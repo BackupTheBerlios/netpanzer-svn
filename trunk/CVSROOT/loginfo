@@ -25,6 +25,6 @@
 # or
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) >> $CVSROOT/CVSROOT/commitlog
 
-CVSROOT /usr/local/bin/syncmail %{sVv} matze@braunis.de
-DEFAULT /usr/local/bin/syncmail %{sVv} netpanzer-cvs@lists.berlios.de
+CVSROOT /usr/local/bin/syncmail -u %{sVv} matze@braunis.de
+DEFAULT /usr/local/bin/syncmail -u %{sVv} netpanzer-cvs@lists.berlios.de
 
