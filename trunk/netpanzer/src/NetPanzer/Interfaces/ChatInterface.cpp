@@ -55,7 +55,7 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
             for( unsigned long i = 0; i < max_players; i++ ) {
                 player_id = PlayerInterface::getPlayerID( i );
 
-                if ( (PlayerInterface::getPlayerStatus( i ) == _player_state_active) ) {
+                if ( (PlayerInterface::getPlayer(i)->getStatus() == _player_state_active) ) {
                     if( PlayerInterface::isAllied( chat_request->getSourcePlayerIndex(), i ) == true ) {
                         if ( (local_player_index != i) ) {
                             SERVER->sendMessage( player_id, &chat_mesg, sizeof(SystemChatMesg), 0 );

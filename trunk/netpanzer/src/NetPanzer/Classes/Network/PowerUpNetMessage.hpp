@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "NetPacket.hpp"
 
-#include "UnitID.hpp"
 #include "PlayerID.hpp"
+#include "UnitBase.hpp"
 
 enum { _net_message_id_powerup_create,
        _net_message_id_powerup_hit

@@ -123,13 +123,13 @@ void ClientConnectDaemon::netMessageConnectProcessUpdate( NetMessage *message )
     process_update = (ConnectProcessUpdate *) message;
 
     char buf[80];
-
-    sprintf( buf, "Your Position In Queue is %d ", process_update->getQueuePosition());
+    snprintf(buf, sizeof(buf), "Your Position In Queue is %d ",
+            process_update->getQueuePosition());
 
     lobbyView->scrollAndUpdate( buf );
 }
 
-void ClientConnectDaemon::netMessageConnectProcessMessage(	NetMessage *message )
+void ClientConnectDaemon::netMessageConnectProcessMessage(NetMessage *message)
 {
     ConnectProcessStateMessage *state_mesg;
 
@@ -149,7 +149,9 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(	NetMessage *message )
         break;
 
     case _connect_state_message_sync_player_info_percent : {
-            sprintf( str_buf, "Synchronizing Player Info ... (%d%%)", state_mesg->getPercentComplete());
+            snprintf(str_buf, sizeof(str_buf),
+                    "Synchronizing Player Info ... (%d%%)",
+                    state_mesg->getPercentComplete());
             lobbyView->update( str_buf );
         }
         break;
@@ -160,7 +162,9 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(	NetMessage *message )
         break;
 
     case _connect_state_message_sync_units_percent : {
-            sprintf( str_buf, "Synchronizing Game Elements ... (%d%%)", state_mesg->getPercentComplete());
+            snprintf(str_buf, sizeof(str_buf),
+                    "Synchronizing Game Elements ... (%d%%)",
+                    state_mesg->getPercentComplete());
             lobbyView->update( str_buf );
         }
         break;
@@ -170,9 +174,7 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(	NetMessage *message )
             lobbyView->toggleGameView();
         }
         break;
-
-    } // ** switch
-
+    }
 }
 
 void ClientConnectDaemon::netMessageConnectServerDisconnect(NetMessage* )

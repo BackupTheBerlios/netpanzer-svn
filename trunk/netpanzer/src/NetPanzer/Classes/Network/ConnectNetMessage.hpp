@@ -34,9 +34,7 @@ enum { _net_message_id_connect_join_game_request,
        _net_message_id_connect_server_game_setup,
        _net_message_id_connect_client_game_setup_ping,
        _net_message_id_connect_client_game_setup_ack,
-
        _net_message_id_connect_client_abort,
-
        _net_message_id_connect_netPanzer_client_disconnect,
        _net_message_id_connect_netPanzer_server_disconnect
      };
@@ -49,12 +47,9 @@ class ClientConnectJoinRequest : public NetMessage
 {
 private:
     uint32_t client_transport_id;
-public:
-    char  code_word[24];
-private:
     uint32_t protocol_version;
+    
 public:
-
     ClientConnectJoinRequest();
     uint32_t getTransportID(void);
     void setTransportID(uint32_t transport_id);
@@ -87,29 +82,24 @@ __attribute__((packed));
 class ClientConnectStartConnect : public NetMessage
 {
 public:
-
     ClientConnectStartConnect()
     {
         message_class = _net_message_class_connect;
         message_id = _net_message_id_client_start_connect;
     }
-
 }
 __attribute__((packed));
 
 class ClientConnectRequest : public NetMessage
 {
 public:
-
     ClientConnectRequest()
     {
         message_class = _net_message_class_connect;
         message_id = _net_message_id_client_connect_request;
     }
-
 }
 __attribute__((packed));
-
 
 enum { _connect_result_success,
        _connect_result_server_busy,
@@ -119,14 +109,13 @@ enum { _connect_result_success,
 class ClientConnectResult : public NetMessage
 {
 public:
-    unsigned char result_code;
+    uint8_t result_code;
 
     ClientConnectResult()
     {
         message_class = _net_message_class_connect;
         message_id = _net_message_id_client_connect_result;
     }
-
 }
 __attribute__((packed));
 
@@ -176,8 +165,9 @@ public:
     uint8_t unit_color;
 
     ConnectClientSettings();
-    int16_t getPlayerFlag(void);
-    void set(const char *player_name, unsigned char unit_color, short player_flag );
+    int16_t getPlayerFlag() const;
+    void set(const char *player_name, uint8_t unit_color,
+             uint16_t player_flag );
 }
 __attribute__((packed));
 

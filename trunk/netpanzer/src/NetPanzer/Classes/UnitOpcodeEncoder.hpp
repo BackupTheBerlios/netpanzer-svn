@@ -21,29 +21,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitOpcodes.hpp"
 #include "UnitNetMessage.hpp"
 
-enum { _opcode_encoder_send_method_guarantee,
-       _opcode_encoder_send_method_no_guarantee
-     };
-
 class UnitOpcodeEncoder
 {
-protected:
+private:
     UnitOpcodeMessage opcode_message;
-    UnitOpcodeMessage decode_message;
-    unsigned char	 current_decode_opcode;
-    int send_method;
+    size_t opcode_index;
+
+    void reset();
 
 public:
-
-    void initialize( int send_method );
-    void resetEncoder( void );
-    void encodeOpcode( UnitOpcode *opcode );
-
-    void setDecodeMessage( UnitOpcodeMessage *message );
-    bool decodeMessage( UnitOpcodeStruct *opcode );
-
-    void sendOpcodeMessage( void );
+    UnitOpcodeEncoder();
+    ~UnitOpcodeEncoder();
+    
+    void encode(const UnitOpcode *opcode);
+    void send();
 };
-
 
 #endif

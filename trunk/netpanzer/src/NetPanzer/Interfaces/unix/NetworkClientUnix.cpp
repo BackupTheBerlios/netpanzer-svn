@@ -25,13 +25,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkClientUnix.hpp"
 #include "LobbyView.hpp"
 
-//#define NETWORKDEBUG
+#define NETWORKDEBUG
 
 #ifdef NETWORKDEBUG
 #include "NetPacketDebugger.hpp"
 #endif
 
-NetworkClientUnix::NetworkClientUnix( void )
+NetworkClientUnix::NetworkClientUnix()
         : NetworkClient(), clientsocket(0)
 {}
 
@@ -40,10 +40,11 @@ NetworkClientUnix::~NetworkClientUnix()
     delete clientsocket;
 }
 
-int NetworkClientUnix::joinServer(const std::string& server_name)
+bool NetworkClientUnix::joinServer(const std::string& server_name)
 {
     delete clientsocket;
     clientsocket = 0;
+    
     LOG( ("Trying to join server '%s'.\n", server_name.c_str()) );
     try {
         clientsocket = new ClientSocket(server_name);
@@ -60,16 +61,16 @@ int NetworkClientUnix::joinServer(const std::string& server_name)
     return true;
 }
 
-int NetworkClientUnix::partServer()
+void NetworkClientUnix::partServer()
 {
     delete clientsocket;
     clientsocket = 0;
-
-    return true;
 }
 
 void NetworkClientUnix::sendMessage(NetMessage *message, size_t size, int flags)
 {
+    message->setSize(size);
+    
     if ( connection_type == _connection_loop_back ) {
         memcpy(net_packet.data, message, size);
         net_packet.packet_size = (unsigned short) size;
@@ -79,8 +80,6 @@ void NetworkClientUnix::sendMessage(NetMessage *message, size_t size, int flags)
 
     if(!clientsocket)
         return;
-
-    message->setsize(size);
 
 #ifdef NETWORKDEBUG
     NetPacketDebugger::logMessage("S", message);
@@ -92,7 +91,7 @@ void NetworkClientUnix::sendMessage(NetMessage *message, size_t size, int flags)
     NetworkState::incPacketsSent( size );
 }
 
-int NetworkClientUnix::getMessage(NetMessage *message)
+bool NetworkClientUnix::getMessage(NetMessage *message)
 {
     updateKeepAliveState();
 

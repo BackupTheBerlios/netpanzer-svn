@@ -28,7 +28,8 @@ protected:
     virtual void soundSelected();
 
 public:
-    Archer( iXY initial_loc, unsigned char color, unsigned char flag );
+    Archer(PlayerState* player, UnitID id, iXY initial_loc,
+            unsigned char color, unsigned char flag );
 
 };
 

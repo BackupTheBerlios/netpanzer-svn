@@ -49,18 +49,22 @@ BotPlayer::processEvents()
     if (playerIndex != NONE_PLAYER) {
         UnitBase *unit = getRandomUnit(playerIndex);
         if (unit) {
+            std::cout << "Unit:" << unit->id;
             int unitTask = m_tasks.queryUnitTask(unit);
             if (unitTask != BotTaskList::TASK_MOVE) {
+                std::cout << " Occupy";
                 unitOccupyOupost(unit);
             }
 
             // manual fire on closest enemy
             UnitBase *enemyUnit;
-            if (UnitInterface::quearyClosestEnemyUnit(&enemyUnit,
+            if (UnitInterface::queryClosestEnemyUnit(&enemyUnit,
                         unit->unit_state.location, playerIndex))
             {
+                std::cout << " Fire(" << enemyUnit->id << ")";
                 manualFire(unit, enemyUnit->unit_state.location);
             }
+            std::cout << std::endl;
         }
         else {
             LOGGER.debug("bot: empty unit list");
@@ -97,26 +101,16 @@ BotPlayer::isReady()
 UnitBase *
 BotPlayer::getRandomUnit(int playerIndex)
 {
-    UnitBase *unit = 0;
-    UnitList *unitList = UnitInterface::getUnitList(playerIndex);
-    assert(unitList != 0);
+    const std::vector<UnitBase*>& units 
+        = UnitInterface::getPlayerUnits(playerIndex);
 
-    long size = unitList->size();
-    if (size > 0) {
-        int unitIndex = rand() % size;
-
-        int p = 0;
-        for(UnitList::iterator i = unitList->begin();
-                i != unitList->end(); ++i) {
-            unit = *i;
-            if(p == unitIndex)
-                break;
-            ++p;
-        }
-    }
-
-    return unit;
+    if(units.size() == 0)
+        return 0;
+    
+    size_t unitIndex = rand() % units.size();
+    return units[unitIndex];
 }
+
 //-----------------------------------------------------------------
 /**
  * @return list of active enemy players
@@ -129,7 +123,7 @@ BotPlayer::getEnemyPlayers()
     int max_players = PlayerInterface::getMaxPlayers();
 
     for (int player_index = 0; player_index < max_players; player_index++) {
-        if (PlayerInterface::getPlayerStatus(player_index) ==
+        if (PlayerInterface::getPlayer(player_index)->getStatus() ==
                 _player_state_active
                 && localIndex != player_index
                 && !PlayerInterface::isAllied(localIndex, player_index))

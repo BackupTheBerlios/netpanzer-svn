@@ -112,6 +112,7 @@ View::~View()
     free(title);
     free(subTitle);
     free(labels);
+    free(searchName);
 } // end ~View::View
 
 // reset
@@ -1189,10 +1190,8 @@ void View::addButtonSurfaceSingle(const iXY &pos, Surface &source, const char *t
 //---------------------------------------------------------------------------
 void View::setSearchName(const char *searchName)
 {
-    if (View::searchName != 0) {
-        free(View::searchName);
-        View::searchName = 0;
-    }
+    free(View::searchName);
+    View::searchName = 0;
 
     if (searchName != 0) {
         View::searchName = strdup(searchName);

@@ -134,7 +134,7 @@ ServerQueryThread::queryMasterServer()
         // send query
         *stream << "\\list\\gamename\\master\\final"
                 << "\\list\\gamename\\netpanzer\\protocol\\"
-                << _NETPANZER_PROTOCOL_VERSION << "\\final\\" << std::flush;
+                << NETPANZER_PROTOCOL_VERSION << "\\final\\" << std::flush;
         
         ServerInfo* lastserver = 0;
         std::string newMasterServers = masterservers.back();

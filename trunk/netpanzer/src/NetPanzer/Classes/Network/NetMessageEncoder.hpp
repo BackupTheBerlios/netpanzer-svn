@@ -19,36 +19,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _NETMESSAGEENCODER_HPP
 
 #include "NetPacket.hpp"
+#include "PlayerID.hpp"
 
 class NetMessageEncoder
 {
-protected:
+private:
+    bool sendAsClient;
+    bool usePlayerID;
+    PlayerID playerID;
     MultiMessage encode_message;
-    MultiMessage decode_message;
     unsigned long encode_message_index;
-    unsigned long decode_message_index;
-    unsigned char decode_current_count;
 
 public:
-
-    void initalize( void );
-    void resetEncoder( void );
-    void encodeMessage( NetMessage *message, unsigned short size );
-
-    bool NetMessageEncoder::encodeMessage( NetMessage *message,
-                                           unsigned short size,
-                                           MultiMessage **encoded_message );
-
-    void getEncodeMessage( MultiMessage **message );
-
-    void setDecodeMessage( MultiMessage *message );
-    bool decodeMessage( NetMessage **message );
-
-    void sendEncodedMessage( void );
+    NetMessageEncoder(bool sendAsClient = false);
+    NetMessageEncoder(const PlayerID& id);
+    ~NetMessageEncoder();
+    
+    void resetEncoder();
+    void encodeMessage(NetMessage *message, size_t size);
+    void sendEncodedMessage();
 };
 
-
-extern NetMessageEncoder PUBLIC_MESSAGE_ENCODER;
-
-
-#endif // ** _NETMESSAGEENCODER_HPP
+#endif

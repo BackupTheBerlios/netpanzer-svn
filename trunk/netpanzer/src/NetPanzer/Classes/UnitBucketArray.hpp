@@ -21,14 +21,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ArrayUtil/BucketArrayTemplate.hpp"
 
 #include "UnitBase.hpp"
-#include "UnitID.hpp"
 
 class UnitBucketPointer
 {
 public:
     UnitBase *unit;
-    unsigned long index;
-    unsigned long player_index;
 
     UnitBucketPointer()
     {
@@ -37,18 +34,9 @@ public:
         prev = 0;
     }
 
-    UnitBucketPointer( UnitBase *unit )
+    UnitBucketPointer(UnitBase *unit)
     {
         UnitBucketPointer::unit = unit;
-        next = 0;
-        prev = 0;
-    }
-
-    UnitBucketPointer( UnitBase *unit,  unsigned long index,  unsigned long player_index )
-    {
-        UnitBucketPointer::unit = unit;
-        UnitBucketPointer::index = index;
-        UnitBucketPointer::player_index = player_index;
         next = 0;
         prev = 0;
     }
@@ -56,7 +44,6 @@ public:
     UnitBucketPointer *next;
     UnitBucketPointer *prev;
 };
-
 
 typedef BucketArrayTemplate< UnitBucketPointer > UnitBucketArrayTemplate;
 typedef LinkListDoubleTemplate< UnitBucketPointer > UnitBucketList;
@@ -155,7 +142,6 @@ public:
 
     long getUnitBucketIndex( UnitID unit_id );
 
-    UnitBase * getUnit( UnitID unit_id );
     UnitBase * getUnit( UnitID unit_id, unsigned long bucket_index );
     UnitBase * getUnitAtWorldLoc( UnitID unit_id, iXY world_loc );
     UnitBase * getUnitAtMapLoc( UnitID unit_id, iXY map_loc );

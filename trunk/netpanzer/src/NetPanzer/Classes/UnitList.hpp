@@ -23,7 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <assert.h>
 
 #include "UnitBase.hpp"
-#include "UnitID.hpp"
+
+#if 0
 
 class UnitList
 {
@@ -215,6 +216,8 @@ public:
 	return unitlistsize;
     }
 };
+
+#endif
 
 #endif
 

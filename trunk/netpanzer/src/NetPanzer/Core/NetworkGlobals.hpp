@@ -15,12 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef _NETWORK_GLOBALS_HPP
-#define _NETWORK_GLOBALS_HPP
+#ifndef __NETWORK_GLOBALS_HPP__
+#define __NETWORK_GLOBALS_HPP__
 
-#define _NETPANZER_DEFAULT_PORT_TCP		3030
+#define NETPANZER_DEFAULT_PORT_TCP     3030
+#define NETPANZER_PROTOCOL_VERSION     1018
 
-#define _NETPANZER_CODEWORD          "netPanzerTest02"
-#define _NETPANZER_PROTOCOL_VERSION  1017
-
-#endif // ** _NETWORK_GLOBALS_HPP
+#endif

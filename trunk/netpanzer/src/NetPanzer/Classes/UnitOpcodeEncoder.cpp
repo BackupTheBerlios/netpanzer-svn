@@ -23,51 +23,44 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConsoleInterface.hpp"
 #include "OpcodeDebugger.hpp"
 #include "UnitNetMessage.hpp"
+#include "Util/Log.hpp"
 
-void UnitOpcodeEncoder::initialize( int send_method )
+UnitOpcodeEncoder::UnitOpcodeEncoder()
 {
-    UnitOpcodeEncoder::send_method = send_method;
-    opcode_message.reset();
+    reset();
 }
 
-void UnitOpcodeEncoder::encodeOpcode( UnitOpcode *opcode )
+UnitOpcodeEncoder::~UnitOpcodeEncoder()
 {
-    opcode_message.add(opcode);
+}
 
-    if (opcode_message.isFull()) {
-        sendOpcodeMessage();
+void
+UnitOpcodeEncoder::reset()
+{
+    opcode_index = 0;
+}
+
+void
+UnitOpcodeEncoder::encode(const UnitOpcode *opcode)
+{
+    if(opcode_index + UnitOpcode::getSize() > sizeof(opcode_message.data)) {
+        send();
     }
+   
+    memcpy(opcode_message.data + opcode_index, opcode, UnitOpcode::getSize());
+    opcode_index += UnitOpcode::getSize();
 }
 
-void UnitOpcodeEncoder::setDecodeMessage( UnitOpcodeMessage *message )
+void
+UnitOpcodeEncoder::send()
 {
-    memcpy( &decode_message, message, sizeof( UnitOpcodeMessage ) );
-    current_decode_opcode = 0;
-}
-
-bool UnitOpcodeEncoder::decodeMessage( UnitOpcodeStruct *opcode )
-{
-    if (!decode_message.extract(current_decode_opcode, opcode))
-        return false;
-
-    current_decode_opcode++;
-
-    NetworkState::incOpcodesReceived();
-
-    return true;
-}
-
-void UnitOpcodeEncoder::sendOpcodeMessage( void )
-{
-    if (opcode_message.isEmpty())
+    if (!opcode_index)
         return;
 
-    if (send_method == _opcode_encoder_send_method_guarantee) {
-        SERVER->sendMessage( &opcode_message, opcode_message.realSize(), 0 );
-    } else {
-        SERVER->sendMessage( &opcode_message, opcode_message.realSize(), _network_send_no_guarantee );
-    }
+    size_t size = opcode_message.getHeaderSize() + opcode_index;
+    SERVER->sendMessage(&opcode_message, size, 0);
 
-    opcode_message.reset();
+    reset();
     NetworkState::incOpcodesSent();
 }
+

@@ -44,8 +44,9 @@ void Valentine::setUnitProperties( void )
 
 }
 
-Valentine::Valentine( iXY initial_loc, unsigned char color, unsigned char flag )
-        : Vehicle( initial_loc )
+Valentine::Valentine(PlayerState* player, UnitID id, iXY initial_loc,
+        unsigned char color, unsigned char flag )
+        : Vehicle(player, id, initial_loc)
 {
     setUnitProperties();
 

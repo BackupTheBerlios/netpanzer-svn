@@ -44,8 +44,9 @@ void Scorpion::setUnitProperties( void )
 
 }
 
-Scorpion::Scorpion( iXY initial_loc, unsigned char color, unsigned char flag )
-        : Vehicle( initial_loc )
+Scorpion::Scorpion(PlayerState* player, UnitID id, iXY initial_loc,
+        unsigned char color, unsigned char flag )
+        : Vehicle(player, id, initial_loc)
 {
     setUnitProperties();
 

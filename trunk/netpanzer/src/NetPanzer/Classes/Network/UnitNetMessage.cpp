@@ -20,100 +20,51 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitNetMessage.hpp"
 #include "UnitOpcodes.hpp"
 
-UnitOpcodeMessage::UnitOpcodeMessage()
-{
-    message_class = _net_message_class_unit;
-    message_id = _net_message_id_opcode_mesg;
-    memset(data, 0, _OPCODE_MESSAGE_LIMIT);
-}
-
-unsigned short UnitOpcodeMessage::realSize( void )
-{
-    return (sizeof(UnitOpcodeMessage) - _OPCODE_MESSAGE_LIMIT +
-        ltoh16(code_size));
-}
-
-void UnitOpcodeMessage::reset(void)
-{
-    code_size = 0;
-    opcode_count = 0;
-    memset(data, 0, _OPCODE_MESSAGE_LIMIT);
-    message_class = _net_message_class_unit;
-    message_id = _net_message_id_opcode_mesg;
-}
-
-bool UnitOpcodeMessage::isEmpty(void)
-{
-    return (opcode_count == 0);
-}
-
-bool UnitOpcodeMessage::isFull(void)
-{
-    return (ltoh16(code_size) + sizeof(UnitOpcodeStruct))
-        > _OPCODE_MESSAGE_LIMIT;
-}
-
-void UnitOpcodeMessage::add(UnitOpcode *opcode)
-{
-    memcpy(data + ltoh16(code_size), opcode, sizeof(UnitOpcodeStruct));
-    code_size = htol16(ltoh16(code_size) + sizeof(UnitOpcodeStruct));
-    opcode_count++;
-}
-
-bool UnitOpcodeMessage::extract(int opcodeNum, UnitOpcodeStruct* dest)
-{
-    if (opcodeNum >= opcode_count)
-        return false;
-
-    memcpy(dest, data + sizeof(UnitOpcodeStruct) * opcodeNum,
-        sizeof(UnitOpcodeStruct));
-    return true;
-}
-
-
-UnitIniSyncMessage::UnitIniSyncMessage(uint8_t type, UnitID id,
-        uint32_t x, uint32_t y)
+UnitIniSyncMessage::UnitIniSyncMessage(uint8_t type, uint16_t player_id,
+        UnitID id, uint32_t x, uint32_t y)
 {
     message_class = _net_message_class_unit;
     message_id = _net_message_id_ini_sync_mesg;
     unit_type = type;
-    unit_id = id;
+    this->player_id = htol16(player_id);
+    unit_id = htol16(id);
     location_x = htol32(x);
     location_y = htol32(y);
 }
 
-unsigned short UnitIniSyncMessage::realSize( void )
+unsigned short UnitIniSyncMessage::realSize() const
 {
     return( sizeof( UnitIniSyncMessage ) );
 }
 
-uint32_t UnitIniSyncMessage::getLocX(void)
+uint32_t UnitIniSyncMessage::getLocX() const
 {
     return ltoh32(location_x);
 }
 
-uint32_t UnitIniSyncMessage::getLocY(void)
+uint32_t UnitIniSyncMessage::getLocY() const
 {
     return ltoh32(location_y);
 }
 
-UnitRemoteCreate::UnitRemoteCreate(UnitID id, uint32_t x, uint32_t y,
-    uint8_t type)
+UnitRemoteCreate::UnitRemoteCreate(uint16_t player_id, UnitID id,
+        uint32_t x, uint32_t y, uint8_t type)
 {
     message_class = _net_message_class_unit;
     message_id = _net_message_id_create_unit;
-    new_unit_id = id;
+    this->player_id = htol16(player_id);
+    new_unit_id = htol16(id);
     location_x = htol32(x);
     location_y = htol32(y);
     unit_type = type;
 }
 
-uint32_t UnitRemoteCreate::getLocX(void)
+uint32_t UnitRemoteCreate::getLocX() const
 {
     return ltoh32(location_x);
 }
 
-uint32_t UnitRemoteCreate::getLocY(void)
+uint32_t UnitRemoteCreate::getLocY() const
 {
     return ltoh32(location_y);
 }

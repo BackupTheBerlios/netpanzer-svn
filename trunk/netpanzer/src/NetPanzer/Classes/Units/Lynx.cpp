@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "UnitGlobals.hpp"
 
-void Lynx::setUnitProperties( void )
+void Lynx::setUnitProperties()
 {
     UnitProfile *profile;
 
@@ -44,8 +44,9 @@ void Lynx::setUnitProperties( void )
 
 }
 
-Lynx::Lynx( iXY initial_loc, unsigned char color, unsigned char flag )
-        : Vehicle( initial_loc )
+Lynx::Lynx(PlayerState* player, UnitID id, iXY initial_loc,
+        unsigned char color, unsigned char flag )
+        : Vehicle(player, id, initial_loc)
 {
     setUnitProperties();
 

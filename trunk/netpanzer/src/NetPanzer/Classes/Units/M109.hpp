@@ -23,12 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class M109 : public Vehicle
 {
 protected:
-    void setUnitProperties( void );
+    void setUnitProperties();
     virtual unsigned short launchProjectile();
     virtual void soundSelected();
 
 public:
-    M109( iXY initial_loc, unsigned char color, unsigned char flag );
+    M109(PlayerState* player, UnitID id, iXY initial_loc,
+            unsigned char color, unsigned char flag );
 
 };
 

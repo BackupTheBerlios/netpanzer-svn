@@ -91,7 +91,7 @@ protected:
 
     unsigned short reload_counter;
     unsigned short death_counter;
-    void updateUnitStateProperties( void );
+    void updateUnitStateProperties();
 
     unsigned char ai_command_state;
     unsigned char external_ai_event;
@@ -106,12 +106,12 @@ protected:
     unsigned short fsmBodyRotate_rotation;
     long           fsmBodyRotate_goal_angle;
     void    setFsmBodyRotate( long goal_angle, unsigned short rotation );
-    bool fsmBodyRotate( void );
+    bool fsmBodyRotate();
 
     unsigned short fsmTurretRotate_rotation;
     long           fsmTurretRotate_goal_angle;
     void    setFsmTurretRotate( long goal_angle, unsigned short rotation );
-    bool fsmTurretRotate( void );
+    bool fsmTurretRotate();
 
     float interpolation_speed;
     TIMESTAMP start_move_stamp;
@@ -122,47 +122,47 @@ protected:
     unsigned char fsmMove_moves_counter;
     unsigned char fsmMove_moves_per_square;
     void setFsmMove( unsigned short orientation );
-    bool fsmMove( void );
+    bool fsmMove();
 
     MoveOpcode move_opcode;
     Timer opcode_move_timer;
     bool move_opcode_sent;
     unsigned char fsmMoveMapSquare_movement_type;
     void setFsmMoveMapSquare( unsigned long square );
-    bool fsmMoveMapSquare( void );
+    bool fsmMoveMapSquare();
 
     iXY fsmTurretTrackPoint_target;
     Angle fsmTurretTrackPoint_target_angle;
     bool fsmTurretTrackPoint_on_target;
     void setFsmTurretTrackPoint(const iXY& target );
-    void clearFsmTurretTrackPoint( void );
-    void syncFsmTurretTrackPoint( void );
-    void fsmTurretTrackPoint( void );
+    void clearFsmTurretTrackPoint();
+    void syncFsmTurretTrackPoint();
+    void fsmTurretTrackPoint();
 
     UnitID fsmTurretTrackTarget_target_id;
     bool fsmTurretTrackTarget_on_target;
-    void setFsmTurretTrackTarget( UnitID &target_id );
-    void clearFsmTurretTrackTarget( void );
-    void syncFsmTurretTrackTarget( void );
-    void fsmTurretTrackTarget( void );
+    void setFsmTurretTrackTarget(UnitID target_id);
+    void clearFsmTurretTrackTarget();
+    void syncFsmTurretTrackTarget();
+    void fsmTurretTrackTarget();
 
     iXY fsmGunneryLocation_target;
     void setFsmGunneryLocation(const iXY& target );
-    void clearFsmGunneryLocation( void );
-    void fsmGunneryLocation( void );
+    void clearFsmGunneryLocation();
+    void fsmGunneryLocation();
 
     UnitID fsmGunneryTarget_target_id;
-    void setFsmGunneryTarget( UnitID &target_id );
-    void clearFsmGunneryTarget( void );
-    void fsmGunneryTarget( void );
+    void setFsmGunneryTarget(UnitID target_id);
+    void clearFsmGunneryTarget();
+    void fsmGunneryTarget();
 
-    void aiFsmIdle( void );
+    void aiFsmIdle();
 
     unsigned char aiFsmDefendHold_state;
     Timer	  aiFsmDefendHold_search_timer;
     UnitID  aiFsmDefendHold_target_ID;
-    void setAiFsmDefendHold( void );
-    void aiFsmDefendHold( void );
+    void setAiFsmDefendHold();
+    void aiFsmDefendHold();
 
     iXY aiFsmMoveToLoc_goal;
     unsigned char aiFsmMoveToLoc_state;
@@ -171,9 +171,9 @@ protected:
     iXY aiFsmMoveToLoc_prev_loc;
     Timer	   aiFsmMoveToLoc_wait_timer;
     bool  aiFsmMoveToLoc_path_not_finished;
-    bool ruleMoveToLoc_GoalReached( void );
-    void aiFsmMoveToLoc_OnExitCleanUp( void );
-    void aiFsmMoveToLoc( void );
+    bool ruleMoveToLoc_GoalReached();
+    void aiFsmMoveToLoc_OnExitCleanUp();
+    void aiFsmMoveToLoc();
 
     UnitID   aiFsmAttackUnit_target_ID;
     iXY aiFsmAttackUnit_target_goal_loc;
@@ -184,44 +184,44 @@ protected:
     Timer	   aiFsmAttackUnit_wait_timer;
     bool  aiFsmAttackUnit_path_not_finished;
     bool  aiFsmAttackUnit_target_destroyed;
-    void aiFsmAttackUnit_OnExitCleanUp( void );
-    void aiFsmAttackUnit( void );
+    void aiFsmAttackUnit_OnExitCleanUp();
+    void aiFsmAttackUnit();
 
 
     unsigned char aiFsmManualMove_move_orientation;
     unsigned char aiFsmManualMove_state;
     iXY aiFsmManualMove_next_loc;
     iXY aiFsmManualMove_prev_loc;
-    void aiFsmManualMove( void );
+    void aiFsmManualMove();
 
     void fireWeapon( iXY &target_loc );
     virtual unsigned short launchProjectile() = 0;
     virtual void soundSelected();
 
     TimerFrameBase threat_level_under_attack_timer;
-    void accessThreatLevels( void );
+    void accessThreatLevels();
 
-    void updateFsmState( void );
-    void updateAIState( void );
+    void updateFsmState();
+    void updateAIState();
 
     // ** Opcode Functions
-    void unitOpcodeMove( UnitOpcodeStruct *opcode );
-    void unitOpcodeTrackPoint( UnitOpcodeStruct *opcode );
-    void unitOpcodeTrackTarget( UnitOpcodeStruct *opcode );
-    void unitOpcodeFireWeapon( UnitOpcodeStruct *opcode );
-    void unitOpcodeSync( UnitOpcodeStruct *opcode );
-    void unitOpcodeUpdateState( UnitOpcodeStruct *opcode );
-    void unitOpcodeDestruct( UnitOpcodeStruct *opcode );
+    void unitOpcodeMove(const UnitOpcode* opcode );
+    void unitOpcodeTrackPoint(const UnitOpcode* opcode );
+    void unitOpcodeTrackTarget(const UnitOpcode* opcode );
+    void unitOpcodeFireWeapon(const UnitOpcode* opcode );
+    void unitOpcodeSync(const UnitOpcode* opcode );
+    void unitOpcodeUpdateState(const UnitOpcode* opcode );
+    void unitOpcodeDestruct(const UnitOpcode* opcode );
 
     UnitOpcodeQueue opcode_queue;
     UnitOpcodeQueue move_opcode_queue;
-    void processMoveOpcodeQueue( void );
-    void processOpcodeQueue( void );
+    void processMoveOpcodeQueue();
+    void processOpcodeQueue();
 
     // ** Message Handlers
     UMesgAICommand pending_AI_comm_mesg;
     bool	     pending_AI_comm;
-    void checkPendingAICommStatus( void );
+    void checkPendingAICommStatus();
 
     void setCommandMoveToLoc( UMesgAICommand *message  );
     void setCommandAttackUnit( UMesgAICommand *message );
@@ -234,16 +234,15 @@ protected:
     void messageSelfDestruct( UnitMessage *message );
 
 public:
+    Vehicle(PlayerState* player, UnitID id, iXY initial_loc);
 
-    Vehicle( iXY initial_loc );
-
-    virtual void updateState( void );
+    virtual void updateState();
 
     virtual void processMessage( UnitMessage *message );
 
-    virtual void evalCommandOpcode( UnitOpcodeStruct *opcode );
+    virtual void evalCommandOpcode(const UnitOpcode* opcode);
 
-    virtual void syncUnit( void );
+    virtual void syncUnit();
 
     virtual void offloadGraphics( SpriteSorter &sorter );
 

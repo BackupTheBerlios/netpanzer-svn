@@ -23,14 +23,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class Humvee : public Vehicle
 {
 protected:
-    void setUnitProperties( void );
+    void setUnitProperties();
     virtual unsigned short launchProjectile();
 
 public:
-    Humvee( iXY initial_loc, unsigned char color, unsigned char flag );
-
-    //virtual void offloadGraphics( SpriteSorter &sorter );
-
+    Humvee(PlayerState* player, UnitID id, iXY initial_loc,
+            unsigned char color, unsigned char flag );
 };
 
 #endif // ** _HUMVEE_HPP

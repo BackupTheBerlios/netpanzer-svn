@@ -57,15 +57,13 @@ Bot::moveUnit(UnitBase *unit, iXY map_pos)
     matrix.getNextEmptyLoc(&map_pos);
 
     TerminalUnitCmdRequest comm_mesg;
-    comm_mesg.comm_request.setHeader(unit->unit_id,
-            _umesg_flag_unique);
+    comm_mesg.comm_request.setHeader(unit->id, _umesg_flag_unique);
     comm_mesg.comm_request.setMoveToLoc(map_pos);
 
     CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest), 0);
     m_tasks.setUnitTask(unit, BotTaskList::TASK_MOVE);
 
-    LOGGER.debug("bot: moveUnit %d to %dx%d",
-            unit->unit_id.getIndex(), map_pos.x, map_pos.y);
+    LOGGER.debug("bot: moveUnit %d to %dx%d", unit->id, map_pos.x, map_pos.y);
 }
 //-----------------------------------------------------------------
 void
@@ -75,14 +73,13 @@ Bot::attackUnit(UnitBase *unit, UnitBase *enemyUnit)
     assert(enemyUnit != 0);
 
     TerminalUnitCmdRequest comm_mesg;
-    comm_mesg.comm_request.setHeader(unit->unit_id, _umesg_flag_unique);
-    comm_mesg.comm_request.setTargetUnit(enemyUnit->unit_id);
+    comm_mesg.comm_request.setHeader(unit->id, _umesg_flag_unique);
+    comm_mesg.comm_request.setTargetUnit(enemyUnit->id);
 
     CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest), 0);
     m_tasks.setUnitTask(unit, BotTaskList::TASK_ATTACK);
 
-    LOGGER.debug("bot: attackUnit %d to %d",
-            unit->unit_id.getIndex(), enemyUnit->unit_id.getIndex());
+    LOGGER.debug("bot: attackUnit %d to %d", unit->id, enemyUnit->id);
 }
 //-----------------------------------------------------------------
 void
@@ -91,7 +88,7 @@ Bot::manualFire(UnitBase *unit, iXY world_pos)
     assert(unit != 0);
 
     TerminalUnitCmdRequest comm_mesg;
-    comm_mesg.comm_request.setHeader(unit->unit_id, _umesg_flag_unique);
+    comm_mesg.comm_request.setHeader(unit->id, _umesg_flag_unique);
     comm_mesg.comm_request.setManualFire(world_pos);
 
     CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest), 0);

@@ -54,7 +54,7 @@ InfoThread::InfoThread(int port)
 InfoThread::~InfoThread()
 {
     running = false;
-    SDL_KillThread(thread);
+    SDL_WaitThread(thread, 0);
     
     if(socket != 0)
         SDLNet_UDP_Close(socket);
@@ -87,6 +87,11 @@ void InfoThread::handleStatusRequests()
         res = SDLNet_UDP_Recv(socket, packet);
         // bleh... we need blocking calls...
         SDL_Delay(20);
+
+        if(running == false) {
+            SDLNet_FreePacket(packet);
+            return;
+        }
     }
     if(res < 0) {
         SDLNet_FreePacket(packet);
@@ -166,7 +171,7 @@ void InfoThread::sendInfo(std::stringstream& out)
 {
     // This should be some game-specific logic...
     out << "gamename\\netpanzer\\"
-        << "protocol\\" << _NETPANZER_PROTOCOL_VERSION << "\\"
+        << "protocol\\" << NETPANZER_PROTOCOL_VERSION << "\\"
         << "hostname\\" << gameconfig->playername << "\\"
         << "mapname\\" << gameconfig->map << "\\"
         << "mapcycle\\" << gameconfig->mapcycle << "\\"

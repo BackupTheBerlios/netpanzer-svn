@@ -45,8 +45,9 @@ void SpahPanzer::setUnitProperties( void )
 
 }
 
-SpahPanzer::SpahPanzer( iXY initial_loc, unsigned char color, unsigned char flag )
-        : Vehicle( initial_loc )
+SpahPanzer::SpahPanzer(PlayerState* player, UnitID id, iXY initial_loc,
+        unsigned char color, unsigned char flag )
+        : Vehicle(player, id, initial_loc)
 {
     setUnitProperties();
 

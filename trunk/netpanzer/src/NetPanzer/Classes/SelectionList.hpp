@@ -69,9 +69,6 @@ public:
     void addList( SelectionList &source_list );
 
     void validateList();
-
 };
-
-
 
 #endif  // ** _SELECTIONLIST_HPP

@@ -7,7 +7,7 @@ class Console
 {
 public:
     static void initialize();
-    static void close();
+    static void shutdown();
    
     static std::ostream* server;
 };

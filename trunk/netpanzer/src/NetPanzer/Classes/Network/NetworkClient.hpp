@@ -35,26 +35,6 @@ enum { _connection_status_no_connection,
        _connection_status_connected
      };
 
-class ConnectionAddress
-{
-public:
-    char string_rep[256];
-};
-
-
-class SessionInfo
-{
-public:
-    char name[64];
-    char map[64];
-    char game_type[64];
-    int  current_players;
-    int  max_players;
-};
-
-typedef ArrayTemplate< SessionInfo > SessionList;
-
-
 #define _CLIENT_KEEP_ALIVE_SEND_INTERVAL   (2)  // in seconds
 #define _SERVER_KEEP_ALIVE_THRESHOLD     (120)  // in seconds
 #define _SERVER_PING_INTERVAL              (5)  // in seconds
@@ -64,8 +44,6 @@ class NetworkClient : public NetworkInterface
 protected:
     NetPacket net_packet;
 
-    SessionList session_list;
-
     Timer   ping_timer;
 
     bool keep_alive_state;
@@ -73,10 +51,10 @@ protected:
     Timer   keep_alive_timer;
     void updateKeepAliveState( void );
 
-    uint32_t client_transport_id;
-
-    unsigned short connection_type;
     unsigned short connection_status;
+    unsigned short connection_type;
+
+    uint32_t client_transport_id;
 
     void netMessageClientKeepAlive( NetMessage *message );
     void netMessageClientSetKeepAliveState( NetMessage *message );
@@ -91,11 +69,11 @@ public:
     void activateKeepAlive();
     void deactivateKeepAlive();
 
-    virtual int joinServer(const std::string& server_name) = 0;
-    virtual int partServer() = 0;
+    virtual bool joinServer(const std::string& server_name) = 0;
+    virtual void partServer() = 0;
 
     virtual void sendMessage(NetMessage *message, size_t size, int flags) = 0;
-    virtual int getMessage(NetMessage *message) = 0;
+    virtual bool getMessage(NetMessage *message) = 0;
 
     virtual void checkIncoming() = 0;
 };

@@ -133,14 +133,10 @@ void UnitPowerUp::powerUpDestruct( UnitID unit_id )
 
 void UnitPowerUp::selectPowerUp( UnitID &unit_id )
 {
-    UnitBase *unit;
-    PlayerID player_id;
-
     sound->playPowerUpSound();
 
-    unit = UnitInterface::getUnit( unit_id );
-
-    player_id = PlayerInterface::getPlayerID( unit_id.getPlayer() );
+    UnitBase* unit = UnitInterface::getUnit( unit_id );
+    PlayerID player_id = unit->player->getPlayerID();
 
     switch( unit_powerup_type ) {
     case _unit_powerup_hitpoints :

@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 NetMessage * ServerMessageRouter::temp_message;
-NetMessageEncoder ServerMessageRouter::message_encoder;
+NetMessageDecoder ServerMessageRouter::message_decoder;
 
 void ServerMessageRouter::initialize( void )
 {
@@ -76,16 +76,16 @@ void ServerMessageRouter::classTerminalMessages( NetMessage *message )
 }
 
 
-void ServerMessageRouter::routeMessages( void )
+void ServerMessageRouter::routeMessages()
 {
     ServerConnectDaemon::connectProcess();
 
     while( SERVER->getMessage( temp_message ) == true ) {
         if ( temp_message->message_class == _net_message_class_multi ) {
             NetMessage *message;
-            message_encoder.setDecodeMessage( (MultiMessage *) temp_message );
+            message_decoder.setDecodeMessage( (MultiMessage *) temp_message );
 
-            while( message_encoder.decodeMessage( &message ) ) {
+            while( message_decoder.decodeMessage( &message ) ) {
                 switch ( message->message_class ) {
                 case _net_message_class_terminal :
                     classTerminalMessages( message );
@@ -103,10 +103,9 @@ void ServerMessageRouter::routeMessages( void )
                 case _net_message_class_player :
                     PlayerInterface::processNetMessage( message );
                     break;
-                } // ** switch
-            } // ** while
-        } // ** if
-
+                }
+            }
+        }
 
         switch ( temp_message->message_class ) {
         case _net_message_class_terminal :
@@ -125,8 +124,6 @@ void ServerMessageRouter::routeMessages( void )
         case _net_message_class_player :
             PlayerInterface::processNetMessage( temp_message );
             break;
-
-        } // ** switch
-
-    } // ** while
+        }
+    }
 }

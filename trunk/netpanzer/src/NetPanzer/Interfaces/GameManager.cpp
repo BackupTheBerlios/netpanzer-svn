@@ -249,6 +249,7 @@ void GameManager::shutdownGameLogic()
     PlayerInterface::cleanUp();
     UnitInterface::cleanUp();
     PathScheduler::cleanUp();
+    //ObjectiveInterface::cleanUp();
 }
 
 void GameManager::shutdownParticleSystems()
@@ -466,7 +467,7 @@ void GameManager::netMessagePingRequest( NetMessage *message )
 
     SystemPingAcknowledge ping_ack;
 
-    if ( (PlayerInterface::getPlayerStatus( player_id ) == _player_state_active) &&
+    if ( (PlayerInterface::getPlayer(player_id.getIndex())->getStatus() == _player_state_active) &&
             (ping_request->getClientPlayerIndex() != 0)
        ) {
         SERVER->sendMessage( player_id, &ping_ack, sizeof(SystemPingAcknowledge), 0 );

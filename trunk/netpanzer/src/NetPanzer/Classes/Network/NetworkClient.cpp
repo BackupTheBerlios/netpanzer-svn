@@ -84,8 +84,7 @@ void NetworkClient::netMessageClientConnectAck( NetMessage *message )
     client_transport_id = connect_ack_mesg->getClientTransportID();
 
     join_request.setTransportID(client_transport_id);
-    strcpy( join_request.code_word, _NETPANZER_CODEWORD );
-    join_request.setProtocolVersion(_NETPANZER_PROTOCOL_VERSION);
+    join_request.setProtocolVersion(NETPANZER_PROTOCOL_VERSION);
 
     sendMessage( &join_request, sizeof(ClientConnectJoinRequest), 0 );
 }

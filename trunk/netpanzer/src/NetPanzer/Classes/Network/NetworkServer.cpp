@@ -220,15 +220,13 @@ void NetworkServer::netMessageServerPingRequest( NetMessage *message )
 
 void NetworkServer::netMessageTransportClientAccept( NetMessage *message )
 {
-    TransportClientAccept *client_accept_mesg;
+    TransportClientAccept *client_accept_mesg 
+        = (TransportClientAccept *) message;
+
     ClientMesgConnectAck connect_ack_mesg;
-    PlayerID player_id;
-
-    client_accept_mesg = (TransportClientAccept *) message;
-
     connect_ack_mesg.setClientTransportID(client_accept_mesg->getClientTransportID());
 
-    player_id = PlayerID( 0, connect_ack_mesg.getClientTransportID() );
+    PlayerID player_id = PlayerID( 0, connect_ack_mesg.getClientTransportID() );
 
     sendMessage(player_id, &connect_ack_mesg, sizeof(ClientMesgConnectAck), 0);
 }

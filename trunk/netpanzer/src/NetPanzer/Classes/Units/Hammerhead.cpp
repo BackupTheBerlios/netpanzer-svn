@@ -43,8 +43,9 @@ void Hammerhead::setUnitProperties( void )
     select_info_box.setHitBarAttributes( profile->hit_points, Color::yellow );
 }
 
-Hammerhead::Hammerhead( iXY initial_loc, unsigned char color, unsigned char flag )
-        : Vehicle( initial_loc )
+Hammerhead::Hammerhead(PlayerState* player, UnitID id, iXY initial_loc,
+        unsigned char color, unsigned char flag )
+        : Vehicle(player, id, initial_loc)
 {
     setUnitProperties();
 

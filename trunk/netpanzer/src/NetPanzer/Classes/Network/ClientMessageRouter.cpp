@@ -39,8 +39,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkState.hpp"
 
 NetMessage * ClientMessageRouter::temp_message;
-NetMessageEncoder ClientMessageRouter::message_encoder;
-
+NetMessageDecoder ClientMessageRouter::message_decoder;
 
 void ClientMessageRouter::initialize( void )
 {
@@ -63,9 +62,9 @@ void ClientMessageRouter::routeMessages( void )
     while( CLIENT->getMessage( temp_message ) == true ) {
         if ( temp_message->message_class == _net_message_class_multi ) {
             NetMessage *message;
-            message_encoder.setDecodeMessage( (MultiMessage *) temp_message );
+            message_decoder.setDecodeMessage( (MultiMessage *) temp_message );
 
-            while( message_encoder.decodeMessage( &message ) ) {
+            while(message_decoder.decodeMessage(&message)) {
                 switch ( message->message_class ) {
                 case _net_message_class_unit : {
                         UnitInterface::processNetMessage( message );

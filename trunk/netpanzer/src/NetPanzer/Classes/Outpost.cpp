@@ -53,14 +53,15 @@ Outpost::Outpost( short ID, iXY location, BoundBox area )
 }
 
 
-void Outpost::attemptOccupationChange( UnitID &unit_id )
+void Outpost::attemptOccupationChange(UnitID unit_id)
 {
     ObjectiveOccupationUpdate update_mesg;
     PlayerState *player_state_ptr;
     int player_index;
     int player_status;
 
-    player_index = unit_id.getPlayer();
+    UnitBase* unit = UnitInterface::getUnit(unit_id);
+    player_index = unit->player->getID();
     player_state_ptr = PlayerInterface::getPlayerState( player_index );
 
     if ( player_state_ptr != 0 ) {
@@ -86,7 +87,7 @@ void Outpost::attemptOccupationChange( UnitID &unit_id )
                     objective_state.name, player_state->getName().c_str() );
         }
     } else {
-        if ( unit_id.getPlayer() != objective_state.occupying_player.getIndex() ) {
+        if (player_index != objective_state.occupying_player.getIndex() ) {
             if( player_status == _player_state_active  ) {
                 objective_state.occupying_player = PlayerInterface::getPlayerID( player_index );
                 objective_state.occupation_status = _occupation_status_occupied;
@@ -118,7 +119,7 @@ void Outpost::checkOccupationStatus( void )
         bounding_area = objective_state.capture_area.getAbsRect( occupation_pad_loc );
 
 
-        UnitInterface::quearyClosestUnit( &unit_ptr,
+        UnitInterface::queryClosestUnit( &unit_ptr,
                                           bounding_area,
                                           occupation_pad_loc
                                         );
@@ -128,7 +129,7 @@ void Outpost::checkOccupationStatus( void )
             iXY unit_loc;
             unit_loc = unit_ptr->unit_state.location;
             if ( objective_state.capture_area.bounds( occupation_pad_loc, unit_loc ) ) {
-                attemptOccupationChange( unit_ptr->unit_id );
+                attemptOccupationChange( unit_ptr->id );
             }
 
         } // ** if unit_ptr != 0
@@ -138,7 +139,7 @@ void Outpost::checkOccupationStatus( void )
 }
 
 
-void Outpost::generateUnits( void )
+void Outpost::generateUnits()
 {
     if ( NetworkState::status == _network_state_server ) {
 
@@ -156,8 +157,9 @@ void Outpost::generateUnits( void )
                                                  objective_state.occupying_player );
 
                 if ( unit != 0 ) {
-                    UnitRemoteCreate create_mesg(unit->unit_id, gen_loc.x,
-                        gen_loc.y, unit_generation_type);
+                    UnitRemoteCreate create_mesg(unit->player->getID(),
+                            unit->id, gen_loc.x, gen_loc.y,
+                            unit_generation_type);
                     SERVER->sendMessage( &create_mesg, sizeof( UnitRemoteCreate ), 0 );
 
                     UMesgAICommand ai_command;
@@ -169,7 +171,7 @@ void Outpost::generateUnits( void )
                     placement_matrix.reset( collection_loc );
                     placement_matrix.getNextEmptyLoc( &loc );
 
-                    ai_command.setHeader( unit->unit_id, _umesg_flag_unique );
+                    ai_command.setHeader( unit->id, _umesg_flag_unique );
                     ai_command.setMoveToLoc( loc );
                     UnitInterface::sendMessage( &ai_command );
                 }

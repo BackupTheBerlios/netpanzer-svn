@@ -35,6 +35,12 @@ TileSet::TileSet( )
     tile_count = 0;
 }
 
+TileSet::~TileSet()
+{
+    delete[] tile_info;
+    delete[] tile_data;
+}
+
 void TileSet::readTileDbHeader(ReadFile& file, TILE_DBASE_HEADER *dbHeader)
 {
     file.read(&dbHeader->netp_id_header, sizeof(dbHeader->netp_id_header), 1);
@@ -54,19 +60,11 @@ void TileSet::loadTileSetInfo( const char *file_path )
 {
     std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
 
-    if ( tile_set_loaded == true ) {
-        if ( tile_data != 0 ) {
-            delete[] tile_data;
-            tile_data = 0;
-        }
-
-        if ( tile_info != 0 ) {
-            delete[] tile_info;
-            tile_info = 0;
-        }
-
-        tile_set_loaded = false;
-    }
+    delete[] tile_data;
+    tile_data = 0;
+    delete[] tile_info;
+    tile_info = 0;
+    tile_set_loaded = false;
 
     readTileDbHeader(*file, &tile_set_info);
 
@@ -84,19 +82,11 @@ void TileSet::loadTileSet( const char *file_path )
     try {
 	std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
 
-	if ( tile_set_loaded == true ) {
-	    if ( tile_data != 0 ) {
-		delete[] tile_data;
-		tile_data = 0;
-	    }
-
-	    if ( tile_info != 0 ) {
-		delete[] tile_info;
-		tile_info = 0;
-	    }
-
-	    tile_set_loaded = false;
-	}
+        delete[] tile_data;
+        tile_data = 0;
+        delete[] tile_info;
+        tile_info = 0;
+        tile_set_loaded = false;
 
 	readTileDbHeader(*file, &tile_set_info);
 
@@ -129,19 +119,11 @@ void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
 
 	std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
 
-	if ( tile_set_loaded == true ) {
-	    if ( tile_data != 0 ) {
-		delete[] tile_data;
-		tile_data = 0;
-	    }
-
-	    if ( tile_info != 0 ) {
-		delete[] tile_info;
-		tile_info = 0;
-	    }
-
-	    tile_set_loaded = false;
-	}
+	delete[] tile_data;
+	tile_data = 0;
+	delete[] tile_info;
+	tile_info = 0;
+	tile_set_loaded = false;
 
 	// ** Read Header Info **
     	readTileDbHeader(*file, &tile_set_info);
@@ -220,19 +202,11 @@ void TileSet::loadTileSetInfo( const char *file_path, WadMapTable &mapping_table
     try {
 	std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
 
-	if ( tile_set_loaded == true ) {
-	    if ( tile_data != 0 ) {
-		delete[] tile_data;
-		tile_data = 0;
-	    }
-
-	    if ( tile_info != 0 ) {
-		delete[] tile_info;
-		tile_info = 0;
-	    }
-
-	    tile_set_loaded = false;
-	}
+	delete[] tile_data;
+	tile_data = 0;
+	delete[] tile_info;
+	tile_info = 0;
+	tile_set_loaded = false;
 
 	// ** Read Header Info **
 	readTileDbHeader(*file, &tile_set_info);
@@ -272,19 +246,11 @@ bool TileSet::startPartitionTileSetLoad( const char *file_path, WadMapTable &map
 
     partition_load_fhandle = FileSystem::openRead(file_path);
 
-    if ( tile_set_loaded == true ) {
-        if ( tile_data != 0 ) {
-            delete[] tile_data;
-            tile_data = 0;
-        }
-
-        if ( tile_info != 0 ) {
-            delete[] tile_info;
-            tile_info = 0;
-        }
-
-        tile_set_loaded = false;
-    }
+    delete[] tile_data;
+    tile_data = 0;
+    delete[] tile_info;
+    tile_info = 0;
+    tile_set_loaded = false;
 
     // ** Read Header Info **
     readTileDbHeader(*partition_load_fhandle, &tile_set_info);

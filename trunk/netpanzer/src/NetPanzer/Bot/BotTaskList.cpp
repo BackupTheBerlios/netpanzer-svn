@@ -35,18 +35,18 @@ BotTaskList::~BotTaskList()
 void BotTaskList::adjustLastUnitLoc(UnitBase *unit)
 {
     iXY curLoc = unit->unit_state.location;
-    if (curLoc == m_tasks[unit->unit_id]->getLastLoc()) {
-        m_tasks[unit->unit_id]->setTask(TASK_IDLE);
+    if (curLoc == m_tasks[unit->id]->getLastLoc()) {
+        m_tasks[unit->id]->setTask(TASK_IDLE);
     }
-    m_tasks[unit->unit_id]->setLastLoc(curLoc);
+    m_tasks[unit->id]->setLastLoc(curLoc);
 }
 //-----------------------------------------------------------------
 void BotTaskList::setUnitTask(UnitBase *unit, int task)
 {
-    bottasks_t::iterator it = m_tasks.find(unit->unit_id);
+    bottasks_t::iterator it = m_tasks.find(unit->id);
     if (it == m_tasks.end()) {
         iXY curLoc = unit->unit_state.location;
-        m_tasks[unit->unit_id] = new BotTask(curLoc, task);
+        m_tasks[unit->id] = new BotTask(curLoc, task);
     }
     else {
         it->second->setTask(task);
@@ -58,13 +58,13 @@ void BotTaskList::setUnitTask(UnitBase *unit, int task)
  */
 int BotTaskList::queryUnitTask(UnitBase *unit)
 {
-    bottasks_t::iterator it = m_tasks.find(unit->unit_id);
+    bottasks_t::iterator it = m_tasks.find(unit->id);
     if (it == m_tasks.end()) {
         return TASK_IDLE;
     }
     else {
         adjustLastUnitLoc(unit);
-        return m_tasks[unit->unit_id]->getTask();
+        return m_tasks[unit->id]->getTask();
     }
 }
 

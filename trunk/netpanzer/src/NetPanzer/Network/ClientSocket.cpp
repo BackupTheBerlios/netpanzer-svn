@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ClientSocket::ClientSocket(const std::string& whole_servername)
 {
-    int port=_NETPANZER_DEFAULT_PORT_TCP;
+    int port = NETPANZER_DEFAULT_PORT_TCP;
     std::string servername;
 
     proxy.setProxy(gameconfig->proxyserver,gameconfig->proxyserveruser,gameconfig->proxyserverpass);

@@ -94,6 +94,11 @@ public:
     OFileStampStream()
         : std::ostream(new FileStampStreamBuf)
     { }
+
+    ~OFileStampStream()
+    {
+        delete rdbuf();
+    }
 };
 
 //---------------------------------------------------------------------------
@@ -105,3 +110,7 @@ void Console::initialize()
     server = new OFileStampStream();
 }
 
+void Console::shutdown()
+{
+    delete server;
+}

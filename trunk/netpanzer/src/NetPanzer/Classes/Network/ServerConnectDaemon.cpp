@@ -147,15 +147,13 @@ void ServerConnectDaemon::netMessageClientJoinRequest( NetMessage *message )
 
     new_player_id = PlayerID(0, join_request_mesg->getTransportID() );
 
-    if( (strcmp(join_request_mesg->code_word, _NETPANZER_CODEWORD) != 0) ||
-            (join_request_mesg->getProtocolVersion() == _NETPANZER_PROTOCOL_VERSION)
-      ) {
+    if(join_request_mesg->getProtocolVersion() == NETPANZER_PROTOCOL_VERSION) {
         join_request_ack.setResultCode(_join_request_result_success);
     } else {
         join_request_ack.setResultCode(_join_request_result_invalid_protocol);
     }
 
-    join_request_ack.setServerProtocolVersion(_NETPANZER_PROTOCOL_VERSION);
+    join_request_ack.setServerProtocolVersion(NETPANZER_PROTOCOL_VERSION);
 
     if( join_request_ack.getResultCode() == _join_request_result_success ) {
 
@@ -462,16 +460,10 @@ bool ServerConnectDaemon::connectStateWaitForClientGameSetupAck( NetMessage *mes
 bool ServerConnectDaemon::connectStatePlayerStateSync()
 {
     ConnectProcessStateMessage state_mesg;
-    int send_ret_val;
     int percent_complete;
+    int send_ret_val;
 
-    if ( PlayerInterface::syncPlayerState( &send_ret_val, &percent_complete ) == true ) {
-        if( send_ret_val != _network_ok ) {
-            connect_player_state->setStatus( _player_state_free );
-            resetConnectFsm();
-            return( true );
-        }
-
+    if (PlayerInterface::syncPlayerState( &percent_complete ) == true ) {
         state_mesg.setMessageEnum(_connect_state_message_sync_player_info_percent);
         state_mesg.setPercentComplete(percent_complete);
         send_ret_val = SERVER->sendMessage( connect_player_id, &state_mesg, sizeof(ConnectProcessStateMessage), 0);
@@ -681,7 +673,7 @@ bool ServerConnectDaemon::disconnectClient( PlayerID player_id )
 
     if ( SERVER->removeClientFromSendList( player_id ) == true ) {
         ObjectiveInterface::disownPlayerObjectives( player_id );
-        UnitInterface::destroyPlayerUnits( player_id );
+        UnitInterface::destroyPlayerUnits(player_id.getIndex());
         PlayerInterface::disconnectPlayerCleanup( player_id );
 
         return( true );

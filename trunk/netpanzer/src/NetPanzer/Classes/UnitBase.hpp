@@ -19,20 +19,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _UNITBASE_HPP
 
 #include "UnitState.hpp"
-#include "UnitID.hpp"
 
 class UnitMessage;
-class UnitOpcodeStruct;
+class UnitOpcode;
 class SpriteSorter;
+class PlayerState;
+
+typedef uint16_t UnitID;
 
 class UnitBase
 {
 public:
-    UnitID    unit_id;
-    UnitState unit_state;
-    bool	 in_sync_flag;
+    PlayerState* player;
+    UnitID       id;
+    UnitState    unit_state;
+    bool         in_sync_flag;
 
-    UnitBase()
+    UnitBase(PlayerState* newPlayer, UnitID newId)
+        : player(newPlayer), id(newId)
     { }
     virtual ~UnitBase()
     { }
@@ -40,7 +44,7 @@ public:
     virtual void processMessage(UnitMessage* )
     {  }
 
-    virtual void evalCommandOpcode(UnitOpcodeStruct* )
+    virtual void evalCommandOpcode(const UnitOpcode* )
     { }
 
     virtual void updateState()
@@ -53,6 +57,18 @@ public:
     { }
 
     virtual void soundSelected() = 0;
+
+private:
+    friend class UnitInterface;
+    void setID(UnitID id)
+    {
+        this->id = id;
+    }
+
+    UnitID getID() const
+    {
+        return id;
+    }
 
 protected:
     UnitBase *groupLinkNext;

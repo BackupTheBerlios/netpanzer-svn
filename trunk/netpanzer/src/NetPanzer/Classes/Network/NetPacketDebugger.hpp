@@ -17,6 +17,8 @@ private:
     static void logMultiMessage(std::ostream& str, NetMessage* message);
     static void logUnitMessage(std::ostream& log, NetMessage* message);
     static void logUnitOpcodeMessage(std::ostream& log, NetMessage* message);
+    static void logClientServerMessage(std::ostream& log, NetMessage* message);
+    static void logConnectMessage(std::ostream& log, NetMessage* message);
 };
 
 #endif

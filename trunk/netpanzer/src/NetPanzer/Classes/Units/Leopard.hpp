@@ -23,13 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class Leopard : public Vehicle
 {
 protected:
-    void setUnitProperties( void );
+    void setUnitProperties();
     virtual unsigned short launchProjectile();
     virtual void soundSelected();
 
 public:
-    Leopard( iXY initial_loc, unsigned char color, unsigned char flag );
-
+    Leopard(PlayerState* palyer, UnitID id, iXY initial_loc,
+            unsigned char color, unsigned char flag );
 };
 
 #endif // ** _LEOPARD_HPP

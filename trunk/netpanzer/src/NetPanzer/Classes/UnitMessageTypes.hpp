@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _UNITMESSAGETYPES_HPP
 
 #include "UnitMessage.hpp"
-#include "UnitID.hpp"
 
 enum { _umesg_ai_command,
        _umesg_weapon_hit,
@@ -41,87 +40,150 @@ class UMesgAICommand : public UnitMessage
 {
 public:
     uint8_t command;
+private:
     int32_t goal_loc_x;
     int32_t goal_loc_y;
-    UnitID target_id;
+    uint16_t target_id;
+public:
     uint8_t manual_move_orientation;
+private:
     int32_t target_loc_x;
     int32_t target_loc_y;
+public:
 
     UMesgAICommand()
     {
     }
 
-    UMesgAICommand( UnitID unit_id, unsigned char flags )
+    UMesgAICommand(UnitID unit_id, unsigned char flags)
             : UnitMessage(unit_id, flags )
     {
     }
 
-    inline void setMoveToLoc( iXY &goal )
+    void setMoveToLoc(iXY &goal)
     {
         message_id = _umesg_ai_command;
         command = _command_move_to_loc;
-        goal_loc_x = goal.x;
-        goal_loc_y = goal.y;
+        goal_loc_x = htol32(goal.x);
+        goal_loc_y = htol32(goal.y);
         manual_move_orientation = 0;
     }
 
-    inline void setTargetUnit( UnitID &target )
+    void setTargetUnit(UnitID target)
     {
         message_id = _umesg_ai_command;
         command = _command_attack_unit;
-        target_id = target;
+        target_id = htol16(target);
         manual_move_orientation = 0;
     }
 
-    inline void setStartManualMove( unsigned char orientation )
+    void setStartManualMove(unsigned char orientation)
     {
         message_id = _umesg_ai_command;
         command = _command_start_manual_move;
         manual_move_orientation = orientation;
     }
 
-    inline void setStopManualMove( void )
+    void setStopManualMove()
     {
         message_id = _umesg_ai_command;
         command = _command_stop_manual_move;
         manual_move_orientation = 0;
     }
 
-    inline void setManualFire( iXY &target )
+    void setManualFire(iXY &target)
     {
         message_id = _umesg_ai_command;
         command = _command_manual_fire;
-        target_loc_x = target.x;
-        target_loc_y = target.y;
+        target_loc_x = htol32(target.x);
+        target_loc_y = htol32(target.y);
         manual_move_orientation = 0;
+    }
+
+    iXY getGoalLoc() const
+    {
+        return iXY(ltoh32(goal_loc_x), ltoh32(goal_loc_y));
+    }
+
+    UnitID getTargetUnitID() const
+    {
+        return ltoh16(target_id);
+    }
+
+    iXY getTargetLoc() const
+    {
+        return iXY(ltoh32(target_loc_x), ltoh32(target_loc_y));
     }
 }
 __attribute__((packed));
 
 class UMesgWeaponHit : public UnitMessage
 {
+private:
+    uint16_t owner_id;
+    int32_t  hit_location_x;
+    int32_t  hit_location_y;
+    uint16_t damage_factor;
+        
 public:
-    UnitID owner_id;
-    int32_t hit_location_x;
-    int32_t hit_location_y;
-    unsigned short damage_factor;
+    void setOwnerUnitID(UnitID id)
+    {
+        owner_id = htol16(id);
+    }
+
+    UnitID getOwnerUnitID() const
+    {
+        return ltoh16(owner_id);
+    }
+
+    void setHitLocation(iXY point)
+    {
+        hit_location_x = htol32(point.x);
+        hit_location_y = htol32(point.y);
+    }
+
+    iXY getHitLocation() const
+    {
+        return iXY(ltoh32(hit_location_x), ltoh32(hit_location_y));
+    }
+
+    void setDamageFactor(uint16_t damage_factor)
+    {
+        this->damage_factor = htol16(damage_factor);
+    }
+    uint16_t getDamageFactor() const
+    {
+        return ltoh16(damage_factor);
+    }
 } __attribute__((packed));
 
 class UMesgEndLifeCycleUpdate : public UnitMessage
 {
+private:
+    uint16_t destroyed;
+    uint16_t destroyer;
+
 public:
-    UnitID destroyed;
-    UnitID destroyer;
     unsigned char unit_type;
 
-    inline void set( UnitID &destroyed_unit, UnitID &destroyer_unit, unsigned char unit_type )
+    void set(UnitID destroyed_unit, UnitID destroyer_unit,
+            unsigned char unit_type )
     {
         message_id = _umesg_end_lifecycle;
         message_flags = _umesg_flag_manager_request;
-        destroyed = destroyed_unit;
-        destroyer = destroyer_unit;
+        destroyed = htol16(destroyed_unit);
+        destroyer = htol16(destroyer_unit);
         UMesgEndLifeCycleUpdate::unit_type = unit_type;
+    }
+
+    UnitID getDestroyed() const
+    {
+        return ltoh16(destroyed);
+    }
+
+    UnitID getDestroyer() const
+    {
+        return ltoh16(destroyer);
     }
 }
 __attribute__((packed));
@@ -164,8 +226,7 @@ __attribute__((packed));
 class UMesgSelfDestruct : public UnitMessage
 {
 public:
-
-    UMesgSelfDestruct( )
+    UMesgSelfDestruct()
     {
         message_id = _umesg_self_destruct;
     }
@@ -176,4 +237,4 @@ __attribute__((packed));
 #pragma()
 #endif
 
-#endif // ** _UNITMESSAGETYPES_HPP
+#endif

@@ -52,7 +52,7 @@ public:
         name[63] = '\0';
     }
 
-    uint16_t getPlayerIndex(void);
+    uint16_t getPlayerIndex() const;
 
     friend class PlayerState;
 private:
@@ -99,7 +99,11 @@ public:
     void operator= (const PlayerState& other);
 
     void setName(const std::string& newname);
-    void setID( PlayerID player_id );
+    void setPlayerID( PlayerID player_id );
+    uint16_t getID() const
+    {
+        return ID.getIndex();
+    }
 
     void resetStats();
     const std::string& getName() const;
@@ -125,7 +129,7 @@ public:
     unsigned char getFlag();
     short getTotal();
     NetworkPlayerState getNetworkPlayerState();
-    void setFromNetworkPlayerState(NetworkPlayerState* state);
+    void setFromNetworkPlayerState(const NetworkPlayerState* state);
     void setColor( uint32_t index );
     uint8_t getColor();
 };

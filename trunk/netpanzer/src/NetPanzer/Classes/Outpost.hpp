@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Objective.hpp"
 #include "ArrayUtil/Timer.hpp"
-#include "UnitID.hpp"
 #include "SelectionBoxSprite.hpp"
+#include "UnitBase.hpp"
 
 class Outpost : public Objective
 {
@@ -39,7 +39,7 @@ protected:
     Timer occupation_status_timer;
     Timer unit_generation_timer;
 
-    void attemptOccupationChange( UnitID &unit_id );
+    void attemptOccupationChange(UnitID unit_id);
 
     void checkOccupationStatus( void );
 

@@ -33,8 +33,6 @@ protected:
     static unsigned short max_players;
     static bool *alliance_matrix;
 
-    static void setKill( unsigned short by_player_index, unsigned short on_player_index, unsigned short unit_type);
-
     static void resetAllianceMatrix();
 
     static unsigned short local_player_index;
@@ -52,9 +50,8 @@ public:
     static void lock();
     static void unLock();
 
-    static void setKill( const PlayerID &by_player, const PlayerID &on_player, unsigned short unit_type );
-
-    static void setKill( const UnitID &by_player, const UnitID &on_player, unsigned short unit_type );
+    static void setKill(PlayerState* by_player, PlayerState* on_player,
+            unsigned short unit_type );
 
     static void setAlliance( const PlayerID& by_player, const PlayerID& with_player );
 
@@ -80,19 +77,30 @@ public:
         return( &player_lists[ player.getIndex() ] );
     }
 
-    static PlayerState * getPlayerState( unsigned short player_index )
+    static PlayerState * getPlayerState(uint16_t player_index )
     {
         assert( player_index < max_players );
         return( &player_lists[ player_index ] );
     }
 
-    static PlayerState * getLocalPlayerState()
+    static PlayerState* getPlayer(uint16_t id)
+    {
+        assert(id < max_players);
+        return &player_lists[id];
+    }
+
+    static PlayerState* getLocalPlayer()
     {
         if( local_player_index == 0xFFFF ) {
             return( &local_player_state);
         }
-
+                                                              
         return( &player_lists[ local_player_index ] );
+    }
+    
+    static PlayerState * getLocalPlayerState()
+    {
+        return getLocalPlayer();
     }
 
     static PlayerID getLocalPlayerID()
@@ -104,27 +112,15 @@ public:
         return( player_lists[ local_player_index ].getPlayerID() );
     }
 
-    static unsigned short getLocalPlayerIndex()
+    static uint16_t getLocalPlayerIndex()
     {
         return( local_player_index );
     }
 
-    static PlayerID getPlayerID( unsigned short player_index )
+    static PlayerID getPlayerID(uint16_t player_index )
     {
         assert( player_index < max_players );
         return( player_lists[ player_index ].getPlayerID() );
-    }
-
-    static unsigned short getPlayerStatus( const PlayerID& player )
-    {
-        assert( player.getIndex() < max_players );
-        return( player_lists[ player.getIndex() ].getStatus() );
-    }
-
-    static unsigned short getPlayerStatus( unsigned short player_index )
-    {
-        assert( player_index < max_players );
-        return( player_lists[ player_index ].getStatus() );
     }
 
     static void resetPlayerStats();
@@ -136,7 +132,7 @@ public:
     static PlayerState * allocateNewPlayer();
     static int countPlayers();
 
-    static void spawnPlayer( unsigned short player_index, const iXY &location );
+    static void spawnPlayer( uint16_t player_index, const iXY &location );
     static void spawnPlayer( const PlayerID &player, const iXY &location );
 
     static bool testRuleScoreLimit( long score_limit, PlayerState ** player_state );
@@ -149,23 +145,23 @@ public:
     static bool testRulePlayerRespawn( bool *completed, PlayerState **player_state );
 
 protected:
-    static NetMessageEncoder message_encoder;
-    static unsigned short player_sync_index;
-    static unsigned short player_sync_connect_player_index;
+    static NetMessageEncoder* message_encoder;
+    static uint16_t player_sync_index;
+    static uint16_t player_sync_connect_player_index;
     static PlayerID player_sync_connect_id;
     static Timer player_sync_timer;
 
-    static void netMessageConnectID( NetMessage *message );
-    static void netMessageSyncState( NetMessage *message );
-    static void netMessageScoreUpdate( NetMessage *message );
-    static void netMessageAllianceRequest( NetMessage *message );
-    static void netMessageAllianceUpdate( NetMessage *message );
+    static void netMessageConnectID(const NetMessage *message );
+    static void netMessageSyncState(const NetMessage *message );
+    static void netMessageScoreUpdate(const NetMessage *message );
+    static void netMessageAllianceRequest(const NetMessage *message );
+    static void netMessageAllianceUpdate(const NetMessage *message );
 
 public:
-    static void startPlayerStateSync( const PlayerID &connect_player );
-    static bool syncPlayerState( int *send_return_code, int *percent_complete );
-    static void processNetMessage( NetMessage *message );
+    static void startPlayerStateSync(const PlayerID &connect_player);
+    static bool syncPlayerState(int *percent_complete);
+    static void processNetMessage(const NetMessage *message );
     static void disconnectPlayerCleanup( PlayerID &player_id );
 };
 
-#endif // ** _PLAYERINTERFACE_HPP
+#endif // ** _PLAYERINTERFACE_HP

@@ -12,8 +12,10 @@ ServerConsole::ServerConsole(DedicatedGameManager* newmanager)
 
 ServerConsole::~ServerConsole()
 {
-    if(thread)
+    if(thread && running)
         SDL_KillThread(thread);
+    else
+        SDL_WaitThread(thread, 0);
 }
 
 class CommandHelp
@@ -39,12 +41,14 @@ void ServerConsole::executeCommand(const std::string& command)
     if(command == "help") {
         std::cout << "Commands:\n";
         for(size_t i = 0; commands[i].name != 0; ++i) {
-            std::cout << "   " << commands[i].name << "     "
-                << commands[i].help << "\n";
+            std::cout << "   " << commands[i].name;
+            for(size_t a = 0; a < 12-strlen(commands[i].name); ++a)
+                std::cout << ' ';
+            std::cout << commands[i].help << "\n";
         }
     } else if(command == "quit") {
-        running = false;
         manager->pushCommand(ServerCommand(ServerCommand::QUIT));
+        running = false;
     } else if(command == "status") {
         manager->pushCommand(ServerCommand(ServerCommand::STATUS));
     } else if(command == "") {

@@ -13,6 +13,8 @@
 
 #include "NetPacketDebugger.hpp"
 #include "OpcodeDebugger.hpp"
+#include "ClientServerNetMessage.hpp"
+#include "ConnectNetMessage.hpp"
 
 void NetPacketDebugger::logMessage(const char* domain, NetMessage* message)
 {
@@ -33,7 +35,7 @@ void NetPacketDebugger::logMessage(const char* domain, NetMessage* message)
         }
         case _net_message_class_client_server:
         {
-            *log << "Client/Server";
+            logClientServerMessage(*log, message);
             break;
         }
         case _net_message_class_system:
@@ -43,7 +45,7 @@ void NetPacketDebugger::logMessage(const char* domain, NetMessage* message)
         }
         case _net_message_class_connect:
         {
-            *log << "Connect";
+            logConnectMessage(*log, message);
             break;
         }
         case _net_message_class_player:
@@ -87,11 +89,11 @@ void NetPacketDebugger::logMessage(const char* domain, NetMessage* message)
     log->flags(std::ios::hex);
     log->fill('0');
     uint8_t* data = (uint8_t *) message;
-    for (int i=0; i<message->getsize(); i++) {
+    for (size_t i=sizeof(NetMessage); i<message->getSize(); ++i) {
         if ((i%4) == 0)
             *log << " ";
         log->width(2);
-        *log << (uint32_t)data[i];
+        *log << (int) data[i];
     }
     log->flags(std::ios::dec);
     *log << std::endl;
@@ -102,15 +104,108 @@ void NetPacketDebugger::logMultiMessage(std::ostream& log,
 {
     MultiMessage* mmessage = (MultiMessage*) message;
     
-    uint8_t* dataptr = mmessage->data + 1;
     log << "multimessage:\n";
-    for(int i=0;i<mmessage->message_count; i++) {
-        NetMessage* submessage = (NetMessage*) dataptr;
-        logMessage("  M", submessage);
-        dataptr += submessage->getsize() + 1;
-        if(dataptr - mmessage->data >= message->getsize()) {
+    size_t index = 0;
+    for(int i=0; i<mmessage->message_count; i++) {
+        if(index + mmessage->getHeaderSize() >= message->getSize()) {
+            printf("IDX: %d HS: %d MS: %d.\n", index, mmessage->getHeaderSize(),
+                    message->getSize());
             assert("Incorrect multi messge" == 0);
         }
+        NetMessage* submessage = (NetMessage*) (mmessage->data + index);
+        index += submessage->getSize();
+
+        logMessage("  M", submessage);
+    }
+}
+
+void NetPacketDebugger::logClientServerMessage(std::ostream& log,
+        NetMessage* message)
+{
+    log << "Client/Server ";
+    switch(message->message_id) {
+        case _net_message_id_transport_client_accept:
+            log << "(transport client accept)";
+            break;
+        case _net_message_id_client_connect_ack:
+            log << "(client connect ack)";
+            break;
+        case _net_message_id_client_server_id:
+            log << "(client server id)";
+            break;
+        case _net_message_id_client_keep_alive:
+            log << "(client keep alive)";
+            break;
+        case _net_message_id_client_set_keepalive_state:
+            log << "(client set keepalive state)";
+            break;
+        case _net_message_id_server_client_disconnect:
+            log << "(server client disconnect)";
+            break;
+        case _net_message_id_server_keep_alive:
+            log << "(server keep alive)";
+            break;
+        case _net_message_id_server_ping_request:
+            log << "(server ping request)";
+            break;
+        case _net_message_id_client_ping_ack:
+            log << "(client ping ack)";
+            break;
+        default:
+            log << "(invalid messageid)";            
+            break;                           }
+}
+
+void NetPacketDebugger::logConnectMessage(std::ostream& log,
+        NetMessage* message)
+{
+    log << "Connect ";
+    switch(message->message_id) {
+        case _net_message_id_connect_join_game_request:
+            log << "(join game request)";
+            break;
+        case _net_message_id_connect_join_game_request_ack:
+            log << "(join game request ack)";
+            break;
+        case _net_message_id_client_start_connect:
+            log << "(client start connect)";
+            break;
+        case _net_message_id_client_connect_request:
+            log << "(client connect request)";
+            break;
+        case _net_message_id_client_connect_result:
+            log << "(client connect result)";
+            break;
+        case _net_message_id_connect_client_settings:
+            log << "(client settings)";
+            break;
+        case _net_message_id_client_connect_process_update:
+            log << "(client connect process update)";
+            break;
+        case _net_message_id_client_connect_process_state_mesg:
+            log << "(client connect process state message)";
+            break;
+        case _net_message_id_connect_server_game_setup:
+            log << "(server game setup)";
+            break;
+        case _net_message_id_connect_client_game_setup_ping:
+            log << "(client game setup ping)";
+            break;
+        case _net_message_id_connect_client_game_setup_ack:
+            log << "(client game setup ack)";
+            break;
+        case _net_message_id_connect_client_abort:
+            log << "(client abort)";
+            break;
+        case _net_message_id_connect_netPanzer_client_disconnect:
+            log << "(netpnatzer client disconnect)";
+            break;
+        case _net_message_id_connect_netPanzer_server_disconnect:
+            log << "(netpanzer server disconnect)";
+            break;
+        default:
+            log << "(invalid messageid)";
+            break;
     }
 }
 
@@ -152,12 +247,13 @@ void NetPacketDebugger::logAICommand(std::ostream& log,
     switch(cmd.command) {
         case _command_move_to_loc:
         {
-            log << "move to:" << cmd.goal_loc_x << "," << cmd.goal_loc_y;
+            log << "move to:" 
+                << cmd.getGoalLoc().x << "," << cmd.getGoalLoc().y;
             break;
         }
         case _command_attack_unit:
         {
-            log << "Attack: " << cmd.target_id.getUnique();
+            log << "Attack: " << cmd.getTargetUnitID();
             break;
         }
         case _command_start_manual_move:
@@ -172,7 +268,8 @@ void NetPacketDebugger::logAICommand(std::ostream& log,
         }
         case _command_manual_fire:
         {
-            log << "MFire: " << cmd.target_loc_x << "," << cmd.target_loc_y;
+            log << "MFire: " << cmd.getTargetLoc().x 
+                << "," << cmd.getTargetLoc().y;
             break;
         }
         default:
@@ -227,7 +324,7 @@ void NetPacketDebugger::logUnitOpcodeMessage(std::ostream& log,
     UnitOpcodeMessage* opcodes = (UnitOpcodeMessage*) message;
     uint8_t* dataptr = opcodes->data;
     uint8_t* dataend 
-        = dataptr + opcodes->opcode_count * sizeof(UnitOpcodeStruct);
+        = dataptr + (message->getSize() - UnitOpcodeMessage::getHeaderSize());
     while(dataptr < dataend) {
         log << "\n  ";
         OpcodeDebugger::logOpcode(log, (UnitOpcode*) dataptr);

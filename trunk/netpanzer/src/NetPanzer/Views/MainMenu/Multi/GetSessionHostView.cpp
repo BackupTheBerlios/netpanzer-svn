@@ -198,12 +198,13 @@ void GetSessionHostView::drawHostList(Surface &dest)
 //---------------------------------------------------------------------------
 void GetSessionHostView::updateHostList()
 {
+#if 0
     int num_games;
     //char game_name[80];
     // XXX
     // HRESULT hr;
 
-    SessionList session_list;
+    //SessionList session_list;
     // winsock hack
     /*
     //bug#15+
@@ -274,6 +275,7 @@ void GetSessionHostView::updateHostList()
     	scrollBar.setItemCount(hosts.size());
     	scrollBar.setItemsSize(CHAR_YPIX + ITEM_GAP_SPACE);
     */
+#endif
 } // end GetSessionHostView::updateHostList
 
 // findItemContaining

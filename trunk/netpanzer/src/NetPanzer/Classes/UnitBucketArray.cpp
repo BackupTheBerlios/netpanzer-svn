@@ -31,12 +31,15 @@ UnitBucketArray::~UnitBucketArray( )
 {
 }
 
-void UnitBucketArray::initialize( iXY map_size, iXY tile_size )
+void
+UnitBucketArray::initialize( iXY map_size, iXY tile_size )
 {
     initialize( map_size, tile_size, 10, 10 );
 }
 
-void UnitBucketArray::initialize( iXY map_size, iXY tile_size, long x_super_sample, long y_super_sample )
+void
+UnitBucketArray::initialize( iXY map_size, iXY tile_size,
+        long x_super_sample, long y_super_sample )
 {
     unsigned long rows, columns;
 
@@ -68,7 +71,8 @@ void UnitBucketArray::initialize( iXY map_size, iXY tile_size, long x_super_samp
     UnitBucketArrayTemplate::initialize( rows, columns );
 }
 
-iRect UnitBucketArray::worldRectToBucketRectClip( iRect &world_rect )
+iRect
+UnitBucketArray::worldRectToBucketRectClip( iRect &world_rect )
 {
     long bucket_max_x;
     long bucket_max_y;
@@ -91,8 +95,8 @@ iRect UnitBucketArray::worldRectToBucketRectClip( iRect &world_rect )
           );
 }
 
-
-UnitBucketList * UnitBucketArray::getBucketAssocWorldLoc( iXY world_loc )
+UnitBucketList*
+UnitBucketArray::getBucketAssocWorldLoc( iXY world_loc )
 {
     long bucket_index;
 
@@ -104,7 +108,8 @@ UnitBucketList * UnitBucketArray::getBucketAssocWorldLoc( iXY world_loc )
     return( &(array[ bucket_index ]) );
 }
 
-UnitBucketList * UnitBucketArray::getBucketAssocMapLoc( iXY map_loc )
+UnitBucketList*
+UnitBucketArray::getBucketAssocMapLoc( iXY map_loc )
 {
     long bucket_index;
 
@@ -116,7 +121,8 @@ UnitBucketList * UnitBucketArray::getBucketAssocMapLoc( iXY map_loc )
     return( &(array[ bucket_index ]) );
 }
 
-void UnitBucketArray::addUnit( UnitBase *unit )
+void
+UnitBucketArray::addUnit( UnitBase *unit )
 {
     UnitBucketPointer *unit_bucket_ptr;
     long bucket_index;
@@ -126,15 +132,13 @@ void UnitBucketArray::addUnit( UnitBase *unit )
 
     assert( bucket_index < (long) size );
 
-    unit_bucket_ptr = new UnitBucketPointer( unit,
-                      unit->unit_id.getIndex(),
-                      unit->unit_id.getPlayer()
-                                           );
+    unit_bucket_ptr = new UnitBucketPointer(unit);
 
     array[ bucket_index ].addFront( unit_bucket_ptr );
 }
 
-void UnitBucketArray::addUnit( UnitBucketPointer *unit_bucket_ptr )
+void
+UnitBucketArray::addUnit( UnitBucketPointer *unit_bucket_ptr )
 {
     long bucket_index;
     UnitBase *unit;
@@ -150,78 +154,44 @@ void UnitBucketArray::addUnit( UnitBucketPointer *unit_bucket_ptr )
 }
 
 
-long UnitBucketArray::getUnitBucketIndex( UnitID unit_id )
+long
+UnitBucketArray::getUnitBucketIndex(UnitID unit_id)
 {
-    unsigned long unique_index;
-
-    unique_index = unit_id.getIndex();
-
     for( unsigned long bucket_index = 0; bucket_index < size; bucket_index++ ) {
         UnitBucketPointer *traversal_ptr;
 
         traversal_ptr = array[ bucket_index ].getFront();
 
         while( traversal_ptr != 0 ) {
-            if( traversal_ptr->index == unique_index )
-                return( (long) bucket_index );
+            if( traversal_ptr->unit->id == unit_id )
+                return (long) bucket_index;
 
             traversal_ptr = traversal_ptr->next;
         }
 
     }
 
-    return( -1 );
+    return -1;
 }
 
-UnitBase * UnitBucketArray::getUnit( UnitID unit_id )
+UnitBase*
+UnitBucketArray::getUnit(UnitID unit_id, unsigned long bucket_index)
 {
-    unsigned long unique_index;
-
-    unique_index = unit_id.getIndex();
-
-    for( unsigned long bucket_index = 0; bucket_index < size; bucket_index++ ) {
-        UnitBucketPointer *traversal_ptr;
-
-        traversal_ptr = array[ bucket_index ].getFront();
-
-        while( traversal_ptr != 0 ) {
-            if( traversal_ptr->index == unique_index )
-                return( traversal_ptr->unit );
-
-            traversal_ptr = traversal_ptr->next;
-        }
-
-    }
-    return( 0 );
-}
-
-
-UnitBase * UnitBucketArray::getUnit( UnitID unit_id, unsigned long bucket_index )
-{
-    unsigned long unique_index;
-
-    unique_index = unit_id.getIndex();
-
-    UnitBucketPointer *traversal_ptr;
-
-    traversal_ptr = array[ bucket_index ].getFront();
+    UnitBucketPointer *traversal_ptr = array[bucket_index].getFront();
 
     while( traversal_ptr != 0 ) {
-        if( traversal_ptr->index == unique_index )
-            return( traversal_ptr->unit );
+        if(traversal_ptr->unit->id == unit_id)
+            return traversal_ptr->unit;
 
         traversal_ptr = traversal_ptr->next;
     }
 
-    return( 0 );
+    return 0;
 }
 
-UnitBase * UnitBucketArray::getUnitAtWorldLoc( UnitID unit_id, iXY world_loc )
+UnitBase* UnitBucketArray::getUnitAtWorldLoc(UnitID unit_id, iXY world_loc)
 {
     long bucket_index;
-    unsigned long unique_index;
-
-    unique_index = unit_id.getIndex();
 
     bucket_index = ((world_loc.y / pixel_y_sample_factor) * column_size) +
                    (world_loc.x / pixel_x_sample_factor);
@@ -233,21 +203,19 @@ UnitBase * UnitBucketArray::getUnitAtWorldLoc( UnitID unit_id, iXY world_loc )
     traversal_ptr = array[ bucket_index ].getFront();
 
     while( traversal_ptr != 0 ) {
-        if( traversal_ptr->index == unique_index )
-            return( traversal_ptr->unit );
+        if(traversal_ptr->unit->id == unit_id)
+            return traversal_ptr->unit;
 
         traversal_ptr = traversal_ptr->next;
     }
 
-    return( 0 );
+    return 0;
 }
 
-UnitBase * UnitBucketArray::getUnitAtMapLoc( UnitID unit_id, iXY map_loc )
+UnitBase*
+UnitBucketArray::getUnitAtMapLoc(UnitID unit_id, iXY map_loc)
 {
     long bucket_index;
-    unsigned long unique_index;
-
-    unique_index = unit_id.getIndex();
 
     bucket_index = ((map_loc.y / map_y_sample_factor) * column_size) +
                    (map_loc.x / map_x_sample_factor);
@@ -259,8 +227,8 @@ UnitBase * UnitBucketArray::getUnitAtMapLoc( UnitID unit_id, iXY map_loc )
     traversal_ptr = array[ bucket_index ].getFront();
 
     while( traversal_ptr != 0 ) {
-        if( traversal_ptr->index == unique_index )
-            return( traversal_ptr->unit );
+        if(traversal_ptr->unit->id == unit_id)
+            return traversal_ptr->unit;
 
         traversal_ptr = traversal_ptr->next;
     }
@@ -268,7 +236,8 @@ UnitBase * UnitBucketArray::getUnitAtMapLoc( UnitID unit_id, iXY map_loc )
     return 0;
 }
 
-bool UnitBucketArray::moveUnit(UnitID unit_id, unsigned long from_bucket_index,
+bool
+UnitBucketArray::moveUnit(UnitID unit_id, unsigned long from_bucket_index,
 			       unsigned long to_bucket_index )
 {
     assert(from_bucket_index < size);
@@ -277,14 +246,11 @@ bool UnitBucketArray::moveUnit(UnitID unit_id, unsigned long from_bucket_index,
     bool found = false;
     UnitBucketPointer *traversal_ptr;
     UnitBucketPointer *move_ptr;
-    unsigned long unique_index;
-
-    unique_index = unit_id.getIndex();
 
     traversal_ptr = array[ from_bucket_index ].getFront();
 
     while( (traversal_ptr != 0) && (found == false) ) {
-        if( traversal_ptr->index == unique_index ) {
+        if(traversal_ptr->unit->id == unit_id) {
             move_ptr = traversal_ptr;
             traversal_ptr = traversal_ptr->next;
             array[ from_bucket_index ].removeObject( move_ptr );
@@ -306,12 +272,10 @@ bool UnitBucketArray::moveUnit(UnitID unit_id, unsigned long from_bucket_index,
     return true;
 }
 
-bool UnitBucketArray::deleteUnitBucketPointer( UnitID unit_id, iXY world_loc )
+bool
+UnitBucketArray::deleteUnitBucketPointer(UnitID unit_id, iXY world_loc)
 {
     long bucket_index;
-    unsigned long unique_index;
-
-    unique_index = unit_id.getIndex();
 
     bucket_index = worldLocToBucketIndex( world_loc );
 
@@ -320,13 +284,13 @@ bool UnitBucketArray::deleteUnitBucketPointer( UnitID unit_id, iXY world_loc )
     traversal_ptr = array[ bucket_index ].getFront();
 
     while( traversal_ptr != 0 ) {
-        if( traversal_ptr->index == unique_index ) {
+        if(traversal_ptr->unit->id == unit_id) {
             array[ bucket_index ].deleteObject( traversal_ptr );
-            return( true );
+            return true;
         }
 
         traversal_ptr = traversal_ptr->next;
     }
 
-    return( false );
+    return false;
 }

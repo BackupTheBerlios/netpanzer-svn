@@ -58,6 +58,7 @@ DedicatedGameManager::~DedicatedGameManager()
     delete console;
     delete heartbeatthread;
     delete infothread;
+    Console::shutdown();
 }
 
 void DedicatedGameManager::initializeVideoSubSystem()

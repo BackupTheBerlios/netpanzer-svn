@@ -79,55 +79,57 @@ void MiniMapInterface::setWorldWindowPosition( iXY world_loc )
 
 void MiniMapInterface::annotateUnits( Surface &map_surface )
 {
-    for(size_t player=0; player < PlayerInterface::getMaxPlayers(); player++) {
-	bool isally = PlayerInterface::isAllied
-	    (PlayerInterface::getLocalPlayerIndex(), player);
-	
-	UnitList* unitlist = UnitInterface::getUnitList(player);
-	for(UnitList::iterator i = unitlist->begin();
-		i != unitlist->end(); ++i) {
-	    UnitState* unit_state = & (i->unit_state);
-	    iXY map_loc = iXY(
-		    int(float(unit_state->location.x) / scale_factor.x),
-		    int(float(unit_state->location.y) / scale_factor.y));
+    const UnitInterface::Units& units = UnitInterface::getUnits();
+    for(UnitInterface::Units::const_iterator i = units.begin();
+            i != units.end(); ++i) {
+        UnitBase* unit = i->second;
+        bool islocal 
+            = unit->player->getID() == PlayerInterface::getLocalPlayerIndex();
+        bool isally = PlayerInterface::isAllied
+	    (PlayerInterface::getLocalPlayerIndex(), unit->player->getID());
+        UnitState& unit_state = unit->unit_state;
+        iXY map_loc = iXY(
+                int(float(unit_state.location.x) / scale_factor.x),
+                int(float(unit_state.location.y) / scale_factor.y));
 
-	    if (player == PlayerInterface::getLocalPlayerIndex()) {
-		if ( unit_state->threat_level == _threat_level_under_attack ) {
-		    if ( radar_blink_flag == true ) {
-			drawLargeUnitDot( map_surface, map_loc, Color::yellow );
-		    }
-		} else {
-		    PIX *unit_color=&player_unit_color;
-		    if(unit_state->select) { unit_color=&selected_unit_color; }
-		    if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
-			drawSmallUnitDot( map_surface, map_loc, *unit_color );
-		    } else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
-			drawLargeUnitDot( map_surface, map_loc, *unit_color );
-		    } else {
-			assert(false);
-		    }
-		}
-	    } else
-		if (isally) {
-		    if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
-			drawSmallUnitDot( map_surface, map_loc, allie_unit_color );
-		    } else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
-			drawLargeUnitDot( map_surface, map_loc, allie_unit_color );
-			
-		    } else {
-			assert(false);
-		    }
-		} else if ( (show_enemy_radar_flag == true) ) {
-			if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
-			    drawSmallUnitDot( map_surface, map_loc, PlayerInterface::getPlayerState( player )->getColor() );
-			} else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
-			    drawLargeUnitDot( map_surface, map_loc, PlayerInterface::getPlayerState( player )->getColor() );
-
-			} else {
-			    assert(false);
-			}
-		    }
-	}
+        if (islocal) {
+            if ( unit_state.threat_level == _threat_level_under_attack ) {
+                if ( radar_blink_flag == true ) {
+                    drawLargeUnitDot( map_surface, map_loc, Color::yellow );
+                }
+            } else {
+                PIX *unit_color=&player_unit_color;
+                if(unit_state.select) { unit_color=&selected_unit_color; }
+                if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
+                    drawSmallUnitDot( map_surface, map_loc, *unit_color );
+                } else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
+                    drawLargeUnitDot( map_surface, map_loc, *unit_color );
+                } else {
+                    assert(false);
+                }
+            }
+        } else
+            if (isally) {
+                if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
+                    drawSmallUnitDot( map_surface, map_loc, allie_unit_color );
+                } else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
+                    drawLargeUnitDot( map_surface, map_loc, allie_unit_color );
+                    
+                } else {
+                    assert(false);
+                }
+            } else if ( (show_enemy_radar_flag == true) ) {
+                if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
+                    drawSmallUnitDot(map_surface, map_loc,
+                            unit->player->getColor() );
+                } else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
+                    drawLargeUnitDot( map_surface, map_loc,
+                            unit->player->getColor() );
+                    
+                } else {
+                    assert(false);
+                }
+            }
     }
 }
 

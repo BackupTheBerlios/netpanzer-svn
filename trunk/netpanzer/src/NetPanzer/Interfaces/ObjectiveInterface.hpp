@@ -41,11 +41,12 @@ class ObjectiveInterface
 protected:
     static std::vector<Objective*> objective_list;
 
-    static void cleanUpObjectiveList( void );
+    static void cleanUpObjectiveList();
 
 public:
+    static void cleanUp();
 
-    static void resetLogic( void );
+    static void resetLogic();
 
     static void loadObjectiveList( const char *file_path );
 
@@ -57,7 +58,7 @@ public:
 
     static void processNetMessages( NetMessage *message );
 
-    static void updateObjectiveStatus( void );
+    static void updateObjectiveStatus();
 
     static void offloadGraphics( SpriteSorter &sorter );
 
@@ -69,7 +70,7 @@ public:
 
     static OutpostStatus getOutpostStatus( short objective_id );
 
-    static void updatePlayerObjectiveCounts( void );
+    static void updatePlayerObjectiveCounts();
 
 protected:
     static NetMessageEncoder message_encoder;
@@ -84,7 +85,7 @@ protected:
     static PlayerID      objective_position_enum_player_id;
 
 public:
-    static void    startObjectivePositionEnumeration( void );
+    static void    startObjectivePositionEnumeration();
     static bool objectivePositionEnumeration(iRect *objective_rect, unsigned char *objective_disposition, int *objective_id);
 };
 

@@ -122,7 +122,7 @@ HeartbeatThread::sendHeartbeat()
     std::stringstream packet;
     packet << "\\heartbeat\\" << "\\gamename\\netpanzer"
            << "\\port\\" << gameconfig->serverport                     
-           << "\\protocol\\" << _NETPANZER_PROTOCOL_VERSION
+           << "\\protocol\\" << NETPANZER_PROTOCOL_VERSION
            << "\\final\\" << std::flush;
     const void* data = packet.str().c_str();
     size_t datasize = packet.str().size();

@@ -112,10 +112,9 @@ void MissleWeapon::fsmFlight()
                 if ( NetworkState::status == _network_state_server ) {
                     weapon_hit.setHeader( _umesg_flag_broadcast );
                     weapon_hit.message_id = _umesg_weapon_hit;
-                    weapon_hit.owner_id = owner_id;
-                    weapon_hit.hit_location_x = location.x;
-                    weapon_hit.hit_location_y = location.y;
-                    weapon_hit.damage_factor = damage_factor;
+                    weapon_hit.setOwnerUnitID(owner_id);
+                    weapon_hit.setHitLocation(location);
+                    weapon_hit.setDamageFactor(damage_factor);
                     UnitInterface::sendMessage( &weapon_hit );
                 }
 

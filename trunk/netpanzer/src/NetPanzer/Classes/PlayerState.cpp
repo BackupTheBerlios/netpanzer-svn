@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Endian.hpp"
 #include "PlayerState.hpp"
 
-uint16_t NetworkPlayerState::getPlayerIndex(void)
+uint16_t NetworkPlayerState::getPlayerIndex() const
 {
     return ltoh16(playerindex_id);
 }
@@ -135,7 +135,7 @@ void PlayerState::setName(const std::string& newname)
     name = newname;
 }
 
-void PlayerState::setID( PlayerID player_id )
+void PlayerState::setPlayerID(PlayerID player_id)
 {
     ID = player_id;
 }
@@ -280,10 +280,12 @@ NetworkPlayerState PlayerState::getNetworkPlayerState()
             objectives_held, colorIndex);
 }
 
-void PlayerState::setFromNetworkPlayerState(NetworkPlayerState* state)
+void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
 {
-    state->name[63] = '\0';
-    name = state->name;
+    char tmp[64];
+    memcpy(tmp, state->name, 64);
+    tmp[63] = '\0';
+    name = tmp;
     flag = state->flag;
     ID.setIndex(ltoh16(state->playerindex_id));
     status = state->status;

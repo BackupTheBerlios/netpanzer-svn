@@ -50,10 +50,10 @@ PowerUp::PowerUp(iXY map_loc, int type)
 bool PowerUp::isPowerUpHit( UnitID *unit_id )
 {
     if( UnitBlackBoard::unitOccupiesLoc( powerup_state.map_loc ) == true ) {
-        if( UnitInterface::quearyUnitAtMapLoc( powerup_state.map_loc, unit_id ) == true ) {
-            return( true );
+        if( UnitInterface::queryUnitAtMapLoc( powerup_state.map_loc, unit_id ) == true ) {
+            return true;
         }
     }
 
-    return( false );
+    return false;
 }

@@ -27,11 +27,11 @@ public:
     NetworkClientUnix();
     virtual ~NetworkClientUnix();
 
-    virtual int joinServer(const std::string& server_name);
-    virtual int partServer();
+    virtual bool joinServer(const std::string& server_name);
+    virtual void partServer();
 
     virtual void sendMessage(NetMessage *message, size_t size, int flags);
-    virtual int getMessage(NetMessage *message);
+    virtual bool getMessage(NetMessage *message);
 
     virtual void checkIncoming();
 private:

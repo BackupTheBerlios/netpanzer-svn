@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "NetPacketDebugger.hpp"
 
-//#define NETWORKDEBUG
+#define NETWORKDEBUG
 
 NetworkServerUnix::NetworkServerUnix()
         : NetworkServer(), serversocket(0)
@@ -62,8 +62,10 @@ void NetworkServerUnix::closeSession()
 int NetworkServerUnix::sendMessage(const PlayerID& player_id,
                                    NetMessage* message, size_t size, int flags)
 {
-    if(serversocket==0) { return _network_failed; }
-    message->setsize(size);
+    if(serversocket==0) {
+        return _network_failed;
+    }
+    message->setSize(size);
 
     try {
         serversocket->sendMessage(player_id.getNetworkID(),	(char *) message,

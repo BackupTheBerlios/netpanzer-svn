@@ -23,9 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 void EnqueueIncomingPacket( void *message, unsigned long message_size,
                             SocketClient::ID toID, SocketClient::ID fromID );
 
-void EnqueueUnreliablePacket( void *message, unsigned long message_size,
-                              SocketClient::ID toID, SocketClient::ID fromID );
-
 class NetworkInterface
 {
 public:

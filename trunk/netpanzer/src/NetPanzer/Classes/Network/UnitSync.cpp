@@ -25,9 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Server.hpp"
 
 UnitSync::UnitSync()
-    : playerid(0),
-      unitlist(UnitInterface::getUnitList(0)),
-      iter(unitlist->getAsyncIterator())
+    : count(0), unitid(0)
 {
 }
 
@@ -36,33 +34,32 @@ UnitSync::~UnitSync()
 
 int UnitSync::getPercentComplete() const
 {
-    return int(100.0 / float(PlayerInterface::getMaxPlayers()) * playerid);
+    return  int (
+            100.0 / UnitInterface::getTotalUnitCount() * float(count));
 }
 
 bool UnitSync::sendNextUnit(PlayerID toplayer)
 {
-    UnitBase* unit;
-    do {
-        unit = iter.next();
-        if(unit == 0) {
-            playerid++;
-            if(playerid >= PlayerInterface::getMaxPlayers())
-                return false;
-            unitlist = UnitInterface::getUnitList(playerid);
-            iter = unitlist->getAsyncIterator();
-        }
-    } while(unit == 0);
+    const UnitInterface::Units& units = UnitInterface::getUnits();
+    UnitInterface::Units::const_iterator i = units.lower_bound(unitid);
+    if(i == units.end()) {
+        return false;
+    }
     
+    UnitBase* unit = i->second;
+    unitid = unit->id;
+
     iXY unit_map_loc;
     MapInterface::pointXYtoMapXY(unit->unit_state.location, &unit_map_loc);
 
-    UnitIniSyncMessage sync_message(unit->unit_state.unit_type, unit->unit_id,
-        unit_map_loc.x, unit_map_loc.y);
+    UnitIniSyncMessage sync_message(unit->unit_state.unit_type,
+            unit->player->getID(), unit->id, unit_map_loc.x, unit_map_loc.y);
     sync_message.unit_state = unit->unit_state.getNetworkUnitState();
 
     SERVER->sendMessage(toplayer, &sync_message, sizeof(UnitIniSyncMessage), 0);
 
     unit->syncUnit();
+    unitid++;
 
     return true;
 }

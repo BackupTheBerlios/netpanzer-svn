@@ -38,7 +38,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       playername("name", "Player"),
       masterservers("masterservers", ""),
       
-      serverport("serverport",_NETPANZER_DEFAULT_PORT_TCP,0,65535),
+      serverport("serverport", NETPANZER_DEFAULT_PORT_TCP,0,65535),
       proxyserver("proxyserver",""),
       proxyserveruser("proxyserveruser",""),
       proxyserverpass("proxyserverpass",""),

@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "NetPacket.hpp"
 #include "UnitState.hpp"
-#include "UnitID.hpp"
+#include "UnitBase.hpp"
 #include "UnitOpcodes.hpp"
 
 #define _OPCODE_MESSAGE_LIMIT 488
@@ -38,21 +38,20 @@ enum { _net_message_id_opcode_mesg,
 
 class UnitOpcodeMessage : public NetMessage
 {
-    friend class NetPacketDebugger;
-private:
-    uint16_t code_size;
-    uint8_t opcode_count;
-    uint8_t data[ _OPCODE_MESSAGE_LIMIT ];
-
 public:
-    UnitOpcodeMessage();
-    unsigned short realSize( void );
-    void reset(void);
-    bool isFull(void);
-    bool isEmpty(void);
-    void add(UnitOpcode *opcode);
-    bool extract(int opcodeNum, UnitOpcodeStruct* dest);
-
+    uint8_t data[ _OPCODE_MESSAGE_LIMIT ];
+    
+    UnitOpcodeMessage()
+    {
+        message_class = _net_message_class_unit;
+        message_id = _net_message_id_opcode_mesg;
+        memset(data, 0, sizeof(data));
+    }
+    
+    static size_t getHeaderSize()
+    {
+        return sizeof(NetMessage);
+    }
 } __attribute__((packed));
 
 
@@ -60,49 +59,77 @@ class UnitIniSyncMessage : public NetMessage
 {
 public:
     uint8_t unit_type;
-    UnitID unit_id;
 private:
+    uint8_t player_id;
+    uint16_t unit_id;
     uint32_t location_x;
     uint32_t location_y;
 public:
     NetworkUnitState unit_state;
 
-    UnitIniSyncMessage(uint8_t unit_type, UnitID unit_id,
+    UnitIniSyncMessage(uint8_t unit_type, uint16_t player_id, UnitID unit_id,
         uint32_t location_x, uint32_t location_y);
-    unsigned short realSize(void);
-    uint32_t getLocX(void);
-    uint32_t getLocY(void);
+    unsigned short realSize() const;
+    uint32_t getLocX() const;
+    uint32_t getLocY() const;
+
+    UnitID getUnitID() const
+    {
+        return ltoh16(unit_id);
+    }
+    uint16_t getPlayerID() const
+    {
+        return ltoh16(player_id);
+    }
 } __attribute__((packed));
 
 // ** NOTE: A big, mother fucking HACK
 
 class UnitRemoteDestroy : public NetMessage
 {
-public:
-    UnitID unit_to_destroy;
+private:
+    uint16_t unit_to_destroy;
 
+public:
     UnitRemoteDestroy()
     {
         message_class = _net_message_class_unit;
         message_id = _net_message_id_destroy_unit;
     }
 
+    void setUnitToDestroy(UnitID id)
+    {
+        unit_to_destroy = htol16(id);
+    }
+    UnitID getUnitToDestroy() const
+    {
+        return ltoh16(unit_to_destroy);
+    }
 } __attribute__((packed));
 
 
 class UnitRemoteCreate : public NetMessage
 {
-public:
-    UnitID new_unit_id;
 private:
+    uint16_t player_id;
+    uint16_t new_unit_id;
     uint32_t location_x;
     uint32_t location_y;
 public:
     uint8_t unit_type;
 
-    UnitRemoteCreate(UnitID id, uint32_t x, uint32_t y, uint8_t type);
-    uint32_t getLocX(void);
-    uint32_t getLocY(void);
+    UnitRemoteCreate(uint16_t player_id, UnitID id,
+            uint32_t x, uint32_t y, uint8_t type);
+    uint32_t getLocX() const;
+    uint32_t getLocY() const;
+    UnitID getUnitID() const
+    {
+        return ltoh16(new_unit_id);
+    }
+    uint16_t getPlayerID() const
+    {
+        return ltoh16(player_id);
+    }
 } __attribute__((packed));
 
 class UnitSyncIntegrityCheck : public NetMessage

@@ -53,16 +53,13 @@ BonusUnitPowerUp::BonusUnitPowerUp(iXY map_loc, int type)
 
 void BonusUnitPowerUp::spawnBonusUnits( UnitID &unit_id )
 {
-    UnitBase *unit;
     PlacementMatrix placement_matrix;
-    PlayerID player_id;
     iXY map_loc;
 
     sound->playPowerUpSound();
 
-    unit = UnitInterface::getUnit( unit_id );
-
-    player_id = PlayerInterface::getPlayerID( unit_id.getPlayer() );
+    UnitBase* unit = UnitInterface::getUnit(unit_id);
+    PlayerID player_id = unit->player->getPlayerID();
 
     MapInterface::pointXYtoMapXY( unit->unit_state.location, &map_loc );
 
@@ -80,8 +77,8 @@ void BonusUnitPowerUp::spawnBonusUnits( UnitID &unit_id )
                                              player_id );
 
         if ( new_unit != 0 ) {
-            UnitRemoteCreate create_mesg(new_unit->unit_id, spawn_loc.x,
-                spawn_loc.y, bonus_unit_type);
+            UnitRemoteCreate create_mesg(new_unit->player->getID(),
+                    new_unit->id, spawn_loc.x, spawn_loc.y, bonus_unit_type);
             SERVER->sendMessage( &create_mesg, sizeof( UnitRemoteCreate ), 0 );
         }
 

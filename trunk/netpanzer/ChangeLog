@@ -1,3 +1,12 @@
+30-Sep-2004 by Matthias Braun
+-BIIG cleanup:
+  lots of endianness work in the network packets (only very few is missing)
+  rewrite of Multi/Opcode Encoders/Decoders
+  Removed UnitID class and replaced with a simple uint16_t
+  Changed UnitList to be a std::map
+  Fixed several possible bugs on the way
+  Lots of random cleanup in Vehicle and UnitInterface code
+
 15-Sep-2004 by Matthias Braun
 -more warning fixes for gcc3.4
 -made PlayerInterface lockable, so that the InfoThread should be threadsafe now

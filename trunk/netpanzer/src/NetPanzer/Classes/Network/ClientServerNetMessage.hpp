@@ -42,8 +42,8 @@ class TransportClientAccept : public NetMessage
 {
 private:
     uint32_t client_transport_id;
+    
 public:
-
     TransportClientAccept();
     uint32_t getClientTransportID(void);
     void setClientTransportID(uint32_t transport_id);
@@ -54,8 +54,8 @@ class ClientMesgConnectAck : public NetMessage
 {
 private:
     uint32_t client_transport_id;
+    
 public:
-
     ClientMesgConnectAck();
     uint32_t getClientTransportID(void);
     void setClientTransportID(uint32_t transport_id);

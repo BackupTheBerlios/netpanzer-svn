@@ -1,17 +1,19 @@
 Next release:
--rewrite ServerBrowser for new protocol
--finish serverconsole
+-rewrite ServerBrowser for new protocol - can be avoided by using qstat
+-finish serverconsole:
+    * make status page display ips
+    * add a kick command
+    * 
+-finish serverlog with filestamp
 -finish infothread - ok
 -implement TIP OF DAY  - no idea how to create graphics for the GUI, so this
  will be delayed for next release. :-/
+-playtesting+bugfixing
 
 *** New Masterserver code
- * Get list of masterservers when connecting
- * Finish InfoThread to output info about players and gamerules
- * port netpanzerbrowser to new protocol
  * add new options to only show servers which are not empty, with a certain map
    or where a certain player is playing.
- * take care about integration into xqf
+ * take care about integration into xqf - patch created and sent
  * Create UDP broadcast code for LAN games
 
 *** Network
@@ -36,7 +38,8 @@ Next release:
  * Use gettext and translate netpanzer
  * Add special chars to functions displaying text that allow to set text
    color/style. (^ like in quake based games?)
- * Convert the 256 color stuff to truecolor
+ * Convert the 256 color stuff to truecolor, usage of opengl is probably a good
+   idea.
  * bots should have different names and different flags - partly implemented
  * make it possible to have different colors for different players - DONE
  * make the code endian safe. It should run on big endian boxes too.

@@ -41,7 +41,8 @@ protected:
     unsigned long partition_load_mapped_index;
 
 public:
-    TileSet( );
+    TileSet();
+    ~TileSet();
 
     void readTileDbHeader(ReadFile& file, TILE_DBASE_HEADER *header);
     void loadTileSetInfo( const char *file_path );

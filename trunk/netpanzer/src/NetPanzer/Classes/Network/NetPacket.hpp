@@ -55,21 +55,17 @@ class NetMessage
 {
 private:
     uint16_t size;
+
 public:
     uint8_t  message_class;
     uint8_t  message_id;
 
-    size_t realSize()
-    {
-        return( sizeof( NetMessage ) );
-    }
-
-    uint16_t getsize(void)
+    uint16_t getSize() const
     {
         return ltoh16(size);
     }
 
-    void setsize(uint16_t newsize)
+    void setSize(uint16_t newsize)
     {
         size = htol16(newsize);
     }
@@ -81,28 +77,16 @@ __attribute__((packed));
 class MultiMessage : public NetMessage
 {
 public:
+    /* header part */
     uint8_t  message_count;
-private:
-    uint16_t message_size;
-public:
+    /* data */
     uint8_t  data[ _MULTI_PACKET_LIMIT ];
 
-    size_t realSize()
+    static size_t getHeaderSize()
     {
-        return( sizeof( MultiMessage ) - _MULTI_PACKET_LIMIT + getSize() );
+        return sizeof(NetMessage) + sizeof(uint8_t);
     }
-
-    void setSize(uint16_t newsize)
-    {
-        message_size = htol16(newsize);
-    }
-
-    uint16_t getSize(void)
-    {
-        return ltoh16(message_size);
-    }
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 #ifdef MSVC
 #pragma pack()

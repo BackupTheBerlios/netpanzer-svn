@@ -22,9 +22,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ArrayUtil/BitArray.hpp"
 #include "MapInterface.hpp"
-#include "UnitID.hpp"
 #include "UnitBlackBoard.hpp"
 #include "Path.hpp"
+#include "UnitBase.hpp"
 
 enum { _path_request_full, _path_request_update };
 enum { _slot_status_free, _slot_status_busy, _slot_status_wait, _slot_status_flush };
@@ -149,6 +149,7 @@ protected:
     
 public:
     Astar();
+    ~Astar();
 
     void initializeAstar( unsigned long node_list_size,
                           unsigned long step_limit,

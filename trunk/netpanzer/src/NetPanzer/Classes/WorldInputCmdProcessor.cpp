@@ -179,7 +179,7 @@ unsigned char WorldInputCmdProcessor::getCursorStatus( iXY &loc )
         return( _cursor_blocked );
     }
 
-    unit_loc_status = UnitInterface::quearyUnitLocationStatus( loc );
+    unit_loc_status = UnitInterface::queryUnitLocationStatus( loc );
     if ( unit_loc_status == _unit_player ) {
         return( _cursor_player_unit );
     } else
@@ -296,12 +296,15 @@ void WorldInputCmdProcessor::evaluateKeyCommands()
 
 void WorldInputCmdProcessor::jumpLastAttackedUnit()
 {
-    UnitList* unitlist
-        = UnitInterface::getUnitList(PlayerInterface::getLocalPlayerIndex());
-    for(UnitList::iterator i = unitlist->begin(); i != unitlist->end(); ++i) {
-        UnitState* unit_state = & (i->unit_state);
-        if ( unit_state->threat_level == _threat_level_under_attack ) {
-            WorldViewInterface::setCameraPosition( unit_state->location );
+    const UnitInterface::Units& units = UnitInterface::getUnits();
+    for(UnitInterface::Units::const_iterator i = units.begin();
+            i != units.end(); ++i) {
+        UnitBase* unit = i->second;
+        if(unit->player != PlayerInterface::getLocalPlayer())
+            continue;
+
+        if (unit->unit_state.threat_level == _threat_level_under_attack) {
+            WorldViewInterface::setCameraPosition(unit->unit_state.location);
 	    break;
         }
     }
@@ -700,7 +703,7 @@ void WorldInputCmdProcessor::evalRightMButtonEvents( MouseEvent &event )
     }
 }
 
-void WorldInputCmdProcessor::sendMoveCommand( iXY &world_pos )
+void WorldInputCmdProcessor::sendMoveCommand(iXY& world_pos)
 {
     iXY map_pos;
     PlacementMatrix matrix;
@@ -710,8 +713,6 @@ void WorldInputCmdProcessor::sendMoveCommand( iXY &world_pos )
     UnitBase *unit_ptr;
 
     TerminalUnitCmdRequest comm_mesg;
-    MultiMessage *encode_message;
-
 
     id_list_size = working_list.unit_list.size();
 
@@ -721,40 +722,33 @@ void WorldInputCmdProcessor::sendMoveCommand( iXY &world_pos )
     MapInterface::pointXYtoMapXY( world_pos, &map_pos );
     matrix.reset( map_pos );
 
-    PUBLIC_MESSAGE_ENCODER.resetEncoder();
+    NetMessageEncoder encoder(true);
 
     for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
         unit_ptr = UnitInterface::getUnit(working_list.unit_list[ id_list_index ]);
         if ( unit_ptr != 0 ) {
             if ( unit_ptr->unit_state.select == true ) {
                 matrix.getNextEmptyLoc( &map_pos );
-                comm_mesg.comm_request.setHeader( unit_ptr->unit_id, _umesg_flag_unique );
+                comm_mesg.comm_request.setHeader(unit_ptr->id,
+                        _umesg_flag_unique );
+
                 comm_mesg.comm_request.setMoveToLoc( map_pos );
+                encoder.encodeMessage(&comm_mesg,
+                        sizeof(TerminalUnitCmdRequest));
+            }
+        }
+    }
 
-                while( PUBLIC_MESSAGE_ENCODER.encodeMessage( &comm_mesg, sizeof(TerminalUnitCmdRequest), &encode_message ) ) {
-                    CLIENT->sendMessage( encode_message, encode_message->realSize(), 0 );
-                    PUBLIC_MESSAGE_ENCODER.resetEncoder();
-                }
-                //CLIENT->sendMessage( &comm_mesg, sizeof(TerminalUnitCmdRequest), 0 );
-
-            } // ** if
-        } // ** if unit_ptr->isValid() == true
-    } // ** for
-
-    PUBLIC_MESSAGE_ENCODER.getEncodeMessage( &encode_message );
-    if ( encode_message != 0 ) {
-        CLIENT->sendMessage( encode_message, encode_message->realSize(), 0 );
-    } // ** if
+    encoder.sendEncodedMessage();
 
     //sfx
     sound->playUnitSound(working_list.getHeadUnitType() );
     sound->playSound("move");
 }
 
-void WorldInputCmdProcessor::sendAttackCommand( iXY &world_pos )
+void WorldInputCmdProcessor::sendAttackCommand(iXY &world_pos)
 {
     TerminalUnitCmdRequest comm_mesg;
-    MultiMessage *encode_message;
 
     UnitBase *target_ptr;
 
@@ -772,33 +766,27 @@ void WorldInputCmdProcessor::sendAttackCommand( iXY &world_pos )
         if ( id_list_size == 0 )
             return;
 
-        PUBLIC_MESSAGE_ENCODER.resetEncoder();
+        NetMessageEncoder encoder(true);
 
         for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
             unit_ptr = UnitInterface::getUnit( working_list.unit_list[ id_list_index ] );
             if ( unit_ptr != 0 ) {
                 if ( unit_ptr->unit_state.select == true ) {
-                    comm_mesg.comm_request.setHeader( unit_ptr->unit_id, _umesg_flag_unique );
-                    comm_mesg.comm_request.setTargetUnit( target_ptr->unit_id );
+                    comm_mesg.comm_request.setHeader(unit_ptr->id,
+                            _umesg_flag_unique);
+                    comm_mesg.comm_request.setTargetUnit(target_ptr->id);
 
-                    while( PUBLIC_MESSAGE_ENCODER.encodeMessage( &comm_mesg, sizeof(TerminalUnitCmdRequest), &encode_message ) ) {
-                        CLIENT->sendMessage( encode_message, encode_message->realSize(), 0 );
-                        PUBLIC_MESSAGE_ENCODER.resetEncoder();
-                    }
-                    //CLIENT->sendMessage( &comm_mesg, sizeof(TerminalUnitCmdRequest), 0 );
-                } // ** if
-            } // ** if
+                    encoder.encodeMessage(&comm_mesg,
+                            sizeof(TerminalUnitCmdRequest));
+                }
+            }
+        }
 
-        } // ** for
-
-        PUBLIC_MESSAGE_ENCODER.getEncodeMessage( &encode_message );
-        if ( encode_message != 0 ) {
-            CLIENT->sendMessage( encode_message, encode_message->realSize(), 0 );
-        } // ** if
+        encoder.sendEncodedMessage();
 
         //sfx
         sound->playSound("target");
-    } // ** if
+    }
 }
 
 void WorldInputCmdProcessor::sendManualMoveCommand( unsigned char orientation,
@@ -812,37 +800,32 @@ void WorldInputCmdProcessor::sendManualMoveCommand( unsigned char orientation,
     if ( working_list.unit_list.size() > 0 ) {
         id_list_size = working_list.unit_list.size();
 
-        PUBLIC_MESSAGE_ENCODER.resetEncoder();
+        NetMessageEncoder encoder(true);
 
         for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
             unit_ptr = UnitInterface::getUnit( working_list.unit_list[ id_list_index ] );
             if ( unit_ptr != 0 ) {
                 if ( unit_ptr->unit_state.select == true ) {
-                    comm_mesg.comm_request.setHeader( unit_ptr->unit_id, _umesg_flag_unique );
+                    comm_mesg.comm_request.setHeader(unit_ptr->id,
+                            _umesg_flag_unique);
                     if ( start_stop == true ) {
                         comm_mesg.comm_request.setStartManualMove( orientation );
                     } else {
                         comm_mesg.comm_request.setStopManualMove();
                     }
 
-                    //CLIENT->sendMessage( &comm_mesg, sizeof(TerminalUnitCmdRequest), 0 );
-                    PUBLIC_MESSAGE_ENCODER.encodeMessage( &comm_mesg, sizeof(TerminalUnitCmdRequest) );
-
-                } // ** if
-            } // ** if unit_ptr != 0
-
-        }  // ** for
-
-        PUBLIC_MESSAGE_ENCODER.sendEncodedMessage();
-    } // ** if containsItems() > 0
-
-
+                    encoder.encodeMessage(&comm_mesg,
+                            sizeof(TerminalUnitCmdRequest) );
+                }
+            }
+        }
+        encoder.sendEncodedMessage();
+    }
 }
 
 void WorldInputCmdProcessor::sendManualFireCommand( iXY &world_pos )
 {
     TerminalUnitCmdRequest comm_mesg;
-    MultiMessage *encode_message;
 
     size_t id_list_index;
     size_t id_list_size;
@@ -851,30 +834,25 @@ void WorldInputCmdProcessor::sendManualFireCommand( iXY &world_pos )
     if ( working_list.unit_list.size() > 0 ) {
         id_list_size = working_list.unit_list.size();
 
-        PUBLIC_MESSAGE_ENCODER.resetEncoder();
+        NetMessageEncoder encoder(true);
 
         for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
             unit_ptr = UnitInterface::getUnit( working_list.unit_list[ id_list_index ] );
 
             if ( unit_ptr != 0 ) {
                 if ( unit_ptr->unit_state.select == true ) {
-                    comm_mesg.comm_request.setHeader( unit_ptr->unit_id, _umesg_flag_unique );
-                    comm_mesg.comm_request.setManualFire( world_pos );
+                    comm_mesg.comm_request.setHeader(unit_ptr->id,
+                            _umesg_flag_unique);
+                    comm_mesg.comm_request.setManualFire(world_pos);
 
-                    while( PUBLIC_MESSAGE_ENCODER.encodeMessage( &comm_mesg, sizeof(TerminalUnitCmdRequest), &encode_message ) ) {
-                        CLIENT->sendMessage( encode_message, encode_message->realSize(), 0 );
-                        PUBLIC_MESSAGE_ENCODER.resetEncoder();
-                    }
-                    //CLIENT->sendMessage( &comm_mesg, sizeof(TerminalUnitCmdRequest), 0 );
-                } // ** if
-            } // ** if
+                    encoder.encodeMessage(&comm_mesg,
+                            sizeof(TerminalUnitCmdRequest));
+                }
+            }
+        }
 
-        }  // ** for
-
-        PUBLIC_MESSAGE_ENCODER.getEncodeMessage( &encode_message );
-        if ( encode_message != 0 ) {
-            CLIENT->sendMessage( encode_message, encode_message->realSize(), 0 );
-        } // ** if
+        encoder.sendEncodedMessage();
+        
         // SFX
         sound->playSound("target");
     } // ** if containsItems() > 0
@@ -890,15 +868,16 @@ void WorldInputCmdProcessor::sendAllianceRequest( iXY &world_pos, bool make_brea
     if ( target_list.isSelected() == true ) {
         target_ptr = UnitInterface::getUnit( target_list.unit_list[0] );
 
-        PlayerAllianceRequest  allie_request;
-        allie_request.allie_by_player_index = PlayerInterface::getLocalPlayerIndex();
-        allie_request.allie_with_player_index = target_ptr->unit_id.getPlayer();
-
+        uint8_t type;
         if ( make_break ) {
-            allie_request.alliance_request_type = _player_make_alliance;
+            type = _player_make_alliance;
         } else {
-            allie_request.alliance_request_type = _player_break_alliance;
+            type = _player_break_alliance;
         }
+
+        PlayerAllianceRequest allie_request;
+        allie_request.set(PlayerInterface::getLocalPlayerIndex(),
+                target_ptr->player->getID(), type);
 
         CLIENT->sendMessage( &allie_request, sizeof(PlayerAllianceRequest), 0 );
     }

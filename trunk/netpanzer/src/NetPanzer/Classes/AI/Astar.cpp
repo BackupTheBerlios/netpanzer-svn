@@ -29,6 +29,11 @@ Astar::Astar()
     node_list = 0;
 }
 
+Astar::~Astar()
+{
+    delete[] node_list;
+}
+
 void Astar::initializeAstar( unsigned long node_list_size,
                              unsigned long step_limit,
                              long heuristic_weight )
@@ -117,13 +122,8 @@ void Astar::initializeNodeList( unsigned long initial_size )
     node_index = 0;
     node_list_size = initial_size;
 
-    if ( node_list != 0 ) {
-        free( node_list );
-        node_list = 0;
-    }
-
-    node_list = (AstarNode *) malloc( sizeof( AstarNode) * node_list_size );
-    assert( node_list != 0 );
+    delete[] node_list;
+    node_list = new AstarNode[node_list_size];
 }
 
 

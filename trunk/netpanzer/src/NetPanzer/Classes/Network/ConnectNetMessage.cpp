@@ -26,7 +26,6 @@ ClientConnectJoinRequest::ClientConnectJoinRequest()
 {
     message_class = _net_message_class_connect;
     message_id = _net_message_id_connect_join_game_request;
-    memset(code_word, 0, sizeof(code_word));
 }
 
 uint32_t ClientConnectJoinRequest::getTransportID(void)
@@ -127,17 +126,18 @@ ConnectClientSettings::ConnectClientSettings()
     memset(&player_name, 0, sizeof(player_name));
 }
 
-int16_t ConnectClientSettings::getPlayerFlag(void)
+int16_t ConnectClientSettings::getPlayerFlag() const
 {
     return ltoh16(player_flag);
 }
 
-void ConnectClientSettings::set(const char *player_name, unsigned char unit_color, short player_flag )
+void ConnectClientSettings::set(const char *player_name, uint8_t unit_color,
+        uint16_t player_flag )
 {
     strncpy(ConnectClientSettings::player_name, player_name, 64);
     ConnectClientSettings::player_name[63] = '\0';
     ConnectClientSettings::unit_color = unit_color;
-    ConnectClientSettings::player_flag = player_flag;
+    ConnectClientSettings::player_flag = htol16(player_flag);
 }
 
 
@@ -178,7 +178,7 @@ void ConnectMesgServerGameSettings::setCloudCoverage(int32_t cloudCoverage)
     cloud_coverage = htol32(cloudCoverage);
 }
 
-float ConnectMesgServerGameSettings::getWindSpeed(void)
+float ConnectMesgServerGameSettings::getWindSpeed()
 {
     return (float)ltoh32((uint32_t)wind_speed);
 }

@@ -50,16 +50,12 @@ EnemyRadarPowerUp::EnemyRadarPowerUp(iXY map_loc, int type)
 }
 
 
-void EnemyRadarPowerUp::setRadar( UnitID &unit_id )
+void EnemyRadarPowerUp::setRadar(UnitID &unit_id)
 {
-    UnitBase *unit;
-    PlayerID player_id;
-
     sound->playPowerUpSound();
 
-    unit = UnitInterface::getUnit( unit_id );
-
-    player_id = PlayerInterface::getPlayerID( unit_id.getPlayer() );
+    UnitBase* unit = UnitInterface::getUnit(unit_id);
+    PlayerID player_id = unit->player->getPlayerID();
 
     PlayerID local_player_id;
 

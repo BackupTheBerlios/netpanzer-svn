@@ -18,142 +18,71 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "NetMessageEncoder.hpp"
 
-#include "string.h"
+#include <string.h>
 
 #include "NetworkState.hpp"
 #include "Server.hpp"
 #include "Client.hpp"
 
-NetMessageEncoder PUBLIC_MESSAGE_ENCODER;
-
-#define _SUB_PACKET_LIMIT 255
-typedef unsigned char SubPacketType;
-
-void NetMessageEncoder::initalize( void )
+NetMessageEncoder::NetMessageEncoder(bool sendAsClient)
 {
+    this->sendAsClient = sendAsClient;
+    usePlayerID = false;
     resetEncoder();
 }
 
-void NetMessageEncoder::resetEncoder( void )
+NetMessageEncoder::NetMessageEncoder(const PlayerID& id)
+{
+    usePlayerID = true;
+    sendAsClient = false;
+    playerID = id;
+    resetEncoder();
+}
+
+NetMessageEncoder::~NetMessageEncoder()
+{
+}
+
+void NetMessageEncoder::resetEncoder()
 {
     encode_message.message_class = _net_message_class_multi ;
     encode_message.message_id = 0;
     encode_message.message_count = 0;
-    encode_message.setSize(0);
-    memset( encode_message.data, 0, _MULTI_PACKET_LIMIT );
+    memset(encode_message.data, 0, _MULTI_PACKET_LIMIT);
     encode_message_index = 0;
 }
 
-void NetMessageEncoder::encodeMessage(NetMessage *message, unsigned short size)
+void NetMessageEncoder::encodeMessage(NetMessage *message, size_t size)
 {
-    message->setsize(size);
-    if( ( (encode_message_index + size + sizeof(SubPacketType)) > _MULTI_PACKET_LIMIT )
-      ) {
-        encode_message.setSize((uint16_t) encode_message_index);
+    if(encode_message_index + size > _MULTI_PACKET_LIMIT
+            || encode_message.message_count == 255) {
+        sendEncodedMessage();
 
-        if( NetworkState::status == _network_state_server ) {
-            SERVER->sendMessage( &encode_message, encode_message.realSize(), 0 );
-        } else {
-            CLIENT->sendMessage( &encode_message, encode_message.realSize(), 0 );
-        }
-
-        resetEncoder( );
-    } // ** if
-
-
-    SubPacketType* packettypeptr
-    = (SubPacketType*) ((char*) encode_message.data + encode_message_index);
-    *packettypeptr = (SubPacketType) size;
-
-    encode_message_index += sizeof(SubPacketType);
-
-    memcpy(&encode_message.data[ encode_message_index ], message, size);
-
-    encode_message_index += size;
-    encode_message.message_count++;
-}
-
-bool NetMessageEncoder::encodeMessage( NetMessage *message, unsigned short size, MultiMessage **encoded_message )
-{
-    message->setsize(size);
-    
-    if( ( (encode_message_index + size + sizeof(SubPacketType)) > _MULTI_PACKET_LIMIT )
-      ) {
-        encode_message.setSize((uint16_t) encode_message_index);
-
-        *encoded_message = (MultiMessage *) &encode_message;
-        return( true );
-    } // ** if
-
-
-    SubPacketType* packettypeptr =
-        (SubPacketType*) (encode_message.data + encode_message_index);
-    *packettypeptr = (SubPacketType) size;
-
-    encode_message_index += sizeof(SubPacketType);
-
-    memcpy( &encode_message.data[ encode_message_index ],
-             message,
-             size
-           );
-
-    encode_message_index += size;
-    encode_message.message_count++;
-
-    *encoded_message = 0;
-    return( false );
-}
-
-void NetMessageEncoder::getEncodeMessage( MultiMessage **message )
-{
-    if ( encode_message.message_count > 0 ) {
-        encode_message.setSize((uint16_t) encode_message_index);
-
-        *message = (MultiMessage *) &encode_message;
-    } // ** if
-    else {
-        *message = 0;
+        resetEncoder();
     }
+
+    message->setSize(size);
+    memcpy(encode_message.data + encode_message_index, message, size);
+
+    encode_message_index += size;
+    encode_message.message_count++;
 }
 
-void NetMessageEncoder::setDecodeMessage( MultiMessage *message )
+void NetMessageEncoder::sendEncodedMessage()
 {
-    decode_message.message_count = message->message_count;
-    decode_message.setSize(message->getSize());
-    memcpy(decode_message.data, message->data, message->getSize());
-    decode_message_index = 0;
-    decode_current_count = 0;
-}
-
-bool NetMessageEncoder::decodeMessage( NetMessage **message )
-{
-    SubPacketType message_size;
-
-    if ( decode_current_count == decode_message.message_count )
-        return( false );
-
-    message_size = (SubPacketType) *(decode_message.data + decode_message_index);
-    decode_message_index += sizeof( SubPacketType );
-
-    *message = (NetMessage *) (decode_message.data + decode_message_index);
-    decode_message_index += message_size;
-
-    decode_current_count++;
-    return( true );
-}
-
-void NetMessageEncoder::sendEncodedMessage( void )
-{
-    if ( encode_message.message_count > 0 ) {
-        encode_message.setSize((uint16_t) encode_message_index);
-
-        if( NetworkState::status == _network_state_server ) {
-            SERVER->sendMessage( &encode_message, encode_message.realSize(), 0 );
+    if (encode_message.message_count > 0) {
+        size_t size = encode_message_index + encode_message.getHeaderSize();
+        if(usePlayerID) {
+            SERVER->sendMessage(playerID, &encode_message, size, 0);
+        } else if(sendAsClient) {
+            CLIENT->sendMessage(&encode_message, size, 0);
+        } if(NetworkState::status == _network_state_server) {
+            SERVER->sendMessage(&encode_message, size, 0);
         } else {
-            CLIENT->sendMessage( &encode_message, encode_message.realSize(), 0 );
+            CLIENT->sendMessage(&encode_message, size, 0);
         }
 
-        resetEncoder( );
-    } // ** if
+        resetEncoder();
+    }
 }
 

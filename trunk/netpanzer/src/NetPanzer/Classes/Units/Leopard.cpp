@@ -44,8 +44,9 @@ void Leopard::setUnitProperties( void )
 
 }
 
-Leopard::Leopard( iXY initial_loc, unsigned char color, unsigned char flag )
-        : Vehicle( initial_loc )
+Leopard::Leopard(PlayerState* player, UnitID id, iXY initial_loc,
+        unsigned char color, unsigned char flag )
+        : Vehicle(player, id, initial_loc)
 {
     setUnitProperties();
 

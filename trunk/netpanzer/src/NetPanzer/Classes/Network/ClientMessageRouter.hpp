@@ -19,14 +19,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _CLIENTMESSAGEROUTER_HPP
 
 #include "NetPacket.hpp"
-#include "NetMessageEncoder.hpp"
+#include "NetMessageDecoder.hpp"
 
 class ClientMessageRouter
 {
 protected:
     static NetMessage *temp_message;
-    static NetMessageEncoder message_encoder;
-
+    static NetMessageDecoder message_decoder;
 
 public:
 

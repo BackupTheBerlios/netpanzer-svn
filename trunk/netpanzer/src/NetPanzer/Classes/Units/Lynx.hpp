@@ -28,8 +28,8 @@ protected:
     virtual void soundSelected();
 
 public:
-    Lynx( iXY initial_loc, unsigned char color, unsigned char flag );
-
+    Lynx(PlayerState* player, UnitID id, iXY initial_loc,
+         unsigned char color, unsigned char flag);
 };
 
-#endif // ** _LYNX_HPP
+#endif

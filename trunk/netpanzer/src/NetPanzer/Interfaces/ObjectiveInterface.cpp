@@ -52,6 +52,11 @@ void ObjectiveInterface::cleanUpObjectiveList()
     objective_list.clear();
 }
 
+void ObjectiveInterface::cleanUp()
+{
+    cleanUpObjectiveList();
+}
+
 void ObjectiveInterface::resetLogic()
 {
     cleanUpObjectiveList();
@@ -72,7 +77,7 @@ void ObjectiveInterface::loadObjectiveList( const char *file_path )
         size_t loc_x, loc_y;
         size_t world_x, world_y;
         std::string name;
-        objective_list.clear();
+        cleanUpObjectiveList();
         for (int objective_index = 0; objective_index < objective_count; objective_index++ ) {
             Objective *objective_obj;
         
@@ -284,29 +289,20 @@ bool ObjectiveInterface::objectivePositionEnumeration(iRect *objective_rect,
     return( false );
 }
 
-void ObjectiveInterface::syncObjectives( PlayerID connect_player )
+void ObjectiveInterface::syncObjectives(PlayerID connect_player)
 {
     ObjectiveSyncMesg sync_mesg;
-    MultiMessage *encode_message;
 
-    message_encoder.resetEncoder();
+    NetMessageEncoder* encoder = new NetMessageEncoder(connect_player);
 
     std::vector<Objective*>::iterator i;
-    for(i = objective_list.begin(); i != objective_list.end(); i++) {
+    for(i = objective_list.begin(); i != objective_list.end(); ++i) {
         (*i)->getSyncData( sync_mesg.sync_data );
 
-        while ( message_encoder.encodeMessage( &sync_mesg, sizeof(ObjectiveSyncMesg), &encode_message ) ) {
-            SERVER->sendMessage( connect_player, encode_message,
-                                 encode_message->realSize(), 0);
-            message_encoder.resetEncoder();
-        } // ** if
+        encoder->encodeMessage(&sync_mesg, sizeof(ObjectiveSyncMesg));
     }
 
-    message_encoder.getEncodeMessage( &encode_message );
-    if ( encode_message != 0 ) {
-        SERVER->sendMessage( connect_player, encode_message,
-                             encode_message->realSize(), 0);
-    } // ** if
+    encoder->sendEncodedMessage();
 }
 
 void ObjectiveInterface::updatePlayerObjectiveCounts()

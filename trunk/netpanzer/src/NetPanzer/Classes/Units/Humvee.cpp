@@ -44,8 +44,9 @@ void Humvee::setUnitProperties( void )
     select_info_box.setHitBarAttributes( profile->hit_points, Color::yellow );
 }
 
-Humvee::Humvee( iXY initial_loc, unsigned char color, unsigned char flag )
-        : Vehicle( initial_loc )
+Humvee::Humvee(PlayerState* player, UnitID id, iXY initial_loc,
+        unsigned char color, unsigned char flag )
+        : Vehicle(player, id, initial_loc)
 {
     setUnitProperties();
 
