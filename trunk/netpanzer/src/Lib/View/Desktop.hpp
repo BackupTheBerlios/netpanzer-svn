@@ -91,7 +91,7 @@ public:
     }
     static void     resetMouseActionOffset()
     {
-        mouseActionOffset = 0;
+        mouseActionOffset.zero();
     }
 
     static int         getViewCount();

@@ -294,16 +294,16 @@ void Surface::reset()
 {
     assert(this != 0);
 
-    pix	        = 0;
+    pix.zero();
     stride      = 0;
-    center      = 0;
+    center.zero();
     mem         = 0;
     frame0      = 0;
     myMem       = false;
     frameCount  = 0;
     curFrame    = 0;
     fps         = 0;
-    offset      = 0;
+    offset.zero();
     doesExist   = 0;
     wipeCount   = 0;
 } // end Surface::reset
@@ -896,7 +896,7 @@ void Surface::fillRect(iRect bounds, const PIX &color) const
     assert(getDoesExist());
     assert(this != 0);
 
-    if (pix == 0) return;
+    if (pix.isZero()) return;
 
     orderCoords(bounds);
 
@@ -935,7 +935,7 @@ void Surface::drawRect(iRect bounds, const PIX &color) const
     assert(getDoesExist());
     assert(this != 0);
 
-    if (pix == 0) return;
+    if (pix.isZero()) return;
 
     orderCoords(bounds);
 
@@ -1794,7 +1794,7 @@ void Surface::blendRect(iRect bounds, ColorTable &colorTable) const
     assert(this != 0);
     assert(Palette::brightness256.getColorCount() == 256);
 
-    if (pix == 0) return;
+    if (pix.isZero()) return;
 
     orderCoords(bounds);
 

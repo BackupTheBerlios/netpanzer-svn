@@ -26,7 +26,10 @@ struct fRect
     fXY min;
     fXY max;
 
-    fRect(float x1=0, float y1=0, float x2=0, float y2=0)
+    fRect()
+    {
+    }
+    fRect(float x1, float y1, float x2, float y2)
     {
         min.x = x1;
         min.y = y1;

@@ -481,7 +481,7 @@ void HostJoinTemplateView::drawFlagInfo(const Surface &dest, const iXY &pos)
     dest.bltLookup(flagBorder, Palette::darkGray256.getColorArray());
     dest.drawButtonBorder(flagBorder, Color::lightGreen, Color::darkGreen);
 
-    dest.bltStringVGradient(pos + 10, "FLAG", Palette::gradientWhite2Green);
+    dest.bltStringVGradient(pos + iXY(10,10) , "FLAG", Palette::gradientWhite2Green);
     playerFlag.blt(dest, iXY(pos.x + 55, pos.y + 10));
 
 } // end HostJoinTemplateView::drawFlagInfo

@@ -40,13 +40,13 @@ public:
     CheckBox(StateChangedCallback* newcallback = 0)
             : Component(), state(false), callback(newcallback)
     {
-        size = 14;
+        size = iXY(14, 14);
     }
 
     CheckBox(const String &newlabel, bool newstate = false)
             : Component(), label(newlabel), state(newstate), callback(0)
     {
-        size = 14;
+        size = iXY(14, 14);
     }
 
     virtual ~CheckBox()

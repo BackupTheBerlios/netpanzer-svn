@@ -79,7 +79,7 @@ void ConsoleInterface::setToSurfaceSize( iXY pix )
 
     bounds.min.x = 5;
     bounds.min.y = 5;
-    bounds.max = pix - 5;
+    bounds.max = pix - iXY(5, 5);
 
     int CHAR_XPIX = 8; // XXX hardcoded
     max_char_per_line = (bounds.max.x - bounds.min.x) / CHAR_XPIX;

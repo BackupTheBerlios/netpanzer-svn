@@ -87,8 +87,7 @@ protected:
 
 public:
     static void    startObjectivePositionEnumeration( void );
-    static bool objectivePositionEnumeration( iRect *objective_rect, unsigned char *objective_disposition, int *objective_id );
-
+    static bool objectivePositionEnumeration(iRect *objective_rect, unsigned char *objective_disposition, int *objective_id);
 };
 
 

@@ -24,11 +24,11 @@ public:
     float x, y;
 
     fXY()
+        : x(0), y(0)
     {}
-    fXY(float x, float y)
+    fXY(float newx, float newy)
+        : x(newx), y(newy)
     {
-        fXY::x = x;
-        fXY::y = y;
     }
     fXY(const fXY &a)
     {

@@ -91,7 +91,7 @@ void MiniMapInterface::annotateUnits( Surface &map_surface )
         map_loc.y = int(float(world_loc.y) / scale_factor.y);
 
         if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
-            unitRect = iRect(map_loc, map_loc + 1);
+            unitRect = iRect(map_loc, map_loc + iXY(1,1));
         }
 
         if ( unit_dispostion == _unit_player ) {

@@ -1,3 +1,10 @@
+12-Oct-2003
+-Fixed a bug in iXY classes.
+-Added note about black screen to readme
+
+11-Oct-2003 by Matthias Braun
+-added a release script
+
 05-Oct-2003 by Matthias Braun
 -did some more code cleanup. all the Rect and XY classes cleaned up a bit and
  finally removed the codewiz.hpp file.

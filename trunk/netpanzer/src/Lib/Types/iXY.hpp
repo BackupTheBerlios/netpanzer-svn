@@ -23,10 +23,14 @@ struct iXY
     int x;
     int y;
 
-    iXY(int x = 0, int y = 0)
+    iXY()
+        : x(0), y(0)
     {
-        iXY::x = x;
-        iXY::y = y;
+    }
+        
+    iXY(int newx, int newy)
+        : x(newx), y(newy)
+    {
     }
 
     iXY(const iXY &a)

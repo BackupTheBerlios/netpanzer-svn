@@ -90,6 +90,10 @@ a dedicated server can be started with
 
 netpanzer -d
 
+Note that on first startup the game needs some time to precalculate some data.
+This might take up to 5 minutes. So just wait a bit when you have a black
+screen.
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 3. Gameplay

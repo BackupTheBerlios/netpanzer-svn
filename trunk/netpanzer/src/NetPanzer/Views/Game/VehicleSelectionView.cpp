@@ -673,9 +673,8 @@ void VehicleSelectionView::drawMiniProductionStatus(const Surface &dest)
         case _objective_disposition_player: {
 
                 iXY objectiveScreenPos(objectiveBounds.min - gameViewRect.min);
-
-                objectiveScreenPos.x -= 0;
-                objectiveScreenPos.y -= 0;
+                printf("ObjectiveScreenPos: %d %d\n", objectiveBounds.min.x,
+                        objectiveBounds.min.y);
 
                 outpostStatus = ObjectiveInterface::getOutpostStatus(objectiveID);
 
@@ -772,9 +771,6 @@ void VehicleSelectionView::drawMiniProductionStatus(const Surface &dest)
                 if( displayOutpostNames == true ) {
                     iXY objectiveScreenPos(objectiveBounds.min - gameViewRect.min);
 
-                    objectiveScreenPos.x -= 0;
-                    objectiveScreenPos.y -= 0;
-
                     assert(screen->getDoesExist());
 
                     miniProductionRect.min   = objectiveScreenPos;
@@ -824,7 +820,6 @@ void VehicleSelectionView::checkMiniProductionRect(String string)
     if (length > miniProductionRect.getSizeX()) {
         miniProductionRect.max.x = miniProductionRect.min.x + length;
     }
-
 } // end VehicleSelectionView::checkMiniProductionRect
 
 // doActivate

@@ -80,7 +80,6 @@ public:
     {
         return background;
     }
-    //inline const  iRect   &getBounds() { return iRect(min, min + size); }
     inline void getBounds(iRect &r)
     {
         r.min = min;

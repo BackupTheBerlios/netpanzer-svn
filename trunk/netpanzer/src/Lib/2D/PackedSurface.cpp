@@ -91,7 +91,7 @@ void PackedSurface::free()
 //--------------------------------------------------------------------------
 void PackedSurface::reset()
 {
-    pix             = 0;
+    pix.zero();
     rowOffsetTable  = 0;
     packedDataChunk = 0;
     frameCount      = 0;

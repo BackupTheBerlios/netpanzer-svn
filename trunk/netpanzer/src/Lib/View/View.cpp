@@ -112,8 +112,8 @@ View::~View()
 //---------------------------------------------------------------------------
 void View::reset()
 {
-    min                   =  0;
-    max                   =  0;
+    min.zero();
+    max.zero();
     status                =  0;
     numLabels             =  0;
     pressedButton         = -1;

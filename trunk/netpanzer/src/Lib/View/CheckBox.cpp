@@ -65,9 +65,9 @@ void CheckBox::drawCheckBox(const Surface &dest)
 //---------------------------------------------------------------------------
 void CheckBox::drawCheck(const Surface &dest)
 {
-    iXY pos(min + 2);
+    iXY pos(min + iXY(2,2));
 
-    iXY length(size - 4);
+    iXY length(size - iXY(4,4));
 
     dest.drawLine(pos, pos + length, Color::white);
 
