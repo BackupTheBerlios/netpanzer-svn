@@ -1,36 +1,44 @@
 SubDir TOP ;
 
 # Decend into subdirs
-SubInclude TOP src ;
-SubInclude TOP docs ;
-SubInclude TOP pics ;
-SubInclude TOP maps ;
-SubInclude TOP sound ;
-SubInclude TOP powerups ;
-SubInclude TOP units ;
-SubInclude TOP wads ;
-SubInclude TOP fonts ;
-SubInclude TOP cache ;
+if ! $(NO_SRC)
+{
+    SubInclude TOP src ;
+    SubInclude TOP docs ;
+}
+if ! $(NO_DATA)
+{
+    SubInclude TOP pics ;
+    SubInclude TOP maps ;
+    SubInclude TOP sound ;
+    SubInclude TOP powerups ;
+    SubInclude TOP units ;
+    SubInclude TOP wads ;
+#    SubInclude TOP fonts ;
+    SubInclude TOP cache ;
+}
 
 UseAutoconf ;
 
-appicondir ?= [ ConcatDirs $(datadir) pixmaps $(PACKAGE_NAME) ] ;
-applicationsdir ?= [ ConcatDirs $(datadir) applications ] ;
+if ! $(NO_SRC) {
+    icondir ?= [ ConcatDirs $(datadir) pixmaps ] ;
+    applicationsdir ?= [ ConcatDirs $(datadir) applications ] ;
 
-##  InstallIcon files [ : subdir ]
-##    Installs an icon
-rule InstallIcon
-{
-    LOCATE on $(<:G=installicon) = $(SUBDIR) ;
-    Depends install_data : [ DoInstall $(<:G=installicon) : $(appicondir) $(2) ] ;
+    ##  InstallIcon files [ : subdir ]
+    ##    Installs an icon
+    rule InstallIcon
+    {
+        LOCATE on $(<:G=installicon) = $(SUBDIR) ;
+        Depends install_data : [ DoInstall $(<:G=installicon) : $(icondir) $(2) ] ;
+    }
+
+    rule InstallDesktop
+    {
+        LOCATE on $(<:G=installdesktop) = $(SUBDIR) ;
+        Depends install_data : [ DoInstall $(<:G=installdesktop) : $(applicationsdir) $(2) ] ;
+    }
+
+    InstallIcon netpanzer.png netpanzer.xpm ;
+    InstallDoc ChangeLog README TODO RELNOTES docs/tipofday.txt docs/serverhowto.html ;
+    InstallDesktop netpanzer.desktop ;
 }
-
-rule InstallDesktop
-{
-    LOCATE on $(<:G=installdesktop) = $(SUBDIR) ;
-    Depends install_data : [ DoInstall $(<:G=installdesktop) : $(applicationsdir) $(2) ];
-}
-
-InstallIcon netpanzer.png netpanzer.xpm ;
-InstallDoc ChangeLog README TODO RELNOTES docs/tipofday.txt docs/serverhowto.html ;
-InstallDesktop netpanzer.desktop ;

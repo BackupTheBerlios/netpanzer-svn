@@ -25,6 +25,7 @@ echo "*** Scanning for files"
 AUTOFILES="autogen.sh configure.ac configure config.h.in `find mk/autoconf/ -name "*.m4" -o -name "config.*"` mk/autoconf/install-sh"
 JAMFILES="Jamrules Jamconfig.in `find mk/jam -name "*.jam"`"
 ICONS="*.png *.xpm"
+DESKTOPFILES="netpanzer.desktop"
 TEXTS="COPYING README TODO RELNOTES ChangeLog"
 SOURCES="`find src -name "*.cpp" -o -name "*.hpp" -o -name "Jamfile"`"
 DOCS="docs/*.[1-9] docs/serverhowto.html docs/tipofday.txt docs/Jamfile"
@@ -32,41 +33,15 @@ DOCS="docs/*.[1-9] docs/serverhowto.html docs/tipofday.txt docs/Jamfile"
 echo "*** Creating Sourcepackage"
 mkdir -p $SOURCERELEASE
 # Create a new Jamfile
-cat > $SOURCERELEASE/Jamfile << '__END__'
-SubDir TOP ;
-
-SubInclude TOP src ;
-SubInclude TOP docs ;
-
-UseAutoconf ;
-
-appicondir ?= [ ConcatDirs $(datadir) pixmaps $(PACKAGE_NAME) ] ;
-applicationsdir ?= [ ConcatDirs $(datadir) applications ] ;
-
-##  InstallIcon files [ : subdir ]
-##    Installs an icon
-rule InstallIcon
-{
-    LOCATE on $(<:G=installicon) = $(SUBDIR) ;
-    Depends install_data : [ DoInstall $(<:G=installicon) : $(appicondir) $(2) ] ;
-}
-
-rule InstallDesktop
-{
-    LOCATE on $(<:G=installdesktop) = $(SUBDIR) ;
-    Depends install_data : [ DoInstall $(<:G=installdesktop) : $(applicationsdir) $(2) ];
-}
-
-InstallIcon netpanzer.png netpanzer.xpm ;
-InstallDoc ChangeLog README TODO RELNOTES docs/tipofday.txt docs/serverhowto.html ;
-InstallDesktop netpanzer.desktop ;
-__END__
+echo "NO_DATA = 1 ;" > $SOURCERELEASE/Jamfile
+cat Jamfile >> $SOURCERELEASE/Jamfile
 
 cp -p --parents $AUTOFILES $SOURCERELEASE
 cp -p --parents $JAMFILES $SOURCERELEASE
 cp -p --parents $TEXTS $SOURCERELEASE
 cp -p --parents $SOURCES $SOURCERELEASE
 cp -p --parents $ICONS $SOURCERELEASE
+cp -p --parents $DESKTOPFILES $SOURCERELEASE
 cp -p --parents $DOCS $SOURCERELEASE
 
 echo "*** Packing source"
@@ -77,18 +52,8 @@ cd -
 echo "*** Creating data release"
 mkdir -p $DATARELEASE
 # Create a new Jamfile
-cat > $DATARELEASE/Jamfile << __END__
-SubDir TOP ;
-
-SubInclude TOP pics ;
-SubInclude TOP maps ;
-SubInclude TOP sound ;
-SubInclude TOP powerups ;
-SubInclude TOP units ;
-SubInclude TOP wads ;
-SubInclude TOP cache ;
-#SubInclude TOP fonts ;
-__END__
+echo "NO_SRC = 1 ;" > $DATARELEASE/Jamfile
+cat Jamfile >> $DATARELEASE/Jamfile
 
 find pics \( -name "*.bmp" -o -name "*.raw" -o -name "*.til" -o -name "*.pak" -o  -name "Jamfile" \) -exec cp -p --parents {} $DATARELEASE ';'
 find wads \( -name "*.act" -o -name "*.tls" -o -name "Jamfile" \) -exec cp -p --parents {} $DATARELEASE ';'
