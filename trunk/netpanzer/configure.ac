@@ -120,6 +120,7 @@ NP_FINDLIB([SDLIMAGE], [SDL_image], [SDL_image >= 1.2],
 
 NP_FINDLIB([PHYSFS], [physfs], [physfs >= 1.9],
 	NP_LANG_PROGRAM([#include <physfs.h>
+#if PHYSFS_VER_MAJOR < 1
 #if PHYSFS_VER_MINOR < 1
 # error PHYSFS is too old
 #else
@@ -128,6 +129,7 @@ NP_FINDLIB([PHYSFS], [physfs], [physfs >= 1.9],
 #   error PHYSFS is too old
 #  endif
 # endif
+#endif
 #endif]),
 	[], [-lphysfs],
 	[],
