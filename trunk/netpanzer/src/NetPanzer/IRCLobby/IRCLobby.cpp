@@ -549,6 +549,9 @@ void IRCLobby::sendIRCMessageLine(const std::string& line)
 
 void IRCLobby::sendIRCMessageLine(const std::string& line, const std::string& to)
 {
+    if(!irc_server_socket)
+        return;
+
     std::stringstream channelmsg;
     channelmsg << "PRIVMSG " << to << " :";
 
@@ -564,6 +567,9 @@ void IRCLobby::sendIRCMessageLine(const std::string& line, const std::string& to
 
 void IRCLobby::sendIRCLine(const std::string& line)
 {
+    if(!irc_server_socket)
+        return;
+    
     if(SDLNet_TCP_Send(irc_server_socket,
                 const_cast<char*> (line.c_str()),
                 line.size()) != (int) line.size())
