@@ -42,7 +42,8 @@ enum { _net_message_id_system_set_view,
 class SystemSetPlayerView : public NetMessage
 {
 public:
-    iXY camera_loc;
+    int32_t camera_loc_x;
+    int32_t camera_loc_y;
 
     SystemSetPlayerView()
     {
@@ -217,7 +218,7 @@ enum { _connect_alert_mesg_connect,
 class SystemConnectAlert : public NetMessage
 {
 public:
-    PlayerID player_id;
+    uint16_t player_id;
     unsigned char alert_enum;
 
     SystemConnectAlert()
@@ -228,7 +229,7 @@ public:
 
     void set(const PlayerID &player, unsigned char alert_type )
     {
-        player_id = player;
+        player_id = player.getIndex();
         alert_enum = alert_type;
     }
 }

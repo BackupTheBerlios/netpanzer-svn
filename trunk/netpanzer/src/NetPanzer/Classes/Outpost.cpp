@@ -159,7 +159,8 @@ void Outpost::generateUnits( void )
                     UnitRemoteCreate create_mesg;
 
                     create_mesg.new_unit_id = unit->unit_id;
-                    create_mesg.location = gen_loc;
+                    create_mesg.location_x = gen_loc.x;
+                    create_mesg.location_y = gen_loc.y;
                     create_mesg.unit_type = unit_generation_type;
                     SERVER->sendMessage( &create_mesg, sizeof( UnitRemoteCreate ), 0 );
 

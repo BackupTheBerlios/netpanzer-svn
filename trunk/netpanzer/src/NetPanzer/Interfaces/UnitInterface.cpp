@@ -503,7 +503,8 @@ void UnitInterface::spawnPlayerUnits( const iXY &location,
 
             assert(unit != 0);
             create_mesg.new_unit_id = unit->unit_id;
-            create_mesg.location = next_loc;
+            create_mesg.location_x = next_loc.x;
+            create_mesg.location_y = next_loc.y;
             create_mesg.unit_type = unit->unit_state.unit_type;
             PUBLIC_MESSAGE_ENCODER.encodeMessage( &create_mesg,
                                                   sizeof( create_mesg )
@@ -514,7 +515,6 @@ void UnitInterface::spawnPlayerUnits( const iXY &location,
     } // ** for unit_type_index
 
     PUBLIC_MESSAGE_ENCODER.sendEncodedMessage();
-
 }
 
 // ******************************************************************
@@ -942,7 +942,7 @@ void UnitInterface::unitSyncMessage( NetMessage *net_message )
     player_index = sync_message->unit_id.getPlayer();
 
     unit = newUnit( sync_message->unit_type,
-                    sync_message->location,
+                    iXY(sync_message->location_x, sync_message->location_y),
                     player_index );
 
     unit->unit_id = sync_message->unit_id;
@@ -1015,7 +1015,7 @@ void UnitInterface::unitCreateMessage( NetMessage *net_message )
     player_index = create_mesg->new_unit_id.getPlayer();
 
     unit = newUnit( create_mesg->unit_type,
-                    create_mesg->location,
+                    iXY(create_mesg->location_x, create_mesg->location_y),
                     player_index );
 
     unit->unit_id = create_mesg->new_unit_id;
@@ -1109,7 +1109,8 @@ bool UnitInterface::syncRemoteUnits( int *send_return_code, int *percent_complet
 
         sync_message.unit_type  = unit->unit_state.unit_type;
         sync_message.unit_id    = unit->unit_id;
-        sync_message.location   = unit_map_loc;
+        sync_message.location_x = unit_map_loc.x;
+        sync_message.location_y = unit_map_loc.y;
         sync_message.unit_state = unit->unit_state;
 
         send_ret_val = SERVER->sendMessage( sync_units_remote_player,

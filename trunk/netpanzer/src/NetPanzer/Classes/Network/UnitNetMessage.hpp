@@ -38,29 +38,30 @@ enum { _net_message_id_opcode_mesg,
 class UnitOpcodeMessage : public NetMessage
 {
 public:
-    unsigned short code_size;
-    unsigned char  opcode_count;
+    uint16_t code_size;
+    uint8_t opcode_count;
 
-    unsigned char data[ _OPCODE_MESSAGE_LIMIT ];
+    uint8_t data[ _OPCODE_MESSAGE_LIMIT ];
 
     UnitOpcodeMessage()
     {
         message_class = _net_message_class_unit;
         message_id = _net_message_id_opcode_mesg;
+        memset(data, 0, _OPCODE_MESSAGE_LIMIT);
     }
 
     unsigned short realSize( void );
 
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 
 class UnitIniSyncMessage : public NetMessage
 {
 public:
-    unsigned char unit_type;
+    uint8_t unit_type;
     UnitID unit_id;
-    iXY location;
+    uint32_t location_x;
+    uint32_t location_y;
     UnitState unit_state;
 
     UnitIniSyncMessage()
@@ -74,8 +75,7 @@ public:
         return( sizeof( UnitIniSyncMessage ) );
     }
 
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 // ** NOTE: A big, mother fucking HACK
 
@@ -90,38 +90,34 @@ public:
         message_id = _net_message_id_destroy_unit;
     }
 
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 
 class UnitRemoteCreate : public NetMessage
 {
 public:
     UnitID new_unit_id;
-    iXY location;
-    unsigned char unit_type;
+    uint32_t location_x;
+    uint32_t location_y;
+    uint8_t unit_type;
 
     UnitRemoteCreate()
     {
         message_class = _net_message_class_unit;
         message_id = _net_message_id_create_unit;
     }
-
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class UnitSyncIntegrityCheck : public NetMessage
 {
 public:
-
     UnitSyncIntegrityCheck()
     {
         message_class = _net_message_class_unit;
         message_id = _net_message_id_unit_sync_integrity_check;
     }
 
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 #ifdef MSVC
 #pragma pack()

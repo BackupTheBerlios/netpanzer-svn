@@ -83,7 +83,8 @@ void BonusUnitPowerUp::spawnBonusUnits( UnitID &unit_id )
             UnitRemoteCreate create_mesg;
 
             create_mesg.new_unit_id = new_unit->unit_id;
-            create_mesg.location = spawn_loc;
+            create_mesg.location_x = spawn_loc.x;
+            create_mesg.location_y = spawn_loc.y;
             create_mesg.unit_type = bonus_unit_type;
             SERVER->sendMessage( &create_mesg, sizeof( UnitRemoteCreate ), 0 );
         }

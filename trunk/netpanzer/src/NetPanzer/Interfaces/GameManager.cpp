@@ -349,7 +349,8 @@ void GameManager::spawnPlayer( const PlayerID &player )
     } else {
         SystemSetPlayerView set_view;
 
-        set_view.camera_loc = world_loc;
+        set_view.camera_loc_x = world_loc.x;
+        set_view.camera_loc_y = world_loc.y;
         SERVER->sendMessage( player, &set_view, sizeof( SystemSetPlayerView ), 0);
     }
 
@@ -386,7 +387,8 @@ void GameManager::netMessageSetView( NetMessage *message )
 
     set_view = (SystemSetPlayerView *) message;
 
-    WorldViewInterface::setCameraPosition( set_view->camera_loc );
+    WorldViewInterface::setCameraPosition(
+            iXY(set_view->camera_loc_x, set_view->camera_loc_y) );
 }
 
 // ******************************************************************

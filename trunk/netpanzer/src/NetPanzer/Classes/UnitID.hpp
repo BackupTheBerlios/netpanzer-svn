@@ -20,6 +20,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdint.h>
 
+#ifdef MSVC
+#pragma pack(1)
+#endif
+
 class UnitID
 {
 public:
@@ -96,6 +100,10 @@ public:
         index  = Uid.index;
         unique = Uid.unique;
     }
-};
+} __attribute__((packed));
+
+#ifdef MSVC
+#pragma pack()
+#endif
 
 #endif
