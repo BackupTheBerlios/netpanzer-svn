@@ -86,20 +86,23 @@ void bNext()
 	else if (GameConfig::GetHostOrJoin() == _game_session_join)
 	{
      CLIENT->openSession();
- 
+
+	 // XXX hack
+	 CLIENT->startEnumeration();
+		 /*
      if ( CLIENT->startEnumeration( ) == false )
       {
        Desktop::setVisibilityAllWindows(false);
 	   Desktop::setVisibility("GetSessionView", true);
       }
      else
-      {
+      {*/
        Desktop::setVisibility("JoinView", true);
 	   Desktop::setVisibility("GetSessionHostView", true);
 	   Desktop::setVisibility("UnitSelectionView", true);
 	   Desktop::setVisibility("FlagSelectionView", true);
 	   Desktop::setVisibility("PlayerNameView", true);     
-      }
+      //}
      
      /* winsock hack
      bool minimize;
@@ -150,7 +153,7 @@ void bNext()
           end winsock hack*/
 
       
-         //Desktop::setVisibility("IPAddressView", true);
+         Desktop::setVisibility("IPAddressView", true);
  	     //Desktop::setVisibility("JoinView", true);
 	     //Desktop::setVisibility("GetSessionHostView", true);
 	     //Desktop::setVisibility("UnitSelectionView", true);

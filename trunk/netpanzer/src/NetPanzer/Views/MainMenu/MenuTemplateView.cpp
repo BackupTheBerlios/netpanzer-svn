@@ -87,6 +87,7 @@ static void bMulti()
 	}
 	else if (strcmp(MenuTemplateView::currentMultiView, "JoinView") == 0)
 	{
+		printf("EnteringJoinView.\n");
 		Desktop::setVisibilityAllWindows(false);
 		Desktop::setVisibility("JoinView", true);
 		Desktop::setVisibility("GetSessionHostView", true);

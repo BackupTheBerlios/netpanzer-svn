@@ -53,6 +53,7 @@ NetworkClient::~NetworkClient( void )
 
 void NetworkClient::netMessageClientKeepAlive( NetMessage *message )
  {
+	 LOG ( ("keep alive.") );
   keep_alive_timer.reset();
  }
 
@@ -64,10 +65,12 @@ void NetworkClient::netMessageClientSetKeepAliveState( NetMessage *message )
 
   keep_alive_state = set_keepalive_state_mesg->keep_alive_state;
   keep_alive_timer.reset();  
+  LOG( ("Set Keepalive from server: %d", keep_alive_state) );
  } 
 
 void NetworkClient::netMessageClientPingAck( NetMessage *message )
  {
+  LOG( ("ping -> pong.") );
   NetworkState::ping_time = (now() - NetworkState::ping_time_stamp) * 1000;
  } 
 
@@ -109,7 +112,10 @@ void NetworkClient::processNetMessage( NetMessage *message )
     case _net_message_id_client_connect_ack :
      netMessageClientConnectAck( message );
     break;
-
+	
+	default:
+	  LOG( ("Unknown messageid in NetworkClient::processNetMessage") );
+	  break;
    }
  }
 

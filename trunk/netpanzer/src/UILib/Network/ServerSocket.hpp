@@ -33,12 +33,17 @@ public:
 					 bool realiable = true);
 	void removeClient(Client::ID clientid);
 
+protected:
+	friend class Client;
+	void closeConnection(Client* client);
+
 private:
 	void acceptNewClients();
 	void readTCP();
 	void readClientTCP(Client* client);
 	
 	TCPsocket tcpsocket;
+	SDLNet_SocketSet sockets;
 	ClientList* clientlist;
 };
 

@@ -47,6 +47,7 @@ bool SDLDraw::setVideoMode(DWORD width, DWORD height, DWORD bpp, bool fullscreen
 {
 	Uint32 flags = 0;
 	flags |= fullscreen ? SDL_FULLSCREEN : 0;
+	flags |= SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_HWPALETTE;
 	FrontBuffer = SDL_SetVideoMode(width, height, bpp, flags);
 	if(FrontBuffer==NULL)
 		return false;

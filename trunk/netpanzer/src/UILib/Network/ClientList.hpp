@@ -22,13 +22,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <SDL_net.h>
 #include "Client.hpp"
 
+class ServerSocket;
+
 class ClientList
 {
 public:
 	ClientList();
 	~ClientList();
 	
-	Client* add(TCPsocket socket);
+	Client* add(ServerSocket* server, TCPsocket socket);
 	
 	Client* getClientFromID(Client::ID id);
 

@@ -36,7 +36,7 @@ TrajectoryParticle2D::TrajectoryParticle2D(	const fXYZ &pos,
 	
 	TrajectoryParticle2D::dieAtMidFlight = dieAtMidFlight;
 	
-	lifetime = (float(initialVelocity * Math::getSin(trajectoryAngle)) / Physics::getGravity()) * 2.0f;
+	lifetime = (float(initialVelocity * Math::getSin(int(trajectoryAngle))) / Physics::getGravity()) * 2.0f;
 	
 	if (dieAtMidFlight)
 	{
@@ -62,7 +62,7 @@ TrajectoryParticle2D::TrajectoryParticle2D(	const fXYZ &pos,
 void TrajectoryParticle2D::sim()
 {
 	// Get the particle horizontal position.
-	float dx = Physics::getHorizontalPosition(initialVelocity, trajectoryAngle, age);
+	float dx = Physics::getHorizontalPosition(initialVelocity, int(trajectoryAngle), age);
 
 	//pos += velocity;
 
@@ -71,7 +71,7 @@ void TrajectoryParticle2D::sim()
 	pos.x = initialPos.x + dx * direction.x;
 	pos.z = initialPos.z + dx * direction.z;
 
-	pos.y = Physics::getVerticalPosition(initialVelocity, trajectoryAngle, age);
+	pos.y = Physics::getVerticalPosition(initialVelocity, int(trajectoryAngle), age);
 
 	if (dieAtMidFlight)
 	{

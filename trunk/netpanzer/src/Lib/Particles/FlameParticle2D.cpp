@@ -94,8 +94,8 @@ void FlameParticle2D::pakFiles()
 
 		float percent = float(i) / float(maxLevel);
 
-		newSize.x = float(tempSurface.getPixX()) * percent;
-		newSize.y = float(tempSurface.getPixY()) * percent;
+		newSize.x = int(float(tempSurface.getPixX()) * percent);
+		newSize.y = int(float(tempSurface.getPixY()) * percent);
 
 		tempSurface.scale(newSize);
 		tempSurface.setFPS(explosionFPS);
@@ -116,8 +116,8 @@ void FlameParticle2D::pakFiles()
 
 		float percent = float(i) / float(maxLevel);
 
-		newSize.x = float(tempSurface.getPixX()) * percent;
-		newSize.y = float(tempSurface.getPixY()) * percent;
+		newSize.x = int(float(tempSurface.getPixX()) * percent);
+		newSize.y = int(float(tempSurface.getPixY()) * percent);
 
 		tempSurface.scale(newSize);
 		tempSurface.setFPS(explosionFPS);
@@ -180,7 +180,7 @@ void FlameParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 		return;
 	}
 
-	packedSurface.setAttrib(PointXYi(pos.x, pos.z), layer);
+	packedSurface.setAttrib(PointXYi((int)pos.x, (int)pos.z), layer);
 	sorter.addSprite(&packedSurface);
 
 } // end FlameParticle2D::draw

@@ -57,7 +57,7 @@ TemplateExplosionSystem::TemplateExplosionSystem(	const fXYZ            &pos,
 	int halfBoundsY = bounds.getSizeY() / 2;
 
 	// Add a crater on the ground if it is a logical location.
-	int pixMovementValue = TileInterface::getWorldPixMovementValue(pos.x, pos.z);
+	int pixMovementValue = TileInterface::getWorldPixMovementValue(int(pos.x), int(pos.z));
 
 	// Check for water or impassible.
 	if (pixMovementValue != 5 &&
@@ -84,7 +84,7 @@ TemplateExplosionSystem::TemplateExplosionSystem(	const fXYZ            &pos,
 			// Since this is a water explosion and only particles are getting thrown,
 			// add some more particles.
 			canHaveSmoke  = 0;
-			particleCount = e.particleCount * 1.7f;
+			particleCount = int(e.particleCount * 1.7f);
 
 		} else 
 		{
@@ -155,7 +155,7 @@ TemplateExplosionSystem::TemplateExplosionSystem(	const fXYZ            &pos,
 		offset.z = pos.z - (rand() % bounds.getSizeY()) + halfBoundsY;
 
 		new ChunkTrajectoryParticle2D(	offset,
-										maxSpeed,
+										int(maxSpeed),
 										scaleMin,
 										scaleRand,
 										waitMin,
@@ -181,7 +181,7 @@ TemplateExplosionSystem::TemplateExplosionSystem(	const fXYZ            &pos,
 		offset.z = pos.z - (rand() % bounds.getSizeY()) + halfBoundsY;
 
 		new ChunkTrajectoryParticle2D(	pos,
-										maxSpeed,
+										int(maxSpeed),
 										scaleMin,
 										scaleRand,
 										waitMin,
@@ -208,7 +208,7 @@ TemplateExplosionSystem::TemplateExplosionSystem(	const fXYZ            &pos,
 
 
 		new ChunkTrajectoryParticle2D(	pos,
-										maxSpeed,
+										int(maxSpeed),
 										scaleMin,
 										scaleRand,
 										waitMin,

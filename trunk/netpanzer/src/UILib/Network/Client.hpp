@@ -3,12 +3,14 @@
 
 #include <SDL_net.h>
 
+class ServerSocket;
+
 /** This class keep data from a single client that is connected to the server
  */
 class Client
 {
 public:
-	Client();
+	Client(ServerSocket* server);
 	~Client();
 	
 	TCPsocket tcpsocket;
@@ -23,6 +25,8 @@ public:
 
 	typedef Uint32 ID;
 	ID id;
+
+	ServerSocket* server;
 };
 
 #endif

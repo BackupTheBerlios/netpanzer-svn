@@ -27,9 +27,9 @@ ClientList::~ClientList()
 {
 }
 
-Client* ClientList::add(TCPsocket socket)
+Client* ClientList::add(ServerSocket* server, TCPsocket socket)
 {
-	Client* client = new Client();
+	Client* client = new Client(server);
 	client->tcpsocket = socket;
 	client->id = nextid++;
 	clients.push_back(client);

@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Exception.hpp"
 #include "Log.hpp"
+#include "Desktop.hpp"
 #include "NetworkGlobals.hpp"
 #include "NetworkState.hpp"
 #include "NetworkClientUnix.hpp"
@@ -41,14 +42,15 @@ int NetworkClientUnix::openSession()
 int NetworkClientUnix::startEnumeration(ConnectionAddress )
 {
 	LOG( ("Server enumeration not implemented yet!") );
+  	Desktop::setVisibility("IPAddressView", true);
   	return false;
 }
 
 int NetworkClientUnix::startEnumeration( )   
 {
 	LOG( ("Server enumeration not implemented yet!") );
-	//Desktop::setVisibility("IPAddressView", true);
-  	return false; 
+	Desktop::setVisibility("IPAddressView", true);
+  	return false;
 }
 
 int NetworkClientUnix::stopEnumeration( void )
@@ -78,12 +80,15 @@ int NetworkClientUnix::joinSession(const char* session_name)
 {
 	delete clientsocket;
 	clientsocket = 0;
+	LOG( ("Trying to join server '%s'.\n", session_name) );
 	try {
 		clientsocket = new ClientSocket(session_name, _NETPANZER_DEFAULT_PORT_TCP);
 	} catch(Exception e) {
 		LOG( ( "Couldn't connect to server:\n%s.", e.getMessage()) );
 		return false;
 	}
+
+	connection_type = _connection_network;
 
   	return true;
 }
@@ -114,6 +119,9 @@ void NetworkClientUnix::sendMessage(NetMessage *message, size_t size, int flags)
 	if(!clientsocket)
 		return;
 
+  	LOG( ( "SEND >> Class: %d ID: %d", message->message_class,
+					     			   message->message_id) );	
+	
 	message->size = size;
 	clientsocket->sendMessage((char*) message, message->size,
 			                  ! (flags & _network_send_no_guarantee) );
@@ -135,7 +143,7 @@ int NetworkClientUnix::getMessage(NetMessage *message)
 				  						 message->message_id) );
 
 	  if ( message->message_class == _net_message_class_client_server )
-	  {  processNetMessage( message ); }
+	  { processNetMessage( message ); }
 
 	  NetworkState::incPacketsReceived( net_packet.packet_size );
 
@@ -164,6 +172,7 @@ int NetworkClientUnix::getMessage(NetMessage *message)
 
 void NetworkClientUnix::checkIncoming()
 {
-	if(clientsocket)
+	if(clientsocket) {
 		clientsocket->read();
+	}
 }

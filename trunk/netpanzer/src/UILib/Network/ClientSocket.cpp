@@ -25,31 +25,32 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ClientSocket::ClientSocket(const char* servername, Uint16 port)
 {
-	// create a UDP socket
-	udpsocket = SDLNet_UDP_Open(0);
-	if(!udpsocket)
-		throw Exception("couldn't open udp socket.");
-
 	// resolve server name
 	IPaddress serverip;
 	// XXX why deosn't ResolveHost take a const char*? Is this cast safe?
 	if(SDLNet_ResolveHost(&serverip, const_cast<char*>(servername),
 						  port) < 0) {
-		SDLNet_UDP_Close(udpsocket);
 		throw Exception("couldn't resolve name '%s'.", servername);
 	}
 
 	tcpsocket = SDLNet_TCP_Open(&serverip);
 	if(!tcpsocket) {
-		SDLNet_UDP_Close(udpsocket);
 		throw Exception("couldn't open tcp connection to server '%s:%u'.",
 						servername, port);
 	}
+
+	socketset = SDLNet_AllocSocketSet(1);
+	if(!socketset) {
+		SDLNet_TCP_Close(tcpsocket);
+		throw Exception("couldn't allocate socket set.");
+	}
+	SDLNet_TCP_AddSocket(socketset, tcpsocket);
 }
 
 ClientSocket::~ClientSocket()
 {
-	SDLNet_UDP_Close(udpsocket);
+	SDLNet_TCP_DelSocket(socketset, tcpsocket);
+	SDLNet_FreeSocketSet(socketset);
 	SDLNet_TCP_Close(tcpsocket);
 }
 
@@ -66,12 +67,13 @@ void ClientSocket::read()
 	static bool bHeaderIncomplete = false;
 
 	// is data available?
+	SDLNet_CheckSockets(socketset, 0);
 	if(!SDLNet_SocketReady(tcpsocket))
 		return;
 
 	int iBytesReceived = SDLNet_TCP_Recv(tcpsocket, RecvBuffer,
 										 sizeof(RecvBuffer));
-	if(iBytesReceived<=0) {
+	if(iBytesReceived<0) {
 		LOG( ("Connection lost to server: %s", SDLNet_GetError()) );
 		return;
 	}

@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameConfig.hpp"
 #include "GameManager.hpp"
 
+#include "Log.hpp"
 #include "ConnectNetMessage.hpp"
 #include "ConsoleInterface.hpp"
 
@@ -80,7 +81,7 @@ void ClientConnectDaemon::netMessageLinkAck( NetMessage *message )
   char buf[80];
   
   join_request_ack_mesg = (ClientConnectJoinRequestAck *) message;
-  
+ 
   switch( join_request_ack_mesg->result_code )
    {
     case _join_request_result_success :
@@ -107,6 +108,10 @@ void ClientConnectDaemon::netMessageLinkAck( NetMessage *message )
      connection_state = _connect_state_connect_failure;
      failure_display_timer.reset();
     break;
+
+	default:
+	 LOG ( ("Unknown ACk result?!?") );
+	 break;
    }  
  
  } 

@@ -15,8 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #include <config.h>
+
 #include "IPAddressView.h"
 #include "Desktop.hpp"
 #include "GameViewGlobals.hpp"
@@ -40,6 +40,8 @@ static void buttonOkay(void)
  strcpy( address.string_rep, szServerName );
 
  ret_val = CLIENT->startEnumeration( address );
+ // XXX hack
+ ret_val = 1;
  
  if(ret_val == 1)
  {

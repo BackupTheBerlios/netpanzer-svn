@@ -43,12 +43,18 @@ ServerSocket::ServerSocket(Uint16 tcpport)
 		throw Exception("couldn't open TCP socket on port %d: %s", tcpport,
 						SDLNet_GetError());
 
+	sockets = SDLNet_AllocSocketSet(64);
+	if(!sockets) {
+		SDLNet_TCP_Close(tcpsocket);
+		throw Exception("couldn't allocate socket set.");
+	}
 	clientlist = new ClientList();
 }
 
 ServerSocket::~ServerSocket()
 {
 	delete clientlist;
+	SDLNet_FreeSocketSet(sockets);
 	SDLNet_TCP_Close(tcpsocket);
 }
 
@@ -69,7 +75,11 @@ void ServerSocket::acceptNewClients()
 {
 	TCPsocket clientsocket;
 	while ( (clientsocket = SDLNet_TCP_Accept(tcpsocket)) ) {
-		Client* client = clientlist->add(clientsocket);
+		if(SDLNet_TCP_AddSocket(sockets, clientsocket) < 0) {
+			LOG ( ("Too many connections to server, dropping client.") );
+			return;
+		}
+		Client* client = clientlist->add(this, clientsocket);
 
 		// Put message about connecting client into message queue
 		TransportClientAccept clientacceptmessage;
@@ -81,6 +91,8 @@ void ServerSocket::acceptNewClients()
 
 void ServerSocket::readTCP()
 {
+	SDLNet_CheckSockets(sockets, 0);
+	
 	// Iterate through client list and check whether data arrived
 	ClientList::ClientIterator i;
 	for(i = clientlist->begin(); i != clientlist->end(); i++) {
@@ -320,6 +332,12 @@ void ServerSocket::sendMessage(Client::ID toclient, char* data, size_t datasize,
 		throw Exception("Error while sending to client %lu: %s", client->id,
 				SDLNet_GetError());
 	}
+}
+
+void ServerSocket::closeConnection(Client* client)
+{
+	SDLNet_TCP_DelSocket(sockets, client->tcpsocket);
+	SDLNet_TCP_Close(client->tcpsocket);
 }
 
 void ServerSocket::removeClient(Client::ID clientid)

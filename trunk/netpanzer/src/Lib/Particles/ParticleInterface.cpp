@@ -482,9 +482,9 @@ void ParticleInterface::addHit(const UnitState &unitState)
 
 	e.percentScaleMin    = 0.8f;
 	e.percentScaleRand   = 0.6f;
-	e.speedSmall         = 400 * hitPointScale;
-	e.speedMedium        = 250 * hitPointScale;
-	e.speedLarge         = 150 * hitPointScale;
+	e.speedSmall         = int(400 * hitPointScale);
+	e.speedMedium        = int(250 * hitPointScale);
+	e.speedLarge         = int(150 * hitPointScale);
 	e.percentCountSmall  = 0.4f;
 	e.percentCountMedium = 0.3f;
 	e.percentCountLarge  = 0.3f;
@@ -496,7 +496,7 @@ void ParticleInterface::addHit(const UnitState &unitState)
 	e.flashMinScale      = 0.6f * hitPointScale;
 	e.flashRandScale     = 0.4f * hitPointScale;
 	e.flashLifetime      = 0.5f;
-	e.flashCount         = 3 * float(unitParticleInfo[unitState.unit_type].minBounds.getArea()) / float(unitBodyMaxArea);
+	e.flashCount         = int( 3 * float(unitParticleInfo[unitState.unit_type].minBounds.getArea()) / float(unitBodyMaxArea));
 	e.flashBounds        = unitParticleInfo[unitState.unit_type].minBounds;
 
 	int randTrajectoryAngleMin = rand() % 3;
@@ -621,7 +621,7 @@ void ParticleInterface::addMiss(const iXY &worldPos, BYTE unitType)
 	float randomness = 1.0f; //Particle2D::getScale(0.8f, 0.4f);
 	float frameRateAdjustment = getFrameRateAdjustment();
 
-	e.particleCount = 5 * (frameRateAdjustment * float(unitAttackFactorTable[unitType]) * randomness);
+	e.particleCount = int(5 * (frameRateAdjustment * float(unitAttackFactorTable[unitType]) * randomness));
 
 	if (gDrawExplosionParticleCount)
 	{
@@ -643,9 +643,9 @@ void ParticleInterface::addMiss(const iXY &worldPos, BYTE unitType)
 
 	e.percentScaleMin    = 0.8f;
 	e.percentScaleRand   = 0.4f;
-	e.speedSmall         = 400 * attackScale;
-	e.speedMedium        = 250 * attackScale;
-	e.speedLarge         = 150 * attackScale;
+	e.speedSmall         = int(400 * attackScale);
+	e.speedMedium        = int(250 * attackScale);
+	e.speedLarge         = int(150 * attackScale);
 	e.percentCountSmall  = 0.5f;
 	e.percentCountMedium = 0.3f;
 	e.percentCountLarge  = 0.2f;
@@ -682,8 +682,8 @@ void ParticleInterface::buildUnitTables()
 	{
 		UnitProfile *p = UnitProfileInterface::getUnitProfile(i);
 		
-		unitHitPointTable[i]     = sqrt(p->hit_points);
-		unitAttackFactorTable[i] = sqrt(p->attack_factor * 2);
+		unitHitPointTable[i]     = int(sqrt(p->hit_points));
+		unitAttackFactorTable[i] = int(sqrt(p->attack_factor * 2));
 	}
 }
 
@@ -703,7 +703,7 @@ void ParticleInterface::buildUnitTables()
 //--------------------------------------------------------------------------
 void ParticleInterface::addMissleFlightPuff(const iXY &worldPos, const fXY &direction, float &curWait, float &totalWait, BYTE unitType)
 {
-	iXY thrustOffset(-10.0f * direction.x, -10.0f * direction.y);
+	iXY thrustOffset(int(-10.0f * direction.x), int(-10.0f * direction.y));
 	fXYZ loc(worldPos.x + thrustOffset.x, 0, worldPos.y + thrustOffset.y);
 
 	curWait += TimerInterface::getTimeSlice();

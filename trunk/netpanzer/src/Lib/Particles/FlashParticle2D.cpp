@@ -80,11 +80,11 @@ void FlashParticle2D::packFiles()
 	const float maxFlashSize = 200.0f;
 	const float flashCount   =  20.0f;
 
-	outputSurface.create(surface.getPixX(), surface.getPixY(), surface.getPixX(), flashCount);
+	outputSurface.create(surface.getPixX(), surface.getPixY(), surface.getPixX(), int(flashCount));
 
 	int n = 0;
 
-	for (int i = minFlashSize; i < maxFlashSize - minFlashSize; i += (maxFlashSize - minFlashSize) / flashCount)
+	for (int i = (int)minFlashSize; i < maxFlashSize - minFlashSize; i += int((maxFlashSize - minFlashSize) / flashCount))
 	{
 		// Set the output frame.
 		outputSurface.setFrame(n++);
@@ -92,8 +92,8 @@ void FlashParticle2D::packFiles()
 
 		// Copy and scale the surface.
 		scaledSurface.copy(surface);
-		float x = float(surface.getPixX()) * (float(i) / maxFlashSize);
-		float y = float(surface.getPixY()) * (float(i) / maxFlashSize);
+		int x = int(float(surface.getPixX()) * (float(i) / maxFlashSize));
+		int y = int(float(surface.getPixY()) * (float(i) / maxFlashSize));
 		scaledSurface.scale(x, y);
 
 		iXY dest((surface.getPix() - scaledSurface.getPix()) / 2);
@@ -133,7 +133,7 @@ void FlashParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 
 	packedSurface.setFrame(frame);
 
-	packedSurface.setAttrib(PointXYi(pos.x, pos.z), layer);
+	packedSurface.setAttrib(PointXYi((int)pos.x, (int)pos.z), layer);
 	sorter.addSprite(&packedSurface);
 
 	// Since we only want a single frame of the flash, kill it after it is done.

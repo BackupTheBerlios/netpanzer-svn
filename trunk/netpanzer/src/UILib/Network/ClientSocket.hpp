@@ -31,10 +31,9 @@ public:
 
 private:
 	void readTCP();
-	void readUDP();
 	
-	UDPsocket udpsocket;
 	TCPsocket tcpsocket;
+	SDLNet_SocketSet socketset;
 };
 
 #endif

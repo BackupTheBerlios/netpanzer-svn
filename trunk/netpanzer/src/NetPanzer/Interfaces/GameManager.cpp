@@ -38,6 +38,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifdef UNIX
 #include "UILib/SDL/SDLSound.hpp"
 #endif
+#include "UILib/DummySound.hpp"
 
 #ifdef WIN32
 #include "NetworkServerWinSock.hpp"
@@ -203,6 +204,10 @@ void GameManager::shutdownVideoSubSystem()
 
 void GameManager::initializeSoundSubSystem()
 {
+	if(execution_mode == _execution_mode_dedicated_server) {
+		sound = new DummySound();
+		return;
+	}
 #ifdef WIN32
     sound = new DirectSound();	
 #endif
@@ -1037,6 +1042,7 @@ bool GameManager::bootStrap()
 bool GameManager::dedicatedBootStrap()
 {
 	try {
+		initializeSoundSubSystem(); // we load a dummy sound driver
 		dedicatedLoadGameData();
 		initializeGameObjects();
 		initializeGameLogic();
@@ -1643,8 +1649,11 @@ void GameManager::joinMultiPlayerGame()
   //winsock hack
   //JoinSession( gapp.hwndApp );
   //InitStreamClient(gapp.hwndApp);
-  Timer wait;
+  CLIENT->joinSession("127.0.0.1");
   
+  // XXX how should that work? we can't process (network) events while waiting
+#if 0
+  Timer wait;
   if ( CLIENT->joinSession() == false )
    {
     lobbyView.scrollAndUpdate( "FAILED TO JOIN NETPANZER SESSION" );
@@ -1654,6 +1663,7 @@ void GameManager::joinMultiPlayerGame()
     lobbyView.toggleMainMenu();      
     return;
    }
+#endif
 
   ClientConnectDaemon::startConnectionProcess();
   sound->PlayTankIdle();
@@ -1684,7 +1694,7 @@ void GameManager::launchNetPanzerGame()
 
 // ******************************************************************
 
-// custom version of fgets that doesn't return the trailing \n
+// custom version of readString that doesn't return the trailing \n
 static inline void readString(char* buffer, size_t buffersize, FILE* file)
 {
 	fgets(buffer, buffersize, file);
