@@ -1402,7 +1402,7 @@ void GameManager::launchDedicatedServer()
     fflush(stdout);
     readString(input_str, 256, stdin);
     if ( strlen(input_str) > 0 ) {
-        short players;
+        int players;
         sscanf( input_str, "%d", &players );
         GameConfig::SetNumberPlayers( players );
     }
@@ -1411,7 +1411,7 @@ void GameManager::launchDedicatedServer()
     fflush(stdout);
     readString(input_str, 256, stdin);
     if ( strlen(input_str) > 0 ) {
-        short units;
+        int units;
         sscanf( input_str, "%d", &units );
         GameConfig::SetNumberUnits( units );
     }

@@ -38,7 +38,7 @@ Todo before beta release:
 -Test it (esp. with more than 2 players)
 -Make it compiling in mingw again.
 -Fix all warnings in the sourcecode
--Add configure script (autoconf) which checks for all prerequesits
+-Add configure script (autoconf) which checks for all prerequesits - OK
 -Create "make install" target (also a "make uninstall"?)
 -Write a README
 -Test it, esp. with more than 2 players and test a complete

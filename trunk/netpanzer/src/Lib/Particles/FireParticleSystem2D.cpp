@@ -28,20 +28,15 @@ BYTE FireParticleSystem2D::fireColor[12];
 //---------------------------------------------------------------------------
 FireParticleSystem2D::FireParticleSystem2D(fXYZ pos, int isFarAway) : ParticleSystem2D(pos, isFarAway)
 {
-    FUNC("FireParticleSystem2D::FireParticleSystem2D");
-
     reset();
 
     init();
-
 } // end FireParticleSystem2D::FireParticleSystem2D
 
 // reset
 //---------------------------------------------------------------------------
 void FireParticleSystem2D::reset()
 {
-    FUNC("FireParticleSystem2D::reset");
-
     combinedTime = 0.0;
     totalTime    = 0.0;
 
@@ -55,8 +50,6 @@ void FireParticleSystem2D::reset()
 //---------------------------------------------------------------------------
 void FireParticleSystem2D::init()
 {
-    FUNC("FireParticleSystem2D::init");
-
 } // end FireParticleSystem2D::init
 
 // initColors
@@ -66,7 +59,6 @@ void FireParticleSystem2D::init()
 //---------------------------------------------------------------------------
 void FireParticleSystem2D::initColors()
 {
-    FUNC("FireParticleSystem2D::initColors");
     fireColor[ 0] = Palette::findNearestColor(RGBColor(255, 237, 146));
     fireColor[ 1] = Palette::findNearestColor(RGBColor(255, 229, 126));
     fireColor[ 2] = Palette::findNearestColor(RGBColor(255, 198, 130));
@@ -86,8 +78,6 @@ void FireParticleSystem2D::initColors()
 //---------------------------------------------------------------------------
 void FireParticleSystem2D::sim()
 {
-    FUNC("FireParticleSystem2D::sim");
-
     if (totalTime < 10) {
         combinedTime += TimerInterface::getTimeSlice();
 

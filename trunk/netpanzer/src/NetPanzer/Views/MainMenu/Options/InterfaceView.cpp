@@ -51,12 +51,12 @@ static int getScrollRate()
 
 static int getMiniMapResizeRate()
 {
-    return GameConfig::getMiniMapResizeRate();
+    return int(GameConfig::getMiniMapResizeRate());
 }
 
 static int getConsoleTextDelay()
 {
-    return GameConfig::getConsoleTextDelay();
+    return int(GameConfig::getConsoleTextDelay());
 }
 
 static int getConsoleTextScreenPercent()
@@ -121,7 +121,6 @@ void InterfaceView::initButtons()
     int y                = bodyTextRect.min.y;
     int yOffset          =  15;
 
-    int buttonXSize      =  90;
     int arrowButtonWidth =  16;
 
     // Settings
@@ -184,9 +183,6 @@ void InterfaceView::doDraw(const Surface &viewArea, const Surface &clientArea)
     char strBuf[256];
 
     const int arrowButtonWidth = 16;
-    iRect visualMeter;
-    int   meterUsageXSize = 0;
-    float percent         = 0.0f;
     int   x               = optionsMeterStartX + arrowButtonWidth;
     int   y               = bodyTextRect.min.y + 15;
     int   yOffset         = 15;
@@ -239,5 +235,4 @@ void InterfaceView::doDraw(const Surface &viewArea, const Surface &clientArea)
 void InterfaceView::loadTitleSurface()
 {
     doLoadTitleSurface("pics/backgrounds/menus/menu/til/interfaceTitle.til");
-
 } // end InterfaceView::loadTitleSurface

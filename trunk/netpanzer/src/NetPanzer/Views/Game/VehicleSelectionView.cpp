@@ -542,8 +542,8 @@ void VehicleSelectionView::doDraw(const Surface &viewArea, const Surface &client
             // Calculate the starting point on the outside of the vehicleSelectionView box.
             fXY v2oSlope(Math::unitDirection(a, b));
 
-            a.x += v2oSlope.x * float(VehicleSelectionView::getSizeX() / 2);
-            a.y += v2oSlope.y * float(VehicleSelectionView::getSizeY() / 2);
+            a.x += int(v2oSlope.x * float(VehicleSelectionView::getSizeX() / 2));
+            a.y += int(v2oSlope.y * float(VehicleSelectionView::getSizeY() / 2));
 
             // Calculate the starting point on the outside of the objective box.
             iXY objectiveOutlineSize(3, 3);
@@ -559,7 +559,7 @@ void VehicleSelectionView::doDraw(const Surface &viewArea, const Surface &client
             //bltBlendRect(screen, r);
             screen.fillRect(r, Color::white);
 
-            int xOffset = (strlen(WorldInputCmdProcessor::getSelectedObjectiveName()) * CHAR_XPIX) / 2;
+            //int xOffset = (strlen(WorldInputCmdProcessor::getSelectedObjectiveName()) * CHAR_XPIX) / 2;
 
             //screen.bltStringShadowed(r.min.x - xOffset, r.min.y - 15, WorldInputCmdProcessor::getSelectedObjectiveName(), Color::white, Color::black);
 
@@ -800,7 +800,11 @@ void VehicleSelectionView::drawMiniProductionStatus(const Surface &dest)
                     sprintf(productionUnitBuf, "Production: %s", getUnitName(outpostStatus.unit_generation_type));
                     checkMiniProductionRect(productionUnitBuf);
 
-                    sprintf(timeLeftBuf, "Time Left:  %01d:%02d", ((int)outpostStatus.unit_generation_time_remaining + 1) / 60, ((int)outpostStatus.unit_generation_time_remaining) % 60, ((int)outpostStatus.unit_generation_time + 1) / 60);
+                    sprintf(timeLeftBuf, "Time Left:  %01d:%02d",
+                            ((int)outpostStatus.unit_generation_time_remaining 
+                                + 1) / 60,
+                            ((int)outpostStatus.unit_generation_time_remaining)
+                                % 60);
                     checkMiniProductionRect(timeLeftBuf);
 
                     dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
@@ -921,10 +925,10 @@ void VehicleSelectionView::checkMaxValues(const UnitProfile &profile)
         maxAttackFactor = profile.attack_factor;
     }
     if (sqrt(profile.attack_range) > maxAttackRange) {
-        maxAttackRange = sqrt(profile.attack_range);
+        maxAttackRange = int(sqrt(profile.attack_range));
     }
     if (sqrt(profile.defend_range) > maxDefendRange) {
-        maxDefendRange = sqrt(profile.defend_range);
+        maxDefendRange = int(sqrt(profile.defend_range));
     }
     if (profile.speed_factor + profile.speed_rate > maxTotalSpeed) {
         maxTotalSpeed = profile.speed_factor + profile.speed_rate;
@@ -983,31 +987,9 @@ void VehicleSelectionView::drawUnitProfileInfo(const Surface &dest, const iXY &p
 
 void VehicleSelectionView::drawBar(const Surface &dest, const iXY &pos, int length, float percent)
 {
-    const PIX tickColor = Color::white;
-
     iXY size(int(float(length) * percent), CHAR_YPIX);
 
     dest.fillRect(iRect(pos.x, pos.y, pos.x + size.x, pos.y + size.y), Color::red);
-
-    // Draw tick marks.
-
-    //// Draw 3 major
-    //int topY    = pos.y + size.y / 2;
-    //int bottomY = pos.y + size.y;
-    //
-    //dest.drawVLine(pos.x + 0, topY, bottomY, tickColor);
-    //dest.drawVLine(pos.x + length / 2 - 1, topY, bottomY, tickColor);
-    //dest.drawVLine(pos.x + length - 1, topY, bottomY, tickColor);
-    //
-    //// Draw 4 minor
-    //int oneSixth = length / 6;
-    //topY    = pos.y + size.y - size.y / 4;
-    //bottomY = pos.y + size.y;
-    //
-    //dest.drawVLine(pos.x + oneSixth - 1, topY, bottomY, tickColor);
-    //dest.drawVLine(pos.x + oneSixth * 2 - 1, topY, bottomY, tickColor);
-    //dest.drawVLine(pos.x + oneSixth * 4 - 1, topY, bottomY, tickColor);
-    //dest.drawVLine(pos.x + oneSixth * 5 - 1, topY, bottomY, tickColor);
 }
 
 // actionPerformed

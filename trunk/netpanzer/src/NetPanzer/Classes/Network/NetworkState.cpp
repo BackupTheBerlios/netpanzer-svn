@@ -72,11 +72,11 @@ void NetworkState::resetNetworkStats( void )
     packets_received = 0;
 
     packets_sent_per_sec = 0;
-    packets_sent_time = 0.0000001;
+    packets_sent_time = 0;
     packets_sent_interval = now();
 
     packets_received_per_sec = 0;
-    packets_received_time = 0.0000001;
+    packets_received_time = 0;
     packets_received_interval = now();
 
     packets_sent_last_sec = 0;
@@ -113,7 +113,7 @@ void NetworkState::updateNetworkStats( void )
         bytes_received_last_sec = bytes_received;
         packets_received_last_sec = packets_received;
         packets_received_interval = stamp;
-        packets_received_time += seconds;
+        packets_received_time += long(seconds);
 
 
         packets_sent_per_sec = (float) packets_sent - (float) packets_sent_last_sec;
@@ -121,11 +121,10 @@ void NetworkState::updateNetworkStats( void )
         bytes_sent_last_sec = bytes_sent;
         packets_sent_last_sec = packets_sent;
         packets_sent_interval = stamp;
-        packets_sent_time += seconds;
+        packets_sent_time += long(seconds);
     }
-
 }
-
 
 void NetworkState::logNetworkStats()
 {}
+

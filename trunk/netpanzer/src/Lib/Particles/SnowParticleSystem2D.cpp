@@ -27,8 +27,6 @@ int SnowParticleSystem2D::snowParticleCount;
 //---------------------------------------------------------------------------
 SnowParticleSystem2D::SnowParticleSystem2D(fXYZ pos) : ParticleSystem2D(pos)
 {
-    FUNC("SnowParticleSystem2D::SnowParticleSystem2D");
-
     reset();
 
     init();
@@ -39,8 +37,6 @@ SnowParticleSystem2D::SnowParticleSystem2D(fXYZ pos) : ParticleSystem2D(pos)
 //---------------------------------------------------------------------------
 void SnowParticleSystem2D::reset()
 {
-    FUNC("SnowParticleSystem2D::reset");
-
     combinedTime      = 0.0;
     totalTime         = 0.0;
     snowParticleCount = 0;
@@ -53,8 +49,6 @@ void SnowParticleSystem2D::reset()
 //---------------------------------------------------------------------------
 void SnowParticleSystem2D::init()
 {
-    FUNC("SnowParticleSystem2D::init");
-
     try {
         snowParticles = new SnowParticle2D [SNOW_PARTICLE_COUNT];
     } catch(...) {}
@@ -70,8 +64,6 @@ void SnowParticleSystem2D::init()
 //---------------------------------------------------------------------------
 void SnowParticleSystem2D::sim()
 {
-    FUNC("SnowParticleSystem2D::sim");
-
     if (totalTime < 20) {
         totalTime += TimerInterface::getTimeSlice();
 

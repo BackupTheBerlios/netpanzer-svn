@@ -319,7 +319,7 @@ void MiniMapView::doIncreaseSize(int value)
     if (value == -1) {
         float dt = TimerInterface::getTimeSlice();
 
-        destSize += scaleDelta * dt;
+        destSize += int(scaleDelta * dt);
     } else {
         destSize += value;
     }
@@ -394,7 +394,7 @@ void MiniMapView::doDecreaseSize(int value)
     if (value == -1) {
         float dt = TimerInterface::getTimeSlice();
 
-        destSize -= scaleDelta * dt;
+        destSize -= int(scaleDelta * dt);
     } else {
         destSize -= value;
     }

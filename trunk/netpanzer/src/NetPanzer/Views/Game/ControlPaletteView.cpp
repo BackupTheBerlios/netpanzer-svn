@@ -70,7 +70,6 @@ ControlPaletteView::ControlPaletteView() : View()
 //---------------------------------------------------------------------------
 void ControlPaletteView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
-    FUNC("ControlPaletteView::doDraw");
     assert(this != 0);
     assert(viewArea.getDoesExist());
     assert(clientArea.getDoesExist());

@@ -29,8 +29,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //---------------------------------------------------------------------------
 GroundExplosionParticleSystem2D::GroundExplosionParticleSystem2D(fXYZ pos, iRect bounds, int maxParticleCount, int maxParticleSpeed) : ParticleSystem2D(pos)
 {
-    FUNC("GroundExplosionParticleSystem2D::GroundExplosionParticleSystem2D");
-
     // Make sure the the bounding box is not negative.
     assert(bounds.getSize().x >= 0);
     assert(bounds.getSize().y >= 0);

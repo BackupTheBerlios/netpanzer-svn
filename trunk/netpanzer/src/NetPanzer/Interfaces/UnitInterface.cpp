@@ -190,7 +190,6 @@ void UnitInterface::updateUnitStatus( void )
         while( unit != 0 ) {
             if ( unit->unit_state.lifecycle_state == _UNIT_LIFECYCLE_INACTIVE ) {
                 // Particle Shit Hack
-                iXY loc = iXY( unit->unit_state.location.x, unit->unit_state.location.y );
                 ParticleInterface::addHit(unit->unit_state);
 
                 //SFX
@@ -574,7 +573,7 @@ bool UnitInterface::quearyClosestUnit( UnitBase **closest_unit_ptr,
     UnitPointer *iterator;
     unsigned long list_index;
     UnitPointer *closest_unit = 0;
-    long closest_magnitude;
+    long closest_magnitude = 0;
 
     for( list_index = 0; list_index < max_players; list_index++) {
         if (   ( (search_flags == _search_exclude_player) && (player_id.getIndex() != list_index) )
@@ -593,10 +592,10 @@ bool UnitInterface::quearyClosestUnit( UnitBase **closest_unit_ptr,
                     if ( closest_unit == 0 ) {
                         closest_unit = unit_ptr;
                         delta  = loc - unit_ptr->unit->unit_state.location;
-                        closest_magnitude = delta.mag2();
+                        closest_magnitude = long(delta.mag2());
                     } else {
                         delta  = loc - unit_ptr->unit->unit_state.location;
-                        temp_mag = delta.mag2();
+                        temp_mag = long(delta.mag2());
 
                         if ( closest_magnitude > temp_mag ) {
                             closest_unit = unit_ptr;
@@ -623,7 +622,7 @@ bool UnitInterface::quearyClosestUnit( UnitBase **closest_unit_ptr,
 bool UnitInterface::quearyClosestUnit( UnitBase **closest_unit_ptr, iRect &bounding_rect, iXY &loc )
 {
     UnitBase *closest_unit = 0;
-    long closest_magnitude;
+    long closest_magnitude = 0;
     iRect bucket_rect;
     UnitBucketList *bucket_list;
     UnitBucketPointer *traversal_ptr;
@@ -643,10 +642,10 @@ bool UnitInterface::quearyClosestUnit( UnitBase **closest_unit_ptr, iRect &bound
                 if ( closest_unit == 0 ) {
                     closest_unit = traversal_ptr->unit;
                     delta  = loc - traversal_ptr->unit->unit_state.location;
-                    closest_magnitude = delta.mag2();
+                    closest_magnitude = long(delta.mag2());
                 } else {
                     delta  = loc - traversal_ptr->unit->unit_state.location;
-                    temp_mag = delta.mag2();
+                    temp_mag = long(delta.mag2());
 
                     if ( closest_magnitude > temp_mag ) {
                         closest_unit = traversal_ptr->unit;
@@ -678,7 +677,7 @@ bool UnitInterface::quearyClosestEnemyUnit( UnitBase **closest_unit_ptr,
     UnitPointer *iterator;
     unsigned long list_index;
     UnitPointer *closest_unit = 0;
-    long closest_magnitude;
+    long closest_magnitude = 0;
 
     for( list_index = 0; list_index < max_players; list_index++) {
         if ( ( player_index != list_index ) &&
@@ -694,10 +693,10 @@ bool UnitInterface::quearyClosestEnemyUnit( UnitBase **closest_unit_ptr,
                 if ( closest_unit == 0 ) {
                     closest_unit = unit_ptr;
                     delta  = loc - unit_ptr->unit->unit_state.location;
-                    closest_magnitude = delta.mag2();
+                    closest_magnitude = long(delta.mag2());
                 } else {
                     delta  = loc - unit_ptr->unit->unit_state.location;
-                    temp_mag = delta.mag2();
+                    temp_mag = long(delta.mag2());
 
                     if ( closest_magnitude > temp_mag ) {
                         closest_unit = unit_ptr;

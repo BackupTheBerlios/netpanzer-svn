@@ -59,8 +59,6 @@ void LobbyView::init()
     moveTo(0, 0);
     resize(640, 480);
 
-    iXY size(getClientRect().getSize());
-
     addButtonCenterText(iXY(628 - 60, 302 - 15), 60, "Abort", "Cancel the joining of this game.", bAbort);
 
     currentline = 0;

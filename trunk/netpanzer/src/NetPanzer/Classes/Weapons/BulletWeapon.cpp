@@ -42,8 +42,6 @@ void BulletWeapon::fsmFlight()
 {
     bool end_cycle = false;
 
-    float dt = TimerInterface::getTimeSlice();
-
     do {
         switch( fsmFlight_state ) {
         case _fsmFlight_idle : {
@@ -52,7 +50,7 @@ void BulletWeapon::fsmFlight()
             break;
 
         case _fsmFlight_in_flight : {
-                if (path.increment(&location, velocity) == true ) {
+                if (path.increment(&location, (short) velocity) == true ) {
                     fsmFlight_state = _fsmFlight_on_target;
                     end_cycle = true;
                 } else {

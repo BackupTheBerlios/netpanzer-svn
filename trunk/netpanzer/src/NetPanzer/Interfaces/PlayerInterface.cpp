@@ -61,7 +61,7 @@ void PlayerInterface::initialize( unsigned short maxPlayers, unsigned char max_s
         player_lists[ player_index ].setStatus( _player_state_free );
         player_lists[ player_index ].setFlag( 0 );
         player_lists[ player_index ].unit_config.initialize( max_spawn_units );
-        sprintf( temp_str, "Player %d", player_index );
+        sprintf( temp_str, "Player %lu", player_index );
         player_lists[ player_index ].setName( temp_str );
     }
 

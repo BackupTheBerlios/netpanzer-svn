@@ -265,10 +265,11 @@ UnitBase * UnitBucketArray::getUnitAtMapLoc( UnitID unit_id, iXY map_loc )
         traversal_ptr = traversal_ptr->next;
     }
 
-    return( 0 );
+    return 0;
 }
 
-bool UnitBucketArray::moveUnit( UnitID unit_id, unsigned long from_bucket_index, unsigned long to_bucket_index )
+bool UnitBucketArray::moveUnit(UnitID unit_id, unsigned long from_bucket_index,
+			       unsigned long to_bucket_index )
 {
     bool found = false;
     UnitBucketPointer *traversal_ptr;
@@ -292,14 +293,14 @@ bool UnitBucketArray::moveUnit( UnitID unit_id, unsigned long from_bucket_index,
     }
 
     if ( found == false ) {
-        from_bucket_index = getUnitBucketIndex( unit_id );
-        if( from_bucket_index  != -1 ) {
+        long from_bucket_index = getUnitBucketIndex( unit_id );
+        if(from_bucket_index != -1) {
             return( moveUnit( unit_id, from_bucket_index, to_bucket_index ) );
         } else
-            return( false );
+            return false;
     }
 
-    return( true );
+    return true;
 }
 
 bool UnitBucketArray::deleteUnitBucketPointer( UnitID unit_id, iXY world_loc )

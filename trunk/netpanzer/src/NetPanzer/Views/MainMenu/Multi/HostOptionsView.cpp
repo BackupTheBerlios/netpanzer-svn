@@ -172,27 +172,27 @@ void HostOptionsView::updateGameConfigCloudCoverage()
     switch (cloudCoverageCount) {
     case 0: {
             cloudCoverageString = "Clear";
-            GameConfig::setCloudCoverage(clearCloudCount);
+            GameConfig::setCloudCoverage(int(clearCloudCount));
         }
         break;
     case 1: {
             cloudCoverageString = "Broken";
-            GameConfig::setCloudCoverage(brokenCloudCount);
+            GameConfig::setCloudCoverage(int(brokenCloudCount));
         }
         break;
     case 2: {
             cloudCoverageString = "Partly Cloudy";
-            GameConfig::setCloudCoverage(partlyCloudyCloudCount);
+            GameConfig::setCloudCoverage(int(partlyCloudyCloudCount));
         }
         break;
     case 3: {
             cloudCoverageString = "Overcast";
-            GameConfig::setCloudCoverage(overcastCloudCount);
+            GameConfig::setCloudCoverage(int(overcastCloudCount));
         }
         break;
     case 4: {
             cloudCoverageString = "Extremely Cloudy";
-            GameConfig::setCloudCoverage(fuckingCloudyCloudCount);
+            GameConfig::setCloudCoverage(int(fuckingCloudyCloudCount));
         }
         break;
     }
@@ -348,7 +348,7 @@ void HostOptionsView::updateWindSpeedString()
 
 static int getObjectiveCapturePercent()
 {
-    return( GameConfig::getObjectiveOccuapationPercentage() );
+    return int(GameConfig::getObjectiveOccuapationPercentage());
 }
 
 static void bIncreaseObjectiveCapturePercent()
@@ -540,18 +540,8 @@ void HostOptionsView::drawMeterInfo(const Surface &dest, const iXY &pos)
 {
     char strBuf[256];
 
-    const int xTextStart       = pos.x;
     const int arrowButtonWidth = 16;
     const int yOffset          = 15;
-    const int buttonStartY     = pos.y;
-
-    // Draw a border around the meters.
-    iXY shit(30, buttonStartY - 20);
-    //iXY size(SCREEN_XPIX - 60, 154);
-    //iXY size(SCREEN_XPIX - 60, 140);
-    //iRect meterBorder(shit.x, shit.y, shit.x + size.x, shit.y + size.y);
-    //dest.bltLookup(meterBorder, Palette::darkGray256.getColorArray());
-    //dest.drawButtonBorder(meterBorder, Color::lightGreen, Color::darkGreen);
 
     int x = pos.x + 270 + arrowButtonWidth;
     int y = pos.y;
@@ -564,14 +554,6 @@ void HostOptionsView::drawMeterInfo(const Surface &dest, const iXY &pos)
     sprintf(strBuf, "%d", getCurMaxPlayersCount());
     tempSurface.bltStringCenter(strBuf, meterTextColor);
     tempSurface.blt(dest, x, y);
-    /*
-    	meterUsageXSize = tempSurface.getPixX() / getCurMaxPlayersCount();
-    	if (meterUsageXSize < 3) { meterUsageXSize = 3; }
-    	visualMeter = iRect(0, 0, meterUsageXSize, 14);
-    	percent = getCurMaxPlayersCount() / getMaxPlayersCount();
-    	visualMeter.translate(iXY(percent * tempSurface.getPixX(), 0));
-    	tempSurface.fillRect(visualMeter, Color::red);
-    */
 
     // Game Max Unit Count
     y += yOffset;

@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _CONNECTNETMESSAGE_HPP
 
 #include <time.h>
+#include <stdint.h>
 #include "NetPacket.hpp"
 #include "PlayerState.hpp"
 
@@ -47,9 +48,9 @@ enum { _net_message_id_connect_join_game_request,
 class ClientConnectJoinRequest : public NetMessage
 {
 public:
-    DWORD client_transport_id;
+    uint32_t client_transport_id;
     char  code_word[24];
-    DWORD protocol_version;
+    uint32_t protocol_version;
 
     ClientConnectJoinRequest()
     {
@@ -70,7 +71,7 @@ class ClientConnectJoinRequestAck : public NetMessage
 public:
     int   result_code;
     int   server_connection_state;
-    DWORD server_protocol_version;
+    uint32_t server_protocol_version;
 
     ClientConnectJoinRequestAck()
     {
@@ -131,7 +132,7 @@ __attribute__((packed));
 class ConnectProcessUpdate : public NetMessage
 {
 public:
-    unsigned long queue_position;
+    uint32_t queue_position;
 
     ConnectProcessUpdate()
     {
@@ -153,8 +154,8 @@ enum { _connect_state_message_load_game_data,
 class ConnectProcessStateMessage : public NetMessage
 {
 public:
-    unsigned long message_enum;
-    int           percent_complete;
+    uint32_t message_enum;
+    int32_t  percent_complete;
 
     ConnectProcessStateMessage()
     {
@@ -169,8 +170,8 @@ class ConnectClientSettings : public NetMessage
 {
 public:
     char player_name[64];
-    short player_flag;
-    unsigned char unit_color;
+    int16_t player_flag;
+    uint8_t unit_color;
 
     ConnectClientSettings()
     {
@@ -191,31 +192,29 @@ __attribute__((packed));
 class ConnectMesgServerGameSettings : public NetMessage
 {
 public:
-    unsigned short max_players;
-    unsigned short max_units;
-    char           map_name[32];
-    int	          cloud_coverage;
-    float          wind_speed;
-    int            game_type;
-    bool        map_cycle_state;
-    bool        powerup_state;
-    int            frag_limit;
-    int            time_limit;
-    time_t         elapsed_time;
+    uint16_t max_players;
+    uint16_t max_units;
+    char     map_name[32];
+    int32_t  cloud_coverage;
+    float    wind_speed;
+    int32_t  game_type;
+    uint8_t  map_cycle_state;
+    uint8_t  powerup_state;
+    int32_t  frag_limit;
+    int32_t  time_limit;
+    time_t   elapsed_time;
 
     ConnectMesgServerGameSettings()
     {
         message_class = _net_message_class_connect;
         message_id = _net_message_id_connect_server_game_setup;
     }
-
 }
 __attribute__((packed));
 
 class ConnectMesgClientGameSetupAck : public NetMessage
 {
 public:
-
     ConnectMesgClientGameSetupAck()
     {
         message_class = _net_message_class_connect;
@@ -227,7 +226,6 @@ __attribute__((packed));
 class ConnectMesgClientGameSetupPing : public NetMessage
 {
 public:
-
     ConnectMesgClientGameSetupPing()
     {
         message_class = _net_message_class_connect;
@@ -253,13 +251,11 @@ __attribute__((packed));
 class ConnectMesgNetPanzerServerDisconnect : public NetMessage
 {
 public:
-
     ConnectMesgNetPanzerServerDisconnect()
     {
         message_class = _net_message_class_connect;
         message_id = _net_message_id_connect_netPanzer_server_disconnect;
     }
-
 }
 __attribute__((packed));
 

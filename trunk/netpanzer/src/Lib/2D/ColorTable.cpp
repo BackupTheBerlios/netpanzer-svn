@@ -179,7 +179,6 @@ void ColorTable::createDarkenFilter(const char *filename, float fudgeValue)
     // it to a file.
     float    curPercent;
     int      curOffset;
-    RGBColor col;
     RGBColor curColor;
     const float percent = fudgeValue;
 

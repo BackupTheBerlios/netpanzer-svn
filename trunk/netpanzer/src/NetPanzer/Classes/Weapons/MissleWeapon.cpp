@@ -90,7 +90,7 @@ void MissleWeapon::fsmFlight()
                 }
 
 
-                if (path.increment(&location, velocity) == true ) {
+                if (path.increment(&location, (short) velocity) == true ) {
                     fsmFlight_state = _fsmFlight_on_target;
                     end_cycle = true;
                 } else {
@@ -145,7 +145,7 @@ void MissleWeapon::updateStatus( void )
 
     shell.setWorldPos(location);
 
-    iXY thrustOffset(-10.0f * direction.x, -10.0f * direction.y);
+    iXY thrustOffset(int(-10.0f * direction.x), int(-10.0f * direction.y));
 
     thrust.setWorldPos(location + thrustOffset);
 

@@ -241,16 +241,16 @@ void MiniMapInterface::deselectUnits( void )
 
 bool MiniMapInterface::isValidUnitMove( iXY location )
 {
-    location.x = location.x * scale_factor.x;
-    location.y = location.y * scale_factor.y;
+    location.x = int(location.x * scale_factor.x);
+    location.y = int(location.y * scale_factor.y);
 
     return( COMMAND_PROCESSOR.isValidMoveLocation( location ) );
 }
 
 bool MiniMapInterface::moveUnits( iXY location )
 {
-    location.x = location.x * scale_factor.x;
-    location.y = location.y * scale_factor.y;
+    location.x = int(location.x * scale_factor.x);
+    location.y = int(location.y * scale_factor.y);
 
     return( COMMAND_PROCESSOR.sendMoveCommandExternal( location ) );
 }

@@ -1692,7 +1692,8 @@ void View::moveTo(iXY destMin)
 
             float xRatio = float(difference.x) / float(getSizeX());
 
-            resize(getSizeX() - difference.x, float(getSizeY()) * xRatio);
+            resize(int(getSizeX() - difference.x),
+                    int(float(getSizeY()) * xRatio));
 
         } else if (getSizeY() > SCREEN_YPIX) {
             fXY difference;
@@ -1701,7 +1702,8 @@ void View::moveTo(iXY destMin)
 
             float yRatio = float(difference.y) / float(getSizeY());
 
-            resize(float(getSizeY()) * yRatio, getSizeY() - difference.y);
+            resize(int(float(getSizeY()) * yRatio),
+                    int(getSizeY() - difference.y));
         }
     }
 

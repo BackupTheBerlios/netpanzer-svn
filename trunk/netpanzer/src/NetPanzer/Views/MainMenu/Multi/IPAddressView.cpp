@@ -30,7 +30,6 @@ static void buttonOkay(void)
 {
     ConnectionAddress address;
     char * szServerName;
-    int ret_val;
 
     szServerName = (char *)IPAddressView::szServer.getString();
 

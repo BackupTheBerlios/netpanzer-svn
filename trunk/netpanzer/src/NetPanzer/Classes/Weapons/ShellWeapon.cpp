@@ -35,8 +35,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ShellWeapon::ShellWeapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end)
         : Weapon(owner, owner_type_id, damage, start, end)
 {
-    fXYZ muzzleStart(start.x + direction.x * 25, 0.0f, start.y + direction.y * 25);
-
     velocity = gShellVelocity;
 
     int frame360 = getGoalAngle(start, end);
@@ -66,8 +64,6 @@ void ShellWeapon::fsmFlight()
 {
     bool end_cycle = false;
 
-    float dt = TimerInterface::getTimeSlice();
-
     do {
         switch( fsmFlight_state ) {
         case _fsmFlight_idle : {
@@ -76,7 +72,7 @@ void ShellWeapon::fsmFlight()
             break;
 
         case _fsmFlight_in_flight : {
-                if (path.increment(&location, velocity) == true ) {
+                if (path.increment(&location, (short) velocity) == true ) {
                     fsmFlight_state = _fsmFlight_on_target;
                     end_cycle = true;
                 } else {

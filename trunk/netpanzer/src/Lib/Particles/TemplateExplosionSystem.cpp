@@ -124,9 +124,9 @@ TemplateExplosionSystem::TemplateExplosionSystem(	const fXYZ            &pos,
     float percentScale = Particle2D::getScale(e.percentScaleMin, e.percentScaleRand);
 
     // Get the number of particles of each type.
-    int smallCount  = particleCount * e.percentCountSmall;
-    int mediumCount = particleCount * e.percentCountMedium;
-    int largeCount  = particleCount * e.percentCountLarge;
+    int smallCount  = int(particleCount * e.percentCountSmall);
+    int mediumCount = int(particleCount * e.percentCountMedium);
+    int largeCount  = int(particleCount * e.percentCountLarge);
 
     // Check to see if we need to make some adjustments for low frame rates.
     int fpsLow = (TimerInterface::getFPS() < 20) ? 1 : 0;

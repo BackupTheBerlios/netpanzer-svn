@@ -36,7 +36,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 enum{ _rotate_and_move, _rotate_stop_move };
 
-Vehicle::Vehicle( iXY initial_loc )
+Vehicle::Vehicle(iXY initial_loc)
+    : path(1000)
 {
     smolderWait    = 0.0f;
     smolderWaitMin = 0.0f;
@@ -45,7 +46,6 @@ Vehicle::Vehicle( iXY initial_loc )
     MapInterface::mapXYtoPointXY( initial_loc, &loc );
     unit_state.location = loc;
     markUnitLoc( initial_loc );
-    path.initialize();
     fsm_timer.changeRate( 10 );
     unit_state_timer.changeRate( 10 );
     setAiFsmDefendHold();

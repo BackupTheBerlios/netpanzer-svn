@@ -30,12 +30,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitPowerUp.hpp"
 #include "EnemyRadarPowerUp.hpp"
 
+#include "Log.hpp"
 #include "NetworkState.hpp"
 #include "Server.hpp"
 #include "PowerUpNetMessage.hpp"
-
-//#include "lua.h"
-//#include "lualib.h"
 
 PowerUpList PowerUpInterface::powerup_list;
 
@@ -152,8 +150,8 @@ void PowerUpInterface::setPowerUpLimits( unsigned long map_size_x, unsigned long
     //spawn_bound_upper  = lua_getresult(2);
     //spawn_bound_lower  = lua_getresult(3);
 
-    int player_factor = (( 0.10 ) * active_players);
-    int power_up_limit = ( ( 0.0000625 ) * ( (map_size_x * map_size_y) ) );
+    int player_factor = int(( 0.10 ) * active_players);
+    int power_up_limit = int( ( 0.0000625 ) * ( (map_size_x * map_size_y) ) );
     power_up_limit = power_up_limit + (power_up_limit * player_factor);
 
     PowerUpInterface::power_up_limit = power_up_limit;
@@ -164,7 +162,7 @@ void PowerUpInterface::setPowerUpLimits( unsigned long map_size_x, unsigned long
 void PowerUpInterface::generatePowerUp( void )
 {
     unsigned long map_size_x, map_size_y;
-    PowerUp *power_up;
+    PowerUp *power_up = 0;
     float next_regen_interval;
     PowerUpCreateMesg create_mesg;
     iXY loc;
@@ -197,11 +195,11 @@ void PowerUpInterface::generatePowerUp( void )
         case _powerup_enemy_radar :
             power_up = new EnemyRadarPowerUp( loc, powerup_type );
             break;
+            
+        default:
+            LOGGER.info("Unknown powerup type?!?");
+            return;
         }
-
-        //power_up = new BonusUnitPowerUp( loc, _powerup_bonus_units);
-        //power_up = new UnitPowerUp( loc, _powerup_unit );
-        //power_up = new EnemyRadarPowerUp( loc, _powerup_enemy_radar );
 
         powerup_list.add( power_up );
 
@@ -225,7 +223,6 @@ void PowerUpInterface::generatePowerUp( void )
 
 void PowerUpInterface::initialize( void )
 {
-    int lua_return;
     BONUS_POWERUP_ANIM.load( "powerups/Bolt.pak" );
     BONUS_POWERUP_ANIM.setFPS( 15 );
     BONUS_POWERUP_ANIM_SHADOW.load( "powerups/BoltS.pak" );
@@ -330,7 +327,7 @@ void PowerUpInterface::offloadGraphics( SpriteSorter &sorter )
 
 void PowerUpInterface::netMessagePowerUpCreate( NetMessage *message )
 {
-    PowerUp *power_up;
+    PowerUp *power_up = 0;
     PowerUpCreateMesg *create_mesg;
 
     create_mesg = (PowerUpCreateMesg *) message;
@@ -348,6 +345,10 @@ void PowerUpInterface::netMessagePowerUpCreate( NetMessage *message )
     case _powerup_enemy_radar :
         power_up = new EnemyRadarPowerUp( create_mesg->map_loc, create_mesg->type );
         break;
+        
+    default:
+        LOGGER.info("Unknown powerup type?!?");
+        return;
     }
 
     power_up->powerup_state.ID = create_mesg->ID;

@@ -19,16 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <assert.h>
 #include "PathList.hpp"
 
-unsigned long DEFAULT_PATH_LIST_SIZE = 1000;
-
-PathList::PathList( void )
-{
-    list = 0;
-    first = 0;
-    last = first;
-}
-
-PathList::PathList( long list_size )
+PathList::PathList(size_t list_size )
 {
     size = list_size;
     first = 0;
@@ -38,30 +29,23 @@ PathList::PathList( long list_size )
     assert( list != 0 );
 }
 
-PathList::~PathList( void )
+PathList::PathList(const PathList& other)
 {
-    if( list != 0 ) {
-        free( list );
-    }
+    initialize(other.size);
+    *this = other;
 }
 
-void PathList::initialize( void )
+PathList::~PathList()
 {
-    size = DEFAULT_PATH_LIST_SIZE;
-    first = 0;
-    last = first;
-
-    list = (unsigned long *) malloc( sizeof(unsigned long) * size );
-    assert( list != 0 );
+    free(list);
 }
 
-
-void PathList::initialize( long list_size )
+void PathList::initialize(size_t list_size )
 {
     size = list_size;
-    first = 0;
-    last = first;
+    first = last = 0;
 
     list = (unsigned long *) malloc( sizeof(unsigned long) * list_size );
     assert( list != 0 );
 }
+

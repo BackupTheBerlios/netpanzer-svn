@@ -201,14 +201,14 @@ void CodeStatsView::drawNetworkStats( const Surface &clientArea)
 
     str_loc.y += 12;
 
-    sprintf(strBuf, "Sent %d, %.4f 1/s, %.4f Avg",NetworkState::packets_sent,
+    sprintf(strBuf, "Sent %ld, %.4f 1/s, %.4f Avg",NetworkState::packets_sent,
             NetworkState::packets_sent_per_sec,
             ((float) NetworkState::packets_sent) / ((float) NetworkState::packets_sent_time) );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
-    sprintf(strBuf, "Recv %d, %.4f 1/s, %.4f Avg",NetworkState::packets_received,
+    sprintf(strBuf, "Recv %ld, %.4f 1/s, %.4f Avg",NetworkState::packets_received,
             NetworkState::packets_received_per_sec,
             ((float) NetworkState::packets_received) / ((float) NetworkState::packets_received_time) );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
@@ -221,14 +221,14 @@ void CodeStatsView::drawNetworkStats( const Surface &clientArea)
 
     str_loc.y += 12;
 
-    sprintf(strBuf, "Sent %d, %.4f 1/s, %.4f Avg",NetworkState::bytes_sent,
+    sprintf(strBuf, "Sent %ld, %.4f 1/s, %.4f Avg",NetworkState::bytes_sent,
             NetworkState::bytes_sent_per_sec,
             ((float) NetworkState::bytes_sent) / ((float) NetworkState::packets_sent_time) );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
-    sprintf(strBuf, "Recv %d, %.4f 1/s, %.4f Avg",NetworkState::bytes_received,
+    sprintf(strBuf, "Recv %ld, %.4f 1/s, %.4f Avg",NetworkState::bytes_received,
             NetworkState::bytes_received_per_sec,
             ((float) NetworkState::bytes_received) / ((float) NetworkState::packets_received_time) );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
@@ -240,13 +240,13 @@ void CodeStatsView::drawNetworkStats( const Surface &clientArea)
 
     str_loc.y += 12;
 
-    sprintf(strBuf, "Sent : %d, %.4f 1/s ", NetworkState::opcodes_sent,
+    sprintf(strBuf, "Sent : %ld, %.4f 1/s ", NetworkState::opcodes_sent,
             NetworkState::opcodes_sent_per_sec );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
-    sprintf(strBuf, "Recv : %d, %.4f 1/s", NetworkState::opcodes_received,
+    sprintf(strBuf, "Recv : %ld, %.4f 1/s", NetworkState::opcodes_received,
             NetworkState::opcodes_received_per_sec );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
@@ -305,7 +305,7 @@ void CodeStatsView::drawSorterStats( const Surface &clientArea)
     str_loc.y += 12;
 
     for ( unsigned long i = 0; i < _MAX_HEIGHT_LEVELS; i++ ) {
-        sprintf(strBuf, "Level %d : %d  ", i, SPRITE_SORTER.getMaxSprites( i ) );
+        sprintf(strBuf, "Level %lu : %lu  ", i, SPRITE_SORTER.getMaxSprites( i ) );
         clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
         str_loc.y += 12;
     }
@@ -341,30 +341,29 @@ void CodeStatsView::drawPathingStats( const Surface &clientArea)
 
     str_loc.y += 12;
 
-    sprintf(strBuf, "Path Length: %d ", PathingState::path_length );
+    sprintf(strBuf, "Path Length: %ld ", PathingState::path_length );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
 
     str_loc.y += 12;
 
-    sprintf(strBuf, "Paths: %d ", PathingState::path_gen_count );
+    sprintf(strBuf, "Paths: %lu ", PathingState::path_gen_count );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
-    sprintf(strBuf, "Updates: %d ", PathingState::update_gen_count );
+    sprintf(strBuf, "Updates: %lu ", PathingState::update_gen_count );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
-    sprintf(strBuf, "Cache Hits: %d ", PathingState::path_cache_hits );
+    sprintf(strBuf, "Cache Hits: %lu ", PathingState::path_cache_hits );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
-    sprintf(strBuf, "Cache Misses: %d ", PathingState::path_cache_misses );
+    sprintf(strBuf, "Cache Misses: %lu ", PathingState::path_cache_misses );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-
 }
 
 //---------------------------------------------------------------------------
@@ -390,7 +389,7 @@ void CodeStatsView::drawUnitStats( const Surface &clientArea )
         units = UnitInterface::getUnitCount( i );
         total += units;
 
-        sprintf(strBuf, "Player %d : %d  ", i, units);
+        sprintf(strBuf, "Player %d : %lu  ", i, units);
         clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
         str_loc.y += 12;
     }

@@ -18,13 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PLAYERID_HPP
 #define _PLAYERID_HPP
 
-#include <string.h>
+#include <stdint.h>
 #include "UILib/Network/Client.hpp"
 
 class PlayerID
 {
 protected:
-    unsigned short index_id;
+    uint16_t index_id;
     Client::ID networkid;
 
 public:

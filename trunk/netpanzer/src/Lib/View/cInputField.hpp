@@ -110,11 +110,11 @@ public:
 
 private:
     iXY      pos;
-    int      maxCharCount;
+    size_t   maxCharCount;
     char    *destString;
     char    *excludedCharacters;
     iRect    bounds;
-    int      cursorPos;
+    size_t   cursorPos;
     Surface inputFieldSurface;
 
     void reset();

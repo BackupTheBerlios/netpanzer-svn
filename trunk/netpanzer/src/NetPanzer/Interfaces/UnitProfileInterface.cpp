@@ -122,8 +122,8 @@ short extract_token( char *token, char **string )
     str = extract_spaces( str, 0 );
 
     while( (str[index] != 0) && (str[ index ] != token_char) ) {
-        if ( str[index] == '""' )
-            token_char = '""';
+        if (str[index] == '"')
+            token_char = '"';
         else
             if ( (str[index] != '\n') && (str[index] != '\r') ) {
                 token[ token_index ] = str[index];
@@ -149,13 +149,7 @@ short extract_token( char *token, char **string )
 
 void string_to_params( char *string, parameter_list *params )
 {
-    char *token_ptr;
-    //**************
-    short string_count=0;
-
-
     params->param_count = 0;
-
 
     if( extract_token( params->params[ params->param_count ], &string ) )
         params->param_count++;
@@ -173,7 +167,6 @@ void string_to_params( char *string, parameter_list *params )
 void read_vehicle_profile( char *file_path, UnitProfile *profile)
 {
     int field;
-    char parse_str[256];
     char temp_str[80];
     parameter_list param_list;
     int temp_int;
@@ -293,17 +286,10 @@ void read_vehicle_profile( char *file_path, UnitProfile *profile)
             }
             break;
         } // ** switch
-
-
-
     } // ** while ( !feof )
-
-
 } // function
 
-
 UnitProfile UnitProfileInterface::profile_table[ _MAX_UNIT_TYPES ];
-
 
 void UnitProfileInterface::loadUnitProfiles( void )
 {

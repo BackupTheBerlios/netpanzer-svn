@@ -85,7 +85,8 @@ void ClientConnectDaemon::netMessageLinkAck( NetMessage *message )
     switch( join_request_ack_mesg->result_code ) {
     case _join_request_result_success :
         lobbyView.scrollAndUpdate( "Link to Server Established" );
-        sprintf( buf, "Protocol Version: %d", join_request_ack_mesg->server_protocol_version);
+        sprintf( buf, "Protocol Version: %u",
+		 join_request_ack_mesg->server_protocol_version);
         lobbyView.scrollAndUpdate( buf );
         break;
 
@@ -94,7 +95,8 @@ void ClientConnectDaemon::netMessageLinkAck( NetMessage *message )
         lobbyView.scrollAndUpdate( "Incorrect Network Protocol Revision" );
         lobbyView.scrollAndUpdate( "Please update your netPanzer executable at" );
         lobbyView.scrollAndUpdate( "www.nongnu.org/netpanzer" );
-        sprintf( buf, "Server Protocol Version: %d", join_request_ack_mesg->server_protocol_version);
+        sprintf( buf, "Server Protocol Version: %u",
+		join_request_ack_mesg->server_protocol_version);
         lobbyView.scrollAndUpdate( buf );
         connection_state = _connect_state_connect_failure;
         failure_display_timer.reset();

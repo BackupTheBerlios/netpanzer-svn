@@ -243,8 +243,6 @@ void ScrollBar::draw(const Surface &dest)
 void ScrollBar::actionPerformed(const iXY &pos)
 {
     if (parent != 0) {
-        iRect cr(((View *) parent)->getClientRect());
-
         if (orientation == HORIZONTAL) {
             percent = float(pos.x) / float(size.x);
         } else if (orientation == VERTICAL) {
@@ -253,7 +251,8 @@ void ScrollBar::actionPerformed(const iXY &pos)
             assert(false);
         }
 
-        int newValue = percent * float(maximum - minimum - viewableAmount);
+        int newValue = int(percent * float(maximum - minimum -
+		       viewableAmount));
 
         int difference = newValue - value;
 

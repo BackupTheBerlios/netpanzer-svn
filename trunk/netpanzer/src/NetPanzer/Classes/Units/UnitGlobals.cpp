@@ -177,34 +177,6 @@ void LoadUnitSurfaces( void )
     gArcherTurret.load( "units/pics/pak/ArchTNSD.pak" );
     gArcherBody.load( "units/pics/pak/ArchHNSD.pak" );
 
-    /*
-    if (  gAbramsTurret.getFrameCount() < 36) assert( false ); 
-    if (  gAbramsBody.getFrameCount() < 36) assert( false ); 
-     
-    if (  gLeopardTurret.getFrameCount() < 36) assert( false ); 
-    if (  gLeopardBody.getFrameCount() < 36) assert( false ); 
-     
-    if (  gValentineTurret.getFrameCount() < 36) assert( false ); 
-    if (  gValentineBody.getFrameCount() < 36) assert( false ); 
-     
-    if (  gHammerheadTurret.getFrameCount() < 36) assert( false ); 
-    if (  gHammerheadBody.getFrameCount() < 36) assert( false ); 
-     
-    if (  gHumveeBody.getFrameCount() < 36) assert( false ); 
-     
-    if (  gLynxTurret.getFrameCount() < 36) assert( false ); 
-    if (  gLynxBody.getFrameCount() < 36) assert( false ); 
-     
-    if (  gM109Turret.getFrameCount() < 36) assert( false ); 
-    if (  gM109Body.getFrameCount() < 36) assert( false ); 
-     
-    if (  gSpahPanzerTurret.getFrameCount() < 36) assert( false ); 
-    if (  gSpahPanzerBody.getFrameCount() < 36) assert( false ); 
-     
-    if (  gScorpionTurret.getFrameCount() < 36) assert( false ); 
-    if (  gScorpionBody.getFrameCount() < 36) assert( false ); 
-    */
-
 #ifdef _GRAY_MAPPED_UNITS
     Palette::init("wads/netp.act");
     ColorTable gray256;
@@ -215,7 +187,9 @@ void LoadUnitSurfaces( void )
     gray256.init(256);
     for (int num = 0; num < 256; num++) {
         int c            = Palette::color[num].getBrightnessInt();
-        int nearestColor = Palette::findNearestColor(RGBColor(c * grayPercent, c * grayPercent, c * grayPercent));
+        int nearestColor = Palette::findNearestColor(
+		RGBColor(int(c * grayPercent), int(c * grayPercent),
+			 int(c * grayPercent)));
         gray256.setColor(num, nearestColor);
     }
 
@@ -290,36 +264,6 @@ void LoadUnitSurfaces( void )
     gArcherBodyDarkBlue.load( "units/pics/pak/ArchHNSD.pak" );
 
 #endif
-
-    /*
-    if (  gAbramsTurretDarkBlue.getFrameCount() < 36) assert( false ); 
-    if (  gAbramsBodyDarkBlue.getFrameCount() < 36) assert( false ); 
-     
-    if (  gLeopardTurretDarkBlue.getFrameCount() < 36) assert( false ); 
-    if (  gLeopardBodyDarkBlue.getFrameCount() < 36) assert( false ); 
-     
-    if (  gValentineTurretDarkBlue.getFrameCount() < 36) assert( false ); 
-    if (  gValentineBodyDarkBlue.getFrameCount() < 36) assert( false ); 
-     
-    if (  gHammerheadTurretDarkBlue.getFrameCount() < 36) assert( false ); 
-    if (  gHammerheadBodyDarkBlue.getFrameCount() < 36) assert( false ); 
-     
-    if (  gHumveeBodyDarkBlue.getFrameCount() < 36) assert( false ); 
-     
-    if (  gLynxTurretDarkBlue.getFrameCount() < 36) assert( false ); 
-    if (  gLynxBodyDarkBlue.getFrameCount() < 36) assert( false ); 
-     
-    if (  gM109TurretDarkBlue.getFrameCount() < 36) assert( false ); 
-    if (  gM109BodyDarkBlue.getFrameCount() < 36) assert( false ); 
-     
-    if (  gSpahPanzerTurretDarkBlue.getFrameCount() < 36) assert( false ); 
-    if (  gSpahPanzerBodyDarkBlue.getFrameCount() < 36) assert( false ); 
-     
-    if (  gScorpionTurretDarkBlue.getFrameCount() < 36) assert( false ); 
-    if (  gScorpionBodyDarkBlue.getFrameCount() < 36) assert( false ); 
-    */
-
-
     //********** SHADOWS ************
 
     gAbramsTurretShadow.load( "units/pics/pak/TitaTSSD.pak" );

@@ -50,13 +50,7 @@ private:
 };
 
 extern Logger LOGGER;
-#ifdef DO_LOGGING
 #define LOG(x)         LOGGER.info x
-#else
-#define LOG(x)
-#endif // DO_LOGGING
-// FUNC is deprecated
-#define FUNC(x)
 
 #endif
 

@@ -106,8 +106,8 @@ GameInfoView::GameInfoView() : GameTemplateView()
 void GameInfoView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
     char unitsBuf[64];
-    char killsBuf[64];
-    char lossesBuf[64];
+    //char killsBuf[64];
+    //char lossesBuf[64];
     char fragsBuf[64];
     char timeBuf[64];
     char pingBuf[64];

@@ -292,8 +292,7 @@ void ParticleInterface::addExplosionSmokeParticle(const iXY &worldPos, int maxPa
     // Chooses light or dark smoke.
     int particleType = rand() % 2;
 
-    fXYZ  pos(worldPos.x, 0, worldPos.y);
-    iRect r(0, 0, 0, 0);
+    //iRect r(0, 0, 0, 0);
 
     if      (particleType == 0) {
         try {
@@ -313,7 +312,7 @@ void ParticleInterface::addExplosionSmokeParticle(const iXY &worldPos, int maxPa
 //--------------------------------------------------------------------------
 void ParticleInterface::addExplosionDirtSystem(const iXY &worldPos, const iRect &bounds)
 {
-    fXYZ  pos(worldPos.x, 0, worldPos.y);
+    //fXYZ  pos(worldPos.x, 0, worldPos.y);
 
     try {
         //new ExplosionParticleSystem2D(pos, bounds, dirtExplosionMaxParticleCount / 2, float(explosionParticleMaxSpeed) * 0.75f, DIRT_PUFF);
@@ -323,7 +322,7 @@ void ParticleInterface::addExplosionDirtSystem(const iXY &worldPos, const iRect 
 //--------------------------------------------------------------------------
 void ParticleInterface::addGroundExplosionSystem(const iXY &worldPos, const iRect &bounds, int maxParticleCount, int maxParticleSpeed)
 {
-    fXYZ  pos(worldPos.x, 0, worldPos.y);
+    //fXYZ  pos(worldPos.x, 0, worldPos.y);
 
     try {
         //new GroundExplosionParticleSystem2D(pos, bounds, maxParticleCount, maxParticleSpeed);
@@ -345,7 +344,7 @@ void ParticleInterface::addExplosionSmokeSystem(const iXY &worldPos, const iRect
     }
     //if (particleNum == 2) { particleType = DIRT_PUFF; }
 
-    fXYZ  pos(worldPos.x, 0, worldPos.y);
+    //fXYZ  pos(worldPos.x, 0, worldPos.y);
 
     try {
         //new ExplosionParticleSystem2D(pos, bounds, maxParticleCount, maxParticleSpeed, particleType);
@@ -911,12 +910,12 @@ void ParticleInterface::addMoveDirtPuff(const UnitState &unitState)
             movePuffWaitTotal = (float(rand()) / float(RAND_MAX)) * 0.05f + 0.05f;
 
             try {
-                new PuffParticle2D(	pos,
+                new PuffParticle2D( pos,
                                     DIRT,
                                     0.0f,
                                     0.15f,
-                                    smokeFPSMin * 0.75f,
-                                    smokeFPSRand * 0.75f,
+                                    (int) (smokeFPSMin * 0.75f),
+                                    (int) (smokeFPSRand * 0.75f),
                                     1,
                                     0,
                                     MuzzleSystem::windScale,

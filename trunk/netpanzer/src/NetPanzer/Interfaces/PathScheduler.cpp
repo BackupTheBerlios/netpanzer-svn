@@ -16,9 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
+#include "Log.hpp"
 #include "PathScheduler.hpp"
-
-
 #include "PathingState.hpp"
 
 void PathCache::initialize( void )
@@ -35,7 +35,7 @@ void PathCache::initialize( unsigned long cache_size )
     cache_list.initialize( PathCache::cache_size );
 
     for( unsigned long i = 0; i < PathCache::cache_size; i++ ) {
-        cache_list[ i ].path.initialize();
+        //cache_list[ i ].path.initialize();
         cache_list[ i ].valid = false;
     }
 
@@ -69,12 +69,12 @@ bool PathCache::search( PathRequest &path_request )
     return( false );
 }
 
-void PathCache::add( PathRequest &path_request )
+void PathCache::add(PathRequest &path_request)
 {
     if (cache_size <= 0 )
         return;
 
-    if ( path_request.path->listCount() >= add_path_length_threshold ) {
+    if (path_request.path->listCount() >= add_path_length_threshold) {
         entry_replace_index = (entry_replace_index % cache_size);
 
         cache_list[ entry_replace_index ].set( path_request.start,
@@ -374,18 +374,19 @@ void PathScheduler::initialize( void )
 {
     if( MapInterface::isMapLoaded() == true ) {
         unsigned long resources;
-        unsigned long path_list_size;
+        size_t path_list_size;
         float map_x_size = MapInterface::getMapXsize();
         float map_y_size = MapInterface::getMapYsize();
         float map_size = (map_x_size * map_y_size);
 
         resources = (unsigned long) ( (map_size * 0.019018) + 4018.0 );
 
-        path_list_size = sqrt( (map_x_size * map_x_size) + (map_y_size * map_y_size) );
-        path_list_size = ( 0.3 * path_list_size) + path_list_size;
+        path_list_size = (size_t) sqrt( (map_x_size * map_x_size) + (map_y_size * map_y_size) );
+        path_list_size += size_t(0.3 * path_list_size);
 
-        if ( path_list_size > 1000 ) {
-            DEFAULT_PATH_LIST_SIZE = (unsigned long) (path_list_size);
+        if ( path_list_size > 5000 ) {
+            //DEFAULT_PATH_LIST_SIZE = (unsigned long) (path_list_size);
+            LOG(("Warning: PathListSite>5000..."));
         }
 
         initialize( 200, 200, 2000, resources );
@@ -437,7 +438,8 @@ void PathScheduler::requestPath( PathRequest &path_request )
 {
     long path_distance_estimate;
 
-    path_distance_estimate = (path_request.start - path_request.goal).mag2();
+    path_distance_estimate 
+        = long ((path_request.start - path_request.goal).mag2());
 
     if ( path_distance_estimate <= short_queue_distance_threshold ) {
         short_request_queue.enqueue( path_request );

@@ -72,8 +72,8 @@ GetSessionHostView::GetSessionHostView() : View()
     maxViewableItems = getClientRect().getSizeY() / (TEXT_GAP_SPACE + CHAR_YPIX) - 1;
     topViewableItem  = 0;
 
-    iXY size(20, 20);
-    iXY pos(getClientRect().getSizeX() - size.x, 0);
+    //iXY size(20, 20);
+    //iXY pos(getClientRect().getSizeX() - size.x, 0);
 
     //upButton.setLabel("+");
     //upButton.setBounds(iRect(pos, pos + size));
@@ -244,7 +244,7 @@ void GetSessionHostView::updateHostList()
     if (hosts.getCount() > 0 && selectedItem != -1 && selectedItem < hosts.getCount()) {
         sprintf(curHostName, "%s", hosts[selectedItem].getName());
     } else {
-        sprintf(curHostName, "");
+        strcpy(curHostName, "");
     }
 
     hosts.setNum(0);

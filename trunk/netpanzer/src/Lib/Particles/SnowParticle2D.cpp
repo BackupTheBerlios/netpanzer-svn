@@ -63,7 +63,6 @@ void SnowParticle2D::init(fXYZ pos, unsigned nSize)
 //---------------------------------------------------------------------------
 void SnowParticle2D::sim()
 {
-    FUNC("SnowParticle2D::sim");
     /*
     	float x = gravity.wind.ParticleSystem2D::wind.x;
     	float z = ParticleSystem2D::wind.z;
@@ -104,8 +103,6 @@ void SnowParticle2D::sim()
 //---------------------------------------------------------------------------
 void SnowParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 {
-    FUNC("SnowParticle2D::draw");
-
     //if      (size == 1) dest.putPixel(iXY(pos.x, pos.z), color);
     //else if (size == 2) dest.fillRect(iRect(pos.x, pos.z, pos.x+1, pos.z+1), color);
     //else if (size == 3) dest.fillRect(iRect(pos.x, pos.z, pos.x+2, pos.z+2), color);

@@ -419,8 +419,7 @@ void HostJoinTemplateView::doDraw(const Surface &viewArea, const Surface &client
 {
     MenuTemplateView::doDraw(viewArea, clientArea);
 
-    iXY pos(420, 38);
-
+    //iXY pos(420, 38);
     //clientArea.bltString(pos, "Are You", Color::white);
 
     // Display the game type.

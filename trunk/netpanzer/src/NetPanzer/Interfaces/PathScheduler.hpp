@@ -44,7 +44,6 @@ public:
     {
         memmove( this, &rhs, sizeof( PathCacheEntry ) );
     }
-
 };
 
 class PathCache
@@ -61,7 +60,6 @@ protected:
     unsigned long entry_replace_index;
 
 public:
-
     void initialize( void );
 
     void initialize( unsigned long cache_size );
@@ -69,10 +67,7 @@ public:
     bool search( PathRequest &path_request );
 
     void add( PathRequest &path_request );
-
 };
-
-
 
 enum { _path_generator_status_free,
        _path_generator_status_busy,
@@ -120,10 +115,8 @@ protected:
     void pathingFsmCachePath( void );
 
 public:
-
-    void initialize( void );
-
-    void initialize( unsigned long resources, unsigned long cache_size );
+    void initialize();
+    void initialize(unsigned long resources, unsigned long cache_size);
 
     void initializePathGeneration( PathRequest &path_request );
     void terminatePathGeneration( UnitID &unit_id );
@@ -145,17 +138,13 @@ public:
         return( false );
     }
 
-    void run( );
-
+    void run();
 };
-
 
 class PathRequestQueue : public QueueTemplate< PathRequest >
 {
 public:
-
     void killRequest( UnitID &unit_id );
-
 };
 
 class PathScheduler
@@ -173,7 +162,6 @@ protected:
 
     static long short_queue_distance_threshold;
 public:
-
     static void initialize( void );
 
     static void initialize( unsigned long short_queue_size, unsigned long long_queue_size );
@@ -203,10 +191,6 @@ public:
 
     static BitArray * getShortPatherSetArray( void );
     static BitArray * getLongPatherSetArray( void );
-
 };
-
-
-
 
 #endif // ** _PATHSCHEDULER_HPP

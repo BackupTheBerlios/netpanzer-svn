@@ -42,7 +42,6 @@ RankView::RankView() : GameTemplateView()
     const unsigned MAX_KILLS_CHARS     =  6;
     const unsigned MAX_LOSSES_CHARS    =  7;
     const unsigned MAX_POINTS_CHARS    =  7;
-    const unsigned MAX_OBJECTIVE_CHARS = 10;
 
     //addLabel(iXY nPos, char *nLabel, BYTE color);
     unsigned xOffset = 0;

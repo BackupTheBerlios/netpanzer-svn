@@ -53,14 +53,11 @@ void DirectPlayErrorExceptionView::init()
     resize(SCREEN_PIX);
 
     iXY buttonSize(70, 15);
-    int BUTTON_COUNT = 2;
     int x            = (getClientRect().getSize().x - (buttonSize.x * 2 + 12)) / 2;
     int y;
-    int yOffset      = buttonSize.y * 2;
 
     y = SCREEN_YCENTER + 30;
     addButtonCenterText(iXY(x, y), buttonSize.x, "OK", "", bOK);
-
 } // end DirectPlayErrorExceptionView::init
 
 // doDraw

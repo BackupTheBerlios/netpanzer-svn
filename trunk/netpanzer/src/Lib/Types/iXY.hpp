@@ -18,21 +18,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __iXY_hpp__
 #define __iXY_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 struct iXY
 {
     int x;
     int y;
 
-    iXY()
-    {}
-
-    iXY(const int x, const int y)
+    iXY(int x = 0, int y = 0)
     {
         iXY::x = x;
         iXY::y = y;

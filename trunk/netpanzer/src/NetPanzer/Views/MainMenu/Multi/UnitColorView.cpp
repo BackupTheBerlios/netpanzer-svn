@@ -55,7 +55,9 @@ static void rebuildGrayColorTable()
     gray256.init(256);
     for (int num = 0; num < 256; num++) {
         int c            = Palette::color[num].getBrightnessInt();
-        int nearestColor = (int) Palette::findNearestColor(RGBColor(c * grayPercent, c * grayPercent, c * grayPercent));
+        int nearestColor = Palette::findNearestColor(
+                RGBColor(int(c * grayPercent), int(c * grayPercent),
+                         int(c * grayPercent)));
         gray256.setColor(num, nearestColor);
     }
     gray256.setColor(255, 0);

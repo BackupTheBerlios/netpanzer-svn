@@ -76,7 +76,8 @@ void UnitPowerUp::powerUpHitPoints( UnitState *unit_state)
     unit_state->max_hit_points = unit_state->hit_points; 
     */
     float percent = (rand() % 100) / 100;
-    int new_hitpoints = unit_state->max_hit_points + (unit_state->max_hit_points * percent);
+    int new_hitpoints = int(unit_state->max_hit_points +
+			    (unit_state->max_hit_points * percent));
     unit_state->hit_points = new_hitpoints;
     unit_state->max_hit_points = new_hitpoints;
 
@@ -84,47 +85,26 @@ void UnitPowerUp::powerUpHitPoints( UnitState *unit_state)
 
 void UnitPowerUp::powerUpRange( UnitState *unit_state)
 {
-    /*
-    lua_Object range;
-
-    lua_pushnumber( (double) (unit_state->weapon_range) );
-    lua_callfunction( lua_getglobal("UnitPowerUpRange") ); 
-    range = lua_getresult(1);
-    unit_state->weapon_range = (short) lua_getnumber( range ); 
-    */
     float percent = (((rand() % 100) / 100) * 50) / 100;
-    int new_weapon_range = unit_state->weapon_range + (unit_state->weapon_range * percent);
+    int new_weapon_range = int(unit_state->weapon_range +
+			      (unit_state->weapon_range * percent));
     unit_state->weapon_range = new_weapon_range;
 }
 
 void UnitPowerUp::powerUpFirePower( UnitState *unit_state)
 {
-    /*
-    lua_Object damage_factor;  
-
-    lua_pushnumber( (double) (unit_state->damage_factor) );
-    lua_callfunction( lua_getglobal("UnitPowerUpFirePower") ); 
-    damage_factor = lua_getresult(1);
-    unit_state->damage_factor = (short) lua_getnumber( damage_factor ); 
-    */
     int max_percent_increase = 50;
     float percent = (((rand() % 100) / 100) * max_percent_increase) / 100;
 
-    int new_damage_factor = unit_state->damage_factor + (unit_state->damage_factor * percent);
+    int new_damage_factor = int(unit_state->damage_factor +
+	    (unit_state->damage_factor * percent));
     unit_state->damage_factor = new_damage_factor;
 }
 
 void UnitPowerUp::powerUpSpeed( UnitState *unit_state)
 {
-    /*
-    lua_Object speed_factor;
-
-    lua_pushnumber( (double) (unit_state->speed_factor) );
-    lua_callfunction( lua_getglobal("UnitPowerUpSpeed") ); 
-    speed_factor = lua_getresult(1);
-    unit_state->speed_factor = (short) lua_getnumber( speed_factor );   
-    */
-    int new_speed_factor = unit_state->speed_factor + floor( (((rand() % 100) / 100) * 5) );
+    int new_speed_factor = int(unit_state->speed_factor + 
+	    floor( (((rand() % 100) / 100) * 5) ));
     unit_state->speed_factor = new_speed_factor;
 }
 
@@ -135,18 +115,11 @@ void UnitPowerUp::powerUpRepair( UnitState *unit_state)
 
 void UnitPowerUp::powerUpReload( UnitState *unit_state)
 {
-    /*
-    lua_Object reload_time;
-
-    lua_pushnumber( (double) (unit_state->reload_time) );
-    lua_callfunction( lua_getglobal("UnitPowerUpReload") ); 
-    reload_time = lua_getresult(1);
-    unit_state->reload_time = (short) lua_getnumber( reload_time );     
-    */
     int max_percent_decrease = 50;
     float percent = (((rand() % 100) / 100) * max_percent_decrease) / 100;
 
-    int new_reload_time = unit_state->reload_time - (unit_state->reload_time * percent);
+    int new_reload_time = int(unit_state->reload_time -
+			     (unit_state->reload_time * percent));
     unit_state->reload_time = new_reload_time;
 }
 

@@ -110,7 +110,6 @@ void Outpost::checkOccupationStatus( void )
 {
     if( occupation_status_timer.count()  )	//
     {
-        PlayerID null_id;
         UnitBase *unit_ptr;
         iRect bounding_area;
         iXY occupation_pad_loc;

@@ -22,52 +22,37 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string.h>
 
-extern unsigned long DEFAULT_PATH_LIST_SIZE;
-
 class PathList
 {
 protected:
     unsigned long *list;
-    long size;
-    long first;
-    long last;
+    size_t size;
+    size_t first;
+    size_t last;
 
 public:
-    PathList( void );
-    PathList( long list_size );
-    ~PathList( void );
+    PathList(size_t list_size = 5000);
+    PathList(const PathList& other);
+    ~PathList();
 
-    void initialize( void );
-    void initialize( long list_size );
+    void initialize(size_t list_size);
 
-    inline void reset( void )
+    inline void reset()
     {
         first = 0;
         last = first;
     }
 
-    inline bool pushFirst( unsigned long tile )
+    inline bool pushFirst(size_t tile)
     {
-        long next_first;
+        size_t next_first;
 
         next_first = (first + 1) % size;
 
         if ( next_first == last )
             return( false );
 
-        //assert( next_first != last );
-
-        /*
-           // NOTE: TO BE USED FOR LIST GROWING 
-           if ( next_first == last )
-            {
-             size = size + 50;
-             list = (unsigned long *) realloc( list, sizeof(unsigned long) * size ); 
-             assert( list != 0 );
-            }
-           */
         first = next_first;
-
         list[ first ] = tile;
 
         return( true );
@@ -89,7 +74,7 @@ public:
 
     inline bool pushLast( unsigned long tile )
     {
-        long next_last;
+        size_t next_last;
 
         next_last = (last - 1) % size;
 
@@ -99,19 +84,7 @@ public:
         if ( first == next_last )
             return( false );
 
-        //assert( first != next_last );
-
-        /*
-           if ( first == last )
-            {
-             size = size + 50;
-             list = (unsigned long *) realloc( list, sizeof(unsigned long) * size ); 
-             assert( list != 0 );
-            }
-           */
-
         list[ next_last ] = tile;
-
         last = next_last;
 
         return( true );
@@ -129,7 +102,7 @@ public:
         return( true );
     }
 
-    inline bool take( long count )
+    inline bool take(int count)
     {
         if ( (first - count) < last )
             return( false );
@@ -139,7 +112,7 @@ public:
         return( true );
     }
 
-    inline bool drop( long count )
+    inline bool drop(int count)
     {
         if ( (last + count) > first )
             return( false );
@@ -149,7 +122,7 @@ public:
         return( true );
     }
 
-    inline  long listCount( void )
+    inline size_t listCount() const
     {
         if ( last > first )
             return ( (first+1) + ( (size-1) - last ) );
@@ -157,7 +130,7 @@ public:
             return ( first - last );
     }
 
-    void operator=( PathList &rhs )
+    void operator=(const PathList &rhs)
     {
         PathList::first = rhs.first;
         PathList::last  = rhs.last;
@@ -171,8 +144,6 @@ public:
             PathList::size = rhs.size;
         }
     }
-
 };
-
 
 #endif // ** _PATHLIST_HPP

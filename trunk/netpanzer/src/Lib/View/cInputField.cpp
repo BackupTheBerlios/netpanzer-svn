@@ -126,7 +126,7 @@ void cInputField::addChar(int newChar)
         // Add the character.
         destString[cursorPos] = newChar;
 
-        int length = strlen(destString) + 1;
+        size_t length = strlen(destString) + 1;
         if (length <= maxCharCount) {
             destString[length] = '\0';
         } else {
@@ -156,14 +156,13 @@ void cInputField::addExtendedChar(int newExtendedChar)
         break;
 
     case SDLK_LEFT: {
-            if(--cursorPos < 0) {
-                cursorPos = 0;
-            }
+            if(cursorPos>0)
+                cursorPos--;
         }
         break;
 
     case SDLK_RIGHT: {
-            int length = strlen(destString);
+            size_t length = strlen(destString);
             if(++cursorPos > length) {
                 if (cursorPos > maxCharCount) {
                     cursorPos = maxCharCount - 1;
@@ -261,7 +260,7 @@ void cInputField::drawHighlighted(const Surface &dest)
 //--------------------------------------------------------------------------
 void cInputField::checkCursor()
 {
-    if (cursorPos > int(strlen(destString))) {
+    if (cursorPos > strlen(destString)) {
         cursorPos = strlen(destString);
     }
 } // end checkCursor

@@ -249,7 +249,7 @@ ObjectiveState * ObjectiveInterface::getObjectiveState( short objective_id )
 
     list_size = objective_list.getSize();
 
-    assert( objective_id < list_size );
+    assert(objective_id < short(list_size));
 
     return( &(objective_list[ objective_id ]->objective_state) );
 }
@@ -262,7 +262,7 @@ OutpostStatus ObjectiveInterface::getOutpostStatus( short objective_id )
 
     list_size = objective_list.getSize();
 
-    assert( objective_id < list_size );
+    assert(objective_id < short(list_size));
 
     outpost_ptr = (Outpost *) (objective_list[ objective_id ]);
 

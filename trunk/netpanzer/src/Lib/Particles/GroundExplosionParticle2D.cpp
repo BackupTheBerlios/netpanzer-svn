@@ -31,8 +31,6 @@ GroundExplosionParticle2D::GroundExplosionParticle2D(const fXYZ& pos,
 // XXX trajectoryAngle was missing here, I added 0
         : TrajectoryParticle2D(pos, maxSpeed, 0)
 {
-    FUNC("GroundExplosionParticle2D::init");
-
     airLifetime = lifetime;
     lifetime    = 10;
 
