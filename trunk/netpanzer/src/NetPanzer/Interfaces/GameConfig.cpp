@@ -152,6 +152,7 @@ void GameConfig::loadConfig()
     loadSettings(config, "player", playersettings);
     loadSettings(config, "visuals", visualssettings);
     loadSettings(config, "interface", interfacesettings);
+    loadSettings(config, "radar", radarsettings);
     loadSettings(config, "server", serversettings);
 }
 
@@ -203,6 +204,7 @@ void GameConfig::saveConfig()
     saveSettings(xmlStore, "player", playersettings);
     saveSettings(xmlStore, "visuals", visualssettings);
     saveSettings(xmlStore, "interface", interfacesettings);
+    saveSettings(xmlStore, "radar", radarsettings);
     saveSettings(xmlStore, "server", serversettings);
 
     xmlStore.save(configfile.c_str());
