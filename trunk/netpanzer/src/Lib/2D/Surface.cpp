@@ -68,50 +68,6 @@ inline void orderCoords(iRect &bounds)
     }
 } // end orderCoords
 
-#ifdef MSVC
-#pragma pack(1)
-#endif
-
-struct PcxHeader
-{
-    uint8_t   manufacturer;
-    uint8_t   version;
-    uint8_t   encoding;
-    uint8_t   bits_per_pixel;
-    uint16_t   x,y;                    //upper left of image
-    uint16_t   width, height;          //size of the image
-    uint16_t   horz_res;               //horizontal resolution
-    uint16_t   vert_res;               //vertical resolution
-    uint8_t   ega_palette[48];        //who cares?
-    uint8_t   reserved;
-    uint8_t   num_color_planes;
-    uint16_t   bytes_per_line;
-    uint16_t   palette_type;
-    uint8_t   padding[58];
-}
-__attribute__((packed));
-
-class SurfaceHeader
-{
-public:
-    uint32_t pixX;
-    uint32_t pixY;
-    uint32_t offsetX;
-    uint32_t offsetY;
-    uint32_t frameCount;
-    float fps;
-
-}
-__attribute__((packed)); // end SurfaceHeader
-
-struct PIC_HEAD
-{
-    uint32_t xPix;         // Horizontal pixel count.
-    uint32_t yPix;         // Vertical pixel count.
-    uint32_t frameCount;    // Number of frames.
-}
-__attribute__((packed));
-
 class BitmapFileHeader
 {
 public:
@@ -169,6 +125,10 @@ BitmapInfoHeader::BitmapInfoHeader(ReadFile* file)
     biClrUsed = file->readULE32();
     biClrImportant = file->readULE32();
 }
+
+#ifdef MSVC
+#pragma pack(1)
+#endif
 
 class RGBQuad
 {
