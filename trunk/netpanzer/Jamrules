@@ -22,9 +22,6 @@ COMPILER.LFLAGS.profile += -g3 -pg ;
 LOCATE.OBJECTS = $(BUILDTOP)/out/$(OSFULL[1]:L) ;
 LOCATE.TARGETS = $(BUILDTOP) ;
 
-# change some install paths from autoconf defaults
-datadir = $(datadir)/netpanzer ;
-
 # Include build rules
 include $(TOP)/mk/jam/build.jam ;
 

@@ -204,6 +204,7 @@ BaseGameManager *initialise(int argc, char** argv)
 
     // Initialize libphysfs
     try {
+        std::cout << "argv[0]=" << argv[0] << std::endl;
         FileSystem::initialize(argv[0], "netpanzer", "netpanzer");
     } catch(std::exception& e) {
         fprintf(stderr, "%s", e.what());

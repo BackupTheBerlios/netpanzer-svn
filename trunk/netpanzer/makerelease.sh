@@ -17,6 +17,7 @@ jam distclean
 echo "*** Scanning for files"
 AUTOFILES="autogen.sh configure.ac configure config.h.in `find mk/autoconf/ -name "*.m4" -o -name "config.*"` mk/autoconf/install-sh"
 JAMFILES="Jamrules Jamconfig.in `find mk/jam -name "*.jam"`"
+ICONS=*.png
 TEXTS="COPYING README TODO ChangeLog"
 
 SOURCES="`find src -name "*.cpp" -o -name "*.hpp" -o -name "Jamfile"`"
@@ -40,6 +41,7 @@ cp -p --parents $AUTOFILES $SOURCERELEASE
 cp -p --parents $JAMFILES $SOURCERELEASE
 cp -p --parents $TEXTS $SOURCERELEASE
 cp -p --parents $SOURCES $SOURCERELEASE
+cp -p --parents $ICONS $SOURCERELEASE
 
 echo "*** Packing source"
 cd release

@@ -9,3 +9,5 @@ SubInclude TOP sound ;
 SubInclude TOP powerups ;
 SubInclude TOP units ;
 SubInclude TOP wads ;
+
+InstallIcon netpanzer.png ;
