@@ -166,7 +166,7 @@ void Stats::Initialize()
         break;
 
     case _stats_sort_order_game_type : {
-            switch( GameConfig::GetGameType() ) {
+            switch( gameconfig->gametype ) {
             case _gametype_objective :
                 ObjectiveInterface::updatePlayerObjectiveCounts();
                 PlayerArray.sort( PlayerArray.getSize(), StatsObjectivesSortKey );
@@ -184,7 +184,7 @@ void Stats::Initialize()
         break;
 
     case _stats_sort_order_winner : {
-            switch( GameConfig::GetGameType() ) {
+            switch( gameconfig->gametype ) {
             case _gametype_objective :
                 ObjectiveInterface::updatePlayerObjectiveCounts();
                 PlayerArray.sort( PlayerArray.getSize(), StatsObjectivesSortKey );

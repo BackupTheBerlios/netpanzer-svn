@@ -24,121 +24,109 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "XmlConfig.hpp"
 #include "XmlStore.hpp"
 
-std::string GameConfig::configfile;
-char  GameConfig::UnitColor;
-char  GameConfig::GameMode;                 //Skirmish or Multiplayer
-char  GameConfig::GameType;                 //Objectives, FragLimit, TimeLimit
-char  GameConfig::HostOrJoin;               // 1=host, 2=join
-char  GameConfig::VehicleGeneration;
-short GameConfig::NumberPlayers      = 8;   //max = 25;
-short GameConfig::NumberUnits        = 500; //max = 50;
-short GameConfig::NumberInitialUnits = 5;
+GameConfig::GameConfig(const std::string& newconfigfile)
+    // VariableName("Name", value [, minimum, maximum])
+    : gametype("gametype", _gametype_objective, 0, _gametype_last-1),
+      hostorjoin("hostorjoin", _game_session_join, 0, _game_session_last-1),
+      playername("name", "Player"),
+      vehicelgeneration("vehiclegeneration", true),
+      maxplayers("maxplayers", 8, 1, 25),
+      maxunits("maxunits", 500, 25, 10000),
+      initialunits("initialunits", 5, 0, 100),
+      timelimit("timelimit", 50, 1),
+      fraglimit("fraglimit", 500, 50),
+      mapcycling("mapcycling", false),
+      powerups("powerups", true),
+      objectiveoccupationpercentage("objectivepercentage", 100, 1, 100),
+      allowallies("allowallies", true),
+      cloudcoverage("cloudcoverage", 0),
+      respawntype("respawntype", _game_config_respawn_type_random, 0,
+                _game_config_respawn_type_last-1),
+      windspeed("windspeed", 0),
+      map("map"),
+      
+      screenresolution("resolution", 0, 0, 2),
+      fullscreen("fullscreen", true),
+      displayshadows("displayshadows", true),
+      blendsmoke("blendsmoke", true),
+      screengamma("gamma", 50, 0, 100),
 
-char  GameConfig::PlayerName[64];
-
-short GameConfig::PlayerFlag;
-
-int   GameConfig::NetworkConnectionType = _connection_tcpip;
-int   GameConfig::TimeLimit = 50;          //in minutes
-int   GameConfig::FragLimit = 1000;        //in frags;
-
-bool      GameConfig::map_cycling_on_off = false;
-bool      GameConfig::powerups_on_off = false;
-
-float        GameConfig::objective_occupation_percentage = 100.0;
-bool      GameConfig::allow_allies_on_off = true;
-int          GameConfig::cloud_coverage;
-float        GameConfig::wind_speed;
-unsigned int GameConfig::respawn_type = _game_config_respawn_type_round_robin;
-
-std::string GameConfig::game_map_name;
-
-// ** Visuals Configuration **
-unsigned int GameConfig::screen_resolution = 0;
-bool GameConfig::screen_fullscreen = true;
-
-bool GameConfig::display_shadows_flag = true;
-bool GameConfig::display_unit_flags = false;
-
-bool GameConfig::radar_display_clouds_flag = false;
-
-int     GameConfig::radar_player_unit_color = _color_aqua;
-int     GameConfig::radar_allied_unit_color = _color_orange;
-int     GameConfig::radar_player_outpost_color = _color_blue;
-int     GameConfig::radar_allied_outpost_color = _color_orange;
-int     GameConfig::radar_enemy_outpost_color = _color_red;
-int     GameConfig::vehicle_selection_box_color = _color_blue;
-int     GameConfig::console_text_color = _color_white;
-
-int     GameConfig::mini_map_unit_size = _mini_map_unit_size_small;
-int     GameConfig::unit_selection_box_draw_mode = _unit_selection_box_draw_mode_rect_edges;
-bool GameConfig::draw_unit_damage = false;
-bool GameConfig::draw_unit_reload = true;
-int     GameConfig::mini_map_objective_draw_mode = _mini_map_objective_draw_mode_outline_rect;
-int     GameConfig::unitInfoDrawLayer = 0;
-
-float   GameConfig::console_test_delay = 10.0;   // in seconds
-int	   GameConfig::console_text_usage = 25;   	// in lines
-
-int     GameConfig::screen_gamma = 50;       // 0..100
-float   GameConfig::screen_brightness = 1.0f;  // 0..100
-
-float   GameConfig::scroll_rate = 1000;            // in pixels/s
-int     GameConfig::mini_map_resize_rate = 400;   // in pixels/s
-
-PlayerUnitConfig GameConfig::unit_spawn_config;
-
-int     GameConfig::attackNotificationTime = 5;
-bool GameConfig::blendSmoke             = true;
-
-
-void GameConfig::initialize(const char* newconfigfile)
+      unitcolor("unitcolor", 0, 0, _color_last-1),
+      playerflag("playerflag", 0, 0, 100),
+      attacknotificationtime("attacknotificationtime", 5, 0, 100),
+      vehicleselectioncolor("vehicleselectioncolor", _color_blue, 0, _color_last-1),
+      consoletextcolor("consoletextcolor", _color_white, 0, _color_last-1),
+      unitselectionmode("unitselectionmode", _unit_selection_box_draw_mode_rect_edges, 0, _unit_selection_box_draw_mode_last-1),
+      unitinfodrawlayer("unitinfodrawlayer", 0, 0, 1),
+      drawunitdamage("drawunitdamage", true),
+      drawunitreload("drawunitreload", false),
+      drawunitflags("drawunitflags", true),
+      consoletextdelay("consoletextdelay", 3, 1, 20),
+      consoletextusage("consoletextusage", 25, 1, 100),
+      scrollrate("scrollrate", 1000, 100, 10000),
+                  
+      radar_displayclouds("displayclouds", false),
+      radar_playerunitcolor("playerunitcolor", _color_aqua, 0, _color_last-1),
+      radar_alliedunitcolor("alliedunitcolor", _color_orange, 0, _color_last-1),
+      radar_playeroutpostcolor("playeroutpostcolor", _color_blue, 0, _color_last-1),
+      radar_alliedoutpostcolor("alliedoutpostcolor", _color_orange, 0, _color_last),
+      radar_enemyoutpostcolor("enemyoutpostcolor", _color_red, 0, _color_last-1),
+      radar_unitsize("unitsize", _mini_map_unit_size_small, 0, _mini_map_unit_size_last-1),
+      radar_objectivedrawmode("objectivedrawmode", _mini_map_objective_draw_mode_outline_rect, 0, _mini_map_objective_draw_mode_last-1),
+      radar_resizerate("resizerate", 400, 10, 1000)      
 {
     configfile = newconfigfile;
-    //UnitColor;
-    GameMode = _gamemode_multiplayer; //Skirmish or Multiplayer
-    GameType = _gametype_objective;   //Objectives, FragLimit, TimeLimit
-    HostOrJoin = _game_session_join;  // 1=host, 2=join
-    VehicleGeneration = true;
-    NumberPlayers      = 8;           //max = 25;
-    NumberUnits        = 500;         //max = 50;
-    NumberInitialUnits = 5;
 
-    strcpy( PlayerName, "Player" );
+    gamesettings.push_back(&gametype);
+    //gamesettings.push_back(&hostorjoin);
 
-    PlayerFlag = 0;
+    playersettings.push_back(&playername);
 
-    NetworkConnectionType = _connection_tcpip;
-    TimeLimit = 50;                   //current limit = 120
-    FragLimit = 1000;                   //current limit = 1000;
+    serversettings.push_back(&vehicelgeneration);
+    serversettings.push_back(&maxplayers);
+    serversettings.push_back(&maxunits);
+    serversettings.push_back(&initialunits);
+    serversettings.push_back(&timelimit);
+    serversettings.push_back(&fraglimit);
+    serversettings.push_back(&mapcycling);
+    serversettings.push_back(&powerups);
+    serversettings.push_back(&objectiveoccupationpercentage);
+    serversettings.push_back(&allowallies);
+    serversettings.push_back(&cloudcoverage);
+    serversettings.push_back(&respawntype);
+    serversettings.push_back(&windspeed);
+    serversettings.push_back(&map);
+   
+    visualssettings.push_back(&screenresolution);
+    visualssettings.push_back(&fullscreen);
+    visualssettings.push_back(&displayshadows);
+    visualssettings.push_back(&blendsmoke);
+    visualssettings.push_back(&screengamma);
 
-    objective_occupation_percentage = 100.0f;
-    allow_allies_on_off = true;
-    /* XXX fix warnings...
-    cloud_coverage;
-    wind_speed;
-    */
-    respawn_type = _game_config_respawn_type_round_robin;
+    interfacesettings.push_back(&unitcolor);
+    interfacesettings.push_back(&playerflag);
+    interfacesettings.push_back(&attacknotificationtime);
+    interfacesettings.push_back(&vehicleselectioncolor);
+    interfacesettings.push_back(&consoletextcolor);
+    interfacesettings.push_back(&unitselectionmode);
+    interfacesettings.push_back(&unitinfodrawlayer);
+    interfacesettings.push_back(&drawunitdamage);
+    interfacesettings.push_back(&drawunitreload);
+    interfacesettings.push_back(&drawunitflags);
+    interfacesettings.push_back(&consoletextdelay);
+    interfacesettings.push_back(&consoletextusage);
+    interfacesettings.push_back(&scrollrate);
 
-    display_shadows_flag = true;
-
-    radar_display_clouds_flag = false;
-
-    radar_player_unit_color = _color_aqua;
-    radar_allied_unit_color = _color_orange;
-    radar_player_outpost_color = _color_blue;
-    radar_allied_outpost_color = _color_orange;
-    radar_enemy_outpost_color = _color_red;
-
-    console_test_delay = 3.0;       // in seconds
-    console_text_usage = 25;   	// in lines
-
-    screen_gamma = 50;       // 0..100
-    screen_brightness = 1.0f;  // 0..100
-
-    scroll_rate = 1000;            // in pixels/s
-    mini_map_resize_rate = 400;   // in pixels/s
-
+    radarsettings.push_back(&radar_displayclouds);
+    radarsettings.push_back(&radar_playerunitcolor);
+    radarsettings.push_back(&radar_alliedunitcolor);
+    radarsettings.push_back(&radar_playeroutpostcolor);
+    radarsettings.push_back(&radar_alliedoutpostcolor);
+    radarsettings.push_back(&radar_enemyoutpostcolor);
+    radarsettings.push_back(&radar_unitsize);
+    radarsettings.push_back(&radar_objectivedrawmode);
+    radarsettings.push_back(&radar_resizerate);
+    
     try {
         loadConfig();
     } catch(Exception e) {
@@ -146,7 +134,7 @@ void GameConfig::initialize(const char* newconfigfile)
     }
 }
 
-void GameConfig::shutdown()
+GameConfig::~GameConfig()
 {
     try {
         saveConfig();
@@ -160,48 +148,91 @@ void GameConfig::loadConfig()
     const char *xmlfile = FileSystem::getRealName(configfile.c_str()).c_str();
     XmlConfig config(xmlfile);
 
-    int configversion = config.readInt("version");
-    if (configversion != CONFIG_VERSION) {
-        throw Exception("wrong config file version, %d!=%d",
-                configversion, CONFIG_VERSION);
+    loadSettings(config, "game", gamesettings);
+    loadSettings(config, "player", playersettings);
+    loadSettings(config, "visuals", visualssettings);
+    loadSettings(config, "interface", interfacesettings);
+    loadSettings(config, "server", serversettings);
+}
+
+void GameConfig::loadSettings(XmlConfig& config, const char* name,
+        std::vector<ConfigVariable*>& settings)
+{
+    try {
+        XmlConfig section = config.getChild(name);
+
+        std::vector<ConfigVariable*>::iterator i;
+        for(i = settings.begin(); i != settings.end(); i++) {
+            ConfigVariable* var = *i;
+
+            try {
+                ConfigInt* confint = dynamic_cast<ConfigInt*> (var);
+                if(confint)
+                    *confint = section.readInt(confint->getName().c_str());
+                ConfigBool* confbool = dynamic_cast<ConfigBool*> (var);
+                if(confbool) {
+                    std::string str =
+                        section.readString(confbool->getName().c_str());
+                    if(str == "yes" || str == "1" || str == "on")
+                        *confbool = true;
+                    else if(str == "no" || str == "0" || str == "off")
+                        *confbool = false;
+                    else
+                        throw Exception("No boolean value for setting '%s'.",
+                                        confbool->getName().c_str());
+                }
+                ConfigString* confstring = dynamic_cast<ConfigString*> (var);
+                if(confstring)
+                    *confstring =
+                        section.readString(confstring->getName().c_str());
+            } catch(Exception& e) {
+                LOG(("Skipping config '%s': %s", var->getName().c_str(),
+                            e.getMessage()));
+            }
+        }
+    } catch(Exception& e) {
+        LOG(("Couldn't find config section '%s', skipping...", name));
     }
-
-    XmlConfig game = config.getChild("game");
-    GameMode = game.readInt("mode", GameMode);
-    GameType = game.readInt("type", GameType);
-    NumberPlayers = game.readInt("players", NumberPlayers);
-    NumberUnits = game.readInt("units", NumberUnits);
-    NumberInitialUnits = game.readInt("init_units", NumberInitialUnits);
-
-    XmlConfig visuals = config.getChild("visuals");
-    screen_resolution = visuals.readInt("resolution", screen_resolution);
-    screen_fullscreen = visuals.readInt("fullscreen", screen_fullscreen);
-    display_shadows_flag = visuals.readInt("shadows_flag",
-            display_shadows_flag);
-    display_unit_flags = visuals.readInt("unit_flags", display_unit_flags);
-    mini_map_unit_size = visuals.readInt("mini_map_unit_size",
-            mini_map_unit_size);
 }
 
 void GameConfig::saveConfig()
 {
     XmlStore xmlStore("netpanzer");
-    xmlStore.writeInt("version", CONFIG_VERSION);
 
-    XmlStore game = xmlStore.createChild("game");
-    game.writeInt("mode", GameMode);
-    game.writeInt("type", GameType);
-    game.writeInt("players", NumberPlayers);
-    game.writeInt("units", NumberUnits);
-    game.writeInt("init_units", NumberInitialUnits);
-
-    XmlStore visuals = xmlStore.createChild("visuals");
-    visuals.writeInt("resolution", screen_resolution);
-    visuals.writeInt("fullscreen", screen_fullscreen);
-    visuals.writeInt("shadows_flag", display_shadows_flag);
-    visuals.writeInt("unit_flags", display_unit_flags);
-    visuals.writeInt("mini_map_unit_size", mini_map_unit_size);
+    saveSettings(xmlStore, "game", gamesettings);
+    saveSettings(xmlStore, "player", playersettings);
+    saveSettings(xmlStore, "visuals", visualssettings);
+    saveSettings(xmlStore, "interface", interfacesettings);
+    saveSettings(xmlStore, "server", serversettings);
 
     xmlStore.save(configfile.c_str());
 }
 
+void GameConfig::saveSettings(XmlStore& xmlstore, const char* name,
+        std::vector<ConfigVariable*>& settings)
+{
+    XmlStore store = xmlstore.createChild(name);
+
+    std::vector<ConfigVariable*>::iterator i;
+    for(i = settings.begin(); i != settings.end(); i++) {
+        ConfigVariable* var = *i;
+
+        ConfigInt* confint = dynamic_cast<ConfigInt*> (var);
+        if(confint)
+            store.writeInt(confint->getName().c_str(), *confint);
+            
+        ConfigBool* confbool = dynamic_cast<ConfigBool*> (var);
+        if(confbool)
+            store.writeString(confbool->getName().c_str(),
+                    *confbool ? "yes" : "no");
+            
+        ConfigString* confstring = dynamic_cast<ConfigString*> (var);
+        if(confstring) {
+            const char* string = 
+                ((const std::string&)(*confstring)).c_str();
+            store.writeString(confstring->getName().c_str(), string);
+        }
+    }
+}
+
+GameConfig* gameconfig = 0;

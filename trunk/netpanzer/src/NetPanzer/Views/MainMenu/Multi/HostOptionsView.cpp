@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapSelectionView.hpp"
 #include "GameViewGlobals.hpp"
 
-
 int HostOptionsView::cloudCoverageCount = 1;
 int HostOptionsView::windSpeed          = 1;
 int HostOptionsView::gameType           = 0;
@@ -31,35 +30,38 @@ int HostOptionsView::gameType           = 0;
 String HostOptionsView::cloudCoverageString;
 String HostOptionsView::windSpeedString;
 
-
 static int getCurMaxPlayersCount()
 {
-    return GameConfig::GetNumberPlayers();
+    return gameconfig->maxplayers;
 }
 
 static int  getCurMaxUnitCount()
 {
-    return GameConfig::GetNumberUnits();
+    return gameconfig->maxunits;
 }
 
 static void bDecreasePlayerCount()
 {
-    GameConfig::SetNumberPlayers(GameConfig::GetNumberPlayers() - 1);
+    if(gameconfig->maxplayers - 1 >= gameconfig->maxplayers.getMin())
+        gameconfig->maxplayers = gameconfig->maxplayers - 1;
 }
 
 static void bIncreasePlayerCount()
 {
-    GameConfig::SetNumberPlayers(GameConfig::GetNumberPlayers() + 1);
+    if(gameconfig->maxplayers + 1 <= gameconfig->maxplayers.getMax())
+        gameconfig->maxplayers = gameconfig->maxplayers + 1;
 }
 
 static void bDecreaseMaxUnitCount()
 {
-    GameConfig::SetNumberUnits(GameConfig::GetNumberUnits() - 5);
+    if(gameconfig->maxunits - 5 >= gameconfig->maxunits.getMin())
+        gameconfig->maxunits = gameconfig->maxunits - 5;
 }
 
 static void bIncreaseMaxUnitCount()
 {
-    GameConfig::SetNumberUnits(GameConfig::GetNumberUnits() + 5);
+    if(gameconfig->maxunits + 5 <= gameconfig->maxunits.getMax())
+        gameconfig->maxunits = gameconfig->maxunits + 5;
 }
 
 void HostOptionsView::updateGameConfigCloudCoverage()
@@ -82,27 +84,27 @@ void HostOptionsView::updateGameConfigCloudCoverage()
     switch (cloudCoverageCount) {
     case 0: {
             cloudCoverageString = "Clear";
-            GameConfig::setCloudCoverage(int(clearCloudCount));
+            gameconfig->cloudcoverage = (int(clearCloudCount));
         }
         break;
     case 1: {
             cloudCoverageString = "Broken";
-            GameConfig::setCloudCoverage(int(brokenCloudCount));
+            gameconfig->cloudcoverage = (int(brokenCloudCount));
         }
         break;
     case 2: {
             cloudCoverageString = "Partly Cloudy";
-            GameConfig::setCloudCoverage(int(partlyCloudyCloudCount));
+            gameconfig->cloudcoverage = (int(partlyCloudyCloudCount));
         }
         break;
     case 3: {
             cloudCoverageString = "Overcast";
-            GameConfig::setCloudCoverage(int(overcastCloudCount));
+            gameconfig->cloudcoverage = (int(overcastCloudCount));
         }
         break;
     case 4: {
             cloudCoverageString = "Extremely Cloudy";
-            GameConfig::setCloudCoverage(int(fuckingCloudyCloudCount));
+            gameconfig->cloudcoverage = (int(fuckingCloudyCloudCount));
         }
         break;
     }
@@ -112,17 +114,17 @@ void HostOptionsView::updateGameConfigGameType()
 {
     switch (gameType) {
     case 0: {
-            GameConfig::SetGameType( _gametype_objective );
+            gameconfig->gametype = _gametype_objective;
         }
         break;
 
     case 1: {
-            GameConfig::SetGameType( _gametype_fraglimit );
+            gameconfig->gametype = _gametype_fraglimit;
         }
         break;
 
     case 2: {
-            GameConfig::SetGameType( _gametype_timelimit );
+            gameconfig->gametype = _gametype_timelimit;
         }
         break;
 
@@ -132,7 +134,7 @@ void HostOptionsView::updateGameConfigGameType()
 
 static char * getGameTypeString()
 {
-    switch ( GameConfig::GetGameType() ) {
+    switch ( gameconfig->gametype ) {
     case _gametype_objective: {
             return( "Objective" );
         }
@@ -154,37 +156,41 @@ static char * getGameTypeString()
 
 static void bIncreaseTimeLimit()
 {
-    GameConfig::SetTimeLimit( GameConfig::GetTimeLimit() + 5 );
+    if(gameconfig->timelimit + 5 <= gameconfig->timelimit.getMax())
+        gameconfig->timelimit = gameconfig->timelimit + 5;
 }
 
 static void bDecreaseTimeLimit()
 {
-    GameConfig::SetTimeLimit( GameConfig::GetTimeLimit() - 5 );
+    if(gameconfig->timelimit - 5 >= gameconfig->timelimit.getMin())
+        gameconfig->timelimit = gameconfig->timelimit - 5;
 }
 
 static int getTimeLimitHours()
 {
-    return( GameConfig::GetTimeLimit() / 60 );
+    return gameconfig->timelimit / 60;
 }
 
 static int getTimeLimitMinutes()
 {
-    return( GameConfig::GetTimeLimit() % 60 );
+    return gameconfig->timelimit % 60;
 }
 
 static void bIncreaseFragLimit()
 {
-    GameConfig::SetFragLimit( GameConfig::GetFragLimit() + 5 );
+    if(gameconfig->fraglimit + 5 <= gameconfig->fraglimit.getMax())
+        gameconfig->fraglimit = gameconfig->fraglimit + 5;
 }
 
 static void bDecreaseFragLimit()
 {
-    GameConfig::SetFragLimit( GameConfig::GetFragLimit() - 5 );
+    if(gameconfig->fraglimit - 5 >= gameconfig->fraglimit.getMin())
+        gameconfig->fraglimit = gameconfig->fraglimit - 5;
 }
 
 static int getFragLimit()
 {
-    return( GameConfig::GetFragLimit() );
+    return gameconfig->fraglimit;
 }
 
 void HostOptionsView::updateWindSpeedString()
@@ -198,27 +204,27 @@ void HostOptionsView::updateWindSpeedString()
     switch (windSpeed) {
     case 0: {
             windSpeedString = "Calm";
-            GameConfig::setWindSpeed(calmWindSpeed);
+            gameconfig->windspeed = int(calmWindSpeed);
         }
         break;
     case 1: {
             windSpeedString = "Breezy";
-            GameConfig::setWindSpeed(breezyWindSpeed);
+            gameconfig->windspeed = int(breezyWindSpeed);
         }
         break;
     case 2: {
             windSpeedString = "Brisk Winds";
-            GameConfig::setWindSpeed(briskWindSpeed);
+            gameconfig->windspeed = int(briskWindSpeed);
         }
         break;
     case 3: {
             windSpeedString = "Heavy Winds";
-            GameConfig::setWindSpeed(heavyWindSpeed);
+            gameconfig->windspeed = int(heavyWindSpeed);
         }
         break;
     case 4: {
             windSpeedString = "Typhoon";
-            GameConfig::setWindSpeed(typhoonWindSpeed);
+            gameconfig->windspeed = int(typhoonWindSpeed);
         }
         break;
     }
@@ -226,17 +232,23 @@ void HostOptionsView::updateWindSpeedString()
 
 static int getObjectiveCapturePercent()
 {
-    return int(GameConfig::getObjectiveOccuapationPercentage());
+    return gameconfig->objectiveoccupationpercentage;
 }
 
 static void bIncreaseObjectiveCapturePercent()
 {
-    GameConfig::increaseObjectiveOccuapationPercentage();
+    if(gameconfig->objectiveoccupationpercentage + 5 <=
+            gameconfig->objectiveoccupationpercentage.getMax())
+        gameconfig->objectiveoccupationpercentage =
+            gameconfig->objectiveoccupationpercentage + 5;
 }
 
 static void bDecreaseObjectiveCapturePercent()
 {
-    GameConfig::decreaseObjectiveOccuapationPercentage();
+    if(gameconfig->objectiveoccupationpercentage - 5 >=
+            gameconfig->objectiveoccupationpercentage.getMin())
+        gameconfig->objectiveoccupationpercentage = 
+            gameconfig->objectiveoccupationpercentage - 5;
 }
 
 
@@ -392,12 +404,12 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     xChoiceOffset += minWidth + 10;
 
     checkMapCycle.setLabel("Cycle Maps");
-    checkMapCycle.setState( (bool) (GameConfig::getMapCycleState()) );
+    checkMapCycle.setState(gameconfig->mapcycling);
     checkMapCycle.setLocation(2, 125);
     add(&checkMapCycle);
 
     checkPowerUp.setLabel("PowerUps");
-    checkPowerUp.setState( (bool) (GameConfig::getPowerUpState()) );
+    checkPowerUp.setState(gameconfig->powerups);
     checkPowerUp.setLocation(120, 125);
     add(&checkPowerUp);
 
@@ -511,19 +523,11 @@ void HostOptionsView::actionPerformed(mMouseEvent me)
 {
     if (me.getSource(checkMapCycle)) {
         if ( getVisible() ) {
-            if (checkMapCycle.getState()) {
-                GameConfig::setMapCycleState( true );
-            } else {
-                GameConfig::setMapCycleState( false );
-            }
+            gameconfig->mapcycling = checkMapCycle.getState();
         }
     } else if (me.getSource(checkPowerUp)) {
         if ( getVisible() ) {
-            if (checkPowerUp.getState()) {
-                GameConfig::setPowerUpState( true );
-            } else {
-                GameConfig::setPowerUpState( false );
-            }
+            gameconfig->powerups = checkPowerUp.getState();
         }
     } else if (me.getSource(choiceWindSpeed)) {
         windSpeed = choiceWindSpeed.getSelectedIndex();

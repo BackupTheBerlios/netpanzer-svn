@@ -553,7 +553,7 @@ void VehicleSelectionView::doDraw(const Surface &viewArea, const Surface &client
         clientArea.bltString(timeRequiredPos, strBuf, color);
     }
 
-    int unitPerPlayer = GameConfig::GetNumberUnits() / GameConfig::GetNumberPlayers();
+    int unitPerPlayer = gameconfig->maxunits / gameconfig->maxplayers;
     sprintf(strBuf, "%d/%d", int(UnitInterface::getUnitCount(PlayerInterface::getLocalPlayerIndex())), unitPerPlayer);
     clientArea.bltString(unitsBuiltPos, strBuf, color);
 

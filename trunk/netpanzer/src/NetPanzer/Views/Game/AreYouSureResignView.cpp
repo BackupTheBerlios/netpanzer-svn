@@ -161,7 +161,6 @@ void AreYouSureResignView::doDraw(const Surface &viewArea, const Surface &client
 //---------------------------------------------------------------------------
 void AreYouSureResignView::doActivate()
 {
-    printf("DoActivate\n");
     init();
     Desktop::setActiveView(this);
 } // end AreYouSureResignView::doActivate

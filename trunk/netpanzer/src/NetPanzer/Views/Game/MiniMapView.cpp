@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MiniMapInterface.hpp"
 #include "KeyboardInterface.hpp"
 #include "cMouse.hpp"
+#include "ScreenSurface.hpp"
 #include "WorldInputCmdProcessor.hpp"
 
 
@@ -281,6 +282,7 @@ void MiniMapView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &
     maxMapSize = std::min(640, 480);
 
     moveTo(min + newPos - prevPos);
+    checkArea(screen->getPix());
 
     // Check for map blending mode change.
     if (KeyboardInterface::getKeyPressed(SDLK_1)) {
@@ -327,11 +329,9 @@ void MiniMapView::doIncreaseSize(int value)
         destSize = maxMapSize;
     }
 
-    // XXX
-#if 0
     // Check the validity of the X dimension.
-    if ((min.x + destSize.x) >= SCREEN_XPIX) {
-        int xOffset = min.x + destSize.x - SCREEN_XPIX;
+    if ((min.x + destSize.x) >= screen->getPixX()) {
+        int xOffset = min.x + destSize.x - screen->getPixX();
 
         int destXPos = min.x - xOffset;
 
@@ -344,8 +344,8 @@ void MiniMapView::doIncreaseSize(int value)
     }
 
     // Check the validity of the Y dimension.
-    if ((min.y + destSize.y) >= SCREEN_YPIX) {
-        int yOffset = min.y + destSize.y - SCREEN_YPIX;
+    if ((min.y + destSize.y) >= screen->getPixY()) {
+        int yOffset = min.y + destSize.y - screen->getPixY();
 
         int destYPos = min.y - yOffset;
 
@@ -356,7 +356,6 @@ void MiniMapView::doIncreaseSize(int value)
             moveTo(min.x, destYPos);
         }
     }
-#endif
 
     // Resize the x dimension.
     if (destSize.x > getViewRect().getSize().x) {

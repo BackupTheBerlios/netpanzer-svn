@@ -120,7 +120,7 @@ void ShellWeapon::updateStatus( void )
 
     shell.setWorldPos(location);
 
-    if (GameConfig::getDisplayShadowsFlag()) {
+    if (gameconfig->displayshadows) {
         shellShadow.setWorldPos(location);
     }
 }
@@ -129,13 +129,13 @@ void ShellWeapon::offloadGraphics(SpriteSorter &sorter)
 {
     shell.setWorldPos(location);
 
-    if (GameConfig::getDisplayShadowsFlag()) {
+    if (gameconfig->displayshadows) {
         shellShadow.setWorldPos(location.x - 10, location.y);
     }
 
     sorter.addSprite(&shell);
 
-    if (GameConfig::getDisplayShadowsFlag()) {
+    if (gameconfig->displayshadows) {
         sorter.addSprite(&shellShadow);
     }
 }

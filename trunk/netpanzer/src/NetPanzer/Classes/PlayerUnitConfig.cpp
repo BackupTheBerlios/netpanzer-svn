@@ -37,7 +37,7 @@ unsigned short UnitGameInfo::unit_point_table[ _MAX_UNIT_TYPES ] = { 2, //manta
                                                                    };
 PlayerUnitConfig::PlayerUnitConfig()
 {
-    initialize( _GAME_CONFIG_INITIAL_UNIT_LIMIT_UPPER );
+    initialize(10000);
 }
 
 PlayerUnitConfig::PlayerUnitConfig( unsigned char max_allowed_units )

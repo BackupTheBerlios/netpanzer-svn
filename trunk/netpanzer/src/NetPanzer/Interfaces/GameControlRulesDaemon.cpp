@@ -175,7 +175,7 @@ void GameControlRulesDaemon::mapCycleFsmServer( void )
                     GameManager::shutdownParticleSystems();
 
                     MapsManager::cycleNextMapName( map_name );
-                    GameConfig::setGameMapName( map_name );
+                    gameconfig->map = map_name;
 
                     GameControlCycleMap cycle_map_mesg;
                     cycle_map_mesg.set( map_name );
@@ -276,7 +276,7 @@ void GameControlRulesDaemon::onTimelimitGameCompleted( void )
 {
     PlayerInterface::lockPlayerStats();
 
-    if( GameConfig::getMapCycleState() == true ) {
+    if( gameconfig->mapcycling == true ) {
         map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;
         GameManager::game_state = _game_state_completed;
     } else {
@@ -298,7 +298,7 @@ void GameControlRulesDaemon::onFraglimitGameCompleted( void )
 {
     PlayerInterface::lockPlayerStats();
 
-    if( GameConfig::getMapCycleState() == true ) {
+    if( gameconfig->mapcycling == true ) {
         map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;
         GameManager::game_state = _game_state_completed;
     } else {
@@ -321,7 +321,7 @@ void GameControlRulesDaemon::onObjectiveGameCompleted( void )
 {
     PlayerInterface::lockPlayerStats();
 
-    if( GameConfig::getMapCycleState() == true ) {
+    if( gameconfig->mapcycling == true ) {
         map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;
         GameManager::game_state = _game_state_completed;
     } else {
@@ -341,7 +341,7 @@ void GameControlRulesDaemon::onObjectiveGameCompleted( void )
 
 void GameControlRulesDaemon::forceMapCycle( void )
 {
-    if( GameConfig::getMapCycleState() == true ) {
+    if( gameconfig->mapcycling == true ) {
         map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;
         GameManager::game_state = _game_state_completed;
     }
@@ -355,25 +355,26 @@ void GameControlRulesDaemon::checkGameRules( void )
             (NetworkState::status == _network_state_server)
        ) {
         unsigned char game_type;
-        game_type = GameConfig::GetGameType();
+        game_type = gameconfig->gametype;
 
         switch( game_type ) {
         case  _gametype_timelimit : {
                 int game_minutes = GameManager::getGameTime() / 60;
-                if( game_minutes >= GameConfig::GetTimeLimit() ) {
+                if( game_minutes >= gameconfig->timelimit ) {
                     onTimelimitGameCompleted();
                 }
             }
 
         case _gametype_fraglimit : {
-                if ( PlayerInterface::testRuleScoreLimit( GameConfig::GetFragLimit(), &player_state ) == true ) {
+                if ( PlayerInterface::testRuleScoreLimit( gameconfig->fraglimit, &player_state ) == true ) {
                     onFraglimitGameCompleted();
                 }
             }
             break;
 
         case _gametype_objective : {
-                if ( PlayerInterface::testRuleObjectiveRatio( GameConfig::getObjectiveOccuapationPercentageDecimal(), &player_state ) == true ) {
+                if ( PlayerInterface::testRuleObjectiveRatio(
+                            gameconfig->objectiveoccupationpercentage, &player_state ) == true ) {
                     onObjectiveGameCompleted( );
                 }
             }

@@ -90,7 +90,7 @@ void MiniMapInterface::annotateUnits( Surface &map_surface )
         map_loc.x = int(float(world_loc.x) / scale_factor.x);
         map_loc.y = int(float(world_loc.y) / scale_factor.y);
 
-        if (GameConfig::getMiniMapUnitSize() == _mini_map_unit_size_large) {
+        if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
             unitRect = iRect(map_loc, map_loc + 1);
         }
 
@@ -100,9 +100,9 @@ void MiniMapInterface::annotateUnits( Surface &map_surface )
                     drawLargeUnitDot( map_surface, map_loc, Color::yellow );
                 }
             } else {
-                if (GameConfig::getMiniMapUnitSize() == _mini_map_unit_size_small) {
+                if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
                     drawSmallUnitDot( map_surface, map_loc, player_unit_color );
-                } else if (GameConfig::getMiniMapUnitSize() == _mini_map_unit_size_large) {
+                } else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
                     drawLargeUnitDot( map_surface, map_loc, player_unit_color );
 
                 } else {
@@ -111,9 +111,9 @@ void MiniMapInterface::annotateUnits( Surface &map_surface )
             }
         } else
             if ( unit_dispostion == _unit_allied ) {
-                if (GameConfig::getMiniMapUnitSize() == _mini_map_unit_size_small) {
+                if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
                     drawSmallUnitDot( map_surface, map_loc, allie_unit_color );
-                } else if (GameConfig::getMiniMapUnitSize() == _mini_map_unit_size_large) {
+                } else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
                     drawLargeUnitDot( map_surface, map_loc, allie_unit_color );
 
                 } else {
@@ -122,9 +122,9 @@ void MiniMapInterface::annotateUnits( Surface &map_surface )
             } else
                 if( ( unit_dispostion == _unit_enemy ) && (show_enemy_radar_flag == true) ) {
 
-                    if (GameConfig::getMiniMapUnitSize() == _mini_map_unit_size_small) {
+                    if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
                         drawSmallUnitDot( map_surface, map_loc, enemy_objective_color );
-                    } else if (GameConfig::getMiniMapUnitSize() == _mini_map_unit_size_large) {
+                    } else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
                         drawLargeUnitDot( map_surface, map_loc, enemy_objective_color );
 
                     } else {
@@ -169,13 +169,13 @@ void MiniMapInterface::annotateObjectives( Surface &map_surface )
         map_rect.max.y = int(float(world_rect.max.y) / scale_factor.y);
 
         // Removed black borders to the text.
-        if (GameConfig::getMiniMapObjectiveDrawMode() == _mini_map_objective_draw_mode_solid_rect) {
+        if (gameconfig->radar_objectivedrawmode == _mini_map_objective_draw_mode_solid_rect) {
             map_surface.fillRect( map_rect, color);
-        } else if (GameConfig::getMiniMapObjectiveDrawMode() == _mini_map_objective_draw_mode_outline_rect) {
+        } else if (gameconfig->radar_objectivedrawmode == _mini_map_objective_draw_mode_outline_rect) {
             map_surface.drawRect( map_rect, color);
             map_surface.drawRect( iRect(map_rect.min.x + 1, map_rect.min.y + 1, map_rect.max.x - 1, map_rect.max.y - 1), color );
             //}
-            //else if (GameConfig::getMiniMapObjectiveDrawMode() == _mini_map_objective_draw_mode_player_flag)
+            //else if (gameconfig->radar_objectivedrawmode == _mini_map_objective_draw_mode_player_flag)
             //{
             //map_surface.fillRect( map_rect, color );
         } else {

@@ -10,7 +10,7 @@ Todo before beta release:
 -Fix all warnings in the sourcecode - OK
 -Add configure script (autoconf) which checks for all prerequesits - OK
 -Create "make install" target (also a "make uninstall"?) - OK (jam system now)
--Write a README
+-Write a README - OK
 -Test it, esp. with more than 2 players and test a complete
     getsource/configure/build/install/play cycle. We should be able to find
     betatesters in irc channels like #netpanzer, #sdl, #*game* I assume ;-)

@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConsoleInterface.hpp"
 #include "GameConfig.hpp"
 
-//GameConfig::getConsoleTextColor()
+//gameconfig->getConsoleTextColor()
 bool ConsoleInterface::stdout_pipe;
 
 long ConsoleInterface::console_size;
@@ -65,7 +65,7 @@ void ConsoleInterface::initialize( long size )
     long line_loop;
 
     for ( line_loop = 0; line_loop < console_size; line_loop++ ) {
-        line_list[ line_loop ].color = GameConfig::getConsoleTextColor();
+        line_list[ line_loop ].color = gameconfig->getConsoleTextColor();
         line_list[ line_loop ].string[0] = 0;
         line_list[ line_loop ].life_timer.changePeriod( 8 );
     }
@@ -187,7 +187,7 @@ void ConsoleInterface::postMessage( const char *format, ... )
             strncpy( line_list[ line_index ].string, temp_str_ptr, max_char_per_line);
             line_list[ line_index ].string[ max_char_per_line ] = 0;
 
-            line_list[ line_index ].color = GameConfig::getConsoleTextColor();
+            line_list[ line_index ].color = gameconfig->getConsoleTextColor();
             line_list[ line_index ].visible = true;
             line_list[ line_index ].life_timer.reset();
 
@@ -203,7 +203,7 @@ void ConsoleInterface::postMessage( const char *format, ... )
 
     strcpy( line_list[ line_index ].string, temp_str_ptr );
 
-    line_list[ line_index ].color = GameConfig::getConsoleTextColor();
+    line_list[ line_index ].color = gameconfig->getConsoleTextColor();
     line_list[ line_index ].visible = true;
     line_list[ line_index ].life_timer.reset();
 
@@ -261,7 +261,7 @@ void ConsoleInterface::update_overlap( Surface &surface )
 
         current_line.y = current_line.y - line_offset.y;
 
-        surface.bltStringShadowed(current_line, inputPrompt, GameConfig::getConsoleTextColor(), Color::black );
+        surface.bltStringShadowed(current_line, inputPrompt, gameconfig->getConsoleTextColor(), Color::black );
 
         int CHAR_XPIX = 8; // XXX hardcoded
         input_offset.x = current_line.x + ( (long) strlen( inputPrompt ) ) * CHAR_XPIX;
@@ -276,9 +276,9 @@ void ConsoleInterface::update_overlap( Surface &surface )
             string_ptr = inputString;
         }
 
-        surface.bltStringShadowed(input_offset, string_ptr , GameConfig::getConsoleTextColor(), Color::black );
+        surface.bltStringShadowed(input_offset, string_ptr , gameconfig->getConsoleTextColor(), Color::black );
 
-        surface.bltStringShadowed(input_offset.x + cursorPos * CHAR_XPIX, input_offset.y, "_", GameConfig::getConsoleTextColor(), Color::black );
+        surface.bltStringShadowed(input_offset.x + cursorPos * CHAR_XPIX, input_offset.y, "_", gameconfig->getConsoleTextColor(), Color::black );
     }
 }
 

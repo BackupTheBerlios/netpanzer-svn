@@ -248,7 +248,7 @@ void PowerUpInterface::resetLogic( void )
 {
     unsigned long map_size_x, map_size_y;
 
-    if( GameConfig::getPowerUpState() == false ) {
+    if( gameconfig->powerups == false ) {
         return;
     }
 
@@ -272,7 +272,7 @@ void PowerUpInterface::updateState( void )
 {
     PowerUp *powerup_ptr = 0;
 
-    if( GameConfig::getPowerUpState() == false ) {
+    if( gameconfig->powerups == false ) {
         return;
     }
 
@@ -312,7 +312,7 @@ void PowerUpInterface::offloadGraphics( SpriteSorter &sorter )
 {
     PowerUp *powerup_ptr;
 
-    if( GameConfig::getPowerUpState() == false ) {
+    if( gameconfig->powerups == false ) {
         return;
     }
 

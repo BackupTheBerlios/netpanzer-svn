@@ -1,3 +1,7 @@
+04-Oct-2003 by Matthias Braun
+-rewrote the config system and completed config saving and loading
+-fixed bug where minimap could be moved outside screen
+
 02-Oct-2003 by Matthias Braun
 -did refactoring work on the surface/DDHardSurface interfaces. DDHardSurface is
  now called ScreenSurface, and is used in 99% of all cases where we need to

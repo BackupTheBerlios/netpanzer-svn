@@ -164,8 +164,6 @@ public:
 
     static void setNetPanzerGameOptions();
 
-    static bool initializeConnectionType();
-
     static void spawnPlayer( const PlayerID &player );
 
     static void requestNetworkPing();

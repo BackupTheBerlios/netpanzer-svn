@@ -283,9 +283,11 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
                         } else {
                             ConnectClientSettings client_setting;
 
-                            client_setting.set( GameConfig::GetPlayerName(),
-                                                (unsigned char) GameConfig::GetUnitColor(),
-                                                GameConfig::GetPlayerFlag() );
+                            client_setting.set( 
+                                    ((const std::string&)
+                                    (gameconfig->playername)).c_str(),
+                                                gameconfig->getUnitColor(),
+                                                gameconfig->playerflag );
 
                             CLIENT->sendMessage( &client_setting, sizeof(ConnectClientSettings), 0 );
 

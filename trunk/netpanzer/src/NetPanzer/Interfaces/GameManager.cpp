@@ -105,7 +105,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "AreYouSureExitView.hpp"
 #include "UnitSelectionView.hpp"
 #include "FlagSelectionView.hpp"
-#include "MiniMapOptionsView.hpp"
 #include "UnitColorView.hpp"
 #include "HostOptionsView.hpp"
 #include "MapSelectionView.hpp"
@@ -211,7 +210,6 @@ void GameManager::initializeWindowSubSystem()
     //Desktop::add(new DesktopView());
     //Desktop::add(new UnitColorView());
     Desktop::add(new HelpScrollView());
-    Desktop::add(new MiniMapOptionsView());
     Desktop::add(new GameToolbarView());
     Desktop::add(new GameInfoView());
 
@@ -260,10 +258,10 @@ void GameManager::setVideoMode()
 {
     iXY mode_res;
     iXY old_res = screen ? screen->getPix() : iXY(0,0) ;
-    bool fullscreen = GameConfig::getFullscreen();
+    bool fullscreen = gameconfig->fullscreen;
 
     int mode;
-    for(mode=GameConfig::getScreenResolution(); mode>=0; mode--) {
+    for(mode=gameconfig->screenresolution; mode>=0; mode--) {
         switch(mode) {
         case 0: mode_res = iXY(640,480); break;
         case 1: mode_res = iXY(800,600); break;
@@ -272,7 +270,7 @@ void GameManager::setVideoMode()
         }
 
         if(Screen->isDisplayModeAvailable(mode_res.x, mode_res.y, 8, fullscreen)) {
-            GameConfig::setScreenResolution(mode);
+            gameconfig->screenresolution = mode;
             break;
         }
     }
@@ -314,28 +312,6 @@ void GameManager::loadPalette(char *palette_path)
     Palette::init(palette_path);
     Screen->setPalette(Palette::color);
 }
-
-// ******************************************************************
-void increaseBrightness(const char *filename)
-{
-    GameConfig::setScreenBrightness(GameConfig::getScreenBrightness() + 0.1f);
-
-    Palette::setBrightnessAbsolute(GameConfig::getScreenBrightness());
-
-    Screen->setPalette(Palette::color);
-    ConsoleInterface::postMessage( "Increasing Brightness");
-} // end increaseBrightness
-
-// ******************************************************************
-void decreaseBrightness(const char *filename)
-{
-    GameConfig::setScreenBrightness(GameConfig::getScreenBrightness() - 0.1f);
-
-    Palette::setBrightnessAbsolute(GameConfig::getScreenBrightness());
-
-    Screen->setPalette(Palette::color);
-    ConsoleInterface::postMessage( "Decreasing Brightness");
-} // end increaseBrightness
 
 // ******************************************************************
 void GameManager::initializeInputDevices()
@@ -383,7 +359,7 @@ void GameManager::initializeNetworkSubSystem()
     ServerMessageRouter::initialize();
     ClientMessageRouter::initialize();
 
-    ServerConnectDaemon::initialize( GameConfig::GetNumberPlayers() );
+    ServerConnectDaemon::initialize( gameconfig->maxplayers );
 
     NetworkState::setNetworkStatus( _network_state_server );
     NetworkState::resetNetworkStats();
@@ -409,10 +385,10 @@ void GameManager::shutdownNetworkSubSystem()
 // ******************************************************************
 void GameManager::initializeGameLogic()
 {
-    PlayerInterface::initialize( GameConfig::GetNumberPlayers(),
-                                 GameConfig::GetNumberInitialUnits() );
+    PlayerInterface::initialize( gameconfig->maxplayers,
+                                 gameconfig->initialunits );
     UnitBlackBoard::initializeBlackBoard();
-    UnitInterface::initialize( GameConfig::GetUnitsPerPlayer() );
+    UnitInterface::initialize( gameconfig->GetUnitsPerPlayer() );
     PathScheduler::initialize();
     PowerUpInterface::resetLogic();
 }
@@ -486,24 +462,8 @@ void GameManager::processSystemKeys()
     if (KeyboardInterface::getKeyState( SDLK_LALT ) ||
             KeyboardInterface::getKeyState( SDLK_RALT )) {
         if (KeyboardInterface::getKeyPressed(SDLK_RETURN)) {
-            GameConfig::setFullscreen(!Screen->isFullScreen());
+            gameconfig->fullscreen.toggle();
             GameManager::setVideoMode();
-        }
-
-        if ( KeyboardInterface::getKeyPressed( SDLK_MINUS) ) {
-            if (!Desktop::getVisible("GameView")) {
-                decreaseBrightness("wads/netpmenu.act");
-            } else {
-                decreaseBrightness("wads/netp.act");
-            }
-        }
-
-        if (KeyboardInterface::getKeyPressed(SDLK_EQUALS)) {
-            if (!Desktop::getVisible("GameView")) {
-                increaseBrightness("wads/netpmenu.act");
-            } else {
-                increaseBrightness("wads/netp.act");
-            }
         }
 
         if( (KeyboardInterface::getKeyState( SDLK_LCTRL) ||
@@ -677,8 +637,8 @@ void GameManager::finishGameMapLoad()
     miniMapView.init();
     ParticleInterface::initParticleSystems();
 
-    ParticleInterface::addCloudParticle(GameConfig::getCloudCoverage());
-    Physics::wind.setVelocity(GameConfig::getWindSpeed(), 107);
+    ParticleInterface::addCloudParticle(gameconfig->cloudcoverage);
+    Physics::wind.setVelocity(gameconfig->windspeed, 107);
 }
 
 // ******************************************************************
@@ -696,8 +656,8 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
     ParticleInterface::initParticleSystems();
     Particle2D::setCreateParticles(false);
 
-    ParticleInterface::addCloudParticle(GameConfig::getCloudCoverage());
-    Physics::wind.setVelocity(GameConfig::getWindSpeed(), 107);
+    ParticleInterface::addCloudParticle(gameconfig->cloudcoverage);
+    Physics::wind.setVelocity(gameconfig->windspeed, 107);
 }
 
 // ******************************************************************
@@ -719,7 +679,7 @@ void GameManager::bootStrap()
     try {
         if(!FileSystem::exists("config"))
             FileSystem::mkdir("config");
-        GameConfig::initialize("config/netpanzer.xml");
+        gameconfig = new GameConfig("config/netpanzer.xml");
         initializeSoundSubSystem();
         initializeVideoSubSystem();
         loadGameData();
@@ -741,7 +701,7 @@ void GameManager::dedicatedBootStrap()
     try {
         if(!FileSystem::exists("config"))
             FileSystem::mkdir("config");
-        GameConfig::initialize("config/netpanzer-dedicated.cfg");
+        gameconfig = new GameConfig("config/netpanzer-dedicated.cfg");
         initializeSoundSubSystem(); // we load a dummy sound driver
         loadGameData();
         initializeGameObjects();
@@ -772,7 +732,8 @@ void GameManager::shutdownSubSystems()
     shutdownSoundSubSystem();
     shutdownVideoSubSystem();
     shutdownInputDevices();
-    GameConfig::shutdown();
+    delete gameconfig;
+    gameconfig = 0;
 }
 
 void GameManager::dedicatedShutdown()
@@ -781,7 +742,7 @@ void GameManager::dedicatedShutdown()
     shutdownNetworkSubSystem();
     shutdownInputDevices();
     shutdownDedicatedConsole();
-    GameManager::shutdown();
+    shutdown();
 }
 
 // ******************************************************************
@@ -873,19 +834,20 @@ void GameManager::evaluateGameRules()
     if ( game_state == _game_state_in_progress ) {
         if ( NetworkState::status == _network_state_server ) {
             unsigned char game_type;
-            game_type = GameConfig::GetGameType();
+            game_type = gameconfig->gametype;
 
             switch( game_type ) {
 
             case _gametype_fraglimit : {
-                    if ( PlayerInterface::testRuleScoreLimit( GameConfig::GetFragLimit(), &player_state ) == true ) {
+                    if ( PlayerInterface::testRuleScoreLimit(gameconfig->fraglimit, &player_state ) == true ) {
                         fraglimitGameCompleted( player_state );
                     }
                 }
                 break;
 
             case _gametype_objective : {
-                    if ( PlayerInterface::testRuleObjectiveRatio( GameConfig::getObjectiveOccuapationPercentageDecimal(), &player_state ) == true ) {
+                    if ( PlayerInterface::testRuleObjectiveRatio(
+                                gameconfig->objectiveoccupationpercentage, &player_state ) == true ) {
                         objectiveGameCompleted( player_state );
                     }
                 }
@@ -907,29 +869,6 @@ void GameManager::evaluateGameRules()
     }
 
 
-}
-
-// ******************************************************************
-
-bool GameManager::initializeConnectionType()
-{
-    //bug#15
-    int connection_type;
-
-    connection_type = GameConfig::GetNetworkConnectType();
-
-    switch( connection_type ) {
-    case _connection_tcpip : {
-            //bug#15
-            //winsock hack
-            //ServProvReturn = SetServProv( gapp.hwndApp, TCPIP );
-            //if(ServProvReturn == 0) return 0;
-        }
-        break;
-
-    } // ** switch
-
-    return 1;
 }
 
 // ******************************************************************
@@ -1011,16 +950,16 @@ void GameManager::getServerGameSetup( NetMessage *message )
 
     game_setup = (ConnectMesgServerGameSettings *) message;
 
-    game_setup->max_players = GameConfig::GetNumberPlayers();
-    game_setup->max_units = GameConfig::GetNumberUnits();
+    game_setup->max_players = gameconfig->maxplayers;
+    game_setup->max_units = gameconfig->maxunits;
     MapsManager::getCurrentMap( game_setup->map_name );
-    game_setup->cloud_coverage = GameConfig::getCloudCoverage();
-    game_setup->wind_speed = GameConfig::getWindSpeed();
-    game_setup->game_type = GameConfig::GetGameType();
-    game_setup->map_cycle_state = GameConfig::getMapCycleState();
-    game_setup->powerup_state = GameConfig::getPowerUpState();
-    game_setup->frag_limit = GameConfig::GetFragLimit();
-    game_setup->time_limit = GameConfig::GetTimeLimit();
+    game_setup->cloud_coverage = gameconfig->cloudcoverage;
+    game_setup->wind_speed = gameconfig->windspeed;
+    game_setup->game_type = gameconfig->gametype;
+    game_setup->map_cycle_state = gameconfig->mapcycling;
+    game_setup->powerup_state = gameconfig->powerups;
+    game_setup->frag_limit = gameconfig->fraglimit;
+    game_setup->time_limit = gameconfig->timelimit;
     game_setup->elapsed_time = getGameTime();
 }
 
@@ -1059,15 +998,15 @@ bool GameManager::startClientGameSetup( NetMessage *message, int *result_code )
 
     game_setup = (ConnectMesgServerGameSettings *) message;
 
-    GameConfig::SetNumberPlayers( game_setup->max_players );
-    GameConfig::SetNumberUnits( game_setup->max_units );
-    GameConfig::setCloudCoverage( game_setup->cloud_coverage );
-    GameConfig::setWindSpeed( game_setup->wind_speed );
-    GameConfig::setMapCycleState( game_setup->map_cycle_state );
-    GameConfig::setPowerUpState( game_setup->powerup_state );
-    GameConfig::SetGameType( game_setup->game_type );
-    GameConfig::SetFragLimit( game_setup->frag_limit );
-    GameConfig::SetTimeLimit( game_setup->time_limit );
+    gameconfig->maxplayers = game_setup->max_players;
+    gameconfig->maxunits = game_setup->max_units;
+    gameconfig->cloudcoverage = game_setup->cloud_coverage;
+    gameconfig->windspeed = (int) game_setup->wind_speed;
+    gameconfig->mapcycling = game_setup->map_cycle_state;
+    gameconfig->powerups = game_setup->powerup_state;
+    gameconfig->gametype = game_setup->game_type;
+    gameconfig->fraglimit = game_setup->frag_limit;
+    gameconfig->timelimit = game_setup->time_limit;
 
     startGameTimer();
     game_elapsed_time_offset = game_setup->elapsed_time;
@@ -1136,11 +1075,11 @@ void GameManager::requestNetworkPing()
 void GameManager::setNetPanzerGameOptions()
 {
 
-    MiniMapInterface::setProperties( GameConfig::getPlayerRadarUnitColor(),
-                                     GameConfig::getAlliedRadarUnitColor(),
-                                     GameConfig::getPlayerOutpostRadarColor(),
-                                     GameConfig::getAlliedOutpostRadarColor(),
-                                     GameConfig::getEnemyOutpostRadarColor() );
+    MiniMapInterface::setProperties( gameconfig->getPlayerRadarUnitColor(),
+                                     gameconfig->getAlliedRadarUnitColor(),
+                                     gameconfig->getPlayerOutpostRadarColor(),
+                                     gameconfig->getAlliedOutpostRadarColor(),
+                                     gameconfig->getEnemyOutpostRadarColor() );
 }
 
 //--------------------------------------------------------------------------
@@ -1197,11 +1136,6 @@ void GameManager::hostMultiPlayerGame()
 
     progressView.open();
 
-    /*
-    initializeConnectionType();
-    HostSession( gapp.hwndApp );                 
-    */
-
     //InitStreamServer(gapp.hwndApp);
 
     progressView.scrollAndUpdateDirect( "Launching Server ..." );
@@ -1224,10 +1158,11 @@ void GameManager::hostMultiPlayerGame()
 
     progressView.scrollAndUpdateDirect( "Loading Game Data ..." );
 
-    MapsManager::setCycleStartMap( GameConfig::getGameMapName().c_str() );
+    const char* mapname = ((const std::string&)(gameconfig->map)).c_str();
+    MapsManager::setCycleStartMap(mapname);
 
     int result_code;
-    startGameMapLoad(GameConfig::getGameMapName().c_str(), 20, &result_code);
+    startGameMapLoad(mapname, 20, &result_code);
 
     if( result_code == _mapload_result_no_wad_file ) {
         progressView.scrollAndUpdateDirect( "MAP TILE SET NOT FOUND!" );
@@ -1261,8 +1196,10 @@ void GameManager::hostMultiPlayerGame()
 
     progressView.scrollAndUpdateDirect( "Spawning Player ..." );
     player_state = PlayerInterface::allocateLoopBackPlayer();
-    player_state->setName( GameConfig::GetPlayerName() );
-    player_state->setFlag( (unsigned char ) GameConfig::GetPlayerFlag() );
+    const char* playername = ((const
+                std::string&)(gameconfig->playername)).c_str();
+    player_state->setName(playername);
+    player_state->setFlag( (unsigned char) gameconfig->playerflag );
     player = PlayerInterface::getLocalPlayerID();
     spawnPlayer( player );
     progressView.updateDirect( "Spawning Player ... (100%)" );
@@ -1306,19 +1243,17 @@ void GameManager::joinMultiPlayerGame()
 
 void GameManager::launchMultiPlayerGame()
 {
-    if( GameConfig::GetHostOrJoin() == _game_session_host ) {
+    if( gameconfig->hostorjoin == _game_session_host ) {
         hostMultiPlayerGame();
     } else
-        if( GameConfig::GetHostOrJoin() == _game_session_join ) {
+        if( gameconfig->hostorjoin == _game_session_join ) {
             joinMultiPlayerGame();
         }
 }
 // ******************************************************************
 void GameManager::launchNetPanzerGame()
 {
-    if ( GameConfig::GetGameMode() == _gamemode_multiplayer ) {
-        launchMultiPlayerGame();
-    }
+    launchMultiPlayerGame();
 }
 
 // ******************************************************************
@@ -1337,31 +1272,32 @@ void GameManager::launchDedicatedServer()
     char input_str[256];
 
     MapsManager::getCurrentMap( input_str );
-    GameConfig::setGameMapName( input_str );
+    gameconfig->map = input_str;
 
-    printf( "Map Name <%s> : ", GameConfig::getGameMapName().c_str() );
+    const char* mapname = ((const std::string&)(gameconfig->map)).c_str();
+    printf( "Map Name <%s> : ", mapname);
     fflush(stdout);
     readString(input_str, 256, stdin);
     if ( strlen(input_str) > 0 ) {
-        GameConfig::setGameMapName( input_str );
+        gameconfig->map = input_str;
     }
 
-    printf( "Players <%d> : ", GameConfig::GetNumberPlayers() );
+    printf( "Players <%d> : ", (int) gameconfig->maxplayers );
     fflush(stdout);
     readString(input_str, 256, stdin);
     if ( strlen(input_str) > 0 ) {
         int players;
         sscanf( input_str, "%d", &players );
-        GameConfig::SetNumberPlayers( players );
+        gameconfig->maxplayers = players;
     }
 
-    printf( "Units <%d> : ", GameConfig::GetNumberUnits() );
+    printf( "Units <%d> : ", (int) gameconfig->maxunits );
     fflush(stdout);
     readString(input_str, 256, stdin);
     if ( strlen(input_str) > 0 ) {
         int units;
         sscanf( input_str, "%d", &units );
-        GameConfig::SetNumberUnits( units );
+        gameconfig->maxunits = units;
     }
 
     int game_type = 1;
@@ -1379,40 +1315,41 @@ void GameManager::launchDedicatedServer()
 
     switch( game_type ) {
     case 1 : {
-            GameConfig::SetGameType(_gametype_objective);
-            printf( "Outpost Occupation <%.0f %%> : ", GameConfig::getObjectiveOccuapationPercentage() );
+            gameconfig->gametype = _gametype_objective;
+            printf( "Outpost Occupation <%d %%> : ",
+                    (int) gameconfig->objectiveoccupationpercentage );
             fflush(stdout);
             readString(input_str, 256, stdin);
             if ( strlen(input_str) > 0 ) {
-                float percent;
-                sscanf( input_str, "%f", &percent );
-                GameConfig::setObjectiveOccuapationPercentage( percent );
+                int percent;
+                sscanf( input_str, "%d", &percent );
+                gameconfig->objectiveoccupationpercentage = percent;
             }
         }
         break;
 
     case 2 : {
-            GameConfig::SetGameType(_gametype_fraglimit);
-            printf( "Frag Limit <%d> frags : ", GameConfig::GetFragLimit() );
+            gameconfig->gametype = _gametype_fraglimit;
+            printf( "Frag Limit <%d> frags : ", (int) gameconfig->fraglimit );
             fflush(stdout);
             readString(input_str, 256, stdin);
             if ( strlen(input_str) > 0 ) {
                 int frags;
                 sscanf( input_str, "%d", &frags);
-                GameConfig::SetFragLimit( frags );
+                gameconfig->fraglimit = frags;
             }
         }
         break;
 
     case 3 : {
-            GameConfig::SetGameType(_gametype_timelimit);
-            printf( "Time Limit <%d> minutes: ", GameConfig::GetTimeLimit() );
+            gameconfig->gametype = _gametype_timelimit;
+            printf( "Time Limit <%d> minutes: ", (int) gameconfig->timelimit );
             fflush(stdout);
             readString(input_str, 256, stdin);
             if ( strlen(input_str) > 0 ) {
                 int time_limit;
                 sscanf( input_str, "%d", &time_limit );
-                GameConfig::SetTimeLimit( time_limit );
+                gameconfig->timelimit = time_limit;
             }
         }
         break;
@@ -1423,21 +1360,23 @@ void GameManager::launchDedicatedServer()
     fflush(stdout);
     readString(input_str, 256, stdin);
     if ( strcasecmp( "y", input_str ) == 0 ) {
-        GameConfig::setPowerUpState(true);
+        gameconfig->powerups = true;
+    } else {
+        gameconfig->powerups = false;
     }
 
     printf( "Server Name <Dedicated Server> :" );
     fflush(stdout);
     readString(input_str, 256, stdin);
     if ( strlen(input_str) > 0 ) {
-        GameConfig::SetPlayerName( input_str );
+        gameconfig->playername = input_str;
     } else {
-        GameConfig::SetPlayerName( "Dedicated Server" );
+        gameconfig->playername = "Dedicated Server";
     }
 
-
-    MapsManager::setCycleStartMap( GameConfig::getGameMapName().c_str() );
-    dedicatedLoadGameMap( GameConfig::getGameMapName().c_str() );
+    mapname = ((const std::string&)(gameconfig->map)).c_str();
+    MapsManager::setCycleStartMap(mapname);
+    dedicatedLoadGameMap(mapname);
 
     reinitializeGameLogic();
 
@@ -1491,13 +1430,6 @@ void GameManager::mainLoop()
 // ******************************************************************
 void GameManager::gameLoop()
 {
-    static bool once = true;
-
-    if (once) {
-        once = false;
-        Desktop::setVisibility("MainView", true);
-    }
-
     TimerInterface::start();
 
     inputLoop();
@@ -1647,12 +1579,12 @@ void GameManager::dedicatedInputLoop()
 
             case 'I' :
             case 'i' : {
-                    ConsoleInterface::postMessage( "Map: %s", GameConfig::getGameMapName() );
+                    ConsoleInterface::postMessage( "Map: %s", gameconfig->getGameMapName() );
                     ConsoleInterface::postMessage( "Players: %d/%d", PlayerInterface::getActivePlayerCount(),
-                                                   GameConfig::GetNumberPlayers() );
+                                                   gameconfig->maxplayers );
 
                     ConsoleInterface::postMessage( "Units: %d/%d", UnitInterface::getTotalUnitCount(),
-                                                   GameConfig::GetNumberUnits() );
+                                                   gameconfig->maxunits);
                 }
                 break;
 

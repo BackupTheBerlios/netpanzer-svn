@@ -51,8 +51,6 @@ static void bMain()
 
 static void bMulti()
 {
-    GameConfig::SetGameMode(_gamemode_multiplayer);
-
     if (strcmp(MenuTemplateView::currentMultiView, "GetSessionView") == 0) {
         Desktop::setVisibilityAllWindows(false);
         Desktop::setVisibility("GetSessionView", true);

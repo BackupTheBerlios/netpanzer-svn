@@ -97,18 +97,18 @@ void HostView::doDraw(const Surface &viewArea, const Surface &clientArea)
     	y += yOffset;
     	y += yOffset;
      
-    	sprintf(strBuf, "%d frags", GameConfig::GetFragLimit());
+    	sprintf(strBuf, "%d frags", gameconfig->GetFragLimit());
     	clientArea.bltString( x + 220, y, strBuf, Color::white);
     	y += yOffset;
      
-    	if ((GameConfig::GetTimeLimit() / 60) > 0)
+    	if ((gameconfig->GetTimeLimit() / 60) > 0)
     	{
-    		sprintf(strBuf, "%d hours  %2d minutes", GameConfig::GetTimeLimit() / 60, GameConfig::GetTimeLimit() % 60);
+    		sprintf(strBuf, "%d hours  %2d minutes", gameconfig->GetTimeLimit() / 60, gameconfig->GetTimeLimit() % 60);
     		clientArea.bltString( x + 220, y, strBuf, Color::white);
     		y += yOffset;
     	} else
     	{
-    		sprintf(strBuf, "%d minutes", GameConfig::GetTimeLimit());
+    		sprintf(strBuf, "%d minutes", gameconfig->GetTimeLimit());
     		clientArea.bltString( x + 220, y, strBuf, Color::white);
     		y += yOffset;
     	}
@@ -116,7 +116,7 @@ void HostView::doDraw(const Surface &viewArea, const Surface &clientArea)
     	sprintf(strBuf, "Player #:");
     	clientArea.bltString(x + 2, y, strBuf, Color::white);
      
-    	sprintf(strBuf, "%3d", GameConfig::GetNumberPlayers());
+    	sprintf(strBuf, "%3d", gameconfig->GetNumberPlayers());
     	clientArea.bltString(x + 125, y, strBuf, Color::white);
     */
     View::doDraw(viewArea, clientArea);

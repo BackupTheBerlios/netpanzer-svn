@@ -126,7 +126,7 @@ void WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos )
 
     screen_size = screen->getPix();
     time_slice = TimerInterface::getTimeSlice();
-    scroll_rate = GameConfig::getScrollRate();
+    scroll_rate = gameconfig->scrollrate;
 
     scroll_increment = (long) ( scroll_rate * time_slice );
 
@@ -252,10 +252,10 @@ void WorldInputCmdProcessor::evaluateKeyCommands( void )
     }
 
     if ( (KeyboardInterface::getKeyPressed( SDLK_f ) == true) ) {
-        GameConfig::toggleDisplayUnitFlags();
+        gameconfig->drawunitflags.toggle();
     }
     if ( (KeyboardInterface::getKeyPressed( SDLK_d ) == true) ) {
-        GameConfig::toggleDrawUnitDamage();
+        gameconfig->drawunitdamage.toggle();
     }
 
     if ( (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true)

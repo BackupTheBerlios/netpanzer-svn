@@ -61,16 +61,8 @@ static void bSendMessageEnemies()
 
 static void bToggleDrawUnitDamage()
 {
-    GameConfig::toggleDrawUnitDamage();
+    gameconfig->drawunitdamage.toggle();
 }
-
-// XXX not used
-#if 0
-static void bToggleDrawUnitReload()
-{
-    GameConfig::toggleDrawUnitReload();
-}
-#endif
 
 static void bSetGroup1()
 {
@@ -136,7 +128,7 @@ static void bIncreaseMiniMapSize()
 
 static void bToggleDrawUnitFlags()
 {
-    GameConfig::toggleDisplayUnitFlags();
+    gameconfig->drawunitflags.toggle();
 }
 
 

@@ -56,7 +56,7 @@ void bNext()
     //winsock hack
     //Desktop::setVisibilityAllWindows(false);
 
-    if (GameConfig::GetHostOrJoin() == _game_session_host) {
+    if (gameconfig->hostorjoin == _game_session_host) {
         //winsock hack
         Desktop::setVisibilityAllWindows(false);
 
@@ -67,17 +67,8 @@ void bNext()
         Desktop::setVisibility("MapSelectionView", true);
         Desktop::setVisibility("PlayerNameView", true);
 
-        //winsock hack
-        //initialize dplay, fix Bug#15--
-        //if the DPlayReturnValue is 0 dplay ain't working.
-        //we need to put up a message box that says so, then pop the
-        //user back to the SetConnectionTypeView--
-        //ShutDownConnection();
-        //DPlayReturnValue = InitializeDirectPlay( gapp.hwndApp);
-        //ConnectTypeReturnValue = GameManager::initializeConnectionType();
-
         SERVER->openSession();
-    } else if (GameConfig::GetHostOrJoin() == _game_session_join) {
+    } else if (gameconfig->hostorjoin == _game_session_join) {
         CLIENT->openSession();
 
         // XXX no server enumertation/info yet
@@ -163,16 +154,16 @@ void bNext()
 
 static void bHost()
 {
-    previousSessionType = GameConfig::GetHostOrJoin();
+    previousSessionType = gameconfig->hostorjoin;
 
-    GameConfig::SetHostOrJoin(_game_session_host);
+    gameconfig->hostorjoin = _game_session_host;
 }
 
 static void bJoin()
 {
-    previousSessionType = GameConfig::GetHostOrJoin();
+    previousSessionType = gameconfig->hostorjoin;
 
-    GameConfig::SetHostOrJoin(_game_session_join);
+    gameconfig->hostorjoin = _game_session_join;
 }
 
 
@@ -220,7 +211,7 @@ GetSessionView::GetSessionView() : MenuTemplateView()
     //    assert(tempSurface.getFrameCount() == 3);
     //    addButtonSurface(iXY(505, 440), tempSurface, "Move back menu.", bBack);
     //
-    //	GameConfig::SetHostOrJoin(_game_session_host);
+    //	gameconfig->SetHostOrJoin(_game_session_host);
 
 } // end GetSessionView::GetSessionView
 
@@ -228,7 +219,7 @@ GetSessionView::GetSessionView() : MenuTemplateView()
 //---------------------------------------------------------------------------
 void GetSessionView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
-    if (previousSessionType != GameConfig::GetHostOrJoin()) {
+    if (previousSessionType != gameconfig->hostorjoin) {
         loadTitleSurface();
     }
 
@@ -241,7 +232,7 @@ void GetSessionView::doDraw(const Surface &viewArea, const Surface &clientArea)
 //---------------------------------------------------------------------------
 void GetSessionView::drawInfo(const Surface &dest)
 {
-    int connectionType = GameConfig::GetHostOrJoin();
+    int connectionType = gameconfig->hostorjoin;
 
     if (connectionType == _game_session_host) {
         drawHostInfo(dest, bodyTextRect);
@@ -329,9 +320,9 @@ void GetSessionView::loadBackgroundSurface()
 //---------------------------------------------------------------------------
 void GetSessionView::loadTitleSurface()
 {
-    if (GameConfig::GetHostOrJoin() == _game_session_host) {
+    if (gameconfig->hostorjoin == _game_session_host) {
         doLoadTitleSurface("pics/backgrounds/menus/menu/til/hostTitle.til");
-    } else if (GameConfig::GetHostOrJoin() == _game_session_join) {
+    } else if (gameconfig->hostorjoin == _game_session_join) {
         doLoadTitleSurface("pics/backgrounds/menus/menu/til/joinTitle.til");
     }
 

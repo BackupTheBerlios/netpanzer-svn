@@ -179,7 +179,7 @@ public:
         message_id = _net_message_id_connect_client_settings;
     }
 
-    void set( char *player_name, unsigned char unit_color, short player_flag )
+    void set(const char *player_name, unsigned char unit_color, short player_flag )
     {
         strcpy( ConnectClientSettings::player_name, player_name );
         ConnectClientSettings::unit_color = unit_color;

@@ -44,7 +44,7 @@ static void bNextMap()
         MapSelectionView::curMap = 0;
     }
 
-    GameConfig::setGameMapName(MapSelectionView::mapList[MapSelectionView::curMap].name);
+    gameconfig->map = MapSelectionView::mapList[MapSelectionView::curMap].name;
     HostOptionsView::updateGameConfigCloudCoverage();
 }
 
@@ -59,7 +59,7 @@ static void bPreviousMap()
         MapSelectionView::curMap = MapSelectionView::mapList.getCount() - 1;
     }
 
-    GameConfig::setGameMapName(MapSelectionView::mapList[MapSelectionView::curMap].name);
+    gameconfig->map = MapSelectionView::mapList[MapSelectionView::curMap].name;
     HostOptionsView::updateGameConfigCloudCoverage();
 }
 
@@ -234,7 +234,7 @@ int MapSelectionView::loadMaps()
         char buffer[128];
         readLine(buffer, sizeof(buffer), &(*file)); 
         if(!sscanf(buffer, "ObjectiveCount: %d", &objectiveCount)) {
-            GameConfig::setGameMapName("");
+            gameconfig->map = "";
             return 1;
         }
 
@@ -249,7 +249,7 @@ int MapSelectionView::loadMaps()
         throw Exception("ERROR: No maps in map directory");
     }
 
-    GameConfig::setGameMapName(MapSelectionView::mapList[curMap].name);
+    gameconfig->map = MapSelectionView::mapList[curMap].name;
     curMap = 0;
 
     // Success

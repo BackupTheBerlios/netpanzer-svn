@@ -53,8 +53,8 @@ static String getTimeLimit()
 {
     char time_string[256];
 
-    int hrs = (GameConfig::GetTimeLimit() / 60);
-    int min = (GameConfig::GetTimeLimit() % 60);
+    int hrs = (gameconfig->timelimit / 60);
+    int min = (gameconfig->timelimit % 60);
 
     sprintf(time_string, "%d:%d", hrs, min);
 
@@ -104,16 +104,16 @@ void GameInfoView::doDraw(const Surface &viewArea, const Surface &clientArea)
     gameInfoRect = getClientRect();
     //gameInfoRect.max.x = 0;
 
-    sprintf(gameBuf, "game   %s", GameConfig::getGameTypeString() );
+    sprintf(gameBuf, "game   %s", gameconfig->getGameTypeString() );
     checkGameInfoRect(gameBuf);
 
 
-    int unitPerPlayer = GameConfig::GetNumberUnits() / GameConfig::GetNumberPlayers();
+    int unitPerPlayer = gameconfig->maxunits / gameconfig->maxplayers;
     sprintf(unitsBuf, "units  %d/%d", int(UnitInterface::getUnitCount(PlayerInterface::getLocalPlayerIndex())), unitPerPlayer);
     checkGameInfoRect(unitsBuf);
 
-    if( GameConfig::GetGameType() == _gametype_fraglimit ) {
-        sprintf(fragsBuf, "frags  %d/%d", getPlayerFrags(), GameConfig::GetFragLimit() );
+    if( gameconfig->gametype == _gametype_fraglimit ) {
+        sprintf(fragsBuf, "frags  %d/%d", getPlayerFrags(), (int) gameconfig->fraglimit);
         checkGameInfoRect(fragsBuf);
     } else {
         sprintf(fragsBuf, "frags  NA" );
@@ -128,7 +128,7 @@ void GameInfoView::doDraw(const Surface &viewArea, const Surface &clientArea)
     checkGameInfoRect(lossesBuf);
     */
 
-    if( GameConfig::GetGameType() == _gametype_timelimit ) {
+    if( gameconfig->gametype == _gametype_timelimit ) {
         sprintf(timeBuf, "time   %s/%s", (const char*) getPlayerTime(),
                 (const char*) getTimeLimit() );
         checkGameInfoRect(timeBuf);

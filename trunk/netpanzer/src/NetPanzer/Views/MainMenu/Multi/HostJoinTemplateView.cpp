@@ -49,13 +49,10 @@ int cOrange;
 
 static void bBack()
 {
-    //fix bug#15--
-    //winsock hack
-    //ShutDownConnection();
-    if (GameConfig::GetHostOrJoin() == _game_session_join) {
+    if (gameconfig->hostorjoin == _game_session_join) {
         CLIENT->closeSession();
     } else
-        if (GameConfig::GetHostOrJoin() == _game_session_host) {
+        if (gameconfig->hostorjoin == _game_session_host) {
             SERVER->closeSession();
         }
 
@@ -90,12 +87,12 @@ void bReady()
     }
 
     // Set the player name.
-    GameConfig::SetPlayerName(PlayerNameView::playerName.getString());
+    gameconfig->playername = PlayerNameView::playerName.getString();
 
     // Set the player flag.
-    GameConfig::SetPlayerFlag( (short) playerFlagSelected );
+    gameconfig->playerflag = ( (short) playerFlagSelected );
 
-    if (GameConfig::GetHostOrJoin() == _game_session_join) {
+    if (gameconfig->hostorjoin == _game_session_join) {
         //winsock hack
         //		if (!IsSelectedGameValid())
         //		{
@@ -131,88 +128,90 @@ enum  { _unit_type_valentine,
         _unit_type_humvee,
 */
 
+#if 0
 // Increase unit count.
 static void bIncreaseHumvee()
 {
-    GameConfig::unit_spawn_config.incrementSpawnUnitCount(_unit_type_humvee);
+    gameconfig->unit_spawn_config.incrementSpawnUnitCount(_unit_type_humvee);
 }
 
 static void bIncreaseLightTank()
 {
-    GameConfig::unit_spawn_config.incrementSpawnUnitCount(_unit_type_valentine);
+    gameconfig->unit_spawn_config.incrementSpawnUnitCount(_unit_type_valentine);
 }
 
 static void bIncreaseMediumTank()
 {
-    GameConfig::unit_spawn_config.incrementSpawnUnitCount(_unit_type_leopard);
+    gameconfig->unit_spawn_config.incrementSpawnUnitCount(_unit_type_leopard);
 }
 
 static void bIncreaseHeavyTank()
 {
-    GameConfig::unit_spawn_config.incrementSpawnUnitCount(_unit_type_abrams);
+    gameconfig->unit_spawn_config.incrementSpawnUnitCount(_unit_type_abrams);
 }
 
 static void bIncreaseMissleLauncher()
 {
-    GameConfig::unit_spawn_config.incrementSpawnUnitCount(_unit_type_hammerhead);
+    gameconfig->unit_spawn_config.incrementSpawnUnitCount(_unit_type_hammerhead);
 }
 
 // Decrease unit count.
 static void bDecreaseHumvee()
 {
-    GameConfig::unit_spawn_config.decrementSpawnUnitCount(_unit_type_humvee);
+    gameconfig->unit_spawn_config.decrementSpawnUnitCount(_unit_type_humvee);
 }
 
 static void bDecreaseLightTank()
 {
-    GameConfig::unit_spawn_config.decrementSpawnUnitCount(_unit_type_valentine);
+    gameconfig->unit_spawn_config.decrementSpawnUnitCount(_unit_type_valentine);
 }
 
 static void bDecreaseMediumTank()
 {
-    GameConfig::unit_spawn_config.decrementSpawnUnitCount(_unit_type_leopard);
+    gameconfig->unit_spawn_config.decrementSpawnUnitCount(_unit_type_leopard);
 }
 
 static void bDecreaseHeavyTank()
 {
-    GameConfig::unit_spawn_config.decrementSpawnUnitCount(_unit_type_abrams);
+    gameconfig->unit_spawn_config.decrementSpawnUnitCount(_unit_type_abrams);
 }
 
 static void bDecreaseMissleLauncher()
 {
-    GameConfig::unit_spawn_config.decrementSpawnUnitCount(_unit_type_hammerhead);
+    gameconfig->unit_spawn_config.decrementSpawnUnitCount(_unit_type_hammerhead);
 }
 
 // Get unit count.
 static int getHumveeCount()
 {
-    return GameConfig::unit_spawn_config.getSpawnUnitCount(_unit_type_humvee);
+    return gameconfig->unit_spawn_config.getSpawnUnitCount(_unit_type_humvee);
 }
 
 static int getLightTankCount()
 {
-    return GameConfig::unit_spawn_config.getSpawnUnitCount(_unit_type_valentine);
+    return gameconfig->unit_spawn_config.getSpawnUnitCount(_unit_type_valentine);
 }
 
 static int getMediumTankCount()
 {
-    return GameConfig::unit_spawn_config.getSpawnUnitCount(_unit_type_leopard);
+    return gameconfig->unit_spawn_config.getSpawnUnitCount(_unit_type_leopard);
 }
 
 static int getHeavyTankCount()
 {
-    return GameConfig::unit_spawn_config.getSpawnUnitCount(_unit_type_abrams);
+    return gameconfig->unit_spawn_config.getSpawnUnitCount(_unit_type_abrams);
 }
 
 static int getMissleLauncherCount()
 {
-    return GameConfig::unit_spawn_config.getSpawnUnitCount(_unit_type_hammerhead);
+    return gameconfig->unit_spawn_config.getSpawnUnitCount(_unit_type_hammerhead);
 }
 
 static int getSelectionsRemaining()
 {
-    return GameConfig::unit_spawn_config.getMaxAllowedUnits() - GameConfig::unit_spawn_config.unitTotal();
+    return gameconfig->unit_spawn_config.getMaxAllowedUnits() - gameconfig->unit_spawn_config.unitTotal();
 }
+#endif
 
 
 // HostJoinTemplateView
@@ -293,6 +292,7 @@ HostJoinTemplateView::HostJoinTemplateView() : MenuTemplateView()
 
 } // end HostJoinTemplateView constructor
 
+#if 0
 // addVehicleButtons
 //---------------------------------------------------------------------------
 void HostJoinTemplateView::addVehicleButtons(const iXY &pos)
@@ -405,6 +405,7 @@ void HostJoinTemplateView::drawVehicleInfo(const Surface &dest, const iXY &pos)
     y += yOffset;
 
 } // end HostView::drawVehicleInfo
+#endif
 
 // doDraw
 //---------------------------------------------------------------------------

@@ -83,15 +83,15 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
 
         // Modified the vehicle selection box and moved the hitpoints outside,
         // the box status check, because I may want the hitpoints drawn all the time.
-        BYTE selectionBoxColor = GameConfig::getVehicleSelectionBoxColor();
+        PIX selectionBoxColor = gameconfig->getVehicleSelectionBoxColor();
 
         assert(max_hit_points > 0);
 
         // Draw the selection box.
-        if (GameConfig::getUnitSelectionBoxDrawMode() == _unit_selection_box_draw_mode_rect) {
+        if (gameconfig->unitselectionmode == _unit_selection_box_draw_mode_rect) {
             // Draw the rectangle selection box.
             surface->drawRect(min_abs.x, min_abs.y, max_abs.x, max_abs.y, selectionBoxColor);
-        } else if (GameConfig::getUnitSelectionBoxDrawMode() == _unit_selection_box_draw_mode_rect_edges) {
+        } else if (gameconfig->unitselectionmode == _unit_selection_box_draw_mode_rect_edges) {
             surface->drawBoxCorners(min_abs.x, min_abs.y, max_abs.x, max_abs.y, 7, selectionBoxColor);
 
         } else {
@@ -101,7 +101,7 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
     } // ** box_state == true
 
     // Draw the unit hitpoints.
-    if ( GameConfig::getDrawUnitDamage() || (box_state == true) ) {
+    if ( gameconfig->drawunitdamage || (box_state == true) ) {
         // Draw a color coded hit bar.
         BYTE hitBarColor;
 
@@ -131,7 +131,7 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
         //surface->drawHLine(min_abs.x, max_abs.y-3, max_abs.x+1, box_color);
     }
 
-    if ( GameConfig::getDisplayUnitFlags() == true ) {
+    if ( gameconfig->drawunitflags == true ) {
         //unit_flag.blt( *surface, iXY( min_abs.x, min_abs.y - unit_flag.getPix().y ) );
         //surface->bltString5x5(min_abs.x + 2, min_abs.y - 6, "Panther1", Color::white);
         unit_flag.blt( *surface, iXY(min_abs.x, min_abs.y - unit_flag.getPixY() - 1) );
