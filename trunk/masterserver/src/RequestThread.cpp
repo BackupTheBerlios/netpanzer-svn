@@ -61,7 +61,9 @@ void RequestThread::run()
     running = true;
     while(!stream->eof() && running) {
         std::string query = tokenizer->getNextToken();
-        if(query == "heartbeat") {
+        if(query == "") {
+            break;
+        } else if(query == "heartbeat") {
             masterserver->parseHeartbeat(*stream, &addr, *tokenizer);
         } else if(query == "list") {
             masterserver->parseList(*stream, &addr, *tokenizer);

@@ -43,7 +43,10 @@ public:
         char c;
         do {
             in >> c;
-        } while(c == '\\');
+        } while(c == '\\' && (!in.eof()));
+
+        if(in.eof())
+            return "";
         
         do {
             result += c;
