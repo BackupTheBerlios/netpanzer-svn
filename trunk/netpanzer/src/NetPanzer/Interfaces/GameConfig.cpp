@@ -32,7 +32,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
     // VariableName("Name", value [, minimum, maximum])
     : hostorjoin("hostorjoin", _game_session_join, 0, _game_session_last-1),
       playername("name", "Player"),
-      lobbyserver("lobbyserver", "irc.freenode.net:6667"),
+      lobbyserver("lobbyserver", "irc.quakenet.eu.org:6667"),
       serverport("serverport",_NETPANZER_DEFAULT_PORT_TCP,0,65535),
       proxyserver("proxyserver",""),
       proxyserveruser("proxyserveruser",""),

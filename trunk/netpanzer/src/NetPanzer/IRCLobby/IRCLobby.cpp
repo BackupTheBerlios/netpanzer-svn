@@ -357,17 +357,18 @@ void IRCLobby::processMessage()
     assert(irc_server_socket != 0);
     
     char buf[1024];
-    char *host, *mess, *host_end, *user_end, *code,*irc_user,*real_user;
+    char *host, *mess, *host_end, *user_end, *code,*irc_user,*real_user,
+        *buf_start;
 
     readIRCLine(buf, sizeof(buf));
 #ifndef WITHOUT_NETPANZER
     LOGGER.debug("recv irc:%s",buf);
 #endif
     
-    if(buf[0]!=':')
-        return;
+    buf_start=buf;
+    if(buf[0]==':')  { buf_start++; }
 
-    real_user=irc_user=buf+1;
+    real_user=irc_user=buf_start;
     if(strncmp(real_user,nickname_prefix,sizeof(nickname_prefix)-1)==0) {
         real_user+=sizeof(nickname_prefix)-1;
     }
@@ -376,15 +377,17 @@ void IRCLobby::processMessage()
     // skip 1 word and spaces behind it
     while(*code && !isspace(*code)) { code++; }
     while(*code && isspace(*code)) { code++; }
-    char *code_end=code;
-    while(*code_end && !isspace(*code_end)) code_end++;
-    *code_end=0;
 
-    int code_i=atoi(code);
-    if((mess=strchr(code_end+1,':'))==NULL) {
+    if((mess=strchr(code,':'))==NULL) {
         return;
     }
     mess++;
+
+    char *code_end=code;
+    while(*code_end && !isspace(*code_end)) code_end++;
+    *code_end=0;
+    int code_i=atoi(code);
+
 
     if(code_i == 433) {
         // wrong user name, change the number at the end
@@ -433,9 +436,9 @@ void IRCLobby::processMessage()
         expected_ping=0;
         return;
     }
-    if(strcmp(code,"PING")==0) {
+    if(strcmp(code,"PING")==0 || strncmp(buf,"PING",4)==0) {
         std::stringstream pong;  
-        pong << "PONG " <<(code+5);
+        pong << "PONG " <<mess;
         sendIRCLine(pong.str());
         return;
     }
