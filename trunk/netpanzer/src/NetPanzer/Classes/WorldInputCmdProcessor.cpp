@@ -48,11 +48,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "codewiz.hpp"
 #include "ConsoleInterface.hpp"
 
-#include "netPanzerGlobals.h"
-#include "JoystickInterface.hpp"
-
 WorldInputCmdProcessor COMMAND_PROCESSOR;
-
 
 enum { _cursor_regular, 
        _cursor_move, 
@@ -126,41 +122,37 @@ void WorldInputCmdProcessor::cycleSelectedUnits( unsigned long new_list_index )
  } 
 
 void WorldInputCmdProcessor::updateScrollStatus(const PointXYi &mouse_pos )
- {
-   PointXYi screen_size;
-   double time_slice;
-   long  scroll_increment;
-   float scroll_rate;
+{
+  	PointXYi screen_size;
+   	double time_slice;
+	long  scroll_increment;
+	float scroll_rate;
 
-   screen_size = FRAME_BUFFER.getPix();
-   time_slice = TimerInterface::getTimeSlice();
-   scroll_rate = GameConfig::getScrollRate();
+	screen_size = FRAME_BUFFER.getPix();
+	time_slice = TimerInterface::getTimeSlice();
+	scroll_rate = GameConfig::getScrollRate();
   
-   scroll_increment = (long) ( scroll_rate * time_slice );
+	scroll_increment = (long) ( scroll_rate * time_slice );
        
-	if(  mouse_pos.x >= (screen_size.x - 1) ||
-		gInputOffset.x > JoystickInterface::errorThreshold)
- 	  {
+	if(mouse_pos.x >= (screen_size.x - 1))
+	{
 		WorldViewInterface::scroll_right(scroll_increment);
-	  }
+	}
 
-	 if( mouse_pos.x < 1 ||
-	  	  gInputOffset.x < -JoystickInterface::errorThreshold)
-	  {
+   	if( mouse_pos.x < 1)
+	{
 		WorldViewInterface::scroll_left(scroll_increment);
-	  }
+  	}
 
-	 if( mouse_pos.y >= (screen_size.y - 1) ||
-		gInputOffset.y < -JoystickInterface::errorThreshold)
-	  {
+	if( mouse_pos.y >= (screen_size.y - 1))
+	{
 		WorldViewInterface::scroll_down(scroll_increment);
-	  }
+  	}
 
-	 if( mouse_pos.y < 1 ||
-		gInputOffset.y > JoystickInterface::errorThreshold)
-	  {
+	if( mouse_pos.y < 1)
+	{
 		WorldViewInterface::scroll_up(scroll_increment);
-	  }
+  	}
  }
 
 
@@ -1006,18 +998,6 @@ void WorldInputCmdProcessor::process( void )
   evaluateKeyboardEvents();
   evaluateMouseEvents();
  
-  if (JoystickInterface::button_down(0))
-   {
-	PointXYi world_pos;
-	PointXYi mouse_pos;
-
-	MouseInterface::getMousePosition( (long *)  &mouse_pos.x, (long *) &mouse_pos.y );
-
-	WorldViewInterface::clientXYtoWorldXY(world_win, mouse_pos, &world_pos);
-
-	sendManualFireCommand(world_pos);
-  }
-
   working_list.validateList(); 
  }
 

@@ -15,14 +15,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-// XXX need new unix code here
-#ifndef UNIX
+#ifdef WIN32
 #include <config.h>
 #include <windows.h>
 
 #include "netPanzerWinProc.h"
-#include "netPanzerGlobals.h"
-#include "netPanzerMain.h"
 #include "gapp.hpp"
 #include "Win32Mouse.hpp"
 #include "MouseInterface.hpp"
@@ -304,7 +301,7 @@ LRESULT CALLBACK PanzerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
           PANZER_THREAD_ACTIVE = false;
 		  //while( PANZER_THREAD_FINISHED == false );
 	      //TerminateThread( (HANDLE) PANZER_THREAD_HANDLE, 0 );
-		  netPanzerShutdown();
+		  GameManager::shutdown();
 		  PostQuitMessage(0);
 		 }
          break;

@@ -28,7 +28,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // ** netPanzer Core Includes
 #include "gapp.hpp"
-#include "netPanzerGlobals.h"
 
 // ** Direct X Includes
 #ifdef WIN32
@@ -1886,7 +1885,6 @@ void GameManager::gameLoop()
   if (once)
    {
   	once = false;
-	gMainLoopBegin = true;
     Desktop::setVisibility("MainView", true);
    }
 
@@ -1930,15 +1928,6 @@ void GameManager::inputLoop()
  {
   KeyboardInterface::sampleKeyboard();
 
-  // XXX Joystick code disabled
-#if 0
-  if (JoystickInterface::exists())
-   {
-    JoystickInterface::poll();
-    gInputOffset = JoystickInterface::getOffset();
-   }
-#endif
-  
   processSystemKeys();
 
   Desktop::manage(mouse.getScreenPos().x, mouse.getScreenPos().y, mouse.getButtonMask() );

@@ -31,7 +31,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particle2D.hpp"
 #include "ParticleSystem2D.hpp"
 #include "PackedSurface.hpp"
-#include "netPanzerGlobals.h"
 #include "UtilInterface.hpp"
 #include "GameManager.hpp"
 #include "GameViewGlobals.hpp"
@@ -266,7 +265,6 @@ void MenuTemplateView::initButtons()
 void MenuTemplateView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
 	//setWorldRect();
-	assert(gMainLoopBegin);
 
 	if (Desktop::getVisible("GameView"))
 	{
@@ -355,11 +353,9 @@ void MenuTemplateView::doDraw(const Surface &viewArea, const Surface &clientArea
 //---------------------------------------------------------------------------
 void MenuTemplateView::doActivate()
 {
-	if (gMainLoopBegin)
-	{
-		// Make the activating view active, redo this please!
-		sprintf(currentView, searchName);
-		Desktop::setActiveView(searchName);
+	// Make the activating view active, redo this please!
+	sprintf(currentView, searchName);
+	Desktop::setActiveView(searchName);
 
 		// Load apprpriate images for this view.
 		//if (globeSurface.getFrameCount() <= 0)
@@ -382,13 +378,11 @@ void MenuTemplateView::doActivate()
 		//		globeSurface.save("pics/backgrounds/menus/globe/pak/globe.pak");
 		//	}
 		//}
-		loadBackgroundSurface();
-		loadTitleSurface();
-		loadNetPanzerLogo();
-	}
+	loadBackgroundSurface();
+	loadTitleSurface();
+	loadNetPanzerLogo();
 
 	SpecialButtonView::doActivate();
-
 } // end doActivate
 
 // loadBackgroundSurface
