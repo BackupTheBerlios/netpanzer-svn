@@ -17,6 +17,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <vector>
+#include <string>
+#include <algorithm>
+
 #include "FindFirst.hpp"
 #include "PackedSurface.hpp"
 #include "Surface.hpp"
@@ -586,49 +590,30 @@ nextRow:
 
 // loadAllPAKInDirectory
 //---------------------------------------------------------------------------
-int loadAllPAKInDirectory(const char *path, cGrowList <PackedSurface> &growList)
+int loadAllPAKInDirectory(const char *path, cGrowList<PackedSurface> &growList)
 {
-    char strBuf[256];
-    char pathWild[256];
+    char** list = FileSystem::enumerateFiles(path);
 
-    sprintf(pathWild, "%s*.pak", path);
-
-    int imageCount = UtilInterface::getNumFilesInDirectory(pathWild);
-    if (imageCount <= 0) {
-        return 0;
+    std::vector<std::string> filenames;
+    for(char** file = list; *file != 0; file++) {
+	std::string name = path;
+	name += *file;
+	if(name.find(".pak") > 0)
+	    filenames.push_back(name);
     }
 
-    struct _finddata_t myFile;
-    int* hFile;
-
-    _findfirst(pathWild, &myFile);
-
-    cGrowList <Filename> filenames;
-    filenames.setNum(imageCount);
-
-    int curFilename = 0;
-    iXY maxSize(0, 0);
-
-    if ((hFile = _findfirst(pathWild, &myFile)) != ((int*) -1)) {
-        do {
-            sprintf(strBuf, "%s%s", path, myFile.name);
-            filenames[curFilename].setName(strBuf);
-            curFilename++;
-
-        } while (_findnext(hFile, &myFile) == 0);
-    }
-    _findclose(hFile);
-
-    filenames.sort(FilenameSortFunction);
+    FileSystem::freeList(list);
+   
+    std::sort(filenames.begin(), filenames.end()); 
 
     // Allocate enough slots into the growList.
-    growList.setNum(imageCount);
+    growList.setNum(filenames.size());
 
     // Now load in the sorted PAK names.
-    for (int i = 0; i < imageCount; i++) {
-        growList[i].load(filenames[i].name);
+    for (size_t i = 0; i < filenames.size(); i++) {
+        growList[i].load(filenames[i].c_str());
     }
 
     return 1;
-
 } // end loadAllPAKInDirectory
+
