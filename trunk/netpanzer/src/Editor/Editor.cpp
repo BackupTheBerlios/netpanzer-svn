@@ -18,10 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <wx/wx.h>
-#include <wx/dirctrl.h>
 
 #include "Editor.hpp"
 #include "TileSetEditor.hpp"
+#include "MapEditor.hpp"
 
 Editor::Editor()
     : wxFrame(0, -1, "Netpanzer Editor", wxPoint(50,50), wxSize(800,600))
@@ -32,12 +32,15 @@ Editor::Editor()
     wxMenu* menufile = new wxMenu;
     menubar->Append(menufile, "&File");
     menufile->Append(ID_ABOUT, "&About");
+    menufile->Append(ID_TEST, "&Test");
     menufile->AppendSeparator();
     menufile->Append(ID_QUIT, "&Quit");
 
     SetMenuBar(menubar);
 
     // Connect slots
+    Connect(ID_TEST, wxEVT_COMMAND_MENU_SELECTED,
+            (wxObjectEventFunction) &Editor::OnTest);
     Connect(ID_QUIT, wxEVT_COMMAND_MENU_SELECTED,
             (wxObjectEventFunction) &Editor::OnQuit);
     Connect(ID_ABOUT, wxEVT_COMMAND_MENU_SELECTED,
@@ -52,6 +55,12 @@ Editor::Editor()
 
 Editor::~Editor()
 {
+}
+
+void Editor::OnTest(wxCommandEvent& )
+{
+    MapEditor* editor = new MapEditor();
+    editor->Show();
 }
 
 void Editor::OnQuit(wxCommandEvent& )

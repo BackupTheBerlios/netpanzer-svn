@@ -256,6 +256,11 @@ int64_t ReadFile::read(void* buffer, size_t objsize, size_t objcount)
     return PHYSFS_read(file, buffer, objsize, objcount);
 }
 
+bool ReadFile::isEOF()
+{
+    return PHYSFS_eof(file);
+}
+
 SDL_RWops* ReadFile::getSDLRWOps()
 {
     SDL_RWops* rwops = (SDL_RWops*) malloc(sizeof(SDL_RWops));
@@ -403,6 +408,16 @@ uint64_t ReadFile::readUBE64()
     return val;
 }
 
+void ReadFile::readLine(std::string& buffer)
+{
+    char c;
+    buffer = "";
+
+    while(!isEOF() && (c = read8()) != '\n') {
+        buffer += c;
+    }
+}
+
 //---------------------------------------------------------------------------
 
 WriteFile::WriteFile(PHYSFS_file* file)
@@ -492,3 +507,10 @@ void WriteFile::writeUBE64(uint64_t val)
         throw Exception("couldn't write: %s", PHYSFS_getLastError());
 }
 
+void WriteFile::writeLine(const std::string& buffer)
+{
+    if(write(buffer.c_str(), buffer.size(), 1) != 1)
+        throw Exception("Couldn't write line: %s", PHYSFS_getLastError());
+	
+    write8('\n');
+}

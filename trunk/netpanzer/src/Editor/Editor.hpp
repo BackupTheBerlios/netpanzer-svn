@@ -26,12 +26,13 @@ public:
     Editor();
     ~Editor();
 
+private:
     void OnQuit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
+    void OnTest(wxCommandEvent& event);
 
-private:
     enum {
-        ID_QUIT=1, ID_ABOUT
+        ID_QUIT=1, ID_ABOUT, ID_TEST
     };
 };
 

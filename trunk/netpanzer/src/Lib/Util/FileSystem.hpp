@@ -58,6 +58,8 @@ class FileSystem;
 class ReadFile : public File
 {
 public:
+	bool isEOF();	
+
     int64_t read(void* buffer, size_t objsize, size_t objcount);
 
     int8_t read8();
@@ -76,6 +78,8 @@ public:
     uint64_t readULE64();
     int64_t readSBE64();
     uint64_t readUBE64();
+
+    void readLine(std::string& buffer);
 
     // Returns the SDL_RWops structure which can be used in several SDL
     // commands. Note that you have to free this structure with SDL_FreeRWops.
@@ -116,6 +120,9 @@ public:
     void writeULE64(uint64_t val);
     void writeSBE64(int64_t val);
     void writeUBE64(uint64_t val);
+
+    /// writes the text in the buffer and an additional newline
+    void writeLine(const std::string& line);
 
 protected:
     WriteFile(PHYSFS_file* file);
@@ -178,4 +185,3 @@ public:
 };
 
 #endif
-

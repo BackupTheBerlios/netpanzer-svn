@@ -96,8 +96,13 @@ TileSet::~TileSet()
     delete[] tiledata;
 }
 
-void TileSet::load(const std::string& dir)
+void TileSet::load(const std::string& name)
 {
+    this->name = name;
+    
+    std::string dir = "/tileset/";
+    dir += name;
+
     std::string filename = dir;
     filename += "/tiles.dat";
     
@@ -132,13 +137,13 @@ void TileSet::load(const std::string& dir)
     }
 
     // read templates
-    readTemplates(dir);
+    readTemplates();
 }
 
-void TileSet::readTemplates(const std::string& newdir)
+void TileSet::readTemplates()
 {
-    dir = newdir;
-    std::string templatedir = dir;
+    std::string templatedir = "/tileset/";
+    templatedir += name;
     templatedir += "/templates/";
     
     char** files = FileSystem::enumerateFiles(templatedir.c_str());
@@ -152,7 +157,8 @@ void TileSet::readTemplates(const std::string& newdir)
 
 void TileSet::save()
 {
-    std::string filename = dir;
+    std::string filename = "/tileset/";
+    filename += name;
     filename += "/tiles.dat";
 
     std::auto_ptr<WriteFile> file (FileSystem::openWrite(filename));
@@ -168,14 +174,16 @@ void TileSet::save()
     }
 }
 
-const std::string& TileSet::getDirectory() const
+std::string TileSet::getDirectory()
 {
-    return dir;
+    std::string result = "/tileset/";
+    result += name;
+    return result;
 }
 
-void TileSet::setDirectory(const std::string& newdirectory)
+void TileSet::setName(const std::string& newname)
 {
-    dir = newdirectory;
+    name = newname;
 }
 
 size_t TileSet::getTileCount() const
@@ -270,14 +278,13 @@ TileTemplate* TileSet::getTemplate(size_t num)
 
 void TileSet::resizeBuffer(size_t newbuffersize)
 {
-    std::auto_ptr<char> newbuffer (new char[newbuffersize]);
+    char* newbuffer = new char[newbuffersize];
 
     if(tiledata)
-        memcpy(newbuffer.get(),
-                tiledata, std::min(tilebuffersize, newbuffersize));
+        memcpy(newbuffer, tiledata, std::min(tilebuffersize, newbuffersize));
 
     delete[] tiledata;
-    tiledata = newbuffer.release();
+    tiledata = newbuffer;
     tilebuffersize = newbuffersize;
 }
 

@@ -1,6 +1,8 @@
 26-Nov-2003 by Matthias Braun
 -made scrolling in tilesetview working correctly
 -template loading and saving in the editor should work now
+-started working on map rendering code for the editor and future netpanzer
+ versions
 
 24-Nov-2003 by Hankin Chick
 -created IRCLobbyServer, so IRCLobby should work by itself.

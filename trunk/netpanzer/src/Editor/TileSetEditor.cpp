@@ -63,7 +63,7 @@ bool TileSetEditor::switchTileSet(const std::string& newtileset)
         filename += newtileset;
 
         currenttileset = new TileSet();
-        currenttileset->load(filename);
+        currenttileset->load(newtileset);
 
         tilesetview->setTileSet(currenttileset);
     } catch(std::exception& e) {

@@ -76,7 +76,7 @@ void TileSetList::OnNewTileset(wxCommandEvent& event)
 
         std::auto_ptr<TileSet> tileset (new TileSet());
         std::string filename = newtileset;
-        tileset->setDirectory(filename);
+        tileset->setName("NewTileset");
         tileset->save();
 
         populateList();

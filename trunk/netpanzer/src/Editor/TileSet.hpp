@@ -19,14 +19,13 @@ public:
     ~TileSet();
 
     /// loads a tileset from disk
-    void load(const std::string& dir);
+    void load(const std::string& name);
     /// save the tileset
     void save();
 
     /// returns the directory containing the tileset
-    const std::string& getDirectory() const;
-
-    void setDirectory(const std::string& newdirectory);
+    std::string getDirectory();
+    void setName(const std::string& newname);
 
     size_t getTileCount() const;
     SDL_Surface* getTile(size_t num);
@@ -41,14 +40,14 @@ public:
 private:
     void resizeBuffer(size_t newbuffersize);
 
-    void readTemplates(const std::string& dir);
+    void readTemplates();
     
     TileSetHeader* header;
     size_t tilesize;
     char* tiledata;
     size_t tilebuffersize;
 
-    std::string dir;
+    std::string name;
     std::vector<TileTemplate*> templates;
 };
 
