@@ -23,7 +23,8 @@ namespace masterserver
 {
 
 ServerInfo::ServerInfo()
-    : querying(false), players(0), maxplayers(0), ping(0)
+    : port(0), querying(false), players(0), maxplayers(0), ping(0),
+      querystartticks(0)
 {
 }
 

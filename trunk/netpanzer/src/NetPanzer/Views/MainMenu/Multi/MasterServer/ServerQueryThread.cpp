@@ -21,20 +21,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <algorithm>
 #include <stdexcept>
+#include <sstream>
 #include <ctype.h>
 #include <SDL_net.h>
 #include "Util/Exception.hpp"
 #include "GameConfig.hpp"
 #include "Core/NetworkGlobals.hpp"
 #include "SDLNetSocketStream.hpp"
+#include "Util/StringTokenizer.hpp"
 #include "Tokenizer.hpp"
+
+static const int MAX_QUERIES = 3;
 
 namespace masterserver
 {
 
 ServerQueryThread::ServerQueryThread(ServerList* newserverlist)
     : running(false), thread(0), serverlist(newserverlist),
-      state(STATE_QUERYMASTERSERVER)
+      state(STATE_QUERYMASTERSERVER), udpsocket(0), queries(0)
 {
     // parse masterserverlist
     const char* str = gameconfig->masterservers.c_str();
@@ -55,7 +59,13 @@ ServerQueryThread::ServerQueryThread(ServerList* newserverlist)
     if(currentstr != "")
         masterservers.push_back(currentstr);
     std::random_shuffle(masterservers.begin(), masterservers.end());
-    
+
+    udpsocket = SDLNet_UDP_Open(0);
+    if(udpsocket == 0) {
+        throw Exception("Couldn't create socket: %s",
+                SDLNet_GetError());
+    }
+   
     thread = SDL_CreateThread(threadMain, this);
 }
 
@@ -63,6 +73,7 @@ ServerQueryThread::~ServerQueryThread()
 {
     running = false;
     SDL_KillThread(thread);
+    SDLNet_UDP_Close(udpsocket);
 }
 
 int
@@ -89,6 +100,8 @@ ServerQueryThread::run()
             default:
                 break;
         }
+        // sleep a little bit
+        SDL_Delay(10);
     }
 }
 
@@ -122,6 +135,7 @@ ServerQueryThread::queryMasterServer()
         *stream << "\\list\\gamename\\netpanzer\\protocol\\" <<
             _NETPANZER_PROTOCOL_VERSION << "\\final\\" << std::flush;
         
+        ServerInfo* lastserver = 0;
         while(!stream->eof() && running) {
             std::string token = tokenizer->getNextToken();
             if(token == "ip") {
@@ -134,7 +148,12 @@ ServerQueryThread::queryMasterServer()
                 // add server into list
                 SDL_mutexP(serverlist->mutex);
                 serverlist->push_back(info);
+                lastserver = &(serverlist->back());
+                not_queried.push_back(lastserver);
                 SDL_mutexV(serverlist->mutex);
+            } else if(token == "port") {
+                std::stringstream portstr(tokenizer->getNextToken());
+                portstr >> lastserver->port;
             } else if(token == "final") {
                 break;
             } else {
@@ -156,7 +175,98 @@ ServerQueryThread::queryMasterServer()
 
 void
 ServerQueryThread::queryServers()
-{
+{    
+    if(queries < MAX_QUERIES && !not_queried.empty()) {
+        // send a query to a server
+        ServerInfo& server = *not_queried.back();
+        not_queried.pop_back();
+
+        // resolve address
+        if(SDLNet_ResolveHost(&server.ipaddress,
+               const_cast<char*> (server.address.c_str()), server.port) < 0) {
+            std::cerr << "Couldn't resolve address of server '"
+                << server.address << "'.\n";
+            return;
+        }
+         
+        // send query
+        std::string query = "\\status\\final\\";
+
+        const void* data = query.c_str();
+        size_t datasize = query.size();
+
+        UDPpacket* sendpacket = SDLNet_AllocPacket(datasize);
+        if(!sendpacket) {
+            throw std::runtime_error("out of memory");
+        }
+        sendpacket->address = server.ipaddress;
+        sendpacket->len = datasize;
+        memcpy(sendpacket->data, data, datasize);
+        int res = SDLNet_UDP_Send(udpsocket, -1, sendpacket);
+        SDLNet_FreePacket(sendpacket);
+        if(res != 1) {
+            std::cerr << "Errro when sending info query: " << SDLNet_GetError();
+            return;            
+        }
+        
+        server.querystartticks = SDL_GetTicks();
+        queries++;
+    }
+
+    // part2 receive data
+
+    UDPpacket* packet = SDLNet_AllocPacket(4096);
+    int res = SDLNet_UDP_Recv(udpsocket, packet);
+
+    if(res < 0) {
+        SDLNet_FreePacket(packet);
+        std::cerr << "Network error when receiving from udpsocket.\n";
+        state = STATE_ERROR;
+        return;
+    }
+
+    // find server with this address
+    ServerInfo* server = 0;
+    SDL_mutexP(serverlist->mutex);
+    for(ServerList::iterator i = serverlist->begin();
+            i != serverlist->end(); ++i) {
+        if(i->ipaddress.host == packet->address.host &&
+                i->ipaddress.port == packet->address.port) {
+            server = &(*i);
+            break;
+        }       
+    }
+    SDL_mutexV(serverlist->mutex);
+    if(server == 0) { // random data from elsewhere
+        SDLNet_FreePacket(packet);
+        return;
+    }
+
+    queries--;
+    server->ping = SDL_GetTicks() - server->querystartticks;
+    
+    std::string packetstr((const char*) packet->data, packet->len);
+    StringTokenizer tokenizer(packetstr, '\\');
+
+    std::string token;
+    while( (token = tokenizer.getNextToken()) != "") {
+        if(token == "hostname") {
+            server->name = tokenizer.getNextToken();
+        } else if(token == "mapname") {
+            server->map = tokenizer.getNextToken();
+        } else if(token == "numplayers") {
+            std::stringstream str(tokenizer.getNextToken());
+            str >> server->players;
+        } else if(token == "maxplayers") {
+            std::stringstream str(tokenizer.getNextToken());
+            str >> server->maxplayers;
+        } else {
+            // handle more tokens...
+        }
+    }
+    server->querying = false;
+
+    SDLNet_FreePacket(packet);
 }
 
 } // masterserver

@@ -1,3 +1,20 @@
+/*
+Copyright (C) 2004 Matthias Braun <matze@braunis.de>
+ 
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+ 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+ 
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 #include <config.h>
 
 #include "InfoThread.hpp"
@@ -5,10 +22,9 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <errno.h>
 #include <string.h>
 
-#include "Tokenizer.hpp"
+#include "Util/StringTokenizer.hpp"
 #include "GameConfig.hpp"
 #include "NetworkGlobals.hpp"
 #include "PlayerInterface.hpp"
@@ -80,7 +96,7 @@ void InfoThread::handleStatusRequests()
     }
 
     std::string packetstr((char*) packet->data, packet->len);
-    Tokenizer tokenizer(packetstr);
+    StringTokenizer tokenizer(packetstr, '\\');
 
     std::string query;
     do {
@@ -108,14 +124,35 @@ void InfoThread::handleStatusRequests()
             sendpacket->len = datasize;
             memcpy(sendpacket->data, data, datasize);
             res = SDLNet_UDP_Send(socket, -1, sendpacket);
+            SDLNet_FreePacket(sendpacket);
             if(res != 1) {
                 SDLNet_FreePacket(packet);
                 std::stringstream msg;
-                msg << "Errro when sending back info: " << strerror(errno);
+                msg << "Errro when sending back info: " << SDLNet_GetError();
                 throw std::runtime_error(msg.str());
             }
 
             break; // enough, next client
+        } else if(query == "echo") {
+            std::string word = tokenizer.getNextToken();
+
+            const void* data = word.c_str();
+            size_t datasize = word.size();
+            UDPpacket* sendpacket = SDLNet_AllocPacket(datasize);
+            if(!sendpacket) {
+                throw std::runtime_error("out of memory");
+            }
+            sendpacket->address = packet->address;
+            sendpacket->len = datasize;
+            memcpy(sendpacket->data, data, datasize);
+            res = SDLNet_UDP_Send(socket, -1, sendpacket);
+            SDLNet_FreePacket(sendpacket);
+            if(res != 1) {
+                SDLNet_FreePacket(packet);
+                std::stringstream msg;
+                msg << "Errro when sending back info: " << SDLNet_GetError();
+                throw std::runtime_error(msg.str());
+            }
         } else {
             // unknown query skip it
         }

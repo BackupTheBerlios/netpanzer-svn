@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __SERVERINFO_HPP__
 
 #include <string>
+#include <SDL_net.h>
 
 namespace masterserver
 {
@@ -34,12 +35,16 @@ public:
     
     std::string name;
     std::string address;
+    int port;
 
     bool querying;
     int players;
     int maxplayers;
     std::string map;
     int ping;
+
+    IPaddress ipaddress;
+    Uint32 querystartticks;
 };
 
 } // masterserver

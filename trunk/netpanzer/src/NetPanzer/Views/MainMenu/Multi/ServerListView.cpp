@@ -62,6 +62,10 @@ ServerListView::~ServerListView()
 void
 ServerListView::refresh()
 {
+    SDL_mutexP(serverlist.mutex);
+    serverlist.clear();
+    SDL_mutexV(serverlist.mutex);
+    
     delete queryThread;
     queryThread = new masterserver::ServerQueryThread(&serverlist);   
 }
