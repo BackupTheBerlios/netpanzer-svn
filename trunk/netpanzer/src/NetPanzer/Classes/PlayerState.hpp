@@ -89,201 +89,39 @@ private:
 public:
     PlayerUnitConfig unit_config;
 
-    PlayerState::PlayerState()
-        : flag(0), status(0), kills(0), kill_points(0), losses(0),
-          loss_points(0), total(0), objectives_held(0), stats_locked(false),
-          colorIndex(0)
-    {
-    }
+    PlayerState::PlayerState();
+    PlayerState::PlayerState(const PlayerState& other);
 
-    PlayerState::PlayerState(const PlayerState& other)
-        : name(other.name), flag(other.flag), status(other.status),
-          kills(other.kills), kill_points(other.kill_points),
-          losses(other.losses), loss_points(other.loss_points),
-          total(other.total), objectives_held(other.objectives_held),
-          stats_locked(other.stats_locked), unit_config(other.unit_config)
-    {
-    }
+    void operator= (const PlayerState& other);
 
-    void operator= (const PlayerState& other)
-    {
-        name = other.name;
-        flag = other.flag;
-        status = other.status;
-        kills = other.kills;
-        kill_points = other.kill_points;
-        losses = other.losses;
-        loss_points = other.loss_points;
-        total = other.total;
-        objectives_held = other.objectives_held;
-        stats_locked = other.stats_locked;
-        unit_config = other.unit_config;
-    }
-    
-    void setName(const std::string& newname)
-    {
-        name = newname;
-    }
+    void setName(const std::string& newname);
+    void setID( PlayerID player_id );
 
-    void setID( PlayerID player_id )
-    {
-        ID = player_id;
-    }
-
-    void resetStats()
-    {
-        kills  = 0;
-        kill_points = 0;
-        losses = 0;
-        loss_points = 0;
-        total = 0;
-        objectives_held = 0;
-        stats_locked = false;
-    }
-
-    const std::string& getName() const
-    {
-        return name;
-    }
-
-    void lockStats()
-    {
-        stats_locked = true;
-    }
-
-    void unlockStats()
-    {
-        stats_locked = false;
-    }
-
-    short getKills()
-    {
-        return( kills );
-    }
-
-    short getLosses()
-    {
-        return( losses );
-    }
-
-    void incKills( unsigned short unit_type )
-    {
-        if ( stats_locked == true ) return;
-        kills++;
-        kill_points += 2 * unit_config.getUnitPointValue( (unsigned char)  unit_type ) ;
-    }
-
-    void decKills( unsigned short unit_type )
-    {
-        if ( stats_locked == true ) return;
-        kills--;
-    }
-
-    void incLosses( unsigned short unit_type )
-    {
-        if ( stats_locked == true ) return;
-        losses++;
-        loss_points += unit_config.getUnitPointValue( (unsigned char) unit_type );
-    }
-
-    void decLosses( unsigned short unit_type )
-    {
-        if ( stats_locked == true ) return;
-        losses--;
-    }
-
-    void incObjectivesHeld()
-    {
-        if ( stats_locked == true ) return;
-        objectives_held++;
-    }
-
-    void decObjectivesHeld()
-    {
-        if ( stats_locked == true ) return;
-        objectives_held++;
-    }
-
-    short getObjectivesHeld()
-    {
-        return( objectives_held );
-    }
-
-    void setObjectivesHeld( short objectives )
-    {
-        if ( stats_locked == true ) return;
-        objectives_held = objectives;
-    }
-
-    void setID( unsigned short index, SocketClient::ID networkid  )
-    {
-        ID.setIndex(index);
-        ID.setNetworkID(networkid);
-    }
-
-    void setID( unsigned short index )
-    {
-        ID.setIndex( index );
-    }
-
-    void setID( SocketClient::ID networkid )
-    {
-        ID.setNetworkID(networkid);
-    }
-
-    PlayerID getPlayerID()
-    {
-        return( ID );
-    }
-
-    void setStatus( unsigned char status )
-    {
-        PlayerState::status = status;
-    }
-
-    unsigned char getStatus()
-    {
-        return( status );
-    }
-
-    void setFlag(unsigned char flag)
-    {
-        PlayerState::flag = flag;
-    }
-
-    unsigned char getFlag()
-    {
-        return flag;
-    }
-
-    short getTotal()
-    {
-        return( kill_points - loss_points );
-    }
-
-    NetworkPlayerState getNetworkPlayerState()
-    {
-        return NetworkPlayerState(name, flag, ID.getIndex(), status,
-                kills, kill_points, losses, loss_points, total,
-                objectives_held, colorIndex);
-    }
-
-    void setFromNetworkPlayerState(NetworkPlayerState* state)
-    {
-        state->name[63] = '\0';
-        name = state->name;
-        flag = state->flag;
-        ID.setIndex(state->playerindex_id);
-        status = state->status;
-        kills = state->kills;
-        kill_points = state->kill_points;
-        losses = state->losses;
-        loss_points = state->loss_points;
-        total = state->total;
-        objectives_held = state->objectives_held;
-	colorIndex = state->colorIndex;
-    }
-
+    void resetStats();
+    const std::string& getName() const;
+    void lockStats();
+    void unlockStats();
+    short getKills();
+    short getLosses();
+    void incKills( unsigned short unit_type );
+    void decKills( unsigned short unit_type );
+    void incLosses( unsigned short unit_type );
+    void decLosses( unsigned short unit_type );
+    void incObjectivesHeld();
+    void decObjectivesHeld();
+    short getObjectivesHeld();
+    void setObjectivesHeld( short objectives );
+    void setID( unsigned short index, SocketClient::ID networkid  );
+    void setID( unsigned short index );
+    void setID( SocketClient::ID networkid );
+    PlayerID getPlayerID();
+    void setStatus( unsigned char status );
+    unsigned char getStatus();
+    void setFlag(unsigned char flag);
+    unsigned char getFlag();
+    short getTotal();
+    NetworkPlayerState getNetworkPlayerState();
+    void setFromNetworkPlayerState(NetworkPlayerState* state);
     void setColor( uint32_t index );
     uint8_t getColor();
 };

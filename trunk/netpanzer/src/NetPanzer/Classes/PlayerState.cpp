@@ -93,3 +93,197 @@ uint8_t PlayerState::getColor() {
     return ( *playerColorArray[ colorIndex ] );
 }
 
+PlayerState::PlayerState()
+    : flag(0), status(0), kills(0), kill_points(0), losses(0),
+      loss_points(0), total(0), objectives_held(0), stats_locked(false),
+      colorIndex(0)
+{
+}
+
+PlayerState::PlayerState(const PlayerState& other)
+    : name(other.name), flag(other.flag), status(other.status),
+      kills(other.kills), kill_points(other.kill_points),
+      losses(other.losses), loss_points(other.loss_points),
+      total(other.total), objectives_held(other.objectives_held),
+      stats_locked(other.stats_locked), unit_config(other.unit_config)
+{
+}
+
+void PlayerState::operator= (const PlayerState& other)
+{
+    name = other.name;
+    flag = other.flag;
+    status = other.status;
+    kills = other.kills;
+    kill_points = other.kill_points;
+    losses = other.losses;
+    loss_points = other.loss_points;
+    total = other.total;
+    objectives_held = other.objectives_held;
+    stats_locked = other.stats_locked;
+    unit_config = other.unit_config;
+}
+
+void PlayerState::setName(const std::string& newname)
+{
+    name = newname;
+}
+
+void PlayerState::setID( PlayerID player_id )
+{
+    ID = player_id;
+}
+
+void PlayerState::resetStats()
+{
+    kills  = 0;
+    kill_points = 0;
+    losses = 0;
+    loss_points = 0;
+    total = 0;
+    objectives_held = 0;
+    stats_locked = false;
+}
+
+const std::string& PlayerState::getName() const
+{
+    return name;
+}
+
+void PlayerState::lockStats()
+{
+    stats_locked = true;
+}
+
+void PlayerState::unlockStats()
+{
+    stats_locked = false;
+}
+
+short PlayerState::getKills()
+{
+    return( kills );
+}
+
+short PlayerState::getLosses()
+{
+    return( losses );
+}
+
+void PlayerState::incKills( unsigned short unit_type )
+{
+    if ( stats_locked == true ) return;
+    kills++;
+    kill_points += 2 * unit_config.getUnitPointValue( (unsigned char)  unit_type ) ;
+}
+
+void PlayerState::decKills( unsigned short unit_type )
+{
+    if ( stats_locked == true ) return;
+    kills--;
+}
+
+void PlayerState::incLosses( unsigned short unit_type )
+{
+    if ( stats_locked == true ) return;
+    losses++;
+    loss_points += unit_config.getUnitPointValue( (unsigned char) unit_type );
+}
+
+void PlayerState::decLosses( unsigned short unit_type )
+{
+    if ( stats_locked == true ) return;
+    losses--;
+}
+
+void PlayerState::incObjectivesHeld()
+{
+    if ( stats_locked == true ) return;
+    objectives_held++;
+}
+
+void PlayerState::decObjectivesHeld()
+{
+    if ( stats_locked == true ) return;
+    objectives_held++;
+}
+
+short PlayerState::getObjectivesHeld()
+{
+    return( objectives_held );
+}
+
+void PlayerState::setObjectivesHeld( short objectives )
+{
+    if ( stats_locked == true ) return;
+    objectives_held = objectives;
+}
+
+void PlayerState::setID( unsigned short index, SocketClient::ID networkid  )
+{
+    ID.setIndex(index);
+    ID.setNetworkID(networkid);
+}
+
+void PlayerState::setID( unsigned short index )
+{
+    ID.setIndex( index );
+}
+
+void PlayerState::setID( SocketClient::ID networkid )
+{
+    ID.setNetworkID(networkid);
+}
+
+PlayerID PlayerState::getPlayerID()
+{
+    return( ID );
+}
+
+void PlayerState::setStatus( unsigned char status )
+{
+    PlayerState::status = status;
+}
+
+unsigned char PlayerState::getStatus()
+{
+    return( status );
+}
+
+void PlayerState::setFlag(unsigned char flag)
+{
+    PlayerState::flag = flag;
+}
+
+unsigned char PlayerState::getFlag()
+{
+    return flag;
+}
+
+short PlayerState::getTotal()
+{
+    return( kill_points - loss_points );
+}
+
+NetworkPlayerState PlayerState::getNetworkPlayerState()
+{
+    return NetworkPlayerState(name, flag, ID.getIndex(), status,
+            kills, kill_points, losses, loss_points, total,
+            objectives_held, colorIndex);
+}
+
+void PlayerState::setFromNetworkPlayerState(NetworkPlayerState* state)
+{
+    state->name[63] = '\0';
+    name = state->name;
+    flag = state->flag;
+    ID.setIndex(state->playerindex_id);
+    status = state->status;
+    kills = state->kills;
+    kill_points = state->kill_points;
+    losses = state->losses;
+    loss_points = state->loss_points;
+    total = state->total;
+    objectives_held = state->objectives_held;
+    colorIndex = state->colorIndex;
+}
