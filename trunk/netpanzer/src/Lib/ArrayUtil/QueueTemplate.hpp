@@ -42,8 +42,8 @@ public:
 
     bool enqueue(const TYPE& object )
     {
-        add( object, (rear + 1) % size );
-        rear = (rear + 1) % size;
+        add( object, (rear + 1) % this->size );
+        rear = (rear + 1) % this->size;
 
         if ( front == rear )
             return( false );
@@ -55,29 +55,29 @@ public:
     {
         assert( front != rear );
 
-        front = ( front + 1 ) % size;
-        return( array[ front ] );
+        front = ( front + 1 ) % this->size;
+        return( this->array[ front ] );
     }
 
     void pop()
     {
         assert( front != rear );
 
-        front = ( front + 1 ) % size;
+        front = ( front + 1 ) % this->size;
     }
 
     TYPE getFirst()
     {
         assert( front != rear );
 
-        return( array[ (( front + 1 ) % size) ] );
+        return( this->array[ (( front + 1 ) % this->size) ] );
     }
 
     TYPE * getFirstPtr()
     {
         assert( front != rear );
 
-        return( &(array[ (( front + 1 ) % size) ]) );
+        return( &(this->array[ (( front + 1 ) % this->size) ]) );
     }
 
 
@@ -88,7 +88,7 @@ public:
 
     bool isFull () const
     {
-        return front == (rear + 1) % size;
+        return front == (rear + 1) % this->size;
     }
 
     bool isReady() const
@@ -99,7 +99,7 @@ public:
     unsigned long itemCount() const
     {
         if ( front > rear )
-            return ( (rear+1) + ( (size-1) - front ) );
+            return ( (rear+1) + ( (this->size-1) - front ) );
         else
             return ( rear - front );
     }
