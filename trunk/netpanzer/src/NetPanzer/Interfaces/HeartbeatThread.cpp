@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <iostream>
 #include <stdexcept>
 #include <sstream>
+#include <algorithm>
 
 #include <time.h>
 #include <errno.h>
@@ -61,6 +62,9 @@ HeartbeatThread::HeartbeatThread()
             LOGGER.warning("Bad Masterserver: %s\n", e.what());
         }
     }
+
+    // distribute load
+    std::random_shuffle(serveraddrs.begin(), serveraddrs.end());
     
     // send initial heartbeat
     if(!sendHeartbeat()) {

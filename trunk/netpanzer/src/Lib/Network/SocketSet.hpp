@@ -3,11 +3,12 @@
 
 #include "SocketHeaders.hpp"
 #include "SocketBase.hpp"
+#include "Util/NoCopy.hpp"
 
 namespace network
 {
 
-class SocketSet
+class SocketSet : public NoCopy
 {
 public:
     SocketSet();
@@ -20,7 +21,7 @@ public:
     /** Waits for input on the sockets in the set until a socket has input or a
      * timeout occurs. Returns false in case of timeout.
      */
-    bool select(unsigned int usec);
+    bool select(unsigned int timeout_usec = 0);
     /** after a select call you can test with this function if a specific socket
      * has data pending
      */

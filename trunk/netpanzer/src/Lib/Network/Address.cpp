@@ -26,6 +26,8 @@ Address::Address(const Address& other)
 void
 Address::operator=(const Address& other)
 {
+    if(&other == this) // ignore self assignment
+        return;
     memcpy(&addr, &other.addr, sizeof(addr));
 }
 

@@ -6,6 +6,7 @@
 namespace network
 {
 
+/** Base class for sockets, this is intended for internal use only */
 class SocketBase : public NoCopy
 {
 protected:

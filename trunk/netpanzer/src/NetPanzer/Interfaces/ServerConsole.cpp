@@ -4,6 +4,7 @@
 
 #include "ServerConsole.hpp"
 #include "Util/Exception.hpp"
+#include "Util/StringTokenizer.hpp"
 
 ServerConsole::ServerConsole(DedicatedGameManager* newmanager)
     : running(false), thread(0), manager(newmanager)
@@ -36,8 +37,11 @@ static CommandHelp commands[] = {
     { 0, 0 }
 };
 
-void ServerConsole::executeCommand(const std::string& command)
+void ServerConsole::executeCommand(const std::string& commandline)
 {
+    StringTokenizer tokenizer(commandline, ' ');
+   
+    std::string command = tokenizer.getNextToken();
     if(command == "help") {
         std::cout << "Commands:\n";
         for(size_t i = 0; commands[i].name != 0; ++i) {
@@ -51,7 +55,14 @@ void ServerConsole::executeCommand(const std::string& command)
         running = false;
     } else if(command == "status") {
         manager->pushCommand(ServerCommand(ServerCommand::STATUS));
-    } else if(command == "") {
+    } else if(command == "kick") {
+        std::string player = tokenizer.getNextToken();
+        if(player != "")
+            manager->pushCommand(ServerCommand(ServerCommand::KICK, player));
+    } else if(command == "map") {
+        std::string map = tokenizer.getNextToken();
+        if(map != "")
+            manager->pushCommand(ServerCommand(ServerCommand::MAPCHANGE, map));
     } else {
         std::cout << "Unknown command.\n";
     }
