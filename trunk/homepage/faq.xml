@@ -108,7 +108,13 @@
       <faq>
         <question>Will players be able to ally?</question>
         <answer>Yes, players can ally.</answer>
+	  </faq>
+
+	  <faq>
+        <question>What ports are used by netPanzer?</question>
+		<answer>3030/TCP, 3032/TCP, 3031/UDP and 3032/UDP.</answer>
       </faq>
+
     </faq-list>
   </section>
 </page>
