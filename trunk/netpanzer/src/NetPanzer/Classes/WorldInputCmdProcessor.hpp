@@ -38,7 +38,7 @@ protected:
     iXY right_mouse_scroll_pos;
     iXY right_mouse_scrolled_pos;
     bool right_mouse_scroll;
-    bool selectBoundBoxUnits( void );
+    bool selectBoundBoxUnits();
 
     bool local_key_table[256];
     bool manual_control_state;
@@ -51,7 +51,7 @@ protected:
     unsigned int current_selection_list_bits;
     SelectionList target_list;
 
-    void initializeSelectionLists( void );
+    void initializeSelectionLists();
     void switchSelectionList( unsigned long new_list_index );
     void setSelectionList( unsigned long new_list_index );
     void cycleSelectedUnits( unsigned long new_list_index );
@@ -59,7 +59,7 @@ protected:
     unsigned char getCursorStatus( iXY &loc );
     void setMouseCursor( unsigned char world_cursor_status );
 
-    void getManualControlStatus( void );
+    void getManualControlStatus();
 
     void sendManualMoveCommand( unsigned char orientation,
                                 bool start_stop );
@@ -71,22 +71,24 @@ protected:
     void evalLeftMButtonEvents( MouseEvent &event );
     void evalRightMButtonEvents( MouseEvent &event );
 
-    void evaluateMouseEvents( void );
+    void evaluateMouseEvents();
 
     unsigned long keyboard_input_mode;
 
-    void keyboardInputModeCommand( void );
+    void keyboardInputModeCommand();
 
     long enter_key_hit_count;
-    void setKeyboardInputModeChatMesg( void );
-    void keyboardInputModeChatMesg( void );
-    void setKeyboardInputModeAllieChatMesg( void );
-    void keyboardInputModeAllieChatMesg( void );
+    void setKeyboardInputModeChatMesg();
+    void keyboardInputModeChatMesg();
+    void setKeyboardInputModeAllieChatMesg();
+    void keyboardInputModeAllieChatMesg();
 
-    void evaluateKeyCommands( void );
-    void evaluateGroupingKeys( void );
+    void evaluateKeyCommands();
+    void evaluateGroupingKeys();
 
-    void evaluateKeyboardEvents( void );
+    void evaluateKeyboardEvents();
+
+    void jumpLastAttackedUnit();
 
     bool getConsoleInputString( char *input_string );
 
@@ -96,32 +98,32 @@ public:
 
     WorldInputCmdProcessor();
 
-    void process( void );
+    void process();
 
-    void inFocus( void );
+    void inFocus();
 
     void updateScrollStatus( const iXY &mouse_pos );
 
-    void updateControls( void );
+    void updateControls();
 
-    void closeSelectionBox( void );
+    void closeSelectionBox();
 
     // ** methods for external input control
-    bool isUnitSelected( void );
+    bool isUnitSelected();
     bool selectUnits( iRect bound_box );
     bool isValidMoveLocation( iXY location );
     bool sendMoveCommandExternal( iXY location );
-    void    deselectUnitsExternal( void );
+    void    deselectUnitsExternal();
 
-    void startChatMessageAll( void );
-    void startChatMessageAllie( void );
+    void startChatMessageAll();
+    void startChatMessageAllie();
 
     void createGroup( unsigned long group );
     void activateGroup( unsigned long group );
 
-    static bool  isObjectiveSelected( void );
-    static char *   getSelectedObjectiveName( void );
-    static iXY getSelectedObjectiveWorldPos( void );
+    static bool  isObjectiveSelected();
+    static char *   getSelectedObjectiveName();
+    static iXY getSelectedObjectiveWorldPos();
 };
 
 extern WorldInputCmdProcessor COMMAND_PROCESSOR;

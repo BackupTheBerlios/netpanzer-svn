@@ -48,6 +48,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ConsoleInterface.hpp"
 
+#include "Vehicle.hpp"
+
 WorldInputCmdProcessor COMMAND_PROCESSOR;
 
 enum { _cursor_regular,
@@ -282,6 +284,23 @@ void WorldInputCmdProcessor::evaluateKeyCommands( void )
         setKeyboardInputModeAllieChatMesg();
     }
 
+    //If space is pressed, jump to first currently attacked unit
+    if( KeyboardInterface::getKeyState( SDLK_SPACE ) == true ) {
+        jumpLastAttackedUnit();
+    }
+
+}
+
+void WorldInputCmdProcessor::jumpLastAttackedUnit()
+{
+    UnitList* unitlist 
+        = UnitInterface::getUnitList(PlayerInterface::getLocalPlayerIndex());
+    for(UnitList::iterator i = unitlist->begin(); i != unitlist->end(); ++i) {
+        UnitState* unit_state = & (i->unit_state);
+        if ( unit_state->threat_level == _threat_level_under_attack ) {
+            WorldViewInterface::setCameraPosition( unit_state->location );
+        }
+    }
 }
 
 void WorldInputCmdProcessor::evaluateGroupingKeys( void )
