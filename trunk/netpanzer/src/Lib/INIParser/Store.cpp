@@ -85,7 +85,8 @@ Store::load(std::istream& in)
 
             ++c;
             while(*c != 0) {
-                value += *c;
+                if(*c != '\r') // win32 hack...
+                    value += *c;
                 ++c;
             }
             
