@@ -101,19 +101,25 @@ void UnitInterface::initialize( unsigned long max_units )
 
 void UnitInterface::cleanUp()
 {
-    //delete[] unit_lists;
     delete[] playerUnitLists;
     playerUnitLists = 0;
+
+    for(Units::iterator i = units.begin(); i != units.end(); ++i)
+        delete i->second;
+    units.clear();
 }
 
 void UnitInterface::reset()
 {
     for(size_t i = 0; i < max_players; i++ ) {
-        //unit_lists[i].clear();
         playerUnitLists[i].clear();
     }
 
     unit_bucket_array.initialize( MapInterface::getSize(), TileInterface::getTileSize() );
+
+    for(Units::iterator i = units.begin(); i != units.end(); ++i)
+        delete i->second;
+    units.clear();
 }
 
 void UnitInterface::sendMessage( UnitMessage *message )

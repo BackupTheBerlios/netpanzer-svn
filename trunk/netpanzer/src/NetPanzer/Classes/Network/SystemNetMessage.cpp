@@ -53,7 +53,7 @@ void SystemChatMesgRequest::reset( void )
 {
     message_class = _net_message_class_system;
     message_id = _net_message_id_system_chat_mesg_req;
-    memset( player_set, 0, sizeof( unsigned char) * 32 );
+    memset( player_set, 0, sizeof(player_set));
     message_scope = _chat_mesg_scope_all;
 }
 
@@ -105,6 +105,7 @@ SystemChatMesg::SystemChatMesg()
 {
     message_class = _net_message_class_system;
     message_id = _net_message_id_system_chat_mesg;
+    memset(message_text, 0, sizeof(message_text));
 }
 
 uint16_t SystemChatMesg::getSourcePlayerIndex(void)
@@ -124,6 +125,7 @@ SystemViewControl::SystemViewControl()
     message_class = _net_message_class_system;
     message_id = _net_message_id_system_view_control;
     action_flags = 0;
+    memset(view_name, 0, sizeof(view_name));
 }
 
 void SystemViewControl::set( char *name, unsigned char flags )

@@ -172,7 +172,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                     Desktop::setVisibility("WinnerMesgView", true );
                 }
 
-                SERVER->sendMessage( &view_control, sizeof( SystemViewControl ), 0 );
+                SERVER->sendMessage(&view_control, sizeof(SystemViewControl), 0);
 
                 map_cycle_fsm_server_endgame_timer.changePeriod( _MAP_CYCLE_ENDGAME_WAIT_PERIOD );
                 map_cycle_fsm_server_endgame_timer.reset();

@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 enum { _net_message_id_game_control_cycle_map,
        _net_message_id_game_control_cycle_respawn_ack
-
      };
 
 #ifdef MSVC
@@ -46,6 +45,7 @@ public:
     {
         message_class = _net_message_class_game_control;
         message_id = _net_message_id_game_control_cycle_map;
+        memset(map_name, 0, sizeof(map_name));
     }
 
 }
@@ -54,13 +54,11 @@ __attribute__((packed));
 class GameControlCycleRespawnAck : public NetMessage
 {
 public:
-
     GameControlCycleRespawnAck()
     {
         message_class = _net_message_class_game_control;
         message_id = _net_message_id_game_control_cycle_respawn_ack;
     }
-
 }
 __attribute__((packed));
 
