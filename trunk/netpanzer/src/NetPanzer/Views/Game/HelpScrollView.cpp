@@ -104,13 +104,13 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("  RMH + [1 - 7]                    Sets the blending level of the minimap");
     insert("  RMH + [+ or -]                   Scales the size of the minimap");
     //insert("  RMH + 'O'                        Toggles outposts");
-    insert(" ");
-    insert(" ");
-    insert("System Related");
-    insert("");
-    insert("  F9                               BMP screen shot");
-    insert("  Alt + '-'                        Decrease brightness");
-    insert("  Alt + '='                        Increase brightness");
+    //insert(" ");
+    //insert(" ");
+    //insert("System Related");
+    //insert("");
+    //insert("  F9                               BMP screen shot");
+    //insert("  Alt + '-'                        Decrease brightness");
+    //insert("  Alt + '='                        Increase brightness");
 
     int CHAR_YPIX = Surface::getFontHeight();
     maxViewableItems = (getClientRect().getSizeY() - (TEXT_GAP_SPACE + CHAR_YPIX)) / (TEXT_GAP_SPACE + CHAR_YPIX) - 1;
