@@ -58,12 +58,7 @@ rule Application
   # construct Install target
   if ! [ IsElem noinstall : $(3) ]
   {
-    local install_opts ;
-    if [ IsElem console : $(3) ]
-    {
-      install_opts += console ;
-    }
-    InstallApplication $(target) : : $(install_opts) ;
+    Depends install_app : [ DoInstall $(target) : $(bindir) ] ;
   }
 
   # Link

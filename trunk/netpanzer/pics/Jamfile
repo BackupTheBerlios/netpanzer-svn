@@ -15,15 +15,16 @@ PARTICELPATHS =
 ;
 
 for p in $(PARTICELPATHS) {
-    FILES += [ WildcardPath $(p) : *.pak ] ;
+    FILES += [ Wildcard $(p) : *.pak ] ;
 }
 
-FILES += [ WildcardPath flags : *.bmp ]
-         [ WildcardPath cursors : *.bmp ]
-         [ WildcardPath menus/vehicleSelectionView : *.bmp ]
-         [ WildcardPath backgrounds/menus/buttons/default/pak : *.pak ]
-         [ WildcardPath backgrounds/menus/menu/pak : *.pak ]
-         [ WildcardPath backgrounds/menus/menu : *.bmp ]
+FILES += [ Wildcard flags : *.bmp ]
+         [ Wildcard cursors : *.bmp ]
+         [ Wildcard menus/vehicleSelectionView : *.bmp ]
+         [ Wildcard backgrounds/menus/buttons/default/pak : *.pak ]
+         [ Wildcard backgrounds/menus/menu/pak : *.pak ]
+         [ Wildcard backgrounds/menus/menu : *.bmp ]
          chars5x5.raw chars8x8.raw grass.bmp ;
 
 InstallData $(FILES) : pics ;
+

@@ -2,186 +2,148 @@
 # Rules for installation
 #============================================================================
 
-# Override Jam defaults.
-EXEMODE = 0755 ;
-FILEMODE = 0644 ;
+COPYDIRS ?= "cp -R" ;
 
-if ! $(appdatadir)
-{
-    appdatadir = [ FDirName $(datadir) $(PACKAGE_NAME) ] ;
-}
-
-##  InstallApplication applicationname [ : subdir [ : options ] ]
-##    Install an application into the bindir directory.  A subdirectory
-##    relative to the bindir can be specified.  Possible options are "console"
-##    if this is a console application (as opposed to a GUI application).  This
-##    rule is already invoked by the Application rule, so usually there's no
-##    need to call it manually.
-rule InstallApplication
-{
-  local dir = [ FDirName $(DESTDIR) $(bindir) $(2) ] ;
-  local target = $(<:R=$(dir):G=install) ;
-
-  CheckOptions console : $(3) : $(<) ;
-  Install $(target) : $(<) ;
-  MODE on $(target) = $(EXEMODE) ;
-  Depends install_apps : $(target) ;
-}
-
-##  InstallLibrary libraryname [ : subdir ]
-##    Install a library into the libdir directory. A subdirectory relative to
-##    the libdar may be specified.
-##    This rule is already invoked by the Library rule, so usually there's no
-##    need to call it manually.
-rule InstallLibrary
-{
-  local dir = [ FDirName $(DESTDIR) $(libdir) $(2) ] ;
-  local target = $(<:R=$(dir):G=install) ;
-  
-  Install $(target) : $(<) ;
-  MODE on $(target) = $(FILEMODE) ;
-  Depends install_libs : $(target) ;
-}
+# set some paths
+appdatadir ?= [ ConcatDirs $(datadir) $(PACKAGE_NAME) ] ;
+appdocdir ?= [ ConcatDirs $(datadir) doc $(PACKAGE_NAME) ] ;
+appconfdir ?= [ ConcatDirs $(sysconfdir) $(PACKAGE_NAME) ] ;
+appicondir ?= [ ConcatDirs $(datadir) pixmaps $(PACKAGE_NAME) ] ;
+plugindir ?= [ ConcatDirs $(libdir) $(PACKAGE_NAME) ] ;
 
 ##  InstallHeader headername [ : subdir ]
-##    Install a headerfile into the includedir directory. A subdirectory
+##    DoInstall a headerfile into the includedir directory. A subdirectory
 ##    relative to the includedir can be specified.
 rule InstallHeader
 {
-  local dir = [ FDirName $(DESTDIR) $(includedir) $(2) ] ;
-  local target = $(<:R=$(dir):G=install) ;
-    
-  Install $(target) : $(<) ;
-  MODE on $(target) = $(FILEMODE) ;
-  Depends install_headers : $(target) ;
+    LOCATE on $(<) = $(SUBDIR) ;
+    Depends install_include : [ DoInstall $(<) : $(includedir) $(2) ] ;
 }
 
 ##  InstallShellScript scriptname [ : subdir ]
-##    Install a shell script into the bindir directory. A subdirectory
+##    Installs a shell script into the bindir directory. A subdirectory
 ##    relative to the bindir can be specified.
 rule InstallShellScript
 {
-  local dir = [ FDirName $(DESTDIR) $(bindir) $(2) ] ;
-  local target = $(<:R=$(dir):G=install) ;
-  
-  Install $(target) : $(<) ;
-  MODE on $(target) = $(EXEMODE) ;
-  Depends install_shellscripts : $(target) ;
+    LOCATE on $(<) = $(SUBDIR) ;
+    Depends install_shellscript 
+        : [ DoInstall $(<) : $(bindir) $(2) : $(INSTALL_SCRIPT) ]
+    ;
 }
 
-##  InstallData datafiles [ : subdir ]
-##    Installs files into the appdatadir directory. A subdirectory realtively
-##    to the appdatadir can be specified.
-##    The appdatadir is set to $(datatdir)/$(PACKAGE_NAME) if not already set
-##    in Jamrules.
-rule InstallData
-{
-  local dir = [ FDirName $(DESTDIR) $(appdatadir) $(2) ] ;
-
-  local target i ;
-  for i in $(<) {
-      LOCATE on $(i) = $(SUBDIR) ;
-      target = $(i:R=$(dir):G=install) ;
-  
-      Install $(target) : $(i) ;
-      MODE on $(target) = $(FILEMODE) ;
-      Depends install_data : $(target) ;
-  }
-}
-
-##  InstallMan manfiles
-##    Installs man files
-rule InstallMan
-{
-  local target i ;
-  
-  for i in $(<) {
-    local dir ;
-    switch $(i)
-    {
-      case *.1 :
-        dir = [ FDirName $(DESTDIR) $(mandir) man1 ] ;
-      case *.2 :
-        dir = [ FDirName $(DESTDIR) $(mandir) man2 ] ;
-      case *.3 :
-        dir = [ FDirName $(DESTDIR) $(mandir) man3 ] ;
-      case *.4 :
-        dir = [ FDirName $(DESTDIR) $(mandir) man4 ] ;
-      case *.5 :
-        dir = [ FDirName $(DESTDIR) $(mandir) man5 ] ;
-      case *.6 :
-        dir = [ FDirName $(DESTDIR) $(mandir) man6 ] ;
-      case *.7 :
-        dir = [ FDirName $(DESTDIR) $(mandir) man7 ] ;
-      case *.8 :
-        dir = [ FDirName $(DESTDIR) $(mandir) man8 ] ;
-      case *.9 :
-        dir = [ FDirName $(DESTDIR) $(mandir) man9 ] ;
-      case * :
-        echo "WARNING: manfile has no *.[0-9] ending." ;
-    }
-    if $(dir)
-    {
-      LOCATE on $(i) = $(SUBDIR) ;
-      target = $(i:R=$(dir):G=install) ;
-
-      Install $(target) : $(i) ;
-      MODE on $(target) = $(FILEMODE) ;
-      Depends install_man : $(target) ;
-    }
-  }
-}
-
-##  InstallIcon iconfiles
-##    Installs icons
+##  InstallIcon files [ : subdir ]
+##    Installs an icon
 rule InstallIcon
 {
-  local dir = [ FDirName $(DESTDIR) $(datadir) pixmaps $(2) ] ;
-
-  local target i ;
-  for i in $(<) {
-      LOCATE on $(i) = $(SUBDIR) ;
-      target = $(i:R=$(dir):G=install) ;
-  
-      Install $(target) : $(i) ;
-      MODE on $(target) = $(FILEMODE) ;
-      Depends install_icon : $(target) ;
-  }
+    LOCATE on $(<) = $(SUBDIR) ;
+    Depends install_data : [ DoInstall $(<) : $(appicondir) $(2) ] ;
 }
 
-##  Install Targetname : sourcename : directory
-##    Install a file. The filemode of the file has to be specified with the
-##    MODE variable for the target.
-##    Normally the InstallApplication/Plugin/Header... rules should be enough
-##    so that there's no need to call this rule.
-rule Install
+##  InstallData files [ : subdir ]
+##    Installs data files
+rule InstallData
 {
-  Depends $(<) : $(>) ;
-  Always $(<) ;
+    LOCATE on $(<) = $(SUBDIR) ;
+    Depends install_data : [ DoInstall $(<) : $(appdatadir) $(2) ] ;
+}
 
-  #Make sure the target directory exists
-  Depends $(<) : $(<:D:G=dir) ;
-  MkDir $(<:D:G=dir) ;
+##  InstallConfig files [ : subdir ]
+##    Installs configuration files
+rule InstallConfig
+{
+    LOCATE on $(<) = $(SUBDIR) ;
+    Depends install_config : [ DoInstall $(<) : $(appconfdir) $(2) ] ;
+}
+
+##  InstallDoc files [ : subdir ]
+##    Installs documentation files
+rule InstallDoc
+{
+    LOCATE on $(<) = $(SUBDIR) ;
+    Depends install_doc : [ DoInstall $(<) : $(appdocdir) $(2) ] ;
+}
+
+##  InstallMan files
+##    DoInstall man files
+rule InstallMan
+{
+    local dir i ;
+    
+    LOCATE on $(<) = $(SUBDIR) ;
+    for i in $(<) {
+        dir = $(mandir) ;
+        switch $(i) {
+            case *.1 : dir += man1 ;
+            case *.2 : dir += man2 ;
+            case *.3 : dir += man3 ;
+            case *.4 : dir += man4 ;
+            case *.5 : dir += man5 ;
+            case *.6 : dir += man6 ;
+            case *.7 : dir += man7 ;
+            case *.8 : dir += man8 ;
+            case *.9 : dir += man9 ;
+            case * :
+                echo "WARNING: manfile has no *.[0-9] ending." ;
+        }
+        Depends install_man : [ DoInstall $(i) : $(dir) ] ;
+    }
+}
+
+##  InstallDocu files [ : subdir ]
+##    DoInstall documentation files
+rule InstallDocu
+{
+    LOCATE on $(<) = $(SUBDIR) ;
+    Depends install_doc : [ DoInstall $(<) : $(appdocdir) $(2) ] ; 
+}
+
+##  DoDoInstall sourcename : directories [ : installapp ]
+##    Creates a new installtarget for the given sources. The target(s) are
+##    returned as function result.
+##    (note: we can't name this rule Install, because Jambase already defines an
+##     action for DoInstall :-/)
+rule DoInstall
+{
+    local targets target i dir gdir ;
+    dir = [ ConcatDirs $(DESTDIR) $(2) ] ;
+
+    gdir = $(dir:G=dir) ;
+    MkDir $(gdir) ;
+  
+    for i in $(1) {
+        target = $(i:R=$(dir):G=install) ;
+        targets += $(target) ;
+        Depends $(target) : $(gdir) $(i) ;
+        Install1 $(target) : $(i) ;
+
+        if $(3) {
+            INSTALL_APP on $(target) = $(3) ;
+        } else {
+            INSTALL_APP on $(target) = $(INSTALL_DATA) ;
+        }
+    }
+
+    Always $(targets) ;
+    return $(targets) ;
 }
 
 #----------------------------------------------------------------------------
 
-INSTALLTARGETS = install_apps install_libs install_headers
-		 install_shellscripts install_data install_man 
-                 install_icon ;
+INSTALLTARGETS = install_app install_plugin install_lib install_header
+		 install_shellscript install_data install_config
+                 install_doc ;
 
 Always install $(INSTALLTARGETS) ;
 NotFile install $(INSTALLTARGETS) ;
-
 Depends install : $(INSTALLTARGETS) ;
 
-actions Install
+actions Install1
 {
-  $(INSTALL) -m$(MODE) "$(>)" "$(<)" $(INSTALLFLAGS) ;
+  $(INSTALL_APP) $(>) $(<) $(INSTALLFLAGS) ;
 }
 
 actions CopyDirs
 {
-  cp -R "$(>)" "$(<)"
+  $(COPYDIRS) $(>) $(<)
 }
 

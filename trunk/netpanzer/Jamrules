@@ -18,10 +18,6 @@ COMPILER.LFLAGS.debug += -g3 ;
 COMPILER.CFLAGS.profile += -DDEBUG -g3 -pg ;
 COMPILER.LFLAGS.profile += -g3 -pg ;
 
-# Put output files into out/systemname.
-LOCATE.OBJECTS = $(BUILDTOP)/out/$(OSFULL[1]:L) ;
-LOCATE.TARGETS = $(BUILDTOP) ;
-
 LINK = $(CXX) ;
 
 # Include build rules

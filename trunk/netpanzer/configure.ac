@@ -27,21 +27,6 @@ AH_TOP([
 test ".$CXXFLAGS" = "." && CXXFLAGS=" "
 
 #----------------------------------------------------------------------------
-# Check for operating system
-#----------------------------------------------------------------------------
-AC_MSG_CHECKING([for target host])
-case $host_os in 
-    mingw*|cygwin*)
-	AC_MSG_RESULT(WIN32)
-	AC_DEFINE([WIN32], [], [define when compiling for a win32 box])
-	;;
-    *)
-	AC_MSG_RESULT([assuming unix])
-	AC_DEFINE([UNIX], [], [define when compiling for a unix/posix system])
-	;;
-esac
-
-#----------------------------------------------------------------------------
 # Check for build variant (debug, profile, optimize)
 #----------------------------------------------------------------------------
 VARIANT=optimize
@@ -141,8 +126,7 @@ AM_PATH_WXCONFIG(2.4.0, [
         AC_SUBST([WX_AVAILABLE])
         ])
 
-CS_INIT_JAMFILE
-CS_OUTPUT_INSTALLDIRS
+AC_INIT_JAM
 AC_CONFIG_FILES([Jamconfig])
 AC_OUTPUT
 

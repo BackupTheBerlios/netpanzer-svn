@@ -1,0 +1,4 @@
+SubDir TOP src NetPanzer Particles ;
+
+Library netpanzerparticles : [ Wildcard *.cpp *.hpp ] ;
+

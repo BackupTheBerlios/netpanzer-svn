@@ -33,21 +33,15 @@ include $(jamrulesdir)/options.jam ;
 # Include OS specific rules
 switch $(target_os)
 {
-case cygwin :
+case cygwin* :
   include $(jamrulesdir)/win32.jam ;
-case mingw32 :
+case mingw32* :
   include $(jamrulesdir)/win32.jam ;
 case apple-darwin :
   include $(jamrulesdir)/macosx.jam ;
 case linux-gnu :
   include $(jamrulesdir)/unix.jam ;
 case * :
-  echo "WARNING: TARGET.OS not defined. Using unix" ;
   include $(jamrulesdir)/unix.jam ;
 }
-
-# leave msvcgen as last element because it overrides some of the earlier
-# defined rules (it needs to be after the OS-specific rules as well because
-# it overrides some Win32 rules)
-include $(jamrulesdir)/msvcgen.jam ;
 

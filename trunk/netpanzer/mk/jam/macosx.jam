@@ -54,6 +54,6 @@ rule SystemLinkApplication
 actions LinkApplication bind NEEDLIBS bind EXTRAOBJECTS
 {
   $(MACOSX.ENVIRON)
-  $(CMD.LINK) -o $(<) $(>) $(EXTRAOBJECTS) $(NEEDLIBS) $(LINKLIBS)
+  $(LINK) -o $(<) $(>) $(EXTRAOBJECTS) $(NEEDLIBS) $(LINKLIBS)
 }
 

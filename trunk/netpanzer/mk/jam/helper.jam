@@ -35,17 +35,9 @@ rule IncludeDir
   }   
 }
 
-##  SearchSubdir subdirectories
-##    Description: Tells jam where to find additional sourcefiles. This is
-##    useful when your target has files in subdirectories. In this case set
-##    SearchSubdir to these subdirectories and just mention the sourcefiles
-##    without path in your other rules.
-##    Implementation: This rule sets the SEARCH_SOURCE variable to
-##    $(SUBDIR)/subdir, so this rule will only work with rules which respect
-##    the SEARCH_SOURCE variable. (All CS rules do so.)
 rule SearchSubdir
 {
-  SEARCH_SOURCE += $(SUBDIR)/$(<) ;
+    echo "Warning: SearchSubDir is deprecated now (just delete it from your Jamfile)" ;
 }
 
 ##  Wildcard [ dir : ] patterns
@@ -55,38 +47,22 @@ rule SearchSubdir
 ##    subdirectories which may have been entered with the SubDir rule.
 rule Wildcard
 {
-  local files dir wildcards ;
+  local files dir sdir wildcards ;
   
   # Is a directory given?
   if $(>) {
     dir = $(<)/ ;
+    sdir = $(<) ;
     wildcards = $(>) ;
   } else {
     dir = "" ;
+    sdir = "" ;
     wildcards = $(<) ;
   }
 
   files = [ GLOB [ FDirName $(SUBDIR) $(dir) ] : $(wildcards) ] ;
 
-  return $(files:BS) ;
-}
-
-rule WildcardPath
-{
-  local files dir wildcards ;
-  
-  # Is a directory given?
-  if $(>) {
-    dir = $(<)/ ;
-    wildcards = $(>) ;
-  } else {
-    dir = "" ;
-    wildcards = $(<) ;
-  }
-
-  files = [ GLOB [ FDirName $(SUBDIR) $(dir) ] : $(wildcards) ] ;
-
-  return $(dir)$(files:BS) ;
+  return $(files:BSR=$(sdir)) ;
 }
 
 ##  Prefix list : prefix
@@ -166,7 +142,7 @@ rule RemoveDups
 
   for i in $(<)
   {
-    if ! [ IsElem §(i) : $(result) ]
+    if ! [ IsElem $(i) : $(result) ]
     {
       result += $(i) ;
     }  
@@ -175,6 +151,17 @@ rule RemoveDups
   return $(result) ;
 } 
 
+rule Reverse
+{
+  local result ;
+  
+  for i in $(<)
+  {
+    result = $(i) $(result) ;
+  }
+  return $(result) ;
+}
+
 ##  GetVar argument
 ##    Simply returns the value of the variable with name argument.
 ##    This is useful to query on target variables:
@@ -182,6 +169,33 @@ rule RemoveDups
 rule GetVar
 {
   return $($(<)) ;
+}
+
+##  ConcatDirs dirs
+##    Concatenates a set of directories. This is a substitute for FDirName in
+##    Jambase. It works also correctly for several rooted paths, where FDirName
+##    fails.
+##    The advantage over $(dir1)/$(dir2) is that this also works correctly if
+##    $(dir1) or $(dir2) is not set.
+rule ConcatDirs
+{
+  local i ;
+  local result = $(<[1]) ;
+  if ! $(result) { $result = "" ; }
+  local dir1 dir2 ;
+
+  for i in $(<[2-])
+  {
+    # eleminate multiple slashes because jam is somewhat buggy here
+    dir1 = [ MATCH (.*[^/]?) : $(result) ] ;
+    dir2 = [ MATCH ([^/].*) : $(i) ] ;
+    if ! $(dir1) { dir1 = "" ; }
+    if $(dir1) != "" { dir1 = $(dir1)/ ; }
+    if ! $(dir2) { dir2 = "" ; }
+    result = $(dir1)$(dir2) ;
+  }
+
+  return $(result) ;
 }
 
 ##  Copy target : source
