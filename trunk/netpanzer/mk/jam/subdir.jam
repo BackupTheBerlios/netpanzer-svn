@@ -3,7 +3,7 @@
 #	(until jampeople accept my patches :-/ )
 #============================================================================
 
-LOCATE.OBJECTS ?= $(BUILDTOP)/out/$(OSFULL[1]:L) ;
+LOCATE.OBJECTS ?= $(BUILDTOP)/out/$(target) ;
 LOCATE.TARGETS ?= $(BUILDTOP) ;
 LOCATE.DOCS ?= $(BUILDTOP)/out ;
 

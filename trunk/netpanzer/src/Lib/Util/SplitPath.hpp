@@ -18,10 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __SPLITPATH_HPP__
 #define __SPLITPATH_HPP__
 
-// unix emulation code for the win32 _splitpath function
+// emulation code for the win32 _splitpath function
 // Warning: don't use this function in your own code, you're asking for secutiry
 // problems (buffer overflow)
-#ifdef UNIX
+#ifndef WIN32
 void _splitpath(const char* path, char* drive, char* dir,
                 char* fname, char* ext);
 #endif
