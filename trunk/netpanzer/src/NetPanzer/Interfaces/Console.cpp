@@ -143,7 +143,7 @@ public:
 
 //---------------------------------------------------------------------------
 
-std::ostream* Console::server;
+std::ostream* Console::server = 0;
 
 void
 Console::initialize()

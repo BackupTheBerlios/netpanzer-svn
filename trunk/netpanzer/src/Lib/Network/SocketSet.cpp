@@ -51,16 +51,24 @@ bool
 SocketSet::select(unsigned int usec)
 {
     struct timeval timeout;
-    timeout.tv_sec = 0;
-    timeout.tv_usec = usec;
+    timeout.tv_sec = usec/1000000;
+    timeout.tv_usec = usec%1000000;
 
     testset = set;
-    int res = ::select(FD_SETSIZE, &testset, 0, 0, &timeout);
+    int res = ::select(FD_SETSIZE, &testset, 0, 0, usec ? &timeout : 0);
+#ifdef WINSOCK
+    if(res < 0) {
+        std::stringstream msg;
+        msg << "Select failed: " << WSAGetLastError();
+        throw std::runtime_error(msg.str());
+    }
+#else
     if(res < 0) {
         std::stringstream msg;
         msg << "Select failed: " << strerror(errno);
         throw std::runtime_error(msg.str());
     }
+#endif
 
     return res != 0;
 }

@@ -683,9 +683,11 @@ void UnitInterface::unitManagerMesgEndLifecycle(const UnitMessage* message)
     int unittype2 = unit2->unit_state.unit_type;
     const std::string& unitname2 =
         UnitProfileInterface::getUnitProfile(unittype2)->unitname;
-    *Console::server << "'" << player1->getName() << "' killed a '" << unitname2
-            << "' from '" << player2->getName() 
+    if(*Console::server) {
+        *Console::server << "'" << player1->getName() << "' killed a '"
+            << unitname2 << "' from '" << player2->getName() 
             << "' with his '" << unitname1 << "'." << std::endl;
+    }
 
     // killing own units doesn't give score
     if(player1 != player2) {
