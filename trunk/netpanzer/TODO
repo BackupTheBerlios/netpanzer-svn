@@ -1,5 +1,11 @@
-*** Lobby Code
- * use new masterserver code
+*** New Masterserver code
+ * Get list of masterservers when connecting
+ * Finish InfoThread to output info about players and gamerules
+ * port netpanzerbrowser to new protocol
+ * add new options to only show servers which are not empty, with a certain map
+   or where a certain player is playing.
+ * take care about integration into xqf
+ * Create UDP broadcast code for LAN games
 
 *** Improvements
  * let dedicated server output statistics on console or in some log files. 
@@ -22,7 +28,6 @@
    select units standing in your base because of the other 2 functions.
 
 *** Tools
- * write a map and tileset editor
  * tool for changing the (server?) configuration
 
 *** Feature Additions
@@ -44,27 +49,21 @@
   - S key stops tanks
 
   -...
- * Display targets of marked players with lines (ie. a green line if the panzer
+ * Display targets of marked panzers with lines (ie. a green line if the panzer
    is moving, a red line if it is attacking some point)
  * Create a nice static! skin which is at the bottom of the screen
    and combines a map, statusdisplay of selected units and outpost buildmenu
  * Redesign menus and UI code (use new font code, sfont or freefont maybe?)
- * Build additional tools:
-  -Build a map and tileset editor (That's what I'm up to at the moment)
  * Create possibilities to save and play replays of the matches
  * Create possibility to save and restore matches
  * Convert the 256 color stuff to truecolor and eventually use opengl for
    displaying stuff.
- * add code for masterserver registration/browsing (this would be additional to
-   the irc lobby code, so that we could get integration into server
-   browsing tools like xqf done eventually)
- * create UDP broadcast code for announcing servers in LANs
  * add a (readline based?) serverconsole along with "chat" command
  * add an in-game console like in quake-like games
 
 *** Graphics
  * pulsing circle on the radar at places where battle happens (bigger circle if
-   heaver)
+   heavier?)
 
 *** gameplay
 / Note that these are just random ideas. We should be very careful when 
