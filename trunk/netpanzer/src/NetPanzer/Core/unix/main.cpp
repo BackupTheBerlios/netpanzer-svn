@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <SDL.h>
 
 #include "Log.hpp"
@@ -29,10 +30,12 @@ bool HandleSDLEvents();
 
 int main(int argc, char** argv)
 {
-	SDL_Init(SDL_INIT_TIMER 
-		   | SDL_INIT_VIDEO
-		 /*| SDL_INIT_AUDIO*/
-		   );
+	SDL_Init(SDL_INIT_TIMER);
+	srand(time(0));
+#ifdef __USE_SVID
+	// the STL functions seem to use the 48er versions of the random generator
+	srand48(time(0));
+#endif
 
 	LOG( ("Starting GameManager initialisation.") );
 	// XXX hacky hack... needs changes in GameManager I think...

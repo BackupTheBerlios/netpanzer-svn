@@ -458,7 +458,9 @@ void ParticleInterface::addHit(const UnitState &unitState)
 	float randomness = 1.0f; //Particle2D::getScale(0.8f, 0.4f);
 	float frameRateAdjustment = getFrameRateAdjustment();
 
-	e.particleCount = 8 * (frameRateAdjustment * float(unitHitPointTable[unitState.unit_type]) * randomness);
+	e.particleCount = (int) (
+			8 * (frameRateAdjustment *
+				float(unitHitPointTable[unitState.unit_type]) * randomness));
 
 	if (gDrawExplosionParticleCount)
 	{

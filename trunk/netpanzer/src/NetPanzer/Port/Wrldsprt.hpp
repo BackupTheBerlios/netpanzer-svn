@@ -58,17 +58,17 @@ class world_sprite_base
  };
 
 class world_sprite : public world_sprite_base
- {
-  public:
-  sprite_data *sprite;
+{
+public:
+  	sprite_data *sprite;
   
-  world_sprite( void );
-  virtual short is_visible( void ); 
-  virtual void set_data( void *data ); 
-  virtual void set_data( void *data, short attach_offset_x, short attach_offset_y, unsigned char height_val ); 
-  virtual void update( long x, long y );
-  virtual void blit( void ); 
- };
+	world_sprite( void );
+	virtual short is_visible( void ); 
+	virtual void set_data( void *data ); 
+	virtual void set_data( void *data, short attach_offset_x, short attach_offset_y, unsigned char height_val ); 
+	virtual void update( long x, long y );
+	virtual void blit( void ); 
+};
 
 class world_animation : public world_sprite_base
  {

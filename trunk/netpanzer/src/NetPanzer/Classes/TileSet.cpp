@@ -143,7 +143,7 @@ void TileSet::loadTileSet( const char *file_path )
   tile_info =  new TILE_HEADER [ tile_set_info.tile_count ];
   assert( tile_info != 0 );
   
-  tile_data =  new unsigned char [ tile_buffer_size ];
+  tile_data =  new unsigned char[tile_buffer_size];
   assert( tile_data != 0 );
 
   fread( tile_info, tile_set_info.tile_count, sizeof(TILE_HEADER), infile );
@@ -225,7 +225,7 @@ void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
   tile_buffer_size = (tile_set_info.x_pix * tile_set_info.y_pix) * mapping_table.used_tile_count;
   tile_size = (tile_set_info.x_pix * tile_set_info.y_pix);
   
-  tile_data =  new unsigned char [ tile_buffer_size ];
+  tile_data =  new unsigned char [tile_buffer_size];
   assert( tile_data != 0 );
 
   mapped_index = 0;
@@ -405,7 +405,7 @@ bool TileSet::startPartitionTileSetLoad( const char *file_path, WadMapTable &map
   tile_buffer_size = (tile_set_info.x_pix * tile_set_info.y_pix) * mapping_table.used_tile_count;
   TileSet::tile_size = tile_size = (tile_set_info.x_pix * tile_set_info.y_pix);
   
-  tile_data =  new unsigned char [ tile_buffer_size ];
+  tile_data = new unsigned char [tile_buffer_size];
   assert( tile_data != 0 );
 
   partition_load_tile_index = 0;

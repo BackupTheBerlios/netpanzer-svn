@@ -20,24 +20,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Sprite.hpp"
 
-typedef 
- struct 
-  {
-   char  name[32];  // name of sprite -- default file from which it was extracted
-   short pyro_id;   // pryosoft id #
-   short x_size;    // width of sprite in pixels
-   short y_size;    // height of sprite in pixels
+struct sprite_data
+{
+  	char  name[32];  // name of sprite -- default file from which it was extracted
+   	short pyro_id;   // pryosoft id #
+	short x_size;    // width of sprite in pixels
+	short y_size;    // height of sprite in pixels
    
-   short g_attrib;  // sprite attributes
+	short g_attrib;  // sprite attributes
                     // bit 0 = standard pic
                     // bit 1 = transparent 
                     // bit 2 = shadowed 
 
-   long data_size;  // size of sprite data in bytes 
+	long data_size;  // size of sprite data in bytes 
                     // ususally x_size * y_size 
-   unsigned char *data;
-
-  }sprite_data;
+	unsigned char *data;
+};
 
 //****************************************************************************************
 

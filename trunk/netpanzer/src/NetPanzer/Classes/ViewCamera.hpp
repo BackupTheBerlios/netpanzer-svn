@@ -23,47 +23,46 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Point.hpp"
 
 class ViewCamera : private MapInterface
- {
-  protected:
-   PointXYi loc;
-   PointXYi view_size;   
+{
+protected:
+ 	PointXYi loc;
+  	PointXYi view_size;   
   
-  public:
-   ViewCamera();
-   void scrollPlusX( long scroll_increment );
-   void scrollMinusX( long scroll_increment );
-   void scrollMinusY( long scroll_increment );
-   void scrollPlusY( long scroll_increment );
+public:
+ 	ViewCamera();
+  	void scrollPlusX( long scroll_increment );
+   	void scrollMinusX( long scroll_increment );
+	void scrollMinusY( long scroll_increment );
+	void scrollPlusY( long scroll_increment );
    
-   inline void setCamera( const PointXYi &new_loc )
-    {     
-	 loc.x = new_loc.x - (new_loc.x % 4);
-	 loc.y = new_loc.y - (new_loc.y % 4);	
+	inline void setCamera( const PointXYi &new_loc )
+	{     
+		loc.x = new_loc.x - (new_loc.x % 4);
+		loc.y = new_loc.y - (new_loc.y % 4);	
 	}
 
-   inline void setCameraSize( const PointXYi &size )
-    {
-	 view_size = size;
+	inline void setCameraSize( const PointXYi &size )
+	{
+		view_size = size;
 	}
     
-   void getViewStart( unsigned long view_size_x, unsigned long view_size_y,
-                      unsigned long *view_start_x, unsigned long *view_start_y );
+	void getViewStart( unsigned long view_size_x, unsigned long view_size_y,
+			unsigned long *view_start_x, unsigned long *view_start_y );
 
-   inline void getViewWindow( Recti *view_win )
-    {
-     unsigned long view_start_x, view_start_y; 
-     getViewStart( view_size.x, view_size.y, &view_start_x, &view_start_y );
-	 view_win->min.x = view_start_x;
-	 view_win->min.y = view_start_y;
-	 view_win->max.x = view_start_x + view_size.x;
-	 view_win->max.y = view_start_y + view_size.y;
+ 	inline void getViewWindow( Recti *view_win )
+ 	{
+		unsigned long view_start_x, view_start_y; 
+	   	getViewStart( view_size.x, view_size.y, &view_start_x, &view_start_y );
+		view_win->min.x = view_start_x;
+		view_win->min.y = view_start_y;
+		view_win->max.x = view_start_x + view_size.x;
+		view_win->max.y = view_start_y + view_size.y;
 	}
  
-   inline long getCameraDistance( const PointXYi &world_loc )
-    {
-	 return( (long) (loc - world_loc).mag2() );
+	inline long getCameraDistance( const PointXYi &world_loc )
+	{
+		return( (long) (loc - world_loc).mag2() );
 	}
- };
-
+};
 
 #endif // ** _VIEWCAMERA_HPP

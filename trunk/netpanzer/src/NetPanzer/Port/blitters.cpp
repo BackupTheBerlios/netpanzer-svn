@@ -16,26 +16,26 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
 #include <assert.h>
 #include "blitters.h"
-#include "codewiz.hpp"
 #include <string.h>
 #include "UIDraw.hpp"
 
-void blit_partial_xy( unsigned char *tile_ptr,unsigned char *buffer_ptr,short y_size,short x_size)
+void blit_partial_xy(const unsigned char *tile_ptr, unsigned char *buffer_ptr,
+					 short y_size, short x_size)
 {
-	assert(isValidPtr(tile_ptr));
-	assert(isValidPtr(buffer_ptr));
+	assert(tile_ptr != 0);
+	assert(buffer_ptr != 0);
 	assert(y_size > 0);
 	assert(x_size > 0);
 
-	int y;
-	
-// XXX 32 should be at least a define, but probably a variable.  Pass in class instead of data pointer.
-	for(y=0; y<y_size; y++) {
-	  memcpy(buffer_ptr, tile_ptr, x_size);
-	  buffer_ptr += Screen->getWidth()-x_size;
-	  tile_ptr   += 32-x_size;
+	// XXX 32 should be at least a define, but probably a variable.
+	// Pass in class instead of data pointer.
+	for(int y=0; y<y_size; y++) {
+		memcpy(buffer_ptr, tile_ptr, x_size);
+		buffer_ptr += Screen->getWidth();
+		tile_ptr   += 32;
 	}
 
 #if 0
@@ -103,15 +103,17 @@ void blit_partial_y( unsigned char *tile_ptr, unsigned char *buffer_ptr, short y
 */
 
 
-void blit_partial_y( unsigned char *tile_ptr, unsigned char *buffer_ptr, short y_size)
+void blit_partial_y(const unsigned char *tile_ptr, unsigned char *buffer_ptr,
+					short y_size)
 {
 	int y;
 	// XXX remove 'magic' 32
 	for(y=0; y<y_size; y++) {
-	  memcpy(tile_ptr, buffer_ptr, 32);
+	  memcpy(buffer_ptr, tile_ptr, 32);
 	  tile_ptr += 32;
-	  buffer_ptr += Screen->getWidth()-32;
+	  buffer_ptr += Screen->getWidth() /*-32*/;
 	}
+
 #if 0
   __asm
  { 
@@ -180,19 +182,21 @@ void blit_partial_y( unsigned char *tile_ptr, unsigned char *buffer_ptr, short y
 
 }
 
-void general_blitter( unsigned char x_size, unsigned char y_size, unsigned long frame_offset, 
-                      unsigned char *buffer_ptr, unsigned char *dbuffer_ptr )
- {
-  int x,y;
-  dbuffer_ptr += frame_offset;
-  for(y=0; y<y_size; y++) {
-    for(x=0; x<x_size; x++) {
-      if(buffer_ptr[x] != 0)
-        dbuffer_ptr[x]=buffer_ptr[x];
-    }
-    buffer_ptr += Screen->getWidth()-x_size;
-    dbuffer_ptr += Screen->getWidth()-x_size;
-  }
+void general_blitter(unsigned char x_size, unsigned char y_size,
+		unsigned long frame_offset, const unsigned char *buffer_ptr,
+		unsigned char *dbuffer_ptr)
+{
+   	int x,y;
+	
+	dbuffer_ptr += frame_offset;
+	for(y=0; y<y_size; y++) {
+		for(x=0; x<x_size; x++) {
+			if(buffer_ptr[x] != 0)
+				dbuffer_ptr[x]=buffer_ptr[x];
+		}
+		buffer_ptr += Screen->getWidth()-x_size;
+		dbuffer_ptr += Screen->getWidth()-x_size;
+	}
 
 #if 0
   __asm

@@ -20,7 +20,7 @@ ifeq ($(SYSTEM),UNIX)
 DIRS += NetPanzer/Interfaces/unix Stub UILib/SDL UILib/Network \
 	    NetPanzer/Core/unix
 GOAL = ../netpanzer
-LINKFLAGS += -g3 `sdl-config --libs` -lSDL_net
+LINKFLAGS += -g3 `sdl-config --libs` -lSDL_net -lSDL_mixer
 CFLAGS += `sdl-config --cflags` -DUNIX
 endif
 ifeq ($(SYSTEM),WIN32)

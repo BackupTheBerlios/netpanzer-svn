@@ -32,32 +32,40 @@ enum { VIDEO_MODE_WINDOWED          = 0x01,
 class UIDraw
 {
 protected:
-  int curWidth, curHeight, curBPP;
+  	int curWidth, curHeight, curBPP;
 
 public:
-  virtual bool initialize() = 0;
-  virtual void shutdown() = 0;
-  virtual bool setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags) = 0;
-  virtual bool isDisplayModeAvailable(int width, int height, int bpp) = 0;
-  virtual bool lockDoubleBuffer(BYTE **DoubleBuffer) = 0;
-  virtual bool unlockDoubleBuffer() = 0;
-  virtual bool createFrameBuffer(DWORD width, DWORD height, DWORD bpp) = 0;
-  virtual void setGDIStatus(bool enable) = 0;
-  virtual void restoreAll()=0;
-  virtual bool copyDoubleBufferandFlip()=0;
-  virtual void setPalette(RGBColor *color)=0;
+	virtual ~UIDraw()
+	{ }
+	
+	virtual bool initialize() = 0;
+	virtual void shutdown() = 0;
+	virtual bool setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags) = 0;
+	virtual bool isDisplayModeAvailable(int width, int height, int bpp) = 0;
+	virtual bool lockDoubleBuffer(unsigned char **DoubleBuffer) = 0;
+	virtual bool unlockDoubleBuffer() = 0;
+	virtual bool createFrameBuffer(DWORD width, DWORD height, DWORD bpp) = 0;
+	virtual void setGDIStatus(bool enable) = 0;
+	virtual void restoreAll()=0;
+	virtual bool copyDoubleBufferandFlip()=0;
+	virtual void setPalette(RGBColor *color)=0;
 
-  int getWidth(void) { return curWidth; }
-  int getHeight(void) { return curHeight; }
-  int getBPP(void) { return curBPP; }
+	inline int getWidth() const
+	{ return curWidth; }
+	inline int getHeight() const
+	{ return curHeight; }
+	inline int getBPP()
+	{ return curBPP; }      	
 }; // end DirectDraw
 
 // XXX some global vars, these should be avoided or at least moved inside the
 // UIDraw class!!!
+#if 0
 extern unsigned long DBUFFER_WIDTH;
 extern unsigned long DBUFFER_HEIGHT;
 extern unsigned long DBUFFER_VIEW_WIDTH;
 extern unsigned long DBUFFER_VIEW_HEIGHT;
+#endif
 extern unsigned long X_CLIP_OFS;
 extern unsigned long Y_CLIP_OFS;
 extern unsigned long OFFSET_TO_VIEW;

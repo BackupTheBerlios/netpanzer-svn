@@ -220,12 +220,9 @@ void GameManager::initializeSoundSubSystem()
 	LOG( ("Initialize sound system.") );
 	sound = new SDLSound();
 #endif
-    if (!sound || !sound->initialize())
-    {
-		LOG( ( "Failed to initialize the Sound Sub-system" ) );
-		delete sound;
-		sound = 0;
-    } 
+
+	// start some music
+	sound->playMusic("sfx/music/");
 }
 
 // ******************************************************************
@@ -234,7 +231,6 @@ void GameManager::shutdownSoundSubSystem()
 {
 	if(sound) {
 		LOG( ("shutdown sound system.") );
-		sound->shutdown();
 		delete sound;
 		sound = 0;
 	}

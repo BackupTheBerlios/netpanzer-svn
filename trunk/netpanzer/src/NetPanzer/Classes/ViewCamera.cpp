@@ -93,35 +93,36 @@ void ViewCamera::scrollPlusY( long scroll_increment )
 
  void ViewCamera::getViewStart( unsigned long view_size_x, unsigned long view_size_y,
                                 unsigned long *view_start_x, unsigned long *view_start_y )
-  {
-   PointXYi map_size;
-   unsigned long view_offset_x;
-   unsigned long view_offset_y;
-   long start_x, start_y;
+{
+  	PointXYi map_size;
+   	unsigned long view_offset_x;
+	unsigned long view_offset_y;
+	long start_x, start_y;
 
-   view_offset_x = view_size_x >> 1;
-   view_offset_y = view_size_y >> 1;
+	view_offset_x = view_size_x >> 1;
+	view_offset_y = view_size_y >> 1;
 
-   start_x = loc.x - view_offset_x;
-   start_y = loc.y - view_offset_y;
+	start_x = loc.x - view_offset_x;
+	start_y = loc.y - view_offset_y;
 
-   getMapPointSize( &map_size );
+	getMapPointSize( &map_size );
  
-   if ( start_x < 0 )
-    start_x = 0;
+	if ( start_x < 0 )
+		start_x = 0;
 
-   if ( start_y < 0 )
-    start_y = 0;
+	if ( start_y < 0 )
+		start_y = 0;
 
-   if ( (start_x + view_size_x) > map_size.x )
-    start_x = (map_size.x - view_size_x) ;
+	if ( (start_x + view_size_x) > map_size.x )
+		start_x = (map_size.x - view_size_x) ;
 
-   if ( (start_y + view_size_y) > map_size.y )
-    start_y = (map_size.y - view_size_y);
+	if ( (start_y + view_size_y) > map_size.y )
+		start_y = (map_size.y - view_size_y);
 
-   loc.x = start_x + view_offset_x;
-   loc.y = start_y + view_offset_y;
+	loc.x = start_x + view_offset_x;
+	loc.y = start_y + view_offset_y;
 
-   *view_start_x = start_x;
-   *view_start_y = start_y;
-  }
+	*view_start_x = start_x;
+	*view_start_y = start_y;
+}
+

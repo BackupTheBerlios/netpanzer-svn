@@ -27,10 +27,10 @@ public:
 		_under_attack, _fire_gun, _hit_target, _miss_target, _scream,
 		_random_battle, _blow_up_tank
 	};
-	
-	virtual bool initialize() = 0;
-	virtual void shutdown() = 0;
 
+	virtual ~Sound()
+	{ }
+	
 	virtual void PlayTankIdle() = 0;
 	virtual void StopTankIdle() = 0;
 	virtual void PlayMenuSound() = 0;
@@ -39,6 +39,11 @@ public:
 	virtual void PlayUnitSound(int unit_type) = 0;
 	virtual void PlayUnitVoice(int unit_type, Event event) = 0;
 	virtual void PlayAmbientSound(int unit_type, Event event, long distance)=0;
+
+	virtual void playSound(const char* name) = 0;
+
+	virtual void playMusic(const char* directory) = 0;
+	virtual void stopMusic() = 0;
 };
 
 extern Sound* sound;

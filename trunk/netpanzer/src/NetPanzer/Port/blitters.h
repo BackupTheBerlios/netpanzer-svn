@@ -18,13 +18,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _BLITTERS_H
 #define _BLITTERS_H
 
-void blit_partial_xy( unsigned char *tile_ptr,unsigned char *buffer_ptr,short y_size,short x_size );
+void blit_partial_xy(const unsigned char *tile_ptr, unsigned char *buffer_ptr,
+					 short y_size,short x_size);
 
+void blit_partial_y(const unsigned char *tile_ptr, unsigned char *buffer_ptr,
+					short y_size);
 
-void blit_partial_y( unsigned char *tile_ptr, unsigned char *buffer_ptr, short y_size);
-
-void general_blitter( unsigned char x_size, unsigned char y_size, unsigned long frame_offset, 
-                      unsigned char *buffer_ptr, unsigned char *dbuffer_ptr );
+void general_blitter(unsigned char x_size, unsigned char y_size,
+		unsigned long frame_offset, const unsigned char *buffer_ptr,
+		unsigned char *dbuffer_ptr);
 
 void blit_selector_square( unsigned char x_size, unsigned char y_size,
                            unsigned long frame_offset, unsigned char *dbuffer_ptr );

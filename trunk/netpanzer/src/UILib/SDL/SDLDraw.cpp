@@ -28,10 +28,12 @@ unsigned long OFFSET_TO_VIEW;
 SDLDraw::SDLDraw()
 	: FrontBuffer(0)
 {
+	SDL_InitSubSystem(SDL_INIT_VIDEO);
 }
 
 SDLDraw::~SDLDraw()
 {
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
 bool SDLDraw::initialize()
