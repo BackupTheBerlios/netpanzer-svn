@@ -133,15 +133,13 @@ __attribute__((packed));
 
 class ConnectProcessUpdate : public NetMessage
 {
-public:
+private:
     uint32_t queue_position;
 
-    ConnectProcessUpdate()
-    {
-        message_class = _net_message_class_connect;
-        message_id = _net_message_id_client_connect_process_update;
-    }
-
+public:
+    ConnectProcessUpdate();
+    uint32_t getQueuePosition(void);
+    void setQueuePosition(uint32_t position);
 }
 __attribute__((packed));
 

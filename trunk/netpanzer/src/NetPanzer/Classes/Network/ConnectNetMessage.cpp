@@ -74,3 +74,21 @@ void ClientConnectJoinRequestAck::setServerProtocolVersion(uint32_t protocol_ver
 {
     server_protocol_version = htol32(protocol_version);
 }
+
+
+ConnectProcessUpdate::ConnectProcessUpdate()
+{
+    message_class = _net_message_class_connect;
+    message_id = _net_message_id_client_connect_process_update;
+}
+
+uint32_t ConnectProcessUpdate::getQueuePosition(void)
+{
+    return ltoh32(queue_position);
+}
+
+void ConnectProcessUpdate::setQueuePosition(uint32_t position)
+{
+    queue_position = htol32(position);
+}
+

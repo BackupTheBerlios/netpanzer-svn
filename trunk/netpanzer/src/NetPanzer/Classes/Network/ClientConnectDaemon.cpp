@@ -124,7 +124,7 @@ void ClientConnectDaemon::netMessageConnectProcessUpdate( NetMessage *message )
 
     char buf[80];
 
-    sprintf( buf, "Your Position In Queue is %d ", process_update->queue_position  );
+    sprintf( buf, "Your Position In Queue is %d ", process_update->getQueuePosition());
 
     lobbyView->scrollAndUpdate( buf );
 }

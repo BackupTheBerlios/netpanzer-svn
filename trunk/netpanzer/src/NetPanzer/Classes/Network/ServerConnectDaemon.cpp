@@ -110,7 +110,7 @@ void ServerConnectDaemon::updateQueuedClients()
         const ConnectQueueElement& connect_request = *i;
       
         ConnectProcessUpdate process_update;
-        process_update.queue_position = queue_position;
+        process_update.setQueuePosition(queue_position);
 
         SERVER->sendMessage( connect_request.new_player_id, &process_update,
                              sizeof(ConnectProcessUpdate), 0);
