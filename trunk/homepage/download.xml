@@ -43,8 +43,8 @@
       <p>
         You need both the
         gamedata and the source if you want to compile yourself, in
-        addition you need Jam, PhysicsFS, SDL, SDL_net, SDL_mixer and
-        SDL_image, see the README for details.
+        addition you need Jam, PhysicsFS, SDL, SDL_net, SDL_mixer, 
+        SDL_image and SDL_ttf, see the README for details.
       </p>
 
       <ul>
