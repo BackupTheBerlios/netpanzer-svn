@@ -170,8 +170,6 @@ void Choice::actionPerformed(const mMouseEvent &me)
 //---------------------------------------------------------------------------
 void Choice::draw(Surface &dest)
 {
-    iXY parentDimensions(((View *)parent)->getClientRect().getSize());
-
     Surface s;
     iRect   r;
 

@@ -348,7 +348,7 @@ public:
         front = 0;
         rear = 0;
     }
-} __attribute__((deprecated));
+};
 
 template< class TYPE >
 LinkListDoubleTemplate< TYPE >::LinkListDoubleTemplate( unsigned long size )
