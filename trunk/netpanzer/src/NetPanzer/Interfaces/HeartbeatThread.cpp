@@ -11,12 +11,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-
 // send a heartbeat packet every 5 minutes
 static const int UPDATEINTERVAL = 5*60;
 
@@ -37,7 +31,8 @@ HeartbeatThread::HeartbeatThread(const std::string& masteraddress,
     }
     
     // lookup server address
-    int res = SDLNet_ResolveHost(&serveraddr, masterhost.c_str(), masterport);
+    int res = SDLNet_ResolveHost(&serveraddr,
+            const_cast<char*> (masterhost.c_str()), masterport);
     if(res < 0) {
         std::stringstream msg;
         msg << "Couldn't resolve address of masterserver '"

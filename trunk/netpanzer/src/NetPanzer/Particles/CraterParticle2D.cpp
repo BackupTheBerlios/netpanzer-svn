@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "CraterParticle2D.hpp"
 #include "Util/UtilInterface.hpp"
-#include "ConsoleInterface.hpp"
 #include "2D/Palette.hpp"
 
 // Set to 1 for divide by zero issues.
@@ -54,8 +53,6 @@ CraterParticle2D::CraterParticle2D(const fXYZ  &pos) : Particle2D(pos)
             isAlive = false;
 
             cacheHitCount++;
-
-            //ConsoleInterface::postMessage("Crater Cache Hit");
         }
     }
 

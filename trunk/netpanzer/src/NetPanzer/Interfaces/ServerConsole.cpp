@@ -139,7 +139,11 @@ void ServerConsole::run()
     running = true;
     while(running) {
         char buf[256];
+        
+        std::cout << "netpanzer-server: ";
         fgets(buf, sizeof(buf), stdin);
+        // eleminated \n at the end
+        buf[strlen(buf)-1] = '\0';
 
         executeCommand(buf);
     }

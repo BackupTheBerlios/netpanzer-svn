@@ -8,10 +8,6 @@
 #include <errno.h>
 #include <string.h>
 
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-
 #include "Tokenizer.hpp"
 #include "GameConfig.hpp"
 #include "NetworkGlobals.hpp"

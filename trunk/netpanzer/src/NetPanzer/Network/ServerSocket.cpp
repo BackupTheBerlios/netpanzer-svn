@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "ServerSocket.hpp"
 
-#include "SocketMessage.hpp"
 #include "ClientServerNetMessage.hpp"
 #include "NetworkInterface.hpp"
 #include "NetPacket.hpp"

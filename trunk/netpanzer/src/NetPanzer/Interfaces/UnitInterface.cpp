@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerInterface.hpp"
 #include "MapInterface.hpp"
 #include "WorldViewInterface.hpp"
-#include "ConsoleInterface.hpp"
 
 #include "Vehicle.hpp"
 #include "Abrams.hpp"
@@ -43,6 +42,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Server.hpp"
 #include "NetworkState.hpp"
 #include "NetMessageEncoder.hpp"
+#include "Console.hpp"
 
 #include "UnitMessageTypes.hpp"
 #include "PlayerNetMessage.hpp"
@@ -184,9 +184,6 @@ void UnitInterface::updateUnitStatus()
 	    post_update_bucket_index = unit_bucket_array.worldLocToBucketIndex( unit->unit_state.location );
 
 	    if ( post_update_bucket_index != pre_update_bucket_index ) {
-		//ConsoleInterface::postMessage( "Moving Unit from bucket %d to bucket %d",
-		//                               pre_update_bucket_index, post_update_bucket_index );
-		
 	    	unit_bucket_array.moveUnit( unit->unit_id, pre_update_bucket_index, post_update_bucket_index );
 	    }
 	    
@@ -773,9 +770,8 @@ void UnitInterface::unitManagerMesgEndLifecycle( UnitMessage *message )
     const std::string& unitname2 =
         UnitProfileInterface::getUnitProfile(unittype2)->unitname;
     // TODO display unit names...
-    ConsoleInterface::postMessage("'%s' killed a '%s' from '%s' with his '%s'.",
-            player1.c_str(), unitname1.c_str(), player2.c_str(),
-            unitname2.c_str());
+    *Console::server << "'" << player1 << "' killed a '" << unitname1
+            << "' from '" << player2 << "' with his '" << unitname2 << "'.";
 
     PlayerScoreUpdate score_update;
     score_update.kill_on_player_index = lifecycle_update->destroyed.getPlayer();

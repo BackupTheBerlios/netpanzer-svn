@@ -136,6 +136,7 @@ public:
     ConfigString map;
     ConfigString mapcycle;
     ConfigString masterserver;
+    ConfigBool   logging;
 
     // Visuals Settings
     ConfigInt   screenresolution;

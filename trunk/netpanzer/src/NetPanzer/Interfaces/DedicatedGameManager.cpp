@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ChatInterface.hpp"
 #include "ConsoleInterface.hpp"
+#include "Console.hpp"
 #include "GameConfig.hpp"
 #include "GameControlRulesDaemon.hpp"
 #include "GameManager.hpp"
@@ -41,6 +42,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "LobbyView.hpp"
 #include "ProgressView.hpp"
 #include "ConsoleLoadingView.hpp"
+#include "Console.hpp"
 #include "HeartbeatThread.hpp"
 #include "InfoThread.hpp"
 #include "Util/Log.hpp"
@@ -48,6 +50,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 DedicatedGameManager::DedicatedGameManager()
     : commandqueue_mutex(0), console(0), heartbeatthread(0), infothread(0)
 {
+    Console::initialize();
 }
 
 DedicatedGameManager::~DedicatedGameManager()
@@ -100,7 +103,6 @@ void DedicatedGameManager::inputLoop()
         switch(command.type) {
             case ServerCommand::QUIT:
             {
-                std::cout << "QUIT.\n";
                 GameManager::exitNetPanzer();
                 break;
             }
@@ -127,32 +129,26 @@ void DedicatedGameManager::pushCommand(const ServerCommand& command)
 //-----------------------------------------------------------------
 bool DedicatedGameManager::launchNetPanzerGame()
 {
-    ConsoleInterface::postMessage("starting dedicated netPanzer server");
+    *Console::server << "starting dedicated netPanzer server";
 
     gameconfig->map = MapsManager::getNextMap("");
     
-    ConsoleInterface::postMessage("Server Settings:"); 
-    ConsoleInterface::postMessage("Map: %s", gameconfig->map.c_str());
-    ConsoleInterface::postMessage("MaxPlayers: %d",
-            (int) gameconfig->maxplayers);
-    ConsoleInterface::postMessage("MaxUnits: %d", (int) gameconfig->maxunits);
-    ConsoleInterface::postMessage("Gametype: %s",
-            gameconfig->getGameTypeString());
-    ConsoleInterface::postMessage("ObjectivePercentage: %d",
-            (int) gameconfig->objectiveoccupationpercentage);
-    ConsoleInterface::postMessage("TimeLimit: %d",
-            (int) gameconfig->timelimit);   
-    ConsoleInterface::postMessage("FragLimit: %d", (int) gameconfig->fraglimit);
-    ConsoleInterface::postMessage("RespawnType: %s",
-            gameconfig->getRespawnTypeString());
-    ConsoleInterface::postMessage("Mapcycle: %s", gameconfig->mapcycle.c_str());
-    ConsoleInterface::postMessage("Powerups: %s",
-            gameconfig->powerups ? "yes" : "no");
-    ConsoleInterface::postMessage("AllowAllies: %s",
-            gameconfig->allowallies ? "yes" : "no");
-    ConsoleInterface::postMessage("CloudCoverage: %d (WindSpeed %d)", 
-            (int) gameconfig->cloudcoverage, (int) gameconfig->windspeed);
-
+    *Console::server << "Server Settings:\n"
+        << "Map: " << gameconfig->map << "\n"
+        << "MaxPlayers: " << gameconfig->maxplayers << "\n"
+        << "MaxUnits: " << gameconfig->maxunits << "\n"
+        << "Gametype: " << gameconfig->getGameTypeString() << "\n"
+        << "ObjectivePercentage: " <<
+        gameconfig->objectiveoccupationpercentage << "\n"
+        << "TimeLimit: " << gameconfig->timelimit << "\n"
+        << "FragLimit: " << gameconfig->fraglimit << "\n"
+        << "RespawnType: " << gameconfig->getRespawnTypeString() << "\n"
+        << "Mapcycle: " << gameconfig->mapcycle << "\n"
+        << "Powerups: " << (gameconfig->powerups ? "yes" : "no") << "\n"
+        << "AllowAllies: " << (gameconfig->allowallies ? "yes" : "no") << "\n"
+        << "CloudCoverage: " << gameconfig->cloudcoverage << " (Windspeed "
+           << gameconfig->windspeed << ")" << std::endl;
+        
     GameManager::dedicatedLoadGameMap(gameconfig->map.c_str());
 
     GameManager::reinitializeGameLogic();
@@ -186,7 +182,7 @@ bool DedicatedGameManager::launchNetPanzerGame()
         }
     }
 
-    ConsoleInterface::postMessage("game started.");
+    *Console::server << "game started." << std::endl;
 
     console = new ServerConsole(this);
     console->startThread();
