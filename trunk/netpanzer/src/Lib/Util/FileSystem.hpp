@@ -124,6 +124,10 @@ protected:
 
 //---------------------------------------------------------------------------
 
+/** This class is a c++ wrapper for the physfs library. See physfs
+ * documentation for details about the functions here. Most function names are
+ * exactly the same as in physfs
+ */
 class FileSystem
 {
 public:
@@ -136,13 +140,21 @@ public:
 
     static const char* getRealDir(const char* filename);
     static std::string getRealName(const char* filename);
-    // remember to call freeLisT
+    /// remember to call freeLisT
     static char** enumerateFiles(const char* directory);
+    static char** enumerateFiles(const std::string& directory)
+    { return enumerateFiles(directory.c_str()); }
     static void freeList(char** list);
 
     static ReadFile* openRead(const char* filename);
+    static ReadFile* openRead(const std::string& filename)
+    { return openRead(filename.c_str()); }
     static WriteFile* openAppend(const char* filename);
+    static WriteFile* openAppend(const std::string& filename)
+    { return openAppend(filename.c_str()); }
     static WriteFile* openWrite(const char* filename);
+    static WriteFile* openWrite(const std::string& filename)
+    { return openWrite(filename.c_str()); }
 
     static void mkdir(const char* dirname);
     static void remove(const char* filename);
