@@ -42,6 +42,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       proxyserver("proxyserver",""),
       proxyserveruser("proxyserveruser",""),
       proxyserverpass("proxyserverpass",""),
+      bindaddress("bindaddress", ""),
       gametype("gametype", _gametype_objective, 0, _gametype_last-1),
       maxplayers("maxplayers", 8, 1, 25),
       maxunits("maxunits", 500, 25, 10000),
@@ -117,6 +118,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
     playersettings.push_back(&proxyserverpass);
 
     serversettings.push_back(&serverport);
+    serversettings.push_back(&bindaddress);
     serversettings.push_back(&gametype);
     serversettings.push_back(&maxplayers);
     serversettings.push_back(&maxunits);

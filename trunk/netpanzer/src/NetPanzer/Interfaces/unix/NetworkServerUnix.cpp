@@ -50,7 +50,8 @@ void NetworkServerUnix::openSession()
 void NetworkServerUnix::hostSession()
 {
     delete serversocket;
-    serversocket = new ServerSocket(gameconfig->serverport);
+    serversocket = new ServerSocket(gameconfig->bindaddress,
+            gameconfig->serverport);
 }
 
 void NetworkServerUnix::closeSession()

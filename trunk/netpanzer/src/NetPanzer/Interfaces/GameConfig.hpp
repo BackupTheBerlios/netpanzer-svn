@@ -122,6 +122,7 @@ public:
     ConfigString proxyserver;
     ConfigString proxyserveruser;
     ConfigString proxyserverpass;
+    ConfigString bindaddress;
     ConfigInt    gametype;             //Objectives, FragLimit, TimeLimit
     ConfigInt    maxplayers;
     ConfigInt    maxunits;

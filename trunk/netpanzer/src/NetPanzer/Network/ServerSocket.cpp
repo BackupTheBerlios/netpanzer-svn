@@ -31,11 +31,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConsoleInterface.hpp"
 #include "Util/Exception.hpp"
 
-ServerSocket::ServerSocket(uint16_t port)
+ServerSocket::ServerSocket(const std::string& bindaddress, uint16_t port)
         : socket(0), clientlist(0)
 {
     try {
-        socket = new network::TCPListenSocket(port, false);
+        if(bindaddress == "") {
+            socket = new network::TCPListenSocket(port, false);
+        } else {
+            network::Address addr 
+                = network::Address::resolve(bindaddress, port);
+            socket = new network::TCPListenSocket(addr, false);
+        }
+            
         clientlist = new ClientList();
     } catch(...) {
         delete socket;
