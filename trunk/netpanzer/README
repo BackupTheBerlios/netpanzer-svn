@@ -100,14 +100,27 @@ You can start a dedicated netpanzer server (a pure server, without any video
 output). By starting netpanzer with the -d commandline option.
 
 The server reads the configuration from
-    $HOME/.netpanzer/config/netpanzer-dedicated.xml
-. The format is basically the same as the normal configuration file of
+    $HOME/.netpanzer/config/netpanzer-dedicated.ini
+The format is basically the same as the normal configuration file of
 netpanzer. Here's a short introduction into the option specific to a server in
-the server section of the xml file:
+the server section of the file:
 
 *serverport [number], default 3030
     Specifies the port which the server will be using.
     (The server is doing both, TCP and UDP connections on this port)
+
+*bindaddress [string], default ""
+    Allows you to bind the server to a specific IP address (usefull if you have
+    multiple IP addresses on 1 box)
+
+*logging [yes,no], default no
+    When enabled the server creates detailed logs about the matches in the
+    $HOME/logs directory. This can be usefull for creating statistics about the
+    matches.
+
+*public [yes,no], default yes
+    Register at the internet masterservers so that the server will appear in the
+    serverlist of other players.
 
 *maxplayers [number], default 8
     Number of players and bots that are able to play simultaneously on the
@@ -120,10 +133,6 @@ the server section of the xml file:
     Number of maximum available units for all players. (Each
             player will be able to have maxplayers/maxunits units at once)
     
-*initialunits [number], default 5
-    Number of units that each player starts with when he joins or after he's
-    been killed. (not working correctly yet)
-
 *gametype [0,1,2], default 0
     Type of game: (0=Objectives, 1=FragLimit, 2=TimeLimit)
 
