@@ -17,7 +17,7 @@ jam distclean
 echo "*** Scanning for files"
 AUTOFILES="autogen.sh configure.ac configure config.h.in `find mk/autoconf/ -name "*.m4" -o -name "config.*"` mk/autoconf/install-sh"
 JAMFILES="Jamrules Jamconfig.in `find mk/jam -name "*.jam"`"
-ICONS=*.png
+ICONS=*.png *.xpm
 TEXTS="COPYING README TODO ChangeLog"
 SOURCES="`find src -name "*.cpp" -o -name "*.hpp" -o -name "Jamfile"`"
 DOCS="docs/*.[1-9] docs/Jamfile"
@@ -30,6 +30,18 @@ SubDir TOP ;
 
 SubInclude TOP src ;
 SubInclude TOP docs ;
+
+appicondir ?= [ ConcatDirs $(datadir) pixmaps $(PACKAGE_NAME) ] ;
+
+##  InstallIcon files [ : subdir ]
+##    Installs an icon
+rule InstallIcon
+{
+    LOCATE on $(<:G=installicon) = $(SUBDIR) ;
+    Depends install_data : [ DoInstall $(<:G=installicon) : $(appicondir) $(2) ] ;
+}
+
+InstallIcon netpanzer.png netpanzer.xpm ;
 __END__
 
 cp -p --parents $AUTOFILES $SOURCERELEASE
