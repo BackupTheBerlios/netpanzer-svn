@@ -21,12 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "RGBColor.hpp"
 
-enum { VIDEO_MODE_WINDOWED          = 0x01,
-       VIDEO_MODE_TRIPLE_BUFFER     = 0x02,
-       VIDEO_MODE_DOUBLE_BUFFER     = 0x04,
-       VIDEO_MODE_AUTO_FBUFFER      = 0x08,
-	   VIDEO_MODE_FORCE_MODE_SWITCH = 0x10, };
-
 // DirectDraw class declarations
 //---------------------------------------------------------------------------
 class UIDraw
@@ -40,7 +34,7 @@ public:
 	
 	virtual bool initialize() = 0;
 	virtual void shutdown() = 0;
-	virtual bool setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags) = 0;
+	virtual bool setVideoMode(DWORD width, DWORD height, DWORD bpp, bool fullscreen) = 0;
 	virtual bool isDisplayModeAvailable(int width, int height, int bpp) = 0;
 	virtual bool lockDoubleBuffer(unsigned char **DoubleBuffer) = 0;
 	virtual bool unlockDoubleBuffer() = 0;
@@ -49,6 +43,8 @@ public:
 	virtual void restoreAll()=0;
 	virtual bool copyDoubleBufferandFlip()=0;
 	virtual void setPalette(RGBColor *color)=0;
+
+	virtual bool isFullScreen() const = 0;
 
 	inline int getWidth() const
 	{ return curWidth; }

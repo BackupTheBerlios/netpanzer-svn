@@ -202,7 +202,7 @@ void ProgressView::open()
  {
   if ( Desktop::getView("ProgressView")->getVisible() == false )
    {
-    GameManager::setVideoMode(iXY(640, 480));
+    GameManager::setVideoMode(iXY(640, 480), false);
 
     GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 

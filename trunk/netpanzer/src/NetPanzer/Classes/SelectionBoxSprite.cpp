@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Surface UNIT_FLAGS_SURFACE;
 
-bool SelectionBoxSprite::isVisible( Recti &world_win )
+bool SelectionBoxSprite::isVisible(const Recti &world_win) const
  {      
   if (
       (world_win.contains( world_pos + selection_area.min ) && (visible == true ) ) ||
@@ -33,7 +33,7 @@ bool SelectionBoxSprite::isVisible( Recti &world_win )
  }
 
 
-void SelectionBoxSprite::blit( Surface *surface, Recti &world_win )
+void SelectionBoxSprite::blit( Surface *surface, const Recti &world_win )
  {
   PointXYi min_abs, max_abs;
   

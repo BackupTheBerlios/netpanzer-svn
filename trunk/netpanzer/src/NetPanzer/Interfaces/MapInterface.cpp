@@ -124,7 +124,7 @@ void MapInterface::LoadMap( const char *file_path, bool load_tiles )
  }
 */
 
-void MapInterface::generateMappingTable( void )
+void MapInterface::generateMappingTable()
  {
   unsigned short tile_count;
   unsigned long  map_size;
@@ -165,30 +165,27 @@ void MapInterface::generateMappingTable( void )
  
  }
 
-void MapInterface::buildMiniMapSurface( void )
- {
-  unsigned long map_x_size, x_index;
-  unsigned long map_y_size, y_index;
-  MapElementType map_value;
-  unsigned char  avg_color;
+void MapInterface::buildMiniMapSurface()
+{
+   	unsigned long map_x_size, x_index;
+	unsigned long map_y_size, y_index;
+	MapElementType map_value;
+	unsigned char  avg_color;
 
-  map_x_size = main_map.getXsize();
-  map_y_size = main_map.getYsize();
-  mini_map_surface.create( map_x_size, map_y_size );
+	map_x_size = main_map.getXsize();
+	map_y_size = main_map.getYsize();
+	mini_map_surface.create( map_x_size, map_y_size );
 
-  for( y_index = 0; y_index < map_y_size; y_index++ )
-   {
-    for ( x_index = 0; x_index < map_x_size; x_index++ )
-     {
-      map_value = main_map.mapValue( x_index, y_index );
-      avg_color = tile_set.getAverageTileColor( map_value );
-      mini_map_surface._putPixel( x_index, y_index, (PIX) avg_color );
-
-     } // ** for x_index
-   
-   } // ** for y_index   
- 
- }
+	for( y_index = 0; y_index < map_y_size; y_index++ )
+	{
+		for ( x_index = 0; x_index < map_x_size; x_index++ )
+		{
+			map_value = main_map.mapValue( x_index, y_index );
+			avg_color = tile_set.getAverageTileColor( map_value );
+			mini_map_surface._putPixel( x_index, y_index, (PIX) avg_color );
+		} // ** for x_index
+	} // ** for y_index   
+}
 
 unsigned char MapInterface::getMovementValue( PointXYi map_loc )
  {

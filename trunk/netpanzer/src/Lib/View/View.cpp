@@ -2084,13 +2084,13 @@ void View::processEvents(void)
 {
 	if (selectedInputField >= 0)
 	{
-		char shit;
-		while (KeyboardInterface::getChar(&shit))
+		int shit;
+		while (KeyboardInterface::getChar(shit))
 		{
 			// Check for extended code.
 			if (shit == 0)
 			{
-				if (KeyboardInterface::getChar(&shit))
+				if (KeyboardInterface::getChar(shit))
 				{
 					inputFields[selectedInputField].addExtendedChar(shit);
 				} else

@@ -176,7 +176,7 @@ public:
 
 	static void processSystemMessage( NetMessage *message );
 
-	static void setVideoMode( PointXYi mode_res );
+	static void setVideoMode(const PointXYi& newmode, bool fullscreen);
 	static void	restorePreviousVideoMode();
    
 	static void increaseDisplayResolution();

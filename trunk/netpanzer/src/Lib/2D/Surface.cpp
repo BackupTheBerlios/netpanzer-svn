@@ -793,7 +793,8 @@ void Surface::bltTransColor(const Surface &dest, iXY min, const BYTE &color) con
 	{
 		for (int col = 0; col < pixelsPerRow; col++)
 		{
-			if (*sPtr != transPix) *dPtr = color;
+			if (*sPtr != transPix)
+				*dPtr = color;
 			sPtr++;
 			dPtr++;
 		}
@@ -1975,11 +1976,20 @@ void Surface::bltBlendScale(const Surface &source, const iRect &destRect, ColorT
 	int stepWholePart = xSrcDelta >> 16;
 	int srcX1FracWithCount = (srcX1 << 16) | pixelsPerRow;
 
+	float xdelta = float(source.pix.x) / float(max.x - min.x);
 	for (int yCount = 0 ; yCount < numRows ; yCount++)
 	{
 		const PIX *sRow = source.rowPtr(srcY >> 16) + (srcX1 >> 16);
 
-		bltBlendScaleSpan(dRow, sRow, srcX1FracWithCount, stepAndDecCount, stepWholePart, table);
+		// bltBlendScaleSpan(dRow, sRow, srcX1FracWithCount, stepAndDecCount, stepWholePart, table);
+
+		// XXX: WARNING SLOW CODE
+		float sPos = 0;
+		for(size_t x=0; x<pixelsPerRow; x++) {
+			dRow[x] = table[ (dRow[x]<<8) + sRow[(size_t) sPos]];
+			//dRow[x] = table[sRow[(size_t) sPos]];
+			sPos += xdelta;
+		}
 
 		srcY += ySrcDelta;
 		dRow += stride;
@@ -2109,7 +2119,7 @@ void Surface::bltScale(const Surface &source, const iRect &destRect) const
 		*/
 		// XXX: WARNING SLOW CODE
 		float sPos = 0;
-		for(int x=0; x<pixelsPerRow; x++) {
+		for(size_t x=0; x<pixelsPerRow; x++) {
 			dRow[x] = sRow[(size_t) sPos];
 			sPos += xdelta;
 		}
@@ -2117,23 +2127,6 @@ void Surface::bltScale(const Surface &source, const iRect &destRect) const
 		srcY += ySrcDelta;
 		dRow += stride;
 	}
-}
-
-void Surface::bltScaleTrans(const Surface &source, const iRect &destRect) const {
-
-//00401151   mov         dword ptr [edi],edx
-//00401153   add         edi,4
-//main_loop_entrance:
-//00401156   mov         edx,7EFEFEFFh
-//0040115B   mov         eax,dword ptr [ecx]
-//0040115D   add         edx,eax
-//0040115F   xor         eax,0FFh
-//00401162   xor         eax,edx
-//00401164   mov         edx,dword ptr [ecx]
-//00401166   add         ecx,4
-//00401169   test        eax,81010100h
-//0040116E   je          main_loop(0x00401151)
-
 }
 
 // blendRect

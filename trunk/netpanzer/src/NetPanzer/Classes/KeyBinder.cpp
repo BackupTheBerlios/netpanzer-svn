@@ -16,14 +16,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
+#include <SDL.h>
 #include "KeyBinder.hpp"
 
 #include <string.h>
 
-
 KeyBinder KEY_BINDER;
 
-bool KeyBinder::locked_key_table[256]; 
+bool KeyBinder::locked_key_table[SDLK_LAST]; 
 
 KeyBinder::KeyBinder( unsigned long key_list_size )
  {
@@ -34,7 +35,7 @@ void KeyBinder::initialize( unsigned long key_list_size )
  {
   unsigned long key_list_index;
 
-  key_list.initialize( key_list_size, 1, 256 );
+  key_list.initialize( key_list_size, 1, SDLK_LAST );
 
   for( key_list_index = 0; key_list_index < key_list_size; key_list_index++ )
    {
@@ -42,7 +43,7 @@ void KeyBinder::initialize( unsigned long key_list_size )
    } // ** for 
  }
 
-KeyBinderElement * KeyBinder::findKeyScanCode( unsigned char key_scan_code )
+KeyBinderElement * KeyBinder::findKeyScanCode(int key_scan_code )
  {
   unsigned long key_list_size;
   unsigned long key_list_index;
@@ -83,20 +84,20 @@ void KeyBinder::staticInitialize( void )
   memset( locked_key_table, 0, sizeof( bool ) );
  }
 
-void KeyBinder::lockKey( unsigned char key_scan_code )
+void KeyBinder::lockKey(int key_scan_code )
  {
   // this is always true, isn't it?
   // assert( key_scan_code < 256 );
   locked_key_table[ key_scan_code ] = true;
  }
 
-void KeyBinder::unlockKey( unsigned char key_scan_code )
+void KeyBinder::unlockKey(int key_scan_code )
  {
   //assert( key_scan_code < 256 );
   locked_key_table[ key_scan_code ] = false;
  }
 
-void KeyBinder::bindAction( unsigned short action_enum, char *action_name, unsigned char key_scan_code )
+void KeyBinder::bindAction( unsigned short action_enum, char *action_name, int key_scan_code )
  {
   if ( isBound( key_scan_code ) == true )
    return;
@@ -124,7 +125,7 @@ unsigned char KeyBinder::getActionKey( char *action_name )
   return( 0 );
  }
 
-bool KeyBinder::isBound( unsigned char key_scan_code )
+bool KeyBinder::isBound(int key_scan_code )
  {
   KeyBinderElement *key_info;
 
@@ -137,7 +138,7 @@ bool KeyBinder::isBound( unsigned char key_scan_code )
   return( false );
  }
    
-unsigned short KeyBinder::getKeyAction( unsigned char key_scan_code )
+unsigned short KeyBinder::getKeyAction(int key_scan_code )
  {
   KeyBinderElement *key_info;
 
@@ -150,7 +151,7 @@ unsigned short KeyBinder::getKeyAction( unsigned char key_scan_code )
   return(0);
  }
  
-bool KeyBinder::getKeyAction( unsigned char key_scan_code, char *action_name )
+bool KeyBinder::getKeyAction(int key_scan_code, char *action_name )
  {
   KeyBinderElement *key_info;
 

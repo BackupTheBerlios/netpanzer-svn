@@ -1002,14 +1002,14 @@ void WorldInputCmdProcessor::process( void )
  }
 
 bool WorldInputCmdProcessor::getConsoleInputString( char *input_string )
- {
-  char key_char;
-  while (KeyboardInterface::getChar(&key_char))
+{
+  int key_char;
+  while (KeyboardInterface::getChar(key_char))
    {
     // Check for extended code.
 	if (key_char == 0)
 	 {
-	  if (KeyboardInterface::getChar(&key_char))
+	  if (KeyboardInterface::getChar(key_char))
 	   {
 	    ConsoleInterface::addExtendedChar(key_char);
 	    if ((key_char == SDLK_RETURN) )

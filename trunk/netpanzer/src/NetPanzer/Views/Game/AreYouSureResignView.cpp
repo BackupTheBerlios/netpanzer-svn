@@ -15,9 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #include <config.h>
+
 #include "AreYouSureResignView.hpp"
 #include "Desktop.hpp"
 #include "DDHardSurface.hpp"
@@ -30,7 +29,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ControlsView.hpp"
 #include "VisualsView.hpp"
 #include "InterfaceView.hpp"
-
 
 //---------------------------------------------------------------------------
 static void bYES()
@@ -49,7 +47,7 @@ static void bYES()
 	//----------------------
 
 	// Swap to the menu resolution.
-	GameManager::setVideoMode(iXY(640, 480));
+	GameManager::setVideoMode(iXY(640, 480), false);
 
 	GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
 

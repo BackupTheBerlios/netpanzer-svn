@@ -45,9 +45,10 @@ void SDLDraw::shutdown()
 {
 }
 
-bool SDLDraw::setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags)
+bool SDLDraw::setVideoMode(DWORD width, DWORD height, DWORD bpp, bool fullscreen)
 {
-	Uint32 flags = 0 /* SDL_FULLSCREEN | SDL_DOUBLEBUF */;
+	Uint32 flags = 0;
+	flags |= fullscreen ? SDL_FULLSCREEN : 0;
 	FrontBuffer = SDL_SetVideoMode(width, height, bpp, flags);
 	if(FrontBuffer==NULL)
 		return false;
@@ -121,3 +122,9 @@ void SDLDraw::setPalette(RGBColor *color)
 
 	SDL_SetColors(FrontBuffer, c, 0, 256);
 }
+
+bool SDLDraw::isFullScreen() const
+{
+	return FrontBuffer->flags & SDL_FULLSCREEN;
+}
+

@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _KEYBOARDINTERFACE_HPP
 #define _KEYBOARDINTERFACE_HPP
 
+#include <SDL.h>
 #include <string.h>
 
 #define _CHAR_BUFFER_SIZE 256
@@ -26,73 +27,59 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class KeyboardInterface 
 {
 protected:
-  	static char key_table[256];
-   	static char previous_key_state[256];
-	static char char_buffer[ _CHAR_BUFFER_SIZE ];
+  	static bool key_table[SDLK_LAST];
+   	static bool previous_key_state[SDLK_LAST];
+	static int char_buffer[ _CHAR_BUFFER_SIZE ];
 	static unsigned long char_buffer_front;
 	static unsigned long char_buffer_rear;
 
 public:
 	static void clearKeyTable()
 	{
-		memset(&key_table[0], 0, 256);
-		memset(&previous_key_state[0], 0, 256);
+		memset(key_table, 0, sizeof(key_table));
+		memset(previous_key_state, 0, sizeof(previous_key_state));
 	}
 
  	static void sampleKeyboard();
+	static void keyPressed(int scancode);
+	static void keyReleased(int scancode);
 
-  	static bool getKeyPressed(unsigned char scanCode)
+  	static bool getKeyPressed(int scanCode);
+
+	static inline bool getKeyState(int scan_code)
 	{
- 		if (
-				KeyboardInterface::getKeyState(scanCode) == true &&
-				KeyboardInterface::getPrevKeyState(scanCode) == false)
-		{
-			return true;
-		}
-
-		return false;
+		return key_table[scan_code];
 	}
 
-	static inline bool getKeyState( unsigned char scan_code )
+	static inline bool getPrevKeyState(int scan_code)
 	{
-		if ( key_table[ scan_code ] & 0x80 )
-			return true;
-   
-		return false;
+		return previous_key_state[scan_code];
 	}
 
-   static inline bool getPrevKeyState( unsigned char scan_code )
-   {
-	   if ( previous_key_state[ scan_code ] & 0x80 )
-		   return true;
-   
-	   return false;
-   }
-
-   static inline void flushCharBuffer( void )
+   static inline void flushCharBuffer()
    {
 	   char_buffer_front = 0;
 	   char_buffer_rear = 0;
    }
 
-   static inline bool getChar( char *c )
+   static inline bool getChar(int &c)
    {
 	   if ( char_buffer_front == char_buffer_rear )
 		   return false;
 
 	   char_buffer_front = ( char_buffer_front + 1 ) & _CHAR_BUFFER_MOD;
-	   *c = char_buffer[ char_buffer_front ];     
+	   c = char_buffer[ char_buffer_front ];     
     
 	   return true;
    }
 
-   static inline void putChar( char c )
+   static inline void putChar(int c)
    {
 	   char_buffer[ (char_buffer_rear + 1) & _CHAR_BUFFER_MOD ] = c;
 	   char_buffer_rear = (char_buffer_rear + 1) & _CHAR_BUFFER_MOD;
    }
 
-   static inline void putChar( char c, int times )
+   static inline void putChar(int c, int times)
    {
 	   while( times != 0 )
 	   {

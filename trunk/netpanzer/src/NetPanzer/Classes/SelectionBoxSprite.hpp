@@ -43,9 +43,9 @@ class SelectionBoxSprite : public Sprite
      box_state = on_off;
     }
   
-   virtual bool isVisible( Recti &world_win );
+   virtual bool isVisible(const Recti &world_win ) const;
     
-   virtual void blit( Surface *surface, Recti &world_win );
+   virtual void blit( Surface *surface, const Recti &world_win );
  
  };
 

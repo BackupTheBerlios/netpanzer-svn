@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Log.hpp"
 #include "GameManager.hpp"
 #include "MouseInterface.hpp"
+#include "KeyboardInterface.hpp"
 #include "cMouse.hpp"
 
 bool HandleSDLEvents();
@@ -31,6 +32,7 @@ bool HandleSDLEvents();
 int main(int argc, char** argv)
 {
 	SDL_Init(SDL_INIT_TIMER);
+	SDL_EnableUNICODE(1);
 	srand(time(0));
 #ifdef __USE_SVID
 	// the STL functions seem to use the 48er versions of the random generator
@@ -71,6 +73,7 @@ bool HandleSDLEvents()
 {
 	static SDL_Event event;
 
+	KeyboardInterface::sampleKeyboard();
 	while(SDL_PollEvent(&event)) {
 		switch (event.type) {
 			case SDL_QUIT:
@@ -107,6 +110,27 @@ bool HandleSDLEvents()
 						cMouse::clearButtonMask(!MMOUSE_BUTTON_MASK);
 						break;
 				}
+				break;
+			case SDL_KEYDOWN:
+			{
+				KeyboardInterface::keyPressed(event.key.keysym.sym);
+				char c = event.key.keysym.unicode & 0x7F;
+				// XXX This is not optimal... we should find another way to
+				// differentiate normal chars and special keys...
+				if ( (c >= 'a' && c <= 'z') || (c >= '0' && c<='9')
+					|| (c>= 'A' && c <= 'Z') || c == '_' || c=='.'
+					|| c==' ') {
+					KeyboardInterface::putChar(c);
+				} else {
+					// it's not a normal char put the 0 into the char buffer to
+					// indicate extended chars...
+					KeyboardInterface::putChar(0);
+					KeyboardInterface::putChar(event.key.keysym.sym);
+				}
+				break;
+			}
+			case SDL_KEYUP:
+				KeyboardInterface::keyReleased(event.key.keysym.sym);
 				break;
 		}
 	}

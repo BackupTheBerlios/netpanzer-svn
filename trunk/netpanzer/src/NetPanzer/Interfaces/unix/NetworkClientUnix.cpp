@@ -103,6 +103,14 @@ int NetworkClientUnix::closeSession()
   
 void NetworkClientUnix::sendMessage(NetMessage *message, size_t size, int flags)
 {
+	if ( connection_type == _connection_loop_back )
+	{
+		memmove( net_packet.data, (void *) message, size  );
+		net_packet.packet_size = (unsigned short) size;
+		loop_back_recv_queue.enqueue( net_packet );
+		return;
+	}
+		
 	if(!clientsocket)
 		return;
 

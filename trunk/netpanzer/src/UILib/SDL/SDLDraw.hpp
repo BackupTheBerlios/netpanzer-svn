@@ -36,7 +36,7 @@ public:
   
 	bool initialize();
 	void shutdown();
-	bool setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags);
+	bool setVideoMode(DWORD width, DWORD height, DWORD bpp, bool fullscreen);
 	bool isDisplayModeAvailable(int width, int height, int bpp);
 	bool lockDoubleBuffer(BYTE **DoubleBuffer);
 	bool unlockDoubleBuffer();
@@ -45,6 +45,8 @@ public:
 	void restoreAll();
 	bool copyDoubleBufferandFlip();
 	void setPalette(RGBColor *color);
+
+	virtual bool isFullScreen() const;
 }; // end DirectDraw
 
 #endif // end __UIDraw_hpp__

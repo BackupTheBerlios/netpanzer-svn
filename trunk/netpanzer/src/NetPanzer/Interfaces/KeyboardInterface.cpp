@@ -15,10 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifdef USE_SDL
 #include <config.h>
-#include <SDL.h>
-#endif
+
 #ifdef WIN32
 #include <windows.h>
 #include "DirectInput.hpp"
@@ -26,19 +24,35 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "KeyboardInterface.hpp"
 
-char KeyboardInterface::key_table[256];
-char KeyboardInterface::previous_key_state[256];
+bool KeyboardInterface::key_table[SDLK_LAST];
+bool KeyboardInterface::previous_key_state[SDLK_LAST];
 
-char KeyboardInterface::char_buffer[ _CHAR_BUFFER_SIZE ];
+int KeyboardInterface::char_buffer[ _CHAR_BUFFER_SIZE ];
 unsigned long KeyboardInterface::char_buffer_front = 0;
 unsigned long KeyboardInterface::char_buffer_rear = 0;
 
 void KeyboardInterface::sampleKeyboard()
 {
-#ifdef WIN32
-	memcpy(previous_key_state, key_table, 256 * sizeof(char));
-	
+	memcpy(previous_key_state, key_table, sizeof(key_table));
+#ifdef WIN32	
 	DirectInput::getKeyboardState(key_table);
 #endif
 }
 
+void KeyboardInterface::keyPressed(int scancode) {
+	key_table[scancode] = true;
+}
+
+void KeyboardInterface::keyReleased(int scancode) {
+	key_table[scancode] = false;
+}
+
+bool KeyboardInterface::getKeyPressed(int scanCode)
+{
+	if (
+			KeyboardInterface::getKeyState(scanCode) == true &&
+			KeyboardInterface::getPrevKeyState(scanCode) == false)
+		return true;
+
+	return false;
+}

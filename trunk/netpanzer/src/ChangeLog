@@ -1,3 +1,13 @@
+8-Sep-2003 by Matze Braun
+-added some basic music plying support (all files in sfx/music are played in
+		random order, so simply put some .mp3 or .ogg there)
+-enabled Tile engine code again
+-fixed some bugs in the blitting routines
+-fixed some more small bugs I introduced while porting
+-Added new keyboard handling code
+-fixed lots of code that assumed a key scancode is "only" a char
+-added possibility to switch windows/fullscreen mode on ALT+ENTER
+
 7-Sep-2003 by Matze Braun
 -removed NetMessageLog class (because it only contained shit ;-)
 -slightly changed NetworkServer and NetworkClient interfaces

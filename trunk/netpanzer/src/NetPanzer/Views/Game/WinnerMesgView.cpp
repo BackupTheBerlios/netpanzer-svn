@@ -60,7 +60,7 @@ static void bReturnToMainMenu()
 	//----------------------
 
 	// Swap to the menu resolution.
-	GameManager::setVideoMode(iXY(640, 480));
+	GameManager::setVideoMode(iXY(640, 480), false);
 
 	GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
 

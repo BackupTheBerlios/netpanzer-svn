@@ -44,7 +44,7 @@ class Sprite : public PObject
      world_pos = worldPos;
 	}
 
-   virtual bool isVisible(const Recti &world_win ) { return( false ); }
+   virtual bool isVisible(const Recti &world_win ) const = 0;
  
    inline void setWorldPos( int x, int y )
     {
@@ -76,15 +76,15 @@ class Sprite : public PObject
 	 Sprite::height = height;
    	}
 	
-   inline unsigned char getHeight( void )
-    {
-     return( height );
-   	}
+   inline unsigned char getHeight() const
+   {
+	   return( height );
+   }
   
-   inline void setVisiblity( bool visible )
-    {
-	 Sprite::visible = visible;
-	} 
+   inline void setVisiblity(bool visible)
+   {
+	   Sprite::visible = visible;
+   } 
 
    inline void attachSprite( Sprite *sprite, const PointXYi &attach )
 	{
@@ -100,7 +100,7 @@ class Sprite : public PObject
      iterator->next = sprite; 
 	}
   
-  virtual void blit( Surface *surface, const Recti &world_win ) { }
+  virtual void blit( Surface *surface, const Recti &world_win ) = 0;
   
   inline void blitAll( Surface *surface, const Recti &world_win )
    {
@@ -166,10 +166,9 @@ class SpriteSurface : public Surface, public Sprite
 	 attach_offset.y = 0;
 	} 
       
-   virtual bool isVisible( Recti &world_win );
+   virtual bool isVisible(const Recti &world_win ) const;
 
-   virtual void blit( Surface *surface, Recti &world_win );
-
+   virtual void blit( Surface *surface, const Recti &world_win );
  };
 
 class SpritePacked : public PackedSurface, public Sprite
@@ -237,10 +236,9 @@ private:
 	 attach_offset.y = 0;
 	} 
 
-   virtual bool isVisible( Recti &world_win );
+   virtual bool isVisible(const Recti &world_win ) const;
 
-   virtual void blit( Surface *surface, Recti &world_win );
-    
- };
+   virtual void blit( Surface *surface, const Recti &world_win );
+};
 
 #endif // ** _SPRITE_HPP

@@ -23,45 +23,41 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "KeyScanCodeDefs.h"
 
 class KeyBinderElement
- {
-  public:
-   unsigned short action_enum;
-   char action_name[32];
-   unsigned char key_scan_code;
- };
+{
+public:
+ 	unsigned short action_enum;
+  	char action_name[32];
+   	int key_scan_code;
+};
 
 class KeyBinder
- {
-  protected:
-   static bool locked_key_table[256]; 
+{
+protected:
+ 	static bool locked_key_table[SDLK_LAST]; 
 
-   ArrayGrowableTemplate< KeyBinderElement > key_list;
+  	ArrayGrowableTemplate< KeyBinderElement > key_list;
 
-   KeyBinderElement * findKeyScanCode( unsigned char key_scan_code );
-   KeyBinderElement * findActionName( char *action_name );
-    
- 
-  public:
-   
-   KeyBinder() { }
-   KeyBinder( unsigned long key_list_size );
+   	KeyBinderElement * findKeyScanCode( int key_scan_code );
+	KeyBinderElement * findActionName( char *action_name );
+public:
+ 	KeyBinder() { }
+  	KeyBinder( unsigned long key_list_size );
 
-   void initialize( unsigned long key_list_size );
-   static void staticInitialize( void );
+   	void initialize( unsigned long key_list_size );
+	static void staticInitialize( void );
 
-   void lockKey( unsigned char key_scan_code );
-   void unlockKey( unsigned char key_scan_code );
+	void lockKey(int key_scan_code);
+	void unlockKey(int key_scan_code);
    
-   void bindAction( unsigned short action_enum, char *action_name, unsigned char key_scan_code );
-   unsigned char getActionKey( unsigned short action_enum );
-   unsigned char getActionKey( char *action_name );
+	void bindAction(unsigned short action_enum, char *action_name, int key_scan_code );
+	unsigned char getActionKey( unsigned short action_enum );
+	unsigned char getActionKey( char *action_name );
    
-   bool isBound( unsigned char key_scan_code );
+   bool isBound(int key_scan_code );
    
-   unsigned short getKeyAction( unsigned char key_scan_code );
-   bool getKeyAction( unsigned char key_scan_code, char *action_name );
-            
- };
+   unsigned short getKeyAction(int key_scan_code );
+   bool getKeyAction(int key_scan_code, char *action_name );
+};
 
 extern KeyBinder KEY_BINDER;
 

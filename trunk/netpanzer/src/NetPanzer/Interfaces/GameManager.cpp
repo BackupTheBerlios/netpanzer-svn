@@ -189,18 +189,8 @@ void GameManager::initializeVideoSubSystem()
 	LOG( ( "Setting Default Video Sub-system" ) );
   
 	current_video_mode_res = PointXYi(640,480); 
-
-#ifdef _DEBUG
-	//current_mode_flags = VIDEO_MODE_WINDOWED;
-	current_mode_flags = VIDEO_MODE_DOUBLE_BUFFER;
-	//current_mode_flags = VIDEO_MODE_TRIPLE_BUFFER;
-#else
-	//current_mode_flags = VIDEO_MODE_WINDOWED;
-	current_mode_flags = VIDEO_MODE_DOUBLE_BUFFER;
-	//current_mode_flags = VIDEO_MODE_TRIPLE_BUFFER;
-#endif
-
-	setVideoMode(current_video_mode_res);
+	// don't go fullscreen for now
+	setVideoMode(current_video_mode_res, false);
 	loadPalette("wads/netp.act");
 }
 
@@ -304,7 +294,7 @@ void GameManager::initializeWindowSubSystem()
 }
 
 // ******************************************************************
-void GameManager::setVideoMode( PointXYi mode_res )
+void GameManager::setVideoMode(const PointXYi& mode_res, bool fullscreen)
 {
    	if(!Screen->isDisplayModeAvailable( mode_res.x, mode_res.y, 8 ))
 		throw Exception("desired Video mode not available.");
@@ -312,8 +302,8 @@ void GameManager::setVideoMode( PointXYi mode_res )
 	previous_video_mode_res = current_video_mode_res;
 	current_video_mode_res = mode_res;
 
-	if (!Screen->setVideoMode(current_video_mode_res.x, current_video_mode_res.y,
-							8, current_mode_flags))
+	if (!Screen->setVideoMode(current_video_mode_res.x,
+				current_video_mode_res.y, 8, fullscreen))
 		throw Exception("failed to set video mode.");
 		
 	WorldViewInterface::setCameraSize( current_video_mode_res.x, current_video_mode_res.y );
@@ -326,7 +316,7 @@ void GameManager::setVideoMode( PointXYi mode_res )
 
 void GameManager::restorePreviousVideoMode()
 {
-  	setVideoMode( previous_video_mode_res );
+  	setVideoMode(previous_video_mode_res, Screen->isFullScreen());
 }
 
 void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
@@ -343,30 +333,30 @@ void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
 // ******************************************************************
 
 void GameManager::increaseDisplayResolution()
- {
-  PointXYi new_mode;
+{
+  	PointXYi new_mode;
   
-  drawTextCenteredOnScreen("Changing Resolution", Color::white);
+	drawTextCenteredOnScreen("Changing Resolution", Color::white);
 
-  GameConfig::setNextGameScreenResolution();
+	GameConfig::setNextGameScreenResolution();
   
-  drawTextCenteredOnScreen("Changing Resolution", Color::white);
+	drawTextCenteredOnScreen("Changing Resolution", Color::white);
 
-  new_mode = GameConfig::getGameScreenResolutionSize();
+	new_mode = GameConfig::getGameScreenResolutionSize();
 
-  setVideoMode(new_mode);
+	setVideoMode(new_mode, Screen->isFullScreen());
     
-  previous_video_mode_res = current_video_mode_res;
-  current_video_mode_res = new_mode;
+	previous_video_mode_res = current_video_mode_res;
+	current_video_mode_res = new_mode;
 
-  WorldViewInterface::setCameraSize( current_video_mode_res.x, current_video_mode_res.y );
-  FRAME_BUFFER.create(current_video_mode_res.x, current_video_mode_res.y, current_video_mode_res.x, 1 );
-  screen.createNoAlloc(current_video_mode_res);   
-  gameView.setSize( current_video_mode_res );
-  Desktop::checkViewPositions();
-  ConsoleInterface::setToSurfaceSize( current_video_mode_res );
+	WorldViewInterface::setCameraSize( current_video_mode_res.x, current_video_mode_res.y );
+	FRAME_BUFFER.create(current_video_mode_res.x, current_video_mode_res.y, current_video_mode_res.x, 1 );
+	screen.createNoAlloc(current_video_mode_res);   
+	gameView.setSize( current_video_mode_res );
+	Desktop::checkViewPositions();
+	ConsoleInterface::setToSurfaceSize( current_video_mode_res );
 
-  loadPalette( "wads/netp.act" );
+	loadPalette( "wads/netp.act" );
 	
   ConsoleInterface::postMessage( "Screen Resolution :  %d  x  %d", current_video_mode_res.x, current_video_mode_res.y );
 }
@@ -385,7 +375,7 @@ void GameManager::decreaseDisplayResolution()
 
   new_mode = GameConfig::getGameScreenResolutionSize();
 
-  setVideoMode(new_mode);
+  setVideoMode(new_mode, Screen->isFullScreen());
     
   previous_video_mode_res = current_video_mode_res;
   current_video_mode_res = new_mode;
@@ -627,7 +617,7 @@ void GameManager::setupKeyboardBindings()
 
 void GameManager::processSystemKeys()
 {
-	unsigned char scan_code;
+	int scan_code;
 
 	if (Desktop::getVisible("GameView"))
 	{
@@ -766,6 +756,22 @@ void GameManager::processSystemKeys()
 				{
 					decreaseDisplayResolution();
 				}  
+			}
+
+			if (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true)
+			{
+				setVideoMode(current_video_mode_res, !Screen->isFullScreen());
+
+				// TODO: put all this video mode change stuff in an own function
+			   	WorldViewInterface::setCameraSize( current_video_mode_res.x, current_video_mode_res.y );
+				FRAME_BUFFER.create(current_video_mode_res.x, current_video_mode_res.y, current_video_mode_res.x, 1 );
+				screen.createNoAlloc(current_video_mode_res);   
+				gameView.setSize( current_video_mode_res );
+				Desktop::checkViewPositions();
+				ConsoleInterface::setToSurfaceSize( current_video_mode_res );    
+			   	loadPalette("wads/netp.act"); 
+				ConsoleInterface::postMessage("Fullscreen : %s",
+						Screen->isFullScreen() ? "yes" : "no" );
 			}
 		}
 
@@ -1923,7 +1929,7 @@ void GameManager::simLoop()
 // ******************************************************************
 void GameManager::inputLoop()
  {
-  KeyboardInterface::sampleKeyboard();
+  //KeyboardInterface::sampleKeyboard();
 
   processSystemKeys();
 
