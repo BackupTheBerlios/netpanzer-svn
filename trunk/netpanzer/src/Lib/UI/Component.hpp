@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Painter.hpp"
 #include "Types/iRect.hpp"
+#include "MouseEventParameter.hpp"
 
 namespace UI{
     
@@ -42,11 +43,25 @@ namespace UI{
         
         virtual void draw(Painter & painter) = 0;
 
-        void setName(std::string & name){
+        void setName(const std::string & name){
             this->name = name;
         }
 
-        const std::string & getName(void) const;
+        const std::string & getName(void) const{
+            return name;
+        }
+
+
+
+        virtual void mouseMoved(MouseEventParameter param){};
+        virtual void mousePressed(MouseEventParameter param){};
+        virtual void mouseReleased(MouseEventParameter param){};
+        virtual void mouseEntered(MouseEventParameter param){};
+        virtual void mouseExited(MouseEventParameter param){};
+
+        bool contains(iXY &point){
+            return area.contains(point);
+        }
 
     };
 

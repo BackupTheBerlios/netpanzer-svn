@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "BaseGameManager.hpp"
 #include "ScreenSurface.hpp"
 
-#include "UI/Painter.hpp"
+#include "UI/FontManager.hpp"
 #include "Panels/TestPanel.hpp"
 
 class SDLVideo;
@@ -29,8 +29,9 @@ class SDLVideo;
 class PlayerGameManager : public BaseGameManager
 {
 private:
+    Panels::TestPanel * testpanel;
+    UI::FontManager fontManager;
     SDLVideo* sdlVideo;
-    Panels::TestPanel testpanel;
     bool showNewPanel;
 
     void initializeWindowSubSystem();

@@ -104,6 +104,13 @@ NP_FINDLIB([SDLIMAGE], [SDL_image], [SDL_image >= 1.2],
 	[AC_MSG_ERROR([Please install SDLImage >= 1.2.1])],
 	[$SDL_CFLAGS], [$SDL_LIBS])
 
+NP_FINDLIB([SDLTTF], [SDL_ttf], [SDL_ttf >= 2.0.0],
+	NP_LANG_PROGRAM([#include <SDL_ttf.h>], [TTF_Init();]),
+	[], [-lSDL_ttf],
+	[],
+	[AC_MSG_ERROR([Please install SDL_ttf >= 2.0.0])],
+	[$SDL_CFLAGS], [$SDL_LIBS])
+
 NP_FINDLIB([PHYSFS], [physfs], [physfs >= 1.9],
 	NP_LANG_PROGRAM([#include <physfs.h>
 #if PHYSFS_VER_MAJOR < 1

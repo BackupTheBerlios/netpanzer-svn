@@ -25,21 +25,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "UI/Container.hpp"
 #include "UI/Button.hpp"
+#include "UI/FontManager.hpp"
 
 namespace Panels{
 
     class TestPanel : public UI::Container{
 
     public:
-        TestPanel(iXY position);
-        void draw(UI::Painter & painter);
+        TestPanel(iXY position, UI::FontManager * fm);
+        void draw(UI::Painter & painter); //draw a white border for debug only
 
     private:
         const static int WIDTH;
         const static int HEIGHT;
-
-        UI::Button * b1;
-        UI::Button * b2;
+        UI::Container * subBox1;
+        UI::Container * subBox2;
+        
     };
 
 }

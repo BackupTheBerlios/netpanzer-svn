@@ -15,21 +15,29 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "Component.hpp"
+#ifndef __UI_Font_Manager_hpp__
+#define __UI_Font_Manager_hpp__
+
+#include <SDL/SDL_ttf.h>
+
+#include <string>
+#include <map>
 
 namespace UI{
+    class FontManager{
 
-    UI::Component::Component(iRect area){
-        this->area = area;
-    }
+    public:
 
-    void UI::Component::setArea(iRect area){
-        this->area = area;
-    }
+        FontManager(void);
+        virtual ~FontManager(void);
 
-    iRect UI::Component::getArea(void) const{
-        return area;
-    }
+        void loadFont(std::string name, const char * fileName, int ptSize);
+        TTF_Font * getFont(const std::string & name);
 
-    
+        private:
+        //TODO use a hash_map instead of map. hash_map doesn't seem to be standard
+        std::map<std::string, TTF_Font * > fontCollection;
+    };
 }
+
+#endif

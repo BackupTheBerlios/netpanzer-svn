@@ -18,10 +18,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <stdint.h>
-#include "Line.hpp"
 
-namespace UI
-{
+#include "DrawingFunctions.hpp"
+
+#include "Util/Log.hpp"
+
+namespace UI{
     static inline void putPixel(SDL_Surface* surface, size_t x, size_t y,
                                 Color color)
     {
@@ -76,4 +78,23 @@ namespace UI
             }
         }
     }
-} // end of namespace UI
+
+    void drawRect(SDL_Surface * surface, iRect rect, Color color){
+        iXY p1(rect.max.x, rect.min.y);
+        iXY p2(rect.min.x, rect.max.y);
+        
+        UI::drawLine(surface, rect.min, p1, color);
+        UI::drawLine(surface, p1, rect.max, color);
+        UI::drawLine(surface, rect.max, p2, color);
+        UI::drawLine(surface, p2, rect.min, color);
+    }
+
+    void fillRect(SDL_Surface * surface, iRect rect, Color color){
+        SDL_Rect r;
+        r.x = rect.min.x;
+        r.y = rect.min.y;
+        r.w = rect.getSizeX();
+        r.h = rect.getSizeY();
+        SDL_FillRect(surface, &r, (Uint32) color);
+    }
+}// end of namespace UI

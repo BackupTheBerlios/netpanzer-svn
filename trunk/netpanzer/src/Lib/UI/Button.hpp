@@ -19,18 +19,35 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __UI_Button_hpp__
 
 #include "Component.hpp"
+#include "FontManager.hpp"
+#include "Util/Log.hpp"
+#include <iostream>
 
 namespace UI{
 
     class Button : public Component{
     public:
-        Button(const std::string& text, iRect area);
-
+        Button(const std::string& text, iRect area, FontManager * fm);
         void draw(Painter & painter);
 
     protected:
-        const std::string& textLabel;
+        std::string textLabel;
+        SDL_Surface * textSurface;
         
+        iXY textPosition;
+
+        Color bgColor;
+
+        void initialiseTextSurface(FontManager * fm);
+
+        void mouseEntered(MouseEventParameter param);
+        void mouseExited(MouseEventParameter param);
+        void mousePressed(MouseEventParameter param);
+        void mouseReleased(MouseEventParameter param);
+
+    private:
+        bool clickState;
+
     };
 }
 

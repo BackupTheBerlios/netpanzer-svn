@@ -21,17 +21,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stack>
 #include <SDL/SDL.h>
-
+#include <SDL/SDL_ttf.h>
 #include "Types/iXY.hpp"
 #include "Types/iRect.hpp"
+
 #include "Color.hpp"
+#include "FontManager.hpp"
 
 namespace UI {
 
     class Painter
     {
     public:
-        Painter(SDL_Surface* surface);
+        Painter(SDL_Surface* surface, FontManager * fm);
         virtual ~Painter();
 
         void setSurface(SDL_Surface* surface);
@@ -39,10 +41,17 @@ namespace UI {
         void setBrushColor(Color color);
         void setFillColor(Color color);
 
+        TTF_Font * getCurrentFont(void);
+
         void drawLine(iXY from, iXY to);
         void drawRect(iRect rect);
         void fillRect(iRect rect);
-        //void drawImage(Surface* surface, iXY pos);
+
+        //should be used for dynamic text only.
+        //static text should be render on a buffer and blitted
+        void drawString(iXY pos, const std::string & s, const std::string & font);
+
+        void drawImage(SDL_Surface* surface, iXY pos);
         //void drawScaledImage(Surface* surface, iRect area);
 
         // the following 2 functions are used by the window to transform the
@@ -95,8 +104,10 @@ namespace UI {
 
         Color brushColor;
         Color fillColor;
+
+        FontManager * fontManager;
         
-        SDL_Surface* drawingSurface;
+        SDL_Surface * drawingSurface;
     };
 }
 

@@ -15,21 +15,27 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "Component.hpp"
+#ifndef __UI_Mouse_EventParameter_hpp__
+#define __UI_Mouse_EventParameter_hpp__
+
+#include <SDL/SDL.h>
+#include "Types/iXY.hpp"
+#include "EventParameter.hpp"
 
 namespace UI{
 
-    UI::Component::Component(iRect area){
-        this->area = area;
-    }
+    class MouseEventParameter : public EventParameter{
+    private:
+        iXY position;
+        Uint8 button;
 
-    void UI::Component::setArea(iRect area){
-        this->area = area;
-    }
+    public:
+        MouseEventParameter(Uint8 buttonMask, iXY pos, SDLMod modifier);
+        MouseEventParameter(MouseEventParameter & parentParam, iXY newPos);
+        Uint8 getButtons(void) const;
+        iXY getPosition(void) const;
+    };
 
-    iRect UI::Component::getArea(void) const{
-        return area;
-    }
-
-    
 }
+
+#endif

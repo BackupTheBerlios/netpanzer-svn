@@ -21,14 +21,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Painter.hpp"
 #include "Util/Log.hpp"
+#include "2D/Palette.hpp"
 
-#include "Line.hpp"
+#include "DrawingFunctions.hpp"
 
 namespace UI
 {
-    Painter::Painter(SDL_Surface* surface)
+    Painter::Painter(SDL_Surface* surface, FontManager * fm)
         : drawingSurface(surface)
     {
+        if(fm == NULL){
+            LOG(("Error : Painter::Painter() you must provide a valid FontManager"));
+        }
+        fontManager = fm;
+        
     }
     
     Painter::~Painter()
@@ -52,6 +58,7 @@ namespace UI
         fillColor = color;
     }
 
+
     void Painter::drawLine(iXY from, iXY to)
     {
         currentTransform.apply(from);
@@ -64,19 +71,42 @@ namespace UI
     {
         currentTransform.apply(rect);
 
-        UI::drawLine(drawingSurface, rect.min, iXY(rect.max.x, rect.min.y),
-                 brushColor);
-        UI::drawLine(drawingSurface, iXY(rect.max.x, rect.min.y), rect.max,
-                 brushColor);
-        UI::drawLine(drawingSurface, rect.min, iXY(rect.min.x, rect.max.y),
-                brushColor);
-        UI::drawLine(drawingSurface, iXY(rect.min.x, rect.max.y), rect.max,
-                brushColor);
+        UI::drawRect(drawingSurface, rect, brushColor);
+
+    }
+
+    void Painter::drawString(iXY pos, const std::string & text, const std::string & font)
+    {
+        currentTransform.apply(pos);
+        Palette p;
+        RGBColor c = p[brushColor];
+        SDL_Color c2;
+        c2.r = c.red;
+        c2.g = c.green;
+        c2.b = c.blue;
+                
+        SDL_Surface * surface = TTF_RenderText_Solid(fontManager->getFont(font),text.c_str(), c2);
+
+        SDL_Rect r;
+        r.x = pos.x;
+        r.y = pos.y;
+
+        SDL_BlitSurface(surface, NULL, drawingSurface, &r);
+    }
+
+    void Painter::drawImage(SDL_Surface* surface, iXY pos)
+    {
+        currentTransform.apply(pos);
+        SDL_Rect r;
+        r.x = pos.x;
+        r.y = pos.y;
+        SDL_BlitSurface(surface, NULL, drawingSurface, &r);
     }
 
     void Painter::fillRect(iRect rect)
     {
-        // TODO
+        currentTransform.apply(rect);
+        UI::fillRect(drawingSurface, rect, fillColor);
     }
 
     void Painter::pushTransform(iXY translate)

@@ -46,7 +46,7 @@ LinkWith netpanzer : netpanzertypes netpanzerutil netpanzerxml netpanzer2d
 ;
 
 CFlags netpanzer : -DDATADIR=\\\"$(datadir)\\\" ;
-ExternalLibs netpanzer : XML SDLNET SDLMIXER SDLIMAGE SDL ;
+ExternalLibs netpanzer : XML SDLNET SDLMIXER SDLTTF SDLIMAGE SDL ;
 Help netpanzer : "Build the main netpanzer executable" ;
 
 for i in $(INCLUDEDIRS)

@@ -28,6 +28,12 @@ namespace UI{
     protected:
         std::list<Component *> components;
 
+        Component * findContainingComponent(iXY point);
+
+        Component * lastFocusedComponent;
+        int previousMouseState;
+        iXY previousMousePosition;
+
     public:
         Container(iRect area);
         Container(iXY position, iXY size);
@@ -38,6 +44,12 @@ namespace UI{
 
         void addComponent(Component * comp);
         void removeComponent(Component * comp);
+
+        void processEvents(iXY mousePosition, int mouseButtons, SDLMod modifier);
+
+        void mouseMoved(MouseEventParameter param);
+        void mouseEntered(MouseEventParameter param);
+        void mouseExited(MouseEventParameter param);
 
     };
 }

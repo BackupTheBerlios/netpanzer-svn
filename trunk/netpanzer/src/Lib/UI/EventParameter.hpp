@@ -1,5 +1,4 @@
-/*
-Copyright (C) 2003 by Matthias Braun
+/*Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
  
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,18 +14,27 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef __UI_LINE_HPP__
-#define __UI_LINE_HPP__
+
+#ifndef __UI_EventParameter_hpp__
+#define __UI_EventParameter_hpp__
 
 #include <SDL/SDL.h>
 
-#include "Types/iXY.hpp"
-#include "Color.hpp"
+namespace UI{
 
-namespace UI
-{
-    void drawLine(SDL_Surface* surface, iXY from, iXY to, Color color);
+    class EventParameter{
+    public:
+        EventParameter(SDLMod mod):modifier(mod){
+        }
+        
+        SDLMod getModifier() const{
+            return modifier;
+        }
+        
+    private:
+        SDLMod modifier;
+    };
+
 }
 
 #endif
-

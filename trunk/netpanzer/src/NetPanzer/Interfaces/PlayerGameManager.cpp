@@ -114,9 +114,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameManager.hpp"
 #include "GameControlRulesDaemon.hpp"
 
+//** User interface
+#include "UI/Painter.hpp"
+
+
 PlayerGameManager::PlayerGameManager()
-    : sdlVideo(0), testpanel(iXY(0, 0))
+    : sdlVideo(0)
 {
+    fontManager.loadFont("fixed10", "Fonts/fixed10.pcf", 10);
+
+    testpanel = new Panels::TestPanel(iXY(30, 60), &fontManager);
     showNewPanel = false;
 }
 
@@ -235,6 +242,12 @@ void PlayerGameManager::inputLoop()
 {
     processSystemKeys();
 
+    if(showNewPanel && Desktop::getVisible("GameView"))
+    {
+        //Game started, draw interface
+        testpanel->processEvents(mouse.getScreenPos(), mouse.getButtonMask(), KMOD_NONE);
+    }
+
     Desktop::manage(mouse.getScreenPos().x, mouse.getScreenPos().y, mouse.getButtonMask() );
 
     COMMAND_PROCESSOR.updateScrollStatus( mouse.getScreenPos() );
@@ -249,10 +262,10 @@ void PlayerGameManager::graphicsLoop()
     //TODO : clean this ugly test :)
     if(showNewPanel && Desktop::getVisible("GameView"))
     {
-        UI::Painter painter(Screen->getSurface());
+        UI::Painter painter(Screen->getSurface(), &fontManager);
 
         //Game started, draw interface
-        testpanel.draw(painter);
+        testpanel->draw(painter);
     }
 
     if (Desktop::getVisible("GameView")) {
