@@ -2,6 +2,23 @@
 <page title="netPanzer - News">
   <section title="News">
     <news>
+      <item date="05. Jan 2004">
+        <p><a
+        href="https://developer.berlios.de/project/showfiles.php?group_id=1250">
+        netPanzer 0.1.3</a> is available now:</p>
+
+        <ul>
+            <li>fix bug where the lobby view would always display 0/x players</li>
+            <li>some robustness and usability fixes for the irc lobby code</li>
+            <li>new slovakian flag</li>
+            <li>lots of code cleanups and rewrites (and still lots more to do)</li>
+            <li>unit spawnpoint can be choosen at the outposts now</li>
+            <li>some small UI improvements</li>
+            <li>reorganised build environment</li>
+            <li>network packets are smaller and more robust now</li>
+        </ul>
+
+      </item>
       <item date="19. Dec 2003">
         We moved over to <a href="http://developer.berlios.de">berlios.de</a>.
         You can find the new homepage at <a href="http://netpanzer.berlios.de">
@@ -13,7 +30,7 @@
       <item date="11. Nov 2003">
 
         <p><a
-        href="http://savannah.nongnu.org/files/?group=netpanzer">netPanzer
+        href="http://developer.berlios.de/project/showfiles.php?group_id=1250">netPanzer
         0.1.2</a> is available now:</p>
         
         <ul>
