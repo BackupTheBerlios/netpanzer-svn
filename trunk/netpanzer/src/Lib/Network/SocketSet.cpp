@@ -56,7 +56,7 @@ SocketSet::select(unsigned int usec)
     timeout.tv_usec = usec%1000000;
 
     testset = set;
-    int res = ::select(FD_SETSIZE, &testset, 0, 0, usec ? &timeout : 0);
+    int res = ::select(FD_SETSIZE, &testset, 0, 0, &timeout);
 #ifdef USE_WINSOCK
     if(res < 0) {
         std::stringstream msg;
