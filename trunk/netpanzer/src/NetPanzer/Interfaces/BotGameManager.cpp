@@ -57,7 +57,7 @@ void BotGameManager::shutdownVideoSubSystem()
 void BotGameManager::initializeGameConfig(const std::string& configfile)
 {
     if(configfile == "")
-        gameconfig = new GameConfig("/config/netpanzer-bot.xml");
+        gameconfig = new GameConfig("/config/netpanzer-bot.ini");
     else
         gameconfig = new GameConfig(configfile);
 }

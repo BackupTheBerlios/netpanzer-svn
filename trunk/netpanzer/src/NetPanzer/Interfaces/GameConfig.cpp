@@ -19,12 +19,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sstream>
 
 #include "Util/FileSystem.hpp"
+#include "Util/FileStream.hpp"
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
+#include "INIParser/Store.hpp"
+#include "INIParser/Section.hpp"
 #include "GameConfig.hpp"
 #include "NetworkGlobals.hpp"
-#include "Xml/XmlConfig.hpp"
-#include "Xml/XmlStore.hpp"
 #include "MiniMapView.hpp"
 #include "GameViewGlobals.hpp"
 
@@ -195,15 +196,17 @@ GameConfig::~GameConfig()
 
 void GameConfig::loadConfig()
 {
-    XmlConfig config(configfile);
+    INI::Store inifile;
+    IFileStream in(configfile);
+    inifile.load(in);
 
-    loadSettings(config, "game", gamesettings);
-    loadSettings(config, "player", playersettings);
-    loadSettings(config, "visuals", visualssettings);
-    loadSettings(config, "sound", soundsettings);
-    loadSettings(config, "interface", interfacesettings);
-    loadSettings(config, "radar", radarsettings);
-    loadSettings(config, "server", serversettings);
+    loadSettings(inifile.getSection("game"), gamesettings);
+    loadSettings(inifile.getSection("player"), playersettings);
+    loadSettings(inifile.getSection("visuals"), visualssettings);
+    loadSettings(inifile.getSection("sound"), soundsettings);
+    loadSettings(inifile.getSection("interface"), interfacesettings);
+    loadSettings(inifile.getSection("radar"), radarsettings);
+    loadSettings(inifile.getSection("server"), serversettings);
 
     // XXX special hack to change defaults
     if(((const std::string&) lobbyserver) == "irc.freenode.net:6667") {
@@ -212,12 +215,10 @@ void GameConfig::loadConfig()
     }
 }
 
-void GameConfig::loadSettings(XmlConfig& config, const std::string& name,
+void GameConfig::loadSettings(const INI::Section& section,
         std::vector<ConfigVariable*>& settings)
 {
     try {
-        XmlConfig section = config.getChild(name);
-
         std::vector<ConfigVariable*>::iterator i;
         for(i = settings.begin(); i != settings.end(); i++) {
             ConfigVariable* var = *i;
@@ -225,17 +226,18 @@ void GameConfig::loadSettings(XmlConfig& config, const std::string& name,
             try {
                 ConfigInt* confint = dynamic_cast<ConfigInt*> (var);
                 if(confint)
-                    *confint = section.readInt(confint->getName().c_str());
+                    *confint = section.getIntValue(confint->getName());
 
                 ConfigXY* confxy = dynamic_cast<ConfigXY*> (var);
                 if(confxy) {
-                    *confxy = section.readXY(confxy->getName().c_str());
+                    iXY(*confxy).x = section.getIntValue(confxy->getName() + "_x");
+                    iXY(*confxy).y = section.getIntValue(confxy->getName() + "_y");
                 }
 
                 ConfigBool* confbool = dynamic_cast<ConfigBool*> (var);
                 if(confbool) {
                     std::string str =
-                        section.readString(confbool->getName().c_str());
+                        section.getValue(confbool->getName());
                     if(str == "yes" || str == "1" || str == "on")
                         *confbool = true;
                     else if(str == "no" || str == "0" || str == "off")
@@ -247,8 +249,7 @@ void GameConfig::loadSettings(XmlConfig& config, const std::string& name,
 
                 ConfigString* confstring = dynamic_cast<ConfigString*> (var);
                 if(confstring)
-                    *confstring =
-                        section.readString(confstring->getName().c_str());
+                    *confstring = section.getValue(confstring->getName());
 
                 // we have a value from config file in the variable now
                 var->setNonDefaultValue();
@@ -258,53 +259,54 @@ void GameConfig::loadSettings(XmlConfig& config, const std::string& name,
             }
         }
     } catch(Exception& e) {
-        LOG(("Couldn't find config section '%s', skipping...", name.c_str()));
+        LOG(("Couldn't find config section '%s', skipping...",
+                    section.getName().c_str()));
     }
 }
 
 void GameConfig::saveConfig()
 {
-    XmlStore xmlStore("netpanzer");
+    INI::Store inifile;
 
-    saveSettings(xmlStore, "game", gamesettings);
-    saveSettings(xmlStore, "player", playersettings);
-    saveSettings(xmlStore, "visuals", visualssettings);
-    saveSettings(xmlStore, "sound", soundsettings);
-    saveSettings(xmlStore, "interface", interfacesettings);
-    saveSettings(xmlStore, "radar", radarsettings);
-    saveSettings(xmlStore, "server", serversettings);
+    saveSettings(inifile.getSection("game"), gamesettings);
+    saveSettings(inifile.getSection("player"), playersettings);
+    saveSettings(inifile.getSection("visuals"), visualssettings);
+    saveSettings(inifile.getSection("sound"), soundsettings);
+    saveSettings(inifile.getSection("interface"), interfacesettings);
+    saveSettings(inifile.getSection("radar"), radarsettings);
+    saveSettings(inifile.getSection("server"), serversettings);
 
-    xmlStore.save(configfile);
+    OFileStream out (configfile);
+    inifile.save(out);
 }
 
-void GameConfig::saveSettings(XmlStore& xmlstore, const std::string& name,
-        std::vector<ConfigVariable*>& settings)
+void GameConfig::saveSettings(INI::Section& section,
+    std::vector<ConfigVariable*>& settings)
 {
-    XmlStore store = xmlstore.createChild(name);
-
     std::vector<ConfigVariable*>::iterator i;
     for(i = settings.begin(); i != settings.end(); i++) {
         ConfigVariable* var = *i;
 
         ConfigInt* confint = dynamic_cast<ConfigInt*> (var);
         if(confint)
-            store.writeInt(confint->getName().c_str(), *confint);
+            section.setIntValue(confint->getName(), *confint);
             
         ConfigBool* confbool = dynamic_cast<ConfigBool*> (var);
         if(confbool)
-            store.writeString(confbool->getName().c_str(),
-                    *confbool ? "yes" : "no");
+            section.setValue(confbool->getName(), *confbool ? "yes" : "no");
 
         ConfigXY* confxy = dynamic_cast<ConfigXY*> (var);
         if(confxy) {
-            store.writeXY(confxy->getName().c_str(), (const iXY&)(*confxy));
+            section.setIntValue(confxy->getName() + "_x",
+                    ((const iXY&)(*confxy)).x);
+            section.setIntValue(confxy->getName() + "_y",
+                    ((const iXY&)(*confxy)).y);
         }
 
         ConfigString* confstring = dynamic_cast<ConfigString*> (var);
         if(confstring) {
-            const char* string = 
-                ((const std::string&)(*confstring)).c_str();
-            store.writeString(confstring->getName().c_str(), string);
+            section.setValue(confstring->getName(),
+                    (const std::string&) *confstring);
         }
     }
 }

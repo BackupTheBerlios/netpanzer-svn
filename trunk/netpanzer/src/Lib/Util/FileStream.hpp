@@ -29,13 +29,8 @@ protected:
         if(file->isEOF())
             return traits_type::eof();
         
-        size_t bytesread = sizeof(buf);
-        try {
-            file->read(buf, 1, sizeof(buf));
-        } catch(FileReadException& e) {
-            bytesread = e.getReadCount();
-        }
-        setg(buf, buf, buf+sizeof(buf));
+        size_t bytesread = file->_read(buf, 1, sizeof(buf));
+        setg(buf, buf, buf + bytesread);
 
         return buf[0];
     }
@@ -56,6 +51,7 @@ public:
 
     ~OFileStreambuf()
     {
+        sync();
         delete file;
     }
 

@@ -95,8 +95,9 @@ enum { _color_aqua,
        _color_last
      };
 
-class XmlConfig;
-class XmlStore;
+namespace INI {
+    class Section;
+}
 
 class GameConfig : public NoCopy
 {
@@ -307,10 +308,9 @@ private:
         return( Color::white );
     }
 
-    void loadSettings(XmlConfig& config, const std::string& name,
+    void loadSettings(const INI::Section&,
             std::vector<ConfigVariable*>& settings);
-    void saveSettings(XmlStore& config, const std::string& name,
-            std::vector<ConfigVariable*>& settings);
+    void saveSettings(INI::Section&, std::vector<ConfigVariable*>& settings);
 
     std::vector<ConfigVariable*> gamesettings;
     std::vector<ConfigVariable*> playersettings;

@@ -81,7 +81,7 @@ void BaseGameManager::shutdownSoundSubSystem()
 void BaseGameManager::initializeGameConfig(const std::string& configfile)
 {
     if(configfile == "")
-        gameconfig = new GameConfig("config/netpanzer.xml");
+        gameconfig = new GameConfig("config/netpanzer.ini");
     else
         gameconfig = new GameConfig(configfile);
 }

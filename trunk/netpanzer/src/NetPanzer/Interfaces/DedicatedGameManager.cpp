@@ -83,7 +83,7 @@ void DedicatedGameManager::shutdownVideoSubSystem()
 void DedicatedGameManager::initializeGameConfig(const std::string& configfile)
 {
     if(configfile == "")
-        gameconfig = new GameConfig("/config/netpanzer-dedicated.xml");
+        gameconfig = new GameConfig("/config/netpanzer-dedicated.ini");
     else
         gameconfig = new GameConfig(configfile.c_str());
 }
