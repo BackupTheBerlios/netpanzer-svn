@@ -94,15 +94,15 @@ class UnitRemoteCreate : public NetMessage
 {
 public:
     UnitID new_unit_id;
+private:
     uint32_t location_x;
     uint32_t location_y;
+public:
     uint8_t unit_type;
 
-    UnitRemoteCreate()
-    {
-        message_class = _net_message_class_unit;
-        message_id = _net_message_id_create_unit;
-    }
+    UnitRemoteCreate(UnitID id, uint32_t x, uint32_t y, uint8_t type);
+    uint32_t getLocX(void);
+    uint32_t getLocY(void);
 } __attribute__((packed));
 
 class UnitSyncIntegrityCheck : public NetMessage

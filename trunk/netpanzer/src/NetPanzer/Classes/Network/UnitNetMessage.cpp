@@ -96,3 +96,24 @@ uint32_t UnitIniSyncMessage::getLocY(void)
 {
     return ltoh32(location_y);
 }
+
+UnitRemoteCreate::UnitRemoteCreate(UnitID id, uint32_t x, uint32_t y,
+    uint8_t type)
+{
+    message_class = _net_message_class_unit;
+    message_id = _net_message_id_create_unit;
+    new_unit_id = id;
+    location_x = htol32(x);
+    location_y = htol32(y);
+    unit_type = type;
+}
+
+uint32_t UnitRemoteCreate::getLocX(void)
+{
+    return ltoh32(location_x);
+}
+
+uint32_t UnitRemoteCreate::getLocY(void)
+{
+    return ltoh32(location_y);
+}

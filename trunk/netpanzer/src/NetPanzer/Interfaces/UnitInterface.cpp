@@ -426,7 +426,6 @@ void UnitInterface::spawnPlayerUnits( const iXY &location,
 {
     iXY next_loc;
     UnitBase *unit;
-    UnitRemoteCreate create_mesg;
     unsigned long unit_type_index;
     unsigned long unit_spawn_count;
     unsigned long unit_spawn_index;
@@ -444,10 +443,8 @@ void UnitInterface::spawnPlayerUnits( const iXY &location,
             unit = createUnit( unit_type_index, next_loc, player );
 
             assert(unit != 0);
-            create_mesg.new_unit_id = unit->unit_id;
-            create_mesg.location_x = next_loc.x;
-            create_mesg.location_y = next_loc.y;
-            create_mesg.unit_type = unit->unit_state.unit_type;
+            UnitRemoteCreate create_mesg(unit->unit_id, next_loc.x,
+                next_loc.y, unit->unit_state.unit_type);
             PUBLIC_MESSAGE_ENCODER.encodeMessage( &create_mesg,
                                                   sizeof( create_mesg )
                                                 );
@@ -868,7 +865,7 @@ void UnitInterface::unitCreateMessage( NetMessage *net_message )
     player_index = create_mesg->new_unit_id.getPlayer();
 
     unit = newUnit( create_mesg->unit_type,
-                    iXY(create_mesg->location_x, create_mesg->location_y),
+                    iXY(create_mesg->getLocX(), create_mesg->getLocY()),
                     player_index );
 
     unit->unit_id = create_mesg->new_unit_id;
