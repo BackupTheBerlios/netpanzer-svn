@@ -27,13 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Log.hpp"
 #include "Exception.hpp"
 
-// XXX remember to remove this later
-#if 1
-#include <SDL.h>
-#include "Palette.hpp"
-#include "String.hpp"
-#endif
-
 //*****************************************************************************
 sprite_dbase::sprite_dbase( void )
  {
@@ -94,18 +87,6 @@ short sprite_dbase::load_dbase( char *dbase_path )
   fclose( infile );
 
   dbase_loaded = true;
-
-	for(int i=0; i<header.sprite_count; i++) {
-		sprite_data* sprite = &sprite_list[i];
-		String filename = sprite->name;
-		filename += ".bmp";
-		
-		Surface surf(false);
-		surf.setTo(sprite->data, iXY(32, 32), 32, 1);
-		Palette pal;
-		surf.saveBMP(filename, pal);
-	}
-  
 
   return( true ); 
 }
