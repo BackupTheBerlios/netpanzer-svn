@@ -15,9 +15,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
 
 #include "XmlStore.hpp"
 #include "XmlParser.hpp"
+#include "FileSystem.hpp"
 #include "Exception.hpp"
 #include "Log.hpp"
 
@@ -84,6 +86,51 @@ XmlStore::writeString(const char *name, const char *value)
 {
     xmlSetProp(m_node, (const xmlChar*)name, (const xmlChar*)value);
 }
+
+class XMLPhysfsWriter
+{
+public:
+    XMLPhysfsWriter(WriteFile* newfile)
+        : file(newfile)
+    {
+        buffer = xmlOutputBufferCreateIO(write, close, file, 0);
+    }
+
+    ~XMLPhysfsWriter()
+    {
+        delete file;
+    }
+
+    xmlOutputBufferPtr getXMLBuffer()
+    { return buffer; }
+        
+
+private:
+    static int write(void* context, const char* buffer, int len)
+    {
+        WriteFile* file = (WriteFile*) context;
+
+        try {
+            if(file->write(buffer, len, 1) != 1) {
+                LOGGER.warning("Write error while saving xml");
+                return 0;
+            }
+        } catch(...) {
+            LOGGER.warning("Write error while saving xml");
+            return 0;
+        }
+        return len;
+    }
+    
+    static int close(void*)
+    {
+        return 0;
+    }
+    
+    xmlOutputBufferPtr buffer;
+    WriteFile* file;
+};
+
 //-----------------------------------------------------------------
 /**
  * Save configuration on disk.
@@ -92,12 +139,16 @@ XmlStore::writeString(const char *name, const char *value)
 void
 XmlStore::save(const char *filename)
 {
+    WriteFile* file = FileSystem::openWrite(filename);
+    XMLPhysfsWriter xmlio(file);
+    
     if (m_doc == 0) {
         throw Exception("xml store: child cannot save document");
     }
-    if (xmlSaveFormatFile(filename, m_doc, 1) == -1) {
+    if (xmlSaveFormatFileTo(xmlio.getXMLBuffer(), m_doc, 0, 1) == -1) {
         throw Exception("xml store: cannot save xml to file '%s'", filename);
     }
+
     LOGGER.debug("saved xml config '%s'", filename);
 }
 

@@ -200,12 +200,7 @@ void GameConfig::saveConfig()
     visuals.writeInt("unit_flags", display_unit_flags);
     visuals.writeInt("unit_color", UnitColor);
 
-    if (!FileSystem::exists(configfile.c_str())) {
-        // hack, touch file
-        delete FileSystem::openWrite(configfile.c_str());
-    }
-    const char *xmlfile = FileSystem::getRealName(configfile.c_str()).c_str();
-    xmlStore.save(xmlfile);
+    xmlStore.save(configfile.c_str());
 }
 
 void GameConfig::setGameMapName( char *map_name )
