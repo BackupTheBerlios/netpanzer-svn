@@ -920,10 +920,10 @@ void VehicleSelectionView::checkMaxValues(const UnitProfile &profile)
     if (profile.attack_factor > maxAttackFactor) {
         maxAttackFactor = profile.attack_factor;
     }
-    if (profile.attack_range > maxAttackRange) {
+    if (sqrt(profile.attack_range) > maxAttackRange) {
         maxAttackRange = sqrt(profile.attack_range);
     }
-    if (profile.defend_range > maxDefendRange) {
+    if (sqrt(profile.defend_range) > maxDefendRange) {
         maxDefendRange = sqrt(profile.defend_range);
     }
     if (profile.speed_factor + profile.speed_rate > maxTotalSpeed) {
