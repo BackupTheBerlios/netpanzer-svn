@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Exception.hpp"
 #include "NetworkServerUnix.hpp"
 
+//#define NETWORKDEBUG
+
 NetworkServerUnix::NetworkServerUnix()
   : NetworkServer(), serversocket(0)
 {
@@ -59,8 +61,10 @@ void NetworkServerUnix::closeSession()
 int NetworkServerUnix::sendMessage(const PlayerID& player_id,
 									NetMessage* message, size_t size, int flags)
 {
+#ifdef NETWORKDEBUG
 	LOG( ( "SEND >> Class: %d ID: %d", message->message_class,
 								   	   message->message_id ) );	
+#endif
 	message->size = size;
 
 	try {
@@ -121,9 +125,11 @@ int NetworkServerUnix::getMessage(NetMessage *message)
 			
 			memmove(  (void *) message, net_packet.data, net_packet.packet_size );
 			NetworkState::incPacketsReceived( net_packet.packet_size );
-	    
+	  
+#ifdef NETWORKDEBUG
 			LOG( ( "RECV >> Class: %d ID: %d", message->message_class,
 											   message->message_id ) );
+#endif
         
 			if ( message->message_class == _net_message_class_client_server )
 			{ processNetMessage( message ); }

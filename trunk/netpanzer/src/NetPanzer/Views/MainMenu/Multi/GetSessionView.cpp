@@ -41,7 +41,7 @@ static int previousSessionType = _game_session_join;
 static void bBack()
 {
 	Desktop::setVisibilityAllWindows(false);
-	Desktop::setVisibility("GetConnectionTypeView", true);
+	Desktop::setVisibility("MainView", true);
 }
 
 void bNext()
@@ -83,7 +83,8 @@ void bNext()
 	{
      CLIENT->openSession();
 
-	 // XXX hack
+	 // XXX no server enumertation/info yet
+#if 0
 	 CLIENT->startEnumeration();
 		 /*
      if ( CLIENT->startEnumeration( ) == false )
@@ -93,9 +94,10 @@ void bNext()
       }
      else
       {*/
+#endif
        Desktop::setVisibility("JoinView", true);
-	   Desktop::setVisibility("GetSessionHostView", true);
-	   Desktop::setVisibility("UnitSelectionView", true);
+	   //Desktop::setVisibility("GetSessionHostView", true);
+	   //Desktop::setVisibility("UnitSelectionView", true);
 	   Desktop::setVisibility("FlagSelectionView", true);
 	   Desktop::setVisibility("PlayerNameView", true);     
       //}

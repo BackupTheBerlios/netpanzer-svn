@@ -16,6 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
 #include "WinnerMesgView.hpp"
 #include "GameViewGlobals.hpp"
 #include "Desktop.hpp"
@@ -47,12 +48,11 @@ static void bReturnToMainMenu()
     sound->stopTankIdle();
 
 	// Blank the screen.
-
 	GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
 
 	ParticleSystem2D::removeAll();
 	Particle2D::removeAll();
-	sprintf(MenuTemplateView::currentMultiView, "GetConnectionTypeView");
+	sprintf(MenuTemplateView::currentMultiView, "GetSessionView");
 
 	// put all code in here for shutdown.
 	//----------------------

@@ -40,7 +40,7 @@ static void bYES()
 
 	ParticleSystem2D::removeAll();
 	Particle2D::removeAll();
-	sprintf(MenuTemplateView::currentMultiView, "GetConnectionTypeView");
+	sprintf(MenuTemplateView::currentMultiView, "GetSessionView");
 
 	// Vlad put all code in here for shutdown.
 	//----------------------

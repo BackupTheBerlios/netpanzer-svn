@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkState.hpp"
 #include "NetworkClientUnix.hpp"
 
+// #define NETWORKDEBUG
+
 NetworkClientUnix::NetworkClientUnix( void )
  : NetworkClient(), clientsocket(0)
 {
@@ -119,8 +121,10 @@ void NetworkClientUnix::sendMessage(NetMessage *message, size_t size, int flags)
 	if(!clientsocket)
 		return;
 
+#ifdef NETWORKDEBUG
   	LOG( ( "SEND >> Class: %d ID: %d", message->message_class,
 					     			   message->message_id) );	
+#endif
 	
 	message->size = size;
 	clientsocket->sendMessage((char*) message, message->size,
@@ -139,8 +143,10 @@ int NetworkClientUnix::getMessage(NetMessage *message)
     	    
 	  memmove(  (void *) message, net_packet.data, net_packet.packet_size );
 
+#ifdef NETWORKDEBUG
 	  LOG( ( "RECV >> Class: %d ID: %d", message->message_class,
 				  						 message->message_id) );
+#endif
 
 	  if ( message->message_class == _net_message_class_client_server )
 	  { processNetMessage( message ); }
@@ -156,8 +162,10 @@ int NetworkClientUnix::getMessage(NetMessage *message)
 	  
 	  memmove(  (void *) message, net_packet.data, net_packet.packet_size );
 	
+#ifdef NETWORKDEBUG
 	  LOG( ( "RECV >> Class: %d ID: %d", message->message_class,
 				  						 message->message_id )  );
+#endif
 
 	  if ( message->message_class == _net_message_class_client_server )
 	  {  processNetMessage( message ); }

@@ -35,10 +35,6 @@ void cInputFieldString::init(const char *string, int maxCharCount)
 	assert(maxCharCount > 0);
 
 	cInputFieldString::string = new char [maxCharCount + 1];
-	if (this->string == 0)
-	{
-		throw Exception("ERROR: Unable to allocate cInputFieldString string.");
-	}
 
 	if (strlen(string) > 0 && strlen(string) < (size_t) maxCharCount)
 	{
@@ -54,7 +50,6 @@ void cInputFieldString::init(const char *string, int maxCharCount)
 void cInputFieldString::setString(const char *string)
 {
 	strncpy(this->string, string, maxCharCount);
-
 } // end setString
 
 // reset

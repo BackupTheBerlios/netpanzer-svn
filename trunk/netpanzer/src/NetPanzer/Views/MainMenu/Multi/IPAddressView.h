@@ -18,12 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __IPAddressView_h__
 #define __IPAddressView_h__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 #include "View.hpp"
 #include "Surface.hpp"
 #include "cGrowList.hpp"
@@ -31,11 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //---------------------------------------------------------------------------
 class IPAddressView : public View
 {
-
-private:
-
-protected:
-
 public:
  static cInputFieldString szServer;
 	
@@ -43,8 +32,7 @@ public:
 
  void Init();
 
- virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
-    
+ virtual void doDraw(const Surface &windowArea, const Surface &clientArea); 
 }; // end IPAddressView
 
 #endif // end __IPAddressView_h__

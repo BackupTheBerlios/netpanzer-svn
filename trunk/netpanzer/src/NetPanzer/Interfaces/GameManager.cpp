@@ -82,7 +82,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "JoinView.hpp"
 #include "HostView.hpp"
 #include "GetSessionView.hpp"
-#include "GetConnectionTypeView.hpp"
 #include "GetSessionHostView.hpp"
 #include "ChatView.hpp"
 #include "WinnerMesgView.hpp"
@@ -243,7 +242,6 @@ void GameManager::initializeWindowSubSystem()
 	Desktop::add(new JoinView());
 	Desktop::add(new HostView());
 	Desktop::add(new GetSessionView());
-	Desktop::add(new GetConnectionTypeView());
 	Desktop::add(new GetSessionHostView());
 	Desktop::add(new OptionsTemplateView());
 	Desktop::add(new OrderingView());
@@ -252,8 +250,6 @@ void GameManager::initializeWindowSubSystem()
 	Desktop::add(new ControlsView());
 	Desktop::add(new VisualsView());
 	Desktop::add(new InterfaceView());
-	//Desktop::add(new DirectPlayErrorExceptionView());
-	//Desktop::add(new UnitSelectionView());
 	Desktop::add(new FlagSelectionView());
 	Desktop::add(new HostOptionsView());
 	Desktop::add(new PlayerNameView());
@@ -1559,7 +1555,7 @@ void GameManager::joinMultiPlayerGame()
   //winsock hack
   //JoinSession( gapp.hwndApp );
   //InitStreamClient(gapp.hwndApp);
-  CLIENT->joinSession("127.0.0.1");
+  CLIENT->joinSession(IPAddressView::szServer.getString());
   
   // XXX how should that work? we can't process (network) events while waiting
 #if 0
@@ -1900,14 +1896,16 @@ void GameManager::graphicsLoop()
 
 // ******************************************************************
 void GameManager::dedicatedGameLoop()
- {
-  TimerInterface::start();
+{
+  	TimerInterface::start();
 
-  dedicatedInputLoop();
-  dedicatedSimLoop();
+	dedicatedInputLoop();
+	dedicatedSimLoop();
+	// wait a bit to make the cpu happy
+	SDL_Delay(20);
  
-  TimerInterface::update();
- }
+	TimerInterface::update();
+}
 
 // ******************************************************************
 void GameManager::dedicatedSimLoop()

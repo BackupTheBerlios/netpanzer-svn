@@ -41,7 +41,7 @@ PackedSurface MenuTemplateView::titlePackedSurface;
 
 //PackedSurface MenuTemplateView::netPanzerLogo;
 
-char MenuTemplateView::currentMultiView[] = "GetConnectionTypeView";
+char MenuTemplateView::currentMultiView[] = "GetSessionView";
 char MenuTemplateView::currentView[]      = "";
 
 static void bMain()
@@ -50,27 +50,11 @@ static void bMain()
 	Desktop::setVisibility("MainView", true);
 }
 
-// never used
-#if 0
-static void bSkirmish()
-{
-	Desktop::setVisibilityAllWindows(false);
-	Desktop::setVisibility("SkirmishView", true);
-}
-#endif
-
 static void bMulti()
 {
 	GameConfig::SetGameMode(_gamemode_multiplayer);
 
-	// Check to see which multi menu the used is actually at since
-	// it is possible to leave the multi menu at any point in the menu.
-	if (strcmp(MenuTemplateView::currentMultiView, "GetConnectionTypeView") == 0)
-	{
-		Desktop::setVisibilityAllWindows(false);
-		Desktop::setVisibility("GetConnectionTypeView", true);
-	}
-	else if (strcmp(MenuTemplateView::currentMultiView, "GetSessionView") == 0)
+	if (strcmp(MenuTemplateView::currentMultiView, "GetSessionView") == 0)
 	{
 		Desktop::setVisibilityAllWindows(false);
 		Desktop::setVisibility("GetSessionView", true);
@@ -89,9 +73,10 @@ static void bMulti()
 	{
 		printf("EnteringJoinView.\n");
 		Desktop::setVisibilityAllWindows(false);
+		// XXX
 		Desktop::setVisibility("JoinView", true);
-		Desktop::setVisibility("GetSessionHostView", true);
-		Desktop::setVisibility("UnitSelectionView", true);
+		//Desktop::setVisibility("GetSessionHostView", true);
+		//Desktop::setVisibility("UnitSelectionView", true);
 		Desktop::setVisibility("FlagSelectionView", true);
 		Desktop::setVisibility("PlayerNameView", true);
 	} else

@@ -36,8 +36,9 @@ static void buttonOkay(void)
  
  strcpy( address.string_rep, szServerName );
 
+ // XXX No server info view yet
+#if 0
  ret_val = CLIENT->startEnumeration( address );
- // XXX hack
  ret_val = 1;
  
  if(ret_val == 1)
@@ -57,8 +58,7 @@ static void buttonOkay(void)
   Desktop::setVisibilityAllWindows(false);
   Desktop::setVisibility("GetSessionView", true);
  }
-
-
+#endif
 }
 ////////////////////////////////////////////
 //END buttonOkay////////////////////////////
@@ -88,29 +88,25 @@ IPAddressView::IPAddressView() : View()
 	setAllowMove(false);
 	setVisible(false);
 
- moveTo(iXY(20,70));
+	moveTo(iXY(20,70));
 
- iXY  area_size = iXY(280, 110); 
- resizeClientArea(area_size);
+	iXY  area_size = iXY(280, 110); 
+	resizeClientArea(area_size);
 
- addButtonCenterText(iXY(185, 10 ), 80,  "Okay", "", buttonOkay);
- addButtonCenterText(iXY(185, 35 ), 80,  "Cancel", "", buttonCancel);
+	addButtonCenterText(iXY(185, 10 ), 80,  "Okay", "", buttonOkay);
+	addButtonCenterText(iXY(185, 35 ), 80,  "Cancel", "", buttonCancel);
 
- //addButtonCenterText(iXY(16, 50 ), area_size.x - 40,  "Cancel", "", buttonCancel);
+	//addButtonCenterText(iXY(16, 50 ), area_size.x - 40,  "Cancel", "", buttonCancel);
 
-
- Init();
-
-
+   	Init();
 } // end IPAddressView constructor
 
 
 
 void IPAddressView::Init()
 {
- szServer.init("  ", 100);
+   	szServer.init("  ", 100);
 	addInputField(iXY(10, 80), &szServer, "", true);
-
 } // end PlayerNameView::init
 
 
@@ -120,8 +116,6 @@ void IPAddressView::Init()
 //---------------------------------------------------------------------------
 void IPAddressView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
-
- clientArea.fill(Color::black);
+   	clientArea.fill(Color::black);
 	View::doDraw(viewArea, clientArea);
-
 } // end IPAddressView::doDraw

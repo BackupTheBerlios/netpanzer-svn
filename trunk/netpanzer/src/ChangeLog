@@ -1,23 +1,27 @@
+15-Sep-2003 by Matthias Braun
+-removed the GetConnectionTypeView menu. We're only using tcp/ip.
+-made the Join view working again
+
 14-Sep-2003 by Ivo Danihelka
 -converted sdlsound to use physfs, Mix_LoadMUS_RW is not used yet
 
-14-Sep-2003 by Matze Braun
+14-Sep-2003 by Matthias Braun
 -applied sound patch by Ivo Danihelka (thanks alot)
 -added code to construct SDL_RWops in physfs files
 
-12-Sep-2003 by Matze Braun
+12-Sep-2003 by Matthias Braun
 -use the physfs for the colortable cache now
 -removed lots of unused code from Surface class
 -removed the screenshot function (this allowed to remove the BMP saver too).
  because there are external screenshot tools around.
 
-11-Sep-2003 by Matze Braun
+11-Sep-2003 by Matthias Braun
 -removed more win32 specific code
 -removed #ifdef USE_SDLs, the code is enabled by default now
 -added a new commandline parser
 -smaller fixes/cleanups
 
-10-Sep-2003 by Matze Braun
+10-Sep-2003 by Matthias Braun
 -more random cleanups
 -more cleanups so that the Stub directory is empty now
 -fixed the bug where the TileEngine didn't correctly draw the last line
@@ -30,14 +34,14 @@
   decided that this stuff is quiet useless.
 -removed most of the win32 specific code
 
-9-Sep-2003 by Matze Braun
+9-Sep-2003 by Matthias Braun
 -worked around issues with the block allocator code for Particl2D (new operator
  is overloaded, but laste C++ draft doesn't allow to return 0 from such an
  overloaded new.) I added exceptions and lots of try {} catch{} blocks, let's
  hope I didn't miss something.
 -eleminated isValidPtr, Util.hpp and GOTTA_HAVE_IT from codewiz.hpp
 
-8-Sep-2003 by Matze Braun
+8-Sep-2003 by Matthias Braun
 -added some basic music plying support (all files in sfx/music are played in
 		random order, so simply put some .mp3 or .ogg there)
 -enabled Tile engine code again
@@ -51,7 +55,7 @@
 -lots of small fixes in the network code
 -applied a patch from Raphael Bosshard which fixes a few warnings
 
-7-Sep-2003 by Matze Braun
+7-Sep-2003 by Matthias Braun
 -removed NetMessageLog class (because it only contained shit ;-)
 -slightly changed NetworkServer and NetworkClient interfaces
 -Added a SDL_Net version of the network code
@@ -61,7 +65,7 @@
 -added a client version of the SDLNet code
 -replaced all FUBARs with throw Exception, so I could remove terminate.cpp
 
-6-Sep-2003 by Matze Braun
+6-Sep-2003 by Matthias Braun
 -added a unix implementation of _findfirst, _findnext and _findclose
 -removed some getDrive functions, was never used and supporting drives in unix
  is hard :)
