@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <map>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -157,86 +158,122 @@ void MasterServer::run()
     }
 }
 
+void MasterServer::parseKeyValues(std::map<std::string, std::string>& pairs,
+        std::iostream& stream, Tokenizer& tokenizer)
+{
+    while(!stream.eof()) {
+        std::string key = tokenizer.getNextToken();
+        if(key == "final")
+            break;
+        
+        std::string value = tokenizer.getNextToken();
+        if(value == "final") {
+            *log << "malformed key/value pair: " << key << "/" << value
+                 << std::endl;
+            break;
+        }
+        pairs.insert(std::make_pair(key, value));
+    }
+}
+
 void MasterServer::parseHeartbeat(std::iostream& stream,
         struct sockaddr_in* addr, Tokenizer& tokenizer)
 {
-    std::string token = tokenizer.getNextToken();
-    std::stringstream strstream(token);
-    
+    std::map<std::string, std::string> keyvalues;
+    parseKeyValues(keyvalues, stream, tokenizer);
+
+    std::map<std::string, std::string>::iterator v
+        = keyvalues.find("gamename");
+    if(v == keyvalues.end()) {
+        *log << "gamename missing for heartbeat." << std::endl;
+        stream << "\\error\\no gamename specified\\final\\" << std::flush;
+        return;
+    }
+    const std::string& gamename = v->second;
+
+    v = keyvalues.find("port");
+    if(v == keyvalues.end()) {
+        *log << "port missing for heartbeat." << std::endl;
+        stream << "\\error\\no port specified\\final\\" << std::flush;
+        return;
+    }
+    std::stringstream strstream(v->second);
     int queryport;
     strstream >> queryport;
 
-    pthread_mutex_lock(&serverlist_mutex);
+    // security check for master/master update
+    if(gamename == "master") {
+        v = keyvalues.find("password");
+        if(v == keyvalues.end()) {
+            *log << "password missing for master heartbeat." << std::endl;
+            stream << "\\error\\passwort missing for master update\\final\\"
+                << std::flush;
+            return;
+        }
+        const std::string& password = v->second;
+        if(password != serverconfig.getValue("masterserver-password")) {
+            *log << "wrong password for master heartbeat." << std::endl;
+            stream << "\\error\\wrong password for master update\\final\\"
+                   << std::flush;
+            return;
+        }     
+    }
 
+    ServerInfo* info = 0;
     std::vector<ServerInfo>::iterator i;
     for(i = serverlist.begin(); i != serverlist.end(); ++i) {
         if(i->address.sin_addr.s_addr == addr->sin_addr.s_addr
             && i->address.sin_port == htons(queryport)) {
             *log << "Heartbeat from " << inet_ntoa(addr->sin_addr) << std::endl;
-            bool result = updateServerInfo(*i, tokenizer);
-            // TODO do UDP check
-            if(!result) {
-                strstream << "\\error\\Couldn't update server\\final\\" <<
-                    std::flush;
-            } else {
-                stream << "\\ok\\server updated\\final\\" << std::flush;
-            }
-            pthread_mutex_unlock(&serverlist_mutex);
-            return;
+            info = &(*i);
         }
     }
-
-    // create a new list entry
-    ServerInfo info;
-    memset(&info.address, 0, sizeof(info.address));
-    info.address.sin_family = AF_INET;
-    info.address.sin_addr.s_addr = addr->sin_addr.s_addr;
-    info.address.sin_port = htons(queryport);
-    *log << "New server at " << inet_ntoa(addr->sin_addr) << std::endl;
-    if(updateServerInfo(info, tokenizer)) {
-        stream << "\\ok\\server added\\final\\" << std::flush;
-        serverlist.push_back(info);
-    } else {
-        stream << "\\error\\Couldn't add server.\\final\\" << std::flush;
+    if(info == 0) {
+        *log << "New server at " << inet_ntoa(addr->sin_addr) << std::endl;
+        serverlist.push_back(ServerInfo());
+        info = & (serverlist.back());
     }
 
-    pthread_mutex_unlock(&serverlist_mutex);
-}
-
-bool MasterServer::updateServerInfo(ServerInfo& info, Tokenizer& tokenizer)
-{    
-    if(tokenizer.getNextToken() != "gamename") {
-        *log << "Invalid heartbeat query." << std::endl;
-        return false;
-    }
-    std::string gamename = tokenizer.getNextToken();
-    // need passwort for masterserver
-    if(gamename == "master") {
-        if(tokenizer.getNextToken() != "passwort") {
-            *log << "Missing passwort for masterserver heartbeat." << std::endl;
-            return false;
-        }
-        if(tokenizer.getNextToken() !=
-                serverconfig.getValue("masterserver-password")) {
-            *log << "Wrong passwort in masterserver heartbeat." << std::endl;
-            return false;
-        }
-    }
+    // update ServerInfo
+    info->address = *addr;
+    info->address.sin_port = htons(queryport);
+    info->settings = keyvalues;
+    info->lastheartbeat = time(0);
     
-    info.gamename = gamename;
-    info.lastheartbeat = time(0);
-    return true;
+    pthread_mutex_unlock(&serverlist_mutex);
+
+    stream << "\\final\\" << std::flush;
 }
 
 void
 MasterServer::addServer(const std::string& gamename, struct sockaddr_in addr)
 {
-    ServerInfo info;
-    info.gamename = gamename;
-    info.address = addr;
-    info.lastheartbeat = time(0);
-
+    // don't add yourself
+    if(addr.sin_addr.s_addr == serveraddr.sin_addr.s_addr
+        && addr.sin_port == serveraddr.sin_port)
+        return;
+    
     pthread_mutex_lock(&serverlist_mutex);
+    std::vector<ServerInfo>::iterator i;
+    for(i = serverlist.begin(); i != serverlist.end(); ++i) {
+        if(i->address.sin_addr.s_addr == addr.sin_addr.s_addr
+            && i->address.sin_port == addr.sin_port) {
+            // already there...
+            i->settings.clear();
+            i->settings.insert(
+                    std::make_pair(std::string("gamename"), gamename));
+            i->lastheartbeat = time(0);
+            pthread_mutex_unlock(&serverlist_mutex);
+            return;
+        }
+    }
+
+    ServerInfo info;
+    info.settings.insert(
+            std::make_pair(std::string("gamename"), gamename));
+    info.address = addr;
+    info.lastheartbeat = time(0);    
+    
     serverlist.push_back(info);
     pthread_mutex_unlock(&serverlist_mutex);
 }
@@ -246,44 +283,65 @@ MasterServer::parseList(std::iostream& stream, struct sockaddr_in* addr,
         Tokenizer& tokenizer)
 {
     time_t currenttime = time(0);
-    std::vector<ServerInfo>::iterator i;
+
+    std::map<std::string, std::string> keyvalues;
+    parseKeyValues(keyvalues, stream, tokenizer);
 
     // get the name of the game
-    std::string token = tokenizer.getNextToken();
-    if(token != "gamename") {
-        *log << "Malformed list query: gamename missing (" <<
-            inet_ntoa(addr->sin_addr) << std::endl;
-        return;
+    std::map<std::string, std::string>::iterator v
+        = keyvalues.find("gamename");
+    if(v == keyvalues.end()) {
+        *log << "Missing gamename in list query." << std::endl;
+        stream << "\\error\\missing gamename in list query\\final\\" <<
+            std::flush;
     }
-    std::string gamename = tokenizer.getNextToken();
-    *log << "List query '" << gamename << "' from "
-         << inet_ntoa(addr->sin_addr) << std::endl;
-
+    const std::string& gamename = v->second;
+    *log << "List query for game '" << gamename << "' from "
+        << inet_ntoa(addr->sin_addr) << std::endl;
+            
     pthread_mutex_lock(&serverlist_mutex);
-    for(i=serverlist.begin(); i != serverlist.end(); /* nothing */) {
-        if(currenttime - i->lastheartbeat <=
+    std::map<std::string, std::string>::iterator v2;
+    for(std::vector<ServerInfo>::iterator i = serverlist.begin();
+            i != serverlist.end(); /* nothing */) {
+        if(currenttime - i->lastheartbeat >=
                 serverconfig.getIntValue("server-alive-timeout")) {
-            if(i->gamename == gamename) {
-                stream << "\\ip\\" << inet_ntoa(i->address.sin_addr)
-                    << "\\port\\" << ntohs(i->address.sin_port);
-            }
-            ++i;
-        } else {
             // remove server from list
             *log << "server timeout at " << inet_ntoa(addr->sin_addr)
                  << std::endl;
             i = serverlist.erase(i);
+            continue;
         }
+
+        // match against requested key/values
+        bool match = true;
+        for(v = keyvalues.begin(); v != keyvalues.end(); ++v) {
+            // find matching key/value pair
+            v2 = i->settings.find(v->first);
+            if(v2 == i->settings.end()) { // no matching key found
+                match = false;
+                break;
+            }
+            if(v2->second != v->second) { // value differs
+                match = false;
+                break;
+            }
+        }
+        if(match) {
+            stream << "\\ip\\" << inet_ntoa(i->address.sin_addr)
+                << "\\port\\" << ntohs(i->address.sin_port);
+        }
+            
+        ++i;
     }
     pthread_mutex_unlock(&serverlist_mutex);
 
-    // we're a masterserver ourself
+    // we're a masterserver ourself (TODO handle additional match criteria)
     if(gamename == "master") {
         stream << "\\ip\\" << inet_ntoa(serveraddr.sin_addr) 
-               << "\\port\\" << ntohs(serveraddr.sin_port) << "\\";
+               << "\\port\\" << ntohs(serveraddr.sin_port);
     }
     
-    stream << "\\final\\";
+    stream << "\\final\\" << std::flush;
 }
 
 void
@@ -297,18 +355,25 @@ MasterServer::parseQuit(std::iostream& stream, struct sockaddr_in* addr,
     strstream >> queryport;
 
     pthread_mutex_lock(&serverlist_mutex);
+    bool found = false;
     for(std::vector<ServerInfo>::iterator i = serverlist.begin();
             i != serverlist.end(); ++i) {
         if(i->address.sin_addr.s_addr == addr->sin_addr.s_addr
             && i->address.sin_port == htons(queryport)) {
-            *log << "Server '" << i->gamename << "' at " <<
-                inet_ntoa(i->address.sin_addr) << ":" << 
-                ntohs(i->address.sin_port) << "\n";
+            *log << "Quit from server at " << inet_ntoa(i->address.sin_addr) 
+                 << ":" << ntohs(i->address.sin_port) << std::endl;
             serverlist.erase(i);
+            found = true;
             break;
         }
     }
     pthread_mutex_unlock(&serverlist_mutex);
+    
+    if(!found) {
+        *log << "No server known for quit request." << std::endl;
+        stream << "\\error\\no server known";
+    }
+    stream << "\\final\\" << std::flush;
 }
 
 void
@@ -321,11 +386,14 @@ MasterServer::writeNeighborCache()
     int idx = 0;
     for(std::vector<ServerInfo>::iterator i = serverlist.begin();
             i != serverlist.end(); ++i) {
-        if(i->gamename == "master") {
-            std::stringstream key;
-            key << "ip" << idx++;
-            neighbors.setValue(key.str(), inet_ntoa(i->address.sin_addr));
-        }
+        std::map<std::string, std::string>::iterator v =
+            i->settings.find("gamename");
+        if(v == i->settings.end() || v->second != "master")
+            continue;
+        
+        std::stringstream key;
+        key << "ip" << idx++;
+        neighbors.setValue(key.str(), inet_ntoa(i->address.sin_addr));
     }
     pthread_mutex_unlock(&serverlist_mutex);
 
@@ -334,7 +402,7 @@ MasterServer::writeNeighborCache()
     std::ofstream out(neighborcachefile.c_str());
     if(!out.good()) {
         *log << "Couldn't write neighborcachefile '" << neighborcachefile
-            << "'.\n";
+            << "'." << std::endl;
         return;
     }
     neighborini.save(out);

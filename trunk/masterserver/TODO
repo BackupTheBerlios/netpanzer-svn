@@ -1,1 +1,5 @@
 -send quit message to other masterservers when we're quitting
+-write docu about the protocol and rethink it.
+-add support for queries with different settings.
+ Esp. protocolversion is important.
+

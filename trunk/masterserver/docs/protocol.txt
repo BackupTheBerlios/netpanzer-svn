@@ -39,8 +39,9 @@ token with a value. Example:
         Additional keys are compared with the saved key/value pairs of the
         server. Only servers that match all key/value pairs are returned.
         
-        Returns: either \error\message\ or a list of \ip\address\ tokens with
-        the IP of each server matching the criteria above.
+        Returns: either \error\message\ or a list of
+        "\ip\address\port\serverport" tokens with the IP of each server
+        matching the criteria above.
 
 4. Server Heartbeats
 A running gameserver should send a heartbeat message to the server every 5

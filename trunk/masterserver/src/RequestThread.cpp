@@ -63,10 +63,8 @@ void RequestThread::run()
         std::string query = tokenizer->getNextToken();
         if(query == "heartbeat") {
             masterserver->parseHeartbeat(*stream, &addr, *tokenizer);
-            break;
         } else if(query == "list") {
             masterserver->parseList(*stream, &addr, *tokenizer);
-            break;
         } else if(query == "quit") {
             masterserver->parseQuit(*stream, &addr, *tokenizer);
         } else if(query == "gamename") {
@@ -79,6 +77,11 @@ void RequestThread::run()
         } else {
             std::cout << "Unknown request : '" << query << "'\n";
             *stream << "\\error\\Unknown request\\final\\" << std::flush;
+            // ignore everything until next final
+            while(!stream->eof()) {                                 
+                if(tokenizer->getNextToken() == "final")            
+                    break;
+            }
         }
     }
     delete tokenizer;

@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 #include <list>
+#include <map>
+#include <string>
 #include <iostream>
 #include <arpa/inet.h>
 #include "ServerInfo.hpp"
@@ -61,10 +63,11 @@ private:
     void parseQuit(std::iostream& stream,
             struct sockaddr_in* addr, Tokenizer& tokenizer);
 
+    void parseKeyValues(std::map<std::string, std::string>& keyvalues,
+            std::iostream& stream, Tokenizer& tokenizer);
+
     /** this function is threadsafe */
     void writeNeighborCache();
-    
-    bool updateServerInfo(ServerInfo& info, Tokenizer& tokenizer);
     
     int sock;
     struct sockaddr_in serveraddr;

@@ -21,13 +21,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 #include <arpa/inet.h>
 #include <time.h>
+#include <map>
+#include <string>
 
 class ServerInfo
 {
 public:
-    std::string gamename;
     struct sockaddr_in address;
     time_t lastheartbeat;
+
+    /// contains key/value pairs for server settings
+    std::map<std::string, std::string> settings;
 };
 
 #endif
