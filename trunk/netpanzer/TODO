@@ -1,21 +1,17 @@
-Todo before beta release:
--Fix the problems with mainmenu in >640x480 resolution - OK
--Eventually trim down option windows to only necessary stuff (this can wait
-    for after the release though) - OK
--Complete GameConfig::save and GameConfig::load functions
--Test it (esp. with more than 2 players)
--Make it compiling in mingw again. - droped from my side, if noone volunteers
- then this release will be unix only... (I really tried with cygwin, but got
- bored since I didn't even manage to compile physfs and SDL_mixer correctly)
--Fix all warnings in the sourcecode - OK
--Add configure script (autoconf) which checks for all prerequesits - OK
--Create "make install" target (also a "make uninstall"?) - OK (jam system now)
--Write a README - OK
--Test it, esp. with more than 2 players and test a complete
-    getsource/configure/build/install/play cycle. We should be able to find
-    betatesters in irc channels like #netpanzer, #sdl, #*game* I assume ;-)
--Create and upload source tarball
--Announce on linux/opensource related sites (together with a call for new
-    artists, coders, and *good* game designers - we wanna improve the gameplay
-    too, don't we?)
+-Improve userinterface:
+        * Make usual shortcuts (known from other RTSes) work. Like
+          CTRL+number for defining groups, a possibility to set spawnpoint
+          of units, scroll map with right mouse, ...
+        * Create a nice static! skin which is at the bottom of the screen
+          and combines a map, statusdisplay of selected units and outpost
+          buildmenu
+        * Redesign menus and UI code (use new font code, sfont or freefont
+          maybe?)
+-Build additional tools:
+        * Build a map and tileset editor (That's what I'm up to at the
+          moment)
+-Create possibilities to save and play replays of the matches
+-Create possibility to save and restore matches
+-Convert the 256 color stuff to truecolor
+-add code for masterserver registration/browsing
 
