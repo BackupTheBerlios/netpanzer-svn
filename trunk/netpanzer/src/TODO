@@ -5,23 +5,27 @@
 -Fix PackedSurface.cpp, Surface.cpp to not use _findfirst anymore... same in
  MapsManager.cpp - OK
 -Write new timercode the assembler cTimeStamp.cpp isn't portable - OK
--Write new code instead of the assembler in Span.cpp and Surface.cpp
+-Write new code instead of the assembler in Span.cpp and Surface.cpp - OK
+  (though this could be speed optimized a bit more...)
 -ParticleInterface.cpp contains some DirectSound code which needs to be replaced
  - OK
 -GroundExplosionParticle, RadarPingParticle2D and DirtKickParticle2D seem to
  miss some Surface variables, where are these defined?
--PUFF_PARTICLE_TYPE isn't defined in SmokingTrajectoryParticle
--write a new version of DDHardSurface
+-PUFF_PARTICLE_TYPE isn't defined in SmokingTrajectoryParticle - Old code?
+-write a new version of DDHardSurface - OK
 -network code probably needs a bigger rewrite since directplay is not available
  on unix.
 -look at all the directx code in GameManager.cpp - OK
 -need new mousecode in MouseInterface.cpp - OK
--need new directplay code in NetworkClientDPlay.cpp, NetworkServerDPlay.cpp
--need new code instead of winsock in NetworkClientWinsock.cpp
--rewrite all the windows specific code in NetPanzer/Core - partly done
+-need new directplay code in NetworkClientDPlay.cpp, NetworkServerDPlay.cpp -
+  not needed, these files aren't used anymore
+-need new code instead of winsock in NetworkClientWinsock.cpp - nearl OK
+-rewrite all the windows specific code in NetPanzer/Core - OK (SDL specific
+ code is in NetPanze/Core/unix now)
 -check if the functions and stuff in Lib/terminate.cpp is really needed (looks
  like some strange hacks for the logging functions to me) Can we remove
- this strange code?
+ this strange code? - Yes we can :) OK
 -Fix the win32 stuff in Lib/Util/UtilInterface.cpp - OK
 -rewrite win32 event loop to use a SDL event loop. Don't forget to pump mouse
- events to MouseInterface then. - partly done
+ events to MouseInterface then. - OK
+
