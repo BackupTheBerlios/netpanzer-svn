@@ -46,4 +46,5 @@ solution would be transfering of unknown flags.
 -Convert the 256 color stuff to truecolor
 -add code for masterserver registration/browsing
 -create UDP broadcast code for announcing servers in LANs
+-make it possible to configure the mapcycle
 
