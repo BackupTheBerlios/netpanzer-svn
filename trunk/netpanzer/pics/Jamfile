@@ -20,10 +20,10 @@ for p in $(PARTICELPATHS) {
 
 FILES += [ WildcardPath flags : *.bmp ]
          [ WildcardPath cursors : *.bmp ]
-         [ WildcardPath menus/vehicleSelectionView/til : *.til ]
+         [ WildcardPath menus/vehicleSelectionView : *.bmp ]
          [ WildcardPath backgrounds/menus/buttons/default/pak : *.pak ]
          [ WildcardPath backgrounds/menus/menu/pak : *.pak ]
-         [ WildcardPath backgrounds/menus/menu/til : *.til ]
+         [ WildcardPath backgrounds/menus/menu : *.bmp ]
          chars5x5.raw chars8x8.raw grass.bmp ;
 
 InstallData $(FILES) : pics ;
