@@ -56,6 +56,7 @@ public:
     {
         message_class = _net_message_class_connect;
         message_id = _net_message_id_connect_join_game_request;
+        memset(code_word, 0, sizeof(code_word));
     }
 
 }
@@ -70,7 +71,6 @@ class ClientConnectJoinRequestAck : public NetMessage
 {
 public:
     int   result_code;
-    int   server_connection_state;
     uint32_t server_protocol_version;
 
     ClientConnectJoinRequestAck()
@@ -177,11 +177,13 @@ public:
     {
         message_class = _net_message_class_connect;
         message_id = _net_message_id_connect_client_settings;
+        memset(&player_name, 0, sizeof(player_name));
     }
 
     void set(const char *player_name, unsigned char unit_color, short player_flag )
     {
-        strcpy( ConnectClientSettings::player_name, player_name );
+        strncpy(ConnectClientSettings::player_name, player_name, 64);
+        ConnectClientSettings::player_name[63] = '\0';
         ConnectClientSettings::unit_color = unit_color;
         ConnectClientSettings::player_flag = player_flag;
     }
@@ -208,6 +210,7 @@ public:
     {
         message_class = _net_message_class_connect;
         message_id = _net_message_id_connect_server_game_setup;
+        memset(map_name, 0, sizeof(map_name));
     }
 }
 __attribute__((packed));

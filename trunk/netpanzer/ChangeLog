@@ -1,3 +1,16 @@
+20-Nov-2003 by Matthias Braun
+-removed lots of remaining nonused code handling with UDP networking
+-convert PlayerStats to use STL
+-small robustness fixes for network
+-only enable the signal handling for clean shutdown, when not compiling in debug
+ mode
+-added sound configuration variables
+-removed stopIRC argument. No need to overly complicate commands. There already
+ is sendIRCMessageLine.
+-some fixes for valgrind complaints
+-fixed some bugs where the original netpanzer authors used memmove?!? instead of
+ = to copy objects.
+
 19-Nov-2003 by Matthias Braun
 -several robustness fixes to editor tileset code
 -some small UI improvements for the editor

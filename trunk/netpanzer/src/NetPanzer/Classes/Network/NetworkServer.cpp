@@ -216,7 +216,7 @@ void NetworkServer::netMessageServerPingRequest( NetMessage *message )
 void NetworkServer::netMessageTransportClientAccept( NetMessage *message )
 {
     TransportClientAccept *client_accept_mesg;
-    ClientMesgConnectAck  connect_ack_mesg;
+    ClientMesgConnectAck connect_ack_mesg;
     PlayerID player_id;
 
     client_accept_mesg = (TransportClientAccept *) message;
@@ -225,9 +225,8 @@ void NetworkServer::netMessageTransportClientAccept( NetMessage *message )
 
     player_id = PlayerID( 0, connect_ack_mesg.client_transport_id );
 
-    sendMessage( player_id, &connect_ack_mesg, sizeof( ClientMesgConnectAck ), 0);
+    sendMessage(player_id, &connect_ack_mesg, sizeof(ClientMesgConnectAck), 0);
 }
-
 
 void NetworkServer::processNetMessage( NetMessage *message )
 {

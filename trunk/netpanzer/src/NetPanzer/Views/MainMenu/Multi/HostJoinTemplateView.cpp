@@ -93,9 +93,12 @@ static void bNext()
         Desktop::setVisibilityAllWindows(false);
 
         Desktop::setVisibility("LobbyView", true);
+#if 0
         std::stringstream join_mess;
         join_mess << "join " << IPAddressView::szServer.getString();
-        lobby_view->stopIRC(join_mess.str().c_str());
+        lobby_view->sendIRCMessageLine(join_mess.str());
+#endif
+        lobby_view->stopIRC();
 
         //this call should be redundant -- enumeration ceases
         //when a session is opened in any case:

@@ -150,13 +150,11 @@ __attribute__((packed));
 class ClientMesgPingAck: public NetMessage
 {
 public:
-
     ClientMesgPingAck()
     {
         message_class = _net_message_class_client_server;
         message_id = _net_message_id_client_ping_ack;
     }
-
 }
 __attribute__((packed));
 

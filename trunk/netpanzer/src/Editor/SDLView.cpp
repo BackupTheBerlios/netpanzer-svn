@@ -60,7 +60,7 @@ void SDLView::initializeSurface()
     height += 4 - (height % 4);
 
     surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 24,
-            0xFF000000, 0x00FF0000, 0x0000FF00, 0);
+            0x000000FF, 0x0000FF00, 0x00FF0000, 0);
     if(!surface || surface->pitch != surface->w * 3)
         throw Exception("Couldn't create SDLsurface for wxwindows (size %dx%d)",
                 width, height);                        

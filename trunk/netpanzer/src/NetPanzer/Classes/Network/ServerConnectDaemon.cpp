@@ -171,7 +171,7 @@ void ServerConnectDaemon::netMessageClientJoinRequest( NetMessage *message )
 
     new_player_id = PlayerID(0, join_request_mesg->client_transport_id );
 
-    if( (strstr( join_request_mesg->code_word, _NETPANZER_CODEWORD) != 0) &&
+    if( (strcmp(join_request_mesg->code_word, _NETPANZER_CODEWORD) != 0) ||
             (join_request_mesg->protocol_version == _NETPANZER_PROTOCOL_VERSION)
       ) {
         join_request_ack.result_code = _join_request_result_success;
@@ -234,19 +234,23 @@ void ServerConnectDaemon::sendConnectionAlert( PlayerID &player_id, int alert_en
     switch( alert_enum ) {
     case _connect_alert_mesg_connect : {
             connect_alert.set( player_id, _connect_alert_mesg_connect );
-            ConsoleInterface::postMessage( "%s has joined the game.", player_state->getName() );
+            ConsoleInterface::postMessage( "%s has joined the game.",
+                    player_state->getName().c_str() );
         }
         break;
 
     case _connect_alert_mesg_disconnect : {
             connect_alert.set( player_id, _connect_alert_mesg_disconnect );
-            ConsoleInterface::postMessage( "%s has left the game.", player_state->getName() );
+            ConsoleInterface::postMessage( "%s has left the game.",
+                    player_state->getName().c_str() );
         }
         break;
 
     case _connect_alert_mesg_client_drop : {
             connect_alert.set( player_id, _connect_alert_mesg_client_drop );
-            ConsoleInterface::postMessage( "Connection to %s has been unexpectedly broken.", player_state->getName() );
+            ConsoleInterface::postMessage(
+                    "Connection to %s has been unexpectedly broken.",
+                    player_state->getName().c_str() );
         }
         break;
 
@@ -422,13 +426,8 @@ bool ServerConnectDaemon::connectStateWaitForClientGameSetupAck( NetMessage *mes
 
     if ( message != 0 ) {
         if ( message->message_id == _net_message_id_connect_client_game_setup_ack ) {
-            PlayerConnectID player_connect_mesg;
-
-            memmove( &player_connect_mesg.connect_state,
-                     connect_player_state,
-                     sizeof( PlayerState )
-                   );
-
+            PlayerConnectID player_connect_mesg
+                (connect_player_state->getNetworkPlayerState());
 
             send_ret_val = SERVER->sendMessage(connect_player_id, &player_connect_mesg, sizeof(PlayerConnectID), 0 );
 
@@ -517,12 +516,8 @@ bool ServerConnectDaemon::connectStatePlayerStateSync( void )
 
         SERVER->addClientToSendList( connect_player_id );
 
-        PlayerStateSync player_state_update;
-
-        memmove( &player_state_update.player_state,
-                 connect_player_state,
-                 sizeof( PlayerState )
-               );
+        PlayerStateSync player_state_update
+            (connect_player_state->getNetworkPlayerState());
 
         SERVER->sendMessage( &player_state_update, sizeof(PlayerStateSync), 0 );
 
@@ -584,12 +579,8 @@ bool ServerConnectDaemon::connectStateUnitSync( void )
 
         connect_player_state->setStatus( _player_state_active );
 
-        PlayerStateSync player_state_update;
-
-        memmove( &player_state_update.player_state,
-                 connect_player_state,
-                 sizeof( PlayerState )
-               );
+        PlayerStateSync player_state_update
+            (connect_player_state->getNetworkPlayerState());
 
         SERVER->sendMessage( &player_state_update, sizeof(PlayerStateSync), 0 );
 

@@ -33,7 +33,7 @@ public:
     IRCLobbyView();
 
     void startIRC();
-    void stopIRC(const char* mess);
+    void stopIRC();
     void restartIRC();
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea); 

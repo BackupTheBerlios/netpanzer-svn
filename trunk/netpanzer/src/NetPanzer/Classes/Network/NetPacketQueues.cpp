@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetPacketQueues.hpp"
 #include "ConsoleInterface.hpp"
 
+#if 0
+
 #define _DEFAULT_WINDOW_TIME     (0.15) // in (seconds) 150ms
 #define _WINDOW_ESTIMATE_WEIGHT  (0.25) // 0 <= weight <= 1
 #define _WINDOW_ESTIMATE_BOUND   (0.15)  // in seconds;
@@ -213,3 +215,6 @@ void ReorderQueue::getStats( float *packet_window_time, float *packet_window_est
         *out_of_order_packets = ReorderQueue::out_of_order_packets;
     }
 }
+
+#endif
+

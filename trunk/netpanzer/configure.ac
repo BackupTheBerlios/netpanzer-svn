@@ -73,7 +73,7 @@ AC_TRY_COMPILE([], [
 #error gcc compiler too old. Need at least version 3.2.0
 #endif
 ], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([no])
-    AC_MSG_ERROR([
+   AC_MSG_ERROR([
 Error: You gcc version is too old. netpanzer needs at least gcc 3.2.0.
 ])])
 AC_LANG_RESTORE

@@ -33,6 +33,10 @@ enum { _command_move_to_loc,
        _command_stop_manual_move,
        _command_manual_fire };
 
+#ifdef MSVC
+#pragma pack(1)
+#endif
+
 class UMesgAICommand : public UnitMessage
 {
 public:
@@ -43,7 +47,8 @@ public:
     iXY target_loc;
 
     UMesgAICommand()
-    {}
+    {
+    }
 
     UMesgAICommand( UnitID unit_id, unsigned char flags )
             : UnitMessage(unit_id, flags )
@@ -55,6 +60,7 @@ public:
         message_id = _umesg_ai_command;
         command = _command_move_to_loc;
         goal_loc = goal;
+        manual_move_orientation = 0;
     }
 
     inline void setTargetUnit( UnitID &target )
@@ -62,6 +68,7 @@ public:
         message_id = _umesg_ai_command;
         command = _command_attack_unit;
         target_id = target;
+        manual_move_orientation = 0;
     }
 
     inline void setStartManualMove( unsigned char orientation )
@@ -75,6 +82,7 @@ public:
     {
         message_id = _umesg_ai_command;
         command = _command_stop_manual_move;
+        manual_move_orientation = 0;
     }
 
     inline void setManualFire( iXY &target )
@@ -82,9 +90,10 @@ public:
         message_id = _umesg_ai_command;
         command = _command_manual_fire;
         target_loc = target;
+        manual_move_orientation = 0;
     }
-
-};
+}
+__attribute__((packed));
 
 class UMesgWeaponHit : public UnitMessage
 {
@@ -93,7 +102,8 @@ public:
     iXY hit_location;
     unsigned short damage_factor;
 
-};
+}
+__attribute__((packed));
 
 class UMesgEndLifeCycleUpdate : public UnitMessage
 {
@@ -110,8 +120,8 @@ public:
         destroyer = destroyer_unit;
         UMesgEndLifeCycleUpdate::unit_type = unit_type;
     }
-
-};
+}
+__attribute__((packed));
 
 enum { _select_box_allie_visibility,
        _select_box_flag_visiblity,
@@ -145,7 +155,8 @@ public:
 
         } // ** switch
     }
-};
+}
+__attribute__((packed));
 
 class UMesgSelfDestruct : public UnitMessage
 {
@@ -155,8 +166,11 @@ public:
     {
         message_id = _umesg_self_destruct;
     }
+}
+__attribute__((packed));
 
-};
-
+#ifdef MSVC
+#pragma()
+#endif
 
 #endif // ** _UNITMESSAGETYPES_HPP

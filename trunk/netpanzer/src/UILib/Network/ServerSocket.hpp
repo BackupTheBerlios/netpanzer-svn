@@ -29,8 +29,8 @@ public:
     ~ServerSocket();
 
     void read();
-    void sendMessage(SocketClient::ID toclient, char* data, size_t datasize,
-                     bool realiable = true);
+    void sendMessage(SocketClient::ID toclient, const char* data,
+            size_t datasize, bool realiable = true);
     void removeClient(SocketClient::ID clientid);
 
 protected:

@@ -52,6 +52,9 @@ void TileSetView::updateView()
 
     if(tileycount-tileywindow > 0)
         SetScrollbar(0, 2, tileycount - tileywindow, getSurface()->h / tilesize.y);
+
+    Refresh();
+    paintContent();
 }
 
 void TileSetView::OnScroll(wxScrollEvent& event)
@@ -63,13 +66,14 @@ void TileSetView::OnScroll(wxScrollEvent& event)
 void TileSetView::redraw()
 {
     updateView();
-    paintContent();
 }
 
 void TileSetView::paintContent()
 {
     if(tileset == 0)
         return;
+
+    std::cout << "Paint TIleset...\n";
 
     SDL_FillRect(getSurface(), 0,
             SDL_MapRGB(getSurface()->format, 255, 255, 255));

@@ -140,6 +140,13 @@ public:
     ConfigBool  displayshadows;
     ConfigBool  blendsmoke;
     ConfigInt   screengamma;
+
+    // sound settings
+    ConfigBool  enablesound;
+    ConfigBool  enablemusic;
+    ConfigInt   musicvolume;
+    ConfigBool  enableeffects;
+    ConfigInt   effectsvolume;
    
     // interface settings
     ConfigInt   unitcolor;
@@ -302,6 +309,7 @@ private:
     std::vector<ConfigVariable*> playersettings;
     std::vector<ConfigVariable*> serversettings;
     std::vector<ConfigVariable*> visualssettings;
+    std::vector<ConfigVariable*> soundsettings;
     std::vector<ConfigVariable*> interfacesettings;
     std::vector<ConfigVariable*> radarsettings;    
 };

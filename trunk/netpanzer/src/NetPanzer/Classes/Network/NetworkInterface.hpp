@@ -32,15 +32,10 @@ public:
     static NetPacketQueue loop_back_send_queue;
     static NetPacketQueue loop_back_recv_queue;
     static NetPacketQueue receive_queue;
-    static ReorderQueue   non_guarantee_queue;
-
-protected:
 
 public:
     NetworkInterface( void );
     ~NetworkInterface();
-
 };
-
 
 #endif // ** _NETWORKINTERFACE_HPP

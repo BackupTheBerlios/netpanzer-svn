@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __STATS_HPP
 #define __STATS_HPP
 
+#include <vector>
+
 #include "PArray.hpp"
 #include "PlayerInterface.hpp"
 
@@ -49,7 +51,7 @@ protected:
     static unsigned short Count;
     static unsigned short NumActivePlayers;
 
-    static PArray PlayerArray;
+    static std::vector<PlayerState*> PlayerArray;
 
     static PlayerID winner_player_id;
     static PlayerState *winner_player_state;
@@ -59,8 +61,6 @@ public:
     Stats();
 
     static void Initialize();
-
-    static void SortPlayers();
 
     static void setSortOrder( int sort_order_enum )
     {
@@ -87,7 +87,7 @@ public:
                                short *losses,
                                short *total,
                                short *objectives,
-                               char  **name,
+                               const char** name,
                                int   *stats_display_type );
 
 

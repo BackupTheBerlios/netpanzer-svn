@@ -179,7 +179,7 @@ void TileSet::addTile(SDL_Surface* surface, SDL_Rect* srcrect)
 
     for(int lines=rect->h-1; lines>=0; lines--) {
         for(int x=0;x<rect->w; x++) {
-            // XXX slow... this should be put outside the loop...
+            // XXX slow... this switch should be put outside the loop...
             switch(bpp) {
                 case 3:
                     memcpy(dptr, sptr, 3);

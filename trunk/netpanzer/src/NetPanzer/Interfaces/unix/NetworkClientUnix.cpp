@@ -158,25 +158,6 @@ int NetworkClientUnix::getMessage(NetMessage *message)
         return true;
     }
 
-    if ( non_guarantee_queue.isReady() ) {
-        non_guarantee_queue.dequeue( &net_packet );
-
-        memmove(  (void *) message, net_packet.data, net_packet.packet_size );
-
-#ifdef NETWORKDEBUG
-        LOG( ( "RECV >> Class: %d ID: %d", message->message_class,
-               message->message_id )  );
-#endif
-
-        if ( message->message_class == _net_message_class_client_server ) {
-            processNetMessage( message );
-        }
-
-        NetworkState::incPacketsReceived( net_packet.packet_size );
-
-        return( true );
-    }
-
     return false;
 }
 

@@ -39,3 +39,8 @@ void DummySound::playMusic(const char* directory)
 void DummySound::stopMusic()
 {}
 
+void DummySound::setSoundVolume(int)
+{}
+
+void DummySound::setMusicVolume(int)
+{}

@@ -39,9 +39,7 @@ protected:
     unsigned char unit_spawn_list[ _MAX_UNIT_TYPES ];
     char unit_color;
 
-
 public:
-
     PlayerUnitConfig();
 
     PlayerUnitConfig( unsigned char max_allowed_units );

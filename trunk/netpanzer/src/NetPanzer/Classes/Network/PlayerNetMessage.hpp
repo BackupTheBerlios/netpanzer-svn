@@ -35,14 +35,14 @@ enum { _net_message_id_player_connect_id,
 class PlayerConnectID : public NetMessage
 {
 public:
-    PlayerState connect_state;
+    NetworkPlayerState connect_state;
 
-    PlayerConnectID()
+    PlayerConnectID(NetworkPlayerState state)
+        : connect_state(state)
     {
         message_class = _net_message_class_player;
         message_id = _net_message_id_player_connect_id;
     }
-
 }
 __attribute__((packed));
 
@@ -50,9 +50,10 @@ __attribute__((packed));
 class PlayerStateSync : public NetMessage
 {
 public:
-    PlayerState player_state;
+    NetworkPlayerState player_state;
 
-    PlayerStateSync()
+    PlayerStateSync(NetworkPlayerState state)
+        : player_state(state)
     {
         message_class = _net_message_class_player;
         message_id = _net_message_id_player_sync_state;

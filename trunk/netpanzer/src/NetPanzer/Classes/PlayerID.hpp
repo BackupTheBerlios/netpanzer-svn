@@ -23,10 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class PlayerID
 {
-protected:
-    uint16_t index_id;
-    SocketClient::ID networkid;
-
 public:
     PlayerID( )
             : index_id(0xFFFF), networkid(0xFFFFFFFF)
@@ -36,39 +32,47 @@ public:
             : index_id(index), networkid(newid)
     { }
 
-    inline void setIndex( unsigned short index )
+    PlayerID(const PlayerID& other)
+            : index_id(other.index_id), networkid(other.networkid)
+    { }
+
+    void operator = (const PlayerID& other)
+    {
+        index_id = other.index_id;
+        networkid = other.networkid;
+    }
+
+    void setIndex( unsigned short index )
     {
         index_id = index;
     }
 
-    inline unsigned short getIndex() const
+    unsigned short getIndex() const
     {
         return( index_id );
     }
 
-    inline void setNetworkID(SocketClient::ID newid)
+    void setNetworkID(SocketClient::ID newid)
     {
         networkid = newid;
     }
 
-    inline SocketClient::ID getNetworkID() const
+    SocketClient::ID getNetworkID() const
     {
         return(networkid);
     }
 
-    inline void operator=(const PlayerID &rhs)
-    {
-        index_id = rhs.index_id;
-        networkid = rhs.networkid;
-    }
-
-    inline bool operator==(const PlayerID &rhs) const
+    bool operator==(const PlayerID &rhs) const
     {
         if ( (index_id == rhs.index_id) && (networkid == rhs.networkid) )
             return true;
 
         return false;
     }
+
+private:
+    uint16_t index_id;
+    SocketClient::ID networkid;
 };
 
 #endif // ** _PLAYERID_HPP

@@ -260,36 +260,7 @@ void CodeStatsView::drawNetworkStats(Surface &clientArea)
     }
 
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-
     str_loc.y += 12;
-
-    float packet_window_time;
-    float packet_window_estimate;
-    int lost_packets;
-    int out_of_order_packets;
-
-    NetworkInterface::non_guarantee_queue.getStats( &packet_window_time, &packet_window_estimate,
-            &lost_packets, &out_of_order_packets );
-
-    sprintf(strBuf, "UDP" );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-
-    str_loc.y += 12;
-
-    sprintf(strBuf, "Pckt Win: %.6f Next: %.6f", packet_window_time, packet_window_estimate );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-
-    str_loc.y += 12;
-
-    sprintf(strBuf, "Lost: %d", lost_packets);
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-    str_loc.y += 12;
-
-    sprintf(strBuf, "Out Of Order: %d", out_of_order_packets);
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-
-
-
 }
 
 //---------------------------------------------------------------------------

@@ -235,7 +235,7 @@ void IRCLobbyView::startIRC()
         return;
 
     try {
-        stopIRC("");
+        stopIRC();
         lobby_connection=new IRCLobby(gameconfig->lobbyserver,
                 gameconfig->playername, "#netpanzerlob");
         lobby_connection->change_name=change_name;
@@ -245,10 +245,10 @@ void IRCLobbyView::startIRC()
     }
 }
 
-void IRCLobbyView::stopIRC(const char* reason)
+void IRCLobbyView::stopIRC()
 {
     if(lobby_connection) {
-        lobby_connection->stopThread(reason);
+        lobby_connection->stopThread();
         delete lobby_connection;
     }
     lobby_connection=0;
@@ -257,7 +257,7 @@ void IRCLobbyView::stopIRC(const char* reason)
 void IRCLobbyView::restartIRC()
 {
         // the crude method for nickname change...
-        stopIRC("restart IRC");
+        stopIRC();
         SDL_Delay(500);
         startIRC();
 }

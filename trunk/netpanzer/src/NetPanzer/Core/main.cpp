@@ -149,7 +149,7 @@ void signalhandler(int signum)
 //-----------------------------------------------------------------
 BaseGameManager *initialise(int argc, char** argv)
 {
-#ifndef WIN32
+#if !defined(WIN32) && !defined(DEBUG)
     // Install signal handlers for a clean shutdown
     signal(SIGILL, signalhandler);
     signal(SIGINT, signalhandler);
@@ -281,15 +281,15 @@ int netpanzer_main(int argc, char** argv)
         delete manager;
         LOG ( ("successfull shutdown.") );
         shutdown();
-    } catch(Exception e) {
+    } catch(std::exception& e) {
         LOGGER.warning("An unexpected exception occured: %s\nShutdown needed.",
                 e.what());
         shutdown();
-        throw;
+        return 1;
     } catch(...) {
         LOGGER.warning("An unexpected exception occured.\nShutdown needed.");
         shutdown();
-        throw;
+        return 1;
     }
 
     return 0;

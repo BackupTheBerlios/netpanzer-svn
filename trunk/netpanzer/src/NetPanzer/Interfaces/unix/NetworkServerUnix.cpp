@@ -27,6 +27,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 //#define NETWORKDEBUG
 
+#ifdef NETWORKDEBUG
+#include "NetworkDebug.hpp"
+#endif
+
 NetworkServerUnix::NetworkServerUnix()
         : NetworkServer(), serversocket(0)
 {}
@@ -62,8 +66,9 @@ int NetworkServerUnix::sendMessage(const PlayerID& player_id,
 {
     if(serversocket==0) { return _network_failed; }
 #ifdef NETWORKDEBUG
-    LOG( ( "SEND >> Class: %d ID: %d", message->message_class,
-           message->message_id ) );
+    LOG( ( "SEND >> Class: %s ID: %d",
+            getNetMessageClass(message->message_class).c_str(),
+            message->message_id ) );
 #endif
     message->size = size;
 
@@ -71,8 +76,8 @@ int NetworkServerUnix::sendMessage(const PlayerID& player_id,
         serversocket->sendMessage(player_id.getNetworkID(),	(char *) message,
                                   message->size, ! (flags & _network_send_no_guarantee));
     } catch(Exception e) {
-        LOG ( ("Network send error when sending to client %d.",
-               player_id.getNetworkID()) );
+        LOG ( ("Network send error when sending to client %d: %s",
+               player_id.getNetworkID(), e.what()) );
         dropClient(player_id);
         return _network_failed;
     }
@@ -123,7 +128,8 @@ int NetworkServerUnix::getMessage(NetMessage *message)
             NetworkState::incPacketsReceived( net_packet.packet_size );
 
 #ifdef NETWORKDEBUG
-            LOG( ( "RECV >> Class: %d ID: %d", message->message_class,
+            LOG( ( "RECV >> Class: %s ID: %d",
+                    getNetMessageClass(message->message_class).c_str(),
                    message->message_id ) );
 #endif
 

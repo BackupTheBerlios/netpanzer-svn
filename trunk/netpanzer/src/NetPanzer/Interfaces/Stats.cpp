@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "Stats.hpp"
 
+#include <algorithm>
+
 #include "Exception.hpp"
 #include "ObjectiveInterface.hpp"
 #include "GameConfig.hpp"
@@ -27,91 +29,36 @@ char           Stats::PlayerName[64];
 unsigned short Stats::MaxPlayers;
 unsigned short Stats::Count;
 unsigned short Stats::NumActivePlayers;
-PArray         Stats::PlayerArray;
+std::vector<PlayerState*> Stats::PlayerArray;
 PlayerID       Stats::winner_player_id;
 PlayerState    *Stats::winner_player_state;
 
-
-
-int StatsNamesSortKey( const void *elem1, const void *elem2 )
+class StatsSortByName 
+    : public std::binary_function<PlayerState*, PlayerState*, bool>
 {
-    if (elem1 == elem2) return 0;
+public:
+    bool operator() (PlayerState* state1, PlayerState* state2) {
+        return state1->getName() < state2->getName();
+    }
+};
 
-    PlayerState *player_state1 = *(PlayerState **) (elem1);
-    PlayerState *player_state2 = *(PlayerState **) (elem2);
-
-    int strcmp_result;
-
-    strcmp_result = strcasecmp( player_state1->getName(), player_state2->getName() );
-
-    if ( strcmp_result != 0 )
-        return( strcmp_result );
-
-    // Tie based on the real comparison basis - impose an arbitrary
-    // but consistent sort order to break the tie.
-
-    if (player_state1 > player_state2) return +1;
-    if (player_state1 < player_state2) return -1;
-
-    // We should never get here, unless the same sprite is
-    // inserted in the list twice
-    throw Exception("sprite_key called to compare the same sprite against itself!");
-    return 0;
-}
-
-int StatsFragsSortKey( const void *elem1, const void *elem2 )
+class StatsSortByFrags
+    : public std::binary_function<PlayerState*, PlayerState*, bool>
 {
-    if (elem1 == elem2) return 0;
+public:
+    bool operator() (PlayerState* state1, PlayerState* state2) {
+        return state1->getTotal() < state2->getTotal();
+    }
+};
 
-    PlayerState *player_state1 = *(PlayerState **) (elem1);
-    PlayerState *player_state2 = *(PlayerState **) (elem2);
-
-
-    short kills1 = player_state1->getTotal();
-    short kills2 = player_state2->getTotal();
-
-    if ( kills1 > kills2 ) return -1;
-    if ( kills1 < kills2 ) return +1;
-
-    // Tie based on the real comparison basis - impose an arbitrary
-    // but consistent sort order to break the tie.
-
-    if (player_state1 > player_state2) return +1;
-    if (player_state1 < player_state2) return -1;
-
-    // We should never get here, unless the same sprite is
-    // inserted in the list twice
-    throw Exception("sprite_key called to compare the same sprite against itself!");
-    return 0;
-}
-
-int StatsObjectivesSortKey( const void *elem1, const void *elem2 )
+class StatsSortByObjectives
+    : public std::binary_function<PlayerState*, PlayerState, bool>
 {
-    if (elem1 == elem2) return 0;
-
-    PlayerState *player_state1 = *(PlayerState **) (elem1);
-    PlayerState *player_state2 = *(PlayerState **) (elem2);
-
-
-    short objectives1 = player_state1->getObjectivesHeld();
-    short objectives2 = player_state2->getObjectivesHeld();
-
-    if ( objectives1 > objectives2 ) return -1;
-    if ( objectives1 < objectives2 ) return +1;
-
-    // Tie based on the real comparison basis - impose an arbitrary
-    // but consistent sort order to break the tie.
-
-    if (player_state1 > player_state2) return +1;
-    if (player_state1 < player_state2) return -1;
-
-    // We should never get here, unless the same sprite is
-    // inserted in the list twice
-    throw Exception("sprite_key called to compare the same sprite against itself!");
-    return 0;
-}
-
-
+public:
+    bool operator() (PlayerState* state1, PlayerState* state2) {
+        return state1->getObjectivesHeld() < state2->getObjectivesHeld();
+    }
+};
 
 Stats::Stats()
 {
@@ -145,57 +92,53 @@ void Stats::Initialize()
     }
 
     //initialize an array to hold all the active players--
-    PlayerArray.initialize( NumActivePlayers);
+    PlayerArray.clear();
 
-    int add_index = 0;
     //build an array of pointers to player states--
     for(index = 0; index < MaxPlayers; index++) {
         playerId = PlayerInterface::getPlayerID( index);
         player = PlayerInterface::getPlayerState( playerId);
         if((player -> getStatus()) == (unsigned char)_player_state_active) {
-            PlayerArray.add( player, add_index );
-            add_index++;
+            PlayerArray.push_back(player);
         }
     }
 
     //sort player array here--
     switch( sort_order_enum ) {
-    case _stats_sort_order_player_name : {
-            PlayerArray.sort( PlayerArray.getSize(), StatsNamesSortKey );
-        }
-        break;
+        case _stats_sort_order_player_name:
+            std::sort(PlayerArray.begin(), PlayerArray.end(),
+                    StatsSortByName());
+            break;
 
-    case _stats_sort_order_game_type : {
+        case _stats_sort_order_game_type: {
             switch( gameconfig->gametype ) {
-            case _gametype_objective :
-                ObjectiveInterface::updatePlayerObjectiveCounts();
-                PlayerArray.sort( PlayerArray.getSize(), StatsObjectivesSortKey );
-                break;
+                case _gametype_objective :
+                    ObjectiveInterface::updatePlayerObjectiveCounts();
+                    std::sort(PlayerArray.begin(), PlayerArray.end(),
+                            StatsSortByObjectives());
+                    break;
 
-            case _gametype_fraglimit :
-                PlayerArray.sort( PlayerArray.getSize(), StatsFragsSortKey );
-                break;
-
-            case _gametype_timelimit :
-                PlayerArray.sort( PlayerArray.getSize(), StatsFragsSortKey );
-                break;
+                case _gametype_fraglimit :
+                case _gametype_timelimit:
+                    std::sort(PlayerArray.begin(), PlayerArray.end(),
+                            StatsSortByFrags());
+                    break;
             } // ** switch
         }
         break;
 
     case _stats_sort_order_winner : {
-            switch( gameconfig->gametype ) {
+        switch( gameconfig->gametype ) {
             case _gametype_objective :
                 ObjectiveInterface::updatePlayerObjectiveCounts();
-                PlayerArray.sort( PlayerArray.getSize(), StatsObjectivesSortKey );
+                std::sort(PlayerArray.begin(), PlayerArray.end(),
+                        StatsSortByObjectives());
                 break;
 
-            case _gametype_fraglimit :
-                PlayerArray.sort( PlayerArray.getSize(), StatsFragsSortKey );
-                break;
-
-            case _gametype_timelimit :
-                PlayerArray.sort( PlayerArray.getSize(), StatsFragsSortKey );
+            case _gametype_timelimit:
+            case _gametype_fraglimit:
+                std::sort(PlayerArray.begin(), PlayerArray.end(),
+                        StatsSortByFrags());
                 break;
             } // ** switch
 
@@ -210,15 +153,6 @@ void Stats::Initialize()
 //////////////////////////////////
 //////////////////////////////////
 
-void Stats::SortPlayers()
-{
-
-
-}
-//////////////////////////////////
-//////////////////////////////////
-
-
 //this function returns 1 if there are still players
 //to process, a 0 if all data in PArray has been returned.
 //menu system should call this function until the 0 gets
@@ -228,7 +162,7 @@ char Stats::GetPlayerStats(char  *flag,
                            short *losses,
                            short *total,
                            short *objectives,
-                           char  **name,
+                           const char** name,
                            int   *stats_display_type )
 {
     PlayerID local_player_id;
@@ -239,7 +173,7 @@ char Stats::GetPlayerStats(char  *flag,
     if(NumActivePlayers) {
         local_player_id = PlayerInterface::getLocalPlayerID();
 
-        player = (PlayerState *) PlayerArray[Count];
+        player = PlayerArray[Count];
         player_id = player->getPlayerID();
 
         if( flag != 0 ) {
@@ -263,7 +197,7 @@ char Stats::GetPlayerStats(char  *flag,
         }
 
         if ( name != 0 ) {
-            *name = player->getName();
+            *name = player->getName().c_str();
         }
 
         if ( stats_display_type != 0 ) {

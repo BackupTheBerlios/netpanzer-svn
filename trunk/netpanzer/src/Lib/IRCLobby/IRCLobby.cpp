@@ -68,10 +68,6 @@ public:
 };
 #endif
 
-
-
-
-
 // split server:port string, doesn't always set the port
 static void splitServerPort(const std::string& server,std::string& address,int *port)
 {
@@ -86,8 +82,6 @@ static void splitServerPort(const std::string& server,std::string& address,int *
         port[0]=atoi(port_str.c_str());
     }
 }
-
-
 
 #endif
 
@@ -119,13 +113,13 @@ IRCLobby::IRCLobby(const std::string& server,
 
 IRCLobby::~IRCLobby()
 {
-    stopThread("delete IRC lobby");
+    stopThread();
     SDL_DestroyMutex(game_servers_mutex);
 }
 
 void IRCLobby::restartThread()
 {
-    stopThread("restart");
+    stopThread();
     startMessagesThread();
 }
 
@@ -160,7 +154,7 @@ void IRCLobby::changeNickName(const std::string &nick)
     sendNickName();
 }
 
-void IRCLobby::stopThread(const char *mess)
+void IRCLobby::stopThread()
 {
     if(!running_thread)
         return;
@@ -169,15 +163,12 @@ void IRCLobby::stopThread(const char *mess)
     running_thread = 0;
     
     if(irc_server_socket) {
-        std::stringstream stop_mess;
-        stop_mess << "-" << leaving_mess << mess;
-        sendIRCMessageLine(stop_mess.str());
-
-        char* quit="QUIT\n";
-        SDLNet_TCP_Send(irc_server_socket,quit,5);
+        static char* quit="QUIT\n";
+        SDLNet_TCP_Send(irc_server_socket, quit, 5);
         SDLNet_TCP_Close(irc_server_socket);
         irc_server_socket=0;
     }
+
     delete game_servers;
     game_servers=0;
 }

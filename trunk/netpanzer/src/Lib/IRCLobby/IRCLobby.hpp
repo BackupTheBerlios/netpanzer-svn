@@ -56,7 +56,7 @@ public:
     { return irc_server_socket != 0; }
     void changeNickName(const std::string &nick);
     void restartThread();   // restart thread & reconnect irc
-    void stopThread(const char *reason);
+    void stopThread();
 
     GameServerList* game_servers;
     NotifyIRCChangeName* change_name;

@@ -140,16 +140,27 @@ void PlayerGameManager::shutdownVideoSubSystem()
 //-----------------------------------------------------------------
 void PlayerGameManager::initializeSoundSubSystem()
 {
+    delete sound;
+    sound = 0;
+    
     LOGGER.info("Initialize sound system.");
     try {
-        sound = new SDLSound();
+        if(gameconfig->enablesound)
+            sound = new SDLSound();
     } catch(Exception e) {
         LOGGER.warning("Couldn't initialize sound: %s", e.what());
-        sound = new DummySound();
     }
 
+    if(sound == 0)
+        sound = new DummySound();
+
+    sound->setSoundVolume(gameconfig->effectsvolume);
+
     // start some music
-    sound->playMusic("sound/music/");
+    if(gameconfig->enablemusic) {
+        sound->playMusic("sound/music/");
+        sound->setMusicVolume(gameconfig->musicvolume);
+    }
 }
 //-----------------------------------------------------------------
 void PlayerGameManager::initializeInputDevices()

@@ -1154,7 +1154,7 @@ void WorldInputCmdProcessor::createGroup( unsigned long group )
 {
     assert( group < 10 );
     setSelectionList( group );
-    ConsoleInterface::postMessage( "Group %d Created", group );
+    ConsoleInterface::postMessage( "Group %lu Created", group );
 }
 
 void WorldInputCmdProcessor::activateGroup( unsigned long group )

@@ -159,7 +159,6 @@ void NetworkClient::updateKeepAliveState( void )
 
 int NetworkClient::openSession()
 {
-    non_guarantee_queue.reset();
-    return( true );
+    return true;
 }
 

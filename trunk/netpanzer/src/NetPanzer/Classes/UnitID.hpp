@@ -25,6 +25,10 @@ public:
     unsigned short index;
     unsigned short unique;
 
+    UnitID()
+        : player(0xff), index(0xffff), unique(0xffff)
+    { }
+
     inline void set(unsigned char player, unsigned short index, unsigned short unique )
     {
         UnitID::player = player;

@@ -212,6 +212,11 @@ std::string SDLSound::getIdName(const char *filename)
     return name.substr(0, pos);
 }
 
+void SDLSound::setSoundVolume(int volume)
+{
+    // TODO...
+}
+
 //---------------------------------------------------------------------------
 // Music part
 //---------------------------------------------------------------------------
@@ -250,6 +255,11 @@ void SDLSound::stopMusic()
         Mix_FadeOutMusic(1000);
         SDL_Delay(1000);
     }
+}
+
+void SDLSound::setMusicVolume(int volume)
+{
+    Mix_VolumeMusic(int (float(MIX_MAX_VOLUME) / 100. * volume));
 }
 
 void SDLSound::nextSong()

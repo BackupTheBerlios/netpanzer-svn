@@ -39,11 +39,6 @@ public:
         PathCacheEntry::goal = goal;
         PathCacheEntry::path = path;
     }
-
-    void operator=( PathCacheEntry &rhs )
-    {
-        memmove( this, &rhs, sizeof( PathCacheEntry ) );
-    }
 };
 
 class PathCache

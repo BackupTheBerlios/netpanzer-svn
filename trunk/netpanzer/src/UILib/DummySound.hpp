@@ -35,9 +35,11 @@ public:
     }
     virtual void stopChannel(int channel)
     {}
+    virtual void setSoundVolume(int volume);
 
     virtual void playMusic(const char* directory);
     virtual void stopMusic();
+    virtual void setMusicVolume(int volume);
 };
 
 #endif

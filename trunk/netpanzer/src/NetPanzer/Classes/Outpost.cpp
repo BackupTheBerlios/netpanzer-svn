@@ -82,7 +82,8 @@ void Outpost::attemptOccupationChange( UnitID &unit_id )
             PlayerState *player_state;
             player_state = PlayerInterface::getPlayerState( objective_state.occupying_player );
 
-            ConsoleInterface::postMessage( "%s has been occupied by %s", objective_state.name, player_state->getName() );
+            ConsoleInterface::postMessage( "%s has been occupied by %s",
+                    objective_state.name, player_state->getName().c_str() );
         }
     } else {
         if ( unit_id.getPlayer() != objective_state.occupying_player.getIndex() ) {
@@ -98,7 +99,8 @@ void Outpost::attemptOccupationChange( UnitID &unit_id )
                 PlayerState *player_state;
                 player_state = PlayerInterface::getPlayerState( objective_state.occupying_player );
 
-                ConsoleInterface::postMessage( "%s has been occupied by %s", objective_state.name, player_state->getName() );
+                ConsoleInterface::postMessage( "%s has been occupied by %s",
+                        objective_state.name, player_state->getName().c_str() );
             }
         }
     }

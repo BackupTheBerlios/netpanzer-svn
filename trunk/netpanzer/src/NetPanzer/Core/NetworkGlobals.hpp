@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _NETPANZER_DEFAULT_PORT_UDP		3031
 #define _NETPANZER_DEFAULT_PORT_BROADCAST 3032
 
-#define _NETPANZER_CODEWORD          "netPanzerTest01"
-#define _NETPANZER_PROTOCOL_VERSION  1011
+#define _NETPANZER_CODEWORD          "netPanzerTest02"
+#define _NETPANZER_PROTOCOL_VERSION  1012
 
 #endif // ** _NETWORK_GLOBALS_HPP

@@ -72,9 +72,11 @@ public:
     static void update( Surface &surface );
     static void update_overlap( Surface &surface );
 
-    static void postMessage( PIX color, const char *format, ... );
+    static void postMessage( PIX color, const char *format, ... )
+        __attribute__(( format(printf, 2, 3) ));
 
-    static void postMessage( const char *format, ... );
+    static void postMessage( const char *format, ... )
+        __attribute__(( format(printf, 1, 2) ));
 
     /* Input String Methods */
     static void setInputStringStatus( bool on_off );

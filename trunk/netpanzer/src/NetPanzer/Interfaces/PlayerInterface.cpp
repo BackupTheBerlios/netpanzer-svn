@@ -31,9 +31,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // ** PlayerInterface Statics
 PlayerState PlayerInterface::local_player_state;
 
-PlayerState   *PlayerInterface::player_lists;
+PlayerState   *PlayerInterface::player_lists = 0;
 unsigned short PlayerInterface::max_players = 0;
-bool *      PlayerInterface::alliance_matrix;
+bool *      PlayerInterface::alliance_matrix = 0;
 unsigned short PlayerInterface::local_player_index = 0xFFFF;
 
 NetMessageEncoder PlayerInterface::message_encoder;
@@ -51,8 +51,8 @@ void PlayerInterface::initialize( unsigned short maxPlayers, unsigned char max_s
     unsigned long player_index;
     max_players = maxPlayers;
 
-    player_lists = new PlayerState [ max_players ];
-    assert( player_lists != 0 );
+    delete[] player_lists;
+    player_lists = new PlayerState[max_players];
 
     for ( player_index = 0; player_index < max_players; player_index++ ) {
         player_id.setIndex( player_index );
@@ -68,21 +68,23 @@ void PlayerInterface::initialize( unsigned short maxPlayers, unsigned char max_s
     local_player_state.setID( PlayerID( 0xFFFF, 0xFFFFFFFF ) );
     local_player_state.setStatus( _player_state_allocated );
 
+    delete[] alliance_matrix;
     alliance_matrix = new bool [max_players * max_players];
-    assert( alliance_matrix != 0 );
     resetAllianceMatrix();
 }
 
-void PlayerInterface::reset( void )
+void PlayerInterface::reset()
 {
     resetPlayerStats();
     resetAllianceMatrix();
 }
 
-void PlayerInterface::cleanUp( void )
+void PlayerInterface::cleanUp()
 {
-    delete [ ] player_lists;
-    delete [] alliance_matrix;
+    delete[] player_lists;
+    player_lists = 0;
+    delete[] alliance_matrix;
+    alliance_matrix = 0;
     max_players = 0;
 }
 
@@ -165,17 +167,16 @@ bool PlayerInterface::isAllied( unsigned short player, unsigned short with_playe
 
 }
 
-void PlayerInterface::lockPlayerStats( void )
+void PlayerInterface::lockPlayerStats()
 {
     unsigned long player_index;
 
     for ( player_index = 0; player_index < max_players; player_index++ ) {
         player_lists[ player_index ].lockStats();
     } // ** for
-
 }
 
-void PlayerInterface::unlockPlayerStats( void )
+void PlayerInterface::unlockPlayerStats()
 {
     unsigned long player_index;
 
@@ -184,18 +185,16 @@ void PlayerInterface::unlockPlayerStats( void )
     } // ** for
 }
 
-
-void PlayerInterface::resetPlayerStats( void )
+void PlayerInterface::resetPlayerStats()
 {
     unsigned long player_index;
 
     for ( player_index = 0; player_index < max_players; player_index++ ) {
         player_lists[ player_index ].resetStats();
     } // ** for
-
 }
 
-void PlayerInterface::resetAllianceMatrix( void )
+void PlayerInterface::resetAllianceMatrix()
 {
     unsigned long i;
     unsigned long matrix_size;
@@ -208,7 +207,7 @@ void PlayerInterface::resetAllianceMatrix( void )
 
 }
 
-int PlayerInterface::getActivePlayerCount( void )
+int PlayerInterface::getActivePlayerCount()
 {
     unsigned long player_index;
     int count = 0;;
@@ -222,7 +221,7 @@ int PlayerInterface::getActivePlayerCount( void )
     return( count );
 }
 
-PlayerState * PlayerInterface::allocateLoopBackPlayer( void )
+PlayerState * PlayerInterface::allocateLoopBackPlayer()
 {
     local_player_index = 0;
 
@@ -231,7 +230,7 @@ PlayerState * PlayerInterface::allocateLoopBackPlayer( void )
     return( &player_lists[ local_player_index ] );
 }
 
-int PlayerInterface::countPlayers( void )
+int PlayerInterface::countPlayers()
 {
     int count=0;
     for ( int player_index = 0; player_index < max_players; player_index++ ) {
@@ -242,7 +241,7 @@ int PlayerInterface::countPlayers( void )
     return count;
 }
 
-PlayerState * PlayerInterface::allocateNewPlayer( void )
+PlayerState * PlayerInterface::allocateNewPlayer()
 {
     unsigned long player_index;
 
@@ -279,9 +278,7 @@ void PlayerInterface::spawnPlayer( const PlayerID &player, const iXY &location )
                                          player,
                                          player_lists[ player_index ].unit_config
                                        );
-
     } // ** if _player_state_active
-
 }
 
 
@@ -351,7 +348,6 @@ void PlayerInterface::startPlayerStateSync( const PlayerID &connect_player  )
 
 bool PlayerInterface::syncPlayerState( int *send_return_code, int *percent_complete )
 {
-    PlayerStateSync sync_mesg;
     unsigned short player_count = 0;
     MultiMessage *encode_message;
 
@@ -367,10 +363,8 @@ bool PlayerInterface::syncPlayerState( int *send_return_code, int *percent_compl
                 (player_count < 5)
              ) {
             if( player_sync_index != player_sync_connect_player_index ) {
-                memmove( &sync_mesg.player_state,
-                         &player_lists[ player_sync_index ],
-                         sizeof( PlayerState )
-                       );
+                PlayerStateSync sync_mesg
+                    (player_lists[player_sync_index].getNetworkPlayerState());
 
                 while( message_encoder.encodeMessage( &sync_mesg, sizeof(PlayerStateSync), &encode_message ) ) {
                     send_ret_val = SERVER->sendMessage( player_sync_connect_id,
@@ -420,33 +414,23 @@ bool PlayerInterface::syncPlayerState( int *send_return_code, int *percent_compl
 void PlayerInterface::netMessageConnectID( NetMessage *message )
 {
     PlayerConnectID *connect_mesg;
-    PlayerID player;
 
     connect_mesg = (PlayerConnectID *) message;
 
-    player = connect_mesg->connect_state.getPlayerID();
-    local_player_index = player.getIndex();
+    local_player_index = connect_mesg->connect_state.playerindex_id;
 
-    memmove( &player_lists[ local_player_index ],
-             &connect_mesg->connect_state,
-             sizeof( PlayerState )
-           );
-
+    player_lists[local_player_index].setFromNetworkPlayerState
+        (&connect_mesg->connect_state);
 }
 
 void PlayerInterface::netMessageSyncState( NetMessage *message )
 {
     PlayerStateSync *sync_mesg;
-    PlayerID player;
-    unsigned short player_index;
+    size_t player_index;
 
     sync_mesg = ( PlayerStateSync *) message;
-    player = sync_mesg->player_state.getPlayerID();
-    player_index = player.getIndex();
-    memcpy( &player_lists[ player_index ],
-            &sync_mesg->player_state,
-            sizeof( PlayerState )
-          );
+    player_index = sync_mesg->player_state.playerindex_id;
+    player_lists[player_index].setFromNetworkPlayerState(&sync_mesg->player_state);
 }
 
 void PlayerInterface::netMessageScoreUpdate( NetMessage *message )
@@ -472,22 +456,27 @@ void PlayerInterface::netMessageAllianceRequest( NetMessage *message )
 
         if( (allie_request->allie_by_player_index == local_player_index) ) {
             player_state = getPlayerState( allie_request->allie_with_player_index );
-            ConsoleInterface::postMessage( "Alliance created with %s.", player_state->getName() );
+            ConsoleInterface::postMessage( "Alliance created with %s.",
+                    player_state->getName().c_str() );
         } else
             if( (allie_request->allie_with_player_index == local_player_index) ) {
                 player_state = getPlayerState( allie_request->allie_by_player_index );
-                ConsoleInterface::postMessage( "%s has allied with you.", player_state->getName() );
+                ConsoleInterface::postMessage( "%s has allied with you.",
+                        player_state->getName().c_str() );
             }
     } else {
         clearAlliance( allie_request->allie_by_player_index, allie_request->allie_with_player_index );
 
         if( (allie_request->allie_by_player_index == local_player_index) ) {
             player_state = getPlayerState( allie_request->allie_with_player_index );
-            ConsoleInterface::postMessage( "Alliance broken with %s.", player_state->getName() );
+            ConsoleInterface::postMessage( "Alliance broken with %s.",
+                    player_state->getName().c_str() );
         } else
             if( (allie_request->allie_with_player_index == local_player_index) ) {
                 player_state = getPlayerState( allie_request->allie_by_player_index );
-                ConsoleInterface::postMessage( "%s has broken their alliance with you.", player_state->getName() );
+                ConsoleInterface::postMessage(
+                        "%s has broken their alliance with you.",
+                        player_state->getName().c_str() );
             }
 
     }
@@ -513,22 +502,27 @@ void PlayerInterface::netMessageAllianceUpdate( NetMessage *message )
 
         if( (allie_update->allie_by_player_index == local_player_index) ) {
             player_state = getPlayerState( allie_update->allie_with_player_index );
-            ConsoleInterface::postMessage( "Alliance created with %s.", player_state->getName() );
+            ConsoleInterface::postMessage( "Alliance created with %s.",
+                    player_state->getName().c_str() );
         } else
             if( (allie_update->allie_with_player_index == local_player_index) ) {
                 player_state = getPlayerState( allie_update->allie_by_player_index );
-                ConsoleInterface::postMessage( "%s has allied with you.", player_state->getName() );
+                ConsoleInterface::postMessage( "%s has allied with you.",
+                        player_state->getName().c_str() );
             }
     } else {
         clearAlliance( allie_update->allie_by_player_index, allie_update->allie_with_player_index );
 
         if( (allie_update->allie_by_player_index == local_player_index) ) {
             player_state = getPlayerState( allie_update->allie_with_player_index );
-            ConsoleInterface::postMessage( "Alliance broken with %s.", player_state->getName() );
+            ConsoleInterface::postMessage( "Alliance broken with %s.",
+                    player_state->getName().c_str() );
         } else
             if( (allie_update->allie_with_player_index == local_player_index) ) {
                 player_state = getPlayerState( allie_update->allie_by_player_index );
-                ConsoleInterface::postMessage( "%s has broken their alliance with you.", player_state->getName() );
+                ConsoleInterface::postMessage(
+                        "%s has broken their alliance with you.",
+                        player_state->getName().c_str() );
             }
     }
 }
@@ -584,15 +578,9 @@ void PlayerInterface::disconnectPlayerCleanup( PlayerID &player_id )
 
     player_lists[ disconnect_player_index ].setStatus( _player_state_free );
 
-    PlayerStateSync player_state_update;
-    PlayerState *player_state;
+    PlayerState *player_state = getPlayerState( player_id );
 
-    player_state = getPlayerState( player_id );
-    memmove( &player_state_update.player_state,
-             player_state,
-             sizeof( PlayerState )
-           );
+    PlayerStateSync player_state_update(player_state->getNetworkPlayerState());
 
     SERVER->sendMessage( &player_state_update, sizeof( PlayerStateSync ), 0 );
-
 }

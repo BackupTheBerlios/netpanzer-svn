@@ -108,7 +108,7 @@ void RankView::drawPlayerStats(Surface &dest)
     short playerLosses;
     short playerTotalPoints;
     short playerObjectives;
-    char  *playerName;
+    const char  *playerName;
     int   playerStatsDisplayType;
 
     int numPlayers   = Stats::getActivePlayers();

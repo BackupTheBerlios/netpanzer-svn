@@ -309,7 +309,7 @@ void ServerSocket::readClientTCP(SocketClient* client)
  * the game loop needs to be temporarily halted anyway.
  * it handles both TCP and UDP sends--
  */
-void ServerSocket::sendMessage(SocketClient::ID toclient, char* data,
+void ServerSocket::sendMessage(SocketClient::ID toclient, const char* data,
         size_t datasize, bool reliable)
 {
     SocketClient* client = clientlist->getClientFromID(toclient);
@@ -317,8 +317,9 @@ void ServerSocket::sendMessage(SocketClient::ID toclient, char* data,
         throw Exception("message sent to unknown client.");
 
     // we ignore the reliable flag for now...
-    if (SDLNet_TCP_Send(client->tcpsocket, data, (int) datasize)
-            < (int) datasize) {
+    // XXX SDLNet_TCP_Send incorrectly takes a non-const data variable
+    if (SDLNet_TCP_Send(client->tcpsocket, const_cast<char*> (data),
+                (int) datasize) < (int) datasize) {
         throw Exception("Error while sending to client %d: %s", client->id,
                         SDLNet_GetError());
     }

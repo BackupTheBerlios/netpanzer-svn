@@ -37,9 +37,11 @@ public:
     virtual void playAmbientSound(const char* name, long distance);
     virtual int playSoundRepeatedly(const char* name);
     virtual void stopChannel(int channel);
+    virtual void setSoundVolume(int volume);
 
     virtual void playMusic(const char* directory);
     virtual void stopMusic();
+    virtual void setMusicVolume(int volume);
 
 private:
     chunks_t m_chunks;

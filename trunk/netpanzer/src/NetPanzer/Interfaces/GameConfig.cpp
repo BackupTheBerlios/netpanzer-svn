@@ -57,6 +57,12 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       blendsmoke("blendsmoke", true),
       screengamma("gamma", 50, 0, 100),
 
+      enablesound("enable", true),
+      enablemusic("music", true),
+      musicvolume("musicvolume", 80, 0, 100),
+      enableeffects("effects", true),
+      effectsvolume("effectsvolume", 100, 0, 100),
+      
       unitcolor("unitcolor", 0, 0, _color_last-1),
       playerflag("playerflag", -1, -1, 100),
       attacknotificationtime("attacknotificationtime", 5, 0, 100),
@@ -117,6 +123,12 @@ GameConfig::GameConfig(const std::string& newconfigfile)
     visualssettings.push_back(&blendsmoke);
     visualssettings.push_back(&screengamma);
 
+    soundsettings.push_back(&enablesound);
+    soundsettings.push_back(&enablemusic);
+    soundsettings.push_back(&musicvolume);
+    soundsettings.push_back(&enableeffects);
+    soundsettings.push_back(&effectsvolume);
+
     interfacesettings.push_back(&unitcolor);
     interfacesettings.push_back(&playerflag);
     interfacesettings.push_back(&attacknotificationtime);
@@ -165,6 +177,7 @@ void GameConfig::loadConfig()
     loadSettings(config, "game", gamesettings);
     loadSettings(config, "player", playersettings);
     loadSettings(config, "visuals", visualssettings);
+    loadSettings(config, "sound", soundsettings);
     loadSettings(config, "interface", interfacesettings);
     loadSettings(config, "radar", radarsettings);
     loadSettings(config, "server", serversettings);
@@ -217,6 +230,7 @@ void GameConfig::saveConfig()
     saveSettings(xmlStore, "game", gamesettings);
     saveSettings(xmlStore, "player", playersettings);
     saveSettings(xmlStore, "visuals", visualssettings);
+    saveSettings(xmlStore, "sound", soundsettings);
     saveSettings(xmlStore, "interface", interfacesettings);
     saveSettings(xmlStore, "radar", radarsettings);
     saveSettings(xmlStore, "server", serversettings);

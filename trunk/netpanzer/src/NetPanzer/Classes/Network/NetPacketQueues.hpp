@@ -76,14 +76,17 @@ public:
         return( packet.packet_size);
     }
 
+#if 0
     unsigned char getSequence( void )
     {
         return( ((NetMessage *) (&(packet.data)) )->sequence );
     }
-
+#endif
 };
 
 typedef ArrayTemplate< NetPacketBlock > NetPacketBlockArray;
+
+#if 0
 
 class ReorderQueue : public NetPacketBlockArray
 {
@@ -127,6 +130,6 @@ public:
 
 };
 
-
+#endif
 
 #endif // ** _NETPACKETQUEUES_HPP

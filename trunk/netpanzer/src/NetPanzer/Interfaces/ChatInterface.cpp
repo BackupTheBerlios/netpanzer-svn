@@ -90,7 +90,7 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
 
         if( (addChatString != 0) ) {
             char mesg_str[256];
-            sprintf( mesg_str, " ---- %s ----", player_state->getName() );
+            sprintf( mesg_str, " ---- %s ----", player_state->getName().c_str() );
 
             addChatString( mesg_str );
             addChatString( chat_mesg.message_text );
@@ -113,7 +113,8 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
 
         } // ** switch
 
-        ConsoleInterface::postMessage( color, "%s :: %s", player_state->getName(), chat_mesg.message_text );
+        ConsoleInterface::postMessage( color, "%s :: %s",
+                player_state->getName().c_str(), chat_mesg.message_text );
     }
 }
 
@@ -137,7 +138,7 @@ void ChatInterface::chatMessage( NetMessage *message )
 
     if ( (addChatString != 0) ) {
         char mesg_str[144];
-        sprintf( mesg_str, " ---- %s ----", player_state->getName() );
+        sprintf( mesg_str, " ---- %s ----", player_state->getName().c_str() );
 
         addChatString( mesg_str );
         addChatString( chat_mesg->message_text );
@@ -160,7 +161,8 @@ void ChatInterface::chatMessage( NetMessage *message )
 
     } // ** switch
 
-    ConsoleInterface::postMessage( color, "%s :: %s", player_state->getName(), chat_mesg->message_text );
+    ConsoleInterface::postMessage( color, "%s :: %s",
+            player_state->getName().c_str(), chat_mesg->message_text );
 }
 
 void ChatInterface::processChatMessages( NetMessage *message )

@@ -226,12 +226,11 @@ public:
         message_id = _net_message_id_system_connect_alert;
     }
 
-    void set( PlayerID &player, unsigned char alert_type )
+    void set(const PlayerID &player, unsigned char alert_type )
     {
         player_id = player;
         alert_enum = alert_type;
     }
-
 }
 __attribute__((packed));
 
