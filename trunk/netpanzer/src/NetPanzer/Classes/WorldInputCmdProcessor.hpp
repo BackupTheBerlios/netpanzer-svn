@@ -44,6 +44,7 @@ protected:
     SelectionList selection_group_lists[10];
     SelectionList working_list;
     unsigned long current_selection_list_index;
+    unsigned int current_selection_list_bits;
     SelectionList target_list;
 
     void initializeSelectionLists( void );

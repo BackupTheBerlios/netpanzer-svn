@@ -73,6 +73,7 @@ public:
     void cycleNextUnit( void );
 
     void copyList( SelectionList &source_list );
+    void addList( SelectionList &source_list );
 
     void validateList( void );
 

@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SelectionList.hpp"
 #include "UnitInterface.hpp"
 #include "PlayerInterface.hpp"
+#include "Log.hpp"
 
 int selectKey( void *key, UnitState *comp )
 {
@@ -230,23 +231,29 @@ void SelectionList::cycleNextUnit( void )
 
 void SelectionList::copyList( SelectionList &source_list )
 {
+    unGroup();
+
+    addList(source_list);
+
+}
+
+void SelectionList::addList( SelectionList &source_list )
+{
     unsigned long list_index;
     unsigned long list_size;
 
-    deselect();
-    unit_list.removeAll();
-
-    list_size = source_list.unit_list.getSize();
+    list_size=source_list.unit_list.contains;
 
     for ( list_index = 0; list_index < list_size; list_index++ ) {
-        unit_list.add( source_list.unit_list[ list_index ], list_index );
+        unit_list.add( source_list.unit_list[ list_index ], unit_list.contains );
     }
 
-    unit_list.contains = source_list.unit_list.contains;
     unit_cycle_index = source_list.unit_cycle_index;
 
     resetUnitCycling();
 }
+
+
 
 unsigned short SelectionList::getHeadUnitType( void )
 {

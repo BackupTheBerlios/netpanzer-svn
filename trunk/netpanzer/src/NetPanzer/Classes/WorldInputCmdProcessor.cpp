@@ -16,6 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+#include <sstream>
 #include "WorldInputCmdProcessor.hpp"
 
 #include "MouseInterface.hpp"
@@ -36,6 +37,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlacementMatrix.hpp"
 #include "Sound.hpp"
 #include "ScreenSurface.hpp"
+#include "Log.hpp"
 
 #include "GameConfig.hpp"
 
@@ -297,19 +299,63 @@ void WorldInputCmdProcessor::evaluateKeyCommands( void )
 
 void WorldInputCmdProcessor::evaluateGroupingKeys( void )
 {
-    bool shift_status = false;
     bool alt_status = false;
+    bool ctrl_status = false;
 
-    if( (KeyboardInterface::getKeyState( SDLK_LSHIFT ) == true) ||
-            (KeyboardInterface::getKeyState( SDLK_RSHIFT ) == true)
+    if( (KeyboardInterface::getKeyState( SDLK_LCTRL ) == true) ||
+            (KeyboardInterface::getKeyState( SDLK_RCTRL ) == true)
       ) {
-        shift_status = true;
+        ctrl_status = true;
     }
 
-    if( (KeyboardInterface::getKeyState( SDLK_LALT ) == true) ) {
+    if( (KeyboardInterface::getKeyState( SDLK_LALT ) == true) ||
+            (KeyboardInterface::getKeyState( SDLK_RALT ) == true)
+      ) {
         alt_status = true;
     }
+    unsigned selected_bits=0;
+    int released=0;
+    for(int key_code=SDLK_0;  key_code<=SDLK_9; key_code++) {
+        unsigned int b=1 << (key_code-SDLK_0);
+        if ( (KeyboardInterface::getKeyState( key_code ) == true) ) {
+            selected_bits|=b;
+        }
+        else if(current_selection_list_bits&b) {
+            // we've released a key
+            released++;
+        }
+    }
+    if(released==0 && selected_bits>0 && selected_bits!=current_selection_list_bits) {
+        // we've pressed down a number key
+        if(ctrl_status != true && alt_status != true) {
+            working_list.unGroup();
+        }
+        for(int key_code=SDLK_0;  key_code<=SDLK_9; key_code++) {
+            if ( (KeyboardInterface::getKeyState( key_code ) != true) ) {
+                continue;
+            }
+            int n=key_code-SDLK_0;
+            if(ctrl_status == true) {
+                setSelectionList(n);
+                std::stringstream s;
+                s << "Group " << n << " Created";
+                ConsoleInterface::postMessage( s.str().c_str() );
+                continue;
+            }
+            if(alt_status == true) {
+                cycleSelectedUnits(n);
+                continue;
+            }
+            working_list.addList( selection_group_lists[ n ] );
+//LOG(("select:%i,working:%i,",n,working_list.unit_list.contains));
+        }
+        if(alt_status != true) {
+            working_list.select();
+        }
+    }
+    current_selection_list_bits=selected_bits;
 
+#if 0
     //*********************************************************
     if ( (KeyboardInterface::getKeyState( SDLK_1 ) == true) &&
             (KeyboardInterface::getPrevKeyState( SDLK_1) == false)  ) {
@@ -449,6 +495,7 @@ void WorldInputCmdProcessor::evaluateGroupingKeys( void )
                 cycleSelectedUnits(0);
             }
     } // ** if
+#endif
 
 }
 
@@ -549,6 +596,7 @@ bool WorldInputCmdProcessor::selectBoundBoxUnits( void )
         return( select_success );
     } else {
         current_selection_list_index = 0xFFFF;
+        current_selection_list_bits=0;
         return( select_success );
     }
 
@@ -638,6 +686,7 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
                         working_list.selectUnit( world_pos );
                     }
 
+                    current_selection_list_bits=0;
                     current_selection_list_index = 0xFFFF;
                     if ( working_list.unit_list.containsItems() > 0 ) {
                         UnitBase *unit = UnitInterface::getUnit(working_list.unit_list[0]);
