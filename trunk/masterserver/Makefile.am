@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = src exampleclient
+SUBDIRS = src exampleclient docs
 EXTRA_DIST = autogen.sh masterserver.cfg.sample neighbors.sample
 
 configfiledir = $(sysconfdir)

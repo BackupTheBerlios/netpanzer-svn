@@ -10,7 +10,7 @@ message.
 2. Message Format
 Messages are sent as a set of tokens separated by a \ character. Messages are
 delimited with a "final" token. Example:
-    \list\gamename\mygame\version\1234\final\
+    \list\gamename\mygame\protocol\1234\final\
 
 An Attribute/Value pair is a token with the name of the value followed by a
 token with a value. Example:
@@ -25,7 +25,7 @@ token with a value. Example:
             protocol - network protocol version of the game
             password - needed for master/master sync, see section 5, 6
         Additional key/value pairs are saved as is by the masterserver. They can
-        be used in later queries to filter for certain types of servers later.
+        be used in queries to filter for certain types of servers.
         Returns: nothing or \error\message\
     * quit
         Informs the masterserver that a server has quit. Allowed key/value
@@ -37,11 +37,11 @@ token with a value. Example:
         key/value pairs to filter for certain servers:
             gamename - specifies the type of game on the server (required)
         Additional keys are compared with the saved key/value pairs of the
-        server. Only servers that match all key/value pairs are returned.
+        servers. Only servers that match all key/value pairs are returned.
         
         Returns: either \error\message\ or a list of
         "\ip\address\port\serverport" tokens with the IP of each server
-        matching the criteria above.
+        matching the filter criteria.
 
 4. Server Heartbeats
 A running gameserver should send a heartbeat message to the server every 5
@@ -60,7 +60,7 @@ security reasons, this is protected with a password, that the maintainer of the
 servernetwork has to tell each party that is trustworthy to be part of the
 masterserver network.
 
-6. Secutiry considerations
+6. Security considerations
 The above design depends alot on secure TCP connections. If someone is able to
 spoof their IP addresses he could do some bad things(flooding the masterserver
 with nonexistant game servers, abusing the masterservers bandwith for DOS
@@ -68,8 +68,8 @@ attacks, ...). In the current internet it might be often possible to do such
 spoofing attacks, however I don't see an easy way to avoid problems here. At
 least spoofing attacks are hard to accomplish. Administrators of a masterserver
 network should make sure that the servers are running on operating systems that
-at least prohibit some of the well known spoofing attacks. (Google for details)
-
+at least prohibit some of the well known spoofing attacks. (Modern linux/bsd
+boxes should be okay, Google for details)
     
 remark1: Despite several other games we're not using UDP, because
     1) latency isn't that critical

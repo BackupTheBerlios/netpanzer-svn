@@ -18,6 +18,6 @@ AC_C_CONST
 AC_C_VOLATILE
 AC_TYPE_SIZE_T
 
-AC_CONFIG_FILES([Makefile src/Makefile exampleclient/Makefile])
+AC_CONFIG_FILES([Makefile docs/Makefile src/Makefile exampleclient/Makefile])
 AC_OUTPUT
 
