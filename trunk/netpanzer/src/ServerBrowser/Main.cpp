@@ -71,8 +71,8 @@ int main(int argc, char** argv)
         serverlist->connect();
         serverlist->queryServerList();
 
-        // wait 20 seconds for answers
-        sleep(config->query_timeout);
+        // wait for answers
+        SDL_Delay(config->query_timeout * 1000);
     } catch(std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         

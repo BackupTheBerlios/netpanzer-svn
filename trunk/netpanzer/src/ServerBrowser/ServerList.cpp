@@ -41,7 +41,7 @@ void ServerList::connect()
     time_t timeout = 2 * 60; // set timeout to 2 minutes
     time_t starttime = time(0);
     while(starttime - time(0) <= timeout && ! connection->isReady()) {
-        sleep(1);
+        SDL_Delay(1000);
     }
 
     if(!connection->isReady()) {
@@ -52,7 +52,7 @@ void ServerList::connect()
     timeout = 10; // 10 seconds timeout for joining channel
     starttime = time(0);
     while(starttime - time(0) <= timeout && !channeljoined) {
-        sleep(1);
+        SDL_Delay(1000);
     }
 
     if(!channeljoined)
