@@ -18,55 +18,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _POWERUP_INTERFACE_HPP
 #define _POWERUP_INTERFACE_HPP
 
+#include <vector>
+
 #include "PowerUp.hpp"
 #include "Timer.hpp"
-#include "LinkListSingleTemplate.hpp"
 #include "PlayerID.hpp"
 #include "NetPacket.hpp"
 
-class PowerUpList : public LinkListSingleTemplate< PowerUp >
+class PowerUpList : public std::vector<PowerUp*>
 {
 protected:
     int id_counter;
-    int item_count;
 
 public:
+    PowerUpList();
+    ~PowerUpList();
 
-    PowerUpList( void );
-    ~PowerUpList( );
-
-    void add( PowerUp *powerup );
-
-    void insert( PowerUp *powerup );
-
-    PowerUp * get( int ID );
-
-    PowerUp * remove( int ID );
-
-    int getItemCount( void )
-    {
-        return( item_count );
-    }
-
-    inline void resetIterator( PowerUp **iterator )
-    {
-        (*iterator) = front;
-    }
-
-    inline PowerUp * incIteratorPtr( PowerUp **iterator )
-    {
-        PowerUp *power_up;
-
-        if( (*iterator) != 0 ) {
-            power_up = (*iterator);
-            (*iterator) = (*iterator)->next;
-            return( power_up );
-        } else {
-            return( 0 );
-        }
-    }
-
-    void reset( void );
+    PowerUp* find(int ID);
 };
 
 class PowerUpInterface
@@ -74,6 +42,7 @@ class PowerUpInterface
 protected:
     static PowerUpList powerup_list;
 
+    static int powerupids;
     static int power_up_limit;
     static int power_up_regen_time_upper_bound;
     static int power_up_regen_time_lower_bound;
