@@ -15,16 +15,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #include <config.h>
-#include "Exception.hpp"
-#include "DigitText.hpp"
 
+#include "Exception.hpp"
+#include "FileSystem.hpp"
+#include "DigitText.hpp"
 
 Surface         DigitText::charactersNormal;
 Surface         DigitText::charactersNoSpace;
 DIGIT_BLT_MODES DigitText::bltMode = NORMAL_TRANS;
-
 
 // init
 //--------------------------------------------------------------------------
@@ -39,9 +38,7 @@ void DigitText::init(const char *filename)
 	// NOTE: Make sure the file size is 128 characters.
 	char charfilename[] = "pics/chars11x17digit.raw";
 
-	FILE *fp = fopen(charfilename, "rb");
-	if (fp == 0)
-		throw Exception("ERROR: Unable to load %s", charfilename);
+	ReadFile* file = FileSystem::openRead(charfilename);
 
 	for (int y = 0; y < charactersNormal.getPixY(); y++)
 	{
@@ -50,12 +47,16 @@ void DigitText::init(const char *filename)
 		for (int curChar = 0; curChar < charactersNormal.getFrameCount(); curChar++)
 		{
 			charactersNormal.setFrame(curChar);
-			fread(charactersNormal.mem + yOffset, charactersNormal.getPixX(), 1, fp);
+			if(!file->read(charactersNormal.mem + yOffset,
+						charactersNormal.getPixX(), 1) != 1) {
+				delete file;
+				throw Exception("Error while loading font file '%s'.",
+								charfilename);
+			}
 		}
 	}
 
-	fclose(fp);
-
+	delete file;
 } // DigitText::initFont
 
 //--------------------------------------------------------------------------

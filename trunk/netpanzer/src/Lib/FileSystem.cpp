@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <stdio.h>
+#include <string.h>
 #include <physfs.h>
 #include "Exception.hpp"
 #include "FileSystem.hpp"
@@ -24,15 +26,96 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 void FileSystem::initialize(const char* argv0, const char* company,
 							const char* application)
 {
-	if(!PHYSFS_init(argv0) ||
-	   !PHYSFS_setSaneConfig(company, application, "zip", 0, 0))
+	if(!PHYSFS_init(argv0))
 		throw Exception("failure while initialising physfs: %s",
 							PHYSFS_getLastError());
+
+	const char* basedir = PHYSFS_getBaseDir();
+	const char* userdir = PHYSFS_getUserDir();
+	const char* dirsep = PHYSFS_getDirSeparator();
+	char* writedir = new char[strlen(userdir) + strlen(application) + 2];
+	
+	sprintf(writedir, "%s.%s", userdir, application);
+	if(!PHYSFS_setWriteDir(writedir)) {
+		// try to create the directory...
+		char* mkdir = new char[strlen(application)+2];
+		sprintf(mkdir, ".%s", application);
+		if(!PHYSFS_setWriteDir(userdir) || ! PHYSFS_mkdir(mkdir)) {
+			delete[] writedir;
+			delete[] mkdir;
+			throw Exception("failed creating configuration directory: '%s': %s",
+							writedir, PHYSFS_getLastError());
+		}
+		delete[] mkdir;
+		
+		if (!PHYSFS_setWriteDir(writedir)) {
+			throw Exception("couldn't set configuration directory to '%s': %s",
+							writedir, PHYSFS_getLastError());
+		}
+	}
+	printf("WriteDir: %s\n", writedir);
+
+	PHYSFS_addToSearchPath(writedir, 0);
+	PHYSFS_addToSearchPath(basedir, 1);
+
+	delete[] writedir;
+
+	/* Root out archives, and add them to search path... */
+	char* archiveExt = "zip";
+    if (archiveExt != NULL)
+    {
+        char **rc = PHYSFS_enumerateFiles("/");
+        char **i;
+        size_t extlen = strlen(archiveExt);
+        char *ext;
+                                                                                
+        for (i = rc; *i != NULL; i++)
+        {
+            size_t l = strlen(*i);
+            if ((l > extlen) && ((*i)[l - extlen - 1] == '.'))
+            {
+                ext = (*i) + (l - extlen);
+                if (strcasecmp(ext, archiveExt) == 0)
+                {
+                    const char *d = PHYSFS_getRealDir(*i);
+					char* str = new char[strlen(d) + strlen(dirsep) + l + 1];
+					sprintf(str, "%s%s%s", d, dirsep, *i);
+					PHYSFS_addToSearchPath(str, 1);
+					delete[] str;
+                } /* if */
+            } /* if */
+        } /* for */
+                                                                                
+        PHYSFS_freeList(rc);
+    } /* if */
 }
 
 void FileSystem::shutdown()
 {
 	PHYSFS_deinit();
+}
+
+const char* FileSystem::getRealDir(const char* filename)
+{
+	return PHYSFS_getRealDir(filename);
+}
+
+std::string FileSystem::getRealName(const char* filename)
+{
+	const char* dir = PHYSFS_getRealDir(filename);
+	std::string realname = dir;
+	realname += filename;
+	return realname;
+}
+
+char** FileSystem::enumerateFiles(const char* directory)
+{
+	return PHYSFS_enumerateFiles(directory);
+}
+
+void FileSystem::freeList(char** list)
+{
+	PHYSFS_freeList(list);
 }
 
 WriteFile* FileSystem::openWrite(const char* filename)

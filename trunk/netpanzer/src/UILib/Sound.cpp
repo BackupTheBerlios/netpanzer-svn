@@ -19,5 +19,56 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Sound.hpp"
 
+#include "UnitTypes.hpp"
+
 Sound* sound = 0;
 
+//-----------------------------------------------------------------
+Sound::Sound()
+{
+	m_battleCount = 0;
+	m_tankIdleChannel = -1;
+}
+//-----------------------------------------------------------------
+/**
+ * Play "tankidle" repeatedly.
+ */
+void Sound::playTankIdle()
+{
+	m_tankIdleChannel = playSoundRepeatedly("tankidle");
+}
+
+void Sound::stopTankIdle()
+{
+	stopChannel(m_tankIdleChannel);
+}
+
+void Sound::playPowerUpSound()
+{
+	playSound("powerup");
+}
+
+void Sound::playUnitSound(int unit_type)
+{
+    if((unit_type == _unit_type_humvee) || (unit_type == _unit_type_hover_craft)) {
+		return;
+	}
+	playSound("unitsound");
+}
+
+//-----------------------------------------------------------------
+/**
+ * When many weapons are firing the battle sound arise.
+ */
+void Sound::playBattle()
+{
+	static const int BATTLE_LIMIT = 16;
+
+	//TODO: this is original behavior,
+	// does it make sense?
+	m_battleCount++;
+	if (m_battleCount > BATTLE_LIMIT) {
+		playSound("battle");
+		m_battleCount = 0;
+	}
+}

@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __LIB_FILESYSTEM_HPP__
 #define __LIB_FILESYSTEM_HPP__
 
+#include <string>
 #include <stdint.h>
 #include <stdlib.h>
 #include <physfs.h>
@@ -109,6 +110,12 @@ public:
 	static void initialize(const char* argv0, const char* company,
 						   const char* applicationname);
 	static void shutdown();
+
+	static const char* getRealDir(const char* filename);
+	static std::string getRealName(const char* filename);
+	// remember to call freeLisT
+	static char** enumerateFiles(const char* directory);
+	static void freeList(char** list);
 	
 	static ReadFile* openRead(const char* filename);
 	static WriteFile* openAppend(const char* filename);

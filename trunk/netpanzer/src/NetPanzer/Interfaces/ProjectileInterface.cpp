@@ -18,8 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "ProjectileInterface.hpp"
 
-#include "Sound.hpp"
-
 #include "ParticleInterface.hpp"
 #include "MissleWeapon.hpp"
 #include "BulletWeapon.hpp"
@@ -74,15 +72,11 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
  {
   Projectile *temp;
 
-  if (projectile_type == 0)
+  if (projectile_type == Weapon::_none)
   {
-	  temp = new Weapon( owner, owner_type_id, damage, start, end );
-	  
-	  // We should make sure and customize all these.
-	  temp->addToList( &projectile_list_start, &projectile_list_end );
 	  assert(false);
   }
-  else if (projectile_type == 1)
+  else if (projectile_type == Weapon::_quad_missile)
   {
 	  // The following code launches 4 missles spaced out evenly like they would be in a
 	  // missle bay.
@@ -128,19 +122,19 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
 	  temp->addToList( &projectile_list_start, &projectile_list_end );
 	  ParticleInterface::addMissleLaunchPuff(startPos, direction, owner_type_id);
   }
-  else if (projectile_type == 2)
+  else if (projectile_type == Weapon::_bullet)
   {
 	  temp = new BulletWeapon( owner, owner_type_id, damage, start, end );
 	  temp->addToList( &projectile_list_start, &projectile_list_end );
   }
-  else if (projectile_type == 3)
+  else if (projectile_type == Weapon::_shell)
   {
 	  temp = new ShellWeapon( owner, owner_type_id, damage, start, end );
 	  temp->addToList( &projectile_list_start, &projectile_list_end );
   }
-  else if (projectile_type == 4)
+  else if (projectile_type == Weapon::_double_missile)
   {
-	  // The following code launches 4 missles spaced out evenly like they would be in a
+	  // The following code launches 2 missles spaced out evenly like they would be in a
 	  // missle bay.
 	  iXY startPos;
 	  iXY endPos;
@@ -184,15 +178,6 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
 	  //temp->addToList( &projectile_list_start, &projectile_list_end );
 	  //ParticleInterface::addMissleLaunchPuff(startPos, direction, owner_type_id);
   }
-  
-  //assert( temp != 0 );
-
-  //temp->addToList( &projectile_list_start, &projectile_list_end );
-  
-  //SFX
-  long distance = WorldViewInterface::getCameraDistance( start );
-  sound->PlayAmbientSound( owner_type_id, Sound::_fire_gun, distance );
-  sound->PlayAmbientSound( _not_applicable, Sound::_random_battle, distance );
  }
 
 

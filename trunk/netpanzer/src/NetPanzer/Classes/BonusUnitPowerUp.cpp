@@ -58,7 +58,7 @@ void BonusUnitPowerUp::spawnBonusUnits( UnitID &unit_id )
   PlayerID player_id;
   iXY map_loc;
   
-  sound->PlayPowerUpSound();
+  sound->playPowerUpSound();
 
     unit = UnitInterface::getUnit( unit_id );
   
@@ -138,7 +138,7 @@ void BonusUnitPowerUp::onHit( PowerUpHitMesg *message  )
  {
   PlayerID local_player_id;
  
-  sound->PlayPowerUpSound(); 
+  sound->playPowerUpSound(); 
   powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive; 
   
   local_player_id = PlayerInterface::getLocalPlayerID();

@@ -375,7 +375,6 @@ void GameManager::loadPalette(char *palette_path)
 	
 	Palette pal;
 
-//	Screen->palette.loadLibPalette(pal, Screen->lpFrontBuffer);
 	Screen->setPalette(pal.color);
  }
 
@@ -1006,7 +1005,7 @@ void GameManager::spawnPlayer( const PlayerID &player )
 {
   iXY spawn_point;
 
-  sound->StopTankIdle(); 
+  sound->stopTankIdle(); 
   
   // ** Get a new spawn point and spawn the player ** 
   MapInterface::getFreeSpawnPoint( &spawn_point );
@@ -1027,7 +1026,7 @@ void GameManager::spawnPlayer( const PlayerID &player )
     SERVER->sendMessage( player, &set_view, sizeof( SystemSetPlayerView ), 0);
    }
   
-  sound->PlayTankIdle();
+  sound->playTankIdle();
 }     
 
 void GameManager::respawnAllPlayers()
@@ -1577,7 +1576,7 @@ void GameManager::joinMultiPlayerGame()
 #endif
 
   ClientConnectDaemon::startConnectionProcess();
-  sound->PlayTankIdle();
+  sound->playTankIdle();
  }
 
 // ******************************************************************
@@ -1759,7 +1758,7 @@ void GameManager::launchDedicatedServer()
 void GameManager::exitNetPanzer()
 {
   	// NOTE: Hack
-	sound->StopTankIdle(); 
+	sound->stopTankIdle(); 
 
 	quitNetPanzerGame();
 

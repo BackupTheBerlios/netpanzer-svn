@@ -28,22 +28,27 @@ public:
 		_random_battle, _blow_up_tank
 	};
 
+	Sound();
 	virtual ~Sound()
 	{ }
 	
-	virtual void PlayTankIdle() = 0;
-	virtual void StopTankIdle() = 0;
-	virtual void PlayMenuSound() = 0;
-	virtual void PlayAttackWarning() = 0;
-	virtual void PlayPowerUpSound() = 0;
-	virtual void PlayUnitSound(int unit_type) = 0;
-	virtual void PlayUnitVoice(int unit_type, Event event) = 0;
-	virtual void PlayAmbientSound(int unit_type, Event event, long distance)=0;
+	void playTankIdle();
+	void stopTankIdle();
+	void playPowerUpSound();
+	void playUnitSound(int unit_type);
+	void playBattle();
 
 	virtual void playSound(const char* name) = 0;
+	virtual void playAmbientSound(const char *name, long distance)=0;
+	virtual int playSoundRepeatedly(const char* name) = 0;
+	virtual void stopChannel(int channel) = 0;
 
 	virtual void playMusic(const char* directory) = 0;
 	virtual void stopMusic() = 0;
+
+	private:
+	int m_tankIdleChannel;
+	int m_battleCount;
 };
 
 extern Sound* sound;

@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _GLOBALS_H
 #define _GLOBALS_H
 
+#if 0
 extern short DISPLAY_PAGE_STATE;
 
 //short CURRENT_BANK;
@@ -27,8 +28,6 @@ extern unsigned short *WORLD; //map of city
 
 //unsigned long WORLD_WIDTH =  2560;
 //unsigned long WORLD_HEIGHT = 2720;
-
-extern unsigned char *TILE_DATA;
 
 extern unsigned char *INTERFACE_BUFFER;
 
@@ -41,15 +40,8 @@ extern long VIEW_X_SIZE, VIEW_Y_SIZE;
 extern long SCREEN_X_BOUND,SCREEN_Y_BOUND;
 
 //byte SCROLL_LEFT,SCROLL_RIGHT,SCROLL_UP,SCROLL_DOWN;
+#endif
 
-extern int GAME_STATE_PAUSED;
+extern unsigned char *TILE_DATA;
 
-enum { _network_state_server, _network_state_client };
-
-extern int NETWORK_STATE; 
-
-extern int maxplayers;
-extern int dedicated;
-
-enum { _640x480_v48x48 , _640x480_v64x48, _800x600_v80x60 };
 #endif

@@ -262,6 +262,8 @@ void MouseInterface::setMiddleButtonDoubleDown()
 
 void MouseInterface::setCursor(CursorType type)
 {
+	
+	
   	switch(type)
  	{
     case defaultcursor:

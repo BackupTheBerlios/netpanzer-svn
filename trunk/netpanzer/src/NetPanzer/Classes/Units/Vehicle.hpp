@@ -202,8 +202,9 @@ class Vehicle : public Unit
   iXY aiFsmManualMove_prev_loc;
   void aiFsmManualMove( void );
    
-  virtual void fireWeapon( iXY &target_loc );
-
+  void fireWeapon( iXY &target_loc );
+  virtual unsigned short launchProjectile() = 0;
+  virtual void soundSelected();
   
   TimerFrameBase threat_level_under_attack_timer;
   void accessThreatLevels( void );

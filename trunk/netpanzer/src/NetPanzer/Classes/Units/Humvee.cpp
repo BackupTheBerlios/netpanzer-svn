@@ -18,16 +18,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "Humvee.hpp"
 #include "UnitProfileInterface.hpp"
-#include "Gdatstct.hpp"
 #include "Color.hpp"
-#include "ProjectileInterface.hpp"
-#include "NetworkState.hpp"
+#include "WorldViewInterface.hpp"
+#include "Weapon.hpp"
+#include "Sound.hpp"
 #include "GameConfig.hpp"
 
 #include "UnitGlobals.hpp"
 
 // NOTE: Temp unit new sprites put in 
-#include "WorldViewInterface.hpp"
 #include "DDHardSurface.hpp"
 
 void Humvee::setUnitProperties( void )
@@ -105,28 +104,19 @@ Humvee::Humvee( iXY initial_loc, unsigned char color, unsigned char flag )
   body_anim_shadow.attachSprite( &turret_anim_shadow, iXY(0,0) ); 
   body_anim_shadow.attachSprite( &turret_anim, iXY(0,0) ); 
   body_anim_shadow.attachSprite( &select_info_box, iXY(0,0) );
-
-  //FLAGS_DBASE.get_sprite_index( flag, select_info_box.unit_flag );
-  //FLAGS_DBASE.get_sprite_name( "allie", select_info_box.allie_flag );
-
  }
 
-void  Humvee::fireWeapon( iXY &target_loc )
+//-----------------------------------------------------------------
+/**
+ * Make noise.
+ * @return projectile_type
+ */
+unsigned short Humvee::launchProjectile()
 {
-  reload_counter = 0;
-  ProjectileInterface::newProjectile( 3, unit_state.unit_type, unit_id, unit_state.damage_factor, 
-                                      unit_state.location, 
-                                      target_loc
-                                     );
+	//SFX
+	long distance = WorldViewInterface::getCameraDistance(unit_state.location);
+	sound->playAmbientSound("lt-fire", distance );
+	sound->playBattle();
 
-  if ( NetworkState::status == _network_state_server )
-   {
-    FireWeaponOpcode fire_opcode;
-    fire_opcode.opcode = _UNIT_OPCODE_FIRE_WEAPON;
-    fire_opcode.unit_index = unit_id.getIndex();
-	fire_opcode.player_index = unit_id.getPlayer();
-    fire_opcode.x = target_loc.x;
-    fire_opcode.y = target_loc.y;    
-    sendOpcode( &fire_opcode );
-   }
+	return Weapon::_shell;
 }

@@ -22,11 +22,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
 #include "Globals.h"
 #include "Log.hpp"
 #include "Exception.hpp"
 
-sprite_dbase FLAGS_DBASE;
+// XXX remember to remove this later
+#if 1
+#include <SDL.h>
+#include "Palette.hpp"
+#include "String.hpp"
+#endif
 
 //*****************************************************************************
 sprite_dbase::sprite_dbase( void )
@@ -88,9 +94,9 @@ short sprite_dbase::load_dbase( char *dbase_path )
   fclose( infile );
 
   dbase_loaded = true;
+
   return( true ); 
- }
- 
+}
 
 //*****************************************************************************
 

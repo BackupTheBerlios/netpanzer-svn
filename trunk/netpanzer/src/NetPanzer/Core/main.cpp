@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <ctype.h>
 #include <SDL.h>
 
 #include <optionmm/command_line.hpp>
@@ -80,11 +81,7 @@ bool HandleSDLEvents()
 			{
 				KeyboardInterface::keyPressed(event.key.keysym.sym);
 				char c = event.key.keysym.unicode & 0x7F;
-				// XXX This is not optimal... we should find another way to
-				// differentiate normal chars and special keys...
-				if ( (c >= 'a' && c <= 'z') || (c >= '0' && c<='9')
-					|| (c>= 'A' && c <= 'Z') || c == '_' || c=='.'
-					|| c==' ') {
+				if (isprint(c)) {
 					KeyboardInterface::putChar(c);
 				} else {
 					// it's not a normal char put the 0 into the char buffer to

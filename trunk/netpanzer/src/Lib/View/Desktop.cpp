@@ -139,7 +139,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 
 					// mouseActionOffset is relative to the current window
 					mouseActionOffset = mousePos - lMouseView->min;
-					mouseActions      = lMouseView->getMouseActions(mousePos-lMouseView->min);
+					mouseActions      = lMouseView->getMouseActions(mouseActionOffset);
 					if (mouseActions != 0)
 					{
 						// A standard mouse action is supposed to happen here.  Remember

@@ -675,13 +675,14 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
           current_selection_list_index = 0xFFFF;
           if ( working_list.unit_list.containsItems() > 0 )
            {
-            sound->PlayUnitVoice( working_list.getHeadUnitType(), 
-								  Sound::_selected);
+			   UnitBase *unit = UnitInterface::getUnit(working_list.unit_list[0]);
+			   unit->soundSelected();
            }
 
 	     } break; 
 
 	    case _cursor_move:
+	    case _cursor_blocked:
 	     {
           sendMoveCommand( world_pos );
 	     } break;
@@ -815,8 +816,8 @@ void WorldInputCmdProcessor::sendMoveCommand( iXY &world_pos )
    } // ** if 
 
   //sfx
-  sound->PlayUnitSound(working_list.getHeadUnitType() );
-  sound->PlayUnitVoice(working_list.getHeadUnitType(), Sound::_move_to);  
+  sound->playUnitSound(working_list.getHeadUnitType() );
+  sound->playSound("move");
  }
 
 void WorldInputCmdProcessor::sendAttackCommand( iXY &world_pos )
@@ -871,7 +872,7 @@ void WorldInputCmdProcessor::sendAttackCommand( iXY &world_pos )
      } // ** if 
 
     //sfx 
-    sound->PlayUnitVoice(working_list.getHeadUnitType(), Sound::_target_enemy);
+    sound->playSound("target");
    } // ** if 
  }
 
@@ -963,7 +964,7 @@ void WorldInputCmdProcessor::sendManualFireCommand( iXY &world_pos )
       CLIENT->sendMessage( encode_message, encode_message->realSize(), 0 );   
      } // ** if 
     // SFX
-    sound->PlayUnitVoice(working_list.getHeadUnitType(), Sound::_target_enemy);
+    sound->playSound("target");
    } // ** if containsItems() > 0  
 
  }

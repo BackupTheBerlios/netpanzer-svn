@@ -86,9 +86,8 @@ void BulletWeapon::fsmFlight()
 				lifecycle_status = _lifecycle_weapon_in_active;
 
 				//SFX
-				sound->PlayAmbientSound( _not_applicable, 
-										 Sound::_hit_target, 
-										 WorldViewInterface::getCameraDistance( location ) );
+				sound->playAmbientSound("hit",
+						WorldViewInterface::getCameraDistance( location ) );
 
 				// **  Particle Shit
 				iXY loc = iXY( location.x, location.y );

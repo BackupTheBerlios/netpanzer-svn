@@ -23,11 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapInterface.hpp"
 #include "PathScheduler.hpp"
 #include "ProjectileInterface.hpp"
-
 #include "NetworkState.hpp"
+#include "Sound.hpp"
 
 // NOTE: Temp unit new sprites put in 
-#include "WorldViewInterface.hpp"
 #include "DDHardSurface.hpp"
 #include "GameConfig.hpp"
 
@@ -1523,24 +1522,33 @@ void Vehicle::aiFsmManualMove( void )
  }
 
 void Vehicle::fireWeapon( iXY &target_loc )
- {
-  reload_counter = 0;
-  ProjectileInterface::newProjectile( 0, unit_state.unit_type, unit_id, unit_state.damage_factor, 
-                                      unit_state.location, 
-                                      target_loc
-                                     );
+{
+	reload_counter = 0;
 
-  if ( NetworkState::status == _network_state_server )
-   {
-    FireWeaponOpcode fire_opcode;
-    fire_opcode.opcode = _UNIT_OPCODE_FIRE_WEAPON;
-    fire_opcode.unit_index = unit_id.getIndex();
-	fire_opcode.player_index = unit_id.getPlayer();
-    fire_opcode.x = target_loc.x;
-    fire_opcode.y = target_loc.y;    
-    sendOpcodeNG( &fire_opcode );
-   }
- } 
+	unsigned short projectile_type = launchProjectile();
+	ProjectileInterface::newProjectile(projectile_type, unit_state.unit_type, unit_id,
+			unit_state.damage_factor,
+			unit_state.location,
+			target_loc
+			);
+
+	if ( NetworkState::status == _network_state_server )
+	{
+		FireWeaponOpcode fire_opcode;
+		fire_opcode.opcode = _UNIT_OPCODE_FIRE_WEAPON;
+		fire_opcode.unit_index = unit_id.getIndex();
+		fire_opcode.player_index = unit_id.getPlayer();
+		fire_opcode.x = target_loc.x;
+		fire_opcode.y = target_loc.y;
+		sendOpcodeNG( &fire_opcode );
+	}
+}
+
+//-----------------------------------------------------------------
+void Vehicle::soundSelected()
+{
+	sound->playSound("yessir");
+}
 
 void Vehicle::accessThreatLevels( void )
  {

@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Surface.hpp"
 #include "TimerInterface.hpp"
 #include "Span.hpp"
+#include "FileSystem.hpp"
 #include "Exception.hpp"
 #include "UtilInterface.hpp"
 
@@ -188,82 +189,71 @@ void PackedSurface::pack(const Surface &source)
 }
 
 //--------------------------------------------------------------------------
-void PackedSurface::load(const char *filename) {
-	FILE *f = fopen(filename, "rb");
-	
-	if (f == 0)
-		throw Exception("Can't open %s", filename);
-	
-	load(f);
-
-	fclose(f);
-}
-
-//--------------------------------------------------------------------------
-void PackedSurface::save(const char *filename) const {
-	FILE *f = fopen(filename, "wb");
-	if (f == 0) throw Exception("Can't create %s", filename);
-	save(f);
-	fclose(f);
-}
-
-//--------------------------------------------------------------------------
-void PackedSurface::load(FILE *f) {
+void PackedSurface::load(const char* filename) {
+	ReadFile* file = FileSystem::openRead(filename);
+		
 	free();
 	int version;
-	fread(&version, sizeof(version), 1, f);
+	file->read(&version, sizeof(version), 1);
 	if (version < 1) {
+		delete file;
 		throw Exception("Invalid PAK file version: %d", version);
 	}
 	if (version > CURRENT_PAK_VERSION) {
+		delete file;
 		throw Exception("PAK file version %d is newer than the .exe (%d) you are using, which only supports up to version", version, CURRENT_PAK_VERSION);
 	}
-	fread(&pix, sizeof(pix), 1, f);
+	file->read(&pix, sizeof(pix), 1);
 
 	center = pix / 2;
 
-	fread(&frameCount, sizeof(frameCount), 1, f);
-	fread(&fps, sizeof(fps), 1, f);
-	fread(&offset, sizeof(offset), 1, f);
+	file->read(&frameCount, sizeof(frameCount), 1);
+	file->read(&fps, sizeof(fps), 1);
+	file->read(&offset, sizeof(offset), 1);
 	rowOffsetTable = (int *) malloc((pix.y * frameCount + 1) * sizeof(*rowOffsetTable));
 	if (rowOffsetTable == 0)
 	{
+		delete file;
 		throw Exception("ERROR: Unable to allocate rowTableOffset for PackedSurface.");
 	}
-	fread(rowOffsetTable, (pix.y*frameCount + 1)*sizeof(*rowOffsetTable), 1, f);
+	file->read(rowOffsetTable, (pix.y*frameCount + 1)*sizeof(*rowOffsetTable), 1);
 	packedDataChunk = (BYTE *)malloc(rowOffsetTable[pix.y*frameCount]);
 	if (packedDataChunk == 0)
 	{
+		delete file;
 		throw Exception("ERROR: Unable to allocate packedDataChunk for PackedSurface.");
 	}
-	fread(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1, f);
-
-	// Quick check for error
-
-	if (ferror(f))
-		throw Exception("Error reading packed surface file!");
+	if(file->read(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1) != 1)
+		throw Exception("error while reading %s.", filename);
 
 	// Add size of rowTableOffset.
 	totalByteCount += (pix.y * frameCount + 1) * sizeof(*rowOffsetTable);
 
 	// Add size of packedDataChunk.
 	totalByteCount += pix.y * frameCount;
+
+	delete file;
 }
 
 //--------------------------------------------------------------------------
-void PackedSurface::save(FILE *f) const {
+void PackedSurface::save(const char* filename) const
+{
+	WriteFile* file = FileSystem::openWrite(filename);
+	
 	int version = CURRENT_PAK_VERSION;
-	fwrite(&version, sizeof(version), 1, f);
-	fwrite(&pix, sizeof(pix), 1, f);
-	fwrite(&frameCount, sizeof(frameCount), 1, f);
-	fwrite(&fps, sizeof(fps), 1, f);
-	fwrite(&offset, sizeof(offset), 1, f);
-	fwrite(rowOffsetTable, (pix.y*frameCount + 1)*sizeof(*rowOffsetTable), 1, f);
-	fwrite(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1, f);
+	file->write(&version, sizeof(version), 1);
+	file->write(&pix, sizeof(pix), 1);
+	file->write(&frameCount, sizeof(frameCount), 1);
+	file->write(&fps, sizeof(fps), 1);
+	file->write(&offset, sizeof(offset), 1);
+	file->write(rowOffsetTable, (pix.y*frameCount + 1)*sizeof(*rowOffsetTable), 1);
+	if (file->write(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1) != 1)
+	{
+		delete file;	
+		throw Exception("error while writing '%s'.", filename);
+	}
 
-	// Quick check for error
-
-	if (ferror(f)) throw Exception("Error writing packed surface file!");
+	delete file;
 }
 
 //--------------------------------------------------------------------------

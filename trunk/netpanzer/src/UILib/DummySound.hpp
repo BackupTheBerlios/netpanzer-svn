@@ -27,16 +27,12 @@ public:
 	DummySound();
 	virtual ~DummySound();
 	
-	virtual void PlayTankIdle();
-	virtual void StopTankIdle();
-	virtual void PlayMenuSound();
-	virtual void PlayAttackWarning();
-	virtual void PlayPowerUpSound();
-	virtual void PlayUnitSound(int unit_type);
-	virtual void PlayUnitVoice(int unit_type, Event event);
-	virtual void PlayAmbientSound(int unit_type, Event event, long distance);
-
 	virtual void playSound(const char* name);
+	virtual void playAmbientSound(const char *name, long distance);
+	virtual int playSoundRepeatedly(const char* name)
+	{ return -1; }
+	virtual void stopChannel(int channel)
+	{}
 
 	virtual void playMusic(const char* directory);
 	virtual void stopMusic();

@@ -24,7 +24,8 @@ class Archer : public Vehicle
  {
   protected:
    void setUnitProperties( void );
-   virtual void  fireWeapon( iXY &target_loc );
+   virtual unsigned short launchProjectile();
+   virtual void soundSelected();
  
   public:
    Archer( iXY initial_loc, unsigned char color, unsigned char flag );

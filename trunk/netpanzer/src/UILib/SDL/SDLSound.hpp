@@ -20,7 +20,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 #include <vector>
+#include <map>
+#include <SDL_mixer.h>
 #include "UILib/Sound.hpp"
+
+typedef std::multimap<std::string,Mix_Chunk*> chunks_t;
+typedef std::vector<std::string> musics_t;
 
 class SDLSound : public Sound
 {
@@ -28,24 +33,25 @@ public:
 	SDLSound();
 	virtual ~SDLSound();
 
-	virtual void PlayTankIdle();
-	virtual void StopTankIdle();
-	virtual void PlayMenuSound();
-	virtual void PlayAttackWarning();
-	virtual void PlayPowerUpSound();
-	virtual void PlayUnitSound(int unit_type);
-	virtual void PlayUnitVoice(int unit_type, Event event);
-	virtual void PlayAmbientSound(int unit_type, Event event, long distance);
-	virtual void playSound(const char* name)
-	{}
+	virtual void playSound(const char* name);
+	virtual void playAmbientSound(const char* name, long distance);
+	virtual int playSoundRepeatedly(const char* name);
+	virtual void stopChannel(int channel);
 
 	virtual void playMusic(const char* directory);
 	virtual void stopMusic();
 
 private:
+	chunks_t m_chunks;
+
+	Mix_Chunk *findChunk(const char *name);
+	int getSoundVolume(long distance);
+	void loadSound(const char* directory);
+	std::string getIdName(const char* filename);
+
 	static void nextSong();
-	static std::vector<std::string> musicfiles;
-	static std::vector<std::string>::iterator currentsong;
+	static musics_t musicfiles;
+	static musics_t::iterator currentsong;
 };
 
 #endif

@@ -373,21 +373,20 @@ void Palette::loadACT(const char *filename)
 {
 	assert(filename != 0);
 
-	FILE *fp;
-
 	setName(filename);
 
-	if ((fp = fopen(filename, "rb")) == 0)
-		throw Exception("Unable to open palette file: %s", filename);
+	ReadFile* file = FileSystem::openRead(filename);
 
 	for (int i = 0; i < 256; i++)
 	{
-	    fread(&color[i], 3, sizeof(BYTE), fp);
+	    if(file->read(&color[i], 3, 1) != 1) {
+			delete file;
+			throw Exception("couldn't read file '%s'", filename);
+		}
 		originalColor[i] = color[i];
 	}
 
-    fclose(fp);
-
+	delete file;
 } // end Palette::loadACT
 
 // findNearestColor

@@ -45,6 +45,8 @@ class UnitBase : public UnitBlackBoard
 
    virtual void offloadGraphics( SpriteSorter &sorter ) { }
   
+   virtual void soundSelected() = 0;
+
   protected:
    UnitBase *groupLinkNext;
  

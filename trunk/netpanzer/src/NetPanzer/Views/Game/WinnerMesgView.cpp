@@ -44,7 +44,7 @@ static void bReturnToMainMenu()
   }
  else
   {  
-    sound->StopTankIdle();
+    sound->stopTankIdle();
 
 	// Blank the screen.
 

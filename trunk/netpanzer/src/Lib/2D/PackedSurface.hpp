@@ -85,8 +85,6 @@ public:
 
 	void load(const char *filename);
 	void save(const char *filename) const;
-	void load(FILE *f);
-	void save(FILE *f) const;
 
 	inline void setFPS(float fps)
 	{
@@ -138,37 +136,3 @@ protected:
 
 #endif // end __PackedSurface_hpp__
 
-/*
-typedef void (*CALLBACK)(void *context);
-
-class WINDOW {
-
-  void close();
-
-  CALLBACK buttonFunc;
-
-}
-
-void closeWindow(void *context) {
-  WINDOW *w = (WINDOW *)context;
-  w->close();
-}
-
-WINDOW::WINDOW() {
-  ...
-  buttonFunc = closeWindow;
-}
-
-
-WINDOW::buttonPushed() {
-  if (buttonFunc != 0) {
-    (*buttonFunc)(this);
-  }
-}
-
-typedef void (WINDOW::*CALLBACK)(void);
-
-CALLBACK buttonFunc = &WINDOW::close;
-
-(*buttonFunc)()
-*/

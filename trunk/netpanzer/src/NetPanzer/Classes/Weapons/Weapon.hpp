@@ -41,6 +41,18 @@ enum
 
 class Weapon : public Projectile
 {
+public:
+	/**
+	 * Projectile types.
+	 */
+	enum {
+		_none,
+		_quad_missile,
+		_bullet,
+		_shell,
+		_double_missile
+	};
+
 protected:
 	SpritePacked shell;
 	SpritePacked shellShadow;

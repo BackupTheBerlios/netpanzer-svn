@@ -34,7 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //---------------------------------------------------------------------------
 static void bYES()
 {
-	sound->StopTankIdle();
+	sound->stopTankIdle();
 
 	GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
 

@@ -207,9 +207,8 @@ void UnitInterface::updateUnitStatus( void )
 		ParticleInterface::addHit(unit->unit_state);
     
 		//SFX
-        sound->PlayAmbientSound( _not_applicable, 
-								 Sound::_blow_up_tank,
-								 WorldViewInterface::getCameraDistance( unit->unit_state.location ) );
+		sound->playAmbientSound("expl",
+				WorldViewInterface::getCameraDistance( unit->unit_state.location ) );
 
         deleteUnit( unit );                              
        }
@@ -1035,9 +1034,8 @@ void UnitInterface::unitDestroyMessage( NetMessage *net_message )
     ParticleInterface::addHit(unit->unit_state);
 
     //SFX
-    sound->PlayAmbientSound( _not_applicable, 
-							 Sound::_blow_up_tank,
-  	  					     WorldViewInterface::getCameraDistance( unit->unit_state.location ) );
+	sound->playAmbientSound("expl",
+			WorldViewInterface::getCameraDistance( unit->unit_state.location ) );
 
     unit_lists[ unit_id.getPlayer() ].deleteUnit( unit_id );
    }

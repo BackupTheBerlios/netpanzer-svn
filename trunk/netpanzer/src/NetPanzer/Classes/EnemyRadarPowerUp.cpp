@@ -55,7 +55,7 @@ void EnemyRadarPowerUp::setRadar( UnitID &unit_id )
   UnitBase *unit;
   PlayerID player_id;
   
-  sound->PlayPowerUpSound();
+  sound->playPowerUpSound();
 
   unit = UnitInterface::getUnit( unit_id );
   
@@ -106,7 +106,7 @@ void EnemyRadarPowerUp::offloadGraphics( SpriteSorter &sorter )
 
 void EnemyRadarPowerUp::onHit( PowerUpHitMesg *message  )
  {
-  sound->PlayPowerUpSound(); 
+  sound->playPowerUpSound(); 
   PlayerID local_player_id;
   
   local_player_id = PlayerInterface::getLocalPlayerID();

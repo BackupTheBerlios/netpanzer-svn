@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _MOUSEINTERFACE_HPP
 #define _MOUSEINTERFACE_HPP
 
+#include <string>
+#include <vector>
 #include "QueueTemplate.hpp"
 #include "Surface.hpp"
 
@@ -50,7 +52,14 @@ private:
   	static Surface mouse_cursor;
    	static unsigned char cursor_x_size;
 	static unsigned char cursor_y_size;
-  
+
+	struct MouseCursorEntry
+	{
+		std::string name;
+		Surface cursor;
+	};
+	std::vector<MouseCursorEntry> cursors;
+
 protected:
   	static iXY mouse_pos;  
    
@@ -100,29 +109,28 @@ public:
 		*y = mouse_pos.y;
 	}
  
-   static inline unsigned char getButtonMask( void )
+   static inline unsigned char getButtonMask()
     {
      return( button_mask );
     }
      
    static bool buttonHeld( unsigned char mask);
-   static void resetButtonHoldStatus( void );
+   static void resetButtonHoldStatus();
    
-   static void setLeftButtonDown( void );
-   static void setLeftButtonUp( void );
-   static void setLeftButtonDoubleDown( void );
+   static void setLeftButtonDown();
+   static void setLeftButtonUp();
+   static void setLeftButtonDoubleDown();
          
-   static void setRightButtonDown( void );
-   static void setRightButtonUp( void );
-   static void setRightButtonDoubleDown( void );
+   static void setRightButtonDown();
+   static void setRightButtonUp();
+   static void setRightButtonDoubleDown();
 
-   static void setMiddleButtonDown( void );
-   static void setMiddleButtonUp( void );
-   static void setMiddleButtonDoubleDown( void );
+   static void setMiddleButtonDown();
+   static void setMiddleButtonUp();
+   static void setMiddleButtonDoubleDown();
    
-   static void setCursor(CursorType type);
-    
-   static void updateCursor( void );
+   static void setCursor(CursorType type); 
+   static void updateCursor();
 };
 
 #endif // ** _MOUSEINTERFACE_HPP

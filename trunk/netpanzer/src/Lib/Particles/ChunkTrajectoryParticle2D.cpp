@@ -188,17 +188,18 @@ void ChunkTrajectoryParticle2D::createGroundChunks()
 	char strBuf[256];
 	sprintf(strBuf, "%sgroundChunks.pak", chunkPathPAK);
 	tempPackedSurface.save(strBuf);
-
 } // end ChunkTrajectoryParticle2D::createGroundChunks
 
 // createPAKFiles
 //---------------------------------------------------------------------------
 void ChunkTrajectoryParticle2D::createPAKFiles()
 {
+#if 0
 	createGroundChunks();
 	createBurnGroundChunks();
 	createUnitBodyGreenChunks();
 	createUnitBodyGrayChunks();
+#endif
 
 	staticPackedGroundChunks.load("pics/particles/chunks/pak/groundChunks.pak");
 	staticPackedBurnGroundChunks.load("pics/particles/chunks/pak/greenUnitChunks.pak");

@@ -29,39 +29,11 @@ DummySound::~DummySound()
 {
 }
 
-void DummySound::PlayTankIdle()
-{
-}
-
-void DummySound::StopTankIdle()
-{
-}
-
-void DummySound::PlayMenuSound()
-{
-}
-
-void DummySound::PlayAttackWarning()
-{
-}
-
-void DummySound::PlayPowerUpSound()
-{
-}
-
-void DummySound::PlayUnitSound(int )
-{
-}
-
-void DummySound::PlayUnitVoice(int, Event)
-{
-}
-
-void DummySound::PlayAmbientSound(int, Event, long)
-{
-}
-
 void DummySound::playSound(const char*)
+{
+}
+
+void DummySound::playAmbientSound(const char*, long)
 {
 }
 

@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <algorithm>
 #include "FindFirst.hpp"
+#include "Log.hpp"
 #include "Surface.hpp"
 #include "FileSystem.hpp"
 #include "UtilInterface.hpp"
@@ -1375,11 +1376,11 @@ void Surface::loadRAW(const char *filename, bool needAlloc /* = true */)
 
 	fread(&head, sizeof(PIC_HEAD), 1, fp);
 
-	//LOG(("loadRAW -> picName: %s", fileName));
-	//LOG(("head.xPix:          %u", head.xPix));
-	//LOG(("head.yPix:          %u", head.yPix));
-	//LOG(("head.frameCount:     %u", head.frameCount));
-	//LOG(("head.numBytes:      %u", head.xPix*head.yPix*head.frameCount));
+	LOG(("loadRAW -> picName: %s", filename));
+	LOG(("head.xPix:          %u", head.xPix));
+	LOG(("head.yPix:          %u", head.yPix));
+	LOG(("head.frameCount:     %u", head.frameCount));
+	LOG(("head.numBytes:      %u", head.xPix*head.yPix*head.frameCount));
 
 	if (ferror(fp))
 	{
@@ -3864,7 +3865,7 @@ void Surface::mapFromPalette(const char* oldPalette)
 		bestFitArray[i] = Palette::findNearestColor(sourceColor[i]);
 	}
 
-	for (size_t x = 0; x < pix.x * pix.y * frameCount; x++)
+	for (size_t x = 0; x < (size_t) (pix.x * pix.y * frameCount); x++)
 	{
 		frame0[x] = bestFitArray[frame0[x]];
 	}

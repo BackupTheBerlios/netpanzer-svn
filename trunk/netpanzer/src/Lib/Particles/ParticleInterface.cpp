@@ -45,6 +45,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitGlobals.hpp"
 #include "CraterParticle2D.hpp"
 #include "Exception.hpp"
+#include "Sound.hpp"
 
 
 cGrowList <UnitParticleInfo> ParticleInterface::unitParticleInfo;
@@ -446,8 +447,7 @@ void ParticleInterface::testSim()
         groupTime0 = 0.0f;
 
         //SFX
-		// XXX
-        // dsound.PlayAmbientSound( _not_applicable, _blow_up_tank, 0 );
+        sound->playSound("expl");
 
 		iRect gameViewRect;
 		WorldViewInterface::getViewWindow(&gameViewRect);
@@ -469,8 +469,7 @@ void ParticleInterface::testSim()
         groupTime1 = 0.0f;
 
         //SFX
-		// XXX
-        // dsound.PlayAmbientSound( _not_applicable, _blow_up_tank, 0 );
+		sound->playSound("expl");
 
 		iRect gameViewRect;
 		WorldViewInterface::getViewWindow(&gameViewRect);
