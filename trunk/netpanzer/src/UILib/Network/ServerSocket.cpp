@@ -59,6 +59,8 @@ ServerSocket::~ServerSocket()
     delete clientlist;
     SDLNet_FreeSocketSet(sockets);
     SDLNet_TCP_Close(tcpsocket);
+
+    SDLNet::shutdown();
 }
 
 void ServerSocket::read()
@@ -124,7 +126,7 @@ void ServerSocket::readClientTCP(Client* client)
     int recvsize = SDLNet_TCP_Recv(client->tcpsocket, recvbuffer,
                                    sizeof(recvbuffer));
     if(recvsize<=0) {
-        printf ("Connection lost for ID %lu: %s\n", client->id,
+        printf ("Connection lost for ID %u: %s\n", client->id,
                 SDLNet_GetError());
         // XXX danger...
         clientlist->remove(client);

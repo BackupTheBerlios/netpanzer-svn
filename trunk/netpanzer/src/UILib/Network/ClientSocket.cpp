@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ClientSocket::ClientSocket(const char* servername, Uint16 port)
 {
-    SDLNet::shutdown();
+    SDLNet::initialise();
     
     // resolve server name
     IPaddress serverip;
@@ -55,6 +55,8 @@ ClientSocket::~ClientSocket()
     SDLNet_TCP_DelSocket(socketset, tcpsocket);
     SDLNet_FreeSocketSet(socketset);
     SDLNet_TCP_Close(tcpsocket);
+
+    SDLNet::shutdown();
 }
 
 void ClientSocket::read()
