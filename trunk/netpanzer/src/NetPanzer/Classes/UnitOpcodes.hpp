@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITOPCODES_HPP
 #define _UNITOPCODES_HPP
 
-#include "QueueTemplate.hpp"
+#include <queue>
 
 enum { _unit_opcode_flag_sync = 0x01 };
 
@@ -38,7 +38,7 @@ struct UnitOpcodeStruct
 __attribute__((packed));
 
 
-typedef QueueTemplate< UnitOpcodeStruct > UnitOpcodeQueue;
+typedef std::queue< UnitOpcodeStruct > UnitOpcodeQueue;
 
 class UnitOpcode
 {

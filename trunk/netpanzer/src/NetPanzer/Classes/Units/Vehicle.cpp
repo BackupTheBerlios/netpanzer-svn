@@ -55,9 +55,6 @@ Vehicle::Vehicle(iXY initial_loc)
     external_ai_event = _external_event_null;
     memset( fsm_active_list, 0, sizeof( bool ) * 7 );
 
-    opcode_queue.initialize( 25 );
-    move_opcode_queue.initialize( 25 );
-
     in_sync_flag = true;
 
     body_anim_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
@@ -1809,15 +1806,16 @@ void Vehicle::processMoveOpcodeQueue( void )
 {
     UnitOpcodeStruct opcode;
 
-    if ( move_opcode_queue.isReady() == true ) {
+    if (!move_opcode_queue.empty()) {
         if( fsm_active_list[ _control_move_map_square ] == false ) {
-            if ( move_opcode_queue.itemCount() >= 3 ) {
+            if ( move_opcode_queue.size() >= 3 ) {
                 for( int i = 0; i < 2; i++ ) {
-                    move_opcode_queue.dequeue();
+                    move_opcode_queue.pop();
                 }
                 //ConsoleInterface::postMessage( "Move Opcode Queue Adjusted" );
             }
-            opcode = move_opcode_queue.dequeue();
+            opcode = move_opcode_queue.front();
+            move_opcode_queue.pop();
             unitOpcodeMove( &opcode );
         }
     }
@@ -1830,50 +1828,50 @@ void Vehicle::processOpcodeQueue( void )
 
     processMoveOpcodeQueue();
 
-    if ( opcode_queue.isReady() ) {
-        opcode = opcode_queue.getFirst();
+    if (!opcode_queue.empty()) {
+        opcode = opcode_queue.front();
 
         switch( opcode.opcode ) {
 
         case _UNIT_OPCODE_TURRET_TRACK_POINT : {
                 unitOpcodeTrackPoint( &opcode );
-                opcode_queue.dequeue();
+                opcode_queue.pop();
             }
             break;
 
         case _UNIT_OPCODE_TURRET_TRACK_TARGET : {
                 unitOpcodeTrackTarget( &opcode );
-                opcode_queue.dequeue();
+                opcode_queue.pop();
             }
             break;
 
         case _UNIT_OPCODE_FIRE_WEAPON : {
                 unitOpcodeFireWeapon( &opcode );
-                opcode_queue.dequeue();
+                opcode_queue.pop();
             }
             break;
 
         case _UNIT_OPCODE_SYNC_UNIT : {
                 unitOpcodeSync( &opcode );
-                opcode_queue.dequeue();
+                opcode_queue.pop();
             }
             break;
 
         case _UNIT_OPCODE_UPDATE_STATE : {
                 unitOpcodeUpdateState( &opcode );
-                opcode_queue.dequeue();
+                opcode_queue.pop();
             }
             break;
 
         case _UNIT_OPCODE_DESTRUCT : {
                 unitOpcodeDestruct( &opcode );
-                opcode_queue.dequeue();
+                opcode_queue.pop();
             }
             break;
 
         } // ** switch
 
-    } // ** if opcode_queue.isReady()
+    } // ** if !opcode_queue.empty()
 }
 
 
@@ -1881,14 +1879,10 @@ void Vehicle::evalCommandOpcode( UnitOpcodeStruct *opcode )
 {
 
     if ( opcode->opcode == _UNIT_OPCODE_MOVE ) {
-        if ( move_opcode_queue.enqueue( *opcode ) == false ) {
-            LOG( ("ERROR : Move Opcode Queue Overwrite, Unit %d, %d", unit_id.getPlayer(), unit_id.getIndex() ) );
-        }
-    } else
-        if ( opcode_queue.enqueue( *opcode ) == false ) {
-            LOG( ("ERROR : Opcode Queue Overwrite, Unit %d, %d", unit_id.getPlayer(), unit_id.getIndex() ) );
-        }
-
+        move_opcode_queue.push( *opcode );
+    } else {
+        opcode_queue.push( *opcode );
+    }
 }
 
 
