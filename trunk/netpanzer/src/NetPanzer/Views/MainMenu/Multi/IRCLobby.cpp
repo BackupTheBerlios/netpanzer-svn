@@ -119,7 +119,6 @@ IRCLobby::~IRCLobby()
 {
     stopThread();
     SDL_DestroyMutex(game_servers_mutex);
-LOG(("delete lobby"));
 }
 
 void IRCLobby::restartThread()
