@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <time.h>
 
+#include <errno.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -76,6 +77,11 @@ MasterServer::MasterServer()
 
 MasterServer::~MasterServer()
 {
+    for(std::list<RequestThread*>::iterator i = threads.begin();
+            i != threads.end(); ++i) {
+        delete *i;
+    }
+    
     close(sock);
     closeLog();
 }

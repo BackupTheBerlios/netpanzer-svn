@@ -4,7 +4,7 @@
 
 #include <fstream>
 
-#define LOGFILE "/var/log/masterserver"
+#define LOGFILE LOCALSTATEDIR"/masterserver"
 
 namespace masterserver
 {

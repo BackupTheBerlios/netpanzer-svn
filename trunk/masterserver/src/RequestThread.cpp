@@ -62,6 +62,7 @@ void RequestThread::run()
             *stream << "\\error\\Unknown request\\final\\" << std::flush;
         }
     }
+    delete tokenizer;
     delete stream;
     stream = 0;
 }
