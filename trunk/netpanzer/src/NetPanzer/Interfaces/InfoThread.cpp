@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <sstream>
 #include <stdexcept>
+#include <stdlib.h>
 
 #include <string.h>
 
@@ -32,6 +33,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Network/Address.hpp"
 #include "GameManager.hpp"
 #include "ObjectiveInterface.hpp"
+#include "ConsoleInterface.hpp"
+
+static const float SERVER_HANG_TIME = 5*60;
 
 InfoThread::InfoThread(int port)
     : socket(0)
@@ -39,9 +43,11 @@ InfoThread::InfoThread(int port)
     network::Address addr = network::Address::resolve(
             gameconfig->bindaddress, port);
     socket = new network::UDPSocket(addr, false);
+
+    lastFrame = now();
     
     // start the thread
-    thread = SDL_CreateThread(threadMain, this);
+    thread = SDL_CreateThread(threadMain, this);    
 }
 
 InfoThread::~InfoThread()
@@ -52,7 +58,8 @@ InfoThread::~InfoThread()
     delete socket;
 }
 
-int InfoThread::threadMain(void* data)
+int
+InfoThread::threadMain(void* data)
 {
     InfoThread* _this = reinterpret_cast<InfoThread*> (data);
 
@@ -71,7 +78,8 @@ int InfoThread::threadMain(void* data)
     return 0;
 }
 
-void InfoThread::handleStatusRequests()
+void
+InfoThread::handleStatusRequests()
 {
     network::Address addr;
     char buffer[4096];
@@ -81,7 +89,8 @@ void InfoThread::handleStatusRequests()
         if(!running)
             return;         
         size = socket->recv(addr, buffer, sizeof(buffer));
-        SDL_Delay(20);
+        SDL_Delay(15);
+        checkServerHang();
     }
 
     std::string packetstr(buffer, size);
@@ -118,7 +127,23 @@ void InfoThread::handleStatusRequests()
     } while(query != "");
 }
 
-void InfoThread::sendInfo(std::stringstream& out)
+// from main.cpp somewhat hacky...
+void shutdown();
+
+void
+InfoThread::checkServerHang()
+{
+    if(now() - lastFrame > SERVER_HANG_TIME) {
+        ConsoleInterface::postMessage("Detected endless loop. Shutting down.");
+
+        // hard shutdown, can't correctly abort the mainloop if it hangs :-/
+        shutdown();
+        exit(1);
+    }
+}
+
+void
+InfoThread::sendInfo(std::stringstream& out)
 {
     // This should be some game-specific logic...
     out << "gamename\\netpanzer\\"
@@ -134,7 +159,8 @@ void InfoThread::sendInfo(std::stringstream& out)
         out << "full\\1\\";
 }
 
-void InfoThread::sendRules(std::stringstream& out)
+void
+InfoThread::sendRules(std::stringstream& out)
 {
     out << "gamestyle\\" << gameconfig->getGameTypeString() << "\\"
         << "units_per_player\\" << gameconfig->GetUnitsPerPlayer() << "\\"
@@ -144,7 +170,8 @@ void InfoThread::sendRules(std::stringstream& out)
         << "objectivelimit\\" << ObjectiveInterface::getObjectiveLimit() <<"\\";
 }
 
-void InfoThread::sendPlayers(std::stringstream& out)
+void
+InfoThread::sendPlayers(std::stringstream& out)
 {
     ObjectiveInterface::updatePlayerObjectiveCounts();
     for(int i = 0; i < PlayerInterface::countPlayers(); ++i) {

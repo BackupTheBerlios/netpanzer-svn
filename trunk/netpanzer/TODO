@@ -1,21 +1,10 @@
 Next release:
 -after having a full nodelist in A* the server is getting slow
     - no idea how to solve this, have to leave it open I guess...
--make 1024x768 default resolution - ok
--update server text (no knetpanzerbrowser anymore) - ok
 -server status command returns wrong player names (seems to happen after sudden
-        client disconnects)
+        client disconnects) - was probably people with ppc trying to join
 -netpanzer fails on win98se
--win32 doesn't show time in serverlogs - ok
--you can't move panzers around on ppc (also often connection errors on ppc:
-        <cypmac> cyp@itouch:~$ netpanzer -c 194.167.156.7
-        <cypmac> open /dev/sequencer: No such device
-        <cypmac> netpanzer: src/NetPanzer/Interfaces/PlayerInterface.hpp:82:
-        static PlayerState* PlayerInterface::getPlayerState(short unsigned int):
-        Assertion `player_index < max_players' failed.
-        <cypmac> Received signal SIGABRT(6)
-        <cypmac> aborting and trying to shutdown.
-        <cypmac> Abandon)
+-you can't move panzers around on ppc - maybe ok (needs testing)
 
 -this resulted in an endless loop in the server
 <fEnIo> Connection lost of Client 64: Read error: Connection timed out.
@@ -32,9 +21,10 @@ Next release:
 <fEnIo> query for worldpixmovement outside map (2518,6662)
 <fEnIo> An unexpected exception occured: Send error: Couldn't send all data.
 <fEnIo> Shutdown needed.
--if I can't solve the server hang, add a new thread that shuts the server down
- after a 5 minutes of hang or so...
--include Christian Hausknechts patch from the mailing list - ok
+    might be more ppc people joining (yes, netpanzer isn't 100% robust in
+            network packet error checking... but no chance to review and fix
+            this stuff before 0.2.0 as it should work quiet well once ppc
+            endianess is fixed)
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map

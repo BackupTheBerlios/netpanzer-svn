@@ -99,6 +99,9 @@ void DedicatedGameManager::initializeInputDevices()
 //-----------------------------------------------------------------
 void DedicatedGameManager::inputLoop()
 {
+    if(infothread)
+        infothread->lastFrame = now();
+    
     // handle server commands
     SDL_mutexP(commandqueue_mutex);
     while(!commandqueue.empty()) {

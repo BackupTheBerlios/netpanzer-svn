@@ -241,6 +241,9 @@ void PlayerGameManager::initializeWindowSubSystem()
 //-----------------------------------------------------------------
 void PlayerGameManager::inputLoop()
 {
+    if(infothread)
+        infothread->lastFrame = now();
+
     processSystemKeys();
 
 #if 0

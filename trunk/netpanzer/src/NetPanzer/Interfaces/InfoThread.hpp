@@ -21,15 +21,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sstream>
 #include <SDL_thread.h>
 #include "Network/UDPSocket.hpp"
+#include "Util/TimeStamp.hpp"
 
 /** This class is responsible for answering queries about the server status.
- * (part of the masterserver/gamebrowser protocol)
+ * Also contains code to detect if the server has hung and shuts it down in
+ * this case.
  */
 class InfoThread
 {
 public:
     InfoThread(int port);
-    ~InfoThread(); 
+    ~InfoThread();
+
+    /** time when the server completed it's last frame. This is used to detect
+     * servers that are in an endless loop (happens sometimes :-(  )
+     */
+    TimeStamp lastFrame;
 
 private:
     static int threadMain(void* data);
@@ -38,6 +45,7 @@ private:
     void sendInfo(std::stringstream& out);
     void sendRules(std::stringstream& out);
     void sendPlayers(std::stringstream& out);
+    void checkServerHang();
 
     network::UDPSocket* socket;
     volatile bool running;
