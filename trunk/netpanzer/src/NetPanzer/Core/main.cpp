@@ -214,8 +214,8 @@ BaseGameManager *initialise(int argc, char** argv)
 #endif
 
     // create a pidfile
-#ifndef WIN32
     pidfile = pidfile_option.value();
+#ifndef WIN32
     if(pidfile != "") {
         std::ofstream out(pidfile.c_str());
         if(!out.good()) {
@@ -227,7 +227,9 @@ BaseGameManager *initialise(int argc, char** argv)
         out.close();
     }
 #else
-    fprintf(stderr, "Pidfiles not supported on win32.\n");
+    if(pidfile != "") {
+        fprintf(stderr, "Pidfiles not supported on win32.\n");
+    }
 #endif
     
     BaseGameManager *manager;
