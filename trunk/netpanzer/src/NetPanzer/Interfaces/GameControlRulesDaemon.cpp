@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Desktop.hpp"
 #include "ProgressView.hpp"
-#include "Log.hpp"
+#include "Util/Log.hpp"
 
 enum { _map_cycle_server_state_idle,
        _map_cycle_server_state_display_endgame_views,

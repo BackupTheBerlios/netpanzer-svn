@@ -20,9 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdarg.h>
 #include <stdio.h>
-#include "ArrayTemplate.hpp"
-#include "Timer.hpp"
-#include "Surface.hpp"
+#include "ArrayUtil/ArrayTemplate.hpp"
+#include "ArrayUtil/Timer.hpp"
+#include "2D/Surface.hpp"
 
 
 class ConsoleLine

@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __MissleWeapon_hpp__
 
 #include "Weapon.hpp"
-#include "fXY.hpp"
+#include "Types/fXY.hpp"
 #include "Particle2D.hpp"
 
 class MissleWeapon : public Weapon

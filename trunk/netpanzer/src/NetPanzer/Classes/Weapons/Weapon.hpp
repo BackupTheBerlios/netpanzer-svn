@@ -19,11 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _WEAPON_HPP
 
 #include "Projectile.hpp"
-#include "BresenhamLine.hpp"
+#include "Util/BresenhamLine.hpp"
 #include "UnitID.hpp"
-#include "Timer.hpp"
+#include "ArrayUtil/Timer.hpp"
 #include "Sprite.hpp"
-#include "fXY.hpp"
+#include "Types/fXY.hpp"
 #include "Particle2D.hpp"
 
 enum

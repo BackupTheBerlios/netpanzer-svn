@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameConfig.hpp"
 #include "GameManager.hpp"
 #include "GameViewGlobals.hpp"
-#include "UILib/UIDraw.hpp"
+#include "System/UIDraw.hpp"
 #include "Desktop.hpp"
 
 // VisualsView

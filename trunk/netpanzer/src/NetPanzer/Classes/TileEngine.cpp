@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "TileEngine.hpp"
 #include "blitters.hpp"
 #include "ScreenSurface.hpp"
-#include "UILib/UIDraw.hpp"
+#include "System/UIDraw.hpp"
 
 void TileEngine::blitWorld()
 {

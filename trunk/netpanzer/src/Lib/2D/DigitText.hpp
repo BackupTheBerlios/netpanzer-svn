@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __DigitText_hpp__
 #define __DigitText_hpp__
 
+#include "Types/iXY.hpp"
 #include "Surface.hpp"
-#include "iXY.hpp"
 #include "Color.hpp"
 
 enum DIGIT_BLT_MODES

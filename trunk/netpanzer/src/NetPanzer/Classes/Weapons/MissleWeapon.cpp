@@ -22,10 +22,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitInterface.hpp"
 #include "NetworkState.hpp"
 #include "WorldViewInterface.hpp"
-#include "Sound.hpp"
+#include "System/Sound.hpp"
 #include "ParticleInterface.hpp"
 #include "WeaponGlobals.hpp"
-#include "Math.hpp"
+#include "Util/Math.hpp"
 #include "GameConfig.hpp"
 #include "FlashParticle2D.hpp"
 

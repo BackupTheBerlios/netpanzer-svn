@@ -17,14 +17,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "SplitPath.hpp"
-#include "FileSystem.hpp"
-#include "Log.hpp"
-#include "Exception.hpp"
+#include "Util/SplitPath.hpp"
+#include "Util/FileSystem.hpp"
+#include "Util/Log.hpp"
+#include "Util/Exception.hpp"
 #include "ColorTable.hpp"
 #include "Palette.hpp"
 #include "Surface.hpp"
-#include "UtilInterface.hpp"
+#include "Util/UtilInterface.hpp"
 
 char *ColorTable::extension = ".tbl";
 

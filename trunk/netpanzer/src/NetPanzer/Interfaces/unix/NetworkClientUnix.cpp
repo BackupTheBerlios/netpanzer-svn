@@ -17,8 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "Exception.hpp"
-#include "Log.hpp"
+#include "Util/Exception.hpp"
+#include "Util/Log.hpp"
 #include "Desktop.hpp"
 #include "NetworkGlobals.hpp"
 #include "NetworkState.hpp"

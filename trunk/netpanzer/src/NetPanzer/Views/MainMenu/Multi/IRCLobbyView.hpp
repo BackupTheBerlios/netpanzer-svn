@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "IRCLobby.hpp"
 #include "View.hpp"
-#include "Surface.hpp"
+#include "2D/Surface.hpp"
 #include "GameServer.hpp"
 #include "Button.hpp"
 

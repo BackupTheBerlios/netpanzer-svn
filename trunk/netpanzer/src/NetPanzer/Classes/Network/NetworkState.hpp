@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETWORKSTATE_HPP
 #define _NETWORKSTATE_HPP
 
-#include "Timer.hpp"
+#include "ArrayUtil/Timer.hpp"
 
 enum{ _network_state_server, _network_state_client };
 

@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "Log.hpp"
+#include "Util/Log.hpp"
 #include "GameInfoView.hpp"
 #include "GameViewGlobals.hpp"
 #include "Desktop.hpp"
@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitInterface.hpp"
 #include "PlayerInterface.hpp"
 #include "NetworkState.hpp"
-#include "String.hpp"
+#include "Types/String.hpp"
 #include "ScreenSurface.hpp"
 
 static int getPlayerFrags()

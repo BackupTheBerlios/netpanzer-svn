@@ -21,11 +21,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include <fcntl.h>
 
-#include "UILib/UIDraw.hpp"
-#include "UILib/Sound.hpp"
-#include "UILib/SDL/SDLSound.hpp"
-#include "UILib/SDL/SDLDraw.hpp"
-#include "UILib/DummySound.hpp"
+#include "System/UIDraw.hpp"
+#include "System/Sound.hpp"
+#include "System/SDL/SDLSound.hpp"
+#include "System/SDL/SDLDraw.hpp"
+#include "System/DummySound.hpp"
 #include "NetworkServerUnix.hpp"
 #include "NetworkClientUnix.hpp"
 
@@ -40,7 +40,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SystemNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
 
-#include "Log.hpp"
+#include "Util/Log.hpp"
 #include "MouseInterface.hpp"
 #include "KeyboardInterface.hpp"
 #include "ScreenSurface.hpp"
@@ -67,12 +67,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapsManager.hpp"
 #include "PowerUpInterface.hpp"
 #include "ChatInterface.hpp"
-#include "Exception.hpp"
-#include "FileSystem.hpp"
+#include "Util/Exception.hpp"
+#include "Util/FileSystem.hpp"
 
 // ** GVS Includes
 #include "cMouse.hpp"
-#include "Palette.hpp"
+#include "2D/Palette.hpp"
 #include "Desktop.hpp"
 #include "GameView.hpp"
 #include "MainMenuView.hpp"
@@ -119,8 +119,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ParticleSystem2D.hpp"
 #include "ParticleInterface.hpp"
 #include "Physics.hpp"
-#include "TimerInterface.hpp"
-#include "Math.hpp"
+#include "Util/TimerInterface.hpp"
+#include "Util/Math.hpp"
 
 #include "Bot.hpp"
 

@@ -1,52 +1,7 @@
 SubDir TOP src ;
 
-SUBDIRS =
-    .
-    Lib
-    Lib/2D
-    Lib/Xml
-    Lib/View
-    Lib/IRCLobby
-    Lib/Types
-    Lib/Particles
-    Lib/PObject
-    Lib/PObject/Classes
-    Lib/PObject/Templates
-    Lib/optionmm
-    Lib/Interfaces
-    NetPanzer
-    NetPanzer/Core
-    NetPanzer/Port
-    NetPanzer/Views
-    NetPanzer/Views/Game
-    NetPanzer/Views/MainMenu
-    NetPanzer/Views/MainMenu/Multi
-    NetPanzer/Views/MainMenu/Options
-    NetPanzer/Classes
-    NetPanzer/Classes/AI
-    NetPanzer/Classes/Units
-    NetPanzer/Classes/Weapons
-    NetPanzer/Classes/Network
-    NetPanzer/Resources
-    NetPanzer/Structs
-    NetPanzer/Interfaces
-    NetPanzer/Interfaces/unix
-    Bot
-    UILib
-    UILib/SDL
-    UILib/Network
-;
+IncludeDir Lib ;
 
-for i in $(SUBDIRS)
-{
-  SearchSubdir $(i) ;
-  SOURCES += [ Wildcard $(i) : *.cpp *.hpp ] ;
-  IncludeDir $(i) ;
-}
-
-Application netpanzer : $(SOURCES) ;
-CFlags netpanzer : -DDATADIR=\\\"$(datadir)\\\" ;
-ExternalLibs netpanzer : XML SDLNET SDLMIXER SDLIMAGE SDL PHYSFS ;
-Help netpanzer : "Build the main netpanzer executable" ;
-
+SubInclude TOP src Lib ;
 SubInclude TOP src Editor ;
+SubInclude TOP src NetPanzer ;

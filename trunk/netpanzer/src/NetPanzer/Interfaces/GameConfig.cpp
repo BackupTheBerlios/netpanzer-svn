@@ -18,13 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include <sstream>
 
-#include "FileSystem.hpp"
-#include "Log.hpp"
-#include "Exception.hpp"
+#include "Util/FileSystem.hpp"
+#include "Util/Log.hpp"
+#include "Util/Exception.hpp"
 #include "GameConfig.hpp"
 #include "NetworkGlobals.hpp"
-#include "XmlConfig.hpp"
-#include "XmlStore.hpp"
+#include "Xml/XmlConfig.hpp"
+#include "Xml/XmlStore.hpp"
 #include "MiniMapView.hpp"
 #include "GameViewGlobals.hpp"
 

@@ -18,11 +18,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "SpecialButtonView.hpp"
-#include "Surface.hpp"
-#include "PackedSurface.hpp"
-#include "UtilInterface.hpp"
+#include "2D/Surface.hpp"
+#include "2D/PackedSurface.hpp"
+#include "Util/UtilInterface.hpp"
 #include "Desktop.hpp"
-#include "Exception.hpp"
+#include "Util/Exception.hpp"
 #include "WorldInputCmdProcessor.hpp"
 
 // addSpecialButton

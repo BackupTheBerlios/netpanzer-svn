@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "GetSessionHostView.hpp"
 #include "Desktop.hpp"
-#include "TimerInterface.hpp"
+#include "Util/TimerInterface.hpp"
 #include "GameViewGlobals.hpp"
 
 #include "Client.hpp"

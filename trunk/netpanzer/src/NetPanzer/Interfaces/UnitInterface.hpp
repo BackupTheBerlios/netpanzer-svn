@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitBucketArray.hpp"
 #include "UnitMessage.hpp"
 #include "PlayerState.hpp"
-#include "Timer.hpp"
+#include "ArrayUtil/Timer.hpp"
 #include "PlacementMatrix.hpp"
 #include "UnitIDList.hpp"
 

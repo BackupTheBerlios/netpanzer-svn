@@ -34,7 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "M109.hpp"
 #include "Archer.hpp"
 
-#include "Timer.hpp"
+#include "ArrayUtil/Timer.hpp"
 #include "Server.hpp"
 #include "NetworkState.hpp"
 #include "NetMessageEncoder.hpp"
@@ -42,7 +42,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitMessageTypes.hpp"
 #include "PlayerNetMessage.hpp"
 
-#include "Sound.hpp"
+#include "System/Sound.hpp"
 #include "ParticleInterface.hpp"
 
 

@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __HostOptionsView_hpp__
 
 #include "RMouseHackView.hpp"
-#include "Surface.hpp"
-#include "String.hpp"
+#include "2D/Surface.hpp"
+#include "Types/String.hpp"
 #include "Choice.hpp"
 
 #include "CheckBox.hpp"

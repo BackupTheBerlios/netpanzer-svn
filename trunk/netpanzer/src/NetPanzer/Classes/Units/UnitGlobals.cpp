@@ -17,8 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 #include "UnitGlobals.hpp"
-#include "Palette.hpp"
-#include "Surface.hpp"
+#include "2D/Palette.hpp"
+#include "2D/Surface.hpp"
 
 // Comment this out if you want green units
 #define _GRAY_MAPPED_UNITS

@@ -24,9 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include <string>
 
-#include "Surface.hpp"
-#include "Color.hpp"
-#include "NoCopy.hpp"
+#include "2D/Surface.hpp"
+#include "2D/Color.hpp"
+#include "Util/NoCopy.hpp"
 #include "ConfigVariable.hpp"
 #include "PlayerUnitConfig.hpp"
 

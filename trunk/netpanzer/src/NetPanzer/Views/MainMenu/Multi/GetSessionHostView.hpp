@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __GetSessionHostView_hpp__
 
 #include "View.hpp"
-#include "Surface.hpp"
-#include "cGrowList.hpp"
+#include "2D/Surface.hpp"
+#include "Util/cGrowList.hpp"
 #include "ScrollBar.hpp"
 
 

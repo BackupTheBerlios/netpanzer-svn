@@ -40,6 +40,7 @@ rule Application
   Always $(<)clean ;
   NotFile $(<)clean ;
   Clean $(<)clean : $(objects) ; # create target clean rule 
+  Depends clean : $(<)clean ;
 
   # so 'jam foo' works when it's really foo.exe (Windows) or foo.app (MacOS/X)
   if $(target) != $(<)

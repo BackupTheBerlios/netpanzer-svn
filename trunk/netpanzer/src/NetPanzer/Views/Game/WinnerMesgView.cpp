@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameViewGlobals.hpp"
 #include "Desktop.hpp"
 #include "Stats.hpp"
-#include "Sound.hpp"
+#include "System/Sound.hpp"
 #include "ParticleSystem2D.hpp"
 #include "Particle2D.hpp"
 #include "GameManager.hpp"

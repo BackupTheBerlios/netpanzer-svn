@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __UnitColorView_hpp__
 
 #include "View.hpp"
-#include "Surface.hpp"
-#include "PackedSurface.hpp"
+#include "2D/Surface.hpp"
+#include "2D/PackedSurface.hpp"
 
 
 //---------------------------------------------------------------------------

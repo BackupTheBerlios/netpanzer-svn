@@ -19,9 +19,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _MINIMAPINTERFACE_HPP
 
 #include "MapInterface.hpp"
-#include "Timer.hpp"
-#include "BitArray.hpp"
-#include "fXY.hpp"
+#include "ArrayUtil/Timer.hpp"
+#include "ArrayUtil/BitArray.hpp"
+#include "Types/fXY.hpp"
 
 class MiniMapInterface
 {

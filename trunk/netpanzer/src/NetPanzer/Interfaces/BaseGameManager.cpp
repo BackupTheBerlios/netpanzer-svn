@@ -30,10 +30,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ServerMessageRouter.hpp"
 #include "NetworkState.hpp"
 
-#include "Log.hpp"
+#include "Util/Log.hpp"
 #include "GameConfig.hpp"
 #include "GameManager.hpp"
-#include "DummySound.hpp"
+#include "System/DummySound.hpp"
 #include "PlayerInterface.hpp"
 #include "UnitInterface.hpp"
 #include "UnitBlackBoard.hpp"
@@ -48,21 +48,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapsManager.hpp"
 #include "PowerUpInterface.hpp"
 #include "GameControlRulesDaemon.hpp"
-#include "Exception.hpp"
-#include "FileSystem.hpp"
+#include "Util/Exception.hpp"
+#include "Util/FileSystem.hpp"
 #include "LobbyView.hpp"
 #include "ProgressView.hpp"
 #include "ConsoleLoadingView.hpp"
 #include "SelectionBoxSprite.hpp"
 
 #include "UnitGlobals.hpp"
-#include "ColorTable.hpp"
-#include "Palette.hpp"
+#include "2D/ColorTable.hpp"
+#include "2D/Palette.hpp"
 
 
 //** Physics/Particle Stuff
 #include "Physics.hpp"
-#include "TimerInterface.hpp"
+#include "Util/TimerInterface.hpp"
 
 //-----------------------------------------------------------------
 void BaseGameManager::initializeVideoSubSystem()

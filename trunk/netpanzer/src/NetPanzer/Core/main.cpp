@@ -26,9 +26,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <optionmm/command_line.hpp>
 
-#include "Log.hpp"
-#include "Exception.hpp"
-#include "FileSystem.hpp"
+#include "Util/Log.hpp"
+#include "Util/Exception.hpp"
+#include "Util/FileSystem.hpp"
 #include "MouseInterface.hpp"
 #include "KeyboardInterface.hpp"
 #include "cMouse.hpp"

@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __VehicleSelectionView_hpp__
 #define __VehicleSelectionView_hpp__
 
-#include "Surface.hpp"
+#include "2D/Surface.hpp"
 #include "View.hpp"
 #include "GameTemplateView.hpp"
 #include "UnitProfileInterface.hpp"

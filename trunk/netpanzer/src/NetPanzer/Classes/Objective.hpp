@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _OBJECTIVE_HPP
 #define _OBJECTIVE_HPP
 
-#include "BoundBox.hpp"
+#include "ArrayUtil/BoundBox.hpp"
 #include "SpriteSorter.hpp"
 #include "PlayerState.hpp"
 #include "ObjectiveMessageTypes.hpp"

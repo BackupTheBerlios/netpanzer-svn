@@ -1,0 +1,8 @@
+SubDir TOP src Lib ArrayUtil ;
+
+Library netpanzerarrayutil
+    : [ Wildcard *.cpp *.hpp ]
+;
+LinkWith netpanzerarrayutil : netpanzertypes netpanzerutil ;
+ExternalLibs netpanzerarrayutil : SDL ;
+

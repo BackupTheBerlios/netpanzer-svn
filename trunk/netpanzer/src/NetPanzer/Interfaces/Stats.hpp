@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 
-#include "PArray.hpp"
+#include "ArrayUtil/PArray.hpp"
 #include "PlayerInterface.hpp"
 
 //the way this works: menu system makes call to Initialize, then it

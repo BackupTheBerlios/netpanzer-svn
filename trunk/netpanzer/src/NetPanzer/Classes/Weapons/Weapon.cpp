@@ -30,12 +30,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "WorldViewInterface.hpp"
 #include "ScreenSurface.hpp"
 
-#include "Exception.hpp"
-#include "Sound.hpp"
+#include "Util/Exception.hpp"
+#include "System/Sound.hpp"
 #include "ParticleInterface.hpp"
 #include "WeaponGlobals.hpp"
-#include "Math.hpp"
-#include "UtilInterface.hpp"
+#include "Util/Math.hpp"
+#include "Util/UtilInterface.hpp"
 
 
 void Weapon::init()

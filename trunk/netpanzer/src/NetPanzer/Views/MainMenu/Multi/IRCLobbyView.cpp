@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <sstream>
 
-#include "Log.hpp"
+#include "Util/Log.hpp"
 #include "IRCLobbyView.hpp"
 #include "IPAddressView.hpp"
 #include "Desktop.hpp"

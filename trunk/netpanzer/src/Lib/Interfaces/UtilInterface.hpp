@@ -41,13 +41,14 @@ public:
 
         sprintf(Filename::name, "%s", name);
     }
-
-}
-; // end Filename
+}; // end Filename
 
 int FilenameSortFunction(const void *a, const void *b);
 
 //--------------------------------------------------------------------------
+/**
+ * @deprecated This interface is deprecated and shouldn't be used in new code
+ */
 class UtilInterface
 {
 public:
@@ -62,11 +63,6 @@ public:
 
     // get servername/port from a string, doesn't always set the port
     static void splitServerPort(const std::string &server,std::string &address,int *port);
-    static void makeBase64(std::string &base64,std::string &str);
-    static void getProxyConnect(std::stringstream &buf,const std::string &serveraddress);
-    static void sendProxyConnect(TCPsocket socket,const std::string &serveraddress);
-
-
 }; // end UtilInterface
 
 #endif // __UtilInterface_hpp__

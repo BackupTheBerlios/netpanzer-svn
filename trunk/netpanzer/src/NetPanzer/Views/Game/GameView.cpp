@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "cMouse.hpp"
 #include "ViewGlobals.hpp"
 #include "ParticleInterface.hpp"
-#include "PackedSurface.hpp"
+#include "2D/PackedSurface.hpp"
 #include "VehicleSelectionView.hpp"
 #include "PowerUpInterface.hpp"
 

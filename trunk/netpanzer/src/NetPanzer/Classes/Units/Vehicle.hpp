@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _VEHICLE_HPP
 
 #include "Unit.hpp"
-#include "Timer.hpp"
+#include "ArrayUtil/Timer.hpp"
 #include "UnitMessageTypes.hpp"
 #include "PathList.hpp"
 

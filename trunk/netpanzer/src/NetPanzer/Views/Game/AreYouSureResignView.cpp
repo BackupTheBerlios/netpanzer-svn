@@ -23,12 +23,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ParticleSystem2D.hpp"
 #include "Particle2D.hpp"
 #include "MenuTemplateView.hpp"
-#include "Sound.hpp"
+#include "System/Sound.hpp"
 #include "SoundView.hpp"
 #include "ScreenSurface.hpp"
 #include "ControlsView.hpp"
 #include "VisualsView.hpp"
-#include "Palette.hpp"
+#include "2D/Palette.hpp"
 #include "InterfaceView.hpp"
 
 //---------------------------------------------------------------------------

@@ -20,9 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string.h>
 #include "NetPacket.hpp"
-#include "QueueTemplate.hpp"
-#include "ArrayTemplate.hpp"
-#include "Timer.hpp"
+#include "ArrayUtil/QueueTemplate.hpp"
+#include "ArrayUtil/ArrayTemplate.hpp"
+#include "ArrayUtil/Timer.hpp"
 
 class NetPacketQueue : public QueueTemplate< NetPacket >
 {

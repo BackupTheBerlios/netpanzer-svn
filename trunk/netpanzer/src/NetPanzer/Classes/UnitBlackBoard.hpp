@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITBLACKBOARD_HPP
 #define _UNITBLACKBOARD_HPP
 
-#include "BitArray.hpp"
-#include "iXY.hpp"
+#include "ArrayUtil/BitArray.hpp"
+#include "Types/iXY.hpp"
 
 class UnitBlackBoard
 {

@@ -18,9 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SPAWNLIST_HPP
 #define _SPAWNLIST_HPP
 
-#include "Timer.hpp"
-#include "ArrayTemplate.hpp"
-#include "iXY.hpp"
+#include "ArrayUtil/Timer.hpp"
+#include "ArrayUtil/ArrayTemplate.hpp"
+#include "Types/iXY.hpp"
 
 class SpawnPoint
 {

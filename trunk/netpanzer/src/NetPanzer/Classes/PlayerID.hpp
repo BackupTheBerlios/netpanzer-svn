@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _PLAYERID_HPP
 
 #include <stdint.h>
-#include "UILib/Network/SocketClient.hpp"
+#include "Network/SocketClient.hpp"
 
 class PlayerID
 {

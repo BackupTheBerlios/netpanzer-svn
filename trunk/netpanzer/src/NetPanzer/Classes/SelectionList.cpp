@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SelectionList.hpp"
 #include "UnitInterface.hpp"
 #include "PlayerInterface.hpp"
-#include "Log.hpp"
+#include "Util/Log.hpp"
 
 int selectKey( void *key, UnitState *comp )
 {

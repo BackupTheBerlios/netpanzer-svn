@@ -18,11 +18,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <assert.h>
-#include "Log.hpp"
+#include "Util/Log.hpp"
 #include "NetworkGlobals.hpp"
 #include "GameConfig.hpp"
 #include "NetworkState.hpp"
-#include "Exception.hpp"
+#include "Util/Exception.hpp"
 #include "NetworkServerUnix.hpp"
 
 //#define NETWORKDEBUG

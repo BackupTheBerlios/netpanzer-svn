@@ -22,16 +22,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include <string>
 #include <algorithm>
-#include "Log.hpp"
-#include "Surface.hpp"
-#include "FileSystem.hpp"
-#include "UtilInterface.hpp"
-#include "cGrowList.hpp"
-#include "fXY.hpp"
-#include "TimerInterface.hpp"
-#include "Span.hpp"
+#include "Util/Log.hpp"
+#include "Util/FileSystem.hpp"
+#include "Util/UtilInterface.hpp"
+#include "Util/cGrowList.hpp"
+#include "Types/fXY.hpp"
+#include "Util/TimerInterface.hpp"
+#include "Util/Exception.hpp"
 #include "Palette.hpp"
-#include "Exception.hpp"
+#include "Surface.hpp"
+#include "Span.hpp"
 
 using std::swap;
 using std::min;

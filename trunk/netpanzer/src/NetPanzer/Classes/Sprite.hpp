@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SPRITE_HPP
 #define _SPRITE_HPP
 
-#include "Surface.hpp"
-#include "PackedSurface.hpp"
+#include "2D/Surface.hpp"
+#include "2D/PackedSurface.hpp"
 
 #define _MAX_HEIGHT_LEVELS 8
 

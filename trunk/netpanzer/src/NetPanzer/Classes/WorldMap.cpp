@@ -24,8 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "WorldMap.hpp"
 #include "MapData.hpp"
-#include "FileSystem.hpp"
-#include "Exception.hpp"
+#include "Util/FileSystem.hpp"
+#include "Util/Exception.hpp"
 
 WorldMap::WorldMap()
 {

@@ -1,6 +1,6 @@
 #include <config.h>
 
-#include "Exception.hpp"
+#include "Util/Exception.hpp"
 #include "ConfigVariable.hpp"
 
 ConfigVariable::ConfigVariable(const std::string& newname)

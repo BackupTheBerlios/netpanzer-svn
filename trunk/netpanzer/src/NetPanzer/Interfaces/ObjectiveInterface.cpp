@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "MapInterface.hpp"
 #include "PlayerInterface.hpp"
-#include "FileSystem.hpp"
+#include "Util/FileSystem.hpp"
 #include "Outpost.hpp"
 
 #include "ObjectiveNetMessage.hpp"

@@ -1,3 +1,7 @@
+22-Nov-2003 by Matthias Braun
+-big reorganisation. Created several real libs in the lib directory and moved
+some stuff inside NetPanzer directory.
+
 21-Nov-2003 by Matthias Braun
 -Applied a patch by Michel Metzger (metzger@essi.fr) which makes it possible to
  select the location where built units move.

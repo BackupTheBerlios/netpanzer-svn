@@ -20,9 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <math.h>
 
 #include "Palette.hpp"
-#include "FileSystem.hpp"
-#include "Exception.hpp"
-#include "UtilInterface.hpp"
+#include "Util/FileSystem.hpp"
+#include "Util/Exception.hpp"
+#include "Util/UtilInterface.hpp"
 
 float Palette::brightness = 1.0f;
 

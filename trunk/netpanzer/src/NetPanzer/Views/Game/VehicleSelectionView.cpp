@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "Exception.hpp"
+#include "Util/Exception.hpp"
 #include "VehicleSelectionView.hpp"
 #include "UnitTypes.hpp"
 #include "GameViewGlobals.hpp"
@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ObjectiveInterface.hpp"
 #include "UnitProfileInterface.hpp"
 #include "ScreenSurface.hpp"
-#include "Math.hpp"
+#include "Util/Math.hpp"
 #include "ObjectiveInterface.hpp"
 #include "UnitTypes.hpp"
 #include "UnitInterface.hpp"

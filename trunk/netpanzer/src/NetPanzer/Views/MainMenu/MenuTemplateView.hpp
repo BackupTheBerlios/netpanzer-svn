@@ -19,11 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __MenuTemplateView_hpp__
 
 #include "SpecialButtonView.hpp"
-#include "Surface.hpp"
-#include "PackedSurface.hpp"
-#include "iRect.hpp"
-#include "iXY.hpp"
-#include "String.hpp"
+#include "2D/Surface.hpp"
+#include "2D/PackedSurface.hpp"
+#include "Types/iRect.hpp"
+#include "Types/iXY.hpp"
+#include "Types/String.hpp"
 
 //--------------------------------------------------------------------------
 class MenuTemplateView : public SpecialButtonView

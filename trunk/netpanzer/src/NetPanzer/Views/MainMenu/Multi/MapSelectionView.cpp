@@ -19,16 +19,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 #include <string>
-#include "SplitPath.hpp"
+#include "Util/SplitPath.hpp"
 #include "MapSelectionView.hpp"
 #include "GameConfig.hpp"
 #include "GameViewGlobals.hpp"
 #include "HostOptionsView.hpp"
-#include "UtilInterface.hpp"
+#include "Util/UtilInterface.hpp"
 #include "MapFileStruct.hpp"
-#include "FileSystem.hpp"
-#include "Exception.hpp"
-#include "Log.hpp"
+#include "Util/FileSystem.hpp"
+#include "Util/Exception.hpp"
+#include "Util/Log.hpp"
 
 cGrowList <MapInfo> MapSelectionView::mapList;
 int MapSelectionView::curMap = 0;

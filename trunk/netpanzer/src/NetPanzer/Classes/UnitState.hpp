@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _UNITSTATE_HPP
 
 #include <string.h>
-#include "BoundBox.hpp"
-#include "Angle.hpp"
+#include "ArrayUtil/BoundBox.hpp"
+#include "Types/Angle.hpp"
 
 #include "UnitLifecycles.hpp"
 

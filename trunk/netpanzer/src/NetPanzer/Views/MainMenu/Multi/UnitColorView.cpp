@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitColorView.hpp"
 #include "GameView.hpp"
 #include "GameViewGlobals.hpp"
-#include "Palette.hpp"
-#include "ColorTable.hpp"
+#include "2D/Palette.hpp"
+#include "2D/ColorTable.hpp"
 
 static float maxPercent       = 3.5f;
 static float minPercent       = 0.5f;

@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _WADMAPTABLE_HPP
 #define _WADMAPTABLE_HPP
 
-#include "ArrayTemplate.hpp"
+#include "ArrayUtil/ArrayTemplate.hpp"
 #include "string.h"
 
 class WadTileMapInfo

@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 
 #include "PowerUp.hpp"
-#include "Timer.hpp"
+#include "ArrayUtil/Timer.hpp"
 #include "PlayerID.hpp"
 #include "NetPacket.hpp"
 

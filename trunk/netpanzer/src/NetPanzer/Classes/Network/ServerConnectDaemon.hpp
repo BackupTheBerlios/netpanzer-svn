@@ -19,9 +19,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _SERVERCONNECTDAEMON_HPP
 
 #include "PlayerState.hpp"
-#include "QueueTemplate.hpp"
+#include "ArrayUtil/QueueTemplate.hpp"
 #include "NetPacket.hpp"
-#include "Timer.hpp"
+#include "ArrayUtil/Timer.hpp"
 
 enum { _connect_status_waiting,
        _connect_status_abort,

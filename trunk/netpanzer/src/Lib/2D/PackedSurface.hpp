@@ -18,10 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __PackedSurface_hpp__
 #define __PackedSurface_hpp__
 
-#include "iRect.hpp"
-#include "iXY.hpp"
+#include "Types/iRect.hpp"
+#include "Types/iXY.hpp"
+#include "Util/cGrowList.hpp"
 #include "ColorTable.hpp"
-#include "cGrowList.hpp"
 
 class Surface;
 class PackedSurface;

@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ClientConnectDaemon.hpp"
 #include "ServerConnectDaemon.hpp"
 #include "GameControlRulesDaemon.hpp"
-#include "iXY.hpp"
+#include "Types/iXY.hpp"
 
 enum { _mapload_result_success,
        _mapload_result_no_map_file,

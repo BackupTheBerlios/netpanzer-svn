@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <assert.h>
 #include "blitters.hpp"
 #include <string.h>
-#include "UIDraw.hpp"
+#include "System/UIDraw.hpp"
 
 void blit_partial_xy(const unsigned char *tile_ptr, unsigned char *buffer_ptr,
                      short y_size, short x_size)

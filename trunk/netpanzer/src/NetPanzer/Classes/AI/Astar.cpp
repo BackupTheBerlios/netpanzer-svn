@@ -19,9 +19,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <functional>
 #include "Astar.hpp"
-#include "Timer.hpp"
+#include "ArrayUtil/Timer.hpp"
 #include "PathingState.hpp"
-#include "Log.hpp"
+#include "Util/Log.hpp"
 
 Astar::Astar()
 {

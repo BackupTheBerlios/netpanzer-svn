@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _UNITIDLIST_HPP
 
 #include "UnitID.hpp"
-#include "ArrayGrowableTemplate.hpp"
+#include "ArrayUtil/ArrayGrowableTemplate.hpp"
 
 typedef ArrayGrowableTemplate< UnitID > UnitIDListTemplate;
 

@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _MAPS_MANAGER_HPP
 #define _MAPS_MANAGER_HPP
 
-#include "FileList.hpp"
+#include "ArrayUtil/FileList.hpp"
 
 enum { _mapfile_valid, _mapfile_not_found, _wadfile_not_found };
 

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Color.hpp"
 #include "ColorTable.hpp"
 #include "RGBColor.hpp"
-#include "String.hpp"
+#include "Types/String.hpp"
 
 const size_t PALETTE_LENGTH = 256;
 

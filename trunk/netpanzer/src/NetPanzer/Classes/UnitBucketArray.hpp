@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNIT_BUCKET_ARRAY_HPP
 #define _UNIT_BUCKET_ARRAY_HPP
 
-#include "BucketArrayTemplate.hpp"
+#include "ArrayUtil/BucketArrayTemplate.hpp"
 
 #include "UnitBase.hpp"
 #include "UnitID.hpp"

@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _OBJECTIVEINTERFACE_HPP
 
 #include "Objective.hpp"
-#include "ArrayTemplate.hpp"
+#include "ArrayUtil/ArrayTemplate.hpp"
 
 #include "NetPacket.hpp"
 #include "NetMessageEncoder.hpp"

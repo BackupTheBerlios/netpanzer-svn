@@ -22,13 +22,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <algorithm>
 #include <memory>
 
+#include "Util/TimerInterface.hpp"
+#include "Util/FileSystem.hpp"
+#include "Util/Exception.hpp"
+#include "Util/UtilInterface.hpp"
 #include "PackedSurface.hpp"
 #include "Surface.hpp"
-#include "TimerInterface.hpp"
 #include "Span.hpp"
-#include "FileSystem.hpp"
-#include "Exception.hpp"
-#include "UtilInterface.hpp"
 
 #ifdef MSVC
 #pragma pack (1)

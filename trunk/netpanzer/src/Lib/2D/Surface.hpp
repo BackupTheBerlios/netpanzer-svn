@@ -22,9 +22,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "iXY.hpp"
-#include "iRect.hpp"
-#include "NoCopy.hpp"
+#include "Types/iXY.hpp"
+#include "Types/iRect.hpp"
+#include "Util/NoCopy.hpp"
 
 class ColorTable;
 class Palette;

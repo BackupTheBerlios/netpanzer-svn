@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SELECTION_BOX_SPRITE_HPP
 #define _SELECTION_BOX_SPRITE_HPP
 
-#include "BoundBox.hpp"
+#include "ArrayUtil/BoundBox.hpp"
 #include "Sprite.hpp"
 
 extern Surface UNIT_FLAGS_SURFACE;

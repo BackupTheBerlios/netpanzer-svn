@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "BulletWeapon.hpp"
 #include "ShellWeapon.hpp"
 #include "WorldViewInterface.hpp"
-#include "Math.hpp"
+#include "Util/Math.hpp"
 
 
 InternalLink * ProjectileInterface::projectile_list_start = 0;

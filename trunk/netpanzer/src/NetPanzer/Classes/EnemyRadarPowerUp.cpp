@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitNetMessage.hpp"
 #include "PowerUpNetMessage.hpp"
 
-#include "Sound.hpp"
+#include "System/Sound.hpp"
 
 
 SpritePacked ENEMY_RADAR_POWERUP_ANIM;

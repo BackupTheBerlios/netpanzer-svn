@@ -22,9 +22,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <map>
 #include <deque>
 
-#include "Surface.hpp"
+#include "2D/Surface.hpp"
 
-#include "cTimeStamp.hpp"
+#include "Util/cTimeStamp.hpp"
 
 #define _LEFT_BUTTON_MASK    0x01
 #define _MIDDLE_BUTTON_MASK  0x02
