@@ -95,7 +95,7 @@ public:
     }
     uint16_t getKillOnPlayerIndex() const
     {
-        return htol16(kill_on_player_index);
+        return ltoh16(kill_on_player_index);
     }
 }
 __attribute__((packed));

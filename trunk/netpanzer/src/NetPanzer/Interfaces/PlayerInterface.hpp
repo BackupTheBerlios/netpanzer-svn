@@ -71,13 +71,13 @@ public:
         return max_players;
     }
 
-    static PlayerState * getPlayerState( const PlayerID& player )
+    static PlayerState* getPlayerState(const PlayerID& player)
     {
         assert(player.getIndex() < max_players);
         return &player_lists[ player.getIndex() ];
     }
 
-    static PlayerState * getPlayerState(uint16_t player_index )
+    static PlayerState* getPlayerState(uint16_t player_index)
     {
         assert(player_index < max_players);
         return &player_lists[player_index];

@@ -274,9 +274,22 @@ short PlayerState::getTotal() const
 
 NetworkPlayerState PlayerState::getNetworkPlayerState() const
 {
-    return NetworkPlayerState(name, flag, ID.getIndex(), status,
-            kills, kill_points, losses, loss_points, total,
-            objectives_held, colorIndex);
+    NetworkPlayerState state;
+
+    memset(state.name, 0, sizeof(state.name));
+    strncpy(state.name, name.c_str(), sizeof(state.name)-1);
+    state.flag = flag;
+    state.playerindex_id = htol16(ID.getIndex());
+    state.status = status;
+    state.kills = htol16(kills);
+    state.kill_points = htol16(kill_points);
+    state.losses = htol16(losses);
+    state.loss_points = htol16(loss_points);
+    state.total = htol16(total);
+    state.objectives_held = htol16(objectives_held);
+    state.colorIndex = htol32(colorIndex);
+    
+    return state;
 }
 
 void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)

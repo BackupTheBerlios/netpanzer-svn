@@ -37,25 +37,13 @@ enum { _player_state_free,
 class NetworkPlayerState
 {
 public:
-    NetworkPlayerState(const std::string& newname,
-            uint8_t newflag, uint16_t newid, uint8_t newstatus,
-            int16_t newkills, int16_t newkill_points, int16_t newlosses,
-            int16_t newloss_points, int16_t newtotal,
-            int16_t newobjectives_held, uint32_t newcolorIndex)
-        : flag(newflag), playerindex_id(newid), status(newstatus),
-          kills(newkills), kill_points(newkill_points), losses(newlosses),
-          loss_points(newloss_points), total(newtotal),
-          objectives_held(newobjectives_held), colorIndex(newcolorIndex)
-    {
-        memset(name, 0, sizeof(name));
-        strncpy(name, newname.c_str(), 64);
-        name[63] = '\0';
-    }
-
     uint16_t getPlayerIndex() const;
 
-    friend class PlayerState;
 private:
+    NetworkPlayerState() 
+    {}
+    friend class PlayerState;    
+    
     char name[64];
     uint8_t flag;
     uint16_t playerindex_id;
