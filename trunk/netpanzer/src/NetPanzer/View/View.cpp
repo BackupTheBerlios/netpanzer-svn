@@ -681,19 +681,21 @@ void View::mouseMove(const iXY & prevPos, const iXY &newPos)
     for (int i = 0; i < componentsUsedCount; i++) {
         assert(componentList[i] != 0);
 
-        if (componentList[i]->contains(prevPos) && !componentList[i]->contains(newPos)) {
+        bool containsPrev=componentList[i]->contains(prevPos);
+        bool containsNew=componentList[i]->contains(newPos);
+        if (containsPrev && !containsNew) {
             mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, newPos.x, newPos.y, 0, false);
 
             componentList[i]->actionPerformed(me);
 
             actionPerformed(me);
-        } else if (!componentList[i]->contains(prevPos) && componentList[i]->contains(newPos)) {
+        } else if (!containsPrev && containsNew) {
             mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, newPos.x, newPos.y, 0, false);
 
             componentList[i]->actionPerformed(me);
 
             actionPerformed(me);
-        } else if (componentList[i]->contains(newPos)) {
+        } else if (containsNew && newPos!=prevPos) {
             mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_MOVED, now(), 0, newPos.x, newPos.y, 0, false);
 
             componentList[i]->actionPerformed(me);
@@ -784,7 +786,7 @@ int View::lMouseUp(const iXY &downPos, const iXY &upPos)
     {for (int i = 0; i < componentsUsedCount; i++)
         {
             assert(componentList[i] != 0);
-            if (!componentList[i]->contains(upPos)) {
+            if (componentList[i]->contains(upPos)) {
                 mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
 
                 componentList[i]->actionPerformed(me);
@@ -809,7 +811,7 @@ void View::lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
     // Check all components for a dragged event.
     for (int i = 0; i < componentsUsedCount; i++) {
         assert(componentList[i] != 0);
-        if (componentList[i]->contains(newPos) && componentList[i]->contains(downPos)) {
+        if (componentList[i]->contains(newPos) && componentList[i]->contains(downPos) && newPos!=prevPos) {
             mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON1_MASK, newPos.x, newPos.y, 0, false);
 
             componentList[i]->actionPerformed(me);
@@ -908,7 +910,7 @@ void View::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
     // Check all components for a moved event.
     for (int i = 0; i < componentsUsedCount; i++) {
         assert(componentList[i] != 0);
-        if (componentList[i]->contains(newPos)) {
+        if (componentList[i]->contains(newPos)  && componentList[i]->contains(downPos) && newPos!=prevPos) {
             mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON2_MASK, newPos.x, newPos.y, 0, false);
 
             componentList[i]->actionPerformed(me);

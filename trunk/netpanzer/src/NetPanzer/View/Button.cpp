@@ -28,14 +28,14 @@ void Button::draw(Surface &dest)
     iRect bounds;
     getBounds(bounds);
 
-    if (highlighted) {
-        dest.fillRect(bounds, componentBodyColor);
-        dest.drawButtonBorder(bounds, topLeftBorderColor, bottomRightBorderColor);
-        dest.bltStringCenteredInRect(bounds, label.c_str(), Color::red);
-    } else if (clicked) {
+    if (clicked) {
         dest.fillRect(bounds, componentBodyColor);
         dest.drawButtonBorder(bounds, bottomRightBorderColor, topLeftBorderColor);
         dest.bltStringCenteredInRect(bounds, label.c_str(), Color::yellow);
+    } else if (highlighted) {
+        dest.fillRect(bounds, componentBodyColor);
+        dest.drawButtonBorder(bounds, topLeftBorderColor, bottomRightBorderColor);
+        dest.bltStringCenteredInRect(bounds, label.c_str(), Color::red);
     } else {
         dest.fillRect(bounds, componentBodyColor);
         dest.drawButtonBorder(bounds, topLeftBorderColor, bottomRightBorderColor);
@@ -50,15 +50,12 @@ void Button::actionPerformed(const mMouseEvent &me)
 {
     if (me.getID() == mMouseEvent::MOUSE_EVENT_ENTERED) {
         highlighted = true;
-    }
-
-    if (me.getID() == mMouseEvent::MOUSE_EVENT_EXITED) {
+    } else if (me.getID() == mMouseEvent::MOUSE_EVENT_EXITED) {
         highlighted = false;
-    }
-
-    if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED) {
+        clicked = false;
+    } else if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED) {
         clicked = true;
-    } else {
+    } else if (me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED) {
         clicked = false;
     }
 

@@ -109,6 +109,7 @@ void Choice::actionPerformed(const mMouseEvent &me)
     } else if (me.getID() == mMouseEvent::MOUSE_EVENT_DRAGGED &&
                 (me.getModifiers() & InputEvent::BUTTON1_MASK)) {
         isOpen = true;
+        size.y = choiceList.size() * ChoiceItemHeight;
 
         iRect r(min.x, min.y, min.x + size.x, min.y + ChoiceItemHeight);
 
@@ -142,8 +143,7 @@ void Choice::actionPerformed(const mMouseEvent &me)
             callback->stateChanged(this);
 
         // Since an item was selected, find which item was selected.
-    } else if (	me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED &&
-                (me.getModifiers() & InputEvent::BUTTON1_MASK)) {
+    } else if (	me.getID() == mMouseEvent::MOUSE_EVENT_EXITED) {
         //assert(!isOpen);
         isOpen = false;
 
@@ -155,12 +155,9 @@ void Choice::actionPerformed(const mMouseEvent &me)
         adjustedY = 0;
 
         // set new element
-        if(mouseover == index)
-            return;
-
-        index = mouseover;
-        if(callback)
-            callback->stateChanged(this);
+//        if(mouseover == index) return;
+//        index = mouseover;
+//        if(callback) callback->stateChanged(this);
     }
 }
 
