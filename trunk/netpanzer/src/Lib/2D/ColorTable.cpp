@@ -384,9 +384,6 @@ void ColorTable::saveTable(FILE *fp) const
 
 	// Dump the colorTable data.
 	fwrite(colorArray, colorCount, sizeof(BYTE), fp);
-	
-	fclose(fp);
-
 } // end ColorTable::saveTable
 
 // isValid

@@ -42,8 +42,11 @@ void FUBAR(const char *msg, ...);
 void vQuitOK(const char *msg, va_list ap);
 void vFUBAR(const char *msg, va_list ap);
 
+// XXX changed this, as it was stupid code (on unix this failed from time to
+// time
 inline bool isValidPtr(const void *ptr) {
-	return (ptr > 0) && (ptr < (void *)0x90000000);
+	//return (ptr > 0) && (ptr < (void *)0x90000000);
+	return ptr != 0;
 }
 
 //***************************************************************************
