@@ -118,7 +118,7 @@ void HeartbeatThread::requestMasterServerList()
         serveraddr.sin_addr.s_addr = ((struct in_addr*) hentry->h_addr)->s_addr;
         serveraddr.sin_port =
             htons(config->getSection("server").getIntValue("port"));
-        
+       
         requestMasterServerList2(&serveraddr); 
     }
 }
@@ -153,7 +153,8 @@ void HeartbeatThread::requestMasterServerList2(struct sockaddr_in* addr)
         while(!stream.eof()) {
             std::string token = tokenizer->getNextToken();
             if(token == "ip") {
-                addMasterServer(tokenizer->getNextToken());
+                std::string server = tokenizer->getNextToken();
+                addMasterServer(server);
             } else if(token == "port") {
                 // ignore always assume 28900
                 tokenizer->getNextToken();
@@ -204,7 +205,7 @@ HeartbeatThread::addMasterServer(const std::string& address)
 void* HeartbeatThread::threadMain(void* data)
 {
     HeartbeatThread* _this = reinterpret_cast<HeartbeatThread*> (data);
-    
+   
     _this->running = true;
     while(_this->running) {
         _this->sendHeartbeats();
@@ -260,10 +261,10 @@ HeartbeatThread::sendHeartbeat(struct sockaddr_in* serveraddr)
         // send heartbeat packet
         SocketStream stream(sock);
         sock = -1; // stream has control of socket now
-        
-        stream << "\\heartbeat\\" <<
+    
+        stream << "\\heartbeat\\port\\" <<
             config->getSection("server").getValue("port")
-               << "\\gamename\\master\\passwort\\" << 
+               << "\\gamename\\master\\password\\" << 
                config->getSection("server").getValue("masterserver-password")
                << "\\final\\" << std::flush;
     } catch(...) {
