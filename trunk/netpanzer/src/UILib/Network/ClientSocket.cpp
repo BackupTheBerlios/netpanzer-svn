@@ -20,11 +20,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Log.hpp"
 #include "Exception.hpp"
+#include "SDLNet.hpp"
 #include "NetworkInterface.hpp"
 #include "ClientSocket.hpp"
 
 ClientSocket::ClientSocket(const char* servername, Uint16 port)
 {
+    SDLNet::shutdown();
+    
     // resolve server name
     IPaddress serverip;
     // XXX why deosn't ResolveHost take a const char*? Is this cast safe?
