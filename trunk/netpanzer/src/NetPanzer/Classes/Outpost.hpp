@@ -50,9 +50,9 @@ private:
     void generateUnits( void );
 
     // ** Message Handlers **
-    void objectiveMesgChangeUnitGeneration( ObjectiveMessage *message );
-    void objectiveMesgDisownPlayerObjective( ObjectiveMessage *message );
-    void objectiveMesgChangeOutputLocation( ObjectiveMessage *message );
+    void objectiveMesgChangeUnitGeneration(const ObjectiveMessage* message);
+    void objectiveMesgDisownPlayerObjective(const ObjectiveMessage* message);
+    void objectiveMesgChangeOutputLocation(const ObjectiveMessage* message);
 
 public:
 
@@ -60,9 +60,9 @@ public:
 
     void getOutpostStatus( OutpostStatus &status );
 
-    virtual void processMessage( ObjectiveMessage *message );
+    virtual void processMessage(const ObjectiveMessage* message);
 
-    virtual void updateStatus( void );
+    virtual void updateStatus();
 
     virtual void offloadGraphics( SpriteSorter &sorter );
 

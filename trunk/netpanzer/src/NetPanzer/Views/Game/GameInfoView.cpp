@@ -84,7 +84,7 @@ GameInfoView::GameInfoView() : GameTemplateView()
 
     moveTo(iXY(0,0));
     //resizeClientArea(iXY(100, 2 * 2 + 12 * 3 + 8));
-    resizeClientArea(iXY(140, 2 * 2 + 4 * 12 + 8));
+    resizeClientArea(iXY(140, 2 * 2 + 5 * 12 + 8));
 
     if(gameconfig->gameinfoposition.isDefaultValue()) {
         // Start it in the top-right corner.

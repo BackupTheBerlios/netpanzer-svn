@@ -98,12 +98,11 @@ static void sendOutpostStatus()
                                     (char) vsvSelectedUnit,
                                     vsvUnitGenOn );
 
-    CLIENT->sendMessage( &term_mesg, sizeof(TerminalOutpostUnitGenRequest));
+    CLIENT->sendMessage(&term_mesg, sizeof(term_mesg));
 
-    if ( NetworkState::status == _network_state_client ) {
+    if(NetworkState::status == _network_state_client) {
         ObjectiveInterface::sendMessage( &(term_mesg.unit_gen_request) );
     }
-
 }
 
 static void bOK()
@@ -544,7 +543,7 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
         sprintf(strBuf, "%s", getUnitName(vsvSelectedUnit));
         clientArea.bltString(productionUnitPos, strBuf, color);
 
-        sprintf(strBuf, "%01d:%02d/%01d:%02d", ((int)outpost_status.unit_generation_time_remaining + 1) / 60, ((int)outpost_status.unit_generation_time_remaining) % 60, ((int)outpost_status.unit_generation_time) / 60, ((int)outpost_status.unit_generation_time + 1) % 60);
+        sprintf(strBuf, "%01d:%02d/%01d:%02d", ((int)outpost_status.unit_generation_time_remaining ) / 60, ((int)outpost_status.unit_generation_time_remaining) % 60, ((int)outpost_status.unit_generation_time) / 60, ((int)outpost_status.unit_generation_time) % 60);
         clientArea.bltString(timeRequiredPos, strBuf, color);
     } else {
         sprintf(strBuf, "power off");
@@ -730,17 +729,19 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                     }
                     checkMiniProductionRect(outpostNameBuf);
 
-                    sprintf(productionUnitBuf, "Production: %s", getUnitName(outpostStatus.unit_generation_type));
+                    sprintf(productionUnitBuf, "Production: %s",
+                            getUnitName(outpostStatus.unit_generation_type));
                     checkMiniProductionRect(productionUnitBuf);
 
                     sprintf(timeLeftBuf, "Time Left:  %01d:%02d",
-                            ((int)outpostStatus.unit_generation_time_remaining 
-                                + 1) / 60,
+                            ((int)outpostStatus.unit_generation_time_remaining)
+                                / 60,
                             ((int)outpostStatus.unit_generation_time_remaining)
                                 % 60);
                     checkMiniProductionRect(timeLeftBuf);
 
-                    dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
+                    dest.bltLookup(miniProductionRect,
+                            Palette::darkGray256.getColorArray());
 
                     dest.bltString(pos, outpostNameBuf, Color::white);
                     pos.y += 16;

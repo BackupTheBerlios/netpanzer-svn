@@ -1,7 +1,6 @@
 Next release:
 -win32 somtimes crashs in lobby window
 -after having a full nodelist in A* the server is getting slow
--when starting to build a titan 2minutes is displayed for a short time
 -display a message when the round is over ("blabla captured xx% of outposts,
         "time is over", "blabla reached xxx frags")
 -remember to disable packet debugger

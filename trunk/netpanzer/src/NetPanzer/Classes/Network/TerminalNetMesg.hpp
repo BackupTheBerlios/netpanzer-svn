@@ -54,9 +54,7 @@ public:
         message_class = _net_message_class_terminal;
         message_id = _net_message_id_term_unit_gen;
     }
-
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class TerminalOutpostOutputLocRequest : public NetMessage
 {

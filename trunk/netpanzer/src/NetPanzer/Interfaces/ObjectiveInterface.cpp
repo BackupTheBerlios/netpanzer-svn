@@ -137,7 +137,11 @@ quearyObjectiveLocationStatus( iXY &loc,
 
 void ObjectiveInterface::sendMessage(const ObjectiveMessage* message)
 {
-    objective_list[message->getObjectiveID()]->processMessage( message );
+    if(message->getObjectiveID() >= objective_list.size()) {
+        LOGGER.warning("Received malformed objective message: id out of range");
+        return;
+    }
+    objective_list[message->getObjectiveID()]->processMessage(message);
 }
 
 void ObjectiveInterface::processNetMessages(const NetMessage* message)
@@ -162,6 +166,7 @@ void ObjectiveInterface::processNetMessages(const NetMessage* message)
         default:
             LOGGER.warning("Unknown Objective Message received (id %d)",
                     message->message_id);
+            break;
     }
 }
 

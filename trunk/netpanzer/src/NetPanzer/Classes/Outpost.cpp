@@ -54,7 +54,6 @@ Outpost::Outpost( short ID, iXY location, BoundBox area )
     select_box.setBoxAttributes( area, 252 );
 }
 
-
 void Outpost::attemptOccupationChange(UnitID unit_id)
 {
     ObjectiveOccupationUpdate update_mesg;
@@ -146,7 +145,6 @@ void Outpost::checkOccupationStatus( void )
 
 }
 
-
 void Outpost::generateUnits()
 {
     if ( NetworkState::status == _network_state_server ) {
@@ -195,8 +193,7 @@ void Outpost::generateUnits()
 
 }
 
-
-void Outpost::updateStatus( void )
+void Outpost::updateStatus()
 {
     if ( NetworkState::status == _network_state_server ) {
         checkOccupationStatus();
@@ -206,7 +203,8 @@ void Outpost::updateStatus( void )
 
 }
 
-void Outpost::objectiveMesgChangeOutputLocation( ObjectiveMessage *message ){
+void Outpost::objectiveMesgChangeOutputLocation(const ObjectiveMessage* message)
+{
     ChangeOutputLocation *msg;
     msg = (ChangeOutputLocation *) message;
     iXY temp;
@@ -215,7 +213,7 @@ void Outpost::objectiveMesgChangeOutputLocation( ObjectiveMessage *message ){
     unit_collection_loc = temp;
 }
 
-void Outpost::objectiveMesgChangeUnitGeneration( ObjectiveMessage *message )
+void Outpost::objectiveMesgChangeUnitGeneration(const ObjectiveMessage* message)
 {
     ChangeUnitGeneration *unit_gen_mesg;
     UnitProfile *profile;
@@ -229,7 +227,8 @@ void Outpost::objectiveMesgChangeUnitGeneration( ObjectiveMessage *message )
     unit_generation_timer.changePeriod( (float) profile->regen_time );
 }
 
-void Outpost::objectiveMesgDisownPlayerObjective( ObjectiveMessage *message )
+void Outpost::objectiveMesgDisownPlayerObjective(
+        const ObjectiveMessage* message)
 {
     DisownPlayerObjective *disown_mesg;
 
@@ -282,22 +281,23 @@ void Outpost::getOutpostStatus( OutpostStatus &status )
 
 }
 
-void Outpost::processMessage( ObjectiveMessage *message )
+void Outpost::processMessage(const ObjectiveMessage* message)
 {
-    switch( message->message_type ) {
-    case _objective_mesg_change_unit_generation :
-        objectiveMesgChangeUnitGeneration( message );
-        break;
+    switch(message->message_type) {
+        case _objective_mesg_change_unit_generation:
+            objectiveMesgChangeUnitGeneration(message);
+            break;
 
-    case _objective_mesg_disown_player_objective :
-        objectiveMesgDisownPlayerObjective( message );
-        break;
-    case _objective_mesg_change_output_location :
-        objectiveMesgChangeOutputLocation( message );
-        break;
-    } // ** switch
+        case _objective_mesg_disown_player_objective:
+            objectiveMesgDisownPlayerObjective(message);
+            break;
+            
+        case _objective_mesg_change_output_location:
+            objectiveMesgChangeOutputLocation(message);
+            break;
+    }
 
-    Objective::processMessage( message );
+    Objective::processMessage(message);
 }
 
 void Outpost::offloadGraphics( SpriteSorter &sorter )
