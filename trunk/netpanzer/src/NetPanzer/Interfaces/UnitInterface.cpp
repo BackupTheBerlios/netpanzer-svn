@@ -531,7 +531,7 @@ bool UnitInterface::quearyClosestUnit( UnitBase **closest_unit_ptr,
                                        unsigned char search_flags )
 {
     long closest_magnitude = 0;
-    UnitBase* closest_unit;
+    UnitBase* closest_unit = 0;
 
     for(size_t list_index = 0; list_index < max_players; list_index++) {
         if (   ( (search_flags == _search_exclude_player) && (player_id.getIndex() != list_index) )
