@@ -69,6 +69,7 @@ VisualsView::VisualsView() : OptionsTemplateView()
     choiceMiniMapUnitSize.addItem("Small");
     choiceMiniMapUnitSize.addItem("Large");
     choiceMiniMapUnitSize.setLocation(x, y);
+    choiceMiniMapUnitSize.select(GameConfig::getMiniMapUnitSize());
     choiceMiniMapUnitSize.setMinWidth(minWidth);
     y += yOffset;
     y += yOffset;
