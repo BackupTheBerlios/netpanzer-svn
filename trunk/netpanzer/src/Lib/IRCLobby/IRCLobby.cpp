@@ -386,7 +386,7 @@ void IRCLobby::processMessage()
     assert(irc_server_socket != 0);
     
     char buf[1024];
-    char *host, *mess, *host_end, *user_end, *code,*user,*real_user;
+    char *host, *mess, *host_end, *user_end, *code,*irc_user,*real_user;
 
     readIRCLine(buf, sizeof(buf));
 #ifndef WITHOUT_NETPANZER
@@ -396,12 +396,12 @@ void IRCLobby::processMessage()
     if(buf[0]!=':')
         return;
 
-    real_user=user=buf+1;
-    if(strncmp(user,nickname_prefix,sizeof(nickname_prefix)-1)==0) {
-        user+=sizeof(nickname_prefix)-1;
+    real_user=irc_user=buf+1;
+    if(strncmp(real_user,nickname_prefix,sizeof(nickname_prefix)-1)==0) {
+        real_user+=sizeof(nickname_prefix)-1;
     }
 
-    code=user;
+    code=irc_user;
     // skip 1 word and spaces behind it
     while(*code && !isspace(*code)) { code++; }
     while(*code && isspace(*code)) { code++; }
@@ -480,7 +480,7 @@ void IRCLobby::processMessage()
     *user_end++=0;
 
     if(strcmp(code,"JOIN")==0) {
-        std::string joined(user);
+        std::string joined(real_user);
         joined+=" has arrived in lobby";
         addChatMessage("",joined);
 #ifndef WITHOUT_NETPANZER
@@ -491,7 +491,7 @@ void IRCLobby::processMessage()
         return;
     }
     if(strcmp(code,"PART")==0 || strcmp(code,"QUIT")==0) {
-        std::string leave(user);
+        std::string leave(real_user);
         leave+=" has left the lobby";
         addChatMessage("",leave);
 #ifndef WITHOUT_NETPANZER
@@ -514,10 +514,10 @@ void IRCLobby::processMessage()
 
     if(mess[0]=='#') {
         // this is a chat message
-        addChatMessage(user, mess+1);
+        addChatMessage(real_user, mess+1);
 #ifndef WITHOUT_NETPANZER
         if(gameconfig->hostorjoin== _game_session_host) {
-            LOG(("IRC message:%s:%s",user,mess+1));
+            LOG(("IRC message:%s:%s",real_user,mess+1));
         }
 #endif
 
@@ -530,7 +530,7 @@ void IRCLobby::processMessage()
         if(strcmp(mess+1, ask_server_running_mess)==0) {
             if(gameconfig->hostorjoin== _game_session_host) {
                 // reply with server details
-                sendServerInfo(real_user);
+                sendServerInfo(irc_user);
             }
         }
         else 
@@ -562,18 +562,19 @@ void IRCLobby::processMessage()
                 SDL_mutexP(game_servers_mutex);
                 game_servers->push_back(
                         GameServer(host, port,
-                            real_user, map, players, max_players));
+                            irc_user,real_user,map, players, max_players));
                 SDL_mutexV(game_servers_mutex);
             }
             else {
-                server->user = real_user;
+                server->irc_user = irc_user;
+                server->real_user = real_user;
                 server->map = map;
                 server->playercount = players;
                 server->max_players = max_players;
             }
         }
         else if(strncmp(mess+1,leaving_mess,sizeof(leaving_mess)-1)==0) {
-            addChatMessage(user,mess);
+            addChatMessage(real_user,mess);
         }
     }
 }
@@ -626,7 +627,7 @@ void IRCLobby::readIRCLine(char *buf, size_t buf_len)
     char *buf_end=buf+buf_len-1;
     char ch;
     char *buf_upto=buf;
-    
+
     SDLNet_SocketSet sock_set=SDLNet_AllocSocketSet(1);
     SDLNet_TCP_AddSocket(sock_set,irc_server_socket);
 
@@ -655,6 +656,7 @@ void IRCLobby::readIRCLine(char *buf, size_t buf_len)
             *buf_upto++=ch;
         }
     } catch(std::exception& e) {
+        buf[0]=0;
         SDLNet_FreeSocketSet(sock_set);
         throw;
     }

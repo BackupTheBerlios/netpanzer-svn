@@ -34,6 +34,7 @@ IRCLobbyView::IRCLobbyView()
 {
     lobby_connection=0;
     change_name=0;
+    skipChatLines=0;
     lobby_view_height=184;
     total_displayed_servers=0;
     setSearchName("IRCLobbyView");
@@ -61,17 +62,25 @@ IRCLobbyView::IRCLobbyView()
     server_list_end_x=(getClientRect().getSizeX()-12);
 
     iXY size(12, 12);
-
     iXY pos(getClientRect().getSizeX() - size.x, 0);
-    upButton.setLabel("-");
-    upButton.setBounds(iRect(pos, pos + size));
-    add(&upButton);
+    serverUpButton.setLabel("-");
+    serverUpButton.setBounds(iRect(pos, pos + size));
+    add(&serverUpButton);
 
-    pos = iXY(getClientRect().getSizeX() - size.x, server_list_end_y-size.y);
-    downButton.setLabel("+");
-    downButton.setBounds(iRect(pos, pos + size));
-    add(&downButton);
+    pos.y= server_list_end_y-size.y;
+    serverDownButton.setLabel("+");
+    serverDownButton.setBounds(iRect(pos, pos + size));
+    add(&serverDownButton);
 
+    pos.y+=size.y;
+    chatUpButton.setLabel("-");
+    chatUpButton.setBounds(iRect(pos, pos + size));
+    add(&chatUpButton);
+
+    pos.y = chat_list_end_y-size.y;
+    chatDownButton.setLabel("+");
+    chatDownButton.setBounds(iRect(pos, pos + size));
+    add(&chatDownButton);
 
     // XXX ugly ugly ugly
     if(!lobby_view)
@@ -113,7 +122,7 @@ void IRCLobbyView::doDraw(Surface &viewArea, Surface &clientArea)
             std::stringstream playerstr;
             playerstr << server->playercount << "/" << server->max_players;
          
-            clientArea.bltString(iXY(0,y),server->user.c_str(), Color::white);
+            clientArea.bltString(iXY(0,y),server->real_user.c_str(), Color::white);
             clientArea.bltString(iXY(140,y),playerstr.str().c_str(), Color::white);
             clientArea.bltString(iXY(200,y),server->map.c_str(), Color::white);
             
@@ -128,8 +137,11 @@ void IRCLobbyView::doDraw(Surface &viewArea, Surface &clientArea)
 
     std::list<IRCChatMessage>::reverse_iterator m;
     y = chat_list_end_y - Surface::getFontHeight();
+    int skipped=0;
     for(m = lobby_connection->chat_messages.rbegin();
-        m != lobby_connection->chat_messages.rend(); m++) {
+        skipped < skipChatLines && m != lobby_connection->chat_messages.rend(); m++,skipped++) {
+    }
+    for(; m != lobby_connection->chat_messages.rend(); m++) {
 
         std::stringstream temp;
         temp << m->getUser() << ": " << m->getMessage();
@@ -171,15 +183,23 @@ int IRCLobbyView::lMouseUp(const iXY &down_pos,const iXY &up_pos)
 void IRCLobbyView::actionPerformed(mMouseEvent me)
 {
     if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED) {
-        if (me.getSource(upButton)) {
+        if (me.getSource(serverUpButton)) {
             if (--topViewableItem < 0) {
                 topViewableItem = 0;
             }
-        } else if (me.getSource(downButton)) {
+        } else if (me.getSource(serverDownButton)) {
             int max_size=lobby_connection->game_servers->size()-1;
             ++topViewableItem;
             if (topViewableItem >= max_size) {
                 topViewableItem = max_size;
+            }
+        } else if (me.getSource(chatUpButton)) {
+            if(++skipChatLines>=((int)lobby_connection->chat_messages.size())) {
+                skipChatLines--;
+            }
+        } else if (me.getSource(chatDownButton)) {
+            if (--skipChatLines <= 0) {
+                skipChatLines = 0;
             }
         }
     }

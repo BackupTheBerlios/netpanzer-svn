@@ -26,23 +26,28 @@ class GameServer
 {
 public:
     GameServer(const std::string& newhost, int newport,
-            const std::string& newuser, const std::string& newmap,
+            const std::string& newuser, 
+            const std::string& newrealuser, 
+            const std::string& newmap,
             int newplayercount, int newmaxplayers)
-        : host(newhost), port(newport), user(newuser), map(newmap),
+        : host(newhost), port(newport), irc_user(newuser), 
+            real_user(newrealuser), map(newmap),
             playercount(newplayercount), max_players(newmaxplayers)
     {
         std::time(&last_update);
     }
 
     GameServer::GameServer(const GameServer& other)
-        : host(other.host), port(other.port), user(other.user), map(other.map),
+        : host(other.host), port(other.port), irc_user(other.irc_user), 
+          real_user(other.real_user), map(other.map),
           last_update(other.last_update), playercount(other.playercount),
           max_players(other.max_players)
     { }
     
     std::string host;
     int port;
-    std::string user;
+    std::string irc_user;
+    std::string real_user;
     std::string map;
     std::time_t last_update;
     int playercount;

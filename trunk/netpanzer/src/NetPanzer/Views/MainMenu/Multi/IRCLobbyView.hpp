@@ -64,9 +64,12 @@ private:
     std::string error_message;
     cInputFieldString szChat;
     IRCLobby *lobby_connection;
+    int skipChatLines;
 
-    Button upButton;
-    Button downButton;
+    Button serverUpButton;
+    Button serverDownButton;
+    Button chatUpButton;
+    Button chatDownButton;
 };
 
 extern IRCLobbyView* lobby_view;
