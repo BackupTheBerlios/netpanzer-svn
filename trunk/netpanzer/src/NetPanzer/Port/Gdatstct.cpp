@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string.h>
 #include <stdlib.h>
 
-#include "Globals.h"
 #include "Log.hpp"
 #include "Exception.hpp"
 
@@ -57,8 +56,6 @@ short tile_dbase::load_dbase( char *dbase_path )
   
   fread( tile_data, tile_buffer_size, 1, infile );
 
-  TILE_DATA = tile_data;
- 
   dbase_loaded = true;
   
   return( true ); 
