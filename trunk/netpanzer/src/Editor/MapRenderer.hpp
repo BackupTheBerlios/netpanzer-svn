@@ -17,6 +17,9 @@ public:
     void render(SDL_Surface* surface, SDL_Rect* area,
             size_t mapxpos, size_t mapypos);
 
+    size_t getMapWidth();
+    size_t getMapHeight();
+
 private:
     void loadTiles();
     

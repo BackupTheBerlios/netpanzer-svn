@@ -1,5 +1,6 @@
 01-Feb-2004 by Matthias Braun
 -added a jam rule to create doxygen documentation
+-implemented scrolling in netpanzeredit mapview
 
 19-Jan-2004 by Wolfgang Koller
 -Fixed WinnerMesgView and RankView so that they now display the correct colors

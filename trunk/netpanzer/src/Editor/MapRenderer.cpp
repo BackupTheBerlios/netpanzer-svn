@@ -29,8 +29,12 @@ void MapRenderer::render(SDL_Surface* surface, SDL_Rect* area,
 
     size_t mapxstart = mapxpos / tilewidth;
     size_t mapystart = mapypos / tileheight;
-    size_t xpos = -tilewidth + mapxpos % tilewidth;
-    size_t ypos = -tileheight + mapypos % tileheight;
+    size_t xpos = 0;
+    if(mapxpos % tilewidth != 0)
+        xpos = -tilewidth + mapxpos % tilewidth;
+    size_t ypos = 0;
+    if(mapypos % tileheight != 0)
+        ypos = -tileheight + mapypos % tileheight;
 
     SDL_Rect from_rect;
     SDL_Rect to_rect;
@@ -76,6 +80,16 @@ void MapRenderer::render(SDL_Surface* surface, SDL_Rect* area,
         if(currenty >= (size_t) surface->h)
             break;
     }
+}
+
+size_t MapRenderer::getMapWidth()
+{
+    return map->getWidth() * tilesets[0]->getTileWidth();
+}
+
+size_t MapRenderer::getMapHeight()
+{
+    return map->getHeight() * tilesets[0]->getTileHeight();
 }
 
 void MapRenderer::loadTiles()

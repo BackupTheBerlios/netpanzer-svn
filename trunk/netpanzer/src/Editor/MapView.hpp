@@ -16,11 +16,17 @@ public:
 
 private:
     virtual void redraw();
+
+    void paint();
+    void updateView();
+    void OnScroll(wxScrollEvent&);
     
     Map* map;                   // reference
     MapRenderer* maprenderer;   // we own the maprenderer
 
     size_t mapxpos, mapypos;
+
+    DECLARE_EVENT_TABLE()
 };
 
 #endif
