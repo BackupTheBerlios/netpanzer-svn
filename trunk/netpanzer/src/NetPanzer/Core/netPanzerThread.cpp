@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "netPanzerGlobals.h"
 #include "netPanzerMain.h"
 
-//#include <process.h>
+#include <process.h>
 
 #include "GameManager.hpp"
 
@@ -39,5 +39,5 @@ void PanzerThread(void* ptr)
    PANZER_THREAD_FINISHED = true;
 
    // XXX
-   //_endthread();
+   _endthread();
 }

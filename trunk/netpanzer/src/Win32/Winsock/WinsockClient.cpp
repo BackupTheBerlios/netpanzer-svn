@@ -1045,6 +1045,8 @@ void OnReadDgramClient(SOCKET socket, int iErrorCode)
     if(iBytesReceived == SOCKET_ERROR)
     {
         iError = WSAGetLastError();
+	printf("socket error.\n");
+	fflush(stdout);
         return;
 
     }
@@ -1067,6 +1069,9 @@ void OnReadDgramClient(SOCKET socket, int iErrorCode)
             strcpy((char*)GAMEINFOCLIENT.MapName, basicGameInfo->MapName);
             strcpy((char*)GAMEINFOCLIENT.PlayerName, basicGameInfo->PlayerName);
 
+	    printf("gameinfo!\n");
+	    fflush(stdout);
+
             serverTimeout.reset();
             netPanzerFound = true;
             
@@ -1080,6 +1085,8 @@ void OnReadDgramClient(SOCKET socket, int iErrorCode)
      else
       {
        //enqueue this datagram--
+	  printf ("Enqueue packet.\n");
+	  fflush(stdout);
        EnqueueUnreliablePacket(RecvDgram,
                                iBytesReceived,
                                 1,

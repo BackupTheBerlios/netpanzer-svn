@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include <windows.h>
 
+#include "gapp.hpp"
 #include "DSound.hpp"
 #include "sfx.h"
 #include "wavfile.h"
@@ -40,7 +41,7 @@ DirectSound::DirectSound()
  Enabled = false;
 }
 
-bool DirectSound::Initialize()
+bool DirectSound::initialize()
 {
     HRESULT hr;
 	short index;
@@ -113,7 +114,7 @@ HRESULT DirectSound::InitDirectSound(HWND hWnd)
 		if(hr == DSERR_OUTOFMEMORY)
 			MessageBox(hWnd, "Not enough memory to run DirectSound. You can still play netPanzer, but there won't be any sound.", "Error", MB_OK);
 
-		ShutDownDirectSound();
+		shutdown();
 		return false;
 	}
 
@@ -124,7 +125,7 @@ HRESULT DirectSound::InitDirectSound(HWND hWnd)
 	if(hr != DS_OK)
 	{
 		MessageBox(hWnd, "DirectSound initialization failed. You can still play netPanzer, but there won't be any sound.", "Error", MB_OK);
-  		ShutDownDirectSound();
+  		shutdown();
         return false;
 	}
 
@@ -137,7 +138,7 @@ HRESULT DirectSound::InitDirectSound(HWND hWnd)
 	if(hr != DS_OK)
 	{
 		MessageBox(hWnd, "DirectSound can't get sound card info. You can still play netPanzer, but there won't be any sound.", "Error", MB_OK);
-		ShutDownDirectSound();
+		shutdown();
 		return false;
 	}
 
@@ -196,7 +197,7 @@ HRESULT DirectSound::InitSoundEngine(HWND hWnd)
         if(WaveLoadFile( file_path, &cbSize[index], &cSamples[index], &m_pWaveFormatEx[index], &pbData1[index]) != 0)
 		{
 			MessageBox(hWnd, "DirectSound couldn't initialize completely. You can still play netPanzer, but there will be no sound.", "Error", MB_OK);
-			ShutDownDirectSound();
+			shutdown();
 			return false;
 		}
 
@@ -235,8 +236,7 @@ HRESULT DirectSound::InitSoundEngine(HWND hWnd)
 				if(hr != DS_OK)
 				{
 				MessageBox(hWnd, "DirectSound couldn't initialize completely. You can still play netPanzer, but there will be no sound.", "Error", MB_OK);
-				ShutDownDirectSound();
-				return false;
+				shutdown();
 				}
 
 			}
@@ -246,7 +246,7 @@ HRESULT DirectSound::InitSoundEngine(HWND hWnd)
 		else
 		{
 			MessageBox(hWnd, "DirectSound couldn't initialize completely. You can still play netPanzer, but there will be no sound.", "Error", MB_OK);
-			ShutDownDirectSound();
+			shutdown();
 			return false;
 		} 
 	}

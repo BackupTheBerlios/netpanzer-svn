@@ -22,11 +22,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "mmsystem.h"
 //#include "mmreg.h"
 //#include "msacm.h"
-#include "dsound.h"
+#include <dsound.h>
 
 #include "PObject.hpp"
 #include "UnitTypes.hpp"
 #include "sfx.h"
+#include "Sound.hpp"
 
 
 ////EXTERNALS/////////////////////////////////////////////////////
@@ -113,7 +114,7 @@ public:
 
  DirectSound();    
 
- void initialize();
+ bool initialize();
  void shutdown();
 
  void PlayTankIdle();

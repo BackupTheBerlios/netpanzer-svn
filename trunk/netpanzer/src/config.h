@@ -4,4 +4,4 @@
 #define __attrib__(x)
 #endif
 
-#define USE_SDL
+//#define USE_SDL

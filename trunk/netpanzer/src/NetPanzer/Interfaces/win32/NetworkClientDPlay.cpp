@@ -27,11 +27,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "DirectPlay.h"
 #include "DPlayError.hpp"
-#include "DirectDrawGlobals.hpp"
 
 #include "MouseInterface.hpp"
 
 #include "ClientConnectDaemon.hpp"
+
+// XXX disabled, broken and probably not needed if socket code is working
+
+#if 0
 
 NetworkClientDPlay::NetworkClientDPlay( void )
  : NetworkClient()
@@ -273,3 +276,4 @@ int NetworkClientDPlay::getMessage( NetMessage *message )
   return( false );
  }
 
+#endif

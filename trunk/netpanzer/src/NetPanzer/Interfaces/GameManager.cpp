@@ -41,8 +41,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifdef WIN32
 #include "NetworkServerWinSock.hpp"
 #include "NetworkClientWinSock.hpp"
-#include "NetworkServerDPlay.hpp"
-#include "NetworkClientDPlay.hpp"
+//#include "NetworkServerDPlay.hpp"
+//#include "NetworkClientDPlay.hpp"
 #endif
 
 #include "UILib/UIDraw.hpp"
@@ -209,10 +209,13 @@ void GameManager::shutdownVideoSubSystem()
 void GameManager::initializeSoundSubSystem()
 {
 #ifdef WIN32
-   	if ( dsound.Initialize( gapp.hwndApp) == false )
-	{
-		LOG( ( "Failure to initialize DirectSound Sub-system" ) );
-	} 
+    sound = new DirectSound();	
+    if (!sound->initialize())
+    {
+	LOG( ( "Failure to initialize DirectSound Sub-system" ) );
+	delete sound;
+	sound = 0;
+    } 
 #endif
 }
 
@@ -221,7 +224,7 @@ void GameManager::initializeSoundSubSystem()
 void GameManager::shutdownSoundSubSystem()
 {
 #ifdef WIN32
-  	dsound.ShutDownDirectSound();
+    sound->shutdown();
 #endif
 }
 
@@ -1065,9 +1068,7 @@ void GameManager::spawnPlayer( const PlayerID &player )
 {
   PointXYi spawn_point;
 
-#ifdef WIN32
-  dsound.StopTankIdle(); 
-#endif
+  sound->StopTankIdle(); 
   
   // ** Get a new spawn point and spawn the player ** 
   MapInterface::getFreeSpawnPoint( &spawn_point );
@@ -1088,9 +1089,7 @@ void GameManager::spawnPlayer( const PlayerID &player )
     SERVER->sendMessage( &set_view, sizeof( SystemSetPlayerView ), player, 0 );
    }
   
-#ifdef WIN32
-  dsound.PlayTankIdle();
-#endif
+  sound->PlayTankIdle();
 }     
 
 void GameManager::respawnAllPlayers()
@@ -1636,9 +1635,7 @@ void GameManager::joinMultiPlayerGame()
    }
 
   ClientConnectDaemon::startConnectionProcess();
-#ifdef WIN32
-  dsound.PlayTankIdle();
-#endif
+  sound->PlayTankIdle();
  }
 
 // ******************************************************************
@@ -1811,10 +1808,8 @@ void GameManager::launchDedicatedServer()
 // ******************************************************************
 void GameManager::exitNetPanzer()
 {
-#ifdef WIN32
   // NOTE: Hack
-  dsound.StopTankIdle(); 
-#endif
+  sound->StopTankIdle(); 
 
   quitNetPanzerGame();
 

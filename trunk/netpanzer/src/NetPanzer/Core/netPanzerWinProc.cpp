@@ -58,18 +58,26 @@ LRESULT CALLBACK PanzerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 
      case SM_STREAMEVENT:
+	 printf("streamev1.\n");
+	 fflush(stdout);
          ServStreamAsyncMsg(hwnd, wParam, lParam);
          break;
 
      case SM_DGRAMEVENT:
+	 printf("streamev2.\n");
+	 fflush(stdout);
          ServDgramAsyncMsg(hwnd, wParam, lParam);
          break;
 
      case CM_STREAMEVENT:
-	     ClientStreamAsyncMsg(hwnd, wParam, lParam);
+	 printf("streamev3.\n");
+	 fflush(stdout);
+	 ClientStreamAsyncMsg(hwnd, wParam, lParam);
          break;
 
      case CM_DGRAMEVENT:
+	 printf("streamev4.\n");
+	 fflush(stdout);
          ClientDgramAsyncMsg(hwnd, wParam, lParam);
          break;
 
@@ -123,7 +131,7 @@ LRESULT CALLBACK PanzerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
          {
           LOG( ("WM_ACTIVATE") );
           //DDraw.setGDIStatus( false ); 
-          Win32HideHardwareMouse();
+	  ShowCursor(false);
           //DDraw.palette.activateCurrentPalette();
          }
 
@@ -131,7 +139,7 @@ LRESULT CALLBACK PanzerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
          {
           LOG( ("WM_ACTIVATE") );
           //DDraw.setGDIStatus( true ); 
-          Win32ShowHardwareMouse();
+	  ShowCursor(true);
           //DDraw.palette.activateSystemPalette();
          }
        }

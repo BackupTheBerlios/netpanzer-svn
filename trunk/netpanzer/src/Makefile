@@ -13,6 +13,10 @@ DIRS = . Lib Lib/2D Lib/Environment Lib/Interfaces Lib/Particles \
 	   NetPanzer/Core NetPanzer/Resources \
 	   UILib
 
+LINKFLAGS += -g3
+INCLUDEDIRS=$(DIRS) NetPanzer/Classes/Network
+CFLAGS += -Wall -g3 -O2 $(foreach dir, $(INCLUDEDIRS), -I$(dir))
+
 ifeq ($(SYSTEM),UNIX)
 DIRS += NetPanzer/Interfaces/unix Stub Win32/unix UILib/SDL \
 	    NetPanzer/Core/unix
@@ -25,7 +29,7 @@ DIRS += NetPanzer/Interfaces/win32 DirectX/DDraw DirectX/DirectInput \
         DirectX/DirectPlay DirectX/DirectSound \
         Win32 Win32/Winsock
 GOAL = ../netpanzer.exe
-CFLAGS += -DWIN32 -Iw32api
+CFLAGS += -DWIN32 -Iw32api -D_DEBUG -Wno-unknown-pragmas
 LINKFLAGS += -lgdi32 -lshell32 -lddraw -ldinput -ldplayx -ldsound -lws2_32 -ldsetup -lwinmm -ldxguid -lole32
 endif
 	   
@@ -34,10 +38,6 @@ OBJECTS = $(SOURCES:.cpp=.o)
 # eventually disable if you don't have makedep installed (but you don't have
 # dependency checking then)
 #MAKEDEPEND=makedepend
-
-LINKFLAGS += -g3
-INCLUDEDIRS=$(DIRS) NetPanzer/Classes/Network
-CFLAGS += -Wall -g3 -O2 $(foreach dir, $(INCLUDEDIRS), -I$(dir))
 
 $(GOAL): $(OBJECTS)
 		g++ -o $(GOAL) $(OBJECTS) $(LINKFLAGS)

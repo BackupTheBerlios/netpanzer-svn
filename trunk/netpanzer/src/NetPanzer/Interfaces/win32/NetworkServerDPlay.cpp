@@ -32,6 +32,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ServerConnectDaemon.hpp"
 
+// XXX Code broken and probably not neccessary when the socket stuff is
+// working
+#if 0
 
 NetworkServerDPlay::NetworkServerDPlay()
   : NetworkServer()
@@ -257,3 +260,4 @@ int NetworkServerDPlay::getMessage( NetMessage *message )
   return( false );
  }
 
+#endif
