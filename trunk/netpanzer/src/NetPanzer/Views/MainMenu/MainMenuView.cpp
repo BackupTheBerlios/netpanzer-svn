@@ -49,19 +49,15 @@ void MainMenuView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
 	MenuTemplateView::doDraw(viewArea, clientArea);
 
-	static char	text[] =	"This is a special limited multiplayer TEST version of netPanzer.  "
-							"netPanzer's legal use must conform to the software license "
-							"which was explicitly agreed to when netPanzer was installed "
-							"on this system.  That license agreement stipulates that this "
-							"version of netPanzer can be posted for download.  See "
-							"license.txt for further details."
-							"\n"
-							"netPanzerTest only supports TCP/IP multiplayer games over "
-							"LAN systems and over the Internet. Skirmish mode, direct connect, "
-							"and modem games will not work in netPanzerTest. These connection "
-							"types and the skirmish mode will be supported in the downloadable "
-							"public beta.";
-
+	static char	text[] =
+		"This is NetPanzer, a massively multiplayer tank battle game.  "
+		"This application is free software under the terms of the "
+		"Gnu General Public license (GPL). See the COPYING file for details."
+		"\n"
+		"NetPanzer only supports TCP/IP multiplayer games over "
+		"LAN systems and over the Internet. A Skirmish mode might "
+		"be added later. We're still searching for talented coders "
+		"and artists. Look at http://www.nongnu.org/netpanzer for details. ";
 
 	viewArea.bltStringInBox(bodyTextRect, text, Color::white, 12);
 
