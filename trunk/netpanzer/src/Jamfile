@@ -47,3 +47,5 @@ Application netpanzer : $(SOURCES) ;
 CFlags netpanzer : -DDATADIR=\\\"$(datadir)\\\" ;
 ExternalLibs netpanzer : XML SDLNET SDLMIXER SDLIMAGE SDL PHYSFS ;
 Help netpanzer : "Build the main netpanzer executable" ;
+
+SubInclude TOP src Editor ;
