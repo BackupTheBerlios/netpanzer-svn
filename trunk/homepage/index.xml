@@ -2,6 +2,13 @@
 <page title="netPanzer - News">
   <section title="News">
     <news>
+      <item date="17. Mar 2004">
+        <p>We're looking for someone who'd host a masterserver for netpanzer</p>
+        <p>To avoid the current problems with irc in the future we'd like to
+        setup a masterserver for netpanzer. So if you have a stable and reliable
+        linux server and want to help an open-source game project, then we'd
+        like to hear from you :)</p>
+      </item>
       <item date="10. Mar 2004">
         <h3><font color="red">Lobby Problems</font></h3>
         <p>The freenode network has some security scripts running that try to
@@ -12,7 +19,7 @@
         of course stay at freenode)</p>
         <p>You <font color="red">have to do 1 of the following things</font>:</p>
         <ul>
-            <li>Invoke the following command:<br/>
+            <li>Invoke this command:<br/>
                 <tt>netpanzer --lobby_server=irc.quakenet.org</tt>
             </li>
             <li>Edit the <tt>netpanzer.xml</tt> file (you can typically find it
