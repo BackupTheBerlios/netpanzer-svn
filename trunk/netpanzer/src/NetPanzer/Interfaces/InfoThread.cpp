@@ -44,7 +44,7 @@ InfoThread::InfoThread(int port)
             gameconfig->bindaddress, port);
     socket = new network::UDPSocket(addr, false);
 
-    lastFrame = now();
+    lastFrame = SDL_GetTicks();
     
     // start the thread
     thread = SDL_CreateThread(threadMain, this);    
@@ -133,11 +133,7 @@ void shutdown();
 void
 InfoThread::checkServerHang()
 {
-    /*
-    printf("CheckServerHang: Now: %f lastf: %f Diff: %f.\n", 
-            now().getSecs(), lastFrame.getSecs(), now() - lastFrame);
-    */
-    if(now() - lastFrame > SERVER_HANG_TIME) {
+    if(SDL_GetTicks() - lastFrame > SERVER_HANG_TIME * 1000) {
         ConsoleInterface::postMessage("Detected endless loop. Shutting down.");
 
         // hard shutdown, can't correctly abort the mainloop if it hangs :-/

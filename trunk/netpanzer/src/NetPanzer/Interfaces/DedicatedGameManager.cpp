@@ -100,8 +100,7 @@ void DedicatedGameManager::initializeInputDevices()
 void DedicatedGameManager::inputLoop()
 {
     if(infothread) {
-        //printf("lastf update.\n");
-        infothread->lastFrame = now();
+        infothread->lastFrame = SDL_GetTicks();
     }
     
     // handle server commands

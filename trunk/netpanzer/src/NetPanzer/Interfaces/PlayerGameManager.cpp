@@ -242,7 +242,7 @@ void PlayerGameManager::initializeWindowSubSystem()
 void PlayerGameManager::inputLoop()
 {
     if(infothread)
-        infothread->lastFrame = now();
+        infothread->lastFrame = SDL_GetTicks();
 
     processSystemKeys();
 

@@ -3,27 +3,6 @@ Next release:
     - no idea how to solve this, have to leave it open I guess...
 -netpanzer fails on win98se
 -add netpanzer:// registration to netpanzer installer
--deadlock detector easily runs amok...
-
--this resulted in an endless loop in the server
-<fEnIo> Connection lost of Client 64: Read error: Connection timed out.
-<fEnIo> <2004-11-11 03:54:09>'Jaden' has left the game.
-<fEnIo> <2004-11-11 03:54:09>'TryToBeatMe' has left the game.
-<fEnIo> Received malformed disconnection message.
-<fEnIo> <2004-11-11 03:54:09>'an2' has left the game.
-<fEnIo> OnReadStreamServer : Invalid Packet Size 2544
-(from bot log:)
-<fEnIo> query for worldpixmovement outside map (6678,2460)
-<fEnIo> query for worldpixmovement outside map (6684,2500)
-<fEnIo> query for worldpixmovement outside map (224,6662)
-<fEnIo> query for worldpixmovement outside map (2600,6672)
-<fEnIo> query for worldpixmovement outside map (2518,6662)
-<fEnIo> An unexpected exception occured: Send error: Couldn't send all data.
-<fEnIo> Shutdown needed.
-    might be more ppc people joining (yes, netpanzer isn't 100% robust in
-            network packet error checking... but no chance to review and fix
-            this stuff before 0.2.0 as it should work quiet well once ppc
-            endianess is fixed)
 
 *** New Masterserver code
  * Create UDP broadcast code for LAN games

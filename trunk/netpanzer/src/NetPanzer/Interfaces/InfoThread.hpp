@@ -36,7 +36,7 @@ public:
     /** time when the server completed it's last frame. This is used to detect
      * servers that are in an endless loop (happens sometimes :-(  )
      */
-    TimeStamp lastFrame;
+    volatile Uint32 lastFrame;
 
 private:
     static int threadMain(void* data);

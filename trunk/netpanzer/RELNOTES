@@ -6,6 +6,7 @@
 * The -c command handles netpanzer:// URLs now
 * Some additional infos are sent out by the server which help server browser
 * Distribute cached palettes so that the first start should be faster now
+* The code finally works on the Mac and probably other big-endian boxes
 
 *** 0.2.0-rc4 ***
 
