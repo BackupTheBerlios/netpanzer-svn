@@ -18,13 +18,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _ARRAYGROWABLETEMPLATE_HPP
 #define _ARRAYGROWABLETEMPLATE_HPP
 
-#include "PObject.hpp"
 #include <assert.h>
 #include <stdlib.h>
 
-
 template< class TYPE >
-class ArrayGrowableTemplate : public PObject
+class ArrayGrowableTemplate
  {
   protected:
    unsigned long size;

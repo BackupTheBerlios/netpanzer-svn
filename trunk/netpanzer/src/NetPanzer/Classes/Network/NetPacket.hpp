@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETPACKET_HPP
 #define _NETPACKET_HPP
 
-#include "PObject.hpp"
 #include "NetMessageEnums.hpp"
 #include "UILib/Network/Client.hpp"
 
@@ -27,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifdef MSVC
 #pragma pack(1)
 #endif
-class NetPacket : public PObject 
+class NetPacket
 {
 public:
 	Client::ID toID;

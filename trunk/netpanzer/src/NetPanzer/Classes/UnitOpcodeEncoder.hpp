@@ -25,7 +25,7 @@ enum { _opcode_encoder_send_method_guarantee,
        _opcode_encoder_send_method_no_guarantee
      };
 
-class UnitOpcodeEncoder : public PObject
+class UnitOpcodeEncoder
  {
   protected:
    UnitOpcodeMessage opcode_message;

@@ -18,13 +18,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _TILEINTERFACE_HPP
 #define _TILEINTERFACE_HPP
 
-#include "PObject.hpp"
 #include "Surface.hpp"
 #include "TileSet.hpp"
 #include "Palette.hpp"
 #include "Point.hpp"
 
-class TileInterface : virtual PObject
+class TileInterface
 {
 protected: 
  	static TileSet tile_set;

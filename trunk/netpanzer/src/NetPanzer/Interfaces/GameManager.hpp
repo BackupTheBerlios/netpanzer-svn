@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _GAMEMANAGER_HPP
 
 #include <time.h>
+#include <stdint.h>
 #include "PlayerState.hpp"
 #include "NetPacket.hpp"
 #include "Point.hpp"
@@ -39,7 +40,6 @@ enum { _mapload_result_success,
        _mapload_result_no_map_file,
        _mapload_result_no_wad_file
      };
-
 
 class GameManager 
 {
@@ -62,7 +62,7 @@ protected:
    
 	static PointXYi previous_video_mode_res;
 	static PointXYi current_video_mode_res;
-	static BYTE     current_mode_flags;
+	static uint8_t  current_mode_flags;
 
 protected:
 	static unsigned char game_state;

@@ -18,11 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITBLACKBOARD_HPP
 #define _UNITBLACKBOARD_HPP
 
-#include "PObject.hpp"
 #include "BitArray.hpp"
 #include "Point.hpp"
 
-class UnitBlackBoard : public PObject
+class UnitBlackBoard
  {
   protected:
    static BitArray unit_loc_map;

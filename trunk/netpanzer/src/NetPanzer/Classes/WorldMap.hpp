@@ -18,13 +18,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _WORLDMAP_HPP
 #define _WORLDMAP_HPP
 
-#include "PObject.hpp"
 #include "MapFileStruct.hpp"
 #include "WadMapTable.hpp"
 
 typedef unsigned short MapElementType;
 
-class WorldMap : virtual PObject
+class WorldMap
  {
   protected:
    bool map_loaded;

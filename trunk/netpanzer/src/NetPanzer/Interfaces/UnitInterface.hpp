@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITINTERFACE_HPP
 #define _UNITINTERFACE_HPP
 
-#include "PObject.hpp"
 #include "UnitList.hpp"
 #include "UnitBucketArray.hpp"
 #include "UnitMessage.hpp"
@@ -38,7 +37,7 @@ enum { _search_all_players,
 
 enum { _no_unit_found, _unit_player, _unit_allied, _unit_enemy };
 
-class UnitInterface : public PObject
+class UnitInterface
  {  
   protected:
    static UnitList *unit_lists;

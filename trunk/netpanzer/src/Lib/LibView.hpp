@@ -18,19 +18,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __LibView_hpp__
 #define __LibView_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
 #include "GameTemplateView.hpp"
 #include "Surface.hpp"
 #include "CheckBox.hpp"
 
-
 extern bool gDrawGameTiles;
 extern bool gDrawUnitTips;
-
 
 enum
 {
@@ -38,7 +31,6 @@ enum
 	LIBVIEW_MODE_PARTICLE_INFO,
 	LIBVIEW_MODE_ENVIRONMENT_INFO,
 };
-
 
 //--------------------------------------------------------------------------
 class LibView : public GameTemplateView
@@ -67,8 +59,6 @@ public:
 	virtual void actionPerformed(mMouseEvent me);
 
 	static int displayMode;
-
 }; // end LibView
-
 
 #endif // end __LibView_hpp__

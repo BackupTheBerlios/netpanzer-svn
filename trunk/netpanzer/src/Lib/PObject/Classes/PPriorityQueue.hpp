@@ -29,16 +29,16 @@ class PPriorityQueue : public PHeap
   
   PPriorityQueue( void );
   
-  inline void push( PObject *object )
+  inline void push(void *object )
    {
     last++;
     add( object, last);
     shiftUp();
    }
   
-  inline PObject * pop( void )
+  inline void* pop( void )
    {
-    PObject *object;
+    void *object;
     if ( array[ root ] == 0 ) 
      {
       return( 0 );

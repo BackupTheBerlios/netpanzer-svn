@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _KEYBINDER_HPP
 #define _KEYBINDER_HPP
 
-#include "PObject.hpp"
 #include "ArrayGrowableTemplate.hpp"
 #include "KeyScanCodeDefs.h"
 

@@ -18,10 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _BRESENHAMLINE_HPP
 #define _BRESENHAMLINE_HPP
 
-#include "PObject.hpp"
 #include "Point.hpp"
 
-class BresenhamLine : public PObject
+class BresenhamLine
  {
   protected:
   

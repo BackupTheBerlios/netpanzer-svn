@@ -34,14 +34,14 @@ class PQueue : public PArray
 
    void initialize( unsigned long size );
 
-   inline void enqueue( PObject *object )
+   inline void enqueue(void *object )
     {
      rear = (rear + 1) % size;
      assert( front != rear );
      add( object, rear );
     }
 
-   inline PObject * dequeue( void )
+   inline void* dequeue()
     {
      if ( front == rear )
        { return ( 0 ); }
@@ -53,24 +53,15 @@ class PQueue : public PArray
       
     }
  
-   inline bool isEmpty( void )
-    {
-     if( front == rear )
-       return ( true );
-         
-     return( false );
-    }
+   inline bool isEmpty() const
+   {
+	   return front == rear;
+   }
 
-   inline bool isReady( void )
-    {
-     if( front == rear )
-      return ( false );
-         
-     return( true );
-    }
-
-
- };
-
+   inline bool isReady() const
+   {
+	   return front != rear;
+   }
+};
 
 #endif // ** _PQUEUE_HPP

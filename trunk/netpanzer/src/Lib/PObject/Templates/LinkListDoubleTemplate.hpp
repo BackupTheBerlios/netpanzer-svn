@@ -19,10 +19,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _LINKLISTDOUBLETEMPLATE_HPP
 
 #include <stdlib.h>
-#include "PObject.hpp"
 
 template< class TYPE >
-class LinkListDoubleTemplate : public PObject
+class LinkListDoubleTemplate
  {
   protected:
    TYPE *front;

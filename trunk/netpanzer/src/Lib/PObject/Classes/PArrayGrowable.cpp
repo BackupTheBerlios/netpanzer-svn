@@ -65,17 +65,17 @@ void PArrayGrowable::initialize( unsigned long size, unsigned long growIncrement
     array = 0;
    }
   
-  array = (PObject * *) malloc( sizeof(PObject *) * size );
+  array = (void**) malloc( sizeof(void*) * size );
  
   assert( array != 0 ); 
  }
  
-PArrayGrowable::~PArrayGrowable( void )
+PArrayGrowable::~PArrayGrowable()
  {
   free( array );
  }
 
-PObject * PArrayGrowable::operator[]( unsigned long index)
+void* PArrayGrowable::operator[]( unsigned long index)
  {
   if ( index >= size )
    {
@@ -83,8 +83,8 @@ PObject * PArrayGrowable::operator[]( unsigned long index)
     new_size = (index + 1 + grow_increment);  
     if ( new_size <= grow_limit )
      {
-      array = (PObject * *) realloc( array, sizeof(PObject *) * new_size );
-      memset( &array[ size ], 0, sizeof(PObject *) * (new_size - size) ); 
+      array = (void**) realloc( array, sizeof(void*) * new_size );
+      memset( &array[ size ], 0, sizeof(void*) * (new_size - size) ); 
       size = new_size;
       assert( array != 0 );     
      }
@@ -95,7 +95,7 @@ PObject * PArrayGrowable::operator[]( unsigned long index)
    return( array[index] );
  }
  
-void PArrayGrowable::add( PObject *object, unsigned long index )
+void PArrayGrowable::add(void *object, unsigned long index )
  {
   if ( index >= size )
    {
@@ -103,8 +103,8 @@ void PArrayGrowable::add( PObject *object, unsigned long index )
     new_size = (index + 1 + grow_increment);  
     if ( new_size <= grow_limit )
      {
-      array = (PObject * *) realloc( array, sizeof(PObject *) * new_size );
-      memset( &array[ size ], 0, sizeof(PObject *) * (new_size - size) ); 
+      array = (void**) realloc( array, sizeof(void*) * new_size );
+      memset( &array[ size ], 0, sizeof(void*) * (new_size - size) ); 
       size = new_size;
       assert( array != 0 );     
      }
@@ -117,7 +117,7 @@ void PArrayGrowable::add( PObject *object, unsigned long index )
 
 void PArrayGrowable::resize( unsigned long size )
  {
-  array = (PObject * *) realloc( array, sizeof(PObject *) * size );
+  array = (void**) realloc( array, sizeof(void*) * size );
   PArrayGrowable::size = size;
   assert( array != 0 );          
  }
@@ -132,8 +132,8 @@ void PArrayGrowable::setGrowIncrement( unsigned long growIncrement )
   grow_increment = growIncrement;
  }
 
-
+// XXX what is sorting pointers good for?!?
 void PArrayGrowable::sort( unsigned long sort_size, int (* compare)(const void *elem1,const void *elem2 ) )
  {
-  qsort( array, sort_size, sizeof(PObject *), compare );
+  qsort( array, sort_size, sizeof(void*), compare );
  }

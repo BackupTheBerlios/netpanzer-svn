@@ -18,16 +18,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PARRAYGROWABLE_HPP
 #define _PARRAYGROWABLE_HPP
 
-#include "PObject.hpp"
-#include "stdlib.h"
+#include <stdlib.h>
 
-class PArrayGrowable : public PObject
+class PArrayGrowable
  {
   protected:
    unsigned long size;
    unsigned long grow_increment;
    unsigned long grow_limit;
-   PObject **array;
+   void **array;
   
   public:
   
@@ -45,9 +44,9 @@ class PArrayGrowable : public PObject
   void initialize( unsigned long size, unsigned long growIncrement, 
                    unsigned long growLimit );
   
-  PObject * operator[]( unsigned long index);
+  void* operator[]( unsigned long index);
  
-  void add( PObject *object, unsigned long index );
+  void add(void *object, unsigned long index );
   
   void resize( unsigned long size );
 
@@ -71,8 +70,7 @@ class PArrayGrowable : public PObject
      }
     
     size = 0;
-   }
- 
- };
+   } 
+};
 
 #endif

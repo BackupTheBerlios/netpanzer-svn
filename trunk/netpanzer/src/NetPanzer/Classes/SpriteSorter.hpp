@@ -22,8 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PArrayGrowable.hpp"
 #include "Point.hpp"
 
-
-class SpriteSorter : public PObject
+class SpriteSorter
  {  
   protected:
    Recti world_window;

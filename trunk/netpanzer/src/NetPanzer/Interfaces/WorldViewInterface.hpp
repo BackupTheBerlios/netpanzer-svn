@@ -19,10 +19,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _WORLDVIEWINTERFACE_HPP
 
 #include "Point.hpp"
-#include "PObject.hpp"
 #include "ViewCamera.hpp"
 
-class WorldViewInterface : virtual PObject
+class WorldViewInterface
 {
 protected:
  	static ViewCamera *main_camera;

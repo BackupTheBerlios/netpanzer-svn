@@ -38,7 +38,7 @@ enum { _objective_disposition_unoccupied,
 	   _objective_disposition_enemy
 	 };
 
-class ObjectiveInterface : public PObject
+class ObjectiveInterface
  {
   protected:
    static ObjectiveList objective_list;

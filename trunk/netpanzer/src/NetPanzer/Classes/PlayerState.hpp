@@ -19,12 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _PLAYERSTATE_HPP
 
 #include <string.h>
-#include "PObject.hpp"
 #include "PlayerID.hpp"
 #include "PlayerUnitConfig.hpp"
-
-
-
 
 enum { _player_state_free,
        _player_state_allocated,
@@ -32,7 +28,7 @@ enum { _player_state_free,
        _player_state_active
      };
 
-class PlayerState : public PObject
+class PlayerState
  {
   protected:
    char name[64];

@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Timer.hpp"
 #include "PathingState.hpp"
 
-int compare( PObject *object1, PObject *object2 )
+int compare(void *object1, void *object2 )
  {
   AstarNode *node1, *node2;
   node1 = (AstarNode *) object1; 					   

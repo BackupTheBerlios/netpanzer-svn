@@ -18,10 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _INTERNALLINK_HPP
 #define _INTERNALLINK_HPP
 
-#include "PObject.hpp"
 #include <stdlib.h>
 
-class InternalLink : public PObject
+class InternalLink
  {
   public:
 

@@ -20,12 +20,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <assert.h>
 #include <stdlib.h>
-#include "PObject.hpp"
 
-class PArray : public PObject
+class PArray
 {
 protected:
-    PObject **array;
+    void **array;
     unsigned long size;
   
 public:
@@ -39,13 +38,13 @@ public:
   
     void sort( unsigned long sort_size, int (* compare)(const void *elem1,const void *elem2 ) );
 
-  inline PObject * operator[]( unsigned long index)
+  inline void* operator[]( unsigned long index)
    {
     assert( index < size );
     return( array[index] );
    }
  
-  inline void add( PObject *object, unsigned long index )
+  inline void add(void* object, unsigned long index )
    {
     assert( index < size );
     array[index] = object;
@@ -66,7 +65,6 @@ public:
     
     size = 0;
    }
- 
- };
+};
 
 #endif // #ifndef __PARRAY_HPP__

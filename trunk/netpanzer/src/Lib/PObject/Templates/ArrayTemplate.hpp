@@ -20,10 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <assert.h>
 #include <stdlib.h>
-#include "PObject.hpp"
 
 template< class TYPE >
-class ArrayTemplate : public PObject
+class ArrayTemplate
  {
   protected:
    unsigned long size;

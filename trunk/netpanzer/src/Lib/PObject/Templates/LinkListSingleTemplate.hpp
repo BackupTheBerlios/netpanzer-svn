@@ -19,10 +19,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _LINKLISTSINGLETEMPLATE_HPP
 
 #include <stdlib.h>
-#include "PObject.hpp"
 
 template< class TYPE >
-class LinkListSingleTemplate : public PObject
+class LinkListSingleTemplate
  {
   protected:
    TYPE *front;

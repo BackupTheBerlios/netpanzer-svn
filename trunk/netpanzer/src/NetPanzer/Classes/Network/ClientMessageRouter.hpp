@@ -18,11 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _CLIENTMESSAGEROUTER_HPP
 #define _CLIENTMESSAGEROUTER_HPP
 
-#include "PObject.hpp"
 #include "NetPacket.hpp"
 #include "NetMessageEncoder.hpp"
 
-class ClientMessageRouter : public PObject
+class ClientMessageRouter
  {
   protected:
    static NetMessage *temp_message;

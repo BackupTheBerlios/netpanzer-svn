@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 PArray::PArray( unsigned long size )
  {
   PArray::size = size;
-  array = new PObject * [ size ];
+  array = new void* [ size ];
   assert( array != 0 );
  }
 
@@ -41,7 +41,7 @@ void PArray::initialize( unsigned long size )
     delete( array );
     array = 0;
    }
-  array = new PObject * [ size ];
+  array = new void* [ size ];
   assert( array != 0 );
  }
 
@@ -53,5 +53,5 @@ void PArray::sort( unsigned long sort_size, int (* compare)(const void *elem1,co
     return;
    }
   
-  qsort( array, sort_size, sizeof(PObject *), compare );
+  qsort( array, sort_size, sizeof(void*), compare );
  }

@@ -22,10 +22,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PArrayGrowable.hpp"
 #include "SpriteSorter.hpp"
 
-
 #include "Gdatstct.hpp"
 
-class StaticsInterface : public PObject
+class StaticsInterface
  {
   protected:
    static PArrayGrowable static_sprite_list;

@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __STATS_HPP
 #define __STATS_HPP
 
-#include "PObject.hpp"
 #include "PArray.hpp"
 #include "PlayerInterface.hpp"
 
@@ -39,7 +38,7 @@ enum { _stats_display_type_winner,
        _stats_display_type_default
      };
 
-class Stats : public PObject
+class Stats
 {
  protected:
 	static int sort_order_enum;

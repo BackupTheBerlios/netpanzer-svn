@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _MOUSEINTERFACE_HPP
 #define _MOUSEINTERFACE_HPP
 
-#include "PObject.hpp"
 #include "Point.hpp" 
 #include "QueueTemplate.hpp"
 #include "Surface.hpp"
@@ -29,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _MIDDLE_BUTTON_MASK  0x02
 #define _RIGHT_BUTTON_MASK   0x04
 
-class MouseEvent : public PObject
+class MouseEvent
 {
 public:
 	enum {
@@ -46,7 +45,7 @@ public:
 
 typedef QueueTemplate< MouseEvent > MouseEventQueue;  
 
-class MouseInterface : public PObject
+class MouseInterface
 {
 private:
   	static Surface mouse_cursor;

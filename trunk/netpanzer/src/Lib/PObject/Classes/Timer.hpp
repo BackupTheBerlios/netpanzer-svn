@@ -18,11 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _TIMER_HPP
 #define _TIMER_HPP
 
-#include "PObject.hpp"
 #include "cTimeStamp.hpp"
 #include "TimerInterface.hpp"
 
-class Timer : public PObject
+class Timer
 {
 protected:
     float period;
@@ -100,7 +99,7 @@ public:
     }   
 };
 
-class TimerFrameBase : public PObject
+class TimerFrameBase
  {
   protected:
    float period;

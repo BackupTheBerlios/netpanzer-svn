@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MouseInterface.hpp"
 #include "Timer.hpp"
 
-class WorldInputCmdProcessor : public PObject
+class WorldInputCmdProcessor
  {  
   protected:
    Recti world_win;

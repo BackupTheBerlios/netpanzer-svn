@@ -30,7 +30,7 @@ enum { _path_request_full, _path_request_update };
 enum { _slot_status_free, _slot_status_busy, _slot_status_wait, _slot_status_flush };
 enum { _path_result_success, _path_result_goal_unreachable };
 
-class PathRequest : public PObject
+class PathRequest
  {
   public:
    unsigned short status;
@@ -68,7 +68,7 @@ class PathRequest : public PObject
  };
 
 
-class AstarNode : public PObject
+class AstarNode
  {
   public:
   PointXYi map_loc;

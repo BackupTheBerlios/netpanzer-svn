@@ -18,11 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _TILESET_HPP
 #define _TILESET_HPP
 
-#include "PObject.hpp"
 #include "TileSetStruct.hpp"
 #include "WadMapTable.hpp"
 
-class TileSet : virtual PObject
+class TileSet
 {
 protected:
  	bool tile_set_loaded;

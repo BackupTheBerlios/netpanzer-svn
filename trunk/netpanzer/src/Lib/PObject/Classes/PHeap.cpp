@@ -45,7 +45,7 @@ void PHeap::initialize( unsigned long size, unsigned long growIncrement,
 
 void PHeap::shiftUp( void )
  {
-  PObject *temp;
+  void *temp;
   unsigned long pred; 
   unsigned long ptr;
   
@@ -69,7 +69,7 @@ void PHeap::shiftUp( void )
 void PHeap::shiftDown( void )
  {
   unsigned long ptr, succ;
-  PObject *root_temp;
+  void *root_temp;
   
   ptr = root; 
   succ = ptr << 1;  // * 2

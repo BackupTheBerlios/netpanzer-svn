@@ -79,8 +79,6 @@ void FileList::getFullPath( unsigned long index, char *full_path )
 
 void FileList::getDir( unsigned long index, char *directory )
 {
-	char* fullname = array[index];
-
 	_splitpath( array[ index ], 0, directory, 0, 0 );  	
 }
 

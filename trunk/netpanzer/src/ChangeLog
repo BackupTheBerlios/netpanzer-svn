@@ -2,6 +2,13 @@
 -more random cleanups
 -more cleanups so that the Stub directory is empty now
 -fixed the bug where the TileEngine didn't correctly draw the last line
+-removed the strange PObject class (still some utility classes which formerly
+ dealt with PObject are there and are - as before - quiet useless). The long
+  story:
+  It seemed like PObject was planed as some generic base type which provided a
+  uniform interface to functions like comparing 2 objects. But since the only
+  function is_equal in PObject wasn't virtual, and since it was never used I
+  decided that this stuff is quiet useless.
 
 9-Sep-2003 by Matze Braun
 -worked around issues with the block allocator code for Particl2D (new operator

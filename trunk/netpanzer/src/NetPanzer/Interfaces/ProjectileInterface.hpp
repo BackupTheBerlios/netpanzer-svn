@@ -21,8 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Projectile.hpp"
 #include "Weapon.hpp"
 
-
-class ProjectileInterface : public PObject
+class ProjectileInterface
  {
   protected:
    static InternalLink *projectile_list_start;

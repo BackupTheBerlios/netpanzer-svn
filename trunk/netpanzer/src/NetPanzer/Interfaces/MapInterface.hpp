@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _MAPINTERFACE_HPP
 #define _MAPINTERFACE_HPP
 
-#include "PObject.hpp"
 #include "TileInterface.hpp"
 #include "WorldMap.hpp"
 #include "SpawnList.hpp"

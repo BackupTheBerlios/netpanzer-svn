@@ -19,9 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _BITARRAY_HPP
 
 #include <stdlib.h>
-#include "PObject.hpp"
 
-class BitArray : public PObject
+class BitArray
  {
   private:
   unsigned char *array;

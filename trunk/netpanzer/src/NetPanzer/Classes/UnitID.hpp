@@ -18,72 +18,70 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITID_HPP
 #define _UNITID_HPP
 
-#include "PObject.hpp"
+class UnitID
+{
+public:
+ 	unsigned char player;
+  	unsigned short index;
+   	unsigned short unique;
 
-class UnitID : public PObject
- {
-  public:
-   unsigned char player;
-   unsigned short index;
-   unsigned short unique;
-
-   inline void set(unsigned char player, unsigned short index, unsigned short unique )
-    {
-     UnitID::player = player;
-     UnitID::index = index;
-     UnitID::unique = unique;
-    } 
+	inline void set(unsigned char player, unsigned short index, unsigned short unique )
+	{
+	   	UnitID::player = player;
+		UnitID::index = index;
+		UnitID::unique = unique;
+	} 
   
-   inline void set( unsigned char player, unsigned short index )
-    {
-     UnitID::player = player;
-     UnitID::index = index;
-    }
+	inline void set( unsigned char player, unsigned short index )
+	{
+		UnitID::player = player;
+		UnitID::index = index;
+	}
 
-   inline unsigned char getPlayer() const
-    {
-     return( player );
-    } 
+	inline unsigned char getPlayer() const
+	{
+		return( player );
+	} 
 
-   inline unsigned short getIndex() const
-    {
-     return( index );
-    } 
+	inline unsigned short getIndex() const
+	{
+		return( index );
+	} 
 
-   inline bool operator==( const UnitID& Uid ) const
-    {
-     if ( (player == Uid.player) && (index == Uid.index) 
-          && (unique == Uid.unique) 
-        )
-      return( true );
+	inline bool operator==( const UnitID& Uid ) const
+	{
+		if ( (player == Uid.player) && (index == Uid.index) 
+			  	&& (unique == Uid.unique) 
+		   )
+			return true;
            
-     return( false );
-    }
+		return false;
+	}
  
-   inline bool operator!=( const UnitID& Uid ) const
-    {
-     if ( (player != Uid.player) || (index != Uid.index) 
-          || (unique != Uid.unique) 
-        )
-      return( true );
+	inline bool operator!=( const UnitID& Uid ) const
+	{
+		if ( (player != Uid.player) || (index != Uid.index) 
+			  	|| (unique != Uid.unique) 
+		   )
+			return true;
            
-     return( false );
-    }
+		return false;
+	}
  
-   inline bool playerEqual( const UnitID& Uid ) const
-    {
-     if ( (player == Uid.player) )
-          return( true );
+	inline bool playerEqual( const UnitID& Uid ) const
+	{
+		if ( (player == Uid.player) )
+		  	return true;
          
-     return( false );
-    }
+		return false;
+	}
  
-   inline void operator=( const UnitID& Uid )
-    {
-     player = Uid.player;
-     index  = Uid.index;
-     unique = Uid.unique;   
-    } 
- };
+	inline void operator=( const UnitID& Uid )
+	{
+		player = Uid.player;
+		index  = Uid.index;
+		unique = Uid.unique;   
+	}
+};
 
 #endif

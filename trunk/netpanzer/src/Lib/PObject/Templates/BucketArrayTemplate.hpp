@@ -19,12 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _BUCKETARRAYTEMPLATE_HPP
 
 #include <assert.h>
-#include "PObject.hpp"
 #include "LinkListDoubleTemplate.hpp"
 
 
 template< class TYPE >
-class BucketArrayTemplate : public PObject
+class BucketArrayTemplate
  {
   protected:
    unsigned long size;

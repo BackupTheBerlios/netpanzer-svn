@@ -21,11 +21,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdlib.h>
 
 #include <string.h>
-#include "PObject.hpp"
 
 extern unsigned long DEFAULT_PATH_LIST_SIZE;
 
-class PathList : public PObject
+class PathList
  {
   protected:
   unsigned long *list;

@@ -60,7 +60,7 @@ class ServerConnectQueue : public QueueTemplate< ConnectQueueElement >
  
  };
 
-class ServerConnectDaemon : public PObject
+class ServerConnectDaemon
  {  
   protected:
    static unsigned char      connection_state;

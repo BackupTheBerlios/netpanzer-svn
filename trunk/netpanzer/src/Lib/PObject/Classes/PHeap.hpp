@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class PHeap : public PArrayGrowable
  {
   protected:
-  int (* compare_func)( PObject *object1, PObject *object2);  
+  int (* compare_func)(void *object1, void* object2);  
   unsigned long root;
   unsigned long last;
   
@@ -42,7 +42,7 @@ class PHeap : public PArrayGrowable
     last = 0;
    }
   
-  void setCompare( int (* compare_func_ptr)( PObject *object1, PObject *object2) )
+  void setCompare( int (* compare_func_ptr)(void *object1, void *object2) )
    {
     compare_func = compare_func_ptr;
    }

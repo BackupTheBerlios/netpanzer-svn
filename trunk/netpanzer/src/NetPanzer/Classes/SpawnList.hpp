@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Timer.hpp"
 #include "ArrayTemplate.hpp"
 
-class SpawnPoint : public PObject
+class SpawnPoint
  {
   public:
   char          name[32];

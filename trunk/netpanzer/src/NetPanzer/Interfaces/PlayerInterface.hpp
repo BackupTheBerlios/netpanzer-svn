@@ -18,12 +18,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PLAYERINTERFACE_HPP
 #define _PLAYERINTERFACE_HPP
 
-#include "PObject.hpp"
 #include "PlayerState.hpp"
 #include "UnitInterface.hpp"
 #include "NetMessageEncoder.hpp"
 
-class PlayerInterface : public PObject
+class PlayerInterface
  {
   private:
    static PlayerState local_player_state;

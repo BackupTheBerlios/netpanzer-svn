@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _UNITSTATE_HPP
 
 #include <string.h>
-#include "PObject.hpp"
 #include "BoundBox.hpp"
 #include "Point.hpp"
 #include "Angle.hpp"
@@ -31,7 +30,7 @@ enum { _threat_level_all_clear,
        _threat_level_defending
      };
 
-class UnitState : public PObject
+class UnitState
  {
   public:
    unsigned long var_flags;

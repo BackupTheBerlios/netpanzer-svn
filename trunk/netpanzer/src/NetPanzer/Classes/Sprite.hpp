@@ -18,14 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SPRITE_HPP
 #define _SPRITE_HPP
 
-#include "PObject.hpp"
 #include "Surface.hpp"
 #include "PackedSurface.hpp"
 #include "Point.hpp"
 
 #define _MAX_HEIGHT_LEVELS 8
 
-class Sprite : public PObject
+class Sprite
  {
   public:
    PointXYi world_pos;

@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <assert.h>
 #include <string.h>
 
-#include "PObject.hpp"
 #include "Point.hpp"
 #include "Surface.hpp"
 #include "Color.hpp"
@@ -132,9 +131,8 @@ const float _GAME_CONFIG_SCREEN_BRIGHTNESS_LIMIT_LOWER =  0.0f;
 #define _GAME_CONFIG_ATTACK_NOTIFICATION_TIME_LIMIT_LOWER  2
 
 
-class GameConfig : public PObject
+class GameConfig
 {
-
   protected:
    static char    UnitColor;
    static char    GameMode;               //Skirmish or Multiplayer

@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "SystemNetMessage.hpp"
 
-class ChatInterface : public PObject
+class ChatInterface
  {
   protected:
    static SystemChatMesgRequest current_chat_mesg;

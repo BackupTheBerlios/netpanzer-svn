@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitIDList.hpp"
 #include "Point.hpp"
 
-class SelectionList : public PObject
+class SelectionList
  {
   protected:
    unsigned long unit_cycle_index;

@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetPacket.hpp"
 #include "Timer.hpp"
 
-class ClientConnectDaemon : public PObject
+class ClientConnectDaemon
  {
   protected:
    static Timer failure_display_timer;

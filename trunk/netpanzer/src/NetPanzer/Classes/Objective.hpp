@@ -31,7 +31,7 @@ enum { _occupation_status_unoccupied,
      };
 
 
-class ObjectiveState : public PObject
+class ObjectiveState
  {
   public:
    short ID;
@@ -63,7 +63,7 @@ class OutpostStatus
    float          unit_generation_time_remaining;
  };
 
-class Objective : public PObject
+class Objective
  {
   protected:
    void objectiveMesgUpdateOccupation( ObjectiveMessage *message ); 

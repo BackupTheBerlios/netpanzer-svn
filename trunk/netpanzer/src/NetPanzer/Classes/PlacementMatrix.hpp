@@ -18,10 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PLACEMENTMATRIX_HPP
 #define _PLACEMENTMATRIX_HPP
 
-#include "PObject.hpp"
 #include "Point.hpp"
 
-class PlacementMatrix : public PObject
+class PlacementMatrix
  {
   protected:
    enum { _placement_state_base_case,
