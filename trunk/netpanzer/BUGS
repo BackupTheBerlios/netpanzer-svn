@@ -1,0 +1,28 @@
+-outpost production status isn't visible anymore - fixed
+-moving the window in minimap below the borders gets crashs or at least draw
+ errors. - fixed
+-after playing some time we get an assert(totoalByteCount >= 0) in
+ Surface::~Surface...
+-another crash reported by kov (happens when someone joins the game):
+<kov> Connection lost for ID 0: accept() failed
+<kov>  
+<kov> Program received signal SIGSEGV, Segmentation fault.
+<kov> [Switching to Thread 16384 (LWP 7944)]
+<kov> 0x08104f3d in ServerSocket::readTCP() (this=0x8930a68) at src/UILib/Network/ServerSocket.cpp:105
+<kov> 105             if (SDLNet_SocketReady(client->tcpsocket))
+<kov> (gdb) bt full
+<kov> #0  0x08104f3d in ServerSocket::readTCP() (this=0x8930a68)
+<kov>     at src/UILib/Network/ServerSocket.cpp:105
+<kov>         client = (Client *) 0x88b28f0
+<MatzeB> hmm that is a new type of crash
+<kov>         i = {<iterator<std::random_access_iterator_tag,Client*,int,Client**,Client*&>> = {<No data fields>}, _M_current = 0x8257544}
+<kov> #1  0x080fb1f0 in GameManager::simLoop() () at src/NetPanzer/Interfaces/GameManager.cpp:1442
+<kov> No locals.
+<kov> #2  0x080fb1ba in GameManager::gameLoop() () at src/NetPanzer/Interfaces/GameManager.cpp:1433
+<kov> No locals.
+<kov> #3  0x08086b61 in netpanzer_main(int, char**) (argc=327, argv=0x147)
+<kov>     at src/NetPanzer/Core/main.cpp:191
+<kov> No locals.
+<kov> #4  0x08086c5b in main (argc=327, argv=0x147) at src/NetPanzer/Core/main.cpp:215
+<kov> No locals.
+<kov> (gdb)

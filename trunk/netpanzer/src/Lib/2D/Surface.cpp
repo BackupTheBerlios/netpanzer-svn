@@ -252,6 +252,7 @@ Surface::~Surface()
     }
 
     totalSurfaceCount--;
+    assert(totalSurfaceCount >= 0);
     totalByteCount -= sizeof(Surface);
 
     assert(totalByteCount >= 0);
