@@ -43,6 +43,7 @@ public:
 	virtual void sendMessage(NetMessage *message, size_t size, int flags);
 	virtual int getMessage(NetMessage *message);
 
+	virtual void checkIncoming();
 private:
 	ClientSocket* clientsocket;
 };

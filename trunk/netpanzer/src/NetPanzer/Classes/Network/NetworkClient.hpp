@@ -106,6 +106,8 @@ public:
 	
 	virtual void sendMessage(NetMessage *message, size_t size, int flags) = 0;
  	virtual int getMessage(NetMessage *message) = 0;
+
+	virtual void checkIncoming() = 0;
 };
 
 #endif // ** _NETWORK_CLIENT_HPP

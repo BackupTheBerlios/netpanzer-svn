@@ -1899,7 +1899,7 @@ void GameManager::gameLoop()
 // ******************************************************************
 void GameManager::simLoop()
  {
-	 // CLIENT->checkIncoming();
+	 CLIENT->checkIncoming();
 	 SERVER->checkIncoming();
   if ( NetworkState::status == _network_state_server )
    { ServerMessageRouter::routeMessages();  }
@@ -2002,7 +2002,7 @@ void GameManager::dedicatedGameLoop()
 // ******************************************************************
 void GameManager::dedicatedSimLoop()
  {
-	 // CLIENT->checkIncoming();
+	 CLIENT->checkIncoming();
 	 SERVER->checkIncoming();
   if ( NetworkState::status == _network_state_server )
    { ServerMessageRouter::routeMessages();  }

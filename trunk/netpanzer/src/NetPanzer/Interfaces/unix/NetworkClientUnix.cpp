@@ -103,6 +103,9 @@ int NetworkClientUnix::closeSession()
   
 void NetworkClientUnix::sendMessage(NetMessage *message, size_t size, int flags)
 {
+	if(!clientsocket)
+		return;
+
 	message->size = size;
 	clientsocket->sendMessage((char*) message, message->size,
 			                  ! (flags & _network_send_no_guarantee) );
@@ -151,3 +154,8 @@ int NetworkClientUnix::getMessage(NetMessage *message)
   return false;
 }
 
+void NetworkClientUnix::checkIncoming()
+{
+	if(clientsocket)
+		clientsocket->read();
+}
