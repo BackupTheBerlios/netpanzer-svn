@@ -31,7 +31,7 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
 {
     char strBuf[256];
 
-    String prefix;
+    std::string prefix;
 
     // Check to see which type of button to load since we have multiple palettes.
     if (Desktop::getVisible("GameView")) {
@@ -40,7 +40,8 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
         prefix = "inMenus";
     }
 
-    sprintf(strBuf, "pics/backgrounds/menus/buttons/default/pak/%s%s.pak", (const char *) prefix, fileString);
+    sprintf(strBuf, "pics/backgrounds/menus/buttons/default/pak/%s%s.pak",
+            prefix.c_str(), fileString);
 
     if (UtilInterface::getFileSize(strBuf) > 0) {
         PackedSurface tempPack;
@@ -53,7 +54,8 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
         Surface buttonSurface;
         Surface tempSurface;
 
-        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/%sbutover.bmp", (const char *) prefix);
+        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/%sbutover.bmp",
+                prefix.c_str());
 
         // Create.
         tempSurface.loadBMP(strBuf);
@@ -69,7 +71,8 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
         buttonSurface.setFrame(2);
         tempSurface.blt(buttonSurface);
 
-        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/%sbuton.bmp", (const char *) prefix);
+        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/%sbuton.bmp",
+                prefix.c_str());
 
         tempSurface.loadBMP(strBuf);
 
@@ -81,7 +84,8 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
         tempSurface.blt(buttonSurface);
 
         // Unhighlight.
-        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/%sbutoff.bmp", (const char *) prefix);
+        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/%sbutoff.bmp",
+                prefix.c_str());
 
         tempSurface.loadBMP(strBuf);
 
@@ -107,7 +111,8 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
         PackedSurface tempPack;
 
         tempPack.pack(buttonSurface);
-        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/pak/%s%s.pak", (const char *) prefix, fileString);
+        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/pak/%s%s.pak",
+                prefix.c_str(), fileString);
         tempPack.save(strBuf);
 
         addButtonPackedSurface(pos, tempPack, "", function);
@@ -134,3 +139,4 @@ void SpecialButtonView::mouseMove(const iXY & prevPos, const iXY &newPos)
 void SpecialButtonView::doActivate()
 {
 } // end SpecialButtonView::doActivate
+

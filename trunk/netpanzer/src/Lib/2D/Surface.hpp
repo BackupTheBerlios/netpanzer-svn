@@ -18,10 +18,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Surface_hpp__
 #define __Surface_hpp__
 
+#include <string>
 #include <assert.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+
 #include "Types/iXY.hpp"
 #include "Types/iRect.hpp"
 #include "Util/NoCopy.hpp"
@@ -522,6 +524,8 @@ public:
 
     static int getFontHeight();
     static int getTextLength(const char* text);
+    static int getTextLength(const std::string& text)
+    { return getTextLength(text.c_str()); } 
 }; // end Surface
 
 #endif // __Surface_HPP__

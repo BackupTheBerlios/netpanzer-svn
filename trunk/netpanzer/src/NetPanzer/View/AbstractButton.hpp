@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Button.hpp"
 #include "Util/cTimeStamp.hpp"
-#include "Types/String.hpp"
 #include "Icon.hpp"
 #include "MouseEvent.hpp"
 
@@ -28,9 +27,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class AbstractButton : public Button
 {
 protected:
-    String label;
-    String actionCommand;
-    String text;
+    std::string label;
+    std::string actionCommand;
+    std::string text;
 
     Icon disableIcon;
     Icon selectedIcon;
@@ -42,46 +41,42 @@ protected:
 public:
     AbstractButton()
     {}
-    AbstractButton(String s) : Button(s)
+    AbstractButton(const std::string& s) : Button(s)
     {}
     virtual ~AbstractButton()
     {}
 
-    void init(const String &text, Icon &icon)
+    void init(const std::string& text, Icon &icon)
     {
         AbstractButton::text = text;
         AbstractButton::icon.copy(icon);
     }
 
-    void  doClick()
-    {}
-    void  doClick(TIMESTAMP time)
-    {}
-    const Surface& getDisableIcon()
+    const Surface& getDisableIcon() const
     {
         return (const Surface&) disableIcon;
     }
-    const Surface &getIcon()
+    const Surface &getIcon() const
     {
         return icon;
     }
-    const Surface &getPressedIcon()
+    const Surface &getPressedIcon() const
     {
         return pressedIcon;
     }
-    const Surface &getRolloverIcon()
+    const Surface &getRolloverIcon() const
     {
         return rolloverIcon;
     }
-    const Surface &getRolloverSelectedIcon()
+    const Surface &getRolloverSelectedIcon() const
     {
         return rolloverSelectedIcon;
     }
-    const Surface &getSelectedIcon()
+    const Surface &getSelectedIcon() const
     {
         return selectedIcon;
     }
-    const String  &getText()
+    const std::string& getText() const
     {
         return text;
     }
@@ -95,26 +90,10 @@ public:
     {
         enabled = b;
     }
-    void setIcon(const Icon &icon)
-    { }
-    void setPressedIcon(const Icon &pressedIcon)
-    { }
-    void setRolloverEnabled(bool b)
-    { }
-    void setRolloverIcon(const Icon &rolloverIcon)
-    { }
-    void setSelected(bool b)
-    {}
-    void setSelectedIcon(Icon selectedIcon)
-    {}
-    void setText(String text)
-    {}
 
     virtual void actionPerformed(const mMouseEvent &me);
     virtual void draw(Surface &dest)
     {}
-
-}
-; // end AbstractButton
+}; // end AbstractButton
 
 #endif // end __AbstractButton_hpp__

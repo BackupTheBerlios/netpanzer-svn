@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 float Palette::brightness = 1.0f;
 
 // The name of the current loaded palette.
-String Palette::name;
+std::string Palette::name;
 
 ColorTable Palette::colorTable2080;
 ColorTable Palette::colorTable4060;
@@ -298,7 +298,7 @@ void Palette::setColorTables()
     }
 
     char tablePath[512];
-    snprintf(tablePath, 512, "cache/colorfilters/%s", getName());
+    snprintf(tablePath, 512, "cache/colorfilters/%s", getName().c_str());
     if(!FileSystem::exists(tablePath)) {
         FileSystem::mkdir(tablePath);
     }
@@ -341,10 +341,10 @@ void Palette::setColorTables()
 
 // setName
 //---------------------------------------------------------------------------
-void Palette::setName(String filename)
+void Palette::setName(const std::string& filename)
 {
     char strBuf[256];
-    sprintf(strBuf, "%s", (const char*) UtilInterface::getFilename(filename));
+    snprintf(strBuf, 256, "%s", UtilInterface::getFilename(filename).c_str());
 
     char *dotPtr = 0;
     if ((dotPtr = strchr(strBuf, '.')) != 0) {

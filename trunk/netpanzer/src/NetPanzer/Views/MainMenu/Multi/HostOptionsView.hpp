@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "RMouseHackView.hpp"
 #include "2D/Surface.hpp"
-#include "Types/String.hpp"
 #include "Choice.hpp"
 
 #include "CheckBox.hpp"
@@ -77,8 +76,8 @@ public:
         windSpeed = speed;
     }
 
-    static String cloudCoverageString;
-    static String windSpeedString;
+    static std::string cloudCoverageString;
+    static std::string windSpeedString;
 }; // end HostOptionsView
 
 #endif // end __HostOptionsView_hpp__

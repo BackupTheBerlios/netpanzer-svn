@@ -103,7 +103,7 @@ private:
 
     static Surface unitImages;
 
-    static void checkMiniProductionRect(String string);
+    static void checkMiniProductionRect(const std::string& string);
 
 public:
     VehicleSelectionView();

@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitInterface.hpp"
 #include "PlayerInterface.hpp"
 #include "NetworkState.hpp"
-#include "Types/String.hpp"
 #include "ScreenSurface.hpp"
 
 static int getPlayerFrags()
@@ -37,28 +36,28 @@ static int getPlayerFrags()
     return( (int) player_state->getTotal() );
 }
 
-static String getPlayerTime()
+static const char* getPlayerTime()
 {
-    char time_string[256];
+    static char time_string[256];
 
     int hrs = (GameManager::getGameTime() / 3600);
     int min = (GameManager::getGameTime() / 60) % 60;
 
-    sprintf(time_string, "%d:%d", hrs, min);
+    snprintf(time_string, 256, "%d:%d", hrs, min);
 
-    return(time_string);
+    return time_string;
 }
 
-static String getTimeLimit()
+static const char* getTimeLimit()
 {
-    char time_string[256];
+    static char time_string[256];
 
     int hrs = (gameconfig->timelimit / 60);
     int min = (gameconfig->timelimit % 60);
 
     sprintf(time_string, "%d:%d", hrs, min);
 
-    return(time_string);
+    return time_string;
 }
 
 
@@ -134,11 +133,11 @@ void GameInfoView::doDraw(Surface &viewArea, Surface &clientArea)
     */
 
     if( gameconfig->gametype == _gametype_timelimit ) {
-        sprintf(timeBuf, "time   %s/%s", (const char*) getPlayerTime(),
+        snprintf(timeBuf, 64, "time   %s/%s", getPlayerTime(),
                 (const char*) getTimeLimit() );
         checkGameInfoRect(timeBuf);
     } else {
-        sprintf(timeBuf, "time   %s", (const char *) getPlayerTime() );
+        snprintf(timeBuf, 64, "time   %s", getPlayerTime() );
         checkGameInfoRect(timeBuf);
     }
 
@@ -176,7 +175,7 @@ void GameInfoView::doDraw(Surface &viewArea, Surface &clientArea)
 //---------------------------------------------------------------------------
 // Purpose: Makes sure the rect is the size of the text inside.
 //---------------------------------------------------------------------------
-void GameInfoView::checkGameInfoRect(String string)
+void GameInfoView::checkGameInfoRect(const std::string& string)
 {
     int length = Surface::getTextLength(string) + 2;
 

@@ -31,15 +31,15 @@ void Button::draw(Surface &dest)
     if (highlighted) {
         dest.fillRect(bounds, componentBodyColor);
         dest.drawButtonBorder(bounds, topLeftBorderColor, bottomRightBorderColor);
-        dest.bltStringCenteredInRect(bounds, (const char *) label, Color::red);
+        dest.bltStringCenteredInRect(bounds, label.c_str(), Color::red);
     } else if (clicked) {
         dest.fillRect(bounds, componentBodyColor);
         dest.drawButtonBorder(bounds, bottomRightBorderColor, topLeftBorderColor);
-        dest.bltStringCenteredInRect(bounds, (const char *) label, Color::yellow);
+        dest.bltStringCenteredInRect(bounds, label.c_str(), Color::yellow);
     } else {
         dest.fillRect(bounds, componentBodyColor);
         dest.drawButtonBorder(bounds, topLeftBorderColor, bottomRightBorderColor);
-        dest.bltStringCenteredInRect(bounds, (const char *) label, Color::white);
+        dest.bltStringCenteredInRect(bounds, label.c_str(), Color::white);
     }
 
 } // end Button::draw

@@ -46,11 +46,11 @@ int FilenameSortFunction(const void *a, const void *b)
 
 // getDirectory
 //---------------------------------------------------------------------------
-String UtilInterface::getDirectory(String path)
+std::string UtilInterface::getDirectory(const std::string& path)
 {
     char strBuf[256];
 
-    _splitpath(path, 0, strBuf, 0, 0);
+    _splitpath(path.c_str(), 0, strBuf, 0, 0);
 
     return strBuf;
 
@@ -58,11 +58,11 @@ String UtilInterface::getDirectory(String path)
 
 // getFilename
 //---------------------------------------------------------------------------
-String UtilInterface::getFilename(String path)
+std::string UtilInterface::getFilename(const std::string& path)
 {
     char strBuf[256];
 
-    _splitpath(path, 0, 0, strBuf, 0);
+    _splitpath(path.c_str(), 0, 0, strBuf, 0);
 
     return strBuf;
 
@@ -70,11 +70,11 @@ String UtilInterface::getFilename(String path)
 
 // getExtension
 //---------------------------------------------------------------------------
-String UtilInterface::getExtension(String path)
+std::string UtilInterface::getExtension(const std::string& path)
 {
     char strBuf[256];
 
-    _splitpath(path, 0, 0, 0, strBuf);
+    _splitpath(path.c_str(), 0, 0, 0, strBuf);
 
     return strBuf;
 
@@ -84,7 +84,7 @@ String UtilInterface::getExtension(String path)
 //---------------------------------------------------------------------------
 // Purpose: Returns file size, in bytes, or 0 if file not found.
 //---------------------------------------------------------------------------
-size_t UtilInterface::getFileSize(String filename)
+size_t UtilInterface::getFileSize(const std::string& filename)
 {
     ReadFile* file = FileSystem::openRead(filename);
     size_t size = file->length();
@@ -97,7 +97,7 @@ size_t UtilInterface::getFileSize(String filename)
 //---------------------------------------------------------------------------
 // Purpose: Returns the number of files in the specified directory.
 //---------------------------------------------------------------------------
-int UtilInterface::getNumFilesInDirectory(String path)
+int UtilInterface::getNumFilesInDirectory(const std::string& path)
 {
     char** list = FileSystem::enumerateFiles(path);
     int numfiles=0;
@@ -107,27 +107,6 @@ int UtilInterface::getNumFilesInDirectory(String path)
 
     return numfiles;
 } // end UtilInterface::getNumFilesInDirectory
-
-// deleteFile
-//---------------------------------------------------------------------------
-// Purpose: Deletes an individual file, or if wild cards are used, multiple
-//          files can be saved.
-//---------------------------------------------------------------------------
-void UtilInterface::deleteFile(String path)
-{
-    if (remove(path) < 0)
-        printf("Couldn't remove file '%s'.\n", (const char*) path);
-} // end UtilInterface::deleteFile
-
-// checkFileError
-//---------------------------------------------------------------------------
-void UtilInterface::checkError(FILE *fp)
-{
-    if (ferror(fp)) {
-        throw Exception("ERROR: Possible corrupt file.");
-    }
-
-} // end UtilInterface::checkError
 
 // startRandomNumberGenerator
 //---------------------------------------------------------------------------

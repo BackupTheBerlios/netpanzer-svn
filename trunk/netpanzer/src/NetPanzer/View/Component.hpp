@@ -18,13 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Component_hpp__
 #define __Component_hpp__
 
+#include <string>
 #include <stdint.h>
 
 #include "2D/Color.hpp"
 #include "2D/Surface.hpp"
 #include "Types/iXY.hpp"
 #include "Types/iRect.hpp"
-#include "Types/String.hpp"
 #include "Util/NoCopy.hpp"
 
 class mMouseEvent;
@@ -38,7 +38,7 @@ protected:
     iXY     size;
     iXY     min;
     Surface surface;
-    String  name;
+    std::string name;
     bool    enabled;
     bool    visible;
 
@@ -72,49 +72,49 @@ public:
 
     // Accessor functions.
     bool contains(int x, int y) const;
-    inline bool            contains(iXY p) const
+    bool            contains(iXY p) const
     {
         return contains(p.x, p.y);
     }
-    inline        uint8_t     getBackground() const
+           uint8_t     getBackground() const
     {
         return background;
     }
-    inline void getBounds(iRect &r)
+    void getBounds(iRect &r)
     {
         r.min = min;
         r.max = min + size;
     }
-    inline        uint8_t     getForeground() const
+           uint8_t     getForeground() const
     {
         return foreground;
     }
-    inline Surface& getGraphics()
+    Surface& getGraphics()
     {
         return surface;
     }
-    inline        String   getName() const
+    const std::string& getName() const
     {
         return name;
     }
-    inline const  iXY     &getSize() const
+    const  iXY     &getSize() const
     {
         return size;
     }
-    inline int             getSizeX() const
+    int             getSizeX() const
     {
         return size.x;
     }
-    inline int             getSizeY() const
+    int             getSizeY() const
     {
         return size.y;
     }
-    inline        bool     isEnabled() const
+           bool     isEnabled() const
     {
         return enabled;
     }
     //const bool &isValid() {}
-    inline        bool     isVisible() const
+           bool     isVisible() const
     {
         return visible;
     }
@@ -130,17 +130,17 @@ public:
     void setEnabled(bool enabled);
     void setForeground(PIX foreground);
     void setLocation(int x, int y);
-    inline void setLocation(const iXY &p)
+    void setLocation(const iXY &p)
     {
         setLocation(p.x, p.y);
     }
-    void setName(const String &name)
+    void setName(const std::string& name)
     {
         Component::name = name;
     }
     void setSize(int width, int height)
     {}
-    inline void setSize(const iXY &d)
+    void setSize(const iXY &d)
     {
         setSize(d.x, d.y);
     }
@@ -152,3 +152,4 @@ public:
 }; // end Component
 
 #endif // end __Component_hpp__
+

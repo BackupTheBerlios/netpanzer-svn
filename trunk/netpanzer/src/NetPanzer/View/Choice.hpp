@@ -18,6 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Choice_hpp__
 #define __Choice_hpp__
 
+#include <vector>
+#include <string>
+
 #include "Component.hpp"
 #include "Util/cGrowList.hpp"
 #include "MouseEvent.hpp"
@@ -28,12 +31,12 @@ class StateChangedCallback;
 class Choice : public Component
 {
 private:
-    cGrowList <String> choiceList;
-    int                index;
-    int                minWidth;
-    bool               isOpen;
-    int				   mouseover;
-    int                adjustedY;  // The y translation value to keep the choice on the screen.
+    std::vector<std::string> choiceList;
+    size_t              index;
+    int                 minWidth;
+    bool                isOpen;
+    size_t              mouseover;
+    int                 adjustedY;  // The y translation value to keep the choice on the screen.
     StateChangedCallback* callback;
 
     enum { ChoiceItemHeight = 14 };
@@ -47,23 +50,19 @@ public:
     virtual ~Choice()
     {}
 
-    void   add(const String &item);
-    void   addItem(const String &item);
+    void   add(const std::string& item);
+    void   addItem(const std::string& item);
     void   copyItems(const Choice &choice);
-    int    getItemCount() const
+    size_t getItemCount() const
     {
-        return choiceList.getCount();
+        return choiceList.size();
     }
-    int    getSelectedIndex() const
+    size_t getSelectedIndex() const
     {
         return index;
     }
-    String paramString()
-    {
-        return String();
-    }
-    void   select(const String &item);
-    void   select(int index);
+    void   select(const std::string& item);
+    void   select(size_t index);
     void   setMinWidth(int minWidth);
 
     void setStateChangedCallback(StateChangedCallback* newcallback)
@@ -76,7 +75,6 @@ public:
 
 private:
     void reset();
-}
-; // end Choice
+}; // end Choice
 
 #endif // end __Choice_hpp__

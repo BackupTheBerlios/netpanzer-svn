@@ -35,11 +35,9 @@ void Choice::reset()
 }
 
 //---------------------------------------------------------------------------
-void Choice::addItem(const String &item)
+void Choice::addItem(const std::string& item)
 {
-    choiceList.setNum(choiceList.getCount() + 1);
-
-    choiceList[choiceList.getCount() - 1] = item;
+    choiceList.push_back(item);
 
     int borderSpace = borderSize * 2;
 
@@ -48,10 +46,10 @@ void Choice::addItem(const String &item)
 }
 
 //---------------------------------------------------------------------------
-void Choice::select(const String &item)
+void Choice::select(const std::string& item)
 {
-    for (int i = 0; i < choiceList.getCount(); i++) {
-        if (strcmp((const char *) item, (const char *) choiceList[i]) == 0) {
+    for(size_t i = 0; i < choiceList.size(); i++) {
+        if(choiceList[i] == item) {
             if(index == i)
                 return;
 
@@ -65,9 +63,9 @@ void Choice::select(const String &item)
 }
 
 //---------------------------------------------------------------------------
-void Choice::select(int index)
+void Choice::select(size_t index)
 {
-    assert(index >= 0 && index < choiceList.getCount());
+    assert(index < choiceList.size());
 
     if(index == Choice::index)
         return;
@@ -88,7 +86,7 @@ void Choice::actionPerformed(const mMouseEvent &me)
         isOpen = true;
 
         // Set the size to accomodate all items.
-        size.y = choiceList.getCount() * ChoiceItemHeight;
+        size.y = choiceList.size() * ChoiceItemHeight;
 
         // Make sure the choice fits on the screen.
         if (min.y + size.y >= parentDimensions.y) {
@@ -114,7 +112,7 @@ void Choice::actionPerformed(const mMouseEvent &me)
 
         iRect r(min.x, min.y, min.x + size.x, min.y + ChoiceItemHeight);
 
-        for (int i = 0; i < choiceList.getCount(); i++) {
+        for (size_t i = 0; i < choiceList.size(); i++) {
             // Find the selected item.
             if (r.contains(iXY(me.getX(), me.getY()))) {
                 mouseover = i;
@@ -181,7 +179,7 @@ void Choice::draw(Surface &dest)
     pos.y = min.y - Surface::getFontHeight() - 4;
 
     // Draw the name of the choice.
-    dest.bltStringShadowed(min.x, pos.y + adjustedY, (const char *) name, Color::white, Color::black);
+    dest.bltStringShadowed(min.x, pos.y + adjustedY, name.c_str(), Color::white, Color::black);
 
     getBounds(r);
 
@@ -193,22 +191,22 @@ void Choice::draw(Surface &dest)
     s.fillRect(iRect(1, 1, s.getPixX() - 2, s.getPixY() - 2), Color::terreVerte);
 
     if (!isOpen)	{
-        s.bltStringShadowedCenter(choiceList[index], Color::white, Color::black);
+        s.bltStringShadowedCenter(choiceList[index].c_str(), Color::white, Color::black);
     } else {
         r = iRect(min.x, min.y, min.x + size.x, min.y + ChoiceItemHeight);
 
-        int count = choiceList.getCount();
+        size_t count = choiceList.size();
 
-        for (int i = 0; i < count; i++) {
+        for (size_t i = 0; i < count; i++) {
             s.setTo(dest, r);
 
             if (i == mouseover) {
                 // Higlight the selected item.
                 s.fill(Color::white);
-                s.bltStringCenter(choiceList[i], Color::black);
+                s.bltStringCenter(choiceList[i].c_str(), Color::black);
 
             } else {
-                s.bltStringShadowedCenter(choiceList[i], Color::white, Color::black);
+                s.bltStringShadowedCenter(choiceList[i].c_str(), Color::white, Color::black);
             }
 
             r.translate(iXY(0, ChoiceItemHeight));
@@ -219,17 +217,14 @@ void Choice::draw(Surface &dest)
 
 // add
 //---------------------------------------------------------------------------
-void Choice::add(const String &item)
+void Choice::add(const std::string& item)
 {
-    choiceList.setNum(choiceList.getCount() + 1);
-
-    choiceList[choiceList.getCount() - 1] = item;
+    choiceList.push_back(item);
 
     int borderSpace = borderSize * 2;
 
     size.x = std::max(Surface::getTextLength(item) + borderSpace, size.y);
     size.x = std::max(minWidth, size.x);
-
 } // end Choice::add
 
 // setMinWidth
@@ -245,11 +240,7 @@ void Choice::setMinWidth(int minWidth)
 //---------------------------------------------------------------------------
 void Choice::copyItems(const Choice &choice)
 {
-    choiceList.setNum(choice.choiceList.getCount());
+    choiceList = choice.choiceList;
 
-    for (int i = 0; i < choice.choiceList.getCount(); i++) {
-        choiceList[i] = choice.choiceList[i];
-    }
-
-    //index = choice.getSelectedIndex();
+    select(0);
 } // end Choice::copyItems

@@ -85,7 +85,7 @@ void CheckBox::drawLabel(Surface &dest)
     pos.x = min.x + size.x + 8;
     pos.y = min.y + (size.y - Surface::getFontHeight()) / 2;
 
-    dest.bltString(pos, (const char *) label, Color::white);
+    dest.bltString(pos, label.c_str(), Color::white);
 } // end CheckBox::drawLabel
 
 // actionPerformed

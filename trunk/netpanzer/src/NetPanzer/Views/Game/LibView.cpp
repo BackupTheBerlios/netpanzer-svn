@@ -296,12 +296,14 @@ void LibView::drawEnvironmentInfo(Surface &dest, iXY pos)
     pos.y += yOffset;
 
     int windSpeed = gameconfig->windspeed;
-    sprintf(strBuf, "Wind:   %s (%d pix/sec)", (const char *) HostOptionsView::windSpeedString, windSpeed);
+    sprintf(strBuf, "Wind:   %s (%d pix/sec)",
+            HostOptionsView::windSpeedString.c_str(), windSpeed);
     dest.bltString(iXY(pos.x, pos.y), strBuf, Color::yellow);
     pos.y += yOffset;
 
     int cloudCount = gameconfig->cloudcoverage;
-    sprintf(strBuf, "Clouds: %s (%d allocated)", (const char *) HostOptionsView::cloudCoverageString, cloudCount);
+    sprintf(strBuf, "Clouds: %s (%d allocated)",
+            HostOptionsView::cloudCoverageString.c_str(), cloudCount);
     dest.bltString(iXY(pos.x, pos.y), strBuf, Color::yellow);
     pos.y += yOffset;
 

@@ -18,13 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Palette_hpp__
 #define __Palette_hpp__
 
+#include <string>
 #include <stdio.h>
 #include <stdint.h>
 
 #include "Color.hpp"
 #include "ColorTable.hpp"
 #include "RGBColor.hpp"
-#include "Types/String.hpp"
 
 const size_t PALETTE_LENGTH = 256;
 
@@ -35,15 +35,15 @@ private:
     static float brightness;
 
     // The name of the current loaded palette.
-    static String name;
+    static std::string name;
 
-    static void setName(String filename);
+    static void setName(const std::string& filename);
 
 public:
     Palette();
 
     static void        setBrightness(float brightness);
-    static const char *getName()
+    static const std::string& getName()
     {
         return name;
     }

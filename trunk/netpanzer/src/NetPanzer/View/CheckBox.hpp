@@ -28,7 +28,7 @@ class StateChangedCallback;
 class CheckBox : public Component
 {
 protected:
-    String label;
+    std::string label;
     bool   state;
     StateChangedCallback* callback;
 
@@ -43,7 +43,7 @@ public:
         size = iXY(14, 14);
     }
 
-    CheckBox(const String &newlabel, bool newstate = false)
+    CheckBox(const std::string& newlabel, bool newstate = false)
             : Component(), label(newlabel), state(newstate), callback(0)
     {
         size = iXY(14, 14);
@@ -52,7 +52,7 @@ public:
     virtual ~CheckBox()
     { }
 
-    String getLabel() const
+    const std::string& getLabel() const
     {
         return label;
     }
@@ -61,7 +61,7 @@ public:
         return state;
     }
 
-    void setLabel(String label)
+    void setLabel(const std::string& label)
     {
         CheckBox::label = label;
     }

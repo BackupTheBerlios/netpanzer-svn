@@ -21,8 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <SDL_net.h>
 
-#include "Types/String.hpp"
-
 class Filename
 {
 public:
@@ -52,13 +50,11 @@ int FilenameSortFunction(const void *a, const void *b);
 class UtilInterface
 {
 public:
-    static String getDirectory(String path);
-    static String getFilename(String path);
-    static String getExtension(String path);
-    static void   deleteFile(String path);
-    static size_t getFileSize(String filename);
-    static int    getNumFilesInDirectory(String path);
-    static void   checkError(FILE *fp);
+    static std::string getDirectory(const std::string& path);
+    static std::string getFilename(const std::string& path);
+    static std::string getExtension(const std::string& path);
+    static size_t getFileSize(const std::string& filename);
+    static int    getNumFilesInDirectory(const std::string& path);
     static void   startRandomNumberGenerator();
 
     // get servername/port from a string, doesn't always set the port

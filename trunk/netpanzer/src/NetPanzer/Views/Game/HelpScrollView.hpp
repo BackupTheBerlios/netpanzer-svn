@@ -19,11 +19,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __HelpScrollView_hpp__
 #define __HelpScrollView_hpp__
 
+#include <vector>
+#include <string>
+
 #include "SpecialButtonView.hpp"
 #include "2D/Surface.hpp"
 #include "ScrollBar.hpp"
-#include "Types/String.hpp"
-#include "Util/cGrowList.hpp"
 #include "Button.hpp"
 
 //---------------------------------------------------------------------------
@@ -37,10 +38,10 @@ protected:
     void drawHelpText(Surface &dest, const int &x, const int &y);
 
     ScrollBar *scrollBar;
-    cGrowList <String> text;
+    std::vector<std::string> text;
 
     enum { TEXT_GAP_SPACE = 2 };
-    void insert(char *string);
+    void insert(const char *string);
 
     Button upButton;
     Button downButton;

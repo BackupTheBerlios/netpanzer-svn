@@ -1,3 +1,8 @@
+24-Nov-2003 by Matthias Braun
+-converted the SelectionList to std::vector, also removed limit of maximum
+ select units while doing this.
+-eleminated the String class and replaced it with std::string
+
 22-Nov-2003 by Matthias Braun
 -big reorganisation. Created several real libs in the lib directory and moved
 some stuff inside NetPanzer directory.

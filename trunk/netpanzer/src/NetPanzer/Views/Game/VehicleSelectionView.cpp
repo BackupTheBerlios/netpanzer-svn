@@ -811,7 +811,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
 //---------------------------------------------------------------------------
 // Purpose: Makes sure the rect is the size of the text inside.
 //---------------------------------------------------------------------------
-void VehicleSelectionView::checkMiniProductionRect(String string)
+void VehicleSelectionView::checkMiniProductionRect(const std::string& string)
 {
     int length = Surface::getTextLength(string) + 54;
 
@@ -933,7 +933,7 @@ void VehicleSelectionView::actionPerformed(mMouseEvent me)
 {
     if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED) {
         if (me.getSource(buttonStaticDisplay)) {
-            if (buttonStaticDisplay.getLabel() == String("On")) {
+            if (buttonStaticDisplay.getLabel() == "On") {
                 buttonStaticDisplay.setLabel("Off");
             } else {
                 buttonStaticDisplay.setLabel("On");
@@ -943,7 +943,7 @@ void VehicleSelectionView::actionPerformed(mMouseEvent me)
         }
 
         if (me.getSource(buttonPower)) {
-            if (buttonPower.getLabel() == String("On")) {
+            if (buttonPower.getLabel() == "On") {
                 buttonPower.setLabel("Off");
             } else {
                 buttonPower.setLabel("On");

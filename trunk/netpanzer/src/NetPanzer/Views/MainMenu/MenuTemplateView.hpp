@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/PackedSurface.hpp"
 #include "Types/iRect.hpp"
 #include "Types/iXY.hpp"
-#include "Types/String.hpp"
 
 //--------------------------------------------------------------------------
 class MenuTemplateView : public SpecialButtonView
@@ -34,8 +33,8 @@ protected:
     virtual void loadBackgroundSurface();
     virtual void loadTitleSurface();
 
-    void doLoadBackgroundSurface(String string);
-    void doLoadTitleSurface(String string);
+    void doLoadBackgroundSurface(const std::string& string);
+    void doLoadTitleSurface(const std::string& string);
 
     float curTitleFlashTime;  // Where am I at in the flash?
     float titleFlashTimeHalf; // Time it takes for a half flash.

@@ -26,8 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class Button : public Component
 {
 protected:
-    String label;
-    String actionCommand;
+    std::string label;
+    std::string actionCommand;
     bool   highlighted;
     bool   clicked;
 
@@ -37,7 +37,7 @@ public:
         reset();
     }
 
-    Button(String s) : Component()
+    Button(const std::string& s) : Component()
     {
         reset();
 
@@ -60,25 +60,20 @@ public:
         return highlighted;
     }
 
-    void setActionCommand(String l)
+    void setActionCommand(const std::string& l)
     {
         label = l;
     }
-    void setLabel(String l)
+    void setLabel(const std::string& l)
     {
         label = l;
     }
 
-    String paramString()
-    {
-        return String();
-    }
-
-    String getLabel()
+    const std::string& getLabel() const
     {
         return label;
     }
-    String getActionCommand()
+    const std::string& getActionCommand() const
     {
         return actionCommand;
     }

@@ -172,7 +172,8 @@ void HelpScrollView::drawHelpText(Surface &dest, const int &x, const int &y)
     //
     int curIndex = 0;
     for (int i = topViewableItem; i < topViewableItem + maxViewableItems; i++) {
-        dest.bltString(1, 6 + curIndex * (TEXT_GAP_SPACE + Surface::getFontHeight()), text[i], color);
+        dest.bltString(1, 6 + curIndex * (TEXT_GAP_SPACE +
+                    Surface::getFontHeight()), text[i].c_str(), color);
         curIndex++;
     }
     //}
@@ -181,12 +182,9 @@ void HelpScrollView::drawHelpText(Surface &dest, const int &x, const int &y)
 
 // insert
 //--------------------------------------------------------------------------
-void HelpScrollView::insert(char *string)
+void HelpScrollView::insert(const char *string)
 {
-    text.setNum(text.getCount() + 1);
-
-    text[text.getCount() - 1] = string;
-
+    text.push_back(std::string(string));
 } // end HelpScrollView::insert
 
 // actionPerformed
@@ -199,8 +197,8 @@ void HelpScrollView::actionPerformed(mMouseEvent me)
                 topViewableItem = 0;
             }
         } else if (me.getSource(downButton)) {
-            if (++topViewableItem >= text.getCount() - maxViewableItems) {
-                topViewableItem = text.getCount() - maxViewableItems;
+            if (++topViewableItem >= (long) text.size() - maxViewableItems) {
+                topViewableItem = (long) text.size() - maxViewableItems;
             }
         }
     }

@@ -18,7 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Icon_hpp__
 #define __Icon_hpp__
 
-#include "Types/String.hpp"
+#include <string>
+
 #include "2D/Surface.hpp"
 
 //--------------------------------------------------------------------------
@@ -26,10 +27,10 @@ class Icon : public Surface
 {
 protected:
     Surface image;
-    String  description;
+    std::string description;
 
 public:
-    Icon(const Surface &image, const String &description)
+    Icon(const Surface &image, const std::string& description)
     {}
     Icon(const Surface &image)
     {}
@@ -38,7 +39,7 @@ public:
     virtual ~Icon()
     {}
 
-    const String  &getDescription() const
+    const std::string& getDescription() const
     {
         return description;
     }
@@ -57,7 +58,7 @@ public:
         return image;
     }
 
-    void setDescription(const String &decription)
+    void setDescription(const std::string& decription)
     {
         Icon::description = description;
     }

@@ -263,9 +263,9 @@ void MenuTemplateView::loadBackgroundSurface()
 
 // doLoadBackgroundSurface
 //---------------------------------------------------------------------------
-void MenuTemplateView::doLoadBackgroundSurface(String string)
+void MenuTemplateView::doLoadBackgroundSurface(const std::string& string)
 {
-    backgroundSurface.loadBMP(string);
+    backgroundSurface.loadBMP(string.c_str());
 } // end MenuTemplateView::doLoadBackgroundSurface
 
 // loadTitleSurface
@@ -277,24 +277,23 @@ void MenuTemplateView::loadTitleSurface()
 
 // doLoadBackgroundSurface
 //---------------------------------------------------------------------------
-void MenuTemplateView::doLoadTitleSurface(String string)
+void MenuTemplateView::doLoadTitleSurface(const std::string& string)
 {
     curTitleFlashTime  = 0.0f;
     titleFlashTimeHalf = 2.5;
 
-    String pakString;
-    pakString = "pics/backgrounds/menus/menu/pak/";
-    pakString += UtilInterface::getFilename(string);
+    std::string pakString = "pics/backgrounds/menus/menu/pak/";
+    pakString += UtilInterface::getFilename(string.c_str());
     pakString += ".pak";
 
-    if (UtilInterface::getFileSize(pakString)) {
-        titlePackedSurface.load((const char *) pakString);
+    if (UtilInterface::getFileSize(pakString.c_str())) {
+        titlePackedSurface.load(pakString.c_str());
 
     } else {
         Surface titleSurface;
 
         try {
-            titleSurface.loadBMP(string);
+            titleSurface.loadBMP(string.c_str());
         } catch(Exception&) {
             titleSurface.create(300, 50, 300, 1);
             titleSurface.fill(128);
@@ -303,7 +302,7 @@ void MenuTemplateView::doLoadTitleSurface(String string)
 
         titlePackedSurface.pack(titleSurface);
 
-        titlePackedSurface.save(pakString);
+        titlePackedSurface.save(pakString.c_str());
     }
 } // end MenuTemplateView::doLoadTitleSurface
 

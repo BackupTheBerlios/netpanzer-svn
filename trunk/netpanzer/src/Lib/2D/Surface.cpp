@@ -18,10 +18,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <math.h>
+#include <ctype.h>
 #include <memory>
 #include <vector>
 #include <string>
 #include <algorithm>
+
 #include "Util/Log.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/UtilInterface.hpp"

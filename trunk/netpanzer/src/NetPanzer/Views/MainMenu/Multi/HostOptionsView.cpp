@@ -27,8 +27,8 @@ int HostOptionsView::cloudCoverageCount = 1;
 int HostOptionsView::windSpeed          = 1;
 int HostOptionsView::gameType           = 0;
 
-String HostOptionsView::cloudCoverageString;
-String HostOptionsView::windSpeedString;
+std::string HostOptionsView::cloudCoverageString;
+std::string HostOptionsView::windSpeedString;
 
 static int getCurMaxPlayersCount()
 {
