@@ -30,7 +30,8 @@ TemplateCreator::TemplateCreator(wxWindow* parent,
     wxBoxSizer* tempnamesizer = new wxBoxSizer(wxHORIZONTAL);
     wxStaticText* label = new wxStaticText(this, 0, "Name: ");
     tempnamesizer->Add(label, 0, wxALL, 5);  
-    templatenamectrl = new wxTextCtrl(this, 0, filename.c_str());
+    std::string name = generateName(filename);
+    templatenamectrl = new wxTextCtrl(this, 0, name.c_str());
     tempnamesizer->Add(templatenamectrl, 1, wxALL | wxGROW, 5);
     boxsizer->Add(tempnamesizer, 0, wxGROW, 0);
 
@@ -44,6 +45,22 @@ TemplateCreator::TemplateCreator(wxWindow* parent,
 
 TemplateCreator::~TemplateCreator()
 {
+}
+
+std::string TemplateCreator::generateName(const std::string& imagefile)
+{
+    size_t lastslash = 0;
+    size_t firstdot = imagefile.size();
+    for(size_t pos = 0; pos < imagefile.size()-1; ++pos) {
+        if(imagefile[pos] == '/') {
+            lastslash = pos+1;
+            firstdot = imagefile.size();
+        }
+        if(imagefile[pos] == '.')
+            firstdot = pos;
+    }
+    
+    return imagefile.substr(lastslash, firstdot - lastslash);
 }
 
 void TemplateCreator::OnCreateTemplate(wxCommandEvent& )

@@ -8,13 +8,13 @@
 #include "TileSet.hpp"
 #include "TileTemplate.hpp"
 
-TileTemplate::TileTemplate(TileSet* newtileset, size_t newsizex, size_t newsizey)
-    : tileset(newtileset), sizex(newsizex), sizey(newsizey)
+TileTemplate::TileTemplate(TileSet* newtileset, const iXY newsize)
+    : tileset(newtileset), size(newsize)
 {
-    tiles = new uint16_t[sizex * sizey];
-    for(size_t y=0; y<sizey; y++)
-        for(size_t x=0; x<sizex; x++)
-            tiles[y*sizex + x] = NOTILE;
+    tiles = new uint16_t[size.x * size.y];
+    for(int y=0; y<size.y; y++)
+        for(int x=0; x<size.x; x++)
+            tiles[y*size.x + x] = NOTILE;
 }
 
 TileTemplate::TileTemplate(TileSet* newtileset, const std::string& newname)
@@ -29,13 +29,13 @@ TileTemplate::TileTemplate(TileSet* newtileset, const std::string& newname)
     std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
 
     try {
-        sizex = file->readULE32();
-        sizey = file->readULE32();
+        size.x = file->readULE32();
+        size.y = file->readULE32();
     
-        tiles = new uint16_t[sizex * sizey];
-        for(size_t y=0; y<sizey; y++)
-            for(size_t x=0; x<sizex; x++)
-                tiles[y*sizex + x] = file->readULE16();
+        tiles = new uint16_t[size.x * size.y];
+        for(int y=0; y<size.y; y++)
+            for(int x=0; x<size.x; x++)
+                tiles[y*size.x + x] = file->readULE16();
     } catch(std::exception& e) {
         throw Exception(
                 "Error while reading template file '%s': file too short",
@@ -57,12 +57,12 @@ void TileTemplate::save()
     std::auto_ptr<WriteFile> file(FileSystem::openWrite(filename));
 
     try {
-        file->writeULE32(sizex);
-        file->writeULE32(sizey);
+        file->writeULE32(size.x);
+        file->writeULE32(size.y);
 
-        for(size_t y=0; y<sizey; y++)
-            for(size_t x=0; x<sizex; x++)
-                file->writeULE16(tiles[y*sizex + x]);
+        for(int y=0; y<size.y; y++)
+            for(int x=0; x<size.x; x++)
+                file->writeULE16(tiles[y*size.x + x]);
     } catch(std::exception& e) {
         throw Exception("Error while saving '%s': %s",
                 filename.c_str(), e.what());
@@ -73,5 +73,4 @@ TileTemplate::~TileTemplate()
 {
     delete[] tiles;
 }
-
 

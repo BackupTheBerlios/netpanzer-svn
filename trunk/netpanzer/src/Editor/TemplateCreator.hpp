@@ -20,6 +20,7 @@ private:
     wxTextCtrl* templatenamectrl;
     TileSet* tileset;
 
+    std::string generateName(const std::string& imagename);
     void OnCreateTemplate(wxCommandEvent& event);
 
     enum {

@@ -17,7 +17,7 @@ public:
 private:
     void populateList();
 
-    void OnItemRightClick(wxListEvent& event);
+    void OnMouseRightClick(wxMouseEvent& event);
 
     void OnNewTileset(wxCommandEvent& event);
     void OnRename(wxCommandEvent& event);

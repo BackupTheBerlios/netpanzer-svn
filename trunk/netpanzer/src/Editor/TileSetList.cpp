@@ -50,17 +50,22 @@ void TileSetList::populateList()
     FileSystem::freeList(files);
 }
 
-void TileSetList::OnItemRightClick(wxListEvent& event)
+void TileSetList::OnMouseRightClick(wxMouseEvent& event)
 {
-    currenttileset = GetItemText(event.GetIndex());
-    currentindex = event.GetIndex();
-
     wxMenu* menu = new wxMenu();
     menu->Append(ID_NEWTILESET, "&New Tileset");
-    menu->Append(ID_RENAME, "&Rename");
-    menu->Append(ID_DELETE, "&Delete");
+    
+    int flags = wxLIST_HITTEST_ONITEM;
+    long index = HitTest(event.GetPosition(), flags);
+    if(index >= 0) {
+        currentindex = index;
+        currenttileset = GetItemText(index);
 
-    PopupMenu(menu, event.GetPoint());
+        menu->Append(ID_RENAME, "&Rename");
+        menu->Append(ID_DELETE, "&Delete");        
+    }
+
+    PopupMenu(menu, event.GetPosition());
 }
 
 void TileSetList::OnNewTileset(wxCommandEvent& event)
@@ -214,6 +219,6 @@ void TileSetList::OnDelete(wxCommandEvent& event)
 }
 
 BEGIN_EVENT_TABLE(TileSetList, wxListView)
-    EVT_LIST_ITEM_RIGHT_CLICK(-1, TileSetList::OnItemRightClick)
+    EVT_RIGHT_DOWN(TileSetList::OnMouseRightClick)
     EVT_LIST_END_LABEL_EDIT(-1, TileSetList::OnEndLabelEdit)
 END_EVENT_TABLE()

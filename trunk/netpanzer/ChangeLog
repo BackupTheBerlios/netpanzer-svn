@@ -1,3 +1,7 @@
+10-Jan-2003 by Matthias Braun
+-implemented tiletemplate view in editor
+-fixed several bugs and problems in the editor
+
 08-Jan-2003 by Matthias Braun
 -hacked a quick connect option into netpanzer, so that external tools can easily
  invoke netpanzer to join directly on a specific server. (Maybe some commandline

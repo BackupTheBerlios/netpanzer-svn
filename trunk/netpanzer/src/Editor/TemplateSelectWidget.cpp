@@ -117,7 +117,7 @@ void TemplateSelectWidget::drawLines()
 
     for(int x=0; x<tilecountx; x++) {
         for(int y=0;y<tilecounty; y++) {
-            if(selected[y * tilecounty + x])
+            if(selected[y * tilecountx + x])
                 darkenRect(getSurface(), x*XSIZE, y*YSIZE, XSIZE, YSIZE);
         }
     }
@@ -137,8 +137,8 @@ void TemplateSelectWidget::OnMouseClick(wxMouseEvent& event)
     if(x >= image->w || y >= image->h)
         return;
 
-    int tilex = x / XSIZE,
-        tiley = y / YSIZE;
+    int tilex = x / XSIZE;
+    int tiley = y / YSIZE;
     selected[tiley * tilecountx + tilex] 
         = !selected[tiley * tilecountx + tilex];
 
@@ -149,12 +149,12 @@ void TemplateSelectWidget::OnMouseClick(wxMouseEvent& event)
 TileTemplate* TemplateSelectWidget::createTemplate(TileSet* tileset)
 {
     std::auto_ptr<TileTemplate> tiletemplate
-        (new TileTemplate(tileset, tilecountx, tilecounty));
+        (new TileTemplate(tileset, iXY(tilecountx, tilecounty)));
     
     for(int x=0; x< tilecountx; x++) {
         for(int y=0;y< tilecounty; y++) {
             if(selected[y*tilecountx + x]) {
-                tiletemplate->setTile(x, y, TileTemplate::NOTILE);
+                tiletemplate->setTile(iXY(x, y), TileTemplate::NOTILE);
                 continue;
             }
 
@@ -164,7 +164,7 @@ TileTemplate* TemplateSelectWidget::createTemplate(TileSet* tileset)
             rect.w = XSIZE;
             rect.h = YSIZE;
             size_t tile = tileset->addTile(image, &rect);
-            tiletemplate->setTile(x, y, tile);
+            tiletemplate->setTile(iXY(x, y), tile);
         }
     }
             

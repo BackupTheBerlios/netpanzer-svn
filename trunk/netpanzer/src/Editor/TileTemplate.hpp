@@ -7,6 +7,7 @@
 #include <string>
 
 #include "Util/NoCopy.hpp"
+#include "Types/iXY.hpp"
 
 class ReadFile;
 class TileSet;
@@ -18,7 +19,7 @@ public:
         NOTILE = 0xffff
     };
     
-    TileTemplate(TileSet* tileset, size_t sizex, size_t sizey);
+    TileTemplate(TileSet* tileset, const iXY size);
     TileTemplate(TileSet* tileset, const std::string& name);
     ~TileTemplate();
 
@@ -29,22 +30,25 @@ public:
     const std::string& getName() const
     { return name; }
 
-    void setTile(size_t x, size_t y, size_t tilenum)
+    void setTile(const iXY pos, size_t tilenum)
     { 
-        assert(x < sizex);
-        assert(y < sizey);
-        tiles[y*sizex + x] = tilenum;
+        assert(pos.x < size.x && pos.y < size.y);
+        tiles[pos.y * size.x + pos.x] = tilenum;
     }
-    size_t getTile(size_t x, size_t y) const
+    size_t getTile(const iXY pos) const
     { 
-        assert(x < sizex);
-        assert(y < sizey);
-        return tiles[y*sizex + x];
+        assert(pos.x < size.x && pos.y < size.y);
+        return tiles[pos.y * size.x + pos.x];
+    }
+
+    const iXY& getSize() const
+    {
+        return size;
     }
 
 private:
     TileSet* tileset;
-    size_t sizex, sizey;
+    iXY size;
     uint16_t* tiles;
 
     std::string name;
