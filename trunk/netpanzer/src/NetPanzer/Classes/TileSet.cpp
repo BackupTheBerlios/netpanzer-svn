@@ -20,6 +20,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include  <fcntl.h>
 #include  <stdio.h>
 #include  <stdlib.h>
+#ifdef UNIX
+// XXX for the read function
+#include <unistd.h>
+#endif
 #include  "Gdatstct.hpp"
 
 TileSet::TileSet( )
@@ -160,7 +164,8 @@ void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
   unsigned long  tile_size;
   int fhandle;
 
-
+  // XXX Why, oh why are't we using normal stdio functions here?	
+  
   //infile = fopen( file_path, "rb" );
   // XXX changed _O_BINARY to 0...
   fhandle = open( file_path, 0 );
