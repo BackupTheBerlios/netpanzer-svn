@@ -149,7 +149,8 @@ void GameInfoView::doDraw(const Surface &viewArea, const Surface &clientArea)
 
    if( GameConfig::GetGameType() == _gametype_timelimit )
     {
-	 sprintf(timeBuf, "time   %s/%s", (const char *) getPlayerTime(), getTimeLimit() );
+	 sprintf(timeBuf, "time   %s/%s", (const char*) getPlayerTime(),
+			 						  (const char*) getTimeLimit() );
 	 checkGameInfoRect(timeBuf);
     }
    else
