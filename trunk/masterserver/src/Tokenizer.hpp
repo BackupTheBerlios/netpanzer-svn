@@ -43,7 +43,7 @@ public:
         char c;
         do {
             in.get(c);
-        } while(c == '\\' && (!in.eof()));
+        } while(!in.eof() && c == '\\');
 
         if(in.eof())
             return "";
