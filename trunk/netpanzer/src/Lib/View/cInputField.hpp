@@ -99,8 +99,11 @@ public:
         return bounds.contains(pos);
     }
 
+    typedef void (*ACTION_FUNC_PTR)(cInputField* inputfield);
+
     void setPos(iXY pos);
     void setInputFieldString(cInputFieldString *string);
+    void setReturnAction(ACTION_FUNC_PTR func);
     void setExcludedCharacters(const char *excludedCharacters);
     void addChar(int newChar);
     void addExtendedChar(int newExtendedChar);
@@ -116,6 +119,7 @@ private:
     iRect    bounds;
     size_t   cursorPos;
     Surface inputFieldSurface;
+    ACTION_FUNC_PTR returnaction;
 
     void reset();
 

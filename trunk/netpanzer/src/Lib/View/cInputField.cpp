@@ -72,6 +72,7 @@ void cInputField::reset()
     maxCharCount       = 0;
     destString         = 0;
     excludedCharacters = 0;
+    returnaction       = 0;
 } // end reset
 
 // setPos
@@ -142,15 +143,17 @@ void cInputField::addChar(int newChar)
     }
 } // addChar
 
+void cInputField::setReturnAction(ACTION_FUNC_PTR action)
+{
+    returnaction = action;
+}
+
 // addExtendedChar
 //--------------------------------------------------------------------------
 void cInputField::addExtendedChar(int newExtendedChar)
 {
     // Process the extendedChar accordingly.
     switch (newExtendedChar) {
-    case SDLK_RETURN: {}
-        break;
-
     case SDLK_HOME: {
             cursorPos = 0;
         }
@@ -210,6 +213,11 @@ void cInputField::addExtendedChar(int newExtendedChar)
 
         }
         break;
+
+    case SDLK_KP_ENTER:
+    case SDLK_RETURN: {
+        returnaction(this);
+    }
 
     default: break;
     }

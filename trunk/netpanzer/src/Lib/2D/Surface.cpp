@@ -1190,235 +1190,6 @@ void Surface::scale(const iXY &pix)
     */
 } // end Surface::scale
 
-// verticalWave3DAll
-//---------------------------------------------------------------------------
-void Surface::verticalWave3DAll(int numWaves, float percent)
-{
-    assert(getDoesExist());
-    assert(this != 0);
-
-    float curOffset  = 0;
-    float offsetStep = 100.0 / float(frameCount);
-
-    for (int curFrame = 0; curFrame < frameCount; curFrame++) {
-        setFrame(curFrame);
-        verticalWave3D(numWaves, percent, (int) curOffset);
-        curOffset += offsetStep;
-    }
-} // end Surface::verticalWave3DAll
-
-// verticalWave3D
-//---------------------------------------------------------------------------
-void Surface::verticalWave3D(int numWaves, float percent, int offset)
-{
-    assert(getDoesExist());
-    assert(this != 0);
-
-    Surface temp;
-    temp.create(pix.x, pix.y, pix.x, 1);
-
-    float angleRadians = (offset * 3.6) / (180.0 / M_PI);
-    float angleStep    = ((M_PI * 2) * numWaves) / pix.y;
-    float amplitude    = (percent * pix.y / 2) / 100.0;
-
-    blt(temp, 0, 0);
-
-    int y = 0;
-    for (int offset1 = 0; offset1 < pix.x * pix.y; offset1 += pix.x) {
-        int offset2 = max(min(int(((cos(angleRadians) * amplitude + y))), pix.y - 1), 0) * pix.x;
-        y++;
-        memcpy((mem + offset1), (temp.mem + offset2), pix.x);
-
-        angleRadians += angleStep;
-    }
-} // end Surface::VERTICAL WAVE 3D
-
-// horizontalWave3DAll
-//---------------------------------------------------------------------------
-void Surface::horizontalWave3DAll(int numWaves, float percent)
-{
-    assert(getDoesExist());
-    assert(this != 0);
-
-    float curOffset  = 0;
-    float offsetStep = 100.0 / float(frameCount);
-
-    for (int curFrame = 0; curFrame < frameCount; curFrame++) {
-        setFrame(curFrame);
-        horizontalWave3D(numWaves, percent, (int) curOffset);
-        curOffset += offsetStep;
-    }
-} // end Surface::horizontalWave3DAll
-
-// horizontalWave3D
-//---------------------------------------------------------------------------
-void Surface::horizontalWave3D(int numWaves, float percent, int offset)
-{
-    assert(getDoesExist());
-    assert(this != 0);
-
-    Surface temp;
-    temp.create(pix.x, pix.y, pix.x, 1);
-
-    float angleRadians = (offset*3.6) / (180.0 / M_PI);
-    float angleStep    = ((M_PI * 2) * numWaves) / pix.y;
-    float amplitude    = (percent * pix.y / 2) / 100.0;
-
-    blt(temp, 0, 0);
-
-    for (int x = 0; x < pix.x; x++) {
-        int xOffset = max(min((int)((cos(angleRadians) * amplitude + x)), pix.x - 1), 0);
-        for (int yOffset = 0; yOffset < pix.x * pix.y; yOffset += pix.x) {
-            mem[x + yOffset] = temp.mem[xOffset + yOffset];
-            angleRadians += angleStep;
-        }
-    }
-} // end Surface::horizontalWave3D
-
-// rippleAll
-//---------------------------------------------------------------------------
-void Surface::rippleAll(int numWaves, float percent)
-{
-    assert(getDoesExist());
-    assert(this != 0);
-
-    float curOffset  = 0;
-    float offsetStep = 100.0 / float(frameCount);
-
-    for (int curFrame = 0; curFrame < frameCount; curFrame++) {
-        setFrame(curFrame);
-        ripple(numWaves, percent, (int) curOffset);
-        curOffset += offsetStep;
-    }
-} // end Surface::rippleAll
-
-// ripple
-//---------------------------------------------------------------------------
-void Surface::ripple(int numWaves, float percent, int offset)
-{
-    assert(getDoesExist());
-    assert(this != 0);
-
-    Surface temp(pix.x, pix.y, pix.x, 1);
-
-    unsigned index     = 0;
-
-    float piTimes2     = float(M_PI * 2.0);
-    float angleRadians = (piTimes2 * percent) / 100.0;
-    float maxDist      = sqrt(pix.x * pix.x + pix.y * pix.y);
-    float scale        = (piTimes2 * numWaves) / maxDist;
-
-    offset = (int) ((offset * piTimes2) / 100.0);
-
-    blt(temp, 0, 0);
-
-    for (int y = 0; y < pix.y; y++) {
-        for (int x = 0; x < pix.x; x++) {
-            float a  = sin(sqrt(x * x + y * y) * scale + offset) * angleRadians;
-            float ca = cos(a);
-            float sa = sin(a);
-
-            int xs = (int)(x * ca - y * sa) + x - center.x;
-            int ys = (int)(y * ca + x * sa) + y - center.y;
-
-            if (xs >= 0 && xs < x - pix.x && ys >= 0 && ys < y - pix.y)
-                mem[index++] = temp.mem[(x - pix.x) * ys + xs];
-            else mem[index++] = Color::black;
-        }
-    }
-} // end Surface::ripple
-
-// horizontalWaveAll
-//---------------------------------------------------------------------------
-void Surface::horizontalWaveAll(int numWaves, float percent)
-{
-    assert(getDoesExist());
-    assert(this != 0);
-
-    float curOffset  = 0;
-    float offsetStep = 100.0 / float(frameCount);
-
-    for (int frame = 0; frame < frameCount; frame++) {
-        setFrame(frame);
-        horizontalWave(numWaves, percent, (int) curOffset);
-        curOffset += offsetStep;
-    }
-} // end Surface::horizontalWaveAll
-
-// horizontalWave
-//---------------------------------------------------------------------------
-void Surface::horizontalWave(int numWaves, float percent, int offset)
-{
-    assert(getDoesExist());
-    assert(this != 0);
-
-    Surface temp(pix.x, pix.y, pix.x, 1);
-    blt(temp, 0, 0);
-
-    float piTimes2      = float(M_PI * 2.0);
-    float waveFrequency = (numWaves * piTimes2) / pix.y;
-    float waveOffset    = (offset * numWaves * piTimes2) / 100.0;
-    float radius        = (pix.x * percent) / 100.0;
-
-    int index = 0;
-
-    for (int y = 0; y < pix.y; y++) {
-        int xOffset = int(round(sin(y * waveFrequency + waveOffset) * radius));
-        for (int x = 0; x < pix.x; x++) {
-            if (xOffset >= 0 && xOffset < pix.x)
-                mem[index++] = temp.mem[xOffset + pix.x * y];
-            else mem[index++] = Color::black;
-            xOffset++;
-        }
-    }
-} // end Surface::horizontalWave
-
-// verticalWaveAll
-//---------------------------------------------------------------------------
-void Surface::verticalWaveAll(int numWaves, float percent)
-{
-    assert(getDoesExist());
-    assert(this != 0);
-
-    float curOffset  = 0;
-    float offsetStep = 100.0 / float(frameCount);
-
-    for (int frame = 0; frame < frameCount; frame++) {
-        setFrame(frame);
-        verticalWave(numWaves, percent, (int) curOffset);
-        curOffset += offsetStep;
-    }
-} // end Surface::verticalWaveAll
-
-// verticalWave
-//---------------------------------------------------------------------------
-void Surface::verticalWave(int numWaves, float percent, int offset)
-{
-    assert(getDoesExist());
-    assert(this != 0);
-
-    Surface temp(pix.x, pix.y, pix.x, 1);
-    blt(temp, 0, 0);
-
-    float piTimes2      = float(M_PI * 2.0);
-    float waveFrequency = (numWaves * piTimes2) / pix.y;
-    float waveOffset    = (offset * numWaves * piTimes2) / 100.0;
-    float radius        = (pix.x * percent) / 100.0;
-
-    for (int x = 0; x < pix.x; x++) {
-        int yOffset = int(round(sin(x * waveFrequency + waveOffset) * radius));
-
-        for (int y = 0; y < pix.y; y++) {
-            if (yOffset >= 0 && yOffset < pix.y) {
-                mem[pix.x * y + x] = temp.mem[pix.x * yOffset + x];
-            } else {
-                mem[pix.x * y + x] = Color::black;
-            }
-            yOffset++;
-        }
-    }
-} // end Surface::verticalWave
-
 // drawButtonBorder
 //---------------------------------------------------------------------------
 void Surface::drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightColor) const
@@ -2328,13 +2099,10 @@ int Surface::getTextLength(const char* text)
 // Purpose: Blits the specied rom character to the screen at the specified
 //          location.
 //---------------------------------------------------------------------------
-void Surface::bltChar8x8(const iXY &pos, const char &character, const PIX &color)
+void Surface::bltChar8x8(const iXY &pos, unsigned char character, const PIX &color)
 {
-#ifdef _DEBUG
-    if (character > ascii8x8.getFrameCount()) {
-        assert(false);
-    }
-#endif
+    if (character >= ascii8x8.getFrameCount())
+        return;
 
     ascii8x8.setFrame(character);
     ascii8x8.bltTransColor(*this, pos, color);
@@ -2342,17 +2110,13 @@ void Surface::bltChar8x8(const iXY &pos, const char &character, const PIX &color
 
 // bltChar5x5
 //---------------------------------------------------------------------------
-void Surface::bltChar5x5(const iXY &pos, const char &character, const PIX &color)
+void Surface::bltChar5x5(const iXY &pos, unsigned char character, const PIX &color)
 {
-#ifdef _DEBUG
-    if (character > ascii5x5.getFrameCount()) {
-        assert(false);
-    }
-#endif
+    if (character >= ascii5x5.getFrameCount())
+        return;
 
     ascii5x5.setFrame(character);
     ascii5x5.bltTransColor(*this, pos, color);
-
 } // end Surface::bltChar8x8
 
 // bltString
@@ -2371,7 +2135,6 @@ void Surface::bltString(const iXY &pos, const char *string, const uint8_t &color
 
         bltChar8x8(iXY(pos.x + (index << 3), pos.y), string[index], color);
     }
-
 } // end Surface::bltString
 
 // bltString5x5
@@ -2472,14 +2235,12 @@ void Surface::bltStringVGradient(const iXY &pos, const char *string, ColorTable 
 }
 
 //---------------------------------------------------------------------------
-void Surface::bltChar8x8VGradient(const iXY &pos, const char &character,
+void Surface::bltChar8x8VGradient(const iXY &pos, unsigned char character,
                                   ColorTable &colorTable)
 {
-#ifdef _DEBUG
-    if (character > ascii8x8.getFrameCount()) {
-        assert(false);
-    }
-#endif
+    if (character >= ascii8x8.getFrameCount())
+        return;
+    
     ascii8x8.setFrame(character);
     ascii8x8.bltTransVGradient(*this, pos, colorTable);
 }

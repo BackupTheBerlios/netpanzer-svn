@@ -323,17 +323,6 @@ public:
         drawWindowsBorder(iRect(0, 0, pix.x, pix.y), light, medium, dark);
     }
 
-    void verticalWaveAll(int numWaves, float percent);
-    void verticalWave(int numWaves, float percent, int offset);
-    void horizontalWaveAll(int numWaves, float percent);
-    void horizontalWave(int numWaves, float percent, int offset);
-    void rippleAll(int numWaves, float percent);
-    void ripple(int numWaves, float percent, int offset);
-    void verticalWave3DAll(int numWaves, float percent);
-    void verticalWave3D(int numWaves, float percent, int offset);
-    void horizontalWave3DAll(int numWaves, float percent);
-    void horizontalWave3D(int numWaves, float percent, int offset);
-
     void blendIn(const Surface &source, iXY min, ColorTable &colorTable) const;
     inline void blendIn(const Surface &source, ColorTable &colorTable) const
     {
@@ -452,20 +441,20 @@ public:
     int  loadAllBMPInDirectory(const char *path);
 
     // Blit a single character of text.
-    void bltChar8x8(const iXY &pos, const char &character, const PIX &color);
-    void bltChar8x8(int x, int y, const char &character, const PIX &color)
+    void bltChar8x8(const iXY &pos, unsigned char character, const PIX &color);
+    void bltChar8x8(int x, int y, unsigned char character, const PIX &color)
     {
         bltChar8x8(iXY(x, y), character, color);
     }
 
-    void bltChar8x8VGradient(const iXY &pos, const char &character, ColorTable &colorTable);
-    void bltChar8x8VGradient(int x, int y, const char &character, ColorTable &colorTable)
+    void bltChar8x8VGradient(const iXY &pos, unsigned char character, ColorTable &colorTable);
+    void bltChar8x8VGradient(int x, int y, unsigned char character, ColorTable &colorTable)
     {
         bltChar8x8VGradient(iXY(x, y), character, colorTable);
     }
 
-    void bltChar5x5(const iXY &pos, const char &character, const PIX &color);
-    inline void bltChar5x5(int x, int y, const char &character, const PIX &color)
+    void bltChar5x5(const iXY &pos, unsigned char character, const PIX &color);
+    inline void bltChar5x5(int x, int y, unsigned char character, const PIX &color)
     {
         bltChar5x5(iXY(x, y), character, color);
     }

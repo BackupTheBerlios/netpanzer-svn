@@ -39,7 +39,7 @@ static void buttonRefresh(void)
     IRCLobbyView::lobby_connection->refreshServerList();
 }
 
-static void buttonChat(void)
+static void chatReturnPressed(cInputField* )
 {
     IRCLobbyView::lobby_connection->sendChatMessage(
         gameconfig->playername,
@@ -69,10 +69,11 @@ IRCLobbyView::IRCLobbyView() : View()
     resizeClientArea(area_size);
 
     int chat_y=lobby_view_height-(Surface::getFontHeight()*2);
-    addButtonCenterText(iXY(320, chat_y ), 80,  "Chat", "", buttonChat);
-    addButtonCenterText(iXY(320, chat_y-(Surface::getFontHeight()*2) ), 80,  "Refresh", "", buttonRefresh);
+    //addButtonCenterText(iXY(320, chat_y ), 80,  "Chat", "", buttonChat);
+    addButtonCenterText(iXY(320, chat_y), 80,  "Refresh", "", buttonRefresh);
     szChat.init("  ", 34);
-    addInputField(iXY(4, chat_y), &szChat, "", true);
+    cInputField* input = addInputField(iXY(4, chat_y), &szChat, "", true);
+    input->setReturnAction(chatReturnPressed);
 } 
 
 

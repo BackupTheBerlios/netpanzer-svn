@@ -1524,7 +1524,7 @@ void View::processEvents(void)
 
 // addInputField
 //---------------------------------------------------------------------------
-void View::addInputField(
+cInputField* View::addInputField(
     const iXY &pos,
     cInputFieldString *string,
     const char *excludedCharacters,
@@ -1539,6 +1539,7 @@ void View::addInputField(
         selectedInputField = inputFields.getCount() - 1;
     }
 
+    return & (inputFields[inputFields.getCount() - 1]);
 } // end addInputField
 
 //---------------------------------------------------------------------------
