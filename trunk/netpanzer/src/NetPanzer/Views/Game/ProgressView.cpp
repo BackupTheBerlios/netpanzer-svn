@@ -155,7 +155,6 @@ void ProgressView::toggleGameView()
     GameManager::setNetPanzerGameOptions();
 
     Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("GameToolbarView", true);
     Desktop::setVisibility("GameInfoView", true);
     Desktop::setVisibility("MiniMapView", true);
     Desktop::setVisibility("GameView", true);

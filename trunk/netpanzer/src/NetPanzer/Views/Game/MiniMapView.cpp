@@ -263,7 +263,6 @@ void MiniMapView::lMouseDown(const iXY &pos)
 //--------------------------------------------------------------------------
 void MiniMapView::rMouseDown(const iXY &pos)
 {
-    MiniMapInterface::deselectUnits();
 
 } // end MiniMapView::rMouseDown
 
@@ -417,21 +416,7 @@ void MiniMapView::doDecreaseSize(int value)
 //--------------------------------------------------------------------------
 int MiniMapView::lMouseUp(const iXY &downPos, const iXY &upPos)
 {
-    if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos()))) {
-        // If units are selected, send the units there and deselect the units.
-        // If there is a unit selected, see if we should move a unit there.
-        if (	(KeyboardInterface::getKeyState(SDLK_LCTRL) ||
-                KeyboardInterface::getKeyState(SDLK_RCTRL))) {
-            if (MiniMapInterface::isUnitSelected()) {
-                if (MiniMapInterface::isValidUnitMove(upPos)) {
-                    MiniMapInterface::moveUnits(upPos);
-                }
-            }
-        }
-    }
-
     return View::lMouseUp(downPos, upPos);
-
 } // end MiniMapView::lMouseUp
 
 // mouseMove
@@ -441,16 +426,6 @@ void MiniMapView::mouseMove(const iXY &prevPos, const iXY &newPos)
     if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos()))) {
         if (	(KeyboardInterface::getKeyState(SDLK_LCTRL) ||
                 KeyboardInterface::getKeyState(SDLK_RCTRL))) {
-            // Set the cursor accordinly.
-            if (MiniMapInterface::isUnitSelected()) {
-                if (MiniMapInterface::isValidUnitMove(newPos)) {
-                    MouseInterface::setCursor("move.bmp");
-                } else {
-                    MouseInterface::setCursor("noentry.bmp");
-                }
-            } else {
-                MouseInterface::setCursor("default.bmp");
-            }
 
             if (!selectionAnchor) {
                 selectionAnchorDownPos = newPos;
@@ -461,32 +436,12 @@ void MiniMapView::mouseMove(const iXY &prevPos, const iXY &newPos)
 
             // Set the selection cursor.
             MouseInterface::setCursor("select.bmp");
-
         } else {
-            if (selectionAnchor) {
-                MiniMapInterface::selectUnits(iRect(selectionAnchorDownPos.x, selectionAnchorDownPos.y, selectionAnchorCurPos.x, selectionAnchorCurPos.y));
-            }
-
             selectionAnchor = false;
         }
     }
 
     GameTemplateView::mouseMove(prevPos, newPos);
-
-    //enum { _mcursor_default,
-    //       _mcursor_noentry,
-    //       _mcursor_move,
-    //       _mcursor_select,
-    //       _mcursor_target,
-    //       _mcursor_make_allie,
-    //       _mcursor_break_allie };
-    //
-    //	}
-
-    //static bool isUnitSelected( void );
-    //static bool selectUnits( iRect bound_box );
-    //static void moveUnits( iXY location );
-
 } // end MiniMapView::mouseMove
 
 // lMouseDrag

@@ -1,6 +1,6 @@
 SubDir TOP src NetPanzer Particles ;
 
-Library netpanzerparticles : [ Wildcard *.cpp *.hpp ] ;
+Library netpanzerparticles : [ Wildcard *.cpp *.hpp ] : noinstall ;
 ExternalLibs netpanzerparticles : SDL ;
 IncludeDir netpanzerparticles : ../Classes ../Interfaces ../Structs
                                 ../Classes/Units ../Views/Components .. ;

@@ -70,13 +70,6 @@ public:
 
     static void annotateMiniMap( Surface &map_surface );
 
-    static bool isUnitSelected( void );
-    static void deselectUnits( void );
-    static bool selectUnits( iRect bound_box );
-    static bool isValidUnitMove( iXY location );
-    static bool moveUnits( iXY location );
-
-
     static void setPathingDebugMode( bool on_off );
 
     static void setShowEnemyRadar( float time );

@@ -2,7 +2,8 @@ SubDir TOP src Lib Util ;
 
 Library netpanzerutil
     : [ Wildcard *.cpp *.hpp ]
+    : noinstall
 ;
 LinkWith netpanzerutil : netpanzertypes ;
-ExternalLibs netpanzerutil : SDL PHYSFS ;
+ExternalLibs netpanzerutil : SDL PHYSFS : export ;
 

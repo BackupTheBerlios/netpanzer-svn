@@ -70,10 +70,6 @@ short WorldInputCmdProcessor::selected_objective_id = 0;
 
 WorldInputCmdProcessor::WorldInputCmdProcessor()
 {
-    initializeSelectionLists();
-
-    memset( local_key_table, 0, 256 );
-
     keyboard_input_mode = _keyboard_input_mode_command;
 
     selection_box_active = false;
@@ -84,11 +80,6 @@ WorldInputCmdProcessor::WorldInputCmdProcessor()
 
     left_button_hold_action_complete = false;
     right_mouse_scroll = false;
-}
-
-void WorldInputCmdProcessor::initializeSelectionLists()
-{
-    /* empty */
 }
 
 void WorldInputCmdProcessor::switchSelectionList( unsigned long new_list_index )
@@ -247,7 +238,7 @@ setMouseCursor( unsigned char world_cursor_status )
     } // ** switch
 }
 
-void WorldInputCmdProcessor::getManualControlStatus( void )
+void WorldInputCmdProcessor::getManualControlStatus()
 {
     if ( KeyboardInterface::getKeyState( SDLK_LCTRL ) ||
             KeyboardInterface::getKeyState( SDLK_RCTRL )
@@ -256,10 +247,9 @@ void WorldInputCmdProcessor::getManualControlStatus( void )
     } else {
         manual_fire_state = false;
     }
-
 }
 
-void WorldInputCmdProcessor::evaluateKeyCommands( void )
+void WorldInputCmdProcessor::evaluateKeyCommands()
 {
     if ( (KeyboardInterface::getKeyPressed( SDLK_o ) == true) ) {
         toggleDisplayOutpostNames();
@@ -317,7 +307,7 @@ void WorldInputCmdProcessor::jumpLastAttackedUnit()
     }
 }
 
-void WorldInputCmdProcessor::evaluateGroupingKeys( void )
+void WorldInputCmdProcessor::evaluateGroupingKeys()
 {
     bool alt_status = false;
     bool ctrl_status = false;
@@ -373,152 +363,9 @@ void WorldInputCmdProcessor::evaluateGroupingKeys( void )
         }
     }
     current_selection_list_bits=selected_bits;
-
-#if 0
-    //*********************************************************
-    if ( (KeyboardInterface::getKeyState( SDLK_1 ) == true) &&
-            (KeyboardInterface::getPrevKeyState( SDLK_1) == false)  ) {
-        if ( shift_status == true ) {
-            setSelectionList(1);
-            ConsoleInterface::postMessage( "Group 1 Created" );
-        } else
-            if ( alt_status == true ) {
-                switchSelectionList(1);
-            } else {
-                cycleSelectedUnits(1);
-            }
-    } // ** if
-
-    //*********************************************************
-    if ( (KeyboardInterface::getKeyState( SDLK_2 ) == true) &&
-            (KeyboardInterface::getPrevKeyState( SDLK_2) == false)    ) {
-        if ( shift_status == true ) {
-            setSelectionList(2);
-            ConsoleInterface::postMessage( "Group 2 Created" );
-        } else
-            if ( alt_status == true ) {
-                switchSelectionList(2);
-            } else {
-                cycleSelectedUnits(2);
-            }
-    } // ** if
-
-    //*********************************************************
-    if ( (KeyboardInterface::getKeyState( SDLK_3 ) == true) &&
-            (KeyboardInterface::getPrevKeyState( SDLK_3) == false)    ) {
-        if ( shift_status == true ) {
-            setSelectionList(3);
-            ConsoleInterface::postMessage( "Group 3 Created" );
-        } else
-            if ( alt_status == true ) {
-                switchSelectionList(3);
-            } else {
-                cycleSelectedUnits(3);
-            }
-    } // ** if
-
-    //*********************************************************
-    if ( (KeyboardInterface::getKeyState( SDLK_4 ) == true) &&
-            (KeyboardInterface::getPrevKeyState( SDLK_4) == false)    ) {
-        if ( shift_status == true ) {
-            setSelectionList(4);
-            ConsoleInterface::postMessage( "Group 4 Created" );
-        } else
-            if ( alt_status == true ) {
-                switchSelectionList(4);
-            } else {
-                cycleSelectedUnits(4);
-            }
-    } // ** if
-
-    //*********************************************************
-    if ( (KeyboardInterface::getKeyState( SDLK_5 ) == true) &&
-            (KeyboardInterface::getPrevKeyState( SDLK_5) == false)    ) {
-        if ( shift_status == true ) {
-            setSelectionList(5);
-            ConsoleInterface::postMessage( "Group 5 Created" );
-        } else
-            if ( alt_status == true ) {
-                switchSelectionList(5);
-            } else {
-                cycleSelectedUnits(5);
-            }
-    } // ** if
-
-    //*********************************************************
-    if ( (KeyboardInterface::getKeyState( SDLK_6 ) == true) &&
-            (KeyboardInterface::getPrevKeyState( SDLK_6) == false)    ) {
-        if ( shift_status == true ) {
-            setSelectionList(6);
-            ConsoleInterface::postMessage( "Group 6 Created" );
-        } else
-            if ( alt_status == true ) {
-                switchSelectionList(6);
-            } else {
-                cycleSelectedUnits(6);
-            }
-    } // ** if
-
-    //*********************************************************
-    if ( (KeyboardInterface::getKeyState( SDLK_7 ) == true) &&
-            (KeyboardInterface::getPrevKeyState( SDLK_7) == false)    ) {
-        if ( shift_status == true ) {
-            setSelectionList(7);
-            ConsoleInterface::postMessage( "Group 7 Created" );
-        } else
-            if ( alt_status == true ) {
-                switchSelectionList(7);
-            } else {
-                cycleSelectedUnits(7);
-            }
-    } // ** if
-
-    //*********************************************************
-    if ( (KeyboardInterface::getKeyState( SDLK_8 ) == true) &&
-            (KeyboardInterface::getPrevKeyState( SDLK_8) == false)    ) {
-        if ( shift_status == true ) {
-            setSelectionList(8);
-            ConsoleInterface::postMessage( "Group 8 Created" );
-        } else
-            if ( alt_status == true ) {
-                switchSelectionList(8);
-            } else {
-                cycleSelectedUnits(8);
-            }
-    } // ** if
-
-    //*********************************************************
-    if ( (KeyboardInterface::getKeyState( SDLK_9 ) == true) &&
-            (KeyboardInterface::getPrevKeyState( SDLK_9) == false) ) {
-        if ( shift_status == true ) {
-            setSelectionList(9);
-            ConsoleInterface::postMessage( "Group 9 Created" );
-        } else
-            if ( alt_status == true ) {
-                switchSelectionList(9);
-            } else {
-                cycleSelectedUnits(9);
-            }
-    } // ** if
-
-    //*********************************************************
-    if ( (KeyboardInterface::getKeyState( SDLK_0 ) == true) &&
-            (KeyboardInterface::getPrevKeyState( SDLK_0) == false) ) {
-        if ( shift_status == true ) {
-            setSelectionList(0);
-            ConsoleInterface::postMessage( "Group 0 Created" );
-        } else
-            if ( alt_status == true ) {
-                switchSelectionList(0);
-            } else {
-                cycleSelectedUnits(0);
-            }
-    } // ** if
-#endif
-
 }
 
-void WorldInputCmdProcessor::keyboardInputModeCommand( void )
+void WorldInputCmdProcessor::keyboardInputModeCommand()
 {
     getManualControlStatus();
 
@@ -529,7 +376,7 @@ void WorldInputCmdProcessor::keyboardInputModeCommand( void )
     previous_manual_control_state = manual_control_state;
 }
 
-void WorldInputCmdProcessor::setKeyboardInputModeChatMesg( void )
+void WorldInputCmdProcessor::setKeyboardInputModeChatMesg()
 {
     ConsoleInterface::setInputStringStatus( true );
     ConsoleInterface::resetInputString( "Message All: " );
@@ -539,7 +386,7 @@ void WorldInputCmdProcessor::setKeyboardInputModeChatMesg( void )
     keyboard_input_mode = _keyboard_input_mode_chat_mesg;
 }
 
-void WorldInputCmdProcessor::keyboardInputModeChatMesg( void )
+void WorldInputCmdProcessor::keyboardInputModeChatMesg()
 {
     char chat_string[256];
     if ( getConsoleInputString( chat_string ) == true ) {
@@ -549,7 +396,7 @@ void WorldInputCmdProcessor::keyboardInputModeChatMesg( void )
     }
 }
 
-void WorldInputCmdProcessor::setKeyboardInputModeAllieChatMesg( void )
+void WorldInputCmdProcessor::setKeyboardInputModeAllieChatMesg()
 {
     ConsoleInterface::setInputStringStatus( true );
     ConsoleInterface::resetInputString( "Message Allies : " );
@@ -559,7 +406,7 @@ void WorldInputCmdProcessor::setKeyboardInputModeAllieChatMesg( void )
     keyboard_input_mode = _keyboard_input_mode_allie_mesg;
 }
 
-void WorldInputCmdProcessor::keyboardInputModeAllieChatMesg( void )
+void WorldInputCmdProcessor::keyboardInputModeAllieChatMesg()
 {
     char chat_string[256];
     if ( getConsoleInputString( chat_string ) == true ) {
@@ -570,7 +417,7 @@ void WorldInputCmdProcessor::keyboardInputModeAllieChatMesg( void )
 }
 
 
-void WorldInputCmdProcessor::evaluateKeyboardEvents( void )
+void WorldInputCmdProcessor::evaluateKeyboardEvents()
 {
     switch( keyboard_input_mode ) {
     case _keyboard_input_mode_command :
@@ -587,7 +434,7 @@ void WorldInputCmdProcessor::evaluateKeyboardEvents( void )
     }
 }
 
-bool WorldInputCmdProcessor::selectBoundBoxUnits( void )
+bool WorldInputCmdProcessor::selectBoundBoxUnits()
 {
     bool select_success;
     long x,y;
@@ -621,7 +468,7 @@ bool WorldInputCmdProcessor::selectBoundBoxUnits( void )
 
 }
 
-void WorldInputCmdProcessor::evaluateMouseEvents( void )
+void WorldInputCmdProcessor::evaluateMouseEvents()
 {
     iXY world_pos;
     iXY mouse_pos;
@@ -685,7 +532,6 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
        ) {
 
         if (event.event == MouseEvent::EVENT_DOWN )
-            //if (event.event == _event_mbutton_click )
         {
             WorldViewInterface::clientXYtoWorldXY( world_win, event.down_pos, &world_pos );
             sendManualFireCommand( world_pos );
@@ -850,8 +696,6 @@ void WorldInputCmdProcessor::evalRightMButtonEvents( MouseEvent &event )
             activateVehicleSelectionView( selected_objective_id );
         }
     }
-
-
 }
 
 void WorldInputCmdProcessor::sendMoveCommand( iXY &world_pos )
@@ -1059,7 +903,7 @@ void WorldInputCmdProcessor::sendAllianceRequest( iXY &world_pos, bool make_brea
 }
 
 
-void WorldInputCmdProcessor::process( void )
+void WorldInputCmdProcessor::process()
 {
     evaluateKeyboardEvents();
     evaluateMouseEvents();
@@ -1094,7 +938,7 @@ bool WorldInputCmdProcessor::getConsoleInputString( char *input_string )
 
 
 
-void WorldInputCmdProcessor::inFocus( void )
+void WorldInputCmdProcessor::inFocus()
 {
     iXY world_pos;
     iXY mouse_pos;
@@ -1109,7 +953,7 @@ void WorldInputCmdProcessor::inFocus( void )
     box_release = world_pos;
 }
 
-void WorldInputCmdProcessor::updateControls( void )
+void WorldInputCmdProcessor::updateControls()
 {
     iXY client_pos;
     iXY mouse_pos;
@@ -1148,7 +992,7 @@ void WorldInputCmdProcessor::updateControls( void )
     }
 }
 
-void WorldInputCmdProcessor::closeSelectionBox( void )
+void WorldInputCmdProcessor::closeSelectionBox()
 {
     iXY world_pos;
     iXY mouse_pos;
@@ -1169,93 +1013,30 @@ void WorldInputCmdProcessor::closeSelectionBox( void )
     }
 }
 
-
-bool WorldInputCmdProcessor::isUnitSelected()
-{
-    return working_list.unit_list.size() > 0;
-}
-
-bool WorldInputCmdProcessor::selectUnits( iRect bound_box )
-{
-    long x,y;
-
-    if ( bound_box.min.x > bound_box.max.x ) {
-        x = bound_box.min.x;
-        bound_box.min.x = bound_box.max.x;
-        bound_box.max.x = x;
-    }
-
-    if ( bound_box.min.y > bound_box.max.y ) {
-        y = bound_box.min.y;
-        bound_box.min.y = bound_box.max.y;
-        bound_box.max.y = y;
-    }
-
-    return( working_list.selectBounded( bound_box ) );
-}
-
-bool WorldInputCmdProcessor::isValidMoveLocation( iXY location )
-{
-    return( true );
-}
-
-bool WorldInputCmdProcessor::sendMoveCommandExternal( iXY location )
-{
-    sendMoveCommand( location );
-    return( true );
-}
-
-void  WorldInputCmdProcessor::deselectUnitsExternal( void )
-{
-    working_list.unGroup();
-}
-
-void WorldInputCmdProcessor::startChatMessageAll( void )
-{
-    setKeyboardInputModeChatMesg();
-}
-
-void WorldInputCmdProcessor::startChatMessageAllie( void )
-{
-    setKeyboardInputModeAllieChatMesg();
-}
-
-void WorldInputCmdProcessor::createGroup( unsigned long group )
-{
-    assert( group < 10 );
-    setSelectionList( group );
-    ConsoleInterface::postMessage( "Group %lu Created", group );
-}
-
-void WorldInputCmdProcessor::activateGroup( unsigned long group )
-{
-    assert( group < 10 );
-    switchSelectionList( group );
-}
-
-bool WorldInputCmdProcessor::isObjectiveSelected( void )
+bool WorldInputCmdProcessor::isObjectiveSelected()
 {
     if (Desktop::getVisible("VehicleSelectionView") == true ) {
         return( true );
     }
-
+                                                                                
     return( false );
 }
-
-char *  WorldInputCmdProcessor::getSelectedObjectiveName( void )
+                                                                                
+char *  WorldInputCmdProcessor::getSelectedObjectiveName()
 {
     ObjectiveState *objective_state;
-
+                                                                                
     objective_state = ObjectiveInterface::getObjectiveState( selected_objective_id );
-
+                                                                                
     return( objective_state->name );
 }
 
-iXY WorldInputCmdProcessor::getSelectedObjectiveWorldPos( void )
+iXY WorldInputCmdProcessor::getSelectedObjectiveWorldPos()
 {
     ObjectiveState *objective_state;
-
+                                                                                
     objective_state = ObjectiveInterface::getObjectiveState( selected_objective_id );
-
+                                                                                
     return( objective_state->location );
 }
+

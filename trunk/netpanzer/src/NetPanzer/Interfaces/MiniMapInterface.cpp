@@ -238,42 +238,6 @@ void MiniMapInterface::annotateMiniMap( Surface &map_surface )
 
 }
 
-bool MiniMapInterface::isUnitSelected( void )
-{
-    return( COMMAND_PROCESSOR.isUnitSelected() );
-}
-
-bool MiniMapInterface::selectUnits( iRect bound_box )
-{
-    bound_box.min.x = int(float(bound_box.min.x) * scale_factor.x);
-    bound_box.min.y = int(float(bound_box.min.y) * scale_factor.y);
-    bound_box.max.x = int(float(bound_box.max.x) * scale_factor.x);
-    bound_box.max.y = int(float(bound_box.max.y) * scale_factor.y);
-
-    return( COMMAND_PROCESSOR.selectUnits( bound_box ) );
-}
-
-void MiniMapInterface::deselectUnits( void )
-{
-    COMMAND_PROCESSOR.deselectUnitsExternal();
-}
-
-bool MiniMapInterface::isValidUnitMove( iXY location )
-{
-    location.x = int(location.x * scale_factor.x);
-    location.y = int(location.y * scale_factor.y);
-
-    return( COMMAND_PROCESSOR.isValidMoveLocation( location ) );
-}
-
-bool MiniMapInterface::moveUnits( iXY location )
-{
-    location.x = int(location.x * scale_factor.x);
-    location.y = int(location.y * scale_factor.y);
-
-    return( COMMAND_PROCESSOR.sendMoveCommandExternal( location ) );
-}
-
 void MiniMapInterface::setPathingDebugMode( bool on_off )
 {
     pathing_debug_mode = on_off;

@@ -95,7 +95,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapSelectionView.hpp"
 #include "PlayerNameView.hpp"
 #include "GameInfoView.hpp"
-#include "GameToolbarView.hpp"
 
 #include "IPAddressView.hpp"
 #include "IRCLobbyView.hpp"
@@ -184,7 +183,6 @@ void PlayerGameManager::initializeWindowSubSystem()
     //Desktop::add(new DesktopView());
     //Desktop::add(new UnitColorView());
     Desktop::add(new HelpScrollView());
-    Desktop::add(new GameToolbarView());
     Desktop::add(new GameInfoView());
 
     lobbyView = new LobbyView();
@@ -372,7 +370,6 @@ void PlayerGameManager::hostMultiPlayerGame()
 
     // Need to open at beginning of game until we are saving status of things.
     // when last played.
-    Desktop::setVisibility("GameToolbarView", true);
     Desktop::setVisibility("GameInfoView", true);
     Desktop::setVisibility("MiniMapView", true);
     Desktop::setVisibility("GameView", true);
@@ -423,13 +420,6 @@ void PlayerGameManager::processSystemKeys()
         if (KeyboardInterface::getKeyPressed( SDLK_F3 )) {
             Desktop::toggleVisibility( "UnitColorView" );
         }
-
-        // Remove all selection.
-        if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE)) {
-            COMMAND_PROCESSOR.closeSelectionBox();
-            MiniMapInterface::deselectUnits();
-        }
-
     }
 
     if (KeyboardInterface::getKeyState( SDLK_LALT ) ||
@@ -448,14 +438,12 @@ void PlayerGameManager::processSystemKeys()
         if (KeyboardInterface::getKeyPressed(SDLK_F7)) {
             Desktop::toggleVisibility( "ChatView" );
         }
-        if (KeyboardInterface::getKeyPressed(SDLK_F6)) {
+        if (KeyboardInterface::getKeyPressed(SDLK_F6) ||
+            KeyboardInterface::getKeyPressed(SDLK_TAB) ) {
             Desktop::toggleVisibility( "RankView" );
         }
         if (KeyboardInterface::getKeyPressed(SDLK_F3)) {
             Desktop::toggleVisibility( "DesktopView" );
-        }
-        if (KeyboardInterface::getKeyPressed(SDLK_TAB)) {
-            Desktop::toggleVisibility( "GameToolbarView" );
         }
         if (KeyboardInterface::getKeyPressed(SDLK_F4)) {
             Desktop::toggleVisibility( "CodeStatsView" );

@@ -108,7 +108,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapSelectionView.hpp"
 #include "PlayerNameView.hpp"
 #include "GameInfoView.hpp"
-#include "GameToolbarView.hpp"
 
 //winsock hack
 #include "IPAddressView.hpp"

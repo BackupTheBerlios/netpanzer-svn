@@ -40,7 +40,6 @@ protected:
     bool right_mouse_scroll;
     bool selectBoundBoxUnits();
 
-    bool local_key_table[256];
     bool manual_control_state;
     bool previous_manual_control_state;
     bool manual_fire_state;
@@ -51,7 +50,6 @@ protected:
     unsigned int current_selection_list_bits;
     SelectionList target_list;
 
-    void initializeSelectionLists();
     void switchSelectionList( unsigned long new_list_index );
     void setSelectionList( unsigned long new_list_index );
     void cycleSelectedUnits( unsigned long new_list_index );
@@ -108,22 +106,9 @@ public:
 
     void closeSelectionBox();
 
-    // ** methods for external input control
-    bool isUnitSelected();
-    bool selectUnits( iRect bound_box );
-    bool isValidMoveLocation( iXY location );
-    bool sendMoveCommandExternal( iXY location );
-    void    deselectUnitsExternal();
-
-    void startChatMessageAll();
-    void startChatMessageAllie();
-
-    void createGroup( unsigned long group );
-    void activateGroup( unsigned long group );
-
     static bool  isObjectiveSelected();
     static char *   getSelectedObjectiveName();
-    static iXY getSelectedObjectiveWorldPos();
+    static iXY getSelectedObjectiveWorldPos();            
 };
 
 extern WorldInputCmdProcessor COMMAND_PROCESSOR;
