@@ -18,4 +18,5 @@
   have your old username until you leave the game.
 - netPanzer shouldn't allow using the same flags by two (or more) players
 - ranking isn't sorted by points (and AFAIR it was before)
-
+- ranking window is too small... if there are many players, only few first
+  are visible.
