@@ -22,3 +22,4 @@
 - Astar sometimes calculates strange paths. Very obvious if you try to capture
   and outpost from the left side: Your panzers will drive around it before
   entering it.
+- Selecting a map when hosting a game doesn't work anymore
