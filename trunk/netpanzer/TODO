@@ -3,6 +3,7 @@
 
 *** Improvements
  * let dedicated server output statistics on console or in some log files. 
+   Also all message should be outputted with timestamps.
    So that you can generate nice html pages with statistics of the players :)
  * Convert the 256 color stuff to truecolor
  * Add timeout/keepalive handling to network layer to correctly detect 
@@ -16,10 +17,6 @@
  * make it possible to have different colors for different players - DONE
  * make the code endian safe. It should run on big endian boxes too.
  * display alliances in the status screens.
- * dedicated server should prefix all messages with timestamps
- * dedicated server should allow saying something to every user... I mean
-   I would like to have possibility to say "hello guys... sorry has to
-   shutdown server because of sth"
 
 *** Tools
  * write a map and tileset editor
@@ -49,10 +46,10 @@
    the irc lobby code, so that we could get integration into server
    browsing tools like xqf done eventually)
  * create UDP broadcast code for announcing servers in LANs
- * add a (readline based?) serverconsole
+ * add a (readline based?) serverconsole along with "chat" command
 
 *** gameplay
-/ Note that these are just random idea. We should be very careful when 
+/ Note that these are just random ideas. We should be very careful when 
 / tuning the gameplay. 1 of the strengths of netpanzer is that it is simple 
 / to understand and play. We should try hard not to destroy this by adding 
 / too many options.
