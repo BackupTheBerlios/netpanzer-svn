@@ -22,6 +22,8 @@ SDLDraw::SDLDraw()
 	: FrontBuffer(0)
 {
 	SDL_InitSubSystem(SDL_INIT_VIDEO);
+	// XXX SDL contains a bug, that makes it loose the unicode state :-/
+	SDL_EnableUNICODE(1);
 }
 
 SDLDraw::~SDLDraw()
