@@ -56,11 +56,8 @@ bool UnitSync::sendNextUnit(PlayerID toplayer)
     iXY unit_map_loc;
     MapInterface::pointXYtoMapXY(unit->unit_state.location, &unit_map_loc);
 
-    UnitIniSyncMessage sync_message;
-    sync_message.unit_type = unit->unit_state.unit_type;
-    sync_message.unit_id = unit->unit_id;
-    sync_message.location_x = unit_map_loc.x;
-    sync_message.location_y = unit_map_loc.y;
+    UnitIniSyncMessage sync_message(unit->unit_state.unit_type, unit->unit_id,
+        unit_map_loc.x, unit_map_loc.y);
     sync_message.unit_state = unit->unit_state.getNetworkUnitState();
 
     SERVER->sendMessage(toplayer, &sync_message, sizeof(UnitIniSyncMessage), 0);

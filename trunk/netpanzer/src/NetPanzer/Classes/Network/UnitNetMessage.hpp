@@ -61,21 +61,17 @@ class UnitIniSyncMessage : public NetMessage
 public:
     uint8_t unit_type;
     UnitID unit_id;
+private:
     uint32_t location_x;
     uint32_t location_y;
+public:
     NetworkUnitState unit_state;
 
-    UnitIniSyncMessage()
-    {
-        message_class = _net_message_class_unit;
-        message_id = _net_message_id_ini_sync_mesg;
-    }
-
-    unsigned short realSize( void )
-    {
-        return( sizeof( UnitIniSyncMessage ) );
-    }
-
+    UnitIniSyncMessage(uint8_t unit_type, UnitID unit_id,
+        uint32_t location_x, uint32_t location_y);
+    unsigned short realSize(void);
+    uint32_t getLocX(void);
+    uint32_t getLocY(void);
 } __attribute__((packed));
 
 // ** NOTE: A big, mother fucking HACK

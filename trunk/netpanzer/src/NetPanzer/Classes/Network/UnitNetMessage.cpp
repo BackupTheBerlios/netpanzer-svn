@@ -67,3 +67,30 @@ bool UnitOpcodeMessage::extract(int opcodeNum, UnitOpcodeStruct* dest)
         sizeof(UnitOpcodeStruct));
     return true;
 }
+
+
+UnitIniSyncMessage::UnitIniSyncMessage(uint8_t type, UnitID id,
+        uint32_t x, uint32_t y)
+{
+    message_class = _net_message_class_unit;
+    message_id = _net_message_id_ini_sync_mesg;
+    unit_type = type;
+    unit_id = id;
+    location_x = htol32(x);
+    location_y = htol32(y);
+}
+
+unsigned short UnitIniSyncMessage::realSize( void )
+{
+    return( sizeof( UnitIniSyncMessage ) );
+}
+
+uint32_t UnitIniSyncMessage::getLocX(void)
+{
+    return ltoh32(location_x);
+}
+
+uint32_t UnitIniSyncMessage::getLocY(void)
+{
+    return ltoh32(location_y);
+}

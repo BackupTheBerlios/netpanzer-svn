@@ -793,7 +793,7 @@ void UnitInterface::unitSyncMessage( NetMessage *net_message )
     player_index = sync_message->unit_id.getPlayer();
 
     unit = newUnit( sync_message->unit_type,
-                    iXY(sync_message->location_x, sync_message->location_y),
+                    iXY(sync_message->getLocX(), sync_message->getLocY()),
                     player_index );
 
     unit->unit_id = sync_message->unit_id;
