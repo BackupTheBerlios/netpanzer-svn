@@ -9,6 +9,6 @@ fi
 MACRODIR=mk/autoconf
 
 aclocal -I $MACRODIR
-automake -a
 autoheader
+automake -a
 autoconf
