@@ -19,20 +19,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __InputEvent_hpp__
 #define __InputEvent_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
-
-#include "Util/cTimeStamp.hpp"
-
+#include "Util/TimeStamp.hpp"
 
 class InputEvent
 {
 protected:
-    TIMESTAMP  when;         // The time the event occured.
+    TimeStamp  when;         // The time the event occured.
     int        modifiers;    // The modifier keys down during the event (shift, ctrl, alt, meta).
 
 public:
@@ -70,7 +62,7 @@ public:
     {
         return modifiers & ALT_GRAPH_MASK;
     }
-    inline TIMESTAMP getWhen() const
+    inline TimeStamp getWhen() const
     {
         return when;
     }

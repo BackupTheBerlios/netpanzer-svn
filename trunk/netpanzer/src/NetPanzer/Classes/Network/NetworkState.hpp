@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETWORKSTATE_HPP
 #define _NETWORKSTATE_HPP
 
-#include "ArrayUtil/Timer.hpp"
+#include "Util/Timer.hpp"
 
 enum{ _network_state_server, _network_state_client };
 
@@ -41,12 +41,12 @@ public:
     static float packets_sent_per_sec;
     static long  packets_sent_last_sec;
     static long  packets_sent_time;
-    static TIMESTAMP packets_sent_interval;
+    static TimeStamp packets_sent_interval;
 
     static float packets_received_per_sec;
     static long  packets_received_last_sec;
     static long  packets_received_time;
-    static TIMESTAMP packets_received_interval;
+    static TimeStamp packets_received_interval;
 
     static long opcodes_sent;
     static long opcodes_received;
@@ -58,7 +58,7 @@ public:
     static long  opcodes_received_last_sec;
     static Timer opcodes_received_timer;
 
-    static TIMESTAMP ping_time_stamp;
+    static TimeStamp ping_time_stamp;
     static Timer     ping_timer;
     static float     ping_time;
 

@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "PlayerState.hpp"
 #include "Types/iXY.hpp"
+#include "Util/Endian.hpp"
 
 #ifdef MSVC
 #pragma pack(1)
@@ -33,8 +34,14 @@ private:
     uint16_t objective_id;
 
 public:
-    uint16_t getObjectiveID();
-    void setObjectiveID(uint16_t id);
+    uint16_t getObjectiveID() const
+    {
+        return ltoh16(objective_id);
+    }
+    void setObjectiveID(uint16_t id)
+    {
+        objective_id = htol16(id);
+    }
 } __attribute__((packed));
 
 enum { _objective_mesg_update_occupation,
@@ -50,11 +57,32 @@ public:
     uint8_t occupation_status;
 private:
     uint16_t occupying_player_id;
+    uint32_t timeleft;
 
 public:
-    void set(unsigned short id, unsigned char status, PlayerID &player);
-    
-    uint16_t getOccupyingPlayerID();
+    uint8_t  unit_type;
+    bool     unit_gen_on;
+        
+    void set(uint16_t id, uint8_t status, uint16_t player_id,
+            bool unit_gen_on, uint8_t unit_type, uint32_t timeleft)
+    {
+        message_type = _objective_mesg_update_occupation;
+        setObjectiveID(id);
+        occupation_status = status;
+        occupying_player_id = htol16(player_id);
+        this->unit_gen_on = unit_gen_on;
+        this->timeleft = htol32(timeleft);
+        this->unit_type = unit_type;
+    }
+   
+    uint16_t getOccupyingPlayerID() const
+    {
+        return ltoh16(occupying_player_id);
+    }
+    uint32_t getTimeLeft() const
+    {
+        return ltoh32(timeleft);
+    }
 } __attribute__((packed));
 
 class ChangeUnitGeneration : public ObjectiveMessage

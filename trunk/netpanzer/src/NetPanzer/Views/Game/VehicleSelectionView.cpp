@@ -601,12 +601,6 @@ const char *VehicleSelectionView::getUnitName(int unitType)
         return "Drake";
     } else if (unitType == _unit_type_archer) {
         return "Archer";
-    } else if (unitType == _unit_type_hover_craft) {
-        return "Hovercraft";
-    } else if (unitType == _unit_type_comm_killer) {
-        return "Communications Killer";
-    } else if (unitType == _unit_type_refueler) {
-        return "Refueling truck";
     } else if (unitType == _unit_type_null) {
         return "None";
     } else {

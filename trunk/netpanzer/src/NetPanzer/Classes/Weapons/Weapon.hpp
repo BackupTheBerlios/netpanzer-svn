@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitBase.hpp"
 #include "Projectile.hpp"
 #include "Util/BresenhamLine.hpp"
-#include "ArrayUtil/Timer.hpp"
+#include "Util/Timer.hpp"
 #include "Sprite.hpp"
 #include "Types/fXY.hpp"
 #include "Particle2D.hpp"

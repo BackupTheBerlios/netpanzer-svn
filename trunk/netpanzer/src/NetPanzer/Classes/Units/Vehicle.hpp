@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _VEHICLE_HPP
 
 #include "UnitBase.hpp"
-#include "ArrayUtil/Timer.hpp"
+#include "Util/Timer.hpp"
 #include "UnitMessageTypes.hpp"
 #include "UnitOpcodes.hpp"
 #include "PathList.hpp"
@@ -114,8 +114,8 @@ protected:
     bool fsmTurretRotate();
 
     float interpolation_speed;
-    TIMESTAMP start_move_stamp;
-    TIMESTAMP end_move_stamp;
+    TimeStamp start_move_stamp;
+    TimeStamp end_move_stamp;
     bool     fsmMove_first_stamp;
     signed char fsmMove_offset_x;
     signed char fsmMove_offset_y;

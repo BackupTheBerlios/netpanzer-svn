@@ -17,8 +17,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 #include "Objective.hpp"
+#include "Outpost.hpp"
 #include "PlayerInterface.hpp"
 #include "ConsoleInterface.hpp"
+#include "UnitProfileInterface.hpp"
 
 Objective::Objective( short ID, iXY location, BoundBox area )
 {
@@ -32,13 +34,24 @@ Objective::Objective( short ID, iXY location, BoundBox area )
 
 void Objective::objectiveMesgUpdateOccupation( ObjectiveMessage *message )
 {
-    UpdateOccupationsStatus *occupation_update;
-
-    occupation_update = (UpdateOccupationsStatus *) message;
+    const UpdateOccupationsStatus *occupation_update
+        = (const UpdateOccupationsStatus *) message;
 
     objective_state.occupation_status = occupation_update->occupation_status;
     objective_state.occupying_player
         = PlayerInterface::getPlayerID(occupation_update->getOccupyingPlayerID());
+
+    Outpost* outpost = dynamic_cast<Outpost*> (this);
+    if(outpost) {
+        outpost->unit_generation_on_flag = occupation_update->unit_gen_on;
+        outpost->unit_generation_type = occupation_update->unit_type;
+        UnitProfile* profile =
+            UnitProfileInterface::getUnitProfile(
+                    outpost->unit_generation_type );
+        outpost->unit_generation_timer.changePeriod((float)profile->regen_time);
+        outpost->unit_generation_timer.setTimeLeft(
+                float(occupation_update->getTimeLeft()) / 128.0);
+    }
 
     if( objective_state.occupation_status != _occupation_status_unoccupied ) {
         PlayerState *player_state;

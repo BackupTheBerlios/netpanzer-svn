@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __TimerInterface_hpp__
 #define __TimerInterface_hpp__
 
-#include "cTimeStamp.hpp"
+#include "TimeStamp.hpp"
 
 extern bool gTimeSliceFlag;
 
@@ -29,7 +29,7 @@ private:
     // Higher number means more accurate average.
     enum { FRAMES_PER_FPS_UPDATE = 20 };
 
-    static TIMESTAMP frameStartTime;
+    static TimeStamp frameStartTime;
     static unsigned  framesUntilNextFPSUpdate;
     static double    totalFPSGroupTime;
     static double    fps;                      // Frames per second update every FRAMES_PER_FPS_UPDATE.
@@ -37,15 +37,15 @@ private:
     static double    timeSlice;                // Time between frames.
 
 public:
-    inline static double getFPS()
+    static double getFPS()
     {
         return fps;
     }
-    inline static double getFPSAvg()
+    static double getFPSAvg()
     {
         return fpsAVG;
     }
-    inline static double getTimeSlice()
+    static double getTimeSlice()
     {
         if (gTimeSliceFlag) {
             return 0.0f;
@@ -54,7 +54,7 @@ public:
         return timeSlice;
     }
 
-    inline static TIMESTAMP getFrameStartTime()
+    static TimeStamp getFrameStartTime()
     {
         return frameStartTime;
     }

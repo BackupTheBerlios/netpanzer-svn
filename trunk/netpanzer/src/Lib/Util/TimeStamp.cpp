@@ -17,13 +17,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "cTimeStamp.hpp"
+#include "TimeStamp.hpp"
 
-void TIMESTAMP::calibrate()
-{ }
-
-TIMESTAMP now()
+TimeStamp now()
 {
-    return TIMESTAMP(SDL_GetTicks());
+    return TimeStamp(SDL_GetTicks());
 }
 

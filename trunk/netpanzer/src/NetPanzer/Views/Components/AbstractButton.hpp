@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __AbstractButton_hpp__
 
 #include "Button.hpp"
-#include "Util/cTimeStamp.hpp"
 #include "Icon.hpp"
 #include "MouseEvent.hpp"
 

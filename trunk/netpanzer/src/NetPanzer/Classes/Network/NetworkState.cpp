@@ -36,12 +36,12 @@ long NetworkState::packets_received;
 float NetworkState::packets_sent_per_sec;
 long  NetworkState::packets_sent_last_sec;
 long  NetworkState::packets_sent_time;
-TIMESTAMP NetworkState::packets_sent_interval;
+TimeStamp NetworkState::packets_sent_interval;
 
 float NetworkState::packets_received_per_sec;
 long  NetworkState::packets_received_last_sec;
 long  NetworkState::packets_received_time;
-TIMESTAMP NetworkState::packets_received_interval;
+TimeStamp NetworkState::packets_received_interval;
 
 long NetworkState::opcodes_sent;
 long NetworkState::opcodes_received;
@@ -54,7 +54,7 @@ long  NetworkState::opcodes_received_last_sec;
 Timer NetworkState::opcodes_received_timer;
 
 Timer     NetworkState::ping_timer;
-TIMESTAMP NetworkState::ping_time_stamp;
+TimeStamp NetworkState::ping_time_stamp;
 float     NetworkState::ping_time = 0;
 
 
@@ -101,7 +101,7 @@ void NetworkState::resetNetworkStats( void )
 
 void NetworkState::updateNetworkStats( void )
 {
-    TIMESTAMP stamp;
+    TimeStamp stamp;
     float seconds;
 
     stamp = now();

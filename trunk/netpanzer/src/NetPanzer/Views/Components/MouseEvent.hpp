@@ -43,7 +43,7 @@ public:
         MOUSE_EVENT_RELEASED,
     };
 
-    mMouseEvent(Component *source, int id, TIMESTAMP when, int modifiers, int x, int y, int clickCount, bool popupTrigger)
+    mMouseEvent(Component *source, int id, TimeStamp when, int modifiers, int x, int y, int clickCount, bool popupTrigger)
     {
         mMouseEvent::source       = source;
         mMouseEvent::id           = id;

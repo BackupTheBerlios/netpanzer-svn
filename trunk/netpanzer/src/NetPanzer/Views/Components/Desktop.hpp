@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 #include "View.hpp"
-#include "Util/cTimeStamp.hpp"
+#include "Util/TimeStamp.hpp"
 
 class Surface;
 
@@ -49,8 +49,8 @@ private: // Variables
     static View      *rMouseView;
     static View      *mouseView;
     static View      *prevMouseView;
-    static TIMESTAMP  lDoubleClickDeadline;
-    static TIMESTAMP  rDoubleClickDeadline;
+    static TimeStamp  lDoubleClickDeadline;
+    static TimeStamp  rDoubleClickDeadline;
     static float      doubleClickTime;
     static int        mouseMoveStatus;
 

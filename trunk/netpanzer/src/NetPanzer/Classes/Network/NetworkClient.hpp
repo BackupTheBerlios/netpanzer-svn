@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkInterface.hpp"
 #include "NetworkReturnCodes.hpp"
 
-#include "ArrayUtil/Timer.hpp"
+#include "Util/Timer.hpp"
 #include "PlayerID.hpp"
 #include "ArrayUtil/ArrayTemplate.hpp"
 

@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 bool gTimeSliceFlag = false;
 
-TIMESTAMP TimerInterface::frameStartTime;
+TimeStamp TimerInterface::frameStartTime;
 unsigned  TimerInterface::framesUntilNextFPSUpdate = 0;
 double    TimerInterface::totalFPSGroupTime        = 0;
 double    TimerInterface::fps                      = 0;

@@ -41,8 +41,8 @@ View     *Desktop::mouseView;
 View     *Desktop::prevMouseView;
 View     *Desktop::lMouseView;
 View     *Desktop::rMouseView;
-TIMESTAMP Desktop::lDoubleClickDeadline;
-TIMESTAMP Desktop::rDoubleClickDeadline;
+TimeStamp Desktop::lDoubleClickDeadline;
+TimeStamp Desktop::rDoubleClickDeadline;
 float     Desktop::doubleClickTime = 0.15f;
 int       Desktop::mouseMoveStatus = 0;
 

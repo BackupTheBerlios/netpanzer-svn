@@ -37,21 +37,21 @@ bool   MouseInterface::left_button_up = false;
 bool   MouseInterface::left_button_dbclick_active = false;
 iXY  MouseInterface::left_button_down_pos;
 iXY  MouseInterface::left_button_up_pos;
-TIMESTAMP MouseInterface::left_button_hold_time;
+TimeStamp MouseInterface::left_button_hold_time;
 
 bool   MouseInterface::right_button_down = false;
 bool   MouseInterface::right_button_up = false;
 bool   MouseInterface::right_button_dbclick_active = false;
 iXY  MouseInterface::right_button_down_pos;
 iXY  MouseInterface::right_button_up_pos;
-TIMESTAMP MouseInterface::right_button_hold_time;
+TimeStamp MouseInterface::right_button_hold_time;
 
 bool   MouseInterface::middle_button_down = false;
 bool   MouseInterface::middle_button_up = false;
 bool   MouseInterface::middle_button_dbclick_active = false;
 iXY  MouseInterface::middle_button_down_pos;
 iXY  MouseInterface::middle_button_up_pos;
-TIMESTAMP MouseInterface::middle_button_hold_time;
+TimeStamp MouseInterface::middle_button_hold_time;
 
 unsigned char MouseInterface::button_mask;
 

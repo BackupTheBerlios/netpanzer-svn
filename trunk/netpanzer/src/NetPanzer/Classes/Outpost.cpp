@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitNetMessage.hpp"
 #include "ObjectiveNetMessage.hpp"
 #include "UnitMessageTypes.hpp"
+
 Outpost::Outpost( short ID, iXY location, BoundBox area )
         : Objective( ID, location, area )
 {
@@ -40,7 +41,7 @@ Outpost::Outpost( short ID, iXY location, BoundBox area )
     objective_state.outpost_type = 0;
     
 
-    unit_generation_type = _unit_type_humvee;
+    unit_generation_type = 0;
     occupation_status_timer.changePeriod( 3 );
     unit_generation_timer.changePeriod( 1 );
     unit_collection_loc = outpost_map_loc + iXY( 13, 13 );
@@ -74,10 +75,13 @@ void Outpost::attemptOccupationChange(UnitID unit_id)
         if ( player_status == _player_state_active ) {
             objective_state.occupying_player = PlayerInterface::getPlayerID( player_index );
             objective_state.occupation_status = _occupation_status_occupied;
-            update_mesg.status_update.set( objective_state.ID,
-                                           objective_state.occupation_status,
-                                           objective_state.occupying_player
-                                         );
+
+            update_mesg.status_update.set(objective_state.ID,
+                        objective_state.occupation_status,
+                        objective_state.occupying_player.getIndex(),
+                        unit_generation_on_flag,
+                        unit_generation_type,
+                        uint32_t(unit_generation_timer.getTimeLeft() * 128.0));
             SERVER->sendMessage( &update_mesg, sizeof( ObjectiveOccupationUpdate ), 0 );
 
             PlayerState *player_state;
@@ -91,12 +95,15 @@ void Outpost::attemptOccupationChange(UnitID unit_id)
             if( player_status == _player_state_active  ) {
                 objective_state.occupying_player = PlayerInterface::getPlayerID( player_index );
                 objective_state.occupation_status = _occupation_status_occupied;
-                update_mesg.status_update.set( objective_state.ID,
-                                               objective_state.occupation_status,
-                                               objective_state.occupying_player
-                                             );
-                SERVER->sendMessage( &update_mesg, sizeof( ObjectiveOccupationUpdate ), 0 );
-
+                update_mesg.status_update.set(
+                        objective_state.ID,
+                        objective_state.occupation_status,
+                        objective_state.occupying_player.getIndex(),
+                        unit_generation_on_flag,
+                        unit_generation_type,
+                        uint32_t(unit_generation_timer.getTimeLeft() * 128));
+                SERVER->sendMessage(&update_mesg,
+                        sizeof(ObjectiveOccupationUpdate), 0);
                 PlayerState *player_state;
                 player_state = PlayerInterface::getPlayerState( objective_state.occupying_player );
 
@@ -235,24 +242,20 @@ void Outpost::objectiveMesgDisownPlayerObjective( ObjectiveMessage *message )
             ObjectiveOccupationUpdate update_mesg;
             update_mesg.status_update.set( objective_state.ID,
                                            objective_state.occupation_status,
-                                           objective_state.occupying_player
-                                         );
+                                           0,
+                                           false,
+                                           0,
+                                           0);
 
             SERVER->sendMessage( &update_mesg, sizeof( ObjectiveOccupationUpdate ), 0 );
 
-            unit_generation_type = _unit_type_humvee;
-
-            UnitProfile *profile;
-
-            profile = UnitProfileInterface::getUnitProfile( unit_generation_type );
+            unit_generation_type = 0;
+            UnitProfile *profile
+                = UnitProfileInterface::getUnitProfile( unit_generation_type );
             unit_generation_timer.changePeriod( (float) profile->regen_time );
-
             unit_generation_on_flag = false;
-
-        } // ** if
-
-    } // ** if
-
+        }
+    }
 }
 
 void Outpost::getOutpostStatus( OutpostStatus &status )

@@ -19,26 +19,30 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _OUTPOST_HPP
 
 #include "Objective.hpp"
-#include "ArrayUtil/Timer.hpp"
+#include "Util/Timer.hpp"
 #include "SelectionBoxSprite.hpp"
 #include "UnitBase.hpp"
 
 class Outpost : public Objective
 {
-protected:
+private:
     unsigned char outpost_state;
     iXY outpost_map_loc;
     iXY unit_generation_loc;
     iXY unit_collection_loc;
     iXY occupation_pad_offset;
+public:
     unsigned short unit_generation_type;
     bool unit_generation_on_flag;
 
+private:
     SelectionBoxSprite select_box;
 
+public:
     Timer occupation_status_timer;
     Timer unit_generation_timer;
 
+private:
     void attemptOccupationChange(UnitID unit_id);
 
     void checkOccupationStatus( void );

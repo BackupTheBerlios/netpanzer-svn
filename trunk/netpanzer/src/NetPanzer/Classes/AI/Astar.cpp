@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <functional>
 #include "Astar.hpp"
-#include "ArrayUtil/Timer.hpp"
+#include "Util/Timer.hpp"
 #include "PathingState.hpp"
 #include "Util/Log.hpp"
 
@@ -130,7 +130,7 @@ void Astar::initializeNodeList( unsigned long initial_size )
 
 void Astar::initializePath( iXY &start, iXY &goal, unsigned short path_type )
 {
-    TIMESTAMP timer_ini_mark = now();
+    TimeStamp timer_ini_mark = now();
 
     if ( sample_set_array_flag == true )
         start_sampling_flag = true;
@@ -290,7 +290,7 @@ bool Astar::process_succ( PathList *path, int *result_code )
     bool goal_reachable = true;
     unsigned short path_length;
 
-    TIMESTAMP timer_path_mark = now();
+    TimeStamp timer_path_mark = now();
 
     while(!done) {
         best_node = 0;
@@ -428,7 +428,7 @@ bool Astar::process_succ( PathList *path, int *result_code )
 
 void Astar::cleanUp( void )
 {
-    TIMESTAMP timer_cleanup_mark = now();
+    TimeStamp timer_cleanup_mark = now();
 
     open_set.clear();
     closed_set.clear();

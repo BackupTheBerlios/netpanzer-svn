@@ -2,9 +2,6 @@
 - in LinkListDoubleTemplate.addFront sometime is (front==0 && rear != 0)
     - Matze: I checked LinkListDoubleTemplate alot, the class seems to be
       correct. Most probably the memory corruption happens elsewhere
-- when the bot occupied an outpost and you occupy it back, then the build menu
-  shows the panzer you built last, but the one choosen by the bot comes out the
-  outpost
 - sometimes 2 players spawn at the same place - hard to fix, low priority
 - game doesn't end when enough objectives are taken - is this still true?
 - irc ping/pong code with reconnect seems to be broken

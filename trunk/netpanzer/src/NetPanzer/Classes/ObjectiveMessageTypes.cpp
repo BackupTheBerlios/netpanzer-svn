@@ -19,31 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Endian.hpp"
 #include "ObjectiveMessageTypes.hpp"
 
-
-uint16_t ObjectiveMessage::getObjectiveID(void)
-{
-    return ltoh16(objective_id);
-}
-
-void ObjectiveMessage::setObjectiveID(uint16_t id)
-{
-    objective_id = htol16(id);
-}
-
-void UpdateOccupationsStatus::set(unsigned short id, unsigned char status,
-    PlayerID &player)
-{
-    message_type = _objective_mesg_update_occupation;
-    setObjectiveID(id);
-    occupation_status = status;
-    occupying_player_id = htol16(player.getIndex());
-}
-
-uint16_t UpdateOccupationsStatus::getOccupyingPlayerID(void)
-{
-    return ltoh16(occupying_player_id);
-}
-
 void ChangeUnitGeneration::set(unsigned short id, unsigned char unit_type,
     bool unit_generation_on)
 {

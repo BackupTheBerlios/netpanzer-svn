@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _GAME_CONTROL_RULES_DAEMON_HPP
 #define _GAME_CONTROL_RULES_DAEMON_HPP
 
-#include "ArrayUtil/Timer.hpp"
+#include "Util/Timer.hpp"
 #include "NetPacket.hpp"
 
 class GameControlRulesDaemon
