@@ -448,13 +448,14 @@ MasterServer::checkTimeouts()
     pthread_mutex_lock(&serverlist_mutex);
     for(std::vector<ServerInfo>::iterator i = serverlist.begin();        
             i != serverlist.end(); /* nothing */) {
-        const ServerInfo& info = *i;
+        ServerInfo& info = *i;
         if(currenttime - info.lastheartbeat >=
                 serverconfig.getIntValue("server-alive-timeout")) {
             // remove server from list
             *log << "server timeout at " 
                 << inet_ntoa(info.address.sin_addr)
-                << ":" << ntohs(info.address.sin_port) << std::endl;
+                << ":" << ntohs(info.address.sin_port) 
+                << " (" << info.settings["gamename"] << ")" << std::endl;
             i = serverlist.erase(i);
             continue;
         }
