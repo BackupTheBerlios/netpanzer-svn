@@ -25,6 +25,7 @@ solution would be transfering of unknown flags.
 distributed to the clients while they connect.
 -limit fps to a fixed value so that we are nicer to the CPU on the system.
 -make it possible to have different colors for different players
+-make the code endian safe. It should run on big endian boxes too.
 
 *** Tools
 -write a map and tileset editor
