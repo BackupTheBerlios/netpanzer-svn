@@ -2,6 +2,15 @@
 <page title="netPanzer - News">
   <section title="News">
     <news>
+      <item date="2. Mar 2004">
+        <p>netPanzer 0.1.5 is available now:</p>
+	<ul>
+	    <li>emergency bugfix: mapcycling was actually broken</li>
+	    <li>fixed bug where pressing "m" while chatting would
+		toggle minimap display</li>
+	    <li>Added an icon in .xpm format</li>
+	</ul>
+      </item>
       <item date="22. Feb 2004">
 	<p>netPanzer 0.1.4 is available now:</p>
 	<ul>
