@@ -28,7 +28,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class ServerClientListData
 {
 public:
-    PlayerID       client_id;
+    PlayerID    client_id;
+    bool        wannadie;
+
+    ServerClientListData()
+        : wannadie(false)
+    { }
 };
 
 class NetworkServer : public NetworkInterface
@@ -49,6 +54,9 @@ protected:
     void netPacketTransportClientAccept(const NetPacket* packet);
 
     void processNetPacket(const NetPacket* packet);
+
+    /// removes client that have the wannadie flag set to true
+    void cleanupClients();
 public:
     NetworkServer();
     virtual ~NetworkServer();

@@ -139,6 +139,7 @@ NetworkServerUnix::getPacket(NetPacket* packet)
 void
 NetworkServerUnix::checkIncoming()
 {
+    cleanupClients();
     if(serversocket)
         serversocket->read();
 }

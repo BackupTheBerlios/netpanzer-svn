@@ -60,8 +60,7 @@ void NetworkServer::removeClientFromSendList(const PlayerID &client_player_id)
             ++i) {
         ServerClientListData* data = *i;
         if(data->client_id == client_player_id) {
-            delete data;
-            client_list.erase(i);
+            data->wannadie = true;
             return;
         }
     }
@@ -108,7 +107,8 @@ void NetworkServer::processNetPacket(const NetPacket* packet)
     }
 }
 
-void NetworkServer::dropClient(SocketClient::ID network_id)
+void
+NetworkServer::dropClient(SocketClient::ID network_id)
 {
     for(ClientList::iterator i = client_list.begin(); i != client_list.end();
             ++i) {
@@ -116,6 +116,21 @@ void NetworkServer::dropClient(SocketClient::ID network_id)
         if(data->client_id.getNetworkID() == network_id) {
             ServerConnectDaemon::startClientDropProcess(data->client_id);
             return;
+        }
+    }
+}
+
+void
+NetworkServer::cleanupClients()
+{
+    for(ClientList::iterator i = client_list.begin(); i != client_list.end();
+            ) {
+        ServerClientListData* data = *i;
+        if(data->wannadie) {
+            delete data;
+            i = client_list.erase(i);
+        } else {
+            ++i;
         }
     }
 }

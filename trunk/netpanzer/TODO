@@ -1,5 +1,6 @@
 Next release:
 -after having a full nodelist in A* the server is getting slow
+-servers always connect to port 3030 even if another port was used...
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map
