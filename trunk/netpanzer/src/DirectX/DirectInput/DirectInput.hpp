@@ -28,11 +28,11 @@ class DirectInput
 
   public:
 
-   static BOOL initialize( void );
+   static bool initialize( void );
    static void shutdown( void );
 
    // ** Direct Input Keyboard Methods
-   static BOOL initializeDirectKeyboard( void );
+   static bool initializeDirectKeyboard( void );
    static void shutdownDirectKeyboard( void );
    static void getKeyboardState( char *key_table );
 

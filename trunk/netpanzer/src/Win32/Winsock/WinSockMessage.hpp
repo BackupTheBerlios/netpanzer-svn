@@ -31,7 +31,9 @@ enum { _net_message_id_basic_info_request,
      };
 
 
+#ifdef MSVC
 #pragma pack(1)
+#endif
 
 class BasicInfoRequest : public NetMessage
 {
@@ -44,7 +46,7 @@ public:
         message_id = _net_message_id_basic_info_request;
     }
     
-};
+} __attribute__((packed));
 
 
 class ExtendedInfoRequest : public NetMessage
@@ -58,7 +60,7 @@ public:
         message_id = _net_message_id_extended_game_info;
     }
 
-};
+} __attribute__((packed));
 
 
 class UDPAddressRequest : public NetMessage
@@ -72,7 +74,7 @@ public:
         message_id = _net_message_id_udp_request;
     }
     
-};
+} __attribute__((packed));
 
 
 class ClientUDPAddress : public NetMessage
@@ -86,7 +88,7 @@ public:
         message_id = _net_message_id_client_udp_address;
     }
     
-};
+} __attribute__((packed));
 
 
 class BasicGameInfo : public NetMessage
@@ -106,7 +108,7 @@ public:
         message_id = _net_message_id_basic_game_info;
     }
 
-};
+} __attribute__((packed));
 
 
 class ExtendedGameInfo : public NetMessage
@@ -120,11 +122,10 @@ public:
 
 
     //TBD
+} __attribute__((packed));
 
-};
-
-
+#ifdef MSVC
 #pragma pack()
+#endif
 
-
-#endif __WINSOCKMESSAGE_HPP
+#endif // __WINSOCKMESSAGE_HPP

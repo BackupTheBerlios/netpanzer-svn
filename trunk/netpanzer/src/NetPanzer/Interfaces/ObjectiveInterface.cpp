@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "ObjectiveInterface.hpp"
 
 #include <stdio.h>
@@ -45,7 +44,7 @@ void ObjectiveInterface::cleanUpObjectiveList( void )
 
   for( list_index = 0; list_index < list_size; list_index++ )
    {
-    if ( objective_list[ list_index ] != NULL )
+    if ( objective_list[ list_index ] != 0 )
      {
       delete( objective_list[ list_index ] );
      }
@@ -67,7 +66,7 @@ void ObjectiveInterface::loadObjectiveList( char *file_path )
   char comment[64];
 
   infile = fopen( file_path, "rt" );
-  assert( infile != NULL );
+  assert( infile != 0 );
   
   cleanUpObjectiveList();
 
@@ -113,7 +112,7 @@ unsigned char ObjectiveInterface::
     
     objective_state = &objective_list[ list_index ]->objective_state;  
     
-    if ( objective_state->selection_box.contains( loc ) == _TRUE )
+    if ( objective_state->selection_box.contains( loc ) == true )
      {
       if ( objective_state->occupation_status == _occupation_status_occupied )
        {
@@ -197,7 +196,7 @@ void ObjectiveInterface::offloadGraphics( SpriteSorter &sorter )
  }
 
 
-boolean ObjectiveInterface::
+bool ObjectiveInterface::
           testRuleObjectiveOccupationRatio( unsigned short player_index, float precentage )
  {
   unsigned long list_size;
@@ -241,9 +240,9 @@ boolean ObjectiveInterface::
 
  
   if ( occupied >= occupation_ratio )
-   return ( _TRUE );
+   return ( true );
 
-  return( _FALSE );
+  return( false );
  }
 
 void ObjectiveInterface::disownPlayerObjectives( PlayerID &player )
@@ -298,7 +297,7 @@ void ObjectiveInterface::startObjectivePositionEnumeration( void )
   objective_position_enum_player_id = PlayerInterface::getLocalPlayerID();
  }
 
-boolean ObjectiveInterface::objectivePositionEnumeration( Recti *objective_rect, unsigned char *objective_disposition, int *objective_id  )
+bool ObjectiveInterface::objectivePositionEnumeration( Recti *objective_rect, unsigned char *objective_disposition, int *objective_id  )
  {
   ObjectiveState *objective_state;
   
@@ -307,7 +306,7 @@ boolean ObjectiveInterface::objectivePositionEnumeration( Recti *objective_rect,
 	objective_state = &(objective_list[ objective_position_enum_index ]->objective_state); 
 	
 	(*objective_rect) = objective_state->area.getAbsRect( objective_state->location );
-	if( objective_id != NULL ) 
+	if( objective_id != 0 ) 
      { (*objective_id) = objective_position_enum_index; }
 
 	if ( objective_state->occupation_status == _occupation_status_occupied )
@@ -326,10 +325,10 @@ boolean ObjectiveInterface::objectivePositionEnumeration( Recti *objective_rect,
 	 { (*objective_disposition) = _objective_disposition_unoccupied; 	 }
 	
 	objective_position_enum_index++;
-	return( _TRUE );   
+	return( true );   
    } // ** if 
  
-  return( _FALSE ); 
+  return( false ); 
  }
 
 void ObjectiveInterface::syncObjectives( PlayerID connect_player )
@@ -356,7 +355,7 @@ void ObjectiveInterface::syncObjectives( PlayerID connect_player )
    }
 
    message_encoder.getEncodeMessage( &encode_message ); 
-   if ( encode_message != NULL )
+   if ( encode_message != 0 )
     {
      SERVER->sendMessage( encode_message, encode_message->realSize(), connect_player, 0 );
     } // ** if 
@@ -365,7 +364,7 @@ void ObjectiveInterface::syncObjectives( PlayerID connect_player )
 void ObjectiveInterface::updatePlayerObjectiveCounts( void )
  {
   unsigned long player_index, player_count;
-  PlayerState *player_state = NULL;
+  PlayerState *player_state = 0;
 
   player_count = PlayerInterface::getMaxPlayers();
  

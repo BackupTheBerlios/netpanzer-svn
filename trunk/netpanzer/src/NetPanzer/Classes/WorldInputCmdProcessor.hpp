@@ -27,16 +27,16 @@ class WorldInputCmdProcessor : public PObject
   protected:
    Recti world_win;
         
-   boolean left_button_hold_action_complete;
+   bool left_button_hold_action_complete;
 
-   boolean selection_box_active;
+   bool selection_box_active;
    PointXYi box_press, box_release;      
-   boolean selectBoundBoxUnits( void );
+   bool selectBoundBoxUnits( void );
 
-   boolean local_key_table[256];
-   boolean manual_control_state;
-   boolean previous_manual_control_state;
-   boolean manual_fire_state;
+   bool local_key_table[256];
+   bool manual_control_state;
+   bool previous_manual_control_state;
+   bool manual_fire_state;
    
    SelectionList selection_group_lists[10];
    SelectionList working_list;
@@ -51,7 +51,7 @@ class WorldInputCmdProcessor : public PObject
    unsigned long unit_cycle_search_iterator;
    void cycleNextUnitAndChangeFocus( void ); 
    
-   static boolean unit_flag_visibility_state;
+   static bool unit_flag_visibility_state;
    void toggleUnitFlagVisibility( void );
 
    unsigned char getCursorStatus( PointXYi &loc ); 
@@ -60,11 +60,11 @@ class WorldInputCmdProcessor : public PObject
    void getManualControlStatus( void );
  
    void sendManualMoveCommand( unsigned char orientation, 
-                               boolean start_stop );
+                               bool start_stop );
    void sendManualFireCommand( PointXYi &world_pos );
    void sendMoveCommand( PointXYi &world_pos );
    void sendAttackCommand( PointXYi &world_pos );
-   void sendAllianceRequest( PointXYi &world_pos, boolean make_break );
+   void sendAllianceRequest( PointXYi &world_pos, bool make_break );
 
    void evalLeftMButtonEvents( MouseEvent &event );
    void evalRightMButtonEvents( MouseEvent &event );
@@ -86,7 +86,7 @@ class WorldInputCmdProcessor : public PObject
  
    void evaluateKeyboardEvents( void );
   
-   boolean getConsoleInputString( char *input_string );
+   bool getConsoleInputString( char *input_string );
 
    static short selected_objective_id;
   
@@ -98,17 +98,17 @@ class WorldInputCmdProcessor : public PObject
    
    void inFocus( void );
    
-   void updateScrollStatus( PointXYi &mouse_pos );
+   void updateScrollStatus( const PointXYi &mouse_pos );
 
    void updateControls( void );
     
    void closeSelectionBox( void );
      
    // ** methods for external input control
-   boolean isUnitSelected( void );
-   boolean selectUnits( Recti bound_box );
-   boolean isValidMoveLocation( PointXYi location );
-   boolean sendMoveCommandExternal( PointXYi location );
+   bool isUnitSelected( void );
+   bool selectUnits( Recti bound_box );
+   bool isValidMoveLocation( PointXYi location );
+   bool sendMoveCommandExternal( PointXYi location );
    void    deselectUnitsExternal( void );
   
    void startChatMessageAll( void );
@@ -117,7 +117,7 @@ class WorldInputCmdProcessor : public PObject
    void createGroup( unsigned long group );
    void activateGroup( unsigned long group ); 
 
-   static boolean  isObjectiveSelected( void );
+   static bool  isObjectiveSelected( void );
    static char *   getSelectedObjectiveName( void );
    static PointXYi getSelectedObjectiveWorldPos( void ); 
  }; 

@@ -15,13 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "UnitOpcodeEncoder.hpp"
 
 #include "Server.hpp"
 #include "NetworkState.hpp"
 
-#include "Codewiz.hpp"
+#include "codewiz.hpp"
 #include "ConsoleInterface.hpp"
 
 void UnitOpcodeEncoder::initialize( int send_method )
@@ -75,12 +74,12 @@ void UnitOpcodeEncoder::setDecodeMessage( UnitOpcodeMessage *message )
   current_decode_opcode = 0;
  }
   
-boolean UnitOpcodeEncoder::decodeMessage( UnitOpcodeStruct *opcode )
+bool UnitOpcodeEncoder::decodeMessage( UnitOpcodeStruct *opcode )
  {
   unsigned char *current_code_ptr;
 
   if ( current_decode_opcode == decode_message.opcode_count )
-   return ( _FALSE );
+   return ( false );
   
   current_code_ptr = ( (unsigned char *) &decode_message.data) 
                         + sizeof(UnitOpcodeStruct)*current_decode_opcode;
@@ -90,7 +89,7 @@ boolean UnitOpcodeEncoder::decodeMessage( UnitOpcodeStruct *opcode )
   current_decode_opcode++;
 
   NetworkState::incOpcodesReceived();
-  return( _TRUE );
+  return( true );
  }
 
 void UnitOpcodeEncoder::sendOpcodeMessage( void )

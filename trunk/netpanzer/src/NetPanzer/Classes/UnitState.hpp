@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITSTATE_HPP
 #define _UNITSTATE_HPP
 
-#include "aliasdef.h"
 #include "PObject.hpp"
 #include "BoundBox.hpp"
 #include "Point.hpp"
@@ -38,7 +37,7 @@ class UnitState : public PObject
    
    unsigned char  unit_type;
 
-   boolean        select;
+   bool        select;
    PointXYi       location;
    BoundBox       bbox;
 
@@ -64,7 +63,7 @@ class UnitState : public PObject
    
    UnitState( );
    
-   inline boolean bounds( PointXYi &loc )
+   inline bool bounds( PointXYi &loc )
     {
      return( bbox.bounds( location, loc ) );
     } 

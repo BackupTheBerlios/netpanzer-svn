@@ -18,16 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __GameViewGlobals_hpp__
 #define __GameViewGlobals_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 #include "Surface.hpp"
 #include "iRect.hpp"
 #include "iXY.hpp"
-
 
 // Globals meter colors.
 #define windowTextColor             (Color::white)
@@ -42,7 +35,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define optionsMeterWidth           (148)
 #define optionsMeterStartX          (448)
 #define optionsColorMeterStartX     (342)
-
 
 // Button placement locations.
 extern iXY exitPos;

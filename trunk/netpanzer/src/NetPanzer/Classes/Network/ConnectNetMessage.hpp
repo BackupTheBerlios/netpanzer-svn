@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _CONNECTNETMESSAGE_HPP
 #define _CONNECTNETMESSAGE_HPP
 
+#include <time.h>
 #include "NetPacket.hpp"
 #include "PlayerState.hpp"
 
@@ -39,7 +40,9 @@ enum { _net_message_id_connect_join_game_request,
        _net_message_id_connect_netPanzer_server_disconnect 
      };
 
+#ifdef MSVC
 #pragma pack(1)
+#endif
 
 class ClientConnectJoinRequest : public NetMessage
  {
@@ -54,7 +57,7 @@ class ClientConnectJoinRequest : public NetMessage
     message_id = _net_message_id_connect_join_game_request;
    }
 
- };
+ } __attribute__((packed));
 
 enum { _join_request_result_success,
        _join_request_result_invalid_protocol,
@@ -74,7 +77,7 @@ class ClientConnectJoinRequestAck : public NetMessage
     message_id = _net_message_id_connect_join_game_request_ack;
    }
 
- };
+ } __attribute__((packed));
 
 class ClientConnectStartConnect : public NetMessage
  {
@@ -86,7 +89,7 @@ class ClientConnectStartConnect : public NetMessage
     message_id = _net_message_id_client_start_connect;
    }
  
- }; 
+ } __attribute__((packed));
 
 class ClientConnectRequest : public NetMessage
  {
@@ -98,7 +101,7 @@ class ClientConnectRequest : public NetMessage
     message_id = _net_message_id_client_connect_request;
    }
  
- };
+ } __attribute__((packed));
 
 
 enum { _connect_result_success,
@@ -117,7 +120,7 @@ class ClientConnectResult : public NetMessage
     message_id = _net_message_id_client_connect_result;
    }
   
- };
+ } __attribute__((packed));
 
 
 class ConnectProcessUpdate : public NetMessage
@@ -131,7 +134,7 @@ class ConnectProcessUpdate : public NetMessage
     message_id = _net_message_id_client_connect_process_update;
    }
   
- };
+ } __attribute__((packed));
  
 enum { _connect_state_message_load_game_data,
        _connect_state_message_sync_player_info,
@@ -153,7 +156,7 @@ class ConnectProcessStateMessage : public NetMessage
     message_id = _net_message_id_client_connect_process_state_mesg;
    }
   
- };
+ } __attribute__((packed));
 
 class ConnectClientSettings : public NetMessage
  {
@@ -175,7 +178,7 @@ class ConnectClientSettings : public NetMessage
     ConnectClientSettings::player_flag = player_flag;
    }
 
- };
+ } __attribute__((packed));
 
 class ConnectMesgServerGameSettings : public NetMessage
  {
@@ -186,8 +189,8 @@ class ConnectMesgServerGameSettings : public NetMessage
    int	          cloud_coverage;
    float          wind_speed;
    int            game_type;
-   boolean        map_cycle_state;
-   boolean        powerup_state;
+   bool        map_cycle_state;
+   bool        powerup_state;
    int            frag_limit;
    int            time_limit;
    time_t         elapsed_time;
@@ -198,7 +201,7 @@ class ConnectMesgServerGameSettings : public NetMessage
     message_id = _net_message_id_connect_server_game_setup;
    }  
  
- };
+ } __attribute__((packed));
 
 class ConnectMesgClientGameSetupAck : public NetMessage
  {
@@ -209,7 +212,7 @@ class ConnectMesgClientGameSetupAck : public NetMessage
     message_class = _net_message_class_connect;
     message_id = _net_message_id_connect_client_game_setup_ack;
    }   
- };
+ } __attribute__((packed));
 
 class ConnectMesgClientGameSetupPing : public NetMessage
  {
@@ -220,7 +223,7 @@ class ConnectMesgClientGameSetupPing : public NetMessage
     message_class = _net_message_class_connect;
     message_id = _net_message_id_connect_client_game_setup_ping;
    }   
- };
+ } __attribute__((packed));
 
 class ConnectMesgNetPanzerClientDisconnect : public NetMessage
  {
@@ -233,7 +236,7 @@ class ConnectMesgNetPanzerClientDisconnect : public NetMessage
     message_id = _net_message_id_connect_netPanzer_client_disconnect;
    }   
  
- };
+ } __attribute__((packed));
 
 class ConnectMesgNetPanzerServerDisconnect : public NetMessage
  {
@@ -245,9 +248,10 @@ class ConnectMesgNetPanzerServerDisconnect : public NetMessage
     message_id = _net_message_id_connect_netPanzer_server_disconnect;
    }   
  
- };
+ } __attribute__((packed));
 
-
+#ifdef MSVC
 #pragma pack()
+#endif
 
 #endif // ** _CONNECTNETMESSAGE_HPP

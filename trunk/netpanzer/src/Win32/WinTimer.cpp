@@ -15,8 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "WinTimer.hpp"
+
+#include "codewiz.hpp"
 
 
 unsigned long WinTimer::MMTimerDelay;
@@ -40,10 +41,10 @@ void CALLBACK MMClock(UINT wTimerID, UINT msg, DWORD dwUser,
  #pragma optimize( "", off )
 #endif
 
-BOOL WinTimer::DetectRDTSC( void )
+bool WinTimer::DetectRDTSC( void )
  { 
-
-	volatile BOOL retval = TRUE;
+#ifdef MSVC
+	volatile bool retval = true;
 	volatile DWORD RegEDX;
 
     __try {
@@ -61,7 +62,7 @@ BOOL WinTimer::DetectRDTSC( void )
 
 	if (retval == 0)
 	{
-		return FALSE;        	// processor does not support CPUID
+		return false;        	// processor does not support CPUID
 	}
 
 	if (RegEDX & 0x10 ) 		// bit 4 is set for RDTSC technology
@@ -71,18 +72,22 @@ BOOL WinTimer::DetectRDTSC( void )
 		             _emit 31h
                     } 
              } 		
-	   __except(EXCEPTION_EXECUTE_HANDLER) { retval = FALSE; }
+	   __except(EXCEPTION_EXECUTE_HANDLER) { retval = false; }
 
 		return retval;
 	}
    	else
 	 {
-      return FALSE;        	// processor supports CPUID but does not support RDTSC technology
+      return false;        	// processor supports CPUID but does not support RDTSC technology
      }
 
 
 	return retval;
-  
+#else
+	// XXX
+	printf ("No RTDSC for gcc...(What is this anyway?)\n");
+	return false;
+#endif
  }
 
 #if _MSC_VER > 1000
@@ -90,26 +95,26 @@ BOOL WinTimer::DetectRDTSC( void )
 #endif  
 
 
-BOOL WinTimer::SetupHighResTimer( void )
+bool WinTimer::SetupHighResTimer( void )
  {
-  BOOL result;
+  bool result;
   LARGE_INTEGER frequency;
 
   result = QueryPerformanceFrequency( &frequency );
 
-  if ( result == FALSE )
-   return ( FALSE );
+  if ( result == false )
+   return ( false );
 
   TimerFrequency = ( double ) frequency.QuadPart;
 
   TimerResolution = 1;
   TimerType = _hires_timer;
 
-  return ( TRUE );
+  return ( true );
 
  }
 
-BOOL WinTimer::SetupMMTimer( void )
+bool WinTimer::SetupMMTimer( void )
  {
   MMRESULT result;
   TIMECAPS TimeCap;
@@ -118,7 +123,7 @@ BOOL WinTimer::SetupMMTimer( void )
   
   assert( result == TIMERR_NOERROR );  
   if ( result != TIMERR_NOERROR )
-   return ( FALSE );
+   return ( false );
     
   MMTimerResolution = MIN( MAX (DWORD(TimeCap.wPeriodMin), DWORD(MMTimerTargerRes) ), DWORD(TimeCap.wPeriodMax));
   TimerResolution = MMTimerResolution;
@@ -129,41 +134,41 @@ BOOL WinTimer::SetupMMTimer( void )
   
   MMTimerID = timeSetEvent( MMTimerDelay, MMTimerResolution, MMClock, 0, TIME_PERIODIC );                // single timer event
 
-  assert( MMTimerID != NULL );
-  if ( MMTimerID == NULL )
-   return ( FALSE );
+  assert( MMTimerID != 0 );
+  if ( MMTimerID == 0 )
+   return ( false );
  
   TimerFrequency = _MMTIMER_FREQUENCY / MMTimerDelay;
 
-  return( TRUE );
+  return( true );
   
  }
 
-BOOL WinTimer::SetupRDTSC( void )
+bool WinTimer::SetupRDTSC( void )
  {
   //TimerFrequency = ( double ) 1000000.0;
   TimerFrequency = ( double ) 2500.0;
 
   TimerResolution = 1;
   TimerType = _TSC_timer;
-  return( TRUE );
+  return( true );
  }
 
-BOOL WinTimer::Initialize( void )
+bool WinTimer::Initialize( void )
  {
 
   MMTimerTargerRes = 2;
   MMTimerTargetDelay = 10;
 
-  if ( DetectRDTSC() == TRUE  )
+  if ( DetectRDTSC() == true  )
    { 
     return( SetupRDTSC() );  
    } 
   else
-   if ( SetupHighResTimer( ) == FALSE )
+   if ( SetupHighResTimer( ) == false )
     {  return ( SetupMMTimer() ); }
   
-  return ( TRUE );
+  return ( true );
  }
 
 void WinTimer::ShutDown( void )
@@ -176,6 +181,7 @@ void WinTimer::ShutDown( void )
 
  }
 
+#ifdef MSVC
 __declspec( naked ) long double WinTimer::RDTSC() 
 { _asm {
 	_emit 0fh
@@ -188,3 +194,4 @@ __declspec( naked ) long double WinTimer::RDTSC()
 	ret
   }
 }
+#endif

@@ -16,7 +16,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "stdafx.hpp"
 #include "ControlView.hpp"
 #include "cMouse.hpp"
 #include "MiniMapInterface.hpp"
@@ -78,9 +77,9 @@ ControlView::ControlView(const char *title) : View()
 	x += xOffset;
 	addButtonCenterText(iXY(x, y), 15, "+", "", increaseZoom);
 	x += xOffset;
-	addButtonCenterText(iXY(x, y), 15, "2", "", NULL);
+	addButtonCenterText(iXY(x, y), 15, "2", "", 0);
 	x += xOffset;
-	addButtonCenterText(iXY(x, y), 15, "3", "", NULL);
+	addButtonCenterText(iXY(x, y), 15, "3", "", 0);
 
 } // end ControlView constructor
 
@@ -131,7 +130,7 @@ void ControlView::drawZoomMap(const Surface &dest)
 
 	iXY drawPos(-world_win.min.x, -world_win.min.y);
 
-	if (miniMap != NULL)
+	if (miniMap != 0)
 	{
 		iXY mcArea = ControlView::getMapClientArea();
 

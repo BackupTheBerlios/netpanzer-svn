@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 //---------------------------------------------------------------------------
 
-#include "stdafx.hpp"
+
 #include "Particle2D.hpp"
 #include "TimerInterface.hpp"
 #include "PackedSurface.hpp"
@@ -35,9 +35,9 @@ int   Particle2D::createParticles     = 1;
 int   Particle2D::drawParticles       = 1;
 
 // Pre-allocation variables.
-const  int    MAX_PARTICLE_CLASS_SIZE = 340;
+const  size_t MAX_PARTICLE_CLASS_SIZE = 340;
 const  int    MAX_PARTICLES           = 3000;
-static size_t biggestParticle         = 0;
+//static size_t biggestParticle         = 0;
 
 static Particle2D *firstAvailableParticle;
 static char particleArray[MAX_PARTICLES][MAX_PARTICLE_CLASS_SIZE];
@@ -60,13 +60,16 @@ void *Particle2D::operator new(size_t numBytes)
 			((Particle2D *)particleArray[i])->next = (Particle2D *)particleArray[i + 1];
 		}
 
-		((Particle2D *)particleArray[MAX_PARTICLES - 1])->next = NULL;
+		((Particle2D *)particleArray[MAX_PARTICLES - 1])->next = 0;
 	}
 
 	// Check global particle disable flag.
 	if (!createParticles)
 	{
-		return NULL;
+		// XXX my compiler claims that new mustn't return 0, so I'm throwing an
+		// exception...
+		throw "allocation error.";
+		//return 0;
 	}
 
 	// Check for trying to create a particle that's too big.
@@ -76,9 +79,12 @@ void *Particle2D::operator new(size_t numBytes)
 	}
 
 	// Check if all slots used.
-	if (firstAvailableParticle == NULL)
+	if (firstAvailableParticle == 0)
 	{
-		return NULL;
+		// XXX my compiler claims that new mustn't return 0, so I'm throwing an
+		// exception...
+		throw "allocation error.";
+		//return 0;
 	}
 
 	// Remove particle from available list and return it.
@@ -123,7 +129,7 @@ Particle2D::Particle2D(const fXYZ &pos)
 		prev = next = zParticle2D;
 	}	else
 		{
-			prev = next = NULL;
+			prev = next = 0;
 			insertMe();
 		}
 
@@ -164,8 +170,8 @@ void Particle2D::reset()
 void Particle2D::insertMe()
 {
 	// If we're inserting, we should not already be in the list.
-	assert(prev == NULL);
-	assert(next == NULL);
+	assert(prev == 0);
+	assert(next == 0);
 
 	// Insert me into the list
 	prev              = zParticle2D;
@@ -189,8 +195,8 @@ void Particle2D::insertMe()
 void Particle2D::removeMe()
 {
 	// removeMe from the list
-	if (prev != NULL) prev->next = next;
-	if (next != NULL) next->prev = prev;
+	if (prev != 0) prev->next = next;
+	if (next != 0) next->prev = prev;
 
 	prev = next = this;
 
@@ -564,7 +570,7 @@ int Particle2D::getFPS(int FPSmin, int FPSrand)
 //--------------------------------------------------------------------------
 int Particle2D::getPakIndex(float scale, int pakImageCount)
 {
-	int destIndex = scale * float(pakImageCount);
+	int destIndex = (int) (scale * float(pakImageCount));
 
 	if (destIndex > pakImageCount - 1)
 	{

@@ -18,12 +18,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETPANZERMAIN_HPP
 #define _NETPANZERMAIN_HPP
 
-#include <windows.h>
+//#include <windows.h>
 
-BOOL netPanzerInitialize( const char *command_line );
+bool netPanzerInitialize( const char *command_line );
 
-VOID netPanzerShutdown( void );
+void netPanzerShutdown();
 
-void mainGameLoop( void );
+void mainGameLoop();
 
 #endif 

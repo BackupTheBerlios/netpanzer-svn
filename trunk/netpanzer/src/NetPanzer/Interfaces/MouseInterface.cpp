@@ -15,7 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+// XXX need new unix code here
+#ifndef UNIX
 #include "MouseInterface.hpp"
 
 #include <windows.h>
@@ -36,29 +37,29 @@ sprite_dbase CURSOR_DBASE;
 
     unsigned char MouseInterface::cursor_x_size;
     unsigned char MouseInterface::cursor_y_size;
-    Surface	  MouseInterface::mouse_cursor( _FALSE );
+    Surface	  MouseInterface::mouse_cursor( false );
 
     PointXYi MouseInterface::mouse_pos;  
    
     float    MouseInterface::button_hold_threshold = (const float) .10;
 
-    boolean   MouseInterface::left_button_down = _FALSE;
-    boolean   MouseInterface::left_button_up = _FALSE;
-    boolean   MouseInterface::left_button_dbclick_active = _FALSE;
+    bool   MouseInterface::left_button_down = false;
+    bool   MouseInterface::left_button_up = false;
+    bool   MouseInterface::left_button_dbclick_active = false;
     PointXYi  MouseInterface::left_button_down_pos;
     PointXYi  MouseInterface::left_button_up_pos;
     TIMESTAMP MouseInterface::left_button_hold_time;
      
-    boolean   MouseInterface::right_button_down = _FALSE;
-    boolean   MouseInterface::right_button_up = _FALSE;
-    boolean   MouseInterface::right_button_dbclick_active = _FALSE;
+    bool   MouseInterface::right_button_down = false;
+    bool   MouseInterface::right_button_up = false;
+    bool   MouseInterface::right_button_dbclick_active = false;
     PointXYi  MouseInterface::right_button_down_pos;
     PointXYi  MouseInterface::right_button_up_pos;
     TIMESTAMP MouseInterface::right_button_hold_time;
    
-    boolean   MouseInterface::middle_button_down = _FALSE;
-    boolean   MouseInterface::middle_button_up = _FALSE;
-    boolean   MouseInterface::middle_button_dbclick_active = _FALSE;
+    bool   MouseInterface::middle_button_down = false;
+    bool   MouseInterface::middle_button_up = false;
+    bool   MouseInterface::middle_button_dbclick_active = false;
     PointXYi  MouseInterface::middle_button_down_pos;
     PointXYi  MouseInterface::middle_button_up_pos;
     TIMESTAMP MouseInterface::middle_button_hold_time;
@@ -85,31 +86,31 @@ void MouseInterface::initialize( void )
    mouse_pos.y = y;
   }
     
- boolean MouseInterface::buttonHeld( unsigned char mask)
+ bool MouseInterface::buttonHeld( unsigned char mask)
   {
 
    if ( (mask & _LEFT_BUTTON_MASK) && left_button_down )
     {
 		 if( (now() - left_button_hold_time) > button_hold_threshold )
-          return( _TRUE );
+          return( true );
         
     } 
    else
     if ( (mask & _RIGHT_BUTTON_MASK) && right_button_down )
      {
           if( (now() - right_button_hold_time) > button_hold_threshold )
-           return( _TRUE );
+           return( true );
         
      } 
     else 
      if ( (mask & _MIDDLE_BUTTON_MASK) && middle_button_down )
       {
            if( (now() - middle_button_hold_time) > button_hold_threshold )
-            return( _TRUE );
+            return( true );
          
       } 
    
-    return( _FALSE );
+    return( false );
   }
 
  void MouseInterface::resetButtonHoldStatus( void )
@@ -123,9 +124,9 @@ void MouseInterface::initialize( void )
   {
    MouseEvent event;
  
-   //assert( left_button_down == _FALSE );
-   left_button_down = _TRUE;
-   left_button_up = _FALSE;
+   //assert( left_button_down == false );
+   left_button_down = true;
+   left_button_up = false;
    button_mask = button_mask | 0x01;
    left_button_down_pos = mouse_pos;
    left_button_hold_time = now();
@@ -141,9 +142,9 @@ void MouseInterface::initialize( void )
   {
    MouseEvent event;
 
-   //assert( left_button_up == _FALSE );
-   left_button_down = _FALSE;
-   left_button_up = _TRUE;
+   //assert( left_button_up == false );
+   left_button_down = false;
+   left_button_up = true;
    button_mask = button_mask & (~0x01);
    left_button_up_pos = mouse_pos;
    
@@ -152,10 +153,10 @@ void MouseInterface::initialize( void )
    event.up_pos = left_button_up_pos;
 
          
-   if ( left_button_dbclick_active == _TRUE )
+   if ( left_button_dbclick_active == true )
     {
      event.event = _event_mbutton_dbclick;
-     left_button_dbclick_active = _FALSE;
+     left_button_dbclick_active = false;
     }
    else
     event.event  = _event_mbutton_click;
@@ -170,9 +171,9 @@ void MouseInterface::initialize( void )
          
 void MouseInterface::setLeftButtonDoubleDown( void )
  {
-  left_button_down = _TRUE;
-  left_button_dbclick_active = _TRUE;
-  left_button_up = _FALSE;
+  left_button_down = true;
+  left_button_dbclick_active = true;
+  left_button_up = false;
   button_mask = button_mask | 0x01;
   left_button_down_pos = mouse_pos;
   left_button_hold_time = now();
@@ -183,9 +184,9 @@ void MouseInterface::setLeftButtonDoubleDown( void )
   {
    MouseEvent event;
  
-   //assert( right_button_down == _FALSE );
-   right_button_down = _TRUE;
-   right_button_up = _FALSE;
+   //assert( right_button_down == false );
+   right_button_down = true;
+   right_button_up = false;
    button_mask = button_mask | 0x04;
    right_button_down_pos = mouse_pos;
    right_button_hold_time = now(); 
@@ -201,9 +202,9 @@ void MouseInterface::setLeftButtonDoubleDown( void )
   {
    MouseEvent event;
 
-   //assert( right_button_up == _FALSE );
-   right_button_down = _FALSE;
-   right_button_up = _TRUE;
+   //assert( right_button_up == false );
+   right_button_down = false;
+   right_button_up = true;
    button_mask = button_mask & (~0x04);
    right_button_up_pos = mouse_pos;
    
@@ -211,10 +212,10 @@ void MouseInterface::setLeftButtonDoubleDown( void )
    event.up_pos = right_button_up_pos;
 
 
-   if ( right_button_dbclick_active == _TRUE )
+   if ( right_button_dbclick_active == true )
     {
      event.event = _event_mbutton_dbclick;
-     right_button_dbclick_active = _FALSE;
+     right_button_dbclick_active = false;
     }
    else
     event.event  = _event_mbutton_click;
@@ -229,9 +230,9 @@ void MouseInterface::setLeftButtonDoubleDown( void )
 
 void MouseInterface::setRightButtonDoubleDown( void )
  {
-  right_button_down = _TRUE;
-  right_button_dbclick_active = _TRUE;
-  right_button_up = _FALSE;
+  right_button_down = true;
+  right_button_dbclick_active = true;
+  right_button_up = false;
   button_mask = button_mask | 0x04;
   right_button_down_pos = mouse_pos;
   right_button_hold_time = now();
@@ -242,9 +243,9 @@ void MouseInterface::setRightButtonDoubleDown( void )
   {
    MouseEvent event;
 
-   //assert( middle_button_down == _FALSE );
-   middle_button_down = _TRUE;
-   middle_button_up = _FALSE;
+   //assert( middle_button_down == false );
+   middle_button_down = true;
+   middle_button_up = false;
    button_mask = button_mask | 0x02;
    middle_button_down_pos = mouse_pos;
    middle_button_hold_time = now();
@@ -260,9 +261,9 @@ void MouseInterface::setMiddleButtonUp( void )
  {
    MouseEvent event;
 
-   //assert( middle_button_up == _FALSE );
-   middle_button_down = _FALSE;
-   middle_button_up = _TRUE;
+   //assert( middle_button_up == false );
+   middle_button_down = false;
+   middle_button_up = true;
    button_mask = button_mask & (~0x02);
    middle_button_up_pos = mouse_pos;
    
@@ -271,10 +272,10 @@ void MouseInterface::setMiddleButtonUp( void )
 
 
    
-  if ( middle_button_dbclick_active == _TRUE )
+  if ( middle_button_dbclick_active == true )
    {
     event.event = _event_mbutton_dbclick;
-    middle_button_dbclick_active = _FALSE;
+    middle_button_dbclick_active = false;
    }
   else
    event.event  = _event_mbutton_click;
@@ -289,9 +290,9 @@ void MouseInterface::setMiddleButtonUp( void )
 
 void MouseInterface::setMiddleButtonDoubleDown( void )
  {
-  middle_button_down = _TRUE;
-  middle_button_dbclick_active = _TRUE;
-  middle_button_up = _FALSE;
+  middle_button_down = true;
+  middle_button_dbclick_active = true;
+  middle_button_up = false;
   button_mask = button_mask | 0x02;
   middle_button_down_pos = mouse_pos;
   middle_button_hold_time = now();
@@ -421,3 +422,4 @@ void MouseInterface::updateCursor( void )
   //mouse_cursor.bltTrans( FRAME_BUFFER, mouse_pos.x, mouse_pos.y ); 
   //FRAME_BUFFER.unlock();
  }
+#endif

@@ -15,7 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
+#include "codewiz.hpp"
 #include "GroundExplosionParticleSystem2D.hpp"
 #include "Physics.hpp"
 #include "GroundExplosionParticle2D.hpp"
@@ -51,7 +52,7 @@ GroundExplosionParticleSystem2D::GroundExplosionParticleSystem2D(fXYZ pos, iRect
 	fXYZ offset;
 
 	// Calculate the maximum height of any particle spawned from this explosion.
-	float midTime = float(maxParticleSpeed) / Physics::getGravity();
+	//float midTime = float(maxParticleSpeed) / Physics::getGravity();
 	//float maxParticleHeight = Physics::getVerticalPosition(maxParticleSpeed, deg2Rad(90), midTime);
 
 	for (int i = 0; i < particleCount; i++)

@@ -17,14 +17,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "stdafx.hpp"
+
 #include "View.hpp"
 #include "Desktop.hpp"
 #include "MouseInterface.hpp"
 #include "KeyboardInterface.hpp"
 #include "fXY.hpp"
 #include "loadPics.hpp"
-#include "viewGlobals.hpp"
+#include "ViewGlobals.hpp"
 #include "InputEvent.hpp"
 
 
@@ -63,8 +63,8 @@ Surface View::pics;
 //---------------------------------------------------------------------------
 void View::add(Component *component)
 {
-	assert(component != NULL);
-	if (component == NULL) { return; }
+	assert(component != 0);
+	if (component == 0) { return; }
 	
 	if (componentsUsedCount < MAX_COMPONENT_COUNT - 1)
 	{
@@ -193,19 +193,19 @@ void View::reset()
 	highlightedButton     = -1;
 	prevHighlightedButton = -1;
 	selectedInputField    = -1;
-	searchName            = NULL;
-	title                 = NULL;
-	subTitle              = NULL;
-	statusText            = NULL;
-	focusComponent        = NULL;
+	searchName            = 0;
+	title                 = 0;
+	subTitle              = 0;
+	statusText            = 0;
+	focusComponent        = 0;
 
 	setSearchName("donut");
 	setTitle("donut");
 	setSubTitle("donut");
 
-	buttons               = NULL;
-	//scrollBar             = NULL;
-	labels                = NULL;
+	buttons               = 0;
+	//scrollBar             = 0;
+	labels                = 0;
 	componentsUsedCount   = 0;
 	
 	assert(MAX_COMPONENT_COUNT > 0);
@@ -500,7 +500,7 @@ void View::drawTitle(const Surface &viewArea)
 void View::loadPics()
 {
 	// Are we already loaded?  Then bail.
-	if (pics.getFrame0() != NULL) return;
+	if (pics.getFrame0() != 0) return;
 
 	//pics.create(iXY(12, 11), 12, 2);
 	//pics.extractPCX("pics\\buttons.pcx", 6, 1);
@@ -580,7 +580,7 @@ void View::doDraw(const Surface &viewArea, const Surface &clientArea)
 	// Draw all non-selected components.
 	for (int i = 0; i < componentsUsedCount; i++)
 	{
-		assert(componentList[i] != NULL);
+		assert(componentList[i] != 0);
 
 		if (componentList[i] != focusComponent)
 		{
@@ -589,7 +589,7 @@ void View::doDraw(const Surface &viewArea, const Surface &clientArea)
 	}
 
 	// Now draw the selected component.
-	if (focusComponent != NULL)
+	if (focusComponent != 0)
 	{
 		focusComponent->draw(clientArea);
 	}
@@ -615,7 +615,7 @@ void View::doActivate()
 	// Tell all the components the mouse entered the view.
 	for (int i = 0; i < componentsUsedCount; i++)
 	{
-		assert(componentList[i] != NULL);
+		assert(componentList[i] != 0);
 
 		if (componentList[i]->contains(mouse.getScreenPos()))
 		{
@@ -926,7 +926,7 @@ void View::mouseMove(const iXY & prevPos, const iXY &newPos)
 	// Check all components for a clicked event.
 	for (int i = 0; i < componentsUsedCount; i++)
 	{
-		assert(componentList[i] != NULL);
+		assert(componentList[i] != 0);
 		
 		if (componentList[i]->contains(prevPos) && !componentList[i]->contains(newPos))
 		{
@@ -985,12 +985,12 @@ void View::lMouseDown(const iXY &pos)
 		selectedInputField = findInputFieldContaining(pos);
 	}
 	
-	focusComponent = NULL;
+	focusComponent = 0;
 
 	// Check all components for a pressed event.
 	for (int i = 0; i < componentsUsedCount; i++)
 	{
-		assert(componentList[i] != NULL);
+		assert(componentList[i] != 0);
 		if (componentList[i]->contains(pos))
 		{
 			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_PRESSED, now(), InputEvent::BUTTON1_MASK, pos.x, pos.y, 0, false);
@@ -1016,9 +1016,9 @@ int View::lMouseUp(const iXY &downPos, const iXY &upPos)
 		if (pressedButton >= 0)
 		{
 				//if (mouse.getCurButton() & 0)
-			if (buttons[pressedButton].leftClickFunc != NULL) buttons[pressedButton].leftClickFunc();
+			if (buttons[pressedButton].leftClickFunc != 0) buttons[pressedButton].leftClickFunc();
 		  //else
-			//if (buttons[pressedButton].rightClickFunc != NULL) buttons[pressedButton].rightClickFunc();
+			//if (buttons[pressedButton].rightClickFunc != 0) buttons[pressedButton].rightClickFunc();
 		}
 	}
 
@@ -1028,7 +1028,7 @@ int View::lMouseUp(const iXY &downPos, const iXY &upPos)
 	// Check all components for a clicked event.
 	{for (int i = 0; i < componentsUsedCount; i++)
 	{
-		assert(componentList[i] != NULL);
+		assert(componentList[i] != 0);
 		if (componentList[i]->contains(downPos) && componentList[i]->contains(upPos))
 		{
 			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
@@ -1042,7 +1042,7 @@ int View::lMouseUp(const iXY &downPos, const iXY &upPos)
 	// Report a mouse release to all components except for a clicked one.
 	{for (int i = 0; i < componentsUsedCount; i++)
 	{
-		assert(componentList[i] != NULL);
+		assert(componentList[i] != 0);
 		if (!componentList[i]->contains(upPos))
 		{
 			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
@@ -1069,7 +1069,7 @@ void View::lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
 	// Check all components for a dragged event.
 	for (int i = 0; i < componentsUsedCount; i++)
 	{
-		assert(componentList[i] != NULL);
+		assert(componentList[i] != 0);
 		if (componentList[i]->contains(newPos) && componentList[i]->contains(downPos))
 		{
 			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON1_MASK, newPos.x, newPos.y, 0, false);
@@ -1096,12 +1096,12 @@ void View::lMouseDouble(const iXY &pos)
 //---------------------------------------------------------------------------
 void View::rMouseDown(const iXY &pos)
 {
-	focusComponent = NULL;
+	focusComponent = 0;
 
 	// Check all components for a pressed event.
 	for (int i = 0; i < componentsUsedCount; i++)
 	{
-		assert(componentList[i] != NULL);
+		assert(componentList[i] != 0);
 		if (componentList[i]->contains(pos))
 		{
 			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_PRESSED, now(), InputEvent::BUTTON2_MASK, pos.x, pos.y, 0, false);
@@ -1125,7 +1125,7 @@ void View::rMouseUp(const iXY &downPos, const iXY &upPos)
 	// Check all components for a clicked event.
 	for (int i = 0; i < componentsUsedCount; i++)
 	{
-		assert(componentList[i] != NULL);
+		assert(componentList[i] != 0);
 		if (componentList[i]->contains(downPos) && componentList[i]->contains(upPos))
 		{
 			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);
@@ -1145,7 +1145,7 @@ void View::rMouseUp(const iXY &downPos, const iXY &upPos)
 		// Check all components for a release event.
 		for (int i = 0; i < componentsUsedCount; i++)
 		{
-			assert(componentList[i] != NULL);
+			assert(componentList[i] != 0);
 			if (componentList[i]->contains(upPos))
 			{
 				mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);
@@ -1173,12 +1173,12 @@ void View::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
 {
 	rMouseDown(newPos);
 
-	focusComponent = NULL;
+	focusComponent = 0;
 
 	// Check all components for a moved event.
 	for (int i = 0; i < componentsUsedCount; i++)
 	{
-		assert(componentList[i] != NULL);
+		assert(componentList[i] != 0);
 		if (componentList[i]->contains(newPos))
 		{
 			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON2_MASK, newPos.x, newPos.y, 0, false);
@@ -1210,7 +1210,7 @@ void View::mouseEnter(const iXY &pos)
 	// Check all components for a entered event.
 	for (int i = 0; i < componentsUsedCount; i++)
 	{
-		assert(componentList[i] != NULL);
+		assert(componentList[i] != 0);
 		if (componentList[i]->contains(pos))
 		{
 			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, pos.x, pos.y, 0, false);
@@ -1234,7 +1234,7 @@ void View::mouseExit(const iXY &pos)
 	// Check all components for a exited event.
 	for (int i = 0; i < componentsUsedCount; i++)
 	{
-		assert(componentList[i] != NULL);
+		assert(componentList[i] != 0);
 		if (componentList[i]->contains(pos))
 		{
 			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, pos.x, pos.y, 0, false);
@@ -1253,7 +1253,7 @@ void View::mouseExit(const iXY &pos)
 //---------------------------------------------------------------------------
 void View::scrollBarMove(const iXY &prevPos, const iXY &newPos)
 {
-	//if (scrollBar != NULL)
+	//if (scrollBar != 0)
 	//{
 	//	scrollBar->actionPerformed(newPos);
 	//}
@@ -1288,10 +1288,10 @@ void View::addLabel(const iXY &pos, char *label, const bool &isShadowed, const P
                       const PIX &backColor)
 {
 	labels = (cLabel *) realloc(labels, (numLabels+1)*sizeof(cLabel));
-	if (labels == NULL) FUBAR("ERROR: Unable to allocate label.");
+	if (labels == 0) FUBAR("ERROR: Unable to allocate label.");
 
 	labels[numLabels].label = strdup(label);
-	assert(labels[numLabels].label != NULL);
+	assert(labels[numLabels].label != 0);
 	labels[numLabels].foreColor  = foreColor;
 	labels[numLabels].backColor  = backColor;
 	labels[numLabels].isShadowed = isShadowed;
@@ -1523,16 +1523,16 @@ void View::addButton(	const iXY &pos,
 //---------------------------------------------------------------------------
 void View::setSearchName(const char *searchName)
 {
-	if (View::searchName != NULL)
+	if (View::searchName != 0)
 	{
 		free(View::searchName);
-		View::searchName = NULL;
+		View::searchName = 0;
 	}
 
-	if (searchName != NULL)
+	if (searchName != 0)
 	{
 		View::searchName = strdup(searchName);
-		if (View::searchName == NULL)
+		if (View::searchName == 0)
 		{
 			FUBAR("ERROR: Unable to allocate searchName: ", searchName);
 		}
@@ -1545,16 +1545,16 @@ void View::setSearchName(const char *searchName)
 //---------------------------------------------------------------------------
 void View::setTitle(const char *title)
 {
-	if (View::title != NULL)
+	if (View::title != 0)
 	{
 		free(View::title);
-		View::title = NULL;
+		View::title = 0;
 	}
 
-	if (title != NULL)
+	if (title != 0)
 	{
 		View::title = strdup(title);
-		if (View::title == NULL)
+		if (View::title == 0)
 		{
 			FUBAR("ERROR: Unable to allocate title: ", title);
 		}
@@ -1567,16 +1567,16 @@ void View::setTitle(const char *title)
 //---------------------------------------------------------------------------
 void View::setSubTitle(const char *subTitle)
 {
-	if (View::subTitle != NULL)
+	if (View::subTitle != 0)
 	{
 		free(View::subTitle);
-		View::subTitle = NULL;
+		View::subTitle = 0;
 	}
 
-	if (subTitle != NULL)
+	if (subTitle != 0)
 	{
 		View::subTitle = strdup(subTitle);
-		if (View::subTitle == NULL)
+		if (View::subTitle == 0)
 		{
 			FUBAR("ERROR: Unable to allocate subTitle: ", subTitle);
 		}
@@ -1589,16 +1589,16 @@ void View::setSubTitle(const char *subTitle)
 //---------------------------------------------------------------------------
 void View::showStatus(const char *string)
 {
-	if (statusText != NULL)
+	if (statusText != 0)
 	{
 		free(statusText);
-		statusText = NULL;
+		statusText = 0;
 	}
 
-	if (string != NULL)
+	if (string != 0)
 	{
 		statusText = strdup(string);
-		if(statusText == NULL) { FUBAR("ERROR: statusText == NULL"); }
+		if(statusText == 0) { FUBAR("ERROR: statusText == 0"); }
 	}
 
 } // end View::showStatus
@@ -1620,7 +1620,7 @@ void View::drawStatus(const Surface &dest)
 	s.fill(Color::gray192);
 
 	// Draw the status text.
-	if (statusText != NULL)
+	if (statusText != 0)
 	{
 		int pos = (DEFAULT_STATUS_BAR_HEIGHT - CHAR_YPIX) >> 1;
 
@@ -1704,7 +1704,7 @@ void View::drawToolTip(const Surface &dest)
 
 	if (highlightedButton < 0) 
 	{
-		if (statusText != NULL)
+		if (statusText != 0)
 		{
 			iRect tRect(rect.min.x, rect.min.y, rect.max.x, rect.max.y);
 			dest.fillRect(tRect, Color::black);
@@ -2150,13 +2150,13 @@ void View::add(DEFAULT_VIEW_BUTTON button)
 //
 //	Component **prevLink = &top;
 //	
-//	while (*prevLink != NULL)
+//	while (*prevLink != 0)
 //	{
 //		prevLink = &(*prevLink)->next;
 //	}
 //
 //	*prevLink    = Component;
-//	Component->next = NULL;
+//	Component->next = 0;
 //
 //} // end View::add
 //
@@ -2168,7 +2168,7 @@ void View::add(DEFAULT_VIEW_BUTTON button)
 //{
 //	Component **prevLink = &top;
 //
-//	while (*prevLink != NULL)
+//	while (*prevLink != 0)
 //	{
 //		if (*prevLink == Component)
 //		{

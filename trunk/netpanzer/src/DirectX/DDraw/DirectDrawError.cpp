@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+#include <windows.h>
 #include <ddraw.h>
 #include <d3d.h>
 #include <d3drmwin.h>
@@ -39,7 +39,7 @@ Msg( LPSTR fmt, ... )
     va_end(args);
     
     lstrcat(buff, "\r\n");
-    MessageBox( NULL, buff, "D3DRM Example Message", MB_OK );
+    MessageBox( 0, buff, "D3DRM Example Message", MB_OK );
 }
 
 
@@ -53,7 +53,7 @@ void DDErrorBox( char *location, HRESULT error )
 
   error_string = D3DRMErrorToString( error );
    
-  MessageBox( NULL, error_string, title, MB_OK );
+  MessageBox( 0, error_string, title, MB_OK );
  }
 
 

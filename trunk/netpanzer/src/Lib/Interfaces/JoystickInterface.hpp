@@ -18,17 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __JoystickInterface_hpp__
 #define __JoystickInterface_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
-#include "stdafx.hpp"
 #include "iXY.hpp"
 #include "fXY.hpp"
 #include "iRect.hpp"
 #include "Surface.hpp"
+
+// disabled for now
+#if 0
 
 extern bool  gSetupJoystickFlag;
 
@@ -87,3 +83,18 @@ public:
 }; // end __JoystickInterface_hpp__
 
 #endif // __JoystickInterface_hpp__
+
+// Dummy implementation
+class JoystickInterface {
+public:
+	static void setCenterPos(const iXY& ) {}
+	static void setExtents(const iRect& ) {}
+	static iXY getCenterPos() { return iXY(0,0); }
+	static iRect getExtents() { return iRect(0,0,0,0); }
+	static bool button_down(int button) { return false; }
+	static void setupJoystick() { }
+
+	static float errorThreshold;	
+};
+
+#endif

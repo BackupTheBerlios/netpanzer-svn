@@ -15,15 +15,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "Sprite.hpp"
 #include "Palette.hpp"
 
 Sprite::Sprite( )
  {
   height = 0;
-  visible = _TRUE;
-  next = NULL;
+  visible = true;
+  next = 0;
 
  }
 
@@ -40,7 +39,7 @@ SpriteSurface::SpriteSurface( void *data, int xPix, int yPix, int numFrames )
   setData( data, xPix, yPix, numFrames );
  }
 
-boolean SpriteSurface::isVisible( Recti &world_win )
+bool SpriteSurface::isVisible( Recti &world_win )
  {
   long min_x;
   long min_y;
@@ -71,9 +70,9 @@ boolean SpriteSurface::isVisible( Recti &world_win )
   temp_pix.y = temp_pix.y/2;
      
   if ( world_win.clip( Recti( world_pos - temp_pix, world_pos + temp_pix) ) )  
-   return( _FALSE );
+   return( false );
 
-  return( _TRUE );
+  return( true );
   */
  }
 
@@ -89,7 +88,7 @@ void SpriteSurface::blit( Surface *surface, Recti &world_win )
 SpritePacked::SpritePacked()
   : Sprite() 
  {
-	colorTable = NULL;
+	colorTable = 0;
 	drawMode   = SOLID;
  }
 
@@ -97,11 +96,11 @@ SpritePacked::SpritePacked( PackedSurface &source )
    : Sprite() 
  {
   setTo( source );
-	colorTable = NULL;
+	colorTable = 0;
 	drawMode   = SOLID;
  }
 
-boolean SpritePacked::isVisible( Recti &world_win )
+bool SpritePacked::isVisible( Recti &world_win )
  {
   long min_x;
   long min_y;
@@ -132,9 +131,9 @@ boolean SpritePacked::isVisible( Recti &world_win )
   temp_pix.y = temp_pix.y/2;
      
   if ( world_win.clip( Recti( world_pos - temp_pix, world_pos + temp_pix) ) )  
-   return( _FALSE );
+   return( false );
 
-  return( _TRUE );  
+  return( true );  
   */
  }
 

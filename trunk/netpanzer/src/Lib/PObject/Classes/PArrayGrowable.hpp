@@ -18,8 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PARRAYGROWABLE_HPP
 #define _PARRAYGROWABLE_HPP
 
-#include "aliasdef.h"
-#include "Pobject.hpp"
+#include "PObject.hpp"
 #include "stdlib.h"
 
 class PArrayGrowable : public PObject
@@ -65,10 +64,10 @@ class PArrayGrowable : public PObject
     
   inline void deallocate( void )
    {
-    if ( array != NULL )
+    if ( array != 0 )
      {
       free( array );
-      array = NULL;
+      array = 0;
      }
     
     size = 0;

@@ -15,24 +15,21 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef _NETWORK_SERVER_DPLAY_HPP
-#define _NETWORK_SERVER_DPLAY_HPP
+#ifndef _NETWORK_SERVER_WINSOCK_HPP
+#define _NETWORK_SERVER_WINSOCK_HPP
 
 #include "NetworkServer.hpp"
 
-#ifndef _USE_DPLAY_KEEPALIVE_CHECKING
- #define _USE_DPLAY_KEEPALIVE_CHECKING
-#endif 
-
-class NetworkServerDPlay : public NetworkServer
+class NetworkServerWinSock : public NetworkServer
  {
   protected:
-   void handleDPSystemMessage( NetPacket *packet );
+   int winsockErrorToNetworkError( int winsock_error );
+
 
   public:
 
-   NetworkServerDPlay();
-   ~NetworkServerDPlay();
+   NetworkServerWinSock();
+   ~NetworkServerWinSock();
    
    virtual int openSession( int connection_type, int session_flags );
    virtual int hostSession( void );
@@ -43,6 +40,7 @@ class NetworkServerDPlay : public NetworkServer
 
    virtual int getMessage( NetMessage *message );
 
- };
+   virtual void shutdownClientTransport( PlayerID &client_id );
 
-#endif // ** _NETWORK_SERVER_DPLAY_HPP
+ };
+#endif // ** _NETWORK_SERVER_WINSOCK_HPP

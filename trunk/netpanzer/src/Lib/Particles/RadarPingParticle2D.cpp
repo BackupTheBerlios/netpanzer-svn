@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "RadarPingParticle2D.hpp"
 
 
@@ -30,8 +30,11 @@ RadarPingParticle2D::RadarPingParticle2D(fXYZ pos) : Particle2D(pos)
 
 	FPS = rand() % 20 + 20;
 
+	// XXX
+#if 0
 	radarPingSurface.setTo(radarPingSprite);
 	radarPingSurface.setFPS(FPS);
+#endif
 
 }; // end RadarPingParticle2D::RadarPingParticle2D
 
@@ -50,6 +53,8 @@ void RadarPingParticle2D::init()
 //---------------------------------------------------------------------------
 void RadarPingParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 {
+	// XXX
+#if 0
 	assert(radarPingSurface.getDoesExist());
 
 	if (!radarPingSurface.nextFrame())
@@ -74,5 +79,6 @@ void RadarPingParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 	{
 		assert(false);
 	}
+#endif
 
 } // end RadarPingParticle2D::draw

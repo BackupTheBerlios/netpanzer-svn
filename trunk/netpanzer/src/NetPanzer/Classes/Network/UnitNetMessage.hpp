@@ -31,7 +31,9 @@ enum { _net_message_id_opcode_mesg,
        _net_message_id_unit_sync_integrity_check
 	 };
 
+#ifdef MSVC
 #pragma pack(1)
+#endif
 
 class UnitOpcodeMessage : public NetMessage
  {
@@ -49,7 +51,7 @@ class UnitOpcodeMessage : public NetMessage
 
   unsigned short realSize( void ); 
 
- };
+ } __attribute__((packed));
 
 
 class UnitIniSyncMessage : public NetMessage
@@ -71,7 +73,7 @@ class UnitIniSyncMessage : public NetMessage
     return( sizeof( UnitIniSyncMessage ) ); 
    }
 
- };
+ } __attribute__((packed));
 
 // ** NOTE: A big, mother fucking HACK
 
@@ -86,7 +88,7 @@ class UnitRemoteDestroy : public NetMessage
     message_id = _net_message_id_destroy_unit;
    } 
  
- };
+ } __attribute__((packed));
 
 
 class UnitRemoteCreate : public NetMessage
@@ -102,7 +104,7 @@ class UnitRemoteCreate : public NetMessage
     message_id = _net_message_id_create_unit;
    }
 
- };
+ } __attribute__((packed));
 
 class UnitSyncIntegrityCheck : public NetMessage
  {
@@ -114,8 +116,10 @@ class UnitSyncIntegrityCheck : public NetMessage
     message_id = _net_message_id_unit_sync_integrity_check;
    }
 
- };
+ } __attribute__((packed));
 
+#ifdef MSVC
 #pragma pack()
+#endif
 
 #endif 

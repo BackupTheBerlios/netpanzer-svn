@@ -18,8 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITINTERFACE_HPP
 #define _UNITINTERFACE_HPP
 
-#include "aliasdef.h"
-
 #include "PObject.hpp"
 #include "UnitList.hpp"
 #include "UnitBucketArray.hpp"
@@ -49,15 +47,15 @@ class UnitInterface : public PObject
    static PlacementMatrix unit_placement_matrix;
   
    static unsigned short unique_generator;
-   static boolean isUniqueIndex( unsigned short new_index );
+   static bool isUniqueIndex( unsigned short new_index );
    static unsigned short uniqueIndex( void );
 
 
    static UnitBase * newUnit( unsigned short unit_type, 
-                              PointXYi &location, 
+                              const PointXYi &location, 
                               unsigned short player_index );
    
-   static void addNewUnit( UnitBase *unit, PlayerID &player  );
+   static void addNewUnit( UnitBase *unit, const PlayerID &player  );
 
    static void deleteUnit( UnitID unit_id );
    static void deleteUnit( UnitBase *unit );
@@ -76,7 +74,7 @@ class UnitInterface : public PObject
      return ( &unit_lists[ player ] );
     }
    
-   static inline UnitList * getUnitList( UnitID &unit_id ) 
+   static inline UnitList * getUnitList( const UnitID &unit_id ) 
     {
      assert( (unit_id.getPlayer() < max_players) );
      return ( &unit_lists[ unit_id.getPlayer() ] ); 
@@ -90,23 +88,23 @@ class UnitInterface : public PObject
 
    static unsigned long getTotalUnitCount( void );
 
-   static inline UnitPointer * getUnitPointer( UnitID &unit_id )
+   static inline UnitPointer * getUnitPointer( const UnitID &unit_id )
     {
      assert( (unit_id.getPlayer() < max_players) );
      return( unit_lists[ unit_id.getPlayer() ][ unit_id.getIndex() ] );
     }
 
-   static inline UnitBase * getUnit( UnitID &unit_id )
+   static inline UnitBase * getUnit( const UnitID &unit_id )
     {
      UnitPointer *unit_pointer;
      assert ( (unit_id.getPlayer() < max_players) );
          
      unit_pointer = unit_lists[ unit_id.getPlayer() ][ unit_id.getIndex() ];
      
-	 if ( unit_pointer != NULL )             
+	 if ( unit_pointer != 0 )             
       { return( unit_pointer->unit  ); }
 
-	 return( NULL );
+	 return( 0 );
     }
  
    static inline UnitBase * getUnit( unsigned char  player_index, 
@@ -117,13 +115,13 @@ class UnitInterface : public PObject
          
      unit_pointer = unit_lists[ player_index ][ unit_index ];
                   
-	 if ( unit_pointer != NULL )             
+	 if ( unit_pointer != 0 )             
       { return( unit_pointer->unit  ); }
 
-	 return( NULL );
+	 return( 0 );
     }
   
-   static inline boolean isValid( UnitID &unit_id )
+   static inline bool isValid( const UnitID &unit_id )
     {
      assert( unit_id.getPlayer() < max_players );
      return( unit_lists[ unit_id.getPlayer() ].isValid( unit_id ) );
@@ -135,30 +133,34 @@ class UnitInterface : public PObject
 
    static void offloadGraphics( SpriteSorter &sorter );
 
-   static UnitBase * createUnit( unsigned short unit_type, PointXYi &location, PlayerID &player );
+   static UnitBase * createUnit( unsigned short unit_type, 
+		   						 const PointXYi &location,
+								 const PlayerID &player );
 
-   static void spawnPlayerUnits( PointXYi &location, PlayerID &player, PlayerUnitConfig &unit_config );   
+   static void spawnPlayerUnits( const PointXYi &location, 
+		   						const PlayerID &player,
+								const PlayerUnitConfig &unit_config );   
 
-   static boolean quearyUnitsKeySearch( UnitIDList *working_list,
+   static bool quearyUnitsKeySearch( UnitIDList *working_list,
                                         int (* key_func )( void *key, UnitState *comp ),
                                         void *key, PlayerID player_id, 
                                         unsigned char search_flags,
-                                        boolean find_first ); 
+                                        bool find_first ); 
     
-   static boolean quearyClosestUnit( UnitBase **closest_unit_ptr,
+   static bool quearyClosestUnit( UnitBase **closest_unit_ptr,
                                      PointXYi &loc,
                                      PlayerID &player_id, 
                                      unsigned char search_flags );
 
-   static boolean quearyClosestUnit( UnitBase **closest_unit_ptr, 
+   static bool quearyClosestUnit( UnitBase **closest_unit_ptr, 
                                      Recti &bounding_rect, 
                                      PointXYi &loc );
 
-   static boolean quearyClosestEnemyUnit( UnitBase **closest_unit_ptr,
+   static bool quearyClosestEnemyUnit( UnitBase **closest_unit_ptr,
                                           PointXYi &loc,
                                           unsigned short player_index );
 
-   static boolean quearyUnitAtMapLoc( PointXYi map_loc, UnitID *queary_unit_id );
+   static bool quearyUnitAtMapLoc( PointXYi map_loc, UnitID *queary_unit_id );
 
    static unsigned char quearyUnitLocationStatus( PointXYi loc );
     
@@ -173,7 +175,7 @@ class UnitInterface : public PObject
    public: 
     // Unit positions, almost exclusivly for mini map
     static void startUnitPositionEnumeration( void );
-    static boolean unitPositionEnumeration( PointXYi *position, unsigned char *unit_disposition, unsigned char *threat_level );
+    static bool unitPositionEnumeration( PointXYi *position, unsigned char *unit_disposition, unsigned char *threat_level );
 
     static void resetUnitCycleIterator( unsigned long *iterator );
     static PointXYi unitPositionCycle( unsigned long *iterator );
@@ -209,7 +211,7 @@ class UnitInterface : public PObject
    
    protected:
     static unsigned long  sync_units_iterator;
-    static boolean	      sync_units_complete_flag;
+    static bool	      sync_units_complete_flag;
     static unsigned short sync_units_list_index;
 	static Timer		  sync_units_packet_timer;
   	static PlayerID	      sync_units_remote_player;
@@ -219,7 +221,7 @@ class UnitInterface : public PObject
 
    public:
     static void startRemoteUnitSync( PlayerID &remote_player );
-	static boolean syncRemoteUnits( int *send_return_code, int *percent_complete );
+	static bool syncRemoteUnits( int *send_return_code, int *percent_complete );
 
    public:
     static void processNetMessage( NetMessage *net_message );

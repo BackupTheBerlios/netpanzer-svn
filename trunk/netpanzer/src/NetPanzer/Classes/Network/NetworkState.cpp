@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+#include <stdio.h>
 #include "NetworkState.hpp"
 
 unsigned short NetworkState::status;
@@ -70,7 +70,7 @@ void NetworkState::resetNetworkStats( void )
   packets_received = 0;
 
   packets_sent_per_sec = 0;
-  packets_sent_time = 0.0000001; 
+  packets_sent_time = 0.0000001;
   packets_sent_interval = now();
  
   packets_received_per_sec = 0;

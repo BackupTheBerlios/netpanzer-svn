@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "stdafx.h"
+
 #include "ImageRobot.h"
 #include "RenameInfoDialog.h"
 
@@ -30,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 // RenameInfoDialog dialog
 
 
-RenameInfoDialog::RenameInfoDialog(CWnd* pParent /*=NULL*/)
+RenameInfoDialog::RenameInfoDialog(CWnd* pParent /*=0*/)
 	: CDialog(RenameInfoDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(RenameInfoDialog)

@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "FireParticle2D.hpp"
 #include "TimerInterface.hpp"
 
@@ -58,9 +58,9 @@ void FireParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 	//if (!isAlive) return;
 	dest.fillRect(100, 100, 110, 110, Color::red);
 
-	int x = pos.x;
+	//int x = (int) pos.x;
 	//int y = pos.y;
-	int z = pos.z;
+	//int z = (int) pos.z;
 
 	//color = BYTE(totalTime * 44); // This 44 is based on the life of 0.25 secs and 12 colors possible.
 	color = BYTE(totalTime * 22); // This 22 is based on the life of 0.50 secs and 12 colors possible.
@@ -68,7 +68,7 @@ void FireParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 	//if (color >= 12) FUBAR("ERROR: Invalid color reached for fire.");
 	assert(color < 12);
 
-	const unsigned halfSize = 1;
+	// const unsigned halfSize = 1;
 
 	//dest.fillRect(iRect(x - halfSize, z - halfSize, x + halfSize, z + halfSize), cFireParticleSystem2D::fireColor[color]);
 

@@ -18,10 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _WIN32CONSOLE_HPP
 #define _WIN32CONSOLE_HPP
 
-#include <windows.h>
-
 void Win32ConsolePrint( const char *string );
-
-
 
 #endif // ** _WIN32CONSOLE_HPP

@@ -110,11 +110,12 @@ enum { _color_aqua,
 #define _GAME_CONFIG_MINI_MAP_SCROLL_LIMIT_UPPER	 1000
 #define _GAME_CONFIG_MINI_MAP_SCROLL_LIMIT_LOWER	  100
 
-#define _GAME_CONFIG_CONSOLE_TEXT_DELAY_LIMIT_UPPER 30.0
-#define _GAME_CONFIG_CONSOLE_TEXT_DELAY_LIMIT_LOWER  1.0
+// XXX: CHanged the CONFIG_CONSOLE values from doubles to ints (removed .0)
+#define _GAME_CONFIG_CONSOLE_TEXT_DELAY_LIMIT_UPPER 30
+#define _GAME_CONFIG_CONSOLE_TEXT_DELAY_LIMIT_LOWER  1
 
-#define _GAME_CONFIG_CONSOLE_TEXT_USEAGE_LIMIT_UPPER 25.0
-#define _GAME_CONFIG_CONSOLE_TEXT_USEAGE_LIMIT_LOWER  5.0
+#define _GAME_CONFIG_CONSOLE_TEXT_USEAGE_LIMIT_UPPER 25
+#define _GAME_CONFIG_CONSOLE_TEXT_USEAGE_LIMIT_LOWER  5
 
 #define _GAME_CONFIG_SCREEN_GAMMA_LIMIT_UPPER  100
 #define _GAME_CONFIG_SCREEN_GAMMA_LIMIT_LOWER	 0
@@ -150,25 +151,25 @@ class GameConfig : public PObject
    static int     TimeLimit;               //current limit = 120
    static int     FragLimit;               //current limit = 1000;
 
-   static boolean      map_cycling_on_off;
-   static boolean      powerups_on_off;
+   static bool      map_cycling_on_off;
+   static bool      powerups_on_off;
    static float        objective_occupation_percentage;
-   static boolean      allow_allies_on_off;
+   static bool      allow_allies_on_off;
    static int          cloud_coverage;
    static unsigned int respawn_type;
    static float        wind_speed;
    static int          attackNotificationTime;
-   static boolean      blendSmoke;
+   static bool      blendSmoke;
 
    static char         game_map_name[256];
 
    // ** Visuals Configuration **
    static unsigned int  screen_resolution_enum;
 
-   static boolean display_shadows_flag;
-   static boolean display_unit_flags;
+   static bool display_shadows_flag;
+   static bool display_unit_flags;
    
-   static boolean radar_display_clouds_flag;
+   static bool radar_display_clouds_flag;
    static int     radar_player_unit_color;
    static int     radar_allied_unit_color;
    static int     radar_player_outpost_color;
@@ -180,8 +181,8 @@ class GameConfig : public PObject
 
    static int     mini_map_unit_size;
    static int     unit_selection_box_draw_mode;
-   static boolean draw_unit_damage;
-   static boolean draw_unit_reload;
+   static bool draw_unit_damage;
+   static bool draw_unit_reload;
    static int     mini_map_objective_draw_mode;
    static int     unitInfoDrawLayer;
 
@@ -197,10 +198,10 @@ class GameConfig : public PObject
   
    
    // ** Input Configuration **
-   static boolean input_joystick_state; 
+   static bool input_joystick_state; 
    
    // ** Sound Configuration **
-   static boolean sound_on_off_flag;
+   static bool sound_on_off_flag;
    static int	  sound_volume;
   
   protected:
@@ -492,55 +493,55 @@ class GameConfig : public PObject
         }
 	 } 
     
-    static inline void setMapCycleState( boolean on_off )
+    static inline void setMapCycleState( bool on_off )
 	 {
 	  map_cycling_on_off = on_off;
 	 }
 
-	static inline boolean getMapCycleState( void )
+	static inline bool getMapCycleState( void )
 	 {
 	  return( map_cycling_on_off );
 	 }
 
     static inline char * getMapCycleString( void )
 	 {
-	  if ( 	map_cycling_on_off == _TRUE )
+	  if ( 	map_cycling_on_off == true )
 	   { return( "Yes" ); }
 	  else
 	   { return( "No" ); }
 	 }
 
-    static inline void setPowerUpState( boolean on_off )
+    static inline void setPowerUpState( bool on_off )
 	 {
 	  powerups_on_off= on_off;
 	 }
 
-	static inline boolean getPowerUpState( void )
+	static inline bool getPowerUpState( void )
 	 {
 	  return( powerups_on_off );
 	 }
 
     static inline char * getPowerUpString( void )
 	 {
-	  if ( 	powerups_on_off == _TRUE )
+	  if ( 	powerups_on_off == true )
 	   { return( "Yes" ); }
 	  else
 	   { return( "No" ); }
 	 }
 
-	static inline void setAllieState( boolean on_off )
+	static inline void setAllieState( bool on_off )
 	 {
 	  allow_allies_on_off = on_off;
 	 }
 
-	static inline boolean getAllieState( void )
+	static inline bool getAllieState( void )
 	 {
 	  return( allow_allies_on_off );
 	 }
 
     static inline char * getAllieStateString( void )
 	 {
-	  if ( 	allow_allies_on_off == _TRUE )
+	  if ( 	allow_allies_on_off == true )
 	   { return( "Yes" ); }
 	  else
 	   { return( "No" ); }
@@ -637,7 +638,7 @@ class GameConfig : public PObject
 	   if ( rate > _GAME_CONFIG_MINI_MAP_SCROLL_LIMIT_UPPER )
 	    { mini_map_resize_rate = _GAME_CONFIG_MINI_MAP_SCROLL_LIMIT_UPPER; }	 
 	   else
-	    { mini_map_resize_rate = rate; }
+	    { mini_map_resize_rate = (int) rate; }
 	 }
 
 	static inline int getMiniMapResizeRateBoundsUpper( void )
@@ -818,15 +819,15 @@ class GameConfig : public PObject
 
    //*********************************************************** 
 
-    static inline void setDisplayCloudsOnRadarFlag( boolean on_off )
+    static inline void setDisplayCloudsOnRadarFlag( bool on_off )
 	 { radar_display_clouds_flag = on_off; }
 
-	static inline boolean getDisplayCloudsOnRadarFlag( void )
+	static inline bool getDisplayCloudsOnRadarFlag( void )
 	 { return( radar_display_clouds_flag ); }
 
 	static inline char * getDisplayCloudsOnRadarFlagString( void )
 	 { 
-	   if ( radar_display_clouds_flag == _TRUE )
+	   if ( radar_display_clouds_flag == true )
 	    { return( "On" );  }
 	   else
 	    { return( "Off" ); }	
@@ -834,15 +835,15 @@ class GameConfig : public PObject
 
    //*********************************************************** 
 
-    static inline void setDisplayShadowsFlag( boolean on_off )
+    static inline void setDisplayShadowsFlag( bool on_off )
 	 { display_shadows_flag = on_off; }
 
-	static inline boolean getDisplayShadowsFlag( void )
+	static inline bool getDisplayShadowsFlag( void )
 	 { return( display_shadows_flag ); }
 
 	static inline char * getDisplayShadowsFlagString( void )
 	 { 
-	   if ( display_shadows_flag == _TRUE )
+	   if ( display_shadows_flag == true )
 	    { return( "On" );  }
 	   else
 	    { return( "Off" ); }	
@@ -850,26 +851,26 @@ class GameConfig : public PObject
 
    //*********************************************************** 
 
-    static inline void setDisplayUnitFlags( boolean on_off )
+    static inline void setDisplayUnitFlags( bool on_off )
 	 { display_unit_flags = on_off; }
 
 	static inline void toggleDisplayUnitFlags( void )
 	 { display_unit_flags = !display_unit_flags; }
 
-	static inline boolean getDisplayUnitFlags( void )
+	static inline bool getDisplayUnitFlags( void )
 	 { return( display_unit_flags ); }
 
    // ** Input Configuration Methods **
 
-    static inline void setJoystickState( boolean on_off )
+    static inline void setJoystickState( bool on_off )
 	 { input_joystick_state = on_off; }
 
-	static inline boolean getJoystickState( void )
+	static inline bool getJoystickState( void )
 	 { return( input_joystick_state ); }
 
 	static inline char * getJoystickStateString( void )
 	 { 
-	   if ( input_joystick_state == _TRUE )
+	   if ( input_joystick_state == true )
 	    { return( "On" );  }
 	   else
 	    { return( "Off" ); }	
@@ -878,15 +879,15 @@ class GameConfig : public PObject
 
    // ** Sound Configuration Methods **
 
-    static inline void setSoundState( boolean on_off )
+    static inline void setSoundState( bool on_off )
 	 { sound_on_off_flag = on_off; }
 
-	static inline boolean getSoundState( void )
+	static inline bool getSoundState( void )
 	 { return( sound_on_off_flag ); }
 
 	static inline char * getSoundStateString( void )
 	 { 
-	   if ( sound_on_off_flag == _TRUE )
+	   if ( sound_on_off_flag == true )
 	    { return( "On" );  }
 	   else
 	    { return( "Off" ); }	
@@ -1000,17 +1001,17 @@ class GameConfig : public PObject
    //*********************************************************** 
 
 	 static inline void setBlendSmokeTrue()
-	 { blendSmoke = _TRUE; }
+	 { blendSmoke = true; }
 	 
 	 static inline void setBlendSmokeFalse()
-	 { blendSmoke = _FALSE; }
+	 { blendSmoke = false; }
 	 
-	 static inline boolean getBlendSmoke()
+	 static inline bool getBlendSmoke()
 	 { return( blendSmoke ); }
 	 
 	 static inline const char *getBlendSmokeString()
 	 {
-		if (blendSmoke == _TRUE)
+		if (blendSmoke == true)
 		{
 			return "On";
 		}
@@ -1098,7 +1099,7 @@ class GameConfig : public PObject
 	static inline void toggleDrawUnitDamage( void )
 	 { draw_unit_damage = !draw_unit_damage;	 }
 
-	static inline boolean getDrawUnitDamage( void )
+	static inline bool getDrawUnitDamage( void )
 	 { return( draw_unit_damage ); }
 
    //*********************************************************** 
@@ -1109,7 +1110,7 @@ class GameConfig : public PObject
 	static inline void toggleDrawUnitReload( void )
 	 { draw_unit_reload = !draw_unit_reload;	 }
 
-	static inline boolean getDrawUnitReload( void )
+	static inline bool getDrawUnitReload( void )
 	 { return( draw_unit_reload ); }
 
    //*********************************************************** 
@@ -1159,7 +1160,7 @@ class GameConfig : public PObject
 	 static inline void toggleUnitInfoDrawLayer()
 	 { unitInfoDrawLayer = (( unitInfoDrawLayer == 7 ) ? 0 : 7); }
 
-	 static inline getUnitInfoDrawLayer()
+	 static inline int getUnitInfoDrawLayer()
 	 { return( unitInfoDrawLayer ); }
 
 	 static inline const char *getUnitInfoDrawLayerString()

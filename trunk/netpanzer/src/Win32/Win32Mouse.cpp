@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "Win32Mouse.hpp"
 #include "gapp.hpp"
 
@@ -45,10 +44,10 @@ void Win32GetMousePos( long *x_pos, long *y_pos )
 
 void Win32HideHardwareMouse( void )
  {
-  while( ShowCursor( FALSE ) > 0 );
+  while( ShowCursor( false ) > 0 );
  }
 
 void Win32ShowHardwareMouse( void )
  {
-  while( ShowCursor( TRUE ) <= 0 );
+  while( ShowCursor( true ) <= 0 );
  }

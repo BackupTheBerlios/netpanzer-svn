@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "CraterParticle2D.hpp"
 #include "UtilInterface.hpp"
 #include "ConsoleInterface.hpp"
@@ -45,7 +45,7 @@ CraterParticle2D::CraterParticle2D(const fXYZ  &pos) : Particle2D(pos)
 	// Check to see if this is valid crater ground.
 
 	// Check the crater cache for a hit.
-	iXY destPos(pos.x, pos.z);
+	iXY destPos((int) pos.x, (int) pos.z);
 
 	for (int i = 0; i < craterCache.getCount(); i++)
 	{
@@ -112,7 +112,7 @@ void CraterParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 {
 	if (!isAlive) { return; }
 
-	packedSurface.setAttrib(iXY(pos.x, pos.z), 0);
+	packedSurface.setAttrib(iXY((int) pos.x, (int) pos.z), 0);
 	sorter.addSprite(&packedSurface);
 
 } // end CraterParticle2D::draw
@@ -126,7 +126,7 @@ void CraterParticle2D::sim()
 		isAlive = false;
 
 		// Check to see if the cache index is still in list and remove it if so.
-		if (craterCache[cacheIndex].pos == iXY(pos.x, pos.z))
+		if (craterCache[cacheIndex].pos == iXY((int) pos.x, (int) pos.z))
 		{
 			// Since it is still in the list, but the particle is dead,
 			// remove it from the list.

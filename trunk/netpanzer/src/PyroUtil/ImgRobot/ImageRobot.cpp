@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "stdafx.h"
+
 #include "ImageRobot.h"
 #include "ImageRobotDlg.h"
 
@@ -56,7 +56,7 @@ CImageRobotApp theApp;
 /////////////////////////////////////////////////////////////////////////////
 // CImageRobotApp initialization
 
-BOOL CImageRobotApp::InitInstance()
+bool CImageRobotApp::InitInstance()
 {
 	InitializeGlobals();
     
@@ -89,7 +89,7 @@ BOOL CImageRobotApp::InitInstance()
 
    CleanupGlobals();
 
-	// Since the dialog has been closed, return FALSE so that we exit the
+	// Since the dialog has been closed, return false so that we exit the
 	//  application, rather than start the application's message pump.
-	return FALSE;
+	return false;
 }

@@ -18,8 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _BITARRAY_HPP
 #define _BITARRAY_HPP
 
-#include "aliasdef.h"
-
 #include <stdlib.h>
 #include "PObject.hpp"
 
@@ -52,7 +50,7 @@ class BitArray : public PObject
   
   void clearBit( unsigned long x, unsigned long y );
 
-  boolean getBit( unsigned long x, unsigned long y );
+  bool getBit( unsigned long x, unsigned long y );
  };
 
 

@@ -18,8 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETWORK_CLIENT_HPP
 #define _NETWORK_CLIENT_HPP
 
-
-
+#include "codewiz.hpp"
 #include "NetworkInterface.hpp"
 #include "NetworkReturnCodes.hpp"
 
@@ -69,7 +68,7 @@ class NetworkClient : public NetworkInterface
    
    Timer   ping_timer;
    
-   boolean keep_alive_state;
+   bool keep_alive_state;
    Timer   keep_alive_emit_timer;
    Timer   keep_alive_timer;
    void updateKeepAliveState( void );
@@ -88,29 +87,29 @@ class NetworkClient : public NetworkInterface
 
   public:
    
-   NetworkClient( void );
-   ~NetworkClient( void );
+   NetworkClient ();
+   virtual ~NetworkClient ();
    
    void activateKeepAlive( void ); 
    void deactivateKeepAlive( void ); 
 
    virtual int openSession( int connection_type, int session_flags );
 
-   virtual int startEnumeration( ConnectionAddress address ) { assert(0); return( _FALSE ); }
-   virtual int startEnumeration( void ) { assert(0); return( _FALSE ); }
-   virtual int stopEnumeration( void ) { assert(0); return( _FALSE ); }
-   virtual int getSessionList( SessionList &list ) { assert(0); return( _FALSE ); }
+   virtual int startEnumeration( ConnectionAddress address ) { assert(0); return( false ); }
+   virtual int startEnumeration( void ) { assert(0); return( false ); }
+   virtual int stopEnumeration( void ) { assert(0); return( false ); }
+   virtual int getSessionList( SessionList &list ) { assert(0); return( false ); }
 
-   virtual int joinSession( void ) { assert(0); return( _FALSE ); }
-   virtual int joinSession( int session_index ) { assert(0); return( _FALSE ); }
-   virtual int joinSession( const char session_name ) { assert(0); return( _FALSE );  }
-   virtual int setJoinSession( const char *session_name ) { assert(0); return( _FALSE );  }
+   virtual int joinSession( void ) { assert(0); return( false ); }
+   virtual int joinSession( int session_index ) { assert(0); return( false ); }
+   virtual int joinSession( const char session_name ) { assert(0); return( false );  }
+   virtual int setJoinSession( const char *session_name ) { assert(0); return( false );  }
       
-   virtual int closeSession( void ) {  assert(0); return( _FALSE ); }
+   virtual int closeSession( void ) {  assert(0); return( false ); }
   
-   virtual int sendMessage( NetMessage *message, unsigned long size, int flags ) { assert(0); return( _FALSE ); }
+   virtual int sendMessage( NetMessage *message, unsigned long size, int flags ) { assert(0); return( false ); }
  
-   virtual int getMessage( NetMessage *message ) { assert(0); return( _FALSE ); }
+   virtual int getMessage( NetMessage *message ) { assert(0); return( false ); }
 
  };
 

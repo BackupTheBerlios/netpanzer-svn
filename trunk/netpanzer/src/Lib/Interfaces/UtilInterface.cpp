@@ -15,9 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
-#include "stdafx.hpp"
+#ifdef WIN32
+#include <io.h>
+#endif
+#include <string.h>
 #include "UtilInterface.hpp"
 
 bool gSpanBlittingFlag = false;
@@ -29,7 +30,7 @@ int FilenameSortFunction(const void *a, const void *b)
 	const Filename *p1 = (const Filename *)a;
 	const Filename *p2 = (const Filename *)b;
 
-	return stricmp(p1->name, p2->name);
+	return strcasecmp(p1->name, p2->name);
 
 } // end FilenameSortFunction
 
@@ -44,8 +45,11 @@ String UtilInterface::getDrive(String path)
 {
 	char strBuf[256];
 
+	// XXX
+#ifdef WIN32
 	//void _splitpath( const char *path, char *drive, char *dir, char *fname, char *ext );
-	_splitpath(path, strBuf, NULL, NULL, NULL);
+	_splitpath(path, strBuf, 0, 0, 0);
+#endif
 
 	return strBuf;
 
@@ -57,8 +61,11 @@ String UtilInterface::getDirectory(String path)
 {
 	char strBuf[256];
 
+	// XXX
+#ifdef WIN32
 	//void _splitpath( const char *path, char *drive, char *dir, char *fname, char *ext );
-	_splitpath(path, NULL, strBuf, NULL, NULL);
+	_splitpath(path, 0, strBuf, 0, 0);
+#endif
 
 	return strBuf;
 
@@ -70,8 +77,11 @@ String UtilInterface::getFilename(String path)
 {
 	char strBuf[256];
 
+	// XXX
+#ifdef WIN32
 	//void _splitpath( const char *path, char *drive, char *dir, char *fname, char *ext );
-	_splitpath(path, NULL, NULL, strBuf, NULL);
+	_splitpath(path, 0, 0, strBuf, 0);
+#endif
 
 	return strBuf;
 
@@ -83,8 +93,11 @@ String UtilInterface::getExtension(String path)
 {
 	char strBuf[256];
 
+	// XXX
+#ifdef WIN32
 	//void _splitpath( const char *path, char *drive, char *dir, char *fname, char *ext );
-	_splitpath(path, NULL, NULL, NULL, strBuf);
+	_splitpath(path, 0, 0, 0, strBuf);
+#endif
 
 	return strBuf;
 
@@ -96,6 +109,8 @@ String UtilInterface::getExtension(String path)
 //---------------------------------------------------------------------------
 DWORD UtilInterface::getFileSize(String filename)
 {
+	// XXX
+#ifdef WIN32
 	struct _finddata_t myFile;
 
 	if (_findfirst((const char *) filename, &myFile) == -1)
@@ -104,6 +119,8 @@ DWORD UtilInterface::getFileSize(String filename)
 	}
 
 	return myFile.size;
+#endif
+	return 0;
 
 } // end UtilInterface::getFileSize
 
@@ -113,6 +130,8 @@ DWORD UtilInterface::getFileSize(String filename)
 //---------------------------------------------------------------------------
 DWORD UtilInterface::getNumFilesInDirectory(String path)
 {
+	// XXX
+#ifdef WIN32
 	struct _finddata_t myFile;
 	long               hFile;
 
@@ -131,6 +150,8 @@ DWORD UtilInterface::getNumFilesInDirectory(String path)
 	_findclose(hFile);
 
 	return numFiles;
+#endif
+	return 0;
 
 } // end UtilInterface::getNumFilesInDirectory
 
@@ -141,6 +162,8 @@ DWORD UtilInterface::getNumFilesInDirectory(String path)
 //---------------------------------------------------------------------------
 void UtilInterface::deleteFile(String path)
 {
+	// XXX
+#ifdef WIN32
 	struct _finddata_t myFile;
 	long               hFile;
 
@@ -151,7 +174,7 @@ void UtilInterface::deleteFile(String path)
 	{
 		do
 		{
-			_splitpath(myFile.name, NULL, NULL, strBuf, NULL);
+			_splitpath(myFile.name, 0, 0, strBuf, 0);
 			
 			remove(strBuf);
 
@@ -159,6 +182,7 @@ void UtilInterface::deleteFile(String path)
 	}
 
 	_findclose(hFile);
+#endif
 
 } // end UtilInterface::deleteFile
 
@@ -182,6 +206,6 @@ void UtilInterface::startRandomNumberGenerator()
 	return;
 #endif 
 
-	srand((unsigned)time(NULL));
+	srand((unsigned)time(0));
 
 } // end UtilInterface::startRandomNumberGenerator

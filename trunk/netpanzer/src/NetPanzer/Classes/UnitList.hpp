@@ -18,8 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITLIST_HPP
 #define _UNITLIST_HPP
 
-
-
 #include "PArray.hpp"
 #include "UnitBase.hpp"
 #include "UnitID.hpp"
@@ -31,12 +29,12 @@ class UnitPointer
    UnitBase *unit;
    unsigned long index;
    
-   UnitPointer() { unit = NULL; next = NULL; }
+   UnitPointer() { unit = 0; next = 0; }
    
    UnitPointer( UnitBase *unit )
     {
 	 UnitPointer::unit = unit;
-	 next = NULL;
+	 next = 0;
 	}
 
    UnitPointer *next;
@@ -70,7 +68,7 @@ class UnitList : public UnitPointerList
   	 
 	traversal_ptr = front;	
 
-	while( (traversal_ptr != NULL) )
+	while( (traversal_ptr != 0) )
 	 {
 	  if ( traversal_ptr->index == index )
 	   return( traversal_ptr );
@@ -78,7 +76,7 @@ class UnitList : public UnitPointerList
 	  traversal_ptr = traversal_ptr->next;
 	 }
   
-   	return( NULL );
+   	return( 0 );
    }
   
   
@@ -102,7 +100,7 @@ class UnitList : public UnitPointerList
 	unit_pointer->index = index;
 
 	
-    if( front == NULL )
+    if( front == 0 )
      {
 	  UnitPointerList::addFront( unit_pointer );
       contains++;
@@ -120,11 +118,11 @@ class UnitList : public UnitPointerList
 	   {
 		traversal_ptr = front;
 		
-		while( traversal_ptr != NULL )
+		while( traversal_ptr != 0 )
 		 {
 		  if( index >= traversal_ptr->index  )
 		   {
-			if( (traversal_ptr->next != NULL) )
+			if( (traversal_ptr->next != 0) )
 			 {
 			  if ( (index <= traversal_ptr->next->index )  )
 			   {
@@ -150,7 +148,7 @@ class UnitList : public UnitPointerList
 	return;
    }  
 
-  inline boolean isValid( unsigned long index )
+  inline bool isValid( unsigned long index )
    {
     UnitPointer *traversal_ptr;
 	  
@@ -158,18 +156,18 @@ class UnitList : public UnitPointerList
 
 	traversal_ptr = front;	
 
-	while( (traversal_ptr != NULL) )
+	while( (traversal_ptr != 0) )
 	 {
 	  if ( traversal_ptr->index == index )
-	   return( _TRUE );
+	   return( true );
 	  
 	  traversal_ptr = traversal_ptr->next;
 	 }
   
-    return( _FALSE );
+    return( false );
    }
 
-  inline boolean isValid( UnitID &unitID )
+  inline bool isValid( const UnitID &unitID ) const
    {
     unsigned long index = unitID.getIndex();
    	UnitPointer *traversal_ptr;
@@ -177,18 +175,18 @@ class UnitList : public UnitPointerList
 
 	traversal_ptr = front;	
 
-	while( (traversal_ptr != NULL) )
+	while( (traversal_ptr != 0) )
 	 {
 	  if ( traversal_ptr->index == index )
-	   return( _TRUE );
+	   return( true );
 	  
 	  traversal_ptr = traversal_ptr->next;
 	 }
   
-    return( _FALSE );
+    return( false );
    }
 
-  inline void add( UnitBase *unit, UnitID &unitID )
+  inline void add( UnitBase *unit, const UnitID &unitID )
    {
     unsigned long index;
     index = unitID.getIndex();
@@ -205,14 +203,14 @@ class UnitList : public UnitPointerList
   inline UnitBase * incIterator( UnitPointer **iterator )
    {
     UnitBase *unit;
-	if( (*iterator) != NULL )
+	if( (*iterator) != 0 )
 	 {
 	  unit = (*iterator)->unit;
 	  *iterator = (*iterator)->next;
 	  return( unit ); 
    	 }
    	else
-	 { return( NULL ); }
+	 { return( 0 ); }
    }  
   
 
@@ -220,14 +218,14 @@ class UnitList : public UnitPointerList
    {
 	UnitPointer *unit_pointer;
 
-	if( (*iterator) != NULL )
+	if( (*iterator) != 0 )
 	 {
 	  unit_pointer = (*iterator);
 	  (*iterator) = (*iterator)->next;
 	  return( unit_pointer ); 
    	 }
    	else
-	 { return( NULL ); }
+	 { return( 0 ); }
    }
 
   inline void resetIterator( UnitPointer **iterator )
@@ -240,34 +238,34 @@ class UnitList : public UnitPointerList
    	(*iterator) = 0;
    }
 
-  inline UnitBase * incIteratorAsync( unsigned long *iterator, boolean *completed )
+  inline UnitBase * incIteratorAsync( unsigned long *iterator, bool *completed )
    {
    	UnitPointer *traversal_ptr;
 
 	traversal_ptr = front;	
 
-	while( (traversal_ptr != NULL) )
+	while( (traversal_ptr != 0) )
 	 {
 	  if ( traversal_ptr->index >= (*iterator) )
 	   {
-	   	if ( traversal_ptr->next != NULL )
+	   	if ( traversal_ptr->next != 0 )
 		 { (*iterator) = traversal_ptr->next->index; }
 	   	else
 		 { (*iterator)++; }
 	   
-	   	(*completed) = _FALSE;
+	   	(*completed) = false;
 		return( traversal_ptr->unit );
 	   }
 	  
 	  traversal_ptr = traversal_ptr->next;
 	 }
   
-    (*completed) = _TRUE;
-	return( NULL );
+    (*completed) = true;
+	return( 0 );
    }  
 
 
-  boolean addFirstFree( UnitBase *unit, unsigned long *new_index );
+  bool addFirstFree( UnitBase *unit, unsigned long *new_index );
         
   inline UnitBase * remove( unsigned long index )
    {
@@ -277,7 +275,7 @@ class UnitList : public UnitPointerList
 	
 	traversal_ptr = front;
 
-	while( traversal_ptr != NULL )
+	while( traversal_ptr != 0 )
 	 {
 	  if ( traversal_ptr->index == index )
 	   {
@@ -285,17 +283,17 @@ class UnitList : public UnitPointerList
  	     contains--;
 
  	     unit = traversal_ptr->unit;
-	     traversal_ptr->unit = NULL;
+	     traversal_ptr->unit = 0;
 
 		 return( unit );
 	   }
 	  traversal_ptr = traversal_ptr->next;
 	 } // ** while 
     
-    return( NULL ); 
+    return( 0 ); 
    }
 
-  inline UnitBase * remove( UnitID &unitID )
+  inline UnitBase * remove( const UnitID &unitID )
    {
     unsigned long index;
     index = unitID.getIndex();
@@ -305,10 +303,10 @@ class UnitList : public UnitPointerList
 
   void removeAll( void ); 
 
-  inline unsigned long getSize( void )
+  inline unsigned long getSize( void ) const
    { return( size ); }
 
-  inline unsigned long containsItems( void )
+  inline unsigned long containsItems( void ) const
    { return( contains );  }
   
   void dispose( unsigned long index );

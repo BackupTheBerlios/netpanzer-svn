@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <process.h>
 
 #define LoadStrFromRes(uID,lpBuffer) \
-LoadString (GetModuleHandle(NULL),\
+LoadString (GetModuleHandle(0),\
             (uID),\
             (lpBuffer),\
             sizeof((lpBuffer)));
@@ -39,7 +39,7 @@ static char     GameDirectory[MAX_PATH];    // where the user wants the game
 static char     SetupDirectory[MAX_PATH];     // where the user ran setup from
 
 
-BOOL FAR PASCAL warnDlgProc(HWND hDlg,DWORD dwMessage,DWORD wParam,DWORD lParam);
+bool FAR PASCAL warnDlgProc(HWND hDlg,DWORD dwMessage,DWORD wParam,DWORD lParam);
 
 
 enum { _launch_netp_install_ok,
@@ -53,7 +53,7 @@ int LaunchNetPanzerInstall( HWND hWnd )
   int   ver_result;
   int   mb_result;
   int   exec_result;
-  BOOL  version_check_success;
+  bool  version_check_success;
 
   DWORD direct_x_version;
   DWORD direct_x_revision;
@@ -62,7 +62,7 @@ int LaunchNetPanzerInstall( HWND hWnd )
   char strBuf[512];
   char ishield_path[MAX_PATH];
 
-  version_check_success = FALSE;
+  version_check_success = false;
 
   ver_result = DirectXSetupGetVersion( &direct_x_version, &direct_x_revision );
   
@@ -90,15 +90,15 @@ int LaunchNetPanzerInstall( HWND hWnd )
 
     }
    else
-    { version_check_success = TRUE; }
+    { version_check_success = true; }
  
-  if( version_check_success == FALSE )
+  if( version_check_success == false )
    return( _launch_netp_install_directx_wrong_ver );
 
   strcpy( ishield_path, SetupDirectory );
   strcat( ishield_path, "\\netPDist\\setup.exe" );
 
-  exec_result = execl( ishield_path, ishield_path, NULL );
+  exec_result = execl( ishield_path, ishield_path, 0 );
  
   if( exec_result == -1 )
    {
@@ -160,7 +160,7 @@ void DoDirectSetup( HWND hWnd )
  }
 
 
-BOOL FAR PASCAL warnDlgProc(HWND hDlg,DWORD dwMessage,DWORD wParam,DWORD lParam)
+bool FAR PASCAL warnDlgProc(HWND hDlg,DWORD dwMessage,DWORD wParam,DWORD lParam)
 {
  switch(dwMessage)
   {
@@ -191,7 +191,7 @@ BOOL FAR PASCAL warnDlgProc(HWND hDlg,DWORD dwMessage,DWORD wParam,DWORD lParam)
  return 0;
 }
 
-BOOL FAR PASCAL mainDlgProc(HWND hDlg,DWORD dwMessage,DWORD wParam,DWORD lParam)
+bool FAR PASCAL mainDlgProc(HWND hDlg,DWORD dwMessage,DWORD wParam,DWORD lParam)
 {
  switch(dwMessage)
   {
@@ -250,7 +250,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrev, LPSTR szCmdLine, int nC
         }
         *x = 0;
         
-        DialogBox( hInstance, MAKEINTRESOURCE( IDD_MAIN_DIALOG ) , NULL, (DLGPROC) mainDlgProc );
+        DialogBox( hInstance, MAKEINTRESOURCE( IDD_MAIN_DIALOG ) , 0, (DLGPROC) mainDlgProc );
 
         return 0;
 } /* WinMain */

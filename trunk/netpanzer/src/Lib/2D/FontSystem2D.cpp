@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "stdafx.hpp"
+
 #include "FontSystem2D.hpp"
 #include "TimerInterface.hpp"
 
@@ -34,7 +34,7 @@ float FontSystem2D::scrollSpeed = 0.005f;
 
 void FontSystem2D::create(iXY pos, const char *string, const Surface &dest, float delay, PIX color)
 {
-	if (string == NULL) { return; }
+	if (string == 0) { return; }
 	//if (dest.getDoesExist == false) { return; }
 
 	reset();
@@ -49,14 +49,14 @@ void FontSystem2D::create(iXY pos, const char *string, const Surface &dest, floa
 		prev = next = zFontSystem2D;
 	}	else
 		{
-			prev = next = NULL;
+			prev = next = 0;
 			insertMe();
 		}
 }
 
 void FontSystem2D::create(iXY pos, const char *string, const Surface &dest, float delay, const ColorTable &colrorTable)
 {
-	if (string == NULL) { return; }
+	if (string == 0) { return; }
 	//if (dest.getDoesExist == false) { return; }
 
 	reset();
@@ -71,7 +71,7 @@ void FontSystem2D::create(iXY pos, const char *string, const Surface &dest, floa
 		prev = next = zFontSystem2D;
 	}	else
 		{
-			prev = next = NULL;
+			prev = next = 0;
 			insertMe();
 		}
 }
@@ -87,7 +87,7 @@ void FontSystem2D::reset()
 	delay           = 0.0f;
 	groupWait       = 0.0f;
 	charCount       = 0;
-	string          = NULL;
+	string          = 0;
 	stringLength    = 0;
 
 } // end FontSystem2D::reset
@@ -107,8 +107,8 @@ FontSystem2D::~FontSystem2D()
 void FontSystem2D::insertMe()
 {
 	// If we're inserting, we should not already be in the list...
-	assert(prev == NULL);
-	assert(next == NULL);
+	assert(prev == 0);
+	assert(next == 0);
 
 	// Insert me into the list
 	prev                = zFontSystem2D;
@@ -125,13 +125,13 @@ void FontSystem2D::insertMe()
 //---------------------------------------------------------------------------
 void FontSystem2D::removeMe()
 {
-	if (string != NULL)
+	if (string != 0)
 	{
 		::free(string);
 	}
 
-	if (prev != NULL) prev->next = next;
-	if (next != NULL) next->prev = prev;
+	if (prev != 0) prev->next = next;
+	if (next != 0) next->prev = prev;
 
 	prev = next = this;
 
@@ -202,7 +202,7 @@ void FontSystem2D::sim()
 
 	if (charCount < stringLength)	
 	{
-		charCount = groupWait / delay;
+		charCount = (int) (groupWait / delay);
 	}
 
 	if (charCount > stringLength)

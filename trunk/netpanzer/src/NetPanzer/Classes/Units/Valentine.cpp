@@ -15,10 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "Valentine.hpp"
 #include "UnitProfileInterface.hpp"
-#include "gdatstct.hpp"
+#include "Gdatstct.hpp"
 #include "Color.hpp"
 #include "ProjectileInterface.hpp"
 #include "NetworkState.hpp"
@@ -49,7 +48,7 @@ Valentine::Valentine( PointXYi initial_loc, unsigned char color, unsigned char f
  {
   setUnitProperties();
 
-  if ( color == _FALSE)
+  if ( color == false)
    {
     body_anim.setData( gValentineBody );
     turret_anim.setData( gValentineTurret );
@@ -71,7 +70,7 @@ Valentine::Valentine( PointXYi initial_loc, unsigned char color, unsigned char f
   turret_anim_shadow.setAttrib( PointXYi(0,0), PointXYi(0,0), unitLayer );
 
   select_info_box.setBoxAttributes( BoundBox( -20, -20, 20, 20), Color::blue );
-  select_info_box.setBoxState( _FALSE );
+  select_info_box.setBoxState( false );
   select_info_box.setFlag( flag );
 
   body_anim_shadow.attachSprite( &body_anim, PointXYi(0,0) );

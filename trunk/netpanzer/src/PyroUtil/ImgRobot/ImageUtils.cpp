@@ -28,12 +28,12 @@ int PicLabCrop( const char *source_path, const char *output_path,
   char fname[_MAX_FNAME];
   char ext[_MAX_EXT];
  
-  _splitpath( source_path, NULL, NULL, fname, ext );
+  _splitpath( source_path, 0, 0, fname, ext );
  
   if ( !stricmp( ext, "tga") )
    { return( _pic_lab_crop_invalid_source ); }
  
-  _splitpath( output_path, NULL, NULL, fname, ext );
+  _splitpath( output_path, 0, 0, fname, ext );
  
   if ( !stricmp( ext, "tga") )
    { return( _pic_lab_crop_invalid_output ); }
@@ -69,7 +69,7 @@ int LoadSurface( const char *file_path, Surface &surface )
   char fname[_MAX_FNAME];
   char ext[_MAX_EXT];
   
-  _splitpath( file_path, NULL, NULL, fname, ext );
+  _splitpath( file_path, 0, 0, fname, ext );
 
   	// Check for valid file extension.
 	if ((stricmp(ext, ".pcx") == 0))
@@ -112,7 +112,7 @@ int PakFiles( FileList &source_list, const char *output_path )
    return( _pak_files_ok );
 
   /*
-  _splitpath( source_list.getString( 0 ), NULL, NULL, fname, ext );
+  _splitpath( source_list.getString( 0 ), 0, 0, fname, ext );
   
   token = strtok( fname, "0123456789" );
   strcpy( output_file, token );  

@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "SelectionList.hpp"
 #include "UnitInterface.hpp"
 #include "PlayerInterface.hpp"
@@ -26,7 +25,7 @@ int selectKey( void *key, UnitState *comp )
 
   point = (PointXYi *) key;
 
-  if ( comp->bounds( *point ) == _TRUE )
+  if ( comp->bounds( *point ) == true )
    return( 0 );
   
   return( -1 );
@@ -38,7 +37,7 @@ int boundKey( void *key, UnitState *comp )
 
   bound = (Recti *) key;
 
-  if ( bound->contains( comp->location ) == _TRUE )
+  if ( bound->contains( comp->location ) == true )
    return( 0 );
    
   return( 1 );  
@@ -52,7 +51,7 @@ void SelectionList::initialize( unsigned long size,
  }
 
 
-boolean SelectionList::selectUnit( PointXYi point )
+bool SelectionList::selectUnit( PointXYi point )
  {
   PlayerID player_id;
 
@@ -66,20 +65,20 @@ boolean SelectionList::selectUnit( PointXYi point )
                                        (void *) &point,
                                        player_id,
                                        _search_player,
-                                       _FALSE
+                                       false
                                       );
 
   select();
   if ( unit_list.containsItems() > 0 )
    {
     resetUnitCycling();
-    return ( _TRUE );
+    return ( true );
    }
 
-  return( _FALSE );
+  return( false );
  }
 
-boolean SelectionList::addUnit( PointXYi point )
+bool SelectionList::addUnit( PointXYi point )
  {
   PlayerID player_id;
 
@@ -92,21 +91,21 @@ boolean SelectionList::addUnit( PointXYi point )
                                        (void *) &point,
                                        player_id,
                                        _search_player,
-                                       _FALSE
+                                       false
                                       );
 
   select();
   if ( unit_list.containsItems() > 0 )
    {
     resetUnitCycling();
-    return ( _TRUE );
+    return ( true );
    }
 
-  return( _FALSE );
+  return( false );
  }
 
   
-boolean SelectionList::selectTarget( PointXYi point )
+bool SelectionList::selectTarget( PointXYi point )
  {
   PlayerID player_id;
 
@@ -120,23 +119,23 @@ boolean SelectionList::selectTarget( PointXYi point )
                                        (void *) &point,
                                        player_id,
                                        _search_exclude_player,
-                                       _FALSE
+                                       false
                                       );
 
   if ( unit_list.containsItems() > 0 )
    {
     resetUnitCycling();
-    return ( _TRUE );
+    return ( true );
    }
   
-  return( _FALSE );
+  return( false );
  }
 
 
-boolean SelectionList::selectBounded( Recti bounds )
+bool SelectionList::selectBounded( Recti bounds )
  {
   PlayerID player_id;
-  boolean found_units;
+  bool found_units;
 
   
   player_id = PlayerInterface::getLocalPlayerID( );
@@ -146,10 +145,10 @@ boolean SelectionList::selectBounded( Recti bounds )
                                                      (void *) &bounds,
                                                      player_id,
                                                     _search_player,
-                                                    _TRUE
+                                                    true
                                                    );
-  if ( found_units == _FALSE )
-   return( _FALSE );
+  if ( found_units == false )
+   return( false );
   
   deselect();
   unit_list.removeAll();
@@ -159,17 +158,17 @@ boolean SelectionList::selectBounded( Recti bounds )
                                        (void *) &bounds,
                                         player_id,
                                        _search_player,
-                                       _FALSE
+                                       false
                                       );
   
   select();
   if ( unit_list.containsItems() > 0 )
    {
     resetUnitCycling();
-    return ( _TRUE );
+    return ( true );
    }
   
-  return( _FALSE );
+  return( false );
  }
 
 
@@ -184,9 +183,9 @@ void SelectionList::select( void )
   for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ )
    {
 	unit = UnitInterface::getUnit( unit_list[ id_list_index ] );
-	if ( unit != NULL )
+	if ( unit != 0 )
 	 {
-	  unit->unit_state.select = _TRUE;
+	  unit->unit_state.select = true;
 	 }
    
    }
@@ -204,9 +203,9 @@ void SelectionList::deselect( void )
   for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ )
    {
 	unit = UnitInterface::getUnit( unit_list[ id_list_index ] );
-	if ( unit != NULL )
+	if ( unit != 0 )
 	 {
-	  unit->unit_state.select = _FALSE;
+	  unit->unit_state.select = false;
 	 }   
    }
  }
@@ -226,14 +225,14 @@ void SelectionList::cycleNextUnit( void )
    {
    	
 	unit = UnitInterface::getUnit( unit_list[ unit_cycle_index ] );    
-	if ( unit != NULL )
+	if ( unit != 0 )
      {
-      unit->unit_state.select = _TRUE;
+      unit->unit_state.select = true;
      }
    
    	unit_cycle_index = (unit_cycle_index + 1) % unit_list.contains;
    
-   } while( (unit == NULL) && (unit_cycle_index != start_index) );
+   } while( (unit == 0) && (unit_cycle_index != start_index) );
  
  }
 
@@ -266,7 +265,7 @@ unsigned short SelectionList::getHeadUnitType( void )
   if ( unit_list.containsItems() > 0 )
    {
     unit = UnitInterface::getUnit( unit_list[ 0 ] );
-    if( unit != NULL )
+    if( unit != 0 )
      { return( unit->unit_state.unit_type ); }
     else
       { return(0); }
@@ -289,7 +288,7 @@ void SelectionList::validateList( void )
   for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ )
    {
 	unit = UnitInterface::getUnit( unit_list[ id_list_index ] );
-	if ( unit != NULL )
+	if ( unit != 0 )
 	 { return; }   
    }
   

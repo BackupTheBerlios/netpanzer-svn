@@ -24,8 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 enum { _net_message_id_occupation_status_update,
        _net_message_id_objective_sync };
-       
+
+#ifdef MSVC
 #pragma pack(1)
+#endif
 
 class ObjectiveOccupationUpdate : public NetMessage
  {
@@ -37,7 +39,7 @@ class ObjectiveOccupationUpdate : public NetMessage
     message_class = _net_message_class_objective;
     message_id = _net_message_id_occupation_status_update;
    }
- };
+ } __attribute__((packed));
 
 class ObjectiveSyncMesg : public NetMessage
  {
@@ -49,8 +51,10 @@ class ObjectiveSyncMesg : public NetMessage
     message_class = _net_message_class_objective;
     message_id = _net_message_id_objective_sync;
    }
- };
+ } __attribute__((packed));
 
+#ifdef MSVC
 #pragma pack()
+#endif
 
 #endif // ** _OBJECTIVE_NET_MESSAGE_HPP

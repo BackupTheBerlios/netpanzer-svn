@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "stdafx.hpp"
 #include "HelpScrollView.hpp"
 #include "gapp.hpp"
 #include "DSound.hpp"
@@ -119,7 +118,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
 
 	// Define the scrollBar fot this view.
 	//scrollBar = new ScrollBar(VERTICAL, 0, 1, 0, text.getCount());
-	//if (scrollBar == NULL)
+	//if (scrollBar == 0)
 	//{
 	//	FUBAR("ERROR: Unable to allocate the scrollBar.");
 	//}
@@ -179,7 +178,7 @@ void HelpScrollView::drawHelpText(const Surface &dest, const int &x, const int &
 {
 	PIX color   = Color::white;
 
-	//if (scrollBar != NULL)
+	//if (scrollBar != 0)
 	//{
 	//	int minView = scrollBar->getValue();
 	//	int maxView = minView + scrollBar->getViewableAmount();

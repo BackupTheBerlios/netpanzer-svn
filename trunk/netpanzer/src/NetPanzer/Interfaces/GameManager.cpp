@@ -15,12 +15,16 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
-
+// XXX we need new code here...
+#ifndef UNIX
 #include "GameManager.hpp"  
 
+#include <stdio.h>
 #include <fcntl.h>
+#ifdef WIN32
 #include <io.h>
+#include <conio.h>
+#endif
 #include <windows.h>
 
 // ** netPanzer Core Includes
@@ -36,6 +40,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //** WinSock Includes
 #include "WinSockServer.h"
 #include "WinSockClient.h"
+
+#ifdef WIN32
+#include "NetworkServerWinSock.hpp"
+#include "NetworkClientWinSock.hpp"
+#include "NetworkServerDPlay.hpp"
+#include "NetworkClientDPlay.hpp"
+#endif
 
 // ** PObject netPanzer Network Includes
 #include "Server.hpp"
@@ -137,8 +148,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ParticleInterface.hpp"
 #include "Physics.hpp"
 #include "TimerInterface.hpp"
-#include "JoystickInterface.hpp"
-#include "LoadSaveData.hpp"
+// XXX joystick disabled
+//#include "JoystickInterface.hpp"
 #include "FontSystem2D.hpp"
 #include "Math.hpp"
 
@@ -152,8 +163,8 @@ char GameManager::map_path[256];
 time_t GameManager::game_start_time = 0;
 time_t GameManager::game_elapsed_time_offset = 0;
 
-boolean GameManager::display_frame_rate_flag = _FALSE;
-boolean GameManager::display_network_info_flag;
+bool GameManager::display_frame_rate_flag = false;
+bool GameManager::display_network_info_flag;
 
 int GameManager::execution_mode;
 
@@ -166,29 +177,31 @@ BYTE     GameManager::current_mode_flags;
 static Surface hostLoadSurface;
 
 // ******************************************************************
-boolean GameManager::initializeDirectXSubSystem( void )
+bool GameManager::initializeDirectXSubSystem( void )
  {
   //_chdir( "c:\\netPanzer\\WorkSpace\\netPanzerBuildTree\\netPanzer\\Debug" );
   if( execution_mode == _execution_mode_loop_back_server)
    { 
     LOG( ( "Initializing Direct Draw" ) );
-    if( ( Screen->initialize() ) == _FALSE ) 
+    if( ( Screen->initialize() ) == false ) 
      {
-  	  MessageBox(gapp.hwndApp, "Screen->Initialize Failed", "Fatal Error", MB_OK);
-	  return ( _FALSE );
+  	  MessageBox(gapp.hwndApp, "DDraw.Initialize Failed", "Fatal Error", MB_OK);
+	  return ( false );
      }
  
     LOG( ( "Initializing Direct Input\n" ) );
-    if ( DirectInput::initialize() == _FALSE )
-     return ( _FALSE ); 
+    if ( DirectInput::initialize() == false )
+     return ( false ); 
    }
+  printf ("DXInit\n");
 
-  return( _TRUE );
+  return( true );
  }
 
 // ******************************************************************
 void GameManager::shutdownDirectXSubSystem( void )
  {
+  printf ("DXShutdown\n");
   //winsock hack
   //ShutDownConnection();
   //ShutdownWinSockClient();
@@ -199,7 +212,7 @@ void GameManager::shutdownDirectXSubSystem( void )
  }
 
 // ******************************************************************
-boolean GameManager::initializeVideoSubSystem( void )
+bool GameManager::initializeVideoSubSystem( void )
  {									     
   LOG( ( "Setting Default Video Sub-system" ) );
   
@@ -215,24 +228,24 @@ boolean GameManager::initializeVideoSubSystem( void )
    //current_mode_flags = VIDEO_MODE_TRIPLE_BUFFER;
   #endif
 	
-  if ( setVideoMode( current_video_mode_res ) == _FALSE)
+  if ( setVideoMode( current_video_mode_res ) == false)
    {
-	return( _FALSE );
+	return( false );
    }
  
   loadPalette( "wads\\netp.act" ); 
 
-  return ( _TRUE );
+  return ( true );
  }
 
 // ******************************************************************
 
-boolean GameManager::initializeSoundSubSystem( void )
+bool GameManager::initializeSoundSubSystem( void )
  {
-  if ( dsound.Initialize( gapp.hwndApp) == _FALSE )
+  if ( dsound.Initialize( gapp.hwndApp) == false )
    { LOG( ( "Failure to initialize DirectSound Sub-system" ) ); } 
   
-  return( _TRUE ); 
+  return( true ); 
  }
 
 // ******************************************************************
@@ -243,16 +256,17 @@ void GameManager::shutdownSoundSubSystem( void )
  }
 
 // ******************************************************************
-boolean GameManager::initializeWin32SubSystem( void )
+bool GameManager::initializeWin32SubSystem( void )
  {
   LOG( ( "Initializing Windows Timer" ) );
   
-  if ( WINTIMER.Initialize() == _FALSE )
-   return( _FALSE );
+  if ( WINTIMER.Initialize() == false )
+   return( false );
 
   TIMESTAMP::calibrate();
+  printf ("Timer Initok\n");
 
-  return( _TRUE );
+  return( true );
  }
 
 // ******************************************************************
@@ -264,7 +278,7 @@ void GameManager::shutdownWin32SubSystem( void )
 
 // ******************************************************************
 
-boolean GameManager::initializeWindowSubSystem( void )
+bool GameManager::initializeWindowSubSystem( void )
  {
 	LOG(("Initializing Game Viewing System"));
 
@@ -318,38 +332,42 @@ boolean GameManager::initializeWindowSubSystem( void )
 	Desktop::add(new FlagSelectionView());
 	Desktop::add(new HostOptionsView());
 	Desktop::add(new PlayerNameView());
- Desktop::add(new ResignView());
+	Desktop::add(new ResignView());
 	Desktop::add(new AreYouSureResignView());
 	Desktop::add(new AreYouSureExitView());
 	
- //winsock hack
- Desktop::add(new IPAddressView());
+	//winsock hack
+	Desktop::add(new IPAddressView());
 
- Desktop::setVisibilityAllWindows(false);
- Desktop::setVisibility("MainView", true);
+	Desktop::setVisibilityAllWindows(false);
+	Desktop::setVisibility("MainView", true);
 
-	return ( _TRUE );
+	printf ("ShowDesktop\n");
+
+	return ( true );
 }
 
 // ******************************************************************
-boolean GameManager::setVideoMode( PointXYi mode_res )
+bool GameManager::setVideoMode( PointXYi mode_res )
  {
-  if ( Screen->isDisplayModeAvailable( mode_res.x, mode_res.y, 8 ) == _TRUE	)
+  if ( DDraw.isDisplayModeAvailable( mode_res.x, mode_res.y, 8 ) == true	)
    {
     previous_video_mode_res = current_video_mode_res;
 	   current_video_mode_res = mode_res;
 
-	if (!Screen->setVideoMode(current_video_mode_res.x, current_video_mode_res.y, 8, current_mode_flags)) return FALSE;
+	if (!DDraw.setVideoMode(current_video_mode_res.x, current_video_mode_res.y, 8, current_mode_flags)) return false;
     
 	WorldViewInterface::setCameraSize( current_video_mode_res.x, current_video_mode_res.y );
     FRAME_BUFFER.create(current_video_mode_res.x, current_video_mode_res.y, current_video_mode_res.x, 1 );
     screen.createNoAlloc(current_video_mode_res);   
 	gameView.setSize( current_video_mode_res );
-   
-    return( _TRUE );
+
+  printf ("SetVideoOk\n");
+    return( true );
    }
+  printf ("SetVideoFailed\n");
  
-  return( _FALSE );
+  return( false );
  }
 
 // ******************************************************************
@@ -384,7 +402,7 @@ void GameManager::increaseDisplayResolution( void )
 
   new_mode = GameConfig::getGameScreenResolutionSize();
 
-  if ( setVideoMode(new_mode) == _TRUE )
+  if ( setVideoMode(new_mode) == true )
    {
     previous_video_mode_res = current_video_mode_res;
 	current_video_mode_res = new_mode;
@@ -416,7 +434,7 @@ void GameManager::decreaseDisplayResolution( void )
 
   new_mode = GameConfig::getGameScreenResolutionSize();
 
-  if ( setVideoMode(new_mode) == _TRUE )
+  if ( setVideoMode(new_mode) == true )
    {
     previous_video_mode_res = current_video_mode_res;
 	current_video_mode_res = new_mode;
@@ -478,14 +496,14 @@ void decreaseBrightness(const char *filename)
 
 
 // ******************************************************************
-boolean GameManager::initializeInputDevices( void )
+bool GameManager::initializeInputDevices( void )
  {
   LOG( ("Initializing Direct Keyboard Input") );
   
   if( execution_mode == _execution_mode_loop_back_server)
    {
-    if ( DirectInput::initializeDirectKeyboard() == _FALSE )
-     return ( _FALSE );
+    if ( DirectInput::initializeDirectKeyboard() == false )
+     return ( false );
    }
 
   //JoystickInterface::init();
@@ -494,14 +512,15 @@ boolean GameManager::initializeInputDevices( void )
   setupKeyboardBindings();
   
   MouseInterface::initialize();
-  MouseInterface::hideHardwareCursor();
+  //MouseInterface::hideHardwareCursor();
   mouse.setPointer(&mouseArrow);
+  printf ("InitInputOK!\n");
 
-  return ( _TRUE );
+  return ( true );
  }
 
 // ******************************************************************
-boolean GameManager::initializeGameObjects( void )
+bool GameManager::initializeGameObjects( void )
  {
   GameConfig::initialize();
   MapsManager::initialize();
@@ -513,40 +532,41 @@ boolean GameManager::initializeGameObjects( void )
 
   ConsoleInterface::initialize( 25 );
   PowerUpInterface::initialize();
-  return( _TRUE );
+  printf ("InitGameObjectOk!\n");
+  return( true );
  }
 
 // ******************************************************************
 
-boolean GameManager::shutdownGameObjects( void )
+bool GameManager::shutdownGameObjects( void )
  {
-  return( _TRUE );
+  return( true );
  }
 
 // ******************************************************************
-boolean GameManager::initializeDedicatedConsole( void )
+bool GameManager::initializeDedicatedConsole( void )
  {
   ShowWindow( gapp.hwndApp, SW_HIDE );
   if( AllocConsole() == 0 )
-   { return( _FALSE ); }
+   { return( false ); }
    
   freopen( "CONOUT$", "a+t", stdout );
   freopen( "CONIN$", "a+t", stdin );
   
-  ConsoleInterface::setStdoutPipe( _TRUE );
-  return( _TRUE );
+  ConsoleInterface::setStdoutPipe( true );
+  return( true );
  }
 
 // ******************************************************************
-boolean GameManager::shutdownDedicatedConsole( void )
+bool GameManager::shutdownDedicatedConsole( void )
  {
   FreeConsole();
   
-  return( _TRUE );
+  return( true );
  }
 
 // ******************************************************************
-boolean GameManager::initializeNetworkSubSystem( void )
+bool GameManager::initializeNetworkSubSystem( void )
  {
   SERVER = new NetworkServerWinSock();
   CLIENT = new NetworkClientWinSock();
@@ -563,7 +583,7 @@ boolean GameManager::initializeNetworkSubSystem( void )
   NetworkState::resetNetworkStats();
 
   SetPacketFunction( EnqueueIncomingPacket );
-  return( _TRUE );
+  return( true );
  }
 
 // ******************************************************************
@@ -580,7 +600,7 @@ void   GameManager::shutdownNetworkSubSystem( void )
  }
 
 // ******************************************************************
-boolean GameManager::initializeGameLogic( void )
+bool GameManager::initializeGameLogic( void )
  {
   PlayerInterface::initialize( GameConfig::GetNumberPlayers(), 
                                GameConfig::GetNumberInitialUnits() );
@@ -588,19 +608,19 @@ boolean GameManager::initializeGameLogic( void )
   UnitInterface::initialize( GameConfig::GetUnitsPerPlayer() );
   PathScheduler::initialize();
   PowerUpInterface::resetLogic(); 
-  return ( _TRUE );
+  return ( true );
  }
 
 // ******************************************************************
-boolean GameManager::reinitializeGameLogic( void )
+bool GameManager::reinitializeGameLogic( void )
  {
   shutdownGameLogic();
   initializeGameLogic();
-  return( _TRUE );
+  return( true );
  }
 
 // ******************************************************************
-boolean GameManager::resetGameLogic( void )
+bool GameManager::resetGameLogic( void )
  {
   PlayerInterface::reset();
   UnitInterface::reset();
@@ -609,7 +629,7 @@ boolean GameManager::resetGameLogic( void )
   PowerUpInterface::resetLogic();
   ProjectileInterface::resetLogic();
   startGameTimer();
-  return( _TRUE );
+  return( true );
  }
 
 // ******************************************************************
@@ -768,17 +788,17 @@ void GameManager::processSystemKeys( void )
 				KeyboardInterface::getKeyState( _SCAN_RGT_ALT ))
 		{
 
-			if (KeyboardInterface::getKeyPressed( _SCAN_NUM_PLUS ) == _TRUE)
+			if (KeyboardInterface::getKeyPressed( _SCAN_NUM_PLUS ) == true)
 			{
-				if (Desktop::getView("MainView")->getVisible() == _FALSE) 
+				if (Desktop::getView("MainView")->getVisible() == false) 
 				{
 					increaseDisplayResolution();
 				}
 			}
 
-			if (KeyboardInterface::getKeyPressed( _SCAN_NUM_MINUS ) == _TRUE)
+			if (KeyboardInterface::getKeyPressed( _SCAN_NUM_MINUS ) == true)
 			{
-				if (Desktop::getView("MainView")->getVisible() == _FALSE) 
+				if (Desktop::getView("MainView")->getVisible() == false) 
 				{
 					decreaseDisplayResolution();
 				}  
@@ -797,7 +817,7 @@ void GameManager::processSystemKeys( void )
 				{
 					View *v = Desktop::getView("OptionsView");
 					
-					if (v != NULL)
+					if (v != 0)
 					{
 						((OptionsTemplateView *)v)->initButtons();
 						((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
@@ -807,7 +827,7 @@ void GameManager::processSystemKeys( void )
 					}
 
 					v = Desktop::getView("SoundView");
-					if (v != NULL)
+					if (v != 0)
 					{
 						((SoundView *)v)->initButtons();
 						((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
@@ -817,7 +837,7 @@ void GameManager::processSystemKeys( void )
 					}
 
 					v = Desktop::getView("ControlsView");
-					if (v != NULL)
+					if (v != 0)
 					{
 						((ControlsView *)v)->initButtons();
 						((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
@@ -827,7 +847,7 @@ void GameManager::processSystemKeys( void )
 					}
 
 					v = Desktop::getView("VisualsView");
-					if (v != NULL)
+					if (v != 0)
 					{
 						((VisualsView *)v)->initButtons();
 						((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
@@ -837,7 +857,7 @@ void GameManager::processSystemKeys( void )
 					}
 
 					v = Desktop::getView("InterfaceView");
-					if (v != NULL)
+					if (v != 0)
 					{
 						((InterfaceView *)v)->initButtons();
 						((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
@@ -851,35 +871,35 @@ void GameManager::processSystemKeys( void )
 				} else
 				{
 					View *v = Desktop::getView("OptionsView");
-					if (v != NULL)
+					if (v != 0)
 					{
 						((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
 						((OptionsTemplateView *)v)->setVisible(false);
 					}
 						
 					v = Desktop::getView("InterfaceView");
-					if (v != NULL)
+					if (v != 0)
 					{
 						((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
 						((OptionsTemplateView *)v)->setVisible(false);
 					}
 					
 					v = Desktop::getView("VisualsView");
-					if (v != NULL)
+					if (v != 0)
 					{
 						((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
 						((OptionsTemplateView *)v)->setVisible(false);
 					}
 					
 					v = Desktop::getView("SoundView");
-					if (v != NULL)
+					if (v != 0)
 					{
 						((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
 						((OptionsTemplateView *)v)->setVisible(false);
 					}
 					
 					v = Desktop::getView("ControlsView");
-					if (v != NULL)
+					if (v != 0)
 					{
 						((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
 						((OptionsTemplateView *)v)->setVisible(false);
@@ -892,29 +912,29 @@ void GameManager::processSystemKeys( void )
 
 
 // ******************************************************************
-boolean GameManager::loadGameData( void )
+bool GameManager::loadGameData( void )
  {
   UnitProfileInterface::loadUnitProfiles();
   LoadUnitSurfaces();
   UNIT_FLAGS_SURFACE.loadAllBMPInDirectory( "pics\\flags\\netp\\" );
   
   GameConfig::loadConfigScript();
-  return( _TRUE ); 
+  return( true ); 
  }
 
 // ******************************************************************
-boolean GameManager::dedicatedLoadGameData( void )
+bool GameManager::dedicatedLoadGameData( void )
  {
   UnitProfileInterface::loadUnitProfiles();
   LoadUnitSurfaces();
   UNIT_FLAGS_SURFACE.loadAllBMPInDirectory( "pics\\flags\\netp\\" );
 
   GameConfig::loadConfigScript();
-  return( _TRUE ); 
+  return( true ); 
  }
 
 // ******************************************************************
-boolean GameManager::startGameMapLoad( char *map_file_path, unsigned long partitions, int *result_code )
+bool GameManager::startGameMapLoad( char *map_file_path, unsigned long partitions, int *result_code )
  {
   int check_return_code; 
   check_return_code = MapsManager::checkMapValidity( map_file_path );
@@ -922,13 +942,13 @@ boolean GameManager::startGameMapLoad( char *map_file_path, unsigned long partit
   if( check_return_code == _mapfile_not_found )
    {
     *result_code = _mapload_result_no_map_file;
-    return( _FALSE );
+    return( false );
    }
   else
    if( check_return_code == _wadfile_not_found )
     {
      *result_code = _mapload_result_no_wad_file;
-     return( _FALSE );
+     return( false );
     }
    else
     { *result_code = _mapload_result_success; }
@@ -936,26 +956,26 @@ boolean GameManager::startGameMapLoad( char *map_file_path, unsigned long partit
   strcpy( map_path, ".\\maps\\" );
   strcat( map_path, map_file_path );
   
-  if ( MapInterface::startMapLoad( map_path, _TRUE, partitions ) == _FALSE )
+  if ( MapInterface::startMapLoad( map_path, true, partitions ) == false )
    { 
     finishGameMapLoad();
-    return( _FALSE );
+    return( false );
    }
   
-  return( _TRUE );
+  return( true );
  }
 
 // ******************************************************************
 
-boolean GameManager::gameMapLoad( int *percent_complete )
+bool GameManager::gameMapLoad( int *percent_complete )
  {
-  if( MapInterface::loadMap( percent_complete ) == _FALSE )
+  if( MapInterface::loadMap( percent_complete ) == false )
    {
     finishGameMapLoad();
-    return( _FALSE );
+    return( false );
    }
  
-  return( _TRUE );
+  return( true );
  }
 
 // ******************************************************************
@@ -982,7 +1002,7 @@ void GameManager::dedicatedLoadGameMap( char *map_name )
   strcpy( map_path, ".\\maps\\" );
   strcat( map_path, map_name );
   
-  MapInterface::startMapLoad( map_path, _FALSE, 0 ); 
+  MapInterface::startMapLoad( map_path, false, 0 ); 
   
   strcat( map_path, ".opt" );
   ObjectiveInterface::loadObjectiveList( map_path );
@@ -995,7 +1015,7 @@ void GameManager::dedicatedLoadGameMap( char *map_name )
  }
 
 // ******************************************************************
-boolean GameManager::initialize( const char *command_line  )
+bool GameManager::initialize( const char *command_line  )
  {
   char work_str[256];
   char *token;
@@ -1003,7 +1023,7 @@ boolean GameManager::initialize( const char *command_line  )
 
   token = strtok( work_str, " " );
   
-  if ( token != NULL )
+  if ( token != 0 )
    {
     if ( strcmpi( token, "-dedicated" ) == 0 )
      {
@@ -1020,10 +1040,10 @@ boolean GameManager::initialize( const char *command_line  )
  }
 
 // ******************************************************************
-boolean GameManager::bootStrap( void )
+bool GameManager::bootStrap( void )
  {
   unsigned long i = 0;
-  boolean success = _TRUE;
+  bool success = true;
 
   while( success && (i < _MAX_INITIALIZE_PROCS ) )
    {
@@ -1075,20 +1095,20 @@ boolean GameManager::bootStrap( void )
     i++;
    }
  
-  if ( success == _FALSE )
+  if ( success == false )
    {  
     shutdown( i );
-    return ( _FALSE );
+    return ( false );
    }
     
-  return( _TRUE );
+  return( true );
  }
 
 // ******************************************************************
-boolean GameManager::dedicatedBootStrap( void )
+bool GameManager::dedicatedBootStrap( void )
  {
   unsigned long i = 0;
-  boolean success = _TRUE;
+  bool success = true;
 
   while( success && (i < _MAX_DEDICATED_INITIALIZE_PROCS) )
    {
@@ -1131,15 +1151,15 @@ boolean GameManager::dedicatedBootStrap( void )
     i++;
    }
  
-  if ( success == _FALSE )
+  if ( success == false )
    {  
     dedicatedShutdown( i );
-    return ( _FALSE );
+    return ( false );
    }
     
   launchDedicatedServer();
 
-  return( _TRUE );
+  return( true );
  }
 
 
@@ -1217,7 +1237,7 @@ void GameManager::shutdown( void )
 
 // ******************************************************************
 
-void GameManager::spawnPlayer( PlayerID &player )
+void GameManager::spawnPlayer( const PlayerID &player )
  {
   PointXYi spawn_point;
 
@@ -1279,7 +1299,7 @@ void GameManager::fraglimitGameCompleted( PlayerState *winner_player_state )
 
   Desktop::setVisibilityAllWindows(false);
   Desktop::setVisibility("GameView", true);
-  Desktop::setVisibility( "WinnerMesgView", TRUE );  
+  Desktop::setVisibility( "WinnerMesgView", true );  
 
   SERVER->sendMessage( &view_control, sizeof( SystemViewControl ), 0 );
  
@@ -1294,7 +1314,7 @@ void GameManager::objectiveGameCompleted( PlayerState *winner_player_state )
 
   Desktop::setVisibilityAllWindows(false);
   Desktop::setVisibility("GameView", true);
-  Desktop::setVisibility( "WinnerMesgView", TRUE );  
+  Desktop::setVisibility( "WinnerMesgView", true );  
 
   SERVER->sendMessage( &view_control, sizeof( SystemViewControl ), 0 );
 
@@ -1318,7 +1338,7 @@ void GameManager::evaluateGameRules( void )
        
         case _gametype_fraglimit :
          {
-          if ( PlayerInterface::testRuleScoreLimit( GameConfig::GetFragLimit(), &player_state ) == _TRUE )
+          if ( PlayerInterface::testRuleScoreLimit( GameConfig::GetFragLimit(), &player_state ) == true )
            {
             fraglimitGameCompleted( player_state );
            }
@@ -1326,7 +1346,7 @@ void GameManager::evaluateGameRules( void )
              
         case _gametype_objective :
          {
-          if ( PlayerInterface::testRuleObjectiveRatio( GameConfig::getObjectiveOccuapationPercentageDecimal(), &player_state ) == _TRUE )
+          if ( PlayerInterface::testRuleObjectiveRatio( GameConfig::getObjectiveOccuapationPercentageDecimal(), &player_state ) == true )
            {
             objectiveGameCompleted( player_state );
            }
@@ -1335,8 +1355,8 @@ void GameManager::evaluateGameRules( void )
        } // ** switch     
       
       // ** Check for Player Respawns ** 
-      boolean respawn_rule_complete = _FALSE;
-      while( respawn_rule_complete == _FALSE )
+      bool respawn_rule_complete = false;
+      while( respawn_rule_complete == false )
        {
         if ( PlayerInterface::testRulePlayerRespawn( &respawn_rule_complete, &player_state ) )
          {
@@ -1354,10 +1374,10 @@ void GameManager::evaluateGameRules( void )
 
 // ******************************************************************
 
-boolean GameManager::initializeConnectionType( void )
+bool GameManager::initializeConnectionType( void )
  {
   //bug#15
-  boolean ServProvReturn;
+  bool ServProvReturn;
 
   int connection_type;
    
@@ -1406,12 +1426,12 @@ void GameManager::netMessageViewControl( NetMessage *message )
 
   if ( view_control->action_flags & _view_control_flag_visible_on )
    {
-    Desktop::setVisibility( view_control->view_name, TRUE );    
+    Desktop::setVisibility( view_control->view_name, true );    
    }
 
   if ( view_control->action_flags & _view_control_flag_visible_off )
    {
-    Desktop::setVisibility( view_control->view_name, FALSE );    
+    Desktop::setVisibility( view_control->view_name, false );    
    }
 
 
@@ -1420,8 +1440,8 @@ void GameManager::netMessageViewControl( NetMessage *message )
 // ******************************************************************
 void GameManager::netMessageConnectAlert( NetMessage *message )
  {
-  SystemConnectAlert *connect_alert = NULL;
-  PlayerState *player_state = NULL;
+  SystemConnectAlert *connect_alert = 0;
+  PlayerState *player_state = 0;
   
   connect_alert = (SystemConnectAlert *) message;
 
@@ -1508,7 +1528,7 @@ void GameManager::netMessagePingAcknowledge( NetMessage *message )
 
 // ******************************************************************
 
-boolean GameManager::startClientGameSetup( NetMessage *message, int *result_code )
+bool GameManager::startClientGameSetup( NetMessage *message, int *result_code )
  {
   ConnectMesgServerGameSettings *game_setup;
 
@@ -1528,20 +1548,20 @@ boolean GameManager::startClientGameSetup( NetMessage *message, int *result_code
   game_elapsed_time_offset = game_setup->elapsed_time;
 
   startGameMapLoad( game_setup->map_name, 20, result_code );  
-  return( _TRUE );
+  return( true );
  }
 
 // ******************************************************************
 
-boolean GameManager::clientGameSetup( int *percent_complete )
+bool GameManager::clientGameSetup( int *percent_complete )
  {
-  if( gameMapLoad( percent_complete ) == _FALSE )
+  if( gameMapLoad( percent_complete ) == false )
    {
     reinitializeGameLogic();
-    return( _FALSE );
+    return( false );
    }
   
-  return( _TRUE );
+  return( true );
  }
 
 
@@ -1656,7 +1676,7 @@ void GameManager::hostMultiPlayerGame( void )
  {
 	PlayerID player;
 	PlayerState *player_state;
-	boolean minimize;
+	bool minimize;
 	Timer wait;
 
     progressView.open();
@@ -1670,7 +1690,7 @@ void GameManager::hostMultiPlayerGame( void )
     initializeConnectionType();
 	HostSession( gapp.hwndApp );                 
 
-	if (minimize == _FALSE)
+	if (minimize == false)
 	 { 
       Screen->setGDIStatus(false);
 	 }  
@@ -1685,7 +1705,7 @@ void GameManager::hostMultiPlayerGame( void )
     //InitStreamServer(gapp.hwndApp);
 
     progressView.scrollAndUpdateDirect( "Launching Server ..." );
-    if ( SERVER->hostSession() == _FALSE )
+    if ( SERVER->hostSession() == false )
      {
       progressView.scrollAndUpdateDirect( "SERVER LAUNCH FAILED" );
       wait.changePeriod( 4 );    
@@ -1726,7 +1746,7 @@ void GameManager::hostMultiPlayerGame( void )
 
     ObjectiveInterface::resetLogic();
 
-    while( gameMapLoad( &percent_complete ) == _TRUE )
+    while( gameMapLoad( &percent_complete ) == true )
      {
       sprintf( strbuf, "Loading Game Data ... (%d%%)", percent_complete);         
       progressView.updateDirect( strbuf );
@@ -1783,7 +1803,7 @@ void GameManager::joinMultiPlayerGame( void )
   //InitStreamClient(gapp.hwndApp);
   Timer wait;
   
-  if ( CLIENT->joinSession() == _FALSE )
+  if ( CLIENT->joinSession() == false )
    {
     lobbyView.scrollAndUpdate( "FAILED TO JOIN NETPANZER SESSION" );
     wait.changePeriod( 4 );    
@@ -1912,7 +1932,7 @@ void GameManager::launchDedicatedServer( void )
   printf( "PowerUps <NO> (Y/N) : " );
   gets( input_str );
   if ( stricmp( "y", input_str ) == 0 )
-   { GameConfig::setPowerUpState( _TRUE ); }
+   { GameConfig::setPowerUpState( true ); }
 
   printf( "Server Name <Dedicated Server> :" );
   gets( input_str );
@@ -2049,11 +2069,14 @@ void GameManager::inputLoop( void )
  {
   KeyboardInterface::sampleKeyboard();
 
+  // XXX Joystick code disabled
+#if 0
   if (JoystickInterface::exists())
    {
     JoystickInterface::poll();
     gInputOffset = JoystickInterface::getOffset();
    }
+#endif
   
   processSystemKeys();
 
@@ -2083,13 +2106,13 @@ void GameManager::graphicsLoop( void )
   
   char strBuf[256];
 
-  if (display_frame_rate_flag == _TRUE)
+  if (display_frame_rate_flag == true)
   {
 	sprintf(strBuf, "%3.1f : %3.1f" , TimerInterface::getFPS(), TimerInterface::getFPSAvg());
 	screen.bltString5x5(iXY(2, 2), strBuf, Color::white);
   }
  
-  if (display_network_info_flag == _TRUE)
+  if (display_network_info_flag == true)
   {
    sprintf(strBuf, "|| %.4f : %.4f || %.4f : %.4f ||" , NetworkState::packets_sent_per_sec, NetworkState::bytes_sent_per_sec,
                                                         NetworkState::packets_received_per_sec, NetworkState::bytes_received_per_sec  );
@@ -2230,3 +2253,5 @@ time_t GameManager::getGameTime( void )
  
   return( (current_time - game_start_time) + game_elapsed_time_offset );
  }
+#endif
+

@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "NetworkServerWinSock.hpp"
 
 #include "gapp.hpp"
@@ -83,17 +82,17 @@ int NetworkServerWinSock::openSession( int connection_type, int session_flags )
 int NetworkServerWinSock::hostSession( void )
  {
   //winsock hack
-  if(InitStreamServer(gapp.hwndApp) == FALSE) return _FALSE;
+  if(InitStreamServer(gapp.hwndApp) == false) return false;
 
-  if(InitDGramServer(gapp.hwndApp)== FALSE) return _FALSE;
+  if(InitDGramServer(gapp.hwndApp)== false) return false;
 
-  return _TRUE;
+  return true;
  }
 
 int NetworkServerWinSock::closeSession( void )
  {
   ShutdownWinSockServer();
-  return( _TRUE );
+  return( true );
  }
 
 int NetworkServerWinSock::sendMessage( NetMessage *message, unsigned long size, int flags )
@@ -105,19 +104,19 @@ int NetworkServerWinSock::sendMessage( NetMessage *message, unsigned long size, 
  
   //LOG( ( "SEND >> Class: %s ID: %s", NetMessageClassToString( *message), NetMessageIDtoString( *message )  ) );
   
-  ServerClientListData *iterator = NULL;
-  ServerClientListData *client_data_ptr = NULL;
+  ServerClientListData *iterator = 0;
+  ServerClientListData *client_data_ptr = 0;
 
   client_list.resetIterator( &iterator );
 
   client_data_ptr = client_list.incIteratorPtr( &iterator );
   
-  while( client_data_ptr != NULL )
+  while( client_data_ptr != 0 )
    {
     //winsock hack
     if( flags & _network_send_no_guarantee )
      {
-      if ( dontSendUDPHackFlag == _FALSE )
+      if ( dontSendUDPHackFlag == false )
        {
         message->sequence = client_data_ptr->no_guarantee_sequence_counter;
         client_data_ptr->no_guarantee_sequence_counter++;
@@ -127,7 +126,7 @@ int NetworkServerWinSock::sendMessage( NetMessage *message, unsigned long size, 
       else
        {
         client_data_ptr->no_guarantee_sequence_counter += 10;
-        dontSendUDPHackFlag = _FALSE; 
+        dontSendUDPHackFlag = false; 
        }
      }
     else
@@ -148,12 +147,12 @@ int NetworkServerWinSock::sendMessage( NetMessage *message, unsigned long size, 
   
   NetworkState::incPacketsSent( size ); 
   
-  return( _TRUE );
+  return( true );
  }
 
 int NetworkServerWinSock::sendMessage( NetMessage *message, unsigned long size, PlayerID &player_id, int flags )
  {
-  ServerClientListData *client_data_ptr = NULL;
+  ServerClientListData *client_data_ptr = 0;
   int ret_val;
 
   message->size = size;
@@ -165,7 +164,7 @@ int NetworkServerWinSock::sendMessage( NetMessage *message, unsigned long size, 
    {
     client_data_ptr = client_list.getClientData( player_id );
 
-    if( client_data_ptr == NULL )
+    if( client_data_ptr == 0 )
      { return( _network_failed ); }
     
     message->sequence = client_data_ptr->no_guarantee_sequence_counter;
@@ -195,7 +194,7 @@ int NetworkServerWinSock::getMessage( NetMessage *message )
     loop_back_recv_queue.dequeue( &net_packet );
 	memmove( (void *) message, net_packet.data, net_packet.packet_size );
 
-	return( _TRUE );
+	return( true );
    }
   else
    {
@@ -211,9 +210,9 @@ int NetworkServerWinSock::getMessage( NetMessage *message )
       if ( message->message_class == _net_message_class_client_server )
 	   { processNetMessage( message ); }
 
-	  return( _TRUE );        
+	  return( true );        
 	 }
    } // ** else 
     
-  return( _FALSE );
+  return( false );
  }

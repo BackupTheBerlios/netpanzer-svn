@@ -15,8 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-#include "stdafx.hpp"
 #include "DirectDrawPalette.hpp"
 #include "DirectDrawError.hpp"
 #include "gapp.hpp"
@@ -25,10 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //---------------------------------------------------------------------------
 DirectDrawPalette::DirectDrawPalette()
 { 
-	DirectDrawPalette::logPaletteHandle    = NULL;
-	DirectDrawPalette::systemPaletteHandle = NULL;
-	DirectDrawPalette::lpDDPalette         = NULL;
-	DirectDrawPalette::lpDDLink            = NULL;
+	DirectDrawPalette::logPaletteHandle    = 0;
+	DirectDrawPalette::systemPaletteHandle = 0;
+	DirectDrawPalette::lpDDPalette         = 0;
+	DirectDrawPalette::lpDDLink            = 0;
     DirectDrawPalette::paletteMode         = _palette_mode_fullscreen;
 }
 
@@ -56,7 +54,7 @@ void DirectDrawPalette::loadTextPalette(const char *filename)
 
 	FILE *fp = fopen(filename, "rt");
 
-	assert(fp != NULL);
+	assert(fp != 0);
 
 	for(int i = 0; i < 256; i++)
 	{
@@ -77,26 +75,26 @@ void DirectDrawPalette::initialize(LPDIRECTDRAW lpDirectDraw, int paletteMode )
 {
 	HRESULT result;
 
-	if(lpDDPalette != NULL)
+	if(lpDDPalette != 0)
 	 {
  	  lpDDPalette->Release();
 	 }
 
-    if ( systemPaletteHandle != NULL )
+    if ( systemPaletteHandle != 0 )
      {
       DeleteObject( systemPaletteHandle );
-	  systemPaletteHandle = NULL;
+	  systemPaletteHandle = 0;
      }
  
-    if ( logPaletteHandle != NULL )
+    if ( logPaletteHandle != 0 )
      {
       DeleteObject( logPaletteHandle );
- 	  logPaletteHandle = NULL;
+ 	  logPaletteHandle = 0;
      }
 
-	DirectDrawPalette::logPaletteHandle    = NULL;
-	DirectDrawPalette::systemPaletteHandle = NULL;
-	DirectDrawPalette::lpDDPalette         = NULL;
+	DirectDrawPalette::logPaletteHandle    = 0;
+	DirectDrawPalette::systemPaletteHandle = 0;
+	DirectDrawPalette::lpDDPalette         = 0;
 	DirectDrawPalette::lpDDLink            = lpDirectDraw;
     DirectDrawPalette::paletteMode         = paletteMode;
 
@@ -104,7 +102,7 @@ void DirectDrawPalette::initialize(LPDIRECTDRAW lpDirectDraw, int paletteMode )
 
     build332Palette(paletteTable);
 
-	result = lpDDLink->CreatePalette(DDPCAPS_8BIT, paletteTable, &lpDDPalette, NULL);
+	result = lpDDLink->CreatePalette(DDPCAPS_8BIT, paletteTable, &lpDDPalette, 0);
 
 	if(result != DD_OK)
 	{
@@ -118,21 +116,21 @@ void DirectDrawPalette::cleanUp()
 {
    activateSystemPalette();
 
-	if(lpDDPalette != NULL)
+	if(lpDDPalette != 0)
 	{
 		lpDDPalette->Release();
 	}
 
-   if ( systemPaletteHandle != NULL )
+   if ( systemPaletteHandle != 0 )
     {
      DeleteObject( systemPaletteHandle );
-	 systemPaletteHandle = NULL;
+	 systemPaletteHandle = 0;
     }
  
-   if ( logPaletteHandle != NULL )
+   if ( logPaletteHandle != 0 )
     {
      DeleteObject( logPaletteHandle );
- 	 logPaletteHandle = NULL;
+ 	 logPaletteHandle = 0;
    }
     
 } // end cleanUp
@@ -154,7 +152,7 @@ void DirectDrawPalette::saveSystemPalette( void )
   HDC hdc;
   UINT error;
 
-  hdc = GetDC( NULL );
+  hdc = GetDC( 0 );
   error = GetSystemPaletteEntries( hdc, 0, 256, systemPalette.palPalEntry );
     
   if ( error == 0 )
@@ -166,7 +164,7 @@ void DirectDrawPalette::saveSystemPalette( void )
   systemPalette.palNumEntries = 256;
   systemPaletteHandle = CreatePalette( (CONST LOGPALETTE *) &systemPalette );
  
-  if ( systemPaletteHandle == NULL )
+  if ( systemPaletteHandle == 0 )
    {
     MessageBox(gapp.hwndApp, "Create System Palette Failed", "Error", MB_OK);     
    }
@@ -179,27 +177,29 @@ void DirectDrawPalette::saveSystemPalette( void )
 //---------------------------------------------------------------------------
 void DirectDrawPalette::createLogicalPalette()
 {
-	for(int i = 0; i < 256; i++)
-	{     
+    int i;
+    
+    for(i = 0; i < 256; i++)
+    {     
 		logicalPalette.palPalEntry[i].peRed   = paletteTable[i].peRed;
 		logicalPalette.palPalEntry[i].peGreen = paletteTable[i].peGreen;
 		logicalPalette.palPalEntry[i].peBlue  = paletteTable[i].peBlue;
 		logicalPalette.palPalEntry[i].peFlags = 0; 
-	}
+    }
 
 	
     for(i = 1; i < 256; i++)
-	{     
-     logicalPalette.palPalEntry[i].peFlags = PC_NOCOLLAPSE; 
+    {     
+   	logicalPalette.palPalEntry[i].peFlags = PC_NOCOLLAPSE; 
     }
     
 	logicalPalette.palVersion    = 0x300;
 	logicalPalette.palNumEntries = 256;
 
-	if (logPaletteHandle != NULL)
+	if (logPaletteHandle != 0)
 	{
 		DeleteObject(logPaletteHandle);
-		logPaletteHandle = NULL;
+		logPaletteHandle = 0;
 	}
 
 	logPaletteHandle = CreatePalette((CONST LOGPALETTE *) &logicalPalette);
@@ -228,13 +228,13 @@ void DirectDrawPalette::activateSystemPalette()
 	UINT     error;
 	HPALETTE palHandle;
 
-	if (systemPaletteHandle == NULL)
+	if (systemPaletteHandle == 0)
  	 { return; }
 
     if ( paletteMode == _palette_mode_fullscreen ) 
      { return; }
 
-	hdc = GetDC(NULL);
+	hdc = GetDC(0);
 	error = SetSystemPaletteUse(hdc, SYSPAL_STATIC); 
 	
 	if (error == SYSPAL_ERROR)
@@ -242,9 +242,9 @@ void DirectDrawPalette::activateSystemPalette()
 		MessageBox(gapp.hwndApp, "SetSystemPaletteUse Failed", "Error", MB_OK);
 	}
 
-	palHandle = SelectPalette(hdc, systemPaletteHandle, FALSE);
+	palHandle = SelectPalette(hdc, systemPaletteHandle, false);
 
-	if (palHandle == NULL)
+	if (palHandle == 0)
 	{
 		MessageBox(gapp.hwndApp, "SelectPalette Failed", "Error", MB_OK);
 	}
@@ -276,13 +276,13 @@ void DirectDrawPalette::activateCurrentPalette()
 	UINT     error;
 	HPALETTE palHandle;
 
-	if(logPaletteHandle == NULL)
+	if(logPaletteHandle == 0)
 	 { return; }
 
     if ( paletteMode == _palette_mode_fullscreen ) 
      { return; }
 
-	hdc   = GetDC(NULL);
+	hdc   = GetDC(0);
 	
     error = SetSystemPaletteUse(hdc, SYSPAL_NOSTATIC); 
 
@@ -292,9 +292,9 @@ void DirectDrawPalette::activateCurrentPalette()
 	}
     
 	
-    palHandle = SelectPalette(hdc, logPaletteHandle, FALSE);
+    palHandle = SelectPalette(hdc, logPaletteHandle, false);
 
-	if (palHandle == NULL)
+	if (palHandle == 0)
 	{
 		MessageBox(gapp.hwndApp, "SelectPalette Failed", "Error", MB_OK);
 	}
@@ -307,7 +307,7 @@ void DirectDrawPalette::activateCurrentPalette()
 	}
 
     
-    if (lpDDPalette != NULL)
+    if (lpDDPalette != 0)
 	{
 		lpDDPalette->SetEntries(0, 0, 256, logicalPalette.palPalEntry);
 	}
@@ -335,7 +335,7 @@ void DirectDrawPalette::loadACTPalette(const char *filename, LPDIRECTDRAWSURFACE
 	BYTE blue;
 
 	FILE *in_file = fopen(filename, "rb");
-	assert(in_file != NULL);
+	assert(in_file != 0);
 
 	for(int i = 0; i < 256; i++)
 	{
@@ -352,15 +352,15 @@ void DirectDrawPalette::loadACTPalette(const char *filename, LPDIRECTDRAWSURFACE
 	fclose(in_file);
 
 	HRESULT result;
-	if (lpDDPalette != NULL)
+	if (lpDDPalette != 0)
 	{
 		lpDDPalette->Release();
-		lpDDPalette = NULL;
+		lpDDPalette = 0;
 	}
 
 	createLogicalPalette();
     
-    result = lpDDLink->CreatePalette(DDPCAPS_8BIT, logicalPalette.palPalEntry, &lpDDPalette, NULL);
+    result = lpDDLink->CreatePalette(DDPCAPS_8BIT, logicalPalette.palPalEntry, &lpDDPalette, 0);
 
 	if (result != DD_OK)
 	{
@@ -398,15 +398,15 @@ void DirectDrawPalette::loadLibPalette(const RGBColor *color, LPDIRECTDRAWSURFAC
 	}
 
 	HRESULT result;
-	if (lpDDPalette != NULL)
+	if (lpDDPalette != 0)
 	{
 		lpDDPalette->Release();
-		lpDDPalette = NULL;
+		lpDDPalette = 0;
 	}
 
 	createLogicalPalette();
     
-    result = lpDDLink->CreatePalette(DDPCAPS_8BIT, logicalPalette.palPalEntry, &lpDDPalette, NULL);
+    result = lpDDLink->CreatePalette(DDPCAPS_8BIT, logicalPalette.palPalEntry, &lpDDPalette, 0);
 
 	if (result != DD_OK)
 	{

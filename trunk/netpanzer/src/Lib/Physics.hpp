@@ -18,11 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Physics_hpp__
 #define __Physics_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
 #include "fXYZ.hpp"
 
 ////////////////////////////////////////////////////////////////////////////
@@ -32,7 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class Physics
 {
 public:
-
 	class Wind
 	{
 	friend class Physics;

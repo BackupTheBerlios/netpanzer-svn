@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _WRLDSPRT_HPP
 
 #include <stdlib.h>
-#include "aliasdef.h"
-#include "gdatstct.hpp"
+#include "codewiz.hpp"
+#include "Gdatstct.hpp"
 #include "Timer.hpp"
 
 class world_sprite_base
@@ -34,23 +34,24 @@ class world_sprite_base
   char select_x_cut;
   char select_y_cut;
 
-  byte  select_flag;
+  unsigned char select_flag;
   
   short attach_x;
   short attach_y;
   
-  byte  height;
-  byte  visible;
+  unsigned char  height;
+  unsigned char  visible;
   
   long  x_loc, y_loc;
 
-  world_sprite_base( void ) { select_flag = _FALSE; } 
+  world_sprite_base( void ) { select_flag = false; } 
   void set_attach_offset( short offset_x, short offset_y );
   void set_select_bbox( char x_cut, char y_cut );
-  void set_select( byte select_on_off );
+  void set_select( unsigned char select_on_off );
   virtual short is_visible( void ) = 0; 
   virtual void set_data( void *data ) = 0; 
-  virtual void set_data( void *data, short attach_offset_x, short attach_offset_y, byte height_val ) = 0; 
+  virtual void set_data( void *data, short attach_offset_x, short
+		  attach_offset_y, unsigned char height_val ) = 0; 
   virtual void update( long x, long y ) = 0;
   virtual void blit( void ) = 0;
 
@@ -64,7 +65,7 @@ class world_sprite : public world_sprite_base
   world_sprite( void );
   virtual short is_visible( void ); 
   virtual void set_data( void *data ); 
-  virtual void set_data( void *data, short attach_offset_x, short attach_offset_y, byte height_val ); 
+  virtual void set_data( void *data, short attach_offset_x, short attach_offset_y, unsigned char height_val ); 
   virtual void update( long x, long y );
   virtual void blit( void ); 
  };
@@ -77,19 +78,19 @@ class world_animation : public world_sprite_base
   public:
   animation_data *anim;
   
-  byte cycle;
-  byte auto_frame_update;
-  byte delay;
+  unsigned char cycle;
+  unsigned char auto_frame_update;
+  unsigned char delay;
   short direct;
   Timer frame_timer;
   short frame_counter;
   
   world_animation( void );
-  void set_anim_props( byte cycle_on_off, byte auto_frame_on_off, byte delay_tics, short rate); 
+  void set_anim_props( unsigned char cycle_on_off, unsigned char auto_frame_on_off, unsigned char delay_tics, short rate); 
   virtual short is_visible( void ); 
   virtual short completed( void );
   virtual void set_data( void *data ); 
-  virtual void set_data( void *data, short attach_offset_x, short attach_offset_y, byte height_val ); 
+  virtual void set_data( void *data, short attach_offset_x, short attach_offset_y, unsigned char height_val ); 
   virtual void update( long x, long y );
   virtual void update( long x, long y, short direction );
   virtual void blit( void ); 

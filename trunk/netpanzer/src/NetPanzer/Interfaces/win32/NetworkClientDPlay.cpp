@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "NetworkClientDPlay.hpp"
 
 #include "gapp.hpp"
@@ -23,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkState.hpp"
 #include "NetMessageLog.hpp"
 
-#include "Codewiz.hpp"
+#include "codewiz.hpp"
 
 #include "DirectPlay.h"
 #include "DPlayError.hpp"
@@ -50,7 +49,7 @@ int NetworkClientDPlay::openSession( int connection_type, int session_flags )
   if ( connection_type == _connection_loop_back )
    {
     NetworkClientDPlay::connection_type = _connection_loop_back;
-    return( _TRUE );
+    return( true );
    }
   else
    {
@@ -61,52 +60,52 @@ int NetworkClientDPlay::openSession( int connection_type, int session_flags )
    
     DPlayReturnValue = InitializeDirectPlay( gapp.hwndApp);
      
-    if( DPlayReturnValue != TRUE )
-     { return( _FALSE ); }
+    if( DPlayReturnValue != true )
+     { return( false ); }
 
     ServProvReturn = SetServProv( gapp.hwndApp, TCPIP );
     if( ServProvReturn == 0 ) 
-     { return( _FALSE ); }
+     { return( false ); }
 
-    return(_TRUE);
+    return(true);
    }
  }
     
 int NetworkClientDPlay::startEnumeration( ConnectionAddress address )   
  {
   
-  return( _FALSE ); 
+  return( false ); 
  }
 
 int NetworkClientDPlay::startEnumeration( )   
  {
   HRESULT hr;
-  BOOL minimize;
+  bool minimize;
 
-  Screen->setGDIStatus(true);
+  DDraw.setGDIStatus(true);
   
   minimize = MinimizeOrNot(gapp.hwndApp);
   hr =	EnumerateGames( gapp.hwndApp );
 
-  if (minimize == _FALSE)
+  if (minimize == false)
    {
-	Screen->setGDIStatus(false);
+	DDraw.setGDIStatus(false);
    }
 
   if( (hr == DPERR_USERCANCEL) || (hr == DPERR_EXCEPTION) || (hr == DPERR_GENERIC) )
    {
-    return( _FALSE );
+    return( false );
    }
 
   MouseInterface::hideHardwareCursor();   
 
-  return( _TRUE ); 
+  return( true ); 
  }
 
 int NetworkClientDPlay::stopEnumeration( void )
  {
   StopAsyncGameEnumeration( gapp.hwndApp );
-  return( _TRUE );   
+  return( true );   
  }
 
 int NetworkClientDPlay::getSessionList( SessionList &list )
@@ -122,7 +121,7 @@ int NetworkClientDPlay::getSessionList( SessionList &list )
 
   if( (hr == DPERR_USERCANCEL) || (hr == DPERR_EXCEPTION) || (hr == DPERR_GENERIC) )
    {
-    return( _FALSE );
+    return( false );
    }
 
   game_count = GetNumGames();
@@ -136,7 +135,7 @@ int NetworkClientDPlay::getSessionList( SessionList &list )
     GetGameName( game_index, list[ game_index ].name );
    }
  
-  return( _TRUE );
+  return( true );
  }
 
 int NetworkClientDPlay::joinSession( void )
@@ -145,36 +144,36 @@ int NetworkClientDPlay::joinSession( void )
 
   hr = JoinSession( gapp.hwndApp );
 
-  if ( hr == FALSE )
-   { return( _FALSE ); }
+  if ( hr == false )
+   { return( false ); }
 
   GetServerPlayerDPID( &server_DPID );
-  return( _TRUE );
+  return( true );
  }
 
 int NetworkClientDPlay::joinSession( int session_index ) 
  {
   
-  return( _FALSE );
+  return( false );
  }
 
 int NetworkClientDPlay::joinSession( const char session_name ) 
  {
-  return( _FALSE );
+  return( false );
  }
  
 int NetworkClientDPlay::setJoinSession( const char *session_name )
  {
-  if ( SetSelectedGame( session_name ) == FALSE )
-   { return( _FALSE ); }
+  if ( SetSelectedGame( session_name ) == false )
+   { return( false ); }
 
-  return( _TRUE );
+  return( true );
  }
   
 int NetworkClientDPlay::closeSession( void ) 
  {
   ShutDownConnection();
-  return( _TRUE );
+  return( true );
  }
   
 int NetworkClientDPlay::sendMessage( NetMessage *message, unsigned long size, int flags ) 
@@ -205,7 +204,7 @@ int NetworkClientDPlay::sendMessage( NetMessage *message, unsigned long size, in
         if (hr == DPERR_INVALIDPLAYER )
          {
           ClientConnectDaemon::serverConnectionBroken();
-          keep_alive_state = _FALSE;
+          keep_alive_state = false;
           connection_status = _connection_status_no_connection;
           closeSession();
          }
@@ -235,7 +234,7 @@ void NetworkClientDPlay::handleDPSystemMessage( NetPacket *packet )
       #ifdef _USE_DPLAY_KEEPALIVE_CHECKING 
       ClientConnectDaemon::serverConnectionBroken();
       connection_status = _connection_status_no_connection;
-      keep_alive_state = _FALSE;
+      keep_alive_state = false;
       ShutDownConnection();
       #endif
 
@@ -267,8 +266,9 @@ int NetworkClientDPlay::getMessage( NetMessage *message )
 
 	  NetworkState::incPacketsReceived( net_packet.packet_size );
 
-      return( _TRUE );  
+      return( true );  
      }
    }
-  return( _FALSE );
+  return( false );
  }
+

@@ -44,7 +44,7 @@ class PQueue : public PArray
    inline PObject * dequeue( void )
     {
      if ( front == rear )
-       { return ( NULL ); }
+       { return ( 0 ); }
      else
       {
        front = ( front + 1 ) % size;
@@ -53,20 +53,20 @@ class PQueue : public PArray
       
     }
  
-   inline boolean isEmpty( void )
+   inline bool isEmpty( void )
     {
      if( front == rear )
-       return ( _TRUE );
+       return ( true );
          
-     return( _FALSE );
+     return( false );
     }
 
-   inline boolean isReady( void )
+   inline bool isReady( void )
     {
      if( front == rear )
-      return ( _FALSE );
+      return ( false );
          
-     return( _TRUE );
+     return( true );
     }
 
 

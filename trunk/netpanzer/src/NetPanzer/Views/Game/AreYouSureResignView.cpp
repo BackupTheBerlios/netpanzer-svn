@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "stdafx.hpp"
 #include "AreYouSureResignView.hpp"
 #include "Desktop.hpp"
 #include "DirectDrawGlobals.hpp"
@@ -63,7 +62,7 @@ static void bYES()
 
 	View *v = Desktop::getView("OptionsView");
 	
-	if (v != NULL)
+	if (v != 0)
 	{
 		((OptionsTemplateView *)v)->initButtons();
 		((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
@@ -73,7 +72,7 @@ static void bYES()
 	}
 
 	v = Desktop::getView("SoundView");
-	if (v != NULL)
+	if (v != 0)
 	{
 		((SoundView *)v)->initButtons();
 		((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
@@ -83,7 +82,7 @@ static void bYES()
 	}
 
 	v = Desktop::getView("ControlsView");
-	if (v != NULL)
+	if (v != 0)
 	{
 		((ControlsView *)v)->initButtons();
 		((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
@@ -93,7 +92,7 @@ static void bYES()
 	}
 
 	v = Desktop::getView("VisualsView");
-	if (v != NULL)
+	if (v != 0)
 	{
 		((VisualsView *)v)->initButtons();
 		((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
@@ -103,7 +102,7 @@ static void bYES()
 	}
 
 	v = Desktop::getView("InterfaceView");
-	if (v != NULL)
+	if (v != 0)
 	{
 		((InterfaceView *)v)->initButtons();
 		((OptionsTemplateView *)v)->setAlwaysOnBottom(true);

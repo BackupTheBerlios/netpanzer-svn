@@ -15,14 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
-#include "stdafx.hpp"
 #include "Desktop.hpp"
 #include "KeyboardInterface.hpp"
 #include "loadPics.hpp"
@@ -61,8 +53,8 @@ int       Desktop::mouseMoveStatus = 0;
 //--------------------------------------------------------------------------
 Desktop::Desktop()
 {
-	top          = NULL;
-	focus        = NULL;
+	top          = 0;
+	focus        = 0;
 	mouseActions = 0;
 	prevButton   = 0;
 
@@ -89,17 +81,17 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 	// Check for mouseEnter and mouseExit.
 	if (mouseView != prevMouseView)
 	{
-		if (mouseView != NULL)
+		if (mouseView != 0)
 		{
 			mouseView->mouseEnter(mouseView->getScreenToClientPos(mousePos));
 		}
-		if (prevMouseView != NULL)
+		if (prevMouseView != 0)
 		{
 			prevMouseView->mouseExit(prevMouseView->getScreenToClientPos(mousePos));
 		}
 	}
 	
-	if (mouseView != NULL)
+	if (mouseView != 0)
 	{
 		mouseView->mouseMove(mouseView->getScreenToClientPos(prevMousePos), mouseView->getScreenToClientPos(mousePos));
 	}
@@ -125,9 +117,10 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 			lMouseDownPos = mousePos;
 
 			// Is this a double click? **FIX THE DOUBLE CLICK SENSITIVITY**
-			if (lMouseView != NULL)
+			if (lMouseView != 0)
 			{
-				int shit = 123456789;
+				// XXX what is this? ;-) commented out to avoid warning
+				//int shit = 123456789;
 
 			} else
 			{
@@ -135,7 +128,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 
 				// Not a double click.  See what window we're over
 				lMouseView = mouseView;
-				if (lMouseView != NULL)
+				if (lMouseView != 0)
 				{
 
 					//LOG_BLOCK(("Setting lMouseView"));
@@ -195,7 +188,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 			// The mouse was down before and is still down.  Are we performing
 			// and standard window actions?
 
-			if (lMouseView != NULL && mouseActions != 0)
+			if (lMouseView != 0 && mouseActions != 0)
 			{
 				//FUBAR("Double click!");
 
@@ -233,7 +226,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 					// No standard mouse actions.  Tell the window where the mouse
 					// was originally clicked that the mouse is being dragged over
 					// it.
-					if (lMouseView != NULL)
+					if (lMouseView != 0)
 					{
 						lMouseView->lMouseDrag(lMouseView->getScreenToClientPos(lMouseDownPos), lMouseView->getScreenToClientPos(prevMousePos), lMouseView->getScreenToClientPos(mousePos));
 					}
@@ -247,7 +240,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 		{
 			// The mouse button just got released.  If it was on top of a window
 			// before, then tell the window that the button was released
-			if (lMouseView != NULL)
+			if (lMouseView != 0)
 			{
 				lMouseView->lMouseUp(lMouseView->getScreenToClientPos(lMouseDownPos), lMouseView->getScreenToClientPos(mousePos));
 			}
@@ -256,7 +249,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 		}
 
 		//LOG(("Button released - clearing lMouseView and mouseActions"));
-		lMouseView = NULL;
+		lMouseView = 0;
 		mouseActions = 0;
 	}
 
@@ -277,7 +270,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 			rMouseDownPos = mousePos;
 
 			// Is this a double click? **FIX THE DOUBLE CLICK SENSITIVITY**
-			if (rMouseView != NULL && now() <= rDoubleClickDeadline && 0)
+			if (rMouseView != 0 && now() <= rDoubleClickDeadline && 0)
 			{
 				 //FUBAR("Double click!");
 
@@ -287,7 +280,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 			{
 				// Not a double click.  See what window we're over.
 				rMouseView = mouseView;
-				if (rMouseView != NULL)
+				if (rMouseView != 0)
 				{
 					// No standard mouse actions.  Tell the window that the mouse
 					// just got pressed.
@@ -301,7 +294,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
         // No standard mouse actions.  Tell the window where the mouse
         // was originally clicked that the mouse is being dragged over
         // it.
-        if (rMouseView != NULL) {
+        if (rMouseView != 0) {
            rMouseView->rMouseDrag(rMouseView->getScreenToClientPos(rMouseDownPos), rMouseView->getScreenToClientPos(prevMousePos), rMouseView->getScreenToClientPos(mousePos));
       }
     }
@@ -313,7 +306,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 			{
          // The mouse button just got released.  If it was on top of a window
          // before, then tell the window that the button was released
-         if (rMouseView != NULL)
+         if (rMouseView != 0)
          {
            rMouseView->rMouseUp(rMouseView->getScreenToClientPos(rMouseDownPos), rMouseView->getScreenToClientPos(mousePos));
          }
@@ -321,7 +314,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
          // Set double click deadline
          rDoubleClickDeadline = now() + doubleClickTime;
       }
-    rMouseView = NULL;
+    rMouseView = 0;
   }
 
   //if (curButton & 2)
@@ -338,7 +331,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 
 	// Send a message to the top (active) window of the position 
 	// of the mouse.
-	//if (focus != NULL)
+	//if (focus != 0)
 		//focus->mouseMove(focus->getScreenToClientPos(prevMousePos), focus->getScreenToClientPos(mousePos));
 
 
@@ -353,11 +346,11 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 
 	//mouseView = findViewContaining(mousePos);
 	unsigned effActions = mouseActions;
-	if (mouseView != NULL && effActions == 0) {
+	if (mouseView != 0 && effActions == 0) {
 		effActions = mouseView->getMouseActions(mousePos-mouseView->min);
 	}
 
-        Surface *pointer = &mouseArrow;
+        //Surface *pointer = &mouseArrow;
 
 	//if (mouseView->status & View::STATUS_ALLOW_RESIZE && mouseView->status & View::STATUS_ACTIVE)
 	//{
@@ -471,7 +464,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 */
 	//mouse.setPointer(pointer);
 
-    if (focus != NULL)
+    if (focus != 0)
     {
 		focus->processEvents();
 		KeyboardInterface::flushCharBuffer();
@@ -490,7 +483,7 @@ void Desktop::draw()
 	size_t viewCount = 0;
 	View *list[MAX_WINDOWS];
 
-	for (View *w = top ; w != NULL ; w = w->next)
+	for (View *w = top ; w != 0 ; w = w->next)
 	{
 		list[viewCount++] = w;
 	}
@@ -501,14 +494,14 @@ void Desktop::draw()
 		list[n]->draw();
 	}
 
-	//if (mouseView != NULL) mouseView->drawToolTip(screen);
+	//if (mouseView != 0) mouseView->drawToolTip(screen);
 } // end draw
 
 // add
 //--------------------------------------------------------------------------
 // Purpose: Adds a new window to the end of the current window list.
 //--------------------------------------------------------------------------
-void Desktop::add(View *view, bool autoActivate /* = TRUE */)
+void Desktop::add(View *view, bool autoActivate /* = true */)
 {
   assert(isValidPtr(view));
 
@@ -520,11 +513,11 @@ void Desktop::add(View *view, bool autoActivate /* = TRUE */)
 	// Insert the guy at the end of the list, while checking that the window is
   // not inserted before some window which should always remain on the bottom.
   View **prevLink = &top;
-	while (*prevLink != NULL /*&& !((*prevLink)->status & View::STATUS_ALWAYS_ON_BOTTOM)*/)
+	while (*prevLink != 0 /*&& !((*prevLink)->status & View::STATUS_ALWAYS_ON_BOTTOM)*/)
 	  prevLink = &(*prevLink)->next;
 
 	*prevLink = view;
-  view->next = NULL;
+  view->next = 0;
 
 	if (autoActivate) activate(view);
 
@@ -536,13 +529,13 @@ void Desktop::add(View *view, bool autoActivate /* = TRUE */)
 //---------------------------------------------------------------------------
 void Desktop::activate(View *view)
 {
-	assert(view != NULL);
+	assert(view != 0);
 
 	// If the top window equals the window to activate, then nothing needs to
 	// be done.
 	if (focus != view)
 	{
-		if (focus != NULL)
+		if (focus != 0)
 		{
 			focus->deactivate();
 		}
@@ -573,7 +566,7 @@ void Desktop::remove(View *view)
 {
 	View **prevLink = &top;
 
-	while (*prevLink != NULL)
+	while (*prevLink != 0)
 	{
 		if (*prevLink == view)
 		{
@@ -589,12 +582,12 @@ void Desktop::remove(View *view)
 //--------------------------------------------------------------------------
 View *Desktop::findViewContaining(iXY pos)
 {
-	for (View *view = top ; view != NULL ; view = view->next)
+	for (View *view = top ; view != 0 ; view = view->next)
 	{
 		if (view->status & View::STATUS_VISIBLE)
 		if (view->contains(pos)) return view;
 	}
-	return NULL;
+	return 0;
 } // end findViewContaining
 
 // removeView
@@ -603,12 +596,12 @@ View *Desktop::findViewContaining(iXY pos)
 //--------------------------------------------------------------------------
 bool Desktop::removeView(const char *searchName)
 {
-	for (View *view = top; view != NULL; view = view->next)
+	for (View *view = top; view != 0; view = view->next)
 	{
 		if (strcmp(view->searchName, searchName) == 0)
 		{
 			remove(view);
-			return TRUE;
+			return true;
 		}
 	}
 	return false;
@@ -620,7 +613,7 @@ bool Desktop::removeView(const char *searchName)
 //--------------------------------------------------------------------------
 void Desktop::removeAllViewAlwaysOnBottom()
 {
-	for (View *view = top; view != NULL; view = view->next)
+	for (View *view = top; view != 0; view = view->next)
 	{
 		if (view->getAlwaysOnBottom())
 		{
@@ -636,7 +629,7 @@ void Desktop::removeAllViewAlwaysOnBottom()
 //--------------------------------------------------------------------------
 void Desktop::toggleVisibility(const char *searchName)
 {
-	for (View *view = top; view != NULL; view = view->next)
+	for (View *view = top; view != 0; view = view->next)
 	{
 		if (strcmp(view->searchName, searchName) == 0)
 		{
@@ -662,7 +655,7 @@ void Desktop::toggleVisibility(const char *searchName)
 //--------------------------------------------------------------------------
 void Desktop::checkViewPositions()
 {
-	for (View *view = top; view != NULL; view = view->next)
+	for (View *view = top; view != 0; view = view->next)
 	{
 		view->moveTo(view->min);
 	}
@@ -676,7 +669,7 @@ void Desktop::checkViewPositions()
 //--------------------------------------------------------------------------
 void Desktop::toggleVisibilityNoDoAnything(const char *searchName)
 {
-	for (View *view = top; view != NULL; view = view->next)
+	for (View *view = top; view != 0; view = view->next)
 	{
 		if (strcmp(view->searchName, searchName) == 0)
 		{
@@ -692,7 +685,7 @@ void Desktop::toggleVisibilityNoDoAnything(const char *searchName)
 //--------------------------------------------------------------------------
 void Desktop::setActiveView(const char *searchName)
 {
-	for (View *view = top; view != NULL; view = view->next)
+	for (View *view = top; view != 0; view = view->next)
 	{
 		if (strcmp(view->searchName, searchName) == 0)
 		{
@@ -711,7 +704,7 @@ void Desktop::setActiveView(const char *searchName)
 //--------------------------------------------------------------------------
 void Desktop::setActiveView(View *view)
 {
-	for (View *v = top; v != NULL; v = v->next)
+	for (View *v = top; v != 0; v = v->next)
 	{
 		if (v == view)
 		{
@@ -732,7 +725,7 @@ unsigned Desktop::getPointerStatus(int mouseX, int mouseY)
 	iXY mouse(mouseX, mouseY);
 
   View *mouseView = findViewContaining(mouse);
-  if (mouseView == NULL) return 0;
+  if (mouseView == 0) return 0;
 
 	// Only let the top window be resized
   if (mouseView == top) return mouseView->getMouseActions(mouse);
@@ -745,7 +738,7 @@ unsigned Desktop::getPointerStatus(int mouseX, int mouseY)
 //--------------------------------------------------------------------------
 void Desktop::doMouseActions(const iXY &mousePos)
 {
-	if (lMouseView == NULL) return;
+	if (lMouseView == 0) return;
 
 	if (mouseActions & View::MA_MOVE)
 	{
@@ -795,7 +788,7 @@ void Desktop::doMouseActions(const iXY &mousePos)
 //--------------------------------------------------------------------------
 char *Desktop::getTopViewTitle()
 {
-	if (top != NULL)
+	if (top != 0)
 	{
 		return top->title;
 	}
@@ -810,7 +803,7 @@ char *Desktop::getTopViewTitle()
 //--------------------------------------------------------------------------
 char *Desktop::getMouseViewTitle()
 {
-	if (mouseView != NULL)
+	if (mouseView != 0)
 	{
 		return mouseView->title;
 	}
@@ -825,7 +818,7 @@ char *Desktop::getMouseViewTitle()
 //--------------------------------------------------------------------------
 unsigned Desktop::getMouseViewStatus()
 {
-	if (mouseView != NULL) return mouseView->status;
+	if (mouseView != 0) return mouseView->status;
 	else return 0;
 } // end getMouseViewStatus
 
@@ -840,7 +833,7 @@ int Desktop::getViewCount()
 	int viewCount = 0;
 	View *list[MAX_WINDOWS];
 
-	for (View *view = top ; view != NULL ; view = view->next)
+	for (View *view = top ; view != 0 ; view = view->next)
 	{
 		if (viewCount > MAX_WINDOWS) assert(false);
 		list[viewCount++] = view;
@@ -862,7 +855,7 @@ const char *Desktop::getViewTitle(int winNum)
 	// Goes through the window list till we get the requested window.
 	for (int num = 0; num < winNum; num++)
 	{
-		assert(w != NULL);
+		assert(w != 0);
 		w = w->next;
 	}
 
@@ -884,7 +877,7 @@ const char *Desktop::getViewSearchName(int winNum)
 	// Goes through the window list till we get the requested window.
 	for (int num = 0; num < winNum; num++)
 	{
-		assert(w != NULL);
+		assert(w != 0);
 		w = w->next;
 	}
 
@@ -899,7 +892,7 @@ const char *Desktop::getViewSearchName(int winNum)
 //--------------------------------------------------------------------------
 int Desktop::getViewStatus(const char *searchName)
 {
-	for (View *view = top; view != NULL; view = view->next)
+	for (View *view = top; view != 0; view = view->next)
 	{
 		if (strcmp(view->searchName, searchName) == 0)
 		{
@@ -921,7 +914,7 @@ bool Desktop::closeView(const char *searchName)
 	int   viewCount = 0;
 	View *list[MAX_WINDOWS];
 
-	for (View *w = top ; w != NULL ; w = w->next)
+	for (View *w = top ; w != 0 ; w = w->next)
 	{
 		// Bounds checking.
 		if (viewCount > MAX_WINDOWS) assert(false);
@@ -931,7 +924,7 @@ bool Desktop::closeView(const char *searchName)
 		{
 			w->status &= ~View::STATUS_VISIBLE;
 			
-			return TRUE;
+			return true;
 		}
 		
 		list[viewCount++] = w;
@@ -947,7 +940,7 @@ bool Desktop::closeView(const char *searchName)
 //--------------------------------------------------------------------------
 void Desktop::setVisibility(const char *searchName, int isVisible)
 {
-	for (View *view = top; view != NULL; view = view->next)
+	for (View *view = top; view != 0; view = view->next)
 	{
 		if (strcmp(view->searchName, searchName) == 0)
 		{
@@ -973,7 +966,7 @@ void Desktop::setVisibility(const char *searchName, int isVisible)
 //--------------------------------------------------------------------------
 void Desktop::setVisibilityNoDoAnything(const char *searchName, int isVisible)
 {
-	for (View *view = top; view != NULL; view = view->next)
+	for (View *view = top; view != 0; view = view->next)
 	{
 		if (strcmp(view->searchName, searchName) == 0)
 		{

@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include <windows.h>
 
 #include "DSound.hpp"
@@ -37,7 +36,7 @@ DirectSound dsound;
 
 DirectSound::DirectSound()
 {
- Enabled = FALSE;
+ Enabled = false;
 }
 //////////////////////////////////
 //////////////////////////////////
@@ -50,18 +49,18 @@ HRESULT DirectSound::Initialize(HWND hWnd)
 
 	for(index = 0; index < MAX_NUM_SFX; index++)
 	{
-		m_pDSBuffer[index] = NULL;
+		m_pDSBuffer[index] = 0;
   PreviousVolume[index] = DSBVOLUME_MAX;
 
   /*      if(index >= AMBIENT_START)
         {
-		    m_pDSBufferDup1[index] = NULL;
-		    m_pDSBufferDup2[index] = NULL;
+		    m_pDSBufferDup1[index] = 0;
+		    m_pDSBufferDup2[index] = 0;
         } */
 
 	}
 
-	m_lpDirectSound = NULL;
+	m_lpDirectSound = 0;
 	
 	ZeroMemory(&m_DSCaps, sizeof(DSCAPS));
 
@@ -74,22 +73,22 @@ HRESULT DirectSound::Initialize(HWND hWnd)
 
  hr = InitDirectSound(hWnd);
 
- if(hr == FALSE)
+ if(hr == false)
  {
-  Enabled = FALSE;
-  return FALSE;
+  Enabled = false;
+  return false;
  }
 
  hr = InitSoundEngine(hWnd);
 
- if(hr == FALSE)
+ if(hr == false)
  {
-  Enabled = FALSE;
-  return FALSE;
+  Enabled = false;
+  return false;
  }
 
- Enabled = TRUE;
- return TRUE;
+ Enabled = true;
+ return true;
 
 }
 //////////////////////////////////
@@ -102,7 +101,7 @@ HRESULT DirectSound::InitDirectSound(HWND hWnd)
 	//here's where i want to create a directsound object--
 	HRESULT	hr;
 	
-	hr = DirectSoundCreate(NULL, &m_lpDirectSound, NULL);
+	hr = DirectSoundCreate(0, &m_lpDirectSound, 0);
 
 	if(hr != DS_OK)
 	{
@@ -119,7 +118,7 @@ HRESULT DirectSound::InitDirectSound(HWND hWnd)
 			MessageBox(hWnd, "Not enough memory to run DirectSound. You can still play netPanzer, but there won't be any sound.", "Error", MB_OK);
 
 		ShutDownDirectSound();
-		return FALSE;
+		return false;
 	}
 
 	//according to spec, the next thing i have to do is set
@@ -130,7 +129,7 @@ HRESULT DirectSound::InitDirectSound(HWND hWnd)
 	{
 		MessageBox(hWnd, "DirectSound initialization failed. You can still play netPanzer, but there won't be any sound.", "Error", MB_OK);
   		ShutDownDirectSound();
-        return FALSE;
+        return false;
 	}
 
 	//i don't have to get device caps, but i will just for the hell
@@ -143,10 +142,10 @@ HRESULT DirectSound::InitDirectSound(HWND hWnd)
 	{
 		MessageBox(hWnd, "DirectSound can't get sound card info. You can still play netPanzer, but there won't be any sound.", "Error", MB_OK);
 		ShutDownDirectSound();
-		return FALSE;
+		return false;
 	}
 
-	return TRUE;
+	return true;
 }
 //////////////////////////////////
 //////////////////////////////////
@@ -162,7 +161,7 @@ HRESULT DirectSound::InitSoundEngine(HWND hWnd)
 
 	HRESULT hr;
 	
-	//declare all the pointers and variables and set them to NULL--
+	//declare all the pointers and variables and set them to 0--
 	//for loading the .wav file--
 	UINT	cbSize[MAX_NUM_SFX];
 	DWORD	cSamples[MAX_NUM_SFX];
@@ -174,17 +173,17 @@ HRESULT DirectSound::InitSoundEngine(HWND hWnd)
 	DWORD   dwLength[MAX_NUM_SFX];
 	DWORD   dwLength2[MAX_NUM_SFX];
 
-	//set all these guys to NULL--
+	//set all these guys to 0--
 	for(index = 0; index < MAX_NUM_SFX; index++)
 	{
-		cbSize[index] = NULL;
-		cSamples[index] = NULL;
-		pbData1[index] = NULL;
+		cbSize[index] = 0;
+		cSamples[index] = 0;
+		pbData1[index] = 0;
 
-		pbData[index] = NULL;
-		pbData2[index] = NULL;
-		dwLength[index] = NULL;
-		dwLength2[index] = NULL;
+		pbData[index] = 0;
+		pbData2[index] = 0;
+		dwLength[index] = 0;
+		dwLength2[index] = 0;
 	}
 
 
@@ -202,7 +201,7 @@ HRESULT DirectSound::InitSoundEngine(HWND hWnd)
 		{
 			MessageBox(hWnd, "DirectSound couldn't initialize completely. You can still play netPanzer, but there will be no sound.", "Error", MB_OK);
 			ShutDownDirectSound();
-			return FALSE;
+			return false;
 		}
 
 		//now make a secondary direct sound buffer for it-- 
@@ -214,7 +213,7 @@ HRESULT DirectSound::InitSoundEngine(HWND hWnd)
 		m_DSBufferDesc[index].dwBufferBytes = cbSize[index];
 	    m_DSBufferDesc[index].lpwfxFormat = m_pWaveFormatEx[index];
 
-		hr = m_lpDirectSound -> CreateSoundBuffer( &m_DSBufferDesc[index], &m_pDSBuffer[index], NULL);
+		hr = m_lpDirectSound -> CreateSoundBuffer( &m_DSBufferDesc[index], &m_pDSBuffer[index], 0);
 
 		if(hr == DS_OK)
 		{
@@ -224,9 +223,9 @@ HRESULT DirectSound::InitSoundEngine(HWND hWnd)
 			memcpy(pbData[index], pbData1[index], cbSize[index]);
 
 		    // Ok, now unlock the buffer--
-			m_pDSBuffer[index]->Unlock( pbData[index], cbSize[index], NULL, 0);
+			m_pDSBuffer[index]->Unlock( pbData[index], cbSize[index], 0, 0);
 
-		    pbData[index] = NULL;
+		    pbData[index] = 0;
 
 			//make duplicate buffers for the ambient sound effects. i have to hard code this
 			//for now (less than 16 is not ambient) make sure to change the value in the
@@ -241,7 +240,7 @@ HRESULT DirectSound::InitSoundEngine(HWND hWnd)
 				{
 				MessageBox(hWnd, "DirectSound couldn't initialize completely. You can still play netPanzer, but there will be no sound.", "Error", MB_OK);
 				ShutDownDirectSound();
-				return FALSE;
+				return false;
 				}
 
 			}
@@ -252,14 +251,14 @@ HRESULT DirectSound::InitSoundEngine(HWND hWnd)
 		{
 			MessageBox(hWnd, "DirectSound couldn't initialize completely. You can still play netPanzer, but there will be no sound.", "Error", MB_OK);
 			ShutDownDirectSound();
-			return FALSE;
+			return false;
 		} 
 	}
 
 	//Do the distance sfx buffers here--
 
 
-	return TRUE;
+	return true;
 
 }
 //////////////////////////////////
@@ -276,36 +275,36 @@ void DirectSound::ShutDownDirectSound()
 	
 	for(index = 0; index < MAX_NUM_SFX; index++)
 	{
-		if(m_pDSBuffer[index] != NULL)
+		if(m_pDSBuffer[index] != 0)
 		{
 			m_pDSBuffer[index] -> Release();
-			m_pDSBuffer[index] = NULL;
+			m_pDSBuffer[index] = 0;
 		}
 
 		//this if statement needs to match the one in
 		//the initialize function--
 /*		if( index >= AMBIENT_START)
 		{
-			if(m_pDSBufferDup1[index] != NULL) m_pDSBufferDup1[index] = NULL;
-			if(m_pDSBufferDup2[index] != NULL) m_pDSBufferDup2[index] = NULL;
+			if(m_pDSBufferDup1[index] != 0) m_pDSBufferDup1[index] = 0;
+			if(m_pDSBufferDup2[index] != 0) m_pDSBufferDup2[index] = 0;
 		}
 */
 	}
 
-/*	if(m_pDSDistantSFX1 != NULL)
+/*	if(m_pDSDistantSFX1 != 0)
 	{
 		m_pDSDistantSFX1 -> Release();
-		m_pDSDistantSFX1 = NULL;
+		m_pDSDistantSFX1 = 0;
 	}
-	if(m_pDSDistantSFX2 != NULL)
+	if(m_pDSDistantSFX2 != 0)
 	{
 		m_pDSDistantSFX2 -> Release();
-		m_pDSDistantSFX2 = NULL;
+		m_pDSDistantSFX2 = 0;
 	}
-	if(m_pDSDistantSFX3 != NULL)
+	if(m_pDSDistantSFX3 != 0)
 	{
 		m_pDSDistantSFX3 -> Release();
-		m_pDSDistantSFX3 = NULL;
+		m_pDSDistantSFX3 = 0;
 	}
 	*/
 
@@ -318,13 +317,13 @@ void DirectSound::PlayTankIdle()
 {
     HRESULT hr;
     
-    if ( Enabled == FALSE )
+    if ( Enabled == false )
      return;
     
-    if(m_pDSBuffer[0] != NULL)
+    if(m_pDSBuffer[0] != 0)
     {
         hr = m_pDSBuffer[0] -> Play(0,0,DSBPLAY_LOOPING);
-        if(hr == DSERR_BUFFERLOST) m_pDSBuffer[0] = NULL;
+        if(hr == DSERR_BUFFERLOST) m_pDSBuffer[0] = 0;
     }
 
 }
@@ -335,7 +334,7 @@ void DirectSound::PlayTankIdle()
 void DirectSound::StopTankIdle()
 {
 
- if ( Enabled == FALSE )
+ if ( Enabled == false )
   return;
 
    StopUnitBuffer(0);
@@ -349,13 +348,13 @@ void DirectSound::PlayMenuSound()
 {
     HRESULT hr;
     
-    if ( Enabled == FALSE )
+    if ( Enabled == false )
      return;
     
-    if(m_pDSBuffer[1] != NULL)
+    if(m_pDSBuffer[1] != 0)
     {
         hr = m_pDSBuffer[1] -> Play(0,0,0);
-        if(hr == DSERR_BUFFERLOST) m_pDSBuffer[1] = NULL;
+        if(hr == DSERR_BUFFERLOST) m_pDSBuffer[1] = 0;
     }
 
 }
@@ -367,13 +366,13 @@ void DirectSound::PlayAttackWarning()
 {
     HRESULT hr;
     
-    if ( Enabled == FALSE )
+    if ( Enabled == false )
      return;
     
-    if(m_pDSBuffer[2] != NULL)
+    if(m_pDSBuffer[2] != 0)
     {
         hr = m_pDSBuffer[2] -> Play(0,0,0);
-        if(hr == DSERR_BUFFERLOST) m_pDSBuffer[2] = NULL;
+        if(hr == DSERR_BUFFERLOST) m_pDSBuffer[2] = 0;
     }
 
 }
@@ -382,14 +381,14 @@ void DirectSound::PlayPowerUpSound()
  {
     HRESULT hr;
     
-    if ( Enabled == FALSE )
+    if ( Enabled == false )
      return;
     
     
-   if(m_pDSBuffer[_sfx_powerup] != NULL)
+   if(m_pDSBuffer[_sfx_powerup] != 0)
     {
      hr = m_pDSBuffer[_sfx_powerup] -> Play(0,0,0);
-     if(hr == DSERR_BUFFERLOST) m_pDSBuffer[_sfx_powerup] = NULL;
+     if(hr == DSERR_BUFFERLOST) m_pDSBuffer[_sfx_powerup] = 0;
     }
 
  }
@@ -402,7 +401,7 @@ void DirectSound::PlayUnitSound(int unit_type)
 {
 	int buffer;
 
-    if ( Enabled == FALSE )
+    if ( Enabled == false )
      return;
 
     if((unit_type == _unit_type_humvee) || (unit_type == _unit_type_hover_craft)) return;
@@ -421,7 +420,7 @@ void DirectSound::PlayUnitVoice(int unit_type, Event event)
 {
 	int buffer;
 
-    if ( Enabled == FALSE )
+    if ( Enabled == false )
      return;
 
     buffer = GetVoiceBuffer(unit_type, event);
@@ -439,7 +438,7 @@ void DirectSound::PlayAmbientSound(int unit_type, Event event, long distance)
 	int buffer;
  long volume;
 
-    if ( Enabled == FALSE )
+    if ( Enabled == false )
      return;
 
     buffer = GetAmbientBuffer(unit_type, event);
@@ -461,10 +460,10 @@ void DirectSound::PlayUnitBuffer(int buffer)
     HRESULT hr;
 
     if((buffer < 0) || (buffer >= MAX_NUM_SFX)) return;
-    if(m_pDSBuffer[buffer] != NULL)
+    if(m_pDSBuffer[buffer] != 0)
     {
         hr = m_pDSBuffer[buffer] -> Play(0,0,0);
-        if(hr == DSERR_BUFFERLOST) m_pDSBuffer[buffer] = NULL;
+        if(hr == DSERR_BUFFERLOST) m_pDSBuffer[buffer] = 0;
     }
 
 }
@@ -476,7 +475,7 @@ void DirectSound::StopUnitBuffer(int buffer)
 {
 
     if((buffer < 0) || (buffer >= MAX_NUM_SFX)) return;
-    if(m_pDSBuffer[buffer] != NULL)
+    if(m_pDSBuffer[buffer] != 0)
     {
         m_pDSBuffer[buffer]-> Stop();
         m_pDSBuffer[buffer]-> SetCurrentPosition(0);
@@ -492,10 +491,10 @@ void DirectSound::PlayVoiceBuffer(int buffer)
     HRESULT hr;
 
     if((buffer < 0) || (buffer >= MAX_NUM_SFX)) return;
-    if(m_pDSBuffer[buffer] != NULL)
+    if(m_pDSBuffer[buffer] != 0)
     {
         hr = m_pDSBuffer[buffer] -> Play(0,0,0);
-        if(hr == DSERR_BUFFERLOST) m_pDSBuffer[buffer] = NULL;
+        if(hr == DSERR_BUFFERLOST) m_pDSBuffer[buffer] = 0;
     }
 
 }
@@ -512,7 +511,7 @@ void DirectSound::PlayAmbientBuffer(int buffer, long volume)
 
 //	if(DupBufferIndex == 0)
 //	{
-        if(m_pDSBuffer[buffer] != NULL)
+        if(m_pDSBuffer[buffer] != 0)
         {
 
          if( PreviousVolume[buffer] != volume)
@@ -526,11 +525,11 @@ void DirectSound::PlayAmbientBuffer(int buffer, long volume)
 		       hr = m_pDSBuffer[buffer] -> Play(0,0,0);
          if(hr == DSERR_BUFFERLOST)
          {
-           m_pDSBuffer[buffer] = NULL;
-           //m_pDSBufferDup1[buffer] = NULL;
-           //m_pDSBufferDup2[buffer] = NULL;
+           m_pDSBuffer[buffer] = 0;
+           //m_pDSBufferDup1[buffer] = 0;
+           //m_pDSBufferDup2[buffer] = 0;
          }
-        }//if m_pDSBuffer[buffer] != NULL
+        }//if m_pDSBuffer[buffer] != 0
 
 // }//if DupBufferIndex == 0
 
@@ -539,7 +538,7 @@ void DirectSound::PlayAmbientBuffer(int buffer, long volume)
 /*	else
 	if(DupBufferIndex == 1)
 	{
-        if(m_pDSBufferDup1[buffer] != NULL)
+        if(m_pDSBufferDup1[buffer] != 0)
         {
 		    hr = m_pDSBufferDup1[buffer] -> Play(0,0,0);
 
@@ -550,7 +549,7 @@ void DirectSound::PlayAmbientBuffer(int buffer, long volume)
 	else
     if(DupBufferIndex == 2)
 	{
-        if(m_pDSBufferDup2[buffer] != NULL)
+        if(m_pDSBufferDup2[buffer] != 0)
         {
 		    hr = m_pDSBufferDup2[buffer] -> Play(0,0,0);
         }
@@ -569,30 +568,30 @@ void DirectSound::RestoreBuffer(int buffer)
     HRESULT hr;
 	UINT	cbSize = 0;
 	DWORD	cSamples = 0;
-	BYTE	*pbData1 = NULL;
+	BYTE	*pbData1 = 0;
 
-	void	*pbData = NULL;
-	void    *pbData2 = NULL;
+	void	*pbData = 0;
+	void    *pbData2 = 0;
 	DWORD   dwLength = 0;
 	DWORD   dwLength2 = 0;
 
 
     hr = m_pDSBuffer[buffer] -> Restore();
-    if(hr != DS_OK) m_pDSBuffer[buffer] = NULL;
+    if(hr != DS_OK) m_pDSBuffer[buffer] = 0;
 
     //load the wave file--
     if(WaveLoadFile( filenames[buffer], &cbSize, &cSamples, &m_pWaveFormatEx[buffer], &pbData1) != 0)
-        m_pDSBuffer[buffer] = NULL;
+        m_pDSBuffer[buffer] = 0;
 
     hr = m_pDSBuffer[buffer] -> Lock( 0, cbSize, &pbData, &dwLength, &pbData2, &dwLength2, 0L);
-    if(hr != DS_OK) m_pDSBuffer[buffer] = NULL;
+    if(hr != DS_OK) m_pDSBuffer[buffer] = 0;
     
     memcpy(pbData, pbData1, cbSize);
 
-    hr = m_pDSBuffer[buffer]->Unlock( pbData, cbSize, NULL, 0);
-    if(hr != DS_OK) m_pDSBuffer[buffer] = NULL;
+    hr = m_pDSBuffer[buffer]->Unlock( pbData, cbSize, 0, 0);
+    if(hr != DS_OK) m_pDSBuffer[buffer] = 0;
 
-    pbData = NULL;
+    pbData = 0;
 
 }
 //////////////////////////////////
@@ -604,7 +603,7 @@ void DirectSound::RestoreDup1(int buffer)
     HRESULT hr;
 
     hr = m_pDSBufferDup1[buffer] -> Restore();
-    if(hr != DS_OK) m_pDSBufferDup1[buffer] = NULL;
+    if(hr != DS_OK) m_pDSBufferDup1[buffer] = 0;
 
 }
 //////////////////////////////////
@@ -616,7 +615,7 @@ void DirectSound::RestoreDup2(int buffer)
     HRESULT hr;
 
     hr = m_pDSBufferDup2[buffer] -> Restore();
-    if(hr != DS_OK) m_pDSBufferDup2[buffer] = NULL;
+    if(hr != DS_OK) m_pDSBufferDup2[buffer] = 0;
 
 }
 //////////////////////////////////

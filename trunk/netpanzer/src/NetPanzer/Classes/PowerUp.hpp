@@ -18,8 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _POWERUP_HPP
 #define _POWERUP_HPP
 
-
-
 #include "Point.hpp"
 #include "UnitID.hpp"
 #include "SpriteSorter.hpp"
@@ -42,7 +40,7 @@ class PowerUpState
 class PowerUp
  {
   protected:
-   boolean isPowerUpHit( UnitID *unit_id );
+   bool isPowerUpHit( UnitID *unit_id );
   
   public:
    PowerUpState powerup_state;

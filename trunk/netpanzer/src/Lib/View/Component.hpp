@@ -87,7 +87,7 @@ public:
 
 	//const Component &operator=(const Component &)
 
-	~Component() {}
+	virtual ~Component() {}
 
 	// Accessor functions.
 	bool contains(int x, int y) const;

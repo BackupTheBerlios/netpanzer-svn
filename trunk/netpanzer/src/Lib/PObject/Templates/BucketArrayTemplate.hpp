@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _BUCKETARRAYTEMPLATE_HPP
 #define _BUCKETARRAYTEMPLATE_HPP
 
-
-#include "Pobject.hpp"
+#include <assert.h>
+#include "PObject.hpp"
 #include "LinkListDoubleTemplate.hpp"
 
 
@@ -90,7 +90,7 @@ class BucketArrayTemplate : public PObject
 template< class TYPE >
 BucketArrayTemplate< TYPE >::BucketArrayTemplate( )
  {
-  array = NULL;
+  array = 0;
   size = 0;
   row_size = 0;
   column_size = 0;
@@ -106,7 +106,7 @@ BucketArrayTemplate< TYPE >::~BucketArrayTemplate()
 template< class TYPE >
 BucketArrayTemplate< TYPE >::BucketArrayTemplate( unsigned long size )
  {
-  array = NULL;
+  array = 0;
   size = 0;
   row_size = 0;
   column_size = 0;
@@ -116,7 +116,7 @@ BucketArrayTemplate< TYPE >::BucketArrayTemplate( unsigned long size )
 template< class TYPE >
 BucketArrayTemplate< TYPE >::BucketArrayTemplate( unsigned long rows, unsigned long columns )
  {
-  array = NULL;
+  array = 0;
   size = 0;
   row_size = 0;
   column_size = 0;
@@ -126,20 +126,20 @@ BucketArrayTemplate< TYPE >::BucketArrayTemplate( unsigned long rows, unsigned l
 template< class TYPE >
 void BucketArrayTemplate< TYPE >::initialize( unsigned long size )
  {
-  if ( array != NULL )
+  if ( array != 0 )
    { deallocate(); }
 
   BucketArrayTemplate< TYPE >::size = size;
   
   array = new LinkListDoubleTemplate< TYPE > [ size ];
   
-  assert( array != NULL );
+  assert( array != 0 );
  }
 
 template< class TYPE >
 void BucketArrayTemplate< TYPE >::initialize( unsigned long rows, unsigned long columns )
  {
-  if ( array != NULL )
+  if ( array != 0 )
    { deallocate(); }
 
   row_size = rows;
@@ -149,7 +149,7 @@ void BucketArrayTemplate< TYPE >::initialize( unsigned long rows, unsigned long 
   
   array = new LinkListDoubleTemplate< TYPE > [ size ];
   
-  assert( array != NULL );
+  assert( array != 0 );
  }
 
 
@@ -163,7 +163,7 @@ void BucketArrayTemplate< TYPE >::deallocate( void )
   
   delete [size] array;
   
-  array = NULL;
+  array = 0;
   size = 0;
   row_size = 0;
   column_size = 0;

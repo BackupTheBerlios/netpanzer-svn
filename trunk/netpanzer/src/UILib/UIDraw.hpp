@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __UIDraw_hpp__
 #define __UIDraw_hpp__
 
-#include "Stdafx.hpp"
 #include "RGBColor.hpp"
 
 // DirectDraw class declarations
@@ -27,16 +26,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class UIDraw
 {
 public:
-  virtual BOOL initialize() = 0;
+  virtual bool initialize() = 0;
   virtual void shutdown() = 0;
-  virtual BOOL setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags) = 0;
-  virtual BOOL isDisplayModeAvailable(int width, int height, int bpp) = 0;
-  virtual BOOL lockDoubleBuffer(BYTE **DoubleBuffer) = 0;
-  virtual BOOL unlockDoubleBuffer() = 0;
-  virtual BOOL createFrameBuffer(DWORD width, DWORD height, DWORD bpp) = 0;
-  virtual void setGDIStatus(BOOL enable) = 0;
+  virtual bool setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags) = 0;
+  virtual bool isDisplayModeAvailable(int width, int height, int bpp) = 0;
+  virtual bool lockDoubleBuffer(BYTE **DoubleBuffer) = 0;
+  virtual bool unlockDoubleBuffer() = 0;
+  virtual bool createFrameBuffer(DWORD width, DWORD height, DWORD bpp) = 0;
+  virtual void setGDIStatus(bool enable) = 0;
   virtual void restoreAll()=0;
-  virtual BOOL copyDoubleBufferandFlip()=0;
+  virtual bool copyDoubleBufferandFlip()=0;
   virtual void setPalette(RGBColor *color)=0;
 }; // end DirectDraw
 

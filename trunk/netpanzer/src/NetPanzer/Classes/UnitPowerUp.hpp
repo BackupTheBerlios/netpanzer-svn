@@ -48,6 +48,8 @@ class UnitPowerUp : public PowerUp
   public:
 
    UnitPowerUp(PointXYi map_loc, int type);
+   virtual ~UnitPowerUp()
+   { }
 
    virtual void updateState( void );
 

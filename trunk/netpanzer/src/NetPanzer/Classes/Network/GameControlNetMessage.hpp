@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _GAME_CONTROL_NET_MESSAGE_HPP
 #define _GAME_CONTROL_NET_MESSAGE_HPP
 
-#include <String.h>
+#include <string.h>
 
 #include "NetPacket.hpp"
 
@@ -27,7 +27,9 @@ enum { _net_message_id_game_control_cycle_map,
  
      };
 
+#ifdef MSVC
 #pragma pack(1)
+#endif
 
 class GameControlCycleMap : public NetMessage
  {
@@ -45,7 +47,7 @@ class GameControlCycleMap : public NetMessage
     message_id = _net_message_id_game_control_cycle_map;
    } 
 
- };
+ } __attribute__((packed));
 
 class GameControlCycleRespawnAck : public NetMessage
  {
@@ -57,8 +59,10 @@ class GameControlCycleRespawnAck : public NetMessage
     message_id = _net_message_id_game_control_cycle_respawn_ack;
    } 
 
- };
+ } __attribute__((packed));
 
+#ifdef MSVC
 #pragma pack()
+#endif
 
 #endif // ** _GAME_CONTROL_NET_MESSAGE_HPP

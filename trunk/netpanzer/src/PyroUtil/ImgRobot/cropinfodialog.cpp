@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "stdafx.h"
+
 #include "ImageRobot.h"
 #include "CropInfoDialog.h"
 
@@ -30,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 // CropInfoDialog dialog
 
 
-CropInfoDialog::CropInfoDialog(CWnd* pParent /*=NULL*/)
+CropInfoDialog::CropInfoDialog(CWnd* pParent /*=0*/)
 	: CDialog(CropInfoDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CropInfoDialog)

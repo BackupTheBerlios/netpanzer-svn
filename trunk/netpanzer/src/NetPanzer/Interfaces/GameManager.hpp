@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _GAMEMANAGER_HPP
 #define _GAMEMANAGER_HPP
 
-#include "Aliasdef.h"
+#include <time.h>
 #include "PlayerState.hpp"
 #include "NetPacket.hpp"
 #include "Point.hpp"
@@ -55,8 +55,8 @@ class GameManager
    static time_t game_start_time;
    static time_t game_elapsed_time_offset;
 
-   static boolean display_frame_rate_flag;
-   static boolean display_network_info_flag;
+   static bool display_frame_rate_flag;
+   static bool display_network_info_flag;
    
    static int execution_mode;
    
@@ -67,34 +67,34 @@ class GameManager
   protected:
    static unsigned char game_state;
    
-   static boolean initializeDirectXSubSystem( void );
+   static bool initializeDirectXSubSystem( void );
    static void    shutdownDirectXSubSystem( void );
   
-   static boolean initializeWin32SubSystem( void );
+   static bool initializeWin32SubSystem( void );
    static void    shutdownWin32SubSystem( void );
    
-   static boolean initializeNetworkSubSystem( void );
+   static bool initializeNetworkSubSystem( void );
    static void    shutdownNetworkSubSystem( void );
 
-   static boolean initializeInputDevices( void );
+   static bool initializeInputDevices( void );
    
-   static boolean initializeVideoSubSystem( void );
+   static bool initializeVideoSubSystem( void );
 
-   static boolean initializeSoundSubSystem( void );
+   static bool initializeSoundSubSystem( void );
    static void    shutdownSoundSubSystem( void );
 
-   static boolean initializeWindowSubSystem( void );
+   static bool initializeWindowSubSystem( void );
    
    // initialize all static objects / interfaces;
-   static boolean initializeGameObjects( void );
-   static boolean shutdownGameObjects( void );
+   static bool initializeGameObjects( void );
+   static bool shutdownGameObjects( void );
 
-   static boolean initializeDedicatedConsole( void );
-   static boolean shutdownDedicatedConsole( void );
+   static bool initializeDedicatedConsole( void );
+   static bool shutdownDedicatedConsole( void );
 
    // boots up netPanzer; initializes all subsystems, game objects etc. 
-   static boolean bootStrap( void );
-   static boolean dedicatedBootStrap( void );
+   static bool bootStrap( void );
+   static bool dedicatedBootStrap( void );
 
    static void shutdown( unsigned long failure_index );
    static void dedicatedShutdown( unsigned long failure_index );
@@ -114,18 +114,18 @@ class GameManager
    
    static void setupKeyboardBindings( void );
 
-   static boolean startGameMapLoad( char *map_file_path, unsigned long partitions, int *result_code );
-   static boolean gameMapLoad( int *percent_complete );
+   static bool startGameMapLoad( char *map_file_path, unsigned long partitions, int *result_code );
+   static bool gameMapLoad( int *percent_complete );
    static void finishGameMapLoad( void );
 
    static void dedicatedLoadGameMap( char *map_file_path );
 
-   static boolean loadGameData( void );     
-   static boolean dedicatedLoadGameData( void );
+   static bool loadGameData( void );     
+   static bool dedicatedLoadGameData( void );
 
-   static boolean initializeGameLogic( void );
-   static boolean reinitializeGameLogic( void );
-   static boolean resetGameLogic( void );
+   static bool initializeGameLogic( void );
+   static bool reinitializeGameLogic( void );
+   static bool resetGameLogic( void );
    static void    shutdownGameLogic( void );
    
    static void shutdownParticleSystems( void );
@@ -149,8 +149,8 @@ class GameManager
    static void netMessageResetGameLogic( NetMessage *message );
    static void getServerGameSetup( NetMessage *message );
    
-   static boolean startClientGameSetup( NetMessage *message, int *result_code );
-   static boolean clientGameSetup( int *percent_complete );
+   static bool startClientGameSetup( NetMessage *message, int *result_code );
+   static bool clientGameSetup( int *percent_complete );
 
    // ** Game Launching Methods
    static void hostMultiPlayerGame( void );
@@ -162,7 +162,7 @@ class GameManager
   
   public:
 
-   static boolean initialize( const char *command_line );
+   static bool initialize( const char *command_line );
    
    static void shutdown( void );
       
@@ -176,15 +176,15 @@ class GameManager
 
    static void setNetPanzerGameOptions( void );
 
-   static boolean initializeConnectionType( void );
+   static bool initializeConnectionType( void );
 
-   static void spawnPlayer( PlayerID &player );     
+   static void spawnPlayer( const PlayerID &player );     
 
    static void requestNetworkPing( void );
 
    static void processSystemMessage( NetMessage *message );
 
-   static boolean setVideoMode( PointXYi mode_res );
+   static bool setVideoMode( PointXYi mode_res );
    static void	restorePreviousVideoMode( void );
    
    static void increaseDisplayResolution( void );

@@ -15,7 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+#ifdef WIN32
+#include <io.h>
+#endif
 #include "ColorTable.hpp"
 #include "Palette.hpp"
 #include "UtilInterface.hpp"
@@ -32,7 +34,7 @@ int ColorTable::totalByteCount       = 0;
 ColorTable::ColorTable()
 {
 	colorCount = 0;
-	colorArray = NULL;
+	colorArray = 0;
 
 	totalColorArrayCount++;
 	totalByteCount += sizeof(ColorTable);
@@ -64,7 +66,7 @@ void ColorTable::init(int colorCount)
 	int numBytes = sizeof(PIX) * colorCount;
 	
 	colorArray = (PIX *) malloc(numBytes);
-	if (colorArray == NULL) FUBAR("ERROR: Unable to allocate color table.");
+	if (colorArray == 0) FUBAR("ERROR: Unable to allocate color table.");
 
 	totalByteCount += numBytes;
 
@@ -86,12 +88,12 @@ void ColorTable::setColor(int index, BYTE color)
 //---------------------------------------------------------------------------
 void ColorTable::free()
 {
-	if (colorArray != NULL)
+	if (colorArray != 0)
 	{
 		::free(colorArray);
 		
 		totalByteCount -= colorCount * sizeof(PIX);
-		colorArray      = NULL;
+		colorArray      = 0;
 		colorCount      = 0;
 	}
 
@@ -132,9 +134,9 @@ void ColorTable::createBrightenFilter(
 				curOffset = (y * 256) + x;
 
 				// !SOMDEDAY! Try holding a threshold when any value gets to 255.
-				curRed   = nb + Palette::color[y].red;
-				curGreen = nb + Palette::color[y].green;
-				curBlue  = nb + Palette::color[y].blue;
+				curRed   = (int) (nb + Palette::color[y].red);
+				curGreen = (int) (nb + Palette::color[y].green);
+				curBlue  = (int) (nb + Palette::color[y].blue);
 
 				if (curRed   > 255) curRed   = 255;
 				if (curGreen > 255) curGreen = 255;
@@ -178,9 +180,9 @@ void ColorTable::createDarkenFilter(const char *filename, float fudgeValue)
 				curPercent = (float(255 - x) / 255.0f) * percent + 1.0f - percent;
 				curOffset  = (y * 256) + x;
 
-				curColor.red   = curPercent * float(Palette::color[y].red);
-				curColor.green = curPercent * float(Palette::color[y].green);
-				curColor.blue  = curPercent * float(Palette::color[y].blue);
+				curColor.red   = (BYTE) (curPercent * float(Palette::color[y].red));
+				curColor.green = (BYTE) (curPercent * float(Palette::color[y].green));
+				curColor.blue  = (BYTE) (curPercent * float(Palette::color[y].blue));
 
 				setColor(curOffset, Palette::findNearestColor(curColor));
 			}
@@ -208,10 +210,10 @@ void ColorTable::create(
 	} else
 	{
 		//float curPercent;
-		int	  totalColors   = colorCount;
-		int   curColorIndex = 0;
-		int   num           = 0;
-		int   numInterval   = (totalColors) / 100;
+		//int	  totalColors   = colorCount;
+		//int   curColorIndex = 0;
+		//int   num           = 0;
+		//int   numInterval   = (totalColors) / 100;
 		
 		char strBuf[256];
 
@@ -234,9 +236,9 @@ void ColorTable::create(
 
 				curOffset = (int(index) << 8) + indexPic;
 
-				RGBColor curColor((color1 * col.red   + color2 * colPic.red), 
-								   (color1 * col.green + color2 * colPic.green), 
-								   (color1 * col.blue  + color2 * colPic.blue));
+				RGBColor curColor((BYTE) (color1 * col.red   + color2 * colPic.red), 
+								   (BYTE) (color1 * col.green + color2 * colPic.green), 
+								   (BYTE) (color1 * col.blue  + color2 * colPic.blue));
 
 				// Makes the color table use color 0 as transparent.
 				if (indexPic == 0)
@@ -278,13 +280,15 @@ void ColorTable::getDiskName(char *destname, const char *filename) const
 	char tableFilename[256];
 
 	//void _splitpath( const char *path, char *drive, char *dir, char *fname, char *ext );
-	_splitpath(Palette::getName(), NULL, NULL, paletteFilename, NULL);
-	_splitpath(filename, NULL, tablePath, NULL, NULL);
-	_splitpath(filename, NULL, NULL, tableFilename, NULL);
+#ifdef WIN32
+	_splitpath(Palette::getName(), 0, 0, paletteFilename, 0);
+	_splitpath(filename, 0, tablePath, 0, 0);
+	_splitpath(filename, 0, 0, tableFilename, 0);
 
 	// This is dangerous, so make sure the filename can handle the length of the possible
 	// sprintf.
 	sprintf(destname, "%s%s%s%s", tablePath, tableFilename, paletteFilename, extension);
+#endif
 
 	return;
 
@@ -311,7 +315,7 @@ bool ColorTable::loadTable(const char *filename)
 
 	FILE *fp = fopen(strBuf, "rb");
 
-	if (fp == NULL)	{ return false;	}
+	if (fp == 0)	{ return false;	}
 
 	loadTable(fp);
 
@@ -325,7 +329,7 @@ bool ColorTable::loadTable(const char *filename)
 //---------------------------------------------------------------------------
 void ColorTable::loadTable(FILE *fp)
 {
-	assert(fp != NULL);
+	assert(fp != 0);
 
 	char strBuf[768];
 
@@ -359,8 +363,7 @@ bool ColorTable::saveTable(const char *filename) const
 	getDiskName(strBuf, filename);
 
 	FILE *fp = fopen(strBuf, "wb");
-
-	if (fp == NULL)	{ return false;	}
+	if (fp == 0)	{ return false;	}
 
 	saveTable(fp);
 
@@ -374,7 +377,7 @@ bool ColorTable::saveTable(const char *filename) const
 //---------------------------------------------------------------------------
 void ColorTable::saveTable(FILE *fp) const
 {
-	assert(fp != NULL);
+	assert(fp != 0);
 
 	// Dump the colorTable source palette.
 	fwrite(&Palette::color, 768, sizeof(BYTE), fp);
@@ -397,22 +400,22 @@ bool ColorTable::isValid(const char *filename) const
 
 	getDiskName(strBuf, filename);
 
-	if (UtilInterface::getFileSize(strBuf) == colorCount + 768)
+	if (UtilInterface::getFileSize(strBuf) == (size_t) (colorCount + 768))
 	{
 		// Check and make sure the file palette matches the loaded palette.
 		FILE *fp = fopen(strBuf, "rb");
-		if (fp == NULL) { return false; }
+		if (fp == 0) { return false; }
 
 		RGBColor checkPal[PALETTE_LENGTH];
 
-		for (int i = 0; i < PALETTE_LENGTH; i++)
+		for (size_t i = 0; i < PALETTE_LENGTH; i++)
 		{
 			fread(&checkPal[i], 3, sizeof(BYTE), fp);
 		}
 		
 		fclose(fp);
 
-		for (int j = 0; j < PALETTE_LENGTH; j++)
+		for (size_t j = 0; j < PALETTE_LENGTH; j++)
 		{
 			if (Palette::originalColor[j].red != checkPal[j].red ||
 				Palette::originalColor[j].green != checkPal[j].green ||
@@ -448,10 +451,10 @@ void ColorTable::createTrans0(
 	{
 		float color1        = float(color1Percent) / 100.0f;
 		float color2        = float(color2Percent) / 100.0f;
-		int	  totalColors   = colorCount;
-		int   curColorIndex = 0;
-		int   num           = 0;
-		int   numInterval   = (totalColors) / 100;
+		//int	  totalColors   = colorCount;
+		//int   curColorIndex = 0;
+		//int   num           = 0;
+		//int   numInterval   = (totalColors) / 100;
 		
 		// Since the file was not found, create the color tables and dump
 		// it to a file.
@@ -467,9 +470,9 @@ void ColorTable::createTrans0(
 
 				curOffset = (int(index) << 8) + indexPic;
 
-				RGBColor curColor((color1 * col.red   + color2 * colPic.red), 
-								   (color1 * col.green + color2 * colPic.green), 
-								   (color1 * col.blue  + color2 * colPic.blue));
+				RGBColor curColor((int) (color1 * col.red   + color2 * colPic.red), 
+								  (int) (color1 * col.green + color2 * colPic.green), 
+								  (int) (color1 * col.blue  + color2 * colPic.blue));
 
 				// Makes the color table use color 0 as transparent.
 

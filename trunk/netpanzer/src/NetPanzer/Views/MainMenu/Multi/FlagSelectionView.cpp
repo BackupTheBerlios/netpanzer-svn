@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "stdafx.hpp"
 #include "FlagSelectionView.hpp"
 #include "gapp.hpp"
 #include "DSound.hpp"
@@ -51,7 +50,7 @@ FlagSelectionView::FlagSelectionView() : RMouseHackView()
 
 	// Define the scrollBar fot this view.
 	//scrollBar = new ScrollBar(HORIZONTAL, 0, 1, 0, flags.getFrameCount());
-	//if (scrollBar == NULL)
+	//if (scrollBar == 0)
 	//{
 	//	FUBAR("ERROR: Unable to allocate scrollBar.");
 	//}
@@ -83,7 +82,7 @@ void FlagSelectionView::init()
 		playerFlag.setFrame(i);
 		//playerFlag.drawButtonBorder(Color::white, Color::gray64);
 		
-		addButtonSurfaceSingle(iXY(x, y), playerFlag, "", NULL);
+		addButtonSurfaceSingle(iXY(x, y), playerFlag, "", 0);
 	
 		x += xOffset;
 		

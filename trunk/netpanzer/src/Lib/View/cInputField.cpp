@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "stdafx.hpp"
+
 #include "cInputField.hpp"
 #include "TimerInterface.hpp"
 
@@ -33,12 +33,12 @@ void cInputFieldString::init(const char *string, int maxCharCount)
 	assert(maxCharCount > 0);
 
 	cInputFieldString::string = new char [maxCharCount + 1];
-	if (this->string == NULL)
+	if (this->string == 0)
 	{
 		FUBAR("ERROR: Unable to allocate cInputFieldString string.");
 	}
 
-	if (strlen(string) > 0 && strlen(string) < maxCharCount)
+	if (strlen(string) > 0 && strlen(string) < (size_t) maxCharCount)
 	{
 		strcpy(cInputFieldString::string, string);
 	} else
@@ -59,7 +59,7 @@ void cInputFieldString::setString(const char *string)
 //--------------------------------------------------------------------------
 void cInputFieldString::reset()
 {
-	string       = NULL;
+	string       = 0;
 	maxCharCount = 0;
 } // end reset
 
@@ -75,8 +75,8 @@ void cInputField::reset()
 	cursorPos          = 0;
 	pos                = iXY(0, 0);
 	maxCharCount       = 0;
-	destString         = NULL;
-	excludedCharacters = NULL;
+	destString         = 0;
+	excludedCharacters = 0;
 } // end reset
 
 // setPos
@@ -93,7 +93,7 @@ void cInputField::setPos(iXY pos)
 //--------------------------------------------------------------------------
 void cInputField::setInputFieldString(cInputFieldString *string)
 {
-	//assert(string->string != NULL);
+	//assert(string->string != 0);
 	assert(string->maxCharCount > 0);
 
 	this->destString   = string->string;
@@ -115,7 +115,7 @@ void cInputField::setInputFieldString(cInputFieldString *string)
 void cInputField::setExcludedCharacters(const char *excludedCharacters)
 {
 	this->excludedCharacters = new char [strlen(excludedCharacters) + 1];
-	if (this->excludedCharacters == NULL)
+	if (this->excludedCharacters == 0)
 	{
 		FUBAR("ERROR: Unable to allocate cInputField excludedCharacters.");
 	}
@@ -128,7 +128,7 @@ void cInputField::setExcludedCharacters(const char *excludedCharacters)
 void cInputField::addChar(int newChar)
 {
 	// Check if the character should be excluded.
-	if (strchr(excludedCharacters, newChar) == NULL)
+	if (strchr(excludedCharacters, newChar) == 0)
 	{
 		// Add the character.
 		destString[cursorPos] = newChar;

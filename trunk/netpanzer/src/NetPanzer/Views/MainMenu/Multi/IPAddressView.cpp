@@ -16,12 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "stdafx.hpp"
 #include "IPAddressView.h"
 #include "Desktop.hpp"
 #include "GameViewGlobals.hpp"
 #include "gapp.hpp"
-#include "winsockclient.h"
+#include "WinsockClient.h"
 #include "winsockglobals.h"
 
 #include "Client.hpp"

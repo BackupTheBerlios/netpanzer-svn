@@ -15,29 +15,29 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef _PARRAY_HPP
-#define _PARRAY_HPP
+#ifndef __PARRAY_HPP__
+#define __PARRAY_HPP__
 
-#include "aliasdef.h"
-
+#include <assert.h>
 #include <stdlib.h>
-#include "Pobject.hpp"
+#include "PObject.hpp"
 
 class PArray : public PObject
- {
-  protected:
-   unsigned long size;
-   PObject **array;
+{
+protected:
+    PObject **array;
+    unsigned long size;
   
-  public:
+public:
+    PArray()
+	: array(0), size(0)
+    { }
+    PArray(unsigned long size);
+    ~PArray();
 
-  PArray() { array = NULL; }
-  PArray( unsigned long size );
-  ~PArray( void );
-
-  void initialize( unsigned long size );
+    void initialize( unsigned long size );
   
-  void sort( unsigned long sort_size, int (* compare)(const void *elem1,const void *elem2 ) );
+    void sort( unsigned long sort_size, int (* compare)(const void *elem1,const void *elem2 ) );
 
   inline PObject * operator[]( unsigned long index)
    {
@@ -58,10 +58,10 @@ class PArray : public PObject
 
   inline void deallocate( void )
    {
-    if ( array != NULL )
+    if ( array != 0 )
      {
       delete( array );
-      array = NULL;
+      array = 0;
      }
     
     size = 0;
@@ -69,4 +69,4 @@ class PArray : public PObject
  
  };
 
-#endif
+#endif // #ifndef __PARRAY_HPP__

@@ -37,20 +37,20 @@ class SelectionList : public PObject
   void initialize( unsigned long size, unsigned long growIncrement, 
                    unsigned long growLimit );
 
-  boolean selectUnit( PointXYi point );
+  bool selectUnit( PointXYi point );
 
-  boolean addUnit( PointXYi point );
+  bool addUnit( PointXYi point );
  
-  boolean selectTarget( PointXYi point ); 
+  bool selectTarget( PointXYi point ); 
   
-  boolean selectBounded( Recti bounds );
+  bool selectBounded( Recti bounds );
 
-  inline boolean isSelected( void )
+  inline bool isSelected( void )
    {
     if ( unit_list.containsItems() > 0 )
-     return( _TRUE );
+     return( true );
 
-    return( _FALSE );
+    return( false );
    }
 
   void select( void );

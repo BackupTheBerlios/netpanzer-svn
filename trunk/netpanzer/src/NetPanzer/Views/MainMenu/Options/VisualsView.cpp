@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "stdafx.hpp"
 #include "VisualsView.hpp"
 #include "ParticleSystemGlobals.hpp"
 #include "GameConfig.hpp"
@@ -43,7 +42,7 @@ static int getGamma()
 
 static int getBrightness()
 {
-	return GameConfig::getScreenBrightness();
+	return (int) GameConfig::getScreenBrightness();
 }
 
 static void bIncreaseResolution()

@@ -15,15 +15,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "PArray.hpp"
-#include <Stdlib.h>
+#include <stdlib.h>
 
 PArray::PArray( unsigned long size )
  {
   PArray::size = size;
   array = new PObject * [ size ];
-  assert( array != NULL );
+  assert( array != 0 );
  }
 
 PArray::~PArray( void )
@@ -35,13 +35,13 @@ void PArray::initialize( unsigned long size )
  {
   PArray::size = size;
   
-  if( array != NULL )
+  if( array != 0 )
    {
     delete( array );
-    array = NULL;
+    array = 0;
    }
   array = new PObject * [ size ];
-  assert( array != NULL );
+  assert( array != 0 );
  }
 
 void PArray::sort( unsigned long sort_size, int (* compare)(const void *elem1,const void *elem2 ) )

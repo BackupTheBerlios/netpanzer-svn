@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _WORLDMAP_HPP
 #define _WORLDMAP_HPP
 
-#include "Aliasdef.h"
 #include "PObject.hpp"
 #include "MapFileStruct.hpp"
 #include "WadMapTable.hpp"
@@ -28,7 +27,7 @@ typedef unsigned short MapElementType;
 class WorldMap : virtual PObject
  {
   protected:
-   boolean map_loaded;
+   bool map_loaded;
    MAP_HEADER map_info;
    MapElementType *map_buffer;
 
@@ -40,7 +39,7 @@ class WorldMap : virtual PObject
   
   void reMap( WadMapTable &mapping_table );
  
-  inline boolean isMapLoaded( void )
+  inline bool isMapLoaded( void )
    { return( map_loaded ); }
   
   inline unsigned char * getName( void )

@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+#include "UIDraw.hpp"
 #include "DDHardSurface.hpp"
 #include "DirectDrawGlobals.hpp"
 
@@ -36,33 +36,33 @@ void DDHardSurface::create(int xPix, int yPix, int nStride, int nNumFrames)
   stride      = nStride;
   center      = iXY( xPix >> 1, yPix >> 1);
   frameCount  = nNumFrames;
-  doesExist   = FALSE;
+  doesExist   = false;
  } 
 
 void DDHardSurface::lock( void )
  {
-  //assert( lock_status == _FALSE );
+  //assert( lock_status == false );
   
   Screen->lockDoubleBuffer( (unsigned char **) &frame0 );
   mem = frame0;
   
-  doesExist = _TRUE;
-  lock_status = _TRUE; 
+  doesExist = true;
+  lock_status = true; 
  }
  
 void DDHardSurface::unlock( void )
  {
-  //assert( lock_status == _TRUE );
+  //assert( lock_status == true );
   
   Screen->unlockDoubleBuffer();
  
-  doesExist = _FALSE;
-  lock_status = _FALSE; 
+  doesExist = false;
+  lock_status = false; 
  }
 
 void DDHardSurface::copyToVideoFlip( void )
- {
-  assert( lock_status == _FALSE );
+{
+  assert( lock_status == false );
   
   Screen->copyDoubleBufferandFlip();
- }
+}

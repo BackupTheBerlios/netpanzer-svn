@@ -18,8 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITMESSAGE_HPP
 #define _UNITMESSAGE_HPP
 
-#include "aliasdef.h"
-
 #include "PObject.hpp"
 #include "UnitID.hpp"
 
@@ -58,12 +56,12 @@ class UnitMessage : public PObject
     message_flags = flags;
    }
  
-  inline boolean isFlagged( unsigned char flags )
+  inline bool isFlagged( unsigned char flags )
    {
     if ( (flags & message_flags) == flags )
-     return( _TRUE );
+     return( true );
    
-    return( _FALSE );
+    return( false );
    }
  
  };

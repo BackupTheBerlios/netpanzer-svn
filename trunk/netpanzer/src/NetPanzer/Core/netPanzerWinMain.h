@@ -17,11 +17,5 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #define WIN32_EXTRA_LEAN
 
-#include <windows.h>
-#include <windowsx.h>
-#include <mmsystem.h>
-#include <stdio.h>
-#include "UIDraw.hpp"
-
 //FUNCTIONS/////////////////////////////////////////////////////
-static BOOL WinInit( HANDLE hInstance, int nCmdShow);
+static bool WinInit( HANDLE hInstance, int nCmdShow);

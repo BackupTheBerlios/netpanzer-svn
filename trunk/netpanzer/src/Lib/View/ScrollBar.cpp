@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "stdafx.hpp"
+
 #include "ScrollBar.hpp"
 
 
@@ -75,7 +75,7 @@ void ScrollBar::reset()
 //---------------------------------------------------------------------------
 void ScrollBar::setLocation()
 {
-	if (parent != NULL)
+	if (parent != 0)
 	{
 		if (orientation == HORIZONTAL)
 		{
@@ -100,7 +100,7 @@ void ScrollBar::setLocation()
 //---------------------------------------------------------------------------
 void ScrollBar::setSize()
 {
-	if (parent != NULL)
+	if (parent != 0)
 	{
 		if (orientation == HORIZONTAL)
 		{
@@ -173,7 +173,7 @@ void ScrollBar::draw(const Surface &dest)
 		//surface.drawButtonBorder(Color::gray192, Color::gray64);
 		if (orientation == VERTICAL)
 		{
-			int midHandlePos = float(size.y) * percent;
+			int midHandlePos = (int) (float(size.y) * percent);
 
 			r = iRect(0, midHandlePos, size.x, midHandlePos);
 			surface.fillRect(r, Color::gray128);
@@ -181,7 +181,7 @@ void ScrollBar::draw(const Surface &dest)
 
 		} else if (orientation == HORIZONTAL)
 		{
-			int midHandlePos = float(size.x) * percent;
+			int midHandlePos = (int) (float(size.x) * percent);
 
 			r = iRect(midHandlePos, 0, midHandlePos, size.y);
 			surface.fillRect(r, Color::gray128);
@@ -264,7 +264,7 @@ void ScrollBar::draw(const Surface &dest)
 //---------------------------------------------------------------------------
 void ScrollBar::actionPerformed(const iXY &pos)
 {
-	if (parent != NULL)
+	if (parent != 0)
 	{
 		iRect cr(((View *) parent)->getClientRect());
 

@@ -35,6 +35,8 @@ class EnemyRadarPowerUp : public PowerUp
   public:
 
    EnemyRadarPowerUp(PointXYi map_loc, int type);
+   virtual ~EnemyRadarPowerUp()
+   { }
 
    virtual void updateState( void );
 

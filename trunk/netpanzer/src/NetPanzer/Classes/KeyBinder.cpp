@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "KeyBinder.hpp"
 
 #include <string.h>
@@ -23,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 KeyBinder KEY_BINDER;
 
-boolean KeyBinder::locked_key_table[256]; 
+bool KeyBinder::locked_key_table[256]; 
 
 KeyBinder::KeyBinder( unsigned long key_list_size )
  {
@@ -57,7 +56,7 @@ KeyBinderElement * KeyBinder::findKeyScanCode( unsigned char key_scan_code )
      } // ** if
    } // ** for 
 
-  return( NULL );
+  return( 0 );
  }
 
 KeyBinderElement * KeyBinder::findActionName( char *action_name )
@@ -69,35 +68,36 @@ KeyBinderElement * KeyBinder::findActionName( char *action_name )
 
   for( key_list_index = 0; key_list_index < key_list_size; key_list_index++ )
    {
-    if( stricmp( key_list[ key_list_index ].action_name, action_name) == 0 )
+    if( strcasecmp( key_list[ key_list_index ].action_name, action_name) == 0 )
      {
       return( &key_list[ key_list_index ] );
      } // ** if
    } // ** for 
 
-  return( NULL );
+  return( 0 );
  }
 
 void KeyBinder::staticInitialize( void )
  {
-  memset( locked_key_table, 0, sizeof( boolean ) );
+  memset( locked_key_table, 0, sizeof( bool ) );
  }
 
 void KeyBinder::lockKey( unsigned char key_scan_code )
  {
-  assert( key_scan_code < 256 );
-  locked_key_table[ key_scan_code ] = _TRUE;
+  // this is always true, isn't it?
+  // assert( key_scan_code < 256 );
+  locked_key_table[ key_scan_code ] = true;
  }
 
 void KeyBinder::unlockKey( unsigned char key_scan_code )
  {
-  assert( key_scan_code < 256 );
-  locked_key_table[ key_scan_code ] = _FALSE;
+  //assert( key_scan_code < 256 );
+  locked_key_table[ key_scan_code ] = false;
  }
 
 void KeyBinder::bindAction( unsigned short action_enum, char *action_name, unsigned char key_scan_code )
  {
-  if ( isBound( key_scan_code ) == _TRUE )
+  if ( isBound( key_scan_code ) == true )
    return;
 
   key_list[ action_enum ].action_enum = action_enum;
@@ -115,7 +115,7 @@ unsigned char KeyBinder::getActionKey( char *action_name )
   KeyBinderElement *key_info;
 
   key_info = findActionName( action_name );
-  if( key_info != NULL )
+  if( key_info != 0 )
    {
     return( key_info->key_scan_code );
    }
@@ -123,17 +123,17 @@ unsigned char KeyBinder::getActionKey( char *action_name )
   return( 0 );
  }
 
-boolean KeyBinder::isBound( unsigned char key_scan_code )
+bool KeyBinder::isBound( unsigned char key_scan_code )
  {
   KeyBinderElement *key_info;
 
   key_info = findKeyScanCode( key_scan_code );
-  if( key_info != NULL )
+  if( key_info != 0 )
    {
-    return( _TRUE ); 
+    return( true ); 
    }
 
-  return( _FALSE );
+  return( false );
  }
    
 unsigned short KeyBinder::getKeyAction( unsigned char key_scan_code )
@@ -141,7 +141,7 @@ unsigned short KeyBinder::getKeyAction( unsigned char key_scan_code )
   KeyBinderElement *key_info;
 
   key_info = findKeyScanCode( key_scan_code );
-  if( key_info != NULL )
+  if( key_info != 0 )
    {
     return( key_info->action_enum );
    }
@@ -149,16 +149,16 @@ unsigned short KeyBinder::getKeyAction( unsigned char key_scan_code )
   return(0);
  }
  
-boolean KeyBinder::getKeyAction( unsigned char key_scan_code, char *action_name )
+bool KeyBinder::getKeyAction( unsigned char key_scan_code, char *action_name )
  {
   KeyBinderElement *key_info;
 
   key_info = findKeyScanCode( key_scan_code );
-  if( key_info != NULL )
+  if( key_info != 0 )
    {
     strcpy( action_name, key_info->action_name );
-    return( _TRUE );
+    return( true );
    }
   
-  return( _FALSE );
+  return( false );
  }

@@ -35,7 +35,7 @@ class ObjectiveState : public PObject
  {
   public:
    short ID;
-   boolean  selection_state;
+   bool  selection_state;
    Recti    selection_box;
    unsigned char outpost_type;
    char name[64];   
@@ -46,7 +46,7 @@ class ObjectiveState : public PObject
    unsigned char occupation_status;
    PlayerID occupying_player;
  
-  inline boolean isBounded( PointXYi &test )
+  inline bool isBounded( PointXYi &test )
    {
     return( capture_area.bounds( location, test ) );
    }
@@ -58,7 +58,7 @@ class OutpostStatus
  {
   public:
    unsigned short unit_generation_type;
-   boolean        unit_generation_on_off; 
+   bool        unit_generation_on_off; 
    float          unit_generation_time;
    float          unit_generation_time_remaining;
  };

@@ -15,18 +15,18 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "PObject.hpp"
 
  
- boolean PObject::is_equal( PObject *object )
-  {
-   if ( this == object )
-    return ( _TRUE );
+bool PObject::is_equal( PObject *object ) const
+{
+    if ( this == object )
+     	return ( true );
 
-   return( _FALSE );    
-  }
+    return( false );    
+}
 
- PObject::PObject( void )
-  {
-  }
+PObject::PObject()
+{
+}

@@ -15,9 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "globals.h" 
+#include "Globals.h" 
 #include "DirectDrawGlobals.hpp" 
-#include "wrldsprt.hpp"
+#include "Wrldsprt.hpp"
 #include "blitters.h"
 
 #include "WorldViewInterface.hpp"
@@ -40,7 +40,7 @@ void world_sprite_base::set_select_bbox( char x_cut, char y_cut )
 
 //*************************************************************************************
 
-void world_sprite_base::set_select( byte select_on_off )
+void world_sprite_base::set_select( unsigned char select_on_off )
  {
   select_flag = select_on_off;
  }
@@ -50,7 +50,7 @@ void world_sprite_base::set_select( byte select_on_off )
 world_sprite::world_sprite( void )
  : world_sprite_base()
  {
-  sprite = NULL;
+  sprite = 0;
  }
 
 
@@ -61,7 +61,7 @@ world_sprite::world_sprite( void )
   PointXYi loc( x_loc + bbox_x1 + attach_x, y_loc + bbox_y1 + attach_y );
   
   //return( WorldViewInterface::inView( 640, 480, loc ) );
-  return( _TRUE );
+  return( true );
  }
 
 //************************************************************************************** 
@@ -76,7 +76,7 @@ world_sprite::world_sprite( void )
   bbox_y2 =  (sprite->y_size / 2); 
  
   height = 0;
-  visible = _TRUE;
+  visible = true;
   
   select_x_cut = 0;
   select_y_cut = 0;
@@ -85,7 +85,7 @@ world_sprite::world_sprite( void )
 
 //************************************************************************************** 
 
- void world_sprite::set_data( void *data, short attach_offset_x, short attach_offset_y, byte height_val )
+ void world_sprite::set_data( void *data, short attach_offset_x, short attach_offset_y, unsigned char height_val )
  {
   sprite = (sprite_data *) data;
  
@@ -98,7 +98,7 @@ world_sprite::world_sprite( void )
   attach_y = attach_offset_y; 
 
   height = height_val; 
-  visible = _TRUE;
+  visible = true;
 
   select_x_cut = 0;
   select_y_cut = 0;
@@ -115,7 +115,7 @@ world_sprite::world_sprite( void )
 
  void world_sprite::blit( void )
  {
-  long frame_offset;
+  long frame_offset = 0;
   unsigned char *double_buffer; 
   long x, y;
   char x_size, y_size;
@@ -154,7 +154,7 @@ world_sprite::world_sprite( void )
 world_animation::world_animation( void )
  : world_sprite_base()
  {
-  anim = NULL;
+  anim = 0;
   
  }
 
@@ -165,12 +165,12 @@ world_animation::world_animation( void )
   PointXYi loc( x_loc + bbox_x1 + attach_x, y_loc + bbox_y1 + attach_y );
   
   //return( WorldViewInterface::inView( 640, 480, loc ) );
-  return( _TRUE );
+  return( true );
  }
 
 //************************************************************************************** 
 
-void world_animation::set_anim_props( byte cycle_on_off, byte auto_frame_on_off, byte delay_tics, short rate )
+void world_animation::set_anim_props( unsigned char cycle_on_off, unsigned char auto_frame_on_off, unsigned char delay_tics, short rate )
  {
   cycle = cycle_on_off;
   auto_frame_update = auto_frame_on_off;
@@ -192,7 +192,7 @@ void world_animation::set_anim_props( byte cycle_on_off, byte auto_frame_on_off,
   
   direct = 0;
   height = 0;
-  visible = _TRUE;
+  visible = true;
 
   select_x_cut = 0;
   select_y_cut = 0;
@@ -201,7 +201,7 @@ void world_animation::set_anim_props( byte cycle_on_off, byte auto_frame_on_off,
 
 //************************************************************************************** 
 
- void world_animation::set_data( void *data, short attach_offset_x, short attach_offset_y, byte height_val )
+ void world_animation::set_data( void *data, short attach_offset_x, short attach_offset_y, unsigned char height_val )
  {
   anim = (animation_data *) data;
 
@@ -216,7 +216,7 @@ void world_animation::set_anim_props( byte cycle_on_off, byte auto_frame_on_off,
   attach_y = attach_offset_y;
   
   height = height_val;  
-  visible = _TRUE;
+  visible = true;
  
   select_x_cut = 0;
   select_y_cut = 0;
@@ -278,8 +278,8 @@ void world_animation::frame_update( void )
 
  void world_animation::blit( void )
  {
-  uchar *frame_data; 
-  long frame_offset;
+  unsigned char *frame_data; 
+  long frame_offset = 0;
   char x_size, y_size;
   long x, y;
   unsigned long view_start_x, view_start_y;
@@ -323,9 +323,9 @@ void world_animation::frame_update( void )
  short world_animation::completed( void )
  {
   if ( frame_counter == (anim->frames-1) )
-   return ( _TRUE );
+   return ( true );
   
-  return( _FALSE );
+  return( false );
  }
 
 
@@ -341,7 +341,7 @@ world_sprite_list::world_sprite_list( void )
     list_counts[ list_loop ] = 0;
 
     for ( i = 0; i < _MAX_SPRITE_LIST; i++ )
-     sprite_list[ list_loop ][ i ] = NULL; 
+     sprite_list[ list_loop ][ i ] = 0; 
   
    }
  

@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "MiniMapInterface.hpp"
 
 #include "WorldInputCmdProcessor.hpp"
@@ -29,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 fXY      MiniMapInterface::scale_factor;
 PointXYi MiniMapInterface::mini_map_size;
-boolean  MiniMapInterface::pathing_debug_mode = _FALSE;	 
+bool  MiniMapInterface::pathing_debug_mode = false;	 
 
 PIX MiniMapInterface::player_unit_color;
 PIX MiniMapInterface::allie_unit_color;
@@ -39,10 +38,10 @@ PIX MiniMapInterface::allie_objective_color;
 PIX MiniMapInterface::enemy_objective_color;
 
 TimerFrameBase MiniMapInterface::radar_blink_timer;
-boolean        MiniMapInterface::radar_blink_flag;
+bool        MiniMapInterface::radar_blink_flag;
 
 TimerFrameBase MiniMapInterface::show_enemy_radar_timer;
-boolean        MiniMapInterface::show_enemy_radar_flag;
+bool        MiniMapInterface::show_enemy_radar_flag;
   
 Recti MiniMapInterface::getWorldWindow( void )
  {
@@ -100,7 +99,7 @@ void MiniMapInterface::annotateUnits( Surface &map_surface )
      { 
       if ( threat_level == _threat_level_under_attack )
        {
-        if ( radar_blink_flag == _TRUE )
+        if ( radar_blink_flag == true )
          {
 		  drawLargeUnitDot( map_surface, map_loc, Color::yellow );
 		 }
@@ -132,7 +131,7 @@ void MiniMapInterface::annotateUnits( Surface &map_surface )
 		  } else { assert(false); }
       }
      else
-       if( ( unit_dispostion == _unit_enemy ) && (show_enemy_radar_flag == _TRUE) ) 
+       if( ( unit_dispostion == _unit_enemy ) && (show_enemy_radar_flag == true) ) 
         {
          
           if (GameConfig::getMiniMapUnitSize() == _mini_map_unit_size_small)
@@ -158,7 +157,7 @@ void MiniMapInterface::annotateObjectives( Surface &map_surface )
 
   ObjectiveInterface::startObjectivePositionEnumeration();
 
-  while( ObjectiveInterface::objectivePositionEnumeration( &world_rect, &objective_disposition, NULL ) )
+  while( ObjectiveInterface::objectivePositionEnumeration( &world_rect, &objective_disposition, 0 ) )
    {	
 	switch( objective_disposition )
 	 {
@@ -204,7 +203,7 @@ void MiniMapInterface::annotateObjectives( Surface &map_surface )
 void MiniMapInterface::annotateMiniMap( Surface &map_surface )
  {
 
-  if ( pathing_debug_mode == _TRUE )
+  if ( pathing_debug_mode == true )
    {
    	BitArray *bit_array;
 	unsigned long map_x_size = MapInterface::getMapXsize();
@@ -227,11 +226,11 @@ void MiniMapInterface::annotateMiniMap( Surface &map_surface )
     if ( radar_blink_timer.count() )
      { radar_blink_flag = !radar_blink_flag; }
 
-    if( show_enemy_radar_flag == _TRUE )
+    if( show_enemy_radar_flag == true )
      {
       if( show_enemy_radar_timer.count() )
        {
-        show_enemy_radar_flag = _FALSE;
+        show_enemy_radar_flag = false;
        }
      }
 	
@@ -241,12 +240,12 @@ void MiniMapInterface::annotateMiniMap( Surface &map_surface )
  
  }
 
-boolean MiniMapInterface::isUnitSelected( void )
+bool MiniMapInterface::isUnitSelected( void )
  {
   return( COMMAND_PROCESSOR.isUnitSelected() );
  }
 
-boolean MiniMapInterface::selectUnits( Recti bound_box )
+bool MiniMapInterface::selectUnits( Recti bound_box )
  {
   bound_box.min.x = int(float(bound_box.min.x) * scale_factor.x);
   bound_box.min.y = int(float(bound_box.min.y) * scale_factor.y);
@@ -261,7 +260,7 @@ void MiniMapInterface::deselectUnits( void )
   COMMAND_PROCESSOR.deselectUnitsExternal(); 
  }
 
-boolean MiniMapInterface::isValidUnitMove( PointXYi location )
+bool MiniMapInterface::isValidUnitMove( PointXYi location )
  {
   location.x = location.x * scale_factor.x;
   location.y = location.y * scale_factor.y;
@@ -269,7 +268,7 @@ boolean MiniMapInterface::isValidUnitMove( PointXYi location )
   return( COMMAND_PROCESSOR.isValidMoveLocation( location ) );
  }
 
-boolean MiniMapInterface::moveUnits( PointXYi location )
+bool MiniMapInterface::moveUnits( PointXYi location )
  {
   location.x = location.x * scale_factor.x;
   location.y = location.y * scale_factor.y;
@@ -277,7 +276,7 @@ boolean MiniMapInterface::moveUnits( PointXYi location )
   return( COMMAND_PROCESSOR.sendMoveCommandExternal( location ) );
  }
 
-void MiniMapInterface::setPathingDebugMode( boolean on_off )
+void MiniMapInterface::setPathingDebugMode( bool on_off )
  {
   pathing_debug_mode = on_off;
  }
@@ -286,7 +285,7 @@ void MiniMapInterface::setShowEnemyRadar( float time )
  {
   show_enemy_radar_timer.changePeriod( time );
   show_enemy_radar_timer.reset();
-  show_enemy_radar_flag = _TRUE;
+  show_enemy_radar_flag = true;
  }
 
 void MiniMapInterface::setProperties( PIX player_unit_color,
@@ -303,10 +302,10 @@ void MiniMapInterface::setProperties( PIX player_unit_color,
   MiniMapInterface::allie_objective_color = allie_objective_color;
   MiniMapInterface::enemy_objective_color = enemy_objective_color;
  
-  radar_blink_flag = _FALSE;
+  radar_blink_flag = false;
   radar_blink_timer.changeRate( 10 );
   
-  show_enemy_radar_flag = _FALSE;
+  show_enemy_radar_flag = false;
  }
 
 void MiniMapInterface::drawLargeUnitDot( const Surface &dest, const PointXYi &location, unsigned char color )

@@ -35,14 +35,14 @@ class NetMessageEncoder : public PObject
    void resetEncoder( void );
    void encodeMessage( NetMessage *message, unsigned short size );
       
-   boolean NetMessageEncoder::encodeMessage( NetMessage *message, 
+   bool NetMessageEncoder::encodeMessage( NetMessage *message, 
                                              unsigned short size, 
                                              MultiMessage **encoded_message );
    
    void getEncodeMessage( MultiMessage **message ); 
 
    void setDecodeMessage( MultiMessage *message ); 
-   boolean decodeMessage( NetMessage **message );
+   bool decodeMessage( NetMessage **message );
 
    void sendEncodedMessage( void );
  };

@@ -50,8 +50,8 @@ public:
 	cButton() { reset(); }
 	~cButton()
 	{
-		if (name    != NULL) free(name);
-		if (toolTip != NULL) free(toolTip);
+		if (name    != 0) free(name);
+		if (toolTip != 0) free(toolTip);
 	}
 
 	//typedef void (WINDOW::*ITEM_FUNC)(void);
@@ -67,7 +67,7 @@ public:
 	iRect getBounds    () const { return bounds;     }
 	char *getName      () const { return name;       }
 	char *getToolTip   () const { return toolTip;    }
-	BOOL  getIsSelected() const { return isSelected; }
+	bool  getIsSelected() const { return isSelected; }
 
 	void createPacked(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc);
 
@@ -106,7 +106,7 @@ public:
 							const char *nToolTip, ITEM_FUNC nLeftClickFunc, 
               ITEM_FUNC nRightClickFunc);
 
-	inline BOOL contains(iXY pos)
+	inline bool contains(iXY pos)
 	{
 		assert(isValidPtr(this));
 
@@ -122,7 +122,7 @@ public:
 			return false;
 		}
 	}
-	BOOL   isSelected;
+	bool   isSelected;
 
 private:
 	iRect  bounds;

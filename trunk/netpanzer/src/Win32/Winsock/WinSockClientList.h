@@ -37,9 +37,9 @@ typedef struct tagClientList
 
  char TempBuffer[512];
  
- BOOL bHeaderIncomplete;
- BOOL bMessageIncomplete;
- BOOL bUDPEnabled;
+ bool bHeaderIncomplete;
+ bool bMessageIncomplete;
+ bool bUDPEnabled;
  short TempOffset;
 
  DWORD winsockID;
@@ -53,7 +53,7 @@ typedef struct tagClientList
 LPCLIENTLIST AddClient(SOCKET newsocket,
                        LPSOCKADDR lpnewSockAddr,
                        int iAddrLen);
-BOOL AddClientUDPAddr(DWORD wsID,
+int AddClientUDPAddr(DWORD wsID,
                       LPSOCKADDR lpUDPSockAddr,
                       int ilength);
 LPCLIENTLIST GetClientFromID(DWORD wsID);
@@ -64,4 +64,4 @@ void DelClient(LPCLIENTLIST lpThis);
 void DelClientByWinsockID(DWORD wsID);
 void DelAllClients(void);
 
-#endif _WINSOCKCLIENTLIST_H
+#endif // _WINSOCKCLIENTLIST_H

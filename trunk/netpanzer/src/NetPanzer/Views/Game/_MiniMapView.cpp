@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "stdafx.hpp"
 #include "MiniMapView.hpp"
 #include "cMouse.hpp"
 #include "MiniMapInterface.hpp"
@@ -26,6 +25,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameConfig.hpp"
 #include "Desktop.hpp"
 
+// XXX is this an old version of the MinimapView?
+
+#if 0
 
 MiniMapView miniMapView;
 
@@ -138,8 +140,8 @@ void MiniMapView::init()
 
 	mapDrawType = MAP_SOLID;
 
-	int xOffset = size.x;
-	int yOffset = 0;
+	//int xOffset = size.x;
+	//int yOffset = 0;
 	
 	iRect clientRect(getClientRect());
 	iRect miniMapRect(clientRect.min.x, clientRect.min.y, clientRect.max.x, clientRect.max.y - DEFAULT_STATUS_BAR_HEIGHT);
@@ -149,7 +151,7 @@ void MiniMapView::init()
 
 	// Get the original version of the minimap.
 	Surface *miniMap = MiniMapInterface::getMiniMap();
-	if (miniMap == NULL)
+	if (miniMap == 0)
 	{
 		FUBAR("ERROR: Unable to find minimap surface.");
 	}
@@ -176,7 +178,7 @@ void MiniMapView::doDraw(const Surface &viewArea, const Surface &clientArea)
 	float dt = TimerInterface::getTimeSlice();
 
 	Surface *miniMap = MiniMapInterface::getMiniMap();
-	if (miniMap == NULL)
+	if (miniMap == 0)
 	{
 		FUBAR("ERROR: Unable to find minimap surface.");
 	}
@@ -223,6 +225,8 @@ void MiniMapView::doDraw(const Surface &viewArea, const Surface &clientArea)
 		{
 			clientArea.bltScale(*miniMap, r);
 		}
+		// doesn't work...
+#if 0 
 		else if (mapDrawType == MAP_2575)
 		{
 			clientArea.bltBlendScale(*miniMap, r, Palette::colorTable2575);
@@ -231,6 +235,7 @@ void MiniMapView::doDraw(const Surface &viewArea, const Surface &clientArea)
 		{
 			clientArea.bltBlendScale(*miniMap, r, Palette::colorTable5050);
 		}
+#endif
 		//else if (mapDrawType == MAP_BLEND_GREEN)
 		//{
 			//clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::green256.getColorArray());
@@ -257,6 +262,8 @@ void MiniMapView::doDraw(const Surface &viewArea, const Surface &clientArea)
 		{
 			miniMapSurface.blt(clientArea, 0, 0);
 		}
+		// XXX not all defined...
+#if 0
 		else if (mapDrawType == MAP_2575)
 		{
 			clientArea.blendIn(miniMapSurface, iXY(0, 0), Palette::colorTable2575);
@@ -265,6 +272,7 @@ void MiniMapView::doDraw(const Surface &viewArea, const Surface &clientArea)
 		{
 			clientArea.blendIn(miniMapSurface, iXY(0, 0), Palette::colorTable5050);
 		}
+#endif
 		//else if (mapDrawType == MAP_BLEND_GREEN)
 		//{
 			//clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::green256.getColorArray());
@@ -511,3 +519,5 @@ void MiniMapView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &
 		scaleGroupWait = 0.0f;
 	}
 } // end MiniMapView::rMouseDrag
+
+#endif

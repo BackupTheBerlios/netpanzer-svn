@@ -15,8 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-#include "stdafx.hpp"
 #include <windows.h>
 #include <mmsystem.h>
 #include "wave.h"
@@ -50,17 +48,17 @@ int WaveOpenFile(
 
 
 	// Initialization...
-	*ppwfxInfo = NULL;
+	*ppwfxInfo = 0;
 	nError = 0;
-	hmmioIn = NULL;
+	hmmioIn = 0;
 	
-	if ((hmmioIn = mmioOpen(pszFileName, NULL, MMIO_ALLOCBUF | MMIO_READ)) == NULL)
+	if ((hmmioIn = mmioOpen(pszFileName, 0, MMIO_ALLOCBUF | MMIO_READ)) == 0)
 		{
 		nError = ER_CANNOTOPEN;
 		goto ERROR_READING_WAVE;
 		}
 
-	if ((nError = (int)mmioDescend(hmmioIn, pckInRIFF, NULL, 0)) != 0)
+	if ((nError = (int)mmioDescend(hmmioIn, pckInRIFF, 0, 0)) != 0)
 		{
 		goto ERROR_READING_WAVE;
 		}
@@ -115,7 +113,7 @@ int WaveOpenFile(
 		}
 							
 	// Ok, now allocate that waveformatex structure.
-	if ((*ppwfxInfo = (WAVEFORMATEX *)GlobalAlloc(GMEM_FIXED, sizeof(WAVEFORMATEX)+cbExtraAlloc)) == NULL)
+	if ((*ppwfxInfo = (WAVEFORMATEX *)GlobalAlloc(GMEM_FIXED, sizeof(WAVEFORMATEX)+cbExtraAlloc)) == 0)
 		{
 		nError = ER_MEM;
 		goto ERROR_READING_WAVE;
@@ -147,16 +145,16 @@ int WaveOpenFile(
 	goto TEMPCLEANUP;               
 
 ERROR_READING_WAVE:
-	if (*ppwfxInfo != NULL)
+	if (*ppwfxInfo != 0)
 		{
 		GlobalFree(*ppwfxInfo);
-		*ppwfxInfo = NULL;
+		*ppwfxInfo = 0;
 		}               
 
-	if (hmmioIn != NULL)
+	if (hmmioIn != 0)
 	{
 	mmioClose(hmmioIn, 0);
-		hmmioIn = NULL;
+		hmmioIn = 0;
 		}
 	
 TEMPCLEANUP:
@@ -189,7 +187,7 @@ int WaveStartDataRead(
 	// Do a nice little seek...
 	if ((nError = mmioSeek(*phmmioIn, pckInRIFF->dwDataOffset + sizeof(FOURCC), SEEK_SET)) == -1)
 		{
-		assert(FALSE);
+		assert(false);
 		}
 
 	nError = 0;
@@ -296,16 +294,16 @@ int WaveCloseReadFile(
 			)
 {
 
-	if (*ppwfxSrc != NULL)
+	if (*ppwfxSrc != 0)
 		{
 		GlobalFree(*ppwfxSrc);
-		*ppwfxSrc = NULL;
+		*ppwfxSrc = 0;
 		}
 
-	if (*phmmio != NULL)
+	if (*phmmio != 0)
 		{
 		mmioClose(*phmmio, 0);
-		*phmmio = NULL;
+		*phmmio = 0;
 		}
 
 	return(0);
@@ -343,8 +341,8 @@ int WaveLoadFile(
 	int                                     nError;
 	UINT                            cbActualRead;
 
-	*ppbData = NULL;
-	*ppwfxInfo = NULL;
+	*ppbData = 0;
+	*ppwfxInfo = 0;
 	*cbSize = 0;
 	
 	if ((nError = WaveOpenFile(pszFileName, &hmmioIn, ppwfxInfo, &ckInRiff)) != 0)
@@ -358,7 +356,7 @@ int WaveLoadFile(
 		}
 
 	// Ok, size of wave data is in ckIn, allocate that buffer.
-	if ((*ppbData = (BYTE *)GlobalAlloc(GMEM_FIXED, ckIn.cksize)) == NULL)
+	if ((*ppbData = (BYTE *)GlobalAlloc(GMEM_FIXED, ckIn.cksize)) == 0)
 		{
 		nError = ER_MEM;
 		goto ERROR_LOADING;
@@ -373,23 +371,23 @@ int WaveLoadFile(
 	goto DONE_LOADING;
 
 ERROR_LOADING:
-	if (*ppbData != NULL)
+	if (*ppbData != 0)
 		{
 		GlobalFree(*ppbData);
-		*ppbData = NULL;
+		*ppbData = 0;
 		}
-	if (*ppwfxInfo != NULL)
+	if (*ppwfxInfo != 0)
 		{
 		GlobalFree(*ppwfxInfo);
-		*ppwfxInfo = NULL;
+		*ppwfxInfo = 0;
 		}
 			
 DONE_LOADING:
 	// Close the wave file. 
-	if (hmmioIn != NULL)
+	if (hmmioIn != 0)
 		{
 		mmioClose(hmmioIn, 0);
-		hmmioIn = NULL;
+		hmmioIn = 0;
 		}
 
 	return(nError);

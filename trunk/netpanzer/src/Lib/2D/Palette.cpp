@@ -15,9 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-#include "stdafx.hpp"
 #include "Palette.hpp"
+#include "FileUtil.hpp"
 #include "UtilInterface.hpp"
 #include "gapp.hpp"
 
@@ -181,7 +180,8 @@ void Palette::setColorTables()
 
 	// 16 shades of gray.
 	gray16.init(16);
-	for (int num = 0; num < 16; num++)
+	int num;
+	for (num = 0; num < 16; num++)
 		gray16.setColor(num, findNearestColor(RGBColor(16*(16-num)-1, 16*(16-num)-1, 16*(16-num)-1)));
 
 	// 64 shades of gray.
@@ -204,7 +204,9 @@ void Palette::setColorTables()
 	for (num = 0; num < 256; num++)
 	{
 		int c            = color[num].getBrightnessInt();
-		int nearestColor = findNearestColor(RGBColor(c * 1.2f, c * 1.2f, c * 1.2f));
+		int nearestColor = findNearestColor(RGBColor((int) (c * 1.2f),
+												     (int) (c * 1.2f),
+													 (int) (c * 1.2f)));
 		gray256.setColor(num, nearestColor);
 	}
 	
@@ -213,7 +215,9 @@ void Palette::setColorTables()
 	for (num = 0; num < 256; num++)
 	{
 		int c            = color[num].getBrightnessInt();
-		int nearestColor = findNearestColor(RGBColor((float(c) / 2.0f), (float(c) / 2.0f), (float(c) / 2.0f)));
+		int nearestColor = findNearestColor(RGBColor((int) (float(c) / 2.0f),
+													 (int) (float(c) / 2.0f),
+													 (int) (float(c) / 2.0f)));
 		darkGray256.setColor(num, nearestColor);
 	}
 
@@ -298,8 +302,8 @@ void Palette::setColorTables()
 	}
 	}
 
-	mkdir("pics");
-	mkdir("pics\\colorFilters");
+	FileUtil::mkdir("pics");
+	FileUtil::mkdir("pics\\colorFilters");
 
 	char strBuf[256];
 	char tablePath[] = "pics\\colorFilters\\";
@@ -357,9 +361,9 @@ void Palette::setName(String filename)
 
 	UtilInterface::getFilename(filename);
 
-	char *dotPtr = NULL;
+	char *dotPtr = 0;
 
-	if ((dotPtr = strchr(strBuf, '.')) != NULL)
+	if ((dotPtr = strchr(strBuf, '.')) != 0)
 	{
 		// Remove the extension.
 		*dotPtr = '\0';
@@ -376,13 +380,13 @@ void Palette::setName(String filename)
 //---------------------------------------------------------------------------
 void Palette::loadACT(const char *filename)
 {
-	assert(filename != NULL);
+	assert(filename != 0);
 
 	FILE *fp;
 
 	setName(filename);
 
-	if ((fp = fopen(filename, "rb")) == NULL)
+	if ((fp = fopen(filename, "rb")) == 0)
 	{
 		FUBAR("Unable to open palette file: %s", filename);
 	}
@@ -555,15 +559,15 @@ void Palette::setBrightnessAbsolute(float brightness)
 	for (int i = 0; i < 256; i++)
 	{
 		// Set the colors based on the original colors.
-		int red = float(originalColor[i].red) * brightness;
+		int red = (int) (float(originalColor[i].red) * brightness);
 		if (red > 255) { red = 255; }
 		else if (red < 0) { red = 0; }
 
-		int green = float(originalColor[i].green) * brightness;
+		int green = (int) (float(originalColor[i].green) * brightness);
 		if (green > 255) { green = 255; }
 		else if (green < 0) { green = 0; }
 
-		int blue = float(originalColor[i].blue) * brightness;
+		int blue = (int) (float(originalColor[i].blue) * brightness);
 		if (blue > 255) { blue = 255; }
 		else if (blue < 0) { blue = 0; }
 		

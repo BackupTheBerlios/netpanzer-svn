@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "UnitBucketArray.hpp"
 
 UnitBucketArray::UnitBucketArray( )
@@ -157,7 +156,7 @@ long UnitBucketArray::getUnitBucketIndex( UnitID unit_id )
     
     traversal_ptr = array[ bucket_index ].getFront();
     
-    while( traversal_ptr != NULL )
+    while( traversal_ptr != 0 )
      {
       if( traversal_ptr->index == unique_index )     
        return( (long) bucket_index );
@@ -182,7 +181,7 @@ UnitBase * UnitBucketArray::getUnit( UnitID unit_id )
     
     traversal_ptr = array[ bucket_index ].getFront();
     
-    while( traversal_ptr != NULL )
+    while( traversal_ptr != 0 )
      {
       if( traversal_ptr->index == unique_index )     
        return( traversal_ptr->unit );
@@ -191,7 +190,7 @@ UnitBase * UnitBucketArray::getUnit( UnitID unit_id )
      }  
 
    }
-  return( NULL );
+  return( 0 );
  }
 
 
@@ -205,7 +204,7 @@ UnitBase * UnitBucketArray::getUnit( UnitID unit_id, unsigned long bucket_index 
     
   traversal_ptr = array[ bucket_index ].getFront();
     
-  while( traversal_ptr != NULL )
+  while( traversal_ptr != 0 )
    {
     if( traversal_ptr->index == unique_index )     
      return( traversal_ptr->unit );
@@ -213,7 +212,7 @@ UnitBase * UnitBucketArray::getUnit( UnitID unit_id, unsigned long bucket_index 
     traversal_ptr = traversal_ptr->next;
    }  
  
-  return( NULL );
+  return( 0 );
  }
 
 UnitBase * UnitBucketArray::getUnitAtWorldLoc( UnitID unit_id, PointXYi world_loc )
@@ -232,7 +231,7 @@ UnitBase * UnitBucketArray::getUnitAtWorldLoc( UnitID unit_id, PointXYi world_lo
     
   traversal_ptr = array[ bucket_index ].getFront();
     
-  while( traversal_ptr != NULL )
+  while( traversal_ptr != 0 )
    {
     if( traversal_ptr->index == unique_index )     
      return( traversal_ptr->unit );
@@ -240,7 +239,7 @@ UnitBase * UnitBucketArray::getUnitAtWorldLoc( UnitID unit_id, PointXYi world_lo
     traversal_ptr = traversal_ptr->next;
    }  
  
-  return( NULL );
+  return( 0 );
  }
 
 UnitBase * UnitBucketArray::getUnitAtMapLoc( UnitID unit_id, PointXYi map_loc )
@@ -259,7 +258,7 @@ UnitBase * UnitBucketArray::getUnitAtMapLoc( UnitID unit_id, PointXYi map_loc )
     
   traversal_ptr = array[ bucket_index ].getFront();
     
-  while( traversal_ptr != NULL )
+  while( traversal_ptr != 0 )
    {
     if( traversal_ptr->index == unique_index )     
      return( traversal_ptr->unit );
@@ -267,12 +266,12 @@ UnitBase * UnitBucketArray::getUnitAtMapLoc( UnitID unit_id, PointXYi map_loc )
     traversal_ptr = traversal_ptr->next;
    }  
  
-  return( NULL );
+  return( 0 );
  }
 
-boolean UnitBucketArray::moveUnit( UnitID unit_id, unsigned long from_bucket_index, unsigned long to_bucket_index )
+bool UnitBucketArray::moveUnit( UnitID unit_id, unsigned long from_bucket_index, unsigned long to_bucket_index )
  {
-  boolean found = _FALSE;
+  bool found = false;
   UnitBucketPointer *traversal_ptr;
   UnitBucketPointer *move_ptr;
   unsigned long unique_index;
@@ -281,7 +280,7 @@ boolean UnitBucketArray::moveUnit( UnitID unit_id, unsigned long from_bucket_ind
     
   traversal_ptr = array[ from_bucket_index ].getFront();
     
-  while( (traversal_ptr != NULL) && (found == _FALSE) )
+  while( (traversal_ptr != 0) && (found == false) )
    {
     if( traversal_ptr->index == unique_index )     
      {
@@ -289,7 +288,7 @@ boolean UnitBucketArray::moveUnit( UnitID unit_id, unsigned long from_bucket_ind
       traversal_ptr = traversal_ptr->next;
       array[ from_bucket_index ].removeObject( move_ptr );
       array[ to_bucket_index ].addFront( move_ptr );
-      found = _TRUE;
+      found = true;
      }
     else
      {
@@ -297,7 +296,7 @@ boolean UnitBucketArray::moveUnit( UnitID unit_id, unsigned long from_bucket_ind
      }
    }  
   
-  if ( found == _FALSE )
+  if ( found == false )
    {
     from_bucket_index = getUnitBucketIndex( unit_id );
     if( from_bucket_index  != -1 )
@@ -305,13 +304,13 @@ boolean UnitBucketArray::moveUnit( UnitID unit_id, unsigned long from_bucket_ind
       return( moveUnit( unit_id, from_bucket_index, to_bucket_index ) );
      }     
     else
-     return( _FALSE );
+     return( false );
    }
   
-  return( _TRUE );
+  return( true );
  }
 
-boolean UnitBucketArray::deleteUnitBucketPointer( UnitID unit_id, PointXYi world_loc )
+bool UnitBucketArray::deleteUnitBucketPointer( UnitID unit_id, PointXYi world_loc )
  {
   long bucket_index;
   unsigned long unique_index;
@@ -324,16 +323,16 @@ boolean UnitBucketArray::deleteUnitBucketPointer( UnitID unit_id, PointXYi world
     
   traversal_ptr = array[ bucket_index ].getFront();
     
-  while( traversal_ptr != NULL )
+  while( traversal_ptr != 0 )
    {
     if( traversal_ptr->index == unique_index )     
      {
       array[ bucket_index ].deleteObject( traversal_ptr );
-      return( _TRUE );
+      return( true );
      }
     
     traversal_ptr = traversal_ptr->next;
    }         
   
-  return( _FALSE );
+  return( false );
  }

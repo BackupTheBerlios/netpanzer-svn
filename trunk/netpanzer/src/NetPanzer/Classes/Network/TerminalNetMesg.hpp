@@ -27,7 +27,9 @@ enum { _net_message_id_term_unit_cmd,
        _net_message_id_term_unit_gen
 	 };
 
+#ifdef MSVC
 #pragma pack(1)
+#endif
        
 class TerminalUnitCmdRequest : public NetMessage
  {
@@ -40,7 +42,7 @@ class TerminalUnitCmdRequest : public NetMessage
     message_id = _net_message_id_term_unit_cmd;
    }
  
- };
+ } __attribute__((packed));
 
 class TerminalOutpostUnitGenRequest : public NetMessage
  {
@@ -53,8 +55,10 @@ class TerminalOutpostUnitGenRequest : public NetMessage
     message_id = _net_message_id_term_unit_gen;
    }
  
- };
+ } __attribute__((packed));
 
+#ifdef MSVC
 #pragma pack()
+#endif
 
 #endif

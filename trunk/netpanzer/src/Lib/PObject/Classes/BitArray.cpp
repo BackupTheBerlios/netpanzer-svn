@@ -15,23 +15,25 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
+#include <assert.h>
+#include <string.h>
 #include "BitArray.hpp"
 
 
 BitArray::BitArray( void )
  {
-  array = NULL;
+  array = 0;
  }
 
 //************************************************************************
 
 BitArray::~BitArray( void )
  {
-  if ( array != NULL )
+  if ( array != 0 )
    {
-    delete [size] array;
-    array = NULL;
+    delete [] array;
+    array = 0;
    }
  }
   
@@ -54,14 +56,14 @@ void BitArray::initialize ( unsigned long x, unsigned long y )
   if ( remain )
    rawsize = rawsize + 1;
    
-  if ( array != NULL )
+  if ( array != 0 )
    {
-    delete [size] array;
-    array = NULL;
+    delete [] array;
+    array = 0;
    }
 
   array = new unsigned char [ rawsize ];
-  assert( array != NULL );
+  assert( array != 0 );
 
   x_size = x;
   y_size = y;
@@ -74,10 +76,10 @@ void BitArray::initialize ( unsigned long x, unsigned long y )
 
 void BitArray::deallocate( void )
  {
-  if ( array != NULL )
+  if ( array != 0 )
    {
-    delete [ size ] array;
-    array = NULL;
+    delete [] array;
+    array = 0;
    }
  }
 
@@ -126,7 +128,7 @@ void BitArray::clearBit( unsigned long x, unsigned long y )
  }
 
 //************************************************************************
-boolean BitArray::getBit( unsigned long x, unsigned long y )
+bool BitArray::getBit( unsigned long x, unsigned long y )
  {
   unsigned long index;
   unsigned char shift;
@@ -141,8 +143,8 @@ boolean BitArray::getBit( unsigned long x, unsigned long y )
   value = array[index] & mask;
   
   if ( value )
-   return( _TRUE );
+   return( true );
   
-  return( _FALSE );
+  return( false );
 
  }

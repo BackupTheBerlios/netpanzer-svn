@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PATHSCHEDULER_HPP
 #define _PATHSCHEDULER_HPP
 
-#include "aliasdef.h"
 #include "PObject.hpp"
 #include "Point.hpp"
 #include "Astar.hpp"
@@ -34,7 +33,7 @@ class PathCacheEntry
    PointXYi  start;
    PointXYi  goal;
    PathList  path;			    
-   boolean   valid;
+   bool   valid;
    
   inline void set( PointXYi start, PointXYi goal, PathList &path )			    
    {
@@ -69,7 +68,7 @@ class PathCache
 
    void initialize( unsigned long cache_size );
 
-   boolean search( PathRequest &path_request );
+   bool search( PathRequest &path_request );
 
    void add( PathRequest &path_request );
     
@@ -107,7 +106,7 @@ class PathGenerator
    unsigned short pathing_fsm;    
    unsigned short pathing_fsm_state;
    
-   boolean path_generation_status;
+   bool path_generation_status;
    
    PathRequest path_request;
 
@@ -134,16 +133,19 @@ class PathGenerator
    inline unsigned short generationStatus( void )
     { return( path_generation_status ); }
 
-   inline boolean generationComplete( UnitID &unit_id )
+   inline bool generationComplete( UnitID &unit_id )
     {
+	 // XXX comparison is always false?!?
+#if 0
      if ( path_generation_status == _path_generator_status_waiting )
 	  if ( path_request.unit_id == unit_id )
 	   { 
 	    path_generation_status = _path_generator_status_free;
-		return( _TRUE );
+		return( true );
 	   }
+#endif
 	 
-	 return( _FALSE );
+	 return( false );
 	}
    
    void run( );
@@ -189,15 +191,15 @@ class PathScheduler
 
    static void requestPath( PathRequest &path_request );
 
-   static boolean queryPath( UnitID &unit_id );
+   static bool queryPath( UnitID &unit_id );
   
    static void killRequest( UnitID &unit_id );
   
    static void run( void );
   
    // ** Debug Stuff **
-   static void setShortPatherDebug( boolean on_off );
-   static void setLongPatherDebug( boolean on_off );
+   static void setShortPatherDebug( bool on_off );
+   static void setLongPatherDebug( bool on_off );
 
    static void sampleShortPather();
    static void sampleLongPather();

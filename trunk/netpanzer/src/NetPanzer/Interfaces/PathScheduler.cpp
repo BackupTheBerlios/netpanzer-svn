@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "PathScheduler.hpp"
 
 
@@ -37,7 +36,7 @@ void PathCache::initialize( unsigned long cache_size )
   for( unsigned long i = 0; i < PathCache::cache_size; i++ )
    {
 	cache_list[ i ].path.initialize();	 
-   	cache_list[ i ].valid = _FALSE;
+   	cache_list[ i ].valid = false;
    }
   
   start_proximity_threshold = 625;	// 25 * 25
@@ -45,7 +44,7 @@ void PathCache::initialize( unsigned long cache_size )
   add_path_length_threshold = 100;
  }
 
-boolean PathCache::search( PathRequest &path_request )
+bool PathCache::search( PathRequest &path_request )
  {
   
   for ( unsigned long list_index = 0; list_index < cache_size; list_index++ )
@@ -56,21 +55,21 @@ boolean PathCache::search( PathRequest &path_request )
 	
 	cache_entry = &(cache_list[ list_index ]);
 
-	if ( cache_entry->valid == _TRUE )
+	if ( cache_entry->valid == true )
 	 {
-	  start_mag = (cache_entry->start - path_request.start).mag2();
-	  goal_mag = (cache_entry->goal - path_request.goal).mag2();
+	  start_mag = (long) ((cache_entry->start - path_request.start).mag2());
+	  goal_mag = (long) (cache_entry->goal - path_request.goal).mag2();
 
 	  if ( (start_mag <= start_proximity_threshold) && (goal_mag <= goal_proximity_threshold) )
 	   {
 	    *(path_request.path) = cache_entry->path; 	 
-	    return ( _TRUE );
+	    return ( true );
 	   }
-	 } // ** if ( cache_entry->valid == _TRUE )
+	 } // ** if ( cache_entry->valid == true )
    
    } // ** for 
 
-  return( _FALSE );
+  return( false );
  }
 
 void PathCache::add( PathRequest &path_request )
@@ -85,7 +84,7 @@ void PathCache::add( PathRequest &path_request )
 	cache_list[ entry_replace_index ].set( path_request.start, 
 	                                       path_request.goal,
 	                                      *(path_request.path) );
-	cache_list[ entry_replace_index ].valid = _TRUE;
+	cache_list[ entry_replace_index ].valid = true;
 
 	entry_replace_index++;
    }  
@@ -116,7 +115,7 @@ void PathGenerator::initializePathGeneration( PathRequest &path_request )
   
   if( path_request.request_type == _path_request_full )
    {
-    if ( path_cache.search( path_request ) == _TRUE )
+    if ( path_cache.search( path_request ) == true )
 	 {
 	  path_generation_status = _path_generator_status_busy;
 	  pathing_fsm = _pathing_fsm_cache_path;
@@ -162,7 +161,7 @@ void PathGenerator::terminatePathGeneration( UnitID &unit_id )
 
 void PathGenerator::pathingFsmFullPath( void )
  {
-  boolean end_cycle = _FALSE;
+  bool end_cycle = false;
   
   do
    {
@@ -178,7 +177,7 @@ void PathGenerator::pathingFsmFullPath( void )
 	   {
 		int path_result_code;
 
-        if ( astar.generatePath( &path_request, _path_merge_front, _FALSE, &path_result_code ) )
+        if ( astar.generatePath( &path_request, _path_merge_front, false, &path_result_code ) )
 		 {
 		  if ( path_result_code == _path_result_success )
            { path_cache.add( path_request ); }
@@ -190,24 +189,24 @@ void PathGenerator::pathingFsmFullPath( void )
 		 }
 	    else
 		 {
-		  end_cycle = _TRUE;
+		  end_cycle = true;
 		 }
 	   
 	   } break;
 
 	  case _pathing_fsm_state_complete :
 	   {
-		end_cycle = _TRUE;
+		end_cycle = true;
 	   } break;
 
 	 }
-   } while( end_cycle == _FALSE );
+   } while( end_cycle == false );
 
  }
 
 void PathGenerator::pathingFsmUpdatePath( void )
  {
-  boolean end_cycle = _FALSE;
+  bool end_cycle = false;
   
   do
    {
@@ -241,7 +240,7 @@ void PathGenerator::pathingFsmUpdatePath( void )
 	   {
 		int path_result_code;
 
-        if ( astar.generatePath( &path_request, _path_merge_front, _FALSE, &path_result_code ) )
+        if ( astar.generatePath( &path_request, _path_merge_front, false, &path_result_code ) )
 		 {
 		  path_generation_status = _path_generator_status_waiting;
 		  pathing_fsm_state = _pathing_fsm_state_complete;
@@ -250,24 +249,24 @@ void PathGenerator::pathingFsmUpdatePath( void )
 		 }
 	    else
 		 {
-		  end_cycle = _TRUE;
+		  end_cycle = true;
 		 }
 	   
 	   } break;
 
 	  case _pathing_fsm_state_complete :
 	   {
-		end_cycle = _TRUE;
+		end_cycle = true;
 	   } break;
 
 	 }
-   } while( end_cycle == _FALSE );
+   } while( end_cycle == false );
  
  }
 
 void PathGenerator::pathingFsmCachePath( void )
  {
-  boolean end_cycle = _FALSE;
+  bool end_cycle = false;
   
   do
    {
@@ -295,7 +294,7 @@ void PathGenerator::pathingFsmCachePath( void )
 	   {
 		int path_result_code;
 
-        if ( astar.generatePath( &path_request, _path_merge_front, _FALSE, &path_result_code ) )
+        if ( astar.generatePath( &path_request, _path_merge_front, false, &path_result_code ) )
 		 {
 		  pathing_fsm_state = _pathing_fsm_state_initialize_part_b;
 		  
@@ -303,7 +302,7 @@ void PathGenerator::pathingFsmCachePath( void )
 		 }
 	    else
 		 {
-		  end_cycle = _TRUE;
+		  end_cycle = true;
 		 }
 	   } break;
 	 
@@ -327,7 +326,7 @@ void PathGenerator::pathingFsmCachePath( void )
 	   {
 		int path_result_code;
         
-        if ( astar.generatePath( &path_request, _path_merge_rear, _FALSE, &path_result_code ) )
+        if ( astar.generatePath( &path_request, _path_merge_rear, false, &path_result_code ) )
 		 {
 		  path_request.goal = working_goal;
 		  path_request.start = working_start; 
@@ -338,17 +337,17 @@ void PathGenerator::pathingFsmCachePath( void )
 		 }
 	    else
 		 {
-		  end_cycle = _TRUE;
+		  end_cycle = true;
 		 }
 	   } break;
 	 
 	  case _pathing_fsm_state_complete :
        {
-		end_cycle = _TRUE;
+		end_cycle = true;
 	   } break;
 
 	 }
-   } while( end_cycle == _FALSE );
+   } while( end_cycle == false );
 
  }
 
@@ -405,7 +404,7 @@ long PathScheduler::short_queue_distance_threshold;
 
 void PathScheduler::initialize( void )
  {
-  if( MapInterface::isMapLoaded() == _TRUE )
+  if( MapInterface::isMapLoaded() == true )
    {
 	unsigned long resources;
 	unsigned long path_list_size;
@@ -486,23 +485,23 @@ void PathScheduler::requestPath( PathRequest &path_request )
    }
  }
 
-boolean PathScheduler::queryPath( UnitID &unit_id )
+bool PathScheduler::queryPath( UnitID &unit_id )
  {
   unsigned long i;
 
   for ( i = 0; i < short_pather_count; i++ )
    {
     if ( short_pather[ i ].generationComplete( unit_id ) )
-	 { return (_TRUE ); }
+	 { return (true ); }
    }
 
   for ( i = 0; i < long_pather_count; i++ )
    {
     if ( long_pather[ i ].generationComplete( unit_id ) )
-	 { return (_TRUE ); }
+	 { return (true ); }
    }
   
-  return ( _FALSE );
+  return ( false );
  }
   
 void PathScheduler::killRequest( UnitID &unit_id )
@@ -567,12 +566,12 @@ void PathScheduler::run( void )
  
  }
 
-void PathScheduler::setShortPatherDebug( boolean on_off )
+void PathScheduler::setShortPatherDebug( bool on_off )
  {
   short_pather[0].astar.setDebugMode( on_off );
  }
 
-void PathScheduler::setLongPatherDebug( boolean on_off )
+void PathScheduler::setLongPatherDebug( bool on_off )
  {
   long_pather[0].astar.setDebugMode( on_off );
  }

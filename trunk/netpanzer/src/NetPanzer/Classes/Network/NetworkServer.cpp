@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "NetworkServer.hpp"
 
 #include "ClientServerNetMessage.hpp"
@@ -23,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "NetMessageLog.hpp"
 
-#include "Codewiz.hpp"
+#include "codewiz.hpp"
 #include "ConsoleInterface.hpp"
 
 //***************************************************************
@@ -35,33 +34,33 @@ void ServerClientList::addClient( ServerClientListData *client_data )
   addRear( client_data );
  }
   
-boolean ServerClientList::removeClient( PlayerID client_id )
+bool ServerClientList::removeClient( PlayerID client_id )
  {
   ServerClientListData *client_data_ptr;
 
-  if ( front == NULL )
-   return( _FALSE );
+  if ( front == 0 )
+   return( false );
 
   client_data_ptr = front;
 
   if ( client_data_ptr->client_id == client_id  )
    {
     deleteFront();
-    return( _TRUE );    
+    return( true );    
    }
   
-  while( client_data_ptr->next != NULL )
+  while( client_data_ptr->next != 0 )
    {
     if ( client_data_ptr->next->client_id == client_id ) 
      {
       deleteAfter( client_data_ptr );
-      return( _TRUE ); 
+      return( true ); 
      }
     
     client_data_ptr = client_data_ptr->next;
    }
 
-  return( _FALSE );
+  return( false );
  }
 
 ServerClientListData * ServerClientList::getClientData( PlayerID client_id )
@@ -70,7 +69,7 @@ ServerClientListData * ServerClientList::getClientData( PlayerID client_id )
 
   client_data_ptr = front;
   
-  while( client_data_ptr != NULL )
+  while( client_data_ptr != 0 )
    {
     if ( client_data_ptr->client_id == client_id ) 
      {
@@ -80,27 +79,27 @@ ServerClientListData * ServerClientList::getClientData( PlayerID client_id )
     client_data_ptr = client_data_ptr->next;
    }
 
-  return( NULL );
+  return( 0 );
  }
 
-boolean ServerClientList::getFullClientID( PlayerID *client_id )
+bool ServerClientList::getFullClientID( PlayerID *client_id )
  {
   ServerClientListData *client_data_ptr;
 
   client_data_ptr = front;
   
-  while( client_data_ptr != NULL )
+  while( client_data_ptr != 0 )
    {
     if ( client_data_ptr->client_id.getDPID() == client_id->getDPID() ) 
      {
       (*client_id) = client_data_ptr->client_id;
-      return( _TRUE );
+      return( true );
      }
     
     client_data_ptr = client_data_ptr->next;
    }
 
-  return( _FALSE );
+  return( false );
  }
 
 
@@ -113,7 +112,7 @@ NetworkServer::NetworkServer( void )
  {
   keep_alive_emit_timer.changePeriod( _SERVER_KEEP_ALIVE_SEND_INTERVAL );
   resetClientList();
-  dontSendUDPHackFlag = _FALSE;
+  dontSendUDPHackFlag = false;
  }
   
 NetworkServer::~NetworkServer()
@@ -126,15 +125,15 @@ void NetworkServer::resetClientList( void )
   client_list.deallocate();
  }
 
-boolean NetworkServer::addClientToSendList( PlayerID &client_player_id )
+bool NetworkServer::addClientToSendList( PlayerID &client_player_id )
  {
-  ServerClientListData *client_data = NULL;
+  ServerClientListData *client_data = 0;
 
   client_data = new ServerClientListData;
   
-  if( client_data == NULL )
+  if( client_data == 0 )
    { 
-    return( _FALSE );
+    return( false );
    }
   
   client_data->client_id = client_player_id;
@@ -142,74 +141,74 @@ boolean NetworkServer::addClientToSendList( PlayerID &client_player_id )
   
   client_list.addClient( client_data );
   
-  return( _TRUE );
+  return( true );
  }
    
-boolean NetworkServer::removeClientFromSendList( PlayerID &client_player_id ) 
+bool NetworkServer::removeClientFromSendList( PlayerID &client_player_id ) 
  {
   return(  client_list.removeClient( client_player_id ) );
  }
 
-boolean NetworkServer::activateKeepAlive( PlayerID &client_player_id )
+bool NetworkServer::activateKeepAlive( PlayerID &client_player_id )
  {
-  ServerClientListData *client_data = NULL;
+  ServerClientListData *client_data = 0;
 
   client_data = client_list.getClientData( client_player_id );
     
-  if( client_data == NULL )
+  if( client_data == 0 )
    { 
     LOG( ("NetworkServer::activateKeepAlive -- Could Not Find Client To Activate Keep Alive" ) );
-    return( _FALSE );
+    return( false );
    }
   
-  client_data->keep_alive_state = _TRUE;
+  client_data->keep_alive_state = true;
   client_data->keep_alive_timer.reset();
   
   ClientMesgSetKeepAlive set_keep_alive_mesg;
 
-  set_keep_alive_mesg.keep_alive_state = _TRUE;
+  set_keep_alive_mesg.keep_alive_state = true;
   
   sendMessage( &set_keep_alive_mesg, sizeof(ClientMesgSetKeepAlive), client_data->client_id, 0  );  
-  return( _TRUE ); 
+  return( true ); 
  } 
 
-boolean NetworkServer::deactivateKeepAlive( PlayerID &client_player_id ) 
+bool NetworkServer::deactivateKeepAlive( PlayerID &client_player_id ) 
  {
-  ServerClientListData *client_data = NULL;
+  ServerClientListData *client_data = 0;
 
   client_data = client_list.getClientData( client_player_id );
     
-  if( client_data == NULL )
+  if( client_data == 0 )
    { 
-    return( _FALSE );
+    return( false );
    }
   
-  client_data->keep_alive_state = _FALSE;
+  client_data->keep_alive_state = false;
   client_data->keep_alive_timer.reset();
   
   ClientMesgSetKeepAlive set_keep_alive_mesg;
 
-  set_keep_alive_mesg.keep_alive_state = _FALSE;
+  set_keep_alive_mesg.keep_alive_state = false;
   
   sendMessage( &set_keep_alive_mesg, sizeof(ClientMesgSetKeepAlive), client_data->client_id, 0  );  
-  return( _TRUE ); 
+  return( true ); 
  }
 
 void NetworkServer::netMessageClientKeepAlive( NetMessage *message )
  {
-  ServerClientListData *client_data = NULL;
-  ServerMesgKeepAlive  *client_keepalive = NULL;
+  ServerClientListData *client_data = 0;
+  ServerMesgKeepAlive  *client_keepalive = 0;
   client_keepalive = (ServerMesgKeepAlive *) message;
       
   client_data = client_list.getClientData( client_keepalive->client_id );
 
-  if( client_data == NULL )
+  if( client_data == 0 )
    { 
     LOG( ("Invalid ClientID for KeepAlive") );
     return;
    }
       
-  if ( client_data->keep_alive_state == _TRUE )
+  if ( client_data->keep_alive_state == true )
    {
     client_data->keep_alive_timer.reset();
    }
@@ -267,22 +266,22 @@ void NetworkServer::processNetMessage( NetMessage *message )
 
 void NetworkServer::updateKeepAliveState( void )
  {
-  boolean send_server_keep_alive_mesg = _FALSE;
-  ServerClientListData *iterator = NULL;
-  ServerClientListData *client_data_ptr = NULL;
+  bool send_server_keep_alive_mesg = false;
+  ServerClientListData *iterator = 0;
+  ServerClientListData *client_data_ptr = 0;
 
   if ( keep_alive_emit_timer.count() )
    {
-    send_server_keep_alive_mesg = _TRUE;
+    send_server_keep_alive_mesg = true;
    }
   
   client_list.resetIterator( &iterator );
 
   client_data_ptr = client_list.incIteratorPtr( &iterator );
   
-  while( client_data_ptr != NULL )
+  while( client_data_ptr != 0 )
    {
-    if ( client_data_ptr->keep_alive_state == _TRUE )
+    if ( client_data_ptr->keep_alive_state == true )
      {
       if( client_data_ptr->keep_alive_timer.count() )
        { 
@@ -290,7 +289,7 @@ void NetworkServer::updateKeepAliveState( void )
         ServerConnectDaemon::startClientDropProcess( client_data_ptr->client_id );
        }
      
-      if( send_server_keep_alive_mesg == _TRUE )
+      if( send_server_keep_alive_mesg == true )
        {
         ClientMesgKeepAlive server_keepalive;
         

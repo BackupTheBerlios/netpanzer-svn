@@ -46,36 +46,40 @@ class WinTimer
 
 
    protected:
-   BOOL DetectRDTSC( void );
-   BOOL SetupRDTSC( void );
-   BOOL SetupHighResTimer( void );
-   BOOL SetupMMTimer( void );
+   bool DetectRDTSC( void );
+   bool SetupRDTSC( void );
+   bool SetupHighResTimer( void );
+   bool SetupMMTimer( void );
    
    public:
-   BOOL Initialize( void );
+   bool Initialize( void );
    void	ShutDown( void );
 
 
    inline static double GetClock( void )
-    {
-     LARGE_INTEGER counter;
-			 
-	 if ( TimerType == _TSC_timer )
-      {
-       return( RDTSC() );
-      } 
-     else
-      if ( TimerType == _hires_timer )
+   {
+       LARGE_INTEGER counter;
+
+#ifdef MSVC       
+       if ( TimerType == _TSC_timer )
+       {
+     	   return( RDTSC() );
+       } 
+       else
+#endif
+	   if ( TimerType == _hires_timer )
 	   { 
-	    QueryPerformanceCounter( &counter );	  
-	    return ( ( double ) counter.QuadPart );
+	       QueryPerformanceCounter( &counter );	  
+	       return ( ( double ) counter.QuadPart );
 	   }
-	  else
-	    return ( MasterClock );
-    }
+	   else
+	       return ( MasterClock );
+   }
    
+#ifdef MSVC
   	//static inline __declspec( naked ) long double RDTSC() 
   	static long double RDTSC();
+#endif
 
   };
 

@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "ClientConnectDaemon.hpp"
 
 #include <stdio.h>
@@ -231,7 +230,7 @@ void ClientConnectDaemon::connectFailureResult( unsigned char result_code )
 
 void ClientConnectDaemon::connectFsm( NetMessage *message )
  {
-  boolean end_cycle = _FALSE;
+  bool end_cycle = false;
   
   do
    {
@@ -242,7 +241,7 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
                
       case _connect_state_wait_for_connect_start : 
 	   {
-        if ( message != NULL )
+        if ( message != 0 )
          {
           if ( message->message_id == _net_message_id_client_start_connect )
            {
@@ -251,12 +250,12 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
            }
           else
            {
-            end_cycle = _TRUE;
+            end_cycle = true;
            }          
-         } // ** if ( message != NULL )
+         } // ** if ( message != 0 )
         else
          {		  
-		  end_cycle = _TRUE;
+		  end_cycle = true;
          }
 		
 	   } break;
@@ -269,12 +268,12 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
         
         connection_state = _connect_state_wait_for_connect_result; 
        
-        end_cycle = _TRUE;
+        end_cycle = true;
        } break;
             
       case _connect_state_wait_for_connect_result :
        {
-         if ( message != NULL )
+         if ( message != 0 )
           {
            if ( message->message_id == _net_message_id_client_connect_result )
             {
@@ -323,7 +322,7 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
            
            }		 
 		          
-         } // ** if ( message != NULL )
+         } // ** if ( message != 0 )
 		else
 		 {
           if ( time_out_timer.count() )
@@ -343,12 +342,12 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
 		  
          }
        
-	    end_cycle = _TRUE;
+	    end_cycle = true;
        } break;
      
    	  case _connect_state_wait_for_server_game_setup :
 	   {
-        if ( message != NULL )
+        if ( message != 0 )
          {
           if ( message->message_id == _net_message_id_connect_server_game_setup )
            {
@@ -391,7 +390,7 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
            }
 		 }
 	   	
-		end_cycle = _TRUE;
+		end_cycle = true;
 	   }
 	  break;
 
@@ -400,7 +399,7 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
        char str_buf[128];
        int percent_complete;
         
-       if ( GameManager::clientGameSetup( &percent_complete ) == _FALSE )
+       if ( GameManager::clientGameSetup( &percent_complete ) == false )
         {
 	     ConnectMesgClientGameSetupAck client_game_setup_ack;
 	
@@ -419,14 +418,14 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
 		 CLIENT->sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing), 0 );	
         }       
       
-       end_cycle = _TRUE;
+       end_cycle = true;
       }
      break;
 
 
      case _connect_state_connect_failure :
 	  {
-	   if ( failure_display_timer.count() == _TRUE ) 
+	   if ( failure_display_timer.count() == true ) 
 	    {
 		 lobbyView.toggleMainMenu();
          connection_state = _connect_state_idle;  
@@ -435,7 +434,7 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
 
     } // ** switch
 
-   } while( end_cycle == _FALSE );
+   } while( end_cycle == false );
 
 
  }
@@ -447,5 +446,5 @@ void ClientConnectDaemon::connectProcess( NetMessage *message)
 
 void ClientConnectDaemon::connectProcess( void )
  {
-  connectFsm( NULL );
+  connectFsm( 0 );
  }

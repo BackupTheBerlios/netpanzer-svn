@@ -48,7 +48,7 @@ class PlayerUnitConfig : public UnitGameInfo
    
    void initialize( unsigned char max_allowed_units );
    
-   inline unsigned char getSpawnUnitCount( unsigned char unit_type )
+   inline unsigned char getSpawnUnitCount( unsigned char unit_type ) const
     {
      return( unit_spawn_list[ unit_type ] );
     }
@@ -77,14 +77,14 @@ class PlayerUnitConfig : public UnitGameInfo
 	 PlayerUnitConfig::max_allowed_units = max_allowed_units;
 	}
 
-   inline unsigned char getMaxAllowedUnits( void )
+   inline unsigned char getMaxAllowedUnits( void ) const
     {
 	 return( max_allowed_units );
 	}
 
    unsigned char unitTotal( void );
 
-   inline char getUnitColor( void )
+   inline char getUnitColor( void ) const
     {
      return( unit_color );
     }

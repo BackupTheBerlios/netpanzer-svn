@@ -28,13 +28,13 @@ class MiniMapInterface : public PObject
   protected:
    static fXY            scale_factor;
    static PointXYi       mini_map_size;
-   static boolean        pathing_debug_mode;	 
+   static bool        pathing_debug_mode;	 
    
    static TimerFrameBase radar_blink_timer;
-   static boolean        radar_blink_flag;
+   static bool        radar_blink_flag;
 
    static TimerFrameBase show_enemy_radar_timer;
-   static boolean        show_enemy_radar_flag;
+   static bool        show_enemy_radar_flag;
      
    static PIX player_unit_color;
    static PIX allie_unit_color;
@@ -64,14 +64,14 @@ class MiniMapInterface : public PObject
 
    static void annotateMiniMap( Surface &map_surface );
 
-   static boolean isUnitSelected( void );
+   static bool isUnitSelected( void );
    static void deselectUnits( void );
-   static boolean selectUnits( Recti bound_box );
-   static boolean isValidUnitMove( PointXYi location );
-   static boolean moveUnits( PointXYi location );
+   static bool selectUnits( Recti bound_box );
+   static bool isValidUnitMove( PointXYi location );
+   static bool moveUnits( PointXYi location );
    
   
-   static void setPathingDebugMode( boolean on_off );
+   static void setPathingDebugMode( bool on_off );
 
    static void setShowEnemyRadar( float time );
      

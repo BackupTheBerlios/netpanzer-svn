@@ -44,7 +44,7 @@ class UnitBlackBoard : public PObject
 
    static void updateUnitLocs( void );
 
-   static inline boolean unitOccupiesLoc( PointXYi &unit_map_loc )
+   static inline bool unitOccupiesLoc( PointXYi &unit_map_loc )
     {
      return( unit_loc_map.getBit( unit_map_loc.x, unit_map_loc.y ) );
 	}

@@ -27,58 +27,58 @@ class UnitID : public PObject
    unsigned short index;
    unsigned short unique;
 
-   inline void set( uchar player, unsigned short index, unsigned short unique )
+   inline void set(unsigned char player, unsigned short index, unsigned short unique )
     {
      UnitID::player = player;
      UnitID::index = index;
      UnitID::unique = unique;
     } 
   
-   inline void set( uchar player, unsigned short index )
+   inline void set( unsigned char player, unsigned short index )
     {
      UnitID::player = player;
      UnitID::index = index;
     }
 
-   inline uchar getPlayer( void )
+   inline unsigned char getPlayer() const
     {
      return( player );
     } 
 
-   inline unsigned short getIndex( void )
+   inline unsigned short getIndex() const
     {
      return( index );
     } 
 
-   inline boolean operator==( UnitID Uid )
+   inline bool operator==( const UnitID& Uid ) const
     {
      if ( (player == Uid.player) && (index == Uid.index) 
           && (unique == Uid.unique) 
         )
-      return( _TRUE );
+      return( true );
            
-     return( _FALSE );
+     return( false );
     }
  
-   inline boolean operator!=( UnitID Uid )
+   inline bool operator!=( const UnitID& Uid ) const
     {
      if ( (player != Uid.player) || (index != Uid.index) 
           || (unique != Uid.unique) 
         )
-      return( _TRUE );
+      return( true );
            
-     return( _FALSE );
+     return( false );
     }
  
-   inline boolean playerEqual( UnitID Uid )
+   inline bool playerEqual( const UnitID& Uid ) const
     {
      if ( (player == Uid.player) )
-          return( _TRUE );
+          return( true );
          
-     return( _FALSE );
+     return( false );
     }
  
-   inline void operator=( UnitID Uid )
+   inline void operator=( const UnitID& Uid )
     {
      player = Uid.player;
      index  = Uid.index;

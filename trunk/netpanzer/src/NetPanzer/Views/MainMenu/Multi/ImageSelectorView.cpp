@@ -16,6 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+// old code?!?
+#if 0
+
 
 #include "ImageSelectorView.hpp"
 #include "cViewManager.hpp"
@@ -166,3 +169,4 @@ void ImageSelectorView::lMouseDown(const iXY &pos)
 	selectedImage = findImageContaining(pos);
 
 } // end lMouseDown
+#endif

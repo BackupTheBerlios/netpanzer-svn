@@ -15,9 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
-#include "stdafx.hpp"
+#ifdef WIN32
+#include <io.h>
+#endif
 #include "MapSelectionView.hpp"
 #include "gapp.hpp"
 #include "DSound.hpp"
@@ -137,6 +137,8 @@ void MapSelectionView::doDraw(const Surface &viewArea, const Surface &clientArea
 //---------------------------------------------------------------------------
 int MapSelectionView::loadMaps()
 {
+	// XXX find an alternative to _findfirst
+#ifdef WIN32
 	char strBuf[256];
 	char pathWild[256];
 
@@ -180,9 +182,9 @@ int MapSelectionView::loadMaps()
 	{for (int i = 0; i < fileList.getCount(); i++)
 	{
 		FILE *fp = fopen(fileList[i].name, "rb");
-		if (fp == NULL)
+		if (fp == 0)
 		{
-			assert(fp != NULL);
+			assert(fp != 0);
 			continue;
 		}
 		
@@ -199,7 +201,7 @@ int MapSelectionView::loadMaps()
 			FUBAR("Map description is too long.");
 		}
 */
-		_splitpath(fileList[i].name, NULL, NULL, mapList[i].name, NULL);
+		_splitpath(fileList[i].name, 0, 0, mapList[i].name, 0);
 		sprintf(mapList[i].description, "%s", netPanzerMapHeader.description);
 
 		mapList[i].cells.x = netPanzerMapHeader.x_size;
@@ -227,7 +229,7 @@ int MapSelectionView::loadMaps()
 		int objectiveCount = 0;
 		sprintf(strBuf, "%s%s.opt", mapsPath, mapList[i].name);
 		fp = fopen(strBuf, "rb");
-		if (fp == NULL || (!fscanf(fp, "ObjectiveCount: %d", &objectiveCount)))
+		if (fp == 0 || (!fscanf(fp, "ObjectiveCount: %d", &objectiveCount)))
 		{
 			GameConfig::setGameMapName("");
 			return 1;
@@ -249,6 +251,7 @@ int MapSelectionView::loadMaps()
 	
 	GameConfig::setGameMapName(MapSelectionView::mapList[curMap].name);
 	curMap = 0;
+#endif
 
 	// Success
 	return -1;

@@ -21,6 +21,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __ImageSelectorView_hpp__
 
 
+// old code?!?
+#if 0
+
 #include "cView.hpp"
 #include "Surface.hpp"
 #include "iXY.hpp"
@@ -57,5 +60,6 @@ public:
 	virtual void loadImages() {}
 
 }; // end ImageSelectorView
+#endif
 
 #endif // end __ImageSelectorView_hpp__

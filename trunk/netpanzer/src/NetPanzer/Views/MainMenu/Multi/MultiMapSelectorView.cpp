@@ -16,6 +16,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+// XXX old code?
+
+#if 0
+
 
 #include "MultiMapSelectorView.hpp"
 #include "cViewManager.hpp"
@@ -77,9 +81,9 @@ void MultiMapSelectorView::loadImages()
 	for (int i = 0; i < fileList.getCount(); i++)
 	{
 		FILE *fp = fopen(fileList[i].name, "rb");
-		if (fp == NULL)
+		if (fp == 0)
 		{
-			assert(fp != NULL);
+			assert(fp != 0);
 			continue;
 		}
 		
@@ -135,3 +139,5 @@ void MultiMapSelectorView::loadImages()
 		flagNoImagesLoaded = true;
 	}
 }
+
+#endif

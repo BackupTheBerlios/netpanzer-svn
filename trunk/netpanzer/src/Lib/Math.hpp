@@ -18,20 +18,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Math_hpp__
 #define __Math_hpp__
 
+#include <math.h>
 
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
-#include "stdafx.hpp"
 #include "fXY.hpp"
 #include "iXY.hpp"
 
+#ifndef M_PI
+#define	M_PI 3.14159265358979323846
+#endif
 
-const  double PI_DIV_2          = 3.14159265358979323846 / 2.0;
-static double deg2RadConversion = PI / 180.0;
-static double rad2DegConversion = 180.0 / PI;
+const  double PI_DIV_2          = M_PI / 2.0;
+const  double deg2RadConversion = M_PI / 180.0;
+const  double rad2DegConversion = 180.0 / M_PI;
 
 //--------------------------------------------------------------------------
 class Math

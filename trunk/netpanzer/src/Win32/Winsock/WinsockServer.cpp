@@ -43,8 +43,8 @@ SOCKET listenSocket;
 SOCKET dgramSocket;
 SOCKET prevRecvSocket = -999;
 
-//BOOL bHeaderIncomplete = FALSE;
-//BOOL bMessageIncomplete = FALSE;
+//bool bHeaderIncomplete = false;
+//bool bMessageIncomplete = false;
 
 //short TempOffset = 0;
 short RecvOffset = 0;
@@ -60,8 +60,8 @@ int gUDPDelivery = 0;
 typedef 
 struct 
 {
-    BOOL bHeaderIncomplete; 
-    BOOL bMessageIncomplete;
+    bool bHeaderIncomplete; 
+    bool bMessageIncomplete;
     short TempOffset;
     short RecvOffset;
     SOCKET prevPrevRecvSocket;
@@ -74,7 +74,7 @@ ParseDebugStruct parseDebug;
 
 //FUNCTIONS////////////////////////////////////////////////
 //initialize winsock--
-BOOL InitWinSock(HWND hWnd)
+bool InitWinSock(HWND hWnd)
 {
     WSADATA wsaData;
     WORD wVersionRequested = MAKEWORD(1,1);
@@ -93,10 +93,10 @@ BOOL InitWinSock(HWND hWnd)
                    MB_OK);
 
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
-    return TRUE;
+    return true;
 }
 //END InitWinSock//////////////////////
 ///////////////////////////////////////
@@ -104,7 +104,7 @@ BOOL InitWinSock(HWND hWnd)
 
 //this function initializes a winsock dgramserver.
 //returns false.
-BOOL InitDGramServer(HWND hWnd)
+bool InitDGramServer(HWND hWnd)
 {
     SOCKADDR_IN dgramSocketAddr;
 
@@ -131,7 +131,7 @@ BOOL InitDGramServer(HWND hWnd)
                    MB_OK);
 
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
 
@@ -152,7 +152,7 @@ BOOL InitDGramServer(HWND hWnd)
 
         closesocket(dgramSocket);
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
 
@@ -180,11 +180,11 @@ BOOL InitDGramServer(HWND hWnd)
 
         closesocket(dgramSocket);
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
 
-    return TRUE;
+    return true;
 
 }
 ////////////////////////////////////////////
@@ -196,7 +196,7 @@ BOOL InitDGramServer(HWND hWnd)
 //sockets, which are separate for netPanzer. if
 //it fails it puts up a messagebox indicating why and then
 //returns false.
-BOOL InitStreamServer(HWND hWnd)
+bool InitStreamServer(HWND hWnd)
 {
     SOCKADDR_IN listenSocketAddr;
 
@@ -223,7 +223,7 @@ BOOL InitStreamServer(HWND hWnd)
                    MB_OK);
 
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
 
@@ -247,7 +247,7 @@ BOOL InitStreamServer(HWND hWnd)
 
         closesocket(listenSocket);
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
 
@@ -275,7 +275,7 @@ BOOL InitStreamServer(HWND hWnd)
 
         closesocket(listenSocket);
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
 
@@ -284,7 +284,7 @@ BOOL InitStreamServer(HWND hWnd)
     //    if (iReturn == SOCKET_ERROR)
     //    {
     //        closesocket(listenSocket);
-    //        return FALSE;
+    //        return false;
     //    }
 
 
@@ -303,11 +303,11 @@ BOOL InitStreamServer(HWND hWnd)
 
         closesocket(listenSocket);
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
 
-    return TRUE;
+    return true;
 
 }
 ////////////////////////////////////////////
@@ -436,7 +436,7 @@ void OnAcceptServer(HWND hWnd, SOCKET socket, int iErrorCode)
     lpClient = AddClient(clientSocket, 
                          (LPSOCKADDR)&clientSocketAddr, 
                          iLength);
-    if (lpClient == NULL)
+    if (lpClient == 0)
     {
         //TODO: should log this--
         LOG( ( "OnAcceptServer : Error AddClient(...)", iReturn) );
@@ -487,9 +487,9 @@ void OnReadStreamServer(SOCKET socket, int iErrorCode)
     //static char TempBuffer[512]; //largest netp message size
 
     //local parsing variables--
-    char *TempBuffer = NULL;
+    char *TempBuffer = 0;
 
-    BOOL bReturn;
+    bool bReturn;
 
     int iBytesReceived, Error;
     short Size;
@@ -505,10 +505,10 @@ void OnReadStreamServer(SOCKET socket, int iErrorCode)
     lpClient = GetClientFromSocket(socket);
 
 
-    //if the client is NULL, can't do much here,
+    //if the client is 0, can't do much here,
     //if it works alias the TempBuffer because it
     //doesn't change (no reason to dereference a million times)--
-    if (lpClient == NULL) return;
+    if (lpClient == 0) return;
     else TempBuffer = lpClient -> TempBuffer;
 
 
@@ -560,7 +560,7 @@ void OnReadStreamServer(SOCKET socket, int iErrorCode)
             //my own list--
             LOG( ("OnReadStreamServer : Error %d - WSANOTINITIALISED, WSAEINTR, WSAEOPNOTSUPP, WSAEACCES", Error ) );
 
-            if (lpClient != NULL)
+            if (lpClient != 0)
             {
                 PostMessage(gapp.hwndApp, SM_REMOVECLIENT, (WPARAM) Error, lpClient->winsockID );
 
@@ -585,7 +585,7 @@ void OnReadStreamServer(SOCKET socket, int iErrorCode)
             //my own list--
             LOG( ("OnReadStreamServer : Error %d - WSAENOTCONN, WSAENOTSOCK, WSAESHUTDOWN, WSAEINVAL", Error ) );
 
-            if (lpClient != NULL)
+            if (lpClient != 0)
             {
                 PostMessage(gapp.hwndApp, SM_REMOVECLIENT, (WPARAM) Error, lpClient->winsockID );
 
@@ -603,7 +603,7 @@ void OnReadStreamServer(SOCKET socket, int iErrorCode)
             LOG( ("OnReadStreamServer : Error %d - WSAENETRESET, WSAECONNABORTED, WSAETIMEDOUT, WSAECONNRESET", Error  ) );
 
             //kill any player on this socket--
-            if (lpClient != NULL)
+            if (lpClient != 0)
             {
                 PostMessage(gapp.hwndApp, SM_REMOVECLIENT, (WPARAM) Error, lpClient->winsockID );
 
@@ -647,7 +647,7 @@ void OnReadStreamServer(SOCKET socket, int iErrorCode)
               closesocket(lpClient->clientdgramSocket);
               PostMessage(gapp.hwndApp, SM_REMOVECLIENT, (WPARAM) 0xFFFF, lpClient->winsockID );
               RecvOffset = 0;
-              lpClient->bHeaderIncomplete = FALSE;
+              lpClient->bHeaderIncomplete = false;
               lpClient->TempOffset = 0;
               return; 
              }
@@ -667,7 +667,7 @@ void OnReadStreamServer(SOCKET socket, int iErrorCode)
 
                 RecvOffset += (Size - 1);
                 iBytesReceived -= (Size - 1);
-                lpClient->bHeaderIncomplete = FALSE;
+                lpClient->bHeaderIncomplete = false;
                 lpClient->TempOffset = 0;
 
             }
@@ -686,7 +686,7 @@ void OnReadStreamServer(SOCKET socket, int iErrorCode)
                 //it may be received as.
                 lpClient->TempOffset += (iBytesReceived - 1); 
 
-                lpClient->bMessageIncomplete = TRUE;
+                lpClient->bMessageIncomplete = true;
 
                 //MissingBytes = Size - (iBytesReceived - 1);
                 //The ammount of bytes we are missing is 
@@ -713,7 +713,7 @@ void OnReadStreamServer(SOCKET socket, int iErrorCode)
                  closesocket(lpClient->clientdgramSocket);
                  PostMessage(gapp.hwndApp, SM_REMOVECLIENT, (WPARAM) 0xFFFF, lpClient->winsockID );
                  RecvOffset = 0;
-                 lpClient->bMessageIncomplete = FALSE;
+                 lpClient->bMessageIncomplete = false;
                  lpClient->TempOffset = 0;
                  return; 
                 }
@@ -724,7 +724,7 @@ void OnReadStreamServer(SOCKET socket, int iErrorCode)
                                        0 );
 
                 lpClient->TempOffset = 0;
-                lpClient->bMessageIncomplete = FALSE;
+                lpClient->bMessageIncomplete = false;
                 RecvOffset += MissingBytes;
                 iBytesReceived -= MissingBytes;
                 MissingBytes = 0;
@@ -754,7 +754,7 @@ void OnReadStreamServer(SOCKET socket, int iErrorCode)
                 memcpy(TempBuffer, RecvBuffer + RecvOffset, 1);
                 lpClient->TempOffset++;
                 iBytesReceived = 0;
-                lpClient->bHeaderIncomplete = TRUE;
+                lpClient->bHeaderIncomplete = true;
             }
             else
                 if (iBytesReceived >= 2)
@@ -800,7 +800,7 @@ void OnReadStreamServer(SOCKET socket, int iErrorCode)
                     //copy bytes to tempbuffer
                     memcpy(TempBuffer, RecvBuffer + RecvOffset, iBytesReceived);
                     lpClient->TempOffset += iBytesReceived;
-                    lpClient->bMessageIncomplete = TRUE;
+                    lpClient->bMessageIncomplete = true;
                     MissingBytes = Size - iBytesReceived;
                     iBytesReceived = 0;
                 }
@@ -845,7 +845,7 @@ void OnReadDgramServer(SOCKET socket, int iErrorCode)
 
     DWORD wsID;
 
-    char *version = NULL;
+    char *version = 0;
 
     iLength = sizeof(SOCKADDR);
     memset(RecvDgram, 0, sizeof(RecvDgram));
@@ -882,8 +882,8 @@ void OnReadDgramServer(SOCKET socket, int iErrorCode)
 
                 version = strstr((char *)infomessage->codeword, _NETPANZER_CODEWORD);
 
-                //if ((version != NULL) && (infomessage->version == _NETPANZER_PROTOCOL_VERSION))
-                if ((version != NULL) )
+                //if ((version != 0) && (infomessage->version == _NETPANZER_PROTOCOL_VERSION))
+                if ((version != 0) )
                     {
                      SetBasicInfo(&basicInfo);
 
@@ -958,7 +958,7 @@ void OnCloseServer(SOCKET socket, int iErrorCode)
     //
 
     lpClient = GetClientFromSocket(socket);
-    if (lpClient == NULL)
+    if (lpClient == 0)
      return;
 
 
@@ -1010,7 +1010,7 @@ void SetBasicInfo(BasicGameInfo *basicInfo)
 //proper place in the client list
 int SetClientUDPAddress(DWORD winsockID, LPSOCKADDR lpclientudpAddr)
 {
-    BOOL bReturn;
+    bool bReturn;
     LPSOCKADDR lpnewUDPAddr;
     DWORD wsid;
 
@@ -1053,7 +1053,7 @@ int WSSend(char guarantee, DWORD wsID, char *bData, DWORD dwDataSize)
 
     //TODO make this function return an int so vlad can
     //get the correct return
-    if (lpClient == NULL) return FALSE;
+    if (lpClient == 0) return false;
 
     //udp hack, guarantee should be == 1
     // ** if ((guarantee == 1) || (gUDPDelivery == 0)) **
@@ -1089,7 +1089,7 @@ int WSSend(char guarantee, DWORD wsID, char *bData, DWORD dwDataSize)
 
                         //this just isn't supposed to happen to a stream
                         //oriented socket. therefore close this shit down.
-                        if (lpClient != NULL)
+                        if (lpClient != 0)
                         {
                             closesocket(lpClient -> clientstreamSocket);
                             closesocket(lpClient -> clientdgramSocket);
@@ -1117,7 +1117,7 @@ int WSSend(char guarantee, DWORD wsID, char *bData, DWORD dwDataSize)
 
                         //maybe try twenty times or so. then forget it.
                         //in the meantime kill the client.
-                        if (lpClient != NULL)
+                        if (lpClient != 0)
                         {
                             closesocket(lpClient -> clientstreamSocket);
                             closesocket(lpClient -> clientdgramSocket);
@@ -1135,7 +1135,7 @@ int WSSend(char guarantee, DWORD wsID, char *bData, DWORD dwDataSize)
                         LOG( ("WSSend : Error - WSAENETUNREACH"  ) );
 
                         //maybe try twenty times or so. then forget it.
-                        if (lpClient != NULL)
+                        if (lpClient != 0)
                         {
                             closesocket(lpClient -> clientstreamSocket);
                             closesocket(lpClient -> clientdgramSocket);
@@ -1168,7 +1168,7 @@ int WSSend(char guarantee, DWORD wsID, char *bData, DWORD dwDataSize)
                         //my own list--
                         LOG( ("WSSend : Error %d - WSANOTINITIALISED, WSAEINTR, WSAEOPNOTSUPP, WSAEACCES", Error ) );
 
-                        if (lpClient != NULL)
+                        if (lpClient != 0)
                         {
                             closesocket(lpClient -> clientstreamSocket);
                             closesocket(lpClient -> clientdgramSocket);
@@ -1190,7 +1190,7 @@ int WSSend(char guarantee, DWORD wsID, char *bData, DWORD dwDataSize)
                         //my own list--
                         LOG( ("WSSend : Error %d - WSAENOTCONN, WSAENOTSOCK, WSAESHUTDOWN, WSAEINVAL", Error ) );
 
-                        if (lpClient != NULL)
+                        if (lpClient != 0)
                         {
 
                             closesocket(lpClient -> clientstreamSocket);
@@ -1209,7 +1209,7 @@ int WSSend(char guarantee, DWORD wsID, char *bData, DWORD dwDataSize)
                         LOG( ("WSSend : Error %d - WSAENETRESET, WSAECONNABORTED, WSAETIMEDOUT, WSAECONNRESET", Error  ) );
 
                         //kill any player on this socket--
-                        if (lpClient != NULL)
+                        if (lpClient != 0)
                         {
                             closesocket(lpClient -> clientstreamSocket);
                             closesocket(lpClient -> clientdgramSocket);
@@ -1222,7 +1222,7 @@ int WSSend(char guarantee, DWORD wsID, char *bData, DWORD dwDataSize)
                     {
                         LOG( ("WSSend Error: %d", Error  ) );
 
-                        if (lpClient != NULL)
+                        if (lpClient != 0)
                         {
                             closesocket(lpClient -> clientstreamSocket);
                             closesocket(lpClient -> clientdgramSocket);
@@ -1240,9 +1240,9 @@ int WSSend(char guarantee, DWORD wsID, char *bData, DWORD dwDataSize)
 
                     while ( gSendReady == 0)
                     {
-                        if ( PeekMessage( &message, NULL, 0, 0, PM_NOREMOVE ) )
+                        if ( PeekMessage( &message, 0, 0, 0, PM_NOREMOVE ) )
                         {
-                            if (GetMessage( &message, NULL, 0, 0))
+                            if (GetMessage( &message, 0, 0, 0))
                             {
                                 //TranslateMessage(&message);
                                 DispatchMessage(&message); 
@@ -1259,7 +1259,7 @@ int WSSend(char guarantee, DWORD wsID, char *bData, DWORD dwDataSize)
             }
         }while (dwDataSize > 0);
 
-    }//END if(guarantee == TRUE)//////////
+    }//END if(guarantee == true)//////////
     else
         if(guarantee == 0)
     {
@@ -1321,7 +1321,7 @@ int WSSend(char guarantee, DWORD wsID, char *bData, DWORD dwDataSize)
                         //my own list--
                         LOG( ("WSSend : Error %d - WSANOTINITIALISED, WSAEINTR, WSAEOPNOTSUPP, WSAEACCES", Error ) );
 
-                        if (lpClient != NULL)
+                        if (lpClient != 0)
                         {
                             closesocket(lpClient -> clientstreamSocket);
                             closesocket(lpClient -> clientdgramSocket);
@@ -1343,7 +1343,7 @@ int WSSend(char guarantee, DWORD wsID, char *bData, DWORD dwDataSize)
                         //my own list--
                         LOG( ("WSSend : Error %d - WSAENOTCONN, WSAENOTSOCK, WSAESHUTDOWN, WSAEINVAL", Error ) );
 
-                        if (lpClient != NULL)
+                        if (lpClient != 0)
                         {
 
                             closesocket(lpClient -> clientstreamSocket);
@@ -1357,7 +1357,7 @@ int WSSend(char guarantee, DWORD wsID, char *bData, DWORD dwDataSize)
                     {
                         LOG( ("WSSend Error: %d", Error  ) );
 
-                        if (lpClient != NULL)
+                        if (lpClient != 0)
                         {
                             closesocket(lpClient -> clientstreamSocket);
                             closesocket(lpClient -> clientdgramSocket);
@@ -1390,14 +1390,14 @@ int WSSend(char guarantee, DWORD wsID, char *bData, DWORD dwDataSize)
 //this function is supposed to shutdown winsock. it closes
 //the remote sockets, closes the send socket, then closes the
 //listen socket.
-BOOL ShutdownWinSockServer()
+bool ShutdownWinSockServer()
 {
     LPCLIENTLIST lpClient;
     int iReturn;
 
     lpClient = GetFirstClient();
 
-    while (lpClient != NULL)
+    while (lpClient != 0)
     {
         //close the remote sockets--
         iReturn = closesocket(lpClient -> clientstreamSocket);
@@ -1460,7 +1460,7 @@ BOOL ShutdownWinSockServer()
     }
 
 
-    return TRUE;
+    return true;
 
 }
 ////////////////////////////////////////////

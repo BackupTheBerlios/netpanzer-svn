@@ -24,10 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 //PROTOTYPES////////////////////////////////
-BOOL InitWinSock(HWND hWnd);
+bool InitWinSock(HWND hWnd);
 
-BOOL InitDGramServer(HWND hWnd);
-BOOL InitStreamServer(HWND hWnd);
+bool InitDGramServer(HWND hWnd);
+bool InitStreamServer(HWND hWnd);
 
 void ServStreamAsyncMsg(HWND hWnd, WPARAM wParam, LPARAM lParam);
 void ServDgramAsyncMsg(HWND hWnd, WPARAM wParam, LPARAM lParam);
@@ -38,11 +38,11 @@ void OnReadDgramServer(SOCKET socket, int iErrorCode);
 void OnCloseServer(SOCKET socket, int iErrorCode);
 
 void SetBasicInfo(BasicGameInfo *basicInfo);
-BOOL SetClientUDPAddress(DWORD winsockID, LPSOCKADDR lpclientudpAddr);
+bool SetClientUDPAddress(DWORD winsockID, LPSOCKADDR lpclientudpAddr);
 
 int WSSend(char guarantee, DWORD wsID, char *bData, DWORD dwDataSize);
 
 
-BOOL ShutdownWinSockServer();
+bool ShutdownWinSockServer();
 
 #endif

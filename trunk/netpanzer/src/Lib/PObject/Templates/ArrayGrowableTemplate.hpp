@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _ARRAYGROWABLETEMPLATE_HPP
 
 #include "PObject.hpp"
+#include <assert.h>
 #include <stdlib.h>
 
 
@@ -64,10 +65,10 @@ class ArrayGrowableTemplate : public PObject
  
   inline void deallocate( void )
    {
-    if ( array != NULL )
+    if ( array != 0 )
      {
       free( array );
-      array = NULL;
+      array = 0;
      }
     
     size = 0;
@@ -78,7 +79,7 @@ class ArrayGrowableTemplate : public PObject
 template< class TYPE > 
 ArrayGrowableTemplate< TYPE >::ArrayGrowableTemplate()
  {
-  array = NULL;
+  array = 0;
   size = 0;
   grow_increment = 1;
   grow_limit = 0xFFFFFFFF;
@@ -121,15 +122,15 @@ void ArrayGrowableTemplate< TYPE >::
 
   assert( (size > 0) && (growIncrement > 0) );
   
-  if ( array != NULL )
+  if ( array != 0 )
    {
     free( array );
-    array = NULL;
+    array = 0;
    }
  
   array = (TYPE *) malloc( sizeof(TYPE) * size );
  
-  assert( array != NULL ); 
+  assert( array != 0 ); 
  }
  
 template< class TYPE > 
@@ -150,7 +151,7 @@ TYPE & ArrayGrowableTemplate< TYPE >::operator[]( unsigned long index)
       array = (TYPE *) realloc( array, sizeof(TYPE) * new_size );
       memset( &array[ size ], 0, sizeof(TYPE) * (new_size - size) ); 
       size = new_size;
-      assert( array != NULL );     
+      assert( array != 0 );     
      }
     else
      assert( 0 );
@@ -171,7 +172,7 @@ void ArrayGrowableTemplate< TYPE >::add( TYPE object, unsigned long index )
       array = (TYPE *) realloc( array, sizeof(TYPE) * new_size );
       memset( &array[ size ], 0, sizeof(TYPE) * (new_size - size) ); 
       size = new_size;
-      assert( array != NULL );     
+      assert( array != 0 );     
      }
     else
      return;
@@ -184,7 +185,7 @@ template< class TYPE >
 void ArrayGrowableTemplate< TYPE >::resize( unsigned long size )
  {
   array = (TYPE *) realloc( array, sizeof(TYPE) * size );
-  assert( array != NULL );          
+  assert( array != 0 );          
  }
 
 template< class TYPE > 

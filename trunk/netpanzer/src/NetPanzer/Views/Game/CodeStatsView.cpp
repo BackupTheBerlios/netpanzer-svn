@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "CodeStatsView.hpp"
 #include "GameViewGlobals.hpp"
 #include "SpriteSorter.hpp"
@@ -72,19 +71,19 @@ static void buttonPathing( void )
 
 static void buttonDebug( void )
  {
-  static boolean previous_flag = _FALSE;
+  static bool previous_flag = false;
   
-  if ( previous_flag == _FALSE )
+  if ( previous_flag == false )
    {
-    PathScheduler::setLongPatherDebug( _TRUE );
-	MiniMapInterface::setPathingDebugMode( _TRUE );
-	previous_flag = _TRUE;
+    PathScheduler::setLongPatherDebug( true );
+	MiniMapInterface::setPathingDebugMode( true );
+	previous_flag = true;
    }
   else
    {
-    PathScheduler::setLongPatherDebug( _FALSE );
-	MiniMapInterface::setPathingDebugMode( _FALSE );
-	previous_flag = _FALSE;
+    PathScheduler::setLongPatherDebug( false );
+	MiniMapInterface::setPathingDebugMode( false );
+	previous_flag = false;
    }
  }
 
@@ -111,10 +110,10 @@ CodeStatsView::CodeStatsView() : GameTemplateView()
 	setTitle("CodeStatsView");
 	setSubTitle(" - F4");
 
-	setAllowResize(_FALSE);
-	setAllowMove(_TRUE);
-	setDisplayStatusBar(_TRUE);
-	setVisible(_FALSE);
+	setAllowResize(false);
+	setAllowMove(true);
+	setDisplayStatusBar(true);
+	setVisible(false);
 
 	moveTo(iXY(0, 0));
 	

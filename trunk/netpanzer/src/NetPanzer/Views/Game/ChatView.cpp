@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "stdafx.hpp"
 #include "ChatView.hpp"
 #include "Desktop.hpp"
 #include "KeyboardInterface.hpp"
@@ -36,10 +35,12 @@ void addNewChatStringCallBack( const char *message_text )
 // Button functions.
 /////////////////////////////////////////////////////////////////////////////
 
+#if 0
 static void closeView()
 {
  Desktop::setVisibility("ChatView", false);
 }
+#endif
 
 static void sendMessageAllPlayers()
 {
@@ -82,7 +83,7 @@ void ChatView::init()
 
 	int x = 0;
 	int y = 0;
-	int buttonXSize = 60;
+	//int buttonXSize = 60;
 
 	x = 0;
 	y = getClientRect().getSize().y - 12;
@@ -99,7 +100,7 @@ void ChatView::init()
 
 	// Define the scrollBar fot this view.
 	scrollBar = new ScrollBar(VERTICAL, 0, 1, 0, 100);
-	if (scrollBar == NULL)
+	if (scrollBar == 0)
 	{
 		FUBAR("ERROR: Unable to allocate the scrollBar.");
 	}

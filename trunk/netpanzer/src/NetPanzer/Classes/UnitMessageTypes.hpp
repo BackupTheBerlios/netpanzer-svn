@@ -123,11 +123,11 @@ class UMesgUpdateSelectBoxInfo : public UnitMessage
  {
   public:   
    unsigned char request_type;
-   boolean allie_flag_visiblity;
-   boolean flag_visiblity;
-   boolean allied_state;
+   bool allie_flag_visiblity;
+   bool flag_visiblity;
+   bool allied_state;
 
-   void set( unsigned char request, boolean state_value )
+   void set( unsigned char request, bool state_value )
     {
      message_id = _umesg_update_select_box_info;
      request_type = request;

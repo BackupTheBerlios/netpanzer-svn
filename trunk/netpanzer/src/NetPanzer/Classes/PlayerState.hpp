@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PLAYERSTATE_HPP
 #define _PLAYERSTATE_HPP
 
-#include "aliasdef.h"
 #include <string.h>
 #include "PObject.hpp"
 #include "PlayerID.hpp"
@@ -46,7 +45,7 @@ class PlayerState : public PObject
    short loss_points;
    short total;
    short objectives_held;
-   boolean stats_locked;
+   bool stats_locked;
 
   public:
    PlayerUnitConfig unit_config;
@@ -69,7 +68,7 @@ class PlayerState : public PObject
      loss_points = 0;
      total = 0;
      objectives_held = 0;
-     stats_locked = _FALSE;
+     stats_locked = false;
     }
 
    inline char * getName( void )
@@ -78,10 +77,10 @@ class PlayerState : public PObject
     }
 
    inline void lockStats( void ) 
-    { stats_locked = _TRUE; }
+    { stats_locked = true; }
 
    inline void unlockStats( void ) 
-    { stats_locked = _FALSE; }
+    { stats_locked = false; }
    
    inline short getKills( void )
     { return( kills ); }
@@ -91,39 +90,39 @@ class PlayerState : public PObject
  
    inline void incKills( unsigned short unit_type )
     { 
-     if ( stats_locked == _TRUE ) return;
+     if ( stats_locked == true ) return;
      kills++; 
      kill_points += 2 * unit_config.getUnitPointValue( (unsigned char)  unit_type ) ;
     } 
 
    inline void decKills( unsigned short unit_type )
     { 
-     if ( stats_locked == _TRUE ) return;
+     if ( stats_locked == true ) return;
      kills--; 
     }
    
    inline void incLosses( unsigned short unit_type )
     { 
-     if ( stats_locked == _TRUE ) return;
+     if ( stats_locked == true ) return;
      losses++; 
      loss_points += unit_config.getUnitPointValue( (unsigned char) unit_type );
     }
 
    inline void decLosses( unsigned short unit_type )
     { 
-     if ( stats_locked == _TRUE ) return;
+     if ( stats_locked == true ) return;
      losses--; 
     }
  
    inline void incObjectivesHeld( void )
     { 
-     if ( stats_locked == _TRUE ) return;
+     if ( stats_locked == true ) return;
      objectives_held++; 
     }
 
    inline void decObjectivesHeld( void )
     { 
-     if ( stats_locked == _TRUE ) return;
+     if ( stats_locked == true ) return;
      objectives_held++; 
     }
 
@@ -134,7 +133,7 @@ class PlayerState : public PObject
    
    inline void setObjectivesHeld( short objectives )
     { 
-     if ( stats_locked == _TRUE ) return;
+     if ( stats_locked == true ) return;
      objectives_held = objectives; 
     }
    

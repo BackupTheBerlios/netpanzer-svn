@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "DigitText.hpp"
 
 
@@ -38,7 +38,7 @@ void DigitText::init(const char *filename)
 	char charfilename[] = "pics\\chars11x17digit.raw";
 
 	FILE *fp = fopen(charfilename, "rb");
-	if (fp == NULL)
+	if (fp == 0)
 	{
 		FUBAR("ERROR: Unable to load %s", charfilename);
 		assert(false);

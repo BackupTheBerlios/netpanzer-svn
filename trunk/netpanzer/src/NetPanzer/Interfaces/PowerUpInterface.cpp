@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "PowerUpInterface.hpp"
 
 #include <stdlib.h>
@@ -87,11 +86,11 @@ void PowerUpList::insert( PowerUp *powerup )
 
 PowerUp * PowerUpList::get( int ID )
  {
-  PowerUp *powerup_ptr = NULL;
+  PowerUp *powerup_ptr = 0;
 
   powerup_ptr = front;
   
-  while( powerup_ptr != NULL )
+  while( powerup_ptr != 0 )
    {
     if ( powerup_ptr->powerup_state.ID == ID ) 
      {
@@ -101,15 +100,15 @@ PowerUp * PowerUpList::get( int ID )
     powerup_ptr = powerup_ptr->next;
    }
 
-  return( NULL );
+  return( 0 );
  }
     
 PowerUp * PowerUpList::remove( int ID )
  {
   PowerUp *powerup_ptr;
 
-  if ( front == NULL )
-   return( NULL );
+  if ( front == 0 )
+   return( 0 );
 
   powerup_ptr = front;
 
@@ -119,7 +118,7 @@ PowerUp * PowerUpList::remove( int ID )
     return( removeFront() );
    }
   
-  while( powerup_ptr->next != NULL )
+  while( powerup_ptr->next != 0 )
    {
     if ( powerup_ptr->next->powerup_state.ID == ID ) 
      {
@@ -130,7 +129,7 @@ PowerUp * PowerUpList::remove( int ID )
     powerup_ptr = powerup_ptr->next;
    }
 
-  return( NULL );
+  return( 0 );
  }
 
 void PowerUpList::reset( void )
@@ -248,7 +247,7 @@ void PowerUpInterface::initialize( void )
   ENEMY_RADAR_POWERUP_ANIM.setTo( BONUS_POWERUP_ANIM );
   ENEMY_RADAR_POWERUP_ANIM_SHADOW.setTo( BONUS_POWERUP_ANIM_SHADOW );
 
-  srand( (unsigned)time( NULL ) );
+  srand( (unsigned)time( 0 ) );
   /*
   mathlib_open();
   lua_return = lua_dofile( "PowerUps\\UnitPowerUp.lua" ); 
@@ -263,7 +262,7 @@ void PowerUpInterface::resetLogic( void )
  {
   unsigned long map_size_x, map_size_y;
   
-  if( GameConfig::getPowerUpState() == _FALSE )
+  if( GameConfig::getPowerUpState() == false )
    { return; }
 
   powerup_list.reset();
@@ -285,9 +284,9 @@ void PowerUpInterface::resetLogic( void )
 
 void PowerUpInterface::updateState( void )
  {
-  PowerUp *powerup_ptr = NULL;
+  PowerUp *powerup_ptr = 0;
   
-  if( GameConfig::getPowerUpState() == _FALSE )
+  if( GameConfig::getPowerUpState() == false )
    { return; }
 
   
@@ -301,7 +300,7 @@ void PowerUpInterface::updateState( void )
 
   powerup_list.resetIterator( &powerup_ptr );
 
-  while( powerup_ptr != NULL )
+  while( powerup_ptr != 0 )
    {
     if( powerup_ptr->powerup_state.life_cycle_state == _power_up_lifecycle_state_inactive )
      {
@@ -314,7 +313,7 @@ void PowerUpInterface::updateState( void )
 
       delete_ptr = powerup_list.remove( delete_id );
       
-      if ( delete_ptr != NULL )
+      if ( delete_ptr != 0 )
        { delete( delete_ptr ); }
      }
     else
@@ -331,12 +330,12 @@ void PowerUpInterface::offloadGraphics( SpriteSorter &sorter )
  {
   PowerUp *powerup_ptr;
   
-  if( GameConfig::getPowerUpState() == _FALSE )
+  if( GameConfig::getPowerUpState() == false )
    { return; }
 
   powerup_list.resetIterator( &powerup_ptr );
 
-  while( powerup_ptr != NULL )
+  while( powerup_ptr != 0 )
    {
     powerup_ptr->offloadGraphics( sorter );
        
@@ -381,7 +380,7 @@ void PowerUpInterface::netMessagePowerUpHit( NetMessage *message )
 
   power_up = powerup_list.get( hit_mesg->ID );
   
-  if (power_up != NULL)
+  if (power_up != 0)
    {
     power_up->onHit( hit_mesg );
    }
@@ -413,7 +412,7 @@ void PowerUpInterface::syncPowerUps( PlayerID player_id )
   
   powerup_list.resetIterator( &powerup_ptr );
 
-  while( powerup_ptr != NULL )
+  while( powerup_ptr != 0 )
    {
     create_mesg.set( powerup_ptr->powerup_state.map_loc,
                      powerup_ptr->powerup_state.ID,

@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _TILESET_HPP
 #define _TILESET_HPP
 
-#include "Aliasdef.h"
 #include "PObject.hpp"
 #include "TileSetStruct.hpp"
 #include "WadMapTable.hpp"
@@ -26,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class TileSet : virtual PObject
  {
   protected:
-   boolean tile_set_loaded;
+   bool tile_set_loaded;
    TILE_DBASE_HEADER tile_set_info;
    TILE_HEADER *tile_info;
    unsigned char *tile_data;
@@ -50,8 +49,8 @@ class TileSet : virtual PObject
 
    void loadTileSet( const char *file_path, WadMapTable &mapping_table );
    
-   boolean startPartitionTileSetLoad( const char *file_path, WadMapTable &mapping_table, unsigned long partitions );
-   boolean partitionTileSetLoad( WadMapTable &mapping_table, int *percent_complete );
+   bool startPartitionTileSetLoad( const char *file_path, WadMapTable &mapping_table, unsigned long partitions );
+   bool partitionTileSetLoad( WadMapTable &mapping_table, int *percent_complete );
 
    void loadTileSet( const char *file_path );
    

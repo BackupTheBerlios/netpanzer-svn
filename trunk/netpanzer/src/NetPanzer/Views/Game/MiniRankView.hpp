@@ -18,13 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __MiniRankView_hpp__
 #define __MiniRankView_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
-#include "stdafx.hpp"
 #include "iXY.hpp"
 #include "iRect.hpp"
 #include "Surface.hpp"
@@ -58,7 +51,7 @@ void drawMiniRankView(const Surface &dest)
 
 	for (int i = 0; i < MIN(playerCount, 4); i++)
 	{
-		Stats::GetPlayerStats(playerFlagName, &playerKills, &playerLosses, &playerTotalPoints, NULL, &playerName, NULL);
+		Stats::GetPlayerStats(playerFlagName, &playerKills, &playerLosses, &playerTotalPoints, 0, &playerName, 0);
 
 		sprintf(strBuf, "%-10s%10i", playerName, playerTotalPoints);
 		

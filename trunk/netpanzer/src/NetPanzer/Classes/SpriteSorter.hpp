@@ -57,7 +57,7 @@ class SpriteSorter : public PObject
 
    void addSprite( Sprite *sprite );
   
-   inline boolean cullSprite( Sprite &sprite )
+   inline bool cullSprite( Sprite &sprite )
     { return( !(sprite.isVisible( world_window )) );  }
  
    void forceAddSprite( Sprite *sprite );

@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "NetPacket.hpp"
 #include "PlayerID.hpp"
+#include "codewiz.hpp"
 
 enum { _net_message_id_transport_client_accept,
        _net_message_id_client_connect_ack,
@@ -32,46 +33,45 @@ enum { _net_message_id_transport_client_accept,
        _net_message_id_client_ping_ack
      };
 
+#ifdef MSVC
 #pragma pack(1)
+#endif
 
 class TransportClientAccept : public NetMessage
- {
-  public:
-   DWORD client_transport_id;
+{
+public:
+ 	DWORD client_transport_id;
    
-  TransportClientAccept()
-   {
-    message_class = _net_message_class_client_server;
-    message_id = _net_message_id_transport_client_accept;
-   } 
-
- };
+   	TransportClientAccept()
+	{
+		message_class = _net_message_class_client_server;
+		message_id = _net_message_id_transport_client_accept;
+	} 
+} __attribute__((packed));
 
 class ClientMesgConnectAck : public NetMessage
- {
-  public:
-   DWORD client_transport_id;
+{
+public:
+ 	DWORD client_transport_id;
    
-  ClientMesgConnectAck()
-   {
-    message_class = _net_message_class_client_server;
-    message_id = _net_message_id_client_connect_ack;
-   } 
-
- };
+   	ClientMesgConnectAck()
+	{
+		message_class = _net_message_class_client_server;
+		message_id = _net_message_id_client_connect_ack;
+	}
+} __attribute__((packed));
 
 class ClientMesgServerId : public NetMessage
- {		
-  public:
-   DPID server_DPID;
+{
+public:
+ 	DPID server_DPID;
   
-  ClientMesgServerId()
-   {
-    message_class = _net_message_class_client_server;
-    message_id = _net_message_id_client_server_id;
-   } 
- 
- };
+   	ClientMesgServerId()
+	{
+		message_class = _net_message_class_client_server;
+		message_id = _net_message_id_client_server_id;
+	}
+} __attribute__((packed));
 
 class ClientMesgKeepAlive : public NetMessage
  {
@@ -83,12 +83,12 @@ class ClientMesgKeepAlive : public NetMessage
     message_id = _net_message_id_client_keep_alive;
    }
 
- };
+ } __attribute__((packed));
 
 class ClientMesgSetKeepAlive : public NetMessage
  {
   public :
-   boolean keep_alive_state;
+   bool keep_alive_state;
 
   ClientMesgSetKeepAlive()
    {
@@ -96,7 +96,7 @@ class ClientMesgSetKeepAlive : public NetMessage
     message_id = _net_message_id_client_set_keepalive_state;
    }
 
- };
+ } __attribute__((packed));
 
 
 class ServerMesgClientDisconnect : public NetMessage
@@ -109,7 +109,7 @@ class ServerMesgClientDisconnect : public NetMessage
     message_class = _net_message_class_client_server;
     message_id = _net_message_id_server_client_disconnect;
    }
- };
+ } __attribute__((packed));
 
 
 class ServerMesgKeepAlive: public NetMessage
@@ -123,7 +123,7 @@ class ServerMesgKeepAlive: public NetMessage
     message_id = _net_message_id_server_keep_alive;
    } 
  
- };
+ } __attribute__((packed));
 
 class ServerMesgPingRequest: public NetMessage
  {		
@@ -136,7 +136,7 @@ class ServerMesgPingRequest: public NetMessage
     message_id = _net_message_id_server_ping_request;
    } 
  
- };
+ } __attribute__((packed));
 
 class ClientMesgPingAck: public NetMessage
  {		
@@ -148,8 +148,10 @@ class ClientMesgPingAck: public NetMessage
     message_id = _net_message_id_client_ping_ack;
    } 
  
- };
+ } __attribute__((packed));
 
+#ifdef MSVC
 #pragma pack()
+#endif
 
 #endif // ** _CLIENT_SERVER_NETMESSAGE_HPP

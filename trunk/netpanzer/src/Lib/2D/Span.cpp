@@ -15,20 +15,18 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "Span.hpp"
 
 
 int allowSpanBlitting = 1;
 
-#if _MSC_VER > 1000
- #pragma optimize( "", off )
-#endif
-
 //--------------------------------------------------------------------------
 void bltTransSpan(PIX *dRow, const PIX *sRow, int pixelsPerRow)
 {
 
+	// XXX msvc assembler disabled...
+#ifdef MSVC
 		_asm {
 			mov edi, [dRow]
 			mov esi, [sRow]
@@ -108,6 +106,7 @@ skipMe2:
 
 spanDone:
 		}
+#endif
 
 } // end bltTransSpan
 
@@ -116,6 +115,8 @@ void bltBlendSpan(PIX *dRow, const PIX *sRow, int pixelsPerRow, const BYTE *tabl
 {
 	if (!allowSpanBlitting) { return; } // Remove for release candidate.
 
+	// XXX disable msvc assembler
+#ifdef MSVC
 		_asm {
 			mov edi, [dRow]
 			mov esi, [sRow]
@@ -189,6 +190,7 @@ leftover:
 spanDone:
 
 		}
+#endif
 
 } // end bltBlendSpan
 
@@ -197,6 +199,8 @@ void bltBlendScaleSpan(PIX *dRow, const PIX *sRow, int srcX1FracWithCount, int s
 {
 	if (!allowSpanBlitting) { return; } // Remove for release candidate.
 
+	// XXX disabled msvc assembler routines
+#ifdef MSVC
 		_asm {
 			mov edi, [dRow]
 			mov esi, [sRow]
@@ -278,14 +282,18 @@ leftover:
 spanDone:
 
 		}
+#endif
 
 } // end bltBlendScaleSpan
 
 //--------------------------------------------------------------------------
 void bltLookupSpan(PIX *dRow, int pixelsPerRow, const PIX *table)
 {
+
 	if (!allowSpanBlitting) { return; } // Remove for release candidate.
 
+	// XXX disabled msvc assembler
+#ifdef MSVC
 		_asm {
 			mov edi, [dRow]
 			mov ecx, [pixelsPerRow]
@@ -344,6 +352,7 @@ leftover:
 
 spanDone:
 		}
+#endif
 
 } // end bltLookupSpan
 
@@ -352,6 +361,8 @@ void bltScaleSpan(PIX *dRow, const PIX *sRow, int srcX1FracWithCount, int stepAn
 {
 	if (!allowSpanBlitting) { return; } // Remove for release candidate.
 
+	// XXX disabled msvc assembler
+#ifdef MSVC
 		_asm {
 			mov edi, [dRow]
 			mov esi, [sRow]
@@ -421,9 +432,7 @@ leftover:
 spanDone:
 			pop ebp
 		}
+#endif
 
 } // end bltScaleSpan
 
-#if _MSC_VER > 1000
- #pragma optimize( "", on )
-#endif

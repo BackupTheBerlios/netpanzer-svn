@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "ChunkTrajectoryParticle2D.hpp"
 #include "TimerInterface.hpp"
 #include "PuffParticle2D.hpp"
@@ -69,7 +69,7 @@ ChunkTrajectoryParticle2D::ChunkTrajectoryParticle2D(	const fXYZ &pos,
 
 	//TileInterface::getWorldPixColor(int worldX, int worldY)
 
-	int randChunk = rand() % staticPackedGroundChunks.getFrameCount();
+	// int randChunk = rand() % staticPackedGroundChunks.getFrameCount();
 
 	packedSurface.setData(staticPackedGroundChunks);
 	packedSurface.setDrawModeSolid();
@@ -82,7 +82,7 @@ ChunkTrajectoryParticle2D::ChunkTrajectoryParticle2D(	const fXYZ &pos,
 
 	} else
 	{
-		index = TileInterface::getWorldPixColor(pos.x, pos.z);
+		index = TileInterface::getWorldPixColor((int) pos.x, (int) pos.z);
 	}
 
 	//int randFrame = rand() % staticPackedChunks[randChunk].getFrameCount();
@@ -119,12 +119,12 @@ void ChunkTrajectoryParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 {
 	assert(isValidPtr(this));
 
-	packedSurface.setAttrib(PointXYi(pos.x, pos.z - arcYPix), layer);
+	packedSurface.setAttrib(PointXYi((int) pos.x, (int) (pos.z - arcYPix)), layer);
 	sorter.addSprite(&packedSurface);
 
 	if (GameConfig::getDisplayShadowsFlag())
 	{
-		packedSurfaceShadow.setAttrib(PointXYi(pos.x - arcYPix, pos.z), shadowLayer);
+		packedSurfaceShadow.setAttrib(PointXYi((int) (pos.x - arcYPix), (int) pos.z), shadowLayer);
 		sorter.addSprite(&packedSurfaceShadow);
 	}
 

@@ -1,5 +1,5 @@
-#SYSTEM=WIN32
-SYSTEM=UNIX
+SYSTEM=WIN32
+#SYSTEM=UNIX
 
 DIRS = . Lib Lib/2D Lib/Environment Lib/Interfaces Lib/Particles \
 	   Lib/PObject/Classes Lib/PObject/Templates Lib/Types Lib/View \
@@ -15,7 +15,7 @@ DIRS = . Lib Lib/2D Lib/Environment Lib/Interfaces Lib/Particles \
 
 ifeq ($(SYSTEM),UNIX)
 DIRS += NetPanzer/Interfaces/unix Stub
-GOAL = netpanzer
+GOAL = ../netpanzer
 LINKFLAGS += -g3 `sdl-config --libs`
 CFLAGS += `sdl-config --cflags` -DUNIX
 endif
@@ -23,7 +23,7 @@ ifeq ($(SYSTEM),WIN32)
 DIRS += NetPanzer/Interfaces/win32 DirectX/DDraw DirectX/DirectInput \
         DirectX/DirectPlay DirectX/DirectSound \
         Win32 Win32/Winsock
-GOAL = netpanzer.exe
+GOAL = ../netpanzer.exe
 CFLAGS += -DWIN32 -Iw32api
 LINKFLAGS += -lgdi32 -lshell32 -lddraw -ldinput -ldplayx -ldsound -lws2_32 -ldsetup -lwinmm -ldxguid -lole32
 endif

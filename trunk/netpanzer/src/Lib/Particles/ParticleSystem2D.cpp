@@ -15,7 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
+#include <assert.h>
 #include "ParticleSystem2D.hpp"
 #include "TimerInterface.hpp"
 #include "ParticleSystemGlobals.hpp"
@@ -42,7 +43,7 @@ ParticleSystem2D::ParticleSystem2D(fXYZ pos, int isFarAway /* = 0 */)
 		prev = next = zParticleSystem2D;
 	}	else
 		{
-			prev = next = NULL;
+			prev = next = 0;
 			insertMe();
 		}
 
@@ -88,8 +89,8 @@ ParticleSystem2D::~ParticleSystem2D()
 void ParticleSystem2D::insertMe()
 {
 	// If we're inserting, we should not already be in the list...
-	assert(prev == NULL);
-	assert(next == NULL);
+	assert(prev == 0);
+	assert(next == 0);
 
 	// Insert me into the list
 	prev                    = zParticleSystem2D;
@@ -112,12 +113,12 @@ void ParticleSystem2D::insertMe()
 void ParticleSystem2D::removeMe()
 {
 	// removeMe from the list
-	if (prev != NULL)
+	if (prev != 0)
 	{
 		prev->next = next;
 	}
 	
-	if (next != NULL)
+	if (next != 0)
 	{
 		next->prev = prev;
 	}

@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "ShellWeapon.hpp"
 #include "UnitMessageTypes.hpp"
 #include "UnitInterface.hpp"
@@ -23,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "StaticsInterface.hpp"
 #include "WorldViewInterface.hpp"
 #include "DDHardSurface.hpp"
-#include "dsound.hpp"
+#include "DSound.hpp"
 #include "Particle2D.hpp"
 #include "WeaponGlobals.hpp"
 #include "ParticleInterface.hpp"
@@ -64,7 +63,7 @@ ShellWeapon::ShellWeapon(UnitID &owner, unsigned short owner_type_id, unsigned s
    
 void ShellWeapon::fsmFlight()
 {
-	boolean end_cycle = _FALSE;
+	bool end_cycle = false;
 	
 	float dt = TimerInterface::getTimeSlice();
 
@@ -74,19 +73,19 @@ void ShellWeapon::fsmFlight()
 		{
 			case _fsmFlight_idle :
 			{
-				end_cycle = _TRUE;
+				end_cycle = true;
 			} break;
 
 			case _fsmFlight_in_flight :
 			{
-				if (path.increment(&location, velocity) == _TRUE )
+				if (path.increment(&location, velocity) == true )
 				{
 					fsmFlight_state = _fsmFlight_on_target;
-					end_cycle = _TRUE;
+					end_cycle = true;
 				}
 				else
 				{
-					end_cycle = _TRUE;
+					end_cycle = true;
 				}
 
 			} break;
@@ -116,12 +115,12 @@ void ShellWeapon::fsmFlight()
 				// **  Particle Shit
 				iXY loc = iXY( location.x, location.y );
 				ParticleInterface::addMiss(loc, Weapon::owner_type_id);
-				end_cycle = _TRUE;
+				end_cycle = true;
 			} break;
 
 		}
 
-	} while ( end_cycle == _FALSE ); 
+	} while ( end_cycle == false ); 
 }
 
 void ShellWeapon::updateStatus( void )

@@ -127,8 +127,8 @@ void SetPacketFunction( void ( * packet_func)( void *message, unsigned long mess
 
 ////////////////////////////////////////////////////////////////
 //functions called related to menu code/////////////////////////
-BOOL IsDPlayObjectValid();
-BOOL SetServProv(HWND hWnd, int SelectedProvider);
+bool IsDPlayObjectValid();
+bool SetServProv(HWND hWnd, int SelectedProvider);
 int	GetNumGames();
 void GetGameName(int index, char *game);
 
@@ -155,13 +155,13 @@ HRESULT ClientToServer(LPVOID lpData, DPID idTo,  DWORD dwDataSize);
 
 ////////////////////////////////////////////////////////////////
 //detect a dialup connection before it's too late
-BOOL MinimizeOrNot(HWND hWnd);
-BOOL GetAutoDialCheck();
-BOOL SetAutoDialState(); //returns false if unable to correctly access registry data
-BOOL GetAutoDialState(); //returns the value of AutoDial, TRUE=ON, FALSE=OFF
-void DoesDialupConnectionExist(BOOL *exist, BOOL *active);
+bool MinimizeOrNot(HWND hWnd);
+bool GetAutoDialCheck();
+bool SetAutoDialState(); //returns false if unable to correctly access registry data
+bool GetAutoDialState(); //returns the value of AutoDial, TRUE=ON, FALSE=OFF
+void DoesDialupConnectionExist(bool *exist, bool *active);
 LPITEMIDLIST GetDialUpNetworkingPidl(LPSHELLFOLDER);
-BOOL GetItemIdName(LPSHELLFOLDER, LPITEMIDLIST, DWORD, LPTSTR, UINT);
+bool GetItemIdName(LPSHELLFOLDER, LPITEMIDLIST, DWORD, LPTSTR, UINT);
 
 
 ////////////////////////////////////////////////////////////////

@@ -15,9 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
-#include "stdafx.hpp"
 #include "ResignView.hpp"
 #include "Desktop.hpp"
 #include "AreYouSureResignView.hpp"
@@ -69,7 +66,7 @@ void ResignView::init()
 	resize(SCREEN_PIX);
 
 	iXY buttonSize(150, 15);
-	int BUTTON_COUNT = 2;
+	//int BUTTON_COUNT = 2;
 	int x            = (getClientRect().getSize().x - buttonSize.x) / 2;
 	int y;
 	int yOffset      = buttonSize.y * 2;

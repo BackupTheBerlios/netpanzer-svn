@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "NetworkServerDPlay.hpp"
 
 #include "gapp.hpp"
@@ -51,51 +50,51 @@ int NetworkServerDPlay::openSession( int connection_type, int session_flags )
    
   DPlayReturnValue = InitializeDirectPlay( gapp.hwndApp);
      
-  if( DPlayReturnValue != TRUE )
-   { return( _FALSE ); }
+  if( DPlayReturnValue != true )
+   { return( false ); }
 
   ServProvReturn = SetServProv( gapp.hwndApp, TCPIP );
   if( ServProvReturn == 0 ) 
-   { return( _FALSE ); }
+   { return( false ); }
 
-  return( _TRUE );
+  return( true );
  }
 
 int NetworkServerDPlay::hostSession( void )
  {
   HRESULT hr;
-  BOOL minimize;
+  bool minimize;
 
-  Screen->setGDIStatus(true);
+  DDraw.setGDIStatus(true);
   minimize = MinimizeOrNot( gapp.hwndApp );    
 
   //SetServProv( gapp.hwndApp, TCPIP );
 
   hr = HostSession( gapp.hwndApp );                 
   
-  if (minimize == _FALSE)
+  if (minimize == false)
    { 
-    Screen->setGDIStatus(false);
+    DDraw.setGDIStatus(false);
    }  
   else
    {
     OpenIcon( gapp.hwndApp ); 
-    Screen->restoreAll();
-    Screen->setGDIStatus( FALSE ); 
+    DDraw.restoreAll();
+    DDraw.setGDIStatus( false ); 
    }
 
   MouseInterface::hideHardwareCursor();   
 
   if( hr != 1 )
-  { return( _FALSE ); }
+  { return( false ); }
 
-  return _TRUE;
+  return true;
  }
 
 int NetworkServerDPlay::closeSession( void )
  {
   ShutDownConnection();
-  return( _TRUE );
+  return( true );
  }
 
 int NetworkServerDPlay::sendMessage( NetMessage *message, unsigned long size, int flags )
@@ -105,16 +104,16 @@ int NetworkServerDPlay::sendMessage( NetMessage *message, unsigned long size, in
  
   //LOG( ( "SEND >> Class: %s ID: %s", NetMessageClassToString( *message), NetMessageIDtoString( *message )  ) );
   
-  ServerClientListData *iterator = NULL;
-  ServerClientListData *client_data_ptr = NULL;
+  ServerClientListData *iterator = 0;
+  ServerClientListData *client_data_ptr = 0;
 
   client_list.resetIterator( &iterator );
 
   client_data_ptr = client_list.incIteratorPtr( &iterator );
   
-  while( client_data_ptr != NULL )
+  while( client_data_ptr != 0 )
    {
-     hr = ServerToOneClient( _TRUE, client_data_ptr->client_id.getDPID(), (void *) message, size ); 
+     hr = ServerToOneClient( true, client_data_ptr->client_id.getDPID(), (void *) message, size ); 
   
      if ( hr != DP_OK )
       {
@@ -139,7 +138,7 @@ int NetworkServerDPlay::sendMessage( NetMessage *message, unsigned long size, in
   
   NetworkState::incPacketsSent( size ); 
   
-  return( _TRUE );
+  return( true );
  }
 
 int NetworkServerDPlay::sendMessage( NetMessage *message, unsigned long size, PlayerID &player_id, int flags )
@@ -150,7 +149,7 @@ int NetworkServerDPlay::sendMessage( NetMessage *message, unsigned long size, Pl
 
   //LOG( ( "SEND >> Class: %s ID: %s", NetMessageClassToString( *message), NetMessageIDtoString( *message )  ) );
   
-  hr = ServerToOneClient( _TRUE, player_id.getDPID(), (void *) message, size ); 
+  hr = ServerToOneClient( true, player_id.getDPID(), (void *) message, size ); 
   
   if ( hr != DP_OK )
    { 
@@ -227,7 +226,7 @@ int NetworkServerDPlay::getMessage( NetMessage *message )
     loop_back_recv_queue.dequeue( &net_packet );
 	memmove( (void *) message, net_packet.data, net_packet.packet_size );
 
-	return( _TRUE );
+	return( true );
    }
   else
    {
@@ -249,10 +248,11 @@ int NetworkServerDPlay::getMessage( NetMessage *message )
         if ( message->message_class == _net_message_class_client_server )
 	     { processNetMessage( message ); }
 
-	    return( _TRUE );        
+	    return( true );        
 	   }
      } // if ( receive_queue.isReady() )
    } // ** else 
     
-  return( _FALSE );
+  return( false );
  }
+

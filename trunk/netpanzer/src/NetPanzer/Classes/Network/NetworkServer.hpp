@@ -30,7 +30,7 @@ class ServerClientListData
  {
   public:
   PlayerID       client_id;
-  boolean        keep_alive_state;
+  bool        keep_alive_state;
   Timer          keep_alive_timer;  
   unsigned char  no_guarantee_sequence_counter;
 
@@ -39,8 +39,8 @@ class ServerClientListData
   ServerClientListData()
    {
     no_guarantee_sequence_counter = 0;
-    keep_alive_state = _FALSE;
-    next = NULL;
+    keep_alive_state = false;
+    next = 0;
    }
  
  };
@@ -54,9 +54,9 @@ class ServerClientList : public LinkListSingleTemplate< ServerClientListData >
 
    void addClient( ServerClientListData *client_data );
   
-   boolean removeClient( PlayerID client_id );
+   bool removeClient( PlayerID client_id );
 
-   boolean getFullClientID( PlayerID *client_id );
+   bool getFullClientID( PlayerID *client_id );
   
    inline void resetIterator( ServerClientListData **iterator )
     {
@@ -67,14 +67,14 @@ class ServerClientList : public LinkListSingleTemplate< ServerClientListData >
     { 
 	 ServerClientListData *client_data;
 
-	 if( (*iterator) != NULL )
+	 if( (*iterator) != 0 )
 	  {
 	   client_data = (*iterator);
 	   (*iterator) = (*iterator)->next;
 	   return( client_data ); 
    	  }
      else
-	  { return( NULL ); }
+	  { return( 0 ); }
     }
  
  };
@@ -100,29 +100,29 @@ class NetworkServer : public NetworkInterface
    
    void processNetMessage( NetMessage *message );
    
-   boolean dontSendUDPHackFlag;
+   bool dontSendUDPHackFlag;
   public:
    
    NetworkServer( void );
-   ~NetworkServer();
+   virtual ~NetworkServer();
 
-   boolean addClientToSendList( PlayerID &client_player_id );
-   boolean removeClientFromSendList( PlayerID &client_player_id ); 
+   bool addClientToSendList( PlayerID &client_player_id );
+   bool removeClientFromSendList( PlayerID &client_player_id ); 
 
-   boolean activateKeepAlive( PlayerID &client_player_id ); 
-   boolean deactivateKeepAlive( PlayerID &client_player_id ); 
+   bool activateKeepAlive( PlayerID &client_player_id ); 
+   bool deactivateKeepAlive( PlayerID &client_player_id ); 
 
    void lostPacketHack()
-    { dontSendUDPHackFlag = _TRUE; } 
+    { dontSendUDPHackFlag = true; } 
          
-   virtual int openSession( int connection_type, int session_flags ) { return( _TRUE ); }
-   virtual int hostSession( void ) { return( _TRUE ); }
-   virtual int closeSession( void ) { return( _TRUE ); }
+   virtual int openSession( int connection_type, int session_flags ) { return( true ); }
+   virtual int hostSession( void ) { return( true ); }
+   virtual int closeSession( void ) { return( true ); }
 
-   virtual int sendMessage( NetMessage *message, unsigned long size, int flags ) { return( _TRUE ); }
-   virtual int sendMessage( NetMessage *message, unsigned long size, PlayerID &player_id, int flags ) { return( _TRUE ); } 
+   virtual int sendMessage( NetMessage *message, unsigned long size, int flags ) { return( true ); }
+   virtual int sendMessage( NetMessage *message, unsigned long size, const PlayerID &player_id, int flags ) { return( true ); } 
 
-   virtual int getMessage( NetMessage *message ) { return( _TRUE ); }
+   virtual int getMessage( NetMessage *message ) { return( true ); }
 
    virtual void dropClient( PlayerID client_id );
    virtual void shutdownClientTransport( PlayerID &client_id ) {  }

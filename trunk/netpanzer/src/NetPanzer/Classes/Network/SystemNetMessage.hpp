@@ -24,7 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerState.hpp"
 #include "NetPacket.hpp"
 
+#ifdef MSVC
 #pragma pack(1)
+#endif
 
 enum { _net_message_id_system_set_view,
        _net_message_id_system_reset_game_logic,
@@ -48,7 +50,7 @@ class SystemSetPlayerView : public NetMessage
     message_id = _net_message_id_system_set_view;
    }
  
- };
+ } __attribute__((packed));
 
 
 class SystemResetGameLogic : public NetMessage
@@ -61,7 +63,7 @@ class SystemResetGameLogic : public NetMessage
     message_id = _net_message_id_system_reset_game_logic;
    }
  
- };
+ } __attribute__((packed));
 
 enum { _chat_mesg_scope_player_set,
        _chat_mesg_scope_alliance,
@@ -89,7 +91,7 @@ class SystemChatMesgRequest : public NetMessage
     {
      message_class = _net_message_class_system;
      message_id = _net_message_id_system_chat_mesg_req;
-     memset( player_set, 0, sizeof( unsigned char) 32 );
+     memset( player_set, 0, sizeof( unsigned char) * 32 );
      message_scope = _chat_mesg_scope_all;
     }
 
@@ -126,7 +128,7 @@ class SystemChatMesgRequest : public NetMessage
      player_set[ index ] = player_set[index] & mask; 
     }
  
- };
+ } __attribute__((packed));
 
 
 class SystemChatMesg: public NetMessage
@@ -142,7 +144,7 @@ class SystemChatMesg: public NetMessage
      message_id = _net_message_id_system_chat_mesg;
     }
  
- };
+ } __attribute__((packed));
 
 
 
@@ -171,7 +173,7 @@ class SystemViewControl : public NetMessage
     strcpy( view_name, name );
    }
  
- };
+ } __attribute__((packed));
 
 
 class SystemPingRequest : public NetMessage
@@ -185,7 +187,7 @@ class SystemPingRequest : public NetMessage
     message_id = _net_message_id_system_ping_request;
    }
 
- };
+ } __attribute__((packed));
 
 class SystemPingAcknowledge : public NetMessage
  {
@@ -197,7 +199,7 @@ class SystemPingAcknowledge : public NetMessage
     message_id = _net_message_id_system_ping_ack;
    }
 
- };
+ } __attribute__((packed));
 
 
 enum { _connect_alert_mesg_connect,
@@ -223,8 +225,10 @@ class SystemConnectAlert : public NetMessage
     alert_enum = alert_type;
    }
  
- };
+ } __attribute__((packed));
 
+#ifdef MSVC
 #pragma pack()
+#endif
 
 #endif // ** _SYSTEMNETMESSAGE_HPP

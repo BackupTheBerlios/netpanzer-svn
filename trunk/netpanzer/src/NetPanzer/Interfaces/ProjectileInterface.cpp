@@ -15,10 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "ProjectileInterface.hpp"
 
-#include "dsound.hpp"
+#include "DSound.hpp"
 
 #include "ParticleInterface.hpp"
 #include "MissleWeapon.hpp"
@@ -28,8 +27,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Math.hpp"
 
 
-InternalLink * ProjectileInterface::projectile_list_start = NULL;
-InternalLink * ProjectileInterface::projectile_list_end = NULL;
+InternalLink * ProjectileInterface::projectile_list_start = 0;
+InternalLink * ProjectileInterface::projectile_list_end = 0;
 
 void ProjectileInterface::removeAll( void )
  {
@@ -37,7 +36,7 @@ void ProjectileInterface::removeAll( void )
 
   traversal_ptr = projectile_list_start;
 
-  while( traversal_ptr != NULL )
+  while( traversal_ptr != 0 )
    {
     InternalLink *destroy_ptr;
 
@@ -47,10 +46,10 @@ void ProjectileInterface::removeAll( void )
 
     destroy_ptr->removeFromList( (InternalLink **) &projectile_list_start, (InternalLink **) &projectile_list_end );
 
-	if (destroy_ptr != NULL)
+	if (destroy_ptr != 0)
 	 {
 	  delete( (Projectile *) (destroy_ptr) );
-	  destroy_ptr = NULL;
+	  destroy_ptr = 0;
 	 }
 
    } // ** while 
@@ -61,8 +60,8 @@ void ProjectileInterface::resetLogic(void)
  {
   removeAll();
   
-  projectile_list_start = NULL;
-  projectile_list_end = NULL;
+  projectile_list_start = 0;
+  projectile_list_end = 0;
  }
 
 
@@ -80,7 +79,7 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
 	  
 	  // We should make sure and customize all these.
 	  temp->addToList( &projectile_list_start, &projectile_list_end );
-	  assert(FALSE);
+	  assert(false);
   }
   else if (projectile_type == 1)
   {
@@ -185,7 +184,7 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
 	  //ParticleInterface::addMissleLaunchPuff(startPos, direction, owner_type_id);
   }
   
-  //assert( temp != NULL );
+  //assert( temp != 0 );
 
   //temp->addToList( &projectile_list_start, &projectile_list_end );
   
@@ -204,7 +203,7 @@ void ProjectileInterface::updateStatus( void )
 
   traversal_ptr = projectile_list_start;
 
-  while( traversal_ptr != NULL )
+  while( traversal_ptr != 0 )
    {
     projectile_ptr =  (Projectile *) traversal_ptr;
 
@@ -215,10 +214,10 @@ void ProjectileInterface::updateStatus( void )
       traversal_ptr = traversal_ptr->next_ptr;
       destroy_ptr->removeFromList( (InternalLink **) &projectile_list_start, (InternalLink **) &projectile_list_end );
 
-	  if (destroy_ptr != NULL)
+	  if (destroy_ptr != 0)
 	  {
 	 	  delete( (Projectile *) (destroy_ptr) );
-	      destroy_ptr = NULL;
+	      destroy_ptr = 0;
 	  }
 
      } // ** if 
@@ -240,7 +239,7 @@ void ProjectileInterface::offloadGraphics( SpriteSorter &sorter )
 
   traversal_ptr = projectile_list_start;
 
-  while( traversal_ptr != NULL )
+  while( traversal_ptr != 0 )
    {
     projectile_ptr =  (Projectile *) traversal_ptr;
 

@@ -18,10 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETMESSAGELOG_HPP
 #define _NETMESSAGELOG_HPP
 
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
 #include "NetPacket.hpp"
 
 char * NetMessageClassToString( NetMessage &message );

@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "GroundExplosionParticle2D.hpp"
 
 
@@ -24,14 +24,18 @@ Surface GroundExplosionParticle2D::groundParticleSprite0;
 
 // GroundExplosionParticle2D constructor
 //---------------------------------------------------------------------------
-GroundExplosionParticle2D::GroundExplosionParticle2D(fXYZ pos, int maxSpeed) : TrajectoryParticle2D(pos, maxSpeed)
+GroundExplosionParticle2D::GroundExplosionParticle2D(const fXYZ& pos,
+													 int maxSpeed) 
+ 	  // XXX trajectoryAngle was missing here, I added 0
+	: TrajectoryParticle2D(pos, maxSpeed, 0)
 {
 	FUNC("GroundExplosionParticle2D::init");
 
 	airLifetime = lifetime;
 	lifetime    = 10;
 
-	groundParticleSurface.setOffsetCenter();
+	// XXX
+	// groundParticleSurface.setOffsetCenter();
 
 } // end GroundExplosionParticle2D::GroundExplosionParticle2D
 
@@ -52,12 +56,15 @@ void GroundExplosionParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 {
 	// Calculate some projection to get the 3D angle effect.  The greater the particleYScale,
 	// the greater the particle bend in the air.
-	float zPos = pos.z;// - pos.y * particleYScale;
+	//float zPos = pos.z;// - pos.y * particleYScale;
 
+	// XXX 
+#if 0
 	groundParticleSurface.setTo(groundParticleSprite0);
 
 	groundParticleSurface.setAttrib(PointXYi(pos.x, zPos), 3);
 	sorter.addSprite(&groundParticleSurface);
+#endif
 } // end GroundExplosionParticle2D::draw
 
   /*
@@ -75,7 +82,7 @@ void GroundExplosionParticle2D::sim()
 
 	if (age >= lifetime)
 	{
-		isAlive = FALSE;
+		isAlive = false;
 	}
 
 	cParticle2D::sim();

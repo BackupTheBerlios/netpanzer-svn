@@ -15,15 +15,16 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "PArrayGrowable.hpp"
+#include <assert.h>
 #include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
 
 PArrayGrowable::PArrayGrowable()
  {
-  array = NULL;
+  array = 0;
   size = 0;
   grow_increment = 1;
   grow_limit = 0xFFFFFFFF;
@@ -57,15 +58,15 @@ void PArrayGrowable::initialize( unsigned long size, unsigned long growIncrement
 
   assert( (size > 0) && (growIncrement > 0) );
   
-  if ( array != NULL )
+  if ( array != 0 )
    {
     free( array );
-    array = NULL;
+    array = 0;
    }
   
   array = (PObject * *) malloc( sizeof(PObject *) * size );
  
-  assert( array != NULL ); 
+  assert( array != 0 ); 
  }
  
 PArrayGrowable::~PArrayGrowable( void )
@@ -84,7 +85,7 @@ PObject * PArrayGrowable::operator[]( unsigned long index)
       array = (PObject * *) realloc( array, sizeof(PObject *) * new_size );
       memset( &array[ size ], 0, sizeof(PObject *) * (new_size - size) ); 
       size = new_size;
-      assert( array != NULL );     
+      assert( array != 0 );     
      }
     else
      assert( 0 );
@@ -104,7 +105,7 @@ void PArrayGrowable::add( PObject *object, unsigned long index )
       array = (PObject * *) realloc( array, sizeof(PObject *) * new_size );
       memset( &array[ size ], 0, sizeof(PObject *) * (new_size - size) ); 
       size = new_size;
-      assert( array != NULL );     
+      assert( array != 0 );     
      }
     else
      assert( 0 );
@@ -117,7 +118,7 @@ void PArrayGrowable::resize( unsigned long size )
  {
   array = (PObject * *) realloc( array, sizeof(PObject *) * size );
   PArrayGrowable::size = size;
-  assert( array != NULL );          
+  assert( array != 0 );          
  }
 
 void PArrayGrowable::setGrowLimit( unsigned long limit )

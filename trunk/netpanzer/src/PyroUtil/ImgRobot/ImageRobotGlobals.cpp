@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ImageRobotGlobals.hpp"
 #include <assert.h>
 
-ColorTable *colorTable = NULL;
+ColorTable *colorTable = 0;
 ColorTable  gray256;
 ColorTable  red256;
 ColorTable  blue256;
@@ -39,7 +39,7 @@ void InitializeGlobals( void )
   gSourceFileList.initialize( 300 );
 
   gFileDialogFileList = (char *) malloc( 200 *  256 * sizeof( char ) );
-  assert( gFileDialogFileList != NULL );
+  assert( gFileDialogFileList != 0 );
   gFileDialogFileListSize = 200 *  256 * sizeof( char );  
   memset( gFileDialogFileList, 0, gFileDialogFileListSize );
  }

@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "TileEngine.hpp"
 #include "DirectDrawGlobals.hpp"
 #include "blitters.h"
@@ -26,7 +25,7 @@ void TileEngine::blitWorld( void )
 
  unsigned long  x_left_length, x_left_offset, x_right_length, x_right_offset;
  unsigned long  y_top_length, y_top_offset, y_bottom_length, y_bottom_offset;
- boolean        x_right_end_flag, y_bottom_end_flag;
+ bool        x_right_end_flag, y_bottom_end_flag;
 
  unsigned short map_x, map_y;
  unsigned long  world_x, world_y;
@@ -55,9 +54,10 @@ void TileEngine::blitWorld( void )
 
 
  tile_size = tile_set.getTileXsize();
- 
- main_camera->getViewStart( DBUFFER_VIEW_WIDTH, DBUFFER_VIEW_HEIGHT,
-                            &world_x, &world_y);
+
+ // XXX
+ // main_camera->getViewStart( DBUFFER_VIEW_WIDTH, DBUFFER_VIEW_HEIGHT,
+ //                           &world_x, &world_y);
  
  pointXYtoMapXY( world_x, world_y, &map_x, &map_y );
 
@@ -80,27 +80,32 @@ void TileEngine::blitWorld( void )
  x_left_offset = (world_x % tile_size);
  x_left_length = (tile_size - x_left_offset);
 
- complete_columns = (DBUFFER_VIEW_WIDTH - x_left_length) / tile_size;
+ // XXX
+ // complete_columns = (DBUFFER_VIEW_WIDTH - x_left_length) / tile_size;
 
  x_right_offset = 0; 
- x_right_length = (DBUFFER_VIEW_WIDTH - x_left_length) % tile_size; 
+ // XXX
+ //x_right_length = (DBUFFER_VIEW_WIDTH - x_left_length) % tile_size; 
  if ( x_right_length > 0 )
-  x_right_end_flag = _TRUE;
+  x_right_end_flag = true;
 
 
  y_top_offset = (world_y % tile_size);
  y_top_length = (tile_size - y_top_offset);
 
- complete_rows = (DBUFFER_VIEW_HEIGHT - y_top_length) / tile_size;
+ // XXX
+ // complete_rows = (DBUFFER_VIEW_HEIGHT - y_top_length) / tile_size;
 
  y_bottom_offset = 0; 
- y_bottom_length = (DBUFFER_VIEW_HEIGHT - y_top_length) % tile_size; 
+ // XXX
+ // y_bottom_length = (DBUFFER_VIEW_HEIGHT - y_top_length) % tile_size; 
  if ( y_bottom_length > 0 ) 
-  y_bottom_end_flag = _TRUE;
+  y_bottom_end_flag = true;
 
  world_row =  map_buffer + (map_y * map_width) + map_x;
 
- next_tile_row_offset = DBUFFER_WIDTH * (tile_size - 1) + X_CLIP_OFS;
+ // XXX
+ //next_tile_row_offset = DBUFFER_WIDTH * (tile_size - 1) + X_CLIP_OFS;
 
  next_map_row_offset = map_width - complete_columns - 1;
 
@@ -111,7 +116,8 @@ void TileEngine::blitWorld( void )
  tile_offset = tile_set.getTile( tile_type ); 
  tile_offset = tile_offset + (y_top_offset * tile_size ) + x_left_offset; 
  
- buffer_offset = double_buffer + OFFSET_TO_VIEW;
+ // XXX
+ //buffer_offset = double_buffer + OFFSET_TO_VIEW;
 
  blit_partial_xy( tile_offset, buffer_offset, y_top_length, x_left_length );
 
@@ -139,7 +145,7 @@ void TileEngine::blitWorld( void )
 
  }
 
- if( x_right_end_flag == _TRUE )
+ if( x_right_end_flag == true )
   {
   
    if (y_top_length > 0 && x_right_length > 0)
@@ -147,13 +153,15 @@ void TileEngine::blitWorld( void )
 	   blit_partial_xy(tile_offset, buffer_offset, y_top_length, x_right_length);
    }
 
-   buffer_offset += ( DBUFFER_WIDTH * (y_top_length-1)) + X_CLIP_OFS + x_right_length;
+   // XXX
+   //buffer_offset += ( DBUFFER_WIDTH * (y_top_length-1)) + X_CLIP_OFS + x_right_length;
 
    world_row = world_row + next_map_row_offset;
   }
  else
   {
-   buffer_offset += (DBUFFER_WIDTH * (y_top_length-1)) + X_CLIP_OFS;
+   // XXX
+   //buffer_offset += (DBUFFER_WIDTH * (y_top_length-1)) + X_CLIP_OFS;
 
    world_row = world_row + next_map_row_offset;
   }               
@@ -193,7 +201,7 @@ for( k=0; k < complete_rows; k++)
   }
 
 
- if( x_right_end_flag == _TRUE )
+ if( x_right_end_flag == true )
   {
    if (tile_size > 0 && x_right_length > 0)
    {
@@ -216,7 +224,7 @@ for( k=0; k < complete_rows; k++)
 
   // NOW THE LAST ROW IF NEEDED
 
- if( y_bottom_end_flag == _TRUE )
+ if( y_bottom_end_flag == true )
   {             
 
    tile_type = *(world_row);
@@ -256,20 +264,22 @@ for( k=0; k < complete_rows; k++)
 
      }
 
-   if( x_right_end_flag == _TRUE )
+   if( x_right_end_flag == true )
     {
 	   if (y_bottom_length > 0 && x_right_length > 0)
 		{
 		     blit_partial_xy( tile_offset, buffer_offset, y_bottom_length, x_right_length );
 		}
 
-     buffer_offset += (DBUFFER_WIDTH * (y_bottom_length-1)) + X_CLIP_OFS + x_right_length;
+	 // XXX
+     // buffer_offset += (DBUFFER_WIDTH * (y_bottom_length-1)) + X_CLIP_OFS + x_right_length;
 
      world_row = world_row + next_map_row_offset;
     }
    else
     {
-     buffer_offset += (DBUFFER_WIDTH * (y_bottom_length-1)) + X_CLIP_OFS;
+	 // XXX
+     // buffer_offset += (DBUFFER_WIDTH * (y_bottom_length-1)) + X_CLIP_OFS;
 
      world_row = world_row + next_map_row_offset;
     }

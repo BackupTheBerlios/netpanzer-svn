@@ -18,14 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _WADMAPTABLE_HPP
 #define _WADMAPTABLE_HPP
 
-#include "Aliasdef.h"
 #include "ArrayTemplate.hpp"
 #include "string.h"
 
 class WadTileMapInfo
  {
   public:
-   boolean is_used;
+   bool is_used;
    unsigned short remap_index;
  };
 

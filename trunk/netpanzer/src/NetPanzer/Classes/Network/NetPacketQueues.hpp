@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETPACKETQUEUES_HPP
 #define _NETPACKETQUEUES_HPP
 
+#include <string.h>
 #include "NetPacket.hpp"
 #include "QueueTemplate.hpp"
 #include "ArrayTemplate.hpp"
@@ -60,14 +61,14 @@ class NetPacketBlock
   public:
 
    NetPacket     packet;
-   boolean       in_use;
-   boolean       out_of_order;
+   bool       in_use;
+   bool       out_of_order;
    unsigned char sequence;
   
    NetPacketBlock( )
     {
-     in_use = _FALSE;
-     out_of_order = _FALSE;
+     in_use = false;
+     out_of_order = false;
     }
  
    unsigned short getPacketSize()
@@ -93,13 +94,13 @@ class ReorderQueue : public NetPacketBlockArray
    // ** variables for exponential averaging of packet window
    TIMESTAMP packet_recv_stamp; 
    TIMESTAMP next_packet_recv_stamp;   
-   boolean window_estimate_init;
+   bool window_estimate_init;
    float packet_window_time;
    float packet_window_estimate;
    float packet_window_time_weight;
   
    // ** variables for tracking packet window 
-   boolean packet_window_wait_flag;
+   bool packet_window_wait_flag;
    Timer   packet_window_timer;
 
    // ** variable for statictics
@@ -118,7 +119,7 @@ class ReorderQueue : public NetPacketBlockArray
 
    void dequeue( NetPacket *net_packet );
 
-   boolean isReady( void );
+   bool isReady( void );
 
    void getStats( float *packet_window_time, float *packet_window_estimate,
                   int *lost_packets, int *out_of_order_packets );

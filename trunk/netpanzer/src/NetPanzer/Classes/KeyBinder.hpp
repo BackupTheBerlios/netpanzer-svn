@@ -33,7 +33,7 @@ class KeyBinderElement
 class KeyBinder
  {
   protected:
-   static boolean locked_key_table[256]; 
+   static bool locked_key_table[256]; 
 
    ArrayGrowableTemplate< KeyBinderElement > key_list;
 
@@ -56,10 +56,10 @@ class KeyBinder
    unsigned char getActionKey( unsigned short action_enum );
    unsigned char getActionKey( char *action_name );
    
-   boolean isBound( unsigned char key_scan_code );
+   bool isBound( unsigned char key_scan_code );
    
    unsigned short getKeyAction( unsigned char key_scan_code );
-   boolean getKeyAction( unsigned char key_scan_code, char *action_name );
+   bool getKeyAction( unsigned char key_scan_code, char *action_name );
             
  };
 

@@ -15,15 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __Palette_hpp__
 #define __Palette_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
+#include <stdio.h>
 
 #include "Color.hpp"
 #include "ColorTable.hpp"
@@ -34,7 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 typedef	BYTE PIX; // Used for variable color depths.
 
 
-const int PALETTE_LENGTH = 256;
+const size_t PALETTE_LENGTH = 256;
 
 
 //--------------------------------------------------------------------------
@@ -113,13 +108,13 @@ public:
 
 	static bool read(FILE *fp)
 	{
-		assert(fp != NULL);
+		assert(fp != 0);
 		return fread(&color, sizeof(color[0]), PALETTE_LENGTH, fp) == PALETTE_LENGTH;
 	}
 
 	//static bool write(FILE *fp)
 	//{
-		//assert(fp != NULL);
+		//assert(fp != 0);
 		//return fwrite(this, sizeof(color[0]), PALETTE_LENGTH, fp) == PALETTE_LENGTH;
 	//}
 	

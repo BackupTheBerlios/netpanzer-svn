@@ -15,35 +15,31 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp" 
 #include "NetMessageEncoder.hpp"
  
- #include "string.h"
+#include "string.h"
 
- #include "NetworkState.hpp"
- #include "Server.hpp"
- #include "Client.hpp"
+#include "NetworkState.hpp"
+#include "Server.hpp"
+#include "Client.hpp"
 
 NetMessageEncoder PUBLIC_MESSAGE_ENCODER;
+ 
+#define _SUB_PACKET_LIMIT 255 
+typedef unsigned char SubPacketType;
 
+void NetMessageEncoder::initalize( void ) 
+{
+  	resetEncoder();
+}
  
- 
- #define _SUB_PACKET_LIMIT 255 
- typedef unsigned char SubPacketType;
- 
-
- void NetMessageEncoder::initalize( void ) 
-  {
-   resetEncoder();
-  }
- 
- void NetMessageEncoder::resetEncoder( void )
-  {
+void NetMessageEncoder::resetEncoder( void )
+{
    encode_message.message_class = _net_message_class_multi ;
    encode_message.message_count = 0;
    memset( encode_message.data, 0, _MULTI_PACKET_LIMIT );
    encode_message_index = 0;
-  } 
+} 
  
  void NetMessageEncoder::encodeMessage( NetMessage *message, unsigned short size )
   {
@@ -64,8 +60,10 @@ NetMessageEncoder PUBLIC_MESSAGE_ENCODER;
      resetEncoder( );
     } // ** if
   
-  
-   (SubPacketType) *(encode_message.data + encode_message_index) = (SubPacketType) size;
+
+   SubPacketType* packettypeptr 
+	   = (SubPacketType*) ((char*) encode_message.data + encode_message_index);
+   *packettypeptr = (SubPacketType) size;
    
    encode_message_index += sizeof(SubPacketType);
    
@@ -78,7 +76,7 @@ NetMessageEncoder PUBLIC_MESSAGE_ENCODER;
    encode_message.message_count++;
   }
 
- boolean NetMessageEncoder::encodeMessage( NetMessage *message, unsigned short size, MultiMessage **encoded_message )
+ bool NetMessageEncoder::encodeMessage( NetMessage *message, unsigned short size, MultiMessage **encoded_message )
   {
    if( ( (encode_message_index + size + sizeof(SubPacketType)) > _MULTI_PACKET_LIMIT )
      )
@@ -86,11 +84,13 @@ NetMessageEncoder PUBLIC_MESSAGE_ENCODER;
      encode_message.message_size = (unsigned short) encode_message_index;
      
      *encoded_message = (MultiMessage *) &encode_message;
-     return( _TRUE );
+     return( true );
     } // ** if
   
   
-   (SubPacketType) *(encode_message.data + encode_message_index) = (SubPacketType) size;
+   SubPacketType* packettypeptr =
+	   (SubPacketType*) (encode_message.data + encode_message_index);
+   *packettypeptr = (SubPacketType) size;
    
    encode_message_index += sizeof(SubPacketType);
    
@@ -102,8 +102,8 @@ NetMessageEncoder PUBLIC_MESSAGE_ENCODER;
    encode_message_index += size;
    encode_message.message_count++;
    
-   *encoded_message = NULL;
-   return( _FALSE );
+   *encoded_message = 0;
+   return( false );
   }
 
  void NetMessageEncoder::getEncodeMessage( MultiMessage **message )
@@ -116,7 +116,7 @@ NetMessageEncoder PUBLIC_MESSAGE_ENCODER;
     } // ** if
    else
     {
-     *message = NULL;
+     *message = 0;
     } 
   } 
 
@@ -129,12 +129,12 @@ NetMessageEncoder PUBLIC_MESSAGE_ENCODER;
    decode_current_count = 0;
   } 
 
- boolean NetMessageEncoder::decodeMessage( NetMessage **message )
+ bool NetMessageEncoder::decodeMessage( NetMessage **message )
   {
    SubPacketType message_size;
 
    if ( decode_current_count == decode_message.message_count )
-    return( _FALSE );
+    return( false );
 
    message_size = (SubPacketType) *(decode_message.data + decode_message_index);
    decode_message_index += sizeof( SubPacketType );
@@ -143,7 +143,7 @@ NetMessageEncoder PUBLIC_MESSAGE_ENCODER;
    decode_message_index += message_size;
    
    decode_current_count++;
-   return( _TRUE );
+   return( true );
   }
 
 void NetMessageEncoder::sendEncodedMessage( void )

@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "ControlPaletteView.hpp"
 #include "cMouse.hpp"
 #include "MiniMapInterface.hpp"
@@ -51,13 +50,13 @@ ControlPaletteView::ControlPaletteView() : View()
 	int xOffset = 15;
 
 	// Add the option buttons.
-	addButtonCenterText(iXY(x, y), 15, "0", "", NULL);
+	addButtonCenterText(iXY(x, y), 15, "0", "", 0);
 	x += xOffset;
-	addButtonCenterText(iXY(x, y), 15, "1", "", NULL);
+	addButtonCenterText(iXY(x, y), 15, "1", "", 0);
 	x += xOffset;
-	addButtonCenterText(iXY(x, y), 15, "2", "", NULL);
+	addButtonCenterText(iXY(x, y), 15, "2", "", 0);
 	x += xOffset;
-	addButtonCenterText(iXY(x, y), 15, "3", "", NULL);
+	addButtonCenterText(iXY(x, y), 15, "3", "", 0);
 
 	init();
 	ControlView::initWorldMapSurface();

@@ -44,7 +44,7 @@ class WorldViewInterface : virtual PObject
    static inline void scroll_down( long scroll_increment )
     { main_camera->scrollPlusY(scroll_increment); }
 
-   static inline void setCameraPosition( PointXYi &world_loc )
+   static inline void setCameraPosition( const PointXYi &world_loc )
     {
      main_camera->setCamera( world_loc );
     }

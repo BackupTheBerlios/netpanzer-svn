@@ -54,14 +54,14 @@ class PowerUpList : public LinkListSingleTemplate< PowerUp >
     { 
 	 PowerUp *power_up;
 
-	 if( (*iterator) != NULL )
+	 if( (*iterator) != 0 )
 	  {
 	   power_up = (*iterator);
 	   (*iterator) = (*iterator)->next;
 	   return( power_up ); 
    	  }
      else
-	  { return( NULL ); }
+	  { return( 0 ); }
     }
 
    void reset( void );

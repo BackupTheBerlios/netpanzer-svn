@@ -15,13 +15,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "DirtKickParticle2D.hpp"
 
 
 Surface DirtKickParticle2D::dirtKickSprite;
 
 const int dirtKickFPS = 24;
+
+/** XXX distKickSurface doesn't seem to be defined ?!?! */
 
 
 // DirtKickParticle2D
@@ -30,7 +32,8 @@ DirtKickParticle2D::DirtKickParticle2D(fXYZ pos) : Particle2D(pos)
 {
 	assert(dirtKickSprite.getDoesExist());
 
-	dirtKickSurface.setTo(dirtKickSprite);
+	// XXX
+	//dirtKickSurface.setTo(dirtKickSprite);
 
 }; // end DirtKickParticle2D::DirtKickParticle2D
 
@@ -41,7 +44,7 @@ void DirtKickParticle2D::init()
 	dirtKickSprite.create(iXY(48, 46), 48, 6);
 	dirtKickSprite.extractPCX("pics\\particles\\dirtKick.pcx", 1, 0);
 	
-	dirtKickSprite.scale(48 * 0.5f, 46 * 0.5f);
+	dirtKickSprite.scale((int) (48 * 0.5f), (int) (46 * 0.5f));
 
 	dirtKickSprite.setFPS(dirtKickFPS);
 	dirtKickSprite.setOffset(iXY(-dirtKickSprite.getCenter().x, -dirtKickSprite.getPix().y));
@@ -52,17 +55,24 @@ void DirtKickParticle2D::init()
 //---------------------------------------------------------------------------
 void DirtKickParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 {
-	assert(dirtKickSurface.getDoesExist());
+	// XXX
+	//assert(dirtKickSurface.getDoesExist());
 
+	// XXX
+#if 0
 	if (!dirtKickSurface.nextFrame())
 	{
-		isAlive = FALSE;
+		isAlive = false;
 		return;
 	}
-		
+#endif
+	
+	// XXX
+#if 0
 	// I can't use nextFrame() below, because there are multiple
 	// particles which share the same Surface.
 	dirtKickSurface.setAttrib(PointXYi(pos.x, pos.z), 3);
 	sorter.addSprite(&dirtKickSurface);
+#endif
 
 } // end DirtKickParticle2D::draw

@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 //GLOBALS///////////////////////////////////
-static LPCLIENTLIST lpHead = NULL;
+static LPCLIENTLIST lpHead = 0;
 static void FreeClient(LPCLIENTLIST lpClient);
 
 DWORD WSClientID = 1;
@@ -32,8 +32,8 @@ LPCLIENTLIST AddClient(SOCKET newsocket,
                        LPSOCKADDR lpnewSockAddr,
                        int iAddrLen)
 {
- LPCLIENTLIST lpClient = NULL;
- LPCLIENTLIST lpThis = NULL;
+ LPCLIENTLIST lpClient = 0;
+ LPCLIENTLIST lpThis = 0;
 
  int iReturn;
 
@@ -41,19 +41,19 @@ LPCLIENTLIST AddClient(SOCKET newsocket,
  //client structure--
  lpThis = (LPCLIENTLIST)malloc(sizeof(CLIENTLIST));
 
- if(lpThis == NULL) return NULL;
+ if(lpThis == 0) return 0;
 
  //allocate memory for a sockaddr
  lpThis -> lpstreamSockAddr = (LPSOCKADDR)malloc(iAddrLen);
 
- if(lpThis -> lpstreamSockAddr == NULL)
+ if(lpThis -> lpstreamSockAddr == 0)
  {
   free(lpThis);
-  return(NULL);
+  return(0);
  }
 
  //if the list is empty--
- if(lpHead == NULL)
+ if(lpHead == 0)
  {
   //put this one at the head
   lpHead = lpThis;
@@ -78,13 +78,13 @@ LPCLIENTLIST AddClient(SOCKET newsocket,
  memcpy(lpThis -> lpstreamSockAddr, lpnewSockAddr, iAddrLen);
 
  //set the parsing variables--
- lpThis -> bHeaderIncomplete = FALSE;
- lpThis -> bMessageIncomplete = FALSE;
+ lpThis -> bHeaderIncomplete = false;
+ lpThis -> bMessageIncomplete = false;
  lpThis -> TempOffset = 0;
  
  lpThis -> winsockID = WSClientID;
- lpThis -> lpNext = NULL;
- lpThis -> bUDPEnabled = FALSE;
+ lpThis -> lpNext = 0;
+ lpThis -> bUDPEnabled = false;
 
 
  //TODO: catch case when value wraps around (only
@@ -113,21 +113,21 @@ int AddClientUDPAddr(DWORD wsID,
 
     //check to see if i've already got this address,
     //if so don't need to go any further--
-    if(lpClient->bUDPEnabled == TRUE) return -1;
+    if(lpClient->bUDPEnabled == true) return -1;
 
     //create memory for our address--
     //allocate memory for a sockaddr
     lpClient -> lpdgramSockAddr = (LPSOCKADDR)malloc(ilength);
-    if(lpClient -> lpdgramSockAddr == NULL)
+    if(lpClient -> lpdgramSockAddr == 0)
     {
         closesocket(lpClient -> clientdgramSocket);
-        lpClient->bUDPEnabled = FALSE;
+        lpClient->bUDPEnabled = false;
         return 0;
     }
 
     //copy our udp address into the client list's udp address--
     memcpy(lpClient -> lpdgramSockAddr, lpUDPAddr, ilength);
-    lpClient->bUDPEnabled = TRUE;
+    lpClient->bUDPEnabled = true;
 
     return 1;
 
@@ -147,14 +147,14 @@ LPCLIENTLIST GetClientFromID(DWORD wsID)
  //the correct socket for use with this id--
  lpClient = lpHead;
 
- while(lpClient != NULL)
+ while(lpClient != 0)
  {
   if(lpClient -> winsockID == wsID) return(lpClient);
 
   lpClient = lpClient -> lpNext;
  }
 
- return NULL; //if null gets returned, vlad needs
+ return 0; //if null gets returned, vlad needs
               //to receive a WS_PLAYER_NOT_FOUND
 
 }
@@ -174,14 +174,14 @@ LPCLIENTLIST GetClientFromSocket(SOCKET socket)
  //the correct socket for use with this id--
  lpClient = lpHead;
 
- while(lpClient != NULL)
+ while(lpClient != 0)
  {
   if(lpClient -> clientstreamSocket == socket) return(lpClient);
 
   lpClient = lpClient -> lpNext;
  }
 
- return NULL;
+ return 0;
 
 }
 //END GetClientFromSocket//////////////
@@ -194,7 +194,7 @@ LPCLIENTLIST GetClientFromSocket(SOCKET socket)
 void DelClient(LPCLIENTLIST lpThis)
 {
  LPCLIENTLIST lpClient;
- BOOL bReturn = FALSE;
+ bool bReturn = false;
 
  //search for the correct client (lpThis)--
  if(lpThis == lpHead)
@@ -258,7 +258,7 @@ void DelAllClients(void)
   lpClient = lpNext;
  }
 
- lpHead = NULL;
+ lpHead = 0;
 }
 //END GetNextClient////////////////////
 ///////////////////////////////////////
@@ -277,10 +277,10 @@ static void FreeClient(LPCLIENTLIST lpClient)
 
 void DelClientByWinsockID(DWORD wsID)
  {
-  LPCLIENTLIST lpClient = NULL;
+  LPCLIENTLIST lpClient = 0;
   
   lpClient = GetClientFromID(wsID);
-  if( lpClient != NULL )
+  if( lpClient != 0 )
    { 
     closesocket(lpClient->clientstreamSocket);
     closesocket(lpClient -> clientdgramSocket);

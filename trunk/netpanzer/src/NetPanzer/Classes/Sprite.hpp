@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SPRITE_HPP
 #define _SPRITE_HPP
 
-
 #include "PObject.hpp"
 #include "Surface.hpp"
 #include "PackedSurface.hpp"
@@ -33,19 +32,19 @@ class Sprite : public PObject
    PointXYi attach_offset;
 
    unsigned char height;
-   boolean       visible;
+   bool       visible;
   
   public:
 
    Sprite( );
      
 
-   inline void setWorldPos( PointXYi &worldPos )
+   inline void setWorldPos(const PointXYi &worldPos )
     {
      world_pos = worldPos;
 	}
 
-   virtual boolean isVisible( Recti &world_win ) { return( _FALSE ); }
+   virtual bool isVisible(const Recti &world_win ) { return( false ); }
  
    inline void setWorldPos( int x, int y )
     {
@@ -53,7 +52,8 @@ class Sprite : public PObject
 	 world_pos.y = y;
    	}
 
-    inline void setAttrib( PointXYi &worldPos, PointXYi &attach, unsigned char height )
+    inline void setAttrib(const PointXYi &worldPos, const PointXYi &attach,
+						  unsigned char height )
     {
 	 world_pos = worldPos;
 	 attach_offset = attach;
@@ -61,7 +61,7 @@ class Sprite : public PObject
 	 Sprite::height = height;
 	} 
 
-   inline void setAttrib( PointXYi &worldPos, unsigned char height )
+   inline void setAttrib(const PointXYi &worldPos, unsigned char height )
     {
 	 world_pos = worldPos;
 	 assert( height < _MAX_HEIGHT_LEVELS );
@@ -81,18 +81,18 @@ class Sprite : public PObject
      return( height );
    	}
   
-   inline void setVisiblity( boolean visible )
+   inline void setVisiblity( bool visible )
     {
 	 Sprite::visible = visible;
 	} 
 
-   inline void attachSprite( Sprite *sprite, PointXYi &attach )
+   inline void attachSprite( Sprite *sprite, const PointXYi &attach )
 	{
      Sprite *iterator;
 
 	 iterator = this;
 
-     while(iterator->next != NULL)
+     while(iterator->next != 0)
 	  iterator = iterator->next;
   	
 	 sprite->setAttrib( world_pos, attach, height );
@@ -100,15 +100,15 @@ class Sprite : public PObject
      iterator->next = sprite; 
 	}
   
-  virtual void blit( Surface *surface, Recti &world_win ) { }
+  virtual void blit( Surface *surface, const Recti &world_win ) { }
   
-  inline void blitAll( Surface *surface, Recti &world_win )
+  inline void blitAll( Surface *surface, const Recti &world_win )
    {
     Sprite *iterator;
 
     iterator = this;
 
-    while(iterator != NULL)
+    while(iterator != 0)
      {
       iterator->blit( surface, world_win );
    	  iterator = iterator->next;
@@ -157,7 +157,7 @@ class SpriteSurface : public Surface, public Sprite
 	 Sprite::height = height;
 	} 
 
-   inline void setAttrib( PointXYi &worldPos, unsigned char height )
+   inline void setAttrib( const PointXYi &worldPos, unsigned char height )
     {
 	 world_pos = worldPos;
 	 assert( height < _MAX_HEIGHT_LEVELS );
@@ -166,14 +166,14 @@ class SpriteSurface : public Surface, public Sprite
 	 attach_offset.y = 0;
 	} 
       
-   virtual boolean isVisible( Recti &world_win );
+   virtual bool isVisible( Recti &world_win );
 
    virtual void blit( Surface *surface, Recti &world_win );
 
  };
 
 class SpritePacked : public PackedSurface, public Sprite
- {
+{
 private:
 	enum DRAW_MODE
 	{
@@ -190,6 +190,9 @@ private:
 
    SpritePacked( PackedSurface &source );
 
+   virtual ~SpritePacked() 
+   { }
+
 	inline void setDrawModeBlend(ColorTable *colorTable)
 	{
 		SpritePacked::colorTable = colorTable;
@@ -205,7 +208,8 @@ private:
    	 setOffsetCenter();
    	}
    
-   inline void setAttrib( PointXYi &worldPos, PointXYi &attach, unsigned char height, int frame )
+   inline void setAttrib( const PointXYi &worldPos, const PointXYi &attach,
+		   				  unsigned char height, int frame )
     {
 	 world_pos = worldPos;
 	 attach_offset = attach;
@@ -215,7 +219,8 @@ private:
     } 
 
 
-   inline void setAttrib( PointXYi &worldPos, PointXYi &attach, unsigned char height )
+   inline void setAttrib( const PointXYi &worldPos, const PointXYi &attach,
+		   				  unsigned char height )
     {
 	 world_pos = worldPos;
 	 attach_offset = attach;
@@ -223,7 +228,7 @@ private:
 	 Sprite::height = height;
 	} 
 
-   inline void setAttrib( PointXYi &worldPos, unsigned char height )
+   inline void setAttrib( const PointXYi &worldPos, unsigned char height )
     {
 	 world_pos = worldPos;
 	 assert( height < _MAX_HEIGHT_LEVELS );
@@ -232,7 +237,7 @@ private:
 	 attach_offset.y = 0;
 	} 
 
-   virtual boolean isVisible( Recti &world_win );
+   virtual bool isVisible( Recti &world_win );
 
    virtual void blit( Surface *surface, Recti &world_win );
     

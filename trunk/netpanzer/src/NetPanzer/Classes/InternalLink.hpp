@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _INTERNALLINK_HPP
 
 #include "PObject.hpp"
-#include "Stdlib.h"
+#include <stdlib.h>
 
 class InternalLink : public PObject
  {
@@ -27,10 +27,10 @@ class InternalLink : public PObject
 
   inline void addToList( InternalLink  **start, InternalLink  **end )
    {
-    next_ptr = NULL;
-    prev_ptr = NULL;
+    next_ptr = 0;
+    prev_ptr = 0;
 
-    if(*start == NULL)
+    if(*start == 0)
      {
       *start = this;
       *end   = this;
@@ -49,20 +49,20 @@ class InternalLink : public PObject
    {
     if ( (this == *start) && (this == *end) )
      {
-      *start = NULL;
-      *end = NULL;
+      *start = 0;
+      *end = 0;
      } 
     else
      if(this == *start)
       {
        *start = next_ptr;
-       next_ptr->prev_ptr = NULL;
+       next_ptr->prev_ptr = 0;
       }
      else  
       if(this == *end)
        {
         *end = prev_ptr;
-        prev_ptr->next_ptr = NULL;
+        prev_ptr->next_ptr = 0;
        } 
       else
        {

@@ -15,14 +15,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#define INITGUID
-#include <stdafx.hpp>
 #include <windows.h>
 #include <windowsx.h>
 #include <cguid.h>
 #include <string.h>
+#include <shlobj.h>
 #include <shlguid.h> //not included by shlobj.h because INITGUID is defined WILL THIS MEAN PROBLEMS?
 //#include <wininet.h>
+#include <dplay.h>
 
 #include "DirectPlay.h"
 
@@ -37,21 +37,21 @@ DPID			dpidPlayer;
 DPNAME			dpName;
 
 int DPlayMode = 0;
-int ConnectionBroken = FALSE;
+int ConnectionBroken = false;
 
 struct	DPlayDrivers dpDrivers[8];	//twice the max known number of
 									//service providers
 struct  ListOfGames gamelist[MAXGAMES];
 struct	PlayerInfo dpPlayerInfo[MAXPLAYERS];
 
-HANDLE	ghDPReceiveThread = NULL;	//handle of DP recieve thread
+HANDLE	ghDPReceiveThread = 0;	//handle of DP recieve thread
 DWORD	gidDPReceiveThread = 0;		//id of the DP recieve thread
-HANDLE	ghDPKillReceiveEvent = NULL; //event used to kill DP recieve thread
+HANDLE	ghDPKillReceiveEvent = 0; //event used to kill DP recieve thread
 
-BOOL AlreadyConnected = FALSE;
-BOOL DirectPlayFailure = FALSE;
-BOOL AutoDial = TRUE; //FOR SAFETY SAKE, ASSUME IT IS ON
-BOOL AutoDialCheck = FALSE;
+bool AlreadyConnected = false;
+bool DirectPlayFailure = false;
+bool AutoDial = true; //FOR SAFETY SAKE, ASSUME IT IS ON
+bool AutoDialCheck = false;
 
 int driverindex = 0;
 int gameindex = 0;
@@ -61,7 +61,7 @@ int NumberOfGames = 0;
 int SelectedGame = 999;            //an unreasonable number in this scheme
 char SelectedGameName[64];   //used for catching failures
 
-LPVOID		glpvReceiveBuffer = NULL;
+LPVOID		glpvReceiveBuffer = 0;
 DWORD		gdwReceiveBufferSize = 0;
 char		Message[200];
 
@@ -83,54 +83,54 @@ HRESULT CreateDirectPlayInterface(HWND hWnd)
 	HRESULT hr;
 
 	//create an IDirectPlay3 interace--
-	hr = CoCreateInstance(CLSID_DirectPlay, NULL, CLSCTX_INPROC_SERVER,
+	hr = CoCreateInstance(CLSID_DirectPlay, 0, CLSCTX_INPROC_SERVER,
 							IID_IDirectPlay3A, (LPVOID*)&lpDirectPlay3A);
 	
 	//NOTE: WINERROR.H defines S_OK to be 0--
 	if(hr == S_OK)
 	{
 		//MessageBox(hWnd,"DirectPlay object created.", "Result", MB_OK);
-		hr = TRUE;
+		hr = true;
 	}
 	else
 	if(hr == REGDB_E_CLASSNOTREG)
 	{
 		//MessageBox(hWnd,"Class not registered. DirectPlay won't work!", "Error", MB_OK);
-		hr = FALSE;
+		hr = false;
 	}
 	else
 	if(hr == CLASS_E_NOAGGREGATION)
 	{
 		//MessageBox(hWnd,"No aggregate. DirectPlay won't work!", "Error", MB_OK);
-		hr = FALSE;
+		hr = false;
 	}
 	else 
 	if(hr == E_INVALIDARG)
 	{
 		//MessageBox(hWnd,"Invalid Argument. DirectPlay won't work!", "Error", MB_OK);
-		hr = FALSE;
+		hr = false;
 	}
 	else
 	if(hr == E_UNEXPECTED)
 	{
 		//MessageBox(hWnd,"Unexpected Error. DirectPlay won't work!", "Error", MB_OK);
-		hr = FALSE;
+		hr = false;
 	}
 	else
 	if(hr == E_OUTOFMEMORY)
 	{
 		//MessageBox(hWnd,"Out of Memory. DirectPlay won't work!", "Error", MB_OK);
-		hr = FALSE;
+		hr = false;
 	}
 	else
 	{
 		//MessageBox(hWnd,"Now what's wrong? DirectPlay won't work!", "Error", MB_OK);
-		hr = FALSE;
+		hr = false;
 	}
 
 	
 	//if cocreate worked--
-	if(hr == TRUE) return 1;
+	if(hr == true) return 1;
 
 
 	return 0; //catchall errors return value
@@ -265,9 +265,9 @@ HRESULT EnumerateServProvs(HWND hWnd)
 {
 	HRESULT hr;
 
- //set global driverindex = 0 so that I can enumconnections numerous times
- //without overwriting any arrays. Bug#15
- driverindex = 0;
+	//set global driverindex = 0 so that I can enumconnections numerous times
+	//without overwriting any arrays. Bug#15
+	driverindex = 0;
 
 	hr = lpDirectPlay3A -> EnumConnections(&NETPANZER_GUID, EnumServProviders, hWnd, 0);
 
@@ -275,11 +275,11 @@ HRESULT EnumerateServProvs(HWND hWnd)
 	//EnumConnections returns a DP_OK if everything went right on its side. My callback
 	//function balks when it gets a null pointer for a connection type -- and I
 	//popup a message box then and call shutdownconnection from there, because after
-	//that I return a 'FALSE' which tells EnumConnections to exit. But if all went
+	//that I return a 'false' which tells EnumConnections to exit. But if all went
 	//well with EnumConnections to that point, then it will return DP_OK when in fact
 	//it is not. Once again, the following code only handles EnumConnection failures,
 	//not my callback (EnumServProviders) function failures. My callback also sets
-	//the global DirectPlayFailure = TRUE if an error occurred within its scope.
+	//the global DirectPlayFailure = true if an error occurred within its scope.
 	if(hr != DP_OK)
 	{
 		MessageBox(hWnd,"DPlay EnumConnections failed. DirectPlay won't work!", "Error", MB_OK);
@@ -287,7 +287,7 @@ HRESULT EnumerateServProvs(HWND hWnd)
 		return 0;
 	}
 
-	if(DirectPlayFailure == TRUE) return 0;
+	if(DirectPlayFailure == true) return 0;
 	else return 1;
 }
 ////////////////////////////////////////////
@@ -318,7 +318,7 @@ HRESULT EnumerateGames(HWND hWnd)
 	gameindex = 0;
 
 	//check for valid interface--
-	if(lpDirectPlay3A == NULL) return DPERR_INVALIDOBJECT;
+	if(lpDirectPlay3A == 0) return DPERR_INVALIDOBJECT;
 
 
 	//prepare to enum sessions by cleaning out a temporary session description--
@@ -338,7 +338,7 @@ HRESULT EnumerateGames(HWND hWnd)
 
 
 
-//return TRUE if the directPlay function returns DP_OK, 
+//return true if the directPlay function returns DP_OK, 
 //false otherwise
 HRESULT StopAsyncGameEnumeration(HWND hWnd)
 {
@@ -384,7 +384,7 @@ HRESULT EnumeratePlayers(HWND hWnd)
 	
 	//now that the lists are cleared let's enum the players again,
 	//the lists are actually rebuilt in the callback function--
-	hr = lpDirectPlay3A -> EnumPlayers( NULL, EnumPlayersInGame, NULL, DPENUMPLAYERS_ALL);
+	hr = lpDirectPlay3A -> EnumPlayers( 0, EnumPlayersInGame, 0, DPENUMPLAYERS_ALL);
 
 	if(hr == DP_OK) return 1;
 	else return 0;
@@ -410,10 +410,10 @@ HRESULT HostSession(HWND hWnd)
 
  DPlayMode = SERVER;
 
-	if(lpDirectPlay3A == NULL)
+	if(lpDirectPlay3A == 0)
 	{
 		MessageBox(hWnd,"DPlay pointer invalid", "Error", MB_OK);
-		return FALSE;
+		return false;
 	}
 
  //attempt to close any open session (in case a user backed out of, say, host,
@@ -485,10 +485,10 @@ HRESULT HostSession(HWND hWnd)
 		ZeroMemory(&dpName, sizeof(DPNAME));
 		dpName.dwSize = sizeof(DPNAME);
 		dpName.lpszShortNameA = szPlayerName;
-		dpName.lpszLongNameA = NULL;
+		dpName.lpszLongNameA = 0;
 
 		// create a player with this name
-		hr = lpDirectPlay3A->CreatePlayer(&dpidPlayer, &dpName, hPlayerEvent, NULL, 0, 0);
+		hr = lpDirectPlay3A->CreatePlayer(&dpidPlayer, &dpName, hPlayerEvent, 0, 0, 0);
 
 		if(hr == DP_OK) return 1;
 		else return 0;
@@ -515,7 +515,7 @@ HRESULT JoinSession(HWND hWnd)
  //SET MY INTERNAL CLIENT FLAG FOR LATER USE--
  DPlayMode = CLIENT;
 
-	if(lpDirectPlay3A == NULL)
+	if(lpDirectPlay3A == 0)
 	{
 		MessageBox(hWnd,"DPlay pointer invalid", "Error", MB_OK);
 		return 0;
@@ -587,11 +587,11 @@ HRESULT JoinSession(HWND hWnd)
 		ZeroMemory(&dpName, sizeof(DPNAME));
 		dpName.dwSize = sizeof(DPNAME);
 		dpName.lpszShortNameA = szPlayerName;
-		dpName.lpszLongNameA = NULL;
+		dpName.lpszLongNameA = 0;
 
 		//add the player to directplay with the user's name--
 		hr = lpDirectPlay3A->CreatePlayer(&dpidPlayer, &dpName, 
-							hPlayerEvent, NULL, 0, 0);
+							hPlayerEvent, 0, 0, 0);
 
 		if(hr != DP_OK)
 		{
@@ -608,9 +608,9 @@ HRESULT JoinSession(HWND hWnd)
 			MessageBox(hWnd,"Failed to enumerate players", "Error", MB_OK);
 			return 0;
 		}
-		else return TRUE;
+		else return true;
 	}
-	else return FALSE;
+	else return false;
 
 }
 ////////////////////////////////////////////
@@ -630,10 +630,10 @@ HRESULT QuitSession()
  {
   hr = lpDirectPlay3A->Close();
 
-  if(hr != DP_OK) return FALSE;
+  if(hr != DP_OK) return false;
  }
  
- return TRUE;
+ return true;
 
 }
 ////////////////////////////////////////////
@@ -677,11 +677,11 @@ BOOL FAR PASCAL EnumServProviders(
 	
 	//copy pointer info for this connection (service provider)--
 	dpDrivers[driverindex].Connection = GlobalAllocPtr(GHND, dwConnectionSize);
-	if((dpDrivers[driverindex].Connection == NULL) && (driverindex < NUMDRIVERS))
+	if((dpDrivers[driverindex].Connection == 0) && (driverindex < NUMDRIVERS))
 	{
 		MessageBox(hWnd,"EnumServProvs failed. DirectPlay won't work!", "Error", MB_OK);
-		DirectPlayFailure = TRUE;
-		return FALSE;
+		DirectPlayFailure = true;
+		return false;
 	}
 	
 	memcpy(dpDrivers[driverindex].Connection, lpConnection, dwConnectionSize);
@@ -698,23 +698,23 @@ BOOL FAR PASCAL EnumServProviders(
 	upper = _strupr( servprovname);
 
 	provider = strstr( upper, tcpip);
-	if(provider != NULL) dpDrivers[driverindex].ConnectionType = TCPIP;
+	if(provider != 0) dpDrivers[driverindex].ConnectionType = TCPIP;
 
 	provider = strstr( upper, ipx);
-	if(provider != NULL) dpDrivers[driverindex].ConnectionType = IPX;
+	if(provider != 0) dpDrivers[driverindex].ConnectionType = IPX;
 
 	provider = strstr( upper, direct);
-	if(provider != NULL) dpDrivers[driverindex].ConnectionType = DIRECT;
+	if(provider != 0) dpDrivers[driverindex].ConnectionType = DIRECT;
 
 	provider = strstr( upper, modem);
-	if(provider != NULL) dpDrivers[driverindex].ConnectionType = MODEM;
+	if(provider != 0) dpDrivers[driverindex].ConnectionType = MODEM;
 		
 	//increment driverindex for next call (and don't let it
-	//increment too much). return TRUE to continue enumerating
-	//or FALSE to stop--
-	if(++driverindex >= NUMDRIVERS) return FALSE;
+	//increment too much). return true to continue enumerating
+	//or false to stop--
+	if(++driverindex >= NUMDRIVERS) return false;
 
-	return TRUE;
+	return true;
 
 }
 ////////////////////////////////////////////
@@ -738,12 +738,12 @@ BOOL FAR PASCAL EnumGamesOnline(
 	if(dwFlags & DPESC_TIMEDOUT)
 	{
 		NumberOfGames = gameindex;
-		return FALSE;
+		return false;
 	}
 
 	//make space for a session instance guid--
 	lpGuid = (LPGUID) GlobalAllocPtr(GHND, sizeof(GUID));
-	if(lpGuid == NULL) return FALSE;
+	if(lpGuid == 0) return false;
 
 	//store pointer to guid in global game description array--
 	*lpGuid = lpSessionDesc -> guidInstance;
@@ -759,9 +759,9 @@ BOOL FAR PASCAL EnumGamesOnline(
 
 	
 	//make sure we aren't out of space for number of games--
-	if(++gameindex >= MAXGAMES) return FALSE;
+	if(++gameindex >= MAXGAMES) return false;
 
-	return TRUE;
+	return true;
 
 }
 ////////////////////////////////////////////
@@ -792,9 +792,9 @@ BOOL FAR PASCAL EnumPlayersInGame(
     lpString = (char *)&dpPlayerInfo[playerindex].Name;
 	strcpy(lpString, lpName->lpszShortNameA);
 
-	if(++playerindex >= MAXPLAYERS) return FALSE;
+	if(++playerindex >= MAXPLAYERS) return false;
 
-	return TRUE;
+	return true;
 }
 ////////////////////////////////////////////
 ////////////////////////////////////////////
@@ -814,7 +814,7 @@ DWORD WINAPI DPReceiveThread(LPVOID lpThreadParameter)
 
 	// loop waiting for player events. If the kill event is signaled
 	// the thread will exit
-	while (WaitForMultipleObjects(2, eventHandles, FALSE, INFINITE) == WAIT_OBJECT_0)
+	while (WaitForMultipleObjects(2, eventHandles, false, INFINITE) == WAIT_OBJECT_0)
 	{
 		// Receive any packets in the queue
 		ReceivePacket();
@@ -844,7 +844,7 @@ unsigned char InitializeDirectPlay(HWND hWnd)
 	AutoDialCheck = SetAutoDialState();
 
 
-	hr = CoInitialize(NULL);
+	hr = CoInitialize(0);
 	if(FAILED(hr))
 	{
 		MessageBox(hWnd,"COM not initialized. DirectPlay won't work!", "Error", MB_OK);
@@ -855,12 +855,12 @@ unsigned char InitializeDirectPlay(HWND hWnd)
 
 	//this event is used to signal that
 	//a message has arrived--
-	hPlayerEvent = CreateEvent(	NULL,	//no security
-								FALSE,	//auto reset
-								FALSE,	//initial event reset
-								NULL);	//no name
+	hPlayerEvent = CreateEvent(	0,	//no security
+								false,	//auto reset
+								false,	//initial event reset
+								0);	//no name
 
-	if(hPlayerEvent == NULL)
+	if(hPlayerEvent == 0)
 	{
 		MessageBox(hWnd,"Create PlayerEvent failed. DirectPlay won't work!", "Error", MB_OK);
 		ShutDownConnection();
@@ -869,12 +869,12 @@ unsigned char InitializeDirectPlay(HWND hWnd)
 
 	//this event is used to signal that the Receive thread
 	//should exit--
-	ghDPKillReceiveEvent = CreateEvent(	NULL,	//no security
-										FALSE,	//auto reset
-										FALSE,	//initial event reset
-										NULL);	//no name
+	ghDPKillReceiveEvent = CreateEvent(	0,	//no security
+										false,	//auto reset
+										false,	//initial event reset
+										0);	//no name
 
-	if(ghDPKillReceiveEvent == NULL)
+	if(ghDPKillReceiveEvent == 0)
 	{
 		MessageBox(hWnd,"Create KillReceiveEvent failed. DirectPlay won't work!", "Error", MB_OK);
 		ShutDownConnection();
@@ -882,14 +882,14 @@ unsigned char InitializeDirectPlay(HWND hWnd)
 	}
 
 	//create a thread to receive player messages--
-	ghDPReceiveThread = CreateThread(	NULL,			//default security
+	ghDPReceiveThread = CreateThread(	0,			//default security
 										0,				//default stack size
 										DPReceiveThread,//pointer to thread routine
-										NULL,			//argument for thread
+										0,			//argument for thread
 										0,				//start it right away
 										&gidDPReceiveThread); //global id of thread
 
-	if(ghDPReceiveThread == NULL)
+	if(ghDPReceiveThread == 0)
 	{
 		MessageBox(hWnd,"Create ReceiveThread failed. DirectPlay won't work!", "Error", MB_OK);
 		ShutDownConnection();
@@ -901,7 +901,7 @@ unsigned char InitializeDirectPlay(HWND hWnd)
 	//GlobalAllocPtr(flags, cb)   (GlobalLock(GlobalAlloc((flags), (cb))))
 	ReceiveBuffer = GlobalAllocPtr(GHND, ReceiveBufferSize); //currently set to 4096 bytes
 
-	if(ReceiveBuffer == NULL)
+	if(ReceiveBuffer == 0)
 	{
 		MessageBox(hWnd,"No ReceiveBuffer. DirectPlay won't work!", "Error", MB_OK);
 		ShutDownConnection();
@@ -935,10 +935,10 @@ unsigned char InitializeDirectPlay(HWND hWnd)
 //NOTE: this may be too simple. but calling 'Initialize' wouldn't
 //seem to work, since according to the documentation it ALWAYS
 //returns DPERR_ALREADYINITIALIZED
-BOOL IsDPlayObjectValid()
+bool IsDPlayObjectValid()
 {
 
-	if(lpDirectPlay3A == NULL) return NO;
+	if(lpDirectPlay3A == 0) return NO;
 
 	return YES;
 }
@@ -947,7 +947,7 @@ BOOL IsDPlayObjectValid()
 
 
 
-BOOL SetServProv(HWND hWnd, int SelectedProvider)
+bool SetServProv(HWND hWnd, int SelectedProvider)
 {
 	HRESULT hr;
 	LPVOID lpDPConnection;
@@ -964,9 +964,9 @@ BOOL SetServProv(HWND hWnd, int SelectedProvider)
 			lpDPConnection = dpDrivers[index].Connection;
 			hr = InitializeServProvider(hWnd, lpDPConnection, SelectedProvider);
 			
-			//if successful, return TRUE--
-			if(hr == 1) return TRUE;
-			else return FALSE;
+			//if successful, return true--
+			if(hr == 1) return true;
+			else return false;
 
 
 		}
@@ -975,7 +975,7 @@ BOOL SetServProv(HWND hWnd, int SelectedProvider)
 	}
 
 	//if we didn't find the driver in 4 iterations something is wrong--
-	return FALSE;
+	return false;
 
 
 }
@@ -1021,13 +1021,13 @@ int SetSelectedGame(const char *game_name )
     {
      SelectedGame = game_index;
      strcpy( SelectedGameName, game_name );
-     return( TRUE );
+     return( true );
     }
   } 
 
  SelectedGame = 999;
  strcpy( SelectedGameName, "" );
- return( FALSE );
+ return( false );
 
 }
 
@@ -1039,11 +1039,11 @@ int IsSelectedGameValid( void )
      if( stricmp( SelectedGameName, gamelist[game_index].SessionNameA) == 0 )
       {
        SelectedGame = game_index;
-       return( TRUE );
+       return( true );
       }
     } 
 
-  return( FALSE );
+  return( false );
  }
 ////////////////////////////////////////////
 ////////////////////////////////////////////
@@ -1054,18 +1054,18 @@ HRESULT GetSelectedGame(LPGUID lpguidGameInstance)
 	
 
 	//make sure my game index is valid (in range of 0 to NumberOfGames),
-	//if not return FALSE (we need to test this by selecting the first and last
+	//if not return false (we need to test this by selecting the first and last
 	//game in the menu list and selecting them)--
 	if((SelectedGame < 0) || (SelectedGame >= NumberOfGames) || (SelectedGame == 999))
-		return FALSE;
+		return false;
 
 	//now get the correct game guid and set it
 	//equal to my pointer that is passed in. NOTE: i'm not positive
 	//about this syntax--
 	*lpguidGameInstance = *(gamelist[SelectedGame].lpSessionGuid);	 
 
-	//return TRUE
-	return TRUE;
+	//return true
+	return true;
 
 }
 ////////////////////////////////////////////
@@ -1088,7 +1088,7 @@ HRESULT ReceivePacket()
  dwMsgBufferSize = gdwReceiveBufferSize;
  lpvMsgBuffer = glpvReceiveBuffer;
 
- while(TRUE)
+ while(true)
  {
   idFrom = 0;
   idTo = 0;
@@ -1099,10 +1099,10 @@ HRESULT ReceivePacket()
 		//we may need to add code here to resize the buffer--
 		if (hr == DPERR_BUFFERTOOSMALL)
 		{
-			if (lpvMsgBuffer == NULL)
+			if (lpvMsgBuffer == 0)
 			{
 				lpvMsgBuffer = GlobalAllocPtr(GHND, dwMsgBufferSize);
-				if (lpvMsgBuffer == NULL)
+				if (lpvMsgBuffer == 0)
 					return (DPERR_NOMEMORY);
 				glpvReceiveBuffer = lpvMsgBuffer;
 				gdwReceiveBufferSize = dwMsgBufferSize;
@@ -1110,7 +1110,7 @@ HRESULT ReceivePacket()
 			else if (dwMsgBufferSize > gdwReceiveBufferSize)
 			{
 				lpvMsgBuffer = GlobalReAllocPtr(lpvMsgBuffer, dwMsgBufferSize, 0);
-				if (lpvMsgBuffer == NULL)
+				if (lpvMsgBuffer == 0)
 					return (DPERR_NOMEMORY);
 				glpvReceiveBuffer = lpvMsgBuffer;
 				gdwReceiveBufferSize = dwMsgBufferSize;
@@ -1151,7 +1151,7 @@ HRESULT ReceivePacket()
    }
    if(DPlayMode == CLIENT)
    {
-    ConnectionBroken = TRUE;
+    ConnectionBroken = true;
    }
 
   }
@@ -1164,7 +1164,7 @@ HRESULT ReceivePacket()
    }
    if(DPlayMode == CLIENT)
    {
-    ConnectionBroken = TRUE;
+    ConnectionBroken = true;
    }
 
   }
@@ -1177,7 +1177,7 @@ HRESULT ReceivePacket()
    }
    if(DPlayMode == CLIENT)
    {
-    ConnectionBroken = TRUE;
+    ConnectionBroken = true;
    }
 
   }
@@ -1211,10 +1211,10 @@ HRESULT ReceivePacket()
 void HandleSystemMessage(LPDPMSG_GENERIC lpMsg, DWORD dwMsgSize,
 						 DPID idFrom, DPID idTo)
 {
-	BOOL	added_player = FALSE;
-	LPSTR	pName = NULL;
-	HWND	hClient = NULL;
-	HWND	hServer = NULL;
+	bool	added_player = false;
+	LPSTR	pName = 0;
+	HWND	hClient = 0;
+	HWND	hServer = 0;
 	int		index =0;
 
     // The body of each case is there so you can set a breakpoint and examine
@@ -1228,7 +1228,7 @@ void HandleSystemMessage(LPDPMSG_GENERIC lpMsg, DWORD dwMsgSize,
 	  LPDPMSG_SESSIONLOST lp = (LPDPMSG_SESSIONLOST)lpMsg;
       if(DPlayMode == CLIENT)
        {
-        ConnectionBroken = TRUE;
+        ConnectionBroken = true;
        }
 
 	  }
@@ -1268,8 +1268,8 @@ void HandleSystemMessage(LPDPMSG_GENERIC lpMsg, DWORD dwMsgSize,
 void HandleApplicationMessage(LPDPMSG_GENERIC lpMsg, DWORD dwMsgSize,
 							  DPID idFrom, DPID idTo)
 {
-	LPSTR		lpString = NULL;
-	LPSTR		lpTempMessage = NULL;
+	LPSTR		lpString = 0;
+	LPSTR		lpTempMessage = 0;
 
 
    AddPacketFunc( (void *) lpMsg, dwMsgSize, idTo, idFrom );    
@@ -1283,7 +1283,7 @@ HRESULT ServerToAllClients(unsigned char guarantee, LPVOID lpData, DWORD dwDataS
 {
 	HRESULT hr;
 
-	if(guarantee == TRUE)
+	if(guarantee == true)
 	{
 	  hr = lpDirectPlay3A -> Send(dpidPlayer, DPID_ALLPLAYERS, DPSEND_GUARANTEED, lpData, dwDataSize);
 	  return( hr );
@@ -1305,7 +1305,7 @@ HRESULT ServerToOneClient(unsigned char guarantee, DPID idTo, LPVOID lpData, DWO
 {
 	HRESULT hr;
 
-	if(guarantee == TRUE)
+	if(guarantee == true)
 	{
 		hr = lpDirectPlay3A -> Send(dpidPlayer, idTo, DPSEND_GUARANTEED, lpData, dwDataSize);
 		return( hr );
@@ -1328,7 +1328,7 @@ HRESULT ClientToServer(LPVOID lpData, DPID idTo,  DWORD dwDataSize)
 {
  HRESULT hr;
 
- if(ConnectionBroken == TRUE)
+ if(ConnectionBroken == true)
  {
   hr = DPERR_SESSIONLOST;
   return hr;
@@ -1350,11 +1350,11 @@ void Destroy()
 //END Destroy///////////////////////////////
 
 
-BOOL MinimizeOrNot(HWND hWnd)
+bool MinimizeOrNot(HWND hWnd)
 {
-  BOOL AutoDialupEnabled = TRUE; //be on the safe side
-  BOOL Exist = FALSE;
-  BOOL Active = FALSE;
+  bool AutoDialupEnabled = true; //be on the safe side
+  bool Exist = false;
+  bool Active = false;
 
   //fix dialup bug
   if(GetAutoDialCheck()) //was i successful examining the registry?
@@ -1363,25 +1363,25 @@ BOOL MinimizeOrNot(HWND hWnd)
    AutoDialupEnabled = GetAutoDialState();
   
    //if autodial is enabled, let's do the routine--
-   if(AutoDialupEnabled == TRUE)
+   if(AutoDialupEnabled == true)
    {
     DoesDialupConnectionExist(&Exist, &Active);
 
-    if(Exist == TRUE)
+    if(Exist == true)
     {
-     if(Active == FALSE)
+     if(Active == false)
      {
-      SendMessage(hWnd, WM_ACTIVATEAPP, FALSE, 0);
+      SendMessage(hWnd, WM_ACTIVATEAPP, false, 0);
       //InternetAttemptConnect(0);
-      return( TRUE );
+      return( true );
      }
    
     }//end DoesDialupConnectionExist
    else
     {
-     SendMessage(hWnd, WM_ACTIVATEAPP, FALSE, 0);
+     SendMessage(hWnd, WM_ACTIVATEAPP, false, 0);
      //InternetAttemptConnect(0);
-     return( TRUE );
+     return( true );
     }
    
    }//end if AutoDialupEnabled
@@ -1395,26 +1395,26 @@ BOOL MinimizeOrNot(HWND hWnd)
    /*
    DoesDialupConnectionExist(&Exist, &Active);
 
-   if(Exist == TRUE)
+   if(Exist == true)
    {
-    if(Active == FALSE)
+    if(Active == false)
     {
-     SendMessage(hWnd, WM_ACTIVATEAPP, FALSE, 0);
+     SendMessage(hWnd, WM_ACTIVATEAPP, false, 0);
      InternetAttemptConnect(0);    
-     return( TRUE );
+     return( true );
     }
    }//end DoesDialupConnectionExist
    */  
   }//end else
 
- return( FALSE );
+ return( false );
 }
 ////////////////////////////////////////////
 //END MinimizeOrNot/////////////////////////
 
 
 
-BOOL GetAutoDialCheck()
+bool GetAutoDialCheck()
 {
  
  return AutoDialCheck;
@@ -1423,13 +1423,13 @@ BOOL GetAutoDialCheck()
 //END GetAutoDialCheck//////////////////////
 
 
-BOOL SetAutoDialState()
+bool SetAutoDialState()
 {
  HKEY          hKey;
  LONG          return_value;
  DWORD         dwType;
  DWORD         dwSize;
- LPBYTE        autodial = NULL;
+ LPBYTE        autodial = 0;
  int           compare = 0;
  char          registrypath[63];
  
@@ -1448,17 +1448,17 @@ BOOL SetAutoDialState()
 	{
   return_value = RegQueryValueEx(hKey,
                                  "EnableAutoDial",
-                                 NULL,
+                                 0,
                                  &dwType,
-                                 NULL,
+                                 0,
                                  &dwSize);
 
   if(return_value == ERROR_SUCCESS) autodial = new unsigned char[dwSize];
-  else return FALSE;
+  else return false;
 
   return_value = RegQueryValueEx(hKey,
                                  "EnableAutoDial",
-                                 NULL,
+                                 0,
                                  &dwType,
                                  autodial,
                                  &dwSize);
@@ -1467,26 +1467,26 @@ BOOL SetAutoDialState()
   if(return_value == ERROR_SUCCESS)
   {
    if((autodial[0] == 0x00) && (autodial[1] == 0x00) &&
-      (autodial[2] == 0x00) && (autodial[3] == 0x00)) AutoDial = FALSE;
-   else AutoDial = TRUE;
+      (autodial[2] == 0x00) && (autodial[3] == 0x00)) AutoDial = false;
+   else AutoDial = true;
 
    //since i successfully read the registry for value of EnableAutoDial
    //and since AutoDial global has been set one way or the other i can
-   //return from this function with a TRUE -- other code knows that the
+   //return from this function with a true -- other code knows that the
    //check went well and we don't have to resort to minimizing and launching
    //the My Connection box to protect ourselves against hanging up the system--
-   return TRUE;
+   return true;
   }
-  else return FALSE;
+  else return false;
  }
- else return FALSE;
+ else return false;
 
 }
 ////////////////////////////////////////////
 //END SetAutoDialState//////////////////////
 
 
-BOOL GetAutoDialState()
+bool GetAutoDialState()
 {
 
  return AutoDial;
@@ -1495,7 +1495,7 @@ BOOL GetAutoDialState()
 //END GetAutoDialState//////////////////////
 
 
-void DoesDialupConnectionExist(BOOL *exist, BOOL *active)
+void DoesDialupConnectionExist(bool *exist, bool *active)
 {
  HRESULT        hr;
  HWND           hWnd;
@@ -1517,8 +1517,8 @@ void DoesDialupConnectionExist(BOOL *exist, BOOL *active)
  //FAILS DOESN'T MEAN THAT A DIALUP CONNECTION ISN'T CONFIGURED--
  if(FAILED(SHGetDesktopFolder(&pDesktop)))
  {
-   *exist = FALSE;
-   *active = FALSE;
+   *exist = false;
+   *active = false;
    return;
  }
 
@@ -1530,13 +1530,13 @@ void DoesDialupConnectionExist(BOOL *exist, BOOL *active)
  {
   //get the IShellFolder for Dial-Up Networking
   hr = pDesktop->BindToObject(  pidlDialUp, 
-                                NULL, 
+                                0, 
                                 IID_IShellFolder, 
                                 (LPVOID*)&pDialUp);
 
   if(SUCCEEDED(hr)) 
   {
-   if(SUCCEEDED(pDialUp->EnumObjects(NULL, SHCONTF_FOLDERS | SHCONTF_NONFOLDERS, &pEnum)))
+   if(SUCCEEDED(pDialUp->EnumObjects(0, SHCONTF_FOLDERS | SHCONTF_NONFOLDERS, &pEnum)))
    {
     //enumerate the item's PIDLs, looking for the one requested
     do
@@ -1549,23 +1549,23 @@ void DoesDialupConnectionExist(BOOL *exist, BOOL *active)
      if(i && SUCCEEDED(hr) && dwRetrieved)
      {
       //here's where i find out if a connection exists and is active.
-      //set exist == TRUE iff szTemp != "Make New Connection" && dwRetrieved
+      //set exist == true iff szTemp != "Make New Connection" && dwRetrieved
       comparison = strcmp( szTemp, "Make New Connection");
 
       if((comparison != 0) && (dwRetrieved != 0))
       {
-       *exist = TRUE;
+       *exist = true;
 
        //append szTemp to the string "Connected to "--
        strcat(tempstring, szTemp);
 
        //now use that string with FindWindow to see if it's up and running--
-       hWnd = FindWindow( NULL, tempstring);
+       hWnd = FindWindow( 0, tempstring);
 
        //if I found the window set active == true, release the interfaces and return--
        if(hWnd)
        {
-        *active = TRUE;
+        *active = true;
         pEnum->Release();
         pDialUp->Release();
         pDesktop->Release();
@@ -1599,17 +1599,17 @@ LPITEMIDLIST GetDialUpNetworkingPidl(LPSHELLFOLDER pDesktop)
  HRESULT        hr;
  LPITEMIDLIST   pidlDialUp;
 
- if(!pDesktop) return NULL;
+ if(!pDesktop) return 0;
 
  //get the pidl for Dial-Up Networking
- hr = pDesktop->ParseDisplayName( NULL,
-                                  NULL,
+ hr = pDesktop->ParseDisplayName( 0,
+                                  0,
                                   L"::{20D04FE0-3AEA-1069-A2D8-08002B30309D}\\::{992CFFA0-F557-101A-88EC-00DD010CCC48}",
-                                  NULL,
+                                  0,
                                   &pidlDialUp,
-                                  NULL);
+                                  0);
 
- if(FAILED(hr)) return NULL;
+ if(FAILED(hr)) return 0;
 
  return pidlDialUp;
 }
@@ -1618,13 +1618,13 @@ LPITEMIDLIST GetDialUpNetworkingPidl(LPSHELLFOLDER pDesktop)
 
 
 
-BOOL GetItemIdName(  LPSHELLFOLDER pFolder, 
+bool GetItemIdName(  LPSHELLFOLDER pFolder, 
                      LPITEMIDLIST pidl, 
                      DWORD dwFlags, 
                      LPTSTR pszName, 
                      UINT cchMax)
 {
-BOOL     fSuccess = TRUE;
+bool     fSuccess = true;
 STRRET   str;
 
 if(SUCCEEDED(pFolder->GetDisplayNameOf(pidl, dwFlags, &str))) 
@@ -1638,8 +1638,8 @@ if(SUCCEEDED(pFolder->GetDisplayNameOf(pidl, dwFlags, &str)))
                                 -1,
                                 pszName,
                                 cchMax,
-                                NULL,
-                                NULL);
+                                0,
+                                0);
          break;
 
       case STRRET_OFFSET:
@@ -1651,13 +1651,13 @@ if(SUCCEEDED(pFolder->GetDisplayNameOf(pidl, dwFlags, &str)))
          break;
 
       default:
-         fSuccess = FALSE;
+         fSuccess = false;
          break;
       }
    } 
 else 
    {
-   fSuccess = FALSE;
+   fSuccess = false;
    }
 
 return (fSuccess);
@@ -1676,13 +1676,13 @@ HRESULT ShutDownConnection()
 		WaitForSingleObject(ghDPReceiveThread, INFINITE);
 
 		CloseHandle(ghDPReceiveThread);
-		ghDPReceiveThread = NULL;
+		ghDPReceiveThread = 0;
 	}
 
 	if(ghDPKillReceiveEvent)
 	{
 		CloseHandle(ghDPKillReceiveEvent);
-		ghDPKillReceiveEvent = NULL;
+		ghDPKillReceiveEvent = 0;
 	}
 
 	if(lpDirectPlay3A)
@@ -1695,15 +1695,15 @@ HRESULT ShutDownConnection()
 		
 		lpDirectPlay3A -> Close();
 		lpDirectPlay3A -> Release();
-		//lpDirectPlay3A = NULL;
+		//lpDirectPlay3A = 0;
 
 	}
- lpDirectPlay3A = NULL;
+ lpDirectPlay3A = 0;
 
 	if(hPlayerEvent)
 	{
 		CloseHandle(hPlayerEvent);
-		hPlayerEvent = NULL;
+		hPlayerEvent = 0;
 
 	}
 

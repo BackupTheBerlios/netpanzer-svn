@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "ChatInterface.hpp"
 
 #include "PlayerInterface.hpp"
@@ -26,12 +25,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConsoleInterface.hpp"
 
 SystemChatMesgRequest ChatInterface::current_chat_mesg;
-void (* ChatInterface::addChatString)( const char *message_text ) = NULL;  
+void (* ChatInterface::addChatString)( const char *message_text ) = 0;  
 
 
 void ChatInterface::chatMessageRequest( NetMessage *message )
  {
-  boolean post_on_server;
+  bool post_on_server;
   SystemChatMesg chat_mesg;
   SystemChatMesgRequest *chat_request;
 
@@ -44,7 +43,7 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
   if( chat_request->message_scope == _chat_mesg_scope_all )
    {
     SERVER->sendMessage( &chat_mesg, sizeof(SystemChatMesg), 0 );
-    post_on_server = _TRUE;
+    post_on_server = true;
    }
   else
    if( chat_request->message_scope == _chat_mesg_scope_alliance )
@@ -62,19 +61,19 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
 
        if ( (PlayerInterface::getPlayerStatus( i ) == _player_state_active) )
         {
-         if( PlayerInterface::isAllied( chat_request->source_player_index, i ) == _TRUE )
+         if( PlayerInterface::isAllied( chat_request->source_player_index, i ) == true )
           {
            if ( (local_player_index != i) )
             { SERVER->sendMessage( &chat_mesg, sizeof(SystemChatMesg), player_id, 0 ); }
            else
-            { post_on_server = _TRUE; }
+            { post_on_server = true; }
           }  
         }
       }
      
      if( chat_request->source_player_index == PlayerInterface::getLocalPlayerIndex() )
       {
-       post_on_server = _TRUE;
+       post_on_server = true;
       }
      else
       { 
@@ -90,14 +89,14 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
       return;
      }
   
-  if ( post_on_server == _TRUE )
+  if ( post_on_server == true )
    {
 
     PlayerState *player_state;
 
     player_state = PlayerInterface::getPlayerState( chat_mesg.source_player_index );
  
-    if( (addChatString != NULL) )
+    if( (addChatString != 0) )
      {    
       char mesg_str[256];
       sprintf( mesg_str, " ---- %s ----", player_state->getName() );
@@ -147,7 +146,7 @@ void ChatInterface::chatMessage( NetMessage *message )
 
   player_state = PlayerInterface::getPlayerState( chat_mesg->source_player_index );
  
-  if ( (addChatString != NULL) )
+  if ( (addChatString != 0) )
    {   
     char mesg_str[144];
     sprintf( mesg_str, " ---- %s ----", player_state->getName() );

@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "Outpost.hpp"
 
 #include "UnitInterface.hpp"
@@ -30,7 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ObjectiveNetMessage.hpp"
 #include "UnitMessageTypes.hpp"
 
-#include "Codewiz.hpp"
+#include "codewiz.hpp"
 
 Outpost::Outpost( short ID, PointXYi location, BoundBox area )
   : Objective( ID, location, area )
@@ -48,7 +47,7 @@ Outpost::Outpost( short ID, PointXYi location, BoundBox area )
   unit_collection_loc = PointXYi( 13, 13 );
   unit_generation_loc = PointXYi( 1, 3 );
   occupation_pad_offset = PointXYi( 224, 48 );
-  unit_generation_on_flag = _FALSE;
+  unit_generation_on_flag = false;
  
   select_box.setAttrib( location, 3 );
   select_box.setBoxAttributes( area, 252 );
@@ -65,7 +64,7 @@ void Outpost::attemptOccupationChange( UnitID &unit_id )
   player_index = unit_id.getPlayer();
   player_state_ptr = PlayerInterface::getPlayerState( player_index );
   
-  if ( player_state_ptr != NULL )
+  if ( player_state_ptr != 0 )
    { player_status = player_state_ptr->getStatus(); }
   else
    { player_status  = _player_state_free; }
@@ -129,7 +128,7 @@ void Outpost::checkOccupationStatus( void )
                                       occupation_pad_loc
                                     );
      
-    if ( unit_ptr != NULL )
+    if ( unit_ptr != 0 )
      {
       PointXYi unit_loc;
       unit_loc = unit_ptr->unit_state.location;
@@ -138,7 +137,7 @@ void Outpost::checkOccupationStatus( void )
         attemptOccupationChange( unit_ptr->unit_id ); 
        }
      
-     } // ** if unit_ptr != NULL  
+     } // ** if unit_ptr != 0  
    
    } // ** if occupation_status_timer.count() 
 
@@ -153,8 +152,8 @@ void Outpost::generateUnits( void )
     if ( (unit_generation_type != _unit_type_null) &&
        (objective_state.occupation_status == _occupation_status_occupied) )
      {
-      if( (unit_generation_timer.count() == _TRUE) && 
-          (unit_generation_on_flag == _TRUE)
+      if( (unit_generation_timer.count() == true) && 
+          (unit_generation_on_flag == true)
         )
        {
         UnitBase *unit;
@@ -165,7 +164,7 @@ void Outpost::generateUnits( void )
                                        gen_loc,
                                        objective_state.occupying_player );
          
-        if ( unit != NULL )
+        if ( unit != 0 )
          {
           UnitRemoteCreate create_mesg;
                                              
@@ -193,7 +192,7 @@ void Outpost::generateUnits( void )
     } // ** if ( objective_state.occupation_status == _occupation_status_unoccupied )
    else
     {
-     if( (unit_generation_timer.count() == _TRUE) ) 
+     if( (unit_generation_timer.count() == true) ) 
       {
        unit_generation_timer.reset();
       }
@@ -254,7 +253,7 @@ void Outpost::objectiveMesgDisownPlayerObjective( ObjectiveMessage *message )
        profile = UnitProfileInterface::getUnitProfile( unit_generation_type );  
        unit_generation_timer.changePeriod( (float) profile->regen_time );
        
-       unit_generation_on_flag = _FALSE;
+       unit_generation_on_flag = false;
 	  
       } // ** if 
 	
@@ -277,7 +276,7 @@ void Outpost::getOutpostStatus( OutpostStatus &status )
   else
    { status.unit_generation_time = 0; }
 
-  if ( unit_generation_on_flag == _TRUE ) 
+  if ( unit_generation_on_flag == true ) 
    { status.unit_generation_time_remaining = unit_generation_timer.getTimeLeft(); }
   else
    { status.unit_generation_time_remaining = 0; }
@@ -302,7 +301,7 @@ void Outpost::processMessage( ObjectiveMessage *message )
 
 void Outpost::offloadGraphics( SpriteSorter &sorter )
  {
-  if( objective_state.selection_state == _TRUE )
+  if( objective_state.selection_state == true )
    {
     sorter.addSprite( &select_box );
    }

@@ -16,8 +16,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-#include "stdafx.hpp"
 #include "cMouse.hpp"
 
 
@@ -27,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 cMouse mouse;
 
-Surface *cMouse::pointer = NULL;
+Surface *cMouse::pointer = 0;
 
 unsigned char cMouse::button_mask = 0;
 
@@ -42,7 +40,7 @@ unsigned char cMouse::button_mask = 0;
 //---------------------------------------------------------------------------
 void cMouse::draw(const Surface &dest)
 {
-	assert(pointer != NULL);
+	assert(pointer != 0);
 
 	if (pointer)
 	{
@@ -58,7 +56,7 @@ void cMouse::draw(const Surface &dest)
 //---------------------------------------------------------------------------
 void cMouse::setPointer(Surface *pointer)
 {
-	assert(pointer != NULL);
+	assert(pointer != 0);
 
 	cMouse::pointer = pointer;
 

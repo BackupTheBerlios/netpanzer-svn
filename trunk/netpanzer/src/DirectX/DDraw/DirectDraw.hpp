@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __DirectDraw_hpp__
 #define __DirectDraw_hpp__
 
-#include "stdafx.hpp"
 #include "DirectDrawPalette.hpp"
 #include "UIDraw.hpp"
 
@@ -63,27 +62,27 @@ class DirectDraw: public UIDraw
 protected:
 	int defaultVideoMode;
     
-	BOOL             doubleBufferLocked;
+	bool             doubleBufferLocked;
 	DDSURFACEDESC    ddDbufferPtrSurf; 
 	DoubleBufferDesc DBufferDesc;
 	DWORD            displayModeCount;
 	DisplayMode      displayModeList[MAX_VIDEO_MODES];
-	BOOL             GDIEnabled;
-	BOOL             DBufferTransferInProgress;
-    BOOL             VideoBufferingModeInitialized;
+	bool             GDIEnabled;
+	bool             DBufferTransferInProgress;
+    bool             VideoBufferingModeInitialized;
 	
     void getViewableRect(RECT *rect);
-	BOOL enumDisplayModes();
-	BOOL DDrawCreate();
+	bool enumDisplayModes();
+	bool DDrawCreate();
 	void cleanUpSurfaces();
     
-	BOOL MMXAvailable;
-    BOOL FPUAvailable;
-    BOOL checkCPUTechnology( void );
+	bool MMXAvailable;
+    bool FPUAvailable;
+    bool checkCPUTechnology( void );
     void selectBlittingFunction( void );
 
-    BOOL windowedSurfaceInitialization(DWORD width, DWORD height,DWORD bpp,BYTE modeFlags);
-	BOOL fullScreenSurfaceInitialization(DWORD width,DWORD height,DWORD bpp,BYTE modeFlags);
+    bool windowedSurfaceInitialization(DWORD width, DWORD height,DWORD bpp,BYTE modeFlags);
+	bool fullScreenSurfaceInitialization(DWORD width,DWORD height,DWORD bpp,BYTE modeFlags);
     
 
     void (*BlitRectsFuncPtr)( unsigned char *pSrc, long srcPitch, unsigned char *pDest, long destPitch, 
@@ -109,7 +108,7 @@ protected:
 
 	LPDIRECTDRAWCLIPPER lpClipper;
 
-	BOOL  fEnabled;                  //DirectDraw enabled
+	bool  fEnabled;                  //DirectDraw enabled
 	DWORD cooperationLevelFlags;
 	BYTE  currentModeFlags;
 	
@@ -119,23 +118,23 @@ public:
 
 	DirectDraw();
         		
-	BOOL initialize();
+	bool initialize();
 	void shutdown();
   
-  BOOL setVideoMode(int width, int height, int bpp = 8);
+  bool setVideoMode(int width, int height, int bpp = 8);
   void getVideoMode(DWORD &width, DWORD &height, DWORD &bpp);
   void getDisplayModes(DisplayMode **modes, int &num);
 
-  BOOL setBlittingFunction( int blitFuncEnum );
+  bool setBlittingFunction( int blitFuncEnum );
 
-  BOOL setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags);
-  BOOL createFrameBuffer(DWORD width, DWORD height, DWORD bpp);
-  BOOL createFrameBuffer(DWORD width, DWORD height, DWORD bpp, DWORD clip_width, DWORD clip_height);
-  BOOL lockDoubleBuffer(BYTE **DoubleBuffer);
-  BOOL unlockDoubleBuffer();
-  BOOL copyDoubleBufferandFlip();
-  void setGDIStatus(BOOL enable);
-  BOOL getGDIStatus( void ) { return( GDIEnabled ); }
+  bool setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags);
+  bool createFrameBuffer(DWORD width, DWORD height, DWORD bpp);
+  bool createFrameBuffer(DWORD width, DWORD height, DWORD bpp, DWORD clip_width, DWORD clip_height);
+  bool lockDoubleBuffer(BYTE **DoubleBuffer);
+  bool unlockDoubleBuffer();
+  bool copyDoubleBufferandFlip();
+  void setGDIStatus(bool enable);
+  bool getGDIStatus( void ) { return( GDIEnabled ); }
   void restoreAll();
   void loadPaletteACT(char *filename);
   void resetDisplayModeList();
@@ -143,9 +142,9 @@ public:
 
   void setPalette(RGBColor *color);
 
-  BOOL isDisplayModeAvailable(int width, int height, int bpp);
-  BOOL decreaseDisplayModeResolution( int *width, int *height );
-  BOOL increaseDisplayModeResolution( int *width, int *height );
+  bool isDisplayModeAvailable(int width, int height, int bpp);
+  bool decreaseDisplayModeResolution( int *width, int *height );
+  bool increaseDisplayModeResolution( int *width, int *height );
 }; // end DirectDraw
 
 #endif // end __DirectDraw_hpp__

@@ -18,14 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _POBJECT_HPP
 #define _POBJECT_HPP
 
-#include "aliasdef.h"
-
 class PObject
- {
-  public: 
-  boolean is_equal( PObject *object );
+{
+public: 
+    bool is_equal(PObject *object) const;
 
-  PObject( void );       
- };
+    PObject();
+};
 
- #endif
+#endif
+

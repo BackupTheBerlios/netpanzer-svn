@@ -21,8 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <windows.h>
 
 
-BOOL InitStreamClient(HWND hWnd);
-BOOL InitDgramClient(HWND hWnd);
+bool InitStreamClient(HWND hWnd);
+bool InitDgramClient(HWND hWnd);
 
 int AsyncGetHost(HWND hWnd, LPSTR lpszServer);
 
@@ -40,13 +40,13 @@ void OnCloseClient(SOCKET socket, int iErrorCode);
 
 void SendUDPAddress(DWORD wsID);
 
-BOOL QueryServer();
+bool QueryServer();
 
-BOOL ShutdownWinSockClient();
+bool ShutdownWinSockClient();
 
 //hack to imitiate enumeration
 
-BOOL GetHostInfo( char *host_name_str, char *map_name, char *game_type, int *current_players, int *max_players );
+bool GetHostInfo( char *host_name_str, char *map_name, char *game_type, int *current_players, int *max_players );
 
 int WSClientToServer(char guarantee, char *bData, DWORD dwDataSize);
 

@@ -25,15 +25,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // includes
 //***************************************************************************
 
-#include "stdafx.hpp"
+
 
 //***************************************************************************
 // global data
 //***************************************************************************
 
-const CALL_STACK *CALL_STACK::top = NULL;
+const CALL_STACK *CALL_STACK::top = 0;
 
-char     const *__logFile     = NULL;
+char     const *__logFile     = 0;
 unsigned        __logLine     = 0;
 unsigned        __logDepth    = 0;
 
@@ -45,7 +45,7 @@ unsigned        __logDepth    = 0;
 void __log(const char *msg, ...) {
 	va_list ap;
 	va_start(ap, msg);
-	__vlog(NULL, NULL, msg, ap);
+	__vlog(0, 0, msg, ap);
 	va_end(ap);
 }
 
@@ -54,7 +54,7 @@ void __logClose(const char *msg, ...) {
 	--__logDepth;
 	va_list ap;
 	va_start(ap, msg);
-	__vlog("} ", NULL, msg, ap);
+	__vlog("} ", 0, msg, ap);
 	va_end(ap);
 }
 
@@ -62,7 +62,7 @@ void __logClose(const char *msg, ...) {
 void __logOpen(const char *msg, ...) {
 	va_list ap;
 	va_start(ap, msg);
-	__vlog(NULL, " {", msg, ap);
+	__vlog(0, " {", msg, ap);
 	va_end(ap);
 	++__logDepth;
 }
@@ -72,7 +72,7 @@ void __vlog(const char *leader, const char *trailer, const char *msg,
 	va_list ap) {
 
 	static const char FILENAME[] = "DEBUG.LOG";
-	static BOOL initted = FALSE;
+	static bool initted = false;
 
 	if (!initted) {
 		#if COMPILER_MICROSOFT
@@ -82,11 +82,11 @@ void __vlog(const char *leader, const char *trailer, const char *msg,
 		#else
 			#error
 		#endif
-		initted = TRUE;
+		initted = true;
 	}
 
 	FILE *fp = fopen(FILENAME, "a+b");
-	if (fp == NULL) return;
+	if (fp == 0) return;
 
 	char buf[1024];
 
@@ -97,11 +97,11 @@ void __vlog(const char *leader, const char *trailer, const char *msg,
   size_t len = __logDepth * TAB_EXPAND;
 	memsetB(buf, ' ', len);
 
-	if (leader  != NULL) len +=  sprintf(buf + len, leader);
-	if (msg     != NULL) len += vsprintf(buf + len, msg, ap);
-	if (trailer != NULL) len +=  sprintf(buf + len, trailer);
+	if (leader  != 0) len +=  sprintf(buf + len, leader);
+	if (msg     != 0) len += vsprintf(buf + len, msg, ap);
+	if (trailer != 0) len +=  sprintf(buf + len, trailer);
 
-	if (__logFile != NULL || __logLine > 0 || CALL_STACK::top != NULL) {
+	if (__logFile != 0 || __logLine > 0 || CALL_STACK::top != 0) {
 		buf[len++] = ' ';
 		buf[len++] = ' ';
 		buf[len++] = ' ';
@@ -109,9 +109,9 @@ void __vlog(const char *leader, const char *trailer, const char *msg,
 			buf[len++] = ' ';
 		}
 		buf[len++] = '[';
-		if (CALL_STACK::top != NULL) len += sprintf(buf + len, "%s%s", CALL_STACK::top->strPtr, (__logFile != NULL || __logLine > 0) ? ", " : "");
-		if (__logFile       != NULL) len += sprintf(buf + len, "%s", __logFile);
-		if (__logLine       >  0   ) len += sprintf(buf + len, "%s%u", (__logFile != NULL) ? ":" : "line ", __logLine);
+		if (CALL_STACK::top != 0) len += sprintf(buf + len, "%s%s", CALL_STACK::top->strPtr, (__logFile != 0 || __logLine > 0) ? ", " : "");
+		if (__logFile       != 0) len += sprintf(buf + len, "%s", __logFile);
+		if (__logLine       >  0   ) len += sprintf(buf + len, "%s%u", (__logFile != 0) ? ":" : "line ", __logLine);
 		buf[len++] = ']';
 	}
 
@@ -130,16 +130,16 @@ void __LOG_PLACEHOLDER::logReturn(const char *file, unsigned line, const char *f
 	__logDepth = savedDepth;
 	va_list ap;
 	va_start(ap, fmt);
-	__vlog("} returning ", NULL, fmt, ap);
+	__vlog("} returning ", 0, fmt, ap);
 	va_end(ap);
-	closed = TRUE;
+	closed = true;
 }
 
 //---------------------------------------------------------------------------
 void CALL_STACK::setMyBuf(const char *fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
-	safeVsprintf(myBuf, sizeof(myBuf), fmt, ap);
+	vsnprintf(myBuf, sizeof(myBuf), fmt, ap);
 	va_end(ap);
 }
 

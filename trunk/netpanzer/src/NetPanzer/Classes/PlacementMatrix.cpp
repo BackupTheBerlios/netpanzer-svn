@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "PlacementMatrix.hpp"
 #include "MapInterface.hpp"
 #include "UnitBlackBoard.hpp"
@@ -30,7 +29,7 @@ void PlacementMatrix::reset( PointXYi ini_map_loc )
   placement_state = _placement_state_base_case;
  }
 
-boolean PlacementMatrix::verifyLocation( PointXYi &loc )
+bool PlacementMatrix::verifyLocation( PointXYi &loc )
  {
   long x_offset, y_offset;
   long free_count = 0; 
@@ -38,10 +37,10 @@ boolean PlacementMatrix::verifyLocation( PointXYi &loc )
   unsigned long direction_index;
 
   if ( ( MapInterface::getMovementValue( loc ) >= 0xFF) || 
-        ( UnitBlackBoard::unitOccupiesLoc( loc ) == _TRUE ) 
+        ( UnitBlackBoard::unitOccupiesLoc( loc ) == true ) 
      )
    {
-    return(_FALSE);
+    return(false);
    }
 
 
@@ -64,7 +63,7 @@ boolean PlacementMatrix::verifyLocation( PointXYi &loc )
     succ.y = loc.y + (y_offset);
 
    if ( ( MapInterface::getMovementValue( succ ) < 0xFF) && 
-        ( UnitBlackBoard::unitOccupiesLoc( succ ) == _FALSE ) 
+        ( UnitBlackBoard::unitOccupiesLoc( succ ) == false ) 
 	  )
     {
 	 free_count++;
@@ -73,15 +72,15 @@ boolean PlacementMatrix::verifyLocation( PointXYi &loc )
    }   
    
   if ( free_count > 0 )
-   return( _TRUE );
+   return( true );
 
-  return ( _FALSE );
+  return ( false );
  }
 
 
-boolean PlacementMatrix::getNextEmptyLoc( PointXYi *loc )
+bool PlacementMatrix::getNextEmptyLoc( PointXYi *loc )
  {
-  boolean end_cycle = _FALSE;
+  bool end_cycle = false;
   
   do 
    {
@@ -95,10 +94,10 @@ boolean PlacementMatrix::getNextEmptyLoc( PointXYi *loc )
 		current_loc = ini_loc + current_offset;
 		run_length += 4;
 
-		if ( verifyLocation( ini_loc ) == _TRUE ) 
+		if ( verifyLocation( ini_loc ) == true ) 
 		 {
 		  *loc = ini_loc;
-		  return( _TRUE ); 
+		  return( true ); 
 		 }
 		 
 	   } break;
@@ -111,14 +110,14 @@ boolean PlacementMatrix::getNextEmptyLoc( PointXYi *loc )
 		  placement_state = _placement_state_right_run;
 		 }		
 		else
-		 if ( verifyLocation( current_loc ) == _TRUE ) 
+		 if ( verifyLocation( current_loc ) == true ) 
 		  {
 		   *loc = current_loc;		  
 
 		   run_counter += 2;
 		   current_loc.x += 2;
 
-		   return( _TRUE ); 
+		   return( true ); 
 		  }
 		 else
 		  { 
@@ -135,14 +134,14 @@ boolean PlacementMatrix::getNextEmptyLoc( PointXYi *loc )
 		  placement_state = _placement_state_bottom_run;
 		 }		
 		else
-		 if ( verifyLocation( current_loc ) == _TRUE ) 
+		 if ( verifyLocation( current_loc ) == true ) 
 		  {
 		   *loc = current_loc;		  
 
 		   run_counter += 2;
 		   current_loc.y += 2;
 
-		   return( _TRUE ); 
+		   return( true ); 
 		  }
 		 else
 		  { 
@@ -159,14 +158,14 @@ boolean PlacementMatrix::getNextEmptyLoc( PointXYi *loc )
 		  placement_state = _placement_state_left_run;
 		 }		
 		else
-		 if ( verifyLocation( current_loc ) == _TRUE ) 
+		 if ( verifyLocation( current_loc ) == true ) 
 		  {
 		   *loc = current_loc;		  
 
 		   run_counter += 2;
 		   current_loc.x -= 2;
 
-		   return( _TRUE ); 
+		   return( true ); 
 		  }
 		 else
 		  { 
@@ -189,17 +188,17 @@ boolean PlacementMatrix::getNextEmptyLoc( PointXYi *loc )
 			placement_state = _placement_state_top_run;		   
 		   }
 		  else
-		   { return( _FALSE ); }
+		   { return( false ); }
 		 }		
 		else
-		 if ( verifyLocation( current_loc ) == _TRUE ) 
+		 if ( verifyLocation( current_loc ) == true ) 
 		  {
 		   *loc = current_loc;		  
 
 		   run_counter += 2;
 		   current_loc.y -= 2;
 
-		   return( _TRUE ); 
+		   return( true ); 
 		  }
 		 else
 		  { 
@@ -210,9 +209,9 @@ boolean PlacementMatrix::getNextEmptyLoc( PointXYi *loc )
 	 
 	 
 	 } // ** switch
-   } while( end_cycle == _FALSE );
+   } while( end_cycle == false );
 
-  return( _FALSE );
+  return( false );
  }
 
 /*
@@ -224,7 +223,7 @@ void PlacementMatrix::reset( PointXYi ini_map_loc )
   direction = 0;
  }
  
-boolean PlacementMatrix::getNextEmptyLoc( PointXYi *loc )
+bool PlacementMatrix::getNextEmptyLoc( PointXYi *loc )
  {
   long x_offset, y_offset;
   PointXYi succ;
@@ -299,7 +298,7 @@ boolean PlacementMatrix::getNextEmptyLoc( PointXYi *loc )
       } // ** switch    
 
    if ( ( MapInterface::getMovementValue( succ ) < 0xFF) &&
-        ( UnitBlackBoard::unitOccupiesLoc( succ ) == _FALSE ) &&
+        ( UnitBlackBoard::unitOccupiesLoc( succ ) == false ) &&
 		( (MapInterface::getMovementValue( succ_right ) < 0xFF) 
 		   || (MapInterface::getMovementValue( succ ) < 0xFF) 
 		)
@@ -312,7 +311,7 @@ boolean PlacementMatrix::getNextEmptyLoc( PointXYi *loc )
 	   level++;
 	   direction = 0;
 	  }	   
-	 return( _TRUE );
+	 return( true );
     }
   
    direction++;
@@ -324,6 +323,6 @@ boolean PlacementMatrix::getNextEmptyLoc( PointXYi *loc )
   
   } // ** while 
   
-  return( _FALSE );
+  return( false );
  }
  */

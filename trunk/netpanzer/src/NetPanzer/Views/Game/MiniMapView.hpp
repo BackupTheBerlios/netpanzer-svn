@@ -82,6 +82,10 @@ public:
 	static int decreaseSize;
 	static int increaseSize;
 
+private:
+	// XXX added this...
+	void addButtons();
+
 }; // end MiniMapView
 
 extern MiniMapView miniMapView;

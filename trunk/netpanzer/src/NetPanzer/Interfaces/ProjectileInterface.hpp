@@ -45,4 +45,4 @@ class ProjectileInterface : public PObject
 
  };
 
-#endif _PROJECTILEINTERFACE_HPP
+#endif

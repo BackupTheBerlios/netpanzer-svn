@@ -18,13 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __fXYZ_hpp__
 #define __fXYZ_hpp__
 
+#include <math.h>
 
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
-#include "stdafx.hpp"
 #include "fXY.hpp"
 
 class  Matrix;
@@ -94,7 +89,6 @@ struct fXYZ
 	inline fXYZ &operator *=(      float  a) { x *=   a; y *=   a; z *=   a; return *this; }
 	inline fXYZ &operator *=(const fXYZ  &a) { x *= a.x; y *= a.y; z *= a.z; return *this; }
 	inline fXYZ &operator /=(      float  a) { x /=   a; y /=   a; z /=   a; return *this; }
-	inline fXYZ &operator /=(const float &a) { x /=   a; y /=   a; z /=   a; return *this; }
 
 	inline int operator <=(const float &a)
 	{
@@ -115,7 +109,7 @@ struct fXYZ
 		return fXYZ(x * a, y * a, z * a);
 	}
 
-	inline fXYZ   &normalize()       { return *this /= float(mag()); }
+	inline fXYZ &normalize()       { return *this /= float(mag()); }
 
 	inline fXY project() const
 	{

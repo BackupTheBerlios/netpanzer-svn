@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "Weapon.hpp"
 
 #include "UnitMessageTypes.hpp"
@@ -28,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "WorldViewInterface.hpp"
 #include "DDHardSurface.hpp"
 
-#include "dsound.hpp"
+#include "DSound.hpp"
 #include "ParticleInterface.hpp"
 #include "WeaponGlobals.hpp"
 #include "Math.hpp"
@@ -159,7 +158,7 @@ Weapon::Weapon(UnitID &owner, unsigned short owner_type_id, unsigned short damag
    
 void Weapon::fsmFlight( void )
  {
-  boolean end_cycle = _FALSE;
+  bool end_cycle = false;
   
   do
    {
@@ -167,19 +166,19 @@ void Weapon::fsmFlight( void )
      {
       case _fsmFlight_idle :
 	   {
-	    end_cycle = _TRUE;
+	    end_cycle = true;
 	   } break;
 
 	  case _fsmFlight_in_flight :
 	   {
-        if ( path.increment( &location, 4 ) == _TRUE )
+        if ( path.increment( &location, 4 ) == true )
 		 {
           fsmFlight_state = _fsmFlight_on_target;
-		  end_cycle = _TRUE;
+		  end_cycle = true;
 		 }
 	    else
 		 {
-          end_cycle = _TRUE;
+          end_cycle = true;
 		 }
 	   } break;
        
@@ -206,13 +205,13 @@ void Weapon::fsmFlight( void )
         // **  Particle Shit
         iXY loc = iXY( location.x, location.y );
 		ParticleInterface::addMiss(loc, Weapon::owner_type_id);
-        end_cycle = _TRUE;
+        end_cycle = true;
 	   } break;
 	
 	
 	 } // ** switch
    
-   } while ( end_cycle == _FALSE ); 
+   } while ( end_cycle == false ); 
  
  }
 
@@ -228,7 +227,7 @@ void Weapon::updateStatus( void )
 
   WorldViewInterface::getViewWindow(&world_win );
  
-  if ( shell.isVisible( world_win ) == _TRUE )
+  if ( shell.isVisible( world_win ) == true )
    {	 	
     //FRAME_BUFFER.lock();
     shell.blit( &FRAME_BUFFER, world_win );

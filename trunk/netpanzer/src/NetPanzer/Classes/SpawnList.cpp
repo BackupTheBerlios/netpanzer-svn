@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "SpawnList.hpp"
 
 
@@ -36,18 +35,18 @@ void SpawnList::loadSpawnFile( char *file_path )
   char comment[64];
 
   infile = fopen( file_path, "rt" );
-  assert( infile != NULL );
+  assert( infile != 0 );
   
   deallocate();
 
-  fscanf( infile, "%s %d", comment, &spawn_count );
+  fscanf( infile, "%s %lu", comment, &spawn_count );
   initialize( spawn_count );
     
   long x, y;
   SpawnPoint *spawn;
   for ( spawn_index = 0; spawn_index < spawn_count; spawn_index++ )
    {
-    fscanf( infile, "%s %d %d", comment, &x, &y );
+    fscanf( infile, "%s %lu %lu", comment, &x, &y );
     spawn = &array[ spawn_index ];
     spawn->map_loc.x = x;
     spawn->map_loc.y = y;

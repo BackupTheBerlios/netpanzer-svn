@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "stdafx.h"
+
 #include "ImageRobot.h"
 #include "ColorPakDialog.h"
 #include "Palette.hpp"
@@ -32,7 +32,7 @@ static char THIS_FILE[] = __FILE__;
 // CColorPakDialog dialog
 
 
-CColorPakDialog::CColorPakDialog(CWnd* pParent /*=NULL*/)
+CColorPakDialog::CColorPakDialog(CWnd* pParent /*=0*/)
 	: CDialog(CColorPakDialog::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CColorPakDialog)
@@ -97,11 +97,11 @@ void CColorPakDialog::OnRedButton()
 	m_Gradient.Invalidate();
 }
 
-BOOL CColorPakDialog::OnInitDialog() 
+bool CColorPakDialog::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
 
-	if (!m_Gradient.init()) return FALSE;
+	if (!m_Gradient.init()) return false;
 	
 ///////////
 //HBITMAP CreateDIBSection( HDC hdc,  // handle to device context 
@@ -113,8 +113,8 @@ BOOL CColorPakDialog::OnInitDialog()
 //); 
 ////////////
 	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	return true;  // return true unless you set the focus to a control
+	              // EXCEPTION: OCX Property Pages should return false
 }
 
 void CColorPakDialog::OnApplyColorPak() 
@@ -155,10 +155,10 @@ COwnerDraw::~COwnerDraw()
 {
 }
 
-BOOL COwnerDraw::init() {
+bool COwnerDraw::init() {
 
-	HDC hdc = CreateCompatibleDC(NULL);
-	if (hdc == NULL) return FALSE;
+	HDC hdc = CreateCompatibleDC(0);
+	if (hdc == 0) return false;
 
 	CRect rect;
 	GetWindowRect(&rect);
@@ -187,22 +187,22 @@ BOOL COwnerDraw::init() {
 		pbmi.pal[i].rgbReserved = 0;
 	}
 
-	void *dibSectionPtr = NULL;
+	void *dibSectionPtr = 0;
 	surface.free();
 	dibSection = CreateDIBSection(	hdc,
 									(BITMAPINFO *)&pbmi,
 									DIB_RGB_COLORS,
 									&dibSectionPtr,
-									NULL,
+									0,
 									0);
 
 	DeleteDC(hdc);
 
-	if (dibSection == NULL) return FALSE;
+	if (dibSection == 0) return false;
 	surface.setTo(dibSectionPtr, iXY(x, y), x, 1);
 	transSurface.copy(surface);
 
-	return TRUE;
+	return true;
 }
 
 void COwnerDraw::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {

@@ -15,7 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+// XXX need new unix code here
+#ifndef UNIX
+#include <windows.h>
+
 #include "netPanzerWinProc.h"
 #include "netPanzerGlobals.h"
 #include "netPanzerMain.h"
@@ -27,19 +30,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "DirectPlay.h"
 #include "winsockglobals.h"
 #include "WinSockClientList.h"
-#include "WinSockServer.h"
-#include "WinSockClient.h"
+#include "WinsockServer.h"
+#include "WinsockClient.h"
 #include "Server.hpp"
 #include "UIDraw.hpp"
 #include "PlayerInterface.hpp"
 #include "GameManager.hpp"
 #include "cMouse.hpp"
 
-#include "CodeWiz.hpp"
+#include "codewiz.hpp"
 
 extern GlobalApp gapp;
 
-BOOL gShiftState;
+bool gShiftState;
 
 char MapUnshiftedToShifted ( char char_code );
 
@@ -85,10 +88,10 @@ LRESULT CALLBACK PanzerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	  
       case WM_ACTIVATEAPP :
        {
-        BOOL fActive;
-        fActive = (BOOL) wParam;
+        bool fActive;
+        fActive = (bool) wParam;
         
-        if ( fActive == TRUE )
+        if ( fActive == true )
          {
           LOG( ("WM_ACTIVATEAPP : GDI FALSE") );
           Screen->restoreAll();
@@ -96,7 +99,7 @@ LRESULT CALLBACK PanzerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
           //DDraw.palette.activateCurrentPalette();
          }
         
-        if ( fActive == FALSE )
+        if ( fActive == false )
          {
           LOG( ("WM_ACTIVATEAPP : GDI TRUE") );
           Screen->setGDIStatus( TRUE ); 
@@ -111,14 +114,14 @@ LRESULT CALLBACK PanzerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       case WM_ACTIVATE :
        {
         WORD fActive;
-        BOOL fMinimized;
+        bool fMinimized;
         fActive = LOWORD(wParam);
-        fMinimized = (BOOL) HIWORD(wParam);
+        fMinimized = (bool) HIWORD(wParam);
 
         if ( (fActive == WA_ACTIVE) || (fActive == WA_CLICKACTIVE) )
          {
           LOG( ("WM_ACTIVATE") );
-          //DDraw.setGDIStatus( FALSE ); 
+          //DDraw.setGDIStatus( false ); 
           Win32HideHardwareMouse();
           //DDraw.palette.activateCurrentPalette();
          }
@@ -126,7 +129,7 @@ LRESULT CALLBACK PanzerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         if( fActive == WA_INACTIVE )
          {
           LOG( ("WM_ACTIVATE") );
-          //DDraw.setGDIStatus( TRUE ); 
+          //DDraw.setGDIStatus( true ); 
           Win32ShowHardwareMouse();
           //DDraw.palette.activateSystemPalette();
          }
@@ -289,8 +292,8 @@ LRESULT CALLBACK PanzerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             		     		
 		case WM_DESTROY:
 		 {
-          PANZER_THREAD_ACTIVE = FALSE;
-		  //while( PANZER_THREAD_FINISHED == FALSE );
+          PANZER_THREAD_ACTIVE = false;
+		  //while( PANZER_THREAD_FINISHED == false );
 	      //TerminateThread( (HANDLE) PANZER_THREAD_HANDLE, 0 );
 		  netPanzerShutdown();
 		  PostQuitMessage(0);
@@ -335,3 +338,5 @@ char MapUnshiftedToShifted ( char char_code )
   
   return( 0 );
  };
+#endif
+

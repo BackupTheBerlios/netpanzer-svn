@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "BresenhamLine.hpp"
 
 void BresenhamLine::set_path( PointXYi &start, PointXYi &end ) 
@@ -102,7 +102,7 @@ void BresenhamLine::set_path( PointXYi &start, PointXYi &end )
 short BresenhamLine::increment(  PointXYi *update, short times )        
  {
   
-  while ( (times != 0) && (finished == _FALSE) )
+  while ( (times != 0) && (finished == false) )
   {
    switch(Octant)
     {

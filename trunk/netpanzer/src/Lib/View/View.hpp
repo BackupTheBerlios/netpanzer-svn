@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #endif
 
 
-#include "stdafx.hpp"
+
 #include "cMouse.hpp"
 #include "cGrowList.hpp"
 #include "cButton.hpp"
@@ -319,7 +319,7 @@ public:
 		memset(componentList, 0, sizeof(Component *) * MAX_COMPONENT_COUNT);
 
 		componentsUsedCount = 0;
-		focusComponent      = NULL;
+		focusComponent      = 0;
 	}
 
 	// Accessor Functions.

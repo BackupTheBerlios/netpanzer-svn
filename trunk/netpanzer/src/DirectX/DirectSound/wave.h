@@ -55,12 +55,12 @@ typedef struct _fileinfo
     DWORD               dwFreq;         // Frequency.
     DWORD               dwPan;          // Panning info.
     DWORD               dwVol;          // Total volume.
-    BOOL                fLooped;        // Looped?
+    bool                fLooped;        // Looped?
 
-    BOOL                fPlaying;       // Is this one playing?
-    BOOL                fLost;          // Is this one lost?
-    BOOL                fHardware;      // Is this a hardware buffer?
-    BOOL                fSticky;        // Is this a sticky buffer?
+    bool                fPlaying;       // Is this one playing?
+    bool                fLost;          // Is this one lost?
+    bool                fHardware;      // Is this a hardware buffer?
+    bool                fSticky;        // Is this a sticky buffer?
 
     int			cox;            // Coordinates of where the structure is
     int			coy;            // printed.

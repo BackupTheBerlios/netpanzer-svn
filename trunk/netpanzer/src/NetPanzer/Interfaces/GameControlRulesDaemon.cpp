@@ -15,8 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
-
 #include "GameControlRulesDaemon.hpp"
 
 #include "GameManager.hpp"
@@ -58,12 +56,12 @@ Timer GameControlRulesDaemon::map_cycle_fsm_server_endgame_timer;
 Timer GameControlRulesDaemon::map_cycle_fsm_server_map_load_timer;
 
 int GameControlRulesDaemon::map_cycle_fsm_client_state = _map_cycle_client_idle;  
-boolean GameControlRulesDaemon::map_cycle_fsm_client_respawn_ack_flag = _FALSE;
+bool GameControlRulesDaemon::map_cycle_fsm_client_respawn_ack_flag = false;
 char GameControlRulesDaemon::map_cycle_fsm_client_map_name[256];  
 
 void GameControlRulesDaemon::mapCycleFsmClient( void )
  {
-  boolean end_cycle = _FALSE;
+  bool end_cycle = false;
 
   do
   {
@@ -71,7 +69,7 @@ void GameControlRulesDaemon::mapCycleFsmClient( void )
     {
      case _map_cycle_client_idle :
       { 
-       end_cycle = _TRUE;
+       end_cycle = true;
       } break;
 
      case _map_cycle_client_start_map_load :
@@ -97,7 +95,7 @@ void GameControlRulesDaemon::mapCycleFsmClient( void )
 
          map_cycle_fsm_client_state = _map_cycle_client_load_map;
         }
-       end_cycle = _TRUE;
+       end_cycle = true;
       } break;     
     
      case _map_cycle_client_load_map :
@@ -105,7 +103,7 @@ void GameControlRulesDaemon::mapCycleFsmClient( void )
        int percent_complete;
        char str_buf[128];
 
-       if ( GameManager::gameMapLoad( &percent_complete ) == _FALSE )
+       if ( GameManager::gameMapLoad( &percent_complete ) == false )
         {
          map_cycle_fsm_client_state = _map_cycle_client_wait_for_respawn_ack;       
          
@@ -120,30 +118,30 @@ void GameControlRulesDaemon::mapCycleFsmClient( void )
          progressView.update( str_buf );
         }
 
-       end_cycle = _TRUE;
+       end_cycle = true;
       } break;
 
      case _map_cycle_client_wait_for_respawn_ack :
       {
-       if( map_cycle_fsm_client_respawn_ack_flag == _TRUE )
+       if( map_cycle_fsm_client_respawn_ack_flag == true )
         {
          progressView.toggleGameView();
-         map_cycle_fsm_client_respawn_ack_flag = _FALSE;
+         map_cycle_fsm_client_respawn_ack_flag = false;
          map_cycle_fsm_client_state = _map_cycle_client_idle;       
         }
        
-       end_cycle = _TRUE;
+       end_cycle = true;
       } break;
     
     } // ** switch
-  } while ( end_cycle == _FALSE );
+  } while ( end_cycle == false );
 
  }
 
 
 void GameControlRulesDaemon::mapCycleFsmServer( void )
  {
-  boolean end_cycle = _FALSE;
+  bool end_cycle = false;
 
   do
   {
@@ -152,7 +150,7 @@ void GameControlRulesDaemon::mapCycleFsmServer( void )
 
      case _map_cycle_server_state_idle :
       { 
-       end_cycle = _TRUE;
+       end_cycle = true;
       } break;   
 
      case _map_cycle_server_state_display_endgame_views:
@@ -167,7 +165,7 @@ void GameControlRulesDaemon::mapCycleFsmServer( void )
         {
          Desktop::setVisibilityAllWindows(false);
          Desktop::setVisibility("GameView", true);
-         Desktop::setVisibility("WinnerMesgView", TRUE );
+         Desktop::setVisibility("WinnerMesgView", true );
         }   
 
        SERVER->sendMessage( &view_control, sizeof( SystemViewControl ), 0 );
@@ -176,13 +174,13 @@ void GameControlRulesDaemon::mapCycleFsmServer( void )
        map_cycle_fsm_server_endgame_timer.reset();
      
        map_cycle_fsm_server_state = _map_cycle_server_state_cycle_next_map;    
-       end_cycle = _TRUE;       
+       end_cycle = true;       
       } break;
      
      case _map_cycle_server_state_cycle_next_map :
       {
        if ( map_cycle_fsm_server_endgame_timer.count() && 
-           (ServerConnectDaemon::isConnecting() == _FALSE)
+           (ServerConnectDaemon::isConnecting() == false)
           )
         {       
          char map_name[256];
@@ -235,7 +233,7 @@ void GameControlRulesDaemon::mapCycleFsmServer( void )
         
         }
        
-       end_cycle = _TRUE;
+       end_cycle = true;
       } break;
     
      case _map_cycle_server_state_load_map :
@@ -243,7 +241,7 @@ void GameControlRulesDaemon::mapCycleFsmServer( void )
        int percent_complete;
        char str_buf[128];
 
-       if ( GameManager::gameMapLoad( &percent_complete ) == _FALSE )
+       if ( GameManager::gameMapLoad( &percent_complete ) == false )
         {
          map_cycle_fsm_server_state = _map_cycle_server_state_respawn_players;
         }
@@ -251,7 +249,7 @@ void GameControlRulesDaemon::mapCycleFsmServer( void )
        sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);         
        progressView.update( str_buf );
        
-       end_cycle = _TRUE;
+       end_cycle = true;
       } break;
     
      case _map_cycle_server_state_wait_for_client_map_load :
@@ -261,7 +259,7 @@ void GameControlRulesDaemon::mapCycleFsmServer( void )
          map_cycle_fsm_server_state = _map_cycle_server_state_respawn_players;        
         }
        
-       end_cycle = _TRUE;       
+       end_cycle = true;       
       } break;
     
      case _map_cycle_server_state_respawn_players :
@@ -287,11 +285,11 @@ void GameControlRulesDaemon::mapCycleFsmServer( void )
        map_cycle_fsm_server_state = _map_cycle_server_state_idle;        
 
        ServerConnectDaemon::unlockConnectProcess();       
-       end_cycle = _TRUE;       
+       end_cycle = true;       
       } break;
      
     } // ** switch
-  } while ( end_cycle == _FALSE );
+  } while ( end_cycle == false );
 
  }
 
@@ -299,7 +297,7 @@ void GameControlRulesDaemon::onTimelimitGameCompleted( void )
  {
   PlayerInterface::lockPlayerStats();
 
-  if( GameConfig::getMapCycleState() == _TRUE )
+  if( GameConfig::getMapCycleState() == true )
    {
     map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;   
     GameManager::game_state = _game_state_completed;
@@ -312,7 +310,7 @@ void GameControlRulesDaemon::onTimelimitGameCompleted( void )
 
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("GameView", true);
-    Desktop::setVisibility("WinnerMesgView", TRUE );  
+    Desktop::setVisibility("WinnerMesgView", true );  
 
     SERVER->sendMessage( &view_control, sizeof( SystemViewControl ), 0 );
  
@@ -324,7 +322,7 @@ void GameControlRulesDaemon::onFraglimitGameCompleted( void )
  {
   PlayerInterface::lockPlayerStats();
 
-  if( GameConfig::getMapCycleState() == _TRUE )
+  if( GameConfig::getMapCycleState() == true )
    {
     map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;   
     GameManager::game_state = _game_state_completed;
@@ -337,7 +335,7 @@ void GameControlRulesDaemon::onFraglimitGameCompleted( void )
 
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("GameView", true);
-    Desktop::setVisibility("WinnerMesgView", TRUE );  
+    Desktop::setVisibility("WinnerMesgView", true );  
 
     SERVER->sendMessage( &view_control, sizeof( SystemViewControl ), 0 );
  
@@ -350,7 +348,7 @@ void GameControlRulesDaemon::onObjectiveGameCompleted( void )
  {
   PlayerInterface::lockPlayerStats();
 
-  if( GameConfig::getMapCycleState() == _TRUE )
+  if( GameConfig::getMapCycleState() == true )
    {
     map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;   
     GameManager::game_state = _game_state_completed;
@@ -363,7 +361,7 @@ void GameControlRulesDaemon::onObjectiveGameCompleted( void )
 
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("GameView", true);
-    Desktop::setVisibility("WinnerMesgView", TRUE );  
+    Desktop::setVisibility("WinnerMesgView", true );  
 
     SERVER->sendMessage( &view_control, sizeof( SystemViewControl ), 0 );
  
@@ -373,7 +371,7 @@ void GameControlRulesDaemon::onObjectiveGameCompleted( void )
 
 void GameControlRulesDaemon::forceMapCycle( void )
  {
-  if( GameConfig::getMapCycleState() == _TRUE )
+  if( GameConfig::getMapCycleState() == true )
    {
     map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;   
     GameManager::game_state = _game_state_completed;
@@ -404,7 +402,7 @@ void GameControlRulesDaemon::checkGameRules( void )
       
       case _gametype_fraglimit :
        {
-        if ( PlayerInterface::testRuleScoreLimit( GameConfig::GetFragLimit(), &player_state ) == _TRUE )
+        if ( PlayerInterface::testRuleScoreLimit( GameConfig::GetFragLimit(), &player_state ) == true )
          {
           onFraglimitGameCompleted();
          }
@@ -412,7 +410,7 @@ void GameControlRulesDaemon::checkGameRules( void )
              
        case _gametype_objective :
         {
-         if ( PlayerInterface::testRuleObjectiveRatio( GameConfig::getObjectiveOccuapationPercentageDecimal(), &player_state ) == _TRUE )
+         if ( PlayerInterface::testRuleObjectiveRatio( GameConfig::getObjectiveOccuapationPercentageDecimal(), &player_state ) == true )
           {
            onObjectiveGameCompleted( );
           }
@@ -421,8 +419,8 @@ void GameControlRulesDaemon::checkGameRules( void )
      } // ** switch     
       
       // ** Check for Player Respawns ** 
-     boolean respawn_rule_complete = _FALSE;
-     while( respawn_rule_complete == _FALSE )
+     bool respawn_rule_complete = false;
+     while( respawn_rule_complete == false )
       {
        if ( PlayerInterface::testRulePlayerRespawn( &respawn_rule_complete, &player_state ) )
         {
@@ -446,7 +444,7 @@ void GameControlRulesDaemon::netMessageCycleMap( NetMessage *message )
 
 void GameControlRulesDaemon::netMessageCycleRespawnAck( NetMessage *message )
  {
-  map_cycle_fsm_client_respawn_ack_flag = _TRUE;
+  map_cycle_fsm_client_respawn_ack_flag = true;
  } 
   
 void GameControlRulesDaemon::processNetMessage( NetMessage *message )

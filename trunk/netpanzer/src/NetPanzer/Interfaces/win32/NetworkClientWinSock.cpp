@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "NetworkClientWinSock.hpp"
 
 #include "gapp.hpp"
@@ -23,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkState.hpp"
 #include "NetMessageLog.hpp"
 
-#include "Codewiz.hpp"
+#include "codewiz.hpp"
 
 #include "WinsockGlobals.h"
 #include "WinsockServer.h"
@@ -76,7 +75,7 @@ int NetworkClientWinSock::openSession( int connection_type, int session_flags )
   if ( connection_type == _connection_loop_back )
    {
     NetworkClientWinSock::connection_type = _connection_loop_back;
-    return( _TRUE );
+    return( true );
    }
   else
    {
@@ -84,7 +83,7 @@ int NetworkClientWinSock::openSession( int connection_type, int session_flags )
     InitWinSock(gapp.hwndApp);
     InitDgramClient(gapp.hwndApp);
     //HACK -- needs to return something real from last two calls--
-    return(_TRUE);
+    return(true);
    }
  }
     
@@ -95,20 +94,20 @@ int NetworkClientWinSock::startEnumeration( ConnectionAddress address )
   iReturn = AsyncGetHost(gapp.hwndApp, (LPSTR) address.string_rep );
  
   if(iReturn == WS_OK)
-   { return( _TRUE ); }
+   { return( true ); }
   
-  return( _FALSE ); 
+  return( false ); 
  }
 
 int NetworkClientWinSock::startEnumeration( )   
  {
   Desktop::setVisibility("IPAddressView", true);
-  return( _TRUE ); 
+  return( true ); 
  }
 
 int NetworkClientWinSock::stopEnumeration( void )
  {
-  return( _TRUE );   
+  return( true );   
  }
 
 int NetworkClientWinSock::getSessionList( SessionList &list )
@@ -122,7 +121,7 @@ int NetworkClientWinSock::getSessionList( SessionList &list )
   QueryServer();
 
   if ( GetHostInfo( session_info.name, session_info.map, session_info.game_type,
-                    &session_info.current_players, &session_info.max_players ) == TRUE )
+                    &session_info.current_players, &session_info.max_players ) == true )
    {
     session_list.initialize( 1 );
     list.initialize( 1 );
@@ -130,41 +129,41 @@ int NetworkClientWinSock::getSessionList( SessionList &list )
     memcpy( &list[ 0 ], &session_info, sizeof( SessionInfo ) );
    }
   
-  return( _TRUE );
+  return( true );
  }
 
 int NetworkClientWinSock::joinSession( void )
  {
-  if ( InitStreamClient(gapp.hwndApp) == _TRUE )
+  if ( InitStreamClient(gapp.hwndApp) == true )
    {
-    return( _TRUE );
+    return( true );
    }
   else
    {
-    return( _FALSE );
+    return( false );
    }
  }
 
 int NetworkClientWinSock::joinSession( int session_index ) 
  {
   
-  return( _FALSE );
+  return( false );
  }
 
 int NetworkClientWinSock::joinSession( const char session_name ) 
  {
-  return( _FALSE );
+  return( false );
  }
 
 int NetworkClientWinSock::setJoinSession( const char *session_name )
  {
-  return( _TRUE );
+  return( true );
  }
 
 int NetworkClientWinSock::closeSession( void ) 
  {
   ShutdownWinSockClient();
-  return( _TRUE );
+  return( true );
  }
   
 int NetworkClientWinSock::sendMessage( NetMessage *message, unsigned long size, int flags ) 
@@ -222,7 +221,7 @@ int NetworkClientWinSock::getMessage( NetMessage *message )
 
 	NetworkState::incPacketsReceived( net_packet.packet_size );
 
-    return( _TRUE );  
+    return( true );  
    }
   
   if ( non_guarantee_queue.isReady() )
@@ -238,9 +237,10 @@ int NetworkClientWinSock::getMessage( NetMessage *message )
 
 	NetworkState::incPacketsReceived( net_packet.packet_size );
 
-    return( _TRUE );  
+    return( true );  
    }
 
 
-  return( _FALSE );
+  return( false );
  }
+

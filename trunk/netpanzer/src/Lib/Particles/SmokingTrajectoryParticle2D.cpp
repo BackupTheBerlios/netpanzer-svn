@@ -15,9 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "SmokingTrajectoryParticle2D.hpp"
-#include "TimerINterface.hpp"
+#include "TimerInterface.hpp"
 
 
 //---------------------------------------------------------------------------
@@ -25,7 +25,9 @@ SmokingTrajectoryParticle2D::SmokingTrajectoryParticle2D(	const fXYZ &pos,
 															int         maxSpeed,
 															float       waitMin,
 															float       waitRand,
-															PUFF_PARTICLE_TYPE particleType) : TrajectoryParticle2D(pos, maxSpeed)
+															PUFF_PARTICLE_TYPE particleType) 
+	// XXX had to add an angle here
+	: TrajectoryParticle2D(pos, maxSpeed, 0)
 {
 	assert(isValidPtr(this));
 

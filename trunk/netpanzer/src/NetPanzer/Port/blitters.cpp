@@ -15,13 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "blitters.h"
 #include "DirectDrawGlobals.hpp"
-
-#if _MSC_VER > 1000
- #pragma optimize( "", off )
-#endif
 
 void blit_partial_xy( unsigned char *tile_ptr,unsigned char *buffer_ptr,short y_size,short x_size)
 {
@@ -30,6 +25,8 @@ void blit_partial_xy( unsigned char *tile_ptr,unsigned char *buffer_ptr,short y_
 	assert(y_size > 0);
 	assert(x_size > 0);
 
+	// XXX disabled msvc assembler
+#ifdef MSVC
   __asm
  {
                         mov  esi,tile_ptr;
@@ -58,6 +55,7 @@ copy_loop:              mov  cl,dh
 
 
   } // end asm block
+#endif
 
 }
 
@@ -95,6 +93,8 @@ void blit_partial_y( unsigned char *tile_ptr, unsigned char *buffer_ptr, short y
 
 void blit_partial_y( unsigned char *tile_ptr, unsigned char *buffer_ptr, short y_size)
 {
+	// XXX disabled msvc assembler
+#ifdef MSVC
   __asm
  { 
                         mov  esi,tile_ptr;
@@ -158,12 +158,16 @@ void blit_partial_y( unsigned char *tile_ptr, unsigned char *buffer_ptr, short y
                         jnz  copy_loop2
 
  }
+#endif
 
 }
 
 void general_blitter( unsigned char x_size, unsigned char y_size, unsigned long frame_offset, 
                       unsigned char *buffer_ptr, unsigned char *dbuffer_ptr )
  {
+
+	 // XXX disabled msvc assembler
+#ifdef MSVC
   __asm
   {
                         mov  ebx,0
@@ -205,6 +209,7 @@ transparent_gb:         add  edi,1
                         dec  bh
                         jnz  row_loop_gb
   }
+#endif
  
  }
                                          
@@ -212,6 +217,8 @@ transparent_gb:         add  edi,1
 void blit_selector_square( unsigned char x_size, unsigned char y_size,
                            unsigned long frame_offset, unsigned char *dbuffer_ptr )
  {
+	 // XXX disabled msvc assembler
+#ifdef MSVC
   __asm
    {
                         mov  ebx,0
@@ -266,9 +273,7 @@ selector_loop:          mov [edi],ch
    
    
    }  
+#endif
 
  }
 
-#if _MSC_VER > 1000
- #pragma optimize( "", on )
-#endif

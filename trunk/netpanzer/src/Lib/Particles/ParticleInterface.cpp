@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "KeyScanCodeDefs.h"
 #include "ParticleInterface.hpp"
 #include "PuffParticle2D.hpp"
@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapInterface.hpp"
 #include "KeyboardInterface.hpp"
 #include "Physics.hpp"
-#include "DSound.hpp"
+//#include "DSound.hpp"
 //#include "DirtKickParticle2D.hpp"
 #include "SparkParticle2D.hpp"
 #include "FireParticleSystem2D.hpp"
@@ -395,7 +395,8 @@ void ParticleInterface::testSim()
         groupTime0 = 0.0f;
 
         //SFX
-        dsound.PlayAmbientSound( _not_applicable, _blow_up_tank, 0 );
+		// XXX
+        // dsound.PlayAmbientSound( _not_applicable, _blow_up_tank, 0 );
 
 		Recti gameViewRect;
 		WorldViewInterface::getViewWindow(&gameViewRect);
@@ -417,7 +418,8 @@ void ParticleInterface::testSim()
         groupTime1 = 0.0f;
 
         //SFX
-        dsound.PlayAmbientSound( _not_applicable, _blow_up_tank, 0 );
+		// XXX
+        // dsound.PlayAmbientSound( _not_applicable, _blow_up_tank, 0 );
 
 		Recti gameViewRect;
 		WorldViewInterface::getViewWindow(&gameViewRect);
@@ -467,7 +469,7 @@ void ParticleInterface::addHit(const UnitState &unitState)
 	float hitPointScale = 1.0f;
 	
 	UnitProfile *p = UnitProfileInterface::getUnitProfile(unitState.unit_type);
-	if (p != NULL)
+	if (p != 0)
 	{
 		hitPointScale = float(unitHitPointTable[unitState.unit_type]) / 18.0f;
 	} else
@@ -628,7 +630,7 @@ void ParticleInterface::addMiss(const iXY &worldPos, BYTE unitType)
 	float attackScale = 1.0f;
 	
 	UnitProfile *p = UnitProfileInterface::getUnitProfile(unitType);
-	if (p != NULL)
+	if (p != 0)
 	{
 		attackScale = float(unitAttackFactorTable[unitType]) / 15.0f;
 	} else

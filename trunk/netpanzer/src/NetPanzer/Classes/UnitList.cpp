@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "UnitList.hpp"
 
 UnitList::UnitList( unsigned long size )
@@ -31,32 +30,32 @@ void UnitList::initialize( unsigned long size )
   contains = 0;
  }
   
-boolean UnitList::addFirstFree( UnitBase *unit, unsigned long *new_index )
+bool UnitList::addFirstFree( UnitBase *unit, unsigned long *new_index )
  {
-  boolean found = _FALSE;
+  //bool found = false;
   UnitPointer *unit_pointer;
   UnitPointer *traversal_ptr;
 
   if( contains == size )
    {
-	return( _FALSE );
+	return( false );
    }
 
   unit_pointer = new UnitPointer( unit );
   
-  if ( front == NULL )
+  if ( front == 0 )
    {
     unit_pointer->index = 0;
 	*new_index = 0;
 	UnitPointerList::addFront( unit_pointer );
 	contains++;
-	return( _TRUE );
+	return( true );
    }
   else
    {
 	traversal_ptr = front;
 	
-	while( traversal_ptr->next != NULL )
+	while( traversal_ptr->next != 0 )
 	 {
 	  if( (traversal_ptr->next->index) > (traversal_ptr->index + 1) )
 	   {
@@ -64,7 +63,7 @@ boolean UnitList::addFirstFree( UnitBase *unit, unsigned long *new_index )
 		unit_pointer->index = *new_index;
 	    UnitPointerList::insertAfter( traversal_ptr, unit_pointer );
 	    contains++;
-		return( _TRUE );
+		return( true );
 	   }
 	  
 	  traversal_ptr = traversal_ptr->next;
@@ -74,10 +73,10 @@ boolean UnitList::addFirstFree( UnitBase *unit, unsigned long *new_index )
 	unit_pointer->index = *new_index;
 	UnitPointerList::insertAfter( traversal_ptr, unit_pointer );
 	contains++;
-	return( _TRUE );
+	return( true );
    } // ** else
 
-  return( _FALSE );
+  return( false );
  }
 
 void UnitList::removeAll( void )
@@ -85,12 +84,12 @@ void UnitList::removeAll( void )
   UnitPointer *traversal_ptr;
   traversal_ptr = front;
 
-  while( traversal_ptr != NULL )
+  while( traversal_ptr != 0 )
    {
     if ( contains > 0 )
      contains--;
 
-    traversal_ptr->unit = NULL;
+    traversal_ptr->unit = 0;
 	traversal_ptr = traversal_ptr->next;
    } // ** while 
     
@@ -104,7 +103,7 @@ void UnitList::dispose( unsigned long index )
 
   if ( index == front->index )
    {
-   	if( front->unit != NULL )
+   	if( front->unit != 0 )
 	 { delete( front->unit ); }	
 	
 	UnitPointerList::deleteFront();
@@ -118,11 +117,11 @@ void UnitList::dispose( unsigned long index )
    {
 	traversal_ptr = front;
 
-	while( traversal_ptr->next != NULL )
+	while( traversal_ptr->next != 0 )
 	 {
 	  if( traversal_ptr->next->index == index )
 	   {
-		if( traversal_ptr->next->unit != NULL )
+		if( traversal_ptr->next->unit != 0 )
 	     { delete( traversal_ptr->next->unit ); }	
 	
 	    UnitPointerList::deleteAfter( traversal_ptr );
@@ -163,9 +162,9 @@ void UnitList::disposeAll( void )
 
   traversal_ptr = front;
 
-  while( traversal_ptr != NULL )
+  while( traversal_ptr != 0 )
    {
-	if( traversal_ptr->unit != NULL )
+	if( traversal_ptr->unit != 0 )
 	 { delete( traversal_ptr->unit ); }	
 
 	traversal_ptr = traversal_ptr->next;

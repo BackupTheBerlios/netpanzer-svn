@@ -15,19 +15,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __Surface_hpp__
 #define __Surface_hpp__
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
 
 #include "iXY.hpp"
 #include "iRect.hpp"
 #include "Palette.hpp"
 #include "String.hpp"
-
 
 // This must be called before any of the string blitting functions are used.
 void initFont();
@@ -81,11 +75,13 @@ inline void orderCoords(iRect &bounds)
 #define SCREEN_XCENTER (screen.getCenterX())
 #define SCREEN_YCENTER (screen.getCenterY())
 
-#pragma pack (1)
-
 /////////////////////////////////////////////////////////////////////////////
 // structs
 /////////////////////////////////////////////////////////////////////////////
+
+#ifdef MSVC
+#pragma pack (1)
+#endif
 
 // A ".til" file.
 class FletchTileHeader
@@ -101,16 +97,18 @@ public:
 	BYTE    avgG;      // .
 	BYTE    avgB;      // .
 	BYTE    avgIndex;  // Closest palette entry to the average color
-}; // end FletchTileHeader
+} __attribute__((packed)); // end FletchTileHeader
 
 //struct PIC_HEAD
 //{
 //	DWORD xPix;         // Horizontal pixel count.
 //	DWORD yPix;         // Vertical pixel count.
 //	DWORD frameCount;    // Number of frames.
-//};
+//} __attribute__((packed));
 
+#ifdef MSVC
 #pragma pack ()
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // class Surface
@@ -122,7 +120,8 @@ class Surface
 public:
 	void setTransPix()
 	{
-		assert(transPix >= 0);
+		// XXX transPix is unisgned long, so >= 0 doesn't make sense...
+		//assert(transPix >= 0);
 		Surface::transPix = transPix;
 	}
 	void setOffset(const iXY &offset) { Surface::offset = offset; }
@@ -132,7 +131,7 @@ public:
 	void setFPS(int fps) { Surface::fps = fps; }
 	void setFrame0(PIX *frame0)
 	{
-		assert(frame0 != NULL);
+		assert(frame0 != 0);
 
 		Surface::frame0 = frame0;
 	}
@@ -175,7 +174,7 @@ public:
 	inline int    getCenterY() const { return center.y; }
 	inline int    getStride() const { return stride; }
 	inline int    getFrameCount() const { return frameCount; }
-	inline int    getCurFrame () const { return curFrame; }
+	inline int    getCurFrame () const { return (int) curFrame; }
 	inline PIX   *getMem() const { return mem; }
 	inline PIX   *getFrame0() const { return frame0; }
 	inline iXY    getOffset() const { return offset; }
@@ -204,7 +203,7 @@ public:
 	//Surface(const Surface &source, int x1, int y1, int x2, int y2, bool doGrab);
 	Surface(void *nFrame0, const iXY &nPix, int nStride, int nFrameCount);
 
-	~Surface();
+	virtual ~Surface();
 
 	bool alloc(const iXY &pix, bool gottaHaveIt, int stride, int frameCount);
 	
@@ -414,7 +413,7 @@ public:
 	}
 
 	PIX getAverageColor();
-	void loadPCX(const char *filename, bool needAlloc = true, void *returnPalette = NULL);
+	void loadPCX(const char *filename, bool needAlloc = true, void *returnPalette = 0);
 	void extractPCX(const char *filename, int nCols, int gapSpace);
 	void loadRAW(const char *fileName, bool needAlloc = true);
 	int  saveRAW(const char *filename) const;
@@ -544,7 +543,7 @@ public:
     void savePCX(FILE *fp, Palette &pal );
     int  savePCX( const char *filename, Palette &pal ); 
 
-    void loadBMP(const char *fileName, bool needAlloc = true, void *returnPalette = NULL);
+    void loadBMP(const char *fileName, bool needAlloc = true, void *returnPalette = 0);
     int  saveBMP(Palette &pal);
     void saveBMP(FILE *fp, Palette &pal );
     int  saveBMP( const char *filename, Palette &pal ); 

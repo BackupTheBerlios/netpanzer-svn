@@ -26,42 +26,42 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class SafePointer : public PObject
  {
   public:
-  boolean valid;
+  bool valid;
 
   PObject *object_ptr;
 
   SafePointer() 
    { 
-    valid = _FALSE;
-    object_ptr = NULL; 
+    valid = false;
+    object_ptr = 0; 
    }
 
   SafePointer( PObject *object )
    {
     object_ptr = object;
-        valid = _TRUE;
+        valid = true;
    }
  
-  inline boolean isValid( void )
+  inline bool isValid( void )
    {
     return ( valid );
    } 
   
   inline void destroy( void )
    {
-    if( valid == _TRUE )
+    if( valid == true )
      { 
       delete( object_ptr );
-      object_ptr = NULL;
+      object_ptr = 0;
      }
     
-    valid = _FALSE;
+    valid = false;
    } 
  
   inline void assign( PObject *object )
    {
     object_ptr = object;
-        valid = _TRUE;
+        valid = true;
    }
 
   inline void operator=( SafePointer &pointer )
@@ -72,7 +72,7 @@ class SafePointer : public PObject
  
   inline PObject * operator->()
    {
-    assert( valid == _TRUE );
+    assert( valid == true );
         return( object_ptr );
    } 
  };
@@ -83,41 +83,41 @@ template< class TYPE >
 class SafePointerTemplate : public PObject
  {
   public:
-  boolean valid;
+  bool valid;
 
   TYPE *object_ptr;
 
   SafePointerTemplate() 
    { 
-    valid = _FALSE;
-    object_ptr = NULL; 
+    valid = false;
+    object_ptr = 0; 
    }
 
   SafePointerTemplate( TYPE *object )
    {
     object_ptr = object;
-    valid = _TRUE;
+    valid = true;
    }
  
-  inline boolean isValid( void )
+  inline bool isValid( void )
    {
     return ( valid );
    } 
   
   inline void destroy( void )
    {
-    if( valid == _TRUE )
+    if( valid == true )
      { 
       delete( object_ptr );
-      object_ptr = NULL;
+      object_ptr = 0;
      }
-    valid = _FALSE;
+    valid = false;
    } 
  
   inline void assign( TYPE *object )
    {
     object_ptr = object;
-        valid = _TRUE;
+        valid = true;
    }
 
   inline void operator=( SafePointerTemplate &pointer )
@@ -128,7 +128,7 @@ class SafePointerTemplate : public PObject
  
   inline TYPE * operator->()
    {
-    assert( valid == _TRUE );
+    assert( valid == true );
         return( object_ptr );
    } 
  };

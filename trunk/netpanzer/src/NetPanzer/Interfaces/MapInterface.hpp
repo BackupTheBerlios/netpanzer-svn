@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _MAPINTERFACE_HPP
 #define _MAPINTERFACE_HPP
 
-#include "aliasdef.h"
 #include "PObject.hpp"
 #include "TileInterface.hpp"
 #include "WorldMap.hpp"
@@ -138,7 +137,7 @@ class MapInterface : protected TileInterface
      main_map.mapXYtoOffset( map_loc.x, map_loc.y, offset );
     } 
 
-   static inline void markLocHack( PointXYi &loc )
+   static inline void markLocHack( const PointXYi &loc )
     {
      unsigned short *map_buffer;
 	 unsigned long offset;
@@ -147,7 +146,7 @@ class MapInterface : protected TileInterface
 	 map_buffer[ offset ] = 27;
 	}
    
-   static inline void unmarkLocHack( PointXYi &loc )
+   static inline void unmarkLocHack( const PointXYi &loc )
     {
      unsigned short *map_buffer;
 	 unsigned long offset;
@@ -178,10 +177,10 @@ class MapInterface : protected TileInterface
   protected: 
    static void finishMapLoad( void );
   public:
-   static boolean startMapLoad( const char *file_path, boolean load_tiles, unsigned long partitions );
-   static boolean loadMap( int *percent_complete );
+   static bool startMapLoad( const char *file_path, bool load_tiles, unsigned long partitions );
+   static bool loadMap( int *percent_complete );
    
-   static inline boolean isMapLoaded( void )
+   static inline bool isMapLoaded( void )
     { return( main_map.isMapLoaded() ); }    
 
    static inline Surface * getMiniMapSurface( void )

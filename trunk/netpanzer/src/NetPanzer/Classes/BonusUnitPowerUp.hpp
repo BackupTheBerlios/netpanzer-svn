@@ -35,6 +35,8 @@ class BonusUnitPowerUp : public PowerUp
    void spawnBonusUnits( UnitID &unit_id );
   
   public:
+   virtual ~BonusUnitPowerUp()
+   { }
 
    BonusUnitPowerUp(PointXYi map_loc, int type);
 

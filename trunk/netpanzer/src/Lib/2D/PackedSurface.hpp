@@ -18,12 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __PackedSurface_hpp__
 #define __PackedSurface_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 #include "iRect.hpp"
 #include "iXY.hpp"
 #include "ColorTable.hpp"
@@ -107,7 +101,7 @@ public:
 	//inline int    getCenterX() const { return center.x; }
 	//inline int    getCenterY() const { return center.y; }
 	inline int    getFrameCount() const { return frameCount; }
-	inline int    getCurFrame () const { return curFrame; }
+	inline int    getCurFrame () const { return (int) curFrame; }
 	inline iXY    getOffset() const { return offset; }
 	inline int    getOffsetX() const { return offset.x; }
 	inline int    getOffsetY() const { return offset.y; }
@@ -167,7 +161,7 @@ WINDOW::WINDOW() {
 
 
 WINDOW::buttonPushed() {
-  if (buttonFunc != NULL) {
+  if (buttonFunc != 0) {
     (*buttonFunc)(this);
   }
 }

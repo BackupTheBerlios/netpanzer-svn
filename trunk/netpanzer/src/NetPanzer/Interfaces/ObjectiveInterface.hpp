@@ -63,7 +63,7 @@ class ObjectiveInterface : public PObject
 
    static void offloadGraphics( SpriteSorter &sorter );
       
-   static boolean testRuleObjectiveOccupationRatio( unsigned short player_index, float precentage );
+   static bool testRuleObjectiveOccupationRatio( unsigned short player_index, float precentage );
 
    static void disownPlayerObjectives( PlayerID &player );
     
@@ -87,7 +87,7 @@ class ObjectiveInterface : public PObject
     
   public:
    static void    startObjectivePositionEnumeration( void );
-   static boolean objectivePositionEnumeration( Recti *objective_rect, unsigned char *objective_disposition, int *objective_id );
+   static bool objectivePositionEnumeration( Recti *objective_rect, unsigned char *objective_disposition, int *objective_id );
  
  };
 

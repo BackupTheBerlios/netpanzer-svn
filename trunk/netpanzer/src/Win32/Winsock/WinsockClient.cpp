@@ -49,8 +49,8 @@ SOCKADDR_IN saServer;
 
 SOCKET BroadcastSocket;
 
-BOOL bHeaderIncomplete;
-BOOL bMessageIncomplete;
+bool bHeaderIncomplete;
+bool bMessageIncomplete;
 
 short TempOffset;
 extern short RecvOffset;
@@ -64,9 +64,9 @@ char szServerPlayerName[32];
 //for asynch host stuff
 HANDLE hndlTask;
 char bufHostEnt[MAXGETHOSTSTRUCT];
-LPHOSTENT lpHostEnt = NULL;
-BOOL hostFound = FALSE;
-BOOL netPanzerFound = FALSE;
+LPHOSTENT lpHostEnt = 0;
+bool hostFound = false;
+bool netPanzerFound = false;
 
 extern int gSendReady;
 
@@ -75,7 +75,7 @@ extern int gSendReady;
 
 //this function initializes a winsock dgramserver.
 //returns false if fails.
-BOOL InitDgramClient(HWND hWnd)
+bool InitDgramClient(HWND hWnd)
 {
 
     int iReturn;
@@ -99,7 +99,7 @@ BOOL InitDgramClient(HWND hWnd)
                    MB_OK);
 
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
 
@@ -120,7 +120,7 @@ BOOL InitDgramClient(HWND hWnd)
 
         closesocket(DatagramSocket);
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
 
@@ -148,11 +148,11 @@ BOOL InitDgramClient(HWND hWnd)
 
         closesocket(DatagramSocket);
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
 
-    return TRUE;
+    return true;
 
 }
 ////////////////////////////////////////////
@@ -162,7 +162,7 @@ BOOL InitDgramClient(HWND hWnd)
 
 //this function initializes a winsock broadcast socket.
 //returns false if fails.
-BOOL InitBroadcastSocket(HWND hWnd)
+bool InitBroadcastSocket(HWND hWnd)
 {
 
     SOCKADDR_IN broadcastSockAddr;
@@ -191,7 +191,7 @@ BOOL InitBroadcastSocket(HWND hWnd)
                    MB_OK);
 
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
     //set the socket options so that the socket can
@@ -215,7 +215,7 @@ BOOL InitBroadcastSocket(HWND hWnd)
 
         closesocket(BroadcastSocket);
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
 
@@ -243,11 +243,11 @@ BOOL InitBroadcastSocket(HWND hWnd)
 
         closesocket(BroadcastSocket);
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
 
-    return TRUE;
+    return true;
 
 }
 ////////////////////////////////////////////
@@ -258,11 +258,11 @@ BOOL InitBroadcastSocket(HWND hWnd)
 //this function initializes a winsock client and sets up the 
 //sockets, if it fails it puts up a messagebox indicating why
 //and then returns false.
-BOOL InitStreamClient(HWND hWnd)
+bool InitStreamClient(HWND hWnd)
 {
     SOCKADDR_IN serverSocketAddr;
 
-    if (netPanzerFound == FALSE) return FALSE;
+    if (netPanzerFound == false) return false;
 
     WORD wVersionRequested = MAKEWORD(1,1);
 
@@ -290,7 +290,7 @@ BOOL InitStreamClient(HWND hWnd)
                    MB_OK);
 
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
 
@@ -314,7 +314,7 @@ BOOL InitStreamClient(HWND hWnd)
 
         closesocket(StreamSocket);
         WSACleanup();
-        return FALSE;
+        return false;
     }
 
 
@@ -333,7 +333,7 @@ BOOL InitStreamClient(HWND hWnd)
     if (iReturn == SOCKET_ERROR)
     {
         closesocket(StreamSocket);
-        return FALSE;
+        return false;
     }
 
 
@@ -362,12 +362,12 @@ BOOL InitStreamClient(HWND hWnd)
 
             closesocket(StreamSocket);
             WSACleanup();
-            return FALSE;
+            return false;
         }
     }
 
 
-    return TRUE;
+    return true;
 
 }
 ////////////////////////////////////////////
@@ -384,9 +384,9 @@ int AsyncGetHost(HWND hWnd, LPSTR lpszServer)
     struct in_addr iaHost;
 
     // make sure host entry pointer is null 
-    lpHostEnt = NULL;
-    hostFound = FALSE;
-    netPanzerFound = FALSE;
+    lpHostEnt = 0;
+    hostFound = false;
+    netPanzerFound = false;
 
 
     //TODO:make this function deal with MULTIHOMED host
@@ -559,7 +559,7 @@ void HandleGetHostMsg(HWND hWnd,
     //host found let's assign the pointer to the host entry
     //to the info filled in by the async host routine--
     lpHostEnt = (LPHOSTENT)bufHostEnt;
-    hostFound = TRUE;
+    hostFound = true;
 
     //TODO:get error stuff in here.
     QueryServer();
@@ -571,7 +571,7 @@ void HandleGetHostMsg(HWND hWnd,
 //END HandleGetHostMsg//////////////////////
 
 
-BOOL QueryServer()
+bool QueryServer()
 {
 
     //SOCKADDR_IN saServer;
@@ -579,7 +579,7 @@ BOOL QueryServer()
 
     int iBytesSent, iError;
 
-    if (hostFound == FALSE) return FALSE;
+    if (hostFound == false) return false;
 
     //check to see if the netpanzer server is active on the host--
     saServer.sin_family = AF_INET;
@@ -604,18 +604,18 @@ BOOL QueryServer()
 
         if (iError == WSAEWOULDBLOCK)
         {
-            return TRUE;
+            return true;
         }
         else
         {
             LOG( ("QueryServer : sendTo - Error %d", iError) );
-            return FALSE;
+            return false;
         }
 
     }
 
-    if (iBytesSent > 0) return TRUE;
-    else return FALSE;
+    if (iBytesSent > 0) return true;
+    else return false;
 
 }
 ////////////////////////////////////////////
@@ -863,7 +863,7 @@ void OnReadStreamClient(SOCKET socket, int iErrorCode)
 
                 RecvOffset += (Size - 1);
                 iBytesReceived -= (Size - 1);
-                bHeaderIncomplete = FALSE;
+                bHeaderIncomplete = false;
                 TempOffset = 0;
 
             }
@@ -882,7 +882,7 @@ void OnReadStreamClient(SOCKET socket, int iErrorCode)
                 //it may be received as.
                 TempOffset += (iBytesReceived - 1);
 
-                bMessageIncomplete = TRUE;    
+                bMessageIncomplete = true;    
 
                 //MissingBytes = Size - (iBytesReceived - 1);
                 //The ammount of bytes we are missing is 
@@ -921,7 +921,7 @@ void OnReadStreamClient(SOCKET socket, int iErrorCode)
                 RecvOffset += MissingBytes;
                 iBytesReceived -= MissingBytes;
                 MissingBytes = 0;
-                bMessageIncomplete = FALSE;
+                bMessageIncomplete = false;
 
             }
             else
@@ -949,7 +949,7 @@ void OnReadStreamClient(SOCKET socket, int iErrorCode)
                 memcpy(TempBuffer, RecvBuffer + RecvOffset, 1);
                 TempOffset++;
                 iBytesReceived = 0;
-                bHeaderIncomplete = TRUE;
+                bHeaderIncomplete = true;
             }
             else
                 if (iBytesReceived >= 2)
@@ -995,7 +995,7 @@ void OnReadStreamClient(SOCKET socket, int iErrorCode)
                     //copy bytes to tempbuffer
                     memcpy(TempBuffer, RecvBuffer + RecvOffset, iBytesReceived);
                     TempOffset += iBytesReceived;
-                    bMessageIncomplete = TRUE;
+                    bMessageIncomplete = true;
                     MissingBytes = Size - iBytesReceived;
                     iBytesReceived = 0;
                 }
@@ -1067,7 +1067,7 @@ void OnReadDgramClient(SOCKET socket, int iErrorCode)
             strcpy((char*)GAMEINFOCLIENT.PlayerName, basicGameInfo->PlayerName);
 
             serverTimeout.reset();
-            netPanzerFound = TRUE;
+            netPanzerFound = true;
             
             //TODO: add in extended game info
           
@@ -1126,7 +1126,7 @@ void OnCloseClient(SOCKET socket, int iErrorCode)
     // Have we already deleted this entry?
     //
     lpReq = GetRequest(socket);
-    if (lpReq == NULL)
+    if (lpReq == 0)
         return;		
 
     // 
@@ -1172,7 +1172,7 @@ void SendUDPAddress(DWORD wsID)
     count = 0;
     while (count < 3)
     {
-        if (udpTimeout.count() == TRUE)
+        if (udpTimeout.count() == true)
         {
             iBytesSent = sendto(DatagramSocket,
                                 (char *)&clientudpAddr,
@@ -1193,7 +1193,7 @@ void SendUDPAddress(DWORD wsID)
 //this function is supposed to shutdown winsock. it closes
 //the remote sockets, closes the send socket, then closes the
 //listen socket.
-BOOL ShutdownWinSockClient()
+bool ShutdownWinSockClient()
 {
 
     int iReturn;
@@ -1234,7 +1234,7 @@ BOOL ShutdownWinSockClient()
     }
 
 
-    return TRUE;
+    return true;
 
 }
 ////////////////////////////////////////////
@@ -1377,9 +1377,9 @@ int WSClientToServer(char guarantee, char *bData, DWORD dwDataSize)
 
                     while ( gSendReady == 0)
                     {
-                        if ( PeekMessage( &message, NULL, 0, 0, PM_NOREMOVE ) )
+                        if ( PeekMessage( &message, 0, 0, 0, PM_NOREMOVE ) )
                         {
-                            if (GetMessage( &message, NULL, 0, 0))
+                            if (GetMessage( &message, 0, 0, 0))
                             {
                                 //TranslateMessage(&message);
                                 DispatchMessage(&message); 
@@ -1484,30 +1484,30 @@ int WSClientToServer(char guarantee, char *bData, DWORD dwDataSize)
 
 
 
-BOOL GetHostInfo( char *host_name_str, char *map_name, char *game_type, int *current_players, int *max_players )
+bool GetHostInfo( char *host_name_str, char *map_name, char *game_type, int *current_players, int *max_players )
 {
 
-    if (serverTimeout.count() == TRUE) netPanzerFound = FALSE;
+    if (serverTimeout.count() == true) netPanzerFound = false;
 
-    if ( (lpHostEnt != NULL) && (netPanzerFound == TRUE) )
+    if ( (lpHostEnt != 0) && (netPanzerFound == true) )
     {
-        if( host_name_str != NULL )
+        if( host_name_str != 0 )
          { strcpy( host_name_str, (char*) GAMEINFOCLIENT.PlayerName ); }
         
-        if( map_name != NULL )
+        if( map_name != 0 )
          { strcpy( map_name, (char*) GAMEINFOCLIENT.MapName ); }
         
-        if( game_type != NULL )
+        if( game_type != 0 )
          { strcpy( game_type, (char*) GAMEINFOCLIENT.GameType ); }
         
-        if( current_players != NULL )
+        if( current_players != 0 )
          { *current_players = GAMEINFOCLIENT.CurrPlayers; }
 
-        if( max_players != NULL )
+        if( max_players != 0 )
          { *max_players = GAMEINFOCLIENT.MaxPlayers; }
 
-        return( _TRUE );
+        return( true );
     }
 
-    return( _FALSE );
+    return( false );
 }

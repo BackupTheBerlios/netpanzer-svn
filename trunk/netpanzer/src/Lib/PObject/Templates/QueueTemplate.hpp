@@ -39,15 +39,15 @@ class QueueTemplate : public ArrayTemplate< TYPE >
      rear = 0;
     }
    
-   inline boolean enqueue( TYPE & object )
+   inline bool enqueue( TYPE & object )
     {
      add( object, (rear + 1) % size );
      rear = (rear + 1) % size;
      
      if ( front == rear )
-      return( _FALSE );
+      return( false );
 
-     return( _TRUE );
+     return( true );
     }
 
    inline TYPE dequeue( void )
@@ -80,28 +80,28 @@ class QueueTemplate : public ArrayTemplate< TYPE >
     }
    
    
-   inline boolean isEmpty( void )
+   inline bool isEmpty( void )
     {
      if( front == rear )
-      return ( _TRUE );
+      return ( true );
          
-      return( _FALSE );
+      return( false );
     }
 
-   inline boolean isFull ( void )
+   inline bool isFull ( void )
     {
      if ( front == (rear + 1) % size )
-      return( _TRUE );
+      return( true );
 
-     return( _FALSE );
+     return( false );
     }
 
-   inline boolean isReady( void )
+   inline bool isReady( void )
     {
      if( front == rear )
-      return ( _FALSE );
+      return ( false );
          
-      return( _TRUE );
+      return( true );
     }
 
    inline unsigned long itemCount( void )
@@ -116,7 +116,7 @@ class QueueTemplate : public ArrayTemplate< TYPE >
 
 template< class TYPE >
 QueueTemplate< TYPE >::QueueTemplate( unsigned long size )
-  : ArrayTemplate( size )
+  : ArrayTemplate<TYPE>( size )
  {
   front = 0;
   rear = 0;

@@ -15,10 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "netPanzerGlobals.h"
 
-#include <windows.h>
+//#include <windows.h>
 
 unsigned short MOUSE_X;
 unsigned short MOUSE_Y;
@@ -27,8 +26,8 @@ unsigned short MAKE_RIGHT_MOUSE_BUTTON;
 unsigned short MAKE_MID_MOUSE_BUTTON;
 unsigned char  MOUSE_BUTTON_MASK;
 
-char PANZER_THREAD_ACTIVE = TRUE;
-char PANZER_THREAD_FINISHED = FALSE;
+char PANZER_THREAD_ACTIVE = true;
+char PANZER_THREAD_FINISHED = false;
 unsigned long PANZER_THREAD_HANDLE;
 char FUCK_THREAD;
 

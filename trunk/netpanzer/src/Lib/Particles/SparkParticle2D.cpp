@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "SparkParticle2D.hpp"
 #include "TimerInterface.hpp"
 
@@ -28,9 +28,11 @@ SparkParticle2D::SparkParticle2D(fXYZ nPos) : Particle2D(nPos)
 {
 	curFrame = 0;
 
-	packedSurface.setData(sparkSprite);
+	// XXX only a setData for packedSurface defined?!?
+	// packedSurface.setData(sparkSprite);
 
-	packedSurface.yPos = rand() % 20 + 10;
+	// XXX
+	//packedSurface.yPos = rand() % 20 + 10;
 
 } // end SparkParticle2D
 
@@ -72,7 +74,7 @@ void SparkParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 	}	else
 		{
 			packedSurface.setFrame(curFrame);
-			packedSurface.setAttrib( PointXYi(pos.x, pos.z), 3);
+			packedSurface.setAttrib( PointXYi((int) pos.x, (int) pos.z), 3);
 			sorter.addSprite(&packedSurface);
 			//spark.blt(dest, iXY(x, z));
 		} 

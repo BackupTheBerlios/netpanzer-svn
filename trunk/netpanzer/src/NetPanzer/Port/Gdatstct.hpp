@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _GDATSTCT_HPP
 #define _GDATSTCT_HPP
 
-#include "aliasdef.h"
 #include "Sprite.hpp"
 
 typedef 
@@ -36,7 +35,7 @@ typedef
 
    long data_size;  // size of sprite data in bytes 
                     // ususally x_size * y_size 
-   uchar *data;
+   unsigned char *data;
 
   }sprite_data;
 
@@ -55,7 +54,7 @@ typedef
                       // bit 1 = transparent 
                       // bit 2 = shadowed 
 
-   uchar anim_type;   // type of animations
+   unsigned char anim_type;   // type of animations
                       // bit 0 = standard multiframe animation;
                       // bit 1 = directional animations
                       // bit 2 = part of multi section animation
@@ -70,9 +69,9 @@ typedef
    
    long  data_size;   // size of anim data in bytes 
 
-   uchar *directions[76];  
+   unsigned char *directions[76];  
    
-   uchar *data;
+   unsigned char *data;
                    
   } animation_data;
 
@@ -81,11 +80,11 @@ typedef
  typedef
   struct
    {
-    uchar t_attrib; // tile attributes
+    unsigned char t_attrib; // tile attributes
                     // bits 0-3 height value of terrain
                     // bits 4-7 reserved
                     
-    uchar move_val; //movement value for tile
+    unsigned char move_val; //movement value for tile
    } tile_info_type;
 
 //****************************************************************************************
@@ -99,7 +98,7 @@ typedef
     short tile_y_size;        // y_size of tile in pixels
     short tile_size;          // tile size in bytes
     short tile_count;         // tile_count;
-    uchar palette[768];       // pallette for tileset;
+    unsigned char palette[768];       // pallette for tileset;
     
    } tile_dbase_header_type;
 
@@ -169,7 +168,7 @@ class tile_dbase
   public:
   short dbase_loaded; 
   tile_dbase_header_type header;
-  uchar *tile_data;
+  unsigned char *tile_data;
   
   tile_dbase( void ); 
   short load_dbase( char *dbase_path );

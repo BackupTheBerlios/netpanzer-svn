@@ -72,12 +72,12 @@ class PointXYi : public PObject
         inline PointXYi  operator * (long a    ) const { return PointXYi(x *   a, y *   a); }
         inline PointXYi  operator / (long a    ) const { return PointXYi(x /   a, y /   a); }
 
-    inline boolean operator ==(const PointXYi &a) const
+    inline bool operator ==(const PointXYi &a) const
         {
                 return x == a.x && y == a.y;
         }
 
-        inline boolean operator !=(const PointXYi &a) const
+        inline bool operator !=(const PointXYi &a) const
         {
                 return x != a.x || y != a.y;
         }
@@ -119,7 +119,7 @@ class Recti : public PObject
     }
 
 
-  inline boolean isEmpty() const
+  inline bool isEmpty() const
   {
         return min.x > max.x || min.y > max.x;
   }
@@ -153,26 +153,26 @@ class Recti : public PObject
                   );
      }
 
-        inline boolean contains(const PointXYi &a) const
+        inline bool contains(const PointXYi &a) const
     { 
         return
                         a.x >= min.x && a.x < max.x &&
                 a.y >= min.y && a.y < max.y;
      }
         
-        inline boolean intersects(const Recti &a) const
+        inline bool intersects(const Recti &a) const
      {
       //Write me!
           //assert(0);
           return a.contains(a.min);
      }
 
-        inline boolean operator ==(const Recti &a)
+        inline bool operator ==(const Recti &a)
      {
       return min == a.min && max == a.max;
      }
 
-        inline boolean operator !=(const Recti &a)
+        inline bool operator !=(const Recti &a)
      {
           return min != a.min || max != a.max;
      }

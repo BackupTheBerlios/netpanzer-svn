@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __SnowParticleSystem2D_hpp__
 
 
-#include "stdafx.hpp"
+
 #include "ParticleSystem2D.hpp"
 #include "SnowParticle2D.hpp"
 

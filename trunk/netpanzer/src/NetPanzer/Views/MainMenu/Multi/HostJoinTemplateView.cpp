@@ -15,9 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
-#include "stdafx.hpp"
+#include <ctype.h>
 #include "HostJoinTemplateView.hpp"
 #include "Desktop.hpp"
 #include "HostJoinTemplateView.hpp"
@@ -119,8 +117,12 @@ void bReady()
     if (strlen(PlayerNameView::playerName.getString()) <= 0) { return; }
 
     strcpy( temp_str, PlayerNameView::playerName.getString() );
-    strlwr( temp_str );
-    if (strstr( temp_str, "server" ) != NULL ) { return; }
+
+    // make string lowercase
+    for(char* p = temp_str; *p != 0; p++) {
+	*p = tolower(*p);
+    }
+    if (strstr( temp_str, "server" ) != 0 ) { return; }
 
     // Check a few things which should be ok.
     if (strlen(HostJoinTemplateView::gameTypeBuf) == 0) { return; }
@@ -329,7 +331,7 @@ HostJoinTemplateView::HostJoinTemplateView() : MenuTemplateView()
 	//	bltString(playerFlag, 2, 3, strBuf, Color::white);
 	//
 	//	// Create a button off the created surface.
-	//	addButtonSurface(iXY(x, 38), playerFlag, strBuf, NULL);
+	//	addButtonSurface(iXY(x, 38), playerFlag, strBuf, 0);
 	//	x += xOffset;
 	//}
 
@@ -357,19 +359,19 @@ void HostJoinTemplateView::addVehicleButtons(const iXY &pos)
 
 	y = pos.y;
 
-	addButtonTILBordered(iXY(x, y), "pics\\vehicleSelectionMenu\\humvee.til", "", NULL);
+	addButtonTILBordered(iXY(x, y), "pics\\vehicleSelectionMenu\\humvee.til", "", 0);
 	x += buttonSize.x + 1;
 
-	addButtonTILBordered(iXY(x, y), "pics\\vehicleSelectionMenu\\light.til", "", NULL);
+	addButtonTILBordered(iXY(x, y), "pics\\vehicleSelectionMenu\\light.til", "", 0);
 	x += buttonSize.x + 1;
 
-	addButtonTILBordered(iXY(x, y), "pics\\vehicleSelectionMenu\\medium.til", "", NULL);
+	addButtonTILBordered(iXY(x, y), "pics\\vehicleSelectionMenu\\medium.til", "", 0);
 	x += buttonSize.x + 1;
 
-	addButtonTILBordered(iXY(x, y), "pics\\vehicleSelectionMenu\\heavy.til", "", NULL);
+	addButtonTILBordered(iXY(x, y), "pics\\vehicleSelectionMenu\\heavy.til", "", 0);
 	x += buttonSize.x + 1;
 	
-	addButtonTILBordered(iXY(x, y), "pics\\vehicleSelectionMenu\\missle.til", "", NULL);
+	addButtonTILBordered(iXY(x, y), "pics\\vehicleSelectionMenu\\missle.til", "", 0);
 	x += buttonSize.x + 1;
 
 	// Draw the arrows to change the numbers.

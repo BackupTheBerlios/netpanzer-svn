@@ -90,12 +90,12 @@ class Vehicle : public Unit
 
   Timer unit_state_timer;
   Timer fsm_timer;
-  boolean fsm_active_list[ 7 ];
+  bool fsm_active_list[ 7 ];
   
   PathList path;
-  boolean path_generated;
-  boolean critical_ai_section;
-  boolean ai_fsm_transition_complete;
+  bool path_generated;
+  bool critical_ai_section;
+  bool ai_fsm_transition_complete;
 
   unsigned short reload_counter;
   unsigned short death_counter;
@@ -114,41 +114,41 @@ class Vehicle : public Unit
   unsigned short fsmBodyRotate_rotation;
   long           fsmBodyRotate_goal_angle;
   void    setFsmBodyRotate( long goal_angle, unsigned short rotation );
-  boolean fsmBodyRotate( void );
+  bool fsmBodyRotate( void );
 
   unsigned short fsmTurretRotate_rotation;
   long           fsmTurretRotate_goal_angle;
   void    setFsmTurretRotate( long goal_angle, unsigned short rotation );
-  boolean fsmTurretRotate( void );
+  bool fsmTurretRotate( void );
 
   float interpolation_speed;
   TIMESTAMP start_move_stamp;
   TIMESTAMP end_move_stamp;
-  boolean     fsmMove_first_stamp;
+  bool     fsmMove_first_stamp;
   signed char fsmMove_offset_x;
   signed char fsmMove_offset_y;
   unsigned char fsmMove_moves_counter;
   unsigned char fsmMove_moves_per_square;
   void setFsmMove( unsigned short orientation );
-  boolean fsmMove( void );
+  bool fsmMove( void );
   
   MoveOpcode move_opcode;
   Timer opcode_move_timer;
-  boolean move_opcode_sent;
+  bool move_opcode_sent;
   unsigned char fsmMoveMapSquare_movement_type;
   void setFsmMoveMapSquare( unsigned long square );
-  boolean fsmMoveMapSquare( void );   
+  bool fsmMoveMapSquare( void );   
   
   PointXYi fsmTurretTrackPoint_target;
   Angle fsmTurretTrackPoint_target_angle;
-  boolean fsmTurretTrackPoint_on_target;
+  bool fsmTurretTrackPoint_on_target;
   void setFsmTurretTrackPoint( PointXYi &target );
   void clearFsmTurretTrackPoint( void );
   void syncFsmTurretTrackPoint( void );
   void fsmTurretTrackPoint( void );
   
   UnitID fsmTurretTrackTarget_target_id;
-  boolean fsmTurretTrackTarget_on_target;
+  bool fsmTurretTrackTarget_on_target;
   void setFsmTurretTrackTarget( UnitID &target_id );
   void clearFsmTurretTrackTarget( void );
   void syncFsmTurretTrackTarget( void );
@@ -178,8 +178,8 @@ class Vehicle : public Unit
   PointXYi aiFsmMoveToLoc_next_loc;
   PointXYi aiFsmMoveToLoc_prev_loc;
   Timer	   aiFsmMoveToLoc_wait_timer;
-  boolean  aiFsmMoveToLoc_path_not_finished;
-  boolean ruleMoveToLoc_GoalReached( void );
+  bool  aiFsmMoveToLoc_path_not_finished;
+  bool ruleMoveToLoc_GoalReached( void );
   void aiFsmMoveToLoc_OnExitCleanUp( void );
   void aiFsmMoveToLoc( void );
   
@@ -190,8 +190,8 @@ class Vehicle : public Unit
   PointXYi aiFsmAttackUnit_next_loc;
   PointXYi aiFsmAttackUnit_prev_loc;
   Timer	   aiFsmAttackUnit_wait_timer;
-  boolean  aiFsmAttackUnit_path_not_finished;
-  boolean  aiFsmAttackUnit_target_destroyed;
+  bool  aiFsmAttackUnit_path_not_finished;
+  bool  aiFsmAttackUnit_target_destroyed;
   void aiFsmAttackUnit_OnExitCleanUp( void );
   void aiFsmAttackUnit( void );
  
@@ -227,7 +227,7 @@ class Vehicle : public Unit
 
   // ** Message Handlers
   UMesgAICommand pending_AI_comm_mesg;
-  boolean	     pending_AI_comm;
+  bool	     pending_AI_comm;
   void checkPendingAICommStatus( void );
   
   void setCommandMoveToLoc( UMesgAICommand *message  );

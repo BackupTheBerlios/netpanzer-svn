@@ -38,7 +38,7 @@ class PlacementMatrix : public PObject
    PointXYi current_loc;
    PointXYi ini_loc;
     
-   boolean verifyLocation( PointXYi &loc );
+   bool verifyLocation( PointXYi &loc );
   
   protected:
   //long level;
@@ -48,7 +48,7 @@ class PlacementMatrix : public PObject
   public:
    void reset( PointXYi ini_map_loc );
  
-   boolean getNextEmptyLoc( PointXYi *loc );
+   bool getNextEmptyLoc( PointXYi *loc );
    
    
  };

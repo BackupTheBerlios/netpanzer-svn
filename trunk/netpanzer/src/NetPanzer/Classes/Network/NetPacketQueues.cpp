@@ -15,9 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "NetPacketQueues.hpp"
-#include "CodeWiz.hpp"
+#include "codewiz.hpp"
 #include "ConsoleInterface.hpp"
 
 
@@ -44,8 +43,8 @@ void ReorderQueue::reset( void )
   packet_window_time = (float) _DEFAULT_WINDOW_TIME;
   packet_window_estimate = (float) _DEFAULT_WINDOW_TIME;
   packet_window_time_weight = (float) _WINDOW_ESTIMATE_WEIGHT;
-  packet_window_wait_flag = _FALSE;
-  window_estimate_init = _FALSE;
+  packet_window_wait_flag = false;
+  window_estimate_init = false;
   lost_packets = 0;
   out_of_order_packets = 0;
  }
@@ -60,10 +59,10 @@ void ReorderQueue::enqueue( NetPacket *net_packet )
   packet_window_time = packet_recv_stamp - next_packet_recv_stamp;
   next_packet_recv_stamp = packet_recv_stamp;
    
-  if( window_estimate_init == _FALSE  )
+  if( window_estimate_init == false  )
    {
     packet_window_time = (float) _DEFAULT_WINDOW_TIME;
-    window_estimate_init = _TRUE;
+    window_estimate_init = true;
    }
 
   packet_window_estimate = (packet_window_time_weight)*( packet_window_time ) +
@@ -80,7 +79,7 @@ void ReorderQueue::enqueue( NetPacket *net_packet )
 
   insert_index = packet_sequence_num % size;
 
-  if( (array[ insert_index ].in_use == _TRUE) && (array[ insert_index ].out_of_order == _FALSE) )
+  if( (array[ insert_index ].in_use == true) && (array[ insert_index ].out_of_order == false) )
    { 
     if( array[ insert_index ].sequence != packet_sequence_num )
      {
@@ -91,8 +90,8 @@ void ReorderQueue::enqueue( NetPacket *net_packet )
         unsigned long dequeue_index;
         dequeue_index = ((unsigned long ) dequeue_sequence_num) % size;
 
-        array[ dequeue_index ].in_use = _FALSE;
-        array[ dequeue_index ].out_of_order = _FALSE;
+        array[ dequeue_index ].in_use = false;
+        array[ dequeue_index ].out_of_order = false;
       
         dequeue_sequence_num++; 
        } // ** while
@@ -102,8 +101,8 @@ void ReorderQueue::enqueue( NetPacket *net_packet )
   net_packet_size = (sizeof( NetPacket ) - _MAX_NET_PACKET_SIZE) + net_packet->packet_size; 
   memmove( (void *) &(array[ insert_index ].packet), (void *) net_packet, net_packet_size ); 
 
-  array[ insert_index ].in_use = _TRUE;
-  array[ insert_index ].out_of_order = _FALSE;
+  array[ insert_index ].in_use = true;
+  array[ insert_index ].out_of_order = false;
   array[ insert_index ].sequence = packet_sequence_num;
 
   if( packet_sequence_num > current_sequence_num)
@@ -118,8 +117,8 @@ void ReorderQueue::enqueue( NetPacket *net_packet )
      {
       sequence_index = sequence_counter % size;
 
-      array[ sequence_index ].in_use = _TRUE;
-      array[ sequence_index ].out_of_order = _TRUE;
+      array[ sequence_index ].in_use = true;
+      array[ sequence_index ].out_of_order = true;
       sequence_counter++;
      }
 
@@ -150,13 +149,13 @@ void ReorderQueue::dequeue( NetPacket *net_packet )
   net_packet_size = (sizeof( NetPacket ) - _MAX_NET_PACKET_SIZE) + array[ dequeue_index ].packet.packet_size; 
   memmove( (void *) net_packet, (void *) &(array[ dequeue_index ].packet), net_packet_size );	       
 
-  array[ dequeue_index ].in_use = _FALSE;
-  array[ dequeue_index ].out_of_order = _FALSE;
+  array[ dequeue_index ].in_use = false;
+  array[ dequeue_index ].out_of_order = false;
 
   dequeue_sequence_num++;
  }
 
-boolean ReorderQueue::isReady( void )
+bool ReorderQueue::isReady( void )
  {
   unsigned long dequeue_index;
 
@@ -164,63 +163,63 @@ boolean ReorderQueue::isReady( void )
    {
     dequeue_index = ((unsigned long ) dequeue_sequence_num) % size;
 
-    if( array[ dequeue_index ].out_of_order == _FALSE  )
+    if( array[ dequeue_index ].out_of_order == false  )
      {
-      packet_window_wait_flag = _FALSE;
-      return( _TRUE );
+      packet_window_wait_flag = false;
+      return( true );
      }
 
     if( packet_window_timer.count()  )
      {
-      array[ dequeue_index ].in_use = _FALSE;
-      array[ dequeue_index ].out_of_order = _FALSE;
+      array[ dequeue_index ].in_use = false;
+      array[ dequeue_index ].out_of_order = false;
       
       dequeue_sequence_num++;
-      packet_window_wait_flag = _FALSE;
+      packet_window_wait_flag = false;
       lost_packets++;
      }
-    return( _FALSE );
+    return( false );
    }
   else
    {
     dequeue_index = ((unsigned long ) dequeue_sequence_num) % size;
 
-    if( array[ dequeue_index ].in_use == _FALSE)
-     { return(_FALSE);}
+    if( array[ dequeue_index ].in_use == false)
+     { return(false);}
 
-    if( array[ dequeue_index ].out_of_order == _TRUE  )
+    if( array[ dequeue_index ].out_of_order == true  )
      {
       #ifdef _USE_PACKET_WINDOW
-      packet_window_wait_flag = _TRUE;
+      packet_window_wait_flag = true;
       packet_window_timer.changePeriod( packet_window_estimate );
-      return( _FALSE );
+      return( false );
       #else
-      array[ dequeue_index ].in_use = _FALSE;
-      array[ dequeue_index ].out_of_order = _FALSE;
+      array[ dequeue_index ].in_use = false;
+      array[ dequeue_index ].out_of_order = false;
       
       dequeue_sequence_num++;
-      packet_window_wait_flag = _FALSE;
+      packet_window_wait_flag = false;
       lost_packets++;
-      return( _FALSE );
+      return( false );
       #endif      
      }
    } 
   
-  return( _TRUE );
+  return( true );
  }
 
 void ReorderQueue::getStats( float *packet_window_time, float *packet_window_estimate,
                              int *lost_packets, int *out_of_order_packets )
  {
-  if( packet_window_time != NULL )
+  if( packet_window_time != 0 )
    { *packet_window_time = ReorderQueue::packet_window_time; }
  
-  if( packet_window_estimate != NULL )
+  if( packet_window_estimate != 0 )
    { *packet_window_estimate = ReorderQueue::packet_window_estimate; }
 
-  if( lost_packets != NULL )
+  if( lost_packets != 0 )
    { *lost_packets = ReorderQueue::lost_packets; }
 
-  if( out_of_order_packets != NULL )
+  if( out_of_order_packets != 0 )
    { *out_of_order_packets = ReorderQueue::out_of_order_packets; }
  }

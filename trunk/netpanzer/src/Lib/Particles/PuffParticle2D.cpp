@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "stdafx.hpp"
+
 #include "PuffParticle2D.hpp"
 #include "PackedSurface.hpp"
 #include "TimerInterface.hpp"
@@ -157,7 +157,7 @@ void PuffParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 
 	packedSurfaceShadow.nextFrame();
 
-	packedSurface.setAttrib(PointXYi(pos.x, pos.z), layer);
+	packedSurface.setAttrib(PointXYi((int) pos.x, (int) pos.z), layer);
 	sorter.addSprite(&packedSurface);
 
 	if (GameConfig::getDisplayShadowsFlag())
@@ -167,13 +167,15 @@ void PuffParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 			shadowPos.x = pos.x - ((float(index) / float(staticPackedSmokeLightPuff.getCount())) * packedSurfaceShadow.getCurFrame() * 10);
 		}
 
-		packedSurfaceShadow.setAttrib(PointXYi(shadowPos.x, shadowPos.z), shadowLayer);
+		packedSurfaceShadow.setAttrib(PointXYi((int) shadowPos.x, (int) shadowPos.z), shadowLayer);
 		sorter.addSprite(&packedSurfaceShadow);
 	}
 
 } // end PuffParticle2D::draw
 
 //---------------------------------------------------------------------------
+// not used
+#if 0
 static void pakFiles()
 {
 	const int maxSize   = 70;
@@ -236,6 +238,7 @@ static void pakFiles()
 		tempPackedSurface.save(strBuf);
 	}
 }
+#endif
 
 // init
 //---------------------------------------------------------------------------

@@ -35,13 +35,13 @@ class ViewCamera : private MapInterface
    void scrollMinusY( long scroll_increment );
    void scrollPlusY( long scroll_increment );
    
-   inline void setCamera( PointXYi &new_loc )
+   inline void setCamera( const PointXYi &new_loc )
     {     
 	 loc.x = new_loc.x - (new_loc.x % 4);
 	 loc.y = new_loc.y - (new_loc.y % 4);	
 	}
 
-   inline void setCameraSize( PointXYi &size )
+   inline void setCameraSize( const PointXYi &size )
     {
 	 view_size = size;
 	}
@@ -59,9 +59,9 @@ class ViewCamera : private MapInterface
 	 view_win->max.y = view_start_y + view_size.y;
 	}
  
-   inline long getCameraDistance( PointXYi &world_loc )
+   inline long getCameraDistance( const PointXYi &world_loc )
     {
-	 return( (loc - world_loc).mag2() );
+	 return( (long) (loc - world_loc).mag2() );
 	}
  };
 

@@ -15,12 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-#include "Stdafx.hpp"
-
 #include "SDLDraw.hpp"
 
-BOOL SDLDraw::initialize()
+bool SDLDraw::initialize()
 {
 	return true;
 }
@@ -29,7 +26,7 @@ void SDLDraw::shutdown()
 {
 }
 
-BOOL SDLDraw::setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags)
+bool SDLDraw::setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags)
 {
   FrontBuffer = SDL_SetVideoMode(width, height, bpp, SDL_FULLSCREEN /*| SDL_DOUBLEBUF | SDL_HWSURFACE*/);
   if(FrontBuffer==NULL)
@@ -37,7 +34,7 @@ BOOL SDLDraw::setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags
   return TRUE;
 }
 
-BOOL SDLDraw::isDisplayModeAvailable(int width, int height, int bpp)
+bool SDLDraw::isDisplayModeAvailable(int width, int height, int bpp)
 {
 	if(SDL_VideoModeOK(width, height, bpp, 0 /*SDL_FULLSCREEN | SDL_DOUBLEBUF | SDL_HWSURFACE*/))
 		return TRUE;
@@ -45,7 +42,7 @@ BOOL SDLDraw::isDisplayModeAvailable(int width, int height, int bpp)
 	return FALSE;
 }
 
-BOOL SDLDraw::lockDoubleBuffer(BYTE **DoubleBuffer)
+bool SDLDraw::lockDoubleBuffer(BYTE **DoubleBuffer)
 {
 	if(SDL_LockSurface(FrontBuffer)<0)
 		return FALSE;
@@ -55,18 +52,18 @@ BOOL SDLDraw::lockDoubleBuffer(BYTE **DoubleBuffer)
 	return TRUE;
 }
 
-BOOL SDLDraw::unlockDoubleBuffer()
+bool SDLDraw::unlockDoubleBuffer()
 {
 	SDL_LockSurface(FrontBuffer);
 	return TRUE;
 }
 
-BOOL SDLDraw::createFrameBuffer(DWORD width, DWORD height, DWORD bpp)
+bool SDLDraw::createFrameBuffer(DWORD width, DWORD height, DWORD bpp)
 {
 	return TRUE;
 }
 
-void SDLDraw::setGDIStatus(BOOL enable)
+void SDLDraw::setGDIStatus(bool enable)
 {
 }
 
@@ -74,7 +71,7 @@ void SDLDraw::restoreAll()
 {
 }
 
-BOOL SDLDraw::copyDoubleBufferandFlip()
+bool SDLDraw::copyDoubleBufferandFlip()
 {
 	if(SDL_Flip(FrontBuffer)==0)
 		return TRUE;

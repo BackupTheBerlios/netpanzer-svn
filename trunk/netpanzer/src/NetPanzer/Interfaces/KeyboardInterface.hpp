@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _KEYBOARDINTERFACE_HPP
 #define _KEYBOARDINTERFACE_HPP
 
-#include "aliasdef.h"
 #include <string.h>
 
 #define _CHAR_BUFFER_SIZE 256
@@ -44,32 +43,32 @@ class KeyboardInterface
 
    static void sampleKeyboard( void );
 
-   static boolean getKeyPressed(unsigned char scanCode)
+   static bool getKeyPressed(unsigned char scanCode)
 	{
        if (
-			KeyboardInterface::getKeyState(scanCode) == _TRUE &&
-			KeyboardInterface::getPrevKeyState(scanCode) == _FALSE)
+			KeyboardInterface::getKeyState(scanCode) == true &&
+			KeyboardInterface::getPrevKeyState(scanCode) == false)
 		{
-			return _TRUE;
+			return true;
 		}
 
-		return _FALSE;
+		return false;
 	}
 
-   static inline boolean getKeyState( unsigned char scan_code )
+   static inline bool getKeyState( unsigned char scan_code )
     {
      if ( key_table[ scan_code ] & 0x80 )
-      return( _TRUE );
+      return( true );
    
-     return( _FALSE );
+     return( false );
     }
 
-   static inline boolean getPrevKeyState( unsigned char scan_code )
+   static inline bool getPrevKeyState( unsigned char scan_code )
     {
      if ( previous_key_state[ scan_code ] & 0x80 )
-      return( _TRUE );
+      return( true );
    
-     return( _FALSE );
+     return( false );
     }
 
    static inline void flushCharBuffer( void )
@@ -78,15 +77,15 @@ class KeyboardInterface
      char_buffer_rear = 0;
     }
 
-   static inline boolean getChar( char *c )
+   static inline bool getChar( char *c )
     {
      if ( char_buffer_front == char_buffer_rear )
-      return( _FALSE );
+      return( false );
 
      char_buffer_front = ( char_buffer_front + 1 ) & _CHAR_BUFFER_MOD;
      *c = char_buffer[ char_buffer_front ];     
     
-     return( _TRUE );
+     return( true );
     }
 
    static inline void putChar( char c )

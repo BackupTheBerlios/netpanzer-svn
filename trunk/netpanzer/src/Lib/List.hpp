@@ -29,13 +29,13 @@ class ListNode
     ListNode *next;
     ListNode *prev;
 
-	ListNode(T item, ListNode<T> *next = NULL)
+	ListNode(T item, ListNode<T> *next = 0)
 	{
 		ListNode::item = item;
 		ListNode::next = next;
-		ListNode::prev = NULL;
+		ListNode::prev = 0;
 
-		if (ListNode::next != NULL)
+		if (ListNode::next != 0)
 		{
 			ListNode::next->prev = this;
 		}
@@ -60,7 +60,7 @@ class List
 template <class T>
 List<T>::List()
 {
-	head     = NULL;
+	head     = 0;
 	numItems = 0;
 }
 
@@ -98,7 +98,7 @@ T List<T>::removeFirstItem()
 		numItems--;
 		return item;
 	}
-	return NULL;
+	return 0;
 }
 
 template <class T>
@@ -113,16 +113,16 @@ T List<T>::removeItem()
 		numItems--;
 		return item;
 	}
-	return NULL;
+	return 0;
 }
 {
-	if (string != NULL)
+	if (string != 0)
 	{
 		::free(string);
 	}
 
-	if (prev != NULL) prev->next = next;
-	if (next != NULL) next->prev = prev;
+	if (prev != 0) prev->next = next;
+	if (next != 0) next->prev = prev;
 
 	prev = next = this;
 }
@@ -131,7 +131,7 @@ template <class T>
 T List<T>::getItem(int index)
 {
 	if (index < 0 || index >= numItems)
-		return NULL;
+		return 0;
 
 	ListNode<T> *node = head;
 	int count = 0;

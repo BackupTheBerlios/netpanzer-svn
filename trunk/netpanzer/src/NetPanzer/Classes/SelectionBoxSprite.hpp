@@ -28,7 +28,7 @@ class SelectionBoxSprite : public Sprite
   protected:
    BoundBox selection_area;
    unsigned char box_color;
-   boolean box_state;
+   bool box_state;
       
   public:
   
@@ -38,12 +38,12 @@ class SelectionBoxSprite : public Sprite
      SelectionBoxSprite::box_color = box_color;
     }
    
-   inline void setBoxState( boolean on_off )
+   inline void setBoxState( bool on_off )
     {
      box_state = on_off;
     }
   
-   virtual boolean isVisible( Recti &world_win );
+   virtual bool isVisible( Recti &world_win );
     
    virtual void blit( Surface *surface, Recti &world_win );
  
@@ -56,15 +56,18 @@ class UnitSelectionBox : public SelectionBoxSprite
    float max_hit_points; 
    unsigned char hit_bar_color;
 
-   boolean allied_visiblity_state; 
-   boolean allie_state;
-   boolean flag_visibility_state;
+   bool allied_visiblity_state; 
+   bool allie_state;
+   bool flag_visibility_state;
        
   public:
    Surface unit_flag;
    Surface allie_flag;
 
    UnitSelectionBox( );
+
+   virtual ~UnitSelectionBox() 
+   { }
    
    inline void setHitBarAttributes( int max_points, unsigned char bar_color )
     {
@@ -84,17 +87,17 @@ class UnitSelectionBox : public SelectionBoxSprite
      unit_flag.setFrame( flag_enum );
     }
 
-   inline void setFlagIcon( boolean flag_state )
+   inline void setFlagIcon( bool flag_state )
     {
      flag_visibility_state = flag_state;
     }
 
-   inline void setAllieIcon( boolean allie_state )
+   inline void setAllieIcon( bool allie_state )
     {
      allied_visiblity_state = allie_state;
     }
    
-   inline void setAllieState( boolean is_allied )
+   inline void setAllieState( bool is_allied )
     {
      allie_state = is_allied;
     }

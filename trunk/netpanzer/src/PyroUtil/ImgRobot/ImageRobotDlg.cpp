@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "stdafx.h"
+
 #include "ImageRobot.h"
 #include "ImageRobotDlg.h"
 
@@ -79,13 +79,13 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CImageRobotDlg dialog
 
-CImageRobotDlg::CImageRobotDlg(CWnd* pParent /*=NULL*/)
+CImageRobotDlg::CImageRobotDlg(CWnd* pParent /*=0*/)
 	: CDialog(CImageRobotDlg::IDD, pParent)
 {
 	
-    m_FileDialog = new CFileDialog( TRUE , NULL, "", 
+    m_FileDialog = new CFileDialog( true , 0, "", 
                                     OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR | OFN_ALLOWMULTISELECT,
-                                    NULL, this );    
+                                    0, this );    
 
     m_FileDialog->m_ofn.lpstrFile = gFileDialogFileList;
 
@@ -130,7 +130,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CImageRobotDlg message handlers
 
-BOOL CImageRobotDlg::OnInitDialog()
+bool CImageRobotDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -140,8 +140,8 @@ BOOL CImageRobotDlg::OnInitDialog()
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
 
-	CMenu* pSysMenu = GetSystemMenu(FALSE);
-	if (pSysMenu != NULL)
+	CMenu* pSysMenu = GetSystemMenu(false);
+	if (pSysMenu != 0)
 	{
 		CString strAboutMenu;
 		strAboutMenu.LoadString(IDS_ABOUTBOX);
@@ -154,15 +154,15 @@ BOOL CImageRobotDlg::OnInitDialog()
 
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
-	SetIcon(m_hIcon, TRUE);			// Set big icon
-	SetIcon(m_hIcon, FALSE);		// Set small icon
+	SetIcon(m_hIcon, true);			// Set big icon
+	SetIcon(m_hIcon, false);		// Set small icon
 	
 	// TODO: Add extra initialization here
 	
 	// Load the game palette.
 	//Palette::init("netp.act");
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return true;  // return true  unless you set the focus to a control
 }
 
 void CImageRobotDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -214,7 +214,7 @@ HCURSOR CImageRobotDlg::OnQueryDragIcon()
 	return (HCURSOR) m_hIcon;
 }
 
-BOOL CImageRobotDlg::ValidateOutputDirectory( void )
+bool CImageRobotDlg::ValidateOutputDirectory( void )
  {
   CString output_path;
   char buffer[_MAX_PATH];
@@ -236,14 +236,14 @@ BOOL CImageRobotDlg::ValidateOutputDirectory( void )
     if ( mesg_result == IDYES )
      {
       _mkdir( output_path );
-      return( TRUE );  
+      return( true );  
      }   
 
-    return( FALSE );
+    return( false );
    }
   
   _chdir( buffer );
-  return( TRUE );
+  return( true );
  }
 
 void CImageRobotDlg::SetListBoxFileCounts( void )
@@ -276,18 +276,18 @@ void CImageRobotDlg::OnClickFiles()
    gSourceFileList.resetList();
    
    iterator = m_FileDialog->GetStartPosition( );	
-   if (iterator == NULL) return;
+   if (iterator == 0) return;
       
    do 
     {
      string = m_FileDialog->GetNextPathName( iterator );
      
 
-     _splitpath( string, NULL, NULL, fname, ext);
+     _splitpath( string, 0, 0, fname, ext);
      strcat( fname, ext );
      m_SourceListBox.AddString( fname );
    
-    } while( iterator != NULL );
+    } while( iterator != 0 );
 
    
    iterator = m_FileDialog->GetStartPosition( );	
@@ -354,7 +354,7 @@ void CImageRobotDlg::PicLabCropPics()
   int file_count;
   int file_index;
   
-  if ( ValidateOutputDirectory() == FALSE )
+  if ( ValidateOutputDirectory() == false )
    return;
 
   FILE *fp;
@@ -391,7 +391,7 @@ void CImageRobotDlg::PicLabCropPics()
  
   fclose( fp );
 
-  _spawnl( _P_NOWAIT, "piclab\\pl", "piclab\\pl", "piclab.prg", NULL );
+  _spawnl( _P_NOWAIT, "piclab\\pl", "piclab\\pl", "piclab.prg", 0 );
  
  }
 
@@ -422,7 +422,7 @@ void CImageRobotDlg::RenamePics( CString nameStub )
     m_SourceListBox.GetText( file_index, source_file );   
     source_path = source_path + source_file;     
     
-    _splitpath( source_file, NULL, NULL, fname, ext);
+    _splitpath( source_file, 0, 0, fname, ext);
 
     char buffer[256];
     sprintf( buffer , "%s%04d%s", nameStub, file_index, ext );
@@ -477,7 +477,7 @@ void CImageRobotDlg::OnClickPakfileButton()
   {
    CString output_path;
    
-   if ( ValidateOutputDirectory() == FALSE )
+   if ( ValidateOutputDirectory() == false )
     return;
   
    m_OutputDirEdit.GetWindowText( output_path );
@@ -523,7 +523,7 @@ void CImageRobotDlg::OnColorPakButton()
 
 			//void _splitpath( const char *path, char *drive, char *dir, char *fname, char *ext );
 			//char extension[256];
-			//_splitpath(outputPath, NULL, NULL, NULL, extension)
+			//_splitpath(outputPath, 0, 0, 0, extension)
 			//m_OutputListBox.AddString(outputFile);
 
 			PackedSurface tempPack;
@@ -570,7 +570,7 @@ void CImageRobotDlg::OnButtonShadowpacker()
 	{
 		CString output_path;
 
-		if (ValidateOutputDirectory() == FALSE)
+		if (ValidateOutputDirectory() == false)
 		{
 			return;
 		}
@@ -600,7 +600,7 @@ void CImageRobotDlg::OnButtonUnitpacker()
 	{
 		CString output_path;
 
-		if (ValidateOutputDirectory() == FALSE)
+		if (ValidateOutputDirectory() == false)
 		{
 			return;
 		}

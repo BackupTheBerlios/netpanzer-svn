@@ -17,14 +17,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "stdafx.hpp"
 #include "MenuTemplateView.hpp"
 #include "Desktop.hpp"
 #include "GameConfig.hpp"
 #include "GameManager.hpp"
-#include "dsound.hpp"
+#include "DSound.hpp"
 #include "cMouse.hpp"
-#include "viewGlobals.hpp"
+#include "ViewGlobals.hpp"
 #include "DirectDrawGlobals.hpp"
 #include "DDHardSurface.hpp"
 #include "FontSystem2D.hpp"
@@ -52,11 +51,14 @@ static void bMain()
 	Desktop::setVisibility("MainView", true);
 }
 
+// never used
+#if 0
 static void bSkirmish()
 {
 	Desktop::setVisibilityAllWindows(false);
 	Desktop::setVisibility("SkirmishView", true);
 }
+#endif
 
 static void bMulti()
 {
@@ -110,6 +112,8 @@ static void bHelp()
 	Desktop::setVisibility("HelpView", true);
 }
 
+// XXX never used
+#if 0
 static void bOrdering()
 {
 	if (Desktop::getVisible("GameView"))
@@ -126,6 +130,7 @@ static void bOrdering()
 
 	Desktop::setVisibility("OrderingView", true);
 }
+#endif
 
 static void bExit()
 {

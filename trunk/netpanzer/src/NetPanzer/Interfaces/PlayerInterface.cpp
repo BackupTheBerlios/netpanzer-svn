@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "PlayerInterface.hpp"
 
 #include "UnitInterface.hpp"
@@ -33,7 +32,7 @@ PlayerState PlayerInterface::local_player_state;
 
 PlayerState   *PlayerInterface::player_lists;
 unsigned short PlayerInterface::max_players = 0;
-boolean *      PlayerInterface::alliance_matrix;
+bool *      PlayerInterface::alliance_matrix;
 unsigned short PlayerInterface::local_player_index = 0xFFFF;
 
 NetMessageEncoder PlayerInterface::message_encoder;
@@ -52,7 +51,7 @@ void PlayerInterface::initialize( unsigned short maxPlayers, unsigned char max_s
   max_players = maxPlayers;
 
   player_lists = new PlayerState [ max_players ];
-  assert( player_lists != NULL );
+  assert( player_lists != 0 );
 
   for ( player_index = 0; player_index < max_players; player_index++ )
    {
@@ -69,8 +68,8 @@ void PlayerInterface::initialize( unsigned short maxPlayers, unsigned char max_s
   local_player_state.setID( PlayerID( 0xFFFF, 0xFFFFFFFF ) );
   local_player_state.setStatus( _player_state_allocated );
 
-  alliance_matrix = new boolean [max_players * max_players];
-  assert( alliance_matrix != NULL );
+  alliance_matrix = new bool [max_players * max_players];
+  assert( alliance_matrix != 0 );
   resetAllianceMatrix();
  }
 
@@ -95,7 +94,7 @@ void PlayerInterface::setKill( unsigned short by_player_index, unsigned short on
   player_lists[ on_player_index ].incLosses( unit_type );   
  }
 
-void PlayerInterface::setKill( PlayerID &by_player, PlayerID &on_player, unsigned short unit_type )
+void PlayerInterface::setKill( const PlayerID &by_player, const PlayerID &on_player, unsigned short unit_type )
  {
   assert( (by_player.getIndex() < max_players) && (on_player.getIndex() < max_players) );
   
@@ -103,7 +102,7 @@ void PlayerInterface::setKill( PlayerID &by_player, PlayerID &on_player, unsigne
   player_lists[ on_player.getIndex() ].incLosses( unit_type );   
  }
 
-void PlayerInterface::setKill( UnitID &by_player, UnitID &on_player, unsigned short unit_type )
+void PlayerInterface::setKill( const UnitID &by_player, const UnitID &on_player, unsigned short unit_type )
  {
   unsigned short by_player_index; 
   unsigned short on_player_index;
@@ -118,12 +117,12 @@ void PlayerInterface::setKill( UnitID &by_player, UnitID &on_player, unsigned sh
  }
 
 
-void PlayerInterface::setAlliance( PlayerID by_player, PlayerID with_player )
+void PlayerInterface::setAlliance( const PlayerID& by_player, const PlayerID& with_player )
  {
   assert( (by_player.getIndex() < max_players) && (with_player.getIndex() < max_players) );
   
-  *(alliance_matrix + (with_player.getIndex() * max_players) + by_player.getIndex() ) = _TRUE;
-  //*(alliance_matrix + (by_player.getIndex() * max_players) + with_player.getIndex() ) = _TRUE;
+  *(alliance_matrix + (with_player.getIndex() * max_players) + by_player.getIndex() ) = true;
+  //*(alliance_matrix + (by_player.getIndex() * max_players) + with_player.getIndex() ) = true;
  }
    
 
@@ -131,20 +130,20 @@ void PlayerInterface::setAlliance( unsigned short by_player, unsigned short with
  {
  assert( (by_player < max_players) && (with_player < max_players) );
   
-  *(alliance_matrix + (with_player * max_players) + by_player ) = _TRUE;
-  //*(alliance_matrix + (by_player * max_players) + with_player ) = _TRUE;
+  *(alliance_matrix + (with_player * max_players) + by_player ) = true;
+  //*(alliance_matrix + (by_player * max_players) + with_player ) = true;
  }
 
 void PlayerInterface::clearAlliance( unsigned short by_player, unsigned short with_player )
  {
   assert( (by_player < max_players) && (with_player < max_players) );
   
-  *(alliance_matrix + (with_player * max_players) + by_player ) = _FALSE; 
+  *(alliance_matrix + (with_player * max_players) + by_player ) = false; 
  } 
 
-boolean PlayerInterface::isAllied( PlayerID player, PlayerID with_player )
+bool PlayerInterface::isAllied( const PlayerID& player, const PlayerID& with_player )
  {
-  boolean val;
+  bool val;
   
   assert( (player.getIndex() < max_players) && (with_player.getIndex() < max_players) );
   
@@ -154,9 +153,9 @@ boolean PlayerInterface::isAllied( PlayerID player, PlayerID with_player )
 
  }
 
-boolean PlayerInterface::isAllied( unsigned short player, unsigned short with_player )
+bool PlayerInterface::isAllied( unsigned short player, unsigned short with_player )
  {
-  boolean val;
+  bool val;
   
   assert( (player < max_players) && (with_player < max_players) );
   
@@ -208,7 +207,7 @@ void PlayerInterface::resetAllianceMatrix( void )
 
   for ( i = 0; i < matrix_size; i++ )
    {
-    alliance_matrix[ i ] = _FALSE;
+    alliance_matrix[ i ] = false;
    }
   
  }
@@ -251,10 +250,10 @@ PlayerState * PlayerInterface::allocateNewPlayer( void )
    
    } // ** for
   
-  return( NULL );
+  return( 0 );
  }
 
-void PlayerInterface::spawnPlayer( unsigned short player_index, PointXYi &location )
+void PlayerInterface::spawnPlayer( unsigned short player_index, const PointXYi &location )
  {
   assert( player_index < max_players );
 
@@ -263,7 +262,7 @@ void PlayerInterface::spawnPlayer( unsigned short player_index, PointXYi &locati
               ); 
  }
 
-void PlayerInterface::spawnPlayer( PlayerID &player, PointXYi &location )
+void PlayerInterface::spawnPlayer( const PlayerID &player, const PointXYi &location )
  {
   unsigned short player_index;
   
@@ -282,7 +281,7 @@ void PlayerInterface::spawnPlayer( PlayerID &player, PointXYi &location )
  }
 
 
-boolean PlayerInterface::testRuleScoreLimit( long score_limit, PlayerState ** player_state )
+bool PlayerInterface::testRuleScoreLimit( long score_limit, PlayerState ** player_state )
  {
   unsigned long player_index;
 
@@ -291,45 +290,45 @@ boolean PlayerInterface::testRuleScoreLimit( long score_limit, PlayerState ** pl
     if ( player_lists[ player_index ].getTotal() >= score_limit )
      {
       *player_state = &player_lists[ player_index ];
-      return( _TRUE );
+      return( true );
      } // ** if 
    
    } // ** for
   
-  return( _FALSE );
+  return( false );
  }
 
-boolean PlayerInterface::testRuleObjectiveRatio( float precentage, PlayerState ** player_state )
+bool PlayerInterface::testRuleObjectiveRatio( float precentage, PlayerState ** player_state )
  {
   unsigned long player_index;
 
   for ( player_index = 0; player_index < max_players; player_index++ )
    {
-    if ( ObjectiveInterface::testRuleObjectiveOccupationRatio( player_index, precentage ) == _TRUE )  
+    if ( ObjectiveInterface::testRuleObjectiveOccupationRatio( player_index, precentage ) == true )  
      {
       *player_state = &player_lists[ player_index ];
-      return( _TRUE );
+      return( true );
      } // ** if 
    
    } // ** for
   
-  return( _FALSE );
+  return( false );
  }
 
 
-boolean PlayerInterface::testRulePlayerRespawn( boolean *completed, PlayerState **player_state )
+bool PlayerInterface::testRulePlayerRespawn( bool *completed, PlayerState **player_state )
  {
   PlayerID player;
 
   if ( respawn_rule_player_index == max_players )
    {
     respawn_rule_player_index = 0;
-    *completed = _TRUE; 
-    return( _FALSE );
+    *completed = true; 
+    return( false );
    }
   else
    {
-    *completed = _FALSE;     
+    *completed = false;     
    }
   player = player_lists[ respawn_rule_player_index ].getPlayerID();
   
@@ -338,14 +337,14 @@ boolean PlayerInterface::testRulePlayerRespawn( boolean *completed, PlayerState 
     {
      *player_state = &player_lists[ respawn_rule_player_index ];
      respawn_rule_player_index++;
-     return( _TRUE );
+     return( true );
     } 
 
   respawn_rule_player_index++;  
-  return( _FALSE );
+  return( false );
  }
 
-void PlayerInterface::startPlayerStateSync( PlayerID &connect_player  )
+void PlayerInterface::startPlayerStateSync( const PlayerID &connect_player  )
  {
   player_sync_index = 0;
   player_sync_connect_player_index = connect_player.getIndex(); 
@@ -354,7 +353,7 @@ void PlayerInterface::startPlayerStateSync( PlayerID &connect_player  )
   message_encoder.resetEncoder();
  }
 
-boolean PlayerInterface::syncPlayerState( int *send_return_code, int *percent_complete )
+bool PlayerInterface::syncPlayerState( int *send_return_code, int *percent_complete )
  {
   PlayerStateSync sync_mesg;
   unsigned short player_count = 0;
@@ -389,7 +388,7 @@ boolean PlayerInterface::syncPlayerState( int *send_return_code, int *percent_co
           if ( send_ret_val != _network_ok )
            {
             *send_return_code = send_ret_val; 
-            return( _TRUE ); 
+            return( true ); 
            }
          } // ** if  
        
@@ -401,14 +400,14 @@ boolean PlayerInterface::syncPlayerState( int *send_return_code, int *percent_co
      } // ** while 
     
     message_encoder.getEncodeMessage( &encode_message ); 
-    if ( encode_message != NULL )
+    if ( encode_message != 0 )
      {
       send_ret_val = SERVER->sendMessage( encode_message, encode_message->realSize(), player_sync_connect_id, 0 );
       
       if ( send_ret_val != _network_ok )
        { 
         *send_return_code = send_ret_val; 
-        return( _TRUE ); 
+        return( true ); 
        }
 
      } // ** if 
@@ -416,7 +415,7 @@ boolean PlayerInterface::syncPlayerState( int *send_return_code, int *percent_co
     if( (player_sync_index == max_players) )
      {
       *percent_complete = 100;
-      return( _TRUE );
+      return( true );
      } // ** if 
         
     float percent;
@@ -424,7 +423,7 @@ boolean PlayerInterface::syncPlayerState( int *send_return_code, int *percent_co
     *percent_complete = (int) percent;  
    } // ** if 
  
-  return( _FALSE );
+  return( false );
  
  }
 
@@ -602,13 +601,13 @@ void PlayerInterface::disconnectPlayerCleanup( PlayerID &player_id )
 
   for ( player_index = 0; player_index < max_players; player_index++ )
    {
-	if ( isAllied( disconnect_player_index, player_index ) == _TRUE )
+	if ( isAllied( disconnect_player_index, player_index ) == true )
 	 {
 	  allie_update.set( disconnect_player_index, player_index, _player_break_alliance ); 
       SERVER->sendMessage( &allie_update, sizeof( PlayerAllianceUpdate ), 0 );
 	 } 
     
-    if ( isAllied( player_index, disconnect_player_index ) == _TRUE )
+    if ( isAllied( player_index, disconnect_player_index ) == true )
 	 {
 	  allie_update.set( player_index, disconnect_player_index, _player_break_alliance ); 
       SERVER->sendMessage( &allie_update, sizeof( PlayerAllianceUpdate ), 0 );

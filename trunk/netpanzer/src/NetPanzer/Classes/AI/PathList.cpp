@@ -15,14 +15,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+#include <assert.h>
 #include "PathList.hpp"
 
 unsigned long DEFAULT_PATH_LIST_SIZE = 1000;
 
 PathList::PathList( void )
  {
-  list = NULL;
+  list = 0;
   first = 0;
   last = first; 
  }
@@ -34,12 +34,12 @@ PathList::PathList( long list_size )
   last = first;
   
   list = (unsigned long *) malloc( sizeof(unsigned long) * list_size ); 
-  assert( list != NULL );
+  assert( list != 0 );
  }
  
 PathList::~PathList( void )
  { 
-  if( list != NULL )
+  if( list != 0 )
    { free( list ); }
  }
 
@@ -50,7 +50,7 @@ void PathList::initialize( void )
   last = first;
   
   list = (unsigned long *) malloc( sizeof(unsigned long) * size ); 
-  assert( list != NULL );
+  assert( list != 0 );
  }
 
 
@@ -61,5 +61,5 @@ void PathList::initialize( long list_size )
   last = first;
   
   list = (unsigned long *) malloc( sizeof(unsigned long) * list_size ); 
-  assert( list != NULL );
+  assert( list != 0 );
  }

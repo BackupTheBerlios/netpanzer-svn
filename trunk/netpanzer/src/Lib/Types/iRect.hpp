@@ -18,14 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __iRect_hpp__
 #define __iRect_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 #include "iXY.hpp"
-
 
 struct iRect
 {
@@ -48,7 +41,7 @@ struct iRect
 		max = a.max;
 	}
 	
-	inline iRect(iXY &min, iXY &max)
+	inline iRect(const iXY &min, const iXY &max)
 	{
 		iRect::min = min;
 		iRect::max = max;

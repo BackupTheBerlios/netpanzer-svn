@@ -19,16 +19,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __ChatView_hpp__
 #define __ChatView_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 #include "View.hpp"
 #include "Surface.hpp"
 #include "GameTemplateView.hpp"
-#include "Scrollbar.hpp"
+#include "ScrollBar.hpp"
 
 
 //---------------------------------------------------------------------------

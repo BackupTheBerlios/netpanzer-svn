@@ -18,8 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PLAYERINTERFACE_HPP
 #define _PLAYERINTERFACE_HPP
 
-#include "aliasdef.h"
-
 #include "PObject.hpp"
 #include "PlayerState.hpp"
 #include "UnitInterface.hpp"
@@ -33,7 +31,7 @@ class PlayerInterface : public PObject
   protected:   
    static PlayerState *player_lists;
    static unsigned short max_players;
-   static boolean *alliance_matrix;
+   static bool *alliance_matrix;
 
    static void setKill( unsigned short by_player_index, unsigned short on_player_index, unsigned short unit_type);
 
@@ -49,19 +47,19 @@ class PlayerInterface : public PObject
 
    static void cleanUp( void );
     
-   static void setKill( PlayerID &by_player, PlayerID &on_player, unsigned short unit_type );
+   static void setKill( const PlayerID &by_player, const PlayerID &on_player, unsigned short unit_type );
    
-   static void setKill( UnitID &by_player, UnitID &on_player, unsigned short unit_type );
+   static void setKill( const UnitID &by_player, const UnitID &on_player, unsigned short unit_type );
 
-   static void setAlliance( PlayerID by_player, PlayerID with_player );
+   static void setAlliance( const PlayerID& by_player, const PlayerID& with_player );
    
    static void setAlliance( unsigned short by_player, unsigned short with_player );
 
    static void clearAlliance( unsigned short by_player, unsigned short with_player ); 
 
-   static boolean isAllied( PlayerID player, PlayerID with_player );
+   static bool isAllied( const PlayerID& player, const PlayerID& with_player );
 
-   static boolean isAllied( unsigned short player, unsigned short with_player );
+   static bool isAllied( unsigned short player, unsigned short with_player );
    
    static void lockPlayerStats( void );
    static void unlockPlayerStats( void );
@@ -71,7 +69,7 @@ class PlayerInterface : public PObject
      return( max_players );
     }
 
-   static inline PlayerState * getPlayerState( PlayerID player )
+   static inline PlayerState * getPlayerState( const PlayerID& player )
     {
      assert( player.getIndex() < max_players );
      return( &player_lists[ player.getIndex() ] );      
@@ -110,7 +108,7 @@ class PlayerInterface : public PObject
      return( player_lists[ player_index ].getPlayerID() );
     }
    
-   static inline unsigned short getPlayerStatus( PlayerID player )
+   static inline unsigned short getPlayerStatus( const PlayerID& player )
     {
      assert( player.getIndex() < max_players );
      return( player_lists[ player.getIndex() ].getStatus() ); 
@@ -130,17 +128,17 @@ class PlayerInterface : public PObject
  
    static PlayerState * allocateNewPlayer( void );
 
-   static void spawnPlayer( unsigned short player_index, PointXYi &location );
-   static void spawnPlayer( PlayerID &player, PointXYi &location );
+   static void spawnPlayer( unsigned short player_index, const PointXYi &location );
+   static void spawnPlayer( const PlayerID &player, const PointXYi &location );
    
-   static boolean testRuleScoreLimit( long score_limit, PlayerState ** player_state );
+   static bool testRuleScoreLimit( long score_limit, PlayerState ** player_state );
    
-   static boolean testRuleObjectiveRatio( float precentage, PlayerState ** player_state );
+   static bool testRuleObjectiveRatio( float precentage, PlayerState ** player_state );
   
    protected:
    static unsigned short respawn_rule_player_index;
    public:
-   static boolean testRulePlayerRespawn( boolean *completed, PlayerState **player_state );
+   static bool testRulePlayerRespawn( bool *completed, PlayerState **player_state );
       
    protected:
    static NetMessageEncoder message_encoder;
@@ -156,8 +154,8 @@ class PlayerInterface : public PObject
    static void netMessageAllianceUpdate( NetMessage *message );
 
    public:
-   static void    startPlayerStateSync( PlayerID &connect_player );
-   static boolean syncPlayerState( int *send_return_code, int *percent_complete );
+   static void    startPlayerStateSync( const PlayerID &connect_player );
+   static bool syncPlayerState( int *send_return_code, int *percent_complete );
 
    static void processNetMessage( NetMessage *message );
  

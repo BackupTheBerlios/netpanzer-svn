@@ -15,56 +15,56 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+#include <windows.h>
 #include "DirectInput.hpp"
 #include "gapp.hpp"
 
-LPDIRECTINPUT  DirectInput::lpDInput = NULL; 
-LPDIRECTINPUTDEVICE DirectInput::lpDIKeyDevice = NULL;
+LPDIRECTINPUT  DirectInput::lpDInput = 0; 
+LPDIRECTINPUTDEVICE DirectInput::lpDIKeyDevice = 0;
 
-BOOL DirectInput::initialize( void )
+bool DirectInput::initialize( void )
  {
   HRESULT hresult;
 
   hresult = DirectInputCreate( gapp.hinstance, 
                                DIRECTINPUT_VERSION, 
                                &lpDInput, 
-                               NULL); 
+                               0); 
   if ( hresult != DI_OK )
    { 
     MessageBox(gapp.hwndApp, "Direct Input Initalization Failed"
 	                         ,"DirectInput: ERROR", MB_OK);   
-    return( FALSE );
+    return( false );
    } 
 
-  return( TRUE );
+  return( true );
  }
 
 void DirectInput::shutdown( void )
  {
-  if ( lpDIKeyDevice != NULL )
+  if ( lpDIKeyDevice != 0 )
    {
     lpDIKeyDevice->Unacquire();
     lpDIKeyDevice->Release();  
    }
   
-  if ( lpDInput != NULL )
+  if ( lpDInput != 0 )
    {
     lpDInput->Release();
    }
  }
 
-BOOL DirectInput::initializeDirectKeyboard( void )
+bool DirectInput::initializeDirectKeyboard( void )
  {
   HRESULT  hresult; 
   
-  hresult = lpDInput->CreateDevice( GUID_SysKeyboard, &lpDIKeyDevice, NULL); 
+  hresult = lpDInput->CreateDevice( GUID_SysKeyboard, &lpDIKeyDevice, 0); 
   if ( hresult != DI_OK )
    { 
     MessageBox(gapp.hwndApp, "Could Not Create KeyBoard Device"
 	                         ,"DirectInput: ERROR", MB_OK);   
     
-    return FALSE; 
+    return false; 
    } 
 
   hresult = lpDIKeyDevice->SetDataFormat(&c_dfDIKeyboard); 
@@ -75,7 +75,7 @@ BOOL DirectInput::initializeDirectKeyboard( void )
 	                         ,"DirectInput: ERROR", MB_OK);   
 
     lpDIKeyDevice->Release(); 
-    return FALSE; 
+    return false; 
    }
    
   hresult = lpDIKeyDevice->SetCooperativeLevel(gapp.hwndApp, 
@@ -85,13 +85,13 @@ BOOL DirectInput::initializeDirectKeyboard( void )
    { 
     MessageBox(gapp.hwndApp, "Could Not Set KeyBoard Cooperative Level"
 	                         ,"DirectInput: ERROR", MB_OK);   
-    return FALSE; 
+    return false; 
    } 
  
 
   lpDIKeyDevice->Acquire();
 
-  return ( TRUE );
+  return ( true );
  }
 
 void DirectInput::shutdownDirectKeyboard( void )

@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PATHLIST_HPP
 #define _PATHLIST_HPP
 
-#include "aliasdef.h"
 #include <stdlib.h>
 
 #include <string.h>
@@ -48,14 +47,14 @@ class PathList : public PObject
     last = first; 
    }
   
-  inline boolean pushFirst( unsigned long tile )
+  inline bool pushFirst( unsigned long tile )
    {
     long next_first;
   
     next_first = (first + 1) % size;
   
    	if ( next_first == last )
-	 return( _FALSE );
+	 return( false );
    
     //assert( next_first != last );
     
@@ -65,20 +64,20 @@ class PathList : public PObject
      {
       size = size + 50;
       list = (unsigned long *) realloc( list, sizeof(unsigned long) * size ); 
-      assert( list != NULL );
+      assert( list != 0 );
      }
     */
     first = next_first;
   
     list[ first ] = tile;
    
-   	return( _TRUE );
+   	return( true );
    }
 
-  inline boolean popFirst( unsigned long *tile )
+  inline bool popFirst( unsigned long *tile )
    {  
     if ( first == last )
-     return( _FALSE );
+     return( false );
 
     *tile = list[ first ];
 
@@ -86,10 +85,10 @@ class PathList : public PObject
     if ( first < 0 )
      first = size+first; 
  
-    return( _TRUE );  
+    return( true );  
    }
   
-  inline boolean pushLast( unsigned long tile )
+  inline bool pushLast( unsigned long tile )
    {
     long next_last;
   
@@ -99,7 +98,7 @@ class PathList : public PObject
      next_last = size+next_last;
    
     if ( first == next_last )
-	 return( _FALSE );
+	 return( false );
     
 	//assert( first != next_last );
     
@@ -108,7 +107,7 @@ class PathList : public PObject
      {
       size = size + 50;
       list = (unsigned long *) realloc( list, sizeof(unsigned long) * size ); 
-      assert( list != NULL );
+      assert( list != 0 );
      }
     */
     
@@ -116,39 +115,39 @@ class PathList : public PObject
 
     last = next_last;  
    
-    return( _TRUE );
+    return( true );
    }
 
-  inline boolean popLast( unsigned long *tile )
+  inline bool popLast( unsigned long *tile )
    {  
     if ( first == last )
-     return( _FALSE );
+     return( false );
 
     last = (last + 1) % size;
   
     *tile = list[ last ];
 
-    return( _TRUE );
+    return( true );
    }
  
-  inline boolean take( long count )
+  inline bool take( long count )
    {
     if ( (first - count) < last )
-     return( _FALSE );
+     return( false );
   
     first = first - count;
   
-    return( _TRUE ); 
+    return( true ); 
    }
 
-  inline boolean drop( long count )
+  inline bool drop( long count )
    {
     if ( (last + count) > first )
-     return( _FALSE );
+     return( false );
    
     last = last + count;
   
-    return( _TRUE );
+    return( true );
    }
   
   inline  long listCount( void )

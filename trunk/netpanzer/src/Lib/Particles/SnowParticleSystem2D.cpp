@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "SnowParticleSystem2D.hpp"
 #include "TimerInterface.hpp"
 
@@ -56,7 +56,7 @@ void SnowParticleSystem2D::init()
 	FUNC("SnowParticleSystem2D::init");
 
 	snowParticles = new SnowParticle2D [SNOW_PARTICLE_COUNT];
-	assert(snowParticles != NULL);
+	assert(snowParticles != 0);
 
 	for (unsigned num = 0; num < SNOW_PARTICLE_COUNT; num++)
 	{

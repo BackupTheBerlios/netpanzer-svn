@@ -15,10 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "BoundBox.hpp"
 
-boolean BoundBox::bounds( PointXYi &center, PointXYi &test )
+bool BoundBox::bounds( PointXYi &center, PointXYi &test )
  {   
   PointXYi new_max( center + max );
   PointXYi new_min( center + min );
@@ -28,7 +28,7 @@ boolean BoundBox::bounds( PointXYi &center, PointXYi &test )
         );   
  }
 
-void BoundBox::setBounds( PointXYi &nMin, PointXYi &nMax )
+void BoundBox::setBounds(const PointXYi &nMin, const PointXYi &nMax )
  {
   min = PointXYi(nMin);
   max = PointXYi(nMax);

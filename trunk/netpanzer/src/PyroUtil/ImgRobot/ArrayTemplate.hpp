@@ -35,7 +35,7 @@ class ArrayTemplate : public PObject
   ArrayTemplate() 
    { 
     size = 0;
-    array = NULL; 
+    array = 0; 
    }
 
   ArrayTemplate( unsigned long size );
@@ -62,10 +62,10 @@ class ArrayTemplate : public PObject
  
   inline void deallocate( void )
    {
-    if ( array != NULL )
+    if ( array != 0 )
      {
       delete [size] array;
-      array = NULL;
+      array = 0;
      }
     
     size = 0;
@@ -80,13 +80,13 @@ ArrayTemplate< TYPE >::ArrayTemplate( unsigned long size )
  {
   ArrayTemplate< TYPE >::size = size;
   array = new TYPE [ size ];
-  assert( array != NULL );
+  assert( array != 0 );
  }
 
 template< class TYPE >
 ArrayTemplate< TYPE >::~ArrayTemplate( void )
  {
-  if ( array != NULL )
+  if ( array != 0 )
    delete [size] array;
  }
 
@@ -95,14 +95,14 @@ void ArrayTemplate< TYPE >::initialize( unsigned long size )
  { 
   ArrayTemplate< TYPE >::size = size;
   
-  if ( array != NULL )
+  if ( array != 0 )
    {
     delete [size] array ;
-    array = NULL;
+    array = 0;
    } 
   
   array = new TYPE [ size ];
-  assert( array != NULL );
+  assert( array != 0 );
  }
  
 

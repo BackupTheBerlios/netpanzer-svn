@@ -32,7 +32,7 @@ class GameControlRulesDaemon
 
   static int map_cycle_fsm_client_state;
   static char map_cycle_fsm_client_map_name[256];  
-  static boolean map_cycle_fsm_client_respawn_ack_flag;
+  static bool map_cycle_fsm_client_respawn_ack_flag;
   static void mapCycleFsmClient( void );
 
   static void onTimelimitGameCompleted( void );

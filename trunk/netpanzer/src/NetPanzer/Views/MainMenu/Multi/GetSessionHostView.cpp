@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "stdafx.hpp"
 #include "GetSessionHostView.hpp"
 #include "Desktop.hpp"
 #include "DirectPlay.h"
@@ -208,8 +207,9 @@ void GetSessionHostView::drawHostList(const Surface &dest)
 void GetSessionHostView::updateHostList()
 {
 	int num_games;
-    char game_name[80];
-    HRESULT hr;
+    //char game_name[80];
+	// XXX
+    // HRESULT hr;
      
     SessionList session_list;
     // winsock hack 
@@ -235,7 +235,7 @@ void GetSessionHostView::updateHostList()
     num_games = GetNumGames();
     */
 
-    if( CLIENT->getSessionList( session_list ) == _FALSE )
+    if( CLIENT->getSessionList( session_list ) == false )
      {
 	  Desktop::setVisibilityAllWindows(false);
 	  Desktop::setVisibility("GetSessionView", true);
@@ -275,9 +275,9 @@ void GetSessionHostView::updateHostList()
     // See if the host name still exists, if so, remap the index to selectedItem.
 	selectedItem = -1;
 
-    for (num = 0; num < num_games; num++)
+    for (int num = 0; num < num_games; num++)
 	{
-		if (stricmp(hosts[num].getName(), curHostName) == 0)
+		if (strcasecmp(hosts[num].getName(), curHostName) == 0)
 		{
 			selectedItem = num;
 		}

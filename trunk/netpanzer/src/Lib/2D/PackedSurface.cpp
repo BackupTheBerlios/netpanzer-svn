@@ -15,23 +15,24 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
-#include "packedsurface.hpp"
+
+#include "PackedSurface.hpp"
 #include "Surface.hpp"
 #include "TimerInterface.hpp"
 #include "Span.hpp"
 #include "UtilInterface.hpp"
 
-extern void fastMemcpy(void *dest, const void *src, int n);
-//#define memcpy fastMemcpy
-
+#ifdef MSVC
 #pragma pack (1)
+#endif
 struct SpanHead
 {
 	unsigned short x1;
 	unsigned short len;
-};
+} __attribute__((packed));
+#ifdef MSVC
 #pragma pack ()
+#endif
 
 #define TRANSPIX 0
 
@@ -61,7 +62,7 @@ void PackedSurface::setOffsetCenter()
 //--------------------------------------------------------------------------
 void PackedSurface::free()
 {
-	if (myMem && rowOffsetTable != NULL)
+	if (myMem && rowOffsetTable != 0)
 	{
 		totalByteCount -= (pix.y * frameCount + 1) * sizeof(*rowOffsetTable);
 
@@ -69,7 +70,7 @@ void PackedSurface::free()
 		
 		//assert(totalByteCount >= 0);
 	}
-	if (myMem && packedDataChunk != NULL)
+	if (myMem && packedDataChunk != 0)
 	{
 		totalByteCount -= pix.y * frameCount;
 
@@ -85,8 +86,8 @@ void PackedSurface::free()
 void PackedSurface::reset()
 {
 	pix             = 0;
-	rowOffsetTable  = NULL;
-	packedDataChunk = NULL;
+	rowOffsetTable  = 0;
+	packedDataChunk = 0;
 	frameCount      = 0;
 	curFrame        = 0.0;
 	fps             = 30.0;
@@ -107,13 +108,13 @@ void PackedSurface::pack(const Surface &source)
 	fps        = source.getFPS();
 
 	rowOffsetTable = (int *) malloc((pix.y*frameCount + 1) * sizeof(*rowOffsetTable));
-	if (rowOffsetTable == NULL)
+	if (rowOffsetTable == 0)
 	{
 		FUBAR("ERROR: Unable to allocate rowTableOffset for PackedSurface.");
 	}
 
 	int bytesAlloced = 0;
-	packedDataChunk = NULL;
+	packedDataChunk = 0;
 	int curByteOffset = 0;
 
 	float saveFrame = source.getCurFrame();
@@ -150,7 +151,7 @@ void PackedSurface::pack(const Surface &source)
 				if (newSize > bytesAlloced) {
 					bytesAlloced = newSize + 16*1024;
 					packedDataChunk = (BYTE *)realloc(packedDataChunk, bytesAlloced);
-					if (packedDataChunk == NULL)
+					if (packedDataChunk == 0)
 					{
 						FUBAR("ERROR: Out of memory for packedDataChunk for PackedSurface.");
 					}
@@ -175,7 +176,7 @@ void PackedSurface::pack(const Surface &source)
 	// Shrink buffer to the size we really need
 
 	packedDataChunk = (BYTE *) realloc(packedDataChunk, curByteOffset);
-	if (packedDataChunk == NULL) FUBAR("Hell froze");
+	if (packedDataChunk == 0) FUBAR("Hell froze");
 
 	// Restore source surface frame number, so the function
 	// is logically const
@@ -186,7 +187,7 @@ void PackedSurface::pack(const Surface &source)
 //--------------------------------------------------------------------------
 void PackedSurface::load(const char *filename) {
 	FILE *f = fopen(filename, "rb");
-	if (f == NULL) FUBAR("Can't open %s", filename);
+	if (f == 0) FUBAR("Can't open %s", filename);
 	load(f);
 	fclose(f);
 }
@@ -194,7 +195,7 @@ void PackedSurface::load(const char *filename) {
 //--------------------------------------------------------------------------
 void PackedSurface::save(const char *filename) const {
 	FILE *f = fopen(filename, "wb");
-	if (f == NULL) FUBAR("Can't create %s", filename);
+	if (f == 0) FUBAR("Can't create %s", filename);
 	save(f);
 	fclose(f);
 }
@@ -218,13 +219,13 @@ void PackedSurface::load(FILE *f) {
 	fread(&fps, sizeof(fps), 1, f);
 	fread(&offset, sizeof(offset), 1, f);
 	rowOffsetTable = (int *) malloc((pix.y * frameCount + 1) * sizeof(*rowOffsetTable));
-	if (rowOffsetTable == NULL)
+	if (rowOffsetTable == 0)
 	{
 		FUBAR("ERROR: Unable to allocate rowTableOffset for PackedSurface.");
 	}
 	fread(rowOffsetTable, (pix.y*frameCount + 1)*sizeof(*rowOffsetTable), 1, f);
 	packedDataChunk = (BYTE *)malloc(rowOffsetTable[pix.y*frameCount]);
-	if (packedDataChunk == NULL)
+	if (packedDataChunk == 0)
 	{
 		FUBAR("ERROR: Unable to allocate packedDataChunk for PackedSurface.");
 	}
@@ -596,6 +597,8 @@ nextRow:
 //---------------------------------------------------------------------------
 int loadAllPAKInDirectory(const char *path, cGrowList <PackedSurface> &growList)
 {
+    // XXX disabled because the _findfirst below is win32 only
+#ifdef MSVC
 	char strBuf[256];
 	char pathWild[256];
 
@@ -606,7 +609,7 @@ int loadAllPAKInDirectory(const char *path, cGrowList <PackedSurface> &growList)
 	{
 		return 0;
 	}
-
+	
 	struct _finddata_t myFile;
 	long               hFile;
 
@@ -640,6 +643,7 @@ int loadAllPAKInDirectory(const char *path, cGrowList <PackedSurface> &growList)
 	{
 		growList[i].load(filenames[i].name);
 	}
+#endif
 
 	return 1;
 

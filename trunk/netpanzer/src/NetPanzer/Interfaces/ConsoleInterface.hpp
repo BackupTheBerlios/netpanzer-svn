@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class ConsoleLine
  {
   public:
-   boolean visible;
+   bool visible;
    PIX     color;
    char    string[256];
    Timer   life_timer;       
@@ -43,8 +43,8 @@ class ConsoleInterface
  {
   protected:
   static FILE *con_file;
-  static boolean log_file_active;
-  static boolean stdout_pipe;
+  static bool log_file_active;
+  static bool stdout_pipe;
 
   static long console_size; 
   static ConsoleLineArray line_list;
@@ -58,7 +58,7 @@ class ConsoleInterface
 
   static long line_index; 
 
-  static boolean input_string_active;
+  static bool input_string_active;
   
   static int  maxCharCount;
   static char inputString[256];
@@ -73,7 +73,7 @@ class ConsoleInterface
 
   static void openLogFile( void );
   static void closeLogFile( void );
-  static void setStdoutPipe( boolean on_off );
+  static void setStdoutPipe( bool on_off );
 
   static void update( Surface &surface );
   static void update_overlap( Surface &surface );
@@ -85,7 +85,7 @@ class ConsoleInterface
   static void printf( const char *format, ... );
 
   /* Input String Methods */
-  static void setInputStringStatus( boolean on_off );
+  static void setInputStringStatus( bool on_off );
   static void resetInputString( char *prompt );
   static void addChar(int newChar);
   static void addExtendedChar(int newExtendedChar);

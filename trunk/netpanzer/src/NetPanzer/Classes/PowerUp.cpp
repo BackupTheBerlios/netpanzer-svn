@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "PowerUp.hpp"
 
 #include "UnitBlackBoard.hpp"
@@ -47,15 +46,15 @@ PowerUp::PowerUp(PointXYi map_loc, int type)
   powerup_state.life_cycle_state = _power_up_lifecycle_state_active;
  }
 
-boolean PowerUp::isPowerUpHit( UnitID *unit_id )
+bool PowerUp::isPowerUpHit( UnitID *unit_id )
  {
-  if( UnitBlackBoard::unitOccupiesLoc( powerup_state.map_loc ) == _TRUE )
+  if( UnitBlackBoard::unitOccupiesLoc( powerup_state.map_loc ) == true )
    { 
-    if( UnitInterface::quearyUnitAtMapLoc( powerup_state.map_loc, unit_id ) == _TRUE )
+    if( UnitInterface::quearyUnitAtMapLoc( powerup_state.map_loc, unit_id ) == true )
      {
-      return( _TRUE );
+      return( true );
      } 
    }
   
-  return( _FALSE );
+  return( false );
  }

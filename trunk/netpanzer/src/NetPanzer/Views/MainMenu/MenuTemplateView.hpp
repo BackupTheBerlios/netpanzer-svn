@@ -19,19 +19,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __MenuTemplateView_hpp__
 #define __MenuTemplateView_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 #include "SpecialButtonView.hpp"
 #include "Surface.hpp"
 #include "PackedSurface.hpp"
 #include "iRect.hpp"
 #include "iXY.hpp"
 #include "String.hpp"
-
 
 //--------------------------------------------------------------------------
 class MenuTemplateView : public SpecialButtonView

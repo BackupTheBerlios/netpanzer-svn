@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "stdafx.hpp"
+
 #include "String.hpp"
 
 // String
@@ -27,7 +27,7 @@ String::String(const char *string)
 {
 	length = strlen(string);
 	mem    = new char [length + 1];
-	if (mem == NULL)
+	if (mem == 0)
 	{
 		FUBAR("ERROR: Unable to allocate string.");
 	}
@@ -43,7 +43,7 @@ String::String(const String &string)
 {
 	length = string.length;
 	mem    = new char [length + 1];
-	if (mem == NULL)
+	if (mem == 0)
 	{
 		FUBAR("ERROR: Unable to allocate string.");
 	}
@@ -71,7 +71,7 @@ const String &String::operator=(const String &string)
 		delete [] mem;
 		length = string.length;
 		mem    = new char [length + 1];
-		if (mem == NULL)
+		if (mem == 0)
 		{
 			FUBAR("ERROR: Unable to allocate string.");
 		}
@@ -90,7 +90,7 @@ String &String::operator+=(const String &string)
 	char *tempPtr = mem;
 	length += string.length;
 	mem    = new char [length + 1];
-	if (mem == NULL)
+	if (mem == 0)
 	{
 		FUBAR("ERROR: Unable to allocate string.");
 	}

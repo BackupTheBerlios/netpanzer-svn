@@ -15,9 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
-#include "stdafx.hpp"
 #include "RankView.hpp"
 #include "Stats.hpp"
 #include "GameViewGlobals.hpp"
@@ -62,7 +59,7 @@ RankView::RankView() : GameTemplateView()
 
 	// Define the scrollBar fot this view.
 	scrollBar = new ScrollBar(VERTICAL, 0, 1, 0, 100);
-	if (scrollBar == NULL)
+	if (scrollBar == 0)
 	{
 		FUBAR("ERROR: Unable to allocate the scrollBar.");
 	}
@@ -155,7 +152,7 @@ void RankView::drawPlayerStats(const Surface &dest)
 
 		// Add player flag name.
         sprintf(statBuf, "%-20s%10i%7i%6i%10i", playerName, playerKills, playerLosses, playerTotalPoints, playerObjectives );
-		if (statBuf != NULL)
+		if (statBuf != 0)
         {
          PIX color;
          

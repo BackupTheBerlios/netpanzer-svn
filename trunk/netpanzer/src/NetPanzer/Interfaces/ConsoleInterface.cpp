@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "ConsoleInterface.hpp"
 #include "KeyScanCodeDefs.h"
 #include "GameConfig.hpp"
@@ -24,8 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 FILE *  ConsoleInterface::con_file;
-boolean ConsoleInterface::log_file_active;
-boolean ConsoleInterface::stdout_pipe;
+bool ConsoleInterface::log_file_active;
+bool ConsoleInterface::stdout_pipe;
 
 long ConsoleInterface::console_size; 
 ConsoleLineArray ConsoleInterface::line_list;
@@ -39,7 +38,7 @@ long     ConsoleInterface::max_char_per_line;
 
 long ConsoleInterface::line_index; 
 
-boolean ConsoleInterface::input_string_active;
+bool ConsoleInterface::input_string_active;
 
 int  ConsoleInterface::maxCharCount;
 char ConsoleInterface::inputString[256];
@@ -65,7 +64,7 @@ void ConsoleInterface::initialize( long size )
   line_offset.x = 0;
   line_offset.y = (8 + vertical_spacing); 
 
-  input_string_active = _FALSE;
+  input_string_active = false;
 
   long line_loop;
 
@@ -76,8 +75,8 @@ void ConsoleInterface::initialize( long size )
     line_list[ line_loop ].life_timer.changePeriod( 8 );
    }  
 
-  log_file_active = _FALSE;
-  stdout_pipe = _FALSE;
+  log_file_active = false;
+  stdout_pipe = false;
  }
 
 void ConsoleInterface::setToSurfaceSize( PointXYi pix )
@@ -94,16 +93,16 @@ void ConsoleInterface::setToSurfaceSize( PointXYi pix )
 void ConsoleInterface::openLogFile( void )
  {
   con_file = fopen( "console.log", "wt" );
-  log_file_active = _TRUE;
+  log_file_active = true;
  }
 
 void ConsoleInterface::closeLogFile( void )
  {
   fclose( con_file );
-  log_file_active = _FALSE;
+  log_file_active = false;
  }
 
-void ConsoleInterface::setStdoutPipe( boolean on_off )
+void ConsoleInterface::setStdoutPipe( bool on_off )
  {
   stdout_pipe = on_off;
  }
@@ -126,7 +125,7 @@ void ConsoleInterface::postMessage( PIX color, const char *format, ... )
   va_end( vap );
 
   va_start( vap, format );
-  if ( stdout_pipe == TRUE )
+  if ( stdout_pipe == true )
    {
     strcpy( format_str, format );
     strcat( format_str, "\n" ); 
@@ -134,7 +133,7 @@ void ConsoleInterface::postMessage( PIX color, const char *format, ... )
    }    
   va_end( vap );
    
-  if( log_file_active == _TRUE )
+  if( log_file_active == true )
    { 
     fprintf( con_file, temp_str );
     fprintf( con_file, "\n");
@@ -159,7 +158,7 @@ void ConsoleInterface::postMessage( PIX color, const char *format, ... )
        line_list[ line_index ].string[ max_char_per_line ] = 0; 
 
        line_list[ line_index ].color = color;
-       line_list[ line_index ].visible = _TRUE;
+       line_list[ line_index ].visible = true;
        line_list[ line_index ].life_timer.reset(); 
       
        temp_str_ptr = temp_str_ptr + max_char_per_line;
@@ -175,7 +174,7 @@ void ConsoleInterface::postMessage( PIX color, const char *format, ... )
    strcpy( line_list[ line_index ].string, temp_str_ptr );   
 
    line_list[ line_index ].color = color;
-   line_list[ line_index ].visible = _TRUE;
+   line_list[ line_index ].visible = true;
    line_list[ line_index ].life_timer.reset(); 
  }
 
@@ -192,7 +191,7 @@ void ConsoleInterface::postMessage( const char *format, ... )
   va_end( vap );
    
   va_start( vap, format );
-  if ( stdout_pipe == TRUE )
+  if ( stdout_pipe == true )
    {
     strcpy( format_str, format );
     strcat( format_str, "\n" ); 
@@ -200,7 +199,7 @@ void ConsoleInterface::postMessage( const char *format, ... )
    }    
   va_end( vap );
 
-  if( log_file_active == _TRUE )
+  if( log_file_active == true )
    { 
     fprintf( con_file, temp_str );
     fprintf( con_file, "\n");
@@ -224,7 +223,7 @@ void ConsoleInterface::postMessage( const char *format, ... )
        line_list[ line_index ].string[ max_char_per_line ] = 0; 
 
        line_list[ line_index ].color = GameConfig::getConsoleTextColor();
-       line_list[ line_index ].visible = _TRUE;
+       line_list[ line_index ].visible = true;
        line_list[ line_index ].life_timer.reset(); 
       
        temp_str_ptr = temp_str_ptr + max_char_per_line;
@@ -240,7 +239,7 @@ void ConsoleInterface::postMessage( const char *format, ... )
    strcpy( line_list[ line_index ].string, temp_str_ptr );   
 
    line_list[ line_index ].color = GameConfig::getConsoleTextColor();
-   line_list[ line_index ].visible = _TRUE;
+   line_list[ line_index ].visible = true;
    line_list[ line_index ].life_timer.reset(); 
 
  }
@@ -271,7 +270,7 @@ void ConsoleInterface::update_overlap( Surface &surface )
 
   } while( index != line_index );
  
-  if( input_string_active == _TRUE )
+  if( input_string_active == true )
    {  
     current_line.y = bounds.min.y + (line_offset.y * visible_count ) + (line_offset.y * 2);
     current_line.x = bounds.min.x + line_offset.x;
@@ -296,7 +295,7 @@ void ConsoleInterface::update_overlap( Surface &surface )
   } while( index != line_index );
  
   
-  if( input_string_active == _TRUE )
+  if( input_string_active == true )
    {  
     PointXYi input_offset;
     unsigned long max_char_space;
@@ -326,7 +325,7 @@ void ConsoleInterface::update_overlap( Surface &surface )
    }
  }
 
-void ConsoleInterface::setInputStringStatus( boolean on_off )
+void ConsoleInterface::setInputStringStatus( bool on_off )
  {
   input_string_active = on_off;
  }

@@ -33,11 +33,14 @@ protected:
 	float waitRand;
 	float waitTime;
 	float incrementScale;
-	
+
+	// XXX PUFF_PARTICLE_TYPE ?!? added a definition here
+	typedef int PUFF_PARTICLE_TYPE;
 	PUFF_PARTICLE_TYPE particleType; // Which kind of particle to use for this explosion.
 
 public:
-	SmokingTrajectoryParticle2D(const fXYZ &pos, int maxSpeed, float waitMin, float waitRand, PUFF_PARTICLE_TYPE particleType);
+	SmokingTrajectoryParticle2D(const fXYZ &pos, int maxSpeed, float waitMin,
+								float waitRand, PUFF_PARTICLE_TYPE particleType);
 	
 	virtual void sim();
 

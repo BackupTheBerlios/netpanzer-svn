@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "stdafx.hpp"
 #include "HelpView.hpp"
 #include "Desktop.hpp"
 #include "GameView.hpp"
@@ -53,7 +52,7 @@ void HelpView::doActivate()
 	//View *v = Desktop::getView("HelpScrollView");
 
 	// Set the position correctly for the scrolling help.
-	//if (v != NULL)
+	//if (v != 0)
 	//{
 	//	v->moveTo(iXY(30, 30));
 	//} else

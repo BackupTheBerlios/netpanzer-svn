@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "stdafx.hpp"
 #include "OrderingView.hpp"
 #include "Desktop.hpp"
 #include "DDHardSurface.hpp"
@@ -25,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameViewGlobals.hpp"
 
 
-static char screenSurfacePathTIL[] = "pics\\backgrounds\\menus\\ordermb.til";
+// static char screenSurfacePathTIL[] = "pics\\backgrounds\\menus\\ordermb.til";
 
 
 // OrderingView

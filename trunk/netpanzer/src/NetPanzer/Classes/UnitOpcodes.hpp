@@ -23,10 +23,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 enum { _unit_opcode_flag_sync = 0x01 };
 
+#ifdef MSVC
 #pragma pack(1)
+#endif
 
-typedef
- struct
+struct UnitOpcodeStruct
   {
    unsigned char  opcode;
    unsigned char  player_index;
@@ -34,7 +35,7 @@ typedef
    unsigned char  flags;
 
    unsigned char op_data[7];
-  } UnitOpcodeStruct;
+  } __attribute__((packed));
 
 
 typedef QueueTemplate< UnitOpcodeStruct > UnitOpcodeQueue;
@@ -46,7 +47,7 @@ class UnitOpcode
    unsigned char  player_index;
    unsigned short unit_index;  
    unsigned char  flags;
- };
+ } __attribute__((packed));
 
 #define _UNIT_OPCODE_MOVE 1
 
@@ -64,7 +65,7 @@ class MoveOpcode : public UnitOpcode
 	 opcode = _UNIT_OPCODE_MOVE;
 	}
 
- };
+ } __attribute__((packed));
 
 #define _UNIT_OPCODE_TURRET_TRACK_POINT 2
 
@@ -73,7 +74,7 @@ class TurretTrackPointOpcode : public UnitOpcode
   public:
    unsigned short x;
    unsigned short y;
-   boolean  activate;
+   bool  activate;
    unsigned char pad[2];
 
    TurretTrackPointOpcode( )
@@ -82,7 +83,7 @@ class TurretTrackPointOpcode : public UnitOpcode
 	 opcode = _UNIT_OPCODE_TURRET_TRACK_POINT;
 	}
 
- };
+ } __attribute__((packed));
 
 #define _UNIT_OPCODE_TURRET_TRACK_TARGET 3
 
@@ -91,7 +92,7 @@ class TurretTrackTargetOpcode : public UnitOpcode
   public:
    unsigned char target_player_index;
    unsigned short target_unit_index;
-   boolean activate;
+   bool activate;
    unsigned char pad[3];
  
  
@@ -101,7 +102,7 @@ class TurretTrackTargetOpcode : public UnitOpcode
 	 opcode = _UNIT_OPCODE_TURRET_TRACK_TARGET;
 	}
 
- };
+ } __attribute__((packed));
 
 #define _UNIT_OPCODE_FIRE_WEAPON 4
 
@@ -117,7 +118,7 @@ class FireWeaponOpcode : public UnitOpcode
 	 flags = 0;
 	 opcode = _UNIT_OPCODE_FIRE_WEAPON;
 	}
- };
+ } __attribute__((packed));
 
 #define _UNIT_OPCODE_SYNC_UNIT 5
 
@@ -132,8 +133,8 @@ class SyncUnitOpcode : public UnitOpcode
 	 opcode = _UNIT_OPCODE_SYNC_UNIT;
    }
  
- };
-
+ } __attribute__((packed));
+ 
 #define _UNIT_OPCODE_UPDATE_STATE 6
 
 class UpdateStateUnitOpcode : public UnitOpcode
@@ -148,7 +149,7 @@ class UpdateStateUnitOpcode : public UnitOpcode
 	opcode = _UNIT_OPCODE_UPDATE_STATE;
    }
  
- };
+ } __attribute__((packed));
 
 #define _UNIT_OPCODE_DESTRUCT 7
 
@@ -163,9 +164,10 @@ class DestructUnitOpcode : public UnitOpcode
 	opcode = _UNIT_OPCODE_DESTRUCT;
    }
  
- };
+ } __attribute__((packed));
 
-
+#ifdef MSVC
 #pragma pack()
+#endif
 
 #endif

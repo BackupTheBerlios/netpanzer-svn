@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETPANZERTHREAD_HPP
 #define _NETPANZERTHREAD_HPP
 
-#include <windows.h>
+//#include <windows.h>
 
-VOID PanzerThread(PVOID pvoid);
+void PanzerThread(void* ptr);
 
 #endif // ** _NETPANZERTHREAD_HPP

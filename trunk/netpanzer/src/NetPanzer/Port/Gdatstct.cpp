@@ -15,14 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
-#include "gdatstct.hpp"
+#include "Gdatstct.hpp"
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "aliasdef.h"
-#include "globals.h"
+#include "Globals.h"
 
 
 
@@ -31,7 +29,7 @@ sprite_dbase FLAGS_DBASE;
 //*****************************************************************************
 sprite_dbase::sprite_dbase( void )
  {
-  dbase_loaded = _FALSE;
+  dbase_loaded = false;
  }
 
 //*****************************************************************************
@@ -41,7 +39,7 @@ short sprite_dbase::unload_dbase( void )
   short sprite_count;
   sprite_data  *sprite;
 
-  if ( dbase_loaded == _TRUE )
+  if ( dbase_loaded == true )
    {
     sprite_count = header.sprite_count;
   
@@ -51,11 +49,11 @@ short sprite_dbase::unload_dbase( void )
       free( sprite->data ); 
      }
    
-    dbase_loaded = _FALSE; 
-    return( _TRUE );
+    dbase_loaded = false; 
+    return( true );
    } 
  
-  return( _FALSE );
+  return( false );
  }
 //*****************************************************************************
 
@@ -70,7 +68,7 @@ short sprite_dbase::load_dbase( char *dbase_path )
   
   infile = fopen( dbase_path, "rb" );
   
-  assert( infile != NULL );
+  assert( infile != 0 );
 
   fread( &header, sizeof (sprite_dbase_header_type ), 1, infile );
   
@@ -81,14 +79,14 @@ short sprite_dbase::load_dbase( char *dbase_path )
     sprite = &sprite_list[ sprite_loop]; 
     
     fread( sprite, sizeof ( sprite_data ), 1, infile );
-    sprite->data = (uchar * ) malloc( sprite->data_size );
+    sprite->data = (unsigned char * ) malloc( sprite->data_size );
     fread( sprite->data, sprite->data_size, 1, infile ); 
    }
   
   fclose( infile );
 
-  dbase_loaded = _TRUE;
-  return( _TRUE ); 
+  dbase_loaded = true;
+  return( true ); 
  }
  
 
@@ -99,11 +97,11 @@ short sprite_dbase::get_sprite_index( short index, sprite_data *record )
   if ( (index >= 0) && (index < header.sprite_count) )
    {
     record = &sprite_list[ index ];
-    return( _TRUE );
+    return( true );
    }
 
-  record = NULL;
-  return ( _FALSE ); 
+  record = 0;
+  return ( false ); 
  }
 
 short sprite_dbase::get_sprite_index( short index, Surface &surface )
@@ -114,10 +112,10 @@ short sprite_dbase::get_sprite_index( short index, Surface &surface )
                    iXY( sprite_list[ index ].x_size, sprite_list[ index ].y_size ),
 				   sprite_list[ index ].x_size, 
                    1 );
-    return( _TRUE );
+    return( true );
    }
 
-  return ( _FALSE ); 
+  return ( false ); 
  }
 
 short sprite_dbase::get_sprite_id( short id_num, sprite_data *record )
@@ -132,12 +130,12 @@ short sprite_dbase::get_sprite_id( short id_num, sprite_data *record )
     if ( id_num == sprite_list[ sprite_loop ].pyro_id )
      {
       record = &sprite_list[ sprite_loop ];
-      return( _TRUE ); 
+      return( true ); 
      } 
    }
  
-  record = NULL;
-  return ( _FALSE ); 
+  record = 0;
+  return ( false ); 
  }
  
 //*****************************************************************************
@@ -158,11 +156,11 @@ short sprite_dbase::get_sprite_name( char *name, Surface &surface )
 				       sprite_list[ sprite_loop ].x_size, 
                        1 );
 
-      return( _TRUE ); 
+      return( true ); 
      } 
    }
  
-  return ( _FALSE ); 
+  return ( false ); 
  }
 
 //*****************************************************************************
@@ -179,18 +177,18 @@ short sprite_dbase::get_sprite_name( char *name, sprite_data *record )
     if ( !strcmp( name, sprite_list[sprite_loop].name)  )
      {
       record = &sprite_list[ sprite_loop ];
-      return( _TRUE ); 
+      return( true ); 
      } 
    }
  
-  record = NULL;
-  return ( _FALSE ); 
+  record = 0;
+  return ( false ); 
  }
 
 //*****************************************************************************
 animation_dbase::animation_dbase(void)
  {
-  dbase_loaded = _FALSE;
+  dbase_loaded = false;
  }
 
 //***************************************************************************** 
@@ -201,7 +199,7 @@ short animation_dbase::unload_dbase( void )
   short animation_count;
   animation_data  *anim;
 
-  if ( dbase_loaded == _TRUE ) 
+  if ( dbase_loaded == true ) 
    {
     animation_count = header.animation_count;
   
@@ -211,11 +209,11 @@ short animation_dbase::unload_dbase( void )
       free( anim->data ); 
      }
  
-    dbase_loaded = _FALSE;
-    return( _TRUE ); 
+    dbase_loaded = false;
+    return( true ); 
    }
   
-  return (_FALSE );
+  return (false );
  }
 //*****************************************************************************
 
@@ -231,7 +229,7 @@ short animation_dbase::load_dbase( char *dbase_path )
   
   infile = fopen( dbase_path, "rb" );
   
-  assert( infile != NULL );
+  assert( infile != 0 );
  
   fread( &header, sizeof (anim_dbase_header_type ), 1, infile );
   
@@ -242,14 +240,14 @@ short animation_dbase::load_dbase( char *dbase_path )
     anim = &animation_list[ animation_loop]; 
     
     fread( anim, sizeof ( animation_data ), 1, infile );
-    anim->data = (uchar * ) malloc( anim->data_size );
+    anim->data = (unsigned char * ) malloc( anim->data_size );
     fread( anim->data, anim->data_size, 1, infile ); 
    }
   
   fclose( infile );
 
-  dbase_loaded = _TRUE;
-  return( _TRUE ); 
+  dbase_loaded = true;
+  return( true ); 
 }
  
 
@@ -260,11 +258,11 @@ short animation_dbase::get_anim_index( short index, animation_data *record )
   if ( (index >= 0) && (index < header.animation_count) )
    {
     record = &animation_list[ index ];
-    return( _TRUE );
+    return( true );
    }
 
-  record = NULL;
-  return ( _FALSE ); 
+  record = 0;
+  return ( false ); 
  }
 
 short animation_dbase::get_anim_id( short id_num, animation_data *record )
@@ -279,12 +277,12 @@ short animation_dbase::get_anim_id( short id_num, animation_data *record )
     if ( id_num == animation_list[ anim_loop ].pyro_id )
      {
       record = &animation_list[ anim_loop ];
-      return( _TRUE ); 
+      return( true ); 
      } 
    }
  
-  record = NULL;
-  return ( _FALSE ); 
+  record = 0;
+  return ( false ); 
  }
  
 //*****************************************************************************
@@ -298,15 +296,15 @@ short animation_dbase::get_anim_name( char *name, animation_data *record )
   
   for ( anim_loop = 0; anim_loop < anim_count; anim_loop++ )
    {
-    if ( !stricmp( name, animation_list[anim_loop].name)  )
+    if ( !strcasecmp( name, animation_list[anim_loop].name)  )
      {
       record = &animation_list[ anim_loop ];
-      return( _TRUE ); 
+      return( true ); 
      } 
    }
  
-  record = NULL;
-  return ( _FALSE ); 
+  record = 0;
+  return ( false ); 
  
  }
 
@@ -321,18 +319,18 @@ short animation_dbase::get_anim_name( char *name, SpriteSurface &sprite )
   
   for ( anim_loop = 0; anim_loop < anim_count; anim_loop++ )
    {
-    if ( !stricmp( name, animation_list[anim_loop].name)  )
+    if ( !strcasecmp( name, animation_list[anim_loop].name)  )
      {
       sprite.setData( (void *) (animation_list[anim_loop].data), 
                                 animation_list[anim_loop].x_size,
 				                animation_list[anim_loop].y_size,
 				                animation_list[anim_loop].frames * animation_list[anim_loop].direct_count );
  
-     return ( _TRUE ); 
+     return ( true ); 
     } 
    }
  
-  return ( _FALSE ); 
+  return ( false ); 
 
  }
 
@@ -345,18 +343,18 @@ short animation_dbase::get_anim_name( char *name, Surface &surface )
   
   for ( anim_loop = 0; anim_loop < anim_count; anim_loop++ )
    {
-    if ( !stricmp( name, animation_list[anim_loop].name)  )
+    if ( !strcasecmp( name, animation_list[anim_loop].name)  )
      {
       surface.setTo( (void *) (animation_list[anim_loop].data), 
                       iXY( animation_list[anim_loop].x_size, animation_list[anim_loop].y_size ),
                       animation_list[anim_loop].x_size,
 				      animation_list[anim_loop].frames * animation_list[anim_loop].direct_count );
  
-     return ( _TRUE ); 
+     return ( true ); 
     } 
    }
  
-  return ( _FALSE ); 
+  return ( false ); 
 
  }
 
@@ -365,7 +363,7 @@ short animation_dbase::get_anim_name( char *name, Surface &surface )
 
 tile_dbase::tile_dbase( void )
  {
-  dbase_loaded = _FALSE;
+  dbase_loaded = false;
 
  }
 //*****************************************************************************
@@ -377,36 +375,36 @@ short tile_dbase::load_dbase( char *dbase_path )
   
   infile = fopen( dbase_path, "rb" );
   
-  if ( infile == NULL )
+  if ( infile == 0 )
    {
     //debug_mesg( _disp_log, "ERROR: Could Not Open tile set : %s", dbase_path );
-    return( _FALSE );
+    return( false );
    }
  
   fread( &header, sizeof( tile_dbase_header_type ), 1, infile );
   
   tile_buffer_size = header.tile_size * header.tile_count;
   
-  tile_data = (uchar *) malloc( sizeof(uchar) * tile_buffer_size );
+  tile_data = (unsigned char *) malloc( sizeof(unsigned char) * tile_buffer_size );
   
   fread( tile_data, tile_buffer_size, 1, infile );
 
   TILE_DATA = tile_data;
  
-  dbase_loaded = _TRUE;
+  dbase_loaded = true;
   
-  return( _TRUE ); 
+  return( true ); 
  }
 
 //*****************************************************************************
 
 short tile_dbase::unload_dbase( void ) 
  {
-  if ( dbase_loaded == _TRUE )
+  if ( dbase_loaded == true )
    {
     free( tile_data );
-    return( _TRUE );
+    return( true );
    }
  
-  return( _FALSE );
+  return( false );
  }

@@ -18,10 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _LINKLISTDOUBLETEMPLATE_HPP
 #define _LINKLISTDOUBLETEMPLATE_HPP
 
-#include "aliasdef.h"
-
 #include <stdlib.h>
-#include "Pobject.hpp"
+#include "PObject.hpp"
 
 template< class TYPE >
 class LinkListDoubleTemplate : public PObject
@@ -34,8 +32,8 @@ class LinkListDoubleTemplate : public PObject
 
   LinkListDoubleTemplate() 
    { 
-	front = NULL;
-	rear = NULL;
+	front = 0;
+	rear = 0;
    }
 
   LinkListDoubleTemplate( unsigned long size );  
@@ -52,10 +50,10 @@ class LinkListDoubleTemplate : public PObject
   
   inline void addRear( TYPE *object )
    {
-	object->next = NULL;
-    object->prev = NULL;
+	object->next = 0;
+    object->prev = 0;
 
-	if ( (front == NULL) && (rear == NULL) )
+	if ( (front == 0) && (rear == 0) )
 	 {
 	  front = object;
 	  rear = object;
@@ -70,10 +68,10 @@ class LinkListDoubleTemplate : public PObject
   
   inline void addFront( TYPE *object )
    {
-	object->next = NULL;
-    object->prev = NULL;
+	object->next = 0;
+    object->prev = 0;
 
-	if ( (front == NULL) && (rear == NULL) )
+	if ( (front == 0) && (rear == 0) )
 	 {
 	  front = object;
 	  rear = object;
@@ -88,12 +86,12 @@ class LinkListDoubleTemplate : public PObject
 
   inline void insertAfter( TYPE *after, TYPE *object )
    {
-    assert( after != NULL );
+    assert( after != 0 );
 	
-	object->next = NULL;
-    object->prev = NULL;
+	object->next = 0;
+    object->prev = 0;
 	
-    if( after->next != NULL )
+    if( after->next != 0 )
      { after->next->prev = object; }
 
     object->next = after->next;
@@ -108,12 +106,12 @@ class LinkListDoubleTemplate : public PObject
 
   inline void insertBefore( TYPE *before, TYPE *object )
    {
-    assert( before != NULL );
+    assert( before != 0 );
 	
-	object->next = NULL;
-    object->prev = NULL;
+	object->next = 0;
+    object->prev = 0;
 	
-    if( before->prev != NULL )
+    if( before->prev != 0 )
      { before->prev->next = object; }
 
     object->prev = before->prev;
@@ -128,10 +126,10 @@ class LinkListDoubleTemplate : public PObject
 
   inline void deleteObject( TYPE *object )
    {
-    if( object->prev != NULL )
+    if( object->prev != 0 )
      { object->prev->next = object->next; }
 
-    if( object->next != NULL )
+    if( object->next != 0 )
      { object->next->prev = object->prev; }
     
     if( object == front )
@@ -149,17 +147,17 @@ class LinkListDoubleTemplate : public PObject
 	
 	delete_ptr = front;
 
-	if ( front != NULL )
+	if ( front != 0 )
 	 {
 	  if (front == rear)
        {
-        front = NULL;
-        rear = NULL;
+        front = 0;
+        rear = 0;
        }
       else
        { 
         front = front->next; 
-        front->prev = NULL;        
+        front->prev = 0;        
        }
        
       delete( delete_ptr );
@@ -172,17 +170,17 @@ class LinkListDoubleTemplate : public PObject
 	
 	delete_ptr = rear;
 
-	if ( rear != NULL )
+	if ( rear != 0 )
 	 {
 	  if (front == rear)
        {
-        front = NULL;
-        rear = NULL;
+        front = 0;
+        rear = 0;
        }
       else
        { 
         rear = rear->prev; 
-        rear->next = NULL; 
+        rear->next = 0; 
        }
 
       delete( delete_ptr );
@@ -192,19 +190,19 @@ class LinkListDoubleTemplate : public PObject
   inline void deleteAfter( TYPE *after )
    {
     TYPE *delete_ptr;
-	assert( after != NULL );
+	assert( after != 0 );
 	
 	delete_ptr = after->next;
     
-	if( after->next != NULL )
+	if( after->next != 0 )
      {
-      if( after->next->next != NULL )
+      if( after->next->next != 0 )
        {
    	    after->next->next->prev = after;
         after->next = after->next->next ;
        }
       else
-       { after->next = NULL; }
+       { after->next = 0; }
 
       if( delete_ptr == rear )
 	   {
@@ -218,19 +216,19 @@ class LinkListDoubleTemplate : public PObject
   inline void deleteBefore( TYPE *before )
    {
     TYPE *delete_ptr;
-	assert( before != NULL );
+	assert( before != 0 );
 	
 	delete_ptr = before->prev;
     
-	if( before->prev != NULL )
+	if( before->prev != 0 )
      {
-      if( before->prev->prev != NULL )
+      if( before->prev->prev != 0 )
        {
    	    before->prev->prev->next = before;
         before->prev = before->prev->prev;
        }
       else
-       { before->prev = NULL; }
+       { before->prev = 0; }
 
       if( delete_ptr == front )
 	   {
@@ -243,10 +241,10 @@ class LinkListDoubleTemplate : public PObject
 
   inline void removeObject( TYPE *object )
    {
-    if( object->prev != NULL )
+    if( object->prev != 0 )
      { object->prev->next = object->next; }
 
-    if( object->next != NULL )
+    if( object->next != 0 )
      { object->next->prev = object->prev; }
     
     if( object == front )
@@ -263,23 +261,23 @@ class LinkListDoubleTemplate : public PObject
 	
 	delete_ptr = front;
 
-	if ( front != NULL )
+	if ( front != 0 )
 	 {
 	  if (front == rear)
        {
-        front = NULL;
-        rear = NULL;
+        front = 0;
+        rear = 0;
        }
       else
        { 
         front = front->next; 
-        front->prev = NULL;        
+        front->prev = 0;        
        }
 
       return( delete_ptr );
    	 }
     
-    return( NULL );
+    return( 0 );
    }
 
   inline TYPE* removeRear( void )
@@ -288,40 +286,40 @@ class LinkListDoubleTemplate : public PObject
 	
 	delete_ptr = rear;
 
-	if ( rear != NULL )
+	if ( rear != 0 )
 	 {
 	  if (front == rear)
        {
-        front = NULL;
-        rear = NULL;
+        front = 0;
+        rear = 0;
        }
       else
        { 
         rear = rear->prev; 
-        rear->next = NULL; 
+        rear->next = 0; 
        }
 
       return( delete_ptr );
    	 }
-    return( NULL );
+    return( 0 );
    }
    
   inline TYPE* removeAfter( TYPE *after )
    {
     TYPE *delete_ptr;
-	assert( after != NULL );
+	assert( after != 0 );
 	
 	delete_ptr = after->next;
     
-	if( after->next != NULL )
+	if( after->next != 0 )
      {
-      if( after->next->next != NULL )
+      if( after->next->next != 0 )
        {
    	    after->next->next->prev = after;
         after->next = after->next->next ;
        }
       else
-       { after->next = NULL; }
+       { after->next = 0; }
 
       if( delete_ptr == rear )
 	   {
@@ -331,25 +329,25 @@ class LinkListDoubleTemplate : public PObject
       return( delete_ptr );
      }
     
-    return( NULL );
+    return( 0 );
    }
 
   inline TYPE* removeBefore( TYPE *before )
    {
     TYPE *delete_ptr;
-	assert( before != NULL );
+	assert( before != 0 );
 	
 	delete_ptr = before->prev;
     
-	if( before->prev != NULL )
+	if( before->prev != 0 )
      {
-      if( before->prev->prev != NULL )
+      if( before->prev->prev != 0 )
        {
    	    before->prev->prev->next = before;
         before->prev = before->prev->prev;
        }
       else
-       { before->prev = NULL; }
+       { before->prev = 0; }
 
       if( delete_ptr == front )
 	   {
@@ -358,7 +356,7 @@ class LinkListDoubleTemplate : public PObject
  
       return( delete_ptr );
      }
-    return( NULL );
+    return( 0 );
    }
 
  
@@ -368,7 +366,7 @@ class LinkListDoubleTemplate : public PObject
 	unsigned long count = 0;
 
 	traversal_ptr = front;	
-	while( traversal_ptr != NULL )
+	while( traversal_ptr != 0 )
 	 {
 	  traversal_ptr = traversal_ptr->next;
 	  count++;
@@ -384,15 +382,15 @@ class LinkListDoubleTemplate : public PObject
 
 	traversal_ptr = front;	
 	
-	while( traversal_ptr != NULL )
+	while( traversal_ptr != 0 )
 	 {
 	  delete_ptr = traversal_ptr;
 	  traversal_ptr = traversal_ptr->next;	  
 	  delete( delete_ptr );
 	 }
    	
-   	front = NULL;
-  	rear = NULL;
+   	front = 0;
+  	rear = 0;
    }
  
  };
@@ -416,8 +414,8 @@ void LinkListDoubleTemplate< TYPE >::initialize( unsigned long size )
  { 
   TYPE *object;
   
-  if( front != NULL )
-   { deallocate() };
+  if( front != 0 )
+   { deallocate(); }
 
   for( unsigned long i; i < size; i++ )
    {

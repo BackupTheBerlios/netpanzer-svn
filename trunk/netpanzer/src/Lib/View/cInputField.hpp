@@ -52,10 +52,10 @@ public:
 
 	void free()
 	{
-		if (string != NULL)
+		if (string != 0)
 		{
 			delete [] string;
-			string = NULL;
+			string = 0;
 		}
 	}
 
@@ -74,7 +74,7 @@ public:
 	cInputField() { reset(); }
 	~cInputField()
 	{
-		if (excludedCharacters != NULL)
+		if (excludedCharacters != 0)
 		{
 			delete [] excludedCharacters;
 		}

@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __FireParticle2D_hpp_
 
 
-#include "stdafx.hpp"
+
 #include "Surface.hpp"
 #include "SpriteSorter.hpp"
 #include "fXYZ.hpp"

@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "UnitProfileInterface.hpp"
 
 #include <stdlib.h>
@@ -73,7 +72,7 @@ char *str;
 
   for(comindex=0; ( (comindex < max_key_list )  && notfound); comindex++ )
    {
-    notfound = strnicmp( str, &key_list[ comindex * _MAX_KEY_LENGTH ], strlen( &key_list[ comindex * _MAX_KEY_LENGTH ]) );
+    notfound = strncasecmp( str, &key_list[ comindex * _MAX_KEY_LENGTH ], strlen( &key_list[ comindex * _MAX_KEY_LENGTH ]) );
    }
 
 comindex = comindex-1;
@@ -142,12 +141,12 @@ short extract_token( char *token, char **string )
   *string = (str+index);
   
   if(str[index] == 0)
-   *string = NULL;
+   *string = 0;
 
   if ( token_index == 0 )
-   return (_FALSE);
+   return (false);
 
-  return (_TRUE);
+  return (true);
  
  }
 
@@ -165,7 +164,7 @@ void string_to_params( char *string, parameter_list *params )
    params->param_count++;
 
 
-  while ( string != NULL )
+  while ( string != 0 )
    {
     if( extract_token( params->params[ params->param_count ], &string ) ) 
     params->param_count++; 
@@ -182,12 +181,12 @@ void read_vehicle_profile( char *file_path, UnitProfile *profile)
   char temp_str[80]; 
   parameter_list param_list;  
   int temp_int;
-  short not_done = _TRUE;
+  short not_done = true;
 
-  FILE *file_ptr = NULL;
+  FILE *file_ptr = 0;
   
   file_ptr = fopen ( file_path, "rt" );
-  assert( file_ptr != NULL );
+  assert( file_ptr != 0 );
 
   while( not_done ) 
    {
@@ -296,7 +295,7 @@ void read_vehicle_profile( char *file_path, UnitProfile *profile)
         }break;
 
        case _end :
-        { not_done = _FALSE; } break;
+        { not_done = false; } break;
       } // ** switch
     
 

@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "UnitPowerUp.hpp"
 
 #include <stdlib.h>
@@ -255,7 +254,7 @@ void UnitPowerUp::updateState( void )
    {
     if ( powerup_state.life_cycle_state == _power_up_lifecycle_state_active )
      {
-      if( isPowerUpHit( &unit_id ) == _TRUE )
+      if( isPowerUpHit( &unit_id ) == true )
        {
         selectPowerUp( unit_id );
        }

@@ -15,8 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#ifdef WIN32
+#include <io.h>
+#endif
 
-#include "stdafx.hpp"
 #include "Surface.hpp"
 #include "UtilInterface.hpp"
 #include "cGrowList.hpp"
@@ -25,82 +27,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "TimerInterface.hpp"
 #include "Span.hpp"
 
-
-#if _MSC_VER > 1000
- #pragma optimize( "", off )
-#endif
-
-// This shit is damn slow right now, so do not use!!!
-void fastMemcpy(void *dest, const void *src, int n) {
-	
-    if (n < 1) return;
-
-	_asm {
-
-		pushad
-		mov esi, [src]
-		mov edi, [dest]
-		mov ecx, [n]
-
-// align to qword boundary.  This could be a lot faster with
-// jump table, but the main speedup will be the qword moves
-alignQword:
-		test edi, 7
-		jz qwordAlignedStart
-
-		mov al, [esi]
-		inc esi
-
-		mov [edi], al
-		inc edi
-
-		dec ecx
-		jnz alignQword
-
-		jmp done
-
-qwordAlignedStart:
-		sub ecx, 8
-		jl leftovers
-
-// Copy data in 8-byte chunks using the FPU
-
-qwordAligned:
-		fild qword ptr [esi]
-		add esi, 8
-		fistp qword ptr [edi]
-		add edi, 8
-		sub ecx, 8
-		jge qwordAligned
-
-leftovers:
-		add ecx, 8
-		jle done
-
-leftover:
-		mov al, [esi]
-		inc esi
-
-		mov [edi], al
-		inc edi
-
-		dec ecx
-		jnz leftover
-
-done:
-		popad
-	}
-
-}
-
-#if _MSC_VER > 1000
- #pragma optimize( "", on )
-#endif
-
-
-//#define memcpy fastMemcpy
-
+#ifdef MSVC
 #pragma pack(1)
+#endif
 
 struct PcxHeader
  {
@@ -118,7 +47,7 @@ struct PcxHeader
    WORD   bytes_per_line;
    WORD   palette_type;
    BYTE   padding[58];
- };
+ } __attribute__((packed));
 
 struct TGAHeader
 {
@@ -134,7 +63,7 @@ struct TGAHeader
 	WORD yPix;
 	BYTE bitsPerPixel;
 	BYTE imageDescriptor;
-}; // end cTGA
+} __attribute__((packed)); // end cTGA
 
 class SurfaceHeader
 {
@@ -146,14 +75,14 @@ public:
 	DWORD frameCount;
 	float fps;
 
-}; // end SurfaceHeader
+} __attribute__((packed)); // end SurfaceHeader
 
 struct PIC_HEAD
 {
 	DWORD xPix;         // Horizontal pixel count.
 	DWORD yPix;         // Vertical pixel count.
 	DWORD frameCount;    // Number of frames.
-};
+} __attribute__((packed));
 
 class BitmapFileHeader
   {
@@ -163,7 +92,7 @@ class BitmapFileHeader
    WORD    bfReserved1;
    WORD    bfReserved2;
    DWORD   bfOffBits;
-  };
+  } __attribute__((packed));
 
 #define BI_RGB      0L
 #define BI_RLE8     1L
@@ -183,7 +112,7 @@ class BitmapInfoHeader
   DWORD  biYPelsPerMeter;
   DWORD  biClrUsed;
   DWORD  biClrImportant;
- };
+ } __attribute__((packed));
 
 class RGBQuad 
  {
@@ -192,10 +121,11 @@ class RGBQuad
   BYTE    rgbGreen;
   BYTE    rgbRed;
   BYTE    rgbReserved;
- };
+ } __attribute__((packed));
 
-
+#ifdef MSVC
 #pragma pack()
+#endif
 
 PIX Surface::transPix = 0;
 bool Surface::screenLocked = true;
@@ -243,7 +173,7 @@ Surface::Surface(const iXY &nPix, int nStride, int nFrameCount)
 
 	reset();
 	alloc(nPix, true, nStride, nFrameCount);
-	assert(frame0 != NULL);
+	assert(frame0 != 0);
 
 	totalSurfaceCount++;
 	totalByteCount += sizeof(Surface);
@@ -292,7 +222,7 @@ Surface::Surface(const Surface &source, const iXY &min, const iXY &max, bool doG
 //---------------------------------------------------------------------------
 Surface::Surface(void *nFrame0, const iXY &nPix, int nStride, int nFrameCount)
 {
-	assert(nFrame0 != NULL);
+	assert(nFrame0 != 0);
 	assert(isValidPtr(this));
 
 	reset();
@@ -322,7 +252,7 @@ Surface::~Surface()
 //---------------------------------------------------------------------------
 void Surface::free()
 {
-	if (myMem && frame0 != NULL)
+	if (myMem && frame0 != 0)
 	{
 		::free(frame0);
 
@@ -331,8 +261,8 @@ void Surface::free()
 		assert(totalByteCount >= 0);
 	}
 	
-	frame0     = NULL;
-	mem        = NULL;
+	frame0     = 0;
+	mem        = 0;
 	myMem      = false;
 	doesExist  = false;
 	frameCount = 0;
@@ -347,8 +277,8 @@ void Surface::reset()
 	pix	        = 0;
 	stride      = 0;
 	center      = 0;
-	mem         = NULL;
-	frame0      = NULL;
+	mem         = 0;
+	frame0      = 0;
 	myMem       = false;
 	frameCount  = 0;
 	curFrame    = 0;
@@ -398,7 +328,7 @@ bool Surface::alloc(const iXY  &pix,
 		// Add the number of bytes for this surface.
 		totalByteCount += requestedBytes;
 
-		if (frame0 == NULL)
+		if (frame0 == 0)
 		{
 			if (gottaHaveIt)
 			{
@@ -489,7 +419,7 @@ void Surface::setTo(void *frame0,
                     int stride, 
                     int frameCount)
 {
-	assert(frame0 != NULL);
+	assert(frame0 != 0);
 	assert(isValidPtr(this));
 
 	free();
@@ -587,9 +517,9 @@ void Surface::blt(const Surface &dest, iXY min) const
 
 	// Something is overlapping, so we need to verify that both
 	// surfaces are valid.
-	assert(mem != NULL);
-	assert(dest.mem != NULL);
-	if (mem == NULL || dest.mem == NULL) return;
+	assert(mem != 0);
+	assert(dest.mem != 0);
+	if (mem == 0 || dest.mem == 0) return;
 
 	int	pixelsPerRow = pix.x;
 	int	numRows      = pix.y;
@@ -686,9 +616,9 @@ void Surface::bltTrans(const Surface &dest, iXY min) const
 
 	// Something is overlapping, so we need to verify that both
 	// surfaces are valid.
-	assert(mem != NULL);
-	assert(dest.mem != NULL);
-	if (mem == NULL || dest.mem == NULL) return;
+	assert(mem != 0);
+	assert(dest.mem != 0);
+	if (mem == 0 || dest.mem == 0) return;
 
 	int	pixelsPerRow = pix.x;
 	int	numRows      = pix.y;
@@ -783,9 +713,9 @@ void Surface::bltTransColor(const Surface &dest, iXY min, const BYTE &color) con
 
 	// Something is overlapping, so we need to verify that both
 	// surfaces are valid.
-	assert(mem != NULL);
-	assert(dest.mem != NULL);
-	if (mem == NULL || dest.mem == NULL) return;
+	assert(mem != 0);
+	assert(dest.mem != 0);
+	if (mem == 0 || dest.mem == 0) return;
 
 	int	pixelsPerRow = pix.x;
 	int	numRows      = pix.y;
@@ -866,8 +796,8 @@ void Surface::drawHLine(int x1, int y, int x2, const PIX &color) const
 	// Check for trivial rejection
 	if (y < 0 || x2 <= 0 || y >= pix.y || x1 >= pix.x) return;
 
-	assert(mem != NULL);
-	if (mem == NULL) return;
+	assert(mem != 0);
+	if (mem == 0) return;
 
 	orderCoords(x1, x2);
 
@@ -903,8 +833,8 @@ void Surface::drawVLine(int x, int y1, int y2, const PIX &color) const
 	// Check for trivial rejection
 	if (x < 0 || y2 <= 0 || x >= pix.x || y1 >= pix.y) return;
 
-	assert(mem != NULL);
-	if (mem == NULL) return;
+	assert(mem != 0);
+	if (mem == 0) return;
 
 	orderCoords(y1, y2);
 
@@ -1132,7 +1062,8 @@ void Surface::outOfMem(size_t requestedBytes)
 {
 	assert(false);
 	
-	MessageBox(gapp.hwndApp, "ERROR: Surface out of memory.", "Error", MB_OK);
+	fprintf(stderr, "ERROR: Surface out of memory.");
+	//MessageBox(gapp.hwndApp, "ERROR: Surface out of memory.", "Error", MB_OK);
 
 	exit(1);
 
@@ -1181,7 +1112,9 @@ void Surface::extractPCX(const char *filename, int nCols, int gapSpace)
 	setFrame(0);
 } // end Surface::extractPCX
 
+#ifdef MSVC
 #pragma pack (1)
+#endif
 struct PCX_HEADER
 {
 	char   manufacturer;
@@ -1200,8 +1133,10 @@ struct PCX_HEADER
 	short  bytesPerLine;
 	short  paletteType;
 	char   padding[58];
-};
+} __attribute__((packed));
+#ifdef MSVC
 #pragma pack ()
+#endif
 
 // loadPCX
 //---------------------------------------------------------------------------
@@ -1211,7 +1146,7 @@ struct PCX_HEADER
 //          into the palette field.
 //---------------------------------------------------------------------------
 void Surface::loadPCX(const char *fileName, bool needAlloc /* = true */,
-	                  void *returnPalette /* = NULL */)
+	                  void *returnPalette /* = 0 */)
 {
 	assert(isValidPtr(this));
 
@@ -1219,7 +1154,7 @@ void Surface::loadPCX(const char *fileName, bool needAlloc /* = true */,
 
 	// Open the PCX file
 	FILE *fp = fopen(fileName,"rb");
-	if (fp == NULL) { FUBAR("Unable to open %s", fileName); }
+	if (fp == 0) { FUBAR("Unable to open %s", fileName); }
 
 	// Read in the header
 	PCX_HEADER header;
@@ -1245,7 +1180,7 @@ void Surface::loadPCX(const char *fileName, bool needAlloc /* = true */,
 				if (pix.x < header.width || pix.y < header.height)
 					FUBAR("Not enough memory to load PCX image %s", fileName);
 			}
-		if (returnPalette != NULL)
+		if (returnPalette != 0)
 		{
 			// Move to the end of the file and back up to the start of the palette
 			fseek(fp, -768L, SEEK_END);
@@ -1367,7 +1302,7 @@ void Surface::copy(Surface &source)
 //---------------------------------------------------------------------------
 void Surface::rotate(int angle)
 {
-	assert(this != NULL);
+	assert(this != 0);
 
 	for (int i = 0; i < frameCount; i++)
 	{
@@ -1421,7 +1356,7 @@ void Surface::loadRAW(const char *filename, bool needAlloc /* = true */)
 
 	// Open the TIL file
 	FILE *fp = fopen(filename, "rb");
-	if (fp == NULL) { FUBAR("ERROR: Unable to load raw %s", filename); }
+	if (fp == 0) { FUBAR("ERROR: Unable to load raw %s", filename); }
 
 	// Read in the header
 	PIC_HEAD head;
@@ -1462,8 +1397,8 @@ void Surface::loadRAW(const char *filename, bool needAlloc /* = true */)
 		//FUBAR("Error reading file %s", fileName);
 	}
 
-	assert(frame0 != NULL);
-	assert(mem    != NULL);
+	assert(frame0 != 0);
+	assert(mem    != 0);
 	assert(unsigned(pix.x)  == head.xPix);
 	assert(unsigned(pix.y)  == head.yPix);
 
@@ -1536,7 +1471,8 @@ void Surface::scale(const iXY &pix)
 	iRect r(0, 0, pix.x, pix.y);
 
 	// Go through all the frames of the surface.
-	for (int frame = 0; frame < tempSurface.getFrameCount(); frame++)
+	int frame;
+	for (frame = 0; frame < tempSurface.getFrameCount(); frame++)
 	{
 		tempSurface.setFrame(frame);
 		Surface::setFrame(frame);
@@ -1618,7 +1554,7 @@ void Surface::verticalWave3DAll(int numWaves, float percent)
 	for (int curFrame = 0; curFrame < frameCount; curFrame++)
 	{
 		setFrame(curFrame);
-		verticalWave3D(numWaves, percent, curOffset);
+		verticalWave3D(numWaves, percent, (int) curOffset);
 		curOffset += offsetStep;
 	}
 } // end Surface::verticalWave3DAll
@@ -1663,7 +1599,7 @@ void Surface::horizontalWave3DAll(int numWaves, float percent)
 	for (int curFrame = 0; curFrame < frameCount; curFrame++)
 	{
 		setFrame(curFrame);
-		horizontalWave3D(numWaves, percent, curOffset);
+		horizontalWave3D(numWaves, percent, (int) curOffset);
 		curOffset += offsetStep;
 	}
 } // end Surface::horizontalWave3DAll
@@ -1708,7 +1644,7 @@ void Surface::rippleAll(int numWaves, float percent)
 	for (int curFrame = 0; curFrame < frameCount; curFrame++)
 	{
 		setFrame(curFrame);
-		ripple(numWaves, percent, curOffset);
+		ripple(numWaves, percent, (int) curOffset);
 		curOffset += offsetStep;
 	}
 } // end Surface::rippleAll
@@ -1729,7 +1665,7 @@ void Surface::ripple(int numWaves, float percent, int offset)
 	float maxDist      = sqrt(pix.x * pix.x + pix.y * pix.y);
 	float scale        = (piTimes2 * numWaves) / maxDist;
 
-	offset = (offset * piTimes2) / 100.0;
+	offset = (int) ((offset * piTimes2) / 100.0);
 
 	blt(temp, 0, 0);
 
@@ -1764,15 +1700,10 @@ void Surface::horizontalWaveAll(int numWaves, float percent)
 	for (int frame = 0; frame < frameCount; frame++)
 	{
 		setFrame(frame);
-		horizontalWave(numWaves, percent, curOffset);
+		horizontalWave(numWaves, percent, (int) curOffset);
 		curOffset += offsetStep;
 	}
 } // end Surface::horizontalWaveAll
-
-static float round(float num)
-{
-  return num += 0.5;
-}
 
 // horizontalWave
 //---------------------------------------------------------------------------
@@ -1817,7 +1748,7 @@ void Surface::verticalWaveAll(int numWaves, float percent)
 	for (int frame = 0; frame < frameCount; frame++)
 	{
 		setFrame(frame);
-		verticalWave(numWaves, percent, curOffset);
+		verticalWave(numWaves, percent, (int) curOffset);
 		curOffset += offsetStep;
 	}
 } // end Surface::verticalWaveAll
@@ -1904,8 +1835,8 @@ void Surface::blendIn(const Surface &source, iXY min, ColorTable &colorTable) co
 
 	// Something is overlapping, so we need to verify that both
 	// surfaces are valid.
-	assert(mem        != NULL);
-	assert(source.mem != NULL);
+	assert(mem        != 0);
+	assert(source.mem != 0);
 
 	int        pixelsPerRow = source.pix.x;
 	int        numRows      = source.pix.y;
@@ -1975,8 +1906,8 @@ void Surface::bltBlendScale(const Surface &source, const iRect &destRect, ColorT
 
 	// Something is overlapping, so we need to verify that both
 	// surfaces are valid.
-	assert(mem        != NULL);
-	assert(source.mem != NULL);
+	assert(mem        != 0);
+	assert(source.mem != 0);
 
 	int pixelsPerRow = max.x-min.x;
 	int numRows      = max.y-min.y;
@@ -2062,7 +1993,7 @@ void Surface::bltLookup(const iRect &destRect, const PIX table[]) const
 	if (max.x > pix.x) max.x = pix.x;
 	if (max.y > pix.y) max.y = pix.y;
 	
-	assert(mem != NULL);
+	assert(mem != 0);
 
 	int pixelsPerRow = max.x - min.x;
 	int numRows      = max.y - min.y;
@@ -2093,8 +2024,8 @@ void Surface::bltScale(const Surface &source, const iRect &destRect) const
 
 	// Something is overlapping, so we need to verify that both
 	// surfaces are valid.
-	assert(mem        != NULL);
-	assert(source.mem != NULL);
+	assert(mem        != 0);
+	assert(source.mem != 0);
 
 	int pixelsPerRow = max.x-min.x;
 	int numRows      = max.y-min.y;
@@ -2196,8 +2127,8 @@ void Surface::blendRect(iRect bounds, ColorTable &colorTable) const
 	if (bounds.min.x >= pix.x) return;
 	if (bounds.min.y >= pix.y) return;
 
-	assert(mem != NULL);
-	if (mem == NULL) return;
+	assert(mem != 0);
+	if (mem == 0) return;
 
 	// Check for clipping
 	if (bounds.min.x <  0)     bounds.min.x = 0;
@@ -2244,7 +2175,8 @@ void Surface::blendRect(iRect bounds, ColorTable &colorTable) const
 	{
 		for (int x = 0; x < diff.x; x++)
 		{
-			index = (float(Palette::brightness256[*ptr]) / 100.0f) * colorTable.getColorCount();
+			index = (int) ((float(Palette::brightness256[*ptr]) / 100.0f) *
+					colorTable.getColorCount());
 			assert(index < colorTable.getColorCount());
 			*ptr = colorTable[index];
 			ptr++;
@@ -2267,7 +2199,8 @@ void Surface::shrinkWrap()
 	bounds.min.y = center.y;
 	bounds.max.y = center.y;
 
-	for (int num = 0; num < frameCount; num++)
+	int num;
+	for (num = 0; num < frameCount; num++)
 	{
 		setFrame(num);
 		//LOG(("curFrame:  %d", curFrame));
@@ -2359,7 +2292,7 @@ static inline float calcY(float average, float ruggedness, unsigned distance)
 //---------------------------------------------------------------------------
 void frac(int *matrix, int stride, int x1, int y1, int x2, int y2, float ruggedness)
 {
-	assert(matrix != NULL);
+	assert(matrix != 0);
 
 	int xm, zm;
 
@@ -2386,7 +2319,8 @@ void frac(int *matrix, int stride, int x1, int y1, int x2, int y2, float ruggedn
 		if (matrix[zm * stride + x1] == -10000)
 		{
 			// Not filled in - generate a random cell value
-			matrix[zm * stride + x1] = calcY((tl+bl)/2.0, ruggedness, y2-y1);
+			matrix[zm * stride + x1] = (int) (calcY((tl+bl)/2.0, ruggedness,
+						y2-y1));
 		}
 
 		// Fill in the middle right cell.  We know it hasn't
@@ -2394,17 +2328,20 @@ void frac(int *matrix, int stride, int x1, int y1, int x2, int y2, float ruggedn
 		// the smaller squares
 		if (matrix[zm * stride + x2] != -10000.0) { FUBAR("1. matrix[%u, %u] != -10000 - value: %d", zm, x2, matrix[zm * stride + x2]); }
 		if (x1 < x2)
-			matrix[zm * stride + x2] = calcY((tr+br)/2.0, ruggedness, y2-y1);
+			matrix[zm * stride + x2] = (int) (calcY((tr+br)/2.0, ruggedness,
+						y2-y1));
 	}
 
 	// Do the same for the top-middle and bottom-middle cells
 	if (xm < x2)
 	{
 		if (matrix[y1 * stride + xm] == -10000.0)
-			matrix[y1 * stride + xm] = calcY((tl+tr)/2.0, ruggedness, x2-x1);
+			matrix[y1 * stride + xm] = (int) (calcY((tl+tr)/2.0, ruggedness,
+						x2-x1));
 		if (matrix[y2 * stride + xm] != -10000.0) { FUBAR("2. matrix[%u, %u] != -10000 - value: %d", y2, xm, matrix[y2 * stride + xm]); }
 		if (y1 < y2)
-			matrix[y2 * stride + xm] = calcY((bl+tr)/2.0, ruggedness, x2-x1);
+			matrix[y2 * stride + xm] = (int) (calcY((bl+tr)/2.0, ruggedness,
+						x2-x1));
 	}
 
 	// Fill in the middle cell value.  If our square is at
@@ -2412,7 +2349,8 @@ void frac(int *matrix, int stride, int x1, int y1, int x2, int y2, float ruggedn
 	if (xm < x2 && zm < y2)
 	{
 		if (matrix[zm * stride + xm] != -10000.0) { FUBAR("3. matrix[%u, %u] != -10000 - value: %d", zm, xm, matrix[zm * stride + xm]); }
-		matrix[zm * stride + xm] = calcY((tl+tr+bl+br)/4.0, ruggedness, (x2-x1)+(y2-y1));
+		matrix[zm * stride + xm] = (int) (calcY((tl+tr+bl+br)/4.0, ruggedness,
+					(x2-x1)+(y2-y1)));
 	}
 
 	// Now recursivly do the smaller squares
@@ -2446,7 +2384,7 @@ void Surface::createFractal(const float &minY, const float &maxY, const float &r
 
 	// Create some temp buffer to generate the values in.
 	int *tempBuf = (int *) malloc(stride * pix.y * sizeof(int));
-	if (tempBuf == NULL) { FUBAR("ERROR: Unable to allocate temp fractal surface."); }
+	if (tempBuf == 0) { FUBAR("ERROR: Unable to allocate temp fractal surface."); }
 
 	// Initialize everything to some bogus value.
 	for (int x = 0; x < stride; x++)
@@ -2458,10 +2396,10 @@ void Surface::createFractal(const float &minY, const float &maxY, const float &r
 	//FUBAR("!EXIT!");;
 
 	// Initialize the corners to some value.
-	tempBuf[0]                           = getRand(minY, maxY);
-	tempBuf[stride-1]                    = getRand(minY, maxY);
-	tempBuf[pix.y-1 * stride-1]          = getRand(minY, maxY);
-	tempBuf[pix.y-1 * stride + stride-1] = getRand(minY, maxY);
+	tempBuf[0]                           = (int) getRand(minY, maxY);
+	tempBuf[stride-1]                    = (int) getRand(minY, maxY);
+	tempBuf[pix.y-1 * stride-1]          = (int) getRand(minY, maxY);
+	tempBuf[pix.y-1 * stride + stride-1] = (int) getRand(minY, maxY);
 
 	// Recursively generate the fractal surface
 	frac(tempBuf, stride, 0, 0, stride-1, pix.y-1, ruggedness);
@@ -2469,7 +2407,7 @@ void Surface::createFractal(const float &minY, const float &maxY, const float &r
 	int yMin = tempBuf[0];
 	int yMax = tempBuf[0];
 
-	for (x = 0; x < stride; x++)
+	for (int x = 0; x < stride; x++)
 	{
 		for (int y = 0; y < pix.y; y++)
 		{
@@ -2484,7 +2422,7 @@ void Surface::createFractal(const float &minY, const float &maxY, const float &r
 	int   difference = yMax - yMin;
 	float ratio      = 255.0/float(difference);
 
-	for (x = 0; x < stride; x++)
+	for (int x = 0; x < stride; x++)
 	{
 		for (int y = 0; y < pix.y; y++)
 		{
@@ -2494,7 +2432,7 @@ void Surface::createFractal(const float &minY, const float &maxY, const float &r
 				tempBuf[y * stride + x] -= yMin;
 			}
 			// Move the land to be within the range [0, 255].
-			int value = tempBuf[y * stride + x]*ratio;
+			int value = (int) (tempBuf[y * stride + x]*ratio);
 			assert(value < 256);
 			tempBuf[y * stride + x] = value;
 			//LOG(("tempBuf[y * stride + x], value: %d", tempBuf[y * stride + x]));
@@ -2520,6 +2458,8 @@ void Surface::createFractal(const float &minY, const float &maxY, const float &r
 void Surface::fire(int *dest, int xSize, int ySize)
 {
 
+	// XXX no msvc assembler
+#ifdef MSVC
 	_asm {
 
 		mov edi, [dest]
@@ -2549,13 +2489,9 @@ void Surface::fire(int *dest, int xSize, int ySize)
 		mov  [edi+esi-4], eax
 		jnz  fl1
 	}
-
-
-}
-#if _MSC_VER > 1000
- #pragma optimize( "", on )
 #endif
-
+	
+}
 
 // smooth
 //---------------------------------------------------------------------------
@@ -2581,7 +2517,7 @@ void Surface::smooth()
 		putPixel(x, 0, (getPixel(x-1, 1)+getPixel(x, 1)+getPixel(x+1, 1))/3);
 
 	// SOUTH EDGE
-	for (x = 1; x < pix.x; x++)
+	for (int x = 1; x < pix.x; x++)
 		putPixel(x, ZP, (getPixel(x-1, ZP-1)+getPixel(x, ZP-1)+getPixel(x+1, ZP-1))/3);
 
 	// WEST EDGE
@@ -2589,12 +2525,12 @@ void Surface::smooth()
 		putPixel(0, y, (getPixel(1, y-1)+getPixel(1, y)+getPixel(1, y+1))/3);
 
 	// EAST EDGE
-	for (y = 1; y < pix.y; y++)
+	for (int y = 1; y < pix.y; y++)
 		putPixel(XP, y, (getPixel(XP, y-1)+getPixel(XP, y)+getPixel(XP, y+1))/3);
 
 	// Then erode the inner area
-	for (x = 1; x < pix.x; x++)
-		for (y = 1; y < pix.y; y++)
+	for (int x = 1; x < pix.x; x++)
+		for (int y = 1; y < pix.y; y++)
 			putPixel(x, y, (getPixel(x-1, y)+getPixel(x+1, y)+getPixel(x, y-1)+getPixel(x, y+1))/4);
 } // end smooth
 
@@ -2636,12 +2572,12 @@ PIX Surface::getAverageColor()
 //---------------------------------------------------------------------------
 void Surface::saveRAW(FILE *fp) const
 {
-	if (fp == NULL) return;
+	if (fp == 0) return;
 
 	int numBytes = pix.x * pix.y * sizeof(PIX);
 	
 	if (numBytes <= 0) return;
-	if (frame0 == NULL) return;
+	if (frame0 == 0) return;
 
 	fwrite(frame0, numBytes, 1, fp);
 
@@ -2655,7 +2591,7 @@ void Surface::saveRAW(FILE *fp) const
 int Surface::saveRAW(const char *filename) const
 {
 	FILE *fp = fopen(filename, "wb");
-	if (fp == NULL) return 0;
+	if (fp == 0) return 0;
 
 	saveRAW(fp);
 
@@ -2671,7 +2607,7 @@ int Surface::loadTIL(String filename)
 {
 	FILE *fp = fopen((const char *) filename, "rb");
 	
-	if (fp == NULL)
+	if (fp == 0)
 	{
 		return 0;
 	}
@@ -2688,12 +2624,12 @@ int Surface::loadTIL(String filename)
 //---------------------------------------------------------------------------
 void Surface::loadTIL(FILE *fp)
 {
-	if (fp == NULL) return;
+	if (fp == 0) return;
 
 	FletchTileHeader fletchTileHeader;
 	fread(&fletchTileHeader, sizeof(FletchTileHeader), 1, fp);
 
-	if (frame0 == NULL || mem == NULL || pix.x != int(fletchTileHeader.xSize) || pix.y != int(fletchTileHeader.ySize))
+	if (frame0 == 0 || mem == 0 || pix.x != int(fletchTileHeader.xSize) || pix.y != int(fletchTileHeader.ySize))
 	{
 		create(fletchTileHeader.xSize, fletchTileHeader.ySize, fletchTileHeader.xSize, 1);
 	}
@@ -2701,7 +2637,7 @@ void Surface::loadTIL(FILE *fp)
 	int numBytes = pix.x * pix.y * sizeof(BYTE);
 	
 	if (numBytes <= 0) return;
-	if (mem == NULL) { FUBAR("ERROR: This should not happen."); }
+	if (mem == 0) { FUBAR("ERROR: This should not happen."); }
 
 	fread(mem, numBytes, 1, fp);
 
@@ -2719,7 +2655,7 @@ void Surface::saveAllTIL(const char *path)
 		setFrame(num);
 
 		FILE *fp = fopen(strBuf, "wb");
-		if (fp == NULL) { continue; }
+		if (fp == 0) { continue; }
 
 		saveTIL(fp);
 
@@ -2733,7 +2669,7 @@ void Surface::saveAllTIL(const char *path)
 int Surface::saveTIL(const char *filename)
 {
 	FILE *fp = fopen(filename, "wb");
-	if (fp == NULL) return 0;
+	if (fp == 0) return 0;
 
 	saveTIL(fp);
 
@@ -2746,7 +2682,7 @@ int Surface::saveTIL(const char *filename)
 // saveTIL
 void Surface::saveTIL(FILE *fp)
 {
-	if (fp == NULL) return;
+	if (fp == 0) return;
 
 	FletchTileHeader fletchTileHeader;
 
@@ -2768,7 +2704,7 @@ void Surface::saveTIL(FILE *fp)
 	int numBytes = pix.x * pix.y * sizeof(BYTE);
 	
 	if (numBytes <= 0) { FUBAR("ERROR: Trying to write surface when (numBytes <= 0)."); }
-	if (mem == NULL) { FUBAR("ERROR: Trying to write surface when (mem == NULL)."); }
+	if (mem == 0) { FUBAR("ERROR: Trying to write surface when (mem == 0)."); }
 
 	fwrite(mem, numBytes, 1, fp);
 
@@ -2778,7 +2714,7 @@ void Surface::saveTIL(FILE *fp)
 int Surface::loadRAW(const char *filename, const iXY pix)
 {
 	FILE *fp = fopen(filename, "rb");
-	if (fp == NULL) return 0;
+	if (fp == 0) return 0;
 
 	loadRAW(fp, pix);
 
@@ -2791,11 +2727,11 @@ int Surface::loadRAW(const char *filename, const iXY pix)
 // loadRAW
 void Surface::loadRAW(FILE *fp, const iXY pix)
 {
-	if (fp == NULL) return;
+	if (fp == 0) return;
 	if (pix.x <= 0) return;
 	if (pix.y <= 0) return;
 
-	if (frame0 == NULL || mem == NULL || this->pix.x != pix.x || this->pix.y != pix.y)
+	if (frame0 == 0 || mem == 0 || this->pix.x != pix.x || this->pix.y != pix.y)
 	{
 		create(pix.x, pix.y, pix.x, 1);
 	}
@@ -2803,7 +2739,7 @@ void Surface::loadRAW(FILE *fp, const iXY pix)
 	int numBytes = pix.x * pix.y * sizeof(BYTE);
 	
 	if (numBytes <= 0) return;
-	if (mem == NULL) { FUBAR("ERROR: This should not happen."); }
+	if (mem == 0) { FUBAR("ERROR: This should not happen."); }
 
 	fread(mem, numBytes, 1, fp);
 
@@ -2847,8 +2783,8 @@ void Surface::bltBrightness(const Surface &dest, const iXY &pos, const float &pe
 
 	// Something is overlapping, so we need to verify that both
 	// surfaces are valid.
-	assert(mem      != NULL);
-	assert(dest.mem != NULL);
+	assert(mem      != 0);
+	assert(dest.mem != 0);
 
 	int        pixelsPerRow = pix.x;
 	int        numRows      = pix.y;
@@ -2899,7 +2835,8 @@ void Surface::bltBrightness(const Surface &dest, const iXY &pos, const float &pe
 		while (xCount > 0)
 		{
 			//*d = Palette::colorTableBrighten[((*d) * 256) + (Palette::brightness256[(*s)] * percent)];
-			*d = Palette::colorTableBrighten[((*d) << 8) + (Palette::brightness256[(*s)] * percent)];
+			*d = Palette::colorTableBrighten[
+				(int) (((*d) << 8) + (Palette::brightness256[(*s)] * percent))];
   
 			xCount--;
 			s++;
@@ -2934,8 +2871,8 @@ void Surface::bltBrightness(const Surface &dest, const iXY pos, ColorTable &colo
 
 	// Something is overlapping, so we need to verify that both
 	// surfaces are valid.
-	assert(mem      != NULL);
-	assert(dest.mem != NULL);
+	assert(mem      != 0);
+	assert(dest.mem != 0);
 
 	int        pixelsPerRow = pix.x;
 	int        numRows      = pix.y;
@@ -3006,9 +2943,6 @@ void Surface::bltBrightness(const Surface &dest, const iXY pos, ColorTable &colo
 
 static BYTE quickHack[65536];
 
-#if _MSC_VER > 1000
- #pragma optimize( "", off )
-#endif
 static void bltLightDarkSpan(int n, PIX *d, const BYTE *i, const PIX *s)
 {
 
@@ -3041,6 +2975,8 @@ static void bltLightDarkSpan(int n, PIX *d, const BYTE *i, const PIX *s)
 	}
 
 	if (n > 3) {
+		// XXX no msvc assembler
+#ifdef MSVC
 		_asm {
 
 			// load vars into regs
@@ -3092,6 +3028,7 @@ static void bltLightDarkSpan(int n, PIX *d, const BYTE *i, const PIX *s)
 			mov d, edi
 			mov n, eax
 		}
+#endif
 	}
 
 	while (n > 0)
@@ -3106,9 +3043,6 @@ static void bltLightDarkSpan(int n, PIX *d, const BYTE *i, const PIX *s)
 	}
 
 }
-#if _MSC_VER > 1000
- #pragma optimize( "", on )
-#endif
 
 void Surface::bltLightDark(const Surface &source, const Surface &lightTable) const
 {
@@ -3126,10 +3060,10 @@ void Surface::bltLightDark(const Surface &source, const Surface &lightTable) con
 
 	while (numRows > 0)
 	{
-		int xCount = pix.x;
-		BYTE const *i = rowI;
-		PIX  const *s = rowS;
-		PIX        *d = rowD;
+		//int xCount = pix.x;
+		//BYTE const *i = rowI;
+		//PIX  const *s = rowS;
+		//PIX        *d = rowD;
 		
 		//while (xCount > 0)
 		//{
@@ -3156,7 +3090,8 @@ void Surface::setToBrightnessIndexes128()
 	{
 		for (int y = 0; y < pix.y; y++)
 		{
-			putPixel(x, y, Palette::brightness256[getPixel(x, y)] * (128.0/100.0));
+			putPixel(x, y, (int) (Palette::brightness256[getPixel(x, y)] *
+						(128.0/100.0)));
 		}
 	}
 }
@@ -3165,10 +3100,6 @@ void Surface::setToBrightnessIndexes128()
 //---------------------------------------------------------------------------
 // Purpose: 
 //---------------------------------------------------------------------------
-
-#if _MSC_VER > 1000
- #pragma optimize( "", off )
-#endif
 
 void Surface::bltAdd(const Surface &dest, iXY min) const
 {
@@ -3206,9 +3137,9 @@ void Surface::bltAdd(const Surface &dest, iXY min) const
 
 	// Something is overlapping, so we need to verify that both
 	// surfaces are valid.
-	assert(mem != NULL);
-	assert(dest.mem != NULL);
-	if (mem == NULL || dest.mem == NULL) return;
+	assert(mem != 0);
+	assert(dest.mem != 0);
+	if (mem == 0 || dest.mem == 0) return;
 
 	int	pixelsPerRow = pix.x;
 	int	numRows      = pix.y;
@@ -3285,6 +3216,8 @@ void Surface::bltAdd(const Surface &dest, iXY min) const
 		// Do 4-byte chunks
 
 		if (0 && n > 3) {
+			// XXX no msvc assembler
+#ifdef MSVC
 			_asm {
 
 				// load vars into regs
@@ -3334,6 +3267,7 @@ void Surface::bltAdd(const Surface &dest, iXY min) const
 				mov n, ebp
 
 			}
+#endif
 		}
 		
 		// Cleanup
@@ -3350,15 +3284,13 @@ void Surface::bltAdd(const Surface &dest, iXY min) const
 
 
 } // end bltAdd
-#if _MSC_VER > 1000
- #pragma optimize( "", on )
-#endif
-
 
 // loadAllTILInDirectory
 //---------------------------------------------------------------------------
 int Surface::loadAllTILInDirectory(const char *path)
 {
+	// XXX _findfirst below is win32 only
+#ifdef WIN32
 	char strBuf[256];
 	char pathWild[256];
 
@@ -3434,6 +3366,7 @@ int Surface::loadAllTILInDirectory(const char *path)
 			tempSurface.blt(*this, myOffset);
 		}
 	}
+#endif
 
 	return 1;
 } // end loadAllTILInDirectory
@@ -3442,6 +3375,8 @@ int Surface::loadAllTILInDirectory(const char *path)
 //---------------------------------------------------------------------------
 int Surface::loadAllPCXInDirectory(const char *path)
 {
+	// XXX _findfirst below is win32 only
+#ifdef WIN32
 	char strBuf[256];
 	char pathWild[256];
 
@@ -3511,6 +3446,7 @@ int Surface::loadAllPCXInDirectory(const char *path)
 		fill(Color::black);
 		tempSurface.blt(*this, myOffset);
 	}
+#endif
 
 	return 1;
 } // end loadAllPCXInDirectory
@@ -3519,6 +3455,8 @@ int Surface::loadAllPCXInDirectory(const char *path)
 //---------------------------------------------------------------------------
 int Surface::loadAllBMPInDirectory(const char *path)
 {
+	// XXX _findfirst below is win32 only
+#ifdef WIN32
 	char strBuf[256];
 	char pathWild[256];
 
@@ -3588,6 +3526,7 @@ int Surface::loadAllBMPInDirectory(const char *path)
 		fill(Color::black);
 		tempSurface.blt(*this, myOffset);
 	}
+#endif
 
 	return 1;
 } // end loadAllBMPInDirectory
@@ -3596,6 +3535,8 @@ int Surface::loadAllBMPInDirectory(const char *path)
 //---------------------------------------------------------------------------
 int Surface::loadAllRAWInDirectory(const char *path, const iXY &pix)
 {
+	// XXX _findfirst below is win32 only
+#ifdef WIN32
 	char strBuf[256];
 	char pathWild[256];
 
@@ -3643,6 +3584,7 @@ int Surface::loadAllRAWInDirectory(const char *path, const iXY &pix)
 			return 0;
 		}
 	}
+#endif
 
 	return 1;
 } // end loadAllRAWInDirectory
@@ -3660,7 +3602,7 @@ void Surface::explode(const double &time)
 
     //int[] zBuffer = new int[width * height];
 	int *zBuffer = new int[getArea()];
-	if (zBuffer == NULL)
+	if (zBuffer == 0)
 	{
 		FUBAR("Unable to allocate zBuffer.");
 	}
@@ -3726,7 +3668,7 @@ void Surface::explode(const double &time)
 int Surface::loadTGA(const char *filename)
 {
 	FILE *fp = fopen(filename, "rb");
-	if (fp == NULL) return 0;
+	if (fp == 0) return 0;
 
 	loadTGA(fp);
 
@@ -3764,9 +3706,9 @@ int loadTGA(FILE *file, cPixel24Bit *dest)
 	fread(&TGAheader, sizeof(TGAheader), 1, fp);
 
 	// Check for uncompressed/true-color.
-	if (TGAheader.imageType != UNCOMPRESSED_trueCOLOR) 
+	if (TGAheader.imageType != UNCOMPRESSEDtrueCOLOR) 
 	{
-		FUBAR("ERROR: TGAheader.imageType != UNCOMPRESSED_trueCOLOR");
+		FUBAR("ERROR: TGAheader.imageType != UNCOMPRESSEDtrueCOLOR");
 	}
 
 	// Check for 24-bits per pixel.
@@ -3792,7 +3734,7 @@ int loadTGA(FILE *file, cPixel24Bit *dest)
 		default: return 0;
 	}
 
-	if (dest != NULL)
+	if (dest != 0)
 	{
 		delete [] dest;
 	}
@@ -3931,13 +3873,11 @@ void Surface::drawPalette()
 }
 
 //--------------------------------------------------------------------------
-#if _MSC_VER > 1000
- #pragma optimize( "", off )
-#endif
-
 void fireByte(BYTE *dest, int xSize, int ySize)
 {
 
+	// XXX no msvc assembler
+#ifdef MSVC	
 	_asm {
 
 		mov edi, [dest]
@@ -3969,11 +3909,9 @@ void fireByte(BYTE *dest, int xSize, int ySize)
 		mov  [edi+esi-1], al
 		jnz  fl1
 	}
+#endif
 
 }
-#if _MSC_VER > 1000
- #pragma optimize( "", on )
-#endif
 
 //--------------------------------------------------------------------------
 void Surface::erode()
@@ -4011,7 +3949,7 @@ void initFont()
 	char charfilename[] = "pics\\chars8x8.raw";
 
 	FILE *fp = fopen(charfilename, "rb");
-	if (fp == NULL)
+	if (fp == 0)
 	{
 		assert(false);
 	}
@@ -4038,7 +3976,7 @@ void initFont()
 	char charfilename[] = "pics\\chars5x5.raw";
 
 	FILE *fp = fopen(charfilename, "rb");
-	if (fp == NULL)
+	if (fp == 0)
 	{
 		assert(false);
 	}
@@ -4302,9 +4240,9 @@ void Surface::bltTransVGradient(const Surface &dest, iXY min, ColorTable &colorT
 
 	// Something is overlapping, so we need to verify that both
 	// surfaces are valid.
-	assert(mem != NULL);
-	assert(dest.mem != NULL);
-	if (mem == NULL || dest.mem == NULL) return;
+	assert(mem != 0);
+	assert(dest.mem != 0);
+	if (mem == 0 || dest.mem == 0) return;
 
 	int	pixelsPerRow = pix.x;
 	int	numRows      = pix.y;
@@ -4360,7 +4298,8 @@ void Surface::bltTransVGradient(const Surface &dest, iXY min, ColorTable &colorT
 
 	for (int row = 0; row < numRows; row++)
 	{
-		int index = float(row) / float(numRows) * (colorTable.getColorCount() - 1);
+		int index = (int) 
+			(float(row) / float(numRows) *(colorTable.getColorCount() - 1));
 		int color = colorTable[index];
 
 		for (int col = 0; col < pixelsPerRow; col++)
@@ -4448,7 +4387,10 @@ inline long pcx_xputc( long c, FILE *fp )
         };
 
         if ( csave != -1 )
-        {  if ( i = pcx_putc( csave, n, fp ) )
+        {  
+		   // XXX is this = intended here? (I added the braces to avoid the
+		   // warning now...)
+		   if ( (i = pcx_putc( csave, n, fp )) )
               return i;
            csave = n = -1;
         };
@@ -4530,7 +4472,7 @@ int Surface::savePCX( const char *filename, Palette &pal )
 {
 	FILE *fp = fopen(filename, "wb");
 
-	if (fp == NULL) return 0;
+	if (fp == 0) return 0;
 
 	savePCX(fp, pal);
 
@@ -4565,7 +4507,7 @@ void Surface::convertTransColor(const PIX &color)
 int  Surface::saveSUR(const char *filename)
 {
 	FILE *fp = fopen(filename, "wb");
-	if (fp == NULL)	{ return 0; }
+	if (fp == 0)	{ return 0; }
 
 	saveSUR(fp);
 
@@ -4605,7 +4547,7 @@ void Surface::saveSUR(FILE *fp)
 int  Surface::loadSUR(const char *filename)
 {
 	FILE *fp = fopen(filename, "rb");
-	if (fp == NULL)	{ return 0; }
+	if (fp == 0)	{ return 0; }
 
 	loadSUR(fp);
 
@@ -4626,7 +4568,7 @@ void Surface::loadSUR(FILE *fp)
 	create(surfaceHeader.pixX, surfaceHeader.pixY, surfaceHeader.pixX, surfaceHeader.frameCount);
 
 	setOffset(iXY(surfaceHeader.offsetX, surfaceHeader.offsetY));
-	setFPS(surfaceHeader.fps);
+	setFPS((int) surfaceHeader.fps);
 
 	// Write the actual data...
 	for (int i = 0; i < frameCount; i++)
@@ -4654,7 +4596,7 @@ void Surface::lock(PIX *memBuf)
 void Surface::unlock()
 {
 	screenLocked = true;
-	frame0 = mem = NULL;
+	frame0 = mem = 0;
 	doesExist    = false;
 
 
@@ -4707,7 +4649,7 @@ void Surface::drawStatic()
 } // end Surface::drawStatic
 
 void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
-	                  void *returnPalette /* = NULL */)
+	                  void *returnPalette /* = 0 */)
  {
 	BitmapFileHeader file_header;
     BitmapInfoHeader info_header;
@@ -4717,7 +4659,7 @@ void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
 	if (needAlloc) free();
 
 	FILE *fp = fopen(fileName,"rb");
-	if (fp == NULL) { FUBAR("Unable to open %s", fileName); }
+	if (fp == 0) { FUBAR("Unable to open %s", fileName); }
 
     fread( &file_header, sizeof(BitmapFileHeader), 1, fp ); 
  
@@ -4772,7 +4714,7 @@ void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
 	  PIX buffer[10];
       int numRows = pix.y;
 
-      PIX *sPtr = mem;
+      //PIX *sPtr = mem;
 
       for (int row = 0; row < numRows; row++)
        {
@@ -4845,7 +4787,7 @@ void Surface::saveBMP(FILE *fp, Palette &pal )
 	  PIX buffer[10];
       int numRows = pix.y;
 
-      PIX *sPtr = mem;
+      //PIX *sPtr = mem;
 
       for (int row = 0; row < numRows; row++)
        {
@@ -4896,7 +4838,7 @@ int Surface::saveBMP( const char *filename, Palette &pal )
 {
 	FILE *fp = fopen(filename, "wb");
 
-	if (fp == NULL) return 0;
+	if (fp == 0) return 0;
 
 	saveBMP(fp, pal);
 
@@ -5001,7 +4943,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
 		
 		strBuf[strBufLength] = '\0';
 
-		if (pos.x + strlen(strBuf) * CHAR_XPIX > rect.max.x)
+		if ((int) (pos.x + strlen(strBuf) * CHAR_XPIX) > rect.max.x)
 		{
 			pos.x = rect.min.x;
 			pos.y += gapSpace;
@@ -5033,7 +4975,7 @@ void Surface::mapFromPalette(String oldPalette)
 
 	FILE *fp;
 
-	if ((fp = fopen(oldPalette, "rb")) == NULL)
+	if ((fp = fopen(oldPalette, "rb")) == 0)
 	{
 		FUBAR("Unable to open palette file: %s", (const char *) oldPalette);
 	}

@@ -44,17 +44,17 @@ class ServerConnectQueue : public QueueTemplate< ConnectQueueElement >
 	 *iterator = front;
 	}
    
-   ConnectQueueElement incIterator( unsigned long *iterator, boolean *completed )
+   ConnectQueueElement incIterator( unsigned long *iterator, bool *completed )
 	{
 	 if ( *iterator == rear )
 	  {
-	   *completed = _TRUE;
+	   *completed = true;
 	   return( array[ *iterator ] );
 	  };
 
 	 *iterator = ( *iterator + 1 ) % size;
 
-	 *completed = _FALSE;
+	 *completed = false;
 	 return( array[ *iterator ] );      
 	}
  
@@ -64,7 +64,7 @@ class ServerConnectDaemon : public PObject
  {  
   protected:
    static unsigned char      connection_state;
-   static boolean            connection_lock_state;
+   static bool            connection_lock_state;
    static PlayerID           connect_player_id;
    static PlayerState        *connect_player_state;
    static Timer		         time_out_timer;
@@ -72,11 +72,11 @@ class ServerConnectDaemon : public PObject
    static ServerConnectQueue connect_queue;
    
    
-   static boolean inConnectQueue( PlayerID &new_player_id ); 
+   static bool inConnectQueue( PlayerID &new_player_id ); 
 
    static void connectFsm( NetMessage *message );
    static void connectProcess( NetMessage *message );
-   static boolean disconnectClient( PlayerID player_id );
+   static bool disconnectClient( PlayerID player_id );
 
    static void updateQueuedClients( void );
 
@@ -88,13 +88,13 @@ class ServerConnectDaemon : public PObject
    static void resetConnectFsm( void );
 
    // ** FSM States
-   static boolean connectStateIdle( void );
-   static boolean connectStateWaitForConnectRequest( NetMessage *message );
-   static boolean connectStateAttemptPlayerAlloc( void );
-   static boolean connectStateWaitForClientSettings( NetMessage *message );
-   static boolean connectStateWaitForClientGameSetupAck( NetMessage *message );
-   static boolean connectStatePlayerStateSync( void );
-   static boolean connectStateUnitSync( void );
+   static bool connectStateIdle( void );
+   static bool connectStateWaitForConnectRequest( NetMessage *message );
+   static bool connectStateAttemptPlayerAlloc( void );
+   static bool connectStateWaitForClientSettings( NetMessage *message );
+   static bool connectStateWaitForClientGameSetupAck( NetMessage *message );
+   static bool connectStatePlayerStateSync( void );
+   static bool connectStateUnitSync( void );
  
   public:
    
@@ -115,9 +115,9 @@ class ServerConnectDaemon : public PObject
    
    static void lockConnectProcess( void );
    static void unlockConnectProcess( void );
-   static boolean getConnectLockStatus( void );  
+   static bool getConnectLockStatus( void );  
         
-   static boolean isConnecting( void );
+   static bool isConnecting( void );
  };
 
 #endif // ** _SERVERCONNECTDAEMON_HPP

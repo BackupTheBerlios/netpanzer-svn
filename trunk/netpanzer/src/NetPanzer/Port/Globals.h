@@ -18,8 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _GLOBALS_H
 #define _GLOBALS_H
 
-#include "aliasdef.h"
-
 extern short DISPLAY_PAGE_STATE;
 
 //short CURRENT_BANK;

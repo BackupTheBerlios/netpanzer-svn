@@ -20,12 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Particle2D_hpp__
 #define __Particle2D_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 #include "iRect.hpp"
 #include "iXY.hpp"
 #include "fXYZ.hpp"
@@ -200,7 +194,7 @@ protected:
 //public:
 //	SpriteBltBlendScale()
 //	{
-//		colorTable = NULL;
+//		colorTable = 0;
 //	}
 //	
 //	virtual void blit(Surface *surface, Recti &world_win);
@@ -217,7 +211,7 @@ protected:
 //public:
 //	SpriteBltBlend()
 //	{
-//		colorTable = NULL;
+//		colorTable = 0;
 //		useBlend   = 1;
 //	}
 //	

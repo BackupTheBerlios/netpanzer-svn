@@ -18,8 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SERVER_HPP
 #define _SERVER_HPP
 
-#include "NetworkServerWinSock.hpp"
-#include "NetworkServerDPlay.hpp"
+#include "NetworkServer.hpp"
 
 extern NetworkServer *SERVER;
 

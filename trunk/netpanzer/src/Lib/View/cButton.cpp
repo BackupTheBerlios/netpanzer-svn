@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "stdafx.hpp"
+
 #include "cButton.hpp"
 #include "Surface.hpp"
 #include "ViewGlobals.hpp"
@@ -36,7 +36,7 @@ void cButton::createPacked(const iXY &pos, PackedSurface &source, const char *to
 
 	topSurface.pack(tempTopSurface);
 
-	cButton::toolTip       = strdup(toolTip); assert(toolTip != NULL);
+	cButton::toolTip       = strdup(toolTip); assert(toolTip != 0);
 	cButton::bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getPix().x, pos.y + tempTopSurface.getPix().y);
 	cButton::leftClickFunc = leftClickFunc;
 }
@@ -70,8 +70,8 @@ void cButton::create(iXY pos, const char *nName, const char *nToolTip,
 	tempTopSurface.drawButtonBorder(iRect(0, 0, xSize, ySize), bottomRightBorderColor, topLeftBorderColor);
 	tempTopSurface.bltString(GAP_SPACE / 2 + 2, GAP_SPACE / 2 + 1, nName, componentActiveTextColor);
 
-	setName(nName); assert(name != NULL);
-	toolTip       = strdup(nToolTip); assert(toolTip != NULL);
+	setName(nName); assert(name != 0);
+	toolTip       = strdup(nToolTip); assert(toolTip != 0);
 	bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getPix().x, pos.y + tempTopSurface.getPix().y);
 	leftClickFunc = nLeftClickFunc;
 
@@ -101,7 +101,7 @@ void cButton::createCenterText(iXY pos,
 
 	// Find out the horizontal offset to put the button name on the button.
 	int xOffset;
-	if (nName != NULL) xOffset = (xSize-(strlen(nName)*CHAR_XPIX))/2;
+	if (nName != 0) xOffset = (xSize-(strlen(nName)*CHAR_XPIX))/2;
 	else xOffset = xSize/2;
 
 	// Make the unselected button
@@ -122,10 +122,10 @@ void cButton::createCenterText(iXY pos,
 	tempTopSurface.bltString(xOffset+1, GAP_SPACE/2+1, nName, componentActiveTextColor);
 
 	// Save the button name.
-	setName(nName); assert(name != NULL);
+	setName(nName); assert(name != 0);
 
 	// Save the button tool tip.
-	toolTip = strdup(nToolTip); assert(toolTip != NULL);
+	toolTip = strdup(nToolTip); assert(toolTip != 0);
 	
 	// Save the bounds of the button.
 	bounds = iRect(pos.x, pos.y, pos.x+tempTopSurface.getPix().x, pos.y+tempTopSurface.getPix().y);
@@ -182,7 +182,7 @@ void cButton::createTIL(iXY pos,
 	tempTopSurface.setFrame(0);
 
 	setName("TIL file");
-	toolTip       = strdup(nToolTip); assert(toolTip != NULL);
+	toolTip       = strdup(nToolTip); assert(toolTip != 0);
 	bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getPix().x, pos.y + tempTopSurface.getPix().y);
 	leftClickFunc = nLeftClickFunc;
 
@@ -246,7 +246,7 @@ void cButton::createSurface(
 	tempTopSurface.setFrame(0);
 
 	setName("Surface Single");
-	toolTip       = strdup(nToolTip); assert(toolTip != NULL);
+	toolTip       = strdup(nToolTip); assert(toolTip != 0);
 	bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getPix().x, pos.y + tempTopSurface.getPix().y);
 	leftClickFunc = nLeftClickFunc;
 
@@ -281,7 +281,7 @@ void cButton::createSurfaceSingle(
 	tempTopSurface.setFrame(0);
 
 	setName("Surface Single");
-	toolTip       = strdup(nToolTip); assert(toolTip != NULL);
+	toolTip       = strdup(nToolTip); assert(toolTip != 0);
 	bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getPix().x, pos.y + tempTopSurface.getPix().y);
 	leftClickFunc = nLeftClickFunc;
 
@@ -303,13 +303,13 @@ void cButton::create(iXY pos,
 
 	tempTopSurface.create(iXY(32, 32), 32, 3);
 	tempTopSurface.setFrame(0);
-	tempTopSurface.loadRAW(imageName0, FALSE);
+	tempTopSurface.loadRAW(imageName0, false);
 	tempTopSurface.setFrame(1);
-	tempTopSurface.loadRAW(imageName1, FALSE);
+	tempTopSurface.loadRAW(imageName1, false);
 	tempTopSurface.setFrame(2);
-	tempTopSurface.loadRAW(imageName2, FALSE);
-	setName(nName); assert(name != NULL);
-	toolTip       = strdup(nToolTip); assert(toolTip != NULL);
+	tempTopSurface.loadRAW(imageName2, false);
+	setName(nName); assert(name != 0);
+	toolTip       = strdup(nToolTip); assert(toolTip != 0);
 	bounds        = iRect(pos.x, pos.y, pos.x+tempTopSurface.getPix().x, pos.y+tempTopSurface.getPix().y);
 	leftClickFunc = nLeftClickFunc;
 
@@ -331,7 +331,7 @@ void cButton::create(iXY pos, ANIMATED_BUTTON_TYPE_PCX topButton,
 	tempTopSurface.create(iXY(topButton.size.x, topButton.size.y), topButton.size.x, topButton.numFrames);
 	tempTopSurface.extractPCX(topButton.filename, topButton.numColumns, topButton.gapSpace);
 	tempTopSurface.scale(iXY(topButton.scale.x, topButton.scale.y));
-	tempTopSurface.setFPS(topButton.fps);
+	tempTopSurface.setFPS((int) topButton.fps);
 /*
 	bottomSurface.create(iXY(bottomButton.size.x, bottomButton.size.y), bottomButton.size.x, bottomButton.numFrames);
 	bottomSurface.extractPCX(bottomButton.filename, bottomButton.numColumns, bottomButton.gapSpace);
@@ -342,7 +342,7 @@ void cButton::create(iXY pos, ANIMATED_BUTTON_TYPE_PCX topButton,
 	assert(tempTopSurface.getPix().x == bottomSurface.getPix().x &&
 	tempTopSurface.getPix().y == bottomSurface.getPix().y);
 */
-	toolTip = strdup(nToolTip); assert(toolTip != NULL);
+	toolTip = strdup(nToolTip); assert(toolTip != 0);
 	bounds  = iRect(pos.x, pos.y, pos.x+tempTopSurface.getPix().x, pos.y+tempTopSurface.getPix().y);
 	
 	leftClickFunc  = nLeftClickFunc;
@@ -356,11 +356,11 @@ void cButton::create(iXY pos, ANIMATED_BUTTON_TYPE_PCX topButton,
 //---------------------------------------------------------------------------
 void cButton::reset()
 {
-	toolTip        = NULL;
-	name           = NULL;
-	isSelected     = FALSE;
-	leftClickFunc  = NULL;
-	rightClickFunc = NULL;
+	toolTip        = 0;
+	name           = 0;
+	isSelected     = false;
+	leftClickFunc  = 0;
+	rightClickFunc = 0;
 } // end RESET
 
 // SET NAME
@@ -368,7 +368,7 @@ void cButton::reset()
 void cButton::setName(const char *buttonName)
 {
 	name = strdup(buttonName);
-	if (buttonName == NULL) FUBAR("ERROR: Unable to allocate button name: %s", buttonName);
+	if (buttonName == 0) FUBAR("ERROR: Unable to allocate button name: %s", buttonName);
 } // end SET NAME
 
 // createPCX
@@ -390,21 +390,21 @@ void cButton::createPCX(iXY pos,
 
 	// Make the unselected button
 	tempTopSurface.setFrame(0);
-	tempTopSurface.loadPCX(filename, FALSE, NULL);
+	tempTopSurface.loadPCX(filename, false, 0);
 	tempTopSurface.drawButtonBorder(Color::white, Color::gray64);
 
 	// Make the mouse-over button
 	tempTopSurface.setFrame(1);
-	tempTopSurface.loadPCX(filename, FALSE, NULL);
+	tempTopSurface.loadPCX(filename, false, 0);
 	tempTopSurface.drawButtonBorder(Color::red, Color::red);
 
 	// Make the selected button
 	tempTopSurface.setFrame(2);
-	tempTopSurface.loadPCX(filename, FALSE, NULL);
+	tempTopSurface.loadPCX(filename, false, 0);
 	tempTopSurface.drawButtonBorder(Color::gray64, Color::white);
 
-	setName(filename); assert(name != NULL);
-	toolTip       = strdup(nToolTip); assert(toolTip != NULL);
+	setName(filename); assert(name != 0);
+	toolTip       = strdup(nToolTip); assert(toolTip != 0);
 	bounds        = iRect(pos.x, pos.y, pos.x+tempTopSurface.getPix().x, pos.y+tempTopSurface.getPix().y);
 	leftClickFunc = nLeftClickFunc;
 

@@ -15,9 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
-#include "stdafx.hpp"
 #include "UnitColorView.hpp"
 #include "gapp.hpp"
 #include "DSound.hpp"
@@ -60,7 +57,7 @@ static void rebuildGrayColorTable()
 	for (int num = 0; num < 256; num++)
 	{
 		int c            = Palette::color[num].getBrightnessInt();
-		int nearestColor = Palette::findNearestColor(RGBColor(c * grayPercent, c * grayPercent, c * grayPercent));
+		int nearestColor = (int) Palette::findNearestColor(RGBColor(c * grayPercent, c * grayPercent, c * grayPercent));
 		gray256.setColor(num, nearestColor);
 	}
 	gray256.setColor(255, 0);

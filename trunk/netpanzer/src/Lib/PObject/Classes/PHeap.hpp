@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PHEAP_HPP
 #define _PHEAP_HPP
 
-#include "aliasdef.h"
 #include "PArrayGrowable.hpp"
 
 class PHeap : public PArrayGrowable

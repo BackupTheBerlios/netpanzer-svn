@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _ASTAR_HPP
 #define _ASTAR_HPP
 
-#include "aliasdef.h"
 #include "PPriorityQueue.hpp"
 #include "BitArray.hpp"
 #include "MapInterface.hpp"
@@ -61,7 +60,7 @@ class PathRequest : public PObject
 	}
  
  
-  void operator=( PathRequest &rhs )
+  void operator=( const PathRequest &rhs )
    {
 	memmove( this, &rhs, sizeof( PathRequest ) );
    }
@@ -97,7 +96,7 @@ class Astar : private MapInterface
    void initializeNodeList( unsigned long initial_size );
 
    AstarNode *free_list_ptr;
-   boolean dynamic_node_management_flag;
+   bool dynamic_node_management_flag;
   
   protected:
    unsigned long mapXYtoAbsloc( PointXYi map_loc );
@@ -114,9 +113,9 @@ class Astar : private MapInterface
 
    // ** For pathing debugging **
    BitArray astar_set_array;
-   boolean sample_set_array_flag;
-   boolean start_sampling_flag;
-   boolean debug_mode_flag;	 
+   bool sample_set_array_flag;
+   bool start_sampling_flag;
+   bool debug_mode_flag;	 
    
    unsigned long steps;
    unsigned long step_limit;
@@ -126,9 +125,9 @@ class Astar : private MapInterface
 
    long heuristic_weight;                // factor for heuristic   f = g() + w * h() 
 
-   boolean        succ_swap_flag;
+   bool        succ_swap_flag;
    unsigned short path_type_flag;
-   boolean        ini_flag;
+   bool        ini_flag;
   
    
    PathRequest *path_request_ptr;
@@ -140,7 +139,7 @@ class Astar : private MapInterface
  
    unsigned char generateSucc( unsigned short direction, AstarNode *node, AstarNode *succ ); 
 
-   boolean process_succ( PathList *path, int *result_code );
+   bool process_succ( PathList *path, int *result_code );
 
   public:
 
@@ -154,14 +153,14 @@ class Astar : private MapInterface
 
    void initializeAstar( void );
  
-   boolean generatePath( PathRequest *path_request, 
+   bool generatePath( PathRequest *path_request, 
                          unsigned short path_merge_type, 
-                         boolean dynamic_node_managment,
+                         bool dynamic_node_managment,
                          int *result_code );
    
    void cleanUp( void );
    
-   void setDebugMode( boolean on_off );
+   void setDebugMode( bool on_off );
 
    void sampleSetArrays( void );
    

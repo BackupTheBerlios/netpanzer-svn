@@ -15,9 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
-
+#ifdef WIN32
 #include <io.h>
+#endif
 #include <string.h>
 #include "MapsManager.hpp"
 #include "MapFileStruct.hpp"
@@ -49,6 +49,8 @@ void MapsManager::scanMaps( void )
    
 void MapsManager::scanMaps( const char *map_directory )
  {
+	 // XXX need a substitute for _findfirst
+#ifdef WIN32
   char search_path[ _MAX_FNAME ];
   char temp_path[ _MAX_FNAME ];
 
@@ -77,7 +79,7 @@ void MapsManager::scanMaps( const char *map_directory )
      
     _findclose( hFile );
    }
-  
+#endif
 
  }
 
@@ -115,7 +117,7 @@ void MapsManager::setCycleStartMap( char *map_name )
   for( int i = 0; i < list_size; i++ )
    {
     master_maps_list.getFilename( i, cycle_map_name ); 
-    if( strcmpi( cycle_map_name, map_name ) == 0 )
+    if( strcasecmp( cycle_map_name, map_name ) == 0 )
      {
       map_cycle_index = i;
       return;
@@ -125,7 +127,7 @@ void MapsManager::setCycleStartMap( char *map_name )
 
 int MapsManager::checkMapValidity( char *map_name )
  { 
-  boolean found = _FALSE;
+  bool found = false;
   int list_size;
   char cycle_map_name[256];
 
@@ -134,13 +136,13 @@ int MapsManager::checkMapValidity( char *map_name )
   for( int i = 0; i < list_size; i++ )
    {
     master_maps_list.getFilename( i, cycle_map_name ); 
-    if( strcmpi( cycle_map_name, map_name ) == 0 )
+    if( strcasecmp( cycle_map_name, map_name ) == 0 )
      {
-      found = _TRUE;
+      found = true;
      } 
    }
   
-  if( found == _FALSE )
+  if( found == false )
    { return( _mapfile_not_found ); }
  
   FILE *fp;
@@ -162,7 +164,7 @@ int MapsManager::checkMapValidity( char *map_name )
  
   fp = fopen( temp_path, "rb" ); 
   
-  if( fp == NULL )
+  if( fp == 0 )
    { 
     return( _wadfile_not_found );
    }

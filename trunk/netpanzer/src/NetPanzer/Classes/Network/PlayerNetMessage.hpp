@@ -28,7 +28,9 @@ enum { _net_message_id_player_connect_id,
 	   _net_message_id_player_alliance_update,
 	 };
 
+#ifdef MSVC
 #pragma pack(1)
+#endif
 
 class PlayerConnectID : public NetMessage
  {
@@ -41,7 +43,7 @@ class PlayerConnectID : public NetMessage
     message_id = _net_message_id_player_connect_id;
    }
  
- };
+ } __attribute__((packed));
 
 
 class PlayerStateSync : public NetMessage
@@ -55,7 +57,7 @@ class PlayerStateSync : public NetMessage
     message_id = _net_message_id_player_sync_state;
    }
  
- };
+ } __attribute__((packed));
  
 class PlayerScoreUpdate : public NetMessage
  {
@@ -69,7 +71,7 @@ class PlayerScoreUpdate : public NetMessage
     message_class = _net_message_class_player;
     message_id = _net_message_id_player_score_update;
    }
- };
+ } __attribute__((packed));
 
 
 enum { _player_make_alliance,
@@ -88,7 +90,7 @@ class PlayerAllianceRequest : public NetMessage
     message_class = _net_message_class_player;
     message_id = _net_message_id_player_alliance_request;
    }
- };
+ } __attribute__((packed));
 
 
 class PlayerAllianceUpdate : public NetMessage
@@ -110,8 +112,10 @@ class PlayerAllianceUpdate : public NetMessage
     allie_with_player_index = with_player_index;
     alliance_update_type = update_type;
    }
- };
+ } __attribute__((packed));
 
+#ifdef MSVC
 #pragma pack()
+#endif
 
 #endif // ** _PLAYERNETMESSAGE_HPP

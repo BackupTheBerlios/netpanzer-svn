@@ -15,6 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+// old version?!?
+
+#if 0
 #include "CodeStatsView.hpp"
 
 #include "cViewManager.hpp"
@@ -53,19 +57,19 @@ static void buttonPathing( void )
 
 static void buttonDebug( void )
  {
-  static boolean previous_flag = _FALSE;
+  static bool previous_flag = false;
   
-  if ( previous_flag == _FALSE )
+  if ( previous_flag == false )
    {
-    PathScheduler::setLongPatherDebug( _TRUE );
-	MiniMapInterface::setPathingDebugMode( _TRUE );
-	previous_flag = _TRUE;
+    PathScheduler::setLongPatherDebug( true );
+	MiniMapInterface::setPathingDebugMode( true );
+	previous_flag = true;
    }
   else
    {
-    PathScheduler::setLongPatherDebug( _FALSE );
-	MiniMapInterface::setPathingDebugMode( _FALSE );
-	previous_flag = _FALSE;
+    PathScheduler::setLongPatherDebug( false );
+	MiniMapInterface::setPathingDebugMode( false );
+	previous_flag = false;
    }
  }
 
@@ -84,10 +88,10 @@ static void buttonUnit( void )
 CodeStatsView::CodeStatsView() : cView()
 {
 	setTitle("CodeStatsView");
-	setAllowResize(FALSE);
-	setAllowMove(TRUE);
-	setDisplayStatusBar(TRUE);
-	setVisible(FALSE);
+	setAllowResize(false);
+	setAllowMove(true);
+	setDisplayStatusBar(true);
+	setVisible(false);
 
 	moveTo(iXY(0, 0));
 	resizeClientArea(iXY(200, 400));
@@ -290,3 +294,5 @@ void CodeStatsView::drawUnitStats( const Surface &clientArea )
 
   str_loc.y += 12;
  }
+
+#endif

@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "stdafx.hpp"
 #include "ControlsView.hpp"
 #include "Desktop.hpp"
 #include "DDHardSurface.hpp"
@@ -27,8 +26,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameViewGlobals.hpp"
 
 
-static char screenSurfacePathTIL[] = "pics\\backgrounds\\menus\\optionmb.til";
+//static char screenSurfacePathTIL[] = "pics\\backgrounds\\menus\\optionmb.til";
 
+// never used
+#if 0
 static void bSetupJoystick()
 {
 	JoystickInterface::setupJoystick();
@@ -48,6 +49,7 @@ static void bSetJoystickStateOff()
 {
 	GameConfig::setJoystickState(false);
 }
+#endif
 
 
 // ControlsView
@@ -66,13 +68,14 @@ void ControlsView::initButtons()
 {
 	OptionsTemplateView::initButtons();
 
+	/*
 	int xTextStart       = bodyTextRect.min.x;
 	int x                = xTextStart;
 	int y                = bodyTextRect.min.y;
 	int yOffset          =  15;
 
 	int buttonXSize      =  90;
-	int arrowButtonWidth =  16;
+	int arrowButtonWidth =  16;*/
 
 	// Settings
 	//----------------------------------------------------------------------

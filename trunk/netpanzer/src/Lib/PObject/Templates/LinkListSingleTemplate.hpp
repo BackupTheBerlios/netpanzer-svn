@@ -18,10 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _LINKLISTSINGLETEMPLATE_HPP
 #define _LINKLISTSINGLETEMPLATE_HPP
 
-#include "aliasdef.h"
-
 #include <stdlib.h>
-#include "Pobject.hpp"
+#include "PObject.hpp"
 
 template< class TYPE >
 class LinkListSingleTemplate : public PObject
@@ -34,8 +32,8 @@ class LinkListSingleTemplate : public PObject
 
   LinkListSingleTemplate() 
    { 
-	front = NULL;
-	rear = NULL;
+	front = 0;
+	rear = 0;
    }
 
   LinkListSingleTemplate( unsigned long size );  
@@ -46,9 +44,9 @@ class LinkListSingleTemplate : public PObject
   
   inline void addRear( TYPE *object )
    {
-	object->next = NULL;
+	object->next = 0;
 
-	if ( (front == NULL) && (rear == NULL) )
+	if ( (front == 0) && (rear == 0) )
 	 {
 	  front = object;
 	  rear = object;
@@ -62,13 +60,13 @@ class LinkListSingleTemplate : public PObject
   
   inline void addFront( TYPE *object )
    {
-	object->next = NULL;
+	object->next = 0;
 
-	if ( (front == NULL) && (rear == NULL) )
+	if ( (front == 0) && (rear == 0) )
 	 {
 	  front = object;
 	  rear = object;
-	  object->next = NULL;
+	  object->next = 0;
 	 }
    	else
 	 {
@@ -79,7 +77,7 @@ class LinkListSingleTemplate : public PObject
 
   inline void insertAfter( TYPE *after, TYPE *object )
    {
-    assert( after != NULL );
+    assert( after != 0 );
 	
 	object->next = after->next;
     after->next = object;
@@ -95,12 +93,12 @@ class LinkListSingleTemplate : public PObject
 	
 	delete_ptr = front;
 
-	if ( front != NULL )
+	if ( front != 0 )
 	 {
 	  if (front == rear)
        {
-        front = NULL;
-        rear = NULL;
+        front = 0;
+        rear = 0;
        }
       else
         { front = front->next; }
@@ -112,7 +110,7 @@ class LinkListSingleTemplate : public PObject
   inline void deleteAfter( TYPE *after )
    {
     TYPE *delete_ptr;
-	assert( after != NULL );
+	assert( after != 0 );
 	
 	delete_ptr = after->next;
     
@@ -129,16 +127,16 @@ class LinkListSingleTemplate : public PObject
   inline TYPE * removeFront( void )
    {
     TYPE *delete_ptr;
-	assert( front != NULL );
+	assert( front != 0 );
 
 	delete_ptr = front;
     
-	if ( front != NULL )
+	if ( front != 0 )
 	 {
 	  if (front == rear)
        {
-        front = NULL;
-        rear = NULL;
+        front = 0;
+        rear = 0;
        }
       else
         { front = front->next; }
@@ -146,13 +144,13 @@ class LinkListSingleTemplate : public PObject
       return( delete_ptr );
      }
     
-    return( NULL );
+    return( 0 );
    }
    
   inline TYPE * removeAfter( TYPE *after )
    {
     TYPE *delete_ptr;
-	assert( after != NULL );
+	assert( after != 0 );
 	
 	delete_ptr = after->next;
     
@@ -174,7 +172,7 @@ class LinkListSingleTemplate : public PObject
 	unsigned long count = 0;
 
 	traversal_ptr = front;	
-	while( traversal_ptr != NULL )
+	while( traversal_ptr != 0 )
 	 {
 	  traversal_ptr = traversal_ptr->next;
 	  count++;
@@ -190,15 +188,15 @@ class LinkListSingleTemplate : public PObject
 
 	traversal_ptr = front;	
 	
-	while( traversal_ptr != NULL )
+	while( traversal_ptr != 0 )
 	 {
 	  delete_ptr = traversal_ptr;
 	  traversal_ptr = traversal_ptr->next;	  
 	  delete( delete_ptr );
 	 }
    	
-   	front = NULL;
-  	rear = NULL;
+   	front = 0;
+  	rear = 0;
    }
  
  };
@@ -218,12 +216,12 @@ LinkListSingleTemplate< TYPE >::~LinkListSingleTemplate( void )
  }
 
 template< class TYPE >
-void LinkListSingleTemplate< TYPE >::initialize( unsigned long size )
+void LinkListSingleTemplate<TYPE>::initialize( unsigned long size )
  { 
   TYPE *object;
   
-  if( front != NULL )
-   { deallocate() };
+  if( front != 0 )
+   { deallocate(); }
 
   for( unsigned long i; i < size; i++ )
    {

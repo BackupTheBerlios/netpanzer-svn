@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __SDLDraw_hpp__
 #define __SDLDraw_hpp__
 
-#include "Stdafx.hpp"
 #include "RGBColor.hpp"
 #include "UIDraw.hpp"
 
@@ -32,16 +31,16 @@ private:
   SDL_Surface *FrontBuffer;
 
 public:
-  BOOL initialize();
+  bool initialize();
   void shutdown();
-  BOOL setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags);
-  BOOL isDisplayModeAvailable(int width, int height, int bpp);
-  BOOL lockDoubleBuffer(BYTE **DoubleBuffer);
-  BOOL unlockDoubleBuffer();
-  BOOL createFrameBuffer(DWORD width, DWORD height, DWORD bpp);
-  void setGDIStatus(BOOL enable);
+  bool setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags);
+  bool isDisplayModeAvailable(int width, int height, int bpp);
+  bool lockDoubleBuffer(BYTE **DoubleBuffer);
+  bool unlockDoubleBuffer();
+  bool createFrameBuffer(DWORD width, DWORD height, DWORD bpp);
+  void setGDIStatus(bool enable);
   void restoreAll();
-  BOOL copyDoubleBufferandFlip();
+  bool copyDoubleBufferandFlip();
   void setPalette(RGBColor *color);
 }; // end DirectDraw
 

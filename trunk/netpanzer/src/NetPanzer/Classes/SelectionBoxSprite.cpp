@@ -15,21 +15,20 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "SelectionBoxSprite.hpp"
 #include "GameConfig.hpp"
 
 Surface UNIT_FLAGS_SURFACE;
 
-boolean SelectionBoxSprite::isVisible( Recti &world_win )
+bool SelectionBoxSprite::isVisible( Recti &world_win )
  {      
   if (
-      (world_win.contains( world_pos + selection_area.min ) && (visible == _TRUE ) ) ||
-	  (world_win.contains( world_pos + selection_area.max ) && (visible == _TRUE ) ) 
+      (world_win.contains( world_pos + selection_area.min ) && (visible == true ) ) ||
+	  (world_win.contains( world_pos + selection_area.max ) && (visible == true ) ) 
 	  )
-   return( _TRUE );
+   return( true );
 
-   return( _FALSE );
+   return( false );
  }
 
 
@@ -37,7 +36,7 @@ void SelectionBoxSprite::blit( Surface *surface, Recti &world_win )
  {
   PointXYi min_abs, max_abs;
   
-  if ( box_state == _FALSE )
+  if ( box_state == false )
    return;
 
   min_abs = (world_pos + selection_area.min) - world_win.min;
@@ -67,9 +66,9 @@ void SelectionBoxSprite::blit( Surface *surface, Recti &world_win )
 
 UnitSelectionBox::UnitSelectionBox( )
  {
-  allied_visiblity_state = _FALSE; 
-  allie_state = _FALSE;
-  flag_visibility_state = _FALSE;
+  allied_visiblity_state = false; 
+  allie_state = false;
+  flag_visibility_state = false;
   unit_flag.setTo( UNIT_FLAGS_SURFACE ); 
  }
 
@@ -81,7 +80,7 @@ void UnitSelectionBox::blit( Surface *surface, Recti &world_win )
   min_abs = (world_pos + selection_area.min) - world_win.min;
   max_abs = (world_pos + selection_area.max) - world_win.min; 
 
-  if ( box_state == _TRUE )
+  if ( box_state == true )
    {
 
    // Modified the vehicle selection box and moved the hitpoints outside,
@@ -102,10 +101,10 @@ void UnitSelectionBox::blit( Surface *surface, Recti &world_win )
 
 	} else { assert(false); }
 
-   } // ** box_state == _TRUE
+   } // ** box_state == true
  
     // Draw the unit hitpoints.
-	if ( GameConfig::getDrawUnitDamage() || (box_state == _TRUE) )
+	if ( GameConfig::getDrawUnitDamage() || (box_state == true) )
 	{
 		// Draw a color coded hit bar.
 		BYTE hitBarColor;
@@ -141,7 +140,7 @@ void UnitSelectionBox::blit( Surface *surface, Recti &world_win )
 		//surface->drawHLine(min_abs.x, max_abs.y-3, max_abs.x+1, box_color);
 	}
 
-  if ( GameConfig::getDisplayUnitFlags() == _TRUE )
+  if ( GameConfig::getDisplayUnitFlags() == true )
    { 
     //unit_flag.blt( *surface, iXY( min_abs.x, min_abs.y - unit_flag.getPix().y ) );  
     //surface->bltString5x5(min_abs.x + 2, min_abs.y - 6, "Panther1", Color::white);
@@ -149,7 +148,7 @@ void UnitSelectionBox::blit( Surface *surface, Recti &world_win )
    }
 
   /*
-  if ( (flag_visibility_state == _TRUE) && (allie_state == _TRUE) )
+  if ( (flag_visibility_state == true) && (allie_state == true) )
    { 
     allie_flag.blt ( *surface, iXY( max_abs.x - allie_flag.getPix().x , min_abs.y - allie_flag.getPix().y ) );
    }

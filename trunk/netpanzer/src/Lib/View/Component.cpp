@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "stdafx.hpp"
+
 #include "Component.hpp"
 #include "ViewGlobals.hpp"
 #include "View.hpp"
@@ -33,10 +33,10 @@ void Component::reset()
 	min.zero();
 	enabled    = true;
 	visible    = true;
-	parent     = NULL;
+	parent     = 0;
 
 	//name = strdup("");
-	//if (name = NULL)
+	//if (name = 0)
 	//{
 	//	FUBAR("ERROR: Unable to allocate component name.");
 	//}
@@ -56,10 +56,10 @@ bool Component::contains(int x, int y) const
 //---------------------------------------------------------------------------
 void Component::setParent(void *parent)
 {
-	assert(parent != NULL);
-	if (parent == NULL)
+	assert(parent != 0);
+	if (parent == 0)
 	{
-		FUBAR("ERROR: Component parent == NULL");
+		FUBAR("ERROR: Component parent == 0");
 	}
 
 	Component::parent = parent;

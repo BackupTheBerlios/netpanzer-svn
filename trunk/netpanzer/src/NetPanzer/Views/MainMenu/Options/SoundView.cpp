@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "stdafx.hpp"
 #include "SoundView.hpp"
 #include "GameConfig.hpp"
 #include "GameViewGlobals.hpp"
@@ -70,12 +69,14 @@ void SoundView::initButtons()
 {
 	OptionsTemplateView::initButtons();
 
+#if 0
 	int xTextStart       = bodyTextRect.min.x;
 	int x                = xTextStart;
 	int y                = bodyTextRect.min.y;
 	int yOffset          =  15;
 	int buttonXSize      =  90;
 	int arrowButtonWidth =  16;
+#endif
 
 	// Settings
 	//----------------------------------------------------------------------
@@ -103,17 +104,17 @@ void SoundView::initButtons()
 	//x = xTextStart;
 	//addLabel(iXY(x, y), "Unit Acknowledgement", Color::white);
 	//x = optionsMeterStartX;
-	//addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", NULL);
+	//addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", 0);
 	//x += optionsMeterWidth + arrowButtonWidth;
-	//addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", NULL);
+	//addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", 0);
 	//y += yOffset;
 	//
 	//x = xTextStart;
 	//addLabel(iXY(x, y), "Ambient Sounds", Color::white);
 	//x = optionsMeterStartX;
-	//addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", NULL);
+	//addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", 0);
 	//x += optionsMeterWidth + arrowButtonWidth;
-	//addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", NULL);
+	//addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", 0);
 	//y += yOffset;
 }
 

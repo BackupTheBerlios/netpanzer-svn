@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "StaticsInterface.hpp"
 
 PArrayGrowable StaticsInterface::static_sprite_list;
@@ -36,7 +35,7 @@ void StaticsInterface::loadStatics( const char *file_path )
   unsigned long static_count = 0;
 
   input_file = fopen ( file_path, "rt" );
-  assert( input_file != NULL );
+  assert( input_file != 0 );
 
   while ( !feof( input_file ) )
    {

@@ -93,7 +93,7 @@ public:
 	static void setVisibility(const char *viewName, int isVisible);
 	static void toggleVisibilityNoDoAnything(const char *viewName);
 	static void setVisibilityNoDoAnything(const char *viewName, int isVisible);
-	static void add(View *view, bool autoActivate = TRUE);
+	static void add(View *view, bool autoActivate = true);
 	static void remove(View *view);
 	static void draw();
 
@@ -154,7 +154,7 @@ public:
 	
 	static View *getView(const char *searchName)
 	{
-		for (View *view = top ; view != NULL ; view = view->next)
+		for (View *view = top ; view != 0 ; view = view->next)
 		{
 			if (strcmp(view->searchName, searchName) == 0)
 			{
@@ -162,7 +162,7 @@ public:
 			}
 		}
 		
-		return NULL;
+		return 0;
 	}
 	
 	static void checkViewPositions();

@@ -15,8 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
-#include "globals.h"
+#include "Globals.h"
 
 short DISPLAY_PAGE_STATE;
 
@@ -33,7 +32,7 @@ long VIEW_X_SIZE, VIEW_Y_SIZE;
 
 long SCREEN_X_BOUND = 480,SCREEN_Y_BOUND = 480;
 
-int GAME_STATE_PAUSED = _FALSE;
+int GAME_STATE_PAUSED = false;
 
 int NETWORK_STATE; 
 

@@ -56,7 +56,7 @@ private:
 		
 		v = Desktop::getView("0ControlView");
 
-		if (v != NULL)
+		if (v != 0)
 		{
 			v->moveTo(getDocPos(0));
 		} else
@@ -66,7 +66,7 @@ private:
 
 		v = Desktop::getView("1ControlView");
 
-		if (v != NULL)
+		if (v != 0)
 		{
 			v->moveTo(getDocPos(1));
 		} else
@@ -76,7 +76,7 @@ private:
 
 		v = Desktop::getView("2ControlView");
 
-		if (v != NULL)
+		if (v != 0)
 		{
 			v->moveTo(getDocPos(2));
 		} else

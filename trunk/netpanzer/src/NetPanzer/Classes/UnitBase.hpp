@@ -30,7 +30,7 @@ class UnitBase : public UnitBlackBoard
   public:
    UnitID    unit_id;
    UnitState unit_state;
-   boolean	 in_sync_flag;      
+   bool	 in_sync_flag;      
   
    UnitBase() { }
    virtual ~UnitBase() { }

@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "stdafx.hpp"
 #include "MiniMapView.hpp"
 #include "cMouse.hpp"
 #include "MiniMapInterface.hpp"
@@ -72,8 +71,8 @@ void MiniMapView::init()
 
 	mapDrawType = MAP_SOLID;
 
-	int xOffset = size.x;
-	int yOffset = 0;
+	//int xOffset = size.x;
+	//int yOffset = 0;
 	
 	MiniMapInterface::setMapScale(getViewRect().getSize());
 
@@ -568,8 +567,8 @@ void MiniMapView::mouseMove(const iXY &prevPos, const iXY &newPos)
 //
 //	}
 
-   //static boolean isUnitSelected( void );
-   //static boolean selectUnits( Recti bound_box );
+   //static bool isUnitSelected( void );
+   //static bool selectUnits( Recti bound_box );
    //static void moveUnits( PointXYi location );
 
 } // end MiniMapView::mouseMove

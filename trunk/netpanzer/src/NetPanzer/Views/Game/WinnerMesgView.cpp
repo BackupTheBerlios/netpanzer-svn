@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "WinnerMesgView.hpp"
 #include "GameViewGlobals.hpp"
 #include "Desktop.hpp"
@@ -70,7 +69,7 @@ static void bReturnToMainMenu()
 	Desktop::setVisibilityAllWindows(false);
 
 	View *v = Desktop::getView("OptionsView");
-	if (v != NULL)
+	if (v != 0)
 	{
 		v->removeAllButtons();
 		((OptionsTemplateView *)v)->initButtons();
@@ -81,7 +80,7 @@ static void bReturnToMainMenu()
 	}
 
 	v = Desktop::getView("SoundView");
-	if (v != NULL)
+	if (v != 0)
 	{
 		v->removeAllButtons();
 		((OptionsTemplateView *)v)->initButtons();
@@ -93,7 +92,7 @@ static void bReturnToMainMenu()
 	}
 
 	v = Desktop::getView("ControlsView");
-	if (v != NULL)
+	if (v != 0)
 	{
 		v->removeAllButtons();
 		((OptionsTemplateView *)v)->initButtons();
@@ -105,7 +104,7 @@ static void bReturnToMainMenu()
 	}
 
 	v = Desktop::getView("VisualsView");
-	if (v != NULL)
+	if (v != 0)
 	{
 		v->removeAllButtons();
 		((OptionsTemplateView *)v)->initButtons();
@@ -117,7 +116,7 @@ static void bReturnToMainMenu()
 	}
 
 	v = Desktop::getView("InterfaceView");
-	if (v != NULL)
+	if (v != 0)
 	{
 		v->removeAllButtons();
 		((OptionsTemplateView *)v)->initButtons();

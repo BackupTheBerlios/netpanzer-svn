@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "GameConfig.hpp"
 
 //#include "lua.h"
@@ -38,11 +37,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
   int   GameConfig::TimeLimit = 50;          //in minutes
   int   GameConfig::FragLimit = 1000;        //in frags;
 
-  boolean      GameConfig::map_cycling_on_off = _TRUE;
-  boolean      GameConfig::powerups_on_off = _FALSE;
+  bool      GameConfig::map_cycling_on_off = true;
+  bool      GameConfig::powerups_on_off = false;
 
   float        GameConfig::objective_occupation_percentage = 100.0;
-  boolean      GameConfig::allow_allies_on_off = _TRUE;
+  bool      GameConfig::allow_allies_on_off = true;
   int          GameConfig::cloud_coverage;
   float        GameConfig::wind_speed;
   unsigned int GameConfig::respawn_type = _game_config_respawn_type_round_robin;
@@ -52,10 +51,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    // ** Visuals Configuration **
    unsigned int GameConfig::screen_resolution_enum = _game_config_standard_res_640x480;
    
-   boolean GameConfig::display_shadows_flag = _TRUE;
-   boolean GameConfig::display_unit_flags = _FALSE;
+   bool GameConfig::display_shadows_flag = true;
+   bool GameConfig::display_unit_flags = false;
   
-   boolean GameConfig::radar_display_clouds_flag = _FALSE;
+   bool GameConfig::radar_display_clouds_flag = false;
 
    int     GameConfig::radar_player_unit_color = _color_aqua;
    int     GameConfig::radar_allied_unit_color = _color_orange;
@@ -67,8 +66,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    
    int     GameConfig::mini_map_unit_size = _mini_map_unit_size_small;
    int     GameConfig::unit_selection_box_draw_mode = _unit_selection_box_draw_mode_rect_edges;
-   boolean GameConfig::draw_unit_damage = _FALSE;
-   boolean GameConfig::draw_unit_reload = _TRUE;
+   bool GameConfig::draw_unit_damage = false;
+   bool GameConfig::draw_unit_reload = true;
    int     GameConfig::mini_map_objective_draw_mode = _mini_map_objective_draw_mode_outline_rect;
    int     GameConfig::unitInfoDrawLayer = 0;
 
@@ -82,16 +81,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    int     GameConfig::mini_map_resize_rate = 400;   // in pixels/s
      
    // ** Input Configuration **
-   boolean GameConfig::input_joystick_state = _FALSE; 
+   bool GameConfig::input_joystick_state = false; 
    
    // ** Sound Configuration **
-   boolean GameConfig::sound_on_off_flag = _TRUE;
+   bool GameConfig::sound_on_off_flag = true;
    int	   GameConfig::sound_volume = 50;
 
    PlayerUnitConfig GameConfig::unit_spawn_config;
 
    int     GameConfig::attackNotificationTime = 5;
-   boolean GameConfig::blendSmoke             = _TRUE;
+   bool GameConfig::blendSmoke             = true;
 
 
 void GameConfig::initialize( void )
@@ -100,7 +99,7 @@ void GameConfig::initialize( void )
   GameMode = _gamemode_multiplayer; //Skirmish or Multiplayer
   GameType = _gametype_objective;   //Objectives, FragLimit, TimeLimit
   HostOrJoin = _game_session_join;  // 1=host, 2=join 
-  VehicleGeneration = _TRUE;
+  VehicleGeneration = true;
   NumberPlayers      = 8;           //max = 25;
   NumberUnits        = 500;         //max = 50;
   NumberInitialUnits = 5;
@@ -114,17 +113,19 @@ void GameConfig::initialize( void )
   FragLimit = 1000;                   //current limit = 1000;
 
   objective_occupation_percentage = 100.0f;
-  allow_allies_on_off = _TRUE;
+  allow_allies_on_off = true;
+  /* XXX fix warnings...
   cloud_coverage;
   wind_speed;
+  */
   respawn_type = _game_config_respawn_type_round_robin;
 
   // ** Visuals Configuration **
   screen_resolution_enum = _game_config_standard_res_640x480;
    
-  display_shadows_flag = _TRUE;
+  display_shadows_flag = true;
    
-  radar_display_clouds_flag = _FALSE;
+  radar_display_clouds_flag = false;
 
   radar_player_unit_color = _color_aqua;
   radar_allied_unit_color = _color_orange;
@@ -142,10 +143,10 @@ void GameConfig::initialize( void )
   mini_map_resize_rate = 400;   // in pixels/s
      
   // ** Input Configuration **
-  input_joystick_state = _FALSE; 
+  input_joystick_state = false; 
    
   // ** Sound Configuration **
-  sound_on_off_flag = _TRUE;
+  sound_on_off_flag = true;
   sound_volume = 50;
 
  }

@@ -15,13 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "MapInterface.hpp"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
-#include "mapdata.hpp"
+#include "MapData.hpp"
 
 WorldMap MapInterface::main_map;
 SpawnList MapInterface::spawn_list;
@@ -29,7 +28,7 @@ WadMapTable MapInterface::wad_mapping_table;
 Surface MapInterface::mini_map_surface; 
 char MapInterface::map_path[256]; 
 
-boolean MapInterface::startMapLoad( const char *file_path, boolean load_tiles, unsigned long partitions )
+bool MapInterface::startMapLoad( const char *file_path, bool load_tiles, unsigned long partitions )
  {
   char path[256];
   char tile_set_path[256];
@@ -47,12 +46,12 @@ boolean MapInterface::startMapLoad( const char *file_path, boolean load_tiles, u
   generateMappingTable();
   main_map.reMap( wad_mapping_table );
   
-  if ( load_tiles == _TRUE )
+  if ( load_tiles == true )
    {
-    if ( tile_set.startPartitionTileSetLoad( tile_set_path, wad_mapping_table, partitions ) == _FALSE )
+    if ( tile_set.startPartitionTileSetLoad( tile_set_path, wad_mapping_table, partitions ) == false )
      {
       finishMapLoad();
-      return( _FALSE );
+      return( false );
      } 
    
    }
@@ -60,21 +59,21 @@ boolean MapInterface::startMapLoad( const char *file_path, boolean load_tiles, u
    {
     tile_set.loadTileSetInfo( tile_set_path, wad_mapping_table );
     finishMapLoad();
-    return( _FALSE );
+    return( false );
    }
 
-  return( _TRUE );
+  return( true );
  }
 
-boolean MapInterface::loadMap( int *percent_complete )
+bool MapInterface::loadMap( int *percent_complete )
  {
-  if( tile_set.partitionTileSetLoad( wad_mapping_table, percent_complete ) == _FALSE )
+  if( tile_set.partitionTileSetLoad( wad_mapping_table, percent_complete ) == false )
    {
     finishMapLoad();
-    return( _FALSE );     
+    return( false );     
    }
   else
-   { return( _TRUE ); }
+   { return( true ); }
  }
 
 
@@ -93,7 +92,7 @@ void MapInterface::finishMapLoad( void )
  }
 
 /*
-void MapInterface::LoadMap( const char *file_path, boolean load_tiles )
+void MapInterface::LoadMap( const char *file_path, bool load_tiles )
  {
   char path[80];
   
@@ -105,7 +104,7 @@ void MapInterface::LoadMap( const char *file_path, boolean load_tiles )
   generateMappingTable();
   main_map.reMap( wad_mapping_table );
   
-  if ( load_tiles == _TRUE )
+  if ( load_tiles == true )
    {
     tile_set.loadTileSet( ".\\wads\\wad.tls", wad_mapping_table ); 
    }
@@ -146,7 +145,7 @@ void MapInterface::generateMappingTable( void )
    { 
     tile_index = map_buffer[ map_index ];
 
-    wad_mapping_table[ tile_index ].is_used = _TRUE;  
+    wad_mapping_table[ tile_index ].is_used = true;  
    } // ** for 
 
   // ** Remap the used tiles ** 
@@ -154,7 +153,7 @@ void MapInterface::generateMappingTable( void )
   
   for ( tile_index = 0; tile_index < tile_count; tile_index++ )
    {
-    if ( wad_mapping_table[ tile_index ].is_used == _TRUE )
+    if ( wad_mapping_table[ tile_index ].is_used == true )
      {
       wad_mapping_table[ tile_index ].remap_index = mapping_index;
       mapping_index++;

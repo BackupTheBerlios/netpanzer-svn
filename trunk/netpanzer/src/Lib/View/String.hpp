@@ -19,6 +19,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __String_hpp__
 #define __String_hpp__
 
+#include <iostream>
+
+#include "codewiz.hpp"
+
+using std::ostream;
+using std::istream;
 
 #if _MSC_VER > 1000
 	#pragma once
@@ -43,7 +49,10 @@ private:
 	{
 		char temp[256];
 
-		input >> setw(256) >> temp;
+		// XXX setw doesn't seem to be known...
+		//input >> setw(256) >> temp;
+		input >> temp;
+		
 		string = temp;
 
 		return input;

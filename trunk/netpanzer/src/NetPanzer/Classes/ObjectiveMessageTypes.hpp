@@ -20,7 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "PlayerState.hpp"
 
+#ifdef MSVC
 #pragma pack(1)
+#endif
 
 class ObjectiveMessage : public PObject
  {
@@ -28,7 +30,7 @@ class ObjectiveMessage : public PObject
    unsigned char message_type;
    unsigned short objective_id;
 
- };
+ } __attribute__((packed));
 
 enum { _objective_mesg_update_occupation,
        _objective_mesg_change_unit_generation, 
@@ -50,15 +52,15 @@ class UpdateOccupationsStatus : public ObjectiveMessage
      message_type = _objective_mesg_update_occupation;
     } 
 
- };
+ } __attribute__((packed));
 
 class ChangeUnitGeneration : public ObjectiveMessage
  {
   public:
    unsigned char unit_type;
-   boolean unit_gen_on;    
+   bool unit_gen_on;    
 
-  void set( unsigned short id, unsigned char unit_type, boolean unit_generation_on )
+  void set( unsigned short id, unsigned char unit_type, bool unit_generation_on )
    {
     objective_id = id;
     ChangeUnitGeneration::unit_type = unit_type;
@@ -66,7 +68,7 @@ class ChangeUnitGeneration : public ObjectiveMessage
     message_type = _objective_mesg_change_unit_generation;
    }
 
- };
+ } __attribute__((packed));
 
 class DisownPlayerObjective : public ObjectiveMessage
  {
@@ -80,7 +82,7 @@ class DisownPlayerObjective : public ObjectiveMessage
 	message_type = _objective_mesg_disown_player_objective;
    }
  
- };
+ } __attribute__((packed));
 
 class SyncObjective : public ObjectiveMessage
  {
@@ -101,8 +103,10 @@ class SyncObjective : public ObjectiveMessage
     message_type = _objective_mesg_sync_objective;
    }
  
- };
+ } __attribute__((packed));
 
+#ifdef MSVC
 #pragma pack()
+#endif
 
 #endif // ** _OBJECTIVE_MESSSAGE_TYPES_HPP

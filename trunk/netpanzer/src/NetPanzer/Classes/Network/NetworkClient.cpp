@@ -15,8 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
-
 #include "NetworkGlobals.hpp"
 
 #include "NetworkClient.hpp"
@@ -30,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerInterface.hpp"
 #include "ClientConnectDaemon.hpp"
 
-#include "Codewiz.hpp"
+#include "codewiz.hpp"
 #include "ConsoleInterface.hpp"
 
 NetworkClient::NetworkClient( void )
@@ -39,7 +37,7 @@ NetworkClient::NetworkClient( void )
   connection_status = _connection_status_no_connection;
   connection_type = _connection_loop_back;  
 
-  keep_alive_state = _FALSE;
+  keep_alive_state = false;
   keep_alive_emit_timer.changePeriod( _CLIENT_KEEP_ALIVE_SEND_INTERVAL ) ;
   keep_alive_timer.changePeriod( _SERVER_KEEP_ALIVE_THRESHOLD );
 
@@ -115,24 +113,24 @@ void NetworkClient::processNetMessage( NetMessage *message )
 
 void NetworkClient::activateKeepAlive( void )
  {
-  keep_alive_state = _TRUE;  
+  keep_alive_state = true;  
  }
 
 void NetworkClient::deactivateKeepAlive( void ) 
  {
-  keep_alive_state = _FALSE;
+  keep_alive_state = false;
  }
 
 void NetworkClient::updateKeepAliveState( void )
  {
-  if ( keep_alive_state == _FALSE )
+  if ( keep_alive_state == false )
    return;
 
   if( keep_alive_timer.count() )
    {
     LOG( ("Server Keep Alive Timed Out") );
     ClientConnectDaemon::serverConnectionBroken();
-    keep_alive_state = _FALSE;
+    keep_alive_state = false;
     connection_status = _connection_status_no_connection;
     closeSession();
    }
@@ -162,5 +160,5 @@ void NetworkClient::updateKeepAliveState( void )
 int NetworkClient::openSession( int connection_type, int session_flags )
  {
   non_guarantee_queue.reset();
-  return( _TRUE );
+  return( true );
  }

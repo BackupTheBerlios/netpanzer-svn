@@ -20,9 +20,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // includes
 //***************************************************************************
 
-#include "stdafx.hpp"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdarg.h>
+// XXX win32 only include it seems
+//#include <process.h>
 
-#include <process.h>
+#include "codewiz.hpp"
 
 //***************************************************************************
 // constants
@@ -36,7 +41,7 @@ const size_t MAX_CLEANUP_FUNCS = 30;
 
 typedef struct {
 	void (*func)();
-	BOOL   doEvenOnFubed;
+	bool   doEvenOnFubed;
 } CLEANUP_FUNC;
 
 //***************************************************************************
@@ -57,7 +62,7 @@ static size_t       numCleanupFuncs = 0;
 //***************************************************************************
 
 //---------------------------------------------------------------------------
-void cleanup(BOOL fubed) {
+void cleanup(bool fubed) {
 	while (numCleanupFuncs > 0) {
 		--numCleanupFuncs;
 		if (!fubed || cleanupFunc[numCleanupFuncs].doEvenOnFubed &&
@@ -65,38 +70,40 @@ void cleanup(BOOL fubed) {
 			cleanupFunc[numCleanupFuncs].func();
 		}
 	}
-	zeroMem(cleanupFunc, sizeof(cleanupFunc));
+	memset(cleanupFunc, 0, sizeof(cleanupFunc));
 }
 
 //---------------------------------------------------------------------------
-void term(int returnCode, BOOL fubed, const char *msg, ...) {
+void vterm(int returnCode, bool fubed, const char *msg, va_list ap);
+
+void term(int returnCode, bool fubed, const char *msg, ...) {
 	va_list ap;
 	va_start(ap, msg);
 	vterm(returnCode, fubed, msg, ap);
 }
 
 //---------------------------------------------------------------------------
-void vterm(int returnCode, BOOL fubed, const char *msg, va_list ap) {
+void vterm(int returnCode, bool fubed, const char *msg, va_list ap) {
 	cleanup(fubed);
 
 	#if COMPILER_WATCOM
 	    flushall();
 	#endif
 //	const CALL_STACK *s = CALL_STACK::top;
-//	CALL_STACK::top = NULL;
+//	CALL_STACK::top = 0;
 //
 //	__logDepth = 0;
-//	__logFile  = NULL;
+//	__logFile  = 0;
 //	__logLine  = 0;
 
-	if (msg != NULL) {
+	if (msg != 0) {
 		static char buf[4096];
 		vsprintf(buf, msg, ap);
 		#ifdef _LOGGING_ON
 			__log("\nFUBAR:\n");
 			//CALL_STACK::top = s;
 			__log(buf);
-			//CALL_STACK::top = NULL;
+			//CALL_STACK::top = 0;
 		#endif
 
 		#if WIN_BUILD
@@ -104,24 +111,24 @@ void vterm(int returnCode, BOOL fubed, const char *msg, va_list ap) {
 				if (fubed) {
 					static char prompt[sizeof(buf) + 200];
 					sprintf(prompt, "%s\n\nPress RETRY to debug the application.", buf);
-					if (MessageBox(NULL, prompt, "GTFO!", MB_RETRYCANCEL) == IDRETRY) {
+					if (MessageBox(0, prompt, "GTFO!", MB_RETRYCANCEL) == IDRETRY) {
             hardBreak();
 					}
 				} else
 			#endif
 
-			MessageBox(NULL, buf, "GTFO!", MB_OK);
+			MessageBox(0, buf, "GTFO!", MB_OK);
 
 		#else
 			fprintf(fubed ? stderr : stdout, "\n%s\n", buf);
-			//if (fubed && s != NULL) {
+			//if (fubed && s != 0) {
 			//	//fprintf(stderr, "\n\nCall stack:\n");
 			//	__log("\nCall stack:");
 			//	do {
 			//		//fprintf(stderr, "  %s  [%s:%u]\n", s->strPtr, s->srcFile, s->srcLine);
 			//		__log("  %s  [%s:%u]", s->strPtr, s->srcFile, s->srcLine);
 			//		s = s->nextDown;
-			//	} while (s != NULL);
+			//	} while (s != 0);
 			//	fprintf(stderr, "\n");
 			//}
 		#endif
@@ -134,36 +141,36 @@ void vterm(int returnCode, BOOL fubed, const char *msg, va_list ap) {
 void quitOK(const char *msg, ...) {
 	va_list ap;
 	va_start(ap, msg);
-	vterm(0, FALSE, msg, ap);
+	vterm(0, false, msg, ap);
 }
 
 //---------------------------------------------------------------------------
 void FUBAR(const char *msg, ...) {
 	va_list ap;
 	va_start(ap, msg);
-	vterm(255, TRUE, msg, ap);
+	vterm(255, true, msg, ap);
 }
 
 //---------------------------------------------------------------------------
 void vQuitOK(const char *msg, va_list ap) {
-	vterm(0, FALSE, msg, ap);
+	vterm(0, false, msg, ap);
 }
 
 //---------------------------------------------------------------------------
 void vFUBAR(const char *msg, va_list ap) {
-	vterm(255, TRUE, msg, ap);
+	vterm(255, true, msg, ap);
 }
 
 //---------------------------------------------------------------------------
-void _addCleanupFunc(void (*func)(), BOOL doEvenOnFubed,
+void _addCleanupFunc(void (*func)(), bool doEvenOnFubed,
 	const char *sourceFile, unsigned lineNumber) {
 
 	FUNCF(("_addCleanupFunc(doEvenOnFubed=%d, sourceFile=%s, lineNumber=%u)", doEvenOnFubed, sourceFile, lineNumber));
-	static BOOL initted = FALSE;
+	static bool initted = false;
 	if (!initted) {
 		if (atexit(atexit_cleanup))
 			FUBAR("Cannot register cleanup function with atexit");
-		initted = TRUE;
+		initted = true;
 	}
 	if (numCleanupFuncs >= MAX_CLEANUP_FUNCS) {
 		FUBAR("Attempted to add more than %u cleanup functions in %s, line %u",
@@ -179,5 +186,5 @@ void _addCleanupFunc(void (*func)(), BOOL doEvenOnFubed,
 //***************************************************************************
 
 void atexit_cleanup() {
-	cleanup(FALSE);
+	cleanup(false);
 }

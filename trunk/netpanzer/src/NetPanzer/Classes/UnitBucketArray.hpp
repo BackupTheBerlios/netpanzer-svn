@@ -33,16 +33,16 @@ class UnitBucketPointer
    
    UnitBucketPointer() 
     { 
-     unit = NULL; 
-     next = NULL; 
-     prev = NULL;
+     unit = 0; 
+     next = 0; 
+     prev = 0;
     }
    
    UnitBucketPointer( UnitBase *unit )
     {
 	 UnitBucketPointer::unit = unit;
-     next = NULL; 
-     prev = NULL;
+     next = 0; 
+     prev = 0;
 	}
 
    UnitBucketPointer( UnitBase *unit,  unsigned long index,  unsigned long player_index )
@@ -50,8 +50,8 @@ class UnitBucketPointer
 	 UnitBucketPointer::unit = unit;
      UnitBucketPointer::index = index;
      UnitBucketPointer::player_index = player_index;
-     next = NULL; 
-     prev = NULL;
+     next = 0; 
+     prev = 0;
 	}
 
    UnitBucketPointer *next;
@@ -155,9 +155,9 @@ class UnitBucketArray : public UnitBucketArrayTemplate
   UnitBase * getUnitAtWorldLoc( UnitID unit_id, PointXYi world_loc );
   UnitBase * getUnitAtMapLoc( UnitID unit_id, PointXYi map_loc );
 
-  boolean moveUnit( UnitID unit_id, unsigned long from_bucket_index, unsigned long to_bucket_index );
+  bool moveUnit( UnitID unit_id, unsigned long from_bucket_index, unsigned long to_bucket_index );
   
-  boolean deleteUnitBucketPointer( UnitID unit_id, PointXYi world_loc );
+  bool deleteUnitBucketPointer( UnitID unit_id, PointXYi world_loc );
  };
 
 

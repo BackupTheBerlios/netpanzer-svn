@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _TILEINTERFACE_HPP
 #define _TILEINTERFACE_HPP
 
-#include "aliasdef.h"
 #include "PObject.hpp"
 #include "TileSet.hpp"
 #include "Palette.hpp"

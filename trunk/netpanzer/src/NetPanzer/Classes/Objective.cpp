@@ -15,14 +15,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "Objective.hpp"
 #include "PlayerInterface.hpp"
 #include "ConsoleInterface.hpp"
 
 Objective::Objective( short ID, PointXYi location, BoundBox area )
  {
-  objective_state.selection_state = _FALSE;
+  objective_state.selection_state = false;
   objective_state.ID = ID;
   objective_state.location = location;
   objective_state.capture_area = area;

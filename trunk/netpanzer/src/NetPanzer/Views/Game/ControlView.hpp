@@ -18,16 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __ControlView_hpp__
 #define __ControlView_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 #include "View.hpp"
 #include "Surface.hpp"
 #include "MiniMapInterface.hpp"
-
 
 class ControlView : public View
 {
@@ -54,7 +47,7 @@ public:
 	{
 		Surface *miniMap = MiniMapInterface::getMiniMap();
 
-		assert(miniMap != NULL);
+		assert(miniMap != 0);
 
 		worldMapSurface.copy(*miniMap);
 		worldMapSurface.scale(getMapClientArea());
@@ -105,7 +98,7 @@ public:
 	//void drawMouseBox(const Surface &dest);
 	//void setViewWindow(const iXY &pos);
 	//void updateObjectPosition(const Surface &dest);
-	//void updateScreenPosition(const Surface &dest);
+	void updateScreenPosition(const Surface &dest);
 
 	//virtual void mouseEnter(const iXY &pos);
 	//virtual void mouseExit(const iXY &pos);

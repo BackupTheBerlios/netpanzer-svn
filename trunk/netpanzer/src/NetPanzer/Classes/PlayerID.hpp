@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PLAYERID_HPP
 #define _PLAYERID_HPP
 
-#include "aliasdef.h"
 #include <string.h>
 #include "PObject.hpp"
 #include "DirectPlay.h"
@@ -52,27 +51,27 @@ class PlayerID
   inline void setIndex( unsigned short index )
    { index_id = index; }
 
-  inline unsigned short getIndex()
+  inline unsigned short getIndex() const
    { return( index_id ); }
 
   inline void setDPID( DPID dpID )
    { direct_play_id = dpID; }
   
-  inline DPID getDPID( )
+  inline DPID getDPID( ) const
    { return( direct_play_id ); }
 
-  inline void operator=( PlayerID &rhs )
+  inline void operator=( const PlayerID &rhs )
    {
     index_id = rhs.getIndex();
     direct_play_id = rhs.getDPID();
    }
  
-  inline boolean operator==( PlayerID &rhs )
+  inline bool operator==( PlayerID &rhs )
    {
     if ( (index_id == rhs.getIndex()) && (direct_play_id = rhs.getDPID()) )
-	 { return( _TRUE ); }
+	 { return( true ); }
 
-    return( _FALSE );    
+    return( false );    
    }
 
  };

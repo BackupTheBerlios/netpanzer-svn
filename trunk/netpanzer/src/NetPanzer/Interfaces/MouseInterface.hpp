@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _MOUSEINTERFACE_HPP
 #define _MOUSEINTERFACE_HPP
 
-#include "aliasdef.h"
 #include "PObject.hpp"
 #include "Point.hpp" 
 #include "QueueTemplate.hpp"
@@ -70,23 +69,23 @@ class MouseInterface : public PObject
    
    static float    button_hold_threshold;
 
-   static boolean  left_button_down;
-   static boolean  left_button_up;
-   static boolean  left_button_dbclick_active; 
+   static bool  left_button_down;
+   static bool  left_button_up;
+   static bool  left_button_dbclick_active; 
    static PointXYi left_button_down_pos;
    static PointXYi left_button_up_pos;
    static TIMESTAMP left_button_hold_time;
      
-   static boolean right_button_down;
-   static boolean right_button_up;
-   static boolean right_button_dbclick_active;
+   static bool right_button_down;
+   static bool right_button_up;
+   static bool right_button_dbclick_active;
    static PointXYi right_button_down_pos;
    static PointXYi right_button_up_pos;
    static TIMESTAMP right_button_hold_time;
    
-   static boolean middle_button_down;
-   static boolean middle_button_up;
-   static boolean middle_button_dbclick_active;
+   static bool middle_button_down;
+   static bool middle_button_up;
+   static bool middle_button_dbclick_active;
    static PointXYi middle_button_down_pos;
    static PointXYi middle_button_up_pos;
    static TIMESTAMP middle_button_hold_time;
@@ -111,7 +110,7 @@ class MouseInterface : public PObject
      return( button_mask );
     }
      
-   static boolean buttonHeld( unsigned char mask);
+   static bool buttonHeld( unsigned char mask);
    static void resetButtonHoldStatus( void );
    
    static void setLeftButtonDown( void );

@@ -19,22 +19,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __LibTypes_hpp__
 #define __LibTypes_hpp__
 
-
 #if _MSC_VER > 1000
 	#pragma once
 #endif
 
-
 typedef unsigned char   BYTE; //  8 - bits
 typedef unsigned short  WORD; // 16 - bits
 typedef unsigned long  DWORD; // 32 - bits
-
-typedef int BOOL;
-
-#ifndef TRUE
-	const BOOL TRUE  = (7 == 7);
-	const BOOL FALSE = (7 != 7);
-#endif
 
 enum
 {
@@ -46,6 +37,6 @@ enum
 #define PI 3.14159265358979323846
 #endif
 
-#define randomize() srand(time(NULL))
+#define randomize() srand(time(0))
 
 #endif // __LibTypes_hpp__

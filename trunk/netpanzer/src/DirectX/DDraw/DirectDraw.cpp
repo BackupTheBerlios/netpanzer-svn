@@ -15,8 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-#include "stdafx.hpp"
+#include <windows.h>
+#include <windowsx.h>
 #include "DirectDraw.hpp"
 #include "DirectDrawError.hpp"
 #include "gapp.hpp"
@@ -43,7 +43,9 @@ void BlitRectsMemcpy( unsigned char *pSrc, long srcPitch, unsigned char *pDest, 
 
 //extern globalApp gapp;
 
-unsigned char *DOUBLE_BUFFER = NULL;
+DirectDraw DDraw;
+
+unsigned char *DOUBLE_BUFFER = 0;
 
 unsigned long DBUFFER_WIDTH;
 unsigned long DBUFFER_HEIGHT;
@@ -80,34 +82,34 @@ HRESULT WINAPI enumDisplayModesCallback(LPDDSURFACEDESC lpDDSurfaceDesc,  LPVOID
 //---------------------------------------------------------------------------
 DirectDraw::DirectDraw()
 {
-	lpDirectDraw   = NULL;
-	lpFrontBuffer  = NULL;
-	lpBackBuffer   = NULL;
-	lpDoubleBuffer = NULL;
+	lpDirectDraw   = 0;
+	lpFrontBuffer  = 0;
+	lpBackBuffer   = 0;
+	lpDoubleBuffer = 0;
 
 	memset((void *) &DDPrimaryDesc,    0, sizeof(DDPrimaryDesc));
 	memset((void *) &DDDoubleBuffDesc, 0, sizeof(DDDoubleBuffDesc));
 	memset((void *) &ddscapsPrim,      0, sizeof(ddscapsPrim));
 	memset((void *) &ddscapsDBuff,     0, sizeof(ddscapsDBuff));
 
-	doubleBufferLocked        = FALSE;
-	GDIEnabled                = FALSE;
-	DBufferTransferInProgress = FALSE;
-    VideoBufferingModeInitialized = FALSE;
+	doubleBufferLocked        = false;
+	GDIEnabled                = false;
+	DBufferTransferInProgress = false;
+    VideoBufferingModeInitialized = false;
 } // end DirectDraw constructor
 
 // initialize
 //---------------------------------------------------------------------------
-BOOL DirectDraw::initialize( )
+bool DirectDraw::initialize( )
 {
- if ( DDrawCreate() == FALSE) 
-  { return( FALSE ); }
+ if ( DDrawCreate() == false) 
+  { return( false ); }
 
  enumDisplayModes();
 
  checkCPUTechnology();
  selectBlittingFunction();
- return( TRUE );
+ return( true );
 } // end initialize
 
 // shutdown
@@ -118,10 +120,10 @@ void DirectDraw::shutdown()
 
 	cleanUpSurfaces();
 
-	if (lpDirectDraw != NULL)
+	if (lpDirectDraw != 0)
 	{
 		lpDirectDraw->Release();
-		lpDirectDraw = NULL;
+		lpDirectDraw = 0;
 	}
 } // end shutdown
 
@@ -147,7 +149,7 @@ int DirectDraw::addDisplayMode(int width, int height, int bpp)
 
 // isDisplayModeAvailable
 //---------------------------------------------------------------------------
-BOOL DirectDraw::isDisplayModeAvailable(int width, int height, int bpp)
+bool DirectDraw::isDisplayModeAvailable(int width, int height, int bpp)
 {
 	for (DWORD i = 0; i < displayModeCount; i++)
 	{
@@ -156,15 +158,15 @@ BOOL DirectDraw::isDisplayModeAvailable(int width, int height, int bpp)
 			(displayModeList[ i ].height == height) &&
 			(displayModeList[ i ].bpp == bpp))
 		{
-			return TRUE;
+			return true;
 		}   
 	}
 
-	return FALSE;
+	return false;
 } // end isDisplayModeAvailable
 
 // sets the video mode using the current mode flags.
-BOOL DirectDraw::setVideoMode(int width, int height, int bpp)
+bool DirectDraw::setVideoMode(int width, int height, int bpp)
 {
   if (currentDisplayMode.width != width ||
     currentDisplayMode.height != height ||
@@ -192,7 +194,7 @@ void DirectDraw::getVideoMode(DWORD &width, DWORD &height, DWORD &bpp)
 // EXAMPLE
 // -----------
 //
-// DisplayMode *list = NULL;
+// DisplayMode *list = 0;
 // int num;
 //
 // ...
@@ -212,9 +214,9 @@ void DirectDraw::getDisplayModes(DisplayMode **modes, int &num)
 // Decreases the screen resolution if possible, otherwise
 // leaves the display mode as is.
 //---------------------------------------------------------------------------
-BOOL DirectDraw::decreaseDisplayModeResolution(int *width, int *height )
+bool DirectDraw::decreaseDisplayModeResolution(int *width, int *height )
 {
-  DisplayMode *newDisplay = NULL;
+  DisplayMode *newDisplay = 0;
   int newNumPixels = 0;
   int currNumPixels = currentDisplayMode.width * 
                       currentDisplayMode.height;
@@ -227,7 +229,7 @@ BOOL DirectDraw::decreaseDisplayModeResolution(int *width, int *height )
     if (displayModeList[i].bpp == currentDisplayMode.bpp &&
   	    numPixels < currNumPixels)
     {
-      if (newDisplay == NULL ||
+      if (newDisplay == 0 ||
           numPixels > newNumPixels)
       {
         newDisplay = &displayModeList[i];
@@ -237,7 +239,7 @@ BOOL DirectDraw::decreaseDisplayModeResolution(int *width, int *height )
       
 	}
   
-  if (newDisplay != NULL)
+  if (newDisplay != 0)
   {
     setVideoMode(newDisplay->width,
                  newDisplay->height,
@@ -247,10 +249,10 @@ BOOL DirectDraw::decreaseDisplayModeResolution(int *width, int *height )
 	*width = newDisplay->width;
 	*height = newDisplay->height;
  
-    return ( TRUE );
+    return ( true );
   }
 
- return ( FALSE );
+ return ( false );
 } // end decreaseDisplayModeResolution
 
 // increaseDisplayModeResolution();
@@ -258,9 +260,9 @@ BOOL DirectDraw::decreaseDisplayModeResolution(int *width, int *height )
 // Increases the screen resolution if possible, otherwise
 // leaves the display mode as is.
 //---------------------------------------------------------------------------
-BOOL DirectDraw::increaseDisplayModeResolution( int *width, int *height )
+bool DirectDraw::increaseDisplayModeResolution( int *width, int *height )
 {
-  DisplayMode *newDisplay = NULL;
+  DisplayMode *newDisplay = 0;
   int newNumPixels = 0;
   int currNumPixels = currentDisplayMode.width * 
                       currentDisplayMode.height;
@@ -273,7 +275,7 @@ BOOL DirectDraw::increaseDisplayModeResolution( int *width, int *height )
     if (displayModeList[i].bpp == currentDisplayMode.bpp &&
   	    numPixels > currNumPixels)
     {
-      if (newDisplay == NULL ||
+      if (newDisplay == 0 ||
           numPixels < newNumPixels)
       {
         newDisplay = &displayModeList[i];
@@ -283,7 +285,7 @@ BOOL DirectDraw::increaseDisplayModeResolution( int *width, int *height )
       
 	}
   
-  if (newDisplay != NULL)
+  if (newDisplay != 0)
   {
     setVideoMode(newDisplay->width,
                  newDisplay->height,
@@ -293,67 +295,67 @@ BOOL DirectDraw::increaseDisplayModeResolution( int *width, int *height )
 	*width = newDisplay->width;
 	*height = newDisplay->height;
  
-    return ( TRUE );
+    return ( true );
   }
 
- return ( FALSE );
+ return ( false );
 } // end increaseDisplayModeResolution
 
 // enumDisplayModes
 //---------------------------------------------------------------------------
-BOOL DirectDraw::enumDisplayModes()
+bool DirectDraw::enumDisplayModes()
 {
 	HRESULT hr;
 
 	resetDisplayModeList();
 
-	hr = lpDirectDraw->EnumDisplayModes(0, NULL, (void *) this, enumDisplayModesCallback);
+	hr = lpDirectDraw->EnumDisplayModes(0, 0, (void *) this, enumDisplayModesCallback);
 
 	if(hr != DD_OK) 
 	{
 		DDErrorBox("enumDisplayModes" , hr);
-		return FALSE;
+		return false;
 	}
 
-	return FALSE;
+	return false;
 } // end enumDisplayModes
 
 // DDrawCreate
 //---------------------------------------------------------------------------
-BOOL DirectDraw::DDrawCreate()
+bool DirectDraw::DDrawCreate()
 {
 	HRESULT hr;
 
-	hr = DirectDrawCreate(NULL, &lpDirectDraw, NULL);
+	hr = DirectDrawCreate(0, &lpDirectDraw, 0);
 
 	if(hr != DD_OK)
 	{
 		free(lpDirectDraw);
-		lpDirectDraw = NULL;
+		lpDirectDraw = 0;
             
 		DDErrorBox("DDrawCreate", hr);
-		return FALSE;
+		return false;
 	}
 
-	return TRUE;
+	return true;
 } // end DDrawCreate
 
 // cleanUpSurfaces
 //---------------------------------------------------------------------------
 void DirectDraw::cleanUpSurfaces()
 {
-	if (lpDirectDraw != NULL)
+	if (lpDirectDraw != 0)
 	{
-		if (lpFrontBuffer != NULL)
+		if (lpFrontBuffer != 0)
 		{
 			lpFrontBuffer->Release();
-			lpFrontBuffer = NULL;
+			lpFrontBuffer = 0;
 		}
 
-		if (lpDoubleBuffer != NULL)
+		if (lpDoubleBuffer != 0)
 		{
 			lpDoubleBuffer->Release();
-			lpDoubleBuffer = NULL;
+			lpDoubleBuffer = 0;
 		}
 	}
 } // end cleanUpSurfaces
@@ -375,9 +377,9 @@ void DirectDraw::setPalette(RGBColor *color)
 
 // setVideoMode
 //---------------------------------------------------------------------------
-BOOL DirectDraw::setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE modeFlags)
+bool DirectDraw::setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE modeFlags)
 {
-	BOOL result;
+	bool result;
 
 	cleanUpSurfaces();
 
@@ -399,18 +401,19 @@ BOOL DirectDraw::setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE modeFla
  #pragma optimize( "", off )
 #endif
 
-BOOL DirectDraw::checkCPUTechnology( void )
- {
+bool DirectDraw::checkCPUTechnology( void )
+{
+    // MMX detection code courtesy of some bloak on the net
+    // nice execption handling routines :)
 
-   // MMX detection code courtesy of some bloak on the net
-   // nice execption handling routines :)
+    volatile bool retval = true;
+    volatile DWORD RegEDX;
+    (void) RegEDX;
 
-	volatile BOOL retval = TRUE;
-	volatile DWORD RegEDX;
-
-	MMXAvailable = 1;
+    MMXAvailable = 1;
     FPUAvailable = 1;
 
+#ifdef MSVC
     __try {
 		_asm {
 			mov eax, 1		// set up CPUID to return processor version and features
@@ -427,30 +430,30 @@ BOOL DirectDraw::checkCPUTechnology( void )
 	if (retval == 0)
 	{
         MMXAvailable = 0;
-		return FALSE;        	// processor does not support CPUID
+		return false;        	// processor does not support CPUID
 	}
 
 	if (RegEDX & 0x800000) 		// bit 23 is set for MMX technology
 	{
 	   __try { _asm emms } 		// try executing the MMX instruction "emms"
-	   __except(EXCEPTION_EXECUTE_HANDLER) { MMXAvailable = 0; retval = FALSE; }
+	   __except(EXCEPTION_EXECUTE_HANDLER) { MMXAvailable = 0; retval = false; }
 
 		return retval;
 	}
    	else
 		{
          MMXAvailable = 0;
-         return FALSE;        	// processor supports CPUID but does not support MMX technology
+         return false;        	// processor supports CPUID but does not support MMX technology
         }
+#endif
 
 	// if retval == 0 here, it means the processor has MMX technology but
 	// floating-point emulation is on; so MMX technology is unavailable
 	MMXAvailable = 0;
-    FPUAvailable = 0;
+	FPUAvailable = 0;
 
 	return retval;
-
- }
+}
 
 #if _MSC_VER > 1000
  #pragma optimize( "", on )
@@ -458,12 +461,12 @@ BOOL DirectDraw::checkCPUTechnology( void )
 
 void DirectDraw::selectBlittingFunction( void )
  {
-  if ( MMXAvailable == TRUE )
+  if ( MMXAvailable == true )
    {
     BlitRectsFuncPtr = BlitRectsMMX; 
    }
   else
-   if ( FPUAvailable == TRUE )
+   if ( FPUAvailable == true )
     {
      BlitRectsFuncPtr = BlitRectsFPU; 
     }
@@ -473,46 +476,46 @@ void DirectDraw::selectBlittingFunction( void )
     }  
  }
 
-BOOL DirectDraw::setBlittingFunction( int blitFuncEnum )
+bool DirectDraw::setBlittingFunction( int blitFuncEnum )
  {
   switch ( blitFuncEnum )
    {
     case BLIT_FUNC_MMX :
      {
-      if ( MMXAvailable == TRUE )
+      if ( MMXAvailable == true )
        {
         BlitRectsFuncPtr = BlitRectsMMX; 
-        return( TRUE );
+        return( true );
        }
-      return( FALSE );
+      return( false );
      } break;
 
     case BLIT_FUNC_FPU :
      {
-      if ( FPUAvailable == TRUE )
+      if ( FPUAvailable == true )
        {
         BlitRectsFuncPtr = BlitRectsFPU; 
-        return( TRUE );
+        return( true );
        }
-      return( FALSE );
+      return( false );
      } break;
 
     case BLIT_FUNC_MEMCPY :
      {
       BlitRectsFuncPtr = BlitRectsMemcpy; 
-      return( TRUE );
+      return( true );
      } break;
 
    } // switch
-  return( FALSE );
+  return( false );
 
  }
 
 // windowedSurfaceInitialization
 //---------------------------------------------------------------------------
-BOOL DirectDraw::windowedSurfaceInitialization(DWORD width, DWORD height, DWORD bpp, BYTE modeFlags)
+bool DirectDraw::windowedSurfaceInitialization(DWORD width, DWORD height, DWORD bpp, BYTE modeFlags)
 {
-	BOOL maximize_window_area = FALSE;
+	bool maximize_window_area = false;
     DDSURFACEDESC currentVideoMode;
 	int           bitsPerPlane, planes;
 	HRESULT       hr;
@@ -522,7 +525,7 @@ BOOL DirectDraw::windowedSurfaceInitialization(DWORD width, DWORD height, DWORD 
 	if(hr != DD_OK) 
 	{
 		DDErrorBox("DDSetCooperativeLevel" , hr);
-		return FALSE;
+		return false;
 	}
 
 	cooperationLevelFlags = DDSCL_NORMAL;
@@ -536,7 +539,7 @@ BOOL DirectDraw::windowedSurfaceInitialization(DWORD width, DWORD height, DWORD 
 	if(hr != DD_OK) 
 	{
 		DDErrorBox("GetDisplayMode:" , hr);
-		return FALSE;
+		return false;
 	}
 
 	if (currentVideoMode.ddpfPixelFormat.dwRGBBitCount != bpp)
@@ -547,11 +550,11 @@ BOOL DirectDraw::windowedSurfaceInitialization(DWORD width, DWORD height, DWORD 
 					"Warning",
 					MB_OK);   
 
-		return FALSE;
+		return false;
 	}
 
 	if ( currentVideoMode.dwWidth == width && currentVideoMode.dwHeight == height )
-     { maximize_window_area = TRUE; }
+     { maximize_window_area = true; }
 
     
     currentDisplayMode.width  = currentVideoMode.dwWidth;
@@ -563,10 +566,10 @@ BOOL DirectDraw::windowedSurfaceInitialization(DWORD width, DWORD height, DWORD 
 	{
 		enumDisplayModes();
 
-		if (isDisplayModeAvailable(width, height, bpp) == FALSE)
+		if (isDisplayModeAvailable(width, height, bpp) == false)
 		{
 			MessageBox(gapp.hwndApp, "Video Mode Not Supported", "Error", MB_OK);
-			return(FALSE );
+			return(false );
 		}
 
 		hr = lpDirectDraw->SetDisplayMode(width, height, bpp);
@@ -574,11 +577,11 @@ BOOL DirectDraw::windowedSurfaceInitialization(DWORD width, DWORD height, DWORD 
 		if(hr != DD_OK)
 		{
 			DDErrorBox("DDSetVideoMode" , hr);
-			return FALSE;
+			return false;
 		}
 	}
 
-	if ( maximize_window_area == TRUE )
+	if ( maximize_window_area == true )
      {  
       SetWindowLong( gapp.hwndApp, GWL_STYLE, WS_POPUP | WS_VISIBLE);
      }
@@ -592,26 +595,26 @@ BOOL DirectDraw::windowedSurfaceInitialization(DWORD width, DWORD height, DWORD 
 	RECT rc;
 	HDC  hdc;
 
-	hdc = GetDC(NULL);
+	hdc = GetDC(0);
 	
-    if ( hdc == NULL )
+    if ( hdc == 0 )
      { MessageBox(  gapp.hwndApp, "GetDC Failed in Windowed Initialization", "DirectDraw", MB_OK ); }  
     
     planes = GetDeviceCaps(hdc, PLANES);
     bitsPerPlane = GetDeviceCaps(hdc, BITSPIXEL);	
     bitsPerPlane = planes * bitsPerPlane;
 
-	ReleaseDC(NULL, hdc);
+	ReleaseDC(0, hdc);
 
 	SetRect(&rc, 0, 0, width, height);
 
 	AdjustWindowRectEx(
 						&rc,
 						GetWindowStyle(gapp.hwndApp),
-						GetMenu(gapp.hwndApp) != NULL,
+						GetMenu(gapp.hwndApp) != 0,
 						GetWindowExStyle(gapp.hwndApp));
 
-	SetWindowPos(gapp.hwndApp, NULL, 0, 0, rc.right-rc.left, rc.bottom-rc.top, SWP_NOZORDER | SWP_NOACTIVATE);
+	SetWindowPos(gapp.hwndApp, 0, 0, 0, rc.right-rc.left, rc.bottom-rc.top, SWP_NOZORDER | SWP_NOACTIVATE);
 
 	SetWindowPos(gapp.hwndApp, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
 
@@ -627,26 +630,26 @@ BOOL DirectDraw::windowedSurfaceInitialization(DWORD width, DWORD height, DWORD 
 		rc.top  = rcWork.top;
 	}
 	
-	SetWindowPos(gapp.hwndApp, NULL, rc.left, rc.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+	SetWindowPos(gapp.hwndApp, 0, rc.left, rc.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 
 	DDPrimaryDesc.dwSize         = sizeof(DDPrimaryDesc);
 	DDPrimaryDesc.dwFlags        = DDSD_CAPS;
 	DDPrimaryDesc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
 
-	hr = lpDirectDraw->CreateSurface(&DDPrimaryDesc, &lpFrontBuffer, NULL);
+	hr = lpDirectDraw->CreateSurface(&DDPrimaryDesc, &lpFrontBuffer, 0);
     
 	if(hr != DD_OK) 
 	{
 		DDErrorBox("CreatePrimarySurface", hr);
-		return FALSE;
+		return false;
 	}
 
-	hr = lpDirectDraw->CreateClipper(0, &lpClipper, NULL);
+	hr = lpDirectDraw->CreateClipper(0, &lpClipper, 0);
 
 	if(hr != DD_OK)
 	{ 
 		DDErrorBox("CreateClipper", hr);
-		return FALSE; 
+		return false; 
 	}
 
 	hr = lpClipper->SetHWnd(0, gapp.hwndApp);
@@ -654,7 +657,7 @@ BOOL DirectDraw::windowedSurfaceInitialization(DWORD width, DWORD height, DWORD 
 	if(hr != DD_OK)
 	{ 
 		DDErrorBox("Clipper: SetHWnd", hr);
-		return FALSE; 
+		return false; 
 	}
 
 	hr = lpFrontBuffer->SetClipper( lpClipper );
@@ -662,7 +665,7 @@ BOOL DirectDraw::windowedSurfaceInitialization(DWORD width, DWORD height, DWORD 
 	if (hr != DD_OK)
 	{ 
 		DDErrorBox("SetClipper", hr);
-		return FALSE; 
+		return false; 
 	}
 
 	palette.initialize(lpDirectDraw, _palette_mode_window );
@@ -671,13 +674,13 @@ BOOL DirectDraw::windowedSurfaceInitialization(DWORD width, DWORD height, DWORD 
 
 	currentModeFlags = modeFlags;
 
-	VideoBufferingModeInitialized = TRUE;
-    return TRUE;
+	VideoBufferingModeInitialized = true;
+    return true;
 } // end windowedSurfaceInitialization
         
 // fullScreenSurfaceInitialization
 //---------------------------------------------------------------------------
-BOOL DirectDraw::fullScreenSurfaceInitialization(DWORD width, DWORD height, DWORD bpp, BYTE modeFlags)
+bool DirectDraw::fullScreenSurfaceInitialization(DWORD width, DWORD height, DWORD bpp, BYTE modeFlags)
 {
 	HRESULT hr;
 
@@ -688,17 +691,17 @@ BOOL DirectDraw::fullScreenSurfaceInitialization(DWORD width, DWORD height, DWOR
 	if(hr != DD_OK) 
 	{
 		DDErrorBox("DDSetCooperativeLevel", hr);
-		return FALSE;
+		return false;
 	}
 
 	cooperationLevelFlags = DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_ALLOWREBOOT;
 
 	enumDisplayModes();
 
-	if (isDisplayModeAvailable(width, height, bpp) == FALSE)
+	if (isDisplayModeAvailable(width, height, bpp) == false)
 	{
 		MessageBox(gapp.hwndApp, "Video Mode Not Supported", "Error", MB_OK);
-		return( FALSE );
+		return( false );
 	}
 
 	hr = lpDirectDraw->SetDisplayMode(width, height, bpp);
@@ -706,7 +709,7 @@ BOOL DirectDraw::fullScreenSurfaceInitialization(DWORD width, DWORD height, DWOR
 	if(hr != DD_OK)
 	{
 		DDErrorBox( "DDSetVideoMode", hr);
-		return FALSE;
+		return false;
 	}
 
 	currentDisplayMode.width  = width;
@@ -724,12 +727,12 @@ BOOL DirectDraw::fullScreenSurfaceInitialization(DWORD width, DWORD height, DWOR
 		DDPrimaryDesc.ddsCaps.dwCaps    = DDPrimaryDesc.ddsCaps.dwCaps | DDSCAPS_COMPLEX | DDSCAPS_FLIP;
 	}
 
-	hr = lpDirectDraw->CreateSurface(&DDPrimaryDesc, &lpFrontBuffer, NULL);
+	hr = lpDirectDraw->CreateSurface(&DDPrimaryDesc, &lpFrontBuffer, 0);
 
 	if (hr != DD_OK) 
 	{
 		DDErrorBox("CreatePrimarySurface", hr);
-		return(FALSE);
+		return(false);
 	}
 
 	if ((modeFlags & VIDEO_MODE_TRIPLE_BUFFER))
@@ -743,7 +746,7 @@ BOOL DirectDraw::fullScreenSurfaceInitialization(DWORD width, DWORD height, DWOR
 		  if( ( hr == DDERR_INVALIDOBJECT) || (hr == DDERR_INVALIDPARAMS) )
 		   {
 		  	DDErrorBox("CreateBackBuffer", hr);
-	  		return FALSE;
+	  		return false;
 	       }   
 	      else
 		   {
@@ -753,14 +756,14 @@ BOOL DirectDraw::fullScreenSurfaceInitialization(DWORD width, DWORD height, DWOR
 	        DDPrimaryDesc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE; 
 
 		    lpFrontBuffer->Release();
-		    lpFrontBuffer = NULL;
+		    lpFrontBuffer = 0;
 
-            hr = lpDirectDraw->CreateSurface(&DDPrimaryDesc, &lpFrontBuffer, NULL);
+            hr = lpDirectDraw->CreateSurface(&DDPrimaryDesc, &lpFrontBuffer, 0);
 
 	        if (hr != DD_OK) 
 	         {
 		      DDErrorBox("CreatePrimarySurface", hr);
-		      return(FALSE);
+		      return(false);
 	         }
 	       
 		     modeFlags = modeFlags & (~VIDEO_MODE_TRIPLE_BUFFER);
@@ -776,14 +779,14 @@ BOOL DirectDraw::fullScreenSurfaceInitialization(DWORD width, DWORD height, DWOR
 
 	currentModeFlags = modeFlags;
 
-	VideoBufferingModeInitialized = TRUE;
+	VideoBufferingModeInitialized = true;
 
-	return TRUE;
+	return true;
 } // end fullScreenSurfaceInitialization
 
 // createFrameBuffer
 //---------------------------------------------------------------------------
-BOOL DirectDraw::createFrameBuffer(DWORD width, DWORD height, DWORD bpp)
+bool DirectDraw::createFrameBuffer(DWORD width, DWORD height, DWORD bpp)
 {
 
 	memset( (void *) &DDDoubleBuffDesc, 0, sizeof(DDDoubleBuffDesc) );
@@ -807,12 +810,12 @@ BOOL DirectDraw::createFrameBuffer(DWORD width, DWORD height, DWORD bpp)
 
 	HRESULT hr;
 
-	hr = lpDirectDraw->CreateSurface(&DDDoubleBuffDesc, &lpDoubleBuffer, NULL);
+	hr = lpDirectDraw->CreateSurface(&DDDoubleBuffDesc, &lpDoubleBuffer, 0);
 
 	if(hr != DD_OK)
 	{
 		DDErrorBox( "CreateDoubleBufferSurface", hr);
-		return FALSE;
+		return false;
 	}
 
 	DBufferDesc.width                  = DBUFFER_WIDTH       = width;
@@ -824,12 +827,12 @@ BOOL DirectDraw::createFrameBuffer(DWORD width, DWORD height, DWORD bpp)
 	DBufferDesc.offset_to_view         = OFFSET_TO_VIEW = 0; 
 	DBufferDesc.offset_to_screen_start = 0;
 
-	return TRUE;
+	return true;
 } // end createFrameBuffer
 
 // createFrameBuffer
 //---------------------------------------------------------------------------
-BOOL DirectDraw::createFrameBuffer(DWORD width, DWORD height, DWORD bpp, DWORD clipWidth, DWORD clipHeight)
+bool DirectDraw::createFrameBuffer(DWORD width, DWORD height, DWORD bpp, DWORD clipWidth, DWORD clipHeight)
 {
    DWORD bufferWidth;
    DWORD bufferHeight;
@@ -849,47 +852,47 @@ BOOL DirectDraw::createFrameBuffer(DWORD width, DWORD height, DWORD bpp, DWORD c
    DBufferDesc.offset_to_view         = OFFSET_TO_VIEW = bufferWidth * clipHeight + clipWidth; 
    DBufferDesc.offset_to_screen_start = bufferWidth * clipHeight + clipWidth;
 
-   return TRUE;
+   return true;
 } // end createFrameBuffer
 
 // lockDoubleBuffer
 //---------------------------------------------------------------------------
-BOOL DirectDraw::lockDoubleBuffer(unsigned char **DoubleBuffer)
+bool DirectDraw::lockDoubleBuffer(unsigned char **DoubleBuffer)
 {
 	HRESULT result;
     
-	if (doubleBufferLocked == TRUE)
+	if (doubleBufferLocked == true)
 	{
-		return FALSE;
+		return false;
 	}
             
 	memset(&ddDbufferPtrSurf, 0, sizeof(ddDbufferPtrSurf));
 	ddDbufferPtrSurf.dwSize = sizeof(ddDbufferPtrSurf);
 
-	result = lpDoubleBuffer->Lock(NULL, &ddDbufferPtrSurf, DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR, NULL);
+	result = lpDoubleBuffer->Lock(0, &ddDbufferPtrSurf, DDLOCK_WAIT | DDLOCK_SURFACEMEMORYPTR, 0);
 
 	if (result != DD_OK)
 	{
 		DDErrorBox("LockDoubleBuffer", result);
-		return FALSE;
+		return false;
 	}  
 
 	*DoubleBuffer = (unsigned char *) ddDbufferPtrSurf.lpSurface;
 
-	doubleBufferLocked = TRUE;
+	doubleBufferLocked = true;
 
-	return TRUE;
+	return true;
 } // end lockDoubleBuffer
 
 // unlockDoubleBuffer
 //---------------------------------------------------------------------------
-BOOL DirectDraw::unlockDoubleBuffer()
+bool DirectDraw::unlockDoubleBuffer()
 {
 	HRESULT result;
 
 	if (!doubleBufferLocked)
 	{
-		return FALSE;
+		return false;
 	}
 
 	result = lpDoubleBuffer->Unlock(ddDbufferPtrSurf.lpSurface);
@@ -897,26 +900,26 @@ BOOL DirectDraw::unlockDoubleBuffer()
 	if (result != DD_OK)
 	{
 		DDErrorBox("UnlockDoubleBuffer", result);
-		return  FALSE;
+		return  false;
 	}
 
-	doubleBufferLocked = FALSE;
+	doubleBufferLocked = false;
 
-	return TRUE; 
+	return true; 
 } // end unlockDoubleBuffer
 
 // copyDoubleBufferandFlip
 //---------------------------------------------------------------------------
-BOOL DirectDraw::copyDoubleBufferandFlip()
+bool DirectDraw::copyDoubleBufferandFlip()
 {
 	HRESULT result;
 
-	DBufferTransferInProgress = TRUE;
+	DBufferTransferInProgress = true;
 
 	if (GDIEnabled)
 	{
-		DBufferTransferInProgress = FALSE;
-		return TRUE;
+		DBufferTransferInProgress = false;
+		return true;
 	}
 
 	RECT rect;
@@ -937,14 +940,14 @@ BOOL DirectDraw::copyDoubleBufferandFlip()
 			if(result != DD_OK) 
 			{
 				DDErrorBox("CopyDoubleBufferandFlip : Get Attached", result);  
-				return FALSE;
+				return false;
 			}  
 
 		    if( (DD_OK != lpBackBuffer->GetBltStatus( DDGBS_CANBLT ) ) || 
                 (DD_OK != lpDoubleBuffer->GetBltStatus( DDGBS_CANBLT) )  
               )
              { 
-  			   result = lpFrontBuffer->Flip( NULL, 0 );
+  			   result = lpFrontBuffer->Flip( 0, 0 );
 
 			   if(result == DDERR_SURFACELOST)
 			    {
@@ -954,10 +957,10 @@ BOOL DirectDraw::copyDoubleBufferandFlip()
 			   if( (result != DD_OK) && (result != DDERR_WASSTILLDRAWING) )
 			    {
 				 DDErrorBox("CopyDoubleBufferandFlip : Flip", result);
-				 return FALSE;
+				 return false;
 			    }  
               
-               return( TRUE ); 
+               return( true ); 
               }
             
             //result = lpBackBuffer->BltFast( 0,0, lpDoubleBuffer, &rect, DDBLTFAST_NOCOLORKEY );
@@ -972,11 +975,11 @@ BOOL DirectDraw::copyDoubleBufferandFlip()
 			if(result != DD_OK) 
 			{
 				DDErrorBox("CopyDoubleBufferandFlip : Blit", result);
-				return FALSE;
+				return false;
 			}  
 
-			//result = lpFrontBuffer->Flip( NULL, DDFLIP_WAIT);
-			result = lpFrontBuffer->Flip( NULL, 0 );
+			//result = lpFrontBuffer->Flip( 0, DDFLIP_WAIT);
+			result = lpFrontBuffer->Flip( 0, 0 );
 
 			if(result == DDERR_SURFACELOST)
 			{
@@ -986,7 +989,7 @@ BOOL DirectDraw::copyDoubleBufferandFlip()
 			if( (result != DD_OK) && (result != DDERR_WASSTILLDRAWING) )
 			{
 				DDErrorBox("CopyDoubleBufferandFlip : Flip", result);
-				return FALSE;
+				return false;
 			}  
 
 		} else
@@ -994,7 +997,7 @@ BOOL DirectDraw::copyDoubleBufferandFlip()
             if( (DD_OK != lpFrontBuffer->GetBltStatus( DDGBS_CANBLT ) ) || 
                 (DD_OK != lpDoubleBuffer->GetBltStatus( DDGBS_CANBLT ) )  
               )
-             { return( TRUE ); }
+             { return( true ); }
 
 			//result = lpFrontBuffer->BltFast( 0,0, lpDoubleBuffer, &rect, DDBLTFAST_NOCOLORKEY );
             
@@ -1008,7 +1011,7 @@ BOOL DirectDraw::copyDoubleBufferandFlip()
 			if( result != DD_OK)
 			{
 				DDErrorBox("DoubeBufferedCopy : Blt", result);
-				return FALSE;
+				return false;
 			}  
 
 		}     
@@ -1019,9 +1022,9 @@ BOOL DirectDraw::copyDoubleBufferandFlip()
         if( (DD_OK != lpFrontBuffer->GetBltStatus( DDGBS_CANBLT ) ) || 
              (DD_OK != lpDoubleBuffer->GetBltStatus( DDGBS_CANBLT ) )   
            )
-         { return( TRUE ); }
+         { return( true ); }
 
-		//result = lpFrontBuffer->Blt(&gapp.wndRectangle, lpDoubleBuffer, &rect, DDBLT_WAIT, NULL);
+		//result = lpFrontBuffer->Blt(&gapp.wndRectangle, lpDoubleBuffer, &rect, DDBLT_WAIT, 0);
 
         result = DDBltRects( lpDoubleBuffer, lpFrontBuffer, 1, &rect, &gapp.wndRectangle );
 
@@ -1031,13 +1034,13 @@ BOOL DirectDraw::copyDoubleBufferandFlip()
 		if(result != DD_OK)
 		{
 			DDErrorBox("WindowedCopy : Blt", result);  
-			return ( FALSE );
+			return ( false );
 		}  
 	}  
 
-	DBufferTransferInProgress = FALSE;
+	DBufferTransferInProgress = false;
 
-	return TRUE;
+	return true;
 } // end copyDoubleBufferandFlip
 
 // restoreAll
@@ -1046,9 +1049,9 @@ void DirectDraw::restoreAll()
 {
 	HRESULT result;
 
-	if ( (lpDirectDraw == NULL) || 
-         (GDIEnabled == FALSE)  ||
-         (VideoBufferingModeInitialized == FALSE) )
+	if ( (lpDirectDraw == 0) || 
+         (GDIEnabled == false)  ||
+         (VideoBufferingModeInitialized == false) )
 	{
 		return;
 	}
@@ -1101,9 +1104,9 @@ void DirectDraw::restoreAll()
 
 // setGDIStatus
 //---------------------------------------------------------------------------
-void DirectDraw::setGDIStatus(BOOL enable)
+void DirectDraw::setGDIStatus(bool enable)
 {
-	if ( (lpDirectDraw == NULL) || (VideoBufferingModeInitialized == FALSE) )
+	if ( (lpDirectDraw == 0) || (VideoBufferingModeInitialized == false) )
 	 {
 	  return;
 	 }
@@ -1115,23 +1118,23 @@ void DirectDraw::setGDIStatus(BOOL enable)
 			return;
 		}
 
-		GDIEnabled = TRUE;
+		GDIEnabled = true;
 		while(DBufferTransferInProgress);
 		
 		lpDirectDraw->FlipToGDISurface();
-	    while( ShowCursor( TRUE ) <= 0 );
+	    while( ShowCursor( true ) <= 0 );
     }
 
 	if (!enable)
 	{
-      while( ShowCursor( FALSE ) > 0 );
+      while( ShowCursor( false ) > 0 );
 
 	  if (!GDIEnabled)
 	   {
 	    return;
 	   }
 
-	  GDIEnabled = FALSE;
+	  GDIEnabled = false;
     }
 
 } // end setGDIStatus
@@ -1218,7 +1221,7 @@ HRESULT DirectDraw::DDBltRects( LPDIRECTDRAWSURFACE pSrc, LPDIRECTDRAWSURFACE pD
 void BlitRectsMMX( unsigned char *pSrc, long srcPitch, unsigned char *pDest, long destPitch, 
                    long bytesPerPixel, long nRects, RECT *pSrcRects, RECT *pDestRects )
 {
-
+#ifdef MSVC
 	long y, rows, prebytes, qwords, postbytes;
 	unsigned char *src, *dest;
 
@@ -1295,6 +1298,9 @@ DONE:
 	{
 		EMMS
 	}
+#else
+	printf ("No BlitMMX version for gcc yet.\n");
+#endif
 
 }
 #if _MSC_VER > 1000
@@ -1336,7 +1342,7 @@ void BlitRectsMemcpy( unsigned char *pSrc, long srcPitch, unsigned char *pDest, 
 void BlitRectsFPU( unsigned char *pSrc, long srcPitch, unsigned char *pDest, long destPitch, 
                    long bytesPerPixel, long nRects, RECT *pSrcRects, RECT *pDestRects )
 {
-
+#if 0
 	long y, rows, prebytes, qdwords, postbytes;
 	unsigned char *src, *dest;
 
@@ -1410,6 +1416,9 @@ DONE:
 		pSrcRects++;
 		pDestRects++;
 	}
+#else
+	printf ("NoBlit rects FPU version for gcc yet.\n");
+#endif
 
 }
 #if _MSC_VER > 1000

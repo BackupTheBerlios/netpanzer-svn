@@ -19,12 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _DDHARDSURFACE_HPP
 
 #include "Surface.hpp"
-#include "aliasdef.h"
 
 class DDHardSurface : public Surface
  {
   protected:
-   boolean lock_status;
+   bool lock_status;
 
   public:
     

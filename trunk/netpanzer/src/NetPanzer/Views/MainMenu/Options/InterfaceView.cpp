@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "stdafx.hpp"
 #include "InterfaceView.hpp"
 #include "GameConfig.hpp"
 #include "GameViewGlobals.hpp"
@@ -46,7 +45,7 @@ static void bDecreaseMiniMapResizeRate()
 
 static int getScrollRate()
 {
-	return GameConfig::getScrollRate();
+	return (int) GameConfig::getScrollRate();
 }
 
 static int getMiniMapResizeRate()

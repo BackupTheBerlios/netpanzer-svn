@@ -40,7 +40,7 @@ class UnitOpcodeEncoder : public PObject
    void encodeOpcode( UnitOpcode *opcode );
    
    void setDecodeMessage( UnitOpcodeMessage *message );
-   boolean decodeMessage( UnitOpcodeStruct *opcode );
+   bool decodeMessage( UnitOpcodeStruct *opcode );
 
    void sendOpcodeMessage( void );
  };

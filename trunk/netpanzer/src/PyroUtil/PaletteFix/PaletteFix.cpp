@@ -93,7 +93,7 @@ void saveSystemPalette( void )
   systemPalette.palNumEntries = 256;
   systemPaletteHandle = CreatePalette( (CONST LOGPALETTE *) &systemPalette );
  
-  if ( systemPaletteHandle == NULL )
+  if ( systemPaletteHandle == 0 )
    {
     MessageBox(hWndApp, "Create System Palette Failed", "Error", MB_OK);     
    }
@@ -107,7 +107,7 @@ void activateSystemPalette()
 	UINT     error;
 	HPALETTE palHandle;
 
-	if (systemPaletteHandle == NULL)
+	if (systemPaletteHandle == 0)
  	 { return; }
 
 	hdc = GetDC(hWndApp);
@@ -118,9 +118,9 @@ void activateSystemPalette()
 		MessageBox(hWndApp, "SetSystemPaletteUse Failed", "Error", MB_OK);
 	}
 
-	palHandle = SelectPalette(hdc, systemPaletteHandle, FALSE);
+	palHandle = SelectPalette(hdc, systemPaletteHandle, false);
 
-	if (palHandle == NULL)
+	if (palHandle == 0)
 	{
 		MessageBox(hWndApp, "SelectPalette Failed", "Error", MB_OK);
 	}
@@ -145,9 +145,9 @@ void activateSystemPalette()
 } // end activateSystemPalette
 
 
-BOOL MyTaskBarAddIcon(HWND hwnd, UINT uID, HICON hicon, LPSTR lpszTip) 
+bool MyTaskBarAddIcon(HWND hwnd, UINT uID, HICON hicon, LPSTR lpszTip) 
 { 
-    BOOL res; 
+    bool res; 
     NOTIFYICONDATA tnid; 
  
     tnid.cbSize = sizeof(NOTIFYICONDATA); 
@@ -173,7 +173,7 @@ BOOL MyTaskBarAddIcon(HWND hwnd, UINT uID, HICON hicon, LPSTR lpszTip)
 
 //this function creates and registers a windows class for our
 //application. then it creates our window using that class--
-static BOOL WinInit( HANDLE hInstance, int nCmdShow)
+static bool WinInit( HANDLE hInstance, int nCmdShow)
 {
     WNDCLASS	wc;
 
@@ -185,12 +185,12 @@ static BOOL WinInit( HANDLE hInstance, int nCmdShow)
 	wc.cbWndExtra	= 0;
 	wc.hInstance	= (HINSTANCE) hInstance;
 	wc.hIcon		= LoadIcon( (HINSTANCE) hInstance, MAKEINTATOM(IDI_APPLICATION));
-	wc.hCursor		= LoadCursor( NULL, IDC_ARROW);
+	wc.hCursor		= LoadCursor( 0, IDC_ARROW);
 	wc.hbrBackground= (HBRUSH) GetStockObject(BLACK_BRUSH);
-	wc.lpszMenuName	= NULL;
+	wc.lpszMenuName	= 0;
 	wc.lpszClassName= "PaletteFixClass";
 
-	if( !RegisterClass( &wc )) return FALSE;
+	if( !RegisterClass( &wc )) return false;
 
      hWndApp = CreateWindowEx(
 		WS_EX_TOOLWINDOW,
@@ -201,10 +201,10 @@ static BOOL WinInit( HANDLE hInstance, int nCmdShow)
 		0,
 		256, //GetSystemMetrics(SM_CXSCREEN),
 		256, //GetSystemMetrics(SM_CYSCREEN),
-		NULL,
-		NULL,
+		0,
+		0,
 		(HINSTANCE) hInstance,
-		NULL );
+		0 );
 
     saveSystemPalette();
 
@@ -212,7 +212,7 @@ static BOOL WinInit( HANDLE hInstance, int nCmdShow)
 
     MyTaskBarAddIcon( hWndApp, IDI_ICON1, hTaskIcon, "Fixes The Palette" );     
 	
-    return TRUE;
+    return true;
 
 }
 
@@ -223,10 +223,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MSG message;
 
 
-	if( WinInit( hInstance, nCmdShow) == FALSE) return FALSE;
+	if( WinInit( hInstance, nCmdShow) == false) return false;
 	
 
-	while(GetMessage( &message, NULL, 0, 0))
+	while(GetMessage( &message, 0, 0, 0))
 	{
 
 		TranslateMessage(&message);

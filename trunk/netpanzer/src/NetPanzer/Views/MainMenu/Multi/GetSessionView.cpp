@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "stdafx.hpp"
 #include "GetSessionView.hpp"
 #include "GetSessionHostView.hpp"
 #include "Desktop.hpp"
@@ -32,7 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 //winsock hack
 #include "IPAddressView.h"
-#include "WinSockClient.h"
+#include "WinsockClient.h"
 
 #include "Server.hpp"
 #include "Client.hpp"
@@ -53,8 +52,8 @@ static void bBack()
 void bNext()
 {
  //Bug#15
- //boolean DPlayReturnValue;
- //boolean ConnectTypeReturnValue;
+ //bool DPlayReturnValue;
+ //bool ConnectTypeReturnValue;
  //HRESULT hr;
 
  //int return_value;
@@ -89,7 +88,7 @@ void bNext()
 	{
      CLIENT->openSession( _connection_network, 0 );
  
-     if ( CLIENT->startEnumeration( ) == _FALSE )
+     if ( CLIENT->startEnumeration( ) == false )
       {
        Desktop::setVisibilityAllWindows(false);
 	   Desktop::setVisibility("GetSessionView", true);
@@ -104,7 +103,7 @@ void bNext()
       }
      
      /* winsock hack
-     boolean minimize;
+     bool minimize;
 
      //initialize dplay, fix Bug#15--
      //if the DPlayReturnValue is 0 dplay ain't working.
@@ -121,7 +120,7 @@ void bNext()
       //bug#15+
       hr =	EnumerateGames( gapp.hwndApp );
 
-	  if (minimize == _FALSE)
+	  if (minimize == false)
 	   {
 		DDraw.setGDIStatus(false);
 	   }

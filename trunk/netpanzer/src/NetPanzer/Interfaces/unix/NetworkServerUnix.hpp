@@ -15,34 +15,30 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef _NETWORK_SERVER_WINSOCK_HPP
-#define _NETWORK_SERVER_WINSOCK_HPP
+#ifndef _NETWORK_SERVER_UNIX_HPP
+#define _NETWORK_SERVER_UNIX_HPP
 
 #include "NetworkServer.hpp"
 
-
-class NetworkServerWinSock : public NetworkServer
- {
-  protected:
-   int winsockErrorToNetworkError( int winsock_error );
-
-
-  public:
-
-   NetworkServerWinSock();
-   ~NetworkServerWinSock();
+/** This class implements a bsd/unix socket implementation of the
+ * NetworkServer interface.
+ */
+class NetworkServerUnix : public NetworkServer
+{
+public:
+	NetworkServerWinSock();
+	virtual ~NetworkServerWinSock();
    
-   virtual int openSession( int connection_type, int session_flags );
-   virtual int hostSession( void );
-   virtual int closeSession( void );
+	virtual int openSession( int connection_type, int session_flags );
+	virtual int hostSession( void );
+	virtual int closeSession( void );
 
-   virtual int sendMessage( NetMessage *message, unsigned long size, int flags );
-   virtual int sendMessage( NetMessage *message, unsigned long size, PlayerID &player_id, int flags );
+	virtual int sendMessage( NetMessage *message, unsigned long size, int flags );
+	virtual int sendMessage( NetMessage *message, unsigned long size, PlayerID &player_id, int flags );
+   
+	virtual int getMessage( NetMessage *message );
 
-   virtual int getMessage( NetMessage *message );
+	virtual void shutdownClientTransport( PlayerID &client_id );
+};
 
-   virtual void shutdownClientTransport( PlayerID &client_id );
-
- };
-
-#endif // ** _NETWORK_SERVER_WINSOCK_HPP
+#endif

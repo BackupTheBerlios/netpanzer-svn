@@ -15,19 +15,18 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "netPanzerThread.h"
 #include "netPanzerGlobals.h"
 #include "netPanzerMain.h"
 
-#include <process.h>
+//#include <process.h>
 
 #include "GameManager.hpp"
 
-VOID PanzerThread(PVOID pvoid)
+void PanzerThread(void* ptr)
 {
 
-  while( PANZER_THREAD_ACTIVE == TRUE ) 
+  while( PANZER_THREAD_ACTIVE == true ) 
    {
     if ( FUCK_THREAD == 1 )
      {
@@ -36,7 +35,8 @@ VOID PanzerThread(PVOID pvoid)
 	  GameManager::mainLoop();
    } // ** while  
 
-   PANZER_THREAD_FINISHED = TRUE;
+   PANZER_THREAD_FINISHED = true;
 
-   _endthread();
+   // XXX
+   //_endthread();
 }

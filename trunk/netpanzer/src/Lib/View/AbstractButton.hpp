@@ -70,7 +70,8 @@ public:
 	const Surface &getSelectedIcon() { return selectedIcon; }
 	const String  &getText() { return text; }
 
-	bool isRolloverEnabled() { return isRolloverEnabled; }
+	// XXX doesn't seem to be defined
+	//bool isRolloverEnabled() { return isRolloverEnabled; }
 
 	void setDisabledIcon(const Icon &disabledIcon) {}
 	void setEnabled(bool b) { enabled = b; }

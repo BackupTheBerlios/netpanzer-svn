@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "Astar.hpp"
 
 #include "Timer.hpp"
@@ -39,7 +38,7 @@ int compare( PObject *object1, PObject *object2 )
 
 Astar::Astar( void )
  {
-  node_list = NULL;
+  node_list = 0;
  }
 
 void Astar::initializeAstar( unsigned long node_list_size,
@@ -57,7 +56,7 @@ void Astar::initializeAstar( unsigned long node_list_size,
   Astar::step_limit = step_limit;
   Astar::heuristic_weight = heuristic_weight;
  
-  ini_flag = _TRUE; 
+  ini_flag = true; 
  }
 
 void Astar::initializeAstar( unsigned long node_list_size )
@@ -76,11 +75,11 @@ AstarNode *  Astar::getNewNode( void )
  {
   AstarNode *node_ptr;
   
- if ( dynamic_node_management_flag == _TRUE )
+ if ( dynamic_node_management_flag == true )
   {
-   if (free_list_ptr == NULL) 
+   if (free_list_ptr == 0) 
   	{
-	 return( NULL );
+	 return( 0 );
 	}
    else
     {
@@ -94,7 +93,7 @@ AstarNode *  Astar::getNewNode( void )
   { 
    if ( node_index >= node_list_size )
     {
-     return( NULL );
+     return( 0 );
     }
 
    node_ptr = &node_list[ node_index ];
@@ -107,7 +106,7 @@ AstarNode *  Astar::getNewNode( void )
 
 void Astar::releaseNode( AstarNode *node )
  {
-  if ( dynamic_node_management_flag == _TRUE )
+  if ( dynamic_node_management_flag == true )
    {
 	node->parent = free_list_ptr;
 	free_list_ptr = node;
@@ -119,14 +118,14 @@ void Astar::resetNodeList( void )
  {
   node_index = 0;
   
-  if ( dynamic_node_management_flag == _TRUE )
+  if ( dynamic_node_management_flag == true )
    {
 	int node_list_index;
 	int node_list_start;
 
 	node_list_start = node_list_size - 2;
 	
-	node_list[ node_list_size - 1].parent = NULL;
+	node_list[ node_list_size - 1].parent = 0;
 
 	for ( node_list_index = node_list_start; node_list_index >= 0; node_list_index-- )
 	 {
@@ -143,14 +142,14 @@ void Astar::initializeNodeList( unsigned long initial_size )
   node_index = 0;
   node_list_size = initial_size;
 
-  if ( node_list != NULL )
+  if ( node_list != 0 )
    {
     free( node_list );
-    node_list = NULL;
+    node_list = 0;
    }
   
   node_list = (AstarNode *) malloc( sizeof( AstarNode) * node_list_size );
-  assert( node_list != NULL );
+  assert( node_list != 0 );
  
  }
   
@@ -159,15 +158,15 @@ void Astar::initializePath( PointXYi &start, PointXYi &goal, unsigned short path
  {
   TIMESTAMP timer_ini_mark = now();
 
-  if ( sample_set_array_flag == _TRUE )
-   start_sampling_flag = _TRUE;
+  if ( sample_set_array_flag == true )
+   start_sampling_flag = true;
     
   resetNodeList();
   
   total_pathing_time = 0;
   steps = 0;
   total_steps = 0;
-  succ_swap_flag = _FALSE;
+  succ_swap_flag = false;
   path_type_flag = path_type;
 
   goal_node.map_loc = goal;
@@ -175,17 +174,17 @@ void Astar::initializePath( PointXYi &start, PointXYi &goal, unsigned short path
   goal_node.g = getMovementValue( goal );
   goal_node.abs_loc = mapXYtoAbsloc( goal );
   
-  best_node = NULL;
+  best_node = 0;
   best_node = getNewNode();
 
-  assert( best_node != NULL );
+  assert( best_node != 0 );
 
   best_node->map_loc = start;
   best_node->abs_loc = mapXYtoAbsloc( start );
   best_node->g = 0;
   best_node->h = heuristic( best_node->map_loc, goal );
   best_node->f = best_node->g + best_node->h;
-  best_node->parent = NULL;
+  best_node->parent = 0;
   
   open.push( best_node );
   
@@ -248,7 +247,7 @@ unsigned char Astar::generateSucc( unsigned short direction, AstarNode *node, As
   movement_val = getMovementValue( succ->map_loc );
 
   if ( movement_val != 0xFF )
-   if ( ( (UnitBlackBoard::unitOccupiesLoc( succ->map_loc ) == _TRUE ) &&
+   if ( ( (UnitBlackBoard::unitOccupiesLoc( succ->map_loc ) == true ) &&
           (succ->map_loc != goal_node.map_loc) )                 
       )
     {
@@ -260,14 +259,14 @@ unsigned char Astar::generateSucc( unsigned short direction, AstarNode *node, As
   succ->h = heuristic( succ->map_loc, goal_node.map_loc );
   succ->f = succ->h + succ->g ;
 
-  succ->parent = NULL;
+  succ->parent = 0;
 
   return( movement_val );
  }
 
-boolean Astar::generatePath( PathRequest *path_request, 
+bool Astar::generatePath( PathRequest *path_request, 
                              unsigned short path_merge_type, 
-                             boolean dynamic_node_managment,
+                             bool dynamic_node_managment,
                              int *result_code )
 {
   if ( ini_flag )
@@ -276,21 +275,21 @@ boolean Astar::generatePath( PathRequest *path_request,
 	Astar::path_merge_type = path_merge_type;
 	Astar::dynamic_node_management_flag = dynamic_node_managment;
 	initializePath( path_request->start, path_request->goal, path_request->path_type ); 
-    ini_flag = _FALSE; 
+    ini_flag = false; 
    }
 
   return ( process_succ( path_request->path, result_code ) );
 }
 
-boolean Astar::process_succ( PathList *path, int *result_code )
+bool Astar::process_succ( PathList *path, int *result_code )
  {
   AstarNode *node;
   AstarNode temp_node;
   unsigned long temp;
-  boolean done = _FALSE;
+  bool done = false;
   unsigned short succ_loop;
-  boolean steps_comp = _FALSE ;
-  boolean goal_reachable = _TRUE;
+  bool steps_comp = false ;
+  bool goal_reachable = true;
   unsigned short path_length;
 
   unsigned short *map_buffer;
@@ -303,16 +302,16 @@ boolean Astar::process_succ( PathList *path, int *result_code )
    {   
 	best_node = (AstarNode *) open.pop( );
     
-    if ( best_node == NULL )
+    if ( best_node == 0 )
     {
-     goal_reachable = _FALSE;
-     done = _TRUE;
+     goal_reachable = false;
+     done = true;
     }
     else
     { 
     if ( (best_node->map_loc == goal_node.map_loc) )
      {
-      done = _TRUE;
+      done = true;
      }
     else
      { 
@@ -336,14 +335,14 @@ boolean Astar::process_succ( PathList *path, int *result_code )
              } // ** if in closed 
             else
              {
-              node = NULL; 
+              node = 0; 
               
               node = getNewNode();
               
-              if ( node == NULL )
+              if ( node == 0 )
                {
-                done = _TRUE;
-                goal_reachable = _FALSE; 
+                done = true;
+                goal_reachable = false; 
                }
                else
                 {
@@ -353,7 +352,7 @@ boolean Astar::process_succ( PathList *path, int *result_code )
 
                  open_set.setBit( node->map_loc.x, node->map_loc.y );
                  
-				 if ( start_sampling_flag == _TRUE)
+				 if ( start_sampling_flag == true)
                   astar_set_array.setBit( node->map_loc.x, node->map_loc.y );
 				  
                  open.push( node );
@@ -371,7 +370,7 @@ boolean Astar::process_succ( PathList *path, int *result_code )
  
 	 closed_set.setBit( best_node->map_loc.x, best_node->map_loc.y );	
 
- 	 if ( start_sampling_flag == _TRUE)
+ 	 if ( start_sampling_flag == true)
       astar_set_array.setBit( best_node->map_loc.x, best_node->map_loc.y );	
 
   	 releaseNode( best_node );
@@ -379,13 +378,13 @@ boolean Astar::process_succ( PathList *path, int *result_code )
     } // ** else
 	
 	if ( succ_swap_flag )
-     succ_swap_flag = _FALSE;
+     succ_swap_flag = false;
     else
-     succ_swap_flag = _TRUE;
+     succ_swap_flag = true;
 
     if ( steps > step_limit )
      {
-      steps_comp = _TRUE;
+      steps_comp = true;
       steps = 0;
      }
     else
@@ -400,11 +399,11 @@ boolean Astar::process_succ( PathList *path, int *result_code )
 
    if ( done && goal_reachable )
     {
-     boolean insert_successful = _TRUE;
+     bool insert_successful = true;
 	 path_length = 0;
      
 	 node = best_node;
-     while ( (node != NULL) && (insert_successful == _TRUE) )
+     while ( (node != 0) && (insert_successful == true) )
       {
        
        if ( path_merge_type == _path_merge_front )
@@ -417,7 +416,7 @@ boolean Astar::process_succ( PathList *path, int *result_code )
        
 	  }
 	 
-	 if ( insert_successful == _FALSE ) 
+	 if ( insert_successful == false ) 
 	  {
 	   path->reset();
 	  }
@@ -430,27 +429,27 @@ boolean Astar::process_succ( PathList *path, int *result_code )
       }
 
      cleanUp();
-     ini_flag = _TRUE;
+     ini_flag = true;
 	 
 	 PathingState::path_length = path_length;
 	 PathingState::astar_gen_time = total_pathing_time;
      PathingState::astar_gen_time_total += total_pathing_time;
 	 *result_code = _path_result_success;
-     return( _TRUE );
+     return( true );
     }
    else
     if ( !goal_reachable )
      {
-      ini_flag = _TRUE;
+      ini_flag = true;
       cleanUp(); 
       
 	  PathingState::astar_gen_time = total_pathing_time;
 	  PathingState::astar_gen_time_total += total_pathing_time;
 	  *result_code = _path_result_goal_unreachable;
-      return( _TRUE );
+      return( true );
      }
 
-   return( _FALSE );
+   return( false );
  }
 
 void Astar::cleanUp( void )
@@ -462,19 +461,19 @@ void Astar::cleanUp( void )
   open.reset();
 
   resetNodeList();
-  ini_flag = _TRUE;
+  ini_flag = true;
  
-  sample_set_array_flag = _FALSE;
-  start_sampling_flag = _FALSE;	 
+  sample_set_array_flag = false;
+  start_sampling_flag = false;	 
   
   total_pathing_time += now() - timer_cleanup_mark;
  }
 
-void Astar::setDebugMode( boolean on_off )
+void Astar::setDebugMode( bool on_off )
  {
   debug_mode_flag = on_off;
 
-  if ( debug_mode_flag == _TRUE )
+  if ( debug_mode_flag == true )
    {
 	astar_set_array.initialize( MapInterface::getMapXsize(), MapInterface::getMapYsize() );
    }
@@ -486,11 +485,11 @@ void Astar::setDebugMode( boolean on_off )
 
 void Astar::sampleSetArrays( void )
  {
-  if ( debug_mode_flag == _TRUE )
+  if ( debug_mode_flag == true )
    {
 	astar_set_array.clear();
-    sample_set_array_flag = _TRUE;
-    start_sampling_flag = _FALSE;	 
+    sample_set_array_flag = true;
+    start_sampling_flag = false;	 
    }
  }
  

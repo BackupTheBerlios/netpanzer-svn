@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
 #include "Stats.hpp"
 
 #include "ObjectiveInterface.hpp"
@@ -41,7 +40,7 @@ int StatsNamesSortKey( const void *elem1, const void *elem2 )
 
   int strcmp_result;
 
-  strcmp_result = stricmp( player_state1->getName(), player_state2->getName() );
+  strcmp_result = strcasecmp( player_state1->getName(), player_state2->getName() );
  
   if ( strcmp_result != 0 )
    return( strcmp_result );
@@ -130,7 +129,7 @@ void Stats::Initialize()
 	//player states via Vlad's code in the GetPlayerStat function below,
 	//and I want that number to be separate from NumActivePlayers for
 	//clarity.
-	winner_player_state = NULL;
+	winner_player_state = 0;
     Count = 0;
 	NumActivePlayers = 0;
 
@@ -250,25 +249,25 @@ char Stats::GetPlayerStats(char  *flag,
         player = (PlayerState *) PlayerArray[Count];
         player_id = player->getPlayerID();
 
-		if( flag != NULL )
+		if( flag != 0 )
          { *flag = player->getFlag(); }
 		
-        if( kills != NULL )
+        if( kills != 0 )
          { *kills = player->getKills(); }
         
-        if ( losses != NULL )
+        if ( losses != 0 )
          { *losses = player->getLosses(); }
          
-        if ( total != NULL )
+        if ( total != 0 )
          { *total =  player->getTotal(); }
 		
-        if ( objectives != NULL )
+        if ( objectives != 0 )
          { *objectives = player->getObjectivesHeld(); }
 		
-        if ( name != NULL )
+        if ( name != 0 )
          { *name = player->getName(); }
 
-		if ( stats_display_type != NULL )
+		if ( stats_display_type != 0 )
          {       
           if ( (sort_order_enum == _stats_sort_order_player_name) ||
              (sort_order_enum == _stats_sort_order_game_type) 
@@ -297,7 +296,7 @@ char Stats::GetPlayerStats(char  *flag,
               else
                { *stats_display_type = _stats_display_type_default; }               
             }
-         } // ** if ( stats_display_type != NULL )
+         } // ** if ( stats_display_type != 0 )
         
         //have to increment count so that next time through
 		//i'll get the next player.

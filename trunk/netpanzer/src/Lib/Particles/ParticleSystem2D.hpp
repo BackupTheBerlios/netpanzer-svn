@@ -66,7 +66,7 @@ protected:
 	static int particleSystemCount;
 	static int peakParticleSystemCount;
 
-	BOOL  isAlive;
+	bool  isAlive;
 	float age;             // How old the system is.
 	float lifetime;        // How long the system will live.
 	fXYZ  pos;

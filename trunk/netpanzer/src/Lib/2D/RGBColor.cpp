@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "stdafx.hpp"
+
 #include "RGBColor.hpp"
 
 
@@ -32,7 +32,7 @@ RGBColor::RGBColor(BYTE red, BYTE green, BYTE blue)
 //--------------------------------------------------------------------------
 int RGBColor::getBrightnessInt()
 {
-	return 255.0f / 768.0f * float(red + blue + green);
+	return (int) (255.0f / 768.0f * float(red + blue + green));
 }
 
 // getBrightnessFloat
@@ -41,5 +41,5 @@ int RGBColor::getBrightnessInt()
 //--------------------------------------------------------------------------
 int RGBColor::getBrightnessFloat()
 {
-	return float(red + blue + green) / 768.0f;
+	return (int) (float(red + blue + green) / 768.0f);
 }

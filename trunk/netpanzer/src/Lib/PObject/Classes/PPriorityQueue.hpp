@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PPRIORITYQUEUE_HPP
 #define _PPRIORITYQUEUE_HPP
 
-#include "aliasdef.h"
 #include <stdlib.h>
 #include "PHeap.hpp"
 
@@ -40,14 +39,14 @@ class PPriorityQueue : public PHeap
   inline PObject * pop( void )
    {
     PObject *object;
-    if ( array[ root ] == NULL ) 
+    if ( array[ root ] == 0 ) 
      {
-      return( NULL );
+      return( 0 );
      }
     else
      { 
       object = array[ root ];
-      array[ root ] =  NULL;
+      array[ root ] =  0;
       array[ root ] = array[ last ];  
       last--;
       shiftDown();

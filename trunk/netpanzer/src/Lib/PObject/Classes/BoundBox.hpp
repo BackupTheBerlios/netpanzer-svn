@@ -44,15 +44,15 @@ class BoundBox : public Recti
      assert( min.x <= 0 && min.y <= 0 && max.x >= 0 && max.y >= 0 );  
     }
  
-   boolean bounds( PointXYi &center, PointXYi &test );
+   bool bounds( PointXYi &center, PointXYi &test );
 
-   void setBounds( PointXYi &nMin, PointXYi &nMax );
+   void setBounds(const PointXYi &nMin, const PointXYi &nMax );
 
    inline Recti getAbsRect( PointXYi &center )
-    {
+   {
 	 return( Recti( center + min, center + max ) );
-	}
+   }
     
- };
+};
 
 #endif
