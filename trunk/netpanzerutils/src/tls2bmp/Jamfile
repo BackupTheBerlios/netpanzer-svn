@@ -1,0 +1,8 @@
+SubDir TOP src tls2bmp ;
+
+Application tls2bmp : [ Wildcard *.cpp *.hpp ] ;
+CFlags pak2bml : -DDATADIR=\\\"$(datadir)\\\" ;
+LinkWith tls2bmp : netpanzertypes netpanzer2d 
+                    optionmm netpanzerutil ;
+ExternalLibs tls2bmp : XML SDLNET SDLMIXER SDLIMAGE SDL PHYSFS ;
+Help tls2bmp : "Build the pak2bmp executable" ;
