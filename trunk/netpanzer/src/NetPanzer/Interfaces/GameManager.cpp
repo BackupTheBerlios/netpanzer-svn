@@ -495,6 +495,14 @@ void GameManager::processSystemKeys()
         Bot::bot()->processEvents();
     }
 
+    // Alt+Enter fullscreen
+    if (KeyboardInterface::getKeyPressed(SDLK_RETURN)
+            && (KeyboardInterface::getKeyState(SDLK_RALT)
+                || KeyboardInterface::getKeyState(SDLK_LALT)))
+    {
+        GameConfig::setFullscreen(!Screen->isFullScreen());
+        GameManager::setVideoMode();
+    }
 
     if (Desktop::getVisible("GameView")) {
 
