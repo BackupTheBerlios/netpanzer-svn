@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SpawnList.hpp"
 #include "FileSystem.hpp"
 #include "Exception.hpp"
+#include "GameConfig.hpp"
 
 SpawnList::SpawnList( unsigned long size )
 {
@@ -77,7 +78,16 @@ void SpawnList::getFreeSpawnPoint( iXY *spawn_loc )
 {
     unsigned long spawn_index;
 
-    spawn_index = last_spawn_index;
+    switch(gameconfig->respawntype) {
+        case _game_config_respawn_type_round_robin :
+            spawn_index = last_spawn_index;
+            break;
+        case _game_config_respawn_type_random :
+            spawn_index = rand() % size;
+            break;
+        default:
+            assert("unknown respawn type" == 0);
+    }
 
     do {
         if ( array[ spawn_index ].spawn_delay.count() ) {
@@ -90,6 +100,5 @@ void SpawnList::getFreeSpawnPoint( iXY *spawn_loc )
 
         spawn_index = (spawn_index + 1) % size;
 
-    } while( spawn_index != last_spawn_index );
-
+    } while(false);
 }

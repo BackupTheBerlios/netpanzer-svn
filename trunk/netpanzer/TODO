@@ -2,6 +2,7 @@
 -Convert the 256 color stuff to truecolor
 -Add timeout/keepalive handling to network layer to correctly detect connection
  losses and try reconnects
+-impelement 'initialunits' param in PlayerUnitConfig::initialize()
 
 *** Feature Additions
 
@@ -22,4 +23,5 @@
 -Create possibility to save and restore matches
 -Convert the 256 color stuff to truecolor
 -add code for masterserver registration/browsing
+
 
