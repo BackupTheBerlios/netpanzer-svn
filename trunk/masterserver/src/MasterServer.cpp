@@ -223,7 +223,7 @@ bool MasterServer::updateServerInfo(ServerInfo& info, Tokenizer& tokenizer)
         }
     }
     
-    info.gamename = tokenizer.getNextToken();
+    info.gamename = gamename;
     info.lastheartbeat = time(0);
     return true;
 }
