@@ -86,7 +86,7 @@ void SpawnList::getFreeSpawnPoint( iXY *spawn_loc )
             spawn_index = rand() % size;
             break;
         default:
-            assert("unknown respawn type" == 0);
+            throw Exception("unknown respawn type");
     }
 
     do {

@@ -3,7 +3,8 @@
  errors. - fixed
 -after playing some time we get an assert(totoalByteCount >= 0) in
  Surface::~Surface... - fixed
--another crash reported by kov (happens when someone joins the game):
+-another crash reported by kov (happens when someone joins the game): -should be
+fixe ...
 <kov> Connection lost for ID 0: accept() failed
 <kov>  
 <kov> Program received signal SIGSEGV, Segmentation fault.
@@ -32,3 +33,5 @@
 - objective game cannot finish - fixed
 - Astar priority_queue "open" are not clear anytime
 - in LinkListDoubleTemplate.addFront sometime is (front==0 && rear != 0)
+- HOM effect outside the progressview window
+

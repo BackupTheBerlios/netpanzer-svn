@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __IRCLobby_h__
 #define __IRCLobby_h__
 
+#include <list>
+
 #include <SDL.h>
 #include <SDL_thread.h>
 #include <SDL_net.h>
@@ -33,40 +35,43 @@ class IRCLobbyView;
 //---------------------------------------------------------------------------
 class IRCLobby
 {
-    friend class IRCLobbyView;
-
-    static const char server_running_mess[];
-    static const char ask_server_running_mess[];
-    IPaddress irc_server;
-    TCPsocket irc_server_sock;
-    char *channel_name;
-    SDL_Thread *running_thread;
-    int quit_thread;
-    LinkListDoubleTemplate<IRCChatMessage> chat_messages;
-    GameServerList *game_servers;
-
-    int sendServerInfo(const char *dest);
-    // read any messages that need to be processed
-    int processMessage();
-    int sendIRCLine(char *line);
-    int sendIRCMessageLine(char *line,const char *to);
-    int readIRCLine(char *buf,int buf_len);
-    int connectToServer();
-    void addChatMessage(const char *m,const char *u);
-
-
 public:
-    SDL_mutex *game_servers_mutex;
-
-    IRCLobby(IPaddress *addr);
+    IRCLobby(const std::string& servername, int serverport,
+             const std::string& nickname,
+             const std::string& channel);
     ~IRCLobby();
 
-    int sendChatMessage(const char *line);
-    int sendIRCMessageLine(char *line);
+    void sendChatMessage(const std::string& user, const std::string& line);
+    void sendIRCMessageLine(const std::string& line);
+    void refreshServerList();
+
+private:
+    void startMessagesThread();
     void stopThread();
-    int refreshServerList();
-    int startMessagesThread();
-    int processMessages();
+
+    void processMessages();
+    static int messagesThreadEntry(void* t);
+
+    void sendServerInfo(const std::string& dest);
+    // read any messages that need to be processed
+    void processMessage();
+    void sendIRCLine(const std::string& line);
+    void sendIRCMessageLine(const std::string& line, const std::string& to);
+    void readIRCLine(char *buf, size_t buf_len);
+    void connectToServer(const std::string& serveraddr, int port, 
+            const std::string& nickname, const std::string& channel_name);
+    void addChatMessage(const std::string& user, const std::string& message);
+
+    SDL_mutex *game_servers_mutex;   
+
+    friend class IRCLobbyView;
+    TCPsocket irc_server_socket;
+
+    std::string channel_name;
+    std::list<IRCChatMessage> chat_messages;
+    GameServerList* game_servers;
+    
+    SDL_Thread *running_thread;
 };
 
 #endif

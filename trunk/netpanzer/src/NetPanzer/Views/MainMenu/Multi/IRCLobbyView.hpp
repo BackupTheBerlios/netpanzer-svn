@@ -27,8 +27,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class IRCLobbyView : public View
 {
  int lobby_view_height;
- GameServer *mouse_down_server;
- GameServer *displayed_servers[64];
+ const GameServer *mouse_down_server;
+ const GameServer *displayed_servers[64];
  int total_displayed_servers;
 public:
  static cInputFieldString szChat;

@@ -15,109 +15,119 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
+
+#include <sstream>
 
 #include "Log.hpp"
 #include "IRCLobby.hpp"
 #include "PlayerInterface.hpp"
 #include "GameConfig.hpp"
 #include "NetworkGlobals.hpp" 
+#include "Exception.hpp"
 
-IRCLobby::IRCLobby(IPaddress *addr)
+static const char* ask_server_running_mess = "Who's running a server?";
+static const char* server_running_mess = "I'm running";
+
+IRCLobby::IRCLobby(const std::string& servername, int serverport,
+        const std::string& nickname,
+        const std::string& newchannelname)
+    : irc_server_socket(0), channel_name(newchannelname), game_servers(0),
+      running_thread(0)
 {
-    irc_server_sock=0;
-    channel_name="#netpanzerlob";
     game_servers=new GameServerList();
-    memcpy(&irc_server,addr,sizeof(irc_server));
-    running_thread=NULL;
-    quit_thread=0;
     game_servers_mutex=SDL_CreateMutex();
+    connectToServer(servername, serverport, nickname, channel_name);
+    startMessagesThread();
 }
 
 IRCLobby::~IRCLobby()
 {
-    SDL_mutexP(game_servers_mutex);
-    delete game_servers;
-    game_servers=NULL;
-    SDL_mutexV(game_servers_mutex);
-    SDL_DestroyMutex(game_servers_mutex);
+    std::cout << "Stop Thread: " << std::endl;
     stopThread();
+    
+    std::cout << "More... " << std::endl;
+    SDL_DestroyMutex(game_servers_mutex);
+    delete game_servers;
+    game_servers=0;
+    std::cout << "ok" << std::endl;
 }
 
-void IRCLobby::stopThread() {
-    int r;
-    quit_thread=1;
-    if(running_thread==NULL) { return; }
-    SDL_WaitThread(running_thread,&r);
-    running_thread=NULL;
-    if(irc_server_sock) {
-        char *quit="QUIT\n";
-        SDLNet_TCP_Send(irc_server_sock,quit,5);
-        SDLNet_TCP_Close(irc_server_sock);
-        irc_server_sock=0;
+void IRCLobby::stopThread()
+{
+    if(!running_thread)
+        return;
+    
+    SDL_KillThread(running_thread);
+    running_thread = 0;
+    
+    if(irc_server_socket) {
+        char* quit="QUIT\n";
+        SDLNet_TCP_Send(irc_server_socket,quit,5);
+        SDLNet_TCP_Close(irc_server_socket);
+        irc_server_socket=0;
     }
 }
-
-const char IRCLobby::server_running_mess[]="I'm running";
-const char IRCLobby::ask_server_running_mess[]="Who's running a server?";
 
 // send server info to someone
-int IRCLobby::sendServerInfo(const char *dest)
+void IRCLobby::sendServerInfo(const std::string& dest)
 {
-    char line[1024];
-    assert(this!=NULL);
-    char *l=line;
+    std::stringstream buffer;
 
-    const char *map= ((const std::string&)(gameconfig->map)).c_str();
-    int running_players=PlayerInterface::countPlayers();
-    l+=snprintf(l,(line+sizeof(line))-l,"-%s %i/%i map:%s",
-        server_running_mess,
-        running_players,PlayerInterface::getMaxPlayers(),
-        map);
+    buffer << "-" << server_running_mess
+           << PlayerInterface::countPlayers()
+           << "/" << PlayerInterface::getMaxPlayers()
+           << " map:" << gameconfig->map;
 
-#if 0
-    int max_players=PlayerInterface::getMaxPlayers();
-    for(int p=0; p<max_players; p++) {
-            PlayerState *st=getPlayerState(p);
-            l+=snprintf(l,(line+sizeof(line))-l,"%s:",
-                    st->getName());
-    }
-    *l++=',';
-#endif
-    return sendIRCMessageLine(line,dest);
+    return sendIRCMessageLine(buffer.str(), dest);
 }
 
-
-int IRCLobby::connectToServer()
+void IRCLobby::connectToServer(const std::string& serveraddress, int port,
+        const std::string& nickname, const std::string& channel)
 {
-    char line[1024];
-    char irc_playername[1024];
-    char *pl;
-    const char *pl_from;
-
-    assert(this!=NULL);
-    if(!(irc_server_sock=SDLNet_TCP_Open(&irc_server))) {
-        return -1;
-    }
+    IPaddress addr;
+    // some old versions of SDL_net take a char* instead of const char*
+    if(SDLNet_ResolveHost(&addr, const_cast<char*>(serveraddress.c_str()), 6667)
+            < 0)
+        throw Exception("Couldn't resolve server address for '%s'",
+                serveraddress.c_str());
+        
+    irc_server_socket = SDLNet_TCP_Open(&addr);
+    if(!irc_server_socket)
+        throw Exception("Couldn't connect to irc server: %s",
+                SDLNet_GetError());
 
     // login
-    const char *playername=((const std::string&)(gameconfig->playername)).c_str();
+    const char *playername = nickname.c_str();
 
-    pl=irc_playername;
-    pl_from=playername;
-    while(*pl_from) {
-        if(!isalnum(*pl_from) && *pl_from!='_') { pl_from++; continue; }
-        *pl++=*pl_from++;
+    // only some names are allowed in irc names
+    char ircname[1024];
+    int i;
+    for(i=0; i<1023; i++) {
+        char c = playername[i];
+        if(c==0)
+            break;
+        // don't use isalpha here since it only behaves correctly (for irc
+        // nicknames) in the C locale setting
+        if( (c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9')
+          || c == ':') {
+            ircname[i] = c;
+        }
     }
-    *pl=0;
+    ircname[i] = 0;
+   
+    std::stringstream buffer;
+    buffer << "NICK " << ircname;
+    sendIRCLine(buffer.str());
 
-    snprintf(line,sizeof(line),"NICK %s",irc_playername);
-    sendIRCLine(line);
-    snprintf(line,sizeof(line),"USER %s 0 * :%s",
-            irc_playername,irc_playername);
-    sendIRCLine(line);
+    buffer.str("");
+    buffer << "USER " << ircname << " 0 * :" << ircname;
+    sendIRCLine(buffer.str());
+
     // join channel
-    snprintf(line,sizeof(line),"JOIN %s",channel_name);
-    sendIRCLine(line);
+    buffer.str("");
+    buffer << "JOIN " << channel_name;
+    sendIRCLine(buffer.str());
 
     if(gameconfig->hostorjoin== _game_session_host) {
         // tell everyone the server just started
@@ -126,74 +136,76 @@ int IRCLobby::connectToServer()
     else if(gameconfig->hostorjoin== _game_session_join) {
         refreshServerList();
     }
-    return 0;
 }
 
-int IRCLobby::refreshServerList()
+void IRCLobby::refreshServerList()
 {
-    char line[256];
+    std::stringstream buffer;
 
-    assert(this!=NULL);
-    // ask for known servers
-    snprintf(line,sizeof(line),"-%s",ask_server_running_mess);
-    sendIRCMessageLine(line,channel_name);
-    return 0;
+    buffer << "-" << ask_server_running_mess;
+    
+    sendIRCMessageLine(buffer.str());
 }
 
-static int messagesThreadEntry(IRCLobby *t)
+int IRCLobby::messagesThreadEntry(void* data)
 {
+    IRCLobby* t = (IRCLobby*) data;
     t->processMessages();
-    LOG(("irc chat ended"));
     return 0;
 }
 
-int IRCLobby::startMessagesThread()
+void IRCLobby::startMessagesThread()
 {
-    assert(this!=NULL);
-    assert(running_thread==NULL);
+    assert(running_thread==0);
 
-    quit_thread=0;
-    if(running_thread!=NULL) { return -1; }
-    running_thread=SDL_CreateThread( (int (*)(void *)) messagesThreadEntry,this);
-    return 0;
+    running_thread 
+        = SDL_CreateThread( (int (*)(void *)) messagesThreadEntry,this);
+    if(!running_thread)
+        throw Exception("Couldn't start IRC thread.");
 }
 
-int IRCLobby::processMessages()
+void IRCLobby::processMessages()
 {
-    assert(this!=NULL);
-    if(connectToServer()<0) { return -1; }
-    while(!quit_thread) {
-        if(processMessage()<0) { return -1; }
+    while(1) {
+        try {
+            processMessage();
+        } catch(std::exception& e) {
+            LOG(("Exception in IRC Thread: %s", e.what()));
+            break;
+        } catch(...) {
+            break;
+        }
     }
-    return 0;
 }
 
-void IRCLobby::addChatMessage(const char *u,const char *m)
+void IRCLobby::addChatMessage(const std::string& user,
+                              const std::string& message)
 {
-    IRCChatMessage *chat_message=new IRCChatMessage(m,u);
-    int dels=chat_messages.getSize();
-    while(dels-->4) {
-        chat_messages.deleteFront();
-    }
-    chat_messages.addRear(chat_message);
+    // only save latest 20 messages
+    while(chat_messages.size() > 20)
+        chat_messages.pop_front();
+
+    chat_messages.push_back(IRCChatMessage(user, message));
 }
 
 // read a line of irc and process it.
-int IRCLobby::processMessage()
+void IRCLobby::processMessage()
 {
+    assert(irc_server_socket != 0);
+    
     char buf[1024];
-    char *host,*mess,*host_end,*user_end,*code;
+    char *host, *mess, *host_end, *user_end, *code;
 
-    assert(this!=NULL);
-    if(!irc_server_sock)  { return 0; }
+    readIRCLine(buf, sizeof(buf));
+    
+    if(buf[0]!=':')
+        return;
 
-    if(readIRCLine(buf,sizeof(buf))<0) {
-        return 0;
-    }
-    if(buf[0]!=':') { return 0; }
     code=buf+1;
-    while(*code && !isspace(*code)) {  code++; }
-    while(isspace(*code)) {  code++; }
+    // skip 1 word and spaces behind it
+    while(*code && !isspace(*code)) { code++; }
+    while(*code && isspace(*code)) { code++; }
+
     int code_i=atoi(code);
     if(code_i>=400 && code_i<500) {
         LOG(("IRC:%s",buf));
@@ -202,169 +214,153 @@ int IRCLobby::processMessage()
     // get remote user/host
     // niknah_!~chatzilla@CPE-203-51-77-123.nsw.bigpond.net.au PRIVMSG #netpanzerlob :asfd
     if(
-        (host=strchr(buf,'@'))==NULL
-        || (mess=strchr(buf+1,':'))==NULL
-        || (user_end=strchr(buf,'!'))==NULL
+        (host=strchr(buf,'@'))==0
+        || (mess=strchr(buf+1,':'))==0
+        || (user_end=strchr(buf,'!'))==0
     ) {
-        return 0;
+        return;
     }
     *host++=0;
     *user_end++=0;
     mess++;
-    if((host_end=strchr(host,' '))==NULL) {
-        return 0;
+    if((host_end=strchr(host,' '))==0) {
+        return;
     }
     *host_end++=0;
     while(isspace(*host_end)) host_end++;
     if(strncmp(host_end,"PRIVMSG",7)!=0) {
-        return 0;
+        return;
     }
 
     if(mess[0]=='#') {
         // this is a chat message
-        addChatMessage(mess+1,buf+1);
+        addChatMessage(buf+1, mess+1);
         if(gameconfig->hostorjoin== _game_session_host) {
             LOG(("IRC message:%s:%s",buf+1,mess+1));
         }
 
-        return 0;
+        return;
     }
-    if(mess[0]!='-') {
-        // this is not an internal message
-        return 0;
-    }
+    if(mess[0]=='-') {
+        // this is an internal message
 
-    if(strcmp(mess+1,ask_server_running_mess)==0) {
-        if(gameconfig->hostorjoin== _game_session_host) {
-            // reply with server details
-            sendServerInfo(buf+1);
+        if(strcmp(mess+1, ask_server_running_mess)==0) {
+            if(gameconfig->hostorjoin== _game_session_host) {
+                // reply with server details
+                sendServerInfo(buf+1);
+            }
+        }
+        else if(strncmp(mess+1,server_running_mess,sizeof(server_running_mess)-1)==0) {
+            // add a server to the list
+            if(gameconfig->hostorjoin== _game_session_join) {
+                const char *p=mess+1+sizeof(server_running_mess);
+                const char *map;
+                int players=atoi(p);
+                if((p=strchr(p,'/'))==0) {
+                    LOG(("bad server description: %s\n",mess));
+                    return;
+                }
+                int max_players=atoi(++p);
+                if((map=strstr(p,"map:"))==0) {
+                    LOG(("no map name: %s\n",mess));
+                    return;
+                }
+                map+=4;
+
+                GameServer *server
+                    = game_servers->find(host, _NETPANZER_DEFAULT_PORT_TCP);
+                if(server==0) {
+                    SDL_mutexP(game_servers_mutex);
+                    game_servers->push_back(
+                            GameServer(host, _NETPANZER_DEFAULT_PORT_TCP,
+                                buf+1, map, players, max_players));
+                    SDL_mutexV(game_servers_mutex);
+                }
+                else {
+                    server->user = buf+1;
+                    server->map = map;
+                    server->playercount = players;
+                    server->max_players = max_players;
+                }
+            }
         }
     }
-    else if(strncmp(mess+1,server_running_mess,sizeof(server_running_mess)-1)==0) {
-        // add a server to the list
-        if(gameconfig->hostorjoin== _game_session_join) {
-            const char *p=mess+1+sizeof(server_running_mess);
-            const char *map;
-            int players=atoi(p);
-            if((p=strchr(p,'/'))==NULL) {
-                LOG(("bad server description: %s\n",mess));
-                return 0;
-            }
-            int max_players=atoi(++p);
-            if((map=strstr(p,"map:"))==NULL) {
-                LOG(("no map name: %s\n",mess));
-                return 0;
-            }
-            map+=4;
-
-//            IPaddress addr;
-//            if(SDLNet_ResolveHost(&addr,host,_NETPANZER_DEFAULT_PORT_TCP)==0) {
-
-            GameServer *server=game_servers->find(host);
-            if(server==NULL) {
-                server=new GameServer(); 
-                server->set(host,buf+1,players,max_players,map);
-                SDL_mutexP(game_servers_mutex);
-                game_servers->add(server);
-                SDL_mutexV(game_servers_mutex);
-            }
-            else {
-                server->set(host,buf+1,players,max_players,map);
-            }
-
-//            }
-//            else { LOG(("cannot lookup: %s\n",host)); }
-        }
-    }
-    else {
-        LOG(("unknown chat cmd: %s\n",mess));
-    }
-    return 0;
 }
 
-int IRCLobby::sendChatMessage(const char *line)
+void IRCLobby::sendChatMessage(const std::string& user,
+                               const std::string& line)
 {
-    assert(this!=NULL);
-    assert(line!=NULL);
-
-    char chat_line[1024];
-    snprintf(chat_line,sizeof(chat_line),"#%s",line);
-    addChatMessage("",line);
-    return sendIRCMessageLine(chat_line);
+    std::string chatline = "#";
+    chatline += line;
+    addChatMessage(user, line);
+    return sendIRCMessageLine(chatline);
 }
 
-
-int IRCLobby::sendIRCMessageLine(char *line)
+void IRCLobby::sendIRCMessageLine(const std::string& line)
 {
-    assert(this!=NULL);
-    assert(line!=NULL);
-    return sendIRCMessageLine(line,channel_name);
+    return sendIRCMessageLine(line, channel_name);
 }
 
-int IRCLobby::sendIRCMessageLine(char *line,const char *to)
+void IRCLobby::sendIRCMessageLine(const std::string& line, const std::string& to)
 {
-    assert(this!=NULL);
-    assert(line!=NULL);
-    assert(to!=NULL);
-    char channel_msg[256];
-    int channel_msg_len;
+    std::stringstream channelmsg;
+    channelmsg << "PRIVMSG " << to << " :";
 
-    channel_msg_len=snprintf(channel_msg,sizeof(channel_msg),"PRIVMSG %s :",to);
-
-    if(SDLNet_TCP_Send(irc_server_sock,channel_msg,channel_msg_len)!=channel_msg_len) {
-        return -1;
+    if(SDLNet_TCP_Send(irc_server_socket,
+                const_cast<char*> (channelmsg.str().c_str()),
+                channelmsg.str().size()) != (int) channelmsg.str().size()) {
+        throw Exception("Error when sending channelmessage: %s",
+                SDLNet_GetError());
     }
-    return sendIRCLine(line);
+
+    sendIRCLine(line);
 }
 
-
-int IRCLobby::sendIRCLine(char *line)
+void IRCLobby::sendIRCLine(const std::string& line)
 {
-    assert(this!=NULL);
-    int len=strlen(line);
-    if(SDLNet_TCP_Send(irc_server_sock,line,len)!=len) {
-        return -1;
-    }
+    if(SDLNet_TCP_Send(irc_server_socket,
+                const_cast<char*> (line.c_str()),
+                line.size()) != (int) line.size())
+        throw Exception("Error when sending irc message '%s': %s",
+                line.c_str(), SDLNet_GetError());
+    
     static char lf[]="\n";
-    SDLNet_TCP_Send(irc_server_sock,lf,1);
-    return 0;
+    if(SDLNet_TCP_Send(irc_server_socket,lf,1) != 1)
+        throw Exception("Error when senging irc lf: %s",
+                SDLNet_GetError());
 }
 
-int IRCLobby::readIRCLine(char *buf,int buf_len)
+void IRCLobby::readIRCLine(char *buf, size_t buf_len)
 {
-    assert(this!=NULL);
     char *buf_end=buf+buf_len-1;
     char ch;
     char *buf_upto=buf;
+    
     SDLNet_SocketSet sock_set=SDLNet_AllocSocketSet(1);
-    SDLNet_TCP_AddSocket(sock_set,irc_server_sock);
+    SDLNet_TCP_AddSocket(sock_set,irc_server_socket);
 
-    while( buf_upto<buf_end) {
-        if(quit_thread) {
-err_ex:;
-            SDLNet_FreeSocketSet(sock_set);
-            return -1;
-        }
-        if(SDLNet_CheckSockets(sock_set,1000)<=0) {
-            const char *err=SDLNet_GetError();
-            if(err[0]!=0) {
-                LOG(("irc socket err:%s\n",err));
-                goto err_ex;
-            }
-            continue;
-        }
-        if(SDLNet_TCP_Recv(irc_server_sock,&ch,1)<=0) {
-            goto err_ex;
-        }
-        if(ch=='\r') { continue; }
-        if(ch=='\n') {
+    try {
+        while(buf_upto < buf_end) {
+            SDLNet_CheckSockets(sock_set, 1000);
+            if(!SDLNet_SocketReady(irc_server_socket))
+                continue;
+
+            if(SDLNet_TCP_Recv(irc_server_socket,&ch,1)<0)
+                throw Exception("Couldn't read TCP: %s",
+                        SDLNet_GetError());
+            
+            if(ch=='\r') { continue; }
+            if(ch=='\n') {
                 break;
+            }
+            *buf_upto++=ch;
         }
-        *buf_upto++=ch;
+    } catch(std::exception& e) {
+        SDLNet_FreeSocketSet(sock_set);
+        throw;
     }
+
     SDLNet_FreeSocketSet(sock_set);
     *buf_upto=0;
-    return buf_upto-buf;
 }
-
 

@@ -49,36 +49,34 @@ void Astar::initializeAstar( unsigned long node_list_size )
 }
 
 
-void Astar::initializeAstar( void )
+void Astar::initializeAstar()
 {
     initializeAstar( 4000, 50, 30 );
 }
 
 
-AstarNode *  Astar::getNewNode( void )
+AstarNode*  Astar::getNewNode()
 {
     AstarNode *node_ptr;
 
     if ( dynamic_node_management_flag == true ) {
         if (free_list_ptr == 0) {
-            return( 0 );
+            return 0;
         } else {
             node_ptr = free_list_ptr;
             free_list_ptr = free_list_ptr->parent;
-            return( node_ptr );
+            return node_ptr;
         }
-
     } else {
         if ( node_index >= node_list_size ) {
-            return( 0 );
+            return 0;
         }
 
         node_ptr = &node_list[ node_index ];
         node_index++;
 
-        return( node_ptr );
+        return node_ptr;
     }
-
 }
 
 void Astar::releaseNode( AstarNode *node )
@@ -123,7 +121,6 @@ void Astar::initializeNodeList( unsigned long initial_size )
 
     node_list = (AstarNode *) malloc( sizeof( AstarNode) * node_list_size );
     assert( node_list != 0 );
-
 }
 
 
@@ -328,9 +325,8 @@ bool Astar::process_succ( PathList *path, int *result_code )
                                     done = true;
                                     goal_reachable = false;
                                 } else {
-                                    memcpy( node, &temp_node, sizeof( AstarNode ) );
+                                    *node = temp_node;
                                     node->parent = best_node;
-
 
                                     open_set.setBit( node->map_loc.x, node->map_loc.y );
 
@@ -355,7 +351,6 @@ bool Astar::process_succ( PathList *path, int *result_code )
                 astar_set_array.setBit( best_node->map_loc.x, best_node->map_loc.y );
 
             releaseNode( best_node );
-
         } // ** else
 
         if ( succ_swap_flag )

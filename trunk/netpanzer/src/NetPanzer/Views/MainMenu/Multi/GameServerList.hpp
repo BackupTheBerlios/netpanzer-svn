@@ -18,60 +18,32 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __GameServerList_h__
 #define __GameServerList_h__
 
-#include <SDL.h>
-#include <SDL_thread.h>
-#include <SDL_net.h>
+#include <vector>
+#include <string>
 
 #include "View.hpp"
 #include "Surface.hpp"
-#include "BucketArrayTemplate.hpp"
 #include "GameServer.hpp"
 
 
 //---------------------------------------------------------------------------
-class GameServerList
+class GameServerList : public std::vector<GameServer>
 {
-    BucketArrayTemplate<GameServer> servers;
-    static int get_str_hash(const char *h) {
-        int n=0xaa;
-        while(*h) { n&=*h; h++; }
-        return n&0xf;
-    }
 public:
-    static const int max_buckets=16;
-    GameServerList() {
-        servers.initialize(max_buckets);
-    }
-    ~GameServerList() {
-    }
+    GameServerList()
+    { }
+    ~GameServerList()
+    { }
 
-    LinkListDoubleTemplate<GameServer> *getBucket(int h) {
-        assert(this!=NULL);
-        assert(h<max_buckets);
-        LinkListDoubleTemplate<GameServer> *i= servers.getBucket(h);
-        return i;
-    }
-    GameServer *find(const char *addr) {
-        assert(this!=NULL);
-        assert(addr!=NULL);
-
-        int h=get_str_hash(addr);
-        LinkListDoubleTemplate<GameServer> *bucket=servers.getBucket(h);
-        GameServer *upto=bucket->getFront();
-        while(upto!=NULL) {
-            if(strcmp((const char *)upto->host,addr)==0) {
-                return upto;
-            }
-            upto=upto->next;
+    GameServer *find(const std::string& host, int port)
+    {
+        std::vector<GameServer>::iterator i;
+        for(i=begin(); i!=end(); i++) {
+            if(i->host == host && i->port == port)
+                return &(*i);
         }
-        return NULL;
-    }
-    void add(GameServer *server) {
-        assert(this!=NULL);
-        assert(server!=NULL);
 
-        int h=get_str_hash(server->host);
-        servers.addObject(h,server);
+        return 0;
     }
 };
 

@@ -58,14 +58,6 @@ public:
         PathRequest::request_type = request_type;
         PathRequest::status = _slot_status_free;
     }
-
-    // XXX this looks strange to me
-#if 0
-    void operator=( const PathRequest &rhs )
-    {
-        memmove( this, &rhs, sizeof( PathRequest ) );
-    }
-#endif
 };
 
 class AstarNode
@@ -119,9 +111,8 @@ protected:
     AstarNode goal_node;
     AstarNode *best_node;
 
-    std::priority_queue<AstarNode*,
-    std::vector<AstarNode*>,
-    AstarNodePtrCompare> open;
+    std::priority_queue<AstarNode*, std::vector<AstarNode*>,
+                        AstarNodePtrCompare> open;
 
     BitArray open_set;
     BitArray closed_set;
@@ -155,6 +146,7 @@ protected:
                                 AstarNode *succ );
 
     bool process_succ( PathList *path, int *result_code );
+    
 public:
     Astar();
 

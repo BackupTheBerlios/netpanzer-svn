@@ -17,7 +17,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include <SDL_net.h>
+
+#include <sstream>
 
 #include "Log.hpp"
 #include "IRCLobbyView.hpp"
@@ -28,9 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Client.hpp"
 
-
-
-IRCLobby *IRCLobbyView::lobby_connection=NULL;
+IRCLobby *IRCLobbyView::lobby_connection=0;
 
 cInputFieldString IRCLobbyView::szChat;
 
@@ -43,6 +42,7 @@ static void buttonRefresh(void)
 static void buttonChat(void)
 {
     IRCLobbyView::lobby_connection->sendChatMessage(
+        gameconfig->playername,
         IRCLobbyView::szChat.getString());
     IRCLobbyView::szChat.setString("");
 }
@@ -53,7 +53,7 @@ static void buttonChat(void)
 IRCLobbyView::IRCLobbyView() : View()
 {
     lobby_view_height=160;
-    mouse_down_server=NULL;
+    mouse_down_server=0;
     total_displayed_servers=0;
     setSearchName("IRCLobbyView");
     setTitle("Lobby");
@@ -80,66 +80,68 @@ IRCLobbyView::IRCLobbyView() : View()
 //---------------------------------------------------------------------------
 void IRCLobbyView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    assert(this!=NULL);
+    assert(this!=0);
     clientArea.fill(Color::black);
+    
     int y=0;
-    int bucket_upto=0;
     int disp_server_upto=0;
+    int server_list_end_y=lobby_view_height-(Surface::getFontHeight()*6);
+    int chat_list_end_y=server_list_end_y+(Surface::getFontHeight()*4);      
 
-    if(lobby_connection==NULL) { return; }
-
-    LinkListDoubleTemplate<GameServer> *bucket=NULL;
-    GameServer *server=NULL;
+    if(lobby_connection==0) { return; }
 
 //~~~ todo: scrollbar for large list of servers
     SDL_mutexP(lobby_connection->game_servers_mutex);
-    int server_list_end_y=lobby_view_height-(Surface::getFontHeight()*6);
-    int chat_list_end_y=server_list_end_y+(Surface::getFontHeight()*4);
-    for(; y<server_list_end_y; y+=Surface::getFontHeight()) {
-        while(server==NULL && bucket_upto<GameServerList::max_buckets) {
-            bucket=lobby_connection->game_servers->getBucket(bucket_upto++);
-            server=bucket->getFront();
-        }
-        if(server==NULL) { break; }
+    
+    GameServerList::iterator i;
+    GameServerList* serverlist = lobby_connection->game_servers;
+    disp_server_upto=0;
+    for(i=serverlist->begin(); i!=serverlist->end(); i++) {
+        const GameServer* server = &(*i);
 
-        char players_str[256];
-        sprintf(players_str,"%i/%i",server->players,server->max_players);
-        clientArea.bltString(iXY(0,y),server->user, Color::white);
-        clientArea.bltString(iXY(140,y),players_str, Color::white);
-        clientArea.bltString(iXY(200,y),server->map, Color::white);
+        std::stringstream playerstr;
+        playerstr << server->playercount << "/" << server->max_players;
+        
+        clientArea.bltString(iXY(0,y),server->user.c_str(), Color::white);
+        clientArea.bltString(iXY(140,y),playerstr.str().c_str(), Color::white);
+        clientArea.bltString(iXY(200,y),server->map.c_str(), Color::white);
+        
         displayed_servers[disp_server_upto++]=server;
-        server=server->next;
+        y += Surface::getFontHeight();
+        if(y >= server_list_end_y)
+            break;
     }
     SDL_mutexV(lobby_connection->game_servers_mutex);
     total_displayed_servers=disp_server_upto;
 
-    IRCChatMessage *cm=lobby_connection->chat_messages.getFront();
-    y=server_list_end_y;
-    for(; cm!=NULL && y<chat_list_end_y; y+=Surface::getFontHeight()) {
-        char mess_str[256];
-        snprintf(mess_str,sizeof(mess_str),"%s:%s",
-            (const char *)cm->user,(const char *)cm->mess);
-        clientArea.bltString(iXY(4,y),mess_str, Color::white);
-        cm=cm->next;
+    std::list<IRCChatMessage>::reverse_iterator m;
+    y = chat_list_end_y - Surface::getFontHeight();
+    for(m = lobby_connection->chat_messages.rbegin();
+        m != lobby_connection->chat_messages.rend(); m++) {
+
+        std::stringstream temp;
+        temp << m->getUser() << ": " << m->getMessage();
+        clientArea.bltString(iXY(4,y), temp.str().c_str(), Color::white);
+        
+        y-=Surface::getFontHeight();
+        if(y < server_list_end_y)
+            break;
     }
     
     View::doDraw(viewArea, clientArea);
 }
 
-
-
-
 int IRCLobbyView::lMouseUp(const iXY &down_pos,const iXY &up_pos)
 {
-    assert(this!=NULL);
+    assert(this!=0);
     int idx_down=down_pos.y/Surface::getFontHeight();
     int idx=up_pos.y/Surface::getFontHeight();
     if(idx>=0 && idx_down==idx && idx<total_displayed_servers) {
-        GameServer *server=displayed_servers[idx];
-        assert(server!=NULL);
+        const GameServer *server=displayed_servers[idx];
+        assert(server!=0);
 
         // connect to this game
-        IPAddressView::szServer.setString(server->host);
+        IPAddressView::szServer.setString(server->host.c_str());
     }
     return View::lMouseUp(down_pos,up_pos);
 }
@@ -150,22 +152,18 @@ int IRCLobbyView::lMouseUp(const iXY &down_pos,const iXY &up_pos)
 //---------------------------------------------------------------------------
 void IRCLobbyView::startIRC()
 {
-    IPaddress addr;
-    stopIRC();
-    if(SDLNet_ResolveHost(&addr,"irc.freenode.net",6667)==0) {
-        lobby_connection=new IRCLobby(&addr);
-        lobby_connection->startMessagesThread();
+    try {
+        stopIRC();
+        lobby_connection = new IRCLobby("irc.freenode.net", 6667,
+                gameconfig->playername, "#netpanzerlob");
+    } catch(std::exception& e) {
+        LOG(("Couldn't connect to irc lobby: %s", e.what()));
     }
-    else { LOG(("cannot find irc host\n")); }
 }
 
 void IRCLobbyView::stopIRC()
 {
-    if(lobby_connection!=NULL) {
-        lobby_connection->stopThread();
-        delete lobby_connection;
-        lobby_connection=NULL;
-        LOG(("stopped irc"));
-    }
+    delete lobby_connection;
+    lobby_connection=0;
 }
 

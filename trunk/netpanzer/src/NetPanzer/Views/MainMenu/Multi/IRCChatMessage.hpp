@@ -18,25 +18,31 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __IRCChatMessage_h__
 #define __IRCChatMessage_h__
 
-#include <SDL.h>
-#include <SDL_thread.h>
-#include <SDL_net.h>
-
-#include "View.hpp"
-#include "Surface.hpp"
-#include "String.hpp" 
+#include <string>
 
 //---------------------------------------------------------------------------
 class IRCChatMessage
 {
 public:
-    String mess;
-    String user;
-    IRCChatMessage *prev,*next;
-    IRCChatMessage(const char *m,const char *u) : mess(m),user(u) {
-        prev=NULL;
-        next=NULL;
+    IRCChatMessage(const std::string& newuser, const std::string& newmessage) 
+        : user(newuser), message(newmessage)
+    {
     }
+
+    IRCChatMessage(const IRCChatMessage& other)
+        : user(other.user), message(other.message)
+    {
+    }
+
+    const std::string getUser() const
+    { return user; }
+
+    const std::string getMessage() const
+    { return message; }
+
+private:
+    std::string user;
+    std::string message;
 };
 
 #endif

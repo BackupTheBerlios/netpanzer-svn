@@ -18,35 +18,35 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __GameServer_h__
 #define __GameServer_h__
 
-#include <SDL_net.h>
-
-#include "String.hpp"
+#include <ctime>
+#include <string>
 
 //---------------------------------------------------------------------------
 class GameServer
 {
 public:
-    String host;
-    String user;
-    String map;
-    time_t last_update;
-    int players;
+    GameServer(const std::string& newhost, int newport,
+            const std::string& newuser, const std::string& newmap,
+            int newplayercount, int newmaxplayers)
+        : host(newhost), port(newport), user(newuser), map(newmap),
+            playercount(newplayercount), max_players(newmaxplayers)
+    {
+        std::time(&last_update);
+    }
+
+    GameServer::GameServer(const GameServer& other)
+        : host(other.host), port(other.port), user(other.user), map(other.map),
+          last_update(other.last_update), playercount(other.playercount),
+          max_players(other.max_players)
+    { }
+    
+    std::string host;
+    int port;
+    std::string user;
+    std::string map;
+    std::time_t last_update;
+    int playercount;
     int max_players;
-    GameServer *next,*prev;
-    GameServer() {
-        next=NULL;
-        prev=NULL;
-    }
-    void set(const char *h,const char *u,int p,int mp,const char *m) {
-        host=h;
-        user=u;
-        map=m;
-        time(&last_update);
-        players=p;
-        max_players=mp;
-    }
 };
-
-
 
 #endif

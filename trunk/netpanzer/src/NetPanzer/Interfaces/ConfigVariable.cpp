@@ -70,3 +70,7 @@ const std::string& ConfigString::operator= (const std::string& newvalue)
     return value;
 }
 
+std::ostream& operator<< (std::ostream& o, const ConfigString& string)
+{
+    return o << ( (const std::string&) string);
+}

@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __CONFIGVARIABLE_HPP__
 #define __CONFIGVARIABLE_HPP__
 
+#include <iostream>
 #include <string>
 
 class ConfigVariable
@@ -91,6 +92,8 @@ public:
 private:
     std::string value;
 };
+
+std::ostream& operator<< (std::ostream& o, const ConfigString& string);
 
 #endif
 
