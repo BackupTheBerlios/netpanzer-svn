@@ -74,7 +74,6 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       playerflag("playerflag", 0, 0, 100),
       attacknotificationtime("attacknotificationtime", 5, 0, 100),
       vehicleselectioncolor("vehicleselectioncolor", _color_blue, 0, _color_last-1),
-      consoletextcolor("consoletextcolor", _color_white, 0, _color_last-1),
       unitselectionmode("unitselectionmode", _unit_selection_box_draw_mode_rect_edges, 0, _unit_selection_box_draw_mode_last-1),
       unitinfodrawlayer("unitinfodrawlayer", 0, 0, 1),
       drawunitdamage("drawunitdamage", true),
@@ -147,7 +146,6 @@ GameConfig::GameConfig(const std::string& newconfigfile)
     interfacesettings.push_back(&playerflag);
     interfacesettings.push_back(&attacknotificationtime);
     interfacesettings.push_back(&vehicleselectioncolor);
-    interfacesettings.push_back(&consoletextcolor);
     interfacesettings.push_back(&unitselectionmode);
     interfacesettings.push_back(&unitinfodrawlayer);
     interfacesettings.push_back(&drawunitdamage);

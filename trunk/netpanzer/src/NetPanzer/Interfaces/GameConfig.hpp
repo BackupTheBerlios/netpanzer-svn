@@ -157,7 +157,6 @@ public:
     ConfigInt   playerflag;
     ConfigInt   attacknotificationtime;
     ConfigInt   vehicleselectioncolor;
-    ConfigInt   consoletextcolor;
     ConfigInt   unitselectionmode;
     ConfigInt   unitinfodrawlayer;
     ConfigBool  drawunitdamage;
@@ -266,11 +265,6 @@ public:
     PIX getVehicleSelectionBoxColor() const
     {
         return( colorEnumToPix( vehicleselectioncolor ) );
-    }
-
-    PIX getConsoleTextColor() const
-    {
-        return( colorEnumToPix( consoletextcolor ) );
     }
 
     const char *getMiniMapUnitSizeString() const

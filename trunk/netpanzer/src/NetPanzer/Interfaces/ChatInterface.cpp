@@ -78,7 +78,8 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
         } else
             if( chat_request->message_scope == _chat_mesg_scope_server ) {
                 SERVER->sendMessage( &chat_mesg, sizeof(SystemChatMesg), 0 );
-                ConsoleInterface::postMessage( Color::unitAqua, "Server :: %s", chat_mesg.message_text );
+                ConsoleInterface::postMessage("Server :: %s",
+                        chat_mesg.message_text );
                 return;
             }
 
@@ -113,7 +114,8 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
 
         } // ** switch
 
-        ConsoleInterface::postMessage( color, "%s :: %s",
+        // TODO add unitcolor
+        ConsoleInterface::postMessage("%s :: %s",
                 player_state->getName().c_str(), chat_mesg.message_text );
     }
 }
@@ -126,7 +128,7 @@ void ChatInterface::chatMessage( NetMessage *message )
     chat_mesg = (SystemChatMesg * ) message;
 
     if( chat_mesg->message_scope == _chat_mesg_scope_server ) {
-        ConsoleInterface::postMessage( Color::unitAqua, "Server :: %s", chat_mesg->message_text );
+        ConsoleInterface::postMessage("Server :: %s", chat_mesg->message_text );
         return;
     }
 
@@ -161,7 +163,7 @@ void ChatInterface::chatMessage( NetMessage *message )
 
     } // ** switch
 
-    ConsoleInterface::postMessage( color, "%s :: %s",
+    ConsoleInterface::postMessage("%s :: %s",
             player_state->getName().c_str(), chat_mesg->message_text );
 }
 

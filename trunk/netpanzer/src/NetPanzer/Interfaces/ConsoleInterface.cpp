@@ -16,10 +16,13 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "ConsoleInterface.hpp"
-#include "GameConfig.hpp"
 
-//gameconfig->getConsoleTextColor()
+#include "ConsoleInterface.hpp"
+
+#include <time.h>
+#include "GameConfig.hpp"
+#include "Util/Log.hpp"
+
 bool ConsoleInterface::stdout_pipe;
 
 long ConsoleInterface::console_size;
@@ -65,7 +68,7 @@ void ConsoleInterface::initialize( long size )
     long line_loop;
 
     for ( line_loop = 0; line_loop < console_size; line_loop++ ) {
-        line_list[ line_loop ].color = gameconfig->getConsoleTextColor();
+        line_list[ line_loop ].color = Color::white;
         line_list[ line_loop ].string[0] = 0;
         line_list[ line_loop ].life_timer.changePeriod( 8 );
     }
@@ -95,26 +98,27 @@ void ConsoleInterface::update( Surface &surface )
     update_overlap( surface );
 }
 
-void ConsoleInterface::postMessage( PIX color, const char *format, ... )
+void ConsoleInterface::postMessage(const char *format, ...)
 {
     char temp_str[256];
-    char format_str[256];
     char *temp_str_ptr;
     long temp_str_length;
     va_list vap;
 
     va_start( vap, format );
-    vsprintf( temp_str, format, vap );
+    vsnprintf( temp_str, 256, format, vap );
     va_end( vap );
 
-    va_start( vap, format );
+    LOGGER.debug("C: %s", temp_str);
+
     if ( stdout_pipe == true ) {
-        strcpy( format_str, format );
-        strcat( format_str, "\n" );
-        vprintf( format_str, vap );
+        char timestamp[128];
+        time_t curtime = time(0);
+        struct tm* loctime = localtime(&curtime);
+        strftime(timestamp, sizeof(timestamp), "<%F %T>", loctime);
+        printf("%s %s\n", timestamp, temp_str);
         fflush(stdout);
     }
-    va_end( vap );
 
     temp_str_ptr = temp_str;
     temp_str_length = (long) strlen(temp_str);
@@ -131,7 +135,7 @@ void ConsoleInterface::postMessage( PIX color, const char *format, ... )
             strncpy( line_list[ line_index ].string, temp_str_ptr, max_char_per_line);
             line_list[ line_index ].string[ max_char_per_line ] = 0;
 
-            line_list[ line_index ].color = color;
+            line_list[ line_index ].color = Color::white;
             line_list[ line_index ].visible = true;
             line_list[ line_index ].life_timer.reset();
 
@@ -147,69 +151,10 @@ void ConsoleInterface::postMessage( PIX color, const char *format, ... )
 
     strcpy( line_list[ line_index ].string, temp_str_ptr );
 
-    line_list[ line_index ].color = color;
+    line_list[ line_index ].color = Color::white;
     line_list[ line_index ].visible = true;
     line_list[ line_index ].life_timer.reset();
 }
-
-void ConsoleInterface::postMessage( const char *format, ... )
-{
-    char temp_str[256];
-    char format_str[256];
-    char *temp_str_ptr;
-    long temp_str_length;
-    va_list vap;
-
-    va_start( vap, format );
-    vsprintf( temp_str, format, vap );
-    va_end( vap );
-
-    va_start( vap, format );
-    if ( stdout_pipe == true ) {
-        strcpy( format_str, format );
-        strcat( format_str, "\n" );
-        vprintf( format_str, vap );
-    }
-    va_end( vap );
-
-    temp_str_ptr = temp_str;
-    temp_str_length = (long) strlen(temp_str);
-
-    if( temp_str_length > max_char_per_line ) {
-        long partion_count = temp_str_length / max_char_per_line;
-
-        for( int i = 0; i < partion_count; i++ ) {
-            if (line_index == 0)
-                line_index = console_size - 1;
-            else
-                line_index = (line_index - 1) % console_size;
-
-            strncpy( line_list[ line_index ].string, temp_str_ptr, max_char_per_line);
-            line_list[ line_index ].string[ max_char_per_line ] = 0;
-
-            line_list[ line_index ].color = gameconfig->getConsoleTextColor();
-            line_list[ line_index ].visible = true;
-            line_list[ line_index ].life_timer.reset();
-
-            temp_str_ptr = temp_str_ptr + max_char_per_line;
-        }
-
-    }
-
-    if (line_index == 0)
-        line_index = console_size - 1;
-    else
-        line_index = (line_index - 1) % console_size;
-
-    strcpy( line_list[ line_index ].string, temp_str_ptr );
-
-    line_list[ line_index ].color = gameconfig->getConsoleTextColor();
-    line_list[ line_index ].visible = true;
-    line_list[ line_index ].life_timer.reset();
-
-}
-
-
 
 void ConsoleInterface::update_overlap( Surface &surface )
 {
@@ -261,7 +206,8 @@ void ConsoleInterface::update_overlap( Surface &surface )
 
         current_line.y = current_line.y - line_offset.y;
 
-        surface.bltStringShadowed(current_line, inputPrompt, gameconfig->getConsoleTextColor(), Color::black );
+        surface.bltStringShadowed(current_line, inputPrompt, Color::white,
+                Color::black );
 
         int CHAR_XPIX = 8; // XXX hardcoded
         input_offset.x = current_line.x + ( (long) strlen( inputPrompt ) ) * CHAR_XPIX;
@@ -276,9 +222,11 @@ void ConsoleInterface::update_overlap( Surface &surface )
             string_ptr = inputString;
         }
 
-        surface.bltStringShadowed(input_offset, string_ptr , gameconfig->getConsoleTextColor(), Color::black );
+        surface.bltStringShadowed(input_offset, string_ptr , Color::white,
+                Color::black );
 
-        surface.bltStringShadowed(input_offset.x + cursorPos * CHAR_XPIX, input_offset.y, "_", gameconfig->getConsoleTextColor(), Color::black );
+        surface.bltStringShadowed(input_offset.x + cursorPos * CHAR_XPIX,
+                input_offset.y, "_", Color::white, Color::black );
     }
 }
 

@@ -75,24 +75,30 @@ void DedicatedGameManager::inputLoop()
 //-----------------------------------------------------------------
 bool DedicatedGameManager::launchNetPanzerGame()
 {
-    ConsoleInterface::postMessage( "netPanzer Dedicated Server");
+    ConsoleInterface::postMessage("starting dedicated netPanzer server");
 
     gameconfig->map = MapsManager::getNextMap("");
     
-    LOGGER.info("Server Settings:"); 
-    LOGGER.info("Map: %s", gameconfig->map.c_str());
-    LOGGER.info("MaxPlayers: %d", (int) gameconfig->maxplayers);
-    LOGGER.info("MaxUnits: %d", (int) gameconfig->maxunits);
-    LOGGER.info("Gametype: %s", gameconfig->getGameTypeString());
-    LOGGER.info("ObjectivePercentage: %d",
+    ConsoleInterface::postMessage("Server Settings:"); 
+    ConsoleInterface::postMessage("Map: %s", gameconfig->map.c_str());
+    ConsoleInterface::postMessage("MaxPlayers: %d",
+            (int) gameconfig->maxplayers);
+    ConsoleInterface::postMessage("MaxUnits: %d", (int) gameconfig->maxunits);
+    ConsoleInterface::postMessage("Gametype: %s",
+            gameconfig->getGameTypeString());
+    ConsoleInterface::postMessage("ObjectivePercentage: %d",
             (int) gameconfig->objectiveoccupationpercentage);
-    LOGGER.info("TimeLimit: %d", (int) gameconfig->timelimit);   
-    LOGGER.info("FragLimit: %d", (int) gameconfig->fraglimit);
-    LOGGER.info("RespawnType: %s", gameconfig->getRespawnTypeString());
-    LOGGER.info("Mapcycle: %s", gameconfig->mapcycle.c_str());
-    LOGGER.info("Powerups: %s", gameconfig->powerups ? "yes" : "no");
-    LOGGER.info("AllowAllies: %s", gameconfig->allowallies ? "yes" : "no");
-    LOGGER.info("CloudCoverage: %d (WindSpeed %d)", 
+    ConsoleInterface::postMessage("TimeLimit: %d",
+            (int) gameconfig->timelimit);   
+    ConsoleInterface::postMessage("FragLimit: %d", (int) gameconfig->fraglimit);
+    ConsoleInterface::postMessage("RespawnType: %s",
+            gameconfig->getRespawnTypeString());
+    ConsoleInterface::postMessage("Mapcycle: %s", gameconfig->mapcycle.c_str());
+    ConsoleInterface::postMessage("Powerups: %s",
+            gameconfig->powerups ? "yes" : "no");
+    ConsoleInterface::postMessage("AllowAllies: %s",
+            gameconfig->allowallies ? "yes" : "no");
+    ConsoleInterface::postMessage("CloudCoverage: %d (WindSpeed %d)", 
             (int) gameconfig->cloudcoverage, (int) gameconfig->windspeed);
 
     GameManager::dedicatedLoadGameMap(gameconfig->map.c_str());
