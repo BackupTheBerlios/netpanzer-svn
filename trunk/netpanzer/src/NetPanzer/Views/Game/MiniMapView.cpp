@@ -67,7 +67,7 @@ void MiniMapView::init()
     //iXY size = miniMap->getPix();
     iXY size(196, 196);
     resize(size);
-    moveTo(iXY(0, 0));
+    moveTo(iXY(0, screen->getPix().y - 196));
 
     mapDrawType = MAP_SOLID;
 
