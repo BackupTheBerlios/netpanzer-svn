@@ -34,11 +34,9 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
 {
     bool post_on_server = false;
     SystemChatMesg chat_mesg;
-    SystemChatMesgRequest *chat_request;
+    SystemChatMesgRequest *chat_request = (SystemChatMesgRequest *) message;
 
-    chat_request = (SystemChatMesgRequest *) message;
-
-    chat_mesg.source_player_index = chat_request->source_player_index;
+    chat_mesg.setSourcePlayerIndex(chat_request->getSourcePlayerIndex());
     chat_mesg.message_scope = chat_request->message_scope;
     strcpy( chat_mesg.message_text, chat_request->message_text );
 
@@ -58,7 +56,7 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
                 player_id = PlayerInterface::getPlayerID( i );
 
                 if ( (PlayerInterface::getPlayerStatus( i ) == _player_state_active) ) {
-                    if( PlayerInterface::isAllied( chat_request->source_player_index, i ) == true ) {
+                    if( PlayerInterface::isAllied( chat_request->getSourcePlayerIndex(), i ) == true ) {
                         if ( (local_player_index != i) ) {
                             SERVER->sendMessage( player_id, &chat_mesg, sizeof(SystemChatMesg), 0 );
                         } else {
@@ -68,11 +66,11 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
                 }
             }
 
-            if( chat_request->source_player_index == PlayerInterface::getLocalPlayerIndex() ) {
+            if( chat_request->getSourcePlayerIndex() == PlayerInterface::getLocalPlayerIndex() ) {
                 post_on_server = true;
             } else {
                 SERVER->sendMessage(
-                    PlayerInterface::getPlayerID(chat_request->source_player_index),
+                    PlayerInterface::getPlayerID(chat_request->getSourcePlayerIndex()),
                     &chat_mesg, sizeof(SystemChatMesg), 0);
             }
         } else
@@ -87,7 +85,7 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
 
         PlayerState *player_state;
 
-        player_state = PlayerInterface::getPlayerState( chat_mesg.source_player_index );
+        player_state = PlayerInterface::getPlayerState( chat_mesg.getSourcePlayerIndex() );
 
         if( (addChatString != 0) ) {
             char mesg_str[256];
@@ -136,7 +134,7 @@ void ChatInterface::chatMessage( NetMessage *message )
 
     PlayerState *player_state;
 
-    player_state = PlayerInterface::getPlayerState( chat_mesg->source_player_index );
+    player_state = PlayerInterface::getPlayerState( chat_mesg->getSourcePlayerIndex() );
 
     if ( (addChatString != 0) ) {
         char mesg_str[144];
@@ -209,7 +207,7 @@ void ChatInterface::setMessageScopeServer( void )
 
 void ChatInterface::sendCurrentMessage( const char *message_text )
 {
-    current_chat_mesg.source_player_index = PlayerInterface::getLocalPlayerIndex();
+    current_chat_mesg.setSourcePlayerIndex(PlayerInterface::getLocalPlayerIndex());
     strncpy( current_chat_mesg.message_text, message_text, 149 );
     current_chat_mesg.message_text[ 149 ] = 0;
 

@@ -336,10 +336,7 @@ void GameManager::spawnPlayer( const PlayerID &player )
     if ( PlayerInterface::getLocalPlayerIndex() == player.getIndex() ) {
         WorldViewInterface::setCameraPosition( world_loc );
     } else {
-        SystemSetPlayerView set_view;
-
-        set_view.camera_loc_x = world_loc.x;
-        set_view.camera_loc_y = world_loc.y;
+        SystemSetPlayerView set_view(world_loc.x, world_loc.y);
         SERVER->sendMessage( player, &set_view, sizeof( SystemSetPlayerView ), 0);
     }
 
@@ -377,7 +374,7 @@ void GameManager::netMessageSetView( NetMessage *message )
     set_view = (SystemSetPlayerView *) message;
 
     WorldViewInterface::setCameraPosition(
-            iXY(set_view->camera_loc_x, set_view->camera_loc_y) );
+            iXY(set_view->getCameraLocX(), set_view->getCameraLocY()) );
 }
 
 // ******************************************************************
@@ -410,7 +407,7 @@ void GameManager::netMessageConnectAlert( NetMessage *message )
 
     connect_alert = (SystemConnectAlert *) message;
 
-    player_state = PlayerInterface::getPlayerState( connect_alert->player_id );
+    player_state = PlayerInterface::getPlayerState( connect_alert->getPlayerID() );
 
     switch( connect_alert->alert_enum ) {
     case _connect_alert_mesg_connect : {
@@ -476,12 +473,12 @@ void GameManager::netMessagePingRequest( NetMessage *message )
 
     ping_request = (SystemPingRequest *) message;
 
-    player_id = PlayerInterface::getPlayerID( ping_request->client_player_index );
+    player_id = PlayerInterface::getPlayerID( ping_request->getClientPlayerIndex() );
 
     SystemPingAcknowledge ping_ack;
 
     if ( (PlayerInterface::getPlayerStatus( player_id ) == _player_state_active) &&
-            (ping_request->client_player_index != 0)
+            (ping_request->getClientPlayerIndex() != 0)
        ) {
         SERVER->sendMessage( player_id, &ping_ack, sizeof(SystemPingAcknowledge), 0 );
     }
@@ -574,9 +571,7 @@ void GameManager::processSystemMessage( NetMessage *message )
 // ******************************************************************
 void GameManager::requestNetworkPing()
 {
-    SystemPingRequest ping_request;
-
-    ping_request.client_player_index = PlayerInterface::getLocalPlayerIndex();
+    SystemPingRequest ping_request(PlayerInterface::getLocalPlayerIndex());
 
     NetworkState::ping_time_stamp = now();
     CLIENT->sendMessage( &ping_request, sizeof(SystemPingRequest), 0  );

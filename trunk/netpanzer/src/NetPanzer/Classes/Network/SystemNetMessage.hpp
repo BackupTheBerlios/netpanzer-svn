@@ -41,16 +41,14 @@ enum { _net_message_id_system_set_view,
 
 class SystemSetPlayerView : public NetMessage
 {
-public:
+private:
     int32_t camera_loc_x;
     int32_t camera_loc_y;
 
-    SystemSetPlayerView()
-    {
-        message_class = _net_message_class_system;
-        message_id = _net_message_id_system_set_view;
-    }
-
+public:
+    SystemSetPlayerView(int32_t x, int32_t y);
+    int32_t getCameraLocX(void);
+    int32_t getCameraLocY(void);
 }
 __attribute__((packed));
 
@@ -58,13 +56,7 @@ __attribute__((packed));
 class SystemResetGameLogic : public NetMessage
 {
 public:
-
-    SystemResetGameLogic()
-    {
-        message_class = _net_message_class_system;
-        message_id = _net_message_id_system_reset_game_logic;
-    }
-
+    SystemResetGameLogic();
 }
 __attribute__((packed));
 
@@ -82,55 +74,18 @@ public:
     unsigned char message_scope;
     unsigned char player_set[32];
 
-    unsigned short source_player_index;
+private:
+    uint16_t source_player_index;
+public:
     char message_text[150];
 
-    SystemChatMesgRequest( )
-    {
-        reset();
-    }
-
-    void reset( void )
-    {
-        message_class = _net_message_class_system;
-        message_id = _net_message_id_system_chat_mesg_req;
-        memset( player_set, 0, sizeof( unsigned char) * 32 );
-        message_scope = _chat_mesg_scope_all;
-    }
-
-    void setMessageScope( unsigned char scope )
-    {
-        message_scope = scope;
-    }
-
-    void setPlayerSet( unsigned short player_index )
-    {
-        unsigned long index;
-        unsigned char shift;
-        unsigned char mask = 1;
-
-        index = ( player_index );
-        shift = (unsigned char) ( 7 - (index & (unsigned long) 7 ) ); // 7 - (index % 8)
-        index = index >> 3;                                           // index / 8
-        mask = mask << shift;
-
-        player_set[index] = player_set[ index ] | mask;
-    }
-
-    void clearPlayerSet( unsigned short player_index )
-    {
-        unsigned long index;
-        unsigned char shift;
-        unsigned char mask = 1;
-
-        index = (player_index);
-        shift = (unsigned char) ( 7 - (index & (unsigned long) 7 ) );
-        index = index >> 3;
-        mask = ~(mask << shift);
-
-        player_set[ index ] = player_set[index] & mask;
-    }
-
+    SystemChatMesgRequest();
+    void reset( void );
+    void setMessageScope( unsigned char scope );
+    void setPlayerSet( unsigned short player_index );
+    void clearPlayerSet( unsigned short player_index );
+    uint16_t getSourcePlayerIndex(void);
+    void setSourcePlayerIndex(uint16_t playerIndex);
 }
 __attribute__((packed));
 
@@ -139,15 +94,14 @@ class SystemChatMesg: public NetMessage
 {
 public:
     unsigned char  message_scope;
-    unsigned short source_player_index;
+private:
+    uint16_t source_player_index;
+public:
     char message_text[150];
 
-    SystemChatMesg()
-    {
-        message_class = _net_message_class_system;
-        message_id = _net_message_id_system_chat_mesg;
-    }
-
+    SystemChatMesg();
+    uint16_t getSourcePlayerIndex(void);
+    void setSourcePlayerIndex(uint16_t playerIndex);
 }
 __attribute__((packed));
 
@@ -165,47 +119,27 @@ public:
     unsigned char action_flags;
     char view_name[32];
 
-    SystemViewControl()
-    {
-        message_class = _net_message_class_system;
-        message_id = _net_message_id_system_view_control;
-        action_flags = 0;
-    }
-
-    void set( char *name, unsigned char flags )
-    {
-        action_flags = flags;
-        strcpy( view_name, name );
-    }
-
+    SystemViewControl();
+    void set( char *name, unsigned char flags );
 }
 __attribute__((packed));
 
 
 class SystemPingRequest : public NetMessage
 {
+private:
+    uint16_t client_player_index;
+
 public:
-    unsigned short client_player_index;
-
-    SystemPingRequest()
-    {
-        message_class = _net_message_class_system;
-        message_id = _net_message_id_system_ping_request;
-    }
-
+    SystemPingRequest(uint16_t playerIndex);
+    uint16_t getClientPlayerIndex(void);
 }
 __attribute__((packed));
 
 class SystemPingAcknowledge : public NetMessage
 {
 public:
-
-    SystemPingAcknowledge()
-    {
-        message_class = _net_message_class_system;
-        message_id = _net_message_id_system_ping_ack;
-    }
-
+    SystemPingAcknowledge();
 }
 __attribute__((packed));
 
@@ -217,21 +151,14 @@ enum { _connect_alert_mesg_connect,
 
 class SystemConnectAlert : public NetMessage
 {
-public:
+private:
     uint16_t player_id;
+public:
     unsigned char alert_enum;
 
-    SystemConnectAlert()
-    {
-        message_class = _net_message_class_system;
-        message_id = _net_message_id_system_connect_alert;
-    }
-
-    void set(const PlayerID &player, unsigned char alert_type )
-    {
-        player_id = player.getIndex();
-        alert_enum = alert_type;
-    }
+    SystemConnectAlert();
+    void set(const PlayerID &player, unsigned char alert_type );
+    uint16_t getPlayerID(void);
 }
 __attribute__((packed));
 
