@@ -5,12 +5,8 @@ Type=Application
 Name=NetPanzer
 GenericName=Realtime Strategy Game
 Comment=Online multiplayer tactical warfare game
-Icon=netpanzer.png
-
-FilePattern=netpanzer
-TryExec=netpanzer
+Icon=netpanzer
 Exec=netpanzer
 Terminal=false
 StartupNotify=false
-
 Categories=Application;Game;StrategyGame;
