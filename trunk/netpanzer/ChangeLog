@@ -1,3 +1,9 @@
+12-Nov-2003 by Matthias Braun
+-fixed a bug where the server browser wouldn't display the correct usercount for
+ servers
+-added configure options, for the case where libs aren't installed in the
+ default dirs
+
 11-Nov-2003 by Matthias Braun
 -fixed irclobby view to not crash on refresh button, when connection is broken
 -report exceptions in the irclobby view
