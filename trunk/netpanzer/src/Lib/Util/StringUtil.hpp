@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
+Copyright (C) 2004 by Matthias Braun <matze@braunis.de>
  
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,10 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef __NETWORK_GLOBALS_HPP__
-#define __NETWORK_GLOBALS_HPP__
+#ifndef __STRINGUTIL_HPP__
+#define __STRINGUTIL_HPP__
 
-#define NETPANZER_DEFAULT_PORT_TCP     3030
-#define NETPANZER_PROTOCOL_VERSION     1020
+#include <string>
+
+std::string removeSurroundingSpaces(const std::string& str);
 
 #endif
+

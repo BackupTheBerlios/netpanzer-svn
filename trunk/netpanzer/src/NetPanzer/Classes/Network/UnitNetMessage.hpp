@@ -60,7 +60,7 @@ class UnitIniSyncMessage : public NetMessage
 public:
     uint8_t unit_type;
 private:
-    uint8_t player_id;
+    uint16_t player_id;
     uint16_t unit_id;
     uint32_t location_x;
     uint32_t location_y;

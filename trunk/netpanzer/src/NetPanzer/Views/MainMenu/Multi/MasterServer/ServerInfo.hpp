@@ -50,6 +50,7 @@ public:
     int maxplayers;
     std::string map;
     int ping;
+    int protocol;
 
     network::Address ipaddress;
     Uint32 querystartticks;

@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "IPAddressView.hpp"
 #include "GameViewGlobals.hpp"
 #include "MasterServer/ServerInfo.hpp"
+#include "Core/NetworkGlobals.hpp"
 
 ServerListView* serverlistview = 0;
 
@@ -105,6 +106,12 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
         } else if(server.status == masterserver::ServerInfo::TIMEOUT) {
             clientArea.bltString(iXY(0, y), server.address, Color::gray);
             clientArea.bltString(iXY(140, y), "timeout", Color::gray);
+        } else if(server.protocol < NETPANZER_PROTOCOL_VERSION) {
+            clientArea.bltString(iXY(0, y), server.address, Color::gray);
+            clientArea.bltString(iXY(140, y), "server protocol too old", Color::gray);
+        } else if(server.protocol > NETPANZER_PROTOCOL_VERSION) {
+            clientArea.bltString(iXY(0, y), server.address, Color::gray);
+            clientArea.bltString(iXY(140, y), "server protocol too new", Color::gray);
         } else {
             std::stringstream playerstr;
             playerstr << server.players << "/" << server.maxplayers;

@@ -39,6 +39,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Util/StringTokenizer.hpp"
 #include "Util/StreamTokenizer.hpp"
+#include "Util/StringUtil.hpp"
 
 // send a heartbeat packet every 5 minutes
 static const int UPDATEINTERVAL = 5*60;
@@ -56,6 +57,7 @@ HeartbeatThread::HeartbeatThread()
     std::string host;
     while( (host = tokenizer.getNextToken()) != "") {
         try {
+            host = removeSurroundingSpaces(host);
             network::Address addr = network::Address::resolve(host, masterport);
             serveraddrs.push_back(addr);
         } catch(std::exception& e) {
@@ -174,7 +176,7 @@ HeartbeatThread::sendPacket(const std::string& str)
         }
     }
 
-    if(failures == (int) serveraddrs.size())
+    if(failures == (int) addresses.size())
         return false;
     
     masterquery--;

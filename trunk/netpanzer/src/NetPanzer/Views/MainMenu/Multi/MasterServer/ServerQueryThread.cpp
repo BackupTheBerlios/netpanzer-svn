@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/StringTokenizer.hpp"
 #include "Util/StreamTokenizer.hpp"
 #include "Util/Log.hpp"
+#include "Util/StringUtil.hpp"
 #include "Network/SocketStream.hpp"
 
 static const size_t MAX_QUERIES = 3;
@@ -46,7 +47,7 @@ ServerQueryThread::ServerQueryThread(ServerList* newserverlist)
     std::string server;
     StringTokenizer tokenizer(gameconfig->masterservers, ',');
     while( (server = tokenizer.getNextToken()) != "") {
-        masterservers.push_back(server);
+        masterservers.push_back(removeSurroundingSpaces(server));
     }
     std::random_shuffle(masterservers.begin(), masterservers.end());
 
@@ -136,8 +137,9 @@ ServerQueryThread::queryMasterServer()
 
         // send query
         *stream << "\\list\\gamename\\master\\final"
-                << "\\list\\gamename\\netpanzer\\protocol\\"
-                << NETPANZER_PROTOCOL_VERSION << "\\final\\" << std::flush;
+                << "\\list\\gamename\\netpanzer"
+                // << "\\protocol\\" << NETPANZER_PROTOCOL_VERSION 
+                << "\\final\\" << std::flush;
         
         ServerInfo* lastserver = 0;
         std::string newMasterServers;
@@ -292,6 +294,9 @@ ServerQueryThread::queryServers()
         } else if(token == "maxplayers") {
             std::stringstream str(tokenizer.getNextToken());
             str >> server->maxplayers;
+        } else if(token == "protocol") {
+            std::stringstream str(tokenizer.getNextToken());
+            str >> server->protocol;
         } else {
             // handle more tokens...
         }
