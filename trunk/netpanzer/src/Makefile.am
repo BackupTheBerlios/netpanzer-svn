@@ -3,6 +3,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 bin_PROGRAMS = netpanzer
 
 netpanzer_CPPFLAGS = -ILib/2D \
+    -IBot \
     -ILib/View \
     -ILib \
     -ILib/Interfaces \
@@ -35,6 +36,13 @@ netpanzer_CXXFLAGS = $(XML_CFLAGS) $(SDL_CFLAGS) $(SDLNET_CFLAGS) \
 netpanzer_LDFLAGS = $(XML_LIBS) $(SDL_LIBS) $(SDLNET_LIBS) $(SDLMIXER_LIBS) \
 		  $(SDLIMAGE_LIBS) $(PHYSFS_LIBS)
 netpanzer_SOURCES = \
+    Bot/Bot.cpp \
+    Bot/Bot.hpp \
+    Bot/BotPlayer.cpp \
+    Bot/BotPlayer.hpp \
+    Bot/BotTask.hpp \
+    Bot/BotTaskList.cpp \
+    Bot/BotTaskList.hpp \
     Lib/2D/Color.cpp \
     Lib/2D/Color.hpp \
     Lib/2D/ColorTable.cpp \
@@ -94,8 +102,6 @@ netpanzer_SOURCES = \
     Lib/Exception.hpp \
     Lib/FileSystem.cpp \
     Lib/FileSystem.hpp \
-    Lib/FileUtil.cpp \
-    Lib/FileUtil.hpp \
     Lib/FindFirst.cpp \
     Lib/FindFirst.hpp \
     Lib/LibView.cpp \

@@ -355,8 +355,8 @@ UnitBase * UnitInterface::newUnit( unsigned short unit_type,
             unit = new Archer ( location, color_flag, unit_flag );
         }
         break;
-
-
+    default:
+        assert("unknown unit_type" == 0);
     } // ** switch
 
     return( unit );

@@ -128,6 +128,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "FontSystem2D.hpp"
 #include "Math.hpp"
 
+#include "Bot.hpp"
 
 #define _MAX_INITIALIZE_PROCS (10)
 #define _MAX_DEDICATED_INITIALIZE_PROCS (8)
@@ -485,6 +486,16 @@ void GameManager::setupKeyboardBindings()
 
 void GameManager::processSystemKeys()
 {
+    static bool toggleBot = false;
+    if (KeyboardInterface::getKeyPressed(SDLK_b)) {
+        toggleBot = !toggleBot;
+        LOGGER.info("Bot enable=%d", toggleBot ? 1 : 0);
+    }
+    if (toggleBot) {
+        Bot::bot()->processEvents();
+    }
+
+
     if (Desktop::getVisible("GameView")) {
 
         if (KeyboardInterface::getKeyPressed( SDLK_F5 )) {

@@ -68,6 +68,14 @@ public:
         return false;
     }
 
+    inline bool operator<( const UnitID& Uid ) const
+    {
+        return (player < Uid.player
+                || (player == Uid.player && index < Uid.index)
+                || (player == Uid.player && index == Uid.index
+                    && unique < Uid.unique));
+    }
+
     inline bool playerEqual( const UnitID& Uid ) const
     {
         if ( (player == Uid.player) )
