@@ -1,0 +1,109 @@
+                                NetPanzer
+                            an open source RTS
+
+Contents:
+1. Introduction
+2. Building and Installation
+3. Gameplay
+4. Contact
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. Introduction
+netPanzer is an online multiplayer tactical warfare game designed for play
+across the Internet and over LAN systems. netPanzer is designed for FAST ACTION
+combat -- it is not another resource management clone. In fact, there aren't
+any resources at all. Each player will have many units of different types at
+their disposal. Players can fight until their units are destroyed -- then
+respawn and keep on going. The game is real-time, but it's based on quick
+tactical action and unit management. Battles progress quickly and constantly;
+in fact, they never let up. There is no stop in the action because there is no
+waiting for resources to be collected and converted into weaponry. Players can
+join or leave multiplayer games at any time.
+
+1.1 A bit of history
+The original development of netpanzer was done from PyroSoft inc. Though in
+1999 they stop development and released the game 2002 in GPL and it was nearly
+forgotten, until Ingo announce it at tux game tome. Soon after this announcement
+a group of coders did the linux port in roughly 2 weeks, with another 2 weeks
+polishing for this release. Now we'll go along and improve the game...
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+2. Building and Installation
+
+2.1 Prerequesites
+The game depends on some tools and libraries to be present, before you can start
+building it. Here's a list of them:
+
+* normal gnu compiler and additional tools (g++ version 3.2 or later is
+  required at the moment)
+
+* perforce jam 2.5 or later (used as build tool)
+  ftp://ftp.perforce.com/pub/jam
+
+* SDL 1.2.5 or later
+  http://www.libsdl.org
+
+* SDL_net 1.2.4 or later
+  http://www.libsdl.org/projects/SDL_net/
+
+* SDL_mixer 1.2.4 or later
+  http://www.libsdl.org/projects/SDL_mixer/
+
+* SDL_image 1.2.3 or later
+  http://www.libsdl.org/projects/SDL_image/
+
+* PhysicsFS 0.1.9 or later
+  http://www.icculus.org/physfs/
+
+Thanks to all the authors of these helpful libraries that made our development
+easy and straightforward.
+
+2.2 Building
+
+To build and install the game use the following commands:
+
+./configure
+jam
+ (You probably need to be root for the installation, so using "su" is a good
+  idea here)
+jam install
+
+The configure script also lets you set some more options like the installation
+directory (--prefix argument). You'll get a full list of these if you invoke
+"configure --help". The game should be installed now.
+
+2.3 Music
+
+Netpanzer doesn't come with own musicfiles yet. However you can place your
+favourite .mp3, .ogg or .mod files into the sound/music directory and netpanzer
+will play these in random order while you play.
+
+2.4 Starting the game
+
+You can start the game by typing
+
+netpanzer
+
+a dedicated server can be started with
+
+netpanzer -d
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+3. Gameplay
+
+This section needs to be written... Use the Help button in the game for now or
+trust your intuition :)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+4. Contact
+
+You can contact is at the netpanzer-devel mailinglist at Savannah:
+
+http://mail.nongnu.org/mailman/listinfo/netpanzer-devel
+
+or you might be able to catch us in irc at irc.freenode.net #netpanzer.
+
