@@ -8,12 +8,15 @@
 #include "optionmm/command_line.hpp"
 
 #include "Util/FileSystem.hpp"
+#include "Util/Log.hpp"
 #include "IRC/Connection.hpp"
 #include "ServerList.hpp"
 
 int main(int argc, char** argv)
 {
     srand(time(0));
+
+    LOGGER.setLogLevel(Logger::LEVEL_INFO);
 
     BrowserConfig* config = new BrowserConfig;
     config->ircserver = "irc.quakenet.org";
@@ -59,6 +62,7 @@ int main(int argc, char** argv)
   
     try {
         FileSystem::initialize(argv[0], "netpanzer", "netpanzer");
+        LOGGER.openLogFile("browserlog.txt");
     } catch(std::exception& e) {
         std::cerr <<  e.what() << std::endl;
         SDL_Quit();
@@ -83,6 +87,7 @@ int main(int argc, char** argv)
     }
 
     SDL_Quit();
+    LOGGER.closeLogFile();
     FileSystem::shutdown();
     return 0;
 }
