@@ -1,6 +1,6 @@
 AC_PREREQ([2.54])
 
-AC_INIT([masterserver], 0.1.2)
+AC_INIT([masterserver], 0.1.3)
 AC_CONFIG_SRCDIR([src/MasterServer.hpp])
 AM_INIT_AUTOMAKE
 
