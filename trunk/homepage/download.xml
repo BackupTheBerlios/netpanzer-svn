@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<page title="netPanzer - An Online Multiplayer Tactical Warfare Game">
+  <section title="Downloads">
+    <subsection title="Binary">
+      <p>
+        This is the first netPanzer release that runs under GNU/Linux,
+        it should also be compilable under Win32 with <a
+          href="http://www.mingw.org/">Mingw</a>, see below for
+        informations on how to obtain the source code. The binary does
+        not depend on non-standard libraries, so it should be useable
+        on most GNU/Linux systems out of the box.
+      </p>
+
+      <ul>
+        <li><a href="http://savannah.nongnu.org/download/netpanzer/netpanzer.pkg/0.1/netpanzer-0.1.2-binary-linux-i386.tar.bz2">netPanzer Binary GNU/Linux - netpanzer-0.1.2-binary-linux-i386.tar.bz2 (11MB)</a></li>
+      </ul>
+
+      <subsubsection title="Debian">
+        <p>If you're using Debian unstable (Sid), you can add the following	
+          lines to your <tt>/etc/apt/sources.list</tt> file:
+
+          <div style="margin: 1em; background-color: black; color: lightgrey; border-style: solid; border-width: thin; padding: 1em;">
+            <tt>deb http://mentors.debian.net/debian unstable main contrib non-free</tt><br />
+            <tt>deb-src http://mentors.debian.net/debian unstable main contrib non-free</tt><br />
+          </div>
+          
+          Second line is needed only if you intend to download sources 
+          of packages. After this modification you should run as root 
+          <tt>apt-get update</tt> and then <tt>apt-get install
+            netpanzer</tt>.</p>
+        <p>Debian packages provided by Bartosz Fenski aka fEnIo 
+          <a href="mailto:fenio@o2.pl">fenio@o2.pl</a></p>
+
+      </subsubsection>
+
+    </subsection>
+
+    <subsection title="Source Code">
+      <p>
+        You need both the
+        gamedata and the source if you want to compile yourself, in
+        addition you need Jam, PhysicsFS, SDL, SDL_net, SDL_mixer and
+        SDL_image, see the README for details.
+      </p>
+
+      <ul>
+        <li><a href="http://download.berlios.de/netpanzer/netpanzer-0.1.2.tar.bz2">netPanzer Source - netpanzer-0.1.2.tar.bz2 (350KB)</a></li>
+        <li><a href="http://download.berlios.de/netpanzer/netpanzerdata-0.1.2.tar.bz2">netPanzer Gamedata - netpanzerdata-0.1.2.tar.bz2 (9.32MB)</a></li>
+      </ul>
+
+      <p>
+        Older releases and other files are available via the <a
+        href="http://developer.berlios.de/project/showfiles.php?group_id=1250">Berlios's Filelist</a>.
+      </p>
+
+      <subsubsection title="CVS">
+        <p>
+          Source Code is also available via CVS. To do a checkout (i.e
+          download) from CVS enter these commands into a terminal:
+
+          <div style="margin: 1em; background-color: black; color: lightgrey; border-style: solid; border-width: thin; padding: 1em;">
+            <tt>cvs -d:pserver:anoncvs@subversions.gnu.org:/cvsroot/netpanzer login</tt><br />
+            <tt>cvs -z3 -d:pserver:anoncvs@subversions.gnu.org:/cvsroot/netpanzer co netpanzer</tt><br />
+          </div>
+        </p>
+      </subsubsection>
+    </subsection>
+  </section>
+  <p />
+</page>

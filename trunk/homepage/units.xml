@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<page title="netPanzer - An Online Multiplayer Tactical Warfare Game">
+  <section title="Units">
+    <table align="center">
+      <tr>
+        <td>
+          <units>
+            <unit>
+              <name>SPAHPANZER</name>
+              <description>Recon Vehicle</description>
+              <image>images/units/spah.jpg</image>
+            </unit>
+
+            <unit>
+              <name>MANTA</name>
+              <description>Light Tank</description>
+              <image>images/units/manta.jpg</image>
+            </unit>
+
+            <unit>
+              <name>PANTHER I</name>
+              <description>Medium Tank</description>
+              <image>images/units/panther1.jpg</image>
+            </unit>
+
+            <unit>
+              <name>TITAN</name>
+              <description>Heavy Tank</description>
+              <image>images/units/titan.jpg</image>
+            </unit>
+
+            <unit>
+              <name>STINGER</name>
+              <description>Missle Launcher</description>
+              <image>images/units/stinger.jpg</image>
+            </unit>
+          </units>
+        </td>
+        <td>
+          <units>
+            <unit>
+              <name>BOBCAT</name>
+              <description>Light Tank</description>
+              <image>images/units/bobcat.jpg</image>
+            </unit>
+
+            <unit>    
+              <name>WOLF</name>
+              <description>Light Recon Tank</description>
+              <image>images/units/wolf.jpg</image>
+            </unit>
+
+            <unit>
+              <name>BEAR</name>
+              <description>Medium Tank</description>
+              <image>images/units/bear.jpg</image>
+            </unit>
+
+            <unit>
+              <name>ARCHER</name>
+              <description>Missle Launcher</description>
+              <image>images/units/archer.jpg</image>
+            </unit>
+
+            <unit>
+              <name>DRAKE</name>
+              <description>Mobile Artillery</description>
+              <image>images/units/drake.jpg</image>
+            </unit>
+          </units>
+        </td>
+      </tr>
+    </table>
+  </section>
+</page>

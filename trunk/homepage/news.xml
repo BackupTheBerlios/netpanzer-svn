@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<page title="netPanzer - News">
+  <section title="News">
+    <news>
+      <item date="19. Dec 2003">
+        We moved over to <a href="http://developer.berlios.de">berlios.de</a>.
+        You can find the new homepage at <a href="http://netpanzer.berlios.de">
+        http://netpanzer.berlios.de</a>.<br/>
+        Along with the new site comes a <a
+        href="http://developer.berlios.de/survey/survey.php?group_id=1250&amp;survey_id=31">survey</a>.
+        Please take the little time to give us some feedback.
+      </item>
+      <item date="11. Nov 2003">
+
+        <p><a
+        href="http://savannah.nongnu.org/files/?group=netpanzer">netPanzer
+        0.1.2</a> is available now:</p>
+        
+        <ul>
+          <li>A new lobby view and server browser has been added</li>
+          <li>a man page has been added</li>
+          <li>The deciated server reads it's setting from a configuration file now</li>
+          <li>The bot player can now be started as a separate process.</li>
+          <li>polish and swedish flag has been added (we happily accept more flags)</li>
+          <li>several smaller bugfixes and improvements</li>
+        </ul>
+      </item>
+
+      <item date="17. Oct 2003">
+        People interested in a little multiplayer netPanzer session
+        are welcome to join <tt>#netpanzer</tt> at
+        <tt>irc.freenode.net</tt>, there you can find other players
+        and developers.
+      </item>
+
+      <item date="14. Oct 2003">
+        Release of netPanzer 0.1.1, fixes a number of issues that made
+        0.1 not so much useable (checkboxes not clickable, crashes
+        after outpost occupation)
+      </item>
+
+      <item date="10. Oct 2003">
+        Release of netPanzer 0.1, it runs and compiles under GNU/Linux
+      </item>
+    </news>
+  </section>
+</page>

@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<page title="netPanzer - An Online Multiplayer Tactical Warfare Game">
+  <section title="FAQ - Frequently Asked Questions">
+    <faq-list>
+      <faq>
+        <question>Where can I find public servers?</question>
+        <answer>
+          There are currently no public servers available, but if you
+          want to play netPanzer and search for other players and
+          servers, join the IRC channel <tt>#netpanzer</tt> at
+          <tt>irc.freenode.net</tt>, you will find there players and
+          developers and sometimes people will give you an IP to join
+          a match.
+        </answer>
+      </faq>
+
+      <faq>
+        <question>How many players does netPanzer support?</question>
+        <answer>
+          netPanzer has been designed around a scalable client/server network
+          architecture and it should support from 1 to 100 players over the
+          Internet or on LAN systems depending on the network connection type
+          and game configuration (dedicated server vs. server-player, max number
+          of units per player, fog of war, and so forth).
+        </answer>
+      </faq>
+
+      <faq>
+        <question>How do multiplayer games work?</question>
+        <answer>
+          There are three modes of multiplayer combat: Outpost, Frag Limit, or Time Limit.
+        </answer>
+      </faq>
+
+      <faq>
+        <question>What are the controls for netPanzer like?</question>
+        <answer>
+          netPanzer uses a mouse and keyboard to manipulate units.
+        </answer>
+      </faq>
+
+      <faq>
+        <question>How big are the game maps?</question>
+        <answer>
+          Maps range in size from 10x13 to 64x85 640x480 size screens.
+        </answer>
+      </faq>
+      
+      <faq>
+        <question>What if I don't have a network or internet
+          connection?</question> 
+
+        <answer>
+          A skirmish mode will be available for those without a ready
+          network connection. The computer player available in skirmish
+          mode can also be used in regular multiplayer games as
+          well.
+        </answer>
+      </faq>
+      
+      <faq>
+        <question>
+          Is there camping in netPanzer? I mean, if there are no
+          resources what is the object of the game?
+        </question>
+
+        <answer>
+          This game was designed to make players fight--no sitting
+          around waiting for your opponents to waste themselves in
+          combat and then wiping them out. Players will be battling for
+          outposts, so that they can increase their unit count.
+        </answer>
+      </faq>
+
+      <faq>
+        <question>
+          What happens when all of a players units are destroyed?
+        </question>
+
+        <answer>
+          Every player respawns when their last unit is destroyed.
+        </answer>
+      </faq>
+
+      <faq>
+        <question>How do I build more units, if there are no resources?</question>
+        <answer>
+          By capturing an outpost, a player can build more units. Each
+          unit has a specific build time. A major strategy in the game
+          will be capturing and holding onto outposts. Each outpost a
+          player owns can produce units for the player.
+        </answer>
+      </faq>
+
+      <faq>
+        <question>What is an Outpost?</question>
+        <answer>
+          An outpost is mainly a factory that produces units for the player who owns it.
+        </answer>
+      </faq>
+
+      <faq>
+        <question>How can an Outpost game be won if players keep
+          respawning?</question> <answer>By taking over a percentage of
+          the outposts a player can win the game.</answer>
+      </faq>
+
+      <faq>
+        <question>Will players be able to ally?</question>
+        <answer>Yes, players can ally.</answer>
+      </faq>
+    </faq-list>
+  </section>
+</page>
