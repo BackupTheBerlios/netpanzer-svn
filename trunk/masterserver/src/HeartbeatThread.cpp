@@ -48,6 +48,7 @@ HeartbeatThread::HeartbeatThread(MasterServer* newmasterserver)
     : masterserver(newmasterserver), running(false)
 {
     // try to get list of masterservers
+    *log << "Querying neighbor masterserver." << std::endl;
     requestMasterServerList();
    
     if(serveraddresses.size() == 0) {
