@@ -207,7 +207,7 @@ void cInputField::addExtendedChar(int newExtendedChar)
     case SDLK_END: {
             cursorPos = strlen(destString);
 
-            if (cursorPos > maxCharCount) {
+            if (cursorPos >= maxCharCount) {
                 cursorPos = maxCharCount - 1;
             }
         }
@@ -259,6 +259,7 @@ void cInputField::addExtendedChar(int newExtendedChar)
 void cInputField::draw(Surface &dest)
 {
     checkCursor();
+    checkRepeat();
 
     inputFieldSurface.fill(Color::black);
     inputFieldSurface.drawButtonBorder(Color::white, Color::gray64);
@@ -271,6 +272,7 @@ void cInputField::draw(Surface &dest)
 void cInputField::drawHighlighted(Surface &dest)
 {
     checkCursor();
+    checkRepeat();
 
     inputFieldSurface.fill(Color::black);
     inputFieldSurface.drawButtonBorder(Color::darkGray, Color::white);
@@ -317,5 +319,27 @@ void cInputField::pressKey(int ch)
 {
     depressedKey=ch;
     depressedKeyTimeNext=SDL_GetTicks()+250;
+}
+
+// check repeat and insert characters as needed
+void cInputField::checkRepeat()
+{
+    if(depressedKey==0) { return; }
+    Uint32 ticks=SDL_GetTicks();
+    if(depressedKeyTimeNext>ticks) {
+        return;
+    }
+    if(KeyboardInterface::getKeyState(depressedKey)!=true) {
+        // we've let go of this key.
+        depressedKey=0;
+        return;
+    }
+
+    if(isprint(depressedKey)) {
+        addChar(depressedKey);
+    }
+    else { addExtendedChar(depressedKey); }
+
+    depressedKeyTimeNext=ticks+50;
 }
 

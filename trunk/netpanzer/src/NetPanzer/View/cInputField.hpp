@@ -132,6 +132,7 @@ private:
     ACTION_FUNC_PTR returnaction;
 
     void pressKey(int ch);
+    void checkRepeat();
     void reset();
 }; // end cInputField
 
