@@ -142,7 +142,7 @@ public:
         objectives_held = objectives;
     }
 
-    inline void setID( unsigned short index, Client::ID networkid  )
+    inline void setID( unsigned short index, SocketClient::ID networkid  )
     {
         ID.setIndex(index);
         ID.setNetworkID(networkid);
@@ -153,7 +153,7 @@ public:
         ID.setIndex( index );
     }
 
-    inline void setID( Client::ID networkid )
+    inline void setID( SocketClient::ID networkid )
     {
         ID.setNetworkID(networkid);
     }

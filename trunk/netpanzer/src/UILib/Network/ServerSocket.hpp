@@ -29,18 +29,18 @@ public:
     ~ServerSocket();
 
     void read();
-    void sendMessage(Client::ID toclient, char* data, size_t datasize,
+    void sendMessage(SocketClient::ID toclient, char* data, size_t datasize,
                      bool realiable = true);
-    void removeClient(Client::ID clientid);
+    void removeClient(SocketClient::ID clientid);
 
 protected:
-    friend class Client;
-    void closeConnection(Client* client);
+    friend class SocketClient;
+    void closeConnection(SocketClient* client);
 
 private:
     void acceptNewClients();
     void readTCP();
-    void readClientTCP(Client* client);
+    void readClientTCP(SocketClient* client);
 
     TCPsocket tcpsocket;
     SDLNet_SocketSet sockets;

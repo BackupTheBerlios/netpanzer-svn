@@ -1,18 +1,22 @@
 #include <config.h>
 
 #include <string.h>
+#include <assert.h>
 #include "ServerSocket.hpp"
 #include "SocketClient.hpp"
 
-Client::Client(ServerSocket* newserver)
+SocketClient::SocketClient(ServerSocket* newserver)
         : tcpsocket(0), headerincomplete(false),
         messageincomplete(0), udpenabled(false), tempoffset(0),
-        id(0), server(newserver)
+        wantstodie(false), id(0), server(newserver)
 {
     memset(&udpaddress, 0, sizeof(IPaddress));
 }
 
-Client::~Client()
+SocketClient::~SocketClient()
 {
+    assert(wantstodie == true);
+
     server->closeConnection(this);
 }
+

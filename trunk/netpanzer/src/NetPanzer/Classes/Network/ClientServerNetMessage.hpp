@@ -67,7 +67,7 @@ __attribute__((packed));
 class ClientMesgServerId : public NetMessage
 {
 public:
-    Client::ID server_id;
+    SocketClient::ID server_id;
 
     ClientMesgServerId()
     {

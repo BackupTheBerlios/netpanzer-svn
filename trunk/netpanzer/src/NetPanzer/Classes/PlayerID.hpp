@@ -25,14 +25,14 @@ class PlayerID
 {
 protected:
     uint16_t index_id;
-    Client::ID networkid;
+    SocketClient::ID networkid;
 
 public:
     PlayerID( )
             : index_id(0xFFFF), networkid(0xFFFFFFFF)
     { }
 
-    PlayerID( unsigned short index, Client::ID newid )
+    PlayerID( unsigned short index, SocketClient::ID newid )
             : index_id(index), networkid(newid)
     { }
 
@@ -46,12 +46,12 @@ public:
         return( index_id );
     }
 
-    inline void setNetworkID(Client::ID newid)
+    inline void setNetworkID(SocketClient::ID newid)
     {
         networkid = newid;
     }
 
-    inline Client::ID getNetworkID() const
+    inline SocketClient::ID getNetworkID() const
     {
         return(networkid);
     }

@@ -7,11 +7,11 @@ class ServerSocket;
 
 /** This class keep data from a single client that is connected to the server
  */
-class Client
+class SocketClient
 {
 public:
-    Client(ServerSocket* server);
-    ~Client();
+    SocketClient(ServerSocket* server);
+    ~SocketClient();
 
     TCPsocket tcpsocket;
     IPaddress udpaddress;
@@ -22,6 +22,10 @@ public:
     bool messageincomplete;
     bool udpenabled;
     short tempoffset;
+
+    /// this variable is set to true, when the Client should be removed from
+    /// client list in the next iteratrion
+    bool wantstodie;
 
     typedef Uint32 ID;
     ID id;

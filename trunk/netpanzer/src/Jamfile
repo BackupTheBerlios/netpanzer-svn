@@ -45,5 +45,5 @@ for i in $(SUBDIRS)
 
 Application netpanzer : $(SOURCES) ;
 CFlags netpanzer : -DDATADIR=\\\"$(datadir)\\\" ;
-ExternalLibs netpanzer : XML SDL SDLNET SDLMIXER SDLIMAGE PHYSFS ;
+ExternalLibs netpanzer : XML SDLNET SDLMIXER SDLIMAGE SDL PHYSFS ;
 Help netpanzer : "Build the main netpanzer executable" ;

@@ -29,8 +29,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class NetPacket
 {
 public:
-    Client::ID toID;
-    Client::ID fromID;
+    SocketClient::ID toID;
+    SocketClient::ID fromID;
     unsigned short packet_size;
 
     unsigned char data[ _MAX_NET_PACKET_SIZE ];

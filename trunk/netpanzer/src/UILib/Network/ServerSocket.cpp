@@ -84,7 +84,7 @@ void ServerSocket::acceptNewClients()
             LOG ( ("Too many connections to server, dropping client.") );
             return;
         }
-        Client* client = clientlist->add(this, clientsocket);
+        SocketClient* client = clientlist->add(this, clientsocket);
 
         // Put message about connecting client into message queue
         TransportClientAccept clientacceptmessage;
@@ -101,9 +101,17 @@ void ServerSocket::readTCP()
     // Iterate through client list and check whether data arrived
     ClientList::ClientIterator i;
     for(i = clientlist->begin(); i != clientlist->end(); i++) {
-        Client* client = *i;
+        SocketClient* client = *i;
         if (SDLNet_SocketReady(client->tcpsocket))
             readClientTCP(client);
+    }
+
+    // Search for clients that wants to be removed from the list
+    for(i = clientlist->begin(); i != clientlist->end(); i++) {
+        SocketClient* client = *i;
+        if(client->wantstodie) {
+            i = clientlist->remove(i);
+        }
     }
 }
 
@@ -119,7 +127,7 @@ void ServerSocket::readTCP()
  * then we have a complete netPanzer message. other cases
  * are handled separately.
  */
-void ServerSocket::readClientTCP(Client* client)
+void ServerSocket::readClientTCP(SocketClient* client)
 {
     static char recvbuffer[10240];
 
@@ -128,8 +136,7 @@ void ServerSocket::readClientTCP(Client* client)
     if(recvsize<=0) {
         printf ("Connection lost for ID %u: %s\n", client->id,
                 SDLNet_GetError());
-        // XXX danger...
-        clientlist->remove(client);
+        client->wantstodie = true;
         return;
     }
 
@@ -152,8 +159,6 @@ void ServerSocket::readClientTCP(Client* client)
                 recvoffset = 0;
                 client->headerincomplete = false;
                 client->tempoffset = 0;
-                clientlist->remove(client);
-                // XXX shouldn't we delete the client here?
                 return;
             }
 
@@ -208,8 +213,6 @@ void ServerSocket::readClientTCP(Client* client)
                     recvoffset = 0;
                     client->messageincomplete = false;
                     client->tempoffset = 0;
-                    clientlist->remove(client);
-                    // XXX shouldn't we delete the client here?
                     return;
                 }
 
@@ -251,8 +254,6 @@ void ServerSocket::readClientTCP(Client* client)
                     LOG( ("OnReadStreamServer : Invalid Packet Size %d", size) );
                     recvoffset = 0;
                     client->tempoffset = 0;
-                    // XXX danger
-                    clientlist->remove(client);
                     return;
                 }
 
@@ -305,33 +306,32 @@ void ServerSocket::readClientTCP(Client* client)
  * the game loop needs to be temporarily halted anyway.
  * it handles both TCP and UDP sends--
  */
-void ServerSocket::sendMessage(Client::ID toclient, char* data, size_t datasize,
-                               bool reliable)
+void ServerSocket::sendMessage(SocketClient::ID toclient, char* data,
+        size_t datasize, bool reliable)
 {
-    Client* client = clientlist->getClientFromID(toclient);
+    SocketClient* client = clientlist->getClientFromID(toclient);
     if(!client)
         throw Exception("message sent to unknown client.");
 
     // we ignore the reliable flag for now...
     if (SDLNet_TCP_Send(client->tcpsocket, data, (int) datasize)
             < (int) datasize) {
-        clientlist->remove(client);
         throw Exception("Error while sending to client %d: %s", client->id,
                         SDLNet_GetError());
     }
 }
 
-void ServerSocket::closeConnection(Client* client)
+void ServerSocket::closeConnection(SocketClient* client)
 {
     SDLNet_TCP_DelSocket(sockets, client->tcpsocket);
     SDLNet_TCP_Close(client->tcpsocket);
 }
 
-void ServerSocket::removeClient(Client::ID clientid)
+void ServerSocket::removeClient(SocketClient::ID clientid)
 {
     // TODO notify client about disconnect...
-    Client* client = clientlist->getClientFromID(clientid);
+    SocketClient* client = clientlist->getClientFromID(clientid);
     if(client)
-        clientlist->remove(client);
+        client->wantstodie = true;
 }
 

@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 #include <SDL_net.h>
-#include "Client.hpp"
+#include "SocketClient.hpp"
 
 class ServerSocket;
 
@@ -30,11 +30,11 @@ public:
     ClientList();
     ~ClientList();
 
-    Client* add(ServerSocket* server, TCPsocket socket);
+    SocketClient* add(ServerSocket* server, TCPsocket socket);
 
-    Client* getClientFromID(Client::ID id);
+    SocketClient* getClientFromID(SocketClient::ID id);
 
-    typedef std::vector<Client*>::iterator ClientIterator;
+    typedef std::vector<SocketClient*>::iterator ClientIterator;
     ClientIterator begin()
     {
         return clients.begin();
@@ -44,11 +44,12 @@ public:
         return clients.end();
     }
 
-    void remove(Client* client);
-    void removeAll();
+    ClientIterator remove(ClientIterator i)
+    { return clients.erase(i); }
+
 private:
-    std::vector<Client*> clients;
-    Client::ID nextid;
+    std::vector<SocketClient*> clients;
+    SocketClient::ID nextid;
 };
 
 #endif // _WINSOCKCLIENTLIST_H

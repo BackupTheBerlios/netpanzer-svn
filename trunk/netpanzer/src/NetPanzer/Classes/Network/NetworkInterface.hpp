@@ -21,10 +21,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetPacketQueues.hpp"
 
 void EnqueueIncomingPacket( void *message, unsigned long message_size,
-                            Client::ID toID, Client::ID fromID );
+                            SocketClient::ID toID, SocketClient::ID fromID );
 
 void EnqueueUnreliablePacket( void *message, unsigned long message_size,
-                              Client::ID toID, Client::ID fromID );
+                              SocketClient::ID toID, SocketClient::ID fromID );
 
 class NetworkInterface
 {

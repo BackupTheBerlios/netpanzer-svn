@@ -23,11 +23,18 @@ ClientList::ClientList()
 {}
 
 ClientList::~ClientList()
-{}
-
-Client* ClientList::add(ServerSocket* server, TCPsocket socket)
 {
-    Client* client = new Client(server);
+    for(ClientIterator i = begin(); i != end(); i++) {
+        SocketClient* client = *i;
+        client->wantstodie = true;
+        delete client;
+    }
+    clients.clear();
+}
+
+SocketClient* ClientList::add(ServerSocket* server, TCPsocket socket)
+{
+    SocketClient* client = new SocketClient(server);
     client->tcpsocket = socket;
     client->id = nextid++;
     clients.push_back(client);
@@ -35,10 +42,10 @@ Client* ClientList::add(ServerSocket* server, TCPsocket socket)
     return client;
 }
 
-Client* ClientList::getClientFromID(Client::ID id)
+SocketClient* ClientList::getClientFromID(SocketClient::ID id)
 {
     for(ClientIterator i = begin(); i != end(); i++) {
-        Client* client = *i;
+        SocketClient* client = *i;
         if(client->id == id)
             return client;
     }
@@ -46,18 +53,3 @@ Client* ClientList::getClientFromID(Client::ID id)
     return 0;
 }
 
-void ClientList::remove(Client* client)
-{
-    for(ClientIterator i = begin(); i != end(); i++) {
-        if(client == *i) {
-            clients.erase(i);
-            break;
-        }
-    }
-    delete client;
-}
-
-void ClientList::removeAll()
-{
-    clients.clear();
-}

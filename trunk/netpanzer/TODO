@@ -1,3 +1,10 @@
+*** Improvements
+-Convert the 256 color stuff to truecolor
+-Add timeout/keepalive handling to network layer to correctly detect connection
+ losses and try reconnects
+
+*** Feature Additions
+
 -Improve userinterface:
         * Make usual shortcuts (known from other RTSes) work. Like
           CTRL+number for defining groups, a possibility to set spawnpoint
