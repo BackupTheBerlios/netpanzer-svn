@@ -29,10 +29,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Log.hpp"
 #include "Config.hpp"
 #include "MasterServer.hpp"
+#include "HeartbeatThread.hpp"
 
 using namespace masterserver;
 
 static MasterServer* masterserv = 0;
+static HeartbeatThread* heartbeatthread = 0;
 
 static void signalhandler(int signum)
 {
@@ -40,7 +42,9 @@ static void signalhandler(int signum)
     if(handler_running)
         return;
     handler_running = 1;
-    
+
+    delete heartbeatthread;
+    heartbeatthread = 0;
     delete masterserv;
     masterserv = 0;
 
@@ -107,6 +111,7 @@ int main(int , char** )
             delete out;
         }
 
+        heartbeatthread = new HeartbeatThread(masterserv);
         masterserv->run();
     } catch(std::exception& e) {
         *masterserver::log << "Fatal Error: " << e.what() << std::endl;

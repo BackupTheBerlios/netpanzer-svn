@@ -77,8 +77,6 @@ private:
     std::list<RequestThread*> threads;
 
     iniparser::Section& serverconfig;
-
-    HeartbeatThread* heartbeatThread;
 };
 
 }

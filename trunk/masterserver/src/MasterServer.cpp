@@ -41,14 +41,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SocketStream.hpp"
 #include "Log.hpp"
 #include "Config.hpp"
-#include "HeartbeatThread.hpp"
 #include "iniparser/Section.hpp"
 
 namespace masterserver
 {
 
 MasterServer::MasterServer()
-    : serverconfig(config->getSection("server")), heartbeatThread(0)
+    : serverconfig(config->getSection("server"))
 {   
     sock = -1;
     try {
@@ -110,9 +109,6 @@ MasterServer::MasterServer()
         }
         
         pthread_mutex_init(&serverlist_mutex, 0);
-
-        // start heartbeatthread
-        heartbeatThread = new HeartbeatThread(this);
     } catch(...) {
         if(sock >= 0)
             close(sock);
@@ -123,7 +119,6 @@ MasterServer::MasterServer()
 MasterServer::~MasterServer()
 {
     writeNeighborCache();
-    delete heartbeatThread;
 
     for(std::list<RequestThread*>::iterator i = threads.begin();
             i != threads.end(); ++i) {
