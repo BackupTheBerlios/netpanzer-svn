@@ -52,6 +52,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 DedicatedGameManager::DedicatedGameManager()
     : commandqueue_mutex(0), console(0), heartbeatthread(0), infothread(0)
 {
+    commandqueue_mutex = SDL_CreateMutex();
     Console::initialize();
 }
 
@@ -61,13 +62,15 @@ DedicatedGameManager::~DedicatedGameManager()
     delete heartbeatthread;
     delete infothread;
     Console::shutdown();
+
+    SDL_DestroyMutex(commandqueue_mutex);
+    commandqueue_mutex = 0;                  
 }
 
 void DedicatedGameManager::initializeVideoSubSystem()
 {
     lobbyView = new ConsoleLoadingView();
     progressView = new ConsoleLoadingView();
-    commandqueue_mutex = SDL_CreateMutex();
 }
 
 void DedicatedGameManager::shutdownVideoSubSystem()
@@ -78,8 +81,6 @@ void DedicatedGameManager::shutdownVideoSubSystem()
     progressView = 0;
     delete console;
     console = 0;
-    SDL_DestroyMutex(commandqueue_mutex);
-    commandqueue_mutex = 0;
 }
 
 //-----------------------------------------------------------------
