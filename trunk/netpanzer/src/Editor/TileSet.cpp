@@ -101,7 +101,7 @@ void TileSet::load(const std::string& dir)
     std::string filename = dir;
     filename += "/tiles.dat";
     
-    std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
+    std::auto_ptr<ReadFile> file (FileSystem::openRead(filename.c_str()));
    
     // read the header
     std::auto_ptr<TileSetHeader> fileheader (new TileSetHeader(*file));
@@ -141,7 +141,7 @@ void TileSet::readTemplates(const std::string& newdir)
     std::string templatedir = dir;
     templatedir += "/templates/";
     
-    char** files = FileSystem::enumerateFiles(templatedir);
+    char** files = FileSystem::enumerateFiles(templatedir.c_str());
     for(char** file = files; *file != 0; file++) {
         std::string filename = templatedir;
         filename += *file;
@@ -157,7 +157,7 @@ void TileSet::save()
     std::string filename = dir;
     filename += "/tiles.dat";
 
-    std::auto_ptr<WriteFile> file (FileSystem::openWrite(filename));
+    std::auto_ptr<WriteFile> file (FileSystem::openWrite(filename.c_str()));
     
     header->write(*file);
     if(tilesize * header->tilecount != 0)
