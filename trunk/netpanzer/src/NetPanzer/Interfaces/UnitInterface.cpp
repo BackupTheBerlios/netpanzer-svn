@@ -695,11 +695,11 @@ void UnitInterface::unitManagerMesgEndLifecycle(const UnitMessage* message)
     // killing own units doesn't give score
     if(player1 != player2) {
         PlayerInterface::setKill(unit1->player, unit2->player,
-                lifecycle_update->unit_type);
+                (UnitType) lifecycle_update->unit_type);
         
         PlayerScoreUpdate score_update;
         score_update.set(player1->getID(), player2->getID(),
-                lifecycle_update->unit_type);
+                (UnitType) lifecycle_update->unit_type);
         SERVER->sendMessage(&score_update, sizeof(PlayerScoreUpdate));
     }
 }

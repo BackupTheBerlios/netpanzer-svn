@@ -111,7 +111,7 @@ void PlayerInterface::unLock()
 }
 
 void PlayerInterface::setKill(PlayerState* by_player, PlayerState* on_player,
-        unsigned short unit_type )
+        UnitType unit_type)
 {
     SDL_mutexP(mutex);
     by_player->incKills( unit_type );
@@ -484,7 +484,7 @@ void PlayerInterface::netMessageScoreUpdate(const NetMessage *message)
 
     PlayerState* player1 = getPlayer(score_update->getKillByPlayerIndex());
     PlayerState* player2 = getPlayer(score_update->getKillOnPlayerIndex());
-    setKill(player1, player2, score_update->unit_type );
+    setKill(player1, player2, (UnitType) score_update->unit_type );
 }
 
 void PlayerInterface::netMessageAllianceRequest(const NetMessage *message)

@@ -137,15 +137,8 @@ void GameInfoView::doDraw(Surface &viewArea, Surface &clientArea)
     }
 
     if(gameconfig->gametype == _gametype_objective) {
-        float percentage 
-            = (float) gameconfig->objectiveoccupationpercentage / 100.0;
-        int wincount = (int) (
-                ((float) ObjectiveInterface::getObjectiveCount()) * percentage
-                + 0.999);
-        if(wincount == 0)
-            wincount = 1;
         snprintf(objectiveBuf, sizeof(objectiveBuf), "obj.   %d/%d",
-                getPlayerObjectives(), wincount);
+                getPlayerObjectives(), ObjectiveInterface::getObjectiveLimit());
     } else {
         snprintf(objectiveBuf, sizeof(objectiveBuf), "obj.   %d",
                 getPlayerObjectives());

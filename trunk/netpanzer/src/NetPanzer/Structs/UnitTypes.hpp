@@ -20,17 +20,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #define _MAX_UNIT_TYPES 13
 
-enum  { _unit_type_valentine,
-        _unit_type_leopard,
-        _unit_type_abrams,
-        _unit_type_hammerhead,
-        _unit_type_lynx,
-        _unit_type_spahpanzer,
-        _unit_type_archer,
-        _unit_type_scorpion,
-        _unit_type_m109,
-        _unit_type_humvee,
-        _unit_type_null
-    };
+enum UnitType {
+    _unit_type_valentine = 0,   // now called manta
+    _unit_type_leopard,     // now called panther
+    _unit_type_abrams,      // now called titan
+    _unit_type_hammerhead,  // now called stinger
+    _unit_type_lynx,        // now called bobcat
+    _unit_type_spahpanzer,  // now called bear
+    _unit_type_archer,      
+    _unit_type_scorpion,    // now called wolf
+    _unit_type_m109,        // now called drake
+    _unit_type_humvee,      // now called scout
+    _unit_type_null
+};
 
 #endif //** _UNITTYPES_HPP

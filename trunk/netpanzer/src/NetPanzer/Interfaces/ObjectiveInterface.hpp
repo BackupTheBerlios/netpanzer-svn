@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _OBJECTIVEINTERFACE_HPP
 #define _OBJECTIVEINTERFACE_HPP
 
+#include <SDL.h>
+
 #include "Objective.hpp"
 #include "ArrayUtil/ArrayTemplate.hpp"
 
@@ -42,6 +44,8 @@ protected:
     static std::vector<Objective*> objective_list;
 
     static void cleanUpObjectiveList();
+
+    static SDL_mutex* mutex;
 
 public:
     static void cleanUp();
@@ -76,6 +80,8 @@ public:
     }
 
     static void updatePlayerObjectiveCounts();
+
+    static int getObjectiveLimit();
 
 protected:
     static NetMessageEncoder message_encoder;

@@ -30,6 +30,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerInterface.hpp"
 #include "Util/Log.hpp"
 #include "Network/Address.hpp"
+#include "GameManager.hpp"
+#include "ObjectiveInterface.hpp"
 
 InfoThread::InfoThread(int port)
     : socket(0)
@@ -135,20 +137,25 @@ void InfoThread::sendInfo(std::stringstream& out)
 void InfoThread::sendRules(std::stringstream& out)
 {
     out << "gamestyle\\" << gameconfig->getGameTypeString() << "\\"
-        << "units_per_player\\" << gameconfig->GetUnitsPerPlayer() << "\\"    
+        << "units_per_player\\" << gameconfig->GetUnitsPerPlayer() << "\\"
+        << "time\\" << GameManager::getGameTime()/60 << "\\"
         << "timelimit\\" << gameconfig->timelimit << "\\"
-        << "fraglimit\\" << gameconfig->fraglimit << "\\";
+        << "fraglimit\\" << gameconfig->fraglimit << "\\"
+        << "objectivelimit\\" << ObjectiveInterface::getObjectiveLimit() <<"\\";
 }
 
 void InfoThread::sendPlayers(std::stringstream& out)
 {
+    ObjectiveInterface::updatePlayerObjectiveCounts();
     for(int i = 0; i < PlayerInterface::countPlayers(); ++i) {
         PlayerState* playerState = PlayerInterface::getPlayerState(i);
         out << "player_" << i << "\\" << playerState->getName() << "\\"
             << "kills_" << i << "\\" << playerState->getKills() << "\\"
             << "deaths_" << i << "\\" << playerState->getLosses() << "\\"
             << "score_" << i << "\\" 
-                << playerState->getObjectivesHeld() << "\\";
+                << playerState->getObjectivesHeld() << "\\"
+            << "flag_" << i << "\\"
+                << (int) playerState->getFlag() << "\\";
     }
     // TODO add team/alliance info
 }

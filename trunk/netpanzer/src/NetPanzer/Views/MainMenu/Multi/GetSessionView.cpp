@@ -170,7 +170,7 @@ void GetSessionView::drawJoinInfo(Surface &dest, const iRect &rect)
         "- you can pick a server from the in-game Lobby.\n"
         "- you can manually specify the IP address of the server, which is "
         "useful for LAN games.\n"
-        "- use 'netpanzerbrowser' or 'KNetpanzerBrowser' to get a list of "
+        "- use external browsers such as qstat to get a list of "
         "available Internet servers, and then run 'netpanzer -c <server>' to "
         "connect directly.\n"
         "\n"

@@ -32,6 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileStream.hpp"
 #include "Util/Log.hpp"
 #include "Outpost.hpp"
+#include "GameConfig.hpp"
 
 #include "ObjectiveNetMessage.hpp"
 
@@ -44,6 +45,8 @@ unsigned long ObjectiveInterface::objective_position_enum_index;
 PlayerID      ObjectiveInterface::objective_position_enum_player_id;
 
 NetMessageEncoder ObjectiveInterface::message_encoder;
+
+SDL_mutex* ObjectiveInterface::mutex = 0;
 
 void ObjectiveInterface::cleanUpObjectiveList()
 {
@@ -353,6 +356,11 @@ void ObjectiveInterface::syncObjectives(PlayerID connect_player)
 
 void ObjectiveInterface::updatePlayerObjectiveCounts()
 {
+    if(mutex == 0) { // little race condition...
+        mutex = SDL_CreateMutex();
+    }
+    
+    SDL_mutexP(mutex);
     unsigned long player_index, player_count;
     PlayerState *player_state = 0;
 
@@ -372,5 +380,18 @@ void ObjectiveInterface::updatePlayerObjectiveCounts()
             player_state->incObjectivesHeld();
         }
     }
-
+    SDL_mutexV(mutex);
 }
+
+int
+ObjectiveInterface::getObjectiveLimit()
+{
+    float percentage
+        = (float) gameconfig->objectiveoccupationpercentage / 100.0;
+    int wincount = (int) ( ((float) getObjectiveCount()) * percentage + 0.999);
+    if(wincount == 0)
+        wincount = 1;
+
+    return wincount;
+}
+

@@ -111,10 +111,10 @@ public:
     void unlockStats();
     short getKills() const;
     short getLosses() const;
-    void incKills( unsigned short unit_type );
-    void decKills( unsigned short unit_type );
-    void incLosses( unsigned short unit_type );
-    void decLosses( unsigned short unit_type );
+    void incKills(UnitType unit_type);
+    void decKills(UnitType unit_type);
+    void incLosses(UnitType unit_type);
+    void decLosses(UnitType unit_type);
     void incObjectivesHeld();
     void decObjectivesHeld();
     short getObjectivesHeld() const;

@@ -51,7 +51,7 @@ public:
     static void unLock();
 
     static void setKill(PlayerState* by_player, PlayerState* on_player,
-            unsigned short unit_type );
+            UnitType unit_type );
 
     static void setAlliance( const PlayerID& by_player, const PlayerID& with_player );
 
@@ -68,19 +68,19 @@ public:
 
     static unsigned short getMaxPlayers( )
     {
-        return( max_players );
+        return max_players;
     }
 
     static PlayerState * getPlayerState( const PlayerID& player )
     {
-        assert( player.getIndex() < max_players );
-        return( &player_lists[ player.getIndex() ] );
+        assert(player.getIndex() < max_players);
+        return &player_lists[ player.getIndex() ];
     }
 
     static PlayerState * getPlayerState(uint16_t player_index )
     {
-        assert( player_index < max_players );
-        return( &player_lists[ player_index ] );
+        assert(player_index < max_players);
+        return &player_lists[player_index];
     }
 
     static PlayerState* getPlayer(uint16_t id)
@@ -92,7 +92,7 @@ public:
     static PlayerState* getLocalPlayer()
     {
         if( local_player_index == 0xFFFF ) {
-            return( &local_player_state);
+            return &local_player_state;
         }
                                                               
         return( &player_lists[ local_player_index ] );
@@ -106,21 +106,21 @@ public:
     static PlayerID getLocalPlayerID()
     {
         if( local_player_index == 0xFFFF ) {
-            return( local_player_state.getPlayerID() );
+            return local_player_state.getPlayerID();
         }
 
-        return( player_lists[ local_player_index ].getPlayerID() );
+        return player_lists[ local_player_index ].getPlayerID();
     }
 
     static uint16_t getLocalPlayerIndex()
     {
-        return( local_player_index );
+        return local_player_index;
     }
 
     static PlayerID getPlayerID(uint16_t player_index )
     {
         assert( player_index < max_players );
-        return( player_lists[ player_index ].getPlayerID() );
+        return player_lists[ player_index ].getPlayerID();
     }
 
     static void resetPlayerStats();

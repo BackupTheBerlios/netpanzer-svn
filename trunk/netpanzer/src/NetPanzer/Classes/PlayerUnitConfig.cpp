@@ -21,20 +21,37 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string.h>
 
-unsigned short UnitGameInfo::unit_point_table[ _MAX_UNIT_TYPES ] = { 2, //manta
-        5, //panther
-        6, //titan
-        5, //stinger
-        1, //humvee,
-        1, //lynx
-        4, //drake
-        4, //bear
-        3, //wolf
-        0,
-        0,
-        0,
-        5, // archer
-                                                                   };
+int
+UnitGameInfo::getUnitPointValue(UnitType unit_type)
+{
+    switch(unit_type) {
+        case _unit_type_valentine:
+            return 2;
+        case _unit_type_leopard:
+            return 5;
+        case _unit_type_abrams:
+            return 6;
+        case _unit_type_hammerhead:
+            return 5;
+        case _unit_type_lynx:
+            return 1;
+        case _unit_type_spahpanzer:
+            return 4;
+        case _unit_type_archer:
+            return 5;
+        case _unit_type_scorpion:
+            return 3;
+        case _unit_type_m109:
+            return 4;
+        case _unit_type_humvee:
+            return 1;
+        default:
+            assert(false);
+    }       
+}
+
+
+
 PlayerUnitConfig::PlayerUnitConfig()
 {
     initialize(10000);

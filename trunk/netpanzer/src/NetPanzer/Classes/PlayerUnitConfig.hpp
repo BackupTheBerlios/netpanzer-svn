@@ -18,18 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PLAYERUNITCONFIG_HPP
 #define _PLAYERUNITCONFIG_HPP
 
+#include <stdint.h>
 #include "UnitTypes.hpp"
 
 class UnitGameInfo
 {
-protected:
-    static unsigned short unit_point_table[ _MAX_UNIT_TYPES ];
-
 public:
-    static inline unsigned short getUnitPointValue( unsigned char unit_type )
-    {
-        return( unit_point_table[ unit_type ] );
-    }
+    int getUnitPointValue(UnitType unit_type);
 };
 
 class PlayerUnitConfig : public UnitGameInfo
@@ -87,7 +82,6 @@ public:
     {
         unit_color = color;
     }
-
 };
 
 

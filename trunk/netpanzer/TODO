@@ -1,13 +1,39 @@
 Next release:
 -after having a full nodelist in A* the server is getting slow
 -make 1024x768 default resolution - ok
--output more stuff in infothread (time until end, flags for players, number of
-    outposts...)
--update server text (no knetpanzerbrowser anymore)
+-update server text (no knetpanzerbrowser anymore) - ok
 -fix infothread always reporting 0 as score
--server status command returns wrong player names (after some
-    connects/disconnects)
+-server status command returns wrong player names (seems to happen after sudden
+        client disconnects)
 -netpanzer fails on win98se
+-when passed in an IP netpanzer should remove a trailing netpanzer:// string so
+ that we can integrate it into browsers.
+-win32 doesn't show time in serverlogs
+-you can't move panzers around on ppc (also often connection errors on ppc:
+        <cypmac> cyp@itouch:~$ netpanzer -c 194.167.156.7
+        <cypmac> open /dev/sequencer: No such device
+        <cypmac> netpanzer: src/NetPanzer/Interfaces/PlayerInterface.hpp:82:
+        static PlayerState* PlayerInterface::getPlayerState(short unsigned int):
+        Assertion `player_index < max_players' failed.
+        <cypmac> Received signal SIGABRT(6)
+        <cypmac> aborting and trying to shutdown.
+        <cypmac> Abandon)
+
+-this resulted in an endless loop in the server
+<fEnIo> Connection lost of Client 64: Read error: Connection timed out.
+<fEnIo> <2004-11-11 03:54:09>'Jaden' has left the game.
+<fEnIo> <2004-11-11 03:54:09>'TryToBeatMe' has left the game.
+<fEnIo> Received malformed disconnection message.
+<fEnIo> <2004-11-11 03:54:09>'an2' has left the game.
+<fEnIo> OnReadStreamServer : Invalid Packet Size 2544
+(from bot log:)
+<fEnIo> query for worldpixmovement outside map (6678,2460)
+<fEnIo> query for worldpixmovement outside map (6684,2500)
+<fEnIo> query for worldpixmovement outside map (224,6662)
+<fEnIo> query for worldpixmovement outside map (2600,6672)
+<fEnIo> query for worldpixmovement outside map (2518,6662)
+<fEnIo> An unexpected exception occured: Send error: Couldn't send all data.
+<fEnIo> Shutdown needed.
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map

@@ -175,28 +175,28 @@ short PlayerState::getLosses() const
     return losses;
 }
 
-void PlayerState::incKills( unsigned short unit_type )
+void PlayerState::incKills(UnitType unit_type)
 {
     if ( stats_locked == true ) return;
     kills++;
-    kill_points += 2 * unit_config.getUnitPointValue( (unsigned char)  unit_type ) ;
+    kill_points += 2 * unit_config.getUnitPointValue(unit_type);
 }
 
-void PlayerState::decKills(unsigned short unit_type)
+void PlayerState::decKills(UnitType unit_type)
 {
     (void) unit_type;
     if ( stats_locked == true ) return;
     kills--;
 }
 
-void PlayerState::incLosses( unsigned short unit_type )
+void PlayerState::incLosses(UnitType unit_type)
 {
     if ( stats_locked == true ) return;
     losses++;
-    loss_points += unit_config.getUnitPointValue( (unsigned char) unit_type );
+    loss_points += unit_config.getUnitPointValue(unit_type);
 }
 
-void PlayerState::decLosses( unsigned short unit_type )
+void PlayerState::decLosses(UnitType unit_type)
 {
     (void) unit_type;
     if ( stats_locked == true ) return;
