@@ -91,13 +91,13 @@ UnitColorView::UnitColorView() : View()
 
 	moveTo(400, 200);
 
-	packedBody.load("units\\pics\\pak\\TitaHNSD.pak");
+	packedBody.load("units/pics/pak/TitaHNSD.pak");
 	packedBody.setFPS(12);
 
-	packedTurret.load("units\\pics\\pak\\TitaTNSD.pak");
+	packedTurret.load("units/pics/pak/TitaTNSD.pak");
 	packedTurret.setFPS(8);
 
-	grassSurface.loadBMP("pics\\grass.bmp");
+	grassSurface.loadBMP("pics/grass.bmp");
 
 	fuckingSurface.create(packedTurret.getPixX(), packedTurret.getPixY(), packedTurret.getPixX(), 1);
 	fuckingSurface.fill(0);

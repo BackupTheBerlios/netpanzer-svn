@@ -105,14 +105,10 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 
 	if (curButton & LMOUSE_BUTTON_MASK)
 	{
-		//LOG_BLOCK(("Button is down"));
-
 		// The button is down.  See if it just got pressed, or if it was pressed
 		// before and is being dragged.
 		if (!(prevButton & LMOUSE_BUTTON_MASK))
 		{
-			//LOG_BLOCK(("Button just got pressed"));
-
 			// The mouse button just got pressed. Remember the initial place
 			// where it got pressed.
 			lMouseDownPos = mousePos;
@@ -125,15 +121,10 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 
 			} else
 			{
-				//LOG_BLOCK(("Not double click"));
-
 				// Not a double click.  See what window we're over
 				lMouseView = mouseView;
 				if (lMouseView != 0)
 				{
-
-					//LOG_BLOCK(("Setting lMouseView"));
-
 					lMouseView->lMouseDown(lMouseView->getScreenToClientPos(mousePos));
 					if (focus != lMouseView)
 					{
@@ -184,8 +175,6 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 			}
 	  	} else
 		{
-			//LOG_BLOCK(("still down"));
-
 			// The mouse was down before and is still down.  Are we performing
 			// and standard window actions?
 
@@ -221,8 +210,6 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 					//		lMouseView->lMouseDown(lMouseView->getScreenToClientPos(mousePos));
 					//	}
 					//}
-
-					//LOG_BLOCK(("Not doing mouse actions - lMouseView=%p, mouseActions=%d", lMouseView, mouseActions));
 
 					// No standard mouse actions.  Tell the window where the mouse
 					// was originally clicked that the mouse is being dragged over
@@ -334,13 +321,6 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 	// of the mouse.
 	//if (focus != 0)
 		//focus->mouseMove(focus->getScreenToClientPos(prevMousePos), focus->getScreenToClientPos(mousePos));
-
-
-	//{
-	//  LOG_BLOCK(("Window stack:"));
-	//	for (View *w = top ; w ; w = w->next)
-	//		LOG(("%s", w->title));
-	//}
 
 	prevButton   = curButton;
 	prevMousePos = mousePos;

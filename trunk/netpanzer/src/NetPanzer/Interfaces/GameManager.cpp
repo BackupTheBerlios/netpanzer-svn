@@ -59,7 +59,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SystemNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
 
-// ** PObject netPanzer Includes
+#include "Log.hpp"
 #include "MouseInterface.hpp"
 #include "KeyboardInterface.hpp"
 #include "KeyBinder.hpp"

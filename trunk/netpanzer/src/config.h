@@ -7,3 +7,5 @@
 #ifdef UNIX
 #define USE_SDL
 #endif
+
+#define DO_LOGGING

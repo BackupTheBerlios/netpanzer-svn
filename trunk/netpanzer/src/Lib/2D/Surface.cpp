@@ -1331,7 +1331,7 @@ void Surface::rotate(int angle)
 		{
 			Surface tempSurface(pix.x, pix.y, stride, 1);
 
-			float angleRadians = -float(angle) / float(DEG_PER_RAD);
+			float angleRadians = -float(angle) / float(180.0 / M_PI);
 			float cosAngle     = cos(angleRadians);
 			float sinAngle     = sin(angleRadians);
 

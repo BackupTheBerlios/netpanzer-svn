@@ -1474,7 +1474,6 @@ void View::addButtonSurfaceSingle(const iXY &pos, Surface &source, const char *t
 void View::addButton(const iXY &pos, const char *name, const char *toolTip,
 											 ITEM_FUNC func)
 {
-	FUNCF(("View::addButton(pos={%d,%d}, name=%s, toolTip=%s, func=%p)", pos.x, pos.y, name, toolTip, func));
 	assert(isValidPtr(this));
 
 	// Grow the list

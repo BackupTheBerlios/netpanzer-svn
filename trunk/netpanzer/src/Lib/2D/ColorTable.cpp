@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include <io.h>
 #endif
+#include "Exception.hpp"
 #include "ColorTable.hpp"
 #include "Palette.hpp"
 #include "UtilInterface.hpp"
@@ -281,6 +282,7 @@ void ColorTable::getDiskName(char *destname, const char *filename) const
 	char tableFilename[256];
 
 	//void _splitpath( const char *path, char *drive, char *dir, char *fname, char *ext );
+	// XXX
 #ifdef WIN32
 	_splitpath(Palette::getName(), 0, 0, paletteFilename, 0);
 	_splitpath(filename, 0, tablePath, 0, 0);
@@ -289,6 +291,8 @@ void ColorTable::getDiskName(char *destname, const char *filename) const
 	// This is dangerous, so make sure the filename can handle the length of the possible
 	// sprintf.
 	sprintf(destname, "%s%s%s%s", tablePath, tableFilename, paletteFilename, extension);
+#else
+	strcpy(destname, filename);
 #endif
 
 	return;
@@ -348,30 +352,29 @@ void ColorTable::loadTable(FILE *fp)
 //---------------------------------------------------------------------------
 void ColorTable::saveTableError(const char *filename) const
 {
-	if (!saveTable(filename))
-	{
-		FUBAR("ERROR: Unable to save %s", filename);
+	try {
+		saveTable(filename);
+	} catch(Exception e) {
+		printf("Exception while saving colortable: '%s'.\n", e.getMessage());
+		FUBAR("Couldn't save color table '%s'.", filename);
 	}
-
 } // end ColorTable::saveTableError
 
 // saveTable
 //---------------------------------------------------------------------------
-bool ColorTable::saveTable(const char *filename) const
+void ColorTable::saveTable(const char *filename) const
 {
 	char strBuf[768];
 
 	getDiskName(strBuf, filename);
 
 	FILE *fp = fopen(strBuf, "wb");
-	if (fp == 0)	{ return false;	}
+	if (fp == 0)
+		throw Exception("couldn't save colortable to '%s'.", filename);	
 
 	saveTable(fp);
 
 	fclose(fp);
-
-	return true;
-
 } // end ColorTable::saveTable
 
 // saveTable

@@ -4,6 +4,10 @@
  is hard :)
 -we still need a big commit to replace all \\ in paths with /
 -added a fastly hacked configure script (no autoconf yet)
+-randomly replaced some \\ in pathnames with /
+-More news on my crusade against codewiz.hpp:
+  *removed some unused stuff from codewiz.hpp and terminate.cpp
+  *added new but alot simpler logging functions to Log.hpp
 
 ------------
 prior changes (not complete)

@@ -68,7 +68,7 @@ public:
 	void loadTable(FILE *fp);
 
 	void saveTableError(const char *filename) const;
-	bool saveTable(const char *filename) const;
+	void saveTable(const char *filename) const;
 	void saveTable(FILE *fp) const;
 
 	bool isValid(const char *filename) const;

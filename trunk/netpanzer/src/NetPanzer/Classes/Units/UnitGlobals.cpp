@@ -145,39 +145,38 @@ void colorMapGray(PackedSurface &source, PackedSurface &dest, ColorTable &colorT
 }
 
 void LoadUnitSurfaces( void )
- {
+{
+  	gAbramsTurret.load( "units/pics/pak/TitaTNSD.pak" );
+	gAbramsBody.load( "units/pics/pak/TitaHNSD.pak" );
 
-  gAbramsTurret.load( "units\\pics\\pak\\TitaTNSD.pak" );
-  gAbramsBody.load( "units\\pics\\pak\\TitaHNSD.pak" );
+  gLeopardTurret.load( "units/pics/pak/PantTNSD.pak" );
+  gLeopardBody.load( "units/pics/pak/PantHNSD.pak" );
 
-  gLeopardTurret.load( "units\\pics\\pak\\PantTNSD.pak" );
-  gLeopardBody.load( "units\\pics\\pak\\PantHNSD.pak" );
+  gValentineTurret.load( "units/pics/pak/MantTNSD.pak" );
+  gValentineBody.load( "units/pics/pak/MantHNSD.pak" );
 
-  gValentineTurret.load( "units\\pics\\pak\\MantTNSD.pak" );
-  gValentineBody.load( "units\\pics\\pak\\MantHNSD.pak" );
+  gHammerheadTurret.load( "units/pics/pak/StinTNSD.pak" );
+  gHammerheadBody.load( "units/pics/pak/StinHNSD.pak" );
 
-  gHammerheadTurret.load( "units\\pics\\pak\\StinTNSD.pak" );
-  gHammerheadBody.load( "units\\pics\\pak\\StinHNSD.pak" );
+  //gHumveeBody.load( "units/pics/pak/ScouHNSD.pak" );
 
-  //gHumveeBody.load( "units\\pics\\pak\\ScouHNSD.pak" );
+  gScorpionTurret.load( "units/pics/pak/WolfTNSD.pak" );
+  gScorpionBody.load( "units/pics/pak/WolfHNSD.pak" );
 
-  gScorpionTurret.load( "units\\pics\\pak\\WolfTNSD.pak" );
-  gScorpionBody.load( "units\\pics\\pak\\WolfHNSD.pak" );
+  gLynxTurret.load( "units/pics/pak/BobcTNSD.pak" );
+  gLynxBody.load( "units/pics/pak/BobcHNSD.pak" );
 
-  gLynxTurret.load( "units\\pics\\pak\\BobcTNSD.pak" );
-  gLynxBody.load( "units\\pics\\pak\\BobcHNSD.pak" );
+  gM109Turret.load( "units/pics/pak/DrakTNSD.pak" );
+  gM109Body.load( "units/pics/pak/DrakHNSD.pak" );
 
-  gM109Turret.load( "units\\pics\\pak\\DrakTNSD.pak" );
-  gM109Body.load( "units\\pics\\pak\\DrakHNSD.pak" );
+  gBearTurret.load( "units/pics/pak/BearTNSD.pak" );
+  gBearBody.load( "units/pics/pak/BearHNSD.pak" );  
 
-  gBearTurret.load( "units\\pics\\pak\\BearTNSD.pak" );
-  gBearBody.load( "units\\pics\\pak\\BearHNSD.pak" );  
+  gSpahPanzerTurret.load( "units/pics/pak/SpahTNSD.pak" );
+  gSpahPanzerBody.load( "units/pics/pak/SpahHNSD.pak" );  
 
-  gSpahPanzerTurret.load( "units\\pics\\pak\\SpahTNSD.pak" );
-  gSpahPanzerBody.load( "units\\pics\\pak\\SpahHNSD.pak" );  
-
-  gArcherTurret.load( "units\\pics\\pak\\ArchTNSD.pak" );
-  gArcherBody.load( "units\\pics\\pak\\ArchHNSD.pak" );  
+  gArcherTurret.load( "units/pics/pak/ArchTNSD.pak" );
+  gArcherBody.load( "units/pics/pak/ArchHNSD.pak" );  
  
 /*
 if (  gAbramsTurret.getFrameCount() < 36) assert( false ); 
@@ -208,7 +207,7 @@ if (  gScorpionBody.getFrameCount() < 36) assert( false );
 */
 
 #ifdef _GRAY_MAPPED_UNITS	
-    Palette::init("wads\\netp.act");
+    Palette::init("wads/netp.act");
 	ColorTable gray256;
 
 	float grayPercent = 1.25f;
@@ -260,37 +259,37 @@ if (  gScorpionBody.getFrameCount() < 36) assert( false );
 #else 
   //********** DARK BLUE UNITS ************
 
-  gAbramsTurretDarkBlue.load( "units\\pics\\pak\\TitaTNSD.pak" );
-  gAbramsBodyDarkBlue.load( "units\\pics\\pak\\TitaHNSD.pak" );
+  gAbramsTurretDarkBlue.load( "units/pics/pak/TitaTNSD.pak" );
+  gAbramsBodyDarkBlue.load( "units/pics/pak/TitaHNSD.pak" );
 
-  gLeopardTurretDarkBlue.load( "units\\pics\\pak\\PantTNSD.pak" );
-  gLeopardBodyDarkBlue.load( "units\\pics\\pak\\PantHNSD.pak" );
+  gLeopardTurretDarkBlue.load( "units/pics/pak/PantTNSD.pak" );
+  gLeopardBodyDarkBlue.load( "units/pics/pak/PantHNSD.pak" );
 
-  gValentineTurretDarkBlue.load( "units\\pics\\pak\\MantTNSD.pak" );
-  gValentineBodyDarkBlue.load( "units\\pics\\pak\\MantHNSD.pak" );
+  gValentineTurretDarkBlue.load( "units/pics/pak/MantTNSD.pak" );
+  gValentineBodyDarkBlue.load( "units/pics/pak/MantHNSD.pak" );
 
-  gHammerheadTurretDarkBlue.load( "units\\pics\\pak\\StinTNSD.pak" );
-  gHammerheadBodyDarkBlue.load( "units\\pics\\pak\\StinHNSD.pak" );
+  gHammerheadTurretDarkBlue.load( "units/pics/pak/StinTNSD.pak" );
+  gHammerheadBodyDarkBlue.load( "units/pics/pak/StinHNSD.pak" );
 
-  //gHumveeBodyDarkBlue.load( "units\\pics\\pak\\ScouHNSD.pak" );
+  //gHumveeBodyDarkBlue.load( "units/pics/pak/ScouHNSD.pak" );
 
-  gScorpionTurretDarkBlue.load( "units\\pics\\pak\\WolfTNSD.pak" );
-  gScorpionBodyDarkBlue.load( "units\\pics\\pak\\WolfHNSD.pak" );
+  gScorpionTurretDarkBlue.load( "units/pics/pak/WolfTNSD.pak" );
+  gScorpionBodyDarkBlue.load( "units/pics/pak/WolfHNSD.pak" );
 
-  gLynxTurretDarkBlue.load( "units\\pics\\pak\\BobcTNSD.pak" );
-  gLynxBodyDarkBlue.load( "units\\pics\\pak\\BobcHNSD.pak" );
+  gLynxTurretDarkBlue.load( "units/pics/pak/BobcTNSD.pak" );
+  gLynxBodyDarkBlue.load( "units/pics/pak/BobcHNSD.pak" );
 
-  gM109TurretDarkBlue.load( "units\\pics\\pak\\DrakTNSD.pak" );
-  gM109BodyDarkBlue.load( "units\\pics\\pak\\DrakHNSD.pak" );
+  gM109TurretDarkBlue.load( "units/pics/pak/DrakTNSD.pak" );
+  gM109BodyDarkBlue.load( "units/pics/pak/DrakHNSD.pak" );
 
-  gBearTurretDarkBlue.load( "units\\pics\\pak\\BearTNSD.pak" );
-  gBearBodyDarkBlue.load( "units\\pics\\pak\\BearHNSD.pak" );  
+  gBearTurretDarkBlue.load( "units/pics/pak/BearTNSD.pak" );
+  gBearBodyDarkBlue.load( "units/pics/pak/BearHNSD.pak" );  
 
-  gSpahPanzerTurretDarkBlue.load( "units\\pics\\pak\\SpahTNSD.pak" );
-  gSpahPanzerBodyDarkBlue.load( "units\\pics\\pak\\SpahHNSD.pak" );  
+  gSpahPanzerTurretDarkBlue.load( "units/pics/pak/SpahTNSD.pak" );
+  gSpahPanzerBodyDarkBlue.load( "units/pics/pak/SpahHNSD.pak" );  
 
-  gArcherTurretDarkBlue.load( "units\\pics\\pak\\ArchTNSD.pak" );
-  gArcherBodyDarkBlue.load( "units\\pics\\pak\\ArchHNSD.pak" );  
+  gArcherTurretDarkBlue.load( "units/pics/pak/ArchTNSD.pak" );
+  gArcherBodyDarkBlue.load( "units/pics/pak/ArchHNSD.pak" );  
 
 #endif 
 
@@ -325,35 +324,35 @@ if (  gScorpionBodyDarkBlue.getFrameCount() < 36) assert( false );
  
 	//********** SHADOWS ************
 
-	gAbramsTurretShadow.load( "units\\pics\\pak\\TitaTSSD.pak" );
-	gAbramsBodyShadow.load( "units\\pics\\pak\\TitaHSSD.pak" );
+	gAbramsTurretShadow.load( "units/pics/pak/TitaTSSD.pak" );
+	gAbramsBodyShadow.load( "units/pics/pak/TitaHSSD.pak" );
 
-	gLeopardTurretShadow.load( "units\\pics\\pak\\PantTSSD.pak" );
-	gLeopardBodyShadow.load( "units\\pics\\pak\\PantHSSD.pak" );
+	gLeopardTurretShadow.load( "units/pics/pak/PantTSSD.pak" );
+	gLeopardBodyShadow.load( "units/pics/pak/PantHSSD.pak" );
 
-	gValentineTurretShadow.load( "units\\pics\\pak\\MantTSSD.pak" );
-	gValentineBodyShadow.load( "units\\pics\\pak\\MantHSSD.pak" );
+	gValentineTurretShadow.load( "units/pics/pak/MantTSSD.pak" );
+	gValentineBodyShadow.load( "units/pics/pak/MantHSSD.pak" );
 
-	gHammerheadTurretShadow.load( "units\\pics\\pak\\StinTSSD.pak" );
-	gHammerheadBodyShadow.load( "units\\pics\\pak\\StinHSSD.pak" );
+	gHammerheadTurretShadow.load( "units/pics/pak/StinTSSD.pak" );
+	gHammerheadBodyShadow.load( "units/pics/pak/StinHSSD.pak" );
 
-	//gHumveeBodyShadow.load( "units\\pics\\pak\\ScouHSSD.pak" );
+	//gHumveeBodyShadow.load( "units/pics/pak/ScouHSSD.pak" );
 
-	gLynxTurretShadow.load( "units\\pics\\pak\\BobcTSSD.pak" );
-	gLynxBodyShadow.load( "units\\pics\\pak\\BobcHSSD.pak" );
+	gLynxTurretShadow.load( "units/pics/pak/BobcTSSD.pak" );
+	gLynxBodyShadow.load( "units/pics/pak/BobcHSSD.pak" );
 
-	gM109TurretShadow.load( "units\\pics\\pak\\DrakTSSD.pak" );
-	gM109BodyShadow.load( "units\\pics\\pak\\DrakHSSD.pak" );
+	gM109TurretShadow.load( "units/pics/pak/DrakTSSD.pak" );
+	gM109BodyShadow.load( "units/pics/pak/DrakHSSD.pak" );
 
-	gSpahPanzerTurretShadow.load( "units\\pics\\pak\\SpahTSSD.pak" );
-	gSpahPanzerBodyShadow.load( "units\\pics\\pak\\SpahHSSD.pak" );
+	gSpahPanzerTurretShadow.load( "units/pics/pak/SpahTSSD.pak" );
+	gSpahPanzerBodyShadow.load( "units/pics/pak/SpahHSSD.pak" );
 
-	gBearTurretShadow.load( "units\\pics\\pak\\BearTSSD.pak" );
-	gBearBodyShadow.load( "units\\pics\\pak\\BearHSSD.pak" );
+	gBearTurretShadow.load( "units/pics/pak/BearTSSD.pak" );
+	gBearBodyShadow.load( "units/pics/pak/BearHSSD.pak" );
 
-	gScorpionTurretShadow.load( "units\\pics\\pak\\WolfTSSD.pak" );
-	gScorpionBodyShadow.load( "units\\pics\\pak\\WolfHSSD.pak" );
+	gScorpionTurretShadow.load( "units/pics/pak/WolfTSSD.pak" );
+	gScorpionBodyShadow.load( "units/pics/pak/WolfHSSD.pak" );
 
-	gArcherTurretShadow.load( "units\\pics\\pak\\ArchTSSD.pak" );
-	gArcherBodyShadow.load( "units\\pics\\pak\\ArchHSSD.pak" );
+	gArcherTurretShadow.load( "units/pics/pak/ArchTSSD.pak" );
+	gArcherBodyShadow.load( "units/pics/pak/ArchHSSD.pak" );
 }

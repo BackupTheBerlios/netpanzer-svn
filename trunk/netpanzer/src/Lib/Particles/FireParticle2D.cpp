@@ -34,8 +34,6 @@ void FireParticle2D::reset()
 //---------------------------------------------------------------------------
 void FireParticle2D::sim()
 {
-	FUNC("FireParticle2D::sim");
-
 	//cWindParticle2D::sim();
 
 	totalTime += TimerInterface::getTimeSlice();
@@ -54,8 +52,6 @@ void FireParticle2D::sim()
 //---------------------------------------------------------------------------
 void FireParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 {
-	FUNC("FireParticle2D::draw");
-
 	//if (!isAlive) return;
 	dest.fillRect(100, 100, 110, 110, Color::red);
 

@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _BOUNDBOX_HPP
 #define _BOUNDBOX_HPP
 
+#include <assert.h>
 #include "Point.hpp"
 
 class BoundBox : public Recti

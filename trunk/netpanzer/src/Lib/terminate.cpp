@@ -46,12 +46,6 @@ typedef struct {
 } CLEANUP_FUNC;
 
 //***************************************************************************
-// local prototypes
-//***************************************************************************
-
-static void atexit_cleanup();
-
-//***************************************************************************
 // local data
 //***************************************************************************
 
@@ -162,30 +156,3 @@ void vFUBAR(const char *msg, va_list ap) {
 	vterm(255, true, msg, ap);
 }
 
-//---------------------------------------------------------------------------
-void _addCleanupFunc(void (*func)(), bool doEvenOnFubed,
-	const char *sourceFile, unsigned lineNumber) {
-
-	FUNCF(("_addCleanupFunc(doEvenOnFubed=%d, sourceFile=%s, lineNumber=%u)", doEvenOnFubed, sourceFile, lineNumber));
-	static bool initted = false;
-	if (!initted) {
-		if (atexit(atexit_cleanup))
-			FUBAR("Cannot register cleanup function with atexit");
-		initted = true;
-	}
-	if (numCleanupFuncs >= MAX_CLEANUP_FUNCS) {
-		FUBAR("Attempted to add more than %u cleanup functions in %s, line %u",
-			MAX_CLEANUP_FUNCS, sourceFile, lineNumber);
-	}
-	cleanupFunc[numCleanupFuncs].doEvenOnFubed = doEvenOnFubed;
-	cleanupFunc[numCleanupFuncs].func          = func;
-	++numCleanupFuncs;
-}
-
-//***************************************************************************
-// local code
-//***************************************************************************
-
-void atexit_cleanup() {
-	cleanup(false);
-}

@@ -312,34 +312,34 @@ UnitProfile UnitProfileInterface::profile_table[ _MAX_UNIT_TYPES ];
 
 void UnitProfileInterface::loadUnitProfiles( void )
  {
-  read_vehicle_profile( "units\\profiles\\Titan.pfl", 
+  read_vehicle_profile( "units/profiles/Titan.pfl", 
                         &profile_table[ _unit_type_abrams ]  );
 
-  read_vehicle_profile( "units\\profiles\\Manta.pfl", 
+  read_vehicle_profile( "units/profiles/Manta.pfl", 
                         &profile_table[ _unit_type_valentine ]  );
 
-  read_vehicle_profile( "units\\profiles\\Panther1.pfl", 
+  read_vehicle_profile( "units/profiles/Panther1.pfl", 
                         &profile_table[ _unit_type_leopard ]  );
 
-  read_vehicle_profile( "units\\profiles\\Stinger.pfl", 
+  read_vehicle_profile( "units/profiles/Stinger.pfl", 
                         &profile_table[ _unit_type_hammerhead ]  );
 
-  read_vehicle_profile( "units\\profiles\\SPanzer.pfl", 
+  read_vehicle_profile( "units/profiles/SPanzer.pfl", 
                         &profile_table[ _unit_type_humvee ]  );
 
-  read_vehicle_profile( "units\\profiles\\Bobcat.pfl", 
+  read_vehicle_profile( "units/profiles/Bobcat.pfl", 
                         &profile_table[ _unit_type_lynx ]  );
 
-  read_vehicle_profile( "units\\profiles\\Wolf.pfl", 
+  read_vehicle_profile( "units/profiles/Wolf.pfl", 
                         &profile_table[ _unit_type_scorpion ]  );
 
-  read_vehicle_profile( "units\\profiles\\Bear.pfl", 
+  read_vehicle_profile( "units/profiles/Bear.pfl", 
                         &profile_table[ _unit_type_spahpanzer ]  );
 
-  read_vehicle_profile( "units\\profiles\\Drake.pfl", 
+  read_vehicle_profile( "units/profiles/Drake.pfl", 
                         &profile_table[ _unit_type_m109 ]  );
 
-  read_vehicle_profile( "units\\profiles\\Archer.pfl", 
+  read_vehicle_profile( "units/profiles/Archer.pfl", 
                         &profile_table[ _unit_type_archer ]  );
 
  }

@@ -16,10 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
+#include "Log.hpp"
 #include "NetPacketQueues.hpp"
 #include "codewiz.hpp"
 #include "ConsoleInterface.hpp"
-
 
 #define _DEFAULT_WINDOW_TIME     (0.15) // in (seconds) 150ms
 #define _WINDOW_ESTIMATE_WEIGHT  (0.25) // 0 <= weight <= 1
