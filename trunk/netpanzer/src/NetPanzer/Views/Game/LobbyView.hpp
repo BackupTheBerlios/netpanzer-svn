@@ -18,19 +18,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __LobbyView_hpp__
 #define __LobbyView_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 #include "View.hpp"
 #include "Surface.hpp"
-
 
 //---------------------------------------------------------------------------
 class LobbyView : public View
 {
+private:
+	int currentline;
+
 protected:
 	virtual void loadBackgroundSurface();
 

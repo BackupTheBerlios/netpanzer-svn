@@ -1547,7 +1547,7 @@ void GameManager::hostMultiPlayerGame()
 // ******************************************************************
 
 void GameManager::joinMultiPlayerGame()
- {
+{
   setNetPanzerGameOptions();
   //reinitializeGameLogic();
   NetworkState::setNetworkStatus( _network_state_client );
@@ -1573,7 +1573,7 @@ void GameManager::joinMultiPlayerGame()
 
   ClientConnectDaemon::startConnectionProcess();
   sound->playTankIdle();
- }
+}
 
 // ******************************************************************
 

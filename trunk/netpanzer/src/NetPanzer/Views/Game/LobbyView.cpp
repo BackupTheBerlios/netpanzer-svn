@@ -36,7 +36,7 @@ static void bAbort()
 
 // LobbyView
 //---------------------------------------------------------------------------
-LobbyView::LobbyView() : View()
+LobbyView::LobbyView() : View(), currentline(0)
 {
 } // end LobbyView::LobbyView
 
@@ -64,6 +64,7 @@ void LobbyView::init()
 
 	addButtonCenterText(iXY(628 - 60, 302 - 15), 60, "Abort", "Cancel the joining of this game.", bAbort);
 
+	currentline = 0;
 } // end LobbyView::init
 
 // doDraw
@@ -92,11 +93,12 @@ void LobbyView::doDraw(const Surface &viewArea, const Surface &clientArea)
 //---------------------------------------------------------------------------
 void LobbyView::update(const char *text)
 {
-	int yOffset = background.getPix().y-CHAR_YPIX - 1;
+	//int yOffset = background.getPix().y-CHAR_YPIX - 1;
+	int yOffset = CHAR_YPIX * currentline;
 
 	// Clear the area for the text and draw the new text.
 	background.fillRect(0, yOffset, background.getPix().x, yOffset + CHAR_YPIX, Color::black);
-	background.bltString(0, background.getPix().y - CHAR_YPIX - 1, text, Color::white);
+	background.bltString(0, yOffset, text, Color::white);
 
 } // end LobbyView::update
 
@@ -107,12 +109,15 @@ void LobbyView::update(const char *text)
 //---------------------------------------------------------------------------
 void LobbyView::scroll()
 {
-	Surface tempSurface;
-	tempSurface.copy(background);
+	if(currentline * CHAR_YPIX > background.getPix().y - CHAR_YPIX)
+	{
+		Surface tempSurface;
+		tempSurface.copy(background);
 
-	// Move the current text up by the height of the app font.
-	tempSurface.blt(background, 0, -CHAR_YPIX - 1);
-
+		// Move the current text up by the height of the app font.
+		tempSurface.blt(background, CHAR_YPIX, 0);
+		currentline--;
+	}
 } // end LobbyView::scroll
 
 // close

@@ -1,6 +1,8 @@
 15-Sep-2003 by Matthias Braun
 -removed the GetConnectionTypeView menu. We're only using tcp/ip.
 -made the Join view working again
+-made lobbyview scrolling topdown
+-made the app report connection errors
 
 14-Sep-2003 by Ivo Danihelka
 -converted sdlsound to use physfs, Mix_LoadMUS_RW is not used yet
