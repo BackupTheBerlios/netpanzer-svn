@@ -125,24 +125,20 @@ void UnitInterface::reset()
 
 void UnitInterface::sendMessage(UnitMessage *message)
 {
-    UnitBase *unit;
-    // ** NOTE: INCOMPLETE
+    if (message->isFlagged(_umesg_flag_unique)) {
+        UnitBase* unit = getUnit(message->unit_id);
+        if(unit == 0)
+            return;
 
-    if ( message->isFlagged( _umesg_flag_unique ) ) {
-        unit = getUnit( message->unit_id );
-
-        if ( unit != 0 ) {
-            unit->processMessage( message );
-        }
-    } // ** if _umesg_flag_unique
-    else if (  message->isFlagged( _umesg_flag_broadcast ) ) {
+        unit->processMessage(message);
+    } else if (message->isFlagged( _umesg_flag_broadcast) ) {
         for(Units::iterator i = units.begin(); i != units.end(); ++i) {
             UnitBase* unit = i->second;
             unit->processMessage(message);
         }
-    } else if ( message->isFlagged( _umesg_flag_manager_request ) ) {
-  	processManagerMessage( message );
-    } // ** if _umesg_flag_manager_request
+    } else if (message->isFlagged( _umesg_flag_manager_request) ) {
+  	processManagerMessage(message);
+    }
 }
 
 // ******************************************************************
@@ -634,7 +630,7 @@ unsigned char UnitInterface::queryUnitLocationStatus(iXY loc)
 
 // ******************************************************************
 
-bool UnitInterface::queryUnitAtMapLoc( iXY map_loc, UnitID *queary_unit_id )
+bool UnitInterface::queryUnitAtMapLoc(iXY map_loc, UnitID *queary_unit_id)
 {
     iXY unit_map_loc;
 
@@ -647,7 +643,7 @@ bool UnitInterface::queryUnitAtMapLoc( iXY map_loc, UnitID *queary_unit_id )
             *queary_unit_id = unit->id;
             return true;
         }
-    } // ** for
+    }
 
     return false;
 }

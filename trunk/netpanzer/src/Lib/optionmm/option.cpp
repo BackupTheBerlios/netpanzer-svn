@@ -1,5 +1,5 @@
 //
-// $Id: option.cpp,v 1.3 2004/06/30 13:16:18 matzebraun Exp $
+// $Id: option.cpp,v 1.4 2004/10/26 20:44:09 matzebraun Exp $
 //
 //  option::option
 //  Copyright (C) 2002 Christian Holm Christensen <cholm@nbi.dk>
@@ -23,6 +23,7 @@
     @author Christian Holm
     @date   Sat Dec 28 19:10:36 2002
     @brief  Command line option  */
+#include <config.h>
 
 #ifndef OPTIONMM_option
 #include "option.hpp"

@@ -1,5 +1,5 @@
 //
-// $Id: command_line.cpp,v 1.2 2003/09/16 20:16:11 fidlej Exp $
+// $Id: command_line.cpp,v 1.3 2004/10/26 20:44:09 matzebraun Exp $
 //
 //  option::command_line
 //  Copyright (C) 2002 Christian Holm Christensen <cholm@nbi.dk>
@@ -23,6 +23,7 @@
     @author Christian Holm
     @date   Sat Dec 28 19:02:59 2002
     @brief  Command line parser */
+#include <config.h>
 
 #ifndef OPTIONMM_command_line
 #include "command_line.hpp"

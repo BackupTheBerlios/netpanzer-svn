@@ -47,10 +47,10 @@ PowerUp::PowerUp(iXY map_loc, int type)
     powerup_state.life_cycle_state = _power_up_lifecycle_state_active;
 }
 
-bool PowerUp::isPowerUpHit( UnitID *unit_id )
+bool PowerUp::isPowerUpHit(UnitID *unit_id)
 {
-    if( UnitBlackBoard::unitOccupiesLoc( powerup_state.map_loc ) == true ) {
-        if( UnitInterface::queryUnitAtMapLoc( powerup_state.map_loc, unit_id ) == true ) {
+    if(UnitBlackBoard::unitOccupiesLoc(powerup_state.map_loc) == true) {
+        if( UnitInterface::queryUnitAtMapLoc(powerup_state.map_loc, unit_id) == true) {
             return true;
         }
     }
