@@ -19,14 +19,8 @@ AUTOFILES="autogen.sh configure.ac configure config.h.in `find mk/autoconf/ -nam
 JAMFILES="Jamrules Jamconfig.in `find mk/jam -name "*.jam"`"
 ICONS=*.png
 TEXTS="COPYING README TODO ChangeLog"
-
 SOURCES="`find src -name "*.cpp" -o -name "*.hpp" -o -name "Jamfile"`"
-PICS="`find pics -name "*.bmp" -o -name "*.raw" -o -name "*.til" -o -name "*.pak" -o -name "Jamfile"`"
-WADS="`find wads -name "*.act" -o -name "*.tls" -o -name "Jamfile"`"
-POWERUPS="`find powerups -name "*.pak" -o -name "Jamfile"`"
-UNITS="`find units -name "*.pfl" -o -name "*.pak" -o -name "Jamfile"`"
-SOUND="`find sound -name "*.wav" -o -name "Jamfile"`"
-MAPS="`find maps -name "*.npm" -o -name "*.opt" -o -name "*.spn" -o -name "Jamfile"`"
+DOCS="docs/*.[1-9] docs/Jamfile"
 
 echo "*** Creating Sourcepackage"
 mkdir -p $SOURCERELEASE
@@ -35,6 +29,7 @@ cat > $SOURCERELEASE/Jamfile << __END__
 SubDir TOP ;
 
 SubInclude TOP src ;
+SubInclude TOP docs ;
 __END__
 
 cp -p --parents $AUTOFILES $SOURCERELEASE
@@ -42,6 +37,7 @@ cp -p --parents $JAMFILES $SOURCERELEASE
 cp -p --parents $TEXTS $SOURCERELEASE
 cp -p --parents $SOURCES $SOURCERELEASE
 cp -p --parents $ICONS $SOURCERELEASE
+cp -p --parents $DOCS $SOURCERELEASE
 
 echo "*** Packing source"
 cd release
@@ -60,6 +56,7 @@ SubInclude TOP sound ;
 SubInclude TOP powerups ;
 SubInclude TOP units ;
 SubInclude TOP wads ;
+SubInclude TOP fonts ;
 __END__
 
 find pics \( -name "*.bmp" -o -name "*.raw" -o -name "*.til" -o -name "*.pak" -o  -name "Jamfile" \) -exec cp -p --parents {} $DATARELEASE ';'
@@ -68,6 +65,7 @@ find powerups \( -name "*.pak" -o -name "Jamfile" \) -exec cp -p --parents {} $D
 find units \( -name "*.pfl" -o -name "*.pak" -o -name "Jamfile" \) -exec cp -p --parents {} $DATARELEASE ';'
 find sound \( -name "*.wav" -o -name "Jamfile" \) -exec cp -p --parents {} $DATARELEASE ';'
 find maps \( -name "*.npm" -o -name "*.opt" -o -name "*.spn" -o -name "Jamfile" \) -exec cp -p --parents {} $DATARELEASE ';'
+find fonts \( -name "*.pcf" \) -exec cp -p --parents {} $DATARELEASE ;
 cp -p --parents $AUTOFILES $DATARELEASE
 cp -p --parents $JAMFILES $DATARELEASE
 cp -p --parents $TEXTS $DATARELEASE
