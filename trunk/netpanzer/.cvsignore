@@ -12,6 +12,7 @@ Makefile.in
 Makefile
 netpanzer
 netpanzeredit
+netpanzerbrowser
 Jamconfig
 Jamconfig.in
 out
