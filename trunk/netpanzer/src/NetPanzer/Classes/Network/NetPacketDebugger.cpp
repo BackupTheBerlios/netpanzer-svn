@@ -95,8 +95,8 @@ void NetPacketDebugger::logMultiMessage(std::ostream& log,
     for(int i=0;i<mmessage->message_count; i++) {
         NetMessage* submessage = (NetMessage*) dataptr;
         logMessage("  M", submessage);
-        dataptr += submessage->size + 1;
-        if(dataptr - mmessage->data >= message->size) {
+        dataptr += submessage->getsize() + 1;
+        if(dataptr - mmessage->data >= message->getsize()) {
             assert("Incorrect multi messge" == 0);
         }
     }

@@ -46,7 +46,7 @@ void NetMessageEncoder::resetEncoder( void )
 
 void NetMessageEncoder::encodeMessage(NetMessage *message, unsigned short size)
 {
-    message->size = size;
+    message->setsize(size);
     if( ( (encode_message_index + size + sizeof(SubPacketType)) > _MULTI_PACKET_LIMIT )
       ) {
         encode_message.message_size = (unsigned short) encode_message_index;
@@ -75,7 +75,7 @@ void NetMessageEncoder::encodeMessage(NetMessage *message, unsigned short size)
 
 bool NetMessageEncoder::encodeMessage( NetMessage *message, unsigned short size, MultiMessage **encoded_message )
 {
-    message->size = size;
+    message->setsize(size);
     
     if( ( (encode_message_index + size + sizeof(SubPacketType)) > _MULTI_PACKET_LIMIT )
       ) {

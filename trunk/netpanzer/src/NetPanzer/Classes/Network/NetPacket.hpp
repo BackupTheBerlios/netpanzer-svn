@@ -64,6 +64,11 @@ public:
         return( sizeof( NetMessage ) );
     }
 
+    uint16_t getsize(void)
+    {
+        return ltoh16(size);
+    }
+
     void setsize(uint16_t newsize)
     {
         size = htol16(newsize);
