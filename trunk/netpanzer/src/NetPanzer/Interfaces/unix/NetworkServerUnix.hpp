@@ -31,7 +31,7 @@ public:
     virtual ~NetworkServerUnix();
 
     virtual void openSession();
-    virtual void hostSession();
+    virtual void hostSession(bool loopback = false);
     virtual void closeSession();
 
     virtual void sendMessage(NetMessage *message, size_t size);

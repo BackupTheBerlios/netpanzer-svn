@@ -67,8 +67,8 @@ void ServerMessageRouter::processTerminalPacket(const NetPacket* packet)
             break;
         }
         default:
-            LOGGER.warning("unnown Terminal Message (id %d)",
-                    message->message_id);
+            LOGGER.warning("unnown Terminal Message (id %d, player %u)",
+                    message->message_id, packet->fromID);
     }
 }
 

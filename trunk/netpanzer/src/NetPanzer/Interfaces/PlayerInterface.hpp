@@ -25,9 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class PlayerInterface
 {
-private:
-    static PlayerState local_player_state;
-
 protected:
     static PlayerState *player_lists;
     static unsigned short max_players;
@@ -59,9 +56,8 @@ public:
 
     static void clearAlliance( unsigned short by_player, unsigned short with_player );
 
-    static bool isAllied( const PlayerID& player, const PlayerID& with_player );
-
-    static bool isAllied( unsigned short player, unsigned short with_player );
+    static bool isAllied(const PlayerID& player, const PlayerID& with_player);
+    static bool isAllied(unsigned short player, unsigned short with_player);
 
     static void lockPlayerStats();
     static void unlockPlayerStats();
@@ -93,11 +89,7 @@ public:
 
     static PlayerState* getLocalPlayer()
     {
-        if( local_player_index == 0xFFFF ) {
-            return &local_player_state;
-        }
-                                                              
-        return( &player_lists[ local_player_index ] );
+        return &player_lists[ local_player_index ];
     }
     
     static PlayerState * getLocalPlayerState()
@@ -107,10 +99,6 @@ public:
 
     static PlayerID getLocalPlayerID()
     {
-        if( local_player_index == 0xFFFF ) {
-            return local_player_state.getPlayerID();
-        }
-
         return player_lists[ local_player_index ].getPlayerID();
     }
 

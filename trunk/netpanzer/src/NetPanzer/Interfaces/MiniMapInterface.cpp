@@ -159,7 +159,7 @@ void MiniMapInterface::annotateObjectives( Surface &map_surface )
             break;
 
         case _objective_disposition_enemy :
-            color = PlayerInterface::getPlayerState( obj_state->occupying_player )->getColor();
+            color = obj_state->occupying_player->getColor();
             break;
         } // ** switch
 

@@ -40,28 +40,67 @@ private:
     int32_t type;
 
 public:
-    PowerUpCreateMesg();
-    void set(iXY map_loc, int ID, int type);
-    int32_t getLocX(void);
-    int32_t getLocY(void);
-    int32_t getID(void);
-    int32_t getType(void);
+    PowerUpCreateMesg()
+    {
+        message_class = _net_message_class_powerup;
+        message_id = _net_message_id_powerup_create;
+    }
+    void set(iXY map_loc, int ID, int type)
+    {
+        this->map_loc_x = htol32(map_loc.x);
+        this->map_loc_y = htol32(map_loc.y);
+        this->ID = htol32(ID);                      
+        this->type = htol32(type);
+    }
+    int32_t getLocX() const
+    {
+        return ltoh32(map_loc_x);
+    }
+    int32_t getLocY() const
+    {
+        return ltoh32(map_loc_y);
+    }
+    int32_t getID() const
+    {
+        return ltoh32(ID);
+    }
+    int32_t getType() const
+    {
+        return ltoh32(type);
+    }
 } __attribute__((packed));
 
 class PowerUpHitMesg : public NetMessage
 {
 private:
     int32_t  ID;
-    uint16_t unit_id;
     uint16_t player_id;
     int32_t  unit_powerup_type;
 
 public:
-    PowerUpHitMesg();
-    void set(int ID, UnitID unit_id, PlayerID player_id, int type=0);
-    int32_t getID(void);
-    uint16_t getPlayerID(void);
-    int32_t getUnitPowerupType(void);
+    PowerUpHitMesg()
+    {
+        message_class = _net_message_class_powerup;
+        message_id = _net_message_id_powerup_hit;
+    }
+    void set(int ID, uint16_t player_id, int type=0)
+    {
+        this->ID = htol32(ID);
+        this->player_id = htol16(player_id);
+        this->unit_powerup_type = htol32(type);
+    }
+    int32_t getID() const
+    {
+        return ltoh32(ID);
+    }
+    uint16_t getPlayerID() const
+    {
+        return ltoh16(player_id);
+    }
+    int32_t getUnitPowerupType() const
+    {
+        return ltoh32(unit_powerup_type);
+    }
 } __attribute__((packed));
 
 #ifdef MSVC

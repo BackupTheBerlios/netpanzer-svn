@@ -50,31 +50,27 @@ EnemyRadarPowerUp::EnemyRadarPowerUp(iXY map_loc, int type)
 
 }
 
-
-void EnemyRadarPowerUp::setRadar(UnitID &unit_id)
+void
+EnemyRadarPowerUp::setRadar(UnitID &unit_id)
 {
     sound->playPowerUpSound();
 
     UnitBase* unit = UnitInterface::getUnit(unit_id);
-    PlayerID player_id = unit->player->getPlayerID();
 
-    PlayerID local_player_id;
-
-    local_player_id = PlayerInterface::getLocalPlayerID();
-
-    if( local_player_id == player_id ) {
+    if(unit->player == PlayerInterface::getLocalPlayer()) {
         MiniMapInterface::setShowEnemyRadar( 180 );
         ConsoleInterface::postMessage( "YOU GOT AN ENEMY RADAR POWERUP" );
     }
 
     PowerUpHitMesg hit_mesg;
-    hit_mesg.set( powerup_state.ID, unit_id, player_id );
+    hit_mesg.set(powerup_state.ID, unit->player->getID());
     SERVER->sendMessage( &hit_mesg, sizeof( PowerUpHitMesg ));
 
     powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive;
 }
 
-void EnemyRadarPowerUp::updateState( void )
+void
+EnemyRadarPowerUp::updateState()
 {
     UnitID unit_id;
 
@@ -87,7 +83,8 @@ void EnemyRadarPowerUp::updateState( void )
     }
 }
 
-void EnemyRadarPowerUp::offloadGraphics( SpriteSorter &sorter )
+void
+EnemyRadarPowerUp::offloadGraphics( SpriteSorter &sorter )
 {
     enemy_radar_animation.nextFrame();
     enemy_radar_animation_shadow.setFrame( enemy_radar_animation.getCurFrame() );
@@ -97,7 +94,8 @@ void EnemyRadarPowerUp::offloadGraphics( SpriteSorter &sorter )
 
 }
 
-void EnemyRadarPowerUp::onHit( PowerUpHitMesg *message  )
+void
+EnemyRadarPowerUp::onHit( PowerUpHitMesg *message  )
 {
     sound->playPowerUpSound();
     PlayerID local_player_id;

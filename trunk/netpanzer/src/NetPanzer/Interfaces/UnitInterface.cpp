@@ -415,15 +415,12 @@ UnitInterface::getUnit(UnitID id)
 // ******************************************************************
 UnitBase* UnitInterface::createUnit( unsigned short unit_type,
                                       const iXY &location,
-                                      const PlayerID &player
-                                    )
+                                      uint16_t player_id)
 {
-    uint16_t player_index = player.getIndex();
-
-    if (playerUnitLists[player_index].size() >= units_per_player)
+    if (playerUnitLists[player_id].size() >= units_per_player)
 	return 0;
 
-    UnitBase* unit = newUnit(unit_type, location, player_index, newUnitID());
+    UnitBase* unit = newUnit(unit_type, location, player_id, newUnitID());
     addNewUnit(unit);
 
     return unit;
@@ -432,7 +429,7 @@ UnitBase* UnitInterface::createUnit( unsigned short unit_type,
 // ******************************************************************
 
 void UnitInterface::spawnPlayerUnits(const iXY &location,
-                                     const PlayerID &player,
+                                     uint16_t player_id,
                                      const PlayerUnitConfig &unit_config)
 {
     iXY next_loc;
@@ -450,7 +447,7 @@ void UnitInterface::spawnPlayerUnits(const iXY &location,
         unit_spawn_count = unit_config.getSpawnUnitCount( unit_type_index );
         for ( unit_spawn_index = 0; unit_spawn_index < unit_spawn_count; unit_spawn_index++ ) {
             unit_placement_matrix.getNextEmptyLoc( &next_loc );
-            unit = createUnit( unit_type_index, next_loc, player );
+            unit = createUnit(unit_type_index, next_loc, player_id);
 
             assert(unit != 0);
             UnitRemoteCreate create_mesg(unit->player->getID(), unit->id,

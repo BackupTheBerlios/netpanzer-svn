@@ -60,7 +60,6 @@ void BonusUnitPowerUp::spawnBonusUnits( UnitID &unit_id )
     sound->playPowerUpSound();
 
     UnitBase* unit = UnitInterface::getUnit(unit_id);
-    PlayerID player_id = unit->player->getPlayerID();
 
     MapInterface::pointXYtoMapXY( unit->unit_state.location, &map_loc );
 
@@ -75,7 +74,7 @@ void BonusUnitPowerUp::spawnBonusUnits( UnitID &unit_id )
 
         new_unit = UnitInterface::createUnit(bonus_unit_type,
                                              spawn_loc,
-                                             player_id );
+                                             unit->player->getID() );
 
         if ( new_unit != 0 ) {
             UnitRemoteCreate create_mesg(new_unit->player->getID(),
@@ -86,19 +85,14 @@ void BonusUnitPowerUp::spawnBonusUnits( UnitID &unit_id )
     }
 
     PowerUpHitMesg hit_mesg;
-    hit_mesg.set( powerup_state.ID, unit_id, player_id );
+    hit_mesg.set( powerup_state.ID, unit->player->getID() );
     SERVER->sendMessage( &hit_mesg, sizeof( PowerUpHitMesg ));
 
     powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive;
 
-    PlayerID local_player_id;
-
-    local_player_id = PlayerInterface::getLocalPlayerID();
-
-    if( local_player_id == player_id ) {
+    if(unit->player == PlayerInterface::getLocalPlayer()) {
         ConsoleInterface::postMessage( "YOU GOT A BONUS UNITS POWERUP" );
     }
-
 }
 
 void BonusUnitPowerUp::updateState( void )

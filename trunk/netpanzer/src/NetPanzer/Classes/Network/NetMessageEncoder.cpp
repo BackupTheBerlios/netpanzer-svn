@@ -78,7 +78,7 @@ void NetMessageEncoder::sendEncodedMessage()
             SERVER->sendMessage(playerID, &encode_message, size);
         } else if(sendAsClient) {
             CLIENT->sendMessage(&encode_message, size);
-        } if(NetworkState::status == _network_state_server) {
+        } else if(NetworkState::status == _network_state_server) {
             SERVER->sendMessage(&encode_message, size);
         } else {
             CLIENT->sendMessage(&encode_message, size);

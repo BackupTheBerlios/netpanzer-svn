@@ -31,8 +31,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SelectionBoxSprite.hpp"
 
 // ** PlayerInterface Statics
-PlayerState PlayerInterface::local_player_state;
-
 PlayerState   *PlayerInterface::player_lists = 0;
 unsigned short PlayerInterface::max_players = 0;
 bool *      PlayerInterface::alliance_matrix = 0;
@@ -68,9 +66,6 @@ void PlayerInterface::initialize(unsigned short maxPlayers)
         sprintf( temp_str, "Player %lu", player_index );
         player_lists[ player_index ].setName( temp_str );
     }
-
-    local_player_state.setPlayerID( PlayerID( 0xFFFF, 0xFFFFFFFF ) );
-    local_player_state.setStatus( _player_state_allocated );
 
     delete[] alliance_matrix;
     alliance_matrix = new bool [max_players * max_players];
@@ -234,15 +229,15 @@ int PlayerInterface::getActivePlayerCount()
     return( count );
 }
 
-PlayerState * PlayerInterface::allocateLoopBackPlayer()
+PlayerState* PlayerInterface::allocateLoopBackPlayer()
 {
     local_player_index = 0;
 
     SDL_mutexP(mutex);
-    player_lists[ local_player_index ].setStatus( _player_state_active );
+    player_lists[local_player_index].setStatus(_player_state_active);
     SDL_mutexV(mutex);
 
-    return( &player_lists[ local_player_index ] );
+    return &player_lists[local_player_index];
 }
 
 int PlayerInterface::countPlayers()
@@ -287,15 +282,13 @@ void PlayerInterface::spawnPlayer( unsigned short player_index, const iXY &locat
 
 void PlayerInterface::spawnPlayer( const PlayerID &player, const iXY &location )
 {
-    unsigned short player_index;
-
-    player_index = player.getIndex();
+    uint16_t player_index = player.getIndex();
     assert( player_index < max_players );
 
     SDL_mutexP(mutex);
-    if ( player_lists[ player_index ].getStatus() != _player_state_free ) {
-        UnitInterface::spawnPlayerUnits( location,
-                                         player,
+    if ( player_lists[player_index].getStatus() != _player_state_free ) {
+        UnitInterface::spawnPlayerUnits(location,
+                                         player_index,
                                          player_lists[ player_index ].unit_config
                                        );
     } // ** if _player_state_active

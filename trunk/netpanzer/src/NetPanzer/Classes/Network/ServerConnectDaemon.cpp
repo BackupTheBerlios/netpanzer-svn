@@ -586,7 +586,7 @@ bool ServerConnectDaemon::disconnectClient( PlayerID player_id )
     SERVER->shutdownClientTransport(player_id.getNetworkID());
 
     SERVER->removeClientFromSendList(player_id);
-    ObjectiveInterface::disownPlayerObjectives( player_id );
+    ObjectiveInterface::disownPlayerObjectives(player_id.getIndex());
     UnitInterface::destroyPlayerUnits(player_id.getIndex());
     PlayerInterface::disconnectPlayerCleanup( player_id );
 

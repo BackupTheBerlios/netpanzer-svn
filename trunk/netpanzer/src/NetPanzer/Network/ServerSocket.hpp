@@ -33,6 +33,7 @@ public:
     void sendMessage(SocketClient::ID toclient, const void* data,
             size_t datasize);
     void removeClient(SocketClient::ID clientid);
+    SocketClient::ID addLoopbackClient();
 
     std::string getClientIP(SocketClient::ID) const;
 

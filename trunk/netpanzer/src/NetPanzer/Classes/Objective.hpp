@@ -33,7 +33,7 @@ enum { _occupation_status_unoccupied,
 class ObjectiveState
 {
 public:
-    short ID;
+    uint16_t ID;
     bool  selection_state;
     iRect    selection_box;
     unsigned char outpost_type;
@@ -43,13 +43,12 @@ public:
     BoundBox area;
     unsigned char objective_status;
     unsigned char occupation_status;
-    PlayerID occupying_player;
+    PlayerState* occupying_player;
 
     inline bool isBounded( iXY &test )
     {
         return( capture_area.bounds( location, test ) );
     }
-
 };
 
 
@@ -72,7 +71,7 @@ protected:
 public:
     ObjectiveState objective_state;
 
-    Objective( short ID, iXY location, BoundBox area );
+    Objective(uint16_t ID, iXY location, BoundBox area );
 
     void getSyncData( SyncObjective &objective_sync_mesg );
 

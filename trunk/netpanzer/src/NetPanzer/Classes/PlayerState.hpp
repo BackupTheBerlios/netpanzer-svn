@@ -115,6 +115,10 @@ public:
     {
         return ID.getNetworkID();
     }
+    void setNetworkID(SocketClient::ID id)
+    {
+        ID.setNetworkID(id);
+    }
     void setStatus( unsigned char status );
     unsigned char getStatus() const;
     void setFlag(unsigned char flag);

@@ -111,12 +111,12 @@ public:
 
     static void offloadGraphics( SpriteSorter &sorter );
 
-    static UnitBase * createUnit( unsigned short unit_type,
+    static UnitBase* createUnit( unsigned short unit_type,
                                   const iXY &location,
-                                  const PlayerID& player );
+                                  uint16_t player_id);
 
     static void spawnPlayerUnits( const iXY &location,
-                                  const PlayerID& player,
+                                  uint16_t player_id,
                                   const PlayerUnitConfig &unit_config );
 
     static void queryUnitsAt(std::vector<UnitID>& working_list,

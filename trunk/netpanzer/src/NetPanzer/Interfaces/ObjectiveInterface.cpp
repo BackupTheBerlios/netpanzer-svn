@@ -35,6 +35,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameConfig.hpp"
 
 #include "ObjectiveNetMessage.hpp"
+#include "TerminalNetMesg.hpp"
+#include "NetPacket.hpp"
 
 #include "Server.hpp"
 
@@ -48,7 +50,8 @@ NetMessageEncoder ObjectiveInterface::message_encoder;
 
 SDL_mutex* ObjectiveInterface::mutex = 0;
 
-void ObjectiveInterface::cleanUpObjectiveList()
+void
+ObjectiveInterface::cleanUpObjectiveList()
 {
     std::vector<Objective*>::iterator i;
     for(i = objective_list.begin(); i != objective_list.end(); i++) {
@@ -58,12 +61,14 @@ void ObjectiveInterface::cleanUpObjectiveList()
     objective_list.clear();
 }
 
-void ObjectiveInterface::cleanUp()
+void
+ObjectiveInterface::cleanUp()
 {
     cleanUpObjectiveList();
 }
 
-void ObjectiveInterface::resetLogic()
+void
+ObjectiveInterface::resetLogic()
 {
     cleanUpObjectiveList();
 }
@@ -112,7 +117,8 @@ static inline std::string readToken(std::istream& in, std::string tokenname)
     return result;
 }
 
-void ObjectiveInterface::loadObjectiveList(const char *file_path)
+void
+ObjectiveInterface::loadObjectiveList(const char *file_path)
 {
     int objective_count = 0;
 
@@ -152,10 +158,9 @@ void ObjectiveInterface::loadObjectiveList(const char *file_path)
     }
 }
 
-unsigned char ObjectiveInterface::
-quearyObjectiveLocationStatus( iXY &loc,
-                               PlayerID &player,
-                               Objective **objective_ptr )
+unsigned char
+ObjectiveInterface::quearyObjectiveLocationStatus(iXY &loc,
+        uint16_t player_id, Objective **objective_ptr )
 {
     std::vector<Objective*>::iterator i;
     for(i = objective_list.begin(); i != objective_list.end(); i++) {
@@ -163,7 +168,7 @@ quearyObjectiveLocationStatus( iXY &loc,
 
         if ( objective_state->selection_box.contains( loc ) == true ) {
             if ( objective_state->occupation_status == _occupation_status_occupied ) {
-                if ( player.getIndex() == objective_state->occupying_player.getIndex() ) {
+                if (objective_state->occupying_player->getID() == player_id) {
                     *objective_ptr = *i;
                     return( _player_occupied_objective_found );
                 } // ** if
@@ -182,16 +187,62 @@ quearyObjectiveLocationStatus( iXY &loc,
     return( _no_objective_found );
 }
 
-void ObjectiveInterface::sendMessage(const ObjectiveMessage* message)
+void
+ObjectiveInterface::processTerminalNetPacket(const NetPacket* packet)
+{
+    const NetMessage* message = packet->getNetMessage();
+    const ObjectiveMessage* objectiveMessage = 0;
+    switch(message->message_id) {
+        case _net_message_id_term_unit_gen: {
+            const TerminalOutpostUnitGenRequest* request =
+                (const TerminalOutpostUnitGenRequest*) message;
+            objectiveMessage = &(request->unit_gen_request);
+            break;
+        }
+        case _net_message_id_term_output_loc: {
+            const TerminalOutpostOutputLocRequest* request =
+                (const TerminalOutpostOutputLocRequest*) message;
+            objectiveMessage = &(request->output_loc_request);
+            break;
+        }
+        default:
+            LOGGER.warning(
+                    "Unknown objective terminal message (id %u, player %u)",
+                    message->message_id, packet->fromID);
+            return;
+    }                                       
+
+    const PlayerState* player 
+        = PlayerInterface::getPlayerByNetworkID(packet->fromID);
+    if(!player) {
+        LOGGER.warning("Couldn't find player for packet from NetworkID %u.",
+                packet->fromID);
+        return;
+    }
+    
+    sendMessage(objectiveMessage, player);
+}
+
+void
+ObjectiveInterface::sendMessage(const ObjectiveMessage* message,
+        const PlayerState* player)
 {
     if(message->getObjectiveID() >= objective_list.size()) {
         LOGGER.warning("Received malformed objective message: id out of range");
         return;
     }
+    Objective* objective = objective_list[message->getObjectiveID()];
+    if(player && objective->objective_state.occupying_player != player) {
+        LOGGER.warning(
+                "Terminal message from player %u for objective %u not allowed.",
+                player->getID(), message->getObjectiveID());
+        return;
+    }
     objective_list[message->getObjectiveID()]->processMessage(message);
 }
 
-void ObjectiveInterface::processNetMessages(const NetMessage* message)
+void
+ObjectiveInterface::processNetMessages(const NetMessage* message)
 {
     switch(message->message_id) {
         case _net_message_id_occupation_status_update:
@@ -217,7 +268,8 @@ void ObjectiveInterface::processNetMessages(const NetMessage* message)
     }
 }
 
-void ObjectiveInterface::updateObjectiveStatus()
+void
+ObjectiveInterface::updateObjectiveStatus()
 {
     std::vector<Objective*>::iterator i;
     for(i = objective_list.begin(); i != objective_list.end(); i++) {
@@ -225,7 +277,8 @@ void ObjectiveInterface::updateObjectiveStatus()
     }
 }
 
-void ObjectiveInterface::offloadGraphics( SpriteSorter &sorter )
+void
+ObjectiveInterface::offloadGraphics( SpriteSorter &sorter )
 {
     std::vector<Objective*>::iterator i;
     for(i = objective_list.begin(); i != objective_list.end(); i++) {
@@ -234,8 +287,9 @@ void ObjectiveInterface::offloadGraphics( SpriteSorter &sorter )
 }
 
 
-bool ObjectiveInterface::
-testRuleObjectiveOccupationRatio(unsigned short player_index, float precentage)
+bool
+ObjectiveInterface::testRuleObjectiveOccupationRatio(
+        uint16_t player_index, float precentage)
 {
     size_t occupation_ratio = (size_t)
         ( ((float) objective_list.size()) * precentage  + 0.999);
@@ -248,9 +302,8 @@ testRuleObjectiveOccupationRatio(unsigned short player_index, float precentage)
     for(i = objective_list.begin(); i != objective_list.end(); i++) {
         ObjectiveState *objective_state = & ((*i)->objective_state);
         if(objective_state->occupation_status == _occupation_status_occupied) {
-            unsigned short occuping_player_index;
-            occuping_player_index 
-                = objective_state->occupying_player.getIndex();
+            uint16_t occuping_player_index 
+                = objective_state->occupying_player->getID();
 
             if ( occuping_player_index == player_index ) {
                 occupied++;
@@ -260,8 +313,8 @@ testRuleObjectiveOccupationRatio(unsigned short player_index, float precentage)
                             occuping_player_index)) {
                     occupied++;
             }
-        } // ** if
-    } // ** for
+        }
+    }
 
     if(occupied >= occupation_ratio)
         return true;
@@ -269,22 +322,25 @@ testRuleObjectiveOccupationRatio(unsigned short player_index, float precentage)
     return false;
 }
 
-void ObjectiveInterface::disownPlayerObjectives( PlayerID &player )
+void
+ObjectiveInterface::disownPlayerObjectives(uint16_t player_id)
 {
     DisownPlayerObjective disown_player_objective;
 
-    for(size_t i = 0; i < objective_list.size(); i++) {
-        disown_player_objective.set(i, player);
+    for(uint16_t i = 0; i < objective_list.size(); i++) {
+        disown_player_objective.set(i, player_id);
         sendMessage(&disown_player_objective);
     }
 }
 
-ObjectiveState * ObjectiveInterface::getObjectiveState( short objective_id )
+ObjectiveState*
+ObjectiveInterface::getObjectiveState( short objective_id )
 {
     return & (objective_list.at(objective_id)->objective_state);
 }
 
-OutpostStatus ObjectiveInterface::getOutpostStatus( short objective_id )
+OutpostStatus
+ObjectiveInterface::getOutpostStatus( short objective_id )
 {
     OutpostStatus outpost_status;
     
@@ -297,14 +353,16 @@ OutpostStatus ObjectiveInterface::getOutpostStatus( short objective_id )
     return outpost_status;
 }
 
-void ObjectiveInterface::startObjectivePositionEnumeration()
+void
+ObjectiveInterface::startObjectivePositionEnumeration()
 {
     objective_position_enum_index	= 0;
     objective_position_enum_list_size = objective_list.size();
     objective_position_enum_player_id = PlayerInterface::getLocalPlayerID();
 }
 
-bool ObjectiveInterface::objectivePositionEnumeration(iRect *objective_rect,
+bool
+ObjectiveInterface::objectivePositionEnumeration(iRect *objective_rect,
         unsigned char *objective_disposition, int *objective_id)
 {
     ObjectiveState *objective_state;
@@ -318,8 +376,8 @@ bool ObjectiveInterface::objectivePositionEnumeration(iRect *objective_rect,
         }
 
         if ( objective_state->occupation_status == _occupation_status_occupied ) {
-            if ( objective_position_enum_player_id.getIndex() != objective_state->occupying_player.getIndex() ) {
-                if ( PlayerInterface::isAllied( objective_state->occupying_player , objective_position_enum_player_id )  ) {
+            if ( objective_position_enum_player_id.getIndex() != objective_state->occupying_player->getID() ) {
+                if (PlayerInterface::isAllied(objective_state->occupying_player->getID() , objective_position_enum_player_id.getIndex())  ) {
                     (*objective_disposition) = _objective_disposition_allie;
                 } else {
                     (*objective_disposition) = _objective_disposition_enemy;
@@ -332,13 +390,14 @@ bool ObjectiveInterface::objectivePositionEnumeration(iRect *objective_rect,
         }
 
         objective_position_enum_index++;
-        return( true );
-    } // ** if
+        return true;
+    }
 
-    return( false );
+    return false;
 }
 
-void ObjectiveInterface::syncObjectives(PlayerID connect_player)
+void
+ObjectiveInterface::syncObjectives(PlayerID connect_player)
 {
     ObjectiveSyncMesg sync_mesg;
 
@@ -354,7 +413,8 @@ void ObjectiveInterface::syncObjectives(PlayerID connect_player)
     encoder->sendEncodedMessage();
 }
 
-void ObjectiveInterface::updatePlayerObjectiveCounts()
+void
+ObjectiveInterface::updatePlayerObjectiveCounts()
 {
     if(mutex == 0) { // little race condition...
         mutex = SDL_CreateMutex();
@@ -376,8 +436,7 @@ void ObjectiveInterface::updatePlayerObjectiveCounts()
         ObjectiveState *objective_state = & ((*i)->objective_state);
 
         if( objective_state->occupation_status == _occupation_status_occupied ) {
-            player_state = PlayerInterface::getPlayerState( objective_state->occupying_player);
-            player_state->incObjectivesHeld();
+            objective_state->occupying_player->incObjectivesHeld();
         }
     }
     SDL_mutexV(mutex);

@@ -54,67 +54,57 @@ Outpost::Outpost( short ID, iXY location, BoundBox area )
     select_box.setBoxAttributes( area, 252 );
 }
 
-void Outpost::attemptOccupationChange(UnitID unit_id)
+void
+Outpost::attemptOccupationChange(UnitID unit_id)
 {
     ObjectiveOccupationUpdate update_mesg;
-    PlayerState *player_state_ptr;
-    int player_index;
     int player_status;
 
     UnitBase* unit = UnitInterface::getUnit(unit_id);
-    player_index = unit->player->getID();
-    player_state_ptr = PlayerInterface::getPlayerState( player_index );
-
-    if ( player_state_ptr != 0 ) {
-        player_status = player_state_ptr->getStatus();
-    } else {
-        player_status  = _player_state_free;
-    }
+    PlayerState* player = unit->player;
+    player_status = player->getStatus();
 
     if ( objective_state.occupation_status == _occupation_status_unoccupied ) {
         if ( player_status == _player_state_active ) {
-            objective_state.occupying_player = PlayerInterface::getPlayerID( player_index );
+            objective_state.occupying_player = player;
             objective_state.occupation_status = _occupation_status_occupied;
 
             update_mesg.status_update.set(objective_state.ID,
                         objective_state.occupation_status,
-                        objective_state.occupying_player.getIndex(),
+                        objective_state.occupying_player->getID(),
                         unit_generation_on_flag,
                         unit_generation_type,
                         uint32_t(unit_generation_timer.getTimeLeft() * 128.0));
             SERVER->sendMessage(&update_mesg, sizeof(ObjectiveOccupationUpdate));
 
-            PlayerState *player_state;
-            player_state = PlayerInterface::getPlayerState( objective_state.occupying_player );
-
+            const PlayerState *player_state = objective_state.occupying_player;
             ConsoleInterface::postMessage( "'%s' has been occupied by '%s'",
                     objective_state.name, player_state->getName().c_str() );
         }
     } else {
-        if (player_index != objective_state.occupying_player.getIndex() ) {
+        if (objective_state.occupying_player != player) {
             if( player_status == _player_state_active  ) {
-                objective_state.occupying_player = PlayerInterface::getPlayerID( player_index );
+                objective_state.occupying_player = player;
                 objective_state.occupation_status = _occupation_status_occupied;
                 update_mesg.status_update.set(
                         objective_state.ID,
                         objective_state.occupation_status,
-                        objective_state.occupying_player.getIndex(),
+                        objective_state.occupying_player->getID(),
                         unit_generation_on_flag,
                         unit_generation_type,
                         uint32_t(unit_generation_timer.getTimeLeft() * 128));
                 SERVER->sendMessage(&update_mesg,
                         sizeof(ObjectiveOccupationUpdate));
-                PlayerState *player_state;
-                player_state = PlayerInterface::getPlayerState( objective_state.occupying_player );
-
+                const PlayerState *player = objective_state.occupying_player;
                 ConsoleInterface::postMessage("'%s' has been occupied by '%s'",
-                        objective_state.name, player_state->getName().c_str() );
+                        objective_state.name, player->getName().c_str() );
             }
         }
     }
 }
 
-void Outpost::checkOccupationStatus( void )
+void
+Outpost::checkOccupationStatus()
 {
     if( occupation_status_timer.count()  )	//
     {
@@ -145,7 +135,8 @@ void Outpost::checkOccupationStatus( void )
 
 }
 
-void Outpost::generateUnits()
+void
+Outpost::generateUnits()
 {
     if ( NetworkState::status == _network_state_server ) {
 
@@ -159,8 +150,7 @@ void Outpost::generateUnits()
                 gen_loc = outpost_map_loc + unit_generation_loc;
 
                 unit = UnitInterface::createUnit(unit_generation_type,
-                                                 gen_loc,
-                                                 objective_state.occupying_player );
+                        gen_loc, objective_state.occupying_player->getID());
 
                 if ( unit != 0 ) {
                     UnitRemoteCreate create_mesg(unit->player->getID(),
@@ -192,7 +182,8 @@ void Outpost::generateUnits()
 
 }
 
-void Outpost::updateStatus()
+void
+Outpost::updateStatus()
 {
     if ( NetworkState::status == _network_state_server ) {
         checkOccupationStatus();
@@ -202,7 +193,8 @@ void Outpost::updateStatus()
 
 }
 
-void Outpost::objectiveMesgChangeOutputLocation(const ObjectiveMessage* message)
+void
+Outpost::objectiveMesgChangeOutputLocation(const ObjectiveMessage* message)
 {
     ChangeOutputLocation *msg;
     msg = (ChangeOutputLocation *) message;
@@ -212,7 +204,8 @@ void Outpost::objectiveMesgChangeOutputLocation(const ObjectiveMessage* message)
     unit_collection_loc = temp;
 }
 
-void Outpost::objectiveMesgChangeUnitGeneration(const ObjectiveMessage* message)
+void
+Outpost::objectiveMesgChangeUnitGeneration(const ObjectiveMessage* message)
 {
     ChangeUnitGeneration *unit_gen_mesg;
     UnitProfile *profile;
@@ -226,16 +219,15 @@ void Outpost::objectiveMesgChangeUnitGeneration(const ObjectiveMessage* message)
     unit_generation_timer.changePeriod( (float) profile->regen_time );
 }
 
-void Outpost::objectiveMesgDisownPlayerObjective(
-        const ObjectiveMessage* message)
+void
+Outpost::objectiveMesgDisownPlayerObjective(const ObjectiveMessage* message)
 {
-    DisownPlayerObjective *disown_mesg;
-
-    disown_mesg = (DisownPlayerObjective *) message;
+    const DisownPlayerObjective *disown_mesg =
+        (const DisownPlayerObjective *) message;
 
     if( objective_state.occupation_status == _occupation_status_occupied ) {
         if (disown_mesg->getDisownedPlayerID() ==
-                objective_state.occupying_player.getIndex() ) {
+                objective_state.occupying_player->getID() ) {
             objective_state.occupation_status = _occupation_status_unoccupied;
 
             ObjectiveOccupationUpdate update_mesg;
@@ -257,7 +249,8 @@ void Outpost::objectiveMesgDisownPlayerObjective(
     }
 }
 
-void Outpost::getOutpostStatus( OutpostStatus &status )
+void
+Outpost::getOutpostStatus( OutpostStatus &status )
 {
     UnitProfile *profile;
 
@@ -280,7 +273,8 @@ void Outpost::getOutpostStatus( OutpostStatus &status )
 
 }
 
-void Outpost::processMessage(const ObjectiveMessage* message)
+void
+Outpost::processMessage(const ObjectiveMessage* message)
 {
     switch(message->message_type) {
         case _objective_mesg_change_unit_generation:
@@ -299,7 +293,8 @@ void Outpost::processMessage(const ObjectiveMessage* message)
     Objective::processMessage(message);
 }
 
-void Outpost::offloadGraphics( SpriteSorter &sorter )
+void
+Outpost::offloadGraphics( SpriteSorter &sorter )
 {
     if( objective_state.selection_state == true ) {
         sorter.addSprite( &select_box );

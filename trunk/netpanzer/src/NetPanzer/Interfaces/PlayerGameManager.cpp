@@ -322,7 +322,7 @@ void PlayerGameManager::hostMultiPlayerGame()
     progressView->open();
     progressView->scrollAndUpdateDirect( "Launching Server ..." );
     try {
-        SERVER->hostSession();
+        SERVER->hostSession(true);
 
         if((bool) gameconfig->publicServer &&
                 (const std::string&) gameconfig->masterservers != "") {
@@ -386,12 +386,12 @@ void PlayerGameManager::hostMultiPlayerGame()
     GameManager::reinitializeGameLogic();
     progressView->updateDirect( "Initializing Game Logic ... (100%) " );
 
-
     progressView->scrollAndUpdateDirect( "Spawning Player ..." );
     player_state = PlayerInterface::allocateLoopBackPlayer();
+    player_state->setNetworkID(0);
     const char* playername = gameconfig->playername.c_str();
     player_state->setName(playername);
-    player_state->setFlag( (unsigned char) gameconfig->playerflag );
+    player_state->setFlag((unsigned char) gameconfig->playerflag);
     player = PlayerInterface::getLocalPlayerID();
     GameManager::spawnPlayer( player );
     progressView->updateDirect( "Spawning Player ... (100%)" );

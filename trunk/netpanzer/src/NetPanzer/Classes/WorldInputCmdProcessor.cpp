@@ -542,11 +542,9 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
         }
 
     } else if (event.event == MouseEvent::EVENT_DOWN) {
-        Objective *objective;
-        PlayerID player_id;
-	
-        player_id = PlayerInterface::getLocalPlayerID();
-        click_status = ObjectiveInterface::quearyObjectiveLocationStatus( world_pos, player_id, &objective );
+        Objective *objective = 0;
+        click_status = ObjectiveInterface::quearyObjectiveLocationStatus(
+            world_pos, PlayerInterface::getLocalPlayerIndex(), &objective);
 	
         if ( (click_status == _player_occupied_objective_found) ) {
             selection_box_active = false;
@@ -572,9 +570,10 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
             iXY temp;
             MouseInterface::getMousePosition( &temp.x, &temp.y );
             
-            Objective *objective;
-            PlayerID player_id = PlayerInterface::getLocalPlayerID();
-            int cs = ObjectiveInterface::quearyObjectiveLocationStatus( world_pos, player_id, &objective );
+            Objective *objective = 0;
+            int cs = ObjectiveInterface::quearyObjectiveLocationStatus(
+                    world_pos, PlayerInterface::getLocalPlayerIndex(),
+                    &objective);
             
             if ( (cs == _player_occupied_objective_found) 
                     && outpost_goal_selection == objective->objective_state.ID

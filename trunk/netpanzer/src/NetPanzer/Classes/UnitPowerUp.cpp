@@ -135,7 +135,6 @@ void UnitPowerUp::selectPowerUp( UnitID &unit_id )
     sound->playPowerUpSound();
 
     UnitBase* unit = UnitInterface::getUnit( unit_id );
-    PlayerID player_id = unit->player->getPlayerID();
 
     switch( unit_powerup_type ) {
     case _unit_powerup_hitpoints :
@@ -168,16 +167,12 @@ void UnitPowerUp::selectPowerUp( UnitID &unit_id )
     }
 
     PowerUpHitMesg hit_mesg;
-    hit_mesg.set( powerup_state.ID, unit_id, player_id, unit_powerup_type );
+    hit_mesg.set(powerup_state.ID, unit->player->getID(), unit_powerup_type);
     SERVER->sendMessage(&hit_mesg, sizeof(PowerUpHitMesg));
 
     powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive;
 
-    PlayerID local_player_id;
-
-    local_player_id = PlayerInterface::getLocalPlayerID();
-
-    if( local_player_id == player_id ) {
+    if(unit->player == PlayerInterface::getLocalPlayer()) {
         ConsoleInterface::postMessage( "YOU GOT A %s POWERUP", powerupTypeToString( unit_powerup_type ) );
     }
 }

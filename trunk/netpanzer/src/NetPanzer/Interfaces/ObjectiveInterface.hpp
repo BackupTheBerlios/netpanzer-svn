@@ -38,6 +38,8 @@ enum { _objective_disposition_unoccupied,
        _objective_disposition_enemy
      };
 
+class NetPacket;
+
 class ObjectiveInterface
 {
 protected:
@@ -54,11 +56,12 @@ public:
 
     static void loadObjectiveList( const char *file_path );
 
-    static unsigned char quearyObjectiveLocationStatus( iXY &loc,
-            PlayerID &player,
-            Objective **objective_ptr );
+    static unsigned char quearyObjectiveLocationStatus(iXY &loc,
+            uint16_t player_id, Objective **objective_ptr);
 
-    static void sendMessage(const ObjectiveMessage* message);
+    static void processTerminalNetPacket(const NetPacket* packet);
+    static void sendMessage(const ObjectiveMessage* message,
+            const PlayerState* player = 0);
 
     static void processNetMessages(const NetMessage* message);
 
@@ -66,9 +69,10 @@ public:
 
     static void offloadGraphics( SpriteSorter &sorter );
 
-    static bool testRuleObjectiveOccupationRatio( unsigned short player_index, float precentage );
+    static bool testRuleObjectiveOccupationRatio(uint16_t player_index,
+            float precentage );
 
-    static void disownPlayerObjectives( PlayerID &player );
+    static void disownPlayerObjectives(uint16_t player_id);
 
     static ObjectiveState * getObjectiveState( short objective_id );
 

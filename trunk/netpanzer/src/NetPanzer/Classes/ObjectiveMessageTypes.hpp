@@ -88,11 +88,16 @@ public:
 class ChangeUnitGeneration : public ObjectiveMessage
 {
 public:
-    unsigned char unit_type;
-    bool unit_gen_on;
+    uint8_t unit_type;
+    uint8_t unit_gen_on;
 
-    void set(unsigned short id, unsigned char unit_type,
-        bool unit_generation_on);
+    void set(uint16_t id, uint8_t unit_type, bool unit_generation_on)
+    {
+        setObjectiveID(id);
+        this->unit_type = unit_type;
+        unit_gen_on = unit_generation_on;                             
+        message_type = _objective_mesg_change_unit_generation;
+    }
 }
 __attribute__((packed));
 
@@ -102,8 +107,16 @@ private:
     uint16_t disowned_player_id;
 
 public:
-    void set(unsigned short id, PlayerID &disowned_player);
-    uint16_t getDisownedPlayerID() const;
+    void set(uint16_t id, uint16_t disowned_player)
+    {
+        setObjectiveID(id);
+        disowned_player_id = htol16(disowned_player);
+        message_type = _objective_mesg_disown_player_objective;        
+    }
+    uint16_t getDisownedPlayerID() const
+    {
+        return ltoh16(disowned_player_id);
+    }
 } __attribute__((packed));
 
 class SyncObjective : public ObjectiveMessage
@@ -115,11 +128,20 @@ private:
     uint16_t occupying_player_id;
 
 public:
-    void set(unsigned short id,
-                  unsigned char objective_status,
-                  unsigned char occupation_status,
-                  PlayerID occupying_player);
-    uint16_t getOccupyingPlayerID() const;
+    void set(uint16_t id, uint8_t objective_status,
+            uint8_t occupation_status, uint16_t occupying_player)
+    {
+        setObjectiveID(id);
+        message_type = _objective_mesg_sync_objective;
+                                                                             
+        this->objective_status = objective_status;
+        this->occupation_status = occupation_status;
+        this->occupying_player_id = htol16(occupying_player);
+    }
+    uint16_t getOccupyingPlayerID() const
+    {
+        return ltoh16(occupying_player_id);
+    }
 } __attribute__((packed));
 
 class ChangeOutputLocation : public ObjectiveMessage
@@ -129,9 +151,21 @@ private:
     int32_t new_point_y;
   
 public:
-    void set(unsigned short id, iXY point);
-    int32_t getPointX() const;
-    int32_t getPointY() const;
+    void set(uint16_t id, iXY point)
+    {
+        setObjectiveID(id);
+        new_point_x = htol32(point.x);
+        new_point_y = htol32(point.y);
+        message_type = _objective_mesg_change_output_location;
+    }
+    int32_t getPointX() const
+    {
+        return ltoh32(new_point_x);
+    }
+    int32_t getPointY() const
+    {
+        return ltoh32(new_point_y);
+    }
 } __attribute__((packed));
 
 #ifdef MSVC

@@ -23,24 +23,26 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitProfileInterface.hpp"
 #include "Util/Log.hpp"
 
-Objective::Objective( short ID, iXY location, BoundBox area )
+Objective::Objective(uint16_t ID, iXY location, BoundBox area)
 {
-    objective_state.selection_state = false;
     objective_state.ID = ID;
+    objective_state.selection_state = false;
     objective_state.location = location;
     objective_state.capture_area = area;
     objective_state.objective_status = _objective_status_null;
     objective_state.occupation_status = _occupation_status_unoccupied;
+    objective_state.occupying_player = 0;
 }
 
-void Objective::objectiveMesgUpdateOccupation(const ObjectiveMessage* message)
+void
+Objective::objectiveMesgUpdateOccupation(const ObjectiveMessage* message)
 {
     const UpdateOccupationsStatus *occupation_update
         = (const UpdateOccupationsStatus *) message;
 
     objective_state.occupation_status = occupation_update->occupation_status;
     objective_state.occupying_player
-        = PlayerInterface::getPlayerID(occupation_update->getOccupyingPlayerID());
+        = PlayerInterface::getPlayer(occupation_update->getOccupyingPlayerID());
 
     Outpost* outpost = dynamic_cast<Outpost*> (this);
     if(outpost) {
@@ -55,31 +57,39 @@ void Objective::objectiveMesgUpdateOccupation(const ObjectiveMessage* message)
     }
 
     if( objective_state.occupation_status != _occupation_status_unoccupied ) {
-        PlayerState *player_state;
-        player_state = PlayerInterface::getPlayerState( objective_state.occupying_player );
-
+        PlayerState *player_state = objective_state.occupying_player;
+        
         ConsoleInterface::postMessage( "'%s' has been occupied by '%s'",
                 objective_state.name, player_state->getName().c_str() );
     }
 }
 
-void Objective::objectiveMesgSync(const ObjectiveMessage* message)
+void
+Objective::objectiveMesgSync(const ObjectiveMessage* message)
 {
     const SyncObjective *sync_mesg = (const SyncObjective*) message;
 
     objective_state.objective_status = sync_mesg->objective_status;
     objective_state.occupation_status = sync_mesg->occupation_status;
-    objective_state.occupying_player.setIndex(sync_mesg->getOccupyingPlayerID());
+    if(objective_state.occupation_status != _occupation_status_unoccupied) {
+        objective_state.occupying_player =
+            PlayerInterface::getPlayer(sync_mesg->getOccupyingPlayerID());
+    } else {
+        objective_state.occupying_player = 0;
+    }
 }
 
-
-void Objective::getSyncData( SyncObjective &objective_sync_mesg )
+void Objective::getSyncData(SyncObjective& objective_sync_mesg)
 {
-    objective_sync_mesg.set( objective_state.ID,
-                             objective_state.objective_status,
-                             objective_state.occupation_status,
-                             objective_state.occupying_player
-                           );
+    uint16_t player_id = 0;
+    if(objective_state.occupation_status != _occupation_status_unoccupied
+            && objective_state.occupying_player) {
+        player_id = objective_state.occupying_player->getID();
+    }
+    objective_sync_mesg.set(objective_state.ID,
+                            objective_state.objective_status,
+                            objective_state.occupation_status,
+                            player_id);
 }
 
 

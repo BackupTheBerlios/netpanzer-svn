@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "NetPacketDebugger.hpp"
 
-//#define NETWORKDEBUG
+#define NETWORKDEBUG
 
 NetworkServerUnix::NetworkServerUnix()
         : NetworkServer(), serversocket(0)
@@ -56,11 +56,15 @@ NetworkServerUnix::openSession()
 {}
 
 void
-NetworkServerUnix::hostSession()
+NetworkServerUnix::hostSession(bool loopback)
 {
     delete serversocket;
     serversocket = new ServerSocket(gameconfig->bindaddress,
             gameconfig->serverport);
+    if(loopback) {
+        SocketClient::ID id = serversocket->addLoopbackClient();
+        assert(id == 0);
+    }
 }
 
 void

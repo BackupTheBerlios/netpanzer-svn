@@ -102,6 +102,13 @@ ServerSocket::acceptNewClients()
     }
 }
 
+SocketClient::ID
+ServerSocket::addLoopbackClient()
+{
+    SocketClient* client = clientlist->add(this, 0);
+    return client->id;
+}
+
 void
 ServerSocket::readTCP()
 {
@@ -110,6 +117,9 @@ ServerSocket::readTCP()
 	ClientList::ClientIterator i;
 	for(i = clientlist->begin(); i != clientlist->end(); i++) {
 	    SocketClient* client = *i;
+            if(client->socket == 0)
+                continue;
+
 	    if (sockets.dataPending(*client->socket))
 		readClientTCP(client);
 	}
@@ -326,6 +336,8 @@ ServerSocket::sendMessage(SocketClient::ID toclient, const void* data,
     SocketClient* client = clientlist->getClientFromID(toclient);
     if(!client || client->wantstodie)
         throw Exception("message sent to unknown client.");
+    if(client->socket == 0)
+        throw Exception("tried to send message to loopback client.");
 
     client->socket->send(data, datasize);
 }
@@ -333,7 +345,8 @@ ServerSocket::sendMessage(SocketClient::ID toclient, const void* data,
 void
 ServerSocket::closeConnection(SocketClient* client)
 {
-    sockets.remove(*client->socket);
+    if(client->socket)
+        sockets.remove(*client->socket);
     delete(client->socket);
     client->socket = 0;
 }
