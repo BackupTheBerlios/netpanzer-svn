@@ -1,31 +1,31 @@
 #ifndef __SOCKETSTREAM_HPP__
 #define __SOCKETSTREAM_HPP__
 
-#include <SDL_net.h>
 #include <streambuf>
 #include <iostream>
+#include "SocketHeaders.hpp"
+#include "TCPSocket.hpp"
 
-namespace masterserver
+namespace network
 {
 
 /** streambuf implementation for tcp network sockets. This makes them usable as
  * C++ istreams
  */
-class SDLNetSocketStreambuf : public std::streambuf
+class SocketStreamBuf : public std::streambuf
 {
 public:
-    SDLNetSocketStreambuf(TCPsocket newsocket)
+    SocketStreamBuf(TCPSocket& newsocket)
         : socket(newsocket)
     { 
         setp(writebuffer, writebuffer + sizeof(writebuffer)-1);
         setg(readbuffer, readbuffer, readbuffer);
     }
 
-    ~SDLNetSocketStreambuf()
+    ~SocketStreamBuf()
     {
         // write remaining buffer to socket
         sync();
-        SDLNet_TCP_Close(socket);
     }
 
 protected:
@@ -37,7 +37,7 @@ protected:
     
     virtual int underflow()
     {
-        int res = SDLNet_TCP_Recv(socket, readbuffer, sizeof(readbuffer));
+        int res = recv(socket.sockfd,(char*) readbuffer, sizeof(readbuffer), 0);
         if(res < 0) {
             return traits_type::eof();
         }
@@ -55,7 +55,7 @@ protected:
         // anything to send out
         if(len > 0) {
             const void* data = pbase();
-            int res = SDLNet_TCP_Send(socket, const_cast<void*> (data), len);
+            int res = send(socket.sockfd, (const char*) data, len, 0);
             if(res <= 0) {
                 return traits_type::eof();
             }
@@ -68,23 +68,23 @@ protected:
 private:
     char readbuffer[1024];
     char writebuffer[1024];
-    TCPsocket socket;
+    TCPSocket& socket;
 };
 
-class SDLNetSocketStream : public std::iostream
+class SocketStream : public std::iostream
 {
 public:
-    SDLNetSocketStream(TCPsocket socket)
-        : std::iostream(new SDLNetSocketStreambuf(socket))
+    SocketStream(TCPSocket& socket)
+        : std::iostream(new SocketStreamBuf(socket))
     { }
 
-    ~SDLNetSocketStream()
+    ~SocketStream()
     {
         delete rdbuf();
     }
 };
 
-} // masterserver
+}
 
 #endif
 

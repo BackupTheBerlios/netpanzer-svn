@@ -61,7 +61,8 @@ namespace UI
     void Button::initialize(const char * backgroundFileNameUp, const char * backgroundFileNameDown){
         clickState = false;
         try{
-            ReadFile * fileDown = FileSystem::openRead(backgroundFileNameDown);
+            filesystem::ReadFile* fileDown 
+                = filesystem::openRead(backgroundFileNameDown);
             SDL_RWops * t = fileDown->getSDLRWOps();
             bgSurfaceDown = IMG_Load_RW(t, false);
             free(t);
@@ -74,7 +75,8 @@ namespace UI
         }
 
         try{
-            ReadFile * fileUp = FileSystem::openRead(backgroundFileNameUp);
+            filesystem::ReadFile* fileUp 
+                = filesystem::openRead(backgroundFileNameUp);
             SDL_RWops * t = fileUp->getSDLRWOps();
             bgSurfaceUp = IMG_Load_RW(t, false);
             free(t);

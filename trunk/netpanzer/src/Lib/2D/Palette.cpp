@@ -298,8 +298,8 @@ void Palette::setColorTables()
 
     char tablePath[512];
     snprintf(tablePath, 512, "cache/colorfilters/%s", name.c_str());
-    if(!FileSystem::exists(tablePath)) {
-        FileSystem::mkdir(tablePath);
+    if(!filesystem::exists(tablePath)) {
+        filesystem::mkdir(tablePath);
     }
     char strBuf[512];
     //progressView->scrollAndUpdate("");
@@ -347,7 +347,7 @@ void Palette::loadACT(const std::string& newname)
     name = newname;
     std::string filename = "wads/" + name + ".act";
 
-    std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
+    std::auto_ptr<filesystem::ReadFile> file (filesystem::openRead(filename));
 
     try {
 	for (int i = 0; i < 256; i++) {

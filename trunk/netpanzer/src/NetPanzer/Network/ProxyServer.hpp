@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 #include <sstream>
 
-#include <SDL_net.h>
+#include "Network/TCPSocket.hpp"
 
 class ProxyServer
 {
@@ -36,7 +36,8 @@ public:
     static void makeBase64(std::string& base64, const std::string& str);
     void getProxyConnect(std::stringstream& buffer,
             const std::string& serveraddress);
-    bool sendProxyConnect(TCPsocket socket, const std::string& serveraddress);
+    void sendProxyConnect(network::TCPSocket& socket,
+            const std::string& serveraddress);
 };
 
 #endif

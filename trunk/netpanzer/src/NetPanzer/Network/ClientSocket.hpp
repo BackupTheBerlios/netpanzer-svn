@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 
 #include "ProxyServer.hpp"
+#include "Network/TCPSocket.hpp"
 
 class ClientSocket
 {
@@ -30,14 +31,13 @@ public:
     ~ClientSocket();
 
     void read();
-    void sendMessage(char* data, size_t datasize, bool realiable = true);
+    void sendMessage(const void* data, size_t datasize);
     ProxyServer proxy;
 
 private:
     void readTCP();
 
-    TCPsocket tcpsocket;
-    SDLNet_SocketSet socketset;
+    network::TCPSocket* socket;
 };
 
 #endif

@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include <string.h>
 
-#include "NetPacket.hpp"
+#include "NetMessage.hpp"
 
 enum { _net_message_id_game_control_cycle_map,
        _net_message_id_game_control_cycle_respawn_ack

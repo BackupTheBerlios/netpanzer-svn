@@ -28,54 +28,43 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/UtilInterface.hpp"
 #include "GameConfig.hpp"
 #include "Util/Endian.hpp"
+#include "Network/Address.hpp"
 
 ClientSocket::ClientSocket(const std::string& whole_servername)
+    : socket(0)
 {
-    int port = NETPANZER_DEFAULT_PORT_TCP;
-    std::string servername;
+    try {
+        proxy.setProxy(gameconfig->proxyserver,
+                gameconfig->proxyserveruser,
+                gameconfig->proxyserverpass);
+    
+        // resolve server name
+        int port = NETPANZER_DEFAULT_PORT_TCP;
+        std::string servername;
+        const char *server= proxy.proxyserver != ""
+                ? proxy.proxyserver.c_str() : whole_servername.c_str();
+        UtilInterface::splitServerPort(server, servername, &port);
 
-    proxy.setProxy(gameconfig->proxyserver,gameconfig->proxyserveruser,gameconfig->proxyserverpass);
+        network::Address serveraddr 
+            = network::Address::resolve(servername, port);
+        
+        socket = new network::TCPSocket(serveraddr, false);
 
-    // resolve server name
-    IPaddress serverip;
-    const char *server=(((const std::string
-                    &)proxy.proxyserver).size()>0?proxy.proxyserver.c_str():whole_servername.c_str());
-    UtilInterface::splitServerPort(server,servername,&port);
-    // some old version of SDL_net take a char* instead of a const char*
-
-    if(SDLNet_ResolveHost(&serverip, const_cast<char *>(servername.c_str()),
-                          port) < 0) {
-        throw Exception("couldn't resolve name '%s'.", servername.c_str());
-    }
-
-    tcpsocket = SDLNet_TCP_Open(&serverip);
-    if(!tcpsocket) {
-        throw Exception("couldn't open tcp connection to server '%s:%u'.",
-                        servername.c_str(), port);
-    }
-
-    if( ((const std::string &)proxy.proxyserver).size()>0) {
-        if(!proxy.sendProxyConnect(tcpsocket,whole_servername)) {
-            throw Exception("couldn't connect via proxy server '%s'.",
-                            server);
+        if(proxy.proxyserver != "") {
+            proxy.sendProxyConnect(*socket, whole_servername);
+            LOGGER.info("%s connected via proxy %s",
+                    whole_servername.c_str(),
+                    proxy.proxyserver.c_str());
         }
-        LOGGER.info("%s connected via proxy %s",whole_servername.c_str(),
-                proxy.proxyserver.c_str());
+    } catch(...) {
+        delete socket;
+        throw;
     }
-
-    socketset = SDLNet_AllocSocketSet(1);
-    if(!socketset) {
-        SDLNet_TCP_Close(tcpsocket);
-        throw Exception("couldn't allocate socket set.");
-    }
-    SDLNet_TCP_AddSocket(socketset, tcpsocket);
 }
 
 ClientSocket::~ClientSocket()
 {
-    SDLNet_TCP_DelSocket(socketset, tcpsocket);
-    SDLNet_FreeSocketSet(socketset);
-    SDLNet_TCP_Close(tcpsocket);
+    delete socket;
 }
 
 void ClientSocket::read()
@@ -90,15 +79,13 @@ void ClientSocket::read()
     static bool bMessageIncomplete = false;
     static bool bHeaderIncomplete = false;
 
-    // is data available?
-    SDLNet_CheckSockets(socketset, 0);
-    if(!SDLNet_SocketReady(tcpsocket))
-        return;
-
-    int iBytesReceived = SDLNet_TCP_Recv(tcpsocket, RecvBuffer,
-                                         sizeof(RecvBuffer));
-    if(iBytesReceived<0) {
-        LOG( ("Connection lost to server.") );
+    int iBytesReceived;
+    try {
+        iBytesReceived = socket->recv(RecvBuffer, sizeof(RecvBuffer));
+        if(iBytesReceived == 0)
+            return;
+    } catch(std::exception& e) {
+        LOG( ("Connection lost to server: %s", e.what()) );
         return;
     }
 
@@ -238,10 +225,7 @@ void ClientSocket::read()
     RecvOffset = 0;
 }
 
-void ClientSocket::sendMessage(char* data, size_t size, bool )
+void ClientSocket::sendMessage(const void* data, size_t size)
 {
-    if(SDLNet_TCP_Send(tcpsocket, data, (int) size) < (int) size) {
-        throw Exception("Error while sending to server: %s",
-                        SDLNet_GetError());
-    }
+    socket->send(data, size);
 }

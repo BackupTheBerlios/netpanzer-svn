@@ -62,14 +62,14 @@ void NetworkServerUnix::closeSession()
 int NetworkServerUnix::sendMessage(const PlayerID& player_id,
                                    NetMessage* message, size_t size, int flags)
 {
+    (void) flags;
     if(serversocket==0) {
         return _network_failed;
     }
     message->setSize(size);
 
     try {
-        serversocket->sendMessage(player_id.getNetworkID(),	(char *) message,
-                                  size, ! (flags & _network_send_no_guarantee));
+        serversocket->sendMessage(player_id.getNetworkID(), message, size);
     } catch(std::exception& e) {
         LOG ( ("Network send error when sending to client %d: %s",
                player_id.getNetworkID(), e.what()) );

@@ -26,7 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdlib.h>
 #include <physfs.h>
 
-//---------------------------------------------------------------------------
+namespace filesystem
+{
 
 class File
 {
@@ -51,8 +52,6 @@ protected:
 
     PHYSFS_file* file;
 };
-
-//---------------------------------------------------------------------------
 
 class FileSystem;
 
@@ -89,9 +88,8 @@ public:
     // can simply set to 1)
     SDL_RWops* getSDLRWOps();
 
-protected:
+    /** for internal use only */
     ReadFile(PHYSFS_file* file);
-    friend class FileSystem;
 
 private:
     static int RWOps_Read(SDL_RWops* context, void* ptr, int size, int maxnum);
@@ -126,9 +124,8 @@ public:
     /// writes the text in the buffer and an additional newline
     void writeLine(const std::string& line);
 
-protected:
+    /** for inernal use only */
     WriteFile(PHYSFS_file* file);
-    friend class FileSystem;
 };
 
 //---------------------------------------------------------------------------
@@ -137,54 +134,50 @@ protected:
  * documentation for details about the functions here. Most function names are
  * exactly the same as in physfs
  */
-class FileSystem
-{
-public:
-    static void initialize(const char* argv0, const char* company,
-                           const char* applicationname);
-    static void shutdown();
+void initialize(const char* argv0, const char* company,
+        const char* applicationname);
+void shutdown();
 
-    static void addToSearchPath(const char* dir, bool append = true);
-    static void removeFromSearchPath(const char* dir);
+void addToSearchPath(const char* dir, bool append = true);
+void removeFromSearchPath(const char* dir);
 
-    static const char* getRealDir(const char* filename);
-    static std::string getRealName(const char* filename);
-    /// remember to call freeLisT
-    static char** enumerateFiles(const char* directory);
-    static char** enumerateFiles(const std::string& directory)
-    { return enumerateFiles(directory.c_str()); }
-    static void freeList(char** list);
+const char* getRealDir(const char* filename);
+std::string getRealName(const char* filename);
+/// remember to call freeLisT
+char** enumerateFiles(const char* directory);
+static inline char** enumerateFiles(const std::string& directory)
+{ return enumerateFiles(directory.c_str()); }
+void freeList(char** list);
 
-    static ReadFile* openRead(const char* filename);
-    static ReadFile* openRead(const std::string& filename)
-    { return openRead(filename.c_str()); }
-    static WriteFile* openAppend(const char* filename);
-    static WriteFile* openAppend(const std::string& filename)
-    { return openAppend(filename.c_str()); }
-    static WriteFile* openWrite(const char* filename);
-    static WriteFile* openWrite(const std::string& filename)
-    { return openWrite(filename.c_str()); }
+ReadFile* openRead(const char* filename);
+static inline ReadFile* openRead(const std::string& filename)
+{ return openRead(filename.c_str()); }
+WriteFile* openAppend(const char* filename);
+static inline WriteFile* openAppend(const std::string& filename)
+{ return openAppend(filename.c_str()); }
+WriteFile* openWrite(const char* filename);
+static inline WriteFile* openWrite(const std::string& filename)
+{ return openWrite(filename.c_str()); }
 
-    static void mkdir(const char* dirname);
-    static void mkdir(const std::string& dirname)
-    { mkdir(dirname.c_str()); }
-    static void remove(const char* filename);
-    static void remove(const std::string& filename)
-    { remove(filename.c_str()); }
+void mkdir(const char* dirname);
+static inline void mkdir(const std::string& dirname)
+{ mkdir(dirname.c_str()); }
+void remove(const char* filename);
+static inline void remove(const std::string& filename)
+{ remove(filename.c_str()); }
 
-    static bool exists(const char* filename);
-    static bool exists(const std::string& filename)
-    { return exists(filename.c_str()); }
-    static bool isDirectory(const char* filename);
-    static bool isDirectory(const std::string& filename)
-    { return isDirectory(filename.c_str()); }
-    static bool isSymbolicLink(const char* filename);
-    static bool isSymbolicLink(const std::string& filename)
-    { return isSymbolicLink(filename.c_str()); }
-    static int64_t getLastModTime(const char* filename);
-    static int64_t getLastModTime(const std::string& filename)
-    { return getLastModTime(filename.c_str()); }
-};
+bool exists(const char* filename);
+static inline bool exists(const std::string& filename)
+{ return exists(filename.c_str()); }
+bool isDirectory(const char* filename);
+static inline bool isDirectory(const std::string& filename)
+{ return isDirectory(filename.c_str()); }
+bool isSymbolicLink(const char* filename);
+static inline bool isSymbolicLink(const std::string& filename)
+{ return isSymbolicLink(filename.c_str()); }
+int64_t getLastModTime(const char* filename);
+static inline int64_t getLastModTime(const std::string& filename)
+{ return getLastModTime(filename.c_str()); }
 
 //---------------------------------------------------------------------------
 
@@ -202,5 +195,7 @@ public:
 private:
     size_t objread, objrequested;
 };
+
+}
 
 #endif

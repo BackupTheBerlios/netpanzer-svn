@@ -18,8 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PLAYERNETMESSAGE_HPP
 #define _PLAYERNETMESSAGE_HPP
 
-#include "NetPacket.hpp"
-
+#include "NetMessage.hpp"
 
 enum { _net_message_id_player_connect_id,
        _net_message_id_player_sync_state,

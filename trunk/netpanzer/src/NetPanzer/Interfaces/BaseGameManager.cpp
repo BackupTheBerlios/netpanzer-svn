@@ -180,8 +180,8 @@ void BaseGameManager::shutdownNetworkSubSystem()
 void BaseGameManager::initialize(const std::string& configfile)
 {
     try {
-        if(!FileSystem::exists("config"))
-            FileSystem::mkdir("config");
+        if(!filesystem::exists("config"))
+            filesystem::mkdir("config");
         initializeGameConfig(configfile);
         initializeSoundSubSystem();
         initializeVideoSubSystem();

@@ -21,7 +21,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdarg.h>
 
+namespace filesystem {
 class WriteFile;
+}
 
 class Logger
 {
@@ -50,7 +52,7 @@ private:
     void log(int priority, const char *fmt, va_list ap);
 
     int m_logLevel;
-    WriteFile* m_logfile;
+    filesystem::WriteFile* m_logfile;
 };
 
 extern Logger LOGGER;

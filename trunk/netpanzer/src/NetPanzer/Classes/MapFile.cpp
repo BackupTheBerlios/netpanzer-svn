@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
 
-void MapFile::load(ReadFile& file)
+void MapFile::load(filesystem::ReadFile& file)
 {
     file.read(&netp_id_header, sizeof(netp_id_header), 1);
     id = file.readULE16();

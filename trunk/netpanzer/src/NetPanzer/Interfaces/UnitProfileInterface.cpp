@@ -182,7 +182,8 @@ void read_vehicle_profile(const std::string& unitName, UnitProfile *profile)
     profile->unitname = unitName;
 
     try {
-	std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
+	std::auto_ptr<filesystem::ReadFile> file(
+                filesystem::openRead(file_path));
 
 	while( not_done ) {
 	    for(int i=0; i<80; i++) {

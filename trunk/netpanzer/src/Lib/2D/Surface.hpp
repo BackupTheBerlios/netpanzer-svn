@@ -30,7 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class ColorTable;
 class Palette;
-class ReadFile;
 typedef uint8_t PIX;
 
 // This must be called before any of the string blitting functions are used.

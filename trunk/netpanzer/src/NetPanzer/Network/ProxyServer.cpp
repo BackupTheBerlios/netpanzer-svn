@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <string>
+#include <stdexcept>
 #include <ctype.h>
 
 #include "ProxyServer.hpp"
@@ -59,22 +60,27 @@ void ProxyServer::getProxyConnect(std::stringstream &buffer,const std::string &s
     }
 }
 
-bool ProxyServer::sendProxyConnect(TCPsocket socket,const std::string &serveraddress)
+void
+ProxyServer::sendProxyConnect(network::TCPSocket& socket,
+        const std::string& serveraddress)
 {
     std::stringstream buffer;
 
-    getProxyConnect(buffer,serveraddress);
-                                                                                
-    SDLNet_TCP_Send(socket,const_cast<char*> (buffer.str().c_str()),buffer.str().size());
+    getProxyConnect(buffer, serveraddress);
+            
+    std::string tbuf = buffer.str();
+    socket.send(tbuf.c_str(), tbuf.size());
     int lfs=0;
     char buf[1024];
     char *b=buf;
     int line=0;
     while(1) {
         char ch;
-        if(SDLNet_TCP_Recv(socket,&ch,1)!=1) { break; }
+        if(socket.recv(&ch, 1)!=1)
+            break;
         *b++=ch;
-        if(ch=='\r') { continue; }
+        if(ch=='\r') 
+            continue;
         if(ch=='\n') {
             *b=0;
             lfs++;
@@ -83,7 +89,9 @@ bool ProxyServer::sendProxyConnect(TCPsocket socket,const std::string &serveradd
                 while(!isspace(*b) && *b) b++;
                 while(isspace(*b)) b++;
                 if(atoi(b)!=200) {
-                    return false;
+                    std::stringstream msg;
+                    msg << "Error when authenticating at proxy: " << b;
+                    throw std::runtime_error(msg.str());
                 }
             }
             line++;
@@ -91,5 +99,4 @@ bool ProxyServer::sendProxyConnect(TCPsocket socket,const std::string &serveradd
         else { lfs=0; }
         if(lfs>=2) { break; }
     }
-    return true;
 }

@@ -19,8 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __UtilInterface_hpp__
 #define __UtilInterface_hpp__
 
-#include <SDL_net.h>
-
 //--------------------------------------------------------------------------
 /**
  * @deprecated This interface is deprecated and shouldn't be used in new code

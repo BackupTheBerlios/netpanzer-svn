@@ -24,7 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Log.hpp"
 #include "FileSystem.hpp"
 
-void FileSystem::initialize(const char* argv0, const char* ,
+namespace filesystem
+{
+
+void initialize(const char* argv0, const char* ,
                             const char* application)
 {
     if(!PHYSFS_init(argv0))
@@ -86,31 +89,31 @@ void FileSystem::initialize(const char* argv0, const char* ,
     } /* if */
 }
 
-void FileSystem::shutdown()
+void shutdown()
 {
     PHYSFS_deinit();
 }
 
-void FileSystem::addToSearchPath(const char* directory, bool append)
+void addToSearchPath(const char* directory, bool append)
 {
     if(!PHYSFS_addToSearchPath(directory, append))
         throw Exception("Couldn't add '%s' to searchpath: %s", directory,
                         PHYSFS_getLastError());
 }
 
-void FileSystem::removeFromSearchPath(const char* directory)
+void removeFromSearchPath(const char* directory)
 {
     if(!PHYSFS_removeFromSearchPath(directory))
         throw Exception("Couldn't remove '%s' from searchpath: %s", directory,
                         PHYSFS_getLastError());
 }
 
-const char* FileSystem::getRealDir(const char* filename)
+const char* getRealDir(const char* filename)
 {
     return PHYSFS_getRealDir(filename);
 }
 
-std::string FileSystem::getRealName(const char* filename)
+std::string getRealName(const char* filename)
 {
     const char* dir = PHYSFS_getRealDir(filename);
     if (dir == 0) {
@@ -122,17 +125,17 @@ std::string FileSystem::getRealName(const char* filename)
     return realname;
 }
 
-char** FileSystem::enumerateFiles(const char* directory)
+char** enumerateFiles(const char* directory)
 {
     return PHYSFS_enumerateFiles(directory);
 }
 
-void FileSystem::freeList(char** list)
+void freeList(char** list)
 {
     PHYSFS_freeList(list);
 }
 
-WriteFile* FileSystem::openWrite(const char* filename)
+WriteFile* openWrite(const char* filename)
 {
     PHYSFS_file* file = PHYSFS_openWrite(filename);
     if(!file)
@@ -142,7 +145,7 @@ WriteFile* FileSystem::openWrite(const char* filename)
     return new WriteFile(file);
 }
 
-ReadFile* FileSystem::openRead(const char* filename)
+ReadFile* openRead(const char* filename)
 {
     PHYSFS_file* file = PHYSFS_openRead(filename);
     if(!file)
@@ -152,7 +155,7 @@ ReadFile* FileSystem::openRead(const char* filename)
     return new ReadFile(file);
 }
 
-WriteFile* FileSystem::openAppend(const char* filename)
+WriteFile* openAppend(const char* filename)
 {
     PHYSFS_file* file = PHYSFS_openAppend(filename);
     if(!file)
@@ -162,36 +165,36 @@ WriteFile* FileSystem::openAppend(const char* filename)
     return new WriteFile(file);
 }
 
-void FileSystem::mkdir(const char* directory)
+void mkdir(const char* directory)
 {
     if(!PHYSFS_mkdir(directory))
         throw Exception("couldn't create directory '%s': %s", directory,
                         PHYSFS_getLastError());
 }
 
-void FileSystem::remove(const char* filename)
+void remove(const char* filename)
 {
     if(!PHYSFS_delete(filename))
         throw Exception("couldn't remove file '%s': %s", filename,
                         PHYSFS_getLastError());
 }
 
-bool FileSystem::exists(const char* filename)
+bool exists(const char* filename)
 {
     return PHYSFS_exists(filename);
 }
 
-bool FileSystem::isDirectory(const char* filename)
+bool isDirectory(const char* filename)
 {
     return PHYSFS_isDirectory(filename);
 }
 
-bool FileSystem::isSymbolicLink(const char* filename)
+bool isSymbolicLink(const char* filename)
 {
     return PHYSFS_isSymbolicLink(filename);
 }
 
-int64_t FileSystem::getLastModTime(const char* filename)
+int64_t getLastModTime(const char* filename)
 {
     int64_t modtime = PHYSFS_getLastModTime(filename);
     if(modtime < 0)
@@ -547,3 +550,4 @@ FileReadException::~FileReadException() throw()
 {
 }
 
+}

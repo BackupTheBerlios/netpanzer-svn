@@ -19,10 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _NETPACKET_HPP
 
 #include <stdint.h>
+#include <string.h>
 
-#include "NetMessageEnums.hpp"
 #include "Network/SocketClient.hpp"
 #include "Util/Endian.hpp"
+#include "NetMessage.hpp"
 
 #define _MAX_NET_PACKET_SIZE 512
 
@@ -47,27 +48,6 @@ struct NetMessageStruct
     uint8_t  message_id;
 
     uint8_t  data[ _MAX_NET_PACKET_SIZE - 4 ];
-}
-__attribute__((packed));
-
-class NetMessage
-{
-private:
-    uint16_t size;
-
-public:
-    uint8_t  message_class;
-    uint8_t  message_id;
-
-    uint16_t getSize() const
-    {
-        return ltoh16(size);
-    }
-
-    void setSize(uint16_t newsize)
-    {
-        size = htol16(newsize);
-    }
 }
 __attribute__((packed));
 

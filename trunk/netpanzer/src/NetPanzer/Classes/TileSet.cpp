@@ -41,7 +41,8 @@ TileSet::~TileSet()
     delete[] tile_data;
 }
 
-void TileSet::readTileDbHeader(ReadFile& file, TILE_DBASE_HEADER *dbHeader)
+void TileSet::readTileDbHeader(filesystem::ReadFile& file,
+        TILE_DBASE_HEADER *dbHeader)
 {
     file.read(&dbHeader->netp_id_header, sizeof(dbHeader->netp_id_header), 1);
     dbHeader->version = file.readULE16();
@@ -58,7 +59,7 @@ void TileSet::computeTileConsts( void )
 
 void TileSet::loadTileSetInfo( const char *file_path )
 {
-    std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
+    std::auto_ptr<filesystem::ReadFile> file (filesystem::openRead(file_path));
 
     delete[] tile_data;
     tile_data = 0;
@@ -80,7 +81,8 @@ void TileSet::loadTileSet( const char *file_path )
     unsigned long  tile_buffer_size;
 
     try {
-	std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
+	std::auto_ptr<filesystem::ReadFile> file(
+                filesystem::openRead(file_path));
 
         delete[] tile_data;
         tile_data = 0;
@@ -117,7 +119,8 @@ void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
 	unsigned long  tile_buffer_size;
 	unsigned long  tile_size;
 
-	std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
+	std::auto_ptr<filesystem::ReadFile> file(
+                filesystem::openRead(file_path));
 
 	delete[] tile_data;
 	tile_data = 0;
@@ -200,7 +203,8 @@ void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
 void TileSet::loadTileSetInfo( const char *file_path, WadMapTable &mapping_table )
 {
     try {
-	std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
+	std::auto_ptr<filesystem::ReadFile> file(
+                filesystem::openRead(file_path));
 
 	delete[] tile_data;
 	tile_data = 0;
@@ -244,7 +248,7 @@ bool TileSet::startPartitionTileSetLoad( const char *file_path, WadMapTable &map
     unsigned long  tile_buffer_size;
     unsigned long  tile_size;
 
-    partition_load_fhandle = FileSystem::openRead(file_path);
+    partition_load_fhandle = filesystem::openRead(file_path);
 
     delete[] tile_data;
     tile_data = 0;

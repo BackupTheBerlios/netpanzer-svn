@@ -29,35 +29,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkGlobals.hpp"
 #include "PlayerInterface.hpp"
 #include "Util/Log.hpp"
+#include "Network/Address.hpp"
 
 InfoThread::InfoThread(int port)
+    : socket(0)
 {
-    // setup socket and bind it
-    socket = 0; 
-    try {
-        socket = SDLNet_UDP_Open(port);
-        if(socket == 0) {
-            std::stringstream msg;
-            msg << "Couldn't create socket: " << SDLNet_GetError();
-            throw std::runtime_error(msg.str());
-        }
+    socket = new network::UDPSocket(port, false);
 
-        // start the thread
-        thread = SDL_CreateThread(threadMain, this);
-    } catch(...) {
-        if(socket != 0)
-            SDLNet_UDP_Close(socket);
-        throw;
-    }
+    // start the thread
+    thread = SDL_CreateThread(threadMain, this);
 }
 
 InfoThread::~InfoThread()
 {
     running = false;
     SDL_WaitThread(thread, 0);
-    
-    if(socket != 0)
-        SDLNet_UDP_Close(socket);
+
+    delete socket;
 }
 
 int InfoThread::threadMain(void* data)
@@ -69,10 +57,10 @@ int InfoThread::threadMain(void* data)
         try {
             _this->handleStatusRequests();
         } catch(std::exception& e) {
-            std::cerr << "Error while handling status request: " << e.what() <<
-                "\n";
+            LOGGER.warning("Error while handling status request: %s",
+                    e.what());
         } catch(...) {
-            std::cerr << "Unexpected exception in InfoThread.\n";
+            LOGGER.warning("Unexpected exception in InfoThread.\n");
         }
     }
 
@@ -81,26 +69,18 @@ int InfoThread::threadMain(void* data)
 
 void InfoThread::handleStatusRequests()
 {
-    UDPpacket* packet = SDLNet_AllocPacket(4096);
-    int res = 0;
-    while(res == 0) {
-        res = SDLNet_UDP_Recv(socket, packet);
-        // bleh... we need blocking calls...
+    network::Address addr;
+    char buffer[4096];
+   
+    size_t size = 0;
+    while(size == 0) {
+        if(!running)
+            return;         
+        size = socket->recv(addr, buffer, sizeof(buffer));
         SDL_Delay(20);
-
-        if(running == false) {
-            SDLNet_FreePacket(packet);
-            return;
-        }
-    }
-    if(res < 0) {
-        SDLNet_FreePacket(packet);
-        std::stringstream msg;
-        msg << "Couldn't receive network data: " << SDLNet_GetError();
-        throw std::runtime_error(msg.str());
     }
 
-    std::string packetstr((char*) packet->data, packet->len);
+    std::string packetstr(buffer, size);
     StringTokenizer tokenizer(packetstr, '\\');
 
     std::string query;
@@ -121,50 +101,17 @@ void InfoThread::handleStatusRequests()
             std::string responsestr = response.str();
             LOGGER.debug("Send back query response, size %d",
                     (int)responsestr.size());
-            const void* data = responsestr.c_str();
-            size_t datasize = responsestr.size();
-            UDPpacket* sendpacket = SDLNet_AllocPacket(datasize);
-            if(!sendpacket) {
-                throw std::runtime_error("out of memory");
-            }
-            sendpacket->address = packet->address;
-            sendpacket->len = datasize;
-            memcpy(sendpacket->data, data, datasize);
-            res = SDLNet_UDP_Send(socket, -1, sendpacket);
-            SDLNet_FreePacket(sendpacket);
-            if(res != 1) {
-                SDLNet_FreePacket(packet);
-                std::stringstream msg;
-                msg << "Errro when sending back info: " << SDLNet_GetError();
-                throw std::runtime_error(msg.str());
-            }
 
+            socket->send(addr, responsestr.c_str(), responsestr.size());
             break; // enough, next client
         } else if(query == "echo") {
             std::string word = tokenizer.getNextToken();
 
-            const void* data = word.c_str();
-            size_t datasize = word.size();
-            UDPpacket* sendpacket = SDLNet_AllocPacket(datasize);
-            if(!sendpacket) {
-                throw std::runtime_error("out of memory");
-            }
-            sendpacket->address = packet->address;
-            sendpacket->len = datasize;
-            memcpy(sendpacket->data, data, datasize);
-            res = SDLNet_UDP_Send(socket, -1, sendpacket);
-            SDLNet_FreePacket(sendpacket);
-            if(res != 1) {
-                SDLNet_FreePacket(packet);
-                std::stringstream msg;
-                msg << "Errro when sending back info: " << SDLNet_GetError();
-                throw std::runtime_error(msg.str());
-            }
+            socket->send(addr, word.c_str(), word.size());
         } else {
             // unknown query skip it
         }
     } while(query != "");
-    SDLNet_FreePacket(packet);
 }
 
 void InfoThread::sendInfo(std::stringstream& out)

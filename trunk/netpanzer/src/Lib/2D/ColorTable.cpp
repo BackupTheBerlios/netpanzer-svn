@@ -110,7 +110,7 @@ void ColorTable::createBrightenFilter(
     assert(brightness > 0 && brightness <= 256);
     init(256 * 256);
 
-    if(FileSystem::exists(filename)) {
+    if(filesystem::exists(filename)) {
         try {
             loadTable(filename);
             return;
@@ -164,7 +164,7 @@ void ColorTable::createDarkenFilter(const char *filename, float fudgeValue)
 {
     init(256 * 256);
 
-    if(FileSystem::exists(filename)) {
+    if(filesystem::exists(filename)) {
         try {
             loadTable(filename);
             return;
@@ -211,7 +211,7 @@ void ColorTable::create(
 {
     init(256 * 256);
 
-    if(FileSystem::exists(filename)) {
+    if(filesystem::exists(filename)) {
         try {
             loadTable(filename);
             return;
@@ -277,7 +277,7 @@ void ColorTable::create(
 void ColorTable::loadTable(const char *filename)
 {
     try {
-        std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
+        std::auto_ptr<filesystem::ReadFile> file(filesystem::openRead(filename));
 
     	// make sure palette in file is the same as current one
 	for(size_t i=0; i<PALETTE_LENGTH; i++) {
@@ -301,7 +301,8 @@ void ColorTable::loadTable(const char *filename)
 void ColorTable::saveTable(const char *filename) const
 {
     try {
-        std::auto_ptr<WriteFile> file (FileSystem::openWrite(filename));
+        std::auto_ptr<filesystem::WriteFile> file(
+                filesystem::openWrite(filename));
 
     	file->write(&Palette::color, 768, 1);
         file->write(colorArray, colorCount, 1);
@@ -320,7 +321,7 @@ void ColorTable::createTrans0(
 {
     init(256 * 256);
 
-    if(FileSystem::exists(filename)) {
+    if(filesystem::exists(filename)) {
         try {
             loadTable(filename);
             return;
@@ -385,7 +386,7 @@ void ColorTable::createLightDarkFilter(const char *filename)
 {
     init(256 * 256);
 
-    if(FileSystem::exists(filename)) {
+    if(filesystem::exists(filename)) {
         try {
             loadTable(filename);
             return;

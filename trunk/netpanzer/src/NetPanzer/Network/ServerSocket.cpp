@@ -31,32 +31,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConsoleInterface.hpp"
 #include "Util/Exception.hpp"
 
-ServerSocket::ServerSocket(Uint16 tcpport)
-        : clientlist(0)
+ServerSocket::ServerSocket(uint16_t port)
+        : socket(0), clientlist(0)
 {
-    IPaddress ip;
-    if(SDLNet_ResolveHost(&ip, 0, tcpport) < 0)
-        throw Exception("couldn't resolve address for socket on port %d: %s",
-                        tcpport, SDLNet_GetError());
-    tcpsocket = SDLNet_TCP_Open(&ip);
-    if(!tcpsocket)
-        throw Exception("couldn't open TCP socket on port %d: %s"
-		" (already a server running?)", tcpport,
-                        SDLNet_GetError());
-
-    sockets = SDLNet_AllocSocketSet(64);
-    if(!sockets) {
-        SDLNet_TCP_Close(tcpsocket);
-        throw Exception("couldn't allocate socket set.");
+    try {
+        socket = new network::TCPListenSocket(port, false);
+        clientlist = new ClientList();
+    } catch(...) {
+        delete socket;
+        delete clientlist;
     }
-    clientlist = new ClientList();
 }
 
 ServerSocket::~ServerSocket()
 {
     delete clientlist;
-    SDLNet_FreeSocketSet(sockets);
-    SDLNet_TCP_Close(tcpsocket);
+    delete socket;
 }
 
 void ServerSocket::read()
@@ -74,32 +64,34 @@ void ServerSocket::read()
 //in the linked list--
 void ServerSocket::acceptNewClients()
 {
-    TCPsocket clientsocket;
-    while ( (clientsocket = SDLNet_TCP_Accept(tcpsocket)) ) {
-        if(SDLNet_TCP_AddSocket(sockets, clientsocket) < 0) {
-            LOG ( ("Too many connections to server, dropping client.") );
-            return;
-        }
-        SocketClient* client = clientlist->add(this, clientsocket);
+    network::TCPSocket* clientsocket = 0;
+    while( (clientsocket = socket->accept())) {
+        try {
+            sockets.add(*clientsocket);
+            SocketClient* client = clientlist->add(this, clientsocket);
 
-        // Put message about connecting client into message queue
-        TransportClientAccept clientacceptmessage;
-        clientacceptmessage.setClientTransportID(client->id);
-        clientacceptmessage.setSize(sizeof(TransportClientAccept));
-        EnqueueIncomingPacket(&clientacceptmessage,
-                              sizeof(TransportClientAccept), 1, 0);
+            // Put message about connecting client into message queue
+            TransportClientAccept clientacceptmessage;
+            clientacceptmessage.setClientTransportID(client->id);
+            clientacceptmessage.setSize(sizeof(TransportClientAccept));
+            EnqueueIncomingPacket(&clientacceptmessage,
+                    sizeof(TransportClientAccept), 1, 0);
+        } catch(...) {
+            delete clientsocket;
+            throw;
+        }
     }
 }
 
 void ServerSocket::readTCP()
 {
-    SDLNet_CheckSockets(sockets, 0);
+    sockets.select(0);
 
     // Iterate through client list and check whether data arrived
     ClientList::ClientIterator i;
     for(i = clientlist->begin(); i != clientlist->end(); i++) {
         SocketClient* client = *i;
-        if (SDLNet_SocketReady(client->tcpsocket))
+        if (sockets.dataPending(*client->socket))
             readClientTCP(client);
     }
 
@@ -108,10 +100,10 @@ void ServerSocket::readTCP()
         SocketClient* client = *i;
         if(client->wantstodie) {
             i = clientlist->remove(i);
+            continue;
         }
-        else {
-            i++;
-        }
+        
+        i++;
     }
 }
 
@@ -131,11 +123,12 @@ void ServerSocket::readClientTCP(SocketClient* client)
 {
     static char recvbuffer[10240];
 
-    int recvsize = SDLNet_TCP_Recv(client->tcpsocket, recvbuffer,
-                                   sizeof(recvbuffer));
-    if(recvsize<=0) {
-        ConsoleInterface::postMessage("Connection lost for ID %u\n",
-                client->id);
+    int recvsize;
+    try {
+        recvsize = client->socket->recv(recvbuffer, sizeof(recvbuffer));
+    } catch(std::exception& e) {
+        LOGGER.warning("Connection lost of Client %u: %s.",
+                client->id, e.what());
         client->wantstodie = true;
         return;
     }
@@ -304,26 +297,21 @@ void ServerSocket::readClientTCP(SocketClient* client)
  * the game loop needs to be temporarily halted anyway.
  * it handles both TCP and UDP sends--
  */
-void ServerSocket::sendMessage(SocketClient::ID toclient, const char* data,
-        size_t datasize, bool /*reliable*/)
+void ServerSocket::sendMessage(SocketClient::ID toclient, const void* data,
+        size_t datasize)
 {
     SocketClient* client = clientlist->getClientFromID(toclient);
     if(!client || client->wantstodie)
         throw Exception("message sent to unknown client.");
 
-    // we ignore the reliable flag for now...
-    // XXX SDLNet_TCP_Send incorrectly takes a non-const data variable
-    if (SDLNet_TCP_Send(client->tcpsocket, const_cast<char*> (data),
-                (int) datasize) < (int) datasize) {
-        throw Exception("Error while sending to client %d: %s", client->id,
-                        SDLNet_GetError());
-    }
+    client->socket->send(data, datasize);
 }
 
 void ServerSocket::closeConnection(SocketClient* client)
 {
-    SDLNet_TCP_DelSocket(sockets, client->tcpsocket);
-    SDLNet_TCP_Close(client->tcpsocket);
+    sockets.remove(*client->socket);
+    delete(client->socket);
+    client->socket = 0;
 }
 
 void ServerSocket::removeClient(SocketClient::ID clientid)

@@ -15,8 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef _NET_MESSAGE_ENUMS_HPP
-#define _NET_MESSAGE_ENUMS_HPP
+#ifndef __NETMESSAGE_HPP__
+#define __NETMESSAGE_HPP__
+
+#include "Util/Endian.hpp"
 
 enum { _net_message_class_multi = 0,
        _net_message_class_client_server,
@@ -31,4 +33,33 @@ enum { _net_message_class_multi = 0,
        _net_message_class_winsock
      };
 
-#endif // ** _NET_MESSAGE_ENUMS_HPP
+#ifdef MSVC
+#pragma pack(1)
+#endif
+
+class NetMessage
+{
+private:
+    uint16_t size;
+
+public:
+    uint8_t  message_class;
+    uint8_t  message_id;
+
+    uint16_t getSize() const
+    {
+        return ltoh16(size);
+    }
+
+    void setSize(uint16_t newsize)
+    {
+        size = htol16(newsize);
+    }
+} __attribute__((packed));
+
+#ifdef MSVC
+#pragma pack()
+#endif
+
+#endif
+

@@ -165,14 +165,15 @@ int SDLSound::getSoundVolume(long distance)
  */
 void SDLSound::loadSound(const char* directory)
 {
-    char **list = FileSystem::enumerateFiles(directory);
+    char **list = filesystem::enumerateFiles(directory);
 
     for (char **i = list; *i != NULL; i++) {
         std::string filename = directory;
         filename.append(*i);
-        if (!FileSystem::isDirectory(filename.c_str())) {
+        if (!filesystem::isDirectory(filename.c_str())) {
             try {
-                ReadFile *file = FileSystem::openRead(filename.c_str());
+                filesystem::ReadFile *file 
+                    = filesystem::openRead(filename.c_str());
                 Mix_Chunk *chunk = Mix_LoadWAV_RW(file->getSDLRWOps(), 1);
                 if (chunk) {
                     std::string idName = getIdName(*i);
@@ -188,7 +189,7 @@ void SDLSound::loadSound(const char* directory)
             }
         }
     }
-    FileSystem::freeList(list);
+    filesystem::freeList(list);
 }
 //-----------------------------------------------------------------
 /**
@@ -215,17 +216,17 @@ void SDLSound::setSoundVolume(int )
 void SDLSound::playMusic(const char* directory)
 {
     // Part1: scan directory for music files
-    char **list = FileSystem::enumerateFiles(directory);
+    char **list = filesystem::enumerateFiles(directory);
 
     musicfiles.clear();
     for (char **i = list; *i != NULL; i++) {
         std::string filename = directory;
         filename.append(*i);
-        if (!FileSystem::isDirectory(filename.c_str())) {
+        if (!filesystem::isDirectory(filename.c_str())) {
             musicfiles.push_back(filename);
         }
     }
-    FileSystem::freeList(list);
+    filesystem::freeList(list);
 
     if(musicfiles.size() == 0) {
         LOGGER.info("Couldn't find any music in '%s'", directory);
@@ -277,7 +278,7 @@ void SDLSound::nextSong()
          * SDL_Mixer has not Mix_LoadMUS_RW
          */
         try {
-            ReadFile *file = FileSystem::openRead(toplay);
+            ReadFile *file = filesystem::openRead(toplay);
             music = Mix_LoadMUS_RW(file->getSDLRWOps(), 1);
             if (music) {
                 if (Mix_PlayMusic(music, 1) == 0) {
@@ -296,7 +297,7 @@ void SDLSound::nextSong()
                   toplay, e.what()));
         }
 #else
-        music = Mix_LoadMUS(FileSystem::getRealName(toplay).c_str());
+        music = Mix_LoadMUS(filesystem::getRealName(toplay).c_str());
         if (music) {
             if (Mix_PlayMusic(music, 1) == 0) {
                 LOG (("Start playing song '%s'", toplay));

@@ -21,7 +21,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "TileSetStruct.hpp"
 #include "WadMapTable.hpp"
 
+namespace filesystem {
 class ReadFile;
+}
 
 class TileSet
 {
@@ -35,7 +37,7 @@ protected:
     unsigned long tile_count;
     void computeTileConsts( void );
 
-    ReadFile* partition_load_fhandle;
+    filesystem::ReadFile* partition_load_fhandle;
     unsigned long partition_load_partition_count;
     unsigned long partition_load_tile_index;
     unsigned long partition_load_mapped_index;
@@ -44,7 +46,7 @@ public:
     TileSet();
     ~TileSet();
 
-    void readTileDbHeader(ReadFile& file, TILE_DBASE_HEADER *header);
+    void readTileDbHeader(filesystem::ReadFile& file, TILE_DBASE_HEADER *header);
     void loadTileSetInfo( const char *file_path );
     void loadTileSetInfo( const char *file_path, WadMapTable &mapping_table );
     void loadTileSet( const char *file_path, WadMapTable &mapping_table );

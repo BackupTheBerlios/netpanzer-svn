@@ -21,7 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include <string>
 #include <SDL_thread.h>
-#include <SDL_net.h>
+#include "Network/TCPSocket.hpp"
+#include "Network/UDPSocket.hpp"
 
 #include "ServerList.hpp"
 
@@ -58,7 +59,7 @@ private:
 
     std::vector<std::string> masterservers;
 
-    UDPsocket udpsocket;
+    network::UDPSocket* udpsocket;
 
     std::vector<ServerInfo*> not_queried;
     int queries; // number of currently running queries

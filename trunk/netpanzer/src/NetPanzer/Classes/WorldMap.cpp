@@ -48,7 +48,8 @@ void WorldMap::reMap( WadMapTable &mapping_table )
 void WorldMap::loadMapFile(const std::string& filename)
 {
     try {
-	std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
+	std::auto_ptr<filesystem::ReadFile> file(
+                filesystem::openRead(filename));
 
 	if ( map_loaded == true ) {
 	    delete[] map_buffer;

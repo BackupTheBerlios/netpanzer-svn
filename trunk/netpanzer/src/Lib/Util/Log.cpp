@@ -52,7 +52,7 @@ void
 Logger::openLogFile(const char* filename)
 {
     try {
-        m_logfile = FileSystem::openWrite(filename);
+        m_logfile = filesystem::openWrite(filename);
     } catch(std::exception& e) {
         fprintf(stderr, "cannot open '%s': %s\n", filename, e.what());
         m_logfile = 0;

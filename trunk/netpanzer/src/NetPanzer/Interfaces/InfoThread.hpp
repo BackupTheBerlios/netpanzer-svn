@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <sstream>
 #include <SDL_thread.h>
-#include <SDL_net.h>
+#include "Network/UDPSocket.hpp"
 
 /** This class is responsible for answering queries about the server status.
  * (part of the masterserver/gamebrowser protocol)
@@ -38,9 +38,9 @@ private:
     void sendInfo(std::stringstream& out);
     void sendRules(std::stringstream& out);
     void sendPlayers(std::stringstream& out);
-    
-    UDPsocket socket;
-    bool running;
+
+    network::UDPSocket* socket;
+    volatile bool running;
     SDL_Thread* thread;
 };
 

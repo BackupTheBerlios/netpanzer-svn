@@ -69,6 +69,7 @@ void NetworkClientUnix::partServer()
 
 void NetworkClientUnix::sendMessage(NetMessage *message, size_t size, int flags)
 {
+    (void) flags;
     message->setSize(size);
     
     if ( connection_type == _connection_loop_back ) {
@@ -85,8 +86,7 @@ void NetworkClientUnix::sendMessage(NetMessage *message, size_t size, int flags)
     NetPacketDebugger::logMessage("S", message);
 #endif
 
-    clientsocket->sendMessage((char*) message, size,
-                              ! (flags & _network_send_no_guarantee) );
+    clientsocket->sendMessage(message, size);
 
     NetworkState::incPacketsSent( size );
 }

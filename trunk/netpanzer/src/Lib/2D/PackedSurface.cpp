@@ -193,7 +193,8 @@ void PackedSurface::pack(const Surface &source)
 void PackedSurface::load(const std::string& filename)
 {
     try {
-	std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
+	std::auto_ptr<filesystem::ReadFile> file(
+                filesystem::openRead(filename));
 
 	free();
 	int32_t version = file->readSLE32();
@@ -248,7 +249,8 @@ void PackedSurface::load(const std::string& filename)
 void PackedSurface::save(const std::string& filename) const
 {
     try {
-	std::auto_ptr<WriteFile> file (FileSystem::openWrite(filename));
+	std::auto_ptr<filesystem::WriteFile> file(
+                filesystem::openWrite(filename));
 
 	int32_t version = CURRENT_PAK_VERSION;
 	file->writeSLE32(version);
@@ -578,7 +580,7 @@ nextRow:
 //---------------------------------------------------------------------------
 int loadAllPAKInDirectory(const char *path, PackedSurfaceList& paklist)
 {
-    char** list = FileSystem::enumerateFiles(path);
+    char** list = filesystem::enumerateFiles(path);
 
     std::vector<std::string> filenames;
     for(char** file = list; *file != 0; file++) {
@@ -588,7 +590,7 @@ int loadAllPAKInDirectory(const char *path, PackedSurfaceList& paklist)
 	    filenames.push_back(name);
     }
 
-    FileSystem::freeList(list);
+    filesystem::freeList(list);
    
     std::sort(filenames.begin(), filenames.end()); 
 

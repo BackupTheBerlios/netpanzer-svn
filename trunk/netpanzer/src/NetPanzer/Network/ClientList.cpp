@@ -32,10 +32,10 @@ ClientList::~ClientList()
     clients.clear();
 }
 
-SocketClient* ClientList::add(ServerSocket* server, TCPsocket socket)
+SocketClient* ClientList::add(ServerSocket* server, network::TCPSocket* socket)
 {
     SocketClient* client = new SocketClient(server);
-    client->tcpsocket = socket;
+    client->socket = socket;
     client->id = nextid++;
     clients.push_back(client);
 

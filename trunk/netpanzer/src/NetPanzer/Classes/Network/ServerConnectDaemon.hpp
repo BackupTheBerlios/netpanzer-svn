@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "PlayerState.hpp"
 #include "ArrayUtil/QueueTemplate.hpp"
-#include "NetPacket.hpp"
+#include "NetMessage.hpp"
 #include "Util/Timer.hpp"
 #include "UnitSync.hpp"
 

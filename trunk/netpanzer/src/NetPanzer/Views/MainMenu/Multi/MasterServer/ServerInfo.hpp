@@ -19,7 +19,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __SERVERINFO_HPP__
 
 #include <string>
-#include <SDL_net.h>
+
+#include <SDL.h>
+#include "Network/Address.hpp"
 
 namespace masterserver
 {
@@ -43,7 +45,7 @@ public:
     std::string map;
     int ping;
 
-    IPaddress ipaddress;
+    network::Address ipaddress;
     Uint32 querystartticks;
 };
 

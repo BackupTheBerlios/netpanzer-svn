@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _CLIENTLIST_H
 
 #include <vector>
-#include <SDL_net.h>
 #include "SocketClient.hpp"
+#include "Network/TCPSocket.hpp"
 
 class ServerSocket;
 
@@ -30,7 +30,7 @@ public:
     ClientList();
     ~ClientList();
 
-    SocketClient* add(ServerSocket* server, TCPsocket socket);
+    SocketClient* add(ServerSocket* server, network::TCPSocket* socket);
 
     SocketClient* getClientFromID(SocketClient::ID id);
 

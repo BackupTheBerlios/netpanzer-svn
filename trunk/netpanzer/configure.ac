@@ -77,6 +77,7 @@ case $host_os in
     mingw*|cygwin*)
         AC_MSG_RESULT([WIN32])
         AC_DEFINE([WINSOCK], [], [Define if winsock should be used])
+        LIBS="$LIBS -lwsock32"
         ;;
     *)
         AC_MSG_RESULT([assume posix])
@@ -89,13 +90,6 @@ esac
 AX_TYPE_SOCKLEN_T
 
 AM_PATH_SDL([1.2.5], , AC_MSG_ERROR([Please install libsdl >= 1.2.]))
-
-NP_FINDLIB([SDLNET], [SDL_net], [SDL_net >= 1.2],
-	NP_LANG_PROGRAM([#include <SDL_net.h>], [SDLNet_Init();]),
-	[], [-lSDL_net],
-	[],
-	[AC_MSG_ERROR([Please install SDLNet >= 1.2.4])],
-	[$SDL_CFLAGS], [$SDL_LIBS])
 
 NP_FINDLIB([SDLMIXER], [SDL_mixer], [SDL_mixer >= 1.2],
 	NP_LANG_PROGRAM([#include <SDL_mixer.h>

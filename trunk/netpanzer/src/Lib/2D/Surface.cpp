@@ -78,10 +78,10 @@ public:
     uint16_t    bfReserved2;
     uint32_t   bfOffBits;
 
-    BitmapFileHeader(ReadFile* file);
+    BitmapFileHeader(filesystem::ReadFile* file);
 };
 
-BitmapFileHeader::BitmapFileHeader(ReadFile* file)
+BitmapFileHeader::BitmapFileHeader(filesystem::ReadFile* file)
 {
     bfType = file->readULE16();
     bfSize = file->readULE32();
@@ -109,10 +109,10 @@ public:
     uint32_t  biClrUsed;
     uint32_t  biClrImportant;
 
-    BitmapInfoHeader(ReadFile* file);
+    BitmapInfoHeader(filesystem::ReadFile* file);
 };
 
-BitmapInfoHeader::BitmapInfoHeader(ReadFile* file)
+BitmapInfoHeader::BitmapInfoHeader(filesystem::ReadFile* file)
 {
     biSize = file->readULE32();
     biWidth = file->readULE32();
@@ -1699,7 +1699,7 @@ PIX Surface::getAverageColor()
 //---------------------------------------------------------------------------
 int Surface::loadAllBMPInDirectory(const char *path)
 {
-    char** list = FileSystem::enumerateFiles(path);
+    char** list = filesystem::enumerateFiles(path);
     
     std::vector<std::string> filenames;
     Surface tempSurface;
@@ -1721,7 +1721,7 @@ int Surface::loadAllBMPInDirectory(const char *path)
         }
     }
 
-    FileSystem::freeList(list);
+    filesystem::freeList(list);
 
     std::sort(filenames.begin(), filenames.end());
 
@@ -1759,7 +1759,8 @@ void initFont()
         // NOTE: Make sure the file size is 128 characters.
         char charfilename[] = "pics/chars8x8.raw";
 
-        std::auto_ptr<ReadFile> file (FileSystem::openRead(charfilename));
+        std::auto_ptr<filesystem::ReadFile> file(
+                filesystem::openRead(charfilename));
 
         for (int y = 0; y < ascii8x8.getPix().y; y++) {
             for (int curChar = 0; curChar < ascii8x8.getFrameCount();
@@ -1782,7 +1783,8 @@ void initFont()
         // NOTE: Make sure the file size is 128 characters.
         char charfilename[] = "pics/chars5x5.raw";
         
-        std::auto_ptr<ReadFile> file (FileSystem::openRead(charfilename));
+        std::auto_ptr<filesystem::ReadFile> file(
+                filesystem::openRead(charfilename));
         
         for (int y = 0; y < ascii5x5.getPix().y; y++) {
             for (int curChar = 0; curChar < ascii5x5.getFrameCount(); curChar++) {
@@ -1970,7 +1972,8 @@ void Surface::loadBMP(const char *fileName, bool needAlloc)
 
     if (needAlloc) free();
 
-    std::auto_ptr<ReadFile> file (FileSystem::openRead(fileName));
+    std::auto_ptr<filesystem::ReadFile> file(
+            filesystem::openRead(fileName));
 
     try {
         BitmapFileHeader file_header(file.get());
@@ -2126,7 +2129,8 @@ void Surface::mapFromPalette(const std::string& oldPalette)
 
     try {
         std::string filename = "wads/" + oldPalette + ".act";
-	std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
+	std::auto_ptr<filesystem::ReadFile> file(
+                filesystem::openRead(filename));
 
 	for (int i = 0; i < 256; i++) {
 	    file->read(&sourceColor[i], 3, 1);

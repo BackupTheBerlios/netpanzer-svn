@@ -13,10 +13,13 @@ if ! $(JAMCONFIG_READ)
 
 COMPILER_CFLAGS += -Wall -W ;
 COMPILER_CFLAGS_optimize += -O3 -g3 ;
+COMPILER_C++FLAGS_optimize += -O3 -g3 ;
 COMPILER_LFLAGS_optimize += -O3 -g3 ;
 COMPILER_CFLAGS_debug += -DDEBUG -Werror -g3 ;
+COMPILER_CXXFLAGS_debug += -DDEBUG -Werror -g3 ;
 COMPILER_LFLAGS_debug += -g3 ;
-COMPILER_CFLAGS_profile += -DDEBUG -g3 -pg ;
+COMPILER_CFLAGS_profile += -O2 -g3 -pg ;
+COMPILER_CXXFLAGS_profile += -O2 -g3 -pg ;
 COMPILER_LFLAGS_profile += -g3 -pg ;
 
 LINK = $(CXX) ;

@@ -41,7 +41,8 @@ void DigitText::init(const char* )
     char charfilename[] = "pics/chars11x17digit.raw";
 
     try {
-	std::auto_ptr<ReadFile> file (FileSystem::openRead(charfilename));
+	std::auto_ptr<filesystem::ReadFile> file(
+                filesystem::openRead(charfilename));
 
 	for (int y = 0; y < charactersNormal.getPixY(); y++) {
 	    int yOffset = y * charactersNormal.getPixX();

@@ -1,3 +1,8 @@
+5-Oct-2004 by Matthias Braun
+- more cleanups
+- fix dedicated server not updateing internal masterserverlist
+- replaced SDL_net with custom socket wrappers
+
 30-Sep-2004 by Matthias Braun
 -BIIG cleanup:
   lots of endianness work in the network packets (only very few is missing)

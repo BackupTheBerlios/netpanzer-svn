@@ -30,49 +30,38 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdlib.h>
 #include <string.h>
 
+#include <SDL.h>
+
+#include "Network/Address.hpp"
+#include "Network/TCPSocket.hpp"
+#include "Network/SocketStream.hpp"
+#include "Util/Log.hpp"
+#include "Util/StringTokenizer.hpp"
+#include "Util/StreamTokenizer.hpp"
+
 // send a heartbeat packet every 5 minutes
 static const int UPDATEINTERVAL = 5*60;
+// after how many heartbeats query for updated masterserverlist
+static const int MASTERQUERYCOUNT = 24;
 
 HeartbeatThread::HeartbeatThread()
-    : running(false)
+    : running(false), masterquery(0)
 {
-    int masterport = 28900;
+    static const int masterport = 28900;
     std::string masterhost = gameconfig->masterservers;
     
     // lookup server addresses
-    const char* str = gameconfig->masterservers.c_str();
-    char c;
-    size_t i = 0;
-    std::string currentstr;
-    while( (c = str[i++]) != 0) {
-        if(c == ',') {
-            IPaddress serveraddr;
-            int res = SDLNet_ResolveHost(&serveraddr,
-                    const_cast<char*> (masterhost.c_str()), masterport);
-            if(res < 0) {
-                std::cerr << "Couldn't resolve address of masterserver '"
-                          << masterhost << "': " << SDLNet_GetError() << "\n";
-            } else {
-                serveraddrs.push_back(serveraddr);
-            }
-        } else if(isspace(c)) {
-            // do nothing
-        } else {
-            currentstr += c;
+    StringTokenizer tokenizer(gameconfig->masterservers, ',');
+    std::string host;
+    while( (host = tokenizer.getNextToken()) != "") {
+        try {
+            network::Address addr = network::Address::resolve(host, masterport);
+            serveraddrs.push_back(addr);
+        } catch(std::exception& e) {
+            LOGGER.warning("Bad Masterserver: %s\n", e.what());
         }
     }
-    if(currentstr != "") {
-        IPaddress serveraddr;
-        int res = SDLNet_ResolveHost(&serveraddr,
-                const_cast<char*> (masterhost.c_str()), masterport);            
-        if(res < 0) {
-            std::cerr << "Couldn't resolve address of masterserver '"
-                      << masterhost << "': " << SDLNet_GetError() << "\n";
-        } else {
-            serveraddrs.push_back(serveraddr);
-        }
-    }
-
+    
     // send initial heartbeat
     sendHeartbeat();
 
@@ -87,8 +76,19 @@ HeartbeatThread::~HeartbeatThread()
     thread = 0;
 
     std::stringstream packet;
-    packet << "\\quit\\" << gameconfig->serverport << "\\final\\" << std::flush;
+    packet << "\\quit\\" << gameconfig->serverport << "\\final\\";
+    masterquery = 1; // do not query for masterserverlist now
     sendPacket(packet.str());
+
+    // write back masterserverlist
+    std::string gameservers;
+    for(Addresses::iterator i = serveraddrs.begin();
+            i != serveraddrs.end(); ++i) {
+        if(i != serveraddrs.begin())
+            gameservers += ",";
+        gameservers += i->getIP();
+    }
+    gameconfig->masterservers = gameservers;
 }
 
 int
@@ -104,10 +104,10 @@ HeartbeatThread::threadMain(void* data)
         try {
             _this->sendHeartbeat();
         } catch(std::exception& e) {
-            std::cerr << "Couldn't send heartbeat packet: " << e.what() << "\n"
-                << "retrying in " << UPDATEINTERVAL << "seconds." << std::endl;
+            LOGGER.warning("Couldn't send heartbeat packet: %s", e.what());
+            LOGGER.warning("retrying in %d seconds.", UPDATEINTERVAL);
         } catch(...) {
-            std::cerr << "Unexpected exception while sending heartbeat.\n";
+            LOGGER.warning("Unexpected exception while sending heartbeat.");
         }
     }
 
@@ -128,35 +128,88 @@ HeartbeatThread::sendHeartbeat()
 void
 HeartbeatThread::sendPacket(const std::string& str)
 {
-    const void* data = str.c_str();
-    size_t datalen = str.size();
-    
-    for(std::vector<IPaddress>::iterator i = serveraddrs.begin();
-            i != serveraddrs.end(); ++i) {
-        IPaddress addr = *i;
+    for(size_t i = 0; i < serveraddrs.size(); ++i) {
+        const network::Address& address = serveraddrs[i];
+        
+        // we use blocking mode here and hope that no masterserver quietly
+        // leaves our connection open without sending data
+        network::TCPSocket socket(address);
+        network::SocketStream stream(socket);
             
-        TCPsocket sock = 0;
-        try {
-            sock = SDLNet_TCP_Open(&addr);
-            if(sock == 0) {
+        bool doMasterQuery = false;
+        if(masterquery <= 0) {
+            doMasterQuery = true;
+            stream << "\\list\\gamename\\master\\final";
+            masterquery = MASTERQUERYCOUNT;
+        }
+            
+        // send heartbeat packet
+        stream << str << std::flush;
+
+        parseResult(stream, doMasterQuery);
+    }
+    masterquery--;
+}
+
+void
+HeartbeatThread::parseResult(std::iostream& stream, bool doMasterQuery)
+{
+    StreamTokenizer tokenizer(stream, '\\');
+
+    // deal with response to master query
+    if(doMasterQuery) {
+        std::string token;
+        std::string ip;
+        bool firstip = true;
+        while( (token = tokenizer.getNextToken()) != "") {
+            if(token == "error") {
                 std::stringstream msg;
-                msg << "Couldn't create socket: " << SDLNet_GetError();
+                msg << "Masterserver sent back error: "
+                    << tokenizer.getNextToken();
+                throw std::runtime_error(msg.str());
+            } else if(token == "ip") {
+                ip = tokenizer.getNextToken();
+            } else if(token == "port") {
+                int port;
+                std::stringstream portstr(tokenizer.getNextToken());
+                portstr >> port;
+
+                try {
+                    network::Address addr = network::Address::resolve(ip, port);
+                                    
+                    if(firstip) {
+                        serveraddrs.clear();
+                        firstip = false;
+                    }
+                    serveraddrs.push_back(addr);
+                } catch(std::exception& e) {
+                    LOGGER.warning(
+                            "Couldn't resolve additional masterserver: %s",
+                            e.what());
+                }
+            } else if(token == "final") {
+                break;
+            } else {
+                std::stringstream msg;
+                msg << "Unknown token in masterserver response: " << token;
                 throw std::runtime_error(msg.str());
             }
-            
-            // send heartbeat packet
-            int res = SDLNet_TCP_Send(sock, const_cast<void*>(data), (int) datalen);
-            if(res != (int) datalen) {
-                std::cerr << 
-                    "Couldn't send heartbeat packet: " << SDLNet_GetError();
-            }
+        }
+    }
 
-            SDLNet_TCP_Close(sock);
-        } catch(std::exception& e) {
-            if(sock != 0)
-                SDLNet_TCP_Close(sock);
-            std::cerr << 
-                "Couldn't send heartbeat packet: " << SDLNet_GetError() << "\n";
+    // deal with response to heartbeat packet
+    std::string token;
+    while( (token = tokenizer.getNextToken()) != "") {
+        if(token == "error") {
+            std::stringstream msg;
+            msg << "Masterserver sent back error: " << tokenizer.getNextToken();
+            throw std::runtime_error(msg.str());
+        } else if(token == "final") {
+            break;
+        } else {
+            std::stringstream msg;
+            msg << "Unknown token in masterserver response: " << token;
+            throw std::runtime_error(msg.str());
         }
     }
 }

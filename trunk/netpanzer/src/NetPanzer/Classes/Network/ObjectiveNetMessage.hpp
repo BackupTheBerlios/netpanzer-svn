@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _OBJECTIVE_NET_MESSAGE_HPP
 #define _OBJECTIVE_NET_MESSAGE_HPP
 
-#include "NetPacket.hpp"
+#include "NetMessage.hpp"
 
 #include "ObjectiveMessageTypes.hpp"
 

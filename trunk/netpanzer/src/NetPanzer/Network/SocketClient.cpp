@@ -6,11 +6,10 @@
 #include "SocketClient.hpp"
 
 SocketClient::SocketClient(ServerSocket* newserver)
-        : tcpsocket(0), headerincomplete(false),
+        : socket(0), headerincomplete(false),
         messageincomplete(0), udpenabled(false), tempoffset(0),
         wantstodie(false), id(0), server(newserver)
 {
-    memset(&udpaddress, 0, sizeof(IPaddress));
 }
 
 SocketClient::~SocketClient()

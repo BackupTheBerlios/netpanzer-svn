@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdint.h>
 
-#include "NetPacket.hpp"
+#include "NetMessage.hpp"
 #include "PlayerID.hpp"
 
 enum { _net_message_id_transport_client_accept,

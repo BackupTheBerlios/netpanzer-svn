@@ -3,7 +3,7 @@ Next release:
 -finish serverconsole:
     * make status page display ips
     * add a kick command
-    * 
+    * add a mapchange command
 -finish serverlog with filestamp
 -finish infothread - ok
 -implement TIP OF DAY  - no idea how to create graphics for the GUI, so this
@@ -27,10 +27,7 @@ Next release:
  * let dedicated server output statistics on console or in some log files. 
    Also all message should be outputted with timestamps.
    So that you can generate nice html pages with statistics of the players :)
- * the Server has a massive memory leak somewhere
- * Add timeout/keepalive handling to network layer to correctly detect 
-   connection losses and try reconnects (we should think about this again, 
-   doesn't TCP already do similar things?)
+ * the Server has a massive memory leak somewhere - might be fixed now
  * impelement 'initialunits' param in PlayerUnitConfig::initialize()
  * synchronize resources between server and clients, both should have same flags
    collection and map. Let them automatically download these things.             

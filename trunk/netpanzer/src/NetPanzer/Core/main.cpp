@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <ctype.h>
 #include <signal.h>
 #include <SDL.h>
-#include <SDL_net.h>
 
 #include <optionmm/command_line.hpp>
 
@@ -41,12 +40,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 void shutdown()
 {
-    SDLNet_Quit();
     SDL_Quit();
     if(gameconfig)
         gameconfig->saveConfig();
     LOGGER.closeLogFile();
-    FileSystem::shutdown();
+    filesystem::shutdown();
 }
 
 #ifndef WIN32
@@ -140,25 +138,18 @@ BaseGameManager *initialise(int argc, char** argv)
     }
     SDL_EnableUNICODE(1);
 
-    // Initialize SDL_net
-    if(SDLNet_Init() < 0) {
-        fprintf(stderr, "SDLNet_Init error: %s.\n", SDLNet_GetError());
-        exit(1);
-    }
-
     // Initialize libphysfs
     try {
-        FileSystem::initialize(argv[0], "netpanzer", "netpanzer");
+        filesystem::initialize(argv[0], "netpanzer", "netpanzer");
     } catch(std::exception& e) {
         fprintf(stderr, "%s", e.what());
         shutdown();
         exit(1);
     }
 
-    // try adding the DATADIR
-#ifdef DATADIR
+#ifdef NP_DATADIR
     try {
-	FileSystem::addToSearchPath(DATADIR);
+	filesystem::addToSearchPath(NP_DATADIR);
     } catch(...)
     { }
 #endif

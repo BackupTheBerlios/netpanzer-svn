@@ -18,9 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __HEARTBEATTHREAD_HPP__
 #define __HEARTBEATTHREAD_HPP__
 
+#include <iostream>
 #include <string>
 
-#include <SDL_net.h>
+#include "Network/Address.hpp"
 #include <SDL_thread.h>
 
 /** This class is responsible for notifying the masterserver from time to time
@@ -45,9 +46,13 @@ private:
     static int threadMain(void* data);
     void sendHeartbeat();
     void sendPacket(const std::string& data);
+    void parseResult(std::iostream& stream, bool doMasterQuery);
     
     volatile bool running;
-    std::vector<IPaddress> serveraddrs;
+    int masterquery;        // number of updates until we query for list of
+                            // masterservers again
+    typedef std::vector<network::Address> Addresses;
+    Addresses serveraddrs;
     SDL_Thread* thread;
 };
 

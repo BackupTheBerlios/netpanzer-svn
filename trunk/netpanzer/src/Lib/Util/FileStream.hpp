@@ -1,3 +1,20 @@
+/*
+Copyright (C) 2004 by Matthias Braun <matze@braunis.de>
+ 
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+ 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+ 
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 #ifndef __FILESTREAM_HPP__
 #define __FILESTREAM_HPP__
 
@@ -11,7 +28,7 @@
 class IFileStreambuf : public std::streambuf
 {
 public:
-    IFileStreambuf(ReadFile* newfile)
+    IFileStreambuf(filesystem::ReadFile* newfile)
         : file(newfile)
     {
         // start reading
@@ -38,14 +55,14 @@ protected:
     }
 
 private:
-    ReadFile* file;
+    filesystem::ReadFile* file;
     char buf[1024];
 };
 
 class OFileStreambuf : public std::streambuf
 {
 public:
-    OFileStreambuf(WriteFile* newfile)
+    OFileStreambuf(filesystem::WriteFile* newfile)
         : file(newfile)
     {
         setp(buf, buf+sizeof(buf));
@@ -82,19 +99,19 @@ protected:
     }
 
 private:
-    WriteFile* file;
+    filesystem::WriteFile* file;
     char buf[1024];
 };
 
 class IFileStream : public std::istream
 {
 public:
-    IFileStream(ReadFile* file)
+    IFileStream(filesystem::ReadFile* file)
         : std::istream(new IFileStreambuf(file))
     { }
 
     IFileStream(const std::string& filename)
-        : std::istream(new IFileStreambuf(FileSystem::openRead(filename)))
+        : std::istream(new IFileStreambuf(filesystem::openRead(filename)))
     { }
 
     ~IFileStream()
@@ -106,12 +123,12 @@ public:
 class OFileStream : public std::ostream
 {
 public:
-    OFileStream(WriteFile* file)
+    OFileStream(filesystem::WriteFile* file)
         : std::ostream(new OFileStreambuf(file))
     { }
 
     OFileStream(const std::string& filename)
-        : std::ostream(new OFileStreambuf(FileSystem::openWrite(filename)))
+        : std::ostream(new OFileStreambuf(filesystem::openWrite(filename)))
     { }
 
     ~OFileStream()

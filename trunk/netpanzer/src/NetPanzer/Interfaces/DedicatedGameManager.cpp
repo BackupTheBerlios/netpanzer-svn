@@ -156,7 +156,7 @@ void DedicatedGameManager::pushCommand(const ServerCommand& command)
 //-----------------------------------------------------------------
 bool DedicatedGameManager::launchNetPanzerGame()
 {
-    *Console::server << "starting dedicated netPanzer server";
+    *Console::server << "starting dedicated netPanzer server\n";
 
     gameconfig->map = MapsManager::getNextMap("");
     
@@ -166,7 +166,7 @@ bool DedicatedGameManager::launchNetPanzerGame()
         << "MaxUnits: " << gameconfig->maxunits << "\n"
         << "Gametype: " << gameconfig->getGameTypeString() << "\n"
         << "ObjectivePercentage: " <<
-        gameconfig->objectiveoccupationpercentage << "\n"
+            gameconfig->objectiveoccupationpercentage << "\n"
         << "TimeLimit: " << gameconfig->timelimit << "\n"
         << "FragLimit: " << gameconfig->fraglimit << "\n"
         << "RespawnType: " << gameconfig->getRespawnTypeString() << "\n"
@@ -193,6 +193,7 @@ bool DedicatedGameManager::launchNetPanzerGame()
 
     Particle2D::setCreateParticles(false);
 
+    *Console::server << "contacting masterserver." << std::endl;
     if((const std::string&) gameconfig->masterservers != "") {
         try {
             infothread = new InfoThread(gameconfig->serverport);

@@ -61,13 +61,13 @@ MouseInterface::cursors_t MouseInterface::cursors;
 void MouseInterface::initialize()
 {
     const char* cursorpath = "pics/cursors/";
-    char** cursorfiles = FileSystem::enumerateFiles(cursorpath);
+    char** cursorfiles = filesystem::enumerateFiles(cursorpath);
     for(char** i = cursorfiles; *i != 0; i++) {
         Surface* surface = new Surface;
         try {
             std::string filename = cursorpath;
             filename += *i;
-            if(FileSystem::isDirectory(filename.c_str())) {
+            if(filesystem::isDirectory(filename.c_str())) {
                 continue;
             }
             surface->loadBMP(filename.c_str());
@@ -77,7 +77,7 @@ void MouseInterface::initialize()
             LOG(("Couldn't load cursorfile '%s': %s", *i, e.what()));
         }
     }
-    FileSystem::freeList(cursorfiles);
+    filesystem::freeList(cursorfiles);
 
     setCursor("default.bmp");
 }

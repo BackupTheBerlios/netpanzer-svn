@@ -18,17 +18,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNIXSERVER_H
 #define _UNIXSERVER_H
 
+#include <stdint.h>
 #include "ClientList.hpp"
+#include "Network/TCPListenSocket.hpp"
+#include "Network/SocketSet.hpp"
 
 class ServerSocket
 {
 public:
-    ServerSocket(Uint16 tcpport);
+    ServerSocket(uint16_t port);
     ~ServerSocket();
 
     void read();
-    void sendMessage(SocketClient::ID toclient, const char* data,
-            size_t datasize, bool realiable = true);
+    void sendMessage(SocketClient::ID toclient, const void* data,
+            size_t datasize);
     void removeClient(SocketClient::ID clientid);
 
 protected:
@@ -40,8 +43,8 @@ private:
     void readTCP();
     void readClientTCP(SocketClient* client);
 
-    TCPsocket tcpsocket;
-    SDLNet_SocketSet sockets;
+    network::TCPListenSocket* socket;
+    network::SocketSet sockets;
     ClientList* clientlist;
 };
 

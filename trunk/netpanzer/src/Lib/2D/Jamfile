@@ -5,6 +5,6 @@ Library netpanzer2d
     : noinstall
 ;
 LinkWith netpanzer2d : netpanzertypes netpanzerutil ;
-ExternalLibs netpanzer2d : XML SDL SDLNET PHYSFS ;
+ExternalLibs netpanzer2d : XML SDL PHYSFS ;
 Help netpanzer2d : "Build the netpanzer 2d support library" ;
 

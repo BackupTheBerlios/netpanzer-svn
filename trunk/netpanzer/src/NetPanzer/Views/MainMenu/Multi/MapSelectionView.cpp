@@ -147,12 +147,12 @@ int MapSelectionView::loadMaps()
 
     // scan directory for .npm files
     std::string suffix = ".npm";
-    char **list = FileSystem::enumerateFiles(mapsPath);
+    char **list = filesystem::enumerateFiles(mapsPath);
     std::vector<std::string> mapfiles;
     for (char **i = list; *i != NULL; i++) {
         std::string filename = mapsPath;
         filename.append(*i);
-        if (!FileSystem::isDirectory(filename.c_str())) {
+        if (!filesystem::isDirectory(filename.c_str())) {
             if (filename.size() >= suffix.size()
                     && (filename.compare(filename.size() - suffix.size(),
                             suffix.size(), suffix) == 0))
@@ -170,7 +170,7 @@ int MapSelectionView::loadMaps()
             }
         }
     }
-    FileSystem::freeList(list);
+    filesystem::freeList(list);
 
     if(mapfiles.size() == 0) {
         throw Exception("not found any maps in '%s'", mapsPath);
@@ -181,8 +181,8 @@ int MapSelectionView::loadMaps()
             std::string filename = mapsPath;
             filename += mapfiles[i];
             filename += ".npm";
-	    std::auto_ptr<ReadFile> file 
-		(FileSystem::openRead(filename));
+	    std::auto_ptr<filesystem::ReadFile> file 
+		(filesystem::openRead(filename));
 
 	    MapFile netPanzerMapHeader;
 	    netPanzerMapHeader.load(*file);

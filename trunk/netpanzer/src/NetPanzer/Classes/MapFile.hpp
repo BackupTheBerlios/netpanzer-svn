@@ -19,11 +19,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _MAPFILE_HPP
 
 #include <stdint.h>
-#include "Util/FileSystem.hpp"
+
+namespace filesystem
+{
+class ReadFile;
+}
 
 class MapFile {
 public:
-    void load(ReadFile& file);
+    void load(filesystem::ReadFile& file);
 
     char netp_id_header[64];
     uint16_t id;
