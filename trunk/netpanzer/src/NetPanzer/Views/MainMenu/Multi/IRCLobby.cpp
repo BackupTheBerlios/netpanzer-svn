@@ -107,13 +107,12 @@ void IRCLobby::connectToServer()
         
     irc_server_socket = SDLNet_TCP_Open(&addr);
     if(!irc_server_socket) {
-        std::string err_mess("Couldn't connect to irc server: " +serveraddress
-            + ":" );
-        err_mess+= serverport;
-        err_mess+= "Err:";
-        err_mess+= SDLNet_GetError();
-        addChatMessage("",err_mess);
-        LOG(("%s",err_mess.c_str()));
+        std::stringstream err_mess;
+        err_mess << "Couldn't connect to irc server: " << serveraddress
+            << ":" << serverport << " Err:" << SDLNet_GetError();
+        addChatMessage("",err_mess.str());
+
+        LOG(("%s",err_mess.str().c_str()));
         return;
     }
 
