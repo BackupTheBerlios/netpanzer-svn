@@ -27,73 +27,55 @@ template< class TYPE >
 class ArrayTemplate : public NoCopy
 {
 protected:
-    unsigned long size;
+    size_t size;
     TYPE *array;
 
 public:
-
     ArrayTemplate()
     {
         size = 0;
         array = 0;
     }
+    ArrayTemplate(size_t newsize)
+        : size(newsize)
+    {
+        array = new TYPE[size];
+    }
+    ~ArrayTemplate()
+    {
+        delete[] array;
+    }
 
-    ArrayTemplate( unsigned long size );
-    ~ArrayTemplate( void );
+    void initialize(size_t newsize)
+    {
+        deallocate();
+        array = new TYPE[newsize];
+        size = newsize;
+    }
 
-    void initialize( unsigned long size );
-
-    inline TYPE &operator[]( unsigned long index)
+    TYPE &operator[](size_t index)
     {
         assert( index < size );
-        return( array[index] );
+        return array[index];
     }
 
-    inline void add( TYPE object, unsigned long index )
+    void add(const TYPE& object, size_t index)
     {
         assert( index < size );
-        memmove( (void *) &array[index], (void *) &object, sizeof( TYPE ) );
+        array[index] = object;
     }
 
-    inline unsigned long getSize( void ) const
+    size_t getSize() const
     {
-        return( size );
+        return size;
     }
 
-    inline void deallocate( void )
+    void deallocate()
     {
-        if ( array != 0 ) {
-            delete[] array;
-            array = 0;
-        }
-
+        delete[] array;
+        array = 0;
         size = 0;
     }
 };
-
-
-
-template< class TYPE >
-ArrayTemplate< TYPE >::ArrayTemplate( unsigned long size )
-{
-    ArrayTemplate< TYPE >::size = size;
-    array = new TYPE [ size ];
-}
-
-template< class TYPE >
-ArrayTemplate< TYPE >::~ArrayTemplate( void )
-{
-    delete[] array;
-}
-
-template< class TYPE >
-void ArrayTemplate< TYPE >::initialize( unsigned long size )
-{
-    ArrayTemplate< TYPE >::size = size;
-
-    delete[] array ;
-    array = new TYPE [ size ];
-}
-
 
 #endif // ** _ARRAYTEMPLATE_HPP

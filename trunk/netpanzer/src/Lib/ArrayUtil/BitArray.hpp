@@ -20,7 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdlib.h>
 
-class BitArray
+#include "Util/NoCopy.hpp"
+
+class BitArray : public NoCopy
 {
 private:
     unsigned char *array;

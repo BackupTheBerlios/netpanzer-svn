@@ -106,7 +106,9 @@ void SDLSound::playAmbientSound(const char* name, long distance)
     if (chunk) {
         int oldVolume = Mix_VolumeChunk(chunk, getSoundVolume(distance));
         if (Mix_PlayChannel(-1, chunk, 0) == -1) {
+            LOG(("allocating more sound channels..."));
             Mix_AllocateChannels(8 + Mix_AllocateChannels(-1));
+            LOG(("ok: %d", Mix_AllocateChannels(-1)));
             if (Mix_PlayChannel(-1, chunk, 0) == -1) {
                 LOG (("Couldn't play sound '%s': %s", name, Mix_GetError()));
             }

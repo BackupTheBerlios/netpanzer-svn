@@ -34,13 +34,13 @@ public:
 
     void initialize( unsigned long size );
 
-    inline void reset( void )
+    void reset( void )
     {
         front = 0;
         rear = 0;
     }
 
-    inline bool enqueue( TYPE & object )
+    bool enqueue(const TYPE& object )
     {
         add( object, (rear + 1) % size );
         rear = (rear + 1) % size;
@@ -51,7 +51,7 @@ public:
         return( true );
     }
 
-    inline TYPE dequeue( void )
+    TYPE dequeue( void )
     {
         assert( front != rear );
 
@@ -59,21 +59,21 @@ public:
         return( array[ front ] );
     }
 
-    inline void pop( void )
+    void pop( void )
     {
         assert( front != rear );
 
         front = ( front + 1 ) % size;
     }
 
-    inline TYPE getFirst( void )
+    TYPE getFirst( void )
     {
         assert( front != rear );
 
         return( array[ (( front + 1 ) % size) ] );
     }
 
-    inline TYPE * getFirstPtr( void )
+    TYPE * getFirstPtr( void )
     {
         assert( front != rear );
 
@@ -81,22 +81,22 @@ public:
     }
 
 
-    inline bool isEmpty( void ) const
+    bool isEmpty( void ) const
     {
         return front == rear;
     }
 
-    inline bool isFull ( void ) const
+    bool isFull ( void ) const
     {
         return front == (rear + 1) % size;
     }
 
-    inline bool isReady( void ) const
+    bool isReady( void ) const
     {
         return front != rear;
     }
 
-    inline unsigned long itemCount( void ) const
+    unsigned long itemCount( void ) const
     {
         if ( front > rear )
             return ( (rear+1) + ( (size-1) - front ) );

@@ -76,8 +76,9 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("Outpost Related");
     insert("");
     insert("  'O'                              Cycle through your outposts");
-    insert("  Ctrl + RMC on captured outpost   Displays the outpost view");
-    insert("  Double RMC on captured outpost   Displays the outpost view");
+    insert("  LMC on captured outpost          Displays the outpost view");
+    insert("  mouse drag on captured outpost   Select unit spawn point");
+    //insert("  Double RMC on captured outpost   Displays the outpost view");
     //insert("  Alt + RMC on captured outpost........Sets selected outpost's delivery location");
     insert("");
     insert("");
@@ -104,10 +105,11 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("  RMH + [1 - 7]                    Sets the blending level of the minimap");
     insert("  RMH + [+ or -]                   Scales the size of the minimap");
     //insert("  RMH + 'O'                        Toggles outposts");
-    //insert(" ");
-    //insert(" ");
-    //insert("System Related");
-    //insert("");
+    insert(" ");
+    insert(" ");
+    insert("System Related");
+    insert("");
+    insert("  ALT + Enter                      Toggle Fullscreen/Windowed mode");
     //insert("  F9                               BMP screen shot");
     //insert("  Alt + '-'                        Decrease brightness");
     //insert("  Alt + '='                        Increase brightness");
