@@ -19,7 +19,7 @@ INCLUDEDIRS=$(DIRS) NetPanzer/Classes/Network
 CFLAGS += -Wall -g3 -O2 $(foreach dir, $(INCLUDEDIRS), -I$(dir))
 
 GOAL = ../netpanzer
-LINKFLAGS += -g3 `sdl-config --libs` -lSDL_net -lSDL_mixer
+LINKFLAGS += -g3 `sdl-config --libs` -lSDL_net -lSDL_mixer -lphysfs
 CFLAGS += `sdl-config --cflags` -DUNIX
 
 ifeq ($(PROFILING),yes)
