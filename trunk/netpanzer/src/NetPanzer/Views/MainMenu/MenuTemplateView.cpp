@@ -33,6 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PackedSurface.hpp"
 #include "UtilInterface.hpp"
 #include "GameManager.hpp"
+#include "UILib/UIDraw.hpp"
 #include "Exception.hpp"
 #include "GameViewGlobals.hpp"
 
@@ -215,7 +216,6 @@ void MenuTemplateView::initButtons()
 void MenuTemplateView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
     //setWorldRect();
-
     if (Desktop::getVisible("GameView")) {
 	// When ingame, tint the game into gray
         clientArea.bltLookup(getClientRect(), Palette::darkGray256.getColorArray());
@@ -223,7 +223,11 @@ void MenuTemplateView::doDraw(const Surface &viewArea, const Surface &clientArea
 
     } else {
 	// When in mainmenu, make background dark and draw menu image
-	
+        if(Screen->getWidth() > 640 ||
+           Screen->getHeight() > 480)
+            screen.fillRect(0, 0, Screen->getWidth(), Screen->getHeight(),
+                            Color::black);
+        
         // Set the following to get does exist.
         if (backgroundSurface.getFrameCount() > 0) {
             backgroundSurface.blt(viewArea, 0, 0);

@@ -563,7 +563,6 @@ void GameManager::processSystemKeys()
         }
 
         if (KeyboardInterface::getKeyPressed(SDLK_F2)) {
-            printf("ShowMenu!\n");
             if (Desktop::getView("GameView")->getVisible()) {
                 if (!Desktop::getView("OptionsView")->getVisible() &&
                         !Desktop::getView("SoundView")->getVisible() &&
