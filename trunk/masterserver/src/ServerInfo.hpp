@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 #include <arpa/inet.h>
+#include <netinet/in.h>
 #include <time.h>
 #include <map>
 #include <string>
