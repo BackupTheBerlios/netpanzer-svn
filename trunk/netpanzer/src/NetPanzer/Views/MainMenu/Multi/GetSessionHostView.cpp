@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Desktop.hpp"
 #include "DirectPlay.h"
 #include "gapp.hpp"
-#include "DSound.hpp"
 #include "TimerInterface.hpp"
 #include "GameViewGlobals.hpp"
 

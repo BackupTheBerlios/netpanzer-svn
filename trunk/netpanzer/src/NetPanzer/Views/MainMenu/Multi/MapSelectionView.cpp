@@ -15,13 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifdef WIN32
 #include <config.h>
+#ifdef WIN32
 #include <io.h>
 #endif
 #include "MapSelectionView.hpp"
 #include "gapp.hpp"
-#include "DSound.hpp"
 #include "GameConfig.hpp"
 #include "GameViewGlobals.hpp"
 #include "HostOptionsView.hpp"

@@ -672,15 +672,16 @@ void GameManager::processSystemKeys()
 			}
 		} 
 
-       if( (KeyboardInterface::getKeyState( SDLK_LCRTL) || KeyboardInterface::getKeyState( SDLK_RCRTL) )   )
+       if( (KeyboardInterface::getKeyState( SDLK_LCTRL) ||
+			KeyboardInterface::getKeyState( SDLK_RCTRL) )   )
         {
          
 		  // DEBUG VIEW 
-		  if ( KeyboardInterface::getKeyPressed( SDLK_F )  )
+		  if ( KeyboardInterface::getKeyPressed( SDLK_f )  )
           { display_frame_rate_flag = !display_frame_rate_flag; }
           
           // DEBUG VIEW 
-		  if ( KeyboardInterface::getKeyPressed( SDLK_N )  )
+		  if ( KeyboardInterface::getKeyPressed( SDLK_n )  )
           { display_network_info_flag = !display_network_info_flag; }
          
         } 

@@ -366,7 +366,7 @@ void ConsoleInterface::addExtendedChar(int newExtendedChar)
 	// Process the extendedChar accordingly.
 	switch (newExtendedChar)
 	{
-		case SDLK_ENTER:
+		case SDLK_RETURN:
 		{
 		} break;
 		

@@ -18,7 +18,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __cTimeStamp_hpp__
 #define __cTimeStamp_hpp__
 
+#ifdef USE_SDL
+#include <SDL.h>
+#endif
+#ifdef WIN32
 #include "WinTimer.hpp"
+#endif
 
 ////---------------------------------------------------------------------------
 //// class TIMESTAMP defines a way to record a point in time.  The actual value
@@ -31,52 +36,56 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //// use RTDSC, so it's as accurate as RESOLUTION.
 class TIMESTAMP {
 private:
-        // RESOLUTION defines the number of ticks that equal one second, but this
-        // doesn't necessarily mean that a timestamp is accurate to the nearest
-        // RESOLTUIONth of a second
-        // enum { RESOLUTION = 2500UL };
+#ifdef WIN32
+		typedef unsigned long Ticks;
+#endif
+#ifdef USE_SDL
+		typedef Uint32 Ticks;
+#endif
+		Ticks v; // ticks count
 
-        unsigned long v; // tick count (actual value is meaningless, only for relative comparisons)
-
-        inline static double ticksToSecs(long  t) { return double(t) * (1.0/WinTimer::TimerFrequency); }
-        inline static long   secsToTicks(float s) { return long(s * float(WinTimer::TimerFrequency)); }
+        inline static double ticksToSecs(Ticks t)
+		{ return double(t) / 1000.0; }
+        inline static long secsToTicks(float s)
+		{ return (Ticks) (s * 1000.0); }
 
 public:
-        inline TIMESTAMP(unsigned long nV) { v = nV; }
+        TIMESTAMP(Ticks nV = 0)
+		{ v = nV; }
+		TIMESTAMP(const TIMESTAMP& other)
+		{ v = other.v; }
 
+        TIMESTAMP &operator =(const TIMESTAMP& other)
+		{ v  = other.v; return *this; }
 
-        inline TIMESTAMP() {}
-        inline TIMESTAMP(const TIMESTAMP &a) { v = a.v; }
+        TIMESTAMP &operator +=(float seconds)
+		{ v += secsToTicks(seconds); return *this; }
+        TIMESTAMP &operator -=(float seconds)
+		{ v -= secsToTicks(seconds); return *this; }
 
-        inline TIMESTAMP &operator  =(const TIMESTAMP &a) { v  = a.v; return *this; }
+        TIMESTAMP operator +(float seconds) const
+		{ return TIMESTAMP(v + secsToTicks(seconds)); }
+        TIMESTAMP operator -(float seconds) const
+		{ return TIMESTAMP(v - secsToTicks(seconds)); }
 
-        inline TIMESTAMP &operator +=(float seconds) { v += secsToTicks(seconds); return *this; }
-        inline TIMESTAMP &operator -=(float seconds) { v -= secsToTicks(seconds); return *this; }
-
-        inline TIMESTAMP operator +(float seconds) const { return TIMESTAMP(v + secsToTicks(seconds)); }
-        inline TIMESTAMP operator -(float seconds) const { return TIMESTAMP(v - secsToTicks(seconds)); }
-
-        inline double operator -(const TIMESTAMP &a) const { return ticksToSecs(long(v - a.v)); }
-
-        inline int operator < (const TIMESTAMP &a) const { return long(v - a.v) <  0L; }
-        inline int operator <=(const TIMESTAMP &a) const { return long(v - a.v) <= 0L; }
-        inline int operator >=(const TIMESTAMP &a) const { return long(v - a.v) >= 0L; }
-        inline int operator > (const TIMESTAMP &a) const { return long(v - a.v) >  0L; }
-		inline int operator ==(const TIMESTAMP &a) const { return v == a.v; }
+        double operator -(const TIMESTAMP &a) const
+		{ return ticksToSecs(long(v - a.v)); }
+        int operator < (const TIMESTAMP &a) const
+		{ return long(v - a.v) <  0L; }
+        int operator <=(const TIMESTAMP &a) const
+		{ return long(v - a.v) <= 0L; }
+        int operator >=(const TIMESTAMP &a) const
+		{ return long(v - a.v) >= 0L; }
+        int operator > (const TIMESTAMP &a) const
+		{ return long(v - a.v) >  0L; }
+		int operator ==(const TIMESTAMP &a) const
+		{ return v == a.v; }
 
         // calibrate the timestamp system for this computer
         static void calibrate();
 };
 
-//***************************************************************************
-// global functions
-//***************************************************************************
-
 // Return the current timestamp
 extern TIMESTAMP now();
-
-//***************************************************************************
-// end
-//***************************************************************************
 
 #endif // #ifndef __cTimeStamp_hpp__

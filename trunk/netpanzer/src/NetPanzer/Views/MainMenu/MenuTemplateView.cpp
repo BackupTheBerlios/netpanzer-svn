@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Desktop.hpp"
 #include "GameConfig.hpp"
 #include "GameManager.hpp"
-#include "DSound.hpp"
+#include "Sound.hpp"
 #include "cMouse.hpp"
 #include "ViewGlobals.hpp"
 #include "DirectDrawGlobals.hpp"

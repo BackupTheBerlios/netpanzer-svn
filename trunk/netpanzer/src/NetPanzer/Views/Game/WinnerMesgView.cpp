@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameViewGlobals.hpp"
 #include "Desktop.hpp"
 #include "Stats.hpp"
-#include "DSound.hpp"
+#include "Sound.hpp"
 #include "DDHardSurface.hpp"
 #include "DirectDrawGlobals.hpp"
 #include "ParticleSystem2D.hpp"
@@ -45,7 +45,7 @@ static void bReturnToMainMenu()
   }
  else
   {  
-    dsound.StopTankIdle();
+    sound->StopTankIdle();
 
 	// Blank the screen.
 

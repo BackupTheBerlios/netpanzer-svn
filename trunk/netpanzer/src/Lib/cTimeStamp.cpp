@@ -21,13 +21,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <assert.h>
 #include "cTimeStamp.hpp"
 
+// the nicely simple SDL version:
+#ifdef USE_SDL
 
+void TIMESTAMP::calibrate()
+{ }
 
+TIMESTAMP now()
+{
+	return TIMESTAMP(SDL_GetTicks());
+}
+
+#endif
+
+// XXX remove this mess when the SDL version is tested enough
+#ifdef WIN32
 //***************************************************************************
 // local data
 //***************************************************************************
-
-bool gTimeSliceFlag = false;
 
 float timeElapsed;
 static bool        calibrated = false;
@@ -78,20 +89,17 @@ long double RDTSC()
 // global code
 //***************************************************************************
 
-#if 1
 // Old version
 //---------------------------------------------------------------------------
 TIMESTAMP now() {
         if (!calibrated) TIMESTAMP::calibrate();
         return TIMESTAMP(long( WinTimer::GetClock() * ticksPerClock));
 }
-#endif
 
 //***************************************************************************
 // class TIMESTAMP member functions
 //***************************************************************************
 
-#if 1
 // Old version
 //---------------------------------------------------------------------------
 void TIMESTAMP::calibrate() {

@@ -39,11 +39,8 @@ DirectSound::DirectSound()
 {
  Enabled = false;
 }
-//////////////////////////////////
-//////////////////////////////////
 
-
-HRESULT DirectSound::Initialize(HWND hWnd)
+bool DirectSound::Initialize()
 {
     HRESULT hr;
 	short index;
@@ -51,7 +48,7 @@ HRESULT DirectSound::Initialize(HWND hWnd)
 	for(index = 0; index < MAX_NUM_SFX; index++)
 	{
 		m_pDSBuffer[index] = 0;
-  PreviousVolume[index] = DSBVOLUME_MAX;
+	  	PreviousVolume[index] = DSBVOLUME_MAX;
 
   /*      if(index >= AMBIENT_START)
         {
@@ -67,34 +64,32 @@ HRESULT DirectSound::Initialize(HWND hWnd)
 
 	RandomCount = 0;
 	BattleSoundIndex = 0;
- UnitIndex = 0;
- VoiceIndex = 0;
+	UnitIndex = 0;
+	VoiceIndex = 0;
 	//DupBufferIndex = 0;
- AmbientIndex = 0;
+	AmbientIndex = 0;
 
- hr = InitDirectSound(hWnd);
+	hr = InitDirectSound(gapp.hwndApp);
 
- if(hr == false)
- {
-  Enabled = false;
-  return false;
- }
+	if(hr == false)
+	{
+		Enabled = false;
+		return false;
+	}
 
- hr = InitSoundEngine(hWnd);
+	hr = InitSoundEngine(gapp.hwndApp);
 
- if(hr == false)
- {
-  Enabled = false;
-  return false;
- }
+	if(hr == false)
+	{
+		Enabled = false;
+		return false;
+	}
 
- Enabled = true;
- return true;
-
+	Enabled = true;
+	return true;
 }
 //////////////////////////////////
 //////////////////////////////////
-
 
 HRESULT DirectSound::InitDirectSound(HWND hWnd)
 {
@@ -265,11 +260,7 @@ HRESULT DirectSound::InitSoundEngine(HWND hWnd)
 //////////////////////////////////
 //////////////////////////////////
 
-
-
-
-
-void DirectSound::ShutDownDirectSound()
+void DirectSound::shutdown()
 {
 	//release the direct sound buffers--
 	short index;

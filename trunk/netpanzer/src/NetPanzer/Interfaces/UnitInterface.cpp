@@ -42,7 +42,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitMessageTypes.hpp"
 #include "PlayerNetMessage.hpp"
 
-#include "DSound.hpp"
+#include "Sound.hpp"
 #include "ParticleInterface.hpp"
 
 
@@ -207,8 +207,8 @@ void UnitInterface::updateUnitStatus( void )
 		ParticleInterface::addHit(unit->unit_state);
     
 		//SFX
-        dsound.PlayAmbientSound( _not_applicable, 
-		                         _blow_up_tank,
+        sound->PlayAmbientSound( _not_applicable, 
+								 Sound::_blow_up_tank,
 								 WorldViewInterface::getCameraDistance( unit->unit_state.location ) );
 
         deleteUnit( unit );                              
@@ -1035,8 +1035,8 @@ void UnitInterface::unitDestroyMessage( NetMessage *net_message )
     ParticleInterface::addHit(unit->unit_state);
 
     //SFX
-    dsound.PlayAmbientSound( _not_applicable, 
-                             _blow_up_tank,
+    sound->PlayAmbientSound( _not_applicable, 
+							 Sound::_blow_up_tank,
   	  					     WorldViewInterface::getCameraDistance( unit->unit_state.location ) );
 
     unit_lists[ unit_id.getPlayer() ].deleteUnit( unit_id );

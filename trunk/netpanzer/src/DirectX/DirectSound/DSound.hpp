@@ -63,21 +63,8 @@ enum UnitType{ _unit_type_valentine,
                _unit_type_archer,	
                _not_applicable};
 */
-enum Event{ _selected,
-			_deselected,
-			_move_to, 
-			_target_enemy,
-			_no_line_of_fire,
-			_under_attack,
-			_fire_gun,
-			_hit_target,
-			_miss_target,
-			_scream,
-			_random_battle,
-			_blow_up_tank};
 
-
-class DirectSound : public PObject
+class DirectSound : public Sound
 {
 protected:
 
@@ -126,9 +113,8 @@ public:
 
  DirectSound();    
 
- HRESULT Initialize(HWND hWnd);
-
- void ShutDownDirectSound();
+ void initialize();
+ void shutdown();
 
  void PlayTankIdle();
  void StopTankIdle();
@@ -141,7 +127,5 @@ public:
 
 
 };
-
-extern DirectSound dsound;
 
 #endif

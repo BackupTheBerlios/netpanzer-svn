@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "StaticsInterface.hpp"
 #include "WorldViewInterface.hpp"
 #include "DDHardSurface.hpp"
-#include "DSound.hpp"
+#include "Sound.hpp"
 #include "ParticleInterface.hpp"
 #include "WeaponGlobals.hpp"
 
@@ -87,8 +87,8 @@ void BulletWeapon::fsmFlight()
 				lifecycle_status = _lifecycle_weapon_in_active;
 
 				//SFX
-				dsound.PlayAmbientSound( _not_applicable, 
-				                         _hit_target, 
+				sound->PlayAmbientSound( _not_applicable, 
+										 Sound::_hit_target, 
 										 WorldViewInterface::getCameraDistance( location ) );
 
 				// **  Particle Shit

@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "ProjectileInterface.hpp"
 
-#include "DSound.hpp"
+#include "Sound.hpp"
 
 #include "ParticleInterface.hpp"
 #include "MissleWeapon.hpp"
@@ -191,8 +191,8 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
   
   //SFX
   long distance = WorldViewInterface::getCameraDistance( start );
-  dsound.PlayAmbientSound( owner_type_id, _fire_gun, distance );
-  dsound.PlayAmbientSound( _not_applicable, _random_battle, distance );
+  sound->PlayAmbientSound( owner_type_id, Sound::_fire_gun, distance );
+  sound->PlayAmbientSound( _not_applicable, Sound::_random_battle, distance );
  }
 
 

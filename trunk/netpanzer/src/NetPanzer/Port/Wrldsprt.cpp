@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "DirectDrawGlobals.hpp" 
 #include "Wrldsprt.hpp"
 #include "blitters.h"
+#include "UIDraw.hpp"
 
 #include "WorldViewInterface.hpp"
 
@@ -129,11 +130,11 @@ world_sprite::world_sprite( void )
   
   frame_offset = ((y - (view_start_y)) * DBUFFER_WIDTH) + (x - (view_start_x)) + OFFSET_TO_VIEW;
 
-  DDraw.lockDoubleBuffer( &double_buffer );
+  Screen->lockDoubleBuffer( &double_buffer );
 
   general_blitter( sprite->x_size, sprite->y_size, frame_offset, sprite->data, double_buffer );
  
-  DDraw.unlockDoubleBuffer();
+  Screen->unlockDoubleBuffer();
 
    if (select_flag)
     {
@@ -297,7 +298,7 @@ void world_animation::frame_update( void )
 
   frame_data = anim->data + (anim->frame_size * frame_counter) + (direct * anim->direct_size);
   
-  DDraw.lockDoubleBuffer( &double_buffer );
+  Screen->lockDoubleBuffer( &double_buffer );
 
   general_blitter( anim->x_size, anim->y_size, frame_offset, frame_data, double_buffer ); 
 
@@ -314,7 +315,7 @@ void world_animation::frame_update( void )
      blit_selector_square( x_size, y_size, frame_offset, double_buffer ); 
     }
 
-   DDraw.unlockDoubleBuffer();
+   Screen->unlockDoubleBuffer();
 
   }
  }

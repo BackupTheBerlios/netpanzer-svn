@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitNetMessage.hpp"
 #include "PowerUpNetMessage.hpp"
 
-#include "DSound.hpp"
+#include "Sound.hpp"
 
 
 SpritePacked BONUS_POWERUP_ANIM;
@@ -58,7 +58,7 @@ void BonusUnitPowerUp::spawnBonusUnits( UnitID &unit_id )
   PlayerID player_id;
   PointXYi map_loc;
   
-  dsound.PlayPowerUpSound();
+  sound->PlayPowerUpSound();
 
     unit = UnitInterface::getUnit( unit_id );
   
@@ -138,7 +138,7 @@ void BonusUnitPowerUp::onHit( PowerUpHitMesg *message  )
  {
   PlayerID local_player_id;
  
-  dsound.PlayPowerUpSound(); 
+  sound->PlayPowerUpSound(); 
   powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive; 
   
   local_player_id = PlayerInterface::getLocalPlayerID();

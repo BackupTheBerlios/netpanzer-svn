@@ -491,8 +491,8 @@ int MiniMapView::lMouseUp(const iXY &downPos, const iXY &upPos)
 	{
 		// If units are selected, send the units there and deselect the units.
 			// If there is a unit selected, see if we should move a unit there.
-		if (	(KeyboardInterface::getKeyState(SDLK_LCRTL) ||
-				 KeyboardInterface::getKeyState(SDLK_RCRTL)))
+		if (	(KeyboardInterface::getKeyState(SDLK_LCTRL) ||
+				 KeyboardInterface::getKeyState(SDLK_RCTRL)))
 		{
 			if (MiniMapInterface::isUnitSelected())
 			{
@@ -514,8 +514,8 @@ void MiniMapView::mouseMove(const iXY &prevPos, const iXY &newPos)
 {
 	if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos())))
 	{
-		if (	(KeyboardInterface::getKeyState(SDLK_LCRTL) ||
-				 KeyboardInterface::getKeyState(SDLK_RCRTL)))
+		if (	(KeyboardInterface::getKeyState(SDLK_LCTRL) ||
+				 KeyboardInterface::getKeyState(SDLK_RCTRL)))
 		{
 			// Set the cursor accordinly.
 			if (MiniMapInterface::isUnitSelected())

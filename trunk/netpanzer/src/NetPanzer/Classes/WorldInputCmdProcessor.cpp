@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Client.hpp"
 #include "NetMessageEncoder.hpp"
 #include "PlacementMatrix.hpp"
-#include "DSound.hpp"
+#include "Sound.hpp"
 
 #include "GameConfig.hpp"
 
@@ -186,13 +186,15 @@ unsigned char WorldInputCmdProcessor::getCursorStatus( PointXYi &loc )
   if ( unit_loc_status == _unit_player )
    { return( _cursor_player_unit ); }
   else
-   if ( (unit_loc_status == _unit_enemy) && KeyboardInterface::getKeyState( SDLK_A ) )
+   if ( (unit_loc_status == _unit_enemy) && KeyboardInterface::getKeyState(
+			   SDLK_a ) )
     { return ( _cursor_make_allie ); } 
    else 
     if (  (unit_loc_status == _unit_enemy) && working_list.isSelected() )
      { return ( _cursor_enemy_unit ); }
     else
-     if ( (unit_loc_status == _unit_allied) && KeyboardInterface::getKeyState( SDLK_A ) )
+     if ( (unit_loc_status == _unit_allied) && KeyboardInterface::getKeyState(
+				 SDLK_a ) )
       { return ( _cursor_break_allie ); } 
   
   if ( working_list.isSelected() )
@@ -262,8 +264,8 @@ void WorldInputCmdProcessor::toggleUnitFlagVisibility( void )
 
 void WorldInputCmdProcessor::getManualControlStatus( void )
  { 
-  if ( KeyboardInterface::getKeyState( SDLK_LCRTL ) ||
-       KeyboardInterface::getKeyState( SDLK_RCRTL )
+  if ( KeyboardInterface::getKeyState( SDLK_LCTRL ) ||
+       KeyboardInterface::getKeyState( SDLK_RCTRL )
      )
    {
     manual_fire_state = true;
@@ -277,20 +279,21 @@ void WorldInputCmdProcessor::getManualControlStatus( void )
 
 void WorldInputCmdProcessor::evaluateKeyCommands( void )
  {
-  //if ( (KeyboardInterface::getKeyPressed( SDLK_U ) == true) )
+  //if ( (KeyboardInterface::getKeyPressed( SDLK_u ) == true) )
   // { cycleNextUnitAndChangeFocus(); }
 
-  if ( (KeyboardInterface::getKeyPressed( SDLK_O ) == true) )
+  if ( (KeyboardInterface::getKeyPressed( SDLK_o ) == true) )
    { toggleDisplayOutpostNames();  }
 
-  if ( (KeyboardInterface::getKeyPressed( SDLK_F ) == true) )
+  if ( (KeyboardInterface::getKeyPressed( SDLK_f ) == true) )
    { toggleUnitFlagVisibility();  }
 
-  if ( (KeyboardInterface::getKeyPressed( SDLK_ENTER ) == true) )
+  if ( (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true) )
    { setKeyboardInputModeChatMesg(); }
 
-  if ( ( KeyboardInterface::getKeyState( SDLK_LCRTL ) || KeyboardInterface::getKeyState( SDLK_RCRTL ) )
-       && (KeyboardInterface::getKeyPressed( SDLK_A ) == true) )
+  if ( ( KeyboardInterface::getKeyState( SDLK_LCTRL ) ||
+			  KeyboardInterface::getKeyState( SDLK_RCTRL ) )
+       && (KeyboardInterface::getKeyPressed( SDLK_a ) == true) )
    { setKeyboardInputModeAllieChatMesg(); }
 
  }
@@ -640,8 +643,8 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
   unsigned char click_status;
 
   if ( (manual_control_state == true) ||
-       KeyboardInterface::getKeyState( SDLK_LCRTL ) ||
-       KeyboardInterface::getKeyState( SDLK_RCRTL ) 
+       KeyboardInterface::getKeyState( SDLK_LCTRL ) ||
+       KeyboardInterface::getKeyState( SDLK_RCTRL ) 
      )
    {
     
@@ -686,7 +689,8 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
           current_selection_list_index = 0xFFFF;
           if ( working_list.unit_list.containsItems() > 0 )
            {
-            dsound.PlayUnitVoice( working_list.getHeadUnitType(), _selected);
+            sound->PlayUnitVoice( working_list.getHeadUnitType(), 
+								  Sound::_selected);
            }
 
 	     } break; 
@@ -732,7 +736,8 @@ void WorldInputCmdProcessor::evalRightMButtonEvents( MouseEvent &event )
   if (event.event == MouseEvent::EVENT_CLICK )
    {   
        
-    if ( (KeyboardInterface::getKeyState(SDLK_LCRTL) || KeyboardInterface::getKeyState(SDLK_RCRTL) ) ) 
+    if ( (KeyboardInterface::getKeyState(SDLK_LCTRL) ||
+		  KeyboardInterface::getKeyState(SDLK_RCTRL) ) ) 
      {
       WorldViewInterface::clientXYtoWorldXY( world_win, event.down_pos, &world_pos );
       player_id = PlayerInterface::getLocalPlayerID();   
@@ -824,8 +829,8 @@ void WorldInputCmdProcessor::sendMoveCommand( PointXYi &world_pos )
    } // ** if 
 
   //sfx
-  dsound.PlayUnitSound(working_list.getHeadUnitType() );
-  dsound.PlayUnitVoice(working_list.getHeadUnitType(), _move_to);  
+  sound->PlayUnitSound(working_list.getHeadUnitType() );
+  sound->PlayUnitVoice(working_list.getHeadUnitType(), Sound::_move_to);  
  }
 
 void WorldInputCmdProcessor::sendAttackCommand( PointXYi &world_pos )
@@ -880,7 +885,7 @@ void WorldInputCmdProcessor::sendAttackCommand( PointXYi &world_pos )
      } // ** if 
 
     //sfx 
-    dsound.PlayUnitVoice(working_list.getHeadUnitType(), _target_enemy);
+    sound->PlayUnitVoice(working_list.getHeadUnitType(), Sound::_target_enemy);
    } // ** if 
  }
 
@@ -972,7 +977,7 @@ void WorldInputCmdProcessor::sendManualFireCommand( PointXYi &world_pos )
       CLIENT->sendMessage( encode_message, encode_message->realSize(), 0 );   
      } // ** if 
     // SFX
-    dsound.PlayUnitVoice(working_list.getHeadUnitType(), _target_enemy);
+    sound->PlayUnitVoice(working_list.getHeadUnitType(), Sound::_target_enemy);
    } // ** if containsItems() > 0  
 
  }
@@ -1032,7 +1037,7 @@ bool WorldInputCmdProcessor::getConsoleInputString( char *input_string )
 	  if (KeyboardInterface::getChar(&key_char))
 	   {
 	    ConsoleInterface::addExtendedChar(key_char);
-	    if ((key_char == SDLK_ENTER) )
+	    if ((key_char == SDLK_RETURN) )
          { 
           enter_key_hit_count++;
           if (enter_key_hit_count == 2) 

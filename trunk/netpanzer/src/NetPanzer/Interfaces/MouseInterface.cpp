@@ -375,8 +375,8 @@ void MouseInterface::updateCursor()
 #ifdef USE_SDL
 	int x, y;
 	SDL_GetMouseState(&x, &y);
-	mouse_pox.x = x;
-	mouse_pox.y = y;
+	mouse_pos.x = x;
+	mouse_pos.y = y;
 #endif
 }
 

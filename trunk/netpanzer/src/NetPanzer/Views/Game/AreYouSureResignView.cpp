@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ParticleSystem2D.hpp"
 #include "Particle2D.hpp"
 #include "MenuTemplateView.hpp"
-#include "DSound.hpp"
+#include "Sound.hpp"
 #include "SoundView.hpp"
 #include "ControlsView.hpp"
 #include "VisualsView.hpp"
@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //---------------------------------------------------------------------------
 static void bYES()
 {
-	dsound.StopTankIdle();
+	sound->StopTankIdle();
 
 	GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
 

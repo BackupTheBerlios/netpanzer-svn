@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitNetMessage.hpp"
 #include "PowerUpNetMessage.hpp"
 
-#include "DSound.hpp"
+#include "Sound.hpp"
 
 
 SpritePacked ENEMY_RADAR_POWERUP_ANIM;
@@ -55,7 +55,7 @@ void EnemyRadarPowerUp::setRadar( UnitID &unit_id )
   UnitBase *unit;
   PlayerID player_id;
   
-  dsound.PlayPowerUpSound();
+  sound->PlayPowerUpSound();
 
   unit = UnitInterface::getUnit( unit_id );
   
@@ -106,7 +106,7 @@ void EnemyRadarPowerUp::offloadGraphics( SpriteSorter &sorter )
 
 void EnemyRadarPowerUp::onHit( PowerUpHitMesg *message  )
  {
-  dsound.PlayPowerUpSound(); 
+  sound->PlayPowerUpSound(); 
   PlayerID local_player_id;
   
   local_player_id = PlayerInterface::getLocalPlayerID();

@@ -34,7 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 //#include "lua.h"
 
-#include "DSound.hpp"
+#include "Sound.hpp"
 
 
 enum { _unit_powerup_hitpoints,
@@ -163,7 +163,7 @@ void UnitPowerUp::selectPowerUp( UnitID &unit_id )
   UnitBase *unit;
   PlayerID player_id;
   
-  dsound.PlayPowerUpSound();
+  sound->PlayPowerUpSound();
 
   unit = UnitInterface::getUnit( unit_id );
   
@@ -276,7 +276,7 @@ void UnitPowerUp::onHit( PowerUpHitMesg *message  )
  {
   PlayerID local_player_id;
 
-  dsound.PlayPowerUpSound(); 
+  sound->PlayPowerUpSound(); 
   powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive; 
   
   local_player_id = PlayerInterface::getLocalPlayerID();

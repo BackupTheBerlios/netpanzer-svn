@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameManager.hpp"
 #include "DirectPlay.h"
 #include "DirectDrawGlobals.hpp"
-#include "DSound.hpp"
 #include "gapp.hpp"
 #include "MouseInterface.hpp"
 #include "GameViewGlobals.hpp"
