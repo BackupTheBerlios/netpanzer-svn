@@ -49,7 +49,7 @@ IPAddressView::IPAddressView() : View()
 
 void IPAddressView::Init()
 {
-    szServer.init("", 50);
+    szServer.init("", 256,29);
     addInputField(iXY(8, 8), &szServer, "", true);
 } // end IPAddressView::init
 
