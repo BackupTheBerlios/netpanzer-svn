@@ -16,6 +16,7 @@ solution would be transfering of unknown flags.
 -make it possible to have different colors for different players - DONE
 -make the code endian safe. It should run on big endian boxes too.
 -display alliances in the status screens.
+-dedicated server should prefix all messages with timestamps
 
 *** Tools
 -write a map and tileset editor
