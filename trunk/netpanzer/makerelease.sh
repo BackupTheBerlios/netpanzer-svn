@@ -18,6 +18,7 @@ if test ! -f Jamconfig; then
 fi
 rm -rf out
 rm -rf release
+jam docbook
 jam distclean
 
 echo "*** Scanning for files"
@@ -26,7 +27,7 @@ JAMFILES="Jamrules Jamconfig.in `find mk/jam -name "*.jam"`"
 ICONS="*.png *.xpm"
 TEXTS="COPYING README TODO RELNOTES ChangeLog"
 SOURCES="`find src -name "*.cpp" -o -name "*.hpp" -o -name "Jamfile"`"
-DOCS="docs/*.[1-9] docs/Jamfile"
+DOCS="docs/*.[1-9] docs/serverhowto.html docs/tipofday.txt docs/Jamfile"
 
 echo "*** Creating Sourcepackage"
 mkdir -p $SOURCERELEASE

@@ -19,3 +19,15 @@ if $(DOXYGEN) {
     Help doxygen : "Create doxygen documentation of the project" ;
 }
 
+# hack for docbook stuff (TODO need a more robust way to do this)
+DBDIR = "/usr/share/sgml/docbook/xsl-stylesheets-1.65.1" ;
+actions XsltProc
+{
+    xsltproc -o $(<) $(DBDIR)/html/docbook.xsl $(>)
+}
+SEARCH on serverhowto.xml = $(SUBDIR)/docbook ;
+LOCATE on serverhowto.html = $(SUBDIR) ;
+XsltProc serverhowto.html : serverhowto.xml ;
+Depends serverhowto.html : serverhowto.xml ;
+Depends docbook : serverhowto.html ;
+Help docbook : "Update docbook documentation" ;

@@ -10,6 +10,8 @@
 * Adding units with shift key now also works for groups and boxes (thanks to
    Rex Tsai for the patch)
 * packet handling is more robust against malformed packets
+* Added Support for pidfiles in server
+* Wrote an HowTo on setting up a dedicated server
 
 *** 2.0.0-rc2 ***
 
