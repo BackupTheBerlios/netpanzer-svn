@@ -1,0 +1,5 @@
+This is a masterserv, a server that is able to manage a list of currently
+running gameservers.
+It's not very polished yet, but the code should be robust and stable. The server
+should just do it's job when you start it.
+
