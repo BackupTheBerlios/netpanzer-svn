@@ -62,7 +62,7 @@ static void bBack()
     Desktop::setVisibility("GetSessionView", true);
 }
 
-void bReady()
+void bNext()
 {
     if ((const std::string&) gameconfig->playername == "")
         return;
@@ -126,10 +126,10 @@ HostJoinTemplateView::HostJoinTemplateView() : MenuTemplateView()
                       "Back",
                       bBack);
 
-    // Ready.
-    addSpecialButton(	readyPos,
-                      "Ready",
-                      bReady);
+    addSpecialButton(   nextPos,
+                      "Next",
+                      bNext);
+
 } // end HostJoinTemplateView constructor
 
 // doDraw
@@ -205,5 +205,5 @@ void HostJoinTemplateView::doActivate()
 //---------------------------------------------------------------------------
 void HostJoinTemplateView::loadBackgroundSurface()
 {
-    doLoadBackgroundSurface("pics/backgrounds/menus/menu/hostjoinMB.bmp");
+    doLoadBackgroundSurface("pics/backgrounds/menus/menu/defaultMB.bmp");
 } // end HostJoinTemplateView::loadBackgroundSurface
