@@ -18,7 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _DEDICATEDGAMEMANAGER_HPP
 #define _DEDICATEDGAMEMANAGER_HPP
 
+#include <queue>
+#include <SDL.h>
 #include "BaseGameManager.hpp"
+#include "ServerCommand.hpp"
 
 class DedicatedGameManager : public BaseGameManager
 {

@@ -271,6 +271,9 @@ UnitBase * UnitBucketArray::getUnitAtMapLoc( UnitID unit_id, iXY map_loc )
 bool UnitBucketArray::moveUnit(UnitID unit_id, unsigned long from_bucket_index,
 			       unsigned long to_bucket_index )
 {
+    assert(from_bucket_index < size);
+    assert(to_bucket_index < size);
+    
     bool found = false;
     UnitBucketPointer *traversal_ptr;
     UnitBucketPointer *move_ptr;

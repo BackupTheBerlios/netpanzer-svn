@@ -123,19 +123,26 @@ static void CopyDirs(const std::string& dest, const std::string& source)
             FileSystem::mkdir(dest.c_str());
             CopyDirs(file, dfile);
         } else {
-            std::auto_ptr<ReadFile> readfile
-                (FileSystem::openRead(file));
-            std::auto_ptr<WriteFile> writefile
-                (FileSystem::openWrite(dfile));
-            std::cout << "Copy: " << file << " - " << dfile << std::endl;
+            try {
+                std::auto_ptr<ReadFile> readfile
+                    (FileSystem::openRead(file));
+                std::auto_ptr<WriteFile> writefile
+                    (FileSystem::openWrite(dfile));
 
-            size_t p;
-            char buf[1024];
-            do {
-                p = readfile->read(buf, 1, 1024);
-                if(p>0)
-                    writefile->write(buf, p, 1);
-            } while(p==1024);
+                char buf[1024];
+                do {
+                    try {
+                        readfile->read(buf, 1, 1024);
+                        writefile->write(buf, 1, 1024);
+                    } catch(FileReadException& e) {
+                        writefile->write(buf, 1, e.getReadCount());
+                        break;
+                    }
+                } while(1);
+            } catch(std::exception& e) {
+                throw Exception("Error while copying '%s' to '%s': %s",
+                        file.c_str(), dfile.c_str(), e.what());
+            }
         }
     }
 

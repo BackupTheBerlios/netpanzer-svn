@@ -105,39 +105,43 @@ void TileSet::load(const std::string& name)
 
     std::string filename = dir;
     filename += "/tiles.dat";
-    
-    std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
+
+    try {
+        std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
    
-    // read the header
-    std::auto_ptr<TileSetHeader> fileheader (new TileSetHeader(*file));
+        // read the header
+        std::auto_ptr<TileSetHeader> fileheader (new TileSetHeader(*file));
 
-    if(memcmp(fileheader->magic, MAGICSTRING, 4) != 0)
-        throw Exception("File is not a tileset");
+        if(memcmp(fileheader->magic, MAGICSTRING, 4) != 0)
+            throw Exception("File is not a tileset");
 
-    if(fileheader->fileformatversion < FILEFORMATVERSION)
-        throw Exception("Tileset has incompatible file format version.");
+        if(fileheader->fileformatversion < FILEFORMATVERSION)
+            throw Exception("Tileset has incompatible file format version.");
 
-    if(fileheader->fileformatversion > FILEFORMATVERSION)
-        LOG(("Warning: TileSet header is newer than program version."));
+        if(fileheader->fileformatversion > FILEFORMATVERSION)
+            LOG(("Warning: TileSet header is newer than program version."));
     
-    // Clear old data
-    delete header;
-    header = fileheader.release();
+        // Clear old data
+        delete header;
+        header = fileheader.release();
     
-    delete[] tiledata;
-    tilebuffersize = 0;
-    tiledata = 0;
+        delete[] tiledata;
+        tilebuffersize = 0;
+        tiledata = 0;
    
-    // read tiles
-    tilesize = header->tilewidth * header->tileheight * (header->tilebitsperpixel / 8);
-    if(header->tilecount > 0) {
-        resizeBuffer(tilesize * header->tilecount);
-        if(file->read(tiledata, tilesize, header->tilecount) != header->tilecount)
-            throw Exception("Tileset file is too short.");
+        // read tiles
+        tilesize = header->tilewidth * header->tileheight * (header->tilebitsperpixel / 8);
+        if(header->tilecount > 0) {
+            resizeBuffer(tilesize * header->tilecount);
+            file->read(tiledata, tilesize, header->tilecount);
+        }
+
+        // read templates
+        readTemplates();
+    } catch(std::exception& e) {
+        throw Exception("Couldn't load tileset '%s': %s",
+            filename.c_str(), e.what());
     }
-
-    // read templates
-    readTemplates();
 }
 
 void TileSet::readTemplates()
