@@ -4,6 +4,9 @@
  losses and try reconnects
 -impelement 'initialunits' param in PlayerUnitConfig::initialize()
 
+*** Tools
+-write a map and tileset editor
+
 *** Feature Additions
 
 -Improve userinterface:
