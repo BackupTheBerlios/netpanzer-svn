@@ -49,10 +49,11 @@ class ClientConnectJoinRequest : public NetMessage
 {
 private:
     uint32_t client_transport_id;
-    uint32_t protocol_version;
-
 public:
     char  code_word[24];
+private:
+    uint32_t protocol_version;
+public:
 
     ClientConnectJoinRequest();
     uint32_t getTransportID(void);
