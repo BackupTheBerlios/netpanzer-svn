@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <SDL_thread.h>
 #include "Network/TCPSocket.hpp"
 #include "Network/UDPSocket.hpp"
+#include "Network/SocketStream.hpp"
 
 #include "ServerList.hpp"
 
@@ -44,12 +45,15 @@ private:
     void queryMasterServer();
     void queryServers();
 
-    bool running;
+    volatile bool running;
+    volatile network::SocketStream* stream;
+    SDL_mutex* shutdown_mutex;
     SDL_Thread* thread;
     
     ServerList* serverlist;
 
     enum State {
+        STATE_NOSERVERS,
         STATE_QUERYMASTERSERVER,
         STATE_QUERYSERVERS,
         STATE_ERROR,

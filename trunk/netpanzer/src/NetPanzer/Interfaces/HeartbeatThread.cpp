@@ -78,8 +78,8 @@ HeartbeatThread::HeartbeatThread()
 HeartbeatThread::~HeartbeatThread()
 {
     // signal thread to stop
-    SDL_KillThread(thread);
-    thread = 0;
+    running = false;
+    SDL_WaitThread(thread, 0);
 
     std::stringstream packet;
     packet << "\\quit\\port\\" << gameconfig->serverport << "\\final\\";
@@ -104,8 +104,13 @@ HeartbeatThread::threadMain(void* data)
     
     _this->running = true;
     while(_this->running) {
-        // use nanosleep to have a thread cancelation point
-        SDL_Delay(UPDATEINTERVAL * 1000);
+        time_t t = time(0);
+
+        while(time(0) - t < UPDATEINTERVAL) {
+            SDL_Delay(300);
+            if(!_this->running)
+                return 1;
+        }
         
         try {
             if(!_this->sendHeartbeat()) {

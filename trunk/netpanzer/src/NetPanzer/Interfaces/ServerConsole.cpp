@@ -30,10 +30,12 @@ ServerConsole::ServerConsole(DedicatedGameManager* newmanager)
 
 ServerConsole::~ServerConsole()
 {
-    if(thread && running)
+    if(thread && running) {
+        // TODO avoid KillThread here...
         SDL_KillThread(thread);
-    else
+    } else {
         SDL_WaitThread(thread, 0);
+    }
 }
 
 class CommandHelp

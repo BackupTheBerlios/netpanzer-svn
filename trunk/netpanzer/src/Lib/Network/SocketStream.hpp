@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <streambuf>
 #include <iostream>
+#include <SDL.h>
 #include "SocketHeaders.hpp"
 #include "TCPSocket.hpp"
 
@@ -33,7 +34,7 @@ class SocketStreamBuf : public std::streambuf
 {
 public:
     SocketStreamBuf(TCPSocket& newsocket)
-        : socket(newsocket)
+        : socket(newsocket), cancel(false)
     { 
         setp(writebuffer, writebuffer + sizeof(writebuffer)-1);
         setg(readbuffer, readbuffer, readbuffer);
@@ -45,6 +46,11 @@ public:
         sync();
     }
 
+    void setCancel()
+    {
+        cancel = true;
+    }
+
 protected:
     virtual int sync()
     {
@@ -54,11 +60,21 @@ protected:
     
     virtual int underflow()
     {
-        int res = recv(socket.sockfd,(char*) readbuffer, sizeof(readbuffer), 0);
-        if(res < 0) {
-            return traits_type::eof();
-        }
-        setg(readbuffer, readbuffer, readbuffer+res);
+        size_t len;
+        do {
+            if(cancel)
+                return traits_type::eof();
+            try {
+                len = socket.recv(readbuffer, sizeof(readbuffer));
+            } catch(...) {
+                return traits_type::eof();
+            }
+            if(len > 0)
+                break;
+            SDL_Delay(300);
+        } while(1);
+
+        setg(readbuffer, readbuffer, readbuffer+len);
         return readbuffer[0];
     }
 
@@ -72,8 +88,9 @@ protected:
         // anything to send out
         if(len > 0) {
             const void* data = pbase();
-            int res = send(socket.sockfd, (const char*) data, len, 0);
-            if(res <= 0) {
+            try {
+                socket.send(data, len);
+            } catch(...) {
                 return traits_type::eof();
             }
             setp(writebuffer, writebuffer+sizeof(writebuffer)-1);
@@ -86,6 +103,7 @@ private:
     char readbuffer[1024];
     char writebuffer[1024];
     TCPSocket& socket;
+    volatile bool cancel;
 };
 
 class SocketStream : public std::iostream
@@ -98,6 +116,12 @@ public:
     ~SocketStream()
     {
         delete rdbuf();
+    }
+
+    void cancel()
+    {
+        SocketStreamBuf* buf = (SocketStreamBuf*) rdbuf();
+        buf->setCancel();
     }
 };
 

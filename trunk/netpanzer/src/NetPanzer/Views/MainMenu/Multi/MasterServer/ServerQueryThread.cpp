@@ -38,8 +38,9 @@ namespace masterserver
 {
 
 ServerQueryThread::ServerQueryThread(ServerList* newserverlist)
-    : running(false), thread(0), serverlist(newserverlist),
-      state(STATE_QUERYMASTERSERVER), udpsocket(0), queries(0)
+    : running(false), stream(0), shutdown_mutex(0), thread(0),
+      serverlist(newserverlist), state(STATE_QUERYMASTERSERVER), udpsocket(0),
+      queries(0)
 {
     // parse masterserverlist
     std::string server;
@@ -49,17 +50,30 @@ ServerQueryThread::ServerQueryThread(ServerList* newserverlist)
     }
     std::random_shuffle(masterservers.begin(), masterservers.end());
 
+    if(masterservers.size() == 0) {
+        state = STATE_NOSERVERS;
+        return;
+    }
+
     udpsocket = new network::UDPSocket(false);
    
+    shutdown_mutex = SDL_CreateMutex();
     thread = SDL_CreateThread(threadMain, this);
 }
 
 ServerQueryThread::~ServerQueryThread()
 {
+    SDL_mutexP(shutdown_mutex);
     running = false;
-    SDL_KillThread(thread);
+    if(stream) {
+        network::SocketStream* temp = (network::SocketStream*) stream;
+        temp->cancel();
+    }
+    SDL_mutexV(shutdown_mutex);
+    SDL_WaitThread(thread, 0);
 
     delete udpsocket;
+    SDL_DestroyMutex(shutdown_mutex);
 }
 
 int
@@ -74,20 +88,24 @@ ServerQueryThread::threadMain(void* data)
 void
 ServerQueryThread::run()
 {
-    running = true;
-    while(running) {
-        switch(state) {
-            case STATE_QUERYMASTERSERVER:
-                queryMasterServer();
-                break;
-            case STATE_QUERYSERVERS:
-                queryServers();
-                break;
-            default:
-                break;
+    try {
+        running = true;
+        while(running) {
+            switch(state) {
+                case STATE_QUERYMASTERSERVER:
+                    queryMasterServer();
+                    break;
+                case STATE_QUERYSERVERS:
+                    queryServers();
+                    break;
+                default:
+                    break;
+            }
+            // sleep a little bit
+            SDL_Delay(10); // this destroys ping times :-(
         }
-        // sleep a little bit
-        SDL_Delay(10); // this destroys ping times :-(
+    } catch(std::exception& e) {
+        LOGGER.warning("Unexpected exception in query thread: %s", e.what());
     }
 }
 
@@ -100,24 +118,27 @@ ServerQueryThread::queryMasterServer()
         return;
     }
 
+    network::TCPSocket* tcpsocket = 0;
+
     try {
         network::Address ip
             = network::Address::resolve(masterservers.back(), 28900);
 
-        network::TCPSocket socket(ip, true);
-        network::SocketStream stream(socket);
-        StreamTokenizer tokenizer(stream, '\\');
+        tcpsocket = new network::TCPSocket(ip, false);
+        stream = new network::SocketStream(*tcpsocket);
+        network::SocketStream* stream = (network::SocketStream*) this->stream;
+        StreamTokenizer tokenizer(*stream, '\\');
 
         // send query
-        stream << "\\list\\gamename\\master\\final"
-               << "\\list\\gamename\\netpanzer\\protocol\\"
-               << NETPANZER_PROTOCOL_VERSION << "\\final\\" << std::flush;
+        *stream << "\\list\\gamename\\master\\final"
+                << "\\list\\gamename\\netpanzer\\protocol\\"
+                << NETPANZER_PROTOCOL_VERSION << "\\final\\" << std::flush;
         
         ServerInfo* lastserver = 0;
         std::string newMasterServers;
 
         // parse master server list
-        while(!stream.eof() && running) {
+        while(!stream->eof() && running) {
             std::string token = tokenizer.getNextToken();
             if(token == "ip") {
                 if(newMasterServers != "")
@@ -135,7 +156,7 @@ ServerQueryThread::queryMasterServer()
         }
 
         // parse server list
-        while(!stream.eof() && running) {
+        while(!stream->eof() && running) {
             std::string token = tokenizer.getNextToken();
             if(token == "ip") {
                 ServerInfo info;
@@ -168,6 +189,12 @@ ServerQueryThread::queryMasterServer()
         LOGGER.warning("Problem querying masterserver: %s.", e.what());
         masterservers.pop_back();
     }
+
+    SDL_mutexP(shutdown_mutex);
+    delete stream;
+    stream = 0;
+    delete tcpsocket;
+    SDL_mutexV(shutdown_mutex);
 }
 
 void
@@ -271,6 +298,8 @@ const char*
 ServerQueryThread::getStateMessage() const
 {
     switch(state) {
+        case STATE_NOSERVERS:
+            return "No Masterservers configured";
         case STATE_QUERYMASTERSERVER:
             return "Querying Masterserver";
         case STATE_ERROR:
