@@ -2841,7 +2841,7 @@ int Surface::loadAllTILInDirectory(const char *path)
     
     std::vector<std::string> filenames;
     Surface tempSurface;
-    iXY maxSize;
+    iXY maxSize(0, 0);
     for(char** file = list; *file != 0; file++) {
         std::string name = path;
         name += *file;

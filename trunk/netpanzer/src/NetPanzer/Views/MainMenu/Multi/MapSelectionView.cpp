@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <vector>
+#include <string>
 #include "SplitPath.hpp"
 #include "FindFirst.hpp"
 #include "MapSelectionView.hpp"
@@ -26,6 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UtilInterface.hpp"
 #include "MapFileStruct.hpp"
 #include "Exception.hpp"
+#include "FileSystem.hpp"
+#include "Log.hpp"
 
 cGrowList <MapInfo> MapSelectionView::mapList;
 int MapSelectionView::curMap = 0;
@@ -134,107 +138,93 @@ void MapSelectionView::doDraw(const Surface &viewArea, const Surface &clientArea
 int MapSelectionView::loadMaps()
 {
     char strBuf[256];
-    char pathWild[256];
 
     const char mapsPath[] = "maps/";
 
-    sprintf(pathWild, "%s*.npm", mapsPath);
-
-    int fileCount = UtilInterface::getNumFilesInDirectory(pathWild);
-    if (fileCount <= 0) {
-        GameConfig::setGameMapName("");
-        throw Exception("couldn't find any mapfile.");
-    }
-
-    struct _finddata_t myFile;
-    int* hFile;
-
-    _findfirst(pathWild, &myFile);
-
-    cGrowList <Filename> fileList;
-    fileList.setNum(fileCount);
-
-    int curFilename = 0;
-
-    if ((hFile = _findfirst(pathWild, &myFile)) != ((int*) -1)) {
-        do {
-            sprintf(strBuf, "%s%s", mapsPath, myFile.name);
-            fileList[curFilename].setName(strBuf);
-            curFilename++;
-
-        } while (_findnext(hFile, &myFile) == 0);
-    }
-    _findclose(hFile);
-
-    fileList.sort(FilenameSortFunction);
-
-    mapList.setNum(fileList.getCount());
-
-    {
-        for (int i = 0; i < fileList.getCount(); i++) {
-            FILE *fp = fopen(fileList[i].name, "rb");
-            if (fp == 0) {
-                assert(fp != 0);
-                continue;
+    // scan directory for .npm files
+    std::string suffix = ".npm";
+    char **list = FileSystem::enumerateFiles(mapsPath);
+    std::vector<std::string> mapfiles;
+    for (char **i = list; *i != NULL; i++) {
+        std::string filename = mapsPath;
+        filename.append(*i);
+        if (!FileSystem::isDirectory(filename.c_str())) {
+            if (filename.size() >= suffix.size()
+                    && (filename.compare(filename.size() - suffix.size(),
+                            suffix.size(), suffix) == 0))
+            {
+                mapfiles.push_back(filename);
             }
-
-            MAP_HEADER netPanzerMapHeader;
-
-            fread(&netPanzerMapHeader, sizeof(netPanzerMapHeader), 1, fp);
-            /*
-            		if (strlen(netPanzerMapHeader.name) > 255)
-            		{
-            			throw Exception("Map name is too long.");
-            		}
-            		if (strlen(netPanzerMapHeader.description) > 255)
-            		{
-            			throw Exception("Map description is too long.");
-            		}
-            */
-            _splitpath(fileList[i].name, 0, 0, mapList[i].name, 0);
-            sprintf(mapList[i].description, "%s", netPanzerMapHeader.description);
-
-            mapList[i].cells.x = netPanzerMapHeader.x_size;
-            mapList[i].cells.y = netPanzerMapHeader.y_size;
-
-            int seekAmount = mapList[i].cells.getArea() * sizeof(WORD);
-
-            fseek(fp, seekAmount, SEEK_CUR);
-
-            iXY pix;
-            pix.x = netPanzerMapHeader.thumbnail_x_pix;
-            pix.y = netPanzerMapHeader.thumbnail_y_pix;
-
-            mapList[i].thumbnail.create(pix, pix.x, 1);
-
-            int numBytes = pix.getArea();
-
-            fread(mapList[i].thumbnail.frame0, numBytes, 1, fp);
-
-            fclose(fp);
-
-            mapList[i].thumbnail.scale(100);
-
-            // Now try to get the outpost count from the outpost file.
-            int objectiveCount = 0;
-            sprintf(strBuf, "%s%s.opt", mapsPath, mapList[i].name);
-            fp = fopen(strBuf, "rb");
-            if (fp == 0 || (!fscanf(fp, "ObjectiveCount: %d", &objectiveCount))) {
-                GameConfig::setGameMapName("");
-                return 1;
-            }
-
-            mapList[i].objectiveCount = objectiveCount;
         }
     }
+    FileSystem::freeList(list);
 
-    {
-        for (int i = 0; i < mapList.getCount(); i++) {
-            mapList[i].thumbnail.mapFromPalette("wads/netp.act");
-        }
+    if(mapfiles.size() == 0) {
+        throw Exception("not found any maps in '%s'", mapsPath);
     }
 
-    assert(mapList.getCount() > 0);
+    mapList.setNum(mapfiles.size());
+
+    for (unsigned int i = 0; i < mapfiles.size(); i++) {
+        FILE *fp = fopen(mapfiles[i].c_str(), "rb");
+        if (fp == 0) {
+            LOGGER.warning("cannot open map file '%s'", mapfiles[i].c_str());
+            continue;
+        }
+
+        MAP_HEADER netPanzerMapHeader;
+
+        fread(&netPanzerMapHeader, sizeof(netPanzerMapHeader), 1, fp);
+        /*
+                    if (strlen(netPanzerMapHeader.name) > 255)
+                    {
+                            throw Exception("Map name is too long.");
+                    }
+                    if (strlen(netPanzerMapHeader.description) > 255)
+                    {
+                            throw Exception("Map description is too long.");
+                    }
+        */
+        _splitpath(mapfiles[i].c_str(), 0, 0, mapList[i].name, 0);
+        sprintf(mapList[i].description, "%s", netPanzerMapHeader.description);
+
+        mapList[i].cells.x = netPanzerMapHeader.x_size;
+        mapList[i].cells.y = netPanzerMapHeader.y_size;
+
+        int seekAmount = mapList[i].cells.getArea() * sizeof(WORD);
+
+        fseek(fp, seekAmount, SEEK_CUR);
+
+        iXY pix;
+        pix.x = netPanzerMapHeader.thumbnail_x_pix;
+        pix.y = netPanzerMapHeader.thumbnail_y_pix;
+
+        mapList[i].thumbnail.create(pix, pix.x, 1);
+
+        int numBytes = pix.getArea();
+
+        fread(mapList[i].thumbnail.frame0, numBytes, 1, fp);
+
+        fclose(fp);
+
+        mapList[i].thumbnail.scale(100);
+
+        // Now try to get the outpost count from the outpost file.
+        int objectiveCount = 0;
+        sprintf(strBuf, "%s%s.opt", mapsPath, mapList[i].name);
+        fp = fopen(strBuf, "rb");
+        if (fp == 0 || (!fscanf(fp, "ObjectiveCount: %d", &objectiveCount))) {
+            GameConfig::setGameMapName("");
+            return 1;
+        }
+
+        mapList[i].objectiveCount = objectiveCount;
+    }
+
+    for (int i = 0; i < mapList.getCount(); i++) {
+        mapList[i].thumbnail.mapFromPalette("wads/netp.act");
+    }
+
     if (mapList.getCount() <= 0) {
         throw Exception("ERROR: No maps in map directory");
     }
