@@ -59,6 +59,14 @@ MasterServer::MasterServer()
             throw std::runtime_error(msg.str());
         }
 
+        // we want to start at once and not waiting for sockets to get into
+        // clean state again (as this waiting was > 1 hour in 1 case)
+        int val = 1;
+        if(setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val)) < 0) {
+            std::cerr << "Warning: Couldn't set SO_REUSEADDR: "
+                << strerror(errno) << std::endl;
+        }
+
         // resolved bind/listen address
         struct hostent* hentry;
         hentry =
