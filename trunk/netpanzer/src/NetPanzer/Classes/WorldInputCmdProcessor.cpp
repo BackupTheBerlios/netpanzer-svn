@@ -80,6 +80,7 @@ WorldInputCmdProcessor::WorldInputCmdProcessor()
     manual_fire_state = false;
 
     left_button_hold_action_complete = false;
+    right_mouse_scroll = false;
 }
 
 void WorldInputCmdProcessor::initializeSelectionLists( void )
@@ -128,6 +129,29 @@ void WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos )
     scroll_rate = gameconfig->scrollrate;
 
     scroll_increment = (long) ( scroll_rate * time_slice );
+
+    if(right_mouse_scroll) {
+        int x,y;
+        int buttons=SDL_GetMouseState(&x,&y);
+        if(!(buttons&SDL_BUTTON(SDL_BUTTON_RIGHT))) {
+            // sometimes the winning page or something comes up
+            //  as you're holding down the right mouse button
+            //  and the UP message doesn't come through
+            right_mouse_scroll=false;
+        }
+        else if(mouse_pos.x!=right_mouse_scroll_pos.x || mouse_pos.y!=right_mouse_scroll_pos.y) {
+            // we're holding down the right mouse button, and mouse has moved
+            int x_move=mouse_pos.x-right_mouse_scroll_pos.x;
+            int y_move=mouse_pos.y-right_mouse_scroll_pos.y;
+            SDL_WarpMouse(right_mouse_scroll_pos.x,right_mouse_scroll_pos.y);
+
+            WorldViewInterface::scroll_right(x_move*4);
+            WorldViewInterface::scroll_down(y_move*4);
+            right_mouse_scrolled_pos.x+=x_move;
+            right_mouse_scrolled_pos.y+=y_move;
+        }
+        return;
+    }
 
     if(mouse_pos.x >= (screen_size.x - 1)) {
         WorldViewInterface::scroll_right(scroll_increment);
@@ -661,6 +685,19 @@ void WorldInputCmdProcessor::evalRightMButtonEvents( MouseEvent &event )
     Objective *objective;
     PlayerID player_id;
 
+    if (event.event == MouseEvent::EVENT_DOWN ) {
+        right_mouse_scroll=true;
+        right_mouse_scroll_pos=event.down_pos;
+        right_mouse_scrolled_pos.x=right_mouse_scrolled_pos.y=0;
+    }
+    if (right_mouse_scroll && event.event == MouseEvent::EVENT_UP ) {
+        right_mouse_scroll=false;
+        if(right_mouse_scrolled_pos.x==0 && right_mouse_scrolled_pos.y==0) {
+            // simple right click on the same position
+            working_list.unGroup();
+        }
+        return;
+    }
 
     if (event.event == MouseEvent::EVENT_CLICK ) {
 
@@ -679,9 +716,7 @@ void WorldInputCmdProcessor::evalRightMButtonEvents( MouseEvent &event )
                    ) {
                 }
         }
-        else {
-            working_list.unGroup();
-        }
+//        else { working_list.unGroup(); }
     }  // ** _event_mbutton_click
 
 

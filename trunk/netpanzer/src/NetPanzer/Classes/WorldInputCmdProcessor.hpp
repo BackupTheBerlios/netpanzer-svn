@@ -31,6 +31,9 @@ protected:
 
     bool selection_box_active;
     iXY box_press, box_release;
+    iXY right_mouse_scroll_pos;
+    iXY right_mouse_scrolled_pos;
+    bool right_mouse_scroll;
     bool selectBoundBoxUnits( void );
 
     bool local_key_table[256];

@@ -72,6 +72,7 @@ static void bMulti()
         Desktop::setVisibility("FlagSelectionView", true);
         Desktop::setVisibility("PlayerNameView", true);
         Desktop::setVisibility("IPAddressView", true);
+        Desktop::setVisibility("IRCLobbyView", true);
     } else {
         assert(false);
     }
