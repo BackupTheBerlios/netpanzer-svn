@@ -7,6 +7,16 @@ Next release:
     EndLifeCycle message doesn't exist anymore(u1: 56 u2: 187)
     <Gwal> Unit in EndLifeCycle message doesn't exist anymore(u1: 243 u2: 295)
 -client often displays: "Message has unknown message class 6."
+-create a new netpanzer-music package which adds pronobozos music to the game
+
+*** Miscelaneous
+ * I had an offer from http://forgottenhope.bf1942files.com/main.html people to
+   share/use their models and sounds in a freeware like license (ie. copyright
+   stays with them, modifications only allowed with their permissions, but free
+   to distribute and download).
+   Would be very interesting to use this, but we should update netpanzer to
+   truecolor graphics first, and we need to look more in detail how to properly
+   separate the GPL game engine and this graphics then.
 
 *** New Masterserver code
  * Create UDP broadcast code for LAN games
