@@ -101,7 +101,7 @@ MasterServer::MasterServer()
                 ((struct in_addr*) hentry->h_addr)->s_addr;
         }
 
-        res = listen(sock, 20);
+        res = listen(sock, 511);
         if(res < 0) {
             std::stringstream msg;
             msg << "Couldn't listen on socket: " << strerror(errno);
