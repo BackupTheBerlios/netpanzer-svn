@@ -824,6 +824,8 @@ bool GameManager::loadGameData()
   UnitProfileInterface::loadUnitProfiles();
   LoadUnitSurfaces();
   UNIT_FLAGS_SURFACE.loadAllBMPInDirectory("pics/flags/netp/");
+  if(UNIT_FLAGS_SURFACE.getFrameCount() == 0)
+	  throw Exception("Couldn't find any flag in pics/flags/netp.");
   
   GameConfig::loadConfigScript();
   return true; 
@@ -835,6 +837,8 @@ void GameManager::dedicatedLoadGameData()
    	UnitProfileInterface::loadUnitProfiles();
 	LoadUnitSurfaces();
 	UNIT_FLAGS_SURFACE.loadAllBMPInDirectory("pics/flags/netp/");
+	if(UNIT_FLAGS_SURFACE.getFrameCount() == 0)
+		throw Exception("Couldn't find any flag in pics/flags/netp.");
 
 	GameConfig::loadConfigScript();
 }
