@@ -27,6 +27,8 @@ Source: "D:\netpanzer\SDL_image.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\netpanzer\SDL_mixer.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\netpanzer\Readme"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\netpanzer\Copying"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\netpanzer\docs\*.txt"; DestDir: "{app}\doc\"; Flags: ignoreversion
+Source: "D:\netpanzer\docs\*.html"; DestDir: "{app}\doc\"; Flags: ignoreversion
 Source: "D:\netpanzer\maps\*.*"; Excludes: "CVS"; DestDir: "{app}\maps\"; Flags: ignoreversion recursesubdirs
 Source: "D:\netpanzer\pics\*.*"; Excludes: "CVS"; DestDir: "{app}\pics\"; Flags: ignoreversion recursesubdirs
 Source: "D:\netpanzer\powerups\*.*"; Excludes: "CVS"; DestDir: "{app}\powerups\"; Flags: ignoreversion recursesubdirs
