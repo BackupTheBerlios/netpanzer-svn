@@ -58,7 +58,7 @@ public:
     inline void deallocate( void )
     {
         if ( array != 0 ) {
-            delete( array );
+            delete[] array;
             array = 0;
         }
 

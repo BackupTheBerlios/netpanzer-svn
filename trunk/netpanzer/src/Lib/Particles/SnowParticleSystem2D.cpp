@@ -72,7 +72,7 @@ void SnowParticleSystem2D::sim()
         }
 
     }	else {
-        delete snowParticles;
+        delete[] snowParticles;
         delete this;
         return;
     }

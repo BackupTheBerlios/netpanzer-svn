@@ -58,7 +58,7 @@ void WorldMap::loadMapFile( const char *file_path )
      
       if ( map_loaded == true )
        {
-        delete( map_buffer );
+        delete[] map_buffer;
         map_buffer = 0;
         map_loaded = false;
        }
@@ -88,7 +88,7 @@ void WorldMap::loadMapFile( const char *file_path )
         throw Exception("couldn't open mapfile '%s'.", file_path);
 
     if ( map_loaded == true ) {
-        delete( map_buffer );
+        delete[] map_buffer;
         map_buffer = 0;
         map_loaded = false;
     }

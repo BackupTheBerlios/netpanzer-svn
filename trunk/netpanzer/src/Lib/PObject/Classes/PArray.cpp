@@ -29,7 +29,7 @@ PArray::PArray( unsigned long size )
 
 PArray::~PArray( void )
 {
-    delete( array );
+    delete[] array;
 }
 
 void PArray::initialize( unsigned long size )
@@ -37,7 +37,7 @@ void PArray::initialize( unsigned long size )
     PArray::size = size;
 
     if( array != 0 ) {
-        delete( array );
+        delete[] array;
         array = 0;
     }
     array = new void* [ size ];

@@ -50,12 +50,12 @@ void TileSet::loadTileSetInfo( const char *file_path )
 
     if ( tile_set_loaded == true ) {
         if ( tile_data != 0 ) {
-            delete( tile_data );
+            delete[] tile_data;
             tile_data = 0;
         }
 
         if ( tile_info != 0 ) {
-            delete( tile_info );
+            delete[] tile_info;
             tile_info = 0;
         }
 
@@ -87,7 +87,7 @@ void TileSet::loadTileSet( const char *file_path )
       
       if ( tile_set_loaded == true )
        {
-        delete( tile_data );
+        delete[] tile_data;
         tile_set_loaded = false;
        }
       
@@ -118,12 +118,12 @@ void TileSet::loadTileSet( const char *file_path )
 
     if ( tile_set_loaded == true ) {
         if ( tile_data != 0 ) {
-            delete( tile_data );
+            delete[] tile_data;
             tile_data = 0;
         }
 
         if ( tile_info != 0 ) {
-            delete( tile_info );
+            delete[] tile_info;
             tile_info = 0;
         }
 
@@ -163,12 +163,12 @@ void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
 
     if ( tile_set_loaded == true ) {
         if ( tile_data != 0 ) {
-            delete( tile_data );
+            delete[] tile_data;
             tile_data = 0;
         }
 
         if ( tile_info != 0 ) {
-            delete( tile_info );
+            delete[] tile_info;
             tile_info = 0;
         }
 
@@ -258,12 +258,12 @@ void TileSet::loadTileSetInfo( const char *file_path, WadMapTable &mapping_table
 
     if ( tile_set_loaded == true ) {
         if ( tile_data != 0 ) {
-            delete( tile_data );
+            delete[] tile_data;
             tile_data = 0;
         }
 
         if ( tile_info != 0 ) {
-            delete( tile_info );
+            delete[] tile_info;
             tile_info = 0;
         }
 
@@ -312,12 +312,12 @@ bool TileSet::startPartitionTileSetLoad( const char *file_path, WadMapTable &map
 
     if ( tile_set_loaded == true ) {
         if ( tile_data != 0 ) {
-            delete( tile_data );
+            delete[] tile_data;
             tile_data = 0;
         }
 
         if ( tile_info != 0 ) {
-            delete( tile_info );
+            delete[] tile_info;
             tile_info = 0;
         }
 
