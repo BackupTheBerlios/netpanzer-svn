@@ -18,7 +18,7 @@ AC_DEFUN([AC_INIT_JAMFILE],
       [AS_IF([test ! -f "${ac_top_builddir}Jamfile"],
 	[echo Installing Jamfile wrapper.
 	 echo "# This file was automatically create by config.status" > Jamfile
-	 echo "TOP ?= $ac_top_srcdir ;" >> Jamfile
-	 echo "BUILDTOP ?= . ;" >> Jamfile
+	 echo "top_srcdir ?= $ac_top_srcdir ;" >> Jamfile
+	 echo "top_builddir ?= . ;" >> Jamfile
 	 echo "include \$(TOP)/Jamfile ;" >> Jamfile])])])
 
