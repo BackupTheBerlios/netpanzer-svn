@@ -1,29 +1,34 @@
-16-Jan-2003 by Matthias Braun
+17-Jan-2004 by Wolfgang Koller
+-Each player now has a color (defined in PlayerState)
+-Minimap uses that color to display captured objectives and units
+-Rank list now uses that color to display statistics
+
+16-Jan-2004 by Matthias Braun
 -rewrote the SDL_Video code and moved it into netpanzer dir
 -initialize SDL_net at application start instead of when network is used first.
  This simplifies things and fixes a bug in lobby view on windows.
 
-12-Jan-2003 by Matthias Braun
+12-Jan-2004 by Matthias Braun
 -added netpanzer icon and jam rules to install icons
 
-11-Jan-2003 by Matthias Braun
+11-Jan-2004 by Matthias Braun
 -implement possibility to set DESTDIR for installation
 
-10-Jan-2003 by Matthias Braun
+10-Jan-2004 by Matthias Braun
 -implemented tiletemplate view in editor
 -fixed several bugs and problems in the editor
 
-08-Jan-2003 by Matthias Braun
+08-Jan-2004 by Matthias Braun
 -hacked a quick connect option into netpanzer, so that external tools can easily
  invoke netpanzer to join directly on a specific server. (Maybe some commandline
  freaks also prefer this method...)
 
-05-Jan-2003 by Matthias Braun
+05-Jan-2004 by Matthias Braun
 -server browser works so far
 -converted yet another array like class in ProjectileInterface to std::list
 -make IRC lib abort earlier if server address can't be resolved
 
-04-Jan-2003 by Matthias Braun
+04-Jan-2004 by Matthias Braun
 -started a new IRC library
 -started a commandline server browser tool
 

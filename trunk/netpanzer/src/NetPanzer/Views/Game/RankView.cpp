@@ -171,7 +171,7 @@ void RankView::drawPlayerStats(Surface &dest)
                 break;
 
             case _stats_display_type_default :
-                color = Color::white;
+                color = PlayerInterface::getPlayerState( i )->getColor();
                 break;
 
 

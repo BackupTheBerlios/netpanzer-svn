@@ -118,12 +118,11 @@ void MiniMapInterface::annotateUnits( Surface &map_surface )
 			assert(false);
 		    }
 		} else if ( (show_enemy_radar_flag == true) ) {
-			
 			if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
-			    drawSmallUnitDot( map_surface, map_loc, enemy_objective_color );
+			    drawSmallUnitDot( map_surface, map_loc, PlayerInterface::getPlayerState( player )->getColor() );
 			} else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
-			    drawLargeUnitDot( map_surface, map_loc, enemy_objective_color );
-			    
+			    drawLargeUnitDot( map_surface, map_loc, PlayerInterface::getPlayerState( player )->getColor() );
+
 			} else {
 			    assert(false);
 			}
