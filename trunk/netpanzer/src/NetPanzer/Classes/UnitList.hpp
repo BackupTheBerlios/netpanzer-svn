@@ -207,6 +207,7 @@ public:
     void clear()
     {
 	unitlist.clear();
+        unitlistsize = 0;
     }
 
     size_t size() const
