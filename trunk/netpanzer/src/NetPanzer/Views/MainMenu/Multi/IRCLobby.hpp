@@ -73,7 +73,6 @@ private:
     std::string channel_name;
     std::string nickname;
     std::string serveraddress;
-    int serverport;
     std::list<IRCChatMessage> chat_messages;
     GameServerList* game_servers;
     

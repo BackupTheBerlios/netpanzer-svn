@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class ClientSocket
 {
 public:
-    ClientSocket(const char* serveraddress, Uint16 port);
+    ClientSocket(const char* serveraddress);
     ~ClientSocket();
 
     void read();

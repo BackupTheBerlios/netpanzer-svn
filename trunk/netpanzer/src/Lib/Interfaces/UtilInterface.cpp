@@ -16,13 +16,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+#include <sstream>
 
 #include <sys/stat.h>
 #include <string.h>
 #include "SplitPath.hpp"
 #include "Exception.hpp"
 #include "FileSystem.hpp"
+#include "GameConfig.hpp"
 #include "UtilInterface.hpp"
+#include "Log.hpp"
 
 bool gSpanBlittingFlag = false;
 
@@ -138,3 +141,81 @@ void UtilInterface::startRandomNumberGenerator()
     srand((unsigned)time(0));
 #endif
 } // end UtilInterface::startRandomNumberGenerator
+
+
+
+// split server:port string, doesn't always set the port
+void UtilInterface::splitServerPort(const std::string& server,std::string& address,int *port)
+{
+    unsigned int colon=server.find(':',0);
+    if(colon==std::string::npos) {
+        address=server;
+    }
+    else {
+        address=server.substr(0,colon);
+        colon++;
+        std::string port_str(server.substr(colon,server.length()-colon));
+        port[0]=atoi(port_str.c_str());
+    }
+}
+
+
+void UtilInterface::makeBase64(std::string &base64,std::string &str)
+{
+    static const char base64_chars[65]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    const char *auth_ptr;
+    char auth_ptr_dest[5];
+
+    auth_ptr_dest[4]=0;
+    base64="";
+    for(auth_ptr=str.c_str(); *auth_ptr; auth_ptr+=3) {
+        auth_ptr_dest[0]='=';
+        auth_ptr_dest[1]='=';
+        auth_ptr_dest[2]='=';
+        auth_ptr_dest[3]='=';
+
+        auth_ptr_dest[0]=base64_chars[(auth_ptr[0]&0xfc) >>2];
+        auth_ptr_dest[1]=base64_chars[((auth_ptr[0]&0x3) <<4)|((auth_ptr[1]&0xf0)>>4)]; 
+        if(auth_ptr[1]==0) { base64+=auth_ptr_dest; break; }
+        auth_ptr_dest[2]=base64_chars[((auth_ptr[1]&0xf) <<2)|((auth_ptr[2]&0xc0)>>6)];
+        if(auth_ptr[2]==0) { base64+=auth_ptr_dest; break; }
+        auth_ptr_dest[3]=base64_chars[((auth_ptr[2]&0x3f))];
+        base64+=auth_ptr_dest;
+    }
+}
+
+
+void UtilInterface::getProxyConnect(std::stringstream &buffer,const std::string &serveraddress) {
+    if(((const std::string &)gameconfig->proxyserver).size()>0) {
+        buffer << "CONNECT " << serveraddress << " HTTP/1.0\r\n";
+        if(((const std::string &)gameconfig->proxyserveruser).size()>0) {
+            std::string base64;
+            std::string userpass( ((const std::string &)gameconfig->proxyserveruser) +":"+((const std::string &)gameconfig->proxyserverpass) );
+            UtilInterface::makeBase64(base64, userpass);
+            buffer << "Authorization: Basic " << base64 << "\r\n";
+        }
+        buffer << "\r\n";
+    }
+}
+
+
+void UtilInterface::sendProxyConnect(TCPsocket socket,const std::string &serveraddress)
+{
+    std::stringstream buffer;
+
+    getProxyConnect(buffer,serveraddress);
+
+    SDLNet_TCP_Send(socket,const_cast<char*> (buffer.str().c_str()),buffer.str().size());
+    int lfs=0;
+// XXX grab any http error messages
+    while(1) {
+        char ch;
+        if(SDLNet_TCP_Recv(socket,&ch,1)!=1) { break; }
+        if(ch=='\r') { continue; }
+        if(ch=='\n') { lfs++; }
+        else { lfs=0; }
+        if(lfs>=2) { break; }
+    }
+}
+
+

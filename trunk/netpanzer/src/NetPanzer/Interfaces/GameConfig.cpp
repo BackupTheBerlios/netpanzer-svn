@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Log.hpp"
 #include "Exception.hpp"
 #include "GameConfig.hpp"
+#include "NetworkGlobals.hpp"
 #include "XmlConfig.hpp"
 #include "XmlStore.hpp"
 
@@ -30,7 +31,10 @@ GameConfig::GameConfig(const std::string& newconfigfile)
     : hostorjoin("hostorjoin", _game_session_join, 0, _game_session_last-1),
       playername("name", "Player"),
       lobbyserver("lobbyserver", "irc.freenode.net:6667"),
-
+      serverport("serverport",_NETPANZER_DEFAULT_PORT_TCP,0,65535),
+      proxyserver("proxyserver",""),
+      proxyserveruser("proxyserveruser",""),
+      proxyserverpass("proxyserverpass",""),
       gametype("gametype", _gametype_objective, 0, _gametype_last-1),
       maxplayers("maxplayers", 8, 1, 25),
       maxunits("maxunits", 500, 25, 10000),
@@ -87,7 +91,11 @@ GameConfig::GameConfig(const std::string& newconfigfile)
     playername=default_player.str();
     playersettings.push_back(&playername);
     playersettings.push_back(&lobbyserver);
+    playersettings.push_back(&proxyserver);
+    playersettings.push_back(&proxyserveruser);
+    playersettings.push_back(&proxyserverpass);
 
+    serversettings.push_back(&serverport);
     serversettings.push_back(&gametype);
     serversettings.push_back(&maxplayers);
     serversettings.push_back(&maxunits);

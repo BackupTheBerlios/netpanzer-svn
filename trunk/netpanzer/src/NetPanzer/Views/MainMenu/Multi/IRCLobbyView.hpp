@@ -42,7 +42,6 @@ private:
     static void chatReturnPressed(cInputField* input);
     
     int lobby_view_height;
-    const GameServer *mouse_down_server;
     const GameServer *displayed_servers[64];
     int total_displayed_servers;
 

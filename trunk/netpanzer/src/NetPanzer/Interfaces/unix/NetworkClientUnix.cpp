@@ -84,7 +84,7 @@ int NetworkClientUnix::joinSession(const char* session_name)
     clientsocket = 0;
     LOG( ("Trying to join server '%s'.\n", session_name) );
     try {
-        clientsocket = new ClientSocket(session_name, _NETPANZER_DEFAULT_PORT_TCP);
+        clientsocket = new ClientSocket(session_name);
     } catch(Exception e) {
         LOG( ( "Couldn't connect to server:\n%s.", e.what()) );
         char text[128];

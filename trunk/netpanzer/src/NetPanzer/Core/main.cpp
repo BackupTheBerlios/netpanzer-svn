@@ -174,15 +174,13 @@ BaseGameManager *initialise(int argc, char** argv)
     option<std::string, true, false> bot_option('b', "bot",
             "connect as bot to specific server", "");
     commandline.add(&bot_option);
-#if 0
     option<int> port_option('p', "port", "run server on specific port", 0);
     commandline.add(&port_option);
-#endif
     bool_option debug_option('g', "debug",
             "enable debug output", false);
     commandline.add(&debug_option);
-    option<char *> lobby_server_option('\0', "lobby_server",
-        "Use an empty lobby server if you dont want to use the lobby", false);
+    option<std::string, true, false> lobby_server_option('\0', "lobby_server",
+        "Use 'none' if you dont want to use the lobby", "");
     commandline.add(&lobby_server_option);
 
     if(!commandline.process() || commandline.help() || commandline.version())
@@ -192,8 +190,6 @@ BaseGameManager *initialise(int argc, char** argv)
         LOGGER.setLogLevel(Logger::LEVEL_DEBUG);
         LOGGER.debug("debug option enabled");
     }
-    if (lobby_server_option.value())
-        gameconfig->lobbyserver = lobby_server_option.value();
 
     // Initialize SDL
     SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER);
@@ -242,7 +238,18 @@ BaseGameManager *initialise(int argc, char** argv)
             }
         }
 
+
         manager->initialize();
+
+        // gameconfig exists now...
+        if (lobby_server_option.value().size() > 0) {
+            if (lobby_server_option.value() == "none") {
+                gameconfig->lobbyserver = "";
+            }
+            else { gameconfig->lobbyserver = lobby_server_option.value(); }
+        }
+        gameconfig->serverport=port_option.value();
+
         return manager;
     } catch(Exception e) {
         LOGGER.warning("Couldn't initialize the game: %s", e.what());

@@ -115,6 +115,10 @@ public:
     ConfigString lobbyserver;
 
     // server settings
+    ConfigInt   serverport;
+    ConfigString proxyserver;
+    ConfigString proxyserveruser;
+    ConfigString proxyserverpass;
     ConfigInt   gametype;             //Objectives, FragLimit, TimeLimit
     ConfigInt   maxplayers;
     ConfigInt   maxunits;

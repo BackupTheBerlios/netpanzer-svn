@@ -34,7 +34,6 @@ IRCLobbyView::IRCLobbyView()
 {
     lobby_connection=0;
     lobby_view_height=160;
-    mouse_down_server=0;
     total_displayed_servers=0;
     setSearchName("IRCLobbyView");
     setTitle("Lobby");
@@ -81,7 +80,7 @@ void IRCLobbyView::doDraw(Surface &viewArea, Surface &clientArea)
         return;
     }
 
-//~~~ todo: scrollbar for large list of servers
+// XXX todo: scrollbar for large list of servers
     if(!lobby_connection->isConnected()) {
         clientArea.bltString(iXY(0,0),"Not connected to lobby", Color::white);
     }
@@ -137,7 +136,9 @@ int IRCLobbyView::lMouseUp(const iXY &down_pos,const iXY &up_pos)
         assert(server!=0);
 
         // connect to this game
-        IPAddressView::szServer.setString(server->host.c_str());
+        std::stringstream server_host;
+        server_host << server->host.c_str() <<":"<<server->port;
+        IPAddressView::szServer.setString(server_host.str().c_str());
     }
     return View::lMouseUp(down_pos,up_pos);
 }

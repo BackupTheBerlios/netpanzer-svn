@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __UtilInterface_hpp__
 #define __UtilInterface_hpp__
 
+#include <SDL_net.h>
+
 #include "String.hpp"
 
 class Filename
@@ -57,6 +59,14 @@ public:
     static int    getNumFilesInDirectory(String path);
     static void   checkError(FILE *fp);
     static void   startRandomNumberGenerator();
+
+    // get servername/port from a string, doesn't always set the port
+    static void splitServerPort(const std::string &server,std::string &address,int *port);
+    static void makeBase64(std::string &base64,std::string &str);
+    static void getProxyConnect(std::stringstream &buf,const std::string &serveraddress);
+    static void sendProxyConnect(TCPsocket socket,const std::string &serveraddress);
+
+
 }; // end UtilInterface
 
 #endif // __UtilInterface_hpp__

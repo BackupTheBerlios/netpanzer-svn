@@ -92,6 +92,7 @@ void bReady()
         Desktop::setVisibilityAllWindows(false);
 
         Desktop::setVisibility("LobbyView", true);
+        lobby_view->stopIRC();
 
         //this call should be redundant -- enumeration ceases
         //when a session is opened in any case:
@@ -100,6 +101,7 @@ void bReady()
     } else {
         // Close all menu views.
         Desktop::setVisibilityAllWindows(false);
+        lobby_view->startIRC();
     }
 
     // Free the menu pictures.
@@ -107,7 +109,6 @@ void bReady()
     MenuTemplateView::backgroundSurface.free();
     //MenuTemplateView::titleSurface.free();
 
-    lobby_view->stopIRC();
     //TODO: I don't like static methods
     PlayerGameManager::launchMultiPlayerGame();
 }
