@@ -121,7 +121,7 @@ bool DedicatedGameManager::launchNetPanzerGame()
         lobby_view = new IRCLobbyView;
     lobby_view->startIRC();
 
-    ConsoleInterface::postMessage( "Game Launched, Server Ready...");
+    ConsoleInterface::postMessage("game started.");
 
     GameManager::startGameTimer();
     return true;

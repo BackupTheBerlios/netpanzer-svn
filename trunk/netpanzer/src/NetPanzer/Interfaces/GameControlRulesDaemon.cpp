@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerInterface.hpp"
 #include "ObjectiveInterface.hpp"
 #include "MapsManager.hpp"
+#include "ConsoleInterface.hpp"
 
 #include "NetworkState.hpp"
 #include "SystemNetMessage.hpp"
@@ -187,7 +188,8 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                     GameManager::shutdownParticleSystems();
 
                     gameconfig->map = MapsManager::getNextMap(gameconfig->map);
-                    LOGGER.info("Next Map: %s", gameconfig->map.c_str());
+                    ConsoleInterface::postMessage("loading map '%s'.",
+                            gameconfig->map.c_str());
 
                     GameControlCycleMap cycle_map_mesg;
                     cycle_map_mesg.set( gameconfig->map.c_str() );
@@ -246,6 +248,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
 
         case _map_cycle_server_state_wait_for_client_map_load : {
                 if ( map_cycle_fsm_server_map_load_timer.count() ) {
+                    ConsoleInterface::postMessage("game started.");
                     map_cycle_fsm_server_state = _map_cycle_server_state_respawn_players;
                 }
             }

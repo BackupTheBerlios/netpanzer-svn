@@ -44,7 +44,7 @@ void Objective::objectiveMesgUpdateOccupation( ObjectiveMessage *message )
         PlayerState *player_state;
         player_state = PlayerInterface::getPlayerState( objective_state.occupying_player );
 
-        ConsoleInterface::postMessage( "%s has been occupied by %s",
+        ConsoleInterface::postMessage( "'%s' has been occupied by '%s'",
                 objective_state.name, player_state->getName().c_str() );
     }
 }
