@@ -10,7 +10,7 @@
 	<li>Gentoo</li>
 	<li>PLD Linux Distribution</li>
       </ul>
-	  <subsubsection title="Suse">
+	  <subsubsection title="RPM">
 	<p>
 	rpm files for Suse and Fedora distributions can be found at the
 	<a href="http://developer.berlios.de/project/showfiles.php?group_id=1250">
