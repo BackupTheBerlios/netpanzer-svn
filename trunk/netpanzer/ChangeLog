@@ -1,3 +1,6 @@
+18-Jan-2004 by Wolfgang Koller
+-Changed the ServerBrowser so that it now really supports the query-timeout
+
 17-Jan-2004 by Wolfgang Koller
 -Each player now has a color (defined in PlayerState)
 -Minimap uses that color to display captured objectives and units

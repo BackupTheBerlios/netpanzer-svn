@@ -39,7 +39,7 @@ int main(int argc, char** argv)
     option<int> query_timeout_option('q', "querytimeout",
             "timeout for querying the servers", 0);
     commandline.add(&query_timeout_option);
-    
+
     if(!commandline.process() || commandline.help() || commandline.version())
         return 0;
 
@@ -72,7 +72,7 @@ int main(int argc, char** argv)
         serverlist->queryServerList();
 
         // wait 20 seconds for answers
-        sleep(20);
+        sleep(config->query_timeout);
     } catch(std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         
