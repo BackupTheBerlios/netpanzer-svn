@@ -1,3 +1,12 @@
+*** 0.8 ***
+
+* Call this final release 0.8 to better reflect the state of development
+* You can move the camera to a defined group by pressing group key twice
+* Server shuts itself down instead of stying in an endless loop
+* The -c command handles netpanzer:// URLs now
+* Some additional infos are sent out by the server which help server browser
+* Distribute cached palettes so that the first start should be faster now
+
 *** 0.2.0-rc4 ***
 
 * Really fixed Duell map

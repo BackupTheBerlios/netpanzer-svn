@@ -10,6 +10,7 @@ SubInclude TOP powerups ;
 SubInclude TOP units ;
 SubInclude TOP wads ;
 SubInclude TOP fonts ;
+SubInclude TOP cache ;
 
 UseAutoconf ;
 

@@ -49,10 +49,7 @@ void MainMenuView::doDraw(Surface &viewArea, Surface &clientArea)
         "This application is free software under the terms of the "
         "Gnu General Public license (GPL). See the COPYING file for details."
         "\n"
-        "NetPanzer only supports TCP/IP multiplayer games over "
-        "LAN systems and over the Internet. "
-        "We're still searching for talented coders "
-        "and artists.";
+        "We're still searching for talented coders and artists.";
 
     viewArea.bltStringInBox(bodyTextRect, text, Color::white, 12);
 } // end MainMenuView::doDraw

@@ -31,7 +31,6 @@ namespace UI{
     protected:
         iRect area; //drawing area
         std::string name; //name, used for debugging
-        
 
     public:
         Component(iRect area);

@@ -4,6 +4,7 @@ Next release:
 -server status command returns wrong player names (seems to happen after sudden
         client disconnects) - was probably people with ppc trying to join
 -netpanzer fails on win98se
+-add netpanzer:// registration to netpanzer installer
 -you can't move panzers around on ppc - maybe ok (needs testing)
 
 -this resulted in an endless loop in the server
@@ -27,8 +28,6 @@ Next release:
             endianess is fixed)
 
 *** New Masterserver code
- * add new options to only show servers which are not empty, with a certain map
-   or where a certain player is playing.
  * Create UDP broadcast code for LAN games
 
 *** Network
@@ -47,7 +46,7 @@ Next release:
  * server console doesn't react really way with all the messages of players
    scrolling by...
 *** Improvements   
- * Use gettext and translate netpanzer
+ * Use gettext (or tinygettext from supertux) and translate netpanzer
  * Add special chars to functions displaying text that allow to set text
    color/style. (^ like in quake based games?)
  * Convert the 256 color stuff to truecolor, usage of opengl is probably a good

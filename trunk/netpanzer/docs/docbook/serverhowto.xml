@@ -1,5 +1,5 @@
-<?xml version="1.0"?>
-<page title="Netpanzer Server Setup HowTo">
+<?xml version="1.0" encoding="iso8859-1"?>
+<!-- <page title="Netpanzer Server Setup HowTo"> -->
 <article>
   <articleinfo>
     <title>NetPanzer Server Setup HowTo</title>
@@ -221,4 +221,4 @@ section</ulink> of netpanzer in the misc category.
     </sect2>
   </sect1>
 </article>
-</page>
+<!-- </page> -->

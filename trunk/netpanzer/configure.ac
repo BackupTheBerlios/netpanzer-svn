@@ -4,7 +4,7 @@
 #----------------------------------------------------------------------------
 AC_PREREQ([2.54])
 
-AC_INIT([netpanzer], [0.2.0_rc4], [netpanzer-devel@lists.berlios.org])
+AC_INIT([netpanzer], [0.8], [netpanzer-devel@lists.berlios.org])
 AC_CONFIG_SRCDIR([mk/jam/build.jam])
 AC_CONFIG_AUX_DIR([mk/autoconf])
 
@@ -145,5 +145,5 @@ AC_OUTPUT
 
 AC_MSG_NOTICE([
 
-Please note that this project uses jam (and not make) as build tool.
+Notice: This project uses jam (and not make) as build tool.
 ])

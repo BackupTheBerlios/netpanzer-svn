@@ -67,7 +67,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("Game Related");
     insert("");
     insert("  LMC + 'A'                        Allies with the clicked unit's team");
-    insert("  ESC                               In game menus");
+    insert("  ESC                              In game menus");
     insert("");
     insert("");
     insert("Outpost Related");

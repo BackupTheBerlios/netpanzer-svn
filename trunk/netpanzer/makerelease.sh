@@ -76,6 +76,7 @@ SubInclude TOP sound ;
 SubInclude TOP powerups ;
 SubInclude TOP units ;
 SubInclude TOP wads ;
+SubInclude TOP cache ;
 #SubInclude TOP fonts ;
 __END__
 
@@ -85,6 +86,7 @@ find powerups \( -name "*.pak" -o -name "Jamfile" \) -exec cp -p --parents {} $D
 find units \( -name "*.pfl" -o -name "*.pak" -o -name "Jamfile" \) -exec cp -p --parents {} $DATARELEASE ';'
 find sound \( -name "*.wav" -o -name "Jamfile" \) -exec cp -p --parents {} $DATARELEASE ';'
 find maps \( -name "*.npm" -o -name "*.opt" -o -name "*.spn" -o -name "Jamfile" \) -exec cp -p --parents {} $DATARELEASE ';'
+find cache \( -name "*.tbl" \) -exec cp -p --parents {} $DATARELEASE ';'
 # find fonts \( -name "*.pcf" \) -exec cp -p --parents {} $DATARELEASE ';'
 cp -p --parents $AUTOFILES $DATARELEASE
 cp -p --parents $JAMFILES $DATARELEASE
