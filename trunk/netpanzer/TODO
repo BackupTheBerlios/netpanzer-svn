@@ -12,22 +12,24 @@
  * We should create a pidfile when the dedicated server is started with
    --pidfile
 
-*** Improvements
+*** Server related
  * refactor bot code, so that it is possible to directly spawn bots at the
    server, after that we could easily add a "Skirmish" button to the main menu.
  * let dedicated server output statistics on console or in some log files. 
    Also all message should be outputted with timestamps.
    So that you can generate nice html pages with statistics of the players :)
- * Add special chars to functions displaying text that allow to set text
-   color/style. (^ like in quake based games?)
- * Convert the 256 color stuff to truecolor
+ * the Server has a massive memory leak somewhere
  * Add timeout/keepalive handling to network layer to correctly detect 
    connection losses and try reconnects (we should think about this again, 
    doesn't TCP already do similar things?)
  * impelement 'initialunits' param in PlayerUnitConfig::initialize()
- * bots should have different names and different flags - partly implemented
  * synchronize resources between server and clients, both should have same flags
-   collection and map. Let them automatically download these things.
+   collection and map. Let them automatically download these things.             
+*** Improvements   
+ * Add special chars to functions displaying text that allow to set text
+   color/style. (^ like in quake based games?)
+ * Convert the 256 color stuff to truecolor
+ * bots should have different names and different flags - partly implemented
  * make it possible to have different colors for different players - DONE
  * make the code endian safe. It should run on big endian boxes too.
  * display alliances in the status screens.
