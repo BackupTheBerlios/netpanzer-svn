@@ -21,7 +21,7 @@ PATHS =
         .
 ;
 
-for p in $(PARTICELPATHS) {
+for p in $(PATHS) {
     InstallData [ Wildcard $(p) : *.bmp *.pak *.raw ] : pics $(p) ;
 }
 
