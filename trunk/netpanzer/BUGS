@@ -17,3 +17,5 @@
 - If you change your username and connect to the server, then you'll still
   have your old username until you leave the game.
 - netPanzer shouldn't allow using the same flags by two (or more) players
+- ranking isn't sorted by points (and AFAIR it was before)
+
