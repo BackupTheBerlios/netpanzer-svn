@@ -7,6 +7,11 @@
  * take care about integration into xqf
  * Create UDP broadcast code for LAN games
 
+*** Network
+ * Add config option to make it possible to bind to specific network addresses
+ * We should create a pidfile when the dedicated server is started with
+   --pidfile
+
 *** Improvements
  * refactor bot code, so that it is possible to directly spawn bots at the
    server, after that we could easily add a "Skirmish" button to the main menu.
