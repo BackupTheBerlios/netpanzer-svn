@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include <config.h>
+#include "Exception.hpp"
 #include "FlameParticle2D.hpp"
 
 cGrowList <PackedSurface> FlameParticle2D::staticPackedExplosion0;
@@ -135,14 +136,14 @@ void FlameParticle2D::loadPakFiles()
 
 	if (!loadAllPAKInDirectory(pathExplosion0, staticPackedExplosion0))
 	{
-		FUBAR("ERROR: Unable to load any exposion images in %s", pathExplosion0);
+		throw Exception("ERROR: Unable to load any exposion images in %s", pathExplosion0);
 	}
 
 	char pathExplosion1[] = "pics/particles/explosion/explosion1/pak/";
 
 	if (!loadAllPAKInDirectory(pathExplosion1, staticPackedExplosion1))
 	{
-		FUBAR("ERROR: Unable to load any exposion images in %s", pathExplosion1);
+		throw Exception("ERROR: Unable to load any exposion images in %s", pathExplosion1);
 	}
 }
 

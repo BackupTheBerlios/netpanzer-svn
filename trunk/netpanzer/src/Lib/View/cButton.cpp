@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "cButton.hpp"
 #include "Surface.hpp"
+#include "Exception.hpp"
 #include "ViewGlobals.hpp"
 
 
@@ -154,7 +155,7 @@ void cButton::createTIL(iXY pos,
 	Surface tempSurface;
 	if(!tempSurface.loadTIL(imageName))
 	{
-		FUBAR("ERROR: Unable to open button TIL file: %s", imageName);
+		throw Exception("ERROR: Unable to open button TIL file: %s", imageName);
 	}
 
 	tempTopSurface.create(tempSurface.getPix(), tempSurface.getPix().x, 3);
@@ -369,7 +370,7 @@ void cButton::reset()
 void cButton::setName(const char *buttonName)
 {
 	name = strdup(buttonName);
-	if (buttonName == 0) FUBAR("ERROR: Unable to allocate button name: %s", buttonName);
+	if (buttonName == 0) throw Exception("ERROR: Unable to allocate button name: %s", buttonName);
 } // end SET NAME
 
 // createPCX

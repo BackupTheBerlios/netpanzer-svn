@@ -154,7 +154,7 @@ void MiniMapView::init()
 	Surface *miniMap = MiniMapInterface::getMiniMap();
 	if (miniMap == 0)
 	{
-		FUBAR("ERROR: Unable to find minimap surface.");
+		throw Exception("ERROR: Unable to find minimap surface.");
 	}
 
 	miniMapSurface.copy(*miniMap);
@@ -181,7 +181,7 @@ void MiniMapView::doDraw(const Surface &viewArea, const Surface &clientArea)
 	Surface *miniMap = MiniMapInterface::getMiniMap();
 	if (miniMap == 0)
 	{
-		FUBAR("ERROR: Unable to find minimap surface.");
+		throw Exception("ERROR: Unable to find minimap surface.");
 	}
 
 	// Check to see if this map need to be rescaled.

@@ -6,6 +6,7 @@
  and clean network code will be needed sometime anyway...)
 -more cleanup in the network code
 -added a client version of the SDLNet code
+-replaced all FUBARs with throw Exception, so I could remove terminate.cpp
 
 6-Sep-2003 by Matze Braun
 -added a unix implementation of _findfirst, _findnext and _findclose

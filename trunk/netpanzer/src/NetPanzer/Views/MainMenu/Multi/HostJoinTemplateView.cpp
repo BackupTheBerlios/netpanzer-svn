@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "DDHardSurface.hpp"
 #include "FontSystem2D.hpp"
 #include "HostView.hpp"
+#include "Exception.hpp"
 #include "MapSelectionView.hpp"
 #include "PlayerNameView.hpp"
 #include "FlagSelectionView.hpp"
@@ -345,7 +346,7 @@ void HostJoinTemplateView::addVehicleButtons(const iXY &pos)
 	Surface tempSurface;
 	if (!tempSurface.loadTIL("pics/vehicleSelectionMenu/light.til"))
 	{
-		FUBAR("ERROR: Unable to open pics/vehicleSelectionMenu/light.til to find the size to make the buttons.");
+		throw Exception("ERROR: Unable to open pics/vehicleSelectionMenu/light.til to find the size to make the buttons.");
 	}
 	
 	iXY buttonSize(tempSurface.getPix());

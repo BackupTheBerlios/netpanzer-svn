@@ -28,20 +28,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 const bool GOTTA_HAVE_IT   = true;
 const bool LIVE_WITHOUT_IT = false;
 
-//***************************************************************************
-// Standard program control/cleanup functions
-//***************************************************************************
-
-#include <stdarg.h>
-
-void cleanup(bool fubed);
-void term(int returnCode, bool fubed, const char *msg, ...);
-void vterm(int returnCode, bool fubed, const char *msg, va_list ap);
-void quitOK(const char *msg, ...);
-void FUBAR(const char *msg, ...);
-void vQuitOK(const char *msg, va_list ap);
-void vFUBAR(const char *msg, va_list ap);
-
 // XXX changed this, as it was stupid code (on unix this failed from time to
 // time
 inline bool isValidPtr(const void *ptr) {

@@ -15,9 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #include <config.h>
+
+#include "Exception.hpp"
 #include "String.hpp"
 
 // String
@@ -30,7 +30,7 @@ String::String(const char *string)
 	mem    = new char [length + 1];
 	if (mem == 0)
 	{
-		FUBAR("ERROR: Unable to allocate string.");
+		throw Exception("ERROR: Unable to allocate string.");
 	}
 	strcpy(mem, string);
 
@@ -46,7 +46,7 @@ String::String(const String &string)
 	mem    = new char [length + 1];
 	if (mem == 0)
 	{
-		FUBAR("ERROR: Unable to allocate string.");
+		throw Exception("ERROR: Unable to allocate string.");
 	}
 	strcpy(mem, string.mem);
 
@@ -74,7 +74,7 @@ const String &String::operator=(const String &string)
 		mem    = new char [length + 1];
 		if (mem == 0)
 		{
-			FUBAR("ERROR: Unable to allocate string.");
+			throw Exception("ERROR: Unable to allocate string.");
 		}
 		strcpy(mem, string.mem);
 	}
@@ -93,7 +93,7 @@ String &String::operator+=(const String &string)
 	mem    = new char [length + 1];
 	if (mem == 0)
 	{
-		FUBAR("ERROR: Unable to allocate string.");
+		throw Exception("ERROR: Unable to allocate string.");
 	}
 	strcpy(mem, tempPtr);
 	strcat(mem, string.mem);

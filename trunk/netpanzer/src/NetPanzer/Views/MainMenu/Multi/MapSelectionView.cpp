@@ -194,11 +194,11 @@ int MapSelectionView::loadMaps()
 /*
 		if (strlen(netPanzerMapHeader.name) > 255)
 		{
-			FUBAR("Map name is too long.");
+			throw Exception("Map name is too long.");
 		}
 		if (strlen(netPanzerMapHeader.description) > 255)
 		{
-			FUBAR("Map description is too long.");
+			throw Exception("Map description is too long.");
 		}
 */
 		_splitpath(fileList[i].name, 0, 0, mapList[i].name, 0);
@@ -246,7 +246,7 @@ int MapSelectionView::loadMaps()
 	assert(mapList.getCount() > 0);
 	if (mapList.getCount() <= 0)
 	{
-		FUBAR("ERROR: No maps in map directory");
+		throw Exception("ERROR: No maps in map directory");
 	}
 	
 	GameConfig::setGameMapName(MapSelectionView::mapList[curMap].name);

@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Surface.hpp"
 #include "TimerInterface.hpp"
 #include "Span.hpp"
+#include "Exception.hpp"
 #include "UtilInterface.hpp"
 
 #ifdef MSVC
@@ -115,7 +116,7 @@ void PackedSurface::pack(const Surface &source)
 	rowOffsetTable = (int *) malloc((pix.y*frameCount + 1) * sizeof(*rowOffsetTable));
 	if (rowOffsetTable == 0)
 	{
-		FUBAR("ERROR: Unable to allocate rowTableOffset for PackedSurface.");
+		throw Exception("ERROR: Unable to allocate rowTableOffset for PackedSurface.");
 	}
 
 	int bytesAlloced = 0;
@@ -158,7 +159,7 @@ void PackedSurface::pack(const Surface &source)
 					packedDataChunk = (BYTE *)realloc(packedDataChunk, bytesAlloced);
 					if (packedDataChunk == 0)
 					{
-						FUBAR("ERROR: Out of memory for packedDataChunk for PackedSurface.");
+						throw Exception("ERROR: Out of memory for packedDataChunk for PackedSurface.");
 					}
 				}
 
@@ -181,7 +182,7 @@ void PackedSurface::pack(const Surface &source)
 	// Shrink buffer to the size we really need
 
 	packedDataChunk = (BYTE *) realloc(packedDataChunk, curByteOffset);
-	if (packedDataChunk == 0) FUBAR("Hell froze");
+	if (packedDataChunk == 0) throw Exception("Hell froze");
 
 	// Restore source surface frame number, so the function
 	// is logically const
@@ -192,7 +193,7 @@ void PackedSurface::pack(const Surface &source)
 //--------------------------------------------------------------------------
 void PackedSurface::load(const char *filename) {
 	FILE *f = fopen(filename, "rb");
-	if (f == 0) FUBAR("Can't open %s", filename);
+	if (f == 0) throw Exception("Can't open %s", filename);
 	load(f);
 	fclose(f);
 }
@@ -200,7 +201,7 @@ void PackedSurface::load(const char *filename) {
 //--------------------------------------------------------------------------
 void PackedSurface::save(const char *filename) const {
 	FILE *f = fopen(filename, "wb");
-	if (f == 0) FUBAR("Can't create %s", filename);
+	if (f == 0) throw Exception("Can't create %s", filename);
 	save(f);
 	fclose(f);
 }
@@ -211,10 +212,10 @@ void PackedSurface::load(FILE *f) {
 	int version;
 	fread(&version, sizeof(version), 1, f);
 	if (version < 1) {
-		FUBAR("Invalid PAK file version: %d", version);
+		throw Exception("Invalid PAK file version: %d", version);
 	}
 	if (version > CURRENT_PAK_VERSION) {
-		FUBAR("PAK file version %d is newer than the .exe you are using, which only supports up to version", version, CURRENT_PAK_VERSION);
+		throw Exception("PAK file version %d is newer than the .exe you are using, which only supports up to version", version, CURRENT_PAK_VERSION);
 	}
 	fread(&pix, sizeof(pix), 1, f);
 
@@ -226,19 +227,19 @@ void PackedSurface::load(FILE *f) {
 	rowOffsetTable = (int *) malloc((pix.y * frameCount + 1) * sizeof(*rowOffsetTable));
 	if (rowOffsetTable == 0)
 	{
-		FUBAR("ERROR: Unable to allocate rowTableOffset for PackedSurface.");
+		throw Exception("ERROR: Unable to allocate rowTableOffset for PackedSurface.");
 	}
 	fread(rowOffsetTable, (pix.y*frameCount + 1)*sizeof(*rowOffsetTable), 1, f);
 	packedDataChunk = (BYTE *)malloc(rowOffsetTable[pix.y*frameCount]);
 	if (packedDataChunk == 0)
 	{
-		FUBAR("ERROR: Unable to allocate packedDataChunk for PackedSurface.");
+		throw Exception("ERROR: Unable to allocate packedDataChunk for PackedSurface.");
 	}
 	fread(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1, f);
 
 	// Quick check for error
 
-	if (ferror(f)) FUBAR("Error reading packed surface file!");
+	if (ferror(f)) throw Exception("Error reading packed surface file!");
 
 	// Add size of rowTableOffset.
 	totalByteCount += (pix.y * frameCount + 1) * sizeof(*rowOffsetTable);
@@ -260,7 +261,7 @@ void PackedSurface::save(FILE *f) const {
 
 	// Quick check for error
 
-	if (ferror(f)) FUBAR("Error writing packed surface file!");
+	if (ferror(f)) throw Exception("Error writing packed surface file!");
 }
 
 //--------------------------------------------------------------------------

@@ -19,17 +19,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __String_hpp__
 #define __String_hpp__
 
+#include <assert.h>
 #include <iostream>
 
 #include "codewiz.hpp"
 
 using std::ostream;
 using std::istream;
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
 
 //--------------------------------------------------------------------------
 class String
@@ -92,11 +88,7 @@ public:
 	// return char reference.
 	char &operator [](int subscript)
 	{
-		if (subscript < 0 || subscript >= length)
-		{
-			FUBAR("ERROR: Indexing string out of bounds.");
-		}
-
+		assert(subscript > 0 && subscript < length);
 		return mem[subscript];
 	}
 	

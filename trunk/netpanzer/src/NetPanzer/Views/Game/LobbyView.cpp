@@ -15,9 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #include <config.h>
+
+#include "Exception.hpp"
 #include "LobbyView.hpp"
 #include "Desktop.hpp"
 #include "UIDraw.hpp"
@@ -191,7 +191,7 @@ void LobbyView::loadBackgroundSurface()
 
 	if (!backgroundSurface.loadTIL(string))
 	{
-		FUBAR("ERROR: Unable to load menu background surface: %s", (const char *) string);
+		throw Exception("ERROR: Unable to load menu background surface: %s", (const char *) string);
 	}
 
 } // end MenuTemplateView::loadBackgroundSurface

@@ -16,9 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 //---------------------------------------------------------------------------
-
-
 #include <config.h>
+
+#include "Exception.hpp"
 #include "Particle2D.hpp"
 #include "TimerInterface.hpp"
 #include "PackedSurface.hpp"
@@ -76,7 +76,7 @@ void *Particle2D::operator new(size_t numBytes)
 	// Check for trying to create a particle that's too big.
 	if (numBytes > MAX_PARTICLE_CLASS_SIZE)
 	{
-		FUBAR("ERROR: Tried to create a particle with class size %d bytes, but max particle class object size is %d bytes", numBytes, MAX_PARTICLE_CLASS_SIZE);
+		throw Exception("ERROR: Tried to create a particle with class size %d bytes, but max particle class object size is %d bytes", numBytes, MAX_PARTICLE_CLASS_SIZE);
 	}
 
 	// Check if all slots used.

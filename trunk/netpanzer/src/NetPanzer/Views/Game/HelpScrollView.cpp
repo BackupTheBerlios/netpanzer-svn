@@ -120,7 +120,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
 	//scrollBar = new ScrollBar(VERTICAL, 0, 1, 0, text.getCount());
 	//if (scrollBar == 0)
 	//{
-	//	FUBAR("ERROR: Unable to allocate the scrollBar.");
+	//	throw Exception("ERROR: Unable to allocate the scrollBar.");
 	//}
 	//
 	//iRect clientRect(getClientRect());

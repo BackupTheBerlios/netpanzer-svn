@@ -16,6 +16,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
+#include "Exception.hpp"
 #include "VehicleSelectionView.hpp"
 #include "UnitTypes.hpp"
 #include "GameViewGlobals.hpp"
@@ -456,34 +458,34 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 	Surface tempSurface;
 	int i = 0;
 
-	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/manta.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/manta.til")) { throw Exception("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/panther1.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/panther1.til")) { throw Exception("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/titan.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/titan.til")) { throw Exception("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/stinger.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/stinger.til")) { throw Exception("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/bobcat.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/bobcat.til")) { throw Exception("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/bear.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/bear.til")) { throw Exception("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/archer.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/archer.til")) { throw Exception("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/wolf.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/wolf.til")) { throw Exception("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/drake.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/drake.til")) { throw Exception("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/scout.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/scout.til")) { throw Exception("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
 	unitImages.setFrame(i++);

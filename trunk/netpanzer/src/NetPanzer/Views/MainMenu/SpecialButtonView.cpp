@@ -15,16 +15,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #include <config.h>
+
 #include "SpecialButtonView.hpp"
 #include "Surface.hpp"
 #include "PackedSurface.hpp"
 #include "UtilInterface.hpp"
 #include "Desktop.hpp"
+#include "Exception.hpp"
 #include "WorldInputCmdProcessor.hpp"
-
 
 // addSpecialButton
 //---------------------------------------------------------------------------
@@ -63,7 +62,7 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
 		// Create.
 		if (!tempSurface.loadTIL(strBuf))
 		{
-			FUBAR("shit");
+			throw Exception("shit");
 		}
 		
 		//-------------------
@@ -81,7 +80,7 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
 
 		if (!tempSurface.loadTIL(strBuf))
 		{
-			FUBAR("shit");
+			throw Exception("shit");
 		}
 		
 		//-------------------
@@ -96,7 +95,7 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
 
 		if (!tempSurface.loadTIL(strBuf))
 		{
-			FUBAR("shit");
+			throw Exception("shit");
 		}
 		
 		//-------------------

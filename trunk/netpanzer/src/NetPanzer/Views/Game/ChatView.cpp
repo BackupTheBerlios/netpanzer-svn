@@ -15,9 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #include <config.h>
+
+#include "Exception.hpp"
 #include "ChatView.hpp"
 #include "Desktop.hpp"
 #include "KeyboardInterface.hpp"
@@ -103,7 +103,7 @@ void ChatView::init()
 	scrollBar = new ScrollBar(VERTICAL, 0, 1, 0, 100);
 	if (scrollBar == 0)
 	{
-		FUBAR("ERROR: Unable to allocate the scrollBar.");
+		throw Exception("ERROR: Unable to allocate the scrollBar.");
 	}
 
 	//iRect clientRect(getClientRect());

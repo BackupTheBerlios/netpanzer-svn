@@ -15,9 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #include <config.h>
+
+#include "Exception.hpp"
 #include "cInputField.hpp"
 #include "TimerInterface.hpp"
 
@@ -36,7 +36,7 @@ void cInputFieldString::init(const char *string, int maxCharCount)
 	cInputFieldString::string = new char [maxCharCount + 1];
 	if (this->string == 0)
 	{
-		FUBAR("ERROR: Unable to allocate cInputFieldString string.");
+		throw Exception("ERROR: Unable to allocate cInputFieldString string.");
 	}
 
 	if (strlen(string) > 0 && strlen(string) < (size_t) maxCharCount)
@@ -118,7 +118,7 @@ void cInputField::setExcludedCharacters(const char *excludedCharacters)
 	this->excludedCharacters = new char [strlen(excludedCharacters) + 1];
 	if (this->excludedCharacters == 0)
 	{
-		FUBAR("ERROR: Unable to allocate cInputField excludedCharacters.");
+		throw Exception("ERROR: Unable to allocate cInputField excludedCharacters.");
 	}
 
 	strcpy(this->excludedCharacters, excludedCharacters);

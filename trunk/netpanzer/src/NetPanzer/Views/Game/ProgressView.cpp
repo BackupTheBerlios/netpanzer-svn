@@ -16,7 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
 #include "ProgressView.hpp"
+#include "Exception.hpp"
 #include "Desktop.hpp"
 #include "UIDraw.hpp"
 #include "DDHardSurface.hpp"
@@ -281,7 +283,7 @@ void ProgressView::loadBackgroundSurface()
 
 	if (!backgroundSurface.loadTIL(string))
 	{
-		FUBAR("ERROR: Unable to load menu background surface: %s", (const char *) string);
+		throw Exception("ERROR: Unable to load menu background surface: %s", (const char *) string);
 	}
 
 } // end MenuTemplateView::loadBackgroundSurface

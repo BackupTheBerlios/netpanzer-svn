@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "fXY.hpp"
 #include "loadPics.hpp"
 #include "ViewGlobals.hpp"
+#include "Exception.hpp"
 #include "InputEvent.hpp"
 
 
@@ -72,7 +73,7 @@ void View::add(Component *component)
 		componentsUsedCount++;
 	} else
 	{
-		FUBAR("ERROR: Trying to add more componentList than pre-allocated, increase the pre-allocated amount.");
+		throw Exception("ERROR: Trying to add more componentList than pre-allocated, increase the pre-allocated amount.");
 	}
 
 } // end View::add
@@ -90,32 +91,32 @@ View::View()
 	if (topBorder.getFrameCount() <= 0)
 	{
 		sprintf(strBuf, "pics/viewBorders/btop.til");
-		if (!topBorder.loadTIL(strBuf))	FUBAR("ERROR: Unable to load: %s", strBuf);
+		if (!topBorder.loadTIL(strBuf))	throw Exception("ERROR: Unable to load: %s", strBuf);
 	}
 	if (leftBorder.getFrameCount() <= 0)
 	{
 		sprintf(strBuf, "pics/viewBorders/bleft.til");
-		if (!leftBorder.loadTIL(strBuf)) FUBAR("ERROR: Unable to load: %s", strBuf);
+		if (!leftBorder.loadTIL(strBuf)) throw Exception("ERROR: Unable to load: %s", strBuf);
 	}
 	if (bottomBorder.getFrameCount() <= 0)
 	{
 		sprintf(strBuf, "pics/viewBorders/bbottom.til");
-		if (!bottomBorder.loadTIL(strBuf))	FUBAR("ERROR: Unable to load: %s", strBuf);
+		if (!bottomBorder.loadTIL(strBuf))	throw Exception("ERROR: Unable to load: %s", strBuf);
 	}
 	if (rightBorder.getFrameCount() <= 0)
 	{
 		sprintf(strBuf, "pics/viewBorders/bright.til");
-		if (!rightBorder.loadTIL(strBuf)) FUBAR("ERROR: Unable to load: %s", strBuf);
+		if (!rightBorder.loadTIL(strBuf)) throw Exception("ERROR: Unable to load: %s", strBuf);
 	}
 	if (topLeftCornerLarge.getFrameCount() <= 0)
 	{
 		sprintf(strBuf, "pics/viewBorders/bctl1.til");
-		if (!topLeftCornerLarge.loadTIL(strBuf)) FUBAR("ERROR: Unable to load: %s", strBuf);
+		if (!topLeftCornerLarge.loadTIL(strBuf)) throw Exception("ERROR: Unable to load: %s", strBuf);
 	}
 	if (topLeftCornerSmall.getFrameCount() <= 0)
 	{
 		sprintf(strBuf, "pics/viewBorders/bctl2.til");
-		if (!topLeftCornerSmall.loadTIL(strBuf)) FUBAR("ERROR: Unable to load: %s", strBuf);
+		if (!topLeftCornerSmall.loadTIL(strBuf)) throw Exception("ERROR: Unable to load: %s", strBuf);
 	}
 
 	// Top right corner.
@@ -1287,7 +1288,7 @@ void View::addLabel(const iXY &pos, char *label, const bool &isShadowed, const P
                       const PIX &backColor)
 {
 	labels = (cLabel *) realloc(labels, (numLabels+1)*sizeof(cLabel));
-	if (labels == 0) FUBAR("ERROR: Unable to allocate label.");
+	if (labels == 0) throw Exception("ERROR: Unable to allocate label.");
 
 	labels[numLabels].label = strdup(label);
 	assert(labels[numLabels].label != 0);
@@ -1308,7 +1309,7 @@ void View::drawLabels(const Surface &clientArea)
 {
 	if (!clientArea.getDoesExist())
 	{
-		FUBAR("ERROR: Client area does not exist.");
+		throw Exception("ERROR: Client area does not exist.");
 	}
 
 	for (int num = 0; num < numLabels; num++)
@@ -1380,7 +1381,7 @@ void View::drawHighlightedButton(const Surface &clientArea)
 
 	if (highlightedButton > buttons.getCount())
 	{
-		FUBAR("ERROR: highlightedButton > butons.getCount()");
+		throw Exception("ERROR: highlightedButton > butons.getCount()");
 	}
 
 	// Change to the highlight button frame.
@@ -1532,7 +1533,7 @@ void View::setSearchName(const char *searchName)
 		View::searchName = strdup(searchName);
 		if (View::searchName == 0)
 		{
-			FUBAR("ERROR: Unable to allocate searchName: ", searchName);
+			throw Exception("ERROR: Unable to allocate searchName: ", searchName);
 		}
 	}
 } // end View::setSearchName
@@ -1554,7 +1555,7 @@ void View::setTitle(const char *title)
 		View::title = strdup(title);
 		if (View::title == 0)
 		{
-			FUBAR("ERROR: Unable to allocate title: ", title);
+			throw Exception("ERROR: Unable to allocate title: ", title);
 		}
 	}
 } // end View::setTitle
@@ -1576,7 +1577,7 @@ void View::setSubTitle(const char *subTitle)
 		View::subTitle = strdup(subTitle);
 		if (View::subTitle == 0)
 		{
-			FUBAR("ERROR: Unable to allocate subTitle: ", subTitle);
+			throw Exception("ERROR: Unable to allocate subTitle: ", subTitle);
 		}
 	}
 } // end View::setSubTitle
@@ -1596,7 +1597,7 @@ void View::showStatus(const char *string)
 	if (string != 0)
 	{
 		statusText = strdup(string);
-		if(statusText == 0) { FUBAR("ERROR: statusText == 0"); }
+		if(statusText == 0) { throw Exception("ERROR: statusText == 0"); }
 	}
 
 } // end View::showStatus
@@ -1804,8 +1805,8 @@ void View::resizeClientArea(const iXY &size)
 	destSize.y += yExtra;
 
 	// Make sure the window will fit on the screen in the specified size.
-	if (destSize.x > SCREEN_XPIX) { FUBAR("ERROR: Trying to size the client area larger than the screen width."); }
-	if (destSize.y > SCREEN_YPIX) { FUBAR("ERROR: Trying to size the client area larger than the screen height."); }
+	if (destSize.x > SCREEN_XPIX) { throw Exception("ERROR: Trying to size the client area larger than the screen width."); }
+	if (destSize.y > SCREEN_YPIX) { throw Exception("ERROR: Trying to size the client area larger than the screen height."); }
 
 	// Move the window accordingly to accomodate for the resize.
 	if (min.x + destSize.x > SCREEN_XPIX)
@@ -1864,7 +1865,7 @@ void View::setPressedButton(const int &button)
 { 
 	if (button >= buttons.getCount())
 	{
-		FUBAR("ERROR: pressedButton >= numButtons");
+		throw Exception("ERROR: pressedButton >= numButtons");
 	}
 	
 	prevPressedButton = pressedButton;
@@ -1878,7 +1879,7 @@ void View::setHighlightedButton(const int &button)
 { 
 	if (button >= buttons.getCount())
 	{
-		FUBAR("ERROR: highlightedButton >= numButtons");
+		throw Exception("ERROR: highlightedButton >= numButtons");
 	}
 
 	prevHighlightedButton = highlightedButton;
@@ -1958,7 +1959,7 @@ void View::moveTo(iXY destMin)
 		{
 			flagFuckMax = 0;
 			max.x = SCREEN_XPIX - 1;
-			//FUBAR("ERROR: The window is too large for the screen.");
+			//throw Exception("ERROR: The window is too large for the screen.");
 		}
 		
 	}
@@ -1975,7 +1976,7 @@ void View::moveTo(iXY destMin)
 			flagFuckMax = 0;
 			max.y = SCREEN_YPIX - 1;
 
-			//FUBAR("ERROR: The window is too large for the screen.");
+			//throw Exception("ERROR: The window is too large for the screen.");
 		}
 		
 	}
@@ -2094,7 +2095,7 @@ void View::processEvents(void)
 					inputFields[selectedInputField].addExtendedChar(shit);
 				} else
 				{
-					FUBAR("ERROR: Expecting extended char code.");
+					throw Exception("ERROR: Expecting extended char code.");
 				}
 			} else
 			{

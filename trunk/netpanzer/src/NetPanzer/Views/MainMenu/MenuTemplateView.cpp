@@ -33,8 +33,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PackedSurface.hpp"
 #include "UtilInterface.hpp"
 #include "GameManager.hpp"
+#include "Exception.hpp"
 #include "GameViewGlobals.hpp"
-
 
 Surface       MenuTemplateView::backgroundSurface;
 PackedSurface MenuTemplateView::titlePackedSurface;
@@ -279,7 +279,7 @@ void MenuTemplateView::doDraw(const Surface &viewArea, const Surface &clientArea
 			backgroundSurface.blt(viewArea, 0, 0);
 		} else
 		{
-			FUBAR("Where is the background surface?");
+			throw Exception("Where is the background surface?");
 		}
 
 		//titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
@@ -310,7 +310,7 @@ void MenuTemplateView::doDraw(const Surface &viewArea, const Surface &clientArea
 	//	}
 	//} else
 	//{
-	//	FUBAR("Where is the title surface?");
+	//	throw Exception("Where is the title surface?");
 	//}
 
 	//iRect r(100, 100, 200, 110);
@@ -335,7 +335,7 @@ void MenuTemplateView::doDraw(const Surface &viewArea, const Surface &clientArea
 	//	globeSurface.bltBlend(viewArea, 0, 0, Palette::colorTable8020);
 	//} else
 	//{
-	//	FUBAR("Where is the fucking globe surface?");
+	//	throw Exception("Where is the fucking globe surface?");
 	//}
 
 	View::doDraw(viewArea, clientArea);
@@ -370,7 +370,7 @@ void MenuTemplateView::doActivate()
 		//
 		//		if (!tempSurface.loadAllTILInDirectory("pics/backgrounds/menus/globe/til/"))
 		//		{
-		//			FUBAR("Shit");
+		//			throw Exception("Shit");
 		//		}
 		//		tempSurface.setFPS(14);
 		//
@@ -399,7 +399,7 @@ void MenuTemplateView::doLoadBackgroundSurface(String string)
 {
 	if (!backgroundSurface.loadTIL(string))
 	{
-		FUBAR("ERROR: Unable to load menu background surface: %s", (const char *) string);
+		throw Exception("ERROR: Unable to load menu background surface: %s", (const char *) string);
 	}
 
 } // end MenuTemplateView::doLoadBackgroundSurface

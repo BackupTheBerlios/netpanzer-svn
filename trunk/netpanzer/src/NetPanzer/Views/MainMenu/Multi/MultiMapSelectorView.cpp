@@ -94,11 +94,11 @@ void MultiMapSelectorView::loadImages()
 /*
 		if (strlen(netPanzerMapHeader.name) > 255)
 		{
-			FUBAR("Map name is too long.");
+			throw Exception("Map name is too long.");
 		}
 		if (strlen(netPanzerMapHeader.description) > 255)
 		{
-			FUBAR("Map description is too long.");
+			throw Exception("Map description is too long.");
 		}
 */
 		sprintf(mapList[i].name, "%s", netPanzerMapHeader.name);

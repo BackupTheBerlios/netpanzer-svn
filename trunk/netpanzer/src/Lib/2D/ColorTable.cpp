@@ -70,7 +70,8 @@ void ColorTable::init(int colorCount)
 	int numBytes = sizeof(PIX) * colorCount;
 	
 	colorArray = (PIX *) malloc(numBytes);
-	if (colorArray == 0) FUBAR("ERROR: Unable to allocate color table.");
+	if (colorArray == 0)
+		throw Exception("ERROR: Unable to allocate color table.");
 
 	totalByteCount += numBytes;
 
@@ -302,7 +303,7 @@ void ColorTable::loadTableError(const char *filename)
 		loadTable(filename);
 	} catch(Exception e) {
 		LOG( ("Error while loading Color Table: %s", e.getMessage()) );
-		FUBAR("ERROR: Unable to load %s", filename);
+		throw Exception("ERROR: Unable to load %s", filename);
 	}
 } // end ColorTable::loadTableError
 
@@ -346,7 +347,7 @@ void ColorTable::saveTableError(const char *filename) const
 		saveTable(filename);
 	} catch(Exception e) {
 		printf("Exception while saving colortable: '%s'.\n", e.getMessage());
-		FUBAR("Couldn't save color table '%s'.", filename);
+		throw Exception("Couldn't save color table '%s'.", filename);
 	}
 } // end ColorTable::saveTableError
 

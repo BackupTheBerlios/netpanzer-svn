@@ -16,10 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
 #include "Palette.hpp"
 #include "FileUtil.hpp"
+#include "Exception.hpp"
 #include "UtilInterface.hpp"
-#include "gapp.hpp"
 
 float Palette::brightness = 1.0f;
 	
@@ -388,9 +389,7 @@ void Palette::loadACT(const char *filename)
 	setName(filename);
 
 	if ((fp = fopen(filename, "rb")) == 0)
-	{
-		FUBAR("Unable to open palette file: %s", filename);
-	}
+		throw Exception("Unable to open palette file: %s", filename);
 
 	for (int i = 0; i < 256; i++)
 	{

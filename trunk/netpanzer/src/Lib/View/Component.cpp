@@ -15,9 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #include <config.h>
+
+#include "Exception.hpp"
 #include "Component.hpp"
 #include "ViewGlobals.hpp"
 #include "View.hpp"
@@ -39,7 +39,7 @@ void Component::reset()
 	//name = strdup("");
 	//if (name = 0)
 	//{
-	//	FUBAR("ERROR: Unable to allocate component name.");
+	//	throw Exception("ERROR: Unable to allocate component name.");
 	//}
 } // end Component::reset
 
@@ -60,7 +60,7 @@ void Component::setParent(void *parent)
 	assert(parent != 0);
 	if (parent == 0)
 	{
-		FUBAR("ERROR: Component parent == 0");
+		throw Exception("ERROR: Component parent == 0");
 	}
 
 	Component::parent = parent;

@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string.h>
 #include "SplitPath.hpp"
 #include "FindFirst.hpp"
+#include "Exception.hpp"
 #include "UtilInterface.hpp"
 
 bool gSpanBlittingFlag = false;
@@ -168,7 +169,7 @@ void UtilInterface::checkError(FILE *fp)
 {
 	if (ferror(fp))
 	{
-		FUBAR("ERROR: Possible corrupt file.");
+		throw Exception("ERROR: Possible corrupt file.");
 	}
 
 } // end UtilInterface::checkError

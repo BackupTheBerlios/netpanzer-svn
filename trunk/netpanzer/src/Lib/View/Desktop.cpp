@@ -180,7 +180,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 
 			if (lMouseView != 0 && mouseActions != 0)
 			{
-				//FUBAR("Double click!");
+				//throw Exception("Double click!");
 
 				// Yes - it's a double click.  Inform the window as such.
 				//lMouseView->lMouseDouble(lMouseView->getScreenToClientPos(mousePos));
@@ -260,7 +260,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 			// Is this a double click? **FIX THE DOUBLE CLICK SENSITIVITY**
 			if (rMouseView != 0 && now() <= rDoubleClickDeadline && 0)
 			{
-				 //FUBAR("Double click!");
+				 //throw Exception("Double click!");
 
 				 // Yes - it's a double click.  Inform the window as such.
 				 rMouseView->rMouseDouble(rMouseView->getScreenToClientPos(mousePos));

@@ -1174,31 +1174,32 @@ void Surface::loadPCX(const char *fileName, bool needAlloc /* = true */,
 
 	// Open the PCX file
 	FILE *fp = fopen(fileName,"rb");
-	if (fp == 0) { FUBAR("Unable to open %s", fileName); }
+	if (fp == 0)
+		throw Exception("Unable to open %s", fileName);
 
 	// Read in the header
 	PCX_HEADER header;
 	fread(&header, sizeof(PCX_HEADER), 1, fp);
 
-	if (ferror(fp)) { FUBAR("Error reading .pcx file %s", fileName); }
+	if (ferror(fp))
+		throw Exception("Error reading .pcx file %s", fileName);
 
 	if (header.manufacturer != 0x0a || header.version != 5)
-    {
-		FUBAR("%s is not a valid 8-bit PCX file", fileName);
-	}
+		throw Exception("%s is not a valid 8-bit PCX file", fileName);
 
 	if (needAlloc)
 	{
 		// Allocate room for the PCX, check to see if we need the palette.
 		if (!alloc(header.width-header.xPos+1, header.height-header.yPos+1, false, header.width-header.xPos+1, 1))
 		{
-			FUBAR("Not enough memory to load PCX image %s", fileName);
+			throw Exception("Not enough memory to load PCX image %s", fileName);
 		}
 		}	else
 			{
 				// Check and make sure the picture will fit
 				if (pix.x < header.width || pix.y < header.height)
-					FUBAR("Not enough memory to load PCX image %s", fileName);
+					throw Exception("Not enough memory to load PCX image %s",
+									fileName);
 			}
 		if (returnPalette != 0)
 		{
@@ -1229,7 +1230,8 @@ void Surface::loadPCX(const char *fileName, bool needAlloc /* = true */,
 				d[index++] = data;		// Else just store it.
 			}
 	}
-	if (ferror(fp)) { FUBAR("Error reading .pcx file %s", fileName); }
+	if (ferror(fp)) 
+		throw Exception("Error reading .pcx file %s", fileName);
 	fclose(fp);
 } // end Surface::loadPCX
 
@@ -1376,7 +1378,8 @@ void Surface::loadRAW(const char *filename, bool needAlloc /* = true */)
 
 	// Open the TIL file
 	FILE *fp = fopen(filename, "rb");
-	if (fp == 0) { FUBAR("ERROR: Unable to load raw %s", filename); }
+	if (fp == 0)
+		throw Exception("ERROR: Unable to load raw %s", filename);
 
 	// Read in the header
 	PIC_HEAD head;
@@ -1392,8 +1395,7 @@ void Surface::loadRAW(const char *filename, bool needAlloc /* = true */)
 	if (ferror(fp))
 	{
 		////MessageBox(gapp.hwndApp, "Error reading .raw file.", "Shit", MB_OK);
-		exit(1);
-		//FUBAR("Error reading .pcx file %s", fileName);
+		throw Exception("Error reading .pcx file %s", filename);
 	}
 
 	if (needAlloc)
@@ -1405,16 +1407,13 @@ void Surface::loadRAW(const char *filename, bool needAlloc /* = true */)
 			if (pix.x < signed(head.xPix) || pix.y < signed(head.yPix) || frameCount < signed(head.frameCount))
 			{
 				////MessageBox(gapp.hwndApp, "During loadTil, you chose to not allocate the memory for the image, but the was not enough already memory already allocated.", "Shit", MB_OK);
-				exit(1);
+				throw Exception("error during loadTil");
 			}
-
-				//FUBAR("During loadTil(%s), you chose to not allocate the memory for the image, but the was not enough already memory already allocated.");
 		}
+
 	if (ferror(fp)) 
 	{
-		//MessageBox(gapp.hwndApp, "Error reading file.", "Shit", MB_OK);
-		exit(1);
-		//FUBAR("Error reading file %s", fileName);
+		throw Exception("Error reading file %s", filename);
 	}
 
 	assert(frame0 != 0);
@@ -1428,9 +1427,7 @@ void Surface::loadRAW(const char *filename, bool needAlloc /* = true */)
 
 	if (ferror(fp))
 	{
-		////MessageBox(gapp.hwndApp, "Error reading file.", "Shit", MB_OK);
-		exit(1);
-		//FUBAR("Error reading file %s", fileName);
+		throw Exception("Error reading file %s", filename);
 	}
 
 	fclose(fp);
@@ -2187,7 +2184,7 @@ void Surface::blendRect(iRect bounds, ColorTable &colorTable) const
 	}
 	else
 	{
-		FUBAR("ERROR: Invalid number of colors for color array.");
+		throw Exception("ERROR: Invalid number of colors for color array.");
 	}
 
 	for (int y = 0; y < diff.y; y++)
@@ -2345,7 +2342,10 @@ void frac(int *matrix, int stride, int x1, int y1, int x2, int y2, float ruggedn
 		// Fill in the middle right cell.  We know it hasn't
 		// been set because of the order in which we fill in
 		// the smaller squares
-		if (matrix[zm * stride + x2] != -10000.0) { FUBAR("1. matrix[%u, %u] != -10000 - value: %d", zm, x2, matrix[zm * stride + x2]); }
+		if (matrix[zm * stride + x2] != -10000.0) {
+			throw Exception("1. matrix[%u, %u] != -10000 - value: %d",
+							zm, x2, matrix[zm * stride + x2]);
+		}
 		if (x1 < x2)
 			matrix[zm * stride + x2] = (int) (calcY((tr+br)/2.0, ruggedness,
 						y2-y1));
@@ -2357,7 +2357,9 @@ void frac(int *matrix, int stride, int x1, int y1, int x2, int y2, float ruggedn
 		if (matrix[y1 * stride + xm] == -10000.0)
 			matrix[y1 * stride + xm] = (int) (calcY((tl+tr)/2.0, ruggedness,
 						x2-x1));
-		if (matrix[y2 * stride + xm] != -10000.0) { FUBAR("2. matrix[%u, %u] != -10000 - value: %d", y2, xm, matrix[y2 * stride + xm]); }
+		if (matrix[y2 * stride + xm] != -10000.0) 
+			throw Exception("2. matrix[%u, %u] != -10000 - value: %d",
+							y2, xm, matrix[y2 * stride + xm]);
 		if (y1 < y2)
 			matrix[y2 * stride + xm] = (int) (calcY((bl+tr)/2.0, ruggedness,
 						x2-x1));
@@ -2367,7 +2369,9 @@ void frac(int *matrix, int stride, int x1, int y1, int x2, int y2, float ruggedn
 	// least 3x3, then this cell should have not yet been set
 	if (xm < x2 && zm < y2)
 	{
-		if (matrix[zm * stride + xm] != -10000.0) { FUBAR("3. matrix[%u, %u] != -10000 - value: %d", zm, xm, matrix[zm * stride + xm]); }
+		if (matrix[zm * stride + xm] != -10000.0) {
+			throw Exception("3. matrix[%u, %u] != -10000 - value: %d", zm, xm, matrix[zm * stride + xm]);
+		}
 		matrix[zm * stride + xm] = (int) (calcY((tl+tr+bl+br)/4.0, ruggedness,
 					(x2-x1)+(y2-y1)));
 	}
@@ -2386,7 +2390,9 @@ void frac(int *matrix, int stride, int x1, int y1, int x2, int y2, float ruggedn
 	for (int x = x1; x < x2 ; ++x) {
 		for (int z = y1; z < y2 ; ++z) {
 			if (matrix[z * stride + x] == -10000.0) {
-				if (matrix[z * stride + x] != -10000.0) { FUBAR("4. matrix[%u, %u] != -10000 - value: %d", z, x, matrix[z * stride + x]); }
+				if (matrix[z * stride + x] != -10000.0) {
+					throw Exception("4. matrix[%u, %u] != -10000 - value: %d", z, x, matrix[z * stride + x]);
+				}
 			}
 		}
 	}
@@ -2403,7 +2409,8 @@ void Surface::createFractal(const float &minY, const float &maxY, const float &r
 
 	// Create some temp buffer to generate the values in.
 	int *tempBuf = (int *) malloc(stride * pix.y * sizeof(int));
-	if (tempBuf == 0) { FUBAR("ERROR: Unable to allocate temp fractal surface."); }
+	if (tempBuf == 0) { throw Exception("ERROR: Unable to allocate temp fractal surface.");
+	}
 
 	// Initialize everything to some bogus value.
 	for (int x = 0; x < stride; x++)
@@ -2412,7 +2419,7 @@ void Surface::createFractal(const float &minY, const float &maxY, const float &r
 
 	//for (int num = 0; num < stride*pix.y; num++)
 	//	LOG(("%d tempBuf: %d", num, tempBuf[num]));
-	//FUBAR("!EXIT!");;
+	//throw Exception("!EXIT!");;
 
 	// Initialize the corners to some value.
 	tempBuf[0]                           = (int) getRand(minY, maxY);
@@ -2430,8 +2437,8 @@ void Surface::createFractal(const float &minY, const float &maxY, const float &r
 	{
 		for (int y = 0; y < pix.y; y++)
 		{
-			//if (tempBuf[y * stride + x] < 0)   tempBuf[y * stride + x] = 0;//FUBAR("tempBuf[y * stride + x] < 0,   value: %d", tempBuf[y * stride + x]);
-			//if (tempBuf[y * stride + x] > 255) tempBuf[y * stride + x] = 255;//FUBAR("tempBuf[y * stride + x] > 255, value: %d", tempBuf[y * stride + x]);
+			//if (tempBuf[y * stride + x] < 0)   tempBuf[y * stride + x] = 0;//throw Exception("tempBuf[y * stride + x] < 0,   value: %d", tempBuf[y * stride + x]);
+			//if (tempBuf[y * stride + x] > 255) tempBuf[y * stride + x] = 255;//throw Exception("tempBuf[y * stride + x] > 255, value: %d", tempBuf[y * stride + x]);
 			//LOG(("tempBuf[y * stride + x]: %d", tempBuf[y * stride + x]));
 			if (tempBuf[y * stride + x] < yMin) yMin = tempBuf[y * stride + x];
 			if (tempBuf[y * stride + x] > yMax) yMax = tempBuf[y * stride + x];
@@ -2656,7 +2663,9 @@ void Surface::loadTIL(FILE *fp)
 	int numBytes = pix.x * pix.y * sizeof(BYTE);
 	
 	if (numBytes <= 0) return;
-	if (mem == 0) { FUBAR("ERROR: This should not happen."); }
+	if (mem == 0) {
+		throw Exception("ERROR: This should not happen.");
+	}
 
 	fread(mem, numBytes, 1, fp);
 
@@ -2722,8 +2731,12 @@ void Surface::saveTIL(FILE *fp)
 
 	int numBytes = pix.x * pix.y * sizeof(BYTE);
 	
-	if (numBytes <= 0) { FUBAR("ERROR: Trying to write surface when (numBytes <= 0)."); }
-	if (mem == 0) { FUBAR("ERROR: Trying to write surface when (mem == 0)."); }
+	if (numBytes <= 0) {
+		throw Exception("ERROR: Trying to write surface when (numBytes <= 0).");
+	}
+	if (mem == 0) {
+		throw Exception("ERROR: Trying to write surface when (mem == 0).");
+	}
 
 	fwrite(mem, numBytes, 1, fp);
 
@@ -2758,7 +2771,9 @@ void Surface::loadRAW(FILE *fp, const iXY pix)
 	int numBytes = pix.x * pix.y * sizeof(BYTE);
 	
 	if (numBytes <= 0) return;
-	if (mem == 0) { FUBAR("ERROR: This should not happen."); }
+	if (mem == 0) { 
+		throw Exception("ERROR: This should not happen.");
+	}
 
 	fread(mem, numBytes, 1, fp);
 
@@ -3344,7 +3359,7 @@ int Surface::loadAllTILInDirectory(const char *path)
 			// Get the max image size.
 			if (!tempSurface.loadTIL(strBuf))
 			{
-				FUBAR("ERROR: This should not happen!");
+				throw Exception("ERROR: This should not happen!");
 			}
 			if (maxSize.x < tempSurface.getPix().x)
 			{
@@ -3611,7 +3626,7 @@ void Surface::explode(const double &time)
 	int *zBuffer = new int[getArea()];
 	if (zBuffer == 0)
 	{
-		FUBAR("Unable to allocate zBuffer.");
+		throw Exception("Unable to allocate zBuffer.");
 	}
     
 	//Random rnd=new Random();
@@ -3715,13 +3730,13 @@ int loadTGA(FILE *file, cPixel24Bit *dest)
 	// Check for uncompressed/true-color.
 	if (TGAheader.imageType != UNCOMPRESSEDtrueCOLOR) 
 	{
-		FUBAR("ERROR: TGAheader.imageType != UNCOMPRESSEDtrueCOLOR");
+		throw Exception("ERROR: TGAheader.imageType != UNCOMPRESSEDtrueCOLOR");
 	}
 
 	// Check for 24-bits per pixel.
 	if (TGAheader.bitsPerPixel != 24) 
 	{
-		FUBAR("ERROR: TGAheader.bitsPerPixel != 24");
+		throw Exception("ERROR: TGAheader.bitsPerPixel != 24");
 	}
 
 	// Mark the starting point of the image data
@@ -4662,29 +4677,33 @@ void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
 	if (needAlloc) free();
 
 	FILE *fp = fopen(fileName,"rb");
-	if (fp == 0) { FUBAR("Unable to open %s", fileName); }
+	if (fp == 0) {
+		throw Exception("Unable to open %s", fileName);
+	}
 
     fread( &file_header, sizeof(BitmapFileHeader), 1, fp ); 
  
-	if (ferror(fp)) { FUBAR("Error reading .bmp file %s", fileName); }
+	if (ferror(fp)) {
+		throw Exception("Error reading .bmp file %s", fileName);
+	}
     
     if ( file_header.bfType != 0x4d42 ) // file_header.bfType != "BM"
      {
-      FUBAR("%s is not a valid 8-bit BMP file", fileName);
+      throw Exception("%s is not a valid 8-bit BMP file", fileName);
      }
   
     fread( &info_header, sizeof(BitmapInfoHeader), 1, fp ); 
  
- 	if (ferror(fp)) { FUBAR("Error reading .bmp file %s", fileName); }
+ 	if (ferror(fp)) { throw Exception("Error reading .bmp file %s", fileName); }
   
     if ( info_header.biBitCount != 8 )
      {
-      FUBAR("%s is not a 8-bit BMP file", fileName);     
+      throw Exception("%s is not a 8-bit BMP file", fileName);     
      }
     
     if ( info_header.biCompression != BI_RGB )
      {
-      FUBAR("%s is not a 8-bit UnCompressed BMP file", fileName);     
+      throw Exception("%s is not a 8-bit UnCompressed BMP file", fileName);     
      }
 
 	if (needAlloc)
@@ -4692,7 +4711,7 @@ void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
       
       if (!alloc(info_header.biWidth, info_header.biHeight , false, info_header.biWidth, 1) )
 	   {
-	    FUBAR("Not enough memory to load BMP image %s", fileName);
+	    throw Exception("Not enough memory to load BMP image %s", fileName);
 	   }
 		
      }
@@ -4700,7 +4719,7 @@ void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
 	 {
 	  // Check and make sure the picture will fit
 	  if (pix.x < (long) info_header.biWidth|| pix.y < (long) info_header.biHeight )
-	    FUBAR("Not enough memory to load BMP image %s", fileName);
+	    throw Exception("Not enough memory to load BMP image %s", fileName);
 	 }
    
    fseek(fp, file_header.bfOffBits, SEEK_SET);
@@ -4727,7 +4746,7 @@ void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
 	   } 
      }
 
-   if (ferror(fp)) { FUBAR("Error reading .bmp file %s", fileName); }
+   if (ferror(fp)) { throw Exception("Error reading .bmp file %s", fileName); }
 	fclose(fp);
    
    flipVertical();  
@@ -4980,7 +4999,7 @@ void Surface::mapFromPalette(String oldPalette)
 
 	if ((fp = fopen(oldPalette, "rb")) == 0)
 	{
-		FUBAR("Unable to open palette file: %s", (const char *) oldPalette);
+		throw Exception("Unable to open palette file: %s", (const char *) oldPalette);
 	}
 
 	{for (int i = 0; i < 256; i++)

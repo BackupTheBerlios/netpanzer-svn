@@ -114,9 +114,9 @@ bool cGrowList<TYPE>::setAlloced(int nAlloced, bool gottaHaveIt /* = GOTTA_HAVE_
 		//FIXME - change to MERLMEM realloc function...
 		TYPE *nArray = (TYPE *)realloc(array, nAlloced * sizeof(array[0]));
 		if (nArray == 0) {
+			
 			if (gottaHaveIt) {
-				FUBAR("Unable to alloc cGrowList to %u elements size %u\n", nAlloced,
-					sizeof(array[0]));
+				assert(false);
 			}
 			return false;
 		}

@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "TimerInterface.hpp"
 #include "ParticleSystemGlobals.hpp"
 #include "UtilInterface.hpp"
+#include "Exception.hpp"
 #include "GameConfig.hpp"
 
 
@@ -96,7 +97,7 @@ void PuffParticle2D::create(	PUFF_TYPE particleType,
 		packedSurfaceShadow.setData(staticPackedDirtPuff[index]);
 	} else
 	{
-		FUBAR("ERROR: Unsupported particleType.");
+		throw Exception("ERROR: Unsupported particleType.");
 	}
 
 	packedSurfaceShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
@@ -192,7 +193,7 @@ static void pakFiles()
 	{
 		if (!tempSurface.loadAllTILInDirectory(pathSmokeLight))
 		{
-			FUBAR("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeLight);
+			throw Exception("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeLight);
 		}
 
 		tempSurface.scale(i);
@@ -209,7 +210,7 @@ static void pakFiles()
 	{
 		if (!tempSurface.loadAllTILInDirectory(pathSmokeDark))
 		{
-			FUBAR("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeDark);
+			throw Exception("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeDark);
 		}
 
 		tempSurface.scale(i);
@@ -226,7 +227,7 @@ static void pakFiles()
 	{
 		if (!tempSurface.loadAllTILInDirectory(pathDirt))
 		{
-			FUBAR("ERROR: Unable to load any particle images in %s", pathDirt);
+			throw Exception("ERROR: Unable to load any particle images in %s", pathDirt);
 		}
 
 		tempSurface.scale(i);
@@ -259,21 +260,21 @@ void PuffParticle2D::loadPAKFiles()
 
 	if (!loadAllPAKInDirectory(pathSmokeLight, staticPackedSmokeLightPuff))
 	{
-		FUBAR("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeLight);
+		throw Exception("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeLight);
 	}
 
 	char pathSmokeDark[] = "pics/particles/puff/smokeDark/pak/";
 
 	if (!loadAllPAKInDirectory(pathSmokeDark, staticPackedSmokeDarkPuff))
 	{
-		FUBAR("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeDark);
+		throw Exception("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeDark);
 	}
 
 	char pathDirt[] = "pics/particles/puff/dirt/pak/";
 
 	if (!loadAllPAKInDirectory(pathDirt, staticPackedDirtPuff))
 	{
-		FUBAR("ERROR: Unable to load any dirt puff particle images in %s", pathDirt);
+		throw Exception("ERROR: Unable to load any dirt puff particle images in %s", pathDirt);
 	}
 }
 
@@ -287,7 +288,7 @@ void PuffParticle2D::loadTILFiles()
 	if (!smokeLightPuffSprite.loadAllPAKInDirectory(pathSmokeLight))
 	//if (!smokeLightPuffSprite.loadAllRAWInDirectory(pathSmokeLightRAW, iXY(320, 240)))
 	{
-		FUBAR("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeLight);
+		throw Exception("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeLight);
 	}
 
 	// Following code is for reducing the size of the images.
@@ -299,7 +300,7 @@ void PuffParticle2D::loadTILFiles()
 
 	if (!smokeDarkPuffSprite.loadAllPAKInDirectory(pathSmokeDark))
 	{
-		FUBAR("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeDark);
+		throw Exception("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeDark);
 	}
 
 	// Following code is for reducing the size of the images.
@@ -311,7 +312,7 @@ void PuffParticle2D::loadTILFiles()
 
 	if (!dirtPuffSprite.loadAllPAKInDirectory(pathDirt))
 	{
-		FUBAR("ERROR: Unable to load any dirt puff particle images in %s", pathDirt);
+		throw Exception("ERROR: Unable to load any dirt puff particle images in %s", pathDirt);
 	}
 
 	// Following code is for reducing the size of the images.

@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include <config.h>
+#include "Exception.hpp"
 #include "DigitText.hpp"
 
 
@@ -40,10 +41,7 @@ void DigitText::init(const char *filename)
 
 	FILE *fp = fopen(charfilename, "rb");
 	if (fp == 0)
-	{
-		FUBAR("ERROR: Unable to load %s", charfilename);
-		assert(false);
-	}
+		throw Exception("ERROR: Unable to load %s", charfilename);
 
 	for (int y = 0; y < charactersNormal.getPixY(); y++)
 	{

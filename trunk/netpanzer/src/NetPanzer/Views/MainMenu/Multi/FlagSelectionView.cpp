@@ -51,7 +51,7 @@ FlagSelectionView::FlagSelectionView() : RMouseHackView()
 	//scrollBar = new ScrollBar(HORIZONTAL, 0, 1, 0, flags.getFrameCount());
 	//if (scrollBar == 0)
 	//{
-	//	FUBAR("ERROR: Unable to allocate scrollBar.");
+	//	throw Exception("ERROR: Unable to allocate scrollBar.");
 	//}
 	//
 	//scrollBar->setViewableAmount(getClientRect().getSizeX() / flags.getPixX());

@@ -62,7 +62,7 @@ void FireParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 	//color = BYTE(totalTime * 44); // This 44 is based on the life of 0.25 secs and 12 colors possible.
 	color = BYTE(totalTime * 22); // This 22 is based on the life of 0.50 secs and 12 colors possible.
 
-	//if (color >= 12) FUBAR("ERROR: Invalid color reached for fire.");
+	//if (color >= 12) throw Exception("ERROR: Invalid color reached for fire.");
 	assert(color < 12);
 
 	// const unsigned halfSize = 1;

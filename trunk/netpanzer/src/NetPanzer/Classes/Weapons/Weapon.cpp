@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "WorldViewInterface.hpp"
 #include "DDHardSurface.hpp"
 
+#include "Exception.hpp"
 #include "Sound.hpp"
 #include "ParticleInterface.hpp"
 #include "WeaponGlobals.hpp"
@@ -53,7 +54,7 @@ void Weapon::init()
 		// Missle thrust lighting.
 		if (!temp.loadTIL("pics/particles/lights/til/missleThrust.til"))
 		{
-			FUBAR("SHIT!");
+			throw Exception("SHIT!");
 		}
 		temp.setOffsetCenter();
 		pack.pack(temp);
@@ -68,7 +69,7 @@ void Weapon::init()
 		// Missle ground lighting.
 		if (!temp.loadTIL("pics/particles/lights/til/missleGroundLight.til"))
 		{
-			FUBAR("SHIT!");
+			throw Exception("SHIT!");
 		}
 		temp.setOffsetCenter();
 		pack.pack(temp);

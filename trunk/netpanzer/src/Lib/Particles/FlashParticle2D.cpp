@@ -15,14 +15,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #include <config.h>
+
+#include "Exception.hpp"
 #include "FlashParticle2D.hpp"
 #include "UtilInterface.hpp"
 
-
 PackedSurface FlashParticle2D::staticPackedFlash;
-
 
 // FlashParticle2D
 //---------------------------------------------------------------------------
@@ -74,7 +73,7 @@ void FlashParticle2D::packFiles()
 
 	if (!surface.loadTIL("pics/particles/lights/til/flash2.til"))
 	{
-		FUBAR("ERROR: Unable to load ""pics/particles/lights/til/flash2.til""");
+		throw Exception("ERROR: Unable to load ""pics/particles/lights/til/flash2.til""");
 	}
 
 	const float minFlashSize =  10.0f;

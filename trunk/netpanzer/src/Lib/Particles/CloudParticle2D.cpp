@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "TimerInterface.hpp"
 #include "PackedSurface.hpp"
 #include "GameConfig.hpp"
+#include "Exception.hpp"
 #include "Sprite.hpp"
 
 
@@ -94,7 +95,7 @@ void CloudParticle2D::loadTILFiles()
 	Surface tempSurface;
 	if (!tempSurface.loadAllTILInDirectory(path))
 	{
-		FUBAR("ERROR: Unable to load any cloud images in %s", path);
+		throw Exception("ERROR: Unable to load any cloud images in %s", path);
 	}
 
 	tempSurface.shrinkWrap();

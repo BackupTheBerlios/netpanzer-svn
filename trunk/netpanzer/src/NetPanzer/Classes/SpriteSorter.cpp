@@ -16,6 +16,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
+#include "Exception.hpp"
 #include "SpriteSorter.hpp"
 
 SpriteSorter SPRITE_SORTER;
@@ -64,7 +66,7 @@ int sprite_key( const void *elem1, const void *elem2 )
 
   // We should never get here, unless the same sprite is
   // inserted in the list twice
-  FUBAR("sprite_key called to compare the same sprite against itself!");
+  throw Exception("sprite_key called to compare the same sprite against itself!");
   return 0;
 }
 
