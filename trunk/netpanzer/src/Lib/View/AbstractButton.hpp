@@ -15,22 +15,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __AbstractButton_hpp__
 #define __AbstractButton_hpp__
-
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
 
 #include "Button.hpp"
 #include "cTimeStamp.hpp"
 #include "String.hpp"
 #include "Icon.hpp"
 #include "MouseEvent.hpp"
-
 
 //--------------------------------------------------------------------------
 class AbstractButton : public Button
@@ -55,19 +47,19 @@ public:
     virtual ~AbstractButton()
     {}
 
-    void init(const String &text, const Icon &icon)
+    void init(const String &text, Icon &icon)
     {
         AbstractButton::text = text;
-        AbstractButton::icon = icon;
+        AbstractButton::icon.copy(icon);
     }
 
     void  doClick()
     {}
     void  doClick(TIMESTAMP time)
     {}
-    const Surface &getDisableIcon()
+    const Surface& getDisableIcon()
     {
-        return disableIcon;
+        return (const Surface&) disableIcon;
     }
     const Surface &getIcon()
     {

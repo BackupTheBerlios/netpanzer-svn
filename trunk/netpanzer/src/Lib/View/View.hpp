@@ -106,9 +106,8 @@ public:
 protected:
     virtual void     actionPerformed(mMouseEvent me)
     {}
-    Surface          getViewArea(Surface& dest);
-    //virtual void     getClientArea(Surface& dest);
-    virtual Surface  getClientArea(Surface& dest);
+    Surface*         getViewArea(Surface& dest);
+    virtual Surface* getClientArea(Surface& dest);
 
     int              pressedButton;
     int              prevPressedButton;
@@ -191,7 +190,7 @@ protected:
     void addLabel(const iXY &pos, char *label, const PIX &color);
     void addLabelShadowed(const iXY &pos, char *label, const PIX &foreColor, const PIX &backColor);
     void addLabel(const iXY &pos, char *label, const bool &isShadowed, const PIX &foreColor, const PIX &backColor);
-    void drawLabels(const Surface &clientArea);
+    void drawLabels(Surface &clientArea);
 
     // cButton Functions.
     void addButtonPackedSurface(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc);
@@ -207,9 +206,9 @@ protected:
     }
     void addButtonSurface(const iXY &pos, Surface &source, const char *toolTip, ITEM_FUNC func);
     void addButtonSurfaceSingle(const iXY &pos, Surface &source, const char *toolTip, ITEM_FUNC func);
-    /*!FIXME!*/ void drawDefinedButtons   (const Surface &clientArea);
-    void drawHighlightedButton(const Surface &clientArea);
-    void drawPressedButton(const Surface &clientArea);
+    /*!FIXME!*/ void drawDefinedButtons   (Surface &clientArea);
+    void drawHighlightedButton(Surface &clientArea);
+    void drawPressedButton(Surface &clientArea);
     void setPressedButton(const int &cButton);
     void setHighlightedButton(const int &cButton);
     int  findButtonContaining(const iXY &pos);
@@ -218,17 +217,17 @@ protected:
     void  setSearchName(const char *searchName);
     void  setTitle(const char *title);
     void  setSubTitle(const char *subTitle);
-    void  drawTitle(const Surface &windowArea);
+    void  drawTitle(Surface &windowArea);
 
     // Input Field Functions
     void addInputField(const iXY &pos, cInputFieldString *string, const char *excludedCharacters, const bool &isSelected);
     int  findInputFieldContaining(const iXY &pos);
-    void drawInputFields(const Surface &clientArea);
+    void drawInputFields(Surface &clientArea);
 
     /////////////////////////////////
     void draw(Surface& drawon);
     void showStatus(const char *string);
-    void drawStatus(const Surface &dest);
+    void drawStatus(Surface &dest);
     void checkResolution(iXY oldResolution, iXY newResolution);
     void checkArea(iXY viewarea);
     void toggleView();
@@ -237,9 +236,9 @@ protected:
     /////////////////////////////////
 
     // These options can be modified on a per View type basis
-    virtual void drawButtons(const Surface &windowArea);
-    virtual void drawBorder(const Surface &windowArea);
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void drawButtons(Surface &windowArea);
+    virtual void drawBorder(Surface &windowArea);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void doActivate();
     virtual void doDeactivate();
     virtual void mouseMove(const iXY &prevPos, const iXY &newPos);

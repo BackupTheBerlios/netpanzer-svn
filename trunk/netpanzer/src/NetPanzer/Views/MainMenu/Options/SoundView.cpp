@@ -88,7 +88,7 @@ void SoundView::initButtons()
 
 // doDraw
 //---------------------------------------------------------------------------
-void SoundView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void SoundView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     MenuTemplateView::doDraw(viewArea, clientArea);
 

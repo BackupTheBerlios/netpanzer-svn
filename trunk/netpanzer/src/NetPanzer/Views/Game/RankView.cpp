@@ -77,7 +77,7 @@ RankView::RankView() : GameTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void RankView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void RankView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     bltViewBackground(viewArea);
 
@@ -86,14 +86,13 @@ void RankView::doDraw(const Surface &viewArea, const Surface &clientArea)
     drawPlayerStats(clientArea);
 
     View::doDraw(viewArea, clientArea);
-
 } // end doDraw
 
 // drawPlayerStats
 //---------------------------------------------------------------------------
 // Purpose:
 //---------------------------------------------------------------------------
-void RankView::drawPlayerStats(const Surface &dest)
+void RankView::drawPlayerStats(Surface &dest)
 {
 
     char statBuf[256];

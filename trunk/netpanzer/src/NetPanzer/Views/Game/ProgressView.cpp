@@ -52,7 +52,7 @@ void ProgressView::init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void ProgressView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void ProgressView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     if (!backgroundSurface.getDoesExist()) {
         loadBackgroundSurface();

@@ -118,7 +118,7 @@ void VisualsView::initButtons()
 
 // doDraw
 //---------------------------------------------------------------------------
-void VisualsView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void VisualsView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     MenuTemplateView::doDraw(viewArea, clientArea);
 

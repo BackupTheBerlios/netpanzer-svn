@@ -222,10 +222,9 @@ GameToolbarView::GameToolbarView() : GameTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void GameToolbarView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void GameToolbarView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     bltViewBackground(viewArea);
 
     View::doDraw(viewArea, clientArea);
-
 } // end GameToolbarView::doDraw

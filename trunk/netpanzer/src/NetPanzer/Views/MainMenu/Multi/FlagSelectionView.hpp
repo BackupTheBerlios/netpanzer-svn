@@ -41,9 +41,9 @@ public:
         delete scrollBar;
     }
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual int  lMouseUp(const iXY &downPos, const iXY &upPos);
-    virtual void drawBorder(const Surface &windowArea)
+    virtual void drawBorder(Surface &windowArea)
     {}
 
     void init();

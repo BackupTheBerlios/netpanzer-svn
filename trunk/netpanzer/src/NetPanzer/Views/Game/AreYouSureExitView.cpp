@@ -76,7 +76,7 @@ void AreYouSureExitView::init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void AreYouSureExitView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void AreYouSureExitView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     iRect r(min, max);
 

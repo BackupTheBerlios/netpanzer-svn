@@ -18,12 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __WinnerMesgView_hpp__
 #define __WinnerMesgView_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 #include "View.hpp"
 #include "Surface.hpp"
 #include "GameTemplateView.hpp"
@@ -40,11 +34,8 @@ protected:
 public:
     WinnerMesgView();
 
-    static void setWinnerInfoHack( char *name, int player_index );
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
-
-}
-; // end WinnerMesgView
-
+    static void setWinnerInfoHack(char *name, int player_index);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+}; // end WinnerMesgView
 
 #endif // end __WinnerMesgView_hpp__

@@ -36,9 +36,9 @@ enum
 class LibView : public GameTemplateView
 {
 protected:
-    void drawSurfaceInfo(const Surface &clientArea, iXY pos);
-    void drawParticleInfo(const Surface &clientArea, iXY pos);
-    void drawEnvironmentInfo(const Surface &dest, iXY pos);
+    void drawSurfaceInfo(Surface &clientArea, iXY pos);
+    void drawParticleInfo(Surface &clientArea, iXY pos);
+    void drawEnvironmentInfo(Surface &dest, iXY pos);
 
     CheckBox checkBoxAllowParticleGeneration;
     CheckBox checkBoxAllowTimeSlice;
@@ -54,13 +54,12 @@ public:
     virtual ~LibView()
     {}
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
     virtual void doActivate();
     virtual void actionPerformed(mMouseEvent me);
 
     static int displayMode;
-}
-; // end LibView
+}; // end LibView
 
 #endif // end __LibView_hpp__

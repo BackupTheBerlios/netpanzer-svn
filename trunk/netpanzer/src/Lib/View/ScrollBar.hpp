@@ -114,8 +114,8 @@ public:
         ScrollBar::viewableAmount = viewableAmount;
     }
 
-    virtual void draw(const Surface &dest);
-    virtual void actionPerformed(const iXY &pos);
+    virtual void draw(Surface &dest);
+    virtual void actionPerformed(const mMouseEvent& me);
 }; // end ScrollBar
 
 #endif // end __ScrollBar_hpp__

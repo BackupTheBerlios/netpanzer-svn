@@ -15,20 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __OrderingView_hpp__
 #define __OrderingView_hpp__
-
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
 
 #include "View.hpp"
 #include "Surface.hpp"
 #include "MenuTemplateView.hpp"
-
 
 //--------------------------------------------------------------------------
 class OrderingView : public MenuTemplateView
@@ -36,9 +28,7 @@ class OrderingView : public MenuTemplateView
 public:
     OrderingView();
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
-
-}
-; // end OrderingView
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+}; // end OrderingView
 
 #endif // end __OrderingView_hpp__

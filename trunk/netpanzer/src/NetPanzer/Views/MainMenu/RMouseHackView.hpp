@@ -29,7 +29,6 @@ public:
 
     virtual void rMouseDrag(const iXY &downPos, const iXY &prevPos,
                             const iXY &newPos);
-}
-; // end RMouseHackView
+}; // end RMouseHackView
 
 #endif // end __RMouseHackView_hpp__

@@ -101,7 +101,7 @@ void OptionsTemplateView::initButtons()
 
 // doDraw
 //---------------------------------------------------------------------------
-void OptionsTemplateView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void OptionsTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     MenuTemplateView::doDraw(viewArea, clientArea);
 

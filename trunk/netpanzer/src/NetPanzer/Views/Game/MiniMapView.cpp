@@ -92,7 +92,7 @@ void MiniMapView::init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void MiniMapView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     assert(this != 0);
     assert(viewArea.getDoesExist());
@@ -223,7 +223,7 @@ void MiniMapView::setViewWindow(const iXY &pos)
 // Purpose: Replaces the mouse cursor with a box showing where the viewable
 //          screen area would be moved to if the mouse was pressed.
 //--------------------------------------------------------------------------
-void MiniMapView::drawMouseBox(const Surface &dest)
+void MiniMapView::drawMouseBox(Surface &dest)
 {
     assert(this != 0);
     assert(dest.getDoesExist());

@@ -461,7 +461,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 
 // doDraw
 //--------------------------------------------------------------------------
-void VehicleSelectionView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     char strBuf[256];
 
@@ -568,7 +568,7 @@ void VehicleSelectionView::doDraw(const Surface &viewArea, const Surface &client
 
 // drawUnitImage
 //---------------------------------------------------------------------------
-void VehicleSelectionView::drawUnitImage(const Surface &dest, const iXY &pos, int unitType)
+void VehicleSelectionView::drawUnitImage(Surface &dest, const iXY &pos, int unitType)
 {
     unitImages.setFrame(unitType);
     unitImages.blt(dest, pos);
@@ -647,7 +647,7 @@ void VehicleSelectionView::mouseMove(const iXY &prevPos, const iXY &newPos)
 
 // drawMiniProductionStatus
 //---------------------------------------------------------------------------
-void VehicleSelectionView::drawMiniProductionStatus(const Surface &dest)
+void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
 {
     iRect         objectiveBounds;
     unsigned char objectiveOwner;
@@ -877,7 +877,7 @@ void VehicleSelectionView::checkMaxValues(const UnitProfile &profile)
 
 } // end VehicleSelectionView::checkMaxValues
 
-void VehicleSelectionView::drawUnitProfileInfo(const Surface &dest, const iXY &pos, short int unitType)
+void VehicleSelectionView::drawUnitProfileInfo(Surface &dest, const iXY &pos, short int unitType)
 {
     if (unitType == -1) {
         return;
@@ -920,7 +920,7 @@ void VehicleSelectionView::drawUnitProfileInfo(const Surface &dest, const iXY &p
 
 }
 
-void VehicleSelectionView::drawBar(const Surface &dest, const iXY &pos, int length, float percent)
+void VehicleSelectionView::drawBar(Surface &dest, const iXY &pos, int length, float percent)
 {
     iXY size(int(float(length) * percent), Surface::getFontHeight());
 

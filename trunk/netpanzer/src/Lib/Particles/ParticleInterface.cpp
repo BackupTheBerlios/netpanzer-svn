@@ -463,7 +463,7 @@ void ParticleInterface::testSim()
 }
 
 //--------------------------------------------------------------------------
-void ParticleInterface::testSimText(const Surface &dest)
+void ParticleInterface::testSimText(Surface &dest)
 {
     char strBuf[256];
 

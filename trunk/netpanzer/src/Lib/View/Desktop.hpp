@@ -172,7 +172,7 @@ class DesktopView : public View
 public:
     DesktopView();
 
-    virtual void doDraw(const Surface &viewArea, const Surface &clientArea);
+    virtual void doDraw(Surface &viewArea, Surface &clientArea);
     virtual void rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
     virtual void doActivate();
 

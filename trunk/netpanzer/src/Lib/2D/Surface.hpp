@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include "iXY.hpp"
 #include "iRect.hpp"
+#include "NoCopy.hpp"
 
 class ColorTable;
 class Palette;
@@ -66,7 +67,7 @@ __attribute__((packed)); // end FletchTileHeader
 /////////////////////////////////////////////////////////////////////////////
 
 //---------------------------------------------------------------------------
-class Surface
+class Surface : public NoCopy
 {
 public:
     void setOffset(const iXY &offset)
@@ -273,42 +274,42 @@ public:
     void setTo(const Surface &source);
     bool grab(const Surface &s, iRect bounds, bool gottaHaveIt, int stride);
 
-    void blt(const Surface &dest, iXY pos) const;
-    inline void blt(const Surface &dest) const
+    void blt(Surface &dest, iXY pos) const;
+    inline void blt(Surface &dest) const
     {
         blt(dest, iXY(0, 0));
     }
-    inline void blt(const Surface &dest, int x, int y) const
+    inline void blt(Surface &dest, int x, int y) const
     {
         blt(dest, iXY(x, y));
     }
 
-    void bltTrans(const Surface &dest, iXY pos) const;
-    inline void bltTrans(const Surface &dest) const
+    void bltTrans(Surface &dest, iXY pos) const;
+    inline void bltTrans(Surface &dest) const
     {
         bltTrans(dest, iXY(0, 0));
     }
-    inline void bltTrans(const Surface &dest, int x, int y) const
+    inline void bltTrans(Surface &dest, int x, int y) const
     {
         bltTrans(dest, iXY(x, y));
     }
 
-    void bltTransColor(const Surface &dest, iXY pos, const PIX &color) const;
-    inline void bltTransColor(const Surface &dest, const PIX &color) const
+    void bltTransColor(Surface &dest, iXY pos, const PIX &color) const;
+    inline void bltTransColor(Surface &dest, const PIX &color) const
     {
         bltTransColor(dest, iXY(0, 0), color);
     }
-    inline void bltTransColor(const Surface &dest, int x, int y, const PIX &color) const
+    inline void bltTransColor(Surface &dest, int x, int y, const PIX &color) const
     {
         bltTransColor(dest, iXY(x, y), color);
     }
 
-    void bltTransVGradient(const Surface &dest, iXY pos, ColorTable &colorTable) const;
-    inline void bltTransVGradient(const Surface &dest, ColorTable &colorTable) const
+    void bltTransVGradient(Surface &dest, iXY pos, ColorTable &colorTable) const;
+    inline void bltTransVGradient(Surface &dest, ColorTable &colorTable) const
     {
         bltTransVGradient(dest, iXY(0, 0), colorTable);
     }
-    inline void bltTransVGradient(const Surface &dest, int x, int y, ColorTable &colorTable) const
+    inline void bltTransVGradient(Surface &dest, int x, int y, ColorTable &colorTable) const
     {
         bltTransVGradient(dest, iXY(x, y), colorTable);
     }
@@ -328,7 +329,7 @@ public:
         resize(iXY(xPix, yPix));
     }
 
-    inline void bltCentered(const Surface &dest) const
+    inline void bltCentered(Surface &dest) const
     {
         iXY pos;
         pos.x = (dest.getPix().x - pix.x) / 2;
@@ -408,7 +409,7 @@ public:
     void flipHorizontal();
     void flipVertical();
     void rotate(int angle);
-    void copy(Surface &dest);
+    void copy(Surface &source);
     void setBrightness(int percent);
     int nextFrame();
 
@@ -482,67 +483,64 @@ public:
     int  loadAllBMPInDirectory(const char *path);
 
     // Blit a single character of text.
-    void bltChar8x8(const iXY &pos, const char &character, const PIX &color) const;
-    inline void bltChar8x8(int x, int y, const char &character, const PIX &color) const
+    void bltChar8x8(const iXY &pos, const char &character, const PIX &color);
+    void bltChar8x8(int x, int y, const char &character, const PIX &color)
     {
         bltChar8x8(iXY(x, y), character, color);
     }
 
-    void bltChar8x8VGradient(const iXY &pos, const char &character, ColorTable &colorTable) const;
-    inline void bltChar8x8VGradient(int x, int y, const char &character, ColorTable &colorTable) const
+    void bltChar8x8VGradient(const iXY &pos, const char &character, ColorTable &colorTable);
+    void bltChar8x8VGradient(int x, int y, const char &character, ColorTable &colorTable)
     {
         bltChar8x8VGradient(iXY(x, y), character, colorTable);
     }
 
-    void bltChar5x5(const iXY &pos, const char &character, const PIX &color) const;
-    inline void bltChar5x5(int x, int y, const char &character, const PIX &color) const
+    void bltChar5x5(const iXY &pos, const char &character, const PIX &color);
+    inline void bltChar5x5(int x, int y, const char &character, const PIX &color)
     {
         bltChar5x5(iXY(x, y), character, color);
     }
 
     // Blit a string of text in a single color.
-    void bltString(const iXY &pos, const char *string, const PIX &color) const;
-    inline void bltString(int x, int y, const char *string, const PIX &color) const
+    void bltString(const iXY &pos, const char *string, const PIX &color);
+    inline void bltString(int x, int y, const char *string, const PIX &color)
     {
         bltString(iXY(x, y), string, color);
     }
 
-    inline void bltStringInBox(int minX, int minY, int maxX, int maxY, const char *string, PIX color, int gapSpace = 14, bool drawBox = false) const
+    void bltStringInBox(int minX, int minY, int maxX, int maxY, const char *string, PIX color, int gapSpace = 14, bool drawBox = false)
     {
         bltStringInBox(iRect(minX, minY, maxX, maxY), string, color, gapSpace, drawBox);
     }
-    void bltStringInBox(const iRect &rect, const char *string, PIX color, int gapSpace = 14, bool drawBox = false) const;
+    void bltStringInBox(const iRect &rect, const char *string, PIX color, int gapSpace = 14, bool drawBox = false);
 
     // Blit a string of text with a vertical gradient.
-    void bltStringVGradient(const iXY &pos, const char *string, ColorTable &colorTable) const;
-    inline void bltStringVGradient(int x, int y, const char *string, ColorTable &colorTable) const
+    void bltStringVGradient(const iXY &pos, const char *string, ColorTable &colorTable);
+    void bltStringVGradient(int x, int y, const char *string, ColorTable &colorTable)
     {
         bltStringVGradient(iXY(x, y), string, colorTable);
     }
 
     // Blit a string of text.
-    void bltString5x5(const iXY &pos, const char *string, const PIX &color) const;
-
-    inline void bltString5x5(int x, int y, const char *string, const PIX &color) const
+    void bltString5x5(const iXY &pos, const char *string, const PIX &color);
+    void bltString5x5(int x, int y, const char *string, const PIX &color)
     {
         bltString5x5(iXY(x, y), string, color);
     }
 
     // Blit a shadowed string of text.
-    void bltStringShadowed(const iXY &pos, const char *string, const PIX &textColor, const PIX &shadowColor) const;
-
-    inline void bltStringShadowed(int x, int y, const char *string, const PIX &textColor, const PIX &shadowColor) const
+    void bltStringShadowed(const iXY &pos, const char *string, const PIX &textColor, const PIX &shadowColor);
+    void bltStringShadowed(int x, int y, const char *string, const PIX &textColor, const PIX &shadowColor)
     {
         bltStringShadowed(iXY(x, y), string, textColor, shadowColor);
     }
 
     // Blits a string of text and centers it horizontally and vertically on the screen.
-    void bltStringCenter(const char *string, PIX color) const;
+    void bltStringCenter(const char *string, PIX color);
 
-    void bltStringShadowedCenter(const char *string, PIX foreground, PIX background) const;
-
-    void bltStringCenteredAtPoint(const iXY &pos, const char *string, const PIX &color) const;
-    void bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color) const;
+    void bltStringShadowedCenter(const char *string, PIX foreground, PIX background);
+    void bltStringCenteredAtPoint(const iXY &pos, const char *string, const PIX &color);
+    void bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color);
 
     void loadBMP(const char *fileName, bool needAlloc = true, void *returnPalette = 0);
 

@@ -58,7 +58,7 @@ void DigitText::init(const char *filename)
 } // DigitText::initFont
 
 //--------------------------------------------------------------------------
-void DigitText::blt(const Surface &dest, const iXY &pos, const char *string, const PIX &color)
+void DigitText::blt(Surface &dest, const iXY &pos, const char *string, const PIX &color)
 {
     if (bltMode == NORMAL_TRANS) {
         bltStringNormalTrans(dest, pos, string, color);
@@ -74,7 +74,7 @@ void DigitText::blt(const Surface &dest, const iXY &pos, const char *string, con
 
 // Blits the characters without the spaces in the text.
 //--------------------------------------------------------------------------
-void DigitText::bltCharNormalTrans(const Surface &dest, const iXY &pos, const char &character, const PIX &color)
+void DigitText::bltCharNormalTrans(Surface &dest, const iXY &pos, const char &character, const PIX &color)
 {
 #ifdef _DEBUG
     if (character > charactersNormal.getFrameCount()) {
@@ -89,7 +89,7 @@ void DigitText::bltCharNormalTrans(const Surface &dest, const iXY &pos, const ch
 
 // Blits the characters without the spaces in the text.
 //--------------------------------------------------------------------------
-void DigitText::bltCharNormalSolid(const Surface &dest, const iXY &pos, const char &character)
+void DigitText::bltCharNormalSolid(Surface &dest, const iXY &pos, const char &character)
 {
 #ifdef _DEBUG
     if (character > charactersNormal.getFrameCount()) {
@@ -104,7 +104,7 @@ void DigitText::bltCharNormalSolid(const Surface &dest, const iXY &pos, const ch
 
 // Blits the characters without the spaces in the text.
 //--------------------------------------------------------------------------
-void DigitText::bltCharNoSpaceTrans(const Surface &dest, const iXY &pos, const char &character, const PIX &color)
+void DigitText::bltCharNoSpaceTrans(Surface &dest, const iXY &pos, const char &character, const PIX &color)
 {
 #ifdef _DEBUG
     if (character > charactersNormal.getFrameCount()) {
@@ -119,7 +119,7 @@ void DigitText::bltCharNoSpaceTrans(const Surface &dest, const iXY &pos, const c
 
 // Blits the characters without the spaces in the text.
 //--------------------------------------------------------------------------
-void DigitText::bltCharNoSpaceSolid(const Surface &dest, const iXY &pos, const char &character)
+void DigitText::bltCharNoSpaceSolid(Surface &dest, const iXY &pos, const char &character)
 {
 #ifdef _DEBUG
     if (character > charactersNormal.getFrameCount()) {
@@ -134,7 +134,7 @@ void DigitText::bltCharNoSpaceSolid(const Surface &dest, const iXY &pos, const c
 
 // Blits the string without the spaces in the text.
 //--------------------------------------------------------------------------
-void DigitText::bltStringNormalTrans(const Surface &dest, const iXY &pos, const char *string, const PIX &color)
+void DigitText::bltStringNormalTrans(Surface &dest, const iXY &pos, const char *string, const PIX &color)
 {
     for (int index = 0; string[index] != 0; index++) {
         bltCharNormalTrans(dest, iXY(pos.x + (index * charactersNormal.getPixX()), pos.y), string[index], color);
@@ -143,7 +143,7 @@ void DigitText::bltStringNormalTrans(const Surface &dest, const iXY &pos, const 
 
 // Blits the string without the spaces in the text.
 //--------------------------------------------------------------------------
-void DigitText::bltStringNormalSolid(const Surface &dest, const iXY &pos, const char *string)
+void DigitText::bltStringNormalSolid(Surface &dest, const iXY &pos, const char *string)
 {
     for (int index = 0; string[index] != 0; index++) {
         bltCharNormalSolid(dest, iXY(pos.x + (index * charactersNormal.getPixX()), pos.y), string[index]);
@@ -152,7 +152,7 @@ void DigitText::bltStringNormalSolid(const Surface &dest, const iXY &pos, const 
 
 // Blits the string without the spaces in the text.
 //--------------------------------------------------------------------------
-void DigitText::bltStringNoSpaceTrans(const Surface &dest, const iXY &pos, const char *string, const PIX &color)
+void DigitText::bltStringNoSpaceTrans(Surface &dest, const iXY &pos, const char *string, const PIX &color)
 {
     for (int index = 0; string[index] != 0; index++) {
         bltCharNoSpaceTrans(dest, iXY(pos.x + (index * charactersNormal.getPixX()), pos.y), string[index], color);
@@ -161,7 +161,7 @@ void DigitText::bltStringNoSpaceTrans(const Surface &dest, const iXY &pos, const
 
 // Blits the string without the spaces in the text.
 //--------------------------------------------------------------------------
-void DigitText::bltStringNoSpaceSolid(const Surface &dest, const iXY &pos, const char *string)
+void DigitText::bltStringNoSpaceSolid(Surface &dest, const iXY &pos, const char *string)
 {
     for (int index = 0; string[index] != 0; index++) {
         bltCharNoSpaceSolid(dest, iXY(pos.x + (index * charactersNormal.getPixX()), pos.y), string[index]);

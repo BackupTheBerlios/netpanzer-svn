@@ -71,7 +71,7 @@ public:
         callback = newcallback;
     }
 
-    virtual void draw(const Surface &dest);
+    virtual void draw(Surface &dest);
     virtual void actionPerformed(const mMouseEvent &me);
 
 private:

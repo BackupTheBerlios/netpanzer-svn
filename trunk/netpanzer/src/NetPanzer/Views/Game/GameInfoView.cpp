@@ -86,7 +86,7 @@ GameInfoView::GameInfoView() : GameTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void GameInfoView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void GameInfoView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     char unitsBuf[64];
     //char killsBuf[64];

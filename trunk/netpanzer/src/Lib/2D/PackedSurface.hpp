@@ -39,14 +39,14 @@ public:
 
     void pack(const Surface &src);
 
-    void blt(const Surface &dest, int x, int y) const;
-    inline void blt(const Surface &dest, iXY pos) const
+    void blt(Surface &dest, int x, int y) const;
+    inline void blt(Surface &dest, iXY pos) const
     {
         blt(dest, pos.x, pos.y);
     }
 
-    void bltBlend(const Surface &dest, int x, int y, ColorTable &colorTable) const;
-    inline void bltBlend(const Surface &dest, iXY pos, ColorTable &colorTable) const
+    void bltBlend(Surface &dest, int x, int y, ColorTable &colorTable) const;
+    inline void bltBlend(Surface &dest, iXY pos, ColorTable &colorTable) const
     {
         bltBlend(dest, pos.x, pos.y, colorTable);
     }

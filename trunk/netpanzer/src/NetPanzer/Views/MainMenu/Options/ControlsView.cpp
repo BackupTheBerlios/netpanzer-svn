@@ -66,7 +66,7 @@ void ControlsView::initButtons()
 
 // doDraw
 //---------------------------------------------------------------------------
-void ControlsView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void ControlsView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     MenuTemplateView::doDraw(viewArea, clientArea);
 

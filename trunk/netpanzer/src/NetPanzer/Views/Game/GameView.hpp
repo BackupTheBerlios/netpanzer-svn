@@ -36,8 +36,7 @@ protected:
     void doActivate();
 
 private:
-
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     //virtual void mouseEnter(const iXY &pos);
     virtual void mouseMove(const iXY & prevPos, const iXY &newPos);
 }; // end GameView

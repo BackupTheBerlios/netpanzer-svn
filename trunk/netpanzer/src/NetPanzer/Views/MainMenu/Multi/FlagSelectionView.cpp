@@ -99,7 +99,7 @@ void FlagSelectionView::init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void FlagSelectionView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void FlagSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     //iRect r(getViewRect());
     //viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
@@ -155,5 +155,4 @@ int FlagSelectionView::lMouseUp(const iXY &downPos, const iXY &upPos)
     }
 
     return true;
-
 } // end FlagSelectionViewlMouseUp

@@ -32,9 +32,9 @@ protected:
     bool   state;
     StateChangedCallback* callback;
 
-    virtual void drawCheckBox(const Surface &dest);
-    virtual void drawCheck(const Surface &dest);
-    virtual void drawLabel(const Surface &dest);
+    virtual void drawCheckBox(Surface &dest);
+    virtual void drawCheck(Surface &dest);
+    virtual void drawLabel(Surface &dest);
 
 public:
     CheckBox(StateChangedCallback* newcallback = 0)
@@ -74,9 +74,8 @@ public:
         callback = newcallback;
     }
 
-    virtual void draw(const Surface &dest);
+    virtual void draw(Surface &dest);
     virtual void actionPerformed(const mMouseEvent &me);
-}
-; // end CheckBox
+}; // end CheckBox
 
 #endif // end __CheckBox_hpp__

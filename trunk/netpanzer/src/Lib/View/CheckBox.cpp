@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // draw
 //---------------------------------------------------------------------------
-void CheckBox::draw(const Surface &dest)
+void CheckBox::draw(Surface &dest)
 {
     iRect bounds;
 
@@ -42,7 +42,7 @@ void CheckBox::draw(const Surface &dest)
 
 // drawCheckBox
 //---------------------------------------------------------------------------
-void CheckBox::drawCheckBox(const Surface &dest)
+void CheckBox::drawCheckBox(Surface &dest)
 {
     iRect bounds;
 
@@ -63,7 +63,7 @@ void CheckBox::drawCheckBox(const Surface &dest)
 
 // drawCheck
 //---------------------------------------------------------------------------
-void CheckBox::drawCheck(const Surface &dest)
+void CheckBox::drawCheck(Surface &dest)
 {
     iXY pos(min + iXY(2,2));
 
@@ -77,7 +77,7 @@ void CheckBox::drawCheck(const Surface &dest)
 
 // drawLabel
 //---------------------------------------------------------------------------
-void CheckBox::drawLabel(const Surface &dest)
+void CheckBox::drawLabel(Surface &dest)
 {
     iXY pos;
 
@@ -86,7 +86,6 @@ void CheckBox::drawLabel(const Surface &dest)
     pos.y = min.y + (size.y - Surface::getFontHeight()) / 2;
 
     dest.bltString(pos, (const char *) label, Color::white);
-
 } // end CheckBox::drawLabel
 
 // actionPerformed

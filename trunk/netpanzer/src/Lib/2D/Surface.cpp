@@ -239,7 +239,6 @@ Surface::Surface(void *nFrame0, const iXY &nPix, int nStride, int nFrameCount)
 
     totalSurfaceCount++;
     totalByteCount += sizeof(Surface);
-
 } // end Surface::Surface
 
 // ~Surface
@@ -496,7 +495,7 @@ bool Surface::grab(const Surface &source,
 // Purpose: Puts the surface onto the destination while performing clipping
 //          on the bounds of the object.
 //---------------------------------------------------------------------------
-void Surface::blt(const Surface &dest, iXY min) const
+void Surface::blt(Surface &dest, iXY min) const
 {
     assert(getDoesExist());
     assert(dest.getDoesExist());
@@ -579,7 +578,7 @@ void Surface::blt(const Surface &dest, iXY min) const
 //          transparency detection (pixel by pixel basis), while performing
 //          clipping on the bounds of the object.
 //---------------------------------------------------------------------------
-void Surface::bltTrans(const Surface &dest, iXY min) const
+void Surface::bltTrans(Surface &dest, iXY min) const
 {
     assert(getDoesExist());
     assert(dest.getDoesExist());
@@ -666,7 +665,7 @@ void Surface::bltTrans(const Surface &dest, iXY min) const
 //          clipping on the bounds of the object. The non-transparent pixels
 //          are blitted in the specified color.
 //---------------------------------------------------------------------------
-void Surface::bltTransColor(const Surface &dest, iXY min, const uint8_t &color) const
+void Surface::bltTransColor(Surface &dest, iXY min, const uint8_t &color) const
 {
     assert(getDoesExist());
     assert(dest.getDoesExist());
@@ -2490,7 +2489,7 @@ int Surface::getTextLength(const char* text)
 // Purpose: Blits the specied rom character to the screen at the specified
 //          location.
 //---------------------------------------------------------------------------
-void Surface::bltChar8x8(const iXY &pos, const char &character, const PIX &color) const
+void Surface::bltChar8x8(const iXY &pos, const char &character, const PIX &color)
 {
 #ifdef _DEBUG
     if (character > ascii8x8.getFrameCount()) {
@@ -2500,12 +2499,11 @@ void Surface::bltChar8x8(const iXY &pos, const char &character, const PIX &color
 
     ascii8x8.setFrame(character);
     ascii8x8.bltTransColor(*this, pos, color);
-
 } // end Surface::bltChar8x8
 
 // bltChar5x5
 //---------------------------------------------------------------------------
-void Surface::bltChar5x5(const iXY &pos, const char &character, const PIX &color) const
+void Surface::bltChar5x5(const iXY &pos, const char &character, const PIX &color)
 {
 #ifdef _DEBUG
     if (character > ascii5x5.getFrameCount()) {
@@ -2524,7 +2522,7 @@ void Surface::bltChar5x5(const iXY &pos, const char &character, const PIX &color
 //          calls to blitChar for each character of the string. Does not
 //          handle wrapping.
 //---------------------------------------------------------------------------
-void Surface::bltString(const iXY &pos, const char *string, const uint8_t &color) const
+void Surface::bltString(const iXY &pos, const char *string, const uint8_t &color)
 {
     for (int index = 0; string[index] != 0; index++) {
         // Don't attempt blank spaces.
@@ -2543,7 +2541,7 @@ void Surface::bltString(const iXY &pos, const char *string, const uint8_t &color
 //          calls to blitChar for each character of the string. Does not
 //          handle wrapping.
 //---------------------------------------------------------------------------
-void Surface::bltString5x5(const iXY &pos, const char *string, const uint8_t &color) const
+void Surface::bltString5x5(const iXY &pos, const char *string, const uint8_t &color)
 {
     for (int index = 0; string[index] != 0; index++) {
         bltChar5x5(iXY(pos.x + (index * 5), pos.y), string[index], color);
@@ -2553,7 +2551,7 @@ void Surface::bltString5x5(const iXY &pos, const char *string, const uint8_t &co
 
 // bltStringShadowed
 //---------------------------------------------------------------------------
-void Surface::bltStringShadowed(const iXY &pos, char const *string, const uint8_t &textColor, const uint8_t &shadowColor) const
+void Surface::bltStringShadowed(const iXY &pos, char const *string, const uint8_t &textColor, const uint8_t &shadowColor)
 {
     for (int index = 0; string[index] != 0; index++) {
         bltChar8x8(pos.x + (index << 3) + 1, pos.y + 1, string[index], shadowColor);
@@ -2567,7 +2565,7 @@ void Surface::bltStringShadowed(const iXY &pos, char const *string, const uint8_
 // Purpose: Blits a string of text and centers it horizontally and vertically
 //          on the screen. Does not handle wrapping.
 //---------------------------------------------------------------------------
-void Surface::bltStringCenter(const char *string, PIX color) const
+void Surface::bltStringCenter(const char *string, PIX color)
 {
     iXY pos;
     pos.x = (getPix().x - (strlen(string) * ascii8x8.getPixX())) / 2;
@@ -2582,7 +2580,7 @@ void Surface::bltStringCenter(const char *string, PIX color) const
 // Purpose: Blits a string of text and centers it horizontally and vertically
 //          on the screen. Does not handle wrapping.
 //---------------------------------------------------------------------------
-void Surface::bltStringShadowedCenter(const char *string, PIX foreground, PIX background) const
+void Surface::bltStringShadowedCenter(const char *string, PIX foreground, PIX background)
 {
     iXY pos;
     pos.x = (getPix().x - (strlen(string) * ascii8x8.getPixX())) / 2;
@@ -2596,7 +2594,7 @@ void Surface::bltStringShadowedCenter(const char *string, PIX foreground, PIX ba
 //---------------------------------------------------------------------------
 // Purpose: Blits the string centered at the specified point.
 //---------------------------------------------------------------------------
-void Surface::bltStringCenteredAtPoint(const iXY &pos, const char *string, const PIX &color) const
+void Surface::bltStringCenteredAtPoint(const iXY &pos, const char *string, const PIX &color)
 {
     iXY destPos;
     destPos.x = pos.x - (strlen(string) * ascii8x8.getPixX()) / 2;
@@ -2611,7 +2609,7 @@ void Surface::bltStringCenteredAtPoint(const iXY &pos, const char *string, const
 //---------------------------------------------------------------------------
 // Purpose: Blits the string centered inside the specified rectangle.
 //---------------------------------------------------------------------------
-void Surface::bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color) const
+void Surface::bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color)
 {
     int length = strlen(string);
 
@@ -2627,7 +2625,7 @@ void Surface::bltStringCenteredInRect(const iRect &rect, const char *string, con
 
 // Blit a string of text with a vertical gradient.
 //---------------------------------------------------------------------------
-void Surface::bltStringVGradient(const iXY &pos, const char *string, ColorTable &colorTable) const
+void Surface::bltStringVGradient(const iXY &pos, const char *string, ColorTable &colorTable)
 {
     for (int index = 0; string[index] != 0; index++) {
         bltChar8x8VGradient(iXY(pos.x + (index << 3), pos.y), string[index], colorTable);
@@ -2636,7 +2634,7 @@ void Surface::bltStringVGradient(const iXY &pos, const char *string, ColorTable 
 
 //---------------------------------------------------------------------------
 void Surface::bltChar8x8VGradient(const iXY &pos, const char &character,
-                                  ColorTable &colorTable) const
+                                  ColorTable &colorTable)
 {
 #ifdef _DEBUG
     if (character > ascii8x8.getFrameCount()) {
@@ -2648,7 +2646,8 @@ void Surface::bltChar8x8VGradient(const iXY &pos, const char &character,
 }
 
 //---------------------------------------------------------------------------
-void Surface::bltTransVGradient(const Surface &dest, iXY min, ColorTable &colorTable) const
+void Surface::bltTransVGradient(Surface &dest, iXY min, ColorTable &colorTable)
+    const
 {
     assert(getDoesExist());
     assert(dest.getDoesExist());
@@ -2860,7 +2859,7 @@ void Surface::drawWindowsBorder(iRect rect, PIX light, PIX medium, PIX dark) con
 
 // bltStringInBox
 //--------------------------------------------------------------------------
-void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, int gapSpace, bool drawBox) const
+void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, int gapSpace, bool drawBox)
 {
     if (drawBox) {
         drawRect(rect, Color::yellow);

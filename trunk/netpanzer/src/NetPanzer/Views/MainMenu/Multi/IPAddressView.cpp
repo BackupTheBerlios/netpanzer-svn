@@ -110,7 +110,7 @@ void IPAddressView::Init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void IPAddressView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void IPAddressView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     clientArea.fill(Color::black);
     View::doDraw(viewArea, clientArea);

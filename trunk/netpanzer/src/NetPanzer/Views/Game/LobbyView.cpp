@@ -63,7 +63,7 @@ void LobbyView::init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void LobbyView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void LobbyView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     if (!backgroundSurface.getDoesExist()) {
         loadBackgroundSurface();
@@ -76,7 +76,6 @@ void LobbyView::doDraw(const Surface &viewArea, const Surface &clientArea)
     background.blt(clientArea, 179, 153);
 
     View::doDraw(viewArea, clientArea);
-
 } // end LobbyView::doDraw
 
 // update

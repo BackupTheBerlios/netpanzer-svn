@@ -103,7 +103,6 @@ View::~View()
     free(title);
     free(subTitle);
     free(labels);
-
 } // end ~View::View
 
 // reset
@@ -157,7 +156,7 @@ void View::reset()
 //---------------------------------------------------------------------------
 // Purpose: Draws the borders of the window.
 //---------------------------------------------------------------------------
-void View::drawBorder(const Surface &viewArea)
+void View::drawBorder(Surface &viewArea)
 {
     assert(this != 0);
     
@@ -168,7 +167,7 @@ void View::drawBorder(const Surface &viewArea)
 //---------------------------------------------------------------------------
 // Purpose: Draws the buttons of the window.
 //---------------------------------------------------------------------------
-void View::drawButtons(const Surface &viewArea)
+void View::drawButtons(Surface &viewArea)
 {
     assert(this != 0);
 
@@ -185,7 +184,7 @@ void View::drawButtons(const Surface &viewArea)
 // Purpose: Draws the title of the view and colors the move area background
 //          depending on whether the view is active.
 //---------------------------------------------------------------------------
-void View::drawTitle(const Surface &viewArea)
+void View::drawTitle(Surface &viewArea)
 {
     assert(this != 0);
 
@@ -400,7 +399,11 @@ void View::draw(Surface& surface)
         return;
 
     currentscreen = &surface; // hack
-    doDraw(getViewArea(surface), getClientArea(surface));
+    Surface* viewarea = getViewArea(surface);
+    Surface* clientarea = getClientArea(surface);
+    doDraw(*viewarea, *clientarea);
+    delete viewarea;
+    delete clientarea;
 } // end draw
 
 // activate
@@ -444,7 +447,7 @@ void View::deactivate()
 //---------------------------------------------------------------------------
 // Purpose: Default implementation - draws all the componentList of the window.
 //---------------------------------------------------------------------------
-void View::doDraw(const Surface &viewArea, const Surface &clientArea)
+void View::doDraw(Surface &viewArea, Surface &clientArea)
 {
     if (getShowStatus()) {
         drawStatus(clientArea);
@@ -619,59 +622,32 @@ iXY View::getScreenToViewPos(const iXY &pos)
 //---------------------------------------------------------------------------
 // Purpose: Returns a Surface of the view's dimensions.
 //---------------------------------------------------------------------------
-Surface View::getViewArea(Surface& dest)
+Surface* View::getViewArea(Surface& dest)
 {
     assert(this != 0);
 
     iRect rect(min, max);
-    Surface surface(dest, rect.min, rect.max, false);
-
-    assert(surface.mem != 0);
     
-    return surface;
+    return new Surface(dest, rect.min, rect.max, false);
 } // end View::getViewArea
-
-#if 0
-// getClientArea
-//---------------------------------------------------------------------------
-// Purpose: Sets the destination surface to the specified coodinates within
-//          the source surface.  If the window does not have borders, then
-//          set the coordinates to the whole window area.
-//---------------------------------------------------------------------------
-void View::getClientArea(Surface &dest)
-{
-    assert(this != 0);
-
-    if (getBordered()) {
-        dest.setTo( getViewArea(),
-                    iRect(borderSize,
-                           borderSize + moveAreaHeight,
-                           getSizeX() - borderSize,
-                           getSizeY() - borderSize));
-    } else {
-        getViewArea(dest);
-    }
-} // end View::getClientArea
-#endif
 
 // getClientArea
 //---------------------------------------------------------------------------
 // Purpose:
 //---------------------------------------------------------------------------
-Surface View::getClientArea(Surface& dest)
+Surface* View::getClientArea(Surface& dest)
 {
+    Surface* viewarea = getViewArea(dest);
     if (getBordered()) {
-        Surface surface(getViewArea(dest),
+        Surface* surface = new Surface(*viewarea,
                         iXY(borderSize, borderSize+moveAreaHeight),
                         iXY(getSizeX() - borderSize,
                             getSizeY() - borderSize), false);
-
-        assert(surface.mem != 0);
-        
+        delete viewarea;
         return surface;
     }
 
-    return getViewArea(dest);
+    return viewarea;
 } // end View::getClientArea
 
 // getClientRect
@@ -1053,7 +1029,7 @@ void View::addLabel(const iXY &pos, char *label, const bool &isShadowed, const P
 //---------------------------------------------------------------------------
 // Purpose:
 //---------------------------------------------------------------------------
-void View::drawLabels(const Surface &clientArea)
+void View::drawLabels(Surface &clientArea)
 {
     if (!clientArea.getDoesExist()) {
         throw Exception("ERROR: Client area does not exist.");
@@ -1070,7 +1046,7 @@ void View::drawLabels(const Surface &clientArea)
 //---------------------------------------------------------------------------
 // Purpose:
 //---------------------------------------------------------------------------
-void View::drawDefinedButtons(const Surface &clientArea)
+void View::drawDefinedButtons(Surface &clientArea)
 {
     for (int num = 0; num < buttons.getCount(); num++) {
         buttons[num].topSurface.blt(clientArea, iXY(buttons[num].getBounds().min.x, buttons[num].getBounds().min.y));
@@ -1081,7 +1057,7 @@ void View::drawDefinedButtons(const Surface &clientArea)
 //---------------------------------------------------------------------------
 // Purpose:
 //---------------------------------------------------------------------------
-void View::drawInputFields(const Surface &clientArea)
+void View::drawInputFields(Surface &clientArea)
 {
     for (int num = 0; num < inputFields.getCount(); num++) {
         if (num == selectedInputField) {
@@ -1096,7 +1072,7 @@ void View::drawInputFields(const Surface &clientArea)
 //---------------------------------------------------------------------------
 // Purpose: Draws the correct image frame for the currently highlighted button.
 //---------------------------------------------------------------------------
-void View::drawHighlightedButton(const Surface &clientArea)
+void View::drawHighlightedButton(Surface &clientArea)
 {
     assert(this != 0);
 
@@ -1278,7 +1254,7 @@ void View::showStatus(const char *string)
 
 // drawStatus
 //---------------------------------------------------------------------------
-void View::drawStatus(const Surface &dest)
+void View::drawStatus(Surface &dest)
 {
     // Draw the status bar.
     iRect clientRect(getClientRect());
@@ -1339,7 +1315,7 @@ int View::findInputFieldContaining(const iXY &pos)
 //---------------------------------------------------------------------------
 // Purpose: Draws the selected button.
 //---------------------------------------------------------------------------
-void View::drawPressedButton(const Surface &clientArea)
+void View::drawPressedButton(Surface &clientArea)
 {
     assert(this != 0);
 

@@ -145,7 +145,7 @@ void AreYouSureResignView::init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void AreYouSureResignView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void AreYouSureResignView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     iRect r(min, max);
 

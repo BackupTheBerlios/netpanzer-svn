@@ -29,10 +29,8 @@ protected:
 public:
     ParticleTweakView();
 
-    virtual void doDraw    (const Surface &viewArea, const Surface &clientArea);
-
-}
-; // end ParticleTweakView
+    virtual void doDraw (Surface &viewArea, Surface &clientArea);
+}; // end ParticleTweakView
 
 
 #endif // end __ParticleTweakView_hpp__

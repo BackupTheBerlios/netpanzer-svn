@@ -15,15 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __SoundView_hpp__
 #define __SoundView_hpp__
-
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
 
 #include "View.hpp"
 #include "OptionsTemplateView.hpp"
@@ -47,10 +40,8 @@ protected:
 public:
     SoundView();
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void initButtons();
-
-}
-; // end SoundView
+}; // end SoundView
 
 #endif // end __SoundView_hpp__

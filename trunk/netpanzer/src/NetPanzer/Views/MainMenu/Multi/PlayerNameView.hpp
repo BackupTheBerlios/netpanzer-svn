@@ -15,27 +15,17 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __PlayerNameView_hpp__
 #define __PlayerNameView_hpp__
-
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
 
 #include "View.hpp"
 #include "Surface.hpp"
 #include "cGrowList.hpp"
 
-
 //---------------------------------------------------------------------------
 class PlayerNameView : public View
 {
 private:
-
-
     enum { BORDER_SPACE           =  4 };
     enum { INPUT_FIELD_CHARACTERS = 16 };
 
@@ -44,8 +34,8 @@ public:
     virtual ~PlayerNameView()
     {}
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
-    virtual void drawBorder(const Surface &windowArea)
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void drawBorder(Surface &windowArea)
     {}
 
     static cInputFieldString playerName;

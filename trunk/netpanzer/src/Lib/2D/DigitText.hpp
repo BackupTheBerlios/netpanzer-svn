@@ -49,28 +49,28 @@ private:
     static DIGIT_BLT_MODES bltMode;
 
     // Blits the characters without the spaces in the text.
-    static void bltCharNormalTrans(const Surface &dest, const iXY &pos, const char &character, const PIX &color);
+    static void bltCharNormalTrans(Surface &dest, const iXY &pos, const char &character, const PIX &color);
 
     // Blits the characters without the spaces in the text.
-    static void bltCharNormalSolid(const Surface &dest, const iXY &pos, const char &character);
+    static void bltCharNormalSolid(Surface &dest, const iXY &pos, const char &character);
 
     // Blits the characters without the spaces in the text.
-    static void bltCharNoSpaceTrans(const Surface &dest, const iXY &pos, const char &character, const PIX &color);
+    static void bltCharNoSpaceTrans(Surface &dest, const iXY &pos, const char &character, const PIX &color);
 
     // Blits the characters without the spaces in the text.
-    static void bltCharNoSpaceSolid(const Surface &dest, const iXY &pos, const char &character);
+    static void bltCharNoSpaceSolid(Surface &dest, const iXY &pos, const char &character);
 
     // Blits the string without the spaces in the text.
-    static void bltStringNormalTrans(const Surface &dest, const iXY &pos, const char *string, const PIX &color);
+    static void bltStringNormalTrans(Surface &dest, const iXY &pos, const char *string, const PIX &color);
 
     // Blits the string without the spaces in the text.
-    static void bltStringNormalSolid(const Surface &dest, const iXY &pos, const char *string);
+    static void bltStringNormalSolid(Surface &dest, const iXY &pos, const char *string);
 
     // Blits the string without the spaces in the text.
-    static void bltStringNoSpaceTrans(const Surface &dest, const iXY &pos, const char *string, const PIX &color);
+    static void bltStringNoSpaceTrans(Surface &dest, const iXY &pos, const char *string, const PIX &color);
 
     // Blits the string without the spaces in the text.
-    static void bltStringNoSpaceSolid(const Surface &dest, const iXY &pos, const char *string);
+    static void bltStringNoSpaceSolid(Surface &dest, const iXY &pos, const char *string);
 
 
 public:
@@ -83,8 +83,8 @@ public:
     static void init(const char *filename);
 
     // Calls the appropriate string blitting function depending on the current mode.
-    static void blt(const Surface &dest, const iXY &pos, const char *string, const PIX &color);
-    static void blt(const Surface &dest, const iXY &pos, const char *string)
+    static void blt(Surface &dest, const iXY &pos, const char *string, const PIX &color);
+    static void blt(Surface &dest, const iXY &pos, const char *string)
     {
         // The color in this really doesn't matter.
         blt(dest, pos, string, Color::black);
@@ -92,8 +92,6 @@ public:
 
     // Sets which type of characters to blt.
     static void setBltMode(const DIGIT_BLT_MODES &mode);
-
-}
-; // end DigitText
+}; // end DigitText
 
 #endif // end __DigitText_hpp__

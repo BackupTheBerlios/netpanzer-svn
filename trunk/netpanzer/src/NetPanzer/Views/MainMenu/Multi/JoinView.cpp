@@ -36,10 +36,9 @@ JoinView::JoinView() : HostJoinTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void JoinView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void JoinView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     HostJoinTemplateView::doDraw(viewArea, clientArea);
-
 } // end JoinView::doDraw
 
 // doDeactivate

@@ -33,7 +33,7 @@ SkirmishView::SkirmishView() : MenuTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void SkirmishView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void SkirmishView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     MenuTemplateView::doDraw(viewArea, clientArea);
 

@@ -18,16 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __GameInfoView_hpp__
 #define __GameInfoView_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 #include "View.hpp"
 #include "Surface.hpp"
 #include "GameTemplateView.hpp"
-
 
 //---------------------------------------------------------------------------
 class GameInfoView : public GameTemplateView
@@ -40,9 +33,7 @@ private:
 public:
     GameInfoView();
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
-
-}
-; // end GameInfoView
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+}; // end GameInfoView
 
 #endif // end __GameInfoView_hpp__

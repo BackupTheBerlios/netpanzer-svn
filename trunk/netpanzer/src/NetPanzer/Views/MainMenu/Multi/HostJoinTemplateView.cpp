@@ -359,7 +359,7 @@ void HostJoinTemplateView::addVehicleButtons(const iXY &pos)
 
 } // end HostJoinTemplateView::addVehicleButtons
 
-void HostJoinTemplateView::drawVehicleInfo(const Surface &dest, const iXY &pos)
+void HostJoinTemplateView::drawVehicleInfo(Surface &dest, const iXY &pos)
 {
     // Draw the dimmed background.
     iXY size(580, 118);
@@ -409,7 +409,7 @@ void HostJoinTemplateView::drawVehicleInfo(const Surface &dest, const iXY &pos)
 
 // doDraw
 //---------------------------------------------------------------------------
-void HostJoinTemplateView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void HostJoinTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     MenuTemplateView::doDraw(viewArea, clientArea);
 
@@ -438,7 +438,7 @@ void HostJoinTemplateView::doDraw(const Surface &viewArea, const Surface &client
 
 // drawNameInfo
 //--------------------------------------------------------------------------
-void HostJoinTemplateView::drawNameInfo(const Surface &dest, const iXY &pos)
+void HostJoinTemplateView::drawNameInfo(Surface &dest, const iXY &pos)
 {
     iXY size(358, 30);
     iRect flagBorder(pos.x, pos.y, pos.x + size.x, pos.y + size.y);
@@ -451,7 +451,7 @@ void HostJoinTemplateView::drawNameInfo(const Surface &dest, const iXY &pos)
 
 // drawPlayerInfo
 //--------------------------------------------------------------------------
-void HostJoinTemplateView::drawPlayerInfo(const Surface &dest, const iXY &pos)
+void HostJoinTemplateView::drawPlayerInfo(Surface &dest, const iXY &pos)
 {
     char strBuf[256];
 
@@ -473,7 +473,7 @@ void HostJoinTemplateView::drawPlayerInfo(const Surface &dest, const iXY &pos)
 
 // drawFlagInfo
 //--------------------------------------------------------------------------
-void HostJoinTemplateView::drawFlagInfo(const Surface &dest, const iXY &pos)
+void HostJoinTemplateView::drawFlagInfo(Surface &dest, const iXY &pos)
 {
     // Draw the dimmed background.
     iXY size(180, 115);

@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Span.hpp"
 #include "GameView.hpp"
 #include "CraterParticle2D.hpp"
+#include "ScreenSurface.hpp"
 
 bool gDrawGameTiles = true;
 bool gDrawUnitTips  = false;
@@ -119,7 +120,7 @@ LibView::LibView() : GameTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void LibView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void LibView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     //bltViewBackground(viewArea);
 
@@ -147,7 +148,7 @@ void LibView::doDraw(const Surface &viewArea, const Surface &clientArea)
 } // end LibView::doDraw
 
 //--------------------------------------------------------------------------
-void LibView::drawSurfaceInfo(const Surface &dest, iXY pos)
+void LibView::drawSurfaceInfo(Surface &dest, iXY pos)
 {
     int  yOffset = 15;
 
@@ -192,7 +193,7 @@ void LibView::drawSurfaceInfo(const Surface &dest, iXY pos)
 }
 
 //--------------------------------------------------------------------------
-void LibView::drawParticleInfo(const Surface &dest, iXY pos)
+void LibView::drawParticleInfo(Surface &dest, iXY pos)
 {
     int  yOffset = 15;
     int  xOffset = 15;
@@ -272,6 +273,7 @@ void LibView::drawParticleInfo(const Surface &dest, iXY pos)
 void LibView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
 {
     moveTo(min + newPos - prevPos);
+    checkArea(screen->getPix());
 }
 
 // doActivate
@@ -279,12 +281,11 @@ void LibView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newP
 void LibView::doActivate()
 {
     Desktop::setActiveView(this);
-
 } // end LibView::doActivate
 
 // drawEnvironmentInfo
 //---------------------------------------------------------------------------
-void LibView::drawEnvironmentInfo(const Surface &dest, iXY pos)
+void LibView::drawEnvironmentInfo(Surface &dest, iXY pos)
 {
     int  yOffset = 15;
     //int  xOffset = 15;

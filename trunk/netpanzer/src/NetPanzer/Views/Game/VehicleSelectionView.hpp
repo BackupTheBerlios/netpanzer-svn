@@ -93,8 +93,8 @@ private:
     int  getUnitRegenTime(unsigned short unitType);
     void checkMaxValues(const UnitProfile &profile);
     void getProfileData();
-    void drawBar(const Surface &dest, const iXY &pos, int length, float percent);
-    void drawUnitProfileInfo(const Surface &dest, const iXY &pos, short int unitType);
+    void drawBar(Surface &dest, const iXY &pos, int length, float percent);
+    void drawUnitProfileInfo(Surface &dest, const iXY &pos, short int unitType);
 
     iXY            productionUnitPos;
     iXY            timeRequiredPos;
@@ -111,11 +111,11 @@ public:
     {}
 
     virtual void        doActivate();
-    virtual void        doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void        doDraw(Surface &windowArea, Surface &clientArea);
     virtual void        mouseMove(const iXY &prevPos, const iXY &newPos);
     static  const char *getUnitName(int unitType);
-    static  void        drawMiniProductionStatus(const Surface &dest);
-    static  void        drawUnitImage(const Surface &dest, const iXY &pos, int unitType);
+    static  void        drawMiniProductionStatus(Surface &dest);
+    static  void        drawUnitImage(Surface &dest, const iXY &pos, int unitType);
     static  bool        displayMiniProductionStatus;
     static  bool        displayOutpostNames;
     static  void        setPowerOn();
@@ -125,8 +125,6 @@ public:
     static iRect   miniProductionRect;
 
     virtual void actionPerformed(mMouseEvent me);
-
-}
-; // end VehicleSelectionView
+}; // end VehicleSelectionView
 
 #endif // end __VehicleSelectionView_hpp__

@@ -63,8 +63,6 @@ public:
     }
     void setImage(const Surface &image)
     {}
-
-}
-; // end Icon
+}; // end Icon
 
 #endif // end __Icon_hpp__

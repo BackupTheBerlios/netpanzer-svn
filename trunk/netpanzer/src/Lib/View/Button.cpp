@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // draw
 //---------------------------------------------------------------------------
-void Button::draw(const Surface &dest)
+void Button::draw(Surface &dest)
 {
     iRect bounds;
     getBounds(bounds);

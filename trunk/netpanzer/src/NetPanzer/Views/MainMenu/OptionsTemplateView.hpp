@@ -32,7 +32,7 @@ protected:
 public:
     OptionsTemplateView();
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void initButtons();
 }; // end OptionsTemplateView
 

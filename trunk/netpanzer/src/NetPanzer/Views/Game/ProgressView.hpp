@@ -18,15 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __ProgressView_hpp__
 #define __ProgressView_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 #include "View.hpp"
 #include "Surface.hpp"
-
 
 //---------------------------------------------------------------------------
 class ProgressView : public View
@@ -38,7 +31,7 @@ public:
     ProgressView();
 
     // Standard window related functions.
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     //virtual void lMouseDown(const iXY &p);
     virtual void doActivate();
 
@@ -67,8 +60,7 @@ public:
     void toggleGameView();
     void toggleMainMenu();
 
-}
-; // end ProgressView
+}; // end ProgressView
 
 extern ProgressView progressView;
 

@@ -116,7 +116,7 @@ void ChatView::addMessage(const char *newMessage)
 
 // drawMessages
 //---------------------------------------------------------------------------
-void ChatView::drawMessages(const Surface &dest)
+void ChatView::drawMessages(Surface &dest)
 {
     /*
     	iXY offset;
@@ -137,7 +137,7 @@ void ChatView::drawMessages(const Surface &dest)
 
 // doDraw
 //---------------------------------------------------------------------------
-void ChatView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void ChatView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     bltViewBackground(viewArea);
 
@@ -155,5 +155,4 @@ void ChatView::doDraw(const Surface &viewArea, const Surface &clientArea)
     //drawTitle(viewArea);
     //drawDefinedButtons(clientArea);
     //drawInputFields(clientArea);
-
 } // end doDraw

@@ -218,7 +218,7 @@ void cInputField::addExtendedChar(int newExtendedChar)
 
 // draw
 //--------------------------------------------------------------------------
-void cInputField::draw(const Surface &dest)
+void cInputField::draw(Surface &dest)
 {
     checkCursor();
 
@@ -230,7 +230,7 @@ void cInputField::draw(const Surface &dest)
 
 // drawHighlighted
 //--------------------------------------------------------------------------
-void cInputField::drawHighlighted(const Surface &dest)
+void cInputField::drawHighlighted(Surface &dest)
 {
     checkCursor();
 

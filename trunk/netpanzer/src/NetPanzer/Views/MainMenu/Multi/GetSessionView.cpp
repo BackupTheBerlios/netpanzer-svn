@@ -217,7 +217,7 @@ GetSessionView::GetSessionView() : MenuTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void GetSessionView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void GetSessionView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     if (previousSessionType != gameconfig->hostorjoin) {
         loadTitleSurface();
@@ -230,7 +230,7 @@ void GetSessionView::doDraw(const Surface &viewArea, const Surface &clientArea)
 } // end GetSessionView::doDraw
 
 //---------------------------------------------------------------------------
-void GetSessionView::drawInfo(const Surface &dest)
+void GetSessionView::drawInfo(Surface &dest)
 {
     int connectionType = gameconfig->hostorjoin;
 
@@ -242,7 +242,7 @@ void GetSessionView::drawInfo(const Surface &dest)
 }
 
 //---------------------------------------------------------------------------
-void GetSessionView::drawHostInfo(const Surface &dest, const iRect &rect)
+void GetSessionView::drawHostInfo(Surface &dest, const iRect &rect)
 {
     static char	tcpipInfo[] =	"HOSTING LAN GAMES\n"
                               "\n"
@@ -284,7 +284,7 @@ void GetSessionView::drawHostInfo(const Surface &dest, const iRect &rect)
 }
 
 //---------------------------------------------------------------------------
-void GetSessionView::drawJoinInfo(const Surface &dest, const iRect &rect)
+void GetSessionView::drawJoinInfo(Surface &dest, const iRect &rect)
 {
     static char	tcpipInfo[] =	"JOINING LAN OR INTERNET GAMES\n"
                               "\n"

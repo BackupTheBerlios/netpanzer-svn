@@ -31,7 +31,7 @@ void sendChatStringToServer();
 class ChatView : public GameTemplateView
 {
 private:
-    void drawMessages(const Surface &dest);
+    void drawMessages(Surface &dest);
 
     int  messageCount;         // How many messages do we currently have?
     int  viewableMessageCount; // How many items are viewable.
@@ -50,7 +50,7 @@ public:
         delete scrollBar;
     }
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
 
     void addMessage(const char *newMessage);
 

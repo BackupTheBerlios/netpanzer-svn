@@ -72,7 +72,7 @@ private:
 public:
     VisualsView();
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void processEvents();
     virtual void initButtons();
     virtual void stateChanged(Component* source);

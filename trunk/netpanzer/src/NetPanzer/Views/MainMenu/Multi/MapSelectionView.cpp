@@ -104,7 +104,7 @@ void MapSelectionView::init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void MapSelectionView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void MapSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     //iRect r(getViewRect());
     //viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
@@ -259,7 +259,7 @@ int MapSelectionView::loadMaps()
 
 // drawCurMapInfo
 //---------------------------------------------------------------------------
-void MapSelectionView::drawCurMapInfo(const Surface &dest, const iXY &pos)
+void MapSelectionView::drawCurMapInfo(Surface &dest, const iXY &pos)
 {
     // Draw the text.
     char strBuf[256];

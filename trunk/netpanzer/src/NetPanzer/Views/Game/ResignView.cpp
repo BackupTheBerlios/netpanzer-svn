@@ -83,7 +83,7 @@ void ResignView::init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void ResignView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void ResignView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     iRect r(0, 0, currentscreen->getPixX(), currentscreen->getPixY());
 

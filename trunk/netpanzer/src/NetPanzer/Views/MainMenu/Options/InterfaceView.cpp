@@ -81,7 +81,7 @@ void InterfaceView::initButtons()
 
 // doDraw
 //---------------------------------------------------------------------------
-void InterfaceView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void InterfaceView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     MenuTemplateView::doDraw(viewArea, clientArea);
 

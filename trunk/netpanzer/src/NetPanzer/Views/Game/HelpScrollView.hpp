@@ -34,7 +34,7 @@ protected:
     int rows;
 
     int  maxYOffset;
-    void drawHelpText(const Surface &dest, const int &x, const int &y);
+    void drawHelpText(Surface &dest, const int &x, const int &y);
 
     ScrollBar *scrollBar;
     cGrowList <String> text;
@@ -55,7 +55,7 @@ public:
         delete scrollBar;
     }
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void actionPerformed(mMouseEvent me);
     virtual void doActivate();
 }

@@ -15,15 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __HostOptionsView_hpp__
 #define __HostOptionsView_hpp__
-
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
 
 #include "RMouseHackView.hpp"
 #include "Surface.hpp"
@@ -37,7 +30,7 @@ class HostOptionsView : public RMouseHackView
 {
 private:
     void addMeterButtons(const iXY &pos);
-    void drawMeterInfo(const Surface &dest, const iXY &pos);
+    void drawMeterInfo(Surface &dest, const iXY &pos);
 
     static int cloudCoverageCount;
     static int windSpeed;
@@ -58,8 +51,8 @@ public:
     virtual ~HostOptionsView()
     {}
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
-    virtual void drawBorder(const Surface &windowArea)
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void drawBorder(Surface &windowArea)
     {}
     virtual void actionPerformed(mMouseEvent me);
 
@@ -86,8 +79,6 @@ public:
 
     static String cloudCoverageString;
     static String windSpeedString;
-
-}
-; // end HostOptionsView
+}; // end HostOptionsView
 
 #endif // end __HostOptionsView_hpp__

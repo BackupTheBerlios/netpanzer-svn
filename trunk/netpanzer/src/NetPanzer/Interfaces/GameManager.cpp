@@ -433,7 +433,9 @@ void GameManager::processSystemKeys()
 
         if (KeyboardInterface::getKeyPressed(SDLK_b)) {
             toggleBot = !toggleBot;
-            LOGGER.info("Bot enable=%d", toggleBot ? 1 : 0);        
+            LOGGER.info("Bot enable=%d", toggleBot ? 1 : 0);
+            ConsoleInterface::postMessage( "bot has been %s.", toggleBot ?
+                    "enabled" : "disabled" );
         }
         if (toggleBot) {                                            
             Bot::bot()->processEvents();

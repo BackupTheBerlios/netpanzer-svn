@@ -31,10 +31,9 @@ protected:
 public:
     HelpView();
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void doActivate();
     virtual void doDeactivate();
-}
-; // end HelpView
+}; // end HelpView
 
 #endif // end __HelpView_hpp__

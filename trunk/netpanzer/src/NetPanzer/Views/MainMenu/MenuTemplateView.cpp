@@ -209,7 +209,7 @@ void MenuTemplateView::initButtons()
 
 // doDraw
 //---------------------------------------------------------------------------
-void MenuTemplateView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     //setWorldRect();
     if (Desktop::getVisible("GameView")) {

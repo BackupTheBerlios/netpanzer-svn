@@ -112,6 +112,9 @@ void shutdown()
 
 void signalhandler(int signum)
 {
+    // set signal handler back to default
+    signal(signum, SIG_DFL);
+    
     const char* sigtype;
     switch(signum) {
         case SIGINT: sigtype = "SIGINT"; break;

@@ -32,7 +32,7 @@ public:
 
  void Init();
 
- virtual void doDraw(const Surface &windowArea, const Surface &clientArea); 
+ virtual void doDraw(Surface &windowArea, Surface &clientArea); 
 }; // end IPAddressView
 
 #endif // end __IPAddressView_h__

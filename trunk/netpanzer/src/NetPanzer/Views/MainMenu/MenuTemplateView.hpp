@@ -45,7 +45,7 @@ protected:
 public:
     MenuTemplateView();
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void doActivate();
     virtual void doDeactivate();
     virtual void processEvents();
@@ -63,8 +63,6 @@ public:
     //static PackedSurface globeSurface;
     static Surface       backgroundSurface;
     static PackedSurface titlePackedSurface;
-
-}
-; // end MenuTemplateView
+}; // end MenuTemplateView
 
 #endif // end __MenuTemplateView_hpp__

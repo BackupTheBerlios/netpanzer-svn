@@ -16,6 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
 #include "CodeStatsView.hpp"
 #include "GameViewGlobals.hpp"
 #include "SpriteSorter.hpp"
@@ -154,7 +155,7 @@ CodeStatsView::CodeStatsView() : GameTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void CodeStatsView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void CodeStatsView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     bltViewBackground(viewArea);
 
@@ -188,7 +189,7 @@ void CodeStatsView::doDraw(const Surface &viewArea, const Surface &clientArea)
 } // end CodeStatsView::doDraw
 
 //---------------------------------------------------------------------------
-void CodeStatsView::drawNetworkStats( const Surface &clientArea)
+void CodeStatsView::drawNetworkStats(Surface &clientArea)
 {
 
     char strBuf[256];
@@ -292,7 +293,7 @@ void CodeStatsView::drawNetworkStats( const Surface &clientArea)
 }
 
 //---------------------------------------------------------------------------
-void CodeStatsView::drawSorterStats( const Surface &clientArea)
+void CodeStatsView::drawSorterStats(Surface &clientArea)
 {
 
     char strBuf[256];
@@ -313,7 +314,7 @@ void CodeStatsView::drawSorterStats( const Surface &clientArea)
 }
 
 //---------------------------------------------------------------------------
-void CodeStatsView::drawPathingStats( const Surface &clientArea)
+void CodeStatsView::drawPathingStats(Surface &clientArea)
 {
 
     char strBuf[256];
@@ -367,7 +368,7 @@ void CodeStatsView::drawPathingStats( const Surface &clientArea)
 }
 
 //---------------------------------------------------------------------------
-void CodeStatsView::drawUnitStats( const Surface &clientArea )
+void CodeStatsView::drawUnitStats(Surface &clientArea)
 {
 
     char strBuf[256];

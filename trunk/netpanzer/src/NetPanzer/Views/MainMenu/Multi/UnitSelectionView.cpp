@@ -50,7 +50,7 @@ UnitSelectionView::UnitSelectionView() : View()
 
 // doDraw
 //---------------------------------------------------------------------------
-void UnitSelectionView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void UnitSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     char strBuf[256];
     sprintf(strBuf, "%d", scrollBar->getValue());

@@ -112,7 +112,7 @@ void ScrollBar::setSize()
 
 // draw
 //---------------------------------------------------------------------------
-void ScrollBar::draw(const Surface &dest)
+void ScrollBar::draw(Surface &dest)
 {
     setLocation();
     setSize();
@@ -237,8 +237,9 @@ void ScrollBar::draw(const Surface &dest)
 
 // clicked
 //---------------------------------------------------------------------------
-void ScrollBar::actionPerformed(const iXY &pos)
+void ScrollBar::actionPerformed(const mMouseEvent& me)
 {
+    iXY pos = me.getPoint();
     if (parent != 0) {
         if (orientation == HORIZONTAL) {
             percent = float(pos.x) / float(size.x);

@@ -273,7 +273,7 @@ HostOptionsView::HostOptionsView() : RMouseHackView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void HostOptionsView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void HostOptionsView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     drawMeterInfo(clientArea, iXY(BORDER_SPACE, BORDER_SPACE));
 
@@ -426,7 +426,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
 
 // drawMeterInfo
 //---------------------------------------------------------------------------
-void HostOptionsView::drawMeterInfo(const Surface &dest, const iXY &pos)
+void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
 {
     char strBuf[256];
 

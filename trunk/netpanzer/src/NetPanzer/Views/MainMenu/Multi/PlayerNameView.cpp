@@ -57,7 +57,7 @@ void PlayerNameView::init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void PlayerNameView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void PlayerNameView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     //iRect r(getViewRect());
     //viewArea.bltLookup(r, Palette::darkGray256.getColorArray());

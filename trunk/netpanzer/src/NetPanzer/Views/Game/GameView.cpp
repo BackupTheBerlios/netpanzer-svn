@@ -74,7 +74,7 @@ void GameView::init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void GameView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void GameView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     // Added for debugging, accesible through LibView.
     if (gDrawSolidBackground) {

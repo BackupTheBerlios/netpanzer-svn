@@ -32,7 +32,7 @@ class RankView : public GameTemplateView
 private:
     int viewableMessageCount;
     enum { ITEM_GAP_SPACE = 10 };
-    void drawPlayerStats(const Surface &dest);
+    void drawPlayerStats(Surface &dest);
 
     ScrollBar *scrollBar;
 
@@ -43,7 +43,7 @@ public:
         delete scrollBar;
     }
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
 
 }
 ; // end _WIN

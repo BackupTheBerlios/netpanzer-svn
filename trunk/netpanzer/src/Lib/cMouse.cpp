@@ -39,7 +39,7 @@ unsigned char cMouse::button_mask = 0;
 //---------------------------------------------------------------------------
 // Purpose: Draws the graphical mouse cursor.
 //---------------------------------------------------------------------------
-void cMouse::draw(const Surface &dest)
+void cMouse::draw(Surface &dest)
 {
     assert(pointer != 0);
 

@@ -256,7 +256,7 @@ void PackedSurface::save(const char* filename) const
 }
 
 //--------------------------------------------------------------------------
-void PackedSurface::blt(const Surface &dest, int destX, int destY) const
+void PackedSurface::blt(Surface &dest, int destX, int destY) const
 {
     totalDrawCount++;
 
@@ -384,41 +384,6 @@ nextRow:
 
 // setTo
 //---------------------------------------------------------------------------
-// Purpose: Maps a PackedSurface's coordinates to an existing surface.  This can
-//          save you from having to allocate memory for every single PackedSurface.
-//          You can just draw everything onto one PackedSurface in the given bounds.
-//---------------------------------------------------------------------------
-/*
-void PackedSurface::setTo(const PackedSurface &source, iRect bounds)
-{
-	assert(this != 0);
- 
-	free();
-	reset();
- 
-	orderCoords(bounds);
- 
-	frameCount = source.getFrameCount();
-	fps        = source.getFPS();
-	pix        = bounds.getSize();
-	center     = ;
-	myMem      = false;
-	offset     = source.getOffset();
- 
-	int   frameCount;
-	float fps;
-	float curFrame;
-	iXY   offset;
-	iXY   center;
-	iXY   pix;
-	int  *rowOffsetTable;
-	uint8_t *packedDataChunk;
-	bool  myMem;
- 
-} // end Surface::setTo
-*/
-// setTo
-//---------------------------------------------------------------------------
 // Purpose: Maps the calling PackedSurface to some specified coordinates of
 //          the another PackedSurface.
 //---------------------------------------------------------------------------
@@ -459,7 +424,7 @@ int PackedSurface::nextFrame()
 
 // bltBlend
 //--------------------------------------------------------------------------
-void PackedSurface::bltBlend(const Surface &dest, int destX, int destY, ColorTable &colorTable) const
+void PackedSurface::bltBlend(Surface &dest, int destX, int destY, ColorTable &colorTable) const
 {
     totalDrawCount++;
 

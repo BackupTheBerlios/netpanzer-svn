@@ -15,15 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __JoinView_hpp__
 #define __JoinView_hpp__
-
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
 
 #include "View.hpp"
 #include "Surface.hpp"
@@ -39,10 +32,8 @@ protected:
 public:
     JoinView();
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void doDeactivate();
-
-}
-; // end JoinView
+}; // end JoinView
 
 #endif // end __JoinView_hpp__

@@ -15,15 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __HostJoinTemplateView_hpp__
 #define __HostJoinTemplateView_hpp__
-
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
 
 #include "View.hpp"
 #include "Surface.hpp"
@@ -40,10 +33,10 @@ class HostJoinTemplateView : public MenuTemplateView
 {
 private:
     void addVehicleButtons(const iXY &pos);
-    void drawVehicleInfo(const Surface &dest, const iXY &pos);
-    void drawFlagInfo(const Surface &dest, const iXY &pos);
-    void drawPlayerInfo(const Surface &dest, const iXY &pos);
-    void drawNameInfo(const Surface &clientArea, const iXY &pos);
+    void drawVehicleInfo(Surface &dest, const iXY &pos);
+    void drawFlagInfo(Surface &dest, const iXY &pos);
+    void drawPlayerInfo(Surface &dest, const iXY &pos);
+    void drawNameInfo(Surface &clientArea, const iXY &pos);
 
     virtual void loadBackgroundSurface();
 
@@ -52,10 +45,8 @@ public:
 
     HostJoinTemplateView();
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void doActivate();
-
-}
-; // end HostJoinTemplateView
+}; // end HostJoinTemplateView
 
 #endif // end __HostJoinTemplateView_hpp__

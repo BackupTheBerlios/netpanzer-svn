@@ -184,7 +184,7 @@ void WinnerMesgView::setWinnerInfoHack( char *name, int player_index )
 
 // doDraw
 //---------------------------------------------------------------------------
-void WinnerMesgView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void WinnerMesgView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     bltViewBackground(viewArea);
 

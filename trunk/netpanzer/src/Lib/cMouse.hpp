@@ -41,7 +41,7 @@ public:
     {}
 
     // cMouse Operation Functions
-    static void draw(const Surface &dest); // Handles the drawing of the cMouse cursor
+    static void draw(Surface &dest); // Handles the drawing of the cMouse cursor
 
     static inline Surface *getCurPointer()
     {

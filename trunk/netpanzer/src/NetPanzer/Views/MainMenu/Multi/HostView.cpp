@@ -85,7 +85,7 @@ HostView::HostView() : HostJoinTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void HostView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void HostView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     HostJoinTemplateView::doDraw(viewArea, clientArea);
 

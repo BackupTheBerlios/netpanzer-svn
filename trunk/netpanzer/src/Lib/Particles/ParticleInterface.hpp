@@ -125,7 +125,7 @@ public:
     ParticleInterface();
 
     static void testSim();
-    static void testSimText(const Surface &dest);
+    static void testSimText(Surface &dest);
 
     static void addHit(const UnitState &unitState);
     static void addMiss(const iXY &worldPos, uint8_t unitType);
@@ -146,7 +146,6 @@ public:
 
     static void addUnitDamagePuffParticle(const UnitState &unitState);
 
-}
-; // end ParticleInterface
+}; // end ParticleInterface
 
 #endif // __ParticleInterface_hpp__

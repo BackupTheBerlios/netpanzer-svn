@@ -69,8 +69,8 @@ enum
     VIEW_BACKGROUND_COUNT,
 };
 
-void bltViewBackground(const Surface &dest);
-void bltBlendRect(const Surface &dest, const iRect &r);
+void bltViewBackground(Surface &dest);
+void bltBlendRect(Surface &dest, const iRect &r);
 
 // Is the game help currently open?
 extern bool gDrawGameHelp;

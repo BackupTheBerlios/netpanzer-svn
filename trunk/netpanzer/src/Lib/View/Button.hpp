@@ -84,10 +84,8 @@ public:
     }
 
     //void   processEvent() { label = l; }
-    virtual void draw(const Surface &dest);
+    virtual void draw(Surface &dest);
     virtual void actionPerformed(const mMouseEvent &me);
-
-}
-; // end Button
+}; // end Button
 
 #endif // end __Button_hpp__

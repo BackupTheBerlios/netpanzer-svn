@@ -34,7 +34,7 @@ public:
     LobbyView();
 
     // Standard window related functions.
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     //virtual void lMouseDown(const iXY &p);
     virtual void doActivate();
 

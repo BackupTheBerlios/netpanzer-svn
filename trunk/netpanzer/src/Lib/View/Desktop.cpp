@@ -472,7 +472,8 @@ void Desktop::doMouseActions(const iXY &mousePos)
 
     if (mouseActions & View::MA_MOVE) {
         // Move the window
-        lMouseView->moveTo(mousePos - mouseActionOffset);
+        // XXX need to check for screen size
+        //lMouseView->moveTo(mousePos - mouseActionOffset);
     } else if (mouseActions & View::MA_SCROLL_BAR) {
         lMouseView->scrollBarMove(lMouseView->getScreenToClientPos(prevMousePos), lMouseView->getScreenToClientPos(mousePos));
     } else if (lMouseView->getResize()) {
@@ -497,8 +498,11 @@ void Desktop::doMouseActions(const iXY &mousePos)
                                lMouseView->min.y + View::RESIZE_YMINSIZE);
         }
 
+        // XXX
+        /*
         lMouseView->moveTo(resizeMin);
         lMouseView->resize(resizeMax - resizeMin);
+        */
     }
 
 } // end Desktop::doMouseActions
@@ -610,7 +614,7 @@ DesktopView::DesktopView() : View()
 
 // doDraw
 //---------------------------------------------------------------------------
-void DesktopView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void DesktopView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     viewArea.fill(Color::black);
 

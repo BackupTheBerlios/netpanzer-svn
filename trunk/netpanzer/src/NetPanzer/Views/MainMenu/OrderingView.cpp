@@ -33,7 +33,7 @@ OrderingView::OrderingView() : MenuTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void OrderingView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void OrderingView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     MenuTemplateView::doDraw(viewArea, clientArea);
 

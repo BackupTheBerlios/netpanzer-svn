@@ -132,7 +132,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void HelpScrollView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void HelpScrollView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     if (Desktop::getVisible("GameView")) {
         bltViewBackground(viewArea);
@@ -156,7 +156,7 @@ void HelpScrollView::doDraw(const Surface &viewArea, const Surface &clientArea)
 
 // drawHelpText
 //--------------------------------------------------------------------------
-void HelpScrollView::drawHelpText(const Surface &dest, const int &x, const int &y)
+void HelpScrollView::drawHelpText(Surface &dest, const int &x, const int &y)
 {
     PIX color   = Color::white;
 

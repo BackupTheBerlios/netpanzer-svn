@@ -89,7 +89,7 @@ public:
     {
         return foreground;
     }
-    inline        Surface  getGraphics() const
+    inline Surface& getGraphics()
     {
         return surface;
     }
@@ -147,12 +147,8 @@ public:
     void setVisible(bool b)
     {}
 
-    virtual void draw(const Surface &dest)
-    {}
-    virtual void actionPerformed(const mMouseEvent &me)
-    {}
-
-}
-; // end Component
+    virtual void draw(Surface &dest) = 0;
+    virtual void actionPerformed(const mMouseEvent &me) = 0;
+}; // end Component
 
 #endif // end __Component_hpp__

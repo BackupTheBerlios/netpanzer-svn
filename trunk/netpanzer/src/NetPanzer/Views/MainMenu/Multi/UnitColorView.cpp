@@ -115,7 +115,7 @@ UnitColorView::UnitColorView() : View()
 
 // doDraw
 //---------------------------------------------------------------------------
-void UnitColorView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void UnitColorView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     //unitSurface.fill(0);
 

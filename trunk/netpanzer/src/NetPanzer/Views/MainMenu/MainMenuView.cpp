@@ -39,7 +39,7 @@ MainMenuView::MainMenuView() : MenuTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void MainMenuView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void MainMenuView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     MenuTemplateView::doDraw(viewArea, clientArea);
 

@@ -57,13 +57,13 @@ bool gDrawGameHelp          = false;
 int  viewDrawBackgroundMode = VIEW_BACKGROUND_DARK_GRAY_BLEND;
 
 //--------------------------------------------------------------------------
-void bltViewBackground(const Surface &dest)
+void bltViewBackground(Surface &dest)
 {
     bltBlendRect(dest, dest.getRect());
 }
 
 //--------------------------------------------------------------------------
-void bltBlendRect(const Surface &dest, const iRect &r)
+void bltBlendRect(Surface &dest, const iRect &r)
 {
     if (viewDrawBackgroundMode == VIEW_BACKGROUND_DARK_GRAY_BLEND) {
         dest.bltLookup(r, Palette::darkGray256.getColorArray());

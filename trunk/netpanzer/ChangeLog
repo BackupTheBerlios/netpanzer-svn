@@ -1,4 +1,9 @@
-12-Oct-2003
+13-Oct-2003 by Matthias Braun
+-fixed wrong const in Surface class
+-don't allow copy constructing of surface class
+-fixed some views which could still be moved outside the screen
+
+12-Oct-2003 by Matthias Braun
 -Fixed a bug in iXY classes.
 -Added note about black screen to readme
 -fixed bug where MiniMapView was drawing outside it's view space, leading to

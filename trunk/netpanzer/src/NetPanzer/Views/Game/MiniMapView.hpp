@@ -15,16 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #ifndef __MiniMapView_hpp__
 #define __MiniMapView_hpp__
-
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
 
 #include "View.hpp"
 #include "Surface.hpp"
@@ -65,7 +57,7 @@ public:
 
     void init();
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void lMouseDown(const iXY &pos);
     virtual int  lMouseUp(const iXY &downPos, const iXY &upPos);
     virtual void lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
@@ -73,7 +65,7 @@ public:
     virtual void rMouseDown(const iXY &pos);
     virtual void mouseMove(const iXY &prevPos, const iXY &newPos);
 
-    void drawMouseBox(const Surface &dest);
+    void drawMouseBox(Surface &dest);
     void setViewWindow(const iXY &pos);
 
     static float          scaleDelta;
@@ -85,9 +77,7 @@ public:
 private:
     // XXX added this...
     void addButtons();
-
-}
-; // end MiniMapView
+}; // end MiniMapView
 
 extern MiniMapView miniMapView;
 

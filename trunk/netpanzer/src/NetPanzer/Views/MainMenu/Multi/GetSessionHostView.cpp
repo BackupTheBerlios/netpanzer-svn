@@ -88,7 +88,7 @@ GetSessionHostView::GetSessionHostView() : View()
 
 // doDraw
 //---------------------------------------------------------------------------
-void GetSessionHostView::doDraw(const Surface &viewArea, const Surface &clientArea)
+void GetSessionHostView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     static float curGroupTime = 0.0f;
 
@@ -121,7 +121,7 @@ void GetSessionHostView::doDraw(const Surface &viewArea, const Surface &clientAr
 
 // drawHostList
 //---------------------------------------------------------------------------
-void GetSessionHostView::drawHostList(const Surface &dest)
+void GetSessionHostView::drawHostList(Surface &dest)
 {
     char host_info_str[256];
     int curIndex = 0;

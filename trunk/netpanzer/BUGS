@@ -2,7 +2,7 @@
 -moving the window in minimap below the borders gets crashs or at least draw
  errors. - fixed
 -after playing some time we get an assert(totoalByteCount >= 0) in
- Surface::~Surface...
+ Surface::~Surface... - fixed
 -another crash reported by kov (happens when someone joins the game):
 <kov> Connection lost for ID 0: accept() failed
 <kov>  

@@ -15,15 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __HostView_hpp__
 #define __HostView_hpp__
-
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
 
 #include "View.hpp"
 #include "Surface.hpp"
@@ -38,7 +31,7 @@ class HostView : public HostJoinTemplateView
 public:
 
 protected:
-    void drawCurMapInfo(const Surface &dest, const iXY &pos);
+    void drawCurMapInfo(Surface &dest, const iXY &pos);
     virtual void loadTitleSurface();
 
     //Choice choiceAllowAllies;
@@ -49,9 +42,7 @@ protected:
 public:
     HostView();
 
-    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
-
-}
-; // end HostView
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+}; // end HostView
 
 #endif // end __HostView_hpp__
