@@ -181,6 +181,16 @@ std::string TileSet::getDirectory()
     return result;
 }
 
+size_t TileSet::getTileWidth() const
+{
+    return header->tilewidth;
+}
+
+size_t TileSet::getTileHeight() const
+{
+    return header->tilewidth;
+}
+
 void TileSet::setName(const std::string& newname)
 {
     name = newname;

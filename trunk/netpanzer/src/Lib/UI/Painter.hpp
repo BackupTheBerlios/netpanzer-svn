@@ -20,26 +20,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __UI_Painter_hpp__
 
 #include <stack>
+#include <SDL/SDL.h>
 
-#include "2D/RGBColor.hpp"
-#include "2D/Surface.hpp"
 #include "Types/iXY.hpp"
+#include "Types/iRect.hpp"
+#include "Color.hpp"
 
 namespace UI {
-
 
     class Painter
     {
     public:
-        Painter();
+        Painter(SDL_Surface* surface);
         virtual ~Painter();
 
-        void setSurface(Surface * surface){
-            drawingSurface = surface;
-        }
+        void setSurface(SDL_Surface* surface);
 
-        void setBrushColor(RGBColor color);
-        void setFillColor(RGBColor color);
+        void setBrushColor(Color color);
+        void setFillColor(Color color);
 
         void drawLine(iXY from, iXY to);
         void drawRect(iRect rect);
@@ -55,10 +53,21 @@ namespace UI {
         void popTransform();
         
     private:
+        void putPixelAbsolute(size_t x, size_t y, Color color);
+
+        
         class Transform {
         public:
-            iXY translation;
+            Transform()
+            {}
+            
+            Transform(const iXY& newtranslation)
+                : translation(newtranslation)
+            { }
+           
             // I think rotation isn't really needed yet...
+            iXY translation;
+
             Transform & operator+=(const Transform & p){
                 translation += p.translation;
                 return *this;
@@ -68,17 +77,27 @@ namespace UI {
                 translation -= p.translation;
                 return *this;
             }
+
+            void apply(iXY& pos)
+            {
+                pos += translation;
+            }
+
+            void apply(iRect& rect)
+            {
+                rect.min += translation;
+                rect.max += translation;
+            }
         };
         
         std::stack<Transform> transforms;
         Transform currentTransform;
 
-        PIX brushColor;
-        PIX fillColor;
+        Color brushColor;
+        Color fillColor;
         
-        Surface * drawingSurface;
-
+        SDL_Surface* drawingSurface;
     };
-
 }
+
 #endif

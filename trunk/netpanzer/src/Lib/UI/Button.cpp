@@ -14,19 +14,23 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
 
 #include "Button.hpp"
+#include "2D/Color.hpp"
 #include "Util/Log.hpp"
 
-namespace UI{
-    
-    Button::Button(const std::string& text, iRect area):Component(area), textLabel(text){
-
+namespace UI
+{
+    Button::Button(const std::string& text, iRect area)
+        : Component(area), textLabel(text)
+    {
     }
 
-    void Button::draw(Painter & painter){
-        painter.setBrushColor(RGBColor(255,255,255));
-        painter.setFillColor(RGBColor(39,89,46));
+    void Button::draw(Painter & painter)
+    {
+        painter.setBrushColor(::Color::white);
+        painter.setFillColor(::Color::green);
         iRect t = area;
         t.max = iXY(area.max.x-1,area.max.y-1);
         painter.fillRect(t);

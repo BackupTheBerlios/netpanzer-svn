@@ -41,6 +41,8 @@ public:
     void setPalette(RGBColor *color);
 
     bool isFullScreen() const;
+
+    SDL_Surface* getSurface();
 }
 ; // end DirectDraw
 

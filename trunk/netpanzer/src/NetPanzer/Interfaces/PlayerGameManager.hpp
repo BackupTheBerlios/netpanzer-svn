@@ -27,8 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class PlayerGameManager : public BaseGameManager
 {
 private:
-    UI::Painter painter;
-    Panels::TestPanel test;
+    Panels::TestPanel testpanel;
     bool showNewPanel;
 
     void initializeWindowSubSystem();
@@ -47,13 +46,11 @@ protected:
     virtual void inputLoop();
     virtual void graphicsLoop();
 public:
+    PlayerGameManager();
+    
     virtual bool launchNetPanzerGame();
 
     static void launchMultiPlayerGame();
-
-    PlayerGameManager():painter(), test(iXY(350,280)){
-        showNewPanel = false;
-    }
 };
 
 #endif

@@ -1,4 +1,5 @@
-/*Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
+/*
+Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
  
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -14,60 +15,78 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
 
 #include "Painter.hpp"
-#include "2D/Palette.hpp"
 #include "Util/Log.hpp"
 
-namespace UI{
+#include "Line.hpp"
 
-    Painter::Painter()
+namespace UI
+{
+    Painter::Painter(SDL_Surface* surface)
+        : drawingSurface(surface)
     {
-        pushTransform(iXY(0,0));
     }
     
     Painter::~Painter()
     {
-
+        if(transforms.size() > 0)
+            LOG(("Warning: transform list is not empty at Painter::~Painter"));
     }
 
-    void Painter::setBrushColor(RGBColor color)
+    void Painter::setSurface(SDL_Surface* surface)
     {
-        this->brushColor = Palette::findNearestColor(color);
+        drawingSurface = surface;
     }
 
-    void Painter::setFillColor(RGBColor color)
+    void Painter::setBrushColor(Color color)
     {
-        this->fillColor = Palette::findNearestColor(color);
+        brushColor = color;
     }
 
-    void Painter::drawLine(iXY from, iXY to){
-            
-        to += currentTransform.translation;
-        from += currentTransform.translation;
-        drawingSurface->drawLine(from, to, 255);
+    void Painter::setFillColor(Color color)
+    {
+        fillColor = color;
     }
 
-    void Painter::drawRect(iRect rect){
-        rect.min += currentTransform.translation;
-        rect.max += currentTransform.translation;
-        drawingSurface->drawRect(rect, brushColor); 
+    void Painter::drawLine(iXY from, iXY to)
+    {
+        currentTransform.apply(from);
+        currentTransform.apply(to);
+
+        UI::drawLine(drawingSurface, from, to, brushColor);
     }
 
-    void Painter::fillRect(iRect rect){
-        rect.min += currentTransform.translation;
-        rect.max += currentTransform.translation;
-        drawingSurface->fillRect(rect, fillColor); 
+    void Painter::drawRect(iRect rect)
+    {
+        currentTransform.apply(rect);
+
+        UI::drawLine(drawingSurface, rect.min, iXY(rect.max.x, rect.min.y),
+                 brushColor);
+        UI::drawLine(drawingSurface, iXY(rect.max.x, rect.min.y), rect.max,
+                 brushColor);
+        UI::drawLine(drawingSurface, rect.min, iXY(rect.min.x, rect.max.y),
+                brushColor);
+        UI::drawLine(drawingSurface, iXY(rect.min.x, rect.max.y), rect.max,
+                brushColor);
     }
 
-    void Painter::pushTransform(iXY translate){
-        Transform t;
-        t.translation = translate;
-        transforms.push(t);
-        currentTransform += t;
+    void Painter::fillRect(iRect rect)
+    {
+        // TODO
     }
 
-    void Painter::popTransform(){
+    void Painter::pushTransform(iXY translate)
+    {
+        transforms.push(Transform(translate));
+        currentTransform += transforms.top();
+    }
+
+    void Painter::popTransform()
+    {
+        assert(transforms.size() > 0);
+
         currentTransform -= transforms.top();
         transforms.pop();
     }

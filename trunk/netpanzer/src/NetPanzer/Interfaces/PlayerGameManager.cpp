@@ -119,6 +119,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameManager.hpp"
 #include "GameControlRulesDaemon.hpp"
 
+PlayerGameManager::PlayerGameManager()
+    : testpanel(iXY(0, 0))
+{
+    showNewPanel = false;
+}
+
 //-----------------------------------------------------------------
 void PlayerGameManager::initializeVideoSubSystem()
 {
@@ -129,8 +135,8 @@ void PlayerGameManager::initializeVideoSubSystem()
 
     lobbyView = new LobbyView();
     progressView = new ProgressView();
-    painter.setSurface(screen);
 }
+
 //-----------------------------------------------------------------
 void PlayerGameManager::shutdownVideoSubSystem()
 {
@@ -246,9 +252,12 @@ void PlayerGameManager::graphicsLoop()
     Desktop::draw(*screen);
 
     //TODO : clean this ugly test :)
-    if(showNewPanel && Desktop::getVisible("GameView")){
+    if(showNewPanel && Desktop::getVisible("GameView"))
+    {
+        UI::Painter painter(Screen->getSurface());
+
         //Game started, draw interface
-        test.draw(painter);
+        testpanel.draw(painter);
     }
 
     if (Desktop::getVisible("GameView")) {

@@ -105,3 +105,7 @@ bool SDLDraw::isFullScreen() const
     return FrontBuffer->flags & SDL_FULLSCREEN;
 }
 
+SDL_Surface* SDLDraw::getSurface()
+{
+    return FrontBuffer;
+}

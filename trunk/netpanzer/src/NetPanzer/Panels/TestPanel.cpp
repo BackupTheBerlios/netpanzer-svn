@@ -1,5 +1,9 @@
+#include <config.h>
+
 #include "TestPanel.hpp"
 #include "Types/iRect.hpp"
+
+#include "2D/Color.hpp"
 
 namespace Panels{
     const int TestPanel::WIDTH = 220;
@@ -13,7 +17,7 @@ namespace Panels{
     }
 
     void TestPanel::draw(UI::Painter & painter){
-        painter.setBrushColor(RGBColor(255,255,255));
+        painter.setBrushColor(Color::white);
         iRect t = area;
         t.max = iXY(area.max.x-1,area.max.y-1);
         painter.drawRect(t);

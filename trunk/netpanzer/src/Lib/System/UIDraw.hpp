@@ -15,9 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __UIDraw_hpp__
 #define __UIDraw_hpp__
+
+#include <SDL/SDL_video.h>
 
 #include "2D/RGBColor.hpp"
 
@@ -29,8 +30,7 @@ protected:
     int curWidth, curHeight, curBPP;
 
 public:
-    virtual ~UIDraw()
-    { }
+    virtual ~UIDraw();
 
     virtual void setVideoMode(int width, int height, int bpp,
                               bool fullscreen) = 0;
@@ -63,6 +63,8 @@ public:
     {
         return curBPP;
     }
+
+    virtual SDL_Surface* getSurface() = 0;
 }
 ; // end DirectDraw
 

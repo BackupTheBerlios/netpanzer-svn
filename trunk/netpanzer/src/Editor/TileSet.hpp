@@ -27,6 +27,9 @@ public:
     std::string getDirectory();
     void setName(const std::string& newname);
 
+    size_t getTileWidth() const;
+    size_t getTileHeight() const;
+
     size_t getTileCount() const;
     SDL_Surface* getTile(size_t num);
     size_t addTile(SDL_Surface* image, SDL_Rect* sourcerect = 0);
