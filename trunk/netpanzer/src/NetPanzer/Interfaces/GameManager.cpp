@@ -146,7 +146,6 @@ int GameManager::execution_mode;
 unsigned char GameManager::game_state  = _game_state_idle;
 iXY GameManager::previous_video_mode_res;
 iXY GameManager::current_video_mode_res;
-BYTE     GameManager::current_mode_flags;
 
 
 static Surface hostLoadSurface;
@@ -567,11 +566,6 @@ void GameManager::processSystemKeys()
 
         if (KeyboardInterface::getKeyPressed( SDLK_F3 )) {
             Desktop::toggleVisibility( "UnitColorView" );
-        }
-
-        // Toggle unit damage bars.
-        if (KeyboardInterface::getKeyPressed(SDLK_d)) {
-            GameConfig::toggleDrawUnitDamage();
         }
 
         // Remove all selection.

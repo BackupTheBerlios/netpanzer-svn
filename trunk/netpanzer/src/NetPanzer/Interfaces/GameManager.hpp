@@ -62,7 +62,6 @@ protected:
 
     static iXY previous_video_mode_res;
     static iXY current_video_mode_res;
-    static uint8_t  current_mode_flags;
 
 protected:
     static unsigned char game_state;
