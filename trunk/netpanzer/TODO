@@ -6,14 +6,12 @@ Next release:
 -with 75% objective setting you can win the Cramped with 2 outposts already
  (which is only be 66% of all outposts)
 -after having a full nodelist in A* the server is getting slow
--when typing empty messages they are sent anyway
 -the refresh button should be disabled in the serverlist window while the
  refreshing is in progress
 -when starting to build a titan 2minutes is displayed for a short time
 -display a message when the round is over ("blabla captured xx% of outposts,
         "time is over", "blabla reached xxx frags")
--having multiple servers in serverlist makes netp crash - fixed
-
+-in objective mode show number of objectives captured/needed to win
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map
