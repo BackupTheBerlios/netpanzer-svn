@@ -6,6 +6,7 @@
 #include "TemplateSelectWidget.hpp"
 #include "Util/Exception.hpp"
 #include "TileSet.hpp"
+#include "TileTemplate.hpp"
 
 #define XSIZE 32
 #define YSIZE 32
@@ -147,21 +148,29 @@ void TemplateSelectWidget::OnMouseClick(wxMouseEvent& event)
 
 TileTemplate* TemplateSelectWidget::createTemplate(TileSet* tileset)
 {
+    std::auto_ptr<TileTemplate> tiletemplate
+        (new TileTemplate(tileset, tilecountx, tilecounty));
+    
     for(int x=0; x< tilecountx; x++) {
         for(int y=0;y< tilecounty; y++) {
-            if(selected[y*tilecountx + x])
+            if(selected[y*tilecountx + x]) {
+                tiletemplate->setTile(x, y, TileTemplate::NOTILE);
                 continue;
+            }
 
             SDL_Rect rect;
             rect.x = x*XSIZE;
             rect.y = y*YSIZE;
             rect.w = XSIZE;
             rect.h = YSIZE;
-            tileset->addTile(image, &rect);
+            size_t tile = tileset->addTile(image, &rect);
+            tiletemplate->setTile(x, y, tile);
         }
     }
 
-    return 0;
+    TileTemplate* result = tiletemplate.get();
+    tileset->addTemplate(tiletemplate.release());
+    return result;
 }
 
 BEGIN_EVENT_TABLE(TemplateSelectWidget, SDLView)

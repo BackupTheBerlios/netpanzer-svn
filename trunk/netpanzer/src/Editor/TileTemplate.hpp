@@ -2,7 +2,9 @@
 #define __TILETMEPLATE_HPP__
 
 #include <stdio.h>
+#include <stdint.h>
 #include <assert.h>
+#include <string>
 
 #include "Util/NoCopy.hpp"
 
@@ -12,9 +14,15 @@ class TileSet;
 class TileTemplate : public NoCopy
 {
 public:
+    enum {
+        NOTILE = 0xffff
+    };
+    
     TileTemplate(TileSet* tileset, size_t sizex, size_t sizey);
-    TileTemplate(ReadFile* file);
+    TileTemplate(TileSet* tileset, const std::string& name);
     ~TileTemplate();
+
+    void save();
 
     void setTile(size_t x, size_t y, size_t tilenum)
     { 
@@ -32,7 +40,9 @@ public:
 private:
     TileSet* tileset;
     size_t sizex, sizey;
-    size_t* tiles;
+    uint16_t* tiles;
+
+    std::string name;
 };
 
 #endif

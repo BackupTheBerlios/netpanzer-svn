@@ -38,9 +38,7 @@ void TileSetEditor::saveTileSet()
 {
     try {
         if(currenttileset) {
-            std::auto_ptr<WriteFile>
-                file(FileSystem::openWrite(filename.c_str()));        
-            currenttileset->save(*(file.get()));
+            currenttileset->save();
         }                                                                 
     } catch(std::exception& e) {
         std::string errormsg = "Couldn't save Tileset to '";
@@ -63,11 +61,9 @@ bool TileSetEditor::switchTileSet(const std::string& newtileset)
     try {
         filename = "/tileset/";
         filename += newtileset;
-        filename += "/tiles.dat";
-        std::auto_ptr<ReadFile> file (FileSystem::openRead(filename.c_str()));
 
         currenttileset = new TileSet();
-        currenttileset->load(*(file.get()));
+        currenttileset->load(filename);
 
         tilesetview->setTileSet(currenttileset);
     } catch(std::exception& e) {

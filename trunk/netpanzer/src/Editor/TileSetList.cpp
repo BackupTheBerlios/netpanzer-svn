@@ -76,9 +76,8 @@ void TileSetList::OnNewTileset(wxCommandEvent& event)
 
         std::auto_ptr<TileSet> tileset (new TileSet());
         std::string filename = newtileset;
-        filename += "/tiles.dat";
-        std::auto_ptr<WriteFile> file (FileSystem::openWrite(filename.c_str()));
-        tileset->save(*(file.get()));
+        tileset->setDirectory(filename);
+        tileset->save();
 
         populateList();
         long idx = FindItem(-1, "NewTileset");

@@ -9,6 +9,7 @@
 #include "Util/Exception.hpp"
 #include "Util/Log.hpp"
 #include "TileSet.hpp"
+#include "TileTemplate.hpp"
 
 static const char* MAGICSTRING="TLST";
 static const uint32_t FILEFORMATVERSION=0001;
@@ -86,13 +87,24 @@ TileSet::TileSet()
 
 TileSet::~TileSet()
 {
+    std::vector<TileTemplate*>::iterator i;
+    for(i=templates.begin(); i!=templates.end(); i++) {
+        delete *i;
+    }
+    
     delete header;
     delete[] tiledata;
 }
 
-void TileSet::load(ReadFile& file)
+void TileSet::load(const std::string& dir)
 {
-    std::auto_ptr<TileSetHeader> fileheader (new TileSetHeader(file));
+    std::string filename = dir;
+    filename += "/tiles.dat";
+    
+    std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
+   
+    // read the header
+    std::auto_ptr<TileSetHeader> fileheader (new TileSetHeader(*file));
 
     if(memcmp(fileheader->magic, MAGICSTRING, 4) != 0)
         throw Exception("File is not a tileset");
@@ -110,20 +122,58 @@ void TileSet::load(ReadFile& file)
     delete[] tiledata;
     tilebuffersize = 0;
     tiledata = 0;
-    
+   
+    // read tiles
     tilesize = header->tilewidth * header->tileheight * (header->tilebitsperpixel / 8);
     if(header->tilecount > 0) {
         resizeBuffer(tilesize * header->tilecount);
-        if(file.read(tiledata, tilesize, header->tilecount) != header->tilecount)
+        if(file->read(tiledata, tilesize, header->tilecount) != header->tilecount)
             throw Exception("Tileset file is too short.");
     }
+
+    // read templates
+    readTemplates(dir);
 }
 
-void TileSet::save(WriteFile& file)
+void TileSet::readTemplates(const std::string& newdir)
 {
-    header->write(file);
+    dir = newdir;
+    std::string templatedir = dir;
+    templatedir += "/templates/";
+    
+    char** files = FileSystem::enumerateFiles(templatedir);
+    for(char** file = files; *file != 0; file++) {
+        std::string filename = templatedir;
+        filename += *file;
+
+        // ...
+    }
+
+    FileSystem::freeList(files);
+}
+
+void TileSet::save()
+{
+    std::string filename = dir;
+    filename += "/tiles.dat";
+
+    std::auto_ptr<WriteFile> file (FileSystem::openWrite(filename));
+    
+    header->write(*file);
     if(tilesize * header->tilecount != 0)
-        file.write(tiledata, tilesize, header->tilecount);
+        file->write(tiledata, tilesize, header->tilecount);
+
+    // TODO save templates
+}
+
+const std::string& TileSet::getDirectory() const
+{
+    return dir;
+}
+
+void TileSet::setDirectory(const std::string& newdirectory)
+{
+    dir = newdirectory;
 }
 
 size_t TileSet::getTileCount() const
@@ -145,7 +195,7 @@ SDL_Surface* TileSet::getTile(size_t num)
     return surface;
 }
 
-void TileSet::addTile(SDL_Surface* surface, SDL_Rect* srcrect)
+size_t TileSet::addTile(SDL_Surface* surface, SDL_Rect* srcrect)
 {
     if(surface->format->BitsPerPixel != header->tilebitsperpixel)
         throw Exception("Surface has incompatible format to be added as a tile"
@@ -192,11 +242,28 @@ void TileSet::addTile(SDL_Surface* surface, SDL_Rect* srcrect)
     }
 
     header->tilecount++;
+
+    return header->tilecount-1;
 }
 
 iXY TileSet::getTileSize() const
 {
     return iXY(header->tilewidth, header->tileheight);
+}
+
+size_t TileSet::getTemplateCount() const
+{
+    return templates.size();
+}
+
+void TileSet::addTemplate(TileTemplate* tiletemplate)
+{
+    templates.push_back(tiletemplate);
+}
+
+TileTemplate* TileSet::getTemplate(size_t num)
+{
+    return templates.at(num);
 }
 
 void TileSet::resizeBuffer(size_t newbuffersize)
