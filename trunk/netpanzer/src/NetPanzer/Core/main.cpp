@@ -243,7 +243,7 @@ int netpanzer_main(int argc, char** argv)
     } 
 // in debug mode we want the exception to abort, so that we have the original
 // stack backtrace
-#ifndef DEBUG
+#if !defined(DEBUG) || defined(WIN32)
     catch(std::exception& e) {
         LOGGER.warning("An unexpected exception occured: %s\nShutdown needed.",
                 e.what());
