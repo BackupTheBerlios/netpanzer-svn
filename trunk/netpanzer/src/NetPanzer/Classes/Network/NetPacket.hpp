@@ -82,13 +82,24 @@ class MultiMessage : public NetMessage
 {
 public:
     uint8_t  message_count;
+private:
     uint16_t message_size;
-
+public:
     uint8_t  data[ _MULTI_PACKET_LIMIT ];
 
     size_t realSize()
     {
         return( sizeof( MultiMessage ) - _MULTI_PACKET_LIMIT + message_size );
+    }
+
+    void setSize(uint16_t newsize)
+    {
+        message_size = htol16(newsize);
+    }
+
+    uint16_t getSize(void)
+    {
+        return ltoh16(message_size);
     }
 }
 __attribute__((packed));

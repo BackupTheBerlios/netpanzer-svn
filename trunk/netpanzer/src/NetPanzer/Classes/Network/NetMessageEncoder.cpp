@@ -39,7 +39,7 @@ void NetMessageEncoder::resetEncoder( void )
     encode_message.message_class = _net_message_class_multi ;
     encode_message.message_id = 0;
     encode_message.message_count = 0;
-    encode_message.message_size = 0;
+    encode_message.setSize(0);
     memset( encode_message.data, 0, _MULTI_PACKET_LIMIT );
     encode_message_index = 0;
 }
@@ -49,7 +49,7 @@ void NetMessageEncoder::encodeMessage(NetMessage *message, unsigned short size)
     message->setsize(size);
     if( ( (encode_message_index + size + sizeof(SubPacketType)) > _MULTI_PACKET_LIMIT )
       ) {
-        encode_message.message_size = (unsigned short) encode_message_index;
+        encode_message.setSize((uint16_t) encode_message_index);
 
         if( NetworkState::status == _network_state_server ) {
             SERVER->sendMessage( &encode_message, encode_message.realSize(), 0 );
@@ -79,7 +79,7 @@ bool NetMessageEncoder::encodeMessage( NetMessage *message, unsigned short size,
     
     if( ( (encode_message_index + size + sizeof(SubPacketType)) > _MULTI_PACKET_LIMIT )
       ) {
-        encode_message.message_size = (unsigned short) encode_message_index;
+        encode_message.setSize((uint16_t) encode_message_index);
 
         *encoded_message = (MultiMessage *) &encode_message;
         return( true );
@@ -107,7 +107,7 @@ bool NetMessageEncoder::encodeMessage( NetMessage *message, unsigned short size,
 void NetMessageEncoder::getEncodeMessage( MultiMessage **message )
 {
     if ( encode_message.message_count > 0 ) {
-        encode_message.message_size = (unsigned short) encode_message_index;
+        encode_message.setSize((uint16_t) encode_message_index);
 
         *message = (MultiMessage *) &encode_message;
     } // ** if
@@ -119,8 +119,8 @@ void NetMessageEncoder::getEncodeMessage( MultiMessage **message )
 void NetMessageEncoder::setDecodeMessage( MultiMessage *message )
 {
     decode_message.message_count = message->message_count;
-    decode_message.message_size = message->message_size;
-    memcpy(decode_message.data, message->data, message->message_size);
+    decode_message.setSize(message->getSize());
+    memcpy(decode_message.data, message->data, message->getSize());
     decode_message_index = 0;
     decode_current_count = 0;
 }
@@ -145,7 +145,7 @@ bool NetMessageEncoder::decodeMessage( NetMessage **message )
 void NetMessageEncoder::sendEncodedMessage( void )
 {
     if ( encode_message.message_count > 0 ) {
-        encode_message.message_size = (unsigned short) encode_message_index;
+        encode_message.setSize((uint16_t) encode_message_index);
 
         if( NetworkState::status == _network_state_server ) {
             SERVER->sendMessage( &encode_message, encode_message.realSize(), 0 );
