@@ -78,7 +78,7 @@ rule InstallData
   
       Install $(target) : $(i) ;
       MODE on $(target) = $(FILEMODE) ;
-      Depends install_shellscripts : $(target) ;
+      Depends install_data : $(target) ;
   }
 }
 
@@ -143,7 +143,7 @@ rule Install
 #----------------------------------------------------------------------------
 
 INSTALLTARGETS = install_apps install_libs install_headers
-		 install_shellscripts install_man ;
+		 install_shellscripts install_data install_man ;
 
 Always install $(INSTALLTARGETS) ;
 NotFile install $(INSTALLTARGETS) ;
