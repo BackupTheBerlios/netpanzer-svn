@@ -13,7 +13,6 @@ public:
         : needstamp(true)
     {
         stream = &std::cout;
-        std::cout << "New\n";
         setp(buf, buf+sizeof(buf));
     }
 
