@@ -5,7 +5,6 @@ Next release:
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map
    or where a certain player is playing.
- * take care about integration into xqf - done
  * Create UDP broadcast code for LAN games
 
 *** Network

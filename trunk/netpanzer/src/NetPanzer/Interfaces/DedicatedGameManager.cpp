@@ -128,11 +128,12 @@ void DedicatedGameManager::inputLoop()
                     << std::setw(4) << "Lost" << " "
                     << std::setw(5) << "Score" << " "
                     << std::setw(21) << "IP\n";
-                size_t playercount = PlayerInterface::countPlayers();
-                for(size_t i = 0; i<playercount; ++i) {
+                NetworkServerUnix* server = (NetworkServerUnix*) SERVER;
+                for(size_t i = 0; i<PlayerInterface::getMaxPlayers(); ++i) {
                     PlayerState* playerstate =
                         PlayerInterface::getPlayerState(i);
-                    NetworkServerUnix* server = (NetworkServerUnix*) SERVER;
+                    if(playerstate->getStatus() != _player_state_active)
+                        continue;
                     //*Console::server
                     std::cout
                         << std::setw(3) << playerstate->getID() << " "

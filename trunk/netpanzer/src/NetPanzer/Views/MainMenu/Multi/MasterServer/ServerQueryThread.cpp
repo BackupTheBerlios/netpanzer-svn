@@ -120,7 +120,8 @@ ServerQueryThread::queryMasterServer()
         while(!stream.eof() && running) {
             std::string token = tokenizer.getNextToken();
             if(token == "ip") {
-                newMasterServers += ",";
+                if(newMasterServers != "")
+                    newMasterServers += ",";
                 newMasterServers += tokenizer.getNextToken();
             } else if(token == "port") {
                 tokenizer.getNextToken();
