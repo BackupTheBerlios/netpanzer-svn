@@ -291,7 +291,7 @@ int IRCLobby::messagesThreadEntry(void* data)
                 restart_delay=5000;
             }
             else {
-                static const int max_restart_delay=60*15*1000;
+                static const int max_restart_delay=60*2*1000; // max time we delay before retrying the connection
                 restart_delay*=2; 
                 if(restart_delay>=max_restart_delay) {
                     restart_delay=max_restart_delay; 
