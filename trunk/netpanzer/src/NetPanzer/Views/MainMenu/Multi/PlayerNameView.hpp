@@ -33,11 +33,9 @@ public:
     {}
 
     void init();
-    void setString(const char *s) { playerName.setString(s); }
-    const char *getString() { return playerName.getString(); }
 
 private:
-    static void returnPressed(cInputField* input);
+    static void textChanged(cInputField* input);
     
     enum { BORDER_SPACE           =  4 };    
     // irc nick is 16 chars max, 2 = "np", 1 spare for digit if nick is taken
@@ -45,7 +43,5 @@ private:
 
     cInputFieldString playerName;
 }; // end PlayerNameView
-
-//extern PlayerNameView* playernameview;
 
 #endif // end __PlayerNameView_hpp__

@@ -103,7 +103,7 @@ public:
 
     void setPos(iXY pos);
     void setInputFieldString(cInputFieldString *string);
-    void setReturnAction(ACTION_FUNC_PTR func);
+    void setTextAction(ACTION_FUNC_PTR func);
     void setExcludedCharacters(const char *excludedCharacters);
     void addChar(int newChar);
     void addExtendedChar(int newExtendedChar);
@@ -125,7 +125,7 @@ private:
     iRect    bounds;
     size_t   cursorPos;
     Surface inputFieldSurface;
-    ACTION_FUNC_PTR returnaction;
+    ACTION_FUNC_PTR textaction;
 
     void pressKey(int ch);
     void checkRepeat();

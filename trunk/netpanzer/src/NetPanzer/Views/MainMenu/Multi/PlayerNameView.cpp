@@ -43,14 +43,10 @@ PlayerNameView::PlayerNameView() : View()
     resizeClientArea(INPUT_FIELD_CHARACTERS * CHAR_XPIX + 8 + BORDER_SPACE * 2, Surface::getFontHeight() + 4 + BORDER_SPACE * 2);
 
     init();
-
-    // XXX ugly
-//    if(!playernameview) playernameview = this;
 } // end PlayerNameView::PlayerNameView
 
 PlayerNameView::~PlayerNameView()
 {
-//	playernameview=0;
 }
 
 // init
@@ -60,7 +56,7 @@ void PlayerNameView::init()
     playerName.init(gameconfig->playername.c_str(), INPUT_FIELD_CHARACTERS);
     cInputField* input 
         = addInputField(iXY(BORDER_SPACE, BORDER_SPACE), &playerName, "", true);
-    input->setReturnAction(returnPressed);
+    input->setTextAction(textChanged);
 } // end PlayerNameView::init
 
 // doDraw
@@ -73,10 +69,8 @@ void PlayerNameView::doDraw(Surface &viewArea, Surface &clientArea)
     View::doDraw(viewArea, clientArea);
 } // end PlayerNameView::doDraw
 
-void PlayerNameView::returnPressed(cInputField* input)
+void PlayerNameView::textChanged(cInputField* input)
 {
     gameconfig->playername = input->getDestString();
 }
 
-// sometime we shoudl eleminate all these global vars...
-//PlayerNameView* playernameview = 0;

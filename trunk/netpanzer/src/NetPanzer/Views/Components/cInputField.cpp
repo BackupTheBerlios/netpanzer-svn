@@ -81,7 +81,7 @@ cInputField::cInputField(const cInputField& other)
     depressedKeyTimeNext(other.depressedKeyTimeNext),
     insertMode(other.insertMode), destString(other.destString),
     bounds(other.bounds),
-    cursorPos(other.cursorPos), returnaction(other.returnaction)
+    cursorPos(other.cursorPos), textaction(other.textaction)
 {
     if(other.excludedCharacters) {
         excludedCharacters = new char[strlen(other.excludedCharacters)+1];
@@ -116,7 +116,7 @@ void cInputField::operator= (const cInputField& other)
     destString = other.destString;
     bounds = other.bounds;
     cursorPos = other.cursorPos;
-    returnaction = other.returnaction;
+    textaction = other.textaction;
     inputFieldSurface.copy(other.inputFieldSurface);
 }
 
@@ -129,7 +129,7 @@ void cInputField::reset()
     maxCharCount       = 0;
     destString         = 0;
     excludedCharacters = 0;
-    returnaction       = 0;
+    textaction         = 0;
     strDisplayStart    = 0;
     depressedKey       = 0;
     depressedKeyTimeNext = 0;
@@ -217,11 +217,14 @@ void cInputField::addChar(int newChar)
             cursorPos++;
         }
     }
+
+    if(textaction != 0)
+        textaction(this);
 } // addChar
 
-void cInputField::setReturnAction(ACTION_FUNC_PTR action)
+void cInputField::setTextAction(ACTION_FUNC_PTR action)
 {
-    returnaction = action;
+    textaction = action;
 }
 
 // addExtendedChar
@@ -294,14 +297,14 @@ void cInputField::addExtendedChar(int newExtendedChar)
         break;
 
     case SDLK_KP_ENTER:
-    case SDLK_RETURN: {
-        if(returnaction != 0)
-            returnaction(this);
-    }
+    case SDLK_RETURN:
+        break;
 
     default: break;
     }
 
+    if(textaction != 0)
+        textaction(this);
 } // addExtendedChar
 
 // draw
