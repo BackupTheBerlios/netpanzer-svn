@@ -44,7 +44,8 @@ void MainMenuView::doDraw(Surface &viewArea, Surface &clientArea)
     MenuTemplateView::doDraw(viewArea, clientArea);
 
     static char text[] =
-        "This is NetPanzer, a massively multiplayer tank battle game.  "
+        "This is NetPanzer version " PACKAGE_VERSION
+        ", a massively multiplayer tank battle game.  "
         "This application is free software under the terms of the "
         "Gnu General Public license (GPL). See the COPYING file for details."
         "\n"

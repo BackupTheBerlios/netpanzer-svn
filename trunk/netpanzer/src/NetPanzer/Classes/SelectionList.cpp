@@ -69,13 +69,14 @@ bool SelectionList::selectTarget(iXY point)
     return true;
 }
 
-
-bool SelectionList::selectBounded(iRect bounds)
+bool SelectionList::selectBounded(iRect bounds, bool addunits)
 {
     uint16_t player_id = PlayerInterface::getLocalPlayerIndex();
 
-    deselect();
-    unit_list.clear();
+    if(!addunits) {
+        deselect();
+        unit_list.clear();
+    }
 
     UnitInterface::queryUnitsAt(unit_list, bounds, player_id, _search_player);
 

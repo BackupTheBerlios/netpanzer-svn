@@ -1,3 +1,18 @@
+*** 2.0.0-rc3 ***
+
+* Fixed Duell map
+* Fixed servers not always registering at all masterservers but only one
+* Fixed some crashs in game
+* Fixed several crashs and misbehaviour in the serverlist
+* open a new console for win32 server and bot
+* Fixed problem in log code that manifested on linux/ppc (thanks to Johannes
+   Mockenhaupt for report+patch)
+* packet handling is more robust against malformed packets
+
+*** 2.0.0-rc2 ***
+
+* Fixed a problem where servers started from menu crashed
+
 *** 2.0.0-rc1 ***
 
 This is a prerelease open for public testing. Especiacially the new ppc code is

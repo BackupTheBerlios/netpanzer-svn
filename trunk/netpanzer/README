@@ -140,7 +140,7 @@ the server section of the xml file:
 *mapcycling [yes,no], default no
     cycle to next map after a map ended.
 
-*poweups [yes,no], default yes
+*powerups [yes,no], default yes
     enable/disable powerups
 
 *allowallies [yes,no], default yes

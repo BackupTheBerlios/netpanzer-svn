@@ -334,7 +334,9 @@ void WorldInputCmdProcessor::evaluateGroupingKeys()
     }
     if(released==0 && selected_bits>0 && selected_bits!=current_selection_list_bits) {
         // we've pressed down a number key
-        if(ctrl_status != true && alt_status != true) {
+        if(ctrl_status != true && alt_status != true &&
+                !KeyboardInterface::getKeyState(SDLK_LSHIFT) &&
+                !KeyboardInterface::getKeyState(SDLK_RSHIFT)) {
             working_list.unGroup();
         }
         for(int key_code=SDLK_0;  key_code<=SDLK_9; key_code++) {
@@ -450,7 +452,12 @@ bool WorldInputCmdProcessor::selectBoundBoxUnits()
         box_release.y = y;
     }
 
-    select_success = working_list.selectBounded(iRect( box_press, box_release));
+    bool addunits = false;
+    if(KeyboardInterface::getKeyState(SDLK_LSHIFT) ||
+            KeyboardInterface::getKeyState(SDLK_RSHIFT))
+        addunits = true;
+    select_success = working_list.selectBounded(iRect( box_press, box_release),
+            addunits);
 
     if ( select_success == false ) {
         iXY box_size;
@@ -585,7 +592,8 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents(MouseEvent &event)
                 if (working_list.unit_list.size() > 0) {
                     UnitBase *unit = UnitInterface::getUnit(
                             working_list.unit_list[0]);
-                    unit->soundSelected();
+                    if(unit)
+                        unit->soundSelected();
                 }
                 break;
 

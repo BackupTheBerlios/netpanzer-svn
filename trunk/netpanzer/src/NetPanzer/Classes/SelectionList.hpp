@@ -39,7 +39,7 @@ public:
 
     bool selectTarget( iXY point );
 
-    bool selectBounded( iRect bounds );
+    bool selectBounded(iRect bounds, bool addunits);
 
     bool isSelected()
     {
