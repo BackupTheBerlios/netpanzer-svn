@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include <memory>
 #include <string>
+#include <sstream>
+#include <stdexcept>
 #include <iostream>
 
 #include "MapInterface.hpp"
@@ -63,7 +65,51 @@ void ObjectiveInterface::resetLogic()
     cleanUpObjectiveList();
 }
 
-void ObjectiveInterface::loadObjectiveList( const char *file_path )
+static inline std::string readToken(std::istream& in, std::string tokenname)
+{
+    if(in.eof())
+        throw std::runtime_error("file too short.");
+    
+    // skip whitespace characters and comments
+    char c;
+    do {
+        in.get(c);
+        if(c == '#') {  // comment till end of line
+            do {
+                in.get(c);
+            } while(!in.eof() && c != '\n');
+        }
+    } while(!in.eof() && isspace(c));
+
+    if(in.eof())
+        throw std::runtime_error("file too short.");
+
+    // read token
+    std::string token;
+    while(!in.eof() && !isspace(c)) {
+        token += c;
+        in.get(c);
+    }
+    if(token != tokenname) {
+        std::stringstream msg;
+        msg << "Expected token '" << tokenname << "' got '" << token << "'.";
+        throw std::runtime_error(msg.str());
+    }
+
+    while(!in.eof() && isspace(c))
+        in.get(c);
+
+    // read token contents
+    std::string result;
+    while(!in.eof() && c != '\n') {
+        result += c;
+        in.get(c);
+    }
+
+    return result;
+}
+
+void ObjectiveInterface::loadObjectiveList(const char *file_path)
 {
     int objective_count = 0;
 
@@ -72,8 +118,9 @@ void ObjectiveInterface::loadObjectiveList( const char *file_path )
 
         cleanUpObjectiveList();
 
-        std::string comment;
-        in >> comment >> objective_count;
+        std::string objectivecount = readToken(in, "ObjectiveCount:");
+        std::stringstream ss(objectivecount);
+        ss >> objective_count;
 
         size_t loc_x, loc_y;
         size_t world_x, world_y;
@@ -81,14 +128,11 @@ void ObjectiveInterface::loadObjectiveList( const char *file_path )
         cleanUpObjectiveList();
         for (int objective_index = 0; objective_index < objective_count; objective_index++ ) {
             Objective *objective_obj;
-        
-            std::string dummy;
-            in >> dummy >> name;
-            if(!in.good())
-                throw Exception("file too short");
-            in >> dummy >> loc_x >> loc_y;
-            if(!in.good())
-                throw Exception("file too short (at %s)", name.c_str());
+       
+            name = readToken(in, "Name:");
+            std::string location = readToken(in, "Location:");
+            std::stringstream ss(location);
+            ss >> loc_x >> loc_y;
             
             MapInterface::mapXYtoPointXY( loc_x, loc_y, &world_x, &world_y );
 
