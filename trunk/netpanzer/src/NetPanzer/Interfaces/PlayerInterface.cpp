@@ -5,7 +5,7 @@ This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -249,6 +249,7 @@ PlayerState * PlayerInterface::allocateNewPlayer()
         if ( player_lists[ player_index ].getStatus() == _player_state_free ) {
             player_lists[ player_index ].setStatus( _player_state_allocated );
             player_lists[ player_index ].resetStats();
+	    player_lists[ player_index ].setColor( player_index );
             return( &player_lists[ player_index ] );
         } // ** if
 

@@ -142,7 +142,9 @@ void MiniMapInterface::annotateObjectives( Surface &map_surface )
     ObjectiveInterface::startObjectivePositionEnumeration();
 
     while( ObjectiveInterface::objectivePositionEnumeration( &world_rect, &objective_disposition, &objective_id ) ) {
-        switch( objective_disposition ) {
+        ObjectiveState * obj_state = ObjectiveInterface::getObjectiveState(objective_id);
+
+	switch( objective_disposition ) {
         case _objective_disposition_unoccupied :
             color = Color::white;
             break;
@@ -156,7 +158,7 @@ void MiniMapInterface::annotateObjectives( Surface &map_surface )
             break;
 
         case _objective_disposition_enemy :
-            color = enemy_objective_color;
+            color = PlayerInterface::getPlayerState( obj_state->occupying_player )->getColor();
             break;
         } // ** switch
 
@@ -179,7 +181,6 @@ void MiniMapInterface::annotateObjectives( Surface &map_surface )
             assert(false);
         }
 
-        ObjectiveState * obj_state = ObjectiveInterface::getObjectiveState(objective_id); 
         //LOG(("%d", obj_state.outpost_type));
         if(obj_state->outpost_type == 0){
             //outpost_type is never used, I assume it determine the type of objective and 0 is for outpost 

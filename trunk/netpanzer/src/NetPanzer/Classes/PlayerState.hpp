@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string.h>
 #include "PlayerID.hpp"
 #include "PlayerUnitConfig.hpp"
+#include "2D/Palette.hpp"
 
 enum { _player_state_free,
        _player_state_allocated,
@@ -40,11 +41,11 @@ public:
             uint8_t newflag, uint16_t newid, uint8_t newstatus,
             int16_t newkills, int16_t newkill_points, int16_t newlosses,
             int16_t newloss_points, int16_t newtotal,
-            int16_t newobjectives_held)
+            int16_t newobjectives_held, int newcolorIndex)
         : flag(newflag), playerindex_id(newid), status(newstatus),
           kills(newkills), kill_points(newkill_points), losses(newlosses),
           loss_points(newloss_points), total(newtotal),
-          objectives_held(newobjectives_held)
+          objectives_held(newobjectives_held), colorIndex( newcolorIndex )
     {
         memset(name, 0, sizeof(name));
         strncpy(name, newname.c_str(), 64);
@@ -61,6 +62,7 @@ public:
     int16_t loss_points;
     int16_t total;
     int16_t objectives_held;
+    int colorIndex;
 }
 __attribute__((packed));
 
@@ -82,6 +84,7 @@ private:
     short total;
     short objectives_held;
     bool stats_locked;
+    int colorIndex;
 
 public:
     PlayerUnitConfig unit_config;
@@ -261,7 +264,7 @@ public:
     {
         return NetworkPlayerState(name, flag, ID.getIndex(), status,
                 kills, kill_points, losses, loss_points, total,
-                objectives_held);
+                objectives_held, colorIndex);
     }
 
     void setFromNetworkPlayerState(NetworkPlayerState* state)
@@ -277,7 +280,11 @@ public:
         loss_points = state->loss_points;
         total = state->total;
         objectives_held = state->objectives_held;
+	colorIndex = state->colorIndex;
     }
+
+    void setColor( int index );
+    uint8_t getColor();
 };
 
 #endif // ** _PLAYERSTATE_HPP
