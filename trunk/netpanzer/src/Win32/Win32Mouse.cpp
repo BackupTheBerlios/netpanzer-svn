@@ -42,12 +42,3 @@ void Win32GetMousePos( long *x_pos, long *y_pos )
    }
  }
 
-void Win32HideHardwareMouse( void )
- {
-  while( ShowCursor( false ) > 0 );
- }
-
-void Win32ShowHardwareMouse( void )
- {
-  while( ShowCursor( true ) <= 0 );
- }

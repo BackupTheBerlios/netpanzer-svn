@@ -72,7 +72,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 {
 	iXY mousePos(mouseX, mouseY);
 	
-	MouseInterface::setCursor(_mcursor_default);
+	MouseInterface::setCursor(MouseInterface::defaultcursor);
 
 	prevMouseView = mouseView;
 

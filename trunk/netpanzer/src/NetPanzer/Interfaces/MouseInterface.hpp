@@ -30,80 +30,78 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _MIDDLE_BUTTON_MASK  0x02
 #define _RIGHT_BUTTON_MASK   0x04
 
-enum { _left_mbutton = 0x01, _middle_mbutton = 0x02, _right_mbutton = 0x04 };
-enum { _event_mbutton_click = 0x01, _event_mbutton_dbclick = 0x02,
-       _event_mbutton_down = 0x04, _event_mbutton_up = 0x08 }; 
-
-enum { _mcursor_default, 
-       _mcursor_noentry, 
-       _mcursor_move, 
-       _mcursor_select, 
-       _mcursor_target,
-       _mcursor_make_allie,
-       _mcursor_break_allie };
-
 class MouseEvent : public PObject
- {
-  public:
-  unsigned char button;
-  unsigned char event;
-  PointXYi down_pos;
-  PointXYi   up_pos; 
-   
- };
+{
+public:
+	enum {
+		EVENT_CLICK = 0x01,
+		EVENT_DBCLICK = 0x02,
+		EVENT_DOWN = 0x04,
+		EVENT_UP = 0x08
+	};
+  	unsigned char button;
+	unsigned char event;
+	PointXYi down_pos;
+	PointXYi   up_pos;
+};
 
 typedef QueueTemplate< MouseEvent > MouseEventQueue;  
 
 class MouseInterface : public PObject
- {
-  private:
-   static Surface mouse_cursor;
-   static unsigned char cursor_x_size;
-   static unsigned char cursor_y_size;
+{
+private:
+  	static Surface mouse_cursor;
+   	static unsigned char cursor_x_size;
+	static unsigned char cursor_y_size;
   
-  private:
-   static void Win32UpdateMousePos( void );
-
-  protected:
-   static PointXYi mouse_pos;  
+protected:
+  	static PointXYi mouse_pos;  
    
-   static float    button_hold_threshold;
+   	static float    button_hold_threshold;
 
-   static bool  left_button_down;
-   static bool  left_button_up;
-   static bool  left_button_dbclick_active; 
-   static PointXYi left_button_down_pos;
-   static PointXYi left_button_up_pos;
-   static TIMESTAMP left_button_hold_time;
+	static bool  left_button_down;
+	static bool  left_button_up;
+	static bool  left_button_dbclick_active; 
+	static PointXYi left_button_down_pos;
+	static PointXYi left_button_up_pos;
+	static TIMESTAMP left_button_hold_time;
      
-   static bool right_button_down;
-   static bool right_button_up;
-   static bool right_button_dbclick_active;
-   static PointXYi right_button_down_pos;
-   static PointXYi right_button_up_pos;
-   static TIMESTAMP right_button_hold_time;
+	static bool right_button_down;
+	static bool right_button_up;
+	static bool right_button_dbclick_active;
+	static PointXYi right_button_down_pos;
+	static PointXYi right_button_up_pos;
+	static TIMESTAMP right_button_hold_time;
    
-   static bool middle_button_down;
-   static bool middle_button_up;
-   static bool middle_button_dbclick_active;
-   static PointXYi middle_button_down_pos;
-   static PointXYi middle_button_up_pos;
-   static TIMESTAMP middle_button_hold_time;
+	static bool middle_button_down;
+	static bool middle_button_up;
+	static bool middle_button_dbclick_active;
+	static PointXYi middle_button_down_pos;
+	static PointXYi middle_button_up_pos;
+	static TIMESTAMP middle_button_hold_time;
    
-   static unsigned char button_mask;
+	static unsigned char button_mask;
   
-  public:
-   static MouseEventQueue event_queue;        
+public:
+	enum {
+		left_button = 0x01,
+		middle_button = 0x02,
+		right_button = 0x04
+	};
+
+	enum CursorType {
+		defaultcursor, noentry, move, select, target, allie, break_allie
+	};
+
+	static MouseEventQueue event_queue;        
    
-   static void initialize( void );
+	static void initialize();
    
-   static void setMousePosition( long x, long y );
-   
-   static inline void getMousePosition( long *x, long *y )
-    {
-     *x = mouse_pos.x;
-     *y = mouse_pos.y;
-    }
+	static inline void getMousePosition( long *x, long *y )
+	{
+		*x = mouse_pos.x;
+		*y = mouse_pos.y;
+	}
  
    static inline unsigned char getButtonMask( void )
     {
@@ -125,14 +123,9 @@ class MouseInterface : public PObject
    static void setMiddleButtonUp( void );
    static void setMiddleButtonDoubleDown( void );
    
-   static void setCursor( unsigned char cursor_type );
+   static void setCursor(CursorType type);
     
-   static void showHardwareCursor( void );
-   static void hideHardwareCursor( void );
-
    static void updateCursor( void );
-   
-
- };
+};
 
 #endif // ** _MOUSEINTERFACE_HPP

@@ -315,8 +315,6 @@ void MiniMapView::rMouseDown(const iXY &pos)
 //--------------------------------------------------------------------------
 void MiniMapView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
 {
-	float dt = TimerInterface::getTimeSlice();
-
 	// Let the map go up to the min screen dimension.
 	//maxMapSize = MIN(SCREEN_XPIX, SCREEN_YPIX);
 	maxMapSize = MIN(640, 480);
@@ -523,14 +521,14 @@ void MiniMapView::mouseMove(const iXY &prevPos, const iXY &newPos)
 			{
 				if (MiniMapInterface::isValidUnitMove(newPos))
 				{
-					MouseInterface::setCursor(_mcursor_move);
+					MouseInterface::setCursor(MouseInterface::move);
 				} else
 				{
-					MouseInterface::setCursor(_mcursor_noentry);
+					MouseInterface::setCursor(MouseInterface::noentry);
 				}
 			} else
 			{
-				MouseInterface::setCursor(_mcursor_default);
+				MouseInterface::setCursor(MouseInterface::defaultcursor);
 			}
 
 			if (!selectionAnchor)
@@ -542,7 +540,7 @@ void MiniMapView::mouseMove(const iXY &prevPos, const iXY &newPos)
 			selectionAnchor       = true;
 			
 			// Set the selection cursor.
-			MouseInterface::setCursor(_mcursor_select);
+			MouseInterface::setCursor(MouseInterface::select);
 
 		} else
 		{

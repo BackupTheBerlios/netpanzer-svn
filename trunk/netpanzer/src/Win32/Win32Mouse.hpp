@@ -20,8 +20,4 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 void Win32GetMousePos( long *x_pos, long *y_pos );
 
-void Win32HideHardwareMouse( void );
-void Win32ShowHardwareMouse( void );
-
-
 #endif 

@@ -203,34 +203,37 @@ unsigned char WorldInputCmdProcessor::getCursorStatus( PointXYi &loc )
 void WorldInputCmdProcessor::
         setMouseCursor( unsigned char world_cursor_status )
  {
+	// XXX yet another abstraction here? probably convert the cursor types to
+	// simple strings (which are the names of the cursor images at the same
+	// time) and get rid of all this code here and in MouseInterface
   switch( world_cursor_status )
    {
     case _cursor_regular :
-     MouseInterface::setCursor( _mcursor_default );
+     MouseInterface::setCursor( MouseInterface::defaultcursor );
     break;
 
     case _cursor_move :
-     MouseInterface::setCursor( _mcursor_move );
+     MouseInterface::setCursor( MouseInterface::move );
     break;
 
     case _cursor_blocked :
-     MouseInterface::setCursor( _mcursor_noentry );
+     MouseInterface::setCursor( MouseInterface::noentry );
     break;
 
     case _cursor_player_unit :
-     MouseInterface::setCursor( _mcursor_select );
+     MouseInterface::setCursor( MouseInterface::select );
     break;
 
     case _cursor_enemy_unit :
-     MouseInterface::setCursor( _mcursor_target );
+     MouseInterface::setCursor( MouseInterface::target );
     break;
   
     case _cursor_make_allie :
-     MouseInterface::setCursor( _mcursor_make_allie );
+     MouseInterface::setCursor( MouseInterface::allie );
     break;
      
     case _cursor_break_allie :
-     MouseInterface::setCursor( _mcursor_break_allie );
+     MouseInterface::setCursor( MouseInterface::break_allie );
     break;
 
     break;
@@ -619,10 +622,10 @@ void WorldInputCmdProcessor::evaluateMouseEvents( void )
    {
     event = MouseInterface::event_queue.dequeue();
 
-    if( event.button == _left_mbutton )
+    if( event.button == MouseInterface::left_button )
 	 evalLeftMButtonEvents( event );
 
-	if( event.button == _right_mbutton )
+	if( event.button == MouseInterface::right_button )
 	 evalRightMButtonEvents( event );
    }
 
@@ -641,7 +644,7 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
      )
    {
     
-    if (event.event == _event_mbutton_down )
+    if (event.event == MouseEvent::EVENT_DOWN )
     //if (event.event == _event_mbutton_click )
      {
       WorldViewInterface::clientXYtoWorldXY( world_win, event.down_pos, &world_pos );
@@ -651,7 +654,7 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
    } 
   else
    {
-    if ( event.event == _event_mbutton_down )
+    if ( event.event == MouseEvent::EVENT_DOWN )
      {
       if ( selection_box_active == false )
        {
@@ -662,7 +665,8 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
      } // ** _event_mbutton_down
 
   
-    if ( (event.event == _event_mbutton_click) && (left_button_hold_action_complete == false) )
+    if ( (event.event == MouseEvent::EVENT_CLICK) &&
+			(left_button_hold_action_complete == false) )
      {
       WorldViewInterface::clientXYtoWorldXY( world_win, event.down_pos, &world_pos );
       click_status = getCursorStatus( world_pos ); 
@@ -724,7 +728,7 @@ void WorldInputCmdProcessor::evalRightMButtonEvents( MouseEvent &event )
   PlayerID player_id;
 
 
-  if (event.event == _event_mbutton_click )
+  if (event.event == MouseEvent::EVENT_CLICK )
    {   
        
     if ( (KeyboardInterface::getKeyState(_SCAN_LCRTL) || KeyboardInterface::getKeyState(_SCAN_RCRTL) ) ) 
@@ -751,7 +755,7 @@ void WorldInputCmdProcessor::evalRightMButtonEvents( MouseEvent &event )
    }  // ** _event_mbutton_click
   
  
-  if (event.event == _event_mbutton_dbclick )
+  if (event.event == MouseEvent::EVENT_DBCLICK )
    {
     WorldViewInterface::clientXYtoWorldXY( world_win, event.down_pos, &world_pos );
     player_id = PlayerInterface::getLocalPlayerID();   

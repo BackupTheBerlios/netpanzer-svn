@@ -92,7 +92,8 @@ public:
 	 {
       return( button_mask );
 	 }
-	//FIXME//static inline const int      getCurButton () { return numButtons;             }
+	//FIXME
+	//static inline const int      getCurButton () { return numButtons;             }
 
 	static void setPointer(Surface *pointer);
 }; // end cMouse
