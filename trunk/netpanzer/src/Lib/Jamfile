@@ -8,3 +8,4 @@ SubInclude TOP src Lib optionmm ;
 SubInclude TOP src Lib System ;
 SubInclude TOP src Lib Xml ;
 SubInclude TOP src Lib UI ;
+SubInclude TOP src Lib IRC ;

@@ -18,11 +18,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __GetSessionHostView_hpp__
 #define __GetSessionHostView_hpp__
 
+#include <vector>
+
 #include "View.hpp"
 #include "2D/Surface.hpp"
-#include "Util/cGrowList.hpp"
 #include "ScrollBar.hpp"
-
 
 // Used for sorting a shape.
 int cHostCompareName(const void *elem1, const void *elem2);
@@ -55,7 +55,7 @@ public:
 class GetSessionHostView : public View
 {
 private:
-    cGrowList<cHost> hosts;
+    std::vector<cHost> hosts;
 
     int viewableItemCount;
     int highlightedItem;

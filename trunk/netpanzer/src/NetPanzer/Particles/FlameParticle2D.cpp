@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "FlameParticle2D.hpp"
 
-cGrowList <PackedSurface> FlameParticle2D::staticPackedExplosion0;
-cGrowList <PackedSurface> FlameParticle2D::staticPackedExplosion1;
+PackedSurfaceList FlameParticle2D::staticPackedExplosion0;
+PackedSurfaceList FlameParticle2D::staticPackedExplosion1;
 
 const int explosionFPS = 18;
 
@@ -47,19 +47,17 @@ FlameParticle2D::FlameParticle2D(	const fXYZ  &pos,
     int picNum = rand() % 2;
 
     if (picNum == 0) {
-        index = getPakIndex(scale, staticPackedExplosion0.getCount());
-        packedSurface.setData(staticPackedExplosion0[index]);
+        index = getPakIndex(scale, staticPackedExplosion0.size());
+        packedSurface.setData(* (staticPackedExplosion0[index]) );
     } else if (picNum == 1) {
-        index = getPakIndex(scale, staticPackedExplosion1.getCount());
-        packedSurface.setData(staticPackedExplosion1[index]);
-
+        index = getPakIndex(scale, staticPackedExplosion1.size());
+        packedSurface.setData(* (staticPackedExplosion1[index]));
     } else {
         assert(false);
     }
 
     // Check for accelerated flames.
     packedSurface.setFPS(getFPS(explosionFPS, 0));
-
 }; // end FlameParticle2D::FlameParticle2D
 
 // loadPakFiles
@@ -83,21 +81,7 @@ void FlameParticle2D::loadPakFiles()
 //---------------------------------------------------------------------------
 void FlameParticle2D::init()
 {
-    // Uncomment the following to produce packed puff particles.
-    //pakFiles();
-
     loadPakFiles();
-
-    /*
-    	explosionFireSprite0.create(iXY(96, 128), 96, 16);
-    	explosionFireSprite0.extractPCX("pics/particles/explosion/pcx/flack1.pcx", 5, 0);
-     
-    	explosionFireSprite1.create(iXY(128, 96), 128, 15);
-    	explosionFireSprite1.extractPCX("pics/particles/explosion/pcx/flack2.pcx", 4, 0);
-     
-    	explosionFireSprite0.setFPS(explosionFPS);
-    	explosionFireSprite1.setFPS(explosionFPS);
-    */
 } // end FlameParticle2D::init
 
 // draw
@@ -117,3 +101,4 @@ void FlameParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
     sorter.addSprite(&packedSurface);
 
 } // end FlameParticle2D::draw
+

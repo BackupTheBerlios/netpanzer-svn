@@ -21,9 +21,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Types/iXY.hpp"
 #include "Types/iRect.hpp"
 #include "2D/Surface.hpp"
+#include "Util/NoCopy.hpp"
 
 //--------------------------------------------------------------------------
-class cInputFieldString
+class cInputFieldString : public NoCopy
 {
     friend class cInputField;
 
@@ -70,35 +71,30 @@ public:
 class cInputField
 {
 public:
-    cInputField()
-    {
-        reset();
-    }
-    ~cInputField()
-    {
-        if (excludedCharacters != 0) {
-            delete [] excludedCharacters;
-        }
-    }
+    cInputField();
+    cInputField(const cInputField& other);
+    ~cInputField();
 
-    inline iXY    getPos() const
+    void operator= (const cInputField& other);
+
+    iXY    getPos() const
     {
         return pos;
     }
-    inline int    getMaxCharCount() const
+    int    getMaxCharCount() const
     {
         return maxCharCount;
     }
-    inline char  *getDestString() const
+    char  *getDestString() const
     {
         return destString;
     }
-    inline char  *getExcludedCharacters() const
+    char  *getExcludedCharacters() const
     {
         return excludedCharacters;
     }
 
-    inline bool contains(const iXY &pos) const
+    bool contains(const iXY &pos) const
     {
         return bounds.contains(pos);
     }

@@ -34,7 +34,7 @@ void EnqueueIncomingPacket(void *message, unsigned long message_size,
 
     TEMP_PACKET.packet_size = (unsigned short) message_size;
 
-    memmove( TEMP_PACKET.data, message, message_size );
+    memcpy(TEMP_PACKET.data, message, message_size);
     NetworkInterface::receive_queue.enqueue( TEMP_PACKET );
 }
 

@@ -22,10 +22,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Types/iXY.hpp"
 #include "Types/iRect.hpp"
 #include "2D/PackedSurface.hpp"
+#include "Util/NoCopy.hpp"
 
 class Surface;
 
-class cButton
+class cButton : public NoCopy
 {
 public:
     cButton()
@@ -38,13 +39,10 @@ public:
         if (toolTip != 0) free(toolTip);
     }
 
-    //typedef void (WINDOW::*ITEM_FUNC)(void);
     typedef void (*ITEM_FUNC)(void);
 
     ITEM_FUNC rightClickFunc;
     ITEM_FUNC leftClickFunc;
-    //Surface  topSurface;
-    //Surface  bottomSurface;
     PackedSurface topSurface;
     PackedSurface bottomSurface;
 
@@ -52,17 +50,17 @@ public:
     {
         return bounds;
     }
-    char *getName      () const
+    const char *getName () const
     {
         return name;
-    }
-    char *getToolTip   () const
-    {
-        return toolTip;
     }
     bool  getIsSelected() const
     {
         return isSelected;
+    }
+    const char* getToolTip() const
+    {
+        return toolTip;
     }
 
     void createPacked(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc);

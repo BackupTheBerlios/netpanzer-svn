@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "NetworkServerUnix.hpp"
 
+#include "NetPacketDebugger.hpp"
+
 //#define NETWORKDEBUG
 
 #ifdef NETWORKDEBUG
@@ -65,11 +67,6 @@ int NetworkServerUnix::sendMessage(const PlayerID& player_id,
                                    NetMessage* message, size_t size, int flags)
 {
     if(serversocket==0) { return _network_failed; }
-#ifdef NETWORKDEBUG
-    LOG( ( "SEND >> Class: %s ID: %d",
-            getNetMessageClass(message->message_class).c_str(),
-            message->message_id ) );
-#endif
     message->size = size;
 
     try {
@@ -83,6 +80,10 @@ int NetworkServerUnix::sendMessage(const PlayerID& player_id,
     }
 
     NetworkState::incPacketsSent(message->size);
+
+#ifdef NETWORKDEBUG
+    NetPacketDebugger::logMessage("S", message);
+#endif
 
     return _network_ok;
 }
@@ -117,26 +118,26 @@ int NetworkServerUnix::getMessage(NetMessage *message)
 
     if (loop_back_recv_queue.isReady() ) {
         loop_back_recv_queue.dequeue( &net_packet );
-        memmove( (void *) message, net_packet.data, net_packet.packet_size );
+        memcpy(message, net_packet.data, net_packet.packet_size);
 
+#ifdef NETWORKDEBUG
+        NetPacketDebugger::logMessage("R", message);
+#endif
         return true;
     } else {
         if ( receive_queue.isReady() ) {
             receive_queue.dequeue( &net_packet );
 
-            memmove(  (void *) message, net_packet.data, net_packet.packet_size );
+            memcpy(message, net_packet.data, net_packet.packet_size);
             NetworkState::incPacketsReceived( net_packet.packet_size );
-
-#ifdef NETWORKDEBUG
-            LOG( ( "RECV >> Class: %s ID: %d",
-                    getNetMessageClass(message->message_class).c_str(),
-                   message->message_id ) );
-#endif
 
             if ( message->message_class == _net_message_class_client_server ) {
                 processNetMessage( message );
             }
 
+#ifdef NETWORKDEBUG
+            NetPacketDebugger::logMessage("R", message);
+#endif
             return true;
         }
     } // ** else

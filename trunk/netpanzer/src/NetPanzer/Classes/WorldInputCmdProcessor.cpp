@@ -72,8 +72,6 @@ WorldInputCmdProcessor::WorldInputCmdProcessor()
 
     memset( local_key_table, 0, 256 );
 
-    UnitInterface::resetUnitCycleIterator( &unit_cycle_search_iterator );
-
     keyboard_input_mode = _keyboard_input_mode_command;
 
     selection_box_active = false;
@@ -247,14 +245,6 @@ setMouseCursor( unsigned char world_cursor_status )
     } // ** switch
 }
 
-void WorldInputCmdProcessor::cycleNextUnitAndChangeFocus( void )
-{
-    iXY world_pos;
-
-    world_pos = UnitInterface::unitPositionCycle( &unit_cycle_search_iterator );
-    WorldViewInterface::setCameraPosition( world_pos );
-}
-
 void WorldInputCmdProcessor::getManualControlStatus( void )
 {
     if ( KeyboardInterface::getKeyState( SDLK_LCTRL ) ||
@@ -269,9 +259,6 @@ void WorldInputCmdProcessor::getManualControlStatus( void )
 
 void WorldInputCmdProcessor::evaluateKeyCommands( void )
 {
-    //if ( (KeyboardInterface::getKeyPressed( SDLK_u ) == true) )
-    // { cycleNextUnitAndChangeFocus(); }
-
     if ( (KeyboardInterface::getKeyPressed( SDLK_o ) == true) ) {
         toggleDisplayOutpostNames();
     }

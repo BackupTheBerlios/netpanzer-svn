@@ -70,6 +70,57 @@ void cInputFieldString::reset()
 // cInputField definitions.
 ////////////////////////////////////////////////////////////////////////////
 
+cInputField::cInputField()
+{
+    reset();
+}
+
+cInputField::cInputField(const cInputField& other)
+    : pos(other.pos), maxCharCount(other.maxCharCount),
+    strDisplayStart(other.strDisplayStart), maxWidth(other.maxWidth),
+    depressedKey(other.depressedKey),
+    depressedKeyTimeNext(other.depressedKeyTimeNext),
+    insertMode(other.insertMode), destString(other.destString),
+    bounds(other.bounds),
+    cursorPos(other.cursorPos), returnaction(other.returnaction)
+{
+    if(other.excludedCharacters) {
+        excludedCharacters = new char[strlen(other.excludedCharacters)+1];
+        strcpy(excludedCharacters, other.excludedCharacters);
+    } else {
+        excludedCharacters = 0;
+    }
+    inputFieldSurface.copy(other.inputFieldSurface);
+}
+
+cInputField::~cInputField()
+{
+    delete[] excludedCharacters;
+}
+
+void cInputField::operator= (const cInputField& other)
+{
+    pos = other.pos;
+    maxCharCount = other.maxCharCount;
+    strDisplayStart = other.strDisplayStart;
+    maxWidth = other.maxWidth;
+    depressedKey = other.depressedKey;
+    depressedKeyTimeNext = other.depressedKeyTimeNext;
+    insertMode = other.insertMode;
+    destString = other.destString;
+    if(other.excludedCharacters) {
+        excludedCharacters = new char[strlen(other.excludedCharacters) +1];
+        strcpy(excludedCharacters, other.excludedCharacters);
+    } else {
+        excludedCharacters = 0;
+    }
+    destString = other.destString;
+    bounds = other.bounds;
+    cursorPos = other.cursorPos;
+    returnaction = other.returnaction;
+    inputFieldSurface.copy(other.inputFieldSurface);
+}
+
 // reset
 //--------------------------------------------------------------------------
 void cInputField::reset()

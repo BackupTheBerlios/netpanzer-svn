@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkState.hpp"
 
 #include "ConsoleInterface.hpp"
+#include "OpcodeDebugger.hpp"
 
 void UnitOpcodeEncoder::initialize( int send_method )
 {
@@ -55,18 +56,17 @@ void UnitOpcodeEncoder::encodeOpcode( UnitOpcode *opcode )
     }
 
     current_code_ptr =  ( (unsigned char *) &opcode_message.data) + opcode_message.code_size;
-    memmove( current_code_ptr, opcode, sizeof( UnitOpcodeStruct ) );
+    memcpy(current_code_ptr, opcode, sizeof( UnitOpcodeStruct ));
 
     opcode_message.code_size += sizeof( UnitOpcodeStruct );
     opcode_message.opcode_count++;
 
     NetworkState::incOpcodesSent();
-
 }
 
 void UnitOpcodeEncoder::setDecodeMessage( UnitOpcodeMessage *message )
 {
-    memmove( &decode_message, message, sizeof( UnitOpcodeMessage ) );
+    memcpy( &decode_message, message, sizeof( UnitOpcodeMessage ) );
     current_decode_opcode = 0;
 }
 
@@ -80,12 +80,13 @@ bool UnitOpcodeEncoder::decodeMessage( UnitOpcodeStruct *opcode )
     current_code_ptr = ( (unsigned char *) &decode_message.data)
                        + sizeof(UnitOpcodeStruct)*current_decode_opcode;
 
-    memmove( opcode, current_code_ptr, sizeof(UnitOpcodeStruct) );
+    memcpy( opcode, current_code_ptr, sizeof(UnitOpcodeStruct) );
 
     current_decode_opcode++;
 
     NetworkState::incOpcodesReceived();
-    return( true );
+
+    return true;
 }
 
 void UnitOpcodeEncoder::sendOpcodeMessage( void )

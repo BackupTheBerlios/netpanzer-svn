@@ -100,6 +100,15 @@ View::View(const iXY &pos, const iXY &size, const char *title)
 //---------------------------------------------------------------------------
 View::~View()
 {
+    std::vector<cButton*>::iterator i;
+    for(i = buttons.begin(); i != buttons.end(); i++) {
+        delete *i;
+    }
+    std::vector<cInputField*>::iterator f;
+    for(f = inputFields.begin(); f != inputFields.end(); f++) {
+        delete *f;
+    }
+    
     free(title);
     free(subTitle);
     free(labels);
@@ -130,7 +139,6 @@ void View::reset()
     setTitle("donut");
     setSubTitle("donut");
 
-    buttons               = 0;
     //scrollBar             = 0;
     labels                = 0;
     componentsUsedCount   = 0;
@@ -383,10 +391,6 @@ void View::loadPics()
 {
     // Are we already loaded?  Then bail.
     if (pics.getFrame0() != 0) return;
-
-    //pics.create(iXY(12, 11), 12, 2);
-    //pics.extractPCX("pics/buttons.pcx", 6, 1);
-
 } // end loadPics
 
 // draw
@@ -760,9 +764,11 @@ int View::lMouseUp(const iXY &downPos, const iXY &upPos)
     if (pressedButton == findButtonContaining(upPos)) {
         if (pressedButton >= 0) {
             //if (mouse.getCurButton() & 0)
-            if (buttons[pressedButton].leftClickFunc != 0) buttons[pressedButton].leftClickFunc();
-            //else
-            //if (buttons[pressedButton].rightClickFunc != 0) buttons[pressedButton].rightClickFunc();
+            if (buttons[pressedButton]->leftClickFunc != 0)
+                buttons[pressedButton]->leftClickFunc();
+            else
+            if (buttons[pressedButton]->rightClickFunc != 0)
+                buttons[pressedButton]->rightClickFunc();
         }
     }
 
@@ -1050,8 +1056,11 @@ void View::drawLabels(Surface &clientArea)
 //---------------------------------------------------------------------------
 void View::drawDefinedButtons(Surface &clientArea)
 {
-    for (int num = 0; num < buttons.getCount(); num++) {
-        buttons[num].topSurface.blt(clientArea, iXY(buttons[num].getBounds().min.x, buttons[num].getBounds().min.y));
+    std::vector<cButton*>::iterator i;
+    for(i = buttons.begin(); i != buttons.end(); i++) {
+        cButton* button = *i;
+        button->topSurface.blt(clientArea,
+                iXY(button->getBounds().min.x, button->getBounds().min.y));
     }
 } // end drawDefinedButtons
 
@@ -1061,11 +1070,11 @@ void View::drawDefinedButtons(Surface &clientArea)
 //---------------------------------------------------------------------------
 void View::drawInputFields(Surface &clientArea)
 {
-    for (int num = 0; num < inputFields.getCount(); num++) {
-        if (num == selectedInputField) {
-            inputFields[num].drawHighlighted(clientArea);
+    for (size_t num = 0; num < inputFields.size(); num++) {
+        if (num == (size_t) selectedInputField) {
+            inputFields[num]->drawHighlighted(clientArea);
         } else {
-            inputFields[num].draw(clientArea);
+            inputFields[num]->draw(clientArea);
         }
     }
 } // end drawInputFields
@@ -1080,11 +1089,12 @@ void View::drawHighlightedButton(Surface &clientArea)
 
     if (highlightedButton < 0) {
         return;
-    } else if (buttons[highlightedButton].topSurface.getFrameCount() < 2) {
-        clientArea.drawRect(iRect(buttons[highlightedButton].getBounds().min.x,
-                                  buttons[highlightedButton].getBounds().min.y,
-                                  buttons[highlightedButton].getBounds().max.x,
-                                  buttons[highlightedButton].getBounds().max.y),
+    } else if (buttons[highlightedButton]->topSurface.getFrameCount() < 2) {
+        cButton* button = buttons[highlightedButton];
+        clientArea.drawRect(iRect(button->getBounds().min.x,
+                                  button->getBounds().min.y,
+                                  button->getBounds().max.x,
+                                  button->getBounds().max.y),
                             Color::red);
         return;
     }
@@ -1093,22 +1103,24 @@ void View::drawHighlightedButton(Surface &clientArea)
         return;
     }
 
-    if (highlightedButton > buttons.getCount()) {
+    if (highlightedButton > (int) buttons.size()) {
         throw Exception("ERROR: highlightedButton > butons.getCount()");
     }
 
     // Change to the highlight button frame.
-    buttons[highlightedButton].topSurface.setFrame(1);
-    buttons[highlightedButton].topSurface.blt(clientArea, iXY(buttons[highlightedButton].getBounds().min.x, buttons[highlightedButton].getBounds().min.y));
-    buttons[highlightedButton].topSurface.setFrame(0);
+    buttons[highlightedButton]->topSurface.setFrame(1);
+    buttons[highlightedButton]->topSurface.blt(clientArea,
+            iXY(buttons[highlightedButton]->getBounds().min.x,
+                buttons[highlightedButton]->getBounds().min.y));
+    buttons[highlightedButton]->topSurface.setFrame(0);
 
 } // end drawHighlightedButton
 
 void View::addButtonPackedSurface(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc)
 {
-    buttons.setNum(buttons.getCount() + 1);
-    cButton &b = buttons[buttons.getCount() - 1];
-    b.createPacked(pos, source, toolTip, leftClickFunc);
+    cButton* button = new cButton;
+    button->createPacked(pos, source, toolTip, leftClickFunc);
+    buttons.push_back(button);
 }
 
 // addButtonCenterText
@@ -1121,10 +1133,9 @@ void View::addButtonCenterText(const iXY &pos,
                                const char *toolTip,
                                ITEM_FUNC leftClickFunc)
 {
-    // Add a new button to the button list.
-    buttons.setNum(buttons.getCount() + 1);
-    cButton &b = buttons[buttons.getCount() - 1];
-    b.createCenterText(pos, xSize, name, toolTip, leftClickFunc);
+    cButton* button = new cButton;
+    button->createCenterText(pos, xSize, name, toolTip, leftClickFunc);
+    buttons.push_back(button);
 } // end addButtonCenterText
 
 // addButtonTIL
@@ -1133,18 +1144,15 @@ void View::addButtonCenterText(const iXY &pos,
 //---------------------------------------------------------------------------
 void View::addButtonBMP(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func, const bool &isBordered)
 {
-    // Add a new button to the button list.
-    buttons.setNum(buttons.getCount() + 1);
-
-    cButton &b = buttons[buttons.getCount() - 1];
-
+    cButton* button = new cButton;
     if (isBordered) {
-        b.createBMPBordered(pos, imageName, toolTip, func);
+        button->createBMPBordered(pos, imageName, toolTip, func);
 
     } else {
-        b.createBMP(pos, imageName, toolTip, func);
+        button->createBMP(pos, imageName, toolTip, func);
     }
 
+    buttons.push_back(button);
 } // end addButtonBMP
 
 // addButtonSurface
@@ -1153,13 +1161,9 @@ void View::addButtonBMP(const iXY &pos, const char *imageName, const char *toolT
 //---------------------------------------------------------------------------
 void View::addButtonSurface(const iXY &pos, Surface &source, const char *toolTip, ITEM_FUNC func)
 {
-    // Add a new button to the button list.
-    buttons.setNum(buttons.getCount() + 1);
-
-    cButton &b = buttons[buttons.getCount() - 1];
-
-    b.createSurface(pos, source, toolTip, func);
-
+    cButton* button = new cButton;
+    button->createSurface(pos, source, toolTip, func);
+    buttons.push_back(button);
 } // end addButtonSurface
 
 // addButtonSurfaceSingle
@@ -1168,13 +1172,9 @@ void View::addButtonSurface(const iXY &pos, Surface &source, const char *toolTip
 //---------------------------------------------------------------------------
 void View::addButtonSurfaceSingle(const iXY &pos, Surface &source, const char *toolTip, ITEM_FUNC func)
 {
-    // Add a new button to the button list.
-    buttons.setNum(buttons.getCount() + 1);
-
-    cButton &b = buttons[buttons.getCount() - 1];
-
-    b.createSurfaceSingle(pos, source, toolTip, func);
-
+    cButton* button = new cButton;
+    button->createSurfaceSingle(pos, source, toolTip, func);
+    buttons.push_back(button);
 } // end addButtonSurfaceSingle
 
 // setSearchName
@@ -1288,8 +1288,8 @@ int View::findButtonContaining(const iXY &pos)
 {
     assert(this != 0);
 
-    for (int num = 0; num < buttons.getCount(); num++) {
-        if (buttons[num].contains(pos)) {
+    for (size_t num = 0; num < buttons.size(); num++) {
+        if (buttons[num]->contains(pos)) {
             //LOG(("pressed button: %u", num));
             return num;
         }
@@ -1305,8 +1305,8 @@ int View::findInputFieldContaining(const iXY &pos)
 {
     assert(this != 0);
 
-    for (int num = 0; num < inputFields.getCount(); num++) {
-        if (inputFields[num].contains(pos)) {
+    for(size_t num = 0; num < inputFields.size(); num++) {
+        if (inputFields[num]->contains(pos)) {
             return num;
         }
     }
@@ -1321,15 +1321,16 @@ void View::drawPressedButton(Surface &clientArea)
 {
     assert(this != 0);
 
-    if (pressedButton < 0 || buttons[pressedButton].topSurface.getFrameCount() < 2) return;
+    if (pressedButton < 0 || buttons[pressedButton]->topSurface.getFrameCount() < 2) return;
     if (highlightedButton != pressedButton) return;
-    assert(pressedButton < buttons.getCount());
+    assert(pressedButton < (int) buttons.size());
 
     // Chage to the highlight button frame.
-    buttons[pressedButton].topSurface.setFrame(2);
-    buttons[pressedButton].topSurface.blt(clientArea, iXY(buttons[pressedButton].getBounds().min.x,
-                                          buttons[pressedButton].getBounds().min.y));
-    buttons[pressedButton].topSurface.setFrame(0);
+    buttons[pressedButton]->topSurface.setFrame(2);
+    buttons[pressedButton]->topSurface.blt(clientArea,
+            iXY(buttons[pressedButton]->getBounds().min.x,
+                buttons[pressedButton]->getBounds().min.y));
+    buttons[pressedButton]->topSurface.setFrame(0);
 } // drawPressedButton
 
 // checkResolution
@@ -1394,7 +1395,7 @@ void View::resize(const iXY &size)
 //---------------------------------------------------------------------------
 void View::setPressedButton(const int &button)
 {
-    if (button >= buttons.getCount()) {
+    if (button >= (int) buttons.size()) {
         throw Exception("ERROR: pressedButton >= numButtons");
     }
 
@@ -1406,7 +1407,7 @@ void View::setPressedButton(const int &button)
 //---------------------------------------------------------------------------
 void View::setHighlightedButton(const int &button)
 {
-    if (button >= buttons.getCount()) {
+    if (button >= (int) buttons.size()) {
         throw Exception("ERROR: highlightedButton >= numButtons");
     }
 
@@ -1513,12 +1514,12 @@ void View::processEvents(void)
             // Check for extended code.
             if (shit == 0) {
                 if (KeyboardInterface::getChar(shit)) {
-                    inputFields[selectedInputField].addExtendedChar(shit);
+                    inputFields[selectedInputField]->addExtendedChar(shit);
                 } else {
                     throw Exception("ERROR: Expecting extended char code.");
                 }
             } else {
-                inputFields[selectedInputField].addChar(shit);
+                inputFields[selectedInputField]->addChar(shit);
             }
         }
     }
@@ -1532,16 +1533,19 @@ cInputField* View::addInputField(
     const char *excludedCharacters,
     const bool &isSelected)
 {
-    inputFields.setNum(inputFields.getCount() + 1);
-    inputFields[inputFields.getCount() - 1].setPos(pos);
-    inputFields[inputFields.getCount() - 1].setInputFieldString(string);
-    inputFields[inputFields.getCount() - 1].setExcludedCharacters(excludedCharacters);
+    cInputField* inputfield = new cInputField;
+
+    inputfield->setPos(pos);
+    inputfield->setInputFieldString(string);
+    inputfield->setExcludedCharacters(excludedCharacters);
+
+    inputFields.push_back(inputfield);
 
     if (isSelected) {
-        selectedInputField = inputFields.getCount() - 1;
+        selectedInputField = inputFields.size() - 1;
     }
 
-    return & (inputFields[inputFields.getCount() - 1]);
+    return inputfield;
 } // end addInputField
 
 //---------------------------------------------------------------------------

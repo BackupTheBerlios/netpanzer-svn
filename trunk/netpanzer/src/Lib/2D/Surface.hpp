@@ -89,83 +89,83 @@ protected:
 
 public:
     // Accessor functions.
-    inline float  getFPS() const
+    float  getFPS() const
     {
         return fps;
     }
-    inline bool   getDoesExist() const
+    bool   getDoesExist() const
     {
         return doesExist;
     }
-    inline iXY    getPix() const
+    iXY    getPix() const
     {
         return pix;
     }
-    inline int    getPixX() const
+    int    getPixX() const
     {
         return pix.x;
     }
-    inline int    getPixY() const
+    int    getPixY() const
     {
         return pix.y;
     }
-    inline float  getAspectXOverY() const
+    float  getAspectXOverY() const
     {
         return float(pix.x) / float(pix.y);
     }
-    inline float  getAspectYOverX() const
+    float  getAspectYOverX() const
     {
         return float(pix.y) / float(pix.x);
     }
-    inline iXY    getCenter() const
+    iXY    getCenter() const
     {
         return center;
     }
-    inline int    getCenterX() const
+    int    getCenterX() const
     {
         return center.x;
     }
-    inline int    getCenterY() const
+    int    getCenterY() const
     {
         return center.y;
     }
-    inline int    getStride() const
+    int    getStride() const
     {
         return stride;
     }
-    inline int    getFrameCount() const
+    int    getFrameCount() const
     {
         return frameCount;
     }
-    inline int    getCurFrame () const
+    int    getCurFrame () const
     {
         return (int) curFrame;
     }
-    inline PIX   *getMem() const
+    PIX   *getMem() const
     {
         return mem;
     }
-    inline PIX   *getFrame0() const
+    PIX   *getFrame0() const
     {
         return frame0;
     }
-    inline iXY    getOffset() const
+    iXY    getOffset() const
     {
         return offset;
     }
-    inline int    getOffsetX() const
+    int    getOffsetX() const
     {
         return offset.x;
     }
-    inline int    getOffsetY() const
+    int    getOffsetY() const
     {
         return offset.y;
     }
-    inline int    getArea() const
+    int    getArea() const
     {
         return pix.x * pix.y;
     }
-    inline iRect  getRect() const
+    iRect  getRect() const
     {
         return iRect(0, 0, pix.x - 1, pix.y - 1);
     }
@@ -193,7 +193,7 @@ public:
 
     bool alloc(const iXY &pix, bool gottaHaveIt, int stride, int frameCount);
 
-    inline bool	alloc(int xPix, int yPix, bool gottaHaveIt, int stride, int frameCount)
+    bool	alloc(int xPix, int yPix, bool gottaHaveIt, int stride, int frameCount)
     {
         return alloc(iXY(xPix, yPix), gottaHaveIt, stride, frameCount);
     }
@@ -202,40 +202,40 @@ public:
 
     void create(iXY nPix ,int nStride, int nFrameCount);
 
-    inline void create(int xPix, int yPix, int stride, int frameCount)
+    void create(int xPix, int yPix, int stride, int frameCount)
     {
         create(iXY(xPix, yPix), stride, frameCount);
     }
-    inline void create(int xPix, int yPix)
+    void create(int xPix, int yPix)
     {
         create(iXY(xPix, yPix), xPix, 1);
     }
-    inline void create(const iXY &pix)
+    void create(const iXY &pix)
     {
         create(pix, pix.x, 1);
     }
-    inline void create(const Surface &source)
+    void create(const Surface &source)
     {
         create(source.getPix(), source.getStride(), source.getFrameCount());
     }
 
     void free();
 
-    inline PIX *pixPtr(const iXY &pos) const
+    PIX *pixPtr(const iXY &pos) const
     {
         assert((pos.y * stride + pos.x) < stride * pix.y);
 
         return mem + (pos.y * stride) + pos.x;
     }
 
-    inline PIX *operator[](int y) const
+    PIX *operator[](int y) const
     {
         assert(y >= 0);
         assert(y < pix.y);
         return mem + (y * stride);
     }
 
-    inline PIX *rowPtr(int y) const
+    PIX *rowPtr(int y) const
     {
         assert(y >= 0);
         assert(y < pix.y);
@@ -249,61 +249,51 @@ public:
     bool grab(const Surface &s, iRect bounds, bool gottaHaveIt, int stride);
 
     void blt(Surface &dest, iXY pos) const;
-    inline void blt(Surface &dest) const
+    void blt(Surface &dest) const
     {
         blt(dest, iXY(0, 0));
     }
-    inline void blt(Surface &dest, int x, int y) const
+    void blt(Surface &dest, int x, int y) const
     {
         blt(dest, iXY(x, y));
     }
 
     void bltTrans(Surface &dest, iXY pos) const;
-    inline void bltTrans(Surface &dest) const
+    void bltTrans(Surface &dest) const
     {
         bltTrans(dest, iXY(0, 0));
     }
-    inline void bltTrans(Surface &dest, int x, int y) const
+    void bltTrans(Surface &dest, int x, int y) const
     {
         bltTrans(dest, iXY(x, y));
     }
 
     void bltTransColor(Surface &dest, iXY pos, const PIX &color) const;
-    inline void bltTransColor(Surface &dest, const PIX &color) const
+    void bltTransColor(Surface &dest, const PIX &color) const
     {
         bltTransColor(dest, iXY(0, 0), color);
     }
-    inline void bltTransColor(Surface &dest, int x, int y, const PIX &color) const
+    void bltTransColor(Surface &dest, int x, int y, const PIX &color) const
     {
         bltTransColor(dest, iXY(x, y), color);
     }
 
-    void bltTransVGradient(Surface &dest, iXY pos, ColorTable &colorTable) const;
-    inline void bltTransVGradient(Surface &dest, ColorTable &colorTable) const
-    {
-        bltTransVGradient(dest, iXY(0, 0), colorTable);
-    }
-    inline void bltTransVGradient(Surface &dest, int x, int y, ColorTable &colorTable) const
-    {
-        bltTransVGradient(dest, iXY(x, y), colorTable);
-    }
+    void drawHLine(int x1, int y,  int x2, const PIX &color);
+    void drawVLine(int x,  int y1, int y2, const PIX &color);
 
-    void drawHLine(int x1, int y,  int x2, const PIX &color) const;
-    void drawVLine(int x,  int y1, int y2, const PIX &color) const;
+    void drawLine(int x1, int y1, int x2, int y2, const PIX &color);
 
-    void drawLine(int x1, int y1, int x2, int y2, const PIX &color) const;
-
-    void drawLine(const iXY &a, const iXY &b, const PIX &color) const
+    void drawLine(const iXY &a, const iXY &b, const PIX &color)
     {
         drawLine(a.x, a.y, b.x, b.y, color);
     }
 
-    inline void	resize(int xPix, int yPix)
+    void resize(int xPix, int yPix)
     {
         resize(iXY(xPix, yPix));
     }
 
-    inline void bltCentered(Surface &dest) const
+    void bltCentered(Surface &dest) const
     {
         iXY pos;
         pos.x = (dest.getPix().x - pix.x) / 2;
@@ -313,106 +303,106 @@ public:
     }
 
     // Surface Effects.
-    void drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightColor) const;
-    inline void drawButtonBorder(PIX topLeftColor, PIX bottomRightColor) const
+    void drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightColor);
+    void drawButtonBorder(PIX topLeftColor, PIX bottomRightColor)
     {
         drawButtonBorder(iRect(0, 0, pix.x, pix.y), topLeftColor, bottomRightColor);
     }
 
-    void drawWindowsBorder(iRect bounds, PIX light, PIX medium, PIX dark) const;
-    inline void drawWindowsBorder(PIX light, PIX medium, PIX dark) const
+    void drawWindowsBorder(iRect bounds, PIX light, PIX medium, PIX dark);
+    void drawWindowsBorder(PIX light, PIX medium, PIX dark)
     {
         drawWindowsBorder(iRect(0, 0, pix.x, pix.y), light, medium, dark);
     }
 
-    void blendIn(const Surface &source, iXY min, ColorTable &colorTable) const;
-    inline void blendIn(const Surface &source, ColorTable &colorTable) const
+    void blendIn(const Surface &source, iXY min, ColorTable &colorTable);
+    void blendIn(const Surface &source, ColorTable &colorTable)
     {
         blendIn(source, iXY(0, 0), colorTable);
     }
-    inline void blendIn(const Surface &source, int x, int y, ColorTable &colorTable) const
+    void blendIn(const Surface &source, int x, int y, ColorTable &colorTable)
     {
         blendIn(source, iXY(x, y), colorTable);
     }
 
-    void bltBlendScale(const Surface &source, const iRect &destRect, ColorTable &colorTable) const;
+    void bltBlendScale(const Surface &source, const iRect &destRect, ColorTable &colorTable);
 
-    void bltLookup(const iRect &destRect, const PIX table[]) const;
-    void bltLookup(const PIX table[]) const
+    void bltLookup(const iRect &destRect, const PIX table[]);
+    void bltLookup(const PIX table[])
     {
         bltLookup(iRect(0, 0, pix.x, pix.y), table);
     }
 
-    void bltScale(const Surface &source, const iRect &destRect) const;
-    void bltScaleTrans(const Surface &source, const iRect &destRect) const;
+    void bltScale(const Surface &source, const iRect &destRect);
+    void bltScaleTrans(const Surface &source, const iRect &destRect);
 
-    void drawRect(iRect bounds, const PIX &color) const;
-    inline void drawRect(int x1, int y1, int x2, int y2, const PIX &color) const
+    void drawRect(iRect bounds, const PIX &color);
+    void drawRect(int x1, int y1, int x2, int y2, const PIX &color)
     {
         drawRect(iRect(x1, y1, x2, y2), color);
     }
-    inline void drawRect(const iXY &min, const iXY &max, const PIX &color) const
+    void drawRect(const iXY &min, const iXY &max, const PIX &color)
     {
         drawRect(iRect(min.x, min.y, max.x, max.y), color);
     }
-    inline void drawRect(const PIX &color) const
+    void drawRect(const PIX &color)
     {
         drawRect(iRect(0, 0, pix.x, pix.y), color);
     }
 
-    void fillRect(iRect bounds, const PIX &color) const;
-    inline void fillRect(int x1, int y1, int x2, int y2, const PIX &color) const
+    void fillRect(iRect bounds, const PIX &color);
+    void fillRect(int x1, int y1, int x2, int y2, const PIX &color)
     {
         fillRect(iRect(x1, y1, x2, y2), color);
     }
 
-    void blendRect(iRect bounds, ColorTable &colorTable) const;
-    void fill(const PIX &color) const;
+    void blendRect(iRect bounds, ColorTable &colorTable);
+    void fill(const PIX &color);
     void fillAll(const PIX &color);
     void flipHorizontal();
     void flipVertical();
     void rotate(int angle);
-    void copy(Surface &source);
-    void setBrightness(int percent);
+    void copy(const Surface &source);
     int nextFrame();
 
-    inline void setFrame(const float &frameNum)
+    void setFrame(const float &frameNum)
     {
         assert(frameNum >= 0.0);
         assert(frameNum < frameCount);
         mem = frame0 + (pix.y * stride) * int(frameNum);
     }
 
-    inline void _putPixel(const iXY &pos, const PIX &color) const
+    void _putPixel(const iXY &pos, const PIX &color)
     {
         assert(getDoesExist());
         assert(pos.x >= 0 && pos.x < pix.x && pos.y >= 0 && pos.y < pix.y);
         *pixPtr(pos) = color;
     }
 
-    inline void _putPixel(int x, int y, const PIX &color) const
+    void _putPixel(int x, int y, const PIX &color) 
     {
         _putPixel(iXY(x, y), color);
     }
 
-    inline void putPixel(const iXY &pos, const PIX &color) const
+    void putPixel(const iXY &pos, const PIX &color) 
     {
         // Clip the pixel to the surface.
-        if (pos.x < 0 || pos.x >= pix.x || pos.y < 0 || pos.y >= pix.y)	return;
+        if (pos.x < 0 || pos.x >= pix.x || pos.y < 0 || pos.y >= pix.y)
+            return;
         _putPixel(pos, color);
     }
 
-    inline void putPixel(int x, int y, const PIX &color) const
+    void putPixel(int x, int y, const PIX &color) 
     {
         putPixel(iXY(x, y), color);
     }
 
-    inline PIX getPixel(const iXY &pos) const
+    PIX getPixel(const iXY &pos) const
     {
         return *pixPtr(pos);
     }
 
-    inline PIX getPixel(int x, int y) const
+    PIX getPixel(int x, int y) const
     {
         return getPixel(iXY(x, y));
     }
@@ -420,26 +410,22 @@ public:
     PIX getAverageColor();
 
     void scale(const iXY &pix);
-    inline void scale(int x, int y)
+    void scale(int x, int y)
     {
         scale(iXY(x, y));
     }
-    inline void scale(int x)
+    void scale(int x)
     {
         scale(iXY(x, x));
     }
 
     void shrinkWrap();
 
-    inline void blendRect(ColorTable &colorTable) const
+    void blendRect(ColorTable &colorTable)
     {
         blendRect(iRect(0, 0, pix.x - 1, pix.y - 1), colorTable);
     }
 
-    void bltBrightness(const Surface &dest, const iXY &pos, const float &percent);
-    void bltLightDark(const Surface &source, const Surface &lightTable) const;
-    void setToBrightnessIndexes128();
-    void bltAdd(const Surface &dest, iXY min) const;
     int  loadAllBMPInDirectory(const char *path);
 
     // Blit a single character of text.
@@ -449,21 +435,15 @@ public:
         bltChar8x8(iXY(x, y), character, color);
     }
 
-    void bltChar8x8VGradient(const iXY &pos, unsigned char character, ColorTable &colorTable);
-    void bltChar8x8VGradient(int x, int y, unsigned char character, ColorTable &colorTable)
-    {
-        bltChar8x8VGradient(iXY(x, y), character, colorTable);
-    }
-
     void bltChar5x5(const iXY &pos, unsigned char character, const PIX &color);
-    inline void bltChar5x5(int x, int y, unsigned char character, const PIX &color)
+    void bltChar5x5(int x, int y, unsigned char character, const PIX &color)
     {
         bltChar5x5(iXY(x, y), character, color);
     }
 
     // Blit a string of text in a single color.
     void bltString(const iXY &pos, const char *string, const PIX &color);
-    inline void bltString(int x, int y, const char *string, const PIX &color)
+    void bltString(int x, int y, const char *string, const PIX &color)
     {
         bltString(iXY(x, y), string, color);
     }
@@ -473,13 +453,6 @@ public:
         bltStringInBox(iRect(minX, minY, maxX, maxY), string, color, gapSpace, drawBox);
     }
     void bltStringInBox(const iRect &rect, const char *string, PIX color, int gapSpace = 14, bool drawBox = false);
-
-    // Blit a string of text with a vertical gradient.
-    void bltStringVGradient(const iXY &pos, const char *string, ColorTable &colorTable);
-    void bltStringVGradient(int x, int y, const char *string, ColorTable &colorTable)
-    {
-        bltStringVGradient(iXY(x, y), string, colorTable);
-    }
 
     // Blit a string of text.
     void bltString5x5(const iXY &pos, const char *string, const PIX &color);
@@ -506,21 +479,23 @@ public:
 
     void mapFromPalette(const char* oldPalette);
 
-    void drawBoxCorners(const iRect &rect, int cornerLength, PIX color) const;
-    inline void drawBoxCorners(const iXY &min, const iXY &max, int cornerLength, PIX color) const
+    void drawBoxCorners(const iRect &rect, int cornerLength, PIX color);
+    void drawBoxCorners(const iXY &min, const iXY &max,
+            int cornerLength, PIX color)
     {
         drawBoxCorners(iRect(min.x, min.y, max.x, max.y), cornerLength, color);
     }
-    inline void drawBoxCorners(int minX, int minY, int maxX, int maxY, int cornerLength, PIX color) const
+    void drawBoxCorners(int minX, int minY, int maxX, int maxY,
+            int cornerLength, PIX color)
     {
         drawBoxCorners(iRect(minX, minY, maxX, maxY), cornerLength, color);
     }
-    inline void drawBoxCorners(int cornerLength, PIX color) const
+    void drawBoxCorners(int cornerLength, PIX color)
     {
         drawBoxCorners(iRect(0, 0, pix.x - 1, pix.y - 1), cornerLength, color);
     }
 
-    void drawLookupBorder(const PIX table[]) const;
+    void drawLookupBorder(const PIX table[]);
 
     static int getFontHeight();
     static int getTextLength(const char* text);

@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __ParticleInterface_hpp__
 
 #include <stdint.h>
+#include <vector>
 
 #include "Types/iXY.hpp"
 #include "Types/iRect.hpp"
@@ -47,7 +48,7 @@ public:
 class ParticleInterface
 {
 private:
-    static cGrowList <UnitParticleInfo> unitParticleInfo;
+    static std::vector<UnitParticleInfo> unitParticleInfo;
     static int unitBodyMaxArea;
 
     static void getUnitParticleInfo();

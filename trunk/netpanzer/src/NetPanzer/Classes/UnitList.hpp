@@ -18,293 +18,202 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITLIST_HPP
 #define _UNITLIST_HPP
 
+#include <vector>
+#include <algorithm>
+#include <assert.h>
+
 #include "UnitBase.hpp"
 #include "UnitID.hpp"
-#include "ArrayUtil/LinkListSingleTemplate.hpp"
 
-class UnitPointer
+class UnitList
 {
-public:
-    UnitBase *unit;
-    unsigned long index;
-
-    UnitPointer()
+private:
+    class IdUnit
     {
-        unit = 0; next = 0;
-    }
+    public:
+	IdUnit(UnitBase* newunit, size_t newid)
+	    : unit(newunit), id(newid)
+	{
+	}
 
-    UnitPointer( UnitBase *unit )
-    {
-        UnitPointer::unit = unit;
-        next = 0;
-    }
+        bool operator< (const IdUnit& otherunitid) const
+        {
+            return id < otherunitid.id;
+        }
 
-    UnitPointer *next;
-};
+	bool operator< (const size_t& compareid) const
+	{
+	    return id < compareid;
+	}
 
-typedef LinkListSingleTemplate< UnitPointer  > UnitPointerList;
+	bool operator == (const size_t& compareid) const
+	{
+	    return id == compareid;
+	}
 
-class UnitList : public UnitPointerList
-{
-protected:
-    unsigned long size;
-
+	UnitBase* unit;
+	size_t id;
+    };
+    
+    std::vector<IdUnit> unitlist;
+    size_t unitlistsize;
+    typedef std::vector<IdUnit>::iterator unititerator;
+    typedef std::vector<IdUnit>::const_iterator const_unititerator;
+    
 public:
-    unsigned long contains;
+    class iterator
+    {
+    public:
+	iterator& operator++ ()
+	{
+	    ++i;
+	    return *this;
+	}
 
+	UnitBase* operator*() const
+	{
+	    return i->unit;
+	}
+
+	UnitBase* operator->() const
+	{
+	    return i->unit;
+	}
+
+	bool operator!=(const iterator& other) const
+	{
+	    return i != other.i;
+	}
+
+	bool operator== (const iterator& other) const
+	{
+	    return i == other.i;
+	}
+	
+    private:
+	friend class UnitList;
+	iterator(unititerator newi)
+	    : i(newi)
+	{
+	}
+	unititerator i;
+    };
+
+    class AsyncIterator 
+    {
+    public:
+        UnitBase* next()
+        {
+            unititerator i
+                = std::lower_bound(unitlist->unitlist.begin(),
+                        unitlist->unitlist.end(), IdUnit(0, currentid));
+            if(i == unitlist->unitlist.end())
+                return 0;
+            UnitBase* unit = i->unit;
+
+            currentid = i->id + 1;
+	    
+            return unit;
+        }
+
+    private:
+        friend class UnitList;
+        AsyncIterator(UnitList* newunitlist, size_t startid)
+            : currentid(startid), unitlist(newunitlist)             
+        {
+        }
+        
+        size_t currentid;
+        UnitList* unitlist;
+    };
+    
     UnitList()
+	: unitlistsize(0)
+    { }
+
+    iterator begin()
     {
-        size = 0;
-        contains = 0;
+	return iterator(unitlist.begin());
     }
 
-    UnitList( unsigned long size );
-
-    void initialize( unsigned long size );
-
-
-    inline UnitPointer * operator[]( unsigned long index )
+    iterator end()
     {
-        UnitPointer *traversal_ptr;
-        //assert( index < size );
-
-        traversal_ptr = front;
-
-        while( (traversal_ptr != 0) ) {
-            if ( traversal_ptr->index == index )
-                return( traversal_ptr );
-
-            traversal_ptr = traversal_ptr->next;
-        }
-
-        return( 0 );
+	return iterator(unitlist.end());
     }
 
-
-    inline void add( UnitBase *unit, unsigned long index )
+    AsyncIterator getAsyncIterator()
     {
-        UnitPointer *unit_pointer;
-
-        //assert( index < size );
-
-        unit_pointer = new UnitPointer( unit );
-        add( unit_pointer, index );
-
+        return AsyncIterator(this, 0);
     }
 
-    inline void add( UnitPointer *unit_pointer, unsigned long index )
+    UnitBase* operator[] (size_t index) const
     {
-        //assert( index < size );
-        UnitPointer *traversal_ptr;
-        traversal_ptr = front;
-
-        unit_pointer->index = index;
-
-
-        if( front == 0 ) {
-            UnitPointerList::addFront( unit_pointer );
-            contains++;
-            return;
-        } else {
-            if ( index < front->index ) {
-                UnitPointerList::addFront( unit_pointer );
-                contains++;
-                return;
-            } else {
-                traversal_ptr = front;
-
-                while( traversal_ptr != 0 ) {
-                    if( index >= traversal_ptr->index  ) {
-                        if( (traversal_ptr->next != 0) ) {
-                            if ( (index <= traversal_ptr->next->index )  ) {
-                                UnitPointerList::insertAfter(traversal_ptr, unit_pointer );
-                                contains++;
-                                return;
-                            }
-                        } else {
-                            insertAfter( traversal_ptr, unit_pointer );
-                            contains++;
-                            return;
-                        }
-                    } // ** if
-
-                    traversal_ptr = traversal_ptr->next;
-                } // ** while
-            } // ** else
-
-        } // ** else
-
-        return;
+	const_unititerator i 
+	    = std::lower_bound(unitlist.begin(), unitlist.end(), index);
+	if(i == unitlist.end() || i->id != index)
+            return 0;
+        
+	return i->unit;
     }
 
-    inline bool isValid( unsigned long index )
+    void insert(UnitBase *unit, size_t index)
     {
-        UnitPointer *traversal_ptr;
+	unititerator i 
+            = std::lower_bound(unitlist.begin(), unitlist.end(), index);
 
-        //assert( index < size );
-
-        traversal_ptr = front;
-
-        while( (traversal_ptr != 0) ) {
-            if ( traversal_ptr->index == index )
-                return( true );
-
-            traversal_ptr = traversal_ptr->next;
-        }
-
-        return( false );
+        unitlist.insert(i, IdUnit(unit, index));
+	++unitlistsize;
     }
 
-    inline bool isValid( const UnitID &unitID ) const
+    void insert(UnitBase *unit, const UnitID &unitID)
     {
-        unsigned long index = unitID.getIndex();
-        UnitPointer *traversal_ptr;
-        //assert( index < size );
-
-        traversal_ptr = front;
-
-        while( (traversal_ptr != 0) ) {
-            if ( traversal_ptr->index == index )
-                return( true );
-
-            traversal_ptr = traversal_ptr->next;
-        }
-
-        return( false );
+	insert(unit, unitID.getIndex());
     }
 
-    inline void add( UnitBase *unit, const UnitID &unitID )
+    /** remember that erasing invalidates all existing iterators over the
+     * list. The only valid iterator is the returned from this function (which
+     * points to the next elements after the one removed)
+     */
+    iterator erase(iterator i)
     {
-        unsigned long index;
-        index = unitID.getIndex();
-
-        //assert( index < size );
-
-        UnitPointer *unit_pointer;
-
-        unit_pointer = new UnitPointer( unit );
-        add( unit_pointer, index );
-
+	--unitlistsize;
+	return unitlist.erase(i.i);
     }
 
-    inline UnitBase * incIterator( UnitPointer **iterator )
+    bool contains(size_t index) const
     {
-        UnitBase *unit;
-        if( (*iterator) != 0 ) {
-            unit = (*iterator)->unit;
-            *iterator = (*iterator)->next;
-            return( unit );
-        } else {
-            return( 0 );
-        }
+	const_unititerator i 
+	    = std::lower_bound(unitlist.begin(), unitlist.end(), index);
+
+	return i != unitlist.end();
     }
 
-
-    inline UnitPointer * incIteratorPtr( UnitPointer **iterator )
+    bool contains(const UnitID &unitID) const
     {
-        UnitPointer *unit_pointer;
-
-        if( (*iterator) != 0 ) {
-            unit_pointer = (*iterator);
-            (*iterator) = (*iterator)->next;
-            return( unit_pointer );
-        } else {
-            return( 0 );
-        }
+	return contains(unitID.getIndex());
     }
 
-    inline void resetIterator( UnitPointer **iterator )
+    iterator find(size_t index)
     {
-        (*iterator) = front;
+	unititerator i
+	    = std::lower_bound(unitlist.begin(), unitlist.end(), index);
+	
+	if(i == unitlist.end() || i->id != index)
+	    i = unitlist.end();
+
+	return iterator(i);
     }
 
-    inline void resetIteratorAsync( unsigned long *iterator )
+    void clear()
     {
-        (*iterator) = 0;
+	unitlist.clear();
     }
 
-    inline UnitBase * incIteratorAsync( unsigned long *iterator, bool *completed )
+    size_t size() const
     {
-        UnitPointer *traversal_ptr;
-
-        traversal_ptr = front;
-
-        while( (traversal_ptr != 0) ) {
-            if ( traversal_ptr->index >= (*iterator) ) {
-                if ( traversal_ptr->next != 0 ) {
-                    (*iterator) = traversal_ptr->next->index;
-                } else {
-                    (*iterator)++;
-                }
-
-                (*completed) = false;
-                return( traversal_ptr->unit );
-            }
-
-            traversal_ptr = traversal_ptr->next;
-        }
-
-        (*completed) = true;
-        return( 0 );
+	return unitlistsize;
     }
-
-
-    bool addFirstFree( UnitBase *unit, unsigned long *new_index );
-
-    inline UnitBase * remove( unsigned long index )
-    {
-        UnitBase *unit;
-        UnitPointer *traversal_ptr;
-        //assert( (index < size) );
-
-        traversal_ptr = front;
-
-        while( traversal_ptr != 0 ) {
-            if ( traversal_ptr->index == index ) {
-                if ( contains > 0 )
-                    contains--;
-
-                unit = traversal_ptr->unit;
-                traversal_ptr->unit = 0;
-
-                return( unit );
-            }
-            traversal_ptr = traversal_ptr->next;
-        } // ** while
-
-        return( 0 );
-    }
-
-    inline UnitBase * remove( const UnitID &unitID )
-    {
-        unsigned long index;
-        index = unitID.getIndex();
-
-        return( remove( index ) );
-    }
-
-    void removeAll( void );
-
-    inline unsigned long getSize( void ) const
-    {
-        return( size );
-    }
-
-    inline unsigned long containsItems( void ) const
-    {
-        return( contains );
-    }
-
-    void dispose( unsigned long index );
-    void dispose( UnitID &unitID );
-    void disposeAll( void );
-
-    void deleteUnit( UnitID &unitID );
-
-    void fill( void );
-    void reset( void );
-    void cleanUp( void );
-
 };
 
 #endif
+

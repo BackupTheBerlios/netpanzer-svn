@@ -34,7 +34,7 @@ public:
 
     void initialize( unsigned long size );
 
-    void reset( void )
+    void reset()
     {
         front = 0;
         rear = 0;
@@ -51,7 +51,7 @@ public:
         return( true );
     }
 
-    TYPE dequeue( void )
+    TYPE dequeue()
     {
         assert( front != rear );
 
@@ -59,21 +59,21 @@ public:
         return( array[ front ] );
     }
 
-    void pop( void )
+    void pop()
     {
         assert( front != rear );
 
         front = ( front + 1 ) % size;
     }
 
-    TYPE getFirst( void )
+    TYPE getFirst()
     {
         assert( front != rear );
 
         return( array[ (( front + 1 ) % size) ] );
     }
 
-    TYPE * getFirstPtr( void )
+    TYPE * getFirstPtr()
     {
         assert( front != rear );
 
@@ -81,22 +81,22 @@ public:
     }
 
 
-    bool isEmpty( void ) const
+    bool isEmpty() const
     {
         return front == rear;
     }
 
-    bool isFull ( void ) const
+    bool isFull () const
     {
         return front == (rear + 1) % size;
     }
 
-    bool isReady( void ) const
+    bool isReady() const
     {
         return front != rear;
     }
 
-    unsigned long itemCount( void ) const
+    unsigned long itemCount() const
     {
         if ( front > rear )
             return ( (rear+1) + ( (size-1) - front ) );

@@ -147,56 +147,6 @@ void HostJoinTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
     View::doDraw(viewArea, clientArea);
 } // end doDraw
 
-// drawNameInfo
-//--------------------------------------------------------------------------
-void HostJoinTemplateView::drawNameInfo(Surface &dest, const iXY &pos)
-{
-    iXY size(358, 30);
-    iRect flagBorder(pos.x, pos.y, pos.x + size.x, pos.y + size.y);
-    dest.bltLookup(flagBorder, Palette::darkGray256.getColorArray());
-    dest.drawButtonBorder(flagBorder, Color::lightGreen, Color::darkGreen);
-
-    dest.bltStringVGradient(iXY(pos.x + 10, pos.y + 12), "NAME", Palette::gradientWhite2Green);
-
-} // end HostJoinTemplateView::drawNameInfo
-
-// drawPlayerInfo
-//--------------------------------------------------------------------------
-void HostJoinTemplateView::drawPlayerInfo(Surface &dest, const iXY &pos)
-{
-    char strBuf[256];
-
-    int x = pos.x;
-    sprintf(strBuf, "Player Name");
-    dest.bltString(x, pos.y + (playerColor.getPix().y - Surface::getFontHeight()) / 2, strBuf, Color::white);
-
-    //x = 236;
-    //playerColor.blt(clientArea, x, pos.y);
-
-    x = 290;
-    playerFlag.blt(dest, x, pos.y);
-
-    x = 342;
-    sprintf(strBuf, "Status");
-    dest.bltString(x, pos.y + (playerColor.getPix().y - Surface::getFontHeight()) / 2, strBuf, Color::white);
-
-} // end drawPlayerInfo
-
-// drawFlagInfo
-//--------------------------------------------------------------------------
-void HostJoinTemplateView::drawFlagInfo(Surface &dest, const iXY &pos)
-{
-    // Draw the dimmed background.
-    iXY size(180, 115);
-    iRect flagBorder(pos.x, pos.y, pos.x + size.x, pos.y + size.y);
-    dest.bltLookup(flagBorder, Palette::darkGray256.getColorArray());
-    dest.drawButtonBorder(flagBorder, Color::lightGreen, Color::darkGreen);
-
-    dest.bltStringVGradient(pos + iXY(10,10) , "FLAG", Palette::gradientWhite2Green);
-    playerFlag.blt(dest, iXY(pos.x + 55, pos.y + 10));
-
-} // end HostJoinTemplateView::drawFlagInfo
-
 // doActivate
 //---------------------------------------------------------------------------
 void HostJoinTemplateView::doActivate()

@@ -26,11 +26,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Palette.hpp"
 #include "GameConfig.hpp"
 
-
 // Static images.
-cGrowList <PackedSurface> PuffParticle2D::staticPackedSmokeLightPuff;
-cGrowList <PackedSurface> PuffParticle2D::staticPackedSmokeDarkPuff;
-cGrowList <PackedSurface> PuffParticle2D::staticPackedDirtPuff;
+PackedSurfaceList PuffParticle2D::staticPackedSmokeLightPuff;
+PackedSurfaceList PuffParticle2D::staticPackedSmokeDarkPuff;
+PackedSurfaceList PuffParticle2D::staticPackedDirtPuff;
 
 // PuffParticle2D
 //---------------------------------------------------------------------------
@@ -73,17 +72,17 @@ void PuffParticle2D::create(	PUFF_TYPE particleType,
     PuffParticle2D::shadowLayer = shadowLayer;
     PuffParticle2D::isFarAway   = isFarAway;
 
-    index = getPakIndex(scale, staticPackedSmokeLightPuff.getCount());
+    index = getPakIndex(scale, staticPackedSmokeLightPuff.size());
 
     if (particleType == LIGHT) {
-        packedSurface.setData(staticPackedSmokeLightPuff[index]);
-        packedSurfaceShadow.setData(staticPackedSmokeLightPuff[index]);
+        packedSurface.setData( *(staticPackedSmokeLightPuff[index]) );
+        packedSurfaceShadow.setData( *(staticPackedSmokeLightPuff[index]) );
     } else if (particleType == DARK) {
-        packedSurface.setData(staticPackedSmokeDarkPuff[index]);
-        packedSurfaceShadow.setData(staticPackedSmokeDarkPuff[index]);
+        packedSurface.setData( *(staticPackedSmokeDarkPuff[index]) );
+        packedSurfaceShadow.setData( *(staticPackedSmokeDarkPuff[index]) );
     } else if (particleType == DIRT) {
-        packedSurface.setData(staticPackedDirtPuff[index]);
-        packedSurfaceShadow.setData(staticPackedDirtPuff[index]);
+        packedSurface.setData( *(staticPackedDirtPuff[index]) );
+        packedSurfaceShadow.setData( *(staticPackedDirtPuff[index]) );
     } else {
         throw Exception("ERROR: Unsupported particleType.");
     }
@@ -142,7 +141,8 @@ void PuffParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 
     if (gameconfig->displayshadows) {
         if (!userDefinedShadowPos) {
-            shadowPos.x = pos.x - ((float(index) / float(staticPackedSmokeLightPuff.getCount())) * packedSurfaceShadow.getCurFrame() * 10);
+            shadowPos.x = pos.x - ((float(index) /
+                        float(staticPackedSmokeLightPuff.size())) * packedSurfaceShadow.getCurFrame() * 10);
         }
 
         packedSurfaceShadow.setAttrib(iXY((int) shadowPos.x, (int) shadowPos.z), shadowLayer);

@@ -18,10 +18,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __MapSelectionView_hpp__
 #define __MapSelectionView_hpp__
 
+#include <vector>
+#include <string.h>
+
 #include "RMouseHackView.hpp"
 #include "2D/Surface.hpp"
-#include "Util/cGrowList.hpp"
-
 
 //---------------------------------------------------------------------------
 class MapInfo
@@ -32,6 +33,10 @@ public:
     char    description[256];
     iXY     cells;
     int     objectiveCount;
+
+    MapInfo()
+    {
+    }
 }; // end MapInfo
 
 //---------------------------------------------------------------------------
@@ -45,12 +50,13 @@ private:
 
 public:
     MapSelectionView();
+    ~MapSelectionView();
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void drawBorder(Surface &windowArea)
     {}
 
-    static cGrowList <MapInfo> mapList;
+    static std::vector<MapInfo*> mapList;
     static int curMap;
 
     void init();

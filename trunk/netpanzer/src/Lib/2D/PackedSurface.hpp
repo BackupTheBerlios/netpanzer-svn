@@ -18,21 +18,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __PackedSurface_hpp__
 #define __PackedSurface_hpp__
 
+#include <vector>
+
 #include "Types/iRect.hpp"
 #include "Types/iXY.hpp"
-#include "Util/cGrowList.hpp"
+#include "Util/NoCopy.hpp"
 #include "ColorTable.hpp"
 
 class Surface;
 class PackedSurface;
 
-int loadAllPAKInDirectory(const char *path, cGrowList <PackedSurface> &growList);
+int loadAllPAKInDirectory(const char *path, std::vector<PackedSurface*>& list);
 
 //--------------------------------------------------------------------------
-class PackedSurface
+class PackedSurface : public NoCopy
 {
 public:
-
     static int totalDrawCount;     // The number of bytes of the surfaces alive.
 
     typedef void (*SPAN_FUNC)(const uint8_t *src, uint8_t *dest, int count);
@@ -40,13 +41,13 @@ public:
     void pack(const Surface &src);
 
     void blt(Surface &dest, int x, int y) const;
-    inline void blt(Surface &dest, iXY pos) const
+    void blt(Surface &dest, iXY pos) const
     {
         blt(dest, pos.x, pos.y);
     }
 
     void bltBlend(Surface &dest, int x, int y, ColorTable &colorTable) const;
-    inline void bltBlend(Surface &dest, iXY pos, ColorTable &colorTable) const
+    void bltBlend(Surface &dest, iXY pos, ColorTable &colorTable) const
     {
         bltBlend(dest, pos.x, pos.y, colorTable);
     }
@@ -79,7 +80,7 @@ public:
 
     int nextFrame();
 
-    inline void setFrame(float frameNum)
+    void setFrame(float frameNum)
     {
         assert(frameNum >= 0.0);
         assert(frameNum < frameCount);
@@ -92,76 +93,76 @@ public:
     void load(const char *filename);
     void save(const char *filename) const;
 
-    inline void setFPS(float fps)
+    void setFPS(float fps)
     {
         PackedSurface::fps = fps;
     }
 
-    inline float  getFPS() const
+    float  getFPS() const
     {
         return fps;
     }
-    inline iXY    getPix() const
+    iXY    getPix() const
     {
         return pix;
     }
-    inline int    getPixX() const
+    int    getPixX() const
     {
         return pix.x;
     }
-    inline int    getPixY() const
+    int    getPixY() const
     {
         return pix.y;
     }
-    //inline iXY    getCenter() const { return center; }
-    //inline int    getCenterX() const { return center.x; }
-    //inline int    getCenterY() const { return center.y; }
-    inline int    getFrameCount() const
+    //iXY    getCenter() const { return center; }
+    //int    getCenterX() const { return center.x; }
+    //int    getCenterY() const { return center.y; }
+    int    getFrameCount() const
     {
         return frameCount;
     }
-    inline int    getCurFrame () const
+    int    getCurFrame () const
     {
         return (int) curFrame;
     }
-    inline iXY    getOffset() const
+    iXY    getOffset() const
     {
         return offset;
     }
-    inline int    getOffsetX() const
+    int    getOffsetX() const
     {
         return offset.x;
     }
-    inline int    getOffsetY() const
+    int    getOffsetY() const
     {
         return offset.y;
     }
-    inline iXY    getCenter() const
+    iXY    getCenter() const
     {
         return center;
     }
-    inline int    getCenterX() const
+    int    getCenterX() const
     {
         return center.x;
     }
-    inline int    getCenterY() const
+    int    getCenterY() const
     {
         return center.y;
     }
-    inline int    getArea() const
+    int    getArea() const
     {
         return pix.x * pix.y;
     }
-    inline iRect  getRect() const
+    iRect  getRect() const
     {
         return iRect(0, 0, pix.x - 1, pix.y - 1);
     }
 
-    inline int  *getRowOffsetTable() const
+    int  *getRowOffsetTable() const
     {
         return rowOffsetTable;
     }
-    inline uint8_t *getPackedDataChunk() const
+    uint8_t *getPackedDataChunk() const
     {
         return packedDataChunk;
     }
@@ -170,7 +171,6 @@ public:
     void setTo(const PackedSurface &source);
 
 protected:
-
     void reset();
 
     int   frameCount;
@@ -185,8 +185,25 @@ protected:
 
     static int totalSurfaceCount;  // The number of surfaces alive.
     static int totalByteCount;     // The number of bytes of the surfaces alive.
-
 };
+
+//---------------------------------------------------------------------------
+
+class PackedSurfaceList : public std::vector<PackedSurface*>
+{
+public:
+    PackedSurfaceList()
+    { }
+
+    ~PackedSurfaceList()
+    {
+        std::vector<PackedSurface*>::iterator i;
+        for(i = begin(); i != end(); i++)
+            delete *i;
+    }
+};
+
+int loadAllPAKInDirectory(const char *path, PackedSurfaceList& list);
 
 #endif // end __PackedSurface_hpp__
 

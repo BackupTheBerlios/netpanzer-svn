@@ -26,16 +26,26 @@ template< class TYPE >
 class ArrayGrowableTemplate : public NoCopy
 {
 protected:
-    std::vector<TYPE> elems;
+    unsigned long size;
+    unsigned long grow_increment;
+    unsigned long grow_limit;
+    TYPE *array;
 
 public:
+
     ArrayGrowableTemplate();
+
+    ArrayGrowableTemplate( unsigned long size, unsigned long growIncrement,
+                           unsigned long growLimit );
+
+    ArrayGrowableTemplate( unsigned long size, unsigned long growIncrement );
 
     ArrayGrowableTemplate( unsigned long size );
 
     ~ArrayGrowableTemplate( void );
 
-    void initialize( unsigned long size );
+    void initialize( unsigned long size, unsigned long growIncrement,
+                     unsigned long growLimit );
 
     TYPE & operator[]( unsigned long index);
 
@@ -43,12 +53,16 @@ public:
 
     void resize( unsigned long size );
 
-    unsigned long getSize( void ) const
+    void setGrowLimit( unsigned long limit );
+
+    void setGrowIncrement( unsigned long growIncrement );
+
+    inline unsigned long getSize( void ) const
     {
         return( size );
     }
 
-    void deallocate( void )
+    inline void deallocate( void )
     {
         if ( array != 0 ) {
             free( array );
@@ -63,51 +77,122 @@ public:
 template< class TYPE >
 ArrayGrowableTemplate< TYPE >::ArrayGrowableTemplate()
 {
+    array = 0;
+    size = 0;
+    grow_increment = 1;
+    grow_limit = 0xFFFFFFFF;
 }
 
 template< class TYPE >
 ArrayGrowableTemplate< TYPE >::
-ArrayGrowableTemplate(unsigned long size)
+ArrayGrowableTemplate( unsigned long size, unsigned long growIncrement,
+                       unsigned long growLimit )
+        : array(0)
 {
-    elems.resize(size);
+    initialize( size , growIncrement, growLimit );
+}
+
+
+template< class TYPE >
+ArrayGrowableTemplate< TYPE >::
+ArrayGrowableTemplate( unsigned long size, unsigned long growIncrement )
+        : array(0)
+{
+    initialize( size , growIncrement, 0xFFFFFFFF );
+}
+
+
+template< class TYPE >
+ArrayGrowableTemplate< TYPE >::
+ArrayGrowableTemplate( unsigned long size )
+        : array(0)
+{
+    initialize( size , 1, 0xFFFFFFFF );
 }
 
 template< class TYPE >
 void ArrayGrowableTemplate< TYPE >::
-initialize(unsigned long size)
+initialize( unsigned long size, unsigned long growIncrement,
+            unsigned long growLimit )
 {
-    elems.resize(size);
+    ArrayGrowableTemplate< TYPE >::size = size;
+
+    grow_increment = growIncrement;
+
+    grow_limit = growLimit;
+
+    assert( (size > 0) && (growIncrement > 0) );
+
+    if ( array != 0 ) {
+        free( array );
+        array = 0;
+    }
+
+    array = (TYPE *) malloc( sizeof(TYPE) * size );
+
+    assert( array != 0 );
 }
 
 template< class TYPE >
-ArrayGrowableTemplate< TYPE >::~ArrayGrowableTemplate()
+ArrayGrowableTemplate< TYPE >::~ArrayGrowableTemplate( void )
 {
+    free( array );
 }
 
 template< class TYPE >
 TYPE & ArrayGrowableTemplate< TYPE >::operator[]( unsigned long index)
 {
-    if(index >= elems.size()) {
-        elems.resize(index);
+    if ( index >= size ) {
+        unsigned long new_size;
+        new_size = (index + 1 + grow_increment);
+        if ( new_size <= grow_limit ) {
+            array = (TYPE *) realloc( array, sizeof(TYPE) * new_size );
+            memset( &array[ size ], 0, sizeof(TYPE) * (new_size - size) );
+            size = new_size;
+            assert( array != 0 );
+        } else
+            assert( 0 );
     }
-    
-    return elems.at(index);
+
+    return( array[index] );
 }
 
 template< class TYPE >
 void ArrayGrowableTemplate< TYPE >::add( TYPE object, unsigned long index )
 {
-    if(index >= elems.size()) {
-        elems.resize(index);
+    if ( index >= size ) {
+        unsigned long new_size;
+        new_size = (index + 1 + grow_increment);
+        if ( new_size <= grow_limit ) {
+            array = (TYPE *) realloc( array, sizeof(TYPE) * new_size );
+            memset( &array[ size ], 0, sizeof(TYPE) * (new_size - size) );
+            size = new_size;
+            assert( array != 0 );
+        } else
+            return;
     }
 
-    elems[index] = object;
+    memmove( (void *) &array[index], (void *) &object , sizeof( TYPE ) );
 }
 
 template< class TYPE >
-void ArrayGrowableTemplate< TYPE >::resize(unsigned long size)
+void ArrayGrowableTemplate< TYPE >::resize( unsigned long size )
 {
-    elems.resize(size);
+    array = (TYPE *) realloc( array, sizeof(TYPE) * size );
+    assert( array != 0 );
 }
+
+template< class TYPE >
+void ArrayGrowableTemplate< TYPE >::setGrowLimit( unsigned long limit )
+{
+    grow_limit = limit;
+}
+
+template< class TYPE >
+void ArrayGrowableTemplate< TYPE >::setGrowIncrement( unsigned long growIncrement )
+{
+    grow_increment = growIncrement;
+}
+
 
 #endif // ** _ARRAYGROWABLETEMPLATE_HPP

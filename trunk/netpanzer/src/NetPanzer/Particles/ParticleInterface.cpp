@@ -48,7 +48,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/Sound.hpp"
 
 
-cGrowList <UnitParticleInfo> ParticleInterface::unitParticleInfo;
+std::vector<UnitParticleInfo> ParticleInterface::unitParticleInfo;
 int ParticleInterface::unitBodyMaxArea                   = 0;
 int ParticleInterface::gParticlesCanHaveSmoke            = 1;
 int ParticleInterface::gSolidColorExplosionParticles     = 0;
@@ -946,7 +946,7 @@ void ParticleInterface::getUnitParticleInfo()
     assert(gValentineTurret.getFrameCount() > 0);
 
     // Create the correct number of unit information slots.
-    unitParticleInfo.setNum(_MAX_UNIT_TYPES);
+    unitParticleInfo.resize(_MAX_UNIT_TYPES);
 
     // _unit_type_valentine
     getMuzzleTips(gValentineTurret, unitParticleInfo[_unit_type_valentine].muzzleTip);

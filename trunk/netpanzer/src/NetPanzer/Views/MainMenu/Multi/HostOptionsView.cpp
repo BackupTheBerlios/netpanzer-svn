@@ -70,7 +70,7 @@ void HostOptionsView::updateGameConfigCloudCoverage()
     // maps, like clear on 128x128 should have far less clouds than
     // clear on 800x800.
 
-    float cloudCount = MapSelectionView::mapList[MapSelectionView::curMap].cells.getArea() / baseTileCountPerCloud;
+    float cloudCount = MapSelectionView::mapList[MapSelectionView::curMap]->cells.getArea() / baseTileCountPerCloud;
     float randCount  = rand() % int(cloudCount / randomDivisorOfBase);
 
     cloudCount += randCount;
@@ -481,8 +481,9 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
     y += yOffset;
     tempSurface.fill(meterColor);
     tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
-    if (MapSelectionView::curMap >= 0 && MapSelectionView::mapList.getCount() > 0) {
-        int objectiveCount = MapSelectionView::mapList[MapSelectionView::curMap].objectiveCount;
+    if (MapSelectionView::curMap >= 0 && MapSelectionView::mapList.size() > 0) {
+        int objectiveCount =
+            MapSelectionView::mapList[MapSelectionView::curMap]->objectiveCount;
         sprintf(strBuf, "%d%% - %d of %d", getObjectiveCapturePercent(), int(float(objectiveCount) * (float(getObjectiveCapturePercent()) / 100.0f)), objectiveCount);
     } else {
         sprintf(strBuf, "Map Data Needed");

@@ -15,17 +15,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __CraterParticle2D_hpp__
 #define __CraterParticle2D_hpp__
 
-
+#include <vector>
 #include "Particle2D.hpp"
-#include "Util/cTimeStamp.hpp"
-
 
 class Surface;
-
 
 class CraterCacheInfo
 {
@@ -64,7 +60,7 @@ protected:
     static int cacheMissCount;
     static int halfBoundsSize;
 
-    static cGrowList<CraterCacheInfo> craterCache;
+    static std::vector<CraterCacheInfo> craterCache;
     static int curCraterIndex;
 
     int cacheIndex;  // Which cache slot I was in.

@@ -43,7 +43,8 @@ ServerSocket::ServerSocket(Uint16 tcpport)
                         tcpport, SDLNet_GetError());
     tcpsocket = SDLNet_TCP_Open(&ip);
     if(!tcpsocket)
-        throw Exception("couldn't open TCP socket on port %d: %s", tcpport,
+        throw Exception("couldn't open TCP socket on port %d: %s"
+		" (already a server running?)", tcpport,
                         SDLNet_GetError());
 
     sockets = SDLNet_AllocSocketSet(64);

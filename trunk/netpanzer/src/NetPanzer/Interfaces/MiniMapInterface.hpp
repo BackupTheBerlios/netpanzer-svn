@@ -46,8 +46,10 @@ protected:
 
     static void annotateUnits( Surface &map_surface );
     static void annotateObjectives( Surface &map_surface );
-    static void drawLargeUnitDot( const Surface &dest, const iXY &location, unsigned char color );
-    static void drawSmallUnitDot( const Surface &dest, const iXY &location, unsigned char color );
+    static void drawLargeUnitDot(Surface &dest, const iXY &location,
+            unsigned char color );
+    static void drawSmallUnitDot(Surface &dest, const iXY &location,
+            unsigned char color );
 
 public:
 

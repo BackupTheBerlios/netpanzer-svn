@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "WorldInputCmdProcessor.hpp"
 
 #include "UnitInterface.hpp"
+#include "PlayerInterface.hpp"
 #include "WorldViewInterface.hpp"
 #include "MapInterface.hpp"
 #include "PathScheduler.hpp"
@@ -78,62 +79,56 @@ void MiniMapInterface::setWorldWindowPosition( iXY world_loc )
 
 void MiniMapInterface::annotateUnits( Surface &map_surface )
 {
-    iXY map_loc;
-    unsigned char unit_dispostion;
-    UnitState *unit_state;
+    for(size_t player=0; player < PlayerInterface::getMaxPlayers(); player++) {
+	bool isally = PlayerInterface::isAllied
+	    (PlayerInterface::getLocalPlayerIndex(), player);
+	
+	UnitList* unitlist = UnitInterface::getUnitList(player);
+	for(UnitList::iterator i = unitlist->begin();
+		i != unitlist->end(); ++i) {
+	    UnitState* unit_state = & (i->unit_state);
+	    iXY map_loc = iXY(
+		    int(float(unit_state->location.x) / scale_factor.x),
+		    int(float(unit_state->location.y) / scale_factor.y));
 
-    UnitInterface::startUnitPositionEnumeration( );
-
-    iRect unitRect;
-
-    while( UnitInterface::unitPositionEnumeration( &unit_dispostion,&unit_state ) ) {
-        map_loc.x = int(float(unit_state->location.x) / scale_factor.x);
-        map_loc.y = int(float(unit_state->location.y) / scale_factor.y);
-
-        if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
-            unitRect = iRect(map_loc, map_loc + iXY(1,1));
-        }
-
-        if ( unit_dispostion == _unit_player ) {
-            if ( unit_state->threat_level == _threat_level_under_attack ) {
-                if ( radar_blink_flag == true ) {
-                    drawLargeUnitDot( map_surface, map_loc, Color::yellow );
-                }
-            } else {
-                PIX *unit_color=&player_unit_color;
-                if(unit_state->select) { unit_color=&selected_unit_color; }
-                if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
-                    drawSmallUnitDot( map_surface, map_loc, *unit_color );
-                } else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
-                    drawLargeUnitDot( map_surface, map_loc, *unit_color );
-                } else {
-                    assert(false);
-                }
-            }
-        } else
-            if ( unit_dispostion == _unit_allied ) {
-                if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
-                    drawSmallUnitDot( map_surface, map_loc, allie_unit_color );
-                } else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
-                    drawLargeUnitDot( map_surface, map_loc, allie_unit_color );
-
-                } else {
-                    assert(false);
-                }
-            } else
-                if( ( unit_dispostion == _unit_enemy ) && (show_enemy_radar_flag == true) ) {
-
-                    if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
-                        drawSmallUnitDot( map_surface, map_loc, enemy_objective_color );
-                    } else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
-                        drawLargeUnitDot( map_surface, map_loc, enemy_objective_color );
-
-                    } else {
-                        assert(false);
-                    }
-
-                }
-
+	    if (player == PlayerInterface::getLocalPlayerIndex()) {
+		if ( unit_state->threat_level == _threat_level_under_attack ) {
+		    if ( radar_blink_flag == true ) {
+			drawLargeUnitDot( map_surface, map_loc, Color::yellow );
+		    }
+		} else {
+		    PIX *unit_color=&player_unit_color;
+		    if(unit_state->select) { unit_color=&selected_unit_color; }
+		    if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
+			drawSmallUnitDot( map_surface, map_loc, *unit_color );
+		    } else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
+			drawLargeUnitDot( map_surface, map_loc, *unit_color );
+		    } else {
+			assert(false);
+		    }
+		}
+	    } else
+		if (isally) {
+		    if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
+			drawSmallUnitDot( map_surface, map_loc, allie_unit_color );
+		    } else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
+			drawLargeUnitDot( map_surface, map_loc, allie_unit_color );
+			
+		    } else {
+			assert(false);
+		    }
+		} else if ( (show_enemy_radar_flag == true) ) {
+			
+			if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
+			    drawSmallUnitDot( map_surface, map_loc, enemy_objective_color );
+			} else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
+			    drawLargeUnitDot( map_surface, map_loc, enemy_objective_color );
+			    
+			} else {
+			    assert(false);
+			}
+		    }
+	}
     }
 }
 
@@ -313,28 +308,18 @@ void MiniMapInterface::setProperties( PIX player_unit_color,
     show_enemy_radar_flag = false;
 }
 
-void MiniMapInterface::drawLargeUnitDot( const Surface &dest, const iXY &location, unsigned char color )
+void MiniMapInterface::drawLargeUnitDot(Surface &dest,
+        const iXY &location, unsigned char color )
 {
     // Center
     dest.putPixel( location.x,     location.y,     color );
     dest.putPixel( location.x + 1, location.y,     color );
     dest.putPixel( location.x,     location.y + 1, color );
     dest.putPixel( location.x + 1, location.y + 1, color );
-
-    //// Top and Bottom
-    //dest.putPixel( location.x,     location.y - 1, Color::black );
-    //dest.putPixel( location.x + 1, location.y - 1, Color::black );
-    //dest.putPixel( location.x,     location.y + 2, Color::black );
-    //dest.putPixel( location.x + 1, location.y + 2, Color::black );
-    //
-    //// Left and Right
-    //dest.putPixel( location.x - 1, location.y,     Color::black );
-    //dest.putPixel( location.x - 1, location.y + 1, Color::black );
-    //dest.putPixel( location.x + 2, location.y,     Color::black );
-    //dest.putPixel( location.x + 2, location.y + 1, Color::black );
 }
 
-void MiniMapInterface::drawSmallUnitDot( const Surface &dest, const iXY &location, unsigned char color )
+void MiniMapInterface::drawSmallUnitDot(Surface &dest, const iXY &location,
+        unsigned char color )
 {
     dest.putPixel( location, color );
 }

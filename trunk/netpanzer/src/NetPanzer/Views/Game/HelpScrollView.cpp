@@ -70,7 +70,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("  LMC + 'A'                        Allies with the clicked unit's team");
     //insert("  Ctrl + [F1..F5]                  Bookmark world locations");
     //insert("  Alt + [F1..F5]                   Recall bookmarked world locations");
-    insert("  F2                               In game menus");
+    insert("  ESC                               In game menus");
     insert("");
     insert("");
     insert("Outpost Related");

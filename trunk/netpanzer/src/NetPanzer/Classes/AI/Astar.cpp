@@ -285,7 +285,6 @@ bool Astar::process_succ( PathList *path, int *result_code )
     unsigned long temp;
     bool done = false;
     unsigned short succ_loop;
-    bool steps_comp = false ;
     bool goal_reachable = true;
     unsigned short path_length;
 
@@ -295,7 +294,7 @@ bool Astar::process_succ( PathList *path, int *result_code )
 
     TIMESTAMP timer_path_mark = now();
 
-    while( !done && !steps_comp ) {
+    while(!done) {
         best_node = 0;
         if (!open.empty()) {
             best_node = open.top();
@@ -305,79 +304,90 @@ bool Astar::process_succ( PathList *path, int *result_code )
         if ( best_node == 0 ) {
             goal_reachable = false;
             done = true;
-        } else {
-            if ( (best_node->map_loc == goal_node.map_loc) ) {
-                done = true;
-            } else {
-                for ( succ_loop = 0; succ_loop < 8; succ_loop++ ) {
-                    unsigned char movement_value;
-                    movement_value = generateSucc( succ_loop, best_node, &temp_node );
+            break;
+        }
 
-                    if ( movement_value != 0xFF ) {
-                        if ( open_set.getBit( temp_node.map_loc.x, temp_node.map_loc.y ) ) {
+        if ( (best_node->map_loc == goal_node.map_loc) ) {
+            done = true;
+        } else {
+            for ( succ_loop = 0; succ_loop < 8; succ_loop++ ) {
+                unsigned char movement_value;
+                movement_value = generateSucc( succ_loop, best_node, &temp_node );
+
+                if ( movement_value != 0xFF ) {
+                    if ( open_set.getBit( temp_node.map_loc.x, temp_node.map_loc.y ) ) {
+                        //best_node->child[ succ_loop ] = old;
+
+                    } // ** if in open
+                    else
+                        if ( closed_set.getBit( temp_node.map_loc.x, temp_node.map_loc.y ) ) {
                             //best_node->child[ succ_loop ] = old;
 
-                        } // ** if in open
-                        else
-                            if ( closed_set.getBit( temp_node.map_loc.x, temp_node.map_loc.y ) ) {
-                                //best_node->child[ succ_loop ] = old;
+                        } // ** if in closed
+                        else {
+                            node = 0;
 
-                            } // ** if in closed
-                            else {
-                                node = 0;
+                            node = getNewNode();
 
-                                node = getNewNode();
+                            if ( node == 0 ) {
+                                done = true;
+                                goal_reachable = false;
+                            } else {
+                                *node = temp_node;
+                                node->parent = best_node;
 
-                                if ( node == 0 ) {
-                                    done = true;
-                                    goal_reachable = false;
-                                } else {
-                                    *node = temp_node;
-                                    node->parent = best_node;
+                                open_set.setBit( node->map_loc.x, node->map_loc.y );
 
-                                    open_set.setBit( node->map_loc.x, node->map_loc.y );
+                                if ( start_sampling_flag == true)
+                                    astar_set_array.setBit( node->map_loc.x, node->map_loc.y );
 
-                                    if ( start_sampling_flag == true)
-                                        astar_set_array.setBit( node->map_loc.x, node->map_loc.y );
+                                open.push(node);
+                            }
 
-                                    open.push(node);
-                                }
+                        } // ** else
 
-                            } // ** else
+                } // ** if valid succesor
+            }  // ** for succ_loop
 
-                    } // ** if valid succesor
-                }  // ** for succ_loop
+        } // **else
 
-            } // **else
+        open_set.clearBit( best_node->map_loc.x, best_node->map_loc.y );
 
-            open_set.clearBit( best_node->map_loc.x, best_node->map_loc.y );
+        closed_set.setBit( best_node->map_loc.x, best_node->map_loc.y );
 
-            closed_set.setBit( best_node->map_loc.x, best_node->map_loc.y );
+        if ( start_sampling_flag == true)
+            astar_set_array.setBit(best_node->map_loc.x, best_node->map_loc.y);
 
-            if ( start_sampling_flag == true)
-                astar_set_array.setBit( best_node->map_loc.x, best_node->map_loc.y );
+        releaseNode( best_node );
 
-            releaseNode( best_node );
-        } // ** else
-
-        if ( succ_swap_flag )
-            succ_swap_flag = false;
-        else
-            succ_swap_flag = true;
+        succ_swap_flag = ! succ_swap_flag;
 
         if ( steps > step_limit ) {
-            steps_comp = true;
             steps = 0;
+            break;
         } else {
             steps++;
             total_steps++;
         }
-
     } // ** while
 
     total_pathing_time += now() - timer_path_mark;
 
-    if ( done && goal_reachable ) {
+    if(!goal_reachable)
+    {
+        LOG(("goal unreachable %dx%d",
+                    goal_node.map_loc.x, goal_node.map_loc.y));
+                                                              
+        ini_flag = true;
+        cleanUp();
+                                                              
+        PathingState::astar_gen_time = total_pathing_time;
+        PathingState::astar_gen_time_total += total_pathing_time;
+        *result_code = _path_result_goal_unreachable;
+        return true;
+    }
+    
+    if (done) {
         bool insert_successful = true;
         path_length = 0;
 
@@ -412,20 +422,8 @@ bool Astar::process_succ( PathList *path, int *result_code )
         PathingState::astar_gen_time = total_pathing_time;
         PathingState::astar_gen_time_total += total_pathing_time;
         *result_code = _path_result_success;
-        return( true );
-    } else
-        if ( !goal_reachable ) {
-            LOG(("goal unreachable %dx%d",
-                 goal_node.map_loc.x, goal_node.map_loc.y));
-
-            ini_flag = true;
-            cleanUp();
-
-            PathingState::astar_gen_time = total_pathing_time;
-            PathingState::astar_gen_time_total += total_pathing_time;
-            *result_code = _path_result_goal_unreachable;
-            return true;
-        }
+        return true;
+    } 
 
     return false;
 }

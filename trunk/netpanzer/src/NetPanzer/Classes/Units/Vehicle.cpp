@@ -927,6 +927,11 @@ void Vehicle::aiFsmAttackUnit( void )
     target_unit_ptr = getUnit( aiFsmAttackUnit_target_ID );
     if ( target_unit_ptr == 0 ) {
         aiFsmAttackUnit_target_destroyed = true;
+        if(aiFsmAttackUnit_state != _aiFsmAttackUnit_move_wait) {
+            setAiFsmDefendHold();
+            aiFsmAttackUnit_OnExitCleanUp();
+            return;
+        }
     } else {
         target_unit_state = &(target_unit_ptr->unit_state);
 
@@ -1586,7 +1591,7 @@ void Vehicle::messageAICommand( UnitMessage *message )
         if ( command_mesg->command == _command_manual_fire ) {
             setCommandManualFire( command_mesg );
         } else {
-            memmove( &pending_AI_comm_mesg, command_mesg, sizeof( UMesgAICommand) );
+            memcpy(&pending_AI_comm_mesg, command_mesg, sizeof(UMesgAICommand));
             pending_AI_comm = true;
         }
     }

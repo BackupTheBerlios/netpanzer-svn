@@ -27,7 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/UtilInterface.hpp"
-#include "Util/cGrowList.hpp"
 #include "Types/fXY.hpp"
 #include "Util/TimerInterface.hpp"
 #include "Util/Exception.hpp"
@@ -737,7 +736,7 @@ void Surface::bltTransColor(Surface &dest, iXY min, const uint8_t &color) const
 //---------------------------------------------------------------------------
 // Purpose: Draws a horizontal drawLine.
 //---------------------------------------------------------------------------
-void Surface::drawHLine(int x1, int y, int x2, const PIX &color) const
+void Surface::drawHLine(int x1, int y, int x2, const PIX &color)
 {
     assert(getDoesExist());
     assert(this != 0);
@@ -771,7 +770,7 @@ void Surface::drawHLine(int x1, int y, int x2, const PIX &color) const
 //---------------------------------------------------------------------------
 // Purpose: Draws a vertical drawLine.
 //---------------------------------------------------------------------------
-void Surface::drawVLine(int x, int y1, int y2, const PIX &color) const
+void Surface::drawVLine(int x, int y1, int y2, const PIX &color)
 {
     assert(getDoesExist());
     assert(this != 0);
@@ -818,7 +817,7 @@ void Surface::fillAll(const PIX &color)
 //---------------------------------------------------------------------------
 // Purpose: Fills the Surface will the specified color.
 //---------------------------------------------------------------------------
-void Surface::fill(const PIX &color) const
+void Surface::fill(const PIX &color)
 {
     assert(getDoesExist());
     assert(this != 0);
@@ -843,7 +842,7 @@ void Surface::fill(const PIX &color) const
 // Purpose: Fills the specified rectangle in the calling Surface with the
 //          specified color.
 //---------------------------------------------------------------------------
-void Surface::fillRect(iRect bounds, const PIX &color) const
+void Surface::fillRect(iRect bounds, const PIX &color)
 {
     assert(getDoesExist());
     assert(this != 0);
@@ -882,7 +881,7 @@ void Surface::fillRect(iRect bounds, const PIX &color) const
 //---------------------------------------------------------------------------
 // Purpose: Draws a rectagle in the specified color on the calling Surface.
 //---------------------------------------------------------------------------
-void Surface::drawRect(iRect bounds, const PIX &color) const
+void Surface::drawRect(iRect bounds, const PIX &color)
 {
     assert(getDoesExist());
     assert(this != 0);
@@ -913,7 +912,7 @@ void Surface::drawRect(iRect bounds, const PIX &color) const
 //---------------------------------------------------------------------------
 // Purpose: Draws a drawLine with any slope.
 //---------------------------------------------------------------------------
-void Surface::drawLine(int x1, int y1, int x2, int y2, const PIX &color) const
+void Surface::drawLine(int x1, int y1, int x2, int y2, const PIX &color)
 {
     assert(getDoesExist());
     assert(this != 0);
@@ -1040,22 +1039,29 @@ void Surface::flipVertical()
 // Purpose: Copies the specified number of frames from the source Surface to
 //          the calling Surface.
 //---------------------------------------------------------------------------
-void Surface::copy(Surface &source)
+void Surface::copy(const Surface &source)
 {
-    assert(source.getDoesExist());
+    if(!source.getDoesExist())
+        return;
+    
     assert(this != 0);
+
+    // XXX ugly ugly ugly
+    Surface& nonconstsource = const_cast<Surface&> (source);
 
     // Create a Surface the surface the same size as the source.
     create(source);
 
+    PIX* oldmem = source.mem;
     for (int frameNum = 0; frameNum < source.getFrameCount(); frameNum++) {
         // Set the source Surface frame.
         setFrame(frameNum);
-        source.setFrame(frameNum);
+        nonconstsource.setFrame(frameNum);
 
         // Blit the source frame to the calling frame
         source.blt(*this);
     }
+    nonconstsource.mem = oldmem;
 } // end Surface::copy
 
 // rotate
@@ -1194,7 +1200,7 @@ void Surface::scale(const iXY &pix)
 
 // drawButtonBorder
 //---------------------------------------------------------------------------
-void Surface::drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightColor) const
+void Surface::drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightColor)
 {
     assert(getDoesExist());
     assert(this != 0);
@@ -1220,7 +1226,7 @@ void Surface::drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightCo
 // Purpose - Blend the specified surface into the calling surface.  The upper-left
 //           corner is min.
 //---------------------------------------------------------------------------
-void Surface::blendIn(const Surface &source, iXY min, ColorTable &colorTable) const
+void Surface::blendIn(const Surface &source, iXY min, ColorTable &colorTable)
 {
     assert(getDoesExist());
     assert(source.getDoesExist());
@@ -1293,7 +1299,7 @@ void Surface::blendIn(const Surface &source, iXY min, ColorTable &colorTable) co
 // Purpose - Blend the specified surface into the calling surface.  The upper-left
 //           corner is min.
 //---------------------------------------------------------------------------
-void Surface::bltBlendScale(const Surface &source, const iRect &destRect, ColorTable &colorTable) const
+void Surface::bltBlendScale(const Surface &source, const iRect &destRect, ColorTable &colorTable)
 {
     assert(getDoesExist());
     assert(source.getDoesExist());
@@ -1382,7 +1388,7 @@ void Surface::bltBlendScale(const Surface &source, const iRect &destRect, ColorT
 
 } // end Surface::bltBlendScale
 
-void Surface::bltLookup(const iRect &destRect, const PIX table[]) const
+void Surface::bltLookup(const iRect &destRect, const PIX table[])
 {
     assert(getDoesExist());
     assert(this != 0);
@@ -1416,7 +1422,7 @@ void Surface::bltLookup(const iRect &destRect, const PIX table[]) const
 }
 
 //---------------------------------------------------------------------------
-void Surface::bltScale(const Surface &source, const iRect &destRect) const
+void Surface::bltScale(const Surface &source, const iRect &destRect)
 {
     assert(getDoesExist());
     assert(source.getDoesExist());
@@ -1507,7 +1513,7 @@ void Surface::bltScale(const Surface &source, const iRect &destRect) const
 //---------------------------------------------------------------------------
 // Purpose - Blend the specified iRect using one of the specific palette tables.
 //---------------------------------------------------------------------------
-void Surface::blendRect(iRect bounds, ColorTable &colorTable) const
+void Surface::blendRect(iRect bounds, ColorTable &colorTable)
 {
     assert(getDoesExist());
     assert(this != 0);
@@ -1688,301 +1694,6 @@ PIX Surface::getAverageColor()
 
     return Palette::findNearestColor(RGBColor(avgR, avgG, avgB));
 } // end Surface::getAverageColor
-
-// setBrightness
-void Surface::setBrightness(int percent)
-{
-    assert(percent >= 0 || percent <= 100);
-
-    for (int x = 0; x < pix.x; x++) {
-        for (int y = 0; y < pix.y; y++) {
-            putPixel(x, y, Palette::colorTableDarkenALittle[(getPixel(x, y) * 100) + percent]);
-        }
-    }
-
-} // end Surface::setBrightness
-
-// bltBrightness
-void Surface::bltBrightness(const Surface &dest, const iXY &pos, const float &percent)
-{
-    assert(getDoesExist());
-    assert(dest.getDoesExist());
-    assert(this != 0);
-    assert(Palette::colorTableBrighten.getColorCount() == 256 * 256);
-    assert(Palette::brightness256.getColorCount() == 256);
-
-    iXY min(pos);
-
-    min += offset;
-
-    if (min.x >= dest.pix.x) return;
-    if (min.y >= dest.pix.y) return;
-
-    iXY max(min + pix);
-    if (max.x <= 0) return;
-    if (max.y <= 0) return;
-
-    // Something is overlapping, so we need to verify that both
-    // surfaces are valid.
-    assert(mem      != 0);
-    assert(dest.mem != 0);
-
-    int        pixelsPerRow = pix.x;
-    int        numRows      = pix.y;
-    const PIX *sRow         = mem;        // Pointer to the this (source) Surface
-    PIX       *dRow         = dest.mem;   // Pointer to the dest Surface
-
-    // CLIP LEFT
-    if (min.x < 0) {
-        pixelsPerRow += min.x;
-        sRow         -= min.x;
-    }	else {
-        dRow += min.x;
-    }
-
-    // CLIP RIGHT
-    if (max.x > dest.pix.x) {
-        pixelsPerRow -= max.x - dest.pix.x;
-    }
-
-    // CLIP TOP
-    if (min.y < 0) {
-        numRows += min.y;
-        sRow    -= (min.y * stride);
-    }	else {
-        dRow += (min.y * dest.stride);
-    }
-
-    // CLIP BOTTOM
-    if (max.y > dest.pix.y) {
-        numRows -= max.y - dest.pix.y;
-    }
-
-    // Check to make sure the clipping is working.
-    //if (signed(pixelsPerRow) <= 0) return;
-    //if (signed(numRows) <= 0) return;
-    assert(signed(pixelsPerRow) > 0);
-    assert(signed(numRows) > 0);
-
-    PIX *d;
-    int xCount;
-
-    for (int yCount = 0 ; yCount < numRows ; yCount++) {
-        const PIX *s = sRow;
-        d            = dRow;
-        xCount       = pixelsPerRow;
-
-        while (xCount > 0) {
-            //*d = Palette::colorTableBrighten[((*d) * 256) + (Palette::brightness256[(*s)] * percent)];
-            *d = Palette::colorTableBrighten[
-                     (int) (((*d) << 8) + (Palette::brightness256[(*s)] * percent))];
-
-            xCount--;
-            s++;
-            d++;
-        }
-
-        sRow += stride;
-        dRow += dest.stride;
-    }
-
-} // end Surface::bltBrightness
-
-static uint8_t quickHack[65536];
-
-static void bltLightDarkSpan(int n, PIX *d, const uint8_t *i, const PIX *s)
-{
-    static int once = 0;
-
-    if (!once) {
-        for (int i = 0 ; i < 65536 ; ++i) {
-            quickHack[i] = Palette::colorTableLightDark[i];
-        }
-        once = 1;
-    }
-
-    // Quick bail if no pixels in span
-
-    if (n < 1) return;
-
-    while (n > 0) {
-        //assert(((*s << 8) + *i) < 256 * 256);
-        *d = Palette::colorTableLightDark[(*s << 8) + *i];
-
-        n--;
-        i++;
-        s++;
-        d++;
-    }
-
-}
-
-void Surface::bltLightDark(const Surface &source, const Surface &lightTable) const
-{
-    // Make sure all 3 surfaces have the same dimension.
-    assert(lightTable.getPix().x  == pix.x && source.getPix().x  == pix.x);
-    assert(lightTable.getPix().y  == pix.y && source.getPix().y  == pix.y);
-    //assert(lightTable.getStride() == stride && source.getStride() == stride);
-    assert(Palette::colorTableLightDark.getColorCount() == 256 * 256);
-
-    int numRows = pix.y;
-
-    uint8_t const *rowI = lightTable[0];
-    PIX  const *rowS = source.mem;
-    PIX        *rowD = mem;
-
-    while (numRows > 0) {
-        //int xCount = pix.x;
-        //uint8_t const *i = rowI;
-        //PIX  const *s = rowS;
-        //PIX        *d = rowD;
-
-        //while (xCount > 0)
-        //{
-        //	//assert(((*s << 8) + *i) < 256 * 256);
-        //	*d = Palette::colorTableLightDark[(*s << 8) + *i];
-        //
-        //	xCount--;
-        //	i++;
-        //	s++;
-        //	d++;
-        //}
-        bltLightDarkSpan(pix.x, rowD, rowI, rowS);
-
-        numRows--;
-        rowI += lightTable.getStride();
-        rowS += source.getStride();
-        rowD += stride;
-    }
-}
-
-void Surface::setToBrightnessIndexes128()
-{
-    for (int x = 0; x < pix.x; x++) {
-        for (int y = 0; y < pix.y; y++) {
-            putPixel(x, y, (int) (Palette::brightness256[getPixel(x, y)] *
-                                  (128.0/100.0)));
-        }
-    }
-}
-
-// bltAdd
-//---------------------------------------------------------------------------
-// Purpose:
-//---------------------------------------------------------------------------
-
-void Surface::bltAdd(const Surface &dest, iXY min) const
-{
-    assert(getDoesExist());
-    assert(dest.getDoesExist());
-    assert(this != 0);
-
-    static uint8_t saturateTable[512];
-
-    static int once = 0;
-    if (!once) {
-        int i;
-        for (i = 0 ; i < 256 ; ++i) saturateTable[i] = i;
-        for (i = 256 ; i < 512 ; ++i) saturateTable[i] = 255;
-        once = 1;
-    }
-
-
-    // Add in the offset factor.
-    min += offset;
-
-    // Trivial clipping rejection - no overlap.
-    // Also will jump out immediately if either image has zero size.
-    if (min.x >= dest.pix.x) return;
-    if (min.y >= dest.pix.y) return;
-
-    iXY max;
-    max = min + pix;
-    //int	x2 = x1 + pix.x;
-    //int	y2 = y1 + pix.y;
-    if (max.x <= 0) return;
-    if (max.y <= 0) return;
-
-    // Something is overlapping, so we need to verify that both
-    // surfaces are valid.
-    assert(mem != 0);
-    assert(dest.mem != 0);
-    if (mem == 0 || dest.mem == 0) return;
-
-    int	pixelsPerRow = pix.x;
-    int	numRows      = pix.y;
-
-    PIX	*sPtr	= mem;      // Pointer to source Surface start of memory.
-    PIX	*dPtr	= dest.mem; // Pointer to destination Surface start of memory.
-
-    // Check for partial clip, calculate number of pixels
-    // per row to copy, and number of rows to copy.  Adjust
-    // sPtr and dPtr.
-
-    // CLIP LEFT
-    if (min.x < 0) {
-        pixelsPerRow +=  min.x; // This will subtract the neg. x value.
-        sPtr         += -min.x; // This will move the sPtr to x = 0, from the neg. x.
-    }	else {
-        dPtr += min.x;
-    }
-
-    // CLIP RIGHT
-    // This subtracts only the portion hanging over the right edge of the
-    // destination Surface
-    if (max.x > dest.pix.x) pixelsPerRow -= max.x - dest.pix.x;
-
-    // CLIP TOP
-    if (min.y < 0) {
-        numRows += min.y;
-        sPtr    -= min.y * stride;
-    }	else {
-        dPtr += min.y * dest.stride;
-    }
-
-    // CLIP BOTTOM
-    // This subtracts only the portion hanging over the bottom edge of the
-    // destination Surface
-    if (max.y > dest.pix.y) numRows -= max.y - dest.pix.y;
-
-    // Now, Check to make sure I actually have something
-    // to draw.  I should - because I checked for trivial
-    // rejection first.  These asserts just make sure
-    // my clipping is working...
-    if (signed(pixelsPerRow) <= 0) return;
-    if (signed(numRows) <= 0) return;
-    assert(signed(pixelsPerRow) > 0);
-    assert(signed(numRows) > 0);
-
-    // Now blt the sucker!  But first, see if we can do it in one
-    // big blt, without doing each row individually...
-    if (stride == pixelsPerRow && dest.stride == pixelsPerRow) {
-        pixelsPerRow *= numRows;
-        numRows = 1;
-    }
-
-    do {
-
-        // Align to 4-byte dest boundary
-
-        PIX *d = dPtr;
-        PIX *s = sPtr;
-        int n = pixelsPerRow;
-
-        // Cleanup
-        while (n > 0) {
-            *d = saturateTable[int(*d) + int(*s)];
-            ++d;
-            ++s;
-            --n;
-        }
-
-        sPtr += stride;
-        dPtr += dest.stride;
-    } while (--numRows > 0);
-
-
-} // end bltAdd
 
 // loadAllBMPInDirectory
 //---------------------------------------------------------------------------
@@ -2227,121 +1938,6 @@ void Surface::bltStringCenteredInRect(const iRect &rect, const char *string, con
 
 } // end Surface::bltStringCenteredInRect
 
-// Blit a string of text with a vertical gradient.
-//---------------------------------------------------------------------------
-void Surface::bltStringVGradient(const iXY &pos, const char *string, ColorTable &colorTable)
-{
-    for (int index = 0; string[index] != 0; index++) {
-        bltChar8x8VGradient(iXY(pos.x + (index << 3), pos.y), string[index], colorTable);
-    }
-}
-
-//---------------------------------------------------------------------------
-void Surface::bltChar8x8VGradient(const iXY &pos, unsigned char character,
-                                  ColorTable &colorTable)
-{
-    if (character >= ascii8x8.getFrameCount())
-        return;
-    
-    ascii8x8.setFrame(character);
-    ascii8x8.bltTransVGradient(*this, pos, colorTable);
-}
-
-//---------------------------------------------------------------------------
-void Surface::bltTransVGradient(Surface &dest, iXY min, ColorTable &colorTable)
-    const
-{
-    assert(getDoesExist());
-    assert(dest.getDoesExist());
-    assert(this != 0);
-    assert(colorTable.getColorCount() > 0);
-
-    // Add in the offset factor.
-    min += offset;
-
-    // Trivial clipping rejection - no overlap.
-    // Also will jump out immediately if either image has zero size.
-    if (min.x >= dest.pix.x) return;
-    if (min.y >= dest.pix.y) return;
-
-    iXY max;
-    max = min + pix;
-    //int	x2 = x1 + pix.x;
-    //int	y2 = y1 + pix.y;
-    if (max.x <= 0) return;
-    if (max.y <= 0) return;
-
-    // Something is overlapping, so we need to verify that both
-    // surfaces are valid.
-    assert(mem != 0);
-    assert(dest.mem != 0);
-    if (mem == 0 || dest.mem == 0) return;
-
-    int	pixelsPerRow = pix.x;
-    int	numRows      = pix.y;
-
-    PIX	*sPtr	= mem;      // Pointer to source Surface start of memory.
-    PIX	*dPtr	= dest.mem; // Pointer to destination Surface start of memory.
-
-    // Check for partial clip, calculate number of pixels
-    // per row to copy, and number of rows to copy.  Adjust
-    // sPtr and dPtr.
-
-    // CLIP LEFT
-    if (min.x < 0) {
-        pixelsPerRow +=  min.x; // This will subtract the neg. x value.
-        sPtr         += -min.x; // This will move the sPtr to x = 0, from the neg. x.
-    }	else {
-        dPtr += min.x;
-    }
-
-    // CLIP RIGHT
-    // This subtracts only the portion hanging over the right edge of the
-    // destination Surface
-    if (max.x > dest.pix.x) pixelsPerRow -= max.x - dest.pix.x;
-
-    // CLIP TOP
-    if (min.y < 0) {
-        numRows += min.y;
-        sPtr    -= min.y * stride;
-    }	else {
-        dPtr += min.y * dest.stride;
-    }
-
-    // CLIP BOTTOM
-    // This subtracts only the portion hanging over the bottom edge of the
-    // destination Surface
-    if (max.y > dest.pix.y) numRows -= max.y - dest.pix.y;
-
-    // Now, Check to make sure I actually have something
-    // to draw.  I should - because I checked for trivial
-    // rejection first.  These asserts just make sure
-    // my clipping is working...
-    if (signed(pixelsPerRow) <= 0) return;
-    if (signed(numRows) <= 0) return;
-    assert(signed(pixelsPerRow) > 0);
-    assert(signed(numRows) > 0);
-
-    int srcAdjustment  = stride      - pixelsPerRow;
-    int destAdjustment = dest.stride - pixelsPerRow;
-
-    for (int row = 0; row < numRows; row++) {
-        int index = (int)
-                    (float(row) / float(numRows) *(colorTable.getColorCount() - 1));
-        int color = colorTable[index];
-
-        for (int col = 0; col < pixelsPerRow; col++) {
-            if (*sPtr != 0)
-                *dPtr = color;
-            sPtr++;
-            dPtr++;
-        }
-
-        sPtr += srcAdjustment;
-        dPtr += destAdjustment;
-    }
-}
-
 // create
 //---------------------------------------------------------------------------
 void Surface::create(iXY nPix ,int nStride, int nFrameCount)
@@ -2433,7 +2029,7 @@ void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
 
 // drawWindowsBorder
 //--------------------------------------------------------------------------
-void Surface::drawWindowsBorder(iRect rect, PIX light, PIX medium, PIX dark) const
+void Surface::drawWindowsBorder(iRect rect, PIX light, PIX medium, PIX dark)
 {
     orderCoords(rect);
 
@@ -2553,7 +2149,7 @@ void Surface::mapFromPalette(const char* oldPalette)
 // Purpose: Draws lines in the corners of the surface of the specified length
 //          and color.
 //--------------------------------------------------------------------------
-void Surface::drawBoxCorners(const iRect &rect, int cornerLength, PIX color) const
+void Surface::drawBoxCorners(const iRect &rect, int cornerLength, PIX color)
 {
     // Make sure the corner lines are not longer than the rect.
     if (rect.getSizeX() < cornerLength) {
@@ -2587,7 +2183,7 @@ void Surface::drawBoxCorners(const iRect &rect, int cornerLength, PIX color) con
 //--------------------------------------------------------------------------
 // Purpose: Colormaps the edges of the surface with the specified table.
 //--------------------------------------------------------------------------
-void Surface::drawLookupBorder(const PIX table[]) const
+void Surface::drawLookupBorder(const PIX table[])
 {
     iRect r;
 

@@ -33,11 +33,7 @@ class HostJoinTemplateView : public MenuTemplateView
 {
 private:
     void addVehicleButtons(const iXY &pos);
-    void drawVehicleInfo(Surface &dest, const iXY &pos);
-    void drawFlagInfo(Surface &dest, const iXY &pos);
-    void drawPlayerInfo(Surface &dest, const iXY &pos);
-    void drawNameInfo(Surface &clientArea, const iXY &pos);
-
+    
     virtual void loadBackgroundSurface();
 
 public:

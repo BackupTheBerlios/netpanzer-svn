@@ -50,7 +50,7 @@ void FireParticle2D::sim()
 //---------------------------------------------------------------------------
 // Purpose: Draws a single particle, no simulation.
 //---------------------------------------------------------------------------
-void FireParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
+void FireParticle2D::draw(Surface &dest, SpriteSorter &sorter)
 {
     //if (!isAlive) return;
     dest.fillRect(100, 100, 110, 110, Color::red);

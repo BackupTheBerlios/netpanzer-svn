@@ -256,8 +256,6 @@ void NetworkServer::processNetMessage( NetMessage *message )
 
 }
 
-
-
 void NetworkServer::updateKeepAliveState( void )
 {
     bool send_server_keep_alive_mesg = false;

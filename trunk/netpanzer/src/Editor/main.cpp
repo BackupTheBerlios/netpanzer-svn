@@ -28,7 +28,7 @@ bool EditorApplication::OnInit()
     try {
         FileSystem::initialize(argv[0], "netpanzer", "netpanzer");
     } catch(std::exception& e) {
-        fprintf(stderr, "%s", e.what());
+        std::cerr << e.what() << std::endl;
         return false;
     }
 

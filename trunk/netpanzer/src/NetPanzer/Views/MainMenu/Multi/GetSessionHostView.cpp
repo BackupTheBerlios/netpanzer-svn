@@ -106,7 +106,7 @@ void GetSessionHostView::doDraw(Surface &viewArea, Surface &clientArea)
 
     //end winsock hack
 
-    //if (hosts.getCount() > 0)
+    //if (hosts.size() > 0)
     //{
     //	clientArea.bltStringCenter(hosts[0].getName(), Color::white);
     //}
@@ -140,7 +140,7 @@ void GetSessionHostView::drawHostList(Surface &dest)
 
     curIndex++;
 
-    for (int i = 0; i < hosts.getCount(); i++) {
+    for (size_t i = 0; i < hosts.size(); i++) {
         sprintf( host_info_str, "%-24s %-24s %-15s %4d/%-4d", hosts[i].name,
                  hosts[i].map,
                  hosts[i].game_type,
@@ -150,9 +150,9 @@ void GetSessionHostView::drawHostList(Surface &dest)
 
         color = Color::white;
 
-        if (i == highlightedItem) {
+        if (i == (size_t) highlightedItem) {
             color = Color::red;
-        } else if (i == selectedItem) {
+        } else if (i == (size_t) selectedItem) {
             color = Color::green;
         }
 
@@ -241,21 +241,21 @@ void GetSessionHostView::updateHostList()
     }
 
     char curHostName[256];
-    if (hosts.getCount() > 0 && selectedItem != -1 && selectedItem < hosts.getCount()) {
+    if (hosts.size() > 0 && selectedItem != -1 && selectedItem < (int) hosts.size()) {
         sprintf(curHostName, "%s", hosts[selectedItem].getName());
     } else {
         strcpy(curHostName, "");
     }
 
-    hosts.setNum(0);
+    hosts.clear();
 
     for (int num = 0; num < num_games; num++) {
-        hosts.setNum(hosts.getCount() + 1);
-        sprintf(hosts[hosts.getCount() - 1].name, "%s", session_list[ num ].name );
-        sprintf(hosts[hosts.getCount() - 1].map, "%s", session_list[ num ].map );
-        sprintf(hosts[hosts.getCount() - 1].game_type, "%s", session_list[ num ].game_type );
-        hosts[hosts.getCount() - 1].current_players = session_list[ num ].current_players;
-        hosts[hosts.getCount() - 1].max_players = session_list[ num ].max_players;
+        hosts.resize(hosts.size() + 1);
+        sprintf(hosts[hosts.size() - 1].name, "%s", session_list[ num ].name );
+        sprintf(hosts[hosts.size() - 1].map, "%s", session_list[ num ].map );
+        sprintf(hosts[hosts.size() - 1].game_type, "%s", session_list[ num ].game_type );
+        hosts[hosts.size() - 1].current_players = session_list[ num ].current_players;
+        hosts[hosts.size() - 1].max_players = session_list[ num ].max_players;
 
     }
 
@@ -270,10 +270,10 @@ void GetSessionHostView::updateHostList()
 
     //int maxViewableItems = getClientRect().getSize().y / (CHAR_YPIX + ITEM_GAP_SPACE);
     //
-    //viewableItemCount = (hosts.getCount() < maxViewableItems) ? hosts.getCount() : maxViewableItems;
+    //viewableItemCount = (hosts.size() < maxViewableItems) ? hosts.size() : maxViewableItems;
     /*
     	scrollBar.setViewableAmount(viewableItemCount);
-    	scrollBar.setItemCount(hosts.getCount());
+    	scrollBar.setItemCount(hosts.size());
     	scrollBar.setItemsSize(CHAR_YPIX + ITEM_GAP_SPACE);
     */
 } // end GetSessionHostView::updateHostList
@@ -286,7 +286,7 @@ int GetSessionHostView::findItemContaining(const iXY &pos)
 
     int length = getClientRect().getSizeX() - 12;
 
-    for (int i = 0; i < hosts.getCount(); i++) {
+    for (size_t i = 0; i < hosts.size(); i++) {
         iXY tempPos;
 
         tempPos.x = 4;
@@ -313,7 +313,7 @@ void GetSessionHostView::lMouseDown(const iXY &pos)
 {
     selectedItem = findItemContaining(pos);
 
-    if ((selectedItem != -1) && (selectedItem < hosts.getCount())) {
+    if ((selectedItem != -1) && (selectedItem < (int) hosts.size())) {
         /* winsock hack
               if (!SetSelectedGame(hosts[selectedItem].getName()))
         {

@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <iostream>
+
 #include <SDL.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -57,6 +59,10 @@ BotPlayer::processEvents()
             if (UnitInterface::quearyClosestEnemyUnit(&enemyUnit,
                         unit->unit_state.location, playerIndex))
             {
+                std::cout << "Closest unit:"
+                    << enemyUnit->unit_id.unique << " (P:"
+                    << (int) enemyUnit->unit_id.player << "-"
+                    << (int) enemyUnit->unit_id.index << ")\n";
                 manualFire(unit, enemyUnit->unit_state.location);
             }
         }
@@ -99,13 +105,17 @@ BotPlayer::getRandomUnit(int playerIndex)
     UnitList *unitList = UnitInterface::getUnitList(playerIndex);
     assert(unitList != 0);
 
-    long size = unitList->containsItems();
+    long size = unitList->size();
     if (size > 0) {
         int unitIndex = rand() % size;
-        UnitPointer *unit_ptr;
-        unitList->resetIterator(&unit_ptr);
-        for (int i = 0; i <= unitIndex; i++) {
-            unit = unitList->incIterator(&unit_ptr);
+
+        int p = 0;
+        for(UnitList::iterator i = unitList->begin();
+                i != unitList->end(); ++i) {
+            unit = *i;
+            if(p == unitIndex)
+                break;
+            ++p;
         }
     }
 

@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdint.h>
 
 #include "cMouse.hpp"
-#include "Util/cGrowList.hpp"
 #include "cButton.hpp"
 #include "2D/Surface.hpp"
 #include "cInputField.hpp"
@@ -58,11 +57,7 @@ class View : public iRect
     friend class Desktop;
 public:
     void add(Component *Component);
-    //void remove(Component *Component);
-
     void add(DEFAULT_VIEW_BUTTON button);
-
-    //cGrowList <Component> ComponentList;
 
 public:
     enum
@@ -74,8 +69,8 @@ public:
     int        componentsUsedCount;
     Component *focusComponent;
 
-    cGrowList<cButton>     buttons;
-    cGrowList<cInputField> inputFields;
+    std::vector<cButton*>     buttons;
+    std::vector<cInputField*> inputFields;
 
     enum
     {
@@ -299,7 +294,7 @@ public:
     }
     void removeAllButtons()
     {
-        buttons.setNum(0);
+        buttons.clear();
     }
     void removeComponents()
     {

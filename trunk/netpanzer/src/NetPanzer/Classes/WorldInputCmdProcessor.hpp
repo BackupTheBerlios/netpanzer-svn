@@ -56,9 +56,6 @@ protected:
     void setSelectionList( unsigned long new_list_index );
     void cycleSelectedUnits( unsigned long new_list_index );
 
-    unsigned long unit_cycle_search_iterator;
-    void cycleNextUnitAndChangeFocus( void );
-
     unsigned char getCursorStatus( iXY &loc );
     void setMouseCursor( unsigned char world_cursor_status );
 

@@ -18,10 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SERVERCONNECTDAEMON_HPP
 #define _SERVERCONNECTDAEMON_HPP
 
+#include <list>
+
 #include "PlayerState.hpp"
 #include "ArrayUtil/QueueTemplate.hpp"
 #include "NetPacket.hpp"
 #include "ArrayUtil/Timer.hpp"
+#include "UnitSync.hpp"
 
 enum { _connect_status_waiting,
        _connect_status_abort,
@@ -35,41 +38,17 @@ public:
     unsigned short connect_status;
 };
 
-class ServerConnectQueue : public QueueTemplate< ConnectQueueElement >
-{
-public:
-
-    void resetIterator( unsigned long *iterator )
-    {
-        *iterator = front;
-    }
-
-    ConnectQueueElement incIterator( unsigned long *iterator, bool *completed )
-    {
-        if ( *iterator == rear ) {
-            *completed = true;
-            return( array[ *iterator ] );
-        };
-
-        *iterator = ( *iterator + 1 ) % size;
-
-        *completed = false;
-        return( array[ *iterator ] );
-    }
-
-};
-
 class ServerConnectDaemon
 {
 protected:
-    static unsigned char      connection_state;
-    static bool            connection_lock_state;
-    static PlayerID           connect_player_id;
-    static PlayerState        *connect_player_state;
-    static Timer		         time_out_timer;
-    static int	             time_out_counter;
-    static ServerConnectQueue connect_queue;
-
+    static unsigned char        connection_state;
+    static bool                 connection_lock_state;
+    static PlayerID             connect_player_id;
+    static PlayerState*         connect_player_state;
+    static UnitSync*            connect_unit_sync;
+    static Timer		time_out_timer;
+    static int	                time_out_counter;
+    static std::list<ConnectQueueElement> connect_queue;
 
     static bool inConnectQueue( PlayerID &new_player_id );
 

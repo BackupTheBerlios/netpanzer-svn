@@ -16,6 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
+#include <iostream>
+
 #include "UnitInterface.hpp"
 #include "PlayerInterface.hpp"
 #include "MapInterface.hpp"
@@ -61,37 +64,24 @@ UnitOpcodeEncoder UnitInterface::no_guarantee_opcode_encoder;
 Timer UnitInterface::message_timer;
 Timer UnitInterface::no_guarantee_message_timer;
 
-
-UnitPointer *UnitInterface::unit_position_enum_iterator;
-unsigned short UnitInterface::unit_position_enum_list_index;
-unsigned short UnitInterface::unit_position_enum_local_player_index;
-
-unsigned short UnitInterface::unit_cycle_player_index;
-unsigned long  UnitInterface::unit_cycle_iterator;
-
-unsigned long  UnitInterface::sync_units_iterator;
-bool	       UnitInterface::sync_units_complete_flag;
-unsigned short UnitInterface::sync_units_list_index;
-unsigned long  UnitInterface::sync_units_total_units;
-unsigned long  UnitInterface::sync_units_in_sync_count;
-unsigned long  UnitInterface::sync_units_in_sync_partial_count;
-Timer		   UnitInterface::sync_units_packet_timer;
-PlayerID	   UnitInterface::sync_units_remote_player;
+unsigned long   UnitInterface::sync_units_iterator;
+bool	        UnitInterface::sync_units_complete_flag;
+unsigned short  UnitInterface::sync_units_list_index;
+unsigned long   UnitInterface::sync_units_total_units;
+unsigned long   UnitInterface::sync_units_in_sync_count;
+unsigned long   UnitInterface::sync_units_in_sync_partial_count;
+size_t          UnitInterface::units_per_player;
+Timer		UnitInterface::sync_units_packet_timer;
+PlayerID	UnitInterface::sync_units_remote_player;
 
 
 // ******************************************************************
 
 void UnitInterface::initialize( unsigned long max_units )
 {
-    unsigned int i;
-
     max_players = PlayerInterface::getMaxPlayers();
 
     unit_lists = new UnitList [ max_players ];
-
-    for( i = 0; i < max_players; i++ ) {
-        unit_lists[i].initialize( max_units );
-    }
 
     unit_bucket_array.initialize( MapInterface::getMapSize(), TileInterface::getTileSize() );
 
@@ -100,27 +90,21 @@ void UnitInterface::initialize( unsigned long max_units )
     no_guarantee_message_timer.changeRate( 15 );
     opcode_encoder.initialize( _opcode_encoder_send_method_guarantee );
     no_guarantee_opcode_encoder.initialize( _opcode_encoder_send_method_no_guarantee );
+
+    units_per_player = max_units;
 }
 
 // ******************************************************************
 
 void UnitInterface::cleanUp( void )
 {
-    unsigned int i;
-
-    for( i = 0; i < max_players; i++ ) {
-        unit_lists[i].cleanUp();
-    }
-
     delete[] unit_lists;
 }
 
 void UnitInterface::reset( void )
 {
-    unsigned int i;
-
-    for( i = 0; i < max_players; i++ ) {
-        unit_lists[i].reset();
+    for(size_t i = 0; i < max_players; i++ ) {
+        unit_lists[i].clear();
     }
 
     unit_bucket_array.initialize( MapInterface::getMapSize(), TileInterface::getTileSize() );
@@ -132,7 +116,7 @@ unsigned long UnitInterface::getTotalUnitCount( void )
     unsigned long unit_total = 0;
 
     for( int i = 0; i < max_players; i++ ) {
-        unit_total += unit_lists[ i ].containsItems();
+        unit_total += unit_lists[ i ].size();
     }
 
     return( unit_total );
@@ -151,45 +135,31 @@ void UnitInterface::sendMessage( UnitMessage *message )
             unit->processMessage( message );
         }
     } // ** if _umesg_flag_unique
-    else
-        if (  message->isFlagged( _umesg_flag_broadcast ) ) {
-            UnitPointer *iterator;
-            unsigned long list_index;
-
-            for( list_index = 0; list_index < max_players; list_index++) {
-                unit_lists[ list_index ].resetIterator( &iterator );
-
-                unit = unit_lists[ list_index ].incIterator( &iterator );
-                while( unit != 0 ) {
-                    unit->processMessage( message );
-
-                    unit = unit_lists[ list_index ].incIterator( &iterator );
-                } // ** while
-
-            } // ** for
-
-
-        } // ** if _mesg_flag_broadcast
-        else
-            if ( message->isFlagged( _umesg_flag_manager_request ) ) {
-                processManagerMessage( message );
-            } // ** if _umesg_flag_manager_request
+    else if (  message->isFlagged( _umesg_flag_broadcast ) ) {
+	for(size_t list_index = 0; list_index < max_players; list_index++) {
+	    UnitList* unitlist = & unit_lists[list_index];
+	    for(UnitList::iterator i = unitlist->begin();
+		    i != unitlist->end(); ++i) {
+		i->processMessage( message );
+	    } // ** for
+	} // ** for
+    } else if ( message->isFlagged( _umesg_flag_manager_request ) ) {
+  	processManagerMessage( message );
+    } // ** if _umesg_flag_manager_request
 }
 
 // ******************************************************************
 
 void UnitInterface::updateUnitStatus()
 {
-    UnitBase *unit;
-    UnitPointer *iterator;
-    unsigned long list_index;
-
-    for( list_index = 0; list_index < max_players; list_index++) {
-        unit_lists[ list_index ].resetIterator( &iterator );
-
-        unit = unit_lists[ list_index ].incIterator( &iterator );
-        while( unit != 0 ) {
-            if ( unit->unit_state.lifecycle_state == _UNIT_LIFECYCLE_INACTIVE ) {
+    for(size_t list_index = 0; list_index < max_players; list_index++) {
+	UnitList* unitlist = & unit_lists[list_index];
+	
+	for(UnitList::iterator i = unitlist->begin();
+		i != unitlist->end(); /* moved to end of loop */) {
+	    UnitBase* unit = *i;
+	    
+            if (unit->unit_state.lifecycle_state == _UNIT_LIFECYCLE_INACTIVE) {
                 // Particle Shit Hack
                 ParticleInterface::addHit(unit->unit_state);
 
@@ -197,29 +167,30 @@ void UnitInterface::updateUnitStatus()
                 sound->playAmbientSound("expl",
                         WorldViewInterface::getCameraDistance(
                             unit->unit_state.location ) );
-
-                deleteUnit( unit );
-            } else {
-                unsigned long pre_update_bucket_index;
-                unsigned long post_update_bucket_index;
-
-                pre_update_bucket_index = unit_bucket_array.worldLocToBucketIndex( unit->unit_state.location );
-
-                unit->updateState();
-
-                post_update_bucket_index = unit_bucket_array.worldLocToBucketIndex( unit->unit_state.location );
-
-                if ( post_update_bucket_index != pre_update_bucket_index ) {
-                    //ConsoleInterface::postMessage( "Moving Unit from bucket %d to bucket %d",
-                    //                               pre_update_bucket_index, post_update_bucket_index );
-
-                    unit_bucket_array.moveUnit( unit->unit_id, pre_update_bucket_index, post_update_bucket_index );
-                }
+		
+                deleteUnit(unit);
+		i = unitlist->erase(i);
+		continue;
             }
+	    
+	    unsigned long pre_update_bucket_index;
+    	    unsigned long post_update_bucket_index;
 
-            unit = unit_lists[ list_index ].incIterator( &iterator );
-        } // ** while
+	    pre_update_bucket_index = unit_bucket_array.worldLocToBucketIndex( unit->unit_state.location );
 
+	    unit->updateState();
+
+	    post_update_bucket_index = unit_bucket_array.worldLocToBucketIndex( unit->unit_state.location );
+
+	    if ( post_update_bucket_index != pre_update_bucket_index ) {
+		//ConsoleInterface::postMessage( "Moving Unit from bucket %d to bucket %d",
+		//                               pre_update_bucket_index, post_update_bucket_index );
+		
+	    	unit_bucket_array.moveUnit( unit->unit_id, pre_update_bucket_index, post_update_bucket_index );
+	    }
+	    
+    	    ++i;
+        } // ** for
     } // ** for
 
     if ( NetworkState::status == _network_state_server ) {
@@ -266,7 +237,7 @@ bool UnitInterface::isUniqueIndex( unsigned short new_index )
     unsigned long list_index;
 
     for( list_index = 0; list_index < max_players; list_index++) {
-        if ( unit_lists[list_index].isValid( new_index ) == true )
+        if ( unit_lists[list_index].contains( new_index ) == true )
             return( false );
     }
 
@@ -375,7 +346,7 @@ void UnitInterface::addNewUnit( UnitBase *unit, const PlayerID &player )
 
     new_index = uniqueIndex( );
 
-    unit_lists[ player_index ].add( unit, new_index );
+    unit_lists[player_index].insert( unit, new_index );
 
     unit->unit_id.index = new_index;
     unit->unit_id.player = player_index;
@@ -400,7 +371,6 @@ void UnitInterface::deleteUnit( UnitID unit_id )
 void UnitInterface::deleteUnit( UnitBase *unit )
 {
     unit_bucket_array.deleteUnitBucketPointer( unit->unit_id, unit->unit_state.location );
-    unit_lists[ unit->unit_id.getPlayer() ].deleteUnit( unit->unit_id );
 }
 
 
@@ -443,14 +413,14 @@ UnitBase * UnitInterface::createUnit( unsigned short unit_type,
 
     player_index = player.getIndex();
 
-    if ( unit_lists[ player_index ].containsItems() == unit_lists[ player_index ].getSize() )
-        return( 0 );
+    if (unit_lists[player_index].size() >= units_per_player)
+	return 0;
 
     unit = newUnit( unit_type, location, player_index );
 
     addNewUnit( unit, player );
 
-    return( unit );
+    return unit;
 }
 
 // ******************************************************************
@@ -464,31 +434,6 @@ void UnitInterface::spawnPlayerUnits( const iXY &location,
     unsigned long unit_type_index;
     unsigned long unit_spawn_count;
     unsigned long unit_spawn_index;
-
-
-    // 1000 UNIT HACK
-    // REMEMEBER THAT YOU MUST GUARANTEE THAT, "X" UNIT ARE ALLOWED VIA MENU
-    /*
-      unsigned long unit_count = 0;
-      long map_x_size = MapInterface::getMapXsize();
-      long map_y_size = MapInterface::getMapYsize(); 
-     
-      for( long map_y = 0; map_y < map_y_size; map_y++ )
-       {
-        for( long map_x = 0; map_x < map_x_size; map_x++ )
-       	 {
-    	  if ( MapInterface::getMovementValue( iXY( map_x, map_y ) ) != 0xFF )
-    	   {
-    		if( unit_count < 1000 )	//  <- CHANGE YOUR UNIT COUNT HERE
-    		 {
-              unit = createUnit( _unit_type_humvee, iXY( map_x, map_y ), player );    
-    		  unit_count++;
-    		 }
-    	   }
-    	 }   
-       }  
-    */
-    // THE REAL SPAWN PLAYER UNITS FUNCTION
 
     PUBLIC_MESSAGE_ENCODER.resetEncoder();
 
@@ -524,31 +469,22 @@ bool UnitInterface::queryUnitsAt(std::vector<UnitID>& working_list,
                       const iXY& point, PlayerID player_id,
                       unsigned char search_flags, bool find_first  )
 {
-    UnitPointer *unit_ptr;
-    UnitPointer *iterator;
-    size_t list_index;
-
-    for( list_index = 0; list_index < max_players; list_index++) {
+    for(size_t list_index = 0; list_index < max_players; list_index++) {
         if (   ( (search_flags == _search_exclude_player) && (player_id.getIndex() != list_index) )
                 || ( (search_flags == _search_player) && (player_id.getIndex() == list_index ) )
            ) {
+	    UnitList* unitlist = & unit_lists[list_index];
 
-            unit_lists[ list_index ].resetIterator( &iterator );
+	    for(UnitList::iterator i = unitlist->begin();
+		    i != unitlist->end(); ++i) {
+		if(i->unit_state.bounds(point)) {
+		    if(find_first)
+		    	return true;
 
-            unit_ptr = unit_lists[ list_index ].incIteratorPtr( &iterator );
-            while( unit_ptr != 0 ) {
-                if(unit_ptr->unit->unit_state.bounds(point)) {
-                    if(find_first)
-                        return true;
-
-                    working_list.push_back(unit_ptr->unit->unit_id);
-                }
-                
-                unit_ptr = unit_lists[ list_index ].incIteratorPtr( &iterator );
-            } // ** while
-
+		    working_list.push_back(i->unit_id);
+		}
+            }
         } // ** if search flags
-
     } // ** for
 
     if( (find_first == false) && (working_list.size() > 0) )
@@ -563,31 +499,22 @@ bool UnitInterface::queryUnitsAt(std::vector<UnitID>& working_list,
                       const iRect& rect, PlayerID player_id,
                       unsigned char search_flags, bool find_first  )
 {
-    UnitPointer *unit_ptr;
-    UnitPointer *iterator;
-    size_t list_index;
-
-    for( list_index = 0; list_index < max_players; list_index++) {
+    for(size_t list_index = 0; list_index < max_players; list_index++) {
         if (   ( (search_flags == _search_exclude_player) && (player_id.getIndex() != list_index) )
                 || ( (search_flags == _search_player) && (player_id.getIndex() == list_index ) )
            ) {
 
-            unit_lists[ list_index ].resetIterator( &iterator );
-
-            unit_ptr = unit_lists[ list_index ].incIteratorPtr( &iterator );
-            while( unit_ptr != 0 ) {
-                if(rect.contains(unit_ptr->unit->unit_state.location)) {
+	    UnitList* unitlist = & unit_lists[list_index];
+	    for(UnitList::iterator i = unitlist->begin();
+		    i != unitlist->end(); ++i) {
+                if(rect.contains(i->unit_state.location)) {
                     if(find_first)
                         return true;
 
-                    working_list.push_back(unit_ptr->unit->unit_id);
+                    working_list.push_back(i->unit_id);
                 }
-                
-                unit_ptr = unit_lists[ list_index ].incIteratorPtr( &iterator );
-            } // ** while
-
+            }
         } // ** if search flags
-
     } // ** for
 
     if( (find_first == false) && (working_list.size() > 0) )
@@ -603,54 +530,50 @@ bool UnitInterface::quearyClosestUnit( UnitBase **closest_unit_ptr,
                                        PlayerID &player_id,
                                        unsigned char search_flags )
 {
-    UnitPointer *unit_ptr;
-    UnitPointer *iterator;
-    unsigned long list_index;
-    UnitPointer *closest_unit = 0;
     long closest_magnitude = 0;
+    UnitBase* closest_unit;
 
-    for( list_index = 0; list_index < max_players; list_index++) {
+    for(size_t list_index = 0; list_index < max_players; list_index++) {
         if (   ( (search_flags == _search_exclude_player) && (player_id.getIndex() != list_index) )
                 || ( (search_flags == _search_player) && (player_id.getIndex() == list_index ) )
                 || (search_flags == _search_all_players)
            ) {
 
             if ( PlayerInterface::getPlayerStatus( list_index ) == _player_state_active ) {
-                unit_lists[ list_index ].resetIterator( &iterator );
-
-                unit_ptr = unit_lists[ list_index ].incIteratorPtr( &iterator );
-                while( unit_ptr != 0 ) {
+                UnitList* unitlist = & unit_lists[list_index] ;
+                                
+                for(UnitList::iterator i = unitlist->begin();
+                        i != unitlist->end(); ++i) {
+                    UnitBase* unit = *i;
                     iXY delta;
                     long temp_mag;
 
                     if ( closest_unit == 0 ) {
-                        closest_unit = unit_ptr;
-                        delta  = loc - unit_ptr->unit->unit_state.location;
+                        closest_unit = unit;
+                        delta  = loc - unit->unit_state.location;
                         closest_magnitude = long(delta.mag2());
                     } else {
-                        delta  = loc - unit_ptr->unit->unit_state.location;
+                        delta  = loc - unit->unit_state.location;
                         temp_mag = long(delta.mag2());
 
                         if ( closest_magnitude > temp_mag ) {
-                            closest_unit = unit_ptr;
+                            closest_unit = unit;
                             closest_magnitude = temp_mag;
                         }
                     } // ** else
-
-                    unit_ptr = unit_lists[ list_index ].incIteratorPtr( &iterator );
-                } // ** while
+                } // ** for
             }
         } // ** if search flags
 
     } // ** for
 
     if( closest_unit != 0 ) {
-        *closest_unit_ptr = closest_unit->unit;
-        return( true );
+        *closest_unit_ptr = closest_unit;
+        return true;
     }
 
     *closest_unit_ptr = 0;
-    return( false );
+    return false;
 }
 
 bool UnitInterface::quearyClosestUnit( UnitBase **closest_unit_ptr, iRect &bounding_rect, iXY &loc )
@@ -707,51 +630,46 @@ bool UnitInterface::quearyClosestEnemyUnit( UnitBase **closest_unit_ptr,
         unsigned short player_index
                                           )
 {
-    UnitPointer *unit_ptr;
-    UnitPointer *iterator;
-    unsigned long list_index;
-    UnitPointer *closest_unit = 0;
+    UnitBase *closest_unit = 0;
     long closest_magnitude = 0;
 
-    for( list_index = 0; list_index < max_players; list_index++) {
+    for(size_t list_index = 0; list_index < max_players; list_index++) {
         if ( ( player_index != list_index ) &&
                 ( PlayerInterface::isAllied( player_index, list_index ) == false )
            ) {
-            unit_lists[ list_index ].resetIterator( &iterator );
 
-            unit_ptr = unit_lists[ list_index ].incIteratorPtr( &iterator );
-            while( unit_ptr != 0 ) {
+            UnitList* unitlist = & unit_lists[list_index];
+           
+            for(UnitList::iterator i = unitlist->begin();
+                    i != unitlist->end(); ++i) {
+                UnitBase* unit = *i;
                 iXY delta;
                 long temp_mag;
 
                 if ( closest_unit == 0 ) {
-                    closest_unit = unit_ptr;
-                    delta  = loc - unit_ptr->unit->unit_state.location;
+                    closest_unit = unit;
+                    delta  = loc - unit->unit_state.location;
                     closest_magnitude = long(delta.mag2());
                 } else {
-                    delta  = loc - unit_ptr->unit->unit_state.location;
+                    delta  = loc - unit->unit_state.location;
                     temp_mag = long(delta.mag2());
 
                     if ( closest_magnitude > temp_mag ) {
-                        closest_unit = unit_ptr;
+                        closest_unit = unit;
                         closest_magnitude = temp_mag;
                     }
                 } // ** else
-
-                unit_ptr = unit_lists[ list_index ].incIteratorPtr( &iterator );
-            } // ** while
-
+            } // ** for
         } // ** if search flags
-
     } // ** for
 
     if( closest_unit != 0 ) {
-        *closest_unit_ptr = closest_unit->unit;
-        return( true );
+        *closest_unit_ptr = closest_unit;
+        return true;
     }
 
     *closest_unit_ptr = 0;
-    return( false );
+    return false;
 }
 
 // ******************************************************************
@@ -761,139 +679,57 @@ unsigned char UnitInterface::quearyUnitLocationStatus( iXY loc )
 {
     PlayerID player_id;
     unsigned long player_index;
-    UnitBase *unit_ptr;
-    UnitState *unit_state;
-    UnitPointer *iterator;
-    unsigned long list_index;
 
     player_id = PlayerInterface::getLocalPlayerID();
     player_index = player_id.getIndex();
 
-    for( list_index = 0; list_index < max_players; list_index++) {
-        unit_lists[ list_index ].resetIterator( &iterator );
+    for(size_t list_index = 0; list_index < max_players; list_index++) {
 
-        unit_ptr = unit_lists[ list_index ].incIterator( &iterator );
-        while( unit_ptr != 0 ) {
-            unit_state = &unit_ptr->unit_state;
+        UnitList* unitlist = & unit_lists[list_index];
+
+        for(UnitList::iterator i = unitlist->begin();
+                i != unitlist->end(); ++i) {
+            UnitBase* unit = *i;
+            UnitState* unit_state = &unit->unit_state;
+            
             if ( unit_state->bounds( loc ) ) {
                 if ( list_index == player_index )
-                    return( _unit_player );
+                    return _unit_player;
                 else
                     if ( PlayerInterface::isAllied( player_index, list_index ) )
-                        return( _unit_allied );
+                        return _unit_allied;
                     else
-                        return( _unit_enemy );
+                        return _unit_enemy;
             } // ** if
-
-            unit_ptr = unit_lists[ list_index ].incIterator( &iterator );
         } // ** while
-
     } // ** for
 
-    return( _no_unit_found );
+    return _no_unit_found;
 }
 
 // ******************************************************************
 
 bool UnitInterface::quearyUnitAtMapLoc( iXY map_loc, UnitID *queary_unit_id )
 {
-    UnitBase *unit_ptr;
-    UnitState *unit_state;
-    UnitPointer *iterator;
-    unsigned long list_index;
     iXY unit_map_loc;
 
+    for(size_t list_index = 0; list_index < max_players; list_index++) {
+        UnitList* unitlist = & unit_lists[list_index];
 
-    for( list_index = 0; list_index < max_players; list_index++) {
-        unit_lists[ list_index ].resetIterator( &iterator );
-
-        unit_ptr = unit_lists[ list_index ].incIterator( &iterator );
-        while( unit_ptr != 0 ) {
-            unit_state = &unit_ptr->unit_state;
+        for(UnitList::iterator i = unitlist->begin();
+                i != unitlist->end(); ++i) {
+            UnitBase* unit = *i;
+            UnitState* unit_state = & unit->unit_state;
+            
             MapInterface::pointXYtoMapXY( unit_state->location, &unit_map_loc );
             if( map_loc == unit_map_loc ) {
-                *queary_unit_id = unit_ptr->unit_id;
-                return( true );
+                *queary_unit_id = unit->unit_id;
+                return true;
             }
-
-            unit_ptr = unit_lists[ list_index ].incIterator( &iterator );
-        } // ** while
-
+        } // ** for
     } // ** for
 
-    return( false );
-}
-
-// ******************************************************************
-
-void UnitInterface::startUnitPositionEnumeration( void )
-{
-    unit_position_enum_list_index = 0;
-
-    unit_position_enum_local_player_index = PlayerInterface::getLocalPlayerIndex();
-
-    unit_lists[ unit_position_enum_list_index ].resetIterator( &unit_position_enum_iterator );
-}
-
-// ******************************************************************
-
-bool UnitInterface::unitPositionEnumeration( unsigned char *unit_disposition ,UnitState **state )
-{
-    UnitBase *unit_ptr;
-
-    unit_ptr = unit_lists[ unit_position_enum_list_index ].incIterator( &unit_position_enum_iterator );
-
-    if ( unit_ptr == 0 ) {
-        // ** NOTE: enumerates all units **
-        unit_position_enum_list_index++;
-
-        if ( unit_position_enum_list_index == max_players) {
-            return( false );
-        }
-
-        unit_lists[ unit_position_enum_list_index ].resetIterator( &unit_position_enum_iterator );
-    } else {
-        if ( unit_position_enum_list_index == unit_position_enum_local_player_index ) {
-            *unit_disposition = _unit_player;
-        } else
-            if ( PlayerInterface::isAllied( unit_position_enum_list_index , unit_position_enum_local_player_index ) ) {
-                *unit_disposition =  _unit_allied;
-            } else {
-                *unit_disposition =  _unit_enemy;
-            }
-
-        state[0]=&unit_ptr->unit_state;
-        return( true );
-    }
-
-    return ( true );
-}
-
-// ******************************************************************
-void UnitInterface::resetUnitCycleIterator( unsigned long *iterator )
-{
-    unit_cycle_player_index = PlayerInterface::getLocalPlayerIndex();
-
-    unit_lists[ unit_cycle_player_index ].resetIteratorAsync( iterator );
-}
-
-// ******************************************************************
-iXY UnitInterface::unitPositionCycle( unsigned long *iterator )
-{
-    UnitBase *unit_ptr;
-    bool  completed;
-
-    if ( unit_lists[ unit_cycle_player_index ].containsItems() == 0 )
-        return( iXY( 0, 0 ) );
-
-    unit_ptr = unit_lists[ unit_cycle_player_index ].incIteratorAsync( iterator, &completed );
-
-    if ( unit_ptr == 0 ) {
-        unit_lists[ unit_cycle_player_index ].resetIteratorAsync( iterator );
-        unit_ptr = unit_lists[ unit_cycle_player_index ].incIteratorAsync( iterator, &completed );
-    }
-
-    return( unit_ptr->unit_state.location );
+    return false;
 }
 
 // ******************************************************************
@@ -949,7 +785,7 @@ void UnitInterface::unitSyncMessage( NetMessage *net_message )
     unit->unit_id = sync_message->unit_id;
     unit->in_sync_flag = false;
 
-    unit_lists[ player_index ].add( (UnitBase *) unit, sync_message->unit_id );
+    unit_lists[player_index].insert(unit, sync_message->unit_id);
     unit_bucket_array.addUnit( unit );
 
     unit->unit_state.setFromNetworkUnitState(sync_message->unit_state);
@@ -998,7 +834,10 @@ void UnitInterface::unitDestroyMessage( NetMessage *net_message )
         sound->playAmbientSound("expl",
                                 WorldViewInterface::getCameraDistance( unit->unit_state.location ) );
 
-        unit_lists[ unit_id.getPlayer() ].deleteUnit( unit_id );
+        UnitList::iterator i =
+            unit_lists[unit_id.getPlayer()].find(unit_id.getIndex());
+        if(i != unit_lists[unit_id.getPlayer()].end())
+            unit_lists[unit_id.getPlayer()].erase(i);
     }
 }
 
@@ -1019,7 +858,7 @@ void UnitInterface::unitCreateMessage( NetMessage *net_message )
                     player_index );
 
     unit->unit_id = create_mesg->new_unit_id;
-    unit_lists[ player_index ].add( (UnitBase *) unit, create_mesg->new_unit_id );
+    unit_lists[player_index].insert(unit, create_mesg->new_unit_id);
     unit_bucket_array.addUnit( unit );
 }
 
@@ -1065,6 +904,7 @@ void UnitInterface::processNetMessage( NetMessage *net_message )
 
 // ******************************************************************
 
+#if 0
 void UnitInterface::startRemoteUnitSync( PlayerID &remote_player )
 {
     sync_units_remote_player = remote_player;
@@ -1074,7 +914,7 @@ void UnitInterface::startRemoteUnitSync( PlayerID &remote_player )
     sync_units_in_sync_partial_count = 0;
     sync_units_total_units = getTotalUnitCount();
 
-    unit_lists[ sync_units_list_index ].resetIteratorAsync( &sync_units_iterator );
+    unit_lists[sync_units_list_index].resetIteratorAsync(&sync_units_iterator);
 
     sync_units_packet_timer.changeRate( 10 );
 }
@@ -1137,26 +977,18 @@ bool UnitInterface::syncRemoteUnits( int *send_return_code, int *percent_complet
 
     return ( true );
 }
+#endif
 
 void UnitInterface::destroyPlayerUnits( PlayerID &player_id )
 {
     UMesgSelfDestruct self_destruct;
-    UnitBase *unit_ptr;
-    UnitPointer *iterator;
-
-    unsigned short player_index;
-
     self_destruct.setHeader( _umesg_flag_unique );
 
-    player_index = player_id.getIndex();
-
-    unit_lists[ player_index ].resetIterator( &iterator );
-
-    unit_ptr = unit_lists[ player_index ].incIterator( &iterator );
-    while( unit_ptr != 0 ) {
-        unit_ptr->processMessage( &self_destruct );
-        unit_ptr = unit_lists[ player_index ].incIterator( &iterator );
+    UnitList& unitlist = unit_lists[player_id.getIndex()];
+    for(UnitList::iterator i = unitlist.begin();
+            i != unitlist.end(); ++i) {
+        UnitBase* unit = *i;
+        unit->processMessage( &self_destruct );
     } // ** while
-
 }
 

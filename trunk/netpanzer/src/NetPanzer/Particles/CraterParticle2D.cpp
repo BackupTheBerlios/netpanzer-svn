@@ -29,7 +29,7 @@ int CraterParticle2D::halfBoundsSize = 24;
 
 PackedSurface CraterParticle2D::staticPackedCrater;
 
-cGrowList<CraterCacheInfo> CraterParticle2D::craterCache;
+std::vector<CraterCacheInfo> CraterParticle2D::craterCache;
 int CraterParticle2D::curCraterIndex = 0;
 
 
@@ -48,7 +48,7 @@ CraterParticle2D::CraterParticle2D(const fXYZ  &pos) : Particle2D(pos)
     // Check the crater cache for a hit.
     iXY destPos((int) pos.x, (int) pos.z);
 
-    for (int i = 0; i < craterCache.getCount(); i++) {
+    for (size_t i = 0; i < craterCache.size(); i++) {
         if (craterCache[i].bounds.contains(destPos)) {
             // Since a crater already exists near this point, do not add another.
             isAlive = false;
@@ -69,7 +69,7 @@ CraterParticle2D::CraterParticle2D(const fXYZ  &pos) : Particle2D(pos)
         // Save the cache position.
         cacheIndex = curCraterIndex;
 
-        if (++curCraterIndex >= craterCache.getCount()) {
+        if (++curCraterIndex >= (long) craterCache.size()) {
             curCraterIndex = 0;
         }
 
@@ -82,8 +82,8 @@ CraterParticle2D::CraterParticle2D(const fXYZ  &pos) : Particle2D(pos)
 //---------------------------------------------------------------------------
 void CraterParticle2D::init()
 {
-    craterCache.setNum(40);
-    for (int i = 0; i < craterCache.getCount(); i++) {
+    craterCache.resize(40);
+    for (size_t i = 0; i < craterCache.size(); i++) {
         craterCache[i].bounds.zero();
         craterCache[i].pos.zero();
     }

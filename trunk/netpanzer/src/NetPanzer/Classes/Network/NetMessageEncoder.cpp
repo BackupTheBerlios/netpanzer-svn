@@ -67,10 +67,7 @@ void NetMessageEncoder::encodeMessage(NetMessage *message, unsigned short size)
 
     encode_message_index += sizeof(SubPacketType);
 
-    memmove( &encode_message.data[ encode_message_index ],
-             message,
-             size
-           );
+    memcpy(&encode_message.data[ encode_message_index ], message, size);
 
     encode_message_index += size;
     encode_message.message_count++;
@@ -123,7 +120,7 @@ void NetMessageEncoder::setDecodeMessage( MultiMessage *message )
 {
     decode_message.message_count = message->message_count;
     decode_message.message_size = message->message_size;
-    memmove( decode_message.data, message->data, message->message_size );
+    memcpy(decode_message.data, message->data, message->message_size);
     decode_message_index = 0;
     decode_current_count = 0;
 }

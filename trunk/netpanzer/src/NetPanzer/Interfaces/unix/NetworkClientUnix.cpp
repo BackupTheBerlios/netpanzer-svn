@@ -114,7 +114,7 @@ int NetworkClientUnix::closeSession()
 void NetworkClientUnix::sendMessage(NetMessage *message, size_t size, int flags)
 {
     if ( connection_type == _connection_loop_back ) {
-        memmove( net_packet.data, (void *) message, size  );
+        memcpy(net_packet.data, message, size);
         net_packet.packet_size = (unsigned short) size;
         loop_back_recv_queue.enqueue( net_packet );
         return;
@@ -142,7 +142,7 @@ int NetworkClientUnix::getMessage(NetMessage *message)
     if ( receive_queue.isReady() ) {
         receive_queue.dequeue( &net_packet );
 
-        memmove(  (void *) message, net_packet.data, net_packet.packet_size );
+        memcpy(message, net_packet.data, net_packet.packet_size);
 
 #ifdef NETWORKDEBUG
         LOG( ( "RECV >> Class: %d ID: %d", message->message_class,

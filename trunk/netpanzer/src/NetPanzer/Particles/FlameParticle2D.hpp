@@ -18,9 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __FlameParticle2D_hpp__
 #define __FlameParticle2D_hpp__
 
+#include <vector>
+
 #include "Particle2D.hpp"
 #include "2D/PackedSurface.hpp"
-#include "Util/cGrowList.hpp"
 
 // FlameParticle2D
 //--------------------------------------------------------------------------
@@ -36,8 +37,8 @@ public:
     static void init();
 
 protected:
-    static cGrowList <PackedSurface> staticPackedExplosion0;
-    static cGrowList <PackedSurface> staticPackedExplosion1;
+    static PackedSurfaceList staticPackedExplosion0;
+    static PackedSurfaceList staticPackedExplosion1;
 
     virtual void draw(const Surface &dest, SpriteSorter &sorter);
 

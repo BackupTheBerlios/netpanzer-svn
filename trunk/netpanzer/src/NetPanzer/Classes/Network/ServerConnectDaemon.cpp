@@ -46,12 +46,13 @@ enum { _connect_state_idle,
 
 
 unsigned char       ServerConnectDaemon::connection_state = _connect_state_idle;
-bool             ServerConnectDaemon::connection_lock_state = false;
+bool                ServerConnectDaemon::connection_lock_state = false;
 PlayerID            ServerConnectDaemon::connect_player_id;
-PlayerState        *ServerConnectDaemon::connect_player_state;
-ServerConnectQueue  ServerConnectDaemon::connect_queue;
-Timer		        ServerConnectDaemon::time_out_timer;
-int	                ServerConnectDaemon::time_out_counter;
+PlayerState*        ServerConnectDaemon::connect_player_state;
+std::list<ConnectQueueElement> ServerConnectDaemon::connect_queue;
+Timer		    ServerConnectDaemon::time_out_timer;
+int	            ServerConnectDaemon::time_out_counter;
+UnitSync*           ServerConnectDaemon::connect_unit_sync = 0;
 
 #define _SERVER_CONNECT_TIME_OUT_TIME (20.0)
 #define _SERVER_CONNECT_RETRY_LIMIT   (5)
@@ -59,18 +60,19 @@ int	                ServerConnectDaemon::time_out_counter;
 
 void ServerConnectDaemon::initialize( unsigned long max_players )
 {
-    connect_queue.initialize( 25 );
     time_out_timer.changePeriod( _SERVER_CONNECT_TIME_OUT_TIME );
+    connect_unit_sync = 0;
 }
 
 void ServerConnectDaemon::startConnectDaemon( unsigned long max_players )
 {
-    connect_queue.initialize( 25 );
     time_out_timer.changePeriod( _SERVER_CONNECT_TIME_OUT_TIME );
 }
 
-void ServerConnectDaemon::shutdownConnectDaemon( void )
+void ServerConnectDaemon::shutdownConnectDaemon()
 {
+    delete connect_unit_sync;
+    connect_unit_sync = 0;
     ConnectMesgNetPanzerServerDisconnect server_disconnect;
 
     SERVER->sendMessage( &server_disconnect,
@@ -84,11 +86,10 @@ void ServerConnectDaemon::startConnectionProcess( PlayerID new_player_id )
 
 
     if ( !inConnectQueue( new_player_id) ) {
-
         connect_request.new_player_id  = new_player_id;
         connect_request.connect_status = _connect_status_waiting;
 
-        connect_queue.enqueue( connect_request );
+        connect_queue.push_back(connect_request);
 
         ClientConnectJoinRequestAck link_ack;
 
@@ -99,53 +100,37 @@ void ServerConnectDaemon::startConnectionProcess( PlayerID new_player_id )
 
 bool ServerConnectDaemon::inConnectQueue( PlayerID &new_player_id )
 {
-    ConnectQueueElement connect_request;
+    std::list<ConnectQueueElement>::iterator i;
+    for(i = connect_queue.begin(); i != connect_queue.end(); ++i) {
+        const ConnectQueueElement& connect_request = *i;
 
-    unsigned long iterator;
-    bool       completed;
-
-    connect_queue.resetIterator( &iterator );
-
-    connect_request = connect_queue.incIterator( &iterator, &completed );
-
-    while( completed == false ) {
         if ( connect_request.new_player_id.getNetworkID() ==
                 new_player_id.getNetworkID() ) {
-            return( true );
+            return true;
         }
-
-        connect_request = connect_queue.incIterator( &iterator, &completed );
     }
 
     if ( (connection_state != _connect_state_idle) &&
             (connect_player_id.getNetworkID() == new_player_id.getNetworkID()  )
        )
-        return( true );
+        return true;
 
-    return( false );
+    return false;
 }
 
-
-void ServerConnectDaemon::updateQueuedClients( void )
+void ServerConnectDaemon::updateQueuedClients()
 {
-    ConnectQueueElement connect_request;
-    ConnectProcessUpdate process_update;
-
-    unsigned long iterator;
-    bool       completed;
     unsigned long queue_position = 1;
 
-    connect_queue.resetIterator( &iterator );
-
-    connect_request = connect_queue.incIterator( &iterator, &completed );
-
-    while( completed == false ) {
+    std::list<ConnectQueueElement>::iterator i;
+    for(i = connect_queue.begin(); i != connect_queue.end(); ++i) {
+        const ConnectQueueElement& connect_request = *i;
+      
+        ConnectProcessUpdate process_update;
         process_update.queue_position = queue_position;
 
         SERVER->sendMessage( connect_request.new_player_id, &process_update,
                              sizeof(ConnectProcessUpdate), 0);
-
-        connect_request = connect_queue.incIterator( &iterator, &completed );
 
         queue_position++;
     }
@@ -191,10 +176,10 @@ void ServerConnectDaemon::netMessageClientJoinRequest( NetMessage *message )
             connect_request.new_player_id  = new_player_id;
             connect_request.connect_status = _connect_status_waiting;
 
-            if ( connect_queue.isFull() == true ) {
+            if (connect_queue.size() > 25) {
                 join_request_ack.result_code = _join_request_result_server_busy;
             } else {
-                connect_queue.enqueue( connect_request );
+                connect_queue.push_back(connect_request);
             }
 
         }
@@ -262,7 +247,7 @@ void ServerConnectDaemon::sendConnectionAlert( PlayerID &player_id, int alert_en
     SERVER->sendMessage( &connect_alert, sizeof(SystemConnectAlert), 0 );
 }
 
-void ServerConnectDaemon::resetConnectFsm( void )
+void ServerConnectDaemon::resetConnectFsm()
 {
     connection_state = _connect_state_idle;
     time_out_timer.reset();
@@ -270,12 +255,13 @@ void ServerConnectDaemon::resetConnectFsm( void )
 }
 
 
-bool ServerConnectDaemon::connectStateIdle( void )
+bool ServerConnectDaemon::connectStateIdle()
 {
-    if ( connect_queue.isReady() && (connection_lock_state == false) ) {
+    if (!connect_queue.empty() && (connection_lock_state == false)) {
         ConnectQueueElement connect_request;
 
-        connect_request   = connect_queue.dequeue();
+        connect_request   = connect_queue.front();
+        connect_queue.pop_front();
         connect_player_id = connect_request.new_player_id;
         connection_state  = _connect_state_wait_for_connect_request;
 
@@ -330,7 +316,7 @@ bool ServerConnectDaemon::connectStateWaitForConnectRequest( NetMessage *message
     return( true );
 }
 
-bool ServerConnectDaemon::connectStateAttemptPlayerAlloc( void )
+bool ServerConnectDaemon::connectStateAttemptPlayerAlloc()
 {
     ClientConnectResult connect_result;
     connect_player_state = PlayerInterface::allocateNewPlayer();
@@ -481,7 +467,7 @@ bool ServerConnectDaemon::connectStateWaitForClientGameSetupAck( NetMessage *mes
     return( true );
 }
 
-bool ServerConnectDaemon::connectStatePlayerStateSync( void )
+bool ServerConnectDaemon::connectStatePlayerStateSync()
 {
     ConnectProcessStateMessage state_mesg;
     int send_ret_val;
@@ -504,7 +490,8 @@ bool ServerConnectDaemon::connectStatePlayerStateSync( void )
             return( true );
         }
 
-        UnitInterface::startRemoteUnitSync( connect_player_id );
+        delete connect_unit_sync;
+        connect_unit_sync = new UnitSync();
 
         state_mesg.message_enum = _connect_state_message_sync_units;
         send_ret_val = SERVER->sendMessage( connect_player_id, &state_mesg, sizeof(ConnectProcessStateMessage), 0 );
@@ -541,78 +528,69 @@ bool ServerConnectDaemon::connectStatePlayerStateSync( void )
     return( true );
 }
 
-bool ServerConnectDaemon::connectStateUnitSync( void )
+bool ServerConnectDaemon::connectStateUnitSync()
 {
     ConnectProcessStateMessage state_mesg;
-    int send_ret_val;
-    int percent_complete;
+    int percent_complete = connect_unit_sync->getPercentComplete();
 
-    if ( UnitInterface::syncRemoteUnits( &send_ret_val, &percent_complete ) == false ) {
-        if( send_ret_val != _network_ok ) {
-            resetConnectFsm();
-            return( true );
-        }
-
+    // send a unit
+    if(connect_unit_sync->sendNextUnit(connect_player_id)) {
         state_mesg.message_enum = _connect_state_message_sync_units_percent;
         state_mesg.percent_complete = percent_complete;
-        send_ret_val = SERVER->sendMessage( connect_player_id, &state_mesg,
-                                            sizeof(ConnectProcessStateMessage), 0 );
-
-        if( send_ret_val != _network_ok ) {
+        int ret = SERVER->sendMessage(connect_player_id, &state_mesg,
+                sizeof(ConnectProcessStateMessage), 0);
+        
+        if(ret != _network_ok ) {
             resetConnectFsm();
-            return( true );
         }
 
-        UnitSyncIntegrityCheck unit_integrity_check_mesg;
-        send_ret_val = SERVER->sendMessage( connect_player_id, &unit_integrity_check_mesg, sizeof(UnitSyncIntegrityCheck), 0 );
+        return true;
+    }
 
-        if( send_ret_val != _network_ok ) {
-            resetConnectFsm();
-            return( true );
-        }
+    // Sending finished
+    state_mesg.message_enum = _connect_state_message_sync_units_percent;
+    state_mesg.percent_complete = percent_complete;
+    int ret = SERVER->sendMessage( connect_player_id, &state_mesg,
+            sizeof(ConnectProcessStateMessage), 0 );
 
+    if(ret != _network_ok) {
+        resetConnectFsm();
+        return true;
+    }
 
-        ObjectiveInterface::syncObjectives( connect_player_id );
+    UnitSyncIntegrityCheck unit_integrity_check_mesg;
+    ret = SERVER->sendMessage( connect_player_id, &unit_integrity_check_mesg, sizeof(UnitSyncIntegrityCheck), 0 );
+    
+    if(ret != _network_ok ) {
+        resetConnectFsm();
+        return true;
+    }
 
-        PowerUpInterface::syncPowerUps( connect_player_id );
+    ObjectiveInterface::syncObjectives( connect_player_id );
 
-        GameManager::spawnPlayer( connect_player_id );
+    PowerUpInterface::syncPowerUps( connect_player_id );
 
-        connect_player_state->setStatus( _player_state_active );
+    GameManager::spawnPlayer( connect_player_id );
 
-        PlayerStateSync player_state_update
-            (connect_player_state->getNetworkPlayerState());
+    connect_player_state->setStatus( _player_state_active );
 
-        SERVER->sendMessage( &player_state_update, sizeof(PlayerStateSync), 0 );
+    PlayerStateSync player_state_update
+        (connect_player_state->getNetworkPlayerState());
 
-        state_mesg.message_enum = _connect_state_sync_complete;
-        send_ret_val = SERVER->sendMessage( connect_player_id, &state_mesg, sizeof(ConnectProcessStateMessage), 0 );
+    SERVER->sendMessage( &player_state_update, sizeof(PlayerStateSync), 0 );
 
-        if( send_ret_val != _network_ok ) {
-            resetConnectFsm();
-            return( true );
-        }
+    state_mesg.message_enum = _connect_state_sync_complete;
+    ret = SERVER->sendMessage( connect_player_id, &state_mesg, sizeof(ConnectProcessStateMessage), 0 );
 
+    if(ret != _network_ok ) {
+        resetConnectFsm();
+        return true;
+    }
 
-        sendConnectionAlert( connect_player_id, _connect_alert_mesg_connect );
+    sendConnectionAlert( connect_player_id, _connect_alert_mesg_connect );
 
-        connection_state = _connect_state_idle;
-        return( true );
-    } else
-        if ( percent_complete > 0 ) {
-            state_mesg.message_enum = _connect_state_message_sync_units_percent;
-            state_mesg.percent_complete = percent_complete;
-            send_ret_val = SERVER->sendMessage( connect_player_id, &state_mesg,
-                                                sizeof(ConnectProcessStateMessage), 0);
-
-            if( send_ret_val != _network_ok ) {
-                resetConnectFsm();
-                return( true );
-            }
-
-        }
-
-    return( true );
+    connection_state = _connect_state_idle;
+    return true;
 }
 
 void ServerConnectDaemon::connectFsm( NetMessage *message )
@@ -700,7 +678,7 @@ void ServerConnectDaemon::connectProcess( NetMessage *message)
     connectFsm( message );
 }
 
-void ServerConnectDaemon::connectProcess( void )
+void ServerConnectDaemon::connectProcess()
 {
     connectFsm( 0 );
 }
@@ -735,22 +713,22 @@ void ServerConnectDaemon::startClientDropProcess( PlayerID player_id )
     }
 }
 
-void ServerConnectDaemon::lockConnectProcess( void )
+void ServerConnectDaemon::lockConnectProcess()
 {
     connection_lock_state = true;
 }
 
-void ServerConnectDaemon::unlockConnectProcess( void )
+void ServerConnectDaemon::unlockConnectProcess()
 {
     connection_lock_state = false;
 }
 
-bool ServerConnectDaemon::getConnectLockStatus( void )
+bool ServerConnectDaemon::getConnectLockStatus()
 {
     return( connection_lock_state );
 }
 
-bool ServerConnectDaemon::isConnecting( void )
+bool ServerConnectDaemon::isConnecting()
 {
     if( connection_state == _connect_state_idle ) {
         return ( false );

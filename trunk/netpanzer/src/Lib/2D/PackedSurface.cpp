@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -52,7 +53,6 @@ int PackedSurface::totalDrawCount    = 0;  // The number of bytes of the surface
 // PAK file format revision history:
 //--------------------------------------
 // 1 MB Initial version
-
 
 const int CURRENT_PAK_VERSION = 1;
 
@@ -563,7 +563,7 @@ nextRow:
 
 // loadAllPAKInDirectory
 //---------------------------------------------------------------------------
-int loadAllPAKInDirectory(const char *path, cGrowList<PackedSurface> &growList)
+int loadAllPAKInDirectory(const char *path, PackedSurfaceList& paklist)
 {
     char** list = FileSystem::enumerateFiles(path);
 
@@ -579,14 +579,13 @@ int loadAllPAKInDirectory(const char *path, cGrowList<PackedSurface> &growList)
    
     std::sort(filenames.begin(), filenames.end()); 
 
-    // Allocate enough slots into the growList.
-    growList.setNum(filenames.size());
-
     // Now load in the sorted PAK names.
     for (size_t i = 0; i < filenames.size(); i++) {
-        growList[i].load(filenames[i].c_str());
+        PackedSurface* surface = new PackedSurface;
+        surface->load(filenames[i].c_str());
+        paklist.push_back(surface);
     }
 
-    return 1;
+    return filenames.size();
 } // end loadAllPAKInDirectory
 

@@ -451,7 +451,7 @@ void PlayerGameManager::processSystemKeys()
             Desktop::toggleVisibility( "HelpScrollView" );
         }
 
-        if (KeyboardInterface::getKeyPressed(SDLK_F2)) {
+        if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE)) {
             if (Desktop::getView("GameView")->getVisible()) {
                 if (!Desktop::getView("OptionsView")->getVisible() &&
                         !Desktop::getView("SoundView")->getVisible() &&

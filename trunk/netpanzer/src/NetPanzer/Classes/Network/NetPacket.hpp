@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETPACKET_HPP
 #define _NETPACKET_HPP
 
+#include <stdint.h>
+
 #include "NetMessageEnums.hpp"
 #include "Network/SocketClient.hpp"
 
@@ -31,31 +33,31 @@ class NetPacket
 public:
     SocketClient::ID toID;
     SocketClient::ID fromID;
-    unsigned short packet_size;
+    uint16_t packet_size;
 
-    unsigned char data[ _MAX_NET_PACKET_SIZE ];
+    uint8_t  data[ _MAX_NET_PACKET_SIZE ];
 }
 __attribute__((packed));
 
 struct NetMessageStruct
 {
-    unsigned short size;
-    unsigned char  sequence;
-    unsigned char  message_class;
-    unsigned char  message_id;
+    uint16_t size;
+    uint8_t  sequence;
+    uint8_t  message_class;
+    uint8_t  message_id;
 
-    unsigned char data[ _MAX_NET_PACKET_SIZE - 5 ];
+    uint8_t  data[ _MAX_NET_PACKET_SIZE - 5 ];
 }
 __attribute__((packed));
 
 class NetMessage
 {
 public:
-    unsigned short size;
-    unsigned char  message_class;
-    unsigned char  message_id;
+    uint16_t size;
+    uint8_t  message_class;
+    uint8_t  message_id;
 
-    unsigned short realSize( void )
+    size_t realSize()
     {
         return( sizeof( NetMessage ) );
     }
@@ -67,12 +69,12 @@ __attribute__((packed));
 class MultiMessage : public NetMessage
 {
 public:
-    unsigned char message_count;
-    unsigned short message_size;
+    uint8_t  message_count;
+    uint16_t message_size;
 
-    unsigned char data[ _MULTI_PACKET_LIMIT ];
+    uint8_t  data[ _MULTI_PACKET_LIMIT ];
 
-    unsigned short realSize( void )
+    size_t realSize()
     {
         return( sizeof( MultiMessage ) - _MULTI_PACKET_LIMIT + message_size );
     }

@@ -44,9 +44,7 @@ public:
     void reset();
 
     virtual void sim();
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
-
-}
-; // end FireParticle2D
+    virtual void draw(Surface &dest, SpriteSorter &sorter);
+}; // end FireParticle2D
 
 #endif // __FireParticle2D_hpp_

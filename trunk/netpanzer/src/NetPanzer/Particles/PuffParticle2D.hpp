@@ -19,11 +19,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __PuffParticle2D_hpp__
 #define __PuffParticle2D_hpp__
 
+#include <vector>
 
 #include "WindParticle2D.hpp"
 #include "ParticleSystemGlobals.hpp"
-#include "Util/cGrowList.hpp"
-
 
 // PuffParticle2D
 //--------------------------------------------------------------------------
@@ -31,9 +30,9 @@ class PuffParticle2D : public WindParticle2D
 {
 protected:
     // Lists of packed surfaces.
-    static cGrowList <PackedSurface> staticPackedSmokeLightPuff;
-    static cGrowList <PackedSurface> staticPackedSmokeDarkPuff;
-    static cGrowList <PackedSurface> staticPackedDirtPuff;
+    static PackedSurfaceList staticPackedSmokeLightPuff;
+    static PackedSurfaceList staticPackedSmokeDarkPuff;
+    static PackedSurfaceList staticPackedDirtPuff;
 
     void create(	PUFF_TYPE particleType,
                  float     scaleMin,

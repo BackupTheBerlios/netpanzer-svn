@@ -28,32 +28,30 @@ class NetPacketQueue : public QueueTemplate< NetPacket >
 {
 public:
 
-    inline void add( NetPacket *object, unsigned long index )
+    void add( NetPacket *object, unsigned long index )
     {
         unsigned long net_packet_size;
 
         assert( index < size );
         net_packet_size = (sizeof( NetPacket ) - _MAX_NET_PACKET_SIZE) + object->packet_size;
-        memmove( (void *) &array[index], (void *) object, net_packet_size );
+        memcpy(&array[index], object, net_packet_size);
     }
 
-    inline void dequeue( NetPacket *object )
+    void dequeue( NetPacket *object )
     {
         unsigned long net_packet_size;
 
         assert( front != rear );
         front = ( front + 1 ) % size;
         net_packet_size = (sizeof( NetPacket ) - _MAX_NET_PACKET_SIZE) + array[ front ].packet_size;
-        memmove( (void *) object, (void *) &array[ front ], net_packet_size );
+        memcpy(object, &array[ front ], net_packet_size);
     }
 
-    inline void enqueue( NetPacket &object )
+    void enqueue( NetPacket &object )
     {
-        //assert( front != rear );
-        add( &object, (rear + 1) % size );
+        add(&object, (rear + 1) % size);
         rear = (rear + 1) % size;
     }
-
 };
 
 class NetPacketBlock
@@ -75,61 +73,8 @@ public:
     {
         return( packet.packet_size);
     }
-
-#if 0
-    unsigned char getSequence( void )
-    {
-        return( ((NetMessage *) (&(packet.data)) )->sequence );
-    }
-#endif
 };
 
 typedef ArrayTemplate< NetPacketBlock > NetPacketBlockArray;
-
-#if 0
-
-class ReorderQueue : public NetPacketBlockArray
-{
-protected:
-    unsigned char current_sequence_num;
-    unsigned char dequeue_sequence_num;
-
-    // ** variables for exponential averaging of packet window
-    TIMESTAMP packet_recv_stamp;
-    TIMESTAMP next_packet_recv_stamp;
-    bool window_estimate_init;
-    float packet_window_time;
-    float packet_window_estimate;
-    float packet_window_time_weight;
-
-    // ** variables for tracking packet window
-    bool packet_window_wait_flag;
-    Timer   packet_window_timer;
-
-    // ** variable for statictics
-    int lost_packets;
-    int out_of_order_packets;
-
-public:
-
-    ReorderQueue( );
-
-    void initialize( unsigned long size );
-
-    void reset( void );
-
-    void enqueue( NetPacket *net_packet );
-
-    void dequeue( NetPacket *net_packet );
-
-    bool isReady( void );
-
-    void getStats( float *packet_window_time, float *packet_window_estimate,
-                   int *lost_packets, int *out_of_order_packets );
-
-
-};
-
-#endif
 
 #endif // ** _NETPACKETQUEUES_HPP

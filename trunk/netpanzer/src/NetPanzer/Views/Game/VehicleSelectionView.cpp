@@ -638,7 +638,7 @@ void VehicleSelectionView::mouseMove(const iXY &prevPos, const iXY &newPos)
     GameTemplateView::mouseMove(prevPos, newPos);
 
     if (highlightedButton >= 0) {
-        showStatus(buttons[highlightedButton].getToolTip());
+        showStatus(buttons[highlightedButton]->getToolTip());
     } else {
         showStatus("Select a unit for production");
     }
