@@ -6,4 +6,4 @@ Library netpanzerui
 ;
 
 LinkWith netpanzerui : netpanzertypes netpanzer2d ;
-ExternalLibs netpanzersys : SDLTTF ;
+ExternalLibs netpanzerui : SDL SDLTTF ;
