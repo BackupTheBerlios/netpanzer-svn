@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ClientSocket.hpp"
 #include "Util/UtilInterface.hpp"
 #include "GameConfig.hpp"
+#include "Util/Endian.hpp"
 
 ClientSocket::ClientSocket(const std::string& whole_servername)
 {
@@ -111,6 +112,7 @@ void ClientSocket::read()
             TempOffset++;
 
             memcpy(&Size, TempBuffer, 2);
+            Size = ltoh16(Size);
 
             if ((iBytesReceived + 1) >= Size) {
                 //memcpy(TempBuffer, RecvBuffer + 1, (Size - 2));
@@ -157,6 +159,7 @@ void ClientSocket::read()
                 if (iBytesReceived >= MissingBytes) {
                     memcpy(TempBuffer + TempOffset, RecvBuffer, MissingBytes);
                     memcpy(&Size, TempBuffer, 2);
+                    Size = ltoh16(Size);
 
                     EnqueueIncomingPacket( TempBuffer,
                                            (unsigned long) Size, 1, 0);
@@ -194,6 +197,7 @@ void ClientSocket::read()
                 } else
                     if (iBytesReceived >= 2) {
                         memcpy(&Size, RecvBuffer + RecvOffset, 2);
+                        Size = ltoh16(Size);
 
                         if (iBytesReceived >= Size) //MESSAGE OKAY
                         {
