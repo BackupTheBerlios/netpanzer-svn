@@ -65,6 +65,7 @@ AC_TRY_COMPILE([], [
 Error: You gcc version is too old. netpanzer needs at least gcc 3.2.0.
 ])])
 AC_LANG_RESTORE
+AC_CHECK_PROGS(DOXYGEN, [doxygen])
 
 #----------------------------------------------------------------------------
 # find libraries

@@ -5,14 +5,23 @@
 # convert autoconf style variablenames to jam style ones
 CCFLAGS += $(CFLAGS) ;
 C++FLAGS += $(CXXFLAGS) ;
-LINKLIBS += $(LIBS) ;
+LFLAGS += $(LIBS) ;
 
 if $(CC)
 {
 
 rule CcRule
 {
-    local object = [ DoObjectGrist $(<:S=$(SUFOBJ)) ] ;
+    local object ;
+
+    if [ IsElem shared : $(2) ]
+    {
+        object = [ DoObjectGrist $(<:S=.lo) ] ;
+        CC on $(object) = "$(LIBTOOL) --mode=compile $(CC)" ;
+    } else {
+        object = [ DoObjectGrist $(<:S=.o) ] ;
+    }
+
     Cc $(object) : $(<) ;
     return $(object) ;
 }
@@ -22,15 +31,11 @@ RegisterHeaderRule HeaderRule : $(HDRPATTERN) : .c ;
 rule Cc
 {
     Depends $(<) : $(>) ;
-
-    CCFLAGS on $(<) += $(CCFLAGS) $(SUBDIRCCFLAGS) ;
-    CCHDRS on $(<) = [ on $(<) FIncludes $(HDRS) ] ;
-    CCDEFS on $(<) = [ on $(<) FDefines $(DEFINES) ] ;
 }
 
 actions Cc
 {
-    $(CC) -c -o $(<) $(CCFLAGS) $(CCDEFS) $(CCHDRS) $(>)
+    $(CC) -c -o $(<) $(CPPFLAGS) $(CFLAGS) $(>)
 }
 } # end if $(CC)
 
@@ -39,25 +44,38 @@ if $(CXX)
 
 rule C++Rule
 {
-    local object = [ DoObjectGrist $(<:S=$(SUFOBJ)) ] ;
+    local object ;
+    
+    if [ IsElem shared : $(2) ] {
+        object = [ DoObjectGrist $(<:S=.lo) ] ;
+        CXX on $(object) = "$(LIBTOOL) --mode=compile $(CXX)" ;
+    } else {
+        object = [ DoObjectGrist $(<:S=.o) ] ;
+    }
     C++ $(object) : $(<) ;
     return $(object) ;
 }
-RegisterFileType C++Rule : .cpp .cc .c++ ;
+RegisterFileType C++Rule : .cpp .cc .c++ ; # we can't register .C here because
+                                           # of windows being case-insensitive.
 RegisterHeaderRule HeaderRule : $(HDRPATTERN) : .cpp .cc .c++ ;
 
 rule C++
 {
     Depends $(<) : $(>) ;
-
-    C++FLAGS on $(<) += $(C++FLAGS) $(SUBDIRC++FLAGS) ;
-    CCHDRS on $(<) = [ on $(<) FIncludes $(HDRS) ] ;
-    CCDEFS on $(<) = [ on $(<) FDefines $(DEFINES) ] ;
 }
 
 actions C++
 {
-    $(CXX) -c -o $(<) $(C++FLAGS) $(CCDEFS) $(CCHDRS) $(>)
+    $(CXX) -c -o $(<) $(CPPFLAGS) $(C++FLAGS) $(>)
 }
 } # end if $(CXX)
 
+rule CreateIncludeFlags
+{
+    return -I$(<) ;
+}
+
+rule CreateDefineFlags
+{
+    return -D$(<) ;
+}

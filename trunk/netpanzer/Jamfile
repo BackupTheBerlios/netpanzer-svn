@@ -10,4 +10,14 @@ SubInclude TOP powerups ;
 SubInclude TOP units ;
 SubInclude TOP wads ;
 
+appicondir ?= [ ConcatDirs $(datadir) pixmaps $(PACKAGE_NAME) ] ;
+
+##  InstallIcon files [ : subdir ]
+##    Installs an icon
+rule InstallIcon
+{
+    LOCATE on $(<:G=installicon) = $(SUBDIR) ;
+    Depends install_data : [ DoInstall $(<:G=installicon) : $(appicondir) $(2) ] ;
+}
+
 InstallIcon netpanzer.png ;

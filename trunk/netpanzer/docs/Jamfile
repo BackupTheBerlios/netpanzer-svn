@@ -1,3 +1,21 @@
 SubDir TOP docs ;
 
 InstallMan netpanzer.6 ;
+
+if $(DOXYGEN) {
+    actions DoxyGen
+    {
+        top_srcdir=$(top_srcdir) $(DOXYGEN) $(DOXGEN_FLAGS) $(>)
+    }
+    
+    SEARCH on Doxyfile = $(SUBDIR) ;
+
+    NotFile doxygen ;
+    Always doxygen ;
+    Depends doc : doxygen ;
+    Depends doxygen : Doxyfile ;
+    DoxyGen doxygen : Doxyfile ;
+
+    Help doxygen : "Create doxygen documentation of the project" ;
+}
+

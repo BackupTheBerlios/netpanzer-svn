@@ -7,12 +7,12 @@ DEEPCOPY ?= "cp -R" ;
 
 # Experience seems to indicate that library scanning misbehaves on MacOS/X with
 # Jam 2.4, consequently we disable it.
-CMD.AR = "ar ru" ;
+AR = "ar ru" ;
 NOARUPDATE = true ;
 NOARSCAN = true ;
 actions Archive
 {
-  $(CMD.AR) $(<) $(>)
+  $(AR) $(<) $(>)
 }
 
 #------------------------------------------------------------------------------
@@ -29,13 +29,7 @@ rule ConstructApplicationTarget
 # ConstructLibraryTarget target : options
 rule ConstructLibraryTarget
 {
-  return lib$(<)$(SUFLIB) ;
-}
-
-# ConstructPluginTarget : options
-rule ConstructPluginTarget
-{
-  return $(<).csbundle ;
+  return lib$(<).a ;
 }
 
 # SystemLinkApplication target : objects : options
@@ -54,6 +48,6 @@ rule SystemLinkApplication
 actions LinkApplication bind NEEDLIBS bind EXTRAOBJECTS
 {
   $(MACOSX.ENVIRON)
-  $(LINK) -o $(<) $(>) $(EXTRAOBJECTS) $(NEEDLIBS) $(LINKLIBS)
+  $(LINK) -o $(<) $(>) $(EXTRAOBJECTS) $(NEEDLIBS) $(LFLAGS)
 }
 

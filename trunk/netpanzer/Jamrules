@@ -1,22 +1,23 @@
-if ! $(BUILDTOP)
+if ! $(top_builddir)
 {
-	BUILDTOP = $(TOP) ;
+    top_builddir = $(TOP) ;
 }
+top_srcdir = $(TOP) ;
 
-JAMCONFIG ?= $(BUILDTOP)/Jamconfig ;
+JAMCONFIG ?= $(top_builddir)/Jamconfig ;
 include $(JAMCONFIG) ;
 if ! $(JAMCONFIG_READ)
 {
   EXIT "Couldn't find config. Please run 'configure' first." ;
 }
 
-COMPILER.CFLAGS += -Wall ;
-COMPILER.CFLAGS.optimize += -O3 -g3 ;
-COMPILER.LFLAGS.optimize += -O3 -g3 ;
-COMPILER.CFLAGS.debug += -DDEBUG -g3 ;
-COMPILER.LFLAGS.debug += -g3 ;
-COMPILER.CFLAGS.profile += -DDEBUG -g3 -pg ;
-COMPILER.LFLAGS.profile += -g3 -pg ;
+COMPILER_CFLAGS += -Wall ;
+COMPILER_CFLAGS_optimize += -O3 -g3 ;
+COMPILER_LFLAGS_optimize += -O3 -g3 ;
+COMPILER_CFLAGS_debug += -DDEBUG -g3 ;
+COMPILER_LFLAGS_debug += -g3 ;
+COMPILER_CFLAGS_profile += -DDEBUG -g3 -pg ;
+COMPILER_LFLAGS_profile += -g3 -pg ;
 
 LINK = $(CXX) ;
 
@@ -24,4 +25,4 @@ LINK = $(CXX) ;
 include $(TOP)/mk/jam/build.jam ;
 
 # Include Dirs
-IncludeDir $(BUILDTOP) ; # for config.h
+IncludeDir $(top_builddir) ; # for config.h

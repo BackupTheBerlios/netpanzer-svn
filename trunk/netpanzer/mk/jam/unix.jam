@@ -10,15 +10,19 @@ SHELL ?= "/bin/sh" ;
 ##    Constructs the application atrget name (ie. foo.exe for foo)
 rule ConstructApplicationTarget
 {
-  return $(<) ;
+    return $(<) ;
 }
 rule ConstructLibraryTarget
 {
-  return lib$(<)$(SUFLIB) ;
+    if [ IsElem shared : $(2) ] {
+        return lib$(<).la ;
+    } else {
+        return lib$(<).a ;
+    }
 }
 rule ConstructPluginTarget
 {
-  return $(<).so ;
+    return $(<).so ;
 }
 
 # SystemLinkApplication target : objects : options
@@ -26,16 +30,18 @@ rule ConstructPluginTarget
 #  correct clean targets.
 rule SystemLinkApplication
 {
-  local target = $($(<)_TARGET) ;
+    local target = $($(<)_TARGET) ;
   
-  Depends $(target) : $(>) ;
-  LinkApplication $(target) : $(>) ;
-  # setup clean rules
-  Clean clean : $(target) ;
-  Clean $(<)clean : $(target) ;
+    Depends $(target) : $(>) ;
+    LinkApplication $(target) : $(>) ;
+    # setup clean rules
+    Clean clean : $(target) ;
+    Clean $(<)clean : $(target) ;
 }
 
 actions LinkApplication bind NEEDLIBS bind EXTRAOBJECTS
 {
-  $(LINK) -o $(<) $(>) $(EXTRAOBJECTS) $(NEEDLIBS) $(LINKLIBS)
+    $(LINK) -o $(<) $(>) $(EXTRAOBJECTS) $(NEEDLIBS) $(LFLAGS)
 }
+
+

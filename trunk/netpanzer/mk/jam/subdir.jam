@@ -3,19 +3,19 @@
 #	(until jampeople accept my patches :-/ )
 #============================================================================
 
-LOCATE.OBJECTS ?= $(BUILDTOP)/out/$(target) ;
-LOCATE.TARGETS ?= $(BUILDTOP) ;
-LOCATE.DOCS ?= $(BUILDTOP)/out ;
+LOCATE_OBJECTS ?= $(top_builddir)/out/$(target) ;
+LOCATE_TARGETS ?= $(top_builddir) ;
+LOCATE_DOCS ?= $(top_builddir)/out ;
 
 SUBDIRRULES += FixSubDirPath ;
 
-CMD.MKDIR ?= mkdir ;
-CMD.MKDIRS ?= "$(CMD.MKDIR) -p" ;
+MKDIR ?= mkdir ;
+MKDIRS ?= "$(MKDIR) -p" ;
 
 rule FixSubDirPath
 {
-    LOCATE_SOURCE = [ FDirName $(LOCATE.OBJECTS) $(SUBDIR_TOKENS) ] ;
-    LOCATE_TARGET = [ FDirName $(LOCATE.OBJECTS) $(SUBDIR_TOKENS) ] ;
+    LOCATE_SOURCE = [ ConcatDirs $(LOCATE_OBJECTS) $(SUBDIR_TOKENS) ] ;
+    LOCATE_TARGET = [ ConcatDirs $(LOCATE_OBJECTS) $(SUBDIR_TOKENS) ] ;
 }
 
 # fix bug in Jambase where SubInclude in the middle of a jam file made it break
@@ -85,6 +85,6 @@ rule MkDir
 
 actions MkDir1
 {
-        $(CMD.MKDIRS) "$(<)"
+        $(MKDIRS) "$(<)"
 }
 

@@ -35,6 +35,8 @@ rule Application
   $(<)_OBJECTS = $(objects) ;
   $(<)_SOURCES = $(sources) ;
   $(<)_TARGET = $(target) ;
+  $(<)_OPTIONS = $(3) ;
+  $(<)_INSTALLTARGET = ;
 
   # create target clean rule
   Always $(<)clean ;
@@ -58,21 +60,25 @@ rule Application
   # construct Install target
   if ! [ IsElem noinstall : $(3) ]
   {
-    Depends install_app : [ DoInstall $(target) : $(bindir) ] ;
+    $(<)_INSTALLTARGET = [ DoInstall $(target) : $(bindir) : $(INSTALL_PROGRAM) ] ;
+    Depends install_bin : $($(<)_INSTALLTARGET) ;
   }
 
   # Link
   MakeLocate $(target) : $(LOCATE.TARGETS) ;
   SystemLinkApplication $(<) : $(objects) : $(3) ;
 
-  CFlags $(<) : $(APPLICATION.CFLAGS) ;
-  LFlags $(<) : $(LINKLIBS) $(APPLICATION.LFLAGS) ;      
+  # Import default flags
+  CppFlags $(<) : $(CPPFLAGS) $(APPLICTION_CPPFLAGS) ;
+  CFlags $(<) : $(CFLAGS) $(APPLICATION_CFLAGS) ;
+  C++Flags $(<) : $(C++FLAGS) $(APPLICATION_C++FLAGS) ;
+  LFlags $(<) : $(LFLAGS) $(APPLICATION_LFLAGS) ;
 }
 
 #----------------------------------------------------------------------------
 # private part
 
-# Construct pseudo target apps which is used instead of the pseudo target exe
-# in Jambase
-Depends exe : apps ;
+# Construct pseudo target apps
+Depends all : apps ;
 NotFile apps ;
+
