@@ -104,8 +104,6 @@ protected:
     static void dedicatedSimLoop();
     static void dedicatedInputLoop();
 
-    static void setupKeyboardBindings();
-
     static bool startGameMapLoad(const char *map_file_path, unsigned long partitions, int *result_code );
     static bool gameMapLoad( int *percent_complete );
     static void finishGameMapLoad();

@@ -73,7 +73,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // ** GVS Includes
 #include "codewiz.hpp"
 #include "cMouse.hpp"
-#include "loadPics.hpp"
 #include "Palette.hpp"
 #include "Desktop.hpp"
 #include "GameView.hpp"
@@ -200,7 +199,6 @@ void GameManager::initializeWindowSubSystem()
     loadPalette("wads/netp.act");
     
     initFont();
-    loadPics();
 
     gameView.init();
     Desktop::add( &gameView );
@@ -324,12 +322,8 @@ void increaseBrightness(const char *filename)
 
     Palette::setBrightnessAbsolute(GameConfig::getScreenBrightness());
 
-    Palette pal;
-
-    //	Screen->palette.loadLibPalette(pal, Screen->lpFrontBuffer);
-    Screen->setPalette(pal.color);
+    Screen->setPalette(Palette::color);
     ConsoleInterface::postMessage( "Increasing Brightness");
-
 } // end increaseBrightness
 
 // ******************************************************************
@@ -339,22 +333,14 @@ void decreaseBrightness(const char *filename)
 
     Palette::setBrightnessAbsolute(GameConfig::getScreenBrightness());
 
-    Palette pal;
-
-    //	Screen->palette.loadLibPalette(pal, Screen->lpFrontBuffer);
-    Screen->setPalette(pal.color);
+    Screen->setPalette(Palette::color);
     ConsoleInterface::postMessage( "Decreasing Brightness");
-
 } // end increaseBrightness
-
 
 // ******************************************************************
 void GameManager::initializeInputDevices()
 {
-    setupKeyboardBindings();
-
     MouseInterface::initialize();
-    mouse.setPointer(&mouseArrow);
 }
 
 void GameManager::shutdownInputDevices()
@@ -466,15 +452,6 @@ void GameManager::shutdownParticleSystems()
 }
 
 // ******************************************************************
-
-void GameManager::setupKeyboardBindings()
-{
-#if 0
-    KEY_BINDER.bindAction( _action_rank_view, "RankView", SDLK_F6 );
-    KEY_BINDER.bindAction( _action_chat_view, "ChatView", SDLK_F7 );
-    KEY_BINDER.bindAction( _action_mini_map, "MiniMapView", SDLK_F8 );
-#endif
-}
 
 void GameManager::processSystemKeys()
 {
@@ -1220,25 +1197,9 @@ void GameManager::hostMultiPlayerGame()
 
     progressView.open();
 
-    //winsock hack
-    //fix dialup problem--
-    //Screen->setGDIStatus(true);
-    //minimize = MinimizeOrNot( gapp.hwndApp );
-
     /*
     initializeConnectionType();
     HostSession( gapp.hwndApp );                 
-
-    if (minimize == false)
-    { 
-      Screen->setGDIStatus(false);
-    }  
-    else
-     {
-      OpenIcon( gapp.hwndApp ); 
-      Screen->restoreAll();
-      Screen->setGDIStatus( FALSE ); 
-     }
     */
 
     //InitStreamServer(gapp.hwndApp);
@@ -1335,23 +1296,7 @@ void GameManager::joinMultiPlayerGame()
     //reinitializeGameLogic();
     NetworkState::setNetworkStatus( _network_state_client );
 
-    //winsock hack
-    //JoinSession( gapp.hwndApp );
-    //InitStreamClient(gapp.hwndApp);
     CLIENT->joinSession(IPAddressView::szServer.getString());
-
-    // XXX how should that work? we can't process (network) events while waiting
-#if 0
-    Timer wait;
-    if ( CLIENT->joinSession() == false ) {
-        lobbyView.scrollAndUpdate( "FAILED TO JOIN NETPANZER SESSION" );
-        wait.changePeriod( 4 );
-        while( !wait.count() );
-
-        lobbyView.toggleMainMenu();
-        return;
-    }
-#endif
 
     ClientConnectDaemon::startConnectionProcess();
     sound->playTankIdle();
