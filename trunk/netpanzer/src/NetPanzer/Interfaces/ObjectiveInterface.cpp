@@ -55,7 +55,7 @@ void ObjectiveInterface::resetLogic()
 
 void ObjectiveInterface::loadObjectiveList( const char *file_path )
 {
-    size_t objective_count = 0;
+    int objective_count = 0;
     char comment[64] = "";
 
     // XXX FIX THIS! Make it using physfs!!!
@@ -70,7 +70,7 @@ void ObjectiveInterface::loadObjectiveList( const char *file_path )
     unsigned long world_x, world_y;
     char name[64];
     objective_list.clear();
-    for (size_t objective_index = 0; objective_index < objective_count; objective_index++ ) {
+    for (int objective_index = 0; objective_index < objective_count; objective_index++ ) {
         Objective *objective_obj;
 
         fscanf( infile, "%s %s", comment, name );
