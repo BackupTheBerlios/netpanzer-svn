@@ -47,18 +47,18 @@ enum { _net_message_id_connect_join_game_request,
 
 class ClientConnectJoinRequest : public NetMessage
 {
-public:
+private:
     uint32_t client_transport_id;
-    char  code_word[24];
     uint32_t protocol_version;
 
-    ClientConnectJoinRequest()
-    {
-        message_class = _net_message_class_connect;
-        message_id = _net_message_id_connect_join_game_request;
-        memset(code_word, 0, sizeof(code_word));
-    }
+public:
+    char  code_word[24];
 
+    ClientConnectJoinRequest();
+    uint32_t getTransportID(void);
+    void setTransportID(uint32_t transport_id);
+    uint32_t getProtocolVersion(void);
+    void setProtocolVersion(uint32_t version);
 }
 __attribute__((packed));
 
@@ -69,16 +69,17 @@ enum { _join_request_result_success,
 
 class ClientConnectJoinRequestAck : public NetMessage
 {
-public:
+private:
     int   result_code;
     uint32_t server_protocol_version;
 
-    ClientConnectJoinRequestAck()
-    {
-        message_class = _net_message_class_connect;
-        message_id = _net_message_id_connect_join_game_request_ack;
-    }
+public:
+    ClientConnectJoinRequestAck();
 
+    int getResultCode(void);
+    void setResultCode(int result);
+    uint32_t getServerProtocolVersion(void);
+    void setServerProtocolVersion(uint32_t protocol_version);
 }
 __attribute__((packed));
 

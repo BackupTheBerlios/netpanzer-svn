@@ -82,11 +82,11 @@ void ClientConnectDaemon::netMessageLinkAck( NetMessage *message )
 
     join_request_ack_mesg = (ClientConnectJoinRequestAck *) message;
 
-    switch( join_request_ack_mesg->result_code ) {
+    switch( join_request_ack_mesg->getResultCode() ) {
     case _join_request_result_success :
         lobbyView->scrollAndUpdate( "Link to Server Established" );
         sprintf( buf, "Protocol Version: %u",
-		 join_request_ack_mesg->server_protocol_version);
+                join_request_ack_mesg->getServerProtocolVersion());
         lobbyView->scrollAndUpdate( buf );
         break;
 
@@ -95,7 +95,7 @@ void ClientConnectDaemon::netMessageLinkAck( NetMessage *message )
         lobbyView->scrollAndUpdate( "Incorrect Network Protocol Revision" );
         lobbyView->scrollAndUpdate( "Please get a newer netPanzer version." );
         sprintf( buf, "Server Protocol Version: %u",
-		join_request_ack_mesg->server_protocol_version);
+                join_request_ack_mesg->getServerProtocolVersion());
         lobbyView->scrollAndUpdate( buf );
         connection_state = _connect_state_connect_failure;
         failure_display_timer.reset();

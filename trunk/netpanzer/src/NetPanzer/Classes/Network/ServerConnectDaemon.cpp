@@ -161,19 +161,19 @@ void ServerConnectDaemon::netMessageClientJoinRequest( NetMessage *message )
 
     join_request_mesg = (ClientConnectJoinRequest *) message;
 
-    new_player_id = PlayerID(0, join_request_mesg->client_transport_id );
+    new_player_id = PlayerID(0, join_request_mesg->getTransportID() );
 
     if( (strcmp(join_request_mesg->code_word, _NETPANZER_CODEWORD) != 0) ||
-            (join_request_mesg->protocol_version == _NETPANZER_PROTOCOL_VERSION)
+            (join_request_mesg->getProtocolVersion() == _NETPANZER_PROTOCOL_VERSION)
       ) {
-        join_request_ack.result_code = _join_request_result_success;
+        join_request_ack.setResultCode(_join_request_result_success);
     } else {
-        join_request_ack.result_code = _join_request_result_invalid_protocol;
+        join_request_ack.setResultCode(_join_request_result_invalid_protocol);
     }
 
-    join_request_ack.server_protocol_version = _NETPANZER_PROTOCOL_VERSION;
+    join_request_ack.setServerProtocolVersion(_NETPANZER_PROTOCOL_VERSION);
 
-    if( join_request_ack.result_code == _join_request_result_success ) {
+    if( join_request_ack.getResultCode() == _join_request_result_success ) {
 
         ConnectQueueElement connect_request;
 
@@ -183,7 +183,7 @@ void ServerConnectDaemon::netMessageClientJoinRequest( NetMessage *message )
             connect_request.connect_status = _connect_status_waiting;
 
             if (connect_queue.size() > 25) {
-                join_request_ack.result_code = _join_request_result_server_busy;
+                join_request_ack.setResultCode(_join_request_result_server_busy);
             } else {
                 connect_queue.push_back(connect_request);
             }
