@@ -101,7 +101,7 @@ void ServerList::ircMessage(const IRC::Client& sender, const std::string& text)
     if(strncmp(mess, RESPONSE_HEADER, sizeof(RESPONSE_HEADER)-1) != 0)
         return;
     
-   const char *p=mess+strlen(RESPONSE_HEADER)+1;
+   const char *p=mess+strlen(RESPONSE_HEADER);
    const char *map;
    int players=atoi(p);
    if((p=strchr(p,'/'))==0) {
