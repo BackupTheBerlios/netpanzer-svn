@@ -52,6 +52,7 @@ PlayerNameView::PlayerNameView() : View()
 
 PlayerNameView::~PlayerNameView()
 {
+	playernameview=0;
 }
 
 // init

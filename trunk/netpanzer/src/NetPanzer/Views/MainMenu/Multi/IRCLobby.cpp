@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Exception.hpp"
 #include "UtilInterface.hpp"
 #include "PlayerNameView.hpp"
+#include "GameControlRulesDaemon.hpp"
 
 static const char* ask_server_running_mess = "Who's running a server?";
 static const char* server_running_mess = "I'm running";
@@ -76,7 +77,9 @@ void IRCLobby::setNickName(const std::string &nick)
     }
     ircname[i] = 0;
     nickname=ircname;
-    playernameview->setString(ircname);
+    if(playernameview) {
+        playernameview->setString(ircname);
+    }
 }
 
 void IRCLobby::changeNickName(const std::string &nick)
