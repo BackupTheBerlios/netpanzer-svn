@@ -220,11 +220,12 @@ void GameManager::initializeSoundSubSystem()
     sound = new DirectSound();	
 #endif
 #ifdef USE_SDL
+	LOG( ("Initialize sound system.") );
 	sound = new SDLSound();
 #endif
     if (!sound || !sound->initialize())
     {
-		LOG( ( "Failure to initialize DirectSound Sub-system" ) );
+		LOG( ( "Failed to initialize the Sound Sub-system" ) );
 		delete sound;
 		sound = 0;
     } 
@@ -235,6 +236,7 @@ void GameManager::initializeSoundSubSystem()
 void GameManager::shutdownSoundSubSystem()
 {
 	if(sound) {
+		LOG( ("shutdown sound system.") );
 		sound->shutdown();
 		delete sound;
 		sound = 0;

@@ -21,8 +21,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "DDHardSurface.hpp"
 
 void TileEngine::blitWorld( void )
- {
-
+{
+ // XXX disabled for now until the assembler blitters are converted
+ // and the global vars (DBUFFER_VIEW_WIDTH, ...) are implemented
+#if 0
  unsigned long  x_left_length, x_left_offset, x_right_length, x_right_offset;
  unsigned long  y_top_length, y_top_offset, y_bottom_length, y_bottom_offset;
  bool        x_right_end_flag, y_bottom_end_flag;
@@ -285,5 +287,5 @@ for( k=0; k < complete_rows; k++)
     }
 
   }
-
+#endif
  }

@@ -12,7 +12,7 @@ SDLSound::~SDLSound()
 
 bool SDLSound::initialize()
 {
-	return false;
+	return true;
 }
 
 void SDLSound::shutdown()
