@@ -222,9 +222,9 @@ ServerQueryThread::queryServers()
     // check for timed out servers
     for(std::vector<ServerInfo*>::iterator i = querying.begin();
             i != querying.end(); ) {
-        ServerInfo& server = *(*i);
-        if(now - server.querystartticks > QUERY_TIMEOUT) {
-            server.status = ServerInfo::TIMEOUT;
+        ServerInfo* server = *i;
+        if(now - server->querystartticks > QUERY_TIMEOUT) {
+            server->status = ServerInfo::TIMEOUT;
             i = querying.erase(i);
             continue;
         }

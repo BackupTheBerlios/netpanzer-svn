@@ -17,6 +17,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -174,6 +178,17 @@ BaseGameManager *initialise(int argc, char** argv)
         LOGGER.openLogFile("log-bot.txt");
     else
         LOGGER.openLogFile("log.txt");
+
+#ifdef WIN32
+    // SDL redirects stdout and stderr to 2 textfiles, better open a new console
+    // for the dedicated server and the bot
+    if(dedicated_option.value() || bot_option.value().size() > 0) {
+        AllocConsole();
+        freopen("CON", "w", stdout);
+        freopen("CON", "w", stderr);
+        freopen("CON", "r", stdin);
+    }
+#endif
 
     // Initialize random number generator
     srand(time(0));
