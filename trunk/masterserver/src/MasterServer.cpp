@@ -219,6 +219,8 @@ void MasterServer::parseHeartbeat(std::iostream& stream,
         }     
     }
 
+    pthread_mutex_lock(&serverlist_mutex);
+    
     ServerInfo* info = 0;
     std::vector<ServerInfo>::iterator i;
     for(i = serverlist.begin(); i != serverlist.end(); ++i) {
