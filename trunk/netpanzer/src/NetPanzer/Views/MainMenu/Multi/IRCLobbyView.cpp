@@ -179,7 +179,7 @@ void IRCLobbyView::actionPerformed(mMouseEvent me)
         } else if (me.getSource(downButton)) {
             int max_size=lobby_connection->game_servers->size()-1;
             ++topViewableItem;
-            if (max_size>0 && topViewableItem >= max_size) {
+            if (topViewableItem >= max_size) {
                 topViewableItem = max_size;
             }
         }
@@ -216,7 +216,7 @@ void IRCLobbyView::startIRC()
         return;
 
     try {
-        stopIRC();
+        stopIRC("");
         lobby_connection=new IRCLobby(gameconfig->lobbyserver,
                 gameconfig->playername, "#netpanzerlob");
         lobby_connection->change_name=change_name;
@@ -226,9 +226,10 @@ void IRCLobbyView::startIRC()
     }
 }
 
-void IRCLobbyView::stopIRC()
+void IRCLobbyView::stopIRC(const char* reason)
 {
     if(lobby_connection) {
+        lobby_connection->stopThread(reason);
         delete lobby_connection;
     }
     lobby_connection=0;
@@ -237,7 +238,7 @@ void IRCLobbyView::stopIRC()
 void IRCLobbyView::restartIRC()
 {
         // the crude method for nickname change...
-        stopIRC();
+        stopIRC("restart IRC");
         SDL_Delay(500);
         startIRC();
 }

@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <ctype.h>
+#include <sstream>
 #include "HostJoinTemplateView.hpp"
 #include "Desktop.hpp"
 #include "HostJoinTemplateView.hpp"
@@ -92,7 +93,9 @@ static void bNext()
         Desktop::setVisibilityAllWindows(false);
 
         Desktop::setVisibility("LobbyView", true);
-        lobby_view->stopIRC();
+        std::stringstream join_mess;
+        join_mess << "join " << IPAddressView::szServer.getString();
+        lobby_view->stopIRC(join_mess.str().c_str());
 
         //this call should be redundant -- enumeration ceases
         //when a session is opened in any case:
