@@ -34,8 +34,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 InfoThread::InfoThread(int port)
     : socket(0)
 {
-    socket = new network::UDPSocket(port, false);
-
+    network::Address addr = network::Address::resolve(
+            gameconfig->bindaddress, port);
+    socket = new network::UDPSocket(addr, false);
+    
     // start the thread
     thread = SDL_CreateThread(threadMain, this);
 }

@@ -26,22 +26,6 @@ TCPListenSocket::TCPListenSocket(const Address& newaddr, bool blocking)
 #endif
 }
 
-TCPListenSocket::TCPListenSocket(uint16_t port, bool blocking)
-{
-    addr.addr.sin_family = AF_INET;
-    addr.addr.sin_addr.s_addr = INADDR_ANY;
-    addr.addr.sin_port = htons(port);
-
-    create(true);
-    try {
-        createBind(blocking);
-    } catch(...) {
-        close();
-        throw;
-    }
-}
-    
-
 void
 TCPListenSocket::createBind(bool blocking)
 {

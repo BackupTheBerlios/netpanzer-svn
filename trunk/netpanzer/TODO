@@ -5,6 +5,7 @@ Next release:
     * add a mapchange command
 -finish serverlog with filestamp
 -playtesting+bugfixing
+-remember to remove packet debugger before releasing
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map
@@ -32,7 +33,6 @@ Next release:
    idea.
  * bots should have different names and different flags - partly implemented
  * make it possible to have different colors for different players - DONE
- * make the code endian safe. It should run on big endian boxes too.
  * display alliances in the status screens.
  * think about setting unit spawnpoint/opening outpost view. It's very hard to
    select units standing in your base because of the other 2 functions.
@@ -68,7 +68,6 @@ Next release:
  * Create possibility to save and restore matches
  * Convert the 256 color stuff to truecolor and eventually use opengl for
    displaying stuff.
- * add a (readline based?) serverconsole along with "chat" command
  * add an in-game console like in quake-like games
 
 *** Graphics

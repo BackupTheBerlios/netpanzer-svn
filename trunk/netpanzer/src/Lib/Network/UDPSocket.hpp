@@ -4,18 +4,19 @@
 #include <stdint.h>
 #include <string.h>
 #include "SocketBase.hpp"
+#include "Address.hpp"
 
 namespace network
 {
 
-class Address;
-
 class UDPSocket : public SocketBase
 {
 public:
-    /** creates a socket and binds it to the specified port or a random one when
-     * port == 0*/
-    UDPSocket(uint16_t port = 0, bool blocking = true);
+    /** creates a new socket and binds it to the specified address and port or a
+     * random port if port == 0
+     */
+    UDPSocket(bool blocking = true);
+    UDPSocket(const Address& addr, bool blocking = true);
     ~UDPSocket();
 
     /** send data to the specified address */
@@ -24,6 +25,9 @@ public:
      * the address of the client who sent the data in addr.
      */
     size_t recv(Address& addr, void* buffer, size_t bufsize);
+
+private:
+    void init(const Address& addr, bool blocking);
 };
 
 }

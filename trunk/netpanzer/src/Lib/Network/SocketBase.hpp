@@ -1,10 +1,12 @@
 #ifndef __SOCKETBASE_HPP__
 #define __SOCKETBASE_HPP__
 
+#include "Util/NoCopy.hpp"
+
 namespace network
 {
 
-class SocketBase
+class SocketBase : public NoCopy
 {
 protected:
     SocketBase();

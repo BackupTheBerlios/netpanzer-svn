@@ -35,14 +35,10 @@ ServerSocket::ServerSocket(const std::string& bindaddress, uint16_t port)
         : socket(0), clientlist(0)
 {
     try {
-        if(bindaddress == "") {
-            socket = new network::TCPListenSocket(port, false);
-        } else {
-            network::Address addr 
-                = network::Address::resolve(bindaddress, port);
-            socket = new network::TCPListenSocket(addr, false);
-        }
-            
+        network::Address addr
+            = network::Address::resolve(bindaddress, port);        
+        socket = new network::TCPListenSocket(addr, false);
+
         clientlist = new ClientList();
     } catch(...) {
         delete socket;

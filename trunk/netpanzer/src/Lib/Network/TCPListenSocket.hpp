@@ -12,8 +12,6 @@ class TCPListenSocket : public TCPSocket
 public:
     /** creates a new listen socket and binds it to the specified address */
     TCPListenSocket(const Address& bindaddr, bool blocking = true);
-    /** creates a new listen socket and binds it to the specified port */
-    TCPListenSocket(uint16_t port, bool blocking = true);
 
     /** accepts a new client and returns it's socket or 0 when no client
      * is connecting and we're in nonblocking mode 

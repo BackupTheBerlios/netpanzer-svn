@@ -9,9 +9,13 @@
 namespace network
 {
 
+Address Address::ANY;
+
 Address::Address()
 {
     memset(&addr, 0, sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = INADDR_ANY;
 }
 
 Address::Address(const Address& other)
@@ -50,6 +54,13 @@ Address::getPort() const
 Address
 Address::resolve(const std::string& name, uint16_t port)
 {
+    Address result;
+    result.addr.sin_port = htons(port);
+    
+    if(name == "") {
+        return result;
+    }
+
     struct hostent* hentry = gethostbyname(name.c_str());
     if(!hentry) {
 #ifdef WINSOCK
@@ -65,10 +76,7 @@ Address::resolve(const std::string& name, uint16_t port)
 #endif
     }
 
-    Address result;
-    result.addr.sin_family = AF_INET;
     result.addr.sin_addr.s_addr = ((struct in_addr*) hentry->h_addr)->s_addr;
-    result.addr.sin_port = htons(port);
 
     return result;
 }

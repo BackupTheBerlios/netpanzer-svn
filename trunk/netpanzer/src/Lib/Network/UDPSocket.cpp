@@ -10,16 +10,22 @@
 namespace network
 {
 
-UDPSocket::UDPSocket(uint16_t port, bool blocking)
+UDPSocket::UDPSocket(bool blocking)
+{
+    init(Address::ANY, blocking);
+}
+
+UDPSocket::UDPSocket(const Address& addr, bool blocking)
+{
+    init(addr, blocking);
+}
+
+void
+UDPSocket::init(const Address& addr, bool blocking)
 {
     create(false);
 
     try {
-        Address addr;
-        addr.addr.sin_family = AF_INET;
-        addr.addr.sin_addr.s_addr = INADDR_ANY;
-        addr.addr.sin_port = htons(port);
-        
         int res = bind(sockfd, (struct sockaddr*) &addr.addr,
                 sizeof(addr.addr));
         if(res < 0) {

@@ -27,6 +27,8 @@ public:
     void operator=(const Address& other);
     bool operator==(const Address& other) const;
 
+    static Address ANY;
+
 private:
     friend class TCPSocket;
     friend class TCPListenSocket;
