@@ -94,9 +94,8 @@ void ServerConnectDaemon::startConnectionProcess( PlayerID new_player_id )
 
     ClientConnectJoinRequestAck link_ack;
 
-    SERVER->sendMessage( &link_ack, 
-                         sizeof(ClientConnectJoinRequestAck), 
-                         new_player_id, 0 );
+    SERVER->sendMessage( new_player_id, &link_ack, 
+                         sizeof(ClientConnectJoinRequestAck), 0);
    }
  }
 
@@ -146,9 +145,8 @@ void ServerConnectDaemon::updateQueuedClients( void )
    {
 	process_update.queue_position = queue_position;
 
-    SERVER->sendMessage( &process_update, 
-                         sizeof(ConnectProcessUpdate), 
-                         connect_request.new_player_id, 0 );
+    SERVER->sendMessage( connect_request.new_player_id, &process_update, 
+                         sizeof(ConnectProcessUpdate), 0);
 
     connect_request = connect_queue.incIterator( &iterator, &completed );   
    
@@ -209,10 +207,8 @@ void ServerConnectDaemon::netMessageClientJoinRequest( NetMessage *message )
 
    }
  
-   SERVER->sendMessage( &join_request_ack, 
-                        sizeof(ClientConnectJoinRequestAck), 
-                        new_player_id, 
-                        0 );
+   SERVER->sendMessage( new_player_id, &join_request_ack, 
+                        sizeof(ClientConnectJoinRequestAck), 0);
 	   
  }
 
@@ -292,9 +288,8 @@ bool ServerConnectDaemon::connectStateIdle( void )
           
 	int send_ret_val;
     
-    send_ret_val  = SERVER->sendMessage( &start_connect, 
-                                         sizeof(ClientConnectStartConnect), 
-                                         connect_player_id, 0 );
+    send_ret_val  = SERVER->sendMessage( connect_player_id, &start_connect, 
+                                         sizeof(ClientConnectStartConnect), 0);
 		  
 	if( send_ret_val != _network_ok )
      {
@@ -359,9 +354,8 @@ bool ServerConnectDaemon::connectStateAttemptPlayerAlloc( void )
     {
      connect_result.result_code = _connect_result_server_full;
     	            
-	 send_ret_val = SERVER->sendMessage( &connect_result, 
-                                         sizeof(ClientConnectResult), 
-                                         connect_player_id, 0 );
+	 send_ret_val = SERVER->sendMessage( connect_player_id, &connect_result, 
+                                         sizeof(ClientConnectResult), 0);
          
      resetConnectFsm();
      return( true );
@@ -370,9 +364,8 @@ bool ServerConnectDaemon::connectStateAttemptPlayerAlloc( void )
     {          
      connect_result.result_code = _connect_result_success;
     
-     send_ret_val = SERVER->sendMessage( &connect_result, 
-                                         sizeof(ClientConnectResult), 
-                                         connect_player_id, 0 );
+     send_ret_val = SERVER->sendMessage( connect_player_id, &connect_result, 
+                                         sizeof(ClientConnectResult), 0 );
 
   	 if( send_ret_val != _network_ok )
       {
@@ -412,9 +405,8 @@ bool ServerConnectDaemon::connectStateWaitForClientSettings( NetMessage *message
       ConnectMesgServerGameSettings server_game_setup;
 	  GameManager::getServerGameSetup( &server_game_setup ); 
 
-	  send_ret_val = SERVER->sendMessage( &server_game_setup, 
-                                          sizeof(ConnectMesgServerGameSettings), 
-                                          connect_player_id, 0 );
+	  send_ret_val = SERVER->sendMessage( connect_player_id, &server_game_setup,
+                                          sizeof(ConnectMesgServerGameSettings), 0);
 	  
       if( send_ret_val != _network_ok )
        {
@@ -470,7 +462,7 @@ bool ServerConnectDaemon::connectStateWaitForClientGameSetupAck( NetMessage *mes
               );
             
 
-      send_ret_val = SERVER->sendMessage( &player_connect_mesg, sizeof(PlayerConnectID), connect_player_id, 0 );
+      send_ret_val = SERVER->sendMessage(connect_player_id, &player_connect_mesg, sizeof(PlayerConnectID), 0 );
 
    	  if( send_ret_val != _network_ok )
        {
@@ -483,7 +475,8 @@ bool ServerConnectDaemon::connectStateWaitForClientGameSetupAck( NetMessage *mes
          
 	  ConnectProcessStateMessage state_mesg;
 	  state_mesg.message_enum = _connect_state_message_sync_player_info;
-      send_ret_val = SERVER->sendMessage( &state_mesg, sizeof(ConnectProcessStateMessage), connect_player_id, 0 );			   
+      send_ret_val = SERVER->sendMessage( connect_player_id, &state_mesg,
+			  						sizeof(ConnectProcessStateMessage), 0);
 
    	  if( send_ret_val != _network_ok )
        {
@@ -547,7 +540,7 @@ bool ServerConnectDaemon::connectStatePlayerStateSync( void )
 
 	state_mesg.message_enum = _connect_state_message_sync_player_info_percent;
     state_mesg.percent_complete = percent_complete;
-    send_ret_val = SERVER->sendMessage( &state_mesg, sizeof(ConnectProcessStateMessage), connect_player_id, 0 );			
+    send_ret_val = SERVER->sendMessage( connect_player_id, &state_mesg, sizeof(ConnectProcessStateMessage), 0);
 
     if( send_ret_val != _network_ok )
      {
@@ -559,7 +552,7 @@ bool ServerConnectDaemon::connectStatePlayerStateSync( void )
     UnitInterface::startRemoteUnitSync( connect_player_id );
 		  		  
 	state_mesg.message_enum = _connect_state_message_sync_units;
-    send_ret_val = SERVER->sendMessage( &state_mesg, sizeof(ConnectProcessStateMessage), connect_player_id, 0 );			
+    send_ret_val = SERVER->sendMessage( connect_player_id, &state_mesg, sizeof(ConnectProcessStateMessage), 0 );
 		  
     if( send_ret_val != _network_ok )
      {
@@ -588,7 +581,7 @@ bool ServerConnectDaemon::connectStatePlayerStateSync( void )
     {
   	 state_mesg.message_enum = _connect_state_message_sync_player_info_percent;
      state_mesg.percent_complete = percent_complete;
-     send_ret_val = SERVER->sendMessage( &state_mesg, sizeof(ConnectProcessStateMessage), connect_player_id, 0 );			
+     send_ret_val = SERVER->sendMessage( connect_player_id, &state_mesg, sizeof(ConnectProcessStateMessage), 0 );
 
      if( send_ret_val != _network_ok )
       {
@@ -617,7 +610,8 @@ bool ServerConnectDaemon::connectStateUnitSync( void )
 
 	state_mesg.message_enum = _connect_state_message_sync_units_percent;
     state_mesg.percent_complete = percent_complete;
-    send_ret_val = SERVER->sendMessage( &state_mesg, sizeof(ConnectProcessStateMessage), connect_player_id, 0 );			
+    send_ret_val = SERVER->sendMessage( connect_player_id, &state_mesg,
+			sizeof(ConnectProcessStateMessage), 0 );
 
     if( send_ret_val != _network_ok )
      {
@@ -626,7 +620,7 @@ bool ServerConnectDaemon::connectStateUnitSync( void )
      }
     
     UnitSyncIntegrityCheck unit_integrity_check_mesg;
-    send_ret_val = SERVER->sendMessage( &unit_integrity_check_mesg, sizeof(UnitSyncIntegrityCheck), connect_player_id, 0 );			
+    send_ret_val = SERVER->sendMessage( connect_player_id, &unit_integrity_check_mesg, sizeof(UnitSyncIntegrityCheck), 0 );
 
     if( send_ret_val != _network_ok )
      {
@@ -653,7 +647,7 @@ bool ServerConnectDaemon::connectStateUnitSync( void )
     SERVER->sendMessage( &player_state_update, sizeof(PlayerStateSync), 0 );
           
 	state_mesg.message_enum = _connect_state_sync_complete;
-    send_ret_val = SERVER->sendMessage( &state_mesg, sizeof(ConnectProcessStateMessage), connect_player_id, 0 );			
+    send_ret_val = SERVER->sendMessage( connect_player_id, &state_mesg, sizeof(ConnectProcessStateMessage), 0 );
 
     if( send_ret_val != _network_ok )
      {
@@ -672,7 +666,8 @@ bool ServerConnectDaemon::connectStateUnitSync( void )
     {
  	 state_mesg.message_enum = _connect_state_message_sync_units_percent;
      state_mesg.percent_complete = percent_complete;
-     send_ret_val = SERVER->sendMessage( &state_mesg, sizeof(ConnectProcessStateMessage), connect_player_id, 0 );			
+     send_ret_val = SERVER->sendMessage( connect_player_id, &state_mesg,
+			 sizeof(ConnectProcessStateMessage), 0);
 
      if( send_ret_val != _network_ok )
       {

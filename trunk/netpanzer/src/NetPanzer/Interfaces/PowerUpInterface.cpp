@@ -420,7 +420,7 @@ void PowerUpInterface::syncPowerUps( PlayerID player_id )
                      powerup_ptr->powerup_state.type
                    );
     
-    SERVER->sendMessage( &create_mesg, sizeof( PowerUpCreateMesg ), player_id, 0 );
+    SERVER->sendMessage( player_id, &create_mesg, sizeof( PowerUpCreateMesg ), 0);
        
     powerup_list.incIteratorPtr( &powerup_ptr );
    }  

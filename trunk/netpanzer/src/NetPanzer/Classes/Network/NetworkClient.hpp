@@ -87,27 +87,25 @@ public:
  	NetworkClient ();
   	virtual ~NetworkClient ();
    
-   	void activateKeepAlive( void ); 
-	void deactivateKeepAlive( void ); 
+   	void activateKeepAlive(); 
+	void deactivateKeepAlive(); 
 
 	virtual int openSession() = 0;
 
-	virtual int startEnumeration( ConnectionAddress address ) = 0;
-	virtual int startEnumeration( void ) = 0;
-	virtual int stopEnumeration( void ) = 0;
-	virtual int getSessionList( SessionList &list ) = 0;
+	virtual int startEnumeration(ConnectionAddress address) = 0;
+	virtual int startEnumeration() = 0;
+	virtual int stopEnumeration() = 0;
+	virtual int getSessionList(SessionList &list) = 0;
 
-	virtual int joinSession( void ) = 0;
-	virtual int joinSession( int session_index ) = 0;
-	virtual int joinSession( const char session_name ) = 0;
-	virtual int setJoinSession( const char *session_name ) = 0;
+	virtual int joinSession() = 0;
+	virtual int joinSession(int session_index) = 0;
+	virtual int joinSession(const char* session_name) = 0;
+	virtual int setJoinSession(const char *session_name) = 0;
       
-	virtual int closeSession( void ) = 0;
+	virtual int closeSession() = 0;
 	
-	virtual int sendMessage( NetMessage *message, unsigned long size, int flags
-			) = 0;
- 
-   virtual int getMessage( NetMessage *message ) = 0;
+	virtual void sendMessage(NetMessage *message, size_t size, int flags) = 0;
+ 	virtual int getMessage(NetMessage *message) = 0;
 };
 
 #endif // ** _NETWORK_CLIENT_HPP

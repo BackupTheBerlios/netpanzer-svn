@@ -114,8 +114,8 @@ public:
 	virtual void closeSession() = 0;
 
 	virtual int sendMessage(NetMessage *message, size_t size, int flags) = 0;
-	virtual int sendMessage(NetMessage *message, size_t size,
-							const PlayerID &player_id, int flags) = 0;  
+	virtual int sendMessage(const PlayerID& player_id,
+							NetMessage *message, size_t size, int flags) = 0;  
 
 	virtual int getMessage(NetMessage *message) = 0;
 

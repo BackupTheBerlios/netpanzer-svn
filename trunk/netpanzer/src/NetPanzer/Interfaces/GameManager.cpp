@@ -1105,7 +1105,7 @@ void GameManager::spawnPlayer( const PlayerID &player )
     SystemSetPlayerView set_view;
 
     set_view.camera_loc = world_loc;
-    SERVER->sendMessage( &set_view, sizeof( SystemSetPlayerView ), player, 0 );
+    SERVER->sendMessage( player, &set_view, sizeof( SystemSetPlayerView ), 0);
    }
   
   sound->PlayTankIdle();
@@ -1359,7 +1359,7 @@ void GameManager::netMessagePingRequest( NetMessage *message )
        (ping_request->client_player_index != 0)
 	 ) 
    {
-    SERVER->sendMessage( &ping_ack, sizeof(SystemPingAcknowledge), player_id, 0 );
+    SERVER->sendMessage( player_id, &ping_ack, sizeof(SystemPingAcknowledge), 0 );
    }
  }
 

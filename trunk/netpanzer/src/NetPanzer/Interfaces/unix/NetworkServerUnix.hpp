@@ -36,8 +36,8 @@ public:
 
 	virtual int sendMessage(NetMessage *message, size_t size,
 							int flags);
-	virtual int sendMessage(NetMessage *message, size_t size,
-							const PlayerID &player_id, int flags);
+	virtual int sendMessage(const PlayerID& player_id,
+							NetMessage *message, size_t size, int flags);
    
 	virtual int getMessage(NetMessage *message);
 
@@ -46,9 +46,6 @@ public:
 	virtual void checkIncoming();
 
 private:
-	void sendMessage(ServerClientListData *client_data_ptr,
-					 const PlayerID& player_id,
-					 NetMessage* message, int flags);
 	ServerSocket* serversocket;
 };
 

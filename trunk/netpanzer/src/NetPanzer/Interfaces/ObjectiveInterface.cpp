@@ -349,8 +349,8 @@ void ObjectiveInterface::syncObjectives( PlayerID connect_player )
     
     while ( message_encoder.encodeMessage( &sync_mesg, sizeof(ObjectiveSyncMesg), &encode_message ) )
      {
-      SERVER->sendMessage( encode_message, encode_message->realSize(), 
-                           connect_player, 0 ); 
+      SERVER->sendMessage( connect_player, encode_message,
+			  			   encode_message->realSize(), 0); 
       message_encoder.resetEncoder();
      } // ** if  
    }
@@ -358,7 +358,8 @@ void ObjectiveInterface::syncObjectives( PlayerID connect_player )
    message_encoder.getEncodeMessage( &encode_message ); 
    if ( encode_message != 0 )
     {
-     SERVER->sendMessage( encode_message, encode_message->realSize(), connect_player, 0 );
+     SERVER->sendMessage( connect_player, encode_message,
+			 			  encode_message->realSize(), 0);
     } // ** if 
  }
 

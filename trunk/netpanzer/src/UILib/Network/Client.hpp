@@ -3,6 +3,8 @@
 
 #include <SDL_net.h>
 
+/** This class keep data from a single client that is connected to the server
+ */
 class Client
 {
 public:

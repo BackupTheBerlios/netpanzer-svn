@@ -2,6 +2,10 @@
 -removed NetMessageLog class (because it only contained shit ;-)
 -slightly changed NetworkServer and NetworkClient interfaces
 -Added a SDL_Net version of the network code
+-cleaned up socket code alot, by removing all this UDP code (a complete new
+ and clean network code will be needed sometime anyway...)
+-more cleanup in the network code
+-added a client version of the SDLNet code
 
 6-Sep-2003 by Matze Braun
 -added a unix implementation of _findfirst, _findnext and _findclose

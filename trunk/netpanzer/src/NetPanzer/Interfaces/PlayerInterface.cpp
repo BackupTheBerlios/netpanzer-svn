@@ -382,8 +382,8 @@ bool PlayerInterface::syncPlayerState( int *send_return_code, int *percent_compl
        
         while( message_encoder.encodeMessage( &sync_mesg, sizeof(PlayerStateSync), &encode_message ) )
          {
-          send_ret_val = SERVER->sendMessage( encode_message, encode_message->realSize(), 
-                                              player_sync_connect_id, 0 ); 
+          send_ret_val = SERVER->sendMessage( player_sync_connect_id,
+				  				encode_message, encode_message->realSize(),0); 
           message_encoder.resetEncoder();
           
           if ( send_ret_val != _network_ok )
@@ -403,7 +403,8 @@ bool PlayerInterface::syncPlayerState( int *send_return_code, int *percent_compl
     message_encoder.getEncodeMessage( &encode_message ); 
     if ( encode_message != 0 )
      {
-      send_ret_val = SERVER->sendMessage( encode_message, encode_message->realSize(), player_sync_connect_id, 0 );
+      send_ret_val = SERVER->sendMessage(player_sync_connect_id,
+							  encode_message, encode_message->realSize(), 0);
       
       if ( send_ret_val != _network_ok )
        { 

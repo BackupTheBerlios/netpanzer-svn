@@ -19,30 +19,32 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _NETWORK_CLIENT_WINSOCK_HPP
 
 #include "NetworkClient.hpp"
+#include "UILib/Network/ClientSocket.hpp"
 
 class NetworkClientUnix : public NetworkClient
 {
 public:  
-   NetworkClientUnix( void );
-   ~NetworkClientUnix();
+	NetworkClientUnix();
+	virtual ~NetworkClientUnix();
 
-   virtual int openSession(); 
+	virtual int openSession();
    
-   virtual int startEnumeration( ConnectionAddress address );   
-   virtual int startEnumeration( void ); 
-   virtual int stopEnumeration( void );
-   virtual int getSessionList( SessionList &list );
+	virtual int startEnumeration(ConnectionAddress address);
+	virtual int startEnumeration();
+	virtual int stopEnumeration();
+	virtual int getSessionList(SessionList &list);
 
-   virtual int joinSession( void );
-   virtual int joinSession( int session_index ); 
-   virtual int joinSession( const char session_name );
-   virtual int setJoinSession( const char *session_name );
-   
-   virtual int closeSession( void ); 
+	virtual int joinSession();
+	virtual int joinSession(int session_index);
+	virtual int joinSession(const char* session_name);
+	virtual int setJoinSession(const char *session_name);
+	virtual int closeSession();
   
-   virtual int sendMessage( NetMessage *message, unsigned long size, int flags ); 
- 
-   virtual int getMessage( NetMessage *message ); 
+	virtual void sendMessage(NetMessage *message, size_t size, int flags);
+	virtual int getMessage(NetMessage *message);
+
+private:
+	ClientSocket* clientsocket;
 };
 
 #endif // ** _NETWORK_CLIENT_WINSOCK_HPP

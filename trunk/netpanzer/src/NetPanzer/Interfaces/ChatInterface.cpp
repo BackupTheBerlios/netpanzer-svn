@@ -31,7 +31,7 @@ void (* ChatInterface::addChatString)( const char *message_text ) = 0;
 
 void ChatInterface::chatMessageRequest( NetMessage *message )
  {
-  bool post_on_server;
+  bool post_on_server = false;
   SystemChatMesg chat_mesg;
   SystemChatMesgRequest *chat_request;
 
@@ -65,7 +65,7 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
          if( PlayerInterface::isAllied( chat_request->source_player_index, i ) == true )
           {
            if ( (local_player_index != i) )
-            { SERVER->sendMessage( &chat_mesg, sizeof(SystemChatMesg), player_id, 0 ); }
+            { SERVER->sendMessage( player_id, &chat_mesg, sizeof(SystemChatMesg), 0 ); }
            else
             { post_on_server = true; }
           }  
@@ -78,8 +78,9 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
       }
      else
       { 
-       SERVER->sendMessage( &chat_mesg, sizeof(SystemChatMesg), 
-                                        PlayerInterface::getPlayerID(chat_request->source_player_index ) , 0 );  
+       SERVER->sendMessage(
+			   PlayerInterface::getPlayerID(chat_request->source_player_index),
+			   &chat_mesg, sizeof(SystemChatMesg), 0);  
       }
     }
    else 

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
+Copyright (C) 2003 Matthias Braun <matze@braunis.de>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -31,16 +31,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Client.hpp"
 #include "Exception.hpp"
 
-ServerSocket::ServerSocket(Uint16 tcpport, Uint16 udpport)
+ServerSocket::ServerSocket(Uint16 tcpport)
+	: clientlist(0)
 {
-	udpsocket = SDLNet_UDP_Open(udpport);
-	if(!udpsocket)
-		throw Exception("couldn't open UDP socket on port %d: %s", udpport,
-						SDLNet_GetError());
-
 	IPaddress ip;
 	if(SDLNet_ResolveHost(&ip, 0, tcpport) < 0)
-		throw Exception("couldn't resolv address for socket on port %d: %s",
+		throw Exception("couldn't resolve address for socket on port %d: %s",
 						tcpport, SDLNet_GetError());
 	tcpsocket = SDLNet_TCP_Open(&ip);
 	if(!tcpsocket)
@@ -54,14 +50,12 @@ ServerSocket::~ServerSocket()
 {
 	delete clientlist;
 	SDLNet_TCP_Close(tcpsocket);
-	SDLNet_UDP_Close(udpsocket);
 }
 
 void ServerSocket::read()
 {
 	acceptNewClients();
 	readTCP();
-	readUDP();
 }
 
 //this function handles accepting a client application that
@@ -77,14 +71,7 @@ void ServerSocket::acceptNewClients()
 	while ( (clientsocket = SDLNet_TCP_Accept(tcpsocket)) ) {
 		Client* client = clientlist->add(clientsocket);
 
-		// We need to request the UDP address of the client
-		UDPAddressRequest udpaddressrequest;
-		udpaddressrequest.clientid = client->id;
-		udpaddressrequest.size = sizeof(UDPAddressRequest);
-		sendMessage(client->id, (char*) &udpaddressrequest,
-					sizeof(UDPAddressRequest));
-
-		// Put the message into the message queue
+		// Put message about connecting client into message queue
 		TransportClientAccept clientacceptmessage;
 		clientacceptmessage.client_transport_id = client->id;
 		EnqueueIncomingPacket(&clientacceptmessage,
@@ -309,105 +296,6 @@ void ServerSocket::readClientTCP(Client* client)
     recvoffset = 0;
 }
 
-void ServerSocket::readUDP()
-{
-	// XXX should we make this static for efficiency? (and don't care about the
-	// small memory leak)
-	UDPpacket* packet = SDLNet_AllocPacket(4096);
-	if(!packet)
-		throw Exception("out of memory in ReadClientUDP.");
-	char *RecvDgram = (char*) packet->data;
-
-    //receive the data--
-    if (SDLNet_UDP_Recv(udpsocket, packet) == 0) {
-		SDLNet_FreePacket(packet);
-		return;
-	}
-
-#if 0
-	Client* client = clientlist->GetClientFromIPAddress(packet.address);
-	if(!client) {
-		SDLNet_FreePacket(packet);
-		return;
-	}
-#endif
-
-	//Get the message id--
-	NetMessage* message = (NetMessage *)RecvDgram; 
-        
-	if ( message->message_class == _net_message_class_winsock )
-	{
-		switch (message->message_id)
-		{
-			//TODO: make all these guys work with errors--
-			case _net_message_id_basic_info_request:
-			{
-				BasicInfoRequest* infomessage;
-				infomessage = (BasicInfoRequest *)RecvDgram;
-				
-				char* version = strstr((char *)infomessage->codeword, _NETPANZER_CODEWORD);
-
- 				if ((version != 0) )
-				{
-				   	BasicGameInfo basicInfo;
-					getBasicInfo(basicInfo);
-					UDPpacket* sendpacket =
-						SDLNet_AllocPacket(sizeof(BasicGameInfo));
-					if(!packet) {
-						SDLNet_FreePacket(packet);
-						SDLNet_FreePacket(sendpacket);
-						throw Exception("Out of memory.");
-					}
-					memcpy(packet->data, &basicInfo, sizeof(BasicGameInfo));
-					sendpacket->address = packet->address;
-					SDLNet_UDP_Send(udpsocket, -1, sendpacket);
-					SDLNet_FreePacket(sendpacket);
-				}
-				break;
-			}
-			case _net_message_id_extended_info_request:
- 				break;
-
-			case _net_message_id_client_udp_address:
-			{
-				ClientUDPAddress *udpmessage
-					= (ClientUDPAddress *)RecvDgram;
-				Client::ID id = udpmessage->clientid;
-
-				Client* client = clientlist->getClientFromID(id);
-				if (!client || client->udpaddress.host != 0)
-					return;
-				client->udpaddress = packet->address;
-				break;
-			}
-
-			default:
- 				break;
-		} // ** switch
-	} // ** if        
-	else
-	{
-		// I just put UDP message into the standard
-		// queue on the server side, because all I'm using the UDP 
-        // for is keepalive message. Also I would have to have a 
-        // reorder queue for each client on the server.
-        EnqueueIncomingPacket(packet->data,
-                              packet->len,
-                              1,
-                              0);
-	}
-}
-
-void ServerSocket::getBasicInfo(BasicGameInfo& basicInfo) const
-{
-    basicInfo.MaxPlayers = (unsigned char)GameConfig::GetNumberPlayers();
-    basicInfo.CurrPlayers = PlayerInterface::getActivePlayerCount();
-
-    memcpy((char *)basicInfo.GameType, GameConfig::getGameTypeString(), 32);
-    memcpy((char *)basicInfo.MapName, GameConfig::getGameMapName(), 32);
-    memcpy((char *)basicInfo.PlayerName, GameConfig::GetPlayerName(), 32);
-}
-
 /** this function interfaces the network AI code to winsock
  * for sending server messages to the client. this
  * implementation simply blocks until the entire message
@@ -423,64 +311,15 @@ void ServerSocket::sendMessage(Client::ID toclient, char* data, size_t datasize,
 	Client* client = clientlist->getClientFromID(toclient);
 	if(!client)
 		throw Exception("message sent to unknown client.");
-	
-    //udp hack, guarantee should be == 1
-    // ** if ((guarantee == 1) || (gUDPDelivery == 0)) **
-    // We need to check on a client by client basis
-    // whether UDP is enabled instead of based on a global that is set 
-    // for all clients. I assume this is what you meant and the code
-    // above is just legacy code.
-     
-    if (reliable == 1)
-    {
-		if (SDLNet_TCP_Send(client->tcpsocket, data, (int) datasize) 
-				< (int) datasize)
-		{
-			printf ("Error while sending to Client %lu: %s\n", client->id,
-					 SDLNet_GetError());
-			clientlist->remove(client);
-			return;
-		}
-	
-		// XXX what is the following code fragment good for? (the original code
-		// here was from the WinSock stuff...)
-#if 0
-                {
-                    MSG message;
 
-                    while ( gSendReady == 0)
-                    {
-                        if ( PeekMessage( &message, 0, 0, 0, PM_NOREMOVE ) )
-                        {
-                            if (GetMessage( &message, 0, 0, 0))
-                            {
-                                //TranslateMessage(&message);
-                                DispatchMessage(&message); 
-                            }
-                        } // ** if PeekMessage
-                    } // ** while
-                    gSendReady = 0;
-                }
-#endif
-    }
-    else
-    {
-		/// XXX we could optimize here by not using SDLNet_AllocPacket, so that
-		//we can avoid the memcpy (but then we're dependent on API changes in
-		//the UDPpacket structure...
-		UDPpacket* packet = SDLNet_AllocPacket(datasize);
-		if (!packet)
-			throw Exception("Out of memeory.");
-
-		packet->address = client->udpaddress;
-		
-		if (SDLNet_UDP_Send(udpsocket, -1, packet) == 0) {
-			printf ("Error while sending UDP packet to %d.\n", client->id);
-			SDLNet_FreePacket(packet);
-			return;
-		}
-		SDLNet_FreePacket(packet);
-    }
+	// we ignore the reliable flag for now...
+	if (SDLNet_TCP_Send(client->tcpsocket, data, (int) datasize) 
+			< (int) datasize)
+	{
+		clientlist->remove(client);
+		throw Exception("Error while sending to client %lu: %s", client->id,
+				SDLNet_GetError());
+	}
 }
 
 void ServerSocket::removeClient(Client::ID clientid)

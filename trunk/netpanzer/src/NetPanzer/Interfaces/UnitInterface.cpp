@@ -1153,8 +1153,8 @@ bool UnitInterface::syncRemoteUnits( int *send_return_code, int *percent_complet
     sync_message.location   = unit_map_loc;
     sync_message.unit_state = unit->unit_state;
       
-    send_ret_val = SERVER->sendMessage( &sync_message, sizeof( UnitIniSyncMessage ),
-                                       sync_units_remote_player, 0 );
+    send_ret_val = SERVER->sendMessage( sync_units_remote_player,
+			&sync_message, sizeof( UnitIniSyncMessage ), 0 );
 
     if ( send_ret_val != _network_ok )
      {

@@ -23,9 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ClientServerNetMessage.hpp"
 #include "ServerConnectDaemon.hpp"
 
-#include "NetMessageLog.hpp"
-
-#include "codewiz.hpp"
 #include "ConsoleInterface.hpp"
 
 //***************************************************************
@@ -171,7 +168,7 @@ bool NetworkServer::activateKeepAlive( PlayerID &client_player_id )
 
   set_keep_alive_mesg.keep_alive_state = true;
   
-  sendMessage( &set_keep_alive_mesg, sizeof(ClientMesgSetKeepAlive), client_data->client_id, 0  );  
+  sendMessage( client_data->client_id, &set_keep_alive_mesg, sizeof(ClientMesgSetKeepAlive), 0);  
   return( true ); 
  } 
 
@@ -193,7 +190,7 @@ bool NetworkServer::deactivateKeepAlive( PlayerID &client_player_id )
 
   set_keep_alive_mesg.keep_alive_state = false;
   
-  sendMessage( &set_keep_alive_mesg, sizeof(ClientMesgSetKeepAlive), client_data->client_id, 0  );  
+  sendMessage( client_data->client_id, &set_keep_alive_mesg, sizeof(ClientMesgSetKeepAlive), 0 );  
   return( true ); 
  }
 
@@ -225,7 +222,7 @@ void NetworkServer::netMessageServerPingRequest( NetMessage *message )
 
   ping_request_mesg = (ServerMesgPingRequest *) message;
   
-  sendMessage( &ping_ack_mesg, sizeof( ClientMesgPingAck ), ping_request_mesg->client_id, _network_send_no_guarantee );             
+  sendMessage( ping_request_mesg->client_id, &ping_ack_mesg, sizeof( ClientMesgPingAck ), _network_send_no_guarantee );
  }
 
 void NetworkServer::netMessageTransportClientAccept( NetMessage *message )
@@ -240,7 +237,7 @@ void NetworkServer::netMessageTransportClientAccept( NetMessage *message )
   
   player_id = PlayerID( 0, connect_ack_mesg.client_transport_id ); 
 
-  sendMessage( &connect_ack_mesg, sizeof( ClientMesgConnectAck ), player_id, 0 );             
+  sendMessage( player_id, &connect_ack_mesg, sizeof( ClientMesgConnectAck ), 0);
  }
 
 
@@ -296,7 +293,7 @@ void NetworkServer::updateKeepAliveState( void )
        {
         ClientMesgKeepAlive server_keepalive;
         
-        sendMessage( &server_keepalive, sizeof( ClientMesgKeepAlive ), client_data_ptr->client_id, 0 );          
+        sendMessage( client_data_ptr->client_id, &server_keepalive, sizeof( ClientMesgKeepAlive ), 0);
        }
      }
     client_data_ptr = client_list.incIteratorPtr( &iterator );

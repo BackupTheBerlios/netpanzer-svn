@@ -47,8 +47,7 @@ void NetworkServerUnix::openSession()
 void NetworkServerUnix::hostSession()
 {
 	delete serversocket;
-	serversocket = new ServerSocket(_NETPANZER_DEFAULT_PORT_TCP, 	
-									_NETPANZER_DEFAULT_PORT_UDP);
+	serversocket = new ServerSocket(_NETPANZER_DEFAULT_PORT_TCP);
 }
 
 void NetworkServerUnix::closeSession()
@@ -57,41 +56,30 @@ void NetworkServerUnix::closeSession()
 	serversocket = 0;
 }
 
-void NetworkServerUnix::sendMessage(ServerClientListData *client_data_ptr,
-									const PlayerID& player_id,
-									NetMessage* message, int flags)
+int NetworkServerUnix::sendMessage(const PlayerID& player_id,
+									NetMessage* message, size_t size, int flags)
 {
-	if( flags & _network_send_no_guarantee )
-	{
-		if(client_data_ptr==0) {
-			client_data_ptr = client_list.getClientData(player_id);
-			assert(client_data_ptr != 0);
-		}
-		message->sequence = client_data_ptr->no_guarantee_sequence_counter;
-		client_data_ptr->no_guarantee_sequence_counter++;
+	LOG( ( "SEND >> Class: %d ID: %d", message->message_class,
+								   	   message->message_id ) );	
+	message->size = size;
 
-		serversocket->sendMessage(
-				player_id.getNetworkID(),
-				(char*) message, message->size, false);
-	}
-	else
-	{
-		serversocket->sendMessage(
-				player_id.getNetworkID(),
-				(char *) message, message->size, true);
+	try {
+		serversocket->sendMessage(player_id.getNetworkID(),	(char *) message,
+				message->size, ! (flags & _network_send_no_guarantee));
+	} catch(Exception e) {
+		LOG ( ("Network send error when sending to client %d.",
+					player_id.getNetworkID()) );
+		//return -1;
 	}
 
 	NetworkState::incPacketsSent(message->size); 
+
+	return 0;
 }
 
 int NetworkServerUnix::sendMessage(NetMessage *message, size_t size,
 								   int flags)
 {
-	message->size = size;
- 
-	LOG( ( "SEND >> Class: %d ID: %d", message->message_class,
-									   message->message_id ) );
-  
 	ServerClientListData *iterator = 0;
 	ServerClientListData *client_data_ptr = 0;
 
@@ -102,8 +90,7 @@ int NetworkServerUnix::sendMessage(NetMessage *message, size_t size,
 	while( client_data_ptr != 0 )
 	{
 		try {
-			sendMessage(client_data_ptr, client_data_ptr->client_id,
-						message, flags);
+			sendMessage(client_data_ptr->client_id,	message, size, flags);
 		} catch(Exception e) {
 			LOG( ("Error while sending network packet.") );
 			//return -1;
@@ -113,24 +100,6 @@ int NetworkServerUnix::sendMessage(NetMessage *message, size_t size,
 	}
   
    	return 0;
-}
-
-int NetworkServerUnix::sendMessage( NetMessage *message, size_t size,
-									const PlayerID &player_id, int flags )
-{
-	message->size = size;
-
-	LOG( ( "SEND >> Class: %d ID: %d", message->message_class,
-									   message->message_id ) );
-
-	try {
-		sendMessage(0, player_id, message, flags);
-	} catch(Exception e) {
-		LOG( ("Error while sending network packet.") );
-		//return -1;
-	}
-  
-	return 0;
 }
 
 int NetworkServerUnix::getMessage(NetMessage *message)
@@ -171,3 +140,4 @@ void NetworkServerUnix::checkIncoming()
 	if(serversocket)
 		serversocket->read();
 }
+

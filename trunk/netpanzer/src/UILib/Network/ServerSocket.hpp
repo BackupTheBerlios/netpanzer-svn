@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
+Copyright (C) 2003 Matthias Braun <matze@braunis.de>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ class BasicGameInfo;
 class ServerSocket
 {
 public:
-	ServerSocket(Uint16 tcpport, Uint16 udpport);
+	ServerSocket(Uint16 tcpport);
 	~ServerSocket();
 
 	void read();
@@ -34,15 +34,10 @@ public:
 	void removeClient(Client::ID clientid);
 
 private:
-	void bindDgram();
 	void acceptNewClients();
 	void readTCP();
-	void readUDP();
 	void readClientTCP(Client* client);
 	
-	void getBasicInfo(BasicGameInfo& basicInfo) const;
-	
-	UDPsocket udpsocket;
 	TCPsocket tcpsocket;
 	ClientList* clientlist;
 };

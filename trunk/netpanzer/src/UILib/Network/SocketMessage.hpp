@@ -48,49 +48,6 @@ public:
     
 } __attribute__((packed));
 
-
-class ExtendedInfoRequest : public NetMessage
-{
-public:
-    char codeword[24];
-    DWORD version;
-    ExtendedInfoRequest()
-    {
-        message_class = _net_message_class_winsock;
-        message_id = _net_message_id_extended_game_info;
-    }
-
-} __attribute__((packed));
-
-
-class UDPAddressRequest : public NetMessage
-{
-public:
-	Client::ID clientid;
-
-    UDPAddressRequest()
-    {
-        message_class = _net_message_class_winsock;
-        message_id = _net_message_id_udp_request;
-    }
-    
-} __attribute__((packed));
-
-
-class ClientUDPAddress : public NetMessage
-{
-public:
-	Client::ID clientid;
-
-    ClientUDPAddress()
-    {
-        message_class = _net_message_class_winsock;
-        message_id = _net_message_id_client_udp_address;
-    }
-    
-} __attribute__((packed));
-
-
 class BasicGameInfo : public NetMessage
 {
 
@@ -108,20 +65,6 @@ public:
         message_id = _net_message_id_basic_game_info;
     }
 
-} __attribute__((packed));
-
-
-class ExtendedGameInfo : public NetMessage
-{
-public:
-    ExtendedGameInfo()
-    {
-        message_class = _net_message_class_winsock;
-        message_id = _net_message_id_extended_game_info;
-    }
-
-
-    //TBD
 } __attribute__((packed));
 
 #ifdef MSVC
