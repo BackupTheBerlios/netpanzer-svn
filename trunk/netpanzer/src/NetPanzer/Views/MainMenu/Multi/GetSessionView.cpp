@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameViewGlobals.hpp"
 
 //winsock hack
-#include "IPAddressView.h"
+#include "IPAddressView.hpp"
 
 #include "Server.hpp"
 #include "Client.hpp"
