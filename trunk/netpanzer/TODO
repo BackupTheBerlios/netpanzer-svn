@@ -6,7 +6,7 @@ Next release:
     <Gwal> 2 messages showed up in my terminal last time I was a host: Unit in
     EndLifeCycle message doesn't exist anymore(u1: 56 u2: 187)
     <Gwal> Unit in EndLifeCycle message doesn't exist anymore(u1: 243 u2: 295)
--client often displays: "Message has unknown message class 6."
+  -> can't do much here... I can't see any error in this part of the code
 -create a new netpanzer-music package which adds pronobozos music to the game
 -shorten time netpanzer is trying to access the masterserver
 
