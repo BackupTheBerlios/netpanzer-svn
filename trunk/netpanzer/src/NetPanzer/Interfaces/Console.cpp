@@ -106,7 +106,7 @@ private:
 };
 
 std::ostream* Console::server;
-std::ostream* Console::clientscreen;
+std::ostream* Console::clientscreen = &std::cout;
 
 void Console::initialize()
 {
