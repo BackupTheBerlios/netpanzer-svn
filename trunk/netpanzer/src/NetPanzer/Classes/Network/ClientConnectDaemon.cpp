@@ -284,8 +284,7 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
                             ConnectClientSettings client_setting;
 
                             client_setting.set( 
-                                    ((const std::string&)
-                                    (gameconfig->playername)).c_str(),
+                                    gameconfig->playername.c_str(),
                                                 gameconfig->getUnitColor(),
                                                 gameconfig->playerflag );
 

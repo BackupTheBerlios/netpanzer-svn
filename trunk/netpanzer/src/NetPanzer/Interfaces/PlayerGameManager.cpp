@@ -285,7 +285,7 @@ void PlayerGameManager::hostMultiPlayerGame()
 
     progressView->scrollAndUpdateDirect( "Loading Game Data ..." );
 
-    const char* mapname = ((const std::string&)(gameconfig->map)).c_str();
+    const char* mapname = gameconfig->map.c_str();
     MapsManager::setCycleStartMap(mapname);
 
     int result_code;
@@ -323,8 +323,7 @@ void PlayerGameManager::hostMultiPlayerGame()
 
     progressView->scrollAndUpdateDirect( "Spawning Player ..." );
     player_state = PlayerInterface::allocateLoopBackPlayer();
-    const char* playername = ((const
-                std::string&)(gameconfig->playername)).c_str();
+    const char* playername = gameconfig->playername.c_str();
     player_state->setName(playername);
     player_state->setFlag( (unsigned char) gameconfig->playerflag );
     player = PlayerInterface::getLocalPlayerID();

@@ -80,6 +80,9 @@ public:
     ConfigString(const std::string& name, const std::string& value="");
     ~ConfigString();
 
+    const char *c_str()
+    { return value.c_str(); }
+
     operator const std::string& () const
     { return value; }
 

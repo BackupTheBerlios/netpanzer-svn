@@ -27,8 +27,6 @@ protected:
     virtual void initializeGameConfig();
 
     virtual void inputLoop();
-
-    void dedicatedLoadGameMap(const char *map_name);
 public:
     virtual bool launchNetPanzerGame();
 };

@@ -39,7 +39,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //-----------------------------------------------------------------
 void DedicatedGameManager::initializeGameConfig()
 {
-    gameconfig = new GameConfig("config/netpanzer-dedicated.cfg");
+    gameconfig = new GameConfig("config/netpanzer-dedicated.xml");
 }
 //-----------------------------------------------------------------
 void DedicatedGameManager::initializeInputDevices()
@@ -49,8 +49,6 @@ void DedicatedGameManager::initializeInputDevices()
 //-----------------------------------------------------------------
 void DedicatedGameManager::inputLoop()
 {
-    //TODO: slow down for happy CPU
-
     // XXX we need new code here (someone wanna write a readline version of this
     // stuff?
 #ifdef WIN32
@@ -114,23 +112,6 @@ void DedicatedGameManager::inputLoop()
 #endif
 }
 //-----------------------------------------------------------------
-void DedicatedGameManager::dedicatedLoadGameMap(const char *map_name)
-{
-    std::string map_path("maps/");
-    map_path.append(map_name);
-
-    MapInterface::startMapLoad(map_path.c_str(), false, 0);
-
-    map_path.append(".opt");
-    ObjectiveInterface::loadObjectiveList(map_path.c_str());
-
-    ParticleInterface::initParticleSystems();
-    Particle2D::setCreateParticles(false);
-
-    ParticleInterface::addCloudParticle(gameconfig->cloudcoverage);
-    Physics::wind.setVelocity(gameconfig->windspeed, 107);
-}
-//-----------------------------------------------------------------
 // custom version of readString that doesn't return the trailing \n
 static inline void readString(char* buffer, size_t buffersize, FILE* file)
 {
@@ -147,7 +128,7 @@ bool DedicatedGameManager::launchNetPanzerGame()
     MapsManager::getCurrentMap( input_str );
     gameconfig->map = input_str;
 
-    const char* mapname = ((const std::string&)(gameconfig->map)).c_str();
+    const char* mapname = gameconfig->map.c_str();
     printf( "Map Name <%s> : ", mapname);
     fflush(stdout);
     readString(input_str, 256, stdin);
@@ -229,16 +210,19 @@ bool DedicatedGameManager::launchNetPanzerGame()
 
     } // ** switch
 
-    printf( "PowerUps <NO> (Y/N) : " );
+    printf( "PowerUps <%s> (Y/N) : ",
+            (bool) gameconfig->powerups ? "Y" : "N" );
     fflush(stdout);
     readString(input_str, 256, stdin);
-    if ( strcasecmp( "y", input_str ) == 0 ) {
-        gameconfig->powerups = true;
-    } else {
-        gameconfig->powerups = false;
+    if ( strlen(input_str) > 0 ) {
+        if ( strcasecmp( "y", input_str ) == 0 ) {
+            gameconfig->powerups = true;
+        } else {
+            gameconfig->powerups = false;
+        }
     }
 
-    printf( "Server Name <Dedicated Server> :" );
+    printf( "Server Name <%s> :", gameconfig->playername.c_str() );
     fflush(stdout);
     readString(input_str, 256, stdin);
     if ( strlen(input_str) > 0 ) {
@@ -247,9 +231,9 @@ bool DedicatedGameManager::launchNetPanzerGame()
         gameconfig->playername = "Dedicated Server";
     }
 
-    mapname = ((const std::string&)(gameconfig->map)).c_str();
+    mapname = gameconfig->map.c_str();
     MapsManager::setCycleStartMap(mapname);
-    dedicatedLoadGameMap(mapname);
+    GameManager::dedicatedLoadGameMap(mapname);
 
     GameManager::reinitializeGameLogic();
 
