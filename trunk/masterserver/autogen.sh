@@ -7,7 +7,7 @@ if test ! -f configure.ac ; then
 fi
 
 aclocal
-automake-1.7 -a
+automake -a
 autoheader
 autoconf
 
