@@ -11,11 +11,11 @@ clean :
 	xsltproc -o $*.html default.xsl $*.xml
 
 uploadhtml: all
-	scp $(OUTPUTFILES) matzebraun@cvs.berlios.de:/home/groups/netpanzer/htdocs
+	scp $(OUTPUTFILES) matzebraun@shell.berlios.de:/home/groups/netpanzer/htdocs
 
 upload: all
-	scp $(OUTPUTFILES) matzebraun@cvs.berlios.de:/home/groups/netpanzer/htdocs
-	scp -r images matzebraun@cvs.berlios.de:/home/groups/netpanzer/htdocs
+	scp $(OUTPUTFILES) matzebraun@shell.berlios.de:/home/groups/netpanzer/htdocs
+	scp -r images matzebraun@shell.berlios.de:/home/groups/netpanzer/htdocs
 
 commit: all
 	cvs commit -m "automatic webpage update"

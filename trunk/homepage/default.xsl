@@ -76,8 +76,9 @@
                   align="middle"
                   width="124" height="32" border="0" alt=""/></a>
                 </td>
-                <td align="right"  style="width: 45%;">Contact: <a
-                href="mailto:netpanzer-devel@lists.berlios.de">netPanzer-Devel</a></td>
+                <td align="right"  style="width: 45%;">
+                    <a href="joinus.html">Contact</a>
+                </td>
               </tr>
             </table>
           </div>

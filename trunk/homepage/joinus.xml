@@ -4,12 +4,11 @@
     <p>
       The first goal to port netPanzer to GNU/Linux is done, now its
       time to extent, fix and cleanup netPanzer. So if you want to
-      help there or at other topics, you are more than welcome. Simply
-      write a mail to <a
-      href="mailto:netpanzer-devel@lists.berlios.de">netPanzer-Devel</a> for
-      more informations.
+      help there or at other topics, you are more than welcome.
     </p>
+  </section>
 
+  <section title="Contact">
     <dl>
       <dt><a href="http://lists.berlios.de/mailman/listinfo/netpanzer-devel">netpanzer-devel</a> - <i>netPanzer Development List</i></dt>
 
@@ -19,8 +18,11 @@
           archives</a>
       </dd>
       <dd>
-        To post a message to all the list members, send email to <a
+        If you are subscribed to the list then you can send an email to
+        <a
         href="mailto:netpanzer-devel@lists.berlios.de">netpanzer-devel@lists.berlios.de</a>
+        . (Unfortunatley we only accept mails from listmembers now, since the
+           list was a constant target of spammers)
       </dd>
     </dl>
     
