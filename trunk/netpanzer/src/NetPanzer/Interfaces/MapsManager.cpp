@@ -45,7 +45,7 @@ std::string MapsManager::getNextMap(const std::string& map)
     string::size_type i = mapcycle.find(',', 0);
     string::size_type lasti = 0;
     if(i == string::npos)
-        i = mapcycle.size() - 1;
+        i = mapcycle.size();
     string currentMap = trim(string(mapcycle, 0, i));
     string firstmap = currentMap;
 
