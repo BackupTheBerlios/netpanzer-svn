@@ -1139,23 +1139,11 @@ bool WorldInputCmdProcessor::selectUnits( iRect bound_box )
 
 bool WorldInputCmdProcessor::isValidMoveLocation( iXY location )
  {
-  int click_status;
-  
-  click_status = getCursorStatus( location ); 
-  if ( click_status != _cursor_move )
-   { return( false ); }
-    
   return( true ); 
  }
 
 bool WorldInputCmdProcessor::sendMoveCommandExternal( iXY location )
  {
-  int click_status;
-  
-  click_status = getCursorStatus( location ); 
-  if ( click_status != _cursor_move )
-   { return( false ); }
-    
   sendMoveCommand( location );
   return( true );
  }
