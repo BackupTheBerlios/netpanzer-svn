@@ -292,7 +292,8 @@ void GameManager::finishGameMapLoad()
     temp_path.append(".opt");
     ObjectiveInterface::loadObjectiveList( temp_path.c_str() );
 
-    miniMapView.init();
+    if(screen)
+        miniMapView.init();
     ParticleInterface::initParticleSystems();
 
     ParticleInterface::addCloudParticle(gameconfig->cloudcoverage);
@@ -313,9 +314,6 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
 
     ParticleInterface::initParticleSystems();
     Particle2D::setCreateParticles(false);
-
-    ParticleInterface::addCloudParticle(gameconfig->cloudcoverage);
-    Physics::wind.setVelocity(gameconfig->windspeed, 107);
 }
 
 
