@@ -29,6 +29,7 @@
  * Improve userinterface:
  * Make usual shortcuts (known from other RTSes) work:
   -CTRL+Number for defining groups - done
+  -pressing a number twice to center screen on the group
   -Scroll map with right mouse - done
   -scrolling map with cursor keys
   -Space jumps to last action - done
