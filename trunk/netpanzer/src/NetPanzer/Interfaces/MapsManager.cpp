@@ -20,11 +20,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include <string.h>
 #include <memory>
+
 #include "Util/FileSystem.hpp"
+#include "Util/SplitPath.hpp"
 #include "MapsManager.hpp"
 #include "MapFileStruct.hpp"
 
-FileList MapsManager::master_maps_list;
+std::vector<std::string> MapsManager::master_maps_list;
 unsigned long MapsManager::map_cycle_index;
 
 
@@ -36,13 +38,12 @@ MapsManager::~MapsManager()
 {
 }
 
-void MapsManager::initialize( void )
+void MapsManager::initialize()
 {
-    master_maps_list.initialize( 25 );
     map_cycle_index = 0;
 }
 
-void MapsManager::scanMaps( void )
+void MapsManager::scanMaps()
 {
     scanMaps( "maps/" );
 }
@@ -53,43 +54,45 @@ void MapsManager::scanMaps( const char *map_directory )
     for(char** file = list; *file != 0; file++) {
         std::string path = map_directory;
         path += *file;
+        
         if(path.find(".npm") != std::string::npos) {
-            master_maps_list.addString(path.c_str());
+            master_maps_list.push_back(path);
         }
     }
     FileSystem::freeList(list);
 }
 
-void MapsManager::resetMapCycling( void )
+void MapsManager::resetMapCycling()
 {
     map_cycle_index = 0;
 }
 
 void MapsManager::cycleNextMapName(char *map_name )
 {
-    if ( (map_cycle_index + 1) < master_maps_list.containsItems() ) {
+    if ( (map_cycle_index + 1) < master_maps_list.size() ) {
         map_cycle_index++;
     } else {
         map_cycle_index = 0;
     }
 
-    master_maps_list.getFilename( map_cycle_index, map_name );
+    _splitpath(master_maps_list[map_cycle_index].c_str(), 0, 0, map_name, 0);
 }
 
 void MapsManager::getCurrentMap(char *map_name )
 {
-    master_maps_list.getFilename( map_cycle_index, map_name );
+    _splitpath(master_maps_list[map_cycle_index].c_str(), 0, 0, map_name, 0);
 }
 
 void MapsManager::setCycleStartMap(const char *map_name )
 {
-    int list_size;
+    size_t list_size;
     char cycle_map_name[256];
 
-    list_size = master_maps_list.containsItems();
+    list_size = master_maps_list.size();
 
-    for( int i = 0; i < list_size; i++ ) {
-        master_maps_list.getFilename( i, cycle_map_name );
+    for(size_t i = 0; i < list_size; i++ ) {
+        _splitpath(master_maps_list[i].c_str(), 0, 0, cycle_map_name, 0);
+
         if( strcasecmp( cycle_map_name, map_name ) == 0 ) {
             map_cycle_index = i;
             return;
@@ -100,13 +103,14 @@ void MapsManager::setCycleStartMap(const char *map_name )
 int MapsManager::checkMapValidity(const char *map_name )
 {
     bool found = false;
-    int list_size;
+    size_t list_size;
     char cycle_map_name[256];
 
-    list_size = master_maps_list.containsItems();
+    list_size = master_maps_list.size();
 
-    for( int i = 0; i < list_size; i++ ) {
-        master_maps_list.getFilename( i, cycle_map_name );
+    for(size_t i = 0; i < list_size; i++) {
+        _splitpath(master_maps_list[i].c_str(), 0, 0, cycle_map_name, 0);
+
         if( strcasecmp( cycle_map_name, map_name ) == 0 ) {
             found = true;
         }

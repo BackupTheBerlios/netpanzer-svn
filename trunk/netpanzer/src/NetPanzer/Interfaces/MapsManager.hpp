@@ -18,14 +18,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _MAPS_MANAGER_HPP
 #define _MAPS_MANAGER_HPP
 
-#include "ArrayUtil/FileList.hpp"
+#include <string>
+#include <vector>
 
 enum { _mapfile_valid, _mapfile_not_found, _wadfile_not_found };
 
 class MapsManager
 {
 protected:
-    static FileList master_maps_list;
+    static std::vector<std::string> master_maps_list;
     static unsigned long map_cycle_index;
 
 public:
