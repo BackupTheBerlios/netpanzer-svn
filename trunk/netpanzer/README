@@ -127,7 +127,7 @@ the server section of the xml file:
     Number of units that each player starts with when he joins or after he's
     been killed.
 
-*gametpye [0,1,2], default 0
+*gametype [0,1,2], default 0
     Type of game: (0=Objectives, 1=FragLimit, 2=TimeLimit)
 
 *timelimit [number], default 50
