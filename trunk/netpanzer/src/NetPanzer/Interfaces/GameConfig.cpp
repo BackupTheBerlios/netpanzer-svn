@@ -67,6 +67,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
                   
       radar_displayclouds("displayclouds", false),
       radar_playerunitcolor("playerunitcolor", _color_aqua, 0, _color_last-1),
+      radar_selectedunitcolor("selectedunitcolor", _color_white, 0, _color_last-1),
       radar_alliedunitcolor("alliedunitcolor", _color_orange, 0, _color_last-1),
       radar_playeroutpostcolor("playeroutpostcolor", _color_blue, 0, _color_last-1),
       radar_alliedoutpostcolor("alliedoutpostcolor", _color_orange, 0, _color_last),

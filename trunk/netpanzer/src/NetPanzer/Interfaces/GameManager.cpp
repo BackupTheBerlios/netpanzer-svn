@@ -572,6 +572,7 @@ void GameManager::setNetPanzerGameOptions()
 {
 
     MiniMapInterface::setProperties( gameconfig->getPlayerRadarUnitColor(),
+                                     gameconfig->getSelectedRadarUnitColor(),
                                      gameconfig->getAlliedRadarUnitColor(),
                                      gameconfig->getPlayerOutpostRadarColor(),
                                      gameconfig->getAlliedOutpostRadarColor(),

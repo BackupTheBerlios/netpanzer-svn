@@ -803,7 +803,7 @@ void UnitInterface::startUnitPositionEnumeration( void )
 
 // ******************************************************************
 
-bool UnitInterface::unitPositionEnumeration( iXY *position, unsigned char *unit_disposition, unsigned char *threat_level  )
+bool UnitInterface::unitPositionEnumeration( unsigned char *unit_disposition ,UnitState **state )
 {
     UnitBase *unit_ptr;
 
@@ -828,8 +828,7 @@ bool UnitInterface::unitPositionEnumeration( iXY *position, unsigned char *unit_
                 *unit_disposition =  _unit_enemy;
             }
 
-        *position = unit_ptr->unit_state.location;
-        *threat_level = unit_ptr->unit_state.threat_level;
+        state[0]=&unit_ptr->unit_state;
         return( true );
     }
 

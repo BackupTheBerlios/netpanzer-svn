@@ -37,6 +37,7 @@ protected:
     static bool        show_enemy_radar_flag;
 
     static PIX player_unit_color;
+    static PIX selected_unit_color;
     static PIX allie_unit_color;
 
     static PIX player_objective_color;
@@ -79,6 +80,7 @@ public:
     static void setShowEnemyRadar( float time );
 
     static void setProperties( PIX player_unit_color,
+                               PIX selected_unit_color,
                                PIX allie_unit_color,
                                PIX player_objective_color,
                                PIX allie_objective_color,

@@ -176,7 +176,7 @@ protected:
 public:
     // Unit positions, almost exclusivly for mini map
     static void startUnitPositionEnumeration( void );
-    static bool unitPositionEnumeration( iXY *position, unsigned char *unit_disposition, unsigned char *threat_level );
+    static bool unitPositionEnumeration( unsigned char *unit_disposition, UnitState **state );
 
     static void resetUnitCycleIterator( unsigned long *iterator );
     static iXY unitPositionCycle( unsigned long *iterator );

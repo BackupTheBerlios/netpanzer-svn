@@ -154,6 +154,7 @@ public:
     // radar settings
     ConfigBool  radar_displayclouds;
     ConfigInt   radar_playerunitcolor;
+    ConfigInt   radar_selectedunitcolor;
     ConfigInt   radar_alliedunitcolor;
     ConfigInt   radar_playeroutpostcolor;
     ConfigInt   radar_alliedoutpostcolor;
@@ -212,6 +213,11 @@ public:
     PIX getPlayerRadarUnitColor() const
     {
         return( colorEnumToPix( radar_playerunitcolor ) );
+    }
+
+    PIX getSelectedRadarUnitColor() const
+    {
+        return( colorEnumToPix( radar_selectedunitcolor ) );
     }
     
     PIX getAlliedRadarUnitColor() const

@@ -32,6 +32,7 @@ iXY MiniMapInterface::mini_map_size;
 bool MiniMapInterface::pathing_debug_mode = false;
 
 PIX MiniMapInterface::player_unit_color;
+PIX MiniMapInterface::selected_unit_color;
 PIX MiniMapInterface::allie_unit_color;
 
 PIX MiniMapInterface::player_objective_color;
@@ -78,33 +79,34 @@ void MiniMapInterface::setWorldWindowPosition( iXY world_loc )
 
 void MiniMapInterface::annotateUnits( Surface &map_surface )
 {
-    iXY world_loc, map_loc;
+    iXY map_loc;
     unsigned char unit_dispostion;
-    unsigned char threat_level;
+    UnitState *unit_state;
 
     UnitInterface::startUnitPositionEnumeration( );
 
     iRect unitRect;
 
-    while( UnitInterface::unitPositionEnumeration( &world_loc, &unit_dispostion, &threat_level) ) {
-        map_loc.x = int(float(world_loc.x) / scale_factor.x);
-        map_loc.y = int(float(world_loc.y) / scale_factor.y);
+    while( UnitInterface::unitPositionEnumeration( &unit_dispostion,&unit_state ) ) {
+        map_loc.x = int(float(unit_state->location.x) / scale_factor.x);
+        map_loc.y = int(float(unit_state->location.y) / scale_factor.y);
 
         if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
             unitRect = iRect(map_loc, map_loc + iXY(1,1));
         }
 
         if ( unit_dispostion == _unit_player ) {
-            if ( threat_level == _threat_level_under_attack ) {
+            if ( unit_state->threat_level == _threat_level_under_attack ) {
                 if ( radar_blink_flag == true ) {
                     drawLargeUnitDot( map_surface, map_loc, Color::yellow );
                 }
             } else {
+                PIX *unit_color=&player_unit_color;
+                if(unit_state->select) { unit_color=&selected_unit_color; }
                 if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
-                    drawSmallUnitDot( map_surface, map_loc, player_unit_color );
+                    drawSmallUnitDot( map_surface, map_loc, *unit_color );
                 } else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
-                    drawLargeUnitDot( map_surface, map_loc, player_unit_color );
-
+                    drawLargeUnitDot( map_surface, map_loc, *unit_color );
                 } else {
                     assert(false);
                 }
@@ -268,6 +270,7 @@ void MiniMapInterface::setShowEnemyRadar( float time )
 }
 
 void MiniMapInterface::setProperties( PIX player_unit_color,
+                                      PIX selected_unit_color,
                                       PIX allie_unit_color,
                                       PIX player_objective_color,
                                       PIX allie_objective_color,
@@ -275,6 +278,7 @@ void MiniMapInterface::setProperties( PIX player_unit_color,
                                     )
 {
     MiniMapInterface::player_unit_color = player_unit_color;
+    MiniMapInterface::selected_unit_color = selected_unit_color;
     MiniMapInterface::allie_unit_color = allie_unit_color;
 
     MiniMapInterface::player_objective_color = player_objective_color;
