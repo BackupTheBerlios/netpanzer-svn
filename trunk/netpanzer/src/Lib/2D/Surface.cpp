@@ -120,8 +120,18 @@ public:
     uint16_t    bfReserved1;
     uint16_t    bfReserved2;
     uint32_t   bfOffBits;
+
+    BitmapFileHeader(ReadFile* file);
+};
+
+BitmapFileHeader::BitmapFileHeader(ReadFile* file)
+{
+    bfType = file->readULE16();
+    bfSize = file->readULE32();
+    bfReserved1 = file->readULE16();
+    bfReserved2 = file->readULE16();
+    bfOffBits = file->readULE32();
 }
-__attribute__((packed));
 
 #define BI_RGB      0L
 #define BI_RLE8     1L
@@ -141,8 +151,24 @@ public:
     uint32_t  biYPelsPerMeter;
     uint32_t  biClrUsed;
     uint32_t  biClrImportant;
+
+    BitmapInfoHeader(ReadFile* file);
+};
+
+BitmapInfoHeader::BitmapInfoHeader(ReadFile* file)
+{
+    biSize = file->readULE32();
+    biWidth = file->readULE32();
+    biHeight = file->readULE32();
+    biPlanes = file->readULE16();
+    biBitCount = file->readULE16();
+    biCompression = file->readULE32();
+    biSizeImage = file->readULE32();
+    biXPelsPerMeter = file->readULE32();
+    biYPelsPerMeter = file->readULE32();
+    biClrUsed = file->readULE32();
+    biClrImportant = file->readULE32();
 }
-__attribute__((packed));
 
 class RGBQuad
 {
@@ -2046,79 +2072,6 @@ static void bltLightDarkSpan(int n, PIX *d, const uint8_t *i, const PIX *s)
 
     if (n < 1) return;
 
-    // Align to 4-byte dest
-#if 0
-    while (int(d) & 3)
-    {
-        //assert(((*s << 8) + *i) < 256 * 256);
-        *d = Palette::colorTableLightDark[(*s << 8) + *i];
-
-        n--;
-        i++;
-        s++;
-        d++;
-
-        if (n < 1) return;
-    }
-
-    if (n > 3) {
-        // XXX no msvc assembler
-#ifdef MSVC
-        _asm {
-
-            // load vars into regs
-            push ebp
-            mov ebx, i
-            mov esi, s
-            mov edi, d
-            mov ebp, n
-
-            xor ecx, ecx
-    quad:
-
-            mov cl, [ebx + 2]
-            add ebx, 4
-
-                mov ch, [esi + 2]
-                add edi, 4
-
-                    mov al, quickHack[ecx]
-                    mov cl, [ebx - 4 + 3]
-
-                    mov ch, [esi + 3]
-                    add esi, 4
-
-                        mov ah, quickHack[ecx]
-
-                        shl eax, 16
-                        mov cl, [ebx - 4 + 0]
-
-                        mov ch, [esi - 4 + 0]
-                        sub ebp, 4
-
-                        mov al, quickHack[ecx]
-                        mov cl, [ebx - 4 + 1]
-
-                        mov ch, [esi - 4 + 1]
-
-                        mov ah, quickHack[ecx]
-
-                        // decrement counter and advance pointers
-                        mov [edi-4], eax
-                        ja quad
-
-                        // restore vars for the c code that cleans up
-                        mov eax, ebp
-                        pop ebp
-                        mov i, ebx
-                        mov s, esi
-                        mov d, edi
-                        mov n, eax
-                    }
-#endif
-
-                }
-#endif
     while (n > 0) {
         //assert(((*s << 8) + *i) < 256 * 256);
         *d = Palette::colorTableLightDark[(*s << 8) + *i];
@@ -2695,64 +2648,64 @@ int Surface::nextFrame()
 void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
                       void *returnPalette /* = 0 */)
 {
-    BitmapFileHeader file_header;
-    BitmapInfoHeader info_header;
-
     assert(this != 0);
 
     if (needAlloc) free();
 
     std::auto_ptr<ReadFile> file (FileSystem::openRead(fileName));
 
-    if(file->read( &file_header, sizeof(BitmapFileHeader), 1) != 1)
-        throw Exception("Error reading .bmp file %s", fileName);
+    try {
+        BitmapFileHeader file_header(file.get());
 
-    if ( file_header.bfType != 0x4d42 ) // file_header.bfType != "BM"
-        throw Exception("%s is not a valid 8-bit BMP file", fileName);
+        if ( file_header.bfType != 0x4d42 ) // file_header.bfType != "BM"
+            throw Exception("%s is not a valid 8-bit BMP file", fileName);
 
-    if(file->read(&info_header, sizeof(BitmapInfoHeader), 1) != 1)
-        throw Exception("Error reading .bmp file %s", fileName);
+        BitmapInfoHeader info_header(file.get());
+        
+        if ( info_header.biBitCount != 8 )
+            throw Exception("%s is not a 8-bit BMP file", fileName);
 
-    if ( info_header.biBitCount != 8 )
-        throw Exception("%s is not a 8-bit BMP file", fileName);
+        if ( info_header.biCompression != BI_RGB )
+            throw Exception("%s is not a 8-bit UnCompressed BMP file", fileName);
 
-    if ( info_header.biCompression != BI_RGB )
-        throw Exception("%s is not a 8-bit UnCompressed BMP file", fileName);
+        if (needAlloc) {
 
-    if (needAlloc) {
+            if (!alloc(info_header.biWidth, info_header.biHeight , false, info_header.biWidth, 1) ) {
+                throw Exception("Not enough memory to load BMP image %s", fileName);
+            }
 
-        if (!alloc(info_header.biWidth, info_header.biHeight , false, info_header.biWidth, 1) ) {
-            throw Exception("Not enough memory to load BMP image %s", fileName);
+        } else {
+            // Check and make sure the picture will fit
+            if (pix.x < (long) info_header.biWidth|| pix.y < (long) info_header.biHeight )
+                throw Exception("Not enough memory to load BMP image %s", fileName);
         }
 
-    } else {
-        // Check and make sure the picture will fit
-        if (pix.x < (long) info_header.biWidth|| pix.y < (long) info_header.biHeight )
-            throw Exception("Not enough memory to load BMP image %s", fileName);
-    }
+        file->seek(file_header.bfOffBits);
 
-    file->seek(file_header.bfOffBits);
+        if ( (info_header.biWidth % 4) == 0 ) {
+            if (file->read(mem, pix.x * pix.y, 1) != 1)
+                throw Exception("error while reading bmp image %s", fileName);
+        } else {
+            int padding = ((info_header.biWidth / 4 + 1) * 4) - info_header.biWidth;
 
-    if ( (info_header.biWidth % 4) == 0 ) {
-        if (file->read(mem, pix.x * pix.y, 1) != 1)
-            throw Exception("error while reading bmp image %s", fileName);
-    } else {
-        int padding = ((info_header.biWidth / 4 + 1) * 4) - info_header.biWidth;
+            PIX buffer[10];
+            int numRows = pix.y;
 
-        PIX buffer[10];
-        int numRows = pix.y;
+            //PIX *sPtr = mem;
 
-        //PIX *sPtr = mem;
-
-        for (int row = 0; row < numRows; row++) {
-            if(file->read(mem, pix.x, 1) != 1 ||
-               file->read(buffer, padding, 1) != 1)
-                throw Exception("error reading file %s.", fileName);
-            mem += stride;
+            for (int row = 0; row < numRows; row++) {
+                if(file->read(mem, pix.x, 1) != 1 ||
+                   file->read(buffer, padding, 1) != 1)
+                    throw Exception("error reading file %s.", fileName);
+                mem += stride;
+            }
         }
-    }
 
-    flipVertical();
+        flipVertical();
+    } catch(std::exception& e) {
+        throw Exception("Error reading .bmp file '%s': %s",
+                fileName, e.what());
+    }
 }
 
 // drawWindowsBorder

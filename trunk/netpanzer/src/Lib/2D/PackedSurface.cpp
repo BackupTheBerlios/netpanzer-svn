@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <memory>
 
 #include "PackedSurface.hpp"
 #include "Surface.hpp"
@@ -190,37 +191,40 @@ void PackedSurface::pack(const Surface &source)
 //--------------------------------------------------------------------------
 void PackedSurface::load(const char* filename)
 {
-    ReadFile* file = FileSystem::openRead(filename);
+    std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
 
     free();
-    int version;
-    file->read(&version, sizeof(version), 1);
-    if (version < 1) {
-        delete file;
+    int32_t version = file->readSLE32();
+    if (version < 1)
         throw Exception("Invalid PAK file version: %d", version);
-    }
-    if (version > CURRENT_PAK_VERSION) {
-        delete file;
+    if (version > CURRENT_PAK_VERSION)
         throw Exception("PAK file version of '%s' is newer(%d) than "
                 "the currently supported version(%d)",
 		filename, version, CURRENT_PAK_VERSION);
-    }
-    file->read(&pix, sizeof(pix), 1);
+    pix.x = file->readSLE32();
+    pix.y = file->readSLE32();
 
     center = pix / 2;
 
-    file->read(&frameCount, sizeof(frameCount), 1);
-    file->read(&fps, sizeof(fps), 1);
-    file->read(&offset, sizeof(offset), 1);
+    frameCount = file->readSLE32(); 
+    // should be done like following but this isn't backward compatible to the
+    // existing files :-/
+    //fps = float(file->readSLE32()) / 65536;
+    // XXX is this correct?!?
+    int32_t fpsint = file->readSLE32();
+    fps = * ((float*) &fpsint);
+    offset.x = file->readSLE32();
+    offset.y = file->readSLE32();
+    
     rowOffsetTable = (int *) malloc((pix.y * frameCount + 1) * sizeof(*rowOffsetTable));
-    if (rowOffsetTable == 0) {
-        delete file;
+    if (rowOffsetTable == 0)
         throw Exception("ERROR: Unable to allocate rowTableOffset for PackedSurface.");
+    for(int i=0;i<(pix.y * frameCount+1);i++) {
+        rowOffsetTable[i] = file->readSLE32();
     }
-    file->read(rowOffsetTable, (pix.y*frameCount + 1)*sizeof(*rowOffsetTable), 1);
+    
     packedDataChunk = (uint8_t *)malloc(rowOffsetTable[pix.y*frameCount]);
     if (packedDataChunk == 0) {
-        delete file;
         throw Exception("ERROR: Unable to allocate packedDataChunk for PackedSurface.");
     }
     if(file->read(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1) != 1)
@@ -231,28 +235,31 @@ void PackedSurface::load(const char* filename)
 
     // Add size of packedDataChunk.
     totalByteCount += pix.y * frameCount;
-
-    delete file;
 }
 
 //--------------------------------------------------------------------------
 void PackedSurface::save(const char* filename) const
 {
-    WriteFile* file = FileSystem::openWrite(filename);
+    std::auto_ptr<WriteFile> file (FileSystem::openWrite(filename));
 
-    int version = CURRENT_PAK_VERSION;
-    file->write(&version, sizeof(version), 1);
-    file->write(&pix, sizeof(pix), 1);
-    file->write(&frameCount, sizeof(frameCount), 1);
-    file->write(&fps, sizeof(fps), 1);
-    file->write(&offset, sizeof(offset), 1);
-    file->write(rowOffsetTable, (pix.y*frameCount + 1)*sizeof(*rowOffsetTable), 1);
-    if (file->write(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1) != 1) {
-        delete file;
-        throw Exception("error while writing '%s'.", filename);
+    int32_t version = CURRENT_PAK_VERSION;
+    file->writeSLE32(version);
+    file->writeSLE32(pix.x);
+    file->writeSLE32(pix.y);
+    
+    // XXX bad not endian safe :-/
+    // is this correct?!?
+    file->writeSLE32( *((uint32_t*) (&fps)) );
+
+    file->writeSLE32(offset.x);
+    file->writeSLE32(offset.y);
+    
+    for(int i=0;i<(pix.y*frameCount+1); i++) {
+        file->writeSLE32(rowOffsetTable[i]);
     }
-
-    delete file;
+    
+    if (file->write(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1) != 1)
+        throw Exception("error while writing '%s'.", filename);
 }
 
 //--------------------------------------------------------------------------
