@@ -4,6 +4,9 @@
  losses and try reconnects
 -impelement 'initialunits' param in PlayerUnitConfig::initialize()
 -bots should have different names and different flags
+-the collection of flags has to be the same on all clients at the moment. This
+should be changed (clients should send the name of their flag). The collest
+solution would be transfering of unknown flags.
 
 *** Tools
 -write a map and tileset editor
