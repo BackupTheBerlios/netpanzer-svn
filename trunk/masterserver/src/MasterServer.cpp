@@ -264,7 +264,8 @@ void MasterServer::parseList(std::iostream& stream,
 
     // we're a masterserver ourself
     if(gamename == "master") {
-        stream << "\\ip\\" << inet_ntoa(serveraddr.sin_addr) << "\\";
+        stream << "\\ip\\" << inet_ntoa(serveraddr.sin_addr) 
+               << "\\port\\" << ntohs(serveraddr.sin_port) << "\\";
     }
     
     stream << "\\final\\";
