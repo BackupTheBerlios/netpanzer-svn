@@ -127,7 +127,7 @@ void MouseInterface::setLeftButtonDown()
     event.button = left_button;
     event.event = MouseEvent::EVENT_DOWN;
     event.down_pos = left_button_down_pos;
-    event_queue.push(event);
+    event_queue.push_back(event);
 }
 
 void MouseInterface::setLeftButtonUp()
@@ -150,10 +150,10 @@ void MouseInterface::setLeftButtonUp()
         event.event  = MouseEvent::EVENT_CLICK;
 
     event.down_pos = left_button_down_pos;
-    event_queue.push(event);
+    event_queue.push_back(event);
 
     event.event = MouseEvent::EVENT_UP;
-    event_queue.push(event);
+    event_queue.push_back(event);
 }
 
 void MouseInterface::setLeftButtonDoubleDown()
@@ -180,7 +180,7 @@ void MouseInterface::setRightButtonDown()
     event.button = right_button;
     event.event = MouseEvent::EVENT_DOWN;
     event.down_pos = right_button_down_pos;
-    event_queue.push( event );
+    event_queue.push_back( event );
 }
 
 void MouseInterface::setRightButtonUp( void )
@@ -203,10 +203,10 @@ void MouseInterface::setRightButtonUp( void )
         event.event  = MouseEvent::EVENT_CLICK;
 
     event.down_pos = right_button_down_pos;
-    event_queue.push( event );
+    event_queue.push_back( event );
 
     event.event = MouseEvent::EVENT_UP;
-    event_queue.push( event );
+    event_queue.push_back( event );
 }
 
 void MouseInterface::setRightButtonDoubleDown()
@@ -233,7 +233,7 @@ void MouseInterface::setMiddleButtonDown()
     event.button = middle_button;
     event.event = MouseEvent::EVENT_DOWN;
     event.down_pos = middle_button_down_pos;
-    event_queue.push( event );
+    event_queue.push_back( event );
 }
 
 void MouseInterface::setMiddleButtonUp()
@@ -256,10 +256,10 @@ void MouseInterface::setMiddleButtonUp()
         event.event  = MouseEvent::EVENT_CLICK;
 
     event.down_pos = middle_button_down_pos;
-    event_queue.push( event );
+    event_queue.push_back( event );
 
     event.event = MouseEvent::EVENT_UP;
-    event_queue.push( event );
+    event_queue.push_back( event );
 }
 
 void MouseInterface::setMiddleButtonDoubleDown()

@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 #include <map>
-#include <queue>
+#include <deque>
 
 #include "Surface.hpp"
 
@@ -45,7 +45,7 @@ public:
     iXY   up_pos;
 };
 
-typedef std::queue<MouseEvent> MouseEventQueue;
+typedef std::deque<MouseEvent> MouseEventQueue;
 
 class MouseInterface
 {

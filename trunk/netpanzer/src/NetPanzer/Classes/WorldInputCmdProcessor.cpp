@@ -559,7 +559,7 @@ void WorldInputCmdProcessor::evaluateMouseEvents( void )
 
     while( !MouseInterface::event_queue.empty() ) {
         MouseEvent event = MouseInterface::event_queue.front();
-        MouseInterface::event_queue.pop();
+        MouseInterface::event_queue.pop_front();
 
         if( event.button == MouseInterface::left_button )
             evalLeftMButtonEvents( event );
