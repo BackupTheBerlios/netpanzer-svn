@@ -60,6 +60,7 @@ void NetworkServerUnix::closeSession()
 int NetworkServerUnix::sendMessage(const PlayerID& player_id,
                                    NetMessage* message, size_t size, int flags)
 {
+    if(serversocket==0) { return _network_failed; }
 #ifdef NETWORKDEBUG
     LOG( ( "SEND >> Class: %d ID: %d", message->message_class,
            message->message_id ) );
