@@ -37,18 +37,4 @@ enum  { _unit_type_valentine,
         _not_applicable
       };
 
-
-
-/*
-enum  { _unit_type_light_tank,
-        _unit_type_medium_tank,
-        _unit_type_heavy_tank,
-        _unit_type_missle_launcher,
-        _unit_type_humvee,
-        _unit_type_hover_craft,
-        _unit_type_comm_killer,
-        _unit_type_refueler,
-        _unit_type_null
-      };
-*/
 #endif //** _UNITTYPES_HPP

@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <iostream>
 
 #include "UnitInterface.hpp"
+#include "UnitProfileInterface.hpp"
 #include "PlayerInterface.hpp"
 #include "MapInterface.hpp"
 #include "WorldViewInterface.hpp"
@@ -756,8 +757,21 @@ void UnitInterface::unitManagerMesgEndLifecycle( UnitMessage *message )
                               lifecycle_update->destroyed,
                               lifecycle_update->unit_type );
 
-    PlayerScoreUpdate score_update;
+    // show score on server display
+    const std::string& player1 =
+        PlayerInterface::getPlayerState(lifecycle_update->destroyer.getPlayer())
+            ->getName();
+    const std::string& player2 =
+        PlayerInterface::getPlayerState(lifecycle_update->destroyed.getPlayer())
+            ->getName();
+    const std::string& unitname =
+        UnitProfileInterface::getUnitProfile(lifecycle_update->unit_type)
+            ->unitname;
+    // TODO display unit names...
+    ConsoleInterface::postMessage("'%s' killed a '%s' from '%s'.",
+            player1.c_str(), unitname.c_str(), player2.c_str());
 
+    PlayerScoreUpdate score_update;
     score_update.kill_on_player_index = lifecycle_update->destroyed.getPlayer();
     score_update.kill_by_player_index = lifecycle_update->destroyer.getPlayer();
     score_update.unit_type = lifecycle_update->unit_type;

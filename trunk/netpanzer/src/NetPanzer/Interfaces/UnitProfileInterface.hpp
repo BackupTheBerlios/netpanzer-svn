@@ -18,12 +18,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITPROFILEINTERFACE_HPP
 #define _UNITPROFILEINTERFACE_HPP
 
+#include <string>
+
 #include "UnitTypes.hpp"
 #include "UnitState.hpp"
 
 class UnitProfile
 {
 public:
+    std::string unitname;
 
     short hit_points;
     short attack_factor;
@@ -51,11 +54,8 @@ protected:
     static UnitProfile profile_table[ _MAX_UNIT_TYPES ];
 
 public:
-
     static void loadUnitProfiles( void );
     static UnitProfile * getUnitProfile( unsigned short unit_type );
-
-
 };
 
 

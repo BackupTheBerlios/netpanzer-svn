@@ -101,9 +101,7 @@ public:
     UnitID owner_id;
     iXY hit_location;
     unsigned short damage_factor;
-
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class UMesgEndLifeCycleUpdate : public UnitMessage
 {
