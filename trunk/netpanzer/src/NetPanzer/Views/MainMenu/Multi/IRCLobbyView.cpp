@@ -34,7 +34,7 @@ IRCLobbyView::IRCLobbyView()
 {
     lobby_connection=0;
     change_name=0;
-    lobby_view_height=160;
+    lobby_view_height=184;
     total_displayed_servers=0;
     setSearchName("IRCLobbyView");
     setTitle("Lobby");
@@ -45,20 +45,19 @@ IRCLobbyView::IRCLobbyView()
     setVisible(false);
     topViewableItem=0;
 
-    moveTo(iXY(bodyTextRect.max.x-400, bodyTextRect.min.y + 200));
+    moveTo(iXY(bodyTextRect.max.x-440, bodyTextRect.min.y + 170));
 
-    iXY  area_size = iXY(400, lobby_view_height);
+    iXY  area_size = iXY(440, lobby_view_height);
     resizeClientArea(area_size);
 
     int chat_y=lobby_view_height-(Surface::getFontHeight()*2);
-    //addButtonCenterText(iXY(320, chat_y ), 80,  "Chat", "", buttonChat);
-    addButtonCenterText(iXY(320, chat_y), 80,  "Refresh", "", buttonRefresh);
-    szChat.init("  ", 34);
+    addButtonCenterText(iXY(getClientRect().getSizeX()-80, chat_y), 80,  "Refresh", "", buttonRefresh);
+    szChat.init("  ", 255,39);
     cInputField* input = addInputField(iXY(4, chat_y), &szChat, "", true);
     input->setReturnAction(chatReturnPressed);
 
-    server_list_end_y=lobby_view_height-(Surface::getFontHeight()*6);
-    chat_list_end_y=server_list_end_y+(Surface::getFontHeight()*4);      
+    server_list_end_y=(Surface::getFontHeight()*6);
+    chat_list_end_y=getClientRect().getSizeY()-(Surface::getFontHeight()*2);
     server_list_end_x=(getClientRect().getSizeX()-12);
 
     iXY size(12, 12);

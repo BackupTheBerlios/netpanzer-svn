@@ -386,7 +386,7 @@ void IRCLobby::processMessage()
     assert(irc_server_socket != 0);
     
     char buf[1024];
-    char *host, *mess, *host_end, *user_end, *code,*user;
+    char *host, *mess, *host_end, *user_end, *code,*user,*real_user;
 
     readIRCLine(buf, sizeof(buf));
 #ifndef WITHOUT_NETPANZER
@@ -395,7 +395,8 @@ void IRCLobby::processMessage()
     
     if(buf[0]!=':')
         return;
-    user=buf+1;
+
+    real_user=user=buf+1;
     if(strncmp(user,nickname_prefix,sizeof(nickname_prefix)-1)==0) {
         user+=sizeof(nickname_prefix)-1;
     }
@@ -529,7 +530,7 @@ void IRCLobby::processMessage()
         if(strcmp(mess+1, ask_server_running_mess)==0) {
             if(gameconfig->hostorjoin== _game_session_host) {
                 // reply with server details
-                sendServerInfo(user);
+                sendServerInfo(real_user);
             }
         }
         else 
@@ -561,11 +562,11 @@ void IRCLobby::processMessage()
                 SDL_mutexP(game_servers_mutex);
                 game_servers->push_back(
                         GameServer(host, port,
-                            user, map, players, max_players));
+                            real_user, map, players, max_players));
                 SDL_mutexV(game_servers_mutex);
             }
             else {
-                server->user = user;
+                server->user = real_user;
                 server->map = map;
                 server->playercount = players;
                 server->max_players = max_players;
