@@ -91,7 +91,8 @@ public:
 
     PlayerState::PlayerState()
         : flag(0), status(0), kills(0), kill_points(0), losses(0),
-          loss_points(0), total(0), objectives_held(0), stats_locked(false)
+          loss_points(0), total(0), objectives_held(0), stats_locked(false),
+          colorIndex(0)
     {
     }
 
