@@ -47,7 +47,7 @@ void Logger::log(const char* msg, ...)
 	vsnprintf(buf, sizeof(buf), msg, args);
 	va_end(args);
 
-	printf("%s\n", buf);
+	fprintf(stderr, "%s\n", buf);
 	*logfile << buf << "\n";
 }
 

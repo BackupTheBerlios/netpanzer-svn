@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __LIB_LOG_HPP__
 #define __LIB_LOG_HPP__
 
+#include <config.h>
 #include <fstream>
 
 class Logger
@@ -26,7 +27,8 @@ public:
 	Logger();
 	~Logger();
 	
-	void log(const char* msg, ...);
+	void log(const char* msg, ...)
+		__attribute__((format (__printf__, 2, 3)));
 
 private:
 	std::ofstream* logfile;
