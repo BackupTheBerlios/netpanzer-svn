@@ -69,23 +69,19 @@ TemplateExplosionSystem::TemplateExplosionSystem(const fXYZ& pos,
     int canHaveSmoke = 1;
 
     // Get the number of particles for this system.
-    int particleCount;
+    int particleCount = 0;
 
     // Reduce particle count if far away.
     if (isFarAway) {
         particleCount = e.particleCount / 3;
-
+    } else if (pixMovementValue == 5) {
+        // Since this is a water explosion and only particles are getting
+        // thrown, add some more particles.
+        canHaveSmoke  = 0;
+        particleCount = int(e.particleCount * 1.7f);
     } else {
-        if (pixMovementValue == 5) {
-            // Since this is a water explosion and only particles are getting thrown,
-            // add some more particles.
-            canHaveSmoke  = 0;
-            particleCount = int(e.particleCount * 1.7f);
-
-        } else {
-            // Since this is a normal explosion leave the particle count alone.
-            particleCount = e.particleCount;
-        }
+        // Since this is a normal explosion leave the particle count alone.
+        particleCount = e.particleCount;
     }
 
     // Only flash and explosion flame if it is near the screen.
@@ -131,18 +127,12 @@ TemplateExplosionSystem::TemplateExplosionSystem(const fXYZ& pos,
     // Check to see if we need to make some adjustments for low frame rates.
     int fpsLow = (TimerInterface::getFPS() < 20) ? 1 : 0;
 
-    float maxSpeed;
-    float scaleMin;
-    float scaleRand;
-    float waitMin;
-    float waitRand;
-
     // Small smoke.
-    maxSpeed  = percentScale * e.speedSmall;
-    scaleMin  = ExplosionSystem::puffSmallScaleMin;
-    scaleRand = ExplosionSystem::puffSmallScaleRand;
-    waitMin   = percentScale * ExplosionSystem::puffSmallWaitMin;
-    waitRand  = percentScale * ExplosionSystem::puffSmallWaitRand;
+    float maxSpeed  = percentScale * e.speedSmall;
+    float scaleMin  = ExplosionSystem::puffSmallScaleMin;
+    float scaleRand = ExplosionSystem::puffSmallScaleRand;
+    float waitMin   = percentScale * ExplosionSystem::puffSmallWaitMin;
+    float waitRand  = percentScale * ExplosionSystem::puffSmallWaitRand;
 
     fXYZ offset;
 

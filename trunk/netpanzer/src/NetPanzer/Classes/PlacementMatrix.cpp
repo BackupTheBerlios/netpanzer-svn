@@ -81,6 +81,9 @@ bool PlacementMatrix::verifyLocation( iXY &loc )
                 x_offset =  1; y_offset =  1;
             }
             break;
+        default:
+            assert(false);
+            return false;
         } // ** switch
 
         succ.x = loc.x + (x_offset);
@@ -94,7 +97,7 @@ bool PlacementMatrix::verifyLocation( iXY &loc )
 
     }
 
-    return ( false );
+    return false;
 }
 
 
