@@ -114,8 +114,9 @@ MasterServer::~MasterServer()
             i != threads.end(); ++i) {
         delete *i;
     }
-    
-    close(sock);
+
+    if(sock>=0)
+        close(sock);
 }
 
 void MasterServer::run()
@@ -227,8 +228,22 @@ bool MasterServer::updateServerInfo(ServerInfo& info, Tokenizer& tokenizer)
     return true;
 }
 
-void MasterServer::parseList(std::iostream& stream,
-        struct sockaddr_in* addr, Tokenizer& tokenizer)
+void
+MasterServer::addServer(const std::string& gamename, struct sockaddr_in addr)
+{
+    ServerInfo info;
+    info.gamename = gamename;
+    info.address = addr;
+    info.lastheartbeat = time(0);
+
+    pthread_mutex_lock(&serverlist_mutex);
+    serverlist.push_back(info);
+    pthread_mutex_unlock(&serverlist_mutex);
+}
+
+void
+MasterServer::parseList(std::iostream& stream, struct sockaddr_in* addr,
+        Tokenizer& tokenizer)
 {
     time_t currenttime = time(0);
     std::vector<ServerInfo>::iterator i;

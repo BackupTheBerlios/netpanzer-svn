@@ -39,6 +39,8 @@ public:
     ~MasterServer();
 
     void run();
+
+    void addServer(const std::string& gamename, struct sockaddr_in address);
     
 private:
     friend class RequestThread;

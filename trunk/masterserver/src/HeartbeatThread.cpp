@@ -38,6 +38,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Log.hpp"
 #include "Config.hpp"
 #include "SocketStream.hpp"
+#include "MasterServer.hpp"
 #include "Tokenizer.hpp"
 
 namespace masterserver
@@ -156,6 +157,7 @@ void HeartbeatThread::requestMasterServerList2(struct sockaddr_in* addr)
                 addMasterServer(tokenizer->getNextToken());
             } else if(token == "port") {
                 // ignore always assume 28900
+                tokenizer->getNextToken();
             } else if(token == "final") {
                 break;
             } else {
@@ -196,6 +198,8 @@ HeartbeatThread::addMasterServer(const std::string& address)
         htons(config->getSection("server").getIntValue("port"));
     
     serveraddresses.push_back(serveraddr);
+
+    masterserver->addServer("master", serveraddr);
 }
 
 void* HeartbeatThread::threadMain(void* data)
