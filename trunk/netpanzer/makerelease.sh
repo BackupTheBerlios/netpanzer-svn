@@ -17,7 +17,7 @@ jam distclean
 echo "*** Scanning for files"
 AUTOFILES="autogen.sh configure.ac configure config.h.in `find mk/autoconf/ -name "*.m4" -o -name "config.*"` mk/autoconf/install-sh"
 JAMFILES="Jamrules Jamconfig.in `find mk/jam -name "*.jam"`"
-LICENSE="COPYING"
+TEXTS="COPYING README TODO ChangeLog"
 
 SOURCES="`find src -name "*.cpp" -o -name "*.hpp" -o -name "Jamfile"`"
 PICS="`find pics -name "*.bmp" -o -name "*.raw" -o -name "*.til" -o -name "*.pak" -o -name "Jamfile"`"
@@ -38,12 +38,12 @@ __END__
 
 cp -p --parents $AUTOFILES $SOURCERELEASE
 cp -p --parents $JAMFILES $SOURCERELEASE
-cp -p --parents $LICENSE $SOURCERELEASE
+cp -p --parents $TEXTS $SOURCERELEASE
 cp -p --parents $SOURCES $SOURCERELEASE
 
 echo "*** Packing source"
-cd $SOURCERELEASE
-tar -c --bzip2 -f netpanzer-$VERSION.tar.bz2 *
+cd release
+tar -c --bzip2 -f netpanzer-$VERSION.tar.bz2 netpanzer-$VERSION
 cd -
 
 echo "*** Creating data release"
@@ -68,7 +68,7 @@ find sound \( -name "*.wav" -o -name "Jamfile" \) -exec cp -p --parents {} $DATA
 find maps \( -name "*.npm" -o -name "*.opt" -o -name "*.spn" -o -name "Jamfile" \) -exec cp -p --parents {} $DATARELEASE ';'
 cp -p --parents $AUTOFILES $DATARELEASE
 cp -p --parents $JAMFILES $DATARELEASE
-cp -p --parents $LICENSE $DATARELEASE
+cp -p --parents $TEXTS $DATARELEASE
 
 echo "*** Packing Data"
 cd release
