@@ -670,6 +670,13 @@ void UnitInterface::unitManagerMesgEndLifecycle(const UnitMessage* message)
 
     UnitBase* unit1 = getUnit(lifecycle_update->getDestroyer());
     UnitBase* unit2 = getUnit(lifecycle_update->getDestroyed());
+    if(unit1 == 0 || unit2 == 0) {
+        LOGGER.warning(
+                "Unit in EndLifeCycle message doesn't exist anymore"
+                "(u1: %u u2: %u)", lifecycle_update->getDestroyer(),
+                lifecycle_update->getDestroyed());
+        return;
+    }
     PlayerState* player1 = unit1->player;
     PlayerState* player2 = unit2->player;
 
