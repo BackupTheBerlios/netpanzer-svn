@@ -18,19 +18,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _CHATINTERFACE_HPP
 #define _CHATINTERFACE_HPP
 
-#include "SystemNetMessage.hpp"
+#include "ChatNetMessage.hpp"
 
 class ChatInterface
 {
 protected:
-    static SystemChatMesgRequest current_chat_mesg;
+    static ChatMesgRequest current_chat_mesg;
     static void (* addChatString)( const char *message_text );
 
-    static void chatMessageRequest( NetMessage *message );
-    static void chatMessage( NetMessage *message );
+    static void chatMessageRequest(const NetMessage* message);
+    static void chatMessage(const NetMessage* message);
 
 public:
-    static void processChatMessages( NetMessage *message );
+    static void processChatMessages(const NetMessage* message);
 
     // ** ChatView Interface Methods
     static void setNewMessageCallBack( void (* addStringCallBack)( const char *message_text ) );

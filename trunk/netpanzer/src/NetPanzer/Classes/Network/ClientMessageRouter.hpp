@@ -28,11 +28,10 @@ protected:
     static NetMessageDecoder message_decoder;
 
 public:
-
-    static void initialize( void );
-    static void cleanUp( void );
-    static void routeMessages( void );
-
+    static void initialize();
+    static void cleanUp();
+    static void routeMessage(const NetMessage* message);
+    static void routeMessages();
 };
 
 #endif

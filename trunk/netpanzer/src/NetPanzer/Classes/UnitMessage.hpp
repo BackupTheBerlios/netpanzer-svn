@@ -59,15 +59,14 @@ public:
         message_flags = flags;
     }
 
-    inline bool isFlagged( unsigned char flags )
+    inline bool isFlagged(unsigned char flags) const
     {
         if ( (flags & message_flags) == flags )
-            return( true );
+            return true;
 
-        return( false );
+        return false;
     }
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 #ifdef MSVC
 #pragma pack()

@@ -34,6 +34,8 @@ enum { _mapload_result_success,
        _mapload_result_no_wad_file
      };
 
+class ConnectMesgServerGameSettings;
+
 class GameManager
 {
 private:
@@ -50,13 +52,13 @@ protected:
     static void finishGameMapLoad();
 
     // ** Network Message Handlers
-    static void netMessageSetView( NetMessage *message );
-    static void netMessageViewControl( NetMessage *message );
-    static void netMessageClientGameSetup( NetMessage *message );
-    static void netMessagePingRequest( NetMessage *message );
-    static void netMessagePingAcknowledge( NetMessage *message );
-    static void netMessageConnectAlert( NetMessage *message );
-    static void netMessageResetGameLogic( NetMessage *message );
+    static void netMessageSetView(const NetMessage* message);
+    static void netMessageViewControl(const  NetMessage* message);
+    static void netMessageClientGameSetup(const NetMessage* message);
+    static void netMessagePingRequest(const NetMessage* message);
+    static void netMessagePingAcknowledge(const NetMessage* message);
+    static void netMessageConnectAlert(const NetMessage* message);
+    static void netMessageResetGameLogic(const NetMessage* message);
 
 public:
     static void dedicatedLoadGameMap(const char *map_file_path );
@@ -76,9 +78,9 @@ public:
 
     static void shutdownParticleSystems();
 
-    static bool startClientGameSetup( NetMessage *message, int *result_code );
+    static bool startClientGameSetup(const NetMessage* message, int *result_code);
     static bool clientGameSetup( int *percent_complete );
-    static void getServerGameSetup( NetMessage *message );
+    static ConnectMesgServerGameSettings* getServerGameSetup();
 
 public:
     static void exitNetPanzer();
@@ -89,7 +91,7 @@ public:
 
     static void requestNetworkPing();
 
-    static void processSystemMessage( NetMessage *message );
+    static void processSystemMessage(const NetMessage* message);
 
     static void setVideoMode();
 

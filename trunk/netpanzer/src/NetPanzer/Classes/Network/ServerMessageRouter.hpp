@@ -24,16 +24,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class ServerMessageRouter
 {
 protected:
-    static NetMessage *temp_message;
+    static NetPacket temp_packet;
     static NetMessageDecoder message_decoder;
-    static void classTerminalMessages( NetMessage *message );
+    static void classTerminalMessages(const NetMessage *message);
 
 public:
-
-    static void initialize( void );
-    static void cleanUp( void );
-    static void routeMessages( void );
-
+    static void initialize();
+    static void cleanUp();
+    static void routePacket(const NetPacket* packet);
+    static void routeMessages();
 };
 
 #endif // ** _SERVERMESSAGEROUTER_HPP

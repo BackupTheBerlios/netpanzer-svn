@@ -34,17 +34,17 @@ public:
     virtual void hostSession();
     virtual void closeSession();
 
-    virtual int sendMessage(NetMessage *message, size_t size);
-    virtual int sendMessage(const PlayerID& player_id,
-                            NetMessage *message, size_t size);
+    virtual void sendMessage(NetMessage *message, size_t size);
+    virtual void sendMessage(SocketClient::ID network_id,
+            NetMessage *message, size_t size);
 
-    virtual int getMessage(NetMessage *message);
+    virtual bool getPacket(NetPacket* message);
 
-    virtual void shutdownClientTransport(const PlayerID &client_id);
+    virtual void shutdownClientTransport(SocketClient::ID network_id);
 
     virtual void checkIncoming();
 
-    std::string getIP(const PlayerID& id) const;
+    std::string getIP(SocketClient::ID network_id) const;
 
 private:
     ServerSocket* serversocket;

@@ -29,17 +29,7 @@ ClientConnectJoinRequest::ClientConnectJoinRequest()
     message_id = _net_message_id_connect_join_game_request;
 }
 
-uint32_t ClientConnectJoinRequest::getTransportID(void)
-{
-    return ltoh32(client_transport_id);
-}
-
-void ClientConnectJoinRequest::setTransportID(uint32_t transport_id)
-{
-    client_transport_id = htol32(transport_id);
-}
-
-uint32_t ClientConnectJoinRequest::getProtocolVersion(void)
+uint32_t ClientConnectJoinRequest::getProtocolVersion() const
 {
     return ltoh32(protocol_version);
 }
@@ -82,7 +72,7 @@ ConnectProcessUpdate::ConnectProcessUpdate()
     message_id = _net_message_id_client_connect_process_update;
 }
 
-uint32_t ConnectProcessUpdate::getQueuePosition(void)
+uint32_t ConnectProcessUpdate::getQueuePosition() const
 {
     return ltoh32(queue_position);
 }
@@ -99,7 +89,7 @@ ConnectProcessStateMessage::ConnectProcessStateMessage()
     message_id = _net_message_id_client_connect_process_state_mesg;
 }
 
-uint32_t ConnectProcessStateMessage::getMessageEnum(void)
+uint32_t ConnectProcessStateMessage::getMessageEnum() const
 {
     return ltoh32(message_enum);
 }
@@ -109,7 +99,7 @@ void ConnectProcessStateMessage::setMessageEnum(uint32_t message)
     message_enum = htol32(message);
 }
 
-int32_t ConnectProcessStateMessage::getPercentComplete(void)
+int32_t ConnectProcessStateMessage::getPercentComplete() const
 {
     return ltoh32(percent_complete);
 }
@@ -149,7 +139,7 @@ ConnectMesgServerGameSettings::ConnectMesgServerGameSettings()
     memset(map_name, 0, sizeof(map_name));
 }
 
-uint16_t ConnectMesgServerGameSettings::getMaxPlayers(void)
+uint16_t ConnectMesgServerGameSettings::getMaxPlayers() const
 {
     return ltoh16(max_players);
 }
@@ -159,7 +149,7 @@ void ConnectMesgServerGameSettings::setMaxPlayers(uint16_t maxPlayers)
     max_players = htol16(maxPlayers);
 }
 
-uint16_t ConnectMesgServerGameSettings::getMaxUnits(void)
+uint16_t ConnectMesgServerGameSettings::getMaxUnits() const
 {
     return ltoh16(max_units);
 }
@@ -169,7 +159,7 @@ void ConnectMesgServerGameSettings::setMaxUnits(uint16_t maxUnits)
     max_units = htol16(maxUnits);
 }
 
-int32_t ConnectMesgServerGameSettings::getCloudCoverage(void)
+int32_t ConnectMesgServerGameSettings::getCloudCoverage() const
 {
     return ltoh32(cloud_coverage);
 }
@@ -179,7 +169,7 @@ void ConnectMesgServerGameSettings::setCloudCoverage(int32_t cloudCoverage)
     cloud_coverage = htol32(cloudCoverage);
 }
 
-float ConnectMesgServerGameSettings::getWindSpeed()
+float ConnectMesgServerGameSettings::getWindSpeed() const
 {
     return (float)ltoh32((uint32_t)wind_speed);
 }
@@ -189,7 +179,7 @@ void ConnectMesgServerGameSettings::setWindSpeed(float windSpeed)
     wind_speed = (float)htol32((uint32_t)windSpeed);
 }
 
-int32_t ConnectMesgServerGameSettings::getGameType(void)
+int32_t ConnectMesgServerGameSettings::getGameType() const
 {
     return ltoh32(game_type);
 }
@@ -199,7 +189,7 @@ void ConnectMesgServerGameSettings::setGameType(int32_t gameType)
     game_type = htol32(gameType);
 }
 
-int32_t ConnectMesgServerGameSettings::getFragLimit(void)
+int32_t ConnectMesgServerGameSettings::getFragLimit() const
 {
     return ltoh32(frag_limit);
 }
@@ -209,7 +199,7 @@ void ConnectMesgServerGameSettings::setFragLimit(int32_t fragLimit)
     frag_limit = htol32(fragLimit);
 }
 
-int32_t ConnectMesgServerGameSettings::getTimeLimit(void)
+int32_t ConnectMesgServerGameSettings::getTimeLimit() const
 {
     return ltoh32(time_limit);
 }
@@ -219,7 +209,7 @@ void ConnectMesgServerGameSettings::setTimeLimit(int32_t timeLimit)
     time_limit = htol32(timeLimit);
 }
 
-time_t ConnectMesgServerGameSettings::getElapsedTime(void)
+time_t ConnectMesgServerGameSettings::getElapsedTime() const
 {
     return (time_t)ltoh32((uint32_t)elapsed_time);
 }

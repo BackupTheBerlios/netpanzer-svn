@@ -46,17 +46,13 @@ enum { _net_message_id_connect_join_game_request,
 class ClientConnectJoinRequest : public NetMessage
 {
 private:
-    uint32_t client_transport_id;
     uint32_t protocol_version;
     
 public:
     ClientConnectJoinRequest();
-    uint32_t getTransportID(void);
-    void setTransportID(uint32_t transport_id);
-    uint32_t getProtocolVersion(void);
+    uint32_t getProtocolVersion() const;
     void setProtocolVersion(uint32_t version);
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 enum { _join_request_result_success,
        _join_request_result_invalid_protocol,
@@ -76,8 +72,7 @@ public:
     void setResultCode(int32_t result);
     uint32_t getServerProtocolVersion() const;
     void setServerProtocolVersion(uint32_t protocol_version);
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class ClientConnectStartConnect : public NetMessage
 {
@@ -87,8 +82,7 @@ public:
         message_class = _net_message_class_connect;
         message_id = _net_message_id_client_start_connect;
     }
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class ClientConnectRequest : public NetMessage
 {
@@ -98,8 +92,7 @@ public:
         message_class = _net_message_class_connect;
         message_id = _net_message_id_client_connect_request;
     }
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 enum { _connect_result_success,
        _connect_result_server_busy,
@@ -116,8 +109,7 @@ public:
         message_class = _net_message_class_connect;
         message_id = _net_message_id_client_connect_result;
     }
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 
 class ConnectProcessUpdate : public NetMessage
@@ -127,10 +119,9 @@ private:
 
 public:
     ConnectProcessUpdate();
-    uint32_t getQueuePosition(void);
+    uint32_t getQueuePosition() const;
     void setQueuePosition(uint32_t position);
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 enum { _connect_state_message_load_game_data,
        _connect_state_message_sync_player_info,
@@ -148,12 +139,11 @@ private:
 
 public:
     ConnectProcessStateMessage();
-    uint32_t getMessageEnum(void);
+    uint32_t getMessageEnum() const;
     void setMessageEnum(uint32_t message);
-    int32_t getPercentComplete(void);
+    int32_t getPercentComplete() const;
     void setPercentComplete(int32_t percent);
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class ConnectClientSettings : public NetMessage
 {
@@ -168,8 +158,7 @@ public:
     int16_t getPlayerFlag() const;
     void set(const char *player_name, uint8_t unit_color,
              uint16_t player_flag );
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class ConnectMesgServerGameSettings : public NetMessage
 {
@@ -191,26 +180,25 @@ private:
 
 public:
     ConnectMesgServerGameSettings();
-    uint16_t getMaxPlayers(void);
+    uint16_t getMaxPlayers() const;
     void setMaxPlayers(uint16_t maxPlayers);
-    uint16_t getMaxUnits(void);
+    uint16_t getMaxUnits() const;
     void setMaxUnits(uint16_t maxUnits);
-    int32_t getCloudCoverage(void);
+    int32_t getCloudCoverage() const;
     void setCloudCoverage(int32_t cloudCoverage);
-    float getWindSpeed(void);
+    float getWindSpeed() const;
     void setWindSpeed(float windSpeed);
-    int32_t getGameType(void);
+    int32_t getGameType() const;
     void setGameType(int32_t gameType);
-    uint8_t getPowerupState(void);
+    uint8_t getPowerupState() const;
     void setPowerupState(uint8_t powerupState);
-    int32_t getFragLimit(void);
+    int32_t getFragLimit() const;
     void setFragLimit(int32_t fragLimit);
-    int32_t getTimeLimit(void);
+    int32_t getTimeLimit() const;
     void setTimeLimit(int32_t timeLimit);
-    time_t getElapsedTime(void);
+    time_t getElapsedTime() const;
     void setElapsedTime(time_t elapsedTime);
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class ConnectMesgClientGameSetupAck : public NetMessage
 {
@@ -220,8 +208,7 @@ public:
         message_class = _net_message_class_connect;
         message_id = _net_message_id_connect_client_game_setup_ack;
     }
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class ConnectMesgClientGameSetupPing : public NetMessage
 {
@@ -231,8 +218,7 @@ public:
         message_class = _net_message_class_connect;
         message_id = _net_message_id_connect_client_game_setup_ping;
     }
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class ConnectMesgNetPanzerClientDisconnect : public NetMessage
 {
@@ -254,8 +240,7 @@ public:
     {
         return ltoh16(player_id);
     }
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class ConnectMesgNetPanzerServerDisconnect : public NetMessage
 {
@@ -265,8 +250,7 @@ public:
         message_class = _net_message_class_connect;
         message_id = _net_message_id_connect_netPanzer_server_disconnect;
     }
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 #ifdef MSVC
 #pragma pack()

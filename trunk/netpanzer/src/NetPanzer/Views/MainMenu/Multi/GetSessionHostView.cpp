@@ -95,7 +95,6 @@ void GetSessionHostView::doDraw(Surface &viewArea, Surface &clientArea)
     //iRect r(getViewRect());
     //viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
 
-    //start winsock hack
     if ((curGroupTime += TimerInterface::getTimeSlice()) > 5.0f) {
         updateHostList();
         curGroupTime = 0.0f;
@@ -103,8 +102,6 @@ void GetSessionHostView::doDraw(Surface &viewArea, Surface &clientArea)
 
 
     drawHostList(clientArea);
-
-    //end winsock hack
 
     //if (hosts.size() > 0)
     //{
@@ -205,7 +202,6 @@ void GetSessionHostView::updateHostList()
     // HRESULT hr;
 
     //SessionList session_list;
-    // winsock hack
     /*
     //bug#15+
     hr =	EnumerateGames( gapp.hwndApp );

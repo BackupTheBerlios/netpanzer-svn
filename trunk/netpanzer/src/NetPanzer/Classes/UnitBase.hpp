@@ -41,21 +41,11 @@ public:
     virtual ~UnitBase()
     { }
 
-    virtual void processMessage(UnitMessage* )
-    {  }
-
-    virtual void evalCommandOpcode(const UnitOpcode* )
-    { }
-
-    virtual void updateState()
-    { }
-
-    virtual void syncUnit()
-    { }
-
-    virtual void offloadGraphics(SpriteSorter& )
-    { }
-
+    virtual void processMessage(const UnitMessage* ) = 0;
+    virtual void evalCommandOpcode(const UnitOpcode* ) = 0;
+    virtual void updateState() = 0;
+    virtual void syncUnit() = 0;
+    virtual void offloadGraphics(SpriteSorter& ) = 0;
     virtual void soundSelected() = 0;
 
 private:

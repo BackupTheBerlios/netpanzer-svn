@@ -66,8 +66,8 @@ public:
 class Objective
 {
 protected:
-    void objectiveMesgUpdateOccupation( ObjectiveMessage *message );
-    void objectiveMesgSync( ObjectiveMessage *message );
+    void objectiveMesgUpdateOccupation(const ObjectiveMessage* message);
+    void objectiveMesgSync(const ObjectiveMessage* message);
 
 public:
     ObjectiveState objective_state;
@@ -76,7 +76,7 @@ public:
 
     void getSyncData( SyncObjective &objective_sync_mesg );
 
-    virtual void processMessage(ObjectiveMessage *message);
+    virtual void processMessage(const ObjectiveMessage* message);
 
     virtual void updateStatus()
     { }

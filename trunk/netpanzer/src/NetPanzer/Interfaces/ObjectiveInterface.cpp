@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileStream.hpp"
+#include "Util/Log.hpp"
 #include "Outpost.hpp"
 
 #include "ObjectiveNetMessage.hpp"
@@ -134,32 +135,34 @@ quearyObjectiveLocationStatus( iXY &loc,
     return( _no_objective_found );
 }
 
-void ObjectiveInterface::sendMessage(ObjectiveMessage *message)
+void ObjectiveInterface::sendMessage(const ObjectiveMessage* message)
 {
     objective_list[message->getObjectiveID()]->processMessage( message );
 }
 
-
-void ObjectiveInterface::processNetMessages(NetMessage *message)
+void ObjectiveInterface::processNetMessages(const NetMessage* message)
 {
-    switch( message->message_id ) {
-    case _net_message_id_occupation_status_update : {
-            ObjectiveOccupationUpdate *occupation_update;
-            occupation_update = (ObjectiveOccupationUpdate *) message;
+    switch(message->message_id) {
+        case _net_message_id_occupation_status_update:
+        {
+            const ObjectiveOccupationUpdate *occupation_update
+                = (const ObjectiveOccupationUpdate*) message;
             sendMessage( &(occupation_update->status_update) );
+            break;
         }
-        break;
 
-    case _net_message_id_objective_sync : {
-            ObjectiveSyncMesg *sync_mesg;
-
-            sync_mesg = (ObjectiveSyncMesg *) message;
+        case _net_message_id_objective_sync:
+        {
+            const ObjectiveSyncMesg* sync_mesg 
+                = (const ObjectiveSyncMesg*) message;
             sendMessage( &(sync_mesg->sync_data) );
+            break;
         }
-        break;
-
-    } // ** switch
-
+        
+        default:
+            LOGGER.warning("Unknown Objective Message received (id %d)",
+                    message->message_id);
+    }
 }
 
 void ObjectiveInterface::updateObjectiveStatus()

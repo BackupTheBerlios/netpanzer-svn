@@ -51,20 +51,20 @@ protected:
 
     static void setPowerUpLimits( unsigned long map_size_x, unsigned long map_size_y );
 
-    static void generatePowerUp( void );
+    static void generatePowerUp();
 
-    static void netMessagePowerUpCreate( NetMessage *message );
-    static void netMessagePowerUpHit( NetMessage *message );
+    static void netMessagePowerUpCreate(const NetMessage* message);
+    static void netMessagePowerUpHit(const NetMessage* message );
 
 public:
 
-    static void initialize( void );
-    static void resetLogic( void );
+    static void initialize();
+    static void resetLogic();
 
-    static void updateState( void );
+    static void updateState();
     static void offloadGraphics( SpriteSorter &sorter );
 
-    static void processNetMessages( NetMessage *message );
+    static void processNetMessages(const NetMessage* message );
 
     static void syncPowerUps( PlayerID player_id );
 };

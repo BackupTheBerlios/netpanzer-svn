@@ -35,9 +35,18 @@ class NetPacket
 public:
     SocketClient::ID toID;
     SocketClient::ID fromID;
-    uint16_t packet_size;
 
     uint8_t  data[ _MAX_NET_PACKET_SIZE ];
+
+    const NetMessage* getNetMessage() const
+    {
+        return (const NetMessage*) data;
+    }
+
+    size_t getSize() const
+    {
+        return sizeof(SocketClient::ID) * 2 + getNetMessage()->getSize();
+    }
 }
 __attribute__((packed));
 

@@ -15,8 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef _NETWORK_CLIENT_WINSOCK_HPP
-#define _NETWORK_CLIENT_WINSOCK_HPP
+#ifndef _NETWORK_CLIENT_UNIX_HPP
+#define _NETWORK_CLIENT_UNIX_HPP
 
 #include "NetworkClient.hpp"
 #include "Network/ClientSocket.hpp"
@@ -30,7 +30,7 @@ public:
     virtual bool joinServer(const std::string& server_name);
     virtual void partServer();
 
-    virtual void sendMessage(NetMessage *message, size_t size);
+    virtual void sendMessage(NetMessage* message, size_t size);
     virtual bool getMessage(NetMessage *message);
 
     virtual void checkIncoming();
@@ -38,4 +38,4 @@ private:
     ClientSocket* clientsocket;
 };
 
-#endif // ** _NETWORK_CLIENT_WINSOCK_HPP
+#endif

@@ -26,270 +26,97 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerInterface.hpp"
 #include "ConsoleInterface.hpp"
 
-//***************************************************************
-// Class: ServerClientList
-//***************************************************************
-
-void ServerClientList::addClient( ServerClientListData *client_data )
-{
-    addRear( client_data );
-}
-
-bool ServerClientList::removeClient( PlayerID client_id )
-{
-    ServerClientListData *client_data_ptr;
-
-    if ( front == 0 )
-        return( false );
-
-    client_data_ptr = front;
-
-    if ( client_data_ptr->client_id == client_id  ) {
-        deleteFront();
-        return( true );
-    }
-
-    while( client_data_ptr->next != 0 ) {
-        if ( client_data_ptr->next->client_id == client_id ) {
-            deleteAfter( client_data_ptr );
-            return( true );
-        }
-
-        client_data_ptr = client_data_ptr->next;
-    }
-
-    return( false );
-}
-
-ServerClientListData * ServerClientList::getClientData( PlayerID client_id )
-{
-    ServerClientListData *client_data_ptr;
-
-    client_data_ptr = front;
-
-    while( client_data_ptr != 0 ) {
-        if ( client_data_ptr->client_id == client_id ) {
-            return( client_data_ptr );
-        }
-
-        client_data_ptr = client_data_ptr->next;
-    }
-
-    return( 0 );
-}
-
-bool ServerClientList::getFullClientID( PlayerID *client_id )
-{
-    ServerClientListData *client_data_ptr;
-
-    client_data_ptr = front;
-
-    while( client_data_ptr != 0 ) {
-        if ( client_data_ptr->client_id.getNetworkID() == client_id->getNetworkID() ) {
-            (*client_id) = client_data_ptr->client_id;
-            return( true );
-        }
-
-        client_data_ptr = client_data_ptr->next;
-    }
-
-    return( false );
-}
-
-
-//***************************************************************
-// Class: NetworkServer
-//***************************************************************
-
-NetworkServer::NetworkServer( void )
+NetworkServer::NetworkServer()
         : NetworkInterface()
 {
-    keep_alive_emit_timer.changePeriod( _SERVER_KEEP_ALIVE_SEND_INTERVAL );
-    resetClientList();
-    dontSendUDPHackFlag = false;
 }
 
 NetworkServer::~NetworkServer()
 {
-    client_list.deallocate();
 }
 
-void NetworkServer::resetClientList( void )
+void NetworkServer::resetClientList()
 {
-    client_list.deallocate();
-}
-
-bool NetworkServer::addClientToSendList( PlayerID &client_player_id )
-{
-    ServerClientListData *client_data = 0;
-
-    client_data = new ServerClientListData;
-
-    if( client_data == 0 ) {
-        return( false );
+    for(ClientList::iterator i = client_list.begin(); i != client_list.end();
+            ++i) {
+        delete *i;
     }
+    client_list.clear();
+}
+
+bool NetworkServer::addClientToSendList(const PlayerID& client_player_id)
+{
+    ServerClientListData *client_data = new ServerClientListData;
 
     client_data->client_id = client_player_id;
-    client_data->keep_alive_timer.changePeriod( _CLIENT_KEEP_ALIVE_THRESHOLD );
+    client_list.push_back(client_data);
 
-    client_list.addClient( client_data );
-
-    return( true );
-}
-
-bool NetworkServer::removeClientFromSendList( PlayerID &client_player_id )
-{
-    return(  client_list.removeClient( client_player_id ) );
-}
-
-bool NetworkServer::activateKeepAlive( PlayerID &client_player_id )
-{
-    ServerClientListData *client_data = 0;
-
-    client_data = client_list.getClientData( client_player_id );
-
-    if( client_data == 0 ) {
-	LOGGER.debug("NetworkServer::activateKeepAlive -- Could Not Find Client To Activate Keep Alive");
-        return false;
-    }
-
-    client_data->keep_alive_state = true;
-    client_data->keep_alive_timer.reset();
-
-    ClientMesgSetKeepAlive set_keep_alive_mesg;
-
-    set_keep_alive_mesg.keep_alive_state = true;
-
-    sendMessage(client_data->client_id, &set_keep_alive_mesg,
-            sizeof(ClientMesgSetKeepAlive));
     return true;
 }
 
-bool NetworkServer::deactivateKeepAlive( PlayerID &client_player_id )
+void NetworkServer::removeClientFromSendList(const PlayerID &client_player_id)
 {
-    ServerClientListData *client_data = 0;
-
-    client_data = client_list.getClientData( client_player_id );
-
-    if( client_data == 0 ) {
-        return false;
+    for(ClientList::iterator i = client_list.begin(); i != client_list.end();
+            ++i) {
+        ServerClientListData* data = *i;
+        if(data->client_id == client_player_id) {
+            delete data;
+            client_list.erase(i);
+            return;
+        }
     }
 
-    client_data->keep_alive_state = false;
-    client_data->keep_alive_timer.reset();
-
-    ClientMesgSetKeepAlive set_keep_alive_mesg;
-
-    set_keep_alive_mesg.keep_alive_state = false;
-
-    sendMessage(client_data->client_id, &set_keep_alive_mesg,
-            sizeof(ClientMesgSetKeepAlive));
-    return true;
+    assert(false);
 }
 
-void NetworkServer::netMessageClientKeepAlive( NetMessage *message )
+void NetworkServer::netPacketClientKeepAlive(const NetPacket* )
 {
-    ServerClientListData *client_data = 0;
-    ServerMesgKeepAlive  *client_keepalive = 0;
-    client_keepalive = (ServerMesgKeepAlive *) message;
-
-    client_data = client_list.getClientData(
-        PlayerInterface::getPlayerID(client_keepalive->getClientID()) );
-
-    if( client_data == 0 ) {
-        LOG( ("Invalid ClientID for KeepAlive") );
-        return;
-    }
-
-    if ( client_data->keep_alive_state == true ) {
-        client_data->keep_alive_timer.reset();
-    }
-
+    // nothing
 }
 
-void NetworkServer::netMessageServerPingRequest( NetMessage *message )
+void NetworkServer::netPacketServerPingRequest(const NetPacket* )
 {
-    ServerMesgPingRequest *ping_request_mesg;
-    ClientMesgPingAck      ping_ack_mesg;
-
-    ping_request_mesg = (ServerMesgPingRequest *) message;
-
-    PlayerID playerid =
-        PlayerInterface::getPlayerID(ping_request_mesg->getClientID());
-    sendMessage(playerid, &ping_ack_mesg, sizeof(ClientMesgPingAck));
+    // nothing
 }
 
-void NetworkServer::netMessageTransportClientAccept( NetMessage *message )
+void NetworkServer::netPacketTransportClientAccept(const NetPacket* packet)
 {
-    TransportClientAccept *client_accept_mesg 
-        = (TransportClientAccept *) message;
-
     ClientMesgConnectAck connect_ack_mesg;
-    connect_ack_mesg.setClientTransportID(client_accept_mesg->getClientTransportID());
-
-    PlayerID player_id = PlayerID( 0, connect_ack_mesg.getClientTransportID() );
-
-    sendMessage(player_id, &connect_ack_mesg, sizeof(ClientMesgConnectAck));
+    sendMessage(packet->fromID, &connect_ack_mesg,sizeof(ClientMesgConnectAck));
 }
 
-void NetworkServer::processNetMessage( NetMessage *message )
+void NetworkServer::processNetPacket(const NetPacket* packet)
 {
-    switch ( message->message_id ) {
+    const NetMessage* message = packet->getNetMessage();
+    switch(message->message_id) {
+        case _net_message_id_server_keep_alive: 
+            netPacketClientKeepAlive(packet);
+            break;
 
-    case _net_message_id_server_keep_alive : {
-            netMessageClientKeepAlive( message );
-        }
-        break;
+        case _net_message_id_server_ping_request:
+            netPacketServerPingRequest(packet);
+            break;
 
-    case _net_message_id_server_ping_request : {
-            netMessageServerPingRequest( message );
-        }
-        break;
-
-    case _net_message_id_transport_client_accept : {
-            netMessageTransportClientAccept( message );
-        }
-        break;
-
-    } // ** switch
-
-}
-
-void NetworkServer::updateKeepAliveState( void )
-{
-    bool send_server_keep_alive_mesg = false;
-    ServerClientListData *iterator = 0;
-    ServerClientListData *client_data_ptr = 0;
-
-    if ( keep_alive_emit_timer.count() ) {
-        send_server_keep_alive_mesg = true;
+        case _net_message_id_transport_client_accept:
+            netPacketTransportClientAccept(packet);
+            break;
+            
+        default:
+            LOGGER.warning("Unknown networkserverpacket: id:%d.",
+                    message->message_id);
+            break;
     }
-
-    client_list.resetIterator( &iterator );
-
-    client_data_ptr = client_list.incIteratorPtr( &iterator );
-
-    while( client_data_ptr != 0 ) {
-        if ( client_data_ptr->keep_alive_state == true ) {
-            if( client_data_ptr->keep_alive_timer.count() ) {
-                LOG( ("Client %d Keep Alive Timed Out", client_data_ptr->client_id.getIndex() ) );
-                ServerConnectDaemon::startClientDropProcess( client_data_ptr->client_id );
-            }
-
-            if( send_server_keep_alive_mesg == true ) {
-                ClientMesgKeepAlive server_keepalive;
-
-                sendMessage( client_data_ptr->client_id, &server_keepalive,
-                        sizeof( ClientMesgKeepAlive ));
-            }
-        }
-        client_data_ptr = client_list.incIteratorPtr( &iterator );
-    }
-
 }
 
-void NetworkServer::dropClient( PlayerID client_id )
+void NetworkServer::dropClient(SocketClient::ID network_id)
 {
-    client_list.getFullClientID( &client_id );
-    ServerConnectDaemon::startClientDropProcess( client_id );
+    for(ClientList::iterator i = client_list.begin(); i != client_list.end();
+            ++i) {
+        ServerClientListData* data = *i;
+        if(data->client_id.getNetworkID() == network_id) {
+            ServerConnectDaemon::startClientDropProcess(data->client_id);
+            return;
+        }
+    }
 }
+

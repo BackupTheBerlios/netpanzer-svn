@@ -67,14 +67,16 @@ void NetworkClientUnix::partServer()
     clientsocket = 0;
 }
 
-void NetworkClientUnix::sendMessage(NetMessage *message, size_t size)
+void NetworkClientUnix::sendMessage(NetMessage* message, size_t size)
 {
+    if(clientsocket == 0)
+        return;
+
     message->setSize(size);
     
     if ( connection_type == _connection_loop_back ) {
         memcpy(net_packet.data, message, size);
-        net_packet.packet_size = (unsigned short) size;
-        loop_back_recv_queue.enqueue( net_packet );
+        loop_back_recv_queue.enqueue(net_packet);
         return;
     }
 
@@ -92,32 +94,31 @@ void NetworkClientUnix::sendMessage(NetMessage *message, size_t size)
 
 bool NetworkClientUnix::getMessage(NetMessage *message)
 {
-    updateKeepAliveState();
-
-    if ( receive_queue.isReady() ) {
-        receive_queue.dequeue( &net_packet );
-
-        memcpy(message, net_packet.data, net_packet.packet_size);
+    if(clientsocket == 0)
+        return false;
+    if(!receive_queue.isReady())
+        return false;
+    
+    receive_queue.dequeue( &net_packet );
+    memcpy(message, net_packet.data, net_packet.getSize());
 
 #ifdef NETWORKDEBUG
-        NetPacketDebugger::logMessage("R", message);
+    NetPacketDebugger::logMessage("R", message);
 #endif
 
-        if ( message->message_class == _net_message_class_client_server ) {
-            processNetMessage( message );
-        }
-
-        NetworkState::incPacketsReceived( net_packet.packet_size );
-
-        return true;
+    if ( message->message_class == _net_message_class_client_server ) {
+        processNetMessage( message );
     }
 
-    return false;
+    NetworkState::incPacketsReceived(net_packet.getSize());
+
+    return true;
 }
 
 void NetworkClientUnix::checkIncoming()
 {
-    if(clientsocket) {
-        clientsocket->read();
-    }
+    if(!clientsocket)
+        return;
+    
+    clientsocket->read();
 }

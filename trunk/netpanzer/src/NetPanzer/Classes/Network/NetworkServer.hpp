@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETWORKSERVER_HPP
 #define _NETWORKSERVER_HPP
 
+#include <list>
 #include "NetworkInterface.hpp"
 #include "NetworkReturnCodes.hpp"
 
@@ -29,57 +30,13 @@ class ServerClientListData
 {
 public:
     PlayerID       client_id;
-    bool        keep_alive_state;
-    Timer          keep_alive_timer;
-    unsigned char  no_guarantee_sequence_counter;
-
-    ServerClientListData *next;
-
-    ServerClientListData()
-    {
-        no_guarantee_sequence_counter = 0;
-        keep_alive_state = false;
-        next = 0;
-    }
 };
-
-class ServerClientList : public LinkListSingleTemplate< ServerClientListData >
-{
-public:
-    ServerClientListData * getClientData( PlayerID client_id );
-
-    void addClient( ServerClientListData *client_data );
-
-    bool removeClient( PlayerID client_id );
-
-    bool getFullClientID( PlayerID *client_id );
-
-    inline void resetIterator( ServerClientListData **iterator )
-    {
-        (*iterator) = front;
-    }
-
-    inline ServerClientListData * incIteratorPtr( ServerClientListData **iterator )
-    {
-        ServerClientListData *client_data;
-
-        if( (*iterator) != 0 ) {
-            client_data = (*iterator);
-            (*iterator) = (*iterator)->next;
-            return( client_data );
-        } else {
-            return( 0 );
-        }
-    }
-};
-
-#define _CLIENT_KEEP_ALIVE_THRESHOLD     (60)  // in seconds
-#define _SERVER_KEEP_ALIVE_SEND_INTERVAL  (2)  // in seconds
 
 class NetworkServer : public NetworkInterface
 {
 protected:
-    ServerClientList client_list;
+    typedef std::list<ServerClientListData*> ClientList;
+    ClientList client_list;
 
     NetPacket net_packet;
 
@@ -88,40 +45,34 @@ protected:
     void updateKeepAliveState();
     void resetClientList();
 
-    void netMessageClientKeepAlive( NetMessage *message );
-    void netMessageServerPingRequest( NetMessage *message );
-    void netMessageTransportClientAccept( NetMessage *message );
+    void netPacketClientKeepAlive(const NetPacket* packet);
+    void netPacketServerPingRequest(const NetPacket* packet);
+    void netPacketTransportClientAccept(const NetPacket* packet);
 
-    void processNetMessage( NetMessage *message );
-
-    bool dontSendUDPHackFlag;
+    void processNetPacket(const NetPacket* packet);
 public:
     NetworkServer();
     virtual ~NetworkServer();
 
-    bool addClientToSendList(PlayerID &client_player_id );
-    bool removeClientFromSendList(PlayerID &client_player_id );
-
-    bool activateKeepAlive(PlayerID &client_player_id);
-    bool deactivateKeepAlive(PlayerID &client_player_id);
-
-    void lostPacketHack()
-    {
-        dontSendUDPHackFlag = true;
-    }
+    bool addClientToSendList(const PlayerID& client_player_id);
+    void removeClientFromSendList(const PlayerID& client_player_id);
 
     virtual void openSession() = 0;
     virtual void hostSession() = 0;
     virtual void closeSession() = 0;
 
-    virtual int sendMessage(NetMessage *message, size_t size) = 0;
-    virtual int sendMessage(const PlayerID& player_id,
-                            NetMessage *message, size_t size) = 0;
+    virtual void sendMessage(NetMessage *message, size_t size) = 0;
+    virtual void sendMessage(SocketClient::ID network_id, NetMessage* message,
+            size_t size) = 0;
+    void sendMessage(const PlayerID& player_id, NetMessage *message,
+            size_t size) {
+        sendMessage(player_id.getNetworkID(), message, size);
+    }
 
-    virtual int getMessage(NetMessage *message) = 0;
+    virtual bool getPacket(NetPacket* packet) = 0;
 
-    virtual void dropClient(PlayerID client_id);
-    virtual void shutdownClientTransport(const PlayerID &client_id) = 0;
+    virtual void dropClient(SocketClient::ID client_id);
+    virtual void shutdownClientTransport(SocketClient::ID network_id) = 0;
 
     virtual void checkIncoming() = 0;
 };

@@ -92,10 +92,9 @@ ServerSocket::acceptNewClients()
 
             // Put message about connecting client into message queue
             TransportClientAccept clientacceptmessage;
-            clientacceptmessage.setClientTransportID(client->id);
             clientacceptmessage.setSize(sizeof(TransportClientAccept));
             EnqueueIncomingPacket(&clientacceptmessage,
-                    sizeof(TransportClientAccept), 1, 0);
+                    sizeof(TransportClientAccept), 0, client->id);
         } catch(...) {
             delete clientsocket;
             throw;
@@ -187,7 +186,7 @@ ServerSocket::readClientTCP(SocketClient* client)
                        recvbuffer + 1, (size - 2));
 
                 EnqueueIncomingPacket(tempbuffer,
-                                      (unsigned long) size, 1, 0);
+                                      (unsigned long) size, 0, client->id);
 
                 recvoffset += (size - 1);
                 recvsize -= (size - 1);
@@ -233,7 +232,7 @@ ServerSocket::readClientTCP(SocketClient* client)
                 }
 
                 EnqueueIncomingPacket(tempbuffer,
-                                      (unsigned long) size, 1, 0);
+                                      (unsigned long) size, 0, client->id);
 
                 client->tempoffset = 0;
                 client->messageincomplete = false;
@@ -277,8 +276,7 @@ ServerSocket::readClientTCP(SocketClient* client)
                 {
                     EnqueueIncomingPacket(recvbuffer + recvoffset,
                                           (unsigned long) size,
-                                          1,
-                                          0 );
+                                          0, client->id);
 
                     //take care of parsing variables--
                     recvoffset += size;

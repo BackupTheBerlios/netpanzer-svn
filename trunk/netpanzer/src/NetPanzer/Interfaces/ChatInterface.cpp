@@ -25,25 +25,26 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkServer.hpp"
 #include "Client.hpp"
 #include "NetworkClient.hpp"
+#include "Util/Log.hpp"
 
 #include "ConsoleInterface.hpp"
+#include "ChatNetMessage.hpp"
 
-SystemChatMesgRequest ChatInterface::current_chat_mesg;
+ChatMesgRequest ChatInterface::current_chat_mesg;
 void (* ChatInterface::addChatString)( const char *message_text ) = 0;
 
-
-void ChatInterface::chatMessageRequest( NetMessage *message )
+void ChatInterface::chatMessageRequest(const NetMessage* message)
 {
     bool post_on_server = false;
-    SystemChatMesg chat_mesg;
-    SystemChatMesgRequest *chat_request = (SystemChatMesgRequest *) message;
+    ChatMesg chat_mesg;
+    const ChatMesgRequest* chat_request = (const ChatMesgRequest*) message;
 
     chat_mesg.setSourcePlayerIndex(chat_request->getSourcePlayerIndex());
     chat_mesg.message_scope = chat_request->message_scope;
     strcpy( chat_mesg.message_text, chat_request->message_text );
 
     if( chat_request->message_scope == _chat_mesg_scope_all ) {
-        SERVER->sendMessage(&chat_mesg, sizeof(SystemChatMesg));
+        SERVER->sendMessage(&chat_mesg, sizeof(ChatMesg));
         post_on_server = true;
     } else
         if( chat_request->message_scope == _chat_mesg_scope_alliance ) {
@@ -60,7 +61,8 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
                 if ( (PlayerInterface::getPlayer(i)->getStatus() == _player_state_active) ) {
                     if( PlayerInterface::isAllied( chat_request->getSourcePlayerIndex(), i ) == true ) {
                         if ( (local_player_index != i) ) {
-                            SERVER->sendMessage( player_id, &chat_mesg, sizeof(SystemChatMesg));
+                            SERVER->sendMessage(player_id, &chat_mesg,
+                                    sizeof(ChatMesg));
                         } else {
                             post_on_server = true;
                         }
@@ -73,11 +75,11 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
             } else {
                 SERVER->sendMessage(
                     PlayerInterface::getPlayerID(chat_request->getSourcePlayerIndex()),
-                    &chat_mesg, sizeof(SystemChatMesg));
+                    &chat_mesg, sizeof(ChatMesg));
             }
         } else
             if( chat_request->message_scope == _chat_mesg_scope_server ) {
-                SERVER->sendMessage(&chat_mesg, sizeof(SystemChatMesg));
+                SERVER->sendMessage(&chat_mesg, sizeof(ChatMesg));
                 ConsoleInterface::postMessage("Server: %s",
                         chat_mesg.message_text );
                 return;
@@ -119,12 +121,10 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
     }
 }
 
-void ChatInterface::chatMessage( NetMessage *message )
+void ChatInterface::chatMessage(const NetMessage* message)
 {
     unsigned short local_player_index;
-    SystemChatMesg *chat_mesg;
-
-    chat_mesg = (SystemChatMesg * ) message;
+    const ChatMesg *chat_mesg = (const ChatMesg*) message;
 
     if( chat_mesg->message_scope == _chat_mesg_scope_server ) {
         ConsoleInterface::postMessage("Server: %s", chat_mesg->message_text );
@@ -166,18 +166,21 @@ void ChatInterface::chatMessage( NetMessage *message )
             player_state->getName().c_str(), chat_mesg->message_text );
 }
 
-void ChatInterface::processChatMessages( NetMessage *message )
+void ChatInterface::processChatMessages(const NetMessage* message)
 {
-    switch( message->message_id ) {
-    case _net_message_id_system_chat_mesg_req :
-        chatMessageRequest( message );
-        break;
+    switch(message->message_id) {
+        case _net_message_id_chat_mesg_req:
+            chatMessageRequest(message);
+            break;
 
-    case _net_message_id_system_chat_mesg :
-        chatMessage( message );
-        break;
+        case _net_message_id_chat_mesg:
+            chatMessage(message);
+            break;
 
-    } // ** switch
+        default:
+            LOGGER.warning("Received unknown chat message (id %d-%d)",
+                    message->message_class, message->message_id);
+    }
 }
 
 
@@ -186,24 +189,24 @@ void ChatInterface::setNewMessageCallBack( void (* addStringCallBack )( const ch
     addChatString = addStringCallBack;
 }
 
-void ChatInterface::setMessageScopeAll( void )
+void ChatInterface::setMessageScopeAll()
 {
-    current_chat_mesg.setMessageScope( _chat_mesg_scope_all );
+    current_chat_mesg.message_scope =  _chat_mesg_scope_all;
 }
 
-void ChatInterface::setMessageScopeAllies( void )
+void ChatInterface::setMessageScopeAllies()
 {
-    current_chat_mesg.setMessageScope( _chat_mesg_scope_alliance );
+    current_chat_mesg.message_scope = _chat_mesg_scope_alliance;
 }
 
 void ChatInterface::setMessageScopeEnemies()
 {
-    current_chat_mesg.setMessageScope( _chat_mesg_scope_enemies );
+    current_chat_mesg.message_scope = _chat_mesg_scope_enemies;
 }
 
 void ChatInterface::setMessageScopeServer()
 {
-    current_chat_mesg.setMessageScope( _chat_mesg_scope_server );
+    current_chat_mesg.message_scope = _chat_mesg_scope_server;
 }
 
 void ChatInterface::sendCurrentMessage( const char *message_text )
@@ -213,9 +216,9 @@ void ChatInterface::sendCurrentMessage( const char *message_text )
     current_chat_mesg.message_text[ 149 ] = 0;
 
     if ( NetworkState::status == _network_state_client ) {
-        CLIENT->sendMessage( &current_chat_mesg, sizeof(SystemChatMesgRequest));
+        CLIENT->sendMessage(&current_chat_mesg, sizeof(ChatMesgRequest));
     } else {
-        processChatMessages( &current_chat_mesg );
+        processChatMessages(&current_chat_mesg);
     }
 
     current_chat_mesg.reset();

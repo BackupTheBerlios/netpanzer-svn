@@ -55,4 +55,4 @@ private:
     SocketClient::ID nextid;
 };
 
-#endif // _WINSOCKCLIENTLIST_H
+#endif

@@ -30,29 +30,28 @@ protected:
     static int   time_out_counter;
     static unsigned char connection_state;
 
-    static void netMessageLinkAck( NetMessage *message );
-    static void netMessageConnectProcessUpdate( NetMessage *message );
-    static void netMessageConnectProcessMessage(	NetMessage *message );
-    static void netMessageConnectServerDisconnect( NetMessage *message );
+    static void netMessageLinkAck(const NetMessage* message);
+    static void netMessageConnectProcessUpdate(const NetMessage* message);
+    static void netMessageConnectProcessMessage(const NetMessage* message);
+    static void netMessageConnectServerDisconnect(const NetMessage* message);
 
-    static void connectFsm( NetMessage *message );
-    static void connectProcess( NetMessage *message);
+    static void connectFsm(const NetMessage* message);
+    static void connectProcess(const NetMessage* message);
 
     static void connectFailureResult( unsigned char result_code );
 
 public:
+    static void startConnectDaemon();
 
-    static void startConnectDaemon( void );
-
-    static void shutdownConnectDaemon( void );
+    static void shutdownConnectDaemon();
 
     static void startConnectionProcess();
 
-    static void connectProcess( void );
+    static void connectProcess();
 
-    static void processNetMessage( NetMessage *message);
+    static void processNetMessage(const NetMessage* message);
 
-    static void serverConnectionBroken( void );
+    static void serverConnectionBroken();
 
 };
 

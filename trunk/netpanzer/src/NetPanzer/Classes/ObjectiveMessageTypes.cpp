@@ -36,7 +36,7 @@ void DisownPlayerObjective::set( unsigned short id, PlayerID &disowned_player )
     message_type = _objective_mesg_disown_player_objective;
 }
 
-uint16_t DisownPlayerObjective::getDisownedPlayerID(void)
+uint16_t DisownPlayerObjective::getDisownedPlayerID() const
 {
     return ltoh16(disowned_player_id);
 }
@@ -54,7 +54,7 @@ void SyncObjective::set(unsigned short id,
     SyncObjective::occupying_player_id = occupying_player.getIndex();
 }
 
-uint16_t SyncObjective::getOccupyingPlayerID(void)
+uint16_t SyncObjective::getOccupyingPlayerID() const
 {
     return ltoh16(occupying_player_id);
 }
@@ -67,12 +67,13 @@ void ChangeOutputLocation::set(unsigned short id, iXY point)
     message_type = _objective_mesg_change_output_location;
 }
 
-int32_t ChangeOutputLocation::getPointX(void)
+int32_t ChangeOutputLocation::getPointX() const
 {
     return ltoh32(new_point_x);
 }
 
-int32_t ChangeOutputLocation::getPointY(void)
+int32_t ChangeOutputLocation::getPointY() const
 {
     return ltoh32(new_point_y);
 }
+

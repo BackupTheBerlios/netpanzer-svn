@@ -66,8 +66,6 @@ void ClientConnectDaemon::shutdownConnectDaemon()
 
     CLIENT->sendMessage(&client_disconnect,
             sizeof(ConnectMesgNetPanzerClientDisconnect));
-
-    CLIENT->deactivateKeepAlive();
 }
 
 void ClientConnectDaemon::startConnectionProcess( )
@@ -78,7 +76,7 @@ void ClientConnectDaemon::startConnectionProcess( )
     connection_state = _connect_state_wait_for_connect_start;
 }
 
-void ClientConnectDaemon::netMessageLinkAck( NetMessage *message )
+void ClientConnectDaemon::netMessageLinkAck(const NetMessage* message)
 {
     ClientConnectJoinRequestAck *join_request_ack_mesg;
     char buf[80];
@@ -119,7 +117,7 @@ void ClientConnectDaemon::netMessageLinkAck( NetMessage *message )
 
 }
 
-void ClientConnectDaemon::netMessageConnectProcessUpdate( NetMessage *message )
+void ClientConnectDaemon::netMessageConnectProcessUpdate(const NetMessage* message )
 {
     ConnectProcessUpdate *process_update;
 
@@ -132,7 +130,7 @@ void ClientConnectDaemon::netMessageConnectProcessUpdate( NetMessage *message )
     lobbyView->scrollAndUpdate( buf );
 }
 
-void ClientConnectDaemon::netMessageConnectProcessMessage(NetMessage *message)
+void ClientConnectDaemon::netMessageConnectProcessMessage(const NetMessage* message)
 {
     ConnectProcessStateMessage *state_mesg;
 
@@ -180,12 +178,12 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(NetMessage *message)
     }
 }
 
-void ClientConnectDaemon::netMessageConnectServerDisconnect(NetMessage* )
+void ClientConnectDaemon::netMessageConnectServerDisconnect(const NetMessage* )
 {
     ConsoleInterface::postMessage("Server has terminated the game" );
 }
 
-void ClientConnectDaemon::processNetMessage( NetMessage *message)
+void ClientConnectDaemon::processNetMessage(const NetMessage* message)
 {
     switch (message->message_id) {
     case _net_message_id_connect_join_game_request_ack : {
@@ -215,7 +213,7 @@ void ClientConnectDaemon::processNetMessage( NetMessage *message)
 
 }
 
-void ClientConnectDaemon::serverConnectionBroken( void )
+void ClientConnectDaemon::serverConnectionBroken()
 {
     ConsoleInterface::postMessage( "CONNECTION TO SERVER HAS BEEN UNEXPECTEDLY BROKEN." );
 }
@@ -236,7 +234,7 @@ void ClientConnectDaemon::connectFailureResult( unsigned char result_code )
 
 }
 
-void ClientConnectDaemon::connectFsm( NetMessage *message )
+void ClientConnectDaemon::connectFsm(const NetMessage* message )
 {
     bool end_cycle = false;
 
@@ -409,12 +407,12 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
 
 }
 
-void ClientConnectDaemon::connectProcess( NetMessage *message)
+void ClientConnectDaemon::connectProcess(const NetMessage* message)
 {
     connectFsm( message );
 }
 
-void ClientConnectDaemon::connectProcess( void )
+void ClientConnectDaemon::connectProcess()
 {
     connectFsm( 0 );
 }

@@ -30,8 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 enum { _net_message_id_system_set_view,
        _net_message_id_system_reset_game_logic,
-       _net_message_id_system_chat_mesg_req,
-       _net_message_id_system_chat_mesg,
        _net_message_id_system_view_control,
        _net_message_id_system_ping_request,
        _net_message_id_system_ping_ack,
@@ -47,8 +45,8 @@ private:
 
 public:
     SystemSetPlayerView(int32_t x, int32_t y);
-    int32_t getCameraLocX();
-    int32_t getCameraLocY();
+    int32_t getCameraLocX() const;
+    int32_t getCameraLocY() const;
 }
 __attribute__((packed));
 
@@ -57,55 +55,7 @@ class SystemResetGameLogic : public NetMessage
 {
 public:
     SystemResetGameLogic();
-}
-__attribute__((packed));
-
-enum { _chat_mesg_scope_player_set,
-       _chat_mesg_scope_alliance,
-       _chat_mesg_scope_enemies,
-       _chat_mesg_scope_all,
-       _chat_mesg_scope_server
-     };
-
-
-class SystemChatMesgRequest : public NetMessage
-{
-public:
-    uint8_t message_scope;
-    char player_set[32];
-
-private:
-    uint16_t source_player_index;
-public:
-    char message_text[150];
-
-    SystemChatMesgRequest();
-    void reset();
-    void setMessageScope( unsigned char scope );
-    void setPlayerSet( unsigned short player_index );
-    void clearPlayerSet( unsigned short player_index );
-    uint16_t getSourcePlayerIndex();
-    void setSourcePlayerIndex(uint16_t playerIndex);
-}
-__attribute__((packed));
-
-
-class SystemChatMesg: public NetMessage
-{
-public:
-    unsigned char  message_scope;
-private:
-    uint16_t source_player_index;
-public:
-    char message_text[150];
-
-    SystemChatMesg();
-    uint16_t getSourcePlayerIndex();
-    void setSourcePlayerIndex(uint16_t playerIndex);
-}
-__attribute__((packed));
-
-
+} __attribute__((packed));
 
 enum { _view_control_flag_visible_on  = 0x01,
        _view_control_flag_visible_off = 0x02,
@@ -121,9 +71,7 @@ public:
 
     SystemViewControl();
     void set( char *name, unsigned char flags );
-}
-__attribute__((packed));
-
+} __attribute__((packed));
 
 class SystemPingRequest : public NetMessage
 {
@@ -132,16 +80,14 @@ private:
 
 public:
     SystemPingRequest(uint16_t playerIndex);
-    uint16_t getClientPlayerIndex(void);
-}
-__attribute__((packed));
+    uint16_t getClientPlayerIndex() const;
+} __attribute__((packed));
 
 class SystemPingAcknowledge : public NetMessage
 {
 public:
     SystemPingAcknowledge();
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 
 enum { _connect_alert_mesg_connect,
@@ -158,9 +104,8 @@ public:
 
     SystemConnectAlert();
     void set(const PlayerID &player, unsigned char alert_type );
-    uint16_t getPlayerID();
-}
-__attribute__((packed));
+    uint16_t getPlayerID() const;
+} __attribute__((packed));
 
 #ifdef MSVC
 #pragma pack()

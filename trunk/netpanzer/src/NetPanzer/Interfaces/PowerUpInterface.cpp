@@ -240,7 +240,7 @@ void PowerUpInterface::offloadGraphics( SpriteSorter &sorter )
     }
 }
 
-void PowerUpInterface::netMessagePowerUpCreate( NetMessage *message )
+void PowerUpInterface::netMessagePowerUpCreate(const NetMessage* message)
 {
     PowerUp *power_up = 0;
     PowerUpCreateMesg *create_mesg;
@@ -276,7 +276,7 @@ void PowerUpInterface::netMessagePowerUpCreate( NetMessage *message )
     powerup_list.push_back(power_up);
 }
 
-void PowerUpInterface::netMessagePowerUpHit( NetMessage *message )
+void PowerUpInterface::netMessagePowerUpHit(const NetMessage* message)
 {
     PowerUp *power_up;
     PowerUpHitMesg *hit_mesg;
@@ -290,20 +290,22 @@ void PowerUpInterface::netMessagePowerUpHit( NetMessage *message )
     }
 }
 
-void PowerUpInterface::processNetMessages( NetMessage *message )
+void PowerUpInterface::processNetMessages(const NetMessage* message )
 {
-    switch( message->message_id ) {
-    case _net_message_id_powerup_create : {
-            netMessagePowerUpCreate( message );
-        }
-        break;
+    switch(message->message_id) {
+        case _net_message_id_powerup_create:
+            netMessagePowerUpCreate(message);
+            break;
 
-    case _net_message_id_powerup_hit : {
-            netMessagePowerUpHit( message );
-        }
-        break;
+        case _net_message_id_powerup_hit:
+            netMessagePowerUpHit(message);
+            break;
 
-    } // ** switch
+        default:
+            LOGGER.warning("Unknown PowerUpMessage type (id %d-%d)",
+                    message->message_class, message->message_id);
+            break;
+    }
 }
 
 void PowerUpInterface::syncPowerUps( PlayerID player_id )

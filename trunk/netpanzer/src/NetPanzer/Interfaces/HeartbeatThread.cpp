@@ -142,10 +142,13 @@ bool
 HeartbeatThread::sendPacket(const std::string& str)
 {
     int failures = 0;
+
+    std::vector<network::Address> addresses = serveraddrs;
     
-    for(size_t i = 0; i < serveraddrs.size(); ++i) {
+    for(std::vector<network::Address>::iterator i = addresses.begin();
+            i != addresses.end(); ++i) {
         try {
-            const network::Address& address = serveraddrs[i];
+            const network::Address& address = *i;
         
             // we use blocking mode here and hope that no masterserver quietly
             // leaves our connection open without sending data

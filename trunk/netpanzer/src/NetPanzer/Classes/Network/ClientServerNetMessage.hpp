@@ -40,49 +40,23 @@ enum { _net_message_id_transport_client_accept,
 
 class TransportClientAccept : public NetMessage
 {
-private:
-    uint32_t client_transport_id;
-    
 public:
     TransportClientAccept()
     {
         message_class = _net_message_class_client_server;
         message_id = _net_message_id_transport_client_accept;
     }
-
-    uint32_t getClientTransportID() const
-    {
-        return ltoh32(client_transport_id);
-    }
-    void setClientTransportID(uint32_t transport_id)
-    {
-        client_transport_id = htol32(transport_id);
-    }
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class ClientMesgConnectAck : public NetMessage
 {
-private:
-    uint32_t client_transport_id;
-    
 public:
     ClientMesgConnectAck()
     {
         message_class = _net_message_class_client_server;
         message_id = _net_message_id_client_connect_ack;
     }
-    
-    uint32_t getClientTransportID() const
-    {
-        return ltoh32(client_transport_id);
-    }
-    void setClientTransportID(uint32_t transport_id)
-    {
-        client_transport_id = htol32(transport_id);
-    }
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class ClientMesgKeepAlive : public NetMessage
 {
@@ -109,45 +83,21 @@ public :
 
 class ServerMesgKeepAlive: public NetMessage
 {
-private:
-    uint16_t client_id;
-
 public:
     ServerMesgKeepAlive()
     {
         message_class = _net_message_class_client_server;
         message_id = _net_message_id_server_keep_alive;
     }
-    
-    uint16_t getClientID() const
-    {
-        return ltoh16(client_id);
-    }
-    void setClientID(uint16_t clientID)
-    {
-        client_id = htol16(clientID);
-    }
 } __attribute__((packed));
 
 class ServerMesgPingRequest: public NetMessage
 {
-private:
-    uint16_t client_id;
-
 public:
     ServerMesgPingRequest()
     {
         message_class = _net_message_class_client_server;
         message_id = _net_message_id_server_ping_request;
-    }
-    
-    uint16_t getClientID() const
-    {
-        return ltoh16(client_id);
-    }
-    void setClientID(uint16_t clientID)
-    {
-        client_id = htol16(clientID);
     }
 } __attribute__((packed));
 

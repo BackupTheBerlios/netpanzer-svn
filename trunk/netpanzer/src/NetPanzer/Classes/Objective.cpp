@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerInterface.hpp"
 #include "ConsoleInterface.hpp"
 #include "UnitProfileInterface.hpp"
+#include "Util/Log.hpp"
 
 Objective::Objective( short ID, iXY location, BoundBox area )
 {
@@ -32,7 +33,7 @@ Objective::Objective( short ID, iXY location, BoundBox area )
     objective_state.occupation_status = _occupation_status_unoccupied;
 }
 
-void Objective::objectiveMesgUpdateOccupation( ObjectiveMessage *message )
+void Objective::objectiveMesgUpdateOccupation(const ObjectiveMessage* message)
 {
     const UpdateOccupationsStatus *occupation_update
         = (const UpdateOccupationsStatus *) message;
@@ -62,11 +63,9 @@ void Objective::objectiveMesgUpdateOccupation( ObjectiveMessage *message )
     }
 }
 
-void Objective::objectiveMesgSync( ObjectiveMessage *message )
+void Objective::objectiveMesgSync(const ObjectiveMessage* message)
 {
-    SyncObjective *sync_mesg;
-
-    sync_mesg = (SyncObjective *) message;
+    const SyncObjective *sync_mesg = (const SyncObjective*) message;
 
     objective_state.objective_status = sync_mesg->objective_status;
     objective_state.occupation_status = sync_mesg->occupation_status;
@@ -84,18 +83,24 @@ void Objective::getSyncData( SyncObjective &objective_sync_mesg )
 }
 
 
-void Objective::processMessage( ObjectiveMessage *message )
+void Objective::processMessage(const ObjectiveMessage* message)
 {
-    switch( message->message_type ) {
-    case _objective_mesg_update_occupation :
-        objectiveMesgUpdateOccupation( message );
-        break;
+    switch(message->message_type) {
+        case _objective_mesg_update_occupation:
+            objectiveMesgUpdateOccupation(message);
+            break;
 
-    case _objective_mesg_sync_objective :
-        objectiveMesgSync( message );
-        break;
+        case _objective_mesg_sync_objective:
+            objectiveMesgSync(message);
+            break;
 
+        case _objective_mesg_change_unit_generation:
+        case _objective_mesg_disown_player_objective:
+        case _objective_mesg_change_output_location:
+            break;
 
+        default:
+            LOGGER.warning("Unknown ObjectiveMessage received (type %d)",
+                    message->message_type);
     }
-
 }

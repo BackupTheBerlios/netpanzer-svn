@@ -370,7 +370,7 @@ void GameControlRulesDaemon::checkGameRules()
 
 }
 
-void GameControlRulesDaemon::netMessageCycleMap( NetMessage *message )
+void GameControlRulesDaemon::netMessageCycleMap(const NetMessage* message)
 {
     GameControlCycleMap *cycle_map_mesg;
 
@@ -379,22 +379,27 @@ void GameControlRulesDaemon::netMessageCycleMap( NetMessage *message )
     map_cycle_fsm_client_state = _map_cycle_client_start_map_load;
 }
 
-void GameControlRulesDaemon::netMessageCycleRespawnAck(NetMessage* )
+void GameControlRulesDaemon::netMessageCycleRespawnAck(const NetMessage* )
 {
     map_cycle_fsm_client_respawn_ack_flag = true;
 }
 
-void GameControlRulesDaemon::processNetMessage( NetMessage *message )
+void GameControlRulesDaemon::processNetMessage(const NetMessage* message)
 {
-    switch( message->message_id ) {
-    case _net_message_id_game_control_cycle_map :
-        netMessageCycleMap( message );
-        break;
+    switch(message->message_id) {
+        case _net_message_id_game_control_cycle_map :
+            netMessageCycleMap(message);
+            break;
 
-    case _net_message_id_game_control_cycle_respawn_ack :
-        netMessageCycleRespawnAck( message );
-        break;
+        case _net_message_id_game_control_cycle_respawn_ack :
+            netMessageCycleRespawnAck(message);
+            break;
 
+        default:
+            LOGGER.warning(
+                    "Received GameControlRulesMessage with unknown id (%d-%d)",
+                    message->message_class, message->message_id);
+            break;
     }
 }
 
@@ -409,7 +414,7 @@ void GameControlRulesDaemon::updateGameControlFlow()
     checkGameRules();
 }
 
-void GameControlRulesDaemon::mapLoadFailureResponse( int result_code, const char *map_name )
+void GameControlRulesDaemon::mapLoadFailureResponse(int result_code, const char *map_name)
 {
     char str_buf[128];
 

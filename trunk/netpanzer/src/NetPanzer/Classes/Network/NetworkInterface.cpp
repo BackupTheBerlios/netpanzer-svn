@@ -29,10 +29,8 @@ void EnqueueIncomingPacket(void *message, unsigned long message_size,
     TEMP_PACKET.fromID = fromID;
     if( message_size > _MAX_NET_PACKET_SIZE ) {
         LOG( ("ERROR: NetPacket Overflow") );
-        message_size = _MAX_NET_PACKET_SIZE;
+        return;
     }
-
-    TEMP_PACKET.packet_size = (unsigned short) message_size;
 
     memcpy(TEMP_PACKET.data, message, message_size);
     NetworkInterface::receive_queue.enqueue( TEMP_PACKET );

@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "PlayerState.hpp"
 #include "ArrayUtil/QueueTemplate.hpp"
-#include "NetMessage.hpp"
+#include "NetPacket.hpp"
 #include "Util/Timer.hpp"
 #include "UnitSync.hpp"
 
@@ -52,48 +52,47 @@ protected:
 
     static bool inConnectQueue( PlayerID &new_player_id );
 
-    static void connectFsm( NetMessage *message );
-    static void connectProcess( NetMessage *message );
-    static bool disconnectClient( PlayerID player_id );
+    static void connectFsm(const NetMessage* message);
+    static void connectProcess(const NetMessage* message);
+    static bool disconnectClient(PlayerID player_id);
 
-    static void updateQueuedClients( void );
+    static void updateQueuedClients();
 
-    static void netMessageClientDisconnect( NetMessage *message );
-    static void netMessageClientJoinRequest( NetMessage *message );
+    static void netMessageClientDisconnect(const NetMessage* message);
+    static void netPacketClientJoinRequest(const NetPacket* packet);
 
-    static void sendConnectionAlert( PlayerID &player_id, int alert_enum );
+    static void sendConnectionAlert(PlayerID &player_id, int alert_enum);
 
-    static void resetConnectFsm( void );
+    static void resetConnectFsm();
 
     // ** FSM States
-    static bool connectStateIdle( void );
-    static bool connectStateWaitForConnectRequest( NetMessage *message );
-    static bool connectStateAttemptPlayerAlloc( void );
-    static bool connectStateWaitForClientSettings( NetMessage *message );
-    static bool connectStateWaitForClientGameSetupAck( NetMessage *message );
-    static bool connectStatePlayerStateSync( void );
-    static bool connectStateUnitSync( void );
+    static bool connectStateIdle();
+    static bool connectStateWaitForConnectRequest(const NetMessage* message);
+    static bool connectStateAttemptPlayerAlloc();
+    static bool connectStateWaitForClientSettings(const NetMessage* message);
+    static bool connectStateWaitForClientGameSetupAck(const NetMessage* message);
+    static bool connectStatePlayerStateSync();
+    static bool connectStateUnitSync();
 
 public:
-
     static void initialize( unsigned long max_players );
 
     static void startConnectDaemon( unsigned long max_players );
 
-    static void shutdownConnectDaemon( void );
+    static void shutdownConnectDaemon();
 
     static void startDisconnectionProcess( PlayerID player_id );
     static void startClientDropProcess( PlayerID player_id );
 
-    static void connectProcess( void );
+    static void connectProcess();
 
-    static void processNetMessage( NetMessage *message );
+    static void processNetPacket(const NetPacket* message);
 
-    static void lockConnectProcess( void );
-    static void unlockConnectProcess( void );
-    static bool getConnectLockStatus( void );
+    static void lockConnectProcess();
+    static void unlockConnectProcess();
+    static bool getConnectLockStatus();
 
-    static bool isConnecting( void );
+    static bool isConnecting();
 };
 
 #endif // ** _SERVERCONNECTDAEMON_HPP

@@ -101,7 +101,7 @@ public:
 
     static UnitBase* getUnit(UnitID unit_id);
 
-    static void sendMessage( UnitMessage *message );
+    static void sendMessage(const UnitMessage* message);
 
     static void updateUnitStatus();
 

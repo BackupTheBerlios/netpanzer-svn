@@ -36,23 +36,73 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ChatInterface.hpp"
 #include "GameControlRulesDaemon.hpp"
 #include "PowerUpInterface.hpp"
+#include "Util/Log.hpp"
 
 #include "NetworkState.hpp"
 
 NetMessage * ClientMessageRouter::temp_message;
 NetMessageDecoder ClientMessageRouter::message_decoder;
 
-void ClientMessageRouter::initialize( void )
+void ClientMessageRouter::initialize()
 {
     temp_message = (NetMessage *) malloc( sizeof( NetMessageStruct ) );
 }
 
-void ClientMessageRouter::cleanUp( void )
+void ClientMessageRouter::cleanUp()
 {
-    free( temp_message );
+    free(temp_message);
 }
 
-void ClientMessageRouter::routeMessages( void )
+void
+ClientMessageRouter::routeMessage(const NetMessage* message)
+{
+    switch (message->message_class) {
+        case _net_message_class_client_server:
+            // already handled in the NetworkClient class
+            break;
+        
+        case _net_message_class_unit:
+            UnitInterface::processNetMessage(message);
+            break;
+
+        case _net_message_class_player:
+            PlayerInterface::processNetMessage(message);
+            break;
+
+        case _net_message_class_system:
+            GameManager::processSystemMessage(message);
+            break;
+
+        case _net_message_class_chat:
+            ChatInterface::processChatMessages(message);
+            break;
+
+        case _net_message_class_connect:
+            ClientConnectDaemon::processNetMessage(message);
+            break;
+
+        case _net_message_class_objective:
+            ObjectiveInterface::processNetMessages(message);
+            break;
+
+        case _net_message_class_game_control:
+            GameControlRulesDaemon::processNetMessage(message);
+            break;
+
+        case _net_message_class_powerup:
+            PowerUpInterface::processNetMessages(message);
+            break;
+
+        default:
+            LOGGER.warning("Message has unknown message class %d.",
+                    message->message_class);
+            break;
+    }       
+}
+
+
+void
+ClientMessageRouter::routeMessages()
 {
     ClientConnectDaemon::connectProcess( );
 
@@ -60,87 +110,16 @@ void ClientMessageRouter::routeMessages( void )
         //GameManager::requestNetworkPing();
     }
 
-    while( CLIENT->getMessage( temp_message ) == true ) {
-        if ( temp_message->message_class == _net_message_class_multi ) {
+    while(CLIENT->getMessage(temp_message) == true) {
+        if (temp_message->message_class == _net_message_class_multi) {
             NetMessage *message;
             message_decoder.setDecodeMessage( (MultiMessage *) temp_message );
 
             while(message_decoder.decodeMessage(&message)) {
-                switch ( message->message_class ) {
-                case _net_message_class_unit : {
-                        UnitInterface::processNetMessage( message );
-                    }
-                    break;
-
-                case _net_message_class_player : {
-                        PlayerInterface::processNetMessage( message );
-                    }
-                    break;
-
-                case _net_message_class_system :
-                    GameManager::processSystemMessage( message );
-                    ChatInterface::processChatMessages( message );
-                    break;
-
-                case _net_message_class_connect :
-                    ClientConnectDaemon::processNetMessage( message );
-                    break;
-
-                case _net_message_class_objective :
-                    ObjectiveInterface::processNetMessages( message );
-                    break;
-
-                case _net_message_class_game_control :
-                    GameControlRulesDaemon::processNetMessage( message );
-                    break;
-
-                case _net_message_class_powerup :
-                    PowerUpInterface::processNetMessages( message );
-                    break;
-
-                } // ** switch
-
-            } // ** while
-
-        } // ** if
-
-
-        switch ( temp_message->message_class ) {
-        case _net_message_class_unit : {
-                UnitInterface::processNetMessage( temp_message );
+                routeMessage(message);
             }
-            break;
-
-        case _net_message_class_player : {
-                PlayerInterface::processNetMessage( temp_message );
-            }
-            break;
-
-        case _net_message_class_system :
-            GameManager::processSystemMessage( temp_message );
-            ChatInterface::processChatMessages( temp_message );
-            break;
-
-        case _net_message_class_connect :
-            ClientConnectDaemon::processNetMessage( temp_message );
-            break;
-
-        case _net_message_class_objective :
-            ObjectiveInterface::processNetMessages( temp_message );
-            break;
-
-        case _net_message_class_game_control :
-            GameControlRulesDaemon::processNetMessage( temp_message );
-            break;
-
-        case _net_message_class_powerup :
-            PowerUpInterface::processNetMessages( temp_message );
-            break;
-
-        } // ** switch
-
-    } // ** while
+        } else {
+            routeMessage(temp_message);
+        }
+    }
 }
-
-
-

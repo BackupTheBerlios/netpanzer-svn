@@ -43,36 +43,23 @@ class NetworkClient : public NetworkInterface
 {
 protected:
     NetPacket net_packet;
-
-    Timer   ping_timer;
-
-    bool keep_alive_state;
-    Timer   keep_alive_emit_timer;
-    Timer   keep_alive_timer;
-    void updateKeepAliveState( void );
-
     unsigned short connection_status;
     unsigned short connection_type;
 
-    uint32_t client_transport_id;
+    void netMessageClientKeepAlive(const NetMessage* message);
+    void netMessageClientSetKeepAliveState(const NetMessage* message);
+    void netMessageClientPingAck(const NetMessage* message);
+    void netMessageClientConnectAck(const NetMessage* message);
 
-    void netMessageClientKeepAlive( NetMessage *message );
-    void netMessageClientSetKeepAliveState( NetMessage *message );
-    void netMessageClientPingAck( NetMessage *message );
-    void netMessageClientConnectAck( NetMessage *message );
-
-    void processNetMessage( NetMessage *message );
+    void processNetMessage(const NetMessage* message);
 public:
     NetworkClient ();
     virtual ~NetworkClient ();
 
-    void activateKeepAlive();
-    void deactivateKeepAlive();
-
     virtual bool joinServer(const std::string& server_name) = 0;
     virtual void partServer() = 0;
 
-    virtual void sendMessage(NetMessage *message, size_t size) = 0;
+    virtual void sendMessage(NetMessage* message, size_t size) = 0;
     virtual bool getMessage(NetMessage *message) = 0;
 
     virtual void checkIncoming() = 0;

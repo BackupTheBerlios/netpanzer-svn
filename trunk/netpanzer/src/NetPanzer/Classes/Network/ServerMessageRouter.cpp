@@ -31,100 +31,101 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SystemNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
 #include "PlayerNetMessage.hpp"
+#include "Util/Log.hpp"
 
 
-NetMessage * ServerMessageRouter::temp_message;
+NetPacket ServerMessageRouter::temp_packet;
 NetMessageDecoder ServerMessageRouter::message_decoder;
 
-void ServerMessageRouter::initialize( void )
+void ServerMessageRouter::initialize()
 {
-    temp_message = (NetMessage *) malloc( sizeof( NetMessageStruct ) );
 }
 
-void ServerMessageRouter::cleanUp( void )
+void ServerMessageRouter::cleanUp()
 {
-    free( temp_message );
 }
 
-void ServerMessageRouter::classTerminalMessages( NetMessage *message )
+void ServerMessageRouter::classTerminalMessages(const NetMessage* message)
 {
-    switch( message->message_id ) {
-    case _net_message_id_term_unit_cmd : {
-            TerminalUnitCmdRequest *terminal_command;
-            terminal_command = (TerminalUnitCmdRequest *) message;
-
+    switch(message->message_id) {
+        case _net_message_id_term_unit_cmd: {
+            const TerminalUnitCmdRequest *terminal_command
+                = (const TerminalUnitCmdRequest*) message;
             UnitInterface::sendMessage( &(terminal_command->comm_request) );
+            break;
         }
-        break;
 
-    case _net_message_id_term_unit_gen : {
-            TerminalOutpostUnitGenRequest *terminal_command;
-            terminal_command = (TerminalOutpostUnitGenRequest *) message;
-
+        case _net_message_id_term_unit_gen: {
+            const TerminalOutpostUnitGenRequest* terminal_command
+                = (const TerminalOutpostUnitGenRequest*) message;
             ObjectiveInterface::sendMessage( &(terminal_command->unit_gen_request) );
+            break;
         }
-        break;
 
-    case _net_message_id_term_output_loc: {
-            TerminalOutpostOutputLocRequest * terminal_command;
-            terminal_command = (TerminalOutpostOutputLocRequest *) message;
+        case _net_message_id_term_output_loc: {
+            const TerminalOutpostOutputLocRequest* terminal_command
+                = (const TerminalOutpostOutputLocRequest*) message;
             ObjectiveInterface::sendMessage( &(terminal_command->output_loc_request));
+            break;
         }
-        break;
-
-    } // ** switch
-
+        default:
+            LOGGER.warning("unnown Terminal Message (id %d)",
+                    message->message_id);
+    }
 }
 
+void ServerMessageRouter::routePacket(const NetPacket* packet)
+{
+    const NetMessage* message = packet->getNetMessage();
+    switch (message->message_class) {
+        case _net_message_class_terminal:
+            classTerminalMessages(message);
+            break;
+
+        case _net_message_class_system:
+            GameManager::processSystemMessage(message);
+            break;
+            
+        case _net_message_class_chat:
+            ChatInterface::processChatMessages(message);
+            break;
+
+        case _net_message_class_connect:
+            ServerConnectDaemon::processNetPacket(packet);
+            break;
+
+        case _net_message_class_player:
+            PlayerInterface::processNetMessage(message);
+            break;
+
+        case _net_message_class_client_server:
+            break;
+
+        default:
+            LOGGER.warning("Packet contained unknown message class: %d",
+                    message->message_class);
+    }
+}
 
 void ServerMessageRouter::routeMessages()
 {
     ServerConnectDaemon::connectProcess();
 
-    while( SERVER->getMessage( temp_message ) == true ) {
-        if ( temp_message->message_class == _net_message_class_multi ) {
-            NetMessage *message;
-            message_decoder.setDecodeMessage( (MultiMessage *) temp_message );
+    while(SERVER->getPacket(&temp_packet) == true) {
+        const NetMessage* message = temp_packet.getNetMessage();
+        if (message->message_class == _net_message_class_multi) {
+            message_decoder.setDecodeMessage((const MultiMessage *) message);
 
-            while( message_decoder.decodeMessage( &message ) ) {
-                switch ( message->message_class ) {
-                case _net_message_class_terminal :
-                    classTerminalMessages( message );
-                    break;
-
-                case _net_message_class_system :
-                    GameManager::processSystemMessage( message );
-                    ChatInterface::processChatMessages( message );
-                    break;
-
-                case _net_message_class_connect :
-                    ServerConnectDaemon::processNetMessage( message );
-                    break;
-
-                case _net_message_class_player :
-                    PlayerInterface::processNetMessage( message );
-                    break;
-                }
+            NetPacket packet;
+            packet.toID = temp_packet.toID;
+            packet.fromID = temp_packet.fromID;
+            NetMessage* mmessage;
+            while(message_decoder.decodeMessage(&mmessage)) {
+                memcpy(packet.data, mmessage, mmessage->getSize());
+                routePacket(&packet);
             }
-        }
-
-        switch ( temp_message->message_class ) {
-        case _net_message_class_terminal :
-            classTerminalMessages( temp_message );
-            break;
-
-        case _net_message_class_system :
-            GameManager::processSystemMessage( temp_message );
-            ChatInterface::processChatMessages( temp_message );
-            break;
-
-        case _net_message_class_connect :
-            ServerConnectDaemon::processNetMessage( temp_message );
-            break;
-
-        case _net_message_class_player :
-            PlayerInterface::processNetMessage( temp_message );
-            break;
+        } else {
+            routePacket(&temp_packet);
         }
     }
 }

@@ -123,7 +123,7 @@ void UnitInterface::reset()
     units.clear();
 }
 
-void UnitInterface::sendMessage(UnitMessage *message)
+void UnitInterface::sendMessage(const UnitMessage* message)
 {
     if (message->isFlagged(_umesg_flag_unique)) {
         UnitBase* unit = getUnit(message->unit_id);

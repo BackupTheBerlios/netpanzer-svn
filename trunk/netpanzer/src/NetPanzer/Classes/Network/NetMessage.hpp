@@ -30,7 +30,7 @@ enum { _net_message_class_multi = 0,
        _net_message_class_objective,
        _net_message_class_game_control,
        _net_message_class_powerup,
-       _net_message_class_winsock
+       _net_message_class_chat
      };
 
 #ifdef MSVC

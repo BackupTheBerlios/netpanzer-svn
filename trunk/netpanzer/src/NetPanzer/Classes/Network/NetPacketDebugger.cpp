@@ -33,7 +33,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ClientServerNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
 
-void NetPacketDebugger::logMessage(const char* domain, NetMessage* message)
+void NetPacketDebugger::logPacket(const char* domain, const NetPacket* packet)
+{
+    logMessage(domain, packet->getNetMessage());
+}
+
+void NetPacketDebugger::logMessage(const char* domain, const NetMessage* message)
 {
     static std::ofstream* log = 0;
     if(log == 0) {
@@ -117,7 +122,7 @@ void NetPacketDebugger::logMessage(const char* domain, NetMessage* message)
 }
 
 void NetPacketDebugger::logMultiMessage(std::ostream& log,
-        NetMessage* message)
+        const NetMessage* message)
 {
     MultiMessage* mmessage = (MultiMessage*) message;
     
@@ -139,7 +144,7 @@ void NetPacketDebugger::logMultiMessage(std::ostream& log,
 }
 
 void NetPacketDebugger::logClientServerMessage(std::ostream& log,
-        NetMessage* message)
+        const NetMessage* message)
 {
     log << "Client/Server ";
     switch(message->message_id) {
@@ -176,7 +181,7 @@ void NetPacketDebugger::logClientServerMessage(std::ostream& log,
 }
 
 void NetPacketDebugger::logConnectMessage(std::ostream& log,
-        NetMessage* message)
+        const NetMessage* message)
 {
     log << "Connect ";
     switch(message->message_id) {
@@ -229,7 +234,7 @@ void NetPacketDebugger::logConnectMessage(std::ostream& log,
 }
 
 void NetPacketDebugger::logTerminalMessage(std::ostream& log,
-        NetMessage* message)
+        const NetMessage* message)
 {
     log << "Terminal/";
     switch(message->message_id) {
@@ -299,7 +304,7 @@ void NetPacketDebugger::logAICommand(std::ostream& log,
     }
 }
 
-void NetPacketDebugger::logUnitMessage(std::ostream& log, NetMessage* message)
+void NetPacketDebugger::logUnitMessage(std::ostream& log, const NetMessage* message)
 {
     log << "Unit/";
     switch(message->message_id) {
@@ -338,7 +343,7 @@ void NetPacketDebugger::logUnitMessage(std::ostream& log, NetMessage* message)
 }
 
 void NetPacketDebugger::logUnitOpcodeMessage(std::ostream& log,
-        NetMessage* message)
+        const NetMessage* message)
 {
     UnitOpcodeMessage* opcodes = (UnitOpcodeMessage*) message;
     uint8_t* dataptr = opcodes->data;

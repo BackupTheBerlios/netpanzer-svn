@@ -27,54 +27,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class NetPacketQueue : public QueueTemplate< NetPacket >
 {
 public:
-
-    void add( NetPacket *object, unsigned long index )
+    void add(NetPacket *object, unsigned long index)
     {
-        unsigned long net_packet_size;
-
-        assert( index < size );
-        net_packet_size = (sizeof( NetPacket ) - _MAX_NET_PACKET_SIZE) + object->packet_size;
-        memcpy(&array[index], object, net_packet_size);
+        memcpy(&array[index], object, sizeof(NetPacket));
     }
 
-    void dequeue( NetPacket *object )
+    void dequeue(NetPacket *object)
     {
-        unsigned long net_packet_size;
-
         assert( front != rear );
         front = ( front + 1 ) % size;
-        net_packet_size = (sizeof( NetPacket ) - _MAX_NET_PACKET_SIZE) + array[ front ].packet_size;
-        memcpy(object, &array[ front ], net_packet_size);
+        memcpy(object, &array[ front ], sizeof(NetPacket));
     }
 
-    void enqueue( NetPacket &object )
+    void enqueue(NetPacket &object)
     {
         add(&object, (rear + 1) % size);
         rear = (rear + 1) % size;
     }
 };
-
-class NetPacketBlock
-{
-public:
-
-    NetPacket     packet;
-    bool       in_use;
-    bool       out_of_order;
-    unsigned char sequence;
-
-    NetPacketBlock( )
-    {
-        in_use = false;
-        out_of_order = false;
-    }
-
-    unsigned short getPacketSize()
-    {
-        return( packet.packet_size);
-    }
-};
-
-typedef ArrayTemplate< NetPacketBlock > NetPacketBlockArray;
 
 #endif // ** _NETPACKETQUEUES_HPP

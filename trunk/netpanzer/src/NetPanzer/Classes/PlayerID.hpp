@@ -28,7 +28,7 @@ public:
             : index_id(0xFFFF), networkid(0xFFFFFFFF)
     { }
 
-    PlayerID( unsigned short index, SocketClient::ID newid )
+    PlayerID(uint16_t index, SocketClient::ID newid)
             : index_id(index), networkid(newid)
     { }
 
@@ -42,14 +42,14 @@ public:
         networkid = other.networkid;
     }
 
-    void setIndex( unsigned short index )
+    void setIndex(uint16_t index)
     {
         index_id = index;
     }
 
-    unsigned short getIndex() const
+    uint16_t getIndex() const
     {
-        return( index_id );
+        return index_id;
     }
 
     void setNetworkID(SocketClient::ID newid)
@@ -59,7 +59,7 @@ public:
 
     SocketClient::ID getNetworkID() const
     {
-        return(networkid);
+        return networkid;
     }
 
     bool operator==(const PlayerID &rhs) const

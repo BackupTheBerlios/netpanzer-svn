@@ -39,16 +39,16 @@ NetworkServerUnix::~NetworkServerUnix()
 }
 
 std::string
-NetworkServerUnix::getIP(const PlayerID& id) const
+NetworkServerUnix::getIP(SocketClient::ID id) const
 {
-    return serversocket->getClientIP(id.getNetworkID());
+    return serversocket->getClientIP(id);
 }
 
 void
-NetworkServerUnix::shutdownClientTransport(const PlayerID &client_id)
+NetworkServerUnix::shutdownClientTransport(SocketClient::ID client_id)
 {
     assert(serversocket != 0);
-    serversocket->removeClient(client_id.getNetworkID());
+    serversocket->removeClient(client_id);
 }
 
 void
@@ -70,22 +70,21 @@ NetworkServerUnix::closeSession()
     serversocket = 0;
 }
 
-int
-NetworkServerUnix::sendMessage(const PlayerID& player_id,
-                                   NetMessage* message, size_t size)
+void
+NetworkServerUnix::sendMessage(SocketClient::ID network_id, NetMessage* message,
+        size_t size)
 {
-    if(serversocket==0) {
-        return _network_failed;
-    }
+    if(serversocket == 0)
+        return;
     message->setSize(size);
 
     try {
-        serversocket->sendMessage(player_id.getNetworkID(), message, size);
+        serversocket->sendMessage(network_id, message, size);
     } catch(std::exception& e) {
         LOG ( ("Network send error when sending to client %d: %s",
-               player_id.getNetworkID(), e.what()) );
-        dropClient(player_id);
-        return _network_failed;
+               network_id, e.what()) );
+        dropClient(network_id);
+        return;
     }
 
     NetworkState::incPacketsSent(size);
@@ -93,64 +92,46 @@ NetworkServerUnix::sendMessage(const PlayerID& player_id,
 #ifdef NETWORKDEBUG
     NetPacketDebugger::logMessage("S", message);
 #endif
-
-    return _network_ok;
 }
 
-int
+void
 NetworkServerUnix::sendMessage(NetMessage *message, size_t size)
 {
-    ServerClientListData *iterator = 0;
-    ServerClientListData *client_data_ptr = 0;
-
-    client_list.resetIterator( &iterator );
-
-    client_data_ptr = client_list.incIteratorPtr( &iterator );
-
-    while( client_data_ptr != 0 ) {
+    for(ClientList::iterator i = client_list.begin(); i != client_list.end();
+            ++i) {
         try {
-            sendMessage(client_data_ptr->client_id, message, size);
+            sendMessage((*i)->client_id.getNetworkID(), message, size);
         } catch(std::exception& e) {
             LOG( ("Error while sending network packet.") );
-            return _network_failed;
+            return;
         }
-
-        client_data_ptr = client_list.incIteratorPtr(&iterator);
     }
-
-    return _network_ok;
 }
 
-int
-NetworkServerUnix::getMessage(NetMessage *message)
+bool
+NetworkServerUnix::getPacket(NetPacket* packet)
 {
-    updateKeepAliveState();
-
     if (loop_back_recv_queue.isReady() ) {
-        loop_back_recv_queue.dequeue( &net_packet );
-        memcpy(message, net_packet.data, net_packet.packet_size);
+        loop_back_recv_queue.dequeue(packet);
 
 #ifdef NETWORKDEBUG
-        NetPacketDebugger::logMessage("R", message);
+        NetPacketDebugger::logPacket("R", packet);
 #endif
         return true;
-    } else {
-        if ( receive_queue.isReady() ) {
-            receive_queue.dequeue( &net_packet );
+    } else if (receive_queue.isReady()) {
+        receive_queue.dequeue(packet);
+        NetworkState::incPacketsReceived(packet->getSize());
 
-            memcpy(message, net_packet.data, net_packet.packet_size);
-            NetworkState::incPacketsReceived( net_packet.packet_size );
-
-            if ( message->message_class == _net_message_class_client_server ) {
-                processNetMessage( message );
-            }
+        if (packet->getNetMessage()->message_class 
+                == _net_message_class_client_server) {
+            processNetPacket(packet);
+        }
 
 #ifdef NETWORKDEBUG
-            NetPacketDebugger::logMessage("R", message);
+        NetPacketDebugger::logPacket("R", packet);
 #endif
-            return true;
-        }
-    } // ** else
+        return true;
+    }
 
     return false;
 }

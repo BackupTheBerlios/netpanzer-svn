@@ -54,9 +54,9 @@ public:
             PlayerID &player,
             Objective **objective_ptr );
 
-    static void sendMessage( ObjectiveMessage *message );
+    static void sendMessage(const ObjectiveMessage* message);
 
-    static void processNetMessages( NetMessage *message );
+    static void processNetMessages(const NetMessage* message);
 
     static void updateObjectiveStatus();
 

@@ -144,7 +144,7 @@ void DedicatedGameManager::inputLoop()
                         << std::setw(4) << playerstate->getLosses() << " "
                         << std::setw(5) << playerstate->getTotal() << " "
                         << std::setw(21) 
-                        << server->getIP(playerstate->getPlayerID())
+                        << server->getIP(playerstate->getNetworkID())
                         << "\n";
                 }
                 //*Console::server << std::flush;
@@ -170,7 +170,7 @@ void DedicatedGameManager::inputLoop()
                     break;
                 }
                 PlayerState* playerstate = PlayerInterface::getPlayerState(id);
-                SERVER->shutdownClientTransport(playerstate->getPlayerID());
+                SERVER->shutdownClientTransport(playerstate->getNetworkID());
                 PlayerInterface::disconnectPlayerCleanup(
                         playerstate->getPlayerID());
                 break;

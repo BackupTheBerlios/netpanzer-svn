@@ -107,18 +107,18 @@ BaseGameManager *initialise(int argc, char** argv)
             argc, argv);
 
     option<std::string, true, false> connect_option('c', "connect",
-            "directly connect to the specified netpanzer server", "");
+            "Connect to the specified netpanzer server", "");
     commandline.add(&connect_option);
     bool_option dedicated_option('d', "dedicated",
-            "run as dedicated server", false);
+            "Run as dedicated server", false);
     commandline.add(&dedicated_option);
     option<std::string, true, false> bot_option('b', "bot",
-            "connect as bot to specific server", "");
+            "Connect as bot to specific server", "");
     commandline.add(&bot_option);
-    option<int> port_option('p', "port", "run server on specific port", 0);
+    option<int> port_option('p', "port", "Run server on specific port", 0);
     commandline.add(&port_option);
     bool_option debug_option('g', "debug",
-            "enable debug output", false);
+            "Enable debug output", false);
     commandline.add(&debug_option);
     option<std::string, true, false> master_server_option('\0', "master_server",
         "Use 'none' if you dont want to use the master server", "");

@@ -376,11 +376,10 @@ void GameManager::spawnPlayer( PlayerState *player_state )
 
 // ******************************************************************
 
-void GameManager::netMessageSetView( NetMessage *message )
+void GameManager::netMessageSetView(const NetMessage* message)
 {
-    SystemSetPlayerView *set_view;
-
-    set_view = (SystemSetPlayerView *) message;
+    const SystemSetPlayerView* set_view
+        = (const SystemSetPlayerView*) message;
 
     WorldViewInterface::setCameraPosition(
             iXY(set_view->getCameraLocX(), set_view->getCameraLocY()) );
@@ -388,11 +387,10 @@ void GameManager::netMessageSetView( NetMessage *message )
 
 // ******************************************************************
 
-void GameManager::netMessageViewControl( NetMessage *message )
+void GameManager::netMessageViewControl(const NetMessage* message)
 {
-    SystemViewControl *view_control;
-
-    view_control =  (SystemViewControl *) message;
+    const SystemViewControl *view_control
+        = (const SystemViewControl*) message;
 
     if ( view_control->action_flags & _view_control_flag_close_all ) {
         Desktop::setVisibilityAllWindows(false);
@@ -409,12 +407,11 @@ void GameManager::netMessageViewControl( NetMessage *message )
 }
 
 // ******************************************************************
-void GameManager::netMessageConnectAlert( NetMessage *message )
+void GameManager::netMessageConnectAlert(const NetMessage* message)
 {
-    SystemConnectAlert *connect_alert = 0;
+    const SystemConnectAlert *connect_alert 
+        = (const SystemConnectAlert*) message;
     PlayerState *player_state = 0;
-
-    connect_alert = (SystemConnectAlert *) message;
 
     player_state = PlayerInterface::getPlayerState( connect_alert->getPlayerID() );
 
@@ -442,18 +439,17 @@ void GameManager::netMessageConnectAlert( NetMessage *message )
 
 // ******************************************************************
 
-void GameManager::netMessageResetGameLogic(NetMessage* )
+void GameManager::netMessageResetGameLogic(const NetMessage* )
 {
     resetGameLogic();
 }
 
 // ******************************************************************
 
-void GameManager::getServerGameSetup( NetMessage *message )
+ConnectMesgServerGameSettings* GameManager::getServerGameSetup()
 {
-    ConnectMesgServerGameSettings *game_setup;
-
-    game_setup = (ConnectMesgServerGameSettings *) message;
+    ConnectMesgServerGameSettings* game_setup 
+        = new ConnectMesgServerGameSettings();
 
     game_setup->setMaxPlayers(gameconfig->maxplayers);
     game_setup->setMaxUnits(gameconfig->maxunits);
@@ -465,16 +461,17 @@ void GameManager::getServerGameSetup( NetMessage *message )
     game_setup->setFragLimit(gameconfig->fraglimit);
     game_setup->setTimeLimit(gameconfig->timelimit);
     game_setup->setElapsedTime(getGameTime());
+
+    return game_setup;
 }
 
 // ******************************************************************
 
-void GameManager::netMessagePingRequest( NetMessage *message )
+void GameManager::netMessagePingRequest(const NetMessage* message)
 {
     PlayerID player_id;
-    SystemPingRequest *ping_request;
-
-    ping_request = (SystemPingRequest *) message;
+    const SystemPingRequest *ping_request
+        = (const SystemPingRequest*) message;
 
     player_id = PlayerInterface::getPlayerID( ping_request->getClientPlayerIndex() );
 
@@ -489,18 +486,17 @@ void GameManager::netMessagePingRequest( NetMessage *message )
 
 // ******************************************************************
 
-void GameManager::netMessagePingAcknowledge(NetMessage* )
+void GameManager::netMessagePingAcknowledge(const NetMessage*)
 {
-    NetworkState::ping_time = (now() - NetworkState::ping_time_stamp) * 1000;
+    //NetworkState::ping_time = (now() - NetworkState::ping_time_stamp) * 1000;
 }
 
 // ******************************************************************
 
-bool GameManager::startClientGameSetup( NetMessage *message, int *result_code )
+bool GameManager::startClientGameSetup(const NetMessage* message, int *result_code)
 {
-    ConnectMesgServerGameSettings *game_setup;
-
-    game_setup = (ConnectMesgServerGameSettings *) message;
+    const ConnectMesgServerGameSettings* game_setup
+        = (const ConnectMesgServerGameSettings*) message;
 
     gameconfig->maxplayers = game_setup->getMaxPlayers();
     gameconfig->maxunits = game_setup->getMaxUnits();
@@ -540,35 +536,37 @@ bool GameManager::clientGameSetup( int *percent_complete )
 }
 
 // ******************************************************************
-void GameManager::processSystemMessage( NetMessage *message )
+void GameManager::processSystemMessage(const NetMessage* message)
 {
-    switch( message->message_id ) {
-    case _net_message_id_system_set_view :
-        netMessageSetView( message );
-        break;
+    switch(message->message_id) {
+        case _net_message_id_system_set_view:
+            netMessageSetView( message );
+            break;
 
-    case _net_message_id_system_view_control :
-        netMessageViewControl( message );
-        break;
+        case _net_message_id_system_view_control:
+            netMessageViewControl( message );
+            break;
 
-    case _net_message_id_system_reset_game_logic :
-        netMessageResetGameLogic( message );
-        break;
+        case _net_message_id_system_reset_game_logic:
+            netMessageResetGameLogic( message );
+            break;
 
-    case _net_message_id_system_ping_request :
-        netMessagePingRequest( message );
-        break;
+        case _net_message_id_system_ping_request:
+            netMessagePingRequest( message );
+            break;
 
-    case _net_message_id_system_ping_ack :
-        netMessagePingAcknowledge( message );
-        break;
+        case _net_message_id_system_ping_ack:
+            netMessagePingAcknowledge( message );
+            break;
 
-    case _net_message_id_system_connect_alert :
-        netMessageConnectAlert( message );
-        break;
+        case _net_message_id_system_connect_alert:
+            netMessageConnectAlert( message );
+            break;
 
-
-    } // ** switch
+        default:
+            LOGGER.warning("Found unknown SystemNetworkPacket (id %d)",
+                    message->message_id);
+    }
 }
 
 // ******************************************************************

@@ -123,6 +123,10 @@ public:
     void setID( unsigned short index );
     void setID( SocketClient::ID networkid );
     PlayerID getPlayerID() const;
+    SocketClient::ID getNetworkID() const
+    {
+        return ID.getNetworkID();
+    }
     void setStatus( unsigned char status );
     unsigned char getStatus() const;
     void setFlag(unsigned char flag);

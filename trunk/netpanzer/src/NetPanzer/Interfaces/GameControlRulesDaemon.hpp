@@ -47,8 +47,8 @@ protected:
 
     static void mapLoadFailureResponse(int result_code, const char *map_name);
 
-    static void netMessageCycleMap(NetMessage *message);
-    static void netMessageCycleRespawnAck(NetMessage *message);
+    static void netMessageCycleMap(const NetMessage* message);
+    static void netMessageCycleRespawnAck(const NetMessage* message);
 
 public:
     static void setStateServerInProgress();
@@ -56,7 +56,7 @@ public:
 
     static void forceMapChange(std::string map);
 
-    static void processNetMessage(NetMessage *message);
+    static void processNetMessage(const NetMessage* message);
     static void updateGameControlFlow();
 };
 

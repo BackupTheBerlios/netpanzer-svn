@@ -223,22 +223,22 @@ protected:
     bool	     pending_AI_comm;
     void checkPendingAICommStatus();
 
-    void setCommandMoveToLoc( UMesgAICommand *message  );
-    void setCommandAttackUnit( UMesgAICommand *message );
-    void setCommandManualMove( UMesgAICommand *message );
-    void setCommandManualFire( UMesgAICommand *message );
+    void setCommandMoveToLoc(const UMesgAICommand* message);
+    void setCommandAttackUnit(const UMesgAICommand* message);
+    void setCommandManualMove(const UMesgAICommand* message);
+    void setCommandManualFire(const UMesgAICommand* message);
 
-    void messageAICommand( UnitMessage *message );
+    void messageAICommand(const UnitMessage* message);
     void messageWeaponHit(const UnitMessage* message);
-    void messageSelectBoxUpdate( UnitMessage *message );
-    void messageSelfDestruct( UnitMessage *message );
+    void messageSelectBoxUpdate(const UnitMessage* message);
+    void messageSelfDestruct(const UnitMessage* message);
 
 public:
     Vehicle(PlayerState* player, UnitID id, iXY initial_loc);
 
     virtual void updateState();
 
-    virtual void processMessage( UnitMessage *message );
+    virtual void processMessage(const UnitMessage* message);
 
     virtual void evalCommandOpcode(const UnitOpcode* opcode);
 

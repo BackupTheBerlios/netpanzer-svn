@@ -1474,7 +1474,7 @@ void Vehicle::checkPendingAICommStatus()
 
 }
 
-void Vehicle::setCommandMoveToLoc( UMesgAICommand *message  )
+void Vehicle::setCommandMoveToLoc(const UMesgAICommand* message)
 {
     iXY start;
 
@@ -1506,7 +1506,7 @@ void Vehicle::setCommandMoveToLoc( UMesgAICommand *message  )
     setFsmTurretTrackPoint( target );
 }
 
-void Vehicle::setCommandAttackUnit( UMesgAICommand *message )
+void Vehicle::setCommandAttackUnit(const UMesgAICommand* message)
 {
     iXY start;
     UnitBase *target_unit_ptr;
@@ -1540,7 +1540,7 @@ void Vehicle::setCommandAttackUnit( UMesgAICommand *message )
     setFsmGunneryTarget( aiFsmAttackUnit_target_ID );
 }
 
-void Vehicle::setCommandManualMove( UMesgAICommand *message )
+void Vehicle::setCommandManualMove(const UMesgAICommand* message)
 {
     if ( message->command == _command_start_manual_move ) {
         aiFsmManualMove_move_orientation = message->manual_move_orientation;
@@ -1553,12 +1553,12 @@ void Vehicle::setCommandManualMove( UMesgAICommand *message )
         }
 }
 
-void Vehicle::setCommandManualFire( UMesgAICommand *message )
+void Vehicle::setCommandManualFire(const UMesgAICommand* message)
 {
     setFsmGunneryLocation(message->getTargetLoc());
 }
 
-void Vehicle::messageAICommand( UnitMessage *message )
+void Vehicle::messageAICommand(const UnitMessage* message )
 {
     UMesgAICommand *command_mesg;
 
@@ -1610,7 +1610,7 @@ void Vehicle::messageWeaponHit(const UnitMessage *message)
     }
 }
 
-void Vehicle::messageSelectBoxUpdate( UnitMessage *message )
+void Vehicle::messageSelectBoxUpdate(const UnitMessage* message)
 {
     UMesgUpdateSelectBoxInfo *select_box_update;
 
@@ -1636,7 +1636,7 @@ void Vehicle::messageSelectBoxUpdate( UnitMessage *message )
 
 }
 
-void Vehicle::messageSelfDestruct(UnitMessage* )
+void Vehicle::messageSelfDestruct(const UnitMessage* )
 {
     unit_state.lifecycle_state = _UNIT_LIFECYCLE_PENDING_DESTRUCT;
     external_ai_event = _external_event_pending_unit_destruct;
@@ -1648,27 +1648,31 @@ void Vehicle::messageSelfDestruct(UnitMessage* )
 }
 
 
-void Vehicle::processMessage( UnitMessage *message )
+void Vehicle::processMessage(const UnitMessage* message)
 {
-    if ( unit_state.lifecycle_state == _UNIT_LIFECYCLE_ACTIVE ) {
-        switch( message->message_id ) {
-        case _umesg_ai_command :
-            messageAICommand( message );
+    if (unit_state.lifecycle_state != _UNIT_LIFECYCLE_ACTIVE)
+        return;
+    
+    switch(message->message_id) {
+        case _umesg_ai_command:
+            messageAICommand(message);
             break;
 
-        case _umesg_weapon_hit :
-            messageWeaponHit( message );
+        case _umesg_weapon_hit:
+            messageWeaponHit(message);
             break;
 
-        case _umesg_update_select_box_info :
-            messageSelectBoxUpdate( message );
+        case _umesg_update_select_box_info:
+            messageSelectBoxUpdate(message);
             break;
 
         case _umesg_self_destruct:
-            messageSelfDestruct( message );
+            messageSelfDestruct(message);
             break;
 
-        } // ** switch
+        default:
+            LOGGER.warning("Unknown unit message (id %d)",
+                    message->message_id);
     }
 }
 

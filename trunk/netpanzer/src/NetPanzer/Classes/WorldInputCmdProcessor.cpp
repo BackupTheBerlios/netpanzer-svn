@@ -387,10 +387,11 @@ void WorldInputCmdProcessor::setKeyboardInputModeChatMesg()
 void WorldInputCmdProcessor::keyboardInputModeChatMesg()
 {
     char chat_string[256];
-    if ( getConsoleInputString( chat_string ) == true ) {
+    if (getConsoleInputString(chat_string)) {
+        if(strcmp(chat_string, "") != 0)
+            ChatInterface::sendCurrentMessage( chat_string );
         keyboard_input_mode = _keyboard_input_mode_command;
-        ConsoleInterface::setInputStringStatus( false );
-        ChatInterface::sendCurrentMessage( chat_string );
+        ConsoleInterface::setInputStringStatus(false);             
     }
 }
 

@@ -103,7 +103,7 @@ private:
 
 public:
     void set(unsigned short id, PlayerID &disowned_player);
-    uint16_t getDisownedPlayerID(void);
+    uint16_t getDisownedPlayerID() const;
 } __attribute__((packed));
 
 class SyncObjective : public ObjectiveMessage
@@ -119,7 +119,7 @@ public:
                   unsigned char objective_status,
                   unsigned char occupation_status,
                   PlayerID occupying_player);
-    uint16_t getOccupyingPlayerID(void);
+    uint16_t getOccupyingPlayerID() const;
 } __attribute__((packed));
 
 class ChangeOutputLocation : public ObjectiveMessage
@@ -130,8 +130,8 @@ private:
   
 public:
     void set(unsigned short id, iXY point);
-    int32_t getPointX(void);
-    int32_t getPointY(void);
+    int32_t getPointX() const;
+    int32_t getPointY() const;
 } __attribute__((packed));
 
 #ifdef MSVC
