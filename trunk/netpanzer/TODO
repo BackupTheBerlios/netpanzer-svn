@@ -1,8 +1,6 @@
 Next release:
 -finish serverlog with filestamp
 -playtesting+bugfixing
--when selecting units and moving the mouse above forbidden terrain and back a
- click with the left mouse deselects the units instead of moving them.
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map

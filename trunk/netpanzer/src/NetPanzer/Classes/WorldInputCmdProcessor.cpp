@@ -79,7 +79,6 @@ WorldInputCmdProcessor::WorldInputCmdProcessor()
     manual_control_state = false;
     manual_fire_state = false;
 
-    left_button_hold_action_complete = false;
     right_mouse_scroll = false;
 }
 
@@ -202,35 +201,35 @@ unsigned char WorldInputCmdProcessor::getCursorStatus(iXY &loc)
 void WorldInputCmdProcessor::
 setMouseCursor(unsigned char world_cursor_status)
 {
-    switch( world_cursor_status ) {
-    case _cursor_regular :
-        MouseInterface::setCursor("default.bmp");
-        break;
+    switch(world_cursor_status) {
+        case _cursor_regular :
+            MouseInterface::setCursor("default.bmp");
+            break;
 
-    case _cursor_move :
-        MouseInterface::setCursor("move.bmp");
-        break;
+        case _cursor_move :
+            MouseInterface::setCursor("move.bmp");
+            break;
 
-    case _cursor_blocked :
-        MouseInterface::setCursor("noentry.bmp");
-        break;
+        case _cursor_blocked :
+            MouseInterface::setCursor("noentry.bmp");
+            break;
 
-    case _cursor_player_unit :
-        MouseInterface::setCursor("select.bmp");
-        break;
+        case _cursor_player_unit :
+            MouseInterface::setCursor("select.bmp");
+            break;
 
-    case _cursor_enemy_unit :
-        MouseInterface::setCursor("target.bmp");
-        break;
+        case _cursor_enemy_unit :
+            MouseInterface::setCursor("target.bmp");
+            break;
 
-    case _cursor_make_allie :
-        MouseInterface::setCursor("allie.bmp");
-        break;
+        case _cursor_make_allie :
+            MouseInterface::setCursor("allie.bmp");
+            break;
 
-    case _cursor_break_allie :
-        MouseInterface::setCursor("breakallie.bmp");
-        break;
-    } // ** switch
+        case _cursor_break_allie :
+            MouseInterface::setCursor("breakallie.bmp");
+            break;
+    }
 }
 
 void WorldInputCmdProcessor::getManualControlStatus()
@@ -475,33 +474,10 @@ void WorldInputCmdProcessor::evaluateMouseEvents()
     WorldViewInterface::getViewWindow( &world_win );
 
     WorldViewInterface::clientXYtoWorldXY( world_win, mouse_pos, &world_pos );
-    setMouseCursor( getCursorStatus( world_pos ) );
+    setMouseCursor(getCursorStatus(world_pos));
 
-    //updateScrollStatus( mouse_pos );
-
-    if ( (MouseInterface::buttonHeld( _LEFT_BUTTON_MASK ) == true)
-	 && (manual_control_state == false) && (manual_fire_state == false)
-	 ) {
-        
-      /*        Objective *objective;
-        PlayerID player_id;
-	
-        player_id = PlayerInterface::getLocalPlayerID();
-        unsigned char status = ObjectiveInterface::quearyObjectiveLocationStatus( world_pos, player_id, &objective );
-        if(status != _player_occupied_objective_found){*/
-        if(outpost_goal_selection == -1){
-            if ( selection_box_active == false ) {
-                selection_box_active = true;
-            }
-        }
-    } else {
-        if ( selection_box_active == true ) {
-            selection_box_active = false;
-            box_release = world_pos;
-            left_button_hold_action_complete = selectBoundBoxUnits();
-        }else{
-          
-        }
+    if(selection_box_active) {
+        box_release = world_pos;
     }
 
     while( !MouseInterface::event_queue.empty() ) {
@@ -514,14 +490,14 @@ void WorldInputCmdProcessor::evaluateMouseEvents()
         if( event.button == MouseInterface::right_button )
             evalRightMButtonEvents(event);
     }
-
-    left_button_hold_action_complete = false;
 }
 
 void WorldInputCmdProcessor::evalLeftMButtonEvents(MouseEvent &event)
 {
     iXY world_pos;
     unsigned char click_status;
+
+    WorldViewInterface::clientXYtoWorldXY(world_win, event.pos, &world_pos);
 
     if ( (manual_control_state == true) ||
             KeyboardInterface::getKeyState( SDLK_LCTRL ) ||
@@ -530,81 +506,70 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents(MouseEvent &event)
 
         if (event.event == MouseEvent::EVENT_DOWN )
         {
-            WorldViewInterface::clientXYtoWorldXY( world_win, event.down_pos, &world_pos );
             sendManualFireCommand( world_pos );
         }
 
-    } else {
-        if ( event.event == MouseEvent::EVENT_DOWN ) {
-	    WorldViewInterface::clientXYtoWorldXY( world_win, event.down_pos, &world_pos );
-            Objective *objective;
-            PlayerID player_id;
+    } else if (event.event == MouseEvent::EVENT_DOWN) {
+        Objective *objective;
+        PlayerID player_id;
 	
-            player_id = PlayerInterface::getLocalPlayerID();
-            click_status = ObjectiveInterface::quearyObjectiveLocationStatus( world_pos, player_id, &objective );
+        player_id = PlayerInterface::getLocalPlayerID();
+        click_status = ObjectiveInterface::quearyObjectiveLocationStatus( world_pos, player_id, &objective );
 	
-            if ( (click_status == _player_occupied_objective_found) ) {
-                box_press = world_pos;
-                box_release = world_pos;
-                                
-                if ( outpost_goal_selection == -1){
-                    outpost_goal_selection = objective->objective_state.ID;
-                    output_pos_press = objective->objective_state.location;
-                }
-            
-            }else{
-                if ( selection_box_active == false) {
-                    WorldViewInterface::clientXYtoWorldXY( world_win, event.down_pos, &world_pos );
-                    box_press = world_pos;
-                    box_release = world_pos;
-                }else{
-              
-                }
-            }
-        } // ** _event_mbutton_down
-
-        if ( event.event == MouseEvent::EVENT_UP ) {
-            if (outpost_goal_selection != -1 ){
-                iXY temp;
-                MouseInterface::getMousePosition( &temp.x, &temp.y );
-                WorldViewInterface::clientXYtoWorldXY( world_win, temp, &world_pos );
-
-                Objective *objective;
-                PlayerID player_id = PlayerInterface::getLocalPlayerID();
-                int cs = ObjectiveInterface::quearyObjectiveLocationStatus( world_pos, player_id, &objective );
-
-                if ( (cs == _player_occupied_objective_found) 
-                    && outpost_goal_selection == objective->objective_state.ID
-                    ) {
-                    // we've let go of the mouse on the building so we're
-                    //  not changing the spawn point
-                    selected_objective_id = CURRENT_SELECTED_OUTPOST_ID = objective->objective_state.ID;
-                    activateVehicleSelectionView( selected_objective_id );
-                }
-                else {
-                    TerminalOutpostOutputLocRequest term_mesg;
-
-                    term_mesg.output_loc_request.set( outpost_goal_selection,
-                                                      world_pos);
-
-                    CLIENT->sendMessage(&term_mesg, sizeof(TerminalOutpostOutputLocRequest));
-
-                    if ( NetworkState::status == _network_state_client ) {
-                    
-                        ObjectiveInterface::sendMessage( &(term_mesg.output_loc_request) );
-                    }
-                }
-                outpost_goal_selection = -1;
+        if ( (click_status == _player_occupied_objective_found) ) {
+            selection_box_active = false;
+            outpost_goal_selection = objective->objective_state.ID;
+            output_pos_press = objective->objective_state.location; 
+        } else {
+            box_press = world_pos;
+            box_release = world_pos;
+            selection_box_active = true;
+        }
+    } else if(event.event == MouseEvent::EVENT_UP) {
+        if (selection_box_active) {
+            selection_box_active = false;
+            box_release = world_pos;
+            if(box_release != box_press) {
+                selectBoundBoxUnits();
+                return;
             }
         }
+        
+        if (outpost_goal_selection != -1 ){
+            iXY temp;
+            MouseInterface::getMousePosition( &temp.x, &temp.y );
+            
+            Objective *objective;
+            PlayerID player_id = PlayerInterface::getLocalPlayerID();
+            int cs = ObjectiveInterface::quearyObjectiveLocationStatus( world_pos, player_id, &objective );
+            
+            if ( (cs == _player_occupied_objective_found) 
+                    && outpost_goal_selection == objective->objective_state.ID
+               ) {
+                // we've let go of the mouse on the building so we're
+                //  not changing the spawn point
+                selected_objective_id = CURRENT_SELECTED_OUTPOST_ID = objective->objective_state.ID;
+                activateVehicleSelectionView( selected_objective_id );
+            }
+            else {
+                TerminalOutpostOutputLocRequest term_mesg;
+                
+                term_mesg.output_loc_request.set( outpost_goal_selection,
+                        world_pos);
+                
+                CLIENT->sendMessage(&term_mesg, sizeof(TerminalOutpostOutputLocRequest));
 
-        if ( (event.event == MouseEvent::EVENT_CLICK) &&
-                (left_button_hold_action_complete == false) ) {
-            WorldViewInterface::clientXYtoWorldXY(world_win, event.down_pos,
-                    &world_pos);
-            click_status = getCursorStatus(world_pos);
-
-	    switch(click_status) {
+                if ( NetworkState::status == _network_state_client ) {
+                    
+                    ObjectiveInterface::sendMessage( &(term_mesg.output_loc_request) );
+                }
+            }
+            outpost_goal_selection = -1;
+            return;
+        }
+        
+        click_status = getCursorStatus(world_pos);
+        switch(click_status) {
             case _cursor_player_unit:
                 if( (KeyboardInterface::getKeyState(SDLK_LSHIFT) == true) ||
                         (KeyboardInterface::getKeyState(SDLK_RSHIFT) == true)) {
@@ -639,7 +604,6 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents(MouseEvent &event)
             case _cursor_break_allie:
                 sendAllianceRequest(world_pos, false);
                 break;
-            }
         }
     }
 }
@@ -647,14 +611,12 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents(MouseEvent &event)
 void WorldInputCmdProcessor::evalRightMButtonEvents( MouseEvent &event )
 {
     iXY world_pos;
-    unsigned char click_status;
 
-    Objective *objective;
     PlayerID player_id;
 
     if (event.event == MouseEvent::EVENT_DOWN ) {
         right_mouse_scroll=true;
-        right_mouse_scroll_pos=event.down_pos;
+        right_mouse_scroll_pos=event.pos;
         right_mouse_scrolled_pos.x=right_mouse_scrolled_pos.y=0;
     }
     if (right_mouse_scroll && event.event == MouseEvent::EVENT_UP ) {
@@ -664,21 +626,6 @@ void WorldInputCmdProcessor::evalRightMButtonEvents( MouseEvent &event )
             working_list.unGroup();
         }
         return;
-    }
-
-//    if (event.event == MouseEvent::EVENT_CLICK ) {
-//    }  // ** _event_mbutton_click
-
-
-    if (event.event == MouseEvent::EVENT_DBCLICK ) {
-        WorldViewInterface::clientXYtoWorldXY( world_win, event.down_pos, &world_pos );
-        player_id = PlayerInterface::getLocalPlayerID();
-        click_status = ObjectiveInterface::quearyObjectiveLocationStatus( world_pos, player_id, &objective );
-
-        if ( (click_status == _player_occupied_objective_found) ) {
-            selected_objective_id = CURRENT_SELECTED_OUTPOST_ID = objective->objective_state.ID;
-            activateVehicleSelectionView( selected_objective_id );
-        }
     }
 }
 
@@ -905,46 +852,27 @@ void WorldInputCmdProcessor::inFocus()
     WorldViewInterface::clientXYtoWorldXY( world_win, mouse_pos, &world_pos );
 
     selection_box_active = false;
-    box_press = world_pos;
-    box_release = world_pos;
 }
 
-void WorldInputCmdProcessor::updateControls()
+void WorldInputCmdProcessor::draw()
 {
-    iXY client_pos;
-    iXY mouse_pos;
+    if (selection_box_active == true && box_press != box_release) {
+        WorldViewInterface::getViewWindow(&world_win);
+        iXY box1, box2;
+        WorldViewInterface::worldXYtoClientXY(world_win, box_press, &box1);
+        WorldViewInterface::worldXYtoClientXY(world_win, box_release, &box2);
 
-    if ( selection_box_active == true ) {
-        MouseInterface::getMousePosition( &mouse_pos.x, &mouse_pos.y );
-
-        WorldViewInterface::getViewWindow( &world_win );
-        WorldViewInterface::worldXYtoClientXY( world_win, box_press, &client_pos );
-
-        if ( client_pos.x < mouse_pos.x ) {
-            screen->drawHLine( client_pos.x, client_pos.y, mouse_pos.x, 252 );
-            screen->drawHLine( client_pos.x, mouse_pos.y, mouse_pos.x, 252 );
-        } else {
-            screen->drawHLine( mouse_pos.x, client_pos.y, client_pos.x, 252 );
-            screen->drawHLine( mouse_pos.x, mouse_pos.y, client_pos.x, 252 );
-        }
-
-        if ( client_pos.y < mouse_pos.y ) {
-            screen->drawVLine( client_pos.x, client_pos.y, mouse_pos.y, 252 );
-            screen->drawVLine( mouse_pos.x, client_pos.y, mouse_pos.y, 252 );
-        } else {
-            screen->drawVLine( client_pos.x, mouse_pos.y, client_pos.y, 252 );
-            screen->drawVLine( mouse_pos.x, mouse_pos.y, client_pos.y, 252 );
-        }
-
+        screen->drawRect(box1, box2, Color::white);
     }
 
-    if (outpost_goal_selection != -1){
+    if (outpost_goal_selection != -1) {
+        iXY mouse_pos;
         MouseInterface::getMousePosition( &mouse_pos.x, &mouse_pos.y );
 
         WorldViewInterface::getViewWindow( &world_win );
-        WorldViewInterface::worldXYtoClientXY( world_win, output_pos_press, &client_pos );
-
-        screen->drawLine(client_pos.x, client_pos.y, mouse_pos.x, mouse_pos.y,252 );
+        iXY pos;
+        WorldViewInterface::worldXYtoClientXY(world_win, output_pos_press,&pos);
+        screen->drawLine(pos, mouse_pos, Color::blue);
     }
 }
 
@@ -958,24 +886,20 @@ void WorldInputCmdProcessor::closeSelectionBox()
     WorldViewInterface::getViewWindow( &world_win );
     WorldViewInterface::clientXYtoWorldXY( world_win, mouse_pos, &world_pos );
 
-    if ( selection_box_active == true ) {
+    if (selection_box_active == true) {
         selection_box_active = false;
         box_release = world_pos;
         left_button_hold_action_complete = selectBoundBoxUnits();
-    } else {
-        selection_box_active = false;
-        box_press = world_pos;
-        box_release = world_pos;
     }
 }
 
 bool WorldInputCmdProcessor::isObjectiveSelected()
 {
     if (Desktop::getVisible("VehicleSelectionView") == true ) {
-        return( true );
+        return true;
     }
                                                                                 
-    return( false );
+    return false;
 }
                                                                                 
 char*  WorldInputCmdProcessor::getSelectedObjectiveName()

@@ -14,4 +14,3 @@
   entering it.
 - Clients aren't notified when the server closes - actually they are, but they
   aren't shutting down the game
-- you shouldn't get points for shooting your own units

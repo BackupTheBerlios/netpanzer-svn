@@ -34,24 +34,12 @@ float    MouseInterface::button_hold_threshold = (const float) .10;
 
 bool   MouseInterface::left_button_down = false;
 bool   MouseInterface::left_button_up = false;
-bool   MouseInterface::left_button_dbclick_active = false;
-iXY  MouseInterface::left_button_down_pos;
-iXY  MouseInterface::left_button_up_pos;
-TimeStamp MouseInterface::left_button_hold_time;
 
 bool   MouseInterface::right_button_down = false;
 bool   MouseInterface::right_button_up = false;
-bool   MouseInterface::right_button_dbclick_active = false;
-iXY  MouseInterface::right_button_down_pos;
-iXY  MouseInterface::right_button_up_pos;
-TimeStamp MouseInterface::right_button_hold_time;
 
 bool   MouseInterface::middle_button_down = false;
 bool   MouseInterface::middle_button_up = false;
-bool   MouseInterface::middle_button_dbclick_active = false;
-iXY  MouseInterface::middle_button_down_pos;
-iXY  MouseInterface::middle_button_up_pos;
-TimeStamp MouseInterface::middle_button_hold_time;
 
 unsigned char MouseInterface::button_mask;
 
@@ -90,29 +78,6 @@ void MouseInterface::shutdown()
     }
 }
 
-bool MouseInterface::buttonHeld(unsigned char mask)
-{
-    if ( mask & button_mask & left_button ) {
-        if( (now() - left_button_hold_time) > button_hold_threshold )
-            return true;
-    } else if ( mask & button_mask & right_button ) {
-        if( (now() - right_button_hold_time) > button_hold_threshold )
-            return true;
-    } else if ( mask & button_mask & middle_button ) {
-        if( (now() - middle_button_hold_time) > button_hold_threshold )
-            return true;
-    }
-
-    return false;
-}
-
-void MouseInterface::resetButtonHoldStatus( void )
-{
-    left_button_hold_time  = now();
-    right_button_hold_time = now();
-    middle_button_hold_time = now();
-}
-
 void MouseInterface::setLeftButtonDown()
 {
     MouseEvent event;
@@ -121,12 +86,10 @@ void MouseInterface::setLeftButtonDown()
     left_button_down = true;
     left_button_up = false;
     button_mask = button_mask | 0x01;
-    left_button_down_pos = mouse_pos;
-    left_button_hold_time = now();
 
     event.button = left_button;
     event.event = MouseEvent::EVENT_DOWN;
-    event.down_pos = left_button_down_pos;
+    event.pos = mouse_pos;
     event_queue.push_back(event);
 }
 
@@ -134,52 +97,27 @@ void MouseInterface::setLeftButtonUp()
 {
     MouseEvent event;
 
-    //assert( left_button_up == false );
     left_button_down = false;
     left_button_up = true;
     button_mask = button_mask & (~0x01);
-    left_button_up_pos = mouse_pos;
-
-    event.button = left_button;
-    event.up_pos = left_button_up_pos;
-
-    if ( left_button_dbclick_active == true ) {
-        event.event = MouseEvent::EVENT_DBCLICK;
-        left_button_dbclick_active = false;
-    } else
-        event.event  = MouseEvent::EVENT_CLICK;
-
-    event.down_pos = left_button_down_pos;
-    event_queue.push_back(event);
 
     event.event = MouseEvent::EVENT_UP;
+    event.button = left_button;
+    event.pos = mouse_pos;
     event_queue.push_back(event);
-}
-
-void MouseInterface::setLeftButtonDoubleDown()
-{
-    left_button_down = true;
-    left_button_dbclick_active = true;
-    left_button_up = false;
-    button_mask = button_mask | 0x01;
-    left_button_down_pos = mouse_pos;
-    left_button_hold_time = now();
 }
 
 void MouseInterface::setRightButtonDown()
 {
     MouseEvent event;
 
-    //assert( right_button_down == false );
     right_button_down = true;
     right_button_up = false;
     button_mask = button_mask | 0x04;
-    right_button_down_pos = mouse_pos;
-    right_button_hold_time = now();
 
     event.button = right_button;
     event.event = MouseEvent::EVENT_DOWN;
-    event.down_pos = right_button_down_pos;
+    event.pos = mouse_pos;
     event_queue.push_back( event );
 }
 
@@ -187,52 +125,27 @@ void MouseInterface::setRightButtonUp( void )
 {
     MouseEvent event;
 
-    //assert( right_button_up == false );
     right_button_down = false;
     right_button_up = true;
     button_mask = button_mask & (~0x04);
-    right_button_up_pos = mouse_pos;
 
     event.button = right_button;
-    event.up_pos = right_button_up_pos;
-
-    if ( right_button_dbclick_active == true ) {
-        event.event = MouseEvent::EVENT_DBCLICK;
-        right_button_dbclick_active = false;
-    } else
-        event.event  = MouseEvent::EVENT_CLICK;
-
-    event.down_pos = right_button_down_pos;
-    event_queue.push_back( event );
-
+    event.pos = mouse_pos;
     event.event = MouseEvent::EVENT_UP;
     event_queue.push_back( event );
-}
-
-void MouseInterface::setRightButtonDoubleDown()
-{
-    right_button_down = true;
-    right_button_dbclick_active = true;
-    right_button_up = false;
-    button_mask = button_mask | 0x04;
-    right_button_down_pos = mouse_pos;
-    right_button_hold_time = now();
 }
 
 void MouseInterface::setMiddleButtonDown()
 {
     MouseEvent event;
 
-    //assert( middle_button_down == false );
     middle_button_down = true;
     middle_button_up = false;
     button_mask = button_mask | 0x02;
-    middle_button_down_pos = mouse_pos;
-    middle_button_hold_time = now();
 
     event.button = middle_button;
     event.event = MouseEvent::EVENT_DOWN;
-    event.down_pos = middle_button_down_pos;
+    event.pos = mouse_pos;
     event_queue.push_back( event );
 }
 
@@ -240,36 +153,14 @@ void MouseInterface::setMiddleButtonUp()
 {
     MouseEvent event;
 
-    //assert( middle_button_up == false );
     middle_button_down = false;
     middle_button_up = true;
     button_mask = button_mask & (~0x02);
-    middle_button_up_pos = mouse_pos;
 
     event.button = middle_button;
-    event.up_pos = middle_button_up_pos;
-
-    if ( middle_button_dbclick_active == true ) {
-        event.event = MouseEvent::EVENT_DBCLICK;
-        middle_button_dbclick_active = false;
-    } else
-        event.event  = MouseEvent::EVENT_CLICK;
-
-    event.down_pos = middle_button_down_pos;
-    event_queue.push_back( event );
-
+    event.pos = mouse_pos;
     event.event = MouseEvent::EVENT_UP;
     event_queue.push_back( event );
-}
-
-void MouseInterface::setMiddleButtonDoubleDown()
-{
-    middle_button_down = true;
-    middle_button_dbclick_active = true;
-    middle_button_up = false;
-    button_mask = button_mask | 0x02;
-    middle_button_down_pos = mouse_pos;
-    middle_button_hold_time = now();
 }
 
 void MouseInterface::setCursor(const char* cursorname)

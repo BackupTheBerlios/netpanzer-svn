@@ -34,15 +34,12 @@ class MouseEvent
 {
 public:
     enum {
-        EVENT_CLICK = 0x01,
-        EVENT_DBCLICK = 0x02,
         EVENT_DOWN = 0x04,
         EVENT_UP = 0x08
     };
     unsigned char button;
     unsigned char event;
-    iXY down_pos;
-    iXY   up_pos;
+    iXY pos;
 };
 
 typedef std::deque<MouseEvent> MouseEventQueue;
@@ -64,24 +61,12 @@ protected:
 
     static bool  left_button_down;
     static bool  left_button_up;
-    static bool  left_button_dbclick_active;
-    static iXY left_button_down_pos;
-    static iXY left_button_up_pos;
-    static TimeStamp left_button_hold_time;
 
     static bool right_button_down;
     static bool right_button_up;
-    static bool right_button_dbclick_active;
-    static iXY right_button_down_pos;
-    static iXY right_button_up_pos;
-    static TimeStamp right_button_hold_time;
 
     static bool middle_button_down;
     static bool middle_button_up;
-    static bool middle_button_dbclick_active;
-    static iXY middle_button_down_pos;
-    static iXY middle_button_up_pos;
-    static TimeStamp middle_button_hold_time;
 
     static unsigned char button_mask;
 
@@ -112,20 +97,14 @@ public:
         return( button_mask );
     }
 
-    static bool buttonHeld( unsigned char mask);
-    static void resetButtonHoldStatus();
-
     static void setLeftButtonDown();
     static void setLeftButtonUp();
-    static void setLeftButtonDoubleDown();
 
     static void setRightButtonDown();
     static void setRightButtonUp();
-    static void setRightButtonDoubleDown();
 
     static void setMiddleButtonDown();
     static void setMiddleButtonUp();
-    static void setMiddleButtonDoubleDown();
 
     static void setCursor(const char* cursorname);
     static void updateCursor();

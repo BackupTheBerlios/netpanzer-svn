@@ -106,7 +106,7 @@ void GameView::doDraw(Surface&, Surface &clientArea)
 
     VehicleSelectionView::drawMiniProductionStatus(*screen);
 
-    COMMAND_PROCESSOR.updateControls();
+    COMMAND_PROCESSOR.draw();
 
     // Make sure the console info is the last thing drawn.
     ConsoleInterface::update(*screen);
@@ -119,9 +119,7 @@ void GameView::doActivate()
 {
     View::doActivate();
     MouseInterface::event_queue.clear();
-    MouseInterface::resetButtonHoldStatus();
     COMMAND_PROCESSOR.inFocus();
-
 } // end GameView::doActivate
 
 // processEvents

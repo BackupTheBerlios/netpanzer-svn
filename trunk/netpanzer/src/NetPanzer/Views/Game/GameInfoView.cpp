@@ -77,7 +77,7 @@ GameInfoView::GameInfoView() : GameTemplateView()
 
     moveTo(iXY(0,0));
     //resizeClientArea(iXY(100, 2 * 2 + 12 * 3 + 8));
-    resizeClientArea(iXY(140, 2 * 2 + 12 * 5 + 8));
+    resizeClientArea(iXY(140, 2 * 2 + 4 * 12 + 8));
 
     if(gameconfig->gameinfoposition.isDefaultValue()) {
         // Start it in the top-right corner.
@@ -163,8 +163,8 @@ void GameInfoView::doDraw(Surface &viewArea, Surface &clientArea)
     */
     clientArea.bltStringShadowed(pos, timeBuf, Color::white, Color::black);
     pos.y += 12;
-    clientArea.bltStringShadowed(pos, pingBuf, Color::white, Color::black);
-    pos.y += 12;
+    /*clientArea.bltStringShadowed(pos, pingBuf, Color::white, Color::black);
+    pos.y += 12;*/
     clientArea.bltStringShadowed(pos, fpsBuf, Color::white, Color::black);
     pos.y += 12;
 

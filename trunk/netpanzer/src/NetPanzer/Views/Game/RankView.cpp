@@ -42,7 +42,6 @@ RankView::RankView() : GameTemplateView()
     resize(iXY(450, 200));
     checkArea(screen->getPix());
 
-
     const unsigned MAX_NAME_CHARS      = 20;
     const unsigned MAX_FLAG_CHARS      =  5;
     const unsigned MAX_KILLS_CHARS     =  6;

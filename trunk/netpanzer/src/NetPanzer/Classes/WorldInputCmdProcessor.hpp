@@ -102,7 +102,7 @@ public:
 
     void updateScrollStatus( const iXY &mouse_pos );
 
-    void updateControls();
+    void draw();
 
     void closeSelectionBox();
 

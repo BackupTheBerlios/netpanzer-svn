@@ -677,9 +677,6 @@ void UnitInterface::unitManagerMesgEndLifecycle(const UnitMessage* message)
     PlayerState* player1 = unit1->player;
     PlayerState* player2 = unit2->player;
     
-    PlayerInterface::setKill(unit1->player, unit2->player,
-            lifecycle_update->unit_type);
-
     // show score on server display
     /*const std::string& unitname1 = 
         UnitProfileInterface::getUnitProfile(lifecycle_update->unit_type)->unitname;*/
@@ -693,10 +690,16 @@ void UnitInterface::unitManagerMesgEndLifecycle(const UnitMessage* message)
             << "' with his '" << unitname2 << "'." << std::endl;
     */
 
-    PlayerScoreUpdate score_update;
-    score_update.set(player1->getID(), player2->getID(),
-            lifecycle_update->unit_type);
-    SERVER->sendMessage(&score_update, sizeof(PlayerScoreUpdate));
+    // killing own units doesn't give score
+    if(player1 != player2) {
+        PlayerInterface::setKill(unit1->player, unit2->player,
+                lifecycle_update->unit_type);
+        
+        PlayerScoreUpdate score_update;
+        score_update.set(player1->getID(), player2->getID(),
+                lifecycle_update->unit_type);
+        SERVER->sendMessage(&score_update, sizeof(PlayerScoreUpdate));
+    }
 }
 
 
@@ -803,82 +806,6 @@ void UnitInterface::processNetMessage(const NetMessage* net_message)
 }
 
 // ******************************************************************
-
-#if 0
-void UnitInterface::startRemoteUnitSync( PlayerID &remote_player )
-{
-    sync_units_remote_player = remote_player;
-
-    sync_units_list_index = 0;
-    sync_units_in_sync_count = 0;
-    sync_units_in_sync_partial_count = 0;
-    sync_units_total_units = getTotalUnitCount();
-
-    unit_lists[sync_units_list_index].resetIteratorAsync(&sync_units_iterator);
-
-    sync_units_packet_timer.changeRate( 10 );
-}
-
-bool UnitInterface::syncRemoteUnits( int *send_return_code, int *percent_complete )
-{
-    UnitIniSyncMessage sync_message;
-    UnitBase *unit;
-
-    *percent_complete = -1;
-
-    int send_ret_val;
-    *send_return_code = _network_ok;
-
-    if ( !sync_units_packet_timer.count() )
-        return( true );
-
-    unit = unit_lists[ sync_units_list_index ].incIteratorAsync( &sync_units_iterator, &sync_units_complete_flag );
-
-    if ( sync_units_complete_flag == true ) {
-        sync_units_list_index++;
-
-        if ( sync_units_list_index >= max_players) {
-            *percent_complete = 100;
-            return( false );
-        }
-
-        unit_lists[ sync_units_list_index ].resetIteratorAsync( &sync_units_iterator );
-    } else {
-        iXY unit_map_loc;
-        MapInterface::pointXYtoMapXY( unit->unit_state.location, &unit_map_loc );
-
-        sync_message.unit_type  = unit->unit_state.unit_type;
-        sync_message.unit_id    = unit->unit_id;
-        sync_message.location_x = unit_map_loc.x;
-        sync_message.location_y = unit_map_loc.y;
-        sync_message.unit_state = unit->unit_state.getNetworkUnitState();
-
-        send_ret_val = SERVER->sendMessage( sync_units_remote_player,
-                                            &sync_message,
-                                            sizeof(UnitIniSyncMessage));
-
-        if ( send_ret_val != _network_ok ) {
-            *send_return_code = send_ret_val;
-            return( false );
-        }
-
-        unit->syncUnit();
-
-        sync_units_in_sync_count++;
-        sync_units_in_sync_partial_count++;
-        if ( sync_units_in_sync_partial_count >= 10 ) {
-            float percent;
-            percent = ( ( (float) sync_units_in_sync_count) / ( (float) sync_units_total_units ) ) * 100;
-            *percent_complete = (int) percent;
-            sync_units_in_sync_partial_count = 0;
-        }
-
-        return( true );
-    }
-
-    return ( true );
-}
-#endif
 
 void UnitInterface::destroyPlayerUnits(uint16_t player_id)
 {
