@@ -428,15 +428,16 @@ void GameManager::shutdownParticleSystems()
 void GameManager::processSystemKeys()
 {
     static bool toggleBot = false;
-    if (KeyboardInterface::getKeyPressed(SDLK_b)) {
-        toggleBot = !toggleBot;
-        LOGGER.info("Bot enable=%d", toggleBot ? 1 : 0);
-    }
-    if (toggleBot) {
-        Bot::bot()->processEvents();
-    }
 
     if (Desktop::getVisible("GameView")) {
+
+        if (KeyboardInterface::getKeyPressed(SDLK_b)) {
+            toggleBot = !toggleBot;
+            LOGGER.info("Bot enable=%d", toggleBot ? 1 : 0);        
+        }
+        if (toggleBot) {                                            
+            Bot::bot()->processEvents();
+        }
 
         if (KeyboardInterface::getKeyPressed( SDLK_F5 )) {
             //  DEBUG VIEW
