@@ -21,6 +21,8 @@
 -the collection of flags has to be the same on all clients at the moment. This
 should be changed (clients should send the name of their flag). The collest
 solution would be transfering of unknown flags.
+-the unit profiles should be possible to set on the server. They should be
+distributed to the clients while they connect.
 
 *** Tools
 -write a map and tileset editor
