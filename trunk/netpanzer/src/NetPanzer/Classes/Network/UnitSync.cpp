@@ -46,7 +46,6 @@ bool UnitSync::sendNextUnit(PlayerID toplayer)
         unit = iter.next();
         if(unit == 0) {
             playerid++;
-            std::cout << "nextPlayer:" << playerid << "\n";
             if(playerid >= PlayerInterface::getMaxPlayers())
                 return false;
             unitlist = UnitInterface::getUnitList(playerid);
@@ -68,7 +67,6 @@ bool UnitSync::sendNextUnit(PlayerID toplayer)
 
     unit->syncUnit();
 
-    std::cout << "getNextUnit" << std::endl;
     return true;
 }
 
