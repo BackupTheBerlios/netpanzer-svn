@@ -248,7 +248,7 @@ BaseGameManager *initialise(int argc, char** argv)
             }
             else { gameconfig->lobbyserver = lobby_server_option.value(); }
         }
-        gameconfig->serverport=port_option.value();
+        if(port_option.value()) { gameconfig->serverport=port_option.value(); }
 
         return manager;
     } catch(Exception e) {
