@@ -178,7 +178,7 @@ void UnitInterface::sendMessage( UnitMessage *message )
 
 // ******************************************************************
 
-void UnitInterface::updateUnitStatus( void )
+void UnitInterface::updateUnitStatus()
 {
     UnitBase *unit;
     UnitPointer *iterator;
@@ -195,7 +195,8 @@ void UnitInterface::updateUnitStatus( void )
 
                 //SFX
                 sound->playAmbientSound("expl",
-                                        WorldViewInterface::getCameraDistance( unit->unit_state.location ) );
+                        WorldViewInterface::getCameraDistance(
+                            unit->unit_state.location ) );
 
                 deleteUnit( unit );
             } else {

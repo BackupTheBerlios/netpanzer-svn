@@ -183,6 +183,9 @@ public:
     {
         flags = 0;
         opcode = _UNIT_OPCODE_UPDATE_STATE;
+
+        for(int i=0; i<5; i++)
+            pad[i] = 0;
     }
 } __attribute__((packed));
 
@@ -199,6 +202,9 @@ public:
     {
         flags = 0;
         opcode = _UNIT_OPCODE_DESTRUCT;
+
+        for(int i=0; i<7; i++)
+            pad[i] = 0;
     }
 } __attribute__((packed));
 
