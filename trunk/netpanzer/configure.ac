@@ -111,7 +111,7 @@ NP_FINDLIB([SDLTTF], [SDL_ttf], [SDL_ttf >= 2.0.0],
 	[AC_MSG_ERROR([Please install SDL_ttf >= 2.0.0])],
 	[$SDL_CFLAGS], [$SDL_LIBS])
 
-NP_FINDLIB([PHYSFS], [physfs], [physfs >= 1.9],
+NP_FINDLIB([PHYSFS], [physfs], [physfs >= 0.1.9],
 	NP_LANG_PROGRAM([#include <physfs.h>
 #if PHYSFS_VER_MAJOR < 1
 #if PHYSFS_VER_MINOR < 1
