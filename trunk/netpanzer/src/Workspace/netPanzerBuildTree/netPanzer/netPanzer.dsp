@@ -2390,6 +2390,10 @@ SOURCE=..\..\..\UILib\SDL\SDLDraw.hpp
 # End Group
 # Begin Source File
 
+SOURCE=..\..\..\UILib\UIDraw.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\UILib\UIDraw.hpp
 # End Source File
 # End Group
