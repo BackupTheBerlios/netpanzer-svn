@@ -31,7 +31,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Network/SocketStream.hpp"
 
-static const int MAX_QUERIES = 3;
+static const size_t MAX_QUERIES = 3;
+static const Uint32 QUERY_TIMEOUT = 5 * 1000;
 
 namespace masterserver
 {
@@ -171,7 +172,26 @@ ServerQueryThread::queryMasterServer()
 void
 ServerQueryThread::queryServers()
 {    
-    if(queries < MAX_QUERIES && !not_queried.empty()) {
+    Uint32 now = SDL_GetTicks();
+    
+    // check for timed out servers
+    printf("QSize: %u.\n", querying.size());
+    for(std::vector<ServerInfo*>::iterator i = querying.begin();
+            i != querying.end(); ) {
+        ServerInfo& server = *(*i);
+        printf("TO: %u.\n", now - server.querystartticks);
+        if(now - server.querystartticks > QUERY_TIMEOUT) {
+            server.name = "Timeout (" + server.address + ")";
+            server.address = "";
+            server.querying = false;
+            i = querying.erase(i);
+            continue;
+        }
+
+        ++i;
+    }
+       
+    if(querying.size() < MAX_QUERIES && !not_queried.empty()) {
         // send a query to a server
         ServerInfo& server = *not_queried.back();
         not_queried.pop_back();
@@ -190,8 +210,9 @@ ServerQueryThread::queryServers()
 
         udpsocket->send(server.ipaddress, query.c_str(), query.size());
 
-        server.querystartticks = SDL_GetTicks();
-        queries++;
+        server.querystartticks = now;
+        querying.push_back(&server);
+        printf("Putback: %u\n", querying.size());
     }
 
     // part2 receive data
@@ -217,8 +238,7 @@ ServerQueryThread::queryServers()
         return;
     }
 
-    queries--;
-    server->ping = SDL_GetTicks() - server->querystartticks;
+    server->ping = now - server->querystartticks;
     
     std::string packetstr(buffer, size);
     StringTokenizer tokenizer(packetstr, '\\');
@@ -240,6 +260,13 @@ ServerQueryThread::queryServers()
         }
     }
     server->querying = false;
+    for(std::vector<ServerInfo*>::iterator i = querying.begin();
+            i != querying.end(); ) {
+        if((*i) == server)                                          
+            i = querying.erase(i);
+        else
+            ++i;
+    }
 }
 
 const char*

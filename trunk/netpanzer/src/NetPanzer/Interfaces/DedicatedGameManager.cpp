@@ -199,7 +199,7 @@ bool DedicatedGameManager::launchNetPanzerGame()
             infothread = new InfoThread(gameconfig->serverport);
             heartbeatthread = new HeartbeatThread();
         } catch(std::exception& e) {
-            LOGGER.warning("failed contacting masterserver: %s", e.what());
+            LOGGER.warning("heartbeats disabled: %s", e.what());
             delete infothread; infothread = 0;
             delete heartbeatthread; heartbeatthread = 0;
         }

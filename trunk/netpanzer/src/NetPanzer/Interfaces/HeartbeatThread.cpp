@@ -63,7 +63,9 @@ HeartbeatThread::HeartbeatThread()
     }
     
     // send initial heartbeat
-    sendHeartbeat();
+    if(!sendHeartbeat()) {
+        throw std::runtime_error("Sending initial heartbeat failed.");
+    }
 
     // start thread
     thread = SDL_CreateThread(threadMain, this);
@@ -102,19 +104,21 @@ HeartbeatThread::threadMain(void* data)
         SDL_Delay(UPDATEINTERVAL * 1000);
         
         try {
-            _this->sendHeartbeat();
-        } catch(std::exception& e) {
-            LOGGER.warning("Couldn't send heartbeat packet: %s", e.what());
-            LOGGER.warning("retrying in %d seconds.", UPDATEINTERVAL);
+            if(!_this->sendHeartbeat()) {
+                LOGGER.warning("all hearbteats failed. retrying in %d seconds.",
+                        UPDATEINTERVAL);
+            }
         } catch(...) {
             LOGGER.warning("Unexpected exception while sending heartbeat.");
+            _this->running = false;
+            break;
         }
     }
 
     return 0;
 }
 
-void
+bool
 HeartbeatThread::sendHeartbeat()
 {
     std::stringstream packet;
@@ -122,33 +126,45 @@ HeartbeatThread::sendHeartbeat()
            << "\\port\\" << gameconfig->serverport                     
            << "\\protocol\\" << NETPANZER_PROTOCOL_VERSION
            << "\\final\\" << std::flush;
-    sendPacket(packet.str());
+    return sendPacket(packet.str());
 }
 
-void
+bool
 HeartbeatThread::sendPacket(const std::string& str)
 {
+    int failures = 0;
+    
     for(size_t i = 0; i < serveraddrs.size(); ++i) {
-        const network::Address& address = serveraddrs[i];
+        try {
+            const network::Address& address = serveraddrs[i];
         
-        // we use blocking mode here and hope that no masterserver quietly
-        // leaves our connection open without sending data
-        network::TCPSocket socket(address);
-        network::SocketStream stream(socket);
+            // we use blocking mode here and hope that no masterserver quietly
+            // leaves our connection open without sending data
+            network::TCPSocket socket(address);
+            network::SocketStream stream(socket);
             
-        bool doMasterQuery = false;
-        if(masterquery <= 0) {
-            doMasterQuery = true;
-            stream << "\\list\\gamename\\master\\final";
-            masterquery = MASTERQUERYCOUNT;
-        }
+            bool doMasterQuery = false;
+            if(masterquery <= 0) {
+                doMasterQuery = true;
+                stream << "\\list\\gamename\\master\\final";
+                masterquery = MASTERQUERYCOUNT;
+            }
             
-        // send heartbeat packet
-        stream << str << std::flush;
+            // send heartbeat packet
+            stream << str << std::flush;
 
-        parseResult(stream, doMasterQuery);
+            parseResult(stream, doMasterQuery);
+        } catch(std::exception& e) {
+            LOGGER.warning("failed contacting masterserver: %s", e.what());
+            failures++;
+        }
     }
+
+    if(failures == (int) serveraddrs.size())
+        return false;
+    
     masterquery--;
+    return true;
 }
 
 void

@@ -44,8 +44,8 @@ public:
 
 private:
     static int threadMain(void* data);
-    void sendHeartbeat();
-    void sendPacket(const std::string& data);
+    bool sendHeartbeat();
+    bool sendPacket(const std::string& data);
     void parseResult(std::iostream& stream, bool doMasterQuery);
     
     volatile bool running;

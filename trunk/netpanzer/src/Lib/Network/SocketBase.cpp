@@ -18,7 +18,6 @@ SocketBase::SocketBase()
 {
 #ifdef WINSOCK
     if(netrefcount == 0) {
-        netrefcount++;
         WSADATA wsaData;
         WORD wVers = MAKEWORD(1, 1);
         int rc = WSAStartup(wVers, &wsaData);
@@ -28,6 +27,7 @@ SocketBase::SocketBase()
             throw std::runtime_error(msg.str());
         }
     }
+    netrefcount++;
 #endif
 }
 

@@ -64,7 +64,7 @@ PowerUpHitMesg::PowerUpHitMesg()
 void PowerUpHitMesg::set(int ID, UnitID unit_id, PlayerID player_id, int type)
 {
     PowerUpHitMesg::ID = htol32(ID);
-    PowerUpHitMesg::unit_id = unit_id;
+    PowerUpHitMesg::unit_id = htol16(unit_id);
     PowerUpHitMesg::player_id = htol16(player_id.getIndex());
     unit_powerup_type = type;
 }

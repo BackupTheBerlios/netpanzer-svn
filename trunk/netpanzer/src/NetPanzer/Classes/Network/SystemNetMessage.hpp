@@ -47,8 +47,8 @@ private:
 
 public:
     SystemSetPlayerView(int32_t x, int32_t y);
-    int32_t getCameraLocX(void);
-    int32_t getCameraLocY(void);
+    int32_t getCameraLocX();
+    int32_t getCameraLocY();
 }
 __attribute__((packed));
 
@@ -84,7 +84,7 @@ public:
     void setMessageScope( unsigned char scope );
     void setPlayerSet( unsigned short player_index );
     void clearPlayerSet( unsigned short player_index );
-    uint16_t getSourcePlayerIndex(void);
+    uint16_t getSourcePlayerIndex();
     void setSourcePlayerIndex(uint16_t playerIndex);
 }
 __attribute__((packed));
@@ -100,7 +100,7 @@ public:
     char message_text[150];
 
     SystemChatMesg();
-    uint16_t getSourcePlayerIndex(void);
+    uint16_t getSourcePlayerIndex();
     void setSourcePlayerIndex(uint16_t playerIndex);
 }
 __attribute__((packed));
@@ -158,7 +158,7 @@ public:
 
     SystemConnectAlert();
     void set(const PlayerID &player, unsigned char alert_type );
-    uint16_t getPlayerID(void);
+    uint16_t getPlayerID();
 }
 __attribute__((packed));
 

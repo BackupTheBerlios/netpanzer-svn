@@ -52,7 +52,7 @@ class PowerUpHitMesg : public NetMessage
 {
 private:
     int32_t  ID;
-    UnitID   unit_id;
+    uint16_t unit_id;
     uint16_t player_id;
     int32_t  unit_powerup_type;
 

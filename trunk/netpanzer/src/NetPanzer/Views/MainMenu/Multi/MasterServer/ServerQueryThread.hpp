@@ -62,6 +62,7 @@ private:
     network::UDPSocket* udpsocket;
 
     std::vector<ServerInfo*> not_queried;
+    std::vector<ServerInfo*> querying;
     int queries; // number of currently running queries
 };
 

@@ -109,29 +109,29 @@ public:
     const std::string& getName() const;
     void lockStats();
     void unlockStats();
-    short getKills();
-    short getLosses();
+    short getKills() const;
+    short getLosses() const;
     void incKills( unsigned short unit_type );
     void decKills( unsigned short unit_type );
     void incLosses( unsigned short unit_type );
     void decLosses( unsigned short unit_type );
     void incObjectivesHeld();
     void decObjectivesHeld();
-    short getObjectivesHeld();
+    short getObjectivesHeld() const;
     void setObjectivesHeld( short objectives );
     void setID( unsigned short index, SocketClient::ID networkid  );
     void setID( unsigned short index );
     void setID( SocketClient::ID networkid );
-    PlayerID getPlayerID();
+    PlayerID getPlayerID() const;
     void setStatus( unsigned char status );
-    unsigned char getStatus();
+    unsigned char getStatus() const;
     void setFlag(unsigned char flag);
-    unsigned char getFlag();
-    short getTotal();
-    NetworkPlayerState getNetworkPlayerState();
+    unsigned char getFlag() const;
+    short getTotal() const;
+    NetworkPlayerState getNetworkPlayerState() const;
     void setFromNetworkPlayerState(const NetworkPlayerState* state);
     void setColor( uint32_t index );
-    uint8_t getColor();
+    uint8_t getColor() const;
 };
 
 #endif // ** _PLAYERSTATE_HPP

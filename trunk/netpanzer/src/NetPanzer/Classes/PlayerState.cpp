@@ -89,11 +89,11 @@ uint8_t *playerColorArray[] = {
 static const size_t playerColorCount 
     = sizeof(playerColorArray) / sizeof(uint8_t*);
 
-void PlayerState::setColor( uint32_t index ) {
-	colorIndex = index % playerColorCount;
+void PlayerState::setColor(uint32_t index) {
+    colorIndex = index % playerColorCount;
 }
 
-uint8_t PlayerState::getColor() {
+uint8_t PlayerState::getColor() const {
     assert(colorIndex < playerColorCount);
     return ( *playerColorArray[ colorIndex ] );
 }
@@ -165,14 +165,14 @@ void PlayerState::unlockStats()
     stats_locked = false;
 }
 
-short PlayerState::getKills()
+short PlayerState::getKills() const
 {
-    return( kills );
+    return kills;
 }
 
-short PlayerState::getLosses()
+short PlayerState::getLosses() const
 {
-    return( losses );
+    return losses;
 }
 
 void PlayerState::incKills( unsigned short unit_type )
@@ -215,9 +215,9 @@ void PlayerState::decObjectivesHeld()
     objectives_held++;
 }
 
-short PlayerState::getObjectivesHeld()
+short PlayerState::getObjectivesHeld() const
 {
-    return( objectives_held );
+    return objectives_held;
 }
 
 void PlayerState::setObjectivesHeld( short objectives )
@@ -242,9 +242,9 @@ void PlayerState::setID( SocketClient::ID networkid )
     ID.setNetworkID(networkid);
 }
 
-PlayerID PlayerState::getPlayerID()
+PlayerID PlayerState::getPlayerID() const
 {
-    return( ID );
+    return ID;
 }
 
 void PlayerState::setStatus( unsigned char status )
@@ -252,9 +252,9 @@ void PlayerState::setStatus( unsigned char status )
     PlayerState::status = status;
 }
 
-unsigned char PlayerState::getStatus()
+unsigned char PlayerState::getStatus() const
 {
-    return( status );
+    return status;
 }
 
 void PlayerState::setFlag(unsigned char flag)
@@ -262,17 +262,17 @@ void PlayerState::setFlag(unsigned char flag)
     PlayerState::flag = flag;
 }
 
-unsigned char PlayerState::getFlag()
+unsigned char PlayerState::getFlag() const
 {
     return flag;
 }
 
-short PlayerState::getTotal()
+short PlayerState::getTotal() const
 {
-    return( kill_points - loss_points );
+    return kill_points - loss_points;
 }
 
-NetworkPlayerState PlayerState::getNetworkPlayerState()
+NetworkPlayerState PlayerState::getNetworkPlayerState() const
 {
     return NetworkPlayerState(name, flag, ID.getIndex(), status,
             kills, kill_points, losses, loss_points, total,
@@ -296,3 +296,4 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
     objectives_held = ltoh16(state->objectives_held);
     colorIndex = ltoh32(state->colorIndex);
 }
+

@@ -8,7 +8,9 @@ Next release:
 -finish infothread - ok
 -implement TIP OF DAY  - no idea how to create graphics for the GUI, so this
  will be delayed for next release. :-/
+-implement forcing of different flags at server
 -playtesting+bugfixing
+-add checkbox if servers hosted by menu should be made public in the internet
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map

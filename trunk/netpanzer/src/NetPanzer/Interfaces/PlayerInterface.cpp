@@ -26,8 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Server.hpp"
 
 #include "ConsoleInterface.hpp"
-
-//#include "WorldViewInterface.hpp"
+// for UNIT_FLAGS_SURFACE
+#include "SelectionBoxSprite.hpp"
 
 // ** PlayerInterface Statics
 PlayerState PlayerInterface::local_player_state;
@@ -421,6 +421,7 @@ void PlayerInterface::netMessageConnectID(const NetMessage* message)
     SDL_mutexP(mutex);
     player_lists[local_player_index].setFromNetworkPlayerState
         (&connect_mesg->connect_state);
+    //forceUniquePlayerFlags();
     SDL_mutexV(mutex);
 }
 
@@ -431,7 +432,49 @@ void PlayerInterface::netMessageSyncState(const NetMessage* message)
     uint16_t player_index = sync_mesg->player_state.getPlayerIndex();
     SDL_mutexP(mutex);
     player_lists[player_index].setFromNetworkPlayerState(&sync_mesg->player_state);
+    forceUniquePlayerFlags();
     SDL_mutexV(mutex);
+}
+
+void PlayerInterface::forceUniquePlayerFlags()
+{
+    // make sure our own flag stays the same (TODO: avoid copy&paste here...)
+    PlayerState& player1 = player_lists[local_player_index];
+    bool unique;
+    do {
+        unique = true;
+        for(int player_id2 = local_player_index-1; player_id2>=0;--player_id2) {
+            const PlayerState& player2 = player_lists[player_id2];
+            if(player1.getFlag() == player2.getFlag()) {
+                unique = false;
+                uint16_t newflag = player1.getFlag() + 1;
+                if(newflag >= UNIT_FLAGS_SURFACE.getFrameCount())
+                    newflag = 0;
+                player1.setFlag(newflag);
+                break;
+            }
+        }
+    } while(!unique);                                                      
+    
+    // make sure each player has a unique flag
+    for(uint16_t player_id = 0; player_id < max_players; ++player_id) {
+        PlayerState& player1 = player_lists[player_id];
+        bool unique;
+        do {
+            unique = true;
+            for(int player_id2 = player_id-1; player_id2>=0;--player_id2) {
+                const PlayerState& player2 = player_lists[player_id2];
+                if(player1.getFlag() == player2.getFlag()) {
+                    unique = false;
+                    uint16_t newflag = player1.getFlag() + 1;
+                    if(newflag >= UNIT_FLAGS_SURFACE.getFrameCount())
+                        newflag = 0;
+                    player1.setFlag(newflag);
+                    break;
+                }
+            }
+        } while(!unique);
+    }
 }
 
 void PlayerInterface::netMessageScoreUpdate(const NetMessage *message)
