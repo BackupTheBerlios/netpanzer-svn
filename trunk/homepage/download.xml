@@ -6,7 +6,10 @@
       default. You might just be able to install netPanzer with your
       distributions software setup tool. This is true for at least the
       following distributions</p>
-      <ul>
+    <ul>
+	<li><a href="http://packages.debian.org/netpanzer">Debian</a>
+		- packages are maintained by Bartosz Fenski aka fEnIo 
+		<a href="mailto:fenio@o2.pl">fenio@o2.pl</a></li>	  
 	<li>Gentoo</li>
 	<li>Mandrake</li>	  
 	<li>PLD Linux Distribution</li>
@@ -21,18 +24,6 @@
 	<p>Fedora packages provided by Daniel Pereda aka pegardan
 	<a href="maito:dannyedu@adinet.com.uy">dannyedu@adinet.com.uy</a>.</p>
 	 </subsubsection>
-      <subsubsection title="Debian">
-        <p>If you're using Debian unstable (Sid), you can add the following	
-          line to your <tt>/etc/apt/sources.list</tt> file:
-
-          <div style="margin: 1em; background-color: black; color: lightgrey; border-style: solid; border-width: thin; padding: 1em;">
-            <tt>deb http://mentors.debian.net/debian unstable main</tt><br />
-          </div>
-         
-	  then run <tt>apt-get update &amp;&amp; apt-get install netpanzer</tt>.</p>
-    <p>Debian packages provided by Bartosz Fenski aka fEnIo 
-    <a href="mailto:fenio@o2.pl">fenio@o2.pl</a></p>      
-    </subsubsection>
 	<subsubsection title="Installer &amp; Static Binary">
 	<p><a href="http://download.berlios.de/netpanzer/netpanzer-0.1.5-linux-i386-installer.run">
 	Loki installer - netpanzer-0.1.5-linux-i386-installer.run (13.44MB)
