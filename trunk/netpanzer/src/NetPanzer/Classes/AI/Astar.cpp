@@ -188,7 +188,12 @@ long Astar::heuristic( iXY &pointA, iXY &pointB )
     delta_x = labs( pointA.x - pointB.x );
     delta_y = labs( pointA.y - pointB.y );
 
-    return( heuristic_weight * (delta_x + delta_y) );
+#if 0
+    // we can move diagonal...
+    return heuristic_weight * std::max(delta_x, delta_y);
+#else
+    return heuristic_weight * (delta_x + delta_y);
+#endif
 }
 
 

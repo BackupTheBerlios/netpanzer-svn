@@ -67,6 +67,7 @@ public:
         PowerUpHitMesg::ID = ID;
         PowerUpHitMesg::unit_id = unit_id;
         PowerUpHitMesg::player_id = player_id.getIndex();
+        unit_powerup_type = 0;
     }
 
     PowerUpHitMesg()

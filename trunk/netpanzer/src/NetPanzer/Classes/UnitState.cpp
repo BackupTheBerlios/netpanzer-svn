@@ -58,3 +58,65 @@ float UnitState::percentDamageFloat( void )
 
     return( damage_percentage );
 }
+
+NetworkUnitState UnitState::getNetworkUnitState() const
+{
+    NetworkUnitState state;
+
+    state.unit_type = unit_type;
+    state.location_x = location.x;
+    state.location_y = location.y;
+    state.bbox_min_x = bbox.min.x;
+    state.bbox_min_y = bbox.min.y;
+    state.bbox_max_x = bbox.max.x;
+    state.bbox_max_y = bbox.max.y;
+
+    state.body_angle = body_angle.getNetworkAngleInt();
+    state.turret_angle = turret_angle.getNetworkAngleInt();
+    state.orientation = orientation;
+    state.speed_rate = speed_rate;
+    state.speed_factor = speed_factor;
+    
+    state.reload_time = reload_time;
+    state.max_hit_points = max_hit_points;
+    state.hit_points = hit_points;
+    state.damage_factor = damage_factor;
+    state.weapon_range = weapon_range;
+    state.defend_range = defend_range;
+    
+    state.threat_level = threat_level;
+    state.lifecycle_state = lifecycle_state;
+
+    return state;
+}
+
+void UnitState::setFromNetworkUnitState(const NetworkUnitState& state)
+{
+    select = false;
+
+    unit_type = state.unit_type;
+    location.x = state.location_x;
+    location.y = state.location_y;
+    bbox.min.x = state.bbox_min_x;
+    bbox.min.y = state.bbox_min_y;
+    bbox.max.x = state.bbox_max_x;
+    bbox.max.y = state.bbox_max_y;
+
+    body_angle.setFromNetworkAngleInt(state.body_angle);
+    turret_angle.setFromNetworkAngleInt(state.turret_angle);
+
+    orientation = state.orientation;
+    speed_rate = state.speed_rate;
+    speed_factor = state.speed_factor;
+    
+    reload_time = state.reload_time;
+    max_hit_points = state.max_hit_points;
+    hit_points = state.hit_points;
+    damage_factor = state.damage_factor;
+    weapon_range = state.weapon_range;
+    defend_range = state.defend_range;
+
+    threat_level = state.threat_level;
+    lifecycle_state = state.lifecycle_state;
+}
+

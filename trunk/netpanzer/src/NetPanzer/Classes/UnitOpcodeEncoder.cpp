@@ -90,7 +90,6 @@ bool UnitOpcodeEncoder::decodeMessage( UnitOpcodeStruct *opcode )
 
 void UnitOpcodeEncoder::sendOpcodeMessage( void )
 {
-
     if ( opcode_message.opcode_count > 0 ) {
         if( send_method == _opcode_encoder_send_method_guarantee ) {
             SERVER->sendMessage( &opcode_message, opcode_message.realSize(), 0 );

@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _ANGLE_HPP
 
 #include <math.h>
+#include <stdint.h>
+
 #include "Types/iXY.hpp"
 
 class Angle
@@ -95,7 +97,29 @@ public:
     }
 };
 
-class AngleInt : public Angle
+#ifdef MSVC
+#pragma pack(1)
+#endif
+
+struct NetworkAngleInt
+{
+public:
+    NetworkAngleInt()
+    { }
+    
+private:
+    int32_t angle_int;
+    uint32_t grain;
+    int32_t angle_limit;
+
+    friend class AngleInt;
+} __attribute__((packed));
+
+#ifdef MSVC
+#pragma pack()
+#endif
+
+class AngleInt
 {
 public:
     long angle_int;
@@ -103,7 +127,6 @@ public:
     long angle_limit;
 
     AngleInt( long nAngle = 0, unsigned long granularity = 360 )
-            : Angle( (double) nAngle )
     {
         angle_int = nAngle;
         grain = granularity;
@@ -111,15 +134,13 @@ public:
     }
 
     AngleInt( long x, long y)
-            : Angle( x, y )
     {
-        angle_int = DegreesInt();
+        angle_int = Angle(x,y).DegreesInt();
     }
 
     AngleInt( iXY &vec )
-            : Angle( vec )
     {
-        angle_int = DegreesInt();
+        angle_int = Angle(vec).DegreesInt();
     }
 
     inline void set( long nAngle, unsigned long granularity )
@@ -148,6 +169,24 @@ public:
     inline long Degrees() const
     {
         return( angle_int * grain );
+    }
+
+    NetworkAngleInt getNetworkAngleInt() const
+    {
+        NetworkAngleInt netangle;
+
+        netangle.angle_int = angle_int;
+        netangle.grain = grain;
+        netangle.angle_limit = angle_limit;
+
+        return netangle;
+    }
+
+    void setFromNetworkAngleInt(const NetworkAngleInt& netangle)
+    {
+        angle_int = netangle.angle_int;
+        grain = netangle.grain;
+        angle_limit = netangle.angle_limit;
     }
 };
 

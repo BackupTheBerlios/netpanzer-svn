@@ -26,6 +26,7 @@ void MapView::setMap(Map* newmap)
 
 void MapView::redraw()
 {
-    maprenderer->render(getSurface(), 0, mapxpos, mapypos);
+    if(maprenderer)
+        maprenderer->render(getSurface(), 0, mapxpos, mapypos);
 }
 

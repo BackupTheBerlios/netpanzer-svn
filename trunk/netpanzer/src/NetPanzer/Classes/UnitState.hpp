@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _UNITSTATE_HPP
 
 #include <string.h>
+#include <stdint.h>
+
 #include "ArrayUtil/BoundBox.hpp"
 #include "Types/Angle.hpp"
 
@@ -29,14 +31,58 @@ enum { _threat_level_all_clear,
        _threat_level_defending
      };
 
+#ifdef MSVC
+#pragma pack(1)
+#endif
+
+class NetworkUnitState
+{
+public:
+    NetworkUnitState()
+    { }
+
+private:
+    uint8_t     unit_type;
+
+    int32_t     location_x;
+    int32_t     location_y;
+    int32_t     bbox_min_x;
+    int32_t     bbox_min_y;
+    int32_t     bbox_max_x;
+    int32_t     bbox_max_y;
+    
+    NetworkAngleInt body_angle;
+    NetworkAngleInt turret_angle;
+
+    uint16_t    orientation;
+    uint16_t    speed_rate;
+    uint16_t    speed_factor;
+
+    uint16_t    reload_time;
+    int16_t     max_hit_points;
+    int16_t     hit_points;
+    uint16_t    damage_factor;
+    uint32_t    weapon_range;
+    uint32_t    defend_range;
+
+    uint8_t threat_level;
+    uint8_t lifecycle_state;
+
+    friend class UnitState;
+} __attribute__((packed));
+
+#ifdef MSVC
+#pragma pack()
+#endif
+
 class UnitState
 {
 public:
-    unsigned long var_flags;
-
     unsigned char  unit_type;
 
+    /// true if the unit is currently selected
     bool           select;
+    /// position of the unit
     iXY            location;
     BoundBox       bbox;
 
@@ -66,6 +112,9 @@ public:
 
     int percentDamageInt();
     float percentDamageFloat();
+
+    NetworkUnitState getNetworkUnitState() const;
+    void setFromNetworkUnitState(const NetworkUnitState& state);
 };
 
 #endif

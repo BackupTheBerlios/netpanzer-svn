@@ -62,7 +62,7 @@ public:
     UnitID unit_id;
     uint32_t location_x;
     uint32_t location_y;
-    UnitState unit_state;
+    NetworkUnitState unit_state;
 
     UnitIniSyncMessage()
     {

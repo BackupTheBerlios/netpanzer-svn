@@ -49,8 +49,8 @@ void MainMenuView::doDraw(Surface &viewArea, Surface &clientArea)
         "Gnu General Public license (GPL). See the COPYING file for details."
         "\n"
         "NetPanzer only supports TCP/IP multiplayer games over "
-        "LAN systems and over the Internet. A Skirmish mode might "
-        "be added later. We're still searching for talented coders "
+        "LAN systems and over the Internet. "
+        "We're still searching for talented coders "
         "and artists. Look at http://www.nongnu.org/netpanzer for details. ";
 
     viewArea.bltStringInBox(bodyTextRect, text, Color::white, 12);

@@ -951,8 +951,7 @@ void UnitInterface::unitSyncMessage( NetMessage *net_message )
     unit_lists[ player_index ].add( (UnitBase *) unit, sync_message->unit_id );
     unit_bucket_array.addUnit( unit );
 
-    unit->unit_state = sync_message->unit_state;
-    unit->unit_state.select = false;
+    unit->unit_state.setFromNetworkUnitState(sync_message->unit_state);
 }
 
 // ******************************************************************
@@ -1111,7 +1110,7 @@ bool UnitInterface::syncRemoteUnits( int *send_return_code, int *percent_complet
         sync_message.unit_id    = unit->unit_id;
         sync_message.location_x = unit_map_loc.x;
         sync_message.location_y = unit_map_loc.y;
-        sync_message.unit_state = unit->unit_state;
+        sync_message.unit_state = unit->unit_state.getNetworkUnitState();
 
         send_ret_val = SERVER->sendMessage( sync_units_remote_player,
                                             &sync_message, sizeof( UnitIniSyncMessage ), 0 );

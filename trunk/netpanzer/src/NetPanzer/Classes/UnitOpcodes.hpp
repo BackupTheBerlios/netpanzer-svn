@@ -18,9 +18,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITOPCODES_HPP
 #define _UNITOPCODES_HPP
 
+#include <stdint.h>
 #include <queue>
 
 enum { _unit_opcode_flag_sync = 0x01 };
+
+/** The following is a tricky macro to ensure a struct has a specific size. THe
+ * check is done at compiletime. The trick is that C doesn't allow duplicate
+ * case labels...
+ */
+#define ASSERT_SIZE(mystruct, size)                                     \
+    namespace TRICKYTESTS { static inline void mystruct##_test() {      \
+        int i=0; switch(i) { case 0: ; case (sizeof(mystruct) == (size)): ; } \
+    } }
 
 #ifdef MSVC
 #pragma pack(1)
@@ -28,14 +38,13 @@ enum { _unit_opcode_flag_sync = 0x01 };
 
 struct UnitOpcodeStruct
 {
-    unsigned char  opcode;
-    unsigned char  player_index;
-    unsigned short unit_index;
-    unsigned char  flags;
+    uint8_t opcode;
+    uint8_t player_index;
+    uint16_t unit_index;
+    uint8_t flags;
 
-    unsigned char op_data[7];
-}
-__attribute__((packed));
+    uint8_t op_data[7];
+} __attribute__((packed));
 
 
 typedef std::queue< UnitOpcodeStruct > UnitOpcodeQueue;
@@ -43,22 +52,21 @@ typedef std::queue< UnitOpcodeStruct > UnitOpcodeQueue;
 class UnitOpcode
 {
 public:
-    unsigned char  opcode;
-    unsigned char  player_index;
-    unsigned short unit_index;
-    unsigned char  flags;
-}
-__attribute__((packed));
+    uint8_t opcode;
+    uint8_t player_index;
+    uint16_t unit_index;
+    uint8_t flags;
+} __attribute__((packed));
 
 #define _UNIT_OPCODE_MOVE 1
 
 class MoveOpcode : public UnitOpcode
 {
 public:
-    unsigned long square;
-    signed char   loc_x_offset;
-    signed char   loc_y_offset;
-    unsigned char pad[1];
+    uint32_t square;
+    int8_t loc_x_offset;
+    int8_t loc_y_offset;
+    uint8_t pad[1];
 
     MoveOpcode( )
     {
@@ -70,18 +78,19 @@ public:
         loc_y_offset = 0;
         pad[0] = 0;
     }
-}
-__attribute__((packed));
+} __attribute__((packed));
+
+ASSERT_SIZE(MoveOpcode, 7 + sizeof(UnitOpcode))
 
 #define _UNIT_OPCODE_TURRET_TRACK_POINT 2
 
 class TurretTrackPointOpcode : public UnitOpcode
 {
 public:
-    unsigned short x;
-    unsigned short y;
-    bool  activate;
-    unsigned char pad[2];
+    uint16_t x;
+    uint16_t y;
+    uint8_t  activate;
+    uint8_t pad[2];
 
     TurretTrackPointOpcode( )
     {
@@ -93,19 +102,19 @@ public:
         pad[0] = pad[1] = 0;
     }
 
-}
-__attribute__((packed));
+} __attribute__((packed));
+
+ASSERT_SIZE(TurretTrackPointOpcode, 7 + sizeof(UnitOpcode))
 
 #define _UNIT_OPCODE_TURRET_TRACK_TARGET 3
 
 class TurretTrackTargetOpcode : public UnitOpcode
 {
 public:
-    unsigned char target_player_index;
-    unsigned short target_unit_index;
-    bool activate;
-    unsigned char pad[3];
-
+    uint8_t target_player_index;
+    uint16_t target_unit_index;
+    uint8_t activate;
+    uint8_t pad[3];
 
     TurretTrackTargetOpcode( )
     {
@@ -117,18 +126,18 @@ public:
         activate = false;
         pad[0] = pad[1] = pad[2] = 0;
     }
+} __attribute__((packed));
 
-}
-__attribute__((packed));
+ASSERT_SIZE(TurretTrackTargetOpcode, 7 + sizeof(UnitOpcode))
 
 #define _UNIT_OPCODE_FIRE_WEAPON 4
 
 class FireWeaponOpcode : public UnitOpcode
 {
 public:
-    unsigned short x;
-    unsigned short y;
-    unsigned char pad[3];
+    uint16_t x;
+    uint16_t y;
+    uint8_t pad[3];
 
     FireWeaponOpcode( )
     {
@@ -138,15 +147,16 @@ public:
         x = y = 0;
         pad[0] = pad[1] = pad[2] = 0;
     }
-}
-__attribute__((packed));
+} __attribute__((packed));
+
+ASSERT_SIZE(FireWeaponOpcode, 7 + sizeof(UnitOpcode))
 
 #define _UNIT_OPCODE_SYNC_UNIT 5
 
 class SyncUnitOpcode : public UnitOpcode
 {
 public:
-    unsigned char pad[7];
+    uint8_t pad[7];
 
     SyncUnitOpcode( )
     {
@@ -157,24 +167,26 @@ public:
             pad[i] = 0;
     }
 
-}
-__attribute__((packed));
+} __attribute__((packed));
+
+ASSERT_SIZE(SyncUnitOpcode, 7 + sizeof(UnitOpcode))
 
 #define _UNIT_OPCODE_UPDATE_STATE 6
 
 class UpdateStateUnitOpcode : public UnitOpcode
 {
 public:
-    short hit_points;
-    unsigned char pad[5];
+    int16_t hit_points;
+    uint8_t pad[5];
 
     UpdateStateUnitOpcode( )
     {
         flags = 0;
         opcode = _UNIT_OPCODE_UPDATE_STATE;
     }
-}
-__attribute__((packed));
+} __attribute__((packed));
+
+ASSERT_SIZE(UpdateStateUnitOpcode, 7 + sizeof(UnitOpcode))
 
 #define _UNIT_OPCODE_DESTRUCT 7
 
@@ -188,9 +200,9 @@ public:
         flags = 0;
         opcode = _UNIT_OPCODE_DESTRUCT;
     }
+} __attribute__((packed));
 
-}
-__attribute__((packed));
+ASSERT_SIZE(DestructUnitOpcode, 7 + sizeof(UnitOpcode))
 
 #ifdef MSVC
 #pragma pack()
