@@ -92,13 +92,5 @@ std::ostream* Console::server;
 void Console::initialize()
 {
     server = new OFileStampStream();
-
-    std::cout << "InitConsole -> Test\n";
-    // test
-    *server << "Test\n"
-        << "Mal sehen, ob das alles auch so klappt.\n"
-        << "jo" << 2 << 3.434 << std::endl;
-    *server << "jo\n" << std::flush;
-    *server << "jupiudo\n\n" << std::endl;
 }
 
