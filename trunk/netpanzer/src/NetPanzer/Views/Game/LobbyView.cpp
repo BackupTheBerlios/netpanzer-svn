@@ -116,7 +116,8 @@ void LobbyView::scroll()
 
 		// Move the current text up by the height of the app font.
 		tempSurface.blt(background, CHAR_YPIX, 0);
-		currentline--;
+	} else {
+		currentline++;
 	}
 } // end LobbyView::scroll
 
