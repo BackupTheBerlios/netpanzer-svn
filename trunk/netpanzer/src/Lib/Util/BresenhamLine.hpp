@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class BresenhamLine
 {
 protected:
-
     long  x;
     long  y;
 
@@ -38,27 +37,20 @@ protected:
 
     short finished;
 
-    void IniOctant_0_3( void );
-    void IniOctant_1_2( void );
-    void IniOctant_4_7( void );
-    void IniOctant_5_6( void );
+    void IniOctant_0_3();
+    void IniOctant_1_2();
+    void IniOctant_4_7();
+    void IniOctant_5_6();
 
-    short Octant_0_3( void );
-    short Octant_1_2( void );
-    short Octant_4_7( void );
-    short Octant_5_6( void );
-
+    short Octant_0_3();
+    short Octant_1_2();
+    short Octant_4_7();
+    short Octant_5_6();
 
 public:
+    void set_path(iXY &start, iXY &end);
 
-    BresenhamLine( void )
-    { }
-
-    void set_path( iXY &start, iXY &end );
-
-    short increment( iXY *update, short times );
-
-
+    short increment(iXY *update, short times);
 };
 
 

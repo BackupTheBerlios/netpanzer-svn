@@ -42,27 +42,23 @@ void BulletWeapon::fsmFlight()
     bool end_cycle = false;
 
     do {
-        switch( fsmFlight_state ) {
-        case _fsmFlight_idle : {
+        switch(fsmFlight_state) {
+            case _fsmFlight_idle:
                 end_cycle = true;
-            }
-            break;
+                break;
 
-        case _fsmFlight_in_flight : {
+            case _fsmFlight_in_flight:
                 if (path.increment(&location, (short) velocity) == true ) {
                     fsmFlight_state = _fsmFlight_on_target;
                     end_cycle = true;
                 } else {
                     end_cycle = true;
                 }
+                break;
 
-            }
-            break;
-
-        case _fsmFlight_on_target : {
-                UMesgWeaponHit weapon_hit;
-
-                if ( NetworkState::status == _network_state_server ) {
+            case _fsmFlight_on_target:
+                if (NetworkState::status == _network_state_server) {
+                    UMesgWeaponHit weapon_hit;
                     weapon_hit.setHeader( _umesg_flag_broadcast );
                     weapon_hit.message_id = _umesg_weapon_hit;
                     weapon_hit.setOwnerUnitID(owner_id);
@@ -76,25 +72,25 @@ void BulletWeapon::fsmFlight()
 
                 //SFX
                 sound->playAmbientSound("hit",
-                                        WorldViewInterface::getCameraDistance( location ) );
+                        WorldViewInterface::getCameraDistance(location) );
 
                 // **  Particle Shit
-                iXY loc = iXY( location.x, location.y );
-                ParticleInterface::addDirtKick(loc);
+                {
+                    iXY loc = iXY( location.x, location.y );
+                    ParticleInterface::addDirtKick(loc);
+                }
                 end_cycle = true;
-            }
-            break;
-
+                break;
+            default:
+                assert(false);
         }
-
-    } while ( end_cycle == false );
+    } while(end_cycle == false);
 }
 
-void BulletWeapon::updateStatus( void )
+void BulletWeapon::updateStatus()
 {
-    if ( fsm_timer.count() )
+    if (fsm_timer.count())
         fsmFlight();
-
 }
 
 void BulletWeapon::offloadGraphics(SpriteSorter& sorter)
@@ -104,3 +100,4 @@ void BulletWeapon::offloadGraphics(SpriteSorter& sorter)
 
     //sorter.addSprite( &shell );
 }
+

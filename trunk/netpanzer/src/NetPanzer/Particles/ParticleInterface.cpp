@@ -709,11 +709,8 @@ void ParticleInterface::addMiss(const iXY &worldPos, uint8_t unitType)
     float attackScale = 1.0f;
 
     UnitProfile *p = UnitProfileInterface::getUnitProfile(unitType);
-    if (p != 0) {
-        attackScale = float(unitAttackFactorTable[unitType]) / 15.0f;
-    } else {
-        assert(false);
-    }
+    assert(p != 0);
+    attackScale = float(unitAttackFactorTable[unitType]) / 15.0f;
 
     e.percentScaleMin    = 0.8f;
     e.percentScaleRand   = 0.4f;
@@ -749,7 +746,7 @@ void ParticleInterface::addMiss(const iXY &worldPos, uint8_t unitType)
     fXYZ pos(worldPos.x, 0, worldPos.y);
 
     try {
-        new TemplateExplosionSystem(	pos,
+        new TemplateExplosionSystem( pos,
                                      iRect(-5, -5, 5, 5),
                                      e,
                                      Particle2D::getFarAway(pos));
