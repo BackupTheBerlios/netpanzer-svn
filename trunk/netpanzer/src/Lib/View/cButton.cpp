@@ -142,7 +142,6 @@ void cButton::createTIL(iXY pos,
     leftClickFunc = nLeftClickFunc;
 
     topSurface.pack(tempTopSurface);
-
 } // end createTIL
 
 // createSurface

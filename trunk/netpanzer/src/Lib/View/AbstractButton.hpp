@@ -111,7 +111,7 @@ public:
     {}
 
     virtual void actionPerformed(const mMouseEvent &me);
-    virtual void draw(const Surface &dest)
+    virtual void draw(Surface &dest)
     {}
 
 }

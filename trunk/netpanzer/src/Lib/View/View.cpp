@@ -453,7 +453,7 @@ void View::doDraw(Surface &viewArea, Surface &clientArea)
         drawStatus(clientArea);
     }
 
-    //FIXME//drawButtons(viewArea);
+    drawButtons(viewArea);
     drawDefinedButtons(clientArea);
     drawInputFields(clientArea);
     drawLabels(clientArea);
