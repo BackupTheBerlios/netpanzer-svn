@@ -70,7 +70,7 @@ void RequestThread::run()
         } else if(query == "gamename") {
             // this is probably an old gamespy type query...
             // ignore everything until next final
-            while(!stream->eof()) {
+            while(!stream->eof() && running) {
                 if(tokenizer->getNextToken() == "final")
                     break;
             }
@@ -78,7 +78,7 @@ void RequestThread::run()
             std::cout << "Unknown request : '" << query << "'\n";
             *stream << "\\error\\Unknown request\\final\\" << std::flush;
             // ignore everything until next final
-            while(!stream->eof()) {                                 
+            while(!stream->eof() && running) {
                 if(tokenizer->getNextToken() == "final")            
                     break;
             }

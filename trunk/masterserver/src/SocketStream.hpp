@@ -54,7 +54,7 @@ protected:
     virtual int underflow()
     {
         int res = recv(fd, readbuffer, sizeof(readbuffer), 0);
-        if(res < 0) {
+        if(res <= 0) {
             return traits_type::eof();
         }
         setg(readbuffer, readbuffer, readbuffer+res);
