@@ -156,6 +156,12 @@ void WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos )
         return;
     }
 
+    if(((bool)gameconfig->fullscreen)!=true) {
+        // don't do border scrolling on windowed mode because
+        //  the window isn't always on the edge of the screen.
+        return;
+    }
+
     if(mouse_pos.x >= (screen_size.x - 1)) {
         WorldViewInterface::scroll_right(scroll_increment);
     }
