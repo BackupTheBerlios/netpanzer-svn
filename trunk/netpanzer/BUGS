@@ -41,3 +41,5 @@ fixe ...
 - when the bot occupied an outpost and you occupy it back, then the build menu
   shows the panzer you built last, but the one choosen by the bot comes out the
   outpost
+- bernhard reports that the bots crash when the server closes
+- sometimes 2 players spawn at the same place
