@@ -144,10 +144,10 @@ void GameInfoView::doDraw(Surface &viewArea, Surface &clientArea)
                 + 0.999);
         if(wincount == 0)
             wincount = 1;
-        snprintf(objectiveBuf, sizeof(objectiveBuf), "Objectives %d/%d",
+        snprintf(objectiveBuf, sizeof(objectiveBuf), "obj.   %d/%d",
                 getPlayerObjectives(), wincount);
     } else {
-        snprintf(objectiveBuf, sizeof(objectiveBuf), "Objectives %d",
+        snprintf(objectiveBuf, sizeof(objectiveBuf), "obj.   %d",
                 getPlayerObjectives());
     }
 
