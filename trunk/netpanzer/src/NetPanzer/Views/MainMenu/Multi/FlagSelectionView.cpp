@@ -15,14 +15,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #include <config.h>
+
 #include "FlagSelectionView.hpp"
 #include "gapp.hpp"
 #include "GameView.hpp"
 #include "GameViewGlobals.hpp"
-
+#include "Exception.hpp"
 
 Surface playerFlag;
 int     playerFlagSelected = 0;
@@ -67,7 +66,9 @@ FlagSelectionView::FlagSelectionView() : RMouseHackView()
 //---------------------------------------------------------------------------
 void FlagSelectionView::init()
 {
-	playerFlag.loadAllBMPInDirectory("pics/flags/netpmenu/");
+	if (playerFlag.loadAllBMPInDirectory("pics/flags/netpmenu/") <= 0)
+		throw Exception("Couldn't find flags for menu in '%s'.",
+				"pics/flags/netpmenu/");
 
 	iXY flagStartOffset(BORDER_SPACE, BORDER_SPACE * 2 + playerFlag.getPixY());
 

@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "gapp.hpp"
 #include "TimerInterface.hpp"
 #include "Span.hpp"
+#include "Exception.hpp"
 
 #ifdef MSVC
 #pragma pack(1)
@@ -3956,9 +3957,7 @@ void initFont()
 
 	FILE *fp = fopen(charfilename, "rb");
 	if (fp == 0)
-	{
-		assert(false);
-	}
+		throw Exception("couldn't load font '%s'.", charfilename);
 
 	for (int y = 0; y < ascii8x8.getPix().y; y++)
 	{
@@ -3983,9 +3982,7 @@ void initFont()
 
 	FILE *fp = fopen(charfilename, "rb");
 	if (fp == 0)
-	{
-		assert(false);
-	}
+		throw Exception("couldn't load font '%s'.", charfilename);
 
 	for (int y = 0; y < ascii5x5.getPix().y; y++)
 	{

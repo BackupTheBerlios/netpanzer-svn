@@ -15,11 +15,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifdef NOTREADYYET
 #include <config.h>
 
-#include "NetworkServerUnix.hpp"
+// XXX stub implementation, mine still has bugs, but will come soon
 
+#include "NetworkServerUnix.hpp"
 #include "gapp.hpp"
 
 #include "NetMessageLog.hpp"
@@ -39,33 +39,36 @@ NetworkServerUnix::~NetworkServerUnix()
 
 void NetworkServerUnix::shutdownClientTransport( PlayerID &client_id )
 {
-  	DelClientByWinsockID( client_id.getDPID() );
+  	//DelClientByWinsockID( client_id.getDPID() );
 }
 
 int NetworkServerUnix::openSession( int connection_type, int session_flags )
 {
-  	return( InitWinSock(gapp.hwndApp) );
+	return 0;
 }
 
 int NetworkServerUnix::hostSession( void )
 {
+#if 0
   	//winsock hack
 	if(InitStreamServer(gapp.hwndApp) == false) return false;
 
 	if(InitDGramServer(gapp.hwndApp)== false) return false;
+#endif
   
 	return true;
 }
 
 int NetworkServerUnix::closeSession( void )
 {
-  	ShutdownWinSockServer();
+  	//ShutdownWinSockServer();
 	return true;
 }
 
 int NetworkServerUnix::sendMessage( NetMessage *message, unsigned long size,
 									int flags )
 {
+#if 0
   	int sock_ret_val;
 	int net_error_code;
 
@@ -115,6 +118,7 @@ int NetworkServerUnix::sendMessage( NetMessage *message, unsigned long size,
 
   
 	NetworkState::incPacketsSent( size ); 
+#endif
   
    	return true;
 }
@@ -122,6 +126,7 @@ int NetworkServerUnix::sendMessage( NetMessage *message, unsigned long size,
 int NetworkServerUnix::sendMessage( NetMessage *message, unsigned long size,
 									PlayerID &player_id, int flags )
 {
+#if 0
   	ServerClientListData *client_data_ptr = 0;
 	int ret_val;
 
@@ -151,12 +156,14 @@ int NetworkServerUnix::sendMessage( NetMessage *message, unsigned long size,
 
 	if( ret_val != WS_OK )
 		return winsockErrorToNetworkError( ret_val );
+#endif
 
 	return _network_ok;
 }
 
 int NetworkServerUnix::getMessage( NetMessage *message )
 {
+#if 0
    	updateKeepAliveState();
       
 	if ( loop_back_recv_queue.isReady() )
@@ -183,8 +190,8 @@ int NetworkServerUnix::getMessage( NetMessage *message )
 			return true;
 		}
 	} // ** else 
+#endif
     
 	return false;
 }
-#endif
 

@@ -26,8 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class NetworkServerUnix : public NetworkServer
 {
 public:
-	NetworkServerWinSock();
-	virtual ~NetworkServerWinSock();
+	NetworkServerUnix();
+	virtual ~NetworkServerUnix();
    
 	virtual int openSession( int connection_type, int session_flags );
 	virtual int hostSession( void );

@@ -37,12 +37,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "DirectInput.hpp"
 #include "DSound.hpp"
 #endif
+#ifdef UNIX
+#include "UILib/SDL/SDLSound.hpp"
+#endif
 
 #ifdef WIN32
 #include "NetworkServerWinSock.hpp"
 #include "NetworkClientWinSock.hpp"
 //#include "NetworkServerDPlay.hpp"
 //#include "NetworkClientDPlay.hpp"
+#endif
+#ifdef UNIX
+#include "NetworkServerUnix.hpp"
+#include "NetworkClientUnix.hpp"
 #endif
 
 #include "UILib/UIDraw.hpp"
@@ -211,22 +218,27 @@ void GameManager::initializeSoundSubSystem()
 {
 #ifdef WIN32
     sound = new DirectSound();	
-    if (!sound->initialize())
-    {
-	LOG( ( "Failure to initialize DirectSound Sub-system" ) );
-	delete sound;
-	sound = 0;
-    } 
 #endif
+#ifdef USE_SDL
+	sound = new SDLSound();
+#endif
+    if (!sound || !sound->initialize())
+    {
+		LOG( ( "Failure to initialize DirectSound Sub-system" ) );
+		delete sound;
+		sound = 0;
+    } 
 }
 
 // ******************************************************************
 
 void GameManager::shutdownSoundSubSystem()
 {
-#ifdef WIN32
-    sound->shutdown();
-#endif
+	if(sound) {
+		sound->shutdown();
+		delete sound;
+		sound = 0;
+	}
 }
 
 // ******************************************************************
@@ -520,6 +532,10 @@ void GameManager::initializeNetworkSubSystem()
 #ifdef WIN32
   	SERVER = new NetworkServerWinSock();
 	CLIENT = new NetworkClientWinSock();
+#endif
+#ifdef UNIX
+	SERVER = new NetworkServerUnix();
+	CLIENT = new NetworkClientUnix();
 #endif
 
 	ServerMessageRouter::initialize();
@@ -1809,16 +1825,21 @@ void GameManager::launchDedicatedServer()
 // ******************************************************************
 void GameManager::exitNetPanzer()
 {
+#if 0
+  // XXX 
   // NOTE: Hack
   sound->StopTankIdle(); 
+#endif
 
   quitNetPanzerGame();
 
 #ifdef WIN32
   PostMessage(gapp.hwndApp, WM_CLOSE, 0, 0);
-#else
-  // XXX not the nice method...
-  exit(1);
+#endif
+#ifdef USE_SDL
+ 	SDL_Event event;
+	event.type = SDL_QUIT;
+	SDL_PushEvent(&event);
 #endif
 }
 

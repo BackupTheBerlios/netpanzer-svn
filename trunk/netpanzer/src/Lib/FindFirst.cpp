@@ -54,4 +54,4 @@ void _findclose(int* ihandle)
 	findhandle_t* handle = (findhandle_t*) ihandle;
 	printf ("closed glob");
 	globfree(&handle->globbuf);
-}
+} 
