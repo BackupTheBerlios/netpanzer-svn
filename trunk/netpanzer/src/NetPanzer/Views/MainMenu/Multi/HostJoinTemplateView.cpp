@@ -90,7 +90,7 @@ void bReady()
     gameconfig->playername = PlayerNameView::playerName.getString();
 
     // Set the player flag.
-    gameconfig->playerflag = ( (short) playerFlagSelected );
+    gameconfig->playerflag = playerFlagSelected;
 
     if (gameconfig->hostorjoin == _game_session_join) {
         //winsock hack

@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameView.hpp"
 #include "GameViewGlobals.hpp"
 #include "Exception.hpp"
+#include "GameConfig.hpp"
 
 Surface playerFlag;
 int     playerFlagSelected = 0;
@@ -94,6 +95,7 @@ void FlagSelectionView::init()
     }
 
     playerFlag.setFrame(0);
+    playerFlagSelected = gameconfig->playerflag;
 
 } // end FlagSelectionView::init
 
