@@ -238,9 +238,9 @@ void PowerUpInterface::generatePowerUp( void )
 void PowerUpInterface::initialize( void )
  {
   int lua_return;
-  BONUS_POWERUP_ANIM.load( "PowerUps/Bolt.pak" );
+  BONUS_POWERUP_ANIM.load( "powerups/Bolt.pak" );
   BONUS_POWERUP_ANIM.setFPS( 15 );
-  BONUS_POWERUP_ANIM_SHADOW.load( "PowerUps/BoltS.pak" );  
+  BONUS_POWERUP_ANIM_SHADOW.load( "powerups/BoltS.pak" );  
 
   UNIT_POWERUP_ANIM.setTo( BONUS_POWERUP_ANIM );
   UNIT_POWERUP_ANIM_SHADOW.setTo( BONUS_POWERUP_ANIM_SHADOW );
@@ -251,9 +251,9 @@ void PowerUpInterface::initialize( void )
   srand( (unsigned)time( 0 ) );
   /*
   mathlib_open();
-  lua_return = lua_dofile( "PowerUps/UnitPowerUp.lua" ); 
+  lua_return = lua_dofile( "powerups/UnitPowerUp.lua" ); 
   assert( lua_return == 0 );
-  lua_return = lua_dofile( "PowerUps/PowerUp.lua" ); 
+  lua_return = lua_dofile( "powerups/PowerUp.lua" ); 
   assert( lua_return == 0 );
   */
   //resetLogic();
