@@ -29,6 +29,8 @@ class TCPSocket : public SocketBase
 public:
     /** connects to a remote host */
     TCPSocket(const Address& address, bool blocking = true);
+    TCPSocket(const Address& bindaddr, const Address& address,
+            bool blocking = true);
     ~TCPSocket();
 
     /** send data to the socket */
@@ -54,6 +56,8 @@ private:
 
     TCPSocket();
     TCPSocket(int fd, const Address& addr);
+
+    void init(const Address& bindaddr, bool blocking);
 
     Address addr;
 };

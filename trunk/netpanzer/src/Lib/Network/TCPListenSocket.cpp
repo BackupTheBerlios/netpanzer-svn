@@ -52,14 +52,16 @@ TCPListenSocket::createBind(bool blocking)
         std::stringstream msg;
         msg << "Couldn't bind socket to address '"
             << addr.getIP() << "' port " << addr.getPort()
-            << ": " << strerror(errno);
+            << ": ";
+        printError(msg);
         throw std::runtime_error(msg.str());
     }
 
     res = listen(sockfd, 20);
     if(res < 0) {
         std::stringstream msg;
-        msg << "Couldn't listen on socket: " << strerror(errno);
+        msg << "Couldn't listen on socket: ";
+        printError(msg);
         throw std::runtime_error(msg.str());
     }
 
@@ -79,16 +81,14 @@ TCPListenSocket::accept()
 #ifdef USE_WINSOCK
         if(WSAGetLastError() == WSAEWOULDBLOCK)
             return 0;
-        std::stringstream msg;
-        msg << "Accept error (code " << WSAGetLastError();
-        throw std::runtime_error(msg.str());               
 #else
         if(errno == EWOULDBLOCK)
             return 0;
-        std::stringstream msg;
-        msg << "Accept error: " << strerror(errno);
-        throw std::runtime_error(msg.str());
 #endif
+        std::stringstream msg;
+        msg << "Accept error: ";
+        printError(msg);
+        throw std::runtime_error(msg.str());
     }
 
     TCPSocket* result;

@@ -30,15 +30,39 @@ namespace network
 TCPSocket::TCPSocket(const Address& newaddr, bool blocking)
     : addr(newaddr)
 {
+    init(Address::ANY, blocking);
+}
+
+TCPSocket::TCPSocket(const Address& bindaddr, const Address& newaddr,
+        bool blocking) : addr(newaddr)
+{
+    init(bindaddr, blocking);
+}
+
+void
+TCPSocket::init(const Address& bindaddr, bool blocking)
+{
     create(true);
 
     try {
-        int res = connect(sockfd, (struct sockaddr*) &addr.addr,
+        int res = bind(sockfd, (struct sockaddr*) &bindaddr.addr,
+                sizeof(bindaddr.addr));
+        if(res < 0) {
+            std::stringstream msg;
+            msg << "Couldn't bind socket to address '"
+                << bindaddr.getIP() << "' port " << bindaddr.getPort()
+                << ": ";
+            printError(msg);
+            throw std::runtime_error(msg.str());           
+        }
+        
+        res = connect(sockfd, (struct sockaddr*) &addr.addr,
                 sizeof(addr.addr));
         if(res < 0) {
             std::stringstream msg;
             msg << "Couldn't connect to '" << addr.getIP() << "' port "
-                << addr.getPort() << ": " << strerror(errno);
+                << addr.getPort() << ": ";
+            printError(msg);
             throw std::runtime_error(msg.str());
         }
 
@@ -59,15 +83,10 @@ TCPSocket::send(const void* data, size_t size)
 {
     int res = ::send(sockfd, (const char*) data, size, 0);
     if(res < 0) {
-#ifdef USE_WINSOCK
         std::stringstream msg;
-        msg << "Send Error (code " << WSAGetLastError() << ")";
+        msg << "Send error: ";
+        printError(msg);
         throw std::runtime_error(msg.str());
-#else
-        std::stringstream msg;
-        msg << "Send error: " << strerror(errno);
-        throw std::runtime_error(msg.str());
-#endif
     }
     if(res != (int) size) {
         std::stringstream msg;
@@ -85,16 +104,14 @@ TCPSocket::recv(void* buffer, size_t size)
 #ifdef USE_WINSOCK
         if(WSAGetLastError() == WSAEWOULDBLOCK)
             return 0;
-        std::stringstream msg;
-        msg << "Read error (code " << WSAGetLastError() << ")";
-        throw std::runtime_error(msg.str());
 #else
         if(errno == EWOULDBLOCK)
             return 0;
-        std::stringstream msg;
-        msg << "Read error: " << strerror(errno);
-        throw std::runtime_error(msg.str());
 #endif
+        std::stringstream msg;
+        msg << "Read error: ";
+        printError(msg);
+        throw std::runtime_error(msg.str());
     }
 
     return res;

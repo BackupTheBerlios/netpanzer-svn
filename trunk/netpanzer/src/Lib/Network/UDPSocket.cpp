@@ -49,7 +49,8 @@ UDPSocket::init(const Address& addr, bool blocking)
             std::stringstream msg;
             msg << "Couldn't bind socket to address '"
                 << addr.getIP() << "' port " << addr.getPort()
-                << ": " << strerror(errno);
+                << ": ";
+            printError(msg);
             throw std::runtime_error(msg.str());
         }
 
@@ -71,15 +72,10 @@ UDPSocket::send(const Address& addr, const void* data, size_t datasize)
     int res = sendto(sockfd, (const char*) data, datasize, 0,
             (struct sockaddr*) &addr.addr, sizeof(addr.addr));
     if(res < 0) {
-#ifdef USE_WINSOCK
         std::stringstream msg;
-        msg << "Send error (code " << WSAGetLastError() << ")";
+        msg << "Send error: ";
+        printError(msg);
         throw std::runtime_error(msg.str());
-#else
-        std::stringstream msg;
-        msg << "Send error: " << strerror(errno);        
-        throw std::runtime_error(msg.str());
-#endif
     }
     if(res != (int) datasize) {
         std::stringstream msg;
@@ -98,16 +94,14 @@ UDPSocket::recv(Address& addr, void* buffer, size_t bufsize)
 #ifdef USE_WINSOCK
         if(WSAGetLastError() == WSAEWOULDBLOCK)
             return 0;
-        std::stringstream msg;
-        msg << "Receive error (code " << WSAGetLastError() << ")";
-        throw std::runtime_error(msg.str());
 #else
         if(errno == EWOULDBLOCK)
             return 0;
+#endif
         std::stringstream msg;
         msg << "Receive error: " << strerror(errno);
+        printError(msg);
         throw std::runtime_error(msg.str());
-#endif
     }
 
     return res;

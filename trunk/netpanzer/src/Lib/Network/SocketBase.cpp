@@ -56,6 +56,16 @@ SocketBase::~SocketBase()
 }
 
 void
+SocketBase::printError(std::ostream& out)
+{
+#ifdef USE_WINSOCK
+    out << "Winsock error " << WSAGetLastError();
+#else
+    out << strerror(errno);
+#endif
+}
+
+void
 SocketBase::create(bool tcp)
 {
     if(tcp)
@@ -65,17 +75,14 @@ SocketBase::create(bool tcp)
 
 #ifdef USE_WINSOCK
     if(sockfd == INVALID_SOCKET) {
-	std::stringstream msg;
-	msg << "Couldn't create socket: " << WSAGetLastError();
-	throw std::runtime_error(msg.str());
-    }
 #else
     if(sockfd < 0) {
-        std::stringstream msg;
-        msg << "Couldn't create socket: " << strerror(errno);
-        throw std::runtime_error(msg.str());
-    }
 #endif
+	std::stringstream msg;
+	msg << "Couldn't create socket: ";
+        printError(msg);
+	throw std::runtime_error(msg.str());
+    }
 }
 
 void
@@ -85,13 +92,15 @@ SocketBase::setNonBlocking()
     unsigned long mode = 1;
     if(ioctlsocket(sockfd, FIONBIO, &mode) != 0) {
 	std::stringstream msg;
-	msg << "Couldn't set nonblocking mode: " << WSAGetLastError();
+	msg << "Couldn't set socket to nonblocking mode: ";
+        printError(msg);
 	throw std::runtime_error(msg.str());
     }
 #else
     if(fcntl(sockfd, F_SETFL, O_NONBLOCK) < 0) {
         std::stringstream msg;
-        msg << "Couldn't set socket to nonblocking mode: " << strerror(errno);
+        msg << "Couldn't set socket to nonblocking mode: ";
+        printError(msg);
         throw std::runtime_error(msg.str());
     }
 #endif

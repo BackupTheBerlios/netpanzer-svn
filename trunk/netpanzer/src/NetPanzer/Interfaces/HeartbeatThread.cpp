@@ -149,7 +149,9 @@ HeartbeatThread::sendPacket(const std::string& str)
         
             // we use blocking mode here and hope that no masterserver quietly
             // leaves our connection open without sending data
-            network::TCPSocket socket(address);
+            network::Address bindaddr = 
+                network::Address::resolve(gameconfig->bindaddress, 0);
+            network::TCPSocket socket(bindaddr, address);
             network::SocketStream stream(socket);
             
             bool doMasterQuery = false;

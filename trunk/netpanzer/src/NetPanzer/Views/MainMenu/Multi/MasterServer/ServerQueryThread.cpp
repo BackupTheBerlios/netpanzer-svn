@@ -198,7 +198,8 @@ ServerQueryThread::queryMasterServer()
         }
 
         state = STATE_QUERYSERVERS;
-        gameconfig->masterservers = newMasterServers;
+        if(newMasterServers != "")
+            gameconfig->masterservers = newMasterServers;
     } catch(std::exception& e) {
         LOGGER.warning("Problem querying masterserver: %s.", e.what());
         masterservers.pop_back();

@@ -65,7 +65,7 @@ SocketSet::select(unsigned int usec)
 #ifdef USE_WINSOCK
     if(res < 0) {
         std::stringstream msg;
-        msg << "Select failed: " << WSAGetLastError();
+        msg << "Select failed: winsock error " << WSAGetLastError();
         throw std::runtime_error(msg.str());
     }
 #else

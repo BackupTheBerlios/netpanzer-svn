@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __SOCKETBASE_HPP__
 #define __SOCKETBASE_HPP__
 
+#include <iostream>
 #include "SocketHeaders.hpp"
 #include "Util/NoCopy.hpp"
 
@@ -36,6 +37,7 @@ protected:
     void create(bool tcp);
     void setNonBlocking();
     void close();
+    void printError(std::ostream& out);
 
 #ifdef USE_WINSOCK
     SOCKET sockfd;
