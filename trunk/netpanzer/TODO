@@ -81,6 +81,9 @@ Next release:
  * pulsing circle on the radar at places where battle happens (bigger circle if
    heavier?)
 
+*** GUI
+ * setting a nickname only works after Enter has been pressed.
+
 *** gameplay
 / Note that these are just random ideas. We should be very careful when 
 / tuning the gameplay. 1 of the strengths of netpanzer is that it is simple 
