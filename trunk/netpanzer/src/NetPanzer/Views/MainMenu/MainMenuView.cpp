@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MainMenuView.hpp"
 #include "Desktop.hpp"
 #include "DDHardSurface.hpp"
-#include "DirectDrawGlobals.hpp"
 #include "FontSystem2D.hpp"
 #include "GameManager.hpp"
 #include "GameViewGlobals.hpp"
@@ -29,14 +28,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "HostJoinTemplateView.hpp"
 #include "GetSessionView.hpp"
 #include "GameConfig.hpp"
-
-static void bQuickLaunch()
-{
-	GameConfig::SetGameMode(_gamemode_multiplayer);
-
-	bNext();
-	bReady();
-}
 
 // MainMenuView
 //---------------------------------------------------------------------------

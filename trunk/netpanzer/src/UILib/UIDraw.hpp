@@ -45,6 +45,16 @@ public:
   virtual void setPalette(RGBColor *color)=0;
 }; // end DirectDraw
 
+// XXX some global vars, these should be avoided or at least moved inside the
+// UIDraw class!!!
+extern unsigned long DBUFFER_WIDTH;
+extern unsigned long DBUFFER_HEIGHT;
+extern unsigned long DBUFFER_VIEW_WIDTH;
+extern unsigned long DBUFFER_VIEW_HEIGHT;
+extern unsigned long X_CLIP_OFS;
+extern unsigned long Y_CLIP_OFS;
+extern unsigned long OFFSET_TO_VIEW;
+
 extern UIDraw *Screen;
 
 #endif // end __UIDraw_hpp__

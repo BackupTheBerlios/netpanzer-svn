@@ -44,8 +44,6 @@ void BlitRectsMemcpy( unsigned char *pSrc, long srcPitch, unsigned char *pDest, 
 
 //extern globalApp gapp;
 
-DirectDraw DDraw;
-
 unsigned char *DOUBLE_BUFFER = 0;
 
 unsigned long DBUFFER_WIDTH;

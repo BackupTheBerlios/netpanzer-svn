@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "LobbyView.hpp"
 #include "Desktop.hpp"
 #include "UIDraw.hpp"
-#include "DirectDrawGlobals.hpp"
 #include "DDHardSurface.hpp"
 #include "GameManager.hpp"
 

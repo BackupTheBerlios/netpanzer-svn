@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "AreYouSureResignView.hpp"
 #include "Desktop.hpp"
-#include "DirectDrawGlobals.hpp"
 #include "DDHardSurface.hpp"
 #include "GameManager.hpp"
 #include "ParticleSystem2D.hpp"

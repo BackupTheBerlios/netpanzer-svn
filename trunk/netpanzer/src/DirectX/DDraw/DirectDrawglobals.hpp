@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "DirectDraw.hpp"
 
+#if 0
 extern DirectDraw DDraw;
 
 extern unsigned long DBUFFER_WIDTH;
@@ -29,5 +30,6 @@ extern unsigned long DBUFFER_VIEW_HEIGHT;
 extern unsigned long X_CLIP_OFS;
 extern unsigned long Y_CLIP_OFS;
 extern unsigned long OFFSET_TO_VIEW;
+#endif
 
 #endif // end __DirectDrawglobals_hpp__

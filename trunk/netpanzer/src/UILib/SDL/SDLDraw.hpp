@@ -15,9 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __SDLDraw_hpp__
 #define __SDLDraw_hpp__
+
+#include <SDL.h>
 
 #include "RGBColor.hpp"
 #include "UIDraw.hpp"
@@ -27,23 +28,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class SDLDraw: public UIDraw
 {
 private:
-
-  SDL_Surface *FrontBuffer;
+	SDL_Surface *FrontBuffer;
 
 public:
-  bool initialize();
-  void shutdown();
-  bool setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags);
-  bool isDisplayModeAvailable(int width, int height, int bpp);
-  bool lockDoubleBuffer(BYTE **DoubleBuffer);
-  bool unlockDoubleBuffer();
-  bool createFrameBuffer(DWORD width, DWORD height, DWORD bpp);
-  void setGDIStatus(bool enable);
-  void restoreAll();
-  bool copyDoubleBufferandFlip();
-  void setPalette(RGBColor *color);
+	SDLDraw();
+	virtual ~SDLDraw();
+  
+	bool initialize();
+	void shutdown();
+	bool setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags);
+	bool isDisplayModeAvailable(int width, int height, int bpp);
+	bool lockDoubleBuffer(BYTE **DoubleBuffer);
+	bool unlockDoubleBuffer();
+	bool createFrameBuffer(DWORD width, DWORD height, DWORD bpp);
+	void setGDIStatus(bool enable);
+	void restoreAll();
+	bool copyDoubleBufferandFlip();
+	void setPalette(RGBColor *color);
 }; // end DirectDraw
-
-extern UIDraw *Screen;
 
 #endif // end __UIDraw_hpp__

@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Sound.hpp"
 #include "cMouse.hpp"
 #include "ViewGlobals.hpp"
-#include "DirectDrawGlobals.hpp"
 #include "DDHardSurface.hpp"
 #include "FontSystem2D.hpp"
 #include "RadarPingParticle2D.hpp"

@@ -18,6 +18,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "SDLDraw.hpp"
 
+// XXX fixme, need sensefull values here
+unsigned long DBUFFER_WIDTH;
+unsigned long DBUFFER_HEIGHT;
+unsigned long DBUFFER_VIEW_WIDTH;
+unsigned long DBUFFER_VIEW_HEIGHT;
+unsigned long X_CLIP_OFS;
+unsigned long Y_CLIP_OFS;
+unsigned long OFFSET_TO_VIEW;
+
+SDLDraw::SDLDraw()
+	: FrontBuffer(0)
+{
+}
+
+SDLDraw::~SDLDraw()
+{
+}
+
 bool SDLDraw::initialize()
 {
 	return true;
@@ -31,37 +49,37 @@ bool SDLDraw::setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags
 {
   FrontBuffer = SDL_SetVideoMode(width, height, bpp, SDL_FULLSCREEN /*| SDL_DOUBLEBUF | SDL_HWSURFACE*/);
   if(FrontBuffer==NULL)
-	  return FALSE;
-  return TRUE;
+	  return false;
+  return true;
 }
 
 bool SDLDraw::isDisplayModeAvailable(int width, int height, int bpp)
 {
 	if(SDL_VideoModeOK(width, height, bpp, 0 /*SDL_FULLSCREEN | SDL_DOUBLEBUF | SDL_HWSURFACE*/))
-		return TRUE;
+		return true;
 
-	return FALSE;
+	return false;
 }
 
 bool SDLDraw::lockDoubleBuffer(BYTE **DoubleBuffer)
 {
 	if(SDL_LockSurface(FrontBuffer)<0)
-		return FALSE;
+		return false;
 
 	*DoubleBuffer = (unsigned char *)FrontBuffer->pixels;
 
-	return TRUE;
+	return true;
 }
 
 bool SDLDraw::unlockDoubleBuffer()
 {
 	SDL_LockSurface(FrontBuffer);
-	return TRUE;
+	return true;
 }
 
 bool SDLDraw::createFrameBuffer(DWORD width, DWORD height, DWORD bpp)
 {
-	return TRUE;
+	return true;
 }
 
 void SDLDraw::setGDIStatus(bool enable)
@@ -75,8 +93,8 @@ void SDLDraw::restoreAll()
 bool SDLDraw::copyDoubleBufferandFlip()
 {
 	if(SDL_Flip(FrontBuffer)==0)
-		return TRUE;
-	return FALSE;
+		return true;
+	return false;
 }
 
 void SDLDraw::setPalette(RGBColor *color)

@@ -16,14 +16,19 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
+#include "UIDraw.hpp"
+
+#ifdef USE_SDL
+#include "SDL/SDLDraw.hpp"
+
+UIDraw *Screen = new SDLDraw();
+#endif
+
+#ifdef WIN32
 #include "DirectDraw.hpp"
 #include "DirectDrawGlobals.hpp"
 
-#include "UIDraw.hpp"
-//#include "SDL/SDLDraw.hpp"
-
-//UIDraw *Screen = new SDLDraw();
-//UIDraw *Screen = new DirectDraw();
-// XXX temporary hack because not everything was converted to use Screen
-UIDraw* Screen = &DDraw;
+UIDraw *Screen = new DirectDraw();
+#endif
 

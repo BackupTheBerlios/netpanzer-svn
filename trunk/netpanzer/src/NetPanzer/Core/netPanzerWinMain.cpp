@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 // XXX need new unix code here
-#ifndef UNIX
+#ifdef WIN32
 #include <config.h>
 #include <stdlib.h>
 #include <windows.h>
@@ -38,10 +38,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	//clear out the GlobalApp data--
 	memset((void *) &gapp, 0, sizeof(gapp));
-
-#ifdef USE_SDL
-	SDL_Init(SDL_INIT_EVERYTHING);
-#endif
 
 	//Initialize the Windows portion of PanzerKrieg (create a window,
 	//fill in the contents of our GlobalApp structure, etc.)

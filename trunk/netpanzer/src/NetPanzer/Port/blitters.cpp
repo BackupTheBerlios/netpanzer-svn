@@ -16,8 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+#include <assert.h>
 #include "blitters.h"
-#include "DirectDrawGlobals.hpp"
+#include "codewiz.hpp"
 
 void blit_partial_xy( unsigned char *tile_ptr,unsigned char *buffer_ptr,short y_size,short x_size)
 {
