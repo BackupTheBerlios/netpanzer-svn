@@ -22,3 +22,5 @@
 - Selecting a map when hosting a game doesn't work anymore
 - Clients aren't notified when the server closes
 - you shouldn't get points for shooting your own units
+- choosing multiplayer -> next -> options -> multiplayer makes lobby
+  partially invisible
