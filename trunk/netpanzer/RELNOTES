@@ -1,10 +1,13 @@
-*** 2.0.0 ***
+*** 2.0.0-rc1 ***
+
+This is a prerelease open for public testing. Especiacially the new ppc code is
+not tested yet. I'd be happy about some feedback if it works or not
+(matze@braunis.de).
 
 * New masterserver protocol which should eleminate all problems with the server
   browser (also next xqf version will support netpanzer)
 * Added a serverconsole
-* Fixed endianess problems. ppc users can play with x86 users now (not tested,
-  I'd be happy to hear some feedback)
+* Fixed endianess problems. ppc users can play with x86 users now.
 * The server creates logfiles now that can be used for statistics or reports on
   webpages
 * Replaced SDL_net with custom socket wrappers (this allows binding servers to
