@@ -101,7 +101,7 @@ ServerQueryThread::run()
                 break;
         }
         // sleep a little bit
-        SDL_Delay(10);
+        SDL_Delay(10); // this destroys ping times :-(
     }
 }
 
@@ -217,13 +217,14 @@ ServerQueryThread::queryServers()
 
     UDPpacket* packet = SDLNet_AllocPacket(4096);
     int res = SDLNet_UDP_Recv(udpsocket, packet);
-
     if(res < 0) {
         SDLNet_FreePacket(packet);
         std::cerr << "Network error when receiving from udpsocket.\n";
         state = STATE_ERROR;
         return;
     }
+    if(res == 0)
+        return;
 
     // find server with this address
     ServerInfo* server = 0;

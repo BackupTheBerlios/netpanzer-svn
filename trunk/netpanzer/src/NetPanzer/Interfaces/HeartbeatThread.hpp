@@ -33,8 +33,7 @@ public:
      * minutes. Throws std::exception's when something goes wrong while
      * intializing.
      */
-    HeartbeatThread(const std::string& masteraddress,
-            const std::string& gamename, int gamestatusport);
+    HeartbeatThread();
     /** Sends a statechanged message to the masterserver indicating that the
      * server gets shutdown. Remember that the masterserver will query us to
      * make sure the packet wasn't faked. So the infothread should return the
@@ -44,14 +43,11 @@ public:
 
 private:
     static int threadMain(void* data);
-    void sendHeartbeat();
+    void sendHeartbeat(IPaddress addr);
     
     volatile bool running;
-    IPaddress serveraddr;
+    std::vector<IPaddress> serveraddrs;
     SDL_Thread* thread;
-    
-    std::string gamename;
-    int gameport;
 };
 
 #endif

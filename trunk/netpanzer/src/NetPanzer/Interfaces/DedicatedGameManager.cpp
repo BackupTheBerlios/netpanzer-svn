@@ -192,11 +192,10 @@ bool DedicatedGameManager::launchNetPanzerGame()
 
     Particle2D::setCreateParticles(false);
 
-    if((const std::string&) gameconfig->masterserver != "") {
+    if((const std::string&) gameconfig->masterservers != "") {
         try {
             infothread = new InfoThread(gameconfig->serverport);
-            heartbeatthread = new HeartbeatThread(gameconfig->masterserver,
-                    "netpanzer", gameconfig->serverport);
+            heartbeatthread = new HeartbeatThread();
         } catch(std::exception& e) {
             LOGGER.warning("failed contacting masterserver: %s", e.what());
             delete infothread; infothread = 0;

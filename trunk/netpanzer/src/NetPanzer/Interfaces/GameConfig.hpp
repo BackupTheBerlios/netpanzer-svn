@@ -137,7 +137,6 @@ public:
     ConfigInt    windspeed;
     ConfigString map;
     ConfigString mapcycle;
-    ConfigString masterserver;
     ConfigBool   logging;
 
     // Visuals Settings
