@@ -300,22 +300,24 @@ int netpanzer_main(int argc, char** argv)
         delete manager;
         LOGGER.info("successfull shutdown.");
         shutdown();
-    } catch(std::exception& e) {
+    } 
+// in debug mode we want the exception to abort, so that we have the original
+// stack backtrace
+#ifndef DEBUG
+    catch(std::exception& e) {
         LOGGER.warning("An unexpected exception occured: %s\nShutdown needed.",
                 e.what());
-#ifdef DEBUG
-        throw;
-#endif
         shutdown();
         return 1;
     } catch(...) {
         LOGGER.warning("An unexpected exception occured.\nShutdown needed.");
-#ifdef DEBUG
-        throw;
-#endif
         shutdown();
         return 1;
     }
+#else
+    catch(const float dummy) {
+    }
+#endif
 
     return 0;
 }

@@ -58,7 +58,7 @@ class FileSystem;
 class ReadFile : public File
 {
 public:
-	bool isEOF();	
+    bool isEOF();	
 
     int64_t read(void* buffer, size_t objsize, size_t objcount);
 

@@ -29,6 +29,7 @@ class KeyboardInterface
 protected:
     static bool key_table[SDLK_LAST];
     static bool previous_key_state[SDLK_LAST];
+    static bool textmode;
     static int char_buffer[ _CHAR_BUFFER_SIZE ];
     static unsigned long char_buffer_front;
     static unsigned long char_buffer_rear;
@@ -60,6 +61,15 @@ public:
     {
         char_buffer_front = 0;
         char_buffer_rear = 0;
+    }
+
+    /** enable text input mode, which has the effect that getKeyPressed
+     * returns always false, as long as it is activated. Only getChar returns
+     * the really pressed keys.
+     */
+    static inline void setTextMode(bool enabled)
+    {
+	textmode = enabled;
     }
 
     static inline bool getChar(int &c)

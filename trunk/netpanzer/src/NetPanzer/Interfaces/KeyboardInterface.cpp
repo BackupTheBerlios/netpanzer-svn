@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 bool KeyboardInterface::key_table[SDLK_LAST];
 bool KeyboardInterface::previous_key_state[SDLK_LAST];
+bool KeyboardInterface::textmode;
 
 int KeyboardInterface::char_buffer[ _CHAR_BUFFER_SIZE ];
 unsigned long KeyboardInterface::char_buffer_front = 0;
@@ -43,6 +44,9 @@ void KeyboardInterface::keyReleased(int scancode)
 
 bool KeyboardInterface::getKeyPressed(int scanCode)
 {
+    if(textmode)
+	return false;
+
     if (KeyboardInterface::getKeyState(scanCode) == true &&
             KeyboardInterface::getPrevKeyState(scanCode) == false)
         return true;

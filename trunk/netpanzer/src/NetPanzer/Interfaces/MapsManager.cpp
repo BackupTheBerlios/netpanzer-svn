@@ -32,13 +32,12 @@ static inline std::string trim(const std::string& str)
     string::size_type start = str.find_first_not_of(" \t\n\r");
     string::size_type end = str.find_last_not_of(" \t\n\r");
 
-    return string(str, start, end-start+1);
+    return string(str, start, end-start);
 }
 
 std::string MapsManager::getNextMap(const std::string& map)
 {
     using std::string;
-    std::cout << "NextMap from '" << map << "': ";
 
     // parse the mapcycle in the config
     const string& mapcycle = gameconfig->mapcycle;
@@ -46,7 +45,7 @@ std::string MapsManager::getNextMap(const std::string& map)
     string::size_type lasti = 0;
     if(i == string::npos)
         i = mapcycle.size();
-    string currentMap = trim(string(mapcycle, 0, i));
+    string currentMap = trim(string(mapcycle, 0, i+1));
     string firstmap = currentMap;
 
     bool takeNext = false;
@@ -58,20 +57,16 @@ std::string MapsManager::getNextMap(const std::string& map)
         if(currentMap == map)
             takeNext = true;
         
-        if(i == mapcycle.size())
+        if(i == mapcycle.size() + 1)
             break;
         lasti = i;
         i = mapcycle.find(',', i+1);
         if(i == string::npos) {
-            i = mapcycle.size();
+            i = mapcycle.size()+1;
         }
-        std::cout << "check: '" << string(mapcycle, lasti+1, i-lasti+1) << "'\n";
-        std::cout << "c2: '" << trim(string(mapcycle, lasti+1, i-lasti+1)) <<
-                "'\n";
         currentMap = trim(string(mapcycle, lasti+1, i-lasti+1));
     } while(1);
 
-    std::cout << firstmap << "(first) \n";
     return firstmap;
 }
 

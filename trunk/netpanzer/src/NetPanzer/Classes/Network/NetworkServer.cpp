@@ -149,8 +149,8 @@ bool NetworkServer::activateKeepAlive( PlayerID &client_player_id )
     client_data = client_list.getClientData( client_player_id );
 
     if( client_data == 0 ) {
-        LOG( ("NetworkServer::activateKeepAlive -- Could Not Find Client To Activate Keep Alive" ) );
-        return( false );
+	LOGGER.debug("NetworkServer::activateKeepAlive -- Could Not Find Client To Activate Keep Alive");
+        return false;
     }
 
     client_data->keep_alive_state = true;

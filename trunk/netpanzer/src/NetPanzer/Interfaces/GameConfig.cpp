@@ -178,6 +178,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
         loadConfig();
     } catch(Exception e) {
         LOG(("couldn't read game configuration: %s", e.what()));
+	LOG(("Using default config. (this is normal on first startup)"));
     }
 }
 

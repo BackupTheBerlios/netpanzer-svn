@@ -382,6 +382,7 @@ void WorldInputCmdProcessor::setKeyboardInputModeChatMesg()
     ConsoleInterface::resetInputString( "Message All: " );
     ChatInterface::setMessageScopeAll();
     KeyboardInterface::flushCharBuffer();
+    KeyboardInterface::setTextMode(true);
     enter_key_hit_count = 1;
     keyboard_input_mode = _keyboard_input_mode_chat_mesg;
 }
@@ -402,6 +403,7 @@ void WorldInputCmdProcessor::setKeyboardInputModeAllieChatMesg()
     ConsoleInterface::resetInputString( "Message Allies : " );
     ChatInterface::setMessageScopeAllies();
     KeyboardInterface::flushCharBuffer();
+    KeyboardInterface::setTextMode(true);
     enter_key_hit_count = 1;
     keyboard_input_mode = _keyboard_input_mode_allie_mesg;
 }
@@ -922,6 +924,7 @@ bool WorldInputCmdProcessor::getConsoleInputString( char *input_string )
                 if ((key_char == SDLK_RETURN) ) {
                     enter_key_hit_count++;
                     if (enter_key_hit_count == 2) {
+			KeyboardInterface::setTextMode(false);
                         ConsoleInterface::getInputString( input_string );
                         return( true );
                     }
