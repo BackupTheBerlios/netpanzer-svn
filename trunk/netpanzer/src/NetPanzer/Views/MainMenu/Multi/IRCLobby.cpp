@@ -83,7 +83,7 @@ void IRCLobby::sendServerInfo(const std::string& dest)
 {
     std::stringstream buffer;
 
-    buffer << "-" << server_running_mess
+    buffer << "-" << server_running_mess << " "
            << PlayerInterface::countPlayers()
            << "/" << PlayerInterface::getMaxPlayers()
            << " map:" << gameconfig->map;
@@ -312,7 +312,7 @@ void IRCLobby::processMessage()
         else if(strncmp(mess+1,server_running_mess,sizeof(server_running_mess)-1)==0) {
             // add a server to the list
             if(gameconfig->hostorjoin== _game_session_join) {
-                const char *p=mess+1+sizeof(server_running_mess);
+                const char *p=mess+strlen(server_running_mess)+1;
                 const char *map;
                 int players=atoi(p);
                 if((p=strchr(p,'/'))==0) {
