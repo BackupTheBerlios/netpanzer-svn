@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Astar.hpp"
 #include "Timer.hpp"
 #include "PathingState.hpp"
+#include "Log.hpp"
 
 Astar::Astar()
 {
@@ -283,9 +284,12 @@ bool Astar::process_succ( PathList *path, int *result_code )
   
   while( !done && !steps_comp )
    {   
-	best_node = open.top();
-	open.pop();
-    
+	best_node = 0;
+	if (!open.empty()) {
+		best_node = open.top();
+		open.pop();
+	}
+
     if ( best_node == 0 )
     {
      goal_reachable = false;
@@ -423,6 +427,9 @@ bool Astar::process_succ( PathList *path, int *result_code )
    else
     if ( !goal_reachable )
      {
+	  LOG(("goal unreachable %dx%d",
+				  goal_node.map_loc.x, goal_node.map_loc.y));
+
       ini_flag = true;
       cleanUp(); 
       
