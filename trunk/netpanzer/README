@@ -128,7 +128,7 @@ the server section of the xml file:
     
 *initialunits [number], default 5
     Number of units that each player starts with when he joins or after he's
-    been killed.
+    been killed. (not working correctly yet)
 
 *gametype [0,1,2], default 0
     Type of game: (0=Objectives, 1=FragLimit, 2=TimeLimit)
@@ -144,7 +144,7 @@ the server section of the xml file:
     (used when gametype=0)
 
 *mapcycling [yes,no], default no
-    cycle to next map after a map ended. (Currently not working correctly...)
+    cycle to next map after a map ended.
 
 *poweups [yes,no], default yes
     enable/disable powerups
