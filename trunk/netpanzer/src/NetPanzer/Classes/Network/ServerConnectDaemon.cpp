@@ -81,24 +81,6 @@ void ServerConnectDaemon::shutdownConnectDaemon()
                          0 );
 }
 
-void ServerConnectDaemon::startConnectionProcess( PlayerID new_player_id )
-{
-    ConnectQueueElement connect_request;
-
-
-    if ( !inConnectQueue( new_player_id) ) {
-        connect_request.new_player_id  = new_player_id;
-        connect_request.connect_status = _connect_status_waiting;
-
-        connect_queue.push_back(connect_request);
-
-        ClientConnectJoinRequestAck link_ack;
-
-        SERVER->sendMessage( new_player_id, &link_ack,
-                             sizeof(ClientConnectJoinRequestAck), 0);
-    }
-}
-
 bool ServerConnectDaemon::inConnectQueue( PlayerID &new_player_id )
 {
     std::list<ConnectQueueElement>::iterator i;

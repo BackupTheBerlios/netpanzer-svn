@@ -82,8 +82,6 @@ public:
 
     static void shutdownConnectDaemon( void );
 
-    static void startConnectionProcess( PlayerID new_player_id );
-
     static void startDisconnectionProcess( PlayerID player_id );
     static void startClientDropProcess( PlayerID player_id );
 
