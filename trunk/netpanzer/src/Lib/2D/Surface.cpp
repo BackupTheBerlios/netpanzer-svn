@@ -2092,16 +2092,31 @@ void Surface::bltScale(const Surface &source, const iRect &destRect) const
 	int stepWholePart = xSrcDelta >> 16;
 	int srcX1FracWithCount = (srcX1 << 16) | pixelsPerRow;
 
+#if 0
+	printf("Source: %d %d\n", source.pix.x, source.pix.y);
+	printf("DestRect: %d %d - %d %d\n", destRect.min.x, destRect.min.y,
+										destRect.max.x, destRect.max.y);
+	printf("ScaledVals: %d %d - %d %d %d\n", srcX1, xSrcDelta,
+			srcX1FracWithCount, stepAndDecCount, stepWholePart);
+#endif
+	float xdelta = float(source.pix.x) / float(max.x - min.x);
 	for (int yCount = 0 ; yCount < numRows ; yCount++)
 	{
 		const PIX *sRow = source.rowPtr(srcY >> 16) + (srcX1 >> 16);
 
+		/*
 		bltScaleSpan(dRow, sRow, srcX1FracWithCount, stepAndDecCount, stepWholePart);
+		*/
+		// XXX: WARNING SLOW CODE
+		float sPos = 0;
+		for(int x=0; x<pixelsPerRow; x++) {
+			dRow[x] = sRow[(size_t) sPos];
+			sPos += xdelta;
+		}
 
 		srcY += ySrcDelta;
 		dRow += stride;
 	}
-
 }
 
 void Surface::bltScaleTrans(const Surface &source, const iRect &destRect) const {
