@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <arpa/inet.h>
+#include <netinet/in.h>
 #include <pthread.h>
 
 /** This class is responsible for notifying the masterserver from time to time
