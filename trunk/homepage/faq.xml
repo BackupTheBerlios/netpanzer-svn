@@ -111,7 +111,7 @@
         <question>I'm behind a firewall/router can I still use netPanzer?</question>
 		<answer>Yes. Joining netPanzer games should work without any
 		problems. If you want to open a server, then you have to
-		forward port 3030tcp to your machine.
+		forward port 3030 TCP+UDP to your machine.
 		</answer>
 	</faq>
 
