@@ -248,7 +248,11 @@ BaseGameManager *initialise(int argc, char** argv)
 
         // gameconfig exists now...
         if(connect_option.value() != "") {
-            gameconfig->serverConnect = connect_option.value();
+            std::string connecthost = connect_option.value();
+            if(connecthost.find("netpanzer://") == 0) {
+                connecthost = connecthost.substr(12, connecthost.size()-12);
+            }
+            gameconfig->serverConnect = connecthost;
             gameconfig->quickConnect = true;
         }                                                               
         if (master_server_option.value().size() > 0) {

@@ -5,8 +5,6 @@ Next release:
 -server status command returns wrong player names (seems to happen after sudden
         client disconnects)
 -netpanzer fails on win98se
--when passed in an IP netpanzer should remove a trailing netpanzer:// string so
- that we can integrate it into browsers.
 -win32 doesn't show time in serverlogs
 -you can't move panzers around on ppc (also often connection errors on ppc:
         <cypmac> cyp@itouch:~$ netpanzer -c 194.167.156.7
