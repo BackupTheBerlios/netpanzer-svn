@@ -1,3 +1,8 @@
+24-Nov-2003 by Hankin Chick
+-created IRCLobbyServer, so IRCLobby should work by itself.
+-fixed repeatitive mouse move/dragged messages even when mouse didn't move
+-added scale/shade/dotsize buttons on the minimap
+
 24-Nov-2003 by Matthias Braun
 -converted the SelectionList to std::vector, also removed limit of maximum
  select units while doing this.
