@@ -25,23 +25,10 @@
            list was a constant target of spammers)
       </dd>
     </dl>
-    
-    <p>
-      You might also join the official netPanzer IRC chatroom at:
-    </p>
-
-    <p>
-      Server: <tt>irc.freenode.net:6667</tt><br />
-      Channel: <tt>#netpanzer</tt><br/>
-    </p>
-  </section>
-
-  <section title="Developer Documentation">
-    <ul>
-      <li>
-        No doxygen documentation currently. (I'd be happy if someone would write
-                the necessary scripts and cron jobs at berlios for me...)
-      </li>
-    </ul>
+    <dl>
+        <dt><a href="irc://irc.freenode.net/#netpanzer">IRC</a> - the netpanzer IRC chatroom is at</dt>
+        <dd>Server: <tt>irc.freenode.net:6667</tt></dd>
+        <dd>Channel: <tt>#netpanzer</tt></dd>
+    </dl>
   </section>
 </page>
