@@ -41,9 +41,11 @@ RequestThread::RequestThread(MasterServer* newmaster, std::iostream* newstream,
 
 RequestThread::~RequestThread()
 {
-    running = false;
-    pthread_cancel(thread);
-    pthread_join(thread, 0);
+    if(running) {
+        running = false;
+        pthread_cancel(thread);
+        pthread_join(thread, 0);
+    }
     
     delete stream;
     stream = 0;
@@ -87,6 +89,7 @@ void RequestThread::run()
             }
         }
     }
+    running = false;
     delete tokenizer;
     delete stream;
     stream = 0;
