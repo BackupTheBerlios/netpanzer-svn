@@ -1,5 +1,6 @@
 #include <config.h>
 
+#include <unistd.h>
 #include <iostream>
 
 #include "HeartbeatThread.hpp"
