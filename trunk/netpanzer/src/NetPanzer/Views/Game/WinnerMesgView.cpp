@@ -244,7 +244,7 @@ void WinnerMesgView::doDraw(Surface &viewArea, Surface &clientArea)
             break;
 
         case _stats_display_type_default :
-            color = Color::white;
+            color = PlayerInterface::getPlayerState( i )->getColor();
             break;
         } // ** switch
 

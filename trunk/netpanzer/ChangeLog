@@ -1,6 +1,7 @@
 18-Jan-2004 by Wolfgang Koller
 -Changed the ServerBrowser so that it now really supports the query-timeout
 -It's now possible to scroll with the arrow key of your keyboard
+-WinnerMesgView now also uses the colors
 
 17-Jan-2004 by Wolfgang Koller
 -Each player now has a color (defined in PlayerState)
