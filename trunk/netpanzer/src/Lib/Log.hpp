@@ -1,5 +1,6 @@
 /*
-Copyright (C) 2003 Matthias Braun <matze@braunis.de>
+Copyright (C) 2003 Matthias Braun <matze@braunis.de>,
+Ivo Danihelka <ivo@danihelka.net>
                                                                                 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,29 +20,43 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __LIB_LOG_HPP__
 
 #include <config.h>
-#include <fstream>
+#include <stdio.h>
 
 class Logger
 {
 public:
+    static const int LEVEL_DEBUG;
+    static const int LEVEL_INFO;
+    static const int LEVEL_WARNING;
+
     Logger();
     ~Logger();
 
-    void log(const char* msg, ...)
-    __attribute__((format (__printf__, 2, 3)));
+    void setLogLevel(int logLevel);
+    int getLogLevel();
+
+    void debug(const char *fmt, ...)
+        __attribute__((format (__printf__, 2, 3)));
+    void info(const char *fmt, ...)
+        __attribute__((format (__printf__, 2, 3)));
+    void warning(const char *fmt, ...)
+        __attribute__((format (__printf__, 2, 3)));
 
 private:
-    std::ofstream* logfile;
+    void log(int priority, const char *fmt, va_list ap);
+
+    int m_logLevel;
+    FILE* m_logfile;
 };
 
-#ifdef DO_LOGGING
 extern Logger logger;
-#define FUNC(funcname) 	logger.log("Entering function '%s'.", funcname);
-#define LOG(x)			logger.log x
+#ifdef DO_LOGGING
+#define FUNC(funcname) logger.debug("Entering function '%s'.", funcname);
+#define LOG(x)         logger.info x
 #else
 #define FUNC(funcname)
 #define LOG(x)
-#endif
+#endif // DO_LOGGING
 
 #endif
 

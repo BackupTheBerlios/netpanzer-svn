@@ -1,5 +1,6 @@
 /*
-Copyright (C) 2003 Matthias Braun <matze@braunis.de>
+Copyright (C) 2003 Matthias Braun <matze@braunis.de>,
+Ivo Danihelka <ivo@danihelka.net>
                                                                                 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,30 +25,61 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Logger logger;
 #endif
 
+// like syslog levels
+const int Logger::LEVEL_DEBUG = 7;
+const int Logger::LEVEL_INFO = 6;
+const int Logger::LEVEL_WARNING = 4;
+//-----------------------------------------------------------------
 Logger::Logger()
 {
-    logfile = new std::ofstream("log.txt");
-    if(!logfile->good()) {
-        delete logfile;
-        logfile = 0;
-    }
+    m_logfile = fopen("log.txt", "w");
 }
-
+//-----------------------------------------------------------------
 Logger::~Logger()
 {
-    delete logfile;
+    if (m_logfile != 0) {
+        fclose(m_logfile);
+    }
 }
-
-void Logger::log(const char* msg, ...)
+//-----------------------------------------------------------------
+    void
+Logger::log(int priority, const char *fmt, va_list ap)
 {
-    char buf[1024];
+    if (m_logLevel >= priority) {
+        vfprintf(stderr, fmt, ap);
+        if (m_logfile != 0) {
+            vfprintf(m_logfile, fmt, ap);
+        }
+    }
+}
+//-----------------------------------------------------------------
+    void
+Logger::debug(const char *fmt, ...)
+{
+    va_list ap;
 
-    va_list args;
-    va_start(args, msg);
-    vsnprintf(buf, sizeof(buf), msg, args);
-    va_end(args);
+    va_start(ap, fmt);
+    log(Logger::LEVEL_DEBUG, fmt, ap);
+    va_end(ap);
+}
+//-----------------------------------------------------------------
+    void
+Logger::info(const char *fmt, ...)
+{
+    va_list ap;
 
-    fprintf(stderr, "%s\n", buf);
-    *logfile << buf << "\n";
+    va_start(ap, fmt);
+    log(Logger::LEVEL_INFO, fmt, ap);
+    va_end(ap);
+}
+//-----------------------------------------------------------------
+    void
+Logger::warning(const char *fmt, ...)
+{
+    va_list ap;
+
+    va_start(ap, fmt);
+    log(Logger::LEVEL_WARNING, fmt, ap);
+    va_end(ap);
 }
 
