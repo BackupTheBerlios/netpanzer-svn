@@ -137,7 +137,7 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(	NetMessage *message )
 
     state_mesg = (ConnectProcessStateMessage *) message;
 
-    switch ( state_mesg->message_enum ) {
+    switch ( state_mesg->getMessageEnum() ) {
     case _connect_state_message_load_game_data : {
             lobbyView->scrollAndUpdate( "Loading Game Data ..." );
         }
@@ -149,7 +149,7 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(	NetMessage *message )
         break;
 
     case _connect_state_message_sync_player_info_percent : {
-            sprintf( str_buf, "Sychronizing Player Info ... (%d%%)", state_mesg->percent_complete);
+            sprintf( str_buf, "Sychronizing Player Info ... (%d%%)", state_mesg->getPercentComplete());
             lobbyView->update( str_buf );
         }
         break;
@@ -160,7 +160,7 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(	NetMessage *message )
         break;
 
     case _connect_state_message_sync_units_percent : {
-            sprintf( str_buf, "Sychronizing Game Elements ... (%d%%)", state_mesg->percent_complete);
+            sprintf( str_buf, "Sychronizing Game Elements ... (%d%%)", state_mesg->getPercentComplete());
             lobbyView->update( str_buf );
         }
         break;

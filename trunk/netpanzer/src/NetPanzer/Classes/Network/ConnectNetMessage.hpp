@@ -153,16 +153,16 @@ enum { _connect_state_message_load_game_data,
 
 class ConnectProcessStateMessage : public NetMessage
 {
-public:
+private:
     uint32_t message_enum;
     int32_t  percent_complete;
 
-    ConnectProcessStateMessage()
-    {
-        message_class = _net_message_class_connect;
-        message_id = _net_message_id_client_connect_process_state_mesg;
-    }
-
+public:
+    ConnectProcessStateMessage();
+    uint32_t getMessageEnum(void);
+    void setMessageEnum(uint32_t message);
+    int32_t getPercentComplete(void);
+    void setPercentComplete(int32_t percent);
 }
 __attribute__((packed));
 
@@ -170,24 +170,14 @@ class ConnectClientSettings : public NetMessage
 {
 public:
     char player_name[64];
+private:
     int16_t player_flag;
+public:
     uint8_t unit_color;
 
-    ConnectClientSettings()
-    {
-        message_class = _net_message_class_connect;
-        message_id = _net_message_id_connect_client_settings;
-        memset(&player_name, 0, sizeof(player_name));
-    }
-
-    void set(const char *player_name, unsigned char unit_color, short player_flag )
-    {
-        strncpy(ConnectClientSettings::player_name, player_name, 64);
-        ConnectClientSettings::player_name[63] = '\0';
-        ConnectClientSettings::unit_color = unit_color;
-        ConnectClientSettings::player_flag = player_flag;
-    }
-
+    ConnectClientSettings();
+    int16_t getPlayerFlag(void);
+    void set(const char *player_name, unsigned char unit_color, short player_flag );
 }
 __attribute__((packed));
 

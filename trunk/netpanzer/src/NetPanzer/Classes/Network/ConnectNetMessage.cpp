@@ -92,3 +92,50 @@ void ConnectProcessUpdate::setQueuePosition(uint32_t position)
     queue_position = htol32(position);
 }
 
+
+ConnectProcessStateMessage::ConnectProcessStateMessage()
+{
+    message_class = _net_message_class_connect;
+    message_id = _net_message_id_client_connect_process_state_mesg;
+}
+
+uint32_t ConnectProcessStateMessage::getMessageEnum(void)
+{
+    return ltoh32(message_enum);
+}
+
+void ConnectProcessStateMessage::setMessageEnum(uint32_t message)
+{
+    message_enum = htol32(message);
+}
+
+int32_t ConnectProcessStateMessage::getPercentComplete(void)
+{
+    return ltoh32(percent_complete);
+}
+
+void ConnectProcessStateMessage::setPercentComplete(int32_t percent)
+{
+    percent_complete = htol32(percent);
+}
+
+
+ConnectClientSettings::ConnectClientSettings()
+{
+    message_class = _net_message_class_connect;
+    message_id = _net_message_id_connect_client_settings;
+    memset(&player_name, 0, sizeof(player_name));
+}
+
+int16_t ConnectClientSettings::getPlayerFlag(void)
+{
+    return ltoh16(player_flag);
+}
+
+void ConnectClientSettings::set(const char *player_name, unsigned char unit_color, short player_flag )
+{
+    strncpy(ConnectClientSettings::player_name, player_name, 64);
+    ConnectClientSettings::player_name[63] = '\0';
+    ConnectClientSettings::unit_color = unit_color;
+    ConnectClientSettings::player_flag = player_flag;
+}

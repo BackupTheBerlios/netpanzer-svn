@@ -352,7 +352,7 @@ bool ServerConnectDaemon::connectStateWaitForClientSettings( NetMessage *message
             client_setting = (ConnectClientSettings *) message;
             connect_player_state->setName( client_setting->player_name );
             connect_player_state->unit_config.setUnitColor( client_setting->unit_color );
-            connect_player_state->setFlag( client_setting->player_flag );
+            connect_player_state->setFlag( client_setting->getPlayerFlag() );
 
             connect_player_state->setID( connect_player_id.getNetworkID() );
             connect_player_state->setStatus( _player_state_connecting );
@@ -417,7 +417,7 @@ bool ServerConnectDaemon::connectStateWaitForClientGameSetupAck( NetMessage *mes
             PlayerInterface::startPlayerStateSync( connect_player_id );
 
             ConnectProcessStateMessage state_mesg;
-            state_mesg.message_enum = _connect_state_message_sync_player_info;
+            state_mesg.setMessageEnum(_connect_state_message_sync_player_info);
             send_ret_val = SERVER->sendMessage( connect_player_id, &state_mesg,
                                                 sizeof(ConnectProcessStateMessage), 0);
 
@@ -470,8 +470,8 @@ bool ServerConnectDaemon::connectStatePlayerStateSync()
             return( true );
         }
 
-        state_mesg.message_enum = _connect_state_message_sync_player_info_percent;
-        state_mesg.percent_complete = percent_complete;
+        state_mesg.setMessageEnum(_connect_state_message_sync_player_info_percent);
+        state_mesg.setPercentComplete(percent_complete);
         send_ret_val = SERVER->sendMessage( connect_player_id, &state_mesg, sizeof(ConnectProcessStateMessage), 0);
 
         if( send_ret_val != _network_ok ) {
@@ -483,7 +483,7 @@ bool ServerConnectDaemon::connectStatePlayerStateSync()
         delete connect_unit_sync;
         connect_unit_sync = new UnitSync();
 
-        state_mesg.message_enum = _connect_state_message_sync_units;
+        state_mesg.setMessageEnum(_connect_state_message_sync_units);
         send_ret_val = SERVER->sendMessage( connect_player_id, &state_mesg, sizeof(ConnectProcessStateMessage), 0 );
 
         if( send_ret_val != _network_ok ) {
@@ -504,8 +504,8 @@ bool ServerConnectDaemon::connectStatePlayerStateSync()
         return( true );
     } else
         if ( percent_complete > 0 ) {
-            state_mesg.message_enum = _connect_state_message_sync_player_info_percent;
-            state_mesg.percent_complete = percent_complete;
+            state_mesg.setMessageEnum(_connect_state_message_sync_player_info_percent);
+            state_mesg.setPercentComplete(percent_complete);
             send_ret_val = SERVER->sendMessage( connect_player_id, &state_mesg, sizeof(ConnectProcessStateMessage), 0 );
 
             if( send_ret_val != _network_ok ) {
@@ -525,8 +525,8 @@ bool ServerConnectDaemon::connectStateUnitSync()
 
     // send a unit
     if(connect_unit_sync->sendNextUnit(connect_player_id)) {
-        state_mesg.message_enum = _connect_state_message_sync_units_percent;
-        state_mesg.percent_complete = percent_complete;
+        state_mesg.setMessageEnum(_connect_state_message_sync_units_percent);
+        state_mesg.setPercentComplete(percent_complete);
         int ret = SERVER->sendMessage(connect_player_id, &state_mesg,
                 sizeof(ConnectProcessStateMessage), 0);
         
@@ -538,8 +538,8 @@ bool ServerConnectDaemon::connectStateUnitSync()
     }
 
     // Sending finished
-    state_mesg.message_enum = _connect_state_message_sync_units_percent;
-    state_mesg.percent_complete = percent_complete;
+    state_mesg.setMessageEnum(_connect_state_message_sync_units_percent);
+    state_mesg.setPercentComplete(percent_complete);
     int ret = SERVER->sendMessage( connect_player_id, &state_mesg,
             sizeof(ConnectProcessStateMessage), 0 );
 
@@ -569,7 +569,7 @@ bool ServerConnectDaemon::connectStateUnitSync()
 
     SERVER->sendMessage( &player_state_update, sizeof(PlayerStateSync), 0 );
 
-    state_mesg.message_enum = _connect_state_sync_complete;
+    state_mesg.setMessageEnum(_connect_state_sync_complete);
     ret = SERVER->sendMessage( connect_player_id, &state_mesg, sizeof(ConnectProcessStateMessage), 0 );
 
     if(ret != _network_ok ) {
