@@ -14,8 +14,10 @@
 #include "IRC/Channel.hpp"
 #include "IRC/Client.hpp"
 
-static const char* CHANNEL = "#netp_servers";
-static const char* SERVER_QUERY = "-Who's running a server?";
+static const char CHANNEL[] = "#netpanzerlob";
+static const char SERVER_QUERY[] = "-Who's running a server?";
+static const char RESPONSE_HEADER[] = "-I'm running ";
+static const int _NETPANZER_DEFAULT_PORT_TCP = 3030;
 
 ServerList::ServerList(BrowserConfig* newconfig)
     : config(newconfig), connection(0), channeljoined(false)
@@ -93,7 +95,36 @@ void ServerList::ircJoin(IRC::Channel* channel)
 
 void ServerList::ircMessage(const IRC::Client& sender, const std::string& text)
 {
-    // TODO parse server response
-    std::cout << "Private response: (" << sender.getName()
-              << ") - " << text << std::endl;
+    const char* mess = text.c_str();
+    
+    // old code for parsing server response
+    if(strncmp(mess, RESPONSE_HEADER, sizeof(RESPONSE_HEADER)-1) != 0)
+        return;
+    
+   const char *p=mess+strlen(RESPONSE_HEADER)+1;
+   const char *map;
+   int players=atoi(p);
+   if((p=strchr(p,'/'))==0) {
+       LOG(("bad server description: %s\n",mess));
+       return;
+   }
+   int max_players=atoi(++p);
+   int port=_NETPANZER_DEFAULT_PORT_TCP;
+   char *port_str;
+   if((port_str=strstr(p,"port:"))!=0) {
+       port=atoi(port_str+5);
+   }
+   if((map=strstr(p,"map:"))==0) {
+       LOG(("no map name: %s\n",mess));
+       return;
+   }
+   map+=4;
+ 
+   std::cout << sender.getName() << ": " << sender.getHost();
+   if(config->showplayers)
+       std::cout << ", " << players << "/" << max_players;
+   if(config->showmap)
+       std::cout << ", " << map;
+   std::cout << std::endl;
 }
+

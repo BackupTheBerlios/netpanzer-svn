@@ -7,6 +7,10 @@ class BrowserConfig
 {
 public:
     std::string ircserver;
+    int connect_timeout;
+    int query_timeout;
+    bool showplayers;
+    bool showmap;
 };
 
 #endif

@@ -2,7 +2,7 @@ SubDir TOP src ServerBrowser ;
 
 Application netpanzerbrowser : [ Wildcard *.cpp *.hpp ] ;
 CFlags netpanzerbrowser : -DDATADIR=\\\"$(datadir)\\\" ;
-LinkWith netpanzerbrowser : netpanzertypes netpanzerutil netpanzerirc ;
+LinkWith netpanzerbrowser : netpanzertypes netpanzerutil netpanzerirc optionmm ;
 ExternalLibs netpanzerbrowser : SDL SDLNET PHYSFS ;
 Help netpanzerbrowser : "Build the netpanzer Server Browser tool" ;
 
