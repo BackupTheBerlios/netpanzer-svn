@@ -1,0 +1,25 @@
+unzip gamedata.zip
+cd netPanzer
+ln -s ../netpanzer .
+mv pics/Chars5x5.raw pics/chars5x5.raw
+mv pics/CHARS8X8.RAW pics/chars8x8.raw
+mv pics/menus/vehicleSelectionView/til/SCOUT.TIL pics/menus/vehicleSelectionView/til/scout.til
+mv pics/menus/vehicleSelectionView/til/MANTA.TIL pics/menus/vehicleSelectionView/til/manta.til
+mv pics/menus/vehicleSelectionView/til/PANTHER1.TIL pics/menus/vehicleSelectionView/til/panther1.til
+mv pics/menus/vehicleSelectionView/til/TITAN.TIL pics/menus/vehicleSelectionView/til/titan.til
+mv pics/menus/vehicleSelectionView/til/STINGER.TIL pics/menus/vehicleSelectionView/til/stinger.til
+mv pics/menus/vehicleSelectionView/til/BOBCAT.TIL pics/menus/vehicleSelectionView/til/bobcat.til
+mv pics/menus/vehicleSelectionView/til/WOLF.TIL pics/menus/vehicleSelectionView/til/wolf.til
+mv pics/menus/vehicleSelectionView/til/BEAR.TIL pics/menus/vehicleSelectionView/til/bear.til
+mv pics/menus/vehicleSelectionView/til/DRAKE.TIL pics/menus/vehicleSelectionView/til/drake.til
+mv pics/menus/vehicleSelectionView/til/ARCHER.TIL pics/menus/vehicleSelectionView/til/archer.til
+mv wads/NETPMENU.ACT wads/netpmenu.act
+mv MAPS/ maps/
+mv pics/backgrounds/menus/menu/til/defaultMB.TIL pics/backgrounds/menus/menu/til/defaultMB.til
+mv pics/backgrounds/menus/menu/til/hostjoinMB.TIL pics/backgrounds/menus/menu/til/hostjoinMB.til
+mv pics/backgrounds/menus/menu/til/sessionMB.TIL pics/backgrounds/menus/menu/til/sessionMB.til
+mv pics/backgrounds/menus/menu/til/connectionMB.TIL pics/backgrounds/menus/menu/til/connectionMB.til
+mv pics/backgrounds/menus/menu/til/optionsMB.TIL pics/backgrounds/menus/menu/til/optionsMB.til
+rename BMP bmp pics/flags/netpmenu/*
+mv PowerUps/bolts.pak PowerUps/BoltS.pak
+
