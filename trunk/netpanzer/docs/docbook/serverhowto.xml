@@ -106,7 +106,7 @@ screen -A -m -d -S netpanzer ./start-netpanzer-dedicated.sh $@
 
 # This version starts the server in a chroot environment and with a different
 # user for even more security
-screen -A -m -d -S netpanzer chroot /home/netpserver su - netpserver -c "./start-netpanzer-dedicated.sh $@"
+# screen -A -m -d -S netpanzer chroot /home/netpserver su - netpserver -c "./start-netpanzer-dedicated.sh $@"
         </programlisting>
       </para>
       <para>
@@ -138,7 +138,7 @@ depend() {
 start() {
     ebegin "Starting netpanzer server"
     start-stop-daemon --start --quiet --pidfile /var/run/netpanzer.pid --exec /usr/local/scripts/netpanzer-screen.sh --pidfile=/var/run/netpanzer.pid
-    eend $
+    eend $?
 }
 
 stop() {
