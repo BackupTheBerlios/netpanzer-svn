@@ -29,10 +29,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 //#define NETWORKDEBUG
 
-#ifdef NETWORKDEBUG
-#include "NetworkDebug.hpp"
-#endif
-
 NetworkServerUnix::NetworkServerUnix()
         : NetworkServer(), serversocket(0)
 {}
