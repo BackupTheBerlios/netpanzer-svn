@@ -133,7 +133,7 @@ void initialise(int argc, char** argv)
 
 	// Initialize libphysfs
 	try {
-		FileSystem::initialize(argv[0], "netpanzer", "");
+		FileSystem::initialize(argv[0], "netpanzer", "netpanzer");
 	} catch(Exception e) {
 		fprintf(stderr, "%s", e.getMessage());
 		shutdown();
