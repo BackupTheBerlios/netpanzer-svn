@@ -148,7 +148,7 @@ void HeartbeatThread::requestMasterServerList2(struct sockaddr_in* addr)
         SocketStream stream(sock);
         sock = -1; // stream has control over the socket now
         
-        stream << "\\list\\gamename\\master\\final\\";
+        stream << "\\list\\gamename\\master\\final\\" << std::flush;
         Tokenizer* tokenizer = new Tokenizer(stream);
         while(!stream.eof()) {
             std::string token = tokenizer->getNextToken();
@@ -256,7 +256,7 @@ HeartbeatThread::sendHeartbeat(struct sockaddr_in* serveraddr)
             config->getSection("server").getValue("port")
                << "\\gamename\\master\\passwort\\" << 
                config->getSection("server").getValue("masterserver-password")
-               << "\\final\\";
+               << "\\final\\" << std::flush;
     } catch(...) {
         if(sock>=0)
             close(sock);
