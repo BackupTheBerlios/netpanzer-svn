@@ -62,7 +62,7 @@ static void bBack()
     Desktop::setVisibility("GetSessionView", true);
 }
 
-void bNext()
+static void bNext()
 {
     if ((const std::string&) gameconfig->playername == "")
         return;
