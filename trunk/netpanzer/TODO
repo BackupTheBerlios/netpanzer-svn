@@ -53,6 +53,7 @@ distributed to the clients while they connect.
 -create UDP broadcast code for announcing servers in LANs
 -make it possible to configure the mapcycle
 -add a (readline based?) serverconsole
+-add possibilty for setting waypoints (ALT+leftclick?)
 
 *** gameplay
 Note that these are just random idea. We should be very careful when tuning the
