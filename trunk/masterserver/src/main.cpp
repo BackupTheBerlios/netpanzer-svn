@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <iostream>
 #include <exception>
+#include <fstream>
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -42,6 +43,13 @@ static void signalhandler(int signum)
     
     delete masterserv;
     masterserv = 0;
+
+    const std::string& pidfile 
+        = config->getSection("server").getValue("pidfile");
+    if(pidfile != "") {
+        unlink(pidfile.c_str());
+    }
+    
     closeLog();
     freeConfig();
 
@@ -55,6 +63,18 @@ int main(int , char** )
     
     try {
         masterserv = new MasterServer;
+
+        std::ofstream* out = 0;
+        const std::string& pidfile = 
+            config->getSection("server").getValue("pidfile");
+        if(pidfile != "") {
+            out = new std::ofstream(pidfile.c_str());
+            if(!out->good()) {
+               std::cerr << "Couldn't create pidfile '" << pidfile << "': ";
+               perror(0);
+               exit(EXIT_FAILURE);
+            }
+        }
 
         // fork
         pid_t pid = fork();
@@ -81,6 +101,11 @@ int main(int , char** )
         signal(SIGTERM, signalhandler);
         signal(SIGINT, signalhandler);
         signal(SIGQUIT, signalhandler);
+
+        if(out) {
+            *out << getpid() << std::endl;
+            delete out;
+        }
 
         masterserv->run();
     } catch(std::exception& e) {

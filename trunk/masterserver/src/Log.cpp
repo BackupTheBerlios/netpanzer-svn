@@ -125,7 +125,7 @@ void initializeLog()
     
     logfile = new std::ofstream(logfilename.c_str(), std::ios_base::app);
     if(!logfile->good()) {
-        std::cout << "Couldn't open '" << logfile
+        std::cout << "Couldn't open logfile '" << logfilename
                   << "' falling back to stdout.\n";
         delete logfile;
 

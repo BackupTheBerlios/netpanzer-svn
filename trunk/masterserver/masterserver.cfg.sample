@@ -27,5 +27,7 @@ masterserver-password=xxx
 # Specifies the location of the logfile
 # logfile = /var/log/masterserver.log
 # Specifies the location of the servercache file
-# servercachefile = /var/cache/masterserver/neighboors.txt
+# servercachefile = /var/cache/masterserver/neighboors
+# Specifies the lcoation of the pidfile
+# pidfile = /var/run/masterserver.pid
 

@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 static const char* CONFIGFILE = SYSCONFDIR"/masterserver.cfg";
 static const char* LOGFILE = LOCALSTATEDIR"/log/masterserver.log";
 static const char* SERVERCACHE = LOCALSTATEDIR"/cache/masterserver/neighbors";
+static const char* PIDFILE = LOCALSTATEDIR"/run/masterserver.pid";
 
 namespace masterserver
 {
@@ -38,6 +39,7 @@ void loadConfig()
     iniparser::Section& server = config->getSection("server");
     server.setValue("logfile", LOGFILE);
     server.setValue("neighborcachefile", SERVERCACHE);
+    server.setValue("pidfile", PIDFILE);
     server.setValue("listen", "0.0.0.0");
     server.setValue("ip", "");
     server.setValue("port", "28900");
