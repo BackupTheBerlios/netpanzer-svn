@@ -103,7 +103,7 @@ void IPAddressView::Init()
 {
     szServer.init("  ", 100);
     addInputField(iXY(10, 80), &szServer, "", true);
-} // end PlayerNameView::init
+} // end IPAddressView::init
 
 
 

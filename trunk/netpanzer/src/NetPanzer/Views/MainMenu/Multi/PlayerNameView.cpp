@@ -50,7 +50,7 @@ PlayerNameView::PlayerNameView() : View()
 //---------------------------------------------------------------------------
 void PlayerNameView::init()
 {
-    playerName.init("Player", INPUT_FIELD_CHARACTERS);
+    playerName.init(std::string(gameconfig->playername).c_str(), INPUT_FIELD_CHARACTERS);
     addInputField(iXY(BORDER_SPACE, BORDER_SPACE), &playerName, "", true);
 
 } // end PlayerNameView::init

@@ -71,6 +71,7 @@ static void bMulti()
         //Desktop::setVisibility("UnitSelectionView", true);
         Desktop::setVisibility("FlagSelectionView", true);
         Desktop::setVisibility("PlayerNameView", true);
+        Desktop::setVisibility("IPAddressView", true);
     } else {
         assert(false);
     }
