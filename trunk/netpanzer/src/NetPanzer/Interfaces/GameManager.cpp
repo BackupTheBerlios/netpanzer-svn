@@ -495,15 +495,6 @@ void GameManager::processSystemKeys()
         Bot::bot()->processEvents();
     }
 
-    // Alt+Enter fullscreen
-    if (KeyboardInterface::getKeyPressed(SDLK_RETURN)
-            && (KeyboardInterface::getKeyState(SDLK_RALT)
-                || KeyboardInterface::getKeyState(SDLK_LALT)))
-    {
-        GameConfig::setFullscreen(!Screen->isFullScreen());
-        GameManager::setVideoMode();
-    }
-
     if (Desktop::getVisible("GameView")) {
 
         if (KeyboardInterface::getKeyPressed( SDLK_F5 )) {
@@ -523,8 +514,13 @@ void GameManager::processSystemKeys()
 
     }
 
-    if (	KeyboardInterface::getKeyState( SDLK_LALT ) ||
+    if (KeyboardInterface::getKeyState( SDLK_LALT ) ||
             KeyboardInterface::getKeyState( SDLK_RALT )) {
+        if (KeyboardInterface::getKeyPressed(SDLK_RETURN)) {
+            GameConfig::setFullscreen(!Screen->isFullScreen());
+            GameManager::setVideoMode();
+        }
+
         if ( KeyboardInterface::getKeyPressed( SDLK_MINUS) ) {
             if (!Desktop::getVisible("GameView")) {
                 decreaseBrightness("wads/netpmenu.act");
