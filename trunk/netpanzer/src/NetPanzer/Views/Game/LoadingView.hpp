@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
+Copyright (C) 2003 Ivo Danihelka <ivo@danihelka.net>
  
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,53 +15,51 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef __ProgressView_hpp__
-#define __ProgressView_hpp__
+#ifndef __LOADINGVIEW_HPP__
+#define __LOADINGVIEW_HPP__
 
 #include "View.hpp"
 #include "Surface.hpp"
-#include "LoadingView.hpp"
 
 //---------------------------------------------------------------------------
-class ProgressView : public LoadingView
+class LoadingView : public View
 {
-protected:
-    virtual void loadBackgroundSurface();
-
 public:
-    ProgressView();
+    virtual ~LoadingView() {}
 
-    // Standard window related functions.
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    //virtual void lMouseDown(const iXY &p);
-    virtual void doActivate();
-
-    Surface background;
-    Surface backgroundSurface;
-
-    virtual void init();
-    virtual void update(const char *text);
-
-    virtual void scroll();
-
+    virtual void init() = 0;
+    virtual void update(const char *text) = 0;
+    virtual void scroll() = 0;
     void scrollAndUpdate(const char *text)
     {
         scroll();
         update(text);
     }
+    void scrollDirect()
+    {
+        scroll();
+        blitToScreen();
+    }
+    void scrollAndUpdateDirect(const char *text)
+    {
+        scroll();
+        update(text);
+        blitToScreen();
+    }
+    void updateDirect(const char *text)
+    {
+        update(text);
+        blitToScreen();
+    }
 
+    virtual void reset() = 0;
 
-    virtual void reset();
-
-    virtual void open();
-    virtual void close();
-    virtual void toggleGameView();
-    virtual void toggleMainMenu();
-
+    virtual void open() = 0;
+    virtual void close() = 0;
+    virtual void toggleGameView() = 0;
+    virtual void toggleMainMenu() = 0;
 private:
-    virtual void blitToScreen();
-}; // end ProgressView
+    virtual void blitToScreen() {};
+};
 
-extern LoadingView *progressView;
-
-#endif // end __ProgressView_hpp__
+#endif // end __LOADINGVIEW_HPP__

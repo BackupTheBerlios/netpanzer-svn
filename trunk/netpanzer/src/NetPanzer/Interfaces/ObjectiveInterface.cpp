@@ -59,7 +59,7 @@ void ObjectiveInterface::resetLogic( void )
     cleanUpObjectiveList();
 }
 
-void ObjectiveInterface::loadObjectiveList( char *file_path )
+void ObjectiveInterface::loadObjectiveList( const char *file_path )
 {
     unsigned long objective_count;
     unsigned long objective_index;

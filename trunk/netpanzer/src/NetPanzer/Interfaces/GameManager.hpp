@@ -20,21 +20,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <time.h>
 #include <stdint.h>
+#include <string>
+
 #include "PlayerState.hpp"
 #include "NetPacket.hpp"
 #include "ClientConnectDaemon.hpp"
 #include "ServerConnectDaemon.hpp"
 #include "GameControlRulesDaemon.hpp"
 #include "iXY.hpp"
-
-enum { _execution_mode_loop_back_server,
-       _execution_mode_dedicated_server
-     };
-
-enum { _game_state_idle,
-       _game_state_in_progress,
-       _game_state_completed
-     };
 
 enum { _mapload_result_success,
        _mapload_result_no_map_file,
@@ -44,12 +37,7 @@ enum { _mapload_result_success,
 class GameManager
 {
 private:
-    static char map_path[256];
-
-protected:
-    friend class ClientConnectDaemon;
-    friend class ServerConnectDaemon;
-    friend class GameControlRulesDaemon;
+    static std::string map_path;
 
 protected:
     static time_t game_start_time;
@@ -58,72 +46,8 @@ protected:
     static bool display_frame_rate_flag;
     static bool display_network_info_flag;
 
-    static int execution_mode;
-
 protected:
-    static unsigned char game_state;
-
-    static void initializeNetworkSubSystem();
-    static void shutdownNetworkSubSystem();
-
-    static void initializeInputDevices();
-    static void shutdownInputDevices();
-
-    static void initializeVideoSubSystem();
-    static void shutdownVideoSubSystem();
-
-    static void initializeSoundSubSystem();
-    static void shutdownSoundSubSystem();
-
-    static void initializeWindowSubSystem();
-
-    // initialize all static objects / interfaces;
-    static void initializeGameObjects();
-    static void shutdownGameObjects();
-
-    static void initializeDedicatedConsole();
-    static void shutdownDedicatedConsole();
-
-    // boots up netPanzer; initializes all subsystems, game objects etc.
-    static void bootStrap();
-    static void dedicatedBootStrap();
-
-    static void shutdownSubSystems();
-    static void dedicatedShutdown();
-
-    // cyclic executive for loop back server / client
-    static void gameLoop();
-
-    static void simLoop();
-    static void inputLoop();
-    static void graphicsLoop();
-
-    // cyclic executive for dedicated server
-    static void dedicatedGameLoop();
-
-    static void dedicatedSimLoop();
-    static void dedicatedInputLoop();
-
-    static bool startGameMapLoad(const char *map_file_path, unsigned long partitions, int *result_code );
-    static bool gameMapLoad( int *percent_complete );
     static void finishGameMapLoad();
-
-    static void dedicatedLoadGameMap(const char *map_file_path );
-
-    static bool loadGameData();
-
-    static void initializeGameLogic();
-    static void reinitializeGameLogic();
-    static bool resetGameLogic();
-    static void shutdownGameLogic();
-
-    static void shutdownParticleSystems();
-
-    static void processSystemKeys();
-
-    // ** Game Rules Methods
-    static void spawnPlayer( PlayerState *player_state );
-    static void respawnAllPlayers();
 
     // ** Network Message Handlers
     static void netMessageSetView( NetMessage *message );
@@ -133,27 +57,31 @@ protected:
     static void netMessagePingAcknowledge( NetMessage *message );
     static void netMessageConnectAlert( NetMessage *message );
     static void netMessageResetGameLogic( NetMessage *message );
-    static void getServerGameSetup( NetMessage *message );
+
+public:
+    static void dedicatedLoadGameMap(const char *map_file_path );
+    static bool startGameMapLoad(const char *map_file_path, unsigned long partitions, int *result_code );
+    static bool gameMapLoad( int *percent_complete );
+
+    // ** Game Rules Methods
+    static void spawnPlayer( PlayerState *player_state );
+
+    static void respawnAllPlayers();
+
+    static void initializeGameLogic();
+    static void reinitializeGameLogic();
+    static bool resetGameLogic();
+    static void shutdownGameLogic();
+
+    static void shutdownParticleSystems();
 
     static bool startClientGameSetup( NetMessage *message, int *result_code );
     static bool clientGameSetup( int *percent_complete );
+    static void getServerGameSetup( NetMessage *message );
 
-    // ** Game Launching Methods
-    static void hostMultiPlayerGame();
-    static void joinMultiPlayerGame();
-    static void launchMultiPlayerGame();
-    static void launchDedicatedServer();
 
 public:
     static void shutdown();
-    /** Initialises the GameManager, only initialize the core parts needed for a
-     * dedicated server if dedicated = true
-     */
-    static void initialize(bool dedicated = false);
-
-    static void mainLoop();
-
-    static void launchNetPanzerGame();
 
     static void exitNetPanzer();
 

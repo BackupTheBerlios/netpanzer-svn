@@ -1,45 +1,36 @@
 /*
 Copyright (C) 2003 Ivo Danihelka <ivo@danihelka.net>
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef BOT_H
-#define BOT_H
+#ifndef _DEDICATEDGAMEMANAGER_HPP
+#define _DEDICATEDGAMEMANAGER_HPP
 
-class UnitBase;
-class ObjectiveState;
-class iXY;
+#include "BaseGameManager.hpp"
 
-#include "BotTaskList.hpp"
+class DedicatedGameManager : public BaseGameManager
+{
+protected:
+    virtual void initializeInputDevices();
+    virtual void initializeGameConfig();
 
-class Bot {
-    static class Bot *s_bot;
-    public:
-        static void initialize(Bot *bot);
-        static void shutdown();
-        static Bot *bot() { return s_bot; }
+    virtual void inputLoop();
 
-        virtual ~Bot() {}
-        virtual void processEvents() = 0;
-
-        void moveUnit(UnitBase *unit, iXY map_pos);
-        void attackUnit(UnitBase *unit, UnitBase *enemyUnit);
-        void manualFire(UnitBase *unit, iXY world_pos);
-        void produceUnit(int outpostID, int selectedProduce);
-    protected:
-        BotTaskList m_tasks;
+    void dedicatedLoadGameMap(const char *map_name);
+public:
+    virtual bool launchNetPanzerGame();
 };
 
 #endif

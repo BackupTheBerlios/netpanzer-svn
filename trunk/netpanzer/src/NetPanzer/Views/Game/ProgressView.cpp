@@ -23,11 +23,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ScreenSurface.hpp"
 #include "GameManager.hpp"
 
-ProgressView progressView;
+LoadingView *progressView = 0;
 
 // ProgressView
 //---------------------------------------------------------------------------
-ProgressView::ProgressView() : View()
+ProgressView::ProgressView() : LoadingView()
 {} // end ProgressView::ProgressView
 
 // init
@@ -79,12 +79,6 @@ void ProgressView::update(const char *text)
     background.bltString(0, background.getPix().y - CHAR_YPIX - 1, text, Color::white);
 } // end ProgressView::update
 
-void ProgressView::updateDirect(const char *text)
-{
-    update(text);
-    blitToScreen();
-}
-
 // scroll
 //---------------------------------------------------------------------------
 // Purpose: Moves all the current text up one line and creates a new
@@ -98,19 +92,6 @@ void ProgressView::scroll()
     // Move the current text up by the height of the app font.
     tempSurface.blt(background, 0, - Surface::getFontHeight() - 1);
 } // end ProgressView::scroll
-
-void ProgressView::scrollDirect()
-{
-    scroll();
-    blitToScreen();
-} // end ProgressView::scrollDirect
-
-void ProgressView::scrollAndUpdateDirect(const char *text)
-{
-    scroll();
-    update(text);
-    blitToScreen();
-} // end ProgressView::scrollDirect
 
 void ProgressView::blitToScreen()
 {

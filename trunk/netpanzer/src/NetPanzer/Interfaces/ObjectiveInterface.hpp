@@ -49,7 +49,7 @@ public:
 
     static void resetLogic( void );
 
-    static void loadObjectiveList( char *file_path );
+    static void loadObjectiveList( const char *file_path );
 
     static unsigned char quearyObjectiveLocationStatus( iXY &loc,
             PlayerID &player,

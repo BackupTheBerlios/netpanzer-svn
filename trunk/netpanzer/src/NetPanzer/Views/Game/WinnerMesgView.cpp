@@ -38,8 +38,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 static void bReturnToMainMenu()
 {
     if ( gameconfig->mapcycling == true ) {
-        progressView.open();
-        progressView.scrollAndUpdate( "Waiting for next game map ..." );
+        progressView->open();
+        progressView->scrollAndUpdate( "Waiting for next game map ..." );
     } else {
         sound->stopTankIdle();
 

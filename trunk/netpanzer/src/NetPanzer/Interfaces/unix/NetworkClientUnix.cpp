@@ -22,8 +22,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Desktop.hpp"
 #include "NetworkGlobals.hpp"
 #include "NetworkState.hpp"
-#include "LobbyView.hpp"
 #include "NetworkClientUnix.hpp"
+#include "LobbyView.hpp"
 
 // #define NETWORKDEBUG
 
@@ -89,7 +89,7 @@ int NetworkClientUnix::joinSession(const char* session_name)
         LOG( ( "Couldn't connect to server:\n%s.", e.getMessage()) );
         char text[128];
         snprintf(text, 128, "connection error: %s", e.getMessage());
-        lobbyView.scrollAndUpdate(text);
+        lobbyView->scrollAndUpdate(text);
         return false;
     }
 

@@ -358,34 +358,6 @@ bool TileSet::partitionTileSetLoad( WadMapTable &mapping_table, int *percent_com
 
         *percent_complete = 100;
 
-#if 0
-        // XXX hack for now, this should not be commited to cvs :), so if you
-        // see this remove it :)
-        Palette::init("wads/netp.act");
-        for(unsigned int i=0; i<tile_count; i++) {
-            SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                    getTileXsize(), getTileYsize(), 8, 0, 0, 0, 0);
-            
-            memcpy(surface->pixels, getTile(i), getTileXsize() * getTileYsize());
-            
-            SDL_Color colors[256];
-            for(int a=0;a<256;a++) {
-                colors[a].r = Palette::color[a].red;
-                colors[a].g = Palette::color[a].green;
-                colors[a].b = Palette::color[a].blue;
-            }
-            SDL_SetColors(surface, colors, 0, 256);
-
-            std::string filename = "tileset/";
-            char buf[20];
-            sprintf(buf, "%04d", i);
-            filename += buf;
-            filename += ".bmp";
-            SDL_SaveBMP(surface, filename.c_str());
-            SDL_FreeSurface(surface);
-        }
-#endif
-                
         return false;
     } else {
         float percent;

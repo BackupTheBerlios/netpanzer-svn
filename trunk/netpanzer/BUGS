@@ -26,3 +26,7 @@
 <kov> #4  0x08086c5b in main (argc=327, argv=0x147) at src/NetPanzer/Core/main.cpp:215
 <kov> No locals.
 <kov> (gdb)
+//-----------------------------------------------------------------
+- still SIGSEGV when client disconnect
+- does not display unit pictures in factory - fixed
+- objective game cannot finish - fixed

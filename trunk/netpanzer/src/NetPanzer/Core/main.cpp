@@ -29,10 +29,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Log.hpp"
 #include "Exception.hpp"
 #include "FileSystem.hpp"
-#include "GameManager.hpp"
 #include "MouseInterface.hpp"
 #include "KeyboardInterface.hpp"
 #include "cMouse.hpp"
+
+#include "BaseGameManager.hpp"
+#include "DedicatedGameManager.hpp"
+#include "BotGameManager.hpp"
+#include "PlayerGameManager.hpp"
 
 /** This functions iterates throgh the SDL event queue.
  * It returns true if a quit message has been received, otherwise false.
@@ -135,7 +139,8 @@ void signalhandler(int signum)
     shutdown();
 }
 
-void initialise(int argc, char** argv)
+//-----------------------------------------------------------------
+BaseGameManager *initialise(int argc, char** argv)
 {
     // Install signal handler
     signal(SIGILL, signalhandler);
@@ -154,12 +159,15 @@ void initialise(int argc, char** argv)
     command_line commandline(PACKAGE_NAME, PACKAGE_VERSION,
             "Copyright(c) 1998 Pyrosoft Inc. and others", "", argc, argv);
 
-    option<bool, false, false> dedicated_option('d', "dedicated",
+    bool_option dedicated_option('d', "dedicated",
             "run as dedicated server", false);
     commandline.add(&dedicated_option);
+    option<std::string, true, false> bot_option('b', "bot",
+            "connect as bot to specific server", "");
+    commandline.add(&bot_option);
     option<int> port_option('p', "port", "run server on specific port", 0);
     commandline.add(&port_option);
-    option<bool, false, false> debug_option('g', "debug",
+    bool_option debug_option('g', "debug",
             "enable debug output", false);
     commandline.add(&debug_option);
 
@@ -203,43 +211,60 @@ void initialise(int argc, char** argv)
     srand48(time(0));
 #endif
 
+    BaseGameManager *manager;
     // finally initialize the game objects
     try {
-        GameManager::initialize(dedicated_option.value());
+        if (dedicated_option.value()) {
+            manager = new DedicatedGameManager();
+        }
+        else {
+            if (bot_option.value().size() > 0) {
+                manager = new BotGameManager(bot_option.value());
+            }
+            else {
+                manager = new PlayerGameManager();
+            }
+        }
+
+        manager->initialize();
+        return manager;
     } catch(Exception e) {
-        fprintf(stderr, "Couldn't initialize the game: %s\n", e.getMessage());
+        LOGGER.warning("Couldn't initialize the game: %s", e.getMessage());
         shutdown();
         exit(1);
     }
 }
 
+//-----------------------------------------------------------------
 int netpanzer_main(int argc, char** argv)
 {
-    initialise(argc, argv);
+    BaseGameManager *manager = initialise(argc, argv);
 
     // we'll catch every exception here, just to be sure the user gets at least
     // a usefull error message and SDL has a chance to shutdown...
     try {
-        while(1) {
-            SDL_PumpEvents();
-            if(HandleSDLEvents() == true) {
-                LOG( ("quitting main loop.") );
-                break;
-            }
+        if (manager->launchNetPanzerGame()) {;
+            while(1) {
+                SDL_PumpEvents();
+                if(HandleSDLEvents() == true) {
+                    LOG( ("quitting main loop.") );
+                    break;
+                }
 
-            GameManager::mainLoop();
+                manager->mainLoop();
+            }
         }
 
-        GameManager::shutdown();
+        delete manager;
         LOG ( ("successfull shutdown.") );
         shutdown();
     } catch(Exception e) {
-        fprintf(stderr, "An unexpected exception occured: %s\nShutdown needed.",
+        LOGGER.warning("An unexpected exception occured: %s\nShutdown needed.",
                 e.getMessage());
         shutdown();
         throw;
     } catch(...) {
-        fprintf(stderr, "An unexpected exception occured.\nShutdown needed.");
+        LOGGER.warning("An unexpected exception occured.\nShutdown needed.");
         shutdown();
         throw;
     }

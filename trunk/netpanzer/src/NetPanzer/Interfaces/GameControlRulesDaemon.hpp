@@ -23,6 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class GameControlRulesDaemon
 {
+    static int execution_mode;
+    static unsigned char game_state;
+
 protected:
     static int map_cycle_fsm_server_state;
     static Timer map_cycle_fsm_server_endgame_timer;
@@ -46,6 +49,7 @@ protected:
     static void netMessageCycleRespawnAck(NetMessage *message);
 
 public:
+    static void setStateServerInProgress();
     static void processNetMessage(NetMessage *message);
     static void forceMapCycle();
     static void updateGameControlFlow();

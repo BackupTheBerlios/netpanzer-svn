@@ -20,13 +20,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "View.hpp"
 #include "Surface.hpp"
+#include "LoadingView.hpp"
 
 //---------------------------------------------------------------------------
-class LobbyView : public View
+class LobbyView : public LoadingView
 {
 private:
     int currentline;
 
+    Surface background;
+    Surface backgroundSurface;
 protected:
     virtual void loadBackgroundSurface();
 
@@ -38,28 +41,25 @@ public:
     //virtual void lMouseDown(const iXY &p);
     virtual void doActivate();
 
-    Surface background;
-    Surface backgroundSurface;
-
-    void init();
-    void update(const char *text);
-    void scroll();
+    virtual void init();
+    virtual void update(const char *text);
+    virtual void scroll();
     void scrollAndUpdate(const char *text)
     {
         scroll();
         update(text);
     }
 
-    void reset();
+    virtual void reset();
 
-    void open();
-    void close();
-    void toggleGameView();
-    void toggleMainMenu();
+    virtual void open();
+    virtual void close();
+    virtual void toggleGameView();
+    virtual void toggleMainMenu();
 
 }
 ; // end LobbyView
 
-extern LobbyView lobbyView;
+extern LoadingView *lobbyView;
 
 #endif // end __LobbyView_hpp__

@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Desktop.hpp"
 #include "HostJoinTemplateView.hpp"
 #include "GameConfig.hpp"
-#include "GameManager.hpp"
+#include "PlayerGameManager.hpp"
 #include "HostView.hpp"
 #include "Exception.hpp"
 #include "MapSelectionView.hpp"
@@ -118,7 +118,8 @@ void bReady()
     MenuTemplateView::backgroundSurface.free();
     //MenuTemplateView::titleSurface.free();
 
-    GameManager::launchNetPanzerGame();
+    //TODO: I don't like static methods
+    PlayerGameManager::launchMultiPlayerGame();
 }
 /*
 enum  { _unit_type_valentine,

@@ -84,28 +84,28 @@ void ClientConnectDaemon::netMessageLinkAck( NetMessage *message )
 
     switch( join_request_ack_mesg->result_code ) {
     case _join_request_result_success :
-        lobbyView.scrollAndUpdate( "Link to Server Established" );
+        lobbyView->scrollAndUpdate( "Link to Server Established" );
         sprintf( buf, "Protocol Version: %u",
 		 join_request_ack_mesg->server_protocol_version);
-        lobbyView.scrollAndUpdate( buf );
+        lobbyView->scrollAndUpdate( buf );
         break;
 
     case _join_request_result_invalid_protocol :
-        lobbyView.scrollAndUpdate( "Link to Server FAILED!" );
-        lobbyView.scrollAndUpdate( "Incorrect Network Protocol Revision" );
-        lobbyView.scrollAndUpdate( "Please update your netPanzer executable at" );
-        lobbyView.scrollAndUpdate( "www.nongnu.org/netpanzer" );
+        lobbyView->scrollAndUpdate( "Link to Server FAILED!" );
+        lobbyView->scrollAndUpdate( "Incorrect Network Protocol Revision" );
+        lobbyView->scrollAndUpdate( "Please update your netPanzer executable at" );
+        lobbyView->scrollAndUpdate( "www.nongnu.org/netpanzer" );
         sprintf( buf, "Server Protocol Version: %u",
 		join_request_ack_mesg->server_protocol_version);
-        lobbyView.scrollAndUpdate( buf );
+        lobbyView->scrollAndUpdate( buf );
         connection_state = _connect_state_connect_failure;
         failure_display_timer.reset();
         break;
 
     case _join_request_result_server_busy :
-        lobbyView.scrollAndUpdate( "Link to Server FAILED!" );
-        lobbyView.scrollAndUpdate( "Server is VERY busy" );
-        lobbyView.scrollAndUpdate( "Please try in a few minutes" );
+        lobbyView->scrollAndUpdate( "Link to Server FAILED!" );
+        lobbyView->scrollAndUpdate( "Server is VERY busy" );
+        lobbyView->scrollAndUpdate( "Please try in a few minutes" );
         connection_state = _connect_state_connect_failure;
         failure_display_timer.reset();
         break;
@@ -127,7 +127,7 @@ void ClientConnectDaemon::netMessageConnectProcessUpdate( NetMessage *message )
 
     sprintf( buf, "Your Position In Queue is %d ", process_update->queue_position  );
 
-    lobbyView.scrollAndUpdate( buf );
+    lobbyView->scrollAndUpdate( buf );
 }
 
 void ClientConnectDaemon::netMessageConnectProcessMessage(	NetMessage *message )
@@ -140,35 +140,35 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(	NetMessage *message )
 
     switch ( state_mesg->message_enum ) {
     case _connect_state_message_load_game_data : {
-            lobbyView.scrollAndUpdate( "Loading Game Data ..." );
+            lobbyView->scrollAndUpdate( "Loading Game Data ..." );
         }
         break;
 
     case  _connect_state_message_sync_player_info : {
-            lobbyView.scrollAndUpdate( "Sychronizing Player Info ..." );
+            lobbyView->scrollAndUpdate( "Sychronizing Player Info ..." );
         }
         break;
 
     case _connect_state_message_sync_player_info_percent : {
             sprintf( str_buf, "Sychronizing Player Info ... (%d%%)", state_mesg->percent_complete);
-            lobbyView.update( str_buf );
+            lobbyView->update( str_buf );
         }
         break;
 
     case  _connect_state_message_sync_units : {
-            lobbyView.scrollAndUpdate( "Sychronizing Game Elements ..." );
+            lobbyView->scrollAndUpdate( "Sychronizing Game Elements ..." );
         }
         break;
 
     case _connect_state_message_sync_units_percent : {
             sprintf( str_buf, "Sychronizing Game Elements ... (%d%%)", state_mesg->percent_complete);
-            lobbyView.update( str_buf );
+            lobbyView->update( str_buf );
         }
         break;
 
     case  _connect_state_sync_complete : {
-            lobbyView.scrollAndUpdate( "Game Synchronized" );
-            lobbyView.toggleGameView();
+            lobbyView->scrollAndUpdate( "Game Synchronized" );
+            lobbyView->toggleGameView();
         }
         break;
 
@@ -220,12 +220,12 @@ void ClientConnectDaemon::connectFailureResult( unsigned char result_code )
 {
     switch( result_code ) {
     case _connect_result_server_busy : {
-            lobbyView.scrollAndUpdate( "Connect Failure: Server Too Busy" );
+            lobbyView->scrollAndUpdate( "Connect Failure: Server Too Busy" );
         }
         break;
 
     case _connect_result_server_full : {
-            lobbyView.scrollAndUpdate( "Connect Failure: Server Full" );
+            lobbyView->scrollAndUpdate( "Connect Failure: Server Full" );
         }
         break;
     } // ** switch
@@ -244,7 +244,7 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
         case _connect_state_wait_for_connect_start : {
                 if ( message != 0 ) {
                     if ( message->message_id == _net_message_id_client_start_connect ) {
-                        lobbyView.scrollAndUpdate( "Connecting ..." );
+                        lobbyView->scrollAndUpdate( "Connecting ..." );
                         connection_state = _connect_state_send_connect_request;
                     } else {
                         end_cycle = true;
@@ -301,7 +301,7 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
                                 CLIENT->sendMessage( &connect_request, sizeof(ClientConnectRequest), 0 );
                                 time_out_counter++;
                             } else {
-                                lobbyView.scrollAndUpdate( "Connection To Server Failed" );
+                                lobbyView->scrollAndUpdate( "Connection To Server Failed" );
                                 connection_state = _connect_state_connect_failure;
                                 failure_display_timer.reset();
                             }
@@ -317,7 +317,7 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
                             CLIENT->sendMessage( &connect_request, sizeof(ClientConnectRequest), 0 );
                             time_out_counter++;
                         } else {
-                            lobbyView.scrollAndUpdate( "Connection To Server Failed" );
+                            lobbyView->scrollAndUpdate( "Connection To Server Failed" );
                             connection_state = _connect_state_connect_failure;
                         }
                     }
@@ -343,20 +343,20 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
 
                         if( result_code == _mapload_result_no_map_file ) {
                             sprintf( str_buf, "MAP %s NOT FOUND!", game_setup->map_name );
-                            lobbyView.scrollAndUpdate( str_buf);
-                            lobbyView.scrollAndUpdate( "please download this map from" );
-                            lobbyView.scrollAndUpdate( "www.pyrosoftgames.com" );
+                            lobbyView->scrollAndUpdate( str_buf);
+                            lobbyView->scrollAndUpdate( "please download this map from" );
+                            lobbyView->scrollAndUpdate( "www.pyrosoftgames.com" );
                             connection_state = _connect_state_connect_failure;
                             failure_display_timer.reset();
                         } else
                             if( result_code == _mapload_result_no_wad_file ) {
-                                lobbyView.scrollAndUpdate( "MAP TILE SET NOT FOUND!" );
-                                lobbyView.scrollAndUpdate( "please download the appropriate tileset" );
-                                lobbyView.scrollAndUpdate( "from www.pyrosoftgames.com" );
+                                lobbyView->scrollAndUpdate( "MAP TILE SET NOT FOUND!" );
+                                lobbyView->scrollAndUpdate( "please download the appropriate tileset" );
+                                lobbyView->scrollAndUpdate( "from www.pyrosoftgames.com" );
                                 connection_state = _connect_state_connect_failure;
                                 failure_display_timer.reset();
                             } else {
-                                lobbyView.scrollAndUpdate( "Loading Game Data ..." );
+                                lobbyView->scrollAndUpdate( "Loading Game Data ..." );
 
                                 CLIENT->sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing), 0 );
 
@@ -377,7 +377,7 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
                     ConnectMesgClientGameSetupAck client_game_setup_ack;
 
                     sprintf( str_buf, "Loading Game Data ... (%d%%)", percent_complete);
-                    lobbyView.update( str_buf );
+                    lobbyView->update( str_buf );
 
                     CLIENT->sendMessage( &client_game_setup_ack, sizeof(ConnectMesgClientGameSetupAck), 0 );
                     connection_state = _connect_state_idle;
@@ -385,7 +385,7 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
                     ConnectMesgClientGameSetupPing client_game_setup_ping;
 
                     sprintf( str_buf, "Loading Game Data ... (%d%%)", percent_complete);
-                    lobbyView.update( str_buf );
+                    lobbyView->update( str_buf );
                     CLIENT->sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing), 0 );
                 }
 
@@ -396,7 +396,7 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
 
         case _connect_state_connect_failure : {
                 if ( failure_display_timer.count() == true ) {
-                    lobbyView.toggleMainMenu();
+                    lobbyView->toggleMainMenu();
                     connection_state = _connect_state_idle;
                 }
             }

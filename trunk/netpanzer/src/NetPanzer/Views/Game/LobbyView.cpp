@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Desktop.hpp"
 #include "GameManager.hpp"
 
-LobbyView lobbyView;
+LoadingView *lobbyView = 0;
 
 static void bAbort()
 {
@@ -33,7 +33,7 @@ static void bAbort()
 
 // LobbyView
 //---------------------------------------------------------------------------
-LobbyView::LobbyView() : View(), currentline(0)
+LobbyView::LobbyView() : LoadingView(), currentline(0)
 {} // end LobbyView::LobbyView
 
 // init

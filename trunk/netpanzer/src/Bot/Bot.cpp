@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "Bot.hpp"
-#include "BotPlayer.hpp"
 
 #include "PlacementMatrix.hpp"
 #include "TerminalNetMesg.hpp"
@@ -29,15 +28,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Objective.hpp"
 #include "Log.hpp"
 
-Bot *Bot::s_bot = new BotPlayer();
+Bot *Bot::s_bot = 0;
 //-----------------------------------------------------------------
 void
-Bot::switchBot(Bot *bot)
+Bot::initialize(Bot *bot)
+{
+    s_bot = bot;
+}
+//-----------------------------------------------------------------
+void
+Bot::shutdown()
 {
     if (s_bot) {
         delete s_bot;
+        s_bot = 0;
     }
-    s_bot = bot;
 }
 //-----------------------------------------------------------------
 void
