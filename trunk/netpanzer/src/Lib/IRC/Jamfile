@@ -1,8 +1,0 @@
-SubDir TOP src Lib IRC ;
-
-Library netpanzerirc 
-    : [ Wildcard *.cpp *.hpp ]
-    : noinstall
-;
-ExternalLibs netpanzerirc : SDL SDLNET ;
-LinkWith netpanzerirc : netpanzertypes netpanzerutil ;

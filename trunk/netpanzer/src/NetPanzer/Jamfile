@@ -12,7 +12,6 @@ SUBDIRS =
     Classes/Units
     Classes/Weapons
     Classes/Network
-    IRCLobby
     Network
     Resources
     Structs

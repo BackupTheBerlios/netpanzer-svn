@@ -69,7 +69,6 @@ public:
         message_class = _net_message_class_terminal;
         message_id = _net_message_id_term_output_loc;
     }
-
 }
 __attribute__((packed));
 

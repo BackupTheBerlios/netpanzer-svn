@@ -53,11 +53,21 @@ public:
 
     UMesgAICommand()
     {
+        command = 0;
+        goal_loc_x = goal_loc_y = 0;
+        target_id = 0;
+        manual_move_orientation = 0;
+        target_loc_x = target_loc_y = 0;
     }
 
     UMesgAICommand(UnitID unit_id, unsigned char flags)
             : UnitMessage(unit_id, flags )
     {
+        command = 0;
+        goal_loc_x = goal_loc_y = 0;
+        target_id = 0;
+        manual_move_orientation = 0;
+        target_loc_x = target_loc_y = 0;
     }
 
     void setMoveToLoc(iXY &goal)

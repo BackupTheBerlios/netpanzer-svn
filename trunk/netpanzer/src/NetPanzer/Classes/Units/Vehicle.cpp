@@ -672,9 +672,9 @@ bool Vehicle::ruleMoveToLoc_GoalReached()
     iXY map_loc;
     MapInterface::pointXYtoMapXY( unit_state.location, &map_loc );
     if ( map_loc == aiFsmMoveToLoc_goal )
-        return( true );
+        return true;
 
-    return( false );
+    return false;
 }
 
 
@@ -888,8 +888,7 @@ void Vehicle::aiFsmMoveToLoc()
 
         } // ** switch
 
-    } while ( end_cycle == false );
-
+    } while (end_cycle == false);
 }
 
 void Vehicle::aiFsmMoveToLoc_OnExitCleanUp()
@@ -1425,26 +1424,26 @@ void Vehicle::updateFsmState()
 
 void Vehicle::updateAIState()
 {
-    switch( ai_command_state ) {
-    case _ai_command_idle :
-        aiFsmIdle();
-        break;
+    switch(ai_command_state) {
+        case _ai_command_idle:
+            aiFsmIdle();
+            break;
 
-    case _ai_command_defend_hold :
-        aiFsmDefendHold();
-        break;
+        case _ai_command_defend_hold:
+            aiFsmDefendHold();
+            break;
 
-    case _ai_command_move_to_loc :
-        aiFsmMoveToLoc();
-        break;
+        case _ai_command_move_to_loc:
+            aiFsmMoveToLoc();
+            break;
 
-    case _ai_command_attack_unit :
-        aiFsmAttackUnit();
-        break;
+        case _ai_command_attack_unit:
+            aiFsmAttackUnit();
+            break;
 
-    case _ai_command_manual_move :
-        aiFsmManualMove();
-        break;
+        case _ai_command_manual_move:
+            aiFsmManualMove();
+            break;
     }
 }
 

@@ -6,5 +6,4 @@ SubInclude TOP src Lib ArrayUtil ;
 SubInclude TOP src Lib 2D ;
 SubInclude TOP src Lib optionmm ;
 SubInclude TOP src Lib UI ;
-SubInclude TOP src Lib IRC ;
 SubInclude TOP src Lib INIParser ;
