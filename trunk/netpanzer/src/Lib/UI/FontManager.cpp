@@ -16,9 +16,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "FontManager.hpp"
-#include "Util/Log.hpp"
+#include <memory>
 
+#include "FontManager.hpp"
+#include "Util/FileSystem.hpp"
+#include "Util/Exception.hpp"
+#include "Util/Log.hpp"
 
 namespace UI{
     
@@ -35,18 +38,20 @@ namespace UI{
     }
 
     void FontManager::loadFont(std::string name, const char * fileName, int ptSize){
-        TTF_Font * font = TTF_OpenFont(fileName, ptSize);
-        if(font == 0){
-            LOG(("Warning: in FontManager::loadFont : %s", TTF_GetError()));
-        }else{ 
+        try {
+            std::auto_ptr<ReadFile> file (FileSystem::openRead(fileName));
+                
+            TTF_Font * font = TTF_OpenFontRW(file->getSDLRWOps(), true, ptSize);
+            if(font == 0)
+                throw Exception("Couldn't load font: %s.", TTF_GetError());
+            
             fontCollection[name] = font;
+        } catch(std::exception& e) {
+            LOGGER.info("Couldn't load font '%s': %s.", fileName, e.what());
         }
     }
 
     TTF_Font * FontManager::getFont(const std::string & name){
-
-        // std::cerr << "getFont(" << name << ")" << std::endl;
-
         if(fontCollection.find(name) != fontCollection.end()){
             return fontCollection[name];
         }else{
