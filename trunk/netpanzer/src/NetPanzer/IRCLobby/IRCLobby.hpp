@@ -104,6 +104,7 @@ private:
     int expected_ping;
     
     SDL_Thread *running_thread;
+    bool run;
 };
 
 #endif

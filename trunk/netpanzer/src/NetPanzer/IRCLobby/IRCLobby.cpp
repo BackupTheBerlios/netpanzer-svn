@@ -108,6 +108,7 @@ IRCLobby::IRCLobby(const std::string& server,
     game_servers_mutex=SDL_CreateMutex();
     change_name=0;
     expected_ping=0;
+    run = true;
 
     setNickName(nick);
 }
@@ -159,10 +160,11 @@ void IRCLobby::stopThread()
 {
     if(!running_thread)
         return;
-    
-    SDL_KillThread(running_thread);
+
+    run = false;
+    SDL_WaitThread(running_thread, NULL);
     running_thread = 0;
-    
+
     if(irc_server_socket) {
         static char* quit="QUIT\n";
         SDLNet_TCP_Send(irc_server_socket, quit, 5);
@@ -271,7 +273,7 @@ int IRCLobby::messagesThreadEntry(void* data)
 {
     IRCLobby* t = (IRCLobby*) data;
     int restart_delay=5000;     // time to wait before starting the server
-    while(1) {
+    while (t->run) {
         // this is here so that the thread is started before we connect 
         // to the irc server otherwise the main thread will halt 
         // if we don't have access to the irc server.
@@ -284,7 +286,11 @@ int IRCLobby::messagesThreadEntry(void* data)
             t->addChatMessage("Error",e.what());
 
             int run_length=time(NULL)-start_tick;
-            SDL_Delay(restart_delay);
+
+            /* break up SDL_Delay calls so we can poll t->run */
+            for (int i=0; t->run && (i < restart_delay); i += 200)
+                SDL_Delay(i);
+
             if(run_length>(15*60)) {
                 // we managed to run for 15mins, reset the delay
                 restart_delay=5000;
@@ -322,7 +328,7 @@ void IRCLobby::processMessages()
         return;
     }
 
-    while(1) {
+    while (run) {
         processMessage();
     }
 }
@@ -595,8 +601,8 @@ void IRCLobby::readIRCLine(char *buf, size_t buf_len)
 
     int no_activity=0;
     try {
-        while(buf_upto < buf_end) {
-            SDLNet_CheckSockets(sock_set, 1000);
+        while (run && (buf_upto < buf_end)) {
+            SDLNet_CheckSockets(sock_set, 200);
             if(!SDLNet_SocketReady(irc_server_socket)) {
                 if(++no_activity>=(60*1) && !expected_ping) {
                     sendPingMessage();
