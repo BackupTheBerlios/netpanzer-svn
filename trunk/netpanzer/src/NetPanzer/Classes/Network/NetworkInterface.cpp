@@ -42,7 +42,7 @@ NetPacketQueue NetworkInterface::loop_back_send_queue;
 NetPacketQueue NetworkInterface::loop_back_recv_queue;
 NetPacketQueue NetworkInterface::receive_queue;
 
-NetworkInterface::NetworkInterface( void )
+NetworkInterface::NetworkInterface()
 {
     loop_back_send_queue.initialize( 25 );
     loop_back_recv_queue.initialize( 100 );
@@ -55,3 +55,4 @@ NetworkInterface::~NetworkInterface()
     loop_back_recv_queue.deallocate();
     receive_queue.deallocate();
 }
+

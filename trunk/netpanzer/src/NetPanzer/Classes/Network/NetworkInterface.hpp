@@ -31,7 +31,7 @@ public:
     static NetPacketQueue receive_queue;
 
 public:
-    NetworkInterface( void );
+    NetworkInterface();
     ~NetworkInterface();
 };
 

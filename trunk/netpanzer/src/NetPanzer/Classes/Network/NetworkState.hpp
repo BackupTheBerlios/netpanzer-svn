@@ -67,7 +67,7 @@ public:
         status = status_flags;
     }
 
-    static inline unsigned short getNetworkStatus( void )
+    static inline unsigned short getNetworkStatus()
     {
         return( status );
     }
@@ -84,7 +84,7 @@ public:
         packets_received++;
     }
 
-    static inline void incOpcodesSent( void )
+    static inline void incOpcodesSent()
     {
         opcodes_sent++;
         if ( opcodes_sent_timer.count() ) {
@@ -93,7 +93,7 @@ public:
         }
     }
 
-    static inline void incOpcodesReceived( void )
+    static inline void incOpcodesReceived()
     {
         opcodes_received++;
         if ( opcodes_received_timer.count() ) {
@@ -102,12 +102,11 @@ public:
         }
     }
 
-    static void resetNetworkStats( void );
+    static void resetNetworkStats();
 
-    static void updateNetworkStats( void );
+    static void updateNetworkStats();
 
-    static void logNetworkStats( void );
-
+    static void logNetworkStats();
 };
 
 #endif // ** _NETWORKSTATE_HPP

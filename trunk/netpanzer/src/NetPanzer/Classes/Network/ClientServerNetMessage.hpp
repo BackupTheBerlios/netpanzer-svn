@@ -44,9 +44,20 @@ private:
     uint32_t client_transport_id;
     
 public:
-    TransportClientAccept();
-    uint32_t getClientTransportID(void);
-    void setClientTransportID(uint32_t transport_id);
+    TransportClientAccept()
+    {
+        message_class = _net_message_class_client_server;
+        message_id = _net_message_id_transport_client_accept;
+    }
+
+    uint32_t getClientTransportID() const
+    {
+        return ltoh32(client_transport_id);
+    }
+    void setClientTransportID(uint32_t transport_id)
+    {
+        client_transport_id = htol32(transport_id);
+    }
 }
 __attribute__((packed));
 
@@ -56,9 +67,20 @@ private:
     uint32_t client_transport_id;
     
 public:
-    ClientMesgConnectAck();
-    uint32_t getClientTransportID(void);
-    void setClientTransportID(uint32_t transport_id);
+    ClientMesgConnectAck()
+    {
+        message_class = _net_message_class_client_server;
+        message_id = _net_message_id_client_connect_ack;
+    }
+    
+    uint32_t getClientTransportID() const
+    {
+        return ltoh32(client_transport_id);
+    }
+    void setClientTransportID(uint32_t transport_id)
+    {
+        client_transport_id = htol32(transport_id);
+    }
 }
 __attribute__((packed));
 
@@ -82,7 +104,6 @@ public :
         message_class = _net_message_class_client_server;
         message_id = _net_message_id_client_set_keepalive_state;
     }
-
 } __attribute__((packed));
 
 
@@ -92,9 +113,20 @@ private:
     uint16_t client_id;
 
 public:
-    ServerMesgKeepAlive();
-    uint16_t getClientID(void);
-    void setClientID(uint16_t clientID);
+    ServerMesgKeepAlive()
+    {
+        message_class = _net_message_class_client_server;
+        message_id = _net_message_id_server_keep_alive;
+    }
+    
+    uint16_t getClientID() const
+    {
+        return ltoh16(client_id);
+    }
+    void setClientID(uint16_t clientID)
+    {
+        client_id = htol16(clientID);
+    }
 } __attribute__((packed));
 
 class ServerMesgPingRequest: public NetMessage
@@ -103,9 +135,20 @@ private:
     uint16_t client_id;
 
 public:
-    ServerMesgPingRequest();
-    uint16_t getClientID(void);
-    void setClientID(uint16_t clientID);
+    ServerMesgPingRequest()
+    {
+        message_class = _net_message_class_client_server;
+        message_id = _net_message_id_server_ping_request;
+    }
+    
+    uint16_t getClientID() const
+    {
+        return ltoh16(client_id);
+    }
+    void setClientID(uint16_t clientID)
+    {
+        client_id = htol16(clientID);
+    }
 } __attribute__((packed));
 
 class ClientMesgPingAck: public NetMessage

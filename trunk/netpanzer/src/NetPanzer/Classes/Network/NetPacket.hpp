@@ -43,11 +43,10 @@ __attribute__((packed));
 struct NetMessageStruct
 {
     uint16_t size;
-    uint8_t  sequence;
     uint8_t  message_class;
     uint8_t  message_id;
 
-    uint8_t  data[ _MAX_NET_PACKET_SIZE - 5 ];
+    uint8_t  data[ _MAX_NET_PACKET_SIZE - 4 ];
 }
 __attribute__((packed));
 

@@ -66,15 +66,15 @@ enum { _join_request_result_success,
 class ClientConnectJoinRequestAck : public NetMessage
 {
 private:
-    int   result_code;
+    int32_t  result_code;
     uint32_t server_protocol_version;
 
 public:
     ClientConnectJoinRequestAck();
 
-    int getResultCode(void);
-    void setResultCode(int result);
-    uint32_t getServerProtocolVersion(void);
+    int32_t getResultCode() const;
+    void setResultCode(int32_t result);
+    uint32_t getServerProtocolVersion() const;
     void setServerProtocolVersion(uint32_t protocol_version);
 }
 __attribute__((packed));
@@ -236,15 +236,24 @@ __attribute__((packed));
 
 class ConnectMesgNetPanzerClientDisconnect : public NetMessage
 {
-public:
-    uint16_t client_id;
+private:
+    uint16_t player_id;
 
+public:
     ConnectMesgNetPanzerClientDisconnect()
     {
         message_class = _net_message_class_connect;
         message_id = _net_message_id_connect_netPanzer_client_disconnect;
     }
 
+    void setPlayerID(uint16_t id)
+    {
+        player_id = htol16(id);
+    }
+    uint16_t getPlayerID() const
+    {
+        return ltoh16(player_id);
+    }
 }
 __attribute__((packed));
 

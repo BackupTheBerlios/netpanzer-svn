@@ -54,17 +54,17 @@ ClientConnectJoinRequestAck::ClientConnectJoinRequestAck()
     message_id = _net_message_id_connect_join_game_request_ack;
 }
 
-int ClientConnectJoinRequestAck::getResultCode(void)
+int32_t ClientConnectJoinRequestAck::getResultCode() const
 {
     return ltoh32(result_code);
 }
 
-void ClientConnectJoinRequestAck::setResultCode(int result)
+void ClientConnectJoinRequestAck::setResultCode(int32_t result)
 {
     result_code = htol32(result);
 }
 
-uint32_t ClientConnectJoinRequestAck::getServerProtocolVersion(void)
+uint32_t ClientConnectJoinRequestAck::getServerProtocolVersion() const
 {
     return ltoh32(server_protocol_version);
 }

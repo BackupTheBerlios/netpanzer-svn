@@ -71,8 +71,8 @@ enum { _chat_mesg_scope_player_set,
 class SystemChatMesgRequest : public NetMessage
 {
 public:
-    unsigned char message_scope;
-    unsigned char player_set[32];
+    uint8_t message_scope;
+    char player_set[32];
 
 private:
     uint16_t source_player_index;
@@ -80,7 +80,7 @@ public:
     char message_text[150];
 
     SystemChatMesgRequest();
-    void reset( void );
+    void reset();
     void setMessageScope( unsigned char scope );
     void setPlayerSet( unsigned short player_index );
     void clearPlayerSet( unsigned short player_index );

@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NET_MESSAGE_ENUMS_HPP
 #define _NET_MESSAGE_ENUMS_HPP
 
-enum { _net_message_class_multi,
+enum { _net_message_class_multi = 0,
        _net_message_class_client_server,
        _net_message_class_system,
        _net_message_class_connect,

@@ -33,7 +33,7 @@ private:
     uint16_t objective_id;
 
 public:
-    uint16_t getObjectiveID(void);
+    uint16_t getObjectiveID();
     void setObjectiveID(uint16_t id);
 } __attribute__((packed));
 
@@ -53,7 +53,8 @@ private:
 
 public:
     void set(unsigned short id, unsigned char status, PlayerID &player);
-    uint16_t getOccupyingPlayerID(void);
+    
+    uint16_t getOccupyingPlayerID();
 } __attribute__((packed));
 
 class ChangeUnitGeneration : public ObjectiveMessage

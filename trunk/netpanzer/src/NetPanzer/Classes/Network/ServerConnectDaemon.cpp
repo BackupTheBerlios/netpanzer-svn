@@ -128,13 +128,13 @@ void ServerConnectDaemon::netMessageClientDisconnect( NetMessage *message )
 
     client_disconnect = (ConnectMesgNetPanzerClientDisconnect *) message;
 
-    if(client_disconnect->client_id >= PlayerInterface::getMaxPlayers()) {
+    if(client_disconnect->getPlayerID() >= PlayerInterface::getMaxPlayers()) {
         LOGGER.warning("Received malformed disconnection message.");
         return;
     }
     
     startDisconnectionProcess(
-            PlayerInterface::getPlayerID(client_disconnect->client_id) );
+            PlayerInterface::getPlayerID(client_disconnect->getPlayerID()) );
 }
 
 void ServerConnectDaemon::netMessageClientJoinRequest( NetMessage *message )

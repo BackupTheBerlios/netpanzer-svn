@@ -51,18 +51,20 @@ unsigned char ClientConnectDaemon::connection_state;
 #define _CLIENT_CONNECT_RETRY_LIMIT   (5)
 
 
-void ClientConnectDaemon::startConnectDaemon( void )
+void ClientConnectDaemon::startConnectDaemon()
 {
     connection_state = _connect_state_idle;
 }
 
-void ClientConnectDaemon::shutdownConnectDaemon( void )
+void ClientConnectDaemon::shutdownConnectDaemon()
 {
     ConnectMesgNetPanzerClientDisconnect client_disconnect;
 
-    client_disconnect.client_id = PlayerInterface::getLocalPlayerID().getIndex();
+    client_disconnect.setPlayerID(
+            PlayerInterface::getLocalPlayerIndex());
 
-    CLIENT->sendMessage( &client_disconnect, sizeof(ConnectMesgNetPanzerClientDisconnect), 0 );
+    CLIENT->sendMessage(&client_disconnect,
+            sizeof(ConnectMesgNetPanzerClientDisconnect), 0);
 
     CLIENT->deactivateKeepAlive();
 }
