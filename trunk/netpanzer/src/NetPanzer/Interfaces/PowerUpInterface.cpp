@@ -246,23 +246,23 @@ void PowerUpInterface::netMessagePowerUpCreate( NetMessage *message )
 
     create_mesg = (PowerUpCreateMesg *) message;
 
-    switch( create_mesg->type ) {
+    switch( create_mesg->getType() ) {
     case _powerup_bonus_units :
         power_up = new BonusUnitPowerUp( 
-                iXY(create_mesg->map_loc_x, create_mesg->map_loc_y),
-                create_mesg->type  );
+                iXY(create_mesg->getLocX(), create_mesg->getLocY()),
+                _powerup_bonus_units );
         break;
 
     case _powerup_unit :
         power_up = new UnitPowerUp(
-                iXY(create_mesg->map_loc_x, create_mesg->map_loc_y),
-                create_mesg->type );
+                iXY(create_mesg->getLocX(), create_mesg->getLocY()),
+                _powerup_unit );
         break;
 
     case _powerup_enemy_radar :
         power_up = new EnemyRadarPowerUp(
-                iXY(create_mesg->map_loc_x, create_mesg->map_loc_y),
-                    create_mesg->type );
+                iXY(create_mesg->getLocX(), create_mesg->getLocY()),
+                _powerup_enemy_radar);
         break;
         
     default:
@@ -270,7 +270,7 @@ void PowerUpInterface::netMessagePowerUpCreate( NetMessage *message )
         return;
     }
 
-    power_up->powerup_state.ID = create_mesg->ID;
+    power_up->powerup_state.ID = create_mesg->getID();
 
     powerup_list.push_back(power_up);
 }
@@ -282,7 +282,7 @@ void PowerUpInterface::netMessagePowerUpHit( NetMessage *message )
 
     hit_mesg = (PowerUpHitMesg *) message;
 
-    power_up = powerup_list.find( hit_mesg->ID );
+    power_up = powerup_list.find( hit_mesg->getID() );
 
     if (power_up != 0) {
         power_up->onHit( hit_mesg );

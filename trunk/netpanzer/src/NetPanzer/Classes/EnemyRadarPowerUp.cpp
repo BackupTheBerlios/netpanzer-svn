@@ -67,7 +67,7 @@ void EnemyRadarPowerUp::setRadar( UnitID &unit_id )
 
     if( local_player_id == player_id ) {
         MiniMapInterface::setShowEnemyRadar( 180 );
-        ConsoleInterface::postMessage( "YOU GOT A ENEMY RADAR POWERUP" );
+        ConsoleInterface::postMessage( "YOU GOT AN ENEMY RADAR POWERUP" );
     }
 
     PowerUpHitMesg hit_mesg;
@@ -107,9 +107,9 @@ void EnemyRadarPowerUp::onHit( PowerUpHitMesg *message  )
 
     local_player_id = PlayerInterface::getLocalPlayerID();
 
-    if( local_player_id.getIndex() == message->player_id ) {
+    if( local_player_id.getIndex() == message->getPlayerID() ) {
         MiniMapInterface::setShowEnemyRadar( 180 );
-        ConsoleInterface::postMessage( "YOU GOT A ENEMY RADAR POWERUP" );
+        ConsoleInterface::postMessage( "YOU GOT AN ENEMY RADAR POWERUP" );
     }
 
     powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive;

@@ -173,8 +173,7 @@ void UnitPowerUp::selectPowerUp( UnitID &unit_id )
     }
 
     PowerUpHitMesg hit_mesg;
-    hit_mesg.set( powerup_state.ID, unit_id, player_id  );
-    hit_mesg.unit_powerup_type = unit_powerup_type;
+    hit_mesg.set( powerup_state.ID, unit_id, player_id, unit_powerup_type );
     SERVER->sendMessage( &hit_mesg, sizeof( PowerUpHitMesg ), 0 );
 
     powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive;
@@ -248,8 +247,8 @@ void UnitPowerUp::onHit( PowerUpHitMesg *message  )
 
     local_player_id = PlayerInterface::getLocalPlayerID();
 
-    if( local_player_id.getIndex() == message->player_id ) {
-        ConsoleInterface::postMessage( "YOU GOT A %s POWERUP", powerupTypeToString( message->unit_powerup_type ) );
+    if( local_player_id.getIndex() == message->getPlayerID() ) {
+        ConsoleInterface::postMessage( "YOU GOT A %s POWERUP", powerupTypeToString( message->getUnitPowerupType() ) );
     }
 
 }

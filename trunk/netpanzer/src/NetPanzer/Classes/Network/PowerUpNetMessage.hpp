@@ -33,49 +33,35 @@ enum { _net_message_id_powerup_create,
 
 class PowerUpCreateMesg : public NetMessage
 {
-public:
+private:
     int32_t map_loc_x;
     int32_t map_loc_y;
     int32_t ID;
     int32_t type;
 
-    void set( iXY map_loc, int ID, int type )
-    {
-        PowerUpCreateMesg::map_loc_x = map_loc.x;
-        PowerUpCreateMesg::map_loc_y = map_loc.y;
-        PowerUpCreateMesg::ID = ID;
-        PowerUpCreateMesg::type = type;
-    }
-
-    PowerUpCreateMesg()
-    {
-        message_class = _net_message_class_powerup;
-        message_id = _net_message_id_powerup_create;
-    }
+public:
+    PowerUpCreateMesg();
+    void set(iXY map_loc, int ID, int type);
+    int32_t getLocX(void);
+    int32_t getLocY(void);
+    int32_t getID(void);
+    int32_t getType(void);
 } __attribute__((packed));
 
 class PowerUpHitMesg : public NetMessage
 {
-public:
+private:
     int32_t  ID;
     UnitID   unit_id;
     uint16_t player_id;
     int32_t  unit_powerup_type;
 
-    void set( int ID, UnitID unit_id, PlayerID player_id )
-    {
-        PowerUpHitMesg::ID = ID;
-        PowerUpHitMesg::unit_id = unit_id;
-        PowerUpHitMesg::player_id = player_id.getIndex();
-        unit_powerup_type = 0;
-    }
-
-    PowerUpHitMesg()
-    {
-        message_class = _net_message_class_powerup;
-        message_id = _net_message_id_powerup_hit;
-    }
-
+public:
+    PowerUpHitMesg();
+    void set(int ID, UnitID unit_id, PlayerID player_id, int type=0);
+    int32_t getID(void);
+    uint16_t getPlayerID(void);
+    int32_t getUnitPowerupType(void);
 } __attribute__((packed));
 
 #ifdef MSVC
