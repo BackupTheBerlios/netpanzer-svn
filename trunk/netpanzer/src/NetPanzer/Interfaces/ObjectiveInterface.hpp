@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetPacket.hpp"
 #include "NetMessageEncoder.hpp"
 
-typedef ArrayTemplate< Objective * > ObjectiveList;
-
 enum { _no_objective_found,
        _player_occupied_objective_found,
        _enemy_occupied_objective_found,
@@ -41,7 +39,7 @@ enum { _objective_disposition_unoccupied,
 class ObjectiveInterface
 {
 protected:
-    static ObjectiveList objective_list;
+    static std::vector<Objective*> objective_list;
 
     static void cleanUpObjectiveList( void );
 

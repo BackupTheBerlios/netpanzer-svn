@@ -52,7 +52,6 @@ class NetMessage
 {
 public:
     unsigned short size;
-    //unsigned char  sequence;
     unsigned char  message_class;
     unsigned char  message_id;
 

@@ -61,6 +61,7 @@ AstarNode*  Astar::getNewNode()
 
     if ( dynamic_node_management_flag == true ) {
         if (free_list_ptr == 0) {
+            LOG(("No new node1"));
             return 0;
         } else {
             node_ptr = free_list_ptr;
@@ -69,6 +70,7 @@ AstarNode*  Astar::getNewNode()
         }
     } else {
         if ( node_index >= node_list_size ) {
+            LOG(("no new node 2"));
             return 0;
         }
 

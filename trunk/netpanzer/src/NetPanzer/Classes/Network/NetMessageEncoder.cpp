@@ -39,11 +39,12 @@ void NetMessageEncoder::resetEncoder( void )
     encode_message.message_class = _net_message_class_multi ;
     encode_message.message_id = 0;
     encode_message.message_count = 0;
+    encode_message.message_size = 0;
     memset( encode_message.data, 0, _MULTI_PACKET_LIMIT );
     encode_message_index = 0;
 }
 
-void NetMessageEncoder::encodeMessage( NetMessage *message, unsigned short size )
+void NetMessageEncoder::encodeMessage(NetMessage *message, unsigned short size)
 {
     message->size = size;
     if( ( (encode_message_index + size + sizeof(SubPacketType)) > _MULTI_PACKET_LIMIT )
@@ -77,6 +78,8 @@ void NetMessageEncoder::encodeMessage( NetMessage *message, unsigned short size 
 
 bool NetMessageEncoder::encodeMessage( NetMessage *message, unsigned short size, MultiMessage **encoded_message )
 {
+    message->size = size;
+    
     if( ( (encode_message_index + size + sizeof(SubPacketType)) > _MULTI_PACKET_LIMIT )
       ) {
         encode_message.message_size = (unsigned short) encode_message_index;
@@ -92,7 +95,7 @@ bool NetMessageEncoder::encodeMessage( NetMessage *message, unsigned short size,
 
     encode_message_index += sizeof(SubPacketType);
 
-    memmove( &encode_message.data[ encode_message_index ],
+    memcpy( &encode_message.data[ encode_message_index ],
              message,
              size
            );

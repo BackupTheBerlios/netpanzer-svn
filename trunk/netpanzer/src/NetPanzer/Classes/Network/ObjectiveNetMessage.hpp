@@ -52,8 +52,7 @@ public:
         message_class = _net_message_class_objective;
         message_id = _net_message_id_objective_sync;
     }
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 #ifdef MSVC
 #pragma pack()

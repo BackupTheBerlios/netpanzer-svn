@@ -56,8 +56,7 @@ void Objective::objectiveMesgSync( ObjectiveMessage *message )
 
     objective_state.objective_status = sync_mesg->objective_status;
     objective_state.occupation_status = sync_mesg->occupation_status;
-    objective_state.occupying_player = sync_mesg->occupying_player;
-
+    objective_state.occupying_player.setIndex(sync_mesg->occupying_player_id);
 }
 
 

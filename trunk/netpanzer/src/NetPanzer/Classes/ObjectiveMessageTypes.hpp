@@ -27,11 +27,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class ObjectiveMessage
 {
 public:
-    unsigned char message_type;
-    unsigned short objective_id;
-
-}
-__attribute__((packed));
+    uint8_t message_type;
+    uint16_t objective_id;
+} __attribute__((packed));
 
 enum { _objective_mesg_update_occupation,
        _objective_mesg_change_unit_generation,
@@ -43,7 +41,7 @@ enum { _objective_mesg_update_occupation,
 class UpdateOccupationsStatus : public ObjectiveMessage
 {
 public:
-    unsigned char occupation_status;
+    uint8_t occupation_status;
     PlayerID occupying_player;
 
     void set( unsigned short id, unsigned char status, PlayerID &player )
@@ -53,9 +51,7 @@ public:
         occupying_player = player;
         message_type = _objective_mesg_update_occupation;
     }
-
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class ChangeUnitGeneration : public ObjectiveMessage
 {
@@ -92,9 +88,9 @@ __attribute__((packed));
 class SyncObjective : public ObjectiveMessage
 {
 public:
-    unsigned char objective_status;
-    unsigned char occupation_status;
-    PlayerID occupying_player;
+    uint8_t objective_status;
+    uint8_t occupation_status;
+    uint16_t occupying_player_id;
 
     void set( unsigned short id,
                   unsigned char objective_status,
@@ -102,30 +98,28 @@ public:
                   PlayerID occupying_player )
     {
         objective_id = id;
+        message_type = _objective_mesg_sync_objective;
+
         SyncObjective::objective_status = objective_status;
         SyncObjective::occupation_status = occupation_status;
-        SyncObjective::occupying_player = occupying_player;
-        message_type = _objective_mesg_sync_objective;
+        SyncObjective::occupying_player_id = occupying_player.getIndex();
     }
-
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class ChangeOutputLocation : public ObjectiveMessage
 {
 public:
-   iXY new_point;
+    int32_t new_point_x;
+    int32_t new_point_y;
   
-    void set( unsigned short id,
-              iXY point)
+    void set(unsigned short id, iXY point)
     {
         objective_id = id;
-        new_point = point;
+        new_point_x = point.x;
+        new_point_y = point.y;
         message_type = _objective_mesg_change_output_location;
     }
-
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 #ifdef MSVC
 #pragma pack()

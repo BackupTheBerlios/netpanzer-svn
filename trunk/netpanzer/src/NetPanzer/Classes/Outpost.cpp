@@ -203,7 +203,8 @@ void Outpost::objectiveMesgChangeOutputLocation( ObjectiveMessage *message ){
     ChangeOutputLocation *msg;
     msg = (ChangeOutputLocation *) message;
     iXY temp;
-    MapInterface::pointXYtoMapXY( msg->new_point, &temp );
+    MapInterface::pointXYtoMapXY(iXY(msg->new_point_x, msg->new_point_y),
+            &temp );
     unit_collection_loc = temp;
 }
 

@@ -24,8 +24,13 @@ void MapRenderer::render(SDL_Surface* surface, SDL_Rect* area,
     int startx = area ? area->x : 0;
     int starty = area ? area->y : 0;
 
-    size_t mapxstart = mapxpos / tilesets[0]->getTileWidth();
-    size_t mapystart = mapypos / tilesets[0]->getTileHeight();
+    size_t tilewidth = tilesets[0]->getTileWidth();
+    size_t tileheight = tilesets[0]->getTileHeight();
+
+    size_t mapxstart = mapxpos / tilewidth;
+    size_t mapystart = mapypos / tileheight;
+    size_t xpos = -tilewidth + mapxpos % tilewidth;
+    size_t ypos = -tileheight + mapypos % tileheight;
     
     for(size_t mapy = mapystart; mapy < map->getHeight(); mapy++) {
         for(size_t mapx = mapxstart; mapx < map->getWidth(); mapx++) {

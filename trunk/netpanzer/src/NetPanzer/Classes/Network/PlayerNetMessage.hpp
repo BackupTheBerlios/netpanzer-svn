@@ -58,9 +58,7 @@ public:
         message_class = _net_message_class_player;
         message_id = _net_message_id_player_sync_state;
     }
-
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class PlayerScoreUpdate : public NetMessage
 {
