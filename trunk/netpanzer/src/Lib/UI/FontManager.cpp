@@ -39,7 +39,9 @@ namespace UI{
 
     void FontManager::loadFont(std::string name, const char * fileName, int ptSize){
         try {
-            std::auto_ptr<ReadFile> file (FileSystem::openRead(fileName));
+	    // XXX memory leak. We need to leave the file open as long as the
+	    // font is open. Ugly hack for now
+            ReadFile* file (FileSystem::openRead(fileName));
                 
             TTF_Font * font = TTF_OpenFontRW(file->getSDLRWOps(), true, ptSize);
             if(font == 0)
