@@ -108,9 +108,11 @@ void NetPacketDebugger::logMultiMessage(std::ostream& log,
     size_t index = 0;
     for(int i=0; i<mmessage->message_count; i++) {
         if(index + mmessage->getHeaderSize() >= message->getSize()) {
-            printf("IDX: %d HS: %d MS: %d.\n", index, mmessage->getHeaderSize(),
-                    message->getSize());
-            assert("Incorrect multi messge" == 0);
+            log << "****Incorrect multi message!!!\n";
+            log << "Index: " << index << " HeaderSize: "
+                << mmessage->getHeaderSize() << " MessageSize: "
+                << message->getSize() << std::endl;
+            return;
         }
         NetMessage* submessage = (NetMessage*) (mmessage->data + index);
         index += submessage->getSize();

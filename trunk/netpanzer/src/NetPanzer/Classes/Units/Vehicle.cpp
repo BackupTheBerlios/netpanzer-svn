@@ -1842,7 +1842,7 @@ void Vehicle::processOpcodeQueue()
                 break;
 
             default:
-                printf("Unknown Opcode: %d.\n", opcode->opcode);
+                LOGGER.warning("Unknown Opcode: %d.\n", opcode->opcode);
                 assert(false);
                 break;
         }

@@ -91,7 +91,6 @@ static const size_t playerColorCount
 
 void PlayerState::setColor( uint32_t index ) {
 	colorIndex = index % playerColorCount;
-//	printf( "%s got colorIndex: %d!\n", name, colorIndex );
 }
 
 uint8_t PlayerState::getColor() {

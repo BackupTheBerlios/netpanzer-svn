@@ -181,7 +181,6 @@ void RankView::drawPlayerStats(Surface &dest)
                 break;
 
             case _stats_display_type_default :
-//		printf( "Index: %d, PlayerID: %d!\n", i, playerID.getIndex() );
                 color = PlayerInterface::getPlayerState( playerID )->getColor();
                 break;
 

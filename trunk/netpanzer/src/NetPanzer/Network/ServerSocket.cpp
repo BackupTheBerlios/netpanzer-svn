@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameConfig.hpp"
 #include "PlayerInterface.hpp"
 #include "Client.hpp"
+#include "ConsoleInterface.hpp"
 #include "Util/Exception.hpp"
 
 ServerSocket::ServerSocket(Uint16 tcpport)
@@ -133,7 +134,8 @@ void ServerSocket::readClientTCP(SocketClient* client)
     int recvsize = SDLNet_TCP_Recv(client->tcpsocket, recvbuffer,
                                    sizeof(recvbuffer));
     if(recvsize<=0) {
-        printf ("Connection lost for ID %u\n", client->id);
+        ConsoleInterface::postMessage("Connection lost for ID %u\n",
+                client->id);
         client->wantstodie = true;
         return;
     }
@@ -269,8 +271,6 @@ void ServerSocket::readClientTCP(SocketClient* client)
                     if (recvsize < 0)
                     {
                         //major problem here--
-                        //TODO: first let user know what problem is
-                        printf ("major problem here...\n");
                         throw Exception("got bad packet.");
                     }//if iBytesReceived < 0
                 }//if iBytesReceived >= Size

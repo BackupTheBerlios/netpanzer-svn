@@ -81,10 +81,8 @@ void SpriteSurface::blit( Surface *surface, const iRect &world_win )
     iXY blit_offset;
 
     blit_offset = (world_pos + attach_offset) - world_win.min;
-    printf("NormalSpriteBlit %d %d\n", blit_offset.x, blit_offset.y);
     bltTrans( *surface, blit_offset.x, blit_offset.y );
 }
-
 
 SpritePacked::SpritePacked()
         : Sprite()

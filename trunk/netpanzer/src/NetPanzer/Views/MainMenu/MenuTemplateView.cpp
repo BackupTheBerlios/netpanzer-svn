@@ -62,7 +62,6 @@ static void bMulti()
         Desktop::setVisibility("MapSelectionView", true);
         Desktop::setVisibility("PlayerNameView", true);
     } else if (strcmp(MenuTemplateView::currentMultiView, "JoinView") == 0) {
-        printf("EnteringJoinView.\n");
         Desktop::setVisibilityAllWindows(false);
         // XXX
         Desktop::setVisibility("JoinView", true);
