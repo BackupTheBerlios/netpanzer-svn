@@ -285,7 +285,7 @@ MasterServer::addServer(const std::string& gamename, struct sockaddr_in addr)
 
 void
 MasterServer::parseList(std::iostream& stream, struct sockaddr_in* addr,
-        Tokenizer& tokenizer)
+        Tokenizer& tokenizer, bool gameSpyHacks)
 {
     time_t currenttime = time(0);
 
@@ -333,8 +333,14 @@ MasterServer::parseList(std::iostream& stream, struct sockaddr_in* addr,
             }
         }
         if(match) {
-            stream << "\\ip\\" << inet_ntoa(i->address.sin_addr)
-                << "\\port\\" << ntohs(i->address.sin_port);
+            if(!gameSpyHacks) {
+                stream << "\\ip\\" << inet_ntoa(i->address.sin_addr)
+                    << "\\port\\" << ntohs(i->address.sin_port);
+            } else {
+                // gamespy hack
+                stream << "\\ip\\" << inet_ntoa(i->address.sin_addr)
+                    << ":" << ntohs(i->address.sin_port);
+            }
         }
             
         ++i;

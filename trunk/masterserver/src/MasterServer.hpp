@@ -58,7 +58,7 @@ private:
             struct sockaddr_in* addr, Tokenizer& tokenizer);
     /** this function is threadsafe */
     void parseList(std::iostream& stream,
-            struct sockaddr_in* addr, Tokenizer& tokenizer);
+            struct sockaddr_in* addr, Tokenizer& tokenizer, bool gameSpyHack);
     /** this function is threadsafe */
     void parseQuit(std::iostream& stream,
             struct sockaddr_in* addr, Tokenizer& tokenizer);

@@ -62,6 +62,7 @@ void RequestThread::run()
 {
     Tokenizer* tokenizer = new Tokenizer(*stream);
     running = true;
+    bool isGameSpy = false;
     while(!stream->eof() && running) {
         std::string query = tokenizer->getNextToken();
         if(query == "" || query == "final") {
@@ -69,7 +70,9 @@ void RequestThread::run()
         } else if(query == "heartbeat") {
             masterserver->parseHeartbeat(*stream, &addr, *tokenizer);
         } else if(query == "list") {
-            masterserver->parseList(*stream, &addr, *tokenizer);
+            masterserver->parseList(*stream, &addr, *tokenizer, isGameSpy);
+            if(isGameSpy) // gamespy drops connection now
+                break;
         } else if(query == "quit") {
             masterserver->parseQuit(*stream, &addr, *tokenizer);
         } else if(query == "gamename") {
@@ -79,6 +82,7 @@ void RequestThread::run()
                 if(tokenizer->getNextToken() == "final")
                     break;
             }
+            isGameSpy = true; // enable gamespy hacks            
         } else {
             *log << "Unknown request: '" << query << "'\n" << std::flush;
             *stream << "\\error\\Unknown request\\final\\" << std::flush;
