@@ -55,13 +55,9 @@
 
       <subsubsection title="CVS">
         <p>
-          Source Code is also available via CVS. To do a checkout (i.e
-          download) from CVS enter these commands into a terminal:
-
-          <div style="margin: 1em; background-color: black; color: lightgrey; border-style: solid; border-width: thin; padding: 1em;">
-            <tt>cvs -d:pserver:anoncvs@subversions.gnu.org:/cvsroot/netpanzer login</tt><br />
-            <tt>cvs -z3 -d:pserver:anoncvs@subversions.gnu.org:/cvsroot/netpanzer co netpanzer</tt><br />
-          </div>
+          Source Code is also available via CVS. Look at the
+          <a href="http://developer.berlios.de/cvs/?group_id=1250">netpanzer
+          cvs</a> page for details.
         </p>
       </subsubsection>
     </subsection>

@@ -15,14 +15,6 @@
     <xsl:copy><xsl:apply-templates select="@* | node()" /></xsl:copy>
   </xsl:template>
 
-  <xsl:template match="dlink">
-    <a href="{@href}"><xsl:value-of select="substring-after(@href,'http://savannah.nongnu.org/download/netpanzer/')" /></a>
-  </xsl:template> 
-
-  <xsl:template match="dlink-full">
-    <a href="{@href}"><xsl:value-of select="@href" /></a>
-  </xsl:template> 
-
   <xsl:template match="menu">
     <div class="menu">
       <xsl:apply-templates />
@@ -84,7 +76,8 @@
                   align="middle"
                   width="124" height="32" border="0" alt=""/></a>
                 </td>
-                <td align="right"  style="width: 45%;">Contact: <a href="mailto:netpanzer-devel@nongnu.org">netPanzer-Devel</a></td>
+                <td align="right"  style="width: 45%;">Contact: <a
+                href="mailto:netpanzer-devel@lists.berlios.de">netPanzer-Devel</a></td>
               </tr>
             </table>
           </div>
