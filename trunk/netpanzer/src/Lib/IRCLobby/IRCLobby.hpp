@@ -56,13 +56,13 @@ public:
     { return irc_server_socket != 0; }
     void changeNickName(const std::string &nick);
     void restartThread();   // restart thread & reconnect irc
+    void stopThread(const char *reason);
 
     GameServerList* game_servers;
     NotifyIRCChangeName* change_name;
 
 private:
     void startMessagesThread();
-    void stopThread();
 
     void processMessages();
     static int messagesThreadEntry(void* t);

@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-// can be used independantly of netpanzer, see sample program at the end
+// can be used independantly of netpanzer, see sample program
 
 #include <SDL_net.h>
 #include <sstream>
@@ -95,6 +95,8 @@ static void splitServerPort(const std::string& server,std::string& address,int *
 
 static const char* ask_server_running_mess = "Who's running a server?";
 static const char* server_running_mess = "I'm running";
+static const char* leaving_mess = "I'm leaving to ";
+static const char nickname_prefix[]="netp_";
 
 IRCLobby::IRCLobby(const std::string& server,
         const std::string& nick,
@@ -117,13 +119,13 @@ IRCLobby::IRCLobby(const std::string& server,
 
 IRCLobby::~IRCLobby()
 {
-    stopThread();
+    stopThread("delete IRC lobby");
     SDL_DestroyMutex(game_servers_mutex);
 }
 
 void IRCLobby::restartThread()
 {
-    stopThread();
+    stopThread("restart");
     startMessagesThread();
 }
 
@@ -158,7 +160,7 @@ void IRCLobby::changeNickName(const std::string &nick)
     sendNickName();
 }
 
-void IRCLobby::stopThread()
+void IRCLobby::stopThread(const char *mess)
 {
     if(!running_thread)
         return;
@@ -167,6 +169,10 @@ void IRCLobby::stopThread()
     running_thread = 0;
     
     if(irc_server_socket) {
+        std::stringstream stop_mess;
+        stop_mess << "-" << leaving_mess << mess;
+        sendIRCMessageLine(stop_mess.str());
+
         char* quit="QUIT\n";
         SDLNet_TCP_Send(irc_server_socket,quit,5);
         SDLNet_TCP_Close(irc_server_socket);
@@ -243,7 +249,7 @@ void IRCLobby::sendNickName()
     std::stringstream buffer;
 
     buffer.str("");
-    buffer << "NICK " << nickname;
+    buffer << "NICK " << nickname_prefix << nickname;
     sendIRCLine(buffer.str());
 }
 
@@ -380,7 +386,7 @@ void IRCLobby::processMessage()
     assert(irc_server_socket != 0);
     
     char buf[1024];
-    char *host, *mess, *host_end, *user_end, *code;
+    char *host, *mess, *host_end, *user_end, *code,*user;
 
     readIRCLine(buf, sizeof(buf));
 #ifndef WITHOUT_NETPANZER
@@ -389,8 +395,12 @@ void IRCLobby::processMessage()
     
     if(buf[0]!=':')
         return;
+    user=buf+1;
+    if(strncmp(user,nickname_prefix,sizeof(nickname_prefix)-1)==0) {
+        user+=sizeof(nickname_prefix)-1;
+    }
 
-    code=buf+1;
+    code=user;
     // skip 1 word and spaces behind it
     while(*code && !isspace(*code)) { code++; }
     while(*code && isspace(*code)) { code++; }
@@ -427,14 +437,29 @@ void IRCLobby::processMessage()
     if(code_i>=400 && code_i<500) {
         addChatMessage("Error",mess);
         LOG(("IRC:%s",buf));
+        return;
     }
-    if(code_i==353 || strcmp(code,"NOTICE")==0) {
+    if(strcmp(code,"NOTICE")==0) {
         addChatMessage("Lobby",mess);
         return;
     }
-
+    if(code_i==353) {
+        char user_list[1024];
+        char *u=user_list;
+        char *m=mess;
+        while(*m) {
+            if(strncmp(m,nickname_prefix,sizeof(nickname_prefix)-1)==0) {
+                m+=sizeof(nickname_prefix)-1;
+            }
+            *u++=*m++;
+        }
+        *u=0;
+        addChatMessage("Lobby",user_list);
+        return;
+    }
     if(strcmp(code,"PONG")==0) {
         expected_ping=0;
+        return;
     }
     if(strcmp(code,"PING")==0) {
         std::stringstream pong;  
@@ -454,7 +479,7 @@ void IRCLobby::processMessage()
     *user_end++=0;
 
     if(strcmp(code,"JOIN")==0) {
-        std::string joined(buf+1);
+        std::string joined(user);
         joined+=" has arrived in lobby";
         addChatMessage("",joined);
 #ifndef WITHOUT_NETPANZER
@@ -465,7 +490,7 @@ void IRCLobby::processMessage()
         return;
     }
     if(strcmp(code,"PART")==0 || strcmp(code,"QUIT")==0) {
-        std::string leave(buf+1);
+        std::string leave(user);
         leave+=" has left the lobby";
         addChatMessage("",leave);
 #ifndef WITHOUT_NETPANZER
@@ -488,10 +513,10 @@ void IRCLobby::processMessage()
 
     if(mess[0]=='#') {
         // this is a chat message
-        addChatMessage(buf+1, mess+1);
+        addChatMessage(user, mess+1);
 #ifndef WITHOUT_NETPANZER
         if(gameconfig->hostorjoin== _game_session_host) {
-            LOG(("IRC message:%s:%s",buf+1,mess+1));
+            LOG(("IRC message:%s:%s",user,mess+1));
         }
 #endif
 
@@ -504,7 +529,7 @@ void IRCLobby::processMessage()
         if(strcmp(mess+1, ask_server_running_mess)==0) {
             if(gameconfig->hostorjoin== _game_session_host) {
                 // reply with server details
-                sendServerInfo(buf+1);
+                sendServerInfo(user);
             }
         }
         else 
@@ -536,15 +561,18 @@ void IRCLobby::processMessage()
                 SDL_mutexP(game_servers_mutex);
                 game_servers->push_back(
                         GameServer(host, port,
-                            buf+1, map, players, max_players));
+                            user, map, players, max_players));
                 SDL_mutexV(game_servers_mutex);
             }
             else {
-                server->user = buf+1;
+                server->user = user;
                 server->map = map;
                 server->playercount = players;
                 server->max_players = max_players;
             }
+        }
+        else if(strncmp(mess+1,leaving_mess,sizeof(leaving_mess)-1)==0) {
+            addChatMessage(user,mess);
         }
     }
 }
@@ -636,35 +664,4 @@ void IRCLobby::readIRCLine(char *buf, size_t buf_len)
 
 
 
-#if 0
-
-// sample program to use this class...
-
-#include <unistd.h>
-#define WITHOUT_NETPANZER
-#include "IRCLobby.cpp"
-
-
-int main()
-{
-    IRCLobby *lobby=new IRCLobby("irc.freenode.net","testnpsrv","#netpanzerlob");
-    sleep(30);
-
-    SDL_mutexP(lobby->game_servers_mutex);
-    GameServerList::iterator i;
-    GameServerList* serverlist = lobby->game_servers;
-    for(i=serverlist->begin(); i!=serverlist->end(); i++) {
-        const GameServer* server = &(*i);
-        printf("%s is running %s (%i/%i) on %s:%i\n",
-            i->user.c_str(),i->map.c_str(),
-            i->playercount,i->max_players,
-            i->host.c_str(),i->port
-            );
-    }
-    SDL_mutexV(lobby->game_servers_mutex);
-
-
-    delete lobby;
-}
-#endif
 
