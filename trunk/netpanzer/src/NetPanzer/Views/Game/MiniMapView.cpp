@@ -331,6 +331,7 @@ void MiniMapView::doIncreaseSize(int value)
         } else {
             moveTo(destXPos, min.y);
         }
+        checkArea(screen->getPix());
     }
 
     // Check the validity of the Y dimension.
@@ -345,6 +346,7 @@ void MiniMapView::doIncreaseSize(int value)
         } else {
             moveTo(min.x, destYPos);
         }
+        checkArea(screen->getPix());
     }
 
     // Resize the x dimension.

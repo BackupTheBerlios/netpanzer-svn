@@ -246,6 +246,7 @@ Surface::Surface(void *nFrame0, const iXY &nPix, int nStride, int nFrameCount)
 //---------------------------------------------------------------------------
 Surface::~Surface()
 {
+    assert(mem != (PIX*) 0xDEADBEEF);
     if ((doesExist != false) && (myMem != false)) {
         free();
     }
@@ -254,6 +255,7 @@ Surface::~Surface()
     totalByteCount -= sizeof(Surface);
 
     assert(totalByteCount >= 0);
+    mem = (PIX*) 0xDEADBEEF;
 } // end Surface::~Surface
 
 //---------------------------------------------------------------------------
@@ -511,8 +513,8 @@ void Surface::blt(const Surface &dest, iXY min) const
 
     iXY max;
     max = min + pix;
-    if (max.x < 0) return;
-    if (max.y < 0) return;
+    if (max.x <= 0) return;
+    if (max.y <= 0) return;
 
     int	pixelsPerRow = pix.x;
     int	numRows      = pix.y;
@@ -594,10 +596,8 @@ void Surface::bltTrans(const Surface &dest, iXY min) const
 
     iXY max;
     max = min + pix;
-    //int	x2 = x1 + pix.x;
-    //int	y2 = y1 + pix.y;
-    if (max.x < 0) return;
-    if (max.y < 0) return;
+    if (max.x <= 0) return;
+    if (max.y <= 0) return;
 
     int	pixelsPerRow = pix.x;
     int	numRows      = pix.y;
@@ -683,8 +683,8 @@ void Surface::bltTransColor(const Surface &dest, iXY min, const uint8_t &color) 
 
     iXY max;
     max = min + pix;
-    if (max.x < 0) return;
-    if (max.y < 0) return;
+    if (max.x <= 0) return;
+    if (max.y <= 0) return;
 
     int	pixelsPerRow = pix.x;
     int	numRows      = pix.y;
@@ -1634,8 +1634,8 @@ void Surface::bltLookup(const iRect &destRect, const PIX table[]) const
     if (min.y >= pix.y) return;
 
     iXY max = destRect.max + offset;
-    if (max.x < 0) return;
-    if (max.y < 0) return;
+    if (max.x <= 0) return;
+    if (max.y <= 0) return;
 
     // Clip destination rectangle
     if (min.x < 0) min.x = 0;

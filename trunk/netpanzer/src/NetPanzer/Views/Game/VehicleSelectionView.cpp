@@ -673,11 +673,6 @@ void VehicleSelectionView::drawMiniProductionStatus(const Surface &dest)
         case _objective_disposition_player: {
 
                 iXY objectiveScreenPos(objectiveBounds.min - gameViewRect.min);
-                printf("GameViewRect: %d %d %d %d\n", gameViewRect.min.x,
-                        gameViewRect.min.y, gameViewRect.max.x,
-                        gameViewRect.max.y);
-                printf("ObjectiveScreenPos: %d %d\n", objectiveBounds.min.x,
-                        objectiveBounds.min.y);
 
                 outpostStatus = ObjectiveInterface::getOutpostStatus(objectiveID);
 
@@ -716,8 +711,7 @@ void VehicleSelectionView::drawMiniProductionStatus(const Surface &dest)
                     //pos.y = (miniProductionRect.getSizeY() - CHAR_YPIX) / 2 + miniProductionRect.min.y;
 
                     // Objective is off.
-                    // XXX
-                    //dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
+                    dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
 
                     dest.bltString(pos, outpostNameBuf, Color::white);
                     pos.y += 16;
@@ -751,8 +745,7 @@ void VehicleSelectionView::drawMiniProductionStatus(const Surface &dest)
                                 % 60);
                     checkMiniProductionRect(timeLeftBuf);
 
-                    // XXX
-                    // dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
+                    dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
 
                     dest.bltString(pos, outpostNameBuf, Color::white);
                     pos.y += 16;
@@ -801,8 +794,7 @@ void VehicleSelectionView::drawMiniProductionStatus(const Surface &dest)
                     }
                     checkMiniProductionRect(outpostNameBuf);
 
-                    // XXX
-                    //dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
+                    dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
 
                     dest.bltString(pos, outpostNameBuf, Color::white);
                 }
@@ -838,6 +830,7 @@ void VehicleSelectionView::doActivate()
         pos = mouse.getScreenPos() - getSize() / 2;
 
         moveTo(pos);
+        checkArea(screen->getPix());
     }
 
     GameTemplateView::doActivate();
