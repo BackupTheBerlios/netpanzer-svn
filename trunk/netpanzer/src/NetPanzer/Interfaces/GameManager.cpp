@@ -173,10 +173,9 @@ void GameManager::setVideoMode()
     int mode;
     for(mode=gameconfig->screenresolution; mode>=0; mode--) {
         switch(mode) {
-        case 0: mode_res = iXY(640,480); break;
-        case 1: mode_res = iXY(800,600); break;
-        case 2: mode_res = iXY(1024,768); break;
-        case 3: mode_res = iXY(1280, 1024); break;
+            case 0: mode_res = iXY(640,480); break;
+            case 1: mode_res = iXY(800,600); break;
+            case 2: mode_res = iXY(1024,768); break;
         }
 
         if(Screen->isDisplayModeAvailable(mode_res.x, mode_res.y, 8, flags)) {

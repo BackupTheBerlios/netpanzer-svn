@@ -39,10 +39,6 @@ public:
      * returns number of read bytes
      */
     size_t recv(void* buffer, size_t bufsize);
-    /** accepts a new client and returns it's socket or 0 when no client
-     * is connecting and we're in nonblocking mode 
-     */
-    TCPSocket* accept();
 
     /** returns the address associated with this socket */
     const Address& getAddress() const

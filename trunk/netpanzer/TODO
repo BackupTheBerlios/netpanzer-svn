@@ -1,6 +1,6 @@
 Next release:
 -after having a full nodelist in A* the server is getting slow
--make 1024x768 default resolution
+-make 1024x768 default resolution - ok
 -output more stuff in infothread (time until end, flags for players, number of
     outposts...)
 -update server text (no knetpanzerbrowser anymore)
