@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __LIB_FILESYSTEM_HPP__
 #define __LIB_FILESYSTEM_HPP__
 
+#include <stdexcept>
 #include <SDL.h>
 #include <string>
 #include <stdint.h>
@@ -60,7 +61,7 @@ class ReadFile : public File
 public:
     bool isEOF();	
 
-    int64_t read(void* buffer, size_t objsize, size_t objcount);
+    void read(void* buffer, size_t objsize, size_t objcount);
 
     int8_t read8();
 
@@ -102,7 +103,7 @@ private:
 class WriteFile : public File
 {
 public:
-    int64_t write(const void* buffer, size_t objsize, size_t objcount);
+    void write(const void* buffer, size_t objsize, size_t objcount);
 
     void write8(int8_t val);
 
@@ -182,6 +183,23 @@ public:
     static int64_t getLastModTime(const char* filename);
     static int64_t getLastModTime(const std::string& filename)
     { return getLastModTime(filename.c_str()); }
+};
+
+//---------------------------------------------------------------------------
+
+class FileReadException : public std::range_error
+{
+public:
+    FileReadException(size_t objread, size_t objrequested,
+	    const std::string& msg) throw();
+    virtual ~FileReadException() throw();
+    
+    size_t getReadCount() const throw()
+    { return objread; }
+    size_t getRequestCount() const throw()
+    { return objrequested; }
+private:
+    size_t objread, objrequested;
 };
 
 #endif

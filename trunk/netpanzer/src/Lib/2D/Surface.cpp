@@ -1752,7 +1752,7 @@ int Surface::loadAllBMPInDirectory(const char *path)
 //---------------------------------------------------------------------------
 void initFont()
 {
-    {
+    try {
         // Make room for the 128 characters.
         ascii8x8.create(8, 8, 8, 128);
 
@@ -1762,19 +1762,20 @@ void initFont()
         std::auto_ptr<ReadFile> file (FileSystem::openRead(charfilename));
 
         for (int y = 0; y < ascii8x8.getPix().y; y++) {
-            for (int curChar = 0; curChar < ascii8x8.getFrameCount(); curChar++) {
+            for (int curChar = 0; curChar < ascii8x8.getFrameCount();
+		    curChar++) {
                 ascii8x8.setFrame(curChar);
                 int yOffset = y * ascii8x8.getPix().x;
 
-                if (file->read(ascii8x8.getMem() + yOffset, ascii8x8.getPix().x, 1) != 1) {
-                    throw Exception("Error while reading font '%s'.",
-                                    charfilename);
-                }
+                file->read(ascii8x8.getMem() + yOffset, ascii8x8.getPix().x, 1);
             }
         }
+    } catch(std::exception& e) {
+	throw Exception("Error while reading 8x8 font: %s",
+		e.what());
     }
 
-    {
+    try {
         // Make room for the 128 characters.
         ascii5x5.create(5, 5, 5, 128);
 
@@ -1788,13 +1789,12 @@ void initFont()
                 ascii5x5.setFrame(curChar);
                 int yOffset = y * ascii5x5.getPix().x;
 
-                if (file->read(ascii5x5.getMem() + yOffset, ascii5x5.getPix().x, 1) != 1) {
-                    throw Exception("error loading font '%s'.", charfilename);
-                }
+                file->read(ascii5x5.getMem() + yOffset, ascii5x5.getPix().x, 1);
             }
         }
+    } catch(std::exception& e) {
+	throw Exception("Error while reading 5x5 font: %s", e.what());
     }
-
 } // Surface::initFont
 
 int Surface::getFontHeight()
@@ -2002,8 +2002,7 @@ void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
         file->seek(file_header.bfOffBits);
 
         if ( (info_header.biWidth % 4) == 0 ) {
-            if (file->read(mem, pix.x * pix.y, 1) != 1)
-                throw Exception("error while reading bmp image %s", fileName);
+            file->read(mem, pix.x * pix.y, 1);
         } else {
             int padding = ((info_header.biWidth / 4 + 1) * 4) - info_header.biWidth;
 
@@ -2013,9 +2012,8 @@ void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
             //PIX *sPtr = mem;
 
             for (int row = 0; row < numRows; row++) {
-                if(file->read(mem, pix.x, 1) != 1 ||
-                   file->read(buffer, padding, 1) != 1)
-                    throw Exception("error reading file %s.", fileName);
+                file->read(mem, pix.x, 1);
+		file->read(buffer, padding, 1);
                 mem += stride;
             }
         }
@@ -2127,20 +2125,23 @@ void Surface::mapFromPalette(const char* oldPalette)
     uint8_t     bestFitArray[256];
     RGBColor sourceColor[256];
 
-    std::auto_ptr<ReadFile> file (FileSystem::openRead(oldPalette));
+    try {
+	std::auto_ptr<ReadFile> file (FileSystem::openRead(oldPalette));
 
-    for (int i = 0; i < 256; i++) {
-        if(file->read(&sourceColor[i], 3, 1) != 1) {
-            throw Exception("Error while loading palette '%s'.", oldPalette);
-        }
-    }
+	for (int i = 0; i < 256; i++) {
+	    file->read(&sourceColor[i], 3, 1);
+	}
 
-    for (int i = 0; i < 256; i++) {
-        bestFitArray[i] = Palette::findNearestColor(sourceColor[i]);
-    }
+	for (int i = 0; i < 256; i++) {
+	    bestFitArray[i] = Palette::findNearestColor(sourceColor[i]);
+	}
 
-    for (size_t x = 0; x < (size_t) (pix.x * pix.y * frameCount); x++) {
-        frame0[x] = bestFitArray[frame0[x]];
+	for (size_t x = 0; x < (size_t) (pix.x * pix.y * frameCount); x++) {
+	    frame0[x] = bestFitArray[frame0[x]];
+	}
+    } catch(std::exception& e) {
+	throw Exception("Error while reading palette '%s': %s",
+		oldPalette, e.what());
     }
 } // end Surface::mapFromPalette
 

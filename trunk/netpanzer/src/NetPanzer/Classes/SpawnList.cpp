@@ -34,16 +34,17 @@ SpawnList::SpawnList( unsigned long size )
 
 static inline void readLine(char* buffer, size_t bufsize, ReadFile* file)
 {
-    for(size_t i=0; i<bufsize; i++) {
-        if(file->read(buffer+i, 1, 1) != 1) {
-            buffer[i] = 0;
-            break;
-        }
-        if(buffer[i] == '\n') {
-            buffer[i] = 0;
-            break;
-        }
+    size_t i;
+    try {
+	for(i=0; i<bufsize; i++) {
+	    buffer[i] = file->read8();
+        if(buffer[i] == '\n')
+	    break;
+	}
+    } catch(std::exception& e) {
+	// ignored
     }
+    buffer[i] = 0;
 }
 
 void SpawnList::loadSpawnFile(const char *file_path)

@@ -366,17 +366,17 @@ void Palette::loadACT(const char *filename)
 
     setName(filename);
 
-    ReadFile* file = FileSystem::openRead(filename);
+    std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
 
-    for (int i = 0; i < 256; i++) {
-        if(file->read(&color[i], 3, 1) != 1) {
-            delete file;
-            throw Exception("couldn't read file '%s'", filename);
-        }
-        originalColor[i] = color[i];
+    try {
+	for (int i = 0; i < 256; i++) {
+	    file->read(&color[i], 3, 1);
+	    originalColor[i] = color[i];
+	}
+    } catch(std::exception& e) {
+	throw Exception("Error while reading Palette '%s': %s",
+		filename, e.what());
     }
-
-    delete file;
 } // end Palette::loadACT
 
 // findNearestColor

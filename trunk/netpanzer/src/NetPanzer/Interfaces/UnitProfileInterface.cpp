@@ -171,130 +171,144 @@ void read_vehicle_profile(const char *file_path, UnitProfile *profile)
     int temp_int;
     short not_done = true;
 
-    std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
+    try {
+	std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
 
-    while( not_done ) {
+	while( not_done ) {
+	    for(int i=0; i<80; i++) {
+		file->read(&(temp_str[i]), 1, 1);
+		if(temp_str[i] == '\n') {
+		    temp_str[i] = 0;
+		    break;
+		}
+	    }
+	    string_to_params( temp_str, &param_list );
+	    find_keyword( param_list.params[0], &field, (char * ) field_headers, max_field_key );
 
-        for(int i=0; i<80; i++) {
-            if(file->read(&(temp_str[i]), 1, 1)!=1) {
-                temp_str[i] = 0;
-                if(i==0)
-                    throw Exception("Error hile reading file '%s': too short",
-                                    file_path);
-                break;
-            }
-            if(temp_str[i] == '\n') {
-                temp_str[i] = 0;
-                break;
-            }
-        }
-        string_to_params( temp_str, &param_list );
-        find_keyword( param_list.params[0], &field, (char * ) field_headers, max_field_key );
+	    switch(field) {
+		case _hit_points:
+		    {
+ 			sscanf( param_list.params[1], "%d", &temp_int );
+			profile->hit_points = (short) temp_int;
+		    }
+		    break;
 
-        switch(field) {
+		case _attack_x:
+		    {
+   			sscanf( param_list.params[1], "%d", &temp_int );
+			profile->attack_factor = (short) temp_int;
+		    }
+		    break;
 
-        case _hit_points : {
-                sscanf( param_list.params[1], "%d", &temp_int );
-                profile->hit_points = (short) temp_int;
-            }
-            break;
+		case _reload_time:
+		    {
+			sscanf( param_list.params[1], "%d", &temp_int );
+			profile->reload_time = (char) temp_int;
+		    }
+		    break;
 
-        case _attack_x : {
-                sscanf( param_list.params[1], "%d", &temp_int );
-                profile->attack_factor = (short) temp_int;
-            }
-            break;
+		case _react_time :
+		    {
+			sscanf( param_list.params[1], "%d", &temp_int );
+			profile->reaction_time = (char) temp_int;
+		    }
+		    break;
 
-        case _reload_time : {
-                sscanf( param_list.params[1], "%d", &temp_int );
-                profile->reload_time = (char) temp_int;
-            }
-            break;
+		case _range_max : 
+		    {
+			sscanf( param_list.params[1], "%d", &temp_int );
+			profile->attack_range = (long) temp_int;
+		    }
+		    break;
 
-        case _react_time : {
-                sscanf( param_list.params[1], "%d", &temp_int );
-                profile->reaction_time = (char) temp_int;
-            }
-            break;
+		case _regen_time: 
+		    {
+			sscanf( param_list.params[1], "%d", &temp_int );
+			profile->regen_time = (short) temp_int;
+		    }
+		    break;
 
-        case _range_max : {
-                sscanf( param_list.params[1], "%d", &temp_int );
-                profile->attack_range = (long) temp_int;
-            }
-            break;
+		case _defend_range: 
+		    {
+			sscanf( param_list.params[1], "%d", &temp_int );
+			profile->defend_range = (long) temp_int;
+		    }
+		    break;
 
-        case _regen_time: {
-                sscanf( param_list.params[1], "%d", &temp_int );
-                profile->regen_time = (short) temp_int;
-            }
-            break;
+		case _speed_rate: 
+		    {
+			sscanf( param_list.params[1], "%d", &temp_int );
+			profile->speed_rate = (char) temp_int;
+		    }
+		    break;
 
-        case _defend_range: {
-                sscanf( param_list.params[1], "%d", &temp_int );
-                profile->defend_range = (long) temp_int;
-            }
-            break;
+		case _speed_factor:
+		    {
+			sscanf( param_list.params[1], "%d", &temp_int );
+			profile->speed_factor = (char) temp_int;
+		    }
+		    break;
 
-        case _speed_rate: {
-                sscanf( param_list.params[1], "%d", &temp_int );
-                profile->speed_rate = (char) temp_int;
-            }
-            break;
+		case _repath_time: 
+		    {
+			sscanf( param_list.params[1], "%d", &temp_int );
+			profile->repath_time = (char) temp_int;
+		    }
+		    break;
 
-        case _speed_factor: {
-                sscanf( param_list.params[1], "%d", &temp_int );
-                profile->speed_factor = (char) temp_int;
-            }
-            break;
+		case _fuel_capacity:
+		    {
+			sscanf( param_list.params[1], "%d", &temp_int );
+			profile->fuel_capacity = (short ) temp_int;
+		    }
+		    break;
 
-        case _repath_time: {
-                sscanf( param_list.params[1], "%d", &temp_int );
-                profile->repath_time = (char) temp_int;
-            }
-            break;
+		case _tracking_rate:
+		    {
+			sscanf( param_list.params[1], "%d", &temp_int );
+			profile->tracking_rate = (char) temp_int;
+		    }
+		    break;
 
-        case _fuel_capacity: {
-                sscanf( param_list.params[1], "%d", &temp_int );
-                profile->fuel_capacity = (short ) temp_int;
-            }
-            break;
+		case _jamm_able:
+		    {
+			sscanf( param_list.params[1], "%d", &temp_int );
+			profile->jammable = (char) temp_int;
+		    }
+		    break;
 
-        case _tracking_rate: {
-                sscanf( param_list.params[1], "%d", &temp_int );
-                profile->tracking_rate = (char) temp_int;
-            }
-            break;
+		case _jamming_time:
+		    {
+			sscanf( param_list.params[1], "%d", &temp_int );
+			profile->jamming_time = (char) temp_int;
+		    }
+		    break;
 
-        case _jamm_able: {
-                sscanf( param_list.params[1], "%d", &temp_int );
-                profile->jammable = (char) temp_int;
-            }
-            break;
+		case _jamming_range:
+		    {
+			sscanf( param_list.params[1], "%d", &temp_int );
+			profile->jamming_range = (long) temp_int;
+		    }
+		    break;
 
-        case _jamming_time: {
-                sscanf( param_list.params[1], "%d", &temp_int );
-                profile->jamming_time = (char) temp_int;
-            }
-            break;
+		case _fueling_range:
+		    {
+			sscanf( param_list.params[1], "%d", &temp_int );
+			profile->fueling_range = (long) temp_int;
+		    }
+		    break;
 
-        case _jamming_range: {
-                sscanf( param_list.params[1], "%d", &temp_int );
-                profile->jamming_range = (long) temp_int;
-            }
-            break;
-
-        case _fueling_range: {
-                sscanf( param_list.params[1], "%d", &temp_int );
-                profile->fueling_range = (long) temp_int;
-            }
-            break;
-
-        case _end : {
-                not_done = false;
-            }
-            break;
-        } // ** switch
-    } // ** while ( !feof )
+		case _end :
+		    {
+			not_done = false;
+		    }
+		    break;
+	    } // ** switch
+	} // ** while ( !feof )
+    } catch(std::exception& e) {
+	throw Exception("Error while reading unitprofile '%s': %s",
+		file_path, e.what());
+    }
 } // function
 
 UnitProfile UnitProfileInterface::profile_table[ _MAX_UNIT_TYPES ];

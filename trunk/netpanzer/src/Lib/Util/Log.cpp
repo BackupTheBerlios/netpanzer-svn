@@ -79,8 +79,10 @@ Logger::log(int priority, const char *fmt, va_list ap)
         char buf[512];
         vsnprintf(buf, 511, fmt, ap);
         strcat(buf, "\n");
-        if(m_logfile->write(buf, strlen(buf), 1) != 1) {
-            fprintf(stderr, "Error while writing logfile");
+	try {
+	    m_logfile->write(buf, strlen(buf), 1);
+	} catch(std::exception& e) {
+            fprintf(stderr, "Error while writing logfile: %s", e.what());
             m_logfile = 0;
         }
     }

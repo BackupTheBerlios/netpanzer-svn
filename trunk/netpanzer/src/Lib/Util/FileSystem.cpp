@@ -251,9 +251,11 @@ ReadFile::ReadFile(PHYSFS_file* file)
         : File(file)
 {}
 
-int64_t ReadFile::read(void* buffer, size_t objsize, size_t objcount)
+void ReadFile::read(void* buffer, size_t objsize, size_t objcount)
 {
-    return PHYSFS_read(file, buffer, objsize, objcount);
+    PHYSFS_sint64 objsread = PHYSFS_read(file, buffer, objsize, objcount);
+    if(objsread != (PHYSFS_sint64) objcount)
+	throw FileReadException(objsread, objcount, "eof while reading");
 }
 
 bool ReadFile::isEOF()
@@ -276,7 +278,15 @@ SDL_RWops* ReadFile::getSDLRWOps()
 int ReadFile::RWOps_Read(SDL_RWops* context, void* ptr, int size, int maxnum)
 {
     ReadFile* file = (ReadFile*) context->hidden.unknown.data1;
-    return file->read(ptr, size, maxnum);
+    try {
+	file->read(ptr, size, maxnum);
+    } catch(FileReadException& e) {
+	return e.getReadCount();
+    } catch(...) {
+	return 0;
+    }
+
+    return maxnum;
 }
 
 int ReadFile::RWOps_Seek(SDL_RWops* context, int offset, int whence)
@@ -378,7 +388,7 @@ uint32_t ReadFile::readUBE32()
 
 int64_t ReadFile::readSLE64()
 {
-    int64_t val;
+    PHYSFS_sint64 val;
     if(!PHYSFS_readSLE64(file, &val))
         throw Exception("read error: %s", PHYSFS_getLastError());
     return val;
@@ -386,7 +396,7 @@ int64_t ReadFile::readSLE64()
 
 uint64_t ReadFile::readULE64()
 {
-    uint64_t val;
+    PHYSFS_uint64 val;
     if(!PHYSFS_readULE64(file, &val))
         throw Exception("read error: %s", PHYSFS_getLastError());
     return val;
@@ -394,7 +404,7 @@ uint64_t ReadFile::readULE64()
 
 int64_t ReadFile::readSBE64()
 {
-    int64_t val;
+    PHYSFS_sint64 val;
     if(!PHYSFS_readSBE64(file, &val))
         throw Exception("read error: %s", PHYSFS_getLastError());
     return val;
@@ -402,7 +412,7 @@ int64_t ReadFile::readSBE64()
 
 uint64_t ReadFile::readUBE64()
 {
-    uint64_t val;
+    PHYSFS_uint64 val;
     if(!PHYSFS_readUBE64(file, &val))
         throw Exception("read error: %s", PHYSFS_getLastError());
     return val;
@@ -424,9 +434,12 @@ WriteFile::WriteFile(PHYSFS_file* file)
         : File(file)
 {}
 
-int64_t WriteFile::write(const void* buffer, size_t objsize, size_t objcount)
+void WriteFile::write(const void* buffer, size_t objsize, size_t objcount)
 {
-    return PHYSFS_write(file, buffer, objsize, objcount);
+    PHYSFS_sint64 objswritten = PHYSFS_write(file, buffer, objsize, objcount);
+    if(objswritten != (PHYSFS_sint64) objcount)
+	throw FileReadException(objswritten, objcount,
+		"write not possible (disk full)?");
 }
 
 void WriteFile::write8(int8_t val)
@@ -509,8 +522,20 @@ void WriteFile::writeUBE64(uint64_t val)
 
 void WriteFile::writeLine(const std::string& buffer)
 {
-    if(write(buffer.c_str(), buffer.size(), 1) != 1)
-        throw Exception("Couldn't write line: %s", PHYSFS_getLastError());
-	
+    write(buffer.c_str(), buffer.size(), 1);
     write8('\n');
 }
+
+//---------------------------------------------------------------------------
+
+FileReadException::FileReadException(size_t newobjread, size_t newobjrequested,
+	const std::string& msg) throw()
+    : std::range_error(msg), objread(newobjrequested),
+	objrequested(newobjrequested)
+{
+}
+
+FileReadException::~FileReadException() throw()
+{
+}
+

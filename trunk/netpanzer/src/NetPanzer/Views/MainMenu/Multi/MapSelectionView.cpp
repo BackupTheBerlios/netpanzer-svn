@@ -140,16 +140,17 @@ void MapSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 
 static inline void readLine(char* buffer, size_t bufsize, ReadFile* file)
 {
-    for(size_t i=0; i<bufsize; i++) {
-        if(file->read(buffer+i, 1, 1) != 1) {
-            buffer[i] = 0;
-            break;
-        }
-        if(buffer[i] == '\n') {
-            buffer[i] = 0;
-            break;
-        }
+    size_t i;
+    try {
+	for(i=0; i<bufsize; i++) {
+	    buffer[i] = file->read8();
+	    if(buffer[i] == '\n')
+		break;
+	}
+    } catch(std::exception& e) {
+	// ignore
     }
+    buffer[i] = 0;
 }
 
 // loadMaps
@@ -185,67 +186,57 @@ int MapSelectionView::loadMaps()
     }
 
     for (unsigned int i = 0; i < mapfiles.size(); i++) {
-        std::auto_ptr<ReadFile> file;
         try {
-            file = std::auto_ptr<ReadFile> (FileSystem::openRead(mapfiles[i].c_str()));
-        } catch(Exception& e) {
-            LOGGER.warning("cannot open map file '%s': %s", 
-                           mapfiles[i].c_str(), e.what());
-            continue;
-        }
+	    std::auto_ptr<ReadFile> file 
+		(FileSystem::openRead(mapfiles[i].c_str()));
 
-        MapFile netPanzerMapHeader;
-        try {
-            netPanzerMapHeader.load(*file);
-        } catch (Exception& e) {
-            LOGGER.warning("cannot open map file '%s': %s", 
-                           mapfiles[i].c_str(), e.what());
-            continue;
-        }
+	    MapFile netPanzerMapHeader;
+	    netPanzerMapHeader.load(*file);
 
-        MapInfo* mapinfo = new MapInfo;
-        _splitpath(FileSystem::getRealName(mapfiles[i].c_str()).c_str(),
-                0, 0, mapinfo->name, 0);
-        sprintf(mapinfo->description, "%s", netPanzerMapHeader.description);
+    	    MapInfo* mapinfo = new MapInfo;
+	    _splitpath(FileSystem::getRealName(mapfiles[i].c_str()).c_str(),
+	    	    0, 0, mapinfo->name, 0);
+	    sprintf(mapinfo->description, "%s", netPanzerMapHeader.description);
 
-        mapinfo->cells.x = netPanzerMapHeader.x_size;
-        mapinfo->cells.y = netPanzerMapHeader.y_size;
+	    mapinfo->cells.x = netPanzerMapHeader.x_size;
+	    mapinfo->cells.y = netPanzerMapHeader.y_size;
 
-        int seekAmount = mapinfo->cells.getArea() * sizeof(uint16_t);
+	    int seekAmount = mapinfo->cells.getArea() * sizeof(uint16_t);
 
-        file->seek(file->tell()+seekAmount);
+	    file->seek(file->tell()+seekAmount);
 
-        iXY pix;
-        pix.x = netPanzerMapHeader.thumbnail_x_pix;
-        pix.y = netPanzerMapHeader.thumbnail_y_pix;
+	    iXY pix;
+	    pix.x = netPanzerMapHeader.thumbnail_x_pix;
+	    pix.y = netPanzerMapHeader.thumbnail_y_pix;
 
-        mapinfo->thumbnail.create(pix, pix.x, 1);
+	    mapinfo->thumbnail.create(pix, pix.x, 1);
+	    
+	    int numBytes = pix.getArea();
 
-        int numBytes = pix.getArea();
+	    file->read(mapinfo->thumbnail.frame0, numBytes, 1);
 
-        if(file->read(mapinfo->thumbnail.frame0, numBytes, 1) != 1)
-            continue;
+	    mapinfo->thumbnail.scale(100);
+	
+	    // Now try to get the outpost count from the outpost file.
+	    int objectiveCount = 0;
+	    sprintf(strBuf, "%s%s.opt", mapsPath, mapinfo->name);
 
-        mapinfo->thumbnail.scale(100);
-
-        // Now try to get the outpost count from the outpost file.
-        int objectiveCount = 0;
-        sprintf(strBuf, "%s%s.opt", mapsPath, mapinfo->name);
-
-        file = std::auto_ptr<ReadFile> (FileSystem::openRead(strBuf));
+	    file = std::auto_ptr<ReadFile> (FileSystem::openRead(strBuf));
        
-        char buffer[128];
-        readLine(buffer, sizeof(buffer), &(*file)); 
-        if(!sscanf(buffer, "ObjectiveCount: %d", &objectiveCount)) {
-            gameconfig->map = "";
-            return 1;
-        }
+	    char buffer[128];
+	    readLine(buffer, sizeof(buffer), &(*file)); 
+	    if(!sscanf(buffer, "ObjectiveCount: %d", &objectiveCount)) {
+		gameconfig->map = "";
+		return 1;
+	    }
 
-        LOGGER.info("    %s, %ix%i", netPanzerMapHeader.name,
-            netPanzerMapHeader.x_size, netPanzerMapHeader.y_size);
-
-        mapinfo->objectiveCount = objectiveCount;
-        mapList.push_back(mapinfo);
+	    mapinfo->objectiveCount = objectiveCount;
+	    mapList.push_back(mapinfo);
+	} catch(std::exception& e) {
+	    LOGGER.warning("cannot open map file '%s': %s", 
+		    mapfiles[i].c_str(), e.what());
+	    continue;
+	}	
     }
 
     for (size_t i = 0; i < mapList.size(); i++) {

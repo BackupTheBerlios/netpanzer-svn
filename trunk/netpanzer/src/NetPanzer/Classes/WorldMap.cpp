@@ -51,26 +51,29 @@ void WorldMap::reMap( WadMapTable &mapping_table )
 
 void WorldMap::loadMapFile( const char *file_path )
 {
-    unsigned long map_size;
+    try {
+	unsigned long map_size;
 
-    std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
+	std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
 
-    if ( map_loaded == true ) {
-        delete[] map_buffer;
-        map_buffer = 0;
-        map_loaded = false;
+	if ( map_loaded == true ) {
+	    delete[] map_buffer;
+	    map_buffer = 0;
+	    map_loaded = false;
+	}
+
+	map_info.load(*file);
+
+	map_size = (map_info.x_size * map_info.y_size);
+
+	map_buffer = new MapElementType [ map_size ];
+	assert( map_buffer != 0 );
+
+	file->read(map_buffer, map_size, sizeof(MapElementType));
+	
+	map_loaded = true;
+    } catch(std::exception& e) {
+	throw Exception("Error while reading mapfile '%s': %s",
+		file_path, e.what());
     }
-
-    map_info.load(*file);
-
-    map_size = (map_info.x_size * map_info.y_size);
-
-    map_buffer = new MapElementType [ map_size ];
-    assert( map_buffer != 0 );
-
-    if(file->read(map_buffer, map_size, sizeof(MapElementType)) != sizeof(MapElementType))
-        throw Exception("Couldn't load mapfile '%s' (while reading elements)",
-                        file_path);
-
-    map_loaded = true;
 }

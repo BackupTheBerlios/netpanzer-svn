@@ -192,75 +192,85 @@ void PackedSurface::pack(const Surface &source)
 //--------------------------------------------------------------------------
 void PackedSurface::load(const char* filename)
 {
-    std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
+    try {
+	std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
 
-    free();
-    int32_t version = file->readSLE32();
-    if (version < 1)
-        throw Exception("Invalid PAK file version: %d", version);
-    if (version > CURRENT_PAK_VERSION)
-        throw Exception("PAK file version of '%s' is newer(%d) than "
-                "the currently supported version(%d)",
+	free();
+	int32_t version = file->readSLE32();
+	if (version < 1)
+	    throw Exception("Invalid PAK file version: %d", version);
+	if (version > CURRENT_PAK_VERSION)
+	    throw Exception("PAK file version of '%s' is newer(%d) than "
+		    "the currently supported version(%d)",
 		filename, version, CURRENT_PAK_VERSION);
-    pix.x = file->readSLE32();
-    pix.y = file->readSLE32();
+	pix.x = file->readSLE32();
+	pix.y = file->readSLE32();
 
-    center = pix / 2;
+	center = pix / 2;
 
-    frameCount = file->readSLE32(); 
-    // should be done like following but this isn't backward compatible to the
-    // existing files :-/
-    //fps = float(file->readSLE32()) / 65536;
-    // XXX is this correct?!?
-    int32_t fpsint = file->readSLE32();
-    fps = * ((float*) &fpsint);
-    offset.x = file->readSLE32();
-    offset.y = file->readSLE32();
+	frameCount = file->readSLE32(); 
+	// should be done like following but this isn't backward compatible to
+	// the existing files :-/
+	//fps = float(file->readSLE32()) / 65536;
+	// XXX is this correct?!?
+	int32_t fpsint = file->readSLE32();
+	fps = * ((float*) &fpsint);
+	offset.x = file->readSLE32();
+	offset.y = file->readSLE32();
     
-    rowOffsetTable = (int *) malloc((pix.y * frameCount + 1) * sizeof(*rowOffsetTable));
-    if (rowOffsetTable == 0)
-        throw Exception("ERROR: Unable to allocate rowTableOffset for PackedSurface.");
-    for(int i=0;i<(pix.y * frameCount+1);i++) {
-        rowOffsetTable[i] = file->readSLE32();
-    }
+	rowOffsetTable = (int *) malloc((pix.y * frameCount + 1) * sizeof(*rowOffsetTable));
+	if (rowOffsetTable == 0)
+	    throw Exception(
+		"ERROR: Unable to allocate rowTableOffset for PackedSurface.");
+	for(int i=0;i<(pix.y * frameCount+1);i++) {
+	    rowOffsetTable[i] = file->readSLE32();
+	}
     
-    packedDataChunk = (uint8_t *)malloc(rowOffsetTable[pix.y*frameCount]);
-    if (packedDataChunk == 0) {
-        throw Exception("ERROR: Unable to allocate packedDataChunk for PackedSurface.");
+	packedDataChunk = (uint8_t *)malloc(rowOffsetTable[pix.y*frameCount]);
+	if (packedDataChunk == 0) {
+	    throw Exception(
+		"ERROR: Unable to allocate packedDataChunk for PackedSurface.");
+	}
+	file->read(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1);
+
+	// Add size of rowTableOffset.
+	totalByteCount += (pix.y * frameCount + 1) * sizeof(*rowOffsetTable);
+
+	// Add size of packedDataChunk.
+	totalByteCount += pix.y * frameCount;
+    } catch(std::exception& e) {
+	throw Exception("Error while reading pakfile '%s': %s",
+	    filename, e.what());
     }
-    if(file->read(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1) != 1)
-        throw Exception("error while reading %s.", filename);
-
-    // Add size of rowTableOffset.
-    totalByteCount += (pix.y * frameCount + 1) * sizeof(*rowOffsetTable);
-
-    // Add size of packedDataChunk.
-    totalByteCount += pix.y * frameCount;
 }
 
 //--------------------------------------------------------------------------
 void PackedSurface::save(const char* filename) const
 {
-    std::auto_ptr<WriteFile> file (FileSystem::openWrite(filename));
+    try {
+	std::auto_ptr<WriteFile> file (FileSystem::openWrite(filename));
 
-    int32_t version = CURRENT_PAK_VERSION;
-    file->writeSLE32(version);
-    file->writeSLE32(pix.x);
-    file->writeSLE32(pix.y);
+	int32_t version = CURRENT_PAK_VERSION;
+	file->writeSLE32(version);
+	file->writeSLE32(pix.x);
+	file->writeSLE32(pix.y);
     
-    // XXX bad not endian safe :-/
-    // is this correct?!?
-    file->writeSLE32( *((uint32_t*) (&fps)) );
+	// XXX bad not endian safe :-/
+	// is this correct?!?
+	file->writeSLE32( *((uint32_t*) (&fps)) );
 
-    file->writeSLE32(offset.x);
-    file->writeSLE32(offset.y);
+	file->writeSLE32(offset.x);
+	file->writeSLE32(offset.y);
     
-    for(int i=0;i<(pix.y*frameCount+1); i++) {
-        file->writeSLE32(rowOffsetTable[i]);
+	for(int i=0;i<(pix.y*frameCount+1); i++) {
+	    file->writeSLE32(rowOffsetTable[i]);
+	}
+    
+	file->write(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1);
+    } catch(std::exception& e) {
+	throw Exception("Error while writing pakfile '%s': %s",
+		filename, e.what());
     }
-    
-    if (file->write(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1) != 1)
-        throw Exception("error while writing '%s'.", filename);
 }
 
 //--------------------------------------------------------------------------

@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <memory>
+
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 #include "DigitText.hpp"
@@ -38,23 +40,23 @@ void DigitText::init(const char *filename)
     // NOTE: Make sure the file size is 128 characters.
     char charfilename[] = "pics/chars11x17digit.raw";
 
-    ReadFile* file = FileSystem::openRead(charfilename);
+    try {
+	std::auto_ptr<ReadFile> file (FileSystem::openRead(charfilename));
 
-    for (int y = 0; y < charactersNormal.getPixY(); y++) {
-        int yOffset = y * charactersNormal.getPixX();
+	for (int y = 0; y < charactersNormal.getPixY(); y++) {
+	    int yOffset = y * charactersNormal.getPixX();
 
-        for (int curChar = 0; curChar < charactersNormal.getFrameCount(); curChar++) {
-            charactersNormal.setFrame(curChar);
-            if(!file->read(charactersNormal.mem + yOffset,
-                           charactersNormal.getPixX(), 1) != 1) {
-                delete file;
-                throw Exception("Error while loading font file '%s'.",
-                                charfilename);
-            }
-        }
+	    for (int curChar = 0; curChar < charactersNormal.getFrameCount();
+		    curChar++) {
+		charactersNormal.setFrame(curChar);
+		file->read(charactersNormal.mem + yOffset,
+			charactersNormal.getPixX(), 1);	
+	    }
+	}
+    } catch(std::exception& e) {
+	throw Exception("Couldn't load fontfile '%s': %s", charfilename,
+		e.what());
     }
-
-    delete file;
 } // DigitText::initFont
 
 //--------------------------------------------------------------------------

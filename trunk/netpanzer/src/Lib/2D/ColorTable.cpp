@@ -277,41 +277,38 @@ void ColorTable::create(
 //---------------------------------------------------------------------------
 void ColorTable::loadTable(const char *filename)
 {
-    ReadFile *file = FileSystem::openRead(filename);
+    std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
 
-    // make sure palette in file is the same as current one
-    for(size_t i=0; i<PALETTE_LENGTH; i++) {
-        RGBColor checkcolor;
-        if(file->read(&checkcolor, sizeof(uint8_t), 3) != 3)
-            throw Exception("couldn't load colortable '%s': "
-                            "file corrupted(too short)", filename);
+    try {
+    	// make sure palette in file is the same as current one
+	for(size_t i=0; i<PALETTE_LENGTH; i++) {
+	    RGBColor checkcolor;
+	    file->read(&checkcolor, sizeof(uint8_t), 3);
+	    if(Palette::originalColor[i] != checkcolor)
+	       	throw Exception("couldn't load colortable '%s': "
+	   		"palettes don't match", filename);
+	}
 
-        if(Palette::originalColor[i] != checkcolor)
-            throw Exception("couldn't load colortable '%s': "
-                            "palettes don't match", filename);
+	// put the color table data into the colorArray
+	file->read(colorArray, colorCount, 1);
+    } catch(std::exception& e) {
+	throw Exception("couldn't load colortable '%s': %s",
+		filename, e.what());
     }
-
-    // put the color table data into the colorArray
-    if(file->read(colorArray, colorCount, 1) != 1)
-        throw Exception("couldn't load colortable '%s': "
-                        "file corrupted(too short)", filename);
-
-    delete file;
 } // end ColorTable::loadTable
 
 // saveTable
 //---------------------------------------------------------------------------
 void ColorTable::saveTable(const char *filename) const
 {
-    WriteFile *file = FileSystem::openWrite(filename);
+    std::auto_ptr<WriteFile> file (FileSystem::openWrite(filename));
 
-    if (file->write(&Palette::color, 768, 1) != 1
-            || file->write(colorArray, colorCount, 1) != 1) {
-        throw Exception("error while writing to file '%s' (disk full?)",
-                        filename);
+    try {
+    	file->write(&Palette::color, 768, 1);
+    } catch(std::exception& e) {
+        throw Exception("error while writing to file '%s': %s",
+                        filename, e.what());
     }
-
-    delete file;
 } // end ColorTable::saveTable
 
 // createTrans0
