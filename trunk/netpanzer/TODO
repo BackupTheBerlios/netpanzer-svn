@@ -2,7 +2,7 @@ Next release:
 -rewrite ServerBrowser for new protocol
 -finish serverconsole
 -finish infothread
--implement TIP OF DAY
+-implement TIP OF DAY  - no idea how to create graphics for the GUI :-/
 
 *** New Masterserver code
  * Get list of masterservers when connecting
@@ -32,6 +32,7 @@ Next release:
  * synchronize resources between server and clients, both should have same flags
    collection and map. Let them automatically download these things.             
 *** Improvements   
+ * Use gettext and translate netpanzer
  * Add special chars to functions displaying text that allow to set text
    color/style. (^ like in quake based games?)
  * Convert the 256 color stuff to truecolor
