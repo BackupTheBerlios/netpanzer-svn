@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ServerCommand.hpp"
 
 class ServerConsole;
+class HeartbeatThread;
+class InfoThread;
 
 class DedicatedGameManager : public BaseGameManager
 {
@@ -51,6 +53,8 @@ private:
     SDL_mutex* commandqueue_mutex;
 
     ServerConsole* console;
+    HeartbeatThread* heartbeatthread;
+    InfoThread* infothread;
 };
 
 #endif

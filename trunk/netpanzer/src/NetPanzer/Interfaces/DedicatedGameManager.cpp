@@ -41,15 +41,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "LobbyView.hpp"
 #include "ProgressView.hpp"
 #include "ConsoleLoadingView.hpp"
+#include "HeartbeatThread.hpp"
+#include "InfoThread.hpp"
+#include "Util/Log.hpp"
 
 DedicatedGameManager::DedicatedGameManager()
-    : commandqueue_mutex(0), console(0)
+    : commandqueue_mutex(0), console(0), heartbeatthread(0), infothread(0)
 {
 }
 
 DedicatedGameManager::~DedicatedGameManager()
 {
     delete console;
+    delete heartbeatthread;
+    delete infothread;
 }
 
 void DedicatedGameManager::initializeVideoSubSystem()
@@ -164,9 +169,22 @@ bool DedicatedGameManager::launchNetPanzerGame()
     gameconfig->hostorjoin=_game_session_host;
 
     Particle2D::setCreateParticles(false);
+    // make server public
     if(!lobby_view)
         lobby_view = new IRCLobbyView;
     lobby_view->startIRC();
+
+    if((const std::string&) gameconfig->masterserver != "") {
+        try {
+            infothread = new InfoThread(gameconfig->serverport);
+            heartbeatthread = new HeartbeatThread(gameconfig->masterserver,
+                    "netpanzer", gameconfig->serverport);
+        } catch(std::exception& e) {
+            LOGGER.warning("failed contacting masterserver: %s", e.what());
+            delete infothread; infothread = 0;
+            delete heartbeatthread; heartbeatthread = 0;
+        }
+    }
 
     ConsoleInterface::postMessage("game started.");
 

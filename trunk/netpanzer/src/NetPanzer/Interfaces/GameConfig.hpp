@@ -117,24 +117,25 @@ public:
     ConfigString lobbyserver;
 
     // server settings
-    ConfigInt   serverport;
+    ConfigInt    serverport;
     ConfigString proxyserver;
     ConfigString proxyserveruser;
     ConfigString proxyserverpass;
-    ConfigInt   gametype;             //Objectives, FragLimit, TimeLimit
-    ConfigInt   maxplayers;
-    ConfigInt   maxunits;
-    ConfigInt   initialunits;
-    ConfigInt   timelimit;
-    ConfigInt   fraglimit;
-    ConfigBool  powerups;
-    ConfigInt   objectiveoccupationpercentage;
-    ConfigBool  allowallies;
-    ConfigInt   cloudcoverage;
-    ConfigInt   respawntype;
-    ConfigInt   windspeed;
+    ConfigInt    gametype;             //Objectives, FragLimit, TimeLimit
+    ConfigInt    maxplayers;
+    ConfigInt    maxunits;
+    ConfigInt    initialunits;
+    ConfigInt    timelimit;
+    ConfigInt    fraglimit;
+    ConfigBool   powerups;
+    ConfigInt    objectiveoccupationpercentage;
+    ConfigBool   allowallies;
+    ConfigInt    cloudcoverage;
+    ConfigInt    respawntype;
+    ConfigInt    windspeed;
     ConfigString map;
     ConfigString mapcycle;
+    ConfigString masterserver;
 
     // Visuals Settings
     ConfigInt   screenresolution;

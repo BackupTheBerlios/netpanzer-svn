@@ -190,7 +190,7 @@ unsigned char MapInterface::getMovementValue( iXY map_loc )
             return( 1 );
 
         case 1 :
-            return( 5 );
+            return( 1 );
 
         case 2 :
             return( 25 );
