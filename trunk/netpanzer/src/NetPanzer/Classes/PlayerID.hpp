@@ -1,0 +1,80 @@
+/*
+Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+#ifndef _PLAYERID_HPP
+#define _PLAYERID_HPP
+
+#include "aliasdef.h"
+#include <string.h>
+#include "PObject.hpp"
+#include "DirectPlay.h"
+
+class PlayerID
+ {
+  protected:
+   unsigned short index_id;
+   DPID direct_play_id;
+
+  public:
+
+  PlayerID( ) 
+   { 
+    index_id = 0xFFFF;
+    direct_play_id = 0xFFFFFFFF;
+   }
+  
+  PlayerID( unsigned short index, DPID dpID ) 
+   {
+    index_id = index;
+    direct_play_id = dpID;
+   }
+     
+  inline void set( unsigned short index, DPID dpID ) 
+   {
+    index_id = index;
+    direct_play_id = dpID;
+   }
+
+  inline void setIndex( unsigned short index )
+   { index_id = index; }
+
+  inline unsigned short getIndex()
+   { return( index_id ); }
+
+  inline void setDPID( DPID dpID )
+   { direct_play_id = dpID; }
+  
+  inline DPID getDPID( )
+   { return( direct_play_id ); }
+
+  inline void operator=( PlayerID &rhs )
+   {
+    index_id = rhs.getIndex();
+    direct_play_id = rhs.getDPID();
+   }
+ 
+  inline boolean operator==( PlayerID &rhs )
+   {
+    if ( (index_id == rhs.getIndex()) && (direct_play_id = rhs.getDPID()) )
+	 { return( _TRUE ); }
+
+    return( _FALSE );    
+   }
+
+ };
+
+#endif // ** _PLAYERID_HPP
