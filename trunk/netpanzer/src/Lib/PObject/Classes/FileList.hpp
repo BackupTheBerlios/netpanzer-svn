@@ -44,8 +44,6 @@ class FileList : public ArrayTemplate< char * >
   
   void getFullPath( unsigned long index, char *full_path );
 
-  void getDrive( unsigned long index, char *drive );
-
   void getDir( unsigned long index, char *directory );
 
   void getFullFilename( unsigned long index, char *full_fname );

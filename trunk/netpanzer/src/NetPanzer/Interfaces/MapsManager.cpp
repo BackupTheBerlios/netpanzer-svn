@@ -15,11 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifdef WIN32
 #include <config.h>
+#ifdef WIN32
 #include <io.h>
 #endif
 #include <string.h>
+#include "FindFirst.hpp"
 #include "MapsManager.hpp"
 #include "MapFileStruct.hpp"
 
@@ -50,20 +51,18 @@ void MapsManager::scanMaps( void )
    
 void MapsManager::scanMaps( const char *map_directory )
  {
-	 // XXX need a substitute for _findfirst
-#ifdef WIN32
-  char search_path[ _MAX_FNAME ];
-  char temp_path[ _MAX_FNAME ];
+  char search_path[1024];
+  char temp_path[1024];
 
   _finddata_t map_file_info;
-  long hFile;
+  int* hFile;
   
   strcpy( search_path, map_directory );
   strcat( search_path, "*.npm" );
   
   hFile = _findfirst( search_path, &map_file_info );
    
-  if( hFile != -1L )
+  if( hFile != ((int*) -1L) )
    {
     strcpy( temp_path, map_directory );
     strcat( temp_path, map_file_info.name );
@@ -80,7 +79,6 @@ void MapsManager::scanMaps( const char *map_directory )
      
     _findclose( hFile );
    }
-#endif
 
  }
 

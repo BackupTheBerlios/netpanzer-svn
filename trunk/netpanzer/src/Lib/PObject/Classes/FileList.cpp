@@ -77,14 +77,6 @@ void FileList::getFullPath( unsigned long index, char *full_path )
   strcpy( full_path, array[ index ] );
 }
 
-void FileList::getDrive( unsigned long index, char *drive )
-{
-    // XXX
-#ifdef WIN32
-  _splitpath( array[ index ], drive, 0, 0, 0 );  
-#endif
-}
-
 void FileList::getDir( unsigned long index, char *directory )
 {
     // XXX

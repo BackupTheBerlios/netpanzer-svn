@@ -56,7 +56,6 @@ int FilenameSortFunction(const void *a, const void *b);
 class UtilInterface
 {
 public:
-	static String getDrive(String path);
 	static String getDirectory(String path);
 	static String getFilename(String path);
 	static String getExtension(String path);

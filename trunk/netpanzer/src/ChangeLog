@@ -1,3 +1,14 @@
+6-Sep-2003 by Matze Braun
+-added a unix implementation of _findfirst, _findnext and _findclose
+-removed some getDrive functions, was never used and supporting drives in unix
+ is hard :)
+-we still need a big commit to replace all \\ in paths with /
+-added a fastly hacked configure script (no autoconf yet)
+
+------------
+prior changes (not complete)
+............
+
 -Added very basic makefile
 -removed #include "Stdafx.h" from all source files, gcc doesn't have precompiled
  headers like msvc.

@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <io.h>
 #endif
 
+#include "FindFirst.hpp"
 #include "Surface.hpp"
 #include "UtilInterface.hpp"
 #include "cGrowList.hpp"
@@ -3306,8 +3307,6 @@ void Surface::bltAdd(const Surface &dest, iXY min) const
 //---------------------------------------------------------------------------
 int Surface::loadAllTILInDirectory(const char *path)
 {
-	// XXX _findfirst below is win32 only
-#ifdef WIN32
 	char strBuf[256];
 	char pathWild[256];
 
@@ -3320,7 +3319,7 @@ int Surface::loadAllTILInDirectory(const char *path)
 	}
 
 	struct _finddata_t myFile;
-	long               hFile;
+	int* hFile;
 
 	_findfirst(pathWild, &myFile);
 	
@@ -3333,7 +3332,7 @@ int Surface::loadAllTILInDirectory(const char *path)
 	int curFilename = 0;
 	iXY maxSize(0, 0);
 
-    if ((hFile = _findfirst(pathWild, &myFile)) != -1)
+    if ((hFile = _findfirst(pathWild, &myFile)) != ((int*) -1))
 	{
 		do
 		{
@@ -3383,7 +3382,6 @@ int Surface::loadAllTILInDirectory(const char *path)
 			tempSurface.blt(*this, myOffset);
 		}
 	}
-#endif
 
 	return 1;
 } // end loadAllTILInDirectory
@@ -3392,8 +3390,6 @@ int Surface::loadAllTILInDirectory(const char *path)
 //---------------------------------------------------------------------------
 int Surface::loadAllPCXInDirectory(const char *path)
 {
-	// XXX _findfirst below is win32 only
-#ifdef WIN32
 	char strBuf[256];
 	char pathWild[256];
 
@@ -3406,7 +3402,7 @@ int Surface::loadAllPCXInDirectory(const char *path)
 	}
 
 	struct _finddata_t myFile;
-	long               hFile;
+	int* hFile;
 
 	_findfirst(pathWild, &myFile);
 	
@@ -3419,7 +3415,7 @@ int Surface::loadAllPCXInDirectory(const char *path)
 	int curFilename = 0;
 	iXY maxSize(0, 0);
 
-    if ((hFile = _findfirst(pathWild, &myFile)) != -1)
+    if ((hFile = _findfirst(pathWild, &myFile)) != ((int*) -1))
 	{
 		do
 		{
@@ -3463,7 +3459,6 @@ int Surface::loadAllPCXInDirectory(const char *path)
 		fill(Color::black);
 		tempSurface.blt(*this, myOffset);
 	}
-#endif
 
 	return 1;
 } // end loadAllPCXInDirectory
@@ -3472,8 +3467,6 @@ int Surface::loadAllPCXInDirectory(const char *path)
 //---------------------------------------------------------------------------
 int Surface::loadAllBMPInDirectory(const char *path)
 {
-	// XXX _findfirst below is win32 only
-#ifdef WIN32
 	char strBuf[256];
 	char pathWild[256];
 
@@ -3486,7 +3479,7 @@ int Surface::loadAllBMPInDirectory(const char *path)
 	}
 
 	struct _finddata_t myFile;
-	long               hFile;
+	int* hFile;
 
 	_findfirst(pathWild, &myFile);
 	
@@ -3499,7 +3492,7 @@ int Surface::loadAllBMPInDirectory(const char *path)
 	int curFilename = 0;
 	iXY maxSize(0, 0);
 
-    if ((hFile = _findfirst(pathWild, &myFile)) != -1)
+    if ((hFile = _findfirst(pathWild, &myFile)) != ((int*) -1))
 	{
 		do
 		{
@@ -3543,7 +3536,6 @@ int Surface::loadAllBMPInDirectory(const char *path)
 		fill(Color::black);
 		tempSurface.blt(*this, myOffset);
 	}
-#endif
 
 	return 1;
 } // end loadAllBMPInDirectory
@@ -3552,8 +3544,6 @@ int Surface::loadAllBMPInDirectory(const char *path)
 //---------------------------------------------------------------------------
 int Surface::loadAllRAWInDirectory(const char *path, const iXY &pix)
 {
-	// XXX _findfirst below is win32 only
-#ifdef WIN32
 	char strBuf[256];
 	char pathWild[256];
 
@@ -3566,7 +3556,7 @@ int Surface::loadAllRAWInDirectory(const char *path, const iXY &pix)
 	}
 
 	struct _finddata_t myFile;
-	long               hFile;
+	int* hFile;
 
 	_findfirst(pathWild, &myFile);
 	
@@ -3578,7 +3568,7 @@ int Surface::loadAllRAWInDirectory(const char *path, const iXY &pix)
 	int curFilename = 0;
 
 	// Load up all the frames of the smoke.
-    if ((hFile = _findfirst(pathWild, &myFile)) != -1)
+    if ((hFile = _findfirst(pathWild, &myFile)) != ((int*) -1))
 	{
 		do
 		{
@@ -3601,7 +3591,6 @@ int Surface::loadAllRAWInDirectory(const char *path, const iXY &pix)
 			return 0;
 		}
 	}
-#endif
 
 	return 1;
 } // end loadAllRAWInDirectory

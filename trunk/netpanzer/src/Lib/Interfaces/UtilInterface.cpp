@@ -18,8 +18,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifdef WIN32
 #include <config.h>
 #include <io.h>
+#else
+#include <sys/stat.h>
 #endif
 #include <string.h>
+#include "FindFirst.hpp"
 #include "UtilInterface.hpp"
 
 bool gSpanBlittingFlag = false;
@@ -39,22 +42,6 @@ int FilenameSortFunction(const void *a, const void *b)
 /////////////////////////////////////////////////////////////////////////////
 // UtilInterface
 /////////////////////////////////////////////////////////////////////////////
-
-// getDrive
-//---------------------------------------------------------------------------
-String UtilInterface::getDrive(String path)
-{
-	char strBuf[256];
-
-	// XXX
-#ifdef WIN32
-	//void _splitpath( const char *path, char *drive, char *dir, char *fname, char *ext );
-	_splitpath(path, strBuf, 0, 0, 0);
-#endif
-
-	return strBuf;
-
-} // end UtilInterface::getDrive
 
 // getDirectory
 //---------------------------------------------------------------------------
@@ -106,23 +93,27 @@ String UtilInterface::getExtension(String path)
 
 // getFileSize
 //---------------------------------------------------------------------------
-// Purpose: Returns file size, in bytes, or -1 if file not found.
+// Purpose: Returns file size, in bytes, or 0 if file not found.
 //---------------------------------------------------------------------------
 DWORD UtilInterface::getFileSize(String filename)
 {
-	// XXX
 #ifdef WIN32
 	struct _finddata_t myFile;
 
-	if (_findfirst((const char *) filename, &myFile) == -1)
+	// XXX small memory leak here
+	if (_findfirst((const char *) filename, &myFile) == ((int*) -1))
 	{
 		return 0;
 	}
 
 	return myFile.size;
-#endif
-	return 0;
+#else
+	struct stat filestats;
+	if (stat(filename, &filestats) < 0)
+		return 0;
 
+	return (DWORD) filestats.st_size;
+#endif
 } // end UtilInterface::getFileSize
 
 // getNumFilesInDirectory
@@ -131,15 +122,13 @@ DWORD UtilInterface::getFileSize(String filename)
 //---------------------------------------------------------------------------
 DWORD UtilInterface::getNumFilesInDirectory(String path)
 {
-	// XXX
-#ifdef WIN32
 	struct _finddata_t myFile;
-	long               hFile;
+	int* hFile;
 
 	DWORD numFiles = 0;
 
 	// Figure out how many files are in the directory.
-    if ((hFile = _findfirst((const char *) path, &myFile)) != -1)
+    if ((hFile = _findfirst((const char *) path, &myFile)) != ((int*) -1))
 	{
 		do
 		{
@@ -151,9 +140,6 @@ DWORD UtilInterface::getNumFilesInDirectory(String path)
 	_findclose(hFile);
 
 	return numFiles;
-#endif
-	return 0;
-
 } // end UtilInterface::getNumFilesInDirectory
 
 // deleteFile
@@ -163,14 +149,13 @@ DWORD UtilInterface::getNumFilesInDirectory(String path)
 //---------------------------------------------------------------------------
 void UtilInterface::deleteFile(String path)
 {
-	// XXX
 #ifdef WIN32
 	struct _finddata_t myFile;
-	long               hFile;
+	int* hFile;
 
 	char strBuf[256];
 
-    if ((hFile = _findfirst((const char *) path, &myFile)) == -1L) return;
+    if ((hFile = _findfirst((const char *) path, &myFile)) == ((int*) -1)) return;
 	else
 	{
 		do
@@ -183,8 +168,10 @@ void UtilInterface::deleteFile(String path)
 	}
 
 	_findclose(hFile);
+#else
+	if (remove(path) < 0)
+		printf("Couldn't remove file '%s'.\n", (const char*) path);
 #endif
-
 } // end UtilInterface::deleteFile
 
 // checkFileError

@@ -15,8 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #include <config.h>
+
+#ifdef WIN32
+#include <io.h>
+#endif
+#include "FindFirst.hpp"
 #include "PackedSurface.hpp"
 #include "Surface.hpp"
 #include "TimerInterface.hpp"
@@ -598,8 +602,6 @@ nextRow:
 //---------------------------------------------------------------------------
 int loadAllPAKInDirectory(const char *path, cGrowList <PackedSurface> &growList)
 {
-    // XXX disabled because the _findfirst below is win32 only
-#ifdef MSVC
 	char strBuf[256];
 	char pathWild[256];
 
@@ -612,7 +614,7 @@ int loadAllPAKInDirectory(const char *path, cGrowList <PackedSurface> &growList)
 	}
 	
 	struct _finddata_t myFile;
-	long               hFile;
+	int* hFile;
 
 	_findfirst(pathWild, &myFile);
 	
@@ -622,7 +624,7 @@ int loadAllPAKInDirectory(const char *path, cGrowList <PackedSurface> &growList)
 	int curFilename = 0;
 	iXY maxSize(0, 0);
 
-    if ((hFile = _findfirst(pathWild, &myFile)) != -1)
+    if ((hFile = _findfirst(pathWild, &myFile)) != ((int*) -1))
 	{
 		do
 		{
@@ -644,7 +646,6 @@ int loadAllPAKInDirectory(const char *path, cGrowList <PackedSurface> &growList)
 	{
 		growList[i].load(filenames[i].name);
 	}
-#endif
 
 	return 1;
 

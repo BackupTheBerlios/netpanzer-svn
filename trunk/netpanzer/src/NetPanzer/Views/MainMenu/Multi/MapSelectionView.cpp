@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifdef WIN32
 #include <io.h>
 #endif
+#include "FindFirst.hpp"
 #include "MapSelectionView.hpp"
 #include "gapp.hpp"
 #include "GameConfig.hpp"
@@ -137,8 +138,6 @@ void MapSelectionView::doDraw(const Surface &viewArea, const Surface &clientArea
 //---------------------------------------------------------------------------
 int MapSelectionView::loadMaps()
 {
-	// XXX find an alternative to _findfirst
-#ifdef WIN32
 	char strBuf[256];
 	char pathWild[256];
 
@@ -154,7 +153,7 @@ int MapSelectionView::loadMaps()
 	}
 
 	struct _finddata_t myFile;
-	long               hFile;
+	int* hFile;
 
 	_findfirst(pathWild, &myFile);
 	
@@ -163,7 +162,7 @@ int MapSelectionView::loadMaps()
 
 	int curFilename = 0;
 
-    if ((hFile = _findfirst(pathWild, &myFile)) != -1)
+    if ((hFile = _findfirst(pathWild, &myFile)) != ((int*) -1))
 	{
 		do
 		{
@@ -201,7 +200,11 @@ int MapSelectionView::loadMaps()
 			FUBAR("Map description is too long.");
 		}
 */
+		// XXX need an alternative to _splitpath
+		printf("Need Splitpath alternative!!!\n");
+#if 0
 		_splitpath(fileList[i].name, 0, 0, mapList[i].name, 0);
+#endif
 		sprintf(mapList[i].description, "%s", netPanzerMapHeader.description);
 
 		mapList[i].cells.x = netPanzerMapHeader.x_size;
@@ -251,7 +254,6 @@ int MapSelectionView::loadMaps()
 	
 	GameConfig::setGameMapName(MapSelectionView::mapList[curMap].name);
 	curMap = 0;
-#endif
 
 	// Success
 	return -1;

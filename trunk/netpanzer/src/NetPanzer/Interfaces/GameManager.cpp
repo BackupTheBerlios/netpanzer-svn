@@ -868,7 +868,7 @@ bool GameManager::loadGameData()
  {
   UnitProfileInterface::loadUnitProfiles();
   LoadUnitSurfaces();
-  UNIT_FLAGS_SURFACE.loadAllBMPInDirectory( "pics\\flags\\netp\\" );
+  UNIT_FLAGS_SURFACE.loadAllBMPInDirectory("pics\\flags\\netp\\");
   
   GameConfig::loadConfigScript();
   return true; 
@@ -879,7 +879,7 @@ void GameManager::dedicatedLoadGameData()
 {
    	UnitProfileInterface::loadUnitProfiles();
 	LoadUnitSurfaces();
-	UNIT_FLAGS_SURFACE.loadAllBMPInDirectory( "pics\\flags\\netp\\" );
+	UNIT_FLAGS_SURFACE.loadAllBMPInDirectory("pics\\flags\\netp\\");
 
 	GameConfig::loadConfigScript();
 }

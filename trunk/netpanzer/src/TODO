@@ -3,18 +3,19 @@
 -Fix FileList.cpp to use only ANSI-C functions, so that we don't need the win32
  _splitpath anymore. The same is in UtilInterface.cpp
 -Fix PackedSurface.cpp, Surface.cpp to not use _findfirst anymore... same in
- MapsManager.cpp
--Write new timercode the assembler cTimeStamp.cpp isn't portable
+ MapsManager.cpp - OK
+-Write new timercode the assembler cTimeStamp.cpp isn't portable - OK
 -Write new code instead of the assembler in Span.cpp and Surface.cpp
 -ParticleInterface.cpp contains some DirectSound code which needs to be replaced
+ - OK
 -GroundExplosionParticle, RadarPingParticle2D and DirtKickParticle2D seem to
  miss some Surface variables, where are these defined?
 -PUFF_PARTICLE_TYPE isn't defined in SmokingTrajectoryParticle
 -write a new version of DDHardSurface
 -network code probably needs a bigger rewrite since directplay is not available
  on unix.
--look at all the directx code in GameManager.cpp
--need new mousecode in MouseInterface.cpp
+-look at all the directx code in GameManager.cpp - OK
+-need new mousecode in MouseInterface.cpp - OK
 -need new directplay code in NetworkClientDPlay.cpp, NetworkServerDPlay.cpp
 -need new code instead of winsock in NetworkClientWinsock.cpp
 -rewrite all the windows specific code in NetPanzer/Core
@@ -24,3 +25,4 @@
 -Fix the win32 stuff in Lib/Util/UtilInterface.cpp
 -rewrite win32 event loop to use a SDL event loop. Don't forget to pump mouse
  events to MouseInterface then.
+

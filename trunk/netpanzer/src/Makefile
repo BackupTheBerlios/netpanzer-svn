@@ -1,5 +1,4 @@
-SYSTEM=WIN32
-#SYSTEM=UNIX
+include config.mak
 
 DIRS = . Lib Lib/2D Lib/Environment Lib/Interfaces Lib/Particles \
 	   Lib/PObject/Classes Lib/PObject/Templates Lib/Types Lib/View \
@@ -35,15 +34,12 @@ endif
 	   
 SOURCES = $(foreach dir, $(DIRS), $(wildcard $(dir)/*.cpp))
 OBJECTS = $(SOURCES:.cpp=.o)
-# eventually disable if you don't have makedep installed (but you don't have
-# dependency checking then)
-#MAKEDEPEND=makedepend
 
 $(GOAL): $(OBJECTS)
-		g++ -o $(GOAL) $(OBJECTS) $(LINKFLAGS)
+		$(CXX) -o $(GOAL) $(OBJECTS) $(LINKFLAGS)
 
 %.o: %.cpp
-		g++ $(CFLAGS) -c -o $@ $<
+		$(CXX) $(CFLAGS) -c -o $@ $<
 
 ifneq (,$(MAKEDEPEND))
 .depend: $(SOURCES)
