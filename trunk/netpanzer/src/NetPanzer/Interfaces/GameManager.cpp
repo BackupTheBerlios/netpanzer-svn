@@ -183,7 +183,6 @@ void GameManager::initializeSoundSubSystem()
 void GameManager::shutdownSoundSubSystem()
 {
     if(sound) {
-        LOG( ("shutdown sound system.") );
         delete sound;
         sound = 0;
     }
@@ -193,8 +192,6 @@ void GameManager::shutdownSoundSubSystem()
 
 void GameManager::initializeWindowSubSystem()
 {
-    LOG(("Initializing Game Viewing System"));
-
     loadPalette("wads/netp.act");
     
     initFont();

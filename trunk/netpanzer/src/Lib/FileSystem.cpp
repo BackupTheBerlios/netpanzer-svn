@@ -54,7 +54,6 @@ void FileSystem::initialize(const char* argv0, const char* company,
                             writedir, PHYSFS_getLastError());
         }
     }
-    printf("WriteDir: %s\n", writedir);
 
     PHYSFS_addToSearchPath(writedir, 0);
     PHYSFS_addToSearchPath(basedir, 1);
