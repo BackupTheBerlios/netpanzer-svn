@@ -124,3 +124,6 @@ CS_OUTPUT_INSTALLDIRS
 AC_CONFIG_FILES([Jamconfig])
 AC_OUTPUT
 
+AC_MSG_NOTICE([
+Please note that this project uses jam (and not make) as build tool.
+])
