@@ -37,6 +37,8 @@ void Astar::initializeAstar( unsigned long node_list_size,
             MapInterface::getHeight() );
     closed_set.initialize( MapInterface::getWidth(),
             MapInterface::getHeight() );
+    open = std::priority_queue<AstarNode*, std::vector<AstarNode*>,
+           AstarNodePtrCompare>();
 
     initializeNodeList( node_list_size );
 
@@ -100,7 +102,7 @@ void Astar::resetNodeList()
     }
 }
 
-void Astar::initializeNodeList( unsigned long initial_size )
+void Astar::initializeNodeList(unsigned long initial_size)
 {
     node_index = 0;
     node_list_size = initial_size;
@@ -110,7 +112,7 @@ void Astar::initializeNodeList( unsigned long initial_size )
 }
 
 
-void Astar::initializePath( iXY &start, iXY &goal, unsigned short path_type )
+void Astar::initializePath(iXY &start, iXY &goal, unsigned short path_type)
 {
     TimeStamp timer_ini_mark = now();
 
@@ -157,11 +159,11 @@ unsigned long Astar::mapXYtoAbsloc( iXY map_loc )
     if ( ( map_loc.x < 0 ) || (map_loc.x >= (int) main_map.getWidth() ) ||
             ( map_loc.y < 0 ) || (map_loc.y >= (int) main_map.getHeight() )
        )
-        return( 0xFFFFFFFF );
+        return 0xFFFFFFFF;
 
     abs = MapInterface::mapXYtoOffset(map_loc.x, map_loc.y);
 
-    return( abs );
+    return abs;
 }
 
 
@@ -182,7 +184,7 @@ long Astar::heuristic( iXY &pointA, iXY &pointB )
 }
 
 
-unsigned char Astar::generateSucc( unsigned short direction, AstarNode *node, AstarNode *succ )
+unsigned char Astar::generateSucc(unsigned short direction, AstarNode *node, AstarNode *succ )
 {
     unsigned long movement_val;
 
@@ -190,39 +192,31 @@ unsigned char Astar::generateSucc( unsigned short direction, AstarNode *node, As
         direction = 7 - direction;
     }
 
-    switch( direction ) {
-    case 0: {
+    switch(direction) {
+        case 0:
             succ->map_loc.x =  1; succ->map_loc.y =  0; succ->g = 0;
-        }
-        break;
-    case 1: {
+            break;
+        case 1:
             succ->map_loc.x =  1; succ->map_loc.y = -1; succ->g = 1;
-        }
-        break;
-    case 2: {
+            break;
+        case 2:
             succ->map_loc.x =  0; succ->map_loc.y = -1; succ->g = 0;
-        }
-        break;
-    case 3: {
+            break;
+        case 3:
             succ->map_loc.x = -1; succ->map_loc.y = -1; succ->g = 1;
-        }
-        break;
-    case 4: {
+            break;
+        case 4:
             succ->map_loc.x = -1; succ->map_loc.y =  0; succ->g = 0;
-        }
-        break;
-    case 5: {
+            break;
+        case 5:
             succ->map_loc.x = -1; succ->map_loc.y =  1; succ->g = 1;
-        }
-        break;
-    case 6: {
+            break;
+        case 6:
             succ->map_loc.x =  0; succ->map_loc.y =  1; succ->g = 0;
-        }
-        break;
-    case 7: {
+            break;
+        case 7:
             succ->map_loc.x =  1; succ->map_loc.y =  1; succ->g = 1;
-        }
-        break;
+            break;
     }
 
     succ->map_loc = node->map_loc + succ->map_loc;
@@ -429,7 +423,7 @@ void Astar::cleanUp()
     total_pathing_time += now() - timer_cleanup_mark;
 }
 
-void Astar::setDebugMode( bool on_off )
+void Astar::setDebugMode(bool on_off)
 {
     debug_mode_flag = on_off;
 
@@ -441,7 +435,7 @@ void Astar::setDebugMode( bool on_off )
     }
 }
 
-void Astar::sampleSetArrays( void )
+void Astar::sampleSetArrays()
 {
     if ( debug_mode_flag == true ) {
         astar_set_array.clear();
@@ -450,8 +444,8 @@ void Astar::sampleSetArrays( void )
     }
 }
 
-BitArray * Astar::getSampledSetArrays( void )
+BitArray * Astar::getSampledSetArrays()
 {
-    return( &astar_set_array );
+    return &astar_set_array;
 }
 

@@ -93,7 +93,7 @@ void PathGenerator::initialize()
     initialize( 4000, 10 );
 }
 
-void PathGenerator::initialize( unsigned long resources, unsigned long cache_size )
+void PathGenerator::initialize(unsigned long resources, unsigned long cache_size)
 {
     astar.initializeAstar( resources );
     path_cache.initialize( cache_size );

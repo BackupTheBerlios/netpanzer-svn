@@ -49,19 +49,17 @@ protected:
 
     unsigned long add_path_length_threshold;
 
-    ArrayTemplate< PathCacheEntry > cache_list;
+    ArrayTemplate<PathCacheEntry> cache_list;
 
     unsigned long cache_size;
     unsigned long entry_replace_index;
 
 public:
-    void initialize( void );
+    void initialize();
+    void initialize(unsigned long cache_size);
 
-    void initialize( unsigned long cache_size );
-
-    bool search( PathRequest &path_request );
-
-    void add( PathRequest &path_request );
+    bool search(PathRequest &path_request);
+    void add(PathRequest &path_request);
 };
 
 enum { _path_generator_status_free,
@@ -98,16 +96,16 @@ protected:
 
     PathRequest path_request;
 
-    void pathingFsmFullPath( void );
+    void pathingFsmFullPath();
 
     unsigned long path_update_threshold;
     unsigned long path_update_length;
-    void pathingFsmUpdatePath( void );
+    void pathingFsmUpdatePath();
 
     iXY working_start;
     iXY working_goal;
     unsigned long path_splice_length;
-    void pathingFsmCachePath( void );
+    void pathingFsmCachePath();
 
 public:
     void initialize();
@@ -116,21 +114,20 @@ public:
     void initializePathGeneration( PathRequest &path_request );
     void terminatePathGeneration( UnitID &unit_id );
 
-    inline unsigned short generationStatus( void )
+    inline unsigned short generationStatus()
     {
-        return( path_generation_status );
+        return path_generation_status;
     }
 
     inline bool generationComplete( UnitID &unit_id )
     {
-        // XXX comparison is always false?!?
         if ( path_generation_status == _path_generator_status_waiting )
             if ( path_request.unit_id == unit_id ) {
                 path_generation_status = _path_generator_status_free;
-                return( true );
+                return true;
             }
 
-        return( false );
+        return false;
     }
 
     void run();
@@ -157,7 +154,7 @@ protected:
 
     static long short_queue_distance_threshold;
 public:
-    static void initialize( void );
+    static void initialize();
 
     static void initialize( unsigned long short_queue_size, unsigned long long_queue_size );
 
@@ -167,7 +164,7 @@ public:
                             unsigned long long_pather_resources
                           );
 
-    static void cleanUp( void );
+    static void cleanUp();
 
     static void requestPath( PathRequest &path_request );
 

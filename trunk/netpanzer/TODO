@@ -5,7 +5,7 @@ Next release:
 -objective count is wrong in status window
 -with 75% objective setting you can win the Cramped with 2 outposts already
  (which is only be 66% of all outposts)
--after having a full nodelist the server is getting slow
+-after having a full nodelist in A* the server is getting slow
 -when typing empty messages they are sent anyway
 -the refresh button should be disabled in the serverlist window while the
  refreshing is in progress
