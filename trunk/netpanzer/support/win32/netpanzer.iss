@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=netPanzer
-AppVerName=netpanzer 0.1.5
+AppVerName=netpanzer 0.2.0 rc3
 AppPublisher=netPanzer developers
 AppPublisherURL=http://netpanzer.berlios.de
 AppSupportURL=http://netpanzer.berlios.de
@@ -18,30 +18,21 @@ Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "A
 
 [Files]
 Source: "D:\netpanzer\netpanzer.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\netpanzer\netpanzer.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\netpanzer\support\icon\netpanzer.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\netpanzer\msvcr70.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\netpanzer\libgettextlib-0-13.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\netpanzer\libglib-2.0-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\netpanzer\libgmodule-2.0-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\netpanzer\libgobject-2.0-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\netpanzer\libgthread-2.0-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\netpanzer\libiconv-2.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\netpanzer\libintl-2.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\netpanzer\libphysfs-0-1-9.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\netpanzer\libcharset-1.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\netpanzer\SDL_net.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\netpanzer\libphysfs-1-0-0.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\netpanzer\Relnotes"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\netpanzer\SDL.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\netpanzer\SDL_image.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\netpanzer\SDL_mixer.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\netpanzer\Readme"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\netpanzer\Copying"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\netpanzer\maps\*.*"; DestDir: "{app}\maps\"; Flags: ignoreversion recursesubdirs
-Source: "D:\netpanzer\pics\*.*"; DestDir: "{app}\pics\"; Flags: ignoreversion recursesubdirs
-Source: "D:\netpanzer\powerups\*.*"; DestDir: "{app}\powerups\"; Flags: ignoreversion recursesubdirs
-Source: "D:\netpanzer\sound\*.*"; DestDir: "{app}\sound\"; Flags: ignoreversion recursesubdirs
-Source: "D:\netpanzer\units\*.*"; DestDir: "{app}\units\"; Flags: ignoreversion recursesubdirs
-Source: "D:\netpanzer\wads\*.*"; DestDir: "{app}\wads\"; Flags: ignoreversion recursesubdirs
+Source: "D:\netpanzer\maps\*.*"; Excludes: "CVS"; DestDir: "{app}\maps\"; Flags: ignoreversion recursesubdirs
+Source: "D:\netpanzer\pics\*.*"; Excludes: "CVS"; DestDir: "{app}\pics\"; Flags: ignoreversion recursesubdirs
+Source: "D:\netpanzer\powerups\*.*"; Excludes: "CVS"; DestDir: "{app}\powerups\"; Flags: ignoreversion recursesubdirs
+Source: "D:\netpanzer\sound\*.*"; Excludes: "CVS"; DestDir: "{app}\sound\"; Flags: ignoreversion recursesubdirs
+Source: "D:\netpanzer\units\*.*"; Excludes: "CVS"; DestDir: "{app}\units\"; Flags: ignoreversion recursesubdirs
+Source: "D:\netpanzer\wads\*.*"; Excludes: "CVS"; DestDir: "{app}\wads\"; Flags: ignoreversion recursesubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [INI]
@@ -49,6 +40,7 @@ Filename: "{app}\netpanzer.url"; Section: "InternetShortcut"; Key: "URL"; String
 
 [Icons]
 Name: "{group}\netPanzer"; Filename: "{app}\netpanzer.exe"; WorkingDir: "{app}"; IconFilename: "{app}\netpanzer.ico"
+Name: "{group}\netPanzer Dedicated Server"; Filename: "{app}\netpanzer.exe"; Parameters: "-d"; WorkingDir: "{app}";
 ; NOTE: The following entry contains an English phrase ("on the Web"). You are free to translate it into another language if required.
 Name: "{group}\netPanzer on the Web"; Filename: "{app}\netpanzer.url"
 ; NOTE: The following entry contains an English phrase ("Uninstall"). You are free to translate it into another language if required.
