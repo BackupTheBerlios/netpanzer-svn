@@ -226,9 +226,9 @@ void NetworkServer::netMessageTransportClientAccept( NetMessage *message )
 
     client_accept_mesg = (TransportClientAccept *) message;
 
-    connect_ack_mesg.client_transport_id = client_accept_mesg->client_transport_id;
+    connect_ack_mesg.setClientTransportID(client_accept_mesg->getClientTransportID());
 
-    player_id = PlayerID( 0, connect_ack_mesg.client_transport_id );
+    player_id = PlayerID( 0, connect_ack_mesg.getClientTransportID() );
 
     sendMessage(player_id, &connect_ack_mesg, sizeof(ClientMesgConnectAck), 0);
 }

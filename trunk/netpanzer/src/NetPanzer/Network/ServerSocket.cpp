@@ -84,7 +84,7 @@ void ServerSocket::acceptNewClients()
 
         // Put message about connecting client into message queue
         TransportClientAccept clientacceptmessage;
-        clientacceptmessage.client_transport_id = client->id;
+        clientacceptmessage.setClientTransportID(client->id);
         EnqueueIncomingPacket(&clientacceptmessage,
                               sizeof(TransportClientAccept), 1, 0);
     }

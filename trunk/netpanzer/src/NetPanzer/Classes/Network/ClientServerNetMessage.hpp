@@ -40,27 +40,25 @@ enum { _net_message_id_transport_client_accept,
 
 class TransportClientAccept : public NetMessage
 {
-public:
+private:
     uint32_t client_transport_id;
+public:
 
-    TransportClientAccept()
-    {
-        message_class = _net_message_class_client_server;
-        message_id = _net_message_id_transport_client_accept;
-    }
+    TransportClientAccept();
+    uint32_t getClientTransportID(void);
+    void setClientTransportID(uint32_t transport_id);
 }
 __attribute__((packed));
 
 class ClientMesgConnectAck : public NetMessage
 {
-public:
+private:
     uint32_t client_transport_id;
+public:
 
-    ClientMesgConnectAck()
-    {
-        message_class = _net_message_class_client_server;
-        message_id = _net_message_id_client_connect_ack;
-    }
+    ClientMesgConnectAck();
+    uint32_t getClientTransportID(void);
+    void setClientTransportID(uint32_t transport_id);
 }
 __attribute__((packed));
 

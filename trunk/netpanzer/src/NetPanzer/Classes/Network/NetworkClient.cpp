@@ -81,7 +81,7 @@ void NetworkClient::netMessageClientConnectAck( NetMessage *message )
 
     connection_status = _connection_status_connected;
 
-    client_transport_id = connect_ack_mesg->client_transport_id;
+    client_transport_id = connect_ack_mesg->getClientTransportID();
 
     join_request.setTransportID(client_transport_id);
     strcpy( join_request.code_word, _NETPANZER_CODEWORD );
