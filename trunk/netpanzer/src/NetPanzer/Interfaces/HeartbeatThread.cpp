@@ -118,7 +118,7 @@ void
 HeartbeatThread::sendHeartbeat()
 {
     std::stringstream packet;
-    packet << "\\heartbeat\\" << "\\gamename\\netpanzer"
+    packet << "\\heartbeat\\gamename\\netpanzer"
            << "\\port\\" << gameconfig->serverport                     
            << "\\protocol\\" << NETPANZER_PROTOCOL_VERSION
            << "\\final\\" << std::flush;

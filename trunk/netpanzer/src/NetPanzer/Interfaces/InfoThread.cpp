@@ -185,7 +185,7 @@ void InfoThread::sendInfo(std::stringstream& out)
 
 void InfoThread::sendRules(std::stringstream& out)
 {
-    out << "gamemode\\" << gameconfig->getGameTypeString() << "\\"
+    out << "gamestyle\\" << gameconfig->getGameTypeString() << "\\"
         << "units_per_player\\" << gameconfig->GetUnitsPerPlayer() << "\\"    
         << "timelimit\\" << gameconfig->timelimit << "\\"
         << "fraglimit\\" << gameconfig->fraglimit << "\\";
@@ -197,8 +197,8 @@ void InfoThread::sendPlayers(std::stringstream& out)
         PlayerState* playerState = PlayerInterface::getPlayerState(i);
         out << "player_" << i << "\\" << playerState->getName() << "\\"
             << "kills_" << i << "\\" << playerState->getKills() << "\\"
-            << "losses_" << i << "\\" << playerState->getLosses() << "\\"
-            << "objectives_" << i << "\\" 
+            << "deaths_" << i << "\\" << playerState->getLosses() << "\\"
+            << "score_" << i << "\\" 
                 << playerState->getObjectivesHeld() << "\\";
     }
     // TODO add team/alliance info
