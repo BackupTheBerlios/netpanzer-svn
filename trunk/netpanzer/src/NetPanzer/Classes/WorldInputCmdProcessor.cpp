@@ -610,10 +610,6 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents(MouseEvent &event)
 
 void WorldInputCmdProcessor::evalRightMButtonEvents( MouseEvent &event )
 {
-    iXY world_pos;
-
-    PlayerID player_id;
-
     if (event.event == MouseEvent::EVENT_DOWN ) {
         right_mouse_scroll=true;
         right_mouse_scroll_pos=event.pos;
