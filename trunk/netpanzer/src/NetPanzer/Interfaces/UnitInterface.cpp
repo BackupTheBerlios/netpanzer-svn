@@ -764,12 +764,18 @@ void UnitInterface::unitManagerMesgEndLifecycle( UnitMessage *message )
     const std::string& player2 =
         PlayerInterface::getPlayerState(lifecycle_update->destroyed.getPlayer())
             ->getName();
-    const std::string& unitname =
+    const std::string& unitname1 =
         UnitProfileInterface::getUnitProfile(lifecycle_update->unit_type)
             ->unitname;
+    int unittype2 =
+        UnitInterface::getUnit(lifecycle_update->destroyer)
+            ->unit_state.unit_type;
+    const std::string& unitname2 =
+        UnitProfileInterface::getUnitProfile(unittype2)->unitname;
     // TODO display unit names...
-    ConsoleInterface::postMessage("'%s' killed a '%s' from '%s'.",
-            player1.c_str(), unitname.c_str(), player2.c_str());
+    ConsoleInterface::postMessage("'%s' killed a '%s' from '%s' with his '%s'.",
+            player1.c_str(), unitname1.c_str(), player2.c_str(),
+            unitname2.c_str());
 
     PlayerScoreUpdate score_update;
     score_update.kill_on_player_index = lifecycle_update->destroyed.getPlayer();
