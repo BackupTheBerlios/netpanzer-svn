@@ -78,6 +78,7 @@ int realmain(int argc, char** argv)
       
         for(int i=0; i<paksurface->getFrameCount(); ++i) {
             paksurface->setFrame(i);
+            surface->fill(0);
             paksurface->blt(*surface, 0, 0);
             std::stringstream filenamestr;
             filenamestr << extractName(inputfile_option.value())

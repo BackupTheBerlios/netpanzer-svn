@@ -24,9 +24,13 @@ int main(int argc, char** argv)
     Palette pal;
 
     TILE_HEADER tileheader;
-    for(size_t i = 0; i<header.tile_count; ++i)
+    for(size_t i = 0; i<header.tile_count; ++i) {
         in.read((char*) &tileheader, sizeof(TILE_HEADER));    
+        std::cout << i << " " << "attribute " << (int) tileheader.attrib 
+            << " movevalue " << (int) tileheader.move_value << "\n";
+    }
 
+#if 0
     for(size_t i = 0; i<header.tile_count; ++i) {
         char filename[128];
         snprintf(filename, 128, "tile%04d.bmp", i);
@@ -39,4 +43,5 @@ int main(int argc, char** argv)
                     header.y_pix), header.x_pix, 1);
         BMPSaver::save(filename, surface, pal);
     }
+#endif
 }

@@ -2,7 +2,7 @@ SubDir TOP src pak2bmp ;
 
 Application pak2bmp : [ Wildcard *.cpp *.hpp ] ;
 CFlags pak2bml : -DDATADIR=\\\"$(datadir)\\\" ;
-LinkWith pak2bmp : netpanzertypes netpanzersys netpanzer2d 
+LinkWith pak2bmp : netpanzertypes netpanzer2d 
                     optionmm netpanzerutil ;
 ExternalLibs pak2bmp : XML SDLNET SDLMIXER SDLIMAGE SDL PHYSFS ;
 Help pak2bmp : "Build the pak2bmp executable" ;
