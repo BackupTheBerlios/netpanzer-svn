@@ -106,14 +106,34 @@ XmlConfig::readInt(const char *name) const
 }
 //-----------------------------------------------------------------
 /**
- * Read string from attribute.
- * @return string
+ * Read number from attribute.
+ * @return long
+ * @return defaultValue default value
  */
-std::string
-XmlConfig::readString(const char *name) const
+long
+XmlConfig::readInt(const char *name, long defaultValue) const
 {
     xmlChar *strXml = xmlGetProp(m_node, (const xmlChar*)name);
     if (strXml == 0) {
+        return defaultValue;
+    }
+    xmlFree(strXml);
+    return readInt(name);
+}
+//-----------------------------------------------------------------
+/**
+ * Read string from attribute.
+ * @return string
+ * @return defaultValue default value or 0
+ */
+std::string
+XmlConfig::readString(const char *name, const char *defaultValue) const
+{
+    xmlChar *strXml = xmlGetProp(m_node, (const xmlChar*)name);
+    if (strXml == 0) {
+        if (defaultValue) {
+            return std::string(defaultValue);
+        }
         throw Exception("xml config: '%s->%s' is empty",
             m_node->name, name);
     }

@@ -64,6 +64,16 @@ VisualsView::VisualsView() : OptionsTemplateView()
     y += yOffset;
     y += yOffset;
 
+    choiceMiniMapUnitSize.setName("Mini Map Unit Size");
+    choiceMiniMapUnitSize.setStateChangedCallback(this);
+    choiceMiniMapUnitSize.addItem("Small");
+    choiceMiniMapUnitSize.addItem("Large");
+    choiceMiniMapUnitSize.setLocation(x, y);
+    choiceMiniMapUnitSize.setMinWidth(minWidth);
+    y += yOffset;
+    y += yOffset;
+
+
 #if 0
     choiceGameViewBackgroundColor.setName("Game View Background Color");
     choiceGameViewBackgroundColor.setStateChangedCallback(this);
@@ -87,15 +97,6 @@ VisualsView::VisualsView() : OptionsTemplateView()
 
     x = 300;
     y = 100;
-    choiceMiniMapUnitSize.setName("Mini Map Unit Size");
-    choiceMiniMapUnitSize.setStateChangedCallback(this);
-    choiceMiniMapUnitSize.addItemDefault("Small");
-    choiceMiniMapUnitSize.addItem("Large");
-    choiceMiniMapUnitSize.setLocation(x, y);
-    choiceMiniMapUnitSize.setMinWidth(minWidth);
-    y += yOffset;
-    y += yOffset;
-
     choiceUnitSelectionDrawMode.setName("Unit Selection Draw Mode");
     choiceUnitSelectionDrawMode.setStateChangedCallback(this);
     choiceUnitSelectionDrawMode.addItemDefault("Rectangle Edges");
@@ -243,7 +244,7 @@ void VisualsView::initButtons()
     add(&choiceResolution);
     //add(&choiceGameViewBackgroundColor);
     //add(&choiceMiniMapObjectiveDrawMode);
-    //add(&choiceMiniMapUnitSize);
+    add(&choiceMiniMapUnitSize);
     //add(&choiceUnitSelectionDrawMode);
     //add(&choiceUnitInfoDrawLayer);
     //add(&choiceYourRadarUnit);
@@ -270,7 +271,7 @@ void VisualsView::doDraw(const Surface &viewArea, const Surface &clientArea)
 void VisualsView::processEvents()
 {
     OptionsTemplateView::processEvents();
-
+#if 0
     GameConfig::setPlayerRadarUnitColor(choiceYourRadarUnit.getSelectedIndex());
     GameConfig::setAlliedRadarUnitColor(choiceAlliedRadarUnit.getSelectedIndex());
     GameConfig::setPlayerOutpostRadarColor(choiceYourRadarObjective.getSelectedIndex());
@@ -280,6 +281,7 @@ void VisualsView::processEvents()
     GameConfig::setConsoleTextColor(choiceConsoleText.getSelectedIndex());
 
     GameManager::setNetPanzerGameOptions();
+#endif
 
 } // end VisualsView::processEvents
 

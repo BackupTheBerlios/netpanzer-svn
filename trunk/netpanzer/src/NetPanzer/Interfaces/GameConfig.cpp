@@ -167,18 +167,20 @@ void GameConfig::loadConfig()
     }
 
     XmlConfig game = config.getChild("game");
-    GameMode = game.readInt("mode");
-    GameType = game.readInt("type");
-    NumberPlayers = game.readInt("players");
-    NumberUnits = game.readInt("units");
-    NumberInitialUnits = game.readInt("init_units");
+    GameMode = game.readInt("mode", GameMode);
+    GameType = game.readInt("type", GameType);
+    NumberPlayers = game.readInt("players", NumberPlayers);
+    NumberUnits = game.readInt("units", NumberUnits);
+    NumberInitialUnits = game.readInt("init_units", NumberInitialUnits);
 
     XmlConfig visuals = config.getChild("visuals");
-    screen_resolution = visuals.readInt("resolution");
-    screen_fullscreen = visuals.readInt("fullscreen");
-    display_shadows_flag = visuals.readInt("shadows_flag");
-    display_unit_flags = visuals.readInt("unit_flags");
-    UnitColor = visuals.readInt("unit_color");
+    screen_resolution = visuals.readInt("resolution", screen_resolution);
+    screen_fullscreen = visuals.readInt("fullscreen", screen_fullscreen);
+    display_shadows_flag = visuals.readInt("shadows_flag",
+            display_shadows_flag);
+    display_unit_flags = visuals.readInt("unit_flags", display_unit_flags);
+    mini_map_unit_size = visuals.readInt("mini_map_unit_size",
+            mini_map_unit_size);
 }
 
 void GameConfig::saveConfig()
@@ -198,7 +200,7 @@ void GameConfig::saveConfig()
     visuals.writeInt("fullscreen", screen_fullscreen);
     visuals.writeInt("shadows_flag", display_shadows_flag);
     visuals.writeInt("unit_flags", display_unit_flags);
-    visuals.writeInt("unit_color", UnitColor);
+    visuals.writeInt("mini_map_unit_size", mini_map_unit_size);
 
     xmlStore.save(configfile.c_str());
 }

@@ -56,6 +56,7 @@ private:
 
     //Choice   choiceUnitInfoDrawLayer;
 
+#if 0
     // Color choices.
     Choice   choiceYourRadarUnit;
     Choice   choiceAlliedRadarUnit;
@@ -64,6 +65,7 @@ private:
     Choice   choiceEnemyRadarObjective;
     Choice   choiceVehicleSelectionBox;
     Choice   choiceConsoleText;
+#endif
 
     virtual void loadTitleSurface();
 
