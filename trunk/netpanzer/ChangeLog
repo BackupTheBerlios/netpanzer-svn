@@ -3,6 +3,7 @@
 -report exceptions in the irclobby view
 -fixed serveraddress view to not contain the ok and abort buttons
 -make irc lobby change nickname when the player changes it's name
+-put a message on screen, when palettes are calculated
 
 07-Nov-2003 by Matthias Braun
 -fixed HOM effect while joining server

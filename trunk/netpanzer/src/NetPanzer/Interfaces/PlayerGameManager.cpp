@@ -125,6 +125,7 @@ void PlayerGameManager::initializeVideoSubSystem()
 {
     LOGGER.info("Initializing video mode");
     Screen = new SDLDraw();
+    initFont();
     GameManager::setVideoMode();
 
     lobbyView = new LobbyView();
@@ -159,8 +160,6 @@ void PlayerGameManager::initializeInputDevices()
 void PlayerGameManager::initializeWindowSubSystem()
 {
     GameManager::loadPalette("wads/netp.act");
-
-    initFont();
 
     gameView.init();
     Desktop::add( &gameView );

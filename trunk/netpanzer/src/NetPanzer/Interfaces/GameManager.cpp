@@ -195,6 +195,18 @@ void GameManager::setVideoMode()
     Desktop::checkViewPositions(mode_res);
     //ConsoleInterface::setToSurfaceSize( mode_res );
 
+    if(old_res == iXY(0,0)) {
+        // users can get annoyed when they see a black screen for half a minute
+        // so we display something here... (we're just hoping that palette1 is
+        // not black)
+        std::cout << "Draw..." << std::endl;
+        Palette::color[255].red = 255;
+        Palette::color[255].green = 255;
+        Palette::color[255].blue = 255;
+        Screen->setPalette(Palette::color);
+        drawTextCenteredOnScreen("Please wait... generating palettes", 255);
+    }
+    
     // reset palette
     Screen->setPalette(Palette::color);
 }
