@@ -1,4 +1,4 @@
-.TH "netpanzer" "6" "0.1.5" "Bartosz Fenski <fenio@o2.pl>" "Games"
+.TH "netpanzer" "6" "0.2.0" "Bartosz Fenski <fenio@o2.pl>" "Games"
 .SH "NAME"
 netPanzer \- an online multiplayer tactical warfare game
 .SH "SYNTAX"
@@ -46,12 +46,14 @@ run server on specified port. (the server uses TCP and UDP connections)
 .TP
 .B -g, --debug
 enable debug output.
-.B     --lobby-server=VALUE
-Use the specified irc server as lobby server. You can use 'none' to
-disable lobby announcement.
+.B     --master_server=VALUE
+use the specified master server. You can use 'none' if you don't want to
+use master server.
 .B     --game_config=VALUE
-Use the specified file as config file. The file will be read from the netpanzer
-config directory (ie. ~/.netpanzer/config)
+use the specified file as config file. Only files from the netpanzer's config 
+directory can be used.
+.B     --protocol
+show version of network protocol.
 .PD
 
 .SH "AUTHORS"
