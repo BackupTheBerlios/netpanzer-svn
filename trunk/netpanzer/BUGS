@@ -2,9 +2,6 @@
 - in LinkListDoubleTemplate.addFront sometime is (front==0 && rear != 0)
     - Matze: I checked LinkListDoubleTemplate alot, the class seems to be
       correct. Most probably the memory corruption happens elsewhere
-- the lobby views disappears when you switch to options menu and back - party
-  fixed, after a connection error the lobby view still isn't visible anymore
-  - seems fixed
 - when the bot occupied an outpost and you occupy it back, then the build menu
   shows the panzer you built last, but the one choosen by the bot comes out the
   outpost
@@ -20,3 +17,5 @@
 - ranking isn't sorted by points (and AFAIR it was before)
 - ranking window is too small... if there are many players, only few first
   are visible.
+- it is reported that in timelimit mode games might end too early (ie. client
+  display 40/60 and game ends)
