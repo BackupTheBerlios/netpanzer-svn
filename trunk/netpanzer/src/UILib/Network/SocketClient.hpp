@@ -1,5 +1,5 @@
-#ifndef __CLIENT_HPP__
-#define __CLIENT_HPP__
+#ifndef __SOCKETCLIENT_HPP__
+#define __SOCKETCLIENT_HPP__
 
 #include <SDL_net.h>
 

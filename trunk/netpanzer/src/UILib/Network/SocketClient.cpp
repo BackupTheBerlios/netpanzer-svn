@@ -2,7 +2,7 @@
 
 #include <string.h>
 #include "ServerSocket.hpp"
-#include "Client.hpp"
+#include "SocketClient.hpp"
 
 Client::Client(ServerSocket* newserver)
         : tcpsocket(0), headerincomplete(false),

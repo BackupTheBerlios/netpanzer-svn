@@ -522,8 +522,8 @@ netpanzer_SOURCES = \
     NetPanzer/Views/MainMenu/Options/SoundView.hpp \
     NetPanzer/Views/MainMenu/Options/VisualsView.cpp \
     NetPanzer/Views/MainMenu/Options/VisualsView.hpp \
-    UILib/Network/Client.cpp \
-    UILib/Network/Client.hpp \
+    UILib/Network/SocketClient.cpp \
+    UILib/Network/SocketClient.hpp \
     UILib/Network/ClientList.cpp \
     UILib/Network/ClientList.hpp \
     UILib/Network/ClientSocket.cpp \
