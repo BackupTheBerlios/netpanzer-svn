@@ -1,6 +1,7 @@
 SubDir TOP docs ;
 
 InstallMan netpanzer.6 ;
+InstallMan netpanzerbrowser.6 ;
 
 if $(DOXYGEN) {
     actions DoxyGen
