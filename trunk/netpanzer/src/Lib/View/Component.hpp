@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Component_hpp__
 #define __Component_hpp__
 
-#include "Cursor.hpp"
 #include "Color.hpp"
 #include "Surface.hpp"
 #include "iXY.hpp"
@@ -37,7 +36,6 @@ protected:
 	iXY     size;
 	iXY     min;
 	Surface surface;
-	Cursor  cursor;
 	String  name;
 	bool    enabled;
 	bool    visible;
@@ -83,7 +81,6 @@ public:
 		r.min = min;
 		r.max = min + size;
 	}
-	inline const  Cursor  &getCursor() const { return cursor; }
 	inline        BYTE     getForeground() const { return foreground; }
 	inline        Surface  getGraphics() const { return surface; }
 	inline        String   getName() const { return name; }
@@ -101,7 +98,6 @@ public:
 		size = r.getSize();
 	}
 
-	void setCursor() {}
 	void setEnabled(bool enabled);
 	void setForeground(PIX foreground);
 	void setLocation(int x, int y);

@@ -199,19 +199,19 @@ void ProgressView::reset()
  }
 
 void ProgressView::open()
- {
-  if ( Desktop::getView("ProgressView")->getVisible() == false )
-   {
-    GameManager::setVideoMode(iXY(640, 480), false);
+{
+  	if ( Desktop::getView("ProgressView")->getVisible() == false )
+   	{
+	   	//GameManager::setVideoMode(iXY(640, 480), false);
 
-    GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
+		GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
-    GameManager::loadPalette("wads/netpmenu.act");
+		GameManager::loadPalette("wads/netpmenu.act");
 
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("ProgressView", true); 
-  }
- }
+		Desktop::setVisibilityAllWindows(false);
+		Desktop::setVisibility("ProgressView", true); 
+	}
+}
 
 
 //---------------------------------------------------------------------------
@@ -222,7 +222,7 @@ void ProgressView::close()
     reset();
     GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
-    GameManager::restorePreviousVideoMode();
+    //GameManager::restorePreviousVideoMode();
 	Desktop::checkViewPositions();
 
     GameManager::loadPalette("wads/netp.act");
@@ -240,7 +240,7 @@ void ProgressView::toggleGameView()
     backgroundSurface.free();
     GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
-    GameManager::restorePreviousVideoMode();
+    //GameManager::restorePreviousVideoMode();
 	Desktop::checkViewPositions();
 
 	// Set the palette to the game palette.

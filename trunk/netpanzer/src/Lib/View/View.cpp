@@ -513,11 +513,10 @@ void View::draw()
 {
 	assert(this != 0);
 
-	if (getVisible())
-	{
-		doDraw(getViewArea(), getClientArea());
-	}
+	if (!getVisible())
+		return;
 
+	doDraw(getViewArea(), getClientArea());
 } // end draw
 
 // activate
@@ -601,7 +600,6 @@ void View::doDraw(const Surface &viewArea, const Surface &clientArea)
 	}
 
 	//drawToolTip(clientArea);
-
 } // end View::doDraw
 
 // doActivate
@@ -626,7 +624,6 @@ void View::doActivate()
 			actionPerformed(me);
 		}
 	}
-
 } // end View::doActivate
 
 // doDeactivate
@@ -646,7 +643,6 @@ void View::doDeactivate()
 
 		actionPerformed(me);
 	}
-
 } // end View::doDeactivate
 
 // getMouseActions
@@ -1625,7 +1621,6 @@ void View::drawStatus(const Surface &dest)
 
 		s.bltString(pos, pos, statusText, Color::black);
 	}
-
 } // end View::drawStatus
 
 // findButtonContaining
@@ -1769,23 +1764,6 @@ void View::centerAbsolute()
 	max.y = min.y + oldSize.y;
 } // end centerAbsolute
 
-// DRAW TOOL TIP
-//---------------------------------------------------------------------------
-// Purpose: Draws a tool tip associated with the currently highlighted
-//          button.
-//---------------------------------------------------------------------------
-//void View::drawToolTip()
-//{
-//	if (highlightedButton < 0) return;
-//
-//	CHECK(strlen(buttons[highlightedButton].getToolTip()) < 80, "ERROR: Tool tip text too long.");
-//
-//	char strBuf[80];
-//	sprintf(strBuf, "%s", buttons[highlightedButton].getToolTip());
-//	bltString(screen, mouse.getScreenPos().x+1, mouse.getScreenPos().y-10+1, strBuf, Color::black);
-//	bltString(screen, mouse.getScreenPos().x, mouse.getScreenPos().y-10, strBuf, pal.cBLUE);
-//} // end DRAW TOOL TIP
-
 // RESIZE CLIENT AREA
 //---------------------------------------------------------------------------
 // Purpose: Resize the client area of the window.  The window area will be 
@@ -1819,7 +1797,6 @@ void View::resizeClientArea(const iXY &size)
 	}
 
 	resize(destSize);
-
 } // end View::resizeClientArea
 
 // RESIZE
@@ -1996,8 +1973,7 @@ void View::moveTo(iXY destMin)
 //---------------------------------------------------------------------------
 void View::toggleView()
 {
-  Desktop::toggleVisibility(searchName);
-
+	Desktop::toggleVisibility(searchName);
 } // end toggleView
 
 // setAllowResize

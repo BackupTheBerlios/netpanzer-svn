@@ -36,13 +36,6 @@ void addNewChatStringCallBack( const char *message_text )
 // Button functions.
 /////////////////////////////////////////////////////////////////////////////
 
-#if 0
-static void closeView()
-{
- Desktop::setVisibility("ChatView", false);
-}
-#endif
-
 static void sendMessageAllPlayers()
 {
  ChatInterface::setMessageScopeAll();

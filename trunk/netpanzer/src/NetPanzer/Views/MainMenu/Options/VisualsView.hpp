@@ -19,18 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __VisualsView_hpp__
 #define __VisualsView_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 #include "View.hpp"
 #include "OptionsTemplateView.hpp"
 #include "CheckBox.hpp"
 #include "Choice.hpp"
-#include "TitledBorder.hpp"
-
+#include "StateChangedCallback.hpp"
 
 /////////////////////////////////////////////////////////////////////////////
 // forward declarations
@@ -43,7 +36,7 @@ class Surface;
 /////////////////////////////////////////////////////////////////////////////
 
 //--------------------------------------------------------------------------
-class VisualsView : public OptionsTemplateView
+class VisualsView : public OptionsTemplateView, public StateChangedCallback
 {
 private:
 	int      selectedColorStartY;
@@ -51,14 +44,16 @@ private:
 	// Option check boxes.
 	CheckBox checkBoxDrawAllShadows;
 	CheckBox checkBoxBlendSmoke;
+	CheckBox checkBoxFullscreen;
 	//CheckBox drawUnitReload;
 
 	// Option choices.
-	//Choice   choiceResolution;
+	Choice   choiceResolution;
 	Choice   choiceGameViewBackgroundColor;
 	Choice   choiceMiniMapObjectiveDrawMode;
 	Choice   choiceMiniMapUnitSize;
 	Choice   choiceUnitSelectionDrawMode;
+	
 	//Choice   choiceUnitInfoDrawLayer;
 
 	// Color choices.
@@ -70,8 +65,6 @@ private:
 	Choice   choiceVehicleSelectionBox;
 	Choice   choiceConsoleText;
 
-	TitledBorder titledBorderColorSettings;
-
 	virtual void loadTitleSurface();
 
 public:
@@ -80,8 +73,7 @@ public:
 	virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
     virtual void processEvents();
 	virtual void initButtons();
-	virtual void actionPerformed(mMouseEvent me);
-
+	virtual void stateChanged(Component* source);
 }; // end VisualsView
 
 #endif // end __VisualsView_hpp__

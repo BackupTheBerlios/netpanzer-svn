@@ -15,18 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __SpecialButtonView_hpp__
 #define __SpecialButtonView_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 #include "RMouseHackView.hpp"
-
 
 //--------------------------------------------------------------------------
 class SpecialButtonView : public RMouseHackView
@@ -42,7 +34,6 @@ public:
 	SpecialButtonView() : RMouseHackView() {}
 	virtual void mouseMove(const iXY & prevPos, const iXY &newPos);
 	virtual void doActivate();
-
 }; // end SpecialButtonView
 
 #endif // end __SpecialButtonView_hpp__

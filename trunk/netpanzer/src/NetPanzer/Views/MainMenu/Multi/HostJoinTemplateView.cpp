@@ -36,13 +36,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Client.hpp"
 #include "Server.hpp"
 
-static int humveeCount         =  0;
-static int lightTankCount      =  0;
-static int mediumTankCount     =  0;
-static int heavyTankCount      =  0;
-static int missleLauncherCount =  0;
-static int selectionsRemaining = 10;
-
 char HostJoinTemplateView::gameTypeBuf[256];
 
 Surface playerColor;
@@ -55,41 +48,6 @@ int cOrange;
 /////////////////////////////////////////////////////////////////////////////
 // Button functions.
 /////////////////////////////////////////////////////////////////////////////
-
-static void bSetColorDarkBlue()
-{ 
-	// Set the ready flag to false.
-
-	playerColor.fill(cDarkBlue);
-}
-
-static void bSetColorLightBlue()
-{
-	// Set the ready flag to false.
-
-	playerColor.fill(cLightBlue);
-}
-
-static void bSetColorLightGreen()
-{
-	// Set the ready flag to false.
-
-	playerColor.fill(cLightGreen);
-}
-
-static void bSetColorRed()
-{
-	// Set the ready flag to false.
-
-	playerColor.fill(Color::red);
-}
-
-static void bSetColorOrange()
-{
-	// Set the ready flag to false.
-
-	playerColor.fill(cOrange);
-}
 
 static void bBack()
 {

@@ -29,7 +29,7 @@ using std::max;
 
 float     Desktop::totalMouseDownTime   = 0.0;
 float     Desktop::currentMouseDownTime = 0.0;
-View     *Desktop::top;
+std::vector<View*> Desktop::views;
 View     *Desktop::focus;
 int       Desktop::mouseActions;
 iXY       Desktop::lMouseDownPos;
@@ -58,7 +58,6 @@ int       Desktop::mouseMoveStatus = 0;
 //--------------------------------------------------------------------------
 Desktop::Desktop()
 {
-	top          = 0;
 	focus        = 0;
 	mouseActions = 0;
 	prevButton   = 0;
@@ -309,23 +308,6 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
     rMouseView = 0;
   }
 
-  //if (curButton & 2)
-  //{
-  //  // Set off that a right single click was made
-  //  mouseView = findViewContaining(mousePos);
-  //  mouseView->rMouseDown(mouseView->getScreenToClientPos(mousePos));
-  //} else
-  //  {
-  //    // The mouse button 2 is up.
-  //    mouseView = findViewContaining(mousePos);
-  //    mouseView->rMouseUp();
-  //  }
-
-	// Send a message to the top (active) window of the position 
-	// of the mouse.
-	//if (focus != 0)
-		//focus->mouseMove(focus->getScreenToClientPos(prevMousePos), focus->getScreenToClientPos(mousePos));
-
 	prevButton   = curButton;
 	prevMousePos = mousePos;
 
@@ -334,120 +316,6 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 	if (mouseView != 0 && effActions == 0) {
 		effActions = mouseView->getMouseActions(mousePos-mouseView->min);
 	}
-
-        //Surface *pointer = &mouseArrow;
-
-	//if (mouseView->status & View::STATUS_ALLOW_RESIZE && mouseView->status & View::STATUS_ACTIVE)
-	//{
-	//	switch (effActions)
-	//	{
-	//		case (View::MA_RESIZE_TOP   ): pointer = &mouseResizeUD; break;
-	//		case (View::MA_RESIZE_BOTTOM): pointer = &mouseResizeUD; break;
-	//		case (View::MA_RESIZE_LEFT  ): pointer = &mouseResizeLR; break;
-	//		case (View::MA_RESIZE_RIGHT ): pointer = &mouseResizeLR; break;
-
-	//		case (View::MA_RESIZE_TOP   +View::MA_RESIZE_RIGHT): pointer = &mouseResizeTR; break;
-	//		case (View::MA_RESIZE_TOP   +View::MA_RESIZE_LEFT ): pointer = &mouseResizeTL; break;
-	//		case (View::MA_RESIZE_BOTTOM+View::MA_RESIZE_LEFT ): pointer = &mouseResizeBL; break;
-	//		case (View::MA_RESIZE_BOTTOM+View::MA_RESIZE_RIGHT): pointer = &mouseResizeBR; break;
-	//	}
-//}
-
-/*	mouseMoveStatus = 0;
-
-	const int moveGapSpace = 1;
-	if      (mousePos.x < moveGapSpace)                mouseMoveStatus |= MM_LEFT;
-	else if (mousePos.x > SCREEN_XSIZE - moveGapSpace) mouseMoveStatus |= MM_RIGHT;
-  	if      (mousePos.y < moveGapSpace)                mouseMoveStatus |= MM_UP;
-  	else if (mousePos.y > SCREEN_YSIZE - moveGapSpace) mouseMoveStatus |= MM_DOWN;
-
-	switch(mouseMoveStatus)
-	{
-		// Check to see if the mouse if at the bounds of the world.
-		case (MM_LEFT  + MM_UP):   
-		{
-			if (mainViewMin.x <= 0 && mainViewMin.y <= 0)
-			{
-				pointer = &mouseMoveUpLeftStop; 
-			} else pointer = &mouseMoveUpLeft; 
-		} break;
-		case (MM_LEFT  + MM_DOWN):
-		{
-			if (mainViewMin.x <= 0 && 
-				mainViewMin.y + mainViewSize.y >= mapLayers.getTotalPix().y - 1)
-			{
-				pointer = &mouseMoveDownLeftStop; 
-			} else pointer = &mouseMoveDownLeft;
-		} break;
-		case (MM_RIGHT + MM_UP):
-		{
-			if (mainViewMin.x + mainViewSize.x >= mapLayers.getTotalPix().x - 1 && 
-				mainViewMin.y <= 0)
-			{
-				pointer = &mouseMoveUpRightStop; 
-			} else pointer = &mouseMoveUpRight;
-		} break;
-		case (MM_RIGHT + MM_DOWN):
-		{
-			if (mainViewMin.x + mainViewSize.x >= mapLayers.getTotalPix().x - 1 && 
-				mainViewMin.y + mainViewSize.y >= mapLayers.getTotalPix().y - 1)
-			{
-				pointer = &mouseMoveDownRightStop; 
-			} else pointer = &mouseMoveDownRight;
-		} break;
-		case (MM_LEFT):
-		{
-			if (mainViewMin.x <= 0)
-			{
-				pointer = &mouseMoveLeftStop;
-			}
-			else pointer = &mouseMoveLeft;
-		} break;
-		case (MM_RIGHT):
-		{
-			if (mainViewMin.x + mainViewSize.x >= mapLayers.getTotalPix().x - 1)
-			{
-				pointer = &mouseMoveRightStop;
-			}
-			else pointer = &mouseMoveRight;
-		} break;
-		case (MM_UP):
-		{
-			if (mainViewMin.y <= 0)
-			{
-				pointer = &mouseMoveUpStop;
-			}
-			else pointer = &mouseMoveUp;
-		} break;
-		case (MM_DOWN):
-		{
-			if (mainViewMin.y + mainViewSize.y >= mapLayers.getTotalPix().y - 1)
-			{
-				pointer = &mouseMoveDownStop;
-			}
-			else pointer = &mouseMoveDown;
-		} break;
-		default: break;
-	}
-*/	
-/*	if      (mousePos.x < moveGapSpace)
-	{ 
-		pointer = &mouseMoveLeft; mouse.setPointer(pointer);
-	}
-	else if (mousePos.y < moveGapSpace)
-	{ 
-		pointer = &mouseMoveUp; mouse.setPointer(pointer);
-	}
-	else if (mousePos.x > SCREEN_XSIZE - moveGapSpace)
-	{ 
-		pointer = &mouseMoveRight; mouse.setPointer(pointer);
-	}
-	else if (mousePos.y > SCREEN_YSIZE - moveGapSpace)
-	{ 
-		pointer = &mouseMoveDown; mouse.setPointer(pointer);
-	}
-*/
-	//mouse.setPointer(pointer);
 
     if (focus != 0)
     {
@@ -463,49 +331,22 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 //--------------------------------------------------------------------------
 void Desktop::draw()
 {
-	const size_t MAX_WINDOWS = 512;
-
-	size_t viewCount = 0;
-	View *list[MAX_WINDOWS];
-
-	for (View *w = top ; w != 0 ; w = w->next)
-	{
-		list[viewCount++] = w;
+	std::vector<View*>::reverse_iterator i;
+	for(i = views.rbegin(); i != views.rend(); i++) {
+		(*i)->draw();
 	}
-
-	for (int n = viewCount-1 ; n >= 0 ; --n)
-	{
-		//LOG(("Window Name: %s", list[n]->getTitle()));
-		list[n]->draw();
-	}
-
-	//if (mouseView != 0) mouseView->drawToolTip(screen);
 } // end draw
 
 // add
 //--------------------------------------------------------------------------
 // Purpose: Adds a new window to the end of the current window list.
 //--------------------------------------------------------------------------
-void Desktop::add(View *view, bool autoActivate /* = true */)
+void Desktop::add(View *view, bool autoActivate)
 {
-  assert(view != 0);
-
-	//printf("Initting Window: %s\n", view->getTitle());
-
-  // First remove it from the list if we already have it somehow
-  remove(view);
-
-	// Insert the guy at the end of the list, while checking that the window is
-  // not inserted before some window which should always remain on the bottom.
-  View **prevLink = &top;
-	while (*prevLink != 0 /*&& !((*prevLink)->status & View::STATUS_ALWAYS_ON_BOTTOM)*/)
-	  prevLink = &(*prevLink)->next;
-
-	*prevLink = view;
-  view->next = 0;
-
-	if (autoActivate) activate(view);
-
+	assert(view != 0);
+	views.push_back(view);
+	if (autoActivate)
+		activate(view);
 } // end add
 
 // activate
@@ -518,95 +359,39 @@ void Desktop::activate(View *view)
 
 	// If the top window equals the window to activate, then nothing needs to
 	// be done.
-	if (focus != view)
-	{
-		if (focus != 0)
-		{
+	if (focus != view) {
+		if (focus != 0)	{
 			focus->deactivate();
 		}
 
 		if (!(view->getAlwaysOnBottom()))
 		{
-			// Remove the new to be top window from the window list.
-			remove(view);
-
-			// Set the current top window to the second wyindow in the list.
-			view->next = top;
-
-			// Set the window to the top window.
-			top = view;
-
-			// Activate the new top window.
+			for(size_t i = 0; i<views.size(); i++) {
+				if(views[i] == view) {
+					for(size_t i2 = i; i2 >= 1; i2--)
+						views[i2] = views[i2-1];
+					views[0] = view;
+					break;
+				}
+			}		
 		}
 		focus = view;
 		view->activate();
 	}
 } // end activate
 
-// remove
-//---------------------------------------------------------------------------
-// Purpose:
-//---------------------------------------------------------------------------
-void Desktop::remove(View *view)
-{
-	View **prevLink = &top;
-
-	while (*prevLink != 0)
-	{
-		if (*prevLink == view)
-		{
-			*prevLink = view->next;
-			break;
-		}
-
-		prevLink = &(*prevLink)->next;
-	}
-} // end remove
-
 // findViewContaining
 //--------------------------------------------------------------------------
 View *Desktop::findViewContaining(iXY pos)
 {
-	for (View *view = top ; view != 0 ; view = view->next)
-	{
-		if (view->status & View::STATUS_VISIBLE)
-		if (view->contains(pos)) return view;
+	std::vector<View*>::iterator i;
+	for(i = views.begin(); i != views.end(); i++) {
+		if((*i)->status & View::STATUS_VISIBLE)
+		if((*i)->contains(pos))
+			return *i;
 	}
 	return 0;
 } // end findViewContaining
-
-// removeView
-//--------------------------------------------------------------------------
-// Purpose:
-//--------------------------------------------------------------------------
-bool Desktop::removeView(const char *searchName)
-{
-	for (View *view = top; view != 0; view = view->next)
-	{
-		if (strcmp(view->searchName, searchName) == 0)
-		{
-			remove(view);
-			return true;
-		}
-	}
-	return false;
-} // end removeView
-
-// removeAllViewAlwaysOnBottom
-//--------------------------------------------------------------------------
-// Purpose:
-//--------------------------------------------------------------------------
-void Desktop::removeAllViewAlwaysOnBottom()
-{
-	for (View *view = top; view != 0; view = view->next)
-	{
-		if (view->getAlwaysOnBottom())
-		{
-			remove(view);
-			//delete view;
-		}
-	}
-} // end removeAllViewAlwaysOnBottom
 
 // toggleVisibility
 //--------------------------------------------------------------------------
@@ -614,8 +399,9 @@ void Desktop::removeAllViewAlwaysOnBottom()
 //--------------------------------------------------------------------------
 void Desktop::toggleVisibility(const char *searchName)
 {
-	for (View *view = top; view != 0; view = view->next)
-	{
+	std::vector<View*>::iterator i;
+	for(i = views.begin(); i != views.end(); i++) {
+		View* view = *i;
 		if (strcmp(view->searchName, searchName) == 0)
 		{
 			view->status ^= View::STATUS_VISIBLE;
@@ -640,11 +426,11 @@ void Desktop::toggleVisibility(const char *searchName)
 //--------------------------------------------------------------------------
 void Desktop::checkViewPositions()
 {
-	for (View *view = top; view != 0; view = view->next)
-	{
+	std::vector<View*>::iterator i;
+	for(i = views.begin(); i != views.end(); i++) {
+		View* view = *i;
 		view->moveTo(view->min);
 	}
-
 } // end Desktop::checkViewPositions
 
 // toggleVisibilityNoDoAnything
@@ -654,8 +440,9 @@ void Desktop::checkViewPositions()
 //--------------------------------------------------------------------------
 void Desktop::toggleVisibilityNoDoAnything(const char *searchName)
 {
-	for (View *view = top; view != 0; view = view->next)
-	{
+	std::vector<View*>::iterator i;
+	for(i = views.begin(); i != views.end(); i++) {
+		View* view = *i;
 		if (strcmp(view->searchName, searchName) == 0)
 		{
 			view->status ^= View::STATUS_VISIBLE;
@@ -670,8 +457,9 @@ void Desktop::toggleVisibilityNoDoAnything(const char *searchName)
 //--------------------------------------------------------------------------
 void Desktop::setActiveView(const char *searchName)
 {
-	for (View *view = top; view != 0; view = view->next)
-	{
+	std::vector<View*>::iterator i;
+	for(i = views.begin(); i != views.end(); i++) {
+		View* view = *i;
 		if (strcmp(view->searchName, searchName) == 0)
 		{
 			// If the view is not active set the view active.
@@ -687,10 +475,12 @@ void Desktop::setActiveView(const char *searchName)
 } // end setActiveView
 
 //--------------------------------------------------------------------------
-void Desktop::setActiveView(View *view)
+void Desktop::setActiveView(View *v)
 {
-	for (View *v = top; v != 0; v = v->next)
-	{
+	std::vector<View*>::iterator i;
+	for(i = views.begin(); i != views.end(); i++) {
+		View* view = *i;                           	
+
 		if (v == view)
 		{
 			// If the view is not active set the view active.
@@ -701,21 +491,6 @@ void Desktop::setActiveView(View *view)
 	}
 
 }
-
-
-// getPointerStatus
-//--------------------------------------------------------------------------
-unsigned Desktop::getPointerStatus(int mouseX, int mouseY)
-{
-	iXY mouse(mouseX, mouseY);
-
-  View *mouseView = findViewContaining(mouse);
-  if (mouseView == 0) return 0;
-
-	// Only let the top window be resized
-  if (mouseView == top) return mouseView->getMouseActions(mouse);
-  else return 0;
-} // end getPointerStatus
 
 // doMouseActions
 //--------------------------------------------------------------------------
@@ -767,87 +542,14 @@ void Desktop::doMouseActions(const iXY &mousePos)
 
 } // end Desktop::doMouseActions
 
-// getTopViewTitle
-//--------------------------------------------------------------------------
-// Purpose: Returns the title of the top window.
-//--------------------------------------------------------------------------
-char *Desktop::getTopViewTitle()
-{
-	if (top != 0)
-	{
-		return top->title;
-	}
-	
-	return "noTitle";
-
-} // end getTopViewTitle
-
-// getMouseViewTitle
-//--------------------------------------------------------------------------
-// Purpose: Returns the title of the window which contains the mouse.
-//--------------------------------------------------------------------------
-char *Desktop::getMouseViewTitle()
-{
-	if (mouseView != 0)
-	{
-		return mouseView->title;
-	}
-	
-	return "noTitle";
-
-} // end getMouseViewTitle
-
-// getMouseViewStatus
-//--------------------------------------------------------------------------
-// Purpose: Returns the status of the window which contains the mouse.
-//--------------------------------------------------------------------------
-unsigned Desktop::getMouseViewStatus()
-{
-	if (mouseView != 0) return mouseView->status;
-	else return 0;
-} // end getMouseViewStatus
-
 // getViewCount
 //--------------------------------------------------------------------------
 // Purpose: Returns the number of windows in the window manager.
 //--------------------------------------------------------------------------
 int Desktop::getViewCount()
 {
-	const int MAX_WINDOWS = 512;
-
-	int viewCount = 0;
-	View *list[MAX_WINDOWS];
-
-	for (View *view = top ; view != 0 ; view = view->next)
-	{
-		if (viewCount > MAX_WINDOWS) assert(false);
-		list[viewCount++] = view;
-	}
-
-	return viewCount;
+	return views.size();
 } // end getViewCount
-
-// getViewTitle
-//--------------------------------------------------------------------------
-// Purpose: Returns the title of the specified window.
-//--------------------------------------------------------------------------
-const char *Desktop::getViewTitle(int winNum)
-{
-	assert(winNum < getViewCount());
-
-	View *w = top;
-
-	// Goes through the window list till we get the requested window.
-	for (int num = 0; num < winNum; num++)
-	{
-		assert(w != 0);
-		w = w->next;
-	}
-
-	// Returnthe requested windows title.
-	return w->title;
-
-} // end getViewTitle
 
 // getViewSearchName
 //--------------------------------------------------------------------------
@@ -857,18 +559,8 @@ const char *Desktop::getViewSearchName(int winNum)
 {
 	assert(winNum < getViewCount());
 
-	View *w = top;
-
-	// Goes through the window list till we get the requested window.
-	for (int num = 0; num < winNum; num++)
-	{
-		assert(w != 0);
-		w = w->next;
-	}
-
 	// Returnthe requested windows searchName.
-	return w->getSearchName();
-
+	return views[winNum]->searchName;
 } // end getViewSearchName
 
 // getViewStatus
@@ -877,8 +569,10 @@ const char *Desktop::getViewSearchName(int winNum)
 //--------------------------------------------------------------------------
 int Desktop::getViewStatus(const char *searchName)
 {
-	for (View *view = top; view != 0; view = view->next)
-	{
+	std::vector<View*>::iterator i;
+	for(i = views.begin(); i != views.end(); i++) {
+		View* view = *i;                           	
+
 		if (strcmp(view->searchName, searchName) == 0)
 		{
 			return view->status;
@@ -888,45 +582,16 @@ int Desktop::getViewStatus(const char *searchName)
 	return 0;
 } // end getViewStatus
 
-// closeView
-//--------------------------------------------------------------------------
-// Purpose: Closes the window of the specified name.
-//--------------------------------------------------------------------------
-bool Desktop::closeView(const char *searchName)
-{
-	const int MAX_WINDOWS = 512;
-
-	int   viewCount = 0;
-	View *list[MAX_WINDOWS];
-
-	for (View *w = top ; w != 0 ; w = w->next)
-	{
-		// Bounds checking.
-		if (viewCount > MAX_WINDOWS) assert(false);
-		
-		// If the window searchName is found, disable the windows visibility.
-		if (strcmp(w->searchName, searchName) == 0)
-		{
-			w->status &= ~View::STATUS_VISIBLE;
-			
-			return true;
-		}
-		
-		list[viewCount++] = w;
-	}
-
-	return false;
-
-} // end closeView
-
 // setVisibility
 //--------------------------------------------------------------------------
 // Purpose:
 //--------------------------------------------------------------------------
 void Desktop::setVisibility(const char *searchName, int isVisible)
 {
-	for (View *view = top; view != 0; view = view->next)
-	{
+	std::vector<View*>::iterator i;
+	for(i = views.begin(); i != views.end(); i++) {
+		View* view = *i;                           	
+	
 		if (strcmp(view->searchName, searchName) == 0)
 		{
 			if (isVisible)
@@ -951,8 +616,10 @@ void Desktop::setVisibility(const char *searchName, int isVisible)
 //--------------------------------------------------------------------------
 void Desktop::setVisibilityNoDoAnything(const char *searchName, int isVisible)
 {
-	for (View *view = top; view != 0; view = view->next)
-	{
+	std::vector<View*>::iterator i;
+	for(i = views.begin(); i != views.end(); i++) { 	
+		View* view = *i;                           	
+	
 		if (strcmp(view->searchName, searchName) == 0)
 		{
 			if (isVisible)

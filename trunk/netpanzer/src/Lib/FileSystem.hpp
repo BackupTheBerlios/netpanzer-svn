@@ -56,6 +56,8 @@ class ReadFile : public File
 public:
 	int64_t read(void* buffer, size_t objsize, size_t objcount);
 
+	int8_t read8();
+
 	int16_t readSLE16();
 	uint16_t readULE16();
 	int16_t readSBE16();
@@ -93,6 +95,8 @@ class WriteFile : public File
 {
 public:
 	int64_t write(const void* buffer, size_t objsize, size_t objcount);
+
+	void write8(int8_t val);
 
 	void writeSLE16(int16_t val);
 	void writeULE16(uint16_t val);

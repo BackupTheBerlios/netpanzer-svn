@@ -15,19 +15,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __TextComponent_hpp__
 #define __TextComponent_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 #include "Component.hpp"
 #include "String.hpp"
-
 
 //--------------------------------------------------------------------------
 class TextComponent : public Component
@@ -55,7 +47,6 @@ public:
 	void   setSelectionStart() {}
 	void   setSelectionEnd() {}
 	void   setText() {}
-
 }; // end TextComponent
 
 #endif // end __TextComponent_hpp__

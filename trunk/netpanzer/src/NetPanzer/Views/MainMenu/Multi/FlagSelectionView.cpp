@@ -39,7 +39,8 @@ FlagSelectionView::FlagSelectionView() : RMouseHackView()
 	setVisible(false);
 
 	// The thirty is to give more room to the map selectior view.
-	moveTo(bodyTextRect.min.x + bodyTextRect.getSizeX() / 2 + 10 + 30, bodyTextRect.min.y + 50);
+	moveTo(bodyTextRect.min.x + bodyTextRect.getSizeX() / 2 + 10 + 30,
+		   bodyTextRect.min.y + 50);
 
 	// Load the flag images.
 	//flags.loadAllBMPInDirectory("pics/flags/");

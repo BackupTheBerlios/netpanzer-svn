@@ -97,26 +97,6 @@ static void bHelp()
 	Desktop::setVisibility("HelpView", true);
 }
 
-// XXX never used
-#if 0
-static void bOrdering()
-{
-	if (Desktop::getVisible("GameView"))
-	{
-		Desktop::setVisibility("ControlsView", false);
-		Desktop::setVisibility("VisualsView", false);
-		Desktop::setVisibility("InterfaceView", false);
-		Desktop::setVisibility("SoundView", false);
-		Desktop::setVisibility("OptionsView", false);
-	} else
-	{
-		Desktop::setVisibilityAllWindows(false);
-	}
-
-	Desktop::setVisibility("OrderingView", true);
-}
-#endif
-
 static void bExit()
 {
 	GameManager::exitNetPanzer();
@@ -236,14 +216,11 @@ void MenuTemplateView::initInGameOptionButtons()
 //---------------------------------------------------------------------------
 void MenuTemplateView::initButtons()
 {
-	if (Desktop::getVisible("GameView"))
-	{
+	if (Desktop::getVisible("GameView")) {
 		initInGameOptionButtons();
-	} else
-	{
+	} else {
 		initPreGameOptionButtons();
 	}
-
 } // end MenuTemplateView::initButtons
 
 // doDraw

@@ -288,6 +288,14 @@ int ReadFile::RWOps_Close(SDL_RWops* context)
 	return 1;
 }
 
+int8_t ReadFile::read8()
+{
+	int8_t val;
+	if(PHYSFS_read(file, &val, 1, 1) != 1)
+		throw Exception("read error: %s", PHYSFS_getLastError());
+	return val;
+}
+
 int16_t ReadFile::readSLE16()
 {
 	int16_t val;
@@ -394,6 +402,12 @@ WriteFile::WriteFile(PHYSFS_file* file)
 int64_t WriteFile::write(const void* buffer, size_t objsize, size_t objcount)
 {
 	return PHYSFS_write(file, buffer, objsize, objcount);
+}
+
+void WriteFile::write8(int8_t val)
+{
+	if(PHYSFS_write(file, &val, 1, 1) != 1)
+		throw Exception("couldn't write: %s", PHYSFS_getLastError());
 }
 
 void WriteFile::writeSLE16(int16_t val)

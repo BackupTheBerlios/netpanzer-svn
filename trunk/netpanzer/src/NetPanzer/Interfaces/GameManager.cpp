@@ -43,7 +43,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Log.hpp"
 #include "MouseInterface.hpp"
 #include "KeyboardInterface.hpp"
-#include "KeyBinder.hpp"
 #include "KeyActionEnum.hpp"
 #include "DDHardSurface.hpp"
 #include "GameConfig.hpp"
@@ -70,6 +69,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PowerUpInterface.hpp"
 #include "ChatInterface.hpp"
 #include "Exception.hpp"
+#include "FileSystem.hpp"
 
 // ** GVS Includes
 #include "codewiz.hpp"
@@ -159,7 +159,7 @@ void GameManager::initializeVideoSubSystem()
 	
 	current_video_mode_res = iXY(640,480); 
 	// don't go fullscreen for now
-	setVideoMode(current_video_mode_res, false);
+	setVideoMode();
 	loadPalette("wads/netp.act");
 }
 
@@ -265,12 +265,28 @@ void GameManager::initializeWindowSubSystem()
 }
 
 // ******************************************************************
-void GameManager::setVideoMode(const iXY& mode_res, bool fullscreen)
+void GameManager::setVideoMode()
 {
-   	if(!Screen->isDisplayModeAvailable( mode_res.x, mode_res.y, 8 ))
-		throw Exception("desired Video mode not available.");
+	iXY mode_res;
+	bool fullscreen = GameConfig::getFullscreen();
+
+	int mode;
+	for(mode=GameConfig::getScreenResolution(); mode>=0; mode--) {
+		switch(mode) {
+			case 0: mode_res = iXY(640,480); break;
+			case 1: mode_res = iXY(800,600); break;
+			case 2: mode_res = iXY(1024,768); break;
+			case 3: mode_res = iXY(1280, 1024); break;
+		}
+	
+		if(Screen->isDisplayModeAvailable( mode_res.x, mode_res.y, 8 )) {
+			GameConfig::setScreenResolution(mode);
+			break;
+		}
+	}
+	if(mode<0)
+		throw Exception("couldn't find a usable video mode");
 		
-	previous_video_mode_res = current_video_mode_res;
 	current_video_mode_res = mode_res;
 
 	if (!Screen->setVideoMode(current_video_mode_res.x,
@@ -280,15 +296,17 @@ void GameManager::setVideoMode(const iXY& mode_res, bool fullscreen)
 	WorldViewInterface::setCameraSize( current_video_mode_res.x, current_video_mode_res.y );
 	FRAME_BUFFER.create(current_video_mode_res.x, current_video_mode_res.y, current_video_mode_res.x, 1 );
 	screen.createNoAlloc(current_video_mode_res);   
-	gameView.setSize( current_video_mode_res );
+	gameView.setSize(current_video_mode_res);
+
+	Desktop::checkViewPositions();
+	//ConsoleInterface::setToSurfaceSize( current_video_mode_res );
+
+	// reset palette
+	Palette pal;
+	Screen->setPalette(pal.color);
 }
 
 // ******************************************************************
-
-void GameManager::restorePreviousVideoMode()
-{
-  	setVideoMode(previous_video_mode_res, Screen->isFullScreen());
-}
 
 void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
  {
@@ -303,6 +321,7 @@ void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
 
 // ******************************************************************
 
+#if 0
 void GameManager::increaseDisplayResolution()
 {
   	iXY new_mode;
@@ -335,7 +354,7 @@ void GameManager::increaseDisplayResolution()
 // ******************************************************************
 
 void GameManager::decreaseDisplayResolution()
- {
+{
   iXY new_mode;
   
   drawTextCenteredOnScreen("Changing Resolution", Color::white);
@@ -362,6 +381,7 @@ void GameManager::decreaseDisplayResolution()
 
   ConsoleInterface::postMessage( "Screen Resolution :  %d  x  %d", current_video_mode_res.x, current_video_mode_res.y );
 }
+#endif
 
 // ******************************************************************
 
@@ -421,7 +441,6 @@ void GameManager::shutdownInputDevices()
 // ******************************************************************
 void GameManager::initializeGameObjects()
 {
-  	GameConfig::initialize();
 	MapsManager::initialize();
 	MapsManager::scanMaps();
   
@@ -533,24 +552,15 @@ void GameManager::shutdownParticleSystems()
 
 void GameManager::setupKeyboardBindings()
 {
-  	KeyBinder::staticInitialize();
-	KEY_BINDER.initialize( 256 );
-  
-	KEY_BINDER.bindAction( _action_mini_map, "MiniMapView", SDLK_F8 );
-	KEY_BINDER.lockKey( SDLK_F8 );
-
-	// UNSUPPORTED VIEW 
-	KEY_BINDER.bindAction( _action_chat_view, "ChatView", SDLK_F7 );
-	KEY_BINDER.lockKey( SDLK_F7 );
-
+#if 0
 	KEY_BINDER.bindAction( _action_rank_view, "RankView", SDLK_F6 );
-	KEY_BINDER.lockKey( SDLK_F6 );
+	KEY_BINDER.bindAction( _action_chat_view, "ChatView", SDLK_F7 );
+	KEY_BINDER.bindAction( _action_mini_map, "MiniMapView", SDLK_F8 );
+#endif
 }
 
 void GameManager::processSystemKeys()
 {
-	int scan_code;
-
 	if (Desktop::getVisible("GameView"))
 	{
 		
@@ -565,14 +575,11 @@ void GameManager::processSystemKeys()
 			Desktop::toggleVisibility( "UnitColorView" );    
 		} 
 
-#if 0 // XXX need another key here, TILDE is not good, because on some keybaords
-      // (german ones) it's a composed char)
 		// Toggle unit damage bars.
-		if (KeyboardInterface::getKeyPressed(SDLK_TILDE))
+		if (KeyboardInterface::getKeyPressed(SDLK_d))
 		{
 			GameConfig::toggleDrawUnitDamage();
 		} 
-#endif
 
 		// Remove all selection.
 		if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE))
@@ -628,87 +635,38 @@ void GameManager::processSystemKeys()
 
 	if (Desktop::getView("GameView")->getVisible())
 	{
-		scan_code = KEY_BINDER.getActionKey( _action_mini_map );
-
-		if (KeyboardInterface::getKeyPressed( scan_code ))
+		if (KeyboardInterface::getKeyPressed(SDLK_F8))
 		{
 			Desktop::toggleVisibility( "MiniMapView" );
 		}
-
-		scan_code = KEY_BINDER.getActionKey( _action_chat_view );
-
-		if (KeyboardInterface::getKeyPressed( scan_code ))
+		if (KeyboardInterface::getKeyPressed(SDLK_F7))
 		{
 			Desktop::toggleVisibility( "ChatView" );
 		}
-
-		scan_code = KEY_BINDER.getActionKey( _action_rank_view );
-
-		if (KeyboardInterface::getKeyPressed( scan_code ))
+		if (KeyboardInterface::getKeyPressed(SDLK_F6))
 		{
 			Desktop::toggleVisibility( "RankView" );
 		} 
-
-        if (KeyboardInterface::getKeyPressed( SDLK_F3 ))
+        if (KeyboardInterface::getKeyPressed(SDLK_F3))
 		{
 			Desktop::toggleVisibility( "DesktopView" );    
 		} 
-
-		if (KeyboardInterface::getKeyPressed( SDLK_TAB ))
+		if (KeyboardInterface::getKeyPressed(SDLK_TAB))
 		{
 			Desktop::toggleVisibility( "GameToolbarView" );    
 		} 
-
-		
-        if (KeyboardInterface::getKeyPressed( SDLK_F4 ))
+        if (KeyboardInterface::getKeyPressed(SDLK_F4))
 		{
 			Desktop::toggleVisibility( "CodeStatsView" );    
 		} 
-        
         if (KeyboardInterface::getKeyPressed(SDLK_F1))
 		{
 			Desktop::toggleVisibility( "HelpScrollView" );    
 		}
 
-		if (	KeyboardInterface::getKeyState( SDLK_LALT ) ||
-				KeyboardInterface::getKeyState( SDLK_RALT ))
-		{
-
-			if (KeyboardInterface::getKeyPressed( SDLK_KP_PLUS ) == true)
-			{
-				if (Desktop::getView("MainView")->getVisible() == false) 
-				{
-					increaseDisplayResolution();
-				}
-			}
-
-			if (KeyboardInterface::getKeyPressed( SDLK_KP_MINUS ) == true)
-			{
-				if (Desktop::getView("MainView")->getVisible() == false) 
-				{
-					decreaseDisplayResolution();
-				}  
-			}
-
-			if (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true)
-			{
-				setVideoMode(current_video_mode_res, !Screen->isFullScreen());
-
-				// TODO: put all this video mode change stuff in an own function
-			   	WorldViewInterface::setCameraSize( current_video_mode_res.x, current_video_mode_res.y );
-				FRAME_BUFFER.create(current_video_mode_res.x, current_video_mode_res.y, current_video_mode_res.x, 1 );
-				screen.createNoAlloc(current_video_mode_res);   
-				gameView.setSize( current_video_mode_res );
-				Desktop::checkViewPositions();
-				ConsoleInterface::setToSurfaceSize( current_video_mode_res );    
-			   	loadPalette("wads/netp.act"); 
-				ConsoleInterface::postMessage("Fullscreen : %s",
-						Screen->isFullScreen() ? "yes" : "no" );
-			}
-		}
-
 		if (KeyboardInterface::getKeyPressed(SDLK_F2))
 		{
+			printf("ShowMenu!\n");
 			if (Desktop::getView("GameView")->getVisible())
 			{
 				if (!Desktop::getView("OptionsView")->getVisible() &&
@@ -718,98 +676,61 @@ void GameManager::processSystemKeys()
 					!Desktop::getView("VisualsView")->getVisible())
 				{
 					View *v = Desktop::getView("OptionsView");
-					
-					if (v != 0)
-					{
-						((OptionsTemplateView *)v)->initButtons();
-						((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
-					} else
-					{
-						assert(false);
-					}
+					assert(v != 0);
+					((OptionsTemplateView *)v)->initButtons();
+					((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
 
 					v = Desktop::getView("SoundView");
-					if (v != 0)
-					{
-						((SoundView *)v)->initButtons();
-						((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
-					} else
-					{
-						assert(false);
-					}
+					assert(v != 0);
+					((SoundView *)v)->initButtons();
+					((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
 
 					v = Desktop::getView("ControlsView");
-					if (v != 0)
-					{
-						((ControlsView *)v)->initButtons();
-						((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
-					} else
-					{
-						assert(false);
-					}
+					assert(v != 0);
+					((ControlsView *)v)->initButtons();
+					((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
 
 					v = Desktop::getView("VisualsView");
-					if (v != 0)
-					{
-						((VisualsView *)v)->initButtons();
-						((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
-					} else
-					{
-						assert(false);
-					}
+					assert(v != 0);
+					((VisualsView *)v)->initButtons();
+					((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
 
 					v = Desktop::getView("InterfaceView");
-					if (v != 0)
-					{
-						((InterfaceView *)v)->initButtons();
-						((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
-					} else
-					{
-						assert(false);
-					}
+					assert(v != 0);
+					((InterfaceView *)v)->initButtons();
+					((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
 
 					Desktop::setVisibility("OptionsView", true);
 					Desktop::setActiveView("OptionsView");
-				} else
-				{
+				} else {
 					View *v = Desktop::getView("OptionsView");
-					if (v != 0)
-					{
-						((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-						((OptionsTemplateView *)v)->setVisible(false);
-					}
+					assert(v != 0);
+					((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
+					((OptionsTemplateView *)v)->setVisible(false);
 						
 					v = Desktop::getView("InterfaceView");
-					if (v != 0)
-					{
-						((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-						((OptionsTemplateView *)v)->setVisible(false);
-					}
+					assert(v != 0);
+					((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
+					((OptionsTemplateView *)v)->setVisible(false);
 					
 					v = Desktop::getView("VisualsView");
-					if (v != 0)
-					{
-						((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-						((OptionsTemplateView *)v)->setVisible(false);
-					}
+					assert(v != 0);
+					((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
+					((OptionsTemplateView *)v)->setVisible(false);
 					
 					v = Desktop::getView("SoundView");
-					if (v != 0)
-					{
-						((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-						((OptionsTemplateView *)v)->setVisible(false);
-					}
+					assert(v != 0);
+					((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
+					((OptionsTemplateView *)v)->setVisible(false);
 					
 					v = Desktop::getView("ControlsView");
-					if (v != 0)
-					{
-						((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-						((OptionsTemplateView *)v)->setVisible(false);
-					}
+					assert(v != 0);
+					((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
+					((OptionsTemplateView *)v)->setVisible(false);
 				}
 			}
 		}
-	} // ** if (Desktop::getView("GameView")->getVisible())
+	}
 }	
 
 
@@ -822,7 +743,6 @@ bool GameManager::loadGameData()
   if(UNIT_FLAGS_SURFACE.getFrameCount() == 0)
 	  throw Exception("Couldn't find any flag in pics/flags/.");
   
-  GameConfig::loadConfigScript();
   return true; 
  }
 
@@ -834,8 +754,6 @@ void GameManager::dedicatedLoadGameData()
 	UNIT_FLAGS_SURFACE.loadAllBMPInDirectory("pics/flags/");
 	if(UNIT_FLAGS_SURFACE.getFrameCount() == 0)
 		throw Exception("Couldn't find any flag in pics/flags/.");
-
-	GameConfig::loadConfigScript();
 }
 
 // ******************************************************************
@@ -936,6 +854,9 @@ void GameManager::initialize(bool dedicated)
 void GameManager::bootStrap()
 {
 	try {
+		if(!FileSystem::exists("config"))
+			FileSystem::mkdir("config");
+		GameConfig::initialize("config/netpanzer.cfg");
 		initializeSoundSubSystem();
 		initializeVideoSubSystem();
 		loadGameData();
@@ -955,6 +876,9 @@ void GameManager::bootStrap()
 void GameManager::dedicatedBootStrap()
 {
 	try {
+		if(!FileSystem::exists("config"))
+			FileSystem::mkdir("config"); 		
+		GameConfig::initialize("config/netpanzer-dedicated.cfg");
 		initializeSoundSubSystem(); // we load a dummy sound driver
 		dedicatedLoadGameData();
 		initializeGameObjects();
@@ -985,6 +909,7 @@ void GameManager::shutdownSubSystems()
 	shutdownSoundSubSystem();
 	shutdownVideoSubSystem();
 	shutdownInputDevices();
+	GameConfig::shutdown();
 }
 
 void GameManager::dedicatedShutdown()
@@ -993,6 +918,7 @@ void GameManager::dedicatedShutdown()
 	shutdownNetworkSubSystem();
 	shutdownInputDevices();
 	shutdownDedicatedConsole();
+	GameManager::shutdown();
 }
 
 // ******************************************************************

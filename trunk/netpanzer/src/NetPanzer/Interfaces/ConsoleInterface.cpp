@@ -80,7 +80,7 @@ void ConsoleInterface::initialize( long size )
  }
 
 void ConsoleInterface::setToSurfaceSize( iXY pix )
- {
+{
   surface_size = pix;
   
   bounds.min.x = 5;
@@ -88,7 +88,7 @@ void ConsoleInterface::setToSurfaceSize( iXY pix )
   bounds.max = pix - 5; 
   
   max_char_per_line = (bounds.max.x - bounds.min.x) / CHAR_XPIX; 
- }
+}
 
 void ConsoleInterface::openLogFile( void )
  {

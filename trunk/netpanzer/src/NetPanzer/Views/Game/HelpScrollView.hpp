@@ -19,19 +19,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __HelpScrollView_hpp__
 #define __HelpScrollView_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 #include "SpecialButtonView.hpp"
 #include "Surface.hpp"
 #include "ScrollBar.hpp"
 #include "String.hpp"
 #include "cGrowList.hpp"
 #include "Button.hpp"
-
 
 //---------------------------------------------------------------------------
 class HelpScrollView : public SpecialButtonView
@@ -66,7 +59,6 @@ public:
 	virtual void processEvents();
 	virtual void actionPerformed(mMouseEvent me);
 	virtual void doActivate();
-
 }; // end HelpScrollView
 
 #endif // end __HelpScrollView_hpp__

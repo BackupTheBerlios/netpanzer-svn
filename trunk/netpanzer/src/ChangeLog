@@ -1,3 +1,12 @@
+16-Sep-2003 by Matthias Braun
+-randomly fixed stuff in the very ugly libview code (also removed several unused
+ files there)
+-added a statechangedcallback to Choice and CheckBox components
+-added the NoCopy class for cases where you want to forbid
+ assignment and copy-construction
+-Started save/loading capabilities for GameConfig
+-added a resolution and fullscreen setting to the Visual Options
+
 16-Sep-2003 by Ivo Danihelka
 -Alt+Enter don't start chat now
 -'d' display damage

@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <assert.h>
 #include <string.h>
+#include <string>
 
 #include "Surface.hpp"
 #include "Color.hpp"
@@ -129,18 +130,21 @@ const float _GAME_CONFIG_SCREEN_BRIGHTNESS_LIMIT_LOWER =  0.0f;
 #define _GAME_CONFIG_ATTACK_NOTIFICATION_TIME_LIMIT_UPPER 30
 #define _GAME_CONFIG_ATTACK_NOTIFICATION_TIME_LIMIT_LOWER  2
 
+// Remember to change this, when the config changes!
+#define CONFIG_VERSION		000001
 
 class GameConfig
 {
-  protected:
-   static char    UnitColor;
-   static char    GameMode;               //Skirmish or Multiplayer
-   static char    GameType;               //Objectives, FragLimit, TimeLimit
-   static char    HostOrJoin;             //1=host, 2=join 
-   static char    VehicleGeneration;
-   static short   NumberPlayers;          //max = 25;
-   static short   NumberUnits;            //max = 50;
-   static short   NumberInitialUnits;     //max = 50; 
+protected:
+	static std::string configfile;
+	static char    UnitColor;
+	static char    GameMode;               //Skirmish or Multiplayer
+	static char    GameType;               //Objectives, FragLimit, TimeLimit
+	static char    HostOrJoin;             //1=host, 2=join 
+	static char    VehicleGeneration;
+	static short   NumberPlayers;          //max = 25;
+	static short   NumberUnits;            //max = 50;
+	static short   NumberInitialUnits;     //max = 50; 
 
    static char    PlayerName[64];
 
@@ -163,7 +167,8 @@ class GameConfig
    static char         game_map_name[256];
 
    // ** Visuals Configuration **
-   static unsigned int  screen_resolution_enum;
+   static unsigned int  screen_resolution;
+   static bool screen_fullscreen;
 
    static bool display_shadows_flag;
    static bool display_unit_flags;
@@ -195,17 +200,8 @@ class GameConfig
 
    static float screen_brightness; // [-1.0 ... 1.0]
   
-   
-   // ** Input Configuration **
-   static bool input_joystick_state; 
-   
-   // ** Sound Configuration **
-   static bool sound_on_off_flag;
-   static int	  sound_volume;
-  
-  protected:
-   
-    static inline PIX colorEnumToPix( int color_enum )
+protected:
+   static inline PIX colorEnumToPix( int color_enum )
      {
       switch( color_enum )
        {
@@ -231,10 +227,14 @@ class GameConfig
 	  return( Color::white );
      }
 
-  public:
+	static void loadConfig();
+	static void saveConfig();
+
+public:
 	static PlayerUnitConfig unit_spawn_config;
 
-    static void initialize( void );
+    static void initialize(const char* configfile);
+	static void shutdown();
 
 	static inline void SetUnitColor(char unit_color)
 	{	UnitColor = unit_color;}
@@ -861,120 +861,25 @@ class GameConfig
 	static inline bool getDisplayUnitFlags( void )
 	 { return( display_unit_flags ); }
 
-   // ** Input Configuration Methods **
+	static void setScreenResolution(int newres)
+	{
+		screen_resolution = newres;
+	}
 
-    static inline void setJoystickState( bool on_off )
-	 { input_joystick_state = on_off; }
+	static int getScreenResolution()
+	{
+		return screen_resolution;
+	}
 
-	static inline bool getJoystickState( void )
-	 { return( input_joystick_state ); }
+	static void setFullscreen(bool fullscreen)
+	{
+		screen_fullscreen = fullscreen;
+	}
 
-	static inline char * getJoystickStateString( void )
-	 { 
-	   if ( input_joystick_state == true )
-	    { return( "On" );  }
-	   else
-	    { return( "Off" ); }	
-	 }
-	
-
-   // ** Sound Configuration Methods **
-
-    static inline void setSoundState( bool on_off )
-	 { sound_on_off_flag = on_off; }
-
-	static inline bool getSoundState( void )
-	 { return( sound_on_off_flag ); }
-
-	static inline char * getSoundStateString( void )
-	 { 
-	   if ( sound_on_off_flag == true )
-	    { return( "On" );  }
-	   else
-	    { return( "Off" ); }	
-	 }
-
-  //*********************************************************** 
-	static inline int getSoundVolume( void )
-	 {
-	  return( sound_volume );
-	 } 
-
-    static inline void setSoundVolume( int volume )
-	 {
-	  if ( volume < _GAME_CONFIG_SOUND_VOLUME_LIMIT_LOWER )
-	   { sound_volume = _GAME_CONFIG_SOUND_VOLUME_LIMIT_LOWER; }
-	  else
-	   if ( volume > _GAME_CONFIG_SOUND_VOLUME_LIMIT_UPPER )
-	    { sound_volume = _GAME_CONFIG_SOUND_VOLUME_LIMIT_UPPER; }	 
-	   else
-	    { sound_volume = volume; }
-	 }
-
-	static inline int getSoundVolumeBoundsUpper( void )
-	 { return( _GAME_CONFIG_SOUND_VOLUME_LIMIT_UPPER); }
-
-	static inline int getSoundVolumeBoundsLower( void )
-	 { return(_GAME_CONFIG_SOUND_VOLUME_LIMIT_UPPER); }
-
-
-	static inline void setGameScreenResolution( unsigned int game_res_enum )
-	 {
-	  if ( (game_res_enum >= 0) && (game_res_enum <= _game_config_standard_res_max) )
-	   {
-		screen_resolution_enum = game_res_enum;
-	   }
-	 }
-
-    static inline void setNextGameScreenResolution(	void )
-	 {
-	  screen_resolution_enum = (screen_resolution_enum + 1) % _game_config_standard_res_max;
-	 }
-
-    static inline void setPreviousGameScreenResolution(	void )
-	 {
-	  screen_resolution_enum = (screen_resolution_enum - 1) % _game_config_standard_res_max;
-	 }
-
-	static inline char * getGameScreenResolutionString( void )
-	 {
-	  switch(screen_resolution_enum)
-	   {
-	   	case _game_config_standard_res_640x480 :
-		 return( "640x480" );
-		break;
-
-		case _game_config_standard_res_800x600 :
-		 return( "800x600" );
-		break;
-
-		case _game_config_standard_res_1024x768 :
-		 return( "1024x768" );		
-		break;
-	   } 
-	 
-	  return( "Invalid Mode" );
-	 }
-
-	static inline iXY getGameScreenResolutionSize( void )
-	 {
-	  switch(screen_resolution_enum)
-	   {
-	   	case _game_config_standard_res_640x480 :
-		 return( iXY( 640, 480) );
-		break;
-
-		case _game_config_standard_res_800x600 :
-		 return( iXY( 800, 600) );
-		break;
-
-		case _game_config_standard_res_1024x768 :
-		 return( iXY(1024, 768) );		
-		break;
-	   } 
-	 
-      return( iXY( 640, 480) );
-	 }
+	static bool getFullscreen()
+	{
+		return screen_fullscreen;
+	}
 
    //*********************************************************** 
 	 static inline void increaseAttackNotificationTime()
@@ -1170,8 +1075,6 @@ class GameConfig
 	   else if ( unitInfoDrawLayer == 7 ) { return( "Top" ); }
 	   return "Undefined value";
 	 }
-  
-  static void loadConfigScript( void );
 };
 
 #endif // ** __GAMECONFIG_HPP

@@ -60,7 +60,7 @@ static void bReturnToMainMenu()
 	//----------------------
 
 	// Swap to the menu resolution.
-	GameManager::setVideoMode(iXY(640, 480), false);
+	//GameManager::setVideoMode(iXY(640, 480), false);
 
 	GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
 
@@ -223,7 +223,6 @@ void WinnerMesgView::doDraw(const Surface &viewArea, const Surface &clientArea)
 	const unsigned MAX_KILLS_CHARS  =  9;
 	const unsigned MAX_LOSSES_CHARS =  10;
 	const unsigned MAX_POINTS_CHARS =  10;
-	const unsigned MAX_OBJECTIVE_CHARS = 13;
 
     for (int i = 0; i < numPlayers; i++)
 	{

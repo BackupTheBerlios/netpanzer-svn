@@ -179,12 +179,8 @@ public:
 
 	static void processSystemMessage( NetMessage *message );
 
-	static void setVideoMode(const iXY& newmode, bool fullscreen);
-	static void	restorePreviousVideoMode();
+	static void setVideoMode();
    
-	static void increaseDisplayResolution();
-	static void decreaseDisplayResolution();
-
 	static void loadPalette( char *palette_path );
 
 	static void drawTextCenteredOnScreen(const char *string, unsigned char color);

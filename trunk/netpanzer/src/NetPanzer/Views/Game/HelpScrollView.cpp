@@ -167,7 +167,6 @@ void HelpScrollView::doDraw(const Surface &viewArea, const Surface &clientArea)
 	//clientArea.bltStringCenter(strBuf, Color::red);
 
 	View::doDraw(viewArea, clientArea);
-
 } // end HelpScrollView::doDraw
 
 // drawHelpText
@@ -186,12 +185,12 @@ void HelpScrollView::drawHelpText(const Surface &dest, const int &x, const int &
 	//		maxView = scrollBar->getMaximum();
 	//	}
 	//
-		int curIndex = 0;
-		for (int i = topViewableItem; i < topViewableItem + maxViewableItems; i++)
-		{
-			dest.bltString(1, 6 + curIndex * (TEXT_GAP_SPACE + CHAR_YPIX), text[i], color);
-			curIndex++;
-		}
+	int curIndex = 0;
+	for (int i = topViewableItem; i < topViewableItem + maxViewableItems; i++)
+	{
+		dest.bltString(1, 6 + curIndex * (TEXT_GAP_SPACE + CHAR_YPIX), text[i], color);
+		curIndex++;
+	}
 	//}
 
 } // end HelpScrollView::drawHelpText

@@ -16,86 +16,83 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
+#include "FileSystem.hpp"
+#include "Log.hpp"
+#include "Exception.hpp"
 #include "GameConfig.hpp"
 
-//#include "lua.h"
-//#include "lualib.h"
+std::string GameConfig::configfile;
+char  GameConfig::UnitColor;
+char  GameConfig::GameMode;                 //Skirmish or Multiplayer
+char  GameConfig::GameType;                 //Objectives, FragLimit, TimeLimit
+char  GameConfig::HostOrJoin;               // 1=host, 2=join 
+char  GameConfig::VehicleGeneration;
+short GameConfig::NumberPlayers      = 8;   //max = 25;
+short GameConfig::NumberUnits        = 500; //max = 50;
+short GameConfig::NumberInitialUnits = 5;
 
-  char  GameConfig::UnitColor;
-  char  GameConfig::GameMode;                 //Skirmish or Multiplayer
-  char  GameConfig::GameType;                 //Objectives, FragLimit, TimeLimit
-  char  GameConfig::HostOrJoin;               // 1=host, 2=join 
-  char  GameConfig::VehicleGeneration;
-  short GameConfig::NumberPlayers      = 8;   //max = 25;
-  short GameConfig::NumberUnits        = 500; //max = 50;
-  short GameConfig::NumberInitialUnits = 5;
-  
-  char  GameConfig::PlayerName[64];
+char  GameConfig::PlayerName[64];
 
-  short GameConfig::PlayerFlag;
+short GameConfig::PlayerFlag;
 
-  int   GameConfig::NetworkConnectionType = _connection_tcpip;
-  int   GameConfig::TimeLimit = 50;          //in minutes
-  int   GameConfig::FragLimit = 1000;        //in frags;
+int   GameConfig::NetworkConnectionType = _connection_tcpip;
+int   GameConfig::TimeLimit = 50;          //in minutes
+int   GameConfig::FragLimit = 1000;        //in frags;
 
-  bool      GameConfig::map_cycling_on_off = false;
-  bool      GameConfig::powerups_on_off = false;
+bool      GameConfig::map_cycling_on_off = false;
+bool      GameConfig::powerups_on_off = false;
 
-  float        GameConfig::objective_occupation_percentage = 100.0;
-  bool      GameConfig::allow_allies_on_off = true;
-  int          GameConfig::cloud_coverage;
-  float        GameConfig::wind_speed;
-  unsigned int GameConfig::respawn_type = _game_config_respawn_type_round_robin;
+float        GameConfig::objective_occupation_percentage = 100.0;
+bool      GameConfig::allow_allies_on_off = true;
+int          GameConfig::cloud_coverage;
+float        GameConfig::wind_speed;
+unsigned int GameConfig::respawn_type = _game_config_respawn_type_round_robin;
 
-  char    GameConfig::game_map_name[256];
+char    GameConfig::game_map_name[256];
 
-   // ** Visuals Configuration **
-   unsigned int GameConfig::screen_resolution_enum = _game_config_standard_res_640x480;
-   
-   bool GameConfig::display_shadows_flag = true;
-   bool GameConfig::display_unit_flags = false;
-  
-   bool GameConfig::radar_display_clouds_flag = false;
+// ** Visuals Configuration **
+unsigned int GameConfig::screen_resolution = 0;
+bool GameConfig::screen_fullscreen = true;
 
-   int     GameConfig::radar_player_unit_color = _color_aqua;
-   int     GameConfig::radar_allied_unit_color = _color_orange;
-   int     GameConfig::radar_player_outpost_color = _color_blue;
-   int     GameConfig::radar_allied_outpost_color = _color_orange;
-   int     GameConfig::radar_enemy_outpost_color = _color_red;
-   int     GameConfig::vehicle_selection_box_color = _color_blue;
-   int     GameConfig::console_text_color = _color_white;
-   
-   int     GameConfig::mini_map_unit_size = _mini_map_unit_size_small;
-   int     GameConfig::unit_selection_box_draw_mode = _unit_selection_box_draw_mode_rect_edges;
-   bool GameConfig::draw_unit_damage = false;
-   bool GameConfig::draw_unit_reload = true;
-   int     GameConfig::mini_map_objective_draw_mode = _mini_map_objective_draw_mode_outline_rect;
-   int     GameConfig::unitInfoDrawLayer = 0;
+bool GameConfig::display_shadows_flag = true;
+bool GameConfig::display_unit_flags = false;
 
-   float   GameConfig::console_test_delay = 10.0;   // in seconds
-   int	   GameConfig::console_text_usage = 25;   	// in lines
+bool GameConfig::radar_display_clouds_flag = false;
 
-   int     GameConfig::screen_gamma = 50;       // 0..100
-   float   GameConfig::screen_brightness = 1.0f;  // 0..100
+int     GameConfig::radar_player_unit_color = _color_aqua;
+int     GameConfig::radar_allied_unit_color = _color_orange;
+int     GameConfig::radar_player_outpost_color = _color_blue;
+int     GameConfig::radar_allied_outpost_color = _color_orange;
+int     GameConfig::radar_enemy_outpost_color = _color_red;
+int     GameConfig::vehicle_selection_box_color = _color_blue;
+int     GameConfig::console_text_color = _color_white;
 
-   float   GameConfig::scroll_rate = 1000;            // in pixels/s   
-   int     GameConfig::mini_map_resize_rate = 400;   // in pixels/s
-     
-   // ** Input Configuration **
-   bool GameConfig::input_joystick_state = false; 
-   
-   // ** Sound Configuration **
-   bool GameConfig::sound_on_off_flag = true;
-   int	   GameConfig::sound_volume = 50;
+int     GameConfig::mini_map_unit_size = _mini_map_unit_size_small;
+int     GameConfig::unit_selection_box_draw_mode = _unit_selection_box_draw_mode_rect_edges;
+bool GameConfig::draw_unit_damage = false;
+bool GameConfig::draw_unit_reload = true;
+int     GameConfig::mini_map_objective_draw_mode = _mini_map_objective_draw_mode_outline_rect;
+int     GameConfig::unitInfoDrawLayer = 0;
 
-   PlayerUnitConfig GameConfig::unit_spawn_config;
+float   GameConfig::console_test_delay = 10.0;   // in seconds
+int	   GameConfig::console_text_usage = 25;   	// in lines
 
-   int     GameConfig::attackNotificationTime = 5;
-   bool GameConfig::blendSmoke             = true;
+int     GameConfig::screen_gamma = 50;       // 0..100
+float   GameConfig::screen_brightness = 1.0f;  // 0..100
+
+float   GameConfig::scroll_rate = 1000;            // in pixels/s   
+int     GameConfig::mini_map_resize_rate = 400;   // in pixels/s
+ 
+PlayerUnitConfig GameConfig::unit_spawn_config;
+
+int     GameConfig::attackNotificationTime = 5;
+bool GameConfig::blendSmoke             = true;
 
 
-void GameConfig::initialize( void )
- {
+void GameConfig::initialize(const char* newconfigfile)
+{
+	configfile = newconfigfile;
   //UnitColor;
   GameMode = _gamemode_multiplayer; //Skirmish or Multiplayer
   GameType = _gametype_objective;   //Objectives, FragLimit, TimeLimit
@@ -121,9 +118,6 @@ void GameConfig::initialize( void )
   */
   respawn_type = _game_config_respawn_type_round_robin;
 
-  // ** Visuals Configuration **
-  screen_resolution_enum = _game_config_standard_res_640x480;
-   
   display_shadows_flag = true;
    
   radar_display_clouds_flag = false;
@@ -143,14 +137,71 @@ void GameConfig::initialize( void )
   scroll_rate = 1000;            // in pixels/s   
   mini_map_resize_rate = 400;   // in pixels/s
      
-  // ** Input Configuration **
-  input_joystick_state = false; 
-   
-  // ** Sound Configuration **
-  sound_on_off_flag = true;
-  sound_volume = 50;
+  try {
+	  loadConfig();
+  } catch(Exception e) {
+	  LOG(("couldn't read game configuration: %s", e.getMessage()));
+  }
+}
 
- }
+void GameConfig::shutdown()
+{
+	try {
+		saveConfig();
+	} catch(Exception e) {
+		LOG(("couldn't save game configuration: %s", e.getMessage()));
+	}
+}
+
+void GameConfig::loadConfig()
+{
+	ReadFile* file = FileSystem::openRead(configfile.c_str());
+
+	// XXX loadin/saving would be nicer in human readable form (XML?)
+
+	int configversion = file->readSLE16();
+	if(configversion != CONFIG_VERSION)
+		throw Exception("wrong config file version");
+
+	UnitColor = file->read8();
+	GameMode = file->read8();
+	GameType = file->read8();
+	NumberPlayers = file->readSLE16();
+	NumberUnits = file->readSLE16();
+	NumberInitialUnits = file->readSLE16();
+
+	// TODO lots of other stuff :)
+	screen_resolution = file->readSLE32();
+	screen_fullscreen = file->read8();
+	display_shadows_flag = file->read8();
+	display_unit_flags = file->read8();
+
+	// TODO lots of other stuff :)
+
+	delete file;
+}
+
+void GameConfig::saveConfig()
+{
+	WriteFile* file = FileSystem::openWrite(configfile.c_str());
+
+	file->writeSLE16(CONFIG_VERSION);
+
+	file->write8(UnitColor);
+	file->write8(GameMode);
+	file->write8(GameType);
+	file->writeSLE16(NumberPlayers);
+	file->writeSLE16(NumberUnits);
+	file->writeSLE16(NumberInitialUnits);
+
+	// TODO lots of other stuff :)
+	file->writeSLE32(screen_resolution);
+	file->write8(screen_fullscreen);
+	file->write8(display_shadows_flag);
+	file->write8(display_unit_flags);
+
+	delete file;
+}
 
 void GameConfig::setGameMapName( char *map_name )
  {
@@ -160,44 +211,4 @@ void GameConfig::setGameMapName( char *map_name )
 char * GameConfig::getGameMapName( void )
  {
   return( game_map_name );
- }
-
-void GameConfig::loadConfigScript( void )
- {
-  return;
-
-  //int lua_return;
-  //lua_Object envValue;
-
-
-  // The LUA library is probably not compatible with
-  // GPL so I'm commenting it out for now 
-  /*
-  lua_return = lua_dofile( "Scripts/config.lua" ); 
-  assert( lua_return == 0 );
-  
-  envValue = lua_getglobal( "envGameType" );            
-  SetGameType( (int) lua_getnumber( envValue ) );
-
-  envValue = lua_getglobal( "envMaxPlayers" );            
-  SetNumberPlayers( (int) lua_getnumber( envValue ) );
-
-  envValue = lua_getglobal( "envMaxUnits" );            
-  SetNumberUnits( (int) lua_getnumber( envValue ) );
-  
-  envValue = lua_getglobal( "envPlayerOrServerName" );            
-  SetPlayerName( lua_getstring( envValue ) );
-
-  envValue = lua_getglobal( "envTimeLimit" );            
-  SetTimeLimit( (int) lua_getnumber( envValue ) );
-
-  envValue = lua_getglobal( "envFragLimit" );            
-  SetFragLimit( (int) lua_getnumber( envValue ) );
-
-  envValue = lua_getglobal( "envMapCycling" );            
-  setMapCycleState( (int) lua_getnumber( envValue ) );
-
-  envValue = lua_getglobal( "envPowerUps" );            
-  setPowerUpState( (int) lua_getnumber( envValue ) ); 
-  */
  }

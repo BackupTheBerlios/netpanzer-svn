@@ -15,45 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #include <config.h>
+
 #include "SoundView.hpp"
 #include "GameConfig.hpp"
 #include "GameViewGlobals.hpp"
 #include "Desktop.hpp"
-
-
-static const char *getSoundState()
-{
-	return GameConfig::getSoundStateString();
-}
-
-static int getSoundVolume()
-{
-	return GameConfig::getSoundVolume();
-}
-
-static void bSetSoundStateOn()
-{
-	GameConfig::setSoundState(true);
-}
-
-static void bSetSoundStateOff()
-{
-	GameConfig::setSoundState(false);
-}
-
-static void bDecreaseSoundVolume()
-{
-	GameConfig::setSoundVolume(GameConfig::getSoundVolume() - 1);
-}
-
-static void bIncreaseSoundVolume()
-{
-	GameConfig::setSoundVolume(GameConfig::getSoundVolume() + 1);
-}
-
 
 // SoundView
 //---------------------------------------------------------------------------

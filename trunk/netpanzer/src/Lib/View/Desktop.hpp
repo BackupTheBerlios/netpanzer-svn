@@ -20,17 +20,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Desktop_hpp__
 #define __Desktop_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
+#include <vector>
 #include "LibTypes.hpp"
 #include "Surface.hpp"
 #include "View.hpp"
 #include "cTimeStamp.hpp"
-
 
 class Desktop
 {
@@ -43,7 +37,7 @@ private: // Variables
 
 	static float      totalMouseDownTime;
 	static float      currentMouseDownTime;
-	static View      *top;
+	static std::vector<View*> views;
 	static View      *focus;
 	static int        mouseActions;
 	static iXY        lMouseDownPos;
@@ -75,9 +69,6 @@ private: // Functions
 	static unsigned isMouseOverResizeArea(int mouseX, int mouseY);
 	static bool     isMouseOverMoveArea  (int mouseX, int mouseY);
 
-	//static View const &topWindow() const { assertTopWindowExist(); return *top; }
-	static View &topView() { assertTopViewExist(); return *top; }
-	static void   assertTopViewExist() { assert(top != 0); }
 	static bool   isMouseInView(int mouseX, int mouseY);
 	static View *findViewContaining(iXY p);
 	static void   doMouseActions(const iXY &mousePos);
@@ -87,28 +78,20 @@ public:
 
 	static void manage(int mouseX, int mouseY, int curButton);
 	static void activate(View *view);
-	static bool removeView(const char *viewitle);
-	static void removeAllViewAlwaysOnBottom();
 	static void toggleVisibility(const char *viewName);
 	static void setVisibility(const char *viewName, int isVisible);
 	static void toggleVisibilityNoDoAnything(const char *viewName);
 	static void setVisibilityNoDoAnything(const char *viewName, int isVisible);
 	static void add(View *view, bool autoActivate = true);
-	static void remove(View *view);
 	static void draw();
 
-	static unsigned getPointerStatus      (int mouseX, int mouseY);
 	static iXY      getMouseActionOffset  () { return mouseActionOffset; }
 	static void     resetMouseActionOffset() { mouseActionOffset = 0; }
 
-	static char       *getTopViewTitle();
-	static char       *getMouseViewTitle();
-	static unsigned    getMouseViewStatus();
 	static int         getViewCount();
 	static const char *getViewTitle(int viewNum);
 	static const char *getViewSearchName(int viewNum);
 	static int         getViewStatus(const char *searchName);
-	static bool        closeView(const char *searchName);
 	static void        setActiveView(const char *viewitle);
 	static void        setActiveView(View *view);
 
@@ -154,8 +137,10 @@ public:
 	
 	static View *getView(const char *searchName)
 	{
-		for (View *view = top ; view != 0 ; view = view->next)
-		{
+		std::vector<View*>::iterator i;
+		for(i = views.begin(); i != views.end(); i++) {
+			View* view = *i;
+				
 			if (strcmp(view->searchName, searchName) == 0)
 			{
 				return view;
@@ -172,8 +157,6 @@ public:
 	{
 		activate(view);
 	}
-
-
 }; // end Desktop
 
 class DesktopView : public View

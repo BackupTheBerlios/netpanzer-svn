@@ -16,55 +16,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
 #include "HostView.hpp"
 #include "GameConfig.hpp"
 #include "GameViewGlobals.hpp"
 #include "ParticleSystemGlobals.hpp"
 #include "HostOptionsView.hpp"
 
-
-static char screenSurfacePathTIL[] = "pics/backgrounds/menus/multimb.til";
-
-
 /////////////////////////////////////////////////////////////////////////////
 // Buttons functions.
 /////////////////////////////////////////////////////////////////////////////
-
-static void setGameTypeObjective()
-{
-	sprintf(HostView::gameTypeBuf, "Objective");
-}
-
-static void setGameTypeFragLimit()
-{
-	sprintf(HostView::gameTypeBuf, "Frag Limit");
-}
-
-static void setGameTypeTimeLimit()
-{
-	sprintf(HostView::gameTypeBuf, "Time Limit");
-}
-
-static void increaseFragLimit()
-{  	
-	GameConfig::SetFragLimit(GameConfig::GetFragLimit() + 5);
-}
-
-static void decreaseFragLimit()
-{
-	GameConfig::SetFragLimit(GameConfig::GetFragLimit() - 5);
-}
-
-static void increaseTimeLimit()
-{
-	GameConfig::SetTimeLimit(GameConfig::GetTimeLimit() + 2);
-}
-
-static void decreaseTimeLimit()
-{
-	GameConfig::SetTimeLimit(GameConfig::GetTimeLimit() - 2);
-}
-
 
 //---------------------------------------------------------------------------
 HostView::HostView() : HostJoinTemplateView()

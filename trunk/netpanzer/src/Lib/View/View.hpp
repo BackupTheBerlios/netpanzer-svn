@@ -16,7 +16,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 //---------------------------------------------------------------------------
-
 #ifndef __View_hpp__
 #define __View_hpp__
 
@@ -27,13 +26,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "cInputField.hpp"
 #include "iRect.hpp"
 #include "iXY.hpp"
-#include "List.hpp"
 #include "Component.hpp"
 #include "MouseEvent.hpp"
 
-
 class PackedSurface;
-
 
 enum { BLANK, MINI_MAP, IMAGE_TILES };
 const int SNAPTO_TOLERANCE = 20;
@@ -57,26 +53,13 @@ enum DEFAULT_VIEW_BUTTON
 class View : public iRect
 {
 friend class Desktop;
-
-private:
-	View   *next;
-
-	void insert(Component *Component);
-
 public:
-	//void add(Component *component)
-	//{
-	//	scrollBar = component;
-	//	scrollBar->setOwner(this);
-	//}
 	void add(Component *Component);
 	//void remove(Component *Component);
 
 	void add(DEFAULT_VIEW_BUTTON button);
 
 	//cGrowList <Component> ComponentList;
-private:
-	//Component              *scrollBar;
 
 public:
 	enum { MAX_COMPONENT_COUNT = 30 };
@@ -334,7 +317,6 @@ public:
 
 	iRect getViewRect() const;
 	iRect getClientRect() const;
-
 }; // end View
 
 #endif // end __View_hpp__
