@@ -16,10 +16,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <ctype.h>
+#include <signal.h>
 #include <SDL.h>
 
 #include <optionmm/command_line.hpp>
@@ -108,8 +110,42 @@ void shutdown()
     FileSystem::shutdown();
 }
 
+void signalhandler(int signum)
+{
+    const char* sigtype;
+    switch(signum) {
+        case SIGINT: sigtype = "SIGINT"; break;
+        case SIGHUP: sigtype = "SIGHUP"; break;
+        case SIGTERM: sigtype = "SIGTERM"; break;
+        case SIGFPE: sigtype = "SIGFPE"; break;
+        case SIGILL: sigtype = "SIGILL"; break;
+        case SIGSEGV: sigtype = "SIGSEGV"; break;
+        case SIGBUS: sigtype = "SIGBUS"; break;
+        case SIGABRT: sigtype = "SIGABRT"; break;
+        case SIGTRAP: sigtype = "SIGTRAP"; break;
+        case SIGSYS: sigtype = "SIGSYS"; break;
+        default: sigtype = "UNKNOWN"; break;
+    }
+        
+    std::cerr << "Received signal " << sigtype << "(" << signum << ")" <<
+        "aborting and trying to shutdown." << std::endl;
+    shutdown();
+}
+
 void initialise(int argc, char** argv)
 {
+    // Install signal handler
+    signal(SIGILL, signalhandler);
+    signal(SIGINT, signalhandler);
+    signal(SIGHUP, signalhandler);
+    signal(SIGTERM, signalhandler);
+    signal(SIGFPE, signalhandler);
+    signal(SIGSEGV, signalhandler);
+    signal(SIGBUS, signalhandler);
+    signal(SIGABRT, signalhandler);
+    signal(SIGTRAP, signalhandler);
+    signal(SIGSYS, signalhandler);
+        
     // Parse commandline
     using namespace optionmm;
     command_line commandline(PACKAGE_NAME, PACKAGE_VERSION,
@@ -133,7 +169,7 @@ void initialise(int argc, char** argv)
     }
 
     // Initialize SDL
-    SDL_Init(SDL_INIT_TIMER);
+    SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER);
     SDL_EnableUNICODE(1);
 
     // Initialize libphysfs
