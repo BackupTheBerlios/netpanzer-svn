@@ -169,8 +169,8 @@ MasterServer::run()
         int clientsock = accept(sock, (struct sockaddr*) &clientaddr,
                 &socklen);
         if(clientsock < 0) {
-            *log << "Accept error: " << strerror(errno) << ". This is very bad."
-                << std::endl;
+            *log << "Accept error: " << strerror(errno) << std::endl;
+            continue;
         }
 
         // remove too old threads
