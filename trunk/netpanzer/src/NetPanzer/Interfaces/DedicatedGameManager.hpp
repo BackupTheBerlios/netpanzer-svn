@@ -30,8 +30,15 @@ protected:
     virtual void initializeGameConfig(const std::string& configfile);
 
     virtual void inputLoop();
+
+    /** this function is threadsafe */
+    void pushCommand(const ServerCommand& command);
 public:
     virtual bool launchNetPanzerGame();
+
+private:
+    std::queue<ServerCommand> commandqueue;
+    SDL_mutex* commandqueue_mutex;
 };
 
 #endif

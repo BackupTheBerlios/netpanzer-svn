@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include <fcntl.h>
 #include <string>
+#include <SDL.h>
 
 #include "ChatInterface.hpp"
 #include "ConsoleInterface.hpp"
@@ -45,12 +46,14 @@ void DedicatedGameManager::initializeVideoSubSystem()
 {
     lobbyView = new ConsoleLoadingView();
     progressView = new ConsoleLoadingView();
+    commandqueue_mutex = SDL_CreateMutex();
 }
 
 void DedicatedGameManager::shutdownVideoSubSystem()
 {
     delete lobbyView;
     delete progressView;
+    SDL_DestroyMutex(commandqueue_mutex);
 }
 
 //-----------------------------------------------------------------
@@ -69,7 +72,14 @@ void DedicatedGameManager::initializeInputDevices()
 //-----------------------------------------------------------------
 void DedicatedGameManager::inputLoop()
 {
-    // we should handle the server console here
+    // handle server commands
+    SDL_mutexP(commandqueue_mutex);
+    while(!commandqueue.empty()) {
+
+
+
+    }
+    SDL_mutexV(commandqueue_mutex);
 }
 
 //-----------------------------------------------------------------
