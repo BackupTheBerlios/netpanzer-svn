@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 static inline void makeTimeStamp(char* buffer, size_t bufsize) {
     time_t curtime = time(0);
     struct tm* loctime = localtime(&curtime);
-    strftime(buffer, bufsize, "<%F %T>", loctime);
+    strftime(buffer, bufsize, "<%Y-%m-%d %H:%M:%S>", loctime);
 }
     
 
@@ -111,7 +111,7 @@ private:
         char timestamp[64];
         time_t curtime = time(0);
         struct tm* loctime = localtime(&curtime);
-        strftime(timestamp, sizeof(timestamp), "<%F %T>", loctime);
+        strftime(timestamp, sizeof(timestamp), "<%Y-%m-%d %H:%M:%S>", loctime);
         *stream << "\r" << timestamp;
         if(file)
             *file << timestamp;
@@ -172,7 +172,7 @@ Console::mapSwitch(const std::string& mapname)
         char timestamp[64];
         time_t curtime = time(0);
         struct tm* loctime = localtime(&curtime);
-        strftime(timestamp, sizeof(timestamp), "%F_%H-%M-%S", loctime);
+        strftime(timestamp, sizeof(timestamp), "%Y-%m-%d_%H-%M-%S", loctime);
         
         std::stringstream filenamestr;
         filenamestr << "logs/" << timestamp << '_' << mapname << ".log";
