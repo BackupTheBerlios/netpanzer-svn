@@ -114,7 +114,7 @@ ServerQueryThread::queryMasterServer()
                << NETPANZER_PROTOCOL_VERSION << "\\final\\" << std::flush;
         
         ServerInfo* lastserver = 0;
-        std::string newMasterServers = masterservers.back();
+        std::string newMasterServers;
 
         // parse master server list
         while(!stream.eof() && running) {
