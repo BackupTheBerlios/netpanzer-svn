@@ -188,28 +188,6 @@ public:
         delete object;
     }
 
-    void deleteBefore(TYPE *before)
-    {
-        assert( before != 0 );
-
-        TYPE *object = before->prev;
-        
-        if(object == 0)
-            return;
-
-        before->prev = object->prev;            
-
-        if(object->prev != 0) {
-            object->prev->next = before;
-        }
-
-        if(delete_ptr == front) {
-            front = before;
-        }
-
-        delete object;
-    }
-
     void removeObject(TYPE *object)
     {
         if( object->prev != 0 ) {
