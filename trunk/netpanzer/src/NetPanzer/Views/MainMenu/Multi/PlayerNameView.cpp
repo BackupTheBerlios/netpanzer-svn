@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "PlayerNameView.hpp"
 #include "GameViewGlobals.hpp"
-#include "IRCLobbyView.hpp"
 #include "GameConfig.hpp"
 
 // PlayerNameView
@@ -77,17 +76,7 @@ void PlayerNameView::doDraw(Surface &viewArea, Surface &clientArea)
 void PlayerNameView::returnPressed(cInputField* input)
 {
     gameconfig->playername = input->getDestString();
-    if(lobby_view) {
-        lobby_view->changeNickName(gameconfig->playername);
-    }
 }
-
-void PlayerNameView::changeIRCName(std::string &newname)
-{
-    setString(newname.c_str());
-    gameconfig->playername=newname;
-}
-
 
 // sometime we shoudl eleminate all these global vars...
 //PlayerNameView* playernameview = 0;

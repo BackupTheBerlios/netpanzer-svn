@@ -99,7 +99,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ServerListView.hpp"
 
 #include "IPAddressView.hpp"
-#include "IRCLobbyView.hpp"
 
 //** Physics/Particle Stuff
 #include "Particle2D.hpp"
@@ -223,9 +222,6 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new AreYouSureExitView());
 
     Desktop::add(new IPAddressView());
-    IRCLobbyView *irc_lobby_view=new IRCLobbyView();
-    Desktop::add(irc_lobby_view);
-    irc_lobby_view->setNotifyIRCChangeName((NotifyIRCChangeName *)playernameview);
     Desktop::add(new ServerListView());
 
     Desktop::setVisibilityAllWindows(false);

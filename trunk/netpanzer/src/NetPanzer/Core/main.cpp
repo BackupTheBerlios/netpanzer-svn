@@ -39,7 +39,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "DedicatedGameManager.hpp"
 #include "BotGameManager.hpp"
 #include "PlayerGameManager.hpp"
-#include "IRCLobbyView.hpp"
 
 /** This functions iterates throgh the SDL event queue.
  * It returns true if a quit message has been received, otherwise false.

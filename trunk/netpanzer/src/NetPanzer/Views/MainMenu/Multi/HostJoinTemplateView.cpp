@@ -32,7 +32,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Palette.hpp"
 #include "GameViewGlobals.hpp"
 #include "IPAddressView.hpp"
-#include "IRCLobbyView.hpp"
 
 #include "Client.hpp"
 #include "Server.hpp"
@@ -88,9 +87,6 @@ static void bNext()
 
     if(gameconfig->hostorjoin == _game_session_join) {
         gameconfig->serverConnect = IPAddressView::szServer.getString();
-        lobby_view->stopIRC();
-    } else {
-        lobby_view->startIRC();
     }
 
     MenuTemplateView::backgroundSurface.free();

@@ -40,15 +40,11 @@ ServerListView::ServerListView()
     setAllowResize(false);
     setAllowMove(false);
     setVisible(false);
-    
-    masterserver::ServerInfo info;
-    info.address = "localhost";
-    info.name = "TestServer";
-    info.players = 0;
-    info.maxplayers = 12;
-    info.map = "Bad Neuburg";
-    serverlist.push_back(info);
 
+    addButtonCenterText(iXY(getClientRect().getSizeX()-80,
+                getClientRect().getSizeY() - Surface::getFontHeight() * 2),
+            80, "Refresh", "", buttonRefresh);
+    
     // XXX ugly
     serverlistview = this;
 }
@@ -68,6 +64,12 @@ ServerListView::refresh()
     
     delete queryThread;
     queryThread = new masterserver::ServerQueryThread(&serverlist);   
+}
+
+void
+ServerListView::buttonRefresh()
+{
+    serverlistview->refresh();
 }
 
 void

@@ -20,10 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "View.hpp"
 #include "2D/Surface.hpp"
-#include "IRCLobby.hpp"
 
 //---------------------------------------------------------------------------
-class PlayerNameView : public View,NotifyIRCChangeName
+class PlayerNameView : public View
 {
 public:
     PlayerNameView();
@@ -36,7 +35,6 @@ public:
     void init();
     void setString(const char *s) { playerName.setString(s); }
     const char *getString() { return playerName.getString(); }
-    virtual void changeIRCName(std::string &newname);
 
 private:
     static void returnPressed(cInputField* input);

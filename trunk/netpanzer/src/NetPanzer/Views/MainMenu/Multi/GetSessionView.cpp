@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameManager.hpp"
 #include "MouseInterface.hpp"
 #include "GameViewGlobals.hpp"
-#include "IRCLobbyView.hpp"
 
 //winsock hack
 #include "IPAddressView.hpp"

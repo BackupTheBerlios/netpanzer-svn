@@ -35,10 +35,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ObjectiveInterface.hpp"
 #include "Particle2D.hpp"
 #include "ParticleInterface.hpp"
+#include "PlayerInterface.hpp"
 #include "Physics.hpp"
 #include "Util/Log.hpp"
 #include "Server.hpp"
-#include "IRCLobbyView.hpp"
 #include "LobbyView.hpp"
 #include "ProgressView.hpp"
 #include "ConsoleLoadingView.hpp"
@@ -191,10 +191,6 @@ bool DedicatedGameManager::launchNetPanzerGame()
     gameconfig->hostorjoin=_game_session_host;
 
     Particle2D::setCreateParticles(false);
-    // make server public
-    if(!lobby_view)
-        lobby_view = new IRCLobbyView;
-    lobby_view->startIRC();
 
     if((const std::string&) gameconfig->masterserver != "") {
         try {

@@ -37,6 +37,8 @@ public:
 private:
     masterserver::ServerList serverlist;
     masterserver::ServerQueryThread* queryThread;
+
+    static void buttonRefresh();
 };
 
 extern ServerListView* serverlistview; // XXX ugly
