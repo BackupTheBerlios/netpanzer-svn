@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ScreenSurface.hpp"
 #include "PlayerInterface.hpp"
 #include "GameConfig.hpp"
+#include "ObjectiveInterface.hpp"
 
 #include "SelectionBoxSprite.hpp"
 
@@ -124,6 +125,8 @@ public:
 void RankView::drawPlayerStats(Surface &dest)
 {
     char statBuf[256];
+
+    ObjectiveInterface::updatePlayerObjectiveCounts();
 
     std::vector<const PlayerState*> states;
     for(size_t i = 0; i < PlayerInterface::getMaxPlayers(); ++i) {

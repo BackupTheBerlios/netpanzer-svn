@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkClientUnix.hpp"
 #include "LobbyView.hpp"
 
-//#define NETWORKDEBUG
+#define NETWORKDEBUG
 
 #ifdef NETWORKDEBUG
 #include "NetPacketDebugger.hpp"
@@ -69,14 +69,16 @@ void NetworkClientUnix::partServer()
 
 void NetworkClientUnix::sendMessage(NetMessage* message, size_t size)
 {
-    if(clientsocket == 0)
-        return;
-
     message->setSize(size);
     
-    if ( connection_type == _connection_loop_back ) {
+    if (connection_type == _connection_loop_back) {
+        net_packet.fromID = 0;
+        net_packet.toID = 0;
         memcpy(net_packet.data, message, size);
         loop_back_recv_queue.enqueue(net_packet);
+#ifdef NETWORKDEBUG
+        NetPacketDebugger::logMessage("LS", message);
+#endif
         return;
     }
 
@@ -89,7 +91,7 @@ void NetworkClientUnix::sendMessage(NetMessage* message, size_t size)
 
     clientsocket->sendMessage(message, size);
 
-    NetworkState::incPacketsSent( size );
+    NetworkState::incPacketsSent(size);
 }
 
 bool NetworkClientUnix::getMessage(NetMessage *message)

@@ -1,6 +1,5 @@
 Next release:
 -win32 somtimes crashs in lobby window
--objective count is wrong in status window
 -with 75% objective setting you can win the Cramped with 2 outposts already
  (which is only be 66% of all outposts)
 -after having a full nodelist in A* the server is getting slow
