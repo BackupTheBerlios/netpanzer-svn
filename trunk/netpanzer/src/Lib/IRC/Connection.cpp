@@ -50,6 +50,12 @@ Connection::Connection(const std::string& server, const std::string& newnick)
         server_port = atoi(port_str.c_str());
     }
 
+    // some old versions of SDL_net take a char* instead of const char*
+    if(SDLNet_ResolveHost(&serveraddress, const_cast<char*>(server_host.c_str()),
+                server_port) < 0)
+        throw Exception("Couldn't resolve server address '%s:%d'",
+                server_host.c_str(), server_port);
+    
     startThread();
 }
 
@@ -91,15 +97,7 @@ void Connection::stopThread()
 
 void Connection::connect()
 {
-    IPaddress addr;
-    
-    // some old versions of SDL_net take a char* instead of const char*
-    if(SDLNet_ResolveHost(&addr, const_cast<char*>(server_host.c_str()),
-                server_port) < 0)
-        throw Exception("Couldn't resolve server address '%s:%d'",
-                server_host.c_str(), server_port);
-
-    irc_server_socket = SDLNet_TCP_Open(&addr);
+    irc_server_socket = SDLNet_TCP_Open(&serveraddress);
     if(!irc_server_socket)
         throw Exception("Couldn't connect to irc server '%s': %s",
                 server_host.c_str(), SDLNet_GetError());

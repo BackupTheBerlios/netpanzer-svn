@@ -1,6 +1,7 @@
 05-Jan-2003 by Matthias Braun
 -server browser works so far
 -converted yet another array like class in ProjectileInterface to std::list
+-make IRC lib abort earlier if server address can't be resolved
 
 04-Jan-2003 by Matthias Braun
 -started a new IRC library

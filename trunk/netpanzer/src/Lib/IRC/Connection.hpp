@@ -71,6 +71,7 @@ private:
                         const std::string& host);
 
     TCPsocket irc_server_socket;
+    IPaddress serveraddress;
 
     std::string nickname;
     std::string server_host;
