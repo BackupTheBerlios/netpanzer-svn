@@ -450,7 +450,7 @@ bool WorldInputCmdProcessor::selectBoundBoxUnits()
         box_release.y = y;
     }
 
-    select_success = working_list.selectBounded( iRect( box_press, box_release ) );
+    select_success = working_list.selectBounded(iRect( box_press, box_release));
 
     if ( select_success == false ) {
         iXY box_size;

@@ -51,6 +51,7 @@ public:
     virtual bool launchNetPanzerGame();
 
     void launchMultiPlayerGame();
+    void quitGame();
 
 private:
     //Panels::TestPanel * testpanel;

@@ -414,6 +414,15 @@ void PlayerGameManager::hostMultiPlayerGame()
     Desktop::setVisibility("GameView", true);
     Desktop::setActiveView("GameView");
 }
+
+void PlayerGameManager::quitGame()
+{
+    delete infothread;
+    infothread = 0;
+    delete heartbeatthread;    
+    heartbeatthread = 0;
+}
+
 //-----------------------------------------------------------------
 void PlayerGameManager::joinMultiPlayerGame()
 {
