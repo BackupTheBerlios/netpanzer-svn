@@ -153,7 +153,7 @@ int SDLSound::getSoundVolume(long distance)
     if( (distance < 92760000)) return int(0.25 * MIX_MAX_VOLUME);
 
     //12 to 16 800x600 screen widths away--
-    if( (distance < 163840000)) return int(0.5 * MIX_MAX_VOLUME);
+    if( (distance < 163840000)) return int(0.05 * MIX_MAX_VOLUME);
 
     //anything further away--
     return 0;
