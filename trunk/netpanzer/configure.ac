@@ -70,14 +70,14 @@ PKG_CHECK_MODULES(XML, [libxml-2.0])
 AM_PATH_SDL([1.2.5], , AC_MSG_ERROR([Please install libsdl >= 1.2.]))
 
 NP_FINDLIB([SDLNET], [SDL_net >= 1.2],
-	AC_LANG_PROGRAM([#include <SDL_net.h>], [SDLNet_Init();]),
+	NP_LANG_PROGRAM([#include <SDL_net.h>], [SDLNet_Init();]),
 	[], [-lSDL_net],
 	[],
 	[AC_MSG_ERROR([Please install SDLNet >= 1.2.4])],
 	[$SDL_CFLAGS], [$SDL_LIBS])
 
 NP_FINDLIB([SDLMIXER], [SDL_mixer >= 1.2],
-	AC_LANG_PROGRAM([#include <SDL_mixer.h>
+	NP_LANG_PROGRAM([#include <SDL_mixer.h>
 #if MIX_MAJOR_VERSION < 1
 # error SDLMix too old
 #else
@@ -93,14 +93,14 @@ NP_FINDLIB([SDLMIXER], [SDL_mixer >= 1.2],
 	[$SDL_CFLAGS], [$SDL_LIBS])
 
 NP_FINDLIB([SDLIMAGE], [SDL_image >= 1.2],
-	AC_LANG_PROGRAM([#include <SDL_image.h>], [IMG_Load("");]),
+	NP_LANG_PROGRAM([#include <SDL_image.h>], [IMG_Load("");]),
 	[], [-lSDL_image],
 	[],
 	[AC_MSG_ERROR([Please install SDLImage >= 1.2.1])],
 	[$SDL_CFLAGS], [$SDL_LIBS])
 
 NP_FINDLIB([PHYSFS], [physfs >= 1.9],
-	AC_LANG_PROGRAM([#include <physfs.h>
+	NP_LANG_PROGRAM([#include <physfs.h>
 #if PHYSFS_VER_MINOR < 1
 # error PHYSFS is too old
 #else

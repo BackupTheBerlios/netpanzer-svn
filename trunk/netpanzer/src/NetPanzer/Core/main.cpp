@@ -169,7 +169,7 @@ void initialise(int argc, char** argv)
     }
 }
 
-int main(int argc, char** argv)
+int netpanzer_main(int argc, char** argv)
 {
     initialise(argc, argv);
 
@@ -203,4 +203,11 @@ int main(int argc, char** argv)
     return 0;
 }
 
+// XXX these tweaks are need for SDL on win32
+extern "C" {
+    int main(int argc, char** argv)
+    {
+        return netpanzer_main(argc, argv);
+    }
+}
 
