@@ -22,12 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "DirectDrawPalette.hpp"
 #include "UIDraw.hpp"
 
-enum { VIDEO_MODE_WINDOWED          = 0x01,
-       VIDEO_MODE_TRIPLE_BUFFER     = 0x02,
-       VIDEO_MODE_DOUBLE_BUFFER     = 0x04,
-       VIDEO_MODE_AUTO_FBUFFER      = 0x08,
-	   VIDEO_MODE_FORCE_MODE_SWITCH = 0x10, };
-
 enum { BLIT_FUNC_MMX,
        BLIT_FUNC_FPU,
        BLIT_FUNC_MEMCPY };

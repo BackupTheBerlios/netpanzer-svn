@@ -154,32 +154,30 @@ bool WinTimer::SetupRDTSC( void )
   return( true );
  }
 
-bool WinTimer::Initialize( void )
- {
+void WinTimer::WinTimer()
+{
+   	MMTimerTargerRes = 2;
+	MMTimerTargetDelay = 10;
 
-  MMTimerTargerRes = 2;
-  MMTimerTargetDelay = 10;
+	if ( DetectRDTSC() == true  )
+	{ 
+		SetupRDTSC();
+	} 
+	else
+	{
+		if ( SetupHighResTimer( ) == false )
+			SetupMMTimer();
+	}
+}
 
-  if ( DetectRDTSC() == true  )
-   { 
-    return( SetupRDTSC() );  
-   } 
-  else
-   if ( SetupHighResTimer( ) == false )
-    {  return ( SetupMMTimer() ); }
-  
-  return ( true );
- }
-
-void WinTimer::ShutDown( void )
- {
-  if ( TimerType == _multimedia_timer )
-   {
-    timeKillEvent( MMTimerID );   
-    timeEndPeriod( MMTimerResolution );
-   }
-
- }
+void WinTimer::~WinTimer()
+{
+	if ( TimerType == _multimedia_timer )
+	{
+	 	timeKillEvent( MMTimerID );   
+		timeEndPeriod( MMTimerResolution );
+	}
+}
 
 #ifdef MSVC
 __declspec( naked ) long double WinTimer::RDTSC() 

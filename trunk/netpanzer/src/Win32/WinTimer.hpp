@@ -28,60 +28,58 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 enum { _TSC_timer, _hires_timer, _multimedia_timer };
 
 class WinTimer
- {
-   protected:
-   MMRESULT MMTimerID;
-   unsigned long MMTimerTargetDelay;
-   unsigned long MMTimerTargerRes;
+{
+protected:
+ 	MMRESULT MMTimerID;
+  	unsigned long MMTimerTargetDelay;
+   	unsigned long MMTimerTargerRes;
+	bool initialized;
    
-   public:  
-   static unsigned long MMTimerDelay;
-   static unsigned long MMTimerResolution;
+public:  
+  	static unsigned long MMTimerDelay;
+   	static unsigned long MMTimerResolution;
    
-   public:
-   static unsigned long TimerType;
-   static double TimerResolution;
-   static double TimerFrequency; 
-   static double MasterClock;
+public:
+ 	static unsigned long TimerType;
+  	static double TimerResolution;
+   	static double TimerFrequency; 
+	static double MasterClock;
 
-
-   protected:
-   bool DetectRDTSC( void );
-   bool SetupRDTSC( void );
-   bool SetupHighResTimer( void );
-   bool SetupMMTimer( void );
+protected:
+ 	bool DetectRDTSC( void );
+  	bool SetupRDTSC( void );
+   	bool SetupHighResTimer( void );
+	bool SetupMMTimer( void );
    
-   public:
-   bool Initialize( void );
-   void	ShutDown( void );
-
-
-   inline static double GetClock( void )
-   {
-       LARGE_INTEGER counter;
+public:
+	WinTimer();
+	~WinTimer();
+   
+ 	inline static double GetClock( void )
+  	{
+   		LARGE_INTEGER counter;
 
 #ifdef MSVC       
-       if ( TimerType == _TSC_timer )
-       {
-     	   return( RDTSC() );
-       } 
-       else
+		if ( TimerType == _TSC_timer )
+	 	{
+	  		return( RDTSC() );
+	   	} 
+		else
 #endif
-	   if ( TimerType == _hires_timer )
-	   { 
-	       QueryPerformanceCounter( &counter );	  
-	       return ( ( double ) counter.QuadPart );
-	   }
-	   else
-	       return ( MasterClock );
-   }
+			if ( TimerType == _hires_timer )
+			{ 
+				QueryPerformanceCounter( &counter );	  
+				return ( ( double ) counter.QuadPart );
+			}
+			else
+				return ( MasterClock );
+	}
    
 #ifdef MSVC
-  	//static inline __declspec( naked ) long double RDTSC() 
-  	static long double RDTSC();
+	//static inline __declspec( naked ) long double RDTSC() 
+	static long double RDTSC();
 #endif
-
-  };
+};
 
 extern WinTimer WINTIMER;
 

@@ -21,6 +21,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "RGBColor.hpp"
 
+enum { VIDEO_MODE_WINDOWED          = 0x01,
+       VIDEO_MODE_TRIPLE_BUFFER     = 0x02,
+       VIDEO_MODE_DOUBLE_BUFFER     = 0x04,
+       VIDEO_MODE_AUTO_FBUFFER      = 0x08,
+	   VIDEO_MODE_FORCE_MODE_SWITCH = 0x10, };
+
 // DirectDraw class declarations
 //---------------------------------------------------------------------------
 class UIDraw

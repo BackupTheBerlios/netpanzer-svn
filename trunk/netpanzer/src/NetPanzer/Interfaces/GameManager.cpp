@@ -15,8 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-// XXX we need new code here...
-#ifndef UNIX
 #include "GameManager.hpp"  
 
 #include <stdio.h>
@@ -24,22 +22,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifdef WIN32
 #include <io.h>
 #include <conio.h>
-#endif
 #include <windows.h>
+#endif
 
 // ** netPanzer Core Includes
 #include "gapp.hpp"
 #include "netPanzerGlobals.h"
 
 // ** Direct X Includes
+#ifdef WIN32
 #include "DirectDrawGlobals.hpp"
 #include "DirectPlay.h"
 #include "DirectInput.hpp"
 #include "DSound.hpp"
-
-//** WinSock Includes
-#include "WinSockServer.h"
-#include "WinSockClient.h"
+#endif
 
 #ifdef WIN32
 #include "NetworkServerWinSock.hpp"
@@ -47,6 +43,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkServerDPlay.hpp"
 #include "NetworkClientDPlay.hpp"
 #endif
+
+#include "UILib/UIDraw.hpp"
 
 // ** PObject netPanzer Network Includes
 #include "Server.hpp"
@@ -87,10 +85,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConsoleInterface.hpp"
 #include "UnitGlobals.hpp"
 #include "SelectionBoxSprite.hpp"
-#include "GdatStct.hpp"
+#include "Gdatstct.hpp"
 #include "MapsManager.hpp"
 #include "PowerUpInterface.hpp"
 #include "ChatInterface.hpp"
+#include "Exception.hpp"
 
 // ** GVS Includes
 #include "codewiz.hpp"
@@ -148,8 +147,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ParticleInterface.hpp"
 #include "Physics.hpp"
 #include "TimerInterface.hpp"
-// XXX joystick disabled
-//#include "JoystickInterface.hpp"
 #include "FontSystem2D.hpp"
 #include "Math.hpp"
 
@@ -177,109 +174,60 @@ BYTE     GameManager::current_mode_flags;
 static Surface hostLoadSurface;
 
 // ******************************************************************
-bool GameManager::initializeDirectXSubSystem( void )
- {
-  //_chdir( "c:\\netPanzer\\WorkSpace\\netPanzerBuildTree\\netPanzer\\Debug" );
-  if( execution_mode == _execution_mode_loop_back_server)
-   { 
-    LOG( ( "Initializing Direct Draw" ) );
-    if( ( Screen->initialize() ) == false ) 
-     {
-  	  MessageBox(gapp.hwndApp, "DDraw.Initialize Failed", "Fatal Error", MB_OK);
-	  return ( false );
-     }
-   }
+void GameManager::initializeVideoSubSystem()
+{									     
+   	LOG( ( "Initializing Direct Draw" ) );
+	if( ( Screen->initialize() ) == false ) 
+	   	throw Exception("DDraw.Intialize failed.");  
 
-   LOG( ( "Initializing Direct Input\n" ) );
-   if ( DirectInput::initialize() == false )
-     return ( false ); 
-   printf ("DXInit\n");
-
-  return( true );
- }
-
-// ******************************************************************
-void GameManager::shutdownDirectXSubSystem( void )
- {
-  printf ("DXShutdown\n");
-  //winsock hack
-  //ShutDownConnection();
-  //ShutdownWinSockClient();
-  //ShutdownWinSockServer();
-
-  DirectInput::shutdown();
-  Screen->shutdown();	  
- }
-
-// ******************************************************************
-bool GameManager::initializeVideoSubSystem( void )
- {									     
-  LOG( ( "Setting Default Video Sub-system" ) );
+	LOG( ( "Setting Default Video Sub-system" ) );
   
-  current_video_mode_res = PointXYi(640,480); 
+	current_video_mode_res = PointXYi(640,480); 
 
-  #ifdef _DEBUG
-   //current_mode_flags = VIDEO_MODE_WINDOWED;
-   current_mode_flags = VIDEO_MODE_DOUBLE_BUFFER;
-   //current_mode_flags = VIDEO_MODE_TRIPLE_BUFFER;
-  #else
-   //current_mode_flags = VIDEO_MODE_WINDOWED;
-   current_mode_flags = VIDEO_MODE_DOUBLE_BUFFER;
-   //current_mode_flags = VIDEO_MODE_TRIPLE_BUFFER;
-  #endif
-	
-  if ( setVideoMode( current_video_mode_res ) == false)
-   {
-	return( false );
-   }
- 
-  loadPalette( "wads\\netp.act" ); 
+#ifdef _DEBUG
+	//current_mode_flags = VIDEO_MODE_WINDOWED;
+	current_mode_flags = VIDEO_MODE_DOUBLE_BUFFER;
+	//current_mode_flags = VIDEO_MODE_TRIPLE_BUFFER;
+#else
+	//current_mode_flags = VIDEO_MODE_WINDOWED;
+	current_mode_flags = VIDEO_MODE_DOUBLE_BUFFER;
+	//current_mode_flags = VIDEO_MODE_TRIPLE_BUFFER;
+#endif
 
-  return ( true );
- }
+	setVideoMode(current_video_mode_res);
+	loadPalette( "wads\\netp.act" ); 
+}
 
-// ******************************************************************
-
-bool GameManager::initializeSoundSubSystem( void )
- {
-  if ( dsound.Initialize( gapp.hwndApp) == false )
-   { LOG( ( "Failure to initialize DirectSound Sub-system" ) ); } 
-  
-  return( true ); 
- }
+void GameManager::shutdownVideoSubSystem()
+{
+	Screen->shutdown();
+}
 
 // ******************************************************************
 
-void GameManager::shutdownSoundSubSystem( void )
- {
-  dsound.ShutDownDirectSound();
- }
-
-// ******************************************************************
-bool GameManager::initializeWin32SubSystem( void )
- {
-  LOG( ( "Initializing Windows Timer" ) );
-  
-  if ( WINTIMER.Initialize() == false )
-   return( false );
-
-  TIMESTAMP::calibrate();
-  printf ("Timer Initok\n");
-
-  return( true );
- }
+void GameManager::initializeSoundSubSystem()
+{
+#ifdef WIN32
+   	if ( dsound.Initialize( gapp.hwndApp) == false )
+	{
+		LOG( ( "Failure to initialize DirectSound Sub-system" ) );
+	} 
+#endif
+}
 
 // ******************************************************************
 
-void GameManager::shutdownWin32SubSystem( void )
- {
-  WINTIMER.ShutDown(); 
- }
+void GameManager::shutdownSoundSubSystem()
+{
+#ifdef WIN32
+  	dsound.ShutDownDirectSound();
+#endif
+}
 
 // ******************************************************************
 
-bool GameManager::initializeWindowSubSystem( void )
- {
+void GameManager::initializeWindowSubSystem()
+{
 	LOG(("Initializing Game Viewing System"));
 
 	// Use this when needing to create colorfilters.
@@ -341,41 +289,33 @@ bool GameManager::initializeWindowSubSystem( void )
 
 	Desktop::setVisibilityAllWindows(false);
 	Desktop::setVisibility("MainView", true);
-
-	printf ("ShowDesktop\n");
-
-	return ( true );
 }
 
 // ******************************************************************
-bool GameManager::setVideoMode( PointXYi mode_res )
- {
-  if ( DDraw.isDisplayModeAvailable( mode_res.x, mode_res.y, 8 ) == true	)
-   {
-    previous_video_mode_res = current_video_mode_res;
-	   current_video_mode_res = mode_res;
+void GameManager::setVideoMode( PointXYi mode_res )
+{
+   	if(!Screen->isDisplayModeAvailable( mode_res.x, mode_res.y, 8 ))
+		throw Exception("desired Video mode not available.");
+		
+	previous_video_mode_res = current_video_mode_res;
+	current_video_mode_res = mode_res;
 
-	if (!DDraw.setVideoMode(current_video_mode_res.x, current_video_mode_res.y, 8, current_mode_flags)) return false;
-    
+	if (!Screen->setVideoMode(current_video_mode_res.x, current_video_mode_res.y,
+							8, current_mode_flags))
+		throw Exception("failed to set video mode.");
+		
 	WorldViewInterface::setCameraSize( current_video_mode_res.x, current_video_mode_res.y );
-    FRAME_BUFFER.create(current_video_mode_res.x, current_video_mode_res.y, current_video_mode_res.x, 1 );
-    screen.createNoAlloc(current_video_mode_res);   
+	FRAME_BUFFER.create(current_video_mode_res.x, current_video_mode_res.y, current_video_mode_res.x, 1 );
+	screen.createNoAlloc(current_video_mode_res);   
 	gameView.setSize( current_video_mode_res );
-
-  printf ("SetVideoOk\n");
-    return( true );
-   }
-  printf ("SetVideoFailed\n");
- 
-  return( false );
- }
+}
 
 // ******************************************************************
 
-void GameManager::restorePreviousVideoMode( void )
- {
-  setVideoMode( previous_video_mode_res );
- }
+void GameManager::restorePreviousVideoMode()
+{
+  	setVideoMode( previous_video_mode_res );
+}
 
 void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
  {
@@ -390,7 +330,7 @@ void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
 
 // ******************************************************************
 
-void GameManager::increaseDisplayResolution( void )
+void GameManager::increaseDisplayResolution()
  {
   PointXYi new_mode;
   
@@ -402,27 +342,26 @@ void GameManager::increaseDisplayResolution( void )
 
   new_mode = GameConfig::getGameScreenResolutionSize();
 
-  if ( setVideoMode(new_mode) == true )
-   {
-    previous_video_mode_res = current_video_mode_res;
-	current_video_mode_res = new_mode;
+  setVideoMode(new_mode);
+    
+  previous_video_mode_res = current_video_mode_res;
+  current_video_mode_res = new_mode;
 
-	WorldViewInterface::setCameraSize( current_video_mode_res.x, current_video_mode_res.y );
-    FRAME_BUFFER.create(current_video_mode_res.x, current_video_mode_res.y, current_video_mode_res.x, 1 );
-    screen.createNoAlloc(current_video_mode_res);   
-	gameView.setSize( current_video_mode_res );
-	Desktop::checkViewPositions();
-    ConsoleInterface::setToSurfaceSize( current_video_mode_res );
+  WorldViewInterface::setCameraSize( current_video_mode_res.x, current_video_mode_res.y );
+  FRAME_BUFFER.create(current_video_mode_res.x, current_video_mode_res.y, current_video_mode_res.x, 1 );
+  screen.createNoAlloc(current_video_mode_res);   
+  gameView.setSize( current_video_mode_res );
+  Desktop::checkViewPositions();
+  ConsoleInterface::setToSurfaceSize( current_video_mode_res );
 
-	loadPalette( "wads\\netp.act" );
+  loadPalette( "wads\\netp.act" );
 	
-	ConsoleInterface::postMessage( "Screen Resolution :  %d  x  %d", current_video_mode_res.x, current_video_mode_res.y );
-   }
- }
+  ConsoleInterface::postMessage( "Screen Resolution :  %d  x  %d", current_video_mode_res.x, current_video_mode_res.y );
+}
 
 // ******************************************************************
 
-void GameManager::decreaseDisplayResolution( void )
+void GameManager::decreaseDisplayResolution()
  {
   PointXYi new_mode;
   
@@ -434,23 +373,22 @@ void GameManager::decreaseDisplayResolution( void )
 
   new_mode = GameConfig::getGameScreenResolutionSize();
 
-  if ( setVideoMode(new_mode) == true )
-   {
-    previous_video_mode_res = current_video_mode_res;
-	current_video_mode_res = new_mode;
+  setVideoMode(new_mode);
+    
+  previous_video_mode_res = current_video_mode_res;
+  current_video_mode_res = new_mode;
 
-	WorldViewInterface::setCameraSize( current_video_mode_res.x, current_video_mode_res.y );
-    FRAME_BUFFER.create(current_video_mode_res.x, current_video_mode_res.y, current_video_mode_res.x, 1 );
-    screen.createNoAlloc(current_video_mode_res);   
-	gameView.setSize( current_video_mode_res );
-	Desktop::checkViewPositions();
-    ConsoleInterface::setToSurfaceSize( current_video_mode_res );    
-	
-    loadPalette( "wads\\netp.act" ); 
+  WorldViewInterface::setCameraSize( current_video_mode_res.x, current_video_mode_res.y );
+  FRAME_BUFFER.create(current_video_mode_res.x, current_video_mode_res.y, current_video_mode_res.x, 1 );
+  screen.createNoAlloc(current_video_mode_res);   
+  gameView.setSize( current_video_mode_res );
+  Desktop::checkViewPositions();
+  ConsoleInterface::setToSurfaceSize( current_video_mode_res );    
+  
+  loadPalette( "wads\\netp.act" ); 
 
-   	ConsoleInterface::postMessage( "Screen Resolution :  %d  x  %d", current_video_mode_res.x, current_video_mode_res.y );
-   }
- }
+  ConsoleInterface::postMessage( "Screen Resolution :  %d  x  %d", current_video_mode_res.x, current_video_mode_res.y );
+}
 
 // ******************************************************************
 
@@ -496,183 +434,182 @@ void decreaseBrightness(const char *filename)
 
 
 // ******************************************************************
-bool GameManager::initializeInputDevices( void )
- {
-  LOG( ("Initializing Direct Keyboard Input") );
+void GameManager::initializeInputDevices()
+{
+#ifdef WIN32
+   	LOG( ( "Initializing Direct Input\n" ) );
+	if ( DirectInput::initialize() == false )
+		throw Exception("DirectInput failed to intialize."); 
+	 
+	LOG( ("Initializing Direct Keyboard Input") );
+  	// XXX commented out, since the main window isn't hidden as intended... I
+	// dunno why. If a key is pressed in the main window, then we need a defined
+	// DirectInput Handler.
+  	if( execution_mode == _execution_mode_loop_back_server)
+	{
+		if ( DirectInput::initializeDirectKeyboard() == false )
+			throw Exception("failed to initialize DirectKeyboard.");			
+	}
+#endif
+
+	setupKeyboardBindings();
   
-  // XXX commented out, since the main window isn't hidden as intended... I
-  // dunno why. If a key is pressed in the main window, then we need a defined
-  // DirectInput Handler.
-  //if( execution_mode == _execution_mode_loop_back_server)
-   {
-    if (!DirectInput::initializeDirectKeyboard())
-     return false;
-   }
+	MouseInterface::initialize();
+	MouseInterface::hideHardwareCursor();
+	mouse.setPointer(&mouseArrow);
+}
 
-  //JoystickInterface::init();
-  //loadDataFromDisk();	
-
-  setupKeyboardBindings();
-  
-  MouseInterface::initialize();
-  //MouseInterface::hideHardwareCursor();
-  mouse.setPointer(&mouseArrow);
-  printf ("InitInputOK!\n");
-
-  return ( true );
- }
+void GameManager::shutdownInputDevices()
+{
+#ifdef WIN32
+  	DirectInput::shutdown();
+#endif
+}
 
 // ******************************************************************
-bool GameManager::initializeGameObjects( void )
- {
-  GameConfig::initialize();
-  MapsManager::initialize();
-  MapsManager::scanMaps();
+void GameManager::initializeGameObjects()
+{
+  	GameConfig::initialize();
+	MapsManager::initialize();
+	MapsManager::scanMaps();
   
-  Physics::init();
-  Math::init();
-  Weapon::init();
+	Physics::init();
+	Math::init();
+	Weapon::init();
 
-  ConsoleInterface::initialize( 25 );
-  PowerUpInterface::initialize();
-  printf ("InitGameObjectOk!\n");
-  return( true );
- }
+	ConsoleInterface::initialize(25);
+	PowerUpInterface::initialize();
+}
 
 // ******************************************************************
 
-bool GameManager::shutdownGameObjects( void )
- {
-  return( true );
- }
+void GameManager::shutdownGameObjects()
+{
+}
 
 // ******************************************************************
-bool GameManager::initializeDedicatedConsole( void )
- {
-  // we don't need an own console on msvc
+void GameManager::initializeDedicatedConsole()
+{
 #ifdef MSVC
-  ShowWindow( gapp.hwndApp, SW_HIDE );
-  if( AllocConsole() == 0 )
-   { return( false ); }
+	ShowWindow(gapp.hwndApp, SW_HIDE);
+	if( AllocConsole() == 0 )
+		throw Exception("couldn't allocate a console.");
    
-  freopen( "CONOUT$", "a+t", stdout );
-  freopen( "CONIN$", "a+t", stdin );
+	freopen( "CONOUT$", "a+t", stdout );
+	freopen( "CONIN$", "a+t", stdin );
 #endif
   
-  ConsoleInterface::setStdoutPipe( true );
+	ConsoleInterface::setStdoutPipe(true);
+}
+
+// ******************************************************************
+void GameManager::shutdownDedicatedConsole()
+{
+#ifdef MSVC
+  	FreeConsole();
+#endif
+}
+
+// ******************************************************************
+void GameManager::initializeNetworkSubSystem()
+{
+#ifdef WIN32
+  	SERVER = new NetworkServerWinSock();
+	CLIENT = new NetworkClientWinSock();
+#endif
+
+	ServerMessageRouter::initialize();
+	ClientMessageRouter::initialize();
   
-  return( true );
- }
+	ServerConnectDaemon::initialize( GameConfig::GetNumberPlayers() );
+	
+	NetworkState::setNetworkStatus( _network_state_server );
+	NetworkState::resetNetworkStats();
+	
+	SetPacketFunction( EnqueueIncomingPacket );
+}
 
 // ******************************************************************
-bool GameManager::shutdownDedicatedConsole( void )
- {
-  FreeConsole();
-  
-  return( true );
- }
+void GameManager::shutdownNetworkSubSystem()
+{
+	if(SERVER) {
+		SERVER->closeSession();
+		ServerMessageRouter::cleanUp();
+		delete SERVER;
+		SERVER = 0;
+	}
+	if(CLIENT) {
+		CLIENT->closeSession();
+		ClientMessageRouter::cleanUp();
+		delete CLIENT;
+		CLIENT = 0;
+	}
+}
 
 // ******************************************************************
-bool GameManager::initializeNetworkSubSystem( void )
- {
-  SERVER = new NetworkServerWinSock();
-  CLIENT = new NetworkClientWinSock();
-
-  //SERVER = new NetworkServerDPlay();
-  //CLIENT = new NetworkClientDPlay();
-
-  ServerMessageRouter::initialize();
-  ClientMessageRouter::initialize();
-  
-  ServerConnectDaemon::initialize( GameConfig::GetNumberPlayers() );
-
-  NetworkState::setNetworkStatus( _network_state_server );
-  NetworkState::resetNetworkStats();
-
-  SetPacketFunction( EnqueueIncomingPacket );
-  return( true );
- }
-
-// ******************************************************************
-void   GameManager::shutdownNetworkSubSystem( void )
- {
-  SERVER->closeSession();
-  CLIENT->closeSession();
-
-  ServerMessageRouter::cleanUp();
-  ClientMessageRouter::cleanUp();
- 
-  delete( SERVER );
-  delete( CLIENT );
- }
-
-// ******************************************************************
-bool GameManager::initializeGameLogic( void )
- {
-  PlayerInterface::initialize( GameConfig::GetNumberPlayers(), 
+void GameManager::initializeGameLogic()
+{
+  	PlayerInterface::initialize( GameConfig::GetNumberPlayers(), 
                                GameConfig::GetNumberInitialUnits() );
-  UnitBlackBoard::initializeBlackBoard();
-  UnitInterface::initialize( GameConfig::GetUnitsPerPlayer() );
-  PathScheduler::initialize();
-  PowerUpInterface::resetLogic(); 
-  return ( true );
- }
+	UnitBlackBoard::initializeBlackBoard();
+	UnitInterface::initialize( GameConfig::GetUnitsPerPlayer() );
+	PathScheduler::initialize();
+	PowerUpInterface::resetLogic(); 
+}
 
 // ******************************************************************
-bool GameManager::reinitializeGameLogic( void )
- {
-  shutdownGameLogic();
-  initializeGameLogic();
-  return( true );
- }
+void GameManager::reinitializeGameLogic()
+{
+   	shutdownGameLogic();
+	initializeGameLogic();
+}
 
 // ******************************************************************
-bool GameManager::resetGameLogic( void )
- {
-  PlayerInterface::reset();
-  UnitInterface::reset();
-  UnitBlackBoard::initializeBlackBoard();
-  PathScheduler::initialize(); 
-  PowerUpInterface::resetLogic();
-  ProjectileInterface::resetLogic();
-  startGameTimer();
-  return( true );
- }
+bool GameManager::resetGameLogic()
+{
+  	PlayerInterface::reset();
+	UnitInterface::reset();
+	UnitBlackBoard::initializeBlackBoard();
+	PathScheduler::initialize(); 
+	PowerUpInterface::resetLogic();
+	ProjectileInterface::resetLogic();
+	startGameTimer();
+	return true;
+}
 
 // ******************************************************************
-void GameManager::shutdownGameLogic( void )
- {
-  PlayerInterface::cleanUp();
-  UnitInterface::cleanUp();
-  PathScheduler::cleanUp();
- }
+void GameManager::shutdownGameLogic()
+{
+  	PlayerInterface::cleanUp();
+	UnitInterface::cleanUp();
+	PathScheduler::cleanUp();
+}
 
-void GameManager::shutdownParticleSystems( void )
- {
-  ParticleSystem2D::removeAll();
-  Particle2D::removeAll();
- }
+void GameManager::shutdownParticleSystems()
+{
+  	ParticleSystem2D::removeAll();
+	Particle2D::removeAll();
+}
 
 // ******************************************************************
 
-void GameManager::setupKeyboardBindings( void )
- {
-  KeyBinder::staticInitialize();
-  KEY_BINDER.initialize( 256 );
+void GameManager::setupKeyboardBindings()
+{
+  	KeyBinder::staticInitialize();
+	KEY_BINDER.initialize( 256 );
   
-  KEY_BINDER.bindAction( _action_mini_map, "MiniMapView", _SCAN_F8 );
-  KEY_BINDER.lockKey( _SCAN_F8 );
+	KEY_BINDER.bindAction( _action_mini_map, "MiniMapView", _SCAN_F8 );
+	KEY_BINDER.lockKey( _SCAN_F8 );
 
-  // UNSUPPORTED VIEW 
-  KEY_BINDER.bindAction( _action_chat_view, "ChatView", _SCAN_F7 );
-  KEY_BINDER.lockKey( _SCAN_F7 );
+	// UNSUPPORTED VIEW 
+	KEY_BINDER.bindAction( _action_chat_view, "ChatView", _SCAN_F7 );
+	KEY_BINDER.lockKey( _SCAN_F7 );
 
-  KEY_BINDER.bindAction( _action_rank_view, "RankView", _SCAN_F6 );
-  KEY_BINDER.lockKey( _SCAN_F6 );
+	KEY_BINDER.bindAction( _action_rank_view, "RankView", _SCAN_F6 );
+	KEY_BINDER.lockKey( _SCAN_F6 );
+}
 
- }
-
-void GameManager::processSystemKeys( void )
+void GameManager::processSystemKeys()
 {
 	unsigned char scan_code;
 
@@ -919,26 +856,25 @@ void GameManager::processSystemKeys( void )
 
 
 // ******************************************************************
-bool GameManager::loadGameData( void )
+bool GameManager::loadGameData()
  {
   UnitProfileInterface::loadUnitProfiles();
   LoadUnitSurfaces();
   UNIT_FLAGS_SURFACE.loadAllBMPInDirectory( "pics\\flags\\netp\\" );
   
   GameConfig::loadConfigScript();
-  return( true ); 
+  return true; 
  }
 
 // ******************************************************************
-bool GameManager::dedicatedLoadGameData( void )
- {
-  UnitProfileInterface::loadUnitProfiles();
-  LoadUnitSurfaces();
-  UNIT_FLAGS_SURFACE.loadAllBMPInDirectory( "pics\\flags\\netp\\" );
+void GameManager::dedicatedLoadGameData()
+{
+   	UnitProfileInterface::loadUnitProfiles();
+	LoadUnitSurfaces();
+	UNIT_FLAGS_SURFACE.loadAllBMPInDirectory( "pics\\flags\\netp\\" );
 
-  GameConfig::loadConfigScript();
-  return( true ); 
- }
+	GameConfig::loadConfigScript();
+}
 
 // ******************************************************************
 bool GameManager::startGameMapLoad( char *map_file_path, unsigned long partitions, int *result_code )
@@ -949,13 +885,13 @@ bool GameManager::startGameMapLoad( char *map_file_path, unsigned long partition
   if( check_return_code == _mapfile_not_found )
    {
     *result_code = _mapload_result_no_map_file;
-    return( false );
+    return false;
    }
   else
    if( check_return_code == _wadfile_not_found )
     {
      *result_code = _mapload_result_no_wad_file;
-     return( false );
+     return false;
     }
    else
     { *result_code = _mapload_result_success; }
@@ -966,10 +902,10 @@ bool GameManager::startGameMapLoad( char *map_file_path, unsigned long partition
   if ( MapInterface::startMapLoad( map_path, true, partitions ) == false )
    { 
     finishGameMapLoad();
-    return( false );
+    return false;
    }
   
-  return( true );
+  return true;
  }
 
 // ******************************************************************
@@ -979,15 +915,15 @@ bool GameManager::gameMapLoad( int *percent_complete )
   if( MapInterface::loadMap( percent_complete ) == false )
    {
     finishGameMapLoad();
-    return( false );
+    return false;
    }
  
-  return( true );
+  return true;
  }
 
 // ******************************************************************
 
-void GameManager::finishGameMapLoad( void )
+void GameManager::finishGameMapLoad()
  {
   char temp_path[256];
 
@@ -1005,7 +941,7 @@ void GameManager::finishGameMapLoad( void )
 // ******************************************************************
 
 void GameManager::dedicatedLoadGameMap( char *map_name )
- {  
+{  
   strcpy( map_path, ".\\maps\\" );
   strcat( map_path, map_name );
   
@@ -1015,244 +951,119 @@ void GameManager::dedicatedLoadGameMap( char *map_name )
   ObjectiveInterface::loadObjectiveList( map_path );
  
   ParticleInterface::initParticleSystems();
-  Particle2D::setCreateParticles( false );
+  Particle2D::setCreateParticles(false);
 
   ParticleInterface::addCloudParticle(GameConfig::getCloudCoverage());
   Physics::wind.setVelocity(GameConfig::getWindSpeed(), 107);
- }
+}
 
 // ******************************************************************
 bool GameManager::initialize( const char *command_line  )
- {
-  char work_str[256];
-  char *token;
-  strcpy( work_str, command_line );
+{
+  	char work_str[256];
+	char *token;
+	strcpy( work_str, command_line );
 
-  token = strtok( work_str, " " );
+	token = strtok( work_str, " " );
   
-  if ( token != 0 )
-   {
-    if ( strcmpi( token, "-dedicated" ) == 0 )
-     {
-      execution_mode = _execution_mode_dedicated_server;
-      return( dedicatedBootStrap() );
-     }
+	if ( token != 0 )
+	{
+		if ( strcasecmp( token, "-dedicated" ) == 0 )
+		{
+			execution_mode = _execution_mode_dedicated_server;
+			return( dedicatedBootStrap() );
+		}
 
-    execution_mode = _execution_mode_loop_back_server;
-    return( bootStrap() );
-   }
+		execution_mode = _execution_mode_loop_back_server;
+		return( bootStrap() );
+	}
 
-   execution_mode = _execution_mode_loop_back_server;
-   return( bootStrap() );
- }
+	execution_mode = _execution_mode_loop_back_server;
+	return( bootStrap() );
+}
 
 // ******************************************************************
-bool GameManager::bootStrap( void )
- {
-  unsigned long i = 0;
-  bool success = true;
-
-  while( success && (i < _MAX_INITIALIZE_PROCS ) )
-   {
-    switch( i )
-     {
-      case 0 :  
-       success = initializeDirectXSubSystem();
-      break;
-
-      case 1 :
-       success = initializeWin32SubSystem();
-      break;
-
-      case 2 : 
-       success = initializeSoundSubSystem();
-      break;
-
-      case 3 : 
-       success = initializeVideoSubSystem();
-   	  break;
-
-      case 4 : 
-       success = loadGameData();
-      break;
- 
-	  case 5 : 
-       success = initializeWindowSubSystem();
-      break;
-
-      case 6 :
-       success = initializeGameObjects();
-      break;
-      
-      case 7 :
-       success = initializeGameLogic();   
-      break;
-
-      case 8 :
-       success = initializeNetworkSubSystem();
-      break;
-
-      case 9 :
-       success = initializeInputDevices();
-      break;
-
-       
-     }// ** switch
-
-    i++;
-   }
- 
-  if ( success == false )
-   {  
-    printf("Initialisation failed at stage %d.\n", i);
-    fflush(stdout);
-    shutdown( i );
-    return ( false );
-   }
+bool GameManager::bootStrap()
+{
+	try {
+		initializeSoundSubSystem();
+		initializeVideoSubSystem();
+		loadGameData();
+		initializeWindowSubSystem();
+		initializeGameObjects();
+		initializeGameLogic();
+		initializeNetworkSubSystem();
+		initializeInputDevices();
+	} catch(Exception e) {
+#ifdef WIN32
+		MessageBox(gapp.hwndApp, e.getMessage(), "Netpanzer", MB_OK);
+#else
+		fprintf(stderr, "Initialisation failed:\n%s\n", e.getMessage());
+#endif
+		shutdown();
+		return false;
+	}
     
-  return( true );
- }
+	return true;
+}
 
 // ******************************************************************
-bool GameManager::dedicatedBootStrap( void )
- {
-  unsigned long i = 0;
-  bool success = true;
-
-  while( success && (i < _MAX_DEDICATED_INITIALIZE_PROCS) )
-   {
-    switch( i )
-     {
-      case 0 :  
-       success = initializeDirectXSubSystem();
-      break;
-
-      case 1 :
-       success = initializeWin32SubSystem();
-      break;
-
-      case 2 : 
-       success = dedicatedLoadGameData();
-      break;
- 
-	  case 3 : 
-       success = initializeGameObjects();
-      break;
-
-      case 4 :
-       success = initializeGameLogic();
-      break;
-      
-      case 5 :
-       success = initializeNetworkSubSystem();   
-      break;
-
-      case 6 :
-       success = initializeInputDevices();
-      break;
-
-      case 7 :
-       success = initializeDedicatedConsole();
-      break;
-      
-     }// ** switch
-
-    i++;
-   }
- 
-  if ( success == false )
-   {  
-    printf("Server Initialization failed at stage %d.\n", i);
-    fflush(stdout);
-    dedicatedShutdown( i );
-    return ( false );
-   }
+bool GameManager::dedicatedBootStrap()
+{
+	try {
+		dedicatedLoadGameData();
+		initializeGameObjects();
+		initializeGameLogic();
+		initializeNetworkSubSystem();   
+		initializeInputDevices();
+		initializeDedicatedConsole();
+	} catch(Exception e) {
+#ifdef WIN32
+		MessageBox(gapp.hwndApp, e.getMessage(), "Netpanzer", MB_OK);
+#else
+		fprintf(stderr, "Initialisation failed:\n%s\n", e.getMessage());
+#endif                                                                  		
+		dedicatedShutdown();
+		return false;
+	}
     
-  launchDedicatedServer();
-
-  return( true );
- }
-
+	launchDedicatedServer();
+	return true;
+}
 
 // ******************************************************************
 
-void GameManager::shutdown( unsigned long failure_index )
- {
-  long i;
+void GameManager::shutdown()
+{
+	shutdownSubSystems();
+}
 
-  for ( i = failure_index - 1; i > -1; i-- )
-   {
-    switch( i )
-     {
-      case 0 :  
-       shutdownDirectXSubSystem();
-      break;
+void GameManager::shutdownSubSystems()
+{
+	shutdownGameLogic();
+	shutdownNetworkSubSystem();
+	shutdownSoundSubSystem();
+	shutdownVideoSubSystem();
+	shutdownInputDevices();
+}
 
-      case 1 :
-       shutdownWin32SubSystem();
-      break;
-
-      case 2 :
-       shutdownSoundSubSystem();
-      break;
-
-      case 4 :
-       shutdownGameLogic();
-      break;
-      
-      case 5 :
-       shutdownNetworkSubSystem();   
-      break;
-       
-     }// ** switch
-   
-   }
-  
- }
-
-void GameManager::dedicatedShutdown( unsigned long failure_index )
- {
-  long i;
-
-  for ( i = failure_index - 1; i > -1; i-- )
-   {
-    switch( i )
-     {
-      case 0 :  
-       shutdownDirectXSubSystem();
-      break;
-
-      case 1 :
-       shutdownWin32SubSystem();
-      break;
-
-      case 7 :
-       shutdownGameLogic();
-      break;
-      
-      case 8 :
-       shutdownNetworkSubSystem();   
-      break;
-       
-     }// ** switch
-   
-   }
- }
-
-// ******************************************************************
-void GameManager::shutdown( void )
- {
-  shutdown( _MAX_INITIALIZE_PROCS );
- }
-
+void GameManager::dedicatedShutdown()
+{
+	shutdownGameLogic();
+	shutdownNetworkSubSystem();
+	shutdownInputDevices();
+	shutdownDedicatedConsole();
+}
 
 // ******************************************************************
 
 void GameManager::spawnPlayer( const PlayerID &player )
- {
+{
   PointXYi spawn_point;
 
+#ifdef WIN32
   dsound.StopTankIdle(); 
+#endif
   
   // ** Get a new spawn point and spawn the player ** 
   MapInterface::getFreeSpawnPoint( &spawn_point );
@@ -1273,10 +1084,12 @@ void GameManager::spawnPlayer( const PlayerID &player )
     SERVER->sendMessage( &set_view, sizeof( SystemSetPlayerView ), player, 0 );
    }
   
-  dsound.PlayTankIdle();  
- }     
+#ifdef WIN32
+  dsound.PlayTankIdle();
+#endif
+}     
 
-void GameManager::respawnAllPlayers( void )
+void GameManager::respawnAllPlayers()
  {
   PlayerState    *player_state;
   unsigned short max_players;
@@ -1333,7 +1146,7 @@ void GameManager::objectiveGameCompleted( PlayerState *winner_player_state )
  } 
 
 // ******************************************************************
-void GameManager::evaluateGameRules( void )
+void GameManager::evaluateGameRules()
  {
   PlayerState *player_state;
   
@@ -1385,11 +1198,9 @@ void GameManager::evaluateGameRules( void )
 
 // ******************************************************************
 
-bool GameManager::initializeConnectionType( void )
+bool GameManager::initializeConnectionType()
  {
   //bug#15
-  bool ServProvReturn;
-
   int connection_type;
    
   connection_type = GameConfig::GetNetworkConnectType();
@@ -1559,7 +1370,7 @@ bool GameManager::startClientGameSetup( NetMessage *message, int *result_code )
   game_elapsed_time_offset = game_setup->elapsed_time;
 
   startGameMapLoad( game_setup->map_name, 20, result_code );  
-  return( true );
+  return true;
  }
 
 // ******************************************************************
@@ -1569,10 +1380,10 @@ bool GameManager::clientGameSetup( int *percent_complete )
   if( gameMapLoad( percent_complete ) == false )
    {
     reinitializeGameLogic();
-    return( false );
+    return false;
    }
   
-  return( true );
+  return true;
  }
 
 
@@ -1610,7 +1421,7 @@ void GameManager::processSystemMessage( NetMessage *message )
  }
 
 // ******************************************************************
-void GameManager::requestNetworkPing( void )
+void GameManager::requestNetworkPing()
  {
   SystemPingRequest ping_request;
   
@@ -1621,7 +1432,7 @@ void GameManager::requestNetworkPing( void )
     
  }
 
-void GameManager::setNetPanzerGameOptions( void )
+void GameManager::setNetPanzerGameOptions()
  {
 
   MiniMapInterface::setProperties( GameConfig::getPlayerRadarUnitColor(),
@@ -1683,11 +1494,10 @@ void displayHostMultiPlayerGameProgress(const int &curNum)
 }
 
 // ******************************************************************
-void GameManager::hostMultiPlayerGame( void )
+void GameManager::hostMultiPlayerGame()
  {
 	PlayerID player;
 	PlayerState *player_state;
-	bool minimize;
 	Timer wait;
 
     progressView.open();
@@ -1803,7 +1613,7 @@ void GameManager::hostMultiPlayerGame( void )
 
 // ******************************************************************
 
-void GameManager::joinMultiPlayerGame( void )
+void GameManager::joinMultiPlayerGame()
  {
   setNetPanzerGameOptions();
   //reinitializeGameLogic();
@@ -1825,12 +1635,14 @@ void GameManager::joinMultiPlayerGame( void )
    }
 
   ClientConnectDaemon::startConnectionProcess();
+#ifdef WIN32
   dsound.PlayTankIdle();
+#endif
  }
 
 // ******************************************************************
 
-void GameManager::launchMultiPlayerGame( void )
+void GameManager::launchMultiPlayerGame()
  {
   if( GameConfig::GetHostOrJoin() == _game_session_host )  
    {
@@ -1843,7 +1655,7 @@ void GameManager::launchMultiPlayerGame( void )
    }
  }
 // ******************************************************************
-void GameManager::launchNetPanzerGame( void )
+void GameManager::launchNetPanzerGame()
  {
   if ( GameConfig::GetGameMode() == _gamemode_multiplayer )
    {
@@ -1852,7 +1664,7 @@ void GameManager::launchNetPanzerGame( void )
  }
 
 // ******************************************************************
-void GameManager::launchDedicatedServer( void )
+void GameManager::launchDedicatedServer()
  {
   ConsoleInterface::postMessage( "netPanzer Dedicated Server");
 
@@ -1950,8 +1762,8 @@ void GameManager::launchDedicatedServer( void )
   printf( "PowerUps <NO> (Y/N) : " );
   fflush(stdout);
   gets( input_str );
-  if ( stricmp( "y", input_str ) == 0 )
-   { GameConfig::setPowerUpState( true ); }
+  if ( strcasecmp( "y", input_str ) == 0 )
+   { GameConfig::setPowerUpState(true); }
 
   printf( "Server Name <Dedicated Server> :" );
   fflush(stdout);
@@ -1989,25 +1801,32 @@ void GameManager::launchDedicatedServer( void )
 
   setNetPanzerGameOptions();  
 
-  Particle2D::setCreateParticles( false ); 
+  Particle2D::setCreateParticles(false); 
   
   ConsoleInterface::postMessage( "Game Launched, Server Ready...");
  
   startGameTimer();
  }
 // ******************************************************************
-void GameManager::exitNetPanzer( void )
- {
+void GameManager::exitNetPanzer()
+{
+#ifdef WIN32
   // NOTE: Hack
   dsound.StopTankIdle(); 
+#endif
 
   quitNetPanzerGame();
 
+#ifdef WIN32
   PostMessage(gapp.hwndApp, WM_CLOSE, 0, 0);
- }
+#else
+  // XXX not the nice method...
+  exit(1);
+#endif
+}
 
 
-void GameManager::quitNetPanzerGame( void )
+void GameManager::quitNetPanzerGame()
  {
   if ( NetworkState::status == _network_state_client )
    {
@@ -2029,7 +1848,7 @@ void GameManager::quitNetPanzerGame( void )
  }
 
 // ******************************************************************
-void GameManager::mainLoop( void )
+void GameManager::mainLoop()
  {
   if ( execution_mode == _execution_mode_loop_back_server )
    { gameLoop(); }
@@ -2038,7 +1857,7 @@ void GameManager::mainLoop( void )
  }
 
 // ******************************************************************
-void GameManager::gameLoop( void )
+void GameManager::gameLoop()
  {
   static bool once = true;
 
@@ -2059,7 +1878,7 @@ void GameManager::gameLoop( void )
  }
 
 // ******************************************************************
-void GameManager::simLoop( void )
+void GameManager::simLoop()
  {
   if ( NetworkState::status == _network_state_server )
    { ServerMessageRouter::routeMessages();  }
@@ -2085,7 +1904,7 @@ void GameManager::simLoop( void )
  }
 
 // ******************************************************************
-void GameManager::inputLoop( void )
+void GameManager::inputLoop()
  {
   KeyboardInterface::sampleKeyboard();
 
@@ -2106,7 +1925,7 @@ void GameManager::inputLoop( void )
  }
 
 // ******************************************************************
-void GameManager::graphicsLoop( void )
+void GameManager::graphicsLoop()
  {
   FRAME_BUFFER.lock();
   screen.lock(FRAME_BUFFER.mem);
@@ -2158,7 +1977,7 @@ void GameManager::graphicsLoop( void )
  }
 
 // ******************************************************************
-void GameManager::dedicatedGameLoop( void )
+void GameManager::dedicatedGameLoop()
  {
   TimerInterface::start();
 
@@ -2169,7 +1988,7 @@ void GameManager::dedicatedGameLoop( void )
  }
 
 // ******************************************************************
-void GameManager::dedicatedSimLoop( void )
+void GameManager::dedicatedSimLoop()
  {
   if ( NetworkState::status == _network_state_server )
    { ServerMessageRouter::routeMessages();  }
@@ -2191,10 +2010,12 @@ void GameManager::dedicatedSimLoop( void )
  }
 
 // ******************************************************************
-void GameManager::dedicatedInputLoop( void )
+void GameManager::dedicatedInputLoop()
  {
   KeyboardInterface::sampleKeyboard();
 
+  // XXX we need SDL code here
+#ifdef WIN32
   if( kbhit() )
    {
     int key;
@@ -2256,16 +2077,17 @@ void GameManager::dedicatedInputLoop( void )
        } // ** switch
      }
    }
+#endif
  
  }
 
-void   GameManager::startGameTimer( void )
+void   GameManager::startGameTimer()
  {
   game_elapsed_time_offset = 0;
   time( &game_start_time );
  }
 
-time_t GameManager::getGameTime( void ) 
+time_t GameManager::getGameTime() 
  {
   time_t current_time;
   
@@ -2273,5 +2095,4 @@ time_t GameManager::getGameTime( void )
  
   return( (current_time - game_start_time) + game_elapsed_time_offset );
  }
-#endif
 
