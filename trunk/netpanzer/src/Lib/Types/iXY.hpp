@@ -35,179 +35,101 @@ struct iXY
         y = a.y;
     }
 
-    inline iXY &operator =(const iXY &a)
+    iXY &operator =(const iXY &a)
     {
         x = a.x;
         y = a.y;
         return *this;
     }
 
-    inline iXY &operator =(const int &a)
-    {
-        x = a;
-        y = a;
-        return *this;
-    }
-
-    inline iXY  &operator +=(const iXY &a)
+    iXY  &operator +=(const iXY &a)
     {
         x += a.x; y += a.y; return *this;
     }
-    inline iXY  &operator +=(int        a)
-    {
-        x +=   a; y +=   a; return *this;
-    }
-    inline iXY  &operator -=(const iXY &a)
+    iXY  &operator -=(const iXY &a)
     {
         x -= a.x; y -= a.y; return *this;
     }
-    inline iXY  &operator -=(int        a)
-    {
-        x -=   a; y -=   a; return *this;
-    }
-    inline iXY  &operator *=(const iXY &a)
+    iXY  &operator *=(const iXY &a)
     {
         x *= a.x; y *= a.y; return *this;
     }
-    inline iXY  &operator *=(int        a)
+    iXY  &operator *=(int        a)
     {
         x *=   a; y *=   a; return *this;
     }
-    inline iXY	&operator /=(const iXY &a)
-    {
-        x /= a.x; y /= a.y; return *this;
-    }
-    inline iXY	&operator /=(int        a)
+    iXY	&operator /=(int        a)
     {
         x /=   a; y /=   a; return *this;
     }
 
-    inline bool operator <=(const iXY &a)
-    {
-        if (x <= a.x && y <= a.y) return true; return false;
-    }
-    inline bool operator <=(int        a)
-    {
-        if (x <= a   && y <= a)   return true; return false;
-    }
-    inline bool operator >=(const iXY &a)
-    {
-        if (x >= a.x && y >= a.y) return true; return false;
-    }
-    inline bool operator >=(int        a)
-    {
-        if (x >= a   && y >= a)   return true; return false;
-    }
-    inline bool operator  <(const iXY &a)
-    {
-        if (x <  a.x && y <  a.y) return true; return false;
-    }
-    inline bool operator  <(int        a)
-    {
-        if (x <  a   && y <  a)   return true; return false;
-    }
-    inline bool operator  >(const iXY &a)
-    {
-        if (x >  a.x && y >  a.y) return true; return false;
-    }
-    inline bool operator  >(int        a)
-    {
-        if (x >  a   && y >  a)   return true; return false;
-    }
-
-    inline iXY operator + (const iXY &a) const
+    iXY operator + (const iXY &a) const
     {
         return iXY(x + a.x, y + a.y);
     }
-    inline iXY operator - (const iXY &a) const
+    iXY operator - (const iXY &a) const
     {
         return iXY(x - a.x, y - a.y);
     }
-    inline iXY operator * (const iXY &a) const
+    iXY operator * (const iXY &a) const
     {
         return iXY(x * a.x, y * a.y);
     }
-    inline iXY operator / (const iXY &a) const
-    {
-        return iXY(x / a.x, y / a.y);
-    }
-    inline iXY operator % (const iXY &a) const
-    {
-        return iXY(x % a.x, y % a.y);
-    }
-    inline iXY operator + (int        a) const
-    {
-        return iXY(x +   a, y +   a);
-    }
-    inline iXY operator - (int        a) const
-    {
-        return iXY(x -   a, y -   a);
-    }
-    inline iXY operator * (int        a) const
+    iXY operator * (int        a) const
     {
         return iXY(x *   a, y *   a);
     }
-    inline iXY operator / (int        a) const
+    iXY operator / (int        a) const
     {
         return iXY(x /   a, y /   a);
     }
-    inline iXY operator % (int        a) const
-    {
-        return iXY(x %   a, y %   a);
-    }
 
-    inline bool operator ==(const iXY &a) const
+    bool operator ==(const iXY &a) const
     {
         return x == a.x && y == a.y;
     }
 
-    inline bool operator ==(int a) const
-    {
-        return x == a && y == a;
-    }
-
-    inline bool operator !=(const iXY &a) const
+    bool operator !=(const iXY &a) const
     {
         return x != a.x || y != a.y;
     }
 
-    inline bool operator !=(int a) const
-    {
-        return x != a && y != a;
-    }
-
     // Negation.
-    inline iXY operator -() const
+    iXY operator -() const
     {
         return iXY(-x, -y);
     }
 
-    inline void zero()
+    void zero()
     {
         x = y = 0;
     }
 
+    bool isZero() const
+    {
+        return x==0 && y==0;
+    }
+
     double mag() const;
-    inline float  mag2() const
+    float  mag2() const
     {
         return float(x * x + y * y);
     }
 
-    inline int getArea() const
+    int getArea() const
     {
         return x * y;
     }
-
 };
 
 //---------------------------------------------------------------------------
-inline double distance(const iXY &a, const iXY &b)
+static inline double distance(const iXY &a, const iXY &b)
 {
     return (a - b).mag();
 }
 
 //---------------------------------------------------------------------------
-inline float distance2(const iXY &a, const iXY &b)
+static inline float distance2(const iXY &a, const iXY &b)
 {
     return (a - b).mag2();
 }

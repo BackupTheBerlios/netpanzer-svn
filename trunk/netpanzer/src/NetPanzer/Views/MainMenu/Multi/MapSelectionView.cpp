@@ -208,7 +208,7 @@ int MapSelectionView::loadMaps()
         mapList[i].cells.x = netPanzerMapHeader.x_size;
         mapList[i].cells.y = netPanzerMapHeader.y_size;
 
-        int seekAmount = mapList[i].cells.getArea() * sizeof(WORD);
+        int seekAmount = mapList[i].cells.getArea() * sizeof(uint16_t);
 
         file->seek(file->tell()+seekAmount);
 

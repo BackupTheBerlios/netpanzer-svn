@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETWORK_CLIENT_HPP
 #define _NETWORK_CLIENT_HPP
 
-#include "codewiz.hpp"
 #include "NetworkInterface.hpp"
 #include "NetworkReturnCodes.hpp"
 
@@ -72,7 +71,7 @@ protected:
     Timer   keep_alive_timer;
     void updateKeepAliveState( void );
 
-    DWORD client_transport_id;
+    uint32_t client_transport_id;
 
     unsigned short connection_type;
     unsigned short connection_status;

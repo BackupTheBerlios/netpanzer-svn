@@ -29,7 +29,7 @@ ScrollBar::ScrollBar() : Component()
 
 // ScrollBar
 //---------------------------------------------------------------------------
-ScrollBar::ScrollBar(int orientation)
+ScrollBar::ScrollBar(Orientation orientation)
 {
     reset();
 
@@ -39,7 +39,7 @@ ScrollBar::ScrollBar(int orientation)
 
 // ScrollBar
 //---------------------------------------------------------------------------
-ScrollBar::ScrollBar(int orientation, int value, int visible, int minimum, int maximum)
+ScrollBar::ScrollBar(Orientation orientation, int value, int visible, int minimum, int maximum)
 {
     reset();
 
@@ -61,7 +61,7 @@ void ScrollBar::reset()
     blockIncrement = DEFAULT_BLOCK_INCREMENT;
     minimum        = DEFAULT_MINIMUM;
     maximum        = DEFAULT_MAXIMUM;
-    orientation    = DEFAULT_ORIENTATION;
+    orientation    = VERTICAL;
     value          = DEFAULT_VALUE;
     unitIncrement  = DEFAULT_UNIT_INCREMENT;
     viewableAmount = 0;

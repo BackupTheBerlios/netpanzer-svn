@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __ParticleInterface_hpp__
 #define __ParticleInterface_hpp__
 
+#include <stdint.h>
+
 #include "iXY.hpp"
 #include "iRect.hpp"
 #include "PuffParticle2D.hpp"
@@ -126,14 +128,14 @@ public:
     static void testSimText(const Surface &dest);
 
     static void addHit(const UnitState &unitState);
-    static void addMiss(const iXY &worldPos, BYTE unitType);
+    static void addMiss(const iXY &worldPos, uint8_t unitType);
 
-    static void addMissleLaunchPuff(const iXY &worldPos, const fXY &direction, BYTE unitType);
-    static void addMissleFlightPuff(const iXY &worldPos, const fXY &direction, float &curWait, float &totalWait, BYTE unitType);
+    static void addMissleLaunchPuff(const iXY &worldPos, const fXY &direction, uint8_t unitType);
+    static void addMissleFlightPuff(const iXY &worldPos, const fXY &direction, float &curWait, float &totalWait, uint8_t unitType);
     static void addMissleExplosion(const iXY &worldPos);
 
-    //static void addMuzzlePuff(const fXYZ &muzzlePos, const fXYZ &direction, BYTE unitType);
-    static void addMuzzlePuff(const fXYZ &worldPos, const fXYZ &direction, int frame, BYTE unitType);
+    //static void addMuzzlePuff(const fXYZ &muzzlePos, const fXYZ &direction, uint8_t unitType);
+    static void addMuzzlePuff(const fXYZ &worldPos, const fXYZ &direction, int frame, uint8_t unitType);
     static void addDirtKick(const iXY &worldPos);
 
     static void addCloudParticle(int count = 1);

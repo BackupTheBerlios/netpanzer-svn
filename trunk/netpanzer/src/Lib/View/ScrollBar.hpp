@@ -25,11 +25,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //--------------------------------------------------------------------------
 class ScrollBar : public Component
 {
+public:
+    enum Orientation {
+        HORIZONTAL, VERTICAL
+    };                          
+
 private:
     enum { DEFAULT_BLOCK_INCREMENT =   1 };
     enum { DEFAULT_MINIMUM         =   0 };
     enum { DEFAULT_MAXIMUM         = 100 };
-    enum { DEFAULT_ORIENTATION     = VERTICAL };
     enum { DEFAULT_VALUE           =   0 };
     enum { DEFAULT_UNIT_INCREMENT  =   1 };
     enum { MINOR_AXIS_SIZE         =  12 };
@@ -37,7 +41,7 @@ private:
     int   blockIncrement;
     int   minimum;
     int   maximum;
-    int   orientation;
+    Orientation orientation;
     int   unitIncrement;
     int   value;
     int   viewableAmount; // The total number of viewable items.
@@ -54,8 +58,8 @@ protected:
 
 public:
     ScrollBar();
-    ScrollBar(int orientation);
-    ScrollBar(int orientation, int value, int visible, int minimum, int maximum);
+    ScrollBar(Orientation orientation);
+    ScrollBar(Orientation orientation, int value, int visible, int minimum, int maximum);
     virtual ~ScrollBar()
     {}
 
@@ -97,7 +101,7 @@ public:
     {
         ScrollBar::minimum = minimum;
     }
-    void setOrientation(int orientation)
+    void setOrientation(Orientation orientation)
     {
         ScrollBar::orientation = orientation;
     }
@@ -112,8 +116,6 @@ public:
 
     virtual void draw(const Surface &dest);
     virtual void actionPerformed(const iXY &pos);
-
-}
-; // end ScrollBar
+}; // end ScrollBar
 
 #endif // end __ScrollBar_hpp__

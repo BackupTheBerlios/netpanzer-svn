@@ -20,11 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <assert.h>
 #include <stdlib.h>
 #include "Log.hpp"
-#include "codewiz.hpp"
 #include "GroundExplosionParticleSystem2D.hpp"
 #include "Physics.hpp"
 #include "GroundExplosionParticle2D.hpp"
-
 
 //---------------------------------------------------------------------------
 GroundExplosionParticleSystem2D::GroundExplosionParticleSystem2D(fXYZ pos, iRect bounds, int maxParticleCount, int maxParticleSpeed) : ParticleSystem2D(pos)

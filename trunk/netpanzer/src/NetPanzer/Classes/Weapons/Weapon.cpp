@@ -16,6 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
+#include <math.h>
+
 #include "Weapon.hpp"
 
 #include "UnitMessageTypes.hpp"
@@ -233,7 +236,7 @@ int Weapon::getGoalAngle(const iXY &start, const iXY &end)
     // Fix the goal angle around to match up with the way our angle
     // measurements work.  We measure with 0 pointing north, moving around
     // clockwise.  We also want to measure the angle from 0.0 to 1.0.
-    float ourGoalAngle = ((PI / 2) - goalAngleRad) / (PI * 2);
+    float ourGoalAngle = ((M_PI / 2) - goalAngleRad) / (M_PI * 2);
     int   angle        = (int) (ourGoalAngle * 360);
 
     while (angle < 0) {

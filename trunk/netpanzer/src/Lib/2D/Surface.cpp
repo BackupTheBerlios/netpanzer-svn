@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <math.h>
 #include <memory>
 #include <vector>
 #include <string>
@@ -73,31 +74,31 @@ inline void orderCoords(iRect &bounds)
 
 struct PcxHeader
 {
-    BYTE   manufacturer;
-    BYTE   version;
-    BYTE   encoding;
-    BYTE   bits_per_pixel;
-    WORD   x,y;                    //upper left of image
-    WORD   width, height;          //size of the image
-    WORD   horz_res;               //horizontal resolution
-    WORD   vert_res;               //vertical resolution
-    BYTE   ega_palette[48];        //who cares?
-    BYTE   reserved;
-    BYTE   num_color_planes;
-    WORD   bytes_per_line;
-    WORD   palette_type;
-    BYTE   padding[58];
+    uint8_t   manufacturer;
+    uint8_t   version;
+    uint8_t   encoding;
+    uint8_t   bits_per_pixel;
+    uint16_t   x,y;                    //upper left of image
+    uint16_t   width, height;          //size of the image
+    uint16_t   horz_res;               //horizontal resolution
+    uint16_t   vert_res;               //vertical resolution
+    uint8_t   ega_palette[48];        //who cares?
+    uint8_t   reserved;
+    uint8_t   num_color_planes;
+    uint16_t   bytes_per_line;
+    uint16_t   palette_type;
+    uint8_t   padding[58];
 }
 __attribute__((packed));
 
 class SurfaceHeader
 {
 public:
-    DWORD pixX;
-    DWORD pixY;
-    DWORD offsetX;
-    DWORD offsetY;
-    DWORD frameCount;
+    uint32_t pixX;
+    uint32_t pixY;
+    uint32_t offsetX;
+    uint32_t offsetY;
+    uint32_t frameCount;
     float fps;
 
 }
@@ -105,20 +106,20 @@ __attribute__((packed)); // end SurfaceHeader
 
 struct PIC_HEAD
 {
-    DWORD xPix;         // Horizontal pixel count.
-    DWORD yPix;         // Vertical pixel count.
-    DWORD frameCount;    // Number of frames.
+    uint32_t xPix;         // Horizontal pixel count.
+    uint32_t yPix;         // Vertical pixel count.
+    uint32_t frameCount;    // Number of frames.
 }
 __attribute__((packed));
 
 class BitmapFileHeader
 {
 public:
-    WORD    bfType;
-    DWORD   bfSize;
-    WORD    bfReserved1;
-    WORD    bfReserved2;
-    DWORD   bfOffBits;
+    uint16_t    bfType;
+    uint32_t   bfSize;
+    uint16_t    bfReserved1;
+    uint16_t    bfReserved2;
+    uint32_t   bfOffBits;
 }
 __attribute__((packed));
 
@@ -129,27 +130,27 @@ __attribute__((packed));
 class BitmapInfoHeader
 {
 public:
-    DWORD  biSize;
-    DWORD  biWidth;
-    DWORD  biHeight;
-    WORD   biPlanes;
-    WORD   biBitCount;
-    DWORD  biCompression;
-    DWORD  biSizeImage;
-    DWORD  biXPelsPerMeter;
-    DWORD  biYPelsPerMeter;
-    DWORD  biClrUsed;
-    DWORD  biClrImportant;
+    uint32_t  biSize;
+    uint32_t  biWidth;
+    uint32_t  biHeight;
+    uint16_t   biPlanes;
+    uint16_t   biBitCount;
+    uint32_t  biCompression;
+    uint32_t  biSizeImage;
+    uint32_t  biXPelsPerMeter;
+    uint32_t  biYPelsPerMeter;
+    uint32_t  biClrUsed;
+    uint32_t  biClrImportant;
 }
 __attribute__((packed));
 
 class RGBQuad
 {
 public:
-    BYTE    rgbBlue;
-    BYTE    rgbGreen;
-    BYTE    rgbRed;
-    BYTE    rgbReserved;
+    uint8_t    rgbBlue;
+    uint8_t    rgbGreen;
+    uint8_t    rgbRed;
+    uint8_t    rgbReserved;
 }
 __attribute__((packed));
 
@@ -337,7 +338,7 @@ bool Surface::alloc(const iXY  &pix,
 
     Surface::stride = stride ? stride : pix.x;
 
-    DWORD requestedBytes = DWORD(Surface::stride) * DWORD(pix.y) * sizeof(PIX) * DWORD(frameCount);
+    uint32_t requestedBytes = uint32_t(Surface::stride) * uint32_t(pix.y) * sizeof(PIX) * uint32_t(frameCount);
 
     if (requestedBytes > 0) {
         frame0 = (PIX *) malloc(requestedBytes);
@@ -692,7 +693,7 @@ void Surface::bltTrans(const Surface &dest, iXY min) const
 //          clipping on the bounds of the object. The non-transparent pixels
 //          are blitted in the specified color.
 //---------------------------------------------------------------------------
-void Surface::bltTransColor(const Surface &dest, iXY min, const BYTE &color) const
+void Surface::bltTransColor(const Surface &dest, iXY min, const uint8_t &color) const
 {
     assert(getDoesExist());
     assert(dest.getDoesExist());
@@ -1266,8 +1267,8 @@ void Surface::verticalWave3D(int numWaves, float percent, int offset)
     Surface temp;
     temp.create(pix.x, pix.y, pix.x, 1);
 
-    float angleRadians = (offset * 3.6) / (180.0 / PI);
-    float angleStep    = ((PI * 2) * numWaves) / pix.y;
+    float angleRadians = (offset * 3.6) / (180.0 / M_PI);
+    float angleStep    = ((M_PI * 2) * numWaves) / pix.y;
     float amplitude    = (percent * pix.y / 2) / 100.0;
 
     blt(temp, 0, 0);
@@ -1309,8 +1310,8 @@ void Surface::horizontalWave3D(int numWaves, float percent, int offset)
     Surface temp;
     temp.create(pix.x, pix.y, pix.x, 1);
 
-    float angleRadians = (offset*3.6) / (180.0 / PI);
-    float angleStep    = ((PI * 2) * numWaves) / pix.y;
+    float angleRadians = (offset*3.6) / (180.0 / M_PI);
+    float angleStep    = ((M_PI * 2) * numWaves) / pix.y;
     float amplitude    = (percent * pix.y / 2) / 100.0;
 
     blt(temp, 0, 0);
@@ -1352,7 +1353,7 @@ void Surface::ripple(int numWaves, float percent, int offset)
 
     unsigned index     = 0;
 
-    float piTimes2     = float(PI * 2.0);
+    float piTimes2     = float(M_PI * 2.0);
     float angleRadians = (piTimes2 * percent) / 100.0;
     float maxDist      = sqrt(pix.x * pix.x + pix.y * pix.y);
     float scale        = (piTimes2 * numWaves) / maxDist;
@@ -1404,7 +1405,7 @@ void Surface::horizontalWave(int numWaves, float percent, int offset)
     Surface temp(pix.x, pix.y, pix.x, 1);
     blt(temp, 0, 0);
 
-    float piTimes2      = float(PI * 2.0);
+    float piTimes2      = float(M_PI * 2.0);
     float waveFrequency = (numWaves * piTimes2) / pix.y;
     float waveOffset    = (offset * numWaves * piTimes2) / 100.0;
     float radius        = (pix.x * percent) / 100.0;
@@ -1449,7 +1450,7 @@ void Surface::verticalWave(int numWaves, float percent, int offset)
     Surface temp(pix.x, pix.y, pix.x, 1);
     blt(temp, 0, 0);
 
-    float piTimes2      = float(PI * 2.0);
+    float piTimes2      = float(M_PI * 2.0);
     float waveFrequency = (numWaves * piTimes2) / pix.y;
     float waveOffset    = (offset * numWaves * piTimes2) / 100.0;
     float radius        = (pix.x * percent) / 100.0;
@@ -1553,7 +1554,7 @@ void Surface::blendIn(const Surface &source, iXY min, ColorTable &colorTable) co
     if (signed(pixelsPerRow) <= 0) return;
     if (signed(numRows) <= 0) return;
 
-    const BYTE *table = colorTable.getColorArray();
+    const uint8_t *table = colorTable.getColorArray();
 
     for (int yCount = 0 ; yCount < numRows ; yCount++) {
         bltBlendSpan(dRow, sRow, pixelsPerRow, table);
@@ -1631,7 +1632,7 @@ void Surface::bltBlendScale(const Surface &source, const iRect &destRect, ColorT
     if (pixelsPerRow <= 0) return;
     if (numRows <= 0) return;
 
-    const BYTE *table = colorTable.getColorArray();
+    const uint8_t *table = colorTable.getColorArray();
 #if 0
     int stepAndDecCount = (xSrcDelta << 16) | 0xffff;
     int stepWholePart = xSrcDelta >> 16;
@@ -1982,7 +1983,7 @@ void Surface::loadTIL(const char* filename)
         create(fletchTileHeader.xSize, fletchTileHeader.ySize, fletchTileHeader.xSize, 1);
     }
 
-    int numBytes = pix.x * pix.y * sizeof(BYTE);
+    int numBytes = pix.x * pix.y * sizeof(uint8_t);
 
     if (numBytes <= 0) return;
     if (mem == 0) {
@@ -2184,9 +2185,9 @@ void Surface::bltBrightness(const Surface &dest, const iXY pos, ColorTable &colo
 	}
 } // end bltBrightness*/
 
-static BYTE quickHack[65536];
+static uint8_t quickHack[65536];
 
-static void bltLightDarkSpan(int n, PIX *d, const BYTE *i, const PIX *s)
+static void bltLightDarkSpan(int n, PIX *d, const uint8_t *i, const PIX *s)
 {
     static int once = 0;
 
@@ -2296,13 +2297,13 @@ void Surface::bltLightDark(const Surface &source, const Surface &lightTable) con
 
     int numRows = pix.y;
 
-    BYTE const *rowI = lightTable[0];
+    uint8_t const *rowI = lightTable[0];
     PIX  const *rowS = source.mem;
     PIX        *rowD = mem;
 
     while (numRows > 0) {
         //int xCount = pix.x;
-        //BYTE const *i = rowI;
+        //uint8_t const *i = rowI;
         //PIX  const *s = rowS;
         //PIX        *d = rowD;
 
@@ -2346,7 +2347,7 @@ void Surface::bltAdd(const Surface &dest, iXY min) const
     assert(dest.getDoesExist());
     assert(this != 0);
 
-    static BYTE saturateTable[512];
+    static uint8_t saturateTable[512];
 
     static int once = 0;
     if (!once) {
@@ -2654,7 +2655,7 @@ void Surface::bltChar5x5(const iXY &pos, const char &character, const PIX &color
 //          calls to blitChar for each character of the string. Does not
 //          handle wrapping.
 //---------------------------------------------------------------------------
-void Surface::bltString(const iXY &pos, const char *string, const BYTE &color) const
+void Surface::bltString(const iXY &pos, const char *string, const uint8_t &color) const
 {
     for (int index = 0; string[index] != 0; index++) {
         // Don't attempt blank spaces.
@@ -2673,7 +2674,7 @@ void Surface::bltString(const iXY &pos, const char *string, const BYTE &color) c
 //          calls to blitChar for each character of the string. Does not
 //          handle wrapping.
 //---------------------------------------------------------------------------
-void Surface::bltString5x5(const iXY &pos, const char *string, const BYTE &color) const
+void Surface::bltString5x5(const iXY &pos, const char *string, const uint8_t &color) const
 {
     for (int index = 0; string[index] != 0; index++) {
         bltChar5x5(iXY(pos.x + (index * 5), pos.y), string[index], color);
@@ -2683,7 +2684,7 @@ void Surface::bltString5x5(const iXY &pos, const char *string, const BYTE &color
 
 // bltStringShadowed
 //---------------------------------------------------------------------------
-void Surface::bltStringShadowed(const iXY &pos, char const *string, const BYTE &textColor, const BYTE &shadowColor) const
+void Surface::bltStringShadowed(const iXY &pos, char const *string, const uint8_t &textColor, const uint8_t &shadowColor) const
 {
     for (int index = 0; string[index] != 0; index++) {
         bltChar8x8(pos.x + (index << 3) + 1, pos.y + 1, string[index], shadowColor);
@@ -3057,7 +3058,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
 void Surface::mapFromPalette(const char* oldPalette)
 {
     // Load the source palette.
-    BYTE     bestFitArray[256];
+    uint8_t     bestFitArray[256];
     RGBColor sourceColor[256];
 
     std::auto_ptr<ReadFile> file (FileSystem::openRead(oldPalette));

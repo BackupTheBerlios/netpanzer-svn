@@ -18,19 +18,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <algorithm>
-#include "codewiz.hpp"
 #include "iRect.hpp"
 
 iRect iRect::operator | (const iRect &a)
 {
-    if (getIsEmpty()) {
+    if (isEmpty())
         return a;
-    } else if (a.getIsEmpty()) {
+    if(a.isEmpty())
         return *this;
-    }
 
     return iRect(
                std::min(min.x, a.min.x), std::min(min.y, a.min.y),
                std::max(max.x, a.max.x), std::max(max.y, a.max.y)
            );
 }
+

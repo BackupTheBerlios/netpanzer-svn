@@ -620,7 +620,7 @@ float ParticleInterface::getFrameRateAdjustment()
 }
 
 //--------------------------------------------------------------------------
-void ParticleInterface::addMiss(const iXY &worldPos, BYTE unitType)
+void ParticleInterface::addMiss(const iXY &worldPos, uint8_t unitType)
 {
     /*
       short hit_points;
@@ -717,7 +717,7 @@ void ParticleInterface::buildUnitTables()
 }
 
 //--------------------------------------------------------------------------
-void ParticleInterface::addMissleFlightPuff(const iXY &worldPos, const fXY &direction, float &curWait, float &totalWait, BYTE unitType)
+void ParticleInterface::addMissleFlightPuff(const iXY &worldPos, const fXY &direction, float &curWait, float &totalWait, uint8_t unitType)
 {
     iXY thrustOffset(int(-10.0f * direction.x), int(-10.0f * direction.y));
     fXYZ loc(worldPos.x + thrustOffset.x, 0, worldPos.y + thrustOffset.y);
@@ -746,7 +746,7 @@ void ParticleInterface::addMissleFlightPuff(const iXY &worldPos, const fXY &dire
 }
 
 //--------------------------------------------------------------------------
-void ParticleInterface::addMissleLaunchPuff(const iXY &worldPos, const fXY &direction, BYTE unitType)
+void ParticleInterface::addMissleLaunchPuff(const iXY &worldPos, const fXY &direction, uint8_t unitType)
 {
     //	//addMissleFlashParticle(pos);
     //
@@ -780,7 +780,7 @@ void ParticleInterface::addMissleExplosion(const iXY &worldPos)
 }
 
 //--------------------------------------------------------------------------
-void ParticleInterface::addMuzzlePuff(const fXYZ &worldPos, const fXYZ &direction, int frame, BYTE unitType)
+void ParticleInterface::addMuzzlePuff(const fXYZ &worldPos, const fXYZ &direction, int frame, uint8_t unitType)
 {
     // Cull out any muzzle puffs which are far away.
     if (Particle2D::getFarAway(worldPos)) {
@@ -853,8 +853,6 @@ void ParticleInterface::addCloudParticle(int count /* = 1 */)
 
 void ParticleInterface::initParticleSystems()
 {
-    randomize();
-
     PuffParticle2D::init();
     //SparkParticle2D::init();
     CloudParticle2D::init();
@@ -899,7 +897,7 @@ void ParticleInterface::addMoveDirtPuff(const UnitState &unitState)
         if (movePuffWaitGroup >= movePuffWaitTotal) {
             iXY size     = unitParticleInfo[unitState.unit_type].minBounds.getSize();
 
-            assert(size > 0);
+            assert(size.x > 0 && size.y > 0);
 
             iXY halfSize = size / 2;
 

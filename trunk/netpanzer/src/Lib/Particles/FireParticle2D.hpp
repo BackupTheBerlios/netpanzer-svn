@@ -31,7 +31,7 @@ class FireParticle2D
 {
 public:
     float totalTime;
-    BYTE  color;
+    uint8_t  color;
     fXYZ  pos;
     bool  isAlive;
 

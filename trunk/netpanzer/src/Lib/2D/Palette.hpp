@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __Palette_hpp__
 
 #include <stdio.h>
+#include <stdint.h>
 
 #include "Color.hpp"
 #include "ColorTable.hpp"
@@ -120,7 +121,7 @@ public:
     static void setEarth();
     static void setFire();
     static void loadACT(const char *filename);
-    static BYTE findNearestColor(const RGBColor &rgb, const bool &ignoreIndexZero = false);
+    static uint8_t findNearestColor(const RGBColor &rgb, const bool &ignoreIndexZero = false);
     static void init(const char *filename);
     static void initNoColorTables(const char *filename);
     static void setColors();

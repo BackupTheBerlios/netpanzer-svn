@@ -80,7 +80,7 @@ void ColorTable::init(int colorCount)
 
 // setColor
 //---------------------------------------------------------------------------
-void ColorTable::setColor(int index, BYTE color)
+void ColorTable::setColor(int index, uint8_t color)
 {
     assert(index < colorCount);
 
@@ -187,9 +187,9 @@ void ColorTable::createDarkenFilter(const char *filename, float fudgeValue)
             curPercent = (float(255 - x) / 255.0f) * percent + 1.0f - percent;
             curOffset  = (y * 256) + x;
 
-            curColor.red   = (BYTE) (curPercent * float(Palette::color[y].red));
-            curColor.green = (BYTE) (curPercent * float(Palette::color[y].green));
-            curColor.blue  = (BYTE) (curPercent * float(Palette::color[y].blue));
+            curColor.red   = (uint8_t) (curPercent * float(Palette::color[y].red));
+            curColor.green = (uint8_t) (curPercent * float(Palette::color[y].green));
+            curColor.blue  = (uint8_t) (curPercent * float(Palette::color[y].blue));
 
             setColor(curOffset, Palette::findNearestColor(curColor));
         }
@@ -242,9 +242,9 @@ void ColorTable::create(
 
             curOffset = (int(index) << 8) + indexPic;
 
-            RGBColor curColor((BYTE) (color1 * col.red   + color2 * colPic.red),
-                              (BYTE) (color1 * col.green + color2 * colPic.green),
-                              (BYTE) (color1 * col.blue  + color2 * colPic.blue));
+            RGBColor curColor((uint8_t) (color1 * col.red   + color2 * colPic.red),
+                              (uint8_t) (color1 * col.green + color2 * colPic.green),
+                              (uint8_t) (color1 * col.blue  + color2 * colPic.blue));
 
             // Makes the color table use color 0 as transparent.
             if (indexPic == 0) {
@@ -282,7 +282,7 @@ void ColorTable::loadTable(const char *filename)
     // make sure palette in file is the same as current one
     for(size_t i=0; i<PALETTE_LENGTH; i++) {
         RGBColor checkcolor;
-        if(file->read(&checkcolor, sizeof(BYTE), 3) != 3)
+        if(file->read(&checkcolor, sizeof(uint8_t), 3) != 3)
             throw Exception("couldn't load colortable '%s': "
                             "file corrupted(too short)", filename);
 

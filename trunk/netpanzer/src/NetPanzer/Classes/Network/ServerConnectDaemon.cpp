@@ -33,7 +33,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConnectNetMessage.hpp"
 #include "SystemNetMessage.hpp"
 
-#include "codewiz.hpp"
 #include "ConsoleInterface.hpp"
 
 enum { _connect_state_idle,

@@ -45,7 +45,7 @@ RankView::RankView() : GameTemplateView()
     // hardcoded for now
     int CHAR_XPIX = 8;
 
-    //addLabel(iXY nPos, char *nLabel, BYTE color);
+    //addLabel(iXY nPos, char *nLabel, uint8_t color);
     unsigned xOffset = 0;
     unsigned yOffset = 16;
     addLabel(iXY(xOffset, yOffset), "Name", Color::red);
@@ -62,7 +62,7 @@ RankView::RankView() : GameTemplateView()
     xOffset += MAX_POINTS_CHARS*CHAR_XPIX;
 
     // Define the scrollBar fot this view.
-    scrollBar = new ScrollBar(VERTICAL, 0, 1, 0, 100);
+    scrollBar = new ScrollBar(ScrollBar::VERTICAL, 0, 1, 0, 100);
     if (scrollBar == 0) {
         throw Exception("ERROR: Unable to allocate the scrollBar.");
     }

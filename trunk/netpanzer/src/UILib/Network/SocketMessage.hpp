@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "NetPacket.hpp"
 #include "Client.hpp"
-#include "codewiz.hpp"
 
 enum { _net_message_id_basic_info_request,
        _net_message_id_extended_info_request,
@@ -39,7 +38,7 @@ class BasicInfoRequest : public NetMessage
 {
 public:
     char codeword[24];
-    DWORD version;
+    uint32_t version;
     BasicInfoRequest()
     {
         message_class = _net_message_class_winsock;

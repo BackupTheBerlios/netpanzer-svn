@@ -36,153 +36,91 @@ public:
         y = a.y;
     }
 
-    inline fXY &operator =(const fXY &a)
+    fXY &operator =(const fXY &a)
     {
         x = a.x;
         y = a.y;
         return *this;
     }
 
-    inline fXY &operator =(float a)
-    {
-        x = a;
-        y = a;
-        return *this;
-    }
-
-    inline fXY &operator +=(const fXY &a)
+    fXY &operator +=(const fXY &a)
     {
         x += a.x; y += a.y; return *this;
     }
-    inline fXY &operator -=(const fXY &a)
+    fXY &operator -=(const fXY &a)
     {
         x -= a.x; y -= a.y; return *this;
     }
-    inline fXY &operator *=(const fXY &a)
+    fXY &operator *=(const fXY &a)
     {
         x *= a.x; y *= a.y; return *this;
     }
-    inline fXY &operator /=(const fXY &a)
-    {
-        x /= a.x; y /= a.y; return *this;
-    }
-    inline fXY &operator *=(float      a)
+    fXY &operator *=(float      a)
     {
         x *=   a; y *=   a; return *this;
     }
-    inline fXY &operator /=(float      a)
+    fXY &operator /=(float      a)
     {
         x /=   a; y /=   a; return *this;
     }
 
-    inline bool operator <=(const fXY &a)
-    {
-        if (x <= a.x && y <= a.y) return true; return false;
-    }
-    inline bool operator <=(float      a)
-    {
-        if (x <= a   && y <= a)   return true; return false;
-    }
-    inline bool operator >=(const fXY &a)
-    {
-        if (x >= a.x && y >= a.y) return true; return false;
-    }
-    inline bool operator >=(float      a)
-    {
-        if (x >= a   && y >= a)   return true; return false;
-    }
-    inline bool operator  <(const fXY &a)
-    {
-        if (x <  a.x && y <  a.y) return true; return false;
-    }
-    inline bool operator  <(float      a)
-    {
-        if (x <  a   && y <  a)   return true; return false;
-    }
-    inline bool operator  >(const fXY &a)
-    {
-        if (x >  a.x && y >  a.y) return true; return false;
-    }
-    inline bool operator  >(float      a)
-    {
-        if (x >  a   && y >  a)   return true; return false;
-    }
-
-    inline fXY operator + (const fXY &a) const
+    fXY operator + (const fXY &a) const
     {
         return fXY(x + a.x, y + a.y);
     }
-    inline fXY operator - (const fXY &a) const
+    fXY operator - (const fXY &a) const
     {
         return fXY(x - a.x, y - a.y);
     }
-    inline fXY operator * (const fXY &a) const
+    fXY operator * (const fXY &a) const
     {
         return fXY(x * a.x, y * a.y);
     }
-    inline fXY operator / (const fXY &a) const
-    {
-        return fXY(x / a.x, y / a.y);
-    }
-    inline fXY operator + (float      a) const
-    {
-        return fXY(x +   a, y +   a);
-    }
-    inline fXY operator - (float      a) const
-    {
-        return fXY(x -   a, y -   a);
-    }
-    inline fXY operator * (float      a) const
+    fXY operator * (float      a) const
     {
         return fXY(x *   a, y *   a);
     }
-    inline fXY operator / (float      a) const
+    fXY operator / (float      a) const
     {
         return fXY(x /   a, y /   a);
     }
 
-    inline bool operator ==(const fXY &a) const
+    bool operator ==(const fXY &a) const
     {
         return x == a.x && y == a.y;
     }
 
-    inline bool operator ==(float a) const
-    {
-        return x == a && y == a;
-    }
-
-    inline bool operator !=(const fXY &a) const
+    bool operator !=(const fXY &a) const
     {
         return x != a.x || y != a.y;
     }
 
-    inline bool operator !=(float a) const
-    {
-        return x != a && y != a;
-    }
-
     // Negation.
-    inline fXY operator -() const
+    fXY operator -() const
     {
         return fXY(-x, -y);
     }
 
-    inline void zero()
+    void zero()
     {
         x = y = 0.0f;
     }
 
-    double mag() const;
-    inline float  mag2() const
+    bool isZero() const
     {
-        return      x * x + y * y ;
+        return x==0 && y==0;
     }
 
-    inline double getArea() const
+    double mag() const;
+    float  mag2() const
+    {
+        return x * x + y * y ;
+    }
+
+    double getArea() const
     {
         return x * y;
     }
-
 };
 
 //---------------------------------------------------------------------------

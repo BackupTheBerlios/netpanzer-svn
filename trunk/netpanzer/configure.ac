@@ -113,6 +113,12 @@ NP_FINDLIB([PHYSFS], [physfs >= 1.9],
 	[],
 	[AC_MSG_ERROR([Please install physfs >= 0.1.9])])
 
+AM_OPTIONS_WXCONFIG
+AM_PATH_WXCONFIG(2.4.0, [
+        WX_AVAILABLE=yes
+        AC_SUBST([WX_AVAILABLE])
+        ])
+
 CS_INIT_JAMFILE
 CS_OUTPUT_INSTALLDIRS
 AC_CONFIG_FILES([Jamconfig])

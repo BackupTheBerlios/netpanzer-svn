@@ -108,7 +108,6 @@ void Choice::actionPerformed(const mMouseEvent &me)
             // Make sure the choice is still on the screen.
             assert (min.y >= 0);
         }
-        assert(min + size < parentDimensions);
     } else if (me.getID() == mMouseEvent::MOUSE_EVENT_DRAGGED &&
                 (me.getModifiers() & InputEvent::BUTTON1_MASK)) {
         isOpen = true;
@@ -124,7 +123,6 @@ void Choice::actionPerformed(const mMouseEvent &me)
 
             r.translate(iXY(0, ChoiceItemHeight));
         }
-        assert(min + size < parentDimensions);
     } else if (	me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED &&
                 (me.getModifiers() & InputEvent::BUTTON1_MASK)) {
         //assert(isOpen);
@@ -146,7 +144,6 @@ void Choice::actionPerformed(const mMouseEvent &me)
             callback->stateChanged(this);
 
         // Since an item was selected, find which item was selected.
-        assert(min + size < parentDimensions);
     } else if (	me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED &&
                 (me.getModifiers() & InputEvent::BUTTON1_MASK)) {
         //assert(!isOpen);
@@ -166,10 +163,7 @@ void Choice::actionPerformed(const mMouseEvent &me)
         index = mouseover;
         if(callback)
             callback->stateChanged(this);
-
-        assert(min + size < parentDimensions);
     }
-
 }
 
 // draw
@@ -219,13 +213,10 @@ void Choice::draw(const Surface &dest)
                 s.bltStringShadowedCenter(choiceList[i], Color::white, Color::black);
             }
 
-            assert(r.max < parentDimensions);
             r.translate(iXY(0, ChoiceItemHeight));
         }
     }
-
     //isOpen = 0;
-
 } // end Choice::draw
 
 // add

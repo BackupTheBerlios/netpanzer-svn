@@ -18,20 +18,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __RGBColor_hpp__
 #define __RGBColor_hpp__
 
-#include "codewiz.hpp"
+#include <stdint.h>
 
 //--------------------------------------------------------------------------
 class RGBColor
 {
 public:
-    BYTE red;   // 0-FF
-    BYTE green; // 0-FF
-    BYTE blue;  // 0-FF
+    uint8_t red;   // 0-FF
+    uint8_t green; // 0-FF
+    uint8_t blue;  // 0-FF
 
     RGBColor()
     {}
 
-    RGBColor(BYTE red, BYTE green, BYTE blue);
+    RGBColor(uint8_t red, uint8_t green, uint8_t blue);
 
     // Returns an int between [0...255]
     int getBrightnessInt();

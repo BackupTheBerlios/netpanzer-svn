@@ -35,7 +35,7 @@ public:
 
     static int totalDrawCount;     // The number of bytes of the surfaces alive.
 
-    typedef void (*SPAN_FUNC)(const BYTE *src, BYTE *dest, int count);
+    typedef void (*SPAN_FUNC)(const uint8_t *src, uint8_t *dest, int count);
 
     void pack(const Surface &src);
 
@@ -161,7 +161,7 @@ public:
     {
         return rowOffsetTable;
     }
-    inline BYTE *getPackedDataChunk() const
+    inline uint8_t *getPackedDataChunk() const
     {
         return packedDataChunk;
     }
@@ -180,7 +180,7 @@ protected:
     iXY   center;
     iXY   pix;
     int  *rowOffsetTable;
-    BYTE *packedDataChunk;
+    uint8_t *packedDataChunk;
     bool  myMem;
 
     static int totalSurfaceCount;  // The number of surfaces alive.

@@ -42,7 +42,7 @@ UnitSelectionView::UnitSelectionView() : View()
     maxYOffset =  0;
 
     // Define the scrollBar fot this view.
-    scrollBar = new ScrollBar(HORIZONTAL, 0, 1, 0, 100);
+    scrollBar = new ScrollBar(ScrollBar::HORIZONTAL, 0, 1, 0, 100);
 
     add(scrollBar);
 

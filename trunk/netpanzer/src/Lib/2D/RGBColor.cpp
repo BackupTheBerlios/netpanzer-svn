@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "RGBColor.hpp"
 
 
-RGBColor::RGBColor(BYTE red, BYTE green, BYTE blue)
+RGBColor::RGBColor(uint8_t red, uint8_t green, uint8_t blue)
 {
     RGBColor::red   = red;
     RGBColor::green = green;

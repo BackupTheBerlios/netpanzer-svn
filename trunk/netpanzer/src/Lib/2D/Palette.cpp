@@ -382,7 +382,7 @@ void Palette::loadACT(const char *filename)
 // Purpose: Walks through the palette and finds the nearest mathcing color
 //          index.
 //---------------------------------------------------------------------------
-BYTE Palette::findNearestColor(const RGBColor &rgb, const bool &ignoreIndexZero)
+uint8_t Palette::findNearestColor(const RGBColor &rgb, const bool &ignoreIndexZero)
 {
     float bestDist = 10000000.0f;
     int   best     = 0;

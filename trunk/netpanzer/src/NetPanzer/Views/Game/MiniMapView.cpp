@@ -325,7 +325,7 @@ void MiniMapView::doIncreaseSize(int value)
 
     //resize(destSize);
     //deltaSize += deltaAmount;
-    if (destSize > maxMapSize) {
+    if (destSize.x > maxMapSize || destSize.y > maxMapSize) {
         destSize = maxMapSize;
     }
 
@@ -400,7 +400,7 @@ void MiniMapView::doDecreaseSize(int value)
 
     resize(destSize);
 
-    if (destSize < minMapSize) {
+    if (destSize.x < minMapSize || destSize.y < minMapSize) {
         resize(iXY(minMapSize, minMapSize));
     }
 

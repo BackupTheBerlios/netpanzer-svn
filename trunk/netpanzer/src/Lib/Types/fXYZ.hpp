@@ -22,9 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "fXY.hpp"
 
-class  Matrix;
-struct XForm;
-
 // fXYZ class declarations.
 //---------------------------------------------------------------------------
 struct fXYZ
@@ -35,14 +32,7 @@ struct fXYZ
 
     static const fXYZ ZERO;
 
-    fXYZ()
-    {
-        x = 0.0;
-        y = 0.0;
-        z = 0.0;
-    }
-
-    fXYZ(float x, float y, float z)
+    fXYZ(float x=0, float y=0, float z=0)
     {
         this->x = x;
         this->y = y;
@@ -56,7 +46,7 @@ struct fXYZ
         z = a.z;
     }
 
-    inline fXYZ &operator =(const fXYZ &a)
+    fXYZ &operator =(const fXYZ &a)
     {
         x = a.x;
         y = a.y;
@@ -64,90 +54,70 @@ struct fXYZ
         return *this;
     }
 
-    inline fXYZ &operator =(const float a)
-    {
-        x = a;
-        y = a;
-        z = a;
-        return *this;
-    }
-
-    inline bool operator !=(const fXYZ &a)
+    bool operator !=(const fXYZ &a)
     {
         if (x != a.x || x != a.y || x != a.z) return true;
         else return false;
     }
 
-    inline bool operator !=(const float a)
-    {
-        if (x != a || y != a || z != a) return true;
-        else return false;
-    }
-
-    inline fXYZ &operator +=(const fXYZ  &a)
+    fXYZ &operator +=(const fXYZ  &a)
     {
         x += a.x; y += a.y; z += a.z; return *this;
     }
-    inline fXYZ &operator -=(const fXYZ  &a)
+    fXYZ &operator -=(const fXYZ  &a)
     {
         x -= a.x; y -= a.y; z -= a.z; return *this;
     }
-    inline fXYZ &operator *=(      float  a)
+    fXYZ &operator *=(      float  a)
     {
         x *=   a; y *=   a; z *=   a; return *this;
     }
-    inline fXYZ &operator *=(const fXYZ  &a)
+    fXYZ &operator *=(const fXYZ  &a)
     {
         x *= a.x; y *= a.y; z *= a.z; return *this;
     }
-    inline fXYZ &operator /=(      float  a)
+    fXYZ &operator /=(      float  a)
     {
         x /=   a; y /=   a; z /=   a; return *this;
     }
 
-    inline int operator <=(const float &a)
-    {
-        if (x <= a && y <= a && z <= a) return 1;
-        else return 0;
-    }
-
-    inline fXYZ  operator + (const fXYZ &a) const
+    fXYZ  operator + (const fXYZ &a) const
     {
         return fXYZ(x + a.x, y + a.y, z + a.z);
     }
-    inline fXYZ  operator - (const fXYZ &a) const
+    fXYZ  operator - (const fXYZ &a) const
     {
         return fXYZ(x - a.x, y - a.y, z - a.z);
     }
-    inline fXYZ  operator * (float a      ) const
+    fXYZ  operator * (float a      ) const
     {
         return fXYZ(x *   a, y *   a, z *   a);
     }
-    inline fXYZ  operator / (float a      ) const
+    fXYZ  operator / (float a      ) const
     {
         return fXYZ(x /   a, y /   a, z /   a);
     }
 
-    inline double  mag      () const
+    double  mag      () const
     {
         return sqrt(x * x + y * y + z * z);
     }
-    inline double  mag2     () const
+    double  mag2     () const
     {
         return x * x + y * y + z * z;
     }
-    inline fXYZ getNormal() const
+    fXYZ getNormal() const
     {
         double a = 1.0 / sqrt(x * x + y * y + z * z);
         return fXYZ(x * a, y * a, z * a);
     }
 
-    inline fXYZ &normalize()
+    fXYZ &normalize()
     {
         return *this /= float(mag());
     }
 
-    inline fXY project() const
+    fXY project() const
     {
         if (z <= 1.0) return fXY(x, y);
 
@@ -155,30 +125,18 @@ struct fXYZ
     }
 
     // Negation.
-    inline fXYZ operator -() const
+    fXYZ operator -() const
     {
         return fXYZ(-x, -y, -z);
     }
 
-    // These are defined in matrix.cpp
-    fXYZ  operator * (const Matrix &m) const;
-    fXYZ &operator *=(const Matrix &m);
-    fXYZ  operator / (const Matrix &m) const;
-    fXYZ &operator /=(const Matrix &m);
-    fXYZ  operator * (const XForm  &t) const;
-    fXYZ &operator *=(const XForm  &t);
-    fXYZ  operator / (const XForm  &t) const;
-    fXYZ &operator /=(const XForm  &t);
-
-    inline void zero()
+    void zero()
     {
         x = y = z = 0.0;
     }
+}; // end fXYZ
 
-}
-; // end fXYZ
-
-inline fXYZ cross(const fXYZ &a, const fXYZ &b)
+static inline fXYZ cross(const fXYZ &a, const fXYZ &b)
 {
     return fXYZ(
                a.y * b.z - b.y * a.z,
@@ -186,23 +144,23 @@ inline fXYZ cross(const fXYZ &a, const fXYZ &b)
                a.x * b.y - b.x * a.y);
 }
 
-inline float  dot(const fXYZ &a, const fXYZ &b)
+static inline float  dot(const fXYZ &a, const fXYZ &b)
 {
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-inline double distance (const fXYZ &a, const fXYZ &b)
+static inline double distance (const fXYZ &a, const fXYZ &b)
 {
     return (a - b).mag();
 }
 
-inline double distance2(const fXYZ &a, const fXYZ &b)
+static inline double distance2(const fXYZ &a, const fXYZ &b)
 {
     return (a - b).mag2();
 }
 
 //---------------------------------------------------------------------------
-inline fXYZ crossProduct(const fXYZ &a, const fXYZ &b)
+static inline fXYZ crossProduct(const fXYZ &a, const fXYZ &b)
 {
     return fXYZ(
                (a.y * b.z) - (a.z * b.y),

@@ -26,9 +26,7 @@ struct fRect
     fXY min;
     fXY max;
 
-    fRect()
-    {}
-    fRect(float x1, float y1, float x2, float y2)
+    fRect(float x1=0, float y1=0, float x2=0, float y2=0)
     {
         min.x = x1;
         min.y = y1;
@@ -46,38 +44,18 @@ struct fRect
         fRect::max = max;
     }
 
-    inline bool getIsEmpty() const
-    {
-        return min.x > max.x || min.y > max.x;
-    }
-
-    void setEmpty()
-    {
-        min.x = min.y = +1;
-        max.x = max.y = -1;
-    }
-
-    inline fXY getSize() const
+    fXY getSize() const
     {
         return max - min;
     }
 
-    inline float getSizeX() const
-    {
-        return max.x - min.x;
-    }
-    inline float getSizeY() const
-    {
-        return max.y - min.y;
-    }
-
-    inline void translate(fXY offset)
+    void translate(fXY offset)
     {
         max += offset;
         min += offset;
     }
 
-    inline float getArea() const
+    float getArea() const
     {
         fXY s = getSize();
 
@@ -89,36 +67,37 @@ struct fRect
 
     fRect operator | (const fRect &a);
 
-    inline bool getContains(const fXY &a) const
+    bool getContains(const fXY &a) const
     {
         return
             a.x >= min.x && a.x < max.x &&
             a.y >= min.y && a.y < max.y;
     }
 
-    inline bool operator ==(const fRect &a) const
+    bool operator ==(const fRect &a) const
     {
         return min == a.max && min == a.max;
     }
 
-    inline bool operator !=(const fRect &a) const
+    bool operator !=(const fRect &a) const
     {
         return min.x != a.max.x || min.y != a.max.y;
     }
 
-    inline void zero()
+    void zero()
     {
-        min.x = min.y = max.x = max.y = 0.0f;
+        min.zero();
+        max.zero();
     }
 
-    inline fRect &operator =(const unsigned a)
+    bool isZero() const
     {
-        min.x = a;
-        min.y = a;
-        max.x = a;
-        max.y = a;
+        return min.isZero() && max.isZero();
+    }
 
-        return *this;
+    bool isEmpty() const
+    {
+        return min.x > max.x || min.y > max.y;
     }
 };
 

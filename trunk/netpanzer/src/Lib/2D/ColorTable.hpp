@@ -20,8 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdio.h>
 #include <assert.h>
-
-#include "codewiz.hpp"
+#include <stdint.h>
 
 //--------------------------------------------------------------------------
 class ColorTable
@@ -32,7 +31,7 @@ protected:
     static char *extension;
 
     int   colorCount;
-    BYTE *colorArray;
+    uint8_t *colorArray;
 
     static int totalColorArrayCount;
     static int totalByteCount;
@@ -42,10 +41,10 @@ public:
     ~ColorTable();
 
     void init(int colorCount);
-    void setColor(int index, BYTE color);
+    void setColor(int index, uint8_t color);
 
     // Give us an array index into the table.
-    inline BYTE operator[](int index) const
+    inline uint8_t operator[](int index) const
     {
         assert(index < colorCount);
         return *(colorArray + index);
@@ -55,7 +54,7 @@ public:
     {
         return colorCount;
     }
-    inline const BYTE *getColorArray()
+    inline const uint8_t *getColorArray()
     {
         return colorArray;
     }

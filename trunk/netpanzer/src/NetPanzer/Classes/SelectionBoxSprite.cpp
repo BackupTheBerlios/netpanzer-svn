@@ -103,7 +103,7 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
     // Draw the unit hitpoints.
     if ( gameconfig->drawunitdamage || (box_state == true) ) {
         // Draw a color coded hit bar.
-        BYTE hitBarColor;
+        uint8_t hitBarColor;
 
         float hitPointPercent = float(hit_points) / float(max_hit_points);
 

@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Component_hpp__
 #define __Component_hpp__
 
+#include <stdint.h>
+
 #include "Color.hpp"
 #include "Surface.hpp"
 #include "iXY.hpp"
@@ -31,8 +33,8 @@ class mMouseEvent;
 class Component : public NoCopy
 {
 protected:
-    BYTE    background;
-    BYTE    foreground;
+    uint8_t    background;
+    uint8_t    foreground;
     iXY     size;
     iXY     min;
     Surface surface;
@@ -74,7 +76,7 @@ public:
     {
         return contains(p.x, p.y);
     }
-    inline        BYTE     getBackground() const
+    inline        uint8_t     getBackground() const
     {
         return background;
     }
@@ -84,7 +86,7 @@ public:
         r.min = min;
         r.max = min + size;
     }
-    inline        BYTE     getForeground() const
+    inline        uint8_t     getForeground() const
     {
         return foreground;
     }
@@ -118,7 +120,7 @@ public:
         return visible;
     }
 
-    void setBackground(BYTE color)
+    void setBackground(uint8_t color)
     {}
     void setBounds(const iRect &r)
     {

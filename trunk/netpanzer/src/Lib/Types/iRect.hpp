@@ -48,17 +48,6 @@ struct iRect
         iRect::max = max;
     }
 
-    inline bool getIsEmpty() const
-    {
-        return min.x > max.x || min.y > max.x;
-    }
-
-    void setEmpty()
-    {
-        min.x = min.y = +1;
-        max.x = max.y = -1;
-    }
-
     inline iXY getSize() const
     {
         return max - min;
@@ -77,6 +66,11 @@ struct iRect
     {
         max += offset;
         min += offset;
+    }
+
+    bool isEmpty() const
+    {
+        return min.x >= max.x || min.y >= max.y;
     }
 
     inline int getArea() const
@@ -100,23 +94,12 @@ struct iRect
 
     inline bool operator ==(const iRect &a)
     {
-        return min == a.max && min == a.max;
+        return min == a.min && max == a.max;
     }
 
     inline bool operator !=(const iRect &a)
     {
-        return min.x != a.max.x || min.y != a.max.y;
-    }
-
-    inline iRect &operator =(const unsigned a)
-    {
-        min.x = a;
-        min.y = a;
-        max.x = a;
-        max.y = a;
-
-        return *this;
-
+        return min != a.min || max != a.max;
     }
 
     inline void zero()
@@ -127,13 +110,11 @@ struct iRect
     inline bool clip( const iRect &a )
     {
         if ( (a.min.y >= max.y) || (a.max.y <= min.y)	||
-                (a.min.x >= max.x) || (a.max.x <= min.x)
-           )
-            return( true );
+             (a.min.x >= max.x) || (a.max.x <= min.x) )
+            return true;
 
-        return( false );
+        return false;
     }
-
 };
 
 #endif // __iRect_hpp__

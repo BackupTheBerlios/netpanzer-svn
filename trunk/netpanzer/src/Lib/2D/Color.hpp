@@ -18,86 +18,85 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Color_hpp__
 #define __Color_hpp__
 
-#include "LibTypes.hpp"
+#include <stdint.h>
 
 //---------------------------------------------------------------------------
 class Color
 {
 public:
-
     // Color for netPanzer players.
-    static BYTE unitAqua;
-    static BYTE unitYellow;
-    static BYTE unitRed;
-    static BYTE unitBlue;
-    static BYTE unitDarkBlue;
-    static BYTE unitLightGreen;
-    static BYTE unitGreen;
-    static BYTE unitBlueGray;
-    static BYTE unitDarkRed;
-    static BYTE unitBlack;
-    static BYTE unitDarkGreen;
-    static BYTE unitWhite;
-    static BYTE unitLightOrange;
-    static BYTE unitOrange;
-    static BYTE unitGray;
-    static BYTE unitDarkGray;
+    static uint8_t unitAqua;
+    static uint8_t unitYellow;
+    static uint8_t unitRed;
+    static uint8_t unitBlue;
+    static uint8_t unitDarkBlue;
+    static uint8_t unitLightGreen;
+    static uint8_t unitGreen;
+    static uint8_t unitBlueGray;
+    static uint8_t unitDarkRed;
+    static uint8_t unitBlack;
+    static uint8_t unitDarkGreen;
+    static uint8_t unitWhite;
+    static uint8_t unitLightOrange;
+    static uint8_t unitOrange;
+    static uint8_t unitGray;
+    static uint8_t unitDarkGray;
 
     // Normal Colors.
-    static BYTE black;
-    static BYTE blue;
-    static BYTE brown;
-    static BYTE cyan;
-    static BYTE gray;
-    static BYTE green;
-    static BYTE magenta;
-    static BYTE orange;
-    static BYTE pink;
-    static BYTE red;
-    static BYTE white;
-    static BYTE yellow;
+    static uint8_t black;
+    static uint8_t blue;
+    static uint8_t brown;
+    static uint8_t cyan;
+    static uint8_t gray;
+    static uint8_t green;
+    static uint8_t magenta;
+    static uint8_t orange;
+    static uint8_t pink;
+    static uint8_t red;
+    static uint8_t white;
+    static uint8_t yellow;
 
     // Color specifically for netPanzer.
-    static BYTE tan;
-    static BYTE chartreuse;
-    static BYTE cobaltGreen;
-    static BYTE emeraldGreen;
-    static BYTE forestGreen;
-    static BYTE darkOliveGreen;
-    static BYTE terreVerte;
+    static uint8_t tan;
+    static uint8_t chartreuse;
+    static uint8_t cobaltGreen;
+    static uint8_t emeraldGreen;
+    static uint8_t forestGreen;
+    static uint8_t darkOliveGreen;
+    static uint8_t terreVerte;
 
     // Dark Colors.
-    static BYTE darkBlue;
-    static BYTE darkBrown;
-    static BYTE darkCyan;
-    static BYTE darkGray;
-    static BYTE darkGreen;
-    static BYTE darkMagenta;
-    static BYTE darkOrange;
-    static BYTE darkPink;
-    static BYTE darkRed;
-    static BYTE darkYellow;
+    static uint8_t darkBlue;
+    static uint8_t darkBrown;
+    static uint8_t darkCyan;
+    static uint8_t darkGray;
+    static uint8_t darkGreen;
+    static uint8_t darkMagenta;
+    static uint8_t darkOrange;
+    static uint8_t darkPink;
+    static uint8_t darkRed;
+    static uint8_t darkYellow;
 
     // Light Colors.
-    static BYTE lightBlue;
-    static BYTE lightBrown;
-    static BYTE lightCyan;
-    static BYTE lightGray;
-    static BYTE lightGreen;
-    static BYTE lightMagenta;
-    static BYTE lightOrange;
-    static BYTE lightPink;
-    static BYTE lightRed;
-    static BYTE lightYellow;
+    static uint8_t lightBlue;
+    static uint8_t lightBrown;
+    static uint8_t lightCyan;
+    static uint8_t lightGray;
+    static uint8_t lightGreen;
+    static uint8_t lightMagenta;
+    static uint8_t lightOrange;
+    static uint8_t lightPink;
+    static uint8_t lightRed;
+    static uint8_t lightYellow;
 
     // Gray scales.
-    static BYTE gray32;
-    static BYTE gray64;
-    static BYTE gray96;
-    static BYTE gray128;
-    static BYTE gray160;
-    static BYTE gray192;
-    static BYTE gray224;
+    static uint8_t gray32;
+    static uint8_t gray64;
+    static uint8_t gray96;
+    static uint8_t gray128;
+    static uint8_t gray160;
+    static uint8_t gray192;
+    static uint8_t gray224;
 
 }
 ; // end Color

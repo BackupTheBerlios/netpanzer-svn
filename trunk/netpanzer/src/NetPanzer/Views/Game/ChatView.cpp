@@ -70,7 +70,7 @@ void ChatView::init()
     ChatInterface::setNewMessageCallBack( addNewChatStringCallBack );
 
     // Define the scrollBar fot this view.
-    scrollBar = new ScrollBar(VERTICAL, 0, 1, 0, 100);
+    scrollBar = new ScrollBar(ScrollBar::VERTICAL, 0, 1, 0, 100);
     if (scrollBar == 0) {
         throw Exception("ERROR: Unable to allocate the scrollBar.");
     }

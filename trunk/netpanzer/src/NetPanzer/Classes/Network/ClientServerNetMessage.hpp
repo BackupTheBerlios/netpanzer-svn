@@ -18,9 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _CLIENT_SERVER_NETMESSAGE_HPP
 #define _CLIENT_SERVER_NETMESSAGE_HPP
 
+#include <stdint.h>
+
 #include "NetPacket.hpp"
 #include "PlayerID.hpp"
-#include "codewiz.hpp"
 
 enum { _net_message_id_transport_client_accept,
        _net_message_id_client_connect_ack,
@@ -40,7 +41,7 @@ enum { _net_message_id_transport_client_accept,
 class TransportClientAccept : public NetMessage
 {
 public:
-    DWORD client_transport_id;
+    uint32_t client_transport_id;
 
     TransportClientAccept()
     {
@@ -53,7 +54,7 @@ __attribute__((packed));
 class ClientMesgConnectAck : public NetMessage
 {
 public:
-    DWORD client_transport_id;
+    uint32_t client_transport_id;
 
     ClientMesgConnectAck()
     {

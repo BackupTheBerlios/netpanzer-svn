@@ -154,7 +154,7 @@ void PackedSurface::pack(const Surface &source)
                 int newSize = (curByteOffset + sizeof(SpanHead) + spanLen*sizeof(PIX) + 3) & ~3;
                 if (newSize > bytesAlloced) {
                     bytesAlloced = newSize + 16*1024;
-                    packedDataChunk = (BYTE *)realloc(packedDataChunk, bytesAlloced);
+                    packedDataChunk = (uint8_t *)realloc(packedDataChunk, bytesAlloced);
                     if (packedDataChunk == 0) {
                         throw Exception("ERROR: Out of memory for packedDataChunk for PackedSurface.");
                     }
@@ -178,7 +178,7 @@ void PackedSurface::pack(const Surface &source)
 
     // Shrink buffer to the size we really need
 
-    packedDataChunk = (BYTE *) realloc(packedDataChunk, curByteOffset);
+    packedDataChunk = (uint8_t *) realloc(packedDataChunk, curByteOffset);
     if (packedDataChunk == 0) throw Exception("Hell froze");
 
     // Restore source surface frame number, so the function
@@ -218,7 +218,7 @@ void PackedSurface::load(const char* filename)
         throw Exception("ERROR: Unable to allocate rowTableOffset for PackedSurface.");
     }
     file->read(rowOffsetTable, (pix.y*frameCount + 1)*sizeof(*rowOffsetTable), 1);
-    packedDataChunk = (BYTE *)malloc(rowOffsetTable[pix.y*frameCount]);
+    packedDataChunk = (uint8_t *)malloc(rowOffsetTable[pix.y*frameCount]);
     if (packedDataChunk == 0) {
         delete file;
         throw Exception("ERROR: Unable to allocate packedDataChunk for PackedSurface.");
@@ -276,7 +276,7 @@ void PackedSurface::blt(const Surface &dest, int destX, int destY) const
     iXY srcMin;
     if (destX < 0) {
         srcMin.x = -destX;
-        if (srcMin >= pix.x) return; // off left
+        if (srcMin.x >= pix.x) return; // off left
         needClipX = 1;
     } else {
         srcMin.x = 0;
@@ -300,11 +300,11 @@ void PackedSurface::blt(const Surface &dest, int destX, int destY) const
     const int *table = &rowOffsetTable[int(curFrame)*pix.y];
 
     if (needClipX) {
-        const BYTE *rowData = packedDataChunk + table[srcMin.y];
+        const uint8_t *rowData = packedDataChunk + table[srcMin.y];
         PIX *destRowPtr = dest.rowPtr(destY + srcMin.y) + destX;
         for (int y = srcMin.y ; y < srcMax.y ; ++y) {
 
-            const BYTE *rowEnd = packedDataChunk + table[y+1];
+            const uint8_t *rowEnd = packedDataChunk + table[y+1];
 
             // Search for first span which is not completely off to the left
 
@@ -364,11 +364,11 @@ nextRow:
             destRowPtr += dest.getStride();
         }
     } else {
-        const BYTE *rowData = packedDataChunk + table[srcMin.y];
+        const uint8_t *rowData = packedDataChunk + table[srcMin.y];
         PIX *destRowPtr = dest.rowPtr(destY + srcMin.y) + destX;
         for (int y = srcMin.y ; y < srcMax.y ; ++y) {
 
-            const BYTE *rowEnd = packedDataChunk + table[y+1];
+            const uint8_t *rowEnd = packedDataChunk + table[y+1];
 
             while (rowData < rowEnd) {
                 SpanHead *span = (SpanHead *)rowData;
@@ -412,7 +412,7 @@ void PackedSurface::setTo(const PackedSurface &source, iRect bounds)
 	iXY   center;
 	iXY   pix;
 	int  *rowOffsetTable;
-	BYTE *packedDataChunk;
+	uint8_t *packedDataChunk;
 	bool  myMem;
  
 } // end Surface::setTo
@@ -500,15 +500,15 @@ void PackedSurface::bltBlend(const Surface &dest, int destX, int destY, ColorTab
         srcMax.y = pix.y;
     }
 
-    const BYTE *cTable = colorTable.getColorArray();
+    const uint8_t *cTable = colorTable.getColorArray();
     const int  *table  = &rowOffsetTable[int(curFrame)*pix.y];
 
     if (needClipX) {
-        const BYTE *rowData = packedDataChunk + table[srcMin.y];
+        const uint8_t *rowData = packedDataChunk + table[srcMin.y];
         PIX *destRowPtr = dest.rowPtr(destY + srcMin.y) + destX;
         for (int y = srcMin.y ; y < srcMax.y ; ++y) {
 
-            const BYTE *rowEnd = packedDataChunk + table[y+1];
+            const uint8_t *rowEnd = packedDataChunk + table[y+1];
 
             // Search for first span which is not completely off to the left
 
@@ -569,11 +569,11 @@ nextRow:
             destRowPtr += dest.getStride();
         }
     } else {
-        const BYTE *rowData = packedDataChunk + table[srcMin.y];
+        const uint8_t *rowData = packedDataChunk + table[srcMin.y];
         PIX *destRowPtr = dest.rowPtr(destY + srcMin.y) + destX;
         for (int y = srcMin.y ; y < srcMax.y ; ++y) {
 
-            const BYTE *rowEnd = packedDataChunk + table[y+1];
+            const uint8_t *rowEnd = packedDataChunk + table[y+1];
 
             while (rowData < rowEnd) {
                 SpanHead *span = (SpanHead *)rowData;
