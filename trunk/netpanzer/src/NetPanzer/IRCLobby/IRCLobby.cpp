@@ -599,7 +599,7 @@ void IRCLobby::readIRCLine(char *buf, size_t buf_len)
                 continue;
             }
 
-            if(SDLNet_TCP_Recv(irc_server_socket,&ch,1)<0)
+            if(SDLNet_TCP_Recv(irc_server_socket,&ch,1)<=0)
                 throw Exception("Couldn't read TCP: %s",
                         SDLNet_GetError());
             
