@@ -1,15 +1,15 @@
 *** Lobby Code
 - Dedicated server always try to announce themself on the netpanzer lobby. User
   should be able to disable this. - implemented
-- Non-Dedicated servers don't announce themselfes at the lobby.
+- Non-Dedicated servers don't announce themselfes at the lobby. - implemented
 - There's no check if the irc-server connection is still available. We should
-  use some ping/pong messages there.
+  use some ping/pong messages there. - implemented
 - the player nickname is often already used by someone else in irc. We should
   add a netpanzer postfix to them. (ie. MatzeB|netp). If you try to use the name
   of another netpanzer player, then you should be warned and given a chance to
-  reconnect with another name
+  reconnect with another name - implemented
 - It should be possible to use different ports than the default one for the
-  netpanzer server
+  netpanzer server - implemented
 
 *** Improvements
 -let dedicated server output statistics on console at the end of a round
