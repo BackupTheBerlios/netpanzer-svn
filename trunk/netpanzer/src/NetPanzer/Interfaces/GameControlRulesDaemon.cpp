@@ -97,6 +97,7 @@ void GameControlRulesDaemon::mapCycleFsmClient()
 
                 GameManager::shutdownParticleSystems();
                 ObjectiveInterface::resetLogic();
+                UnitInterface::reset();
 
                 gameconfig->map = map_cycle_fsm_client_map_name;
 

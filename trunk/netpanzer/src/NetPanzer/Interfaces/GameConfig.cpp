@@ -53,7 +53,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       objectiveoccupationpercentage("objectivepercentage", 75, 1, 100),
       allowallies("allowallies", true),
       cloudcoverage("cloudcoverage", 0),
-      respawntype("respawntype", _game_config_respawn_type_random, 0,
+      respawntype("respawntype", _game_config_respawn_type_round_robin, 0,
                 _game_config_respawn_type_last-1),
       windspeed("windspeed", 30),
       map("map", "Bad Neuburg"),
