@@ -37,11 +37,11 @@ public:
             return "";
 
         // skip \ chars
-        while(buffer[pos] == token && pos < buffer.length())
+        while(pos < buffer.length() && buffer[pos] == token)
             ++pos;
         std::string::size_type start = pos;
         // search next \ char
-        while(buffer[pos] != token && pos < buffer.length())
+        while(pos < buffer.length() && buffer[pos] != token)
             ++pos;
         
         return std::string(buffer, start, pos-start);
