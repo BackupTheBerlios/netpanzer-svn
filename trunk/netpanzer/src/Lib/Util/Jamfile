@@ -5,5 +5,5 @@ Library netpanzerutil
     : noinstall
 ;
 LinkWith netpanzerutil : netpanzertypes ;
-ExternalLibs netpanzerutil : SDL PHYSFS : export ;
+ExternalLibs netpanzerutil : SDL SDLNET PHYSFS : export ;
 

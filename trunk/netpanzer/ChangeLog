@@ -1,3 +1,6 @@
+1-Mar-2004 by Matthias Braun
+-applied some fixes to Jamfiles (thanks Hollis Blanchard)
+
 21-Feb-2004 by Matthias Braun
 -added a mapcycle variable to the server config.
 -fixed a bug in map loading while mapcycling on the client

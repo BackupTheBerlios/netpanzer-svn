@@ -21,4 +21,4 @@ rule InstallIcon
     Depends install_data : [ DoInstall $(<:G=installicon) : $(appicondir) $(2) ] ;
 }
 
-InstallIcon netpanzer.png ;
+InstallIcon netpanzer.png netpanzer.xpm ;
