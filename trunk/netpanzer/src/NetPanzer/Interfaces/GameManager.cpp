@@ -20,36 +20,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdio.h>
 #include <fcntl.h>
-#ifdef WIN32
-#include <io.h>
-#include <conio.h>
-#include <windows.h>
-#endif
-
-// ** Direct X Includes
-#ifdef WIN32
-#include "DirectDrawGlobals.hpp"
-#include "DirectInput.hpp"
-#include "DSound.hpp"
-#endif
-#ifdef UNIX
-#include "UILib/SDL/SDLSound.hpp"
-#endif
-#include "UILib/DummySound.hpp"
-
-#ifdef WIN32
-#include "NetworkServerWinSock.hpp"
-#include "NetworkClientWinSock.hpp"
-//#include "NetworkServerDPlay.hpp"
-//#include "NetworkClientDPlay.hpp"
-#endif
-#ifdef UNIX
-#include "NetworkServerUnix.hpp"
-#include "NetworkClientUnix.hpp"
-#endif
 
 #include "UILib/UIDraw.hpp"
 #include "UILib/Sound.hpp"
+#include "UILib/SDL/SDLSound.hpp"
+#include "UILib/SDL/SDLDraw.hpp"
+#include "UILib/DummySound.hpp"
+#include "NetworkServerUnix.hpp"
+#include "NetworkClientUnix.hpp"
 
 // ** PObject netPanzer Network Includes
 #include "Server.hpp"
@@ -67,7 +45,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "KeyboardInterface.hpp"
 #include "KeyBinder.hpp"
 #include "KeyActionEnum.hpp"
-#include "KeyScanCodeDefs.h"
 #include "DDHardSurface.hpp"
 #include "GameConfig.hpp"
 #include "TileInterface.hpp"
@@ -177,13 +154,10 @@ static Surface hostLoadSurface;
 
 // ******************************************************************
 void GameManager::initializeVideoSubSystem()
-{									     
-   	LOG( ( "Initializing Direct Draw" ) );
-	if( ( Screen->initialize() ) == false ) 
-	   	throw Exception("DDraw.Intialize failed.");  
-
-	LOG( ( "Setting Default Video Sub-system" ) );
-  
+{
+   	LOG( ( "Initializing video mode" ) );
+	Screen = new SDLDraw();
+	
 	current_video_mode_res = iXY(640,480); 
 	// don't go fullscreen for now
 	setVideoMode(current_video_mode_res, false);
@@ -192,7 +166,8 @@ void GameManager::initializeVideoSubSystem()
 
 void GameManager::shutdownVideoSubSystem()
 {
-	Screen->shutdown();
+	delete Screen;
+	Screen = 0;
 }
 
 // ******************************************************************
@@ -203,13 +178,13 @@ void GameManager::initializeSoundSubSystem()
 		sound = new DummySound();
 		return;
 	}
-#ifdef WIN32
-    sound = new DirectSound();	
-#endif
-#ifdef USE_SDL
 	LOG( ("Initialize sound system.") );
-	sound = new SDLSound();
-#endif
+	try {
+		sound = new SDLSound();
+	} catch(Exception e) {
+		LOG( ("Couldn't initialize sound: %s", e.getMessage()) );
+		sound = new DummySound();
+	}
 
 	// start some music
 	sound->playMusic("sfx/music/");
@@ -438,22 +413,6 @@ void decreaseBrightness(const char *filename)
 // ******************************************************************
 void GameManager::initializeInputDevices()
 {
-#ifdef WIN32
-   	LOG( ( "Initializing Direct Input\n" ) );
-	if ( DirectInput::initialize() == false )
-		throw Exception("DirectInput failed to intialize."); 
-	 
-	LOG( ("Initializing Direct Keyboard Input") );
-  	// XXX commented out, since the main window isn't hidden as intended... I
-	// dunno why. If a key is pressed in the main window, then we need a defined
-	// DirectInput Handler.
-  	if( execution_mode == _execution_mode_loop_back_server)
-	{
-		if ( DirectInput::initializeDirectKeyboard() == false )
-			throw Exception("failed to initialize DirectKeyboard.");			
-	}
-#endif
-
 	setupKeyboardBindings();
   
 	MouseInterface::initialize();
@@ -462,9 +421,6 @@ void GameManager::initializeInputDevices()
 
 void GameManager::shutdownInputDevices()
 {
-#ifdef WIN32
-  	DirectInput::shutdown();
-#endif
 }
 
 // ******************************************************************
@@ -490,37 +446,19 @@ void GameManager::shutdownGameObjects()
 // ******************************************************************
 void GameManager::initializeDedicatedConsole()
 {
-#ifdef MSVC
-	ShowWindow(gapp.hwndApp, SW_HIDE);
-	if( AllocConsole() == 0 )
-		throw Exception("couldn't allocate a console.");
-   
-	freopen( "CONOUT$", "a+t", stdout );
-	freopen( "CONIN$", "a+t", stdin );
-#endif
-  
 	ConsoleInterface::setStdoutPipe(true);
 }
 
 // ******************************************************************
 void GameManager::shutdownDedicatedConsole()
 {
-#ifdef MSVC
-  	FreeConsole();
-#endif
 }
 
 // ******************************************************************
 void GameManager::initializeNetworkSubSystem()
 {
-#ifdef WIN32
-  	SERVER = new NetworkServerWinSock();
-	CLIENT = new NetworkClientWinSock();
-#endif
-#ifdef UNIX
 	SERVER = new NetworkServerUnix();
 	CLIENT = new NetworkClientUnix();
-#endif
 
 	ServerMessageRouter::initialize();
 	ClientMessageRouter::initialize();
@@ -983,32 +921,20 @@ void GameManager::dedicatedLoadGameMap( char *map_name )
 }
 
 // ******************************************************************
-bool GameManager::initialize( const char *command_line  )
+void GameManager::initialize(bool dedicated)
 {
-  	char work_str[256];
-	char *token;
-	strcpy( work_str, command_line );
-
-	token = strtok( work_str, " " );
-  
-	if ( token != 0 )
-	{
-		if ( strcasecmp( token, "-dedicated" ) == 0 )
-		{
-			execution_mode = _execution_mode_dedicated_server;
-			return( dedicatedBootStrap() );
-		}
-
-		execution_mode = _execution_mode_loop_back_server;
-		return( bootStrap() );
+	if(dedicated) {
+		execution_mode = _execution_mode_dedicated_server;
+		dedicatedBootStrap();
+		return;
 	}
 
 	execution_mode = _execution_mode_loop_back_server;
-	return( bootStrap() );
+	bootStrap();
 }
 
 // ******************************************************************
-bool GameManager::bootStrap()
+void GameManager::bootStrap()
 {
 	try {
 		initializeSoundSubSystem();
@@ -1020,20 +946,14 @@ bool GameManager::bootStrap()
 		initializeNetworkSubSystem();
 		initializeInputDevices();
 	} catch(Exception e) {
-#ifdef WIN32
-		MessageBox(gapp.hwndApp, e.getMessage(), "Netpanzer", MB_OK);
-#else
 		fprintf(stderr, "Initialisation failed:\n%s\n", e.getMessage());
-#endif
 		shutdown();
-		return false;
+		throw Exception("bootstrap failed.");
 	}
-    
-	return true;
 }
 
 // ******************************************************************
-bool GameManager::dedicatedBootStrap()
+void GameManager::dedicatedBootStrap()
 {
 	try {
 		initializeSoundSubSystem(); // we load a dummy sound driver
@@ -1043,20 +963,13 @@ bool GameManager::dedicatedBootStrap()
 		initializeNetworkSubSystem();   
 		initializeInputDevices();
 		initializeDedicatedConsole();
+
+		launchDedicatedServer();
 	} catch(Exception e) {
 		fprintf(stderr, "Initialisation failed:\n%s\n", e.getMessage());
 		dedicatedShutdown();
-		return false;
+		throw Exception("bootstrap failed.");
 	}
-   
-	try {
-		launchDedicatedServer();
-	} catch(Exception e) {
-		fprintf(stderr, "Serverlaunch failed :\n%s\n", e.getMessage());
-		dedicatedShutdown();
-		return false;
-	}
-	return true;
 }
 
 // ******************************************************************
@@ -1841,22 +1754,14 @@ void GameManager::launchDedicatedServer()
 // ******************************************************************
 void GameManager::exitNetPanzer()
 {
-#if 0
-  // XXX 
-  // NOTE: Hack
-  sound->StopTankIdle(); 
-#endif
+  	// NOTE: Hack
+	sound->StopTankIdle(); 
 
-  quitNetPanzerGame();
+	quitNetPanzerGame();
 
-#ifdef WIN32
-  PostMessage(gapp.hwndApp, WM_CLOSE, 0, 0);
-#endif
-#ifdef USE_SDL
- 	SDL_Event event;
+	SDL_Event event;
 	event.type = SDL_QUIT;
 	SDL_PushEvent(&event);
-#endif
 }
 
 
@@ -1941,8 +1846,6 @@ void GameManager::simLoop()
 // ******************************************************************
 void GameManager::inputLoop()
  {
-  //KeyboardInterface::sampleKeyboard();
-
   processSystemKeys();
 
   Desktop::manage(mouse.getScreenPos().x, mouse.getScreenPos().y, mouse.getButtonMask() );
@@ -2039,10 +1942,9 @@ void GameManager::dedicatedSimLoop()
 
 // ******************************************************************
 void GameManager::dedicatedInputLoop()
- {
-  KeyboardInterface::sampleKeyboard();
-
-  // XXX we need SDL code here
+{
+  // XXX we need new code here (someone wanna write a readline version of this
+  // stuff?
 #ifdef WIN32
   if( kbhit() )
    {
@@ -2105,22 +2007,21 @@ void GameManager::dedicatedInputLoop()
        } // ** switch
      }
    }
-#endif
- 
- }
+#endif 
+}
 
-void   GameManager::startGameTimer()
- {
-  game_elapsed_time_offset = 0;
-  time( &game_start_time );
- }
+void GameManager::startGameTimer()
+{
+  	game_elapsed_time_offset = 0;
+	time( &game_start_time );
+}
 
 time_t GameManager::getGameTime() 
- {
-  time_t current_time;
+{
+  	time_t current_time;
   
-  time( &current_time );
+	time( &current_time );
  
-  return( (current_time - game_start_time) + game_elapsed_time_offset );
- }
+	return( (current_time - game_start_time) + game_elapsed_time_offset );
+}
 

@@ -32,8 +32,6 @@ public:
 	virtual ~UIDraw()
 	{ }
 	
-	virtual bool initialize() = 0;
-	virtual void shutdown() = 0;
 	virtual bool setVideoMode(DWORD width, DWORD height, DWORD bpp, bool fullscreen) = 0;
 	virtual bool isDisplayModeAvailable(int width, int height, int bpp) = 0;
 	virtual bool lockDoubleBuffer(unsigned char **DoubleBuffer) = 0;

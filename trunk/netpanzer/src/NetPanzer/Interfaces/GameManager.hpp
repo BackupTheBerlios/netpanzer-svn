@@ -89,8 +89,8 @@ protected:
 	static void shutdownDedicatedConsole();
 
 	// boots up netPanzer; initializes all subsystems, game objects etc. 
-	static bool bootStrap();
-	static bool dedicatedBootStrap();
+	static void bootStrap();
+	static void dedicatedBootStrap();
 
 	static void shutdownSubSystems();
 	static void dedicatedShutdown();
@@ -156,7 +156,10 @@ protected:
   
 public:
 	static void shutdown();
- 	static bool initialize( const char *command_line );
+	/** Initialises the GameManager, only initialize the core parts needed for a
+	 * dedicated server if dedicated = true
+	 */
+ 	static void initialize(bool dedicated = false);
    
    	static void mainLoop();
  

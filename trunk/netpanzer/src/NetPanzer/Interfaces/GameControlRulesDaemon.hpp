@@ -22,36 +22,33 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetPacket.hpp"
 
 class GameControlRulesDaemon
- {
-  protected:
+{
+protected:
+  	static int map_cycle_fsm_server_state;
+	static Timer map_cycle_fsm_server_endgame_timer;
+	static Timer map_cycle_fsm_server_map_load_timer;
+	static void mapCycleFsmServer();
+
+	static int map_cycle_fsm_client_state;
+	static char map_cycle_fsm_client_map_name[256];  
+	static bool map_cycle_fsm_client_respawn_ack_flag;
+	static void mapCycleFsmClient();
+
+	static void onTimelimitGameCompleted();
+	static void onFraglimitGameCompleted();
+	static void onObjectiveGameCompleted();
   
-  static int map_cycle_fsm_server_state;
-  static Timer map_cycle_fsm_server_endgame_timer;
-  static Timer map_cycle_fsm_server_map_load_timer;
-  static void mapCycleFsmServer( void );
+	static void checkGameRules();
 
-  static int map_cycle_fsm_client_state;
-  static char map_cycle_fsm_client_map_name[256];  
-  static bool map_cycle_fsm_client_respawn_ack_flag;
-  static void mapCycleFsmClient( void );
-
-  static void onTimelimitGameCompleted( void );
-  static void onFraglimitGameCompleted( void );
-  static void onObjectiveGameCompleted( void );
+	static void mapLoadFailureResponse( int result_code, char *map_name );
   
-  static void checkGameRules( void );
-
-  static void mapLoadFailureResponse( int result_code, char *map_name );
+	static void netMessageCycleMap(NetMessage *message);
+	static void netMessageCycleRespawnAck(NetMessage *message);
   
-  static void netMessageCycleMap( NetMessage *message ); 
-  static void netMessageCycleRespawnAck( NetMessage *message ); 
-  
-  public: 
-
-  static void processNetMessage( NetMessage *message );
-  static void forceMapCycle( void );
-  static void updateGameControlFlow( void );
-
- };
+public: 
+   	static void processNetMessage(NetMessage *message);
+	static void forceMapCycle();
+	static void updateGameControlFlow();
+};
 
 #endif // ** _GAME_CONTROL_RULES_DAEMON_HPP

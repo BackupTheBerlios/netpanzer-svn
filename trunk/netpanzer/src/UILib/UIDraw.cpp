@@ -19,16 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "UIDraw.hpp"
 
-#ifdef USE_SDL
-#include "SDL/SDLDraw.hpp"
+UIDraw *Screen = 0;
 
-UIDraw *Screen = new SDLDraw();
-#endif
-
-#ifdef WIN32
-#include "DirectDraw.hpp"
-#include "DirectDrawGlobals.hpp"
-
-UIDraw *Screen = new DirectDraw();
-#endif
 

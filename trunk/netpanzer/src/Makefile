@@ -2,6 +2,7 @@ include config.mak
 
 DIRS = . Lib Lib/2D Lib/Environment Lib/Interfaces Lib/Particles \
 	   Lib/PObject/Classes Lib/PObject/Templates Lib/Types Lib/View \
+	   Lib/optionmm \
 	   NetPanzer/Classes NetPanzer/Classes/Weapons \
 	   NetPanzer/Classes/Network \
 	   NetPanzer/Views/MainMenu NetPanzer/Views/MainMenu/Options \
@@ -10,27 +11,17 @@ DIRS = . Lib Lib/2D Lib/Environment Lib/Interfaces Lib/Particles \
 	   NetPanzer/Classes/AI NetPanzer/Classes/Units \
 	   NetPanzer/Interfaces NetPanzer/Structs \
 	   NetPanzer/Core NetPanzer/Resources \
+	   NetPanzer/Interfaces/unix UILib/SDL UILib/Network \
 	   UILib
 
 LINKFLAGS += -g3
 INCLUDEDIRS=$(DIRS) NetPanzer/Classes/Network
 CFLAGS += -Wall -g3 -O2 $(foreach dir, $(INCLUDEDIRS), -I$(dir))
 
-ifeq ($(SYSTEM),UNIX)
-DIRS += NetPanzer/Interfaces/unix Stub UILib/SDL UILib/Network \
-	    NetPanzer/Core/unix
 GOAL = ../netpanzer
 LINKFLAGS += -g3 `sdl-config --libs` -lSDL_net -lSDL_mixer
 CFLAGS += `sdl-config --cflags` -DUNIX
-endif
-ifeq ($(SYSTEM),WIN32)
-DIRS += NetPanzer/Interfaces/win32 DirectX/DDraw DirectX/DirectInput \
-        DirectX/DirectPlay DirectX/DirectSound \
-        Win32 Win32/Winsock
-GOAL = ../netpanzer.exe
-CFLAGS += -DWIN32 -Iw32api -D_DEBUG -Wno-unknown-pragmas
-LINKFLAGS += -lgdi32 -lshell32 -lddraw -ldinput -ldplayx -ldsound -lws2_32 -ldsetup -lwinmm -ldxguid -lole32
-endif
+
 ifeq ($(PROFILING),yes)
 CFLAGS += -pg
 LINKFLAGS += -pg

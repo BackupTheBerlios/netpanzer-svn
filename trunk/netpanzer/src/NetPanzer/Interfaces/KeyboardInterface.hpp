@@ -77,16 +77,7 @@ public:
    {
 	   char_buffer[ (char_buffer_rear + 1) & _CHAR_BUFFER_MOD ] = c;
 	   char_buffer_rear = (char_buffer_rear + 1) & _CHAR_BUFFER_MOD;
-   }
-
-   static inline void putChar(int c, int times)
-   {
-	   while( times != 0 )
-	   {
-		   char_buffer[ (char_buffer_rear + 1) & _CHAR_BUFFER_MOD ] = c;
-		   char_buffer_rear = (char_buffer_rear + 1) & _CHAR_BUFFER_MOD;
-		   times--;
-	   }
+	   printf("putch: %c\n", c);
    }
 };
 

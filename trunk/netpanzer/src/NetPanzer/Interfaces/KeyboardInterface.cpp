@@ -17,11 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#ifdef WIN32
-#include <windows.h>
-#include "DirectInput.hpp"
-#endif
-
 #include "KeyboardInterface.hpp"
 
 bool KeyboardInterface::key_table[SDLK_LAST];
@@ -34,9 +29,6 @@ unsigned long KeyboardInterface::char_buffer_rear = 0;
 void KeyboardInterface::sampleKeyboard()
 {
 	memcpy(previous_key_state, key_table, sizeof(key_table));
-#ifdef WIN32	
-	DirectInput::getKeyboardState(key_table);
-#endif
 }
 
 void KeyboardInterface::keyPressed(int scancode) {
@@ -49,9 +41,8 @@ void KeyboardInterface::keyReleased(int scancode) {
 
 bool KeyboardInterface::getKeyPressed(int scanCode)
 {
-	if (
-			KeyboardInterface::getKeyState(scanCode) == true &&
-			KeyboardInterface::getPrevKeyState(scanCode) == false)
+	if (KeyboardInterface::getKeyState(scanCode) == true &&
+		KeyboardInterface::getPrevKeyState(scanCode) == false)
 		return true;
 
 	return false;

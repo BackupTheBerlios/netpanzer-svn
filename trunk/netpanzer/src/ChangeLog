@@ -1,3 +1,9 @@
+11-Sep-2003 by Matze Braun
+-removed more win32 specific code
+-removed #ifdef USE_SDLs, the code is enabled by default now
+-added a new commandline parser
+-smaller fixes/cleanups
+
 10-Sep-2003 by Matze Braun
 -more random cleanups
 -more cleanups so that the Stub directory is empty now
@@ -9,6 +15,7 @@
   uniform interface to functions like comparing 2 objects. But since the only
   function is_equal in PObject wasn't virtual, and since it was never used I
   decided that this stuff is quiet useless.
+-removed most of the win32 specific code
 
 9-Sep-2003 by Matze Braun
 -worked around issues with the block allocator code for Particl2D (new operator

@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _KEYBINDER_HPP
 
 #include "ArrayGrowableTemplate.hpp"
-#include "KeyScanCodeDefs.h"
 
 class KeyBinderElement
 {

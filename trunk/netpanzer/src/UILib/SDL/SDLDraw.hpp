@@ -34,8 +34,6 @@ public:
 	SDLDraw();
 	virtual ~SDLDraw();
   
-	bool initialize();
-	void shutdown();
 	bool setVideoMode(DWORD width, DWORD height, DWORD bpp, bool fullscreen);
 	bool isDisplayModeAvailable(int width, int height, int bpp);
 	bool lockDoubleBuffer(BYTE **DoubleBuffer);

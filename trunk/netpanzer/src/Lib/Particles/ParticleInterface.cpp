@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "KeyScanCodeDefs.h"
 #include "ParticleInterface.hpp"
 #include "PuffParticle2D.hpp"
 #include "SmolderParticleSystem2D.hpp"

@@ -16,13 +16,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#ifdef WIN32
-#include <windows.h>
-#include "Win32Mouse.hpp"
-#endif
-#ifdef USE_SDL
+
 #include <SDL.h>
-#endif
 #include "MouseInterface.hpp"
 
 #include "DDHardSurface.hpp"
@@ -365,17 +360,9 @@ void MouseInterface::setCursor(CursorType type)
     
 void MouseInterface::updateCursor()
 {
-#ifdef WIN32
-  	long x_pos, y_pos;
-	Win32GetMousePos( &x_pos, &y_pos );
-	mouse_pos.x = x_pos;
-	mouse_pos.y = y_pos;
-#endif
-#ifdef USE_SDL
 	int x, y;
 	SDL_GetMouseState(&x, &y);
 	mouse_pos.x = x;
 	mouse_pos.y = y;
-#endif
 }
 

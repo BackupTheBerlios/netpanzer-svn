@@ -18,12 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __cTimeStamp_hpp__
 #define __cTimeStamp_hpp__
 
-#ifdef USE_SDL
 #include <SDL.h>
-#endif
-#ifdef WIN32
-#include "WinTimer.hpp"
-#endif
 
 ////---------------------------------------------------------------------------
 //// class TIMESTAMP defines a way to record a point in time.  The actual value
@@ -36,12 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //// use RTDSC, so it's as accurate as RESOLUTION.
 class TIMESTAMP {
 private:
-#ifdef WIN32
-		typedef unsigned long Ticks;
-#endif
-#ifdef USE_SDL
 		typedef Uint32 Ticks;
-#endif
 		Ticks v; // ticks count
 
         inline static double ticksToSecs(Ticks t)

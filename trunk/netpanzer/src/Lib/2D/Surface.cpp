@@ -708,19 +708,10 @@ void Surface::bltTrans(const Surface &dest, iXY min) const
 	assert(signed(pixelsPerRow) > 0);
 	assert(signed(numRows) > 0);
 
-#ifndef MSVC
 	int srcAdjustment  = stride      - pixelsPerRow;
-	int destAdjustment = dest.stride - pixelsPerRow;
-#endif
+	int destAdjustment = dest.stride - pixelsPerRow;	
 	for (int row = 0; row < numRows; row++)
 	{
-		// XXX we don't use the assembler stuff when not on msvc
-#ifdef MSVC
-		bltTransSpan(dRow, sRow, pixelsPerRow);
-
-		sRow += stride;
-		dRow += dest.stride;
-#else
 		for (int col = 0; col < pixelsPerRow; col++)
 		{
 			if (*sRow != 0) 
@@ -731,7 +722,6 @@ void Surface::bltTrans(const Surface &dest, iXY min) const
 		
 		sRow += srcAdjustment;
 		dRow += destAdjustment;
-#endif
 	}
 
 } // end Surface::bltTrans
@@ -2006,9 +1996,11 @@ void Surface::bltBlendScale(const Surface &source, const iRect &destRect, ColorT
 	if (numRows <= 0) return;
 
 	const BYTE *table = colorTable.getColorArray();
+#if 0
 	int stepAndDecCount = (xSrcDelta << 16) | 0xffff;
 	int stepWholePart = xSrcDelta >> 16;
 	int srcX1FracWithCount = (srcX1 << 16) | pixelsPerRow;
+#endif
 
 	float xdelta = float(source.pix.x) / float(max.x - min.x);
 	for (int yCount = 0 ; yCount < numRows ; yCount++)
@@ -2056,12 +2048,12 @@ void Surface::bltLookup(const iRect &destRect, const PIX table[]) const
 	
 	assert(mem != 0);
 
-	int pixelsPerRow = max.x - min.x;
-	int numRows      = max.y - min.y;
+	size_t pixelsPerRow = max.x - min.x;
+	size_t numRows      = max.y - min.y;
 
 	PIX *dRow = mem + min.y*stride + min.x;
 
-	for (int yCount = 0 ; yCount < numRows ; yCount++)
+	for (size_t yCount = 0 ; yCount < numRows ; yCount++)
 	{
 		for(size_t x=0; x<pixelsPerRow; x++)
 			dRow[x] = table[dRow[x]];
@@ -2089,8 +2081,8 @@ void Surface::bltScale(const Surface &source, const iRect &destRect) const
 	assert(mem        != 0);
 	assert(source.mem != 0);
 
-	int pixelsPerRow = max.x-min.x;
-	int numRows      = max.y-min.y;
+	size_t pixelsPerRow = max.x-min.x;
+	size_t numRows      = max.y-min.y;
 
 	int srcX1 = 0;
 	int srcY = 0;
@@ -2133,31 +2125,27 @@ void Surface::bltScale(const Surface &source, const iRect &destRect) const
 	if (pixelsPerRow <= 0) return;
 	if (numRows <= 0) return;
 
+#if 0
 	int stepAndDecCount = (xSrcDelta << 16) | 0xffff;
 	int stepWholePart = xSrcDelta >> 16;
 	int srcX1FracWithCount = (srcX1 << 16) | pixelsPerRow;
-
-#if 0
-	printf("Source: %d %d\n", source.pix.x, source.pix.y);
-	printf("DestRect: %d %d - %d %d\n", destRect.min.x, destRect.min.y,
-										destRect.max.x, destRect.max.y);
-	printf("ScaledVals: %d %d - %d %d %d\n", srcX1, xSrcDelta,
-			srcX1FracWithCount, stepAndDecCount, stepWholePart);
 #endif
+
 	float xdelta = float(source.pix.x) / float(max.x - min.x);
-	for (int yCount = 0 ; yCount < numRows ; yCount++)
+	for (size_t yCount = 0 ; yCount < numRows ; yCount++)
 	{
 		const PIX *sRow = source.rowPtr(srcY >> 16) + (srcX1 >> 16);
 
-		/*
+#if 0
 		bltScaleSpan(dRow, sRow, srcX1FracWithCount, stepAndDecCount, stepWholePart);
-		*/
+#else
 		// XXX: WARNING SLOW CODE
 		float sPos = 0;
 		for(size_t x=0; x<pixelsPerRow; x++) {
 			dRow[x] = sRow[(size_t) sPos];
 			sPos += xdelta;
 		}
+#endif
 
 		srcY += ySrcDelta;
 		dRow += stride;
@@ -2520,13 +2508,12 @@ void Surface::createFractal(const float &minY, const float &maxY, const float &r
 
 } // end Surface::createFractal
 
-
 #if _MSC_VER > 1000
  #pragma optimize( "", off )
 #endif
 void Surface::fire(int *dest, int xSize, int ySize)
 {
-
+	printf ("Fire not implemented in gcc yet!\n");
 	// XXX no msvc assembler
 #ifdef MSVC
 	_asm {
@@ -3022,7 +3009,6 @@ static BYTE quickHack[65536];
 
 static void bltLightDarkSpan(int n, PIX *d, const BYTE *i, const PIX *s)
 {
-
 	static int once = 0;
 
 	if (!once) {
@@ -3283,71 +3269,7 @@ void Surface::bltAdd(const Surface &dest, iXY min) const
 		PIX *d = dPtr;
 		PIX *s = sPtr;
 		int n = pixelsPerRow;
-#if 0
-		while (n > 0 && int(d) & 3) {
-			*d = saturateTable[int(*d) + int(*s)];
-			++d;
-			++s;
-			--n;
-		}
 		
-		// Do 4-byte chunks
-
-		if (0 && n > 3) {
-			// XXX no msvc assembler
-#ifdef MSVC
-			_asm {
-
-				// load vars into regs
-
-				push ebp
-				mov esi, sPtr
-				mov edi, dPtr
-				mov ebp, n
-
-				xor ebx, ebx
-				xor ecx, ecx
-			quad:
-
-				mov bl, [esi+2]
-				mov cl, [edi+2]
-
-				add esi, 4
-				mov al, saturateTable[ebx + ecx]
-
-				mov bl, [esi+3]
-				mov cl, [edi+3]
-
-				add edi, 4
-				mov ah, saturateTable[ebx + ecx]
-
-				shl eax, 16
-				sub ebp, 4
-
-				mov bl, [esi+0]
-				mov cl, [edi+0]
-
-				mov al, saturateTable[ebx + ecx]
-
-				mov bl, [esi+1]
-				mov cl, [edi+1]
-
-				mov ah, saturateTable[ebx + ecx]
-
-				mov [edi], eax
-				ja quad
-
-				// restore vars for the c code that cleans up
-				mov eax, ebp
-				pop ebp
-				mov sPtr, esi
-				mov dPtr, edi
-				mov n, ebp
-
-			}
-#endif
-		}
-#endif		
 		// Cleanup
 		while (n > 0) {
 			*d = saturateTable[int(*d) + int(*s)];
@@ -3941,6 +3863,7 @@ void Surface::drawPalette()
 //--------------------------------------------------------------------------
 void fireByte(BYTE *dest, int xSize, int ySize)
 {
+	printf("no gcc version of fireByte yet.\n");
 
 	// XXX no msvc assembler
 #ifdef MSVC	

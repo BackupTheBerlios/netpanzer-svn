@@ -29,15 +29,6 @@ SDLDraw::~SDLDraw()
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-bool SDLDraw::initialize()
-{
-	return true;
-}
-
-void SDLDraw::shutdown()
-{
-}
-
 bool SDLDraw::setVideoMode(DWORD width, DWORD height, DWORD bpp, bool fullscreen)
 {
 	Uint32 flags = 0;

@@ -18,12 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __cMouse_hpp__
 #define __cMouse_hpp__
 
-#ifdef USE_SDL
 #include <SDL.h>
-#endif
-#ifdef WIN32
-#include "Win32Mouse.hpp"
-#endif
 
 #include "Surface.hpp"
 #include "Surface.hpp"
@@ -52,16 +47,9 @@ public:
 
 	static inline iXY getScreenPos () 
 	{ 
-#ifdef WIN32
-		long mouse_x, mouse_y;
-		Win32GetMousePos(&mouse_x, &mouse_y );  
-		return iXY(mouse_x, mouse_y);
-#endif
-#ifdef USE_SDL
 		int x, y;
 		SDL_GetMouseState(&x, &y);
 		return iXY(x, y);
-#endif
 	}
 	
 	static inline int getScreenX   () 

@@ -21,50 +21,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <time.h>
 #include <SDL.h>
 
+#include <optionmm/command_line.hpp>
+
 #include "Log.hpp"
+#include "Exception.hpp"
 #include "GameManager.hpp"
 #include "MouseInterface.hpp"
 #include "KeyboardInterface.hpp"
 #include "cMouse.hpp"
-
-bool HandleSDLEvents();
-
-int main(int argc, char** argv)
-{
-	SDL_Init(SDL_INIT_TIMER);
-	SDL_EnableUNICODE(1);
-	srand(time(0));
-#ifdef __USE_SVID
-	// the STL functions seem to use the 48er versions of the random generator
-	srand48(time(0));
-#endif
-
-	LOG( ("Starting GameManager initialisation.") );
-	// XXX hacky hack... needs changes in GameManager I think...
-	const char* commandline = argc > 1 ? argv[1] : "";
-	if (!GameManager::initialize(commandline)) {
-		fprintf(stderr, "Couldn't initialize the game.\n");
-		exit(1);
-	}
-	LOG( ("Initialisation succeeded.") );
-
-	while(1) {
-		SDL_PumpEvents();
-		GameManager::mainLoop();
-	
-		if(HandleSDLEvents() == true) {
-			LOG( ("quitting main loop.") );
-			break;
-		}
-	}
-	
-	GameManager::shutdown();
-	LOG ( ("successfull shutdown.") );
-
-	SDL_Quit();
-
-	return 0;
-}
 
 /** This functions iterates throgh the SDL event queue.
  * It returns true if a quit message has been received, otherwise false.
@@ -137,4 +101,72 @@ bool HandleSDLEvents()
 
 	return false;
 }
+
+//---------------------------------------------------------------------------
+
+int main(int argc, char** argv)
+{
+	using namespace optionmm;
+	command_line commandline(PACKAGE_NAME, PACKAGE_VERSION,
+			"Copyright(c) 1998 Pyrosoft Inc. and others", "", argc, argv);
+	
+	option<bool, false, false> dedicated_option('d', "dedicated",
+							   "run as dedicated server", false);
+	commandline.add(&dedicated_option);
+	option<int>	 port_option('p', "port", "run server on specific port", 0);
+	commandline.add(&port_option);
+
+	if(!commandline.process() || commandline.help() || commandline.version())
+		return 0;
+	
+	SDL_Init(SDL_INIT_TIMER);
+	SDL_EnableUNICODE(1);
+
+	srand(time(0));
+	// the STL functions in gcc3 seem to use the 48er versions of the random
+	// generator instead of the default libc one, so we have todo a double srand
+	// :-/
+#ifdef __USE_SVID
+	srand48(time(0));
+#endif
+
+	try {
+		GameManager::initialize(dedicated_option.value());
+	} catch(Exception e) {
+		fprintf(stderr, "Couldn't initialize the game: %s\n", e.getMessage());
+		SDL_Quit();
+		exit(1);
+	}
+
+	// we'll catch every exception here, just to be sure the user gets at least
+	// a usefull error message and SDL has a chance to shutdown...
+	try {
+		while(1) {
+			SDL_PumpEvents();
+			if(HandleSDLEvents() == true) {
+				LOG( ("quitting main loop.") );
+				break;
+			}
+
+			GameManager::mainLoop();
+		}
+
+		GameManager::shutdown();
+		LOG ( ("successfull shutdown.") );
+		SDL_Quit();
+
+	} catch(Exception e) {
+		fprintf(stderr, "An unexpected exception occured: %s\nShutdown needed.",
+						e.getMessage());
+		SDL_Quit();
+		throw;
+	} catch(...) {
+		fprintf(stderr, "An unexpected exception occured.\nShutdown needed.");
+		SDL_Quit();
+		throw;
+	}
+
+	return 0;
+}
+
 
