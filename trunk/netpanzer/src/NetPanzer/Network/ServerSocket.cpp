@@ -106,18 +106,19 @@ ServerSocket::acceptNewClients()
 void
 ServerSocket::readTCP()
 {
-    sockets.select(0);
-
-    // Iterate through client list and check whether data arrived
-    ClientList::ClientIterator i;
-    for(i = clientlist->begin(); i != clientlist->end(); i++) {
-        SocketClient* client = *i;
-        if (sockets.dataPending(*client->socket))
-            readClientTCP(client);
+    if(sockets.select(0)) {
+    	// Iterate through client list and check whether data arrived
+	ClientList::ClientIterator i;
+	for(i = clientlist->begin(); i != clientlist->end(); i++) {
+	    SocketClient* client = *i;
+	    if (sockets.dataPending(*client->socket))
+		readClientTCP(client);
+	}
     }
 
     // Search for clients that wants to be removed from the list
-    for(i = clientlist->begin(); i != clientlist->end(); /* empty */) {
+    for(ClientList::ClientIterator i = clientlist->begin();
+	    i != clientlist->end(); /* empty */) {
         SocketClient* client = *i;
         if(client->wantstodie) {
             i = clientlist->remove(i);

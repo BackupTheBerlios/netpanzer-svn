@@ -55,6 +55,11 @@ SocketSet::select(unsigned int usec)
     timeout.tv_sec = usec/1000000;
     timeout.tv_usec = usec%1000000;
 
+#ifdef USE_WINSOCK
+    if(set.fd_count == 0)
+	return false;
+#endif
+    
     testset = set;
     int res = ::select(FD_SETSIZE, &testset, 0, 0, &timeout);
 #ifdef USE_WINSOCK
