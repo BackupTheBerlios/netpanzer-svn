@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #ifndef WITHOUT_NETPANZER
 
-#include <SDLNet.hpp>
 #include "Util/Log.hpp"
 #include "IRCLobbyView.hpp"
 #include "PlayerInterface.hpp"
