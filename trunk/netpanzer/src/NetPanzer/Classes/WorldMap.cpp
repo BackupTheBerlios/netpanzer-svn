@@ -42,8 +42,8 @@ void WorldMap::reMap( WadMapTable &mapping_table )
     map_size = map_info.x_size * map_info.y_size;
 
     for ( map_index = 0; map_index < map_size; map_index++ ) {
-        tile_value = ltoh16(map_buffer[map_index]);
-        map_buffer[map_index] = htol16(mapping_table[tile_value].remap_index);
+        tile_value = mapValue(map_index);
+        setMapValue(map_index, mapping_table[tile_value].remap_index);
     }
 
 }
