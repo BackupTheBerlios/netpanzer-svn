@@ -70,18 +70,18 @@ Logger::closeLogFile()
 void
 Logger::log(int priority, const char *fmt, va_list ap)
 {
+    char buf[512];
+    vsnprintf(buf, sizeof(buf)-1, fmt, ap);
+    strcat(buf, "\n");
+    
     if (m_logLevel >= priority) {
-        vfprintf(stderr, fmt, ap);
-        fprintf(stderr, "\n");
+        fprintf(stderr, buf);
     }
     
     if (m_logfile != 0) {
-        char buf[512];
-        vsnprintf(buf, sizeof(buf)-1, fmt, ap);
-        strcat(buf, "\n");
 	try {
 	    m_logfile->write(buf, strlen(buf), 1);
-        m_logfile->flush();
+            m_logfile->flush();
 	} catch(std::exception& e) {
             fprintf(stderr, "Error while writing logfile: %s", e.what());
             m_logfile = 0;
