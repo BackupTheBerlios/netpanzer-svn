@@ -3,6 +3,7 @@
 -Add timeout/keepalive handling to network layer to correctly detect connection
  losses and try reconnects
 -impelement 'initialunits' param in PlayerUnitConfig::initialize()
+-bots should have different names and different flags
 
 *** Tools
 -write a map and tileset editor
