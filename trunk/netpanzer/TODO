@@ -5,6 +5,8 @@
  * let dedicated server output statistics on console or in some log files. 
    Also all message should be outputted with timestamps.
    So that you can generate nice html pages with statistics of the players :)
+ * Add special chars to functions displaying text that allow to set text
+   color/style. (^ like in quake based games?)
  * Convert the 256 color stuff to truecolor
  * Add timeout/keepalive handling to network layer to correctly detect 
    connection losses and try reconnects (we should think about this again, 
