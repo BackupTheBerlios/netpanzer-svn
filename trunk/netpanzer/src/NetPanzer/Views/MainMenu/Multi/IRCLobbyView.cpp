@@ -67,22 +67,18 @@ void IRCLobbyView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     assert(this!=0);
     clientArea.fill(Color::black);
+    startIRC();  // start irc if needed
     
     int y=0;
     int disp_server_upto=0;
     int server_list_end_y=lobby_view_height-(Surface::getFontHeight()*6);
     int chat_list_end_y=server_list_end_y+(Surface::getFontHeight()*4);      
 
-    if(lobby_connection == 0) {
-        clientArea.bltString(iXY(0,0), "Not connected to lobby:", Color::white);
-        clientArea.bltString(iXY(0, Surface::getFontHeight()),
-                error_message.c_str(), Color::white);
-        return;
-    }
-
 // XXX todo: scrollbar for large list of servers
-    if(!lobby_connection->isConnected()) {
+    if(lobby_connection == 0 || !lobby_connection->isConnected()) {
         clientArea.bltString(iXY(0,0),"Not connected to lobby", Color::white);
+        View::doDraw(viewArea, clientArea);
+        return;
     }
     else {
         SDL_mutexP(lobby_connection->game_servers_mutex);
@@ -164,6 +160,10 @@ void IRCLobbyView::chatReturnPressed(cInputField* )
 //---------------------------------------------------------------------------
 void IRCLobbyView::startIRC()
 {
+    if(lobby_connection) {
+        // already started
+        return; 
+    }
     if((const std::string&) gameconfig->lobbyserver == "")
         return;
 
@@ -179,7 +179,9 @@ void IRCLobbyView::startIRC()
 
 void IRCLobbyView::stopIRC()
 {
-    delete lobby_connection;
+    if(lobby_connection) {
+        delete lobby_connection;
+    }
     lobby_connection=0;
 }
 
