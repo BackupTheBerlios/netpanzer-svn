@@ -69,6 +69,7 @@ MasterServer::MasterServer()
     } catch(...) {
         if(sock >= 0)
             close(sock);
+        throw;
     }
 }
 

@@ -18,7 +18,6 @@ public:
     std::string getNextToken()
     {
         if(in.eof()) {
-            std::cout << "EOF\n";
             return "";
         }
         
