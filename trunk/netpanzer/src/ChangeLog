@@ -1,3 +1,9 @@
+18-Sepby Matthias Braun
+-fixed the Choice-reset problem
+-removed lots of options from visualsview
+-changed sound back to 8 channels at 22k, no need to blow too much resources
+ away...
+
 16-Sep-2003 by Matthias Braun
 -randomly fixed stuff in the very ugly libview code (also removed several unused
  files there)

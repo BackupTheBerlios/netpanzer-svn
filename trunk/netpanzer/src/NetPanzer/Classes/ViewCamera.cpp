@@ -37,7 +37,6 @@ void ViewCamera::scrollPlusX( long scroll_increment )
     if ( (view.x >= 0) && (view.x <= map_size.x) ) {
         loc.x = view.x;
     }
-
 }
 
 void ViewCamera::scrollMinusX( long scroll_increment )
@@ -53,7 +52,6 @@ void ViewCamera::scrollMinusX( long scroll_increment )
     if ( (view.x >= 0) && (view.x <= map_size.x) ) {
         loc.x = view.x;
     }
-
 }
 
 void ViewCamera::scrollMinusY( long scroll_increment )
@@ -84,7 +82,6 @@ void ViewCamera::scrollPlusY( long scroll_increment )
     if ( (view.y >= 0) && (view.y <= map_size.y) ) {
         loc.y = view.y;
     }
-
 }
 
 void ViewCamera::getViewStart( unsigned long view_size_x, unsigned long view_size_y,

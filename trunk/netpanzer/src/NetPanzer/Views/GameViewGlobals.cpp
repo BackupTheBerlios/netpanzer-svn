@@ -29,15 +29,25 @@ iXY multiPos(169, 7);
 iXY optionsPos(325, 7);
 iXY helpPos(480, 7);
 iXY creditsPos(0, 0);
-iXY soundPos(16, 32);
-iXY tcpipPos = soundPos;
-iXY joinPos  = soundPos;
-iXY interfacePos(169, 32);
-iXY directConnectPos = interfacePos;
-iXY hostPos          = interfacePos;
-iXY visualsPos(325, 32);
-iXY modemPos = visualsPos;
-iXY controlsPos(480, 32);
+
+const iXY sub1(16, 32);
+const iXY sub2(169, 32);
+const iXY sub3(325, 32);
+const iXY sub4(480, 32);
+
+#if 0 // XXX
+iXY soundPos = sub1;
+iXY interfacePos = sub2;
+iXY visualsPos = sub3;
+iXY controlsPos = sub4;
+#else
+iXY visualsPos = sub1;
+iXY interfacePos = sub2;
+#endif
+
+iXY hostPos = sub1;
+iXY joinPos = sub2;
+
 iXY returnToGamePos = mainPos;
 iXY resignPos = multiPos;
 

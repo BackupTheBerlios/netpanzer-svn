@@ -58,9 +58,6 @@ bool Component::contains(int x, int y) const
 void Component::setParent(void *parent)
 {
     assert(parent != 0);
-    if (parent == 0) {
-        throw Exception("ERROR: Component parent == 0");
-    }
 
     Component::parent = parent;
 }

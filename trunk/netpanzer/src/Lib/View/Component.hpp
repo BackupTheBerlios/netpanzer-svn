@@ -65,10 +65,6 @@ public:
     {
         reset();
     }
-    Component(int i)
-    {
-        reset();
-    }
     virtual ~Component()
     {}
 

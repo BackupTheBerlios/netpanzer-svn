@@ -64,9 +64,6 @@ Surface View::pics;
 void View::add(Component *component)
 {
     assert(component != 0);
-    if (component == 0) {
-        return;
-    }
 
     if (componentsUsedCount < MAX_COMPONENT_COUNT - 1) {
         componentList[componentsUsedCount] = component;

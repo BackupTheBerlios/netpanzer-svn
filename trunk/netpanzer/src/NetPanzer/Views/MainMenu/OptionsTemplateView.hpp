@@ -15,26 +15,17 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __OptionsTemplateView_hpp__
 #define __OptionsTemplateView_hpp__
-
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
 
 #include "View.hpp"
 #include "Surface.hpp"
 #include "MenuTemplateView.hpp"
 
-
 //--------------------------------------------------------------------------
 class OptionsTemplateView : public MenuTemplateView
 {
 protected:
-
     virtual void loadBackgroundSurface();
     virtual void loadTitleSurface();
 
@@ -43,8 +34,6 @@ public:
 
     virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
     virtual void initButtons();
-
-}
-; // end OptionsTemplateView
+}; // end OptionsTemplateView
 
 #endif // end __OptionsTemplateView_hpp__

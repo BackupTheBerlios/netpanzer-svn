@@ -144,9 +144,6 @@ bool GameManager::display_network_info_flag;
 int GameManager::execution_mode;
 
 unsigned char GameManager::game_state  = _game_state_idle;
-iXY GameManager::previous_video_mode_res;
-iXY GameManager::current_video_mode_res;
-
 
 static Surface hostLoadSurface;
 
@@ -156,8 +153,6 @@ void GameManager::initializeVideoSubSystem()
     LOG( ( "Initializing video mode" ) );
     Screen = new SDLDraw();
 
-    current_video_mode_res = iXY(640,480);
-    // don't go fullscreen for now
     setVideoMode();
     loadPalette("wads/netp.act");
 }
@@ -286,19 +281,17 @@ void GameManager::setVideoMode()
     if(mode<0)
         throw Exception("couldn't find a usable video mode");
 
-    current_video_mode_res = mode_res;
-
-    if (!Screen->setVideoMode(current_video_mode_res.x,
-                              current_video_mode_res.y, 8, fullscreen))
+    if (!Screen->setVideoMode(mode_res.x,
+                              mode_res.y, 8, fullscreen))
         throw Exception("failed to set video mode.");
 
-    WorldViewInterface::setCameraSize( current_video_mode_res.x, current_video_mode_res.y );
-    FRAME_BUFFER.create(current_video_mode_res.x, current_video_mode_res.y, current_video_mode_res.x, 1 );
-    screen.createNoAlloc(current_video_mode_res);
-    gameView.setSize(current_video_mode_res);
+    WorldViewInterface::setCameraSize( mode_res.x, mode_res.y );
+    FRAME_BUFFER.create(mode_res.x, mode_res.y, mode_res.x, 1 );
+    screen.createNoAlloc(mode_res);
+    gameView.setSize(mode_res);
 
     Desktop::checkViewPositions();
-    //ConsoleInterface::setToSurfaceSize( current_video_mode_res );
+    //ConsoleInterface::setToSurfaceSize( mode_res );
 
     // reset palette
     Palette pal;
@@ -317,70 +310,6 @@ void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
     screen.unlock();
     Screen->copyDoubleBufferandFlip();
 }
-
-// ******************************************************************
-
-#if 0
-void GameManager::increaseDisplayResolution()
-{
-    iXY new_mode;
-
-    drawTextCenteredOnScreen("Changing Resolution", Color::white);
-
-    GameConfig::setNextGameScreenResolution();
-
-    drawTextCenteredOnScreen("Changing Resolution", Color::white);
-
-    new_mode = GameConfig::getGameScreenResolutionSize();
-
-    setVideoMode(new_mode, Screen->isFullScreen());
-
-    previous_video_mode_res = current_video_mode_res;
-    current_video_mode_res = new_mode;
-
-    WorldViewInterface::setCameraSize( current_video_mode_res.x, current_video_mode_res.y );
-    FRAME_BUFFER.create(current_video_mode_res.x, current_video_mode_res.y, current_video_mode_res.x, 1 );
-    screen.createNoAlloc(current_video_mode_res);
-    gameView.setSize( current_video_mode_res );
-    Desktop::checkViewPositions();
-    ConsoleInterface::setToSurfaceSize( current_video_mode_res );
-
-    loadPalette( "wads/netp.act" );
-
-    ConsoleInterface::postMessage( "Screen Resolution :  %d  x  %d", current_video_mode_res.x, current_video_mode_res.y );
-}
-
-// ******************************************************************
-
-void GameManager::decreaseDisplayResolution()
-{
-    iXY new_mode;
-
-    drawTextCenteredOnScreen("Changing Resolution", Color::white);
-
-    GameConfig::setPreviousGameScreenResolution();
-
-    drawTextCenteredOnScreen("Changing Resolution", Color::white);
-
-    new_mode = GameConfig::getGameScreenResolutionSize();
-
-    setVideoMode(new_mode, Screen->isFullScreen());
-
-    previous_video_mode_res = current_video_mode_res;
-    current_video_mode_res = new_mode;
-
-    WorldViewInterface::setCameraSize( current_video_mode_res.x, current_video_mode_res.y );
-    FRAME_BUFFER.create(current_video_mode_res.x, current_video_mode_res.y, current_video_mode_res.x, 1 );
-    screen.createNoAlloc(current_video_mode_res);
-    gameView.setSize( current_video_mode_res );
-    Desktop::checkViewPositions();
-    ConsoleInterface::setToSurfaceSize( current_video_mode_res );
-
-    loadPalette("wads/netp.act");
-
-    ConsoleInterface::postMessage( "Screen Resolution :  %d  x  %d", current_video_mode_res.x, current_video_mode_res.y );
-}
-#endif
 
 // ******************************************************************
 
@@ -477,9 +406,6 @@ void GameManager::initializeNetworkSubSystem()
 
     NetworkState::setNetworkStatus( _network_state_server );
     NetworkState::resetNetworkStats();
-
-    // XXX do we need this?
-    //SetPacketFunction( EnqueueIncomingPacket );
 }
 
 // ******************************************************************
@@ -1062,8 +988,6 @@ void GameManager::netMessageViewControl( NetMessage *message )
     if ( view_control->action_flags & _view_control_flag_visible_off ) {
         Desktop::setVisibility( view_control->view_name, false );
     }
-
-
 }
 
 // ******************************************************************
@@ -1095,7 +1019,6 @@ void GameManager::netMessageConnectAlert( NetMessage *message )
     default :
         assert(0);
     } // ** switch
-
 }
 
 // ******************************************************************
@@ -1578,19 +1501,6 @@ void GameManager::launchDedicatedServer()
 
     reinitializeGameLogic();
 
-    /*
-    MinimizeOrNot( gapp.hwndApp );    
-
-    InitializeDirectPlay( gapp.hwndApp);
-
-    initializeConnectionType();
-
-    HostSession( gapp.hwndApp );                 
-    */
-
-    //winsock hack
-    //InitStreamServer(gapp.hwndApp);
-
     SERVER->openSession();
     SERVER->hostSession();
 
@@ -1609,9 +1519,6 @@ void GameManager::launchDedicatedServer()
 // ******************************************************************
 void GameManager::exitNetPanzer()
 {
-    // NOTE: Hack
-    sound->stopTankIdle();
-
     quitNetPanzerGame();
 
     SDL_Event event;
@@ -1629,13 +1536,6 @@ void GameManager::quitNetPanzerGame()
         ServerConnectDaemon::shutdownConnectDaemon();
         SERVER->closeSession();
     }
-
-
-    //***workaround for directplay fuckup on bad client disconnects
-    //until we find out why close doesn't work anymore on the server
-    //object after the crap out. actually, this call seems unnecessary,
-    //since the dplay object is destroyed subsequently anyway. sr
-    //QuitSession();
 }
 
 // ******************************************************************
@@ -1734,11 +1634,6 @@ void GameManager::graphicsLoop()
     }
 
     mouse.draw(screen);
-
-    //char strBuf[256];
-    //sprintf(strBuf, "%d, %d", mouse.getScreenPos().x, mouse.getScreenPos().y);
-    //screen.bltString(40, 2, strBuf, Color::white);
-
     MouseInterface::updateCursor();
 
     FRAME_BUFFER.unlock();

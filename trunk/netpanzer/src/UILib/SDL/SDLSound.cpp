@@ -40,11 +40,11 @@ SDLSound::SDLSound()
     if(SDL_InitSubSystem(SDL_INIT_AUDIO) < 0)
         throw Exception("SDL_Init audio error: %s", SDL_GetError());
 
-    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) < 0)
+    if(Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024) < 0)
         throw Exception("Couldn't open audio device: %s", Mix_GetError());
 
     loadSound("sound/");
-    Mix_AllocateChannels(16);
+    Mix_AllocateChannels(8);
 }
 //-----------------------------------------------------------------
 SDLSound::~SDLSound()

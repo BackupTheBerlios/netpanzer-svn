@@ -50,15 +50,21 @@ VisualsView::VisualsView() : OptionsTemplateView()
     y = 100;
     choiceResolution.setName("Resolution");
     choiceResolution.setStateChangedCallback(this);
-    choiceResolution.addItemDefault("640x480");
+    choiceResolution.addItem("640x480");
     choiceResolution.addItem("800x600");
     choiceResolution.addItem("1024x768");
     choiceResolution.setLocation(x, y);
     choiceResolution.select(GameConfig::getScreenResolution());
     choiceResolution.setMinWidth(minWidth);
+
+    checkBoxFullscreen.setLabel("Fullscreen");
+    checkBoxFullscreen.setStateChangedCallback(this);
+    checkBoxFullscreen.setState(Screen->isFullScreen());    
+    checkBoxFullscreen.setLocation(x+ 200, y);
     y += yOffset;
     y += yOffset;
 
+#if 0
     choiceGameViewBackgroundColor.setName("Game View Background Color");
     choiceGameViewBackgroundColor.setStateChangedCallback(this);
     choiceGameViewBackgroundColor.addItemDefault("Dark Gray Blend");
@@ -115,6 +121,7 @@ VisualsView::VisualsView() : OptionsTemplateView()
     //x += optionsMeterWidth + arrowButtonWidth;
     //addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseBrightness);
     //y += yOffset;
+#endif
 
     // Other visual options to add.
     // Gamma
@@ -122,6 +129,7 @@ VisualsView::VisualsView() : OptionsTemplateView()
 
     // Color Settings
     //----------------------------------------------------------------------
+#if 0
     minWidth = 13 * CHAR_XPIX;
 
     x = xTextStart + 10;
@@ -208,6 +216,7 @@ VisualsView::VisualsView() : OptionsTemplateView()
 
     x = 300;
     y = 344;
+#endif
 
     checkBoxDrawAllShadows.setLabel("Draw All Shadows");
     checkBoxDrawAllShadows.setStateChangedCallback(this);
@@ -219,12 +228,6 @@ VisualsView::VisualsView() : OptionsTemplateView()
     checkBoxBlendSmoke.setStateChangedCallback(this);
     checkBoxBlendSmoke.setState(GameConfig::getBlendSmoke());
     checkBoxBlendSmoke.setLocation(x, y);
-    y += yOffset;
-
-    checkBoxFullscreen.setLabel("Fullscreen");
-    checkBoxFullscreen.setStateChangedCallback(this);
-    checkBoxFullscreen.setState(Screen->isFullScreen());
-    checkBoxFullscreen.setLocation(x, y);
     y += yOffset;
 } // end VisualsView::VisualsView
 
@@ -238,19 +241,18 @@ void VisualsView::initButtons()
     add(&checkBoxBlendSmoke);
     add(&checkBoxFullscreen);
     add(&choiceResolution);
-    add(&choiceGameViewBackgroundColor);
-    add(&choiceMiniMapObjectiveDrawMode);
-    add(&choiceMiniMapUnitSize);
-    add(&choiceUnitSelectionDrawMode);
+    //add(&choiceGameViewBackgroundColor);
+    //add(&choiceMiniMapObjectiveDrawMode);
+    //add(&choiceMiniMapUnitSize);
+    //add(&choiceUnitSelectionDrawMode);
     //add(&choiceUnitInfoDrawLayer);
-    add(&choiceYourRadarUnit);
-    add(&choiceAlliedRadarUnit);
-    add(&choiceYourRadarObjective);
-    add(&choiceAlliedRadarObjective);
-    add(&choiceEnemyRadarObjective);
-    add(&choiceVehicleSelectionBox);
-    add(&choiceConsoleText);
-
+    //add(&choiceYourRadarUnit);
+    //add(&choiceAlliedRadarUnit);
+    //add(&choiceYourRadarObjective);
+    //add(&choiceAlliedRadarObjective);
+    //add(&choiceEnemyRadarObjective);
+    //add(&choiceVehicleSelectionBox);
+    //add(&choiceConsoleText);
 } // end VisualsView::initButtons
 
 // doDraw

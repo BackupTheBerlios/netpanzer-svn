@@ -60,9 +60,6 @@ protected:
 
     static int execution_mode;
 
-    static iXY previous_video_mode_res;
-    static iXY current_video_mode_res;
-
 protected:
     static unsigned char game_state;
 

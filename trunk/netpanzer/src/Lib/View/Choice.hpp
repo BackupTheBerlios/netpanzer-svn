@@ -49,7 +49,6 @@ public:
 
     void   add(const String &item);
     void   addItem(const String &item);
-    void   addItemDefault(const String &item);
     void   copyItems(const Choice &choice);
     int    getItemCount() const
     {
@@ -59,14 +58,10 @@ public:
     {
         return index;
     }
-    void   insert(String item, int index);
     String paramString()
     {
         return String();
     }
-    void   remove(String item);
-    void   remove(int index);
-    void   removeAll();
     void   select(const String &item);
     void   select(int index);
     void   setMinWidth(int minWidth);

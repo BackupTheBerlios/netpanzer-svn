@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __LIB_LOG_HPP__
 #define __LIB_LOG_HPP__
 
-#include <config.h>
+#include <stdarg.h>
 #include <stdio.h>
 
 class Logger
@@ -51,12 +51,12 @@ private:
 
 extern Logger logger;
 #ifdef DO_LOGGING
-#define FUNC(funcname) logger.debug("Entering function '%s'.", funcname);
 #define LOG(x)         logger.info x
 #else
-#define FUNC(funcname)
 #define LOG(x)
 #endif // DO_LOGGING
+// FUNC is deprecated
+#define FUNC(x)
 
 #endif
 

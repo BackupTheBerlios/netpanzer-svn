@@ -48,59 +48,6 @@ void Choice::addItem(const String &item)
 }
 
 //---------------------------------------------------------------------------
-void Choice::addItemDefault(const String &item)
-{
-    choiceList.setNum(choiceList.getCount() + 1);
-
-    choiceList[choiceList.getCount() - 1] = item;
-
-    int borderSpace = borderSize * 2;
-
-    size.x = std::max(int(strlen(item) * CHAR_XPIX + borderSpace), size.y);
-    size.y = CHAR_XPIX + borderSpace;
-
-    select(item);
-}
-
-//---------------------------------------------------------------------------
-void Choice::insert(String item, int index)
-{
-    //	for (int i = 0; i < choiceList.getCount(); i++)
-    //	{
-    //		if (strcmp((const char *) item, (const char *) choiceList[i]) == 0)
-    //		{
-    //			choiceList.removeByIndex(i);
-    //
-    //			return;
-    //		}
-    //	}
-}
-
-//---------------------------------------------------------------------------
-void Choice::remove(String item)
-{
-    for (int i = 0; i < choiceList.getCount(); i++) {
-        if (strcmp((const char *) item, (const char *) choiceList[i]) == 0) {
-            choiceList.removeByIndex(i);
-
-            return;
-        }
-    }
-}
-
-//---------------------------------------------------------------------------
-void Choice::remove(int index)
-{
-    choiceList.removeByIndex(index);
-}
-
-//---------------------------------------------------------------------------
-void Choice::removeAll()
-{
-    choiceList.setNum(0);
-}
-
-//---------------------------------------------------------------------------
 void Choice::select(const String &item)
 {
     for (int i = 0; i < choiceList.getCount(); i++) {
@@ -108,7 +55,7 @@ void Choice::select(const String &item)
             if(index == i)
                 return;
 
-            index = i;
+            mouseover = index = i;
             if(callback)
                 callback->stateChanged(this);
 
@@ -125,7 +72,7 @@ void Choice::select(int index)
     if(index == Choice::index)
         return;
 
-    Choice::index = index;
+    Choice::index = mouseover = index;
     if(callback)
         callback->stateChanged(this);
 }
@@ -135,7 +82,7 @@ void Choice::actionPerformed(const mMouseEvent &me)
 {
     iXY parentDimensions(((View *)parent)->getClientRect().getSize());
 
-    if (	me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED &&
+    if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED &&
             (me.getModifiers() & InputEvent::BUTTON1_MASK)) {
         //assert(isOpen == false);
         isOpen = true;
@@ -159,12 +106,10 @@ void Choice::actionPerformed(const mMouseEvent &me)
 
 
             // Make sure the choice is still on the screen.
-            if (min.y < 0) {
-                assert(false);
-            }
+            assert (min.y >= 0);
         }
         assert(min + size < parentDimensions);
-    } else if (	me.getID() == mMouseEvent::MOUSE_EVENT_DRAGGED &&
+    } else if (me.getID() == mMouseEvent::MOUSE_EVENT_DRAGGED &&
                 (me.getModifiers() & InputEvent::BUTTON1_MASK)) {
         isOpen = true;
 
@@ -318,6 +263,5 @@ void Choice::copyItems(const Choice &choice)
         choiceList[i] = choice.choiceList[i];
     }
 
-    index = choice.getSelectedIndex();
-
+    //index = choice.getSelectedIndex();
 } // end Choice::copyItems
