@@ -1,5 +1,6 @@
 #include <config.h>
 
+#include <iostream>
 #include <stdint.h>
 #include <memory>
 
@@ -32,7 +33,7 @@ public:
 
 TileSetHeader::TileSetHeader()
     : fileformatversion(FILEFORMATVERSION), tilewidth(32), tileheight(32),
-      tilebitsperpixel(32), tilecount(0)
+      tilebitsperpixel(24), tilecount(0)
 {
     strncpy(magic, MAGICSTRING, 4);
     for(size_t i=0;i<sizeof(reserved)/sizeof(uint32_t); i++)
@@ -107,13 +108,14 @@ void TileSet::load(ReadFile& file)
     header = fileheader.release();
     
     delete[] tiledata;
+    tilebuffersize = 0;
+    tiledata = 0;
+    
     tilesize = header->tilewidth * header->tileheight * (header->tilebitsperpixel / 8);
-    if(tiledata > 0) {
+    if(header->tilecount > 0) {
         resizeBuffer(tilesize * header->tilecount);
         if(file.read(tiledata, tilesize, header->tilecount) != header->tilecount)
             throw Exception("Tileset file is too short.");
-    } else {
-        tiledata = 0;
     }
 }
 
@@ -163,12 +165,12 @@ void TileSet::addTile(SDL_Surface* surface, SDL_Rect* srcrect)
         }
     }
 
-    if(rect->x + rect->w >= surface->w ||
-       rect->y + rect->h >= surface->h)
+    if(rect->x + rect->w > surface->w ||
+       rect->y + rect->h > surface->h)
         throw Exception("Invalid source rectangle, can't add tile");
 
-    if(tilesize * header->tilecount > tilebuffersize)
-        resizeBuffer(tilebuffersize * 2);
+    if(tilesize * (header->tilecount+1) > tilebuffersize)
+        resizeBuffer(tilebuffersize * 2 + tilesize);
 
     int bpp = surface->format->BytesPerPixel;
     char* sptr = ((char*) surface->pixels) +
@@ -211,5 +213,6 @@ void TileSet::resizeBuffer(size_t newbuffersize)
 
     delete[] tiledata;
     tiledata = newbuffer.release();
+    tilebuffersize = newbuffersize;
 }
 

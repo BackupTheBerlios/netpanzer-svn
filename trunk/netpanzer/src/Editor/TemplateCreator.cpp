@@ -49,8 +49,11 @@ void TemplateCreator::OnCreateTemplate(wxCommandEvent& )
 {
     try {
         TileTemplate* tiletemplate = selectwidget->createTemplate(tileset);
+
         (void) tiletemplate;
-        // XXX TODO blabla...
+        // XXX TODO
+
+        Close();
     } catch(std::exception& e) {
         wxMessageDialog(this, e.what(), "Error", wxOK | wxICON_ERROR).ShowModal();    
     }

@@ -19,10 +19,13 @@ public:
 private:
     void OnItemSelected(wxListEvent& event);
     bool switchTileSet(const std::string& tileset);
+
+    void saveTileSet();
     
     TileSetList* tilesetlist;
     TileSetView* tilesetview;
 
+    std::string filename;
     TileSet* currenttileset;
 
     DECLARE_EVENT_TABLE()

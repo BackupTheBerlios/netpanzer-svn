@@ -25,6 +25,7 @@ TileSetEditor::TileSetEditor(wxWindow* parent)
 
 TileSetEditor::~TileSetEditor()
 {
+    saveTileSet();
     delete currenttileset;
 }
 
@@ -33,15 +34,38 @@ void TileSetEditor::OnItemSelected(wxListEvent& evt)
     switchTileSet((const char*) evt.GetText());
 }
 
-bool TileSetEditor::switchTileSet(const std::string& newtileset)
+void TileSetEditor::saveTileSet()
 {
     try {
-        std::string filename = "/tileset/";
+        if(currenttileset) {
+            std::auto_ptr<WriteFile>
+                file(FileSystem::openWrite(filename.c_str()));        
+            currenttileset->save(*(file.get()));
+        }                                                                 
+    } catch(std::exception& e) {
+        std::string errormsg = "Couldn't save Tileset to '";
+        errormsg += filename ;
+        errormsg += "' : ";
+        errormsg += e.what();
+        wxMessageDialog(this, errormsg.c_str(),
+                "Error", wxOK | wxICON_ERROR).ShowModal();
+    }
+}
+
+bool TileSetEditor::switchTileSet(const std::string& newtileset)
+{
+    saveTileSet();
+
+    delete currenttileset;
+    currenttileset = 0;
+    tilesetview->setTileSet(0);    
+    
+    try {
+        filename = "/tileset/";
         filename += newtileset;
         filename += "/tiles.dat";
         std::auto_ptr<ReadFile> file (FileSystem::openRead(filename.c_str()));
 
-        delete currenttileset; currenttileset = 0;
         currenttileset = new TileSet();
         currenttileset->load(*(file.get()));
 
