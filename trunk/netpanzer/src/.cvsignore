@@ -1,5 +1,5 @@
-.depend
-.depend.bak
-config.mak
-log.txt
+Makefile
+Makefile.in
+.deps
+netpanzer
 
