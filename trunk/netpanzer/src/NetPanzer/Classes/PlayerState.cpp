@@ -18,8 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "PlayerState.hpp"
 
-static const int playerColorCount = 59;
-
 //If you modify this array, also modify the constant above
 uint8_t *playerColorArray[] = {
 	&Color::red,
@@ -83,10 +81,14 @@ uint8_t *playerColorArray[] = {
 	&Color::gray224
 };
 
-void PlayerState::setColor( int index ) {
+static const int playerColorCount = sizeof(playerColorArray) / sizeof(uint8_t*);
+
+void PlayerState::setColor( uint32_t index ) {
 	colorIndex = index % playerColorCount;
 }
 
 uint8_t PlayerState::getColor() {
-	return ( *playerColorArray[ colorIndex ] );
+    assert(colorIndex < playerColorCount);    
+    return ( *playerColorArray[ colorIndex ] );
 }
+

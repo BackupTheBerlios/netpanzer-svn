@@ -41,11 +41,11 @@ public:
             uint8_t newflag, uint16_t newid, uint8_t newstatus,
             int16_t newkills, int16_t newkill_points, int16_t newlosses,
             int16_t newloss_points, int16_t newtotal,
-            int16_t newobjectives_held, int newcolorIndex)
+            int16_t newobjectives_held, uint32_t newcolorIndex)
         : flag(newflag), playerindex_id(newid), status(newstatus),
           kills(newkills), kill_points(newkill_points), losses(newlosses),
           loss_points(newloss_points), total(newtotal),
-          objectives_held(newobjectives_held), colorIndex( newcolorIndex )
+          objectives_held(newobjectives_held), colorIndex(newcolorIndex)
     {
         memset(name, 0, sizeof(name));
         strncpy(name, newname.c_str(), 64);
@@ -62,7 +62,7 @@ public:
     int16_t loss_points;
     int16_t total;
     int16_t objectives_held;
-    int colorIndex;
+    uint32_t colorIndex;
 }
 __attribute__((packed));
 
@@ -84,7 +84,7 @@ private:
     short total;
     short objectives_held;
     bool stats_locked;
-    int colorIndex;
+    uint32_t colorIndex;
 
 public:
     PlayerUnitConfig unit_config;
@@ -283,7 +283,7 @@ public:
 	colorIndex = state->colorIndex;
     }
 
-    void setColor( int index );
+    void setColor( uint32_t index );
     uint8_t getColor();
 };
 
