@@ -39,19 +39,19 @@ GameTemplateView::GameTemplateView() : View()
 void GameTemplateView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
 {
 	// Check for view blending mode change.
-	if (KeyboardInterface::getKeyPressed(_SCAN_1))
+	if (KeyboardInterface::getKeyPressed(SDLK_1))
 	{
 		viewDrawBackgroundMode = VIEW_BACKGROUND_DARK_GRAY_BLEND;
 	}
-	else if (KeyboardInterface::getKeyPressed(_SCAN_2))
+	else if (KeyboardInterface::getKeyPressed(SDLK_2))
 	{
 		viewDrawBackgroundMode = VIEW_BACKGROUND_LIGHT_GRAY_BLEND;
 	}
-	else if (KeyboardInterface::getKeyPressed(_SCAN_3))
+	else if (KeyboardInterface::getKeyPressed(SDLK_3))
 	{
 		viewDrawBackgroundMode = VIEW_BACKGROUND_SOLID_BLACK;
 	}
-	else if (KeyboardInterface::getKeyPressed(_SCAN_4))
+	else if (KeyboardInterface::getKeyPressed(SDLK_4))
 	{
 		viewDrawBackgroundMode = VIEW_BACKGROUND_TRANSPARENT;
 	}

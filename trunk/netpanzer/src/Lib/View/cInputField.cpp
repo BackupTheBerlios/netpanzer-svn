@@ -158,16 +158,16 @@ void cInputField::addExtendedChar(int newExtendedChar)
 	// Process the extendedChar accordingly.
 	switch (newExtendedChar)
 	{
-		case _SCAN_ENTER:
+		case SDLK_ENTER:
 		{
 		} break;
 		
-		case _SCAN_HOME:
+		case SDLK_HOME:
 		{
 			cursorPos = 0;
 		} break;
 		
-		case _SCAN_LEFT:
+		case SDLK_LEFT:
 		{
 			if(--cursorPos < 0)
 			{
@@ -175,7 +175,7 @@ void cInputField::addExtendedChar(int newExtendedChar)
 			}
 		} break;
 		
-		case _SCAN_RIGHT:
+		case SDLK_RIGHT:
 		{
 			int length = strlen(destString);
 			if(++cursorPos > length)
@@ -190,7 +190,7 @@ void cInputField::addExtendedChar(int newExtendedChar)
 			}
 		} break;
 		
-		case _SCAN_END:
+		case SDLK_END:
 		{
 			cursorPos = strlen(destString);
 
@@ -200,18 +200,18 @@ void cInputField::addExtendedChar(int newExtendedChar)
 			}
 		} break;
 		
-		case _SCAN_INS:
+		case SDLK_INSERT:
 		{
 		} break;
 
-		case _SCAN_DEL:
+		case SDLK_DELETE:
 		{
 			if (cursorPos == strlen(destString)) { break; }
 
 			memcpy(destString + cursorPos, destString + cursorPos + 1, strlen(destString + cursorPos + 1) + 1);
 		} break;
 		
-		case _SCAN_BKSP:
+		case SDLK_BACKSPACE:
 		{
 			if (cursorPos >= 1)
 			{

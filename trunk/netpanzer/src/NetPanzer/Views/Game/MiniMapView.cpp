@@ -322,40 +322,40 @@ void MiniMapView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &
 	moveTo(min + newPos - prevPos);
 
 	// Check for map blending mode change.
-	if (KeyboardInterface::getKeyPressed(_SCAN_1))
+	if (KeyboardInterface::getKeyPressed(SDLK_1))
 	{
 		MiniMapView::mapDrawType = MAP_SOLID;
 	}
-	else if (KeyboardInterface::getKeyPressed(_SCAN_2))
+	else if (KeyboardInterface::getKeyPressed(SDLK_2))
 	{
 		MiniMapView::mapDrawType = MAP_2080;
 	}
-	else if (KeyboardInterface::getKeyPressed(_SCAN_3))
+	else if (KeyboardInterface::getKeyPressed(SDLK_3))
 	{
 		MiniMapView::mapDrawType = MAP_4060;
 	}
-	else if (KeyboardInterface::getKeyPressed(_SCAN_4))
+	else if (KeyboardInterface::getKeyPressed(SDLK_4))
 	{
 		MiniMapView::mapDrawType = MAP_BLEND_GRAY;
 	}
-	else if (KeyboardInterface::getKeyPressed(_SCAN_5))
+	else if (KeyboardInterface::getKeyPressed(SDLK_5))
 	{
 		MiniMapView::mapDrawType = MAP_BLEND_DARK_GRAY;
 	}
-	else if (KeyboardInterface::getKeyPressed(_SCAN_6))
+	else if (KeyboardInterface::getKeyPressed(SDLK_6))
 	{
 		MiniMapView::mapDrawType = MAP_BLACK;
 	}
-	else if (KeyboardInterface::getKeyPressed(_SCAN_7))
+	else if (KeyboardInterface::getKeyPressed(SDLK_7))
 	{
 		MiniMapView::mapDrawType = MAP_TRANSPARENT;
 	}
 	
-	if (KeyboardInterface::getKeyState(_SCAN_NUM_PLUS))
+	if (KeyboardInterface::getKeyState(SDLK_KP_PLUS))
 	{
 		increaseSize = -1;
 	}
-	else if (KeyboardInterface::getKeyState(_SCAN_NUM_MINUS))
+	else if (KeyboardInterface::getKeyState(SDLK_KP_MINUS))
 	{
 		decreaseSize = -1;
 	}
@@ -490,8 +490,8 @@ int MiniMapView::lMouseUp(const iXY &downPos, const iXY &upPos)
 	{
 		// If units are selected, send the units there and deselect the units.
 			// If there is a unit selected, see if we should move a unit there.
-		if (	(KeyboardInterface::getKeyState(_SCAN_LCRTL) ||
-				 KeyboardInterface::getKeyState(_SCAN_RCRTL)))
+		if (	(KeyboardInterface::getKeyState(SDLK_LCRTL) ||
+				 KeyboardInterface::getKeyState(SDLK_RCRTL)))
 		{
 			if (MiniMapInterface::isUnitSelected())
 			{
@@ -513,8 +513,8 @@ void MiniMapView::mouseMove(const iXY &prevPos, const iXY &newPos)
 {
 	if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos())))
 	{
-		if (	(KeyboardInterface::getKeyState(_SCAN_LCRTL) ||
-				 KeyboardInterface::getKeyState(_SCAN_RCRTL)))
+		if (	(KeyboardInterface::getKeyState(SDLK_LCRTL) ||
+				 KeyboardInterface::getKeyState(SDLK_RCRTL)))
 		{
 			// Set the cursor accordinly.
 			if (MiniMapInterface::isUnitSelected())

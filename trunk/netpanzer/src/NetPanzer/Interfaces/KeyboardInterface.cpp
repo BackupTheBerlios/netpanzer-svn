@@ -15,13 +15,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-// XXX we need new unix code here
-#ifndef UNIX
-
+#ifdef USE_SDL
+#include <SDL.h>
+#endif
+#ifdef WIN32
 #include <windows.h>
-#include "KeyboardInterface.hpp"
 #include "DirectInput.hpp"
+#endif
 
+#include "KeyboardInterface.hpp"
 
 char KeyboardInterface::key_table[256];
 char KeyboardInterface::previous_key_state[256];
@@ -30,12 +32,12 @@ char KeyboardInterface::char_buffer[ _CHAR_BUFFER_SIZE ];
 unsigned long KeyboardInterface::char_buffer_front = 0;
 unsigned long KeyboardInterface::char_buffer_rear = 0;
 
-void KeyboardInterface::sampleKeyboard( void )
- {
+void KeyboardInterface::sampleKeyboard()
+{
+#ifdef WIN32
 	memcpy(previous_key_state, key_table, 256 * sizeof(char));
 	
 	DirectInput::getKeyboardState(key_table);
- }
-
 #endif
+}
 

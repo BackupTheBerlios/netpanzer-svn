@@ -365,16 +365,16 @@ void ConsoleInterface::addExtendedChar(int newExtendedChar)
 	// Process the extendedChar accordingly.
 	switch (newExtendedChar)
 	{
-		case _SCAN_ENTER:
+		case SDLK_ENTER:
 		{
 		} break;
 		
-		case _SCAN_HOME:
+		case SDLK_HOME:
 		{
 			cursorPos = 0;
 		} break;
 		
-		case _SCAN_LEFT:
+		case SDLK_LEFT:
 		{
 			if(--cursorPos < 0)
 			{
@@ -382,7 +382,7 @@ void ConsoleInterface::addExtendedChar(int newExtendedChar)
 			}
 		} break;
 		
-		case _SCAN_RIGHT:
+		case SDLK_RIGHT:
 		{
 			int length = strlen(inputString);
 			if(++cursorPos > length)
@@ -397,7 +397,7 @@ void ConsoleInterface::addExtendedChar(int newExtendedChar)
 			}
 		} break;
 		
-		case _SCAN_END:
+		case SDLK_END:
 		{
 			cursorPos = strlen(inputString);
 
@@ -407,18 +407,18 @@ void ConsoleInterface::addExtendedChar(int newExtendedChar)
 			}
 		} break;
 		
-		case _SCAN_INS:
+		case SDLK_INSERT:
 		{
 		} break;
 
-		case _SCAN_DEL:
+		case SDLK_DELETE:
 		{
 			if (cursorPos == (int) strlen(inputString + cursorPos)) { break; }
 
 			memcpy(inputString + cursorPos, inputString + cursorPos + 1, strlen(inputString + cursorPos + 1) + 1);
 		} break;
 		
-		case _SCAN_BKSP:
+		case SDLK_BACKSPACE:
 		{
 			if (cursorPos >= 1)
 			{

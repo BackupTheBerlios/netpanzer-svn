@@ -394,7 +394,7 @@ void JoystickInterface::setupJoystick()
 //	// Since we found the JoystickInterface, make sure it is set up.
 //	while (!done)
 //	{
-//		while (!KeyboardInterface::getKeyState(_SCAN_C) && !KeyboardInterface::getKeyState(_SCAN_ENTER))
+//		while (!KeyboardInterface::getKeyState(SDLK_C) && !KeyboardInterface::getKeyState(SDLK_ENTER))
 //		{
 //			TimerInterface::start();
 //			JoystickInterface::poll();
@@ -430,13 +430,13 @@ void JoystickInterface::setupJoystick()
 //			TimerInterface::update();
 //		}
 //
-//		if (KeyboardInterface::getKeyPressed(_SCAN_ENTER))
+//		if (KeyboardInterface::getKeyPressed(SDLK_ENTER))
 //		{
 //			// Save the JoystickInterface center position.
 //			JoystickInterface::pollCenterPos();
 //			KeyboardInterface::sampleKeyboard();
 //
-//			while (!KeyboardInterface::getKeyPressed(_SCAN_ENTER) && !KeyboardInterface::getKeyPressed(_SCAN_J))
+//			while (!KeyboardInterface::getKeyPressed(SDLK_ENTER) && !KeyboardInterface::getKeyPressed(SDLK_J))
 //			{
 //				TimerInterface::start();
 //				KeyboardInterface::sampleKeyboard();
@@ -474,7 +474,7 @@ void JoystickInterface::setupJoystick()
 //				TimerInterface::update();
 //			}
 //
-//			if (KeyboardInterface::getKeyPressed(_SCAN_ENTER))
+//			if (KeyboardInterface::getKeyPressed(SDLK_ENTER))
 //			{
 //				break;
 //			}

@@ -185,13 +185,13 @@ unsigned char WorldInputCmdProcessor::getCursorStatus( PointXYi &loc )
   if ( unit_loc_status == _unit_player )
    { return( _cursor_player_unit ); }
   else
-   if ( (unit_loc_status == _unit_enemy) && KeyboardInterface::getKeyState( _SCAN_A ) )
+   if ( (unit_loc_status == _unit_enemy) && KeyboardInterface::getKeyState( SDLK_A ) )
     { return ( _cursor_make_allie ); } 
    else 
     if (  (unit_loc_status == _unit_enemy) && working_list.isSelected() )
      { return ( _cursor_enemy_unit ); }
     else
-     if ( (unit_loc_status == _unit_allied) && KeyboardInterface::getKeyState( _SCAN_A ) )
+     if ( (unit_loc_status == _unit_allied) && KeyboardInterface::getKeyState( SDLK_A ) )
       { return ( _cursor_break_allie ); } 
   
   if ( working_list.isSelected() )
@@ -261,8 +261,8 @@ void WorldInputCmdProcessor::toggleUnitFlagVisibility( void )
 
 void WorldInputCmdProcessor::getManualControlStatus( void )
  { 
-  if ( KeyboardInterface::getKeyState( _SCAN_LCRTL ) ||
-       KeyboardInterface::getKeyState( _SCAN_RCRTL )
+  if ( KeyboardInterface::getKeyState( SDLK_LCRTL ) ||
+       KeyboardInterface::getKeyState( SDLK_RCRTL )
      )
    {
     manual_fire_state = true;
@@ -276,20 +276,20 @@ void WorldInputCmdProcessor::getManualControlStatus( void )
 
 void WorldInputCmdProcessor::evaluateKeyCommands( void )
  {
-  //if ( (KeyboardInterface::getKeyPressed( _SCAN_U ) == true) )
+  //if ( (KeyboardInterface::getKeyPressed( SDLK_U ) == true) )
   // { cycleNextUnitAndChangeFocus(); }
 
-  if ( (KeyboardInterface::getKeyPressed( _SCAN_O ) == true) )
+  if ( (KeyboardInterface::getKeyPressed( SDLK_O ) == true) )
    { toggleDisplayOutpostNames();  }
 
-  if ( (KeyboardInterface::getKeyPressed( _SCAN_F ) == true) )
+  if ( (KeyboardInterface::getKeyPressed( SDLK_F ) == true) )
    { toggleUnitFlagVisibility();  }
 
-  if ( (KeyboardInterface::getKeyPressed( _SCAN_ENTER ) == true) )
+  if ( (KeyboardInterface::getKeyPressed( SDLK_ENTER ) == true) )
    { setKeyboardInputModeChatMesg(); }
 
-  if ( ( KeyboardInterface::getKeyState( _SCAN_LCRTL ) || KeyboardInterface::getKeyState( _SCAN_RCRTL ) )
-       && (KeyboardInterface::getKeyPressed( _SCAN_A ) == true) )
+  if ( ( KeyboardInterface::getKeyState( SDLK_LCRTL ) || KeyboardInterface::getKeyState( SDLK_RCRTL ) )
+       && (KeyboardInterface::getKeyPressed( SDLK_A ) == true) )
    { setKeyboardInputModeAllieChatMesg(); }
 
  }
@@ -299,21 +299,21 @@ void WorldInputCmdProcessor::evaluateGroupingKeys( void )
   bool shift_status = false;
   bool alt_status = false;
 
-  if( (KeyboardInterface::getKeyState( _SCAN_LFT_SHIFT ) == true) ||
-      (KeyboardInterface::getKeyState( _SCAN_RGT_SHIFT ) == true)  
+  if( (KeyboardInterface::getKeyState( SDLK_LSHIFT ) == true) ||
+      (KeyboardInterface::getKeyState( SDLK_RSHIFT ) == true)  
     )
    {
     shift_status = true;
    }        
 
-  if( (KeyboardInterface::getKeyState( _SCAN_ALT ) == true) )
+  if( (KeyboardInterface::getKeyState( SDLK_LALT ) == true) )
    {
     alt_status = true;
    }        
 
   //*********************************************************
-  if ( (KeyboardInterface::getKeyState( _SCAN_1 ) == true) &&
-       (KeyboardInterface::getPrevKeyState( _SCAN_1) == false)  )
+  if ( (KeyboardInterface::getKeyState( SDLK_1 ) == true) &&
+       (KeyboardInterface::getPrevKeyState( SDLK_1) == false)  )
    {
     if ( shift_status == true )
      { 
@@ -328,8 +328,8 @@ void WorldInputCmdProcessor::evaluateGroupingKeys( void )
    } // ** if 
     
   //*********************************************************
-  if ( (KeyboardInterface::getKeyState( _SCAN_2 ) == true) &&
-       (KeyboardInterface::getPrevKeyState( _SCAN_2) == false)    )
+  if ( (KeyboardInterface::getKeyState( SDLK_2 ) == true) &&
+       (KeyboardInterface::getPrevKeyState( SDLK_2) == false)    )
    {
     if ( shift_status == true )
      { 
@@ -344,8 +344,8 @@ void WorldInputCmdProcessor::evaluateGroupingKeys( void )
    } // ** if 
 
   //*********************************************************
-  if ( (KeyboardInterface::getKeyState( _SCAN_3 ) == true) &&
-       (KeyboardInterface::getPrevKeyState( _SCAN_3) == false)    )
+  if ( (KeyboardInterface::getKeyState( SDLK_3 ) == true) &&
+       (KeyboardInterface::getPrevKeyState( SDLK_3) == false)    )
    {
     if ( shift_status == true )
      { 
@@ -360,8 +360,8 @@ void WorldInputCmdProcessor::evaluateGroupingKeys( void )
    } // ** if 
  
   //*********************************************************
-  if ( (KeyboardInterface::getKeyState( _SCAN_4 ) == true) &&
-       (KeyboardInterface::getPrevKeyState( _SCAN_4) == false)    )
+  if ( (KeyboardInterface::getKeyState( SDLK_4 ) == true) &&
+       (KeyboardInterface::getPrevKeyState( SDLK_4) == false)    )
    {
     if ( shift_status == true )
      { 
@@ -376,8 +376,8 @@ void WorldInputCmdProcessor::evaluateGroupingKeys( void )
    } // ** if 
 
   //*********************************************************
-  if ( (KeyboardInterface::getKeyState( _SCAN_5 ) == true) &&
-       (KeyboardInterface::getPrevKeyState( _SCAN_5) == false)    )
+  if ( (KeyboardInterface::getKeyState( SDLK_5 ) == true) &&
+       (KeyboardInterface::getPrevKeyState( SDLK_5) == false)    )
    {
     if ( shift_status == true )
      { 
@@ -392,8 +392,8 @@ void WorldInputCmdProcessor::evaluateGroupingKeys( void )
    } // ** if 
 
   //*********************************************************
-  if ( (KeyboardInterface::getKeyState( _SCAN_6 ) == true) &&
-       (KeyboardInterface::getPrevKeyState( _SCAN_6) == false)    )
+  if ( (KeyboardInterface::getKeyState( SDLK_6 ) == true) &&
+       (KeyboardInterface::getPrevKeyState( SDLK_6) == false)    )
    {
     if ( shift_status == true )
      { 
@@ -408,8 +408,8 @@ void WorldInputCmdProcessor::evaluateGroupingKeys( void )
    } // ** if 
 
   //*********************************************************
-  if ( (KeyboardInterface::getKeyState( _SCAN_7 ) == true) &&
-       (KeyboardInterface::getPrevKeyState( _SCAN_7) == false)    )
+  if ( (KeyboardInterface::getKeyState( SDLK_7 ) == true) &&
+       (KeyboardInterface::getPrevKeyState( SDLK_7) == false)    )
    {
     if ( shift_status == true )
      { 
@@ -424,8 +424,8 @@ void WorldInputCmdProcessor::evaluateGroupingKeys( void )
    } // ** if 
  
   //*********************************************************
-  if ( (KeyboardInterface::getKeyState( _SCAN_8 ) == true) &&
-       (KeyboardInterface::getPrevKeyState( _SCAN_8) == false)    )
+  if ( (KeyboardInterface::getKeyState( SDLK_8 ) == true) &&
+       (KeyboardInterface::getPrevKeyState( SDLK_8) == false)    )
    {
     if ( shift_status == true )
      { 
@@ -440,8 +440,8 @@ void WorldInputCmdProcessor::evaluateGroupingKeys( void )
    } // ** if 
 
   //*********************************************************
-  if ( (KeyboardInterface::getKeyState( _SCAN_9 ) == true) &&
-       (KeyboardInterface::getPrevKeyState( _SCAN_9) == false) )
+  if ( (KeyboardInterface::getKeyState( SDLK_9 ) == true) &&
+       (KeyboardInterface::getPrevKeyState( SDLK_9) == false) )
    {
     if ( shift_status == true )
      { 
@@ -456,8 +456,8 @@ void WorldInputCmdProcessor::evaluateGroupingKeys( void )
    } // ** if 
 
    //*********************************************************
-  if ( (KeyboardInterface::getKeyState( _SCAN_0 ) == true) &&
-       (KeyboardInterface::getPrevKeyState( _SCAN_0) == false) )
+  if ( (KeyboardInterface::getKeyState( SDLK_0 ) == true) &&
+       (KeyboardInterface::getPrevKeyState( SDLK_0) == false) )
    {
     if ( shift_status == true )
      { 
@@ -639,8 +639,8 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
   unsigned char click_status;
 
   if ( (manual_control_state == true) ||
-       KeyboardInterface::getKeyState( _SCAN_LCRTL ) ||
-       KeyboardInterface::getKeyState( _SCAN_RCRTL ) 
+       KeyboardInterface::getKeyState( SDLK_LCRTL ) ||
+       KeyboardInterface::getKeyState( SDLK_RCRTL ) 
      )
    {
     
@@ -675,8 +675,8 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
 	   {
         case _cursor_player_unit :
          {
-          if( (KeyboardInterface::getKeyState( _SCAN_LFT_SHIFT ) == true) ||
-              (KeyboardInterface::getKeyState( _SCAN_RGT_SHIFT ) == true)  
+          if( (KeyboardInterface::getKeyState( SDLK_LSHIFT ) == true) ||
+              (KeyboardInterface::getKeyState( SDLK_RSHIFT ) == true)  
             )
            { working_list.addUnit( world_pos ); }  
 	      else
@@ -731,7 +731,7 @@ void WorldInputCmdProcessor::evalRightMButtonEvents( MouseEvent &event )
   if (event.event == MouseEvent::EVENT_CLICK )
    {   
        
-    if ( (KeyboardInterface::getKeyState(_SCAN_LCRTL) || KeyboardInterface::getKeyState(_SCAN_RCRTL) ) ) 
+    if ( (KeyboardInterface::getKeyState(SDLK_LCRTL) || KeyboardInterface::getKeyState(SDLK_RCRTL) ) ) 
      {
       WorldViewInterface::clientXYtoWorldXY( world_win, event.down_pos, &world_pos );
       player_id = PlayerInterface::getLocalPlayerID();   
@@ -1031,7 +1031,7 @@ bool WorldInputCmdProcessor::getConsoleInputString( char *input_string )
 	  if (KeyboardInterface::getChar(&key_char))
 	   {
 	    ConsoleInterface::addExtendedChar(key_char);
-	    if ((key_char == _SCAN_ENTER) )
+	    if ((key_char == SDLK_ENTER) )
          { 
           enter_key_hit_count++;
           if (enter_key_hit_count == 2) 

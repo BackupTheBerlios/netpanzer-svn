@@ -398,40 +398,40 @@ void MiniMapView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &
 	moveTo(min + newPos - prevPos);
 
 	// Check for map blending mode change.
-	if (KeyboardInterface::getKeyPressed(_SCAN_1))
+	if (KeyboardInterface::getKeyPressed(SDLK_1))
 	{
 		MiniMapView::mapDrawType = MAP_SOLID;
 	}
-	else if (KeyboardInterface::getKeyPressed(_SCAN_2))
+	else if (KeyboardInterface::getKeyPressed(SDLK_2))
 	{
 		MiniMapView::mapDrawType = MAP_2575;
 	}
-	else if (KeyboardInterface::getKeyPressed(_SCAN_3))
+	else if (KeyboardInterface::getKeyPressed(SDLK_3))
 	{
 		MiniMapView::mapDrawType = MAP_5050;
 	}
-	else if (KeyboardInterface::getKeyPressed(_SCAN_4))
+	else if (KeyboardInterface::getKeyPressed(SDLK_4))
 	{
 		MiniMapView::mapDrawType = MAP_BLEND_GREEN;
 	}
-	else if (KeyboardInterface::getKeyPressed(_SCAN_5))
+	else if (KeyboardInterface::getKeyPressed(SDLK_5))
 	{
 		MiniMapView::mapDrawType = MAP_BLEND_GRAY;
 	}
-	else if (KeyboardInterface::getKeyPressed(_SCAN_6))
+	else if (KeyboardInterface::getKeyPressed(SDLK_6))
 	{
 		MiniMapView::mapDrawType = MAP_BLEND_DARK_GRAY;
 	}
-	else if (KeyboardInterface::getKeyPressed(_SCAN_7))
+	else if (KeyboardInterface::getKeyPressed(SDLK_7))
 	{
 		MiniMapView::mapDrawType = MAP_BLACK;
 	}
-	else if (KeyboardInterface::getKeyPressed(_SCAN_8))
+	else if (KeyboardInterface::getKeyPressed(SDLK_8))
 	{
 		MiniMapView::mapDrawType = MAP_TRANSPARENT;
 	}
 
-	if (KeyboardInterface::getKeyState(_SCAN_NUM_PLUS))
+	if (KeyboardInterface::getKeyState(SDLK_NUM_PLUS))
 	{
 		iXY   destSize(getViewRect().getSize() + scaleDelta * dt);
 
@@ -503,7 +503,7 @@ void MiniMapView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &
 		needScale      = true;
 		scaleGroupWait = 0.0f;
 	}
-	else if (KeyboardInterface::getKeyState(_SCAN_NUM_MINUS))
+	else if (KeyboardInterface::getKeyState(SDLK_NUM_MINUS))
 	{
 		resize(getViewRect().getSize() - scaleDelta * dt);
 		//deltaSize -= deltaAmount;

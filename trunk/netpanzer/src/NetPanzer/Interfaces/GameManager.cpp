@@ -597,15 +597,15 @@ void GameManager::setupKeyboardBindings()
   	KeyBinder::staticInitialize();
 	KEY_BINDER.initialize( 256 );
   
-	KEY_BINDER.bindAction( _action_mini_map, "MiniMapView", _SCAN_F8 );
-	KEY_BINDER.lockKey( _SCAN_F8 );
+	KEY_BINDER.bindAction( _action_mini_map, "MiniMapView", SDLK_F8 );
+	KEY_BINDER.lockKey( SDLK_F8 );
 
 	// UNSUPPORTED VIEW 
-	KEY_BINDER.bindAction( _action_chat_view, "ChatView", _SCAN_F7 );
-	KEY_BINDER.lockKey( _SCAN_F7 );
+	KEY_BINDER.bindAction( _action_chat_view, "ChatView", SDLK_F7 );
+	KEY_BINDER.lockKey( SDLK_F7 );
 
-	KEY_BINDER.bindAction( _action_rank_view, "RankView", _SCAN_F6 );
-	KEY_BINDER.lockKey( _SCAN_F6 );
+	KEY_BINDER.bindAction( _action_rank_view, "RankView", SDLK_F6 );
+	KEY_BINDER.lockKey( SDLK_F6 );
 }
 
 void GameManager::processSystemKeys()
@@ -615,25 +615,28 @@ void GameManager::processSystemKeys()
 	if (Desktop::getVisible("GameView"))
 	{
 		
-        if (KeyboardInterface::getKeyPressed( _SCAN_F5 ))
+        if (KeyboardInterface::getKeyPressed( SDLK_F5 ))
 		{
 			//  DEBUG VIEW 
 			Desktop::toggleVisibility( "LibView" );    
 		} 
         
-		if (KeyboardInterface::getKeyPressed( _SCAN_F3 ))
+		if (KeyboardInterface::getKeyPressed( SDLK_F3 ))
 		{
 			Desktop::toggleVisibility( "UnitColorView" );    
 		} 
 
+#if 0 // XXX need another key here, TILDE is not good, because on some keybaords
+      // (german ones) it's a composed char)
 		// Toggle unit damage bars.
-		if (KeyboardInterface::getKeyPressed(_SCAN_TILDE))
+		if (KeyboardInterface::getKeyPressed(SDLK_TILDE))
 		{
 			GameConfig::toggleDrawUnitDamage();
 		} 
+#endif
 
 		// Remove all selection.
-		if (KeyboardInterface::getKeyPressed(_SCAN_ESC))
+		if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE))
 		{
 	        COMMAND_PROCESSOR.closeSelectionBox();
 			MiniMapInterface::deselectUnits();
@@ -641,10 +644,10 @@ void GameManager::processSystemKeys()
 
 	}
 
-	if (	KeyboardInterface::getKeyState( _SCAN_LFT_ALT ) ||
-			KeyboardInterface::getKeyState( _SCAN_RGT_ALT ))
+	if (	KeyboardInterface::getKeyState( SDLK_LALT ) ||
+			KeyboardInterface::getKeyState( SDLK_RALT ))
 	{
-		if ( KeyboardInterface::getKeyPressed( _SCAN_MINUS) )
+		if ( KeyboardInterface::getKeyPressed( SDLK_MINUS) )
 		{
 			if (!Desktop::getVisible("GameView"))
 			{
@@ -656,7 +659,7 @@ void GameManager::processSystemKeys()
 			}
 		} 
 
-		if (KeyboardInterface::getKeyPressed(_SCAN_EQUALS))
+		if (KeyboardInterface::getKeyPressed(SDLK_EQUALS))
 		{
 			if (!Desktop::getVisible("GameView"))
 			{
@@ -668,15 +671,15 @@ void GameManager::processSystemKeys()
 			}
 		} 
 
-       if( (KeyboardInterface::getKeyState( _SCAN_LCRTL) || KeyboardInterface::getKeyState( _SCAN_RCRTL) )   )
+       if( (KeyboardInterface::getKeyState( SDLK_LCRTL) || KeyboardInterface::getKeyState( SDLK_RCRTL) )   )
         {
          
 		  // DEBUG VIEW 
-		  if ( KeyboardInterface::getKeyPressed( _SCAN_F )  )
+		  if ( KeyboardInterface::getKeyPressed( SDLK_F )  )
           { display_frame_rate_flag = !display_frame_rate_flag; }
           
           // DEBUG VIEW 
-		  if ( KeyboardInterface::getKeyPressed( _SCAN_N )  )
+		  if ( KeyboardInterface::getKeyPressed( SDLK_N )  )
           { display_network_info_flag = !display_network_info_flag; }
          
         } 
@@ -706,32 +709,32 @@ void GameManager::processSystemKeys()
 			Desktop::toggleVisibility( "RankView" );
 		} 
 
-        if (KeyboardInterface::getKeyPressed( _SCAN_F3 ))
+        if (KeyboardInterface::getKeyPressed( SDLK_F3 ))
 		{
 			Desktop::toggleVisibility( "DesktopView" );    
 		} 
 
-		if (KeyboardInterface::getKeyPressed( _SCAN_TAB ))
+		if (KeyboardInterface::getKeyPressed( SDLK_TAB ))
 		{
 			Desktop::toggleVisibility( "GameToolbarView" );    
 		} 
 
 		
-        if (KeyboardInterface::getKeyPressed( _SCAN_F4 ))
+        if (KeyboardInterface::getKeyPressed( SDLK_F4 ))
 		{
 			Desktop::toggleVisibility( "CodeStatsView" );    
 		} 
         
-        if (KeyboardInterface::getKeyPressed(_SCAN_F1))
+        if (KeyboardInterface::getKeyPressed(SDLK_F1))
 		{
 			Desktop::toggleVisibility( "HelpScrollView" );    
 		}
 
-		if (	KeyboardInterface::getKeyState( _SCAN_LFT_ALT ) ||
-				KeyboardInterface::getKeyState( _SCAN_RGT_ALT ))
+		if (	KeyboardInterface::getKeyState( SDLK_LALT ) ||
+				KeyboardInterface::getKeyState( SDLK_RALT ))
 		{
 
-			if (KeyboardInterface::getKeyPressed( _SCAN_NUM_PLUS ) == true)
+			if (KeyboardInterface::getKeyPressed( SDLK_KP_PLUS ) == true)
 			{
 				if (Desktop::getView("MainView")->getVisible() == false) 
 				{
@@ -739,7 +742,7 @@ void GameManager::processSystemKeys()
 				}
 			}
 
-			if (KeyboardInterface::getKeyPressed( _SCAN_NUM_MINUS ) == true)
+			if (KeyboardInterface::getKeyPressed( SDLK_KP_MINUS ) == true)
 			{
 				if (Desktop::getView("MainView")->getVisible() == false) 
 				{
@@ -748,7 +751,7 @@ void GameManager::processSystemKeys()
 			}
 		}
 
-		if (KeyboardInterface::getKeyPressed(_SCAN_F2))
+		if (KeyboardInterface::getKeyPressed(SDLK_F2))
 		{
 			if (Desktop::getView("GameView")->getVisible())
 			{
@@ -1930,7 +1933,7 @@ void GameManager::graphicsLoop()
   
   FontSystem2D::drawAll();
 
-  if ( KeyboardInterface::getKeyPressed( _SCAN_F9 ) )
+  if ( KeyboardInterface::getKeyPressed( SDLK_F9 ) )
    {
 	Palette pal;
     if (!screen.saveBMP(pal) )
