@@ -1,7 +1,5 @@
 Next release:
--win32 somtimes crashs in lobby window
 -after having a full nodelist in A* the server is getting slow
--remember to disable packet debugger
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map
@@ -16,6 +14,7 @@ Next release:
  * let dedicated server output statistics on console or in some log files. 
    Also all message should be outputted with timestamps.
    So that you can generate nice html pages with statistics of the players :)
+    - done
  * the Server has a massive memory leak somewhere - might be fixed now
  * impelement 'initialunits' param in PlayerUnitConfig::initialize()
  * synchronize resources between server and clients, both should have same flags
