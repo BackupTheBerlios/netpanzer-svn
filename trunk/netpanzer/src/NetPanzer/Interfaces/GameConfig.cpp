@@ -47,7 +47,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       timelimit("timelimit", 50, 1),
       fraglimit("fraglimit", 500, 50),
       powerups("powerups", true),
-      objectiveoccupationpercentage("objectivepercentage", 100, 1, 100),
+      objectiveoccupationpercentage("objectivepercentage", 75, 1, 100),
       allowallies("allowallies", true),
       cloudcoverage("cloudcoverage", 0),
       respawntype("respawntype", _game_config_respawn_type_random, 0,
