@@ -8,6 +8,7 @@ Next release:
     <Gwal> Unit in EndLifeCycle message doesn't exist anymore(u1: 243 u2: 295)
 -client often displays: "Message has unknown message class 6."
 -create a new netpanzer-music package which adds pronobozos music to the game
+-shorten time netpanzer is trying to access the masterserver
 
 *** Miscelaneous
  * I had an offer from http://forgottenhope.bf1942files.com/main.html people to

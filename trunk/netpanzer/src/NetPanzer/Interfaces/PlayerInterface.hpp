@@ -89,6 +89,8 @@ public:
         return &player_lists[id];
     }
 
+    static PlayerState* getPlayerByNetworkID(SocketClient::ID id);
+
     static PlayerState* getLocalPlayer()
     {
         if( local_player_index == 0xFFFF ) {

@@ -644,3 +644,17 @@ void PlayerInterface::disconnectPlayerCleanup(const PlayerID &player_id )
     SERVER->sendMessage(&player_state_update, sizeof(PlayerStateSync));
 }
 
+PlayerState*
+PlayerInterface::getPlayerByNetworkID(SocketClient::ID id)
+{
+    for(int i = 0; i < max_players; ++i) {
+        PlayerState* state = &player_lists[i];
+        if(state->getStatus() != _player_state_active)
+            continue;
+        if(state->getNetworkID() == id)
+            return state;
+    }
+
+    return 0;
+}
+

@@ -45,15 +45,13 @@ void ServerMessageRouter::cleanUp()
 {
 }
 
-void ServerMessageRouter::classTerminalMessages(const NetMessage* message)
+void ServerMessageRouter::processTerminalPacket(const NetPacket* packet)
 {
+    const NetMessage* message = packet->getNetMessage();
     switch(message->message_id) {
-        case _net_message_id_term_unit_cmd: {
-            const TerminalUnitCmdRequest *terminal_command
-                = (const TerminalUnitCmdRequest*) message;
-            UnitInterface::sendMessage( &(terminal_command->comm_request) );
+        case _net_message_id_term_unit_cmd:
+            UnitInterface::processNetPacket(packet);
             break;
-        }
 
         case _net_message_id_term_unit_gen: {
             const TerminalOutpostUnitGenRequest* terminal_command
@@ -79,7 +77,7 @@ void ServerMessageRouter::routePacket(const NetPacket* packet)
     const NetMessage* message = packet->getNetMessage();
     switch (message->message_class) {
         case _net_message_class_terminal:
-            classTerminalMessages(message);
+            processTerminalPacket(packet);
             break;
 
         case _net_message_class_system:

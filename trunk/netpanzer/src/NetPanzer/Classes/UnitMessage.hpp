@@ -66,13 +66,6 @@ public:
         message_flags = flags;
     }
 
-#if 0
-    void setHeader(unsigned char flags)
-    {
-        message_flags = flags;
-    }
-#endif
-
     bool isFlagged(unsigned char flags) const
     {
         if ( (flags & message_flags) == flags )

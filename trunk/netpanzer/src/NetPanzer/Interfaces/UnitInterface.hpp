@@ -37,6 +37,8 @@ enum { _search_all_players,
 
 enum { _no_unit_found, _unit_player, _unit_allied, _unit_enemy };
 
+class NetPacket;
+
 class UnitInterface
 {
 public:
@@ -101,7 +103,9 @@ public:
 
     static UnitBase* getUnit(UnitID unit_id);
 
-    static void sendMessage(const UnitMessage* message);
+    static void processNetPacket(const NetPacket* packet);
+    static void sendMessage(const UnitMessage* message,
+            const PlayerState* player = 0);
 
     static void updateUnitStatus();
 

@@ -1558,21 +1558,18 @@ void Vehicle::setCommandManualFire(const UMesgAICommand* message)
     setFsmGunneryLocation(message->getTargetLoc());
 }
 
-void Vehicle::messageAICommand(const UnitMessage* message )
+void Vehicle::messageAICommand(const UnitMessage* message)
 {
-    UMesgAICommand *command_mesg;
-
-    command_mesg = (UMesgAICommand *) message;
+    const UMesgAICommand *command_mesg = (const UMesgAICommand *) message;
 
     if ( unit_state.lifecycle_state == _UNIT_LIFECYCLE_ACTIVE ) {
-        if ( command_mesg->command == _command_manual_fire ) {
+        if (command_mesg->command == _command_manual_fire) {
             setCommandManualFire( command_mesg );
         } else {
             memcpy(&pending_AI_comm_mesg, command_mesg, sizeof(UMesgAICommand));
             pending_AI_comm = true;
         }
     }
-
 }
 
 
@@ -1612,28 +1609,26 @@ void Vehicle::messageWeaponHit(const UnitMessage *message)
 
 void Vehicle::messageSelectBoxUpdate(const UnitMessage* message)
 {
-    UMesgUpdateSelectBoxInfo *select_box_update;
+    const UMesgUpdateSelectBoxInfo *select_box_update 
+        = (const UMesgUpdateSelectBoxInfo *) message;
 
-    select_box_update = (UMesgUpdateSelectBoxInfo *) message;
-
-    switch ( select_box_update->request_type ) {
-    case _select_box_allie_visibility : {
-            select_info_box.setAllieIcon( select_box_update->allie_flag_visiblity );
+    switch (select_box_update->request_type) {
+        case _select_box_allie_visibility: {
+            select_info_box.setAllieIcon(select_box_update->allie_flag_visiblity );
+            break;
         }
         break;
 
-    case _select_box_flag_visiblity : {
+        case _select_box_flag_visiblity: {
             select_info_box.setFlagIcon( select_box_update->flag_visiblity );
+            break;
         }
-        break;
 
-    case _select_box_is_allied : {
+        case _select_box_is_allied: {
             select_info_box.setAllieState( select_box_update->allied_state );
+            break;
         }
-        break;
-
-    } // ** switch
-
+    }
 }
 
 void Vehicle::messageSelfDestruct(const UnitMessage* )
@@ -1646,7 +1641,6 @@ void Vehicle::messageSelfDestruct(const UnitMessage* )
     MapInterface::pointXYtoMapXY( unit_state.location, &current_map_loc );
     UnitBlackBoard::unmarkUnitLoc( current_map_loc );
 }
-
 
 void Vehicle::processMessage(const UnitMessage* message)
 {
@@ -1673,6 +1667,7 @@ void Vehicle::processMessage(const UnitMessage* message)
         default:
             LOGGER.warning("Unknown unit message (id %d)",
                     message->message_id);
+            break;
     }
 }
 

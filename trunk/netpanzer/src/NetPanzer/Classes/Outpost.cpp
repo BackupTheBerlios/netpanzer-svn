@@ -181,7 +181,6 @@ void Outpost::generateUnits()
                     ai_command.setMoveToLoc( loc );
                     UnitInterface::sendMessage( &ai_command );
                 }
-
             } // ** if
         } // ** if
     } // ** if ( objective_state.occupation_status == _occupation_status_unoccupied )

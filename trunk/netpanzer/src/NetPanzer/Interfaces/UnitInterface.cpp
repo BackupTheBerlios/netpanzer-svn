@@ -48,6 +48,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "UnitMessageTypes.hpp"
 #include "PlayerNetMessage.hpp"
+#include "NetPacket.hpp"
+#include "TerminalNetMesg.hpp"
 
 #include "System/Sound.hpp"
 #include "ParticleInterface.hpp"
@@ -110,7 +112,8 @@ void UnitInterface::cleanUp()
     units.clear();
 }
 
-void UnitInterface::reset()
+void
+UnitInterface::reset()
 {
     for(size_t i = 0; i < max_players; i++ ) {
         playerUnitLists[i].clear();
@@ -123,20 +126,59 @@ void UnitInterface::reset()
     units.clear();
 }
 
-void UnitInterface::sendMessage(const UnitMessage* message)
+void
+UnitInterface::processNetPacket(const NetPacket* packet)
+{
+    const NetMessage* message = packet->getNetMessage();
+    const TerminalUnitCmdRequest* terminal_command =
+        (const TerminalUnitCmdRequest*) message;
+
+    const PlayerState* player 
+        = PlayerInterface::getPlayerByNetworkID(packet->fromID);
+    if(player == 0) {
+        LOGGER.warning("No player found for Network ID '%u'?!?",
+                packet->fromID);
+        return;
+    }
+    
+    sendMessage(&(terminal_command->comm_request) , player);
+}
+
+void
+UnitInterface::sendMessage(const UnitMessage* message,const PlayerState* player)
 {
     if (message->isFlagged(_umesg_flag_unique)) {
         UnitBase* unit = getUnit(message->getUnitID());
         if(unit == 0)
             return;
-
+        if(player && unit->player != player) {
+            LOGGER.warning(
+                "Terminal request for unit (%u) not owned by player (%u).\n",
+                unit->id, player->getID());
+            return;
+        }
+                    
         unit->processMessage(message);
     } else if (message->isFlagged( _umesg_flag_broadcast) ) {
+        if(message->message_id != _umesg_weapon_hit) {
+            LOGGER.warning("Broadcast flag only allowed for weapon hit.");
+            if(player) {
+                LOGGER.warning("from player %u.\n", player->getID());
+            }
+            return;
+        }
+            
         for(Units::iterator i = units.begin(); i != units.end(); ++i) {
             UnitBase* unit = i->second;
             unit->processMessage(message);
         }
     } else if (message->isFlagged( _umesg_flag_manager_request) ) {
+        if(player) {
+            LOGGER.warning(
+                    "UnitManagerMessage sent out by player %u not allowed.",
+                    player->getID());
+            return;
+        }
   	processManagerMessage(message);
     }
 }
@@ -654,10 +696,14 @@ void UnitInterface::processManagerMessage(const UnitMessage* message)
 {
     switch(message->message_id) {
         case _umesg_end_lifecycle:
-            unitManagerMesgEndLifecycle( message );
+            unitManagerMesgEndLifecycle(message);
             break;
         default:
+            LOGGER.warning("Unknown unit Manage Message type (%u).",
+                    message->message_id);
+#ifdef DEBUG
             assert(false);
+#endif
     }
 }
 
@@ -803,7 +849,12 @@ void UnitInterface::processNetMessage(const NetMessage* net_message)
             break;
 
         default:
+            LOGGER.warning("Unknown message id in UnitMessage (%d)",
+                    net_message->message_id);
+#ifdef DEBUG
             assert(false);
+#endif
+            break;
     }
 }
 

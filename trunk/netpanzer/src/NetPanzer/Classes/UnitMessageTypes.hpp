@@ -173,7 +173,7 @@ private:
     uint16_t destroyer;
 
 public:
-    unsigned char unit_type;
+    uint8_t unit_type;
 
     void set(UnitID destroyed_unit, UnitID destroyer_unit,
             unsigned char unit_type )
@@ -182,7 +182,7 @@ public:
         message_flags = _umesg_flag_manager_request;
         destroyed = htol16(destroyed_unit);
         destroyer = htol16(destroyer_unit);
-        UMesgEndLifeCycleUpdate::unit_type = unit_type;
+        this->unit_type = unit_type;
     }
 
     UnitID getDestroyed() const
