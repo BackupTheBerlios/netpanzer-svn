@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=Application
+Name=NetPanzer
+GenericName=Realtime Strategy Game
+Comment=Online multiplayer tactical warfare game
+Icon=netpanzer/netpanzer.png
+
+FilePattern=netpanzer
+TryExec=netpanzer
+Exec=netpanzer
+Terminal=false
+StartupNotify=false
+
+Categories=Application;Game;StrategyGame;

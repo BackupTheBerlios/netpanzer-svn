@@ -15,6 +15,7 @@ SubInclude TOP cache ;
 UseAutoconf ;
 
 appicondir ?= [ ConcatDirs $(datadir) pixmaps $(PACKAGE_NAME) ] ;
+applicationsdir ?= [ ConcatDirs $(datadir) applications ] ;
 
 ##  InstallIcon files [ : subdir ]
 ##    Installs an icon
@@ -24,5 +25,12 @@ rule InstallIcon
     Depends install_data : [ DoInstall $(<:G=installicon) : $(appicondir) $(2) ] ;
 }
 
+rule InstallDesktop
+{
+    LOCATE on $(<:G=installdesktop) = $(SUBDIR) ;
+    Depends install_data : [ DoInstall $(<:G=installdesktop) : $(applicationsdir) $(2) ];
+}
+
 InstallIcon netpanzer.png netpanzer.xpm ;
 InstallDoc ChangeLog README TODO RELNOTES docs/tipofday.txt docs/serverhowto.html ;
+InstallDesktop netpanzer.desktop ;

@@ -41,6 +41,7 @@ SubInclude TOP docs ;
 UseAutoconf ;
 
 appicondir ?= [ ConcatDirs $(datadir) pixmaps $(PACKAGE_NAME) ] ;
+applicationsdir ?= [ ConcatDirs $(datadir) applications ] ;
 
 ##  InstallIcon files [ : subdir ]
 ##    Installs an icon
@@ -50,8 +51,15 @@ rule InstallIcon
     Depends install_data : [ DoInstall $(<:G=installicon) : $(appicondir) $(2) ] ;
 }
 
+rule InstallDesktop
+{
+    LOCATE on $(<:G=installdesktop) = $(SUBDIR) ;
+    Depends install_data : [ DoInstall $(<:G=installdesktop) : $(applicationsdir) $(2) ];
+}
+
 InstallIcon netpanzer.png netpanzer.xpm ;
 InstallDoc ChangeLog README TODO RELNOTES docs/tipofday.txt docs/serverhowto.html ;
+InstallDesktop netpanzer.desktop ;
 __END__
 
 cp -p --parents $AUTOFILES $SOURCERELEASE
@@ -88,7 +96,7 @@ find powerups \( -name "*.pak" -o -name "Jamfile" \) -exec cp -p --parents {} $D
 find units \( -name "*.pfl" -o -name "*.pak" -o -name "Jamfile" \) -exec cp -p --parents {} $DATARELEASE ';'
 find sound \( -name "*.wav" -o -name "Jamfile" \) -exec cp -p --parents {} $DATARELEASE ';'
 find maps \( -name "*.npm" -o -name "*.opt" -o -name "*.spn" -o -name "Jamfile" \) -exec cp -p --parents {} $DATARELEASE ';'
-find cache \( -name "*.tbl" \) -exec cp -p --parents {} $DATARELEASE ';'
+find cache \( -name "*.tbl" -o -name "Jamfile" \) -exec cp -p --parents {} $DATARELEASE ';'
 # find fonts \( -name "*.pcf" \) -exec cp -p --parents {} $DATARELEASE ';'
 cp -p --parents $AUTOFILES $DATARELEASE
 cp -p --parents $JAMFILES $DATARELEASE
