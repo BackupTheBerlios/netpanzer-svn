@@ -70,13 +70,6 @@ public:
 	uint8_t    avgIndex;  // Closest palette entry to the average color
 } __attribute__((packed)); // end FletchTileHeader
 
-//struct PIC_HEAD
-//{
-//	uint32_t xPix;         // Horizontal pixel count.
-//	uint32_t yPix;         // Vertical pixel count.
-//	uint32_t frameCount;    // Number of frames.
-//} __attribute__((packed));
-
 #ifdef MSVC
 #pragma pack ()
 #endif
@@ -89,14 +82,6 @@ public:
 class Surface
 {
 public:
-// XXX this function seems pointless and does a noop
-#if 0
-	void setTransPix()
-	{
-		assert(transPix >= 0);
-		Surface::transPix = transPix;
-	}
-#endif
 	void setOffset(const iXY &offset) { Surface::offset = offset; }
 	void setOffsetX(int offset) { Surface::offset.x = offset; }
 	void setOffsetY(int offset) { Surface::offset.y = offset; }
@@ -160,14 +145,9 @@ public:
 	static int    getTotalByteCount() { return totalByteCount; }
 
 protected:
-	static PIX transPix;
-
-	// This is called when we run out of memory.
-	void static outOfMem(size_t bytesRequested);
 	void        reset();
 
 public:
-
 	Surface();
 	Surface(bool nMyMem);
 	Surface(const iXY &nPix, int nStride, int nFrameCount);
@@ -335,8 +315,6 @@ public:
 	void flipVertical();
 	void rotate(int angle);
 	void copy(Surface &dest);
-	void createFractal(const float &minY, const float &maxY, const float &ruggedness);
-	void smooth();
 	void setBrightness(int percent);
 	int nextFrame();
 
@@ -385,9 +363,7 @@ public:
 	void loadPCX(const char *filename, bool needAlloc = true, void *returnPalette = 0);
 	void extractPCX(const char *filename, int nCols, int gapSpace);
 	void loadRAW(const char *fileName, bool needAlloc = true);
-	int  saveRAW(const char *filename) const;
-	void saveRAW(FILE *fp) const;
-	bool saveRAW();
+	
 	virtual int  loadTIL(const char* filename);
 	virtual void loadTIL(FILE *fp);
 	int  saveTIL(const char *filename);
@@ -406,7 +382,7 @@ public:
 	{
 		blendRect(iRect(0, 0, pix.x - 1, pix.y - 1), colorTable);
 	}
-	//void bltBrightness(const Surface &dest, const iXY pos, ColorTable &colorTable);
+	
 	void bltBrightness(const Surface &dest, const iXY &pos, const float &percent);
 	void bltLightDark(const Surface &source, const Surface &lightTable) const;
 	void setToBrightnessIndexes128();
@@ -415,16 +391,7 @@ public:
 	int  loadAllPCXInDirectory(const char *path);
 	int  loadAllBMPInDirectory(const char *path);
 	int  loadAllRAWInDirectory(const char *path, const iXY &pix);
-	void fire(int *dest, int xSize, int ySize);
-	void explode(const double &time);
 
-	void convertBW();
-	void erode();
-	void drawStatic();
-	void setToColorTable(const ColorTable &source);
-	void drawPalette();
-	void convertTransColor(const PIX &color);
-	
 	// Blit a single character of text.
 	void bltChar8x8(const iXY &pos, const char &character, const PIX &color) const;
 	inline void bltChar8x8(int x, int y, const char &character, const PIX &color) const

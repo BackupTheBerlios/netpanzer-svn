@@ -24,11 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "cMouse.hpp"
 
-#ifndef _MAP_EDITOR_BUILD
-// ** NOTE: TEMPORARY UNIT MOUSE STANDARDIZED
 #include "Gdatstct.hpp"
 sprite_dbase CURSOR_DBASE;
-#endif // ** _MAP_EDITOR_BUILD
 
 unsigned char MouseInterface::cursor_x_size;
 unsigned char MouseInterface::cursor_y_size;
@@ -67,10 +64,7 @@ void MouseInterface::initialize()
 {
 	event_queue.initialize( 20 );
 	mouse_cursor.setOffsetCenter();
-#ifndef _MAP_EDITOR_BUILD
-	// ** NOTE: TEMPORARY
-	CURSOR_DBASE.load_dbase( "./gdbase/cursor.dbs" );
-#endif // ** _MAP_EDITOR_BUILD
+	CURSOR_DBASE.load_dbase( "gdbase/cursor.dbs" );
 }
     
 bool MouseInterface::buttonHeld(unsigned char mask)
@@ -268,7 +262,6 @@ void MouseInterface::setMiddleButtonDoubleDown()
 
 void MouseInterface::setCursor(CursorType type)
 {
-  #ifndef _MAP_EDITOR_BUILD
   	switch(type)
  	{
     case defaultcursor:
@@ -355,7 +348,6 @@ void MouseInterface::setCursor(CursorType type)
     break;
 
    } // ** switch 
-  #endif // ** _MAP_EDITOR_BUILD
 }
     
 void MouseInterface::updateCursor()

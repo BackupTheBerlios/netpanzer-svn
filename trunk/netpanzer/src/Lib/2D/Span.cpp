@@ -57,7 +57,7 @@ void bltLookupSpan(PIX *dRow, int pixelsPerRow, const PIX *table)
 {
 	if (!allowSpanBlitting) { return; } // Remove for release candidate.
 
-	for(size_t idx=0;idx<pixelsPerRow;idx++)
+	for(int idx=0;idx<pixelsPerRow;idx++)
 	  	dRow[idx] = table[dRow[idx]];
 } // end bltLookupSpan
 

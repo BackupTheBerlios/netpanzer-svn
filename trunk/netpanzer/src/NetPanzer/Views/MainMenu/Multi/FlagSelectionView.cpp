@@ -68,6 +68,7 @@ void FlagSelectionView::init()
 	if (playerFlag.loadAllBMPInDirectory("pics/flags/") <= 0)
 		throw Exception("Couldn't find flags for menu in '%s'.",
 				"pics/flags/");
+	playerFlag.mapFromPalette("wads/netp.act");
 
 	iXY flagStartOffset(BORDER_SPACE, BORDER_SPACE * 2 + playerFlag.getPixY());
 

@@ -16,6 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
 #include <stdio.h>
 #include "NetworkState.hpp"
 
@@ -127,46 +128,6 @@ void NetworkState::updateNetworkStats( void )
  }
 
 
-void NetworkState::logNetworkStats( void )
- {
-  FILE *fp;
-
-  fp = fopen( "NetworkStats.log", "at" );
-
-  fprintf(fp, "Packets\n" );
-	
-	
-  fprintf(fp, "Sent %d, %.4f 1/s, %.4f Avg\n",NetworkState::packets_sent,
-                                                  NetworkState::packets_sent_per_sec,
-                                                  ((float) NetworkState::packets_sent) / ((float) NetworkState::packets_sent_time) );
-
- 
-  fprintf(fp, "Recv %d, %.4f 1/s, %.4f Avg\n",NetworkState::packets_received,
-                                                  NetworkState::packets_received_per_sec,
-                                                  ((float) NetworkState::packets_received) / ((float) NetworkState::packets_received_time) );
- 	
-  fprintf(fp, "Bytes\n" );
-	
-
-	
-  fprintf(fp, "Sent %d, %.4f 1/s, %.4f Avg\n",NetworkState::bytes_sent,
-                                                  NetworkState::bytes_sent_per_sec,
-                                                  ((float) NetworkState::bytes_sent) / ((float) NetworkState::packets_sent_time) );
-
-  
-  fprintf(fp, "Recv %d, %.4f 1/s, %.4f Avg\n",NetworkState::bytes_received,
-                                                  NetworkState::bytes_received_per_sec,
-                                                  ((float) NetworkState::bytes_received) / ((float) NetworkState::packets_received_time) );
-
-  fprintf(fp, "Opcodes\n" );
-
-  fprintf(fp, "Sent : %d, %.4f 1/s\n ", NetworkState::opcodes_sent,
-                                          NetworkState::opcodes_sent_per_sec );
-
-  fprintf(fp, "Recv : %d, %.4f 1/s\n", NetworkState::opcodes_received,
-                                           NetworkState::opcodes_received_per_sec );
-  
-  fprintf(fp, "-------------------------------------------------------------\n" );
-
-  fclose( fp );
- }
+void NetworkState::logNetworkStats()
+{
+}

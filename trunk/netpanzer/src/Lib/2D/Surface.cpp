@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <algorithm>
 #include "FindFirst.hpp"
 #include "Surface.hpp"
+#include "FileSystem.hpp"
 #include "UtilInterface.hpp"
 #include "cGrowList.hpp"
 #include "fXY.hpp"
@@ -87,22 +88,6 @@ struct PcxHeader
    BYTE   padding[58];
  } __attribute__((packed));
 
-struct TGAHeader
-{
-	BYTE imageIDLength;
-	PIX colorMapType;
-	BYTE imageType;
-	WORD colorMapFirstIndex;
-	WORD colorMapLength;
-	PIX colorMapBitsPerEntry;
-	WORD xOrigin;
-	WORD yOrigin;
-	WORD xPix;
-	WORD yPix;
-	BYTE bitsPerPixel;
-	BYTE imageDescriptor;
-} __attribute__((packed)); // end cTGA
-
 class SurfaceHeader
 {
 public:
@@ -123,14 +108,14 @@ struct PIC_HEAD
 } __attribute__((packed));
 
 class BitmapFileHeader
-  {
-   public:
-   WORD    bfType;
-   DWORD   bfSize;
-   WORD    bfReserved1;
-   WORD    bfReserved2;
-   DWORD   bfOffBits;
-  } __attribute__((packed));
+{
+public:
+ 	WORD    bfType;
+  	DWORD   bfSize;
+   	WORD    bfReserved1;
+	WORD    bfReserved2;
+	DWORD   bfOffBits;
+} __attribute__((packed));
 
 #define BI_RGB      0L
 #define BI_RLE8     1L
@@ -165,9 +150,7 @@ class RGBQuad
 #pragma pack()
 #endif
 
-PIX Surface::transPix = 0;
 bool Surface::screenLocked = true;
-
 
 Surface screen;
 Surface ascii8x8;
@@ -186,7 +169,6 @@ Surface::Surface()
 
 	totalSurfaceCount++;
 	totalByteCount += sizeof(Surface);
-
 } // end Surface::Surface
 
 //---------------------------------------------------------------------------
@@ -284,7 +266,6 @@ Surface::~Surface()
 	totalByteCount -= sizeof(Surface);
 
 	assert(totalByteCount >= 0);
-
 } // end Surface::~Surface
 
 //---------------------------------------------------------------------------
@@ -324,7 +305,6 @@ void Surface::reset()
 	offset      = 0;
 	doesExist   = 0;
 	wipeCount   = 0;
-
 } // end Surface::reset
 
 // setOffsetCenter
@@ -370,8 +350,7 @@ bool Surface::alloc(const iXY  &pix,
 		{
 			if (gottaHaveIt)
 			{
-				outOfMem(requestedBytes);
-				assert(false);
+				throw Exception("out of memory while allocating surface.");
 			}
 
 			// Subtract the number of bytes for this surface.
@@ -817,7 +796,7 @@ void Surface::bltTransColor(const Surface &dest, iXY min, const BYTE &color) con
 	{
 		for (int col = 0; col < pixelsPerRow; col++)
 		{
-			if (*sPtr != transPix)
+			if (*sPtr != 0)
 				*dPtr = color;
 			sPtr++;
 			dPtr++;
@@ -1098,21 +1077,6 @@ void Surface::drawLine(int x1, int y1, int x2, int y2, const PIX &color) const
 		}
 	}
 } //end Surface::drawLine
-
-// outOfMem
-//---------------------------------------------------------------------------
-// Purpose: Displays an out of memory error.
-//---------------------------------------------------------------------------
-void Surface::outOfMem(size_t requestedBytes)
-{
-	assert(false);
-	
-	fprintf(stderr, "ERROR: Surface out of memory.");
-	//MessageBox(gapp.hwndApp, "ERROR: Surface out of memory.", "Error", MB_OK);
-
-	exit(1);
-
-} // end Surface::outOfMem
 
 // extractPCX
 //---------------------------------------------------------------------------
@@ -2260,7 +2224,7 @@ void Surface::shrinkWrap()
 		{
 			for (int x = 0; x < pix.x; x++)
 			{
-				if (getPixel(x, y) != transPix)
+				if (getPixel(x, y) != 0)
 				{
 					if (x < bounds.min.x)
 					{
@@ -2279,7 +2243,7 @@ void Surface::shrinkWrap()
 		{
 			for (int y = 0; y < pix.y; y++)
 			{
-				if (getPixel(x, y) != transPix)
+				if (getPixel(x, y) != 0)
 				{
 					if (y < bounds.min.y)
 					{
@@ -2333,263 +2297,6 @@ static inline float calcY(float average, float ruggedness, unsigned distance)
 	return average+getRand(-ruggedness, ruggedness)*float(distance);
 }
 
-// frac
-//---------------------------------------------------------------------------
-// Purpose: Recursively creates a random fractal image.
-//---------------------------------------------------------------------------
-void frac(int *matrix, int stride, int x1, int y1, int x2, int y2, float ruggedness)
-{
-	assert(matrix != 0);
-
-	int xm, zm;
-
-	assert(x1 <= x2);
-	assert(y1 <= y2);
-	assert(x1 >= 0);
-	assert(y1 >= 0);
-
-	xm = (x1+x2+1)/2;
-	zm = (y1+y2+1)/2;
-
-	float tl = matrix[y1 * stride + x1];
-	float bl = matrix[y2 * stride + x1];
-	float tr = matrix[y1 * stride + x2];
-	float br = matrix[y2 * stride + x2];
-
-	// If the rectangle is at least 3 cells tall, check
-	// if the middle left cell has been filled in, and if
-	// not, then stick in a value
-	if (zm < y2)
-	{
-
-		// See if the middle left cell has been set
-		if (matrix[zm * stride + x1] == -10000)
-		{
-			// Not filled in - generate a random cell value
-			matrix[zm * stride + x1] = (int) (calcY((tl+bl)/2.0, ruggedness,
-						y2-y1));
-		}
-
-		// Fill in the middle right cell.  We know it hasn't
-		// been set because of the order in which we fill in
-		// the smaller squares
-		if (matrix[zm * stride + x2] != -10000.0) {
-			throw Exception("1. matrix[%u, %u] != -10000 - value: %d",
-							zm, x2, matrix[zm * stride + x2]);
-		}
-		if (x1 < x2)
-			matrix[zm * stride + x2] = (int) (calcY((tr+br)/2.0, ruggedness,
-						y2-y1));
-	}
-
-	// Do the same for the top-middle and bottom-middle cells
-	if (xm < x2)
-	{
-		if (matrix[y1 * stride + xm] == -10000.0)
-			matrix[y1 * stride + xm] = (int) (calcY((tl+tr)/2.0, ruggedness,
-						x2-x1));
-		if (matrix[y2 * stride + xm] != -10000.0) 
-			throw Exception("2. matrix[%u, %u] != -10000 - value: %d",
-							y2, xm, matrix[y2 * stride + xm]);
-		if (y1 < y2)
-			matrix[y2 * stride + xm] = (int) (calcY((bl+tr)/2.0, ruggedness,
-						x2-x1));
-	}
-
-	// Fill in the middle cell value.  If our square is at
-	// least 3x3, then this cell should have not yet been set
-	if (xm < x2 && zm < y2)
-	{
-		if (matrix[zm * stride + xm] != -10000.0) {
-			throw Exception("3. matrix[%u, %u] != -10000 - value: %d", zm, xm, matrix[zm * stride + xm]);
-		}
-		matrix[zm * stride + xm] = (int) (calcY((tl+tr+bl+br)/4.0, ruggedness,
-					(x2-x1)+(y2-y1)));
-	}
-
-	// Now recursivly do the smaller squares
-	if (xm < x2 || zm < y2)
-	{
-		frac(matrix, stride, x1, y1, xm, zm, ruggedness);
-		frac(matrix, stride, x1, zm, xm, y2, ruggedness);
-		frac(matrix, stride, xm, y1, x2, zm, ruggedness);
-		frac(matrix, stride, xm, zm, x2, y2, ruggedness);
-	}
-
-	// Since we've finished this square, every cell in the square
-	// should have been filled in.
-	for (int x = x1; x < x2 ; ++x) {
-		for (int z = y1; z < y2 ; ++z) {
-			if (matrix[z * stride + x] == -10000.0) {
-				if (matrix[z * stride + x] != -10000.0) {
-					throw Exception("4. matrix[%u, %u] != -10000 - value: %d", z, x, matrix[z * stride + x]);
-				}
-			}
-		}
-	}
-} // end Surface::frac
-
-// createFractal
-//---------------------------------------------------------------------------
-// Purpose: Create a fractal image onto the Surface.
-//---------------------------------------------------------------------------
-void Surface::createFractal(const float &minY, const float &maxY, const float &ruggedness)
-{
-	assert(getDoesExist());
-	assert(this != 0);
-
-	// Create some temp buffer to generate the values in.
-	int *tempBuf = (int *) malloc(stride * pix.y * sizeof(int));
-	if (tempBuf == 0) { throw Exception("ERROR: Unable to allocate temp fractal surface.");
-	}
-
-	// Initialize everything to some bogus value.
-	for (int x = 0; x < stride; x++)
-		for (int y = 0; y < pix.y; y++)
-			tempBuf[y * stride + x] = -10000;
-
-	//for (int num = 0; num < stride*pix.y; num++)
-	//	LOG(("%d tempBuf: %d", num, tempBuf[num]));
-	//throw Exception("!EXIT!");;
-
-	// Initialize the corners to some value.
-	tempBuf[0]                           = (int) getRand(minY, maxY);
-	tempBuf[stride-1]                    = (int) getRand(minY, maxY);
-	tempBuf[pix.y-1 * stride-1]          = (int) getRand(minY, maxY);
-	tempBuf[pix.y-1 * stride + stride-1] = (int) getRand(minY, maxY);
-
-	// Recursively generate the fractal surface
-	frac(tempBuf, stride, 0, 0, stride-1, pix.y-1, ruggedness);
-
-	int yMin = tempBuf[0];
-	int yMax = tempBuf[0];
-
-	for (int x = 0; x < stride; x++)
-	{
-		for (int y = 0; y < pix.y; y++)
-		{
-			//if (tempBuf[y * stride + x] < 0)   tempBuf[y * stride + x] = 0;//throw Exception("tempBuf[y * stride + x] < 0,   value: %d", tempBuf[y * stride + x]);
-			//if (tempBuf[y * stride + x] > 255) tempBuf[y * stride + x] = 255;//throw Exception("tempBuf[y * stride + x] > 255, value: %d", tempBuf[y * stride + x]);
-			//LOG(("tempBuf[y * stride + x]: %d", tempBuf[y * stride + x]));
-			if (tempBuf[y * stride + x] < yMin) yMin = tempBuf[y * stride + x];
-			if (tempBuf[y * stride + x] > yMax) yMax = tempBuf[y * stride + x];
-		}
-	}
-
-	int   difference = yMax - yMin;
-	float ratio      = 255.0/float(difference);
-
-	for (int x = 0; x < stride; x++)
-	{
-		for (int y = 0; y < pix.y; y++)
-		{
-			// Push all the min values to sea level (0) if the min is less than 0.
-			if (yMin < 0)
-			{
-				tempBuf[y * stride + x] -= yMin;
-			}
-			// Move the land to be within the range [0, 255].
-			int value = (int) (tempBuf[y * stride + x]*ratio);
-			assert(value < 256);
-			tempBuf[y * stride + x] = value;
-			//LOG(("tempBuf[y * stride + x], value: %d", tempBuf[y * stride + x]));
-		}
-	}
-
-	fill(Color::black);
-	//for (int y = 0; y < pix.y; y++)
-	//{
-		memcpy(frame0, tempBuf, stride*pix.y);
-	//}
-
-	smooth();
-	smooth();
-	smooth();
-
-} // end Surface::createFractal
-
-#if _MSC_VER > 1000
- #pragma optimize( "", off )
-#endif
-void Surface::fire(int *dest, int xSize, int ySize)
-{
-	printf ("Fire not implemented in gcc yet!\n");
-	// XXX no msvc assembler
-#ifdef MSVC
-	_asm {
-
-		mov edi, [dest]
-		mov ecx, [xSize]
-		mov ebx, [ySize]
-
-		add  edi,4
-		lea  esi,[ecx*4]
-		imul ecx,ebx
-		sub  ecx,ebx
-		sub  ecx,ebx
-		sub  ecx,2
-	fl1:
-		mov  ebx,[edi]
-		mov  edx,[edi+esi-4]
-		lea  eax,[ebx + edx]
-		mov  ebx,[edi+esi+4]
-		mov  edx,[edi+esi*2]
-		add  eax,ebx
-		add  eax,edx
-		add  edi,4
-		shr  eax,2
-		jz   fl2
-		dec  eax
-	fl2:
-		dec  ecx
-		mov  [edi+esi-4], eax
-		jnz  fl1
-	}
-#endif
-	
-}
-
-// smooth
-//---------------------------------------------------------------------------
-// Purpose: Makes every pixel the average of its four neighbors oolor.
-//          This is NOT complete, needs to be finished.
-//---------------------------------------------------------------------------
-void Surface::smooth()
-{
-	assert(getDoesExist());
-	assert(this != 0);
-
-	const int XP = pix.x;
-	const int ZP = pix.y;
-
-	// First erode the edges
-	putPixel( 0,  0, (getPixel(   0,    1)+getPixel(   1,    1)+getPixel( 1,    0))/3); // NW
-	putPixel( 0, ZP, (getPixel(   0, ZP-1)+getPixel(   1, ZP-1)+getPixel( 1,   ZP))/3); // SW
-	putPixel(XP,  0, (getPixel(XP-1,    0)+getPixel(XP-1,    1)+getPixel(XP,    0))/3); // NE
-	putPixel(XP, ZP, (getPixel(XP-1, ZP-1)+getPixel(XP-1,   ZP)+getPixel(XP, ZP-1))/3); // SE
-
-	// NORTH EDGE
-	for (int x = 1; x < pix.x; x++)
-		putPixel(x, 0, (getPixel(x-1, 1)+getPixel(x, 1)+getPixel(x+1, 1))/3);
-
-	// SOUTH EDGE
-	for (int x = 1; x < pix.x; x++)
-		putPixel(x, ZP, (getPixel(x-1, ZP-1)+getPixel(x, ZP-1)+getPixel(x+1, ZP-1))/3);
-
-	// WEST EDGE
-	for (int y = 1; y < pix.y; y++)
-		putPixel(0, y, (getPixel(1, y-1)+getPixel(1, y)+getPixel(1, y+1))/3);
-
-	// EAST EDGE
-	for (int y = 1; y < pix.y; y++)
-		putPixel(XP, y, (getPixel(XP, y-1)+getPixel(XP, y)+getPixel(XP, y+1))/3);
-
-	// Then erode the inner area
-	for (int x = 1; x < pix.x; x++)
-		for (int y = 1; y < pix.y; y++)
-			putPixel(x, y, (getPixel(x-1, y)+getPixel(x+1, y)+getPixel(x, y-1)+getPixel(x, y+1))/4);
-} // end smooth
-
 // getAverageColor
 //---------------------------------------------------------------------------
 // Purpose: Recalculates the best single color to represent this Surface.
@@ -2620,42 +2327,6 @@ PIX Surface::getAverageColor()
 
 	return Palette::findNearestColor(RGBColor(avgR, avgG, avgB));
 } // end Surface::getAverageColor
-
-// saveRAW
-//---------------------------------------------------------------------------
-// Purpose: Save a RAW file of the first frame of the Surface into the 
-//          specified file handle.
-//---------------------------------------------------------------------------
-void Surface::saveRAW(FILE *fp) const
-{
-	if (fp == 0) return;
-
-	int numBytes = pix.x * pix.y * sizeof(PIX);
-	
-	if (numBytes <= 0) return;
-	if (frame0 == 0) return;
-
-	fwrite(frame0, numBytes, 1, fp);
-
-} // end Surface::saveRAW
-
-// saveRAW
-//---------------------------------------------------------------------------
-// Purpose: Save a RAW file of the first frame of the Surface into the
-//          specified filename.  Returns 0 on error, 1 on success.
-//---------------------------------------------------------------------------
-int Surface::saveRAW(const char *filename) const
-{
-	FILE *fp = fopen(filename, "wb");
-	if (fp == 0) return 0;
-
-	saveRAW(fp);
-
-	fclose(fp);
-	
-	return 1;
-
-} // end Surface::saveRAW
 
 // loadTIL
 //---------------------------------------------------------------------------
@@ -3577,352 +3248,6 @@ int Surface::loadAllRAWInDirectory(const char *path, const iXY &pix)
 	return 1;
 } // end loadAllRAWInDirectory
 
-// explode
-void Surface::explode(const double &time)
-{
-    //Duplicate image
-    //int[] sourcePixels=pixels;
-    //pixels = new int[width * height];
-	Surface tempSurface;
-	tempSurface.create(pix, pix.x, 1);
-	this->blt(tempSurface);
-	this->fill(Color::black);
-
-    //int[] zBuffer = new int[width * height];
-	int *zBuffer = new int[getArea()];
-	if (zBuffer == 0)
-	{
-		throw Exception("Unable to allocate zBuffer.");
-	}
-    
-	//Random rnd=new Random();
-    //Make sure the same sequence of random numbers are returned for each call to explode
-    //rnd.setSeed(0);
-	srand(0);
-
-    int index = 0;
-    
-	//This is the y value added because of gravity
-    double yOffset = ((time + 1.0f) * (time * 1.0f)) / 60.0f;
-
-    for (int y = -center.y; y < center.y; y++)
-	{
-    	for (int x = -center.x; x < center.x; x++)
-    	{
-    		//int c = sourcePixels[index];
-			int c = tempSurface.getPixel(x, y);
-    		
-			//if ((c&0xff000000) != 0)
-			if (c != 0)
-    		{
-    			//Calculate distance from center, or the ‘bomb’
-    			//double d = Math.sqrt(x*x+y*y);
-    			double d = sqrt(x * x + y * y);
-
-    			//Pixel's z, or depth, value
-    			//double z=(rnd.nextDouble()+1)*time/d;
-    			double z = (float(rand() % RAND_MAX) / float(rand() % RAND_MAX) + 1) * time / d;
-
-    			//Calculate x and y destination, add perspective
-    			int xd = (int)(x * z + x) + center.x;
-    			int yd = (int)((y + yOffset) * z + y) + center.y;
-
-                //Calculate the pixels offset in the pixels array
-    			int offset = xd + yd * pix.x;
-    			
-				if (xd >= 0 && xd < pix.x && yd >= 0 && yd < pix.y)
-				{
-                    
-					//Check to see if another pixel blocks this
-    				if (zBuffer[offset] <= z)
-    				{
-    					//The pixel is unblocked, plot and update z, or depth, value
-    					//pixels[offset]  = c;
-						this->putPixel(xd, yd, c);
-
-    					//zBuffer[offset] = (int)z;
-						zBuffer[offset] = (int)z;
-    				}
-				}
-    		}
-			index++;
-	   }
-	}
-	delete [] zBuffer;
-} // end explode
-
-/*
-//---------------------------------------------------------------------------
-int Surface::loadTGA(const char *filename)
-{
-	FILE *fp = fopen(filename, "rb");
-	if (fp == 0) return 0;
-
-	loadTGA(fp);
-
-	fclose(fp);
-	
-	return 1;
-} // end loadTGA
-
-class cPixel24Bit
-{
-	BYTE r;
-	BYTE g
-	BYTE b;
-	BYTE v;
-}; // end cPixel24Bit
-
-class Surface24Bit
-{
-	loadTGA();
-};
-
-//---------------------------------------------------------------------------
-int loadTGA(FILE *file, cPixel24Bit *dest)
-{
-
-	assert(&this != 0);
-
-	// Read in the TGA header.
-	cTGAHeader TGAheader;
-	fread(&TGAheader, sizeof(TGAheader), 1, fp);
-
-	BYTE        *buffer;
-
-	// Read in the header
-	fread(&TGAheader, sizeof(TGAheader), 1, fp);
-
-	// Check for uncompressed/true-color.
-	if (TGAheader.imageType != UNCOMPRESSEDtrueCOLOR) 
-	{
-		throw Exception("ERROR: TGAheader.imageType != UNCOMPRESSEDtrueCOLOR");
-	}
-
-	// Check for 24-bits per pixel.
-	if (TGAheader.bitsPerPixel != 24) 
-	{
-		throw Exception("ERROR: TGAheader.bitsPerPixel != 24");
-	}
-
-	// Mark the starting point of the image data
-	long dataStartPos = ftell(f);
-
-	// Set the size
-	iXY size(TGAheader.width, TGAheader.height);
-
-	int xGoofy, yGoofy;
-
-	switch (header.imageDescriptor) 
-	{
-		case ORIGIN_BOTTOMLEFT:  xGoofy = 0; yGoofy = 1; break;
-		case ORIGIN_BOTTOMRIGHT: xGoofy = 1; yGoofy = 1; break;
-		case ORIGIN_TOPLEFT:     xGoofy = 0; yGoofy = 0; break;
-		case ORIGIN_TOPRIGHT:    xGoofy = 1; yGoofy = 0; break;
-		default: return 0;
-	}
-
-	if (dest != 0)
-	{
-		delete [] dest;
-	}
-
-	dest  = new SPixel [size.x * size.y * sizeof(cPixel24Bit)];
-
-	// Read in image
-	buffer = (BYTE *) malloc(size.x * 3);
-
-	// Top-down or bottom-up?
-	int yStart, yEnd, yStep;
-
-	if (yGoofy) 
-	{ 
-		yStart = ys-1; 
-		yEnd = -1; 
-		yStep = -1; 
-	} else
-	{
-		yStart = 0; 
-		yEnd = ys; 
-		yStep = +1; 
-	}
-
-	// Left->Right or Right->Left?
-	int xStart, xEnd, xStep;
-
-	if (xGoofy)
-	{ 
-		xStart = xs-1; 
-		xEnd = -1; 
-		xStep = -1; 
-	} else 
-	{ 
-		xStart = 0; 
-		xEnd = xs; 
-		xStep = +1; 
-	}
-
-	for (int y = yStart; y != yEnd; y += yStep)
-	{
-		dest = bitmap + (y * xs);
-
-		fread(buffer, xs * 3, 1, f);
-
-		for (int x = xStart; x != xEnd; x += xStep)
-		{
-			dest->r = buffer[(x * 3) + 2];
-			dest->g = buffer[(x * 3) + 1];
-			dest->b = buffer[(x * 3) + 0];
-			dest->v = 0;
-
-			++dest;
-		}
-	}
-
-	free(buffer);
-
-	cornerX1 = 0;
-	cornerY1 = 0;
-	cornerX2 = xs - 1;
-	cornerY2 = ys - 1;
-
-	// Return success!
-	return(1);
-} // loadTGA
-*/
-
-// Surface::saveRAW
-//---------------------------------------------------------------------------
-// Purpose: Dumps an incrementally numbered RAW file of the Surface.
-//---------------------------------------------------------------------------
-bool Surface::saveRAW()
-{
-	char strBuf[256];
-	int  num = 0;
-
-	// Incrementally create screen shots.
-	for(;;)
-	{
-		sprintf(strBuf, "shot%04d.raw", num);
-
-		if (UtilInterface::getFileSize(strBuf) <= 0)
-		{
-			if (!saveRAW(strBuf))
-			{
-				return false;
-				//sprintf(progressBuf, "Error saving screen shot: %d.raw", num);
-				//progressView->scrollAndUpdate(progressBuf);
-				//break;
-			}
-
-			//sprintf(progressBuf, "Screen shot saved(%d, %d): %d.raw", pix.x, pix.y, num);
-			//progressView->scrollAndUpdate(progressBuf);
-			//break;
-			return true;
-		} else num++;
-	}
-	return true;
-} // end Surface::saveRAW
-
-// convertBW
-//--------------------------------------------------------------------------
-// Purpose: Converts the image to the best black and white representation it 
-//          can.
-//--------------------------------------------------------------------------
-void Surface::convertBW()
-{
-	assert(Palette::gray256.getColorCount() == 256);
-
-	for (int x = 0; x < pix.x; x++)
-	{
-		for (int y = 0; y < pix.y; y++)
-		{
-			putPixel(x, y, Palette::gray256[getPixel(x, y)]);
-		}
-	}
-} // end Surface::convertBW
-
-//--------------------------------------------------------------------------
-void Surface::drawPalette()
-{
-	iXY  pos;
-	BYTE color = 0;
-
-	iXY dimension(SCREEN_XPIX / 16, SCREEN_YPIX / 16);
-
-	for (int y = 0; y < SCREEN_YPIX; y += dimension.y)
-	{
-		for (int x = 0; x < SCREEN_XPIX; x += dimension.x)
-		{
-			fillRect(x, y, x + dimension.x, y + dimension.y, color);
-			color++;
-		}
-	}
-}
-
-//--------------------------------------------------------------------------
-void fireByte(BYTE *dest, int xSize, int ySize)
-{
-	printf("no gcc version of fireByte yet.\n");
-
-	// XXX no msvc assembler
-#ifdef MSVC	
-	_asm {
-
-		mov edi, [dest]
-		mov ecx, [xSize]
-		mov ebx, [ySize]
-
-		inc  edi
-		mov  esi,ecx
-		imul ecx,ebx
-		sub  ecx,ebx
-		sub  ecx,ebx
-		sub  ecx,2
-		xor  ebx,ebx
-		xor  edx,edx
-	fl1:
-		mov  bl,[edi]
-		mov  dl,[edi+esi-1]
-		lea  eax, [ebx + edx]
-		mov  bl,[edi+esi+1]
-		mov  dl,[edi+esi*2]
-		add  eax,ebx
-		add  eax,edx
-		inc  edi
-		shr  eax,2
-		jz   fl2
-		dec  al
-	fl2:
-		dec  ecx
-		mov  [edi+esi-1], al
-		jnz  fl1
-	}
-#endif
-
-}
-
-//--------------------------------------------------------------------------
-void Surface::erode()
-{
-	fireByte(frame0, pix.x, pix.y);
-}
-
-//--------------------------------------------------------------------------
-void Surface::setToColorTable(const ColorTable &source)
-{
-	//assert(source.getColorCount() == 256);
-
-	for (int x = 0; x < pix.x; x++)
-	{
-		for (int y = 0; y < pix.y; y++)
-		{
-			putPixel(x, y, source[getPixel(x, y)]);
-		}
-	}
-}
-
-
 // initFont
 //---------------------------------------------------------------------------
 // Purpose: Load all the characters into a surface of 128 frames.  Then the
@@ -4273,7 +3598,8 @@ void Surface::bltTransVGradient(const Surface &dest, iXY min, ColorTable &colorT
 
 		for (int col = 0; col < pixelsPerRow; col++)
 		{
-			if (*sPtr != transPix) *dPtr = color;
+			if (*sPtr != 0)
+				*dPtr = color;
 			sPtr++;
 			dPtr++;
 		}
@@ -4282,27 +3608,6 @@ void Surface::bltTransVGradient(const Surface &dest, iXY min, ColorTable &colorT
 		dPtr += destAdjustment;
 	}
 }
-
-// convertTransColor
-//---------------------------------------------------------------------------
-void Surface::convertTransColor(const PIX &color)
-{
-	for (int i = 0; i < frameCount; i++)
-	{
-		setFrame(i);
-		
-		for (int x = 0; x < pix.x; x++)
-		{
-			for (int y = 0; y < pix.y; y++)
-			{
-				if (getPixel(x, y) != 0)
-				{
-					putPixel(x, y, color);
-				}
-			}
-		}
-	}
-} // end Surface::convertTransColor
 
 // lock
 //---------------------------------------------------------------------------
@@ -4328,7 +3633,6 @@ void Surface::create(iXY nPix ,int nStride, int nFrameCount)
 {
 	reset();
 	alloc(nPix, true, nStride, nFrameCount);
-
 } // end Surface::create
 
 // nextFrame
@@ -4349,24 +3653,6 @@ int Surface::nextFrame()
 	setFrame(curFrame);
 	return 1;
 }
-
-// drawStatic
-//---------------------------------------------------------------------------
-// Purpose: Draws static (like a t.v. station at 3AM) on the surface.
-//---------------------------------------------------------------------------
-void Surface::drawStatic()
-{
-	for (int x = 0; x < pix.x; x++)
-	{
-		for (int y = 0; y < pix.y; y++)
-		{
-			putPixel(x, y, rand() % 256);
-		}
-	}
-
-	convertBW();
-
-} // end Surface::drawStatic
 
 void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
 	                  void *returnPalette /* = 0 */)
@@ -4480,23 +3766,6 @@ void Surface::drawWindowsBorder(iRect rect, PIX light, PIX medium, PIX dark) con
 	drawLine(rect.min.x + 0, rect.max.y - 1, rect.max.x,     rect.max.y - 1, dark); //S
 	drawLine(rect.max.x - 1, rect.max.y,     rect.max.x - 1, rect.min.y + 0, dark); //E
 	drawLine(rect.min.x + 2, rect.max.y - 3, rect.min.x + 2, rect.min.y + 2, dark); //W
-
-	// Draw the border of the window
-	//drawLine(0,         0,         pix.x,   0,         light); //N
-	//drawLine(2,         pix.y - 3, pix.x-2, pix.y - 3, light); //S
-	//drawLine(pix.x - 3, pix.y - 2, pix.x-3, 2,         light); //E
-	//drawLine(0,         pix.y,     0,       0,         light); //W
-	//
-	//drawLine(1,         1,         pix.x - 1, 1,         medium); //N
-	//drawLine(1,         pix.y - 2, pix.x - 2, pix.y - 2, medium); //S
-	//drawLine(pix.x - 2, pix.y - 1, pix.x - 2, 1,         medium); //E
-	//drawLine(1,         pix.y,     1,         1,         medium); //W
-	//
-	//drawLine(2,         2,         pix.x - 4, 2,         dark); //N
-	//drawLine(0,         pix.y - 1, pix.x,     pix.y - 1, dark); //S
-	//drawLine(pix.x - 1, pix.y,     pix.x - 1, 0,         dark); //E
-	//drawLine(2,         pix.y - 3, 2,         2,         dark); //W
-
 } // end Surface::drawWindowsBorder
 
 // bltStringInBox
@@ -4579,31 +3848,26 @@ void Surface::mapFromPalette(const char* oldPalette)
 	BYTE     bestFitArray[256];
 	RGBColor sourceColor[256];
 
-	FILE *fp;
+	ReadFile* file = FileSystem::openRead(oldPalette);
 
-	if ((fp = fopen(oldPalette, "rb")) == 0)
+	for (int i = 0; i < 256; i++)
 	{
-		throw Exception("Unable to open palette file: %s", (const char *) oldPalette);
-	}
-
-	{for (int i = 0; i < 256; i++)
-	{
-	    fread(&sourceColor[i], 3, 1, fp);
-	}}
-
-	{for (int i = 0; i < 256; i++)
-	{
-		bestFitArray[i] = Palette::findNearestColor(sourceColor[i]);
-	}}
-
-	for (int x = 0; x < pix.x; x++)
-	{
-		for (int y = 0; y < pix.y; y++)
-		{
-			putPixel(x, y, bestFitArray[getPixel(x, y)]);
+		if(file->read(&sourceColor[i], 3, 1) != 1) {
+			delete file;
+			throw Exception("Error while loading palette '%s'.", oldPalette);
 		}
 	}
+	delete file;
 
+	for (int i = 0; i < 256; i++)
+	{
+		bestFitArray[i] = Palette::findNearestColor(sourceColor[i]);
+	}
+
+	for (size_t x = 0; x < pix.x * pix.y * frameCount; x++)
+	{
+		frame0[x] = bestFitArray[frame0[x]];
+	}
 } // end Surface::mapFromPalette
 
 // drawBoxCorners
