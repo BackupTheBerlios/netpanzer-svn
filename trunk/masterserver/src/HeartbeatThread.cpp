@@ -232,7 +232,8 @@ HeartbeatThread::sendHeartbeats()
         try {
             sendHeartbeat(& (*i));
         } catch(std::exception& e) {
-            *log << "Couldn't send heartbeat packet: " << e.what() << "\n";
+            *log << "Couldn't send heartbeat packet to '"
+                << inet_ntoa(i->sin_addr) << "': " << e.what() << "\n";
         } catch(...) {
             *log << "Unexpected exception while sending heartbeat.\n";
         }
