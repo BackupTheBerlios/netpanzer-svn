@@ -529,7 +529,8 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents(MouseEvent &event)
         if (selection_box_active) {
             selection_box_active = false;
             box_release = world_pos;
-            if(box_release != box_press) {
+            if(abs(box_release.x - box_press.x) > 3
+		    && abs(box_release.y - box_press.y) > 3) {
                 selectBoundBoxUnits();
                 return;
             }
