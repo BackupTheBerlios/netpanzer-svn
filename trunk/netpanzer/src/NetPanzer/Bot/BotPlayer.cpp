@@ -49,10 +49,8 @@ BotPlayer::processEvents()
     if (playerIndex != NONE_PLAYER) {
         UnitBase *unit = getRandomUnit(playerIndex);
         if (unit) {
-            std::cout << "Unit:" << unit->id;
             int unitTask = m_tasks.queryUnitTask(unit);
             if (unitTask != BotTaskList::TASK_MOVE) {
-                std::cout << " Occupy";
                 unitOccupyOupost(unit);
             }
 
@@ -61,10 +59,8 @@ BotPlayer::processEvents()
             if (UnitInterface::queryClosestEnemyUnit(&enemyUnit,
                         unit->unit_state.location, playerIndex))
             {
-                std::cout << " Fire(" << enemyUnit->id << ")";
                 manualFire(unit, enemyUnit->unit_state.location);
             }
-            std::cout << std::endl;
         }
         else {
             LOGGER.debug("bot: empty unit list");

@@ -762,16 +762,16 @@ void Vehicle::aiFsmMoveToLoc()
             // *************************************************************
 
         case _aiFsmMoveToLoc_next_move : {
-                // CurrentPathComplete: is Unit at the end of the current path?
-                if ( path.empty() ) {
+                // CurrentPathComplete: is Unit at the end of the current path
+                aiFsmMoveToLoc_path_not_finished = path.popFirst( &aiFsmMoveToLoc_next_square );
+                MapInterface::offsetToMapXY( aiFsmMoveToLoc_next_square, &aiFsmMoveToLoc_next_loc );
+
+
+                if ( !aiFsmMoveToLoc_path_not_finished ) {
                     // Rule: CurrentPathComplete is true
                     // Action : check if unit is at the goal
                     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_check_goal;
                 } else {
-                    aiFsmMoveToLoc_next_loc = path.front();
-                    aiFsmMoveToLoc_next_square =
-                        MapInterface::mapXYtoOffset(aiFsmMoveToLoc_next_loc);
-                    path.pop_front();
                     // Rule: CurrentPathComplete is false
                     // Action: Check if next location is empty
                     aiFsmMoveToLoc_prev_loc = unit_state.location;
@@ -1035,16 +1035,15 @@ void Vehicle::aiFsmAttackUnit()
             // *************************************************************
 
         case _aiFsmAttackUnit_next_move : {
-                if (path.empty()) {
+                // CurrentPathComplete: is Unit at the end of the current path
+                aiFsmAttackUnit_path_not_finished = path.popFirst( &aiFsmAttackUnit_next_square );
+                MapInterface::offsetToMapXY( aiFsmAttackUnit_next_square, &aiFsmAttackUnit_next_loc );
+
+                if ( !aiFsmAttackUnit_path_not_finished ) {
                     // Rule: CurrentPathComplete is true
                     // Action : check if unit is at the goal
                     aiFsmAttackUnit_state = _aiFsmAttackUnit_range_check;
                 } else {
-                    aiFsmAttackUnit_next_loc = path.front();
-                    path.pop_front();
-                    aiFsmAttackUnit_next_square =
-                        MapInterface::mapXYtoOffset(aiFsmAttackUnit_next_loc);
-
                     // Rule: CurrentPathComplete is false
                     // Action: Check if next location is empty
                     aiFsmAttackUnit_prev_loc = unit_state.location;
@@ -1053,7 +1052,6 @@ void Vehicle::aiFsmAttackUnit()
                     aiFsmAttackUnit_wait_timer.changePeriod( 0.8f );
                     aiFsmAttackUnit_state = _aiFsmAttackUnit_wait_clear_loc;
                 }
-
             }
             break;
 

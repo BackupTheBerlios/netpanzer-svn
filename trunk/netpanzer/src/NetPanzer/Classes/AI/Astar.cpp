@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <functional>
-#include "Path.hpp"
 #include "Astar.hpp"
 #include "ArrayUtil/Timer.hpp"
 #include "PathingState.hpp"
@@ -29,17 +28,14 @@ Astar::Astar()
     node_list = 0;
 }
 
-Astar::~Astar()
-{
-    delete[] node_list;
-}
-
 void Astar::initializeAstar( unsigned long node_list_size,
                              unsigned long step_limit,
                              long heuristic_weight )
 {
-    open_set.initialize( MapInterface::getWidth(),  MapInterface::getHeight());
-    closed_set.initialize( MapInterface::getWidth(), MapInterface::getHeight());
+    open_set.initialize( MapInterface::getWidth(),
+            MapInterface::getHeight() );
+    closed_set.initialize( MapInterface::getWidth(),
+            MapInterface::getHeight() );
 
     initializeNodeList( node_list_size );
 
@@ -122,8 +118,13 @@ void Astar::initializeNodeList( unsigned long initial_size )
     node_index = 0;
     node_list_size = initial_size;
 
-    delete[] node_list;
-    node_list = new AstarNode[node_list_size];
+    if ( node_list != 0 ) {
+        free( node_list );
+        node_list = 0;
+    }
+
+    node_list = (AstarNode *) malloc( sizeof( AstarNode) * node_list_size );
+    assert( node_list != 0 );
 }
 
 
@@ -166,18 +167,18 @@ void Astar::initializePath( iXY &start, iXY &goal, unsigned short path_type )
     total_pathing_time += now() - timer_ini_mark;
 }
 
-size_t Astar::mapXYtoAbsloc(iXY map_loc)
+unsigned long Astar::mapXYtoAbsloc( iXY map_loc )
 {
-    size_t abs;
+    unsigned long abs;
 
-    if ( ( map_loc.x < 0 ) || ((size_t) map_loc.x >= main_map.getWidth() ) ||
-            ( map_loc.y < 0 ) || ((size_t) map_loc.y >= main_map.getHeight() )
+    if ( ( map_loc.x < 0 ) || (map_loc.x >= (int) main_map.getWidth() ) ||
+            ( map_loc.y < 0 ) || (map_loc.y >= (int) main_map.getHeight() )
        )
         return( 0xFFFFFFFF );
 
-    abs = MapInterface::mapXYtoOffset( map_loc.x, map_loc.y);
+    abs = MapInterface::mapXYtoOffset(map_loc.x, map_loc.y);
 
-    return abs;
+    return( abs );
 }
 
 
@@ -279,10 +280,11 @@ bool Astar::generatePath( PathRequest *path_request,
     return ( process_succ( path_request->path, result_code ) );
 }
 
-bool Astar::process_succ(Path* path, int *result_code )
+bool Astar::process_succ( PathList *path, int *result_code )
 {
     AstarNode *node;
     AstarNode temp_node;
+    unsigned long temp;
     bool done = false;
     unsigned short succ_loop;
     bool goal_reachable = true;
@@ -389,16 +391,26 @@ bool Astar::process_succ(Path* path, int *result_code )
 
         node = best_node;
         while ( (node != 0) && (insert_successful == true) ) {
-            path->push_back( node->map_loc );
+
+            if ( path_merge_type == _path_merge_front ) {
+                insert_successful = path->pushFirst( node->abs_loc );
+            } else {
+                insert_successful = path->pushLast( node->abs_loc );
+            }
 
             node = node->parent;
             path_length++;
 
         }
 
-        path->pop_back();
-        if ( path_merge_type == _path_merge_front ) {
-            std::reverse(path->begin(), path->end());
+        if ( insert_successful == false ) {
+            path->reset();
+        } else {
+            if ( path_merge_type == _path_merge_front ) {
+                path->popFirst( &temp );
+            } else {
+                path->popLast( &temp );
+            }
         }
 
         cleanUp();
@@ -441,7 +453,7 @@ void Astar::setDebugMode( bool on_off )
     debug_mode_flag = on_off;
 
     if ( debug_mode_flag == true ) {
-        astar_set_array.initialize( MapInterface::getWidth(),
+        astar_set_array.initialize(MapInterface::getWidth(),
                 MapInterface::getHeight() );
     } else {
         astar_set_array.deallocate();

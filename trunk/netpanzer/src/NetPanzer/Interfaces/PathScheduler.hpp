@@ -19,7 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _PATHSCHEDULER_HPP
 
 #include "Astar.hpp"
-#include "Path.hpp"
+#include "PathList.hpp"
+#include "UnitBase.hpp"
 #include "ArrayUtil/QueueTemplate.hpp"
 #include "ArrayUtil/ArrayTemplate.hpp"
 
@@ -29,10 +30,10 @@ class PathCacheEntry
 public:
     iXY  start;
     iXY  goal;
-    Path path;
+    PathList  path;
     bool   valid;
 
-    inline void set( iXY start, iXY goal, Path &path )
+    inline void set( iXY start, iXY goal, PathList &path )
     {
         PathCacheEntry::start = start;
         PathCacheEntry::goal = goal;

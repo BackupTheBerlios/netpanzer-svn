@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ArrayUtil/BitArray.hpp"
 #include "MapInterface.hpp"
 #include "UnitBlackBoard.hpp"
-#include "Path.hpp"
+#include "PathList.hpp"
 #include "UnitBase.hpp"
 
 enum { _path_request_full, _path_request_update };
@@ -41,13 +41,13 @@ public:
     UnitID         unit_id;
     iXY       start;
     iXY       goal;
-    Path*     path;
+    PathList      *path;
 
     void set( UnitID &unit_id,
                   iXY &start,
                   iXY &goal,
                   unsigned short path_type,
-                  Path* path,
+                  PathList *path,
                   unsigned short request_type )
     {
         PathRequest::unit_id = unit_id;
@@ -105,7 +105,7 @@ private:
     bool dynamic_node_management_flag;
 
 protected:
-    size_t mapXYtoAbsloc( iXY map_loc );
+    unsigned long mapXYtoAbsloc( iXY map_loc );
 
     AstarNode current_node;
     AstarNode goal_node;
@@ -137,7 +137,7 @@ protected:
 
     PathRequest *path_request_ptr;
     unsigned short path_merge_type;
-    
+
     void initializePath( iXY &start, iXY &goal, unsigned short path_type );
 
     long heuristic( iXY &pointA, iXY &pointB );
@@ -145,11 +145,10 @@ protected:
     unsigned char generateSucc( unsigned short direction, AstarNode *node,
                                 AstarNode *succ );
 
-    bool process_succ(Path* path, int *result_code );
+    bool process_succ( PathList *path, int *result_code );
     
 public:
     Astar();
-    ~Astar();
 
     void initializeAstar( unsigned long node_list_size,
                           unsigned long step_limit,

@@ -26,9 +26,9 @@ class PathList
 {
 protected:
     unsigned long *list;
-    size_t size;
-    size_t first;
-    size_t last;
+    int size;
+    int first;
+    int last;
 
 public:
     PathList(size_t list_size = 5000);
@@ -43,78 +43,83 @@ public:
         last = first;
     }
 
-    inline bool pushFirst(size_t tile)
+    inline bool pushFirst(int tile)
     {
-        size_t next_first;
+        int next_first;
 
         next_first = (first + 1) % size;
 
         if ( next_first == last )
-            return false;
+            return( false );
 
         first = next_first;
         list[ first ] = tile;
 
-        return true;
+        return( true );
     }
 
     inline bool popFirst( unsigned long *tile )
     {
         if ( first == last )
-            return false;
+            return( false );
 
         *tile = list[ first ];
 
-        first = (first + size-1) % size;
+        first = (first - 1) % size;
+        if ( first < 0 )
+            first = size+first;
 
-        return true;
+        return( true );
     }
 
     inline bool pushLast( unsigned long tile )
     {
-        size_t next_last;
+        int next_last;
 
-        next_last = (last + size-1) % size;
+        next_last = (last - 1) % size;
+
+        if ( next_last < 0 )
+            next_last = size+next_last;
 
         if ( first == next_last )
-            return false;
+            return( false );
 
         list[ next_last ] = tile;
         last = next_last;
 
-        return true;
+        return( true );
     }
 
     inline bool popLast( unsigned long *tile )
     {
         if ( first == last )
-            return false;
+            return( false );
 
         last = (last + 1) % size;
 
         *tile = list[ last ];
 
-        return true;
+        return( true );
     }
 
     inline bool take(int count)
     {
         if ( (first - count) < last )
-            return false;
+            return( false );
 
         first = first - count;
 
-        return true;
+        return( true );
     }
 
     inline bool drop(int count)
     {
         if ( (last + count) > first )
-            return false;
+            return( false );
 
         last = last + count;
 
-        return true;
+        return( true );
     }
 
     inline size_t listCount() const
