@@ -1,6 +1,10 @@
 28-Nov-2003 by Matthias Braun
 -converted UI classes to use SDL_Surface
 
+28-Nov-2003 by Michel Metzger
+-first release of the new UI lib.
+-add a temporary test panel to the game (F12)
+	
 26-Nov-2003 by Matthias Braun
 -made scrolling in tilesetview working correctly
 -template loading and saving in the editor should work now
