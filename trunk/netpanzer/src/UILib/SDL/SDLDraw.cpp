@@ -47,10 +47,17 @@ void SDLDraw::shutdown()
 
 bool SDLDraw::setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags)
 {
-  FrontBuffer = SDL_SetVideoMode(width, height, bpp, SDL_FULLSCREEN /*| SDL_DOUBLEBUF | SDL_HWSURFACE*/);
-  if(FrontBuffer==NULL)
-	  return false;
-  return true;
+	Uint32 flags = 0 /* SDL_FULLSCREEN | SDL_DOUBLEBUF */;
+	FrontBuffer = SDL_SetVideoMode(width, height, bpp, flags);
+	if(FrontBuffer==NULL)
+		return false;
+
+	// let's scare the mouse :)
+	SDL_ShowCursor(SDL_DISABLE);
+	// and set a window title
+	SDL_WM_SetCaption("NetPanzer - Linux Port", 0);
+	
+	return true;
 }
 
 bool SDLDraw::isDisplayModeAvailable(int width, int height, int bpp)
