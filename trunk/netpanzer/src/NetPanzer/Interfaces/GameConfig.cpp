@@ -64,7 +64,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       effectsvolume("effectsvolume", 100, 0, 100),
       
       unitcolor("unitcolor", 0, 0, _color_last-1),
-      playerflag("playerflag", -1, -1, 100),
+      playerflag("playerflag", 0, 0, 100),
       attacknotificationtime("attacknotificationtime", 5, 0, 100),
       vehicleselectioncolor("vehicleselectioncolor", _color_blue, 0, _color_last-1),
       consoletextcolor("consoletextcolor", _color_white, 0, _color_last-1),
