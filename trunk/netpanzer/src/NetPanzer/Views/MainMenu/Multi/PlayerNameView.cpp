@@ -46,13 +46,12 @@ PlayerNameView::PlayerNameView() : View()
     init();
 
     // XXX ugly
-    if(!playernameview)
-        playernameview = this;
+//    if(!playernameview) playernameview = this;
 } // end PlayerNameView::PlayerNameView
 
 PlayerNameView::~PlayerNameView()
 {
-	playernameview=0;
+//	playernameview=0;
 }
 
 // init
@@ -83,5 +82,12 @@ void PlayerNameView::returnPressed(cInputField* input)
     }
 }
 
+void PlayerNameView::changeIRCName(std::string &newname)
+{
+    setString(newname.c_str());
+    gameconfig->playername=newname;
+}
+
+
 // sometime we shoudl eleminate all these global vars...
-PlayerNameView* playernameview = 0;
+//PlayerNameView* playernameview = 0;

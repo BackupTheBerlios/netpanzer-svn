@@ -24,13 +24,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <SDL_thread.h>
 #include <SDL_net.h>
 
-#include "View.hpp"
-#include "Surface.hpp"
 #include "GameServer.hpp"
 #include "GameServerList.hpp"
 #include "IRCChatMessage.hpp"
 
+class IRCLobby;
 class IRCLobbyView;
+
+class NotifyIRCChangeName {
+public:
+    virtual void changeIRCName(std::string &newname) = 0;
+    friend class IRCLobby;
+};
+
 
 //---------------------------------------------------------------------------
 class IRCLobby
@@ -49,6 +55,10 @@ public:
     bool isConnected() const
     { return irc_server_socket != 0; }
     void changeNickName(const std::string &nick);
+    void restartThread();   // restart thread & reconnect irc
+
+    GameServerList* game_servers;
+    NotifyIRCChangeName* change_name;
 
 private:
     void startMessagesThread();
@@ -67,6 +77,7 @@ private:
     void sendLoginInfo();
     void setNickName(const std::string &nick);
     void sendNickName();
+    void sendPingMessage();
     void addChatMessage(const std::string& user, const std::string& message);
 
     SDL_mutex *game_servers_mutex;   
@@ -77,8 +88,9 @@ private:
     std::string channel_name;
     std::string nickname;
     std::string serveraddress;
+    std::string server_host;
     std::list<IRCChatMessage> chat_messages;
-    GameServerList* game_servers;
+    unsigned int expected_ping;
     
     SDL_Thread *running_thread;
 };

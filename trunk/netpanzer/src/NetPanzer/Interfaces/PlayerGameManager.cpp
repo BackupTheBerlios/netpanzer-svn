@@ -200,14 +200,17 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new InterfaceView());
     Desktop::add(new FlagSelectionView());
     Desktop::add(new HostOptionsView());
-    Desktop::add(new PlayerNameView());
+    PlayerNameView *playernameview=new PlayerNameView();
+    Desktop::add(playernameview);
     Desktop::add(new ResignView());
     Desktop::add(new AreYouSureResignView());
     Desktop::add(new AreYouSureExitView());
 
     //winsock hack
     Desktop::add(new IPAddressView());
-    Desktop::add(new IRCLobbyView());
+    IRCLobbyView *irc_lobby_view=new IRCLobbyView();
+    Desktop::add(irc_lobby_view);
+    irc_lobby_view->setNotifyIRCChangeName((NotifyIRCChangeName *)playernameview);
 
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("MainView", true);

@@ -15,13 +15,19 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+
+// can be used independantly of netpanzer, see sample program at the end
+
+#include <SDL_net.h>
+#include <sstream>
+
+
+#ifndef WITHOUT_NETPANZER
 #include <config.h>
 
 #include <SDLNet.hpp>
-#include <sstream>
-
 #include "Log.hpp"
-#include "IRCLobby.hpp"
 #include "IRCLobbyView.hpp"
 #include "PlayerInterface.hpp"
 #include "GameConfig.hpp"
@@ -31,18 +37,78 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerNameView.hpp"
 #include "GameControlRulesDaemon.hpp"
 
+#else
+
+#include <stdarg.h>
+#include <stdio.h>
+
+#ifndef _NETPANZER_DEFAULT_PORT_TCP
+#define _NETPANZER_DEFAULT_PORT_TCP 3030
+#endif
+
+#ifndef LOG
+#define LOG(x) printf x
+#endif
+
+#ifndef Exception
+class Exception : public std::exception {
+    char* message;
+public:
+    Exception(const char* msg, ...) throw() {
+        va_list args;
+        va_start(args, msg);
+
+        message = new char[255];
+        vsnprintf(message, 255, msg, args);
+
+        va_end(args);
+    }
+    ~Exception() throw() { delete[] message; }
+    const char* what() const throw() { return message; }
+};
+#endif
+
+
+
+
+
+// split server:port string, doesn't always set the port
+static void splitServerPort(const std::string& server,std::string& address,int *port)
+{
+    unsigned int colon=server.find(':',0);
+    if(colon==std::string::npos) {
+        address=server;
+    }
+    else {
+        address=server.substr(0,colon);
+        colon++;
+        std::string port_str(server.substr(colon,server.length()-colon));
+        port[0]=atoi(port_str.c_str());
+    }
+}
+
+
+
+#endif
+
+#include "IRCLobby.hpp"
+
 static const char* ask_server_running_mess = "Who's running a server?";
 static const char* server_running_mess = "I'm running";
 
 IRCLobby::IRCLobby(const std::string& server,
         const std::string& nick,
-        const std::string& newchannelname)
-    : irc_server_socket(0), channel_name(newchannelname), nickname(nick),
-        game_servers(0), running_thread(0)
+        const std::string& newchannelname
+        )
+    : game_servers(0),
+    irc_server_socket(0), channel_name(newchannelname), nickname(nick),
+         running_thread(0)
 {
     serveraddress=server;
     game_servers=new GameServerList();
     game_servers_mutex=SDL_CreateMutex();
+    change_name=0;
+    expected_ping=0;
 
     setNickName(nick);
 
@@ -52,10 +118,14 @@ IRCLobby::IRCLobby(const std::string& server,
 IRCLobby::~IRCLobby()
 {
     stopThread();
-    
     SDL_DestroyMutex(game_servers_mutex);
-    delete game_servers;
-    game_servers=0;
+LOG(("delete lobby"));
+}
+
+void IRCLobby::restartThread()
+{
+    stopThread();
+    startMessagesThread();
 }
 
 void IRCLobby::setNickName(const std::string &nick)
@@ -77,9 +147,7 @@ void IRCLobby::setNickName(const std::string &nick)
     }
     ircname[i] = 0;
     nickname=ircname;
-    if(playernameview) {
-        playernameview->setString(ircname);
-    }
+    if(change_name) { change_name->changeIRCName(nickname); }
 }
 
 void IRCLobby::changeNickName(const std::string &nick)
@@ -105,8 +173,11 @@ void IRCLobby::stopThread()
         SDLNet_TCP_Close(irc_server_socket);
         irc_server_socket=0;
     }
+    delete game_servers;
+    game_servers=0;
 }
 
+#ifndef WITHOUT_NETPANZER
 // send server info to someone
 void IRCLobby::sendServerInfo(const std::string& dest)
 {
@@ -121,31 +192,44 @@ void IRCLobby::sendServerInfo(const std::string& dest)
     return sendIRCMessageLine(buffer.str(), dest);
 }
 
+
+#endif
+
+
 void IRCLobby::connectToServer()
 {
     IPaddress addr;
+    expected_ping=0;
     
-    const std::string &server=((const std::string &)gameconfig->proxyserver).size()>0 ? ((const std::string &)gameconfig->proxyserver): serveraddress;
+#ifndef WITHOUT_NETPANZER
+    const std::string &proxyserver=gameconfig->proxyserver;
+#else
+    const std::string proxyserver;
+#endif
+    const std::string &server=proxyserver.size()>0 ? proxyserver: serveraddress;
 
     int sport=6667;
-    std::string saddress;
-    UtilInterface::splitServerPort(server,saddress,&sport);
+#ifndef WITHOUT_NETPANZER
+    UtilInterface::splitServerPort(server,server_host,&sport);
+#else
+    ::splitServerPort(server,server_host,&sport);
+#endif
 
     // some old versions of SDL_net take a char* instead of const char*
-    if(SDLNet_ResolveHost(&addr, const_cast<char*>(saddress.c_str()), sport) < 0)
+    if(SDLNet_ResolveHost(&addr, const_cast<char*>(server_host.c_str()), sport) < 0)
         throw Exception("Couldn't resolve server address '%s'",
-                saddress.c_str());
+                server_host.c_str());
         
     irc_server_socket = SDLNet_TCP_Open(&addr);
     if(!irc_server_socket)
         throw Exception("Couldn't connect to irc server '%s': %s",
-                saddress.c_str(),  SDLNet_GetError());
+                server.c_str(),  SDLNet_GetError());
 
-
-
-    if(((const std::string &)gameconfig->proxyserver).size()>0) {
+#ifndef WITHOUT_NETPANZER
+    if(proxyserver.size()>0) {
         UtilInterface::sendProxyConnect(irc_server_socket,serveraddress);
     }
+#endif
 
     std::stringstream buffer;
     buffer.str("");
@@ -176,6 +260,7 @@ void IRCLobby::sendLoginInfo()
     buffer << "JOIN " << channel_name;
     sendIRCLine(buffer.str());
 
+#ifndef WITHOUT_NETPANZER
     if(gameconfig->hostorjoin== _game_session_host) {
         // tell everyone the server just started
         sendServerInfo(channel_name);
@@ -183,10 +268,15 @@ void IRCLobby::sendLoginInfo()
     else if(gameconfig->hostorjoin== _game_session_join) {
         refreshServerList();
     }
+#else
+    refreshServerList();
+#endif
 }
 
 void IRCLobby::refreshServerList()
 {
+    delete game_servers;
+    game_servers=new GameServerList();
     std::stringstream buffer;
 
     buffer << "-" << ask_server_running_mess;
@@ -200,14 +290,44 @@ void IRCLobby::refreshUserList()
     sendIRCLine(str);
 }
 
+void IRCLobby::sendPingMessage()
+{
+    std::stringstream ping;  
+    ping << "PING " << server_host;
+    sendIRCLine(ping.str());
+    expected_ping=SDL_GetTicks()+15000;
+}
+
 int IRCLobby::messagesThreadEntry(void* data)
 {
     IRCLobby* t = (IRCLobby*) data;
-    // this is here so that the thread is started before we connect 
-    // to the irc server otherwise the main thread will halt 
-    // if we don't have access to the irc server.
-    t->connectToServer();
-    t->processMessages();
+    int restart_delay=5000;     // time to wait before starting the server
+    while(1) {
+        // this is here so that the thread is started before we connect 
+        // to the irc server otherwise the main thread will halt 
+        // if we don't have access to the irc server.
+        Uint32 start_tick=SDL_GetTicks();
+        try {
+            t->connectToServer();
+            t->processMessages();
+        } catch(std::exception& e) {
+            LOG(("Exception in IRC Thread: %s, restarting in %i secs", e.what(),(restart_delay/1000) ));
+            t->addChatMessage("Error",e.what());
+
+            Uint32 run_length=SDL_GetTicks()-start_tick;
+            SDL_Delay(restart_delay);
+            if(run_length>(15*60*1000)) {
+                // we managed to run for 15mins, reset the delay
+                restart_delay=5000;
+            }
+            else { restart_delay*=2; }
+            // ... wait a while and try to reconnect
+            continue;
+        } catch(...) {
+            break;
+        }
+        break;
+    }
     return 0;
 }
 
@@ -228,14 +348,7 @@ void IRCLobby::processMessages()
     }
 
     while(1) {
-        try {
-            processMessage();
-        } catch(std::exception& e) {
-            LOG(("Exception in IRC Thread: %s", e.what()));
-            break;
-        } catch(...) {
-            break;
-        }
+        processMessage();
     }
 }
 
@@ -271,7 +384,9 @@ void IRCLobby::processMessage()
     char *host, *mess, *host_end, *user_end, *code;
 
     readIRCLine(buf, sizeof(buf));
+#ifndef WITHOUT_NETPANZER
     LOGGER.debug("irc:%s",buf);
+#endif
     
     if(buf[0]!=':')
         return;
@@ -280,19 +395,29 @@ void IRCLobby::processMessage()
     // skip 1 word and spaces behind it
     while(*code && !isspace(*code)) { code++; }
     while(*code && isspace(*code)) { code++; }
+    char *code_end=code;
+    while(*code_end && !isspace(*code_end)) code_end++;
+    *code_end=0;
 
     int code_i=atoi(code);
-    if((mess=strchr(buf+1,':'))==NULL) {
+    if((mess=strchr(code_end+1,':'))==NULL) {
         return;
     }
     mess++;
 
     if(code_i == 433) {
-        // wrong user name, add _ at the end like chatzilla does
+        // wrong user name, change the number at the end
         char newplayer[256];
-        strncpy(newplayer,playernameview->getString(),sizeof(newplayer)-2);
+        char *p;
+        strncpy(newplayer,nickname.c_str(),sizeof(newplayer)-2);
         newplayer[sizeof(newplayer)-2]=0;
-        strcat(newplayer,"_");
+        p=strchr(newplayer,0);
+        if(isdigit(p[-1])) {
+            p--;
+            while(isdigit(*p) && p>newplayer) p--;
+            p++;
+        }
+        snprintf(p,(newplayer+sizeof(newplayer))-p,"%i",atoi(p)+1);
         changeNickName(newplayer);
         return;
     }
@@ -304,8 +429,18 @@ void IRCLobby::processMessage()
         addChatMessage("Error",mess);
         LOG(("IRC:%s",buf));
     }
-    if(code_i==353 || strncmp(code,"NOTICE ",7)==0) {
+    if(code_i==353 || strcmp(code,"NOTICE")==0) {
         addChatMessage("Lobby",mess);
+        return;
+    }
+
+    if(strcmp(code,"PONG")==0) {
+        expected_ping=0;
+    }
+    if(strcmp(code,"PING")==0) {
+        std::stringstream pong;  
+        pong << "PONG " <<(code+5);
+        sendIRCLine(pong.str());
         return;
     }
 
@@ -319,22 +454,26 @@ void IRCLobby::processMessage()
     *host++=0;
     *user_end++=0;
 
-    if(strncmp(code,"JOIN ",5)==0) {
+    if(strcmp(code,"JOIN")==0) {
         std::string joined(buf+1);
         joined+=" has arrived in lobby";
         addChatMessage("",joined);
+#ifndef WITHOUT_NETPANZER
         if(gameconfig->hostorjoin== _game_session_host) {
             LOG(("%s",joined.c_str()));
         }
+#endif
         return;
     }
-    if(strncmp(code,"PART ",5)==0 || strncmp(code,"QUIT ",5)==0) {
+    if(strcmp(code,"PART")==0 || strcmp(code,"QUIT")==0) {
         std::string leave(buf+1);
         leave+=" has left the lobby";
         addChatMessage("",leave);
+#ifndef WITHOUT_NETPANZER
         if(gameconfig->hostorjoin== _game_session_host) {
             LOG(("%s",leave.c_str()));
         }
+#endif
         return;
     }
 
@@ -344,65 +483,68 @@ void IRCLobby::processMessage()
     }
     *host_end++=0;
     while(isspace(*host_end)) host_end++;
-    if(strncmp(host_end,"PRIVMSG ",8)!=0) {
+    if(strcmp(code,"PRIVMSG")!=0) {
         return;
     }
 
     if(mess[0]=='#') {
         // this is a chat message
         addChatMessage(buf+1, mess+1);
+#ifndef WITHOUT_NETPANZER
         if(gameconfig->hostorjoin== _game_session_host) {
             LOG(("IRC message:%s:%s",buf+1,mess+1));
         }
+#endif
 
         return;
     }
     if(mess[0]=='-') {
         // this is an internal message
 
+#ifndef WITHOUT_NETPANZER
         if(strcmp(mess+1, ask_server_running_mess)==0) {
             if(gameconfig->hostorjoin== _game_session_host) {
                 // reply with server details
                 sendServerInfo(buf+1);
             }
         }
-        else if(strncmp(mess+1,server_running_mess,sizeof(server_running_mess)-1)==0) {
+        else 
+#endif
+        if(strncmp(mess+1,server_running_mess,sizeof(server_running_mess)-1)==0) {
             // add a server to the list
-            if(gameconfig->hostorjoin== _game_session_join) {
-                const char *p=mess+strlen(server_running_mess)+1;
-                const char *map;
-                int players=atoi(p);
-                if((p=strchr(p,'/'))==0) {
-                    LOG(("bad server description: %s\n",mess));
-                    return;
-                }
-                int max_players=atoi(++p);
-                int port=_NETPANZER_DEFAULT_PORT_TCP;
-                char *port_str;
-                if((port_str=strstr(p,"port:"))!=0) {
-                    port=atoi(port_str+5);
-                }
-                if((map=strstr(p,"map:"))==0) {
-                    LOG(("no map name: %s\n",mess));
-                    return;
-                }
-                map+=4;
+            const char *p=mess+strlen(server_running_mess)+1;
+            const char *map;
+            int players=atoi(p);
+            if((p=strchr(p,'/'))==0) {
+                LOG(("bad server description: %s\n",mess));
+                return;
+            }
+            int max_players=atoi(++p);
+            int port=_NETPANZER_DEFAULT_PORT_TCP;
+            char *port_str;
+            if((port_str=strstr(p,"port:"))!=0) {
+                port=atoi(port_str+5);
+            }
+            if((map=strstr(p,"map:"))==0) {
+                LOG(("no map name: %s\n",mess));
+                return;
+            }
+            map+=4;
 
-                GameServer *server
-                    = game_servers->find(host, port);
-                if(server==0) {
-                    SDL_mutexP(game_servers_mutex);
-                    game_servers->push_back(
-                            GameServer(host, port,
-                                buf+1, map, players, max_players));
-                    SDL_mutexV(game_servers_mutex);
-                }
-                else {
-                    server->user = buf+1;
-                    server->map = map;
-                    server->playercount = players;
-                    server->max_players = max_players;
-                }
+            GameServer *server
+                = game_servers->find(host, port);
+            if(server==0) {
+                SDL_mutexP(game_servers_mutex);
+                game_servers->push_back(
+                        GameServer(host, port,
+                            buf+1, map, players, max_players));
+                SDL_mutexV(game_servers_mutex);
+            }
+            else {
+                server->user = buf+1;
+                server->map = map;
+                server->playercount = players;
+                server->max_players = max_players;
             }
         }
     }
@@ -460,11 +602,19 @@ void IRCLobby::readIRCLine(char *buf, size_t buf_len)
     SDLNet_SocketSet sock_set=SDLNet_AllocSocketSet(1);
     SDLNet_TCP_AddSocket(sock_set,irc_server_socket);
 
+    int no_activity=0;
     try {
         while(buf_upto < buf_end) {
             SDLNet_CheckSockets(sock_set, 1000);
-            if(!SDLNet_SocketReady(irc_server_socket))
+            if(!SDLNet_SocketReady(irc_server_socket)) {
+                if(++no_activity>=(60*2) && !expected_ping) {
+                    sendPingMessage();
+                }
+                if(expected_ping && expected_ping<SDL_GetTicks()) {
+                    throw Exception("no pong received after ping");
+                }
                 continue;
+            }
 
             if(SDLNet_TCP_Recv(irc_server_socket,&ch,1)<0)
                 throw Exception("Couldn't read TCP: %s",
@@ -484,4 +634,38 @@ void IRCLobby::readIRCLine(char *buf, size_t buf_len)
     SDLNet_FreeSocketSet(sock_set);
     *buf_upto=0;
 }
+
+
+
+#if 0
+
+// sample program to use this class...
+
+#include <unistd.h>
+#define WITHOUT_NETPANZER
+#include "IRCLobby.cpp"
+
+
+int main()
+{
+    IRCLobby *lobby=new IRCLobby("irc.freenode.net","testnpsrv","#netpanzerlob");
+    sleep(30);
+
+    SDL_mutexP(lobby->game_servers_mutex);
+    GameServerList::iterator i;
+    GameServerList* serverlist = lobby->game_servers;
+    for(i=serverlist->begin(); i!=serverlist->end(); i++) {
+        const GameServer* server = &(*i);
+        printf("%s is running %s (%i/%i) on %s:%i\n",
+            i->user.c_str(),i->map.c_str(),
+            i->playercount,i->max_players,
+            i->host.c_str(),i->port
+            );
+    }
+    SDL_mutexV(lobby->game_servers_mutex);
+
+
+    delete lobby;
+}
+#endif
 

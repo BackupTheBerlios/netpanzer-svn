@@ -44,11 +44,15 @@ public:
             lobby_connection->changeNickName(s);
         }
     }
+    void setNotifyIRCChangeName(NotifyIRCChangeName *cn) {
+        change_name=cn;
+    }
 
 private:
     static void buttonRefresh();
     static void chatReturnPressed(cInputField* input);
     
+    NotifyIRCChangeName *change_name;
     int server_list_end_y;
     int server_list_end_x;
     int chat_list_end_y;

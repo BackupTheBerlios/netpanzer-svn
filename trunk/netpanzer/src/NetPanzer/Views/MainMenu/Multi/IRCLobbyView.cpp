@@ -33,6 +33,7 @@ IRCLobbyView::IRCLobbyView()
     : View()
 {
     lobby_connection=0;
+    change_name=0;
     lobby_view_height=160;
     total_displayed_servers=0;
     setSearchName("IRCLobbyView");
@@ -218,6 +219,7 @@ void IRCLobbyView::startIRC()
         stopIRC();
         lobby_connection=new IRCLobby(gameconfig->lobbyserver,
                 gameconfig->playername, "#netpanzerlob");
+        lobby_connection->change_name=change_name;
     } catch(std::exception& e) {
         LOG(("Couldn't connect to irc lobby: %s", e.what()));
         error_message = e.what();
