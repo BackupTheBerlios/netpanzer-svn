@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "RankView.hpp"
 #include "Stats.hpp"
 #include "GameViewGlobals.hpp"
+#include "ScreenSurface.hpp"
+#include "GameConfig.hpp"
 
 #include "SelectionBoxSprite.hpp"
 
@@ -33,8 +35,10 @@ RankView::RankView() : GameTemplateView()
     setSubTitle(" - F6");
 
     setAllowResize(false);
-    moveTo(iXY(0, 0));
+    moveTo(gameconfig->rankposition);
     resize(iXY(450, 200));
+    checkArea(screen->getPix());
+
 
     const unsigned MAX_NAME_CHARS      = 20;
     const unsigned MAX_FLAG_CHARS      =  5;
@@ -181,3 +185,8 @@ void RankView::drawPlayerStats(Surface &dest)
     }
 
 } // end RankView::drawPlayerStats
+
+void RankView::notifyMoveTo()
+{
+    gameconfig->rankposition=min;
+}

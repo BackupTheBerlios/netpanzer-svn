@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameViewGlobals.hpp"
 #include "KeyboardInterface.hpp"
 #include "ScreenSurface.hpp"
+#include "GameConfig.hpp"
 
 #include "WorldInputCmdProcessor.hpp"
 
@@ -41,17 +42,18 @@ void GameTemplateView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const 
 {
     // Check for view blending mode change.
     if (KeyboardInterface::getKeyPressed(SDLK_1)) {
-        viewDrawBackgroundMode = VIEW_BACKGROUND_DARK_GRAY_BLEND;
+        gameconfig->viewdrawbackgroundmode = VIEW_BACKGROUND_DARK_GRAY_BLEND;
     } else if (KeyboardInterface::getKeyPressed(SDLK_2)) {
-        viewDrawBackgroundMode = VIEW_BACKGROUND_LIGHT_GRAY_BLEND;
+        gameconfig->viewdrawbackgroundmode = VIEW_BACKGROUND_LIGHT_GRAY_BLEND;
     } else if (KeyboardInterface::getKeyPressed(SDLK_3)) {
-        viewDrawBackgroundMode = VIEW_BACKGROUND_SOLID_BLACK;
+        gameconfig->viewdrawbackgroundmode = VIEW_BACKGROUND_SOLID_BLACK;
     } else if (KeyboardInterface::getKeyPressed(SDLK_4)) {
-        viewDrawBackgroundMode = VIEW_BACKGROUND_TRANSPARENT;
+        gameconfig->viewdrawbackgroundmode = VIEW_BACKGROUND_TRANSPARENT;
     }
 
     moveTo(min + newPos - prevPos);
     checkArea(screen->getPix());
+    notifyMoveTo();
 }
 
 // doActivate

@@ -59,7 +59,6 @@ extern iXY resignPos;
 extern iRect bodyTextRect;
 
 // These are the possible background colors for the menus.
-extern int viewDrawBackgroundMode;
 enum
 {
     VIEW_BACKGROUND_DARK_GRAY_BLEND,

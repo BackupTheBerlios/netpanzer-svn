@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Palette.hpp"
 #include "GameViewGlobals.hpp"
+#include "GameConfig.hpp"
 
 iXY exitPos(6, 454);
 iXY readyPos(480, 32);
@@ -54,7 +55,6 @@ iXY resignPos = multiPos;
 iRect bodyTextRect(27, 72, 620, 430);
 
 bool gDrawGameHelp          = false;
-int  viewDrawBackgroundMode = VIEW_BACKGROUND_DARK_GRAY_BLEND;
 
 //--------------------------------------------------------------------------
 void bltViewBackground(Surface &dest)
@@ -65,11 +65,11 @@ void bltViewBackground(Surface &dest)
 //--------------------------------------------------------------------------
 void bltBlendRect(Surface &dest, const iRect &r)
 {
-    if (viewDrawBackgroundMode == VIEW_BACKGROUND_DARK_GRAY_BLEND) {
+    if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_DARK_GRAY_BLEND) {
         dest.bltLookup(r, Palette::darkGray256.getColorArray());
-    } else if (viewDrawBackgroundMode == VIEW_BACKGROUND_LIGHT_GRAY_BLEND) {
+    } else if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_LIGHT_GRAY_BLEND) {
         dest.bltLookup(r, Palette::gray256.getColorArray());
-    } else if (viewDrawBackgroundMode == VIEW_BACKGROUND_SOLID_BLACK) {
+    } else if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_SOLID_BLACK) {
         dest.fillRect(r, Color::black);
-    } else if (viewDrawBackgroundMode == VIEW_BACKGROUND_TRANSPARENT) {}
+    } else if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_TRANSPARENT) {}
 }

@@ -32,6 +32,7 @@ private:
 
 public:
     GameInfoView();
+    virtual void notifyMoveTo();
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
 }; // end GameInfoView

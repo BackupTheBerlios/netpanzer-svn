@@ -28,7 +28,9 @@ class GameToolbarView : public GameTemplateView
 public:
     GameToolbarView();
 
+
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void notifyMoveTo();
 }; // end GameToolbarView
 
 #endif // end __GameToolbarView_hpp__

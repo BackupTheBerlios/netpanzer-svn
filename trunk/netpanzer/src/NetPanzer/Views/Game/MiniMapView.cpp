@@ -25,10 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "cMouse.hpp"
 #include "ScreenSurface.hpp"
 #include "WorldInputCmdProcessor.hpp"
+#include "GameConfig.hpp"
 
 MiniMapView miniMapView;
 
-MAP_DRAW_TYPES MiniMapView::mapDrawType;
 
 float MiniMapView::scaleDelta   = 400.0f;
 int   MiniMapView::decreaseSize = 0;
@@ -63,16 +63,19 @@ void MiniMapView::init()
     miniMap = MiniMapInterface::getMiniMap();
 
     //iXY size = miniMap->getPix();
-    iXY size(196, 196);
+    iXY size(((const iXY &)gameconfig->minimapsize)+iXY(2,2));
     resize(size);
-    moveTo(iXY(0, screen->getPix().y - 196));
-
-    mapDrawType = MAP_SOLID;
+    if(gameconfig->configfileexists) {
+        moveTo(gameconfig->minimapposition);
+    } else {
+        moveTo(iXY(0, screen->getPix().y - 196));
+    }
 
     //int xOffset = size.x;
     //int yOffset = 0;
 
     MiniMapInterface::setMapScale(getSize() - iXY(2,2));
+    checkArea(screen->getPix());
 
     minMapSize =  64;
     maxMapSize = 480;
@@ -128,6 +131,7 @@ void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
 
     iRect r(iXY(0,0), getSize());
 
+    int mapDrawType=gameconfig->minimapdrawtype;
     if (needScale) {
         // Draw the slow on the fly scaled map.
         if (mapDrawType == MAP_SOLID) {
@@ -262,6 +266,11 @@ void MiniMapView::rMouseDown(const iXY &pos)
 
 } // end MiniMapView::rMouseDown
 
+void MiniMapView::setMapDrawType(MAP_DRAW_TYPES type)
+{
+    gameconfig->minimapdrawtype=type;
+}
+
 //--------------------------------------------------------------------------
 void MiniMapView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
 {
@@ -269,24 +278,26 @@ void MiniMapView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &
     //maxMapSize = std::min(SCREEN_XPIX, SCREEN_YPIX);
     maxMapSize = std::min(640, 480);
 
-    moveTo(min + newPos - prevPos);
+    iXY map_pos=min + newPos - prevPos;
+    moveTo(map_pos);
+    gameconfig->minimapposition=map_pos;
     checkArea(screen->getPix());
 
     // Check for map blending mode change.
     if (KeyboardInterface::getKeyPressed(SDLK_1)) {
-        MiniMapView::mapDrawType = MAP_SOLID;
+        setMapDrawType(MAP_SOLID);
     } else if (KeyboardInterface::getKeyPressed(SDLK_2)) {
-        MiniMapView::mapDrawType = MAP_2080;
+        setMapDrawType(MAP_2080);
     } else if (KeyboardInterface::getKeyPressed(SDLK_3)) {
-        MiniMapView::mapDrawType = MAP_4060;
+        setMapDrawType(MAP_4060);
     } else if (KeyboardInterface::getKeyPressed(SDLK_4)) {
-        MiniMapView::mapDrawType = MAP_BLEND_GRAY;
+        setMapDrawType(MAP_BLEND_GRAY);
     } else if (KeyboardInterface::getKeyPressed(SDLK_5)) {
-        MiniMapView::mapDrawType = MAP_BLEND_DARK_GRAY;
+        setMapDrawType(MAP_BLEND_DARK_GRAY);
     } else if (KeyboardInterface::getKeyPressed(SDLK_6)) {
-        MiniMapView::mapDrawType = MAP_BLACK;
+        setMapDrawType(MAP_BLACK);
     } else if (KeyboardInterface::getKeyPressed(SDLK_7)) {
-        MiniMapView::mapDrawType = MAP_TRANSPARENT;
+        setMapDrawType(MAP_TRANSPARENT);
     }
 
     if (KeyboardInterface::getKeyState(SDLK_KP_PLUS)) {

@@ -107,6 +107,8 @@ public:
     void loadConfig();
     void saveConfig();
 
+    bool configfileexists;   // whether we loaded from a config file
+
     // game Settings
     ConfigInt hostorjoin;           //1=host, 2=join
 
@@ -162,6 +164,13 @@ public:
     ConfigInt   consoletextdelay;
     ConfigInt   consoletextusage;
     ConfigInt   scrollrate;
+    ConfigXY    minimapposition;
+    ConfigXY    minimapsize;
+    ConfigInt   minimapdrawtype;
+    ConfigXY    gameinfoposition;
+    ConfigXY    toolbarposition;
+    ConfigXY    rankposition;
+    ConfigInt   viewdrawbackgroundmode;
 
     // radar settings
     ConfigBool  radar_displayclouds;

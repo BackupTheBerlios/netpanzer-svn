@@ -33,7 +33,7 @@ public:
     //virtual void mouseEnter(const iXY &pos);
     virtual void doActivate();
     virtual void doDeactivate();
-
+    virtual void notifyMoveTo() {}
 }
 ; // end GameTemplateView
 

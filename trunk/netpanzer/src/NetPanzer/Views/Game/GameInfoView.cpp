@@ -76,12 +76,17 @@ GameInfoView::GameInfoView() : GameTemplateView()
     setVisible(false);
     setBordered(true);
 
-    moveTo(iXY(0, 0));
+    moveTo(iXY(0,0));
     //resizeClientArea(iXY(100, 2 * 2 + 12 * 3 + 8));
     resizeClientArea(iXY(140, 2 * 2 + 12 * 5 + 8));
 
-    // Start it in the top-left corner.
-    moveTo(screen->getPixX() - getSize().x, 0);
+    if(!gameconfig->configfileexists) {
+        // Start it in the top-left corner.
+        moveTo(screen->getPixX() - getSize().x, 0);
+    } else {
+        moveTo(gameconfig->gameinfoposition); 
+    }
+    checkArea(screen->getPix());
 } // end GameInfoView::GameInfoView
 
 // doDraw
@@ -180,3 +185,12 @@ void GameInfoView::checkGameInfoRect(String string)
     }
 
 } // end GameInfoView::checkGameInfoRect
+
+
+// save position, background into gameconfig
+void GameInfoView::notifyMoveTo()
+{
+    gameconfig->gameinfoposition=min;
+}
+
+

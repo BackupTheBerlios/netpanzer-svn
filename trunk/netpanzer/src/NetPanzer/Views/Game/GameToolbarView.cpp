@@ -216,8 +216,13 @@ GameToolbarView::GameToolbarView() : GameTemplateView()
 
     resizeClientArea(iXY(117, pos.y));
 
-    // Start it in the bottom-left corner.
-    moveTo(screen->getPix() - getSize());
+    if(gameconfig->configfileexists) {
+        moveTo(gameconfig->toolbarposition);
+    } else {
+        // Start it in the bottom-left corner.
+        moveTo(screen->getPix() - getSize());
+    }
+    checkArea(screen->getPix());
 } // end GameToolbarView::GameToolbarView
 
 // doDraw
@@ -228,3 +233,9 @@ void GameToolbarView::doDraw(Surface &viewArea, Surface &clientArea)
 
     View::doDraw(viewArea, clientArea);
 } // end GameToolbarView::doDraw
+
+
+void GameToolbarView::notifyMoveTo()
+{
+    gameconfig->toolbarposition=min;
+}

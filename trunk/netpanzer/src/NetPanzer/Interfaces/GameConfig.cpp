@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkGlobals.hpp"
 #include "XmlConfig.hpp"
 #include "XmlStore.hpp"
+#include "MiniMapView.hpp"
+#include "GameViewGlobals.hpp"
 
 GameConfig::GameConfig(const std::string& newconfigfile)
     // VariableName("Name", value [, minimum, maximum])
@@ -76,6 +78,13 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       consoletextdelay("consoletextdelay", 3, 1, 20),
       consoletextusage("consoletextusage", 25, 1, 100),
       scrollrate("scrollrate", 1000, 100, 10000),
+      minimapposition("minimapposition", iXY(0,0)),
+      minimapsize("minimapsize", iXY(194,194)),
+      minimapdrawtype("minimapdrawtype", MAP_SOLID),
+      gameinfoposition("gameinfoposition", iXY(0,0)),
+      toolbarposition("toolbarposition", iXY(0,0)),
+      rankposition("rankposition", iXY(0,0)),
+      viewdrawbackgroundmode("viewdrawbackgroundmode",(int)VIEW_BACKGROUND_DARK_GRAY_BLEND),
                   
       radar_displayclouds("displayclouds", false),
       radar_playerunitcolor("playerunitcolor", _color_aqua, 0, _color_last-1),
@@ -89,6 +98,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       radar_resizerate("resizerate", 400, 10, 1000)      
 {
     configfile = newconfigfile;
+    configfileexists = false;
 
     //gamesettings.push_back(&hostorjoin);
 
@@ -142,6 +152,13 @@ GameConfig::GameConfig(const std::string& newconfigfile)
     interfacesettings.push_back(&consoletextdelay);
     interfacesettings.push_back(&consoletextusage);
     interfacesettings.push_back(&scrollrate);
+    interfacesettings.push_back(&minimapposition);
+    interfacesettings.push_back(&minimapsize);
+    interfacesettings.push_back(&minimapdrawtype);
+    interfacesettings.push_back(&gameinfoposition);
+    interfacesettings.push_back(&toolbarposition);
+    interfacesettings.push_back(&rankposition);
+    interfacesettings.push_back(&viewdrawbackgroundmode);
 
     radarsettings.push_back(&radar_displayclouds);
     radarsettings.push_back(&radar_playerunitcolor);
@@ -172,6 +189,7 @@ GameConfig::~GameConfig()
 void GameConfig::loadConfig()
 {
     const char *xmlfile = FileSystem::getRealName(configfile.c_str()).c_str();
+
     XmlConfig config(xmlfile);
 
     loadSettings(config, "game", gamesettings);
@@ -181,6 +199,7 @@ void GameConfig::loadConfig()
     loadSettings(config, "interface", interfacesettings);
     loadSettings(config, "radar", radarsettings);
     loadSettings(config, "server", serversettings);
+    configfileexists = true;
 }
 
 void GameConfig::loadSettings(XmlConfig& config, const char* name,
@@ -197,6 +216,12 @@ void GameConfig::loadSettings(XmlConfig& config, const char* name,
                 ConfigInt* confint = dynamic_cast<ConfigInt*> (var);
                 if(confint)
                     *confint = section.readInt(confint->getName().c_str());
+
+                ConfigXY* confxy = dynamic_cast<ConfigXY*> (var);
+                if(confxy) {
+                    *confxy = section.readXY(confxy->getName().c_str());
+                }
+
                 ConfigBool* confbool = dynamic_cast<ConfigBool*> (var);
                 if(confbool) {
                     std::string str =
@@ -209,6 +234,7 @@ void GameConfig::loadSettings(XmlConfig& config, const char* name,
                         throw Exception("No boolean value for setting '%s'.",
                                         confbool->getName().c_str());
                 }
+
                 ConfigString* confstring = dynamic_cast<ConfigString*> (var);
                 if(confstring)
                     *confstring =
@@ -255,7 +281,12 @@ void GameConfig::saveSettings(XmlStore& xmlstore, const char* name,
         if(confbool)
             store.writeString(confbool->getName().c_str(),
                     *confbool ? "yes" : "no");
-            
+
+        ConfigXY* confxy = dynamic_cast<ConfigXY*> (var);
+        if(confxy) {
+            store.writeXY(confxy->getName().c_str(), (const iXY&)(*confxy));
+        }
+
         ConfigString* confstring = dynamic_cast<ConfigString*> (var);
         if(confstring) {
             const char* string = 

@@ -28,7 +28,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameConfig.hpp"
 
 fXY MiniMapInterface::scale_factor;
-iXY MiniMapInterface::mini_map_size;
 bool MiniMapInterface::pathing_debug_mode = false;
 
 PIX MiniMapInterface::player_unit_color;
@@ -62,8 +61,8 @@ void MiniMapInterface::setMapScale(const iXY &mini_map_size)
 {
     iXY map_size;
 
-    MiniMapInterface::mini_map_size = mini_map_size;
-
+    gameconfig->minimapsize=mini_map_size;
+ 
     MapInterface::getMapPointSize( &map_size );
     scale_factor.x = float(map_size.x) / float(mini_map_size.x);
     scale_factor.y = float(map_size.y) / float(mini_map_size.y);

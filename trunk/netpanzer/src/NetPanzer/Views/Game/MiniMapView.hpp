@@ -67,9 +67,9 @@ public:
 
     void drawMouseBox(Surface &dest);
     void setViewWindow(const iXY &pos);
+    void setMapDrawType(MAP_DRAW_TYPES type);
 
     static float          scaleDelta;
-    static MAP_DRAW_TYPES mapDrawType;
 
     static int decreaseSize;
     static int increaseSize;

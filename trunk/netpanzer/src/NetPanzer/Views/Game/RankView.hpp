@@ -44,7 +44,7 @@ public:
     }
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
-
+    virtual void notifyMoveTo();
 }
 ; // end _WIN
 
