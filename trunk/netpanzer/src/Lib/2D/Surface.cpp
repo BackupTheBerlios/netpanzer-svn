@@ -919,8 +919,8 @@ void Surface::fillRect(iRect bounds, const PIX &color) const
     // Check for clipping
     if (bounds.min.x <  0)     bounds.min.x = 0;
     if (bounds.min.y <  0)     bounds.min.y = 0;
-    if (bounds.max.x >= pix.x) bounds.max.x = pix.x - 1;
-    if (bounds.max.y >= pix.y) bounds.max.y = pix.y - 1;
+    if (bounds.max.x > pix.x) bounds.max.x = pix.x;
+    if (bounds.max.y > pix.y) bounds.max.y = pix.y;
 
     iXY diff;
     diff = (bounds.max - bounds.min);
