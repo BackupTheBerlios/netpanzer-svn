@@ -313,7 +313,7 @@ void ServerSocket::sendMessage(SocketClient::ID toclient, char* data,
         size_t datasize, bool reliable)
 {
     SocketClient* client = clientlist->getClientFromID(toclient);
-    if(!client)
+    if(!client || client->wantstodie)
         throw Exception("message sent to unknown client.");
 
     // we ignore the reliable flag for now...
