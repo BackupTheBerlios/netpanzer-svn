@@ -29,18 +29,26 @@
           </div>
          
 	  then run <tt>apt-get update &amp;&amp; apt-get install netpanzer</tt>.</p>
-        <p>Debian packages provided by Bartosz Fenski aka fEnIo 
-          <a href="mailto:fenio@o2.pl">fenio@o2.pl</a></p>      
-      </subsubsection>
-      <subsubsection title="Installer, Static Binary">
-        <p>A loki installer and a statically linked binary are in the
-	works.</p>
-      </subsubsection>
+    <p>Debian packages provided by Bartosz Fenski aka fEnIo 
+    <a href="mailto:fenio@o2.pl">fenio@o2.pl</a></p>      
+    </subsubsection>
+	<subsubsection title="Installer &amp; Static Binary">
+	<p><a href="http://download.berlios.de/netpanzer/netpanzer-0.1.5-linux-i386-installer.run">
+	Loki installer - netpanzer-0.1.5-linux-i386-installer.run (13.44MB)
+	</a></p>
+	<p><a href="http://download.berlios.de/netpanzer/netpanzer-0.1.5-binary-linux-i386.tar.bz2">
+	Linux static binary - netpanzer-0.1.5-binary-linux-i386.tar.bz2 (12.23MB)
+	</a></p>.
+	<p>
+	Above files provided by Matthias Braun 
+	<a href="mailto:matze@braunis.de">matze@braunis.de</a> and Bartosz
+	Fenski aka fEnIo <a href="fenio@o2.pl">fenio@o2.pl</a>.</p>
+    </subsubsection>
     </subsection>
 	<subsection title="Windows">
-	<p>A windows version with installer can be found at the
-    <a href="http://developer.berlios.de/project/showfiles.php?group_id=1250">
-	netPanzer download section</a>.</p>
+	<p><a href="http://download.berlios.de/netpanzer/netpanzer-0.1.5-windows-installer.exe">
+	netPanzer Windows installer - netpanzer-0.1.5-windows-installer.exe (14.39MB)
+	</a></p>
 	<p>Windows version provided by Matthias Braun 
 	<a href="mailto:matze@braunis.de">matze@braunis.de</a> (binary) 
 	along with Bartosz Fenski aka fEnIo 
