@@ -1,6 +1,6 @@
 *** Lobby Code
 - Dedicated server always try to announce themself on the netpanzer lobby. User
-  should be able to disable this.
+  should be able to disable this. - implemented
 - Non-Dedicated servers don't announce themselfes at the lobby.
 - There's no check if the irc-server connection is still available. We should
   use some ping/pong messages there.
