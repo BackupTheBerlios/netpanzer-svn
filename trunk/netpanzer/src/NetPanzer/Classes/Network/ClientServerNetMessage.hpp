@@ -86,19 +86,6 @@ public :
 } __attribute__((packed));
 
 
-class ServerMesgClientDisconnect : public NetMessage
-{
-public:
-    uint16_t client_player_id;
-
-    ServerMesgClientDisconnect()
-    {
-        message_class = _net_message_class_client_server;
-        message_id = _net_message_id_server_client_disconnect;
-    }
-} __attribute__((packed));
-
-
 class ServerMesgKeepAlive: public NetMessage
 {
 public:
