@@ -14,9 +14,9 @@ DIRS = . Lib Lib/2D Lib/Environment Lib/Interfaces Lib/Particles \
 	   UILib
 
 ifeq ($(SYSTEM),UNIX)
-DIRS += NetPanzer/Interfaces/unix Stub
+DIRS += NetPanzer/Interfaces/unix Stub Win32/unix
 GOAL = ../netpanzer
-LINKFLAGS += -g3 `sdl-config --libs`
+LINKFLAGS += -g3 `sdl-config --libs` -lSDL_net
 CFLAGS += `sdl-config --cflags` -DUNIX
 endif
 ifeq ($(SYSTEM),WIN32)

@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // old version?!?
 
 #if 0
+#include <config.h>
 #include "CodeStatsView.hpp"
 
 #include "cViewManager.hpp"

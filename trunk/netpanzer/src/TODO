@@ -22,4 +22,5 @@
  like some strange hacks for the logging functions to me) Can we remove
  this strange code?
 -Fix the win32 stuff in Lib/Util/UtilInterface.cpp
-
+-rewrite win32 event loop to use a SDL event loop. Don't forget to pump mouse
+ events to MouseInterface then.

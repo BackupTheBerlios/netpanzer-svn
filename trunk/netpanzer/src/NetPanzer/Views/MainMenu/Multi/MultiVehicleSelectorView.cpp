@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // XXX old code?
 #if 0
 
+#include <config.h>
 #include "MultiVehicleSelectorView.hpp"
 #include "cViewManager.hpp"
 #include "iRect.hpp"

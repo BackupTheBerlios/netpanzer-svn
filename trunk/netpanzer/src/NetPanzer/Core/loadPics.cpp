@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // Includes.
 ////////////////////////////////////////////////////////////////////////////
 
+#include <config.h>
 #include "Surface.hpp"
 #include "loadPics.hpp"
 
