@@ -112,7 +112,7 @@ void ConsoleInterface::postMessage(const char *format, ...)
 
     LOGGER.debug("C: %s", temp_str);
 
-    if (stdout_pipe == true) {
+    if (stdout_pipe && *Console::server) {
         *Console::server << temp_str << std::endl;
     }
 
