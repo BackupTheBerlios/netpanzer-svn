@@ -98,7 +98,6 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       radar_resizerate("resizerate", 400, 10, 1000)      
 {
     configfile = newconfigfile;
-    configfileexists = false;
 
     //gamesettings.push_back(&hostorjoin);
 
@@ -199,7 +198,6 @@ void GameConfig::loadConfig()
     loadSettings(config, "interface", interfacesettings);
     loadSettings(config, "radar", radarsettings);
     loadSettings(config, "server", serversettings);
-    configfileexists = true;
 }
 
 void GameConfig::loadSettings(XmlConfig& config, const char* name,
@@ -239,6 +237,9 @@ void GameConfig::loadSettings(XmlConfig& config, const char* name,
                 if(confstring)
                     *confstring =
                         section.readString(confstring->getName().c_str());
+
+                // we have a value from config file in the variable now
+                var->setNonDefaultValue();
             } catch(Exception& e) {
                 LOG(("Skipping config '%s': %s", var->getName().c_str(),
                             e.what()));

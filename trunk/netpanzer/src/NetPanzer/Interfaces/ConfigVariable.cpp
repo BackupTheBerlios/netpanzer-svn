@@ -4,7 +4,7 @@
 #include "ConfigVariable.hpp"
 
 ConfigVariable::ConfigVariable(const std::string& newname)
-    : name(newname)
+    : name(newname), defaultvalue(true)
 {
 }
 

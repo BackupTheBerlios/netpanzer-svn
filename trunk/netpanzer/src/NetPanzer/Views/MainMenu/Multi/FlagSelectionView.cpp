@@ -95,12 +95,11 @@ void FlagSelectionView::init()
     }
 
     playerFlag.setFrame(0);
-    if(!gameconfig->configfileexists) {
+    if(gameconfig->playerflag.isDefaultValue()) {
         // new player, no flag...
         gameconfig->playerflag=rand()%playerFlag.getFrameCount();
     }
     playerFlagSelected = gameconfig->playerflag;
-
 } // end FlagSelectionView::init
 
 // doDraw

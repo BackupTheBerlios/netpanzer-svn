@@ -65,11 +65,12 @@ void MiniMapView::init()
     //iXY size = miniMap->getPix();
     iXY size(((const iXY &)gameconfig->minimapsize)+iXY(2,2));
     resize(size);
-    if(gameconfig->configfileexists) {
-        moveTo(gameconfig->minimapposition);
-    } else {
-        moveTo(gameconfig->minimapposition=iXY(0, screen->getPix().y - 196));
+
+    if(gameconfig->minimapposition.isDefaultValue()) {
+        gameconfig->minimapposition = iXY(0, screen->getPix().y - 196);
     }
+    moveTo(gameconfig->minimapposition);
+    checkArea(screen->getPix());
 
     //int xOffset = size.x;
     //int yOffset = 0;

@@ -30,9 +30,18 @@ public:
 
     const std::string& getName() const
     { return name; }
+
+    /** Does this variable contain a default value or was is loaded from disk?
+     */
+    bool isDefaultValue() const
+    { return defaultvalue; }
+
+    void setNonDefaultValue()
+    { defaultvalue = false; }
     
 private:
     std::string name;
+    bool defaultvalue;
 };
 
 class ConfigInt : public ConfigVariable

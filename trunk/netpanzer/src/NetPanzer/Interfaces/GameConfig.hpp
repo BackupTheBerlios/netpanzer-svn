@@ -107,8 +107,6 @@ public:
     void loadConfig();
     void saveConfig();
 
-    bool configfileexists;   // whether we loaded from a config file
-
     // game Settings
     ConfigInt hostorjoin;           //1=host, 2=join
 

@@ -216,7 +216,7 @@ GameToolbarView::GameToolbarView() : GameTemplateView()
 
     resizeClientArea(iXY(117, pos.y));
 
-    if(!gameconfig->configfileexists) {
+    if(gameconfig->toolbarposition.isDefaultValue()) {
         // Start it in the bottom-left corner.
         iXY pos=screen->getPix() - getSize();
         gameconfig->toolbarposition=pos;
