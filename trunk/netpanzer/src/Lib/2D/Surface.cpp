@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <vector>
+#include <string>
 #include <algorithm>
 #include "FindFirst.hpp"
 #include "Log.hpp"
@@ -2835,38 +2837,19 @@ void Surface::bltAdd(const Surface &dest, iXY min) const
 //---------------------------------------------------------------------------
 int Surface::loadAllTILInDirectory(const char *path)
 {
-    char strBuf[256];
-    char pathWild[256];
-
-    sprintf(pathWild, "%s*.til", path);
-
-    int imageCount = UtilInterface::getNumFilesInDirectory(pathWild);
-    if (imageCount <= 0) {
-        return 0;
-    }
-
-    struct _finddata_t myFile;
-    int* hFile;
-
-    _findfirst(pathWild, &myFile);
-
-    // Find the dimensions of the first file.
+    char** list = FileSystem::enumerateFiles(path);
+    
+    std::vector<std::string> filenames;
     Surface tempSurface;
-
-    cGrowList <Filename> filenames;
-    filenames.setNum(imageCount);
-
-    int curFilename = 0;
-    iXY maxSize(0, 0);
-
-    if ((hFile = _findfirst(pathWild, &myFile)) != ((int*) -1)) {
-        do {
-            sprintf(strBuf, "%s%s", path, myFile.name);
-            filenames[curFilename].setName(strBuf);
-            curFilename++;
+    iXY maxSize;
+    for(char** file = list; *file != 0; file++) {
+	std::string name = path;
+	name += *file;
+	if(name.find(".til") != std::string::npos) {
+	    filenames.push_back(name);
 
             // Get the max image size.
-            if (!tempSurface.loadTIL(strBuf)) {
+            if (!tempSurface.loadTIL(name.c_str())) {
                 throw Exception("ERROR: This should not happen!");
             }
             if (maxSize.x < tempSurface.getPix().x) {
@@ -2875,23 +2858,23 @@ int Surface::loadAllTILInDirectory(const char *path)
             if (maxSize.y < tempSurface.getPix().y) {
                 maxSize.y = tempSurface.getPix().y;
             }
-
-        } while (_findnext(hFile, &myFile) == 0);
+	}
     }
-    _findclose(hFile);
 
-    filenames.sort(FilenameSortFunction);
+    FileSystem::freeList(list);
+
+    std::sort(filenames.begin(), filenames.end());
 
     // Create the Surface to have the size of the largest image in the
     // diRectory.  All other images will be centered based off the
     // largest size.
-    create(maxSize, maxSize.x, imageCount);
+    create(maxSize, maxSize.x, filenames.size());
 
     // Now load in the sorted TIL names.
-    for (int i = 0; i < imageCount; i++) {
+    for (size_t i = 0; i < filenames.size(); i++) {
         setFrame(i);
 
-        if (!tempSurface.loadTIL(filenames[i].name)) {
+        if (!tempSurface.loadTIL(filenames[i].c_str())) {
             return 0;
         } else {
             iXY myOffset;
@@ -2905,138 +2888,46 @@ int Surface::loadAllTILInDirectory(const char *path)
     return 1;
 } // end loadAllTILInDirectory
 
-// loadAllPCXInDirectory
-//---------------------------------------------------------------------------
-int Surface::loadAllPCXInDirectory(const char *path)
-{
-    char strBuf[256];
-    char pathWild[256];
-
-    sprintf(pathWild, "%s*.pcx", path);
-
-    int imageCount = UtilInterface::getNumFilesInDirectory(pathWild);
-    if (imageCount <= 0) {
-        return 0;
-    }
-
-    struct _finddata_t myFile;
-    int* hFile;
-
-    _findfirst(pathWild, &myFile);
-
-    // Find the dimensions of the first file.
-    Surface tempSurface;
-
-    cGrowList <Filename> filenames;
-    filenames.setNum(imageCount);
-
-    int curFilename = 0;
-    iXY maxSize(0, 0);
-
-    if ((hFile = _findfirst(pathWild, &myFile)) != ((int*) -1)) {
-        do {
-            sprintf(strBuf, "%s%s", path, myFile.name);
-            filenames[curFilename].setName(strBuf);
-            curFilename++;
-
-            // Get the max image size.
-            tempSurface.loadPCX(strBuf);
-
-            if (maxSize.x < tempSurface.getPix().x) {
-                maxSize.x = tempSurface.getPix().x;
-            }
-            if (maxSize.y < tempSurface.getPix().y) {
-                maxSize.y = tempSurface.getPix().y;
-            }
-
-        } while (_findnext(hFile, &myFile) == 0);
-    }
-    _findclose(hFile);
-
-    filenames.sort(FilenameSortFunction);
-
-    // Create the Surface to have the size of the largest image in the
-    // diRectory.  All other images will be centered based off the
-    // largest size.
-    create(maxSize, maxSize.x, imageCount);
-
-    // Now load in the sorted TIL names.
-    for (int i = 0; i < imageCount; i++) {
-        setFrame(i);
-
-        tempSurface.loadPCX(filenames[i].name);
-
-        iXY myOffset;
-        myOffset = maxSize - tempSurface.getPix();
-
-        fill(Color::black);
-        tempSurface.blt(*this, myOffset);
-    }
-
-    return 1;
-} // end loadAllPCXInDirectory
-
 // loadAllBMPInDirectory
 //---------------------------------------------------------------------------
 int Surface::loadAllBMPInDirectory(const char *path)
 {
-    char strBuf[256];
-    char pathWild[256];
-
-    sprintf(pathWild, "%s*.bmp", path);
-
-    int imageCount = UtilInterface::getNumFilesInDirectory(pathWild);
-    if (imageCount <= 0) {
-        return 0;
-    }
-
-    struct _finddata_t myFile;
-    int* hFile;
-
-    _findfirst(pathWild, &myFile);
-
-    // Find the dimensions of the first file.
+    char** list = FileSystem::enumerateFiles(path);
+    
+    std::vector<std::string> filenames;
     Surface tempSurface;
-
-    cGrowList <Filename> filenames;
-    filenames.setNum(imageCount);
-
-    int curFilename = 0;
-    iXY maxSize(0, 0);
-
-    if ((hFile = _findfirst(pathWild, &myFile)) != ((int*) -1)) {
-        do {
-            sprintf(strBuf, "%s%s", path, myFile.name);
-            filenames[curFilename].setName(strBuf);
-            curFilename++;
+    iXY maxSize;
+    for(char** file = list; *file != 0; file++) {
+	std::string name = path;
+	name += *file;
+	if(name.find(".til") != std::string::npos) {
+	    filenames.push_back(name);
 
             // Get the max image size.
-            tempSurface.loadBMP(strBuf);
-
+            tempSurface.loadBMP(name.c_str());
             if (maxSize.x < tempSurface.getPix().x) {
                 maxSize.x = tempSurface.getPix().x;
             }
             if (maxSize.y < tempSurface.getPix().y) {
                 maxSize.y = tempSurface.getPix().y;
             }
-
-        } while (_findnext(hFile, &myFile) == 0);
+	}
     }
-    _findclose(hFile);
 
-    filenames.sort(FilenameSortFunction);
+    FileSystem::freeList(list);
+
+    std::sort(filenames.begin(), filenames.end());
 
     // Create the Surface to have the size of the largest image in the
     // diRectory.  All other images will be centered based off the
     // largest size.
-    create(maxSize, maxSize.x, imageCount);
+    create(maxSize, maxSize.x, filenames.size());
 
     // Now load in the sorted TIL names.
-    for (int i = 0; i < imageCount; i++) {
+    for (size_t i = 0; i < filenames.size(); i++) {
         setFrame(i);
 
-        tempSurface.loadBMP(filenames[i].name);
-
+        tempSurface.loadBMP(filenames[i].c_str());
         iXY myOffset;
         myOffset = maxSize - tempSurface.getPix();
 
@@ -3046,56 +2937,6 @@ int Surface::loadAllBMPInDirectory(const char *path)
 
     return 1;
 } // end loadAllBMPInDirectory
-
-// loadAllRAWInDirectory
-//---------------------------------------------------------------------------
-int Surface::loadAllRAWInDirectory(const char *path, const iXY &pix)
-{
-    char strBuf[256];
-    char pathWild[256];
-
-    sprintf(pathWild, "%s*.raw", path);
-
-    int imageCount = UtilInterface::getNumFilesInDirectory(pathWild);
-    if (imageCount <= 0) {
-        return 0;
-    }
-
-    struct _finddata_t myFile;
-    int* hFile;
-
-    _findfirst(pathWild, &myFile);
-
-    create(pix.x, pix.y, pix.x, imageCount);
-
-    cGrowList <Filename> filenames;
-    filenames.setNum(imageCount);
-
-    int curFilename = 0;
-
-    // Load up all the frames of the smoke.
-    if ((hFile = _findfirst(pathWild, &myFile)) != ((int*) -1)) {
-        do {
-            sprintf(strBuf, "%s%s", path, myFile.name);
-            filenames[curFilename].setName(strBuf);
-            curFilename++;
-        } while (_findnext(hFile, &myFile) == 0);
-    }
-    _findclose(hFile);
-
-    filenames.sort(FilenameSortFunction);
-
-    // Now load in the sorted RAW names.
-    for (int i = 0; i < imageCount; i++) {
-        setFrame(i);
-
-        if (!loadRAW(filenames[i].name, pix)) {
-            return 0;
-        }
-    }
-
-    return 1;
-} // end loadAllRAWInDirectory
 
 // initFont
 //---------------------------------------------------------------------------

@@ -3,7 +3,7 @@
 # pseudo configure, until we use autoconf...
 
 echo -n "Checking for system type... "
-if uname | grep "win"; then
+if uname | grep -i "win"; then
 	echo "assuming win32"
 	OS=WIN32
 else

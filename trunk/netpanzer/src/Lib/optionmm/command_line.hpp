@@ -1,5 +1,5 @@
 //
-// $Id: command_line.hpp,v 1.2 2003/09/16 20:16:11 fidlej Exp $
+// $Id: command_line.hpp,v 1.3 2003/09/19 15:22:30 MatzeBraun Exp $
 //
 //  optionmm::command_line
 //  Copyright (C) 2002 Christian Holm Christensen <cholm@nbi.dk>
@@ -33,19 +33,7 @@
 #ifndef __IOSTREAM__
 #include <iostream>
 #endif
-#ifdef WIN32
-# ifdef LIBOPTIONMM_EXPORTS
-#  ifndef EXPORT
-#   define EXPORT __declspec(dllexport)
-#  endif
-# else
-#  ifndef EXPORT
-#   define EXPORT __declspec(dllimport)
-#  endif
-# endif
-#else
-# define EXPORT
-#endif
+#define EXPORT
 
 /** @file   command_line.hh
     @author Christian Holm

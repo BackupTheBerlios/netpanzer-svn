@@ -53,6 +53,8 @@ protected:
 
 //---------------------------------------------------------------------------
 
+class FileSystem;
+
 class ReadFile : public File
 {
 public:

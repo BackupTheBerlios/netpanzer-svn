@@ -20,7 +20,7 @@ CFLAGS += -Wall -g3 -O2 $(foreach dir, $(INCLUDEDIRS), -I$(dir))
 
 GOAL = ../netpanzer
 LINKFLAGS += -g3 `sdl-config --libs` -lSDL_net -lSDL_mixer -lSDL_image -lphysfs
-CFLAGS += `sdl-config --cflags` -DUNIX
+CFLAGS += `sdl-config --cflags` -D${SYSTEM}
 
 ifeq ($(PROFILING),yes)
 CFLAGS += -pg

@@ -53,13 +53,10 @@ public:
     static String getFilename(String path);
     static String getExtension(String path);
     static void   deleteFile(String path);
-    static DWORD  getFileSize(String filename);
-    static DWORD  getNumFilesInDirectory(String path);
+    static size_t getFileSize(String filename);
+    static int    getNumFilesInDirectory(String path);
     static void   checkError(FILE *fp);
     static void   startRandomNumberGenerator();
-
-}
-; // end UtilInterface
-
+}; // end UtilInterface
 
 #endif // __UtilInterface_hpp__

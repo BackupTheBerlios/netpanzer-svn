@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SplitPath.hpp"
 #include "FindFirst.hpp"
 #include "Exception.hpp"
+#include "FileSystem.hpp"
 #include "UtilInterface.hpp"
 
 bool gSpanBlittingFlag = false;
@@ -82,36 +83,28 @@ String UtilInterface::getExtension(String path)
 //---------------------------------------------------------------------------
 // Purpose: Returns file size, in bytes, or 0 if file not found.
 //---------------------------------------------------------------------------
-DWORD UtilInterface::getFileSize(String filename)
+size_t UtilInterface::getFileSize(String filename)
 {
-    struct stat filestats;
-    if (stat(filename, &filestats) < 0)
-        return 0;
+    ReadFile* file = FileSystem::openRead(filename);
+    size_t size = file->length();
+    delete file;
 
-    return (DWORD) filestats.st_size;
+    return size;
 } // end UtilInterface::getFileSize
 
 // getNumFilesInDirectory
 //---------------------------------------------------------------------------
 // Purpose: Returns the number of files in the specified directory.
 //---------------------------------------------------------------------------
-DWORD UtilInterface::getNumFilesInDirectory(String path)
+int UtilInterface::getNumFilesInDirectory(String path)
 {
-    struct _finddata_t myFile;
-    int* hFile;
+    char** list = FileSystem::enumerateFiles(path);
+    int numfiles=0;
+    for(char** file = list; *file != 0; file++)
+	numfiles++;
+    FileSystem::freeList(list);
 
-    DWORD numFiles = 0;
-
-    // Figure out how many files are in the directory.
-    if ((hFile = _findfirst((const char *) path, &myFile)) != ((int*) -1)) {
-        do {
-            numFiles++;
-
-        } while (_findnext(hFile, &myFile) == 0);
-        _findclose(hFile);
-    }
-
-    return numFiles;
+    return numfiles;
 } // end UtilInterface::getNumFilesInDirectory
 
 // deleteFile

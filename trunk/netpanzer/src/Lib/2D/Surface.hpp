@@ -515,9 +515,7 @@ public:
     void setToBrightnessIndexes128();
     void bltAdd(const Surface &dest, iXY min) const;
     int  loadAllTILInDirectory(const char *path);
-    int  loadAllPCXInDirectory(const char *path);
     int  loadAllBMPInDirectory(const char *path);
-    int  loadAllRAWInDirectory(const char *path, const iXY &pix);
 
     // Blit a single character of text.
     void bltChar8x8(const iXY &pos, const char &character, const PIX &color) const;
