@@ -128,6 +128,7 @@ public:
     static PlayerState * allocateLoopBackPlayer( void );
 
     static PlayerState * allocateNewPlayer( void );
+    static int countPlayers( void );
 
     static void spawnPlayer( unsigned short player_index, const iXY &location );
     static void spawnPlayer( const PlayerID &player, const iXY &location );

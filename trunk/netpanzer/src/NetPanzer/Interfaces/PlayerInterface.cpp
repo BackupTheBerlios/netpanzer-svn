@@ -231,6 +231,17 @@ PlayerState * PlayerInterface::allocateLoopBackPlayer( void )
     return( &player_lists[ local_player_index ] );
 }
 
+int PlayerInterface::countPlayers( void )
+{
+    int count=0;
+    for ( int player_index = 0; player_index < max_players; player_index++ ) {
+        if ( player_lists[ player_index ].getStatus() != _player_state_free ) {
+            count++;
+        }
+    }
+    return count;
+}
+
 PlayerState * PlayerInterface::allocateNewPlayer( void )
 {
     unsigned long player_index;

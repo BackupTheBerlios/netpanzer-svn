@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameManager.hpp"
 #include "MouseInterface.hpp"
 #include "GameViewGlobals.hpp"
+#include "IRCLobbyView.hpp"
 
 //winsock hack
 #include "IPAddressView.hpp"
@@ -140,6 +141,8 @@ void bNext()
 
 
         Desktop::setVisibility("IPAddressView", true);
+        Desktop::setVisibility("IRCLobbyView", true);
+        IRCLobbyView::startIRC();
         //Desktop::setVisibility("JoinView", true);
         //Desktop::setVisibility("GetSessionHostView", true);
         //Desktop::setVisibility("UnitSelectionView", true);

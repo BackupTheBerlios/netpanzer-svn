@@ -36,6 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Physics.hpp"
 #include "Log.hpp"
 #include "Server.hpp"
+#include "IRCLobbyView.hpp"
 
 //-----------------------------------------------------------------
 void DedicatedGameManager::initializeGameConfig()
@@ -148,7 +149,10 @@ bool DedicatedGameManager::launchNetPanzerGame()
 
     GameManager::setNetPanzerGameOptions();
 
+    gameconfig->hostorjoin=_game_session_host;
+
     Particle2D::setCreateParticles(false);
+    IRCLobbyView::startIRC();
 
     ConsoleInterface::postMessage( "Game Launched, Server Ready...");
 

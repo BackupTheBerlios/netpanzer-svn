@@ -102,6 +102,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 //winsock hack
 #include "IPAddressView.hpp"
+#include "IRCLobbyView.hpp"
 
 //** Physics/Particle Stuff
 #include "Particle2D.hpp"
@@ -207,6 +208,7 @@ void PlayerGameManager::initializeWindowSubSystem()
 
     //winsock hack
     Desktop::add(new IPAddressView());
+    Desktop::add(new IRCLobbyView());
 
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("MainView", true);

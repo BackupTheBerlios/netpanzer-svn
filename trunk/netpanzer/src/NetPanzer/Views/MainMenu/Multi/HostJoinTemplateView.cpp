@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "FlagSelectionView.hpp"
 #include "Palette.hpp"
 #include "GameViewGlobals.hpp"
+#include "IRCLobbyView.hpp"
 
 #include "Client.hpp"
 #include "Server.hpp"
@@ -118,6 +119,7 @@ void bReady()
     MenuTemplateView::backgroundSurface.free();
     //MenuTemplateView::titleSurface.free();
 
+    IRCLobbyView::stopIRC();
     //TODO: I don't like static methods
     PlayerGameManager::launchMultiPlayerGame();
 }
