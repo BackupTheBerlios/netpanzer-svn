@@ -1,7 +1,6 @@
 Next release:
 -finish serverlog with filestamp
 -playtesting+bugfixing
--fix lobby disappearing when going from multiplayer to options and back
 -when selecting units and moving the mouse above forbidden terrain and back a
  click with the left mouse deselects the units instead of moving them.
 

@@ -48,18 +48,7 @@ static void bBack()
 
 void bNext()
 {
-    //Bug#15
-    //bool DPlayReturnValue;
-    //bool ConnectTypeReturnValue;
-    //HRESULT hr;
-
-    //int return_value;
-
-    //winsock hack
-    //Desktop::setVisibilityAllWindows(false);
-
     if (gameconfig->hostorjoin == _game_session_host) {
-        //winsock hack
         Desktop::setVisibilityAllWindows(false);
 
         Desktop::setVisibility("HostView", true);
@@ -72,20 +61,12 @@ void bNext()
         SERVER->openSession();
     } else if (gameconfig->hostorjoin == _game_session_join) {
         Desktop::setVisibility("JoinView", true);
-        //Desktop::setVisibility("GetSessionHostView", true);
-        //Desktop::setVisibility("UnitSelectionView", true);
         Desktop::setVisibility("FlagSelectionView", true);
         Desktop::setVisibility("PlayerNameView", true);
 
         Desktop::setVisibility("IPAddressView", true);
         Desktop::setVisibility("ServerListView", true);
         serverlistview->refresh();
-
-        //Desktop::setVisibility("JoinView", true);
-        //Desktop::setVisibility("GetSessionHostView", true);
-        //Desktop::setVisibility("UnitSelectionView", true);
-        //Desktop::setVisibility("FlagSelectionView", true);
-        //Desktop::setVisibility("PlayerNameView", true);
     }
 }
 

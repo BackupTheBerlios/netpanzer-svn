@@ -63,14 +63,12 @@ static void bMulti()
         Desktop::setVisibility("PlayerNameView", true);
     } else if (strcmp(MenuTemplateView::currentMultiView, "JoinView") == 0) {
         Desktop::setVisibilityAllWindows(false);
-        // XXX
         Desktop::setVisibility("JoinView", true);
-        //Desktop::setVisibility("GetSessionHostView", true);
-        //Desktop::setVisibility("UnitSelectionView", true);
         Desktop::setVisibility("FlagSelectionView", true);
         Desktop::setVisibility("PlayerNameView", true);
         Desktop::setVisibility("IPAddressView", true);
         Desktop::setVisibility("IRCLobbyView", true);
+        Desktop::setVisibility("ServerListView", true);
     } else {
         assert(false);
     }
