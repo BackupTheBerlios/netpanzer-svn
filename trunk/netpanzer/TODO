@@ -2,7 +2,6 @@ Next release:
 -after having a full nodelist in A* the server is getting slow
 -make 1024x768 default resolution - ok
 -update server text (no knetpanzerbrowser anymore) - ok
--fix infothread always reporting 0 as score
 -server status command returns wrong player names (seems to happen after sudden
         client disconnects)
 -netpanzer fails on win98se
