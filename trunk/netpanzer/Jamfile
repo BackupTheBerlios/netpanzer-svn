@@ -22,3 +22,4 @@ rule InstallIcon
 }
 
 InstallIcon netpanzer.png netpanzer.xpm ;
+InstallDoc ChangeLog README TODO RELNOTES ;

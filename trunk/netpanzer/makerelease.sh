@@ -22,7 +22,7 @@ echo "*** Scanning for files"
 AUTOFILES="autogen.sh configure.ac configure config.h.in `find mk/autoconf/ -name "*.m4" -o -name "config.*"` mk/autoconf/install-sh"
 JAMFILES="Jamrules Jamconfig.in `find mk/jam -name "*.jam"`"
 ICONS="*.png *.xpm"
-TEXTS="COPYING README TODO ChangeLog"
+TEXTS="COPYING README TODO RELNOTES ChangeLog"
 SOURCES="`find src -name "*.cpp" -o -name "*.hpp" -o -name "Jamfile"`"
 DOCS="docs/*.[1-9] docs/Jamfile"
 
@@ -46,6 +46,7 @@ rule InstallIcon
 }
 
 InstallIcon netpanzer.png netpanzer.xpm ;
+InstallDoc ChangeLog README TODO RELNOTES ;
 __END__
 
 cp -p --parents $AUTOFILES $SOURCERELEASE
