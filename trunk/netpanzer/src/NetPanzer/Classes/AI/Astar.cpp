@@ -16,49 +16,31 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "Astar.hpp"
 
+#include <functional>
+#include "Astar.hpp"
 #include "Timer.hpp"
 #include "PathingState.hpp"
 
-int compare(void *object1, void *object2 )
- {
-  AstarNode *node1, *node2;
-  node1 = (AstarNode *) object1; 					   
-  node2 = (AstarNode *) object2;
- 
-  if (node1->f > node2->f)
-   return( 1 );
-  else
-   if ( node1->f < node2->f )
-    return( -1 );
-    
-  return( 0 ); 
- } 
-
-
-Astar::Astar( void )
- {
-  node_list = 0;
- }
+Astar::Astar()
+{
+   	node_list = 0;
+}
 
 void Astar::initializeAstar( unsigned long node_list_size,
                              unsigned long step_limit,
 			       		     long heuristic_weight )
- { 
+{ 
   open_set.initialize( getMapXsize(),  getMapYsize() );
   closed_set.initialize( getMapXsize(), getMapYsize() );
   
-  open.initialize( node_list_size + (100) , node_list_size / 10, 0xFFFFFFFF );
-  open.setCompare( compare );
-
   initializeNodeList( node_list_size );
 
   Astar::step_limit = step_limit;
   Astar::heuristic_weight = heuristic_weight;
  
   ini_flag = true; 
- }
+}
 
 void Astar::initializeAstar( unsigned long node_list_size )
  {
@@ -187,7 +169,7 @@ void Astar::initializePath( iXY &start, iXY &goal, unsigned short path_type )
   best_node->f = best_node->g + best_node->h;
   best_node->parent = 0;
   
-  open.push( best_node );
+  open.push(best_node);
   
   open_set.setBit( best_node->map_loc.x, best_node->map_loc.y );  
  
@@ -301,7 +283,8 @@ bool Astar::process_succ( PathList *path, int *result_code )
   
   while( !done && !steps_comp )
    {   
-	best_node = (AstarNode *) open.pop( );
+	best_node = open.top();
+	open.pop();
     
     if ( best_node == 0 )
     {
@@ -356,8 +339,7 @@ bool Astar::process_succ( PathList *path, int *result_code )
 				 if ( start_sampling_flag == true)
                   astar_set_array.setBit( node->map_loc.x, node->map_loc.y );
 				  
-                 open.push( node );
-              
+                 open.push(node);
                  }
              
              } // ** else
@@ -459,7 +441,12 @@ void Astar::cleanUp( void )
 
   open_set.clear();
   closed_set.clear(); 
-  open.reset();
+  
+  // STL doesn't define a clear for some reason, so we try a workaround with
+  // asignment
+  //open.clear();
+  open = std::priority_queue<AstarNode*, std::vector<AstarNode*>, 
+                             AstarNodePtrCompare>();
 
   resetNodeList();
   ini_flag = true;
