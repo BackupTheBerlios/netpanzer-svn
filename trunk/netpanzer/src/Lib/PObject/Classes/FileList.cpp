@@ -15,101 +15,89 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #include <config.h>
+
+#include "SplitPath.hpp"
 #include "FileList.hpp"
 #include <string.h>
 #include <stdlib.h>
 
 FileList::FileList() : ArrayTemplate< char * >()
 {
- contains = 0;
+	contains = 0;
 }
 
 FileList::FileList( unsigned long size ) : ArrayTemplate< char * >( )
 {
-  initialize( size );
+	initialize( size );
 }
 
 void FileList::initialize( unsigned long size )
 {
-  contains = 0;
+	contains = 0;
   
-  ArrayTemplate< char * >::initialize( size );
-  for ( unsigned long i = 0; i < size; i++ )
-  {
-    array[i] = new char[_FILESTRING_SIZE];
-  }
+	ArrayTemplate< char * >::initialize( size );
+	for ( unsigned long i = 0; i < size; i++ )
+	{
+		array[i] = new char[_FILESTRING_SIZE];
+	}
 }
  
 FileList::~FileList()
 {
-  for ( unsigned long i = 0; i < size; i++ )
-   {
-    delete[] (array[i]);
-   }    
+	for ( unsigned long i = 0; i < size; i++ )
+	{
+		delete[] (array[i]);
+	}    
 }
   
 void FileList::addString( char *string )
 {
-  strcpy( array[contains], string );   
-  contains++;
+	strcpy( array[contains], string );   
+	contains++;
 }
   
 char * FileList::getString( unsigned long index )
 {
-  return( array[ index ] );
+	return( array[ index ] );
 }
   
 void FileList::resetList( void )
 {
-  contains = 0;
+	contains = 0;
 }
 
 unsigned long FileList::containsItems( void )
 {
-  return( contains );
+	return contains;
 }
 
 void FileList::getFullPath( unsigned long index, char *full_path )
 {
-  strcpy( full_path, array[ index ] );
+	strcpy( full_path, array[ index ] );
 }
 
 void FileList::getDir( unsigned long index, char *directory )
 {
-    // XXX
-#ifdef WIN32
-  _splitpath( array[ index ], 0, directory, 0, 0 );  
-#endif
+	char* fullname = array[index];
+
+	_splitpath( array[ index ], 0, directory, 0, 0 );  	
 }
 
 void FileList::getFullFilename( unsigned long index, char *full_fname )
 {
-  char ext[256];
- 
-  // XXX 
-#ifdef WIN32
-  _splitpath( array[ index ], 0, 0, full_fname, 0 );   
-  _splitpath( array[ index ], 0, 0, 0, ext );   
-#endif
-  
-  strcat( full_fname, ext );
+	char ext[256];
+	_splitpath( array[ index ], 0, 0, full_fname, 0 );   
+	_splitpath( array[ index ], 0, 0, 0, ext );   
+	strcat( full_fname, ext );
 }
    
 void FileList::getFilename( unsigned long index, char *fname ) 
 {
-    // XXX
-#ifdef WIN32
-  _splitpath( array[ index ], 0, 0, fname, 0 );     
-#endif
+	_splitpath( array[ index ], 0, 0, fname, 0 );     
 }
   
 void FileList::getExtension( unsigned long index, char *extension )
 {
-    // XXX
-#ifdef WIN32
-  _splitpath( array[ index ], 0, 0, 0, extension );      
-#endif
+  	_splitpath( array[ index ], 0, 0, 0, extension );      
 }

@@ -204,7 +204,7 @@ void GameManager::initializeVideoSubSystem()
 #endif
 
 	setVideoMode(current_video_mode_res);
-	loadPalette( "wads/netp.act" ); 
+	loadPalette("wads/netp.act");
 }
 
 void GameManager::shutdownVideoSubSystem()
@@ -248,7 +248,7 @@ void GameManager::initializeWindowSubSystem()
 	LOG(("Initializing Game Viewing System"));
 
 	// Use this when needing to create colorfilters.
-	loadPalette( "wads/netp.act" ); 
+	loadPalette("wads/netp.act"); 
 
 	initFont();  
 	loadPics();
@@ -402,14 +402,14 @@ void GameManager::decreaseDisplayResolution()
   Desktop::checkViewPositions();
   ConsoleInterface::setToSurfaceSize( current_video_mode_res );    
   
-  loadPalette( "wads/netp.act" ); 
+  loadPalette("wads/netp.act"); 
 
   ConsoleInterface::postMessage( "Screen Resolution :  %d  x  %d", current_video_mode_res.x, current_video_mode_res.y );
 }
 
 // ******************************************************************
 
-void GameManager::loadPalette( char *palette_path )
+void GameManager::loadPalette(char *palette_path)
  {
 	Palette::init(palette_path);
 	

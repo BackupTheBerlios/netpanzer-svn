@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifdef WIN32
 #include <io.h>
 #endif
+#include "SplitPath.hpp"
 #include "FindFirst.hpp"
 #include "MapSelectionView.hpp"
 #include "gapp.hpp"
@@ -200,11 +201,7 @@ int MapSelectionView::loadMaps()
 			FUBAR("Map description is too long.");
 		}
 */
-		// XXX need an alternative to _splitpath
-		printf("Need Splitpath alternative!!!\n");
-#if 0
 		_splitpath(fileList[i].name, 0, 0, mapList[i].name, 0);
-#endif
 		sprintf(mapList[i].description, "%s", netPanzerMapHeader.description);
 
 		mapList[i].cells.x = netPanzerMapHeader.x_size;

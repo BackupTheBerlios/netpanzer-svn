@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include <io.h>
 #endif
+#include "SplitPath.hpp"
 #include "Log.hpp"
 #include "Exception.hpp"
 #include "ColorTable.hpp"
@@ -282,19 +283,12 @@ void ColorTable::getDiskName(char *destname, const char *filename) const
 	char tablePath[256];
 	char tableFilename[256];
 
-	//void _splitpath( const char *path, char *drive, char *dir, char *fname, char *ext );
-	// XXX
-#ifdef WIN32
 	_splitpath(Palette::getName(), 0, 0, paletteFilename, 0);
-	_splitpath(filename, 0, tablePath, 0, 0);
-	_splitpath(filename, 0, 0, tableFilename, 0);
+	_splitpath(filename, 0, tablePath, tableFilename, 0);
 
 	// This is dangerous, so make sure the filename can handle the length of the possible
 	// sprintf.
 	sprintf(destname, "%s%s%s%s", tablePath, tableFilename, paletteFilename, extension);
-#else
-	strcpy(destname, filename);
-#endif
 
 	return;
 

@@ -15,6 +15,7 @@
 -added a basic SDL Event loop
 -fixed more small issues
 => the main menu is displayed now and the Exit and Options buttons work :)
+-added a unix verison of _splitpath
 
 ------------
 prior changes (not complete)

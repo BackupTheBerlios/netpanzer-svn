@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sys/stat.h>
 #endif
 #include <string.h>
+#include "SplitPath.hpp"
 #include "FindFirst.hpp"
 #include "UtilInterface.hpp"
 
@@ -49,11 +50,7 @@ String UtilInterface::getDirectory(String path)
 {
 	char strBuf[256];
 
-	// XXX
-#ifdef WIN32
-	//void _splitpath( const char *path, char *drive, char *dir, char *fname, char *ext );
 	_splitpath(path, 0, strBuf, 0, 0);
-#endif
 
 	return strBuf;
 
@@ -65,11 +62,7 @@ String UtilInterface::getFilename(String path)
 {
 	char strBuf[256];
 
-	// XXX
-#ifdef WIN32
-	//void _splitpath( const char *path, char *drive, char *dir, char *fname, char *ext );
 	_splitpath(path, 0, 0, strBuf, 0);
-#endif
 
 	return strBuf;
 
@@ -81,11 +74,7 @@ String UtilInterface::getExtension(String path)
 {
 	char strBuf[256];
 
-	// XXX
-#ifdef WIN32
-	//void _splitpath( const char *path, char *drive, char *dir, char *fname, char *ext );
 	_splitpath(path, 0, 0, 0, strBuf);
-#endif
 
 	return strBuf;
 
@@ -192,7 +181,5 @@ void UtilInterface::startRandomNumberGenerator()
 	srand(0);
 	return;
 #endif 
-
 	srand((unsigned)time(0));
-
 } // end UtilInterface::startRandomNumberGenerator
