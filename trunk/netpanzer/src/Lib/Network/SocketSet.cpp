@@ -57,7 +57,7 @@ SocketSet::select(unsigned int usec)
 
     testset = set;
     int res = ::select(FD_SETSIZE, &testset, 0, 0, usec ? &timeout : 0);
-#ifdef WINSOCK
+#ifdef USE_WINSOCK
     if(res < 0) {
         std::stringstream msg;
         msg << "Select failed: " << WSAGetLastError();

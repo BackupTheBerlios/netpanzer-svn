@@ -59,7 +59,7 @@ TCPSocket::send(const void* data, size_t size)
 {
     int res = ::send(sockfd, (const char*) data, size, 0);
     if(res < 0) {
-#ifdef WINSOCK
+#ifdef USE_WINSOCK
         std::stringstream msg;
         msg << "Send Error (code " << WSAGetLastError() << ")";
         throw std::runtime_error(msg.str());
@@ -82,7 +82,7 @@ TCPSocket::recv(void* buffer, size_t size)
     int res = ::recv(sockfd, (char*) buffer, size, 0);
 
     if(res < 0) {
-#ifdef WINSOCK
+#ifdef USE_WINSOCK
         if(WSAGetLastError() == WSAEWOULDBLOCK)
             return 0;
         std::stringstream msg;

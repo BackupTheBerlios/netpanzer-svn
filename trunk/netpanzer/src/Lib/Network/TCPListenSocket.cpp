@@ -38,7 +38,7 @@ TCPListenSocket::TCPListenSocket(const Address& newaddr, bool blocking)
         close();
         throw;
     }
-#ifdef WINSOCK
+#ifdef USE_WINSOCK
     this->blocking = blocking;
 #endif
 }
@@ -76,7 +76,7 @@ TCPListenSocket::accept()
         = ::accept(sockfd, (struct sockaddr*) &addr.addr, &socklen);
 
     if(clientsockfd < 0) {
-#ifdef WINSOCK
+#ifdef USE_WINSOCK
         if(WSAGetLastError() == WSAEWOULDBLOCK)
             return 0;
         std::stringstream msg;
@@ -99,10 +99,8 @@ TCPListenSocket::accept()
         throw;
     }
 
-#ifdef WINSOCK
+#ifdef USE_WINSOCK
     try {
-        // TODO on win32 you have to explicitely set the client sockets to
-        // nonblocking too
         if(!blocking)
             result->setNonBlocking();
     } catch(...) {

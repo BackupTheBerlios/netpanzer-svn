@@ -76,7 +76,7 @@ AC_MSG_CHECKING([for target host])
 case $host_os in
     mingw*|cygwin*)
         AC_MSG_RESULT([WIN32])
-        AC_DEFINE([WINSOCK], [], [Define if winsock should be used])
+        AC_DEFINE([USE_WINSOCK], [], [Define if winsock should be used])
         LIBS="$LIBS -lwsock32"
         ;;
     *)

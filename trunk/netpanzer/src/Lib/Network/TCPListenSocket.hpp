@@ -44,7 +44,7 @@ private:
     size_t recv(void* , size_t )
     { assert(false); }
 
-#ifdef WINSOCK
+#ifdef USE_WINSOCK
     bool blocking;
 #endif
 };

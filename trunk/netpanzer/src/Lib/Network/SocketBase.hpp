@@ -35,8 +35,12 @@ protected:
     void create(bool tcp);
     void setNonBlocking();
     void close();
-    
+
+#ifdef USE_WINSOCK
+    SOCKET sockfd;
+#else    
     int sockfd;
+#endif
 };
 
 }

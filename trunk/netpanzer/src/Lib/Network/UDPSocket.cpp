@@ -71,7 +71,7 @@ UDPSocket::send(const Address& addr, const void* data, size_t datasize)
     int res = sendto(sockfd, (const char*) data, datasize, 0,
             (struct sockaddr*) &addr.addr, sizeof(addr.addr));
     if(res < 0) {
-#ifdef WINSOCK
+#ifdef USE_WINSOCK
         std::stringstream msg;
         msg << "Send error (code " << WSAGetLastError() << ")";
         throw std::runtime_error(msg.str());
@@ -95,7 +95,7 @@ UDPSocket::recv(Address& addr, void* buffer, size_t bufsize)
     int res = recvfrom(sockfd, (char*) buffer, bufsize, 0,
             (struct sockaddr*) &addr.addr, &socklen);
     if(res < 0) {
-#ifdef WINSOCK
+#ifdef USE_WINSOCK
         if(WSAGetLastError() == WSAEWOULDBLOCK)
             return 0;
         std::stringstream msg;

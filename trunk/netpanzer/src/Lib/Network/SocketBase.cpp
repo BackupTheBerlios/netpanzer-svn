@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 namespace network
 {
 
-#ifdef WINSOCK
+#ifdef USE_WINSOCK
 class WinSockInit {
 public:
     WinSockInit() {
@@ -47,7 +47,6 @@ WinSockInit _WinSockInit;
 #endif
 
 SocketBase::SocketBase()
-    : sockfd(-1)
 {
 }
 
@@ -64,17 +63,25 @@ SocketBase::create(bool tcp)
     else
         sockfd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
+#ifdef USE_WINSOCK
+    if(sockfd == INVALID_SOCKET) {
+	std::stringstream msg;
+	msg << "Couldn't create socket: " << WSAGetLastError();
+	throw std::runtime_error(msg.str());
+    }
+#else
     if(sockfd < 0) {
         std::stringstream msg;
         msg << "Couldn't create socket: " << strerror(errno);
         throw std::runtime_error(msg.str());
     }
+#endif
 }
 
 void
 SocketBase::setNonBlocking()
 {
-#ifdef WIN32
+#ifdef USE_WINSOCK
     unsigned long mode = 1;
     if(ioctlsocket(sockfd, FIONBIO, &mode) != 0) {
 	std::stringstream msg;
@@ -93,13 +100,11 @@ SocketBase::setNonBlocking()
 void
 SocketBase::close()
 {
-    if(sockfd >= 0) {
-#ifdef WINSOCK
-        closesocket(sockfd);
+#ifdef USE_WINSOCK
+    closesocket(sockfd);
 #else
-        ::close(sockfd);
+    ::close(sockfd);
 #endif
-    }
 }
 
 }

@@ -82,7 +82,7 @@ Address::resolve(const std::string& name, uint16_t port)
 
     struct hostent* hentry = gethostbyname(name.c_str());
     if(!hentry) {
-#ifdef WINSOCK
+#ifdef USE_WINSOCK
         std::stringstream msg;
         msg << "Couldn't resolve address '" << name << "' (code "
             << WSAGetLastError() << ")";
