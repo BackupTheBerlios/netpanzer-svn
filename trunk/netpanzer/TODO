@@ -10,6 +10,8 @@ Next release:
 -the refresh button should be disabled in the serverlist window while the
  refreshing is in progress
 -when starting to build a titan 2minutes is displayed for a short time
+-display a message when the round is over ("blabla captured xx% of outposts,
+        "time is over", "blabla reached xxx frags")
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map
