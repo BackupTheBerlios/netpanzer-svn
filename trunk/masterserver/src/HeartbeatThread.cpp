@@ -62,9 +62,9 @@ HeartbeatThread::HeartbeatThread(MasterServer* newmasterserver)
 HeartbeatThread::~HeartbeatThread()
 {
     // signal thread to stop
-    running = false;
-    pthread_cancel(thread);
-    pthread_join(thread, 0);
+    if(running) {
+        pthread_cancel(thread);
+    }
 }
 
 void

@@ -47,8 +47,8 @@ private:
     std::iostream* stream;
     struct sockaddr_in addr;
     pthread_t thread;
-    volatile bool running;
     time_t starttime;
+    volatile bool running;
 };
 
 }
