@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "BoundBox.hpp"
 
-bool BoundBox::bounds( iXY &center, iXY &test )
+bool BoundBox::bounds(const iXY& center, const iXY& test ) const
 {
     iXY new_max( center + max );
     iXY new_min( center + min );

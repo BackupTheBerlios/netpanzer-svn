@@ -25,8 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class BoundBox : public iRect
 {
 public:
-
-    BoundBox( void )
+    BoundBox()
     {}
 
     BoundBox(int x1, int y1, int x2, int y2)
@@ -41,17 +40,17 @@ public:
         assert( min.x <= 0 && min.y <= 0 && max.x >= 0 && max.y >= 0 );
     }
 
-    BoundBox(iXY &nMin, iXY &nMax)
+    BoundBox(const iXY& nMin, const iXY& nMax)
             : iRect( nMin, nMax )
     {
         assert( min.x <= 0 && min.y <= 0 && max.x >= 0 && max.y >= 0 );
     }
 
-    bool bounds( iXY &center, iXY &test );
+    bool bounds(const iXY &center, const iXY &test ) const;
 
     void setBounds(const iXY &nMin, const iXY &nMax );
 
-    inline iRect getAbsRect( iXY &center )
+    inline iRect getAbsRect(const iXY& center) const
     {
         return( iRect( center + min, center + max ) );
     }

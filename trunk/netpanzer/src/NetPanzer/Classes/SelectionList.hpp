@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SELECTIONLIST_HPP
 #define _SELECTIONLIST_HPP
 
-#include "UnitList.hpp"
 #include "UnitState.hpp"
 #include "UnitInterface.hpp"
 #include "UnitIDList.hpp"
@@ -29,13 +28,11 @@ protected:
     unsigned long unit_cycle_index;
 
 public:
-    UnitIDList unit_list;
+    std::vector<UnitID> unit_list;
 
     SelectionList( )
+        : unit_cycle_index(0)
     { }
-
-    void initialize( unsigned long size, unsigned long growIncrement,
-                     unsigned long growLimit );
 
     bool selectUnit( iXY point );
 
@@ -45,37 +42,34 @@ public:
 
     bool selectBounded( iRect bounds );
 
-    inline bool isSelected( void )
+    bool isSelected()
     {
-        if ( unit_list.containsItems() > 0 )
-            return( true );
-
-        return( false );
+        return unit_list.size() > 0;
     }
 
-    void select( void );
+    void select();
 
-    void deselect( void );
+    void deselect();
 
-    inline void unGroup( void )
+    void unGroup()
     {
         deselect( );
-        unit_list.removeAll();
+        unit_list.clear();
     }
 
-    unsigned short getHeadUnitType( void );
+    unsigned short getHeadUnitType();
 
-    inline void resetUnitCycling( void )
+    inline void resetUnitCycling()
     {
         unit_cycle_index = 0;
     }
 
-    void cycleNextUnit( void );
+    void cycleNextUnit();
 
     void copyList( SelectionList &source_list );
     void addList( SelectionList &source_list );
 
-    void validateList( void );
+    void validateList();
 
 };
 

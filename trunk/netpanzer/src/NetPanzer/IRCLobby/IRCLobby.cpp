@@ -619,14 +619,10 @@ void IRCLobby::readIRCLine(char *buf, size_t buf_len)
     *buf_upto=0;
 }
 
-
-
 void IRCLobby::sendServerRunningMess(const std::string& dest,const std::string& str)
 {
         std::stringstream buffer;
         buffer << "-" << server_running_mess << " " << str;
         return sendIRCMessageLine(buffer.str(), dest);
 }
-
-
 

@@ -27,12 +27,16 @@ enum { _net_message_id_powerup_create,
        _net_message_id_powerup_hit
      };
 
+#ifdef MSVC
+#pragma pack(1)
+#endif
+
 class PowerUpCreateMesg : public NetMessage
 {
 public:
-    iXY map_loc;
-    int      ID;
-    int      type;
+    iXY     map_loc;
+    int32_t ID;
+    int32_t type;
 
     void set( iXY map_loc, int ID, int type )
     {
@@ -47,15 +51,16 @@ public:
         message_id = _net_message_id_powerup_create;
     }
 
-};
+}
+__attribute__((packed));
 
 class PowerUpHitMesg : public NetMessage
 {
 public:
-    int      ID;
+    int32_t  ID;
     UnitID   unit_id;
     PlayerID player_id;
-    int unit_powerup_type;
+    int32_t  unit_powerup_type;
 
     void set( int ID, UnitID unit_id, PlayerID player_id )
     {
@@ -70,7 +75,11 @@ public:
         message_id = _net_message_id_powerup_hit;
     }
 
-};
+}
+__attribute__((packed));
 
+#ifdef MSVC
+#pragma pack()
+#endif
 
 #endif // ** _POWERUP_NET_MESSAGE_HPP

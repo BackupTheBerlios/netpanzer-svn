@@ -62,20 +62,14 @@ public:
 
     UnitState( );
 
-    inline bool bounds( iXY &loc )
+    bool bounds(const iXY& loc) const
     {
         return( bbox.bounds( location, loc ) );
     }
 
-    inline void operator=( UnitState &unit_state )
-    {
-        memmove( this, &unit_state, sizeof( UnitState ) );
-    }
-
-    int percentDamageInt( void );
-    float percentDamageFloat( void );
-
+    int percentDamageInt();
+    float percentDamageFloat();
 };
 
-
 #endif
+

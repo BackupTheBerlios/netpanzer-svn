@@ -47,7 +47,7 @@ protected:
 
     static unsigned short unique_generator;
     static bool isUniqueIndex( unsigned short new_index );
-    static unsigned short uniqueIndex( void );
+    static unsigned short uniqueIndex();
 
 
     static UnitBase * newUnit( unsigned short unit_type,
@@ -59,41 +59,41 @@ protected:
     static void deleteUnit( UnitID unit_id );
     static void deleteUnit( UnitBase *unit );
 
-    static void sortBucketArray( void );
+    static void sortBucketArray();
 
 public:
 
     static void initialize( unsigned long max_units );
-    static void cleanUp( void );
-    static void reset( void );
+    static void cleanUp();
+    static void reset();
 
-    static inline UnitList * getUnitList( unsigned long player )
+    static UnitList * getUnitList( unsigned long player )
     {
         assert( (player < max_players) );
         return ( &unit_lists[ player ] );
     }
 
-    static inline UnitList * getUnitList( const UnitID &unit_id )
+    static UnitList * getUnitList( const UnitID &unit_id )
     {
         assert( (unit_id.getPlayer() < max_players) );
         return ( &unit_lists[ unit_id.getPlayer() ] );
     }
 
-    static inline unsigned long getUnitCount( unsigned short player_index )
+    static unsigned long getUnitCount( unsigned short player_index )
     {
         assert( (player_index < max_players) );
         return( unit_lists[ player_index ].containsItems() );
     }
 
-    static unsigned long getTotalUnitCount( void );
+    static unsigned long getTotalUnitCount();
 
-    static inline UnitPointer * getUnitPointer( const UnitID &unit_id )
+    static UnitPointer * getUnitPointer( const UnitID &unit_id )
     {
         assert( (unit_id.getPlayer() < max_players) );
         return( unit_lists[ unit_id.getPlayer() ][ unit_id.getIndex() ] );
     }
 
-    static inline UnitBase * getUnit( const UnitID &unit_id )
+    static UnitBase * getUnit( const UnitID &unit_id )
     {
         UnitPointer *unit_pointer;
         assert ( (unit_id.getPlayer() < max_players) );
@@ -107,7 +107,7 @@ public:
         return( 0 );
     }
 
-    static inline UnitBase * getUnit( unsigned char  player_index,
+    static UnitBase * getUnit( unsigned char  player_index,
                                       unsigned short unit_index    )
     {
         UnitPointer *unit_pointer;
@@ -122,7 +122,7 @@ public:
         return( 0 );
     }
 
-    static inline bool isValid( const UnitID &unit_id )
+    static bool isValid( const UnitID &unit_id )
     {
         assert( unit_id.getPlayer() < max_players );
         return( unit_lists[ unit_id.getPlayer() ].isValid( unit_id ) );
@@ -130,7 +130,7 @@ public:
 
     static void sendMessage( UnitMessage *message );
 
-    static void updateUnitStatus( void );
+    static void updateUnitStatus();
 
     static void offloadGraphics( SpriteSorter &sorter );
 
@@ -142,11 +142,13 @@ public:
                                   const PlayerID &player,
                                   const PlayerUnitConfig &unit_config );
 
-    static bool quearyUnitsKeySearch( UnitIDList *working_list,
-                                      int (* key_func )( void *key, UnitState *comp ),
-                                      void *key, PlayerID player_id,
-                                      unsigned char search_flags,
-                                      bool find_first );
+    static bool queryUnitsAt(std::vector<UnitID>& working_list,
+                             const iXY& point, PlayerID player_id,
+                             unsigned char search_flags, bool find_first);
+
+    static bool queryUnitsAt(std::vector<UnitID>& working_list,
+                            const iRect& rect, PlayerID player_id,
+                            unsigned char search_flags, bool find_first);
 
     static bool quearyClosestUnit( UnitBase **closest_unit_ptr,
                                    iXY &loc,
@@ -175,7 +177,7 @@ protected:
     static unsigned long  unit_cycle_iterator;
 public:
     // Unit positions, almost exclusivly for mini map
-    static void startUnitPositionEnumeration( void );
+    static void startUnitPositionEnumeration();
     static bool unitPositionEnumeration( unsigned char *unit_disposition, UnitState **state );
 
     static void resetUnitCycleIterator( unsigned long *iterator );
@@ -194,12 +196,12 @@ protected:
     static UnitOpcodeEncoder no_guarantee_opcode_encoder;
 
     // Network Message Handler Methods
-    static inline void sendOpcode( UnitOpcode *opcode )
+    static void sendOpcode( UnitOpcode *opcode )
     {
         opcode_encoder.encodeOpcode( opcode );
     }
 
-    static inline void sendOpcodeNG( UnitOpcode *opcode )
+    static void sendOpcodeNG( UnitOpcode *opcode )
     {
         no_guarantee_opcode_encoder.encodeOpcode( opcode );
     }
@@ -227,7 +229,6 @@ public:
 public:
     static void processNetMessage( NetMessage *net_message );
     static void destroyPlayerUnits( PlayerID &player_id );
-
-
 };
+
 #endif // ** _UNITINTERFACE_HPP

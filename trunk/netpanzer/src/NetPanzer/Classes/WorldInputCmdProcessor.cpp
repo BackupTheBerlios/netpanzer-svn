@@ -86,16 +86,9 @@ WorldInputCmdProcessor::WorldInputCmdProcessor()
     right_mouse_scroll = false;
 }
 
-void WorldInputCmdProcessor::initializeSelectionLists( void )
+void WorldInputCmdProcessor::initializeSelectionLists()
 {
-    unsigned long list_index;
-
-    for( list_index = 0; list_index < 10; list_index++ ) {
-        selection_group_lists[ list_index ].initialize( 20, 10, 40 );
-    } // ** for
-
-    target_list.initialize( 20, 10, 40 );
-    working_list.initialize( 20, 10, 40 );
+    /* empty */
 }
 
 void WorldInputCmdProcessor::switchSelectionList( unsigned long new_list_index )
@@ -761,7 +754,7 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
 
                     current_selection_list_bits=0;
                     current_selection_list_index = 0xFFFF;
-                    if ( working_list.unit_list.containsItems() > 0 ) {
+                    if (working_list.unit_list.size() > 0) {
                         UnitBase *unit = UnitInterface::getUnit(working_list.unit_list[0]);
                         unit->soundSelected();
                     }
@@ -847,14 +840,14 @@ void WorldInputCmdProcessor::sendMoveCommand( iXY &world_pos )
     PlacementMatrix matrix;
 
     unsigned long id_list_index;
-    unsigned long id_list_size;
+    size_t id_list_size;
     UnitBase *unit_ptr;
 
     TerminalUnitCmdRequest comm_mesg;
     MultiMessage *encode_message;
 
 
-    id_list_size = working_list.unit_list.containsItems();
+    id_list_size = working_list.unit_list.size();
 
     if ( id_list_size == 0 )
         return;
@@ -865,7 +858,7 @@ void WorldInputCmdProcessor::sendMoveCommand( iXY &world_pos )
     PUBLIC_MESSAGE_ENCODER.resetEncoder();
 
     for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
-        unit_ptr = UnitInterface::getUnit( working_list.unit_list[ id_list_index ] );
+        unit_ptr = UnitInterface::getUnit(working_list.unit_list[ id_list_index ]);
         if ( unit_ptr != 0 ) {
             if ( unit_ptr->unit_state.select == true ) {
                 matrix.getNextEmptyLoc( &map_pos );
@@ -899,8 +892,8 @@ void WorldInputCmdProcessor::sendAttackCommand( iXY &world_pos )
 
     UnitBase *target_ptr;
 
-    unsigned long id_list_index;
-    unsigned long id_list_size;
+    size_t id_list_index;
+    size_t id_list_size;
     UnitBase *unit_ptr;
 
     if ( working_list.isSelected() == true ) {
@@ -908,7 +901,7 @@ void WorldInputCmdProcessor::sendAttackCommand( iXY &world_pos )
 
         target_ptr = UnitInterface::getUnit( target_list.unit_list[0] );
 
-        id_list_size = working_list.unit_list.containsItems();
+        id_list_size = working_list.unit_list.size();
 
         if ( id_list_size == 0 )
             return;
@@ -946,12 +939,12 @@ void WorldInputCmdProcessor::sendManualMoveCommand( unsigned char orientation,
         bool start_stop )
 {
     TerminalUnitCmdRequest comm_mesg;
-    unsigned long id_list_index;
-    unsigned long id_list_size;
+    size_t id_list_index;
+    size_t id_list_size;
     UnitBase *unit_ptr;
 
-    if ( working_list.unit_list.containsItems() > 0 ) {
-        id_list_size = working_list.unit_list.containsItems();
+    if ( working_list.unit_list.size() > 0 ) {
+        id_list_size = working_list.unit_list.size();
 
         PUBLIC_MESSAGE_ENCODER.resetEncoder();
 
@@ -985,12 +978,12 @@ void WorldInputCmdProcessor::sendManualFireCommand( iXY &world_pos )
     TerminalUnitCmdRequest comm_mesg;
     MultiMessage *encode_message;
 
-    unsigned long id_list_index;
-    unsigned long id_list_size;
+    size_t id_list_index;
+    size_t id_list_size;
     UnitBase *unit_ptr;
 
-    if ( working_list.unit_list.containsItems() > 0 ) {
-        id_list_size = working_list.unit_list.containsItems();
+    if ( working_list.unit_list.size() > 0 ) {
+        id_list_size = working_list.unit_list.size();
 
         PUBLIC_MESSAGE_ENCODER.resetEncoder();
 
@@ -1157,13 +1150,9 @@ void WorldInputCmdProcessor::closeSelectionBox( void )
 }
 
 
-bool WorldInputCmdProcessor::isUnitSelected( void )
+bool WorldInputCmdProcessor::isUnitSelected()
 {
-    if( working_list.unit_list.containsItems() > 0 ) {
-        return( true );
-    } else {
-        return( false );
-    }
+    return working_list.unit_list.size() > 0;
 }
 
 bool WorldInputCmdProcessor::selectUnits( iRect bound_box )

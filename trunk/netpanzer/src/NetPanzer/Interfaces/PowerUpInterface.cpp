@@ -211,18 +211,17 @@ void PowerUpInterface::updateState()
     }
 
     for (PowerUpList::iterator i = powerup_list.begin();
-            i != powerup_list.end(); i++)
+            i != powerup_list.end(); /* empty */)
     {
-        PowerUpList::iterator cur = i;
-        PowerUp* powerup = *cur;
+        PowerUp* powerup = *i;
 
         if(powerup->powerup_state.life_cycle_state ==
                 _power_up_lifecycle_state_inactive) {
             delete powerup;
-            --i;
-            powerup_list.erase(cur);
+            i = powerup_list.erase(i);
         } else {
             powerup->updateState();
+            i++;
         }
     }
  }

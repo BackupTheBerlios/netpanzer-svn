@@ -21,57 +21,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerInterface.hpp"
 #include "Util/Log.hpp"
 
-int selectKey( void *key, UnitState *comp )
-{
-    iXY *point;
-
-    point = (iXY *) key;
-
-    if ( comp->bounds( *point ) == true )
-        return( 0 );
-
-    return( -1 );
-}
-
-int boundKey( void *key, UnitState *comp )
-{
-    iRect *bound;
-
-    bound = (iRect *) key;
-
-    if ( bound->contains( comp->location ) == true )
-        return( 0 );
-
-    return( 1 );
-}
-
-void SelectionList::initialize( unsigned long size,
-                                unsigned long growIncrement,
-                                unsigned long growLimit )
-{
-    unit_list.initialize( size, growIncrement, growLimit );
-}
-
-
 bool SelectionList::selectUnit( iXY point )
 {
     PlayerID player_id;
 
     deselect();
-    unit_list.removeAll();
+    unit_list.clear();
 
-    player_id = PlayerInterface::getLocalPlayerID( );
+    player_id = PlayerInterface::getLocalPlayerID();
 
-    UnitInterface::quearyUnitsKeySearch( &unit_list,
-                                         selectKey,
-                                         (void *) &point,
-                                         player_id,
-                                         _search_player,
-                                         false
-                                       );
+    UnitInterface::queryUnitsAt(unit_list, point, player_id, _search_player,
+            false);
 
     select();
-    if ( unit_list.containsItems() > 0 ) {
+    if (unit_list.size() > 0) {
         resetUnitCycling();
         return ( true );
     }
@@ -87,16 +50,11 @@ bool SelectionList::addUnit( iXY point )
 
     player_id = PlayerInterface::getLocalPlayerID( );
 
-    UnitInterface::quearyUnitsKeySearch( &unit_list,
-                                         selectKey,
-                                         (void *) &point,
-                                         player_id,
-                                         _search_player,
-                                         false
-                                       );
+    UnitInterface::queryUnitsAt(unit_list, point, player_id,
+            _search_player, false);
 
     select();
-    if ( unit_list.containsItems() > 0 ) {
+    if ( unit_list.size() > 0 ) {
         resetUnitCycling();
         return ( true );
     }
@@ -110,19 +68,14 @@ bool SelectionList::selectTarget( iXY point )
     PlayerID player_id;
 
     deselect();
-    unit_list.removeAll();
+    unit_list.clear();
 
     player_id = PlayerInterface::getLocalPlayerID( );
 
-    UnitInterface::quearyUnitsKeySearch( &unit_list,
-                                         selectKey,
-                                         (void *) &point,
-                                         player_id,
-                                         _search_exclude_player,
-                                         false
-                                       );
+    UnitInterface::queryUnitsAt(unit_list, point, player_id,
+            _search_exclude_player, false);
 
-    if ( unit_list.containsItems() > 0 ) {
+    if ( unit_list.size() > 0 ) {
         resetUnitCycling();
         return ( true );
     }
@@ -139,29 +92,20 @@ bool SelectionList::selectBounded( iRect bounds )
 
     player_id = PlayerInterface::getLocalPlayerID( );
 
-    found_units = UnitInterface::quearyUnitsKeySearch( &unit_list,
-                  boundKey,
-                  (void *) &bounds,
-                  player_id,
-                  _search_player,
-                  true
-                                                     );
+    found_units = UnitInterface::queryUnitsAt(unit_list, bounds,
+            player_id, _search_player, true);
+
     if ( found_units == false )
         return( false );
 
     deselect();
-    unit_list.removeAll();
+    unit_list.clear();
 
-    UnitInterface::quearyUnitsKeySearch( &unit_list,
-                                         boundKey,
-                                         (void *) &bounds,
-                                         player_id,
-                                         _search_player,
-                                         false
-                                       );
+    UnitInterface::queryUnitsAt(unit_list, bounds,
+            player_id, _search_player, false);
 
     select();
-    if ( unit_list.containsItems() > 0 ) {
+    if ( unit_list.size() > 0 ) {
         resetUnitCycling();
         return ( true );
     }
@@ -176,7 +120,7 @@ void SelectionList::select( void )
     unsigned long id_list_size;
     UnitBase *unit;
 
-    id_list_size = unit_list.containsItems();
+    id_list_size = unit_list.size();
 
     for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
         unit = UnitInterface::getUnit( unit_list[ id_list_index ] );
@@ -194,7 +138,7 @@ void SelectionList::deselect( void )
     unsigned long id_list_size;
     UnitBase *unit;
 
-    id_list_size = unit_list.containsItems();
+    id_list_size = unit_list.size();
 
     for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
         unit = UnitInterface::getUnit( unit_list[ id_list_index ] );
@@ -211,7 +155,7 @@ void SelectionList::cycleNextUnit( void )
 
     start_index = unit_cycle_index;
 
-    if ( unit_list.contains == 0 )
+    if ( unit_list.size() == 0 )
         return;
 
     deselect();
@@ -222,7 +166,7 @@ void SelectionList::cycleNextUnit( void )
             unit->unit_state.select = true;
         }
 
-        unit_cycle_index = (unit_cycle_index + 1) % unit_list.contains;
+        unit_cycle_index = (unit_cycle_index + 1) % unit_list.size();
 
     } while( (unit == 0) && (unit_cycle_index != start_index) );
 
@@ -242,10 +186,10 @@ void SelectionList::addList( SelectionList &source_list )
     unsigned long list_index;
     unsigned long list_size;
 
-    list_size=source_list.unit_list.contains;
+    list_size=source_list.unit_list.size();
 
     for ( list_index = 0; list_index < list_size; list_index++ ) {
-        unit_list.add( source_list.unit_list[ list_index ], unit_list.contains );
+        unit_list.push_back(source_list.unit_list[ list_index ]);
     }
 
     unit_cycle_index = source_list.unit_cycle_index;
@@ -259,7 +203,7 @@ unsigned short SelectionList::getHeadUnitType( void )
 {
     UnitBase *unit;
 
-    if ( unit_list.containsItems() > 0 ) {
+    if ( unit_list.size() > 0 ) {
         unit = UnitInterface::getUnit( unit_list[ 0 ] );
         if( unit != 0 ) {
             return( unit->unit_state.unit_type );
@@ -277,7 +221,7 @@ void SelectionList::validateList( void )
     unsigned long id_list_size;
     UnitBase *unit;
 
-    id_list_size = unit_list.containsItems();
+    id_list_size = unit_list.size();
 
     if( id_list_size == 0) {
         return;
@@ -290,5 +234,5 @@ void SelectionList::validateList( void )
         }
     }
 
-    unit_list.removeAll();
+    unit_list.clear();
 }

@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "M109.hpp"
 #include "Archer.hpp"
 
+#include "Types/iXY.hpp"
 #include "ArrayUtil/Timer.hpp"
 #include "Server.hpp"
 #include "NetworkState.hpp"
@@ -518,19 +519,13 @@ void UnitInterface::spawnPlayerUnits( const iXY &location,
 
 // ******************************************************************
 
-bool UnitInterface::
-quearyUnitsKeySearch( UnitIDList *working_list,
-                      int (* key_func )( void *key, UnitState *comp ),
-                      void *key, PlayerID player_id,
-                      unsigned char search_flags,
-                      bool find_first  )
+bool UnitInterface::queryUnitsAt(std::vector<UnitID>& working_list,
+                      const iXY& point, PlayerID player_id,
+                      unsigned char search_flags, bool find_first  )
 {
     UnitPointer *unit_ptr;
     UnitPointer *iterator;
-    unsigned long list_index;
-    unsigned long work_index;
-
-    work_index = working_list->containsItems();
+    size_t list_index;
 
     for( list_index = 0; list_index < max_players; list_index++) {
         if (   ( (search_flags == _search_exclude_player) && (player_id.getIndex() != list_index) )
@@ -541,14 +536,13 @@ quearyUnitsKeySearch( UnitIDList *working_list,
 
             unit_ptr = unit_lists[ list_index ].incIteratorPtr( &iterator );
             while( unit_ptr != 0 ) {
-                if ( key_func( key, &(unit_ptr->unit->unit_state) ) == 0 ) {
-                    if ( find_first == true )
-                        return( true );
+                if(unit_ptr->unit->unit_state.bounds(point)) {
+                    if(find_first)
+                        return true;
 
-                    working_list->add( unit_ptr->unit->unit_id, work_index );
-                    work_index++;
-                } // ** if key_func
-
+                    working_list.push_back(unit_ptr->unit->unit_id);
+                }
+                
                 unit_ptr = unit_lists[ list_index ].incIteratorPtr( &iterator );
             } // ** while
 
@@ -556,13 +550,52 @@ quearyUnitsKeySearch( UnitIDList *working_list,
 
     } // ** for
 
-    if( (find_first == false) && (work_index > 0) )
-        return( true );
+    if( (find_first == false) && (working_list.size() > 0) )
+        return true;
 
-    return( false );
+    return false;
 } // ** quearyUnitsKeySearch
 
 // ******************************************************************
+
+bool UnitInterface::queryUnitsAt(std::vector<UnitID>& working_list,
+                      const iRect& rect, PlayerID player_id,
+                      unsigned char search_flags, bool find_first  )
+{
+    UnitPointer *unit_ptr;
+    UnitPointer *iterator;
+    size_t list_index;
+
+    for( list_index = 0; list_index < max_players; list_index++) {
+        if (   ( (search_flags == _search_exclude_player) && (player_id.getIndex() != list_index) )
+                || ( (search_flags == _search_player) && (player_id.getIndex() == list_index ) )
+           ) {
+
+            unit_lists[ list_index ].resetIterator( &iterator );
+
+            unit_ptr = unit_lists[ list_index ].incIteratorPtr( &iterator );
+            while( unit_ptr != 0 ) {
+                if(rect.contains(unit_ptr->unit->unit_state.location)) {
+                    if(find_first)
+                        return true;
+
+                    working_list.push_back(unit_ptr->unit->unit_id);
+                }
+                
+                unit_ptr = unit_lists[ list_index ].incIteratorPtr( &iterator );
+            } // ** while
+
+        } // ** if search flags
+
+    } // ** for
+
+    if( (find_first == false) && (working_list.size() > 0) )
+        return true;
+
+    return false;
+} // ** quearyUnitsKeySearch
+
+/****************************************************************************/
 
 bool UnitInterface::quearyClosestUnit( UnitBase **closest_unit_ptr,
                                        iXY &loc,

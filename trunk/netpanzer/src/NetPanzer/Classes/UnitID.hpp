@@ -18,41 +18,43 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITID_HPP
 #define _UNITID_HPP
 
+#include <stdint.h>
+
 class UnitID
 {
 public:
-    unsigned char player;
-    unsigned short index;
-    unsigned short unique;
+    uint8_t player;
+    uint16_t index;
+    uint16_t unique;
 
     UnitID()
         : player(0xff), index(0xffff), unique(0xffff)
     { }
 
-    inline void set(unsigned char player, unsigned short index, unsigned short unique )
+    void set(uint8_t player, uint16_t index, uint16_t unique )
     {
         UnitID::player = player;
         UnitID::index = index;
         UnitID::unique = unique;
     }
 
-    inline void set( unsigned char player, unsigned short index )
+    void set( uint8_t player, uint16_t index )
     {
         UnitID::player = player;
         UnitID::index = index;
     }
 
-    inline unsigned char getPlayer() const
+    uint8_t getPlayer() const
     {
-        return( player );
+        return player;
     }
 
-    inline unsigned short getIndex() const
+    uint16_t getIndex() const
     {
-        return( index );
+        return index;
     }
 
-    inline bool operator==( const UnitID& Uid ) const
+    bool operator==( const UnitID& Uid ) const
     {
         if ( (player == Uid.player) && (index == Uid.index)
                 && (unique == Uid.unique)
@@ -62,7 +64,7 @@ public:
         return false;
     }
 
-    inline bool operator!=( const UnitID& Uid ) const
+    bool operator!=( const UnitID& Uid ) const
     {
         if ( (player != Uid.player) || (index != Uid.index)
                 || (unique != Uid.unique)
@@ -72,7 +74,7 @@ public:
         return false;
     }
 
-    inline bool operator<( const UnitID& Uid ) const
+    bool operator<( const UnitID& Uid ) const
     {
         return (player < Uid.player
                 || (player == Uid.player && index < Uid.index)
@@ -80,7 +82,7 @@ public:
                     && unique < Uid.unique));
     }
 
-    inline bool playerEqual( const UnitID& Uid ) const
+    bool playerEqual( const UnitID& Uid ) const
     {
         if ( (player == Uid.player) )
             return true;
@@ -88,7 +90,7 @@ public:
         return false;
     }
 
-    inline void operator=( const UnitID& Uid )
+    void operator=( const UnitID& Uid )
     {
         player = Uid.player;
         index  = Uid.index;

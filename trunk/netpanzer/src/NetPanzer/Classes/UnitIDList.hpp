@@ -18,42 +18,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITIDLIST_HPP
 #define _UNITIDLIST_HPP
 
+#include <vector>
+
 #include "UnitID.hpp"
-#include "ArrayUtil/ArrayGrowableTemplate.hpp"
+#include "Util/NoCopy.hpp"
 
-typedef ArrayGrowableTemplate< UnitID > UnitIDListTemplate;
-
-class UnitIDList : public UnitIDListTemplate
+class UnitIDList : public std::vector<UnitID>, public NoCopy
 {
 public:
-    unsigned long contains;
-
-    UnitIDList() : UnitIDListTemplate()
-    {
-        contains = 0;
-    }
-
-    void initialize( unsigned long size, unsigned long growIncrement, unsigned long growLimit )
-    {
-        UnitIDListTemplate::initialize( size, growIncrement, growLimit );
-    }
-
-    inline void add( UnitID object, unsigned long index )
-    {
-        UnitIDListTemplate::add( object, index );
-        if ( contains < size )
-            contains++;
-    }
-
-    inline void removeAll( void )
-    {
-        contains = 0;
-    }
-
-    inline unsigned long containsItems( void )
-    {
-        return( contains );
-    }
 };
 
 #endif // ** _UNITIDLIST_HPP
