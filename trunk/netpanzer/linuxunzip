@@ -22,4 +22,4 @@ mv pics/backgrounds/menus/menu/til/connectionMB.TIL pics/backgrounds/menus/menu/
 mv pics/backgrounds/menus/menu/til/optionsMB.TIL pics/backgrounds/menus/menu/til/optionsMB.til
 rename BMP bmp pics/flags/netpmenu/*
 mv PowerUps/bolts.pak PowerUps/BoltS.pak
-
+mv gdbase/CURSOR.DBS gdbase/cursor.dbs
