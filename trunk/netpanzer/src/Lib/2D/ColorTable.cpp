@@ -277,9 +277,9 @@ void ColorTable::create(
 //---------------------------------------------------------------------------
 void ColorTable::loadTable(const char *filename)
 {
-    std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
-
     try {
+        std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
+
     	// make sure palette in file is the same as current one
 	for(size_t i=0; i<PALETTE_LENGTH; i++) {
 	    RGBColor checkcolor;
@@ -301,10 +301,11 @@ void ColorTable::loadTable(const char *filename)
 //---------------------------------------------------------------------------
 void ColorTable::saveTable(const char *filename) const
 {
-    std::auto_ptr<WriteFile> file (FileSystem::openWrite(filename));
-
     try {
+        std::auto_ptr<WriteFile> file (FileSystem::openWrite(filename));
+
     	file->write(&Palette::color, 768, 1);
+        file->write(colorArray, colorCount, 1);
     } catch(std::exception& e) {
         throw Exception("error while writing to file '%s': %s",
                         filename, e.what());
