@@ -455,7 +455,6 @@ void GameManager::initializeInputDevices()
 	setupKeyboardBindings();
   
 	MouseInterface::initialize();
-	MouseInterface::hideHardwareCursor();
 	mouse.setPointer(&mouseArrow);
 }
 
@@ -1448,9 +1447,6 @@ void displayHostMultiPlayerGameProgress(const int &curNum)
 	const int yOffset = 20;
 	iXY pos(0, 140);
 
-	// FUCK YOU HARDWARE CURSOR!!!
-	MouseInterface::hideHardwareCursor();   
-
 	{
 	FRAME_BUFFER.lock();
 
@@ -1675,13 +1671,13 @@ void GameManager::launchDedicatedServer()
   
   printf( "Map Name <%s> : ", GameConfig::getGameMapName() );
   fflush(stdout);
-  gets( input_str );
+  fgets(input_str, sizeof(input_str), stdin);
   if ( strlen(input_str) > 0 )
    {  GameConfig::setGameMapName( input_str ); } 
 
   printf( "Players <%d> : ", GameConfig::GetNumberPlayers() );
   fflush(stdout);
-  gets( input_str );
+  fgets(input_str, sizeof(input_str), stdin);
   if ( strlen(input_str) > 0 )
    { 
     short players; 
@@ -1691,7 +1687,7 @@ void GameManager::launchDedicatedServer()
 
   printf( "Units <%d> : ", GameConfig::GetNumberUnits() );
   fflush(stdout);
-  gets( input_str );
+  fgets(input_str, sizeof(input_str), stdin);
   if ( strlen(input_str) > 0 )
    { 
     short units; 
@@ -1709,7 +1705,7 @@ void GameManager::launchDedicatedServer()
    printf( "(3) Time Limit \n" );
    printf( "Choose : " );
    fflush(stdout);
-   gets( input_str );
+   fgets(input_str, sizeof(input_str), stdin);
    sscanf( input_str, "%d", &game_type ); 
   } while( (game_type < 1) && (game_type > 3) );
  
@@ -1720,7 +1716,7 @@ void GameManager::launchDedicatedServer()
       GameConfig::SetGameType(_gametype_objective);
       printf( "Outpost Occupation <%.0f %%> : ", GameConfig::getObjectiveOccuapationPercentage() );
       fflush(stdout);
-      gets( input_str );
+      fgets(input_str, sizeof(input_str), stdin);
       if ( strlen(input_str) > 0 )
        { 
         float percent; 
@@ -1734,7 +1730,7 @@ void GameManager::launchDedicatedServer()
       GameConfig::SetGameType(_gametype_fraglimit);
       printf( "Frag Limit <%d> frags : ", GameConfig::GetFragLimit() );
       fflush(stdout);
-      gets( input_str );
+      fgets(input_str, sizeof(input_str), stdin);
       if ( strlen(input_str) > 0 )
        { 
         int frags; 
@@ -1748,7 +1744,7 @@ void GameManager::launchDedicatedServer()
       GameConfig::SetGameType(_gametype_timelimit);
       printf( "Time Limit <%d> minutes: ", GameConfig::GetTimeLimit() );
       fflush(stdout);
-      gets( input_str );
+      fgets(input_str, sizeof(input_str), stdin);
       if ( strlen(input_str) > 0 )
        { 
         int time_limit; 
@@ -1761,13 +1757,13 @@ void GameManager::launchDedicatedServer()
     
   printf( "PowerUps <NO> (Y/N) : " );
   fflush(stdout);
-  gets( input_str );
+  fgets(input_str, sizeof(input_str), stdin);
   if ( strcasecmp( "y", input_str ) == 0 )
    { GameConfig::setPowerUpState(true); }
 
   printf( "Server Name <Dedicated Server> :" );
   fflush(stdout);
-  gets( input_str );
+  fgets(input_str, sizeof(input_str), stdin);
   if ( strlen(input_str) > 0 )
    { GameConfig::SetPlayerName( input_str ); }
   else
