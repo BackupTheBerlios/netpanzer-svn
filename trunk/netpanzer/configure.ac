@@ -70,8 +70,24 @@ AC_LANG_RESTORE
 AC_CHECK_PROGS(DOXYGEN, [doxygen])
 
 #----------------------------------------------------------------------------
+# Check for operating system
+#----------------------------------------------------------------------------
+AC_MSG_CHECKING([for target host])
+case $host_os in
+    mingw*|cygwin*)
+        AC_MSG_RESULT([WIN32])
+        AC_DEFINE([WINSOCK], [], [Define if winsock should be used])
+        ;;
+    *)
+        AC_MSG_RESULT([assume posix])
+        ;;
+esac
+
+#----------------------------------------------------------------------------
 # find libraries
 #----------------------------------------------------------------------------
+AX_TYPE_SOCKLEN_T
+
 AM_PATH_SDL([1.2.5], , AC_MSG_ERROR([Please install libsdl >= 1.2.]))
 
 NP_FINDLIB([SDLNET], [SDL_net], [SDL_net >= 1.2],
@@ -133,5 +149,6 @@ AC_CONFIG_FILES([Jamconfig])
 AC_OUTPUT
 
 AC_MSG_NOTICE([
+
 Please note that this project uses jam (and not make) as build tool.
 ])
