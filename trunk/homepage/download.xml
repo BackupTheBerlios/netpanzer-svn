@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<page title="netPanzer - An Online Multiplayer Tactical Warfare Game">
+<page title="NetPanzer - An Online Multiplayer Tactical Warfare Game">
   <section title="Downloads">
     <subsection title="Linux">
-      <p>Some linux distributions already come with netPanzer packages by
-      default. You might just be able to install netPanzer with your
+      <p>Some linux distributions already come with NetPanzer packages by
+      default. You might just be able to install NetPanzer with your
       distributions software setup tool. This is true for at least the
       following distributions</p>
     <ul>
@@ -15,18 +15,18 @@
 	<li>PLD Linux Distribution</li>
       </ul>
 	  <subsubsection title="RPM">
-        <p>There are no packages for 0.2.0 yet, plase contribute!</p>
+        <p>There are no packages for 0.8 yet, plase contribute!</p>
         <p><b>Old Release</b>:
 	rpm files for Suse and Fedora distributions can be found at the
 	<a href="http://developer.berlios.de/project/showfiles.php?group_id=1250">
-		netPanzer download section</a>.</p>
+		NetPanzer download section</a>.</p>
 	<p>SuSE packages provided by Sander Erkamp aka Storm 
 	<a href="mailto:panux@2itb.com">panux@2itb.com</a>.</p>
 	<p>Fedora packages provided by Daniel Pereda aka pegardan
 	<a href="maito:dannyedu@adinet.com.uy">dannyedu@adinet.com.uy</a>.</p>
 	 </subsubsection>
 	<subsubsection title="Installer &amp; Static Binary">
-        <p>A static binary for 0.2.0 is not yet available</p>
+        <p>A static binary for 0.8 is not yet available</p>
         <p><b>Old Release:</b><br/>
 	<a href="http://download.berlios.de/netpanzer/netpanzer-0.1.5-linux-i386-installer.run">
 	Loki installer - netpanzer-0.1.5-linux-i386-installer.run (13.44MB)
@@ -41,8 +41,8 @@
     </subsubsection>
     </subsection>
 	<subsection title="Windows">
-	<p><a href="http://download.berlios.de/netpanzer/netpanzer-0.2.0_rc4-windows-installer.exe">
-	netPanzer Windows installer - netpanzer-0.2.0_rc4-windows-installer.exe
+	<p><a href="http://download.berlios.de/netpanzer/netpanzer-0.8-windows-installer.exe">
+	NetPanzer Windows installer - netpanzer-0.8-windows-installer.exe
 (11MB)
 	</a></p>
 	<p>Windows version provided by Matthias Braun 
@@ -57,15 +57,17 @@
       <p>
         You need both the
         gamedata and the source if you want to compile yourself, in
-		addition you need Jam, PhysicsFS, libxml, SDL, SDL_net, SDL_mixer, 
+        addition you need Jam, PhysicsFS, SDL, SDL_net, SDL_mixer, 
         SDL_image and SDL_ttf, see the README for details.
       </p>
 
       <ul>
         <li><a
-        href="http://download.berlios.de/netpanzer/netpanzer-0.2.0_rc4.tar.bz2">netPanzer Source - netpanzer-0.2.0_rc4.tar.bz2 (350KB)</a></li>
+        href="http://download.berlios.de/netpanzer/netpanzer-0.8.tar.bz2">
+        NetPanzer Source - netpanzer-0.8.tar.bz2 (350KB)</a></li>
         <li><a
-        href="http://download.berlios.de/netpanzer/netpanzer-data-0.2.0.tar.bz2">netPanzer Gamedata - netpanzer-data-0.2.0.tar.bz2 (9.32MB)</a></li>
+        href="http://download.berlios.de/netpanzer/netpanzer-data-0.8.tar.bz2">
+        NetPanzer Gamedata - netpanzer-data-0.2.0.tar.bz2 (9.32MB)</a></li>
       </ul>
 
       <p>

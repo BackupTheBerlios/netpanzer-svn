@@ -7,10 +7,9 @@
         <answer>
           <p>netPanzer contains a builtin server browser. You should see a list
           of currently running servers when you are in the Join-Game view.</p>
-          <p>If you're using linux with KDE, then you can also use
-          <a
-          href="http://www.suselinuxsupport.de/index.php?location=download&amp;language=EN">KNetPanzerBrowser</a>
-          a nice server browser for netpanzer.</p>
+          <p>You can also take a look <a
+          href="http://netpanzer.n-d-m.net">here</a> for a list of running
+          servers.</p>
         </answer>
       </faq>
 

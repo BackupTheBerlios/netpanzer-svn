@@ -2,6 +2,30 @@
 <page title="netPanzer - News">
   <section title="News">
     <news>
+      <item date="27. Jan 2005">
+        <p>NetPanzer 0.8 released</p>
+        <p>Downloads available here: <a
+                 href="http://developer.berlios.de/project/showfiles.php?group_id=1250">
+                 http://developer.berlios.de/project/showfiles.php?group_id=1250</a>.</p>
+       <p>Changes:
+            <ul>
+                <li>Call this final release 0.8 to better reflect the state of
+                development</li>
+                <li>You can move the camera to a defined group by pressing group
+                key twice</li>
+                <li>Server shuts itself down instead of stying in an endless
+                loop</li>
+                <li>The -c command handles netpanzer:// URLs now</li>
+                <li>Some additional infos are sent out by the server which help
+                server browser</li>
+                <li>Distribute cached palettes so that the first start should be
+                faster now</li>
+                <li>The code finally works on the Mac and probably other
+                big-endian boxes</li>
+            </ul>
+        </p>
+      </item>
+                 
       <item date="10. Nov 2004">
        <p>Thanks to Tobias Blerch we now have a <a
        href="http://netpanzer.n-d-m.net">php serverbrowser</a> for
@@ -10,7 +34,7 @@
        </p>
       </item>
       <item date="8. Nov 2004">
-       <p>netPanze 0.2.0 release candidate 4</p>
+       <p>netPanzer 0.2.0 release candidate 4</p>
        <p>This is a prerelease open for public testing. Especiacially the new
           ppc code needs more testing. I'd be happy about some feedback if it
           works or not (matze@braunis.de).
