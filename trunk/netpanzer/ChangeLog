@@ -1,3 +1,6 @@
+25-Oct-2003 by Matthias Braun
+-removed support for .til files and converted them to .bmp
+
 23-Oct-2003 by Ivo Danihelka
 -implemented respawntype="Random" parameter
 

@@ -106,5 +106,5 @@ void InterfaceView::doDraw(Surface &viewArea, Surface &clientArea)
 //---------------------------------------------------------------------------
 void InterfaceView::loadTitleSurface()
 {
-    doLoadTitleSurface("pics/backgrounds/menus/menu/til/interfaceTitle.til");
+    doLoadTitleSurface("pics/backgrounds/menus/menu/interfaceTitle.bmp");
 } // end InterfaceView::loadTitleSurface

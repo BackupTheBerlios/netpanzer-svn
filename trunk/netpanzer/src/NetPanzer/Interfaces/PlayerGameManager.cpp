@@ -268,8 +268,9 @@ void PlayerGameManager::hostMultiPlayerGame()
     progressView->scrollAndUpdateDirect( "Launching Server ..." );
     try {
         SERVER->hostSession();
-    } catch(Exception e) {
+    } catch(std::exception& e) {
         progressView->scrollAndUpdateDirect( "SERVER LAUNCH FAILED" );
+        progressView->scrollAndUpdateDirect(e.what());
         wait.changePeriod( 4 );
         while( !wait.count() );
 

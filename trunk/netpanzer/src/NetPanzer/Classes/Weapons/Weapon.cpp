@@ -48,25 +48,8 @@ void Weapon::init()
     Surface       temp;
     PackedSurface pack;
 
-    if (UtilInterface::getFileSize("pics/particles/lights/pak/missleThrust.pak") > 0) {
-        gMissleThrustPackedSurface.load("pics/particles/lights/pak/missleThrust.pak");
-    } else {
-        // Missle thrust lighting.
-        temp.loadTIL("pics/particles/lights/til/missleThrust.til");
-        temp.setOffsetCenter();
-        pack.pack(temp);
-        pack.save("pics/particles/lights/pak/missleThrust.pak");
-    }
-
-    if (UtilInterface::getFileSize("pics/particles/lights/pak/missleGroundLight.pak") > 0) {
-        gMissleGroundLightPackedSurface.load("pics/particles/lights/pak/missleGroundLight.pak");
-    } else {
-        // Missle ground lighting.
-        temp.loadTIL("pics/particles/lights/til/missleGroundLight.til");
-        temp.setOffsetCenter();
-        pack.pack(temp);
-        pack.save("pics/particles/lights/pak/missleGroundLight.pak");
-    }
+    gMissleThrustPackedSurface.load("pics/particles/lights/pak/missleThrust.pak");
+    gMissleGroundLightPackedSurface.load("pics/particles/lights/pak/missleGroundLight.pak");
 }
 
 void Weapon::packFiles()

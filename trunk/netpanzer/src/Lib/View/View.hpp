@@ -195,14 +195,14 @@ protected:
     // cButton Functions.
     void addButtonPackedSurface(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc);
     void addButtonCenterText(const iXY &pos, const int &xSize, const char *nName, const char *nToolTip, ITEM_FUNC nLeftClickFunc);
-    void addButtonTIL(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func, const bool &isBordered);
-    inline void addButtonTIL(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func)
+    void addButtonBMP(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func, const bool &isBordered);
+    inline void addButtonBMP(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func)
     {
-        addButtonTIL(pos, imageName, toolTip, func, false);
+        addButtonBMP(pos, imageName, toolTip, func, false);
     }
-    inline void addButtonTILBordered(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func)
+    inline void addButtonBMPBordered(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func)
     {
-        addButtonTIL(pos, imageName, toolTip, func, true);
+        addButtonBMP(pos, imageName, toolTip, func, true);
     }
     void addButtonSurface(const iXY &pos, Surface &source, const char *toolTip, ITEM_FUNC func);
     void addButtonSurfaceSingle(const iXY &pos, Surface &source, const char *toolTip, ITEM_FUNC func);

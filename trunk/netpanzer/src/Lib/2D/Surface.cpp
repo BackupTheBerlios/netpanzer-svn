@@ -1930,30 +1930,6 @@ PIX Surface::getAverageColor()
     return Palette::findNearestColor(RGBColor(avgR, avgG, avgB));
 } // end Surface::getAverageColor
 
-// loadTIL
-//---------------------------------------------------------------------------
-void Surface::loadTIL(const char* filename)
-{
-    std::auto_ptr<ReadFile> file(FileSystem::openRead(filename));
-
-    FletchTileHeader fletchTileHeader;
-    file->read(&fletchTileHeader, sizeof(FletchTileHeader), 1);
-
-    if (frame0 == 0 || mem == 0 || pix.x != int(fletchTileHeader.xSize) || pix.y != int(fletchTileHeader.ySize)) {
-        create(fletchTileHeader.xSize, fletchTileHeader.ySize, fletchTileHeader.xSize, 1);
-    }
-
-    int numBytes = pix.x * pix.y * sizeof(uint8_t);
-
-    if (numBytes <= 0) return;
-    if (mem == 0) {
-        throw Exception("ERROR: This should not happen.");
-    }
-
-    if(file->read(mem, numBytes, 1) != 1)
-        throw Exception("Error reading .TIL '%s'", filename);
-} // end Surface::loadTIL
-
 // setBrightness
 void Surface::setBrightness(int percent)
 {
@@ -2322,56 +2298,6 @@ void Surface::bltAdd(const Surface &dest, iXY min) const
 
 } // end bltAdd
 
-// loadAllTILInDirectory
-//---------------------------------------------------------------------------
-int Surface::loadAllTILInDirectory(const char *path)
-{
-    char** list = FileSystem::enumerateFiles(path);
-    
-    std::vector<std::string> filenames;
-    Surface tempSurface;
-    iXY maxSize(0, 0);
-    for(char** file = list; *file != 0; file++) {
-        std::string name = path;
-        name += *file;
-        if(name.find(".til") != std::string::npos) {
-            filenames.push_back(name);
-
-            // Get the max image size.
-            tempSurface.loadTIL(name.c_str());
-            if (maxSize.x < tempSurface.getPix().x) {
-                maxSize.x = tempSurface.getPix().x;
-            }
-            if (maxSize.y < tempSurface.getPix().y) {
-                maxSize.y = tempSurface.getPix().y;
-            }
-        }
-    }
-
-    FileSystem::freeList(list);
-
-    std::sort(filenames.begin(), filenames.end());
-
-    // Create the Surface to have the size of the largest image in the
-    // diRectory.  All other images will be centered based off the
-    // largest size.
-    create(maxSize, maxSize.x, filenames.size());
-
-    // Now load in the sorted TIL names.
-    for (size_t i = 0; i < filenames.size(); i++) {
-        setFrame(i);
-
-        tempSurface.loadTIL(filenames[i].c_str());
-        iXY myOffset;
-        myOffset = maxSize - tempSurface.getPix();
-
-        fill(Color::black);
-        tempSurface.blt(*this, myOffset);
-    }
-
-    return 1;
-} // end loadAllTILInDirectory
-
 // loadAllBMPInDirectory
 //---------------------------------------------------------------------------
 int Surface::loadAllBMPInDirectory(const char *path)
@@ -2407,7 +2333,7 @@ int Surface::loadAllBMPInDirectory(const char *path)
     // largest size.
     create(maxSize, maxSize.x, filenames.size());
 
-    // Now load in the sorted TIL names.
+    // Now load in the sorted BMP names.
     for (size_t i = 0; i < filenames.size(); i++) {
         setFrame(i);
 

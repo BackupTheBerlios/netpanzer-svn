@@ -1129,7 +1129,7 @@ void View::addButtonCenterText(const iXY &pos,
 //---------------------------------------------------------------------------
 // Purpose: Adds a button of a TIL image.
 //---------------------------------------------------------------------------
-void View::addButtonTIL(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func, const bool &isBordered)
+void View::addButtonBMP(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func, const bool &isBordered)
 {
     // Add a new button to the button list.
     buttons.setNum(buttons.getCount() + 1);
@@ -1137,13 +1137,13 @@ void View::addButtonTIL(const iXY &pos, const char *imageName, const char *toolT
     cButton &b = buttons[buttons.getCount() - 1];
 
     if (isBordered) {
-        b.createTILBordered(pos, imageName, toolTip, func);
+        b.createBMPBordered(pos, imageName, toolTip, func);
 
     } else {
-        b.createTIL(pos, imageName, toolTip, func);
+        b.createBMP(pos, imageName, toolTip, func);
     }
 
-} // end addButtonTIL
+} // end addButtonBMP
 
 // addButtonSurface
 //---------------------------------------------------------------------------

@@ -128,6 +128,6 @@ void SoundView::doDraw(Surface &viewArea, Surface &clientArea)
 //---------------------------------------------------------------------------
 void SoundView::loadTitleSurface()
 {
-    doLoadTitleSurface("pics/backgrounds/menus/menu/til/soundTitle.til");
+    doLoadTitleSurface("pics/backgrounds/menus/menu/soundTitle.bmp");
 
 } // end SoundView::loadTitleSurface

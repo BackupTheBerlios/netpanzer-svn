@@ -28,8 +28,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class CloudParticle2D : public WindParticle2D
 {
 private:
-
-    static void loadTILFiles();
     static void loadPAKFiles();
     static void packFiles();
 

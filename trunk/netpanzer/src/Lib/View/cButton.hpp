@@ -69,14 +69,14 @@ public:
 
     void createCenterText(iXY pos, int xSize, const char *nName, const char *nToolTip, ITEM_FUNC nLeftClickFunc);
 
-    void createTIL(iXY pos, const char *imageName, const char *nToolTip, ITEM_FUNC nLeftClickFunc, bool isBordered);
-    inline void createTIL(iXY pos, const char *imageName, const char *nToolTip, ITEM_FUNC nLeftClickFunc)
+    void createBMP(iXY pos, const char *imageName, const char *nToolTip, ITEM_FUNC nLeftClickFunc, bool isBordered);
+    inline void createBMP(iXY pos, const char *imageName, const char *nToolTip, ITEM_FUNC nLeftClickFunc)
     {
-        createTIL(pos, imageName, nToolTip, nLeftClickFunc, false);
+        createBMP(pos, imageName, nToolTip, nLeftClickFunc, false);
     }
-    inline void createTILBordered(iXY pos, const char *imageName, const char *nToolTip, ITEM_FUNC nLeftClickFunc)
+    inline void createBMPBordered(iXY pos, const char *imageName, const char *nToolTip, ITEM_FUNC nLeftClickFunc)
     {
-        createTIL(pos, imageName, nToolTip, nLeftClickFunc, true);
+        createBMP(pos, imageName, nToolTip, nLeftClickFunc, true);
     }
 
     void createSurface(iXY pos, Surface &source, const char *nToolTip, ITEM_FUNC nLeftClickFunc, bool isBordered);

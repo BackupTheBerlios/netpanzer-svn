@@ -83,24 +83,6 @@ void CloudParticle2D::setRandomSurface()
 } // end CloudParticle2D::setRandomSurface
 
 //---------------------------------------------------------------------------
-void CloudParticle2D::loadTILFiles()
-{
-    char path[] = "pics/particles/clouds/til/";
-
-    Surface tempSurface;
-    if (!tempSurface.loadAllTILInDirectory(path)) {
-        throw Exception("ERROR: Unable to load any cloud images in %s", path);
-    }
-
-    tempSurface.shrinkWrap();
-    tempSurface.setOffsetCenter();
-
-    PackedSurface tempPackedSurface;
-    tempPackedSurface.pack(tempSurface);
-    tempPackedSurface.save("pics/particles/clouds/pak/clouds.pak");
-}
-
-//---------------------------------------------------------------------------
 void CloudParticle2D::packFiles()
 {}
 
@@ -115,9 +97,7 @@ void CloudParticle2D::loadPAKFiles()
 //---------------------------------------------------------------------------
 void CloudParticle2D::init()
 {
-    //loadTILFiles();
     loadPAKFiles();
-
 } // end CloudParticle2D::init
 
 // sim

@@ -28,39 +28,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class ColorTable;
 class Palette;
+class ReadFile;
 typedef uint8_t PIX;
 
 // This must be called before any of the string blitting functions are used.
 void initFont();
-
-/////////////////////////////////////////////////////////////////////////////
-// structs
-/////////////////////////////////////////////////////////////////////////////
-
-#ifdef MSVC
-#pragma pack (1)
-#endif
-
-// A ".til" file.
-class FletchTileHeader
-{
-public:
-    uint8_t    minVer;    // Version number
-    uint8_t    majVer;    // Version number
-    uint16_t   headSize;  // Size (in bytes) of header.  Also offset of data
-    uint32_t   xSize;     // Horizontal pixel count
-    uint32_t   ySize;     // Vertical pixel count
-    uint32_t   frameCount; // Number of frames
-    uint8_t    avgR;      // Average color in 24-bit format
-    uint8_t    avgG;      // .
-    uint8_t    avgB;      // .
-    uint8_t    avgIndex;  // Closest palette entry to the average color
-}
-__attribute__((packed)); // end FletchTileHeader
-
-#ifdef MSVC
-#pragma pack ()
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // class Surface
@@ -456,8 +428,6 @@ public:
 
     PIX getAverageColor();
 
-    virtual void loadTIL(const char* filename);
-
     void scale(const iXY &pix);
     inline void scale(int x, int y)
     {
@@ -479,7 +449,6 @@ public:
     void bltLightDark(const Surface &source, const Surface &lightTable) const;
     void setToBrightnessIndexes128();
     void bltAdd(const Surface &dest, iXY min) const;
-    int  loadAllTILInDirectory(const char *path);
     int  loadAllBMPInDirectory(const char *path);
 
     // Blit a single character of text.

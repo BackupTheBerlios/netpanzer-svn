@@ -57,6 +57,6 @@ void JoinView::doDeactivate()
 //---------------------------------------------------------------------------
 void JoinView::loadTitleSurface()
 {
-    doLoadTitleSurface("pics/backgrounds/menus/menu/til/joinTitle.til");
+    doLoadTitleSurface("pics/backgrounds/menus/menu/joinTitle.bmp");
 } // end JoinView::loadTitleSurface
 

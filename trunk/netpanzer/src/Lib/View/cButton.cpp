@@ -101,9 +101,9 @@ void cButton::createCenterText(iXY pos,
 
 } // end createCenterText
 
-// createTIL
+// createBMP
 //---------------------------------------------------------------------------
-void cButton::createTIL(iXY pos,
+void cButton::createBMP(iXY pos,
                         const char *imageName,
                         const char *nToolTip,
                         ITEM_FUNC nLeftClickFunc,
@@ -112,7 +112,7 @@ void cButton::createTIL(iXY pos,
     Surface tempTopSurface;
 
     Surface tempSurface;
-    tempSurface.loadTIL(imageName);
+    tempSurface.loadBMP(imageName);
 
     tempTopSurface.create(tempSurface.getPix(), tempSurface.getPix().x, 3);
 
@@ -142,7 +142,7 @@ void cButton::createTIL(iXY pos,
     leftClickFunc = nLeftClickFunc;
 
     topSurface.pack(tempTopSurface);
-} // end createTIL
+} // end createBMP
 
 // createSurface
 //---------------------------------------------------------------------------

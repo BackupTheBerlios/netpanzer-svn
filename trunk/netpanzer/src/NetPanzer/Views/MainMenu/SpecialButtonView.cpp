@@ -53,10 +53,10 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
         Surface buttonSurface;
         Surface tempSurface;
 
-        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/til/%sbutover.til", (const char *) prefix);
+        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/%sbutover.bmp", (const char *) prefix);
 
         // Create.
-        tempSurface.loadTIL(strBuf);
+        tempSurface.loadBMP(strBuf);
 
         //-------------------
         //tempSurface.fill(0);
@@ -69,9 +69,9 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
         buttonSurface.setFrame(2);
         tempSurface.blt(buttonSurface);
 
-        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/til/%sbuton.til", (const char *) prefix);
+        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/%sbuton.bmp", (const char *) prefix);
 
-        tempSurface.loadTIL(strBuf);
+        tempSurface.loadBMP(strBuf);
 
         //-------------------
         //tempSurface.fill(0);
@@ -81,9 +81,9 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
         tempSurface.blt(buttonSurface);
 
         // Unhighlight.
-        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/til/%sbutoff.til", (const char *) prefix);
+        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/%sbutoff.bmp", (const char *) prefix);
 
-        tempSurface.loadTIL(strBuf);
+        tempSurface.loadBMP(strBuf);
 
         //-------------------
         //tempSurface.fill(0);

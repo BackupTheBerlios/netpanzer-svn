@@ -100,6 +100,6 @@ void ControlsView::doDraw(Surface &viewArea, Surface &clientArea)
 //---------------------------------------------------------------------------
 void ControlsView::loadTitleSurface()
 {
-    doLoadTitleSurface("pics/backgrounds/menus/menu/til/controlsTitle.til");
+    doLoadTitleSurface("pics/backgrounds/menus/menu/controlsTitle.bmp");
 
 } // end ControlsView::loadTitleSurface

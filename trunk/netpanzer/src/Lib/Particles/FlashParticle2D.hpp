@@ -48,9 +48,6 @@ protected:
     virtual void draw(const Surface &dest, SpriteSorter &sorter);
     virtual void sim();
 
-    static void packFiles();
-
-}
-; // end FlashParticle2D
+}; // end FlashParticle2D
 
 #endif // __FlashParticle2D_hpp__

@@ -258,21 +258,21 @@ void MenuTemplateView::doActivate()
 //---------------------------------------------------------------------------
 void MenuTemplateView::loadBackgroundSurface()
 {
-    doLoadBackgroundSurface("pics/backgrounds/menus/menu/til/defaultMB.til");
+    doLoadBackgroundSurface("pics/backgrounds/menus/menu/defaultMB.bmp");
 } // end MenuTemplateView::loadBackgroundSurface
 
 // doLoadBackgroundSurface
 //---------------------------------------------------------------------------
 void MenuTemplateView::doLoadBackgroundSurface(String string)
 {
-    backgroundSurface.loadTIL(string);
+    backgroundSurface.loadBMP(string);
 } // end MenuTemplateView::doLoadBackgroundSurface
 
 // loadTitleSurface
 //---------------------------------------------------------------------------
 void MenuTemplateView::loadTitleSurface()
 {
-    doLoadTitleSurface("pics/backgrounds/menus/menu/til/mainTitle.til");
+    doLoadTitleSurface("pics/backgrounds/menus/menu/mainTitle.bmp");
 } // end MenuTemplateView::loadTitleSurface
 
 // doLoadBackgroundSurface
@@ -294,7 +294,7 @@ void MenuTemplateView::doLoadTitleSurface(String string)
         Surface titleSurface;
 
         try {
-            titleSurface.loadTIL(string);
+            titleSurface.loadBMP(string);
         } catch(Exception&) {
             titleSurface.create(300, 50, 300, 1);
             titleSurface.fill(128);

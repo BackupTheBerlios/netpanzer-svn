@@ -32,13 +32,6 @@ cGrowList <PackedSurface> PuffParticle2D::staticPackedSmokeLightPuff;
 cGrowList <PackedSurface> PuffParticle2D::staticPackedSmokeDarkPuff;
 cGrowList <PackedSurface> PuffParticle2D::staticPackedDirtPuff;
 
-
-// Image paths.
-const char pathSmokeLight[] = "pics/particles/puff/smokeLight/til/";
-const char pathSmokeDark[]  = "pics/particles/puff/smokeDark/til/";
-const char pathDirt[]       = "pics/particles/puff/dirt/til/";
-
-
 // PuffParticle2D
 //---------------------------------------------------------------------------
 PuffParticle2D::PuffParticle2D(	const fXYZ &pos,
@@ -158,67 +151,6 @@ void PuffParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 
 } // end PuffParticle2D::draw
 
-//---------------------------------------------------------------------------
-// not used
-#if 0
-static void pakFiles()
-{
-    const int maxSize   = 70;
-    const int minSize   =  4;
-    const int increment =  4;
-
-    int i;
-
-    Surface       tempSurface;
-    PackedSurface tempPackedSurface;
-
-    // Light Smoke.
-    for (i = minSize; i <= maxSize; i += increment) {
-        if (!tempSurface.loadAllTILInDirectory(pathSmokeLight)) {
-            throw Exception("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeLight);
-        }
-
-        tempSurface.scale(i);
-
-        tempPackedSurface.pack(tempSurface);
-
-        char strBuf[256];
-        sprintf(strBuf, "%ssmokeLightPuff%04d.pak", pathSmokeLight, i);
-        tempPackedSurface.save(strBuf);
-    }
-
-    // Dark Smoke.
-    for (i = minSize; i <= maxSize; i += increment) {
-        if (!tempSurface.loadAllTILInDirectory(pathSmokeDark)) {
-            throw Exception("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeDark);
-        }
-
-        tempSurface.scale(i);
-
-        tempPackedSurface.pack(tempSurface);
-
-        char strBuf[256];
-        sprintf(strBuf, "%ssmokeDarkPuff%04d.pak", pathSmokeDark, i);
-        tempPackedSurface.save(strBuf);
-    }
-
-    // Dirt.
-    for (i = minSize; i <= maxSize; i += increment) {
-        if (!tempSurface.loadAllTILInDirectory(pathDirt)) {
-            throw Exception("ERROR: Unable to load any particle images in %s", pathDirt);
-        }
-
-        tempSurface.scale(i);
-
-        tempPackedSurface.pack(tempSurface);
-
-        char strBuf[256];
-        sprintf(strBuf, "%sdirtPuff%04d.pak", pathDirt, i);
-        tempPackedSurface.save(strBuf);
-    }
-}
-#endif
-
 // init
 //---------------------------------------------------------------------------
 void PuffParticle2D::init()
@@ -256,43 +188,4 @@ void PuffParticle2D::loadPAKFiles()
 //---------------------------------------------------------------------------
 void PuffParticle2D::loadTILFiles()
 {
-    /*
-    	char pathSmokeLight[] = "pics/particles/puff/smokeLight/til/";
-    	//char pathSmokeLight[] = "pics/particles/puff/smokeLight/raw/";
-     
-    	if (!smokeLightPuffSprite.loadAllPAKInDirectory(pathSmokeLight))
-    	//if (!smokeLightPuffSprite.loadAllRAWInDirectory(pathSmokeLightRAW, iXY(320, 240)))
-    	{
-    		throw Exception("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeLight);
-    	}
-     
-    	// Following code is for reducing the size of the images.
-    	//smokeLightPuffSprite.shrinkWrap();
-    	//smokeLightPuffSprite.scale(100);
-    	//smokeLightPuffSprite.saveAllTIL("pics/particles/puff/smokeLight/");
-     
-    	char pathSmokeDark[] = "pics/particles/puff/smokeDark/til/";
-     
-    	if (!smokeDarkPuffSprite.loadAllPAKInDirectory(pathSmokeDark))
-    	{
-    		throw Exception("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeDark);
-    	}
-     
-    	// Following code is for reducing the size of the images.
-    	//smokeDarkPuffSprite.shrinkWrap();
-    	//smokeDarkPuffSprite.scale(100);
-    	//smokeDarkPuffSprite.saveAllTIL("pics/particles/puff/smokeDark/");
-     
-    	char pathDirt[] = "pics/particles/puff/dirt/til/";
-     
-    	if (!dirtPuffSprite.loadAllPAKInDirectory(pathDirt))
-    	{
-    		throw Exception("ERROR: Unable to load any dirt puff particle images in %s", pathDirt);
-    	}
-     
-    	// Following code is for reducing the size of the images.
-    	//dirtPuffSprite.shrinkWrap();
-    	//dirtPuffSprite.scale(100);
-    	//dirtPuffSprite.saveAllTIL("pics/particles/puff/dirt/");}
-    */
 }

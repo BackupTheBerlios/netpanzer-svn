@@ -301,7 +301,7 @@ void HostJoinTemplateView::addVehicleButtons(const iXY &pos)
     // Add the vehicle buttons.
     // Get the dimensions of the buttons to draw.
     Surface tempSurface;
-    tempSurface.loadTIL("pics/vehicleSelectionMenu/light.til");
+    tempSurface.loadTIL("pics/vehicleSelectionMenu/light.bmp");
 
     iXY buttonSize(tempSurface.getPix());
     int arrowButtonWidth =  16;
@@ -313,19 +313,19 @@ void HostJoinTemplateView::addVehicleButtons(const iXY &pos)
 
     y = pos.y;
 
-    addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/humvee.til", "", 0);
+    addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/humvee.bmp", "", 0);
     x += buttonSize.x + 1;
 
-    addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/light.til", "", 0);
+    addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/light.bmp", "", 0);
     x += buttonSize.x + 1;
 
-    addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/medium.til", "", 0);
+    addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/medium.bmp", "", 0);
     x += buttonSize.x + 1;
 
-    addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/heavy.til", "", 0);
+    addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/heavy.bmp", "", 0);
     x += buttonSize.x + 1;
 
-    addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/missle.til", "", 0);
+    addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/missle.bmp", "", 0);
     x += buttonSize.x + 1;
 
     // Draw the arrows to change the numbers.
@@ -501,6 +501,5 @@ void HostJoinTemplateView::doActivate()
 //---------------------------------------------------------------------------
 void HostJoinTemplateView::loadBackgroundSurface()
 {
-    doLoadBackgroundSurface("pics/backgrounds/menus/menu/til/hostjoinMB.til");
-
+    doLoadBackgroundSurface("pics/backgrounds/menus/menu/hostjoinMB.bmp");
 } // end HostJoinTemplateView::loadBackgroundSurface

@@ -180,5 +180,6 @@ void ProgressView::doActivate()
 //---------------------------------------------------------------------------
 void ProgressView::loadBackgroundSurface()
 {
-    backgroundSurface.loadTIL("pics/backgrounds/menus/menu/til/loadingMB.til");
+    backgroundSurface.loadBMP("pics/backgrounds/menus/menu/loadingMB.bmp");
 } // end MenuTemplateView::loadBackgroundSurface
+

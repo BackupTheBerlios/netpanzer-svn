@@ -183,7 +183,6 @@ void LobbyView::doActivate()
 //---------------------------------------------------------------------------
 void LobbyView::loadBackgroundSurface()
 {
-    String string = "pics/backgrounds/menus/menu/til/loadingMB.til";
-
-    backgroundSurface.loadTIL(string);
+    backgroundSurface.loadBMP("pics/backgrounds/menus/menu/loadingMB.bmp");
 } // end MenuTemplateView::loadBackgroundSurface
+

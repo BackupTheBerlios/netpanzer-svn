@@ -47,63 +47,8 @@ FlashParticle2D::FlashParticle2D(	const fXYZ  &pos,
 //---------------------------------------------------------------------------
 void FlashParticle2D::init()
 {
-    //staticPackedFlash.shrinkWrap();
-    //staticPackedFlash.setOffsetCenter();
-
-    // The following lines packs the light image.
-    if (UtilInterface::getFileSize("pics/particles/lights/pak/flash2.pak") > 0) {
-        staticPackedFlash.load("pics/particles/lights/pak/flash2.pak");
-    } else {
-        packFiles();
-        staticPackedFlash.load("pics/particles/lights/pak/flash2.pak");
-    }
-
+    staticPackedFlash.load("pics/particles/lights/pak/flash2.pak");
 } // end FlashParticle2D::init
-
-// packFiles
-//---------------------------------------------------------------------------
-void FlashParticle2D::packFiles()
-{
-    Surface       surface;
-    Surface       scaledSurface;
-    Surface       outputSurface;
-
-    //surface.loadBMP("pics/particles/lights/bmp/flash.bmp");
-
-    surface.loadTIL("pics/particles/lights/til/flash2.til");
-
-    const float minFlashSize =  10.0f;
-    const float maxFlashSize = 200.0f;
-    const float flashCount   =  20.0f;
-
-    outputSurface.create(surface.getPixX(), surface.getPixY(), surface.getPixX(), int(flashCount));
-
-    int n = 0;
-
-    for (int i = (int)minFlashSize; i < maxFlashSize - minFlashSize; i += int((maxFlashSize - minFlashSize) / flashCount)) {
-        // Set the output frame.
-        outputSurface.setFrame(n++);
-        outputSurface.fill(0);
-
-        // Copy and scale the surface.
-        scaledSurface.copy(surface);
-        int x = int(float(surface.getPixX()) * (float(i) / maxFlashSize));
-        int y = int(float(surface.getPixY()) * (float(i) / maxFlashSize));
-        scaledSurface.scale(x, y);
-
-        iXY dest((surface.getPix() - scaledSurface.getPix()) / 2);
-
-        // Blit the scaled surface onto the output surface.
-        scaledSurface.blt(outputSurface, dest.x, dest.y);
-    }
-
-    PackedSurface packedSurface;
-    packedSurface.pack(outputSurface);
-    char strBuf[256];
-    sprintf(strBuf, "pics/particles/lights/pak/flash2.pak");
-    packedSurface.save(strBuf);
-
-} // end FlashParticle2D::packFiles
 
 // draw
 //---------------------------------------------------------------------------
