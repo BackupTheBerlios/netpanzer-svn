@@ -1,6 +1,5 @@
 Next release:
 -playtesting+bugfixing
--often when a server is started it is only listed in 1 masterserver
 -win32 somtimes crashs in lobby window
 -objective count is wrong in status window
 -with 75% objective setting you can win the Cramped with 2 outposts already
