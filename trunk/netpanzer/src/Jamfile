@@ -6,6 +6,7 @@ SUBDIRS =
     Lib/2D
     Lib/Xml
     Lib/View
+    Lib/IRCLobby
     Lib/Types
     Lib/Particles
     Lib/PObject
