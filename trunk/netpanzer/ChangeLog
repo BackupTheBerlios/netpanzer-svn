@@ -1,3 +1,7 @@
+8-Mar-2004 by Matthias Braun
+-fixed a bug in colortable saving which I introduced with my last commit
+-added timestamp to serverconsole and cleaned related code a bit
+
 4-Mar-2004 by Matthias Braun
 -applied a bunch of endianess patches from Hollis Blanchard
 -added doxygen comments to Endian.hpp and did a few other fixes/style
