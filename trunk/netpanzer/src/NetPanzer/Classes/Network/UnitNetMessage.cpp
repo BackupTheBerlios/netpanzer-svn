@@ -29,7 +29,8 @@ UnitOpcodeMessage::UnitOpcodeMessage()
 
 unsigned short UnitOpcodeMessage::realSize( void )
 {
-    return( ( sizeof( UnitOpcodeMessage ) - _OPCODE_MESSAGE_LIMIT ) + code_size );
+    return (sizeof(UnitOpcodeMessage) - _OPCODE_MESSAGE_LIMIT +
+        ltoh16(code_size));
 }
 
 void UnitOpcodeMessage::reset(void)
@@ -43,18 +44,19 @@ void UnitOpcodeMessage::reset(void)
 
 bool UnitOpcodeMessage::isEmpty(void)
 {
-    return opcode_count != 0;
+    return (opcode_count == 0);
 }
 
 bool UnitOpcodeMessage::isFull(void)
 {
-    return (code_size + sizeof(UnitOpcodeStruct)) > _OPCODE_MESSAGE_LIMIT;
+    return (ltoh16(code_size) + sizeof(UnitOpcodeStruct))
+        > _OPCODE_MESSAGE_LIMIT;
 }
 
 void UnitOpcodeMessage::add(UnitOpcode *opcode)
 {
-    memcpy(data + code_size, opcode, sizeof(UnitOpcodeStruct));
-    code_size += sizeof(UnitOpcodeStruct);
+    memcpy(data + ltoh16(code_size), opcode, sizeof(UnitOpcodeStruct));
+    code_size = htol16(ltoh16(code_size) + sizeof(UnitOpcodeStruct));
     opcode_count++;
 }
 
