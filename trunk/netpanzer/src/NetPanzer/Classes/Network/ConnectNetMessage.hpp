@@ -183,24 +183,42 @@ __attribute__((packed));
 
 class ConnectMesgServerGameSettings : public NetMessage
 {
-public:
+private:
     uint16_t max_players;
     uint16_t max_units;
+public:
     char     map_name[32];
+private:
     int32_t  cloud_coverage;
     float    wind_speed;
     int32_t  game_type;
+public:
     uint8_t  powerup_state;
+private:
     int32_t  frag_limit;
     int32_t  time_limit;
     time_t   elapsed_time;
 
-    ConnectMesgServerGameSettings()
-    {
-        message_class = _net_message_class_connect;
-        message_id = _net_message_id_connect_server_game_setup;
-        memset(map_name, 0, sizeof(map_name));
-    }
+public:
+    ConnectMesgServerGameSettings();
+    uint16_t getMaxPlayers(void);
+    void setMaxPlayers(uint16_t maxPlayers);
+    uint16_t getMaxUnits(void);
+    void setMaxUnits(uint16_t maxUnits);
+    int32_t getCloudCoverage(void);
+    void setCloudCoverage(int32_t cloudCoverage);
+    float getWindSpeed(void);
+    void setWindSpeed(float windSpeed);
+    int32_t getGameType(void);
+    void setGameType(int32_t gameType);
+    uint8_t getPowerupState(void);
+    void setPowerupState(uint8_t powerupState);
+    int32_t getFragLimit(void);
+    void setFragLimit(int32_t fragLimit);
+    int32_t getTimeLimit(void);
+    void setTimeLimit(int32_t timeLimit);
+    time_t getElapsedTime(void);
+    void setElapsedTime(time_t elapsedTime);
 }
 __attribute__((packed));
 

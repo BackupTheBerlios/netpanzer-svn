@@ -453,16 +453,16 @@ void GameManager::getServerGameSetup( NetMessage *message )
 
     game_setup = (ConnectMesgServerGameSettings *) message;
 
-    game_setup->max_players = gameconfig->maxplayers;
-    game_setup->max_units = gameconfig->maxunits;
+    game_setup->setMaxPlayers(gameconfig->maxplayers);
+    game_setup->setMaxUnits(gameconfig->maxunits);
     snprintf(game_setup->map_name, 32, gameconfig->map.c_str()); 
-    game_setup->cloud_coverage = gameconfig->cloudcoverage;
-    game_setup->wind_speed = gameconfig->windspeed;
-    game_setup->game_type = gameconfig->gametype;
+    game_setup->setCloudCoverage(gameconfig->cloudcoverage);
+    game_setup->setWindSpeed(gameconfig->windspeed);
+    game_setup->setGameType(gameconfig->gametype);
     game_setup->powerup_state = gameconfig->powerups;
-    game_setup->frag_limit = gameconfig->fraglimit;
-    game_setup->time_limit = gameconfig->timelimit;
-    game_setup->elapsed_time = getGameTime();
+    game_setup->setFragLimit(gameconfig->fraglimit);
+    game_setup->setTimeLimit(gameconfig->timelimit);
+    game_setup->setElapsedTime(getGameTime());
 }
 
 // ******************************************************************
@@ -500,17 +500,17 @@ bool GameManager::startClientGameSetup( NetMessage *message, int *result_code )
 
     game_setup = (ConnectMesgServerGameSettings *) message;
 
-    gameconfig->maxplayers = game_setup->max_players;
-    gameconfig->maxunits = game_setup->max_units;
-    gameconfig->cloudcoverage = game_setup->cloud_coverage;
-    gameconfig->windspeed = (int) game_setup->wind_speed;
+    gameconfig->maxplayers = game_setup->getMaxPlayers();
+    gameconfig->maxunits = game_setup->getMaxUnits();
+    gameconfig->cloudcoverage = game_setup->getCloudCoverage();
+    gameconfig->windspeed = (int) game_setup->getWindSpeed();
     gameconfig->powerups = game_setup->powerup_state;
-    gameconfig->gametype = game_setup->game_type;
-    gameconfig->fraglimit = game_setup->frag_limit;
-    gameconfig->timelimit = game_setup->time_limit;
+    gameconfig->gametype = game_setup->getGameType();
+    gameconfig->fraglimit = game_setup->getFragLimit();
+    gameconfig->timelimit = game_setup->getTimeLimit();
 
     startGameTimer();
-    game_elapsed_time_offset = game_setup->elapsed_time;
+    game_elapsed_time_offset = game_setup->getElapsedTime();
 
     try {
         startGameMapLoad( game_setup->map_name, 20);

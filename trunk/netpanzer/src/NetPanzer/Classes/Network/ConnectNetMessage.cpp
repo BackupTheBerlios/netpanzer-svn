@@ -139,3 +139,92 @@ void ConnectClientSettings::set(const char *player_name, unsigned char unit_colo
     ConnectClientSettings::unit_color = unit_color;
     ConnectClientSettings::player_flag = player_flag;
 }
+
+
+ConnectMesgServerGameSettings::ConnectMesgServerGameSettings()
+{
+    message_class = _net_message_class_connect;
+    message_id = _net_message_id_connect_server_game_setup;
+    memset(map_name, 0, sizeof(map_name));
+}
+
+uint16_t ConnectMesgServerGameSettings::getMaxPlayers(void)
+{
+    return ltoh16(max_players);
+}
+
+void ConnectMesgServerGameSettings::setMaxPlayers(uint16_t maxPlayers)
+{
+    max_players = htol16(maxPlayers);
+}
+
+uint16_t ConnectMesgServerGameSettings::getMaxUnits(void)
+{
+    return ltoh16(max_units);
+}
+
+void ConnectMesgServerGameSettings::setMaxUnits(uint16_t maxUnits)
+{
+    max_units = htol16(maxUnits);
+}
+
+int32_t ConnectMesgServerGameSettings::getCloudCoverage(void)
+{
+    return ltoh32(cloud_coverage);
+}
+
+void ConnectMesgServerGameSettings::setCloudCoverage(int32_t cloudCoverage)
+{
+    cloud_coverage = htol32(cloudCoverage);
+}
+
+float ConnectMesgServerGameSettings::getWindSpeed(void)
+{
+    return (float)ltoh32((uint32_t)wind_speed);
+}
+
+void ConnectMesgServerGameSettings::setWindSpeed(float windSpeed)
+{
+    wind_speed = (float)htol32((uint32_t)windSpeed);
+}
+
+int32_t ConnectMesgServerGameSettings::getGameType(void)
+{
+    return ltoh32(game_type);
+}
+
+void ConnectMesgServerGameSettings::setGameType(int32_t gameType)
+{
+    game_type = htol32(gameType);
+}
+
+int32_t ConnectMesgServerGameSettings::getFragLimit(void)
+{
+    return ltoh32(frag_limit);
+}
+
+void ConnectMesgServerGameSettings::setFragLimit(int32_t fragLimit)
+{
+    frag_limit = htol32(fragLimit);
+}
+
+int32_t ConnectMesgServerGameSettings::getTimeLimit(void)
+{
+    return ltoh32(time_limit);
+}
+
+void ConnectMesgServerGameSettings::setTimeLimit(int32_t timeLimit)
+{
+    time_limit = htol32(timeLimit);
+}
+
+time_t ConnectMesgServerGameSettings::getElapsedTime(void)
+{
+    return (time_t)ltoh32((uint32_t)elapsed_time);
+}
+
+void ConnectMesgServerGameSettings::setElapsedTime(time_t elapsedTime)
+{
+    elapsed_time = (time_t)htol32((uint32_t)elapsedTime);
+}
+
