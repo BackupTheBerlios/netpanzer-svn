@@ -1,0 +1,113 @@
+9-Sep-2003 by Matze Braun
+-worked around issues with the block allocator code for Particl2D (new operator
+ is overloaded, but laste C++ draft doesn't allow to return 0 from such an
+ overloaded new.) I added exceptions and lots of try {} catch{} blocks, let's
+ hope I didn't miss something.
+
+8-Sep-2003 by Matze Braun
+-added some basic music plying support (all files in sfx/music are played in
+		random order, so simply put some .mp3 or .ogg there)
+-enabled Tile engine code again
+-fixed some bugs in the blitting routines
+-fixed some more small bugs I introduced while porting
+-Added new keyboard handling code
+-fixed lots of code that assumed a key scancode is "only" a char
+-added possibility to switch windows/fullscreen mode on ALT+ENTER
+-fixed some smaller bugs in Splitpath and FileUtil
+-added an fps counter to the info window
+-lots of small fixes in the network code
+-applied a patch from Raphael Bosshard which fixes a few warnings
+
+7-Sep-2003 by Matze Braun
+-removed NetMessageLog class (because it only contained shit ;-)
+-slightly changed NetworkServer and NetworkClient interfaces
+-Added a SDL_Net version of the network code
+-cleaned up socket code alot, by removing all this UDP code (a complete new
+ and clean network code will be needed sometime anyway...)
+-more cleanup in the network code
+-added a client version of the SDLNet code
+-replaced all FUBARs with throw Exception, so I could remove terminate.cpp
+
+6-Sep-2003 by Matze Braun
+-added a unix implementation of _findfirst, _findnext and _findclose
+-removed some getDrive functions, was never used and supporting drives in unix
+ is hard :)
+-we still need a big commit to replace all \\ in paths with /
+-added a fastly hacked configure script (no autoconf yet)
+-randomly replaced some \\ in pathnames with /
+-More news on my crusade against codewiz.hpp:
+  *removed some unused stuff from codewiz.hpp and terminate.cpp
+  *added new but alot simpler logging functions to Log.hpp
+-replaced all \\ in paths with / (gotta love sed). Yes, I made sure that I only
+ change paths (I looked at the list of stuff I change, before applying the sed
+ command)
+-added Stub for SDLSound implementation
+-added a basic SDL Event loop
+-fixed more small issues
+=> the main menu is displayed now and the Exit and Options buttons work :)
+-added a unix verison of _splitpath
+-some code cleanups:
+ *removed JoystickInterface completely
+ *removed netPanzerGlobals.*
+ *removed netPanzerMain.*
+
+------------
+prior changes (not complete)
+............
+
+-Added very basic makefile
+-removed #include "Stdafx.h" from all source files, gcc doesn't have precompiled
+ headers like msvc.
+-Added some missing include in several files
+-Removed strange double-include protection from codewiz.hpp
+-Removed DOS-compilation stuff from codewiz.hpp
+-Renamed TRUE to true, FALSE to false, BOOL to bool and removed the definitions
+ for them from codewiz.hpp
+-Removed BYTE,WORD,DWORD definitions from codewiz.hpp these are already defined
+ in Types/LibTypes.hpp
+-Commented memset assembler routines in codewiz.hpp
+-removed special WATCOM/MSVC #pragmas in lots of places in codewiz.hpp
+-changed type of PALETTE_LENGTH to size_t
+-added a SWAP function to codewiz.hpp, couldn't find one elsewhere in the
+ project. Also added a SWAP function with an explicit temporary variable which
+ is used at some places in the project (does this bring speed?)
+-made destructor of Surface, Component, SpritePacked virtual
+-changed usage of zeroMem to memset
+-use memcpy instead of memcpyB
+-Added a stub of RDTSC function to cTimeStamp.cpp, need an implementation there.
+-Added a dummy GameTemplateView.hpp. Needs investigation why the Lib includes
+ files from the main game.
+-copied KeyScanCodeDefs.h from main game
+-removed #if _MSC_VER > 1000 #pragma once #endif randomly from several files...
+-removed /= (const float&) in fXYZ class (/= (float) is enough)
+-gave up with the Lib/Main Game dependencies and added include paths to the main
+game in the Makefiles...
+-removed "aliasdef.h" from several files (it contained yet another definition of
+  a boolean type...), several renames again :-/
+-added int return type to getUnitInfoDrawLayer in GameConfig
+-changed iRect constructor to use const types
+-disabled all joystick code
+-casted several floats to ints in ColorTable.cpp to avoid warnings
+-Commented out several uses of _splitpath (which is win32 only) at FileList.cpp
+-fixed some upper/lowercase errors in #include statements
+-commented out code that uses _findfirst in Surface.cpp and PackedSurface.cpp,
+ this is a win32 only function
+-casted some floats to int in Palette.cpp to avoid warnings
+-commented out several assembler routines in Span.cpp
+-removed custom memcpy from Surface.cpp
+-changed a MessageBox to fprintf(stderr, ...) in Surface.cpp
+-added implementation of MIN and MAX to codewiz.hpp
+-renamed stricmp to strcasecmp in UtilInterface.cpp
+-made some functions in SpritePacked and Sprite const-correct
+-commented out lots of code in DirtKickParticle2D, because a variable didn't
+seem to be defined. Did teh same in GroundExplosionParticle
+-some more const-correctness fixes in GroundExplosionParticle and
+TrajectoryParticle.
+-made some functions in WorldViewInterface const-correct, same in ViewCamera
+-commented out some direct sound code in ParticleInterface.cpp
+-renamed some occurences of NULL to 0 in ParticleSystem2D
+-commented out isRolloverEnabled in AbstractButton.hpp, this variable doesn't
+seem to exist.
+-removed Lib/loadSaveData.* it wasn't used (some joystick stuff, we wanna remove
+		the joystick anyway).
+

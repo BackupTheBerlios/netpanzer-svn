@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# pseudo configure, until we use autoconf...
+
+echo -n "Checking for system type... "
+if uname | grep "win"; then
+	echo "assuming win32"
+	OS=WIN32
+else
+	echo "assuming posix"
+	OS=UNIX
+fi
+
+echo -n "Checking for makedepend... "
+MAKEDEPEND=`which makedepend`
+if [ -n "$MAKEDEPEND" ]; then
+    echo found
+else
+    echo not found
+fi
+
+echo -n "Checking for C compiler... "
+CC=${CC-gcc}
+echo $CC
+                                                                                
+echo -n "Checking for C++ compiler... "
+CXX=${CXX-g++}
+echo $CXX
+
+echo Creating config.mak
+rm -f config.mak
+touch config.mak
+echo "SYSTEM=$OS" >> config.mak
+echo "CC=$CC" >> config.mak
+echo "CXX=$CXX" >> config.mak
+if [ -n "$MAKEDEPEND" ]; then
+    echo "MAKEDEPEND=$MAKEDEPEND" >> config.mak
+fi
+
