@@ -88,26 +88,24 @@ public :
 
 class ServerMesgKeepAlive: public NetMessage
 {
-public:
+private:
     uint16_t client_id;
 
-    ServerMesgKeepAlive()
-    {
-        message_class = _net_message_class_client_server;
-        message_id = _net_message_id_server_keep_alive;
-    }
+public:
+    ServerMesgKeepAlive();
+    uint16_t getClientID(void);
+    void setClientID(uint16_t clientID);
 } __attribute__((packed));
 
 class ServerMesgPingRequest: public NetMessage
 {
-public:
+private:
     uint16_t client_id;
 
-    ServerMesgPingRequest()
-    {
-        message_class = _net_message_class_client_server;
-        message_id = _net_message_id_server_ping_request;
-    }
+public:
+    ServerMesgPingRequest();
+    uint16_t getClientID(void);
+    void setClientID(uint16_t clientID);
 } __attribute__((packed));
 
 class ClientMesgPingAck: public NetMessage

@@ -192,7 +192,7 @@ void NetworkServer::netMessageClientKeepAlive( NetMessage *message )
     client_keepalive = (ServerMesgKeepAlive *) message;
 
     client_data = client_list.getClientData(
-        PlayerInterface::getPlayerID(client_keepalive->client_id) );
+        PlayerInterface::getPlayerID(client_keepalive->getClientID()) );
 
     if( client_data == 0 ) {
         LOG( ("Invalid ClientID for KeepAlive") );
@@ -213,7 +213,7 @@ void NetworkServer::netMessageServerPingRequest( NetMessage *message )
     ping_request_mesg = (ServerMesgPingRequest *) message;
 
     PlayerID playerid =
-        PlayerInterface::getPlayerID(ping_request_mesg->client_id);
+        PlayerInterface::getPlayerID(ping_request_mesg->getClientID());
     sendMessage(playerid, &ping_ack_mesg,
             sizeof( ClientMesgPingAck ), _network_send_no_guarantee );
 }
