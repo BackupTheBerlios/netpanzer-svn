@@ -1,5 +1,6 @@
 Next release:
--rewrite ServerBrowser for new protocol - can be avoided by using qstat
+-rewrite ServerBrowser for new protocol - can be avoided by using qstat, patches
+ in qstat and xqf - done
 -finish serverconsole:
     * make status page display ips
     * add a kick command
@@ -15,7 +16,7 @@ Next release:
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map
    or where a certain player is playing.
- * take care about integration into xqf - patch created and sent
+ * take care about integration into xqf - done
  * Create UDP broadcast code for LAN games
 
 *** Network
