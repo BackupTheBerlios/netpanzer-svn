@@ -108,6 +108,10 @@ The server reads the configuration from
 netpanzer. Here's a short introduction into the option specific to a server in
 the server section of the xml file:
 
+*serverport [number], default 3030
+    Specifies the port which the server will be using. (The server is using the
+    TCP protocol)
+
 *maxplayers [number], default 8
     Number of players and bots that are able to play simultaneously on the
     server.
