@@ -673,6 +673,9 @@ void VehicleSelectionView::drawMiniProductionStatus(const Surface &dest)
         case _objective_disposition_player: {
 
                 iXY objectiveScreenPos(objectiveBounds.min - gameViewRect.min);
+                printf("GameViewRect: %d %d %d %d\n", gameViewRect.min.x,
+                        gameViewRect.min.y, gameViewRect.max.x,
+                        gameViewRect.max.y);
                 printf("ObjectiveScreenPos: %d %d\n", objectiveBounds.min.x,
                         objectiveBounds.min.y);
 

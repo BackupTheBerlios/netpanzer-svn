@@ -74,7 +74,7 @@ void MiniMapView::init()
     //int xOffset = size.x;
     //int yOffset = 0;
 
-    MiniMapInterface::setMapScale(getViewRect().getSize());
+    MiniMapInterface::setMapScale(getSize() - iXY(2,2));
 
     minMapSize =  64;
     maxMapSize = 480;
@@ -116,10 +116,10 @@ void MiniMapView::doDraw(const Surface &viewArea, const Surface &clientArea)
         scaleGroupWait += dt;
 
         if (scaleGroupWait > 1.0f) {
-            miniMapSurface.create(getViewRect().getSize(), getViewRect().getSize().x , 1);
+            miniMapSurface.create(getSize(), getSize().x , 1);
 
             //miniMapSurface.scale(getViewRect().getSize());
-            iRect r(iXY(0, 0), getViewRect().getSize());
+            iRect r(iXY(0, 0), getSize());
 
             miniMapSurface.bltScale(*miniMap, r);
 
@@ -128,7 +128,7 @@ void MiniMapView::doDraw(const Surface &viewArea, const Surface &clientArea)
         }
     }
 
-    iRect r(getViewRect().min, getViewRect().max);
+    iRect r(iXY(0,0), getSize());
 
     if (needScale) {
         // Draw the slow on the fly scaled map.
@@ -184,7 +184,9 @@ void MiniMapView::doDraw(const Surface &viewArea, const Surface &clientArea)
     MiniMapInterface::annotateMiniMap((Surface &) clientArea);
 
     // Draw the world view box corners.
-    clientArea.drawBoxCorners(MiniMapInterface::getWorldWindow(), 5, Color::white);
+    iRect boxpos = MiniMapInterface::getWorldWindow();
+    boxpos.translate(iXY(1,1));
+    clientArea.drawBoxCorners(boxpos, 5, Color::white);
 
     // Draw an inner black rect inside the outer white rect, for visibility reasons.
     //iRect innerRect(MiniMapInterface::getWorldWindow());
@@ -220,12 +222,9 @@ void MiniMapView::setViewWindow(const iXY &pos)
 {
     assert(this != 0);
 
-    iXY size(getViewRect().getSize());
-
-    if ((pos.x >= 0) && (pos.x < size.x) && (pos.y >= 0) && (pos.y < size.y)) {
-        MiniMapInterface::setWorldWindowPosition( iXY( pos.x, pos.y ) );
+    if (iRect(iXY(0,0), getSize()).contains(pos)) {
+        MiniMapInterface::setWorldWindowPosition( pos - iXY(1,1) );
     }
-
 } // end MiniMapView::setViewWindow
 
 // drawMouseBox
@@ -313,7 +312,7 @@ void MiniMapView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &
 //--------------------------------------------------------------------------
 void MiniMapView::doIncreaseSize(int value)
 {
-    iXY destSize(getViewRect().getSize());
+    iXY destSize(getSize());
 
     if (value == -1) {
         float dt = TimerInterface::getTimeSlice();
@@ -358,26 +357,26 @@ void MiniMapView::doIncreaseSize(int value)
     }
 
     // Resize the x dimension.
-    if (destSize.x > getViewRect().getSize().x) {
+    if (destSize.x > getSize().x) {
         if (destSize.x > maxMapSize) {
-            resize(iXY(maxMapSize, getViewRect().getSize().y));
+            resize(iXY(maxMapSize, getSize().y));
 
         } else {
-            resize(iXY(destSize.x, getViewRect().getSize().y));
+            resize(iXY(destSize.x, getSize().y));
         }
     }
 
     // Resize the y dimension.
-    if (destSize.y > getViewRect().getSize().y) {
+    if (destSize.y > getSize().y) {
         if (destSize.x > maxMapSize) {
-            resize(iXY(getViewRect().getSize().x, maxMapSize));
+            resize(iXY(getSize().x, maxMapSize));
 
         } else {
-            resize(iXY(getViewRect().getSize().x, destSize.x));
+            resize(iXY(getSize().x, destSize.x));
         }
     }
 
-    MiniMapInterface::setMapScale(getViewRect().getSize());
+    MiniMapInterface::setMapScale(getSize() - iXY(2,2));
 
     needScale      = true;
     scaleGroupWait = 0.0f;
@@ -388,7 +387,7 @@ void MiniMapView::doIncreaseSize(int value)
 //--------------------------------------------------------------------------
 void MiniMapView::doDecreaseSize(int value)
 {
-    iXY destSize(getViewRect().getSize());
+    iXY destSize(getSize());
 
     if (value == -1) {
         float dt = TimerInterface::getTimeSlice();
@@ -404,7 +403,7 @@ void MiniMapView::doDecreaseSize(int value)
         resize(iXY(minMapSize, minMapSize));
     }
 
-    MiniMapInterface::setMapScale(getViewRect().getSize());
+    MiniMapInterface::setMapScale(getSize() - iXY(2,2));
 
     needScale      = true;
     scaleGroupWait = 0.0f;
