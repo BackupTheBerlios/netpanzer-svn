@@ -122,4 +122,19 @@ namespace UI
         currentTransform -= transforms.top();
         transforms.pop();
     }
+
+
+    void Painter::setClipRect(iRect rect){
+        currentTransform.apply(rect);
+        SDL_Rect r;
+        r.x = rect.min.x;
+        r.y = rect.min.y;
+        r.w = rect.getSizeX();
+        r.h = rect.getSizeY();
+        SDL_SetClipRect(drawingSurface, &r);
+    }
+
+    void Painter::unsetClipRect(){
+        SDL_SetClipRect(drawingSurface, 0);
+    }
 }

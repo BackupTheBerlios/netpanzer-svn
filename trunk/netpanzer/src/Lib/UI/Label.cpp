@@ -96,5 +96,6 @@ namespace UI{
     void Label::draw(Painter & painter){
         if(textSurface != 0)
             painter.drawImage(textSurface, textPosition);
+        //drawFrame(painter);
     }
 }

@@ -25,12 +25,14 @@ namespace UI{
     Container::Container(iRect area):Component(area), previousMousePosition(-1,-1){
         lastFocusedComponent = 0;
         previousMouseState = 0;
+        draw_frame = false;
     }
 
     Container::Container(iXY position, iXY size):Component(iRect(position, position+size)), previousMousePosition(-1,-1)
     {
         lastFocusedComponent = 0;
         previousMouseState = 0;
+        draw_frame = false;
     }
 
     /**
@@ -52,10 +54,8 @@ namespace UI{
     void Container::draw(Painter & painter)
     {
         painter.setBrushColor(::Color::white);
-        iRect t = area;
-        t.max = iXY(area.max.x-1,area.max.y-1);
-        painter.drawRect(t);
-
+        if(draw_frame)
+            drawFrame(painter);
         painter.pushTransform(area.min);
 
         std::list<Component *>::iterator i;

@@ -61,6 +61,9 @@ namespace UI {
 
         void popTransform();
         
+        void setClipRect(iRect rect);
+        void unsetClipRect();
+
     private:
         void putPixelAbsolute(size_t x, size_t y, Color color);
 

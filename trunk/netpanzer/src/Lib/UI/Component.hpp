@@ -41,6 +41,8 @@ namespace UI{
 
         iRect getArea(void) const;
         
+        virtual void drawFrame(Painter & painter);
+
         virtual void draw(Painter & painter) = 0;
 
         void setName(const std::string & name){

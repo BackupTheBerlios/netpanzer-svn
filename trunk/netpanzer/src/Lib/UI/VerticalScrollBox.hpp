@@ -23,10 +23,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Button.hpp"
 
+#include <vector>
+
 namespace UI{
+
+    class BoxElement;
+
     class VerticalScrollBox : public Component, public ButtonCallback{
     public:
         VerticalScrollBox(iRect area);
+        ~VerticalScrollBox(void);
         void draw(Painter & painter);
     
         void buttonPressed(MouseEventParameter & event, Button * source);
@@ -36,12 +42,55 @@ namespace UI{
         void mousePressed(MouseEventParameter param);
         void mouseReleased(MouseEventParameter param);
 
-
     private:
+        class VerticalViewPort : public Container{
+        public:
+            VerticalViewPort(iRect area):Container(area){}
+            int getLastElementIndex(void){return components.size() - 1;}
+            int getVerticalSize(void);
+            void draw(Painter & painter);
+
+
+            void addVerticalOffset(int y){
+                offset.y += y;
+            }
+
+            int getVerticalOffset(void) const{
+                return offset.y;
+            }
+        private:
+            iXY offset;
+        };
+   
         Button * scrollDown;
         Button * scrollUp;
-        Container * viewPort;
+        VerticalViewPort * viewPort;
+
+   
+
+        int addBoxElement(BoxElement * box);
+        int getBoxWidth(void){
+            return area.max.x - area.min.x - 10;
+        }
+        friend class BoxElement;
     };
+
+    class BoxElement : public Container{
+    public:
+        BoxElement(VerticalScrollBox * parent, int height):Container(iRect(0,0,parent->getBoxWidth(), height)){
+            this->parent = parent;
+            position = parent->addBoxElement(this);
+
+        }
+
+        void draw(Painter & painter);
+        void drawFrame(Painter & painter){};
+
+    private:
+        VerticalScrollBox * parent;
+        int position;
+    };
+
 }
 
 #endif

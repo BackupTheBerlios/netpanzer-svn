@@ -33,21 +33,49 @@ namespace Panels{
     {
         
         this->setName("RootPanel");
+        setDrawFrame(true);
         col = 0;
 
         iRect labelPosition(200, 5, 300, 20);
-        label1 = new UI::Label("Test", labelPosition, fm, UI::H_CENTER|UI::BOTTOM);
+        label1 = new UI::Label("Test", labelPosition, fm, UI::H_CENTER|UI::V_CENTER);
+        addComponent(label1);
 
-
-        UI::VerticalScrollBox * scroll_box = new UI::VerticalScrollBox(iRect(200, 30, 300, 200));
+        UI::VerticalScrollBox * scroll_box = new UI::VerticalScrollBox(iRect(200, 30, 430, 130));
         addComponent(scroll_box);
 
+        UI::BoxElement * box1 = new UI::BoxElement(scroll_box, 20);
+        box1->addComponent(new UI::Label("Box1", iRect(5, 5, 45, 15), fm));
+        UI::BoxElement * box2 = new UI::BoxElement(scroll_box, 20);
+        box2->addComponent(new UI::Label("Box2", iRect(5, 5, 45, 15), fm));
+        UI::BoxElement * box3 = new UI::BoxElement(scroll_box, 20);
+        box3->addComponent(new UI::Label("Box3", iRect(5, 5, 45, 15), fm));
+        UI::BoxElement * box4 = new UI::BoxElement(scroll_box, 20);
+        box4->addComponent(new UI::Label("Box4", iRect(5, 5, 45, 15), fm));
+        UI::BoxElement * box5 = new UI::BoxElement(scroll_box, 20);
+        box5->addComponent(new UI::Label("Box5", iRect(5, 5, 45, 15), fm));
+        UI::BoxElement * box6 = new UI::BoxElement(scroll_box, 20);
+        box6->addComponent(new UI::Label("Box6", iRect(5, 5, 45, 15), fm));
+        UI::BoxElement * box7 = new UI::BoxElement(scroll_box, 20);
+        box7->addComponent(new UI::Label("Box7", iRect(5, 5, 45, 15), fm));
+        UI::BoxElement * box8 = new UI::BoxElement(scroll_box, 20);
+        box8->addComponent(new UI::Label("Box8", iRect(5, 5, 45, 15), fm));
+        UI::BoxElement * box9 = new UI::BoxElement(scroll_box, 20);
+        box9->addComponent(new UI::Label("Box9", iRect(5, 5, 45, 15), fm));
+        UI::BoxElement * box10 = new UI::BoxElement(scroll_box, 20);
+        box10->addComponent(new UI::Label("Box10", iRect(5, 5, 45, 15), fm));
+        UI::BoxElement * box11 = new UI::BoxElement(scroll_box, 20);
+        box11->addComponent(new UI::Label("Box11", iRect(5, 5, 45, 15), fm));
+        UI::BoxElement * box12 = new UI::BoxElement(scroll_box, 20);
+        box12->addComponent(new UI::Label("Box12", iRect(5, 5, 45, 15), fm));
 
         iXY sub1Position(15, 15);
         iXY sub2Position(15, 15);
 
         subBox1 = new Container(sub1Position, iXY(150, 230));
+        subBox1->setDrawFrame(true);
+
         subBox2 = new Container(sub2Position, iXY(120, 200));
+        subBox2->setDrawFrame(true);
         
         subBox1->setName("subBox1");
         subBox2->setName("subBox2");
@@ -62,7 +90,6 @@ namespace Panels{
         subBox2->addComponent(b1);
         subBox2->addComponent(b2);
         subBox1->addComponent(subBox2);
-        subBox1->addComponent(label1);
         addComponent(subBox1);
 
     }

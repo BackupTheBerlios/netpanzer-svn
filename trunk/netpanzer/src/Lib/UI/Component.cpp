@@ -27,5 +27,10 @@ namespace UI{
         return area;
     }
 
-    
+    void Component::drawFrame(Painter & painter){
+        iRect t = area;
+        t.max = iXY(area.max.x-1,area.max.y-1);
+        painter.drawRect(t);
+    }
+
 }

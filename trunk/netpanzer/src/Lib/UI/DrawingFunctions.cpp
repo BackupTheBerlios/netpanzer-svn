@@ -29,7 +29,13 @@ namespace UI{
     {
         // XXX hardcoded to 8 bit for now...
         uint8_t* pixels = (uint8_t*) surface->pixels;
-        pixels[y * surface->pitch + x] = color; 
+
+        //is this cast safe ?
+        if(x >= (size_t)surface->clip_rect.x &&
+           x <  (size_t)surface->clip_rect.x + surface->clip_rect.w &&
+           y >= (size_t)surface->clip_rect.y &&
+           y <  (size_t)surface->clip_rect.y + surface->clip_rect.h)
+            pixels[y * surface->pitch + x] = color; 
     }
     
     // bresenham algorithm for drawing a line

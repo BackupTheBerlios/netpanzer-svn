@@ -34,6 +34,8 @@ namespace UI{
         int previousMouseState;
         iXY previousMousePosition;
 
+        bool draw_frame;
+
     public:
         Container(iRect area);
         Container(iXY position, iXY size);
@@ -50,6 +52,10 @@ namespace UI{
         void mouseMoved(MouseEventParameter param);
         void mouseEntered(MouseEventParameter param);
         void mouseExited(MouseEventParameter param);
+
+        void setDrawFrame(bool b){
+            draw_frame = b;
+        }
 
     };
 }
