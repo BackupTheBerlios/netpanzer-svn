@@ -49,7 +49,7 @@ rule InstallIcon
 }
 
 InstallIcon netpanzer.png netpanzer.xpm ;
-InstallDoc ChangeLog README TODO RELNOTES ;
+InstallDoc ChangeLog README TODO RELNOTES docs/tipofday.txt docs/serverhowto.html ;
 __END__
 
 cp -p --parents $AUTOFILES $SOURCERELEASE

@@ -102,7 +102,7 @@ namespace INI {
 class GameConfig : public NoCopy
 {
 public:
-    GameConfig(const std::string& configfile);
+    GameConfig(const std::string& configfile, bool usePhysFS = true);
     ~GameConfig();
 
     void loadConfig();
@@ -282,6 +282,7 @@ public:
 
 private:
     std::string configfile;
+    bool usePhysFS;
 
     PIX colorEnumToPix(int color_enum) const
     {

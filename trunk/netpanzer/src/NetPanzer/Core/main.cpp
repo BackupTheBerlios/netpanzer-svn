@@ -242,12 +242,7 @@ BaseGameManager *initialise(int argc, char** argv)
             manager = new PlayerGameManager();
         }
 
-        std::string game_config;
-        if(game_config_option.value() != "") {
-            game_config = "/config/";
-            game_config += game_config_option.value();
-        }
-        manager->initialize(game_config);
+        manager->initialize(game_config_option.value());
 
         // gameconfig exists now...
         if(connect_option.value() != "") {

@@ -89,7 +89,7 @@ void DedicatedGameManager::initializeGameConfig(const std::string& configfile)
     if(configfile == "")
         gameconfig = new GameConfig("/config/netpanzer-dedicated.ini");
     else
-        gameconfig = new GameConfig(configfile.c_str());
+        gameconfig = new GameConfig(configfile, false);
 }
 //-----------------------------------------------------------------
 void DedicatedGameManager::initializeInputDevices()

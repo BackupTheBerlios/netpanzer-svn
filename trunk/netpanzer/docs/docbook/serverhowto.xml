@@ -199,5 +199,28 @@ details. The screen startup script shown above also demonstrates in a comment
 how to do this with the su and chroot commands.
     </para>
   </sect1>
+  <sect1 id="tools">
+    <title>Additional Tools</title>
+    <sect2 id="phpbrowser">
+      <title>PHP Server Browser</title>
+      <para>
+        Tobias Blersch has written a php script which allows you display a list
+        of running netpanzer servers on your homepage. You can find it at the
+        <ulink
+url="https://developer.berlios.de/project/showfiles.php?group_id=1250">download
+section</ulink> of netpanzer in the misc category.
+      </para>
+    </sect2>
+    <sect2 id="qstat">
+      <title>QStat</title>
+      <para>The netpanzer masterserver protocol is compatible with qstat
+(<ulink url="http://www.qstat.org">http://www.qstat.org</ulink>).
+      You can query for netpanzer server with the command
+      <command>qstat -gsm,netpanzer 81.169.185.36</command>. There are several
+      toold and script available to display server status on homepages with the
+      help of qstat.
+      </para>
+    </sect2>
+  </sect1>
 </article>
 

@@ -16,6 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+#include <fstream>
 #include <sstream>
 
 #include "Util/FileSystem.hpp"
@@ -29,7 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MiniMapView.hpp"
 #include "GameViewGlobals.hpp"
 
-GameConfig::GameConfig(const std::string& newconfigfile)
+GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     // VariableName("Name", value [, minimum, maximum])
     : hostorjoin("hostorjoin", _game_session_join, 0, _game_session_last-1),
       quickConnect("quickconnect", false),
@@ -105,7 +106,8 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       radar_objectivedrawmode("objectivedrawmode", _mini_map_objective_draw_mode_outline_rect, 0, _mini_map_objective_draw_mode_last-1),
       radar_resizerate("resizerate", 400, 10, 1000)      
 {
-    configfile = newconfigfile;
+    this->configfile = configfile;
+    this->usePhysFS = usePhysFS;
 
     std::stringstream default_player;
     default_player << "Player" << (rand()%1000);
@@ -198,8 +200,13 @@ GameConfig::~GameConfig()
 void GameConfig::loadConfig()
 {
     INI::Store inifile;
-    IFileStream in(configfile);
-    inifile.load(in);
+    if(usePhysFS) {
+        IFileStream in(configfile);
+        inifile.load(in);
+    } else {
+        std::ifstream in(configfile.c_str());
+        inifile.load(in);
+    }
 
     loadSettings(inifile.getSection("game"), gamesettings);
     loadSettings(inifile.getSection("player"), playersettings);
@@ -271,8 +278,13 @@ void GameConfig::saveConfig()
     saveSettings(inifile.getSection("radar"), radarsettings);
     saveSettings(inifile.getSection("server"), serversettings);
 
-    OFileStream out (configfile);
-    inifile.save(out);
+    if(usePhysFS) {
+        OFileStream out (configfile);
+        inifile.save(out);
+    } else {
+        std::ofstream out(configfile.c_str());
+        inifile.save(out);
+    }
 }
 
 void GameConfig::saveSettings(INI::Section& section,

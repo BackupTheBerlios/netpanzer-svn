@@ -60,7 +60,7 @@ void BotGameManager::initializeGameConfig(const std::string& configfile)
     if(configfile == "")
         gameconfig = new GameConfig("/config/netpanzer-bot.ini");
     else
-        gameconfig = new GameConfig(configfile);
+        gameconfig = new GameConfig(configfile, false);
 }
 //-----------------------------------------------------------------
 void BotGameManager::initializeInputDevices()
