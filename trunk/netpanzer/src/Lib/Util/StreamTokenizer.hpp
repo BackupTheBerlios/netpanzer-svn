@@ -42,12 +42,12 @@ public:
 
         char c;
         do {
-            in >> c;
+            in.get(c);
         } while(c == delimiter);
         
         do {
             result += c;
-            in >> c;
+            in.get(c);
         } while((!in.eof()) && c != delimiter);
 
         return result;
