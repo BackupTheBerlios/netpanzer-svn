@@ -6,3 +6,9 @@ SubInclude TOP src Lib ;
 SubInclude TOP src Editor ;
 SubInclude TOP src NetPanzer ;
 SubInclude TOP src ServerBrowser ;
+
+# eventually add additional utils
+for i in $(NETPUTILS)
+{
+    SubInclude TOP src $(i) ;
+}
