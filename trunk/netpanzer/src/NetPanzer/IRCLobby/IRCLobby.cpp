@@ -94,7 +94,7 @@ public:
 static const char* ask_server_running_mess = "Who's running a server?";
 static const char* server_running_mess = "I'm running";
 static const char* leaving_mess = "I'm leaving to ";
-static const char nickname_prefix[]="netp_";
+static const char nickname_prefix[]="np";
 
 IRCLobby::IRCLobby(const std::string& server,
         const std::string& nick,

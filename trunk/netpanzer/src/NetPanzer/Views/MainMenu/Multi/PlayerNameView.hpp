@@ -43,7 +43,8 @@ private:
     static void returnPressed(cInputField* input);
     
     enum { BORDER_SPACE           =  4 };    
-    enum { INPUT_FIELD_CHARACTERS = 16 };
+    // irc nick is 16 chars max, 2 = "np", 1 spare for digit if nick is taken
+    enum { INPUT_FIELD_CHARACTERS = 13 };
 
     cInputFieldString playerName;
 }; // end PlayerNameView
