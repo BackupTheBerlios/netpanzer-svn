@@ -11,4 +11,7 @@ NetworkStats.log
 Makefile.in
 Makefile
 netpanzer
+Jamconfig
+Jamconfig.in
+out
 
