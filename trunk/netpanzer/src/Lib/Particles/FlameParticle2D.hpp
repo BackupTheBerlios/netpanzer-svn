@@ -46,7 +46,6 @@ protected:
 
 	static void pakFiles();
 	static void loadPakFiles();
-
 }; // end FlameParticle2D
 
 #endif // __FlameParticle2D_hpp__

@@ -15,8 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #include <config.h>
+
 #include "KeyScanCodeDefs.h"
 #include "ParticleInterface.hpp"
 #include "PuffParticle2D.hpp"
@@ -30,7 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapInterface.hpp"
 #include "KeyboardInterface.hpp"
 #include "Physics.hpp"
-//#include "DSound.hpp"
 //#include "DirtKickParticle2D.hpp"
 #include "SparkParticle2D.hpp"
 #include "FireParticleSystem2D.hpp"
@@ -46,6 +45,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "TemplateMuzzleSystem.hpp"
 #include "UnitGlobals.hpp"
 #include "CraterParticle2D.hpp"
+#include "Exception.hpp"
 
 
 cGrowList <UnitParticleInfo> ParticleInterface::unitParticleInfo;
@@ -99,7 +99,8 @@ void ParticleInterface::addUnitDamagePuffParticle(const UnitState &unitState)
 
 	if (particleType == 0)
 	{
-		new PuffParticle2D(	newPos,
+		try {
+			new PuffParticle2D(	newPos,
 							LIGHT,
 							0.0f,
 							0.4f,
@@ -109,10 +110,14 @@ void ParticleInterface::addUnitDamagePuffParticle(const UnitState &unitState)
 							smokeShadowLayer,
 							smokeWindScale,
 							Particle2D::getFarAway(newPos));
+		} catch(...) {
+			// ignored for now
+		}
 	}
 	else if (particleType == 1)
 	{
-		new PuffParticle2D(	newPos,
+		try {
+			new PuffParticle2D(	newPos,
 							DARK,
 							0.0f,
 							0.4f,
@@ -122,9 +127,12 @@ void ParticleInterface::addUnitDamagePuffParticle(const UnitState &unitState)
 							smokeShadowLayer,
 							smokeWindScale,
 							Particle2D::getFarAway(newPos));
-
-	} else { assert(false); }
-
+		} catch(...) {
+			// ignored for now
+		}
+	} else {
+		throw Exception("Unknonw DamagePuffParticle type");
+	}
 } // end ParticleInterface::addUnitDamagePuffParticle
 
 //--------------------------------------------------------------------------
@@ -170,7 +178,10 @@ void ParticleInterface::addSmokePuffParticle(const iXY &worldPos, PUFF_TYPE type
 //--------------------------------------------------------------------------
 void ParticleInterface::addPuffParticle(const iXY &worldPos, PUFF_TYPE type, float minScale, float randScale, int minFPS, int randFPS, int layer, float windScale /* = 1.0f */, float incrementScale /* = 0.0f */)
 {
+	try {
 //	new PuffParticle2D(fXYZ(worldPos.x, 0, worldPos.y), type, minScale, randScale, minFPS, randFPS, layer, layer - 1, windScale);
+	} catch(...) {
+	}
 }
 
 //--------------------------------------------------------------------------
@@ -225,7 +236,10 @@ void ParticleInterface::addPuffSystem(const iXY &worldPos, const iRect &bounds, 
 //        
 //        // These particles have a hardcoded waitMax and waitMin.  They are the last 2 variables
 //        // in the following statement.
+//		  try {
 //        new PuffParticle2D(offset, particleType, minScale, randScale, minFPS, randFPS, layer, layer - 1, smolderWindScale);
+//		  } catch(...) {
+//        }
 //    }
 }
 
@@ -256,13 +270,21 @@ void ParticleInterface::addMissleExplosionFlashParticle(const iXY &worldPos)
 //--------------------------------------------------------------------------
 void ParticleInterface::addFlashParticle(const iXY &worldPos, float minScale, float randScale, float lifetime, int layer, bool singleFrame /* = false */)
 {
-	new FlashParticle2D(fXYZ(worldPos.x, 0, worldPos.y), minScale, randScale, lifetime, layer, singleFrame);
+	try {
+		new FlashParticle2D(fXYZ(worldPos.x, 0, worldPos.y), minScale, randScale, lifetime, layer, singleFrame);
+	} catch(...) {
+		// ignrored
+	}
 }
 
 //--------------------------------------------------------------------------
 void ParticleInterface::addExplosionFlameParticle(const iXY &worldPos, const float &minScale, const float &randScale, const int &layer)
 {
+	try {
 //	new ExplosionFireParticle2D(fXYZ(worldPos.x, 0, worldPos.y), minScale, randScale, layer);
+	} catch(...) {
+		// ignored
+	}
 }
 
 //--------------------------------------------------------------------------
@@ -282,11 +304,19 @@ void ParticleInterface::addExplosionSmokeParticle(const iXY &worldPos, int maxPa
 
     if      (particleType == 0)
     {
+		try {
 		//new ExplosionParticleSystem2D(pos, r, 1, maxParticleSpeed, LIGHT);
+		} catch(...) {
+			// ignored
+		}
     }
     else if (particleType == 1)
     {
+		try {
 		//new ExplosionParticleSystem2D(pos, r, 1, maxParticleSpeed, DARK);
+		} catch(...) {
+			// ignored
+		}
     }
 }
 
@@ -295,7 +325,10 @@ void ParticleInterface::addExplosionDirtSystem(const iXY &worldPos, const iRect 
 {
     fXYZ  pos(worldPos.x, 0, worldPos.y);
 
+	try {
     //new ExplosionParticleSystem2D(pos, bounds, dirtExplosionMaxParticleCount / 2, float(explosionParticleMaxSpeed) * 0.75f, DIRT_PUFF);
+	} catch(...) {
+	}
 }
 
 //--------------------------------------------------------------------------
@@ -303,7 +336,10 @@ void ParticleInterface::addGroundExplosionSystem(const iXY &worldPos, const iRec
 {
     fXYZ  pos(worldPos.x, 0, worldPos.y);
 
-    //new GroundExplosionParticleSystem2D(pos, bounds, maxParticleCount, maxParticleSpeed);
+	try {
+		//new GroundExplosionParticleSystem2D(pos, bounds, maxParticleCount, maxParticleSpeed);
+	} catch(...) {
+	}
 }
 
 //--------------------------------------------------------------------------
@@ -320,7 +356,10 @@ void ParticleInterface::addExplosionSmokeSystem(const iXY &worldPos, const iRect
 
 	fXYZ  pos(worldPos.x, 0, worldPos.y);
 
+	try {
 	//new ExplosionParticleSystem2D(pos, bounds, maxParticleCount, maxParticleSpeed, particleType);
+	} catch(...) {
+	}
 
 	// Add an additional set of particles in the center of the larger explosion which
 	// move at a slower initialVelocity, since real explosions have a lot of smoke lingering
@@ -329,7 +368,10 @@ void ParticleInterface::addExplosionSmokeSystem(const iXY &worldPos, const iRect
 
 	if (slowerParticleSpeed > 0)
 	{
-		//new ExplosionParticleSystem2D(pos, bounds, maxParticleCount / 2, slowerParticleSpeed, particleType);
+		try {
+			//new ExplosionParticleSystem2D(pos, bounds, maxParticleCount / 2, slowerParticleSpeed, particleType);
+		} catch(...) {
+		}
 	}
 }
 
@@ -348,11 +390,17 @@ void ParticleInterface::addSmolderSystem(const iXY &worldPos, const iRect &bound
 
 	if      (particleType == 0)
 	{
-		new SmolderParticleSystem2D(pos, bounds, lifetime, waitMin, waitMax, LIGHT);
+		try {
+			new SmolderParticleSystem2D(pos, bounds, lifetime, waitMin, waitMax, LIGHT);
+		} catch(...) {
+		}
 	}
 	else if (particleType == 1)
 	{
-		new SmolderParticleSystem2D(pos, bounds, lifetime, waitMin, waitMax, DARK);
+		try {
+			new SmolderParticleSystem2D(pos, bounds, lifetime, waitMin, waitMax, DARK);
+		} catch(...) {
+		}
 	} else
 	{
 			assert(false);
@@ -367,7 +415,10 @@ void ParticleInterface::addCloudParticle(const iXY &worldPos, const iXY &worldSi
 
 	fXYZ  pos(worldPos.x, 0, worldPos.y);
 
-	new CloudParticle2D(pos, iXY(shit.x, shit.y), cloudWindMinPercent, cloudWindRandPercent);
+	try {
+		new CloudParticle2D(pos, iXY(shit.x, shit.y), cloudWindMinPercent, cloudWindRandPercent);
+	} catch(...) {
+	}
 }
 
 //--------------------------------------------------------------------------
@@ -517,10 +568,13 @@ void ParticleInterface::addHit(const UnitState &unitState)
 	
 	fXYZ pos(unitState.location.x, 0, unitState.location.y);
 
-	new TemplateExplosionSystem(	pos,
+	try {
+		new TemplateExplosionSystem(	pos,
 									unitParticleInfo[unitState.unit_type].minBounds,
 									e,
 									Particle2D::getFarAway(pos));
+	} catch(...) {
+	}
 
 	
 	// Create some smoke in the middle of the explosion.
@@ -670,10 +724,13 @@ void ParticleInterface::addMiss(const iXY &worldPos, BYTE unitType)
 
 	fXYZ pos(worldPos.x, 0, worldPos.y);
 
-	new TemplateExplosionSystem(	pos,
+	try {
+		new TemplateExplosionSystem(	pos,
 									iRect(-5, -5, 5, 5),
 									e,
 									Particle2D::getFarAway(pos));
+	} catch(...) {
+	}
 }
 
 void ParticleInterface::buildUnitTables()
@@ -686,19 +743,6 @@ void ParticleInterface::buildUnitTables()
 		unitAttackFactorTable[i] = int(sqrt(p->attack_factor * 2));
 	}
 }
-
-
-// UnitInterface.cpp
-/*
-                iXY loc = iXY( unit->unit_state.location.x, unit->unit_state.location.y );
-                ParticleInterface::addHit(loc, iRect(loc - 5, loc + 5));
-*/
-
-// Weapon.cpp
-/*
-        iXY loc = iXY( location.x, location.y );
-                ParticleInterface::addMiss(loc);
-*/
 
 //--------------------------------------------------------------------------
 void ParticleInterface::addMissleFlightPuff(const iXY &worldPos, const fXY &direction, float &curWait, float &totalWait, BYTE unitType)
@@ -713,7 +757,8 @@ void ParticleInterface::addMissleFlightPuff(const iXY &worldPos, const fXY &dire
 		curWait   = 0.0f;
 		totalWait = (float(rand()) / float(RAND_MAX)) * 0.03f + 0.02f;
 
-		new PuffParticle2D(	loc,
+		try {
+			new PuffParticle2D(	loc,
 							LIGHT,
 							0.05f,
 							0.05f,
@@ -723,6 +768,9 @@ void ParticleInterface::addMissleFlightPuff(const iXY &worldPos, const fXY &dire
 							smokeShadowLayer,
 							MuzzleSystem::windScale,
 							Particle2D::getFarAway(loc));
+		} catch(...) {
+			// ignored
+		}
 	}
 }
 
@@ -808,13 +856,19 @@ void ParticleInterface::addMuzzlePuff(const fXYZ &worldPos, const fXYZ &directio
 	muzzlePos.z = worldPos.z + muzzleOffset.y;
 
 	// Start the muzzle smoke.
-	new TemplateMuzzleSystem(muzzlePos, direction, m);
+	try {
+		new TemplateMuzzleSystem(muzzlePos, direction, m);
+	} catch(...) {
+	}
 }
 
 //--------------------------------------------------------------------------
 void ParticleInterface::addDirtKick(const iXY &worldPos)
 {
-	//new DirtKickParticle2D(fXYZ(worldPos.x, 0, worldPos.y));
+	try {
+		//new DirtKickParticle2D(fXYZ(worldPos.x, 0, worldPos.y));
+	} catch(...) {
+	}
 }
 
 //--------------------------------------------------------------------------
@@ -827,7 +881,10 @@ void ParticleInterface::addCloudParticle(int count /* = 1 */)
 
     for (int i = 0; i < count; i++)
     {
-		new CloudParticle2D(fXYZ(rand() % shit.x, 0, rand() % shit.y), iXY(shit.x, shit.y), cloudWindMinPercent, cloudWindRandPercent);
+		try {
+			new CloudParticle2D(fXYZ(rand() % shit.x, 0, rand() % shit.y), iXY(shit.x, shit.y), cloudWindMinPercent, cloudWindRandPercent);
+		} catch(...) {
+		}
     }
 }
 
@@ -893,7 +950,8 @@ void ParticleInterface::addMoveDirtPuff(const UnitState &unitState)
 			movePuffWaitGroup = 0.0f;
 			movePuffWaitTotal = (float(rand()) / float(RAND_MAX)) * 0.05f + 0.05f;
 
-			new PuffParticle2D(	pos,
+			try {
+				new PuffParticle2D(	pos,
 								DIRT,
 								0.0f,
 								0.15f,
@@ -903,6 +961,9 @@ void ParticleInterface::addMoveDirtPuff(const UnitState &unitState)
 								0,
 								MuzzleSystem::windScale,
 								isFarAway);
+			} catch(...) {
+				// ignored for now
+			}
 		}
 	}
 }

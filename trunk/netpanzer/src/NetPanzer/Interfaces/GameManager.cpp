@@ -1649,7 +1649,7 @@ void GameManager::joinMultiPlayerGame()
   //winsock hack
   //JoinSession( gapp.hwndApp );
   //InitStreamClient(gapp.hwndApp);
-  CLIENT->joinSession("kiff.local");
+  CLIENT->joinSession("127.0.0.1");
   
   // XXX how should that work? we can't process (network) events while waiting
 #if 0

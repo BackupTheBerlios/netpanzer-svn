@@ -67,10 +67,7 @@ void *Particle2D::operator new(size_t numBytes)
 	// Check global particle disable flag.
 	if (!createParticles)
 	{
-		// XXX my compiler claims that new mustn't return 0, so I'm throwing an
-		// exception...
-		throw "allocation error.";
-		//return 0;
+		throw "particles disabled";
 	}
 
 	// Check for trying to create a particle that's too big.
@@ -82,10 +79,7 @@ void *Particle2D::operator new(size_t numBytes)
 	// Check if all slots used.
 	if (firstAvailableParticle == 0)
 	{
-		// XXX my compiler claims that new mustn't return 0, so I'm throwing an
-		// exception...
-		throw "allocation error.";
-		//return 0;
+		throw "all particle slots used";
 	}
 
 	// Remove particle from available list and return it.
@@ -93,7 +87,6 @@ void *Particle2D::operator new(size_t numBytes)
 	firstAvailableParticle = firstAvailableParticle->next;
 
 	return p;
-
 } // end Particle2D::operator new
 
 // operator delete
@@ -114,7 +107,6 @@ void Particle2D::operator delete(void *block)
 	Particle2D *p = (Particle2D *)block;
 	p->next = firstAvailableParticle;
 	firstAvailableParticle = p;
-
 } // end Particle2D::operator delete
 
 // Particle2D
@@ -128,12 +120,10 @@ Particle2D::Particle2D(const fXYZ &pos)
 	if (this == zParticle2D)
 	{
 		prev = next = zParticle2D;
-	}	else
-		{
-			prev = next = 0;
-			insertMe();
-		}
-
+	} else {
+		prev = next = 0;
+		insertMe();
+	}
 } // end Particle2D
 
 // ~Particle2D
@@ -186,7 +176,6 @@ void Particle2D::insertMe()
 	{
 		peakCount = frameCount;
 	}
-
 } // end Particle2D::insertMe
 
 // removeMe
@@ -219,7 +208,6 @@ void Particle2D::removeAll()
 		delete e;
 		e = nextPtr;
 	}
-
 } // end Particle2D::removeAll
 
 // simAll
@@ -236,7 +224,6 @@ void Particle2D::simAll()
 		e->sim();
 		e = nextPtr;
 	}
-
 } // end Particle2D::simAll
 
 // drawAll
@@ -254,7 +241,6 @@ void Particle2D::drawAll(const Surface &clientArea, SpriteSorter &sorter)
 		e->draw(clientArea, sorter);
 		e = nextPtr;
 	}
-
 } // end Particle2D::drawAll
 
 // draw
@@ -263,11 +249,6 @@ void Particle2D::drawAll(const Surface &clientArea, SpriteSorter &sorter)
 //---------------------------------------------------------------------------
 void Particle2D::draw(const Surface &dest, SpriteSorter &sorter)
 {
-	if (!isAlive)
-	{
-		return;
-	}
-
 } // end draw
 
 // Particle2D::sim
@@ -293,264 +274,6 @@ void Particle2D::sim()
 
 } // end Particle2D::sim
 
-//---------------------------------------------------------------------------
-#ifdef _DEBUG
-	//void Particle2D::verifyList()
-	//{
-    /*
-		// Verify head/tail node
-		assert(isValidPtr(zParticle2D));
-		assert(isValidPtr(zParticle2D->next));
-		assert(isValidPtr(zParticle2D->prev));
-
-		// Go through links and verify nodes match up
-		Particle2D *e = zParticle2D;
-		int numLeftToCount = particleCount+1;
-    do
-		{
-			assert(isValidPtr(e));
-			assert(isValidPtr(e->next));
-			assert(isValidPtr(e->prev));
-
-			assert(e->prev->next == e);
-			assert(e->next->prev == e);
-
-			e = e->next;
-      assert(numLeftToCount > 0);
-      --numLeftToCount;
-		} while (e != zParticle2D);
-	  if (numLeftToCount != 0) {
-      LOG(("numLeftToCount: %d", numLeftToCount));
-    }
-    assert(numLeftToCount == 0);
-    */
-  //}
-#endif
-
-//// blit
-////--------------------------------------------------------------------------
-//void SpriteBltNormal::blit(Surface *surface, Recti &world_win)
-//{
-//	// blit_offset
-//	PointXYi bo = world_pos - world_win.min; 
-//	
-//	blt(*surface, bo.x, bo.y);
-//} // end blit
-//
-//// blit
-////--------------------------------------------------------------------------
-//void SpriteBltTrans::blit(Surface *surface, Recti &world_win)
-//{
-//	// blit_offset
-//	PointXYi bo = world_pos - world_win.min; 
-//	
-//	bltTrans(*surface, bo.x, bo.y);
-//} // end blit
-//
-//// blit
-////--------------------------------------------------------------------------
-//void SpriteBltBrightness::blit(Surface *surface, Recti &world_win)
-//{
-//	// blit_offset
-//	PointXYi bo = world_pos - world_win.min; 
-//	
-//	bltBrightness(*surface, iXY(bo.x, bo.y), brightness);
-//} // end blit
-//
-//// SpriteBltBlendRandomScale constructor
-////--------------------------------------------------------------------------
-//SpriteBltBlendRandomScale::SpriteBltBlendRandomScale()
-//{
-//	blendTable = rand() % Palette::COLOR_BLEND_TABLE_COUNT;
-//} // end SpriteBltBlendRandomScale constructor
-//	
-//// blit
-////--------------------------------------------------------------------------
-//void SpriteBltBlendRandomScale::blit(Surface *surface, Recti &world_win)
-//{
-//	// blit_offset
-//	PointXYi bo = world_pos - world_win.min; 
-//	
-//	iRect r(bo, bo + 10 + yPos / 2);
-//	//iRect r(bo, bo + 50);
-//	
-//	iXY center = r.getSize() / (-2);
-//	
-//	r.min += center;
-//	r.max += center;
-//
-//	//surface->setOffset((surface->getPix() - r.getSize()) / (-2));
-//	//surface->setOffset(r.getSize() / (-2));
-//
-//	if(1)
-//	{	
-//		if      (blendTable == 0)
-//		{
-//			surface->bltBlendScale(*this, r, Palette::colorTable2575);
-//		}
-//		else if (blendTable == 1)
-//		{
-//			surface->bltBlendScale(*this, r, Palette::colorTable5050);
-//		}
-//		else if (blendTable == 2)
-//		{
-//			surface->bltBlendScale(*this, r, Palette::colorTable7525);
-//		}
-//	}
-//} // end SpriteBltBlendRandomScale::blit
-//	
-//// blit
-////--------------------------------------------------------------------------
-//void SpriteBltBlendScale::blit(Surface *surface, Recti &world_win)
-//{
-//	if (scale <= 0) { return; }
-//
-//	PointXYi viewPos = world_pos - world_win.min; 
-//	
-//	//iRect r(bo, bo + 10 + yPos / 2);
-//	//iXY center = r.getSize() / (-2);
-//	
-//	// Use scale to adjust the size of the image while keeping the
-//	// aspect ratio correct.
-//
-//	iRect r(viewPos.x, viewPos.y, viewPos.x + this->pix.x * scale, viewPos.y + this->pix.y * scale);
-//	
-//	iXY center;
-//	center.x = -(r.getSizeX() >> 1);
-//	center.y = -(r.getSizeY() >> 1);
-//
-//	r.translate(center);
-//
-//	surface->bltBlendScale(*this, r, *colorTable);
-//	//surface->bltScale(*this, r);
-//
-//} // end SpriteBltBlendScale::blit
-//
-//// SpriteBltBlendRandom constructor
-////--------------------------------------------------------------------------
-//SpriteBltBlendRandom::SpriteBltBlendRandom()
-//{
-//	blendTable = rand() % Palette::COLOR_BLEND_TABLE_COUNT;
-//
-//} // end SpriteBltBlendRandom constructor
-//	
-//// blit
-////--------------------------------------------------------------------------
-//void SpriteBltBlendRandom::blit(Surface *surface, Recti &world_win)
-//{
-//	// blit_offset
-//	PointXYi bo = world_pos - world_win.min; 
-//	
-//	if(1)
-//	{	
-//		if      (blendTable == 0)
-//		{
-//			surface->blendIn(*this, bo.x, bo.y, Palette::colorTable2575);
-//		}
-//		else if (blendTable == 1)
-//		{
-//			surface->blendIn(*this, bo.x, bo.y, Palette::colorTable5050);
-//		}
-//		else if (blendTable == 2)
-//		{
-//			surface->blendIn(*this, bo.x, bo.y, Palette::colorTable7525);
-//		}
-//	}
-//
-//} // end SpriteBltBlendRandom::blit
-//
-//// blit
-////--------------------------------------------------------------------------
-//void SpriteBltBlend::blit(Surface *surface, Recti &world_win)
-//{
-//	// blit_offset
-//	PointXYi bo = world_pos - world_win.min; 
-//	
-//	if (useBlend)
-//	{
-//		surface->blendIn(*this, bo.x, bo.y, *colorTable);
-//	} else
-//	{
-//		blt(*surface, bo);
-//	}
-//
-//} // end SpriteBltBlend::blit
-//
-//// blit
-////--------------------------------------------------------------------------
-//void SpriteBltScale::blit(Surface *surface, Recti &world_win)
-//{
-//	if (scale <= 0) { return; }
-//
-//	PointXYi viewPos = world_pos - world_win.min; 
-//
-//	iRect r(viewPos.x, viewPos.y, viewPos.x + this->pix.x * scale, viewPos.y + this->pix.y * scale);
-//	
-//	iXY center;
-//	center.x = -(r.getSizeX() >> 1);
-//	center.y = -(r.getSizeY() >> 1);
-//
-//	r.translate(center);
-//
-//	//surface->bltScale(*this, r);
-//	surface->bltBlendScale(*this, r, Palette::colorTableSolidTrans0);
-//
-//} // end SpriteBltScale::blit
-//
-//// blit
-////--------------------------------------------------------------------------
-//void PackedSurfacePreScaled::blit(Surface *surface, Recti &world_win)
-//{
-//	PointXYi viewPos = world_pos - world_win.min; 
-//
-//	blt(*surface, viewPos);
-//
-//} // end PackedSurfacePreScaled::blit
-//
-////--------------------------------------------------------------------------
-//void PackedSurfacePreScaled::setTo(const PackedSurface &source)
-//{
-//	assert(isValidPtr(this));
-//
-//	free();
-//
-//	myMem      = false;
-//	pix        = source.getPix();
-//	center     = source.getCenter();
-//	frameCount = source.getFrameCount();
-//	fps        = source.getFPS();
-//	offset     = source.getOffset();
-//
-//} // end Surface::setTo
-//
-//// blit
-////--------------------------------------------------------------------------
-//void SpritePackedBlt::blit(Surface *surface, Recti &world_win)
-//{
-//	//if (scale <= 0) { return; }
-//
-//	PointXYi viewPos = world_pos - world_win.min;
-//	
-//	//iRect r(bo, bo + 10 + yPos / 2);
-//	//iXY center = r.getSize() / (-2);
-//	
-//	// Use scale to adjust the size of the image while keeping the
-//	// aspect ratio correct.
-//
-//	//iRect r(viewPos.x, viewPos.y, viewPos.x + this->pix.x * scale, viewPos.y + this->pix.y * scale);
-//	
-//	//iXY center;
-//	//center.x = -(r.getSizeX() >> 1);
-//	//center.y = -(r.getSizeY() >> 1);
-//
-//	//r.translate(center);
-//
-//	//surface->bltBlendScale(*this, r, *colorTable);
-//	//surface->bltScale(*this, r);
-//	blt(*surface, viewPos);
-//
-//} // end SpritePackedBlit::blit
-
 // getFPS
 //--------------------------------------------------------------------------
 int Particle2D::getFPS(int FPSmin, int FPSrand)
@@ -564,7 +287,6 @@ int Particle2D::getFPS(int FPSmin, int FPSrand)
 	}
 
 	return FPS;
-
 } // end Particle2D::getFPS
 
 // getPakIndex
@@ -579,7 +301,6 @@ int Particle2D::getPakIndex(float scale, int pakImageCount)
 	}
 
 	return destIndex;
-
 } // end Particle2D::getPakIndex
 
 // getScale
@@ -587,7 +308,6 @@ int Particle2D::getPakIndex(float scale, int pakImageCount)
 float Particle2D::getScale(float scaleMin, float scaleRand)
 {
 	return (float(rand()) / float(RAND_MAX)) * scaleRand + scaleMin;
-
 } // end Particle2D::getScale
 
 // getLifetime
@@ -595,7 +315,6 @@ float Particle2D::getScale(float scaleMin, float scaleRand)
 float Particle2D::getLifetime(float lifetimeMin, float lifetimeRand)
 {
 	return (float(rand()) / float(RAND_MAX)) * lifetimeRand + lifetimeMin;
-
 } // end Particle2D::getLifetime
 
 // getFarAway
@@ -650,5 +369,5 @@ int Particle2D::getFarAway(const fXYZ &worldPos)
 
 	// The particle must be near the screen.
 	return 0;
-
 } // end Particle2D::getFarAway
+

@@ -15,17 +15,16 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #include <config.h>
+
 #include "WindParticle2D.hpp"
 #include "Physics.hpp"
 
-
 //--------------------------------------------------------------------------
-WindParticle2D::WindParticle2D(const fXYZ &pos, float windScale /* = 1.0f */) : Particle2D(pos)
+WindParticle2D::WindParticle2D(const fXYZ &pos, float windScale /* = 1.0f */)
+	: Particle2D(pos)
 {
 	WindParticle2D::windScale = windScale;
-
 } // end WindParticle2D::WindParticle2D
 
 // WindParticle2D::sim
@@ -35,5 +34,4 @@ void WindParticle2D::sim()
 	pos += (Physics::wind.getDisplacement() * windScale);
 
 	Particle2D::sim();
-
 } // end WindParticle2D::sim
