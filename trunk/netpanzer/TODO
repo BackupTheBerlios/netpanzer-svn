@@ -24,6 +24,7 @@ solution would be transfering of unknown flags.
 
 *** Tools
 -write a map and tileset editor
+-tool for changing the (server?) configuration
 
 *** Feature Additions
 
@@ -44,5 +45,5 @@ solution would be transfering of unknown flags.
 -Create possibility to save and restore matches
 -Convert the 256 color stuff to truecolor
 -add code for masterserver registration/browsing
-
+-create UDP broadcast code for announcing servers in LANs
 
