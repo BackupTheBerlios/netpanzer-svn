@@ -107,10 +107,13 @@ void ServerSocket::readTCP()
     }
 
     // Search for clients that wants to be removed from the list
-    for(i = clientlist->begin(); i != clientlist->end(); i++) {
+    for(i = clientlist->begin(); i != clientlist->end(); /* empty */) {
         SocketClient* client = *i;
         if(client->wantstodie) {
             i = clientlist->remove(i);
+        }
+        else {
+            i++;
         }
     }
 }

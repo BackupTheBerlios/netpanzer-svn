@@ -27,6 +27,6 @@
 <kov> No locals.
 <kov> (gdb)
 //-----------------------------------------------------------------
-- still SIGSEGV when client disconnect
+- still SIGSEGV when client disconnect - fixed
 - does not display unit pictures in factory - fixed
 - objective game cannot finish - fixed

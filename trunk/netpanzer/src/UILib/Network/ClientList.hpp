@@ -45,7 +45,10 @@ public:
     }
 
     ClientIterator remove(ClientIterator i)
-    { return clients.erase(i); }
+    {
+        delete *i;
+        return clients.erase(i);
+    }
 
 private:
     std::vector<SocketClient*> clients;

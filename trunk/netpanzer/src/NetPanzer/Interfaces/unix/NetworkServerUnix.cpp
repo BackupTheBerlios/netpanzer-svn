@@ -71,12 +71,13 @@ int NetworkServerUnix::sendMessage(const PlayerID& player_id,
     } catch(Exception e) {
         LOG ( ("Network send error when sending to client %d.",
                player_id.getNetworkID()) );
-        //return -1;
+        dropClient(player_id);
+        return _network_failed;
     }
 
     NetworkState::incPacketsSent(message->size);
 
-    return 0;
+    return _network_ok;
 }
 
 int NetworkServerUnix::sendMessage(NetMessage *message, size_t size,
@@ -94,13 +95,13 @@ int NetworkServerUnix::sendMessage(NetMessage *message, size_t size,
             sendMessage(client_data_ptr->client_id,	message, size, flags);
         } catch(Exception e) {
             LOG( ("Error while sending network packet.") );
-            //return -1;
+            return _network_failed;
         }
 
         client_data_ptr = client_list.incIteratorPtr(&iterator);
     }
 
-    return 0;
+    return _network_ok;
 }
 
 int NetworkServerUnix::getMessage(NetMessage *message)
