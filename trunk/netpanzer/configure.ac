@@ -23,6 +23,9 @@ AH_TOP([
 #endif
 ])
 
+# stupid autoconf is adding default -g -O2 flags when we don't do this :-/
+test ".$CXXFLAGS" = "." && CXXFLAGS=" "
+
 #----------------------------------------------------------------------------
 # Check for operating system
 #----------------------------------------------------------------------------
