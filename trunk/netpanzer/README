@@ -52,6 +52,9 @@ building it. Here's a list of them:
 * SDL_image 1.2.3 or later
   http://www.libsdl.org/projects/SDL_image/
 
+* SDL_ttf 2.0.0 or later
+  http://www.libsdl.org/projects/SDL_ttf/
+
 * PhysicsFS 0.1.9 or later
   http://www.icculus.org/physfs/
 
