@@ -80,7 +80,6 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("");
     insert("  Enter                            Send message to all");
     insert("  Ctrl + 'A'                       Send message to allies");
-    insert("  Ctrl + 'E'                       Send message to enemies");
     insert("");
     insert("");
     insert("View Related");
