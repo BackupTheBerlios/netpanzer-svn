@@ -117,7 +117,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameToolbarView.hpp"
 
 //winsock hack
-#include "IPAddressView.h"
+#include "IPAddressView.hpp"
 
 //** Physics/Particle Stuff
 #include "Particle2D.hpp"
