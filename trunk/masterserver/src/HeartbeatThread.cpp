@@ -52,15 +52,16 @@ HeartbeatThread::HeartbeatThread(MasterServer* newmasterserver)
     requestMasterServerList();
    
     // start thread
-    pthread_create(&thread, 0, threadMain, this);
+    if(pthread_create(&thread, 0, threadMain, this) != 0) {
+        throw std::runtime_error("Couldn't create Heartbeat Thread");
+    }
 }
 
 HeartbeatThread::~HeartbeatThread()
 {
     // signal thread to stop
-    if(running) {
-        pthread_cancel(thread);
-    }
+    running = false;
+    pthread_join(thread, 0);
 
     writeNeighborCache();
     std::stringstream packet;
@@ -252,10 +253,15 @@ void* HeartbeatThread::threadMain(void* data)
         _this->sendPacket(packet.str());
 
         // use nanosleep to have a thread cancelation point
-        timespec sleeptime = {
-            config->getSection("server").
-                getIntValue("masterserver-heartbeat-interval"), 0 };
-        nanosleep(&sleeptime, 0);
+        time_t startsleep = time(0);
+        int sleeptime = config->getSection("server").
+            getIntValue("masterserver-heartbeat-interval");
+        while(_this->running) {
+            timespec ntime = { 0, 300000 };
+            nanosleep(&ntime, 0);
+            if(time(0) - startsleep > sleeptime)
+                break;
+        }
 
         _this->writeNeighborCache();
     }

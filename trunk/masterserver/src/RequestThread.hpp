@@ -27,12 +27,13 @@ namespace masterserver
 {
 
 class MasterServer;
+class SocketStream;
 
 /** A thread that handles a single client request */
 class RequestThread
 {
 public:
-    RequestThread(MasterServer* master, std::iostream* stream,
+    RequestThread(MasterServer* master, SocketStream* stream,
             struct sockaddr_in addr);
     ~RequestThread();
 
@@ -44,10 +45,11 @@ private:
     void run();
     
     MasterServer* masterserver;
-    std::iostream* stream;
+    SocketStream* stream;
     struct sockaddr_in addr;
     pthread_t thread;
     time_t starttime;
+    pthread_mutex_t exit_sync;
     volatile bool running;
 };
 

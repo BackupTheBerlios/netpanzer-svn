@@ -39,28 +39,10 @@ static HeartbeatThread* heartbeatthread = 0;
 
 static void signalhandler(int signum)
 {
-    static volatile sig_atomic_t handler_running = 0;
-    if(handler_running)
-        return;
-    handler_running = 1;
-
-    delete heartbeatthread;
-    heartbeatthread = 0;
-    delete masterserv;
-    masterserv = 0;
-
-    const std::string& pidfile 
-        = config->getSection("server").getValue("pidfile");
-    if(pidfile != "") {
-        unlink(pidfile.c_str());
-    }
-    
-    closeLog();
-    freeConfig();
-
-    exit(0);
+    if(masterserv)
+        masterserv->cancel();
 }
-
+    
 int main(int , char** )
 {   
     loadConfig();
@@ -124,12 +106,21 @@ int main(int , char** )
         freeConfig();
         return 1;
     }
-    
-    assert(false); // we should never come here...
-    delete masterserv;
 
+    delete heartbeatthread;
+    heartbeatthread = 0;
+    delete masterserv;
+    masterserv = 0;
+
+    const std::string& pidfile 
+        = config->getSection("server").getValue("pidfile");
+    if(pidfile != "") {
+        unlink(pidfile.c_str());
+    }
+    
     closeLog();
     freeConfig();
+
     return 0;
 }
 

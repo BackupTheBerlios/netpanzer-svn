@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <streambuf>
 #include <iostream>
 
+namespace masterserver
+{
+
 /** streambuf implementation for tcp network sockets. This makes them usable as
  * C++ istreams
  */
@@ -32,8 +35,10 @@ class SocketStreambuf : public std::streambuf
 {
 public:
     SocketStreambuf(int newfd)
-        : fd(newfd)
+        : fd(newfd), cancelMe(false)
     { 
+        FD_ZERO(&set);
+        FD_SET(fd, &set);
         setp(writebuffer, writebuffer + sizeof(writebuffer)-1);
         setg(readbuffer, readbuffer, readbuffer);
     }
@@ -45,6 +50,11 @@ public:
         close(fd);
     }
 
+    void cancel()
+    {
+        cancelMe = true;
+    }
+
 protected:
     virtual int sync()
     {
@@ -54,7 +64,24 @@ protected:
     
     virtual int underflow()
     {
-        int res = recv(fd, readbuffer, sizeof(readbuffer), 0);
+        if(cancelMe)
+            return traits_type::eof();
+
+        fd_set testset;
+        
+        int res = 0;
+        do {
+            struct timeval timeout;
+            timeout.tv_sec = 1;
+            timeout.tv_usec = 0;
+            
+            testset = set;
+            res = select(FD_SETSIZE, &testset, 0, 0, &timeout);
+            if(res < 0 || cancelMe)
+                return traits_type::eof();
+        } while(res == 0);
+    
+        res = recv(fd, readbuffer, sizeof(readbuffer), 0);
         if(res <= 0) {
             return traits_type::eof();
         }
@@ -86,6 +113,8 @@ private:
     char readbuffer[1024];
     char writebuffer[1024];
     int fd;
+    fd_set set;
+    volatile bool cancelMe;
 };
 
 class SocketStream : public std::iostream
@@ -99,7 +128,15 @@ public:
     {
         delete rdbuf();
     }
+
+    void cancel()
+    {
+        SocketStreambuf* streambuf = (SocketStreambuf*) rdbuf();
+        streambuf->cancel();
+    }
 };
+
+}
 
 #endif
 

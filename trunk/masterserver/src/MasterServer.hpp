@@ -47,6 +47,8 @@ public:
 
     void getServerList(std::vector<const ServerInfo*>& list,
             const std::string& gamename);
+
+    void cancel();
     
 private:
     friend class RequestThread;
@@ -80,6 +82,8 @@ private:
     std::list<RequestThread*> threads;
 
     iniparser::Section& serverconfig;
+
+    volatile bool running;
 };
 
 }

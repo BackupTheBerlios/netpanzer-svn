@@ -91,7 +91,7 @@ private:
         time_t curtime = time(0);
         struct tm* loctime = localtime(&curtime);
         strftime(timestamp, sizeof(timestamp), "<%F %T>", loctime);
-        *stream << "\r" << timestamp;
+        *stream << timestamp;
     }
 
     std::ostream* stream;

@@ -47,7 +47,7 @@ namespace masterserver
 {
 
 MasterServer::MasterServer()
-    : serverconfig(config->getSection("server"))
+    : serverconfig(config->getSection("server")), running(false)
 {   
     sock = -1;
     try {
@@ -127,18 +127,42 @@ MasterServer::~MasterServer()
         close(sock);
 }
 
-void MasterServer::run()
+void
+MasterServer::cancel()
 {
+    running = false;
+}
+
+void
+MasterServer::run()
+{   
+    running = true;
+    
     while(1) {
-        // wait for clients...
+        fd_set set;
+        FD_ZERO(&set);
+        FD_SET(sock, &set);
+
+        int res = 0;
+        do {
+            struct timeval timeout;
+            timeout.tv_sec = 1;
+            timeout.tv_usec = 0;
+           
+            fd_set testset = set;
+            res = select(FD_SETSIZE, &testset, 0, 0, &timeout);
+            if(res < 0 || !running)
+                return;
+        } while(res == 0);
+
+        // accept the client
         struct sockaddr_in clientaddr;
         socklen_t socklen = sizeof(struct sockaddr_in);
         int clientsock = accept(sock, (struct sockaddr*) &clientaddr,
                 &socklen);
         if(clientsock < 0) {
-            std::stringstream msg;
-            msg << "Accept error: " << strerror(errno);
-            throw std::runtime_error(msg.str());
+            *log << "Accept error: " << strerror(errno) << ". This is very bad."
+                << std::endl;
         }
 
         // remove too old threads
@@ -160,12 +184,22 @@ void MasterServer::run()
         }
 
         SocketStream* stream = new SocketStream(clientsock);
-        RequestThread* thread = new RequestThread(this, stream, clientaddr);
+        RequestThread* thread = 0;
+        try {
+            thread = new RequestThread(this, stream, clientaddr);
+        } catch(std::exception* e) {
+            *log << "error starting requestthread! This is very bad"
+                 << std::endl;
+            delete thread;
+            delete stream;
+            continue;
+        }
         threads.push_back(thread);
     }
 }
 
-void MasterServer::parseKeyValues(std::map<std::string, std::string>& pairs,
+void
+MasterServer::parseKeyValues(std::map<std::string, std::string>& pairs,
         std::iostream& stream, Tokenizer& tokenizer)
 {
     while(!stream.eof()) {
@@ -183,7 +217,8 @@ void MasterServer::parseKeyValues(std::map<std::string, std::string>& pairs,
     }
 }
 
-void MasterServer::parseHeartbeat(std::iostream& stream,
+void
+MasterServer::parseHeartbeat(std::iostream& stream,
         struct sockaddr_in* addr, Tokenizer& tokenizer)
 {
     std::map<std::string, std::string> keyvalues;

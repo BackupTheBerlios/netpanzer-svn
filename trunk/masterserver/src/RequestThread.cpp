@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <time.h>
 #include <stdexcept>
 
+#include "SocketStream.hpp"
 #include "MasterServer.hpp"
 #include "Tokenizer.hpp"
 #include "Log.hpp"
@@ -29,25 +30,33 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 namespace masterserver
 {
 
-RequestThread::RequestThread(MasterServer* newmaster, std::iostream* newstream,
+RequestThread::RequestThread(MasterServer* newmaster, SocketStream* newstream,
         struct sockaddr_in newaddr)
     : masterserver(newmaster), stream(newstream), addr(newaddr)
 {
     starttime = time(0);
     running = false;
-    if(pthread_create(&thread, 0, threadMain, this) < 0) {
+
+    pthread_mutex_init(&exit_sync, 0);
+    
+    if(pthread_create(&thread, 0, threadMain, this) != 0) {
         throw std::runtime_error("Couldn't create thread for request.");
     }
 }
 
 RequestThread::~RequestThread()
 {
+    pthread_mutex_lock(&exit_sync);
     if(running) {
         running = false;
-        pthread_cancel(thread);
+        if(stream)
+            stream->cancel();
     }
+    pthread_mutex_unlock(&exit_sync);
 
-    delete stream;
+    pthread_join(thread, 0);
+
+    pthread_mutex_destroy(&exit_sync);
 }
 
 void* RequestThread::threadMain(void* data)
@@ -59,8 +68,6 @@ void* RequestThread::threadMain(void* data)
 
 void RequestThread::run()
 {
-    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, 0);
-    
     Tokenizer tokenizer(*stream);
     running = true;
     bool isGameSpy = false;
@@ -99,10 +106,11 @@ void RequestThread::run()
         }
     }
 
+    pthread_mutex_lock(&exit_sync);
     delete stream;
     stream = 0;
-
     running = false;
+    pthread_mutex_unlock(&exit_sync);
 }
 
 } // end of namespace masterserver
