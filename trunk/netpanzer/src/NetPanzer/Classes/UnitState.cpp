@@ -16,6 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+#include "Util/Endian.hpp"
 #include "UnitState.hpp"
 
 UnitState::UnitState()
@@ -64,25 +65,25 @@ NetworkUnitState UnitState::getNetworkUnitState() const
     NetworkUnitState state;
 
     state.unit_type = unit_type;
-    state.location_x = location.x;
-    state.location_y = location.y;
-    state.bbox_min_x = bbox.min.x;
-    state.bbox_min_y = bbox.min.y;
-    state.bbox_max_x = bbox.max.x;
-    state.bbox_max_y = bbox.max.y;
+    state.location_x = htol32(location.x);
+    state.location_y = htol32(location.y);
+    state.bbox_min_x = htol32(bbox.min.x);
+    state.bbox_min_y = htol32(bbox.min.y);
+    state.bbox_max_x = htol32(bbox.max.x);
+    state.bbox_max_y = htol32(bbox.max.y);
 
     state.body_angle = body_angle.getNetworkAngleInt();
     state.turret_angle = turret_angle.getNetworkAngleInt();
-    state.orientation = orientation;
-    state.speed_rate = speed_rate;
-    state.speed_factor = speed_factor;
+    state.orientation = htol16(orientation);
+    state.speed_rate = htol16(speed_rate);
+    state.speed_factor = htol16(speed_factor);
     
-    state.reload_time = reload_time;
-    state.max_hit_points = max_hit_points;
-    state.hit_points = hit_points;
-    state.damage_factor = damage_factor;
-    state.weapon_range = weapon_range;
-    state.defend_range = defend_range;
+    state.reload_time = htol16(reload_time);
+    state.max_hit_points = htol16(max_hit_points);
+    state.hit_points = htol16(hit_points);
+    state.damage_factor = htol16(damage_factor);
+    state.weapon_range = htol32(weapon_range);
+    state.defend_range = htol32(defend_range);
     
     state.threat_level = threat_level;
     state.lifecycle_state = lifecycle_state;
@@ -95,26 +96,26 @@ void UnitState::setFromNetworkUnitState(const NetworkUnitState& state)
     select = false;
 
     unit_type = state.unit_type;
-    location.x = state.location_x;
-    location.y = state.location_y;
-    bbox.min.x = state.bbox_min_x;
-    bbox.min.y = state.bbox_min_y;
-    bbox.max.x = state.bbox_max_x;
-    bbox.max.y = state.bbox_max_y;
+    location.x = ltoh32(state.location_x);
+    location.y = ltoh32(state.location_y);
+    bbox.min.x = ltoh32(state.bbox_min_x);
+    bbox.min.y = ltoh32(state.bbox_min_y);
+    bbox.max.x = ltoh32(state.bbox_max_x);
+    bbox.max.y = ltoh32(state.bbox_max_y);
 
     body_angle.setFromNetworkAngleInt(state.body_angle);
     turret_angle.setFromNetworkAngleInt(state.turret_angle);
 
-    orientation = state.orientation;
-    speed_rate = state.speed_rate;
-    speed_factor = state.speed_factor;
+    orientation = ltoh16(state.orientation);
+    speed_rate = ltoh16(state.speed_rate);
+    speed_factor = ltoh16(state.speed_factor);
     
-    reload_time = state.reload_time;
-    max_hit_points = state.max_hit_points;
-    hit_points = state.hit_points;
-    damage_factor = state.damage_factor;
-    weapon_range = state.weapon_range;
-    defend_range = state.defend_range;
+    reload_time = ltoh16(state.reload_time);
+    max_hit_points = ltoh16(state.max_hit_points);
+    hit_points = ltoh16(state.hit_points);
+    damage_factor = ltoh16(state.damage_factor);
+    weapon_range = ltoh32(state.weapon_range);
+    defend_range = ltoh32(state.defend_range);
 
     threat_level = state.threat_level;
     lifecycle_state = state.lifecycle_state;
