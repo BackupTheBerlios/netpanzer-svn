@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 #include <libxml/tree.h>
+#include <iXY.hpp>
 
 /**
  * XML configuration from file.
@@ -40,6 +41,7 @@ class XmlConfig {
         const XmlConfig getChild(const char *childName) const;
         long readInt(const char *name) const;
         long readInt(const char *name, long defaultValue) const;
+        iXY readXY(const char *name) const;
         std::string readString(const char *name,
                 const char *defaultValue = 0) const;
 };

@@ -77,6 +77,21 @@ XmlStore::writeInt(const char *name, long value)
 }
 //-----------------------------------------------------------------
 /**
+ * Write number to new attribute.
+ * @param name attribute name
+ * @param value value
+ */
+void
+XmlStore::writeXY(const char *name, const iXY &value)
+{
+
+    std::ostringstream buffer;
+    buffer << value.x << "," << value.y;;
+    xmlSetProp(m_node, (const xmlChar*)name,
+            (const xmlChar*)(buffer.str().c_str()));
+}
+//-----------------------------------------------------------------
+/**
  * Write string to new attribute.
  * @param name attribute name
  * @param value value

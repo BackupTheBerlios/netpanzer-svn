@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 #include <libxml/tree.h>
+#include <iXY.hpp>
 
 /**
  * Save XML configuration to file.
@@ -37,6 +38,7 @@ class XmlStore {
 
         const XmlStore createChild(const char *childName);
         void writeInt(const char *name, long value);
+        void writeXY(const char *name, const iXY &value);
         void writeString(const char *name, const char *value);
         void save(const char *filename);
 };

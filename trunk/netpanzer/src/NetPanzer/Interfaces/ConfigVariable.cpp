@@ -36,6 +36,21 @@ int ConfigInt::operator = (int newvalue)
 }
 
 //---------------------------------------------------------------------------
+ConfigXY::ConfigXY(const std::string& newname, const iXY &newvalue)
+    : ConfigVariable(newname)
+{
+    *this = newvalue;
+}
+
+ConfigXY::~ConfigXY()
+{
+}
+const iXY& ConfigXY::operator = (const iXY& newvalue)
+{
+    value = newvalue;
+    return value;
+}
+//---------------------------------------------------------------------------
 
 ConfigBool::ConfigBool(const std::string& newname, bool newvalue)
     : ConfigVariable(newname), value(newvalue)

@@ -107,6 +107,42 @@ XmlConfig::readInt(const char *name) const
 //-----------------------------------------------------------------
 /**
  * Read number from attribute.
+ * @return iXY
+ */
+iXY
+XmlConfig::readXY(const char *name) const
+{
+    xmlChar *strXml = xmlGetProp(m_node, (const xmlChar*)name);
+    if (strXml == 0) {
+        throw Exception("xml config: '%s->%s' is empty",
+            m_node->name, name);
+    }
+
+    LOGGER.debug("readXY '%s->%s=%s'",
+            m_node->name, name, strXml);
+
+    char *endptr,*endptr2;
+    long x = strtol((char *)strXml, &endptr, 0);
+    if(*endptr!=',') {
+        throw Exception("xml config: '%s->%s=%s' has no comma ",
+            m_node->name, name, strXml);
+    }
+    long y = strtol(endptr+1, &endptr2, 0);
+    bool ok = (strXml[0] != '\0' && endptr2[0] == '\0');
+
+    if (!ok) {
+        throw Exception("xml config: '%s->%s=%s' is not XY",
+            m_node->name, name, strXml);
+    }
+
+    xmlFree(strXml);
+    return iXY(x,y);
+}
+
+
+//-----------------------------------------------------------------
+/**
+ * Read number from attribute.
  * @return long
  * @return defaultValue default value
  */

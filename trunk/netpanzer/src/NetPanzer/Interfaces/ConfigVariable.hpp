@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <iostream>
 #include <string>
+#include <iXY.hpp>
 
 class ConfigVariable
 {
@@ -55,6 +56,21 @@ public:
 private:
     int value;
     int min, max;
+};
+
+class ConfigXY : public ConfigVariable
+{
+public:
+    ConfigXY(const std::string& name, const iXY &value);
+    ~ConfigXY();
+
+    operator const iXY& () const
+    { return value; }
+
+    const iXY& operator = (const iXY& newvalue);
+    
+private:
+    iXY value;
 };
 
 class ConfigBool : public ConfigVariable
