@@ -1,7 +1,7 @@
 #ifndef __MAPRENDERER_HPP__
 #define __MAPRENDERER_HPP__
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include <vector>
 
 #include "TileSet.hpp"

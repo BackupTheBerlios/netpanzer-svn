@@ -1,7 +1,7 @@
 #include <config.h>
 
 #include <iostream>
-#include <SDL/SDL_image.h>
+#include <SDL_image.h>
 
 #include "Util/Exception.hpp"
 #include "ImageListView.hpp"

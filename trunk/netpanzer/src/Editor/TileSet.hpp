@@ -1,7 +1,7 @@
 #ifndef __TILESET_HPP__
 #define __TILESET_HPP__
 
-#include <SDL/SDL_video.h>
+#include <SDL_video.h>
 
 #include <vector>
 #include <string>

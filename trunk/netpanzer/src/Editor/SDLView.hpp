@@ -1,7 +1,7 @@
 #ifndef __SDLVIEW_HPP__
 #define __SDLVIEW_HPP__
 
-#include <SDL/SDL_video.h>
+#include <SDL_video.h>
 #include <wx/wx.h>
 
 /** Hack to allow displaying of SDL inside a wxWindows widget */

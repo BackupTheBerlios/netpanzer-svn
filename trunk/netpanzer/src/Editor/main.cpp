@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <wx/app.h>
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 #include "Editor.hpp"
 #include "Util/FileSystem.hpp"
