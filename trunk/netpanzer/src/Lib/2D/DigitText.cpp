@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -32,52 +32,43 @@ DIGIT_BLT_MODES DigitText::bltMode = NORMAL_TRANS;
 //--------------------------------------------------------------------------
 void DigitText::init(const char *filename)
 {
-	// Make room for the 128 characters.
-	charactersNormal.create(11, 17, 11, 128);
+    // Make room for the 128 characters.
+    charactersNormal.create(11, 17, 11, 128);
 
-	// NOTE: Make sure the file size is 128 characters.
-	char charfilename[] = "pics/chars11x17digit.raw";
+    // NOTE: Make sure the file size is 128 characters.
+    char charfilename[] = "pics/chars11x17digit.raw";
 
-	ReadFile* file = FileSystem::openRead(charfilename);
+    ReadFile* file = FileSystem::openRead(charfilename);
 
-	for (int y = 0; y < charactersNormal.getPixY(); y++)
-	{
-		int yOffset = y * charactersNormal.getPixX();
+    for (int y = 0; y < charactersNormal.getPixY(); y++) {
+        int yOffset = y * charactersNormal.getPixX();
 
-		for (int curChar = 0; curChar < charactersNormal.getFrameCount(); curChar++)
-		{
-			charactersNormal.setFrame(curChar);
-			if(!file->read(charactersNormal.mem + yOffset,
-						charactersNormal.getPixX(), 1) != 1) {
-				delete file;
-				throw Exception("Error while loading font file '%s'.",
-								charfilename);
-			}
-		}
-	}
+        for (int curChar = 0; curChar < charactersNormal.getFrameCount(); curChar++) {
+            charactersNormal.setFrame(curChar);
+            if(!file->read(charactersNormal.mem + yOffset,
+                           charactersNormal.getPixX(), 1) != 1) {
+                delete file;
+                throw Exception("Error while loading font file '%s'.",
+                                charfilename);
+            }
+        }
+    }
 
-	delete file;
+    delete file;
 } // DigitText::initFont
 
 //--------------------------------------------------------------------------
 void DigitText::blt(const Surface &dest, const iXY &pos, const char *string, const PIX &color)
 {
-	if (bltMode == NORMAL_TRANS)
-	{
-		bltStringNormalTrans(dest, pos, string, color);
-	}
-	else if (bltMode == NO_SPACE_TRANS)
-	{
-		bltStringNoSpaceTrans(dest, pos, string, color);
-	}
-	else if (bltMode == NORMAL_SOLID)
-	{
-		bltStringNormalSolid(dest, pos, string);
-	}
-	else if (bltMode == NO_SPACE_SOLID)
-	{
-		bltStringNoSpaceSolid(dest, pos, string);
-	}
+    if (bltMode == NORMAL_TRANS) {
+        bltStringNormalTrans(dest, pos, string, color);
+    } else if (bltMode == NO_SPACE_TRANS) {
+        bltStringNoSpaceTrans(dest, pos, string, color);
+    } else if (bltMode == NORMAL_SOLID) {
+        bltStringNormalSolid(dest, pos, string);
+    } else if (bltMode == NO_SPACE_SOLID) {
+        bltStringNoSpaceSolid(dest, pos, string);
+    }
 
 } // DigitText::blt
 
@@ -86,14 +77,13 @@ void DigitText::blt(const Surface &dest, const iXY &pos, const char *string, con
 void DigitText::bltCharNormalTrans(const Surface &dest, const iXY &pos, const char &character, const PIX &color)
 {
 #ifdef _DEBUG
-	if (character > charactersNormal.getFrameCount())
-	{
-		assert(false);
-	}
+    if (character > charactersNormal.getFrameCount()) {
+        assert(false);
+    }
 #endif
 
-	charactersNormal.setFrame(character);
-	charactersNormal.bltTransColor(dest, pos, color);
+    charactersNormal.setFrame(character);
+    charactersNormal.bltTransColor(dest, pos, color);
 
 }
 
@@ -102,14 +92,13 @@ void DigitText::bltCharNormalTrans(const Surface &dest, const iXY &pos, const ch
 void DigitText::bltCharNormalSolid(const Surface &dest, const iXY &pos, const char &character)
 {
 #ifdef _DEBUG
-	if (character > charactersNormal.getFrameCount())
-	{
-		assert(false);
-	}
+    if (character > charactersNormal.getFrameCount()) {
+        assert(false);
+    }
 #endif
 
-	charactersNormal.setFrame(character);
-	charactersNormal.blt(dest, pos);
+    charactersNormal.setFrame(character);
+    charactersNormal.blt(dest, pos);
 
 }
 
@@ -118,14 +107,13 @@ void DigitText::bltCharNormalSolid(const Surface &dest, const iXY &pos, const ch
 void DigitText::bltCharNoSpaceTrans(const Surface &dest, const iXY &pos, const char &character, const PIX &color)
 {
 #ifdef _DEBUG
-	if (character > charactersNormal.getFrameCount())
-	{
-		assert(false);
-	}
+    if (character > charactersNormal.getFrameCount()) {
+        assert(false);
+    }
 #endif
 
-	charactersNoSpace.setFrame(character);
-	charactersNoSpace.bltTransColor(dest, pos, color);
+    charactersNoSpace.setFrame(character);
+    charactersNoSpace.bltTransColor(dest, pos, color);
 
 }
 
@@ -134,14 +122,13 @@ void DigitText::bltCharNoSpaceTrans(const Surface &dest, const iXY &pos, const c
 void DigitText::bltCharNoSpaceSolid(const Surface &dest, const iXY &pos, const char &character)
 {
 #ifdef _DEBUG
-	if (character > charactersNormal.getFrameCount())
-	{
-		assert(false);
-	}
+    if (character > charactersNormal.getFrameCount()) {
+        assert(false);
+    }
 #endif
 
-	charactersNoSpace.setFrame(character);
-	charactersNoSpace.blt(dest, pos);
+    charactersNoSpace.setFrame(character);
+    charactersNoSpace.blt(dest, pos);
 
 } // end DigitText::bltCharNoSpaceSolid
 
@@ -149,46 +136,42 @@ void DigitText::bltCharNoSpaceSolid(const Surface &dest, const iXY &pos, const c
 //--------------------------------------------------------------------------
 void DigitText::bltStringNormalTrans(const Surface &dest, const iXY &pos, const char *string, const PIX &color)
 {
-	for (int index = 0; string[index] != 0; index++)
-	{
-		bltCharNormalTrans(dest, iXY(pos.x + (index * charactersNormal.getPixX()), pos.y), string[index], color);
-	}
+    for (int index = 0; string[index] != 0; index++) {
+        bltCharNormalTrans(dest, iXY(pos.x + (index * charactersNormal.getPixX()), pos.y), string[index], color);
+    }
 }
 
 // Blits the string without the spaces in the text.
 //--------------------------------------------------------------------------
 void DigitText::bltStringNormalSolid(const Surface &dest, const iXY &pos, const char *string)
 {
-	for (int index = 0; string[index] != 0; index++)
-	{
-		bltCharNormalSolid(dest, iXY(pos.x + (index * charactersNormal.getPixX()), pos.y), string[index]);
-	}
+    for (int index = 0; string[index] != 0; index++) {
+        bltCharNormalSolid(dest, iXY(pos.x + (index * charactersNormal.getPixX()), pos.y), string[index]);
+    }
 }
 
 // Blits the string without the spaces in the text.
 //--------------------------------------------------------------------------
 void DigitText::bltStringNoSpaceTrans(const Surface &dest, const iXY &pos, const char *string, const PIX &color)
 {
-	for (int index = 0; string[index] != 0; index++)
-	{
-		bltCharNoSpaceTrans(dest, iXY(pos.x + (index * charactersNormal.getPixX()), pos.y), string[index], color);
-	}
+    for (int index = 0; string[index] != 0; index++) {
+        bltCharNoSpaceTrans(dest, iXY(pos.x + (index * charactersNormal.getPixX()), pos.y), string[index], color);
+    }
 }
 
 // Blits the string without the spaces in the text.
 //--------------------------------------------------------------------------
 void DigitText::bltStringNoSpaceSolid(const Surface &dest, const iXY &pos, const char *string)
 {
-	for (int index = 0; string[index] != 0; index++)
-	{
-		bltCharNoSpaceSolid(dest, iXY(pos.x + (index * charactersNormal.getPixX()), pos.y), string[index]);
-	}
+    for (int index = 0; string[index] != 0; index++) {
+        bltCharNoSpaceSolid(dest, iXY(pos.x + (index * charactersNormal.getPixX()), pos.y), string[index]);
+    }
 }
 
 // Sets which type of characters to blt.
 //--------------------------------------------------------------------------
 void DigitText::setBltMode(const DIGIT_BLT_MODES &mode)
 {
-	bltMode = mode;
+    bltMode = mode;
 
 } // end DigitText::setBltMode

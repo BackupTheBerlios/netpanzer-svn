@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -40,48 +40,56 @@ enum { _stats_display_type_winner,
 
 class Stats
 {
- protected:
-	static int sort_order_enum;
-    
+protected:
+    static int sort_order_enum;
+
     static char PlayerName[64];
 
-	static unsigned short MaxPlayers;
-	static unsigned short Count;
-	static unsigned short NumActivePlayers;
+    static unsigned short MaxPlayers;
+    static unsigned short Count;
+    static unsigned short NumActivePlayers;
 
-	static PArray PlayerArray;
-    
+    static PArray PlayerArray;
+
     static PlayerID winner_player_id;
     static PlayerState *winner_player_state;
 
- public:
+public:
 
-	Stats();
+    Stats();
 
-	static void Initialize();
+    static void Initialize();
 
-	static void SortPlayers();
-   
+    static void SortPlayers();
+
     static void setSortOrder( int sort_order_enum )
-     { Stats::sort_order_enum = sort_order_enum; }
+    {
+        Stats::sort_order_enum = sort_order_enum;
+    }
 
     static unsigned short getMaxPlayers( void )
-     { return ( MaxPlayers ); }
+    {
+        return ( MaxPlayers );
+    }
 
     static unsigned short getActivePlayers( void )
-     { return ( NumActivePlayers ); }
+    {
+        return ( NumActivePlayers );
+    }
 
     static const char * getLocalPlayerName( void )
-     { return ( PlayerName ); }
-       
-	static char GetPlayerStats(char  *flag,
-						       short *kills,
-						       short *losses,
-					           short *total,
+    {
+        return ( PlayerName );
+    }
+
+    static char GetPlayerStats(char  *flag,
+                               short *kills,
+                               short *losses,
+                               short *total,
                                short *objectives,
-						       char  **name,
+                               char  **name,
                                int   *stats_display_type );
-	
+
 
 };
 

@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -24,87 +24,85 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class ControlView : public View
 {
-friend class ControlPaletteView;
+    friend class ControlPaletteView;
 
 protected:
-	enum ORIENTATION { VERTICAL, HORIZONTAL, };
+    enum ORIENTATION { VERTICAL, HORIZONTAL, };
 
-	static ORIENTATION orientation;
-	static int         iconBarMinSize;
-	static int         mapNavAidSize;
-	static Surface    worldMapSurface;
-	static Surface    worldMapClientArea;
-	static Surface    zoomMapSurface;
-	static int         maxZoomLevel;
-
-public:
-	static int         deltaZoom;
+    static ORIENTATION orientation;
+    static int         iconBarMinSize;
+    static int         mapNavAidSize;
+    static Surface    worldMapSurface;
+    static Surface    worldMapClientArea;
+    static Surface    zoomMapSurface;
+    static int         maxZoomLevel;
 
 public:
-	ControlView(const char *title);
+    static int         deltaZoom;
 
-	static void initWorldMapSurface()
-	{
-		Surface *miniMap = MiniMapInterface::getMiniMap();
+public:
+    ControlView(const char *title);
 
-		assert(miniMap != 0);
+    static void initWorldMapSurface()
+    {
+        Surface *miniMap = MiniMapInterface::getMiniMap();
 
-		worldMapSurface.copy(*miniMap);
-		worldMapSurface.scale(getMapClientArea());
-	}
+        assert(miniMap != 0);
 
-	virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+        worldMapSurface.copy(*miniMap);
+        worldMapSurface.scale(getMapClientArea());
+    }
 
-	static iXY getMapClientArea()
-	{
-		iXY viewSize;
-		int allComponentsButViewAreaYSize = iconBarMinSize * 4 + mapNavAidSize * 3;
+    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
 
-		viewSize.y = (SCREEN_YPIX - allComponentsButViewAreaYSize) / 3;
+    static iXY getMapClientArea()
+    {
+        iXY viewSize;
+        int allComponentsButViewAreaYSize = iconBarMinSize * 4 + mapNavAidSize * 3;
 
-		if (orientation == VERTICAL)
-		{
-			// Vertical
-			viewSize.x = viewSize.y;
-		}
-		else if (orientation == HORIZONTAL)
-		{
-			// Horizontal
-			viewSize.x = (SCREEN_XPIX - allComponentsButViewAreaYSize) / 3;
-		}
+        viewSize.y = (SCREEN_YPIX - allComponentsButViewAreaYSize) / 3;
 
-		return viewSize;
-	}
+        if (orientation == VERTICAL) {
+            // Vertical
+            viewSize.x = viewSize.y;
+        } else if (orientation == HORIZONTAL) {
+            // Horizontal
+            viewSize.x = (SCREEN_XPIX - allComponentsButViewAreaYSize) / 3;
+        }
 
-	static iXY getViewSize()
-	{
-		iXY viewSize = getMapClientArea();
+        return viewSize;
+    }
 
-		viewSize.x += mapNavAidSize + 1;
-		viewSize.y += iconBarMinSize + mapNavAidSize + 1;
+    static iXY getViewSize()
+    {
+        iXY viewSize = getMapClientArea();
 
-		return viewSize;
-	}
+        viewSize.x += mapNavAidSize + 1;
+        viewSize.y += iconBarMinSize + mapNavAidSize + 1;
 
-	void drawIconBorder(const Surface &dest);
-	void drawZoomMap(const Surface &dest);
+        return viewSize;
+    }
 
-	//virtual void lMouseDown(const iXY &pos);
-	void rMouseDown(const iXY &pos);
-	void rMouseUp(const iXY &downPos, const iXY &upPos);
-	void rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
-	void rMouseDouble(const iXY &pos);
-	
-	//void drawMouseBox(const Surface &dest);
-	//void setViewWindow(const iXY &pos);
-	//void updateObjectPosition(const Surface &dest);
-	void updateScreenPosition(const Surface &dest);
+    void drawIconBorder(const Surface &dest);
+    void drawZoomMap(const Surface &dest);
 
-	//virtual void mouseEnter(const iXY &pos);
-	//virtual void mouseExit(const iXY &pos);
-	//virtual void doActivate();
-	//virtual void doDeactivate();
+    //virtual void lMouseDown(const iXY &pos);
+    void rMouseDown(const iXY &pos);
+    void rMouseUp(const iXY &downPos, const iXY &upPos);
+    void rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
+    void rMouseDouble(const iXY &pos);
 
-}; // end ControlView
+    //void drawMouseBox(const Surface &dest);
+    //void setViewWindow(const iXY &pos);
+    //void updateObjectPosition(const Surface &dest);
+    void updateScreenPosition(const Surface &dest);
+
+    //virtual void mouseEnter(const iXY &pos);
+    //virtual void mouseExit(const iXY &pos);
+    //virtual void doActivate();
+    //virtual void doDeactivate();
+
+}
+; // end ControlView
 
 #endif // end __ControlView_hpp__

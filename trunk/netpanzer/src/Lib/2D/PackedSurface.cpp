@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -31,9 +31,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #endif
 struct SpanHead
 {
-	unsigned short x1;
-	unsigned short len;
-} __attribute__((packed));
+    unsigned short x1;
+    unsigned short len;
+}
+__attribute__((packed));
 #ifdef MSVC
 #pragma pack ()
 #endif
@@ -54,332 +55,325 @@ const int CURRENT_PAK_VERSION = 1;
 //--------------------------------------------------------------------------
 void PackedSurface::setOffset(const iXY &offset)
 {
-	PackedSurface::offset = offset;
+    PackedSurface::offset = offset;
 }
 
 //--------------------------------------------------------------------------
 void PackedSurface::setOffsetCenter()
 {
-	PackedSurface::offset = pix / -2;
+    PackedSurface::offset = pix / -2;
 }
 
 //--------------------------------------------------------------------------
 void PackedSurface::free()
 {
-	if (myMem && rowOffsetTable != 0)
-	{
-		totalByteCount -= (pix.y * frameCount + 1) * sizeof(*rowOffsetTable);
+    if (myMem && rowOffsetTable != 0) {
+        totalByteCount -= (pix.y * frameCount + 1) * sizeof(*rowOffsetTable);
 
-		::free(rowOffsetTable);
-		
-		//assert(totalByteCount >= 0);
-	}
-	if (myMem && packedDataChunk != 0)
-	{
-		totalByteCount -= pix.y * frameCount;
+        ::free(rowOffsetTable);
 
-		::free(packedDataChunk);
-		
-		//assert(totalByteCount >= 0);
-	}
+        //assert(totalByteCount >= 0);
+    }
+    if (myMem && packedDataChunk != 0) {
+        totalByteCount -= pix.y * frameCount;
 
-	reset();
+        ::free(packedDataChunk);
+
+        //assert(totalByteCount >= 0);
+    }
+
+    reset();
 }
 
 //--------------------------------------------------------------------------
 void PackedSurface::reset()
 {
-	pix             = 0;
-	rowOffsetTable  = 0;
-	packedDataChunk = 0;
-	frameCount      = 0;
-	curFrame        = 0.0;
-	fps             = 30.0;
-	myMem           = true;
+    pix             = 0;
+    rowOffsetTable  = 0;
+    packedDataChunk = 0;
+    frameCount      = 0;
+    curFrame        = 0.0;
+    fps             = 30.0;
+    myMem           = true;
 
-	center.zero();
-	offset.zero();
+    center.zero();
+    offset.zero();
 }
 
 //--------------------------------------------------------------------------
 void PackedSurface::pack(const Surface &source)
 {
-	free();
+    free();
 
-	pix        = source.getPix();
-	offset     = source.getOffset();
-	frameCount = source.getFrameCount();
-	fps        = source.getFPS();
+    pix        = source.getPix();
+    offset     = source.getOffset();
+    frameCount = source.getFrameCount();
+    fps        = source.getFPS();
 
-	rowOffsetTable = (int *) malloc((pix.y*frameCount + 1) * sizeof(*rowOffsetTable));
-	if (rowOffsetTable == 0)
-	{
-		throw Exception("ERROR: Unable to allocate rowTableOffset for PackedSurface.");
-	}
+    rowOffsetTable = (int *) malloc((pix.y*frameCount + 1) * sizeof(*rowOffsetTable));
+    if (rowOffsetTable == 0) {
+        throw Exception("ERROR: Unable to allocate rowTableOffset for PackedSurface.");
+    }
 
-	int bytesAlloced = 0;
-	packedDataChunk = 0;
-	int curByteOffset = 0;
+    int bytesAlloced = 0;
+    packedDataChunk = 0;
+    int curByteOffset = 0;
 
-	float saveFrame = source.getCurFrame();
+    float saveFrame = source.getCurFrame();
 
-	for (int frame = 0 ; frame < frameCount ; ++frame) {
-		((Surface *)&source)->setFrame(frame);
-		for (int y = 0 ; y < pix.y ; ++y) {
-			rowOffsetTable[frame*pix.y + y] = curByteOffset;
-			const PIX *rowPtr = source.rowPtr(y);
+    for (int frame = 0 ; frame < frameCount ; ++frame) {
+        ((Surface *)&source)->setFrame(frame);
+        for (int y = 0 ; y < pix.y ; ++y) {
+            rowOffsetTable[frame*pix.y + y] = curByteOffset;
+            const PIX *rowPtr = source.rowPtr(y);
 
-			int x = 0;
-			while (x < pix.x)
-			{
+            int x = 0;
+            while (x < pix.x) {
 
-				// transparent pixels until first non-transparent pixel
+                // transparent pixels until first non-transparent pixel
 
-				if (rowPtr[x] == TRANSPIX) {
-					x++;
-					continue;
-				}
+                if (rowPtr[x] == TRANSPIX) {
+                    x++;
+                    continue;
+                }
 
-				// Now scan forward until we hit the end of the span,
-				// either the right side of the bitmap or a transparent pixel
+                // Now scan forward until we hit the end of the span,
+                // either the right side of the bitmap or a transparent pixel
 
-				int spanX1 = x;
-				do {
-					x++;
-				} while((x < pix.x) && (rowPtr[x] != TRANSPIX));
-				int spanLen = x - spanX1;
+                int spanX1 = x;
+                do {
+                    x++;
+                } while((x < pix.x) && (rowPtr[x] != TRANSPIX));
+                int spanLen = x - spanX1;
 
-				// Check if we need to grow buffer to add the span
+                // Check if we need to grow buffer to add the span
 
-				int newSize = (curByteOffset + sizeof(SpanHead) + spanLen*sizeof(PIX) + 3) & ~3;
-				if (newSize > bytesAlloced) {
-					bytesAlloced = newSize + 16*1024;
-					packedDataChunk = (BYTE *)realloc(packedDataChunk, bytesAlloced);
-					if (packedDataChunk == 0)
-					{
-						throw Exception("ERROR: Out of memory for packedDataChunk for PackedSurface.");
-					}
-				}
+                int newSize = (curByteOffset + sizeof(SpanHead) + spanLen*sizeof(PIX) + 3) & ~3;
+                if (newSize > bytesAlloced) {
+                    bytesAlloced = newSize + 16*1024;
+                    packedDataChunk = (BYTE *)realloc(packedDataChunk, bytesAlloced);
+                    if (packedDataChunk == 0) {
+                        throw Exception("ERROR: Out of memory for packedDataChunk for PackedSurface.");
+                    }
+                }
 
-				// Now write the data into the chunk.
+                // Now write the data into the chunk.
 
-				SpanHead *span = (SpanHead *)(packedDataChunk + curByteOffset);
-				span->x1 = spanX1;
-				span->len = spanLen;
-				memcpy(span + 1, &rowPtr[spanX1], spanLen * sizeof(PIX));
-				curByteOffset = newSize;
-			}
-		}
-	}
+                SpanHead *span = (SpanHead *)(packedDataChunk + curByteOffset);
+                span->x1 = spanX1;
+                span->len = spanLen;
+                memcpy(span + 1, &rowPtr[spanX1], spanLen * sizeof(PIX));
+                curByteOffset = newSize;
+            }
+        }
+    }
 
-	// Shove in final offset table entry, which we need to know the
-	// length of data for the last row of the last frame
-	
-	rowOffsetTable[frameCount*pix.y] = curByteOffset;
+    // Shove in final offset table entry, which we need to know the
+    // length of data for the last row of the last frame
 
-	// Shrink buffer to the size we really need
+    rowOffsetTable[frameCount*pix.y] = curByteOffset;
 
-	packedDataChunk = (BYTE *) realloc(packedDataChunk, curByteOffset);
-	if (packedDataChunk == 0) throw Exception("Hell froze");
+    // Shrink buffer to the size we really need
 
-	// Restore source surface frame number, so the function
-	// is logically const
+    packedDataChunk = (BYTE *) realloc(packedDataChunk, curByteOffset);
+    if (packedDataChunk == 0) throw Exception("Hell froze");
 
-	((Surface *)&source)->setFrame(saveFrame);
+    // Restore source surface frame number, so the function
+    // is logically const
+
+    ((Surface *)&source)->setFrame(saveFrame);
 }
 
 //--------------------------------------------------------------------------
-void PackedSurface::load(const char* filename) {
-	ReadFile* file = FileSystem::openRead(filename);
-		
-	free();
-	int version;
-	file->read(&version, sizeof(version), 1);
-	if (version < 1) {
-		delete file;
-		throw Exception("Invalid PAK file version: %d", version);
-	}
-	if (version > CURRENT_PAK_VERSION) {
-		delete file;
-		throw Exception("PAK file version %d is newer than the .exe (%d) you are using, which only supports up to version", version, CURRENT_PAK_VERSION);
-	}
-	file->read(&pix, sizeof(pix), 1);
+void PackedSurface::load(const char* filename)
+{
+    ReadFile* file = FileSystem::openRead(filename);
 
-	center = pix / 2;
+    free();
+    int version;
+    file->read(&version, sizeof(version), 1);
+    if (version < 1) {
+        delete file;
+        throw Exception("Invalid PAK file version: %d", version);
+    }
+    if (version > CURRENT_PAK_VERSION) {
+        delete file;
+        throw Exception("PAK file version %d is newer than the .exe (%d) you are using, which only supports up to version", version, CURRENT_PAK_VERSION);
+    }
+    file->read(&pix, sizeof(pix), 1);
 
-	file->read(&frameCount, sizeof(frameCount), 1);
-	file->read(&fps, sizeof(fps), 1);
-	file->read(&offset, sizeof(offset), 1);
-	rowOffsetTable = (int *) malloc((pix.y * frameCount + 1) * sizeof(*rowOffsetTable));
-	if (rowOffsetTable == 0)
-	{
-		delete file;
-		throw Exception("ERROR: Unable to allocate rowTableOffset for PackedSurface.");
-	}
-	file->read(rowOffsetTable, (pix.y*frameCount + 1)*sizeof(*rowOffsetTable), 1);
-	packedDataChunk = (BYTE *)malloc(rowOffsetTable[pix.y*frameCount]);
-	if (packedDataChunk == 0)
-	{
-		delete file;
-		throw Exception("ERROR: Unable to allocate packedDataChunk for PackedSurface.");
-	}
-	if(file->read(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1) != 1)
-		throw Exception("error while reading %s.", filename);
+    center = pix / 2;
 
-	// Add size of rowTableOffset.
-	totalByteCount += (pix.y * frameCount + 1) * sizeof(*rowOffsetTable);
+    file->read(&frameCount, sizeof(frameCount), 1);
+    file->read(&fps, sizeof(fps), 1);
+    file->read(&offset, sizeof(offset), 1);
+    rowOffsetTable = (int *) malloc((pix.y * frameCount + 1) * sizeof(*rowOffsetTable));
+    if (rowOffsetTable == 0) {
+        delete file;
+        throw Exception("ERROR: Unable to allocate rowTableOffset for PackedSurface.");
+    }
+    file->read(rowOffsetTable, (pix.y*frameCount + 1)*sizeof(*rowOffsetTable), 1);
+    packedDataChunk = (BYTE *)malloc(rowOffsetTable[pix.y*frameCount]);
+    if (packedDataChunk == 0) {
+        delete file;
+        throw Exception("ERROR: Unable to allocate packedDataChunk for PackedSurface.");
+    }
+    if(file->read(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1) != 1)
+        throw Exception("error while reading %s.", filename);
 
-	// Add size of packedDataChunk.
-	totalByteCount += pix.y * frameCount;
+    // Add size of rowTableOffset.
+    totalByteCount += (pix.y * frameCount + 1) * sizeof(*rowOffsetTable);
 
-	delete file;
+    // Add size of packedDataChunk.
+    totalByteCount += pix.y * frameCount;
+
+    delete file;
 }
 
 //--------------------------------------------------------------------------
 void PackedSurface::save(const char* filename) const
 {
-	WriteFile* file = FileSystem::openWrite(filename);
-	
-	int version = CURRENT_PAK_VERSION;
-	file->write(&version, sizeof(version), 1);
-	file->write(&pix, sizeof(pix), 1);
-	file->write(&frameCount, sizeof(frameCount), 1);
-	file->write(&fps, sizeof(fps), 1);
-	file->write(&offset, sizeof(offset), 1);
-	file->write(rowOffsetTable, (pix.y*frameCount + 1)*sizeof(*rowOffsetTable), 1);
-	if (file->write(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1) != 1)
-	{
-		delete file;	
-		throw Exception("error while writing '%s'.", filename);
-	}
+    WriteFile* file = FileSystem::openWrite(filename);
 
-	delete file;
+    int version = CURRENT_PAK_VERSION;
+    file->write(&version, sizeof(version), 1);
+    file->write(&pix, sizeof(pix), 1);
+    file->write(&frameCount, sizeof(frameCount), 1);
+    file->write(&fps, sizeof(fps), 1);
+    file->write(&offset, sizeof(offset), 1);
+    file->write(rowOffsetTable, (pix.y*frameCount + 1)*sizeof(*rowOffsetTable), 1);
+    if (file->write(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1) != 1) {
+        delete file;
+        throw Exception("error while writing '%s'.", filename);
+    }
+
+    delete file;
 }
 
 //--------------------------------------------------------------------------
 void PackedSurface::blt(const Surface &dest, int destX, int destY) const
 {
-	totalDrawCount++;
+    totalDrawCount++;
 
-	destX += offset.x;
-	destY += offset.y;
+    destX += offset.x;
+    destY += offset.y;
 
-	// Clip and trivial reject
+    // Clip and trivial reject
 
-	int needClipX = 0;
+    int needClipX = 0;
 
-	iXY srcMax;
-	srcMax.x = dest.getPixX() - destX;
-	if (srcMax.x <= 0) return; // off right
-	srcMax.y = dest.getPixY() - destY;
-	if (srcMax.y <= 0) return; // off bottom
+    iXY srcMax;
+    srcMax.x = dest.getPixX() - destX;
+    if (srcMax.x <= 0) return; // off right
+    srcMax.y = dest.getPixY() - destY;
+    if (srcMax.y <= 0) return; // off bottom
 
-	iXY srcMin;
-	if (destX < 0) {
-		srcMin.x = -destX;
-		if (srcMin >= pix.x) return; // off left
-		needClipX = 1;
-	} else {
-		srcMin.x = 0;
-	}
-	if (destY < 0) {
-		srcMin.y = -destY;
-		if (srcMin.y >= pix.y) return; // off right
-	} else {
-		srcMin.y = 0;
-	}
+    iXY srcMin;
+    if (destX < 0) {
+        srcMin.x = -destX;
+        if (srcMin >= pix.x) return; // off left
+        needClipX = 1;
+    } else {
+        srcMin.x = 0;
+    }
+    if (destY < 0) {
+        srcMin.y = -destY;
+        if (srcMin.y >= pix.y) return; // off right
+    } else {
+        srcMin.y = 0;
+    }
 
-	if (srcMax.x > pix.x) {
-		srcMax.x = pix.x;
-	} else {
-		needClipX = 1;
-	}
-	if (srcMax.y > pix.y) {
-		srcMax.y = pix.y;
-	}
+    if (srcMax.x > pix.x) {
+        srcMax.x = pix.x;
+    } else {
+        needClipX = 1;
+    }
+    if (srcMax.y > pix.y) {
+        srcMax.y = pix.y;
+    }
 
-	const int *table = &rowOffsetTable[int(curFrame)*pix.y];
+    const int *table = &rowOffsetTable[int(curFrame)*pix.y];
 
-	if (needClipX) {
-		const BYTE *rowData = packedDataChunk + table[srcMin.y];
-		PIX *destRowPtr = dest.rowPtr(destY + srcMin.y) + destX;
-		for (int y = srcMin.y ; y < srcMax.y ; ++y) {
+    if (needClipX) {
+        const BYTE *rowData = packedDataChunk + table[srcMin.y];
+        PIX *destRowPtr = dest.rowPtr(destY + srcMin.y) + destX;
+        for (int y = srcMin.y ; y < srcMax.y ; ++y) {
 
-			const BYTE *rowEnd = packedDataChunk + table[y+1];
+            const BYTE *rowEnd = packedDataChunk + table[y+1];
 
-			// Search for first span which is not completely off to the left
+            // Search for first span which is not completely off to the left
 
-			int x1, x2;
-			SpanHead *span;
-			const PIX *data;
-			for (;;) {
-				if (rowData >= rowEnd) goto nextRow;
-				span = (SpanHead *)rowData;
-				x1 = span->x1;
-				x2 = x1 + span->len;
-				rowData += (sizeof(*span) + span->len*sizeof(PIX) + 3) & ~3;
-				if (x2 > srcMin.x) break;
-			}
+            int x1, x2;
+            SpanHead *span;
+            const PIX *data;
+            for (;;) {
+                if (rowData >= rowEnd) goto nextRow;
+                span = (SpanHead *)rowData;
+                x1 = span->x1;
+                x2 = x1 + span->len;
+                rowData += (sizeof(*span) + span->len*sizeof(PIX) + 3) & ~3;
+                if (x2 > srcMin.x) break;
+            }
 
-			// Clip against left edge
+            // Clip against left edge
 
-			data = (const PIX *)(span + 1);
-			if (x1 < srcMin.x) {
-				data += srcMin.x - x1;
-				x1 = srcMin.x;
-			}
+            data = (const PIX *)(span + 1);
+            if (x1 < srcMin.x) {
+                data += srcMin.x - x1;
+                x1 = srcMin.x;
+            }
 
-			// Output spans to the screen until we hit the first
-			// span which is partially or completely out to the
-			// right
+            // Output spans to the screen until we hit the first
+            // span which is partially or completely out to the
+            // right
 
-			for (;;) {
-				if (x1 >= srcMax.x) {
-					rowData = rowEnd;
-					goto nextRow;
-				}
+            for (;;) {
+                if (x1 >= srcMax.x) {
+                    rowData = rowEnd;
+                    goto nextRow;
+                }
 
-				// Clip current span against right edge
-				if (x2 > srcMax.x) {
-					memcpy(destRowPtr + x1, data, (srcMax.x-x1) * sizeof(PIX));
-					rowData = rowEnd;
-					goto nextRow;
-				}
+                // Clip current span against right edge
+                if (x2 > srcMax.x) {
+                    memcpy(destRowPtr + x1, data, (srcMax.x-x1) * sizeof(PIX));
+                    rowData = rowEnd;
+                    goto nextRow;
+                }
 
-				memcpy(destRowPtr + x1, data, (x2-x1) * sizeof(PIX));
+                memcpy(destRowPtr + x1, data, (x2-x1) * sizeof(PIX));
 
-				if (rowData >= rowEnd) goto nextRow;
-				span = (SpanHead *)rowData;
-				x1 = span->x1;
-				if (x1 >= srcMax.x) {
-					rowData = rowEnd;
-					goto nextRow;
-				}
-				x2 = x1 + span->len;
-				data = (const PIX *)(span + 1);
-				rowData += (sizeof(*span) + span->len*sizeof(PIX) + 3) & ~3;
-			}
+                if (rowData >= rowEnd) goto nextRow;
+                span = (SpanHead *)rowData;
+                x1 = span->x1;
+                if (x1 >= srcMax.x) {
+                    rowData = rowEnd;
+                    goto nextRow;
+                }
+                x2 = x1 + span->len;
+                data = (const PIX *)(span + 1);
+                rowData += (sizeof(*span) + span->len*sizeof(PIX) + 3) & ~3;
+            }
 
 nextRow:
-			assert(rowData == rowEnd);
-			destRowPtr += dest.getStride();
-		}
-	} else {
-		const BYTE *rowData = packedDataChunk + table[srcMin.y];
-		PIX *destRowPtr = dest.rowPtr(destY + srcMin.y) + destX;
-		for (int y = srcMin.y ; y < srcMax.y ; ++y) {
+            assert(rowData == rowEnd);
+            destRowPtr += dest.getStride();
+        }
+    } else {
+        const BYTE *rowData = packedDataChunk + table[srcMin.y];
+        PIX *destRowPtr = dest.rowPtr(destY + srcMin.y) + destX;
+        for (int y = srcMin.y ; y < srcMax.y ; ++y) {
 
-			const BYTE *rowEnd = packedDataChunk + table[y+1];
+            const BYTE *rowEnd = packedDataChunk + table[y+1];
 
-			while (rowData < rowEnd) {
-				SpanHead *span = (SpanHead *)rowData;
-				memcpy(destRowPtr + span->x1, span + 1, span->len * sizeof(PIX));
-				rowData += (sizeof(*span) + span->len*sizeof(PIX) + 3) & ~3;
-			}
-			assert(rowData == rowEnd);
-			destRowPtr += dest.getStride();
-		}
-	}
+            while (rowData < rowEnd) {
+                SpanHead *span = (SpanHead *)rowData;
+                memcpy(destRowPtr + span->x1, span + 1, span->len * sizeof(PIX));
+                rowData += (sizeof(*span) + span->len*sizeof(PIX) + 3) & ~3;
+            }
+            assert(rowData == rowEnd);
+            destRowPtr += dest.getStride();
+        }
+    }
 
 }
 
@@ -393,19 +387,19 @@ nextRow:
 void PackedSurface::setTo(const PackedSurface &source, iRect bounds)
 {
 	assert(this != 0);
-
+ 
 	free();
 	reset();
-
+ 
 	orderCoords(bounds);
-
+ 
 	frameCount = source.getFrameCount();
 	fps        = source.getFPS();
 	pix        = bounds.getSize();
 	center     = ;
 	myMem      = false;
 	offset     = source.getOffset();
-
+ 
 	int   frameCount;
 	float fps;
 	float curFrame;
@@ -415,29 +409,29 @@ void PackedSurface::setTo(const PackedSurface &source, iRect bounds)
 	int  *rowOffsetTable;
 	BYTE *packedDataChunk;
 	bool  myMem;
-
+ 
 } // end Surface::setTo
 */
 // setTo
 //---------------------------------------------------------------------------
-// Purpose: Maps the calling PackedSurface to some specified coordinates of 
+// Purpose: Maps the calling PackedSurface to some specified coordinates of
 //          the another PackedSurface.
 //---------------------------------------------------------------------------
 void PackedSurface::setTo(const PackedSurface &source)
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	free();
+    free();
 
-	frameCount      = source.getFrameCount();
-	fps             = source.getFPS();
-	offset          = source.getOffset();
-	center          = source.getCenter();
-	pix             = source.getPix();
-	rowOffsetTable  = source.getRowOffsetTable();
-	curFrame        = source.getCurFrame();
-	packedDataChunk = source.getPackedDataChunk();
-	myMem           = false;
+    frameCount      = source.getFrameCount();
+    fps             = source.getFPS();
+    offset          = source.getOffset();
+    center          = source.getCenter();
+    pix             = source.getPix();
+    rowOffsetTable  = source.getRowOffsetTable();
+    curFrame        = source.getCurFrame();
+    packedDataChunk = source.getPackedDataChunk();
+    myMem           = false;
 
 } // end Surface::setTo
 
@@ -448,146 +442,145 @@ void PackedSurface::setTo(const PackedSurface &source)
 //---------------------------------------------------------------------------
 int PackedSurface::nextFrame()
 {
-	curFrame += TimerInterface::getTimeSlice() * fps;
-	
-	if (curFrame >= frameCount)
-	{
-		curFrame = 0.0;
-		return 0;
-	}
-	
-	return 1;
+    curFrame += TimerInterface::getTimeSlice() * fps;
+
+    if (curFrame >= frameCount) {
+        curFrame = 0.0;
+        return 0;
+    }
+
+    return 1;
 }
 
 // bltBlend
 //--------------------------------------------------------------------------
 void PackedSurface::bltBlend(const Surface &dest, int destX, int destY, ColorTable &colorTable) const
 {
-	totalDrawCount++;
+    totalDrawCount++;
 
-	destX += offset.x;
-	destY += offset.y;
+    destX += offset.x;
+    destY += offset.y;
 
-	// Clip and trivial reject
+    // Clip and trivial reject
 
-	int needClipX = 0;
+    int needClipX = 0;
 
-	iXY srcMax;
-	srcMax.x = dest.getPixX() - destX;
-	if (srcMax.x <= 0) return; // off right
-	srcMax.y = dest.getPixY() - destY;
-	if (srcMax.y <= 0) return; // off bottom
+    iXY srcMax;
+    srcMax.x = dest.getPixX() - destX;
+    if (srcMax.x <= 0) return; // off right
+    srcMax.y = dest.getPixY() - destY;
+    if (srcMax.y <= 0) return; // off bottom
 
-	iXY srcMin;
-	if (destX < 0) {
-		srcMin.x = -destX;
-		if (srcMin.x >= pix.x) return; // off left
-		needClipX = 1;
-	} else {
-		srcMin.x = 0;
-	}
-	if (destY < 0) {
-		srcMin.y = -destY;
-		if (srcMin.y >= pix.y) return; // off right
-	} else {
-		srcMin.y = 0;
-	}
+    iXY srcMin;
+    if (destX < 0) {
+        srcMin.x = -destX;
+        if (srcMin.x >= pix.x) return; // off left
+        needClipX = 1;
+    } else {
+        srcMin.x = 0;
+    }
+    if (destY < 0) {
+        srcMin.y = -destY;
+        if (srcMin.y >= pix.y) return; // off right
+    } else {
+        srcMin.y = 0;
+    }
 
-	if (srcMax.x > pix.x) {
-		srcMax.x = pix.x;
-	} else {
-		needClipX = 1;
-	}
-	if (srcMax.y > pix.y) {
-		srcMax.y = pix.y;
-	}
+    if (srcMax.x > pix.x) {
+        srcMax.x = pix.x;
+    } else {
+        needClipX = 1;
+    }
+    if (srcMax.y > pix.y) {
+        srcMax.y = pix.y;
+    }
 
-	const BYTE *cTable = colorTable.getColorArray();
-	const int  *table  = &rowOffsetTable[int(curFrame)*pix.y];
+    const BYTE *cTable = colorTable.getColorArray();
+    const int  *table  = &rowOffsetTable[int(curFrame)*pix.y];
 
-	if (needClipX) {
-		const BYTE *rowData = packedDataChunk + table[srcMin.y];
-		PIX *destRowPtr = dest.rowPtr(destY + srcMin.y) + destX;
-		for (int y = srcMin.y ; y < srcMax.y ; ++y) {
+    if (needClipX) {
+        const BYTE *rowData = packedDataChunk + table[srcMin.y];
+        PIX *destRowPtr = dest.rowPtr(destY + srcMin.y) + destX;
+        for (int y = srcMin.y ; y < srcMax.y ; ++y) {
 
-			const BYTE *rowEnd = packedDataChunk + table[y+1];
+            const BYTE *rowEnd = packedDataChunk + table[y+1];
 
-			// Search for first span which is not completely off to the left
+            // Search for first span which is not completely off to the left
 
-			int x1, x2;
-			SpanHead *span;
-			const PIX *data;
-			for (;;) {
-				if (rowData >= rowEnd) goto nextRow;
-				span = (SpanHead *)rowData;
-				x1 = span->x1;
-				x2 = x1 + span->len;
-				rowData += (sizeof(*span) + span->len*sizeof(PIX) + 3) & ~3;
-				if (x2 > srcMin.x) break;
-			}
+            int x1, x2;
+            SpanHead *span;
+            const PIX *data;
+            for (;;) {
+                if (rowData >= rowEnd) goto nextRow;
+                span = (SpanHead *)rowData;
+                x1 = span->x1;
+                x2 = x1 + span->len;
+                rowData += (sizeof(*span) + span->len*sizeof(PIX) + 3) & ~3;
+                if (x2 > srcMin.x) break;
+            }
 
-			// Clip against left edge
+            // Clip against left edge
 
-			data = (const PIX *)(span + 1);
-			if (x1 < srcMin.x) {
-				data += srcMin.x - x1;
-				x1 = srcMin.x;
-			}
+            data = (const PIX *)(span + 1);
+            if (x1 < srcMin.x) {
+                data += srcMin.x - x1;
+                x1 = srcMin.x;
+            }
 
-			// Output spans to the screen until we hit the first
-			// span which is partially or completely out to the
-			// right
+            // Output spans to the screen until we hit the first
+            // span which is partially or completely out to the
+            // right
 
-			for (;;) {
-				if (x1 >= srcMax.x) {
-					rowData = rowEnd;
-					goto nextRow;
-				}
+            for (;;) {
+                if (x1 >= srcMax.x) {
+                    rowData = rowEnd;
+                    goto nextRow;
+                }
 
-				// Clip current span against right edge
-				if (x2 > srcMax.x) {
-					bltBlendSpan(destRowPtr + x1, data, srcMax.x - x1, cTable);
-					
-					rowData = rowEnd;
-					goto nextRow;
-				}
+                // Clip current span against right edge
+                if (x2 > srcMax.x) {
+                    bltBlendSpan(destRowPtr + x1, data, srcMax.x - x1, cTable);
 
-				bltBlendSpan(destRowPtr + x1, data, x2 - x1, cTable);
+                    rowData = rowEnd;
+                    goto nextRow;
+                }
 
-				if (rowData >= rowEnd) goto nextRow;
-				span = (SpanHead *)rowData;
-				x1 = span->x1;
-				if (x1 >= srcMax.x) {
-					rowData = rowEnd;
-					goto nextRow;
-				}
-				x2 = x1 + span->len;
-				data = (const PIX *)(span + 1);
-				rowData += (sizeof(*span) + span->len*sizeof(PIX) + 3) & ~3;
-			}
+                bltBlendSpan(destRowPtr + x1, data, x2 - x1, cTable);
+
+                if (rowData >= rowEnd) goto nextRow;
+                span = (SpanHead *)rowData;
+                x1 = span->x1;
+                if (x1 >= srcMax.x) {
+                    rowData = rowEnd;
+                    goto nextRow;
+                }
+                x2 = x1 + span->len;
+                data = (const PIX *)(span + 1);
+                rowData += (sizeof(*span) + span->len*sizeof(PIX) + 3) & ~3;
+            }
 
 nextRow:
-			assert(rowData == rowEnd);
-			destRowPtr += dest.getStride();
-		}
-	} else {
-		const BYTE *rowData = packedDataChunk + table[srcMin.y];
-		PIX *destRowPtr = dest.rowPtr(destY + srcMin.y) + destX;
-		for (int y = srcMin.y ; y < srcMax.y ; ++y) {
+            assert(rowData == rowEnd);
+            destRowPtr += dest.getStride();
+        }
+    } else {
+        const BYTE *rowData = packedDataChunk + table[srcMin.y];
+        PIX *destRowPtr = dest.rowPtr(destY + srcMin.y) + destX;
+        for (int y = srcMin.y ; y < srcMax.y ; ++y) {
 
-			const BYTE *rowEnd = packedDataChunk + table[y+1];
+            const BYTE *rowEnd = packedDataChunk + table[y+1];
 
-			while (rowData < rowEnd) {
-				SpanHead *span = (SpanHead *)rowData;
+            while (rowData < rowEnd) {
+                SpanHead *span = (SpanHead *)rowData;
 
-				bltBlendSpan(destRowPtr + span->x1, (const PIX *)(span + 1), span->len, cTable);
-				
-				rowData += (sizeof(*span) + span->len*sizeof(PIX) + 3) & ~3;
-			}
-			assert(rowData == rowEnd);
-			destRowPtr += dest.getStride();
-		}
-	}
+                bltBlendSpan(destRowPtr + span->x1, (const PIX *)(span + 1), span->len, cTable);
+
+                rowData += (sizeof(*span) + span->len*sizeof(PIX) + 3) & ~3;
+            }
+            assert(rowData == rowEnd);
+            destRowPtr += dest.getStride();
+        }
+    }
 
 } // end PackedSurface::bltBlend
 
@@ -595,51 +588,47 @@ nextRow:
 //---------------------------------------------------------------------------
 int loadAllPAKInDirectory(const char *path, cGrowList <PackedSurface> &growList)
 {
-	char strBuf[256];
-	char pathWild[256];
+    char strBuf[256];
+    char pathWild[256];
 
-	sprintf(pathWild, "%s*.pak", path);
+    sprintf(pathWild, "%s*.pak", path);
 
-	int imageCount = UtilInterface::getNumFilesInDirectory(pathWild);
-	if (imageCount <= 0)
-	{
-		return 0;
-	}
-	
-	struct _finddata_t myFile;
-	int* hFile;
+    int imageCount = UtilInterface::getNumFilesInDirectory(pathWild);
+    if (imageCount <= 0) {
+        return 0;
+    }
 
-	_findfirst(pathWild, &myFile);
-	
-	cGrowList <Filename> filenames;
-	filenames.setNum(imageCount);
+    struct _finddata_t myFile;
+    int* hFile;
 
-	int curFilename = 0;
-	iXY maxSize(0, 0);
+    _findfirst(pathWild, &myFile);
 
-    if ((hFile = _findfirst(pathWild, &myFile)) != ((int*) -1))
-	{
-		do
-		{
-			sprintf(strBuf, "%s%s", path, myFile.name);
-			filenames[curFilename].setName(strBuf);
-			curFilename++;
+    cGrowList <Filename> filenames;
+    filenames.setNum(imageCount);
 
-		} while (_findnext(hFile, &myFile) == 0);
-	}
-	_findclose(hFile);
+    int curFilename = 0;
+    iXY maxSize(0, 0);
 
-	filenames.sort(FilenameSortFunction);
+    if ((hFile = _findfirst(pathWild, &myFile)) != ((int*) -1)) {
+        do {
+            sprintf(strBuf, "%s%s", path, myFile.name);
+            filenames[curFilename].setName(strBuf);
+            curFilename++;
 
-	// Allocate enough slots into the growList.
-	growList.setNum(imageCount);
+        } while (_findnext(hFile, &myFile) == 0);
+    }
+    _findclose(hFile);
 
-	// Now load in the sorted PAK names.
-	for (int i = 0; i < imageCount; i++)
-	{
-		growList[i].load(filenames[i].name);
-	}
+    filenames.sort(FilenameSortFunction);
 
-	return 1;
+    // Allocate enough slots into the growList.
+    growList.setNum(imageCount);
+
+    // Now load in the sorted PAK names.
+    for (int i = 0; i < imageCount; i++) {
+        growList[i].load(filenames[i].name);
+    }
+
+    return 1;
 
 } // end loadAllPAKInDirectory

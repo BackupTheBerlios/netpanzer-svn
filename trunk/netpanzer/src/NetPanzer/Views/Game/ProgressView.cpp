@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -31,30 +31,29 @@ ProgressView progressView;
 // ProgressView
 //---------------------------------------------------------------------------
 ProgressView::ProgressView() : View()
-{
-} // end ProgressView::ProgressView
+{} // end ProgressView::ProgressView
 
 // init
 //---------------------------------------------------------------------------
 void ProgressView::init()
 {
-	setSearchName("ProgressView");
-	setTitle("Progress Update");
-	setSubTitle("");
+    setSearchName("ProgressView");
+    setTitle("Progress Update");
+    setSubTitle("");
 
-	setAllowResize(false);
+    setAllowResize(false);
     setAllowMove(false);
-	setDisplayStatusBar(false);
-	setVisible(false);
-	setBordered(false);
+    setDisplayStatusBar(false);
+    setVisible(false);
+    setBordered(false);
 
-	background.create(628 - 179, 302 - 153, 628 - 179, 1);
-	background.fill(0);
+    background.create(628 - 179, 302 - 153, 628 - 179, 1);
+    background.fill(0);
 
-	moveTo(0, 0);
-	resize(640, 480);
+    moveTo(0, 0);
+    resize(640, 480);
 
-	iXY size(getClientRect().getSize());
+    iXY size(getClientRect().getSize());
 
 } // end ProgressView::init
 
@@ -62,47 +61,45 @@ void ProgressView::init()
 //---------------------------------------------------------------------------
 void ProgressView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
-	if (!backgroundSurface.getDoesExist())
-	{
-		loadBackgroundSurface();
-	}
-	
-	backgroundSurface.blt(clientArea);
+    if (!backgroundSurface.getDoesExist()) {
+        loadBackgroundSurface();
+    }
 
-	//MenuTemplateView::doDraw(viewArea, clientArea);
+    backgroundSurface.blt(clientArea);
 
-	background.blt(clientArea, 179, 153);
+    //MenuTemplateView::doDraw(viewArea, clientArea);
 
-	View::doDraw(viewArea, clientArea);
+    background.blt(clientArea, 179, 153);
+
+    View::doDraw(viewArea, clientArea);
 
 } // end ProgressView::doDraw
 
 // update
 //---------------------------------------------------------------------------
-// Purpose: Adds the specified text to the current surface, erasing 
+// Purpose: Adds the specified text to the current surface, erasing
 //          whatever is on the current line.
 //---------------------------------------------------------------------------
 void ProgressView::update(const char *text)
 {
-	int yOffset = background.getPix().y-CHAR_YPIX - 1;
+    int yOffset = background.getPix().y-CHAR_YPIX - 1;
 
-	// Clear the area for the text and draw the new text.
-	background.fillRect(0, yOffset, background.getPix().x, yOffset + CHAR_YPIX, Color::black);
-	background.bltString(0, background.getPix().y - CHAR_YPIX - 1, text, Color::white);
+    // Clear the area for the text and draw the new text.
+    background.fillRect(0, yOffset, background.getPix().x, yOffset + CHAR_YPIX, Color::black);
+    background.bltString(0, background.getPix().y - CHAR_YPIX - 1, text, Color::white);
 
 } // end ProgressView::update
 
 void ProgressView::updateDirect(const char *text)
- {
+{
     FRAME_BUFFER.lock();
     screen.lock(FRAME_BUFFER.mem);
 
-    if (!backgroundSurface.getDoesExist())
-	 {
-	   loadBackgroundSurface();
-	 }
-	
-	backgroundSurface.blt(screen);
+    if (!backgroundSurface.getDoesExist()) {
+        loadBackgroundSurface();
+    }
+
+    backgroundSurface.blt(screen);
 
     int yOffset = background.getPix().y-CHAR_YPIX - 1;
 
@@ -110,12 +107,12 @@ void ProgressView::updateDirect(const char *text)
     background.fillRect(0, yOffset, background.getPix().x, yOffset + CHAR_YPIX, Color::black);
     background.bltString(0, background.getPix().y - CHAR_YPIX - 1, text, Color::white);
 
-	background.blt(screen, 179, 153);
-  
+    background.blt(screen, 179, 153);
+
     FRAME_BUFFER.unlock();
     screen.unlock();
-    Screen->copyDoubleBufferandFlip(); 
- }
+    Screen->copyDoubleBufferandFlip();
+}
 
 // scroll
 //---------------------------------------------------------------------------
@@ -124,59 +121,57 @@ void ProgressView::updateDirect(const char *text)
 //---------------------------------------------------------------------------
 void ProgressView::scroll()
 {
-	Surface tempSurface;
-	tempSurface.copy(background);
+    Surface tempSurface;
+    tempSurface.copy(background);
 
-	// Move the current text up by the height of the app font.
-	tempSurface.blt(background, 0, -CHAR_YPIX - 1);
+    // Move the current text up by the height of the app font.
+    tempSurface.blt(background, 0, -CHAR_YPIX - 1);
 
 } // end ProgressView::scroll
 
 void ProgressView::scrollDirect()
 {
-	Surface tempSurface;
+    Surface tempSurface;
 
     FRAME_BUFFER.lock();
     screen.lock(FRAME_BUFFER.mem);
 
-    if (!backgroundSurface.getDoesExist())
-	 {
-	   loadBackgroundSurface();
-	 }
-	
-	backgroundSurface.blt(screen);
+    if (!backgroundSurface.getDoesExist()) {
+        loadBackgroundSurface();
+    }
 
-	tempSurface.copy(background);
+    backgroundSurface.blt(screen);
 
-	// Move the current text up by the height of the app font.
-	tempSurface.blt(background, 0, -CHAR_YPIX - 1);
+    tempSurface.copy(background);
 
-	background.blt(screen, 179, 153);
-  
+    // Move the current text up by the height of the app font.
+    tempSurface.blt(background, 0, -CHAR_YPIX - 1);
+
+    background.blt(screen, 179, 153);
+
     FRAME_BUFFER.unlock();
     screen.unlock();
-    Screen->copyDoubleBufferandFlip(); 
+    Screen->copyDoubleBufferandFlip();
 
 } // end ProgressView::scrollDirect
 
 void ProgressView::scrollAndUpdateDirect(const char *text)
- {
-	Surface tempSurface;
+{
+    Surface tempSurface;
 
     FRAME_BUFFER.lock();
     screen.lock(FRAME_BUFFER.mem);
 
-    if (!backgroundSurface.getDoesExist())
-	 {
-	   loadBackgroundSurface();
-	 }
-	
-	backgroundSurface.blt(screen);
+    if (!backgroundSurface.getDoesExist()) {
+        loadBackgroundSurface();
+    }
 
-	tempSurface.copy(background);
+    backgroundSurface.blt(screen);
 
-	// Move the current text up by the height of the app font.
-	tempSurface.blt(background, 0, -CHAR_YPIX - 1);
+    tempSurface.copy(background);
+
+    // Move the current text up by the height of the app font.
+    tempSurface.blt(background, 0, -CHAR_YPIX - 1);
 
     int yOffset = background.getPix().y-CHAR_YPIX - 1;
 
@@ -184,75 +179,73 @@ void ProgressView::scrollAndUpdateDirect(const char *text)
     background.fillRect(0, yOffset, background.getPix().x, yOffset + CHAR_YPIX, Color::black);
     background.bltString(0, background.getPix().y - CHAR_YPIX - 1, text, Color::white);
 
-	background.blt(screen, 179, 153);
-  
+    background.blt(screen, 179, 153);
+
     FRAME_BUFFER.unlock();
     screen.unlock();
-    Screen->copyDoubleBufferandFlip(); 
+    Screen->copyDoubleBufferandFlip();
 
- } // end ProgressView::scrollDirect
+} // end ProgressView::scrollDirect
 
 
 void ProgressView::reset()
- {
-  background.fill(0);
- }
+{
+    background.fill(0);
+}
 
 void ProgressView::open()
 {
-  	if ( Desktop::getView("ProgressView")->getVisible() == false )
-   	{
-	   	//GameManager::setVideoMode(iXY(640, 480), false);
+    if ( Desktop::getView("ProgressView")->getVisible() == false ) {
+        //GameManager::setVideoMode(iXY(640, 480), false);
 
-		GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
+        GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
-		GameManager::loadPalette("wads/netpmenu.act");
+        GameManager::loadPalette("wads/netpmenu.act");
 
-		Desktop::setVisibilityAllWindows(false);
-		Desktop::setVisibility("ProgressView", true); 
-	}
+        Desktop::setVisibilityAllWindows(false);
+        Desktop::setVisibility("ProgressView", true);
+    }
 }
 
 
 //---------------------------------------------------------------------------
 void ProgressView::close()
 {
-  if ( Desktop::getView("ProgressView")->getVisible() > 0 )
-   {
-    reset();
-    GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
+    if ( Desktop::getView("ProgressView")->getVisible() > 0 ) {
+        reset();
+        GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
-    //GameManager::restorePreviousVideoMode();
-	Desktop::checkViewPositions();
+        //GameManager::restorePreviousVideoMode();
+        Desktop::checkViewPositions();
 
-    GameManager::loadPalette("wads/netp.act");
+        GameManager::loadPalette("wads/netp.act");
 
-    backgroundSurface.free();
-    Desktop::setVisibility("ProgressView", false);
-   }
+        backgroundSurface.free();
+        Desktop::setVisibility("ProgressView", false);
+    }
 } // end ProgressView::close
 
 // toggleGameView
 //---------------------------------------------------------------------------
 void ProgressView::toggleGameView()
 {
-	reset();
+    reset();
     backgroundSurface.free();
     GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
     //GameManager::restorePreviousVideoMode();
-	Desktop::checkViewPositions();
+    Desktop::checkViewPositions();
 
-	// Set the palette to the game palette.
-	GameManager::loadPalette("wads/netp.act");
+    // Set the palette to the game palette.
+    GameManager::loadPalette("wads/netp.act");
 
-	GameManager::setNetPanzerGameOptions();
+    GameManager::setNetPanzerGameOptions();
 
-	Desktop::setVisibilityAllWindows(false);
-	Desktop::setVisibility("GameToolbarView", true);
-	Desktop::setVisibility("GameInfoView", true);
-	Desktop::setVisibility("MiniMapView", true);
-	Desktop::setVisibility("GameView", true);
+    Desktop::setVisibilityAllWindows(false);
+    Desktop::setVisibility("GameToolbarView", true);
+    Desktop::setVisibility("GameInfoView", true);
+    Desktop::setVisibility("MiniMapView", true);
+    Desktop::setVisibility("GameView", true);
 
 } // end ProgressView::toggleGameView
 
@@ -260,10 +253,10 @@ void ProgressView::toggleGameView()
 //---------------------------------------------------------------------------
 void ProgressView::toggleMainMenu()
 {
-	reset();
+    reset();
     backgroundSurface.free();
     Desktop::setVisibilityAllWindows(false);
-	Desktop::setVisibility("MainView", true);
+    Desktop::setVisibility("MainView", true);
 
 } // end ProgressView::toggleMainMenu
 
@@ -271,7 +264,7 @@ void ProgressView::toggleMainMenu()
 //---------------------------------------------------------------------------
 void ProgressView::doActivate()
 {
-	Desktop::setActiveView(this);
+    Desktop::setActiveView(this);
 
 } // end VehicleSelectionView::doActivate
 
@@ -279,11 +272,10 @@ void ProgressView::doActivate()
 //---------------------------------------------------------------------------
 void ProgressView::loadBackgroundSurface()
 {
-	String string = "pics/backgrounds/menus/menu/til/loadingMB.til";
+    String string = "pics/backgrounds/menus/menu/til/loadingMB.til";
 
-	if (!backgroundSurface.loadTIL(string))
-	{
-		throw Exception("ERROR: Unable to load menu background surface: %s", (const char *) string);
-	}
+    if (!backgroundSurface.loadTIL(string)) {
+        throw Exception("ERROR: Unable to load menu background surface: %s", (const char *) string);
+    }
 
 } // end MenuTemplateView::loadBackgroundSurface

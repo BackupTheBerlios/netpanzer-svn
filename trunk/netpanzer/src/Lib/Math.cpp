@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -31,7 +31,7 @@ float Math::sinTable[360 + 1];
 //--------------------------------------------------------------------------
 int Math::rad2Deg(float radian)
 {
-	return int(radian * (180.0 / M_PI));
+    return int(radian * (180.0 / M_PI));
 
 } // end Math::rad2Deg
 
@@ -41,7 +41,7 @@ int Math::rad2Deg(float radian)
 //--------------------------------------------------------------------------
 float Math::deg2Rad(int degree)
 {
-	return degree * (M_PI / 180.0);
+    return degree * (M_PI / 180.0);
 
 } // end Math::deg2Rad
 
@@ -49,7 +49,7 @@ float Math::deg2Rad(int degree)
 //--------------------------------------------------------------------------
 int Math::degAngle(const iXY &a, const iXY &b)
 {
-	return rad2Deg(radAngle(a, b));
+    return rad2Deg(radAngle(a, b));
 
 } // end Math::degAngle
 
@@ -57,7 +57,7 @@ int Math::degAngle(const iXY &a, const iXY &b)
 //--------------------------------------------------------------------------
 int Math::degAngle(float x, float y)
 {
-	return rad2Deg(radAngle(x, y));
+    return rad2Deg(radAngle(x, y));
 
 } // end Math::degAngle
 
@@ -65,9 +65,9 @@ int Math::degAngle(float x, float y)
 //--------------------------------------------------------------------------
 fXY Math::unitDirection(const iXY &a, const iXY &b)
 {
-	float angle = radAngle(a, b);
+    float angle = radAngle(a, b);
 
-	return unitDirection(angle);
+    return unitDirection(angle);
 
 } // end Math::unitDirection
 
@@ -75,7 +75,7 @@ fXY Math::unitDirection(const iXY &a, const iXY &b)
 //--------------------------------------------------------------------------
 fXY Math::unitDirection(float angle)
 {
-	return fXY(cos(angle), sin(angle));
+    return fXY(cos(angle), sin(angle));
 
 } // end Math::unitDirection
 
@@ -83,7 +83,7 @@ fXY Math::unitDirection(float angle)
 //--------------------------------------------------------------------------
 float Math::radAngle(const iXY &a, const iXY &b)
 {
-	return atan2(b.y - a.y, b.x - a.x);
+    return atan2(b.y - a.y, b.x - a.x);
 
 } // end Math::radAngle
 
@@ -91,7 +91,7 @@ float Math::radAngle(const iXY &a, const iXY &b)
 //--------------------------------------------------------------------------
 float Math::radAngle(float x, float y)
 {
-	return atan2(y, x);
+    return atan2(y, x);
 
 } // end Math::radAngle
 
@@ -99,11 +99,11 @@ float Math::radAngle(float x, float y)
 //--------------------------------------------------------------------------
 fXY Math::unitDirectionEast(const fXY &northDirection)
 {
-	float angle = radAngle(northDirection.x, northDirection.y);
+    float angle = radAngle(northDirection.x, northDirection.y);
 
-	angle += M_PI / 2.0;
+    angle += M_PI / 2.0;
 
-	return unitDirection(angle);
+    return unitDirection(angle);
 
 } // end Math::unitDirectionEast
 
@@ -111,11 +111,11 @@ fXY Math::unitDirectionEast(const fXY &northDirection)
 //--------------------------------------------------------------------------
 fXY Math::unitDirectionWest(const fXY &northDirection)
 {
-	float angle = radAngle(northDirection.x, northDirection.y);
+    float angle = radAngle(northDirection.x, northDirection.y);
 
-	angle -= M_PI / 2.0;
+    angle -= M_PI / 2.0;
 
-	return unitDirection(angle);
+    return unitDirection(angle);
 
 } // end Math::unitDirectionWest
 
@@ -123,9 +123,9 @@ fXY Math::unitDirectionWest(const fXY &northDirection)
 //--------------------------------------------------------------------------
 float Math::getCos(int angle)
 {
-	assert(angle >= 0 && angle <= 360);
+    assert(angle >= 0 && angle <= 360);
 
-	return cosTable[angle];
+    return cosTable[angle];
 
 } // end Math::getCos
 
@@ -133,9 +133,9 @@ float Math::getCos(int angle)
 //--------------------------------------------------------------------------
 float Math::getSin(int angle)
 {
-	assert(angle >= 0 && angle <= 360);
+    assert(angle >= 0 && angle <= 360);
 
-	return sinTable[angle];
+    return sinTable[angle];
 
 } // end Math::getSin
 
@@ -143,13 +143,12 @@ float Math::getSin(int angle)
 //--------------------------------------------------------------------------
 Math::Math()
 {
-	for (int i = 0; i <= 360; i++)
-	{
-		float radians = deg2Rad(i);
+    for (int i = 0; i <= 360; i++) {
+        float radians = deg2Rad(i);
 
-		cosTable[i] = cos(radians);
-		sinTable[i] = sin(radians);
-	}
+        cosTable[i] = cos(radians);
+        sinTable[i] = sin(radians);
+    }
 } // end Math::init
 
 Math math;

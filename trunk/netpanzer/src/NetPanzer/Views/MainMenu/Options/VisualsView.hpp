@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -39,41 +39,42 @@ class Surface;
 class VisualsView : public OptionsTemplateView, public StateChangedCallback
 {
 private:
-	int      selectedColorStartY;
+    int      selectedColorStartY;
 
-	// Option check boxes.
-	CheckBox checkBoxDrawAllShadows;
-	CheckBox checkBoxBlendSmoke;
-	CheckBox checkBoxFullscreen;
-	//CheckBox drawUnitReload;
+    // Option check boxes.
+    CheckBox checkBoxDrawAllShadows;
+    CheckBox checkBoxBlendSmoke;
+    CheckBox checkBoxFullscreen;
+    //CheckBox drawUnitReload;
 
-	// Option choices.
-	Choice   choiceResolution;
-	Choice   choiceGameViewBackgroundColor;
-	Choice   choiceMiniMapObjectiveDrawMode;
-	Choice   choiceMiniMapUnitSize;
-	Choice   choiceUnitSelectionDrawMode;
-	
-	//Choice   choiceUnitInfoDrawLayer;
+    // Option choices.
+    Choice   choiceResolution;
+    Choice   choiceGameViewBackgroundColor;
+    Choice   choiceMiniMapObjectiveDrawMode;
+    Choice   choiceMiniMapUnitSize;
+    Choice   choiceUnitSelectionDrawMode;
 
-	// Color choices.
-	Choice   choiceYourRadarUnit;
-	Choice   choiceAlliedRadarUnit;
-	Choice   choiceYourRadarObjective;
-	Choice   choiceAlliedRadarObjective;
-	Choice   choiceEnemyRadarObjective;
-	Choice   choiceVehicleSelectionBox;
-	Choice   choiceConsoleText;
+    //Choice   choiceUnitInfoDrawLayer;
 
-	virtual void loadTitleSurface();
+    // Color choices.
+    Choice   choiceYourRadarUnit;
+    Choice   choiceAlliedRadarUnit;
+    Choice   choiceYourRadarObjective;
+    Choice   choiceAlliedRadarObjective;
+    Choice   choiceEnemyRadarObjective;
+    Choice   choiceVehicleSelectionBox;
+    Choice   choiceConsoleText;
+
+    virtual void loadTitleSurface();
 
 public:
-	VisualsView();
+    VisualsView();
 
-	virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
     virtual void processEvents();
-	virtual void initButtons();
-	virtual void stateChanged(Component* source);
-}; // end VisualsView
+    virtual void initButtons();
+    virtual void stateChanged(Component* source);
+}
+; // end VisualsView
 
 #endif // end __VisualsView_hpp__

@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -50,14 +50,13 @@ int GameView::gDrawSolidBackground = 0;
 // GameView
 //---------------------------------------------------------------------------
 GameView::GameView() : View()
-{
-} // end GameView::GameView
+{} // end GameView::GameView
 
 // setSize
 //---------------------------------------------------------------------------
 void GameView::setSize(iXY size)
 {
-	resize(size);
+    resize(size);
 
 } // end GameView::setSize
 
@@ -65,18 +64,18 @@ void GameView::setSize(iXY size)
 //---------------------------------------------------------------------------
 void GameView::init()
 {
-	setSearchName("GameView");
-	setTitle("Game");
-	setSubTitle("");
+    setSearchName("GameView");
+    setTitle("Game");
+    setSubTitle("");
 
-	setBordered(false);
-	setAlwaysOnBottom(true);
-	setAllowResize(false);
-	setDisplayStatusBar(false);
-	setVisible(false);
+    setBordered(false);
+    setAlwaysOnBottom(true);
+    setAllowResize(false);
+    setDisplayStatusBar(false);
+    setVisible(false);
 
-	moveTo(iXY(0, 0));
-	resize(iXY(SCREEN_XPIX, SCREEN_YPIX));
+    moveTo(iXY(0, 0));
+    resize(iXY(SCREEN_XPIX, SCREEN_YPIX));
 
 } // end GameView::init
 
@@ -84,43 +83,40 @@ void GameView::init()
 //---------------------------------------------------------------------------
 void GameView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
-	// Added for debugging, accesible through LibView.
-	if (gDrawSolidBackground)
-	{
-		screen.fill(250);
-	} else
-	{
-		TileEngine::blitWorld();
-	}
-	
-	// Added for debugging, accesible through LibView.
-	if (ParticleInterface::gTestSim)
-	{
-		ParticleInterface::testSim();
-		//ParticleInterface::testSimText(viewArea);
-	}
+    // Added for debugging, accesible through LibView.
+    if (gDrawSolidBackground) {
+        screen.fill(250);
+    } else {
+        TileEngine::blitWorld();
+    }
 
-	iRect world_win;
-	WorldViewInterface::getViewWindow( &world_win );
-	SPRITE_SORTER.reset(world_win);
+    // Added for debugging, accesible through LibView.
+    if (ParticleInterface::gTestSim) {
+        ParticleInterface::testSim();
+        //ParticleInterface::testSimText(viewArea);
+    }
 
-	PackedSurface::totalDrawCount = 0;
-	ParticleSystem2D::drawAll(clientArea, SPRITE_SORTER );
-	Particle2D::drawAll(clientArea, SPRITE_SORTER );
+    iRect world_win;
+    WorldViewInterface::getViewWindow( &world_win );
+    SPRITE_SORTER.reset(world_win);
 
-	UnitInterface::offloadGraphics( SPRITE_SORTER );
-	ProjectileInterface::offloadGraphics( SPRITE_SORTER );
-	ObjectiveInterface::offloadGraphics( SPRITE_SORTER );
+    PackedSurface::totalDrawCount = 0;
+    ParticleSystem2D::drawAll(clientArea, SPRITE_SORTER );
+    Particle2D::drawAll(clientArea, SPRITE_SORTER );
+
+    UnitInterface::offloadGraphics( SPRITE_SORTER );
+    ProjectileInterface::offloadGraphics( SPRITE_SORTER );
+    ObjectiveInterface::offloadGraphics( SPRITE_SORTER );
     PowerUpInterface::offloadGraphics( SPRITE_SORTER );
 
-	SPRITE_SORTER.blitLists( &FRAME_BUFFER );  
+    SPRITE_SORTER.blitLists( &FRAME_BUFFER );
 
-	VehicleSelectionView::drawMiniProductionStatus(screen);
+    VehicleSelectionView::drawMiniProductionStatus(screen);
 
-	COMMAND_PROCESSOR.updateControls();
+    COMMAND_PROCESSOR.updateControls();
 
-	// Make sure the console info is the last thing drawn.
-	ConsoleInterface::update( FRAME_BUFFER );
+    // Make sure the console info is the last thing drawn.
+    ConsoleInterface::update( FRAME_BUFFER );
 
 } // end GameView::doDraw
 
@@ -128,10 +124,10 @@ void GameView::doDraw(const Surface &viewArea, const Surface &clientArea)
 //---------------------------------------------------------------------------
 void GameView::doActivate()
 {
-	View::doActivate();
-	MouseInterface::event_queue.reset();
-	MouseInterface::resetButtonHoldStatus();
-	COMMAND_PROCESSOR.inFocus();
+    View::doActivate();
+    MouseInterface::event_queue.reset();
+    MouseInterface::resetButtonHoldStatus();
+    COMMAND_PROCESSOR.inFocus();
 
 } // end GameView::doActivate
 
@@ -139,7 +135,7 @@ void GameView::doActivate()
 //---------------------------------------------------------------------------
 void GameView::processEvents()
 {
-	COMMAND_PROCESSOR.process();
+    COMMAND_PROCESSOR.process();
 
 } // end GameView::processEvents
 
@@ -158,13 +154,12 @@ void GameView::processEvents()
 //--------------------------------------------------------------------------
 void GameView::mouseMove(const iXY & prevPos, const iXY &newPos)
 {
-	View::mouseMove(prevPos, newPos);
+    View::mouseMove(prevPos, newPos);
 
-	if (!mouse.getButtonMask() && Desktop::getFocus() != this)
-	{
-		Desktop::setFocusView(this);
-		//Desktop::setActiveView(this);
-		MouseInterface::setCursor("default.bmp");
-	}
+    if (!mouse.getButtonMask() && Desktop::getFocus() != this) {
+        Desktop::setFocusView(this);
+        //Desktop::setActiveView(this);
+        MouseInterface::setCursor("default.bmp");
+    }
 
 } // end GameView::mouseMove

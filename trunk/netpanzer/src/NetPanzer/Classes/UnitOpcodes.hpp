@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -27,143 +27,152 @@ enum { _unit_opcode_flag_sync = 0x01 };
 #endif
 
 struct UnitOpcodeStruct
-  {
-   unsigned char  opcode;
-   unsigned char  player_index;
-   unsigned short unit_index;
-   unsigned char  flags;
+{
+    unsigned char  opcode;
+    unsigned char  player_index;
+    unsigned short unit_index;
+    unsigned char  flags;
 
-   unsigned char op_data[7];
-  } __attribute__((packed));
+    unsigned char op_data[7];
+}
+__attribute__((packed));
 
 
 typedef QueueTemplate< UnitOpcodeStruct > UnitOpcodeQueue;
 
 class UnitOpcode
- {
-  public:
-   unsigned char  opcode;
-   unsigned char  player_index;
-   unsigned short unit_index;  
-   unsigned char  flags;
- } __attribute__((packed));
+{
+public:
+    unsigned char  opcode;
+    unsigned char  player_index;
+    unsigned short unit_index;
+    unsigned char  flags;
+}
+__attribute__((packed));
 
 #define _UNIT_OPCODE_MOVE 1
 
 class MoveOpcode : public UnitOpcode
- {
-  public:
-   unsigned long square;
-   signed char   loc_x_offset;
-   signed char   loc_y_offset;
-   unsigned char pad[1];
- 
-   MoveOpcode( )
-    {
-	 flags = 0;
-	 opcode = _UNIT_OPCODE_MOVE;
-	}
+{
+public:
+    unsigned long square;
+    signed char   loc_x_offset;
+    signed char   loc_y_offset;
+    unsigned char pad[1];
 
- } __attribute__((packed));
+    MoveOpcode( )
+    {
+        flags = 0;
+        opcode = _UNIT_OPCODE_MOVE;
+    }
+
+}
+__attribute__((packed));
 
 #define _UNIT_OPCODE_TURRET_TRACK_POINT 2
 
 class TurretTrackPointOpcode : public UnitOpcode
- {
-  public:
-   unsigned short x;
-   unsigned short y;
-   bool  activate;
-   unsigned char pad[2];
+{
+public:
+    unsigned short x;
+    unsigned short y;
+    bool  activate;
+    unsigned char pad[2];
 
-   TurretTrackPointOpcode( )
+    TurretTrackPointOpcode( )
     {
-	 flags = 0;
-	 opcode = _UNIT_OPCODE_TURRET_TRACK_POINT;
-	}
+        flags = 0;
+        opcode = _UNIT_OPCODE_TURRET_TRACK_POINT;
+    }
 
- } __attribute__((packed));
+}
+__attribute__((packed));
 
 #define _UNIT_OPCODE_TURRET_TRACK_TARGET 3
 
 class TurretTrackTargetOpcode : public UnitOpcode
- {
-  public:
-   unsigned char target_player_index;
-   unsigned short target_unit_index;
-   bool activate;
-   unsigned char pad[3];
- 
- 
-   TurretTrackTargetOpcode( )
-    {
-	 flags = 0;
-	 opcode = _UNIT_OPCODE_TURRET_TRACK_TARGET;
-	}
+{
+public:
+    unsigned char target_player_index;
+    unsigned short target_unit_index;
+    bool activate;
+    unsigned char pad[3];
 
- } __attribute__((packed));
+
+    TurretTrackTargetOpcode( )
+    {
+        flags = 0;
+        opcode = _UNIT_OPCODE_TURRET_TRACK_TARGET;
+    }
+
+}
+__attribute__((packed));
 
 #define _UNIT_OPCODE_FIRE_WEAPON 4
 
 class FireWeaponOpcode : public UnitOpcode
- {
-  public:
-   unsigned short x;
-   unsigned short y;
-   unsigned char pad[3];
+{
+public:
+    unsigned short x;
+    unsigned short y;
+    unsigned char pad[3];
 
-   FireWeaponOpcode( )
+    FireWeaponOpcode( )
     {
-	 flags = 0;
-	 opcode = _UNIT_OPCODE_FIRE_WEAPON;
-	}
- } __attribute__((packed));
+        flags = 0;
+        opcode = _UNIT_OPCODE_FIRE_WEAPON;
+    }
+}
+__attribute__((packed));
 
 #define _UNIT_OPCODE_SYNC_UNIT 5
 
 class SyncUnitOpcode : public UnitOpcode
- {
-  public:
-   unsigned char pad[7];
+{
+public:
+    unsigned char pad[7];
 
-  SyncUnitOpcode( )
-   {
-	 flags = 0;
-	 opcode = _UNIT_OPCODE_SYNC_UNIT;
-   }
- 
- } __attribute__((packed));
- 
+    SyncUnitOpcode( )
+    {
+        flags = 0;
+        opcode = _UNIT_OPCODE_SYNC_UNIT;
+    }
+
+}
+__attribute__((packed));
+
 #define _UNIT_OPCODE_UPDATE_STATE 6
 
 class UpdateStateUnitOpcode : public UnitOpcode
- {
-  public:
-   short hit_points;
-   unsigned char pad[5];
+{
+public:
+    short hit_points;
+    unsigned char pad[5];
 
-  UpdateStateUnitOpcode( )
-   {
-	flags = 0;
-	opcode = _UNIT_OPCODE_UPDATE_STATE;
-   }
- 
- } __attribute__((packed));
+    UpdateStateUnitOpcode( )
+    {
+        flags = 0;
+        opcode = _UNIT_OPCODE_UPDATE_STATE;
+    }
+
+}
+__attribute__((packed));
 
 #define _UNIT_OPCODE_DESTRUCT 7
 
 class DestructUnitOpcode : public UnitOpcode
- {
-  public:
-   unsigned char pad[7];
+{
+public:
+    unsigned char pad[7];
 
-  DestructUnitOpcode( )
-   {
-	flags = 0;
-	opcode = _UNIT_OPCODE_DESTRUCT;
-   }
- 
- } __attribute__((packed));
+    DestructUnitOpcode( )
+    {
+        flags = 0;
+        opcode = _UNIT_OPCODE_DESTRUCT;
+    }
+
+}
+__attribute__((packed));
 
 #ifdef MSVC
 #pragma pack()

@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -22,104 +22,105 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 template< class TYPE >
 class QueueTemplate : public ArrayTemplate< TYPE >
- {
-  public:
-   unsigned long front;
-   unsigned long rear;
+{
+public:
+    unsigned long front;
+    unsigned long rear;
 
-   QueueTemplate( ) { }
+    QueueTemplate( )
+    { }
 
-   QueueTemplate( unsigned long size );
+    QueueTemplate( unsigned long size );
 
-   void initialize( unsigned long size );
+    void initialize( unsigned long size );
 
-   inline void reset( void )
+    inline void reset( void )
     {
-     front = 0;
-     rear = 0;
-    }
-   
-   inline bool enqueue( TYPE & object )
-    {
-     add( object, (rear + 1) % size );
-     rear = (rear + 1) % size;
-     
-     if ( front == rear )
-      return( false );
-
-     return( true );
+        front = 0;
+        rear = 0;
     }
 
-   inline TYPE dequeue( void )
-    {             
-     assert( front != rear );
-         
-     front = ( front + 1 ) % size;
-	 return( array[ front ] );      
-    }
- 
-   inline void pop( void )
+    inline bool enqueue( TYPE & object )
     {
-     assert( front != rear );
-         
-     front = ( front + 1 ) % size;
+        add( object, (rear + 1) % size );
+        rear = (rear + 1) % size;
+
+        if ( front == rear )
+            return( false );
+
+        return( true );
     }
 
-   inline TYPE getFirst( void )
+    inline TYPE dequeue( void )
     {
-     assert( front != rear );
-         
-     return( array[ (( front + 1 ) % size) ] );      
-	}
+        assert( front != rear );
 
-   inline TYPE * getFirstPtr( void )
-    {
-     assert( front != rear );
-         
-     return( &(array[ (( front + 1 ) % size) ]) );      
-    }
-   
-   
-   inline bool isEmpty( void ) const
-    {
-     return front == rear;
+        front = ( front + 1 ) % size;
+        return( array[ front ] );
     }
 
-   inline bool isFull ( void ) const
+    inline void pop( void )
     {
-     return front == (rear + 1) % size;
+        assert( front != rear );
+
+        front = ( front + 1 ) % size;
     }
 
-   inline bool isReady( void ) const
+    inline TYPE getFirst( void )
     {
-     return front != rear;
+        assert( front != rear );
+
+        return( array[ (( front + 1 ) % size) ] );
     }
 
-   inline unsigned long itemCount( void ) const
+    inline TYPE * getFirstPtr( void )
     {
-     if ( front > rear ) 
-      return ( (rear+1) + ( (size-1) - front ) );
-     else  
-      return ( rear - front ); 
+        assert( front != rear );
+
+        return( &(array[ (( front + 1 ) % size) ]) );
     }
- };
+
+
+    inline bool isEmpty( void ) const
+    {
+        return front == rear;
+    }
+
+    inline bool isFull ( void ) const
+    {
+        return front == (rear + 1) % size;
+    }
+
+    inline bool isReady( void ) const
+    {
+        return front != rear;
+    }
+
+    inline unsigned long itemCount( void ) const
+    {
+        if ( front > rear )
+            return ( (rear+1) + ( (size-1) - front ) );
+        else
+            return ( rear - front );
+    }
+};
 
 
 template< class TYPE >
 QueueTemplate< TYPE >::QueueTemplate( unsigned long size )
-  : ArrayTemplate<TYPE>( size )
- {
-  front = 0;
-  rear = 0;
- }
+        : ArrayTemplate<TYPE>( size )
+{
+    front = 0;
+    rear = 0;
+}
 
 template< class TYPE >
 void QueueTemplate< TYPE >::initialize( unsigned long size )
- {
-  ArrayTemplate< TYPE >::initialize( size );
-  front = 0;
-  rear = 0; 
- }
+{
+    ArrayTemplate< TYPE >::initialize( size );
+    front = 0;
+    rear = 0;
+}
 
 
 #endif // ** _QUEUETEMPLATE_HPP

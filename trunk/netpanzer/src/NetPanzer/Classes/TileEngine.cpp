@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -24,233 +24,214 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 void TileEngine::blitWorld()
 {
-	unsigned long  x_left_length, x_left_offset, x_right_length, x_right_offset;
-	unsigned long  y_top_length, y_top_offset, y_bottom_length, y_bottom_offset;
-	bool           x_right_end_flag = false, y_bottom_end_flag = false;
+    unsigned long  x_left_length, x_left_offset, x_right_length, x_right_offset;
+    unsigned long  y_top_length, y_top_offset, y_bottom_length, y_bottom_offset;
+    bool           x_right_end_flag = false, y_bottom_end_flag = false;
 
-	unsigned short map_x, map_y;
-	unsigned long  world_x, world_y;
+    unsigned short map_x, map_y;
+    unsigned long  world_x, world_y;
 
-	unsigned char *tile_offset, *buffer_offset;
+    unsigned char *tile_offset, *buffer_offset;
 
-	unsigned long i,k;
+    unsigned long i,k;
 
-	unsigned char  *double_buffer;
+    unsigned char  *double_buffer;
 
-   	MapElementType *map_buffer;
-	MapElementType *world_row;
-	MapElementType  tile_type;
+    MapElementType *map_buffer;
+    MapElementType *world_row;
+    MapElementType  tile_type;
 
-	unsigned short map_width;
-	unsigned short map_height;
+    unsigned short map_width;
+    unsigned short map_height;
 
-	unsigned long next_map_row_offset;
-	unsigned long next_tile_row_offset;
-	unsigned long tile_size;
+    unsigned long next_map_row_offset;
+    unsigned long next_tile_row_offset;
+    unsigned long tile_size;
 
-	unsigned long complete_columns;
-	unsigned long complete_rows;
+    unsigned long complete_columns;
+    unsigned long complete_rows;
 
-   	tile_size = tile_set.getTileXsize();
+    tile_size = tile_set.getTileXsize();
 
-   	main_camera->getViewStart(Screen->getWidth(), Screen->getHeight(),
-							  &world_x, &world_y);
-	pointXYtoMapXY( world_x, world_y, &map_x, &map_y );
+    main_camera->getViewStart(Screen->getWidth(), Screen->getHeight(),
+                              &world_x, &world_y);
+    pointXYtoMapXY( world_x, world_y, &map_x, &map_y );
 
-   	map_width = main_map.getXsize();
+    map_width = main_map.getXsize();
 
-	map_height = main_map.getYsize();
+    map_height = main_map.getYsize();
 
-	main_map.getRawMapBuffer( &map_buffer );
+    main_map.getRawMapBuffer( &map_buffer );
 
-	double_buffer = (unsigned char*) FRAME_BUFFER.mem;
+    double_buffer = (unsigned char*) FRAME_BUFFER.mem;
 
-	/* 
-	   x_offset = (world_x % tile_size );
-	   y_offset = (world_y % tile_size );
-	   
-	   x_length = tile_size - x_offset;
-	   y_length = tile_size - y_offset;
-	 */
- 
-	x_left_offset = (world_x % tile_size);
-	x_left_length = (tile_size - x_left_offset);
+    /*
+       x_offset = (world_x % tile_size );
+       y_offset = (world_y % tile_size );
+       
+       x_length = tile_size - x_offset;
+       y_length = tile_size - y_offset;
+     */
 
-	complete_columns = (Screen->getWidth() - x_left_length) / tile_size;
+    x_left_offset = (world_x % tile_size);
+    x_left_length = (tile_size - x_left_offset);
 
-	x_right_offset = 0; 
-	x_right_length = (Screen->getWidth() - x_left_length) % tile_size; 
-	if ( x_right_length > 0 )
-		x_right_end_flag = true;
+    complete_columns = (Screen->getWidth() - x_left_length) / tile_size;
 
-	y_top_offset = (world_y % tile_size);
-	y_top_length = (tile_size - y_top_offset);
+    x_right_offset = 0;
+    x_right_length = (Screen->getWidth() - x_left_length) % tile_size;
+    if ( x_right_length > 0 )
+        x_right_end_flag = true;
 
-	complete_rows = (Screen->getHeight() - y_top_length) / tile_size;
+    y_top_offset = (world_y % tile_size);
+    y_top_length = (tile_size - y_top_offset);
 
-	y_bottom_offset = 0; 
-	y_bottom_length = (Screen->getHeight() - y_top_length) % tile_size; 
-	if ( y_bottom_length > 0 ) 
-		y_bottom_end_flag = true;
+    complete_rows = (Screen->getHeight() - y_top_length) / tile_size;
 
-	world_row =  map_buffer + (map_y * map_width) + map_x;
+    y_bottom_offset = 0;
+    y_bottom_length = (Screen->getHeight() - y_top_length) % tile_size;
+    if ( y_bottom_length > 0 )
+        y_bottom_end_flag = true;
 
-	// XXX
-	next_tile_row_offset = Screen->getWidth() * (tile_size - 1);
+    world_row =  map_buffer + (map_y * map_width) + map_x;
 
-	next_map_row_offset = map_width - complete_columns - 1;
+    // XXX
+    next_tile_row_offset = Screen->getWidth() * (tile_size - 1);
 
-	// THE TOP ROW
+    next_map_row_offset = map_width - complete_columns - 1;
 
-	tile_type = *(world_row);
-	
-	tile_offset = tile_set.getTile( tile_type ); 
-	tile_offset = tile_offset + (y_top_offset * tile_size ) + x_left_offset; 
- 
-	buffer_offset = double_buffer;
+    // THE TOP ROW
 
-	blit_partial_xy( tile_offset, buffer_offset, y_top_length, x_left_length );
+    tile_type = *(world_row);
 
-	world_row++;
+    tile_offset = tile_set.getTile( tile_type );
+    tile_offset = tile_offset + (y_top_offset * tile_size ) + x_left_offset;
 
-	tile_type = *(world_row);
+    buffer_offset = double_buffer;
 
-	tile_offset = tile_set.getTile( tile_type ); 
-	tile_offset = tile_offset + (y_top_offset * tile_size ); 
- 
-	buffer_offset += x_left_length;
-	
-	for( i=0; i < complete_columns; i++ )
-	{
-		blit_partial_y( tile_offset, buffer_offset, y_top_length );
+    blit_partial_xy( tile_offset, buffer_offset, y_top_length, x_left_length );
 
-		world_row++;
+    world_row++;
 
-		tile_type = *(world_row);
+    tile_type = *(world_row);
 
-		tile_offset = tile_set.getTile( tile_type ); 
-		tile_offset = tile_offset + (y_top_offset * tile_size ); 
+    tile_offset = tile_set.getTile( tile_type );
+    tile_offset = tile_offset + (y_top_offset * tile_size );
 
-		buffer_offset += tile_size;
-	}
+    buffer_offset += x_left_length;
 
-	if( x_right_end_flag == true )
-	{
-  
-		if (y_top_length > 0 && x_right_length > 0)
-		{
-			blit_partial_xy(tile_offset, buffer_offset, y_top_length, x_right_length);
-		}
+    for( i=0; i < complete_columns; i++ ) {
+        blit_partial_y( tile_offset, buffer_offset, y_top_length );
 
-		buffer_offset += ( Screen->getWidth() * (y_top_length-1)) + x_right_length;
+        world_row++;
 
-		world_row = world_row + next_map_row_offset;
-	}
-	else
-	{
-		buffer_offset += (Screen->getWidth() * (y_top_length-1));
+        tile_type = *(world_row);
 
-		world_row = world_row + next_map_row_offset;
-	}               
+        tile_offset = tile_set.getTile( tile_type );
+        tile_offset = tile_offset + (y_top_offset * tile_size );
 
-	// THE MIDDLE ROWS
+        buffer_offset += tile_size;
+    }
 
-	for( k=0; k < complete_rows; k++)
-	{
+    if( x_right_end_flag == true ) {
 
-		tile_type = *(world_row);
-		
-		tile_offset = tile_set.getTile( tile_type ); 
-		tile_offset = tile_offset + x_left_offset; 
+        if (y_top_length > 0 && x_right_length > 0) {
+            blit_partial_xy(tile_offset, buffer_offset, y_top_length, x_right_length);
+        }
 
-		blit_partial_xy( tile_offset, buffer_offset, tile_size, x_left_length);
+        buffer_offset += ( Screen->getWidth() * (y_top_length-1)) + x_right_length;
 
-		world_row++;
-		tile_type = *(world_row);
-		tile_offset = tile_set.getTile( tile_type ); 
-		buffer_offset += x_left_length;
+        world_row = world_row + next_map_row_offset;
+    } else {
+        buffer_offset += (Screen->getWidth() * (y_top_length-1));
 
-		for( i=0; i < complete_columns; i++ )
-		{   
-			blit_partial_y( tile_offset, buffer_offset, tile_size );
+        world_row = world_row + next_map_row_offset;
+    }
 
-			world_row++;
-			tile_type = *(world_row);
-			tile_offset = tile_set.getTile( tile_type ); 
-			buffer_offset += tile_size;
-		}
-		
+    // THE MIDDLE ROWS
 
-		if( x_right_end_flag == true )
-		{
-			if (tile_size > 0 && x_right_length > 0)
-			{
-				blit_partial_xy( tile_offset, buffer_offset, tile_size, x_right_length );
-			}
+    for( k=0; k < complete_rows; k++) {
 
-			buffer_offset += next_tile_row_offset + x_right_length;
+        tile_type = *(world_row);
 
-			world_row = world_row + next_map_row_offset;
-		}
-		else
-		{
-			buffer_offset += next_tile_row_offset;
+        tile_offset = tile_set.getTile( tile_type );
+        tile_offset = tile_offset + x_left_offset;
 
-			world_row = world_row + next_map_row_offset;
-		}
+        blit_partial_xy( tile_offset, buffer_offset, tile_size, x_left_length);
 
-	}
+        world_row++;
+        tile_type = *(world_row);
+        tile_offset = tile_set.getTile( tile_type );
+        buffer_offset += x_left_length;
 
-  	// NOW THE LAST ROW IF NEEDED
-	if( y_bottom_end_flag == true )
-	{             
-		tile_type = *(world_row);
+        for( i=0; i < complete_columns; i++ ) {
+            blit_partial_y( tile_offset, buffer_offset, tile_size );
 
-		tile_offset = tile_set.getTile( tile_type ); 
-		tile_offset = tile_offset + x_left_offset; 
+            world_row++;
+            tile_type = *(world_row);
+            tile_offset = tile_set.getTile( tile_type );
+            buffer_offset += tile_size;
+        }
 
-		if (y_bottom_length > 0 && x_left_length > 0)
-		{
-			blit_partial_xy( tile_offset, buffer_offset, y_bottom_length, x_left_length );
-		}
 
-		world_row++;
+        if( x_right_end_flag == true ) {
+            if (tile_size > 0 && x_right_length > 0) {
+                blit_partial_xy( tile_offset, buffer_offset, tile_size, x_right_length );
+            }
 
-		tile_type = *(world_row);
+            buffer_offset += next_tile_row_offset + x_right_length;
 
-		tile_offset = tile_set.getTile( tile_type ); 
+            world_row = world_row + next_map_row_offset;
+        } else {
+            buffer_offset += next_tile_row_offset;
 
-		buffer_offset += x_left_length;
+            world_row = world_row + next_map_row_offset;
+        }
 
-		for( i=0; i < complete_columns; i++ )
-		{
-			if (y_bottom_length > 0)
-			{
-				blit_partial_y( tile_offset, buffer_offset, y_bottom_length );
-			}
-			world_row++;
+    }
 
-			tile_type = *(world_row);
-			tile_offset = tile_set.getTile( tile_type ); 
-			buffer_offset += tile_size;
-		}
+    // NOW THE LAST ROW IF NEEDED
+    if( y_bottom_end_flag == true ) {
+        tile_type = *(world_row);
 
-		if( x_right_end_flag == true )
-		{
-			if (y_bottom_length > 0 && x_right_length > 0)
-			{
-				blit_partial_xy( tile_offset, buffer_offset, y_bottom_length, x_right_length );
-			}
+        tile_offset = tile_set.getTile( tile_type );
+        tile_offset = tile_offset + x_left_offset;
 
-			buffer_offset += (Screen->getWidth() * (y_bottom_length-1)) + x_right_length;
+        if (y_bottom_length > 0 && x_left_length > 0) {
+            blit_partial_xy( tile_offset, buffer_offset, y_bottom_length, x_left_length );
+        }
 
-			world_row = world_row + next_map_row_offset;
-		}
-		else
-		{
-			buffer_offset += (Screen->getWidth() * (y_bottom_length-1));
+        world_row++;
 
-			world_row = world_row + next_map_row_offset;
-		}
-	}
+        tile_type = *(world_row);
+
+        tile_offset = tile_set.getTile( tile_type );
+
+        buffer_offset += x_left_length;
+
+        for( i=0; i < complete_columns; i++ ) {
+            if (y_bottom_length > 0) {
+                blit_partial_y( tile_offset, buffer_offset, y_bottom_length );
+            }
+            world_row++;
+
+            tile_type = *(world_row);
+            tile_offset = tile_set.getTile( tile_type );
+            buffer_offset += tile_size;
+        }
+
+        if( x_right_end_flag == true ) {
+            if (y_bottom_length > 0 && x_right_length > 0) {
+                blit_partial_xy( tile_offset, buffer_offset, y_bottom_length, x_right_length );
+            }
+
+            buffer_offset += (Screen->getWidth() * (y_bottom_length-1)) + x_right_length;
+
+            world_row = world_row + next_map_row_offset;
+        } else {
+            buffer_offset += (Screen->getWidth() * (y_bottom_length-1));
+
+            world_row = world_row + next_map_row_offset;
+        }
+    }
 }

@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // problems (buffer overflow)
 #ifdef UNIX
 void _splitpath(const char* path, char* drive, char* dir,
-				                  char* fname, char* ext);
+                char* fname, char* ext);
 #endif
 
 #endif

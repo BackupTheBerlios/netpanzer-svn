@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -30,86 +30,79 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 float BulletWeapon::velocity = gBulletVelocity;
 
 BulletWeapon::	BulletWeapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end)
- : Weapon(owner, owner_type_id, damage, start, end)
+        : Weapon(owner, owner_type_id, damage, start, end)
 {
-	setSurface();
+    setSurface();
 }
 
 void BulletWeapon::setSurface()
-{
-}
+{}
 
 void BulletWeapon::fsmFlight()
 {
-	bool end_cycle = false;
-	
-	float dt = TimerInterface::getTimeSlice();
+    bool end_cycle = false;
 
-	do
-	{
-		switch( fsmFlight_state )
-		{
-			case _fsmFlight_idle :
-			{
-				end_cycle = true;
-			} break;
+    float dt = TimerInterface::getTimeSlice();
 
-			case _fsmFlight_in_flight :
-			{
-				if (path.increment(&location, velocity) == true )
-				{
-					fsmFlight_state = _fsmFlight_on_target;
-					end_cycle = true;
-				}
-				else
-				{
-					end_cycle = true;
-				}
+    do {
+        switch( fsmFlight_state ) {
+        case _fsmFlight_idle : {
+                end_cycle = true;
+            }
+            break;
 
-			} break;
+        case _fsmFlight_in_flight : {
+                if (path.increment(&location, velocity) == true ) {
+                    fsmFlight_state = _fsmFlight_on_target;
+                    end_cycle = true;
+                } else {
+                    end_cycle = true;
+                }
 
-			case _fsmFlight_on_target :
-			{
-				UMesgWeaponHit weapon_hit;
+            }
+            break;
 
-				if ( NetworkState::status == _network_state_server )
-				{
-					weapon_hit.setHeader( _umesg_flag_broadcast );
-					weapon_hit.message_id = _umesg_weapon_hit;
-					weapon_hit.owner_id = owner_id;
-					weapon_hit.hit_location = location;
-					weapon_hit.damage_factor = damage_factor;
-					UnitInterface::sendMessage( &weapon_hit );
-				}
+        case _fsmFlight_on_target : {
+                UMesgWeaponHit weapon_hit;
 
-				fsmFlight_state = _fsmFlight_idle;
-				lifecycle_status = _lifecycle_weapon_in_active;
+                if ( NetworkState::status == _network_state_server ) {
+                    weapon_hit.setHeader( _umesg_flag_broadcast );
+                    weapon_hit.message_id = _umesg_weapon_hit;
+                    weapon_hit.owner_id = owner_id;
+                    weapon_hit.hit_location = location;
+                    weapon_hit.damage_factor = damage_factor;
+                    UnitInterface::sendMessage( &weapon_hit );
+                }
 
-				//SFX
-				sound->playAmbientSound("hit",
-						WorldViewInterface::getCameraDistance( location ) );
+                fsmFlight_state = _fsmFlight_idle;
+                lifecycle_status = _lifecycle_weapon_in_active;
 
-				// **  Particle Shit
-				iXY loc = iXY( location.x, location.y );
-				ParticleInterface::addDirtKick(loc);
-				end_cycle = true;
-			} break;
+                //SFX
+                sound->playAmbientSound("hit",
+                                        WorldViewInterface::getCameraDistance( location ) );
 
-		}
+                // **  Particle Shit
+                iXY loc = iXY( location.x, location.y );
+                ParticleInterface::addDirtKick(loc);
+                end_cycle = true;
+            }
+            break;
 
-	} while ( end_cycle == false ); 
+        }
+
+    } while ( end_cycle == false );
 }
 
 void BulletWeapon::updateStatus( void )
- {
-  if ( fsm_timer.count() )
-   fsmFlight();
- 
- }
+{
+    if ( fsm_timer.count() )
+        fsmFlight();
+
+}
 
 void BulletWeapon::offloadGraphics( SpriteSorter &sorter )
- {
-  //shell.setWorldPos( location );
+{
+    //shell.setWorldPos( location );
 
-  //sorter.addSprite( &shell );
- }
+    //sorter.addSprite( &shell );
+}

@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -29,12 +29,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 enum{ _display_mode_network_stats,
       _display_mode_pathing_stats,
-	  _display_mode_sorter_stats,
-	  _display_mode_unit_stats
-	};
+      _display_mode_sorter_stats,
+      _display_mode_unit_stats
+    };
 
 int gPacketSize = 0;
-int display_mode;  
+int display_mode;
 
 
 /*
@@ -42,116 +42,113 @@ static void bPlusPacketSize( void )
  {
   gPacketSize++ 
  }
-
+ 
 static void bMinusPacketSize( void )
  {
   gPacketSize--;
  }
-
+ 
 static void bSend( void )
  {
-
+ 
  }
 */
 
 static void buttonNetwork( void )
- {
-  display_mode = _display_mode_network_stats;
+{
+    display_mode = _display_mode_network_stats;
 
- }
+}
 
 static void buttonSorter( void )
- {
-  display_mode = _display_mode_sorter_stats;
- }
+{
+    display_mode = _display_mode_sorter_stats;
+}
 
 static void buttonPathing( void )
- {
-  display_mode = _display_mode_pathing_stats;
- }
+{
+    display_mode = _display_mode_pathing_stats;
+}
 
 static void buttonDebug( void )
- {
-  static bool previous_flag = false;
-  
-  if ( previous_flag == false )
-   {
-    PathScheduler::setLongPatherDebug( true );
-	MiniMapInterface::setPathingDebugMode( true );
-	previous_flag = true;
-   }
-  else
-   {
-    PathScheduler::setLongPatherDebug( false );
-	MiniMapInterface::setPathingDebugMode( false );
-	previous_flag = false;
-   }
- }
+{
+    static bool previous_flag = false;
+
+    if ( previous_flag == false ) {
+        PathScheduler::setLongPatherDebug( true );
+        MiniMapInterface::setPathingDebugMode( true );
+        previous_flag = true;
+    } else {
+        PathScheduler::setLongPatherDebug( false );
+        MiniMapInterface::setPathingDebugMode( false );
+        previous_flag = false;
+    }
+}
 
 static void buttonSample( void )
- {
-  PathScheduler::sampleLongPather( );
- }
+{
+    PathScheduler::sampleLongPather( );
+}
 
 static void buttonUnit( void )
- {
-  display_mode = _display_mode_unit_stats;
- }
+{
+    display_mode = _display_mode_unit_stats;
+}
 
 static void bNetLog( void )
- {
-  NetworkState::logNetworkStats();
- }
+{
+    NetworkState::logNetworkStats();
+}
 
 static long INFO_AREA_Y_OFFSET = 60;
 
 CodeStatsView::CodeStatsView() : GameTemplateView()
 {
-	setSearchName("CodeStatsView");
-	setTitle("CodeStatsView");
-	setSubTitle(" - F4");
+    setSearchName("CodeStatsView");
+    setTitle("CodeStatsView");
+    setSubTitle(" - F4");
 
-	setAllowResize(false);
-	setAllowMove(true);
-	setDisplayStatusBar(true);
-	setVisible(false);
+    setAllowResize(false);
+    setAllowMove(true);
+    setDisplayStatusBar(true);
+    setVisible(false);
 
-	moveTo(iXY(0, 0));
-	
+    moveTo(iXY(0, 0));
+
     iXY  area_size = iXY(280, 280) ;
     long bXOffset;
     INFO_AREA_Y_OFFSET = 2;
-   
+
     resizeClientArea(area_size);
-    
+
     bXOffset = area_size.x / 3;
-	addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), bXOffset,  "Net", "", buttonNetwork);
+    addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), bXOffset,  "Net", "", buttonNetwork);
     addButtonCenterText(iXY(bXOffset, INFO_AREA_Y_OFFSET), bXOffset, "Sprite", "", buttonSorter);
-	addButtonCenterText(iXY(bXOffset*2, INFO_AREA_Y_OFFSET), bXOffset, "Unit", "", buttonUnit);
-   
+    addButtonCenterText(iXY(bXOffset*2, INFO_AREA_Y_OFFSET), bXOffset, "Unit", "", buttonUnit);
+
     INFO_AREA_Y_OFFSET += 18;
-	addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), area_size.x, "Path", "", buttonPathing);
+    addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), area_size.x, "Path", "", buttonPathing);
 
     INFO_AREA_Y_OFFSET += 18;
     bXOffset = area_size.x / 3;
-	addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), bXOffset,  "Debug", "", buttonDebug);
-	addButtonCenterText(iXY(bXOffset, INFO_AREA_Y_OFFSET), bXOffset, "Sample", "", buttonSample);
-	addButtonCenterText(iXY(bXOffset*2, INFO_AREA_Y_OFFSET), bXOffset, "NetLog", "", bNetLog );
+    addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), bXOffset,  "Debug", "", buttonDebug);
+    addButtonCenterText(iXY(bXOffset, INFO_AREA_Y_OFFSET), bXOffset, "Sample", "", buttonSample);
+    addButtonCenterText(iXY(bXOffset*2, INFO_AREA_Y_OFFSET), bXOffset, "NetLog", "", bNetLog );
 
     INFO_AREA_Y_OFFSET += 18;
-	/*
-    addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), 20, "+", "", bPlusPacketSize );
-	addButtonCenterText(iXY(25, INFO_AREA_Y_OFFSET), 20, "-", "", bMinusPacketSize );
-	addButtonCenterText(iXY(50, INFO_AREA_Y_OFFSET), 20, "0", "", bMinusPacketSize );
-	addButtonCenterText(iXY(65, INFO_AREA_Y_OFFSET), 20, "1", "", bMinusPacketSize );
+    /*
+       addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), 20, "+", "", bPlusPacketSize );
+    addButtonCenterText(iXY(25, INFO_AREA_Y_OFFSET), 20, "-", "", bMinusPacketSize );
+    addButtonCenterText(iXY(50, INFO_AREA_Y_OFFSET), 20, "0", "", bMinusPacketSize );
+    addButtonCenterText(iXY(65, INFO_AREA_Y_OFFSET), 20, "1", "", bMinusPacketSize );
 
-	addButtonCenterText(iXY(45, INFO_AREA_Y_OFFSET), 40, "Send", "", bSend );
+    addButtonCenterText(iXY(45, INFO_AREA_Y_OFFSET), 40, "Send", "", bSend );
 
-    INFO_AREA_Y_OFFSET += 18;
-    INFO_AREA_Y_OFFSET += 18;
-    */
+       INFO_AREA_Y_OFFSET += 18;
+       INFO_AREA_Y_OFFSET += 18;
+       */
 
-	display_mode = _display_mode_network_stats;
+    display_mode = _display_mode_network_stats;
 
 } // end CodeStatsView::CodeStatsView
 
@@ -159,33 +156,32 @@ CodeStatsView::CodeStatsView() : GameTemplateView()
 //---------------------------------------------------------------------------
 void CodeStatsView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
-	bltViewBackground(viewArea);
+    bltViewBackground(viewArea);
 
-    switch( display_mode )
-	 {
-	  case _display_mode_network_stats :
-	   drawNetworkStats( clientArea );
-	  break;
+    switch( display_mode ) {
+    case _display_mode_network_stats :
+        drawNetworkStats( clientArea );
+        break;
 
-	  case _display_mode_sorter_stats :
-	   drawSorterStats( clientArea );
-	  break;
+    case _display_mode_sorter_stats :
+        drawSorterStats( clientArea );
+        break;
 
-	  case _display_mode_pathing_stats :
-	   drawPathingStats( clientArea );
-	  break;
+    case _display_mode_pathing_stats :
+        drawPathingStats( clientArea );
+        break;
 
-	  case _display_mode_unit_stats :
-	   drawUnitStats( clientArea );
-	  break;
-	 }
+    case _display_mode_unit_stats :
+        drawUnitStats( clientArea );
+        break;
+    }
 
     /*
     char strBuf[256];
 
-	sprintf(strBuf, "Packet Size : %d", gPacketSize );
-	
-	clientArea.bltString(2, INFO_AREA_Y_OFFSET - 18, strBuf, Color::white);
+    sprintf(strBuf, "Packet Size : %d", gPacketSize );
+
+    clientArea.bltString(2, INFO_AREA_Y_OFFSET - 18, strBuf, Color::white);
     */
     View::doDraw(viewArea, clientArea);
 
@@ -193,220 +189,215 @@ void CodeStatsView::doDraw(const Surface &viewArea, const Surface &clientArea)
 
 //---------------------------------------------------------------------------
 void CodeStatsView::drawNetworkStats( const Surface &clientArea)
- {
-    
+{
+
     char strBuf[256];
 
     iXY str_loc(2, INFO_AREA_Y_OFFSET);
 
-	sprintf(strBuf, "Packets" );
-	
-	clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    sprintf(strBuf, "Packets" );
 
-    str_loc.y += 12;
-	
-	sprintf(strBuf, "Sent %d, %.4f 1/s, %.4f Avg",NetworkState::packets_sent,
-                                                  NetworkState::packets_sent_per_sec,
-                                                  ((float) NetworkState::packets_sent) / ((float) NetworkState::packets_sent_time) );
-	clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-
-    str_loc.y += 12;
-
-	sprintf(strBuf, "Recv %d, %.4f 1/s, %.4f Avg",NetworkState::packets_received,
-                                                  NetworkState::packets_received_per_sec,
-                                                  ((float) NetworkState::packets_received) / ((float) NetworkState::packets_received_time) );
-	clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-
-    str_loc.y += 12;
-	
-	sprintf(strBuf, "Bytes" );
-	
-	clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-
-    str_loc.y += 12;
-	
-	sprintf(strBuf, "Sent %d, %.4f 1/s, %.4f Avg",NetworkState::bytes_sent,
-                                                  NetworkState::bytes_sent_per_sec,
-                                                  ((float) NetworkState::bytes_sent) / ((float) NetworkState::packets_sent_time) );
-	clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-
-    str_loc.y += 12;
-
-	sprintf(strBuf, "Recv %d, %.4f 1/s, %.4f Avg",NetworkState::bytes_received,
-                                                  NetworkState::bytes_received_per_sec,
-                                                  ((float) NetworkState::bytes_received) / ((float) NetworkState::packets_received_time) );
-	clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-
-    str_loc.y += 12;
-
-	sprintf(strBuf, "Opcodes" );
-	clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-
-    str_loc.y += 12;
-
-	sprintf(strBuf, "Sent : %d, %.4f 1/s ", NetworkState::opcodes_sent,
-                                            NetworkState::opcodes_sent_per_sec );
-	clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-
-    str_loc.y += 12;
-
-	sprintf(strBuf, "Recv : %d, %.4f 1/s", NetworkState::opcodes_received,
-                                           NetworkState::opcodes_received_per_sec );
-	clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-
-    str_loc.y += 12;
-
-    if ( NetworkState::status == _network_state_client )
- 	 {
-      sprintf(strBuf, "Ping Time: %.4f (ms)", NetworkState::ping_time );     
-     }
-    else
- 	 {
-      sprintf(strBuf, "Ping Time: NA" );     
-     }
-     
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
-	float packet_window_time;
+    sprintf(strBuf, "Sent %d, %.4f 1/s, %.4f Avg",NetworkState::packets_sent,
+            NetworkState::packets_sent_per_sec,
+            ((float) NetworkState::packets_sent) / ((float) NetworkState::packets_sent_time) );
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+
+    str_loc.y += 12;
+
+    sprintf(strBuf, "Recv %d, %.4f 1/s, %.4f Avg",NetworkState::packets_received,
+            NetworkState::packets_received_per_sec,
+            ((float) NetworkState::packets_received) / ((float) NetworkState::packets_received_time) );
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+
+    str_loc.y += 12;
+
+    sprintf(strBuf, "Bytes" );
+
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+
+    str_loc.y += 12;
+
+    sprintf(strBuf, "Sent %d, %.4f 1/s, %.4f Avg",NetworkState::bytes_sent,
+            NetworkState::bytes_sent_per_sec,
+            ((float) NetworkState::bytes_sent) / ((float) NetworkState::packets_sent_time) );
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+
+    str_loc.y += 12;
+
+    sprintf(strBuf, "Recv %d, %.4f 1/s, %.4f Avg",NetworkState::bytes_received,
+            NetworkState::bytes_received_per_sec,
+            ((float) NetworkState::bytes_received) / ((float) NetworkState::packets_received_time) );
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+
+    str_loc.y += 12;
+
+    sprintf(strBuf, "Opcodes" );
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+
+    str_loc.y += 12;
+
+    sprintf(strBuf, "Sent : %d, %.4f 1/s ", NetworkState::opcodes_sent,
+            NetworkState::opcodes_sent_per_sec );
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+
+    str_loc.y += 12;
+
+    sprintf(strBuf, "Recv : %d, %.4f 1/s", NetworkState::opcodes_received,
+            NetworkState::opcodes_received_per_sec );
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+
+    str_loc.y += 12;
+
+    if ( NetworkState::status == _network_state_client ) {
+        sprintf(strBuf, "Ping Time: %.4f (ms)", NetworkState::ping_time );
+    } else {
+        sprintf(strBuf, "Ping Time: NA" );
+    }
+
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+
+    str_loc.y += 12;
+
+    float packet_window_time;
     float packet_window_estimate;
     int lost_packets;
     int out_of_order_packets;
 
     NetworkInterface::non_guarantee_queue.getStats( &packet_window_time, &packet_window_estimate,
-                                                    &lost_packets, &out_of_order_packets );
+            &lost_packets, &out_of_order_packets );
 
     sprintf(strBuf, "UDP" );
-	clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-    
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+
     str_loc.y += 12;
-  
+
     sprintf(strBuf, "Pckt Win: %.6f Next: %.6f", packet_window_time, packet_window_estimate );
-	clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Lost: %d", lost_packets);
-	clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
     str_loc.y += 12;
 
     sprintf(strBuf, "Out Of Order: %d", out_of_order_packets);
-	clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-    
-       
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
- }
+
+
+}
 
 //---------------------------------------------------------------------------
 void CodeStatsView::drawSorterStats( const Surface &clientArea)
- {
-  
-  char strBuf[256];
+{
 
-  iXY str_loc(2, INFO_AREA_Y_OFFSET);
+    char strBuf[256];
 
-  sprintf(strBuf, "Sorter" );
-  clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    iXY str_loc(2, INFO_AREA_Y_OFFSET);
 
-  str_loc.y += 12;
- 	
-  for ( unsigned long i = 0; i < _MAX_HEIGHT_LEVELS; i++ )
-   {
-    sprintf(strBuf, "Level %d : %d  ", i, SPRITE_SORTER.getMaxSprites( i ) );
+    sprintf(strBuf, "Sorter" );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+
     str_loc.y += 12;
-   }
-  
- }
+
+    for ( unsigned long i = 0; i < _MAX_HEIGHT_LEVELS; i++ ) {
+        sprintf(strBuf, "Level %d : %d  ", i, SPRITE_SORTER.getMaxSprites( i ) );
+        clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+        str_loc.y += 12;
+    }
+
+}
 
 //---------------------------------------------------------------------------
 void CodeStatsView::drawPathingStats( const Surface &clientArea)
- {
-  
-  char strBuf[256];
+{
 
-  iXY str_loc(2, INFO_AREA_Y_OFFSET);
+    char strBuf[256];
 
-  sprintf(strBuf, "Pathing" );
-  clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    iXY str_loc(2, INFO_AREA_Y_OFFSET);
 
-  str_loc.y += 12;
+    sprintf(strBuf, "Pathing" );
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
-  sprintf(strBuf, "A* Time: %.6f s", PathingState::astar_gen_time );  	
-  clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    str_loc.y += 12;
 
-  str_loc.y += 12;
+    sprintf(strBuf, "A* Time: %.6f s", PathingState::astar_gen_time );
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
-  sprintf(strBuf, "A* Avg: %.6f s", PathingState::getAverageAstarPathTime() );  	
-  clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    str_loc.y += 12;
 
-  str_loc.y += 12;
+    sprintf(strBuf, "A* Avg: %.6f s", PathingState::getAverageAstarPathTime() );
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
-  sprintf(strBuf, "A* Total: %.6f s", PathingState::astar_gen_time_total );  	
-  clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    str_loc.y += 12;
 
-
-  str_loc.y += 12;
-
-  sprintf(strBuf, "Path Length: %d ", PathingState::path_length );  	
-  clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    sprintf(strBuf, "A* Total: %.6f s", PathingState::astar_gen_time_total );
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
 
-  str_loc.y += 12;
+    str_loc.y += 12;
 
-  sprintf(strBuf, "Paths: %d ", PathingState::path_gen_count );  	
-  clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-  
-  str_loc.y += 12;
+    sprintf(strBuf, "Path Length: %d ", PathingState::path_length );
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
-  sprintf(strBuf, "Updates: %d ", PathingState::update_gen_count );  	
-  clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
-  str_loc.y += 12;
+    str_loc.y += 12;
 
-  sprintf(strBuf, "Cache Hits: %d ", PathingState::path_cache_hits );  	
-  clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    sprintf(strBuf, "Paths: %d ", PathingState::path_gen_count );
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
-  str_loc.y += 12;
+    str_loc.y += 12;
 
-  sprintf(strBuf, "Cache Misses: %d ", PathingState::path_cache_misses );  	
-  clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-  
- }
+    sprintf(strBuf, "Updates: %d ", PathingState::update_gen_count );
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+
+    str_loc.y += 12;
+
+    sprintf(strBuf, "Cache Hits: %d ", PathingState::path_cache_hits );
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+
+    str_loc.y += 12;
+
+    sprintf(strBuf, "Cache Misses: %d ", PathingState::path_cache_misses );
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+
+}
 
 //---------------------------------------------------------------------------
 void CodeStatsView::drawUnitStats( const Surface &clientArea )
- {
-  
-  char strBuf[256];
-  int total = 0;
-  int max_players;
+{
+
+    char strBuf[256];
+    int total = 0;
+    int max_players;
 
 
-  iXY str_loc(2, INFO_AREA_Y_OFFSET);
+    iXY str_loc(2, INFO_AREA_Y_OFFSET);
 
-  sprintf(strBuf, "Units" );
-  clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
-
-  str_loc.y += 12;
-
-  max_players = PlayerInterface::getMaxPlayers();
-  
-  for ( int i = 0; i < max_players; i++ )
-   {
-    unsigned long units;
-	units = UnitInterface::getUnitCount( i );
-	total += units;
-
-	sprintf(strBuf, "Player %d : %d  ", i, units);
+    sprintf(strBuf, "Units" );
     clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+
     str_loc.y += 12;
-   }
 
-  sprintf(strBuf, "UnitTotal : %d", total );
-  clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    max_players = PlayerInterface::getMaxPlayers();
 
-  str_loc.y += 12;
-  
- }
+    for ( int i = 0; i < max_players; i++ ) {
+        unsigned long units;
+        units = UnitInterface::getUnitCount( i );
+        total += units;
+
+        sprintf(strBuf, "Player %d : %d  ", i, units);
+        clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+        str_loc.y += 12;
+    }
+
+    sprintf(strBuf, "UnitTotal : %d", total );
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+
+    str_loc.y += 12;
+
+}

@@ -22,26 +22,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "DummySound.hpp"
 
 DummySound::DummySound()
-{
-}
+{}
 
 DummySound::~DummySound()
-{
-}
+{}
 
 void DummySound::playSound(const char*)
-{
-}
+{}
 
 void DummySound::playAmbientSound(const char*, long)
-{
-}
+{}
 
 void DummySound::playMusic(const char* directory)
-{
-}
+{}
 
 void DummySound::stopMusic()
-{
-}
+{}
 

@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -26,81 +26,73 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 static void bSound()
 {
-	if (Desktop::getVisible("GameView"))
-	{
-		Desktop::setVisibility("ControlsView", false);
-		Desktop::setVisibility("VisualsView", false);
-		Desktop::setVisibility("InterfaceView", false);
-		Desktop::setVisibility("SoundView", false);
-		Desktop::setVisibility("OptionsView", false);
-	} else
-	{
-		Desktop::setVisibilityAllWindows(false);
-	}
+    if (Desktop::getVisible("GameView")) {
+        Desktop::setVisibility("ControlsView", false);
+        Desktop::setVisibility("VisualsView", false);
+        Desktop::setVisibility("InterfaceView", false);
+        Desktop::setVisibility("SoundView", false);
+        Desktop::setVisibility("OptionsView", false);
+    } else {
+        Desktop::setVisibilityAllWindows(false);
+    }
 
-	Desktop::setVisibility("SoundView", true);
+    Desktop::setVisibility("SoundView", true);
 }
 
 static void bInterface()
 {
-	if (Desktop::getVisible("GameView"))
-	{
-		Desktop::setVisibility("ControlsView", false);
-		Desktop::setVisibility("VisualsView", false);
-		Desktop::setVisibility("InterfaceView", false);
-		Desktop::setVisibility("SoundView", false);
-		Desktop::setVisibility("OptionsView", false);
-	} else
-	{
-		Desktop::setVisibilityAllWindows(false);
-	}
+    if (Desktop::getVisible("GameView")) {
+        Desktop::setVisibility("ControlsView", false);
+        Desktop::setVisibility("VisualsView", false);
+        Desktop::setVisibility("InterfaceView", false);
+        Desktop::setVisibility("SoundView", false);
+        Desktop::setVisibility("OptionsView", false);
+    } else {
+        Desktop::setVisibilityAllWindows(false);
+    }
 
-	Desktop::setVisibility("InterfaceView", true);
+    Desktop::setVisibility("InterfaceView", true);
 }
 
 static void bVisuals()
 {
-	if (Desktop::getVisible("GameView"))
-	{
-		Desktop::setVisibility("ControlsView", false);
-		Desktop::setVisibility("VisualsView", false);
-		Desktop::setVisibility("InterfaceView", false);
-		Desktop::setVisibility("SoundView", false);
-		Desktop::setVisibility("OptionsView", false);
-	} else
-	{
-		Desktop::setVisibilityAllWindows(false);
-	}
+    if (Desktop::getVisible("GameView")) {
+        Desktop::setVisibility("ControlsView", false);
+        Desktop::setVisibility("VisualsView", false);
+        Desktop::setVisibility("InterfaceView", false);
+        Desktop::setVisibility("SoundView", false);
+        Desktop::setVisibility("OptionsView", false);
+    } else {
+        Desktop::setVisibilityAllWindows(false);
+    }
 
-	Desktop::setVisibility("VisualsView", true);
+    Desktop::setVisibility("VisualsView", true);
 }
 
 static void bControls()
 {
-	if (Desktop::getVisible("GameView"))
-	{
-		Desktop::setVisibility("ControlsView", false);
-		Desktop::setVisibility("VisualsView", false);
-		Desktop::setVisibility("InterfaceView", false);
-		Desktop::setVisibility("SoundView", false);
-		Desktop::setVisibility("OptionsView", false);
-	} else
-	{
-		Desktop::setVisibilityAllWindows(false);
-	}
+    if (Desktop::getVisible("GameView")) {
+        Desktop::setVisibility("ControlsView", false);
+        Desktop::setVisibility("VisualsView", false);
+        Desktop::setVisibility("InterfaceView", false);
+        Desktop::setVisibility("SoundView", false);
+        Desktop::setVisibility("OptionsView", false);
+    } else {
+        Desktop::setVisibilityAllWindows(false);
+    }
 
-	Desktop::setVisibility("ControlsView", true);
+    Desktop::setVisibility("ControlsView", true);
 }
 
 // OptionsTemplateView
 //---------------------------------------------------------------------------
 OptionsTemplateView::OptionsTemplateView() : MenuTemplateView()
 {
-	setSearchName("OptionsView");
-	setTitle("OptionsTemplate");
-	setSubTitle("");
+    setSearchName("OptionsView");
+    setTitle("OptionsTemplate");
+    setSubTitle("");
 
-	initButtons();
+    initButtons();
 
 } // end OptionsTemplateView::OptionsTemplateView
 
@@ -109,30 +101,30 @@ OptionsTemplateView::OptionsTemplateView() : MenuTemplateView()
 //---------------------------------------------------------------------------
 void OptionsTemplateView::initButtons()
 {
-	removeAllButtons();
-	removeComponents();
+    removeAllButtons();
+    removeComponents();
 
-	MenuTemplateView::initButtons();
+    MenuTemplateView::initButtons();
 
-	// Sound.
-	addSpecialButton(	soundPos,
-						"Sound",
-						bSound);
+    // Sound.
+    addSpecialButton(	soundPos,
+                      "Sound",
+                      bSound);
 
-	// Interface.
-	addSpecialButton(	interfacePos,
-						"Interface",
-						bInterface);
+    // Interface.
+    addSpecialButton(	interfacePos,
+                      "Interface",
+                      bInterface);
 
-	// Visuals.
-	addSpecialButton(	visualsPos,
-						"Visuals",
-						bVisuals);
+    // Visuals.
+    addSpecialButton(	visualsPos,
+                      "Visuals",
+                      bVisuals);
 
-	// Contols.
-	addSpecialButton(	controlsPos,
-						"Controls",
-						bControls);
+    // Contols.
+    addSpecialButton(	controlsPos,
+                      "Controls",
+                      bControls);
 
 } // end OptionsTemplateView::initButtons
 
@@ -140,9 +132,9 @@ void OptionsTemplateView::initButtons()
 //---------------------------------------------------------------------------
 void OptionsTemplateView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
-	MenuTemplateView::doDraw(viewArea, clientArea);
+    MenuTemplateView::doDraw(viewArea, clientArea);
 
-	clientArea.bltStringCenter("Select your option category above", Color::white);
+    clientArea.bltStringCenter("Select your option category above", Color::white);
 
 } // end OptionsTemplateView::doDraw
 
@@ -150,7 +142,7 @@ void OptionsTemplateView::doDraw(const Surface &viewArea, const Surface &clientA
 //---------------------------------------------------------------------------
 void OptionsTemplateView::loadBackgroundSurface()
 {
-	doLoadBackgroundSurface(("pics/backgrounds/menus/menu/til/optionsMB.til"));
+    doLoadBackgroundSurface(("pics/backgrounds/menus/menu/til/optionsMB.til"));
 
 } // end OptionsTemplateView::loadBackgroundSurface
 
@@ -158,6 +150,6 @@ void OptionsTemplateView::loadBackgroundSurface()
 //---------------------------------------------------------------------------
 void OptionsTemplateView::loadTitleSurface()
 {
-	doLoadTitleSurface("pics/backgrounds/menus/menu/til/optionsTitle.til");
+    doLoadTitleSurface("pics/backgrounds/menus/menu/til/optionsTitle.til");
 
 } // end ControlsView::loadTitleSurface

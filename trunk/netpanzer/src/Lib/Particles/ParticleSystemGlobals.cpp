@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -95,7 +95,7 @@ int   smokeFPSMin       =  6;
 int   smokeFPSRand      = 14;
 float smokeWindScale    = 0.35f;
 
-// Muzzle System statics - 
+// Muzzle System statics -
 //--------------------------------------------------------------------------
 float MuzzleSystem::windScale   = 0.1f;
 int   MuzzleSystem::layer       = 5;
@@ -190,11 +190,11 @@ int   MuzzleSystem::flashLayer  = 4;
 //float missleExplosionFlameMinScale     = 0.15f;
 //float missleExplosionFlameRandScale    = 0.15f;
 //float missleExplosionFlashLifetime     = 0.5f;
-//int   missleExplosionFlameLayer	       = 6;    
+//int   missleExplosionFlameLayer	       = 6;
 //
 //float missleExplosionFlashScaleMin     = 0.25f;
 //float missleExplosionFlashScaleRand    = 0.15f;
-//int   missleExplosionFlashLayer        = 5;    
+//int   missleExplosionFlashLayer        = 5;
 //
 //int   missleExplosionSmokeMaxParticleCount = 14;
 //

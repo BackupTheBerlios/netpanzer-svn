@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -32,113 +32,105 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //---------------------------------------------------------------------------
 MultiMapSelectorView::MultiMapSelectorView() : ImageSelectorView()
 {
-	setTitle("MultiMapSelectorView");
+    setTitle("MultiMapSelectorView");
 
-	init(iXY(100, 100));
+    init(iXY(100, 100));
 
 } // end MultiMapSelectorView::MultiMapSelectorView
 
 void MultiMapSelectorView::loadImages()
 {
-	char strBuf[256];
-	char pathWild[256];
+    char strBuf[256];
+    char pathWild[256];
 
-	const char path[] = "maps/";
+    const char path[] = "maps/";
 
-	sprintf(pathWild, "%s*.npm", path);
+    sprintf(pathWild, "%s*.npm", path);
 
-	int fileCount = getNumFilesInDirectory(pathWild);
-	if (fileCount <= 0)
-	{
-		return;
-	}
+    int fileCount = getNumFilesInDirectory(pathWild);
+    if (fileCount <= 0) {
+        return;
+    }
 
-	struct _finddata_t myFile;
-	long               hFile;
+    struct _finddata_t myFile;
+    long               hFile;
 
-	_findfirst(pathWild, &myFile);
-	
-	cGrowList <FilenameItem> fileList;
-	fileList.setNum(fileCount);
+    _findfirst(pathWild, &myFile);
 
-	int curFilename = 0;
+    cGrowList <FilenameItem> fileList;
+    fileList.setNum(fileCount);
 
-    if ((hFile = _findfirst(pathWild, &myFile)) != -1)
-	{
-		do
-		{
-			sprintf(strBuf, "%s%s", path, myFile.name);
-			fileList[curFilename].setName(strBuf);
-			curFilename++;
+    int curFilename = 0;
 
-		} while (_findnext(hFile, &myFile) == 0);
-	}
-	_findclose(hFile);
+    if ((hFile = _findfirst(pathWild, &myFile)) != -1) {
+        do {
+            sprintf(strBuf, "%s%s", path, myFile.name);
+            fileList[curFilename].setName(strBuf);
+            curFilename++;
 
-	fileList.sort(FilenameItemSortFunction);
+        } while (_findnext(hFile, &myFile) == 0);
+    }
+    _findclose(hFile);
 
-	mapList.setNum(fileList.getCount());
+    fileList.sort(FilenameItemSortFunction);
 
-	for (int i = 0; i < fileList.getCount(); i++)
-	{
-		FILE *fp = fopen(fileList[i].name, "rb");
-		if (fp == 0)
-		{
-			assert(fp != 0);
-			continue;
-		}
-		
-		MAP_HEADER netPanzerMapHeader;
+    mapList.setNum(fileList.getCount());
 
-		fread(&netPanzerMapHeader, sizeof(netPanzerMapHeader), 1, fp);
-/*
-		if (strlen(netPanzerMapHeader.name) > 255)
-		{
-			throw Exception("Map name is too long.");
-		}
-		if (strlen(netPanzerMapHeader.description) > 255)
-		{
-			throw Exception("Map description is too long.");
-		}
-*/
-		sprintf(mapList[i].name, "%s", netPanzerMapHeader.name);
-		sprintf(mapList[i].description, "%s", netPanzerMapHeader.description);
+    for (int i = 0; i < fileList.getCount(); i++) {
+        FILE *fp = fopen(fileList[i].name, "rb");
+        if (fp == 0) {
+            assert(fp != 0);
+            continue;
+        }
 
-		mapList[i].cells.x = netPanzerMapHeader.x_size;
-		mapList[i].cells.y = netPanzerMapHeader.y_size;
+        MAP_HEADER netPanzerMapHeader;
 
-		int seekAmount = mapList[i].cells.getArea() * sizeof(WORD);
+        fread(&netPanzerMapHeader, sizeof(netPanzerMapHeader), 1, fp);
+        /*
+        		if (strlen(netPanzerMapHeader.name) > 255)
+        		{
+        			throw Exception("Map name is too long.");
+        		}
+        		if (strlen(netPanzerMapHeader.description) > 255)
+        		{
+        			throw Exception("Map description is too long.");
+        		}
+        */
+        sprintf(mapList[i].name, "%s", netPanzerMapHeader.name);
+        sprintf(mapList[i].description, "%s", netPanzerMapHeader.description);
 
-		fseek(fp, seekAmount, SEEK_CUR);
+        mapList[i].cells.x = netPanzerMapHeader.x_size;
+        mapList[i].cells.y = netPanzerMapHeader.y_size;
 
-		iXY pix;
-		pix.x = netPanzerMapHeader.thumbnail_x_pix;
-		pix.y = netPanzerMapHeader.thumbnail_y_pix;
+        int seekAmount = mapList[i].cells.getArea() * sizeof(WORD);
 
-		mapList[i].thumbnail.create(pix, pix.x, 1);
+        fseek(fp, seekAmount, SEEK_CUR);
 
-		int numBytes = pix.getArea();
+        iXY pix;
+        pix.x = netPanzerMapHeader.thumbnail_x_pix;
+        pix.y = netPanzerMapHeader.thumbnail_y_pix;
 
-		fread(mapList[i].thumbnail.frame0, numBytes, 1, fp);
+        mapList[i].thumbnail.create(pix, pix.x, 1);
 
-		fclose(fp);
-	}
+        int numBytes = pix.getArea();
 
-	if (mapList.getCount() > 0)
-	{
-		images.create(mapList[0].thumbnail.getPix(), mapList[0].thumbnail.getPixX(), mapList.getCount());
+        fread(mapList[i].thumbnail.frame0, numBytes, 1, fp);
 
-		for (int j = 0; j < mapList.getCount(); j++)
-		{
-			images.setFrame(j);
+        fclose(fp);
+    }
 
-			mapList[j].thumbnail.blt(images);
-		}
+    if (mapList.getCount() > 0) {
+        images.create(mapList[0].thumbnail.getPix(), mapList[0].thumbnail.getPixX(), mapList.getCount());
 
-	} else
-	{
-		flagNoImagesLoaded = true;
-	}
+        for (int j = 0; j < mapList.getCount(); j++) {
+            images.setFrame(j);
+
+            mapList[j].thumbnail.blt(images);
+        }
+
+    } else {
+        flagNoImagesLoaded = true;
+    }
 }
 
 #endif

@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -25,81 +25,82 @@ class Color
 {
 public:
 
-	// Color for netPanzer players.
-	static BYTE unitAqua;
-	static BYTE unitYellow;
-	static BYTE unitRed;
-	static BYTE unitBlue;
-	static BYTE unitDarkBlue;
-	static BYTE unitLightGreen;
-	static BYTE unitGreen;
-	static BYTE unitBlueGray;
-	static BYTE unitDarkRed;
-	static BYTE unitBlack;
-	static BYTE unitDarkGreen;
-	static BYTE unitWhite;
-	static BYTE unitLightOrange;
-	static BYTE unitOrange;
-	static BYTE unitGray;
-	static BYTE unitDarkGray;
+    // Color for netPanzer players.
+    static BYTE unitAqua;
+    static BYTE unitYellow;
+    static BYTE unitRed;
+    static BYTE unitBlue;
+    static BYTE unitDarkBlue;
+    static BYTE unitLightGreen;
+    static BYTE unitGreen;
+    static BYTE unitBlueGray;
+    static BYTE unitDarkRed;
+    static BYTE unitBlack;
+    static BYTE unitDarkGreen;
+    static BYTE unitWhite;
+    static BYTE unitLightOrange;
+    static BYTE unitOrange;
+    static BYTE unitGray;
+    static BYTE unitDarkGray;
 
-	// Normal Colors.
-	static BYTE black;
-	static BYTE blue;
-	static BYTE brown;
-	static BYTE cyan;
-	static BYTE gray;
-	static BYTE green;
-	static BYTE magenta;
-	static BYTE orange;
-	static BYTE pink;
-	static BYTE red;
-	static BYTE white;
-	static BYTE yellow;
-	
-	// Color specifically for netPanzer.
-	static BYTE tan;
-	static BYTE chartreuse;
-	static BYTE cobaltGreen;
-	static BYTE emeraldGreen;
-	static BYTE forestGreen;
-	static BYTE darkOliveGreen;
-	static BYTE terreVerte;
+    // Normal Colors.
+    static BYTE black;
+    static BYTE blue;
+    static BYTE brown;
+    static BYTE cyan;
+    static BYTE gray;
+    static BYTE green;
+    static BYTE magenta;
+    static BYTE orange;
+    static BYTE pink;
+    static BYTE red;
+    static BYTE white;
+    static BYTE yellow;
 
-	// Dark Colors.
-	static BYTE darkBlue;
-	static BYTE darkBrown;
-	static BYTE darkCyan;
-	static BYTE darkGray;
-	static BYTE darkGreen;
-	static BYTE darkMagenta;
-	static BYTE darkOrange;
-	static BYTE darkPink;
-	static BYTE darkRed;
-	static BYTE darkYellow;
+    // Color specifically for netPanzer.
+    static BYTE tan;
+    static BYTE chartreuse;
+    static BYTE cobaltGreen;
+    static BYTE emeraldGreen;
+    static BYTE forestGreen;
+    static BYTE darkOliveGreen;
+    static BYTE terreVerte;
 
-	// Light Colors.
-	static BYTE lightBlue;
-	static BYTE lightBrown;
-	static BYTE lightCyan;
-	static BYTE lightGray;
-	static BYTE lightGreen;
-	static BYTE lightMagenta;
-	static BYTE lightOrange;
-	static BYTE lightPink;
-	static BYTE lightRed;
-	static BYTE lightYellow;
+    // Dark Colors.
+    static BYTE darkBlue;
+    static BYTE darkBrown;
+    static BYTE darkCyan;
+    static BYTE darkGray;
+    static BYTE darkGreen;
+    static BYTE darkMagenta;
+    static BYTE darkOrange;
+    static BYTE darkPink;
+    static BYTE darkRed;
+    static BYTE darkYellow;
 
-	// Gray scales.
-	static BYTE gray32;
-	static BYTE gray64;
-	static BYTE gray96;
-	static BYTE gray128;
-	static BYTE gray160;
-	static BYTE gray192;
-	static BYTE gray224;
+    // Light Colors.
+    static BYTE lightBlue;
+    static BYTE lightBrown;
+    static BYTE lightCyan;
+    static BYTE lightGray;
+    static BYTE lightGreen;
+    static BYTE lightMagenta;
+    static BYTE lightOrange;
+    static BYTE lightPink;
+    static BYTE lightRed;
+    static BYTE lightYellow;
 
-}; // end Color
+    // Gray scales.
+    static BYTE gray32;
+    static BYTE gray64;
+    static BYTE gray96;
+    static BYTE gray128;
+    static BYTE gray160;
+    static BYTE gray192;
+    static BYTE gray224;
+
+}
+; // end Color
 
 #endif // end __Color_hpp__
 

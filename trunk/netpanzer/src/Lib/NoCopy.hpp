@@ -24,14 +24,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class NoCopy
 {
 public:
-	NoCopy()
-	{ }
-	
+    NoCopy()
+    { }
+
 private:
-	NoCopy(const NoCopy& other)
-	{ }
-	void operator=(const NoCopy& other)
-	{ }
-};
+    NoCopy(const NoCopy& other)
+    { }
+    void operator=(const NoCopy& other)
+    { }
+}
+;
 
 #endif

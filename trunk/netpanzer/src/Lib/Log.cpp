@@ -26,28 +26,28 @@ Logger logger;
 
 Logger::Logger()
 {
-	logfile = new std::ofstream("log.txt");
-	if(!logfile->good()) {
-		delete logfile;
-		logfile = 0;
-	}
+    logfile = new std::ofstream("log.txt");
+    if(!logfile->good()) {
+        delete logfile;
+        logfile = 0;
+    }
 }
 
 Logger::~Logger()
 {
-	delete logfile;
+    delete logfile;
 }
 
 void Logger::log(const char* msg, ...)
 {
-	char buf[1024];
-	
-	va_list args;
-	va_start(args, msg);
-	vsnprintf(buf, sizeof(buf), msg, args);
-	va_end(args);
+    char buf[1024];
 
-	fprintf(stderr, "%s\n", buf);
-	*logfile << buf << "\n";
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(buf, sizeof(buf), msg, args);
+    va_end(args);
+
+    fprintf(stderr, "%s\n", buf);
+    *logfile << buf << "\n";
 }
 

@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -40,55 +40,55 @@ int   MiniMapView::increaseSize = 0;
 //---------------------------------------------------------------------------
 MiniMapView::MiniMapView() : GameTemplateView()
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	setSearchName("MiniMapView");
+    setSearchName("MiniMapView");
     setTitle("MiniMapView");
-	setSubTitle("");
-	setAllowResize(false);
-	setDisplayStatusBar(false);
-	setVisible(false);
-	
-	setBordered(false);
+    setSubTitle("");
+    setAllowResize(false);
+    setDisplayStatusBar(false);
+    setVisible(false);
 
-	add(CLOSE_VIEW_BUTTON);
-	add(MINMAX_VIEW_BUTTON);
-	
+    setBordered(false);
+
+    add(CLOSE_VIEW_BUTTON);
+    add(MINMAX_VIEW_BUTTON);
+
 } // end MiniMapView::MiniMapView
 
 // init
 //---------------------------------------------------------------------------
 void MiniMapView::init()
 {
-	moveTo(iXY(0, 0));
+    moveTo(iXY(0, 0));
 
-	Surface *miniMap;
+    Surface *miniMap;
     miniMap = MiniMapInterface::getMiniMap();
 
-	//iXY size = miniMap->getPix();
-	iXY size(196, 196);
+    //iXY size = miniMap->getPix();
+    iXY size(196, 196);
 
-	resize(size);
+    resize(size);
 
-	mapDrawType = MAP_SOLID;
+    mapDrawType = MAP_SOLID;
 
-	//int xOffset = size.x;
-	//int yOffset = 0;
-	
-	MiniMapInterface::setMapScale(getViewRect().getSize());
+    //int xOffset = size.x;
+    //int yOffset = 0;
 
-	minMapSize =  64;
-	maxMapSize = 480;
+    MiniMapInterface::setMapScale(getViewRect().getSize());
 
-	// Get the original version of the minimap.
-	miniMapSurface.copy(*miniMap);
+    minMapSize =  64;
+    maxMapSize = 480;
 
-	scaleGroupWait  = 0.0f;
-	needScale       = true;
-	selectionAnchor = false;
+    // Get the original version of the minimap.
+    miniMapSurface.copy(*miniMap);
 
-	selectionAnchorDownPos.zero();
-	selectionAnchorCurPos.zero();
+    scaleGroupWait  = 0.0f;
+    needScale       = true;
+    selectionAnchor = false;
+
+    selectionAnchorDownPos.zero();
+    selectionAnchorCurPos.zero();
 
 } // end MiniMapView::init
 
@@ -96,152 +96,118 @@ void MiniMapView::init()
 //---------------------------------------------------------------------------
 void MiniMapView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
-	assert(this != 0);
-	assert(viewArea.getDoesExist());
-	assert(clientArea.getDoesExist());
+    assert(this != 0);
+    assert(viewArea.getDoesExist());
+    assert(clientArea.getDoesExist());
 
-	if (decreaseSize != 0)
-	{
-		doDecreaseSize(decreaseSize);
-		decreaseSize = 0;
-	}
-	if (increaseSize != 0)
-	{
-		doIncreaseSize(increaseSize);
-		increaseSize = 0;
-	}
+    if (decreaseSize != 0) {
+        doDecreaseSize(decreaseSize);
+        decreaseSize = 0;
+    }
+    if (increaseSize != 0) {
+        doIncreaseSize(increaseSize);
+        increaseSize = 0;
+    }
 
-	float dt = TimerInterface::getTimeSlice();
+    float dt = TimerInterface::getTimeSlice();
 
-	Surface *miniMap;
+    Surface *miniMap;
     miniMap = MiniMapInterface::getMiniMap();
 
-	if (needScale)
-	{
-		scaleGroupWait += dt;
+    if (needScale) {
+        scaleGroupWait += dt;
 
-		if (scaleGroupWait > 1.0f)
-		{
-			miniMapSurface.create(getViewRect().getSize(), getViewRect().getSize().x , 1);
-			
-			//miniMapSurface.scale(getViewRect().getSize());
-			iRect r(iXY(0, 0), getViewRect().getSize());
+        if (scaleGroupWait > 1.0f) {
+            miniMapSurface.create(getViewRect().getSize(), getViewRect().getSize().x , 1);
 
-			miniMapSurface.bltScale(*miniMap, r);
+            //miniMapSurface.scale(getViewRect().getSize());
+            iRect r(iXY(0, 0), getViewRect().getSize());
 
-			needScale      = false;
-			scaleGroupWait = 0.0f;
-		}
-	}
+            miniMapSurface.bltScale(*miniMap, r);
 
-	iRect r(getViewRect().min, getViewRect().max);
+            needScale      = false;
+            scaleGroupWait = 0.0f;
+        }
+    }
 
-	if (needScale)
-	{
-		// Draw the slow on the fly scaled map.
-		if (mapDrawType == MAP_SOLID) 
-		{
-			clientArea.bltScale(*miniMap, r);
-		}
-		else if (mapDrawType == MAP_2080)
-		{
-			clientArea.bltBlendScale(*miniMap, r, Palette::colorTable2080);
-		}
-		else if (mapDrawType == MAP_4060)
-		{
-			clientArea.bltBlendScale(*miniMap, r, Palette::colorTable4060);
-		}
-		//else if (mapDrawType == MAP_BLEND_GREEN)
-		//{
-			//clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::green256.getColorArray());
-		//}
-		else if (mapDrawType == MAP_BLEND_GRAY)
-		{
-			clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::gray256.getColorArray());
-		}
-		else if (mapDrawType == MAP_BLEND_DARK_GRAY)
-		{
-			clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::darkGray256.getColorArray());
-		}
-		else if (mapDrawType == MAP_BLACK)
-		{
-			clientArea.fill(Color::black);
-		}
-		else if (mapDrawType == MAP_TRANSPARENT)
-		{
-		}
-	} else
-	{
-		// Draw the fast not on the fly scaled map.
-		if (mapDrawType == MAP_SOLID) 
-		{
-			miniMapSurface.blt(clientArea, 0, 0);
-		}
-		else if (mapDrawType == MAP_2080)
-		{
-			clientArea.blendIn(miniMapSurface, iXY(0, 0), Palette::colorTable2080);
-		}
-		else if (mapDrawType == MAP_4060)
-		{
-			clientArea.blendIn(miniMapSurface, iXY(0, 0), Palette::colorTable4060);
-		}
-		//else if (mapDrawType == MAP_BLEND_GREEN)
-		//{
-			//clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::green256.getColorArray());
-		//}
-		else if (mapDrawType == MAP_BLEND_GRAY)
-		{
-			clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::gray256.getColorArray());
-		}
-		else if (mapDrawType == MAP_BLEND_DARK_GRAY)
-		{
-			clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::darkGray256.getColorArray());
-		}
-		else if (mapDrawType == MAP_BLACK)
-		{
-			clientArea.fill(Color::black);
-		}
-		else if (mapDrawType == MAP_TRANSPARENT)
-		{
-		}
-	}
+    iRect r(getViewRect().min, getViewRect().max);
 
-	// Draw a hairline border.
-	//viewArea.drawRect(Color::white);
-	viewArea.drawLookupBorder(Palette::darkGray256.getColorArray());
-	
-	// Draw the world view box.
-	clientArea.bltLookup(MiniMapInterface::getWorldWindow(), Palette::darkGray256.getColorArray());
+    if (needScale) {
+        // Draw the slow on the fly scaled map.
+        if (mapDrawType == MAP_SOLID) {
+            clientArea.bltScale(*miniMap, r);
+        } else if (mapDrawType == MAP_2080) {
+            clientArea.bltBlendScale(*miniMap, r, Palette::colorTable2080);
+        } else if (mapDrawType == MAP_4060) {
+            clientArea.bltBlendScale(*miniMap, r, Palette::colorTable4060);
+        }
+        //else if (mapDrawType == MAP_BLEND_GREEN)
+        //{
+        //clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::green256.getColorArray());
+        //}
+        else if (mapDrawType == MAP_BLEND_GRAY) {
+            clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::gray256.getColorArray());
+        } else if (mapDrawType == MAP_BLEND_DARK_GRAY) {
+            clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::darkGray256.getColorArray());
+        } else if (mapDrawType == MAP_BLACK) {
+            clientArea.fill(Color::black);
+        } else if (mapDrawType == MAP_TRANSPARENT) {}
+    }
+    else {
+        // Draw the fast not on the fly scaled map.
+        if (mapDrawType == MAP_SOLID) {
+            miniMapSurface.blt(clientArea, 0, 0);
+        } else if (mapDrawType == MAP_2080) {
+            clientArea.blendIn(miniMapSurface, iXY(0, 0), Palette::colorTable2080);
+        } else if (mapDrawType == MAP_4060) {
+            clientArea.blendIn(miniMapSurface, iXY(0, 0), Palette::colorTable4060);
+        }
+        //else if (mapDrawType == MAP_BLEND_GREEN)
+        //{
+        //clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::green256.getColorArray());
+        //}
+        else if (mapDrawType == MAP_BLEND_GRAY) {
+            clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::gray256.getColorArray());
+        } else if (mapDrawType == MAP_BLEND_DARK_GRAY) {
+            clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::darkGray256.getColorArray());
+        } else if (mapDrawType == MAP_BLACK) {
+            clientArea.fill(Color::black);
+        } else if (mapDrawType == MAP_TRANSPARENT) {}
+    }
 
-	// Draw the units and such on the minimap.
-	MiniMapInterface::annotateMiniMap((Surface &) clientArea);
+    // Draw a hairline border.
+    //viewArea.drawRect(Color::white);
+    viewArea.drawLookupBorder(Palette::darkGray256.getColorArray());
 
-	// Draw the world view box corners.
-	clientArea.drawBoxCorners(MiniMapInterface::getWorldWindow(), 5, Color::white);
+    // Draw the world view box.
+    clientArea.bltLookup(MiniMapInterface::getWorldWindow(), Palette::darkGray256.getColorArray());
 
-	// Draw an inner black rect inside the outer white rect, for visibility reasons.
-	//iRect innerRect(MiniMapInterface::getWorldWindow());
-	//
-	//innerRect.min += 1;
-	//innerRect.max -= 1;
-	//
-	//clientArea.drawBoxCorners(innerRect, 4, Color::black);
+    // Draw the units and such on the minimap.
+    MiniMapInterface::annotateMiniMap((Surface &) clientArea);
 
-	// If the mouse is over the client area, then change the cursor.
-	if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos())))
-	{
-		if (selectionAnchor)
-		{
-			// Since we are selecting units, draw the selection box.
-			clientArea.drawRect(selectionAnchorDownPos, selectionAnchorCurPos, Color::white);
-		} else
-		{
-			// Draw a box which show where the area which you click will be located.
-			drawMouseBox(clientArea);
-		}
-	}
+    // Draw the world view box corners.
+    clientArea.drawBoxCorners(MiniMapInterface::getWorldWindow(), 5, Color::white);
 
-	GameTemplateView::doDraw(viewArea, clientArea);
+    // Draw an inner black rect inside the outer white rect, for visibility reasons.
+    //iRect innerRect(MiniMapInterface::getWorldWindow());
+    //
+    //innerRect.min += 1;
+    //innerRect.max -= 1;
+    //
+    //clientArea.drawBoxCorners(innerRect, 4, Color::black);
+
+    // If the mouse is over the client area, then change the cursor.
+    if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos()))) {
+        if (selectionAnchor) {
+            // Since we are selecting units, draw the selection box.
+            clientArea.drawRect(selectionAnchorDownPos, selectionAnchorCurPos, Color::white);
+        } else {
+            // Draw a box which show where the area which you click will be located.
+            drawMouseBox(clientArea);
+        }
+    }
+
+    GameTemplateView::doDraw(viewArea, clientArea);
 
 } // end doDraw
 
@@ -253,15 +219,14 @@ void MiniMapView::doDraw(const Surface &viewArea, const Surface &clientArea)
 //          viewable window is repositioned.
 //--------------------------------------------------------------------------
 void MiniMapView::setViewWindow(const iXY &pos)
-{ 
-	assert(this != 0);
+{
+    assert(this != 0);
 
-	iXY size(getViewRect().getSize());
+    iXY size(getViewRect().getSize());
 
-	if ((pos.x >= 0) && (pos.x < size.x) && (pos.y >= 0) && (pos.y < size.y))
-	{
-		MiniMapInterface::setWorldWindowPosition( iXY( pos.x, pos.y ) );
-	} 
+    if ((pos.x >= 0) && (pos.x < size.x) && (pos.y >= 0) && (pos.y < size.y)) {
+        MiniMapInterface::setWorldWindowPosition( iXY( pos.x, pos.y ) );
+    }
 
 } // end MiniMapView::setViewWindow
 
@@ -272,15 +237,15 @@ void MiniMapView::setViewWindow(const iXY &pos)
 //--------------------------------------------------------------------------
 void MiniMapView::drawMouseBox(const Surface &dest)
 {
-	assert(this != 0);
-	assert(dest.getDoesExist());
+    assert(this != 0);
+    assert(dest.getDoesExist());
 
     iRect r(MiniMapInterface::getWorldWindow());
-	iXY   size(r.getSize() / 2);
-	iXY   pos(getScreenToClientPos(mouse.getScreenPos()));
+    iXY   size(r.getSize() / 2);
+    iXY   pos(getScreenToClientPos(mouse.getScreenPos()));
 
-	//dest.drawRect(pos - size - 1, pos + size - 1, Color::yellow);
-	dest.drawBoxCorners(pos - size - 1, iXY(pos.x + size.x - 1, pos.y + size.y), 5, Color::red);
+    //dest.drawRect(pos - size - 1, pos + size - 1, Color::yellow);
+    dest.drawBoxCorners(pos - size - 1, iXY(pos.x + size.x - 1, pos.y + size.y), 5, Color::red);
 
 } // end MiniMapView::drawMouseBox
 
@@ -291,17 +256,15 @@ void MiniMapView::drawMouseBox(const Surface &dest)
 //--------------------------------------------------------------------------
 void MiniMapView::lMouseDown(const iXY &pos)
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos())))
-	{
-		if (!selectionAnchor)
-		{
-			setViewWindow(pos);
-		}
-	}
+    if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos()))) {
+        if (!selectionAnchor) {
+            setViewWindow(pos);
+        }
+    }
 
-	GameTemplateView::lMouseDown(pos);
+    GameTemplateView::lMouseDown(pos);
 
 } // end MiniMapView::lMouseDown
 
@@ -309,57 +272,41 @@ void MiniMapView::lMouseDown(const iXY &pos)
 //--------------------------------------------------------------------------
 void MiniMapView::rMouseDown(const iXY &pos)
 {
-	MiniMapInterface::deselectUnits();
+    MiniMapInterface::deselectUnits();
 
 } // end MiniMapView::rMouseDown
 
 //--------------------------------------------------------------------------
 void MiniMapView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
 {
-	// Let the map go up to the min screen dimension.
-	//maxMapSize = std::min(SCREEN_XPIX, SCREEN_YPIX);
-	maxMapSize = std::min(640, 480);
+    // Let the map go up to the min screen dimension.
+    //maxMapSize = std::min(SCREEN_XPIX, SCREEN_YPIX);
+    maxMapSize = std::min(640, 480);
 
-	moveTo(min + newPos - prevPos);
+    moveTo(min + newPos - prevPos);
 
-	// Check for map blending mode change.
-	if (KeyboardInterface::getKeyPressed(SDLK_1))
-	{
-		MiniMapView::mapDrawType = MAP_SOLID;
-	}
-	else if (KeyboardInterface::getKeyPressed(SDLK_2))
-	{
-		MiniMapView::mapDrawType = MAP_2080;
-	}
-	else if (KeyboardInterface::getKeyPressed(SDLK_3))
-	{
-		MiniMapView::mapDrawType = MAP_4060;
-	}
-	else if (KeyboardInterface::getKeyPressed(SDLK_4))
-	{
-		MiniMapView::mapDrawType = MAP_BLEND_GRAY;
-	}
-	else if (KeyboardInterface::getKeyPressed(SDLK_5))
-	{
-		MiniMapView::mapDrawType = MAP_BLEND_DARK_GRAY;
-	}
-	else if (KeyboardInterface::getKeyPressed(SDLK_6))
-	{
-		MiniMapView::mapDrawType = MAP_BLACK;
-	}
-	else if (KeyboardInterface::getKeyPressed(SDLK_7))
-	{
-		MiniMapView::mapDrawType = MAP_TRANSPARENT;
-	}
-	
-	if (KeyboardInterface::getKeyState(SDLK_KP_PLUS))
-	{
-		increaseSize = -1;
-	}
-	else if (KeyboardInterface::getKeyState(SDLK_KP_MINUS))
-	{
-		decreaseSize = -1;
-	}
+    // Check for map blending mode change.
+    if (KeyboardInterface::getKeyPressed(SDLK_1)) {
+        MiniMapView::mapDrawType = MAP_SOLID;
+    } else if (KeyboardInterface::getKeyPressed(SDLK_2)) {
+        MiniMapView::mapDrawType = MAP_2080;
+    } else if (KeyboardInterface::getKeyPressed(SDLK_3)) {
+        MiniMapView::mapDrawType = MAP_4060;
+    } else if (KeyboardInterface::getKeyPressed(SDLK_4)) {
+        MiniMapView::mapDrawType = MAP_BLEND_GRAY;
+    } else if (KeyboardInterface::getKeyPressed(SDLK_5)) {
+        MiniMapView::mapDrawType = MAP_BLEND_DARK_GRAY;
+    } else if (KeyboardInterface::getKeyPressed(SDLK_6)) {
+        MiniMapView::mapDrawType = MAP_BLACK;
+    } else if (KeyboardInterface::getKeyPressed(SDLK_7)) {
+        MiniMapView::mapDrawType = MAP_TRANSPARENT;
+    }
+
+    if (KeyboardInterface::getKeyState(SDLK_KP_PLUS)) {
+        increaseSize = -1;
+    } else if (KeyboardInterface::getKeyState(SDLK_KP_MINUS)) {
+        decreaseSize = -1;
+    }
 
 } // end MiniMapView::rMouseDrag
 
@@ -367,89 +314,74 @@ void MiniMapView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &
 //--------------------------------------------------------------------------
 void MiniMapView::doIncreaseSize(int value)
 {
-	iXY destSize(getViewRect().getSize());
+    iXY destSize(getViewRect().getSize());
 
-	if (value == -1)
-	{
-		float dt = TimerInterface::getTimeSlice();
+    if (value == -1) {
+        float dt = TimerInterface::getTimeSlice();
 
-		destSize += scaleDelta * dt;
-	} else
-	{
-		destSize += value;
-	}
+        destSize += scaleDelta * dt;
+    } else {
+        destSize += value;
+    }
 
-	//resize(destSize);
-	//deltaSize += deltaAmount;
-	if (destSize > maxMapSize)
-	{
-		destSize = maxMapSize;
-	}
-	
-	// Check the validity of the X dimension.
-	if ((min.x + destSize.x) >= SCREEN_XPIX)
-	{
-		int xOffset = min.x + destSize.x - SCREEN_XPIX;
+    //resize(destSize);
+    //deltaSize += deltaAmount;
+    if (destSize > maxMapSize) {
+        destSize = maxMapSize;
+    }
 
-		int destXPos = min.x - xOffset;
-		
-		if (destXPos < 0)
-		{
-			moveTo(0, min.y);
+    // Check the validity of the X dimension.
+    if ((min.x + destSize.x) >= SCREEN_XPIX) {
+        int xOffset = min.x + destSize.x - SCREEN_XPIX;
 
-		} else
-		{
-			moveTo(destXPos, min.y);
-		}
-	}
+        int destXPos = min.x - xOffset;
 
-	// Check the validity of the Y dimension.
-	if ((min.y + destSize.y) >= SCREEN_YPIX)
-	{
-		int yOffset = min.y + destSize.y - SCREEN_YPIX;
+        if (destXPos < 0) {
+            moveTo(0, min.y);
 
-		int destYPos = min.y - yOffset;
-		
-		if (destYPos < 0)
-		{
-			moveTo(min.x, 0);
+        } else {
+            moveTo(destXPos, min.y);
+        }
+    }
 
-		} else
-		{
-			moveTo(min.x, destYPos);
-		}
-	}
-	
-	// Resize the x dimension.
-	if (destSize.x > getViewRect().getSize().x)
-	{
-		if (destSize.x > maxMapSize)
-		{
-			resize(iXY(maxMapSize, getViewRect().getSize().y));
+    // Check the validity of the Y dimension.
+    if ((min.y + destSize.y) >= SCREEN_YPIX) {
+        int yOffset = min.y + destSize.y - SCREEN_YPIX;
 
-		} else
-		{
-			resize(iXY(destSize.x, getViewRect().getSize().y));
-		}
-	}
+        int destYPos = min.y - yOffset;
 
-	// Resize the y dimension.
-	if (destSize.y > getViewRect().getSize().y)
-	{
-		if (destSize.x > maxMapSize)
-		{
-			resize(iXY(getViewRect().getSize().x, maxMapSize));
+        if (destYPos < 0) {
+            moveTo(min.x, 0);
 
-		} else
-		{
-			resize(iXY(getViewRect().getSize().x, destSize.x));
-		}
-	}
+        } else {
+            moveTo(min.x, destYPos);
+        }
+    }
 
-	MiniMapInterface::setMapScale(getViewRect().getSize());
+    // Resize the x dimension.
+    if (destSize.x > getViewRect().getSize().x) {
+        if (destSize.x > maxMapSize) {
+            resize(iXY(maxMapSize, getViewRect().getSize().y));
 
-	needScale      = true;
-	scaleGroupWait = 0.0f;
+        } else {
+            resize(iXY(destSize.x, getViewRect().getSize().y));
+        }
+    }
+
+    // Resize the y dimension.
+    if (destSize.y > getViewRect().getSize().y) {
+        if (destSize.x > maxMapSize) {
+            resize(iXY(getViewRect().getSize().x, maxMapSize));
+
+        } else {
+            resize(iXY(getViewRect().getSize().x, destSize.x));
+        }
+    }
+
+    MiniMapInterface::setMapScale(getViewRect().getSize());
+
+    needScale      = true;
+    scaleGroupWait = 0.0f;
 
 } // end MiniMapView::doIncreaseSize
 
@@ -457,29 +389,26 @@ void MiniMapView::doIncreaseSize(int value)
 //--------------------------------------------------------------------------
 void MiniMapView::doDecreaseSize(int value)
 {
-	iXY destSize(getViewRect().getSize());
+    iXY destSize(getViewRect().getSize());
 
-	if (value == -1)
-	{
-		float dt = TimerInterface::getTimeSlice();
+    if (value == -1) {
+        float dt = TimerInterface::getTimeSlice();
 
-		destSize -= scaleDelta * dt;
-	} else
-	{
-		destSize -= value;
-	}
+        destSize -= scaleDelta * dt;
+    } else {
+        destSize -= value;
+    }
 
-	resize(destSize);
+    resize(destSize);
 
-	if (destSize < minMapSize)
-	{
-		resize(iXY(minMapSize, minMapSize));
-	}
+    if (destSize < minMapSize) {
+        resize(iXY(minMapSize, minMapSize));
+    }
 
-	MiniMapInterface::setMapScale(getViewRect().getSize());
+    MiniMapInterface::setMapScale(getViewRect().getSize());
 
-	needScale      = true;
-	scaleGroupWait = 0.0f;
+    needScale      = true;
+    scaleGroupWait = 0.0f;
 
 } // end MiniMapView::doDecreaseSize
 
@@ -487,24 +416,20 @@ void MiniMapView::doDecreaseSize(int value)
 //--------------------------------------------------------------------------
 int MiniMapView::lMouseUp(const iXY &downPos, const iXY &upPos)
 {
-	if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos())))
-	{
-		// If units are selected, send the units there and deselect the units.
-			// If there is a unit selected, see if we should move a unit there.
-		if (	(KeyboardInterface::getKeyState(SDLK_LCTRL) ||
-				 KeyboardInterface::getKeyState(SDLK_RCTRL)))
-		{
-			if (MiniMapInterface::isUnitSelected())
-			{
-				if (MiniMapInterface::isValidUnitMove(upPos))
-				{
-					MiniMapInterface::moveUnits(upPos);
-				}
-			}
-		}
-	}
+    if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos()))) {
+        // If units are selected, send the units there and deselect the units.
+        // If there is a unit selected, see if we should move a unit there.
+        if (	(KeyboardInterface::getKeyState(SDLK_LCTRL) ||
+                KeyboardInterface::getKeyState(SDLK_RCTRL))) {
+            if (MiniMapInterface::isUnitSelected()) {
+                if (MiniMapInterface::isValidUnitMove(upPos)) {
+                    MiniMapInterface::moveUnits(upPos);
+                }
+            }
+        }
+    }
 
-	return View::lMouseUp(downPos, upPos);
+    return View::lMouseUp(downPos, upPos);
 
 } // end MiniMapView::lMouseUp
 
@@ -512,63 +437,54 @@ int MiniMapView::lMouseUp(const iXY &downPos, const iXY &upPos)
 //--------------------------------------------------------------------------
 void MiniMapView::mouseMove(const iXY &prevPos, const iXY &newPos)
 {
-	if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos())))
-	{
-		if (	(KeyboardInterface::getKeyState(SDLK_LCTRL) ||
-				 KeyboardInterface::getKeyState(SDLK_RCTRL)))
-		{
-			// Set the cursor accordinly.
-			if (MiniMapInterface::isUnitSelected())
-			{
-				if (MiniMapInterface::isValidUnitMove(newPos))
-				{
-					MouseInterface::setCursor("move.bmp");
-				} else
-				{
-					MouseInterface::setCursor("noentry.bmp");
-				}
-			} else
-			{
-				MouseInterface::setCursor("default.bmp");
-			}
+    if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos()))) {
+        if (	(KeyboardInterface::getKeyState(SDLK_LCTRL) ||
+                KeyboardInterface::getKeyState(SDLK_RCTRL))) {
+            // Set the cursor accordinly.
+            if (MiniMapInterface::isUnitSelected()) {
+                if (MiniMapInterface::isValidUnitMove(newPos)) {
+                    MouseInterface::setCursor("move.bmp");
+                } else {
+                    MouseInterface::setCursor("noentry.bmp");
+                }
+            } else {
+                MouseInterface::setCursor("default.bmp");
+            }
 
-			if (!selectionAnchor)
-			{
-				selectionAnchorDownPos = newPos;
-			}
+            if (!selectionAnchor) {
+                selectionAnchorDownPos = newPos;
+            }
 
-			selectionAnchorCurPos = newPos;
-			selectionAnchor       = true;
-			
-			// Set the selection cursor.
-			MouseInterface::setCursor("select.bmp");
+            selectionAnchorCurPos = newPos;
+            selectionAnchor       = true;
 
-		} else
-		{
-			if (selectionAnchor)
-			{
-				MiniMapInterface::selectUnits(iRect(selectionAnchorDownPos.x, selectionAnchorDownPos.y, selectionAnchorCurPos.x, selectionAnchorCurPos.y));
-			}
+            // Set the selection cursor.
+            MouseInterface::setCursor("select.bmp");
 
-			selectionAnchor = false;
-		}
-	}
+        } else {
+            if (selectionAnchor) {
+                MiniMapInterface::selectUnits(iRect(selectionAnchorDownPos.x, selectionAnchorDownPos.y, selectionAnchorCurPos.x, selectionAnchorCurPos.y));
+            }
 
-	GameTemplateView::mouseMove(prevPos, newPos);
+            selectionAnchor = false;
+        }
+    }
 
-//enum { _mcursor_default, 
-//       _mcursor_noentry, 
-//       _mcursor_move, 
-//       _mcursor_select, 
-//       _mcursor_target,
-//       _mcursor_make_allie,
-//       _mcursor_break_allie };
-//
-//	}
+    GameTemplateView::mouseMove(prevPos, newPos);
 
-   //static bool isUnitSelected( void );
-   //static bool selectUnits( iRect bound_box );
-   //static void moveUnits( iXY location );
+    //enum { _mcursor_default,
+    //       _mcursor_noentry,
+    //       _mcursor_move,
+    //       _mcursor_select,
+    //       _mcursor_target,
+    //       _mcursor_make_allie,
+    //       _mcursor_break_allie };
+    //
+    //	}
+
+    //static bool isUnitSelected( void );
+    //static bool selectUnits( iRect bound_box );
+    //static void moveUnits( iXY location );
 
 } // end MiniMapView::mouseMove
 
@@ -576,6 +492,6 @@ void MiniMapView::mouseMove(const iXY &prevPos, const iXY &newPos)
 //--------------------------------------------------------------------------
 void MiniMapView::lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
 {
-	lMouseDown(newPos);
+    lMouseDown(newPos);
 
 } // end MiniMapView::lMouseDrag

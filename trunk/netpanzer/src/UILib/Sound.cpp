@@ -26,8 +26,8 @@ Sound* sound = 0;
 //-----------------------------------------------------------------
 Sound::Sound()
 {
-	m_battleCount = 0;
-	m_tankIdleChannel = -1;
+    m_battleCount = 0;
+    m_tankIdleChannel = -1;
 }
 //-----------------------------------------------------------------
 /**
@@ -35,25 +35,25 @@ Sound::Sound()
  */
 void Sound::playTankIdle()
 {
-	m_tankIdleChannel = playSoundRepeatedly("tankidle");
+    m_tankIdleChannel = playSoundRepeatedly("tankidle");
 }
 
 void Sound::stopTankIdle()
 {
-	stopChannel(m_tankIdleChannel);
+    stopChannel(m_tankIdleChannel);
 }
 
 void Sound::playPowerUpSound()
 {
-	playSound("powerup");
+    playSound("powerup");
 }
 
 void Sound::playUnitSound(int unit_type)
 {
     if((unit_type == _unit_type_humvee) || (unit_type == _unit_type_hover_craft)) {
-		return;
-	}
-	playSound("unitsound");
+        return;
+    }
+    playSound("unitsound");
 }
 
 //-----------------------------------------------------------------
@@ -62,13 +62,13 @@ void Sound::playUnitSound(int unit_type)
  */
 void Sound::playBattle()
 {
-	static const int BATTLE_LIMIT = 16;
+    static const int BATTLE_LIMIT = 16;
 
-	//TODO: this is original behavior,
-	// does it make sense?
-	m_battleCount++;
-	if (m_battleCount > BATTLE_LIMIT) {
-		playSound("battle");
-		m_battleCount = 0;
-	}
+    //TODO: this is original behavior,
+    // does it make sense?
+    m_battleCount++;
+    if (m_battleCount > BATTLE_LIMIT) {
+        playSound("battle");
+        m_battleCount = 0;
+    }
 }

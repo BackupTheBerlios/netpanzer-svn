@@ -24,18 +24,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class DummySound : public Sound
 {
 public:
-	DummySound();
-	virtual ~DummySound();
-	
-	virtual void playSound(const char* name);
-	virtual void playAmbientSound(const char *name, long distance);
-	virtual int playSoundRepeatedly(const char* name)
-	{ return -1; }
-	virtual void stopChannel(int channel)
-	{}
+    DummySound();
+    virtual ~DummySound();
 
-	virtual void playMusic(const char* directory);
-	virtual void stopMusic();
+    virtual void playSound(const char* name);
+    virtual void playAmbientSound(const char *name, long distance);
+    virtual int playSoundRepeatedly(const char* name)
+    {
+        return -1;
+    }
+    virtual void stopChannel(int channel)
+    {}
+
+    virtual void playMusic(const char* directory);
+    virtual void stopMusic();
 };
 
 #endif

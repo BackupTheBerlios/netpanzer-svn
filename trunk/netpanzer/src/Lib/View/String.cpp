@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -26,13 +26,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //---------------------------------------------------------------------------
 String::String(const char *string)
 {
-	length = strlen(string);
-	mem    = new char [length + 1];
-	if (mem == 0)
-	{
-		throw Exception("ERROR: Unable to allocate string.");
-	}
-	strcpy(mem, string);
+    length = strlen(string);
+    mem    = new char [length + 1];
+    if (mem == 0) {
+        throw Exception("ERROR: Unable to allocate string.");
+    }
+    strcpy(mem, string);
 
 } // String::String
 
@@ -42,13 +41,12 @@ String::String(const char *string)
 //---------------------------------------------------------------------------
 String::String(const String &string)
 {
-	length = string.length;
-	mem    = new char [length + 1];
-	if (mem == 0)
-	{
-		throw Exception("ERROR: Unable to allocate string.");
-	}
-	strcpy(mem, string.mem);
+    length = string.length;
+    mem    = new char [length + 1];
+    if (mem == 0) {
+        throw Exception("ERROR: Unable to allocate string.");
+    }
+    strcpy(mem, string.mem);
 
 } // String::String
 
@@ -58,7 +56,7 @@ String::String(const String &string)
 //---------------------------------------------------------------------------
 String::~String()
 {
-	delete [] mem;
+    delete [] mem;
 
 } // end String::~String
 
@@ -67,19 +65,17 @@ String::~String()
 //---------------------------------------------------------------------------
 const String &String::operator=(const String &string)
 {
-	if (&string != this)
-	{
-		delete [] mem;
-		length = string.length;
-		mem    = new char [length + 1];
-		if (mem == 0)
-		{
-			throw Exception("ERROR: Unable to allocate string.");
-		}
-		strcpy(mem, string.mem);
-	}
+    if (&string != this) {
+        delete [] mem;
+        length = string.length;
+        mem    = new char [length + 1];
+        if (mem == 0) {
+            throw Exception("ERROR: Unable to allocate string.");
+        }
+        strcpy(mem, string.mem);
+    }
 
-	return *this;
+    return *this;
 } // end String::operator=
 
 // operator+=
@@ -88,17 +84,16 @@ const String &String::operator=(const String &string)
 //---------------------------------------------------------------------------
 String &String::operator+=(const String &string)
 {
-	char *tempPtr = mem;
-	length += string.length;
-	mem    = new char [length + 1];
-	if (mem == 0)
-	{
-		throw Exception("ERROR: Unable to allocate string.");
-	}
-	strcpy(mem, tempPtr);
-	strcat(mem, string.mem);
-	delete [] tempPtr;
+    char *tempPtr = mem;
+    length += string.length;
+    mem    = new char [length + 1];
+    if (mem == 0) {
+        throw Exception("ERROR: Unable to allocate string.");
+    }
+    strcpy(mem, tempPtr);
+    strcat(mem, string.mem);
+    delete [] tempPtr;
 
-	return *this;
+    return *this;
 
 } // end String::operator+=

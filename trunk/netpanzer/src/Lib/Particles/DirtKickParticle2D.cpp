@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -31,24 +31,25 @@ const int dirtKickFPS = 24;
 //---------------------------------------------------------------------------
 DirtKickParticle2D::DirtKickParticle2D(fXYZ pos) : Particle2D(pos)
 {
-	assert(dirtKickSprite.getDoesExist());
+    assert(dirtKickSprite.getDoesExist());
 
-	// XXX
-	//dirtKickSurface.setTo(dirtKickSprite);
+    // XXX
+    //dirtKickSurface.setTo(dirtKickSprite);
 
-}; // end DirtKickParticle2D::DirtKickParticle2D
+}
+; // end DirtKickParticle2D::DirtKickParticle2D
 
 // init
 //---------------------------------------------------------------------------
 void DirtKickParticle2D::init()
 {
-	dirtKickSprite.create(iXY(48, 46), 48, 6);
-	dirtKickSprite.extractPCX("pics/particles/dirtKick.pcx", 1, 0);
-	
-	dirtKickSprite.scale((int) (48 * 0.5f), (int) (46 * 0.5f));
+    dirtKickSprite.create(iXY(48, 46), 48, 6);
+    dirtKickSprite.extractPCX("pics/particles/dirtKick.pcx", 1, 0);
 
-	dirtKickSprite.setFPS(dirtKickFPS);
-	dirtKickSprite.setOffset(iXY(-dirtKickSprite.getCenter().x, -dirtKickSprite.getPix().y));
+    dirtKickSprite.scale((int) (48 * 0.5f), (int) (46 * 0.5f));
+
+    dirtKickSprite.setFPS(dirtKickFPS);
+    dirtKickSprite.setOffset(iXY(-dirtKickSprite.getCenter().x, -dirtKickSprite.getPix().y));
 
 } // end DirtKickParticle2D::init
 
@@ -56,24 +57,24 @@ void DirtKickParticle2D::init()
 //---------------------------------------------------------------------------
 void DirtKickParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 {
-	// XXX
-	//assert(dirtKickSurface.getDoesExist());
+    // XXX
+    //assert(dirtKickSurface.getDoesExist());
 
-	// XXX
+    // XXX
 #if 0
-	if (!dirtKickSurface.nextFrame())
-	{
-		isAlive = false;
-		return;
-	}
+    if (!dirtKickSurface.nextFrame())
+    {
+        isAlive = false;
+        return;
+    }
 #endif
-	
-	// XXX
+
+    // XXX
 #if 0
-	// I can't use nextFrame() below, because there are multiple
-	// particles which share the same Surface.
-	dirtKickSurface.setAttrib(iXY(pos.x, pos.z), 3);
-	sorter.addSprite(&dirtKickSurface);
+    // I can't use nextFrame() below, because there are multiple
+    // particles which share the same Surface.
+    dirtKickSurface.setAttrib(iXY(pos.x, pos.z), 3);
+    sorter.addSprite(&dirtKickSurface);
 #endif
 
 } // end DirtKickParticle2D::draw

@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 enum MAP_DRAW_TYPES
 {
-	MAP_SOLID,
+    MAP_SOLID,
     MAP_2080,
     MAP_4060,
     MAP_BLEND_GRAY,
@@ -47,46 +47,47 @@ enum MAP_DRAW_TYPES
 class MiniMapView : public GameTemplateView
 {
 private:
-	int     deltaSize;
-	int     minMapSize;
-	int     maxMapSize;
-	Surface miniMapSurface;
-	bool    needScale;
-	float   scaleGroupWait;
-	bool    selectionAnchor;
-	iXY     selectionAnchorDownPos;
-	iXY     selectionAnchorCurPos;
+    int     deltaSize;
+    int     minMapSize;
+    int     maxMapSize;
+    Surface miniMapSurface;
+    bool    needScale;
+    float   scaleGroupWait;
+    bool    selectionAnchor;
+    iXY     selectionAnchorDownPos;
+    iXY     selectionAnchorCurPos;
 
-	void doDecreaseSize(int value);
-	void doIncreaseSize(int value);
+    void doDecreaseSize(int value);
+    void doIncreaseSize(int value);
 
 public:
-	MiniMapView();
+    MiniMapView();
 
-	void init();
-	
-	virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
-	virtual void lMouseDown(const iXY &pos);
-	virtual int  lMouseUp(const iXY &downPos, const iXY &upPos);
-	virtual void lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
-	virtual void rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
-	virtual void rMouseDown(const iXY &pos);
-	virtual void mouseMove(const iXY &prevPos, const iXY &newPos);
-	
-	void drawMouseBox(const Surface &dest);
-	void setViewWindow(const iXY &pos);
+    void init();
 
-	static float          scaleDelta;
-	static MAP_DRAW_TYPES mapDrawType;
+    virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
+    virtual void lMouseDown(const iXY &pos);
+    virtual int  lMouseUp(const iXY &downPos, const iXY &upPos);
+    virtual void lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
+    virtual void rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
+    virtual void rMouseDown(const iXY &pos);
+    virtual void mouseMove(const iXY &prevPos, const iXY &newPos);
 
-	static int decreaseSize;
-	static int increaseSize;
+    void drawMouseBox(const Surface &dest);
+    void setViewWindow(const iXY &pos);
+
+    static float          scaleDelta;
+    static MAP_DRAW_TYPES mapDrawType;
+
+    static int decreaseSize;
+    static int increaseSize;
 
 private:
-	// XXX added this...
-	void addButtons();
+    // XXX added this...
+    void addButtons();
 
-}; // end MiniMapView
+}
+; // end MiniMapView
 
 extern MiniMapView miniMapView;
 

@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 struct _finddata_t
 {
-	char* name;
+    char* name;
 };
 
 int* _findfirst(const char* dir, _finddata_t* fileinfo);

@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -32,85 +32,82 @@ ColorTable gray256;
 
 static void setGrayColorTable()
 {
-	colorTable = &gray256;
+    colorTable = &gray256;
 }
 
 static void increasePercent(float &color)
 {
-	if ((color += incrementPercent) > maxPercent)
-	{
-		color = maxPercent;
-	}
+    if ((color += incrementPercent) > maxPercent) {
+        color = maxPercent;
+    }
 }
 
 static void decreasePercent(float &color)
 {
-	if ((color -= incrementPercent) < minPercent)
-	{
-		color = minPercent;
-	}
+    if ((color -= incrementPercent) < minPercent) {
+        color = minPercent;
+    }
 }
 
 static void rebuildGrayColorTable()
 {
-	// 256 shades of gray.
-	gray256.init(256);
-	for (int num = 0; num < 256; num++)
-	{
-		int c            = Palette::color[num].getBrightnessInt();
-		int nearestColor = (int) Palette::findNearestColor(RGBColor(c * grayPercent, c * grayPercent, c * grayPercent));
-		gray256.setColor(num, nearestColor);
-	}
-	gray256.setColor(255, 0);
+    // 256 shades of gray.
+    gray256.init(256);
+    for (int num = 0; num < 256; num++) {
+        int c            = Palette::color[num].getBrightnessInt();
+        int nearestColor = (int) Palette::findNearestColor(RGBColor(c * grayPercent, c * grayPercent, c * grayPercent));
+        gray256.setColor(num, nearestColor);
+    }
+    gray256.setColor(255, 0);
 }
 
 static void bIncreaseBrightness()
 {
-	increasePercent(grayPercent);
-	rebuildGrayColorTable();
+    increasePercent(grayPercent);
+    rebuildGrayColorTable();
 }
 
 static void bDecreaseBrightness()
 {
-	decreasePercent(grayPercent);
-	rebuildGrayColorTable();
+    decreasePercent(grayPercent);
+    rebuildGrayColorTable();
 }
 
 // UnitColorView
 //---------------------------------------------------------------------------
 UnitColorView::UnitColorView() : View()
 {
-	setSearchName("UnitColorView");
-	setTitle("Selects Your Unit Color");
-	setSubTitle("");
+    setSearchName("UnitColorView");
+    setTitle("Selects Your Unit Color");
+    setSubTitle("");
 
-	setAllowResize(false);
-	setAllowMove(false);
-	setVisible(false);
+    setAllowResize(false);
+    setAllowMove(false);
+    setVisible(false);
 
-	Surface unitSurface;
+    Surface unitSurface;
 
-	moveTo(400, 200);
+    moveTo(400, 200);
 
-	packedBody.load("units/pics/pak/TitaHNSD.pak");
-	packedBody.setFPS(12);
+    packedBody.load("units/pics/pak/TitaHNSD.pak");
+    packedBody.setFPS(12);
 
-	packedTurret.load("units/pics/pak/TitaTNSD.pak");
-	packedTurret.setFPS(8);
+    packedTurret.load("units/pics/pak/TitaTNSD.pak");
+    packedTurret.setFPS(8);
 
-	grassSurface.loadBMP("pics/grass.bmp");
+    grassSurface.loadBMP("pics/grass.bmp");
 
-	fuckingSurface.create(packedTurret.getPixX(), packedTurret.getPixY(), packedTurret.getPixX(), 1);
-	fuckingSurface.fill(0);
+    fuckingSurface.create(packedTurret.getPixX(), packedTurret.getPixY(), packedTurret.getPixX(), 1);
+    fuckingSurface.fill(0);
 
-	resizeClientArea(packedTurret.getPixX(), packedTurret.getPixY());
+    resizeClientArea(packedTurret.getPixX(), packedTurret.getPixY());
 
-	int size = packedTurret.getPixX() / 2;
-	addButtonCenterText(iXY(0, 0), size, "Up", "", bIncreaseBrightness);
-	addButtonCenterText(iXY(size, 0), size, "Down", "", bDecreaseBrightness);
+    int size = packedTurret.getPixX() / 2;
+    addButtonCenterText(iXY(0, 0), size, "Up", "", bIncreaseBrightness);
+    addButtonCenterText(iXY(size, 0), size, "Down", "", bDecreaseBrightness);
 
-	setGrayColorTable();
-	rebuildGrayColorTable();
+    setGrayColorTable();
+    rebuildGrayColorTable();
 
 } // end UnitColorView::UnitColorView
 
@@ -118,42 +115,42 @@ UnitColorView::UnitColorView() : View()
 //---------------------------------------------------------------------------
 void UnitColorView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
-	//unitSurface.fill(0);
+    //unitSurface.fill(0);
 
-	packedBody.nextFrame();
-	packedTurret.nextFrame();
+    packedBody.nextFrame();
+    packedTurret.nextFrame();
 
-	fuckingSurface.fill(Color::white);
-	packedBody.blt(fuckingSurface, 0, 0);
-	packedTurret.blt(fuckingSurface, 0, 0);
-	fuckingSurface.bltLookup(fuckingSurface.getRect(), colorTable->getColorArray());
-	
-	grassSurface.blt(clientArea);
-	fuckingSurface.bltTrans(clientArea);
+    fuckingSurface.fill(Color::white);
+    packedBody.blt(fuckingSurface, 0, 0);
+    packedTurret.blt(fuckingSurface, 0, 0);
+    fuckingSurface.bltLookup(fuckingSurface.getRect(), colorTable->getColorArray());
 
-	char strBuf[256];
-	sprintf(strBuf, "%1.3f of %1.3f", grayPercent, maxPercent);
-	clientArea.bltString(2, fuckingSurface.getPixY() - CHAR_YPIX - 1, strBuf, Color::white);
+    grassSurface.blt(clientArea);
+    fuckingSurface.bltTrans(clientArea);
 
-	View::doDraw(viewArea, clientArea);
+    char strBuf[256];
+    sprintf(strBuf, "%1.3f of %1.3f", grayPercent, maxPercent);
+    clientArea.bltString(2, fuckingSurface.getPixY() - CHAR_YPIX - 1, strBuf, Color::white);
+
+    View::doDraw(viewArea, clientArea);
 
 } // end UnitColorView::doDraw
 
 //---------------------------------------------------------------------------
 void UnitColorView::rMouseDown(const iXY &pos)
 {
-	View::lMouseDown(pos);
+    View::lMouseDown(pos);
 }
 
 //---------------------------------------------------------------------------
 void UnitColorView::rMouseUp(const iXY &downPos, const iXY &upPos)
 {
-	View::lMouseUp(downPos, upPos);
+    View::lMouseUp(downPos, upPos);
 }
 
 //---------------------------------------------------------------------------
 void UnitColorView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
 {
-	View::lMouseUp(downPos, newPos);
-	View::lMouseDown(newPos);
+    View::lMouseUp(downPos, newPos);
+    View::lMouseDown(newPos);
 }

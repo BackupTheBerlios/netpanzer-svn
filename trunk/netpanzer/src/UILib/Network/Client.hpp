@@ -10,23 +10,23 @@ class ServerSocket;
 class Client
 {
 public:
-	Client(ServerSocket* server);
-	~Client();
-	
-	TCPsocket tcpsocket;
-	IPaddress udpaddress;
+    Client(ServerSocket* server);
+    ~Client();
 
-	char tempbuffer[512];
- 
-	bool headerincomplete;
-	bool messageincomplete;
-	bool udpenabled;
-	short tempoffset;
+    TCPsocket tcpsocket;
+    IPaddress udpaddress;
 
-	typedef Uint32 ID;
-	ID id;
+    char tempbuffer[512];
 
-	ServerSocket* server;
+    bool headerincomplete;
+    bool messageincomplete;
+    bool udpenabled;
+    short tempoffset;
+
+    typedef Uint32 ID;
+    ID id;
+
+    ServerSocket* server;
 };
 
 #endif

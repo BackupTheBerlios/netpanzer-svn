@@ -30,28 +30,28 @@ typedef std::vector<std::string> musics_t;
 class SDLSound : public Sound
 {
 public:
-	SDLSound();
-	virtual ~SDLSound();
+    SDLSound();
+    virtual ~SDLSound();
 
-	virtual void playSound(const char* name);
-	virtual void playAmbientSound(const char* name, long distance);
-	virtual int playSoundRepeatedly(const char* name);
-	virtual void stopChannel(int channel);
+    virtual void playSound(const char* name);
+    virtual void playAmbientSound(const char* name, long distance);
+    virtual int playSoundRepeatedly(const char* name);
+    virtual void stopChannel(int channel);
 
-	virtual void playMusic(const char* directory);
-	virtual void stopMusic();
+    virtual void playMusic(const char* directory);
+    virtual void stopMusic();
 
 private:
-	chunks_t m_chunks;
+    chunks_t m_chunks;
 
-	Mix_Chunk *findChunk(const char *name);
-	int getSoundVolume(long distance);
-	void loadSound(const char* directory);
-	std::string getIdName(const char* filename);
+    Mix_Chunk *findChunk(const char *name);
+    int getSoundVolume(long distance);
+    void loadSound(const char* directory);
+    std::string getIdName(const char* filename);
 
-	static void nextSong();
-	static musics_t musicfiles;
-	static musics_t::iterator currentsong;
+    static void nextSong();
+    static musics_t musicfiles;
+    static musics_t::iterator currentsong;
 };
 
 #endif

@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -29,76 +29,74 @@ LobbyView lobbyView;
 
 static void bAbort()
 {
-	Desktop::setVisibilityAllWindows(false);
-	Desktop::setVisibility("MainView", true);
+    Desktop::setVisibilityAllWindows(false);
+    Desktop::setVisibility("MainView", true);
 }
 
 
 // LobbyView
 //---------------------------------------------------------------------------
 LobbyView::LobbyView() : View(), currentline(0)
-{
-} // end LobbyView::LobbyView
+{} // end LobbyView::LobbyView
 
 // init
 //---------------------------------------------------------------------------
 void LobbyView::init()
 {
-	setSearchName("LobbyView");
-	setTitle("Join Lobby");
-	setSubTitle("");
+    setSearchName("LobbyView");
+    setTitle("Join Lobby");
+    setSubTitle("");
 
-	setAllowResize(false);
+    setAllowResize(false);
     setAllowMove(false);
-	setDisplayStatusBar(false);
-	setVisible(false);
-	setBordered(false);
+    setDisplayStatusBar(false);
+    setVisible(false);
+    setBordered(false);
 
-	background.create(628 - 179, 302 - 153, 628 - 179, 1);
-	background.fill(0);
+    background.create(628 - 179, 302 - 153, 628 - 179, 1);
+    background.fill(0);
 
-	moveTo(0, 0);
-	resize(640, 480);
+    moveTo(0, 0);
+    resize(640, 480);
 
-	iXY size(getClientRect().getSize());
+    iXY size(getClientRect().getSize());
 
-	addButtonCenterText(iXY(628 - 60, 302 - 15), 60, "Abort", "Cancel the joining of this game.", bAbort);
+    addButtonCenterText(iXY(628 - 60, 302 - 15), 60, "Abort", "Cancel the joining of this game.", bAbort);
 
-	currentline = 0;
+    currentline = 0;
 } // end LobbyView::init
 
 // doDraw
 //---------------------------------------------------------------------------
 void LobbyView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
-	if (!backgroundSurface.getDoesExist())
-	{
-		loadBackgroundSurface();
-	}
-	
-	backgroundSurface.blt(clientArea);
+    if (!backgroundSurface.getDoesExist()) {
+        loadBackgroundSurface();
+    }
 
-	//MenuTemplateView::doDraw(viewArea, clientArea);
+    backgroundSurface.blt(clientArea);
 
-	background.blt(clientArea, 179, 153);
+    //MenuTemplateView::doDraw(viewArea, clientArea);
 
-	View::doDraw(viewArea, clientArea);
+    background.blt(clientArea, 179, 153);
+
+    View::doDraw(viewArea, clientArea);
 
 } // end LobbyView::doDraw
 
 // update
 //---------------------------------------------------------------------------
-// Purpose: Adds the specified text to the current surface, erasing 
+// Purpose: Adds the specified text to the current surface, erasing
 //          whatever is on the current line.
 //---------------------------------------------------------------------------
 void LobbyView::update(const char *text)
 {
-	//int yOffset = background.getPix().y-CHAR_YPIX - 1;
-	int yOffset = CHAR_YPIX * currentline;
+    //int yOffset = background.getPix().y-CHAR_YPIX - 1;
+    int yOffset = CHAR_YPIX * currentline;
 
-	// Clear the area for the text and draw the new text.
-	background.fillRect(0, yOffset, background.getPix().x, yOffset + CHAR_YPIX, Color::black);
-	background.bltString(0, yOffset, text, Color::white);
+    // Clear the area for the text and draw the new text.
+    background.fillRect(0, yOffset, background.getPix().x, yOffset + CHAR_YPIX, Color::black);
+    background.bltString(0, yOffset, text, Color::white);
 
 } // end LobbyView::update
 
@@ -109,64 +107,62 @@ void LobbyView::update(const char *text)
 //---------------------------------------------------------------------------
 void LobbyView::scroll()
 {
-	if(currentline * CHAR_YPIX > background.getPix().y - CHAR_YPIX)
-	{
-		Surface tempSurface;
-		tempSurface.copy(background);
+    if(currentline * CHAR_YPIX > background.getPix().y - CHAR_YPIX) {
+        Surface tempSurface;
+        tempSurface.copy(background);
 
-		// Move the current text up by the height of the app font.
-		tempSurface.blt(background, CHAR_YPIX, 0);
-	} else {
-		currentline++;
-	}
+        // Move the current text up by the height of the app font.
+        tempSurface.blt(background, CHAR_YPIX, 0);
+    } else {
+        currentline++;
+    }
 } // end LobbyView::scroll
 
 // close
 
 void LobbyView::reset()
- {
-  background.fill(0);
- }
+{
+    background.fill(0);
+}
 
 void LobbyView::open()
- {
-  if ( Desktop::getView("LobbyView")->getVisible() == false )
-   {
-    GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
+{
+    if ( Desktop::getView("LobbyView")->getVisible() == false ) {
+        GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
-    GameManager::loadPalette("wads/netpmenu.act");
+        GameManager::loadPalette("wads/netpmenu.act");
 
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("LobbyView", true); 
-  }
- }
+        Desktop::setVisibilityAllWindows(false);
+        Desktop::setVisibility("LobbyView", true);
+    }
+}
 
 
 //---------------------------------------------------------------------------
 void LobbyView::close()
 {
-  backgroundSurface.free();
-  Desktop::setVisibility("LobbyView", false);
+    backgroundSurface.free();
+    Desktop::setVisibility("LobbyView", false);
 } // end LobbyView::close
 
 // toggleGameView
 //---------------------------------------------------------------------------
 void LobbyView::toggleGameView()
 {
-	reset();
+    reset();
     backgroundSurface.free();
     GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
-	// Set the palette to the game palette.
-	GameManager::loadPalette("wads/netp.act");
+    // Set the palette to the game palette.
+    GameManager::loadPalette("wads/netp.act");
 
-	GameManager::setNetPanzerGameOptions();
+    GameManager::setNetPanzerGameOptions();
 
-	Desktop::setVisibilityAllWindows(false);
-	Desktop::setVisibility("GameToolbarView", true);
-	Desktop::setVisibility("GameInfoView", true);
-	Desktop::setVisibility("MiniMapView", true);
-	Desktop::setVisibility("GameView", true);
+    Desktop::setVisibilityAllWindows(false);
+    Desktop::setVisibility("GameToolbarView", true);
+    Desktop::setVisibility("GameInfoView", true);
+    Desktop::setVisibility("MiniMapView", true);
+    Desktop::setVisibility("GameView", true);
 
 } // end LobbyView::toggleGameView
 
@@ -174,10 +170,10 @@ void LobbyView::toggleGameView()
 //---------------------------------------------------------------------------
 void LobbyView::toggleMainMenu()
 {
-	reset();
+    reset();
     backgroundSurface.free();
     Desktop::setVisibilityAllWindows(false);
-	Desktop::setVisibility("MainView", true);
+    Desktop::setVisibility("MainView", true);
 
 } // end LobbyView::toggleMainMenu
 
@@ -185,7 +181,7 @@ void LobbyView::toggleMainMenu()
 //---------------------------------------------------------------------------
 void LobbyView::doActivate()
 {
-	Desktop::setActiveView(this);
+    Desktop::setActiveView(this);
 
 } // end VehicleSelectionView::doActivate
 
@@ -193,11 +189,10 @@ void LobbyView::doActivate()
 //---------------------------------------------------------------------------
 void LobbyView::loadBackgroundSurface()
 {
-	String string = "pics/backgrounds/menus/menu/til/loadingMB.til";
+    String string = "pics/backgrounds/menus/menu/til/loadingMB.til";
 
-	if (!backgroundSurface.loadTIL(string))
-	{
-		throw Exception("ERROR: Unable to load menu background surface: %s", (const char *) string);
-	}
+    if (!backgroundSurface.loadTIL(string)) {
+        throw Exception("ERROR: Unable to load menu background surface: %s", (const char *) string);
+    }
 
 } // end MenuTemplateView::loadBackgroundSurface

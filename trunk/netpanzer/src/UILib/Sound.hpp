@@ -22,33 +22,33 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class Sound
 {
 public:
-	enum Event{
-		_selected, _deselected, _move_to, _target_enemy, _no_line_of_fire,
-		_under_attack, _fire_gun, _hit_target, _miss_target, _scream,
-		_random_battle, _blow_up_tank
-	};
+    enum Event{
+        _selected, _deselected, _move_to, _target_enemy, _no_line_of_fire,
+        _under_attack, _fire_gun, _hit_target, _miss_target, _scream,
+        _random_battle, _blow_up_tank
+    };
 
-	Sound();
-	virtual ~Sound()
-	{ }
-	
-	void playTankIdle();
-	void stopTankIdle();
-	void playPowerUpSound();
-	void playUnitSound(int unit_type);
-	void playBattle();
+    Sound();
+    virtual ~Sound()
+    { }
 
-	virtual void playSound(const char* name) = 0;
-	virtual void playAmbientSound(const char *name, long distance)=0;
-	virtual int playSoundRepeatedly(const char* name) = 0;
-	virtual void stopChannel(int channel) = 0;
+    void playTankIdle();
+    void stopTankIdle();
+    void playPowerUpSound();
+    void playUnitSound(int unit_type);
+    void playBattle();
 
-	virtual void playMusic(const char* directory) = 0;
-	virtual void stopMusic() = 0;
+    virtual void playSound(const char* name) = 0;
+    virtual void playAmbientSound(const char *name, long distance)=0;
+    virtual int playSoundRepeatedly(const char* name) = 0;
+    virtual void stopChannel(int channel) = 0;
 
-	private:
-	int m_tankIdleChannel;
-	int m_battleCount;
+    virtual void playMusic(const char* directory) = 0;
+    virtual void stopMusic() = 0;
+
+private:
+    int m_tankIdleChannel;
+    int m_battleCount;
 };
 
 extern Sound* sound;

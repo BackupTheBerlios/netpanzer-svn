@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -63,18 +63,18 @@ Surface View::pics;
 //---------------------------------------------------------------------------
 void View::add(Component *component)
 {
-	assert(component != 0);
-	if (component == 0) { return; }
-	
-	if (componentsUsedCount < MAX_COMPONENT_COUNT - 1)
-	{
-		componentList[componentsUsedCount] = component;
-		componentList[componentsUsedCount]->setParent(this);
-		componentsUsedCount++;
-	} else
-	{
-		throw Exception("ERROR: Trying to add more componentList than pre-allocated, increase the pre-allocated amount.");
-	}
+    assert(component != 0);
+    if (component == 0) {
+        return;
+    }
+
+    if (componentsUsedCount < MAX_COMPONENT_COUNT - 1) {
+        componentList[componentsUsedCount] = component;
+        componentList[componentsUsedCount]->setParent(this);
+        componentsUsedCount++;
+    } else {
+        throw Exception("ERROR: Trying to add more componentList than pre-allocated, increase the pre-allocated amount.");
+    }
 
 } // end View::add
 
@@ -82,69 +82,63 @@ void View::add(Component *component)
 //---------------------------------------------------------------------------
 View::View()
 {
-	reset();
-	loadPics();
+    reset();
+    loadPics();
 
 #ifdef GRAPHIC_BORDERS
-	char strBuf[256];
+    char strBuf[256];
 
-	if (topBorder.getFrameCount() <= 0)
-	{
-		sprintf(strBuf, "pics/viewBorders/btop.til");
-		if (!topBorder.loadTIL(strBuf))	throw Exception("ERROR: Unable to load: %s", strBuf);
-	}
-	if (leftBorder.getFrameCount() <= 0)
-	{
-		sprintf(strBuf, "pics/viewBorders/bleft.til");
-		if (!leftBorder.loadTIL(strBuf)) throw Exception("ERROR: Unable to load: %s", strBuf);
-	}
-	if (bottomBorder.getFrameCount() <= 0)
-	{
-		sprintf(strBuf, "pics/viewBorders/bbottom.til");
-		if (!bottomBorder.loadTIL(strBuf))	throw Exception("ERROR: Unable to load: %s", strBuf);
-	}
-	if (rightBorder.getFrameCount() <= 0)
-	{
-		sprintf(strBuf, "pics/viewBorders/bright.til");
-		if (!rightBorder.loadTIL(strBuf)) throw Exception("ERROR: Unable to load: %s", strBuf);
-	}
-	if (topLeftCornerLarge.getFrameCount() <= 0)
-	{
-		sprintf(strBuf, "pics/viewBorders/bctl1.til");
-		if (!topLeftCornerLarge.loadTIL(strBuf)) throw Exception("ERROR: Unable to load: %s", strBuf);
-	}
-	if (topLeftCornerSmall.getFrameCount() <= 0)
-	{
-		sprintf(strBuf, "pics/viewBorders/bctl2.til");
-		if (!topLeftCornerSmall.loadTIL(strBuf)) throw Exception("ERROR: Unable to load: %s", strBuf);
-	}
+    if (topBorder.getFrameCount() <= 0) {
+        sprintf(strBuf, "pics/viewBorders/btop.til");
+        if (!topBorder.loadTIL(strBuf))	throw Exception("ERROR: Unable to load: %s", strBuf);
+    }
+    if (leftBorder.getFrameCount() <= 0) {
+        sprintf(strBuf, "pics/viewBorders/bleft.til");
+        if (!leftBorder.loadTIL(strBuf)) throw Exception("ERROR: Unable to load: %s", strBuf);
+    }
+    if (bottomBorder.getFrameCount() <= 0) {
+        sprintf(strBuf, "pics/viewBorders/bbottom.til");
+        if (!bottomBorder.loadTIL(strBuf))	throw Exception("ERROR: Unable to load: %s", strBuf);
+    }
+    if (rightBorder.getFrameCount() <= 0) {
+        sprintf(strBuf, "pics/viewBorders/bright.til");
+        if (!rightBorder.loadTIL(strBuf)) throw Exception("ERROR: Unable to load: %s", strBuf);
+    }
+    if (topLeftCornerLarge.getFrameCount() <= 0) {
+        sprintf(strBuf, "pics/viewBorders/bctl1.til");
+        if (!topLeftCornerLarge.loadTIL(strBuf)) throw Exception("ERROR: Unable to load: %s", strBuf);
+    }
+    if (topLeftCornerSmall.getFrameCount() <= 0) {
+        sprintf(strBuf, "pics/viewBorders/bctl2.til");
+        if (!topLeftCornerSmall.loadTIL(strBuf)) throw Exception("ERROR: Unable to load: %s", strBuf);
+    }
 
-	// Top right corner.
-	topRightCornerLarge.copy(topLeftCornerLarge);
-	topRightCornerLarge.flipHorizontal();
-	
-	topRightCornerSmall.copy(topLeftCornerSmall);
-	topRightCornerSmall.flipHorizontal();
+    // Top right corner.
+    topRightCornerLarge.copy(topLeftCornerLarge);
+    topRightCornerLarge.flipHorizontal();
 
-	// Bottom left corner.
-	bottomLeftCornerLarge.copy(topLeftCornerLarge);
-	bottomLeftCornerLarge.flipVertical();
-	
-	bottomLeftCornerSmall.copy(topLeftCornerSmall);
-	bottomLeftCornerSmall.flipVertical();
+    topRightCornerSmall.copy(topLeftCornerSmall);
+    topRightCornerSmall.flipHorizontal();
 
-	// Bottom right corner.
-	bottomRightCornerLarge.copy(topLeftCornerLarge);
-	bottomRightCornerLarge.flipHorizontal();
-	bottomRightCornerLarge.flipVertical();
-	
-	bottomRightCornerSmall.copy(topLeftCornerSmall);
-	bottomRightCornerSmall.flipHorizontal();
-	bottomRightCornerSmall.flipVertical();
+    // Bottom left corner.
+    bottomLeftCornerLarge.copy(topLeftCornerLarge);
+    bottomLeftCornerLarge.flipVertical();
+
+    bottomLeftCornerSmall.copy(topLeftCornerSmall);
+    bottomLeftCornerSmall.flipVertical();
+
+    // Bottom right corner.
+    bottomRightCornerLarge.copy(topLeftCornerLarge);
+    bottomRightCornerLarge.flipHorizontal();
+    bottomRightCornerLarge.flipVertical();
+
+    bottomRightCornerSmall.copy(topLeftCornerSmall);
+    bottomRightCornerSmall.flipHorizontal();
+    bottomRightCornerSmall.flipVertical();
 #endif
 
 #ifdef HAIRLINE_BORDERS
-	borderSize = 1;
+    borderSize = 1;
 #endif
 
 } // end View::View
@@ -153,18 +147,18 @@ View::View()
 //---------------------------------------------------------------------------
 View::View(const iXY &pos, const iXY &size, const char *title)
 {
-	reset();
+    reset();
 
-	// If the button is bordered, then put a close button on it.
-	//if (status & STATUS_ISBORDERED)
-	//LOG(("About to addButton"));
-	//addButton(iXY(getSizeX()-10, getSizeY()-10), "pics/buttons/wclose.raw", "Close the current window", View::toggleWindow);
-	//LOG(("Past addButton"));
+    // If the button is bordered, then put a close button on it.
+    //if (status & STATUS_ISBORDERED)
+    //LOG(("About to addButton"));
+    //addButton(iXY(getSizeX()-10, getSizeY()-10), "pics/buttons/wclose.raw", "Close the current window", View::toggleWindow);
+    //LOG(("Past addButton"));
 
-	moveTo(pos);
-	resize(size);
-	setTitle(title);
-	loadPics();
+    moveTo(pos);
+    resize(size);
+    setTitle(title);
+    loadPics();
 
 } // end View::View
 
@@ -172,9 +166,9 @@ View::View(const iXY &pos, const iXY &size, const char *title)
 //---------------------------------------------------------------------------
 View::~View()
 {
-	free(title);
-	free(subTitle);
-	free(labels);
+    free(title);
+    free(subTitle);
+    free(labels);
 
 } // end ~View::View
 
@@ -184,46 +178,46 @@ View::~View()
 //---------------------------------------------------------------------------
 void View::reset()
 {
-	min                   =  0;
-	max                   =  0;
-	status                =  0;
-	numLabels             =  0;
-	pressedButton         = -1;
-	prevPressedButton     = -1;
-	highlightedButton     = -1;
-	prevHighlightedButton = -1;
-	selectedInputField    = -1;
-	searchName            = 0;
-	title                 = 0;
-	subTitle              = 0;
-	statusText            = 0;
-	focusComponent        = 0;
+    min                   =  0;
+    max                   =  0;
+    status                =  0;
+    numLabels             =  0;
+    pressedButton         = -1;
+    prevPressedButton     = -1;
+    highlightedButton     = -1;
+    prevHighlightedButton = -1;
+    selectedInputField    = -1;
+    searchName            = 0;
+    title                 = 0;
+    subTitle              = 0;
+    statusText            = 0;
+    focusComponent        = 0;
 
-	setSearchName("donut");
-	setTitle("donut");
-	setSubTitle("donut");
+    setSearchName("donut");
+    setTitle("donut");
+    setSubTitle("donut");
 
-	buttons               = 0;
-	//scrollBar             = 0;
-	labels                = 0;
-	componentsUsedCount   = 0;
-	
-	assert(MAX_COMPONENT_COUNT > 0);
-	memset(componentList, 0, sizeof(Component *) * MAX_COMPONENT_COUNT);
+    buttons               = 0;
+    //scrollBar             = 0;
+    labels                = 0;
+    componentsUsedCount   = 0;
 
-	moveAreaHeight  = DEFAULT_MOVE_AREA_HEIGHT;
-	borderSize      = DEFAULT_BORDER_SIZE;
-	snapToTolerance = DEFAULT_SNAP_TOLERANCE;
+    assert(MAX_COMPONENT_COUNT > 0);
+    memset(componentList, 0, sizeof(Component *) * MAX_COMPONENT_COUNT);
 
-	setAllowResize(true);
-	setAllowMove(true);
-	setBordered(true);
-	setVisible(false);
-	setDisplayStatusBar(false);
-	setAlwaysOnBottom(false);
+    moveAreaHeight  = DEFAULT_MOVE_AREA_HEIGHT;
+    borderSize      = DEFAULT_BORDER_SIZE;
+    snapToTolerance = DEFAULT_SNAP_TOLERANCE;
 
-	//setScrollBar(false);
-	setAllowAutoResize(false);
+    setAllowResize(true);
+    setAllowMove(true);
+    setBordered(true);
+    setVisible(false);
+    setDisplayStatusBar(false);
+    setAlwaysOnBottom(false);
+
+    //setScrollBar(false);
+    setAllowAutoResize(false);
 
 } // end reset
 
@@ -233,49 +227,49 @@ void View::reset()
 //---------------------------------------------------------------------------
 void View::drawBorder(const Surface &viewArea)
 {
-	assert(this != 0);
+    assert(this != 0);
 
 #ifdef GRAPHIC_BORDERS
-	// Straight edges.
-	topBorder.blt(viewArea, topLeftCornerLarge.getPix().x, 2);
+    // Straight edges.
+    topBorder.blt(viewArea, topLeftCornerLarge.getPix().x, 2);
 
-	int yOffset = viewArea.getPix().y - bottomBorder.getPix().y - 2;
-	bottomBorder.blt(viewArea, bottomLeftCornerSmall.getPix().x, yOffset);
+    int yOffset = viewArea.getPix().y - bottomBorder.getPix().y - 2;
+    bottomBorder.blt(viewArea, bottomLeftCornerSmall.getPix().x, yOffset);
 
-	leftBorder.blt(viewArea, 2, topLeftCornerLarge.getPix().y + topLeftCornerSmall.getPix().y);
-	
-	int xOffset = viewArea.getPix().x - rightBorder.getPix().x - 2;
-	rightBorder.blt(viewArea, xOffset, topRightCornerLarge.getPix().y + topRightCornerSmall.getPix().y);
+    leftBorder.blt(viewArea, 2, topLeftCornerLarge.getPix().y + topLeftCornerSmall.getPix().y);
 
-	// Corners.
-	topLeftCornerLarge.blt(viewArea);
-	topLeftCornerSmall.blt(viewArea, 0, topLeftCornerLarge.getPix().y);
+    int xOffset = viewArea.getPix().x - rightBorder.getPix().x - 2;
+    rightBorder.blt(viewArea, xOffset, topRightCornerLarge.getPix().y + topRightCornerSmall.getPix().y);
 
-	xOffset = viewArea.getPix().x - topRightCornerLarge.getPix().x;
-	topRightCornerLarge.blt(viewArea, xOffset, 0);
-	
-	xOffset = viewArea.getPix().x - topRightCornerSmall.getPix().x;
-	topRightCornerSmall.blt(viewArea, xOffset, topLeftCornerLarge.getPix().y);
+    // Corners.
+    topLeftCornerLarge.blt(viewArea);
+    topLeftCornerSmall.blt(viewArea, 0, topLeftCornerLarge.getPix().y);
 
-	yOffset = viewArea.getPix().y - bottomLeftCornerLarge.getPix().y;
-	bottomLeftCornerLarge.blt(viewArea, 0, yOffset);
-	yOffset = viewArea.getPix().y - bottomLeftCornerLarge.getPix().y - bottomLeftCornerSmall.getPix().y;
-	bottomLeftCornerSmall.blt(viewArea, 0, yOffset);
+    xOffset = viewArea.getPix().x - topRightCornerLarge.getPix().x;
+    topRightCornerLarge.blt(viewArea, xOffset, 0);
 
-	xOffset = viewArea.getPix().x - bottomRightCornerLarge.getPix().x;
-	yOffset = viewArea.getPix().y - bottomRightCornerLarge.getPix().y;
-	bottomRightCornerLarge.blt(viewArea, xOffset, yOffset);
-	xOffset = viewArea.getPix().x - bottomRightCornerSmall.getPix().x;
-	yOffset = viewArea.getPix().y - bottomRightCornerSmall.getPix().y - bottomRightCornerLarge.getPix().y;
-	bottomRightCornerSmall.blt(viewArea, xOffset, yOffset);
+    xOffset = viewArea.getPix().x - topRightCornerSmall.getPix().x;
+    topRightCornerSmall.blt(viewArea, xOffset, topLeftCornerLarge.getPix().y);
+
+    yOffset = viewArea.getPix().y - bottomLeftCornerLarge.getPix().y;
+    bottomLeftCornerLarge.blt(viewArea, 0, yOffset);
+    yOffset = viewArea.getPix().y - bottomLeftCornerLarge.getPix().y - bottomLeftCornerSmall.getPix().y;
+    bottomLeftCornerSmall.blt(viewArea, 0, yOffset);
+
+    xOffset = viewArea.getPix().x - bottomRightCornerLarge.getPix().x;
+    yOffset = viewArea.getPix().y - bottomRightCornerLarge.getPix().y;
+    bottomRightCornerLarge.blt(viewArea, xOffset, yOffset);
+    xOffset = viewArea.getPix().x - bottomRightCornerSmall.getPix().x;
+    yOffset = viewArea.getPix().y - bottomRightCornerSmall.getPix().y - bottomRightCornerLarge.getPix().y;
+    bottomRightCornerSmall.blt(viewArea, xOffset, yOffset);
 #endif
 
 #ifdef STANDARD_BORDERS
-	viewArea.drawWindowsBorder(Color::white, Color::lightGray, Color::gray);
+    viewArea.drawWindowsBorder(Color::white, Color::lightGray, Color::gray);
 #endif
 
 #ifdef HAIRLINE_BORDERS
-	viewArea.drawButtonBorder(Color::lightGreen, Color::darkGreen);
+    viewArea.drawButtonBorder(Color::lightGreen, Color::darkGreen);
 #endif
 
 } // end drawBorder
@@ -286,13 +280,13 @@ void View::drawBorder(const Surface &viewArea)
 //---------------------------------------------------------------------------
 void View::drawButtons(const Surface &viewArea)
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	//pics.setFrame(CLOSE);
-	//pics.blt(viewArea, iXY(getSizeX()-pics.getPix().x-borderSize-2, borderSize+2));
+    //pics.setFrame(CLOSE);
+    //pics.blt(viewArea, iXY(getSizeX()-pics.getPix().x-borderSize-2, borderSize+2));
 
-	//pics.setFrame(MINIMIZE);
-	//pics.blt(viewArea, getSizeX()-pics.xSize*2-borderSize*2-2, borderSize+2);
+    //pics.setFrame(MINIMIZE);
+    //pics.blt(viewArea, getSizeX()-pics.xSize*2-borderSize*2-2, borderSize+2);
 
 } // end View::drawButtons
 
@@ -303,195 +297,194 @@ void View::drawButtons(const Surface &viewArea)
 //---------------------------------------------------------------------------
 void View::drawTitle(const Surface &viewArea)
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	iRect r(borderSize, borderSize, getSizeX() - borderSize, borderSize + moveAreaHeight - 1);
+    iRect r(borderSize, borderSize, getSizeX() - borderSize, borderSize + moveAreaHeight - 1);
 
-	Surface s;
-	s.setTo(viewArea, r);
+    Surface s;
+    s.setTo(viewArea, r);
 
-	s.fill(getActive() ? activeWindowTitleBodyColor : inactiveWindowTitleBodyColor);
+    s.fill(getActive() ? activeWindowTitleBodyColor : inactiveWindowTitleBodyColor);
 
-	char strBuf[256];
-	
-	sprintf(strBuf, "%s%s", title, subTitle);
+    char strBuf[256];
 
-	s.bltStringCenter(strBuf, getActive() ? activeWindowTitleTextColor : inactiveWindowTitleTextColor);
+    sprintf(strBuf, "%s%s", title, subTitle);
 
-	if (getResize())
-	{
-		{
-		// Bottom-Left resize.
-		iXY verticalPos(borderSize, getSizeY() - borderSize - moveAreaHeight + 1);
-		iXY horizontalPos(borderSize + moveAreaHeight - 1, getSizeY() - borderSize);
+    s.bltStringCenter(strBuf, getActive() ? activeWindowTitleTextColor : inactiveWindowTitleTextColor);
 
-		viewArea.drawLine(verticalPos, horizontalPos, Color::white);
-		verticalPos.y++;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
-		verticalPos.y++;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
-		verticalPos.y++;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x--;
-		}
+    if (getResize()) {
+        {
+            // Bottom-Left resize.
+            iXY verticalPos(borderSize, getSizeY() - borderSize - moveAreaHeight + 1);
+            iXY horizontalPos(borderSize + moveAreaHeight - 1, getSizeY() - borderSize);
 
-		// Top-Left resize.
-		{
-		iXY verticalPos(borderSize, borderSize + moveAreaHeight - 1);
-		iXY horizontalPos(borderSize + moveAreaHeight - 1, borderSize);
+            viewArea.drawLine(verticalPos, horizontalPos, Color::white);
+            verticalPos.y++;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
+            verticalPos.y++;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
+            verticalPos.y++;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x--;
+        }
 
-		viewArea.drawLine(verticalPos, horizontalPos, Color::white);
-		verticalPos.y--;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
-		verticalPos.y--;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
-		verticalPos.y--;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x--;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x--;
-		}
+        // Top-Left resize.
+        {
+            iXY verticalPos(borderSize, borderSize + moveAreaHeight - 1);
+            iXY horizontalPos(borderSize + moveAreaHeight - 1, borderSize);
 
-		// Top-Right resize.
-		{
-		iXY verticalPos(getSizeX() - borderSize, borderSize + moveAreaHeight - 1);
-		iXY horizontalPos(getSizeX() - borderSize - moveAreaHeight, borderSize - 1);
+            viewArea.drawLine(verticalPos, horizontalPos, Color::white);
+            verticalPos.y--;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
+            verticalPos.y--;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
+            verticalPos.y--;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x--;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x--;
+        }
 
-		viewArea.drawLine(verticalPos, horizontalPos, Color::white);
-		verticalPos.y--;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
-		verticalPos.y--;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
-		verticalPos.y--;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y--;
-		horizontalPos.x++;
-		}
+        // Top-Right resize.
+        {
+            iXY verticalPos(getSizeX() - borderSize, borderSize + moveAreaHeight - 1);
+            iXY horizontalPos(getSizeX() - borderSize - moveAreaHeight, borderSize - 1);
 
-		// Bottom-Right resize.
-		{
-		iXY verticalPos(getSizeX() - borderSize, getSizeY() - borderSize - moveAreaHeight + 1);
-		iXY horizontalPos(getSizeX() - borderSize - moveAreaHeight + 1, getSizeY() - borderSize);
+            viewArea.drawLine(verticalPos, horizontalPos, Color::white);
+            verticalPos.y--;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
+            verticalPos.y--;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
+            verticalPos.y--;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y--;
+            horizontalPos.x++;
+        }
 
-		viewArea.drawLine(verticalPos, horizontalPos, Color::white);
-		verticalPos.y++;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
-		verticalPos.y++;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
-		verticalPos.y++;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x++;
-		viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
-		verticalPos.y++;
-		horizontalPos.x++;
-		}
-	}
+        // Bottom-Right resize.
+        {
+            iXY verticalPos(getSizeX() - borderSize, getSizeY() - borderSize - moveAreaHeight + 1);
+            iXY horizontalPos(getSizeX() - borderSize - moveAreaHeight + 1, getSizeY() - borderSize);
+
+            viewArea.drawLine(verticalPos, horizontalPos, Color::white);
+            verticalPos.y++;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
+            verticalPos.y++;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
+            verticalPos.y++;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x++;
+            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            verticalPos.y++;
+            horizontalPos.x++;
+        }
+    }
 
 } // end View::drawTitle
 
@@ -499,11 +492,11 @@ void View::drawTitle(const Surface &viewArea)
 //---------------------------------------------------------------------------
 void View::loadPics()
 {
-	// Are we already loaded?  Then bail.
-	if (pics.getFrame0() != 0) return;
+    // Are we already loaded?  Then bail.
+    if (pics.getFrame0() != 0) return;
 
-	//pics.create(iXY(12, 11), 12, 2);
-	//pics.extractPCX("pics/buttons.pcx", 6, 1);
+    //pics.create(iXY(12, 11), 12, 2);
+    //pics.extractPCX("pics/buttons.pcx", 6, 1);
 
 } // end loadPics
 
@@ -511,12 +504,12 @@ void View::loadPics()
 //---------------------------------------------------------------------------
 void View::draw()
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	if (!getVisible())
-		return;
+    if (!getVisible())
+        return;
 
-	doDraw(getViewArea(), getClientArea());
+    doDraw(getViewArea(), getClientArea());
 } // end draw
 
 // activate
@@ -525,15 +518,14 @@ void View::draw()
 //---------------------------------------------------------------------------
 void View::activate()
 {
-	if (getActive())
-	{
-		return;
-	}
+    if (getActive()) {
+        return;
+    }
 
-	// Set the active bit.
-	status |= STATUS_ACTIVE;
+    // Set the active bit.
+    status |= STATUS_ACTIVE;
 
-	doActivate();
+    doActivate();
 
 } // end View::activate
 
@@ -543,18 +535,17 @@ void View::activate()
 //---------------------------------------------------------------------------
 void View::deactivate()
 {
-	if (!getActive())
-	{
-		return;
-	}
+    if (!getActive()) {
+        return;
+    }
 
-	setActive(false);
+    setActive(false);
 
-	doDeactivate();
-	
-	highlightedButton     = -1;
-	prevHighlightedButton = -1;
-	selectedInputField    = -1;
+    doDeactivate();
+
+    highlightedButton     = -1;
+    prevHighlightedButton = -1;
+    selectedInputField    = -1;
 
 } // end View::deactivate
 
@@ -564,42 +555,37 @@ void View::deactivate()
 //---------------------------------------------------------------------------
 void View::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
-	if (getShowStatus()) 
-	{
-		drawStatus(clientArea);
-	}
+    if (getShowStatus()) {
+        drawStatus(clientArea);
+    }
 
-	//FIXME//drawButtons(viewArea);
-	drawDefinedButtons(clientArea);
-	drawInputFields(clientArea);
-	drawLabels(clientArea);
-	drawHighlightedButton(clientArea);
-	drawPressedButton(clientArea);
+    //FIXME//drawButtons(viewArea);
+    drawDefinedButtons(clientArea);
+    drawInputFields(clientArea);
+    drawLabels(clientArea);
+    drawHighlightedButton(clientArea);
+    drawPressedButton(clientArea);
 
-	// Draw all non-selected components.
-	for (int i = 0; i < componentsUsedCount; i++)
-	{
-		assert(componentList[i] != 0);
+    // Draw all non-selected components.
+    for (int i = 0; i < componentsUsedCount; i++) {
+        assert(componentList[i] != 0);
 
-		if (componentList[i] != focusComponent)
-		{
-			componentList[i]->draw(clientArea);
-		}
-	}
+        if (componentList[i] != focusComponent) {
+            componentList[i]->draw(clientArea);
+        }
+    }
 
-	// Now draw the selected component.
-	if (focusComponent != 0)
-	{
-		focusComponent->draw(clientArea);
-	}
+    // Now draw the selected component.
+    if (focusComponent != 0) {
+        focusComponent->draw(clientArea);
+    }
 
-	if (getBordered()) 
-	{
-		drawTitle(viewArea);
-		drawBorder(viewArea);
-	}
+    if (getBordered()) {
+        drawTitle(viewArea);
+        drawBorder(viewArea);
+    }
 
-	//drawToolTip(clientArea);
+    //drawToolTip(clientArea);
 } // end View::doDraw
 
 // doActivate
@@ -608,22 +594,20 @@ void View::doDraw(const Surface &viewArea, const Surface &clientArea)
 //---------------------------------------------------------------------------
 void View::doActivate()
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	// Tell all the components the mouse entered the view.
-	for (int i = 0; i < componentsUsedCount; i++)
-	{
-		assert(componentList[i] != 0);
+    // Tell all the components the mouse entered the view.
+    for (int i = 0; i < componentsUsedCount; i++) {
+        assert(componentList[i] != 0);
 
-		if (componentList[i]->contains(mouse.getScreenPos()))
-		{
-			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, mouse.getScreenX(), mouse.getScreenY(), 0, false);
+        if (componentList[i]->contains(mouse.getScreenPos())) {
+            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, mouse.getScreenX(), mouse.getScreenY(), 0, false);
 
-			componentList[i]->actionPerformed(me);
+            componentList[i]->actionPerformed(me);
 
-			actionPerformed(me);
-		}
-	}
+            actionPerformed(me);
+        }
+    }
 } // end View::doActivate
 
 // doDeactivate
@@ -632,17 +616,16 @@ void View::doActivate()
 //---------------------------------------------------------------------------
 void View::doDeactivate()
 {
-	assert(this != 0);
-		
-	// Tell all the components the mouse exited the view.
-	for (int i = 0; i < componentsUsedCount; i++)
-	{
-		mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, mouse.getScreenX(), mouse.getScreenY(), 0, false);
+    assert(this != 0);
 
-		componentList[i]->actionPerformed(me);
+    // Tell all the components the mouse exited the view.
+    for (int i = 0; i < componentsUsedCount; i++) {
+        mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, mouse.getScreenX(), mouse.getScreenY(), 0, false);
 
-		actionPerformed(me);
-	}
+        componentList[i]->actionPerformed(me);
+
+        actionPerformed(me);
+    }
 } // end View::doDeactivate
 
 // getMouseActions
@@ -652,69 +635,63 @@ void View::doDeactivate()
 //---------------------------------------------------------------------------
 int View::getMouseActions(const iXY &pos) const
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	int actions = 0;
+    int actions = 0;
 
-	if (!getVisible() || !getActive())
-	{
-		return actions;
-	}
+    if (!getVisible() || !getActive()) {
+        return actions;
+    }
 
-	if (!getBordered())
-	{
-		return actions;
-	}
+    if (!getBordered()) {
+        return actions;
+    }
 
-	if (getResize())
-	{
-		// Now lets check for a window resize
-		iXY minOff;
-		iXY maxOff;
+    if (getResize()) {
+        // Now lets check for a window resize
+        iXY minOff;
+        iXY maxOff;
 
-		minOff.x = abs(pos.x); maxOff.x = abs(pos.x - getSizeX());
-		minOff.y = abs(pos.y); maxOff.y = abs(pos.y - getSizeY());
+        minOff.x = abs(pos.x); maxOff.x = abs(pos.x - getSizeX());
+        minOff.y = abs(pos.y); maxOff.y = abs(pos.y - getSizeY());
 
-		// Check the left,  then the right
-		if      (minOff.x < RESIZE_XMIN) actions |= MA_RESIZE_LEFT;
-		else if (maxOff.x < RESIZE_XMIN) actions |= MA_RESIZE_RIGHT;
+        // Check the left,  then the right
+        if      (minOff.x < RESIZE_XMIN) actions |= MA_RESIZE_LEFT;
+        else if (maxOff.x < RESIZE_XMIN) actions |= MA_RESIZE_RIGHT;
 
-		// Check the top, then the bottom
-		if      (minOff.y < RESIZE_YMIN) actions |= MA_RESIZE_TOP;
-		else if (maxOff.y < RESIZE_YMIN) actions |= MA_RESIZE_BOTTOM;
+        // Check the top, then the bottom
+        if      (minOff.y < RESIZE_YMIN) actions |= MA_RESIZE_TOP;
+        else if (maxOff.y < RESIZE_YMIN) actions |= MA_RESIZE_BOTTOM;
 
-		// If a left or right was turned on, then give more area for selecting the
-		// resize area
-		if (actions & (MA_RESIZE_LEFT | MA_RESIZE_RIGHT))
-		{
-			if      (minOff.y < RESIZE_YMAX) actions |= MA_RESIZE_TOP;
-			else if (maxOff.y < RESIZE_YMAX) actions |= MA_RESIZE_BOTTOM;
-		}
+        // If a left or right was turned on, then give more area for selecting the
+        // resize area
+        if (actions & (MA_RESIZE_LEFT | MA_RESIZE_RIGHT)) {
+            if      (minOff.y < RESIZE_YMAX) actions |= MA_RESIZE_TOP;
+            else if (maxOff.y < RESIZE_YMAX) actions |= MA_RESIZE_BOTTOM;
+        }
 
-		if (actions & (MA_RESIZE_TOP | MA_RESIZE_BOTTOM))
-		{
-			if      (minOff.x < RESIZE_XMAX) actions |= MA_RESIZE_LEFT;
-			else if (maxOff.x < RESIZE_XMAX) actions |= MA_RESIZE_RIGHT;
-		}
-	}
+        if (actions & (MA_RESIZE_TOP | MA_RESIZE_BOTTOM)) {
+            if      (minOff.x < RESIZE_XMAX) actions |= MA_RESIZE_LEFT;
+            else if (maxOff.x < RESIZE_XMAX) actions |= MA_RESIZE_RIGHT;
+        }
+    }
 
-	// Check for moving the window via the move area.
-	if (getAllowMove())
-	{
-		//iRect titleBar(borderSize, borderSize, getSizeX()-borderSize, borderSize + moveAreaHeight);
-		iRect titleBar(borderSize, borderSize, getSizeX() - borderSize, borderSize + moveAreaHeight);
-		if (titleBar.contains(pos)) return actions |= MA_MOVE;
-	}
+    // Check for moving the window via the move area.
+    if (getAllowMove()) {
+        //iRect titleBar(borderSize, borderSize, getSizeX()-borderSize, borderSize + moveAreaHeight);
+        iRect titleBar(borderSize, borderSize, getSizeX() - borderSize, borderSize + moveAreaHeight);
+        if (titleBar.contains(pos)) return actions |= MA_MOVE;
+    }
 
-	// Check for moving the window via the status bar.
-	//if (getAllowMove())
-	//{
-	//	//iRect titleBar(borderSize, borderSize, getSizeX()-borderSize, borderSize + moveAreaHeight);
-	//	iRect titleBar(borderSize, getSizeY() - borderSize - DEFAULT_STATUS_BAR_HEIGHT, getSizeX() - borderSize, getSizeY() - borderSize);
-	//	if (titleBar.contains(pos)) return actions |= MA_MOVE;
-	//}
+    // Check for moving the window via the status bar.
+    //if (getAllowMove())
+    //{
+    //	//iRect titleBar(borderSize, borderSize, getSizeX()-borderSize, borderSize + moveAreaHeight);
+    //	iRect titleBar(borderSize, getSizeY() - borderSize - DEFAULT_STATUS_BAR_HEIGHT, getSizeX() - borderSize, getSizeY() - borderSize);
+    //	if (titleBar.contains(pos)) return actions |= MA_MOVE;
+    //}
 
-	return actions;
+    return actions;
 } // end getMouseActions
 
 // getScreenToClientPos
@@ -726,15 +703,14 @@ int View::getMouseActions(const iXY &pos) const
 //---------------------------------------------------------------------------
 iXY View::getScreenToClientPos(const iXY &pos)
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	if (getBordered())
-	{
-		return iXY(	pos.x - (min.x + borderSize),
-					pos.y - (min.y + borderSize + moveAreaHeight));
-	}
-	
-	return getScreenToViewPos(pos);
+    if (getBordered()) {
+        return iXY(	pos.x - (min.x + borderSize),
+                    pos.y - (min.y + borderSize + moveAreaHeight));
+    }
+
+    return getScreenToViewPos(pos);
 
 } // end View::getScreenToClientPos
 
@@ -746,9 +722,9 @@ iXY View::getScreenToClientPos(const iXY &pos)
 //---------------------------------------------------------------------------
 iXY View::getScreenToViewPos(const iXY &pos)
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	return iXY(pos.x - min.x, pos.y - min.y);
+    return iXY(pos.x - min.x, pos.y - min.y);
 
 } // end getScreenToViewPos
 
@@ -758,15 +734,15 @@ iXY View::getScreenToViewPos(const iXY &pos)
 //---------------------------------------------------------------------------
 void View::getViewArea(Surface &dest)
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	iRect rect(min, max);
-	
-	//iRect rect;
-	//checkSnapToEdges(min, max, rect.min, rect.max);
-	//dest.setTo(screen, rect);
+    iRect rect(min, max);
 
-	dest.setTo(screen, rect);
+    //iRect rect;
+    //checkSnapToEdges(min, max, rect.min, rect.max);
+    //dest.setTo(screen, rect);
+
+    dest.setTo(screen, rect);
 
 } // end getViewArea
 
@@ -778,35 +754,29 @@ void View::getViewArea(Surface &dest)
 //---------------------------------------------------------------------------
 void View::checkSnapToEdges(const iXY &min, const iXY &max, iXY &newMin, iXY &newMax)
 {
-	const int SNAP_TOLERANCE = 20;
+    const int SNAP_TOLERANCE = 20;
 
-	newMin = min;
-	newMax = max;
-	
-	iXY size(newMax - newMin);
+    newMin = min;
+    newMax = max;
 
-	// Snap To Screen edges!
-	if (min.x < SNAP_TOLERANCE)
-	{
-		newMin.x = 0;
-		newMax.x = size.x;
-	}
-	else if (max.x > SCREEN_XPIX - SNAP_TOLERANCE)
-	{
-		newMin.x = SCREEN_XPIX - 1 - size.x;
-		newMax.x = SCREEN_XPIX - 1;
-	}
+    iXY size(newMax - newMin);
 
-	if (min.y < SNAP_TOLERANCE)
-	{
-		newMin.y = 0;
-		newMax.y = size.y;
-	}
-	else if (max.y > SCREEN_YPIX - SNAP_TOLERANCE)
-	{
-		newMin.y = SCREEN_YPIX - 1 - size.y;
-		newMax.y = SCREEN_YPIX - 1;
-	}
+    // Snap To Screen edges!
+    if (min.x < SNAP_TOLERANCE) {
+        newMin.x = 0;
+        newMax.x = size.x;
+    } else if (max.x > SCREEN_XPIX - SNAP_TOLERANCE) {
+        newMin.x = SCREEN_XPIX - 1 - size.x;
+        newMax.x = SCREEN_XPIX - 1;
+    }
+
+    if (min.y < SNAP_TOLERANCE) {
+        newMin.y = 0;
+        newMax.y = size.y;
+    } else if (max.y > SCREEN_YPIX - SNAP_TOLERANCE) {
+        newMin.y = SCREEN_YPIX - 1 - size.y;
+        newMax.y = SCREEN_YPIX - 1;
+    }
 
 } // end View::checkSnapToEdges
 
@@ -816,13 +786,13 @@ void View::checkSnapToEdges(const iXY &min, const iXY &max, iXY &newMin, iXY &ne
 //---------------------------------------------------------------------------
 Surface View::getViewArea()
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	iRect rect(min, max);
-	//iRect rect;
-	//checkSnapToEdges(min, max, rect.min, rect.max);
+    iRect rect(min, max);
+    //iRect rect;
+    //checkSnapToEdges(min, max, rect.min, rect.max);
 
-	return Surface(screen, rect.min, rect.max, false);
+    return Surface(screen, rect.min, rect.max, false);
 
 } // end View::getViewArea
 
@@ -832,7 +802,7 @@ Surface View::getViewArea()
 //---------------------------------------------------------------------------
 iRect View::getViewRect() const
 {
-	return iRect(0, 0, getSizeX(), getSizeY());
+    return iRect(0, 0, getSizeX(), getSizeY());
 
 } // end getViewRect
 
@@ -844,19 +814,17 @@ iRect View::getViewRect() const
 //---------------------------------------------------------------------------
 void View::getClientArea(Surface &dest)
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	if (getBordered())
-	{
-		dest.setTo(	getViewArea(),
-					iRect(	borderSize,
-							borderSize + moveAreaHeight,
-							getSizeX() - borderSize,
-							getSizeY() - borderSize));
-	} else
-	{
-		getViewArea(dest);
-	}
+    if (getBordered()) {
+        dest.setTo(	getViewArea(),
+                    iRect(	borderSize,
+                           borderSize + moveAreaHeight,
+                           getSizeX() - borderSize,
+                           getSizeY() - borderSize));
+    } else {
+        getViewArea(dest);
+    }
 
 } // end View::getClientArea
 
@@ -866,17 +834,16 @@ void View::getClientArea(Surface &dest)
 //---------------------------------------------------------------------------
 Surface View::getClientArea()
 {
-	if (getBordered())
-	{
-		return Surface(	getViewArea(),
-						iXY(borderSize,
-							borderSize + moveAreaHeight),
-						iXY(getSizeX() - borderSize,
-							getSizeY() - borderSize),
-						false);
-	}
+    if (getBordered()) {
+        return Surface(	getViewArea(),
+                        iXY(borderSize,
+                            borderSize + moveAreaHeight),
+                        iXY(getSizeX() - borderSize,
+                            getSizeY() - borderSize),
+                        false);
+    }
 
-	return getViewArea();
+    return getViewArea();
 
 } // end View::getClientArea
 
@@ -886,15 +853,14 @@ Surface View::getClientArea()
 //---------------------------------------------------------------------------
 iRect View::getClientRect() const
 {
-	if (getBordered())
-	{
-		return iRect(	borderSize,
-						borderSize + moveAreaHeight,
-						getSizeX() - borderSize,
-						getSizeY() - borderSize);
-	}
+    if (getBordered()) {
+        return iRect(	borderSize,
+                      borderSize + moveAreaHeight,
+                      getSizeX() - borderSize,
+                      getSizeY() - borderSize);
+    }
 
-	return iRect(0, 0, getSizeX(), getSizeY());
+    return iRect(0, 0, getSizeX(), getSizeY());
 
 } // end View::getClientRect
 
@@ -904,8 +870,8 @@ iRect View::getClientRect() const
 //---------------------------------------------------------------------------
 Surface *View::getMouseCursor(const iXY & /* pos */)
 {
-	// Draw the mouse pointer last
-	return &mouseArrow;
+    // Draw the mouse pointer last
+    return &mouseArrow;
 
 } // end View::getMouseCursor
 
@@ -916,88 +882,78 @@ Surface *View::getMouseCursor(const iXY & /* pos */)
 //---------------------------------------------------------------------------
 void View::mouseMove(const iXY & prevPos, const iXY &newPos)
 {
-	prevHighlightedButton = highlightedButton;
-	highlightedButton     = findButtonContaining(newPos);
+    prevHighlightedButton = highlightedButton;
+    highlightedButton     = findButtonContaining(newPos);
 
-	// Check all components for a clicked event.
-	for (int i = 0; i < componentsUsedCount; i++)
-	{
-		assert(componentList[i] != 0);
-		
-		if (componentList[i]->contains(prevPos) && !componentList[i]->contains(newPos))
-		{
-			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, newPos.x, newPos.y, 0, false);
+    // Check all components for a clicked event.
+    for (int i = 0; i < componentsUsedCount; i++) {
+        assert(componentList[i] != 0);
 
-			componentList[i]->actionPerformed(me);
+        if (componentList[i]->contains(prevPos) && !componentList[i]->contains(newPos)) {
+            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, newPos.x, newPos.y, 0, false);
 
-			actionPerformed(me);
-		}
-		else if (!componentList[i]->contains(prevPos) && componentList[i]->contains(newPos))
-		{
-			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, newPos.x, newPos.y, 0, false);
+            componentList[i]->actionPerformed(me);
 
-			componentList[i]->actionPerformed(me);
+            actionPerformed(me);
+        } else if (!componentList[i]->contains(prevPos) && componentList[i]->contains(newPos)) {
+            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, newPos.x, newPos.y, 0, false);
 
-			actionPerformed(me);
-		}
-		else if (componentList[i]->contains(newPos))
-		{
-			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_MOVED, now(), 0, newPos.x, newPos.y, 0, false);
+            componentList[i]->actionPerformed(me);
 
-			componentList[i]->actionPerformed(me);
-			
-			actionPerformed(me);
-		}
-	}
+            actionPerformed(me);
+        } else if (componentList[i]->contains(newPos)) {
+            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_MOVED, now(), 0, newPos.x, newPos.y, 0, false);
 
-/*  // THIS DOES NOT WORK!!!!!!!!!!
-	bool flagNewPos  = contains(newPos);
-	bool flagPrevPos = contains(prevPos);
+            componentList[i]->actionPerformed(me);
 
-	// Check for status of mouseEnter and mouseExit.
-	if (flagNewPos && !flagPrevPos)
-	{
-		mouseEnter(newPos);
-	}
-	else if (!flagNewPos && flagPrevPos)
-	{
-		mouseExit(prevPos);
-	}
-*/
+            actionPerformed(me);
+        }
+    }
+
+    /*  // THIS DOES NOT WORK!!!!!!!!!!
+    	bool flagNewPos  = contains(newPos);
+    	bool flagPrevPos = contains(prevPos);
+     
+    	// Check for status of mouseEnter and mouseExit.
+    	if (flagNewPos && !flagPrevPos)
+    	{
+    		mouseEnter(newPos);
+    	}
+    	else if (!flagNewPos && flagPrevPos)
+    	{
+    		mouseExit(prevPos);
+    	}
+    */
 } // end mouseMove
 
 // lMouseDown
 //---------------------------------------------------------------------------
 void View::lMouseDown(const iXY &pos)
 {
-	if (pressedButton < 0)
-	{
-		prevPressedButton = pressedButton;
-		pressedButton     = findButtonContaining(pos);
-	}
+    if (pressedButton < 0) {
+        prevPressedButton = pressedButton;
+        pressedButton     = findButtonContaining(pos);
+    }
 
-	if (selectedInputField < 0)
-	{
-		selectedInputField = findInputFieldContaining(pos);
-	}
-	
-	focusComponent = 0;
+    if (selectedInputField < 0) {
+        selectedInputField = findInputFieldContaining(pos);
+    }
 
-	// Check all components for a pressed event.
-	for (int i = 0; i < componentsUsedCount; i++)
-	{
-		assert(componentList[i] != 0);
-		if (componentList[i]->contains(pos))
-		{
-			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_PRESSED, now(), InputEvent::BUTTON1_MASK, pos.x, pos.y, 0, false);
+    focusComponent = 0;
 
-			componentList[i]->actionPerformed(me);
+    // Check all components for a pressed event.
+    for (int i = 0; i < componentsUsedCount; i++) {
+        assert(componentList[i] != 0);
+        if (componentList[i]->contains(pos)) {
+            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_PRESSED, now(), InputEvent::BUTTON1_MASK, pos.x, pos.y, 0, false);
 
-			focusComponent = componentList[i];
+            componentList[i]->actionPerformed(me);
 
-			actionPerformed(me);
-		}
-	}
+            focusComponent = componentList[i];
+
+            actionPerformed(me);
+        }
+    }
 
 } // end View::lMouseDown
 
@@ -1005,53 +961,49 @@ void View::lMouseDown(const iXY &pos)
 //---------------------------------------------------------------------------
 int View::lMouseUp(const iXY &downPos, const iXY &upPos)
 {
-	Desktop::resetMouseActionOffset();
+    Desktop::resetMouseActionOffset();
 
-	if (pressedButton == findButtonContaining(upPos))
-	{
-		if (pressedButton >= 0)
-		{
-				//if (mouse.getCurButton() & 0)
-			if (buttons[pressedButton].leftClickFunc != 0) buttons[pressedButton].leftClickFunc();
-		  //else
-			//if (buttons[pressedButton].rightClickFunc != 0) buttons[pressedButton].rightClickFunc();
-		}
-	}
+    if (pressedButton == findButtonContaining(upPos)) {
+        if (pressedButton >= 0) {
+            //if (mouse.getCurButton() & 0)
+            if (buttons[pressedButton].leftClickFunc != 0) buttons[pressedButton].leftClickFunc();
+            //else
+            //if (buttons[pressedButton].rightClickFunc != 0) buttons[pressedButton].rightClickFunc();
+        }
+    }
 
-	prevPressedButton = pressedButton;
-	pressedButton     = -1;
+    prevPressedButton = pressedButton;
+    pressedButton     = -1;
 
-	// Check all components for a clicked event.
-	{for (int i = 0; i < componentsUsedCount; i++)
-	{
-		assert(componentList[i] != 0);
-		if (componentList[i]->contains(downPos) && componentList[i]->contains(upPos))
-		{
-			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
+    // Check all components for a clicked event.
+    {for (int i = 0; i < componentsUsedCount; i++)
+        {
+            assert(componentList[i] != 0);
+            if (componentList[i]->contains(downPos) && componentList[i]->contains(upPos)) {
+                mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
 
-			componentList[i]->actionPerformed(me);
+                componentList[i]->actionPerformed(me);
 
-			actionPerformed(me);
-		}
-	}}
+                actionPerformed(me);
+            }
+        }}
 
-	// Report a mouse release to all components except for a clicked one.
-	{for (int i = 0; i < componentsUsedCount; i++)
-	{
-		assert(componentList[i] != 0);
-		if (!componentList[i]->contains(upPos))
-		{
-			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
+    // Report a mouse release to all components except for a clicked one.
+    {for (int i = 0; i < componentsUsedCount; i++)
+        {
+            assert(componentList[i] != 0);
+            if (!componentList[i]->contains(upPos)) {
+                mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
 
-			componentList[i]->actionPerformed(me);
+                componentList[i]->actionPerformed(me);
 
-			actionPerformed(me);
-		}
-	}}
-	
-	// I added this so I can tell if a button was pressed when
-	// the mouse button is let up.
-	return prevPressedButton;
+                actionPerformed(me);
+            }
+        }}
+
+    // I added this so I can tell if a button was pressed when
+    // the mouse button is let up.
+    return prevPressedButton;
 
 } // end View::lMouseUp
 
@@ -1059,24 +1011,22 @@ int View::lMouseUp(const iXY &downPos, const iXY &upPos)
 //---------------------------------------------------------------------------
 void View::lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
 {
-	//lMouseDown(newPos);
-	//mouseMove(prevPos, newPos);
+    //lMouseDown(newPos);
+    //mouseMove(prevPos, newPos);
 
-	// Check all components for a dragged event.
-	for (int i = 0; i < componentsUsedCount; i++)
-	{
-		assert(componentList[i] != 0);
-		if (componentList[i]->contains(newPos) && componentList[i]->contains(downPos))
-		{
-			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON1_MASK, newPos.x, newPos.y, 0, false);
+    // Check all components for a dragged event.
+    for (int i = 0; i < componentsUsedCount; i++) {
+        assert(componentList[i] != 0);
+        if (componentList[i]->contains(newPos) && componentList[i]->contains(downPos)) {
+            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON1_MASK, newPos.x, newPos.y, 0, false);
 
-			componentList[i]->actionPerformed(me);
+            componentList[i]->actionPerformed(me);
 
-			focusComponent = componentList[i];
+            focusComponent = componentList[i];
 
-			actionPerformed(me);
-		}
-	}
+            actionPerformed(me);
+        }
+    }
 
 } // end View::lMouseDrag
 
@@ -1084,7 +1034,7 @@ void View::lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
 //---------------------------------------------------------------------------
 void View::lMouseDouble(const iXY &pos)
 {
-	lMouseDown(pos);
+    lMouseDown(pos);
 
 } // end View::lMouseDouble
 
@@ -1092,23 +1042,21 @@ void View::lMouseDouble(const iXY &pos)
 //---------------------------------------------------------------------------
 void View::rMouseDown(const iXY &pos)
 {
-	focusComponent = 0;
+    focusComponent = 0;
 
-	// Check all components for a pressed event.
-	for (int i = 0; i < componentsUsedCount; i++)
-	{
-		assert(componentList[i] != 0);
-		if (componentList[i]->contains(pos))
-		{
-			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_PRESSED, now(), InputEvent::BUTTON2_MASK, pos.x, pos.y, 0, false);
+    // Check all components for a pressed event.
+    for (int i = 0; i < componentsUsedCount; i++) {
+        assert(componentList[i] != 0);
+        if (componentList[i]->contains(pos)) {
+            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_PRESSED, now(), InputEvent::BUTTON2_MASK, pos.x, pos.y, 0, false);
 
-			componentList[i]->actionPerformed(me);
+            componentList[i]->actionPerformed(me);
 
-			focusComponent = componentList[i];
+            focusComponent = componentList[i];
 
-			actionPerformed(me);
-		}
-	}
+            actionPerformed(me);
+        }
+    }
 
 } // end View::rMouseDown
 
@@ -1116,76 +1064,68 @@ void View::rMouseDown(const iXY &pos)
 //---------------------------------------------------------------------------
 void View::rMouseUp(const iXY &downPos, const iXY &upPos)
 {
-	int reportRelease = true;
+    int reportRelease = true;
 
-	// Check all components for a clicked event.
-	for (int i = 0; i < componentsUsedCount; i++)
-	{
-		assert(componentList[i] != 0);
-		if (componentList[i]->contains(downPos) && componentList[i]->contains(upPos))
-		{
-			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);
+    // Check all components for a clicked event.
+    for (int i = 0; i < componentsUsedCount; i++) {
+        assert(componentList[i] != 0);
+        if (componentList[i]->contains(downPos) && componentList[i]->contains(upPos)) {
+            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);
 
-			componentList[i]->actionPerformed(me);
+            componentList[i]->actionPerformed(me);
 
-			reportRelease = false;
+            reportRelease = false;
 
-			actionPerformed(me);
-		}
-	}
+            actionPerformed(me);
+        }
+    }
 
-	// If we are on the last component and there was no component containing both
-	// mouse press positions, then report a release to an
-	if (reportRelease)
-	{
-		// Check all components for a release event.
-		for (int i = 0; i < componentsUsedCount; i++)
-		{
-			assert(componentList[i] != 0);
-			if (componentList[i]->contains(upPos))
-			{
-				mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);
+    // If we are on the last component and there was no component containing both
+    // mouse press positions, then report a release to an
+    if (reportRelease) {
+        // Check all components for a release event.
+        for (int i = 0; i < componentsUsedCount; i++) {
+            assert(componentList[i] != 0);
+            if (componentList[i]->contains(upPos)) {
+                mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);
 
-				componentList[i]->actionPerformed(me);
+                componentList[i]->actionPerformed(me);
 
-				reportRelease = false;
+                reportRelease = false;
 
-				actionPerformed(me);
-			}
-		}
-	}
+                actionPerformed(me);
+            }
+        }
+    }
 
 } // end View::rMouseUp
 
 // rMouseUp
 //---------------------------------------------------------------------------
 void View::rMouseUp()
-{
-} // end View::rMouseUp
+{} // end View::rMouseUp
 
 // rMouseDrag
 //---------------------------------------------------------------------------
 void View::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
 {
-	rMouseDown(newPos);
+    rMouseDown(newPos);
 
-	focusComponent = 0;
+    focusComponent = 0;
 
-	// Check all components for a moved event.
-	for (int i = 0; i < componentsUsedCount; i++)
-	{
-		assert(componentList[i] != 0);
-		if (componentList[i]->contains(newPos))
-		{
-			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON2_MASK, newPos.x, newPos.y, 0, false);
+    // Check all components for a moved event.
+    for (int i = 0; i < componentsUsedCount; i++) {
+        assert(componentList[i] != 0);
+        if (componentList[i]->contains(newPos)) {
+            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON2_MASK, newPos.x, newPos.y, 0, false);
 
-			componentList[i]->actionPerformed(me);
+            componentList[i]->actionPerformed(me);
 
-			focusComponent = componentList[i];
+            focusComponent = componentList[i];
 
-			actionPerformed(me);
-		}
-	}
+            actionPerformed(me);
+        }
+    }
 
 } // end View::rMouseDrag
 
@@ -1193,7 +1133,7 @@ void View::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
 //---------------------------------------------------------------------------
 void View::rMouseDouble(const iXY &pos)
 {
-	rMouseDown(pos);
+    rMouseDown(pos);
 
 } // end View::rMouseDouble
 
@@ -1203,19 +1143,17 @@ void View::rMouseDouble(const iXY &pos)
 //---------------------------------------------------------------------------
 void View::mouseEnter(const iXY &pos)
 {
-	// Check all components for a entered event.
-	for (int i = 0; i < componentsUsedCount; i++)
-	{
-		assert(componentList[i] != 0);
-		if (componentList[i]->contains(pos))
-		{
-			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, pos.x, pos.y, 0, false);
+    // Check all components for a entered event.
+    for (int i = 0; i < componentsUsedCount; i++) {
+        assert(componentList[i] != 0);
+        if (componentList[i]->contains(pos)) {
+            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, pos.x, pos.y, 0, false);
 
-			componentList[i]->actionPerformed(me);
+            componentList[i]->actionPerformed(me);
 
-			actionPerformed(me);
-		}
-	}
+            actionPerformed(me);
+        }
+    }
 
 } // end View::mouseEnter
 
@@ -1225,34 +1163,32 @@ void View::mouseEnter(const iXY &pos)
 //---------------------------------------------------------------------------
 void View::mouseExit(const iXY &pos)
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	// Check all components for a exited event.
-	for (int i = 0; i < componentsUsedCount; i++)
-	{
-		assert(componentList[i] != 0);
-		if (componentList[i]->contains(pos))
-		{
-			mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, pos.x, pos.y, 0, false);
+    // Check all components for a exited event.
+    for (int i = 0; i < componentsUsedCount; i++) {
+        assert(componentList[i] != 0);
+        if (componentList[i]->contains(pos)) {
+            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, pos.x, pos.y, 0, false);
 
-			componentList[i]->actionPerformed(me);
+            componentList[i]->actionPerformed(me);
 
-			actionPerformed(me);
-		}
-	}
+            actionPerformed(me);
+        }
+    }
 
 } // end View::mouseExit
 
 // scrollBarMove
 //---------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //---------------------------------------------------------------------------
 void View::scrollBarMove(const iXY &prevPos, const iXY &newPos)
 {
-	//if (scrollBar != 0)
-	//{
-	//	scrollBar->actionPerformed(newPos);
-	//}
+    //if (scrollBar != 0)
+    //{
+    //	scrollBar->actionPerformed(newPos);
+    //}
 
 } // end scrollBarMove
 
@@ -1262,7 +1198,7 @@ void View::scrollBarMove(const iXY &prevPos, const iXY &newPos)
 //---------------------------------------------------------------------------
 void View::addLabel(const iXY &pos, char *label, const PIX &color)
 {
-	addLabel(pos, label, false, color, Color::black);
+    addLabel(pos, label, false, color, Color::black);
 
 } // end addLabel
 
@@ -1270,30 +1206,30 @@ void View::addLabel(const iXY &pos, char *label, const PIX &color)
 //---------------------------------------------------------------------------
 // Purpose:
 //---------------------------------------------------------------------------
-void View::addLabelShadowed(const iXY &pos, char *label, const PIX &foreColor, 
-                              const PIX &backColor)
+void View::addLabelShadowed(const iXY &pos, char *label, const PIX &foreColor,
+                            const PIX &backColor)
 {
-	addLabel(pos, label, true, foreColor, backColor);
+    addLabel(pos, label, true, foreColor, backColor);
 } // end addLabelShadowed
 
 // addLabel
 //---------------------------------------------------------------------------
 // Purpose:
 //---------------------------------------------------------------------------
-void View::addLabel(const iXY &pos, char *label, const bool &isShadowed, const PIX &foreColor, 
-                      const PIX &backColor)
+void View::addLabel(const iXY &pos, char *label, const bool &isShadowed, const PIX &foreColor,
+                    const PIX &backColor)
 {
-	labels = (cLabel *) realloc(labels, (numLabels+1)*sizeof(cLabel));
-	if (labels == 0) throw Exception("ERROR: Unable to allocate label.");
+    labels = (cLabel *) realloc(labels, (numLabels+1)*sizeof(cLabel));
+    if (labels == 0) throw Exception("ERROR: Unable to allocate label.");
 
-	labels[numLabels].label = strdup(label);
-	assert(labels[numLabels].label != 0);
-	labels[numLabels].foreColor  = foreColor;
-	labels[numLabels].backColor  = backColor;
-	labels[numLabels].isShadowed = isShadowed;
+    labels[numLabels].label = strdup(label);
+    assert(labels[numLabels].label != 0);
+    labels[numLabels].foreColor  = foreColor;
+    labels[numLabels].backColor  = backColor;
+    labels[numLabels].isShadowed = isShadowed;
 
-	labels[numLabels].pos = pos;
-	numLabels++;
+    labels[numLabels].pos = pos;
+    numLabels++;
 
 } // end View::addLabel
 
@@ -1303,19 +1239,15 @@ void View::addLabel(const iXY &pos, char *label, const bool &isShadowed, const P
 //---------------------------------------------------------------------------
 void View::drawLabels(const Surface &clientArea)
 {
-	if (!clientArea.getDoesExist())
-	{
-		throw Exception("ERROR: Client area does not exist.");
-	}
+    if (!clientArea.getDoesExist()) {
+        throw Exception("ERROR: Client area does not exist.");
+    }
 
-	for (int num = 0; num < numLabels; num++)
-	{
-		if (labels[num].isShadowed)
-		{
-			clientArea.bltStringShadowed(labels[num].pos.x, labels[num].pos.y, labels[num].label, labels[num].foreColor, labels[num].backColor);
-		}
-		else clientArea.bltString(labels[num].pos.x, labels[num].pos.y, labels[num].label, labels[num].foreColor);
-	}
+    for (int num = 0; num < numLabels; num++) {
+        if (labels[num].isShadowed) {
+            clientArea.bltStringShadowed(labels[num].pos.x, labels[num].pos.y, labels[num].label, labels[num].foreColor, labels[num].backColor);
+        } else clientArea.bltString(labels[num].pos.x, labels[num].pos.y, labels[num].label, labels[num].foreColor);
+    }
 } // end DRAW LABELS
 
 // drawDefinedButtons
@@ -1324,10 +1256,9 @@ void View::drawLabels(const Surface &clientArea)
 //---------------------------------------------------------------------------
 void View::drawDefinedButtons(const Surface &clientArea)
 {
-	for (int num = 0; num < buttons.getCount(); num++)
-	{
-		buttons[num].topSurface.blt(clientArea, iXY(buttons[num].getBounds().min.x, buttons[num].getBounds().min.y));
-	}
+    for (int num = 0; num < buttons.getCount(); num++) {
+        buttons[num].topSurface.blt(clientArea, iXY(buttons[num].getBounds().min.x, buttons[num].getBounds().min.y));
+    }
 } // end drawDefinedButtons
 
 // drawInputFields
@@ -1336,16 +1267,13 @@ void View::drawDefinedButtons(const Surface &clientArea)
 //---------------------------------------------------------------------------
 void View::drawInputFields(const Surface &clientArea)
 {
-	for (int num = 0; num < inputFields.getCount(); num++)
-	{
-		if (num == selectedInputField)
-		{
-			inputFields[num].drawHighlighted(clientArea);
-		} else
-		{
-			inputFields[num].draw(clientArea);
-		}
-	}
+    for (int num = 0; num < inputFields.getCount(); num++) {
+        if (num == selectedInputField) {
+            inputFields[num].drawHighlighted(clientArea);
+        } else {
+            inputFields[num].draw(clientArea);
+        }
+    }
 } // end drawInputFields
 
 // drawHighlightedButton
@@ -1354,60 +1282,55 @@ void View::drawInputFields(const Surface &clientArea)
 //---------------------------------------------------------------------------
 void View::drawHighlightedButton(const Surface &clientArea)
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	if (highlightedButton < 0)
-	{
-		return;
-	}
-	else if (buttons[highlightedButton].topSurface.getFrameCount() < 2)
-	{
-		clientArea.drawRect(iRect(buttons[highlightedButton].getBounds().min.x,
-								  buttons[highlightedButton].getBounds().min.y,
-								  buttons[highlightedButton].getBounds().max.x,
-								  buttons[highlightedButton].getBounds().max.y),
-								  Color::red);
-		return;
-	}
+    if (highlightedButton < 0) {
+        return;
+    } else if (buttons[highlightedButton].topSurface.getFrameCount() < 2) {
+        clientArea.drawRect(iRect(buttons[highlightedButton].getBounds().min.x,
+                                  buttons[highlightedButton].getBounds().min.y,
+                                  buttons[highlightedButton].getBounds().max.x,
+                                  buttons[highlightedButton].getBounds().max.y),
+                            Color::red);
+        return;
+    }
 
-	if (pressedButton == highlightedButton)
-	{
-		return;
-	}
+    if (pressedButton == highlightedButton) {
+        return;
+    }
 
-	if (highlightedButton > buttons.getCount())
-	{
-		throw Exception("ERROR: highlightedButton > butons.getCount()");
-	}
+    if (highlightedButton > buttons.getCount()) {
+        throw Exception("ERROR: highlightedButton > butons.getCount()");
+    }
 
-	// Change to the highlight button frame.
-	buttons[highlightedButton].topSurface.setFrame(1);
-	buttons[highlightedButton].topSurface.blt(clientArea, iXY(buttons[highlightedButton].getBounds().min.x, buttons[highlightedButton].getBounds().min.y));
-	buttons[highlightedButton].topSurface.setFrame(0);
+    // Change to the highlight button frame.
+    buttons[highlightedButton].topSurface.setFrame(1);
+    buttons[highlightedButton].topSurface.blt(clientArea, iXY(buttons[highlightedButton].getBounds().min.x, buttons[highlightedButton].getBounds().min.y));
+    buttons[highlightedButton].topSurface.setFrame(0);
 
 } // end drawHighlightedButton
 
 void View::addButtonPackedSurface(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc)
 {
-	buttons.setNum(buttons.getCount() + 1);
-	cButton &b = buttons[buttons.getCount() - 1];
-	b.createPacked(pos, source, toolTip, leftClickFunc);
+    buttons.setNum(buttons.getCount() + 1);
+    cButton &b = buttons[buttons.getCount() - 1];
+    b.createPacked(pos, source, toolTip, leftClickFunc);
 }
 
 // addButtonCenterText
 //---------------------------------------------------------------------------
 // Purpose: Adds a centered type button to the list of buttons.
 //---------------------------------------------------------------------------
-void View::addButtonCenterText(const iXY &pos, 
-                       const int &xSize, 
-                       const char *name, 
-                       const char *toolTip,
-                       ITEM_FUNC leftClickFunc)
+void View::addButtonCenterText(const iXY &pos,
+                               const int &xSize,
+                               const char *name,
+                               const char *toolTip,
+                               ITEM_FUNC leftClickFunc)
 {
-	// Add a new button to the button list.
-	buttons.setNum(buttons.getCount() + 1);
-	cButton &b = buttons[buttons.getCount() - 1];
-	b.createCenterText(pos, xSize, name, toolTip, leftClickFunc);
+    // Add a new button to the button list.
+    buttons.setNum(buttons.getCount() + 1);
+    cButton &b = buttons[buttons.getCount() - 1];
+    b.createCenterText(pos, xSize, name, toolTip, leftClickFunc);
 } // end addButtonCenterText
 
 // addButtonTIL
@@ -1416,19 +1339,17 @@ void View::addButtonCenterText(const iXY &pos,
 //---------------------------------------------------------------------------
 void View::addButtonTIL(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func, const bool &isBordered)
 {
-	// Add a new button to the button list.
-	buttons.setNum(buttons.getCount() + 1);
-	
-	cButton &b = buttons[buttons.getCount() - 1];
-	
-	if (isBordered)
-	{
-		b.createTILBordered(pos, imageName, toolTip, func);
+    // Add a new button to the button list.
+    buttons.setNum(buttons.getCount() + 1);
 
-	} else
-	{
-		b.createTIL(pos, imageName, toolTip, func);
-	}
+    cButton &b = buttons[buttons.getCount() - 1];
+
+    if (isBordered) {
+        b.createTILBordered(pos, imageName, toolTip, func);
+
+    } else {
+        b.createTIL(pos, imageName, toolTip, func);
+    }
 
 } // end addButtonTIL
 
@@ -1438,12 +1359,12 @@ void View::addButtonTIL(const iXY &pos, const char *imageName, const char *toolT
 //---------------------------------------------------------------------------
 void View::addButtonSurface(const iXY &pos, Surface &source, const char *toolTip, ITEM_FUNC func)
 {
-	// Add a new button to the button list.
-	buttons.setNum(buttons.getCount() + 1);
-	
-	cButton &b = buttons[buttons.getCount() - 1];
-	
-	b.createSurface(pos, source, toolTip, func);
+    // Add a new button to the button list.
+    buttons.setNum(buttons.getCount() + 1);
+
+    cButton &b = buttons[buttons.getCount() - 1];
+
+    b.createSurface(pos, source, toolTip, func);
 
 } // end addButtonSurface
 
@@ -1453,12 +1374,12 @@ void View::addButtonSurface(const iXY &pos, Surface &source, const char *toolTip
 //---------------------------------------------------------------------------
 void View::addButtonSurfaceSingle(const iXY &pos, Surface &source, const char *toolTip, ITEM_FUNC func)
 {
-	// Add a new button to the button list.
-	buttons.setNum(buttons.getCount() + 1);
-	
-	cButton &b = buttons[buttons.getCount() - 1];
-	
-	b.createSurfaceSingle(pos, source, toolTip, func);
+    // Add a new button to the button list.
+    buttons.setNum(buttons.getCount() + 1);
+
+    cButton &b = buttons[buttons.getCount() - 1];
+
+    b.createSurfaceSingle(pos, source, toolTip, func);
 
 } // end addButtonSurfaceSingle
 
@@ -1467,49 +1388,49 @@ void View::addButtonSurfaceSingle(const iXY &pos, Surface &source, const char *t
 // Purpose:
 //---------------------------------------------------------------------------
 void View::addButton(const iXY &pos, const char *name, const char *toolTip,
-											 ITEM_FUNC func)
+                     ITEM_FUNC func)
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	// Grow the list
-	buttons.setNum(buttons.getCount()+1);
-	cButton &b = buttons[buttons.getCount()-1];
-	b.create(pos, name, toolTip, func);
+    // Grow the list
+    buttons.setNum(buttons.getCount()+1);
+    cButton &b = buttons[buttons.getCount()-1];
+    b.create(pos, name, toolTip, func);
 } // end ADD cButton
 
 // addButtonPCX
 //---------------------------------------------------------------------------
 // Purpose:  Makes a button out of a PCX image.
 //---------------------------------------------------------------------------
-void View::addButtonPCX(const iXY &pos, 
-                       const char *filename, 
-                       const char *toolTip,
-                       ITEM_FUNC func)
+void View::addButtonPCX(const iXY &pos,
+                        const char *filename,
+                        const char *toolTip,
+                        ITEM_FUNC func)
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	// Grow the list.
-	buttons.setNum(buttons.getCount()+1);
-	cButton &b = buttons[buttons.getCount()-1];
+    // Grow the list.
+    buttons.setNum(buttons.getCount()+1);
+    cButton &b = buttons[buttons.getCount()-1];
 
-	// Create the button.
-	b.createPCX(pos, filename, toolTip, func);
+    // Create the button.
+    b.createPCX(pos, filename, toolTip, func);
 } // end addButtonPCX
 
 //---------------------------------------------------------------------------
-void View::addButton(	const iXY &pos, 
-						const ANIMATED_BUTTON_TYPE_PCX &topButton, 
-						const ANIMATED_BUTTON_TYPE_PCX &bottomButton,
-						const char *toolTip,
-						ITEM_FUNC leftClickFunc, 
-						ITEM_FUNC rightClickFunc)
+void View::addButton(	const iXY &pos,
+                      const ANIMATED_BUTTON_TYPE_PCX &topButton,
+                      const ANIMATED_BUTTON_TYPE_PCX &bottomButton,
+                      const char *toolTip,
+                      ITEM_FUNC leftClickFunc,
+                      ITEM_FUNC rightClickFunc)
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	// Grow the list
-	buttons.setNum(buttons.getCount()+1);
-	cButton &b = buttons[buttons.getCount()-1];
-	b.create(pos, topButton, bottomButton, toolTip, leftClickFunc, rightClickFunc);
+    // Grow the list
+    buttons.setNum(buttons.getCount()+1);
+    cButton &b = buttons[buttons.getCount()-1];
+    b.create(pos, topButton, bottomButton, toolTip, leftClickFunc, rightClickFunc);
 } // end ADD cButton
 
 // setSearchName
@@ -1518,20 +1439,17 @@ void View::addButton(	const iXY &pos,
 //---------------------------------------------------------------------------
 void View::setSearchName(const char *searchName)
 {
-	if (View::searchName != 0)
-	{
-		free(View::searchName);
-		View::searchName = 0;
-	}
+    if (View::searchName != 0) {
+        free(View::searchName);
+        View::searchName = 0;
+    }
 
-	if (searchName != 0)
-	{
-		View::searchName = strdup(searchName);
-		if (View::searchName == 0)
-		{
-			throw Exception("ERROR: Unable to allocate searchName: %s", searchName);
-		}
-	}
+    if (searchName != 0) {
+        View::searchName = strdup(searchName);
+        if (View::searchName == 0) {
+            throw Exception("ERROR: Unable to allocate searchName: %s", searchName);
+        }
+    }
 } // end View::setSearchName
 
 // setTitle
@@ -1540,20 +1458,17 @@ void View::setSearchName(const char *searchName)
 //---------------------------------------------------------------------------
 void View::setTitle(const char *title)
 {
-	if (View::title != 0)
-	{
-		free(View::title);
-		View::title = 0;
-	}
+    if (View::title != 0) {
+        free(View::title);
+        View::title = 0;
+    }
 
-	if (title != 0)
-	{
-		View::title = strdup(title);
-		if (View::title == 0)
-		{
-			throw Exception("ERROR: Unable to allocate title: %s", title);
-		}
-	}
+    if (title != 0) {
+        View::title = strdup(title);
+        if (View::title == 0) {
+            throw Exception("ERROR: Unable to allocate title: %s", title);
+        }
+    }
 } // end View::setTitle
 
 // setSubTitle
@@ -1562,20 +1477,17 @@ void View::setTitle(const char *title)
 //---------------------------------------------------------------------------
 void View::setSubTitle(const char *subTitle)
 {
-	if (View::subTitle != 0)
-	{
-		free(View::subTitle);
-		View::subTitle = 0;
-	}
+    if (View::subTitle != 0) {
+        free(View::subTitle);
+        View::subTitle = 0;
+    }
 
-	if (subTitle != 0)
-	{
-		View::subTitle = strdup(subTitle);
-		if (View::subTitle == 0)
-		{
-			throw Exception("ERROR: Unable to allocate subTitle: %s", subTitle);
-		}
-	}
+    if (subTitle != 0) {
+        View::subTitle = strdup(subTitle);
+        if (View::subTitle == 0) {
+            throw Exception("ERROR: Unable to allocate subTitle: %s", subTitle);
+        }
+    }
 } // end View::setSubTitle
 
 // showStatus
@@ -1584,17 +1496,17 @@ void View::setSubTitle(const char *subTitle)
 //---------------------------------------------------------------------------
 void View::showStatus(const char *string)
 {
-	if (statusText != 0)
-	{
-		free(statusText);
-		statusText = 0;
-	}
+    if (statusText != 0) {
+        free(statusText);
+        statusText = 0;
+    }
 
-	if (string != 0)
-	{
-		statusText = strdup(string);
-		if(statusText == 0) { throw Exception("ERROR: statusText == 0"); }
-	}
+    if (string != 0) {
+        statusText = strdup(string);
+        if(statusText == 0) {
+            throw Exception("ERROR: statusText == 0");
+        }
+    }
 
 } // end View::showStatus
 
@@ -1602,25 +1514,24 @@ void View::showStatus(const char *string)
 //---------------------------------------------------------------------------
 void View::drawStatus(const Surface &dest)
 {
-	// Draw the status bar.
-	iRect clientRect(getClientRect());
+    // Draw the status bar.
+    iRect clientRect(getClientRect());
 
-	iRect r(0,
-			clientRect.getSizeY() - DEFAULT_STATUS_BAR_HEIGHT,
-			clientRect.getSizeX(),
-			clientRect.getSizeY());
+    iRect r(0,
+            clientRect.getSizeY() - DEFAULT_STATUS_BAR_HEIGHT,
+            clientRect.getSizeX(),
+            clientRect.getSizeY());
 
-	Surface s;
-	s.setTo(dest, r);
-	s.fill(Color::gray192);
+    Surface s;
+    s.setTo(dest, r);
+    s.fill(Color::gray192);
 
-	// Draw the status text.
-	if (statusText != 0)
-	{
-		int pos = (DEFAULT_STATUS_BAR_HEIGHT - CHAR_YPIX) >> 1;
+    // Draw the status text.
+    if (statusText != 0) {
+        int pos = (DEFAULT_STATUS_BAR_HEIGHT - CHAR_YPIX) >> 1;
 
-		s.bltString(pos, pos, statusText, Color::black);
-	}
+        s.bltString(pos, pos, statusText, Color::black);
+    }
 } // end View::drawStatus
 
 // findButtonContaining
@@ -1631,35 +1542,31 @@ void View::drawStatus(const Surface &dest)
 //---------------------------------------------------------------------------
 int View::findButtonContaining(const iXY &pos)
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	for (int num = 0; num < buttons.getCount(); num++)
-	{
-		if (buttons[num].contains(pos))
-		{
-			//LOG(("pressed button: %u", num));
-			return num;
-		}
-	}
-	return -1;
+    for (int num = 0; num < buttons.getCount(); num++) {
+        if (buttons[num].contains(pos)) {
+            //LOG(("pressed button: %u", num));
+            return num;
+        }
+    }
+    return -1;
 } // end findButtonContaining
 
 // findInputFieldContaining
 //---------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //---------------------------------------------------------------------------
 int View::findInputFieldContaining(const iXY &pos)
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	for (int num = 0; num < inputFields.getCount(); num++)
-	{
-		if (inputFields[num].contains(pos))
-		{
-			return num;
-		}
-	}
-	return -1;
+    for (int num = 0; num < inputFields.getCount(); num++) {
+        if (inputFields[num].contains(pos)) {
+            return num;
+        }
+    }
+    return -1;
 } // end findInputFieldContaining
 
 // drawPressedButton
@@ -1668,17 +1575,17 @@ int View::findInputFieldContaining(const iXY &pos)
 //---------------------------------------------------------------------------
 void View::drawPressedButton(const Surface &clientArea)
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	if (pressedButton < 0 || buttons[pressedButton].topSurface.getFrameCount() < 2) return;
-	if (highlightedButton != pressedButton) return;
-	assert(pressedButton < buttons.getCount());
+    if (pressedButton < 0 || buttons[pressedButton].topSurface.getFrameCount() < 2) return;
+    if (highlightedButton != pressedButton) return;
+    assert(pressedButton < buttons.getCount());
 
-	// Chage to the highlight button frame.
-	buttons[pressedButton].topSurface.setFrame(2);
-        buttons[pressedButton].topSurface.blt(clientArea, iXY(buttons[pressedButton].getBounds().min.x,
-                                                          buttons[pressedButton].getBounds().min.y));
-	buttons[pressedButton].topSurface.setFrame(0);
+    // Chage to the highlight button frame.
+    buttons[pressedButton].topSurface.setFrame(2);
+    buttons[pressedButton].topSurface.blt(clientArea, iXY(buttons[pressedButton].getBounds().min.x,
+                                          buttons[pressedButton].getBounds().min.y));
+    buttons[pressedButton].topSurface.setFrame(0);
 } // drawPressedButton
 
 // DRAW TOOL TIP
@@ -1687,52 +1594,47 @@ void View::drawPressedButton(const Surface &clientArea)
 //---------------------------------------------------------------------------
 void View::drawToolTip(const Surface &dest)
 {
-	assert(this != 0);
+    assert(this != 0);
 
-	iRect rect;
-	rect.min.x = 0;
-	rect.min.y = getClientRect().max.y - moveAreaHeight + 2;
-	rect.max.x = getClientRect().getSizeX()+1;
-	rect.max.y = getClientRect().max.y+1;
-	int xOffset = 5;
+    iRect rect;
+    rect.min.x = 0;
+    rect.min.y = getClientRect().max.y - moveAreaHeight + 2;
+    rect.max.x = getClientRect().getSizeX()+1;
+    rect.max.y = getClientRect().max.y+1;
+    int xOffset = 5;
 
-	if (highlightedButton < 0) 
-	{
-		if (statusText != 0)
-		{
-			iRect tRect(rect.min.x, rect.min.y, rect.max.x, rect.max.y);
-			dest.fillRect(tRect, Color::black);
-			dest.drawButtonBorder(tRect, Color::gray32, Color::gray64);
-			dest.bltString(rect.min.x+xOffset+1, rect.min.y+2, statusText, Color::black);
-			dest.bltString(rect.min.x+xOffset, rect.min.y+1, statusText, Color::white);
-		}
-		return;
-	} else
-	{
-		if (strlen(buttons[highlightedButton].getToolTip()) == 0)
-		{
-			return;
-		}
+    if (highlightedButton < 0) {
+        if (statusText != 0) {
+            iRect tRect(rect.min.x, rect.min.y, rect.max.x, rect.max.y);
+            dest.fillRect(tRect, Color::black);
+            dest.drawButtonBorder(tRect, Color::gray32, Color::gray64);
+            dest.bltString(rect.min.x+xOffset+1, rect.min.y+2, statusText, Color::black);
+            dest.bltString(rect.min.x+xOffset, rect.min.y+1, statusText, Color::white);
+        }
+        return;
+    } else {
+        if (strlen(buttons[highlightedButton].getToolTip()) == 0) {
+            return;
+        }
 
-		int length = strlen(buttons[highlightedButton].getToolTip()) * CHAR_XPIX;
+        int length = strlen(buttons[highlightedButton].getToolTip()) * CHAR_XPIX;
 
-		// min is this window's min derived from iRect.
-		iRect r(buttons[highlightedButton].getBounds());
-		iRect r2(r.min.x + min.x, r.max.y + min.y, r.min.x + length + 4 + min.x, r.max.y + CHAR_YPIX + 4 + min.y);
+        // min is this window's min derived from iRect.
+        iRect r(buttons[highlightedButton].getBounds());
+        iRect r2(r.min.x + min.x, r.max.y + min.y, r.min.x + length + 4 + min.x, r.max.y + CHAR_YPIX + 4 + min.y);
 
-		// Keep the tooltip on the screen as best as possible.
-		if (r2.max.x > SCREEN_XPIX)
-		{
-			int xOffset = r2.max.x - SCREEN_XPIX;
-			r2.min.x -= xOffset;
-			r2.max.x -= xOffset;
-		}
+        // Keep the tooltip on the screen as best as possible.
+        if (r2.max.x > SCREEN_XPIX) {
+            int xOffset = r2.max.x - SCREEN_XPIX;
+            r2.min.x -= xOffset;
+            r2.max.x -= xOffset;
+        }
 
-		dest.fillRect(r2, Color::black);
-		dest.drawButtonBorder(r2, Color::white, Color::gray64);
-		dest.bltString(r2.min.x + 2, r2.min.y + 2, buttons[highlightedButton].getToolTip(), Color::white);
-		//dest.bltString(rect.min.x+xOffset, rect.min.y+1, buttons[highlightedButton].getToolTip(), Color::white);
-	}
+        dest.fillRect(r2, Color::black);
+        dest.drawButtonBorder(r2, Color::white, Color::gray64);
+        dest.bltString(r2.min.x + 2, r2.min.y + 2, buttons[highlightedButton].getToolTip(), Color::white);
+        //dest.bltString(rect.min.x+xOffset, rect.min.y+1, buttons[highlightedButton].getToolTip(), Color::white);
+    }
 } // end drawToolTip
 
 // drawToolTip
@@ -1741,13 +1643,12 @@ void View::drawToolTip(const Surface &dest)
 //---------------------------------------------------------------------------
 void View::drawToolTip(const Surface &dest, const char *toolTip)
 {
-	if (strlen(toolTip) == 0)
-	{
-		return;
-	}
+    if (strlen(toolTip) == 0) {
+        return;
+    }
 
-	dest.bltString(4, 1, toolTip,      0);
-	dest.bltString(3, 0, toolTip, Color::white);
+    dest.bltString(4, 1, toolTip,      0);
+    dest.bltString(3, 0, toolTip, Color::white);
 } // end drawToolTip
 
 // centerAbsolute
@@ -1756,47 +1657,49 @@ void View::drawToolTip(const Surface &dest, const char *toolTip)
 //---------------------------------------------------------------------------
 void View::centerAbsolute()
 {
-	iXY oldSize = getSize();
+    iXY oldSize = getSize();
 
-	min.x = (SCREEN_XPIX - oldSize.x) >> 1;
-	min.y = (SCREEN_YPIX - oldSize.y) >> 1;
-	max.x = min.x + oldSize.x;
-	max.y = min.y + oldSize.y;
+    min.x = (SCREEN_XPIX - oldSize.x) >> 1;
+    min.y = (SCREEN_YPIX - oldSize.y) >> 1;
+    max.x = min.x + oldSize.x;
+    max.y = min.y + oldSize.y;
 } // end centerAbsolute
 
 // RESIZE CLIENT AREA
 //---------------------------------------------------------------------------
-// Purpose: Resize the client area of the window.  The window area will be 
+// Purpose: Resize the client area of the window.  The window area will be
 //          resized accordingly.
 //---------------------------------------------------------------------------
 void View::resizeClientArea(const iXY &size)
 {
-	// These variables constitue the gap space needed for the window borders and
-	// move area.
-	int xExtra = borderSize * 2;
-	int yExtra = xExtra + moveAreaHeight;
+    // These variables constitue the gap space needed for the window borders and
+    // move area.
+    int xExtra = borderSize * 2;
+    int yExtra = xExtra + moveAreaHeight;
 
-	iXY destSize(size);
+    iXY destSize(size);
 
-	// Add the area for the borders and move area.
-	destSize.x += xExtra;
-	destSize.y += yExtra;
+    // Add the area for the borders and move area.
+    destSize.x += xExtra;
+    destSize.y += yExtra;
 
-	// Make sure the window will fit on the screen in the specified size.
-	if (destSize.x > SCREEN_XPIX) { throw Exception("ERROR: Trying to size the client area larger than the screen width."); }
-	if (destSize.y > SCREEN_YPIX) { throw Exception("ERROR: Trying to size the client area larger than the screen height."); }
+    // Make sure the window will fit on the screen in the specified size.
+    if (destSize.x > SCREEN_XPIX) {
+        throw Exception("ERROR: Trying to size the client area larger than the screen width.");
+    }
+    if (destSize.y > SCREEN_YPIX) {
+        throw Exception("ERROR: Trying to size the client area larger than the screen height.");
+    }
 
-	// Move the window accordingly to accomodate for the resize.
-	if (min.x + destSize.x > SCREEN_XPIX)
-	{
-		min.x += (SCREEN_XPIX - min.x + destSize.x);
-	}
-	if (min.y + destSize.y > SCREEN_YPIX)
-	{
-		min.y += (SCREEN_YPIX - min.y + destSize.y);
-	}
+    // Move the window accordingly to accomodate for the resize.
+    if (min.x + destSize.x > SCREEN_XPIX) {
+        min.x += (SCREEN_XPIX - min.x + destSize.x);
+    }
+    if (min.y + destSize.y > SCREEN_YPIX) {
+        min.y += (SCREEN_YPIX - min.y + destSize.y);
+    }
 
-	resize(destSize);
+    resize(destSize);
 } // end View::resizeClientArea
 
 // RESIZE
@@ -1805,165 +1708,140 @@ void View::resizeClientArea(const iXY &size)
 //---------------------------------------------------------------------------
 void View::resize(const iXY &size)
 {
-	iXY destSize(size);
+    iXY destSize(size);
 
-	if      (destSize.x <= RESIZE_XMINSIZE)
-	{
-		destSize.y = SCREEN_YPIX - min.y;
-	}
+    if      (destSize.x <= RESIZE_XMINSIZE) {
+        destSize.y = SCREEN_YPIX - min.y;
+    }
+    else if (destSize.x >  SCREEN_XPIX - min.x) {
+        destSize.x = SCREEN_XPIX - min.x;
+    }
 
-	else if (destSize.x >  SCREEN_XPIX - min.x)
-	{
-		destSize.x = SCREEN_XPIX - min.x;
-	}
+    if      (destSize.y <= RESIZE_YMINSIZE) {
+        destSize.y = RESIZE_YMINSIZE;
+    } else if (destSize.y >  SCREEN_YPIX - min.y) {
+        destSize.y = SCREEN_YPIX - min.y;
+    }
 
-	if      (destSize.y <= RESIZE_YMINSIZE)
-	{
-		destSize.y = RESIZE_YMINSIZE;
-	}
-	else if (destSize.y >  SCREEN_YPIX - min.y)
-	{
-		destSize.y = SCREEN_YPIX - min.y;
-	}
+    // Are we already at the desired size?  Then bail.
+    if (size == getSize()) {
+        return;
+    }
 
-	// Are we already at the desired size?  Then bail.
-	if (size == getSize())
-	{
-		return;
-	}
-
-	max = min + destSize;
+    max = min + destSize;
 
 } // end View::resize
 
 // setPressedButton
 //---------------------------------------------------------------------------
 void View::setPressedButton(const int &button)
-{ 
-	if (button >= buttons.getCount())
-	{
-		throw Exception("ERROR: pressedButton >= numButtons");
-	}
-	
-	prevPressedButton = pressedButton;
-	pressedButton     = button;
+{
+    if (button >= buttons.getCount()) {
+        throw Exception("ERROR: pressedButton >= numButtons");
+    }
+
+    prevPressedButton = pressedButton;
+    pressedButton     = button;
 
 } // end setPressedButton
 
 // setHighlightedButton
 //---------------------------------------------------------------------------
 void View::setHighlightedButton(const int &button)
-{ 
-	if (button >= buttons.getCount())
-	{
-		throw Exception("ERROR: highlightedButton >= numButtons");
-	}
+{
+    if (button >= buttons.getCount()) {
+        throw Exception("ERROR: highlightedButton >= numButtons");
+    }
 
-	prevHighlightedButton = highlightedButton;
-	highlightedButton     = button;
+    prevHighlightedButton = highlightedButton;
+    highlightedButton     = button;
 
 } // end setHighlightedButton
 
 // checkViewSize
 //---------------------------------------------------------------------------
-// Purpose: If the window's dimension is too big or too small, then resize 
+// Purpose: If the window's dimension is too big or too small, then resize
 //          the window accordingly.
 //---------------------------------------------------------------------------
 void View::checkViewSize(iXY &pix)
 {
-	if      (pix.x >  SCREEN_XPIX)
-	{
-		pix.x = SCREEN_XPIX;
-	}
-	else if (pix.x <= RESIZE_XMINSIZE)
-	{
-		pix.x = RESIZE_XMINSIZE;
-	}
-	if      (pix.y >  SCREEN_YPIX)
-	{
-		pix.y = SCREEN_YPIX;
-	}
-	else if (pix.y <= RESIZE_YMINSIZE)
-	{
-		pix.y = RESIZE_YMINSIZE;
-	}
+    if      (pix.x >  SCREEN_XPIX) {
+        pix.x = SCREEN_XPIX;
+    } else if (pix.x <= RESIZE_XMINSIZE) {
+        pix.x = RESIZE_XMINSIZE;
+    }
+    if      (pix.y >  SCREEN_YPIX) {
+        pix.y = SCREEN_YPIX;
+    } else if (pix.y <= RESIZE_YMINSIZE) {
+        pix.y = RESIZE_YMINSIZE;
+    }
 
 } // end View::checkViewSize
 
 // moveTo
 //---------------------------------------------------------------------------
-// Purpose: Move the window to the specified position, while making sure the 
+// Purpose: Move the window to the specified position, while making sure the
 //          window is on the screen.
 //---------------------------------------------------------------------------
 void View::moveTo(iXY destMin)
 {
-	if (getAllowAutoResize())
-	{
-		if (getSizeX() > SCREEN_XPIX)
-		{
-			fXY difference;
+    if (getAllowAutoResize()) {
+        if (getSizeX() > SCREEN_XPIX) {
+            fXY difference;
 
-			difference.x = getSizeX() - SCREEN_XPIX;
+            difference.x = getSizeX() - SCREEN_XPIX;
 
-			float xRatio = float(difference.x) / float(getSizeX());
+            float xRatio = float(difference.x) / float(getSizeX());
 
-			resize(getSizeX() - difference.x, float(getSizeY()) * xRatio);
+            resize(getSizeX() - difference.x, float(getSizeY()) * xRatio);
 
-		} else if (getSizeY() > SCREEN_YPIX)
-		{
-			fXY difference;
+        } else if (getSizeY() > SCREEN_YPIX) {
+            fXY difference;
 
-			difference.y = getSizeY() - SCREEN_YPIX;
+            difference.y = getSizeY() - SCREEN_YPIX;
 
-			float yRatio = float(difference.y) / float(getSizeY());
+            float yRatio = float(difference.y) / float(getSizeY());
 
-			resize(float(getSizeY()) * yRatio, getSizeY() - difference.y);
-		}
-	}
+            resize(float(getSizeY()) * yRatio, getSizeY() - difference.y);
+        }
+    }
 
-	// Used until I rewrite this to keep the view in the size of the screen.
-	int flagFuckMax = 1;
+    // Used until I rewrite this to keep the view in the size of the screen.
+    int flagFuckMax = 1;
 
-	// Keep the windows within the bounds of the screen
-	if (destMin.x > SCREEN_XPIX - getSizeX())
-	{
-		destMin.x = SCREEN_XPIX - getSizeX();
-	}
-	if (destMin.x < 0) 
-	{
-		destMin.x = 0;
-		if (destMin.x + getSizeX() - 1 >= SCREEN_XPIX)
-		{
-			flagFuckMax = 0;
-			max.x = SCREEN_XPIX - 1;
-			//throw Exception("ERROR: The window is too large for the screen.");
-		}
-		
-	}
+    // Keep the windows within the bounds of the screen
+    if (destMin.x > SCREEN_XPIX - getSizeX()) {
+        destMin.x = SCREEN_XPIX - getSizeX();
+    }
+    if (destMin.x < 0) {
+        destMin.x = 0;
+        if (destMin.x + getSizeX() - 1 >= SCREEN_XPIX) {
+            flagFuckMax = 0;
+            max.x = SCREEN_XPIX - 1;
+            //throw Exception("ERROR: The window is too large for the screen.");
+        }
 
-	if (destMin.y > SCREEN_YPIX - getSizeY())
-	{
-		destMin.y = SCREEN_YPIX - getSizeY();
-	}
-	if (destMin.y < 0)
-	{
-		destMin.y = 0;
-		if (destMin.y + getSizeY() - 1 >= SCREEN_YPIX)
-		{
-			flagFuckMax = 0;
-			max.y = SCREEN_YPIX - 1;
+    }
 
-			//throw Exception("ERROR: The window is too large for the screen.");
-		}
-		
-	}
+    if (destMin.y > SCREEN_YPIX - getSizeY()) {
+        destMin.y = SCREEN_YPIX - getSizeY();
+    }
+    if (destMin.y < 0) {
+        destMin.y = 0;
+        if (destMin.y + getSizeY() - 1 >= SCREEN_YPIX) {
+            flagFuckMax = 0;
+            max.y = SCREEN_YPIX - 1;
 
-	if (flagFuckMax)
-	{
-		max += destMin - min;
-	}
+            //throw Exception("ERROR: The window is too large for the screen.");
+        }
 
-	min  = destMin;
+    }
+
+    if (flagFuckMax) {
+        max += destMin - min;
+    }
+
+    min  = destMin;
 
 } // end moveTo
 
@@ -1973,7 +1851,7 @@ void View::moveTo(iXY destMin)
 //---------------------------------------------------------------------------
 void View::toggleView()
 {
-	Desktop::toggleVisibility(searchName);
+    Desktop::toggleVisibility(searchName);
 } // end toggleView
 
 // setAllowResize
@@ -1982,8 +1860,8 @@ void View::toggleView()
 //---------------------------------------------------------------------------
 void View::setAllowResize(const bool &newStatus)
 {
-	if (newStatus == true) status |=  STATUS_ALLOW_RESIZE;
-	else                   status &= ~STATUS_ALLOW_RESIZE;
+    if (newStatus == true) status |=  STATUS_ALLOW_RESIZE;
+    else                   status &= ~STATUS_ALLOW_RESIZE;
 } // end setAllowResize
 
 // setAllowAutoResize
@@ -1992,8 +1870,8 @@ void View::setAllowResize(const bool &newStatus)
 //---------------------------------------------------------------------------
 void View::setAllowAutoResize(const bool &newStatus)
 {
-	if (newStatus == true) status |=  STATUS_ALLOW_AUTO_RESIZE;
-	else                   status &= ~STATUS_ALLOW_AUTO_RESIZE;
+    if (newStatus == true) status |=  STATUS_ALLOW_AUTO_RESIZE;
+    else                   status &= ~STATUS_ALLOW_AUTO_RESIZE;
 } // end setAllowAutoResize
 
 // setDisplayStatusBar
@@ -2002,8 +1880,8 @@ void View::setAllowAutoResize(const bool &newStatus)
 //---------------------------------------------------------------------------
 void View::setDisplayStatusBar(const bool &newStatus)
 {
-	if (newStatus == true) status |=  STATUS_DISPLAY_STATUS_BAR;
-	else                   status &= ~STATUS_DISPLAY_STATUS_BAR;
+    if (newStatus == true) status |=  STATUS_DISPLAY_STATUS_BAR;
+    else                   status &= ~STATUS_DISPLAY_STATUS_BAR;
 } // setDisplayStatusBar
 
 // setAlwaysOnBottom
@@ -2012,8 +1890,8 @@ void View::setDisplayStatusBar(const bool &newStatus)
 //---------------------------------------------------------------------------
 void View::setAlwaysOnBottom(const bool &newStatus)
 {
-	if (newStatus == true) status |=  STATUS_ALWAYS_ON_BOTTOM;
-	else                   status &= ~STATUS_ALWAYS_ON_BOTTOM;
+    if (newStatus == true) status |=  STATUS_ALWAYS_ON_BOTTOM;
+    else                   status &= ~STATUS_ALWAYS_ON_BOTTOM;
 } // setAlwaysOnBottom
 
 // setBordered
@@ -2022,16 +1900,16 @@ void View::setAlwaysOnBottom(const bool &newStatus)
 //---------------------------------------------------------------------------
 void View::setBordered(const bool &newStatus)
 {
-	if (newStatus == true) status |=  STATUS_BORDERED;
-	else                   status &= ~STATUS_BORDERED;
+    if (newStatus == true) status |=  STATUS_BORDERED;
+    else                   status &= ~STATUS_BORDERED;
 } // end setBordered
 
 // setAllowMove
 //---------------------------------------------------------------------------
 void View::setAllowMove(const bool &newStatus)
 {
-	if (newStatus == true) status |=  STATUS_ALLOW_MOVE;
-	else                   status &= ~STATUS_ALLOW_MOVE;
+    if (newStatus == true) status |=  STATUS_ALLOW_MOVE;
+    else                   status &= ~STATUS_ALLOW_MOVE;
 } // end setAllowMove
 
 // setVisible
@@ -2040,8 +1918,8 @@ void View::setAllowMove(const bool &newStatus)
 //---------------------------------------------------------------------------
 void View::setVisible(const bool &newStatus)
 {
-	if (newStatus == true) status |=  STATUS_VISIBLE;
-	else                   status &= ~STATUS_VISIBLE;
+    if (newStatus == true) status |=  STATUS_VISIBLE;
+    else                   status &= ~STATUS_VISIBLE;
 } // end setVisible
 
 // setActive
@@ -2050,69 +1928,58 @@ void View::setVisible(const bool &newStatus)
 //---------------------------------------------------------------------------
 void View::setActive(const bool &newStatus)
 {
-	if (newStatus == true) status |=  STATUS_ACTIVE;
-	else                   status &= ~STATUS_ACTIVE;
+    if (newStatus == true) status |=  STATUS_ACTIVE;
+    else                   status &= ~STATUS_ACTIVE;
 } // end setActive
 
 // processEvents
 //---------------------------------------------------------------------------
 void View::processEvents(void)
 {
-	if (selectedInputField >= 0)
-	{
-		int shit;
-		while (KeyboardInterface::getChar(shit))
-		{
-			// Check for extended code.
-			if (shit == 0)
-			{
-				if (KeyboardInterface::getChar(shit))
-				{
-					inputFields[selectedInputField].addExtendedChar(shit);
-				} else
-				{
-					throw Exception("ERROR: Expecting extended char code.");
-				}
-			} else
-			{
-				inputFields[selectedInputField].addChar(shit);
-			}
-		}
-	}
+    if (selectedInputField >= 0) {
+        int shit;
+        while (KeyboardInterface::getChar(shit)) {
+            // Check for extended code.
+            if (shit == 0) {
+                if (KeyboardInterface::getChar(shit)) {
+                    inputFields[selectedInputField].addExtendedChar(shit);
+                } else {
+                    throw Exception("ERROR: Expecting extended char code.");
+                }
+            } else {
+                inputFields[selectedInputField].addChar(shit);
+            }
+        }
+    }
 } // end processEvents
 
 // addInputField
 //---------------------------------------------------------------------------
 void View::addInputField(
-						  const iXY &pos, 
-						  cInputFieldString *string, 
-						  const char *excludedCharacters, 
-						  const bool &isSelected)
+    const iXY &pos,
+    cInputFieldString *string,
+    const char *excludedCharacters,
+    const bool &isSelected)
 {
-	inputFields.setNum(inputFields.getCount() + 1);
-	inputFields[inputFields.getCount() - 1].setPos(pos);
-	inputFields[inputFields.getCount() - 1].setInputFieldString(string);
-	inputFields[inputFields.getCount() - 1].setExcludedCharacters(excludedCharacters);
+    inputFields.setNum(inputFields.getCount() + 1);
+    inputFields[inputFields.getCount() - 1].setPos(pos);
+    inputFields[inputFields.getCount() - 1].setInputFieldString(string);
+    inputFields[inputFields.getCount() - 1].setExcludedCharacters(excludedCharacters);
 
-	if (isSelected)
-	{
-		selectedInputField = inputFields.getCount() - 1;
-	}
+    if (isSelected) {
+        selectedInputField = inputFields.getCount() - 1;
+    }
 
 } // end addInputField
 
 //---------------------------------------------------------------------------
 void View::add(DEFAULT_VIEW_BUTTON button)
 {
-	if (button == CLOSE_VIEW_BUTTON)
-	{
-	}
-	else if (button == MINMAX_VIEW_BUTTON)
-	{
-	} else
-	{
-		assert(false);
-	}
+    if (button == CLOSE_VIEW_BUTTON) {}
+    else if (button == MINMAX_VIEW_BUTTON) {}
+    else {
+        assert(false);
+    }
 }
 
 //void View::add(Component *Component)
@@ -2124,7 +1991,7 @@ void View::add(DEFAULT_VIEW_BUTTON button)
 //	remove(Component);
 //
 //	Component **prevLink = &top;
-//	
+//
 //	while (*prevLink != 0)
 //	{
 //		prevLink = &(*prevLink)->next;

@@ -1,16 +1,16 @@
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
-
+ 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
+ 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
+ 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -34,20 +34,20 @@ iXY CloudParticle2D::worldSize(0, 0);
 // CloudParticle2D
 //---------------------------------------------------------------------------
 CloudParticle2D::CloudParticle2D(	const fXYZ &pos,
-									const iXY  &worldSize,
-									float       windMin,
-									float       windRand) : WindParticle2D(pos)
+                                  const iXY  &worldSize,
+                                  float       windMin,
+                                  float       windRand) : WindParticle2D(pos)
 {
-	// How much does the ambient wind affect this cloud.
-	windScale = getScale(windMin, windRand);
+    // How much does the ambient wind affect this cloud.
+    windScale = getScale(windMin, windRand);
 
-	CloudParticle2D::worldSize = worldSize;
-	
-	// Randomly select a cloud and a blend mode.
-	setRandomSurface();
-	
-	// Make the particle live forever.
-	lifetime  = -1;
+    CloudParticle2D::worldSize = worldSize;
+
+    // Randomly select a cloud and a blend mode.
+    setRandomSurface();
+
+    // Make the particle live forever.
+    lifetime  = -1;
 
 } // end CloudParticle2D::CloudParticle2D
 
@@ -58,73 +58,65 @@ CloudParticle2D::CloudParticle2D(	const fXYZ &pos,
 //---------------------------------------------------------------------------
 void CloudParticle2D::setRandomSurface()
 {
-	packedSurface.setData(staticPackedCloud);
+    packedSurface.setData(staticPackedCloud);
 
-	int randFrame = rand() % staticPackedCloud.getFrameCount();
-	packedSurface.setFrame(randFrame);
+    int randFrame = rand() % staticPackedCloud.getFrameCount();
+    packedSurface.setFrame(randFrame);
 
-	packedSurfaceShadow.setData(staticPackedCloud);
-	packedSurfaceShadow.setFrame(randFrame);
+    packedSurfaceShadow.setData(staticPackedCloud);
+    packedSurfaceShadow.setFrame(randFrame);
 
-	packedSurfaceShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
+    packedSurfaceShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
 
-	int randColorTable = rand() % 3;
+    int randColorTable = rand() % 3;
 
-	if (randColorTable == 0)
-	{
-		packedSurface.setDrawModeBlend(&Palette::colorTable2080);
-	}
-	else if(randColorTable == 1)
-	{
-		packedSurface.setDrawModeBlend(&Palette::colorTable4060);
-	}
-	else if(randColorTable == 2)
-	{
-		packedSurface.setDrawModeBlend(&Palette::colorTable6040);
-	} else
-	{
-		assert(false);
-	}
+    if (randColorTable == 0) {
+        packedSurface.setDrawModeBlend(&Palette::colorTable2080);
+    } else if(randColorTable == 1) {
+        packedSurface.setDrawModeBlend(&Palette::colorTable4060);
+    } else if(randColorTable == 2) {
+        packedSurface.setDrawModeBlend(&Palette::colorTable6040);
+    } else {
+        assert(false);
+    }
 
 } // end CloudParticle2D::setRandomSurface
 
 //---------------------------------------------------------------------------
 void CloudParticle2D::loadTILFiles()
 {
-	char path[] = "pics/particles/clouds/til/";
+    char path[] = "pics/particles/clouds/til/";
 
-	Surface tempSurface;
-	if (!tempSurface.loadAllTILInDirectory(path))
-	{
-		throw Exception("ERROR: Unable to load any cloud images in %s", path);
-	}
+    Surface tempSurface;
+    if (!tempSurface.loadAllTILInDirectory(path)) {
+        throw Exception("ERROR: Unable to load any cloud images in %s", path);
+    }
 
-	tempSurface.shrinkWrap();
-	tempSurface.setOffsetCenter();
+    tempSurface.shrinkWrap();
+    tempSurface.setOffsetCenter();
 
-	PackedSurface tempPackedSurface;
-	tempPackedSurface.pack(tempSurface);
-	tempPackedSurface.save("pics/particles/clouds/pak/clouds.pak");
+    PackedSurface tempPackedSurface;
+    tempPackedSurface.pack(tempSurface);
+    tempPackedSurface.save("pics/particles/clouds/pak/clouds.pak");
 }
 
 //---------------------------------------------------------------------------
 void CloudParticle2D::packFiles()
-{
-}
+{}
 
 //---------------------------------------------------------------------------
 void CloudParticle2D::loadPAKFiles()
 {
-	staticPackedCloud.load("pics/particles/clouds/pak/clouds.pak");
-	staticPackedCloud.setOffsetCenter();
+    staticPackedCloud.load("pics/particles/clouds/pak/clouds.pak");
+    staticPackedCloud.setOffsetCenter();
 }
 
 // init
 //---------------------------------------------------------------------------
 void CloudParticle2D::init()
 {
-	//loadTILFiles();
-	loadPAKFiles();
+    //loadTILFiles();
+    loadPAKFiles();
 
 } // end CloudParticle2D::init
 
@@ -132,52 +124,42 @@ void CloudParticle2D::init()
 //---------------------------------------------------------------------------
 void CloudParticle2D::sim()
 {
-	static const bool worldWraps = false;
+    static const bool worldWraps = false;
 
-	// NOTE - Rand will not randomly place the clouds over the whole map,
-	//        when the maps get larger than RAND_MAX in pixel dimension.
-	// Handle the wrap around.
-	if (pos.x + packedSurface.getPixX() < 0)
-	{
-		pos.x = worldSize.x + packedSurface.getCenterX();
-		
-		if (!worldWraps)
-		{
-			pos.z = rand() % (worldSize.y + packedSurface.getCenterY());
-			setRandomSurface();
-		}
-	}
-	else if (pos.x > worldSize.x + packedSurface.getCenterX())
-	{
-		pos.x = packedSurface.getOffsetX();
+    // NOTE - Rand will not randomly place the clouds over the whole map,
+    //        when the maps get larger than RAND_MAX in pixel dimension.
+    // Handle the wrap around.
+    if (pos.x + packedSurface.getPixX() < 0) {
+        pos.x = worldSize.x + packedSurface.getCenterX();
 
-		if (!worldWraps)
-		{
-			setRandomSurface();
-		}
-	}
+        if (!worldWraps) {
+            pos.z = rand() % (worldSize.y + packedSurface.getCenterY());
+            setRandomSurface();
+        }
+    } else if (pos.x > worldSize.x + packedSurface.getCenterX()) {
+        pos.x = packedSurface.getOffsetX();
 
-	if (pos.z + packedSurface.getPixY() < 0)
-	{
-		pos.z = worldSize.y + packedSurface.getCenterY();
+        if (!worldWraps) {
+            setRandomSurface();
+        }
+    }
 
-		if (!worldWraps)
-		{
-			pos.x = rand() % (worldSize.x + packedSurface.getCenterX());
-			setRandomSurface();
-		}
-	}
-	else if (pos.z > worldSize.y + packedSurface.getCenterY())
-	{
-		pos.z = packedSurface.getOffsetY();
+    if (pos.z + packedSurface.getPixY() < 0) {
+        pos.z = worldSize.y + packedSurface.getCenterY();
 
-		if (!worldWraps)
-		{
-			setRandomSurface();
-		}
-	}
+        if (!worldWraps) {
+            pos.x = rand() % (worldSize.x + packedSurface.getCenterX());
+            setRandomSurface();
+        }
+    } else if (pos.z > worldSize.y + packedSurface.getCenterY()) {
+        pos.z = packedSurface.getOffsetY();
 
-	WindParticle2D::sim();
+        if (!worldWraps) {
+            setRandomSurface();
+        }
+    }
+
+    WindParticle2D::sim();
 
 } // end CloudParticle2D::sim
 
@@ -185,13 +167,12 @@ void CloudParticle2D::sim()
 //---------------------------------------------------------------------------
 void CloudParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 {
-	packedSurface.setAttrib(iXY(int(pos.x), int(pos.z)), layer);
-	sorter.addSprite(&packedSurface);
+    packedSurface.setAttrib(iXY(int(pos.x), int(pos.z)), layer);
+    sorter.addSprite(&packedSurface);
 
-	if (GameConfig::getDisplayShadowsFlag())
-	{
-		packedSurfaceShadow.setAttrib(iXY(int(pos.x - 300), int(pos.z)), shadowLayer);
-		sorter.addSprite(&packedSurfaceShadow);
-	}
+    if (GameConfig::getDisplayShadowsFlag()) {
+        packedSurfaceShadow.setAttrib(iXY(int(pos.x - 300), int(pos.z)), shadowLayer);
+        sorter.addSprite(&packedSurfaceShadow);
+    }
 
 } // end CloudParticle2D::draw
