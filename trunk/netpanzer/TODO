@@ -1,3 +1,16 @@
+*** Lobby Code
+- Dedicated server always try to announce themself on the netpanzer lobby. User
+  should be able to disable this.
+- Non-Dedicated servers don't announce themselfes at the lobby.
+- There's no check if the irc-server connection is still available. We should
+  use some ping/pong messages there.
+- the player nickname is often already used by someone else in irc. We should
+  add a netpanzer postfix to them. (ie. MatzeB|netp). If you try to use the name
+  of another netpanzer player, then you should be warned and given a chance to
+  reconnect with another name
+- It should be possible to use different ports than the default one for the
+  netpanzer server
+
 *** Improvements
 -Convert the 256 color stuff to truecolor
 -Add timeout/keepalive handling to network layer to correctly detect connection
