@@ -74,7 +74,8 @@ void bReady()
     if (MapSelectionView::curMap == -1) {
         return;
     }
-    if (strcmp(IPAddressView::szServer.getString(), "") == 0)
+    if (gameconfig->hostorjoin == _game_session_join &&
+        strcmp(IPAddressView::szServer.getString(), "") == 0)
         return;
 
     // Set the player flag.

@@ -55,14 +55,11 @@ IRCLobby::IRCLobby(const std::string& server,
 
 IRCLobby::~IRCLobby()
 {
-    std::cout << "Stop Thread: " << std::endl;
     stopThread();
     
-    std::cout << "More... " << std::endl;
     SDL_DestroyMutex(game_servers_mutex);
     delete game_servers;
     game_servers=0;
-    std::cout << "ok" << std::endl;
 }
 
 void IRCLobby::stopThread()
