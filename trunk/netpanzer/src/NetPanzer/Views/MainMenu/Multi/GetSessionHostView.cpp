@@ -227,10 +227,8 @@ void GetSessionHostView::updateHostList()
     num_games = GetNumGames();
     */
 
-    if( CLIENT->getSessionList( session_list ) == false ) {
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("GetSessionView", true);
-    }
+    Desktop::setVisibilityAllWindows(false);
+    Desktop::setVisibility("GetSessionView", true);
 
     num_games = session_list.getSize();
 
@@ -314,19 +312,7 @@ void GetSessionHostView::lMouseDown(const iXY &pos)
     selectedItem = findItemContaining(pos);
 
     if ((selectedItem != -1) && (selectedItem < (int) hosts.size())) {
-        /* winsock hack
-              if (!SetSelectedGame(hosts[selectedItem].getName()))
-        {
-        	selectedItem = -1;
-        	//updateHostList(); winsock hack
-        }
-          */
-
-        if ( !CLIENT->setJoinSession(hosts[selectedItem].getName()) ) {
-            selectedItem = -1;
-            updateHostList();
-        }
-
+        // TODO
     }
 
 } // end GetSessionHostView::lMouseDown
