@@ -65,7 +65,7 @@ rule Application
   }
 
   # Link
-  MakeLocate $(target) : $(LOCATE.TARGETS) ;
+  MakeLocate $(target) : $(LOCATE_TARGETS) ;
   SystemLinkApplication $(<) : $(objects) : $(3) ;
 
   # Import default flags
