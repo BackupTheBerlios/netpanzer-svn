@@ -16,6 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+#include <stdexcept>
 #include "PlayerInterface.hpp"
 
 #include "UnitInterface.hpp"
@@ -44,6 +45,8 @@ Timer PlayerInterface::player_sync_timer;
 
 unsigned short PlayerInterface::respawn_rule_player_index = 0;
 
+SDL_mutex* PlayerInterface::mutex = 0;
+
 void PlayerInterface::initialize( unsigned short maxPlayers, unsigned char max_spawn_units )
 {
     char temp_str[64];
@@ -71,6 +74,11 @@ void PlayerInterface::initialize( unsigned short maxPlayers, unsigned char max_s
     delete[] alliance_matrix;
     alliance_matrix = new bool [max_players * max_players];
     resetAllianceMatrix();
+
+    mutex = SDL_CreateMutex();
+    if(!mutex) {
+        throw std::runtime_error("Couldn't create PlayerInterface mutex.");
+    }
 }
 
 void PlayerInterface::reset()
@@ -86,22 +94,39 @@ void PlayerInterface::cleanUp()
     delete[] alliance_matrix;
     alliance_matrix = 0;
     max_players = 0;
+
+    SDL_DestroyMutex(mutex);
+    mutex = 0;
+}
+
+void PlayerInterface::lock()
+{
+    SDL_mutexP(mutex);
+}
+
+void PlayerInterface::unLock()
+{
+    SDL_mutexV(mutex);
 }
 
 void PlayerInterface::setKill( unsigned short by_player_index, unsigned short on_player_index, unsigned short unit_type)
 {
     assert( (by_player_index < max_players) && (on_player_index < max_players) );
-
+    
+    SDL_mutexP(mutex);
     player_lists[ by_player_index ].incKills( unit_type );
     player_lists[ on_player_index ].incLosses( unit_type );
+    SDL_mutexV(mutex);
 }
 
 void PlayerInterface::setKill( const PlayerID &by_player, const PlayerID &on_player, unsigned short unit_type )
 {
     assert( (by_player.getIndex() < max_players) && (on_player.getIndex() < max_players) );
 
+    SDL_mutexP(mutex);
     player_lists[ by_player.getIndex() ].incKills( unit_type );
     player_lists[ on_player.getIndex() ].incLosses( unit_type );
+    SDL_mutexV(mutex);
 }
 
 void PlayerInterface::setKill( const UnitID &by_player, const UnitID &on_player, unsigned short unit_type )
@@ -109,6 +134,7 @@ void PlayerInterface::setKill( const UnitID &by_player, const UnitID &on_player,
     unsigned short by_player_index;
     unsigned short on_player_index;
 
+    SDL_mutexP(mutex);
     by_player_index = by_player.getPlayer();
     on_player_index = on_player.getPlayer();
 
@@ -116,6 +142,7 @@ void PlayerInterface::setKill( const UnitID &by_player, const UnitID &on_player,
 
     player_lists[ by_player_index ].incKills(unit_type);
     player_lists[ on_player_index ].incLosses(unit_type);
+    SDL_mutexV(mutex);
 }
 
 
@@ -123,8 +150,10 @@ void PlayerInterface::setAlliance( const PlayerID& by_player, const PlayerID& wi
 {
     assert( (by_player.getIndex() < max_players) && (with_player.getIndex() < max_players) );
 
+    SDL_mutexP(mutex);
     *(alliance_matrix + (with_player.getIndex() * max_players) + by_player.getIndex() ) = true;
     //*(alliance_matrix + (by_player.getIndex() * max_players) + with_player.getIndex() ) = true;
+    SDL_mutexV(mutex);
 }
 
 
@@ -132,15 +161,19 @@ void PlayerInterface::setAlliance( unsigned short by_player, unsigned short with
 {
     assert( (by_player < max_players) && (with_player < max_players) );
 
+    SDL_mutexP(mutex);
     *(alliance_matrix + (with_player * max_players) + by_player ) = true;
     //*(alliance_matrix + (by_player * max_players) + with_player ) = true;
+    SDL_mutexV(mutex);
 }
 
 void PlayerInterface::clearAlliance( unsigned short by_player, unsigned short with_player )
 {
     assert( (by_player < max_players) && (with_player < max_players) );
 
+    SDL_mutexP(mutex);
     *(alliance_matrix + (with_player * max_players) + by_player ) = false;
+    SDL_mutexV(mutex);
 }
 
 bool PlayerInterface::isAllied( const PlayerID& player, const PlayerID& with_player )
@@ -171,27 +204,33 @@ void PlayerInterface::lockPlayerStats()
 {
     unsigned long player_index;
 
+    SDL_mutexP(mutex);
     for ( player_index = 0; player_index < max_players; player_index++ ) {
         player_lists[ player_index ].lockStats();
     } // ** for
+    SDL_mutexV(mutex);
 }
 
 void PlayerInterface::unlockPlayerStats()
 {
     unsigned long player_index;
 
+    SDL_mutexP(mutex);
     for ( player_index = 0; player_index < max_players; player_index++ ) {
         player_lists[ player_index ].unlockStats();
     } // ** for
+    SDL_mutexV(mutex);
 }
 
 void PlayerInterface::resetPlayerStats()
 {
     unsigned long player_index;
 
+    SDL_mutexP(mutex);
     for ( player_index = 0; player_index < max_players; player_index++ ) {
         player_lists[ player_index ].resetStats();
     } // ** for
+    SDL_mutexV(mutex);
 }
 
 void PlayerInterface::resetAllianceMatrix()
@@ -199,12 +238,13 @@ void PlayerInterface::resetAllianceMatrix()
     unsigned long i;
     unsigned long matrix_size;
 
+    SDL_mutexP(mutex);
     matrix_size = max_players * max_players;
 
     for ( i = 0; i < matrix_size; i++ ) {
         alliance_matrix[ i ] = false;
     }
-
+    SDL_mutexV(mutex);
 }
 
 int PlayerInterface::getActivePlayerCount()
@@ -225,7 +265,9 @@ PlayerState * PlayerInterface::allocateLoopBackPlayer()
 {
     local_player_index = 0;
 
+    SDL_mutexP(mutex);
     player_lists[ local_player_index ].setStatus( _player_state_active );
+    SDL_mutexV(mutex);
 
     return( &player_lists[ local_player_index ] );
 }
@@ -245,15 +287,18 @@ PlayerState * PlayerInterface::allocateNewPlayer()
 {
     unsigned long player_index;
 
+    SDL_mutexP(mutex);
     for ( player_index = 0; player_index < max_players; player_index++ ) {
         if ( player_lists[ player_index ].getStatus() == _player_state_free ) {
             player_lists[ player_index ].setStatus( _player_state_allocated );
             player_lists[ player_index ].resetStats();
 	    player_lists[ player_index ].setColor( player_index );
+            SDL_mutexV(mutex);
             return( &player_lists[ player_index ] );
         } // ** if
 
     } // ** for
+    SDL_mutexV(mutex);
 
     return( 0 );
 }
@@ -274,12 +319,14 @@ void PlayerInterface::spawnPlayer( const PlayerID &player, const iXY &location )
     player_index = player.getIndex();
     assert( player_index < max_players );
 
+    SDL_mutexP(mutex);
     if ( player_lists[ player_index ].getStatus() != _player_state_free ) {
         UnitInterface::spawnPlayerUnits( location,
                                          player,
                                          player_lists[ player_index ].unit_config
                                        );
     } // ** if _player_state_active
+    SDL_mutexV(mutex);
 }
 
 
@@ -358,6 +405,7 @@ bool PlayerInterface::syncPlayerState( int *send_return_code, int *percent_compl
     *send_return_code = _network_ok;
 
 
+    SDL_mutexP(mutex);
     if ( player_sync_timer.count() ) {
 
         while( (player_sync_index != max_players) &&
@@ -374,6 +422,7 @@ bool PlayerInterface::syncPlayerState( int *send_return_code, int *percent_compl
 
                     if ( send_ret_val != _network_ok ) {
                         *send_return_code = send_ret_val;
+                        SDL_mutexV(mutex);
                         return( true );
                     }
                 } // ** if
@@ -392,6 +441,7 @@ bool PlayerInterface::syncPlayerState( int *send_return_code, int *percent_compl
 
             if ( send_ret_val != _network_ok ) {
                 *send_return_code = send_ret_val;
+                SDL_mutexV(mutex);
                 return( true );
             }
 
@@ -399,6 +449,7 @@ bool PlayerInterface::syncPlayerState( int *send_return_code, int *percent_compl
 
         if( (player_sync_index == max_players) ) {
             *percent_complete = 100;
+            SDL_mutexV(mutex);
             return( true );
         } // ** if
 
@@ -407,8 +458,8 @@ bool PlayerInterface::syncPlayerState( int *send_return_code, int *percent_compl
         *percent_complete = (int) percent;
     } // ** if
 
+    SDL_mutexV(mutex);
     return( false );
-
 }
 
 
@@ -420,8 +471,10 @@ void PlayerInterface::netMessageConnectID( NetMessage *message )
 
     local_player_index = connect_mesg->connect_state.getPlayerIndex();
 
+    SDL_mutexP(mutex);
     player_lists[local_player_index].setFromNetworkPlayerState
         (&connect_mesg->connect_state);
+    SDL_mutexV(mutex);
 }
 
 void PlayerInterface::netMessageSyncState( NetMessage *message )
@@ -431,7 +484,9 @@ void PlayerInterface::netMessageSyncState( NetMessage *message )
 
     sync_mesg = ( PlayerStateSync *) message;
     player_index = sync_mesg->player_state.getPlayerIndex();
+    SDL_mutexP(mutex);
     player_lists[player_index].setFromNetworkPlayerState(&sync_mesg->player_state);
+    SDL_mutexV(mutex);
 }
 
 void PlayerInterface::netMessageScoreUpdate( NetMessage *message )
@@ -452,6 +507,7 @@ void PlayerInterface::netMessageAllianceRequest( NetMessage *message )
 
     allie_request = (PlayerAllianceRequest *) message;
 
+    SDL_mutexP(mutex);
     if ( allie_request->alliance_request_type == _player_make_alliance ) {
         setAlliance( allie_request->allie_by_player_index, allie_request->allie_with_player_index );
 
@@ -487,6 +543,7 @@ void PlayerInterface::netMessageAllianceRequest( NetMessage *message )
     allie_update.allie_by_player_index   = allie_request->allie_by_player_index;
     allie_update.allie_with_player_index = allie_request->allie_with_player_index;
     allie_update.alliance_update_type = allie_request->alliance_request_type;
+    SDL_mutexV(mutex);
 
     SERVER->sendMessage( &allie_update, sizeof( PlayerAllianceUpdate ), 0 );
 }
@@ -498,6 +555,7 @@ void PlayerInterface::netMessageAllianceUpdate( NetMessage *message )
 
     allie_update = (PlayerAllianceUpdate *) message;
 
+    SDL_mutexP(mutex);
     if ( allie_update->alliance_update_type == _player_make_alliance ) {
         setAlliance( allie_update->allie_by_player_index, allie_update->allie_with_player_index );
 
@@ -526,6 +584,7 @@ void PlayerInterface::netMessageAllianceUpdate( NetMessage *message )
                         player_state->getName().c_str() );
             }
     }
+    SDL_mutexV(mutex);
 }
 
 
@@ -564,6 +623,7 @@ void PlayerInterface::disconnectPlayerCleanup( PlayerID &player_id )
 
     disconnect_player_index = player_id.getIndex();
 
+    SDL_mutexP(mutex);
     for ( player_index = 0; player_index < max_players; player_index++ ) {
         if ( isAllied( disconnect_player_index, player_index ) == true ) {
             allie_update.set( disconnect_player_index, player_index, _player_break_alliance );
@@ -582,6 +642,8 @@ void PlayerInterface::disconnectPlayerCleanup( PlayerID &player_id )
     PlayerState *player_state = getPlayerState( player_id );
 
     PlayerStateSync player_state_update(player_state->getNetworkPlayerState());
+    SDL_mutexV(mutex);
 
     SERVER->sendMessage( &player_state_update, sizeof( PlayerStateSync ), 0 );
 }
+

@@ -38,8 +38,8 @@ namespace Panels{
         void buttonPressed(UI::MouseEventParameter & event, UI::Button * source);
 
     private:
-        const static int WIDTH;
-        const static int HEIGHT;
+        static const int WIDTH;
+        static const int HEIGHT;
         UI::Container * subBox1;
         UI::Container * subBox2;
         UI::Label * label1;

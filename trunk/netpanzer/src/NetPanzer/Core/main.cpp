@@ -214,7 +214,7 @@ BaseGameManager *initialise(int argc, char** argv)
         if(port_option.value()) { gameconfig->serverport=port_option.value(); }
 
         return manager;
-    } catch(Exception e) {
+    } catch(std::exception& e) {
         LOGGER.warning("Couldn't initialize the game: %s", e.what());
         shutdown();
         exit(1);

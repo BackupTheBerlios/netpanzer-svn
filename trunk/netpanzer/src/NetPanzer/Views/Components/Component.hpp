@@ -119,8 +119,6 @@ public:
         return visible;
     }
 
-    void setBackground(uint8_t color)
-    {}
     void setBounds(const iRect &r)
     {
         min  = r.min;
@@ -144,8 +142,6 @@ public:
     {
         setSize(d.x, d.y);
     }
-    void setVisible(bool b)
-    {}
 
     virtual void draw(Surface &dest) = 0;
     virtual void actionPerformed(const mMouseEvent &me) = 0;

@@ -68,7 +68,7 @@ int NetworkServerUnix::sendMessage(const PlayerID& player_id,
     try {
         serversocket->sendMessage(player_id.getNetworkID(),	(char *) message,
                                   size, ! (flags & _network_send_no_guarantee));
-    } catch(Exception e) {
+    } catch(std::exception& e) {
         LOG ( ("Network send error when sending to client %d: %s",
                player_id.getNetworkID(), e.what()) );
         dropClient(player_id);
@@ -97,7 +97,7 @@ int NetworkServerUnix::sendMessage(NetMessage *message, size_t size,
     while( client_data_ptr != 0 ) {
         try {
             sendMessage(client_data_ptr->client_id,	message, size, flags);
-        } catch(Exception e) {
+        } catch(std::exception& e) {
             LOG( ("Error while sending network packet.") );
             return _network_failed;
         }

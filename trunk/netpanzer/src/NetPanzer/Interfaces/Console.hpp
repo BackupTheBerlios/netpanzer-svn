@@ -10,7 +10,6 @@ public:
     static void close();
    
     static std::ostream* server;
-    static std::ostream* clientscreen;
 };
 
 #endif

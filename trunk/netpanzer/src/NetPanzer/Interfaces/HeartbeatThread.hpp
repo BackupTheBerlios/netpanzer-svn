@@ -43,7 +43,8 @@ public:
 
 private:
     static int threadMain(void* data);
-    void sendHeartbeat(IPaddress addr);
+    void sendHeartbeat();
+    void sendPacket(const void* data, size_t len);
     
     volatile bool running;
     std::vector<IPaddress> serveraddrs;

@@ -106,9 +106,11 @@ void InfoThread::handleStatusRequests()
         if(query == "status") {
             std::stringstream response; 
             // you should make sure the response packet doesn't get > 1500bytes
+            PlayerInterface::lock();
             sendInfo(response);
             sendRules(response);
             sendPlayers(response);
+            PlayerInterface::unLock();
             response << "\\final\\";
 
             std::string responsestr = response.str();

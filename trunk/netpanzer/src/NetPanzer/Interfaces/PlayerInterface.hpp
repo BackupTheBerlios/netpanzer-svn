@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PLAYERINTERFACE_HPP
 #define _PLAYERINTERFACE_HPP
 
+#include <SDL_thread.h>
 #include "PlayerState.hpp"
 #include "UnitInterface.hpp"
 #include "NetMessageEncoder.hpp"
@@ -38,6 +39,8 @@ protected:
 
     static unsigned short local_player_index;
 
+    static SDL_mutex* mutex;
+
 public:
 
     static void initialize( unsigned short maxPlayers, unsigned char max_spawn_units );
@@ -45,6 +48,9 @@ public:
     static void reset();
 
     static void cleanUp();
+
+    static void lock();
+    static void unLock();
 
     static void setKill( const PlayerID &by_player, const PlayerID &on_player, unsigned short unit_type );
 
@@ -156,11 +162,9 @@ protected:
     static void netMessageAllianceUpdate( NetMessage *message );
 
 public:
-    static void    startPlayerStateSync( const PlayerID &connect_player );
+    static void startPlayerStateSync( const PlayerID &connect_player );
     static bool syncPlayerState( int *send_return_code, int *percent_complete );
-
     static void processNetMessage( NetMessage *message );
-
     static void disconnectPlayerCleanup( PlayerID &player_id );
 };
 

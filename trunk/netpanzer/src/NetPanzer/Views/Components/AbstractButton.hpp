@@ -84,8 +84,6 @@ public:
     // XXX doesn't seem to be defined
     //bool isRolloverEnabled() { return isRolloverEnabled; }
 
-    void setDisabledIcon(const Icon &disabledIcon)
-    {}
     void setEnabled(bool b)
     {
         enabled = b;

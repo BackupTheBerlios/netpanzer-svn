@@ -33,7 +33,7 @@ private:
 
     static iXY worldSize;    // How big the is the current world map?
 
-    PackedSurface static staticPackedCloud;
+    static PackedSurface staticPackedCloud;
 
     void setRandomSurface();
 
@@ -43,12 +43,10 @@ public:
                      float       windMin,
                      float       windRand);
 
-    void static init();
+    static void init();
 
     virtual void sim();
     virtual void draw(const Surface &dest, SpriteSorter &sorter);
-
-}
-; // end CloudParticle2D
+};
 
 #endif // __CloudParticle2D_hpp__

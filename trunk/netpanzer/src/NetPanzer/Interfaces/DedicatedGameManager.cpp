@@ -212,3 +212,19 @@ bool DedicatedGameManager::launchNetPanzerGame()
     return true;
 }
 
+//---------------------------------------------------------------------------
+void
+DedicatedGameManager::initializeNetworkSubSystem()
+{
+    BaseGameManager::initializeNetworkSubSystem();
+}
+
+void
+DedicatedGameManager::shutdownNetworkSubSystem()
+{
+    delete infothread;
+    infothread = 0;
+    delete heartbeatthread;
+    heartbeatthread = 0;
+    BaseGameManager::shutdownNetworkSubSystem();
+}

@@ -34,7 +34,7 @@ public:
     static void init();
 
 protected:
-    Surface static radarPingSprite;
+    static Surface radarPingSprite;
 
     float FPS;
 

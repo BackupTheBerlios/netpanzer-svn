@@ -27,8 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/DummySound.hpp"
 #include "NetworkServerUnix.hpp"
 #include "NetworkClientUnix.hpp"
-
-// ** PObject netPanzer Network Includes
+#include "ConsoleInterface.hpp"
 #include "Server.hpp"
 #include "Client.hpp"
 #include "ClientMessageRouter.hpp"
@@ -38,7 +37,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkState.hpp"
 #include "SystemNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
-
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
 #include "MouseInterface.hpp"
@@ -69,7 +67,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 
-// ** GVS Includes
 #include "cMouse.hpp"
 #include "2D/Palette.hpp"
 #include "Desktop.hpp"
@@ -110,7 +107,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "BaseGameManager.hpp"
 #include "IPAddressView.hpp"
 
-//** Physics/Particle Stuff
 #include "Particle2D.hpp"
 #include "ParticleSystem2D.hpp"
 #include "ParticleInterface.hpp"
@@ -408,32 +404,26 @@ void GameManager::netMessageConnectAlert( NetMessage *message )
 
     player_state = PlayerInterface::getPlayerState( connect_alert->getPlayerID() );
 
-    switch( connect_alert->alert_enum ) {
-    case _connect_alert_mesg_connect : {
-            *Console::clientscreen
-                << player_state->getName()
-                << " has joined the game." << std::endl;
-        }
-        break;
+    switch (connect_alert->alert_enum) {
+        case _connect_alert_mesg_connect:
+            ConsoleInterface::postMessage("%s has joined the game.",
+                    player_state->getName().c_str());
+            break;
 
-    case _connect_alert_mesg_disconnect : {
-            *Console::clientscreen
-                << player_state->getName()
-                << " has left the game." << std::endl;
-        }
-        break;
+        case _connect_alert_mesg_disconnect: 
+            ConsoleInterface::postMessage("%s has left the game.",
+                    player_state->getName().c_str());
+            break;
 
-    case _connect_alert_mesg_client_drop : {
-            *Console::clientscreen
-                << "Connection to "
-                << player_state->getName() << " has been unexpectedly broken."
-                << std::endl;
-        }
-        break;
+        case _connect_alert_mesg_client_drop:
+            ConsoleInterface::postMessage(
+                    "Connection to %s has been unexpectedly broken.",
+                    player_state->getName().c_str());
+            break;
 
-    default :
-        LOGGER.warning("invalid connection_alert enum found.");
-    } // ** switch
+        default:
+            LOGGER.warning("invalid connection_alert enum found.");
+    }
 }
 
 // ******************************************************************

@@ -27,12 +27,12 @@ public:
 
     //cSpriteBltTrans static spark;
 
-    Surface static sparkSprite;
+    static Surface sparkSprite;
 
     float           curFrame;
 
-    void static  init();
-    void virtual draw(const Surface &dest, SpriteSorter &sorter);
+    static void init();
+    virtual void draw(const Surface &dest, SpriteSorter &sorter);
 }
 ; // end SparkParticle2D
 

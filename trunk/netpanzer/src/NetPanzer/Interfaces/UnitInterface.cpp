@@ -766,7 +766,8 @@ void UnitInterface::unitManagerMesgEndLifecycle( UnitMessage *message )
         UnitProfileInterface::getUnitProfile(unittype2)->unitname;
     // TODO display unit names...
     *Console::server << "'" << player1 << "' killed a '" << unitname1
-            << "' from '" << player2 << "' with his '" << unitname2 << "'.";
+            << "' from '" << player2 << "' with his '" << unitname2 << "'."
+            << std::endl;
 
     PlayerScoreUpdate score_update;
     score_update.kill_on_player_index = lifecycle_update->destroyed.getPlayer();

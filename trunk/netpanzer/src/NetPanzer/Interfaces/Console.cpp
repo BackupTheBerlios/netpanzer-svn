@@ -67,11 +67,6 @@ private:
         *stream << timestamp;
     }
 
-    void output(const char* data, size_t len)
-    {
-        
-    }
-        
     std::ostream* stream;
 
     bool needstamp;
@@ -88,28 +83,10 @@ public:
 
 //---------------------------------------------------------------------------
 
-class ScreenMessageBuf : public std::streambuf
-{
-public:
-    ScreenMessageBuf();
-    virtual ~ScreenMessageBuf();
-
-protected:
-    virtual int overflow(int c)
-    {
-        return 0;
-    }
-
-private:
-    
-};
-
 std::ostream* Console::server;
-std::ostream* Console::clientscreen = &std::cout;
 
 void Console::initialize()
 {
     server = new OFileStampStream();
-    clientscreen = &std::cout;
 }
 

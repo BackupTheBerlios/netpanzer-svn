@@ -1,7 +1,7 @@
 Next release:
 -rewrite ServerBrowser for new protocol
 -finish serverconsole
--finish infothread
+-finish infothread - ok
 -implement TIP OF DAY  - no idea how to create graphics for the GUI :-/
 
 *** New Masterserver code

@@ -115,7 +115,7 @@ void ColorTable::createBrightenFilter(
         try {
             loadTable(filename);
             return;
-        } catch(Exception e) {
+        } catch(std::exception& e) {
             LOG( ("Error while loading palette '%s': %s", filename,
                   e.what()) );
         }
@@ -153,7 +153,7 @@ void ColorTable::createBrightenFilter(
 
     try {
         saveTable(filename);
-    } catch(Exception e) {
+    } catch(std::exception& e) {
         LOG ( ("Caching of ColorTable '%s' failed: %s", filename,
                e.what()) );
     }
@@ -169,7 +169,7 @@ void ColorTable::createDarkenFilter(const char *filename, float fudgeValue)
         try {
             loadTable(filename);
             return;
-        } catch(Exception e) {
+        } catch(std::exception& e) {
             LOG( ("Error while loading palette'%s': %s", filename, e.what()) );
         }
     }
@@ -197,7 +197,7 @@ void ColorTable::createDarkenFilter(const char *filename, float fudgeValue)
 
     try {
         saveTable(filename);
-    } catch(Exception e) {
+    } catch(std::exception& e) {
         LOG ( ("Caching of ColorTable '%s' failed: %s", filename,
                e.what()) );
     }
@@ -216,7 +216,7 @@ void ColorTable::create(
         try {
             loadTable(filename);
             return;
-        } catch(Exception e) {
+        } catch(std::exception& e) {
             LOG( ("Error while loading palette'%s': %s", filename, e.what()) );
         }
     }
@@ -267,7 +267,7 @@ void ColorTable::create(
 
     try {
         saveTable(filename);
-    } catch(Exception e) {
+    } catch(std::exception& e) {
         LOG ( ("Caching of ColorTable '%s' failed: %s", filename,
                e.what()) );
     }
@@ -325,7 +325,7 @@ void ColorTable::createTrans0(
         try {
             loadTable(filename);
             return;
-        } catch(Exception e) {
+        } catch(std::exception& e) {
             LOG( ("Error while loading palette'%s': %s", filename, e.what()) );
         }
     }
@@ -367,7 +367,7 @@ void ColorTable::createTrans0(
 
     try {
         saveTable(filename);
-    } catch(Exception e) {
+    } catch(std::exception& e) {
         LOG ( ("Caching of ColorTable '%s' failed: %s",
                filename, e.what()) );
     }
@@ -390,7 +390,7 @@ void ColorTable::createLightDarkFilter(const char *filename)
         try {
             loadTable(filename);
             return;
-        } catch(Exception e) {
+        } catch(std::exception& e) {
             LOG( ("Error while loading palette'%s': %s", filename, e.what()) );
         }
     }
@@ -424,7 +424,7 @@ void ColorTable::createLightDarkFilter(const char *filename)
 
     try {
         saveTable(filename);
-    } catch(Exception e) {
+    } catch(std::exception& e) {
         LOG ( ("Caching of ColorTable '%s' failed: %s", filename, e.what()) );
     }
 } // end ColorTable::createLightDarkFilter

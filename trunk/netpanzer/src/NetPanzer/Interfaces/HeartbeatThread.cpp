@@ -74,10 +74,7 @@ HeartbeatThread::HeartbeatThread()
     }
 
     // send initial heartbeat
-    for(std::vector<IPaddress>::iterator i = serveraddrs.begin();
-            i != serveraddrs.end(); ++i) {
-        sendHeartbeat(*i);
-    }
+    sendHeartbeat();
 
     // start thread
     thread = SDL_CreateThread(threadMain, this);
@@ -88,9 +85,16 @@ HeartbeatThread::~HeartbeatThread()
     // signal thread to stop
     SDL_KillThread(thread);
     thread = 0;
+
+    std::stringstream packet;
+    packet << "\\quit\\" << gameconfig->serverport << "\\final\\" << std::flush;
+    const void* data = packet.str().c_str();
+    size_t datasize = packet.str().size();
+    sendPacket(data, datasize);                        
 }
 
-int HeartbeatThread::threadMain(void* data)
+int
+HeartbeatThread::threadMain(void* data)
 {
     HeartbeatThread* _this = reinterpret_cast<HeartbeatThread*> (data);
     
@@ -100,10 +104,7 @@ int HeartbeatThread::threadMain(void* data)
         SDL_Delay(UPDATEINTERVAL * 1000);
         
         try {
-            for(std::vector<IPaddress>::iterator i = _this->serveraddrs.begin();
-                    i != _this->serveraddrs.end(); ++i) {
-                _this->sendHeartbeat(*i);
-            }
+            _this->sendHeartbeat();
         } catch(std::exception& e) {
             std::cerr << "Couldn't send heartbeat packet: " << e.what() << "\n"
                 << "retrying in " << UPDATEINTERVAL << "seconds." << std::endl;
@@ -115,36 +116,49 @@ int HeartbeatThread::threadMain(void* data)
     return 0;
 }
 
-void HeartbeatThread::sendHeartbeat(IPaddress addr)
+void
+HeartbeatThread::sendHeartbeat()
 {
-    TCPsocket sock = 0;
-    try {
-        sock = SDLNet_TCP_Open(&addr);
-        if(sock == 0) {
-            std::stringstream msg;
-            msg << "Couldn't create socket: " << SDLNet_GetError();
-            throw std::runtime_error(msg.str());
-        }
-        
-        // send heartbeat packet
-        std::stringstream packet;
-        packet << "\\heartbeat\\" << "\\gamename\\netpanzer"
-               << "\\port\\" << gameconfig->serverport
-               << "\\protocol\\" << _NETPANZER_PROTOCOL_VERSION
-               << "\\final\\" << std::flush;
-        const void* data = packet.str().c_str();
-        size_t datasize = packet.str().size();
-        int res = SDLNet_TCP_Send(sock, const_cast<void*>(data), (int) datasize);
-        if(res != (int) datasize) {
+    std::stringstream packet;
+    packet << "\\heartbeat\\" << "\\gamename\\netpanzer"
+           << "\\port\\" << gameconfig->serverport                     
+           << "\\protocol\\" << _NETPANZER_PROTOCOL_VERSION
+           << "\\final\\" << std::flush;
+    const void* data = packet.str().c_str();
+    size_t datasize = packet.str().size();
+    sendPacket(data, datasize);
+}
+
+void
+HeartbeatThread::sendPacket(const void* data, size_t datalen)
+{
+    for(std::vector<IPaddress>::iterator i = serveraddrs.begin();
+            i != serveraddrs.end(); ++i) {
+        IPaddress addr = *i;
+            
+        TCPsocket sock = 0;
+        try {
+            sock = SDLNet_TCP_Open(&addr);
+            if(sock == 0) {
+                std::stringstream msg;
+                msg << "Couldn't create socket: " << SDLNet_GetError();
+                throw std::runtime_error(msg.str());
+            }
+            
+            // send heartbeat packet
+            int res = SDLNet_TCP_Send(sock, const_cast<void*>(data), (int) datalen);
+            if(res != (int) datalen) {
+                std::cerr << 
+                    "Couldn't send heartbeat packet: " << SDLNet_GetError();
+            }
+
+            SDLNet_TCP_Close(sock);
+        } catch(std::exception& e) {
+            if(sock != 0)
+                SDLNet_TCP_Close(sock);
             std::cerr << 
                 "Couldn't send heartbeat packet: " << SDLNet_GetError();
         }
-
-        SDLNet_TCP_Close(sock);
-    } catch(...) {
-        if(sock != 0)
-            SDLNet_TCP_Close(sock);
-        throw;
     }
 }
 

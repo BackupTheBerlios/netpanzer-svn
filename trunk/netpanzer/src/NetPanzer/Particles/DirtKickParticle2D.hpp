@@ -19,10 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __DirtKickParticle2D_hpp__
 #define __DirtKickParticle2D_hpp__
 
-
-
 #include "Particle2D.hpp"
-
 
 // DirtKickParticle2D
 //--------------------------------------------------------------------------
@@ -34,11 +31,9 @@ public:
     static void init();
 
 protected:
-    Surface static dirtKickSprite;
+    static Surface dirtKickSprite;
 
     virtual void draw(const Surface &dest, SpriteSorter &sorter);
-
-}
-; // end DirtKickParticle2D
+};
 
 #endif // __DirtKickParticle2D_hpp__

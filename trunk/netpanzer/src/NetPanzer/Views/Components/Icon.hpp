@@ -30,10 +30,6 @@ protected:
     std::string description;
 
 public:
-    Icon(const Surface &image, const std::string& description)
-    {}
-    Icon(const Surface &image)
-    {}
     Icon()
     {}
     virtual ~Icon()
@@ -57,13 +53,6 @@ public:
     {
         return image;
     }
-
-    void setDescription(const std::string& decription)
-    {
-        Icon::description = description;
-    }
-    void setImage(const Surface &image)
-    {}
 }; // end Icon
 
 #endif // end __Icon_hpp__

@@ -188,7 +188,7 @@ void BaseGameManager::initialize(const std::string& configfile)
         initializeGameObjects();
         initializeNetworkSubSystem();
         initializeInputDevices();
-    } catch(Exception &e) {
+    } catch(std::exception& e) {
         LOGGER.warning("Initialisation failed:\n%s", e.what());
         shutdown();
         throw Exception("bootstrap failed.");

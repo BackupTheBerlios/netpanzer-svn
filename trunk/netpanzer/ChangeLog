@@ -1,3 +1,8 @@
+15-Sep-2004 by Matthias Braun
+-more warning fixes for gcc3.4
+-made PlayerInterface lockable, so that the InfoThread should be threadsafe now
+-server sends quit to masterserver now when exiting
+
 30-Jun-2004 by Matthias Braun
 -lots of warning fixes
 -improvements to the masterserver code

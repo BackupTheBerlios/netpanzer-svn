@@ -155,7 +155,7 @@ void PlayerGameManager::initializeSoundSubSystem()
     try {
         if(gameconfig->enablesound)
             sound = new SDLSound();
-    } catch(Exception e) {
+    } catch(std::exception& e) {
         LOGGER.warning("Couldn't initialize sound: %s", e.what());
     }
 

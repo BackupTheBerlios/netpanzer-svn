@@ -34,14 +34,15 @@ public:
     virtual ~Callback()
     { }
     
-    virtual void ircError(const std::string& number, const std::string& arg0,
-            const std::string& text)
+    virtual void ircError(const std::string& /*number*/,
+            const std::string& /*arg0*/, const std::string& /*text*/)
     { }
     
-    virtual void ircMessage(const Client& from, const std::string& text)
+    virtual void ircMessage(const Client& /*from*/,
+            const std::string& /*text*/)
     { }
     
-    virtual void ircJoin(Channel* channel)
+    virtual void ircJoin(Channel* /*channel*/)
     { }
 };
 
@@ -51,18 +52,18 @@ public:
     virtual ~ChannelCallback()
     { }
     
-    virtual void channelJoin(Channel* channel, const Client& client)
+    virtual void channelJoin(Channel* /*channel*/, const Client& /*client*/)
     { }
 
-    virtual void channelPart(Channel* channel, const Client& client)
+    virtual void channelPart(Channel* /*channel*/, const Client& /*client*/)
     { }
     
-    virtual void channelRename(Channel* channel, const Client& client,
-            const std::string& newnickname)
+    virtual void channelRename(Channel* /*channel*/, const Client& /*client*/,
+            const std::string& /*newnickname*/)
     { }
 
-    virtual void channelMessage(Channel* channel, const Client& client,
-            const std::string& text)
+    virtual void channelMessage(Channel* /*channel*/, const Client& /*client*/,
+            const std::string& /*text*/)
     { }
 };
 

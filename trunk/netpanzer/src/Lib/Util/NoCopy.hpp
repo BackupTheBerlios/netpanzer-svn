@@ -28,9 +28,9 @@ public:
     { }
 
 private:
-    NoCopy(const NoCopy& other)
+    NoCopy(const NoCopy& )
     { }
-    void operator=(const NoCopy& other)
+    void operator=(const NoCopy& )
     { }
 };
 

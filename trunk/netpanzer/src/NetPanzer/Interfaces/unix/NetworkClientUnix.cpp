@@ -47,7 +47,7 @@ int NetworkClientUnix::joinServer(const std::string& server_name)
     LOG( ("Trying to join server '%s'.\n", server_name.c_str()) );
     try {
         clientsocket = new ClientSocket(server_name);
-    } catch(Exception e) {
+    } catch(std::exception& e) {
         LOG( ( "Couldn't connect to server:\n%s.", e.what()) );
         char text[128];
         snprintf(text, 128, "connection error: %s", e.what());

@@ -178,7 +178,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
     
     try {
         loadConfig();
-    } catch(Exception e) {
+    } catch(std::exception& e) {
         LOG(("couldn't read game configuration: %s", e.what()));
 	LOG(("Using default config. (this is normal on first startup)"));
     }
@@ -188,7 +188,7 @@ GameConfig::~GameConfig()
 {
     try {
         saveConfig();
-    } catch(Exception e) {
+    } catch(std::exception& e) {
         LOG(("couldn't save game configuration: %s", e.what()));
     }
 }
@@ -246,12 +246,12 @@ void GameConfig::loadSettings(const INI::Section& section,
 
                 // we have a value from config file in the variable now
                 var->setNonDefaultValue();
-            } catch(Exception& e) {
+            } catch(std::exception& e) {
                 LOG(("Skipping config '%s': %s", var->getName().c_str(),
                             e.what()));
             }
         }
-    } catch(Exception& e) {
+    } catch(std::exception& e) {
         LOG(("Couldn't find config section '%s', skipping...",
                     section.getName().c_str()));
     }
