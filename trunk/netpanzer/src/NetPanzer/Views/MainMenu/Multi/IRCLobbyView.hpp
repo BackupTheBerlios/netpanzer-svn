@@ -34,10 +34,16 @@ public:
 
     void startIRC();
     void stopIRC();
+    void restartIRC();
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea); 
     virtual int lMouseUp(const iXY &up_pos,const iXY &down_pos);
     virtual void actionPerformed(mMouseEvent me);
+    void changeNickName(const std::string &s) {
+        if(lobby_connection) {
+            lobby_connection->changeNickName(s);
+        }
+    }
 
 private:
     static void buttonRefresh();

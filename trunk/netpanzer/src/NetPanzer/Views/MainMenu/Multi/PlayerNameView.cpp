@@ -78,10 +78,7 @@ void PlayerNameView::returnPressed(cInputField* input)
 {
     gameconfig->playername = input->getDestString();
     if(lobby_view) {
-        // the crude method for nickname change...
-        lobby_view->stopIRC();
-        SDL_Delay(500);
-        lobby_view->startIRC();
+        lobby_view->changeNickName(gameconfig->playername);
     }
 }
 

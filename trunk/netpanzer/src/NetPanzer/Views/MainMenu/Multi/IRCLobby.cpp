@@ -22,11 +22,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Log.hpp"
 #include "IRCLobby.hpp"
+#include "IRCLobbyView.hpp"
 #include "PlayerInterface.hpp"
 #include "GameConfig.hpp"
 #include "NetworkGlobals.hpp" 
 #include "Exception.hpp"
 #include "UtilInterface.hpp"
+#include "PlayerNameView.hpp"
 
 static const char* ask_server_running_mess = "Who's running a server?";
 static const char* server_running_mess = "I'm running";
@@ -41,6 +43,8 @@ IRCLobby::IRCLobby(const std::string& server,
     game_servers=new GameServerList();
     game_servers_mutex=SDL_CreateMutex();
 
+    setNickName(nick);
+
     startMessagesThread();
 }
 
@@ -51,6 +55,37 @@ IRCLobby::~IRCLobby()
     SDL_DestroyMutex(game_servers_mutex);
     delete game_servers;
     game_servers=0;
+}
+
+void IRCLobby::setNickName(const std::string &nick)
+{
+    const char *playername = nick.c_str();
+    // only some names are allowed in irc names
+    char ircname[1024];
+    int i;
+    for(i=0; i<1023; i++) {
+        char c = playername[i];
+        if(c==0)
+            break;
+        // don't use isalpha here since it only behaves correctly (for irc
+        // nicknames) in the C locale setting
+        if( (c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9')
+          || c == ':' ||  c=='_') {
+            ircname[i] = c;
+        }
+    }
+    ircname[i] = 0;
+    nickname=ircname;
+    playernameview->setString(ircname);
+}
+
+void IRCLobby::changeNickName(const std::string &nick)
+{
+    std::stringstream notice;
+    notice << "Changing nickname to: " << nick;
+    addChatMessage("Notice",notice.str());
+    setNickName(nick);
+    sendNickName();
 }
 
 void IRCLobby::stopThread()
@@ -103,39 +138,35 @@ void IRCLobby::connectToServer()
         throw Exception("Couldn't connect to irc server '%s': %s",
                 saddress.c_str(),  SDLNet_GetError());
 
-    // login
-    const char *playername = nickname.c_str();
 
-    // only some names are allowed in irc names
-    char ircname[1024];
-    int i;
-    for(i=0; i<1023; i++) {
-        char c = playername[i];
-        if(c==0)
-            break;
-        // don't use isalpha here since it only behaves correctly (for irc
-        // nicknames) in the C locale setting
-        if( (c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9')
-          || c == ':') {
-            ircname[i] = c;
-        }
-    }
-    ircname[i] = 0;
-
-   
-    std::stringstream buffer;
 
     if(((const std::string &)gameconfig->proxyserver).size()>0) {
         UtilInterface::sendProxyConnect(irc_server_socket,serveraddress);
     }
 
+    std::stringstream buffer;
     buffer.str("");
-    buffer << "NICK " << ircname;
+    buffer << "USER " << nickname << " 0 * :" << nickname;
     sendIRCLine(buffer.str());
 
+    sendNickName();
+}
+
+void IRCLobby::sendNickName()
+{
+    std::stringstream buffer;
+
     buffer.str("");
-    buffer << "USER " << ircname << " 0 * :" << ircname;
+    buffer << "NICK " << nickname;
     sendIRCLine(buffer.str());
+}
+
+void IRCLobby::sendLoginInfo()
+{
+    std::stringstream buffer;
+
+    sendNickName();
+
 
     // join channel
     buffer.str("");
@@ -237,6 +268,7 @@ void IRCLobby::processMessage()
     char *host, *mess, *host_end, *user_end, *code;
 
     readIRCLine(buf, sizeof(buf));
+    LOGGER.debug("irc:%s",buf);
     
     if(buf[0]!=':')
         return;
@@ -252,11 +284,24 @@ void IRCLobby::processMessage()
     }
     mess++;
 
+    if(code_i == 433) {
+        // wrong user name, add _ at the end like chatzilla does
+        char newplayer[256];
+        strncpy(newplayer,playernameview->getString(),sizeof(newplayer)-2);
+        newplayer[sizeof(newplayer)-2]=0;
+        strcat(newplayer,"_");
+        changeNickName(newplayer);
+        return;
+    }
+    if(code_i==1) {
+        sendLoginInfo();
+        return;
+    }
     if(code_i>=400 && code_i<500) {
         addChatMessage("Error",mess);
         LOG(("IRC:%s",buf));
     }
-    if(code_i==353) {
+    if(code_i==353 || strncmp(code,"NOTICE ",7)==0) {
         addChatMessage("Lobby",mess);
         return;
     }

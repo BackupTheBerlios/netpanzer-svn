@@ -34,6 +34,8 @@ public:
     {}
 
     void init();
+    void setString(const char *s) { playerName.setString(s); }
+    const char *getString() { return playerName.getString(); }
 
 private:
     static void returnPressed(cInputField* input);

@@ -48,6 +48,7 @@ public:
 
     bool isConnected() const
     { return irc_server_socket != 0; }
+    void changeNickName(const std::string &nick);
 
 private:
     void startMessagesThread();
@@ -63,6 +64,9 @@ private:
     void sendIRCMessageLine(const std::string& line, const std::string& to);
     void readIRCLine(char *buf, size_t buf_len);
     void connectToServer();
+    void sendLoginInfo();
+    void setNickName(const std::string &nick);
+    void sendNickName();
     void addChatMessage(const std::string& user, const std::string& message);
 
     SDL_mutex *game_servers_mutex;   

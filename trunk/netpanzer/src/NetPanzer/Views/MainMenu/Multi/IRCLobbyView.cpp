@@ -89,6 +89,7 @@ void IRCLobbyView::doDraw(Surface &viewArea, Surface &clientArea)
     
     int y=0;
     int disp_server_upto=0;
+    total_displayed_servers=0;
 
     if(lobby_connection == 0 || !lobby_connection->isConnected()) {
         clientArea.bltString(iXY(0,0),"Not connected to lobby", Color::white);
@@ -229,6 +230,14 @@ void IRCLobbyView::stopIRC()
         delete lobby_connection;
     }
     lobby_connection=0;
+}
+
+void IRCLobbyView::restartIRC()
+{
+        // the crude method for nickname change...
+        stopIRC();
+        SDL_Delay(500);
+        startIRC();
 }
 
 IRCLobbyView* lobby_view = 0;
