@@ -81,7 +81,7 @@ void NetworkClientUnix::sendMessage(NetMessage *message, size_t size, int flags)
            message->message_id) );
 #endif
 
-    message->size = size;
+    message->setsize(size);
     clientsocket->sendMessage((char*) message, size,
                               ! (flags & _network_send_no_guarantee) );
 

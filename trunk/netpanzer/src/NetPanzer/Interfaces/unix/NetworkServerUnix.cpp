@@ -67,7 +67,7 @@ int NetworkServerUnix::sendMessage(const PlayerID& player_id,
                                    NetMessage* message, size_t size, int flags)
 {
     if(serversocket==0) { return _network_failed; }
-    message->size = size;
+    message->setsize(size);
 
     try {
         serversocket->sendMessage(player_id.getNetworkID(),	(char *) message,

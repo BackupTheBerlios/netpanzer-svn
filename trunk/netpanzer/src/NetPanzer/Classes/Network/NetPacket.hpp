@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "NetMessageEnums.hpp"
 #include "Network/SocketClient.hpp"
+#include "Util/Endian.hpp"
 
 #define _MAX_NET_PACKET_SIZE 512
 
@@ -52,14 +53,20 @@ __attribute__((packed));
 
 class NetMessage
 {
-public:
+private:
     uint16_t size;
+public:
     uint8_t  message_class;
     uint8_t  message_id;
 
     size_t realSize()
     {
         return( sizeof( NetMessage ) );
+    }
+
+    void setsize(uint16_t newsize)
+    {
+        size = htol16(newsize);
     }
 }
 __attribute__((packed));
