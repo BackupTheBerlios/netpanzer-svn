@@ -16,7 +16,7 @@ int main(int argc, char** argv)
     srand(time(0));
 
     BrowserConfig* config = new BrowserConfig;
-    config->ircserver = "irc.freenode.net";
+    config->ircserver = "irc.quakenet.net";
     config->connect_timeout = 20;
     config->query_timeout = 20;
 
