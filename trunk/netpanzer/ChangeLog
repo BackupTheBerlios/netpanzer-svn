@@ -1,3 +1,6 @@
+05-Nov-2003 by Matthias Braun
+-added manpage contributed by Bartosz Fesnky <fenio@o2.pl>
+
 25-Oct-2003 by Matthias Braun
 -removed support for .til files and converted them to .bmp
 -tried to make .pak and .bmp loader endian safe

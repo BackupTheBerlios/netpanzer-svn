@@ -2,6 +2,7 @@ SubDir TOP ;
 
 # Decend into subdirs
 SubInclude TOP src ;
+SubInclude TOP docs ;
 SubInclude TOP pics ;
 SubInclude TOP maps ;
 SubInclude TOP sound ;
