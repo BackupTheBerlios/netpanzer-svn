@@ -15,32 +15,34 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef _NETWORKINTERFACE_HPP
-#define _NETWORKINTERFACE_HPP
+#ifndef _CLIENTLIST_H
+#define _CLIENTLIST_H
 
-#include "NetPacketQueues.hpp"
+#include <vector>
+#include <SDL_net.h>
+#include "Client.hpp"
 
-void EnqueueIncomingPacket( void *message, unsigned long message_size,
-							Client::ID toID, Client::ID fromID );
+class ClientList
+{
+public:
+	ClientList();
+	~ClientList();
+	
+	Client* add(TCPsocket socket);
+	
+	Client* getClientFromID(Client::ID id);
 
-void EnqueueUnreliablePacket( void *message, unsigned long message_size,
-							  Client::ID toID, Client::ID fromID );
+	typedef std::vector<Client*>::iterator ClientIterator;
+	ClientIterator begin()
+	{ return clients.begin(); }
+	ClientIterator end()
+	{ return clients.end(); }
 
-class NetworkInterface 
- {
-  public:
-   static NetPacketQueue loop_back_send_queue;
-   static NetPacketQueue loop_back_recv_queue;
-   static NetPacketQueue receive_queue;
-   static ReorderQueue   non_guarantee_queue;
+	void remove(Client* client);
+	void removeAll();
+private:
+	std::vector<Client*> clients;
+	Client::ID nextid;
+};
 
-  protected:
-   
-  public:
-   NetworkInterface( void );
-   ~NetworkInterface();
-
- };
-
-
-#endif // ** _NETWORKINTERFACE_HPP
+#endif // _WINSOCKCLIENTLIST_H

@@ -23,7 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 NetPacket TEMP_PACKET;
 
-void EnqueueIncomingPacket( void *message, unsigned long message_size, DPID toID, DPID fromID )
+void EnqueueIncomingPacket(void *message, unsigned long message_size,
+						   Client::ID toID, Client::ID fromID )
  {
   TEMP_PACKET.toID = toID;
   TEMP_PACKET.fromID = fromID;
@@ -41,7 +42,8 @@ void EnqueueIncomingPacket( void *message, unsigned long message_size, DPID toID
 
 NetPacket TEMP_PACKET2;
 
-void EnqueueUnreliablePacket( void *message, unsigned long message_size, DPID toID, DPID fromID )
+void EnqueueUnreliablePacket(void *message, unsigned long message_size,
+							 Client::ID toID, Client::ID fromID )
  {
   TEMP_PACKET2.toID = toID;
   TEMP_PACKET2.fromID = fromID;

@@ -15,32 +15,36 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef _NETWORKINTERFACE_HPP
-#define _NETWORKINTERFACE_HPP
+#ifndef _UNIXSERVER_H
+#define _UNIXSERVER_H
 
-#include "NetPacketQueues.hpp"
+#include "ClientList.hpp"
 
-void EnqueueIncomingPacket( void *message, unsigned long message_size,
-							Client::ID toID, Client::ID fromID );
+class BasicGameInfo;
 
-void EnqueueUnreliablePacket( void *message, unsigned long message_size,
-							  Client::ID toID, Client::ID fromID );
+class ServerSocket
+{
+public:
+	ServerSocket(Uint16 tcpport, Uint16 udpport);
+	~ServerSocket();
 
-class NetworkInterface 
- {
-  public:
-   static NetPacketQueue loop_back_send_queue;
-   static NetPacketQueue loop_back_recv_queue;
-   static NetPacketQueue receive_queue;
-   static ReorderQueue   non_guarantee_queue;
+	void read();
+	void sendMessage(Client::ID toclient, char* data, size_t datasize,
+					 bool realiable = true);
+	void removeClient(Client::ID clientid);
 
-  protected:
-   
-  public:
-   NetworkInterface( void );
-   ~NetworkInterface();
+private:
+	void bindDgram();
+	void acceptNewClients();
+	void readTCP();
+	void readUDP();
+	void readClientTCP(Client* client);
+	
+	void getBasicInfo(BasicGameInfo& basicInfo) const;
+	
+	UDPsocket udpsocket;
+	TCPsocket tcpsocket;
+	ClientList* clientlist;
+};
 
- };
-
-
-#endif // ** _NETWORKINTERFACE_HPP
+#endif

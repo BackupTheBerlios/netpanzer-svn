@@ -25,109 +25,104 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerID.hpp"
 #include "LinkListSingleTemplate.hpp"
 
-
 class ServerClientListData
- {
-  public:
-  PlayerID       client_id;
-  bool        keep_alive_state;
-  Timer          keep_alive_timer;  
-  unsigned char  no_guarantee_sequence_counter;
+{
+public:
+   	PlayerID       client_id;
+	bool        keep_alive_state;
+	Timer          keep_alive_timer;  
+	unsigned char  no_guarantee_sequence_counter;
 
-  ServerClientListData *next;
+	ServerClientListData *next;
  
-  ServerClientListData()
-   {
-    no_guarantee_sequence_counter = 0;
-    keep_alive_state = false;
-    next = 0;
-   }
- 
- };
-
+	ServerClientListData()
+	{
+		no_guarantee_sequence_counter = 0;
+		keep_alive_state = false;
+		next = 0;
+	}
+};
 
 class ServerClientList : public LinkListSingleTemplate< ServerClientListData >
- {
-  public:
-  
-   ServerClientListData * getClientData( PlayerID client_id );
+{
+public:
+ 	ServerClientListData * getClientData( PlayerID client_id );
 
-   void addClient( ServerClientListData *client_data );
-  
-   bool removeClient( PlayerID client_id );
+   	void addClient( ServerClientListData *client_data );
+   
+	bool removeClient( PlayerID client_id );
 
-   bool getFullClientID( PlayerID *client_id );
+	bool getFullClientID( PlayerID *client_id );
   
-   inline void resetIterator( ServerClientListData **iterator )
+	inline void resetIterator( ServerClientListData **iterator )
     {
-     (*iterator) = front;
-    }
+		(*iterator) = front;
+	}
     
-   inline ServerClientListData * incIteratorPtr( ServerClientListData **iterator )
-    { 
-	 ServerClientListData *client_data;
+	inline ServerClientListData * incIteratorPtr( ServerClientListData **iterator )
+	{ 
+		ServerClientListData *client_data;
 
-	 if( (*iterator) != 0 )
-	  {
-	   client_data = (*iterator);
-	   (*iterator) = (*iterator)->next;
-	   return( client_data ); 
-   	  }
-     else
-	  { return( 0 ); }
-    }
- 
- };
+		if( (*iterator) != 0 )
+		{
+			client_data = (*iterator);
+			(*iterator) = (*iterator)->next;
+			return( client_data ); 
+		}
+		else
+		{ return( 0 ); }
+	}
+};
 
 #define _CLIENT_KEEP_ALIVE_THRESHOLD     (60)  // in seconds
 #define _SERVER_KEEP_ALIVE_SEND_INTERVAL  (2)  // in seconds
 
 class NetworkServer : public NetworkInterface
- {
-  protected:
-   ServerClientList client_list;
+{
+protected:
+ 	ServerClientList client_list;
 
-   NetPacket net_packet;
+  	NetPacket net_packet;
 
-   Timer keep_alive_emit_timer;
+   	Timer keep_alive_emit_timer;
    
-   void updateKeepAliveState( void );
-   void resetClientList( void );
+	void updateKeepAliveState();
+	void resetClientList();
 
-   void netMessageClientKeepAlive( NetMessage *message );
-   void netMessageServerPingRequest( NetMessage *message );
-   void netMessageTransportClientAccept( NetMessage *message );
+	void netMessageClientKeepAlive( NetMessage *message );
+	void netMessageServerPingRequest( NetMessage *message );
+	void netMessageTransportClientAccept( NetMessage *message );
    
-   void processNetMessage( NetMessage *message );
+	void processNetMessage( NetMessage *message );
    
-   bool dontSendUDPHackFlag;
-  public:
-   
-   NetworkServer( void );
-   virtual ~NetworkServer();
+	bool dontSendUDPHackFlag;
+public:
+	NetworkServer();
+	virtual ~NetworkServer();
 
-   bool addClientToSendList( PlayerID &client_player_id );
-   bool removeClientFromSendList( PlayerID &client_player_id ); 
+	bool addClientToSendList(PlayerID &client_player_id );
+	bool removeClientFromSendList(PlayerID &client_player_id ); 
 
-   bool activateKeepAlive( PlayerID &client_player_id ); 
-   bool deactivateKeepAlive( PlayerID &client_player_id ); 
+	bool activateKeepAlive(PlayerID &client_player_id); 
+	bool deactivateKeepAlive(PlayerID &client_player_id); 
 
-   void lostPacketHack()
-    { dontSendUDPHackFlag = true; } 
+	void lostPacketHack()
+	{ dontSendUDPHackFlag = true; } 
          
-   virtual int openSession( int connection_type, int session_flags ) { return( true ); }
-   virtual int hostSession( void ) { return( true ); }
-   virtual int closeSession( void ) { return( true ); }
+	virtual void openSession() = 0;
+	virtual void hostSession() = 0;
+	virtual void closeSession() = 0;
 
-   virtual int sendMessage( NetMessage *message, unsigned long size, int flags ) { return( true ); }
-   virtual int sendMessage( NetMessage *message, unsigned long size, const PlayerID &player_id, int flags ) { return( true ); } 
+	virtual int sendMessage(NetMessage *message, size_t size, int flags) = 0;
+	virtual int sendMessage(NetMessage *message, size_t size,
+							const PlayerID &player_id, int flags) = 0;  
 
-   virtual int getMessage( NetMessage *message ) { return( true ); }
+	virtual int getMessage(NetMessage *message) = 0;
 
-   virtual void dropClient( PlayerID client_id );
-   virtual void shutdownClientTransport( PlayerID &client_id ) {  }
+	virtual void dropClient(PlayerID client_id);
+	virtual void shutdownClientTransport(const PlayerID &client_id) = 0;
 
- };
-
+	virtual void checkIncoming() = 0;
+};
 
 #endif // ** _NETWORKSERVER_HPP

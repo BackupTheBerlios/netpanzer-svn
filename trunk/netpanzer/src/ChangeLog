@@ -1,3 +1,8 @@
+7-Sep-2003 by Matze Braun
+-removed NetMessageLog class (because it only contained shit ;-)
+-slightly changed NetworkServer and NetworkClient interfaces
+-Added a SDL_Net version of the network code
+
 6-Sep-2003 by Matze Braun
 -added a unix implementation of _findfirst, _findnext and _findclose
 -removed some getDrive functions, was never used and supporting drives in unix
@@ -16,6 +21,10 @@
 -fixed more small issues
 => the main menu is displayed now and the Exit and Options buttons work :)
 -added a unix verison of _splitpath
+-some code cleanups:
+ *removed JoystickInterface completely
+ *removed netPanzerGlobals.*
+ *removed netPanzerMain.*
 
 ------------
 prior changes (not complete)

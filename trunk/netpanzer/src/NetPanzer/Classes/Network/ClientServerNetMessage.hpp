@@ -64,7 +64,7 @@ public:
 class ClientMesgServerId : public NetMessage
 {
 public:
- 	DPID server_DPID;
+	Client::ID server_id;
   
    	ClientMesgServerId()
 	{

@@ -26,7 +26,7 @@ public:
    NetworkClientUnix( void );
    ~NetworkClientUnix();
 
-   virtual int openSession( int connection_type, int session_flags ); 
+   virtual int openSession(); 
    
    virtual int startEnumeration( ConnectionAddress address );   
    virtual int startEnumeration( void ); 

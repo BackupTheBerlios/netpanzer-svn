@@ -18,9 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETPACKET_HPP
 #define _NETPACKET_HPP
 
-#include "DirectPlay.h"
 #include "PObject.hpp"
 #include "NetMessageEnums.hpp"
+#include "UILib/Network/Client.hpp"
 
 #define _MAX_NET_PACKET_SIZE 512
 
@@ -30,8 +30,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class NetPacket : public PObject 
 {
 public:
-   	DPID toID;
-	DPID fromID;  
+	Client::ID toID;
+	Client::ID fromID;  
 	unsigned short packet_size;
 
 	unsigned char data[ _MAX_NET_PACKET_SIZE ];

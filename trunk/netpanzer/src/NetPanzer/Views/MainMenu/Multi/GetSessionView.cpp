@@ -81,11 +81,11 @@ void bNext()
      //DPlayReturnValue = InitializeDirectPlay( gapp.hwndApp);
      //ConnectTypeReturnValue = GameManager::initializeConnectionType();
 
-     SERVER->openSession( 0, 0 );     
+     SERVER->openSession();
     }
 	else if (GameConfig::GetHostOrJoin() == _game_session_join)
 	{
-     CLIENT->openSession( _connection_network, 0 );
+     CLIENT->openSession();
  
      if ( CLIENT->startEnumeration( ) == false )
       {

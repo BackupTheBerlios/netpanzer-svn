@@ -113,14 +113,15 @@ bool ServerConnectDaemon::inConnectQueue( PlayerID &new_player_id )
   
   while( completed == false )
    {
-	if ( connect_request.new_player_id.getDPID() == new_player_id.getDPID() )
+	if ( connect_request.new_player_id.getNetworkID() == 
+			new_player_id.getNetworkID() )
 	 { return( true ); }
 
     connect_request = connect_queue.incIterator( &iterator, &completed );      
    }
   
   if ( (connection_state != _connect_state_idle) &&
-       (connect_player_id.getDPID() == new_player_id.getDPID()  )
+       (connect_player_id.getNetworkID() == new_player_id.getNetworkID()  )
 	 )
    return( true );
   
@@ -403,7 +404,7 @@ bool ServerConnectDaemon::connectStateWaitForClientSettings( NetMessage *message
       connect_player_state->unit_config.setUnitColor( client_setting->unit_color );
       connect_player_state->setFlag( client_setting->player_flag );
 
-      connect_player_state->setID( connect_player_id.getDPID() );
+      connect_player_state->setID( connect_player_id.getNetworkID() );
       connect_player_state->setStatus( _player_state_connecting );
       connect_player_id = connect_player_state->getPlayerID();
         		   

@@ -36,7 +36,7 @@ NetworkClientUnix::~NetworkClientUnix()
 {
 }
 
-int NetworkClientUnix::openSession( int connection_type, int session_flags ) 
+int NetworkClientUnix::openSession() 
 {
 #if 0
   NetworkClient::openSession( connection_type, session_flags );

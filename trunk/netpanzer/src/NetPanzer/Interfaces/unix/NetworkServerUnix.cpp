@@ -17,64 +17,80 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-// XXX stub implementation, mine still has bugs, but will come soon
-
-#include "NetworkServerUnix.hpp"
-#include "gapp.hpp"
-
-#include "NetMessageLog.hpp"
-
+#include <assert.h>
+#include "Log.hpp"
+#include "NetworkGlobals.hpp"
 #include "NetworkState.hpp"
-
-#include "ServerConnectDaemon.hpp"
+#include "Exception.hpp"
+#include "NetworkServerUnix.hpp"
 
 NetworkServerUnix::NetworkServerUnix()
-  : NetworkServer()
+  : NetworkServer(), serversocket(0)
 {
 }
 
 NetworkServerUnix::~NetworkServerUnix()
 {
+	delete serversocket;
 }
 
-void NetworkServerUnix::shutdownClientTransport( PlayerID &client_id )
+void NetworkServerUnix::shutdownClientTransport(const PlayerID &client_id)
 {
-  	//DelClientByWinsockID( client_id.getDPID() );
+	assert(serversocket != 0);
+	serversocket->removeClient(client_id.getNetworkID());
 }
 
-int NetworkServerUnix::openSession( int connection_type, int session_flags )
+void NetworkServerUnix::openSession()
 {
-	return 0;
 }
 
-int NetworkServerUnix::hostSession( void )
+void NetworkServerUnix::hostSession()
 {
-#if 0
-  	//winsock hack
-	if(InitStreamServer(gapp.hwndApp) == false) return false;
-
-	if(InitDGramServer(gapp.hwndApp)== false) return false;
-#endif
-  
-	return true;
+	delete serversocket;
+	serversocket = new ServerSocket(_NETPANZER_DEFAULT_PORT_TCP, 	
+									_NETPANZER_DEFAULT_PORT_UDP);
 }
 
-int NetworkServerUnix::closeSession( void )
+void NetworkServerUnix::closeSession()
 {
-  	//ShutdownWinSockServer();
-	return true;
+  	delete serversocket;
+	serversocket = 0;
 }
 
-int NetworkServerUnix::sendMessage( NetMessage *message, unsigned long size,
-									int flags )
+void NetworkServerUnix::sendMessage(ServerClientListData *client_data_ptr,
+									const PlayerID& player_id,
+									NetMessage* message, int flags)
 {
-#if 0
-  	int sock_ret_val;
-	int net_error_code;
+	if( flags & _network_send_no_guarantee )
+	{
+		if(client_data_ptr==0) {
+			client_data_ptr = client_list.getClientData(player_id);
+			assert(client_data_ptr != 0);
+		}
+		message->sequence = client_data_ptr->no_guarantee_sequence_counter;
+		client_data_ptr->no_guarantee_sequence_counter++;
 
+		serversocket->sendMessage(
+				player_id.getNetworkID(),
+				(char*) message, message->size, false);
+	}
+	else
+	{
+		serversocket->sendMessage(
+				player_id.getNetworkID(),
+				(char *) message, message->size, true);
+	}
+
+	NetworkState::incPacketsSent(message->size); 
+}
+
+int NetworkServerUnix::sendMessage(NetMessage *message, size_t size,
+								   int flags)
+{
 	message->size = size;
  
-	//LOG( ( "SEND >> Class: %s ID: %s", NetMessageClassToString( *message), NetMessageIDtoString( *message )  ) );
+	LOG( ( "SEND >> Class: %d ID: %d", message->message_class,
+									   message->message_id ) );
   
 	ServerClientListData *iterator = 0;
 	ServerClientListData *client_data_ptr = 0;
@@ -85,88 +101,43 @@ int NetworkServerUnix::sendMessage( NetMessage *message, unsigned long size,
   
 	while( client_data_ptr != 0 )
 	{
-		//winsock hack
-		if( flags & _network_send_no_guarantee )
-		{
-			if ( dontSendUDPHackFlag == false )
-			{
-				message->sequence = client_data_ptr->no_guarantee_sequence_counter;
-				client_data_ptr->no_guarantee_sequence_counter++;
-
-				sock_ret_val = WSSend( 0, client_data_ptr -> client_id.getDPID(), (char *) message, (DWORD) size);
-			}
-			else
-			{
-				client_data_ptr->no_guarantee_sequence_counter += 10;
-				dontSendUDPHackFlag = false; 
-			}
-		}
-		else
-		{
-			sock_ret_val = WSSend( 1, client_data_ptr -> client_id.getDPID(), (char *) message, (DWORD) size);
+		try {
+			sendMessage(client_data_ptr, client_data_ptr->client_id,
+						message, flags);
+		} catch(Exception e) {
+			LOG( ("Error while sending network packet.") );
+			//return -1;
 		}
 
-		if( sock_ret_val != WS_OK )
-		{ 
-			net_error_code = winsockErrorToNetworkError( sock_ret_val );
-      
-			ServerConnectDaemon::startClientDropProcess( client_data_ptr->client_id );
-		}
-
-		client_data_ptr = client_list.incIteratorPtr( &iterator );
+		client_data_ptr = client_list.incIteratorPtr(&iterator);
 	}
-
   
-	NetworkState::incPacketsSent( size ); 
-#endif
-  
-   	return true;
+   	return 0;
 }
 
-int NetworkServerUnix::sendMessage( NetMessage *message, unsigned long size,
-									PlayerID &player_id, int flags )
+int NetworkServerUnix::sendMessage( NetMessage *message, size_t size,
+									const PlayerID &player_id, int flags )
 {
-#if 0
-  	ServerClientListData *client_data_ptr = 0;
-	int ret_val;
-
 	message->size = size;
 
-	//LOG( ( "SEND >> Class: %s ID: %s", NetMessageClassToString( *message), NetMessageIDtoString( *message )  ) );
+	LOG( ( "SEND >> Class: %d ID: %d", message->message_class,
+									   message->message_id ) );
+
+	try {
+		sendMessage(0, player_id, message, flags);
+	} catch(Exception e) {
+		LOG( ("Error while sending network packet.") );
+		//return -1;
+	}
   
-	//winsock hack
-	if( flags & _network_send_no_guarantee )
-	{
-		client_data_ptr = client_list.getClientData( player_id );
-
-		if( client_data_ptr == 0 )
-		{ return( _network_failed ); }
-    
-		message->sequence = client_data_ptr->no_guarantee_sequence_counter;
-		client_data_ptr->no_guarantee_sequence_counter++;
-    
-		ret_val = WSSend( 0, player_id.getDPID(), (char *) message, (DWORD) size); 
-	}
-	else
-	{
-		ret_val = WSSend( 1, player_id.getDPID(), (char *) message, (DWORD) size);
-	}
-
-	NetworkState::incPacketsSent( size ); 
-
-	if( ret_val != WS_OK )
-		return winsockErrorToNetworkError( ret_val );
-#endif
-
-	return _network_ok;
+	return 0;
 }
 
-int NetworkServerUnix::getMessage( NetMessage *message )
+int NetworkServerUnix::getMessage(NetMessage *message)
 {
-#if 0
    	updateKeepAliveState();
       
-	if ( loop_back_recv_queue.isReady() )
+	if (loop_back_recv_queue.isReady() )
 	{
 		loop_back_recv_queue.dequeue( &net_packet );
 		memmove( (void *) message, net_packet.data, net_packet.packet_size );
@@ -182,7 +153,8 @@ int NetworkServerUnix::getMessage( NetMessage *message )
 			memmove(  (void *) message, net_packet.data, net_packet.packet_size );
 			NetworkState::incPacketsReceived( net_packet.packet_size );
 	    
-			//LOG( ( "RECV >> Class: %s ID: %s", NetMessageClassToString( *message), NetMessageIDtoString( *message )  ) );        
+			LOG( ( "RECV >> Class: %d ID: %d", message->message_class,
+											   message->message_id ) );
         
 			if ( message->message_class == _net_message_class_client_server )
 			{ processNetMessage( message ); }
@@ -190,8 +162,12 @@ int NetworkServerUnix::getMessage( NetMessage *message )
 			return true;
 		}
 	} // ** else 
-#endif
     
 	return false;
 }
 
+void NetworkServerUnix::checkIncoming()
+{
+	if(serversocket)
+		serversocket->read();
+}

@@ -20,60 +20,48 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string.h>
 #include "PObject.hpp"
-#include "DirectPlay.h"
+#include "UILib/Network/Client.hpp"
 
 class PlayerID
- {
-  protected:
-   unsigned short index_id;
-   DPID direct_play_id;
+{
+protected:
+  	unsigned short index_id;
+	Client::ID networkid;
 
-  public:
-
-  PlayerID( ) 
-   { 
-    index_id = 0xFFFF;
-    direct_play_id = 0xFFFFFFFF;
-   }
+public:
+  	PlayerID( ) 
+		: index_id(0xFFFF), networkid(0xFFFFFFFF)
+   	{ }
   
-  PlayerID( unsigned short index, DPID dpID ) 
-   {
-    index_id = index;
-    direct_play_id = dpID;
-   }
+	PlayerID( unsigned short index, Client::ID newid ) 
+		: index_id(index), networkid(newid)
+	{ }
      
-  inline void set( unsigned short index, DPID dpID ) 
-   {
-    index_id = index;
-    direct_play_id = dpID;
-   }
+	inline void setIndex( unsigned short index )
+	{ index_id = index; }
 
-  inline void setIndex( unsigned short index )
-   { index_id = index; }
+	inline unsigned short getIndex() const
+	{ return( index_id ); }
 
-  inline unsigned short getIndex() const
-   { return( index_id ); }
-
-  inline void setDPID( DPID dpID )
-   { direct_play_id = dpID; }
+	inline void setNetworkID(Client::ID newid)
+	{ networkid = newid; }
   
-  inline DPID getDPID( ) const
-   { return( direct_play_id ); }
+	inline Client::ID getNetworkID() const
+	{ return(networkid); }
 
-  inline void operator=( const PlayerID &rhs )
-   {
-    index_id = rhs.getIndex();
-    direct_play_id = rhs.getDPID();
-   }
+	inline void operator=(const PlayerID &rhs)
+	{
+		index_id = rhs.index_id;
+		networkid = rhs.networkid;
+	}
  
-  inline bool operator==( PlayerID &rhs )
-   {
-    if ( (index_id == rhs.getIndex()) && (direct_play_id = rhs.getDPID()) )
-	 { return( true ); }
-
-    return( false );    
-   }
-
- };
+	inline bool operator==(const PlayerID &rhs) const
+	{
+		if ( (index_id == rhs.index_id) && (networkid == rhs.networkid) )
+			return true;
+		
+		return false;
+	}
+};
 
 #endif // ** _PLAYERID_HPP

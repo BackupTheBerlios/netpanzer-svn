@@ -15,32 +15,53 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef _NETWORKINTERFACE_HPP
-#define _NETWORKINTERFACE_HPP
+#include <config.h>
+#include "ClientList.hpp"
 
-#include "NetPacketQueues.hpp"
+ClientList::ClientList()
+	: nextid(0)
+{
+}
 
-void EnqueueIncomingPacket( void *message, unsigned long message_size,
-							Client::ID toID, Client::ID fromID );
+ClientList::~ClientList()
+{
+}
 
-void EnqueueUnreliablePacket( void *message, unsigned long message_size,
-							  Client::ID toID, Client::ID fromID );
+Client* ClientList::add(TCPsocket socket)
+{
+	Client* client = new Client();
+	client->tcpsocket = socket;
+	client->id = nextid++;
+	clients.push_back(client);
 
-class NetworkInterface 
- {
-  public:
-   static NetPacketQueue loop_back_send_queue;
-   static NetPacketQueue loop_back_recv_queue;
-   static NetPacketQueue receive_queue;
-   static ReorderQueue   non_guarantee_queue;
+	return client;
+}
 
-  protected:
-   
-  public:
-   NetworkInterface( void );
-   ~NetworkInterface();
+Client* ClientList::getClientFromID(Client::ID id)
+{
+	for(ClientIterator i = begin(); i != end(); i++)
+	{
+		Client* client = *i;
+		if(client->id == id)
+			return client;
+	}
 
- };
+	return 0;
+}
 
+void ClientList::remove(Client* client)
+{
+	for(ClientIterator i = begin(); i != end(); i++)
+	{
+		if(client == *i) {
+			clients.erase(i);
+			break;
+		}
+	}
+	delete client;
+}
 
-#endif // ** _NETWORKINTERFACE_HPP
+void ClientList::removeAll()
+{
+	clients.clear();
+}

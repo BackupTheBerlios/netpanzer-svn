@@ -93,7 +93,7 @@ bool ServerClientList::getFullClientID( PlayerID *client_id )
   
   while( client_data_ptr != 0 )
    {
-    if ( client_data_ptr->client_id.getDPID() == client_id->getDPID() ) 
+    if ( client_data_ptr->client_id.getNetworkID() == client_id->getNetworkID() ) 
      {
       (*client_id) = client_data_ptr->client_id;
       return( true );

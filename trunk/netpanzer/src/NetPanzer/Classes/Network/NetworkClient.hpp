@@ -59,59 +59,55 @@ typedef ArrayTemplate< SessionInfo > SessionList;
 #define _SERVER_PING_INTERVAL              (5)  // in seconds
 
 class NetworkClient : public NetworkInterface
- {
-  protected:
+{
+protected:
+ 	NetPacket net_packet;
 
-   NetPacket net_packet;
-
-   SessionList session_list;
+  	SessionList session_list;
    
-   Timer   ping_timer;
+   	Timer   ping_timer;
    
-   bool keep_alive_state;
-   Timer   keep_alive_emit_timer;
-   Timer   keep_alive_timer;
-   void updateKeepAliveState( void );
+	bool keep_alive_state;
+	Timer   keep_alive_emit_timer;
+	Timer   keep_alive_timer;
+	void updateKeepAliveState( void );
 
-   DWORD client_transport_id;
+	DWORD client_transport_id;
 
-   unsigned short connection_type;
-   unsigned short connection_status;
+	unsigned short connection_type;
+	unsigned short connection_status;
    
-   void netMessageClientKeepAlive( NetMessage *message );
-   void netMessageClientSetKeepAliveState( NetMessage *message ); 
-   void netMessageClientPingAck( NetMessage *message ); 
-   void netMessageClientConnectAck( NetMessage *message ); 
+	void netMessageClientKeepAlive( NetMessage *message );
+	void netMessageClientSetKeepAliveState( NetMessage *message ); 
+	void netMessageClientPingAck( NetMessage *message ); 
+	void netMessageClientConnectAck( NetMessage *message ); 
 
-   void processNetMessage( NetMessage *message );
-
-  public:
+	void processNetMessage( NetMessage *message );
+public:
+ 	NetworkClient ();
+  	virtual ~NetworkClient ();
    
-   NetworkClient ();
-   virtual ~NetworkClient ();
-   
-   void activateKeepAlive( void ); 
-   void deactivateKeepAlive( void ); 
+   	void activateKeepAlive( void ); 
+	void deactivateKeepAlive( void ); 
 
-   virtual int openSession( int connection_type, int session_flags );
+	virtual int openSession() = 0;
 
-   virtual int startEnumeration( ConnectionAddress address ) { assert(0); return( false ); }
-   virtual int startEnumeration( void ) { assert(0); return( false ); }
-   virtual int stopEnumeration( void ) { assert(0); return( false ); }
-   virtual int getSessionList( SessionList &list ) { assert(0); return( false ); }
+	virtual int startEnumeration( ConnectionAddress address ) = 0;
+	virtual int startEnumeration( void ) = 0;
+	virtual int stopEnumeration( void ) = 0;
+	virtual int getSessionList( SessionList &list ) = 0;
 
-   virtual int joinSession( void ) { assert(0); return( false ); }
-   virtual int joinSession( int session_index ) { assert(0); return( false ); }
-   virtual int joinSession( const char session_name ) { assert(0); return( false );  }
-   virtual int setJoinSession( const char *session_name ) { assert(0); return( false );  }
+	virtual int joinSession( void ) = 0;
+	virtual int joinSession( int session_index ) = 0;
+	virtual int joinSession( const char session_name ) = 0;
+	virtual int setJoinSession( const char *session_name ) = 0;
       
-   virtual int closeSession( void ) {  assert(0); return( false ); }
-  
-   virtual int sendMessage( NetMessage *message, unsigned long size, int flags ) { assert(0); return( false ); }
+	virtual int closeSession( void ) = 0;
+	
+	virtual int sendMessage( NetMessage *message, unsigned long size, int flags
+			) = 0;
  
-   virtual int getMessage( NetMessage *message ) { assert(0); return( false ); }
-
- };
-
+   virtual int getMessage( NetMessage *message ) = 0;
+};
 
 #endif // ** _NETWORK_CLIENT_HPP

@@ -160,8 +160,9 @@ void NetworkClient::updateKeepAliveState( void )
    }
  }
 
-int NetworkClient::openSession( int connection_type, int session_flags )
- {
-  non_guarantee_queue.reset();
-  return( true );
- }
+int NetworkClient::openSession()
+{
+  	non_guarantee_queue.reset();
+	return( true );
+}
+

@@ -71,7 +71,7 @@ void ObjectiveInterface::loadObjectiveList( char *file_path )
   
   cleanUpObjectiveList();
 
-  fscanf( infile, "%s %d", comment, &objective_count );
+  fscanf( infile, "%s %ld", comment, &objective_count );
   objective_list.initialize( objective_count );
     
   unsigned long loc_x, loc_y;
@@ -82,7 +82,7 @@ void ObjectiveInterface::loadObjectiveList( char *file_path )
     Objective *objective_obj;
 
     fscanf( infile, "%s %s", comment, name ); 
-    fscanf( infile, "%s %d %d", comment, &loc_x, &loc_y );
+    fscanf( infile, "%s %ld %ld", comment, &loc_x, &loc_y );
    
     MapInterface::mapXYtoPointXY( loc_x, loc_y, &world_x, &world_y );
 

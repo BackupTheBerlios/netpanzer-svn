@@ -32,7 +32,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // ** Direct X Includes
 #ifdef WIN32
 #include "DirectDrawGlobals.hpp"
-#include "DirectPlay.h"
 #include "DirectInput.hpp"
 #include "DSound.hpp"
 #endif
@@ -135,7 +134,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ResignView.hpp"
 #include "AreYouSureResignView.hpp"
 #include "AreYouSureExitView.hpp"
-#include "DirectPlayErrorExceptionView.hpp"
 #include "UnitSelectionView.hpp"
 #include "FlagSelectionView.hpp"
 #include "MiniMapOptionsView.hpp"
@@ -293,7 +291,7 @@ void GameManager::initializeWindowSubSystem()
 	Desktop::add(new ControlsView());
 	Desktop::add(new VisualsView());
 	Desktop::add(new InterfaceView());
-	Desktop::add(new DirectPlayErrorExceptionView());
+	//Desktop::add(new DirectPlayErrorExceptionView());
 	//Desktop::add(new UnitSelectionView());
 	Desktop::add(new FlagSelectionView());
 	Desktop::add(new HostOptionsView());
@@ -547,7 +545,8 @@ void GameManager::initializeNetworkSubSystem()
 	NetworkState::setNetworkStatus( _network_state_server );
 	NetworkState::resetNetworkStats();
 	
-	SetPacketFunction( EnqueueIncomingPacket );
+	// XXX do we need this?
+	//SetPacketFunction( EnqueueIncomingPacket );
 }
 
 // ******************************************************************
@@ -1546,22 +1545,22 @@ void GameManager::hostMultiPlayerGame()
     //InitStreamServer(gapp.hwndApp);
 
     progressView.scrollAndUpdateDirect( "Launching Server ..." );
-    if ( SERVER->hostSession() == false )
-     {
-      progressView.scrollAndUpdateDirect( "SERVER LAUNCH FAILED" );
-      wait.changePeriod( 4 );    
-      while( !wait.count() );
+    try {
+		SERVER->hostSession();
+	} catch(Exception e) {
+		progressView.scrollAndUpdateDirect( "SERVER LAUNCH FAILED" );
+		wait.changePeriod( 4 );    
+		while( !wait.count() );
    	  
-      progressView.toggleMainMenu();      
-      return;
-     }
+		progressView.toggleMainMenu();      
+		return;
+	}
 
     progressView.updateDirect( "Launching Server ... (100%) " );
 
     game_state = _game_state_in_progress;
 	NetworkState::setNetworkStatus( _network_state_server );
-	CLIENT->openSession( _connection_loop_back, 0 );
-
+	CLIENT->openSession();
 
     progressView.scrollAndUpdateDirect( "Loading Game Data ..." );
 
@@ -1810,8 +1809,8 @@ void GameManager::launchDedicatedServer()
   //winsock hack
   //InitStreamServer(gapp.hwndApp);
   
-  SERVER->openSession( 0, 0 );
-  SERVER->hostSession( );
+  SERVER->openSession();
+  SERVER->hostSession();
   	
   game_state = _game_state_in_progress;
 
@@ -1900,6 +1899,8 @@ void GameManager::gameLoop()
 // ******************************************************************
 void GameManager::simLoop()
  {
+	 // CLIENT->checkIncoming();
+	 SERVER->checkIncoming();
   if ( NetworkState::status == _network_state_server )
    { ServerMessageRouter::routeMessages();  }
   else
@@ -2001,6 +2002,8 @@ void GameManager::dedicatedGameLoop()
 // ******************************************************************
 void GameManager::dedicatedSimLoop()
  {
+	 // CLIENT->checkIncoming();
+	 SERVER->checkIncoming();
   if ( NetworkState::status == _network_state_server )
    { ServerMessageRouter::routeMessages();  }
   else

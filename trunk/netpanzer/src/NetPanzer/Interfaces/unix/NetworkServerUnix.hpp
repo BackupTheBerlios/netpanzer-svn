@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _NETWORK_SERVER_UNIX_HPP
 
 #include "NetworkServer.hpp"
+#include "UILib/Network/ServerSocket.hpp"
 
 /** This class implements a bsd/unix socket implementation of the
  * NetworkServer interface.
@@ -29,16 +30,26 @@ public:
 	NetworkServerUnix();
 	virtual ~NetworkServerUnix();
    
-	virtual int openSession( int connection_type, int session_flags );
-	virtual int hostSession( void );
-	virtual int closeSession( void );
+	virtual void openSession();
+	virtual void hostSession();
+	virtual void closeSession();
 
-	virtual int sendMessage( NetMessage *message, unsigned long size, int flags );
-	virtual int sendMessage( NetMessage *message, unsigned long size, PlayerID &player_id, int flags );
+	virtual int sendMessage(NetMessage *message, size_t size,
+							int flags);
+	virtual int sendMessage(NetMessage *message, size_t size,
+							const PlayerID &player_id, int flags);
    
-	virtual int getMessage( NetMessage *message );
+	virtual int getMessage(NetMessage *message);
 
-	virtual void shutdownClientTransport( PlayerID &client_id );
+	virtual void shutdownClientTransport(const PlayerID &client_id);
+
+	virtual void checkIncoming();
+
+private:
+	void sendMessage(ServerClientListData *client_data_ptr,
+					 const PlayerID& player_id,
+					 NetMessage* message, int flags);
+	ServerSocket* serversocket;
 };
 
 #endif

@@ -137,19 +137,20 @@ class PlayerState : public PObject
      objectives_held = objectives; 
     }
    
-   inline void setID( unsigned short index, DPID dpID  )
-     {
-      ID.set( index, dpID );
-     }
+   inline void setID( unsigned short index, Client::ID networkid  )
+   {
+      ID.setIndex(index);
+	  ID.setNetworkID(networkid);
+   }
 
    inline void setID( unsigned short index )
     {
      ID.setIndex( index );
     }
   
-   inline void setID( DPID dpID )
+   inline void setID( Client::ID networkid )
     {
-     ID.setDPID( dpID );
+     ID.setNetworkID(networkid);
     }
 
    inline PlayerID getPlayerID( void )

@@ -17,7 +17,7 @@ INCLUDEDIRS=$(DIRS) NetPanzer/Classes/Network
 CFLAGS += -Wall -g3 -O2 $(foreach dir, $(INCLUDEDIRS), -I$(dir))
 
 ifeq ($(SYSTEM),UNIX)
-DIRS += NetPanzer/Interfaces/unix Stub Win32/unix UILib/SDL \
+DIRS += NetPanzer/Interfaces/unix Stub UILib/SDL UILib/Network \
 	    NetPanzer/Core/unix
 GOAL = ../netpanzer
 LINKFLAGS += -g3 `sdl-config --libs` -lSDL_net
