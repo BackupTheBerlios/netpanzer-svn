@@ -1,5 +1,11 @@
 #include <config.h>
 
+#ifdef USE_READLINE
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#endif
+
 #include "Console.hpp"
 #include "GameConfig.hpp"
 
@@ -20,7 +26,7 @@ public:
     {
         if(pbase() == pptr())
             return 0;
-        
+       
         if(needstamp)
             outputdate();
         needstamp = false;
@@ -31,7 +37,8 @@ public:
             if(*p == '\n') {
                 // output data in buffer so far
                 stream->write(chunkstart, p-chunkstart+1);
-                if(p < epptr()-1)
+                redisplay_prompt();
+                if(p < pptr()-1)
                     outputdate();
                 else
                     needstamp = true;
@@ -40,11 +47,13 @@ public:
         }
         // output the rest
         stream->write(chunkstart, pptr() - chunkstart);
-        
+
         if(c != traits_type::eof()) {
             *stream << (char) c;
-            if(c == '\n')
+            if(c == '\n') {
                 needstamp = true;
+                redisplay_prompt();
+            }
         }
         setp(buf, buf+sizeof(buf));
         return 0;
@@ -64,7 +73,13 @@ private:
         time_t curtime = time(0);
         struct tm* loctime = localtime(&curtime);
         strftime(timestamp, sizeof(timestamp), "<%F %T>", loctime);
-        *stream << timestamp;
+        *stream << "\r" << timestamp;
+    }
+
+    void redisplay_prompt()
+    {
+        // XXX doesn't work reliably...
+        //*stream << "netpanzer-server: ";
     }
 
     std::ostream* stream;

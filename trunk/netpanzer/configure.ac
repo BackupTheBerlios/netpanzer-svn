@@ -128,17 +128,6 @@ NP_FINDLIB([PHYSFS], [physfs], [physfs >= 0.1.9],
 	[],
 	[AC_MSG_ERROR([Please install physfs >= 0.1.9])])
 
-NP_FINDLIB([READLINE], [readline], [readline],
-        NP_LANG_PROGRAM(
-            [
-#include <stdio.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-],
-    [char* test = readline("test"); add_history(test);]), [], 
-        [-lreadline -lhistory -lncurses],
-        [AC_DEFINE([USE_READLINE], [], [use readline library])], [])
-
 AC_INIT_JAM
 AC_CONFIG_FILES([Jamconfig])
 AC_OUTPUT

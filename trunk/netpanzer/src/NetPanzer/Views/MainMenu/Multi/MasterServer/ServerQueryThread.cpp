@@ -184,7 +184,6 @@ ServerQueryThread::queryMasterServer()
         }
 
         state = STATE_QUERYSERVERS;
-        std::cout << "Done querying servers.\n";
 
         gameconfig->masterservers = newMasterServers;
 

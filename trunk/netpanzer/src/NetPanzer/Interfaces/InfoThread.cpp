@@ -166,7 +166,7 @@ void InfoThread::sendInfo(std::stringstream& out)
 {
     // This should be some game-specific logic...
     out << "gamename\\netpanzer\\"
-        << "gamever\\" << _NETPANZER_PROTOCOL_VERSION << "\\"
+        << "protocol\\" << _NETPANZER_PROTOCOL_VERSION << "\\"
         << "hostname\\" << gameconfig->playername << "\\"
         << "mapname\\" << gameconfig->map << "\\"
         << "mapcycle\\" << gameconfig->mapcycle << "\\"
@@ -182,7 +182,7 @@ void InfoThread::sendRules(std::stringstream& out)
 {
     out << "gamemode\\" << gameconfig->getGameTypeString() << "\\"
         << "units_per_player\\" << gameconfig->GetUnitsPerPlayer() << "\\"    
-        << "timelmit\\" << gameconfig->timelimit << "\\"
+        << "timelimit\\" << gameconfig->timelimit << "\\"
         << "fraglimit\\" << gameconfig->fraglimit << "\\";
 }
 

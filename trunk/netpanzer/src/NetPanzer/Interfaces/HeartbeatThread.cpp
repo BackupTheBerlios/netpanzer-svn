@@ -157,7 +157,7 @@ HeartbeatThread::sendPacket(const void* data, size_t datalen)
             if(sock != 0)
                 SDLNet_TCP_Close(sock);
             std::cerr << 
-                "Couldn't send heartbeat packet: " << SDLNet_GetError();
+                "Couldn't send heartbeat packet: " << SDLNet_GetError() << "\n";
         }
     }
 }
