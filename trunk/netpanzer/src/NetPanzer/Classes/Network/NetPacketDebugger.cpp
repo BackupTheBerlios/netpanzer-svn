@@ -152,7 +152,7 @@ void NetPacketDebugger::logAICommand(std::ostream& log,
     switch(cmd.command) {
         case _command_move_to_loc:
         {
-            log << "move to:" << cmd.goal_loc.x << "," << cmd.goal_loc.y;
+            log << "move to:" << cmd.goal_loc_x << "," << cmd.goal_loc_y;
             break;
         }
         case _command_attack_unit:
@@ -172,7 +172,7 @@ void NetPacketDebugger::logAICommand(std::ostream& log,
         }
         case _command_manual_fire:
         {
-            log << "MFire: " << cmd.target_loc.x << "," << cmd.target_loc.y;
+            log << "MFire: " << cmd.target_loc_x << "," << cmd.target_loc_y;
             break;
         }
         default:

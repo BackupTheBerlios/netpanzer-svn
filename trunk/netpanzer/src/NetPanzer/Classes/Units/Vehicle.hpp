@@ -134,7 +134,7 @@ protected:
     iXY fsmTurretTrackPoint_target;
     Angle fsmTurretTrackPoint_target_angle;
     bool fsmTurretTrackPoint_on_target;
-    void setFsmTurretTrackPoint( iXY &target );
+    void setFsmTurretTrackPoint(const iXY& target );
     void clearFsmTurretTrackPoint( void );
     void syncFsmTurretTrackPoint( void );
     void fsmTurretTrackPoint( void );
@@ -147,7 +147,7 @@ protected:
     void fsmTurretTrackTarget( void );
 
     iXY fsmGunneryLocation_target;
-    void setFsmGunneryLocation( iXY &target );
+    void setFsmGunneryLocation(const iXY& target );
     void clearFsmGunneryLocation( void );
     void fsmGunneryLocation( void );
 

@@ -88,7 +88,8 @@ void ShellWeapon::fsmFlight()
                     weapon_hit.setHeader( _umesg_flag_broadcast );
                     weapon_hit.message_id = _umesg_weapon_hit;
                     weapon_hit.owner_id = owner_id;
-                    weapon_hit.hit_location = location;
+                    weapon_hit.hit_location_x = location.x;
+                    weapon_hit.hit_location_y = location.y;
                     weapon_hit.damage_factor = damage_factor;
                     UnitInterface::sendMessage( &weapon_hit );
                 }

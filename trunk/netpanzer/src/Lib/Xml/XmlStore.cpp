@@ -27,10 +27,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /**
  * Store xml config to file.
  */
-XmlStore::XmlStore(const char *rootName)
+XmlStore::XmlStore(const std::string& rootName)
 {
     m_doc = xmlNewDoc((const xmlChar*)"1.0");
-    m_node = xmlNewDocRawNode(m_doc, 0, (const xmlChar*)rootName, 0);
+    m_node = xmlNewDocRawNode(m_doc, 0, (const xmlChar*)rootName.c_str(), 0);
     xmlDocSetRootElement(m_doc, m_node);
 }
 //-----------------------------------------------------------------
@@ -58,9 +58,10 @@ XmlStore::~XmlStore()
  * @return secondary XmlStore, valid only with exist parent
  */
 const XmlStore
-XmlStore::createChild(const char *childName)
+XmlStore::createChild(const std::string& childName)
 {
-    xmlNodePtr cur = xmlNewTextChild(m_node, 0, (const xmlChar*)childName, 0);
+    xmlNodePtr cur = xmlNewTextChild(m_node, 0,
+            (const xmlChar*)childName.c_str(), 0);
     return XmlStore(cur);
 }
 //-----------------------------------------------------------------
@@ -70,10 +71,12 @@ XmlStore::createChild(const char *childName)
  * @param value value
  */
 void
-XmlStore::writeInt(const char *name, long value)
+XmlStore::writeInt(const std::string& name, long value)
 {
-    xmlSetProp(m_node, (const xmlChar*)name,
-            (const xmlChar*)(XmlParser::toString(value).c_str()));
+    char buf[64];
+    snprintf(buf, 64, "%ld", value);
+    xmlSetProp(m_node, (const xmlChar*) name.c_str(),
+            (const xmlChar*) buf);
 }
 //-----------------------------------------------------------------
 /**
@@ -82,12 +85,11 @@ XmlStore::writeInt(const char *name, long value)
  * @param value value
  */
 void
-XmlStore::writeXY(const char *name, const iXY &value)
+XmlStore::writeXY(const std::string& name, const iXY &value)
 {
-
     std::ostringstream buffer;
     buffer << value.x << "," << value.y;;
-    xmlSetProp(m_node, (const xmlChar*)name,
+    xmlSetProp(m_node, (const xmlChar*)name.c_str(),
             (const xmlChar*)(buffer.str().c_str()));
 }
 //-----------------------------------------------------------------
@@ -97,9 +99,10 @@ XmlStore::writeXY(const char *name, const iXY &value)
  * @param value value
  */
 void
-XmlStore::writeString(const char *name, const char *value)
+XmlStore::writeString(const std::string& name, const std::string& value)
 {
-    xmlSetProp(m_node, (const xmlChar*)name, (const xmlChar*)value);
+    xmlSetProp(m_node, (const xmlChar*)name.c_str(),
+            (const xmlChar*)value.c_str());
 }
 
 class XMLPhysfsWriter
@@ -149,7 +152,7 @@ private:
  * Only valid operation for root element.
  */
 void
-XmlStore::save(const char *filename)
+XmlStore::save(const std::string& filename)
 {
     WriteFile* file = FileSystem::openWrite(filename);
     XMLPhysfsWriter xmlio(file);
@@ -158,9 +161,10 @@ XmlStore::save(const char *filename)
         throw Exception("xml store: child cannot save document");
     }
     if (xmlSaveFormatFileTo(xmlio.getXMLBuffer(), m_doc, 0, 1) == -1) {
-        throw Exception("xml store: cannot save xml to file '%s'", filename);
+        throw Exception("xml store: cannot save xml to file '%s'",
+                filename.c_str());
     }
 
-    LOGGER.debug("saved xml config '%s'", filename);
+    LOGGER.debug("saved xml config '%s'", filename.c_str());
 }
 

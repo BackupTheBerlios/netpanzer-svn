@@ -307,9 +307,9 @@ private:
         return( Color::white );
     }
 
-    void loadSettings(XmlConfig& config, const char* name,
+    void loadSettings(XmlConfig& config, const std::string& name,
             std::vector<ConfigVariable*>& settings);
-    void saveSettings(XmlStore& config, const char* name,
+    void saveSettings(XmlStore& config, const std::string& name,
             std::vector<ConfigVariable*>& settings);
 
     std::vector<ConfigVariable*> gamesettings;

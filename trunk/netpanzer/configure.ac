@@ -72,7 +72,7 @@ AC_CHECK_PROGS(DOXYGEN, [doxygen])
 #----------------------------------------------------------------------------
 # find libraries
 #----------------------------------------------------------------------------
-PKG_CHECK_MODULES(XML, [libxml-2.0])
+PKG_CHECK_MODULES(XML, [libxml-2.0 >= 2.6])
     
 AM_PATH_SDL([1.2.5], , AC_MSG_ERROR([Please install libsdl >= 1.2.]))
 

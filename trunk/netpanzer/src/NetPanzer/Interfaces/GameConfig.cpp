@@ -195,9 +195,7 @@ GameConfig::~GameConfig()
 
 void GameConfig::loadConfig()
 {
-    const char *xmlfile = FileSystem::getRealName(configfile.c_str()).c_str();
-
-    XmlConfig config(xmlfile);
+    XmlConfig config(configfile);
 
     loadSettings(config, "game", gamesettings);
     loadSettings(config, "player", playersettings);
@@ -214,7 +212,7 @@ void GameConfig::loadConfig()
     }
 }
 
-void GameConfig::loadSettings(XmlConfig& config, const char* name,
+void GameConfig::loadSettings(XmlConfig& config, const std::string& name,
         std::vector<ConfigVariable*>& settings)
 {
     try {
@@ -260,7 +258,7 @@ void GameConfig::loadSettings(XmlConfig& config, const char* name,
             }
         }
     } catch(Exception& e) {
-        LOG(("Couldn't find config section '%s', skipping...", name));
+        LOG(("Couldn't find config section '%s', skipping...", name.c_str()));
     }
 }
 
@@ -276,10 +274,10 @@ void GameConfig::saveConfig()
     saveSettings(xmlStore, "radar", radarsettings);
     saveSettings(xmlStore, "server", serversettings);
 
-    xmlStore.save(configfile.c_str());
+    xmlStore.save(configfile);
 }
 
-void GameConfig::saveSettings(XmlStore& xmlstore, const char* name,
+void GameConfig::saveSettings(XmlStore& xmlstore, const std::string& name,
         std::vector<ConfigVariable*>& settings)
 {
     XmlStore store = xmlstore.createChild(name);

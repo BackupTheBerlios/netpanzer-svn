@@ -34,14 +34,14 @@ class XmlStore {
     private:
         XmlStore(xmlNodePtr node);
     public:
-        XmlStore(const char *rootName);
+        XmlStore(const std::string& rootName);
         ~XmlStore();
 
-        const XmlStore createChild(const char *childName);
-        void writeInt(const char *name, long value);
-        void writeXY(const char *name, const iXY &value);
-        void writeString(const char *name, const char *value);
-        void save(const char *filename);
+        const XmlStore createChild(const std::string& childName);
+        void writeInt(const std::string& name, long value);
+        void writeXY(const std::string& name, const iXY &value);
+        void writeString(const std::string& name, const std::string& value);
+        void save(const std::string& filename);
 };
 
 #endif

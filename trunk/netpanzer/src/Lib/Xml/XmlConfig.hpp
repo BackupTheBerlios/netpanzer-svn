@@ -35,15 +35,14 @@ class XmlConfig {
     private:
         XmlConfig(xmlNodePtr node);
     public:
-        XmlConfig(const char *filename);
+        XmlConfig(const std::string& filename);
         ~XmlConfig();
 
-        const XmlConfig getChild(const char *childName) const;
-        long readInt(const char *name) const;
-        long readInt(const char *name, long defaultValue) const;
-        iXY readXY(const char *name) const;
-        std::string readString(const char *name,
-                const char *defaultValue = 0) const;
+        const XmlConfig getChild(const std::string& childName) const;
+        long readInt(const std::string& name) const;
+        long readInt(const std::string& name, long defaultValue) const;
+        iXY readXY(const std::string& name) const;
+        std::string readString(const std::string& name) const;
 };
 
 #endif

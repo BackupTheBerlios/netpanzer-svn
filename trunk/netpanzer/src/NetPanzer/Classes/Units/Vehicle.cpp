@@ -434,7 +434,7 @@ bool Vehicle::fsmMoveMapSquare( void )
 }
 
 
-void Vehicle::setFsmTurretTrackPoint( iXY &target )
+void Vehicle::setFsmTurretTrackPoint(const iXY& target)
 {
     iXY direction_vector;
 
@@ -590,7 +590,7 @@ void Vehicle::fsmTurretTrackTarget( void )
 
 
 
-void Vehicle::setFsmGunneryLocation( iXY &target )
+void Vehicle::setFsmGunneryLocation(const iXY& target )
 {
     if ( fsm_active_list[ _control_gunnery_target ] == true ) {
         clearFsmGunneryTarget();
@@ -1505,7 +1505,7 @@ void Vehicle::setCommandMoveToLoc( UMesgAICommand *message  )
         clearFsmGunneryLocation();
     }
 
-    aiFsmMoveToLoc_goal = message->goal_loc;
+    aiFsmMoveToLoc_goal = iXY(message->goal_loc_x, message->goal_loc_y);
     ai_command_state = _ai_command_move_to_loc;
     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_path_generate;
     aiFsmMoveToLoc_path_not_finished = true;
@@ -1578,7 +1578,7 @@ void Vehicle::setCommandManualMove( UMesgAICommand *message )
 
 void Vehicle::setCommandManualFire( UMesgAICommand *message )
 {
-    setFsmGunneryLocation( message->target_loc );
+    setFsmGunneryLocation( iXY(message->target_loc_x, message->target_loc_y) );
 }
 
 void Vehicle::messageAICommand( UnitMessage *message )
@@ -1605,7 +1605,9 @@ void Vehicle::messageWeaponHit( UnitMessage *message )
 
     weapon_hit = (UMesgWeaponHit *) message;
 
-    if ( unit_state.bounds( weapon_hit->hit_location ) == true ) {
+    if ( unit_state.bounds(
+                iXY(weapon_hit->hit_location_x, weapon_hit->hit_location_y))
+            == true ) {
         unit_state.hit_points -= weapon_hit->damage_factor;
 
         unit_state.threat_level = _threat_level_under_attack;

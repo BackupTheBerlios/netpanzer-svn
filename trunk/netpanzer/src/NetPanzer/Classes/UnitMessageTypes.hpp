@@ -41,10 +41,12 @@ class UMesgAICommand : public UnitMessage
 {
 public:
     uint8_t command;
-    iXY goal_loc;
+    int32_t goal_loc_x;
+    int32_t goal_loc_y;
     UnitID target_id;
     uint8_t manual_move_orientation;
-    iXY target_loc;
+    int32_t target_loc_x;
+    int32_t target_loc_y;
 
     UMesgAICommand()
     {
@@ -59,7 +61,8 @@ public:
     {
         message_id = _umesg_ai_command;
         command = _command_move_to_loc;
-        goal_loc = goal;
+        goal_loc_x = goal.x;
+        goal_loc_y = goal.y;
         manual_move_orientation = 0;
     }
 
@@ -89,7 +92,8 @@ public:
     {
         message_id = _umesg_ai_command;
         command = _command_manual_fire;
-        target_loc = target;
+        target_loc_x = target.x;
+        target_loc_y = target.y;
         manual_move_orientation = 0;
     }
 }
@@ -99,7 +103,8 @@ class UMesgWeaponHit : public UnitMessage
 {
 public:
     UnitID owner_id;
-    iXY hit_location;
+    int32_t hit_location_x;
+    int32_t hit_location_y;
     unsigned short damage_factor;
 } __attribute__((packed));
 

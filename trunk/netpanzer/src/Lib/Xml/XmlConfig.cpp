@@ -26,13 +26,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /**
  * XmlConfig from file.
  */
-XmlConfig::XmlConfig(const char *filename)
+XmlConfig::XmlConfig(const std::string& filename)
 {
-    m_doc = XmlParser::parseFile(filename, false);
-    if (m_doc == 0) {
-        throw Exception("xml config: invalid xml file '%s' ", filename);
-    }
-
+    m_doc = XmlParser::parseFile(filename);
     m_node = xmlDocGetRootElement(m_doc);
 }
 //-----------------------------------------------------------------
@@ -60,18 +56,18 @@ XmlConfig::~XmlConfig()
  * @return secondary XmlConfig, valid only with exist parent
  */
 const XmlConfig
-XmlConfig::getChild(const char *childName) const
+XmlConfig::getChild(const std::string& childName) const
 {
     xmlNodePtr cur = XmlParser::tagChildren(m_node);
 
     while (cur != 0
-            && xmlStrcmp(cur->name, (const xmlChar*)childName) != 0)
+            && xmlStrcmp(cur->name, (const xmlChar*)childName.c_str()) != 0)
     {
         cur = XmlParser::nextTag(cur);
     }
 
     if (cur == 0) {
-        throw Exception("xml config: child '%s' not found", childName);
+        throw Exception("xml config: child '%s' not found", childName.c_str());
     }
 
     return XmlConfig(cur);
@@ -82,16 +78,16 @@ XmlConfig::getChild(const char *childName) const
  * @return long
  */
 long
-XmlConfig::readInt(const char *name) const
+XmlConfig::readInt(const std::string& name) const
 {
-    xmlChar *strXml = xmlGetProp(m_node, (const xmlChar*)name);
+    xmlChar *strXml = xmlGetProp(m_node, (const xmlChar*)name.c_str());
     if (strXml == 0) {
         throw Exception("xml config: '%s->%s' is empty",
-            m_node->name, name);
+            m_node->name, name.c_str());
     }
 
     LOGGER.debug("readInt '%s->%s=%s'",
-            m_node->name, name, strXml);
+            m_node->name, name.c_str(), strXml);
 
     char *endptr;
     long result = strtol((char *)strXml, &endptr, 0);
@@ -100,7 +96,7 @@ XmlConfig::readInt(const char *name) const
 
     if (!ok) {
         throw Exception("xml config: '%s->%s=%s' is not number",
-            m_node->name, name, strXml);
+            m_node->name, name.c_str(), strXml);
     }
     return result;
 }
@@ -110,29 +106,29 @@ XmlConfig::readInt(const char *name) const
  * @return iXY
  */
 iXY
-XmlConfig::readXY(const char *name) const
+XmlConfig::readXY(const std::string& name) const
 {
-    xmlChar *strXml = xmlGetProp(m_node, (const xmlChar*)name);
+    xmlChar *strXml = xmlGetProp(m_node, (const xmlChar*)name.c_str());
     if (strXml == 0) {
         throw Exception("xml config: '%s->%s' is empty",
-            m_node->name, name);
+            m_node->name, name.c_str());
     }
 
     LOGGER.debug("readXY '%s->%s=%s'",
-            m_node->name, name, strXml);
+            m_node->name, name.c_str(), strXml);
 
     char *endptr,*endptr2;
     long x = strtol((char *)strXml, &endptr, 0);
     if(*endptr!=',') {
         throw Exception("xml config: '%s->%s=%s' has no comma ",
-            m_node->name, name, strXml);
+            m_node->name, name.c_str(), strXml);
     }
     long y = strtol(endptr+1, &endptr2, 0);
     bool ok = (strXml[0] != '\0' && endptr2[0] == '\0');
 
     if (!ok) {
         throw Exception("xml config: '%s->%s=%s' is not XY",
-            m_node->name, name, strXml);
+            m_node->name, name.c_str(), strXml);
     }
 
     xmlFree(strXml);
@@ -147,9 +143,9 @@ XmlConfig::readXY(const char *name) const
  * @return defaultValue default value
  */
 long
-XmlConfig::readInt(const char *name, long defaultValue) const
+XmlConfig::readInt(const std::string& name, long defaultValue) const
 {
-    xmlChar *strXml = xmlGetProp(m_node, (const xmlChar*)name);
+    xmlChar *strXml = xmlGetProp(m_node, (const xmlChar*)name.c_str());
     if (strXml == 0) {
         return defaultValue;
     }
@@ -163,23 +159,34 @@ XmlConfig::readInt(const char *name, long defaultValue) const
  * @return defaultValue default value or 0
  */
 std::string
-XmlConfig::readString(const char *name, const char *defaultValue) const
+XmlConfig::readString(const std::string& name)
+    const
 {
-    xmlChar *strXml = xmlGetProp(m_node, (const xmlChar*)name);
+    xmlChar *strXml = xmlGetProp(m_node, (const xmlChar*)name.c_str());
     if (strXml == 0) {
-        if (defaultValue) {
-            return std::string(defaultValue);
-        }
         throw Exception("xml config: '%s->%s' is empty",
-            m_node->name, name);
+            m_node->name, name.c_str());
     }
 
     LOGGER.debug("readString '%s->%s=%s'",
-            m_node->name, name, strXml);
+            m_node->name, name.c_str(), strXml);
 
     std::string result((char *)strXml);
     xmlFree(strXml);
 
     return result;
 }
+
+// --------------------------------------------------------------------------
+// we have to initialize libxml at app startup
+class InitializeLibXml
+{
+public:
+    InitializeLibXml()
+    {
+        LIBXML_TEST_VERSION;
+    }
+};
+
+static InitializeLibXml initxml;
 

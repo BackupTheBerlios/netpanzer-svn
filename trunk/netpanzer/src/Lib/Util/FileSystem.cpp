@@ -251,6 +251,11 @@ ReadFile::ReadFile(PHYSFS_file* file)
         : File(file)
 {}
 
+size_t ReadFile::_read(void* buffer, size_t objsize, size_t objcount)
+{
+    return (size_t) PHYSFS_read(file, buffer, objsize, objcount);
+}
+
 void ReadFile::read(void* buffer, size_t objsize, size_t objcount)
 {
     PHYSFS_sint64 objsread = PHYSFS_read(file, buffer, objsize, objcount);

@@ -24,23 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sstream>
 #include <libxml/tree.h>
 
-class XmlParser {
-    private:
-        static void xmlValidityError(void *ctx, const char *msg, ...);
-        static char *makeMessage(const char *fmt, va_list ap);
-    public:
-        static xmlDocPtr parseFile(const char *filename, bool validate = true);
-        static xmlNodePtr tagChildren(xmlNodePtr node);
-        static xmlNodePtr nextTag(xmlNodePtr cur);
-
-
-        template<class T>
-            static std::string toString(const T &val)
-            {
-                std::ostringstream buffer;
-                buffer << val;
-                return buffer.str();
-            }
+class XmlParser
+{
+public:
+    static xmlDocPtr parseFile(const std::string& filename);
+    static xmlNodePtr tagChildren(xmlNodePtr node);
+    static xmlNodePtr nextTag(xmlNodePtr cur);
 };
 
 #endif

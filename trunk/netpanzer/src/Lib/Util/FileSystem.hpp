@@ -62,6 +62,7 @@ public:
     bool isEOF();	
 
     void read(void* buffer, size_t objsize, size_t objcount);
+    size_t _read(void* buffer, size_t objsize, size_t objcount);
 
     int8_t read8();
 
