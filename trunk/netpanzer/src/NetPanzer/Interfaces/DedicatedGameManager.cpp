@@ -148,6 +148,7 @@ bool DedicatedGameManager::launchNetPanzerGame()
     SERVER->hostSession();
 
     GameControlRulesDaemon::setStateServerInProgress();
+    GameControlRulesDaemon::setDedicatedServer();
     NetworkState::setNetworkStatus( _network_state_server );
 
     GameManager::setNetPanzerGameOptions();

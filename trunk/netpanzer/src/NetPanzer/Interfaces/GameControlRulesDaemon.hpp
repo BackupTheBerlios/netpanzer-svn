@@ -50,6 +50,8 @@ protected:
 
 public:
     static void setStateServerInProgress();
+    static void setDedicatedServer();
+
     static void processNetMessage(NetMessage *message);
     static void forceMapCycle();
     static void updateGameControlFlow();

@@ -74,9 +74,14 @@ char GameControlRulesDaemon::map_cycle_fsm_client_map_name[256];
 //-----------------------------------------------------------------
 void GameControlRulesDaemon::setStateServerInProgress()
 {
-    GameControlRulesDaemon::execution_mode = _execution_mode_dedicated_server;
     GameControlRulesDaemon::game_state = _game_state_in_progress;
 }
+//-----------------------------------------------------------------
+void GameControlRulesDaemon::setDedicatedServer()
+{
+    GameControlRulesDaemon::execution_mode = _execution_mode_dedicated_server;
+}
+
 //-----------------------------------------------------------------
 void GameControlRulesDaemon::mapCycleFsmClient( void )
 {
