@@ -163,18 +163,19 @@ char Stats::GetPlayerStats(char  *flag,
                            short *total,
                            short *objectives,
                            const char** name,
-                           int   *stats_display_type )
+                           int   *stats_display_type,
+			   PlayerID player_id )
 {
     PlayerID local_player_id;
-    PlayerID player_id;
+//    PlayerID player_id;
 
     PlayerState *player;
 
-    if(NumActivePlayers) {
+//    if(NumActivePlayers) {
         local_player_id = PlayerInterface::getLocalPlayerID();
 
-        player = PlayerArray[Count];
-        player_id = player->getPlayerID();
+        player = PlayerInterface::getPlayerState( player_id );
+  //      player_id = player->getPlayerID();
 
         if( flag != 0 ) {
             *flag = player->getFlag();
@@ -231,13 +232,12 @@ char Stats::GetPlayerStats(char  *flag,
 
         //have to increment count so that next time through
         //i'll get the next player.
-        Count++;
-        NumActivePlayers--;
-        return (1);
+//        Count++;
+//        NumActivePlayers--;
+//        return (1);
 
-    } else return (0);
-
-
+//    } else return (0);
+    return (0);
 }
 //////////////////////////////////
 //////////////////////////////////

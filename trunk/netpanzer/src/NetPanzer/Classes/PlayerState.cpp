@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 uint8_t *playerColorArray[] = {
 	&Color::red,
 	&Color::green,
-	&Color::orange,
 	&Color::brown,
 	&Color::yellow,
 	&Color::cyan,
@@ -86,6 +85,7 @@ static const size_t playerColorCount
 
 void PlayerState::setColor( uint32_t index ) {
 	colorIndex = index % playerColorCount;
+//	printf( "%s got colorIndex: %d!\n", name, colorIndex );
 }
 
 uint8_t PlayerState::getColor() {

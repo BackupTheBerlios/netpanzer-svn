@@ -114,8 +114,8 @@ void RankView::drawPlayerStats(Surface &dest)
     short playerObjectives;
     const char  *playerName;
     int   playerStatsDisplayType;
+    PlayerID playerID;
 
-    int numPlayers   = Stats::getActivePlayers();
     //int offsetRunner = getScrollBarTopItem() - numPlayers;
 
     // Scoot through the list to the first visible player, since we can't seek to an index yet.
@@ -138,12 +138,21 @@ void RankView::drawPlayerStats(Surface &dest)
     //	setScrollBarTopItem(numPlayers - viewableMessageCount);
     //}
 
-    for (int i = 0; i < numPlayers; i++) {
-        int CHAR_YPIX = Surface::getFontHeight();
+    int activePlayer = -1;
+    for( int index = 0; index < PlayerInterface::getMaxPlayers(); index++ ) {
+        playerID = PlayerInterface::getPlayerID( index );
+        if( ( PlayerInterface::getPlayerState( playerID )->getStatus() ) != (unsigned char) _player_state_active ) {
+		continue;
+	}
+	//Another active player
+	activePlayer++;
+
+	//Calculate screen offset
+	int CHAR_YPIX = Surface::getFontHeight();
         offset.x = 2;
         flagOffset.x = offset.x + 160;
-        offset.y = 40 + i * (CHAR_YPIX + (UNIT_FLAGS_SURFACE.getPixY() - CHAR_YPIX) );
-        flagOffset.y = (40 - (UNIT_FLAGS_SURFACE.getPixY() - CHAR_YPIX)/2 ) + i * UNIT_FLAGS_SURFACE.getPixY();
+        offset.y = 40 + activePlayer * (CHAR_YPIX + (UNIT_FLAGS_SURFACE.getPixY() - CHAR_YPIX) );
+        flagOffset.y = (40 - (UNIT_FLAGS_SURFACE.getPixY() - CHAR_YPIX)/2 ) + activePlayer * UNIT_FLAGS_SURFACE.getPixY();
 
         //index = getScrollBarTopItem() + i;
         //assert(index < numPlayers);
@@ -154,7 +163,8 @@ void RankView::drawPlayerStats(Surface &dest)
                               &playerTotalPoints,
                               &playerObjectives,
                               &playerName,
-                              &playerStatsDisplayType);
+                              &playerStatsDisplayType,
+			      playerID );
 
         // Add player flag name.
         sprintf(statBuf, "%-20s%10i%7i%6i%10i", playerName, playerKills, playerLosses, playerTotalPoints, playerObjectives );
@@ -171,7 +181,8 @@ void RankView::drawPlayerStats(Surface &dest)
                 break;
 
             case _stats_display_type_default :
-                color = PlayerInterface::getPlayerState( i )->getColor();
+//		printf( "Index: %d, PlayerID: %d!\n", i, playerID.getIndex() );
+                color = PlayerInterface::getPlayerState( playerID )->getColor();
                 break;
 
 

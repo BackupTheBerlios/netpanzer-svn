@@ -200,8 +200,8 @@ void WinnerMesgView::doDraw(Surface &viewArea, Surface &clientArea)
     short  playerObjectives;
     const char  *playerName;
     int   playerStatsDisplayType;
-    int    numPlayers = Stats::getActivePlayers();
     iXY    offset;
+    PlayerID playerID;
     offset.zero();
 
     const int ITEM_GAP_SPACE = 2;
@@ -212,9 +212,17 @@ void WinnerMesgView::doDraw(Surface &viewArea, Surface &clientArea)
     const unsigned MAX_LOSSES_CHARS =  10;
     const unsigned MAX_POINTS_CHARS =  10;
 
-    for (int i = 0; i < numPlayers; i++) {
-        offset.x = 2;
-        offset.y = 32 + i * (Surface::getFontHeight() + ITEM_GAP_SPACE / 2);
+    int activePlayer = -1;
+    for( int index = 0; index < PlayerInterface::getMaxPlayers(); index++ ) {
+        playerID = PlayerInterface::getPlayerID( index );
+        if( ( PlayerInterface::getPlayerState( playerID )->getStatus() ) != (unsigned char) _player_state_active ) {
+		continue;
+	}
+	//Another active player
+	activePlayer++;
+
+	offset.x = 2;
+        offset.y = 32 + activePlayer * (Surface::getFontHeight() + ITEM_GAP_SPACE / 2);
 
         Stats::GetPlayerStats(playerFlagName,
                               &playerKills,
@@ -222,7 +230,8 @@ void WinnerMesgView::doDraw(Surface &viewArea, Surface &clientArea)
                               &playerTotalPoints,
                               &playerObjectives,
                               &playerName,
-                              &playerStatsDisplayType);
+                              &playerStatsDisplayType,
+			      playerID );
 
         PIX color;
 
@@ -244,7 +253,7 @@ void WinnerMesgView::doDraw(Surface &viewArea, Surface &clientArea)
             break;
 
         case _stats_display_type_default :
-            color = PlayerInterface::getPlayerState( i )->getColor();
+            color = PlayerInterface::getPlayerState( playerID )->getColor();
             break;
         } // ** switch
 

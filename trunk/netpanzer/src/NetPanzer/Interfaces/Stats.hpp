@@ -87,7 +87,8 @@ public:
                                short *total,
                                short *objectives,
                                const char** name,
-                               int   *stats_display_type );
+                               int   *stats_display_type,
+			       PlayerID player_id );
 
 
 };
