@@ -52,6 +52,10 @@ public:
         name[63] = '\0';
     }
 
+    uint16_t getPlayerIndex(void);
+
+    friend class PlayerState;
+private:
     char name[64];
     uint8_t flag;
     uint16_t playerindex_id;

@@ -16,7 +16,13 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+#include "Util/Endian.hpp"
 #include "PlayerState.hpp"
+
+uint16_t NetworkPlayerState::getPlayerIndex(void)
+{
+    return ltoh16(playerindex_id);
+}
 
 //If you modify this array, also modify the constant above
 uint8_t *playerColorArray[] = {
@@ -277,13 +283,13 @@ void PlayerState::setFromNetworkPlayerState(NetworkPlayerState* state)
     state->name[63] = '\0';
     name = state->name;
     flag = state->flag;
-    ID.setIndex(state->playerindex_id);
+    ID.setIndex(ltoh16(state->playerindex_id));
     status = state->status;
-    kills = state->kills;
-    kill_points = state->kill_points;
-    losses = state->losses;
-    loss_points = state->loss_points;
-    total = state->total;
-    objectives_held = state->objectives_held;
-    colorIndex = state->colorIndex;
+    kills = ltoh16(state->kills);
+    kill_points = ltoh16(state->kill_points);
+    losses = ltoh16(state->losses);
+    loss_points = ltoh16(state->loss_points);
+    total = ltoh16(state->total);
+    objectives_held = ltoh16(state->objectives_held);
+    colorIndex = ltoh32(state->colorIndex);
 }
