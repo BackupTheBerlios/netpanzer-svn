@@ -77,7 +77,6 @@ public:
    {
 	   char_buffer[ (char_buffer_rear + 1) & _CHAR_BUFFER_MOD ] = c;
 	   char_buffer_rear = (char_buffer_rear + 1) & _CHAR_BUFFER_MOD;
-	   printf("putch: %c\n", c);
    }
 };
 
