@@ -100,7 +100,11 @@ const char* FileSystem::getRealDir(const char* filename)
 std::string FileSystem::getRealName(const char* filename)
 {
     const char* dir = PHYSFS_getRealDir(filename);
+    if (dir == 0) {
+        throw Exception("no such path '%s'", filename);
+    }
     std::string realname = dir;
+    realname += PHYSFS_getDirSeparator();
     realname += filename;
     return realname;
 }

@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Log.hpp"
 #include "Exception.hpp"
 #include "GameConfig.hpp"
+#include "XmlConfig.hpp"
+#include "XmlStore.hpp"
 
 std::string GameConfig::configfile;
 char  GameConfig::UnitColor;
@@ -155,52 +157,55 @@ void GameConfig::shutdown()
 
 void GameConfig::loadConfig()
 {
-    ReadFile* file = FileSystem::openRead(configfile.c_str());
+    const char *xmlfile = FileSystem::getRealName(configfile.c_str()).c_str();
+    XmlConfig config(xmlfile);
 
-    // XXX loadin/saving would be nicer in human readable form (XML?)
+    int configversion = config.readInt("version");
+    if (configversion != CONFIG_VERSION) {
+        throw Exception("wrong config file version, %d!=%d",
+                configversion, CONFIG_VERSION);
+    }
 
-    int configversion = file->readSLE16();
-    if(configversion != CONFIG_VERSION)
-        throw Exception("wrong config file version");
+    XmlConfig game = config.getChild("game");
+    GameMode = game.readInt("mode");
+    GameType = game.readInt("type");
+    NumberPlayers = game.readInt("players");
+    NumberUnits = game.readInt("units");
+    NumberInitialUnits = game.readInt("init_units");
 
-    UnitColor = file->read8();
-    GameMode = file->read8();
-    GameType = file->read8();
-    NumberPlayers = file->readSLE16();
-    NumberUnits = file->readSLE16();
-    NumberInitialUnits = file->readSLE16();
-
-    // TODO lots of other stuff :)
-    screen_resolution = file->readSLE32();
-    screen_fullscreen = file->read8();
-    display_shadows_flag = file->read8();
-    display_unit_flags = file->read8();
-
-    // TODO lots of other stuff :)
-
-    delete file;
+    XmlConfig visuals = config.getChild("visuals");
+    screen_resolution = visuals.readInt("resolution");
+    screen_fullscreen = visuals.readInt("fullscreen");
+    display_shadows_flag = visuals.readInt("shadows_flag");
+    display_unit_flags = visuals.readInt("unit_flags");
+    UnitColor = visuals.readInt("unit_color");
 }
 
 void GameConfig::saveConfig()
 {
-    WriteFile* file = FileSystem::openWrite(configfile.c_str());
+    XmlStore xmlStore("netpanzer");
+    xmlStore.writeInt("version", CONFIG_VERSION);
 
-    file->writeSLE16(CONFIG_VERSION);
+    XmlStore game = xmlStore.createChild("game");
+    game.writeInt("mode", GameMode);
+    game.writeInt("type", GameType);
+    game.writeInt("players", NumberPlayers);
+    game.writeInt("units", NumberUnits);
+    game.writeInt("init_units", NumberInitialUnits);
 
-    file->write8(UnitColor);
-    file->write8(GameMode);
-    file->write8(GameType);
-    file->writeSLE16(NumberPlayers);
-    file->writeSLE16(NumberUnits);
-    file->writeSLE16(NumberInitialUnits);
+    XmlStore visuals = xmlStore.createChild("visuals");
+    visuals.writeInt("resolution", screen_resolution);
+    visuals.writeInt("fullscreen", screen_fullscreen);
+    visuals.writeInt("shadows_flag", display_shadows_flag);
+    visuals.writeInt("unit_flags", display_unit_flags);
+    visuals.writeInt("unit_color", UnitColor);
 
-    // TODO lots of other stuff :)
-    file->writeSLE32(screen_resolution);
-    file->write8(screen_fullscreen);
-    file->write8(display_shadows_flag);
-    file->write8(display_unit_flags);
-
-    delete file;
+    if (!FileSystem::exists(configfile.c_str())) {
+        // hack, touch file
+        delete FileSystem::openWrite(configfile.c_str());
+    }
+    const char *xmlfile = FileSystem::getRealName(configfile.c_str()).c_str();
+    xmlStore.save(xmlfile);
 }
 
 void GameConfig::setGameMapName( char *map_name )

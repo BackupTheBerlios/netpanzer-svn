@@ -2,7 +2,7 @@ include config.mak
 
 DIRS = . Lib Lib/2D Lib/Environment Lib/Interfaces Lib/Particles \
 	   Lib/PObject/Classes Lib/PObject/Templates Lib/Types Lib/View \
-	   Lib/optionmm \
+	   Lib/optionmm Lib/Xml \
 	   NetPanzer/Classes NetPanzer/Classes/Weapons \
 	   NetPanzer/Classes/Network \
 	   NetPanzer/Views/MainMenu NetPanzer/Views/MainMenu/Options \
@@ -19,8 +19,9 @@ INCLUDEDIRS=$(DIRS) NetPanzer/Classes/Network
 CFLAGS += -Wall -g3 -O2 $(foreach dir, $(INCLUDEDIRS), -I$(dir))
 
 GOAL = ../netpanzer
-LINKFLAGS += -g3 `sdl-config --libs` -lSDL_net -lSDL_mixer -lSDL_image -lphysfs
-CFLAGS += `sdl-config --cflags` -D${SYSTEM}
+LINKFLAGS += -g3 `sdl-config --libs` -lSDL_net -lSDL_mixer -lSDL_image \
+	-lphysfs `xml2-config --libs`
+CFLAGS += `sdl-config --cflags` `xml2-config --cflags` -D${SYSTEM}
 
 ifeq ($(PROFILING),yes)
 CFLAGS += -pg

@@ -131,7 +131,7 @@ const float _GAME_CONFIG_SCREEN_BRIGHTNESS_LIMIT_LOWER =  0.0f;
 #define _GAME_CONFIG_ATTACK_NOTIFICATION_TIME_LIMIT_LOWER  2
 
 // Remember to change this, when the config changes!
-#define CONFIG_VERSION		000001
+#define CONFIG_VERSION 1
 
 class GameConfig
 {

@@ -1,4 +1,8 @@
-18-Sepby Matthias Braun
+21-Sep-2003 by Ivo Danihelka
+-solved the higher resolutions problem in MainMenu
+-load/save GameConfig in XML format
+
+18-Sep-2003 by Matthias Braun
 -fixed the Choice-reset problem
 -removed lots of options from visualsview
 -changed sound back to 8 channels at 22k, no need to blow too much resources

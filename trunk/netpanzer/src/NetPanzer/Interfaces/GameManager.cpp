@@ -736,7 +736,7 @@ void GameManager::bootStrap()
     try {
         if(!FileSystem::exists("config"))
             FileSystem::mkdir("config");
-        GameConfig::initialize("config/netpanzer.cfg");
+        GameConfig::initialize("config/netpanzer.xml");
         initializeSoundSubSystem();
         initializeVideoSubSystem();
         loadGameData();
