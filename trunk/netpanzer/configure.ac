@@ -5,7 +5,7 @@
 AC_PREREQ([2.54])
 
 AC_INIT([netpanzer], [0.1], [netpanzer-devel@nongnu.org])
-AC_CONFIG_SRCDIR([src/Lib/Log.hpp])
+AC_CONFIG_SRCDIR([mk/jam/build.jam])
 AC_CONFIG_AUX_DIR([mk/autoconf])
 
 AC_CANONICAL_BUILD
