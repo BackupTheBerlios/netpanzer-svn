@@ -53,8 +53,10 @@ Store::load(std::istream& in)
         // skip lines full with spaces
         if(*c == 0)
             continue;
-        
-        if(*c == '[') { // section starts...
+
+        if(*c == '#') {
+            // skipp comments
+        } else if(*c == '[') { // section starts...
             ++c;
             std::string newsection;
             while(*c != 0 && *c != ']') {
