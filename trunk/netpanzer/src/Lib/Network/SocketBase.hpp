@@ -37,9 +37,6 @@ protected:
     void close();
     
     int sockfd;
-#ifdef WINSOCK
-    static int netrefcount;
-#endif
 };
 
 }

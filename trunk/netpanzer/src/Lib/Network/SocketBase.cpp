@@ -27,37 +27,32 @@ namespace network
 {
 
 #ifdef WINSOCK
-int SocketBase::netrefcount = 0;
+class WinSockInit {
+    WinSockInit() {
+        WSADATA wsaData;
+        WORD wVers = MAKEWORD(2, 0);
+        int rc = WSAStartup(wVers, &wsaData);
+        if(rc != 0) {
+	    fprintf(stderr, "Failed to initialize winsock: %d\n", rc);
+	    exit(1);
+        }
+    }
+
+    ~WinSockInit() {
+	WSACleanup();
+    }
+};
+WinSockInit _WinSockInit;
 #endif
 
 SocketBase::SocketBase()
     : sockfd(-1)
 {
-#ifdef WINSOCK
-    if(netrefcount == 0) {
-        WSADATA wsaData;
-        WORD wVers = MAKEWORD(1, 1);
-        int rc = WSAStartup(wVers, &wsaData);
-        if(rc != 0) {
-            std::stringstream msg;
-            msg << "Failed to initialize winsock (Error code " << rc << ")";
-            throw std::runtime_error(msg.str());
-        }
-    }
-    netrefcount++;
-#endif
 }
 
 SocketBase::~SocketBase()
 {
     close();
-    
-#ifdef WINSOCK
-    netrefcount--;
-    if(netrefcount == 0) {
-        WSACleanup();
-    }
-#endif
 }
 
 void
@@ -80,8 +75,11 @@ SocketBase::setNonBlocking()
 {
 #ifdef WIN32
     unsigned long mode = 1;
-    ioctlsocket(sockfd, FIONBIO, &mode);
-    // TODO error checking
+    if(ioctlsocket(sockfd, FIONBIO, &mode) != 0) {
+	std::stringstream msg;
+	msg << "Couldn't set nonblocking mode: " << WSAGetLastError();
+	throw std::runtime_error(msg.str());
+    }
 #else
     if(fcntl(sockfd, F_SETFL, O_NONBLOCK) < 0) {
         std::stringstream msg;
