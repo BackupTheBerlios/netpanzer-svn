@@ -35,6 +35,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "DedicatedGameManager.hpp"
 #include "BotGameManager.hpp"
 #include "PlayerGameManager.hpp"
+#include "NetworkGlobals.hpp"
 
 //---------------------------------------------------------------------------
 
@@ -118,9 +119,18 @@ BaseGameManager *initialise(int argc, char** argv)
         "Which config file should be used (only files inside config directory)",
         "");
     commandline.add(&game_config_option);
+    option<bool, false, false> protocol_option('\0', "protocol",
+            "Show version of network protocol", false);
+    commandline.add(&protocol_option);
+    
 
     if(!commandline.process() || commandline.help() || commandline.version())
         exit(0);
+
+    if(protocol_option.value()) {
+        std::cout << (int) NETPANZER_PROTOCOL_VERSION << std::endl;
+        exit(0);
+    }
 
     if (debug_option.value()) {
         LOGGER.setLogLevel(Logger::LEVEL_DEBUG);
