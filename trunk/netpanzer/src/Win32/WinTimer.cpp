@@ -154,7 +154,7 @@ bool WinTimer::SetupRDTSC( void )
   return( true );
  }
 
-void WinTimer::WinTimer()
+WinTimer::WinTimer()
 {
    	MMTimerTargerRes = 2;
 	MMTimerTargetDelay = 10;
@@ -170,7 +170,7 @@ void WinTimer::WinTimer()
 	}
 }
 
-void WinTimer::~WinTimer()
+WinTimer::~WinTimer()
 {
 	if ( TimerType == _multimedia_timer )
 	{
