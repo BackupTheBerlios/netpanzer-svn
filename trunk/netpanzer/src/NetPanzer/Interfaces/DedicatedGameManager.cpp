@@ -37,6 +37,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Server.hpp"
 #include "IRCLobbyView.hpp"
+#include "LobbyView.hpp"
+#include "ProgressView.hpp"
+#include "ConsoleLoadingView.hpp"
+
+void DedicatedGameManager::initializeVideoSubSystem()
+{
+    lobbyView = new ConsoleLoadingView();
+    progressView = new ConsoleLoadingView();
+}
+
+void DedicatedGameManager::shutdownVideoSubSystem()
+{
+    delete lobbyView;
+    delete progressView;
+}
 
 //-----------------------------------------------------------------
 void DedicatedGameManager::initializeGameConfig(const std::string& configfile)
@@ -54,67 +69,7 @@ void DedicatedGameManager::initializeInputDevices()
 //-----------------------------------------------------------------
 void DedicatedGameManager::inputLoop()
 {
-    // XXX we need new code here (someone wanna write a readline version of this
-    // stuff?
-#ifdef WIN32
-    if( kbhit() )
-    {
-        int key;
-        key = getch();
-        if ( key == 0 ) {
-            key = getch();
-        } else {
-            switch( key ) {
-            case 27 : {
-                    GameManager::exitNetPanzer();
-                }
-                break;
-
-            case 'Q' :
-            case 'q' : {
-                    GameManager::exitNetPanzer();
-                }
-                break;
-
-            case 'M' :
-            case 'm' : {
-                    GameControlRulesDaemon::forceMapCycle();
-                }
-                break;
-
-            case 'I' :
-            case 'i' : {
-                    ConsoleInterface::postMessage( "Map: %s", gameconfig->getGameMapName() );
-                    ConsoleInterface::postMessage( "Players: %d/%d", PlayerInterface::getActivePlayerCount(),
-                                                   gameconfig->maxplayers );
-
-                    ConsoleInterface::postMessage( "Units: %d/%d", UnitInterface::getTotalUnitCount(),
-                                                   gameconfig->maxunits);
-                }
-                break;
-
-            case '1' : {
-                    ChatInterface::setMessageScopeServer();
-                    ChatInterface::sendCurrentMessage( "Server will restart in 5 minutes" );
-                }
-                break;
-
-            case '2' : {
-                    ChatInterface::setMessageScopeServer();
-                    ChatInterface::sendCurrentMessage( "Server is restarting" );
-                }
-                break;
-
-            case '3' : {
-                    ChatInterface::setMessageScopeServer();
-                    ChatInterface::sendCurrentMessage( "Server is rotating map" );
-                }
-                break;
-
-            } // ** switch
-        }
-    }
-#endif
+    // we should handle the server console here
 }
 
 //-----------------------------------------------------------------

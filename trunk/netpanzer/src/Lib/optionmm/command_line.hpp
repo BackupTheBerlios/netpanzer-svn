@@ -1,5 +1,5 @@
 //
-// $Id: command_line.hpp,v 1.3 2003/09/19 15:22:30 MatzeBraun Exp $
+// $Id: command_line.hpp,v 1.4 2004/01/17 12:39:57 matzebraun Exp $
 //
 //  optionmm::command_line
 //  Copyright (C) 2002 Christian Holm Christensen <cholm@nbi.dk>
@@ -33,7 +33,6 @@
 #ifndef __IOSTREAM__
 #include <iostream>
 #endif
-#define EXPORT
 
 /** @file   command_line.hh
     @author Christian Holm
@@ -65,7 +64,7 @@ namespace optionmm
     command line options given. 
     @until return
  */
-class EXPORT command_line
+class command_line
 {
 public:
     /// The container of options.
@@ -172,42 +171,42 @@ public:
 
 /// Explicit specialisation of helper function
 template <>
-struct EXPORT string_to_value<int>
+struct string_to_value<int>
 {
     int operator()(const char* arg);
 };
 
 /// Explicit specialisation of helper function
 template <>
-struct EXPORT string_to_value<long>
+struct string_to_value<long>
 {
     long operator()(const char* arg);
 };
 
 /// Explicit specialisation of helper function
 template <>
-struct EXPORT string_to_value<float>
+struct string_to_value<float>
 {
     float operator()(const char* arg);
 };
 
 /// Explicit specialisation of helper function
 template <>
-struct EXPORT string_to_value<double>
+struct string_to_value<double>
 {
     double operator()(const char* arg);
 };
 
 /// Explicit specialisation of helper function
 template <>
-struct EXPORT string_to_value<bool>
+struct string_to_value<bool>
 {
     bool operator()(const char* arg);
 };
 
 /// Explicit specialisation  of helper function
 template<>
-struct EXPORT toggle_value<bool>
+struct toggle_value<bool>
 {
     inline void operator()(bool& x)
     {

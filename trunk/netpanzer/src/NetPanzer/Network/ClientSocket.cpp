@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
-#include "SDLNet.hpp"
 #include "NetworkInterface.hpp"
 #include "NetworkGlobals.hpp"
 #include "ClientSocket.hpp"
@@ -31,7 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ClientSocket::ClientSocket(const std::string& whole_servername)
 {
-    SDLNet::initialise();
     int port=_NETPANZER_DEFAULT_PORT_TCP;
     std::string servername;
 
@@ -77,8 +75,6 @@ ClientSocket::~ClientSocket()
     SDLNet_TCP_DelSocket(socketset, tcpsocket);
     SDLNet_FreeSocketSet(socketset);
     SDLNet_TCP_Close(tcpsocket);
-
-    SDLNet::shutdown();
 }
 
 void ClientSocket::read()

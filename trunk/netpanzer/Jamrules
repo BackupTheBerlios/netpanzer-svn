@@ -22,6 +22,8 @@ COMPILER.LFLAGS.profile += -g3 -pg ;
 LOCATE.OBJECTS = $(BUILDTOP)/out/$(OSFULL[1]:L) ;
 LOCATE.TARGETS = $(BUILDTOP) ;
 
+LINK = $(CXX) ;
+
 # Include build rules
 include $(TOP)/mk/jam/build.jam ;
 

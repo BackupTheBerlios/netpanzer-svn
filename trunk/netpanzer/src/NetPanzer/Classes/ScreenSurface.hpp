@@ -20,12 +20,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "2D/Surface.hpp"
 
-class UIDraw;
+class SDLVideo;
 
 class ScreenSurface : public Surface
 {
 public:
-    ScreenSurface(UIDraw* draw, int width, int height, int bpp);
+    ScreenSurface(SDLVideo* draw, int width, int height, int bpp);
 
     void create(int xPix, int yPix, int nStride, int nNumFrames);
 
@@ -34,7 +34,7 @@ public:
     void copyToVideoFlip();
 
 private:
-    UIDraw* draw;
+    SDLVideo* draw;
 };
 
 extern ScreenSurface* screen;

@@ -27,6 +27,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Client.hpp"
 #include "ClientConnectDaemon.hpp"
 #include "Util/Exception.hpp"
+#include "LobbyView.hpp"
+#include "ProgressView.hpp"
+#include "ConsoleLoadingView.hpp"
 
 //-----------------------------------------------------------------
 BotGameManager::BotGameManager(const std::string &serverHost)
@@ -34,6 +37,19 @@ BotGameManager::BotGameManager(const std::string &serverHost)
 {
     /* empty */
 }
+
+void BotGameManager::initializeVideoSubSystem()
+{
+    lobbyView = new ConsoleLoadingView();
+    progressView = new ConsoleLoadingView();
+}
+
+void BotGameManager::shutdownVideoSubSystem()
+{
+    delete lobbyView;
+    delete progressView;
+}
+
 //-----------------------------------------------------------------
 /**
  * Bot uses name = playername + "-" + rand() % 1000

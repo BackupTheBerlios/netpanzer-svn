@@ -139,6 +139,8 @@ public:
     // Visuals Settings
     ConfigInt   screenresolution;
     ConfigBool  fullscreen;
+    ConfigBool  hardwareSurface;
+    ConfigBool  hardwareDoubleBuffer;
     ConfigBool  displayshadows;
     ConfigBool  blendsmoke;
     ConfigInt   screengamma;

@@ -24,9 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UI/Painter.hpp"
 #include "Panels/TestPanel.hpp"
 
+class SDLVideo;
+
 class PlayerGameManager : public BaseGameManager
 {
 private:
+    SDLVideo* sdlVideo;
     Panels::TestPanel testpanel;
     bool showNewPanel;
 

@@ -1,5 +1,5 @@
 //
-// $Id: option.hpp,v 1.2 2003/09/16 20:16:11 fidlej Exp $
+// $Id: option.hpp,v 1.3 2004/01/17 12:39:57 matzebraun Exp $
 //
 //  optionmm::option
 //  Copyright (C) 2002 Christian Holm Christensen <cholm@nbi.dk>
@@ -31,19 +31,6 @@
 #ifndef __IOSTREAM__
 #include <iostream>
 #endif
-#ifdef WIN32
-# ifdef LIBOPTIONMM_EXPORTS
-#  ifndef EXPORT
-#   define EXPORT __declspec(dllexport)
-#  endif
-# else
-#  ifndef EXPORT
-#   define EXPORT __declspec(dllimport)
-#  endif
-# endif
-#else
-# define EXPORT
-#endif
 
 /** @file   option.hh
     @author Christian Holm
@@ -55,7 +42,7 @@ namespace optionmm
 //====================================================================
 /** Base class for options. This is needed to use the @c std::vector
     container in the class command_line below. */
-class EXPORT basic_option
+class basic_option
 {
 public:
     typedef std::vector<size_t> position_list;
@@ -131,7 +118,7 @@ public:
 /** @brief Turns a C string into a value of @a Type
     @param Type The type to convert into */
 template <typename Type>
-struct EXPORT string_to_value
+struct string_to_value
 {
     /** Convert the C string to a value of @a Type
     @param arg the C string to convert. 
@@ -150,7 +137,7 @@ struct EXPORT string_to_value
     the option. 
     @param Type The type to toggle. */
 template <typename Type>
-struct EXPORT toggle_value
+struct toggle_value
 {
     /** Toggles the value of a type.
     @param x a reference the value to toggle. */
@@ -169,7 +156,7 @@ bool argument=true,
 bool multivalue=true,
 typename Convert=string_to_value<Type>,
 typename Toggle=toggle_value<Type> >
-class EXPORT option : public basic_option
+class option : public basic_option
 {
 public:
     /// The value type

@@ -34,8 +34,8 @@ protected:
     virtual void initializeInputDevices();
     virtual void shutdownInputDevices();
 
-    virtual void initializeVideoSubSystem();
-    virtual void shutdownVideoSubSystem();
+    virtual void initializeVideoSubSystem() = 0;
+    virtual void shutdownVideoSubSystem() = 0;
 
     virtual void initializeSoundSubSystem();
     virtual void shutdownSoundSubSystem();
@@ -52,9 +52,9 @@ protected:
     virtual void graphicsLoop();
 
     virtual void shutdownSubSystems();
-    virtual void shutdown();
 public:
-    virtual ~BaseGameManager() { shutdown(); }
+    virtual void shutdown();
+    virtual ~BaseGameManager() { }
 
     virtual void initialize(const std::string& configfile = "");
 

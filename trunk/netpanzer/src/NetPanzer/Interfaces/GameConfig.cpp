@@ -58,6 +58,8 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       
       screenresolution("resolution", 0, 0, 2),
       fullscreen("fullscreen", true),
+      hardwareSurface("hardwareSurface", true),
+      hardwareDoubleBuffer("hardwareDoubleBuffer", true),
       displayshadows("displayshadows", true),
       blendsmoke("blendsmoke", true),
       screengamma("gamma", 50, 0, 100),
@@ -129,6 +131,8 @@ GameConfig::GameConfig(const std::string& newconfigfile)
    
     visualssettings.push_back(&screenresolution);
     visualssettings.push_back(&fullscreen);
+    visualssettings.push_back(&hardwareSurface);
+    visualssettings.push_back(&hardwareDoubleBuffer);
     visualssettings.push_back(&displayshadows);
     visualssettings.push_back(&blendsmoke);
     visualssettings.push_back(&screengamma);

@@ -1,3 +1,8 @@
+16-Jan-2003 by Matthias Braun
+-rewrote the SDL_Video code and moved it into netpanzer dir
+-initialize SDL_net at application start instead of when network is used first.
+ This simplifies things and fixes a bug in lobby view on windows.
+
 12-Jan-2003 by Matthias Braun
 -added netpanzer icon and jam rules to install icons
 

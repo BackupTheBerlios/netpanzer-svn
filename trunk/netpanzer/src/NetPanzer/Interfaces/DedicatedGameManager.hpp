@@ -23,6 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class DedicatedGameManager : public BaseGameManager
 {
 protected:
+    virtual void initializeVideoSubSystem();
+    virtual void shutdownVideoSubSystem();
+    
     virtual void initializeInputDevices();
     virtual void initializeGameConfig(const std::string& configfile);
 

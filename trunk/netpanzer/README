@@ -12,16 +12,12 @@ Contents:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. Introduction
-netPanzer is an online multiplayer tactical warfare game designed for play
-across the Internet and over LAN systems. netPanzer is designed for FAST ACTION
-combat -- it is not another resource management clone. In fact, there aren't
-any resources at all. Each player will have many units of different types at
-their disposal. Players can fight until their units are destroyed -- then
-respawn and keep on going. The game is real-time, but it's based on quick
-tactical action and unit management. Battles progress quickly and constantly;
-in fact, they never let up. There is no stop in the action because there is no
-waiting for resources to be collected and converted into weaponry. Players can
-join or leave multiplayer games at any time.
+netPanzer is an online multiplayer tactical warfare game designed for FAST
+ACTION combat. Gameplay concentrates on the core -- no resource management is
+needed. The game is based on quick tactical action and unit management in
+real-time. Battles progress quickly and constantly as destroyed players respawn
+with a set of new units. Players can join or leave multiplayer games at any
+time.
 
 1.1 A bit of history
 The original development of netpanzer was done from PyroSoft inc. Though in

@@ -27,7 +27,7 @@ class TimerInterface
 {
 private:
     // Higher number means more accurate average.
-    enum { FRAMES_PER_FPS_UPDATE = 4 };
+    enum { FRAMES_PER_FPS_UPDATE = 20 };
 
     static TIMESTAMP frameStartTime;
     static unsigned  framesUntilNextFPSUpdate;

@@ -28,15 +28,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkGlobals.hpp"
 #include "GameConfig.hpp"
 #include "PlayerInterface.hpp"
-#include "SDLNet.hpp"
 #include "Client.hpp"
 #include "Util/Exception.hpp"
 
 ServerSocket::ServerSocket(Uint16 tcpport)
         : clientlist(0)
 {
-    SDLNet::initialise();
-    
     IPaddress ip;
     if(SDLNet_ResolveHost(&ip, 0, tcpport) < 0)
         throw Exception("couldn't resolve address for socket on port %d: %s",
@@ -60,8 +57,6 @@ ServerSocket::~ServerSocket()
     delete clientlist;
     SDLNet_FreeSocketSet(sockets);
     SDLNet_TCP_Close(tcpsocket);
-
-    SDLNet::shutdown();
 }
 
 void ServerSocket::read()

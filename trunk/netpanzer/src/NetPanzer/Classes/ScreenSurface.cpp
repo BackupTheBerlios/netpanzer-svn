@@ -17,12 +17,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "System/UIDraw.hpp"
+#include "System/SDLVideo.hpp"
 #include "ScreenSurface.hpp"
 
 ScreenSurface* screen = 0;
 
-ScreenSurface::ScreenSurface(UIDraw* newdraw, int width, int height, int bpp)
+ScreenSurface::ScreenSurface(SDLVideo* newdraw, int width, int height, int bpp)
         : Surface(), draw(newdraw)
 {
     myMem = false;

@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameConfig.hpp"
 #include "GameManager.hpp"
 #include "GameViewGlobals.hpp"
-#include "System/UIDraw.hpp"
 #include "Desktop.hpp"
 
 // VisualsView
@@ -49,28 +48,28 @@ VisualsView::VisualsView() : OptionsTemplateView()
     x = xTextStart + 10;
     y = 100;
     choiceResolution.setName("Resolution");
-    choiceResolution.setStateChangedCallback(this);
     choiceResolution.addItem("640x480");
     choiceResolution.addItem("800x600");
     choiceResolution.addItem("1024x768");
     choiceResolution.setLocation(x, y);
     choiceResolution.select(gameconfig->screenresolution);
     choiceResolution.setMinWidth(minWidth);
+    choiceResolution.setStateChangedCallback(this);
 
     checkBoxFullscreen.setLabel("Fullscreen");
-    checkBoxFullscreen.setStateChangedCallback(this);
-    checkBoxFullscreen.setState(Screen->isFullScreen());    
+    checkBoxFullscreen.setState(gameconfig->fullscreen);    
     checkBoxFullscreen.setLocation(x+ 200, y);
+    checkBoxFullscreen.setStateChangedCallback(this);
     y += yOffset;
     y += yOffset;
 
     choiceMiniMapUnitSize.setName("Mini Map Unit Size");
-    choiceMiniMapUnitSize.setStateChangedCallback(this);
     choiceMiniMapUnitSize.addItem("Small");
     choiceMiniMapUnitSize.addItem("Large");
     choiceMiniMapUnitSize.setLocation(x, y);
     choiceMiniMapUnitSize.select(gameconfig->radar_unitsize);
     choiceMiniMapUnitSize.setMinWidth(minWidth);
+    choiceMiniMapUnitSize.setStateChangedCallback(this);
     y += yOffset;
     y += yOffset;
 
@@ -80,15 +79,15 @@ VisualsView::VisualsView() : OptionsTemplateView()
     // Blend Mouse.
 
     checkBoxDrawAllShadows.setLabel("Draw All Shadows");
-    checkBoxDrawAllShadows.setStateChangedCallback(this);
     checkBoxDrawAllShadows.setState(gameconfig->displayshadows);
     checkBoxDrawAllShadows.setLocation(x, y);
+    checkBoxDrawAllShadows.setStateChangedCallback(this);
     y += yOffset;
 
     checkBoxBlendSmoke.setLabel("Blend Smoke");
-    checkBoxBlendSmoke.setStateChangedCallback(this);
     checkBoxBlendSmoke.setState(gameconfig->blendsmoke);
     checkBoxBlendSmoke.setLocation(x, y);
+    checkBoxBlendSmoke.setStateChangedCallback(this);
     y += yOffset;
 } // end VisualsView::VisualsView
 

@@ -21,10 +21,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include <fcntl.h>
 
-#include "System/UIDraw.hpp"
 #include "System/Sound.hpp"
-#include "System/SDL/SDLSound.hpp"
-#include "System/SDL/SDLDraw.hpp"
+#include "System/SDLSound.hpp"
+#include "System/SDLVideo.hpp"
 #include "System/DummySound.hpp"
 #include "NetworkServerUnix.hpp"
 #include "NetworkClientUnix.hpp"
@@ -163,9 +162,21 @@ void GameManager::loadPalette(char *palette_path)
 
 void GameManager::setVideoMode()
 {
+    // try to find sensible defaults for SDL flags...
+    if(gameconfig->hardwareSurface.isDefaultValue()) {
+        gameconfig->hardwareSurface = false;
+    }
+    if(gameconfig->hardwareDoubleBuffer.isDefaultValue()) {
+        gameconfig->hardwareDoubleBuffer = false;
+    }
+
+    // construct flags
     iXY mode_res;
     iXY old_res = screen ? screen->getPix() : iXY(0,0) ;
-    bool fullscreen = gameconfig->fullscreen;
+    Uint32 flags = gameconfig->fullscreen ? SDL_FULLSCREEN : 0;
+    flags |= gameconfig->hardwareSurface ? SDL_HWSURFACE : 0;
+    flags |= gameconfig->hardwareDoubleBuffer ? SDL_DOUBLEBUF : 0;
+    LOG(("SetVideoMode flags: %X", flags));
 
     int mode;
     for(mode=gameconfig->screenresolution; mode>=0; mode--) {
@@ -176,7 +187,7 @@ void GameManager::setVideoMode()
         case 3: mode_res = iXY(1280, 1024); break;
         }
 
-        if(Screen->isDisplayModeAvailable(mode_res.x, mode_res.y, 8, fullscreen)) {
+        if(Screen->isDisplayModeAvailable(mode_res.x, mode_res.y, 8, flags)) {
             gameconfig->screenresolution = mode;
             break;
         }
@@ -184,7 +195,7 @@ void GameManager::setVideoMode()
     if(mode<0)
         throw Exception("couldn't find a usable video mode");
 
-    Screen->setVideoMode(mode_res.x, mode_res.y, 8, fullscreen);
+    Screen->setVideoMode(mode_res.x, mode_res.y, 8, flags);
 
     WorldViewInterface::setCameraSize( mode_res.x, mode_res.y );
     delete screen;
@@ -199,7 +210,6 @@ void GameManager::setVideoMode()
         // users can get annoyed when they see a black screen for half a minute
         // so we display something here... (we're just hoping that palette1 is
         // not black)
-        std::cout << "Draw..." << std::endl;
         Palette::color[255].red = 255;
         Palette::color[255].green = 255;
         Palette::color[255].blue = 255;

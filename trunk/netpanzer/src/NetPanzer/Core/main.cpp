@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <ctype.h>
 #include <signal.h>
 #include <SDL.h>
+#include <SDL_net.h>
 
 #include <optionmm/command_line.hpp>
 
@@ -111,6 +112,7 @@ bool HandleSDLEvents()
 
 void shutdown()
 {
+    SDLNet_Quit();
     SDL_Quit();
     if(gameconfig)
         gameconfig->saveConfig();
@@ -202,9 +204,11 @@ BaseGameManager *initialise(int argc, char** argv)
     SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER);
     SDL_EnableUNICODE(1);
 
+    // Initialize SDL_net
+    SDLNet_Init();
+
     // Initialize libphysfs
     try {
-        std::cout << "argv[0]=" << argv[0] << std::endl;
         FileSystem::initialize(argv[0], "netpanzer", "netpanzer");
     } catch(std::exception& e) {
         fprintf(stderr, "%s", e.what());
@@ -291,6 +295,7 @@ int netpanzer_main(int argc, char** argv)
             }
         }
 
+        manager->shutdown();
         delete manager;
         LOG ( ("successfull shutdown.") );
         shutdown();

@@ -29,6 +29,9 @@ private:
 protected:
     void initializeGameConfig(const std::string& configfile);
 
+    virtual void initializeVideoSubSystem();
+    virtual void shutdownVideoSubSystem();
+
     virtual void initializeInputDevices();
     virtual void shutdownInputDevices();
 

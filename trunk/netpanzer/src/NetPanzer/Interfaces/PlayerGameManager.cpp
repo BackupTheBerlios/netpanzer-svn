@@ -109,15 +109,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Math.hpp"
 
 #include "System/Sound.hpp"
-#include "System/SDL/SDLSound.hpp"
-#include "System/SDL/SDLDraw.hpp"
+#include "System/SDLSound.hpp"
+#include "System/SDLVideo.hpp"
 #include "System/DummySound.hpp"
-#include "System/UIDraw.hpp"
 #include "GameManager.hpp"
 #include "GameControlRulesDaemon.hpp"
 
 PlayerGameManager::PlayerGameManager()
-    : testpanel(iXY(0, 0))
+    : sdlVideo(0), testpanel(iXY(0, 0))
 {
     showNewPanel = false;
 }
@@ -126,7 +125,8 @@ PlayerGameManager::PlayerGameManager()
 void PlayerGameManager::initializeVideoSubSystem()
 {
     LOGGER.info("Initializing video mode");
-    Screen = new SDLDraw();
+    sdlVideo = new SDLVideo();
+    Screen = sdlVideo;
     initFont();
     GameManager::setVideoMode();
 }
@@ -134,7 +134,8 @@ void PlayerGameManager::initializeVideoSubSystem()
 //-----------------------------------------------------------------
 void PlayerGameManager::shutdownVideoSubSystem()
 {
-    delete Screen;
+    delete sdlVideo;
+    sdlVideo = 0;
     Screen = 0;
 }
 //-----------------------------------------------------------------

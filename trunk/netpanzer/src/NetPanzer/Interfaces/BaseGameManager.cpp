@@ -65,22 +65,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/TimerInterface.hpp"
 
 //-----------------------------------------------------------------
-void BaseGameManager::initializeVideoSubSystem()
-{
-    lobbyView = new ConsoleLoadingView();
-    progressView = new ConsoleLoadingView();
-}
-//-----------------------------------------------------------------
-void BaseGameManager::shutdownVideoSubSystem()
-{
-    if (lobbyView) {
-        delete lobbyView;
-    }
-    if (progressView) {
-        delete progressView;
-    }
-}
-//-----------------------------------------------------------------
 void BaseGameManager::initializeSoundSubSystem()
 {
     sound = new DummySound();
@@ -228,7 +212,7 @@ void BaseGameManager::mainLoop()
 /**
  * Sleep to make stable FPS and happy CPU.
  */
-    void
+void
 BaseGameManager::sleeping()
 {
     static Uint32 nextTime = 0;
@@ -238,9 +222,6 @@ BaseGameManager::sleeping()
         SDL_Delay(nextTime - now);
     }
     nextTime += TIMEINTERVAL;
-
-    // to protect from time slide
-    //nextTime = SDL_GetTicks() + TIMEINTERVAL;
 }
 
 //-----------------------------------------------------------------
