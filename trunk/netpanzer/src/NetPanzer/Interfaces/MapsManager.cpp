@@ -32,7 +32,7 @@ static inline std::string trim(const std::string& str)
     string::size_type start = str.find_first_not_of(" \t\n\r");
     string::size_type end = str.find_last_not_of(" \t\n\r");
 
-    return string(str, start, end-start);
+    return string(str, start, end-start+1);
 }
 
 std::string MapsManager::getNextMap(const std::string& map)
@@ -51,20 +51,19 @@ std::string MapsManager::getNextMap(const std::string& map)
     bool takeNext = false;
     do {
         if(takeNext) {
-            std::cout << currentMap << "\n";
             return currentMap;
         }
         if(currentMap == map)
             takeNext = true;
         
-        if(i == mapcycle.size() + 1)
+        if(i == mapcycle.size())
             break;
         lasti = i;
         i = mapcycle.find(',', i+1);
         if(i == string::npos) {
-            i = mapcycle.size()+1;
+            i = mapcycle.size();
         }
-        currentMap = trim(string(mapcycle, lasti+1, i-lasti+1));
+        currentMap = trim(string(mapcycle, lasti+1, i-lasti-1));
     } while(1);
 
     return firstmap;
