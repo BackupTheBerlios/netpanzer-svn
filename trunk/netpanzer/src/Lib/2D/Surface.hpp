@@ -118,12 +118,14 @@ public:
 class Surface
 {
 public:
+// XXX this function seems pointless and does a noop
+#if 0
 	void setTransPix()
 	{
-		// XXX transPix is unisgned long, so >= 0 doesn't make sense...
-		//assert(transPix >= 0);
+		assert(transPix >= 0);
 		Surface::transPix = transPix;
 	}
+#endif
 	void setOffset(const iXY &offset) { Surface::offset = offset; }
 	void setOffsetX(int offset) { Surface::offset.x = offset; }
 	void setOffsetY(int offset) { Surface::offset.y = offset; }

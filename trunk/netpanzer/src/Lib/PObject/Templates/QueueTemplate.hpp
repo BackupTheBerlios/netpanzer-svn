@@ -80,31 +80,22 @@ class QueueTemplate : public ArrayTemplate< TYPE >
     }
    
    
-   inline bool isEmpty( void )
+   inline bool isEmpty( void ) const
     {
-     if( front == rear )
-      return ( true );
-         
-      return( false );
+     return front == rear;
     }
 
-   inline bool isFull ( void )
+   inline bool isFull ( void ) const
     {
-     if ( front == (rear + 1) % size )
-      return( true );
-
-     return( false );
+     return front == (rear + 1) % size;
     }
 
-   inline bool isReady( void )
+   inline bool isReady( void ) const
     {
-     if( front == rear )
-      return ( false );
-         
-      return( true );
+     return front != rear;
     }
 
-   inline unsigned long itemCount( void )
+   inline unsigned long itemCount( void ) const
     {
      if ( front > rear ) 
       return ( (rear+1) + ( (size-1) - front ) );

@@ -48,7 +48,7 @@ class BucketArrayTemplate : public PObject
  
    void deallocate( void );
 
-   inline unsigned long getSize( void )
+   inline unsigned long getSize( void ) const
     { return( size ); }
    
    inline void addObject( unsigned long bucket_index, TYPE *object )
@@ -161,7 +161,7 @@ void BucketArrayTemplate< TYPE >::deallocate( void )
     array[ bucket_index ].deallocate();
    }
   
-  delete [size] array;
+  delete[] array;
   
   array = 0;
   size = 0;

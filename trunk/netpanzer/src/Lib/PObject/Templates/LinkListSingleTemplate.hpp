@@ -31,9 +31,8 @@ class LinkListSingleTemplate : public PObject
   public:
 
   LinkListSingleTemplate() 
+	  : front(0), rear(0)
    { 
-	front = 0;
-	rear = 0;
    }
 
   LinkListSingleTemplate( unsigned long size );  
@@ -205,6 +204,7 @@ class LinkListSingleTemplate : public PObject
 
 template< class TYPE >
 LinkListSingleTemplate< TYPE >::LinkListSingleTemplate( unsigned long size )
+	: front(0), rear(0)
  {
   initialize( size );
  }

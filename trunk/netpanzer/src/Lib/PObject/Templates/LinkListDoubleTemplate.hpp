@@ -31,10 +31,8 @@ class LinkListDoubleTemplate : public PObject
   public:
 
   LinkListDoubleTemplate() 
-   { 
-	front = 0;
-	rear = 0;
-   }
+	  : front(0), rear(0)
+   { }
 
   LinkListDoubleTemplate( unsigned long size );  
   
@@ -399,6 +397,7 @@ class LinkListDoubleTemplate : public PObject
 
 template< class TYPE >
 LinkListDoubleTemplate< TYPE >::LinkListDoubleTemplate( unsigned long size )
+	: front(0), rear(0)
  {
   initialize( size );
  }

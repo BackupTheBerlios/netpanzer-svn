@@ -58,7 +58,7 @@ class ArrayGrowableTemplate : public PObject
 
   void setGrowIncrement( unsigned long growIncrement );
 
-  inline unsigned long getSize( void )
+  inline unsigned long getSize( void ) const
    {
     return( size );
    }
@@ -89,6 +89,7 @@ template< class TYPE >
 ArrayGrowableTemplate< TYPE >::
         ArrayGrowableTemplate( unsigned long size, unsigned long growIncrement, 
                            unsigned long growLimit )
+	: array(0)
  {
   initialize( size , growIncrement, growLimit );
  }
@@ -97,6 +98,7 @@ ArrayGrowableTemplate< TYPE >::
 template< class TYPE > 
 ArrayGrowableTemplate< TYPE >::
         ArrayGrowableTemplate( unsigned long size, unsigned long growIncrement )
+	: array(0)
  {
   initialize( size , growIncrement, 0xFFFFFFFF );
  }
@@ -105,6 +107,7 @@ ArrayGrowableTemplate< TYPE >::
 template< class TYPE > 
 ArrayGrowableTemplate< TYPE >::
         ArrayGrowableTemplate( unsigned long size )
+	: array(0)
  {
   initialize( size , 1, 0xFFFFFFFF );
  }

@@ -575,15 +575,14 @@ void Surface::blt(const Surface &dest, iXY min) const
 	if (stride == pixelsPerRow && dest.stride == pixelsPerRow)
 	{
 		memcpy(dPtr, sPtr, pixelsPerRow * numRows * sizeof(PIX));
-	}	else
+	} else {
+		do
 		{
-			do
-			{
-				memcpy(dPtr, sPtr, pixelsPerRow * sizeof(PIX));
-				sPtr += stride;
-				dPtr += dest.stride;
-			} while (--numRows > 0);
-	  }
+			memcpy(dPtr, sPtr, pixelsPerRow * sizeof(PIX));
+			sPtr += stride;
+			dPtr += dest.stride;
+		} while (--numRows > 0);
+	}
 } // end Surface::blt
 
 // bltTrans
@@ -635,10 +634,11 @@ void Surface::bltTrans(const Surface &dest, iXY min) const
 	{
 		pixelsPerRow +=  min.x; // This will subtract the neg. x value.
 		sRow         += -min.x; // This will move the sRow to x = 0, from the neg. x.
-	}	else
-		{
+	} 
+	else
+	{
 		dRow += min.x;
-		}
+	}
 
 	// CLIP RIGHT
 	// This subtracts only the portion hanging over the right edge of the
@@ -650,10 +650,11 @@ void Surface::bltTrans(const Surface &dest, iXY min) const
 	{
 		numRows += min.y;
 		sRow    -= min.y * stride;
-	}	else
-		{
-		  dRow += min.y * dest.stride;
-		}
+	}
+	else
+	{
+		dRow += min.y * dest.stride;
+	}
 
 	// CLIP BOTTOM
 	// This subtracts only the portion hanging over the bottom edge of the
@@ -669,15 +670,30 @@ void Surface::bltTrans(const Surface &dest, iXY min) const
 	assert(signed(pixelsPerRow) > 0);
 	assert(signed(numRows) > 0);
 
-	//int srcAdjustment  = stride      - pixelsPerRow;
-	//int destAdjustment = dest.stride - pixelsPerRow;
-
+#ifndef MSVC
+	int srcAdjustment  = stride      - pixelsPerRow;
+	int destAdjustment = dest.stride - pixelsPerRow;
+#endif
 	for (int row = 0; row < numRows; row++)
 	{
+		// XXX we don't use the assembler stuff when not on msvc
+#ifdef MSVC
 		bltTransSpan(dRow, sRow, pixelsPerRow);
 
 		sRow += stride;
 		dRow += dest.stride;
+#else
+		for (int col = 0; col < pixelsPerRow; col++)
+		{
+			if (*sRow != 0) 
+				*dRow = *sRow;
+			sRow++;
+			dRow++;
+		}
+		
+		sRow += srcAdjustment;
+		dRow += destAdjustment;
+#endif
 	}
 
 } // end Surface::bltTrans
@@ -2088,7 +2104,6 @@ void Surface::bltScale(const Surface &source, const iRect &destRect) const
 }
 
 void Surface::bltScaleTrans(const Surface &source, const iRect &destRect) const {
-
 
 //00401151   mov         dword ptr [edi],edx
 //00401153   add         edi,4

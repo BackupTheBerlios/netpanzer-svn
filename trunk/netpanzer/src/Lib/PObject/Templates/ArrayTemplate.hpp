@@ -54,7 +54,7 @@ class ArrayTemplate : public PObject
     memmove( (void *) &array[index], (void *) &object, sizeof( TYPE ) );
    }  
 
-  inline unsigned long getSize( void )
+  inline unsigned long getSize( void ) const
    {
     return( size );
    }
@@ -63,7 +63,7 @@ class ArrayTemplate : public PObject
    {
     if ( array != 0 )
      {
-      delete [size] array;
+      delete[] array;
       array = 0;
      }
     
@@ -79,14 +79,12 @@ ArrayTemplate< TYPE >::ArrayTemplate( unsigned long size )
  {
   ArrayTemplate< TYPE >::size = size;
   array = new TYPE [ size ];
-  assert( array != 0 );
  }
 
 template< class TYPE >
 ArrayTemplate< TYPE >::~ArrayTemplate( void )
  {
-  if ( array != 0 )
-   delete [size] array;
+   delete[] array;
  }
 
 template< class TYPE >
@@ -94,14 +92,8 @@ void ArrayTemplate< TYPE >::initialize( unsigned long size )
  { 
   ArrayTemplate< TYPE >::size = size;
   
-  if ( array != 0 )
-   {
-    delete [size] array ;
-    array = 0;
-   } 
-  
+  delete[] array ;
   array = new TYPE [ size ];
-  assert( array != 0 );
  }
  
 
