@@ -62,9 +62,10 @@ private:
     /** this function is threadsafe */
     void writeNeighborCache();
     
-    void updateServerInfo(ServerInfo& info, Tokenizer& tokenizer);
+    bool updateServerInfo(ServerInfo& info, Tokenizer& tokenizer);
     
     int sock;
+    struct sockaddr_in serveraddr;
     pthread_mutex_t serverlist_mutex;
     std::vector<ServerInfo> serverlist;
     std::list<RequestThread*> threads;

@@ -163,7 +163,13 @@ void HeartbeatThread::requestMasterServerList2(struct sockaddr_in* addr)
                     token << "\n";
             }
         }
+
         delete tokenizer;
+    } catch(std::exception& e) {
+        if(sock>=0)
+            close(sock);
+        *log << "Couldn't request a list of other masterservers: " << e.what()
+            << "\n";
     } catch(...) {
         if(sock>=0)
             close(sock);

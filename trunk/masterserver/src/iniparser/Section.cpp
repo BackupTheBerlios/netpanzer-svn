@@ -88,7 +88,12 @@ Section::getFloatValue(const std::string& key) const
 void
 Section::setValue(const std::string& key, const std::string& value)
 {
-    values.insert(std::make_pair(key, value));
+    std::map<std::string, std::string>::iterator i = values.find(key);
+    if(i == values.end()) {
+        values.insert(std::make_pair(key, value));
+    } else {
+        i->second = value;
+    }
 }
 
 void

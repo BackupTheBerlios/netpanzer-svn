@@ -38,7 +38,7 @@ void loadConfig()
     iniparser::Section& server = config->getSection("server");
     server.setValue("logfile", LOGFILE);
     server.setValue("neighborcachefile", SERVERCACHE);
-    server.setValue("listen-address", "");
+    server.setValue("listen", "");
     server.setValue("port", "28900");
     server.setValue("server-alive-timeout", "720");
     server.setValue("client-request-timeout", "30");

@@ -90,7 +90,7 @@ Store::load(std::istream& in)
                 value += *c;
                 ++c;
             }
-            
+           
             currentsection->setValue(key, value);
         }
     }

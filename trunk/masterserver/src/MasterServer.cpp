@@ -60,27 +60,25 @@ MasterServer::MasterServer()
         }
 
         // resolved bind/listen address
-        int bindaddress = INADDR_ANY;
-
-        if(serverconfig.getValue("listen-address") != "") {
-            struct hostent* hentry;
-            hentry =
-                gethostbyname(serverconfig.getValue("listen-address").c_str());
-            if(!hentry) {
-                std::stringstream msg;
-                msg << "Couldn't resolve listen-address '" << 
-                    serverconfig.getValue("listen-address") << "'.";
-                throw std::runtime_error(msg.str());
-            }
-            bindaddress = ((struct in_addr*) hentry->h_addr)->s_addr;
+        struct hostent* hentry;
+        hentry =
+            gethostbyname(serverconfig.getValue("listen").c_str());
+        if(!hentry) {
+            std::stringstream msg;
+            msg << "Couldn't resolve listen-address '" << 
+                serverconfig.getValue("listen") << "'.";
+            throw std::runtime_error(msg.str());
+        }
+        int bindaddress = ((struct in_addr*) hentry->h_addr)->s_addr;
+        if(bindaddress == 0) {
+            throw std::runtime_error("Must specify an explicit bind address");
         }
        
-        struct sockaddr_in addr;
-        memset(&addr, 0, sizeof(struct sockaddr_in));
-        addr.sin_family = AF_INET;
-        addr.sin_addr.s_addr = bindaddress;
-        addr.sin_port = htons(serverconfig.getIntValue("port"));
-        int res = bind(sock, (struct sockaddr*) &addr,
+        memset(&serveraddr, 0, sizeof(struct sockaddr_in));
+        serveraddr.sin_family = AF_INET;
+        serveraddr.sin_addr.s_addr = bindaddress;
+        serveraddr.sin_port = htons(serverconfig.getIntValue("port"));
+        int res = bind(sock, (struct sockaddr*) &serveraddr,
                 sizeof(struct sockaddr_in));
         if(res < 0) {
             std::stringstream msg;
@@ -173,10 +171,15 @@ void MasterServer::parseHeartbeat(std::iostream& stream,
     for(i = serverlist.begin(); i != serverlist.end(); ++i) {
         if(i->address.sin_addr.s_addr == addr->sin_addr.s_addr
             && i->address.sin_port == htons(queryport)) {
-            updateServerInfo(*i, tokenizer);
-            // TODO do UDP check
             *log << "Heartbeat from " << inet_ntoa(addr->sin_addr) << std::endl;
-            stream << "\\ok\\server updated\\final\\" << std::flush;
+            bool result = updateServerInfo(*i, tokenizer);
+            // TODO do UDP check
+            if(!result) {
+                strstream << "\\error\\Couldn't update server\\final\\" <<
+                    std::flush;
+            } else {
+                stream << "\\ok\\server updated\\final\\" << std::flush;
+            }
             pthread_mutex_unlock(&serverlist_mutex);
             return;
         }
@@ -188,22 +191,40 @@ void MasterServer::parseHeartbeat(std::iostream& stream,
     info.address.sin_family = AF_INET;
     info.address.sin_addr.s_addr = addr->sin_addr.s_addr;
     info.address.sin_port = htons(queryport);
-    updateServerInfo(info, tokenizer);
-    serverlist.push_back(info);
     *log << "New server at " << inet_ntoa(addr->sin_addr) << std::endl;
-    stream << "\\ok\\server added\\final\\" << std::flush;
+    if(updateServerInfo(info, tokenizer)) {
+        stream << "\\ok\\server added\\final\\" << std::flush;
+        serverlist.push_back(info);
+    } else {
+        stream << "\\error\\Couldn't add server.\\final\\" << std::flush;
+    }
 
     pthread_mutex_unlock(&serverlist_mutex);
 }
 
-void MasterServer::updateServerInfo(ServerInfo& info, Tokenizer& tokenizer)
+bool MasterServer::updateServerInfo(ServerInfo& info, Tokenizer& tokenizer)
 {    
     if(tokenizer.getNextToken() != "gamename") {
         *log << "Invalid heartbeat query." << std::endl;
-        return;
+        return false;
     }
+    std::string gamename = tokenizer.getNextToken();
+    // need passwort for masterserver
+    if(gamename == "master") {
+        if(tokenizer.getNextToken() != "passwort") {
+            *log << "Missing passwort for masterserver heartbeat." << std::endl;
+            return false;
+        }
+        if(tokenizer.getNextToken() !=
+                serverconfig.getValue("masterserver-password")) {
+            *log << "Wrong passwort in masterserver heartbeat." << std::endl;
+            return false;
+        }
+    }
+    
     info.gamename = tokenizer.getNextToken();
     info.lastheartbeat = time(0);
+    return true;
 }
 
 void MasterServer::parseList(std::iostream& stream,
@@ -240,6 +261,11 @@ void MasterServer::parseList(std::iostream& stream,
         }
     }
     pthread_mutex_unlock(&serverlist_mutex);
+
+    // we're a masterserver ourself
+    if(gamename == "master") {
+        stream << "\\ip\\" << inet_ntoa(serveraddr.sin_addr) << "\\";
+    }
     
     stream << "\\final\\";
 }

@@ -49,7 +49,8 @@ int main(int argc, char** argv)
         masterserv = new MasterServer;
         masterserv->run();
     } catch(std::exception& e) {
-        *masterserver::log << "Fatal Error: " << e.what() << "\n";
+        *log << "Fatal Error: " << e.what() << "\n";
+        std::cerr << "Fatal Error: " << e.what() << "\n";
         delete masterserv;
         masterserv = 0;
 
