@@ -53,7 +53,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConsoleInterface.hpp"
 #include "UnitGlobals.hpp"
 #include "SelectionBoxSprite.hpp"
-#include "Gdatstct.hpp"
 #include "MapsManager.hpp"
 #include "PowerUpInterface.hpp"
 #include "ChatInterface.hpp"

@@ -26,11 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
-#include "Gdatstct.hpp"
-
-// XXX hack, remove me
-#include <SDL.h>
-#include "2D/Palette.hpp"
 
 TileSet::TileSet( )
 {
