@@ -182,23 +182,28 @@ int IRCLobbyView::lMouseUp(const iXY &down_pos,const iXY &up_pos)
 
 void IRCLobbyView::actionPerformed(mMouseEvent me)
 {
+    static const int chat_scroll_lines=8;
+    static const int server_scroll_lines=3;
     if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED) {
         if (me.getSource(serverUpButton)) {
-            if (--topViewableItem < 0) {
+            topViewableItem-=server_scroll_lines;
+            if (topViewableItem < 0) {
                 topViewableItem = 0;
             }
         } else if (me.getSource(serverDownButton)) {
             int max_size=lobby_connection->game_servers->size()-1;
-            ++topViewableItem;
+            topViewableItem+=server_scroll_lines;
             if (topViewableItem >= max_size) {
                 topViewableItem = max_size;
             }
         } else if (me.getSource(chatUpButton)) {
-            if(++skipChatLines>=((int)lobby_connection->chat_messages.size())) {
-                skipChatLines--;
+            skipChatLines+=chat_scroll_lines;
+            if(skipChatLines>=((int)lobby_connection->chat_messages.size())) {
+                skipChatLines=((int)lobby_connection->chat_messages.size())-1;
             }
         } else if (me.getSource(chatDownButton)) {
-            if (--skipChatLines <= 0) {
+            skipChatLines-=chat_scroll_lines;
+            if (skipChatLines <= 0) {
                 skipChatLines = 0;
             }
         }
