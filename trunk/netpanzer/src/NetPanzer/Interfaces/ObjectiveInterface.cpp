@@ -182,42 +182,36 @@ void ObjectiveInterface::offloadGraphics( SpriteSorter &sorter )
 bool ObjectiveInterface::
 testRuleObjectiveOccupationRatio(unsigned short player_index, float precentage)
 {
-    size_t list_size = objective_list.size();
-    long occupation_ratio;
-    long occupied;
+    size_t occupation_ratio = (size_t)
+        roundf( ((float) objective_list.size()) * precentage );
 
-    occupied = 0;
-    occupation_ratio = (unsigned long) ( ((float) list_size) * precentage );
-
-    if ( occupation_ratio <= 0 )
+    if (occupation_ratio == 0)
         occupation_ratio = 1;
 
     std::vector<Objective*>::iterator i;
+    size_t occupied = 0;
     for(i = objective_list.begin(); i != objective_list.end(); i++) {
         ObjectiveState *objective_state = & ((*i)->objective_state);
-
-        if (  objective_state->occupation_status == _occupation_status_occupied ) {
+        if(objective_state->occupation_status == _occupation_status_occupied) {
             unsigned short occuping_player_index;
-            occuping_player_index = objective_state->occupying_player.getIndex();
+            occuping_player_index 
+                = objective_state->occupying_player.getIndex();
 
             if ( occuping_player_index == player_index ) {
                 occupied++;
-            } // ** if
-            else
-                if ( PlayerInterface::isAllied(occuping_player_index,player_index) &&
-                        PlayerInterface::isAllied(player_index,occuping_player_index)
-                   ) {
+            } else if (PlayerInterface::isAllied(
+                        occuping_player_index, player_index) &&
+                        PlayerInterface::isAllied(player_index,
+                            occuping_player_index)) {
                     occupied++;
-                }
-
+            }
         } // ** if
     } // ** for
 
+    if(occupied >= occupation_ratio)
+        return true;
 
-    if ( occupied >= occupation_ratio )
-        return ( true );
-
-    return( false );
+    return false;
 }
 
 void ObjectiveInterface::disownPlayerObjectives( PlayerID &player )

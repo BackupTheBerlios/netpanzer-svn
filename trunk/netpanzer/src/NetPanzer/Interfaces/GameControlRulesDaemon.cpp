@@ -347,14 +347,14 @@ void GameControlRulesDaemon::checkGameRules()
             }
             break;
 
-        case _gametype_objective : {
-                if ( PlayerInterface::testRuleObjectiveRatio(
-                            gameconfig->objectiveoccupationpercentage / 100.0, &player_state ) == true ) {
+        case _gametype_objective:
+                float ratio 
+                    = (float) gameconfig->objectiveoccupationpercentage / 100.0;
+                if (PlayerInterface::testRuleObjectiveRatio(
+                            ratio, &player_state)) {
                     onObjectiveGameCompleted( );
                 }
-            }
             break;
-
         } // ** switch
 
         // ** Check for Player Respawns **

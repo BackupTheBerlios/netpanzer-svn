@@ -325,12 +325,11 @@ bool PlayerInterface::testRuleObjectiveRatio( float precentage, PlayerState ** p
     for ( player_index = 0; player_index < max_players; player_index++ ) {
         if ( ObjectiveInterface::testRuleObjectiveOccupationRatio( player_index, precentage ) == true ) {
             *player_state = &player_lists[ player_index ];
-            return( true );
+            return true;
         } // ** if
-
     } // ** for
 
-    return( false );
+    return false;
 }
 
 
