@@ -536,11 +536,10 @@ void WorldInputCmdProcessor::evaluateMouseEvents( void )
     iXY world_pos;
     iXY mouse_pos;
 
-    MouseInterface::getMousePosition( (long *)  &mouse_pos.x, (long *) &mouse_pos.y );
-
+    MouseInterface::getMousePosition( &mouse_pos.x, &mouse_pos.y );
     WorldViewInterface::getViewWindow( &world_win );
-    WorldViewInterface::clientXYtoWorldXY( world_win, mouse_pos, &world_pos );
 
+    WorldViewInterface::clientXYtoWorldXY( world_win, mouse_pos, &world_pos );
     setMouseCursor( getCursorStatus( world_pos ) );
 
     //updateScrollStatus( mouse_pos );
@@ -947,7 +946,7 @@ void WorldInputCmdProcessor::inFocus( void )
     iXY world_pos;
     iXY mouse_pos;
 
-    MouseInterface::getMousePosition( (long *)  &mouse_pos.x, (long *) &mouse_pos.y );
+    MouseInterface::getMousePosition( &mouse_pos.x, &mouse_pos.y );
 
     WorldViewInterface::getViewWindow( &world_win );
     WorldViewInterface::clientXYtoWorldXY( world_win, mouse_pos, &world_pos );
@@ -963,7 +962,7 @@ void WorldInputCmdProcessor::updateControls( void )
     iXY mouse_pos;
 
     if ( selection_box_active == true ) {
-        MouseInterface::getMousePosition( (long *) &mouse_pos.x, (long *) &mouse_pos.y );
+        MouseInterface::getMousePosition( &mouse_pos.x, &mouse_pos.y );
 
         WorldViewInterface::getViewWindow( &world_win );
         WorldViewInterface::worldXYtoClientXY( world_win, box_press, &client_pos );
@@ -992,7 +991,7 @@ void WorldInputCmdProcessor::closeSelectionBox( void )
     iXY world_pos;
     iXY mouse_pos;
 
-    MouseInterface::getMousePosition( (long *)  &mouse_pos.x, (long *) &mouse_pos.y );
+    MouseInterface::getMousePosition( &mouse_pos.x, &mouse_pos.y );
 
     WorldViewInterface::getViewWindow( &world_win );
     WorldViewInterface::clientXYtoWorldXY( world_win, mouse_pos, &world_pos );

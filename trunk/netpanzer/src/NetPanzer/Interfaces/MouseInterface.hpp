@@ -100,7 +100,7 @@ public:
     static void initialize();
     static void shutdown();
 
-    static inline void getMousePosition( long *x, long *y )
+    static inline void getMousePosition( int *x, int *y )
     {
         *x = mouse_pos.x;
         *y = mouse_pos.y;
