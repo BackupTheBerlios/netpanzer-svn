@@ -23,6 +23,8 @@ AH_TOP([
 #endif
 ])
 
+AC_C_BIGENDIAN()
+
 # stupid autoconf is adding default -g -O2 flags when we don't do this :-/
 test ".$CXXFLAGS" = "." && CXXFLAGS=" "
 

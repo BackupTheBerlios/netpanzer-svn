@@ -288,10 +288,6 @@ bool Astar::process_succ( PathList *path, int *result_code )
     bool goal_reachable = true;
     unsigned short path_length;
 
-    unsigned short *map_buffer;
-
-    main_map.getRawMapBuffer( &map_buffer );
-
     TIMESTAMP timer_path_mark = now();
 
     while(!done) {

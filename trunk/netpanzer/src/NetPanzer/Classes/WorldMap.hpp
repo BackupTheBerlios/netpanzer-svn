@@ -18,7 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _WORLDMAP_HPP
 #define _WORLDMAP_HPP
 
-#include "MapFileStruct.hpp"
+#include "Util/Endian.hpp"
+#include "MapFile.hpp"
 #include "WadMapTable.hpp"
 
 typedef unsigned short MapElementType;
@@ -27,7 +28,7 @@ class WorldMap
 {
 protected:
     bool map_loaded;
-    MAP_HEADER map_info;
+    MapFile map_info;
     MapElementType *map_buffer;
 
 public:
@@ -63,11 +64,6 @@ public:
         return( map_info.x_size * map_info.y_size );
     }
 
-    void getRawMapBuffer( MapElementType **raw_buffer )
-    {
-        *raw_buffer = map_buffer;
-    }
-
     inline void offsetToMapXY( unsigned long offset, unsigned short *map_x, unsigned short *map_y )
     {
         *map_y = (unsigned short ) ( offset / map_info.x_size );
@@ -84,12 +80,26 @@ public:
         unsigned long offset;
         mapXYtoOffset( map_x, map_y, &offset );
 
-        return( map_buffer[ offset ] );
+        return mapValue(offset);
     }
 
     inline MapElementType mapValue( unsigned long offset )
     {
-        return( map_buffer[ offset ] );
+        return ltoh16(map_buffer[offset]);
+    }
+
+    void setMapValue(unsigned short map_x, unsigned short map_y,
+            MapElementType value)
+    {
+        unsigned long offset;
+        mapXYtoOffset( map_x, map_y, &offset );
+
+        setMapValue(offset, value);
+    }
+
+    void setMapValue(unsigned long mapIndex, MapElementType value)
+    {
+        map_buffer[mapIndex] = htol16(value);
     }
 
     char * getAssocTileSet( void )

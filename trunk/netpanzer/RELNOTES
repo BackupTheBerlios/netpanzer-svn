@@ -35,3 +35,25 @@ UI rewrite, but these have to wait for a later release. Changes:
     * reorganised build environment
     * network packets are smaller and more robust now
 
+-----------------------------------------------------------------------------
+*** 0.1.4 ***
+
+Some small feature additions. Unfortunatley we changed the network protocol
+again, so servers and clients should get updated soon. There's a bug in the old
+0.1.3 server code that makes it crash when a 0.1.4 client connects.
+                                                                                
+    * It's possible to configure the mapcycle in the server
+    * Players now have colors on the radar (thanks Viras)
+    * small fixes to make netpanzer run on win32
+    * a new quickconnect option for the commandline (usefull for external server      browsers like KNetpanzerbrowser 
+	(http://www.suselinuxsupport.de/index.php?location=download)
+
+-----------------------------------------------------------------------------
+*** 0.1.5 ***
+
+This is an emergency bugfix release.
+
+* fixed a bug where pressing "m" or 1-9 in chat messages would   toggle the minimap or panzer groups
+* fixed a map in the dedicated server where the mapcycle string wasn't properly parsed.
+* added an xpm icon.
+

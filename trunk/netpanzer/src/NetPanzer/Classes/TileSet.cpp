@@ -40,6 +40,16 @@ TileSet::TileSet( )
     tile_count = 0;
 }
 
+void TileSet::readTileDbHeader(ReadFile& file, TILE_DBASE_HEADER *dbHeader)
+{
+    file.read(&dbHeader->netp_id_header, sizeof(dbHeader->netp_id_header), 1);
+    dbHeader->version = file.readULE16();
+    dbHeader->x_pix = file.readULE16();
+    dbHeader->y_pix = file.readULE16();
+    dbHeader->tile_count = file.readULE16();
+    file.read(&dbHeader->palette, sizeof(dbHeader->palette), 1);
+}
+
 void TileSet::computeTileConsts( void )
 {
     tile_size = tile_set_info.x_pix * tile_set_info.y_pix;
@@ -63,9 +73,7 @@ void TileSet::loadTileSetInfo( const char *file_path )
         tile_set_loaded = false;
     }
 
-    if(file->read( &tile_set_info, sizeof(TILE_DBASE_HEADER), 1) != 1) {
-        throw Exception("error reading tilesetinfo from '%s'", file_path);
-    }
+    readTileDbHeader(*file, &tile_set_info);
 
     tile_count = tile_set_info.tile_count;
 
@@ -94,9 +102,7 @@ void TileSet::loadTileSet( const char *file_path )
         tile_set_loaded = false;
     }
 
-    if(file->read( &tile_set_info, sizeof(TILE_DBASE_HEADER), 1) != 1) {
-        throw Exception("error reading tileset '%s'", file_path);
-    }
+    readTileDbHeader(*file, &tile_set_info);
 
     tile_buffer_size = (tile_set_info.x_pix * tile_set_info.y_pix) * tile_set_info.tile_count;
 
@@ -142,8 +148,7 @@ void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
     }
 
     // ** Read Header Info **
-    if(file->read( &tile_set_info, sizeof(TILE_DBASE_HEADER), 1) != 1)
-        throw Exception("error reading filesetinfo %s", file_path);
+    readTileDbHeader(*file, &tile_set_info);
 
     // ** Read in Tile Info **
     tile_info =  new TILE_HEADER [ mapping_table.used_tile_count ];
@@ -236,8 +241,7 @@ void TileSet::loadTileSetInfo( const char *file_path, WadMapTable &mapping_table
     }
 
     // ** Read Header Info **
-    if(file->read(&tile_set_info, sizeof(TILE_DBASE_HEADER), 1) != 1) 
-        throw Exception("error reading tileset %s", file_path);
+    readTileDbHeader(*file, &tile_set_info);
 
     // ** Read in Tile Info **
     tile_info =  new TILE_HEADER [ mapping_table.used_tile_count ];
@@ -287,7 +291,7 @@ bool TileSet::startPartitionTileSetLoad( const char *file_path, WadMapTable &map
     }
 
     // ** Read Header Info **
-    partition_load_fhandle->read(&tile_set_info, sizeof(TILE_DBASE_HEADER ), 1);
+    readTileDbHeader(*partition_load_fhandle, &tile_set_info);
 
     // ** Read in Tile Info **
     tile_info =  new TILE_HEADER [ mapping_table.used_tile_count ];

@@ -43,6 +43,7 @@ protected:
 public:
     TileSet( );
 
+    void readTileDbHeader(ReadFile& file, TILE_DBASE_HEADER *header);
     void loadTileSetInfo( const char *file_path );
     void loadTileSetInfo( const char *file_path, WadMapTable &mapping_table );
     void loadTileSet( const char *file_path, WadMapTable &mapping_table );

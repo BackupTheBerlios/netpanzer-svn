@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapData.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
+#include "Util/Endian.hpp"
 
 WorldMap::WorldMap()
 {
@@ -41,8 +42,8 @@ void WorldMap::reMap( WadMapTable &mapping_table )
     map_size = map_info.x_size * map_info.y_size;
 
     for ( map_index = 0; map_index < map_size; map_index++ ) {
-        tile_value = map_buffer[ map_index ];
-        map_buffer[ map_index  ] = mapping_table[ tile_value ].remap_index;
+        tile_value = ltoh16(map_buffer[map_index]);
+        map_buffer[map_index] = htol16(mapping_table[tile_value].remap_index);
     }
 
 }
@@ -60,9 +61,7 @@ void WorldMap::loadMapFile( const char *file_path )
         map_loaded = false;
     }
 
-    if(file->read(&map_info, sizeof( MAP_HEADER ), 1) != 1)
-        throw Exception("Couldn't load mapfile '%s' (while reading mapinfo)",
-                        file_path);
+    map_info.load(*file);
 
     map_size = (map_info.x_size * map_info.y_size);
 

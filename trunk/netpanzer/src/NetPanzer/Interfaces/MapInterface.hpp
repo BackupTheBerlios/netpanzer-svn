@@ -146,20 +146,12 @@ public:
 
     static inline void markLocHack( const iXY &loc )
     {
-        unsigned short *map_buffer;
-        unsigned long offset;
-        main_map.getRawMapBuffer( &map_buffer );
-        offset = ( loc.y * getMapXsize() ) + loc.x;
-        map_buffer[ offset ] = 27;
+        main_map.setMapValue(loc.x, loc.y, 27);
     }
 
     static inline void unmarkLocHack( const iXY &loc )
     {
-        unsigned short *map_buffer;
-        unsigned long offset;
-        main_map.getRawMapBuffer( &map_buffer );
-        offset = ( loc.y * getMapXsize() ) + loc.x;
-        map_buffer[ offset ] = 28;
+        main_map.setMapValue(loc.x, loc.y, 28);
     }
 
     static void normalizePointXY( unsigned long point_x, unsigned long point_y, unsigned long *norm_x, unsigned long *norm_y )
@@ -168,11 +160,6 @@ public:
 
         pointXYtoMapXY( point_x, point_y, &map_x, &map_y );
         mapXYtoPointXY( map_x, map_y, norm_x, norm_y );
-    }
-
-    static inline void MapInterface::getRawMapBuffer( MapElementType **raw_buffer )
-    {
-        main_map.getRawMapBuffer( raw_buffer );
     }
 
     static inline WorldMap * getMap( void )

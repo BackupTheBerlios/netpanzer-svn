@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string.h>
 #include <stdio.h>
 
+#include "Util/Endian.hpp"
 #include "MapData.hpp"
 
 WorldMap MapInterface::main_map;
@@ -122,7 +123,6 @@ void MapInterface::generateMappingTable()
 {
     unsigned short tile_count;
     unsigned long  map_size;
-    MapElementType *map_buffer;
     unsigned long  map_index;
 
     tile_count = tile_set.getTileCount();
@@ -131,14 +131,11 @@ void MapInterface::generateMappingTable()
     wad_mapping_table.initialize( tile_count );
     wad_mapping_table.resetMappingTable();
 
-    main_map.getRawMapBuffer( &map_buffer );
-
     // ** Find all of the used tiles **
     unsigned short tile_index;
 
     for ( map_index = 0; map_index < map_size; map_index++ ) {
-        tile_index = map_buffer[ map_index ];
-
+        tile_index = main_map.mapValue(map_index);
         wad_mapping_table[ tile_index ].is_used = true;
     } // ** for
 

@@ -1,3 +1,8 @@
+4-Mar-2004 by Matthias Braun
+-applied a bunch of endianess patches from Hollis Blanchard
+-added doxygen comments to Endian.hpp and did a few other fixes/style
+ improvements
+    
 1-Mar-2004 by Matthias Braun
 -applied some fixes to Jamfiles (thanks Hollis Blanchard)
 

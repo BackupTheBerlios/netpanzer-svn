@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameViewGlobals.hpp"
 #include "HostOptionsView.hpp"
 #include "Util/UtilInterface.hpp"
-#include "MapFileStruct.hpp"
+#include "MapFile.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
 #include "Util/Log.hpp"
@@ -160,6 +160,8 @@ int MapSelectionView::loadMaps()
 
     const char mapsPath[] = "maps/";
 
+    LOGGER.info("Loading maps.");
+
     // scan directory for .npm files
     std::string suffix = ".npm";
     char **list = FileSystem::enumerateFiles(mapsPath);
@@ -192,11 +194,15 @@ int MapSelectionView::loadMaps()
             continue;
         }
 
-        MAP_HEADER netPanzerMapHeader;
-
-        if(file->read(&netPanzerMapHeader, sizeof(netPanzerMapHeader), 1) != 1)
+        MapFile netPanzerMapHeader;
+        try {
+            netPanzerMapHeader.load(*file);
+        } catch (Exception& e) {
+            LOGGER.warning("cannot open map file '%s': %s", 
+                           mapfiles[i].c_str(), e.what());
             continue;
-        
+        }
+
         MapInfo* mapinfo = new MapInfo;
         _splitpath(FileSystem::getRealName(mapfiles[i].c_str()).c_str(),
                 0, 0, mapinfo->name, 0);
@@ -234,6 +240,9 @@ int MapSelectionView::loadMaps()
             gameconfig->map = "";
             return 1;
         }
+
+        LOGGER.info("    %s, %ix%i", netPanzerMapHeader.name,
+            netPanzerMapHeader.x_size, netPanzerMapHeader.y_size);
 
         mapinfo->objectiveCount = objectiveCount;
         mapList.push_back(mapinfo);
