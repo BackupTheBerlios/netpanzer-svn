@@ -412,18 +412,14 @@ BYTE Palette::findNearestColor(const RGBColor &rgb, const bool &ignoreIndexZero)
 	int   best     = 0; 
 	int   start    = ignoreIndexZero ? 1 : 0;
 
-	//float vPic = sqrt(rgb.red * rgb.red + rgb.green * rgb.green + rgb.blue * rgb.blue) * 0.57735027;
-	// XXX speed optimisation is this still correct?
-	float vPic = rgb.red * rgb.red + rgb.green * rgb.green + rgb.blue * rgb.blue * 0.57735027;
+	float vPic = sqrt(rgb.red * rgb.red + rgb.green * rgb.green + rgb.blue * rgb.blue) * 0.57735027;
 	
 	//float vPic = sqrt(rgb.red * rgb.red + rgb.green * rgb.green + rgb.blue * rgb.blue);
 
 	for (int i = start; i < 256; i++)
 	{  
 		//float vPal = sqrt(color[i].red * color[i].red + color[i].green * color[i].green + color[i].blue*color[i].blue);
-		//float vPal = sqrt(color[i].red * color[i].red + color[i].green * color[i].green + color[i].blue*color[i].blue) * 0.57735027;
-		// XXX speed optimisation 
-		float vPal = color[i].red * color[i].red + color[i].green * color[i].green + color[i].blue*color[i].blue * 0.57735027;
+		float vPal = sqrt(color[i].red * color[i].red + color[i].green * color[i].green + color[i].blue*color[i].blue) * 0.57735027;
 
 		float dr = color[i].red-rgb.red;
 		float dg = color[i].green-rgb.green;  
