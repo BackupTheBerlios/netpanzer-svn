@@ -39,7 +39,7 @@ MultiVehicleSelectorView::MultiVehicleSelectorView() : ImageSelectorView()
 //---------------------------------------------------------------------------
 void MultiVehicleSelectorView::loadImages()
 {
-	if (!images.loadAllTILInDirectory("pics\\vehicleSelectionMenu\\"))
+	if (!images.loadAllTILInDirectory("pics/vehicleSelectionMenu/"))
 	{
 		FUBAR("ERROR: Unable to load any vehicles in MultiVehicleSelectorView::loadImages.");
 	}

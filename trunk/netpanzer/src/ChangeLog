@@ -8,6 +8,9 @@
 -More news on my crusade against codewiz.hpp:
   *removed some unused stuff from codewiz.hpp and terminate.cpp
   *added new but alot simpler logging functions to Log.hpp
+-replaced all \\ in paths with / (gotta love sed). Yes, I made sure that I only
+ change paths (I looked at the list of stuff I change, before applying the sed
+ command)
 
 ------------
 prior changes (not complete)

@@ -2669,7 +2669,7 @@ void Surface::saveAllTIL(const char *path)
 
 	for (int i = 0; i < frameCount; i++)
 	{
-		sprintf(strBuf, "%s\\dump%04d.til", path, num);
+		sprintf(strBuf, "%s/dump%04d.til", path, num);
 		setFrame(num);
 
 		FILE *fp = fopen(strBuf, "wb");
@@ -3952,7 +3952,7 @@ void initFont()
 	ascii8x8.create(8, 8, 8, 128);
 
 	// NOTE: Make sure the file size is 128 characters.
-	char charfilename[] = "pics\\chars8x8.raw";
+	char charfilename[] = "pics/chars8x8.raw";
 
 	FILE *fp = fopen(charfilename, "rb");
 	if (fp == 0)
@@ -3979,7 +3979,7 @@ void initFont()
 	ascii5x5.create(5, 5, 5, 128);
 
 	// NOTE: Make sure the file size is 128 characters.
-	char charfilename[] = "pics\\chars5x5.raw";
+	char charfilename[] = "pics/chars5x5.raw";
 
 	FILE *fp = fopen(charfilename, "rb");
 	if (fp == 0)

@@ -40,7 +40,7 @@ bool MapInterface::startMapLoad( const char *file_path, bool load_tiles, unsigne
   strcat( path, ".npm" );
   main_map.loadMapFile( path );
   
-  strcpy( tile_set_path, ".\\wads\\" );
+  strcpy( tile_set_path, "./wads/" );
   strcat( tile_set_path, main_map.getAssocTileSet() );
   
   tile_set.loadTileSetInfo( tile_set_path );
@@ -101,17 +101,17 @@ void MapInterface::LoadMap( const char *file_path, bool load_tiles )
   strcat( path, ".npm" );
   main_map.loadMapFile( path );
   
-  tile_set.loadTileSetInfo( ".\\wads\\wad.tls" );
+  tile_set.loadTileSetInfo( "./wads/wad.tls" );
   generateMappingTable();
   main_map.reMap( wad_mapping_table );
   
   if ( load_tiles == true )
    {
-    tile_set.loadTileSet( ".\\wads\\wad.tls", wad_mapping_table ); 
+    tile_set.loadTileSet( "./wads/wad.tls", wad_mapping_table ); 
    }
   else
    {
-    tile_set.loadTileSetInfo( ".\\wads\\wad.tls", wad_mapping_table ); 
+    tile_set.loadTileSetInfo( "./wads/wad.tls", wad_mapping_table ); 
    }
 
   wad_mapping_table.deallocate();

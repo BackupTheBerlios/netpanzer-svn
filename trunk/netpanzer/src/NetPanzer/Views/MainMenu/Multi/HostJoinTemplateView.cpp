@@ -343,9 +343,9 @@ void HostJoinTemplateView::addVehicleButtons(const iXY &pos)
 	// Add the vehicle buttons.
 	// Get the dimensions of the buttons to draw.
 	Surface tempSurface;
-	if (!tempSurface.loadTIL("pics\\vehicleSelectionMenu\\light.til"))
+	if (!tempSurface.loadTIL("pics/vehicleSelectionMenu/light.til"))
 	{
-		FUBAR("ERROR: Unable to open pics\\vehicleSelectionMenu\\light.til to find the size to make the buttons.");
+		FUBAR("ERROR: Unable to open pics/vehicleSelectionMenu/light.til to find the size to make the buttons.");
 	}
 	
 	iXY buttonSize(tempSurface.getPix());
@@ -358,19 +358,19 @@ void HostJoinTemplateView::addVehicleButtons(const iXY &pos)
 
 	y = pos.y;
 
-	addButtonTILBordered(iXY(x, y), "pics\\vehicleSelectionMenu\\humvee.til", "", 0);
+	addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/humvee.til", "", 0);
 	x += buttonSize.x + 1;
 
-	addButtonTILBordered(iXY(x, y), "pics\\vehicleSelectionMenu\\light.til", "", 0);
+	addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/light.til", "", 0);
 	x += buttonSize.x + 1;
 
-	addButtonTILBordered(iXY(x, y), "pics\\vehicleSelectionMenu\\medium.til", "", 0);
+	addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/medium.til", "", 0);
 	x += buttonSize.x + 1;
 
-	addButtonTILBordered(iXY(x, y), "pics\\vehicleSelectionMenu\\heavy.til", "", 0);
+	addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/heavy.til", "", 0);
 	x += buttonSize.x + 1;
 	
-	addButtonTILBordered(iXY(x, y), "pics\\vehicleSelectionMenu\\missle.til", "", 0);
+	addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/missle.til", "", 0);
 	x += buttonSize.x + 1;
 
 	// Draw the arrows to change the numbers.
@@ -593,6 +593,6 @@ void HostJoinTemplateView::drawMapInfo(const Surface &dest, const iXY &pos)
 //---------------------------------------------------------------------------
 void HostJoinTemplateView::loadBackgroundSurface()
 {
-	doLoadBackgroundSurface("pics\\backgrounds\\menus\\menu\\til\\hostjoinMB.til");
+	doLoadBackgroundSurface("pics/backgrounds/menus/menu/til/hostjoinMB.til");
 
 } // end HostJoinTemplateView::loadBackgroundSurface

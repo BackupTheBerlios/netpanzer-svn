@@ -47,7 +47,7 @@ void MapsManager::initialize( void )
    
 void MapsManager::scanMaps( void )
  {
-  scanMaps( ".\\maps\\" );
+  scanMaps( "./maps/" );
  }
    
 void MapsManager::scanMaps( const char *map_directory )
@@ -149,7 +149,7 @@ int MapsManager::checkMapValidity( char *map_name )
   char temp_path[256];
   MAP_HEADER map_info;
 
-  strcpy( temp_path, ".\\maps\\");
+  strcpy( temp_path, "./maps/");
   strcat( temp_path, map_name);
   strcat( temp_path, ".npm" );
    
@@ -159,7 +159,7 @@ int MapsManager::checkMapValidity( char *map_name )
   
   fclose( fp );
         
-  strcpy( temp_path, ".\\wads\\");
+  strcpy( temp_path, "./wads/");
   strcat( temp_path, map_info.tile_set );
  
   fp = fopen( temp_path, "rb" ); 

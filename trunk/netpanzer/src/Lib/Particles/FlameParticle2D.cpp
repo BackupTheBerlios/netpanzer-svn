@@ -24,7 +24,7 @@ cGrowList <PackedSurface> FlameParticle2D::staticPackedExplosion1;
 
 const int explosionFPS = 18;
 
-const char explosionPath[] = "pics\\particles\\explosion\\";
+const char explosionPath[] = "pics/particles/explosion/";
 
 // Used for packing images.
 static int maxLevel       = 7;
@@ -86,7 +86,7 @@ void FlameParticle2D::pakFiles()
 	for (i = minLevel; i <= maxLevel; i += incrementLevel)
 	{
 		tempSurface.create(iXY(96, 128), 96, 16);
-		sprintf(strBuf, "%s\\pcx\\flack1.pcx", explosionPath);
+		sprintf(strBuf, "%s/pcx/flack1.pcx", explosionPath);
 		tempSurface.extractPCX(strBuf, 5, 0);
 
 		iXY newSize;
@@ -100,7 +100,7 @@ void FlameParticle2D::pakFiles()
 		tempSurface.setFPS(explosionFPS);
 		tempPackedSurface.pack(tempSurface);
 
-		sprintf(strBuf, "%s\\pak\\explosion1-%04d.pak", explosionPath, i);
+		sprintf(strBuf, "%s/pak/explosion1-%04d.pak", explosionPath, i);
 		tempPackedSurface.save(strBuf);
 	}
 
@@ -108,7 +108,7 @@ void FlameParticle2D::pakFiles()
 	for (i = minLevel; i <= maxLevel; i += incrementLevel)
 	{
 		tempSurface.create(iXY(128, 96), 128, 15);
-		sprintf(strBuf, "%s\\pcx\\flack2.pcx", explosionPath);
+		sprintf(strBuf, "%s/pcx/flack2.pcx", explosionPath);
 		tempSurface.extractPCX(strBuf, 4, 0);
 
 		iXY newSize;
@@ -122,7 +122,7 @@ void FlameParticle2D::pakFiles()
 		tempSurface.setFPS(explosionFPS);
 		tempPackedSurface.pack(tempSurface);
 
-		sprintf(strBuf, "%s\\pak\\explosion2-%04d.pak", explosionPath, i);
+		sprintf(strBuf, "%s/pak/explosion2-%04d.pak", explosionPath, i);
 		tempPackedSurface.save(strBuf);
 	}
 }
@@ -131,14 +131,14 @@ void FlameParticle2D::pakFiles()
 //---------------------------------------------------------------------------
 void FlameParticle2D::loadPakFiles()
 {
-	char pathExplosion0[] = "pics\\particles\\explosion\\explosion0\\pak\\";
+	char pathExplosion0[] = "pics/particles/explosion/explosion0/pak/";
 
 	if (!loadAllPAKInDirectory(pathExplosion0, staticPackedExplosion0))
 	{
 		FUBAR("ERROR: Unable to load any exposion images in %s", pathExplosion0);
 	}
 
-	char pathExplosion1[] = "pics\\particles\\explosion\\explosion1\\pak\\";
+	char pathExplosion1[] = "pics/particles/explosion/explosion1/pak/";
 
 	if (!loadAllPAKInDirectory(pathExplosion1, staticPackedExplosion1))
 	{
@@ -157,10 +157,10 @@ void FlameParticle2D::init()
 
 /*
 	explosionFireSprite0.create(iXY(96, 128), 96, 16);
-	explosionFireSprite0.extractPCX("pics\\particles\\explosion\\pcx\\flack1.pcx", 5, 0);
+	explosionFireSprite0.extractPCX("pics/particles/explosion/pcx/flack1.pcx", 5, 0);
 
 	explosionFireSprite1.create(iXY(128, 96), 128, 15);
-	explosionFireSprite1.extractPCX("pics\\particles\\explosion\\pcx\\flack2.pcx", 4, 0);
+	explosionFireSprite1.extractPCX("pics/particles/explosion/pcx/flack2.pcx", 4, 0);
 
 	explosionFireSprite0.setFPS(explosionFPS);
 	explosionFireSprite1.setFPS(explosionFPS);

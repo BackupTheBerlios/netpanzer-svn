@@ -44,7 +44,7 @@ FlagSelectionView::FlagSelectionView() : RMouseHackView()
 	moveTo(bodyTextRect.min.x + bodyTextRect.getSizeX() / 2 + 10 + 30, bodyTextRect.min.y + 50);
 
 	// Load the flag images.
-	//flags.loadAllBMPInDirectory("pics\\flags\\netpmenu\\");
+	//flags.loadAllBMPInDirectory("pics/flags/netpmenu/");
 
 	resizeClientArea(bodyTextRect.getSizeX() / 2 - 10 - 30, 108);
 
@@ -67,7 +67,7 @@ FlagSelectionView::FlagSelectionView() : RMouseHackView()
 //---------------------------------------------------------------------------
 void FlagSelectionView::init()
 {
-	playerFlag.loadAllBMPInDirectory("pics\\flags\\netpmenu\\");
+	playerFlag.loadAllBMPInDirectory("pics/flags/netpmenu/");
 
 	iXY flagStartOffset(BORDER_SPACE, BORDER_SPACE * 2 + playerFlag.getPixY());
 

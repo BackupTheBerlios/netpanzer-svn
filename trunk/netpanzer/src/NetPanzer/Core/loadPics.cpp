@@ -70,7 +70,7 @@ void loadPics()
 	//mouseResizeTR.create(40, 30, 40, 30);
 	//mouseResizeTL.create(40, 30, 40, 30);
 
-	//mouseArrow.loadRAW("pics\\cursors\\arrowPointer.raw");
+	//mouseArrow.loadRAW("pics/cursors/arrowPointer.raw");
 	mouseArrow.create(20, 20, 20, 1);
 	mouseArrow.fill(0);
 	mouseArrow.drawLine(0, 0, mouseArrow.getCenterX(), 0, 241);
@@ -81,22 +81,22 @@ void loadPics()
 	mouseArrow.drawLine(mouseArrow.getPixX() - 5, mouseArrow.getPixY() - 1, mouseArrow.getPixX(), mouseArrow.getPixY() - 1, 241);
 	mouseArrow.drawLine(mouseArrow.getPixX() - 1, mouseArrow.getPixY() - 5, mouseArrow.getPixX() - 1, mouseArrow.getPixY() - 1, 241);
 
-	//mouseMoveLeft.loadRAW("pics\\cursors\\arrowMoveLeft.raw");
-	//mouseMoveUp.loadRAW("pics\\cursors\\arrowMoveUp.raw");
+	//mouseMoveLeft.loadRAW("pics/cursors/arrowMoveLeft.raw");
+	//mouseMoveUp.loadRAW("pics/cursors/arrowMoveUp.raw");
 
-	//mouseMoveLeftStop.loadRAW("pics\\cursors\\arrowMoveLeftStop.raw");
-	//mouseMoveUpStop.loadRAW("pics\\cursors\\arrowMoveUpStop.raw");
+	//mouseMoveLeftStop.loadRAW("pics/cursors/arrowMoveLeftStop.raw");
+	//mouseMoveUpStop.loadRAW("pics/cursors/arrowMoveUpStop.raw");
 
 	// Up/Down
-	//mouseResizeUD.loadRAW("pics\\cursors\\resizeud.raw");
+	//mouseResizeUD.loadRAW("pics/cursors/resizeud.raw");
 	// Left/Right
-	//mouseResizeLR.extractPCX("pics\\cursors\\resizetb.pcx", 15, 1);
+	//mouseResizeLR.extractPCX("pics/cursors/resizetb.pcx", 15, 1);
 
 	// Diagonals
-	//mouseResizeBR.loadRAW("pics\\cursors\\resizebr.raw");
+	//mouseResizeBR.loadRAW("pics/cursors/resizebr.raw");
 
-	//mouseMoveUpLeft.loadRAW("pics\\cursors\\arrowMoveUpperLeft.raw");
-	//mouseMoveUpLeftStop.loadRAW("pics\\cursors\\arrowMoveUpperLeftStop.raw");
+	//mouseMoveUpLeft.loadRAW("pics/cursors/arrowMoveUpperLeft.raw");
+	//mouseMoveUpLeftStop.loadRAW("pics/cursors/arrowMoveUpperLeftStop.raw");
 
 /*
 	mouseResizeBL.copy(mouseResizeBR);

@@ -161,6 +161,6 @@ void SoundView::doDraw(const Surface &viewArea, const Surface &clientArea)
 //---------------------------------------------------------------------------
 void SoundView::loadTitleSurface()
 {
-	doLoadTitleSurface("pics\\backgrounds\\menus\\menu\\til\\soundTitle.til");
+	doLoadTitleSurface("pics/backgrounds/menus/menu/til/soundTitle.til");
 
 } // end SoundView::loadTitleSurface

@@ -44,7 +44,7 @@ RadarPingParticle2D::RadarPingParticle2D(fXYZ pos) : Particle2D(pos)
 void RadarPingParticle2D::init()
 {
 	radarPingSprite.create(iXY(48, 46), 48, 6);
-	radarPingSprite.loadAllTILInDirectory("pics\\particles\\radarPing\\");
+	radarPingSprite.loadAllTILInDirectory("pics/particles/radarPing/");
 
 	radarPingSprite.setOffset(iXY(-radarPingSprite.getCenter().x, -radarPingSprite.getPix().y));
 

@@ -64,7 +64,7 @@ static void bReturnToMainMenu()
 
 	GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
 
-	GameManager::loadPalette("wads\\netpmenu.act");
+	GameManager::loadPalette("wads/netpmenu.act");
 
 	Desktop::setVisibilityAllWindows(false);
 

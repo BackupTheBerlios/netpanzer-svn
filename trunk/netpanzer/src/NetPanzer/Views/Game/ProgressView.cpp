@@ -204,7 +204,7 @@ void ProgressView::open()
 
     GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
-    GameManager::loadPalette("wads\\netpmenu.act");
+    GameManager::loadPalette("wads/netpmenu.act");
 
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("ProgressView", true); 
@@ -223,7 +223,7 @@ void ProgressView::close()
     GameManager::restorePreviousVideoMode();
 	Desktop::checkViewPositions();
 
-    GameManager::loadPalette("wads\\netp.act");
+    GameManager::loadPalette("wads/netp.act");
 
     backgroundSurface.free();
     Desktop::setVisibility("ProgressView", false);
@@ -242,7 +242,7 @@ void ProgressView::toggleGameView()
 	Desktop::checkViewPositions();
 
 	// Set the palette to the game palette.
-	GameManager::loadPalette("wads\\netp.act");
+	GameManager::loadPalette("wads/netp.act");
 
 	GameManager::setNetPanzerGameOptions();
 
@@ -277,7 +277,7 @@ void ProgressView::doActivate()
 //---------------------------------------------------------------------------
 void ProgressView::loadBackgroundSurface()
 {
-	String string = "pics\\backgrounds\\menus\\menu\\til\\loadingMB.til";
+	String string = "pics/backgrounds/menus/menu/til/loadingMB.til";
 
 	if (!backgroundSurface.loadTIL(string))
 	{

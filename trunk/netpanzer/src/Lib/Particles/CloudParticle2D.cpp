@@ -89,7 +89,7 @@ void CloudParticle2D::setRandomSurface()
 //---------------------------------------------------------------------------
 void CloudParticle2D::loadTILFiles()
 {
-	char path[] = "pics\\particles\\clouds\\til\\";
+	char path[] = "pics/particles/clouds/til/";
 
 	Surface tempSurface;
 	if (!tempSurface.loadAllTILInDirectory(path))
@@ -102,7 +102,7 @@ void CloudParticle2D::loadTILFiles()
 
 	PackedSurface tempPackedSurface;
 	tempPackedSurface.pack(tempSurface);
-	tempPackedSurface.save("pics\\particles\\clouds\\pak\\clouds.pak");
+	tempPackedSurface.save("pics/particles/clouds/pak/clouds.pak");
 }
 
 //---------------------------------------------------------------------------
@@ -113,7 +113,7 @@ void CloudParticle2D::packFiles()
 //---------------------------------------------------------------------------
 void CloudParticle2D::loadPAKFiles()
 {
-	staticPackedCloud.load("pics\\particles\\clouds\\pak\\clouds.pak");
+	staticPackedCloud.load("pics/particles/clouds/pak/clouds.pak");
 	staticPackedCloud.setOffsetCenter();
 }
 

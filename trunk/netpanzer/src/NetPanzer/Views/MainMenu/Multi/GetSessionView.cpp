@@ -208,17 +208,17 @@ GetSessionView::GetSessionView() : MenuTemplateView()
 
 //    Surface tempSurface;
 //
-//	tempSurface.loadAllTILInDirectory("pics\\backgrounds\\menus\\multi\\getSession\\buttons\\join\\til\\");
+//	tempSurface.loadAllTILInDirectory("pics/backgrounds/menus/multi/getSession/buttons/join/til/");
 //    assert(tempSurface.getFrameCount() == 3);
 //    addButtonSurface(iXY(137, 118), tempSurface, "Join a multiplayer session.", bJoin);
 //
-//	tempSurface.loadAllTILInDirectory("pics\\backgrounds\\menus\\multi\\getSession\\buttons\\host\\til\\");
+//	tempSurface.loadAllTILInDirectory("pics/backgrounds/menus/multi/getSession/buttons/host/til/");
 //    assert(tempSurface.getFrameCount() == 3);
 //    addButtonSurface(iXY(106, 138), tempSurface, "Host a multiplayer session.", bHost);
 //
 //	addButtonCenterText(iXY(360, 438), 100, "Next", "Accepts the current selection.", bNext);
 //
-//	tempSurface.loadAllTILInDirectory("pics\\backgrounds\\menus\\buttons\\back\\til\\");
+//	tempSurface.loadAllTILInDirectory("pics/backgrounds/menus/buttons/back/til/");
 //    assert(tempSurface.getFrameCount() == 3);
 //    addButtonSurface(iXY(505, 440), tempSurface, "Move back menu.", bBack);
 //
@@ -327,7 +327,7 @@ void GetSessionView::doActivate()
 //---------------------------------------------------------------------------
 void GetSessionView::loadBackgroundSurface()
 {
-	doLoadBackgroundSurface(("pics\\backgrounds\\menus\\menu\\til\\sessionMB.til"));
+	doLoadBackgroundSurface(("pics/backgrounds/menus/menu/til/sessionMB.til"));
 
 } // end GetSessionView::loadBackgroundSurface
 
@@ -337,11 +337,11 @@ void GetSessionView::loadTitleSurface()
 {
 	if (GameConfig::GetHostOrJoin() == _game_session_host)
 	{
-		doLoadTitleSurface("pics\\backgrounds\\menus\\menu\\til\\hostTitle.til");
+		doLoadTitleSurface("pics/backgrounds/menus/menu/til/hostTitle.til");
 	}
 	else if (GameConfig::GetHostOrJoin() == _game_session_join)
 	{
-		doLoadTitleSurface("pics\\backgrounds\\menus\\menu\\til\\joinTitle.til");
+		doLoadTitleSurface("pics/backgrounds/menus/menu/til/joinTitle.til");
 	}
 
 } // end GetSessionView::loadTitleSurface

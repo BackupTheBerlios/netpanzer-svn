@@ -42,13 +42,13 @@ SparkParticle2D::SparkParticle2D(fXYZ nPos) : Particle2D(nPos)
 void SparkParticle2D::init()
 {
 	sparkSprite.create(iXY(96, 128), 96, 16);
-	sparkSprite.extractPCX("pics\\particles\\explosion\\pcx\\flack1.pcx", 5, 0);
+	sparkSprite.extractPCX("pics/particles/explosion/pcx/flack1.pcx", 5, 0);
 	//sparkSprite.setOffsetCenter();
 
-	//explosion.loadRAW("pics\\explode\\expl0002.raw");
+	//explosion.loadRAW("pics/explode/expl0002.raw");
 	//spark.create(iXY(64, 64), 64, 16);
 	//spark.fill(Color::red);
-	//spark.extractPCX("pics\\explode\\expl01.pcx", 4, 0);
+	//spark.extractPCX("pics/explode/expl01.pcx", 4, 0);
 	//spark.scale(iXY(20, 20));
 
 } // end SparkParticle2D::init

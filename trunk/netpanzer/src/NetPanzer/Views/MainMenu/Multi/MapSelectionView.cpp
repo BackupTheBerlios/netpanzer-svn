@@ -141,7 +141,7 @@ int MapSelectionView::loadMaps()
 	char strBuf[256];
 	char pathWild[256];
 
-	const char mapsPath[] = "maps\\";
+	const char mapsPath[] = "maps/";
 
 	sprintf(pathWild, "%s*.npm", mapsPath);
 
@@ -243,7 +243,7 @@ int MapSelectionView::loadMaps()
 
 	{for (int i = 0; i < mapList.getCount(); i++)
 	{
-		mapList[i].thumbnail.mapFromPalette("wads\\netp.act");
+		mapList[i].thumbnail.mapFromPalette("wads/netp.act");
 	}}
 
 	assert(mapList.getCount() > 0);

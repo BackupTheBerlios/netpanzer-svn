@@ -197,7 +197,7 @@ void GameManager::initializeVideoSubSystem()
 #endif
 
 	setVideoMode(current_video_mode_res);
-	loadPalette( "wads\\netp.act" ); 
+	loadPalette( "wads/netp.act" ); 
 }
 
 void GameManager::shutdownVideoSubSystem()
@@ -236,7 +236,7 @@ void GameManager::initializeWindowSubSystem()
 	LOG(("Initializing Game Viewing System"));
 
 	// Use this when needing to create colorfilters.
-	loadPalette( "wads\\netp.act" ); 
+	loadPalette( "wads/netp.act" ); 
 
 	initFont();  
 	loadPics();
@@ -264,7 +264,7 @@ void GameManager::initializeWindowSubSystem()
 	//chatView.init();
 	//Desktop::add(&chatView);
 
-	loadPalette( "wads\\netpmenu.act" );
+	loadPalette( "wads/netpmenu.act" );
 
 	Desktop::add(new MapSelectionView());
 	Desktop::add(new MainMenuView());
@@ -359,7 +359,7 @@ void GameManager::increaseDisplayResolution()
   Desktop::checkViewPositions();
   ConsoleInterface::setToSurfaceSize( current_video_mode_res );
 
-  loadPalette( "wads\\netp.act" );
+  loadPalette( "wads/netp.act" );
 	
   ConsoleInterface::postMessage( "Screen Resolution :  %d  x  %d", current_video_mode_res.x, current_video_mode_res.y );
 }
@@ -390,7 +390,7 @@ void GameManager::decreaseDisplayResolution()
   Desktop::checkViewPositions();
   ConsoleInterface::setToSurfaceSize( current_video_mode_res );    
   
-  loadPalette( "wads\\netp.act" ); 
+  loadPalette( "wads/netp.act" ); 
 
   ConsoleInterface::postMessage( "Screen Resolution :  %d  x  %d", current_video_mode_res.x, current_video_mode_res.y );
 }
@@ -656,11 +656,11 @@ void GameManager::processSystemKeys()
 		{
 			if (!Desktop::getVisible("GameView"))
 			{
-				decreaseBrightness("wads\\netpmenu.act");
+				decreaseBrightness("wads/netpmenu.act");
 			}
 			else
 			{
-				decreaseBrightness("wads\\netp.act");
+				decreaseBrightness("wads/netp.act");
 			}
 		} 
 
@@ -668,11 +668,11 @@ void GameManager::processSystemKeys()
 		{
 			if (!Desktop::getVisible("GameView"))
 			{
-				increaseBrightness("wads\\netpmenu.act");
+				increaseBrightness("wads/netpmenu.act");
 			}
 			else
 			{
-				increaseBrightness("wads\\netp.act");
+				increaseBrightness("wads/netp.act");
 			}
 		} 
 
@@ -868,7 +868,7 @@ bool GameManager::loadGameData()
  {
   UnitProfileInterface::loadUnitProfiles();
   LoadUnitSurfaces();
-  UNIT_FLAGS_SURFACE.loadAllBMPInDirectory("pics\\flags\\netp\\");
+  UNIT_FLAGS_SURFACE.loadAllBMPInDirectory("pics/flags/netp/");
   
   GameConfig::loadConfigScript();
   return true; 
@@ -879,7 +879,7 @@ void GameManager::dedicatedLoadGameData()
 {
    	UnitProfileInterface::loadUnitProfiles();
 	LoadUnitSurfaces();
-	UNIT_FLAGS_SURFACE.loadAllBMPInDirectory("pics\\flags\\netp\\");
+	UNIT_FLAGS_SURFACE.loadAllBMPInDirectory("pics/flags/netp/");
 
 	GameConfig::loadConfigScript();
 }
@@ -904,7 +904,7 @@ bool GameManager::startGameMapLoad( char *map_file_path, unsigned long partition
    else
     { *result_code = _mapload_result_success; }
   
-  strcpy( map_path, ".\\maps\\" );
+  strcpy( map_path, "./maps/" );
   strcat( map_path, map_file_path );
   
   if ( MapInterface::startMapLoad( map_path, true, partitions ) == false )
@@ -950,7 +950,7 @@ void GameManager::finishGameMapLoad()
 
 void GameManager::dedicatedLoadGameMap( char *map_name )
 {  
-  strcpy( map_path, ".\\maps\\" );
+  strcpy( map_path, "./maps/" );
   strcat( map_path, map_name );
   
   MapInterface::startMapLoad( map_path, false, 0 ); 
@@ -1599,7 +1599,7 @@ void GameManager::hostMultiPlayerGame()
     progressView.close();
 
     // Set the palette to the game palette.
-    loadPalette( "wads\\netp.act" ); 
+    loadPalette( "wads/netp.act" ); 
 
 	setNetPanzerGameOptions();
 

@@ -43,7 +43,7 @@ void MultiMapSelectorView::loadImages()
 	char strBuf[256];
 	char pathWild[256];
 
-	const char path[] = "maps\\";
+	const char path[] = "maps/";
 
 	sprintf(pathWild, "%s*.npm", path);
 

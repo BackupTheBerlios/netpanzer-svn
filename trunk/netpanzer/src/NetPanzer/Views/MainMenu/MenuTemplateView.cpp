@@ -365,21 +365,21 @@ void MenuTemplateView::doActivate()
 		//if (globeSurface.getFrameCount() <= 0)
 		//{
 		//	// See if the pak image already exists.
-		//	if (getFileSize("pics\\backgrounds\\menus\\globe\\pak\\globe.pak") > 0)
+		//	if (getFileSize("pics/backgrounds/menus/globe/pak/globe.pak") > 0)
 		//	{
-		//		globeSurface.load("pics\\backgrounds\\menus\\globe\\pak\\globe.pak");
+		//		globeSurface.load("pics/backgrounds/menus/globe/pak/globe.pak");
 		//	} else
 		//	{
 		//		Surface tempSurface;
 		//
-		//		if (!tempSurface.loadAllTILInDirectory("pics\\backgrounds\\menus\\globe\\til\\"))
+		//		if (!tempSurface.loadAllTILInDirectory("pics/backgrounds/menus/globe/til/"))
 		//		{
 		//			FUBAR("Shit");
 		//		}
 		//		tempSurface.setFPS(14);
 		//
 		//		globeSurface.pack(tempSurface);
-		//		globeSurface.save("pics\\backgrounds\\menus\\globe\\pak\\globe.pak");
+		//		globeSurface.save("pics/backgrounds/menus/globe/pak/globe.pak");
 		//	}
 		//}
 		loadBackgroundSurface();
@@ -395,7 +395,7 @@ void MenuTemplateView::doActivate()
 //---------------------------------------------------------------------------
 void MenuTemplateView::loadBackgroundSurface()
 {
-	doLoadBackgroundSurface("pics\\backgrounds\\menus\\menu\\til\\defaultMB.til");
+	doLoadBackgroundSurface("pics/backgrounds/menus/menu/til/defaultMB.til");
 
 } // end MenuTemplateView::loadBackgroundSurface
 
@@ -414,7 +414,7 @@ void MenuTemplateView::doLoadBackgroundSurface(String string)
 //---------------------------------------------------------------------------
 void MenuTemplateView::loadTitleSurface()
 {
-	doLoadTitleSurface("pics\\backgrounds\\menus\\menu\\til\\mainTitle.til");
+	doLoadTitleSurface("pics/backgrounds/menus/menu/til/mainTitle.til");
 
 } // end MenuTemplateView::loadTitleSurface
 
@@ -426,7 +426,7 @@ void MenuTemplateView::doLoadTitleSurface(String string)
 	titleFlashTimeHalf = 2.5;
 
 	String pakString;
-	pakString = "pics\\backgrounds\\menus\\menu\\pak\\";
+	pakString = "pics/backgrounds/menus/menu/pak/";
 	pakString += UtilInterface::getFilename(string);
 	pakString += ".pak";
 

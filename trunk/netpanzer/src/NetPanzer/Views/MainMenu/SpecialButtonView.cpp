@@ -43,7 +43,7 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
 		prefix = "inMenus";
 	}
 
-	sprintf(strBuf, "pics\\backgrounds\\menus\\buttons\\default\\pak\\%s%s.pak", (const char *) prefix, fileString);
+	sprintf(strBuf, "pics/backgrounds/menus/buttons/default/pak/%s%s.pak", (const char *) prefix, fileString);
 
 	if (UtilInterface::getFileSize(strBuf) > 0)
 	{
@@ -58,7 +58,7 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
 		Surface buttonSurface;
 		Surface tempSurface;
 		
-		sprintf(strBuf, "pics\\backgrounds\\menus\\buttons\\default\\til\\%sbutover.til", (const char *) prefix);
+		sprintf(strBuf, "pics/backgrounds/menus/buttons/default/til/%sbutover.til", (const char *) prefix);
 
 		// Create.
 		if (!tempSurface.loadTIL(strBuf))
@@ -77,7 +77,7 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
 		buttonSurface.setFrame(2);
 		tempSurface.blt(buttonSurface);
 
-		sprintf(strBuf, "pics\\backgrounds\\menus\\buttons\\default\\til\\%sbuton.til", (const char *) prefix);
+		sprintf(strBuf, "pics/backgrounds/menus/buttons/default/til/%sbuton.til", (const char *) prefix);
 
 		if (!tempSurface.loadTIL(strBuf))
 		{
@@ -92,7 +92,7 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
 		tempSurface.blt(buttonSurface);
 		
 		// Unhighlight.
-		sprintf(strBuf, "pics\\backgrounds\\menus\\buttons\\default\\til\\%sbutoff.til", (const char *) prefix);
+		sprintf(strBuf, "pics/backgrounds/menus/buttons/default/til/%sbutoff.til", (const char *) prefix);
 
 		if (!tempSurface.loadTIL(strBuf))
 		{
@@ -121,7 +121,7 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
 		PackedSurface tempPack;
 
 		tempPack.pack(buttonSurface);
-		sprintf(strBuf, "pics\\backgrounds\\menus\\buttons\\default\\pak\\%s%s.pak", (const char *) prefix, fileString);
+		sprintf(strBuf, "pics/backgrounds/menus/buttons/default/pak/%s%s.pak", (const char *) prefix, fileString);
 		tempPack.save(strBuf);
 
 		addButtonPackedSurface(pos, tempPack, "", function);

@@ -43,7 +43,7 @@ DirtKickParticle2D::DirtKickParticle2D(fXYZ pos) : Particle2D(pos)
 void DirtKickParticle2D::init()
 {
 	dirtKickSprite.create(iXY(48, 46), 48, 6);
-	dirtKickSprite.extractPCX("pics\\particles\\dirtKick.pcx", 1, 0);
+	dirtKickSprite.extractPCX("pics/particles/dirtKick.pcx", 1, 0);
 	
 	dirtKickSprite.scale((int) (48 * 0.5f), (int) (46 * 0.5f));
 

@@ -75,7 +75,7 @@ void MouseInterface::initialize()
 	mouse_cursor.setOffsetCenter();
 #ifndef _MAP_EDITOR_BUILD
 	// ** NOTE: TEMPORARY
-	CURSOR_DBASE.load_dbase( ".\\gdbase\\cursor.dbs" );
+	CURSOR_DBASE.load_dbase( "./gdbase/cursor.dbs" );
 #endif // ** _MAP_EDITOR_BUILD
 }
     

@@ -36,7 +36,7 @@ void DigitText::init(const char *filename)
 	charactersNormal.create(11, 17, 11, 128);
 
 	// NOTE: Make sure the file size is 128 characters.
-	char charfilename[] = "pics\\chars11x17digit.raw";
+	char charfilename[] = "pics/chars11x17digit.raw";
 
 	FILE *fp = fopen(charfilename, "rb");
 	if (fp == 0)

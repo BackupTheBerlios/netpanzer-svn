@@ -15,10 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
-
 #include <config.h>
+
 #include "View.hpp"
 #include "Desktop.hpp"
 #include "MouseInterface.hpp"
@@ -91,32 +89,32 @@ View::View()
 
 	if (topBorder.getFrameCount() <= 0)
 	{
-		sprintf(strBuf, "pics\\viewBorders\\btop.til");
+		sprintf(strBuf, "pics/viewBorders/btop.til");
 		if (!topBorder.loadTIL(strBuf))	FUBAR("ERROR: Unable to load: %s", strBuf);
 	}
 	if (leftBorder.getFrameCount() <= 0)
 	{
-		sprintf(strBuf, "pics\\viewBorders\\bleft.til");
+		sprintf(strBuf, "pics/viewBorders/bleft.til");
 		if (!leftBorder.loadTIL(strBuf)) FUBAR("ERROR: Unable to load: %s", strBuf);
 	}
 	if (bottomBorder.getFrameCount() <= 0)
 	{
-		sprintf(strBuf, "pics\\viewBorders\\bbottom.til");
+		sprintf(strBuf, "pics/viewBorders/bbottom.til");
 		if (!bottomBorder.loadTIL(strBuf))	FUBAR("ERROR: Unable to load: %s", strBuf);
 	}
 	if (rightBorder.getFrameCount() <= 0)
 	{
-		sprintf(strBuf, "pics\\viewBorders\\bright.til");
+		sprintf(strBuf, "pics/viewBorders/bright.til");
 		if (!rightBorder.loadTIL(strBuf)) FUBAR("ERROR: Unable to load: %s", strBuf);
 	}
 	if (topLeftCornerLarge.getFrameCount() <= 0)
 	{
-		sprintf(strBuf, "pics\\viewBorders\\bctl1.til");
+		sprintf(strBuf, "pics/viewBorders/bctl1.til");
 		if (!topLeftCornerLarge.loadTIL(strBuf)) FUBAR("ERROR: Unable to load: %s", strBuf);
 	}
 	if (topLeftCornerSmall.getFrameCount() <= 0)
 	{
-		sprintf(strBuf, "pics\\viewBorders\\bctl2.til");
+		sprintf(strBuf, "pics/viewBorders/bctl2.til");
 		if (!topLeftCornerSmall.loadTIL(strBuf)) FUBAR("ERROR: Unable to load: %s", strBuf);
 	}
 
@@ -159,7 +157,7 @@ View::View(const iXY &pos, const iXY &size, const char *title)
 	// If the button is bordered, then put a close button on it.
 	//if (status & STATUS_ISBORDERED)
 	//LOG(("About to addButton"));
-	//addButton(iXY(getSizeX()-10, getSizeY()-10), "pics\\buttons\\wclose.raw", "Close the current window", View::toggleWindow);
+	//addButton(iXY(getSizeX()-10, getSizeY()-10), "pics/buttons/wclose.raw", "Close the current window", View::toggleWindow);
 	//LOG(("Past addButton"));
 
 	moveTo(pos);
@@ -504,7 +502,7 @@ void View::loadPics()
 	if (pics.getFrame0() != 0) return;
 
 	//pics.create(iXY(12, 11), 12, 2);
-	//pics.extractPCX("pics\\buttons.pcx", 6, 1);
+	//pics.extractPCX("pics/buttons.pcx", 6, 1);
 
 } // end loadPics
 

@@ -38,41 +38,41 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 void Weapon::init()
 {
 	//packFiles();
-	gMissleMediumPackedSurface.load("pics\\particles\\missles\\pak\\misslesMedium.pak");
-	gMissleSmallPackedSurface.load("pics\\particles\\missles\\pak\\misslesSmall.pak");
-	gShellPackedSurface.load("pics\\particles\\shells\\pak\\shells.pak");
+	gMissleMediumPackedSurface.load("pics/particles/missles/pak/misslesMedium.pak");
+	gMissleSmallPackedSurface.load("pics/particles/missles/pak/misslesSmall.pak");
+	gShellPackedSurface.load("pics/particles/shells/pak/shells.pak");
 
 	Surface       temp;
 	PackedSurface pack;
 
-	if (UtilInterface::getFileSize("pics\\particles\\lights\\pak\\missleThrust.pak") > 0)
+	if (UtilInterface::getFileSize("pics/particles/lights/pak/missleThrust.pak") > 0)
 	{
-		gMissleThrustPackedSurface.load("pics\\particles\\lights\\pak\\missleThrust.pak");
+		gMissleThrustPackedSurface.load("pics/particles/lights/pak/missleThrust.pak");
 	} else
 	{
 		// Missle thrust lighting.
-		if (!temp.loadTIL("pics\\particles\\lights\\til\\missleThrust.til"))
+		if (!temp.loadTIL("pics/particles/lights/til/missleThrust.til"))
 		{
 			FUBAR("SHIT!");
 		}
 		temp.setOffsetCenter();
 		pack.pack(temp);
-		pack.save("pics\\particles\\lights\\pak\\missleThrust.pak");
+		pack.save("pics/particles/lights/pak/missleThrust.pak");
 	}
 
-	if (UtilInterface::getFileSize("pics\\particles\\lights\\pak\\missleGroundLight.pak") > 0)
+	if (UtilInterface::getFileSize("pics/particles/lights/pak/missleGroundLight.pak") > 0)
 	{
-		gMissleGroundLightPackedSurface.load("pics\\particles\\lights\\pak\\missleGroundLight.pak");
+		gMissleGroundLightPackedSurface.load("pics/particles/lights/pak/missleGroundLight.pak");
 	} else
 	{
 		// Missle ground lighting.
-		if (!temp.loadTIL("pics\\particles\\lights\\til\\missleGroundLight.til"))
+		if (!temp.loadTIL("pics/particles/lights/til/missleGroundLight.til"))
 		{
 			FUBAR("SHIT!");
 		}
 		temp.setOffsetCenter();
 		pack.pack(temp);
-		pack.save("pics\\particles\\lights\\pak\\missleGroundLight.pak");
+		pack.save("pics/particles/lights/pak/missleGroundLight.pak");
 	}
 }
 
@@ -85,7 +85,7 @@ void Weapon::packFiles()
 	int           i;
 
 	// Medium
-	tempSurface.loadPCX("pics\\particles\\missles\\pcx\\missle1.pcx");
+	tempSurface.loadPCX("pics/particles/missles/pcx/missle1.pcx");
 
 	// Pack the missles.
 	tempMissleSurface.create(tempSurface.getPix(), tempSurface.getPixX(), 360);
@@ -100,10 +100,10 @@ void Weapon::packFiles()
 	}
 
 	tempPackSurface.pack(tempMissleSurface);
-	tempPackSurface.save("pics\\particles\\missles\\pak\\misslesMedium.pak");
+	tempPackSurface.save("pics/particles/missles/pak/misslesMedium.pak");
 
 	// Small
-	tempSurface.loadPCX("pics\\particles\\missles\\pcx\\missle0.pcx");
+	tempSurface.loadPCX("pics/particles/missles/pcx/missle0.pcx");
 
 	// Pack the missles.
 	tempMissleSurface.create(tempSurface.getPix(), tempSurface.getPixX(), 360);
@@ -118,7 +118,7 @@ void Weapon::packFiles()
 	}
 
 	tempPackSurface.pack(tempMissleSurface);
-	tempPackSurface.save("pics\\particles\\missles\\pak\\misslesSmall.pak");
+	tempPackSurface.save("pics/particles/missles/pak/misslesSmall.pak");
 
 	// Pack the shells.
 	//Surface tempShellSurface(gShellSurface.getPix(), gShellSurface.getPixX(), 360);
@@ -133,7 +133,7 @@ void Weapon::packFiles()
 	//}
 	//
 	//tempPackSurface.pack(tempShellSurface);
-	//tempPackSurface.save("pics\\particles\\shells\\pak\\shells.pak");
+	//tempPackSurface.save("pics/particles/shells/pak/shells.pak");
 }
 
 Weapon::Weapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, PointXYi &start, PointXYi &end) 

@@ -181,7 +181,7 @@ void ChunkTrajectoryParticle2D::createGroundChunks()
 
 	tempPackedSurface.pack(tempSurface);
 
-	char chunkPathPAK[] = "pics\\particles\\chunks\\pak\\";
+	char chunkPathPAK[] = "pics/particles/chunks/pak/";
 	char strBuf[256];
 	sprintf(strBuf, "%sgroundChunks.pak", chunkPathPAK);
 	tempPackedSurface.save(strBuf);
@@ -197,10 +197,10 @@ void ChunkTrajectoryParticle2D::createPAKFiles()
 	createUnitBodyGreenChunks();
 	createUnitBodyGrayChunks();
 
-	staticPackedGroundChunks.load("pics\\particles\\chunks\\pak\\groundChunks.pak");
-	staticPackedBurnGroundChunks.load("pics\\particles\\chunks\\pak\\greenUnitChunks.pak");
-	staticPackedUnitGreenChunks.load("pics\\particles\\chunks\\pak\\grayUnitChunks.pak");
-	staticPackedUnitGrayChunks.load("pics\\particles\\chunks\\pak\\burnGroundChunks.pak");
+	staticPackedGroundChunks.load("pics/particles/chunks/pak/groundChunks.pak");
+	staticPackedBurnGroundChunks.load("pics/particles/chunks/pak/greenUnitChunks.pak");
+	staticPackedUnitGreenChunks.load("pics/particles/chunks/pak/grayUnitChunks.pak");
+	staticPackedUnitGrayChunks.load("pics/particles/chunks/pak/burnGroundChunks.pak");
 
 } // end ChunkTrajectoryParticle2D::createPAKFiles
 
@@ -246,7 +246,7 @@ void ChunkTrajectoryParticle2D::createUnitBodyGrayChunks()
 	PackedSurface tempPackedSurface;
 	tempPackedSurface.pack(tempSurface);
 
-	char chunkPathPAK[] = "pics\\particles\\chunks\\pak\\";
+	char chunkPathPAK[] = "pics/particles/chunks/pak/";
 	char strBuf[256];
 	sprintf(strBuf, "%sgrayUnitChunks.pak", chunkPathPAK);
 	tempPackedSurface.save(strBuf);
@@ -295,7 +295,7 @@ void ChunkTrajectoryParticle2D::createUnitBodyGreenChunks()
 	PackedSurface tempPackedSurface;
 	tempPackedSurface.pack(tempSurface);
 
-	char chunkPathPAK[] = "pics\\particles\\chunks\\pak\\";
+	char chunkPathPAK[] = "pics/particles/chunks/pak/";
 	char strBuf[256];
 	sprintf(strBuf, "%sgreenUnitChunks.pak", chunkPathPAK);
 	tempPackedSurface.save(strBuf);
@@ -349,7 +349,7 @@ void ChunkTrajectoryParticle2D::createBurnGroundChunks()
 	PackedSurface tempPackedSurface;
 	tempPackedSurface.pack(tempSurface);
 
-	char chunkPathPAK[] = "pics\\particles\\chunks\\pak\\";
+	char chunkPathPAK[] = "pics/particles/chunks/pak/";
 	char strBuf[256];
 	sprintf(strBuf, "%sburnGroundChunks.pak", chunkPathPAK);
 	tempPackedSurface.save(strBuf);

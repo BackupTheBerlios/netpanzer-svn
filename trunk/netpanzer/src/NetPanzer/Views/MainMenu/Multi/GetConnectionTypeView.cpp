@@ -94,15 +94,15 @@ GetConnectionTypeView::GetConnectionTypeView() : MenuTemplateView()
 
     //Surface tempSurface;
 	//
-	//tempSurface.loadAllTILInDirectory("pics\\backgrounds\\menus\\multi\\getConnection\\buttons\\tcpip\\til\\");
+	//tempSurface.loadAllTILInDirectory("pics/backgrounds/menus/multi/getConnection/buttons/tcpip/til/");
     //assert(tempSurface.getFrameCount() == 3);
     //addButtonSurface(iXY(173, 99), tempSurface, "Selects a TCP/IP connection type.", bTCP);
 	//
-    //tempSurface.loadAllTILInDirectory("pics\\backgrounds\\menus\\multi\\getConnection\\buttons\\directConnect\\til\\");
+    //tempSurface.loadAllTILInDirectory("pics/backgrounds/menus/multi/getConnection/buttons/directConnect/til/");
     //assert(tempSurface.getFrameCount() == 3);
     //addButtonSurface(iXY(134, 119), tempSurface, "Selects a DirectConnect connection type.", bDirect);
 	//
-    //tempSurface.loadAllTILInDirectory("pics\\backgrounds\\menus\\multi\\getConnection\\buttons\\modem\\til\\");
+    //tempSurface.loadAllTILInDirectory("pics/backgrounds/menus/multi/getConnection/buttons/modem/til/");
     //assert(tempSurface.getFrameCount() == 3);
     //addButtonSurface(iXY(104, 138), tempSurface, "Selects a modem connection type.", bModem);
 
@@ -197,7 +197,7 @@ void GetConnectionTypeView::doActivate()
 //---------------------------------------------------------------------------
 void GetConnectionTypeView::loadBackgroundSurface()
 {
-	doLoadBackgroundSurface(("pics\\backgrounds\\menus\\menu\\til\\connectionMB.til"));
+	doLoadBackgroundSurface(("pics/backgrounds/menus/menu/til/connectionMB.til"));
 
 } // end MenuTemplateView::loadBackgroundSurface
 
@@ -207,15 +207,15 @@ void GetConnectionTypeView::loadTitleSurface()
 {
 	if (GameConfig::GetNetworkConnectType() == _connection_tcpip)
 	{
-		doLoadTitleSurface("pics\\backgrounds\\menus\\menu\\til\\tcpipTitle.til");
+		doLoadTitleSurface("pics/backgrounds/menus/menu/til/tcpipTitle.til");
 	}
 	else if (GameConfig::GetNetworkConnectType() == _connection_direct_connect)
 	{
-		doLoadTitleSurface("pics\\backgrounds\\menus\\menu\\til\\directConnectionTitle.til");
+		doLoadTitleSurface("pics/backgrounds/menus/menu/til/directConnectionTitle.til");
 	}
 	else if (GameConfig::GetNetworkConnectType() == _connection_modem)
 	{
-		doLoadTitleSurface("pics\\backgrounds\\menus\\menu\\til\\modemTitle.til");
+		doLoadTitleSurface("pics/backgrounds/menus/menu/til/modemTitle.til");
 	}
 
 } // end GetConnectionTypeView::loadTitleSurface

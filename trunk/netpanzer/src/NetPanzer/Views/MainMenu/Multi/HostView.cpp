@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "HostOptionsView.hpp"
 
 
-static char screenSurfacePathTIL[] = "pics\\backgrounds\\menus\\multimb.til";
+static char screenSurfacePathTIL[] = "pics/backgrounds/menus/multimb.til";
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -166,6 +166,6 @@ void HostView::doDraw(const Surface &viewArea, const Surface &clientArea)
 //---------------------------------------------------------------------------
 void HostView::loadTitleSurface()
 {
-	doLoadTitleSurface("pics\\backgrounds\\menus\\menu\\til\\hostTitle.til");
+	doLoadTitleSurface("pics/backgrounds/menus/menu/til/hostTitle.til");
 
 } // end HostView::loadTitleSurface

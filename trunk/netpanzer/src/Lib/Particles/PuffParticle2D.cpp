@@ -15,9 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #include <config.h>
+
 #include "PuffParticle2D.hpp"
 #include "PackedSurface.hpp"
 #include "TimerInterface.hpp"
@@ -33,9 +32,9 @@ cGrowList <PackedSurface> PuffParticle2D::staticPackedDirtPuff;
 
 
 // Image paths.
-const char pathSmokeLight[] = "pics\\particles\\puff\\smokeLight\\til\\";
-const char pathSmokeDark[]  = "pics\\particles\\puff\\smokeDark\\til\\";
-const char pathDirt[]       = "pics\\particles\\puff\\dirt\\til\\";
+const char pathSmokeLight[] = "pics/particles/puff/smokeLight/til/";
+const char pathSmokeDark[]  = "pics/particles/puff/smokeDark/til/";
+const char pathDirt[]       = "pics/particles/puff/dirt/til/";
 
 
 // PuffParticle2D
@@ -256,21 +255,21 @@ void PuffParticle2D::init()
 //---------------------------------------------------------------------------
 void PuffParticle2D::loadPAKFiles()
 {
-	char pathSmokeLight[] = "pics\\particles\\puff\\smokeLight\\pak\\";
+	char pathSmokeLight[] = "pics/particles/puff/smokeLight/pak/";
 
 	if (!loadAllPAKInDirectory(pathSmokeLight, staticPackedSmokeLightPuff))
 	{
 		FUBAR("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeLight);
 	}
 
-	char pathSmokeDark[] = "pics\\particles\\puff\\smokeDark\\pak\\";
+	char pathSmokeDark[] = "pics/particles/puff/smokeDark/pak/";
 
 	if (!loadAllPAKInDirectory(pathSmokeDark, staticPackedSmokeDarkPuff))
 	{
 		FUBAR("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeDark);
 	}
 
-	char pathDirt[] = "pics\\particles\\puff\\dirt\\pak\\";
+	char pathDirt[] = "pics/particles/puff/dirt/pak/";
 
 	if (!loadAllPAKInDirectory(pathDirt, staticPackedDirtPuff))
 	{
@@ -282,8 +281,8 @@ void PuffParticle2D::loadPAKFiles()
 void PuffParticle2D::loadTILFiles()
 {
 /*
-	char pathSmokeLight[] = "pics\\particles\\puff\\smokeLight\\til\\";
-	//char pathSmokeLight[] = "pics\\particles\\puff\\smokeLight\\raw\\";
+	char pathSmokeLight[] = "pics/particles/puff/smokeLight/til/";
+	//char pathSmokeLight[] = "pics/particles/puff/smokeLight/raw/";
 
 	if (!smokeLightPuffSprite.loadAllPAKInDirectory(pathSmokeLight))
 	//if (!smokeLightPuffSprite.loadAllRAWInDirectory(pathSmokeLightRAW, iXY(320, 240)))
@@ -294,9 +293,9 @@ void PuffParticle2D::loadTILFiles()
 	// Following code is for reducing the size of the images.
 	//smokeLightPuffSprite.shrinkWrap();
 	//smokeLightPuffSprite.scale(100);
-	//smokeLightPuffSprite.saveAllTIL("pics\\particles\\puff\\smokeLight\\");
+	//smokeLightPuffSprite.saveAllTIL("pics/particles/puff/smokeLight/");
 
-	char pathSmokeDark[] = "pics\\particles\\puff\\smokeDark\\til\\";
+	char pathSmokeDark[] = "pics/particles/puff/smokeDark/til/";
 
 	if (!smokeDarkPuffSprite.loadAllPAKInDirectory(pathSmokeDark))
 	{
@@ -306,9 +305,9 @@ void PuffParticle2D::loadTILFiles()
 	// Following code is for reducing the size of the images.
 	//smokeDarkPuffSprite.shrinkWrap();
 	//smokeDarkPuffSprite.scale(100);
-	//smokeDarkPuffSprite.saveAllTIL("pics\\particles\\puff\\smokeDark\\");
+	//smokeDarkPuffSprite.saveAllTIL("pics/particles/puff/smokeDark/");
 
-	char pathDirt[] = "pics\\particles\\puff\\dirt\\til\\";
+	char pathDirt[] = "pics/particles/puff/dirt/til/";
 
 	if (!dirtPuffSprite.loadAllPAKInDirectory(pathDirt))
 	{
@@ -318,6 +317,6 @@ void PuffParticle2D::loadTILFiles()
 	// Following code is for reducing the size of the images.
 	//dirtPuffSprite.shrinkWrap();
 	//dirtPuffSprite.scale(100);
-	//dirtPuffSprite.saveAllTIL("pics\\particles\\puff\\dirt\\");}
+	//dirtPuffSprite.saveAllTIL("pics/particles/puff/dirt/");}
 */
 }

@@ -150,7 +150,7 @@ void OptionsTemplateView::doDraw(const Surface &viewArea, const Surface &clientA
 //---------------------------------------------------------------------------
 void OptionsTemplateView::loadBackgroundSurface()
 {
-	doLoadBackgroundSurface(("pics\\backgrounds\\menus\\menu\\til\\optionsMB.til"));
+	doLoadBackgroundSurface(("pics/backgrounds/menus/menu/til/optionsMB.til"));
 
 } // end OptionsTemplateView::loadBackgroundSurface
 
@@ -158,6 +158,6 @@ void OptionsTemplateView::loadBackgroundSurface()
 //---------------------------------------------------------------------------
 void OptionsTemplateView::loadTitleSurface()
 {
-	doLoadTitleSurface("pics\\backgrounds\\menus\\menu\\til\\optionsTitle.til");
+	doLoadTitleSurface("pics/backgrounds/menus/menu/til/optionsTitle.til");
 
 } // end ControlsView::loadTitleSurface

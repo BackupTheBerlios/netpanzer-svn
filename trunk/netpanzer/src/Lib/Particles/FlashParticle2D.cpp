@@ -51,13 +51,13 @@ void FlashParticle2D::init()
 	//staticPackedFlash.setOffsetCenter();
 
 	// The following lines packs the light image.
-	if (UtilInterface::getFileSize("pics\\particles\\lights\\pak\\flash2.pak") > 0)
+	if (UtilInterface::getFileSize("pics/particles/lights/pak/flash2.pak") > 0)
 	{
-		staticPackedFlash.load("pics\\particles\\lights\\pak\\flash2.pak");
+		staticPackedFlash.load("pics/particles/lights/pak/flash2.pak");
 	} else
 	{
 		packFiles();
-		staticPackedFlash.load("pics\\particles\\lights\\pak\\flash2.pak");
+		staticPackedFlash.load("pics/particles/lights/pak/flash2.pak");
 	}
 
 } // end FlashParticle2D::init
@@ -70,11 +70,11 @@ void FlashParticle2D::packFiles()
 	Surface       scaledSurface;
 	Surface       outputSurface;
 
-	//surface.loadBMP("pics\\particles\\lights\\bmp\\flash.bmp");
+	//surface.loadBMP("pics/particles/lights/bmp/flash.bmp");
 
-	if (!surface.loadTIL("pics\\particles\\lights\\til\\flash2.til"))
+	if (!surface.loadTIL("pics/particles/lights/til/flash2.til"))
 	{
-		FUBAR("ERROR: Unable to load ""pics\\particles\\lights\\til\\flash2.til""");
+		FUBAR("ERROR: Unable to load ""pics/particles/lights/til/flash2.til""");
 	}
 
 	const float minFlashSize =  10.0f;
@@ -106,7 +106,7 @@ void FlashParticle2D::packFiles()
 	PackedSurface packedSurface;
 	packedSurface.pack(outputSurface);
 	char strBuf[256];
-	sprintf(strBuf, "pics\\particles\\lights\\pak\\flash2.pak");
+	sprintf(strBuf, "pics/particles/lights/pak/flash2.pak");
 	packedSurface.save(strBuf);
 
 } // end FlashParticle2D::packFiles

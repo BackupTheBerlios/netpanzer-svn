@@ -75,6 +75,6 @@ void HelpView::doDeactivate()
 //---------------------------------------------------------------------------
 void HelpView::loadTitleSurface()
 {
-	doLoadTitleSurface("pics\\backgrounds\\menus\\menu\\til\\helpTitle.til");
+	doLoadTitleSurface("pics/backgrounds/menus/menu/til/helpTitle.til");
 
 } // end HelpView::loadTitleSurface

@@ -173,7 +173,7 @@ void GameConfig::loadConfigScript( void )
   // The LUA library is probably not compatible with
   // GPL so I'm commenting it out for now 
   /*
-  lua_return = lua_dofile( "Scripts\\config.lua" ); 
+  lua_return = lua_dofile( "Scripts/config.lua" ); 
   assert( lua_return == 0 );
   
   envValue = lua_getglobal( "envGameType" );            

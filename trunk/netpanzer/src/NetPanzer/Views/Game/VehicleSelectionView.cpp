@@ -365,35 +365,35 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 	// Unit images.
 	unit_regen_time = getUnitRegenTime(_unit_type_humvee);     
     sprintf(strBuf, "SpahPanzer - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-	addButtonTILBordered(pos, "pics\\menus\\vehicleSelectionView\\til\\scout.til", strBuf, bSelectScout);
+	addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/scout.til", strBuf, bSelectScout);
 	abstractButtonHumvee.setBounds(iRect(pos, pos + 48));
 	add(&abstractButtonHumvee);
 	
 	pos.x += 48 + gapSpace;
 	unit_regen_time = getUnitRegenTime(_unit_type_valentine);     
     sprintf(strBuf, "Manta - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-	addButtonTILBordered(pos, "pics\\menus\\vehicleSelectionView\\til\\manta.til", strBuf, bSelectManta);
+	addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/manta.til", strBuf, bSelectManta);
 	abstractButtonValentine.setBounds(iRect(pos, pos + 48));
 	add(&abstractButtonValentine);
 	
 	pos.x += 48 + gapSpace;
 	unit_regen_time = getUnitRegenTime(_unit_type_leopard);     
     sprintf(strBuf, "Panther1 - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-	addButtonTILBordered(pos, "pics\\menus\\vehicleSelectionView\\til\\panther1.til", strBuf, bSelectPanther1);
+	addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/panther1.til", strBuf, bSelectPanther1);
 	abstractButtonLeopard.setBounds(iRect(pos, pos + 48));
 	add(&abstractButtonLeopard);
 	
 	pos.x += 48 + gapSpace;
 	unit_regen_time = getUnitRegenTime(_unit_type_abrams);     
     sprintf(strBuf, "Titan - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-	addButtonTILBordered(pos, "pics\\menus\\vehicleSelectionView\\til\\titan.til", strBuf, bSelectTitan);
+	addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/titan.til", strBuf, bSelectTitan);
 	abstractButtonAbrams.setBounds(iRect(pos, pos + 48));
 	add(&abstractButtonAbrams);
 
 	pos.x += 48 + gapSpace;
 	unit_regen_time = getUnitRegenTime(_unit_type_hammerhead);     
     sprintf(strBuf, "Stinger - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-	addButtonTILBordered(pos, "pics\\menus\\vehicleSelectionView\\til\\stinger.til", strBuf, bSelectStinger);
+	addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/stinger.til", strBuf, bSelectStinger);
 	abstractButtonHammerhead.setBounds(iRect(pos, pos + 48));
 	add(&abstractButtonHammerhead);
 
@@ -401,35 +401,35 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 	pos.y += 48 + gapSpace;
 	unit_regen_time = getUnitRegenTime(_unit_type_lynx);     
     sprintf(strBuf, "Bobcat - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-	addButtonTILBordered(pos, "pics\\menus\\vehicleSelectionView\\til\\bobcat.til", strBuf, bSelectBobcat);
+	addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/bobcat.til", strBuf, bSelectBobcat);
 	abstractButtonLynx.setBounds(iRect(pos, pos + 48));
 	add(&abstractButtonLynx);
 
 	pos.x += 48 + gapSpace;
 	unit_regen_time = getUnitRegenTime(_unit_type_scorpion);     
     sprintf(strBuf, "Wolf - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-	addButtonTILBordered(pos, "pics\\menus\\vehicleSelectionView\\til\\wolf.til", strBuf, bSelectWolf);
+	addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/wolf.til", strBuf, bSelectWolf);
 	abstractButtonScorpion.setBounds(iRect(pos, pos + 48));
 	add(&abstractButtonScorpion);
 
 	pos.x += 48 + gapSpace;
 	unit_regen_time = getUnitRegenTime(_unit_type_spahpanzer);     
     sprintf(strBuf, "Bear - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-	addButtonTILBordered(pos, "pics\\menus\\vehicleSelectionView\\til\\bear.til", strBuf, bSelectBear);
+	addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/bear.til", strBuf, bSelectBear);
 	abstractButtonSpahpanzer.setBounds(iRect(pos, pos + 48));
 	add(&abstractButtonSpahpanzer);
 
 	pos.x += 48 + gapSpace;
 	unit_regen_time = getUnitRegenTime(_unit_type_m109);     
     sprintf(strBuf, "Drake - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-	addButtonTILBordered(pos, "pics\\menus\\vehicleSelectionView\\til\\drake.til", strBuf, bSelectDrake);
+	addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/drake.til", strBuf, bSelectDrake);
 	abstractButtonM109.setBounds(iRect(pos, pos + 48));
 	add(&abstractButtonM109);
 
 	pos.x += 48 + gapSpace;
 	unit_regen_time = getUnitRegenTime(_unit_type_archer);     
     sprintf(strBuf, "Archer - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-	addButtonTILBordered(pos, "pics\\menus\\vehicleSelectionView\\til\\archer.til", strBuf, bSelectArcher);
+	addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/archer.til", strBuf, bSelectArcher);
 	abstractButtonArcher.setBounds(iRect(pos, pos + 48));
 	add(&abstractButtonArcher);
 
@@ -456,34 +456,34 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 	Surface tempSurface;
 	int i = 0;
 
-	if (!tempSurface.loadTIL("pics\\menus\\vehicleSelectionView\\til\\manta.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/manta.til")) { FUBAR("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics\\menus\\vehicleSelectionView\\til\\panther1.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/panther1.til")) { FUBAR("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics\\menus\\vehicleSelectionView\\til\\titan.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/titan.til")) { FUBAR("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics\\menus\\vehicleSelectionView\\til\\stinger.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/stinger.til")) { FUBAR("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics\\menus\\vehicleSelectionView\\til\\bobcat.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/bobcat.til")) { FUBAR("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics\\menus\\vehicleSelectionView\\til\\bear.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/bear.til")) { FUBAR("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics\\menus\\vehicleSelectionView\\til\\archer.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/archer.til")) { FUBAR("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics\\menus\\vehicleSelectionView\\til\\wolf.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/wolf.til")) { FUBAR("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics\\menus\\vehicleSelectionView\\til\\drake.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/drake.til")) { FUBAR("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
-	if (!tempSurface.loadTIL("pics\\menus\\vehicleSelectionView\\til\\scout.til")) { FUBAR("Shit!"); }
+	if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/scout.til")) { FUBAR("Shit!"); }
 	unitImages.setFrame(i++);
 	tempSurface.blt(unitImages);
 	unitImages.setFrame(i++);

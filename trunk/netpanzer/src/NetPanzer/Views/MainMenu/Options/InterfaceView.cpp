@@ -238,6 +238,6 @@ void InterfaceView::doDraw(const Surface &viewArea, const Surface &clientArea)
 //---------------------------------------------------------------------------
 void InterfaceView::loadTitleSurface()
 {
-	doLoadTitleSurface("pics\\backgrounds\\menus\\menu\\til\\interfaceTitle.til");
+	doLoadTitleSurface("pics/backgrounds/menus/menu/til/interfaceTitle.til");
 
 } // end InterfaceView::loadTitleSurface

@@ -53,7 +53,7 @@ static void bYES()
 
 	GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
 
-	GameManager::loadPalette("wads\\netpmenu.act");
+	GameManager::loadPalette("wads/netpmenu.act");
 
 	// Must remove the gameView first so that the initButtons detects that
 	// and loads the correct buttons.

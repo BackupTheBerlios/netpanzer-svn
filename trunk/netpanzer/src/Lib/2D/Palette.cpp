@@ -304,10 +304,10 @@ void Palette::setColorTables()
 	}
 
 	FileUtil::mkdir("pics");
-	FileUtil::mkdir("pics\\colorFilters");
+	FileUtil::mkdir("pics/colorFilters");
 
 	char strBuf[256];
-	char tablePath[] = "pics\\colorFilters\\";
+	char tablePath[] = "pics/colorFilters/";
 
 	//progressView->scrollAndUpdate("");
 

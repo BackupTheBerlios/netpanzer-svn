@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameViewGlobals.hpp"
 
 
-//static char screenSurfacePathTIL[] = "pics\\backgrounds\\menus\\optionmb.til";
+//static char screenSurfacePathTIL[] = "pics/backgrounds/menus/optionmb.til";
 
 // never used
 #if 0
@@ -130,6 +130,6 @@ void ControlsView::doDraw(const Surface &viewArea, const Surface &clientArea)
 //---------------------------------------------------------------------------
 void ControlsView::loadTitleSurface()
 {
-	doLoadTitleSurface("pics\\backgrounds\\menus\\menu\\til\\controlsTitle.til");
+	doLoadTitleSurface("pics/backgrounds/menus/menu/til/controlsTitle.til");
 
 } // end ControlsView::loadTitleSurface

@@ -93,16 +93,16 @@ void CraterParticle2D::init()
 		craterCache[i].pos.zero();
 	}
 
-	if (UtilInterface::getFileSize("pics\\particles\\craters\\pak\\craters.pak") > 0)
+	if (UtilInterface::getFileSize("pics/particles/craters/pak/craters.pak") > 0)
 	{
-		staticPackedCrater.load("pics\\particles\\craters\\pak\\craters.pak");
+		staticPackedCrater.load("pics/particles/craters/pak/craters.pak");
 	} else
 	{
 		Surface tempSurface;
-		tempSurface.loadAllBMPInDirectory("pics\\particles\\craters\\bmp\\");
+		tempSurface.loadAllBMPInDirectory("pics/particles/craters/bmp/");
 
 		staticPackedCrater.pack(tempSurface);
-		staticPackedCrater.save("pics\\particles\\craters\\pak\\craters.pak");
+		staticPackedCrater.save("pics/particles/craters/pak/craters.pak");
 	}
 
 } // end CraterParticle2D::init
