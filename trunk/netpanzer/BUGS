@@ -14,5 +14,5 @@
 - unit count is calculated incorrect (20 in server config - 9 units 
   available in game) - the unit count is simply hardcoded, it's not
   configurable yet
-- Statistics window (showed after pressing TAB) shows old title F6.
-  We don't use F6 for showing it up already.
+- If you change your username and connect to the server, then you'll still
+  have your old username until you leave the game.
