@@ -17,11 +17,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <vector>
+#include <algorithm>
+
 #include "Util/Exception.hpp"
 #include "RankView.hpp"
-#include "Stats.hpp"
 #include "GameViewGlobals.hpp"
 #include "ScreenSurface.hpp"
+#include "PlayerInterface.hpp"
 #include "GameConfig.hpp"
 
 #include "SelectionBoxSprite.hpp"
@@ -70,27 +73,50 @@ RankView::RankView() : GameTemplateView()
     if (scrollBar == 0) {
         throw Exception("ERROR: Unable to allocate the scrollBar.");
     }
-
-    //iRect clientRect(getClientRect());
-    //scrollBar->setViewableAmount(clientRect.getSizeY() / (TEXT_GAP_SPACE + CHAR_YPIX) - 1);
-    //scrollBar->setBlockIncrement(1);
-
-    //add(scrollBar);
-
 } // end RankView::RankView
 
 // doDraw
 //---------------------------------------------------------------------------
 void RankView::doDraw(Surface &viewArea, Surface &clientArea)
 {
+    // make sure the window is big enough for all players
+    int CHAR_YPIX = Surface::getFontHeight();
+    int entryheight = std::max(CHAR_YPIX, UNIT_FLAGS_SURFACE.getPixY()) + 2;
+    resize(iXY(450, 60 + entryheight * PlayerInterface::countPlayers()));
+    
     bltViewBackground(viewArea);
 
-    clientArea.drawButtonBorder(iRect(0, 26, getClientRect().getSize().x - 1, getClientRect().getSize().y - 1), Color::gray64, Color::white);
+    clientArea.drawButtonBorder(
+            iRect(0, 26, getClientRect().getSize().x - 1,
+                getClientRect().getSize().y - 1), Color::gray64, Color::white);
 
     drawPlayerStats(clientArea);
 
     View::doDraw(viewArea, clientArea);
 } // end doDraw
+
+class StatesSortByFrags
+    : public std::binary_function<const PlayerState*, const PlayerState*, bool>
+{
+public:
+    bool operator() (const PlayerState* state1, const PlayerState* state2) {
+        if(state1->getKills() > state2->getKills())
+            return true;
+        if(state1->getLosses() < state2->getLosses())
+            return true;
+        return false;
+    }
+};
+
+class StatesSortByObjectives
+    : public std::binary_function<const PlayerState*, const PlayerState*, bool>
+{
+public:
+    bool operator() (const PlayerState* state1, const PlayerState* state2) {
+        return state1->getObjectivesHeld() > state2->getObjectivesHeld();
+    }
+};
+
 
 // drawPlayerStats
 //---------------------------------------------------------------------------
@@ -98,100 +124,45 @@ void RankView::doDraw(Surface &viewArea, Surface &clientArea)
 //---------------------------------------------------------------------------
 void RankView::drawPlayerStats(Surface &dest)
 {
-
     char statBuf[256];
-    iXY offset;
-    iXY flagOffset;
-    //int index;
 
-    Stats::setSortOrder( _stats_sort_order_game_type );
-    Stats::Initialize();
+    std::vector<const PlayerState*> states;
+    for(size_t i = 0; i < PlayerInterface::getMaxPlayers(); ++i) {
+        PlayerState* state = PlayerInterface::getPlayerState(i);
+        if(state->getStatus() != _player_state_active)
+            continue;
+        states.push_back(state);
+    }
 
-    char  playerFlagIndex;
-    short playerKills;
-    short playerLosses;
-    short playerTotalPoints;
-    short playerObjectives;
-    const char  *playerName;
-    int   playerStatsDisplayType;
-    PlayerID playerID;
+    switch(gameconfig->gametype) {
+        case _gametype_objective:
+            std::sort(states.begin(), states.end(), StatesSortByObjectives());
+            break;
+        case _gametype_timelimit:
+        case _gametype_fraglimit:
+            std::sort(states.begin(), states.end(), StatesSortByFrags());
+            break;
+    }
 
-    //int offsetRunner = getScrollBarTopItem() - numPlayers;
+    int CHAR_YPIX = Surface::getFontHeight();
+    int entryHeight = std::max(CHAR_YPIX, UNIT_FLAGS_SURFACE.getPixY()) + 2;
+    iXY offset(2, 40);
+    iXY flagOffset(162, 40 + (CHAR_YPIX - UNIT_FLAGS_SURFACE.getPixY())/2);
 
-    // Scoot through the list to the first visible player, since we can't seek to an index yet.
-    //while(offsetRunner > 0)
-    //{
-    //	offsetRunner--;
-    //	Stats::GetPlayerStats(playerFlagName, &playerKills, &playerLosses, &playerTotalPoints, &playerName);
-    //}
-    //
-    //setScrollBarViewableCount(viewableMessageCount);
-    //setScrollBarItemCount(numPlayers);
-    //
-    //int numToDraw = (viewableMessageCount < numPlayers) ? viewableMessageCount : numPlayers;
-    //
-    //if(numPlayers < viewableMessageCount)
-    //{
-    //	setScrollBarTopItem(numPlayers);
-    //} else
-    //{
-    //	setScrollBarTopItem(numPlayers - viewableMessageCount);
-    //}
+    for(std::vector<const PlayerState*>::iterator i = states.begin();
+            i != states.end(); ++i) {
+        const PlayerState* state = *i;
 
-    int activePlayer = -1;
-    for( int index = 0; index < PlayerInterface::getMaxPlayers(); index++ ) {
-        playerID = PlayerInterface::getPlayerID( index );
-        if( ( PlayerInterface::getPlayerState( playerID )->getStatus() ) != (unsigned char) _player_state_active ) {
-		continue;
-	}
-	//Another active player
-	activePlayer++;
-
-	//Calculate screen offset
-	int CHAR_YPIX = Surface::getFontHeight();
-        offset.x = 2;
-        flagOffset.x = offset.x + 160;
-        offset.y = 40 + activePlayer * (CHAR_YPIX + (UNIT_FLAGS_SURFACE.getPixY() - CHAR_YPIX) );
-        flagOffset.y = (40 - (UNIT_FLAGS_SURFACE.getPixY() - CHAR_YPIX)/2 ) + activePlayer * UNIT_FLAGS_SURFACE.getPixY();
-
-        //index = getScrollBarTopItem() + i;
-        //assert(index < numPlayers);
-
-        Stats::GetPlayerStats(&playerFlagIndex,
-                              &playerKills,
-                              &playerLosses,
-                              &playerTotalPoints,
-                              &playerObjectives,
-                              &playerName,
-                              &playerStatsDisplayType,
-			      playerID );
-
-        // Add player flag name.
-        sprintf(statBuf, "%-20s%10i%7i%6i%10i", playerName, playerKills, playerLosses, playerTotalPoints, playerObjectives );
-        if (statBuf != 0) {
-            PIX color;
-
-            switch( playerStatsDisplayType ) {
-            case _stats_display_type_local_player :
-                color = Color::blue;
-                break;
-
-            case _stats_display_type_ally :
-                color = Color::orange;
-                break;
-
-            case _stats_display_type_default :
-                color = PlayerInterface::getPlayerState( playerID )->getColor();
-                break;
-
-
-            } // ** switch
-
-            dest.bltString( offset.x, offset.y, statBuf, color );
-
-        }
-        UNIT_FLAGS_SURFACE.setFrame( playerFlagIndex );
+        snprintf(statBuf, sizeof(statBuf),
+                "%-20s%10i%7i%6i%10i", state->getName().c_str(),
+                state->getKills(), state->getLosses(), state->getTotal(),
+                state->getObjectivesHeld());
+        dest.bltString(offset.x, offset.y, statBuf, state->getColor());
+        UNIT_FLAGS_SURFACE.setFrame(state->getFlag());
         UNIT_FLAGS_SURFACE.blt( dest, flagOffset.x, flagOffset.y );
+
+        offset.y += entryHeight;
+        flagOffset.y += entryHeight;        
     }
 
 } // end RankView::drawPlayerStats

@@ -76,7 +76,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "HostView.hpp"
 #include "GetSessionView.hpp"
 #include "GetSessionHostView.hpp"
-#include "WinnerMesgView.hpp"
 #include "RankView.hpp"
 #include "VehicleSelectionView.hpp"
 #include "MiniMapView.hpp"

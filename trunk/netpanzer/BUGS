@@ -3,24 +3,15 @@
     - Matze: I checked LinkListDoubleTemplate alot, the class seems to be
       correct. Most probably the memory corruption happens elsewhere
 - sometimes 2 players spawn at the same place - hard to fix, low priority
-- game doesn't end when enough objectives are taken - is this still true?
-- irc ping/pong code with reconnect seems to be broken
 - unit count is calculated incorrect (20 in server config - 9 units 
   available in game) - the unit count is simply hardcoded, it's not
   configurable yet
-- If you change your username and connect to the server, then you'll still
-  have your old username until you leave the game.
-- netPanzer shouldn't allow using the same flags by two (or more) players
-- ranking isn't sorted by points (and AFAIR it was before)
-- ranking window is too small... if there are many players, only few first
-  are visible.
 - it is reported that in timelimit mode games might end too early (ie. client
-  display 40/60 and game ends)
+  display 40/60 and game ends) - is it possible that the client time doesn't
+  sync correctly with server time?
 - Astar sometimes calculates strange paths. Very obvious if you try to capture
   and outpost from the left side: Your panzers will drive around it before
   entering it.
-- Selecting a map when hosting a game doesn't work anymore
-- Clients aren't notified when the server closes
+- Clients aren't notified when the server closes - actually they are, but they
+  aren't shutting down the game
 - you shouldn't get points for shooting your own units
-- choosing multiplayer -> next -> options -> multiplayer makes lobby
-  partially invisible

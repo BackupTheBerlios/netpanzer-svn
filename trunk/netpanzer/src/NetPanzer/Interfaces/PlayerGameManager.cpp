@@ -70,7 +70,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "HostView.hpp"
 #include "GetSessionView.hpp"
 #include "GetSessionHostView.hpp"
-#include "WinnerMesgView.hpp"
 #include "RankView.hpp"
 #include "VehicleSelectionView.hpp"
 #include "MiniMapView.hpp"
@@ -189,7 +188,6 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add( &gameView );
     Desktop::add(new RankView());
     Desktop::add(new VehicleSelectionView());
-    Desktop::add(new WinnerMesgView());
     Desktop::add( &miniMapView );
     Desktop::add(new CodeStatsView());
     Desktop::add(new LibView());

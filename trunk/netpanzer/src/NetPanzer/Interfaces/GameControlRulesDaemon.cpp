@@ -166,12 +166,12 @@ void GameControlRulesDaemon::mapCycleFsmServer()
 
                 ServerConnectDaemon::lockConnectProcess();
 
-                view_control.set( "WinnerMesgView", _view_control_flag_visible_on | _view_control_flag_close_all );
+                view_control.set("RankView", _view_control_flag_visible_on | _view_control_flag_close_all );
 
                 if ( GameControlRulesDaemon::execution_mode == _execution_mode_loop_back_server ) {
                     Desktop::setVisibilityAllWindows(false);
                     Desktop::setVisibility("GameView", true);
-                    Desktop::setVisibility("WinnerMesgView", true );
+                    Desktop::setVisibility("RankView", true );
                 }
 
                 SERVER->sendMessage(&view_control, sizeof(SystemViewControl));
