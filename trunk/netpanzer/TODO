@@ -12,6 +12,7 @@
   netpanzer server
 
 *** Improvements
+-let dedicated server output statistics on console at the end of a round
 -Convert the 256 color stuff to truecolor
 -Add timeout/keepalive handling to network layer to correctly detect connection
  losses and try reconnects
