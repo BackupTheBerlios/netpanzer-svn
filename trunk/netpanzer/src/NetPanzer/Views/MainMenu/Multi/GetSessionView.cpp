@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 //winsock hack
 #include "IPAddressView.hpp"
+#include "ServerListView.hpp"
 
 #include "Server.hpp"
 #include "Client.hpp"
@@ -78,8 +79,8 @@ void bNext()
 
         Desktop::setVisibility("IPAddressView", true);
         if((const std::string&) gameconfig->lobbyserver != "") {
-            Desktop::setVisibility("IRCLobbyView", true);
-            lobby_view->startIRC();
+            Desktop::setVisibility("ServerListView", true);
+            serverlistview->refresh();
         }
         //Desktop::setVisibility("JoinView", true);
         //Desktop::setVisibility("GetSessionHostView", true);
@@ -223,9 +224,9 @@ void GetSessionView::loadBackgroundSurface()
 void GetSessionView::loadTitleSurface()
 {
     if (gameconfig->hostorjoin == _game_session_host) {
-        doLoadTitleSurface("pics/backgrounds/menus/menu/hostTitle.bmp");
+        doLoadTitleSurface("hostTitle");
     } else if (gameconfig->hostorjoin == _game_session_join) {
-        doLoadTitleSurface("pics/backgrounds/menus/menu/joinTitle.bmp");
+        doLoadTitleSurface("joinTitle");
     }
 
 } // end GetSessionView::loadTitleSurface

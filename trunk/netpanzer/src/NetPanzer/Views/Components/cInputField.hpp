@@ -56,7 +56,7 @@ public:
     void init(const char *string, int maxCharCount) {
         init(string,maxCharCount,maxCharCount);
     }
-    void setString(const char *string);
+    void setString(const std::string& string);
     void reset();
 
     const char *getString()

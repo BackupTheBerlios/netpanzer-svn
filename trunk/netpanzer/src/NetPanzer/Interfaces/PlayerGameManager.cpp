@@ -96,6 +96,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapSelectionView.hpp"
 #include "PlayerNameView.hpp"
 #include "GameInfoView.hpp"
+#include "ServerListView.hpp"
 
 #include "IPAddressView.hpp"
 #include "IRCLobbyView.hpp"
@@ -177,7 +178,7 @@ void PlayerGameManager::initializeInputDevices()
 //-----------------------------------------------------------------
 void PlayerGameManager::initializeWindowSubSystem()
 {
-    GameManager::loadPalette("wads/netp.act");
+    GameManager::loadPalette("netp");
 
     gameView.init();
     Desktop::add( &gameView );
@@ -198,7 +199,7 @@ void PlayerGameManager::initializeWindowSubSystem()
     progressView->init();
     Desktop::add(progressView);
 
-    GameManager::loadPalette("wads/netpmenu.act");
+    GameManager::loadPalette("netpmenu");
 
     Desktop::add(new MapSelectionView());
     Desktop::add(new MainMenuView());
@@ -225,6 +226,7 @@ void PlayerGameManager::initializeWindowSubSystem()
     IRCLobbyView *irc_lobby_view=new IRCLobbyView();
     Desktop::add(irc_lobby_view);
     irc_lobby_view->setNotifyIRCChangeName((NotifyIRCChangeName *)playernameview);
+    Desktop::add(new ServerListView());
 
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("MainView", true);
@@ -368,7 +370,7 @@ void PlayerGameManager::hostMultiPlayerGame()
     progressView->close();
 
     // Set the palette to the game palette.
-    GameManager::loadPalette( "wads/netp.act" );
+    GameManager::loadPalette( "netp");
 
     GameManager::setNetPanzerGameOptions();
 

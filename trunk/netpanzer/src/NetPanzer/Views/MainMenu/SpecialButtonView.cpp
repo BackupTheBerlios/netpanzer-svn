@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SpecialButtonView.hpp"
 #include "2D/Surface.hpp"
 #include "2D/PackedSurface.hpp"
-#include "Util/UtilInterface.hpp"
 #include "Desktop.hpp"
 #include "Util/Exception.hpp"
 #include "WorldInputCmdProcessor.hpp"
@@ -43,81 +42,9 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
     sprintf(strBuf, "pics/backgrounds/menus/buttons/default/pak/%s%s.pak",
             prefix.c_str(), fileString);
 
-    if (UtilInterface::getFileSize(strBuf) > 0) {
-        PackedSurface tempPack;
-
-        tempPack.load(strBuf);
-
-        addButtonPackedSurface(pos, tempPack, "", function);
-
-    } else {
-        Surface buttonSurface;
-        Surface tempSurface;
-
-        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/%sbutover.bmp",
-                prefix.c_str());
-
-        // Create.
-        tempSurface.loadBMP(strBuf);
-
-        //-------------------
-        //tempSurface.fill(0);
-        //-------------------
-
-        buttonSurface.create(tempSurface.getPixX(), tempSurface.getPixY(), tempSurface.getPixX(), 3);
-        buttonSurface.fillAll(0);
-
-        // Highlight.
-        buttonSurface.setFrame(2);
-        tempSurface.blt(buttonSurface);
-
-        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/%sbuton.bmp",
-                prefix.c_str());
-
-        tempSurface.loadBMP(strBuf);
-
-        //-------------------
-        //tempSurface.fill(0);
-        //-------------------
-
-        buttonSurface.setFrame(1);
-        tempSurface.blt(buttonSurface);
-
-        // Unhighlight.
-        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/%sbutoff.bmp",
-                prefix.c_str());
-
-        tempSurface.loadBMP(strBuf);
-
-        //-------------------
-        //tempSurface.fill(0);
-        //-------------------
-
-        buttonSurface.setFrame(0);
-        tempSurface.bltTrans(buttonSurface);
-
-        buttonSurface.setFrame(0);
-        //buttonSurface.bltString(13, 5, labelString, Palette::findNearestColor(RGBColor(74, 116, 0)));
-        buttonSurface.bltStringShadowed(13, 5, labelString, Color::yellow, Color::black);
-
-        buttonSurface.setFrame(1);
-        //buttonSurface.bltString(13, 5, labelString, Palette::findNearestColor(RGBColor(0, 255, 0)));
-        buttonSurface.bltStringShadowed(13, 5, labelString, Color::white, Color::black);
-
-        buttonSurface.setFrame(2);
-        //buttonSurface.bltString(13, 5, labelString, Palette::findNearestColor(RGBColor(0, 255, 0)));
-        buttonSurface.bltStringShadowed(13, 5, labelString, Color::white, Color::black);
-
-        PackedSurface tempPack;
-
-        tempPack.pack(buttonSurface);
-        sprintf(strBuf, "pics/backgrounds/menus/buttons/default/pak/%s%s.pak",
-                prefix.c_str(), fileString);
-        tempPack.save(strBuf);
-
-        addButtonPackedSurface(pos, tempPack, "", function);
-    }
-
+    PackedSurface tempPack;
+    tempPack.load(strBuf);
+    addButtonPackedSurface(pos, tempPack, "", function);
 } // end SpecialButtonView::addSpecialButton
 
 // mouseMove

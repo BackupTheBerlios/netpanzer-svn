@@ -50,11 +50,10 @@ void cInputFieldString::init(const char *string, int maxCharCount, int maxWidth)
 } // end init
 
 // setString
-void cInputFieldString::setString(const char *string)
+void cInputFieldString::setString(const std::string& string)
 {
-// XXX notify cinputfield to resetString positions
-
-    strncpy(this->string, string, maxCharCount);
+    // XXX notify cinputfield to resetString positions
+    strncpy(this->string, string.c_str(), maxCharCount);
 } // end setString
 
 // reset
@@ -327,7 +326,8 @@ void cInputField::drawHighlighted(Surface &dest)
 
     inputFieldSurface.fill(Color::black);
     inputFieldSurface.drawButtonBorder(Color::darkGray, Color::white);
-    inputFieldSurface.bltStringShadowed(4, 2, destString+strDisplayStart, Color::white, Color::black);
+    inputFieldSurface.bltStringShadowed(iXY(4, 2),
+            destString+strDisplayStart, Color::white, Color::black);
 
     static float timeForBlink = 0.0f;
     if ((timeForBlink += TimerInterface::getTimeSlice()) > 0.25f) {

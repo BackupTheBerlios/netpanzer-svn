@@ -225,8 +225,9 @@ void ConsoleInterface::update_overlap( Surface &surface )
         surface.bltStringShadowed(input_offset, string_ptr , Color::white,
                 Color::black );
 
-        surface.bltStringShadowed(input_offset.x + cursorPos * CHAR_XPIX,
-                input_offset.y, "_", Color::white, Color::black );
+        surface.bltStringShadowed(
+                iXY(input_offset.x + cursorPos * CHAR_XPIX, input_offset.y),
+                "_", Color::white, Color::black );
     }
 }
 

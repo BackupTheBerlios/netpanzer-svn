@@ -120,7 +120,7 @@ void ProgressView::open()
     if ( Desktop::getView("ProgressView")->getVisible() == false ) {
         GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
-        GameManager::loadPalette("wads/netpmenu.act");
+        GameManager::loadPalette("netpmenu");
 
         Desktop::setVisibilityAllWindows(false);
         Desktop::setVisibility("ProgressView", true);
@@ -134,7 +134,7 @@ void ProgressView::close()
         reset();
         GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
-        GameManager::loadPalette("wads/netp.act");
+        GameManager::loadPalette("netp");
 
         backgroundSurface.free();
         Desktop::setVisibility("ProgressView", false);
@@ -150,7 +150,7 @@ void ProgressView::toggleGameView()
     GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
     // Set the palette to the game palette.
-    GameManager::loadPalette("wads/netp.act");
+    GameManager::loadPalette("netp");
 
     GameManager::setNetPanzerGameOptions();
 

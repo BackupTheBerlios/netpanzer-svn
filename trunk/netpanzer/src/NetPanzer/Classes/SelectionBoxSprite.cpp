@@ -92,7 +92,9 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
             // Draw the rectangle selection box.
             surface->drawRect(min_abs.x, min_abs.y, max_abs.x, max_abs.y, selectionBoxColor);
         } else if (gameconfig->unitselectionmode == _unit_selection_box_draw_mode_rect_edges) {
-            surface->drawBoxCorners(min_abs.x, min_abs.y, max_abs.x, max_abs.y, 7, selectionBoxColor);
+            surface->drawBoxCorners(
+                    iRect(min_abs.x, min_abs.y, max_abs.x, max_abs.y),
+                    7, selectionBoxColor);
 
         } else {
             assert(false);

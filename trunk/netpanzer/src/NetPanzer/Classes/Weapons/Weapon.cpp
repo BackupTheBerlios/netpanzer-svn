@@ -35,8 +35,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ParticleInterface.hpp"
 #include "WeaponGlobals.hpp"
 #include "Util/Math.hpp"
-#include "Util/UtilInterface.hpp"
-
 
 void Weapon::init()
 {

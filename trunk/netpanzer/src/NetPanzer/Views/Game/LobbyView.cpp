@@ -133,7 +133,7 @@ void LobbyView::open()
     if ( Desktop::getView("LobbyView")->getVisible() == false ) {
         GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
-        GameManager::loadPalette("wads/netpmenu.act");
+        GameManager::loadPalette("netpmenu");
 
         Desktop::setVisibilityAllWindows(false);
         Desktop::setVisibility("LobbyView", true);
@@ -157,7 +157,7 @@ void LobbyView::toggleGameView()
     GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
     // Set the palette to the game palette.
-    GameManager::loadPalette("wads/netp.act");
+    GameManager::loadPalette("netp");
 
     GameManager::setNetPanzerGameOptions();
 

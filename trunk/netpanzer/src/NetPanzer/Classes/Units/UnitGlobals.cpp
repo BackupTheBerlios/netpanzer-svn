@@ -178,7 +178,7 @@ void LoadUnitSurfaces( void )
     gArcherBody.load( "units/pics/pak/ArchHNSD.pak" );
 
 #ifdef _GRAY_MAPPED_UNITS
-    Palette::init("wads/netp.act");
+    Palette::init("netp");
     ColorTable gray256;
 
     float grayPercent = 1.25f;

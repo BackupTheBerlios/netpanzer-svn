@@ -1045,8 +1045,12 @@ void View::drawLabels(Surface &clientArea)
 
     for (int num = 0; num < numLabels; num++) {
         if (labels[num].isShadowed) {
-            clientArea.bltStringShadowed(labels[num].pos.x, labels[num].pos.y, labels[num].label, labels[num].foreColor, labels[num].backColor);
-        } else clientArea.bltString(labels[num].pos.x, labels[num].pos.y, labels[num].label, labels[num].foreColor);
+            clientArea.bltStringShadowed(iXY(labels[num].pos.x,
+                        labels[num].pos.y),
+                    labels[num].label, labels[num].foreColor,
+                    labels[num].backColor);
+        } else clientArea.bltString(labels[num].pos.x, labels[num].pos.y,
+                labels[num].label, labels[num].foreColor);
     }
 } // end DRAW LABELS
 

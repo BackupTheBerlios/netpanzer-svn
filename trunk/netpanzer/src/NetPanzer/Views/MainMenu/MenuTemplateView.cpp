@@ -30,7 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particle2D.hpp"
 #include "ParticleSystem2D.hpp"
 #include "2D/PackedSurface.hpp"
-#include "Util/UtilInterface.hpp"
 #include "GameManager.hpp"
 #include "Util/Exception.hpp"
 #include "GameViewGlobals.hpp"
@@ -271,7 +270,7 @@ void MenuTemplateView::doLoadBackgroundSurface(const std::string& string)
 //---------------------------------------------------------------------------
 void MenuTemplateView::loadTitleSurface()
 {
-    doLoadTitleSurface("pics/backgrounds/menus/menu/mainTitle.bmp");
+    doLoadTitleSurface("mainTitle");
 } // end MenuTemplateView::loadTitleSurface
 
 // doLoadBackgroundSurface
@@ -282,27 +281,10 @@ void MenuTemplateView::doLoadTitleSurface(const std::string& string)
     titleFlashTimeHalf = 2.5;
 
     std::string pakString = "pics/backgrounds/menus/menu/pak/";
-    pakString += UtilInterface::getFilename(string.c_str());
+    pakString += string;
     pakString += ".pak";
 
-    if (UtilInterface::getFileSize(pakString.c_str())) {
-        titlePackedSurface.load(pakString.c_str());
-
-    } else {
-        Surface titleSurface;
-
-        try {
-            titleSurface.loadBMP(string.c_str());
-        } catch(Exception&) {
-            titleSurface.create(300, 50, 300, 1);
-            titleSurface.fill(128);
-            titleSurface.bltStringCenter("No title image", Color::white);
-        }
-
-        titlePackedSurface.pack(titleSurface);
-
-        titlePackedSurface.save(pakString.c_str());
-    }
+    titlePackedSurface.load(pakString);
 } // end MenuTemplateView::doLoadTitleSurface
 
 // doDeactivate

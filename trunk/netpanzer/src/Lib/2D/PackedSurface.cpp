@@ -190,7 +190,7 @@ void PackedSurface::pack(const Surface &source)
 }
 
 //--------------------------------------------------------------------------
-void PackedSurface::load(const char* filename)
+void PackedSurface::load(const std::string& filename)
 {
     try {
 	std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
@@ -202,7 +202,7 @@ void PackedSurface::load(const char* filename)
 	if (version > CURRENT_PAK_VERSION)
 	    throw Exception("PAK file version of '%s' is newer(%d) than "
 		    "the currently supported version(%d)",
-		filename, version, CURRENT_PAK_VERSION);
+		filename.c_str(), version, CURRENT_PAK_VERSION);
 	pix.x = file->readSLE32();
 	pix.y = file->readSLE32();
 
@@ -240,12 +240,12 @@ void PackedSurface::load(const char* filename)
 	totalByteCount += pix.y * frameCount;
     } catch(std::exception& e) {
 	throw Exception("Error while reading pakfile '%s': %s",
-	    filename, e.what());
+	    filename.c_str(), e.what());
     }
 }
 
 //--------------------------------------------------------------------------
-void PackedSurface::save(const char* filename) const
+void PackedSurface::save(const std::string& filename) const
 {
     try {
 	std::auto_ptr<WriteFile> file (FileSystem::openWrite(filename));
@@ -269,7 +269,7 @@ void PackedSurface::save(const char* filename) const
 	file->write(packedDataChunk, rowOffsetTable[pix.y*frameCount], 1);
     } catch(std::exception& e) {
 	throw Exception("Error while writing pakfile '%s': %s",
-		filename, e.what());
+		filename.c_str(), e.what());
     }
 }
 

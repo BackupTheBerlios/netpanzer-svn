@@ -136,7 +136,7 @@ void VisualsView::processEvents()
 //---------------------------------------------------------------------------
 void VisualsView::loadTitleSurface()
 {
-    doLoadTitleSurface("pics/backgrounds/menus/menu/visualsTitle.bmp");
+    doLoadTitleSurface("visualsTitle");
 } // end VisualsView::loadTitleSurface
 
 // actionPerformed

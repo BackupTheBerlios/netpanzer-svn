@@ -29,8 +29,8 @@ class MapInfo
 {
 public:
     Surface thumbnail;
-    char    name[256];
-    char    description[256];
+    std::string name;
+    std::string description;
     iXY     cells;
     int     objectiveCount;
 

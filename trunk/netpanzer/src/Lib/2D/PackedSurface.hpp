@@ -90,8 +90,8 @@ public:
     void setOffset(const iXY &offset);
     void setOffsetCenter();
 
-    void load(const char *filename);
-    void save(const char *filename) const;
+    void load(const std::string& filename);
+    void save(const std::string& filename) const;
 
     void setFPS(float fps)
     {

@@ -33,20 +33,12 @@ class Palette
 {
 private:
     static float brightness;
-
-    // The name of the current loaded palette.
     static std::string name;
-
-    static void setName(const std::string& filename);
 
 public:
     Palette();
 
     static void        setBrightness(float brightness);
-    static const std::string& getName()
-    {
-        return name;
-    }
 
     // Best color match blending tables.
     static ColorTable	colorTable2080;
@@ -120,10 +112,10 @@ public:
     static void ramp(RGBColor table [], int startRGB, int r1, int g1, int b1, int endRGB, int r2, int g2, int b2);
     static void setEarth();
     static void setFire();
-    static void loadACT(const char *filename);
+    static void loadACT(const std::string& filename);
     static uint8_t findNearestColor(const RGBColor &rgb, const bool &ignoreIndexZero = false);
-    static void init(const char *filename);
-    static void initNoColorTables(const char *filename);
+    static void init(const std::string& name);
+    static void initNoColorTables(const std::string& name);
     static void setColors();
     static void setColorTables();
 

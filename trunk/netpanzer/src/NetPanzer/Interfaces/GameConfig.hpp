@@ -116,6 +116,7 @@ public:
     // player settings
     ConfigString playername;
     ConfigString lobbyserver;
+    ConfigString masterservers;
 
     // server settings
     ConfigInt    serverport;

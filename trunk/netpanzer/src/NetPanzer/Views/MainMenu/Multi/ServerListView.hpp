@@ -1,35 +1,45 @@
 /*
-Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+Copyright (C) 2004 by Matthias Braun <matze@braunis.de>
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#ifndef __SERVERLISTVIEW_HPP__
+#define __SERVERLISTVIEW_HPP__
 
-#ifndef __UtilInterface_hpp__
-#define __UtilInterface_hpp__
+#include "View.hpp"
+#include "MasterServer/ServerInfo.hpp"
+#include "MasterServer/ServerList.hpp"
+#include "MasterServer/ServerQueryThread.hpp"
 
-#include <SDL_net.h>
-
-//--------------------------------------------------------------------------
-/**
- * @deprecated This interface is deprecated and shouldn't be used in new code
- */
-class UtilInterface
+class ServerListView : public View
 {
 public:
-    // get servername/port from a string, doesn't always set the port
-    static void splitServerPort(const std::string &server,std::string &address,int *port);
-}; // end UtilInterface
+    ServerListView();
+    virtual ~ServerListView();
 
-#endif // __UtilInterface_hpp__
+    void refresh();
+        
+    virtual void doDraw(Surface& windowArea, Surface& clientArea);
+    virtual int lMouseUp(const iXY& up_pos, const iXY& down_pos);
+
+private:
+    masterserver::ServerList serverlist;
+    masterserver::ServerQueryThread* queryThread;
+};
+
+extern ServerListView* serverlistview; // XXX ugly
+
+#endif
+

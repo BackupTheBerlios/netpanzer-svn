@@ -127,6 +127,6 @@ void HostView::doDraw(Surface &viewArea, Surface &clientArea)
 //---------------------------------------------------------------------------
 void HostView::loadTitleSurface()
 {
-    doLoadTitleSurface("pics/backgrounds/menus/menu/hostTitle.bmp");
+    doLoadTitleSurface("hostTitle");
 
 } // end HostView::loadTitleSurface

@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameConfig.hpp"
 #include "GameViewGlobals.hpp"
 #include "HostOptionsView.hpp"
-#include "Util/UtilInterface.hpp"
 #include "MapFile.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/FileStream.hpp"
@@ -143,8 +142,6 @@ void MapSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 //---------------------------------------------------------------------------
 int MapSelectionView::loadMaps()
 {
-    char strBuf[256];
-
     const char mapsPath[] = "maps/";
 
     LOGGER.info("Loading maps.");
@@ -161,7 +158,16 @@ int MapSelectionView::loadMaps()
                     && (filename.compare(filename.size() - suffix.size(),
                             suffix.size(), suffix) == 0))
             {
-                mapfiles.push_back(filename);
+                std::string mapname;
+                size_t p = 0;
+                char c;
+                while( (c = (*i)[p++]) != 0) {
+                    if(c == '.')
+                        break;
+                    mapname += c;
+                }
+                
+                mapfiles.push_back(mapname);
             }
         }
     }
@@ -173,16 +179,29 @@ int MapSelectionView::loadMaps()
 
     for (unsigned int i = 0; i < mapfiles.size(); i++) {
         try {
+            std::string filename = mapsPath;
+            filename += mapfiles[i];
+            filename += ".npm";
 	    std::auto_ptr<ReadFile> file 
-		(FileSystem::openRead(mapfiles[i].c_str()));
+		(FileSystem::openRead(filename));
 
 	    MapFile netPanzerMapHeader;
 	    netPanzerMapHeader.load(*file);
 
     	    MapInfo* mapinfo = new MapInfo;
-	    _splitpath(FileSystem::getRealName(mapfiles[i].c_str()).c_str(),
-	    	    0, 0, mapinfo->name, 0);
-	    sprintf(mapinfo->description, "%s", netPanzerMapHeader.description);
+
+            std::string mapname;
+            const char* filestring = mapfiles[i].c_str();
+            size_t i = 0;
+            char c;
+            while( (c = filestring[i++]) != 0) {
+                if(c == '.')
+                    break;
+                mapname += c;
+            }
+            
+            mapinfo->name = mapname;
+	    mapinfo->description = netPanzerMapHeader.description;
 
 	    mapinfo->cells.x = netPanzerMapHeader.width;
 	    mapinfo->cells.y = netPanzerMapHeader.height;
@@ -205,9 +224,8 @@ int MapSelectionView::loadMaps()
 	
 	    // Now try to get the outpost count from the outpost file.
 	    int objectiveCount = 0;
-	    sprintf(strBuf, "%s%s.opt", mapsPath, mapinfo->name);
-
-            IFileStream in(strBuf);
+            filename = mapsPath + mapinfo->name + ".opt";
+            IFileStream in(filename);
       
             std::string dummy;
             in >> dummy >> objectiveCount;
@@ -224,7 +242,7 @@ int MapSelectionView::loadMaps()
     }
 
     for (size_t i = 0; i < mapList.size(); i++) {
-        mapList[i]->thumbnail.mapFromPalette("wads/netp.act");
+        mapList[i]->thumbnail.mapFromPalette("netp");
     }
 
     if (mapList.size() == 0) {
@@ -250,17 +268,17 @@ void MapSelectionView::drawCurMapInfo(Surface &dest, const iXY &pos)
 
     const int yOffset = 15;
 
-    sprintf(strBuf, "Name:       %s", mapList[curMap]->name);
-    dest.bltStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
+    sprintf(strBuf, "Name:       %s", mapList[curMap]->name.c_str());
+    dest.bltStringShadowed(iXY(x, y), strBuf, windowTextColor, windowTextColorShadow);
     y += yOffset;
 
     int sizeX = (mapList[curMap]->cells.y * 32) / 480;
     int sizeY = (mapList[curMap]->cells.x * 32) / 640;
     sprintf(strBuf, "Size:       %d x %d", sizeX, sizeY);
-    dest.bltStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
+    dest.bltStringShadowed(iXY(x, y), strBuf, windowTextColor, windowTextColorShadow);
     y += yOffset;
 
     sprintf(strBuf, "Objectives: %d", mapList[curMap]->objectiveCount);
-    dest.bltStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
+    dest.bltStringShadowed(iXY(x, y), strBuf, windowTextColor, windowTextColorShadow);
 
 } // end MapSelectionView::drawMapInfo

@@ -70,7 +70,7 @@ void FlagSelectionView::init()
     if (playerFlag.loadAllBMPInDirectory("pics/flags/") <= 0)
         throw Exception("Couldn't find flags for menu in '%s'.",
                         "pics/flags/");
-    playerFlag.mapFromPalette("wads/netp.act");
+    playerFlag.mapFromPalette("netp");
 
     iXY flagStartOffset(BORDER_SPACE, BORDER_SPACE * 2 + playerFlag.getPixY());
 
@@ -112,7 +112,9 @@ void FlagSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
     char strBuf[256];
     sprintf(strBuf, "Current:");
     int CHAR_XPIX = 8; // XXX hardcoded
-    clientArea.bltStringShadowed(BORDER_SPACE, BORDER_SPACE + (playerFlag.getPixY() - Surface::getFontHeight()) / 2, strBuf, windowTextColor, windowTextColorShadow);
+    clientArea.bltStringShadowed(
+            iXY(BORDER_SPACE, BORDER_SPACE + (playerFlag.getPixY() - Surface::getFontHeight()) / 2),
+            strBuf, windowTextColor, windowTextColorShadow);
     playerFlag.setFrame(playerFlagSelected);
     playerFlag.blt(clientArea, BORDER_SPACE + strlen(strBuf) * CHAR_XPIX + BORDER_SPACE, BORDER_SPACE);
 

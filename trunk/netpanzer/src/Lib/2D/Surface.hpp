@@ -442,31 +442,23 @@ public:
     }
 
     // Blit a string of text in a single color.
-    void bltString(const iXY &pos, const char *string, const PIX &color);
-    void bltString(int x, int y, const char *string, const PIX &color)
+    void bltString(const iXY& pos, const char *string, const PIX &color);
+    void bltString(const iXY& pos, const std::string& string, const PIX& color)
     {
-        bltString(iXY(x, y), string, color);
+        bltString(pos, string.c_str(), color);
+    }
+    void bltString(int x, int y, const std::string& string, const PIX& color)
+    {
+        bltString(iXY(x, y), string.c_str(), color);
     }
 
-    void bltStringInBox(int minX, int minY, int maxX, int maxY, const char *string, PIX color, int gapSpace = 14, bool drawBox = false)
-    {
-        bltStringInBox(iRect(minX, minY, maxX, maxY), string, color, gapSpace, drawBox);
-    }
     void bltStringInBox(const iRect &rect, const char *string, PIX color, int gapSpace = 14, bool drawBox = false);
 
     // Blit a string of text.
     void bltString5x5(const iXY &pos, const char *string, const PIX &color);
-    void bltString5x5(int x, int y, const char *string, const PIX &color)
-    {
-        bltString5x5(iXY(x, y), string, color);
-    }
 
     // Blit a shadowed string of text.
     void bltStringShadowed(const iXY &pos, const char *string, const PIX &textColor, const PIX &shadowColor);
-    void bltStringShadowed(int x, int y, const char *string, const PIX &textColor, const PIX &shadowColor)
-    {
-        bltStringShadowed(iXY(x, y), string, textColor, shadowColor);
-    }
 
     // Blits a string of text and centers it horizontally and vertically on the screen.
     void bltStringCenter(const char *string, PIX color);
@@ -477,18 +469,13 @@ public:
 
     void loadBMP(const char *fileName, bool needAlloc = true, void *returnPalette = 0);
 
-    void mapFromPalette(const char* oldPalette);
+    void mapFromPalette(const std::string& oldPalette);
 
     void drawBoxCorners(const iRect &rect, int cornerLength, PIX color);
     void drawBoxCorners(const iXY &min, const iXY &max,
             int cornerLength, PIX color)
     {
         drawBoxCorners(iRect(min.x, min.y, max.x, max.y), cornerLength, color);
-    }
-    void drawBoxCorners(int minX, int minY, int maxX, int maxY,
-            int cornerLength, PIX color)
-    {
-        drawBoxCorners(iRect(minX, minY, maxX, maxY), cornerLength, color);
     }
     void drawBoxCorners(int cornerLength, PIX color)
     {

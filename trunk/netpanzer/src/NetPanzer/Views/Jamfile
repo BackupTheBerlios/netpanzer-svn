@@ -1,6 +1,14 @@
 SubDir TOP src NetPanzer Views ;
 
-SUBDIRS = Game MainMenu MainMenu/Multi MainMenu/Options Components . ;
+SUBDIRS =
+    Game
+    MainMenu
+    MainMenu/Multi
+    MainMenu/Multi/MasterServer
+    MainMenu/Options
+    Components
+    .
+;
 
 SOURCES = ;
 for i in $(SUBDIRS)

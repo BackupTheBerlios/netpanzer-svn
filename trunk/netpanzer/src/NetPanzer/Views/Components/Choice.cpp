@@ -176,7 +176,8 @@ void Choice::draw(Surface &dest)
     pos.y = min.y - Surface::getFontHeight() - 4;
 
     // Draw the name of the choice.
-    dest.bltStringShadowed(min.x, pos.y + adjustedY, name.c_str(), Color::white, Color::black);
+    dest.bltStringShadowed(iXY(min.x, pos.y + adjustedY),
+            name.c_str(), Color::white, Color::black);
 
     getBounds(r);
 

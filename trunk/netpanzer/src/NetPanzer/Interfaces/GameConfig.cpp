@@ -37,6 +37,8 @@ GameConfig::GameConfig(const std::string& newconfigfile)
     
       playername("name", "Player"),
       lobbyserver("lobbyserver", "irc.quakenet.org"),
+      masterservers("masterservers", ""),
+      
       serverport("serverport",_NETPANZER_DEFAULT_PORT_TCP,0,65535),
       proxyserver("proxyserver",""),
       proxyserveruser("proxyserveruser",""),
@@ -111,6 +113,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
     playername=default_player.str();
     playersettings.push_back(&playername);
     playersettings.push_back(&lobbyserver);
+    playersettings.push_back(&masterservers);
     playersettings.push_back(&proxyserver);
     playersettings.push_back(&proxyserveruser);
     playersettings.push_back(&proxyserverpass);

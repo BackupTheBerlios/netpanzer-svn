@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 float Palette::brightness = 1.0f;
 
-// The name of the current loaded palette.
 std::string Palette::name;
 
 ColorTable Palette::colorTable2080;
@@ -298,7 +297,7 @@ void Palette::setColorTables()
     }
 
     char tablePath[512];
-    snprintf(tablePath, 512, "cache/colorfilters/%s", getName().c_str());
+    snprintf(tablePath, 512, "cache/colorfilters/%s", name.c_str());
     if(!FileSystem::exists(tablePath)) {
         FileSystem::mkdir(tablePath);
     }
@@ -338,33 +337,15 @@ void Palette::setColorTables()
     colorTableLightDark.createLightDarkFilter(strBuf);
 } // end setColorTables
 
-
-// setName
-//---------------------------------------------------------------------------
-void Palette::setName(const std::string& filename)
-{
-    char strBuf[256];
-    snprintf(strBuf, 256, "%s", UtilInterface::getFilename(filename).c_str());
-
-    char *dotPtr = 0;
-    if ((dotPtr = strchr(strBuf, '.')) != 0) {
-        // Remove the extension.
-        *dotPtr = '\0';
-    }
-
-    name = strBuf;
-} // end Palette::setName
-
 // loadACT
 //---------------------------------------------------------------------------
 // Purpose: Opens the specified .act palette file and loads it into the
 //          programs defined palette, system palette is not changed.
 //---------------------------------------------------------------------------
-void Palette::loadACT(const char *filename)
+void Palette::loadACT(const std::string& newname)
 {
-    assert(filename != 0);
-
-    setName(filename);
+    name = newname;
+    std::string filename = "wads/" + name + ".act";
 
     std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
 
@@ -375,7 +356,7 @@ void Palette::loadACT(const char *filename)
 	}
     } catch(std::exception& e) {
 	throw Exception("Error while reading Palette '%s': %s",
-		filename, e.what());
+		filename.c_str(), e.what());
     }
 } // end Palette::loadACT
 
@@ -473,25 +454,23 @@ void Palette::setFire()
 
 // init
 //---------------------------------------------------------------------------
-void Palette::init(const char *filename)
+void Palette::init(const std::string& name)
 {
     //setFire();
     //return;
-    loadACT(filename);
+    loadACT(name);
     setColors();
     setColorTables();
     setBrightnessAbsolute(brightness);
-
 } // end Palette::init
 
 // initNoColorTables
 //---------------------------------------------------------------------------
-void Palette::initNoColorTables(const char *filename)
+void Palette::initNoColorTables(const std::string& name)
 {
-    loadACT(filename);
+    loadACT(name);
     setColors();
     setBrightnessAbsolute(brightness);
-
 } // end Palette::initNoColorTables
 
 // setBrightnessRelative

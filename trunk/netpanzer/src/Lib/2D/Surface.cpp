@@ -2119,14 +2119,15 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
 //--------------------------------------------------------------------------
 // Purpose: Maps this image from the specified palette to the current palette.
 //--------------------------------------------------------------------------
-void Surface::mapFromPalette(const char* oldPalette)
+void Surface::mapFromPalette(const std::string& oldPalette)
 {
     // Load the source palette.
     uint8_t     bestFitArray[256];
     RGBColor sourceColor[256];
 
     try {
-	std::auto_ptr<ReadFile> file (FileSystem::openRead(oldPalette));
+        std::string filename = "wads/" + oldPalette + ".act";
+	std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
 
 	for (int i = 0; i < 256; i++) {
 	    file->read(&sourceColor[i], 3, 1);
@@ -2141,7 +2142,7 @@ void Surface::mapFromPalette(const char* oldPalette)
 	}
     } catch(std::exception& e) {
 	throw Exception("Error while reading palette '%s': %s",
-		oldPalette, e.what());
+		oldPalette.c_str(), e.what());
     }
 } // end Surface::mapFromPalette
 

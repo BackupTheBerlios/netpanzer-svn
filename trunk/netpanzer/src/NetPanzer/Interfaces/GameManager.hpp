@@ -93,7 +93,7 @@ public:
 
     static void setVideoMode();
 
-    static void loadPalette( char *palette_path );
+    static void loadPalette(const std::string& palette_path );
 
     static void drawTextCenteredOnScreen(const char *string, unsigned char color);
 

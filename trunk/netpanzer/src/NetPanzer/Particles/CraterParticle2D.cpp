@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "CraterParticle2D.hpp"
-#include "Util/UtilInterface.hpp"
 #include "2D/Palette.hpp"
 
 // Set to 1 for divide by zero issues.
@@ -85,16 +84,7 @@ void CraterParticle2D::init()
         craterCache[i].pos.zero();
     }
 
-    if (UtilInterface::getFileSize("pics/particles/craters/pak/craters.pak") > 0) {
-        staticPackedCrater.load("pics/particles/craters/pak/craters.pak");
-    } else {
-        Surface tempSurface;
-        tempSurface.loadAllBMPInDirectory("pics/particles/craters/bmp/");
-
-        staticPackedCrater.pack(tempSurface);
-        staticPackedCrater.save("pics/particles/craters/pak/craters.pak");
-    }
-
+    staticPackedCrater.load("pics/particles/craters/pak/craters.pak");
 } // end CraterParticle2D::init
 
 // draw

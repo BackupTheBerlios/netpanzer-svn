@@ -57,5 +57,5 @@ void HelpView::doDeactivate()
 //---------------------------------------------------------------------------
 void HelpView::loadTitleSurface()
 {
-    doLoadTitleSurface("pics/backgrounds/menus/menu/helpTitle.bmp");
+    doLoadTitleSurface("helpTitle");
 } // end HelpView::loadTitleSurface
