@@ -81,14 +81,15 @@ uint8_t *playerColorArray[] = {
 	&Color::gray224
 };
 
-static const int playerColorCount = sizeof(playerColorArray) / sizeof(uint8_t*);
+static const size_t playerColorCount 
+    = sizeof(playerColorArray) / sizeof(uint8_t*);
 
 void PlayerState::setColor( uint32_t index ) {
 	colorIndex = index % playerColorCount;
 }
 
 uint8_t PlayerState::getColor() {
-    assert(colorIndex < playerColorCount);    
+    assert(colorIndex < playerColorCount);
     return ( *playerColorArray[ colorIndex ] );
 }
 
