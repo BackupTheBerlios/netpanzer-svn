@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerInterface.hpp"
 #include "UnitInterface.hpp"
 #include "Client.hpp"
+#include "NetworkClient.hpp"
 #include "GameConfig.hpp"
 #include "GameManager.hpp"
 
@@ -64,7 +65,7 @@ void ClientConnectDaemon::shutdownConnectDaemon()
             PlayerInterface::getLocalPlayerIndex());
 
     CLIENT->sendMessage(&client_disconnect,
-            sizeof(ConnectMesgNetPanzerClientDisconnect), 0);
+            sizeof(ConnectMesgNetPanzerClientDisconnect));
 
     CLIENT->deactivateKeepAlive();
 }
@@ -263,7 +264,7 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
         case _connect_state_send_connect_request : {
                 ClientConnectRequest connect_request;
 
-                CLIENT->sendMessage( &connect_request, sizeof(ClientConnectRequest), 0 );
+                CLIENT->sendMessage(&connect_request, sizeof(ClientConnectRequest));
 
                 connection_state = _connect_state_wait_for_connect_result;
 
@@ -291,7 +292,7 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
                                                 gameconfig->getUnitColor(),
                                                 gameconfig->playerflag );
 
-                            CLIENT->sendMessage( &client_setting, sizeof(ConnectClientSettings), 0 );
+                            CLIENT->sendMessage( &client_setting, sizeof(ConnectClientSettings));
 
                             connection_state = _connect_state_wait_for_server_game_setup;
                         }
@@ -300,7 +301,7 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
                         if ( time_out_timer.count() ) {
                             if ( time_out_counter < _CLIENT_CONNECT_RETRY_LIMIT ) {
                                 ClientConnectRequest connect_request;
-                                CLIENT->sendMessage( &connect_request, sizeof(ClientConnectRequest), 0 );
+                                CLIENT->sendMessage( &connect_request, sizeof(ClientConnectRequest));
                                 time_out_counter++;
                             } else {
                                 lobbyView->scrollAndUpdate( "Connection To Server Failed" );
@@ -316,7 +317,7 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
                     if ( time_out_timer.count() ) {
                         if ( time_out_counter < _CLIENT_CONNECT_RETRY_LIMIT ) {
                             ClientConnectRequest connect_request;
-                            CLIENT->sendMessage( &connect_request, sizeof(ClientConnectRequest), 0 );
+                            CLIENT->sendMessage( &connect_request, sizeof(ClientConnectRequest));
                             time_out_counter++;
                         } else {
                             lobbyView->scrollAndUpdate( "Connection To Server Failed" );
@@ -357,7 +358,7 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
                             } else {
                                 lobbyView->scrollAndUpdate( "Loading Game Data ..." );
 
-                                CLIENT->sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing), 0 );
+                                CLIENT->sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
 
                                 connection_state = _connect_state_setup_client_game;
                             }
@@ -378,14 +379,14 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
                     sprintf( str_buf, "Loading Game Data ... (%d%%)", percent_complete);
                     lobbyView->update( str_buf );
 
-                    CLIENT->sendMessage( &client_game_setup_ack, sizeof(ConnectMesgClientGameSetupAck), 0 );
+                    CLIENT->sendMessage( &client_game_setup_ack, sizeof(ConnectMesgClientGameSetupAck));
                     connection_state = _connect_state_idle;
                 } else {
                     ConnectMesgClientGameSetupPing client_game_setup_ping;
 
                     sprintf( str_buf, "Loading Game Data ... (%d%%)", percent_complete);
                     lobbyView->update( str_buf );
-                    CLIENT->sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing), 0 );
+                    CLIENT->sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
                 }
 
                 end_cycle = true;

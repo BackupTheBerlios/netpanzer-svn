@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "PlayerNetMessage.hpp"
 #include "Server.hpp"
+#include "NetworkServer.hpp"
 
 #include "ConsoleInterface.hpp"
 // for UNIT_FLAGS_SURFACE
@@ -538,7 +539,7 @@ void PlayerInterface::netMessageAllianceRequest(const NetMessage *message)
     allie_update.set(allie_request->getAllieByPlayerIndex(),
                      allie_request->getAllieWithPlayerIndex(),
                      allie_request->alliance_request_type);
-    SERVER->sendMessage( &allie_update, sizeof( PlayerAllianceUpdate ), 0 );
+    SERVER->sendMessage(&allie_update, sizeof(PlayerAllianceUpdate));
 }
 
 void PlayerInterface::netMessageAllianceUpdate(const NetMessage* message)
@@ -612,7 +613,7 @@ void PlayerInterface::processNetMessage(const NetMessage* message)
     }
 }
 
-void PlayerInterface::disconnectPlayerCleanup( PlayerID &player_id )
+void PlayerInterface::disconnectPlayerCleanup(const PlayerID &player_id )
 {
     PlayerAllianceUpdate allie_update;
 
@@ -625,12 +626,12 @@ void PlayerInterface::disconnectPlayerCleanup( PlayerID &player_id )
     for ( player_index = 0; player_index < max_players; player_index++ ) {
         if ( isAllied( disconnect_player_index, player_index ) == true ) {
             allie_update.set( disconnect_player_index, player_index, _player_break_alliance );
-            SERVER->sendMessage( &allie_update, sizeof( PlayerAllianceUpdate ), 0 );
+            SERVER->sendMessage(&allie_update, sizeof(PlayerAllianceUpdate));
         }
 
         if ( isAllied( player_index, disconnect_player_index ) == true ) {
             allie_update.set( player_index, disconnect_player_index, _player_break_alliance );
-            SERVER->sendMessage( &allie_update, sizeof( PlayerAllianceUpdate ), 0 );
+            SERVER->sendMessage(&allie_update, sizeof(PlayerAllianceUpdate));
         }
     }
 
@@ -641,6 +642,6 @@ void PlayerInterface::disconnectPlayerCleanup( PlayerID &player_id )
     PlayerStateSync player_state_update(player_state->getNetworkPlayerState());
     SDL_mutexV(mutex);
 
-    SERVER->sendMessage( &player_state_update, sizeof( PlayerStateSync ), 0 );
+    SERVER->sendMessage(&player_state_update, sizeof(PlayerStateSync));
 }
 

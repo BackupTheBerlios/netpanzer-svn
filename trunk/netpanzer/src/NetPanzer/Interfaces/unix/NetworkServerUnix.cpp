@@ -38,32 +38,42 @@ NetworkServerUnix::~NetworkServerUnix()
     delete serversocket;
 }
 
-void NetworkServerUnix::shutdownClientTransport(const PlayerID &client_id)
+std::string
+NetworkServerUnix::getIP(const PlayerID& id) const
+{
+    return serversocket->getClientIP(id.getNetworkID());
+}
+
+void
+NetworkServerUnix::shutdownClientTransport(const PlayerID &client_id)
 {
     assert(serversocket != 0);
     serversocket->removeClient(client_id.getNetworkID());
 }
 
-void NetworkServerUnix::openSession()
+void
+NetworkServerUnix::openSession()
 {}
 
-void NetworkServerUnix::hostSession()
+void
+NetworkServerUnix::hostSession()
 {
     delete serversocket;
     serversocket = new ServerSocket(gameconfig->bindaddress,
             gameconfig->serverport);
 }
 
-void NetworkServerUnix::closeSession()
+void
+NetworkServerUnix::closeSession()
 {
     delete serversocket;
     serversocket = 0;
 }
 
-int NetworkServerUnix::sendMessage(const PlayerID& player_id,
-                                   NetMessage* message, size_t size, int flags)
+int
+NetworkServerUnix::sendMessage(const PlayerID& player_id,
+                                   NetMessage* message, size_t size)
 {
-    (void) flags;
     if(serversocket==0) {
         return _network_failed;
     }
@@ -87,8 +97,8 @@ int NetworkServerUnix::sendMessage(const PlayerID& player_id,
     return _network_ok;
 }
 
-int NetworkServerUnix::sendMessage(NetMessage *message, size_t size,
-                                   int flags)
+int
+NetworkServerUnix::sendMessage(NetMessage *message, size_t size)
 {
     ServerClientListData *iterator = 0;
     ServerClientListData *client_data_ptr = 0;
@@ -99,7 +109,7 @@ int NetworkServerUnix::sendMessage(NetMessage *message, size_t size,
 
     while( client_data_ptr != 0 ) {
         try {
-            sendMessage(client_data_ptr->client_id,	message, size, flags);
+            sendMessage(client_data_ptr->client_id, message, size);
         } catch(std::exception& e) {
             LOG( ("Error while sending network packet.") );
             return _network_failed;
@@ -111,7 +121,8 @@ int NetworkServerUnix::sendMessage(NetMessage *message, size_t size,
     return _network_ok;
 }
 
-int NetworkServerUnix::getMessage(NetMessage *message)
+int
+NetworkServerUnix::getMessage(NetMessage *message)
 {
     updateKeepAliveState();
 
@@ -144,7 +155,8 @@ int NetworkServerUnix::getMessage(NetMessage *message)
     return false;
 }
 
-void NetworkServerUnix::checkIncoming()
+void
+NetworkServerUnix::checkIncoming()
 {
     if(serversocket)
         serversocket->read();

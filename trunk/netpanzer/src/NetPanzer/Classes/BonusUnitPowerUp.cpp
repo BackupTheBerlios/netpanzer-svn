@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConsoleInterface.hpp"
 
 #include "Server.hpp"
+#include "NetworkServer.hpp"
 #include "NetworkState.hpp"
 #include "UnitNetMessage.hpp"
 #include "PowerUpNetMessage.hpp"
@@ -79,14 +80,14 @@ void BonusUnitPowerUp::spawnBonusUnits( UnitID &unit_id )
         if ( new_unit != 0 ) {
             UnitRemoteCreate create_mesg(new_unit->player->getID(),
                     new_unit->id, spawn_loc.x, spawn_loc.y, bonus_unit_type);
-            SERVER->sendMessage( &create_mesg, sizeof( UnitRemoteCreate ), 0 );
+            SERVER->sendMessage( &create_mesg, sizeof( UnitRemoteCreate ));
         }
 
     }
 
     PowerUpHitMesg hit_mesg;
     hit_mesg.set( powerup_state.ID, unit_id, player_id );
-    SERVER->sendMessage( &hit_mesg, sizeof( PowerUpHitMesg ), 0 );
+    SERVER->sendMessage( &hit_mesg, sizeof( PowerUpHitMesg ));
 
     powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive;
 

@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ServerMessageRouter.hpp"
 
 #include "Server.hpp"
+#include "NetworkServer.hpp"
 #include "ServerConnectDaemon.hpp"
 #include "UnitInterface.hpp"
 #include "PlayerInterface.hpp"

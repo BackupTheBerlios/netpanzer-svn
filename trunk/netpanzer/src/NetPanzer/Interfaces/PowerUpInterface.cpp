@@ -33,6 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "NetworkState.hpp"
 #include "Server.hpp"
+#include "NetworkServer.hpp"
 #include "PowerUpNetMessage.hpp"
 
 PowerUpList PowerUpInterface::powerup_list;
@@ -149,7 +150,7 @@ void PowerUpInterface::generatePowerUp()
                          power_up->powerup_state.type
                        );
 
-        SERVER->sendMessage( &create_mesg, sizeof( PowerUpCreateMesg ), 0 );
+        SERVER->sendMessage(&create_mesg, sizeof(PowerUpCreateMesg));
 
         do {
             next_regen_interval = rand() % (power_up_regen_time_upper_bound + 1);
@@ -317,7 +318,7 @@ void PowerUpInterface::syncPowerUps( PlayerID player_id )
                          powerup_ptr->powerup_state.type
                        );
 
-        SERVER->sendMessage( player_id, &create_mesg, sizeof( PowerUpCreateMesg ), 0);
+        SERVER->sendMessage(player_id, &create_mesg, sizeof(PowerUpCreateMesg));
     }
 }
 

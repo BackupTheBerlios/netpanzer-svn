@@ -33,6 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "TerminalNetMesg.hpp"
 #include "PlayerNetMessage.hpp"
 #include "Client.hpp"
+#include "NetworkClient.hpp"
 #include "NetMessageEncoder.hpp"
 #include "PlacementMatrix.hpp"
 #include "System/Sound.hpp"
@@ -595,7 +596,7 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
                     term_mesg.output_loc_request.set( outpost_goal_selection,
                                                       world_pos);
 
-                    CLIENT->sendMessage( &term_mesg, sizeof(TerminalOutpostOutputLocRequest), 0 );
+                    CLIENT->sendMessage(&term_mesg, sizeof(TerminalOutpostOutputLocRequest));
 
                     if ( NetworkState::status == _network_state_client ) {
                     
@@ -879,7 +880,7 @@ void WorldInputCmdProcessor::sendAllianceRequest( iXY &world_pos, bool make_brea
         allie_request.set(PlayerInterface::getLocalPlayerIndex(),
                 target_ptr->player->getID(), type);
 
-        CLIENT->sendMessage( &allie_request, sizeof(PlayerAllianceRequest), 0 );
+        CLIENT->sendMessage( &allie_request, sizeof(PlayerAllianceRequest));
     }
 }
 

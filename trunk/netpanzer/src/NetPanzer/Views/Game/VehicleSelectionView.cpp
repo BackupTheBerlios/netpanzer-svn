@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "cMouse.hpp"
 #include "TerminalNetMesg.hpp"
 #include "Client.hpp"
+#include "NetworkClient.hpp"
 #include "NetworkState.hpp"
 #include "WorldInputCmdProcessor.hpp"
 #include "WorldViewInterface.hpp"
@@ -97,7 +98,7 @@ static void sendOutpostStatus()
                                     (char) vsvSelectedUnit,
                                     vsvUnitGenOn );
 
-    CLIENT->sendMessage( &term_mesg, sizeof(TerminalOutpostUnitGenRequest), 0 );
+    CLIENT->sendMessage( &term_mesg, sizeof(TerminalOutpostUnitGenRequest));
 
     if ( NetworkState::status == _network_state_client ) {
         ObjectiveInterface::sendMessage( &(term_mesg.unit_gen_request) );

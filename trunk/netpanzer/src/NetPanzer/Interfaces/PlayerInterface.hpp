@@ -163,7 +163,7 @@ public:
     static void startPlayerStateSync(const PlayerID &connect_player);
     static bool syncPlayerState(int *percent_complete);
     static void processNetMessage(const NetMessage *message );
-    static void disconnectPlayerCleanup( PlayerID &player_id );
+    static void disconnectPlayerCleanup(const PlayerID &player_id );
 };
 
 #endif // ** _PLAYERINTERFACE_HP

@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapInterface.hpp"
 #include "UnitSync.hpp"
 #include "Server.hpp"
+#include "NetworkServer.hpp"
 
 UnitSync::UnitSync()
     : count(0), unitid(0)
@@ -56,7 +57,7 @@ bool UnitSync::sendNextUnit(PlayerID toplayer)
             unit->player->getID(), unit->id, unit_map_loc.x, unit_map_loc.y);
     sync_message.unit_state = unit->unit_state.getNetworkUnitState();
 
-    SERVER->sendMessage(toplayer, &sync_message, sizeof(UnitIniSyncMessage), 0);
+    SERVER->sendMessage(toplayer, &sync_message, sizeof(UnitIniSyncMessage));
 
     unit->syncUnit();
     unitid++;

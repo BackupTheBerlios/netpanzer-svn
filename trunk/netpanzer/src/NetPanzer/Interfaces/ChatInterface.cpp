@@ -22,7 +22,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerInterface.hpp"
 #include "NetworkState.hpp"
 #include "Server.hpp"
+#include "NetworkServer.hpp"
 #include "Client.hpp"
+#include "NetworkClient.hpp"
 
 #include "ConsoleInterface.hpp"
 
@@ -41,7 +43,7 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
     strcpy( chat_mesg.message_text, chat_request->message_text );
 
     if( chat_request->message_scope == _chat_mesg_scope_all ) {
-        SERVER->sendMessage( &chat_mesg, sizeof(SystemChatMesg), 0 );
+        SERVER->sendMessage(&chat_mesg, sizeof(SystemChatMesg));
         post_on_server = true;
     } else
         if( chat_request->message_scope == _chat_mesg_scope_alliance ) {
@@ -58,7 +60,7 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
                 if ( (PlayerInterface::getPlayer(i)->getStatus() == _player_state_active) ) {
                     if( PlayerInterface::isAllied( chat_request->getSourcePlayerIndex(), i ) == true ) {
                         if ( (local_player_index != i) ) {
-                            SERVER->sendMessage( player_id, &chat_mesg, sizeof(SystemChatMesg), 0 );
+                            SERVER->sendMessage( player_id, &chat_mesg, sizeof(SystemChatMesg));
                         } else {
                             post_on_server = true;
                         }
@@ -71,11 +73,11 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
             } else {
                 SERVER->sendMessage(
                     PlayerInterface::getPlayerID(chat_request->getSourcePlayerIndex()),
-                    &chat_mesg, sizeof(SystemChatMesg), 0);
+                    &chat_mesg, sizeof(SystemChatMesg));
             }
         } else
             if( chat_request->message_scope == _chat_mesg_scope_server ) {
-                SERVER->sendMessage( &chat_mesg, sizeof(SystemChatMesg), 0 );
+                SERVER->sendMessage(&chat_mesg, sizeof(SystemChatMesg));
                 ConsoleInterface::postMessage("Server :: %s",
                         chat_mesg.message_text );
                 return;
@@ -212,7 +214,7 @@ void ChatInterface::sendCurrentMessage( const char *message_text )
     current_chat_mesg.message_text[ 149 ] = 0;
 
     if ( NetworkState::status == _network_state_client ) {
-        CLIENT->sendMessage( &current_chat_mesg, sizeof(SystemChatMesgRequest), 0 );
+        CLIENT->sendMessage( &current_chat_mesg, sizeof(SystemChatMesgRequest));
     } else {
         processChatMessages( &current_chat_mesg );
     }

@@ -22,7 +22,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerGameManager.hpp"
 
 #include "Server.hpp"
+#include "NetworkServer.hpp"
 #include "Client.hpp"
+#include "NetworkClient.hpp"
 #include "ClientMessageRouter.hpp"
 #include "ClientConnectDaemon.hpp"
 #include "ServerConnectDaemon.hpp"

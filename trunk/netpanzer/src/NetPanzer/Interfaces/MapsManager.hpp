@@ -25,6 +25,7 @@ class MapsManager
 {
 public:
     static std::string getNextMap(const std::string& map);
+    static bool existsMap(const std::string& map);
 };
 
 #endif

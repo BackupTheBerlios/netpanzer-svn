@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConsoleInterface.hpp"
 
 #include "Server.hpp"
+#include "NetworkServer.hpp"
 #include "NetworkState.hpp"
 #include "UnitNetMessage.hpp"
 #include "PowerUpNetMessage.hpp"
@@ -68,7 +69,7 @@ void EnemyRadarPowerUp::setRadar(UnitID &unit_id)
 
     PowerUpHitMesg hit_mesg;
     hit_mesg.set( powerup_state.ID, unit_id, player_id );
-    SERVER->sendMessage( &hit_mesg, sizeof( PowerUpHitMesg ), 0 );
+    SERVER->sendMessage( &hit_mesg, sizeof( PowerUpHitMesg ));
 
     powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive;
 }

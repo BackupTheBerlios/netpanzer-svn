@@ -34,6 +34,8 @@ public:
             size_t datasize);
     void removeClient(SocketClient::ID clientid);
 
+    std::string getClientIP(SocketClient::ID) const;
+
 protected:
     friend class SocketClient;
     void closeConnection(SocketClient* client);

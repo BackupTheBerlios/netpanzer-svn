@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "MapsManager.hpp"
 #include "GameConfig.hpp"
+#include "Util/FileSystem.hpp"
 
 /// removes leading and trailing whitespaces from a string
 static inline std::string trim(const std::string& str)
@@ -67,5 +68,23 @@ std::string MapsManager::getNextMap(const std::string& map)
     } while(1);
 
     return firstmap;
+}
+
+bool MapsManager::existsMap(const std::string& name)
+{
+    std::string basefilename = "maps/";
+    basefilename += name;
+
+    std::string filename = basefilename + ".npm";
+    if(!filesystem::exists(filename))
+        return false;
+    filename = basefilename + ".opt";
+    if(!filesystem::exists(filename))
+        return false;
+    filename = basefilename + ".spn";
+    if(!filesystem::exists(filename))
+        return false;
+
+    return true;
 }
 

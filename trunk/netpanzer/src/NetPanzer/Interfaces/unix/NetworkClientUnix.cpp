@@ -67,9 +67,8 @@ void NetworkClientUnix::partServer()
     clientsocket = 0;
 }
 
-void NetworkClientUnix::sendMessage(NetMessage *message, size_t size, int flags)
+void NetworkClientUnix::sendMessage(NetMessage *message, size_t size)
 {
-    (void) flags;
     message->setSize(size);
     
     if ( connection_type == _connection_loop_back ) {

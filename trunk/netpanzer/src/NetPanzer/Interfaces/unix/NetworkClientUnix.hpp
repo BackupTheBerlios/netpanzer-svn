@@ -30,7 +30,7 @@ public:
     virtual bool joinServer(const std::string& server_name);
     virtual void partServer();
 
-    virtual void sendMessage(NetMessage *message, size_t size, int flags);
+    virtual void sendMessage(NetMessage *message, size_t size);
     virtual bool getMessage(NetMessage *message);
 
     virtual void checkIncoming();

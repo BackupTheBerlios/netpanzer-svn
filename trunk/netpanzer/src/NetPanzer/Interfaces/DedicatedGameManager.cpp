@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include <fcntl.h>
 #include <string>
+#include <iomanip>
 #include <SDL.h>
 
 #include "ChatInterface.hpp"
@@ -46,6 +47,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "HeartbeatThread.hpp"
 #include "InfoThread.hpp"
 #include "Util/Log.hpp"
+#include "unix/NetworkServerUnix.hpp"
 
 DedicatedGameManager::DedicatedGameManager()
     : commandqueue_mutex(0), console(0), heartbeatthread(0), infothread(0)
@@ -114,30 +116,60 @@ void DedicatedGameManager::inputLoop()
             }
             case ServerCommand::STATUS:
             {
-                *Console::server << "Server " << gameconfig->playername
+                //*Console::server
+                std::cout
+                    << "Server " << gameconfig->playername
                     << " version " << PACKAGE_VERSION << " port "
                     << gameconfig->serverport << "\n"
                     << "Map: " << gameconfig-> map << "\n"
-                    << "ID Player    Ki  Lo  P\n";
+                    << std::setw(3) << "ID" << " "
+                    << std::setw(30) << "Name" << " "
+                    << std::setw(4) << "Kill" << " "
+                    << std::setw(4) << "Lost" << " "
+                    << std::setw(5) << "Score" << " "
+                    << std::setw(21) << "IP\n";
                 size_t playercount = PlayerInterface::countPlayers();
                 for(size_t i = 0; i<playercount; ++i) {
                     PlayerState* playerstate =
                         PlayerInterface::getPlayerState(i);
-                    *Console::server
-                        << i << "  " << playerstate->getName() << "    "
-                        << playerstate->getKills() << " - " 
-                        << playerstate->getLosses() << " - "
-                        << playerstate->getTotal() << " - "
-                        << "xxx.xxx.xxx.xxx" << "\n";
+                    NetworkServerUnix* server = (NetworkServerUnix*) SERVER;
+                    //*Console::server
+                    std::cout
+                        << std::setw(3) << playerstate->getID() << " "
+                        << std::setw(30) << playerstate->getName() << " "
+                        << std::setw(4) << playerstate->getKills() << " "
+                        << std::setw(4) << playerstate->getLosses() << " "
+                        << std::setw(5) << playerstate->getTotal() << " "
+                        << std::setw(21) 
+                        << server->getIP(playerstate->getPlayerID())
+                        << "\n";
                 }
-                *Console::server << std::flush;
+                //*Console::server << std::flush;
+                std::cout << std::flush;
                 break;
             }
             case ServerCommand::MAPCHANGE:
-                // TODO
+                if(!MapsManager::existsMap(command.argument)) {
+                    std::cout << "map '" << command.argument
+                        << "' doesn't exist." << std::endl;
+                    break;
+                }
+            
+                GameControlRulesDaemon::forceMapChange(command.argument);
+                std::cout << "Preparing mapchange..." << std::endl;
                 break;
             case ServerCommand::KICK:
-                // TODO
+                std::stringstream idstream(command.argument);
+                uint16_t id = 0xffff;
+                idstream >> id;
+                if(id >= PlayerInterface::getMaxPlayers()) {
+                    std::cout << "Unknown player." << std::endl;
+                    break;
+                }
+                PlayerState* playerstate = PlayerInterface::getPlayerState(id);
+                SERVER->shutdownClientTransport(playerstate->getPlayerID());
+                PlayerInterface::disconnectPlayerCleanup(
+                        playerstate->getPlayerID());
                 break;
         }
         commandqueue.pop();

@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "UnitOpcodeEncoder.hpp"
 #include "Server.hpp"
+#include "NetworkServer.hpp"
 #include "NetworkState.hpp"
 #include "ConsoleInterface.hpp"
 #include "OpcodeDebugger.hpp"
@@ -58,7 +59,7 @@ UnitOpcodeEncoder::send()
         return;
 
     size_t size = opcode_message.getHeaderSize() + opcode_index;
-    SERVER->sendMessage(&opcode_message, size, 0);
+    SERVER->sendMessage(&opcode_message, size);
 
     reset();
     NetworkState::incOpcodesSent();

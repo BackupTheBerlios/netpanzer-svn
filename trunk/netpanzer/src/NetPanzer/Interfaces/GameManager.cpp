@@ -333,7 +333,7 @@ void GameManager::spawnPlayer( const PlayerID &player )
         WorldViewInterface::setCameraPosition( world_loc );
     } else {
         SystemSetPlayerView set_view(world_loc.x, world_loc.y);
-        SERVER->sendMessage( player, &set_view, sizeof( SystemSetPlayerView ), 0);
+        SERVER->sendMessage(player, &set_view, sizeof(SystemSetPlayerView));
     }
 
     sound->playTankIdle();
@@ -470,7 +470,7 @@ void GameManager::netMessagePingRequest( NetMessage *message )
     if ( (PlayerInterface::getPlayer(player_id.getIndex())->getStatus() == _player_state_active) &&
             (ping_request->getClientPlayerIndex() != 0)
        ) {
-        SERVER->sendMessage( player_id, &ping_ack, sizeof(SystemPingAcknowledge), 0 );
+        SERVER->sendMessage(player_id, &ping_ack, sizeof(SystemPingAcknowledge));
     }
 }
 
@@ -564,8 +564,7 @@ void GameManager::requestNetworkPing()
     SystemPingRequest ping_request(PlayerInterface::getLocalPlayerIndex());
 
     NetworkState::ping_time_stamp = now();
-    CLIENT->sendMessage( &ping_request, sizeof(SystemPingRequest), 0  );
-
+    CLIENT->sendMessage( &ping_request, sizeof(SystemPingRequest));
 }
 
 void GameManager::setNetPanzerGameOptions()

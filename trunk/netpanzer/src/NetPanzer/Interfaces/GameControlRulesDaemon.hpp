@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _GAME_CONTROL_RULES_DAEMON_HPP
 #define _GAME_CONTROL_RULES_DAEMON_HPP
 
+#include <string>
 #include "Util/Timer.hpp"
 #include "NetPacket.hpp"
 
@@ -25,6 +26,7 @@ class GameControlRulesDaemon
 {
     static int execution_mode;
     static unsigned char game_state;
+    static std::string nextmap;
 
 protected:
     static int map_cycle_fsm_server_state;
@@ -52,8 +54,9 @@ public:
     static void setStateServerInProgress();
     static void setDedicatedServer();
 
+    static void forceMapChange(std::string map);
+
     static void processNetMessage(NetMessage *message);
-    static void forceMapCycle();
     static void updateGameControlFlow();
 };
 

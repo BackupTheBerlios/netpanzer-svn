@@ -40,6 +40,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Types/iXY.hpp"
 #include "Util/Timer.hpp"
 #include "Server.hpp"
+#include "NetworkServer.hpp"
 #include "NetworkState.hpp"
 #include "NetMessageEncoder.hpp"
 #include "Console.hpp"
@@ -695,7 +696,7 @@ void UnitInterface::unitManagerMesgEndLifecycle(const UnitMessage* message)
     PlayerScoreUpdate score_update;
     score_update.set(player1->getID(), player2->getID(),
             lifecycle_update->unit_type);
-    SERVER->sendMessage( &score_update, sizeof( PlayerScoreUpdate ), 0 );
+    SERVER->sendMessage(&score_update, sizeof(PlayerScoreUpdate));
 }
 
 
@@ -853,7 +854,8 @@ bool UnitInterface::syncRemoteUnits( int *send_return_code, int *percent_complet
         sync_message.unit_state = unit->unit_state.getNetworkUnitState();
 
         send_ret_val = SERVER->sendMessage( sync_units_remote_player,
-                                            &sync_message, sizeof( UnitIniSyncMessage ), 0 );
+                                            &sync_message,
+                                            sizeof(UnitIniSyncMessage));
 
         if ( send_ret_val != _network_ok ) {
             *send_return_code = send_ret_val;

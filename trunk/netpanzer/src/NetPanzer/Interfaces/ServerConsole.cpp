@@ -39,9 +39,15 @@ static CommandHelp commands[] = {
 
 void ServerConsole::executeCommand(const std::string& commandline)
 {
-    StringTokenizer tokenizer(commandline, ' ');
-   
-    std::string command = tokenizer.getNextToken();
+    std::string command, argument;
+    size_t i;
+    for(i = 0; i < commandline.size() && !isspace(commandline[i]); ++i) {
+        command += commandline[i];
+    }
+    ++i;
+    for( ; i < commandline.size(); ++i)
+        argument += commandline[i];
+            
     if(command == "help") {
         std::cout << "Commands:\n";
         for(size_t i = 0; commands[i].name != 0; ++i) {
@@ -56,13 +62,16 @@ void ServerConsole::executeCommand(const std::string& commandline)
     } else if(command == "status") {
         manager->pushCommand(ServerCommand(ServerCommand::STATUS));
     } else if(command == "kick") {
-        std::string player = tokenizer.getNextToken();
-        if(player != "")
-            manager->pushCommand(ServerCommand(ServerCommand::KICK, player));
+        if(argument != "")
+            manager->pushCommand(ServerCommand(ServerCommand::KICK, argument));
+        else
+            std::cout << "Please specify the number of a player.\n";
     } else if(command == "map") {
-        std::string map = tokenizer.getNextToken();
-        if(map != "")
-            manager->pushCommand(ServerCommand(ServerCommand::MAPCHANGE, map));
+        if(argument != "")
+            manager->pushCommand(
+                    ServerCommand(ServerCommand::MAPCHANGE, argument));
+        else
+            std::cout << "Please specify the name of a map.\n";
     } else {
         std::cout << "Unknown command.\n";
     }

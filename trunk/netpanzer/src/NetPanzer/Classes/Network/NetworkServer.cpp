@@ -160,8 +160,9 @@ bool NetworkServer::activateKeepAlive( PlayerID &client_player_id )
 
     set_keep_alive_mesg.keep_alive_state = true;
 
-    sendMessage( client_data->client_id, &set_keep_alive_mesg, sizeof(ClientMesgSetKeepAlive), 0);
-    return( true );
+    sendMessage(client_data->client_id, &set_keep_alive_mesg,
+            sizeof(ClientMesgSetKeepAlive));
+    return true;
 }
 
 bool NetworkServer::deactivateKeepAlive( PlayerID &client_player_id )
@@ -171,7 +172,7 @@ bool NetworkServer::deactivateKeepAlive( PlayerID &client_player_id )
     client_data = client_list.getClientData( client_player_id );
 
     if( client_data == 0 ) {
-        return( false );
+        return false;
     }
 
     client_data->keep_alive_state = false;
@@ -181,8 +182,9 @@ bool NetworkServer::deactivateKeepAlive( PlayerID &client_player_id )
 
     set_keep_alive_mesg.keep_alive_state = false;
 
-    sendMessage( client_data->client_id, &set_keep_alive_mesg, sizeof(ClientMesgSetKeepAlive), 0 );
-    return( true );
+    sendMessage(client_data->client_id, &set_keep_alive_mesg,
+            sizeof(ClientMesgSetKeepAlive));
+    return true;
 }
 
 void NetworkServer::netMessageClientKeepAlive( NetMessage *message )
@@ -214,8 +216,7 @@ void NetworkServer::netMessageServerPingRequest( NetMessage *message )
 
     PlayerID playerid =
         PlayerInterface::getPlayerID(ping_request_mesg->getClientID());
-    sendMessage(playerid, &ping_ack_mesg,
-            sizeof( ClientMesgPingAck ), _network_send_no_guarantee );
+    sendMessage(playerid, &ping_ack_mesg, sizeof(ClientMesgPingAck));
 }
 
 void NetworkServer::netMessageTransportClientAccept( NetMessage *message )
@@ -228,7 +229,7 @@ void NetworkServer::netMessageTransportClientAccept( NetMessage *message )
 
     PlayerID player_id = PlayerID( 0, connect_ack_mesg.getClientTransportID() );
 
-    sendMessage(player_id, &connect_ack_mesg, sizeof(ClientMesgConnectAck), 0);
+    sendMessage(player_id, &connect_ack_mesg, sizeof(ClientMesgConnectAck));
 }
 
 void NetworkServer::processNetMessage( NetMessage *message )
@@ -278,7 +279,8 @@ void NetworkServer::updateKeepAliveState( void )
             if( send_server_keep_alive_mesg == true ) {
                 ClientMesgKeepAlive server_keepalive;
 
-                sendMessage( client_data_ptr->client_id, &server_keepalive, sizeof( ClientMesgKeepAlive ), 0);
+                sendMessage( client_data_ptr->client_id, &server_keepalive,
+                        sizeof( ClientMesgKeepAlive ));
             }
         }
         client_data_ptr = client_list.incIteratorPtr( &iterator );

@@ -18,8 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _CLIENT_HPP
 #define _CLIENT_HPP
 
-#include "NetworkClient.hpp"
-
+class NetworkClient;
 extern NetworkClient *CLIENT;
 
 #endif // ** _CLIENT_HPP

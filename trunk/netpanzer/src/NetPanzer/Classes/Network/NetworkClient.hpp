@@ -72,7 +72,7 @@ public:
     virtual bool joinServer(const std::string& server_name) = 0;
     virtual void partServer() = 0;
 
-    virtual void sendMessage(NetMessage *message, size_t size, int flags) = 0;
+    virtual void sendMessage(NetMessage *message, size_t size) = 0;
     virtual bool getMessage(NetMessage *message) = 0;
 
     virtual void checkIncoming() = 0;

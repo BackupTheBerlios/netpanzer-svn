@@ -86,7 +86,7 @@ void NetworkClient::netMessageClientConnectAck( NetMessage *message )
     join_request.setTransportID(client_transport_id);
     join_request.setProtocolVersion(NETPANZER_PROTOCOL_VERSION);
 
-    sendMessage( &join_request, sizeof(ClientConnectJoinRequest), 0 );
+    sendMessage( &join_request, sizeof(ClientConnectJoinRequest));
 }
 
 
@@ -143,7 +143,7 @@ void NetworkClient::updateKeepAliveState( void )
             keep_alive_mesg.setClientID(
                 PlayerInterface::getLocalPlayerID().getIndex());
 
-            sendMessage( &keep_alive_mesg, sizeof(ServerMesgKeepAlive), 0 );
+            sendMessage( &keep_alive_mesg, sizeof(ServerMesgKeepAlive));
         }
     }
 
@@ -154,7 +154,7 @@ void NetworkClient::updateKeepAliveState( void )
 
         NetworkState::ping_time_stamp = now();
 
-        sendMessage( &ping_request_mesg, sizeof(ServerMesgPingRequest), _network_send_no_guarantee );
+        sendMessage( &ping_request_mesg, sizeof(ServerMesgPingRequest));
     }
 }
 

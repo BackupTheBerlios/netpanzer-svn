@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConsoleInterface.hpp"
 
 #include "Server.hpp"
+#include "NetworkServer.hpp"
 #include "NetworkState.hpp"
 #include "UnitNetMessage.hpp"
 #include "ObjectiveNetMessage.hpp"
@@ -82,7 +83,7 @@ void Outpost::attemptOccupationChange(UnitID unit_id)
                         unit_generation_on_flag,
                         unit_generation_type,
                         uint32_t(unit_generation_timer.getTimeLeft() * 128.0));
-            SERVER->sendMessage( &update_mesg, sizeof( ObjectiveOccupationUpdate ), 0 );
+            SERVER->sendMessage(&update_mesg, sizeof(ObjectiveOccupationUpdate));
 
             PlayerState *player_state;
             player_state = PlayerInterface::getPlayerState( objective_state.occupying_player );
@@ -103,7 +104,7 @@ void Outpost::attemptOccupationChange(UnitID unit_id)
                         unit_generation_type,
                         uint32_t(unit_generation_timer.getTimeLeft() * 128));
                 SERVER->sendMessage(&update_mesg,
-                        sizeof(ObjectiveOccupationUpdate), 0);
+                        sizeof(ObjectiveOccupationUpdate));
                 PlayerState *player_state;
                 player_state = PlayerInterface::getPlayerState( objective_state.occupying_player );
 
@@ -167,7 +168,7 @@ void Outpost::generateUnits()
                     UnitRemoteCreate create_mesg(unit->player->getID(),
                             unit->id, gen_loc.x, gen_loc.y,
                             unit_generation_type);
-                    SERVER->sendMessage( &create_mesg, sizeof( UnitRemoteCreate ), 0 );
+                    SERVER->sendMessage(&create_mesg, sizeof(UnitRemoteCreate));
 
                     UMesgAICommand ai_command;
                     PlacementMatrix placement_matrix;
@@ -247,7 +248,7 @@ void Outpost::objectiveMesgDisownPlayerObjective( ObjectiveMessage *message )
                                            0,
                                            0);
 
-            SERVER->sendMessage( &update_mesg, sizeof( ObjectiveOccupationUpdate ), 0 );
+            SERVER->sendMessage(&update_mesg, sizeof(ObjectiveOccupationUpdate));
 
             unit_generation_type = 0;
             UnitProfile *profile

@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <string.h>
+#include <sstream>
 #include "Util/Log.hpp"
 #include "ServerSocket.hpp"
 
@@ -52,7 +53,21 @@ ServerSocket::~ServerSocket()
     delete socket;
 }
 
-void ServerSocket::read()
+std::string
+ServerSocket::getClientIP(SocketClient::ID clientid) const
+{
+    SocketClient* client = clientlist->getClientFromID(clientid);
+    if(!client)
+        return "";
+    
+    std::stringstream result;
+    result << client->socket->getAddress().getIP() 
+        << ':' << client->socket->getAddress().getPort();
+    return result.str();
+}
+
+void
+ServerSocket::read()
 {
     acceptNewClients();
     readTCP();
@@ -65,7 +80,8 @@ void ServerSocket::read()
 //for this game, send a message back telling the player
 //why he was refused and return without putting the client
 //in the linked list--
-void ServerSocket::acceptNewClients()
+void
+ServerSocket::acceptNewClients()
 {
     network::TCPSocket* clientsocket = 0;
     while( (clientsocket = socket->accept())) {
@@ -86,7 +102,8 @@ void ServerSocket::acceptNewClients()
     }
 }
 
-void ServerSocket::readTCP()
+void
+ServerSocket::readTCP()
 {
     sockets.select(0);
 
@@ -122,7 +139,8 @@ void ServerSocket::readTCP()
  * then we have a complete netPanzer message. other cases
  * are handled separately.
  */
-void ServerSocket::readClientTCP(SocketClient* client)
+void
+ServerSocket::readClientTCP(SocketClient* client)
 {
     static char recvbuffer[10240];
 
@@ -300,7 +318,8 @@ void ServerSocket::readClientTCP(SocketClient* client)
  * the game loop needs to be temporarily halted anyway.
  * it handles both TCP and UDP sends--
  */
-void ServerSocket::sendMessage(SocketClient::ID toclient, const void* data,
+void
+ServerSocket::sendMessage(SocketClient::ID toclient, const void* data,
         size_t datasize)
 {
     SocketClient* client = clientlist->getClientFromID(toclient);
@@ -310,14 +329,16 @@ void ServerSocket::sendMessage(SocketClient::ID toclient, const void* data,
     client->socket->send(data, datasize);
 }
 
-void ServerSocket::closeConnection(SocketClient* client)
+void
+ServerSocket::closeConnection(SocketClient* client)
 {
     sockets.remove(*client->socket);
     delete(client->socket);
     client->socket = 0;
 }
 
-void ServerSocket::removeClient(SocketClient::ID clientid)
+void
+ServerSocket::removeClient(SocketClient::ID clientid)
 {
     // TODO notify client about disconnect...
     SocketClient* client = clientlist->getClientFromID(clientid);

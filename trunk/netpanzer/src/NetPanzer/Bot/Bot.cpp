@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlacementMatrix.hpp"
 #include "TerminalNetMesg.hpp"
 #include "Client.hpp"
+#include "NetworkClient.hpp"
 #include "ObjectiveInterface.hpp"
 #include "UnitBase.hpp"
 #include "NetworkState.hpp"
@@ -60,7 +61,7 @@ Bot::moveUnit(UnitBase *unit, iXY map_pos)
     comm_mesg.comm_request.setHeader(unit->id, _umesg_flag_unique);
     comm_mesg.comm_request.setMoveToLoc(map_pos);
 
-    CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest), 0);
+    CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest));
     m_tasks.setUnitTask(unit, BotTaskList::TASK_MOVE);
 
     LOGGER.debug("bot: moveUnit %d to %dx%d", unit->id, map_pos.x, map_pos.y);
@@ -76,7 +77,7 @@ Bot::attackUnit(UnitBase *unit, UnitBase *enemyUnit)
     comm_mesg.comm_request.setHeader(unit->id, _umesg_flag_unique);
     comm_mesg.comm_request.setTargetUnit(enemyUnit->id);
 
-    CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest), 0);
+    CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest));
     m_tasks.setUnitTask(unit, BotTaskList::TASK_ATTACK);
 
     LOGGER.debug("bot: attackUnit %d to %d", unit->id, enemyUnit->id);
@@ -91,7 +92,7 @@ Bot::manualFire(UnitBase *unit, iXY world_pos)
     comm_mesg.comm_request.setHeader(unit->id, _umesg_flag_unique);
     comm_mesg.comm_request.setManualFire(world_pos);
 
-    CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest), 0);
+    CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest));
     //NOTE: manual fire is not special unit task,
     // unit can move and fire simultanous
 }
@@ -106,7 +107,7 @@ Bot::produceUnit(int outpostID, int selectedProduce)
 
     term_mesg.unit_gen_request.set(outpostID, selectedProduce, true);
 
-    CLIENT->sendMessage(&term_mesg, sizeof(TerminalOutpostUnitGenRequest), 0);
+    CLIENT->sendMessage(&term_mesg, sizeof(TerminalOutpostUnitGenRequest));
 
     // XXX is this needed?
     if (NetworkState::status == _network_state_client) {

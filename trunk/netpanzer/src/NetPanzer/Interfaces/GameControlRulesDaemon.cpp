@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SystemNetMessage.hpp"
 #include "GameControlNetMessage.hpp"
 #include "Server.hpp"
+#include "NetworkServer.hpp"
 #include "Client.hpp"
 #include "ServerConnectDaemon.hpp"
 
@@ -60,6 +61,7 @@ enum { _game_state_idle,
 
 int GameControlRulesDaemon::execution_mode = _execution_mode_loop_back_server;
 unsigned char GameControlRulesDaemon::game_state  = _game_state_idle;
+std::string GameControlRulesDaemon::nextmap = "";
 
 #define _MAP_CYCLE_ENDGAME_WAIT_PERIOD  (20) // seconds
 #define _MAP_CYCLE_MAP_LOAD_WAIT_PERIOD (7) // seconds
@@ -172,7 +174,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                     Desktop::setVisibility("WinnerMesgView", true );
                 }
 
-                SERVER->sendMessage(&view_control, sizeof(SystemViewControl), 0);
+                SERVER->sendMessage(&view_control, sizeof(SystemViewControl));
 
                 map_cycle_fsm_server_endgame_timer.changePeriod( _MAP_CYCLE_ENDGAME_WAIT_PERIOD );
                 map_cycle_fsm_server_endgame_timer.reset();
@@ -187,14 +189,21 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                    ) {
                     GameManager::shutdownParticleSystems();
 
-                    gameconfig->map = MapsManager::getNextMap(gameconfig->map);
+                    if(nextmap != "") {
+                        gameconfig->map = nextmap;
+                        nextmap = "";
+                    } else {
+                        gameconfig->map 
+                            = MapsManager::getNextMap(gameconfig->map);
+                    }
+                    
                     ConsoleInterface::postMessage("loading map '%s'.",
                             gameconfig->map.c_str());
 
                     GameControlCycleMap cycle_map_mesg;
                     cycle_map_mesg.set( gameconfig->map.c_str() );
 
-                    SERVER->sendMessage( &cycle_map_mesg, sizeof( GameControlCycleMap ), 0 );
+                    SERVER->sendMessage( &cycle_map_mesg, sizeof( GameControlCycleMap ));
 
                     if ( GameControlRulesDaemon::execution_mode == _execution_mode_dedicated_server ) {
                         ObjectiveInterface::resetLogic();
@@ -258,7 +267,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 SystemResetGameLogic reset_game_logic_mesg;
 
                 GameManager::resetGameLogic();
-                SERVER->sendMessage( &reset_game_logic_mesg, sizeof(SystemResetGameLogic), 0 );
+                SERVER->sendMessage( &reset_game_logic_mesg, sizeof(SystemResetGameLogic));
 
                 GameManager::respawnAllPlayers();
 
@@ -268,7 +277,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 progressView->toggleGameView();
 
                 GameControlCycleRespawnAck respawn_ack_mesg;
-                SERVER->sendMessage( &respawn_ack_mesg, sizeof(GameControlCycleRespawnAck), 0 );
+                SERVER->sendMessage( &respawn_ack_mesg, sizeof(GameControlCycleRespawnAck));
 
                 map_cycle_fsm_server_state = _map_cycle_server_state_idle;
 
@@ -303,8 +312,12 @@ void GameControlRulesDaemon::onObjectiveGameCompleted()
     GameControlRulesDaemon::game_state = _game_state_completed;
 }
 
-void GameControlRulesDaemon::forceMapCycle()
+void GameControlRulesDaemon::forceMapChange(std::string _nextmap)
 {
+    nextmap = _nextmap;
+
+    PlayerInterface::lockPlayerStats();
+
     map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;
     GameControlRulesDaemon::game_state = _game_state_completed;
 }
