@@ -12,6 +12,8 @@ Next release:
 -when starting to build a titan 2minutes is displayed for a short time
 -display a message when the round is over ("blabla captured xx% of outposts,
         "time is over", "blabla reached xxx frags")
+-having multiple servers in serverlist makes netp crash - fixed
+
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map

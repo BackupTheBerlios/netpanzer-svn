@@ -63,6 +63,9 @@ ServerListView::refresh()
     // don't clear before the delete or after the new, as the thread contains
     // pointers to the serverlist
     SDL_mutexP(serverlist.mutex);
+    for(std::vector<masterserver::ServerInfo*>::iterator i = serverlist.begin();
+            i != serverlist.end(); ++i)
+        delete *i;
     serverlist.clear();
     SDL_mutexV(serverlist.mutex);
 
@@ -89,14 +92,14 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
 
     SDL_mutexP(serverlist.mutex);
     int y = 0;
-    for(std::vector<masterserver::ServerInfo>::iterator i = serverlist.begin();
+    for(std::vector<masterserver::ServerInfo*>::iterator i = serverlist.begin();
             i != serverlist.end(); ++i) {
-        const masterserver::ServerInfo& server = *i;
+        const masterserver::ServerInfo& server = *(*i);
 
-        if(i->status == masterserver::ServerInfo::QUERYING) {
+        if(server.status == masterserver::ServerInfo::QUERYING) {
             clientArea.bltString(iXY(0, y), server.address, Color::gray);
             clientArea.bltString(iXY(140, y), "querying...", Color::gray);
-        } else if(i->status == masterserver::ServerInfo::TIMEOUT) {
+        } else if(server.status == masterserver::ServerInfo::TIMEOUT) {
             clientArea.bltString(iXY(0, y), server.address, Color::gray);
             clientArea.bltString(iXY(140, y), "timeout", Color::gray);
         } else {
@@ -129,10 +132,10 @@ ServerListView::lMouseUp(const iXY& down_pos, const iXY& up_pos)
 
     int listpos = down_pos.y / Surface::getFontHeight();
     if(listpos >= int(serverlist.size()) || 
-            serverlist[listpos].status != masterserver::ServerInfo::RUNNING)
+            serverlist[listpos]->status != masterserver::ServerInfo::RUNNING)
         return View::lMouseUp(down_pos, up_pos);
 
-    const masterserver::ServerInfo& server = serverlist[listpos];
+    const masterserver::ServerInfo& server = *(serverlist[listpos]);
     IPAddressView::szServer.setString(server.address);
     
     return View::lMouseUp(down_pos, up_pos);

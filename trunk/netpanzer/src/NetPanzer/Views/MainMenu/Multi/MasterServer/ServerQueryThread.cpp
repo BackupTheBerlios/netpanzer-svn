@@ -172,17 +172,17 @@ ServerQueryThread::queryMasterServer()
         while(!stream->eof() && running) {
             std::string token = tokenizer.getNextToken();
             if(token == "ip") {
-                ServerInfo info;
-                info.status = ServerInfo::QUERYING;
-                info.address = tokenizer.getNextToken();
-                if(info.address == "")
+                ServerInfo* info = new ServerInfo();
+                info->status = ServerInfo::QUERYING;
+                info->address = tokenizer.getNextToken();
+                if(info->address == "")
                     break;
             
                 // add server into list
                 SDL_mutexP(serverlist->mutex);
                 serverlist->push_back(info);
-                lastserver = &(serverlist->back());
-                not_queried.push_back(lastserver);
+                not_queried.push_back(info);
+                lastserver = info;
                 SDL_mutexV(serverlist->mutex);
             } else if(token == "port") {
                 std::stringstream portstr(tokenizer.getNextToken());
@@ -234,13 +234,13 @@ ServerQueryThread::queryServers()
        
     if(querying.size() < MAX_QUERIES && !not_queried.empty()) {
         // send a query to a server
-        ServerInfo& server = *not_queried.back();
+        ServerInfo* server = not_queried.back();
         not_queried.pop_back();
 
         // resolve address
         try {
-            server.ipaddress = network::Address::resolve(server.address,
-                    server.port);
+            server->ipaddress = network::Address::resolve(server->address,
+                    server->port);
         } catch(std::exception& e) {
             LOGGER.warning(e.what());
             return;
@@ -249,10 +249,10 @@ ServerQueryThread::queryServers()
         // send query
         std::string query = "\\status\\final\\";
 
-        udpsocket->send(server.ipaddress, query.c_str(), query.size());
+        udpsocket->send(server->ipaddress, query.c_str(), query.size());
 
-        server.querystartticks = now;
-        querying.push_back(&server);
+        server->querystartticks = now;
+        querying.push_back(server);
     }
 
     // part2 receive data
@@ -268,8 +268,8 @@ ServerQueryThread::queryServers()
     SDL_mutexP(serverlist->mutex);
     for(ServerList::iterator i = serverlist->begin();
             i != serverlist->end(); ++i) {
-        if(i->ipaddress == addr) {
-            server = &(*i);
+        if((*i)->ipaddress == addr) {
+            server = *i;
             break;
         }       
     }
