@@ -53,6 +53,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("  LMC + Shift, LMC + Ctrl          Add unit to selection");
     insert("  Ctrl + [0..9]                    Define a group of units");
     insert("  [0..9]                           Recall a group of units");
+    insert("  [0..9] (2 times)                 Center view on a group of units");
     //insert("  'E'                              Select all units on screen");
 
     //insert("  LMC + 'T'............................Track the selected unit");
