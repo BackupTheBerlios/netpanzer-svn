@@ -20,13 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __View_hpp__
 #define __View_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
-
 #include "cMouse.hpp"
 #include "cGrowList.hpp"
 #include "cButton.hpp"

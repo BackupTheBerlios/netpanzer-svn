@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <algorithm>
 #include "Choice.hpp"
 #include "View.hpp"
+#include "StateChangedCallback.hpp"
 
 //---------------------------------------------------------------------------
 void Choice::reset()
@@ -29,6 +30,7 @@ void Choice::reset()
 	size.x    = 10;
 	size.y    = ChoiceItemHeight;
 	isOpen    = 0;
+	mouseover = 0;
 	adjustedY = 0;
 }
 
@@ -107,7 +109,12 @@ void Choice::select(const String &item)
 	{
 		if (strcmp((const char *) item, (const char *) choiceList[i]) == 0)
 		{
+			if(index == i)
+				return;
+
 			index = i;
+			if(callback)
+				callback->stateChanged(this);
 			
 			return;
 		}
@@ -117,7 +124,14 @@ void Choice::select(const String &item)
 //---------------------------------------------------------------------------
 void Choice::select(int index)
 {
+	assert(index >= 0 && index < choiceList.getCount());
+
+	if(index == Choice::index)
+		return;
+	
 	Choice::index = index;
+	if(callback)
+		callback->stateChanged(this);
 }
 
 //---------------------------------------------------------------------------
@@ -172,7 +186,7 @@ void Choice::actionPerformed(const mMouseEvent &me)
 			// Find the selected item.
 			if (r.contains(iXY(me.getX(), me.getY())))
 			{
-				index = i;
+				mouseover = i;
 				break;
 			}
 
@@ -193,6 +207,14 @@ void Choice::actionPerformed(const mMouseEvent &me)
 		min.y += adjustedY;
 		adjustedY = 0;
 
+		// set new element
+		if(mouseover == index)
+			return;
+			                                 		
+		index = mouseover;
+		if(callback)
+			callback->stateChanged(this);                		
+
 		// Since an item was selected, find which item was selected.
 		assert(min + size < parentDimensions);
 	}
@@ -208,6 +230,15 @@ void Choice::actionPerformed(const mMouseEvent &me)
 		// Move the choice back to its original location.
 		min.y += adjustedY;
 		adjustedY = 0;
+
+		// set new element
+		if(mouseover == index)
+			return;
+			                                 		
+		index = mouseover;
+		if(callback)
+			callback->stateChanged(this);                		
+		
 		assert(min + size < parentDimensions);
 	}
 
@@ -241,11 +272,9 @@ void Choice::draw(const Surface &dest)
 	s.drawRect(iRect(1, 1, s.getPixX() - 1, s.getPixY() - 1), Color::white);
 	s.fillRect(iRect(1, 1, s.getPixX() - 2, s.getPixY() - 2), Color::terreVerte);
 
-	if (!isOpen)
-	{
+	if (!isOpen)	{
 		s.bltStringShadowedCenter(choiceList[index], Color::white, Color::black);
-	} else
-	{
+	} else {
 		r = iRect(min.x, min.y, min.x + size.x, min.y + ChoiceItemHeight);
 		
 		int count = choiceList.getCount();
@@ -254,7 +283,7 @@ void Choice::draw(const Surface &dest)
 		{
 			s.setTo(dest, r);
 
-			if (i == index)
+			if (i == mouseover)
 			{
 				// Higlight the selected item.
 				s.fill(Color::white);

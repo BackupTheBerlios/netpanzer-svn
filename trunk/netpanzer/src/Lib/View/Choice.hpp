@@ -15,20 +15,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __Choice_hpp__
 #define __Choice_hpp__
-
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
 
 #include "Component.hpp"
 #include "cGrowList.hpp"
 #include "MouseEvent.hpp"
 
+class StateChangedCallback;
 
 //--------------------------------------------------------------------------
 class Choice : public Component
@@ -37,25 +31,29 @@ private:
 	cGrowList <String> choiceList;
 	int                index;
 	int                minWidth;
-	int                isOpen;
+	bool               isOpen;
+	int				   mouseover;
 	int                adjustedY;  // The y translation value to keep the choice on the screen.
+	StateChangedCallback* callback;
 
 	enum { ChoiceItemHeight = 14 };
 
 public:
-	Choice()
+	Choice(StateChangedCallback* newcallback = 0)
+		: callback(newcallback)
 	{
 		reset();
 	}
 	virtual ~Choice() {}
 
-	void   reset();
 	void   add(const String &item);
 	void   addItem(const String &item);
 	void   addItemDefault(const String &item);
 	void   copyItems(const Choice &choice);
-	int    getItemCount() const { return choiceList.getCount(); }
-	int    getSelectedIndex() const { return index; }
+	int    getItemCount() const
+	{ return choiceList.getCount(); }
+	int    getSelectedIndex() const
+	{ return index; }
 	void   insert(String item, int index);
 	String paramString() { return String(); }
 	void   remove(String item);
@@ -64,10 +62,15 @@ public:
 	void   select(const String &item);
 	void   select(int index);
 	void   setMinWidth(int minWidth);
-	
+
+	void setStateChangedCallback(StateChangedCallback* newcallback)
+	{ callback = newcallback; }
+
 	virtual void draw(const Surface &dest);
 	virtual void actionPerformed(const mMouseEvent &me);
 
+private:
+	void reset();
 }; // end Choice
 
 #endif // end __Choice_hpp__

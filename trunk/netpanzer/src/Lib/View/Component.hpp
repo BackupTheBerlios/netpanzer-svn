@@ -15,15 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __Component_hpp__
 #define __Component_hpp__
-
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
 
 #include "Cursor.hpp"
 #include "Color.hpp"
@@ -31,15 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "iXY.hpp"
 #include "iRect.hpp"
 #include "String.hpp"
+#include "NoCopy.hpp"
 
 class mMouseEvent;
 
-
 //--------------------------------------------------------------------------
-class Component
+class Component : public NoCopy
 {
-	//virtual copy() {}
-
 protected:
 	BYTE    background;
 	BYTE    foreground;
@@ -80,13 +71,6 @@ public:
 	{
 		reset();
 	}
-	Component(const Component &)
-	{
-		
-	}
-
-	//const Component &operator=(const Component &)
-
 	virtual ~Component() {}
 
 	// Accessor functions.
@@ -109,8 +93,6 @@ public:
 	inline        bool     isEnabled() const { return enabled; }
 	//const bool &isValid() {}
 	inline        bool     isVisible() const { return visible; }
-
-	void processEvent() {}
 
 	void setBackground(BYTE color) {}
 	void setBounds(const iRect &r)

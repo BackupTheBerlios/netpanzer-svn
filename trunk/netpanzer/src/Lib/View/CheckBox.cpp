@@ -15,22 +15,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #include <config.h>
+
 #include "CheckBox.hpp"
 #include "MouseEvent.hpp"
-
-
-// reset
-//---------------------------------------------------------------------------
-void CheckBox::reset()
-{
-	label = "";
-	state = false;
-	size  = 14;
-
-} // end CheckBox::reset
+#include "StateChangedCallback.hpp"
 
 // draw
 //---------------------------------------------------------------------------
@@ -110,6 +99,8 @@ void CheckBox::actionPerformed(const mMouseEvent &me)
 			(me.getModifiers() & InputEvent::BUTTON1_MASK))
 	{
 		state = !state;
+		if(callback)
+			callback->stateChanged(this);
 	}
 
 } // end CheckBox::actionPerformed

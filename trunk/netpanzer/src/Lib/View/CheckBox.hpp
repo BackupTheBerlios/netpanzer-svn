@@ -19,15 +19,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __CheckBox_hpp__
 #define __CheckBox_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
 #include "Component.hpp"
 #include "MouseEvent.hpp"
 
+class StateChangedCallback;
 
 //--------------------------------------------------------------------------
 class CheckBox : public Component
@@ -35,45 +30,42 @@ class CheckBox : public Component
 protected:
 	String label;
 	bool   state;
+	StateChangedCallback* callback;
 
 	virtual void drawCheckBox(const Surface &dest);
 	virtual void drawCheck(const Surface &dest);
 	virtual void drawLabel(const Surface &dest);
 
 public:
-	CheckBox() : Component()
+	CheckBox(StateChangedCallback* newcallback = 0) 
+		: Component(), state(false), callback(newcallback)
 	{
-		reset();
+		size = 14;
 	}
 
-	CheckBox(const String &label) : Component()
+	CheckBox(const String &newlabel, bool newstate = false) 
+		: Component(), label(newlabel), state(newstate), callback(0)
 	{
-		reset();
-
-		CheckBox::label = label;
+		size = 14;
 	}
 
-	CheckBox(const String &label, bool state) : Component()
-	{
-		reset();
+	virtual ~CheckBox()
+	{ }
 
-		CheckBox::label = label;
-		CheckBox::state = state;
-	}
-
-	virtual ~CheckBox() {}
-
-	void reset();
-
-	String getLabel() { return label; }
-	bool   getState() { return state; }
-
-	void setLabel(String label) { CheckBox::label = label; }
-	void setState(bool state) { CheckBox::state = state; }
+	String getLabel() const
+	{ return label; }
+	bool   getState() const
+	{ return state; }
+	
+	void setLabel(String label)
+	{ CheckBox::label = label; }
+	void setState(bool state)
+	{ CheckBox::state = state; }
+	void setStateChangedCallback(StateChangedCallback* newcallback)
+	{ callback = newcallback; }
 
 	virtual void draw(const Surface &dest);
 	virtual void actionPerformed(const mMouseEvent &me);
-
 }; // end CheckBox
 
 #endif // end __CheckBox_hpp__
