@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class UnitBlackBoard
 {
 protected:
+    friend class Vehicle;
+    
     static BitArray unit_loc_map;
 
     static inline void markUnitLoc( iXY &unit_map_loc )

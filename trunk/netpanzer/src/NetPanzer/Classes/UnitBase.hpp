@@ -18,14 +18,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITBASE_HPP
 #define _UNITBASE_HPP
 
-#include "UnitBlackBoard.hpp"
 #include "UnitState.hpp"
-#include "UnitMessage.hpp"
 #include "UnitID.hpp"
-#include "UnitOpcodes.hpp"
-#include "SpriteSorter.hpp"
 
-class UnitBase : public UnitBlackBoard
+class UnitMessage;
+class UnitOpcodeStruct;
+class SpriteSorter;
+
+class UnitBase
 {
 public:
     UnitID    unit_id;
@@ -56,7 +56,6 @@ public:
 
 protected:
     UnitBase *groupLinkNext;
-
 };
 
 #endif // ** _UNITBASE_HPP

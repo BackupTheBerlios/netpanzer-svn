@@ -45,6 +45,49 @@ private:
     char buf[1024];
 };
 
+class OFileStreambuf : public std::streambuf
+{
+public:
+    OFileStreambuf(WriteFile* newfile)
+        : file(newfile)
+    {
+        setp(buf, buf+sizeof(buf));
+    }
+
+    ~OFileStreambuf()
+    {
+        delete file;
+    }
+
+protected:
+    virtual int overflow(int c)
+    {
+        if(pbase() == pptr())
+            return 0;
+
+        try {
+            size_t size = pptr() - pbase();
+            file->write(pbase(), size, 1);
+            if(c != traits_type::eof())
+                file->write8(c);
+        } catch(std::exception& e) {
+            return traits_type::eof();
+        }
+
+        setp(buf, buf+sizeof(buf));
+        return 0;
+    }
+
+    virtual int sync()
+    {
+        return overflow(traits_type::eof());
+    }
+
+private:
+    WriteFile* file;
+    char buf[1024];
+};
+
 class IFileStream : public std::istream
 {
 public:
@@ -55,6 +98,28 @@ public:
     IFileStream(const std::string& filename)
         : std::istream(new IFileStreambuf(FileSystem::openRead(filename)))
     { }
+
+    ~IFileStream()
+    {
+        delete rdbuf();
+    }
+};
+
+class OFileStream : public std::ostream
+{
+public:
+    OFileStream(WriteFile* file)
+        : std::ostream(new OFileStreambuf(file))
+    { }
+
+    OFileStream(const std::string& filename)
+        : std::ostream(new OFileStreambuf(FileSystem::openWrite(filename)))
+    { }
+
+    ~OFileStream()
+    {
+        delete rdbuf();
+    }
 };
 
 #endif

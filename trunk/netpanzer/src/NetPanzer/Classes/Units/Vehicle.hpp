@@ -18,10 +18,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _VEHICLE_HPP
 #define _VEHICLE_HPP
 
-#include "Unit.hpp"
+#include "UnitBase.hpp"
 #include "ArrayUtil/Timer.hpp"
 #include "UnitMessageTypes.hpp"
 #include "PathList.hpp"
+#include "UnitOpcodes.hpp"
 
 #include "Sprite.hpp"
 #include "SelectionBoxSprite.hpp"
@@ -68,13 +69,9 @@ enum { _external_event_null,
 
 enum { _rotate_pos, _rotate_neg };
 
-class Vehicle : public Unit
+class Vehicle : public UnitBase
 {
 protected:
-    // ** NOTE: TEMPORARY FOR TESTING
-    //SpriteSurface body_anim;
-    //SpriteSurface turret_anim;
-
     SpritePacked body_anim;
     SpritePacked turret_anim;
 

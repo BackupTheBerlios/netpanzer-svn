@@ -147,6 +147,8 @@ protected:
     static void unitManagerMesgEndLifecycle( UnitMessage *message );
 
 protected:
+    friend class Vehicle;
+    
     // Network Message Handler Variables
     static Timer message_timer;
     static Timer no_guarantee_message_timer;

@@ -7,7 +7,7 @@ class ServerCommand
 {
 public:
     enum CommandType {
-        QUIT, CHAT, MAPCHANGE, KICK
+        QUIT, CHAT, STATUS, MAPCHANGE, KICK
     };
     
     CommandType type;

@@ -35,6 +35,8 @@ public:
 static CommandHelp commands[] = {
     { "help", "Display this help message" },
     { "quit", "Shutdown the netPanzer server" },
+    { "status", "Display server status" },
+    { "say", "Prints a message on client displays" },
     { 0, 0 }
 };
 
@@ -49,6 +51,8 @@ void ServerConsole::executeCommand(const std::string& command)
     } else if(command == "quit") {
         running = false;
         manager->pushCommand(ServerCommand(ServerCommand::QUIT));
+    } else if(command == "status") {
+        manager->pushCommand(ServerCommand(ServerCommand::STATUS));
     } else {
         std::cout << "Unknown command.\n";
     }

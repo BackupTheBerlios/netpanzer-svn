@@ -107,11 +107,36 @@ void DedicatedGameManager::inputLoop()
                 break;
             }
             case ServerCommand::CHAT:
+            {
+                ChatInterface::sendCurrentMessage(command.argument.c_str());
                 break;
+            }
+            case ServerCommand::STATUS:
+            {
+                *Console::server << "Server " << gameconfig->playername
+                    << " version " << PACKAGE_VERSION << " port "
+                    << gameconfig->serverport << "\n"
+                    << "Map: " << gameconfig-> map << "\n"
+                    << "ID Player    Ki  Lo  P\n";
+                for(size_t i = 0; i<PlayerInterface::getMaxPlayers(); ++i) {
+                    PlayerState* playerstate =
+                        PlayerInterface::getPlayerState(i);
+                    *Console::server
+                        << i << "  " << playerstate->getName() << "    "
+                        << playerstate->getKills() << " - " 
+                        << playerstate->getLosses() << " - "
+                        << playerstate->getTotal() << " - "
+                        << "xxx.xxx.xxx.xxx" << "\n";
+                }
+                *Console::server << std::flush;
+                break;
+            }
             case ServerCommand::MAPCHANGE:
                 break;
             case ServerCommand::KICK:
+            {
                 break;
+            }
         }
         commandqueue.pop();
     }

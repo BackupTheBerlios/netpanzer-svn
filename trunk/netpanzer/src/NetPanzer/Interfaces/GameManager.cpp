@@ -60,7 +60,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Vehicle.hpp"
 #include "UnitProfileInterface.hpp"
 #include "ObjectiveInterface.hpp"
-#include "ConsoleInterface.hpp"
+#include "Console.hpp"
 #include "UnitGlobals.hpp"
 #include "SelectionBoxSprite.hpp"
 #include "MapsManager.hpp"
@@ -201,7 +201,6 @@ void GameManager::setVideoMode()
 
     Desktop::checkResolution(old_res, mode_res);
     Desktop::checkViewPositions(mode_res);
-    //ConsoleInterface::setToSurfaceSize( mode_res );
 
     if(old_res == iXY(0,0)) {
         // users can get annoyed when they see a black screen for half a minute
@@ -415,26 +414,29 @@ void GameManager::netMessageConnectAlert( NetMessage *message )
 
     switch( connect_alert->alert_enum ) {
     case _connect_alert_mesg_connect : {
-            ConsoleInterface::postMessage( "%s has joined the game.",
-                    player_state->getName().c_str() );
+            *Console::clientscreen
+                << player_state->getName()
+                << " has joined the game." << std::endl;
         }
         break;
 
     case _connect_alert_mesg_disconnect : {
-            ConsoleInterface::postMessage( "%s has left the game.",
-                    player_state->getName().c_str() );
+            *Console::clientscreen
+                << player_state->getName()
+                << " has left the game." << std::endl;
         }
         break;
 
     case _connect_alert_mesg_client_drop : {
-            ConsoleInterface::postMessage( 
-                    "Connection to %s has been unexpectedly broken.",
-                    player_state->getName().c_str() );
+            *Console::clientscreen
+                << "Connection to "
+                << player_state->getName() << " has been unexpectedly broken."
+                << std::endl;
         }
         break;
 
     default :
-        assert(0);
+        LOGGER.warning("invalid connection_alert enum found.");
     } // ** switch
 }
 

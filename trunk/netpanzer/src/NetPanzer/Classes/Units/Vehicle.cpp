@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapInterface.hpp"
 #include "PathScheduler.hpp"
 #include "ProjectileInterface.hpp"
+#include "UnitInterface.hpp"
+#include "UnitBlackBoard.hpp"
 #include "NetworkState.hpp"
 #include "System/Sound.hpp"
 
@@ -43,7 +45,7 @@ Vehicle::Vehicle(iXY initial_loc)
     iXY loc;
     MapInterface::mapXYtoPointXY( initial_loc, &loc );
     unit_state.location = loc;
-    markUnitLoc( initial_loc );
+    UnitBlackBoard::markUnitLoc( initial_loc );
     fsm_timer.changeRate( 10 );
     unit_state_timer.changeRate( 10 );
     setAiFsmDefendHold();
@@ -102,8 +104,7 @@ void Vehicle::updateUnitStateProperties( void )
             DestructUnitOpcode destruct_opcode;
             destruct_opcode.unit_index = unit_id.getIndex();
             destruct_opcode.player_index = unit_id.getPlayer();
-            sendOpcode( &destruct_opcode );
-
+            UnitInterface::sendOpcode( &destruct_opcode );
         } else
             death_counter++;
     }
@@ -376,7 +377,7 @@ void Vehicle::setFsmMoveMapSquare( unsigned long square )
         move_opcode.loc_x_offset = (signed char) loc_offset.x;
         move_opcode.loc_y_offset = (signed char) loc_offset.y;
         if ( move_opcode_sent == true )
-            sendOpcodeNG( &move_opcode );
+            UnitInterface::sendOpcodeNG( &move_opcode );
 
     }
 
@@ -389,7 +390,7 @@ bool Vehicle::fsmMoveMapSquare( void )
 {
     if ( move_opcode_sent == false && NetworkState::status == _network_state_server )
         if ( opcode_move_timer.count() ) {
-            sendOpcodeNG( &move_opcode );
+            UnitInterface::sendOpcodeNG( &move_opcode );
             move_opcode_sent = true;
         }
 
@@ -401,7 +402,7 @@ bool Vehicle::fsmMoveMapSquare( void )
                     critical_ai_section = false;
 
                     if ( move_opcode_sent == false && NetworkState::status == _network_state_server ) {
-                        sendOpcodeNG( &move_opcode );
+                        UnitInterface::sendOpcodeNG( &move_opcode );
                         move_opcode_sent = true;
                     }
 
@@ -418,7 +419,7 @@ bool Vehicle::fsmMoveMapSquare( void )
                 critical_ai_section = false;
 
                 if ( move_opcode_sent == false && NetworkState::status == _network_state_server ) {
-                    sendOpcodeNG( &move_opcode );
+                    UnitInterface::sendOpcodeNG( &move_opcode );
                     move_opcode_sent = true;
                 }
 
@@ -453,7 +454,7 @@ void Vehicle::setFsmTurretTrackPoint( iXY &target )
         track_point_opcode.x = (unsigned short) target.x;
         track_point_opcode.y = (unsigned short) target.y;
         track_point_opcode.activate = true;
-        sendOpcode( &track_point_opcode );
+        UnitInterface::sendOpcode( &track_point_opcode );
     }
 
 }
@@ -470,9 +471,8 @@ void Vehicle::clearFsmTurretTrackPoint( void )
         track_point_opcode.unit_index = unit_id.getIndex();
         track_point_opcode.player_index = unit_id.getPlayer();
         track_point_opcode.activate = false;
-        sendOpcode( &track_point_opcode );
+        UnitInterface::sendOpcode( &track_point_opcode );
     }
-
 }
 
 void Vehicle::syncFsmTurretTrackPoint( void )
@@ -487,7 +487,7 @@ void Vehicle::syncFsmTurretTrackPoint( void )
         track_point_opcode.y = (unsigned short) fsmTurretTrackPoint_target.y;
         track_point_opcode.activate = true;
 
-        sendOpcode( &track_point_opcode );
+        UnitInterface::sendOpcode( &track_point_opcode );
     }
 }
 
@@ -525,7 +525,7 @@ void Vehicle::setFsmTurretTrackTarget( UnitID &target_id )
         track_target_opcode.target_player_index = target_id.getPlayer();
         track_target_opcode.target_unit_index = target_id.getIndex();
         track_target_opcode.activate = true;
-        sendOpcode( &track_target_opcode );
+        UnitInterface::sendOpcode( &track_target_opcode );
     }
 
 }
@@ -540,7 +540,7 @@ void Vehicle::clearFsmTurretTrackTarget( void )
         track_target_opcode.unit_index = unit_id.getIndex();
         track_target_opcode.player_index = unit_id.getPlayer();
         track_target_opcode.activate = false;
-        sendOpcode( &track_target_opcode );
+        UnitInterface::sendOpcode( &track_target_opcode );
     }
 
 }
@@ -556,7 +556,7 @@ void Vehicle::syncFsmTurretTrackTarget( void )
         track_target_opcode.target_player_index = fsmTurretTrackTarget_target_id.getPlayer();
         track_target_opcode.target_unit_index = fsmTurretTrackTarget_target_id.getIndex();
         track_target_opcode.activate = true;
-        sendOpcode( &track_target_opcode );
+        UnitInterface::sendOpcode( &track_target_opcode );
     }
 
 }
@@ -570,7 +570,7 @@ void Vehicle::fsmTurretTrackTarget( void )
     UnitBase *target_unit_ptr;
     iXY direction_vector;
 
-    target_unit_ptr = getUnit( fsmTurretTrackTarget_target_id );
+    target_unit_ptr = UnitInterface::getUnit( fsmTurretTrackTarget_target_id );
 
     if ( target_unit_ptr != 0 ) {
         direction_vector = target_unit_ptr->unit_state.location - unit_state.location;
@@ -650,7 +650,7 @@ void Vehicle::fsmGunneryTarget( void )
     UnitState *target_unit_state;
     iXY range_vector;
 
-    target_unit_ptr = getUnit( fsmGunneryTarget_target_id );
+    target_unit_ptr = UnitInterface::getUnit( fsmGunneryTarget_target_id );
     if ( target_unit_ptr == 0 ) {
         clearFsmGunneryTarget();
     } else {
@@ -715,7 +715,7 @@ void Vehicle::aiFsmMoveToLoc( void )
 
                     iXY current_map_loc;
                     MapInterface::pointXYtoMapXY( unit_state.location, &current_map_loc );
-                    unmarkUnitLoc( current_map_loc );
+                    UnitBlackBoard::unmarkUnitLoc( current_map_loc );
 
                     external_ai_event = _external_event_null;
                     ai_command_state = _ai_command_idle;
@@ -748,7 +748,7 @@ void Vehicle::aiFsmMoveToLoc( void )
                     // Action : Exit fsm
                     aiFsmMoveToLoc_prev_loc = unit_state.location;
                     MapInterface::pointXYtoMapXY( aiFsmMoveToLoc_prev_loc, &aiFsmMoveToLoc_prev_loc );
-                    markUnitLoc( aiFsmMoveToLoc_prev_loc );
+                    UnitBlackBoard::markUnitLoc( aiFsmMoveToLoc_prev_loc );
 
                     aiFsmMoveToLoc_OnExitCleanUp();
                     setAiFsmDefendHold();
@@ -794,7 +794,7 @@ void Vehicle::aiFsmMoveToLoc( void )
                     // Action: Check if next location is empty
                     aiFsmMoveToLoc_prev_loc = unit_state.location;
                     MapInterface::pointXYtoMapXY( aiFsmMoveToLoc_prev_loc, &aiFsmMoveToLoc_prev_loc );
-                    markUnitLoc( aiFsmMoveToLoc_prev_loc );
+                    UnitBlackBoard::markUnitLoc( aiFsmMoveToLoc_prev_loc );
 
                     aiFsmMoveToLoc_wait_timer.changePeriod( 0.8f );
                     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_wait_clear_loc;
@@ -811,7 +811,7 @@ void Vehicle::aiFsmMoveToLoc( void )
                     // External Event: This unit is about to be deleted
                     // Action : Exit fsm gracefully
                     aiFsmMoveToLoc_OnExitCleanUp();
-                    unmarkUnitLoc( aiFsmMoveToLoc_prev_loc );
+                    UnitBlackBoard::unmarkUnitLoc( aiFsmMoveToLoc_prev_loc );
                     external_ai_event = _external_event_null;
                     ai_command_state = _ai_command_idle;
                     end_cycle = true;
@@ -823,7 +823,7 @@ void Vehicle::aiFsmMoveToLoc( void )
                         aiFsmMoveToLoc_OnExitCleanUp();
                         end_cycle = true;
                     } else  // NextSquareOccupied: does the next square contain a abstruction
-                        if ( unitOccupiesLoc( aiFsmMoveToLoc_next_loc ) == true ) {
+                        if ( UnitBlackBoard::unitOccupiesLoc( aiFsmMoveToLoc_next_loc ) == true ) {
                             // Rule: NextSquareOccupied is true
                             // Action: Check Wait Timer
 
@@ -833,8 +833,8 @@ void Vehicle::aiFsmMoveToLoc( void )
 
                                 if ( aiFsmMoveToLoc_next_loc == aiFsmMoveToLoc_goal ) {
 
-                                    unit_placement_matrix.reset( aiFsmMoveToLoc_goal );
-                                    unit_placement_matrix.getNextEmptyLoc( &aiFsmMoveToLoc_goal );
+                                    UnitInterface::unit_placement_matrix.reset( aiFsmMoveToLoc_goal );
+                                    UnitInterface::unit_placement_matrix.getNextEmptyLoc( &aiFsmMoveToLoc_goal );
 
                                     PathRequest path_request;
                                     path_request.set( unit_id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_full );
@@ -852,7 +852,7 @@ void Vehicle::aiFsmMoveToLoc( void )
                         } else {
                             // Rule: NextSquareOccupied is false
                             // Action: Begin move to next square
-                            markUnitLoc( aiFsmMoveToLoc_next_loc );
+                            UnitBlackBoard::markUnitLoc( aiFsmMoveToLoc_next_loc );
                             setFsmMoveMapSquare( aiFsmMoveToLoc_next_square );
 
                             aiFsmMoveToLoc_state = _aiFsmMoveToLoc_move_wait;
@@ -868,7 +868,7 @@ void Vehicle::aiFsmMoveToLoc( void )
                 if ( fsm_active_list[ _control_move_map_square ] == false ) {
                     // Rule: MoveFinished is true
                     // Action: Check for a pending transition
-                    unmarkUnitLoc( aiFsmMoveToLoc_prev_loc );
+                    UnitBlackBoard::unmarkUnitLoc( aiFsmMoveToLoc_prev_loc );
                     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_check_fsm_transition;
                     end_cycle = true;
                 } else {
@@ -885,7 +885,7 @@ void Vehicle::aiFsmMoveToLoc( void )
                     // External Event: This unit is about to be deleted
                     // Action : Exit fsm gracefully
                     aiFsmMoveToLoc_OnExitCleanUp();
-                    unmarkUnitLoc( aiFsmMoveToLoc_next_loc );
+                    UnitBlackBoard::unmarkUnitLoc( aiFsmMoveToLoc_next_loc );
                     external_ai_event = _external_event_null;
                     ai_command_state = _ai_command_idle;
                     end_cycle = true;
@@ -924,7 +924,7 @@ void Vehicle::aiFsmAttackUnit( void )
     UnitState *target_unit_state = 0;
     iXY range_vector;
 
-    target_unit_ptr = getUnit( aiFsmAttackUnit_target_ID );
+    target_unit_ptr = UnitInterface::getUnit( aiFsmAttackUnit_target_ID );
     if ( target_unit_ptr == 0 ) {
         aiFsmAttackUnit_target_destroyed = true;
         if(aiFsmAttackUnit_state != _aiFsmAttackUnit_move_wait) {
@@ -962,7 +962,7 @@ void Vehicle::aiFsmAttackUnit( void )
 
                     iXY current_map_loc;
                     MapInterface::pointXYtoMapXY( unit_state.location, &current_map_loc );
-                    unmarkUnitLoc( current_map_loc );
+                    UnitBlackBoard::unmarkUnitLoc( current_map_loc );
 
                     external_ai_event = _external_event_null;
                     ai_command_state = _ai_command_idle;
@@ -995,7 +995,7 @@ void Vehicle::aiFsmAttackUnit( void )
                     // Action: Remain in position
                     aiFsmAttackUnit_prev_loc = unit_state.location;
                     MapInterface::pointXYtoMapXY( aiFsmAttackUnit_prev_loc, &aiFsmAttackUnit_prev_loc );
-                    markUnitLoc( aiFsmAttackUnit_prev_loc );
+                    UnitBlackBoard::markUnitLoc( aiFsmAttackUnit_prev_loc );
                     aiFsmAttackUnit_state = _aiFsmAttackUnit_idle;
                     end_cycle = true;
                 } else {
@@ -1026,7 +1026,7 @@ void Vehicle::aiFsmAttackUnit( void )
                     // External Event: This unit is about to be deleted
                     // Action : Exit fsm gracefully
                     aiFsmAttackUnit_OnExitCleanUp();
-                    unmarkUnitLoc( aiFsmAttackUnit_prev_loc );
+                    UnitBlackBoard::unmarkUnitLoc( aiFsmAttackUnit_prev_loc );
                     external_ai_event = _external_event_null;
                     ai_command_state = _ai_command_idle;
                     end_cycle = true;
@@ -1067,7 +1067,7 @@ void Vehicle::aiFsmAttackUnit( void )
                     // Action: Check if next location is empty
                     aiFsmAttackUnit_prev_loc = unit_state.location;
                     MapInterface::pointXYtoMapXY( aiFsmAttackUnit_prev_loc, &aiFsmAttackUnit_prev_loc );
-                    markUnitLoc( aiFsmAttackUnit_prev_loc );
+                    UnitBlackBoard::markUnitLoc( aiFsmAttackUnit_prev_loc );
                     aiFsmAttackUnit_wait_timer.changePeriod( 0.8f );
                     aiFsmAttackUnit_state = _aiFsmAttackUnit_wait_clear_loc;
                 }
@@ -1082,7 +1082,7 @@ void Vehicle::aiFsmAttackUnit( void )
                     // External Event: This unit is about to be deleted
                     // Action : Exit fsm gracefully
                     aiFsmAttackUnit_OnExitCleanUp();
-                    unmarkUnitLoc( aiFsmAttackUnit_prev_loc );
+                    UnitBlackBoard::unmarkUnitLoc( aiFsmAttackUnit_prev_loc );
                     external_ai_event = _external_event_null;
                     ai_command_state = _ai_command_idle;
                     end_cycle = true;
@@ -1094,12 +1094,12 @@ void Vehicle::aiFsmAttackUnit( void )
                         aiFsmAttackUnit_OnExitCleanUp();
                         end_cycle = true;
                     } else
-                        if ( unitOccupiesLoc( aiFsmAttackUnit_next_loc ) == true ) {
+                        if ( UnitBlackBoard::unitOccupiesLoc( aiFsmAttackUnit_next_loc ) == true ) {
                             if ( aiFsmAttackUnit_wait_timer.count() ) {
 
                                 if ( aiFsmAttackUnit_next_loc == aiFsmAttackUnit_target_goal_loc ) {
-                                    unit_placement_matrix.reset( aiFsmAttackUnit_target_goal_loc );
-                                    unit_placement_matrix.getNextEmptyLoc( &aiFsmAttackUnit_target_goal_loc );
+                                    UnitInterface::unit_placement_matrix.reset( aiFsmAttackUnit_target_goal_loc );
+                                    UnitInterface::unit_placement_matrix.getNextEmptyLoc( &aiFsmAttackUnit_target_goal_loc );
 
                                     PathRequest path_request;
                                     path_request.set( unit_id, aiFsmAttackUnit_prev_loc, aiFsmAttackUnit_target_goal_loc, 0, &path, _path_request_full );
@@ -1117,7 +1117,7 @@ void Vehicle::aiFsmAttackUnit( void )
 
                             end_cycle = true;
                         } else {
-                            markUnitLoc( aiFsmAttackUnit_next_loc );
+                            UnitBlackBoard::markUnitLoc( aiFsmAttackUnit_next_loc );
                             setFsmMoveMapSquare( aiFsmAttackUnit_next_square );
                             aiFsmAttackUnit_state = _aiFsmAttackUnit_move_wait;
                         }
@@ -1129,7 +1129,7 @@ void Vehicle::aiFsmAttackUnit( void )
 
         case _aiFsmAttackUnit_move_wait : {
                 if ( fsm_active_list[ _control_move_map_square ] == false ) {
-                    unmarkUnitLoc( aiFsmAttackUnit_prev_loc );
+                    UnitBlackBoard::unmarkUnitLoc( aiFsmAttackUnit_prev_loc );
                     aiFsmAttackUnit_state = _aiFsmAttackUnit_check_fsm_transition;
                     end_cycle = true;
                 } else {
@@ -1146,7 +1146,7 @@ void Vehicle::aiFsmAttackUnit( void )
                     // External Event: This unit is about to be deleted
                     // Action : Exit fsm gracefully
                     aiFsmAttackUnit_OnExitCleanUp();
-                    unmarkUnitLoc( aiFsmAttackUnit_next_loc );
+                    UnitBlackBoard::unmarkUnitLoc( aiFsmAttackUnit_next_loc );
                     external_ai_event = _external_event_null;
                     ai_command_state = _ai_command_idle;
                     end_cycle = true;
@@ -1237,7 +1237,7 @@ void Vehicle::aiFsmDefendHold( void )
                         end_cycle = true;
                     } else
                         if ( aiFsmDefendHold_search_timer.count() ) {
-                            if ( quearyClosestEnemyUnit( &target_unit_ptr, unit_state.location, unit_id.getPlayer() ) ) {
+                            if ( UnitInterface::quearyClosestEnemyUnit( &target_unit_ptr, unit_state.location, unit_id.getPlayer() ) ) {
                                 target_unit_state = &(target_unit_ptr->unit_state);
                                 range_vector = target_unit_state->location - unit_state.location;
                                 if ( range_vector.mag2() <= unit_state.defend_range ) {
@@ -1276,7 +1276,7 @@ void Vehicle::aiFsmDefendHold( void )
                         ai_fsm_transition_complete = true;
                         end_cycle = true;
                     } else {
-                        target_unit_ptr = getUnit( aiFsmDefendHold_target_ID );
+                        target_unit_ptr = UnitInterface::getUnit( aiFsmDefendHold_target_ID );
                         if ( target_unit_ptr == 0 ) {
                             clearFsmGunneryTarget();
                             aiFsmDefendHold_state = _aiFsmDefendHold_search_for_enemy;
@@ -1331,11 +1331,11 @@ void Vehicle::aiFsmManualMove( void )
                     setAiFsmDefendHold();
                     end_cycle = true;
                 } else
-                    if( unitOccupiesLoc( aiFsmManualMove_next_loc ) == true ) {
+                    if( UnitBlackBoard::unitOccupiesLoc( aiFsmManualMove_next_loc ) == true ) {
                         setAiFsmDefendHold();
                         end_cycle = true;
                     } else {
-                        markUnitLoc( aiFsmManualMove_next_loc );
+                        UnitBlackBoard::markUnitLoc( aiFsmManualMove_next_loc );
                         setFsmMoveMapSquare( next_square );
                         aiFsmManualMove_state = _aiFsmManualMove_move_wait;
                     }
@@ -1346,7 +1346,7 @@ void Vehicle::aiFsmManualMove( void )
 
         case _aiFsmManualMove_move_wait : {
                 if ( fsm_active_list[ _control_move_map_square ] == false ) {
-                    unmarkUnitLoc( aiFsmManualMove_prev_loc );
+                    UnitBlackBoard::unmarkUnitLoc( aiFsmManualMove_prev_loc );
                     aiFsmManualMove_state = _aiFsmManualMove_check_fsm_transition;
                     end_cycle = true;
                 } else {
@@ -1361,7 +1361,7 @@ void Vehicle::aiFsmManualMove( void )
                 if ( external_ai_event == _external_event_pending_unit_destruct  ) {
                     // External Event: This unit is about to be deleted
                     // Action : Exit fsm gracefully
-                    unmarkUnitLoc( aiFsmManualMove_next_loc );
+                    UnitBlackBoard::unmarkUnitLoc( aiFsmManualMove_next_loc );
                     external_ai_event = _external_event_null;
                     ai_command_state = _ai_command_idle;
                     end_cycle = true;
@@ -1398,7 +1398,7 @@ void Vehicle::fireWeapon( iXY &target_loc )
         fire_opcode.player_index = unit_id.getPlayer();
         fire_opcode.x = target_loc.x;
         fire_opcode.y = target_loc.y;
-        sendOpcodeNG( &fire_opcode );
+        UnitInterface::sendOpcodeNG( &fire_opcode );
     }
 }
 
@@ -1537,7 +1537,7 @@ void Vehicle::setCommandAttackUnit( UMesgAICommand *message )
 
     aiFsmAttackUnit_target_ID = message->target_id;
 
-    target_unit_ptr = getUnit( aiFsmAttackUnit_target_ID );
+    target_unit_ptr = UnitInterface::getUnit( aiFsmAttackUnit_target_ID );
     if ( target_unit_ptr == 0 )
         return;
 
@@ -1617,7 +1617,7 @@ void Vehicle::messageWeaponHit( UnitMessage *message )
         update_state_opcode.player_index = unit_id.getPlayer();
         update_state_opcode.unit_index = unit_id.getIndex();
         update_state_opcode.hit_points = unit_state.hit_points;
-        sendOpcode( &update_state_opcode );
+        UnitInterface::sendOpcode( &update_state_opcode );
 
 
         if ( unit_state.hit_points <= 0 ) {
@@ -1626,12 +1626,12 @@ void Vehicle::messageWeaponHit( UnitMessage *message )
 
             UMesgEndLifeCycleUpdate lifecycle_update;
             lifecycle_update.set( unit_id, weapon_hit->owner_id, unit_state.unit_type );
-            sendMessage( &lifecycle_update );
+            UnitInterface::sendMessage( &lifecycle_update );
 
             // ** Note: Temp
             iXY current_map_loc;
             MapInterface::pointXYtoMapXY( unit_state.location, &current_map_loc );
-            unmarkUnitLoc( current_map_loc );
+            UnitBlackBoard::unmarkUnitLoc( current_map_loc );
         }
 
     }
@@ -1671,7 +1671,7 @@ void Vehicle::messageSelfDestruct( UnitMessage *message )
     // ** Note: Temp
     iXY current_map_loc;
     MapInterface::pointXYtoMapXY( unit_state.location, &current_map_loc );
-    unmarkUnitLoc( current_map_loc );
+    UnitBlackBoard::unmarkUnitLoc( current_map_loc );
 }
 
 
@@ -1824,7 +1824,7 @@ void Vehicle::syncUnit( void )
     sync_opcode.opcode = _UNIT_OPCODE_SYNC_UNIT;
     sync_opcode.unit_index = unit_id.getIndex();
     sync_opcode.player_index = unit_id.getPlayer();
-    sendOpcode( &sync_opcode );
+    UnitInterface::sendOpcode( &sync_opcode );
 }
 
 
