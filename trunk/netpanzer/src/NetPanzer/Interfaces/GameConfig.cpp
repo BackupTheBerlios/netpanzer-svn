@@ -35,7 +35,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       serverConnect("serverconnect", ""),
     
       playername("name", "Player"),
-      lobbyserver("lobbyserver", "irc.freenode.net:6667"),
+      lobbyserver("lobbyserver", "irc.quakenet.org"),
       serverport("serverport",_NETPANZER_DEFAULT_PORT_TCP,0,65535),
       proxyserver("proxyserver",""),
       proxyserveruser("proxyserveruser",""),
@@ -202,6 +202,12 @@ void GameConfig::loadConfig()
     loadSettings(config, "interface", interfacesettings);
     loadSettings(config, "radar", radarsettings);
     loadSettings(config, "server", serversettings);
+
+    // XXX special hack to change defaults
+    if(((const std::string&) lobbyserver) == "irc.freenode.net:6667") {
+        LOGGER.warning("Changing lobbyserver default away from freenode!");
+        lobbyserver = "irc.quakenet.org";
+    }
 }
 
 void GameConfig::loadSettings(XmlConfig& config, const char* name,
