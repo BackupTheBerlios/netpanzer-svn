@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "Util/Exception.hpp"
+#include "Util/Log.hpp"
 #include "LobbyView.hpp"
 #include "Desktop.hpp"
 #include "GameManager.hpp"
@@ -93,6 +94,8 @@ void LobbyView::update(const char *text)
 {
     //int yOffset = background.getPix().y-CHAR_YPIX - 1;
     int yOffset = Surface::getFontHeight() * currentline;
+
+    LOGGER.info("%s %s", "Lobby:", text);
 
     // Clear the area for the text and draw the new text.
     background.fillRect(0, yOffset, background.getPix().x, yOffset + Surface::getFontHeight(), Color::black);
