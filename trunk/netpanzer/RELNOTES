@@ -10,6 +10,7 @@
 * Replaced SDL_net with custom socket wrappers (this allows binding servers to
   addresses and eleminates a dependency)
 * libxml2 replaced with a simple ini parser (eleminates another dependency)
+* gcc 3.4 fixes
 * lots and lots of bugfixes
 
 *** 0.1.5 ***

@@ -85,11 +85,9 @@ rule InstallMan
     }
 }
 
-##  DoDoInstall sourcename : directories [ : installapp ]
+##  DoInstall sourcename : directories [ : installapp ]
 ##    Creates a new installtarget for the given sources. The target(s) are
 ##    returned as function result.
-##    (note: we can't name this rule Install, because Jambase already defines an
-##     action for DoInstall :-/)
 rule DoInstall
 {
     local targets target i dir gdir ;
