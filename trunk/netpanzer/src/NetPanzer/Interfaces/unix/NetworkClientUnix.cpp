@@ -25,7 +25,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkClientUnix.hpp"
 #include "LobbyView.hpp"
 
-// #define NETWORKDEBUG
+//#define NETWORKDEBUG
+
+#ifdef NETWORKDEBUG
+#include "NetPacketDebugger.hpp"
+#endif
 
 NetworkClientUnix::NetworkClientUnix( void )
         : NetworkClient(), clientsocket(0)
@@ -76,12 +80,12 @@ void NetworkClientUnix::sendMessage(NetMessage *message, size_t size, int flags)
     if(!clientsocket)
         return;
 
+    message->setsize(size);
+
 #ifdef NETWORKDEBUG
-    LOG( ( "SEND >> Class: %d ID: %d", message->message_class,
-           message->message_id) );
+    NetPacketDebugger::logMessage("S", message);
 #endif
 
-    message->setsize(size);
     clientsocket->sendMessage((char*) message, size,
                               ! (flags & _network_send_no_guarantee) );
 
@@ -98,8 +102,7 @@ int NetworkClientUnix::getMessage(NetMessage *message)
         memcpy(message, net_packet.data, net_packet.packet_size);
 
 #ifdef NETWORKDEBUG
-        LOG( ( "RECV >> Class: %d ID: %d", message->message_class,
-               message->message_id) );
+        NetPacketDebugger::logMessage("R", message);
 #endif
 
         if ( message->message_class == _net_message_class_client_server ) {
