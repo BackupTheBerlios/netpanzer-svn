@@ -61,6 +61,23 @@ AC_SUBST([VARIANT])
 AC_PROG_CXX
 AC_PROG_INSTALL
 
+# check if our c++ compiler is gcc3.2 or newer
+AC_MSG_CHECKING([whether g++ is new enough])
+AC_LANG_SAVE
+AC_LANG_CPLUSPLUS
+AC_TRY_COMPILE([], [
+#ifndef __GNUC__
+#error no gcc compiler found (__GNUC__ not defined)
+#endif
+#if __GNUC__ < 3 || (__GNUC__ == 3 && __GNUC__ < 2)
+#error gcc compiler too old. Need at least version 3.2.0
+#endif
+], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([no])
+    AC_MSG_ERROR([
+Error: You gcc version is too old. netpanzer needs at least gcc 3.2.0.
+])])
+AC_LANG_RESTORE
+
 #----------------------------------------------------------------------------
 # find libraries
 #----------------------------------------------------------------------------
@@ -115,7 +132,7 @@ NP_FINDLIB([PHYSFS], [physfs >= 1.9],
 
 AM_OPTIONS_WXCONFIG
 AM_PATH_WXCONFIG(2.4.0, [
-        WX_AVAILABLE=yes
+        WX_AVAILABLE="yes"
         AC_SUBST([WX_AVAILABLE])
         ])
 
