@@ -11,7 +11,7 @@ if ! $(JAMCONFIG_READ)
   EXIT "Couldn't find config. Please run 'configure' first." ;
 }
 
-COMPILER_CFLAGS += -Wall ;
+COMPILER_CFLAGS += -Wall -W ;
 COMPILER_CFLAGS_optimize += -O3 -g3 ;
 COMPILER_LFLAGS_optimize += -O3 -g3 ;
 COMPILER_CFLAGS_debug += -DDEBUG -Werror -g3 ;

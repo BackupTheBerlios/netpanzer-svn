@@ -34,6 +34,7 @@ Exception::Exception(const char* msg, ...) throw()
 }
 
 Exception::Exception(const Exception& other) throw()
+    : std::exception(other)
 {
     size_t len = strlen(other.message);
     message = new char[len+1];

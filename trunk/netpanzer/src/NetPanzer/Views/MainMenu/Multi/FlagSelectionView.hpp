@@ -43,7 +43,7 @@ public:
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual int  lMouseUp(const iXY &downPos, const iXY &upPos);
-    virtual void drawBorder(Surface &windowArea)
+    virtual void drawBorder(Surface& )
     {}
 
     void init();

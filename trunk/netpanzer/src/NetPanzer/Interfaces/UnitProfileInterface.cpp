@@ -84,7 +84,7 @@ void find_keyword(char *string, int *command, char *key_list, char max_key_list 
 
 }
 //****************************************************************************************
-void get_line( char *string, long count, FILE *infile )
+void get_line(char* string, long count, FILE *infile )
 {
     int  inchar;
     char tempchar;
@@ -97,6 +97,10 @@ void get_line( char *string, long count, FILE *infile )
         if ( (tempchar != '\n') && (tempchar != '\r') ) {
             string[ string_count ] = tempchar;
             string_count++;
+            if(string_count >= count) {
+                string[string_count-1] = 0;
+                return;
+            }
         }
 
         inchar = fgetc( infile );

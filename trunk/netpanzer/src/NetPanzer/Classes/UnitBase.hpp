@@ -37,19 +37,19 @@ public:
     virtual ~UnitBase()
     { }
 
-    virtual void processMessage( UnitMessage *message )
+    virtual void processMessage(UnitMessage* )
     {  }
 
-    virtual void evalCommandOpcode( UnitOpcodeStruct *opcode )
+    virtual void evalCommandOpcode(UnitOpcodeStruct* )
     { }
 
-    virtual void updateState( void )
+    virtual void updateState()
     { }
 
-    virtual void syncUnit( void )
+    virtual void syncUnit()
     { }
 
-    virtual void offloadGraphics( SpriteSorter &sorter )
+    virtual void offloadGraphics(SpriteSorter& )
     { }
 
     virtual void soundSelected() = 0;

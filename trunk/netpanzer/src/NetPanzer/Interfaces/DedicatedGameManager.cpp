@@ -133,11 +133,11 @@ void DedicatedGameManager::inputLoop()
                 break;
             }
             case ServerCommand::MAPCHANGE:
+                // TODO
                 break;
             case ServerCommand::KICK:
-            {
+                // TODO
                 break;
-            }
         }
         commandqueue.pop();
     }

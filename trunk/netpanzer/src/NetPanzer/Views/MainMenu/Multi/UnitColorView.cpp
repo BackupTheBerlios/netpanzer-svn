@@ -151,7 +151,7 @@ void UnitColorView::rMouseUp(const iXY &downPos, const iXY &upPos)
 }
 
 //---------------------------------------------------------------------------
-void UnitColorView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
+void UnitColorView::rMouseDrag(const iXY &downPos, const iXY&, const iXY &newPos)
 {
     View::lMouseUp(downPos, newPos);
     View::lMouseDown(newPos);

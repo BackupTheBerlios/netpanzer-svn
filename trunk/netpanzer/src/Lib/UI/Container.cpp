@@ -117,6 +117,7 @@ namespace UI{
     }
 
     void Container::mouseEntered(MouseEventParameter param){
+        (void) param;
         //LOG(("%s : Mouse Entered", getName().c_str()));
 //         iXY p = param.getPosition() - area.min;
 //         Component * c = findContainingComponent(p);
@@ -126,6 +127,7 @@ namespace UI{
 
 
     void Container::mouseExited(MouseEventParameter param){
+        (void) param;
         //LOG(("%s : Mouse Exited", getName().c_str()));
     }
     

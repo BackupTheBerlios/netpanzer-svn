@@ -1,5 +1,5 @@
 //
-// $Id: option.hpp,v 1.3 2004/01/17 12:39:57 matzebraun Exp $
+// $Id: option.hpp,v 1.4 2004/06/30 13:16:18 matzebraun Exp $
 //
 //  optionmm::option
 //  Copyright (C) 2002 Christian Holm Christensen <cholm@nbi.dk>
@@ -141,7 +141,7 @@ struct toggle_value
 {
     /** Toggles the value of a type.
     @param x a reference the value to toggle. */
-    inline void operator()(Type& x)
+    inline void operator()(Type& )
     { }
 }
 ;
@@ -246,7 +246,7 @@ template<typename Type, bool arg, bool multi,
 typename Convert, typename Toggle>
 inline Type option<Type,arg,multi,Convert,Toggle>::value(size_t i) const
 {
-    if (!many_values() || i >= _values.size() || i < 0)
+    if (!many_values() || i >= _values.size())
         return _values[0];
     return _values[i];
 }

@@ -132,10 +132,31 @@ ServerQueryThread::queryMasterServer()
         Tokenizer* tokenizer = new Tokenizer(*stream);
 
         // send query
-        *stream << "\\list\\gamename\\netpanzer\\protocol\\" <<
-            _NETPANZER_PROTOCOL_VERSION << "\\final\\" << std::flush;
+        *stream << "\\list\\gamename\\master\\final"
+                << "\\list\\gamename\\netpanzer\\protocol\\"
+                << _NETPANZER_PROTOCOL_VERSION << "\\final\\" << std::flush;
         
         ServerInfo* lastserver = 0;
+        std::string newMasterServers = masterservers.back();
+
+        // parse master server list
+        while(!stream->eof() && running) {
+            std::string token = tokenizer->getNextToken();
+            if(token == "ip") {
+                newMasterServers += ",";
+                newMasterServers += tokenizer->getNextToken();
+            } else if(token == "port") {
+                tokenizer->getNextToken();
+                // ignored
+            } else if(token == "final") {
+                break;
+            } else {
+                std::cerr << "Unknown token '" << token
+                          << "' when querying masterserverlist.\n";
+            }
+        }
+
+        // parse server list
         while(!stream->eof() && running) {
             std::string token = tokenizer->getNextToken();
             if(token == "ip") {
@@ -144,7 +165,7 @@ ServerQueryThread::queryMasterServer()
                 info.address = tokenizer->getNextToken();
                 if(info.address == "")
                     break;
-                
+            
                 // add server into list
                 SDL_mutexP(serverlist->mutex);
                 serverlist->push_back(info);
@@ -164,6 +185,8 @@ ServerQueryThread::queryMasterServer()
 
         state = STATE_QUERYSERVERS;
         std::cout << "Done querying servers.\n";
+
+        gameconfig->masterservers = newMasterServers;
 
         delete tokenizer;
         delete stream;       
@@ -268,6 +291,22 @@ ServerQueryThread::queryServers()
     server->querying = false;
 
     SDLNet_FreePacket(packet);
+}
+
+const char*
+ServerQueryThread::getStateMessage() const
+{
+    switch(state) {
+        case STATE_QUERYMASTERSERVER:
+            return "Querying Masterserver";
+        case STATE_ERROR:
+            return "No response from Masterserver";
+        case STATE_QUERYSERVERS:
+        case STATE_DONE:
+            return "No servers found";
+    }
+
+    return "Querying Masterserver";
 }
 
 } // masterserver

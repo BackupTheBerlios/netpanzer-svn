@@ -98,8 +98,9 @@ void BulletWeapon::updateStatus( void )
 
 }
 
-void BulletWeapon::offloadGraphics( SpriteSorter &sorter )
+void BulletWeapon::offloadGraphics(SpriteSorter& sorter)
 {
+    (void) sorter;
     //shell.setWorldPos( location );
 
     //sorter.addSprite( &shell );

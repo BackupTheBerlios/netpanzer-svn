@@ -46,7 +46,7 @@ void Sound::playPowerUpSound()
     playSound("powerup");
 }
 
-void Sound::playUnitSound(int unit_type)
+void Sound::playUnitSound(int )
 {
     playSound("unitsound");
 }

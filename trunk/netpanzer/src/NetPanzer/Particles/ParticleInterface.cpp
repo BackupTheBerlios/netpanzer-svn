@@ -68,14 +68,17 @@ ParticleInterface::ParticleInterface()
 {}
 
 //--------------------------------------------------------------------------
-void ParticleInterface::addDirtPuffParticle(const iXY &worldPos)
+void ParticleInterface::addDirtPuffParticle(const iXY&)
 {
     //	addPuffParticle(worldPos, DIRT_PUFF, smolderMinScale, smolderRandScale, smolderMinFPS, smolderRandFPS, smolderLayer);
 }
 
 //--------------------------------------------------------------------------
-void ParticleInterface::addDirtPuffSystem(const iXY &worldPos, const iRect &bounds)
+void ParticleInterface::addDirtPuffSystem(const iXY& worldPos,
+        const iRect& bounds)
 {
+    (void) worldPos;
+    (void) bounds;
     //	addPuffSystem(worldPos, bounds, dirtPuffMaxParticleCount, DIRT_PUFF, smolderMinScale, smolderRandScale, smolderMinFPS, smolderRandFPS, smolderLayer);
 }
 
@@ -164,14 +167,26 @@ void ParticleInterface::addSmokePuffParticle(const iXY &worldPos, float minScale
 }
 
 //--------------------------------------------------------------------------
-void ParticleInterface::addSmokePuffParticle(const iXY &worldPos, PUFF_TYPE type)
+void ParticleInterface::addSmokePuffParticle(const iXY& worldPos,
+        PUFF_TYPE type)
 {
+    (void) worldPos;
+    (void) type;
     //	addPuffParticle(worldPos, type, smolderMinScale, smolderRandScale, smolderMinFPS, smolderRandFPS, smolderLayer, smolderWindScale, smolderIncrementScale);
 }
 
 //--------------------------------------------------------------------------
 void ParticleInterface::addPuffParticle(const iXY &worldPos, PUFF_TYPE type, float minScale, float randScale, int minFPS, int randFPS, int layer, float windScale /* = 1.0f */, float incrementScale /* = 0.0f */)
 {
+    (void) worldPos;
+    (void) type;
+    (void) minScale;
+    (void) randScale;
+    (void) minFPS;
+    (void) randFPS;
+    (void) layer;
+    (void) windScale;
+    (void) incrementScale;
     try {
         //	new PuffParticle2D(fXYZ(worldPos.x, 0, worldPos.y), type, minScale, randScale, minFPS, randFPS, layer, layer - 1, windScale);
     } catch(...) {}
@@ -180,6 +195,9 @@ void ParticleInterface::addPuffParticle(const iXY &worldPos, PUFF_TYPE type, flo
 //--------------------------------------------------------------------------
 void ParticleInterface::addSmokePuffSystem(const iXY &worldPos, const iRect &bounds, int maxParticleCount)
 {
+    (void) worldPos;
+    (void) bounds;
+    (void) maxParticleCount;
     //    int particleType = rand() % 2;
     //
     //    if      (particleType == 0)
@@ -195,6 +213,15 @@ void ParticleInterface::addSmokePuffSystem(const iXY &worldPos, const iRect &bou
 //--------------------------------------------------------------------------
 void ParticleInterface::addPuffSystem(const iXY &worldPos, const iRect &bounds, int maxParticleCount, PUFF_TYPE particleType, float minScale, float randScale, int minFPS, int randFPS, int layer)
 {
+    (void) worldPos;
+    (void) bounds;
+    (void) maxParticleCount;
+    (void) particleType;
+    (void) minScale;
+    (void) randScale;
+    (void) minFPS;
+    (void) randFPS;
+    (void) layer;
     //    // Make sure the the bounding box is not negative.
     //    assert(bounds.getSize().x >= 0);
     //    assert(bounds.getSize().y >= 0);
@@ -239,24 +266,28 @@ void ParticleInterface::addPuffSystem(const iXY &worldPos, const iRect &bounds, 
 //--------------------------------------------------------------------------
 void ParticleInterface::addVehicleExplosionFlameParticle(const iXY &worldPos)
 {
+    (void) worldPos;
     //	addExplosionFlameParticle(worldPos, vehicleExplosionFlameMinScale, vehicleExplosionFlameRandScale, vehicleExplosionFlameLayer);
 }
 
 //--------------------------------------------------------------------------
 void ParticleInterface::addVehicleExplosionFlashParticle(const iXY &worldPos)
 {
+    (void) worldPos;
     //	addFlashParticle(worldPos, vehicleExplosionFlashScaleMin, vehicleExplosionFlashScaleRand, vehicleExplosionFlashLifetime, vehicleExplosionFlashLayer);
 }
 
 //--------------------------------------------------------------------------
 void ParticleInterface::addMissleExplosionFlameParticle(const iXY &worldPos)
 {
+    (void) worldPos;
     //	addExplosionFlameParticle(worldPos, missleExplosionFlameMinScale, missleExplosionFlameRandScale, missleExplosionFlameLayer);
 }
 
 //--------------------------------------------------------------------------
 void ParticleInterface::addMissleExplosionFlashParticle(const iXY &worldPos)
 {
+    (void) worldPos;
     //	addFlashParticle(worldPos, missleExplosionFlashScaleMin, missleExplosionFlashScaleRand, missleExplosionFlashLifetime, missleExplosionFlashLayer);
 }
 
@@ -273,6 +304,10 @@ void ParticleInterface::addFlashParticle(const iXY &worldPos, float minScale, fl
 //--------------------------------------------------------------------------
 void ParticleInterface::addExplosionFlameParticle(const iXY &worldPos, const float &minScale, const float &randScale, const int &layer)
 {
+    (void) worldPos;
+    (void) minScale;
+    (void) randScale;
+    (void) layer;
     try {
         //	new ExplosionFireParticle2D(fXYZ(worldPos.x, 0, worldPos.y), minScale, randScale, layer);
     } catch(...) {
@@ -283,12 +318,15 @@ void ParticleInterface::addExplosionFlameParticle(const iXY &worldPos, const flo
 //--------------------------------------------------------------------------
 void ParticleInterface::addMissleBurnParticle(const iXY &worldPos)
 {
+    (void) worldPos;
     //	addFlashParticle(worldPos, missleExplosionFlashScaleMin, missleExplosionFlashScaleRand, missleExplosionFlashLifetime, missleExplosionFlashLayer);
 }
 
 //--------------------------------------------------------------------------
 void ParticleInterface::addExplosionSmokeParticle(const iXY &worldPos, int maxParticleSpeed)
 {
+    (void) worldPos;
+    (void) maxParticleSpeed;
     // Chooses light or dark smoke.
     int particleType = rand() % 2;
 
@@ -312,6 +350,8 @@ void ParticleInterface::addExplosionSmokeParticle(const iXY &worldPos, int maxPa
 //--------------------------------------------------------------------------
 void ParticleInterface::addExplosionDirtSystem(const iXY &worldPos, const iRect &bounds)
 {
+    (void) worldPos;
+    (void) bounds;
     //fXYZ  pos(worldPos.x, 0, worldPos.y);
 
     try {
@@ -322,6 +362,10 @@ void ParticleInterface::addExplosionDirtSystem(const iXY &worldPos, const iRect 
 //--------------------------------------------------------------------------
 void ParticleInterface::addGroundExplosionSystem(const iXY &worldPos, const iRect &bounds, int maxParticleCount, int maxParticleSpeed)
 {
+    (void) worldPos;
+    (void) bounds;
+    (void) maxParticleCount;
+    (void) maxParticleSpeed;
     //fXYZ  pos(worldPos.x, 0, worldPos.y);
 
     try {
@@ -332,6 +376,10 @@ void ParticleInterface::addGroundExplosionSystem(const iXY &worldPos, const iRec
 //--------------------------------------------------------------------------
 void ParticleInterface::addExplosionSmokeSystem(const iXY &worldPos, const iRect &bounds, int maxParticleCount, int maxParticleSpeed)
 {
+    (void) worldPos;
+    (void) bounds;
+    (void) maxParticleCount;
+    (void) maxParticleSpeed;
     // Chooses light or dark smoke.
     int particleNum = rand() % 2;
 
@@ -393,6 +441,8 @@ void ParticleInterface::addSmolderSystem(const iXY &worldPos, const iRect &bound
 //--------------------------------------------------------------------------
 void ParticleInterface::addCloudParticle(const iXY &worldPos, const iXY &worldSize)
 {
+    (void) worldSize;
+
     iXY shit;
     MapInterface::getMapPointSize(&shit);
 
@@ -719,6 +769,7 @@ void ParticleInterface::buildUnitTables()
 //--------------------------------------------------------------------------
 void ParticleInterface::addMissleFlightPuff(const iXY &worldPos, const fXY &direction, float &curWait, float &totalWait, uint8_t unitType)
 {
+    (void) unitType;
     iXY thrustOffset(int(-10.0f * direction.x), int(-10.0f * direction.y));
     fXYZ loc(worldPos.x + thrustOffset.x, 0, worldPos.y + thrustOffset.y);
 
@@ -748,6 +799,9 @@ void ParticleInterface::addMissleFlightPuff(const iXY &worldPos, const fXY &dire
 //--------------------------------------------------------------------------
 void ParticleInterface::addMissleLaunchPuff(const iXY &worldPos, const fXY &direction, uint8_t unitType)
 {
+    (void) worldPos;
+    (void) direction;
+    (void) unitType;
     //	//addMissleFlashParticle(pos);
     //
     //	//missleLaunchPuffWaitGroup += TimerInterface::getTimeSlice();
@@ -831,6 +885,7 @@ void ParticleInterface::addMuzzlePuff(const fXYZ &worldPos, const fXYZ &directio
 //--------------------------------------------------------------------------
 void ParticleInterface::addDirtKick(const iXY &worldPos)
 {
+    (void) worldPos;
     try {
         //new DirtKickParticle2D(fXYZ(worldPos.x, 0, worldPos.y));
     } catch(...) {}

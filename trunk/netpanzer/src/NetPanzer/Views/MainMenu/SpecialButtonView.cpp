@@ -26,7 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // addSpecialButton
 //---------------------------------------------------------------------------
-void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString, const char *fileString, ITEM_FUNC function)
+void SpecialButtonView::addSpecialButton(const iXY &pos, const char *,
+        const char *fileString, ITEM_FUNC function)
 {
     char strBuf[256];
 

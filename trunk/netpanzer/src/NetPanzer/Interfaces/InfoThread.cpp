@@ -186,6 +186,14 @@ void InfoThread::sendRules(std::stringstream& out)
 
 void InfoThread::sendPlayers(std::stringstream& out)
 {
-    // TODO: do it in a threadsafe way!!
+    for(int i = 0; i < PlayerInterface::countPlayers(); ++i) {
+        PlayerState* playerState = PlayerInterface::getPlayerState(i);
+        out << "player_" << i << "\\" << playerState->getName() << "\\"
+            << "objectives_" << i << "\\" 
+                << playerState->getObjectivesHeld() << "\\"
+            << "kills_" << i << "\\" << playerState->getKills() << "\\"
+            << "losses_" << i << "\\" << playerState->getLosses() << "\\";
+    }
+    // TODO add team/alliance info
 }
 

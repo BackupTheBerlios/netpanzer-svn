@@ -51,7 +51,7 @@ void FlashParticle2D::init()
 
 // draw
 //---------------------------------------------------------------------------
-void FlashParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
+void FlashParticle2D::draw(const Surface&, SpriteSorter& sorter)
 {
     if (!isAlive) {
         return;

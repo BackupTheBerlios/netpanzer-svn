@@ -81,7 +81,7 @@ void SnowParticleSystem2D::sim()
 
 // draw
 //---------------------------------------------------------------------------
-void SnowParticleSystem2D::draw(const Surface &dest, SpriteSorter &sorter)
+void SnowParticleSystem2D::draw(const Surface&, SpriteSorter&)
 {
     //for (unsigned num = 0; num < NUM_SNOW_PARTICLES; num++)
     //	snowParticles[num].draw(dest);

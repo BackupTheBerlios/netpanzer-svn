@@ -53,13 +53,11 @@ namespace UI{
             return name;
         }
 
-
-
-        virtual void mouseMoved(MouseEventParameter param){};
-        virtual void mousePressed(MouseEventParameter param){};
-        virtual void mouseReleased(MouseEventParameter param){};
-        virtual void mouseEntered(MouseEventParameter param){};
-        virtual void mouseExited(MouseEventParameter param){};
+        virtual void mouseMoved(MouseEventParameter ){};
+        virtual void mousePressed(MouseEventParameter ){};
+        virtual void mouseReleased(MouseEventParameter ){};
+        virtual void mouseEntered(MouseEventParameter ){};
+        virtual void mouseExited(MouseEventParameter ){};
 
         bool contains(const iXY &point){
             return area.contains(point);

@@ -29,13 +29,13 @@ public:
 
     virtual void playSound(const char* name);
     virtual void playAmbientSound(const char *name, long distance);
-    virtual int playSoundRepeatedly(const char* name)
+    virtual int playSoundRepeatedly(const char* )
     {
         return -1;
     }
-    virtual void stopChannel(int channel)
+    virtual void stopChannel(int )
     {}
-    virtual void setSoundVolume(int volume);
+    virtual void setSoundVolume(int );
 
     virtual void playMusic(const char* directory);
     virtual void stopMusic();

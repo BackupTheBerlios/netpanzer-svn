@@ -329,8 +329,7 @@ void GetSessionHostView::actionPerformed(mMouseEvent me)
 
 // mouseMove
 //---------------------------------------------------------------------------
-void GetSessionHostView::mouseMove(const iXY & prevPos, const iXY &newPos)
+void GetSessionHostView::mouseMove(const iXY&, const iXY &newPos)
 {
     highlightedItem = findItemContaining(newPos);
-
 } // end GetSessionHostView::mouseMove

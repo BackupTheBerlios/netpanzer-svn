@@ -75,6 +75,12 @@ public:
     ConfigXY(const std::string& name, const iXY &value);
     ~ConfigXY();
 
+    void set(int x, int y)
+    {
+        value.x = x;
+        value.y = y;
+    }
+
     operator const iXY& () const
     { return value; }
 

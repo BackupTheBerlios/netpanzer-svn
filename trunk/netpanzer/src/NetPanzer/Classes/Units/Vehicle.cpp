@@ -1665,7 +1665,7 @@ void Vehicle::messageSelectBoxUpdate( UnitMessage *message )
 
 }
 
-void Vehicle::messageSelfDestruct( UnitMessage *message )
+void Vehicle::messageSelfDestruct(UnitMessage* )
 {
     unit_state.lifecycle_state = _UNIT_LIFECYCLE_PENDING_DESTRUCT;
     external_ai_event = _external_event_pending_unit_destruct;
@@ -1794,7 +1794,7 @@ void Vehicle::unitOpcodeFireWeapon( UnitOpcodeStruct *opcode )
     fireWeapon( target_loc );
 }
 
-void Vehicle::unitOpcodeSync( UnitOpcodeStruct *opcode )
+void Vehicle::unitOpcodeSync(UnitOpcodeStruct* )
 {
     in_sync_flag = true;
 }
@@ -1811,7 +1811,7 @@ void Vehicle::unitOpcodeUpdateState( UnitOpcodeStruct *opcode )
     threat_level_under_attack_timer.changePeriod( 30 );
 }
 
-void Vehicle::unitOpcodeDestruct( UnitOpcodeStruct *opcode )
+void Vehicle::unitOpcodeDestruct(UnitOpcodeStruct* )
 {
     unit_state.lifecycle_state = _UNIT_LIFECYCLE_INACTIVE;
 }

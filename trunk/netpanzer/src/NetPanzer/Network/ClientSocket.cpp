@@ -238,7 +238,7 @@ void ClientSocket::read()
     RecvOffset = 0;
 }
 
-void ClientSocket::sendMessage(char* data, size_t size, bool realiable)
+void ClientSocket::sendMessage(char* data, size_t size, bool )
 {
     if(SDLNet_TCP_Send(tcpsocket, data, (int) size) < (int) size) {
         throw Exception("Error while sending to server: %s",

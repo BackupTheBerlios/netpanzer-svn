@@ -54,6 +54,8 @@ void RadarPingParticle2D::init()
 //---------------------------------------------------------------------------
 void RadarPingParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 {
+    (void) dest;
+    (void) sorter;
     // XXX
 #if 0
     assert(radarPingSurface.getDoesExist());

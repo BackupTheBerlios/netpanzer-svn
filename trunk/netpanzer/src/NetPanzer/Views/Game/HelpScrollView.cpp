@@ -149,7 +149,7 @@ void HelpScrollView::doDraw(Surface &viewArea, Surface &clientArea)
 
 // drawHelpText
 //--------------------------------------------------------------------------
-void HelpScrollView::drawHelpText(Surface &dest, const int &x, const int &y)
+void HelpScrollView::drawHelpText(Surface &dest, const int &, const int &)
 {
     PIX color   = Color::white;
 

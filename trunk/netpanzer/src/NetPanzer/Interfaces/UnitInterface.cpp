@@ -875,7 +875,7 @@ void UnitInterface::unitCreateMessage( NetMessage *net_message )
 
 // ******************************************************************
 
-void UnitInterface::unitSyncIntegrityCheckMessage( NetMessage *net_message )
+void UnitInterface::unitSyncIntegrityCheckMessage(NetMessage* )
 {
     sortBucketArray();
 }

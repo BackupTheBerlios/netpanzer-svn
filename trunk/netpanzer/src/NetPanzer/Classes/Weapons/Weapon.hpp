@@ -78,9 +78,9 @@ public:
     virtual ~Weapon()
     { }
 
-    virtual void updateStatus( void );
+    virtual void updateStatus();
 
-    virtual void offloadGraphics( SpriteSorter &sorter )
+    virtual void offloadGraphics(SpriteSorter& )
     { }
 
     static void init();

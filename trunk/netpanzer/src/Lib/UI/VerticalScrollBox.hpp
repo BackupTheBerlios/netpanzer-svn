@@ -83,8 +83,8 @@ namespace UI{
 
         }
 
-        void draw(Painter & painter);
-        void drawFrame(Painter & painter){};
+        void draw(Painter& painter);
+        void drawFrame(Painter& ){};
 
     private:
         VerticalScrollBox * parent;

@@ -53,7 +53,7 @@ void SparkParticle2D::init()
 
 // draw
 //---------------------------------------------------------------------------
-void SparkParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
+void SparkParticle2D::draw(const Surface&, SpriteSorter &sorter)
 {
     if (!isAlive) return;
 

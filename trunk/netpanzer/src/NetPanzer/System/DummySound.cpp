@@ -33,7 +33,7 @@ void DummySound::playSound(const char*)
 void DummySound::playAmbientSound(const char*, long)
 {}
 
-void DummySound::playMusic(const char* directory)
+void DummySound::playMusic(const char* )
 {}
 
 void DummySound::stopMusic()

@@ -368,7 +368,7 @@ void Connection::parseResponse(const std::string& buffer)
     if(command[0] == '4') {
         if(callback)
             callback->ircError(command, params.size() >= 1 ? params[0] : "",
-                    params.size() >= 0 ? params[params.size()-1] : "");
+                    params.size() > 0 ? params[params.size()-1] : "");
         return;
     }
 }

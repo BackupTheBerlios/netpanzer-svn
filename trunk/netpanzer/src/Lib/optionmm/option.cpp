@@ -1,5 +1,5 @@
 //
-// $Id: option.cpp,v 1.2 2003/09/16 20:16:11 fidlej Exp $
+// $Id: option.cpp,v 1.3 2004/06/30 13:16:18 matzebraun Exp $
 //
 //  option::option
 //  Copyright (C) 2002 Christian Holm Christensen <cholm@nbi.dk>
@@ -50,7 +50,7 @@ optionmm::basic_option::basic_option(char s,
 int
 optionmm::basic_option::position(size_t i) const
 {
-    if (i < 0 || i >= _positions.size()) return 0;
+    if (i >= _positions.size()) return 0;
     if (!many_values()) return _positions[0];
     return _positions[i];
 }

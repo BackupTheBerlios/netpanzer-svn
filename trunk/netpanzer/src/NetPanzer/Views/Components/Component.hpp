@@ -138,7 +138,7 @@ public:
     {
         Component::name = name;
     }
-    void setSize(int width, int height)
+    void setSize(int, int)
     {}
     void setSize(const iXY &d)
     {

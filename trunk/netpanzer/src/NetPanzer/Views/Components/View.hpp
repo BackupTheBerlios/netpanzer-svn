@@ -99,7 +99,7 @@ public:
     }
 
 protected:
-    virtual void     actionPerformed(mMouseEvent me)
+    virtual void     actionPerformed(mMouseEvent )
     {}
     Surface*         getViewArea(Surface& dest);
     virtual Surface* getClientArea(Surface& dest);

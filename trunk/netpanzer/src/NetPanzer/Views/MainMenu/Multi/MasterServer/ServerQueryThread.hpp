@@ -34,6 +34,8 @@ public:
     ServerQueryThread(ServerList* serverlist);
     ~ServerQueryThread();
 
+    const char* getStateMessage() const;
+
 private:
     static int threadMain(void* data);
     void run();
@@ -49,7 +51,8 @@ private:
     enum State {
         STATE_QUERYMASTERSERVER,
         STATE_QUERYSERVERS,
-        STATE_ERROR
+        STATE_ERROR,
+        STATE_DONE
     };
     State state;
 

@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // rMouseDrag
 //---------------------------------------------------------------------------
-void RMouseHackView::rMouseDrag(const iXY &downPos, const iXY &prevPos,
+void RMouseHackView::rMouseDrag(const iXY &downPos, const iXY&,
                                 const iXY &newPos)
 {
     lMouseDown(newPos);

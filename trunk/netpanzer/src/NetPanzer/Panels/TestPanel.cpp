@@ -101,7 +101,8 @@ namespace Panels{
         Container::draw(painter);
     }
 
-    void TestPanel::buttonPressed(UI::MouseEventParameter & event, UI::Button * source){
+    void TestPanel::buttonPressed(UI::MouseEventParameter& , UI::Button * source)
+    {
         LOG(("Button Pressed : %s", source->getName().c_str()));
         if(source == b1)
             label1->setTextColor(::Color::red);

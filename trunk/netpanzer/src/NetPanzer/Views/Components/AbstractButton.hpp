@@ -92,7 +92,7 @@ public:
     }
 
     virtual void actionPerformed(const mMouseEvent &me);
-    virtual void draw(Surface &dest)
+    virtual void draw(Surface& )
     {}
 }; // end AbstractButton
 

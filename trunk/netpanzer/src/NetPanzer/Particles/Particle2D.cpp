@@ -238,7 +238,7 @@ void Particle2D::drawAll(const Surface &clientArea, SpriteSorter &sorter)
 //---------------------------------------------------------------------------
 // Purpose: Draws a single particle, no simulation.
 //---------------------------------------------------------------------------
-void Particle2D::draw(const Surface &dest, SpriteSorter &sorter)
+void Particle2D::draw(const Surface&, SpriteSorter&)
 {} // end draw
 
 // Particle2D::sim

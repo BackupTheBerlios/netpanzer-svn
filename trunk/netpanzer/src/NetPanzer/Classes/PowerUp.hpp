@@ -51,13 +51,13 @@ public:
 
     PowerUp(iXY map_loc, int type);
 
-    virtual void updateState( void )
+    virtual void updateState()
     { }
 
-    virtual void offloadGraphics( SpriteSorter &sorter )
+    virtual void offloadGraphics(SpriteSorter& )
     { }
 
-    virtual void onHit( PowerUpHitMesg *message )
+    virtual void onHit(PowerUpHitMesg* )
     { }
     PowerUp *next;
 };

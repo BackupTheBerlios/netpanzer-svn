@@ -304,7 +304,7 @@ void ServerSocket::readClientTCP(SocketClient* client)
  * it handles both TCP and UDP sends--
  */
 void ServerSocket::sendMessage(SocketClient::ID toclient, const char* data,
-        size_t datasize, bool reliable)
+        size_t datasize, bool /*reliable*/)
 {
     SocketClient* client = clientlist->getClientFromID(toclient);
     if(!client || client->wantstodie)

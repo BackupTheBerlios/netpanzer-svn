@@ -113,9 +113,9 @@ BaseGameManager *initialise(int argc, char** argv)
     bool_option debug_option('g', "debug",
             "enable debug output", false);
     commandline.add(&debug_option);
-    option<std::string, true, false> lobby_server_option('\0', "lobby_server",
-        "Use 'none' if you dont want to use the lobby", "");
-    commandline.add(&lobby_server_option);
+    option<std::string, true, false> master_server_option('\0', "master_server",
+        "Use 'none' if you dont want to use the master server", "");
+    commandline.add(&master_server_option);
     option<std::string, true, false> game_config_option(0, "game_config",
         "Which config file should be used (only files inside config directory)",
         "");
@@ -163,7 +163,12 @@ BaseGameManager *initialise(int argc, char** argv)
     { }
 #endif
 
-    LOGGER.openLogFile("log.txt");
+    if(dedicated_option.value())
+        LOGGER.openLogFile("log-server.txt");
+    else if(bot_option.value().size() > 0)
+        LOGGER.openLogFile("log-bot.txt");
+    else
+        LOGGER.openLogFile("log.txt");
 
     // Initialize random number generator
     srand(time(0));
@@ -198,11 +203,13 @@ BaseGameManager *initialise(int argc, char** argv)
             gameconfig->serverConnect = connect_option.value();
             gameconfig->quickConnect = true;
         }                                                               
-        if (lobby_server_option.value().size() > 0) {
-            if (lobby_server_option.value() == "none") {
-                gameconfig->lobbyserver = "";
+        if (master_server_option.value().size() > 0) {
+            if (master_server_option.value() == "none") {
+                gameconfig->masterservers = "";
             }
-            else { gameconfig->lobbyserver = lobby_server_option.value(); }
+            else {
+                gameconfig->masterservers = master_server_option.value();
+            }
         }
         if(port_option.value()) { gameconfig->serverport=port_option.value(); }
 

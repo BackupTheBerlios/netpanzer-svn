@@ -59,14 +59,16 @@ UnitSync*           ServerConnectDaemon::connect_unit_sync = 0;
 #define _SERVER_CONNECT_RETRY_LIMIT   (5)
 
 
-void ServerConnectDaemon::initialize( unsigned long max_players )
+void ServerConnectDaemon::initialize(unsigned long max_players)
 {
+    (void) max_players;
     time_out_timer.changePeriod( _SERVER_CONNECT_TIME_OUT_TIME );
     connect_unit_sync = 0;
 }
 
 void ServerConnectDaemon::startConnectDaemon( unsigned long max_players )
 {
+    (void) max_players;
     time_out_timer.changePeriod( _SERVER_CONNECT_TIME_OUT_TIME );
 }
 

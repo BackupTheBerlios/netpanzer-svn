@@ -50,76 +50,71 @@ public:
         next_first = (first + 1) % size;
 
         if ( next_first == last )
-            return( false );
+            return false;
 
         first = next_first;
         list[ first ] = tile;
 
-        return( true );
+        return true;
     }
 
     inline bool popFirst( unsigned long *tile )
     {
         if ( first == last )
-            return( false );
+            return false;
 
         *tile = list[ first ];
 
-        first = (first - 1) % size;
-        if ( first < 0 )
-            first = size+first;
+        first = (first + size-1) % size;
 
-        return( true );
+        return true;
     }
 
     inline bool pushLast( unsigned long tile )
     {
         size_t next_last;
 
-        next_last = (last - 1) % size;
-
-        if ( next_last < 0 )
-            next_last = size+next_last;
+        next_last = (last + size-1) % size;
 
         if ( first == next_last )
-            return( false );
+            return false;
 
         list[ next_last ] = tile;
         last = next_last;
 
-        return( true );
+        return true;
     }
 
     inline bool popLast( unsigned long *tile )
     {
         if ( first == last )
-            return( false );
+            return false;
 
         last = (last + 1) % size;
 
         *tile = list[ last ];
 
-        return( true );
+        return true;
     }
 
     inline bool take(int count)
     {
         if ( (first - count) < last )
-            return( false );
+            return false;
 
         first = first - count;
 
-        return( true );
+        return true;
     }
 
     inline bool drop(int count)
     {
         if ( (last + count) > first )
-            return( false );
+            return false;
 
         last = last + count;
 
-        return( true );
+        return true;
     }
 
     inline size_t listCount() const

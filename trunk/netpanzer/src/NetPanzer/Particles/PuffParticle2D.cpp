@@ -42,7 +42,7 @@ PuffParticle2D::PuffParticle2D(	const fXYZ &pos,
                                 int         layer,
                                 int         shadowLayer,
                                 float       windScale /* = 1.0f */,
-                                int         isFarAway /* = 0 */) : WindParticle2D(pos, windScale)
+                                int) : WindParticle2D(pos, windScale)
 {
     PuffParticle2D::shadowPos = shadowPos;
     userDefinedShadowPos      = true;
@@ -126,7 +126,7 @@ void PuffParticle2D::create(	PUFF_TYPE particleType,
 //---------------------------------------------------------------------------
 // Purpose: Draws a single puff particle, no simulation.
 //---------------------------------------------------------------------------
-void PuffParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
+void PuffParticle2D::draw(const Surface&, SpriteSorter &sorter)
 {
     if (!packedSurface.nextFrame()) {
         isAlive = false;

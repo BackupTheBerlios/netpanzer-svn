@@ -80,7 +80,7 @@ GameInfoView::GameInfoView() : GameTemplateView()
     resizeClientArea(iXY(140, 2 * 2 + 12 * 5 + 8));
 
     if(gameconfig->gameinfoposition.isDefaultValue()) {
-        // Start it in the top-left corner.
+        // Start it in the top-right corner.
         iXY pos(screen->getPixX() - getSize().x,0);
         gameconfig->gameinfoposition=pos;
     }
@@ -191,5 +191,4 @@ void GameInfoView::notifyMoveTo()
 {
     gameconfig->gameinfoposition=min;
 }
-
 

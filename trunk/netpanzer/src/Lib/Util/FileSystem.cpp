@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Log.hpp"
 #include "FileSystem.hpp"
 
-void FileSystem::initialize(const char* argv0, const char* company,
+void FileSystem::initialize(const char* argv0, const char* ,
                             const char* application)
 {
     if(!PHYSFS_init(argv0))
@@ -538,7 +538,7 @@ void WriteFile::writeLine(const std::string& buffer)
 
 FileReadException::FileReadException(size_t newobjread, size_t newobjrequested,
 	const std::string& msg) throw()
-    : std::range_error(msg), objread(newobjrequested),
+    : std::range_error(msg), objread(newobjread),
 	objrequested(newobjrequested)
 {
 }

@@ -32,7 +32,7 @@ DIGIT_BLT_MODES DigitText::bltMode = NORMAL_TRANS;
 // Purpose: Load all the characters into a surface of 128 frames.  Then the
 //          characters can be accessed by changing the frame appropriately.
 //--------------------------------------------------------------------------
-void DigitText::init(const char *filename)
+void DigitText::init(const char* )
 {
     // Make room for the 128 characters.
     charactersNormal.create(11, 17, 11, 128);

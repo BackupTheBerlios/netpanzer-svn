@@ -178,6 +178,7 @@ void View::drawBorder(Surface &viewArea)
 void View::drawButtons(Surface &viewArea)
 {
     assert(this != 0);
+    (void) viewArea;
 
     //pics.setFrame(CLOSE);
     //pics.blt(viewArea, iXY(getSizeX()-pics.getPix().x-borderSize-2, borderSize+2));
@@ -985,11 +986,12 @@ void View::mouseExit(const iXY &pos)
 //---------------------------------------------------------------------------
 void View::scrollBarMove(const iXY &prevPos, const iXY &newPos)
 {
+    (void) prevPos;
+    (void) newPos;
     //if (scrollBar != 0)
     //{
     //	scrollBar->actionPerformed(newPos);
     //}
-
 } // end scrollBarMove
 
 // addLabel

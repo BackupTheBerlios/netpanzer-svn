@@ -1,3 +1,9 @@
+Next release:
+-rewrite ServerBrowser for new protocol
+-finish serverconsole
+-finish infothread
+-implement TIP OF DAY
+
 *** New Masterserver code
  * Get list of masterservers when connecting
  * Finish InfoThread to output info about players and gamerules

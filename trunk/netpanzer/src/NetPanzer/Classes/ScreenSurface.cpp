@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ScreenSurface* screen = 0;
 
-ScreenSurface::ScreenSurface(SDLVideo* newdraw, int width, int height, int bpp)
+ScreenSurface::ScreenSurface(SDLVideo* newdraw, int width, int height)
         : Surface(), draw(newdraw)
 {
     myMem = false;

@@ -175,7 +175,7 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(	NetMessage *message )
 
 }
 
-void ClientConnectDaemon::netMessageConnectServerDisconnect( NetMessage *message )
+void ClientConnectDaemon::netMessageConnectServerDisconnect(NetMessage* )
 {
     ConsoleInterface::postMessage("Server has terminated the game" );
 }

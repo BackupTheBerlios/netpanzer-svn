@@ -28,10 +28,10 @@ public:
     virtual ~Projectile()
     { }
     
-    virtual void updateStatus( void )
+    virtual void updateStatus()
     { }
 
-    virtual void offloadGraphics( SpriteSorter &sorter )
+    virtual void offloadGraphics(SpriteSorter& )
     { }
 };
 

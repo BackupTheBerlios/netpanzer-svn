@@ -78,7 +78,8 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
     clientArea.fill(Color::black);
 
     if(serverlist.empty()) {
-        clientArea.bltString(iXY(0, 0), "Searching for servers", Color::white);
+        const char* msg = queryThread->getStateMessage();
+        clientArea.bltString(iXY(0, 0), msg, Color::white);
         View::doDraw(windowArea, clientArea);
         return;
     }

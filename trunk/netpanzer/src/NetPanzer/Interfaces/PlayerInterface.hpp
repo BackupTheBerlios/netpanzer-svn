@@ -34,7 +34,7 @@ protected:
 
     static void setKill( unsigned short by_player_index, unsigned short on_player_index, unsigned short unit_type);
 
-    static void resetAllianceMatrix( void );
+    static void resetAllianceMatrix();
 
     static unsigned short local_player_index;
 
@@ -42,9 +42,9 @@ public:
 
     static void initialize( unsigned short maxPlayers, unsigned char max_spawn_units );
 
-    static void reset( void );
+    static void reset();
 
-    static void cleanUp( void );
+    static void cleanUp();
 
     static void setKill( const PlayerID &by_player, const PlayerID &on_player, unsigned short unit_type );
 
@@ -60,8 +60,8 @@ public:
 
     static bool isAllied( unsigned short player, unsigned short with_player );
 
-    static void lockPlayerStats( void );
-    static void unlockPlayerStats( void );
+    static void lockPlayerStats();
+    static void unlockPlayerStats();
 
     static unsigned short getMaxPlayers( )
     {
@@ -80,7 +80,7 @@ public:
         return( &player_lists[ player_index ] );
     }
 
-    static PlayerState * getLocalPlayerState( void )
+    static PlayerState * getLocalPlayerState()
     {
         if( local_player_index == 0xFFFF ) {
             return( &local_player_state);
@@ -89,7 +89,7 @@ public:
         return( &player_lists[ local_player_index ] );
     }
 
-    static PlayerID getLocalPlayerID( void )
+    static PlayerID getLocalPlayerID()
     {
         if( local_player_index == 0xFFFF ) {
             return( local_player_state.getPlayerID() );
@@ -98,7 +98,7 @@ public:
         return( player_lists[ local_player_index ].getPlayerID() );
     }
 
-    static unsigned short getLocalPlayerIndex( void )
+    static unsigned short getLocalPlayerIndex()
     {
         return( local_player_index );
     }
@@ -121,14 +121,14 @@ public:
         return( player_lists[ player_index ].getStatus() );
     }
 
-    static void resetPlayerStats( void );
+    static void resetPlayerStats();
 
-    static int getActivePlayerCount( void );
+    static int getActivePlayerCount();
 
-    static PlayerState * allocateLoopBackPlayer( void );
+    static PlayerState * allocateLoopBackPlayer();
 
-    static PlayerState * allocateNewPlayer( void );
-    static int countPlayers( void );
+    static PlayerState * allocateNewPlayer();
+    static int countPlayers();
 
     static void spawnPlayer( unsigned short player_index, const iXY &location );
     static void spawnPlayer( const PlayerID &player, const iXY &location );

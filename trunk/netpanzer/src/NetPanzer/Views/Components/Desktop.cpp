@@ -642,10 +642,9 @@ void DesktopView::doDraw(Surface &viewArea, Surface &clientArea)
 
 // rMouseDrag
 //---------------------------------------------------------------------------
-void DesktopView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
+void DesktopView::rMouseDrag(const iXY&, const iXY &prevPos, const iXY &newPos)
 {
     moveTo(min + newPos - prevPos);
-
 } // end DesktopView::rMouseDrag
 
 // doActivate
@@ -653,5 +652,4 @@ void DesktopView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &
 void DesktopView::doActivate()
 {
     Desktop::setActiveView(this);
-
 } // end DesktopView::doActivate

@@ -53,7 +53,7 @@ public:
     ~MapSelectionView();
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    virtual void drawBorder(Surface &windowArea)
+    virtual void drawBorder(Surface& )
     {}
 
     static std::vector<MapInfo*> mapList;

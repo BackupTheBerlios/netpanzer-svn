@@ -76,15 +76,13 @@ public:
 
     void getSyncData( SyncObjective &objective_sync_mesg );
 
-    virtual void processMessage( ObjectiveMessage *message );
+    virtual void processMessage(ObjectiveMessage *message);
 
-    virtual void updateStatus( void )
+    virtual void updateStatus()
     { }
 
-    virtual void offloadGraphics( SpriteSorter &sorter )
+    virtual void offloadGraphics(SpriteSorter& )
     { }
-
-}
-;
+};
 
 #endif // ** _OBJECTIVE_HPP

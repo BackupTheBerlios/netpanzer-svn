@@ -38,7 +38,7 @@ GameTemplateView::GameTemplateView() : View()
 
 // rMouseDrag
 //---------------------------------------------------------------------------
-void GameTemplateView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
+void GameTemplateView::rMouseDrag(const iXY&, const iXY &prevPos, const iXY &newPos)
 {
     // Check for view blending mode change.
     if (KeyboardInterface::getKeyPressed(SDLK_1)) {

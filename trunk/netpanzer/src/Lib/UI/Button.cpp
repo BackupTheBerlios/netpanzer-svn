@@ -30,7 +30,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 namespace UI
 {
-    Button::Button(const char * backgroundFileNameUp, const char * backgroundFileNameDown, const std::string& text,iRect area, FontManager * fm)
+    Button::Button(const char* backgroundFileNameUp,
+            const char* backgroundFileNameDown, const std::string& text,
+            iRect area, FontManager* fm)
         : Component(area)
     {
         initialize(backgroundFileNameUp, backgroundFileNameDown);
@@ -38,13 +40,14 @@ namespace UI
         setName(text);
     }
 
-    Button::Button(const char * backgroundFileNameUp, const char * backgroundFileNameDown, iRect area, FontManager * fm)
+    Button::Button(const char* backgroundFileNameUp,
+            const char* backgroundFileNameDown, iRect area, FontManager * fm)
         : Component(area)
     {
-        initialize(backgroundFileNameUp, backgroundFileNameUp);
+        (void) fm;
+        initialize(backgroundFileNameUp, backgroundFileNameDown);
         textLabel = 0;
         setName("unknown");
-
     }
 
     Button::~Button(void){
@@ -97,12 +100,14 @@ namespace UI
             textLabel->draw(painter);
     }
 
-    void Button::mouseEntered(MouseEventParameter param){
+    void Button::mouseEntered(MouseEventParameter param) {
+        (void) param;
         // LOG(("%s : Mouse Entered", getName().c_str()));
     }
 
 
-    void Button::mouseExited(MouseEventParameter param){
+    void Button::mouseExited(MouseEventParameter param) {
+        (void) param;
         //LOG(("%s : Mouse Exited", getName().c_str()));
         clickState = false;
     }

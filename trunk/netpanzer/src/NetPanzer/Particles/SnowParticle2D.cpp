@@ -103,6 +103,8 @@ void SnowParticle2D::sim()
 //---------------------------------------------------------------------------
 void SnowParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 {
+    (void) dest;
+    (void) sorter;
     //if      (size == 1) dest.putPixel(iXY(pos.x, pos.z), color);
     //else if (size == 2) dest.fillRect(iRect(pos.x, pos.z, pos.x+1, pos.z+1), color);
     //else if (size == 3) dest.fillRect(iRect(pos.x, pos.z, pos.x+2, pos.z+2), color);

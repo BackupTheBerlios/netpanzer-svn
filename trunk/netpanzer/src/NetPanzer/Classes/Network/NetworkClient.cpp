@@ -49,7 +49,7 @@ NetworkClient::~NetworkClient( void )
 {
 }
 
-void NetworkClient::netMessageClientKeepAlive( NetMessage *message )
+void NetworkClient::netMessageClientKeepAlive(NetMessage* )
 {
     LOG ( ("keep alive.") );
     keep_alive_timer.reset();
@@ -66,7 +66,7 @@ void NetworkClient::netMessageClientSetKeepAliveState( NetMessage *message )
     LOG( ("Set Keepalive from server: %d", keep_alive_state) );
 }
 
-void NetworkClient::netMessageClientPingAck( NetMessage *message )
+void NetworkClient::netMessageClientPingAck(NetMessage* )
 {
     LOG( ("ping -> pong.") );
     NetworkState::ping_time = (now() - NetworkState::ping_time_stamp) * 1000;

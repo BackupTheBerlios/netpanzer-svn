@@ -36,7 +36,6 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       serverConnect("serverconnect", ""),
     
       playername("name", "Player"),
-      lobbyserver("lobbyserver", "irc.quakenet.org"),
       masterservers("masterservers", ""),
       
       serverport("serverport",_NETPANZER_DEFAULT_PORT_TCP,0,65535),
@@ -111,7 +110,6 @@ GameConfig::GameConfig(const std::string& newconfigfile)
     default_player << "Player" << (rand()%1000);
     playername=default_player.str();
     playersettings.push_back(&playername);
-    playersettings.push_back(&lobbyserver);
     playersettings.push_back(&masterservers);
     playersettings.push_back(&proxyserver);
     playersettings.push_back(&proxyserveruser);
@@ -208,12 +206,6 @@ void GameConfig::loadConfig()
     loadSettings(inifile.getSection("interface"), interfacesettings);
     loadSettings(inifile.getSection("radar"), radarsettings);
     loadSettings(inifile.getSection("server"), serversettings);
-
-    // XXX special hack to change defaults
-    if(((const std::string&) lobbyserver) == "irc.freenode.net:6667") {
-        LOGGER.warning("Changing lobbyserver default away from freenode!");
-        lobbyserver = "irc.quakenet.org";
-    }
 }
 
 void GameConfig::loadSettings(const INI::Section& section,
@@ -231,8 +223,8 @@ void GameConfig::loadSettings(const INI::Section& section,
 
                 ConfigXY* confxy = dynamic_cast<ConfigXY*> (var);
                 if(confxy) {
-                    iXY(*confxy).x = section.getIntValue(confxy->getName() + "_x");
-                    iXY(*confxy).y = section.getIntValue(confxy->getName() + "_y");
+                    confxy->set(section.getIntValue(confxy->getName() + "_x"),
+                            section.getIntValue(confxy->getName() + "_y"));
                 }
 
                 ConfigBool* confbool = dynamic_cast<ConfigBool*> (var);

@@ -77,10 +77,9 @@ void bNext()
         Desktop::setVisibility("PlayerNameView", true);
 
         Desktop::setVisibility("IPAddressView", true);
-        if((const std::string&) gameconfig->lobbyserver != "") {
-            Desktop::setVisibility("ServerListView", true);
-            serverlistview->refresh();
-        }
+        Desktop::setVisibility("ServerListView", true);
+        serverlistview->refresh();
+
         //Desktop::setVisibility("JoinView", true);
         //Desktop::setVisibility("GetSessionHostView", true);
         //Desktop::setVisibility("UnitSelectionView", true);

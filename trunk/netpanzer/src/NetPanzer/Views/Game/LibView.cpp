@@ -270,7 +270,7 @@ void LibView::drawParticleInfo(Surface &dest, iXY pos)
 
 // rMouseDrag
 //---------------------------------------------------------------------------
-void LibView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
+void LibView::rMouseDrag(const iXY&, const iXY &prevPos, const iXY &newPos)
 {
     moveTo(min + newPos - prevPos);
     checkArea(screen->getPix());

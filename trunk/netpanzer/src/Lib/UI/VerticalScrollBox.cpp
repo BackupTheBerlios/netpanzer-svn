@@ -57,7 +57,7 @@ namespace UI{
         painter.popTransform();
     }
 
-    void VerticalScrollBox::buttonPressed(MouseEventParameter & event, Button * source){
+    void VerticalScrollBox::buttonPressed(MouseEventParameter& , Button * source){
         if(source == scrollUp && viewPort->getVerticalOffset() < 0)
             viewPort->addVerticalOffset(5);
         if(source == scrollDown &&  viewPort->getArea().getSizeY() - viewPort->getVerticalOffset() < viewPort->getVerticalSize())

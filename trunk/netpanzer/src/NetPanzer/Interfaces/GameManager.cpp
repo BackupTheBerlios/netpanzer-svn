@@ -193,9 +193,9 @@ void GameManager::setVideoMode()
 
     Screen->setVideoMode(mode_res.x, mode_res.y, 8, flags);
 
-    WorldViewInterface::setCameraSize( mode_res.x, mode_res.y );
+    WorldViewInterface::setCameraSize( mode_res.x, mode_res.y);
     delete screen;
-    screen = new ScreenSurface(Screen, mode_res.x, mode_res.y, 8);
+    screen = new ScreenSurface(Screen, mode_res.x, mode_res.y);
     gameView.setSize(mode_res);
 
     Desktop::checkResolution(old_res, mode_res);
@@ -438,7 +438,7 @@ void GameManager::netMessageConnectAlert( NetMessage *message )
 
 // ******************************************************************
 
-void GameManager::netMessageResetGameLogic( NetMessage *message )
+void GameManager::netMessageResetGameLogic(NetMessage* )
 {
     resetGameLogic();
 }
@@ -485,7 +485,7 @@ void GameManager::netMessagePingRequest( NetMessage *message )
 
 // ******************************************************************
 
-void GameManager::netMessagePingAcknowledge( NetMessage *message )
+void GameManager::netMessagePingAcknowledge(NetMessage* )
 {
     NetworkState::ping_time = (now() - NetworkState::ping_time_stamp) * 1000;
 }

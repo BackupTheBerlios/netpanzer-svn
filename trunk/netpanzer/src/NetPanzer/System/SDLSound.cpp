@@ -203,7 +203,7 @@ std::string SDLSound::getIdName(const char *filename)
     return name.substr(0, pos);
 }
 
-void SDLSound::setSoundVolume(int volume)
+void SDLSound::setSoundVolume(int )
 {
     // TODO...
 }

@@ -366,7 +366,7 @@ void GameControlRulesDaemon::netMessageCycleMap( NetMessage *message )
     map_cycle_fsm_client_state = _map_cycle_client_start_map_load;
 }
 
-void GameControlRulesDaemon::netMessageCycleRespawnAck( NetMessage *message )
+void GameControlRulesDaemon::netMessageCycleRespawnAck(NetMessage* )
 {
     map_cycle_fsm_client_respawn_ack_flag = true;
 }

@@ -54,6 +54,8 @@ void GroundExplosionParticle2D::init()
 //---------------------------------------------------------------------------
 void GroundExplosionParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 {
+    (void) dest;
+    (void) sorter;
     // Calculate some projection to get the 3D angle effect.  The greater the particleYScale,
     // the greater the particle bend in the air.
     //float zPos = pos.z;// - pos.y * particleYScale;

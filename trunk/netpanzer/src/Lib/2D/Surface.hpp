@@ -467,7 +467,7 @@ public:
     void bltStringCenteredAtPoint(const iXY &pos, const char *string, const PIX &color);
     void bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color);
 
-    void loadBMP(const char *fileName, bool needAlloc = true, void *returnPalette = 0);
+    void loadBMP(const char *fileName, bool needAlloc = true);
 
     void mapFromPalette(const std::string& oldPalette);
 

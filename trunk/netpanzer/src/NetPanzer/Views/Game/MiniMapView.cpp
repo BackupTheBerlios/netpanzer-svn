@@ -261,9 +261,8 @@ void MiniMapView::lMouseDown(const iXY &pos)
 
 // rMouseDown
 //--------------------------------------------------------------------------
-void MiniMapView::rMouseDown(const iXY &pos)
+void MiniMapView::rMouseDown(const iXY&)
 {
-
 } // end MiniMapView::rMouseDown
 
 void MiniMapView::setMapDrawType(MAP_DRAW_TYPES type)
@@ -272,7 +271,7 @@ void MiniMapView::setMapDrawType(MAP_DRAW_TYPES type)
 }
 
 //--------------------------------------------------------------------------
-void MiniMapView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
+void MiniMapView::rMouseDrag(const iXY&, const iXY &prevPos, const iXY &newPos)
 {
     // Let the map go up to the min screen dimension.
     //maxMapSize = std::min(SCREEN_XPIX, SCREEN_YPIX);
@@ -446,7 +445,7 @@ void MiniMapView::mouseMove(const iXY &prevPos, const iXY &newPos)
 
 // lMouseDrag
 //--------------------------------------------------------------------------
-void MiniMapView::lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
+void MiniMapView::lMouseDrag(const iXY&, const iXY&, const iXY &newPos)
 {
     lMouseDown(newPos);
 

@@ -1964,8 +1964,7 @@ int Surface::nextFrame()
     return 1;
 }
 
-void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
-                      void *returnPalette /* = 0 */)
+void Surface::loadBMP(const char *fileName, bool needAlloc)
 {
     assert(this != 0);
 
