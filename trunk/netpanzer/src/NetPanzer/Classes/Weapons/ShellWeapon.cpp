@@ -16,11 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
 #include "ShellWeapon.hpp"
 #include "UnitMessageTypes.hpp"
 #include "UnitInterface.hpp"
 #include "NetworkState.hpp"
-#include "StaticsInterface.hpp"
 #include "WorldViewInterface.hpp"
 #include "DDHardSurface.hpp"
 #include "Sound.hpp"
