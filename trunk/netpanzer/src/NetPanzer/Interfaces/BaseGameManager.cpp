@@ -226,16 +226,12 @@ void BaseGameManager::mainLoop()
 BaseGameManager::sleeping()
 {
     static Uint32 nextTime = 0;
-    static Uint32 lastTime = SDL_GetTicks();
-    Uint32 now;
 
-    now = SDL_GetTicks();
+    Uint32 now = SDL_GetTicks();
     if (now < nextTime) {
         SDL_Delay(nextTime - now);
     }
     nextTime += TIMEINTERVAL;
-
-    lastTime = SDL_GetTicks();
 
     // to protect from time slide
     //nextTime = SDL_GetTicks() + TIMEINTERVAL;
