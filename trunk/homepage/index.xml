@@ -1,70 +1,109 @@
 <?xml version="1.0"?>
-<page title="netPanzer - An Online Multiplayer Tactical Warfare Game">
-  <section title="What is netPanzer?">
-    <p>
-      netPanzer is an online multiplayer tactical warfare game designed for
-      FAST ACTION combat. Gameplay concentrates on the core -- no resource
-      management is needed. The game is based on quick tactical action and unit
-      management in real-time. Battles progress quickly and constantly as
-      destroyed players respawn with a set of new units. Players can join or
-      leave multiplayer games at any time.
-    </p>
+<page title="netPanzer - News">
+  <section title="News">
+    <news>
+      <item date="10. Mar 2004">
+        <h3><font color="red">Lobby Problems</font></h3>
+        <p>The freenode network has some security scripts running that try to
+        identify spam and clone bots. Unfortunately netpanzers server exactly
+        match criterias of these scripts. To not cause more trouble on our
+        favourite irc server we decided to move the lobby over to
+        irc.quakenet.org (Note that the development channel #netpanzer will
+        of course stay at freenode)</p>
+        <p>You <font color="red">have to do 1 of the following things</font>:</p>
+        <ul>
+            <li>Invoke the following command:<br/>
+                <tt>netpanzer --lobby_server=irc.quakenet.org</tt>
+            </li>
+            <li>Edit the <tt>netpanzer.xml</tt> file (you can typically find it
+                    in $HOME/.netpanzer/config) and replace
+                "irc.freenode.net:6667" with "irc.quakenet.org".
+            </li>
+        </ul>
+        <p>Sorry for these inconveniences. Next release will have correct
+        defaults.</p>
+      </item>
+      <item date="2. Mar 2004">
+        <p>netPanzer 0.1.5 is available now:</p>
+	<ul>
+	    <li>emergency bugfix: mapcycling was actually broken</li>
+	    <li>fixed bug where pressing "m" while chatting would
+		toggle minimap display</li>
+	    <li>Added an icon in .xpm format</li>
+	</ul>
+      </item>
+      <item date="22. Feb 2004">
+	<p>netPanzer 0.1.4 is available now:</p>
+	<ul>
+	    <li>It's possible to configure the mapcycle in the server</li>
+	    <li>each player has a unique color on the radar (thanks
+		    viras)</li>
+	    <li>small fixes to make netpanzer run on win32</li>
+	    <li>added a quickconnect option to the commandline. This is
+	    usefull for external server browsers like <a
+	    href="http://www.suselinuxsupport.de/index.php?location=download">
+	    KNetpanzerBrowser</a>
+	    </li>
+	    <li>More smaller bugfixes and improvements</li>
+	</ul>
+      </item>
+      <item date="05. Jan 2004">
+        <p><a
+        href="https://developer.berlios.de/project/showfiles.php?group_id=1250">
+        netPanzer 0.1.3</a> is available now:</p>
 
-    <p>
-      Official netPanzer development got basically halted in 1999,
-      since 2002 netPanzer is available under the <a
-      href="http://www.gnu.org/copyleft/gpl.html">GNU GPL</a> and thus
-      Free Software and a GNU/Linux port of netPanzer is ready.
-    </p>
+        <ul>
+            <li>fix bug where the lobby view would always display 0/x players</li>
+            <li>some robustness and usability fixes for the irc lobby code</li>
+            <li>new slovakian flag</li>
+            <li>lots of code cleanups and rewrites (and still lots more to do)</li>
+            <li>unit spawnpoint can be choosen at the outposts now</li>
+            <li>some small UI improvements</li>
+            <li>reorganised build environment</li>
+            <li>network packets are smaller and more robust now</li>
+        </ul>
+
+      </item>
+      <item date="19. Dec 2003">
+        We moved over to <a href="http://developer.berlios.de">berlios.de</a>.
+        You can find the new homepage at <a href="http://netpanzer.berlios.de">
+        http://netpanzer.berlios.de</a>.<br/>
+        Along with the new site comes a <a
+        href="http://developer.berlios.de/survey/survey.php?group_id=1250&amp;survey_id=31">survey</a>.
+        Please take the little time to give us some feedback.
+      </item>
+      <item date="11. Nov 2003">
+
+        <p><a
+        href="http://developer.berlios.de/project/showfiles.php?group_id=1250">netPanzer
+        0.1.2</a> is available now:</p>
+        
+        <ul>
+          <li>A new lobby view and server browser has been added</li>
+          <li>a man page has been added</li>
+          <li>The deciated server reads it's setting from a configuration file now</li>
+          <li>The bot player can now be started as a separate process.</li>
+          <li>polish and swedish flag has been added (we happily accept more flags)</li>
+          <li>several smaller bugfixes and improvements</li>
+        </ul>
+      </item>
+
+      <item date="17. Oct 2003">
+        People interested in a little multiplayer netPanzer session
+        are welcome to join <tt>#netpanzer</tt> at
+        <tt>irc.freenode.net</tt>, there you can find other players
+        and developers.
+      </item>
+
+      <item date="14. Oct 2003">
+        Release of netPanzer 0.1.1, fixes a number of issues that made
+        0.1 not so much useable (checkboxes not clickable, crashes
+        after outpost occupation)
+      </item>
+
+      <item date="10. Oct 2003">
+        Release of netPanzer 0.1, it runs and compiles under GNU/Linux
+      </item>
+    </news>
   </section>
-
-  <subsection title="Features">
-    <ul>
-      <li>
-        netPanzer is a game designed to fit into the real-time
-        tactical game genre. It's art is based on realistic
-        environments and vehicles. Battle will heat up as players
-        challenge for territory, and without the need for resource
-        management battles will emerge swiftly.
-      </li>
-    </ul>
-
-    <subsubsection title="Network:">
-      <ul>
-        <li>Features a scalable client/server network architecture.</li>
-      </ul>
-
-      <ul>
-        <li>Support from 1 to 100 players over the Internet or on LAN systems
-          depending on the network connection type and game configuration (single/multi dedicated
-          server vs. server-player, max number of units per player and so forth).
-        </li>
-      </ul>
-      <ul>
-        <li>Players will be able to join or leave multiplayer games at any time.</li>
-      </ul>
-    </subsubsection>
-
-    <subsubsection title="Gameplay:">
-      <ul>
-        <li>Real-time action without the need to gather resources. </li>
-        <li>Manually aim your units fire while they are moving to another
-          location.</li>
-        <li>Maps range in size from 10x13 to 64x85 640x480 size screens.</li>
-        <li>Three modes of multiplayer combat; objective capture, frag limit, and
-          time limit.</li>
-        <li>Change screen resolutions on the fly to 640x480, 800x600 or 1024x768</li>
-        <li>A customizable interface layout.</li>
-        <li>MiniMap for quick viewing of the world.</li>
-      </ul>
-    </subsubsection>
-
-    <subsubsection title="Special Effects:">
-      <ul>
-        <li>Particle system explosions, muzzle shots, missile trails, etc.</li>
-        <li>Dynamic, real-time lighting.</li>
-        <li>Translucent particles and shadows.</li>
-      </ul>
-    </subsubsection>
-  </subsection>
 </page>

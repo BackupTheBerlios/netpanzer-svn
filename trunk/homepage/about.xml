@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<page title="netPanzer - An Online Multiplayer Tactical Warfare Game">
+  <section title="What is netPanzer?">
+    <p>
+      netPanzer is an online multiplayer tactical warfare game designed for
+      FAST ACTION combat. Gameplay concentrates on the core -- no resource
+      management is needed. The game is based on quick tactical action and unit
+      management in real-time. Battles progress quickly and constantly as
+      destroyed players respawn with a set of new units. Players can join or
+      leave multiplayer games at any time.
+    </p>
+
+    <p>
+      Official netPanzer development got basically halted in 1999,
+      since 2002 netPanzer is available under the <a
+      href="http://www.gnu.org/copyleft/gpl.html">GNU GPL</a> and thus
+      Free Software and a GNU/Linux port of netPanzer is ready.
+    </p>
+  </section>
+
+  <subsection title="Features">
+    <ul>
+      <li>
+        netPanzer is a game designed to fit into the real-time
+        tactical game genre. It's art is based on realistic
+        environments and vehicles. Battle will heat up as players
+        challenge for territory, and without the need for resource
+        management battles will emerge swiftly.
+      </li>
+    </ul>
+
+    <subsubsection title="Network:">
+      <ul>
+        <li>Features a scalable client/server network architecture.</li>
+      </ul>
+
+      <ul>
+        <li>Support from 1 to 100 players over the Internet or on LAN systems
+          depending on the network connection type and game configuration (single/multi dedicated
+          server vs. server-player, max number of units per player and so forth).
+        </li>
+      </ul>
+      <ul>
+        <li>Players will be able to join or leave multiplayer games at any time.</li>
+      </ul>
+    </subsubsection>
+
+    <subsubsection title="Gameplay:">
+      <ul>
+        <li>Real-time action without the need to gather resources. </li>
+        <li>Manually aim your units fire while they are moving to another
+          location.</li>
+        <li>Maps range in size from 10x13 to 64x85 640x480 size screens.</li>
+        <li>Three modes of multiplayer combat; objective capture, frag limit, and
+          time limit.</li>
+        <li>Change screen resolutions on the fly to 640x480, 800x600 or 1024x768</li>
+        <li>A customizable interface layout.</li>
+        <li>MiniMap for quick viewing of the world.</li>
+      </ul>
+    </subsubsection>
+
+    <subsubsection title="Special Effects:">
+      <ul>
+        <li>Particle system explosions, muzzle shots, missile trails, etc.</li>
+        <li>Dynamic, real-time lighting.</li>
+        <li>Translucent particles and shadows.</li>
+      </ul>
+    </subsubsection>
+  </subsection>
+</page>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <menu>
-  <item file="news.html">News</item>
-  <item file="index.html">About</item>
+  <item file="index.html">News</item>
+  <item file="about.html">About</item>
   <item file="screenshots.html">Screenshot</item>
   <item file="units.html">Units</item>
   <item file="faq.html">FAQ</item>
