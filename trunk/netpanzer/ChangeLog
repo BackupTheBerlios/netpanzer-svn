@@ -1,5 +1,6 @@
 18-Jan-2004 by Wolfgang Koller
 -Changed the ServerBrowser so that it now really supports the query-timeout
+-It's now possible to scroll with the arrow key of your keyboard
 
 17-Jan-2004 by Wolfgang Koller
 -Each player now has a color (defined in PlayerState)

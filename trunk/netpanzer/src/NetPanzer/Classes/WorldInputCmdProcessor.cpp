@@ -289,16 +289,30 @@ void WorldInputCmdProcessor::evaluateKeyCommands( void )
         jumpLastAttackedUnit();
     }
 
+    //If any of the four arrow-keys is pressed, scroll (not in a own function, since it is not necessary)
+    if( KeyboardInterface::getKeyState( SDLK_UP ) == true ) {
+    	WorldViewInterface::scroll_up( 15 );
+    }
+    else if( KeyboardInterface::getKeyState( SDLK_DOWN ) == true ) {
+    	WorldViewInterface::scroll_down( 15 );
+    }
+    if( KeyboardInterface::getKeyState( SDLK_RIGHT ) == true ) {
+    	WorldViewInterface::scroll_right( 15 );
+    }
+    else if( KeyboardInterface::getKeyState( SDLK_LEFT ) == true ) {
+    	WorldViewInterface::scroll_left( 15 );
+    }
 }
 
 void WorldInputCmdProcessor::jumpLastAttackedUnit()
 {
-    UnitList* unitlist 
+    UnitList* unitlist
         = UnitInterface::getUnitList(PlayerInterface::getLocalPlayerIndex());
     for(UnitList::iterator i = unitlist->begin(); i != unitlist->end(); ++i) {
         UnitState* unit_state = & (i->unit_state);
         if ( unit_state->threat_level == _threat_level_under_attack ) {
             WorldViewInterface::setCameraPosition( unit_state->location );
+	    break;
         }
     }
 }
