@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdint.h>
 
 #include "Types/iXY.hpp"
+#include "Util/Endian.hpp"
 
 class Angle
 {
@@ -175,18 +176,18 @@ public:
     {
         NetworkAngleInt netangle;
 
-        netangle.angle_int = angle_int;
-        netangle.grain = grain;
-        netangle.angle_limit = angle_limit;
+        netangle.angle_int = htol32(angle_int);
+        netangle.grain = htol32(grain);
+        netangle.angle_limit = htol32(angle_limit);
 
         return netangle;
     }
 
     void setFromNetworkAngleInt(const NetworkAngleInt& netangle)
     {
-        angle_int = netangle.angle_int;
-        grain = netangle.grain;
-        angle_limit = netangle.angle_limit;
+        angle_int = ltoh32(netangle.angle_int);
+        grain = ltoh32(netangle.grain);
+        angle_limit = ltoh32(netangle.angle_limit);
     }
 };
 
