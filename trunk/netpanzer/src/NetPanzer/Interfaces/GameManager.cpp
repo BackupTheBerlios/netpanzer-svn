@@ -318,12 +318,10 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
 
 void GameManager::spawnPlayer( const PlayerID &player )
 {
-    iXY spawn_point;
-
     sound->stopTankIdle();
 
     // ** Get a new spawn point and spawn the player **
-    MapInterface::getFreeSpawnPoint( &spawn_point );
+    iXY spawn_point = MapInterface::getFreeSpawnPoint();
     PlayerInterface::spawnPlayer( player, spawn_point );
 
     //** Change the location of the view camera to the spawn point **

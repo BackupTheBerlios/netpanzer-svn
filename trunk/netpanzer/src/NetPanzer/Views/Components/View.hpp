@@ -43,8 +43,7 @@ public:
     uint8_t  foreColor;
     uint8_t  backColor;
     bool  isShadowed;
-}
-; // end cLabel
+}; // end cLabel
 
 enum DEFAULT_VIEW_BUTTON
 {
@@ -81,19 +80,19 @@ public:
         MAX_WINDOW_CLIENT_YSIZE = 458
     };
 
-    inline int getPressedButton()
+    int getPressedButton()
     {
         return pressedButton;
     }
-    inline int getPrevPressedButton()
+    int getPrevPressedButton()
     {
         return prevPressedButton;
     }
-    inline int getHighlightedButton()
+    int getHighlightedButton()
     {
         return highlightedButton;
     }
-    inline int getPrevHighlightedButton()
+    int getPrevHighlightedButton()
     {
         return prevHighlightedButton;
     }

@@ -30,58 +30,58 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class cMouse
 {
 private:
-    static Surface *pointer;
-    static unsigned char button_mask;
+    Surface *pointer;
+    unsigned char button_mask;
 
 public:
     cMouse()
+        : pointer(0), button_mask(0)
     {}
     ~cMouse()
     {}
 
     // cMouse Operation Functions
-    static void draw(Surface &dest); // Handles the drawing of the cMouse cursor
+    void draw(Surface &dest); // Handles the drawing of the cMouse cursor
 
-    static inline Surface *getCurPointer()
+    const Surface* getCurPointer() const
     {
         return pointer;
     }
 
-    static inline iXY getScreenPos ()
+    iXY getScreenPos() const
     {
         int x, y;
         SDL_GetMouseState(&x, &y);
         return iXY(x, y);
     }
 
-    static inline int getScreenX   ()
+    int getScreenX() const
     {
         return getScreenPos().x;
     }
 
-    static inline int getScreenY   ()
+    int getScreenY() const
     {
         return getScreenPos().y;
     }
 
-    static inline void setButtonMask( unsigned char mask )
+    void setButtonMask(unsigned char mask)
     {
         button_mask = button_mask | mask;
     }
 
-    static inline void clearButtonMask( unsigned char mask )
+    void clearButtonMask(unsigned char mask)
     {
         button_mask = button_mask & mask;
     }
 
-    static inline unsigned char getButtonMask( void )
+    unsigned char getButtonMask() const
     {
-        return( button_mask );
+        return button_mask;
     }
 
-    static void setPointer(Surface *pointer);
-}
-; // end cMouse
+    void setPointer(Surface *pointer);
+}; // end cMouse
 
 extern cMouse mouse;
 

@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Component.hpp"
 
-
 //--------------------------------------------------------------------------
 class Button : public Component
 {
@@ -78,7 +77,6 @@ public:
         return actionCommand;
     }
 
-    //void   processEvent() { label = l; }
     virtual void draw(Surface &dest);
     virtual void actionPerformed(const mMouseEvent &me);
 }; // end Button

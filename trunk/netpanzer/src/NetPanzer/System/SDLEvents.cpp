@@ -36,15 +36,15 @@ bool handleSDLEvents()
             switch(event.button.button) {
             case 1:
                 MouseInterface::setLeftButtonDown();
-                cMouse::setButtonMask(LMOUSE_BUTTON_MASK);
+                mouse.setButtonMask(LMOUSE_BUTTON_MASK);
                 break;
             case 3:
                 MouseInterface::setRightButtonDown();
-                cMouse::setButtonMask(RMOUSE_BUTTON_MASK);
+                mouse.setButtonMask(RMOUSE_BUTTON_MASK);
                 break;
             case 2:
                 MouseInterface::setMiddleButtonDown();
-                cMouse::setButtonMask(MMOUSE_BUTTON_MASK);
+                mouse.setButtonMask(MMOUSE_BUTTON_MASK);
                 break;
             }
             break;
@@ -52,15 +52,15 @@ bool handleSDLEvents()
             switch(event.button.button) {
             case 1:
                 MouseInterface::setLeftButtonUp();
-                cMouse::clearButtonMask(!LMOUSE_BUTTON_MASK);
+                mouse.clearButtonMask(!LMOUSE_BUTTON_MASK);
                 break;
             case 3:
                 MouseInterface::setRightButtonUp();
-                cMouse::clearButtonMask(!RMOUSE_BUTTON_MASK);
+                mouse.clearButtonMask(!RMOUSE_BUTTON_MASK);
                 break;
             case 2:
                 MouseInterface::setMiddleButtonUp();
-                cMouse::clearButtonMask(!MMOUSE_BUTTON_MASK);
+                mouse.clearButtonMask(!MMOUSE_BUTTON_MASK);
                 break;
             }
             break;

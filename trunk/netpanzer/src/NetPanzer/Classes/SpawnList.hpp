@@ -18,37 +18,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SPAWNLIST_HPP
 #define _SPAWNLIST_HPP
 
-#include "Util/Timer.hpp"
-#include "ArrayUtil/ArrayTemplate.hpp"
+#include <vector>
+#include <string>
 #include "Types/iXY.hpp"
 
-class SpawnPoint
+class SpawnList : public std::vector<iXY>
 {
-public:
-    char          name[32];
-    iXY      map_loc;
-    unsigned char capacity;
-    Timer         spawn_delay;
-};
-
-class SpawnList : public ArrayTemplate< SpawnPoint >
-{
-protected:
-    unsigned long last_spawn_index;
+private:
+    size_t last_spawn_index;
 
 public:
+    SpawnList();
 
-    SpawnList( )
-    {
-        last_spawn_index = 0;
-    }
-
-    SpawnList( unsigned long size );
-
-    void loadSpawnFile(const char *file_path );
-
-    void getFreeSpawnPoint( iXY *spawn_loc );
-
+    void loadSpawnFile(const std::string& file_path);
+    iXY getFreeSpawnPoint();
 };
 
 #endif // ** _SPAWNLIST_HPP

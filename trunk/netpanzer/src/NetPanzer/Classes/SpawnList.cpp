@@ -27,74 +27,55 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "GameConfig.hpp"
 
-SpawnList::SpawnList( unsigned long size )
+SpawnList::SpawnList()
 {
     last_spawn_index = 0;
-    initialize( size );
 }
 
-void SpawnList::loadSpawnFile(const char *file_path)
+void SpawnList::loadSpawnFile(const std::string& file_path)
 {
-    unsigned long spawn_count;
-    unsigned long spawn_index;
+    clear();
 
     try {
         IFileStream in(file_path);
 
-        deallocate();
-
         std::string dummy;
+        size_t spawn_count;
         in >> dummy >> spawn_count;
         if(!in.good())
             throw Exception("file too short");
-        initialize( spawn_count );
 
         long x, y;
-        SpawnPoint *spawn;
-        for ( spawn_index = 0; spawn_index < spawn_count; spawn_index++ ) {
+        for (size_t i = 0; i < spawn_count; ++i) {
             in >> dummy >> x >> y;
             if(!in.good())
                 throw Exception("file too short");
             
-            spawn = &array[ spawn_index ];
-            spawn->map_loc.x = x;
-            spawn->map_loc.y = y;
-            spawn->spawn_delay.changePeriod( 30 );
-            spawn->spawn_delay.zero();
+            push_back(iXY(x, y));
         }
 
         last_spawn_index = 0;
     } catch(std::exception& e) {
         throw Exception("Couldn't load spawnpoints in '%s': %s",
-                file_path, e.what());
+                file_path.c_str(), e.what());
     }
 }
 
-void SpawnList::getFreeSpawnPoint( iXY *spawn_loc )
+iXY SpawnList::getFreeSpawnPoint()
 {
-    unsigned long spawn_index;
+    size_t spawn_index;
 
     switch(gameconfig->respawntype) {
         case _game_config_respawn_type_round_robin :
-            spawn_index = last_spawn_index;
+            spawn_index = (last_spawn_index + 1) % size();
+            last_spawn_index = spawn_index;
             break;
         case _game_config_respawn_type_random :
-            spawn_index = rand() % size;
+            spawn_index = rand() % size();
             break;
         default:
             throw Exception("unknown respawn type");
     }
 
-    do {
-        if ( array[ spawn_index ].spawn_delay.count() ) {
-            (*spawn_loc) = array[ spawn_index ].map_loc;
-            array[ spawn_index ].spawn_delay.reset();
-
-            last_spawn_index = (spawn_index + 1) % size;
-            return;
-        }
-
-        spawn_index = (spawn_index + 1) % size;
-
-    } while(false);
+    return at(spawn_index);
 }

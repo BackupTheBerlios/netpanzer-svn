@@ -182,14 +182,14 @@ public:
 
     static unsigned char getAverageColorMapXY( iXY &map_loc );
 
-    static void getFreeSpawnPoint( iXY *spawn_loc )
+    static iXY getFreeSpawnPoint()
     {
-        spawn_list.getFreeSpawnPoint( spawn_loc );
+        return spawn_list.getFreeSpawnPoint();
     }
 
-    static SpawnList * getSpawnList( void )
+    static SpawnList* getSpawnList()
     {
-        return( &spawn_list );
+        return &spawn_list;
     }
 };
 

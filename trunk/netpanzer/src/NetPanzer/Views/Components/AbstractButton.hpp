@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __AbstractButton_hpp__
 
 #include "Button.hpp"
-#include "Icon.hpp"
 #include "MouseEvent.hpp"
 
 //--------------------------------------------------------------------------
@@ -30,12 +29,7 @@ protected:
     std::string actionCommand;
     std::string text;
 
-    Icon disableIcon;
-    Icon selectedIcon;
-    Icon pressedIcon;
-    Icon rolloverIcon;
-    Icon rolloverSelectedIcon;
-    Icon icon;
+    Surface image;
 
 public:
     AbstractButton()
@@ -45,36 +39,12 @@ public:
     virtual ~AbstractButton()
     {}
 
-    void init(const std::string& text, Icon &icon)
+    void init(const std::string& text, const Surface* image)
     {
-        AbstractButton::text = text;
-        AbstractButton::icon.copy(icon);
+        this->text = text;
+        this->image.copy(*image);
     }
 
-    const Surface& getDisableIcon() const
-    {
-        return (const Surface&) disableIcon;
-    }
-    const Surface &getIcon() const
-    {
-        return icon;
-    }
-    const Surface &getPressedIcon() const
-    {
-        return pressedIcon;
-    }
-    const Surface &getRolloverIcon() const
-    {
-        return rolloverIcon;
-    }
-    const Surface &getRolloverSelectedIcon() const
-    {
-        return rolloverSelectedIcon;
-    }
-    const Surface &getSelectedIcon() const
-    {
-        return selectedIcon;
-    }
     const std::string& getText() const
     {
         return text;

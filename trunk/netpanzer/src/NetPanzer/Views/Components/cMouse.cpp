@@ -15,25 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #include <config.h>
 #include "cMouse.hpp"
 
-
-/////////////////////////////////////////////////////////////////////////////
-// Statics.
-/////////////////////////////////////////////////////////////////////////////
-
 cMouse mouse;
-
-Surface *cMouse::pointer = 0;
-
-unsigned char cMouse::button_mask = 0;
-
-
-/////////////////////////////////////////////////////////////////////////////
-// Class definitions.
-/////////////////////////////////////////////////////////////////////////////
 
 // draw
 //---------------------------------------------------------------------------
@@ -47,7 +32,6 @@ void cMouse::draw(Surface &dest)
         pointer->nextFrame();
         pointer->bltTrans(dest, getScreenPos().x, getScreenPos().y);
     }
-
 } // end draw
 
 // setPointer

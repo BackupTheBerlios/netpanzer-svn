@@ -31,7 +31,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class Surface;
 class PackedSurface;
 
-
 // Random waits for particles.
 #define MISSLE_LAUNCH_PUFF_RANDNUM ((float(rand()) / float(RAND_MAX)) * 0.01f)
 
@@ -40,9 +39,7 @@ class UnitParticleInfo
 public:
     iXY   muzzleTip[36];  // 36 frames per unit.
     iRect minBounds;      // Body min bounds.
-
-}
-; // end UnitParticleInfo
+}; // end UnitParticleInfo
 
 // ParticleInterface
 class ParticleInterface
@@ -146,7 +143,6 @@ public:
     static void initParticleSystems();
 
     static void addUnitDamagePuffParticle(const UnitState &unitState);
-
 }; // end ParticleInterface
 
 #endif // __ParticleInterface_hpp__
