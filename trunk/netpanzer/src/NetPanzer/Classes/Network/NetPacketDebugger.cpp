@@ -83,6 +83,18 @@ void NetPacketDebugger::logMessage(const char* domain, NetMessage* message)
         }
     }
     *log << std::endl;
+
+    log->flags(std::ios::hex);
+    log->fill('0');
+    uint8_t* data = (uint8_t *) message;
+    for (int i=0; i<message->getsize(); i++) {
+        if ((i%4) == 0)
+            *log << " ";
+        log->width(2);
+        *log << (uint32_t)data[i];
+    }
+    log->flags(std::ios::dec);
+    *log << std::endl;
 }
 
 void NetPacketDebugger::logMultiMessage(std::ostream& log,
