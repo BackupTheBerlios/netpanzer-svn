@@ -47,7 +47,11 @@ TCPSocket::init(const Address& bindaddr, bool blocking)
     try {
         int res = bind(sockfd, (struct sockaddr*) &bindaddr.addr,
                 sizeof(bindaddr.addr));
+#ifdef USE_WINSOCK
+        if(res == SOCKET_ERROR) {
+#else
         if(res < 0) {
+#endif
             std::stringstream msg;
             msg << "Couldn't bind socket to address '"
                 << bindaddr.getIP() << "' port " << bindaddr.getPort()
@@ -58,7 +62,11 @@ TCPSocket::init(const Address& bindaddr, bool blocking)
         
         res = connect(sockfd, (struct sockaddr*) &addr.addr,
                 sizeof(addr.addr));
+#ifdef USE_WINSOCK
+        if(res == SOCKET_ERROR) {
+#else
         if(res < 0) {
+#endif
             std::stringstream msg;
             msg << "Couldn't connect to '" << addr.getIP() << "' port "
                 << addr.getPort() << ": ";

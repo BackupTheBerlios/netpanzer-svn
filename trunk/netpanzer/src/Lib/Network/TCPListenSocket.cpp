@@ -48,7 +48,11 @@ TCPListenSocket::createBind(bool blocking)
 {
     int res = bind(sockfd, (struct sockaddr*) &addr.addr,
             sizeof(addr.addr));
+#ifdef USE_WINSOCK
+    if(res == SOCKET_ERROR) {
+#else
     if(res < 0) {
+#endif
         std::stringstream msg;
         msg << "Couldn't bind socket to address '"
             << addr.getIP() << "' port " << addr.getPort()
@@ -58,7 +62,11 @@ TCPListenSocket::createBind(bool blocking)
     }
 
     res = listen(sockfd, 20);
+#ifdef USE_WINSOCK
+    if(res == SOCKET_ERROR) {
+#else
     if(res < 0) {
+#endif
         std::stringstream msg;
         msg << "Couldn't listen on socket: ";
         printError(msg);
@@ -76,8 +84,12 @@ TCPListenSocket::accept()
     socklen_t socklen = sizeof(addr.addr);
     int clientsockfd 
         = ::accept(sockfd, (struct sockaddr*) &addr.addr, &socklen);
-
+#ifdef USE_WINSOCK
+    if(clientsockfd == INVALID_SOCKET) {
+#else
     if(clientsockfd < 0) {
+#endif
+
 #ifdef USE_WINSOCK
         if(WSAGetLastError() == WSAEWOULDBLOCK)
             return 0;
