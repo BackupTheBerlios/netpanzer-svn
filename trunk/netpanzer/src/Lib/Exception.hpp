@@ -23,7 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class Exception
 {
 public:
-	Exception(const char* message, ...);
+	Exception(const char* message, ...)
+		__attribute__((format (__printf__, 2, 3)));
 	Exception(const Exception& other);
 	~Exception();
 

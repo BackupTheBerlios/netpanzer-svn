@@ -37,6 +37,15 @@ public:
 
 	// Returns an int between [+0.0...+1.0]
 	int getBrightnessFloat();
+
+	bool operator == (const RGBColor& other) const
+	{
+		return red == other.red &&
+			   green == other.green &&
+			   blue == other.blue;
+	}
+	bool operator != (const RGBColor& other) const
+	{ return ! (*this == other); }
 };
 
 #endif // end __RGBColor_hpp__

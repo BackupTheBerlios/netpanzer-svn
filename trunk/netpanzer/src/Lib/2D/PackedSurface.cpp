@@ -216,7 +216,7 @@ void PackedSurface::load(FILE *f) {
 		throw Exception("Invalid PAK file version: %d", version);
 	}
 	if (version > CURRENT_PAK_VERSION) {
-		throw Exception("PAK file version %d is newer than the .exe you are using, which only supports up to version", version, CURRENT_PAK_VERSION);
+		throw Exception("PAK file version %d is newer than the .exe (%d) you are using, which only supports up to version", version, CURRENT_PAK_VERSION);
 	}
 	fread(&pix, sizeof(pix), 1, f);
 

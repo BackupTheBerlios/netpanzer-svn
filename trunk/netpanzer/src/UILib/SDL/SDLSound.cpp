@@ -45,6 +45,13 @@ SDLSound::~SDLSound()
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
 
+struct SoundEntry
+{
+public:
+	std::string name;
+	std::vector<Mix_Chunk*> sounds;
+};
+
 void SDLSound::PlayTankIdle()
 {
 }

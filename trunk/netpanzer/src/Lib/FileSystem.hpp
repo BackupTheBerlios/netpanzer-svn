@@ -106,7 +106,8 @@ protected:
 class FileSystem
 {
 public:
-	static void initialize(const char* argv0);
+	static void initialize(const char* argv0, const char* company,
+						   const char* applicationname);
 	static void shutdown();
 	
 	static ReadFile* openRead(const char* filename);

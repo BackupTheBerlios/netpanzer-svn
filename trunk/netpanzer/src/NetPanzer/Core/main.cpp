@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Log.hpp"
 #include "Exception.hpp"
+#include "FileSystem.hpp"
 #include "GameManager.hpp"
 #include "MouseInterface.hpp"
 #include "KeyboardInterface.hpp"
@@ -104,8 +105,15 @@ bool HandleSDLEvents()
 
 //---------------------------------------------------------------------------
 
-int main(int argc, char** argv)
+void shutdown()
 {
+	SDL_Quit();
+	FileSystem::shutdown();
+}
+
+void initialise(int argc, char** argv)
+{
+	// Parse commandline
 	using namespace optionmm;
 	command_line commandline(PACKAGE_NAME, PACKAGE_VERSION,
 			"Copyright(c) 1998 Pyrosoft Inc. and others", "", argc, argv);
@@ -117,11 +125,22 @@ int main(int argc, char** argv)
 	commandline.add(&port_option);
 
 	if(!commandline.process() || commandline.help() || commandline.version())
-		return 0;
-	
+		exit(0);
+
+	// Initialize SDL
 	SDL_Init(SDL_INIT_TIMER);
 	SDL_EnableUNICODE(1);
 
+	// Initialize libphysfs
+	try {
+		FileSystem::initialize(argv[0], "netpanzer", "netpanzer");
+	} catch(Exception e) {
+		fprintf(stderr, "%s", e.getMessage());
+		shutdown();
+		exit(1);
+	}
+
+	// Initialize random number generator
 	srand(time(0));
 	// the STL functions in gcc3 seem to use the 48er versions of the random
 	// generator instead of the default libc one, so we have todo a double srand
@@ -130,13 +149,19 @@ int main(int argc, char** argv)
 	srand48(time(0));
 #endif
 
+	// finally initialize the game objects
 	try {
 		GameManager::initialize(dedicated_option.value());
 	} catch(Exception e) {
 		fprintf(stderr, "Couldn't initialize the game: %s\n", e.getMessage());
-		SDL_Quit();
+		shutdown();
 		exit(1);
 	}
+}
+
+int main(int argc, char** argv)
+{
+	initialise(argc, argv);
 
 	// we'll catch every exception here, just to be sure the user gets at least
 	// a usefull error message and SDL has a chance to shutdown...
@@ -153,16 +178,15 @@ int main(int argc, char** argv)
 
 		GameManager::shutdown();
 		LOG ( ("successfull shutdown.") );
-		SDL_Quit();
-
+		shutdown();
 	} catch(Exception e) {
 		fprintf(stderr, "An unexpected exception occured: %s\nShutdown needed.",
 						e.getMessage());
-		SDL_Quit();
+		shutdown();
 		throw;
 	} catch(...) {
 		fprintf(stderr, "An unexpected exception occured.\nShutdown needed.");
-		SDL_Quit();
+		shutdown();
 		throw;
 	}
 

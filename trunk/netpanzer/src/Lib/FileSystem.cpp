@@ -21,14 +21,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Exception.hpp"
 #include "FileSystem.hpp"
 
-void FileSystem::initialize(const char* argv0)
+void FileSystem::initialize(const char* argv0, const char* company,
+							const char* application)
 {
-	if (!PHYSFS_init(argv0))
+	if(!PHYSFS_init(argv0) ||
+	   !PHYSFS_setSaneConfig(company, application, "zip", 0, 0))
 		throw Exception("failure while initialising physfs: %s",
 							PHYSFS_getLastError());
-
-	// TODO check search and writepaths here
-	PHYSFS_setSaneConfig("netpanzer", "netpanzer", "zip", 0, 0);
 }
 
 void FileSystem::shutdown()

@@ -201,7 +201,7 @@ void Weapon::fsmFlight( void )
 		lifecycle_status = _lifecycle_weapon_in_active;
         
         //SFX
-        sound->PlayAmbientSound( _not_applicable, Sound::_hit_target, 0 );
+        sound->playSound("hit_target");
         
         // **  Particle Shit
         iXY loc = iXY( location.x, location.y );
@@ -252,7 +252,7 @@ int Weapon::getGoalAngle(const iXY &start, const iXY &end)
 	// measurements work.  We measure with 0 pointing north, moving around
 	// clockwise.  We also want to measure the angle from 0.0 to 1.0.
 	float ourGoalAngle = ((PI / 2) - goalAngleRad) / (PI * 2);
-	int   angle        = ourGoalAngle * 360;
+	int   angle        = (int) (ourGoalAngle * 360);
 
 	while (angle < 0)
 	{

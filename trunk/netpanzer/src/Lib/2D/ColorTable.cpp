@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "SplitPath.hpp"
+#include "FileSystem.hpp"
 #include "Log.hpp"
 #include "Exception.hpp"
 #include "ColorTable.hpp"
@@ -109,50 +110,56 @@ void ColorTable::createBrightenFilter(
 									const int  &brightness)
 {
 	assert(brightness > 0 && brightness <= 256);
-
 	init(256 * 256);
 
-	// Check to see if the color table file exists, if so, load it.
-	if (isValid(filename))
-	{
-		loadTableError(filename);
-
-	} else
-	{
-		// Since the file was not found, create the color tables and dump
-		// it to a file.
-		int   curOffset;
-		int   curRed;
-		int   curGreen;
-		int   curBlue;
-		float nb;        // The new brightness color.
-
-		float fBrightness = float(brightness) / 256.0f;
-		
-		for (int y = 0; y < 256; y++)
-		{
-			for (int x = 0; x < 256; x++)
-			{
-				nb = float(x) * fBrightness;
-				curOffset = (y * 256) + x;
-
-				// !SOMDEDAY! Try holding a threshold when any value gets to 255.
-				curRed   = (int) (nb + Palette::color[y].red);
-				curGreen = (int) (nb + Palette::color[y].green);
-				curBlue  = (int) (nb + Palette::color[y].blue);
-
-				if (curRed   > 255) curRed   = 255;
-				if (curGreen > 255) curGreen = 255;
-				if (curBlue  > 255) curBlue  = 255;
-				//curColor = Palette::color[y];
-
-				setColor(curOffset, Palette::findNearestColor(RGBColor(curRed, curGreen, curBlue)));
-			}
+	if(FileSystem::exists(filename)) {
+		try {
+			loadTable(filename);
+			return;
+		} catch(Exception e) {
+			LOG( ("Error while loading palette '%s': %s", filename, e.getMessage(),
+				  e.getMessage()) );
 		}
+	}
+	
+	LOG ( ("Creating ColorTable '%s'.", filename) );
+	// Since the file was not found, create the color tables and dump
+	// it to a file.
+	int   curOffset;
+	int   curRed;
+	int   curGreen;
+	int   curBlue;
+	float nb;        // The new brightness color.
 
-		saveTableError(filename);
+	float fBrightness = float(brightness) / 256.0f;
+		
+	for (int y = 0; y < 256; y++)
+	{
+		for (int x = 0; x < 256; x++)
+		{
+			nb = float(x) * fBrightness;
+			curOffset = (y * 256) + x;
+
+			// !SOMDEDAY! Try holding a threshold when any value gets to 255.
+			curRed   = (int) (nb + Palette::color[y].red);
+			curGreen = (int) (nb + Palette::color[y].green);
+			curBlue  = (int) (nb + Palette::color[y].blue);
+
+			if (curRed   > 255) curRed   = 255;
+			if (curGreen > 255) curGreen = 255;
+			if (curBlue  > 255) curBlue  = 255;
+			//curColor = Palette::color[y];
+
+			setColor(curOffset, Palette::findNearestColor(RGBColor(curRed, curGreen, curBlue)));
+		}
 	}
 
+	try {
+		saveTable(filename);
+	} catch(Exception e) {
+		LOG ( ("Caching of ColorTable '%s' failed: %s", filename,
+			   e.getMessage()) );
+	}
 } // end createBrightenFilter
 
 // createDarkenFilter
@@ -161,39 +168,45 @@ void ColorTable::createDarkenFilter(const char *filename, float fudgeValue)
 {
 	init(256 * 256);
 
-	// Check to see if the color table file exists, if so, load it.
-	if (isValid(filename))
-	{
-		loadTableError(filename);
-
-	} else
-	{
-		// Since the file was not found, create the color tables and dump
-		// it to a file.
-		float    curPercent;
-		int      curOffset;
-		RGBColor col;
-		RGBColor curColor;
-		const float percent = fudgeValue;
-
-		for (int y = 0; y < 256; y++)
-		{
-			for (int x = 0; x < 256; x++)
-			{
-				curPercent = (float(255 - x) / 255.0f) * percent + 1.0f - percent;
-				curOffset  = (y * 256) + x;
-
-				curColor.red   = (BYTE) (curPercent * float(Palette::color[y].red));
-				curColor.green = (BYTE) (curPercent * float(Palette::color[y].green));
-				curColor.blue  = (BYTE) (curPercent * float(Palette::color[y].blue));
-
-				setColor(curOffset, Palette::findNearestColor(curColor));
-			}
+	if(FileSystem::exists(filename)) {
+		try {
+			loadTable(filename);
+			return;
+		} catch(Exception e) {
+			LOG( ("Error while loading palette'%s': %s", filename, e.getMessage()) );
 		}
-		
-		saveTableError(filename);
 	}
 
+	LOG ( ("Creating colortable '%s'.", filename) );
+	// Since the file was not found, create the color tables and dump
+	// it to a file.
+	float    curPercent;
+	int      curOffset;
+	RGBColor col;
+	RGBColor curColor;
+	const float percent = fudgeValue;
+
+	for (int y = 0; y < 256; y++)
+	{
+		for (int x = 0; x < 256; x++)
+		{
+			curPercent = (float(255 - x) / 255.0f) * percent + 1.0f - percent;
+			curOffset  = (y * 256) + x;
+
+			curColor.red   = (BYTE) (curPercent * float(Palette::color[y].red));
+			curColor.green = (BYTE) (curPercent * float(Palette::color[y].green));
+			curColor.blue  = (BYTE) (curPercent * float(Palette::color[y].blue));
+
+			setColor(curOffset, Palette::findNearestColor(curColor));
+		}
+	}
+		
+	try {
+		saveTable(filename);
+	} catch(Exception e) {
+		LOG ( ("Caching of ColorTable '%s' failed: %s", filename,
+			   e.getMessage()) );	
+	}	
 } // end createDarkenFilter
 
 // create
@@ -205,223 +218,111 @@ void ColorTable::create(
 {
 	init(256 * 256);
 
-	// Check to see if the color table file exists, if so, load it.
-	if (isValid(filename))
-	{
-		loadTableError(filename);
-
-	} else
-	{
-		//float curPercent;
-		//int	  totalColors   = colorCount;
-		//int   curColorIndex = 0;
-		//int   num           = 0;
-		//int   numInterval   = (totalColors) / 100;
-		
-		char strBuf[256];
-
-		sprintf(strBuf, "  %s: progress: 0%%", filename);
-		//progressView->scrollAndUpdate(strBuf);
-
-		// Since the file was not found, create the color tables and dump
-		// it to a file.
-		unsigned curOffset = 0;
-
-		for (unsigned index = 0; index < 256; index++)
-		{
-			float color1 = float(color1Percent) / 100.0f;
-			float color2 = float(color2Percent) / 100.0f;
-			const RGBColor col = Palette::color[index];
-
-			for (unsigned indexPic = 0; indexPic < 256; indexPic++)
-			{
-				const RGBColor colPic = Palette::color[indexPic];
-
-				curOffset = (int(index) << 8) + indexPic;
-
-				RGBColor curColor((BYTE) (color1 * col.red   + color2 * colPic.red), 
-								   (BYTE) (color1 * col.green + color2 * colPic.green), 
-								   (BYTE) (color1 * col.blue  + color2 * colPic.blue));
-
-				// Makes the color table use color 0 as transparent.
-				if (indexPic == 0)
-				{
-					setColor(curOffset, index);
-
-				} else
-				{
-					setColor(curOffset, Palette::findNearestColor(curColor));
-				}
-
-				// Display a progress update every 1%.
-				/*if (num > numInterval)
-				{
-					curColorIndex += numInterval;
-					curPercent = float(curColorIndex) / float(totalColors);
-					//sprintf(strBuf, "  %s: progress: %d%%", filename, int(curPercent * 100));
-					//progressView->update(strBuf);
-					num = 0;
-				} else num++;
-				*/
-			}
+	if(FileSystem::exists(filename)) {
+		try {
+			loadTable(filename);
+			return;
+		} catch(Exception e) {
+			LOG( ("Error while loading palette'%s': %s", filename, e.getMessage()) );
 		}
+	}
+	
+	LOG ( ("Creating colortable '%s'.", filename) );
+	//float curPercent;
+	//int	  totalColors   = colorCount;
+	//int   curColorIndex = 0;
+	//int   num           = 0;
+	//int   numInterval   = (totalColors) / 100;
+	
+	// Since the file was not found, create the color tables and dump
+	// it to a file.
+	unsigned curOffset = 0;
 
-		sprintf(strBuf, "  %s: progress: 100%%", filename);
-		//progressView->update(strBuf);
+	for (unsigned index = 0; index < 256; index++)
+	{
+		float color1 = float(color1Percent) / 100.0f;
+		float color2 = float(color2Percent) / 100.0f;
+		const RGBColor col = Palette::color[index];
 
-		saveTableError(filename);
+		for (unsigned indexPic = 0; indexPic < 256; indexPic++)
+		{
+			const RGBColor colPic = Palette::color[indexPic];
+
+			curOffset = (int(index) << 8) + indexPic;
+
+			RGBColor curColor((BYTE) (color1 * col.red   + color2 * colPic.red), 
+							   (BYTE) (color1 * col.green + color2 * colPic.green), 
+							   (BYTE) (color1 * col.blue  + color2 * colPic.blue));
+
+			// Makes the color table use color 0 as transparent.
+			if (indexPic == 0)
+			{
+				setColor(curOffset, index);
+
+			} else
+			{
+				setColor(curOffset, Palette::findNearestColor(curColor));
+			}
+
+			// Display a progress update every 1%.
+			/*if (num > numInterval)
+			{
+				curColorIndex += numInterval;
+				curPercent = float(curColorIndex) / float(totalColors);
+				num = 0;
+			} else num++;
+			*/
+		}
 	}
 
-} // end ColorTable::create
-
-// getDiskName
-//---------------------------------------------------------------------------
-void ColorTable::getDiskName(char *destname, const char *filename) const
-{
-	char paletteFilename[256];
-	char tablePath[256];
-	char tableFilename[256];
-
-	_splitpath(Palette::getName(), 0, 0, paletteFilename, 0);
-	_splitpath(filename, 0, tablePath, tableFilename, 0);
-
-	// This is dangerous, so make sure the filename can handle the length of the possible
-	// sprintf.
-	sprintf(destname, "%s%s%s%s", tablePath, tableFilename, paletteFilename, extension);
-
-	return;
-
-} // end ColorTable::getDiskName
-
-// loadTableError
-//---------------------------------------------------------------------------
-void ColorTable::loadTableError(const char *filename)
-{
 	try {
-		loadTable(filename);
+		saveTable(filename);
 	} catch(Exception e) {
-		LOG( ("Error while loading Color Table: %s", e.getMessage()) );
-		throw Exception("ERROR: Unable to load %s", filename);
-	}
-} // end ColorTable::loadTableError
+		LOG ( ("Caching of ColorTable '%s' failed: %s", filename,
+			   e.getMessage()) );	
+	}	
+} // end ColorTable::create
 
 // loadTable
 //---------------------------------------------------------------------------
 void ColorTable::loadTable(const char *filename)
 {
-	char strBuf[768];
+	ReadFile *file = FileSystem::openRead(filename);
 
-	getDiskName(strBuf, filename);
+	// make sure palette in file is the same as current one
+	for(size_t i=0; i<PALETTE_LENGTH; i++) {
+		RGBColor checkcolor;
+		if(file->read(&checkcolor, sizeof(BYTE), 3) != 3)
+			throw Exception("couldn't load colortable '%s': "
+							"file corrupted(too short)", filename);
 
-	FILE *fp = fopen(strBuf, "rb");
-	if (fp == 0)
-		throw Exception("Couldn't load colortable %s('%s').", strBuf);
-
-	loadTable(fp);
-
-	fclose(fp);
-} // end ColorTable::loadTable
-
-// loadTable
-//---------------------------------------------------------------------------
-void ColorTable::loadTable(FILE *fp)
-{
-	assert(fp != 0);
-
-	char strBuf[768];
-
-	// Bypass the palette info.
-	fread(strBuf, 768, 1, fp);
-	
-	// Put the color table data into the colorArray.
-	fread(colorArray, colorCount, 1, fp);
-} // end ColorTable::loadTable
-
-// saveTableError
-//---------------------------------------------------------------------------
-void ColorTable::saveTableError(const char *filename) const
-{
-	try {
-		saveTable(filename);
-	} catch(Exception e) {
-		printf("Exception while saving colortable: '%s'.\n", e.getMessage());
-		throw Exception("Couldn't save color table '%s'.", filename);
+		if(Palette::originalColor[i] != checkcolor)
+			throw Exception("couldn't load colortable '%s': "
+							"palettes don't match", filename);
 	}
-} // end ColorTable::saveTableError
+ 	
+	// put the color table data into the colorArray
+	if(file->read(colorArray, colorCount, 1) != 1)
+		throw Exception("couldn't load colortable '%s': "
+						"file corrupted(too short)", filename);
+	
+	delete file;
+} // end ColorTable::loadTable
 
 // saveTable
 //---------------------------------------------------------------------------
 void ColorTable::saveTable(const char *filename) const
 {
-	char strBuf[768];
+	WriteFile *file = FileSystem::openWrite(filename);
 
-	getDiskName(strBuf, filename);
-
-	FILE *fp = fopen(strBuf, "wb");
-	if (fp == 0)
-		throw Exception("couldn't save colortable to '%s'.", strBuf);	
-
-	saveTable(fp);
-
-	fclose(fp);
-} // end ColorTable::saveTable
-
-// saveTable
-//---------------------------------------------------------------------------
-void ColorTable::saveTable(FILE *fp) const
-{
-	assert(fp != 0);
-
-	// Dump the colorTable source palette.
-	fwrite(&Palette::color, 768, sizeof(BYTE), fp);
-
-	// Dump the colorTable data.
-	fwrite(colorArray, colorCount, sizeof(BYTE), fp);
-} // end ColorTable::saveTable
-
-// isValid
-//---------------------------------------------------------------------------
-// Purpose: Makes sure the table on disk has the correct number of colors
-//          plus the palette data of the associated palette.
-//---------------------------------------------------------------------------
-bool ColorTable::isValid(const char *filename) const
-{
-	char strBuf[768];
-
-	getDiskName(strBuf, filename);
-
-	if (UtilInterface::getFileSize(strBuf) == (size_t) (colorCount + 768))
-	{
-		// Check and make sure the file palette matches the loaded palette.
-		FILE *fp = fopen(strBuf, "rb");
-		if (fp == 0) { return false; }
-
-		RGBColor checkPal[PALETTE_LENGTH];
-
-		for (size_t i = 0; i < PALETTE_LENGTH; i++)
-		{
-			fread(&checkPal[i], 3, sizeof(BYTE), fp);
-		}
-		
-		fclose(fp);
-
-		for (size_t j = 0; j < PALETTE_LENGTH; j++)
-		{
-			if (Palette::originalColor[j].red != checkPal[j].red ||
-				Palette::originalColor[j].green != checkPal[j].green ||
-				Palette::originalColor[j].blue != checkPal[j].blue)
-			{
-				return false;
-			}
-		}
-
-		return true;
+	if (file->write(&Palette::color, 768, 1) != 1
+		|| file->write(colorArray, colorCount, 1) != 1) {
+		throw Exception("error while writing to file '%s' (disk full?)",
+						filename);
 	}
 
-	return false;
-
-} // end ColorTable::isValid
-
+	delete file;
+} // end ColorTable::saveTable
 
 // createTrans0
 //---------------------------------------------------------------------------
@@ -432,54 +333,60 @@ void ColorTable::createTrans0(
 {
 	init(256 * 256);
 
-	// Check to see if the color table file exists, if so, load it.
-	if (isValid(filename))
-	{
-		loadTableError(filename);
-
-	} else
-	{
-		float color1        = float(color1Percent) / 100.0f;
-		float color2        = float(color2Percent) / 100.0f;
-		//int	  totalColors   = colorCount;
-		//int   curColorIndex = 0;
-		//int   num           = 0;
-		//int   numInterval   = (totalColors) / 100;
-		
-		// Since the file was not found, create the color tables and dump
-		// it to a file.
-		unsigned curOffset = 0;
-
-		for (unsigned index = 0; index < 256; index++)
-		{
-			const RGBColor col = Palette::color[index];
-
-			for (unsigned indexPic = 0; indexPic < 256; indexPic++)
-			{
-				const RGBColor colPic = Palette::color[indexPic];
-
-				curOffset = (int(index) << 8) + indexPic;
-
-				RGBColor curColor((int) (color1 * col.red   + color2 * colPic.red), 
-								  (int) (color1 * col.green + color2 * colPic.green), 
-								  (int) (color1 * col.blue  + color2 * colPic.blue));
-
-				// Makes the color table use color 0 as transparent.
-
-				if (indexPic == 0)
-				{
-					setColor(curOffset, index);
-				} else
-				{
-
-					setColor(curOffset, Palette::findNearestColor(curColor));
-				}
-			}
+	if(FileSystem::exists(filename)) {
+		try {
+			loadTable(filename);
+			return;
+		} catch(Exception e) {
+			LOG( ("Error while loading palette'%s': %s", filename, e.getMessage()) );
 		}
-
-		saveTableError(filename);
 	}
 
+	LOG ( ("Creating colortable '%s'.", filename) );
+	float color1        = float(color1Percent) / 100.0f;
+	float color2        = float(color2Percent) / 100.0f;
+	//int	  totalColors   = colorCount;
+	//int   curColorIndex = 0;
+	//int   num           = 0;
+	//int   numInterval   = (totalColors) / 100;
+	
+	// Since the file was not found, create the color tables and dump
+	// it to a file.
+	unsigned curOffset = 0;
+
+	for (unsigned index = 0; index < 256; index++)
+	{
+		const RGBColor col = Palette::color[index];
+
+		for (unsigned indexPic = 0; indexPic < 256; indexPic++)
+		{
+			const RGBColor colPic = Palette::color[indexPic];
+
+			curOffset = (int(index) << 8) + indexPic;
+
+			RGBColor curColor((int) (color1 * col.red   + color2 * colPic.red), 
+							  (int) (color1 * col.green + color2 * colPic.green), 
+							  (int) (color1 * col.blue  + color2 * colPic.blue));
+
+			// Makes the color table use color 0 as transparent.
+
+			if (indexPic == 0)
+			{
+				setColor(curOffset, index);
+			} else
+			{
+
+				setColor(curOffset, Palette::findNearestColor(curColor));
+			}
+		}
+	}
+	
+	try {
+		saveTable(filename);
+	} catch(Exception e) {                                      	
+		LOG ( ("Caching of ColorTable '%s' failed: %s",	
+			  filename, e.getMessage()) );	
+	}	
 } // end ColorTable::createTrans0
 
 // lightDark table builder logic.
@@ -495,40 +402,48 @@ void ColorTable::createLightDarkFilter(const char *filename)
 {
 	init(256 * 256);
 
-	if (isValid(filename))
-	{
-		loadTableError(filename);
-
-	} else
-	{
-		int curOffset;
-		int curRed;
-		int curGreen;
-		int curBlue;
-
-		for (int y = 0; y < 256; y++)
-		{
-			int x;
-			for (x = 0; x <= 128; x++)
-			{
-				curOffset = x + (y << 8);
-				curRed   = Palette::color[y].red   * x / 128;
-				curGreen = Palette::color[y].green * x / 128;
-				curBlue  = Palette::color[y].blue  * x / 128;
-
-				setColor(curOffset, Palette::findNearestColor(RGBColor(curRed, curGreen, curBlue)));
-			}
-			for (x = 129; x < 256; x++)
-			{
-				curOffset = x + (y << 8);
-				curRed   = Palette::color[y].red + ((255 - Palette::color[y].red) * (x-128) / 127);
-				curGreen = Palette::color[y].green + ((255 - Palette::color[y].green) * (x-128) / 127);
-				curBlue  = Palette::color[y].blue + ((255 - Palette::color[y].blue) * (x-128) / 127);
-
-				setColor(curOffset, Palette::findNearestColor(RGBColor(curRed, curGreen, curBlue)));
-			}
+	if(FileSystem::exists(filename)) {
+		try {
+			loadTable(filename);
+			return;
+		} catch(Exception e) {
+			LOG( ("Error while loading palette'%s': %s", filename, e.getMessage()) );
 		}
-
-		saveTableError(filename);
 	}
+
+	LOG ( ("Creating colortable '%s'.", filename) );
+	
+	int curOffset;
+	int curRed;
+	int curGreen;
+	int curBlue;
+
+	for (int y = 0; y < 256; y++)
+	{
+		int x;
+		for (x = 0; x <= 128; x++)
+		{
+			curOffset = x + (y << 8);
+			curRed   = Palette::color[y].red   * x / 128;
+			curGreen = Palette::color[y].green * x / 128;
+			curBlue  = Palette::color[y].blue  * x / 128;
+
+			setColor(curOffset, Palette::findNearestColor(RGBColor(curRed, curGreen, curBlue)));
+		}
+		for (x = 129; x < 256; x++)
+		{
+			curOffset = x + (y << 8);
+			curRed   = Palette::color[y].red + ((255 - Palette::color[y].red) * (x-128) / 127);
+			curGreen = Palette::color[y].green + ((255 - Palette::color[y].green) * (x-128) / 127);
+			curBlue  = Palette::color[y].blue + ((255 - Palette::color[y].blue) * (x-128) / 127);
+
+			setColor(curOffset, Palette::findNearestColor(RGBColor(curRed, curGreen, curBlue)));
+		}
+	}
+
+	try {
+		saveTable(filename);
+	} catch(Exception e) {                                      	
+		LOG ( ("Caching of ColorTable '%s' failed: %s", filename, e.getMessage()) );	  	
+	}	                                                           	
 } // end ColorTable::createLightDarkFilter

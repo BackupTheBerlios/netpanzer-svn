@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Palette.hpp"
 #include "FileUtil.hpp"
+#include "FileSystem.hpp"
 #include "Exception.hpp"
 #include "UtilInterface.hpp"
 
@@ -304,29 +305,25 @@ void Palette::setColorTables()
 	}
 	}
 
-	FileUtil::mkdir("pics");
-	FileUtil::mkdir("pics/colorFilters");
-
-	char strBuf[256];
-	char tablePath[] = "pics/colorFilters/";
-
+	char tablePath[512];
+	snprintf(tablePath, 512, "cache/colorfilters/%s", getName());
+	if(!FileSystem::exists(tablePath)) {
+		FileSystem::mkdir(tablePath);
+	}
+	char strBuf[512];
 	//progressView->scrollAndUpdate("");
 
 	// Best color match.
-	//progressView->update("  col2575.tbl");
-	sprintf(strBuf, "%s2080", tablePath);
+	sprintf(strBuf, "%s/2080.tbl", tablePath);
 	colorTable2080.create(20, 80, strBuf);
 
-	//progressView->update("  col5050.tbl");
-	sprintf(strBuf, "%s4060", tablePath);
+	sprintf(strBuf, "%s/4060.tbl", tablePath);
 	colorTable4060.create(40, 60, strBuf);
 
-	//progressView->update("  col7525.tbl");
-	sprintf(strBuf, "%s6040", tablePath);
+	sprintf(strBuf, "%s/6040.tbl", tablePath);
 	colorTable6040.create(60, 40, strBuf);
 
-	//progressView->update("  col7525.tbl");
-	sprintf(strBuf, "%s8020", tablePath);
+	sprintf(strBuf, "%s/8020.tbl", tablePath);
 	colorTable8020.create(80, 20, strBuf);
 
 	//sprintf(strBuf, "%sSolidTrans0", tablePath);
@@ -336,21 +333,17 @@ void Palette::setColorTables()
 	//colorTableSolid.create(0, 100, strBuf);
 
 	// Brighten.
-	sprintf(strBuf, "%sBrighten", tablePath);
+	sprintf(strBuf, "%s/Brighten.tbl", tablePath);
 	colorTableBrighten.createBrightenFilter(strBuf, 256);
 
 	// Darken.
-	sprintf(strBuf, "%sDarkenALot", tablePath);
+	sprintf(strBuf, "%s/DarkenALot.tbl", tablePath);
 	colorTableDarkenALot.createDarkenFilter(strBuf, 0.5f);
-	sprintf(strBuf, "%sDarkenALittle", tablePath);
+	sprintf(strBuf, "%s/DarkenALittle.tbl", tablePath);
 	colorTableDarkenALittle.createDarkenFilter(strBuf, 0.15f);
 
-	//progressView->update("  litedark.tbl");
-	sprintf(strBuf, "%sLightDark", tablePath);
+	sprintf(strBuf, "%s/LightDark.tbl", tablePath);
 	colorTableLightDark.createLightDarkFilter(strBuf);
-
-	//progressView->update("  DONE.");
-
 } // end setColorTables
 
 
@@ -359,12 +352,9 @@ void Palette::setColorTables()
 void Palette::setName(String filename)
 {
 	char strBuf[256];
-	sprintf(strBuf, "%s", (const char *) filename);
-
-	UtilInterface::getFilename(filename);
+	sprintf(strBuf, "%s", (const char*) UtilInterface::getFilename(filename));
 
 	char *dotPtr = 0;
-
 	if ((dotPtr = strchr(strBuf, '.')) != 0)
 	{
 		// Remove the extension.
@@ -372,7 +362,6 @@ void Palette::setName(String filename)
 	}
 
 	name = strBuf;
-
 } // end Palette::setName
 
 // loadACT

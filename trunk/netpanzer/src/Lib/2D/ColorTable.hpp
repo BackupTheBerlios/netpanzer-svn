@@ -63,22 +63,11 @@ public:
 	void createDarkenFilter(const char *filename, float fudgeValue);
 	void createLightDarkFilter(const char *filename);
 	
-	void loadTableError(const char *filename);
 	void loadTable(const char *filename);
-	void loadTable(FILE *fp);
-
-	void saveTableError(const char *filename) const;
 	void saveTable(const char *filename) const;
-	void saveTable(FILE *fp) const;
-
-	bool isValid(const char *filename) const;
-	
-	// Gets the name of the filename + palettename + extension.
-	void getDiskName(char *destname, const char *filename) const;
 
 private:
 	void free();
-
 }; // end ColorTable
 
 #endif // end __ColorTable_hpp__
