@@ -4,10 +4,11 @@
       correct. Most probably the memory corruption happens elsewhere
 - the lobby views disappears when you switch to options menu and back - party
   fixed, after a connection error the lobby view still isn't visible anymore
+  - seems fixed
 - when the bot occupied an outpost and you occupy it back, then the build menu
   shows the panzer you built last, but the one choosen by the bot comes out the
   outpost
-- sometimes 2 players spawn at the same place
+- sometimes 2 players spawn at the same place - hard to fix, low priority
 - game doesn't end when enough objectives are taken - is this still true?
 - irc ping/pong code with reconnect seems to be broken
 - unit count is calculated incorrect (20 in server config - 9 units 

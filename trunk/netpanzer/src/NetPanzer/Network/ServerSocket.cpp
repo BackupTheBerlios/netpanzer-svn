@@ -138,8 +138,7 @@ void ServerSocket::readClientTCP(SocketClient* client)
     int recvsize = SDLNet_TCP_Recv(client->tcpsocket, recvbuffer,
                                    sizeof(recvbuffer));
     if(recvsize<=0) {
-        printf ("Connection lost for ID %u: %s\n", client->id,
-                SDLNet_GetError());
+        printf ("Connection lost for ID %u\n", client->id);
         client->wantstodie = true;
         return;
     }

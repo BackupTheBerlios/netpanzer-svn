@@ -59,10 +59,6 @@ BotPlayer::processEvents()
             if (UnitInterface::quearyClosestEnemyUnit(&enemyUnit,
                         unit->unit_state.location, playerIndex))
             {
-                std::cout << "Closest unit:"
-                    << enemyUnit->unit_id.unique << " (P:"
-                    << (int) enemyUnit->unit_id.player << "-"
-                    << (int) enemyUnit->unit_id.index << ")\n";
                 manualFire(unit, enemyUnit->unit_state.location);
             }
         }

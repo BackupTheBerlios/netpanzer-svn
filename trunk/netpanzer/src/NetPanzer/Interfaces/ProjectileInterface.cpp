@@ -25,43 +25,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "WorldViewInterface.hpp"
 #include "Util/Math.hpp"
 
+std::list<Projectile*> ProjectileInterface::projectiles;
 
-InternalLink * ProjectileInterface::projectile_list_start = 0;
-InternalLink * ProjectileInterface::projectile_list_end = 0;
-
-void ProjectileInterface::removeAll( void )
+void ProjectileInterface::removeAll()
 {
-    InternalLink *traversal_ptr;
+    std::list<Projectile*>::iterator i;
+    for(i = projectiles.begin(); i != projectiles.end(); ++i)
+        delete *i;
 
-    traversal_ptr = projectile_list_start;
-
-    while( traversal_ptr != 0 ) {
-        InternalLink *destroy_ptr;
-
-        destroy_ptr = traversal_ptr;
-
-        traversal_ptr = traversal_ptr->next_ptr;
-
-        destroy_ptr->removeFromList( (InternalLink **) &projectile_list_start, (InternalLink **) &projectile_list_end );
-
-        if (destroy_ptr != 0) {
-            delete( (Projectile *) (destroy_ptr) );
-            destroy_ptr = 0;
-        }
-
-    } // ** while
-
+    projectiles.clear();
 }
 
-void ProjectileInterface::resetLogic(void)
+void ProjectileInterface::resetLogic()
 {
     removeAll();
-
-    projectile_list_start = 0;
-    projectile_list_end = 0;
 }
-
-
 
 void ProjectileInterface::newProjectile( unsigned short projectile_type,
         unsigned short owner_type_id,
@@ -89,7 +67,7 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
         offsetPos = Math::unitDirectionWest(direction) * startRadius * 2;
         startPos = start + iXY(int(offsetPos.x), int(offsetPos.y));
         temp = new MissleWeapon( owner, owner_type_id, damage, startPos, endPos);
-        temp->addToList( &projectile_list_start, &projectile_list_end );
+        projectiles.push_back(temp);
 
         ParticleInterface::addMissleLaunchPuff(startPos, direction, owner_type_id);
 
@@ -98,7 +76,7 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
         offsetPos = Math::unitDirectionWest(direction) * startRadius;
         startPos = start + iXY(int(offsetPos.x), int(offsetPos.y));
         temp = new MissleWeapon( owner, owner_type_id, damage, startPos, endPos);
-        temp->addToList( &projectile_list_start, &projectile_list_end );
+        projectiles.push_back(temp);
         ParticleInterface::addMissleLaunchPuff(startPos, direction, owner_type_id);
 
         // East inner
@@ -106,7 +84,7 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
         offsetPos = Math::unitDirectionEast(direction) * startRadius;
         startPos = start + iXY(int(offsetPos.x), int(offsetPos.y));
         temp = new MissleWeapon( owner, owner_type_id, damage, startPos, endPos);
-        temp->addToList( &projectile_list_start, &projectile_list_end );
+        projectiles.push_back(temp);
         ParticleInterface::addMissleLaunchPuff(startPos, direction, owner_type_id);
 
         //// East outer
@@ -114,14 +92,14 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
         offsetPos = Math::unitDirectionEast(direction) * startRadius * 2;
         startPos = start + iXY(int(offsetPos.x), int(offsetPos.y));
         temp = new MissleWeapon( owner, owner_type_id, damage, startPos, endPos);
-        temp->addToList( &projectile_list_start, &projectile_list_end );
+        projectiles.push_back(temp);
         ParticleInterface::addMissleLaunchPuff(startPos, direction, owner_type_id);
     } else if (projectile_type == Weapon::_bullet) {
         temp = new BulletWeapon( owner, owner_type_id, damage, start, end );
-        temp->addToList( &projectile_list_start, &projectile_list_end );
+        projectiles.push_back(temp);
     } else if (projectile_type == Weapon::_shell) {
         temp = new ShellWeapon( owner, owner_type_id, damage, start, end );
-        temp->addToList( &projectile_list_start, &projectile_list_end );
+        projectiles.push_back(temp);
     } else if (projectile_type == Weapon::_double_missile) {
         // The following code launches 2 missles spaced out evenly like they would be in a
         // missle bay.
@@ -134,21 +112,12 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
         fXY direction = Math::unitDirection(start, end);
         fXY offsetPos;
 
-        //// West outer
-        //endPos    = iXY(end.x + (rand() % endRadius << 1) - endRadius, end.y + (rand() % endRadius << 1) - endRadius);
-        //offsetPos = Math::unitDirectionWest(direction) * startRadius * 2;
-        //startPos = start + iXY(offsetPos.x, offsetPos.y);
-        //temp = new MissleWeapon( owner, owner_type_id, damage, startPos, endPos);
-        //temp->addToList( &projectile_list_start, &projectile_list_end );
-
-        ParticleInterface::addMissleLaunchPuff(startPos, direction, owner_type_id);
-
         // West inner
         endPos    = iXY(end.x + (rand() % endRadius << 1) - endRadius, end.y + (rand() % endRadius << 1) - endRadius);
         offsetPos = Math::unitDirectionWest(direction) * startRadius;
         startPos = start + iXY(int(offsetPos.x), int(offsetPos.y));
         temp = new MissleWeapon( owner, owner_type_id, damage, startPos, endPos);
-        temp->addToList( &projectile_list_start, &projectile_list_end );
+        projectiles.push_back(temp);
         ParticleInterface::addMissleLaunchPuff(startPos, direction, owner_type_id);
 
         // East inner
@@ -156,66 +125,35 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
         offsetPos = Math::unitDirectionEast(direction) * startRadius;
         startPos = start + iXY(int(offsetPos.x), int(offsetPos.y));
         temp = new MissleWeapon( owner, owner_type_id, damage, startPos, endPos);
-        temp->addToList( &projectile_list_start, &projectile_list_end );
+        projectiles.push_back(temp);
         ParticleInterface::addMissleLaunchPuff(startPos, direction, owner_type_id);
-
-        //// East outer
-        //endPos    = iXY(end.x + (rand() % endRadius << 1) - endRadius, end.y + (rand() % endRadius << 1) - endRadius);
-        //offsetPos = Math::unitDirectionEast(direction) * startRadius * 2;
-        //startPos = start + iXY(offsetPos.x, offsetPos.y);
-        //temp = new MissleWeapon( owner, owner_type_id, damage, startPos, endPos);
-        //temp->addToList( &projectile_list_start, &projectile_list_end );
-        //ParticleInterface::addMissleLaunchPuff(startPos, direction, owner_type_id);
     }
 }
 
-
-
-void ProjectileInterface::updateStatus( void )
+void ProjectileInterface::updateStatus()
 {
-    InternalLink *traversal_ptr;
-    Projectile *projectile_ptr;
+    std::list<Projectile*>::iterator i;
+    for(i = projectiles.begin(); i != projectiles.end(); ) {
+        Projectile* projectile = *i;
 
-    traversal_ptr = projectile_list_start;
-
-    while( traversal_ptr != 0 ) {
-        projectile_ptr =  (Projectile *) traversal_ptr;
-
-        if ( projectile_ptr->lifecycle_status == _lifecycle_weapon_in_active ) {
-            InternalLink *destroy_ptr;
-            destroy_ptr = traversal_ptr;
-            traversal_ptr = traversal_ptr->next_ptr;
-            destroy_ptr->removeFromList( (InternalLink **) &projectile_list_start, (InternalLink **) &projectile_list_end );
-
-            if (destroy_ptr != 0) {
-                delete( (Projectile *) (destroy_ptr) );
-                destroy_ptr = 0;
-            }
-
-        } // ** if
-        else {
-            projectile_ptr->updateStatus();
-            traversal_ptr = (traversal_ptr->next_ptr);
-
-        }  // ** else
-
+        if (projectile->lifecycle_status == _lifecycle_weapon_in_active) {
+            i = projectiles.erase(i);
+            delete projectile;
+            continue;
+        }
+        
+        projectile->updateStatus();
+        ++i;
     } // ** while
-
 }
 
 void ProjectileInterface::offloadGraphics( SpriteSorter &sorter )
 {
-    InternalLink *traversal_ptr;
-    Projectile *projectile_ptr;
+    std::list<Projectile*>::iterator i;
 
-    traversal_ptr = projectile_list_start;
-
-    while( traversal_ptr != 0 ) {
-        projectile_ptr =  (Projectile *) traversal_ptr;
-
-        projectile_ptr->offloadGraphics( sorter );
-
-        traversal_ptr = (traversal_ptr->next_ptr);
-    } // ** while
-
+    for(i = projectiles.begin(); i != projectiles.end(); ++i) {
+        Projectile* projectile = *i;
+        projectile->offloadGraphics(sorter);
+    }
 }
+

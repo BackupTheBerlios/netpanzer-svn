@@ -90,9 +90,6 @@ Bot::manualFire(UnitBase *unit, iXY world_pos)
 {
     assert(unit != 0);
 
-    std::cout << "Manual fire to:" << world_pos.x << ","
-        << world_pos.y << "\n";
-
     TerminalUnitCmdRequest comm_mesg;
     comm_mesg.comm_request.setHeader(unit->unit_id, _umesg_flag_unique);
     comm_mesg.comm_request.setManualFire(world_pos);

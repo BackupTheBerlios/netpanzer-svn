@@ -18,22 +18,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PROJECTILE_HPP
 #define _PROJECTILE_HPP
 
-#include "InternalLink.hpp"
 #include "SpriteSorter.hpp"
 
-class Projectile : public InternalLink
+class Projectile
 {
-
 public:
     unsigned char lifecycle_status;
-
+    
+    virtual ~Projectile()
+    { }
+    
     virtual void updateStatus( void )
     { }
 
     virtual void offloadGraphics( SpriteSorter &sorter )
     { }
-
-}
-;
+};
 
 #endif

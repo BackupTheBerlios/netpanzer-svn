@@ -225,6 +225,7 @@ OutpostStatus ObjectiveInterface::getOutpostStatus( short objective_id )
     
     Outpost *outpost_ptr 
         = dynamic_cast<Outpost*> (objective_list.at(objective_id));
+    assert(outpost_ptr != 0);
 
     outpost_ptr->getOutpostStatus( outpost_status );
 

@@ -18,30 +18,29 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PROJECTILEINTERFACE_HPP
 #define _PROJECTILEINTERFACE_HPP
 
+#include <list>
+
 #include "Projectile.hpp"
 #include "Weapon.hpp"
 
 class ProjectileInterface
 {
 protected:
-    static InternalLink *projectile_list_start;
-    static InternalLink *projectile_list_end;
+    static std::list<Projectile*> projectiles;
 
-    static void removeAll( void );
+    static void removeAll();
 
 public:
-
-    static void resetLogic(void);
+    static void resetLogic();
 
     static void newProjectile( unsigned short projectile_type,
                                unsigned short owner_type_id,
                                UnitID &owner, unsigned short damage,
                                iXY &start, iXY &end );
 
-    static void updateStatus( void );
+    static void updateStatus();
 
     static void offloadGraphics( SpriteSorter &sorter );
-
 };
 
 #endif

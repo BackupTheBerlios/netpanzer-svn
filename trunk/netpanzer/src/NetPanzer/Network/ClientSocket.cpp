@@ -99,7 +99,7 @@ void ClientSocket::read()
     int iBytesReceived = SDLNet_TCP_Recv(tcpsocket, RecvBuffer,
                                          sizeof(RecvBuffer));
     if(iBytesReceived<0) {
-        LOG( ("Connection lost to server: %s", SDLNet_GetError()) );
+        LOG( ("Connection lost to server.") );
         return;
     }
 
