@@ -32,14 +32,11 @@ namespace Panels{
     {
         
         this->setName("RootPanel");
-        UI::Button * b1;
-        UI::Button * b2;
         col = 0;
 
-        iRect labelPosition(200, 15, 300, 30);
-        label1 = new UI::Label("Test label", labelPosition, fm);
+        iRect labelPosition(200, 15, 300, 50);
+        label1 = new UI::Label("Test", labelPosition, fm, UI::H_CENTER|UI::BOTTOM);
 
-        label1->setAlignment(UI::LEFT|UI::V_CENTER);
 
         iXY sub1Position(15, 15);
         iXY sub2Position(15, 15);
@@ -84,8 +81,11 @@ namespace Panels{
         Container::draw(painter);
     }
 
-    void TestPanel::buttonPressed(UI::MouseEventParameter & event, UI::Button & source){
-        LOG(("Button Pressed : %s", source.getName().c_str()));
-        label1->setTextColor(::Color::red);
+    void TestPanel::buttonPressed(UI::MouseEventParameter & event, UI::Button * source){
+        LOG(("Button Pressed : %s", source->getName().c_str()));
+        if(source == b1)
+            label1->setTextColor(::Color::red);
+        else
+            label1->setTextColor(::Color::yellow);
     }
 }

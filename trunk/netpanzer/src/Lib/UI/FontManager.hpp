@@ -31,7 +31,7 @@ namespace UI{
         FontManager(void);
         virtual ~FontManager(void);
 
-        void loadFont(std::string name, const char * fileName, int ptSize);
+        void loadFont(const std::string name, const char * fileName, int ptSize);
         TTF_Font * getFont(const std::string & name);
 
         private:

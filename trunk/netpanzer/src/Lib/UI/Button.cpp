@@ -96,7 +96,7 @@ namespace UI
             //LOG(("%s : Click", getName().c_str()));
             std::list<ButtonCallback *>::iterator i;
             for(i = callbacks.begin(); i != callbacks.end(); i++)
-                (*i)->buttonPressed(param, *this);
+                (*i)->buttonPressed(param, this);
         }
     }
 }

@@ -32,7 +32,7 @@ namespace UI{
     class Button;
     class ButtonCallback{
     public:
-        virtual void buttonPressed(MouseEventParameter & event, Button & source) = 0;
+        virtual void buttonPressed(MouseEventParameter & event, Button * source) = 0;
     };
 
     class Button : public Component{

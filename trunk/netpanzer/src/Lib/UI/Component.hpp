@@ -23,10 +23,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Painter.hpp"
 #include "Types/iRect.hpp"
 #include "MouseEventParameter.hpp"
+#include "Util/NoCopy.hpp"
 
 namespace UI{
     
-    class Component{
+    class Component : public NoCopy {
     protected:
         iRect area; //drawing area
         std::string name; //name, used for debugging
@@ -59,7 +60,7 @@ namespace UI{
         virtual void mouseEntered(MouseEventParameter param){};
         virtual void mouseExited(MouseEventParameter param){};
 
-        bool contains(iXY &point){
+        bool contains(const iXY &point){
             return area.contains(point);
         }
 

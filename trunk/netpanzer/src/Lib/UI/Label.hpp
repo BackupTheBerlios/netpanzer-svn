@@ -54,13 +54,7 @@ namespace UI{
         SDL_Color transformColor(Color c);
 
     public:
-        Label(std::string text, iRect area, FontManager *fm, int alignment = TOP|LEFT): Component(area){
-            fontManager = fm;
-            this->alignment = alignment;
-            textColor = transformColor(::Color::white);
-            textSurface = 0;
-            setText(text);
-        }
+        Label(std::string text, iRect area, FontManager *fm, int alignment = TOP | LEFT);
 
         void setText(std::string text);
         const std::string &  getText(void) const;

@@ -37,16 +37,15 @@ namespace UI{
             TTF_CloseFont((*i).second);
     }
 
-    void FontManager::loadFont(std::string name, const char * fileName, int ptSize){
+    void FontManager::loadFont(const std::string name, const char * fileName, int ptSize){
         try {
+            LOGGER.info("Load font : %s",  FileSystem::getRealName(fileName).c_str());
 	    // XXX memory leak. We need to leave the file open as long as the
 	    // font is open. Ugly hack for now
             ReadFile* file (FileSystem::openRead(fileName));
-                
             TTF_Font * font = TTF_OpenFontRW(file->getSDLRWOps(), true, ptSize);
             if(font == 0)
                 throw Exception("Couldn't load font: %s.", TTF_GetError());
-            
             fontCollection[name] = font;
         } catch(std::exception& e) {
             LOGGER.info("Couldn't load font '%s': %s.", fileName, e.what());

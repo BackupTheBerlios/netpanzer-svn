@@ -35,7 +35,7 @@ namespace Panels{
         TestPanel(iXY position, UI::FontManager * fm);
         void draw(UI::Painter & painter); //draw a white border for debug only
 
-        void buttonPressed(UI::MouseEventParameter & event, UI::Button & source);
+        void buttonPressed(UI::MouseEventParameter & event, UI::Button * source);
 
     private:
         const static int WIDTH;
@@ -43,6 +43,8 @@ namespace Panels{
         UI::Container * subBox1;
         UI::Container * subBox2;
         UI::Label * label1;
+        UI::Button * b1;
+        UI::Button * b2;
         int col;
         
     };

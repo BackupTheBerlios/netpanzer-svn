@@ -242,13 +242,12 @@ void PlayerGameManager::inputLoop()
 {
     processSystemKeys();
 
-    if(showNewPanel && Desktop::getVisible("GameView"))
+    if(showNewPanel && Desktop::getVisible("GameView") && testpanel->contains(mouse.getScreenPos()))
     {
         //Game started, draw interface
         testpanel->processEvents(mouse.getScreenPos(), mouse.getButtonMask(), KMOD_NONE);
-    }
-
-    Desktop::manage(mouse.getScreenPos().x, mouse.getScreenPos().y, mouse.getButtonMask() );
+    }else
+       Desktop::manage(mouse.getScreenPos().x, mouse.getScreenPos().y, mouse.getButtonMask() );
 
     COMMAND_PROCESSOR.updateScrollStatus( mouse.getScreenPos() );
 }

@@ -21,23 +21,45 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <iostream>
 namespace UI{
 
+    Label::Label(std::string text, iRect area, FontManager *fm, int alignment): Component(area){
+        fontManager = fm;
+        this->alignment = alignment;
+        textColor = transformColor(::Color::white);
+        textSurface = 0;
+        setText(text);
+    }
+
     void Label::updateTextSurface(void){
         TTF_Font * font = fontManager->getFont("fixed10");
         if(textSurface != 0)
             SDL_FreeSurface(textSurface);
 
         if(font !=0){
-            textSurface = TTF_RenderText_Solid(font, text.c_str(), textColor);
+           textSurface = TTF_RenderText_Solid(font, text.c_str(), textColor);
+            if(alignment & H_CENTER){
 
-            if(alignment & H_CENTER)
                 textPosition.x = area.min.x + ((area.max.x - area.min.x) - textSurface->w) /2;
-            else if(alignment & RIGHT)
+            }else if(alignment & RIGHT){
+
                 textPosition.x = area.min.x + ((area.max.x - area.min.x) - textSurface->w);
-            else
+            }else{
+
                 textPosition.x = area.min.x;
-            
-            if(alignment & V_CENTER)
+            }
+
+            if(alignment & V_CENTER){
                 textPosition.y =  area.min.y + ((area.max.y - area.min.y) - textSurface->h) /2;        
+
+            }else if(alignment & BOTTOM){
+
+                textPosition.y = area.min.y + ((area.max.y - area.min.y) - textSurface->h);
+            }else{
+
+                textPosition.y = area.min.y;
+            }
+
+
+        
         }else
             textSurface = 0;
 
@@ -74,6 +96,7 @@ namespace UI{
 
 
     void Label::draw(Painter & painter){
+
         if(textSurface != 0)
             painter.drawImage(textSurface, textPosition);
         iRect t = area;
