@@ -30,10 +30,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "VisualsView.hpp"
 #include "2D/Palette.hpp"
 #include "InterfaceView.hpp"
+#include "GameConfig.hpp"
 
 //---------------------------------------------------------------------------
 static void bYES()
 {
+    if(gameconfig->quickConnect == true) {
+        GameManager::exitNetPanzer();
+        return;
+    }
+    
     sound->stopTankIdle();
 
     GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);

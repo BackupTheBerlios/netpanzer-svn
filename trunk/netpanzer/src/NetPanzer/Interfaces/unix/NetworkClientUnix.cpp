@@ -36,55 +36,13 @@ NetworkClientUnix::~NetworkClientUnix()
     delete clientsocket;
 }
 
-int NetworkClientUnix::openSession()
-{
-    return true;
-}
-
-int NetworkClientUnix::startEnumeration(ConnectionAddress )
-{
-    LOG( ("Server enumeration not implemented yet!") );
-    Desktop::setVisibility("IPAddressView", true);
-    return false;
-}
-
-int NetworkClientUnix::startEnumeration( )
-{
-    LOG( ("Server enumeration not implemented yet!") );
-    Desktop::setVisibility("IPAddressView", true);
-    return false;
-}
-
-int NetworkClientUnix::stopEnumeration( void )
-{
-    return true;
-}
-
-int NetworkClientUnix::getSessionList(SessionList& )
-{
-    LOG( ("SessionList enumeration not implemented yet!") );
-
-    return false;
-}
-
-int NetworkClientUnix::joinSession()
-{
-    return false;
-}
-
-int NetworkClientUnix::joinSession(int )
-{
-    LOG ( ("Join by session ID not implemented!") );
-    return false;
-}
-
-int NetworkClientUnix::joinSession(const char* session_name)
+int NetworkClientUnix::joinServer(const std::string& server_name)
 {
     delete clientsocket;
     clientsocket = 0;
-    LOG( ("Trying to join server '%s'.\n", session_name) );
+    LOG( ("Trying to join server '%s'.\n", server_name.c_str()) );
     try {
-        clientsocket = new ClientSocket(session_name);
+        clientsocket = new ClientSocket(server_name);
     } catch(Exception e) {
         LOG( ( "Couldn't connect to server:\n%s.", e.what()) );
         char text[128];
@@ -98,12 +56,7 @@ int NetworkClientUnix::joinSession(const char* session_name)
     return true;
 }
 
-int NetworkClientUnix::setJoinSession(const char* )
-{
-    return false;
-}
-
-int NetworkClientUnix::closeSession()
+int NetworkClientUnix::partServer()
 {
     delete clientsocket;
     clientsocket = 0;

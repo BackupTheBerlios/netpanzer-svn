@@ -70,75 +70,11 @@ void bNext()
 
         SERVER->openSession();
     } else if (gameconfig->hostorjoin == _game_session_join) {
-        CLIENT->openSession();
-
-        // XXX no server enumertation/info yet
-#if 0
-        CLIENT->startEnumeration();
-        /*
-          if ( CLIENT->startEnumeration( ) == false )
-           {
-            Desktop::setVisibilityAllWindows(false);
-         Desktop::setVisibility("GetSessionView", true);
-           }
-          else
-           {*/
-#endif
         Desktop::setVisibility("JoinView", true);
         //Desktop::setVisibility("GetSessionHostView", true);
         //Desktop::setVisibility("UnitSelectionView", true);
         Desktop::setVisibility("FlagSelectionView", true);
         Desktop::setVisibility("PlayerNameView", true);
-        //}
-
-        /* winsock hack
-        bool minimize;
-
-        //initialize dplay, fix Bug#15--
-        //if the DPlayReturnValue is 0 dplay ain't working.
-        //we need to put up a message box that says so, then pop the
-        //user back to the SetConnectionTypeView--
-        //ShutDownConnection();
-        DPlayReturnValue = InitializeDirectPlay( gapp.hwndApp);
-        ConnectTypeReturnValue = GameManager::initializeConnectionType();
-
-        DDraw.setGDIStatus(true);
-        //fix dialup problem
-        minimize = MinimizeOrNot(gapp.hwndApp);
-
-         //bug#15+
-         hr =	EnumerateGames( gapp.hwndApp );
-
-        if (minimize == false)
-        {
-        DDraw.setGDIStatus(false);
-        }
-
-        MouseInterface::hideHardwareCursor();   
-
-         // had to rearrange the code so that it would 
-         // react correctly to the dialog box return 
-         if(hr == DPERR_USERCANCEL)
-          {
-           //WE NEED TO BACK OUT TO SELECTSESSIONTYPEVIEW if this
-           //happens
-        //Desktop::toggleVisibility("DirectPlayErrorUserCancelView");
-           Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("GetSessionView", true);
-          }
-         else
-          if((hr == DPERR_EXCEPTION) || (hr == DPERR_GENERIC))
-           {
-            //WE NEED TO TELL THEM THAT A WEIRD DPLAY ERROR OCCURRED
-            //AND BUMP THEM OUT TO SELECTSESSIONTYPEVIEW
-        Desktop::toggleVisibility("DirectPlayErrorExceptionView");
-        Desktop::setVisibility("GetSessionView", true);
-           }
-          else
-           { 
-           
-             end winsock hack*/
-
 
         Desktop::setVisibility("IPAddressView", true);
         if((const std::string&) gameconfig->lobbyserver != "") {
@@ -150,10 +86,6 @@ void bNext()
         //Desktop::setVisibility("UnitSelectionView", true);
         //Desktop::setVisibility("FlagSelectionView", true);
         //Desktop::setVisibility("PlayerNameView", true);
-
-
-        //}
-
     }
 }
 

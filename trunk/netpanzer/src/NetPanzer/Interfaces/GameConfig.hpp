@@ -107,8 +107,10 @@ public:
     void loadConfig();
     void saveConfig();
 
-    // game Settings
-    ConfigInt hostorjoin;           //1=host, 2=join
+    // game Settings (there are not saved to disk)
+    ConfigInt       hostorjoin;         // 1=host, 2=join
+    ConfigBool      quickConnect;
+    ConfigString    serverConnect;      // server to connect to
 
     // player settings
     ConfigString playername;

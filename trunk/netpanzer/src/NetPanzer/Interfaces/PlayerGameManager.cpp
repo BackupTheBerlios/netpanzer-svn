@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "PlayerGameManager.hpp"
 
-// ** PObject netPanzer Network Includes
 #include "Server.hpp"
 #include "Client.hpp"
 #include "ClientMessageRouter.hpp"
@@ -58,7 +57,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 
-// ** GVS Includes
 #include "cMouse.hpp"
 #include "2D/Palette.hpp"
 #include "Desktop.hpp"
@@ -99,7 +97,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameInfoView.hpp"
 #include "GameToolbarView.hpp"
 
-//winsock hack
 #include "IPAddressView.hpp"
 #include "IRCLobbyView.hpp"
 
@@ -132,9 +129,6 @@ void PlayerGameManager::initializeVideoSubSystem()
     Screen = new SDLDraw();
     initFont();
     GameManager::setVideoMode();
-
-    lobbyView = new LobbyView();
-    progressView = new ProgressView();
 }
 
 //-----------------------------------------------------------------
@@ -192,8 +186,11 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new GameToolbarView());
     Desktop::add(new GameInfoView());
 
+    lobbyView = new LobbyView();
     lobbyView->init();
     Desktop::add(lobbyView);
+
+    progressView = new ProgressView();    
     progressView->init();
     Desktop::add(progressView);
 
@@ -223,7 +220,6 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new AreYouSureResignView());
     Desktop::add(new AreYouSureExitView());
 
-    //winsock hack
     Desktop::add(new IPAddressView());
     IRCLobbyView *irc_lobby_view=new IRCLobbyView();
     Desktop::add(irc_lobby_view);
@@ -313,7 +309,6 @@ void PlayerGameManager::hostMultiPlayerGame()
 
     GameControlRulesDaemon::setStateServerInProgress();
     NetworkState::setNetworkStatus( _network_state_server );
-    CLIENT->openSession();
 
     progressView->scrollAndUpdateDirect( "Loading Game Data ..." );
 
@@ -389,11 +384,28 @@ void PlayerGameManager::joinMultiPlayerGame()
     //reinitializeGameLogic();
     NetworkState::setNetworkStatus( _network_state_client );
 
-    CLIENT->joinSession(IPAddressView::szServer.getString());
+    CLIENT->joinServer(gameconfig->serverConnect);
 
     ClientConnectDaemon::startConnectionProcess();
     sound->playTankIdle();
 }
+
+void PlayerGameManager::mainLoop()
+{
+    // this is a bit ugly...
+    static bool firstrun = true;
+    if(firstrun) {
+        firstrun = false;
+        if(gameconfig->quickConnect == true) {
+            Desktop::setVisibilityAllWindows(false);
+            Desktop::setVisibility("LobbyView", true);
+            launchMultiPlayerGame();
+        }
+    }
+
+    BaseGameManager::mainLoop();
+}
+
 //-----------------------------------------------------------------
 void PlayerGameManager::processSystemKeys()
 {

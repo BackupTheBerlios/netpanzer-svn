@@ -21,12 +21,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "LobbyView.hpp"
 #include "Desktop.hpp"
 #include "GameManager.hpp"
+#include "GameConfig.hpp"
 #include "ScreenSurface.hpp"
 
 LoadingView *lobbyView = 0;
 
 static void bAbort()
 {
+    if(gameconfig->quickConnect) {
+        GameManager::exitNetPanzer();
+        return;
+    }
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("MainView", true);
 }

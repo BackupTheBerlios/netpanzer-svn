@@ -31,6 +31,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 GameConfig::GameConfig(const std::string& newconfigfile)
     // VariableName("Name", value [, minimum, maximum])
     : hostorjoin("hostorjoin", _game_session_join, 0, _game_session_last-1),
+      quickConnect("quickconnect", false),
+      serverConnect("serverconnect", ""),
+    
       playername("name", "Player"),
       lobbyserver("lobbyserver", "irc.freenode.net:6667"),
       serverport("serverport",_NETPANZER_DEFAULT_PORT_TCP,0,65535),
@@ -98,8 +101,6 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       radar_resizerate("resizerate", 400, 10, 1000)      
 {
     configfile = newconfigfile;
-
-    //gamesettings.push_back(&hostorjoin);
 
     std::stringstream default_player;
     default_player << "Player" << (rand()%1000);

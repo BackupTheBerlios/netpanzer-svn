@@ -35,6 +35,7 @@ private:
 
     static void hostMultiPlayerGame();
     static void joinMultiPlayerGame();
+
 protected:
     virtual void initializeInputDevices();
 
@@ -43,8 +44,11 @@ protected:
 
     virtual void initializeSoundSubSystem();
 
+    virtual void mainLoop();
+
     virtual void inputLoop();
     virtual void graphicsLoop();
+
 public:
     PlayerGameManager();
     

@@ -67,7 +67,7 @@ bool BotGameManager::launchNetPanzerGame()
     GameManager::setNetPanzerGameOptions();
     NetworkState::setNetworkStatus( _network_state_client );
 
-    if (!CLIENT->joinSession(m_serverHost.c_str())) {
+    if (!CLIENT->joinServer(m_serverHost.c_str())) {
         return false;
     }
 

@@ -51,15 +51,15 @@ protected:
     virtual void inputLoop();
     virtual void graphicsLoop();
 
-    void shutdownSubSystems();
-    void shutdown();
+    virtual void shutdownSubSystems();
+    virtual void shutdown();
 public:
     virtual ~BaseGameManager() { shutdown(); }
 
-    void initialize(const std::string& configfile = "");
+    virtual void initialize(const std::string& configfile = "");
 
     // cyclic executive for loop back server / client
-    void mainLoop();
+    virtual void mainLoop();
 
     virtual bool launchNetPanzerGame() = 0;
 };

@@ -1,3 +1,8 @@
+08-Jan-2003 by Matthias Braun
+-hacked a quick connect option into netpanzer, so that external tools can easily
+ invoke netpanzer to join directly on a specific server. (Maybe some commandline
+ freaks also prefer this method...)
+
 05-Jan-2003 by Matthias Braun
 -server browser works so far
 -converted yet another array like class in ProjectileInterface to std::list

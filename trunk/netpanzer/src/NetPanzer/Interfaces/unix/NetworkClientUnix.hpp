@@ -27,18 +27,8 @@ public:
     NetworkClientUnix();
     virtual ~NetworkClientUnix();
 
-    virtual int openSession();
-
-    virtual int startEnumeration(ConnectionAddress address);
-    virtual int startEnumeration();
-    virtual int stopEnumeration();
-    virtual int getSessionList(SessionList &list);
-
-    virtual int joinSession();
-    virtual int joinSession(int session_index);
-    virtual int joinSession(const char* session_name);
-    virtual int setJoinSession(const char *session_name);
-    virtual int closeSession();
+    virtual int joinServer(const std::string& server_name);
+    virtual int partServer();
 
     virtual void sendMessage(NetMessage *message, size_t size, int flags);
     virtual int getMessage(NetMessage *message);

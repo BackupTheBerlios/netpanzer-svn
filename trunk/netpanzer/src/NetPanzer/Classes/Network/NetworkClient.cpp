@@ -136,7 +136,7 @@ void NetworkClient::updateKeepAliveState( void )
         ClientConnectDaemon::serverConnectionBroken();
         keep_alive_state = false;
         connection_status = _connection_status_no_connection;
-        closeSession();
+        partServer();
     } else {
         if ( keep_alive_emit_timer.count() ) {
             ServerMesgKeepAlive keep_alive_mesg;
@@ -157,10 +157,5 @@ void NetworkClient::updateKeepAliveState( void )
 
         sendMessage( &ping_request_mesg, sizeof(ServerMesgPingRequest), _network_send_no_guarantee );
     }
-}
-
-int NetworkClient::openSession()
-{
-    return true;
 }
 

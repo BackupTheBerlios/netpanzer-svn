@@ -168,6 +168,9 @@ BaseGameManager *initialise(int argc, char** argv)
     command_line commandline(PACKAGE_NAME, PACKAGE_VERSION,
             "Copyright(c) 1998 Pyrosoft Inc. and others", "", argc, argv);
 
+    option<std::string, true, false> connect_option('c', "connect",
+            "directly connect to the specified netpanzer server", "");
+    commandline.add(&connect_option);
     bool_option dedicated_option('d', "dedicated",
             "run as dedicated server", false);
     commandline.add(&dedicated_option);
@@ -233,13 +236,10 @@ BaseGameManager *initialise(int argc, char** argv)
         if (dedicated_option.value()) {
             manager = new DedicatedGameManager();
         }
-        else {
-            if (bot_option.value().size() > 0) {
-                manager = new BotGameManager(bot_option.value());
-            }
-            else {
-                manager = new PlayerGameManager();
-            }
+        else if (bot_option.value().size() > 0) {
+            manager = new BotGameManager(bot_option.value());
+        } else {
+            manager = new PlayerGameManager();
         }
 
         std::string game_config;
@@ -250,6 +250,10 @@ BaseGameManager *initialise(int argc, char** argv)
         manager->initialize(game_config);
 
         // gameconfig exists now...
+        if(connect_option.value() != "") {
+            gameconfig->serverConnect = connect_option.value();
+            gameconfig->quickConnect = true;
+        }                                                               
         if (lobby_server_option.value().size() > 0) {
             if (lobby_server_option.value() == "none") {
                 gameconfig->lobbyserver = "";
@@ -292,10 +296,16 @@ int netpanzer_main(int argc, char** argv)
     } catch(std::exception& e) {
         LOGGER.warning("An unexpected exception occured: %s\nShutdown needed.",
                 e.what());
+#ifdef DEBUG
+        throw;
+#endif
         shutdown();
         return 1;
     } catch(...) {
         LOGGER.warning("An unexpected exception occured.\nShutdown needed.");
+#ifdef DEBUG
+        throw;
+#endif
         shutdown();
         return 1;
     }

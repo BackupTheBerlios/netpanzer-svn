@@ -172,7 +172,7 @@ void BaseGameManager::shutdownNetworkSubSystem()
         SERVER = 0;
     }
     if(CLIENT) {
-        CLIENT->closeSession();
+        CLIENT->partServer();
         ClientMessageRouter::cleanUp();
         delete CLIENT;
         CLIENT = 0;

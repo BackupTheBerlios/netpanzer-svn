@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/UtilInterface.hpp"
 #include "GameConfig.hpp"
 
-ClientSocket::ClientSocket(const char* whole_servername)
+ClientSocket::ClientSocket(const std::string& whole_servername)
 {
     SDLNet::initialise();
     int port=_NETPANZER_DEFAULT_PORT_TCP;
@@ -39,7 +39,8 @@ ClientSocket::ClientSocket(const char* whole_servername)
 
     // resolve server name
     IPaddress serverip;
-    const char *server=(((const std::string &)proxy.proxyserver).size()>0?proxy.proxyserver.c_str():whole_servername);
+    const char *server=(((const std::string
+                    &)proxy.proxyserver).size()>0?proxy.proxyserver.c_str():whole_servername.c_str());
     UtilInterface::splitServerPort(server,servername,&port);
     // some old version of SDL_net take a char* instead of a const char*
 
@@ -59,7 +60,8 @@ ClientSocket::ClientSocket(const char* whole_servername)
             throw Exception("couldn't connect via proxy server '%s'.",
                             server);
         }
-        LOGGER.info("%s connected via proxy %s",whole_servername,proxy.proxyserver.c_str());
+        LOGGER.info("%s connected via proxy %s",whole_servername.c_str(),
+                proxy.proxyserver.c_str());
     }
 
     socketset = SDLNet_AllocSocketSet(1);

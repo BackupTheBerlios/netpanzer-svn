@@ -19,13 +19,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __UILIB_NETWORK_CLIENTSOCKET_HPP__
 
 #include <SDL_net.h>
+#include <string>
 
 #include "ProxyServer.hpp"
 
 class ClientSocket
 {
 public:
-    ClientSocket(const char* serveraddress);
+    ClientSocket(const std::string& serveraddress);
     ~ClientSocket();
 
     void read();

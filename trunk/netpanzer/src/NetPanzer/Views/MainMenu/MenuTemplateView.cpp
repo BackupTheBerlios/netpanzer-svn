@@ -185,17 +185,16 @@ void MenuTemplateView::initPreGameOptionButtons()
 //---------------------------------------------------------------------------
 void MenuTemplateView::initInGameOptionButtons()
 {
-    addSpecialButton(	resignPos,
-                      "Resign",
-                      bResign);
+    if(!gameconfig->quickConnect) {
+        addSpecialButton(resignPos, "Resign", bResign);
+        addSpecialButton(exitPos, "Exit netPanzer", bExitNetPanzer);
+    } else {
+        addSpecialButton(exitPos, "Resign", bResign);
+    }
 
-    addSpecialButton(	returnToGamePos,
+    addSpecialButton( returnToGamePos,
                       "Close Options",
                       bCloseOptions);
-
-    addSpecialButton(	exitPos,
-                      "Exit netPanzer",
-                      bExitNetPanzer);
 } // end MenuTemplateView::initInGameOptionButtons
 
 // initButtons

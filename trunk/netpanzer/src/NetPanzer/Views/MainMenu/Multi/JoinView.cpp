@@ -31,7 +31,6 @@ JoinView::JoinView() : HostJoinTemplateView()
     setSearchName("JoinView");
     setTitle("Join Options");
     setSubTitle("");
-
 } // end JoinView constructor
 
 // doDraw

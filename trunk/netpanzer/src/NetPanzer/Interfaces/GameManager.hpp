@@ -79,7 +79,6 @@ public:
     static bool clientGameSetup( int *percent_complete );
     static void getServerGameSetup( NetMessage *message );
 
-
 public:
     static void exitNetPanzer();
 

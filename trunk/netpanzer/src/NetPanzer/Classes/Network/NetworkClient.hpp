@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETWORK_CLIENT_HPP
 #define _NETWORK_CLIENT_HPP
 
+#include <string>
+
 #include "NetworkInterface.hpp"
 #include "NetworkReturnCodes.hpp"
 
@@ -89,19 +91,8 @@ public:
     void activateKeepAlive();
     void deactivateKeepAlive();
 
-    virtual int openSession() = 0;
-
-    virtual int startEnumeration(ConnectionAddress address) = 0;
-    virtual int startEnumeration() = 0;
-    virtual int stopEnumeration() = 0;
-    virtual int getSessionList(SessionList &list) = 0;
-
-    virtual int joinSession() = 0;
-    virtual int joinSession(int session_index) = 0;
-    virtual int joinSession(const char* session_name) = 0;
-    virtual int setJoinSession(const char *session_name) = 0;
-
-    virtual int closeSession() = 0;
+    virtual int joinServer(const std::string& server_name) = 0;
+    virtual int partServer() = 0;
 
     virtual void sendMessage(NetMessage *message, size_t size, int flags) = 0;
     virtual int getMessage(NetMessage *message) = 0;

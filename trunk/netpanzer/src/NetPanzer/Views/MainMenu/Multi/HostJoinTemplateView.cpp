@@ -53,7 +53,7 @@ int cOrange;
 static void bBack()
 {
     if (gameconfig->hostorjoin == _game_session_join) {
-        CLIENT->closeSession();
+        CLIENT->partServer();
     } else
         if (gameconfig->hostorjoin == _game_session_host) {
             SERVER->closeSession();
@@ -82,38 +82,18 @@ static void bNext()
     // Set the player flag.
     gameconfig->playerflag = playerFlagSelected;
 
-    if (gameconfig->hostorjoin == _game_session_join) {
-        //winsock hack
-        //		if (!IsSelectedGameValid())
-        //		{
-        //			return;
-        //		}
+    // Close all menu views.
+    Desktop::setVisibilityAllWindows(false);
+    Desktop::setVisibility("LobbyView", true);
 
-        // Close all menu views.
-        Desktop::setVisibilityAllWindows(false);
-
-        Desktop::setVisibility("LobbyView", true);
-#if 0
-        std::stringstream join_mess;
-        join_mess << "join " << IPAddressView::szServer.getString();
-        lobby_view->sendIRCMessageLine(join_mess.str());
-#endif
+    if(gameconfig->hostorjoin == _game_session_join) {
+        gameconfig->serverConnect = IPAddressView::szServer.getString();
         lobby_view->stopIRC();
-
-        //this call should be redundant -- enumeration ceases
-        //when a session is opened in any case:
-        //StopAsyncGameEnumeration( gapp.hwndApp );
-        CLIENT->stopEnumeration();
     } else {
-        // Close all menu views.
-        Desktop::setVisibilityAllWindows(false);
         lobby_view->startIRC();
     }
 
-    // Free the menu pictures.
-    //MenuTemplateView::netPanzerLogo.free();
     MenuTemplateView::backgroundSurface.free();
-    //MenuTemplateView::titleSurface.free();
 
     //TODO: I don't like static methods
     PlayerGameManager::launchMultiPlayerGame();
@@ -154,7 +134,6 @@ void HostJoinTemplateView::doActivate()
     MenuTemplateView::doActivate();
 
     sprintf(currentMultiView, searchName);
-
 } // end doActivate
 
 // loadBackgroundSurface
