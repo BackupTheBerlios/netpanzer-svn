@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameManager.hpp"
 #include "GameConfig.hpp"
 #include "ScreenSurface.hpp"
+#include "System/Sound.hpp"
 
 LoadingView *lobbyView = 0;
 
@@ -32,6 +33,7 @@ static void bAbort()
         GameManager::exitNetPanzer();
         return;
     }
+    sound->stopTankIdle();
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("MainView", true);
 }
