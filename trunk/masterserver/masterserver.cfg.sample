@@ -1,8 +1,14 @@
 # This is an example configuration for the masterserver
+# Change it to your needs and copy to masterserver.cfg
+
 [server]
 # you can specify an address here, if you don't want to bind on all network
 # interfaces
 listen=127.0.0.1
+
+# In case the listen address is not the internet-ip for this server, you can
+# specify the internet-ip here
+# ip=127.0.0.1
 port=28900
 # time until a server is considered dead
 server-alive-timeout=720

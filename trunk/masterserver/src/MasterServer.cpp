@@ -71,8 +71,9 @@ MasterServer::MasterServer()
             throw std::runtime_error(msg.str());
         }
         int bindaddress = ((struct in_addr*) hentry->h_addr)->s_addr;
-        if(bindaddress == 0) {
-            throw std::runtime_error("Must specify an explicit bind address");
+        if(bindaddress == 0 && serverconfig.getValue("ip") == "") {
+            throw std::runtime_error(
+                    "Must specify an explicit bind address or an IP in config");
         }
        
         memset(&serveraddr, 0, sizeof(struct sockaddr_in));
@@ -342,8 +343,12 @@ MasterServer::parseList(std::iostream& stream, struct sockaddr_in* addr,
 
     // we're a masterserver ourself (TODO handle additional match criteria)
     if(gamename == "master") {
-        stream << "\\ip\\" << inet_ntoa(serveraddr.sin_addr) 
-               << "\\port\\" << ntohs(serveraddr.sin_port);
+        stream << "\\ip\\";
+        if(serverconfig.getValue("ip") != "")
+            stream << serverconfig.getValue("ip");
+        else
+            stream << inet_ntoa(serveraddr.sin_addr);
+        stream << "\\port\\" << ntohs(serveraddr.sin_port);
     }
     
     stream << "\\final\\" << std::flush;
