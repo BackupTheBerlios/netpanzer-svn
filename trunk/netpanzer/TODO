@@ -23,6 +23,7 @@ should be changed (clients should send the name of their flag). The collest
 solution would be transfering of unknown flags.
 -the unit profiles should be possible to set on the server. They should be
 distributed to the clients while they connect.
+-limit fps to a fixed value so that we are nicer to the CPU on the system.
 
 *** Tools
 -write a map and tileset editor
