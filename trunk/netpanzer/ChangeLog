@@ -1,5 +1,11 @@
 ... ChangeLog is not up to date...
 
+15-Feb-2004 by Matthias Braun
+- fixed typo in UnitIniSyncMessage packet, had to increase network protocol
+  version because of that
+- improved parsing of , separated list for masterservers. it's robust against
+  spaces now
+
 5-Oct-2004 by Matthias Braun
 - more cleanups
 - fix dedicated server not updateing internal masterserverlist
