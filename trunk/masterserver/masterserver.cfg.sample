@@ -1,0 +1,25 @@
+# This is an example configuration for the masterserver
+[server]
+# you can specify an address here, if you don't want to bind on all network
+# interfaces
+listen-address=
+port=28900
+# time until a server is considered dead
+server-alive-timeout=720
+# time until a clientrequest is aborted
+client-request-timeout=30
+# limit of concurrently handled requests
+connection-limit=10
+
+# Interval other masterservers are notified that we're still alive
+masterserver-heartbeat-interval=350
+# Passwort for masterserver heartbeats
+masterserver-password=xxx
+
+# Paths, Enable them if you don't want the default paths
+
+# Specifies the location of the logfile
+# logfile = /var/log/masterserver.log
+# Specifies the location of the servercache file
+# servercachefile = /var/cache/masterserver/neighboors.txt
+
