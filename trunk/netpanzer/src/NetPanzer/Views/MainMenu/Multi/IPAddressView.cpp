@@ -84,7 +84,7 @@ IPAddressView::IPAddressView() : View()
     setAllowMove(false);
     setVisible(false);
 
-    moveTo(iXY(20,70));
+    moveTo(iXY(bodyTextRect.min.x, bodyTextRect.min.y + 50));
 
     iXY  area_size = iXY(280, 110);
     resizeClientArea(area_size);
