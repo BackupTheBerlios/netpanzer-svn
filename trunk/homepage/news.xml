@@ -2,6 +2,21 @@
 <page title="netPanzer - News">
   <section title="News">
     <news>
+      <item date="22. Feb 2004">
+	<p>netPanzer 0.1.4 is available now:</p>
+	<ul>
+	    <li>It's possible to configure the mapcycle in the server</li>
+	    <li>each player has a unique color on the radar (thanks
+		    viras)</li>
+	    <li>small fixes to make netpanzer run on win32</li>
+	    <li>added a quickconnect option to the commandline. This is
+	    usefull for external server browsers like <a
+	    href="http://www.suselinuxsupport.de/index.php?location=download">
+	    KNetpanzerBrowser</a>
+	    </li>
+	    <li>More smaller bugfixes and improvements</li>
+	</ul>
+      </item>
       <item date="05. Jan 2004">
         <p><a
         href="https://developer.berlios.de/project/showfiles.php?group_id=1250">
