@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "HeartbeatThread.hpp"
+#include "NetworkGlobals.hpp"
 
 #include <iostream>
 #include <stdexcept>
@@ -106,8 +107,10 @@ void HeartbeatThread::sendHeartbeat()
         
         // send heartbeat packet
         std::stringstream packet;
-        packet << "\\heartbeat\\" << gameport
-               << "\\gamename\\" << gamename << "\\final\\";
+        packet << "\\heartbeat\\" << "\\gamename\\" << gamename
+               << "\\port\\" << gameport 
+               << "\\protocol\\" << _NETPANZER_PROTOCOL_VERSION
+               << "\\final\\";
         const void* data = packet.str().c_str();
         size_t datasize = packet.str().size();
         int res = SDLNet_TCP_Send(sock, const_cast<void*>(data), (int) datasize);
