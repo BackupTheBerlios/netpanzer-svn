@@ -16,6 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+#include <sstream>
 
 #include "FileSystem.hpp"
 #include "Log.hpp"
@@ -53,7 +54,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       screengamma("gamma", 50, 0, 100),
 
       unitcolor("unitcolor", 0, 0, _color_last-1),
-      playerflag("playerflag", 0, 0, 100),
+      playerflag("playerflag", -1, -1, 100),
       attacknotificationtime("attacknotificationtime", 5, 0, 100),
       vehicleselectioncolor("vehicleselectioncolor", _color_blue, 0, _color_last-1),
       consoletextcolor("consoletextcolor", _color_white, 0, _color_last-1),
@@ -81,6 +82,9 @@ GameConfig::GameConfig(const std::string& newconfigfile)
 
     //gamesettings.push_back(&hostorjoin);
 
+    std::stringstream default_player;
+    default_player << "Player" << (rand()%1000);
+    playername=default_player.str();
     playersettings.push_back(&playername);
     playersettings.push_back(&lobbyserver);
 
