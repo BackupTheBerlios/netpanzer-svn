@@ -418,7 +418,7 @@ void PlayerInterface::netMessageConnectID( NetMessage *message )
 
     connect_mesg = (PlayerConnectID *) message;
 
-    local_player_index = connect_mesg->connect_state.playerindex_id;
+    local_player_index = connect_mesg->connect_state.getPlayerIndex();
 
     player_lists[local_player_index].setFromNetworkPlayerState
         (&connect_mesg->connect_state);
@@ -430,7 +430,7 @@ void PlayerInterface::netMessageSyncState( NetMessage *message )
     size_t player_index;
 
     sync_mesg = ( PlayerStateSync *) message;
-    player_index = sync_mesg->player_state.playerindex_id;
+    player_index = sync_mesg->player_state.getPlayerIndex();
     player_lists[player_index].setFromNetworkPlayerState(&sync_mesg->player_state);
 }
 
