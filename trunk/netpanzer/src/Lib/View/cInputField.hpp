@@ -29,6 +29,7 @@ class cInputFieldString
 
 private:
     int   maxCharCount;
+    int     maxWidth;         // max width in the gui
     char *string;
 
 public:
@@ -50,7 +51,10 @@ public:
         }
     }
 
-    void init(const char *string, int maxCharCount);
+    void init(const char *string, int maxCharCount,int maxWidth);
+    void init(const char *string, int maxCharCount) {
+        init(string,maxCharCount,maxCharCount);
+    }
     void setString(const char *string);
     void reset();
 
@@ -110,10 +114,16 @@ public:
    void draw(Surface &dest);
     void drawHighlighted(Surface &dest);
     void checkCursor();
+    void resetString();     // reset string position
 
 private:
     iXY      pos;
     size_t   maxCharCount;
+    int     strDisplayStart;  // which char to start displaying from
+    int     maxWidth;         // max width in the gui
+    int     depressedKey;     // currently depressed key
+    unsigned int depressedKeyTimeNext;  // tick to repeat the key
+    bool    insertMode;
     char    *destString;
     char    *excludedCharacters;
     iRect    bounds;
@@ -121,6 +131,8 @@ private:
     Surface inputFieldSurface;
     ACTION_FUNC_PTR returnaction;
 
+    void pressKey(int ch);
+    void checkRepeat();
     void reset();
 }; // end cInputField
 

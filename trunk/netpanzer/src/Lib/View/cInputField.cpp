@@ -18,10 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <string.h>
+#include <ctype.h>
 #include "Color.hpp"
 #include "Exception.hpp"
 #include "cInputField.hpp"
 #include "TimerInterface.hpp"
+#include "KeyboardInterface.hpp"
+#include "Log.hpp"
 
 ////////////////////////////////////////////////////////////////////////////
 // cInputFieldString definitions.
@@ -29,10 +32,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // init
 //--------------------------------------------------------------------------
-void cInputFieldString::init(const char *string, int maxCharCount)
+void cInputFieldString::init(const char *string, int maxCharCount, int maxWidth)
 {
     cInputFieldString::maxCharCount = maxCharCount;
+    cInputFieldString::maxWidth = maxWidth;
     assert(maxCharCount > 0);
+    assert(maxWidth > 0);
 
     cInputFieldString::string = new char [maxCharCount + 1];
 
@@ -47,6 +52,8 @@ void cInputFieldString::init(const char *string, int maxCharCount)
 // setString
 void cInputFieldString::setString(const char *string)
 {
+// XXX notify cinputfield to resetString positions
+
     strncpy(this->string, string, maxCharCount);
 } // end setString
 
@@ -73,7 +80,17 @@ void cInputField::reset()
     destString         = 0;
     excludedCharacters = 0;
     returnaction       = 0;
+    strDisplayStart    = 0;
+    depressedKey       = 0;
+    depressedKeyTimeNext = 0;
+    insertMode         = true;
 } // end reset
+
+void cInputField::resetString()
+{
+    strDisplayStart    = 0;
+    cursorPos          = 0;
+}
 
 // setPos
 //--------------------------------------------------------------------------
@@ -94,10 +111,11 @@ void cInputField::setInputFieldString(cInputFieldString *string)
 
     this->destString   = string->string;
     this->maxCharCount = string->maxCharCount;
+    this->maxWidth = string->maxWidth;
 
     iXY size;
     // XXX (8 is hardcoded here...)
-    size.x = maxCharCount * 8 + 8;
+    size.x = string->maxWidth * 8 + 8;
     size.y = Surface::getFontHeight() + 4;
 
     bounds.max = bounds.min + size;
@@ -123,14 +141,22 @@ void cInputField::setExcludedCharacters(const char *excludedCharacters)
 //--------------------------------------------------------------------------
 void cInputField::addChar(int newChar)
 {
+    pressKey(newChar);
     // Check if the character should be excluded.
     if (strchr(excludedCharacters, newChar) == 0) {
-        size_t length = strlen(destString) + 1;
         
         // Add the character.
+        if(insertMode) {
+            // ins, move stuff forward
+            if((cursorPos+1)<maxCharCount) {
+                memmove(destString+cursorPos+1,destString+cursorPos,
+                    maxCharCount-(cursorPos+1));
+            }
+        }
+        int replacedChar=destString[cursorPos];
         destString[cursorPos] = newChar;
-        if (length <= maxCharCount) {
-            destString[length] = '\0';
+        if (cursorPos <= maxCharCount) {
+            if(replacedChar=='\0') destString[cursorPos+1] = '\0';
         } else {
             destString[maxCharCount] = '\0';
         }
@@ -152,6 +178,7 @@ void cInputField::setReturnAction(ACTION_FUNC_PTR action)
 //--------------------------------------------------------------------------
 void cInputField::addExtendedChar(int newExtendedChar)
 {
+    pressKey(newExtendedChar);
     // Process the extendedChar accordingly.
     switch (newExtendedChar) {
     case SDLK_HOME: {
@@ -186,7 +213,9 @@ void cInputField::addExtendedChar(int newExtendedChar)
         }
         break;
 
-    case SDLK_INSERT: {}
+    case SDLK_INSERT: {
+            insertMode^=1;
+        }
         break;
 
     case SDLK_DELETE: {
@@ -230,10 +259,11 @@ void cInputField::addExtendedChar(int newExtendedChar)
 void cInputField::draw(Surface &dest)
 {
     checkCursor();
+    checkRepeat();
 
     inputFieldSurface.fill(Color::black);
     inputFieldSurface.drawButtonBorder(Color::white, Color::gray64);
-    inputFieldSurface.bltString(4, 2, destString, Color::white);
+    inputFieldSurface.bltString(4, 2, destString+strDisplayStart, Color::white);
     inputFieldSurface.blt(dest, pos);
 } // draw
 
@@ -242,10 +272,11 @@ void cInputField::draw(Surface &dest)
 void cInputField::drawHighlighted(Surface &dest)
 {
     checkCursor();
+    checkRepeat();
 
     inputFieldSurface.fill(Color::black);
     inputFieldSurface.drawButtonBorder(Color::darkGray, Color::white);
-    inputFieldSurface.bltStringShadowed(4, 2, destString, Color::white, Color::black);
+    inputFieldSurface.bltStringShadowed(4, 2, destString+strDisplayStart, Color::white, Color::black);
 
     static float timeForBlink = 0.0f;
     if ((timeForBlink += TimerInterface::getTimeSlice()) > 0.25f) {
@@ -253,7 +284,8 @@ void cInputField::drawHighlighted(Surface &dest)
             timeForBlink = 0.0f;
         }
     } else {
-        if (cursorPos >= maxCharCount) {
+        int cursorPos=cInputField::cursorPos-strDisplayStart;
+        if ((size_t)cursorPos >= maxCharCount) {
             // XXX hardcoded CHAR_PIXX (8)
             inputFieldSurface.bltString(((cursorPos - 1) * 8) + 4, 2, "_", Color::red);
         } else {
@@ -275,4 +307,39 @@ void cInputField::checkCursor()
     if (cursorPos > strlen(destString)) {
         cursorPos = strlen(destString);
     }
+    if(((size_t)strDisplayStart)>cursorPos) {
+        strDisplayStart=cursorPos;
+    }
+    else if(((size_t)(strDisplayStart+maxWidth))<=cursorPos) {
+        strDisplayStart=cursorPos-maxWidth;
+    }
 } // end checkCursor
+
+// check repeat and insert characters as needed
+void cInputField::checkRepeat()
+{
+    if(depressedKey==0) { return; }
+    Uint32 ticks=SDL_GetTicks();
+    if(depressedKeyTimeNext>ticks) {
+        return;
+    }
+    if(KeyboardInterface::getKeyState(depressedKey)!=true) {
+        // we've let go of this key.
+        depressedKey=0;
+        return;
+    }
+
+    if(isprint(depressedKey)) {
+        addChar(depressedKey);
+    }
+    else { addExtendedChar(depressedKey); }
+
+    depressedKeyTimeNext=ticks+50;
+}
+
+void cInputField::pressKey(int ch)
+{
+    depressedKey=ch;
+    depressedKeyTimeNext=SDL_GetTicks()+250;
+}
+
