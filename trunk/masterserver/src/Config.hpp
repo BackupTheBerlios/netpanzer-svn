@@ -1,39 +1,34 @@
-#ifndef __CONFIGFILE_HPP__
-#define __CONFIGFILE_HPP__
+/*
+Copyright (C) 2004 Matthias Braun <matze@braunis.de>
+ 
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+ 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+ 
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+#ifndef __CONFIG_HPP__
+#define __CONFIG_HPP__
 
-#include <vector>
-#include <string>
+#include "iniparser/Store.hpp"
 
-/** A very simple configfile parser, which parses key/value pairs from a config
- * file and stores them
- */
-class ConfigFile
+namespace masterserver
 {
-public:
-    ConfigFile(const std::string& filename);
-    ~ConfigFile();
 
-    int getPort()
-    { return port; }
-    int getGameServerTimeout()
-    { return gameservertimeout; }
-    int getRequestTimeout()
-    { return requesttimeout; }
-    int getConnectionLimit()
-    { return connectionlimit; }
-    std::vector<std::string>& getBindAddresses()
-    { return bindaddresses; }
+extern iniparser::Store* config;
 
-private:
-    std::string token;
-    void nextToken();
-    
-    int port;
-    int gameservertimeout;
-    int requesttimeout;
-    int connectionlimit;
-    std::vector<std::string> bindaddresses;
-};
+void loadConfig();
+void freeConfig();
+
+} // end of namespace masterserver
 
 #endif
 

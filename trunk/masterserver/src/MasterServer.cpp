@@ -1,9 +1,27 @@
+/*
+Copyright (C) 2004 Matthias Braun <matze@braunis.de>
+ 
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+ 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+ 
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 #include <config.h>
 
 #include "MasterServer.hpp"
 
 #include <stdexcept>
 #include <sstream>
+#include <fstream>
 #include <iostream>
 
 #include <stdio.h>
@@ -21,20 +39,16 @@
 #include "Tokenizer.hpp"
 #include "SocketStream.hpp"
 #include "Log.hpp"
-
-#define PORT 28900
-
-#define SERVERTIMEOUT       12*60
-#define REQUESTTIMEOUT      30
-#define CONNECTIONLIMIT     15
+#include "Config.hpp"
+#include "HeartbeatThread.hpp"
+#include "iniparser/Section.hpp"
 
 namespace masterserver
 {
 
 MasterServer::MasterServer()
+    : serverconfig(config->getSection("server")), heartbeatThread(0)
 {   
-    initializeLog();
-    
     sock = -1;
     try {
         // bind to socket
@@ -44,18 +58,34 @@ MasterServer::MasterServer()
             msg << "Couldn't create socket: " << strerror(errno);
             throw std::runtime_error(msg.str());
         }
+
+        // resolved bind/listen address
+        int bindaddress = INADDR_ANY;
+
+        if(serverconfig.getValue("listen-address") != "") {
+            struct hostent* hentry;
+            hentry =
+                gethostbyname(serverconfig.getValue("listen-address").c_str());
+            if(!hentry) {
+                std::stringstream msg;
+                msg << "Couldn't resolve listen-address '" << 
+                    serverconfig.getValue("listen-address") << "'.";
+                throw std::runtime_error(msg.str());
+            }
+            bindaddress = ((struct in_addr*) hentry->h_addr)->s_addr;
+        }
        
         struct sockaddr_in addr;
         memset(&addr, 0, sizeof(struct sockaddr_in));
         addr.sin_family = AF_INET;
-        addr.sin_addr.s_addr = INADDR_ANY;
-        addr.sin_port = htons(PORT);
+        addr.sin_addr.s_addr = bindaddress;
+        addr.sin_port = htons(serverconfig.getIntValue("port"));
         int res = bind(sock, (struct sockaddr*) &addr,
                 sizeof(struct sockaddr_in));
         if(res < 0) {
             std::stringstream msg;
-            msg << "Couldn't bind socket to port " << PORT << " : "
-                << strerror(errno);
+            msg << "Couldn't bind socket to port " <<
+                serverconfig.getIntValue("port") << " : " << strerror(errno);
             throw std::runtime_error(msg.str());
         }
 
@@ -67,7 +97,9 @@ MasterServer::MasterServer()
         }
         
         pthread_mutex_init(&serverlist_mutex, 0);
-        
+
+        // start heartbeatthread
+        heartbeatThread = new HeartbeatThread(this);
     } catch(...) {
         if(sock >= 0)
             close(sock);
@@ -77,13 +109,15 @@ MasterServer::MasterServer()
 
 MasterServer::~MasterServer()
 {
+    writeNeighborCache();
+    delete heartbeatThread;
+
     for(std::list<RequestThread*>::iterator i = threads.begin();
             i != threads.end(); ++i) {
         delete *i;
     }
     
     close(sock);
-    closeLog();
 }
 
 void MasterServer::run()
@@ -104,14 +138,15 @@ void MasterServer::run()
         std::list<RequestThread*>::iterator i;
         time_t currenttime = time(0);
         for(i = threads.begin(); i != threads.end(); ) {
-            if(currenttime - (*i)->getStartTime() > REQUESTTIMEOUT) {
+            if(currenttime - (*i)->getStartTime() >
+                    serverconfig.getIntValue("client-request-timeout")) {
                 delete *i;
                 i = threads.erase(i);
             } else {
                 ++i;
             }               
         }
-        if(threads.size() > REQUESTTIMEOUT) {
+        if(threads.size() > serverconfig.getIntValue("connection-limit")) {
             // drop the client, we're too busy
             close(clientsock);
             continue;
@@ -139,6 +174,7 @@ void MasterServer::parseHeartbeat(std::iostream& stream,
         if(i->address.sin_addr.s_addr == addr->sin_addr.s_addr
             && i->address.sin_port == htons(queryport)) {
             updateServerInfo(*i, tokenizer);
+            // TODO do UDP check
             *log << "Heartbeat from " << inet_ntoa(addr->sin_addr) << std::endl;
             stream << "\\ok\\server updated\\final\\" << std::flush;
             pthread_mutex_unlock(&serverlist_mutex);
@@ -189,21 +225,77 @@ void MasterServer::parseList(std::iostream& stream,
 
     pthread_mutex_lock(&serverlist_mutex);
     for(i=serverlist.begin(); i != serverlist.end(); /* nothing */) {
-        if(currenttime - i->lastheartbeat <= SERVERTIMEOUT) {
+        if(currenttime - i->lastheartbeat <=
+                serverconfig.getIntValue("server-alive-timeout")) {
             if(i->gamename == gamename) {
                 stream << "\\ip\\" << inet_ntoa(i->address.sin_addr)
-                    << ":" << ntohs(i->address.sin_port);
+                    << "\\port\\" << ntohs(i->address.sin_port);
             }
             ++i;
         } else {
             // remove server from list
-            *log << "timeout from " << inet_ntoa(addr->sin_addr) << std::endl;
+            *log << "server timeout at " << inet_ntoa(addr->sin_addr)
+                 << std::endl;
             i = serverlist.erase(i);
         }
     }
     pthread_mutex_unlock(&serverlist_mutex);
     
     stream << "\\final\\";
+}
+
+void
+MasterServer::parseQuit(std::iostream& stream, struct sockaddr_in* addr,
+        Tokenizer& tokenizer)
+{
+    std::string token = tokenizer.getNextToken();
+    std::stringstream strstream(token);
+    
+    int queryport;
+    strstream >> queryport;
+
+    pthread_mutex_lock(&serverlist_mutex);
+    for(std::vector<ServerInfo>::iterator i = serverlist.begin();
+            i != serverlist.end(); ++i) {
+        if(i->address.sin_addr.s_addr == addr->sin_addr.s_addr
+            && i->address.sin_port == htons(queryport)) {
+            *log << "Server '" << i->gamename << "' at " <<
+                inet_ntoa(i->address.sin_addr) << ":" << 
+                ntohs(i->address.sin_port) << "\n";
+            serverlist.erase(i);
+            break;
+        }
+    }
+    pthread_mutex_unlock(&serverlist_mutex);
+}
+
+void
+MasterServer::writeNeighborCache()
+{
+    iniparser::Store neighborini;
+    iniparser::Section& neighbors = neighborini.getSection("neighbors");
+
+    pthread_mutex_lock(&serverlist_mutex);
+    int idx = 0;
+    for(std::vector<ServerInfo>::iterator i = serverlist.begin();
+            i != serverlist.end(); ++i) {
+        if(i->gamename == "master") {
+            std::stringstream key;
+            key << "ip" << idx++;
+            neighbors.setValue(key.str(), inet_ntoa(i->address.sin_addr));
+        }
+    }
+    pthread_mutex_unlock(&serverlist_mutex);
+
+    const std::string neighborcachefile = 
+        config->getSection("server").getValue("neighborcachefile");
+    std::ofstream out(neighborcachefile.c_str());
+    if(!out.good()) {
+        *log << "Couldn't write neighborcachefile '" << neighborcachefile
+            << "'.\n";
+        return;
+    }
+    neighborini.save(out);
 }
 
 }

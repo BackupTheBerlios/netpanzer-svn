@@ -15,42 +15,47 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef __REQUESTTHREAD_HPP__
-#define __REQUESTTHREAD_HPP__
+#ifndef __HEARTBEATTHREAD_HPP__
+#define __HEARTBEATTHREAD_HPP__
 
-#include <iostream>
-#include <time.h>
-#include <netinet/in.h>
+#include <vector>
+
+#include <arpa/inet.h>
+#include <pthread.h>
 
 namespace masterserver
 {
 
 class MasterServer;
 
-/** A thread that handles a single client request */
-class RequestThread
+/** This class is responsible for notifying the other masterservers from time
+ * to time that we're still running.
+ */
+class HeartbeatThread
 {
 public:
-    RequestThread(MasterServer* master, std::iostream* stream,
-            struct sockaddr_in addr);
-    ~RequestThread();
+    HeartbeatThread(MasterServer* masterserver);
+    ~HeartbeatThread();
 
-    time_t getStartTime()
-    { return starttime; }
-    
 private:
     static void* threadMain(void* data);
-    void run();
+    void sendHeartbeats();
+    void sendHeartbeat(struct sockaddr_in* address);
+
+    void readNeighborCache(std::vector<std::string>& list);
     
+    void requestMasterServerList();
+    void requestMasterServerList2(struct sockaddr_in* address);
+    void addMasterServer(const std::string& address);
+
     MasterServer* masterserver;
-    std::iostream* stream;
-    struct sockaddr_in addr;
-    pthread_t thread;
+    
     volatile bool running;
-    time_t starttime;
+    std::vector<struct sockaddr_in> serveraddresses;
+    pthread_t thread;
 };
 
-}
+} // end of namespace masterserver
 
 #endif
 
