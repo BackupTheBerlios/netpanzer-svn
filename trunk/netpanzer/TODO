@@ -71,6 +71,8 @@
 / tuning the gameplay. 1 of the strengths of netpanzer is that it is simple 
 / to understand and play. We should try hard not to destroy this by adding 
 / too many options.
+ * adjust points for killings tanks based, on their type. Killing a spahpanzer
+   should get fewer points than killing a Titan.
  * Add a mode where nothing is produced (maps without outposts). Players can
    select some tanks based on a points system and can then fight with this fixed
    amount of tanks
