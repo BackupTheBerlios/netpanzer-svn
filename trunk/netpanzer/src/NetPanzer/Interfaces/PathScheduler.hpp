@@ -106,7 +106,7 @@ class PathGenerator
    unsigned short pathing_fsm;    
    unsigned short pathing_fsm_state;
    
-   bool path_generation_status;
+   int path_generation_status;
    
    PathRequest path_request;
 
@@ -136,14 +136,12 @@ class PathGenerator
    inline bool generationComplete( UnitID &unit_id )
     {
 	 // XXX comparison is always false?!?
-#if 0
      if ( path_generation_status == _path_generator_status_waiting )
 	  if ( path_request.unit_id == unit_id )
 	   { 
 	    path_generation_status = _path_generator_status_free;
 		return( true );
 	   }
-#endif
 	 
 	 return( false );
 	}
