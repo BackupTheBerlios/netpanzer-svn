@@ -118,7 +118,6 @@ static void bCloseOptions()
     Desktop::setVisibility("InterfaceView", false);
     Desktop::setVisibility("SoundView", false);
     Desktop::setVisibility("OptionsView", false);
-
 }
 
 //---------------------------------------------------------------------------
@@ -155,7 +154,6 @@ MenuTemplateView::MenuTemplateView() : SpecialButtonView()
 
     curTitleFlashTime  = 0.0f;
     titleFlashTimeHalf = 0.5;
-
 } // end MenuTemplateView constructor
 
 //---------------------------------------------------------------------------
@@ -178,11 +176,7 @@ void MenuTemplateView::initPreGameOptionButtons()
                       "Help",
                       bHelp);
 
-    //addSpecialButton(	iXY(11, 147),
-    //					"Order",
-    //					bOrdering);
-
-    addSpecialButton(	exitPos,
+    addSpecialButton( exitPos,
                       "Exit netPanzer",
                       bExit);
 
@@ -203,7 +197,6 @@ void MenuTemplateView::initInGameOptionButtons()
     addSpecialButton(	exitPos,
                       "Exit netPanzer",
                       bExitNetPanzer);
-
 } // end MenuTemplateView::initInGameOptionButtons
 
 // initButtons
@@ -224,10 +217,13 @@ void MenuTemplateView::doDraw(const Surface &viewArea, const Surface &clientArea
     //setWorldRect();
 
     if (Desktop::getVisible("GameView")) {
+	// When ingame, tint the game into gray
         clientArea.bltLookup(getClientRect(), Palette::darkGray256.getColorArray());
         clientArea.drawWindowsBorder(Color::white, Color::white, Color::white);
 
     } else {
+	// When in mainmenu, make background dark and draw menu image
+	
         // Set the following to get does exist.
         if (backgroundSurface.getFrameCount() > 0) {
             backgroundSurface.blt(viewArea, 0, 0);
@@ -239,67 +235,7 @@ void MenuTemplateView::doDraw(const Surface &viewArea, const Surface &clientArea
         titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, 390, Palette::colorTable6040);
     }
 
-    // Set the following to get does exist.
-    //if (titleSurface.getFrameCount() > 0)
-    //{
-    //	curTitleFlashTime += TimerInterface::getTimeSlice();
-    //
-    //	if (curTitleFlashTime > titleFlashTimeHalf * 2.0f)
-    //	{
-    //		// Since we are done, draw the solid image.
-    //		titleSurface.blt(viewArea, bodyTextRect.min.x, 394);
-    //	}
-    //	else if (curTitleFlashTime > titleFlashTimeHalf)
-    //	{
-    //		float titleFlashPercent = 1.0f - (float(curTitleFlashTime) / float(titleFlashTimeHalf));
-    //
-    //		titleSurface.bltBrightness(viewArea, iXY(bodyTextRect.min.x, 394), titleFlashPercent);
-    //	}
-    //	else
-    //	{
-    //		float titleFlashPercent = float(curTitleFlashTime) / float(titleFlashTimeHalf);
-    //
-    //		titleSurface.bltBrightness(viewArea, iXY(bodyTextRect.min.x, 394), titleFlashPercent);
-    //	}
-    //} else
-    //{
-    //	throw Exception("Where is the title surface?");
-    //}
-
-    //iRect r(100, 100, 200, 110);
-    //clientArea.fillRect(r, Color::chartreuse);
-    //r.translate(iXY(0, 15));
-    //clientArea.fillRect(r, Color::cobaltGreen);
-    //r.translate(iXY(0, 15));
-    //clientArea.fillRect(r, Color::emeraldGreen);
-    //r.translate(iXY(0, 15));
-    //clientArea.fillRect(r, Color::forestGreen);
-    //r.translate(iXY(0, 15));
-    //clientArea.fillRect(r, Color::darkOliveGreen);
-    //r.translate(iXY(0, 15));
-    //clientArea.fillRect(r, Color::terreVerte);
-    //r.translate(iXY(0, 15));
-
-    // Set the following to get does exist.
-    //if (globeSurface.getFrameCount() > 0)
-    //{
-    //	globeSurface.nextFrame();
-    //	globeSurface.blt(viewArea, 0, 0);
-    //	globeSurface.bltBlend(viewArea, 0, 0, Palette::colorTable8020);
-    //} else
-    //{
-    //	throw Exception("Where is the fucking globe surface?");
-    //}
-
     View::doDraw(viewArea, clientArea);
-
-    //iXY pos;
-    //pos.x = 0;
-    //pos.y = SCREEN_YPIX - netPanzerLogo.getPixY();
-
-    //netPanzerLogo.nextFrame();
-    //netPanzerLogo.blt(viewArea, pos);
-
 } // end doDraw
 
 // doActivate
@@ -310,27 +246,6 @@ void MenuTemplateView::doActivate()
     sprintf(currentView, searchName);
     Desktop::setActiveView(searchName);
 
-    // Load apprpriate images for this view.
-    //if (globeSurface.getFrameCount() <= 0)
-    //{
-    //	// See if the pak image already exists.
-    //	if (getFileSize("pics/backgrounds/menus/globe/pak/globe.pak") > 0)
-    //	{
-    //		globeSurface.load("pics/backgrounds/menus/globe/pak/globe.pak");
-    //	} else
-    //	{
-    //		Surface tempSurface;
-    //
-    //		if (!tempSurface.loadAllTILInDirectory("pics/backgrounds/menus/globe/til/"))
-    //		{
-    //			throw Exception("Shit");
-    //		}
-    //		tempSurface.setFPS(14);
-    //
-    //		globeSurface.pack(tempSurface);
-    //		globeSurface.save("pics/backgrounds/menus/globe/pak/globe.pak");
-    //	}
-    //}
     loadBackgroundSurface();
     loadTitleSurface();
     loadNetPanzerLogo();
@@ -343,7 +258,6 @@ void MenuTemplateView::doActivate()
 void MenuTemplateView::loadBackgroundSurface()
 {
     doLoadBackgroundSurface("pics/backgrounds/menus/menu/til/defaultMB.til");
-
 } // end MenuTemplateView::loadBackgroundSurface
 
 // doLoadBackgroundSurface
@@ -353,7 +267,6 @@ void MenuTemplateView::doLoadBackgroundSurface(String string)
     if (!backgroundSurface.loadTIL(string)) {
         throw Exception("ERROR: Unable to load menu background surface: %s", (const char *) string);
     }
-
 } // end MenuTemplateView::doLoadBackgroundSurface
 
 // loadTitleSurface
@@ -361,7 +274,6 @@ void MenuTemplateView::doLoadBackgroundSurface(String string)
 void MenuTemplateView::loadTitleSurface()
 {
     doLoadTitleSurface("pics/backgrounds/menus/menu/til/mainTitle.til");
-
 } // end MenuTemplateView::loadTitleSurface
 
 // doLoadBackgroundSurface
@@ -392,7 +304,6 @@ void MenuTemplateView::doLoadTitleSurface(String string)
 
         titlePackedSurface.save(pakString);
     }
-
 } // end MenuTemplateView::doLoadTitleSurface
 
 // doDeactivate
@@ -400,7 +311,6 @@ void MenuTemplateView::doLoadTitleSurface(String string)
 void MenuTemplateView::doDeactivate()
 {
     FontSystem2D::removeAll();
-
 } // end doDeactivate
 
 //---------------------------------------------------------------------------
@@ -412,5 +322,5 @@ void MenuTemplateView::loadNetPanzerLogo()
 void MenuTemplateView::processEvents()
 {
     centerAbsolute();
-
 } // end MenuTemplateView::processEvents
+

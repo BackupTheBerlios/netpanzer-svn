@@ -37,9 +37,6 @@ MainMenuView::MainMenuView() : MenuTemplateView()
     setSubTitle("");
 
     setVisible(true);
-
-    //addButtonCenterText(iXY(240, 454), 260, "QuickLaunch of Host Session", "Accepts the current selection.", bQuickLaunch);
-
 } // end MainMenuView::MainMenuView
 
 // doDraw
@@ -59,5 +56,4 @@ void MainMenuView::doDraw(const Surface &viewArea, const Surface &clientArea)
         "and artists. Look at http://www.nongnu.org/netpanzer for details. ";
 
     viewArea.bltStringInBox(bodyTextRect, text, Color::white, 12);
-
 } // end MainMenuView::doDraw

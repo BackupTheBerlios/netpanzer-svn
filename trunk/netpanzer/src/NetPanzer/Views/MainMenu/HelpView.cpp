@@ -46,26 +46,12 @@ void HelpView::doActivate()
     MenuTemplateView::doActivate();
 
     Desktop::setVisibilityNoDoAnything("HelpScrollView", true);
-
-    //View *v = Desktop::getView("HelpScrollView");
-
-    // Set the position correctly for the scrolling help.
-    //if (v != 0)
-    //{
-    //	v->moveTo(iXY(30, 30));
-    //} else
-    //{
-    //	assert(false);
-    //}
-
 } // end HelpView::doActivate
 
 // doDeactivate
 //---------------------------------------------------------------------------
 void HelpView::doDeactivate()
 {
-    // !HACK!  The screenSurface is not being de-allocated.
-
 } // end HelpView::doDeactivate
 
 // loadTitleSurface
@@ -73,5 +59,4 @@ void HelpView::doDeactivate()
 void HelpView::loadTitleSurface()
 {
     doLoadTitleSurface("pics/backgrounds/menus/menu/til/helpTitle.til");
-
 } // end HelpView::loadTitleSurface

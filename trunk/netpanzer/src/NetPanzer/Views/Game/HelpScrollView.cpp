@@ -111,21 +111,6 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("  F9                               BMP screen shot");
     insert("  Alt + '-'                        Decrease brightness");
     insert("  Alt + '='                        Increase brightness");
-    insert("  Alt + Keypad plus                Increase game resolution");
-    insert("  Alt + Keypad minus               Decrease game resolution");
-
-    // Define the scrollBar fot this view.
-    //scrollBar = new ScrollBar(VERTICAL, 0, 1, 0, text.getCount());
-    //if (scrollBar == 0)
-    //{
-    //	throw Exception("ERROR: Unable to allocate the scrollBar.");
-    //}
-    //
-    //iRect clientRect(getClientRect());
-    //scrollBar->setViewableAmount(clientRect.getSizeY() / (TEXT_GAP_SPACE + CHAR_YPIX) - 1);
-    //scrollBar->setBlockIncrement(1);
-
-    //add(scrollBar);
 
     maxViewableItems = (getClientRect().getSizeY() - (TEXT_GAP_SPACE + CHAR_YPIX)) / (TEXT_GAP_SPACE + CHAR_YPIX) - 1;
     topViewableItem  = 0;

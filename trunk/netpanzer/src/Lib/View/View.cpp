@@ -41,23 +41,17 @@ Surface View::bottomLeftCornerSmall;
 Surface View::bottomRightCornerLarge;
 Surface View::bottomRightCornerSmall;
 
-
 const int RESIZE_WIDTH = 10;
 const int RESIZE_XMIN  = RESIZE_WIDTH;
 const int RESIZE_XMAX  = RESIZE_WIDTH * 3;
 const int RESIZE_YMIN  = RESIZE_WIDTH;
 const int RESIZE_YMAX  = RESIZE_WIDTH * 3;
 
-
 /////////////////////////////////////////////////////////////////////////////
 // Statics.
 /////////////////////////////////////////////////////////////////////////////
 
 Surface View::pics;
-
-#define STANDARD_BORDERS
-//#define HAIRLINE_BORDERS
-//#define GRAPHIC_BORDERS
 
 // add
 //---------------------------------------------------------------------------
@@ -81,63 +75,6 @@ View::View()
 {
     reset();
     loadPics();
-
-#ifdef GRAPHIC_BORDERS
-    char strBuf[256];
-
-    if (topBorder.getFrameCount() <= 0) {
-        sprintf(strBuf, "pics/viewBorders/btop.til");
-        if (!topBorder.loadTIL(strBuf))	throw Exception("ERROR: Unable to load: %s", strBuf);
-    }
-    if (leftBorder.getFrameCount() <= 0) {
-        sprintf(strBuf, "pics/viewBorders/bleft.til");
-        if (!leftBorder.loadTIL(strBuf)) throw Exception("ERROR: Unable to load: %s", strBuf);
-    }
-    if (bottomBorder.getFrameCount() <= 0) {
-        sprintf(strBuf, "pics/viewBorders/bbottom.til");
-        if (!bottomBorder.loadTIL(strBuf))	throw Exception("ERROR: Unable to load: %s", strBuf);
-    }
-    if (rightBorder.getFrameCount() <= 0) {
-        sprintf(strBuf, "pics/viewBorders/bright.til");
-        if (!rightBorder.loadTIL(strBuf)) throw Exception("ERROR: Unable to load: %s", strBuf);
-    }
-    if (topLeftCornerLarge.getFrameCount() <= 0) {
-        sprintf(strBuf, "pics/viewBorders/bctl1.til");
-        if (!topLeftCornerLarge.loadTIL(strBuf)) throw Exception("ERROR: Unable to load: %s", strBuf);
-    }
-    if (topLeftCornerSmall.getFrameCount() <= 0) {
-        sprintf(strBuf, "pics/viewBorders/bctl2.til");
-        if (!topLeftCornerSmall.loadTIL(strBuf)) throw Exception("ERROR: Unable to load: %s", strBuf);
-    }
-
-    // Top right corner.
-    topRightCornerLarge.copy(topLeftCornerLarge);
-    topRightCornerLarge.flipHorizontal();
-
-    topRightCornerSmall.copy(topLeftCornerSmall);
-    topRightCornerSmall.flipHorizontal();
-
-    // Bottom left corner.
-    bottomLeftCornerLarge.copy(topLeftCornerLarge);
-    bottomLeftCornerLarge.flipVertical();
-
-    bottomLeftCornerSmall.copy(topLeftCornerSmall);
-    bottomLeftCornerSmall.flipVertical();
-
-    // Bottom right corner.
-    bottomRightCornerLarge.copy(topLeftCornerLarge);
-    bottomRightCornerLarge.flipHorizontal();
-    bottomRightCornerLarge.flipVertical();
-
-    bottomRightCornerSmall.copy(topLeftCornerSmall);
-    bottomRightCornerSmall.flipHorizontal();
-    bottomRightCornerSmall.flipVertical();
-#endif
-
-#ifdef HAIRLINE_BORDERS
-    borderSize = 1;
-#endif
-
 } // end View::View
 
 // View
@@ -225,50 +162,8 @@ void View::reset()
 void View::drawBorder(const Surface &viewArea)
 {
     assert(this != 0);
-
-#ifdef GRAPHIC_BORDERS
-    // Straight edges.
-    topBorder.blt(viewArea, topLeftCornerLarge.getPix().x, 2);
-
-    int yOffset = viewArea.getPix().y - bottomBorder.getPix().y - 2;
-    bottomBorder.blt(viewArea, bottomLeftCornerSmall.getPix().x, yOffset);
-
-    leftBorder.blt(viewArea, 2, topLeftCornerLarge.getPix().y + topLeftCornerSmall.getPix().y);
-
-    int xOffset = viewArea.getPix().x - rightBorder.getPix().x - 2;
-    rightBorder.blt(viewArea, xOffset, topRightCornerLarge.getPix().y + topRightCornerSmall.getPix().y);
-
-    // Corners.
-    topLeftCornerLarge.blt(viewArea);
-    topLeftCornerSmall.blt(viewArea, 0, topLeftCornerLarge.getPix().y);
-
-    xOffset = viewArea.getPix().x - topRightCornerLarge.getPix().x;
-    topRightCornerLarge.blt(viewArea, xOffset, 0);
-
-    xOffset = viewArea.getPix().x - topRightCornerSmall.getPix().x;
-    topRightCornerSmall.blt(viewArea, xOffset, topLeftCornerLarge.getPix().y);
-
-    yOffset = viewArea.getPix().y - bottomLeftCornerLarge.getPix().y;
-    bottomLeftCornerLarge.blt(viewArea, 0, yOffset);
-    yOffset = viewArea.getPix().y - bottomLeftCornerLarge.getPix().y - bottomLeftCornerSmall.getPix().y;
-    bottomLeftCornerSmall.blt(viewArea, 0, yOffset);
-
-    xOffset = viewArea.getPix().x - bottomRightCornerLarge.getPix().x;
-    yOffset = viewArea.getPix().y - bottomRightCornerLarge.getPix().y;
-    bottomRightCornerLarge.blt(viewArea, xOffset, yOffset);
-    xOffset = viewArea.getPix().x - bottomRightCornerSmall.getPix().x;
-    yOffset = viewArea.getPix().y - bottomRightCornerSmall.getPix().y - bottomRightCornerLarge.getPix().y;
-    bottomRightCornerSmall.blt(viewArea, xOffset, yOffset);
-#endif
-
-#ifdef STANDARD_BORDERS
+    
     viewArea.drawWindowsBorder(Color::white, Color::lightGray, Color::gray);
-#endif
-
-#ifdef HAIRLINE_BORDERS
-    viewArea.drawButtonBorder(Color::lightGreen, Color::darkGreen);
-#endif
-
 } // end drawBorder
 
 // drawButtons
@@ -1986,43 +1881,3 @@ void View::add(DEFAULT_VIEW_BUTTON button)
     }
 }
 
-//void View::add(Component *Component)
-//{
-//	assert(this != 0);
-//	assert(Component != 0);
-//
-//	// First remove it from the list if we already have it somehow.
-//	remove(Component);
-//
-//	Component **prevLink = &top;
-//
-//	while (*prevLink != 0)
-//	{
-//		prevLink = &(*prevLink)->next;
-//	}
-//
-//	*prevLink    = Component;
-//	Component->next = 0;
-//
-//} // end View::add
-//
-//// remove
-////---------------------------------------------------------------------------
-//// Purpose:
-////---------------------------------------------------------------------------
-//void View::remove(Component *Component)
-//{
-//	Component **prevLink = &top;
-//
-//	while (*prevLink != 0)
-//	{
-//		if (*prevLink == Component)
-//		{
-//			*prevLink = Component->next;
-//			break;
-//		}
-//
-//		prevLink = &(*prevLink)->next;
-//	}
-//
-//} // end View::remove

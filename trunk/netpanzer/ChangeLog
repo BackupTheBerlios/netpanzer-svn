@@ -1,3 +1,7 @@
+22-Sep-2003 by Matthias Braun
+-Commited automake stuff from Ivo and merged his autoconf script with mine
+-small cleanups/compile fixes
+
 21-Sep-2003 by Ivo Danihelka
 -solved the higher resolutions problem in MainMenu
 -load/save GameConfig in XML format

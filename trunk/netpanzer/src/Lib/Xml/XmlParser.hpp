@@ -19,9 +19,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef XMLPARSER_H
 #define XMLPARSER_H
 
-#include <libxml/tree.h>
+#include <stdarg.h>
 #include <string>
 #include <sstream>
+#include <libxml/tree.h>
 
 class XmlParser {
     private:
