@@ -85,7 +85,7 @@ void ReorderQueue::enqueue( NetPacket *net_packet )
    { 
     if( array[ insert_index ].sequence != packet_sequence_num )
      {
-      LOG( ("*** REORDER QUEUE OVERFLOW Packet %d Current %d ***", packet_sequence_num, current_sequence_num ) );
+      LOG( ("*** REORDER QUEUE OVERFLOW Packet %lu Current %d ***", packet_sequence_num, current_sequence_num ) );
       //ConsoleInterface::postMessage( "*** REORDER QUEUE OVERFLOW Packet %d Current %d ***", packet_sequence_num, current_sequence_num  );
       while( (dequeue_sequence_num % size) != (insert_index + 1) )
        { 

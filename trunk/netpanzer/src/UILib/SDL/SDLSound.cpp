@@ -29,7 +29,6 @@
 #include "Exception.hpp"
 #include "FileSystem.hpp"
 #include "SDLSound.hpp"
-#include "FileSystem.hpp"
 
 musics_t SDLSound::musicfiles;
 musics_t::iterator SDLSound::currentsong;

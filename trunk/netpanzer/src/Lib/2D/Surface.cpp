@@ -1377,10 +1377,10 @@ void Surface::loadRAW(const char *filename, bool needAlloc /* = true */)
 	fread(&head, sizeof(PIC_HEAD), 1, fp);
 
 	LOG(("loadRAW -> picName: %s", filename));
-	LOG(("head.xPix:          %u", head.xPix));
-	LOG(("head.yPix:          %u", head.yPix));
-	LOG(("head.frameCount:     %u", head.frameCount));
-	LOG(("head.numBytes:      %u", head.xPix*head.yPix*head.frameCount));
+	LOG(("head.xPix:          %lu", head.xPix));
+	LOG(("head.yPix:          %lu", head.yPix));
+	LOG(("head.frameCount:     %lu", head.frameCount));
+	LOG(("head.numBytes:      %lu", head.xPix*head.yPix*head.frameCount));
 
 	if (ferror(fp))
 	{

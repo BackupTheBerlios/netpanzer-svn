@@ -33,7 +33,6 @@ void PlacementMatrix::reset( iXY ini_map_loc )
 bool PlacementMatrix::verifyLocation( iXY &loc )
  {
   long x_offset, y_offset;
-  long free_count = 0; 
   iXY succ;
   unsigned long direction_index;
 
@@ -67,14 +66,11 @@ bool PlacementMatrix::verifyLocation( iXY &loc )
         ( UnitBlackBoard::unitOccupiesLoc( succ ) == false ) 
 	  )
     {
-	 free_count++;
+		return true;
 	}
 
    }   
    
-  if ( free_count > 0 )
-   return( true );
-
   return ( false );
  }
 

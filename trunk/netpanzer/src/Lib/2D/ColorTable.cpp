@@ -117,8 +117,8 @@ void ColorTable::createBrightenFilter(
 			loadTable(filename);
 			return;
 		} catch(Exception e) {
-			LOG( ("Error while loading palette '%s': %s", filename, e.getMessage(),
-				  e.getMessage()) );
+			LOG( ("Error while loading palette '%s': %s", filename,
+						e.getMessage()) );
 		}
 	}
 	

@@ -329,7 +329,7 @@ void ServerSocket::sendMessage(Client::ID toclient, char* data, size_t datasize,
 			< (int) datasize)
 	{
 		clientlist->remove(client);
-		throw Exception("Error while sending to client %lu: %s", client->id,
+		throw Exception("Error while sending to client %d: %s", client->id,
 				SDLNet_GetError());
 	}
 }
