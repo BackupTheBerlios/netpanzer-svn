@@ -62,18 +62,6 @@ public:
 }
 __attribute__((packed));
 
-class ClientMesgServerId : public NetMessage
-{
-public:
-    uint32_t server_id;
-
-    ClientMesgServerId()
-    {
-        message_class = _net_message_class_client_server;
-        message_id = _net_message_id_client_server_id;
-    }
-} __attribute__((packed));
-
 class ClientMesgKeepAlive : public NetMessage
 {
 public :
