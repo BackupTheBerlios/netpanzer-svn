@@ -186,9 +186,13 @@ void GetSessionView::drawJoinInfo(Surface &dest, const iRect &rect)
     static char	tcpipInfo[] =
         "JOINING LAN OR INTERNET GAMES\n"
         "\n"
-        "netPanzerTest will show you a list of servers on the internet"
-        "which you can join. Alternatively you can specify the IP Address"
-        "of the server manually which us usefull in a LAN.\n"
+        "There are three ways to join a game:\n"
+        "- you can pick a server from the in-game Lobby.\n"
+        "- you can manually specify the IP address of the server, which is "
+        "useful for LAN games.\n"
+        "- use 'netpanzerbrowser' or 'KNetpanzerBrowser' to get a list of "
+        "available Internet servers, and then run 'netpanzer -c <server>' to "
+        "connect directly.\n"
         "\n"
         "Click the Next button to proceed.";
 
