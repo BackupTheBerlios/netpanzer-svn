@@ -82,10 +82,10 @@ GameInfoView::GameInfoView() : GameTemplateView()
 
     if(!gameconfig->configfileexists) {
         // Start it in the top-left corner.
-        moveTo(screen->getPixX() - getSize().x, 0);
-    } else {
-        moveTo(gameconfig->gameinfoposition); 
+        iXY pos(screen->getPixX() - getSize().x,0);
+        gameconfig->gameinfoposition=pos;
     }
+    moveTo(gameconfig->gameinfoposition); 
     checkArea(screen->getPix());
 } // end GameInfoView::GameInfoView
 

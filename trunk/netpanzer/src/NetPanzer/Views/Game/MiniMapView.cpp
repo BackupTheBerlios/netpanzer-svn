@@ -68,7 +68,7 @@ void MiniMapView::init()
     if(gameconfig->configfileexists) {
         moveTo(gameconfig->minimapposition);
     } else {
-        moveTo(iXY(0, screen->getPix().y - 196));
+        moveTo(gameconfig->minimapposition=iXY(0, screen->getPix().y - 196));
     }
 
     //int xOffset = size.x;

@@ -216,12 +216,12 @@ GameToolbarView::GameToolbarView() : GameTemplateView()
 
     resizeClientArea(iXY(117, pos.y));
 
-    if(gameconfig->configfileexists) {
-        moveTo(gameconfig->toolbarposition);
-    } else {
+    if(!gameconfig->configfileexists) {
         // Start it in the bottom-left corner.
-        moveTo(screen->getPix() - getSize());
+        iXY pos=screen->getPix() - getSize();
+        gameconfig->toolbarposition=pos;
     }
+    moveTo(gameconfig->toolbarposition);
     checkArea(screen->getPix());
 } // end GameToolbarView::GameToolbarView
 
