@@ -8,6 +8,8 @@
  * Create UDP broadcast code for LAN games
 
 *** Improvements
+ * refactor bot code, so that it is possible to directly spawn bots at the
+   server, after that we could easily add a "Skirmish" button to the main menu.
  * let dedicated server output statistics on console or in some log files. 
    Also all message should be outputted with timestamps.
    So that you can generate nice html pages with statistics of the players :)
