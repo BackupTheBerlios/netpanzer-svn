@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2003 by Matthias Braun <matze@braunis.de>
+Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,29 +15,31 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef __PROXYSERVER_HPP__
-#define __PROXYSERVER_HPP__
+#ifndef __IRCLobbyServer_h__
+#define __IRCLobbyServer_h__
 
 #include <string>
-#include <sstream>
 
-#include <SDL_net.h>
+#include "IRCLobby.hpp"
+#include "GameConfig.hpp"
+#include "PlayerInterface.hpp"
 
-class ProxyServer
+//---------------------------------------------------------------------------
+class IRCLobbyServer : public IRCLobby
 {
 public:
-    std::string proxyserver;
-    std::string proxyserveruser;
-    std::string proxyserverpass;
+    IRCLobbyServer(const std::string& servername,
+             const std::string& nickname,
+             const std::string& channel);
 
-    void setProxy(const std::string& p,const std::string& u="",const std::string& pass="") {
-        proxyserver=p; proxyserveruser=u; proxyserverpass=pass; 
-    }
-    static void makeBase64(std::string& base64, const std::string& str);
-    void getProxyConnect(std::stringstream& buffer,
-            const std::string& serveraddress);
-    bool sendProxyConnect(TCPsocket socket, const std::string& serveraddress);
+    virtual ~IRCLobbyServer();
+
+    // send server info to someone
+    virtual void sendServerInfo(const std::string& dest);
+    virtual void notifyStartup();
+    virtual void addChatMessage(const std::string& user, const std::string& message);
 };
+
 
 #endif
 

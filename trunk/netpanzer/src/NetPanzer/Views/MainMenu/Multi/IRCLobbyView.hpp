@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 
-#include "IRCLobby.hpp"
+#include "IRCLobbyServer.hpp"
 #include "View.hpp"
 #include "2D/Surface.hpp"
 #include "GameServer.hpp"
@@ -63,7 +63,7 @@ private:
 
     std::string error_message;
     cInputFieldString szChat;
-    IRCLobby *lobby_connection;
+    IRCLobbyServer *lobby_connection;
     int skipChatLines;
 
     Button serverUpButton;

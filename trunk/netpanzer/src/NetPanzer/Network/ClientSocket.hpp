@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <SDL_net.h>
 
+#include "ProxyServer.hpp"
+
 class ClientSocket
 {
 public:
@@ -28,6 +30,7 @@ public:
 
     void read();
     void sendMessage(char* data, size_t datasize, bool realiable = true);
+    ProxyServer proxy;
 
 private:
     void readTCP();

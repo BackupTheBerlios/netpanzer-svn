@@ -1,24 +1,27 @@
 
-
 // sample program to use this class...
 
+// to compile by itself...
+// touch config.h
+// g++ -DWITHOUT_NETPANZER -I. -I/usr/local/include/SDL -lSDL_net irc_test.cpp IRCLobby.cpp ProxyServer.cpp
+
 #include <unistd.h>
-#define WITHOUT_NETPANZER
-#include "IRCLobby.cpp"
+#include "IRCLobby.hpp"
 
 
 int main()
 {
-    IRCLobby *lobby=new IRCLobby("irc.freenode.net","testnpsrv","#netpanzerlob");
+    IRCLobby *lobby=new IRCLobby("irc.freenode.net:6667","testnpclient","#netpanzerlob");
+    lobby->startThread();
+    // wait 30 secs for the server list to fill up
     sleep(30);
 
     SDL_mutexP(lobby->game_servers_mutex);
     GameServerList::iterator i;
     GameServerList* serverlist = lobby->game_servers;
     for(i=serverlist->begin(); i!=serverlist->end(); i++) {
-        const GameServer* server = &(*i);
         printf("%s is running %s (%i/%i) on %s:%i\n",
-            i->user.c_str(),i->map.c_str(),
+            i->real_user.c_str(),i->map.c_str(),
             i->playercount,i->max_players,
             i->host.c_str(),i->port
             );

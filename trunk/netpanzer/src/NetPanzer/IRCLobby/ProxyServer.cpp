@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <string>
+#include <ctype.h>
 
-#include "GameConfig.hpp"
 #include "ProxyServer.hpp"
 
 void ProxyServer::makeBase64(std::string &base64, const std::string &str)
@@ -47,33 +47,49 @@ void ProxyServer::makeBase64(std::string &base64, const std::string &str)
 }
 
 void ProxyServer::getProxyConnect(std::stringstream &buffer,const std::string &serveraddress) {
-    if(((const std::string &)gameconfig->proxyserver).size()>0) {
+    if(((const std::string &)proxyserver).size()>0) {
         buffer << "CONNECT " << serveraddress << " HTTP/1.0\r\n";
-        if(((const std::string &)gameconfig->proxyserveruser).size()>0) {
+        if(((const std::string &)proxyserveruser).size()>0) {
             std::string base64;
-            std::string userpass( ((const std::string &)gameconfig->proxyserveruser) +":"+((const std::string &)gameconfig->proxyserverpass) );
-            ProxyServer::makeBase64(base64, userpass);
+            std::string userpass( ((const std::string &)proxyserveruser) +":"+((const std::string &)proxyserverpass) );
+            makeBase64(base64, userpass);
             buffer << "Authorization: Basic " << base64 << "\r\n";
         }
         buffer << "\r\n";
     }
 }
 
-void ProxyServer::sendProxyConnect(TCPsocket socket,const std::string &serveraddress)
+bool ProxyServer::sendProxyConnect(TCPsocket socket,const std::string &serveraddress)
 {
     std::stringstream buffer;
-                                                                                
+
     getProxyConnect(buffer,serveraddress);
                                                                                 
     SDLNet_TCP_Send(socket,const_cast<char*> (buffer.str().c_str()),buffer.str().size());
     int lfs=0;
-// XXX grab any http error messages
+    char buf[1024];
+    char *b=buf;
+    int line=0;
     while(1) {
         char ch;
         if(SDLNet_TCP_Recv(socket,&ch,1)!=1) { break; }
+        *b++=ch;
         if(ch=='\r') { continue; }
-        if(ch=='\n') { lfs++; }
+        if(ch=='\n') {
+            *b=0;
+            lfs++;
+            b=buf; 
+            if(line==0) {
+                while(!isspace(*b) && *b) b++;
+                while(isspace(*b)) b++;
+                if(atoi(b)!=200) {
+                    return false;
+                }
+            }
+            line++;
+        }
         else { lfs=0; }
         if(lfs>=2) { break; }
     }
+    return true;
 }

@@ -27,7 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkGlobals.hpp"
 #include "ClientSocket.hpp"
 #include "Util/UtilInterface.hpp"
-#include "ProxyServer.hpp"
 #include "GameConfig.hpp"
 
 ClientSocket::ClientSocket(const char* whole_servername)
@@ -35,10 +34,12 @@ ClientSocket::ClientSocket(const char* whole_servername)
     SDLNet::initialise();
     int port=_NETPANZER_DEFAULT_PORT_TCP;
     std::string servername;
-    
+
+    proxy.setProxy(gameconfig->proxyserver,gameconfig->proxyserveruser,gameconfig->proxyserverpass);
+
     // resolve server name
     IPaddress serverip;
-    const char *server=(((const std::string &)gameconfig->proxyserver).size()>0?gameconfig->proxyserver.c_str():whole_servername);
+    const char *server=(((const std::string &)proxy.proxyserver).size()>0?proxy.proxyserver.c_str():whole_servername);
     UtilInterface::splitServerPort(server,servername,&port);
     // some old version of SDL_net take a char* instead of a const char*
 
@@ -53,9 +54,12 @@ ClientSocket::ClientSocket(const char* whole_servername)
                         servername.c_str(), port);
     }
 
-    if( ((const std::string &)gameconfig->proxyserver).size()>0) {
-        ProxyServer::sendProxyConnect(tcpsocket,whole_servername);
-        LOGGER.info("%s connected via proxy %s",whole_servername,gameconfig->proxyserver.c_str());
+    if( ((const std::string &)proxy.proxyserver).size()>0) {
+        if(!proxy.sendProxyConnect(tcpsocket,whole_servername)) {
+            throw Exception("couldn't connect via proxy server '%s'.",
+                            server);
+        }
+        LOGGER.info("%s connected via proxy %s",whole_servername,proxy.proxyserver.c_str());
     }
 
     socketset = SDLNet_AllocSocketSet(1);

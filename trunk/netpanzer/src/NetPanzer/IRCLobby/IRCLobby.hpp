@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameServer.hpp"
 #include "GameServerList.hpp"
 #include "IRCChatMessage.hpp"
+#include "ProxyServer.hpp"
 
 class IRCLobby;
 class IRCLobbyView;
@@ -45,42 +46,51 @@ public:
     IRCLobby(const std::string& servername,
              const std::string& nickname,
              const std::string& channel);
-    ~IRCLobby();
+    virtual ~IRCLobby();
 
     void sendChatMessage(const std::string& user, const std::string& line);
     void sendIRCMessageLine(const std::string& line);
+    void sendIRCMessageLine(const std::string& line, const std::string& to);
+    void sendServerRunningMess(const std::string& dest,const std::string& str);
     void refreshServerList();
     void refreshUserList();
+
+
 
     bool isConnected() const
     { return irc_server_socket != 0; }
     void changeNickName(const std::string &nick);
     void restartThread();   // restart thread & reconnect irc
     void stopThread();
+    void startThread();
+    std::string& getChannelName() { return channel_name; }
 
+    ProxyServer proxy;
     GameServerList* game_servers;
     NotifyIRCChangeName* change_name;
+    SDL_mutex *game_servers_mutex;   
+
+protected:
+    virtual void sendServerInfo(const std::string& dest) { return; }
+    virtual void notifyStartup() { refreshServerList(); }
+    virtual void addChatMessage(const std::string& user, const std::string& message);
 
 private:
-    void startMessagesThread();
 
     void processMessages();
     static int messagesThreadEntry(void* t);
 
-    void sendServerInfo(const std::string& dest);
+
     // read any messages that need to be processed
     void processMessage();
     void sendIRCLine(const std::string& line);
-    void sendIRCMessageLine(const std::string& line, const std::string& to);
     void readIRCLine(char *buf, size_t buf_len);
     void connectToServer();
     void sendLoginInfo();
     void setNickName(const std::string &nick);
     void sendNickName();
     void sendPingMessage();
-    void addChatMessage(const std::string& user, const std::string& message);
 
-    SDL_mutex *game_servers_mutex;   
 
     friend class IRCLobbyView;
     TCPsocket irc_server_socket;
@@ -90,7 +100,7 @@ private:
     std::string serveraddress;
     std::string server_host;
     std::list<IRCChatMessage> chat_messages;
-    unsigned int expected_ping;
+    int expected_ping;
     
     SDL_Thread *running_thread;
 };

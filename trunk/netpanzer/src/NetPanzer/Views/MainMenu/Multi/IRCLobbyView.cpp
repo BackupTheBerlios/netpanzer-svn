@@ -236,9 +236,14 @@ void IRCLobbyView::startIRC()
 
     try {
         stopIRC();
-        lobby_connection=new IRCLobby(gameconfig->lobbyserver,
+        lobby_connection=new IRCLobbyServer(gameconfig->lobbyserver,
                 gameconfig->playername, "#netpanzerlob");
         lobby_connection->change_name=change_name;
+        lobby_connection->proxy.setProxy(
+            gameconfig->proxyserver,
+            gameconfig->proxyserveruser,
+            gameconfig->proxyserverpass);
+        lobby_connection->startThread();
     } catch(std::exception& e) {
         LOG(("Couldn't connect to irc lobby: %s", e.what()));
         error_message = e.what();
