@@ -1,24 +1,21 @@
 <?xml version="1.0"?>
 <page title="netPanzer - An Online Multiplayer Tactical Warfare Game">
   <section title="Downloads">
-    <subsection title="Binary">
-      <p>
-        This is the first netPanzer release that runs under GNU/Linux,
-        it should also be compilable under Win32 with <a
-          href="http://www.mingw.org/">Mingw</a>, see below for
-        informations on how to obtain the source code. The binary does
-        not depend on non-standard libraries, so it should be useable
-        on most GNU/Linux systems out of the box.
-      </p>
-
+    <subsection title="Linux">
+      <p>Some linux distributions already come with netpanzer packages by
+      default. You might just be able to install netpanzer with your
+      distributions software setup tool. This is true for at least the
+      following distributions</p>
       <ul>
-        No binary for 0.1.4 created yet.
-        <!-- <li><a
-        href="http://savannah.nongnu.org/download/netpanzer/netpanzer.pkg/0.1/netpanzer-0.1.2-binary-linux-i386.tar.bz2">netPanzer
-        Binary GNU/Linux - netpanzer-0.1.2-binary-linux-i386.tar.bz2
-        (11MB)</a></li> -->
+	<li>Gentoo</li>
+	<li>PLD Linux Distribution</li>
       </ul>
-
+      <subsubsection title="Suse">
+	rpm files for Suse and other distributions can be found at the
+	<a
+	href="http://developer.berlios.de/project/showfiles.php?group_id=1250">
+	netPanzer download section</a>.
+      </subsubsection>
       <subsubsection title="Debian">
         <p>If you're using Debian unstable (Sid), you can add the following	
           lines to your <tt>/etc/apt/sources.list</tt> file:
@@ -27,18 +24,25 @@
             <tt>deb http://mentors.debian.net/debian unstable main contrib non-free</tt><br />
             <tt>deb-src http://mentors.debian.net/debian unstable main contrib non-free</tt><br />
           </div>
-          
-          Second line is needed only if you intend to download sources 
-          of packages. After this modification you should run as root 
-          <tt>apt-get update</tt> and then <tt>apt-get install
+         
+	  run <tt>apt-get update</tt> and then <tt>apt-get install
             netpanzer</tt>.</p>
-        <p>Debian packages provided by Bartosz Fenski aka fEnIo 
-          <a href="mailto:fenio@o2.pl">fenio@o2.pl</a></p>
-
+        <p>Debian packages are provided by Bartosz Fenski aka fEnIo 
+          <a href="mailto:fenio@o2.pl">fenio@o2.pl</a></p>      
       </subsubsection>
-
+      <subsubsection title="Installer, Static Binary">
+        <p>A loki installer and a statically linked binary are in the
+	works.</p>
+      </subsubsection>
     </subsection>
-
+    <subsection title="Windows">
+      <p>A windows version with installer is in the works.</p>
+    </subsection>
+    <subsection title="MacOSX">
+      <p>Currently netpanzer code does not work correctly on big-endian
+      machines like PPC. However we're trying to fix this for future versions.
+      Help in this area is welcome.</p>
+    </subsection>
     <subsection title="Source Code">
       <p>
         You need both the
