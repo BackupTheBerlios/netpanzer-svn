@@ -1,3 +1,7 @@
+29-Nov-2003 by Matthias Braun
+-fixed wrong read in blitWorld when we're rendering to lower right edge of the
+ map.
+
 28-Nov-2003 by Matthias Braun
 -converted UI classes to use SDL_Surface
 
