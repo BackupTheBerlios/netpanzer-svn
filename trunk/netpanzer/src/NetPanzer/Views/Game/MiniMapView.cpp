@@ -243,7 +243,7 @@ void MiniMapView::drawMouseBox(const Surface &dest)
     iXY   pos(getScreenToClientPos(mouse.getScreenPos()));
 
     //dest.drawRect(pos - size - 1, pos + size - 1, Color::yellow);
-    dest.drawBoxCorners(pos - size - 1, iXY(pos.x + size.x - 1, pos.y + size.y), 5, Color::red);
+    dest.drawBoxCorners(pos - size - iXY(1,1), iXY(pos.x + size.x - 1, pos.y + size.y), 5, Color::red);
 
 } // end MiniMapView::drawMouseBox
 
@@ -318,15 +318,15 @@ void MiniMapView::doIncreaseSize(int value)
     if (value == -1) {
         float dt = TimerInterface::getTimeSlice();
 
-        destSize += int(scaleDelta * dt);
+        destSize += iXY(int(scaleDelta * dt), int(scaleDelta * dt));
     } else {
-        destSize += value;
+        destSize += iXY(value, value);
     }
 
     //resize(destSize);
     //deltaSize += deltaAmount;
     if (destSize.x > maxMapSize || destSize.y > maxMapSize) {
-        destSize = maxMapSize;
+        destSize = iXY(maxMapSize, maxMapSize);
     }
 
     // Check the validity of the X dimension.
@@ -393,9 +393,9 @@ void MiniMapView::doDecreaseSize(int value)
     if (value == -1) {
         float dt = TimerInterface::getTimeSlice();
 
-        destSize -= int(scaleDelta * dt);
+        destSize -= iXY(int(scaleDelta * dt), int(scaleDelta * dt));
     } else {
-        destSize -= value;
+        destSize -= iXY(value, value);
     }
 
     resize(destSize);

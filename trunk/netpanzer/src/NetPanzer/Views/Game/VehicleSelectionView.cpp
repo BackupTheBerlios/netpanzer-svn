@@ -277,7 +277,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     iXY pos(0 ,0);
 
     pos.x = 0;
-    addLabel(pos + 2, "Static Display:", Color::white);
+    addLabel(pos + iXY(2,2), "Static Display:", Color::white);
 
     pos.x = getClientRect().getSizeX() - 100;
     buttonStaticDisplay.setLabel("On");
@@ -286,7 +286,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     pos.y += yOffset;
 
     pos.x = 0;
-    addLabel(pos + 2, "Power:", Color::white);
+    addLabel(pos + iXY(2,2) , "Power:", Color::white);
 
     pos.x = getClientRect().getSizeX() - 100;
     buttonPower.setLabel("Off");
@@ -298,19 +298,19 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     int CHAR_XPIX = 8;
     
     pos.x = 0;
-    addLabel(pos + 2, "Production:", Color::white);
+    addLabel(pos + iXY(2,2), "Production:", Color::white);
     productionUnitPos.x = (strlen("Current Unit:") + 1) * CHAR_XPIX + 2;
     productionUnitPos.y = pos.y + 2;
     pos.y += yOffset;
 
     pos.x = 0;
-    addLabel(pos + 2, "Time:        ", Color::white);
+    addLabel(pos + iXY(2,2), "Time:        ", Color::white);
     timeRequiredPos.x = (strlen("Time:        ") + 1) * CHAR_XPIX + 2;
     timeRequiredPos.y = pos.y + 2;
     pos.y += yOffset;
 
     pos.x = 0;
-    addLabel(pos + 2, "Unit Built:   ", Color::white);
+    addLabel(pos + iXY(2,2), "Unit Built:   ", Color::white);
     unitsBuiltPos.x = (strlen("Time:        ") + 1) * CHAR_XPIX + 2;
     unitsBuiltPos.y = pos.y + 2;
     pos.y += yOffset;
@@ -321,35 +321,35 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     unit_regen_time = getUnitRegenTime(_unit_type_humvee);
     sprintf(strBuf, "SpahPanzer - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
     addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/scout.til", strBuf, bSelectScout);
-    abstractButtonHumvee.setBounds(iRect(pos, pos + 48));
+    abstractButtonHumvee.setBounds(iRect(pos, pos + iXY(48,48)));
     add(&abstractButtonHumvee);
 
     pos.x += 48 + gapSpace;
     unit_regen_time = getUnitRegenTime(_unit_type_valentine);
     sprintf(strBuf, "Manta - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
     addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/manta.til", strBuf, bSelectManta);
-    abstractButtonValentine.setBounds(iRect(pos, pos + 48));
+    abstractButtonValentine.setBounds(iRect(pos, pos + iXY(48,48)));
     add(&abstractButtonValentine);
 
     pos.x += 48 + gapSpace;
     unit_regen_time = getUnitRegenTime(_unit_type_leopard);
     sprintf(strBuf, "Panther1 - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
     addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/panther1.til", strBuf, bSelectPanther1);
-    abstractButtonLeopard.setBounds(iRect(pos, pos + 48));
+    abstractButtonLeopard.setBounds(iRect(pos, pos + iXY(48,48)));
     add(&abstractButtonLeopard);
 
     pos.x += 48 + gapSpace;
     unit_regen_time = getUnitRegenTime(_unit_type_abrams);
     sprintf(strBuf, "Titan - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
     addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/titan.til", strBuf, bSelectTitan);
-    abstractButtonAbrams.setBounds(iRect(pos, pos + 48));
+    abstractButtonAbrams.setBounds(iRect(pos, pos + iXY(48,48)));
     add(&abstractButtonAbrams);
 
     pos.x += 48 + gapSpace;
     unit_regen_time = getUnitRegenTime(_unit_type_hammerhead);
     sprintf(strBuf, "Stinger - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
     addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/stinger.til", strBuf, bSelectStinger);
-    abstractButtonHammerhead.setBounds(iRect(pos, pos + 48));
+    abstractButtonHammerhead.setBounds(iRect(pos, pos + iXY(48,48)));
     add(&abstractButtonHammerhead);
 
     pos.x = 0;
@@ -357,35 +357,35 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     unit_regen_time = getUnitRegenTime(_unit_type_lynx);
     sprintf(strBuf, "Bobcat - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
     addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/bobcat.til", strBuf, bSelectBobcat);
-    abstractButtonLynx.setBounds(iRect(pos, pos + 48));
+    abstractButtonLynx.setBounds(iRect(pos, pos + iXY(48,48)));
     add(&abstractButtonLynx);
 
     pos.x += 48 + gapSpace;
     unit_regen_time = getUnitRegenTime(_unit_type_scorpion);
     sprintf(strBuf, "Wolf - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
     addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/wolf.til", strBuf, bSelectWolf);
-    abstractButtonScorpion.setBounds(iRect(pos, pos + 48));
+    abstractButtonScorpion.setBounds(iRect(pos, pos + iXY(48, 48)));
     add(&abstractButtonScorpion);
 
     pos.x += 48 + gapSpace;
     unit_regen_time = getUnitRegenTime(_unit_type_spahpanzer);
     sprintf(strBuf, "Bear - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
     addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/bear.til", strBuf, bSelectBear);
-    abstractButtonSpahpanzer.setBounds(iRect(pos, pos + 48));
+    abstractButtonSpahpanzer.setBounds(iRect(pos, pos + iXY(48, 48)));
     add(&abstractButtonSpahpanzer);
 
     pos.x += 48 + gapSpace;
     unit_regen_time = getUnitRegenTime(_unit_type_m109);
     sprintf(strBuf, "Drake - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
     addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/drake.til", strBuf, bSelectDrake);
-    abstractButtonM109.setBounds(iRect(pos, pos + 48));
+    abstractButtonM109.setBounds(iRect(pos, pos + iXY(48, 48)));
     add(&abstractButtonM109);
 
     pos.x += 48 + gapSpace;
     unit_regen_time = getUnitRegenTime(_unit_type_archer);
     sprintf(strBuf, "Archer - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
     addButtonTILBordered(pos, "pics/menus/vehicleSelectionView/til/archer.til", strBuf, bSelectArcher);
-    abstractButtonArcher.setBounds(iRect(pos, pos + 48));
+    abstractButtonArcher.setBounds(iRect(pos, pos + iXY(48, 48)));
     add(&abstractButtonArcher);
 
     pos.y += 48 + gapSpace * 4;
@@ -758,7 +758,7 @@ void VehicleSelectionView::drawMiniProductionStatus(const Surface &dest)
                     pos.y += 16;
 
                     // Draw the current production unit image.
-                    drawUnitImage(dest, miniProductionRect.min + 1, outpostStatus.unit_generation_type);
+                    drawUnitImage(dest, miniProductionRect.min + iXY(1,1), outpostStatus.unit_generation_type);
                 }
 
                 //vsvUnitGenOn    = outpost_status.unit_generation_on_off;
