@@ -19,6 +19,8 @@
  * make it possible to have different colors for different players - DONE
  * make the code endian safe. It should run on big endian boxes too.
  * display alliances in the status screens.
+ * think about setting unit spawnpoint/opening outpost view. It's very hard to
+   select units standing in your base because of the other 2 functions.
 
 *** Tools
  * write a map and tileset editor
