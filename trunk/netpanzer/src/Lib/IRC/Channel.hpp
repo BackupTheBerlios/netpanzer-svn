@@ -35,7 +35,7 @@ public:
     const std::string& getName()
     { return name; }
 
-    void send(const std::string& message);
+    void sendMessage(const std::string& message);
 
     void setCallback(ChannelCallback* newcallback)
     { callback = newcallback; }
@@ -44,9 +44,12 @@ private:
     friend class Connection;
     Channel(Connection* newconnection, const std::string& newname);
 
+    bool containsClient(Client* client);
+    void removeClient(Client* client);
+
     Connection* connection;
     std::string name;
-    std::vector<Client*> people;
+    std::vector<Client*> clients;
 
     ChannelCallback* callback;
 };

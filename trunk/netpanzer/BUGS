@@ -11,5 +11,6 @@
 - game doesn't end when enough objectives are taken - is this still true?
 - irc ping/pong code with reconnect seems to be broken
 - unit count is calculated incorrect (20 in server config - 9 units 
-  available in game)
+  available in game) - the unit count is simply hardcoded, it's not
+  configurable yet
 

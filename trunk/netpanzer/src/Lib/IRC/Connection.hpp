@@ -45,6 +45,8 @@ public:
 
     Channel* joinChannel(const std::string& channelname);
     Channel* findChannel(const std::string& channelname);
+
+    bool isReady() const ;
     
 private:
     friend class Channel;
@@ -63,7 +65,10 @@ private:
 
     void parseResponse(const std::string& buffer);
 
-    Client* getCreateClient(const std::string& name);
+    Client* createClient(const std::string& name, const std::string& user,
+                            const std::string& host);
+    Client* findClient(const std::string& name, const std::string& user,
+                        const std::string& host);
 
     TCPsocket irc_server_socket;
 
@@ -72,6 +77,8 @@ private:
     int server_port;
     
     SDL_Thread *running_thread;
+
+    bool connection_ready;
 
     std::vector<Channel*> channels;
     std::vector<Client*> clients;

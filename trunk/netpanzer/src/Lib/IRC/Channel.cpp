@@ -20,11 +20,33 @@ Channel::~Channel()
     connection->send(buf.str());
 }
 
-void Channel::send(const std::string& text)
+void Channel::sendMessage(const std::string& text)
 {
     std::stringstream buf;
-    buf << "MSG " << name << " " << text << "\n";
+    buf << "PRIVMSG " << name << " :" << text << "\n";
     connection->send(buf.str());
+}
+
+bool Channel::containsClient(Client* client)
+{
+    std::vector<Client*>::iterator i;
+    for(i = clients.begin(); i != clients.end(); ++i) {
+        if(*i == client)
+            return true;
+    }
+
+    return false;
+}
+
+void Channel::removeClient(Client* client)
+{
+    std::vector<Client*>::iterator i;
+    for(i = clients.begin(); i != clients.end(); ++i) {
+        if(*i == client) {
+            clients.erase(i);
+            break;
+        }
+    }
 }
 
 } // end of namespace IRC

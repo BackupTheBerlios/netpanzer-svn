@@ -29,12 +29,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Connection.hpp"
 #include "Client.hpp"
 
+// #define IRC_DEBUG
+
 namespace IRC
 {
 
 Connection::Connection(const std::string& server, const std::string& newnick)
     : irc_server_socket(0), nickname(newnick), running_thread(0), callback(0)
 {
+    connection_ready = false;
     server_port = 6667;
 
     size_t colon = server.find(':', 0);
@@ -151,20 +154,39 @@ int Connection::threadMain()
 
 void Connection::parseResponse(const std::string& buffer)
 {
+#ifdef IRC_DEBUG
     LOG(("IRC read: %s", buffer.c_str()));
+#endif
                                                          
     size_t pos = 0;
     // parse prefix (at least the name)
     std::string prefix;
+    std::string user;
+    std::string host;
     if(buffer[0] == ':' && 1 < buffer.size()) {
         size_t prefixstart = 1;
         while(pos < buffer.size() && !isspace(buffer[pos]) 
                                   && buffer[pos] != '!')
             ++pos;
         prefix = buffer.substr(prefixstart, pos-prefixstart);
-        // eventually skip rest of prefix
-        while(pos < buffer.size() && !isspace(buffer[pos]))
+
+        // parse user
+        if(buffer[pos] == '!' && pos+1 < buffer.size()) {
             ++pos;
+            size_t userstart = pos;
+            while(pos < buffer.size() && !isspace(buffer[pos])
+                                      && buffer[pos] != '@')
+                    ++pos;
+            user = buffer.substr(userstart, pos-userstart);
+        }
+        // parse host
+        if(buffer[pos] == '@' && pos+1 < buffer.size()) {
+            ++pos;
+            size_t hoststart = pos;
+            while(pos < buffer.size() && !isspace(buffer[pos]))
+                ++pos;
+            host = buffer.substr(hoststart, pos-hoststart);        
+        }
     }
     // skip spaces before command
     while(pos < buffer.size() && isspace(buffer[pos]))
@@ -198,28 +220,37 @@ void Connection::parseResponse(const std::string& buffer)
     }
 
     // DEBUG...
-    printf("(%s) '%s' - ", prefix.c_str(), command.c_str());
+#ifdef IRC_DEBUG
+    printf("(%s!%s@%s) '%s' - ", prefix.c_str(), user.c_str(), host.c_str(),
+                                 command.c_str());
     for(size_t i=0; i<params.size(); ++i) {
         if(i>0)
             printf(", ");
         printf("'%s'", params[i].c_str());
     }
     printf("\n");
+#endif
    
     // react to the command
     if(command == "PING" && params.size() > 0) {
         std::stringstream pongmsg;
         pongmsg << "PONG :" << params[0] << "\n";
         send(pongmsg.str());
-    } else if(command == "JOIN" && params.size() >= 1) {
+        return;
+    }
+    
+    if(command == "JOIN" && params.size() >= 1) {
         // channel already in the list?
         Channel* channel = findChannel(params[0]);
         if(findChannel(params[0]) != 0) {
             // someone else joined the channel
             if(prefix != nickname) {
-                Client* client = getCreateClient(prefix);
-                channel->people.push_back(client);
-                // TODO generate a message
+                Client* client = findClient(prefix, user, host);
+                if(!client)
+                    client = createClient(prefix, user, host);
+                channel->clients.push_back(client);
+                if(channel->callback)
+                    channel->callback->channelJoin(channel, *client);
             }
             return;
         }
@@ -230,7 +261,15 @@ void Connection::parseResponse(const std::string& buffer)
         if(callback) {
             callback->ircJoin(channel);
         }
-    } else if(command == "PRIVMSG" && params.size() >= 2) {
+
+        return;
+    }
+    
+    if(command == "PRIVMSG" && params.size() >= 2) {
+        Client* client = findClient(prefix, user, host);
+        if(!client)
+            client = createClient(prefix, user, host);
+        
         // is it a message to a channel?
         if(params[0][0] == '#') {
             Channel* channel = findChannel(params[0]);
@@ -238,18 +277,107 @@ void Connection::parseResponse(const std::string& buffer)
                 return;
             
             if(channel->callback) {
-                channel->callback->channelMessage(channel, prefix, params[1]);
+                channel->callback->channelMessage(channel, *client, params[1]);
             }
             return;
         }
         // a private message to us
-        if(params[9] == nickname) {
+        if(params[0] == nickname) {
             if(callback)
-                callback->ircMessage(prefix, params[1]);
+                callback->ircMessage(*client, params[1]);
             return;
         }
         LOG(("Unknown PRIVMSG received"));
+        return;
     }
+    
+    if(command == "PART" && params.size() >= 2) {
+        Channel* channel = findChannel(params[0]);
+        if(!channel)
+            return;
+
+        Client* client = findClient(prefix, user, host);
+        if(!client)
+            return;
+
+        if(channel->callback)
+            channel->callback->channelPart(channel, *client);
+        channel->removeClient(client);
+
+        return;
+    }
+    
+    if(command == "QUIT") {
+        Client* client = findClient(prefix, user, host);
+        if(!client)
+            return;
+
+        // remove client from all channels
+        std::vector<Channel*>::iterator i;
+        for(i = channels.begin(); i != channels.end(); ++i) {
+            Channel* channel = *i;
+
+            if(!channel->containsClient(client))
+                continue;
+
+            if(channel->callback)
+                channel->callback->channelPart(channel, *client);
+            channel->removeClient(client);
+        }
+        
+        // remove Client
+        std::vector<Client*>::iterator c;
+        for(c = clients.begin(); c != clients.end(); ++c) {
+            Client* client = *c;
+            
+            if(client->name == prefix) {
+                clients.erase(c);
+                break;
+            }
+        }
+        
+        return;
+    }
+    
+    if(command == "NICK") {
+        Client* client = findClient(prefix, user, host);
+        if(!client)
+            client = createClient(prefix, user, host);
+
+        // look for all channels this client participates in
+        std::vector<Channel*>::iterator i;
+        for(i = channels.begin(); i != channels.end(); ++i) {
+            Channel* channel = *i;
+
+            if(channel->containsClient(client) && channel->callback)
+                channel->callback->channelRename(channel, *client, params[0]);
+        }
+
+        client->name = params[0];
+        return;
+    }
+
+    // a more or less hacky way to determine the point where we have a fine
+    // connection...
+    if(command == "242" || command == "243" || command == "251" 
+        || command == "252" || command == "253" || command == "254"
+        || command == "255") {
+        connection_ready = true;
+        return;
+    }
+    
+    // error message?
+    if(command[0] == '4') {
+        if(callback)
+            callback->ircError(command, params.size() >= 1 ? params[0] : "",
+                    params.size() >= 0 ? params[params.size()-1] : "");
+        return;
+    }
+}
+
+bool Connection::isReady() const
+{
+    return connection_ready;
 }
     
 void Connection::setNickName(const std::string& nick)
@@ -320,18 +448,36 @@ Channel* Connection::findChannel(const std::string& name)
     return 0;
 }
 
-Client* Connection::getCreateClient(const std::string& name)
+Client* Connection::findClient(const std::string& name,
+        const std::string& user, const std::string& host)
 {
     std::vector<Client*>::iterator i;
     for(i = clients.begin(); i != clients.end(); ++i) {
         Client* client = *i;
 
-        if(client->getName() == name)
-            return client;
+        if(client->getName() == name) {
+            if(user != "")
+                client->user = user;
+            if(host != "")
+                client->host = host;
+            
+            return client;                                 
+        }
     }
+    
+    return 0;
+}
 
+Client* Connection::createClient(const std::string& name,
+    const std::string& user, const std::string& host)
+{
     Client* client = new Client(name);
     clients.push_back(client);
+
+    if(user != "")
+        client->user = user;
+    if(host != "")
+        client->host = host;
     
     return client;
 }

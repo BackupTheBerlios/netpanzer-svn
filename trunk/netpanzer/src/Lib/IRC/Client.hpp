@@ -26,16 +26,22 @@ namespace IRC
 class Client
 {
 public:
-    Client(const std::string& name);
+    explicit Client(const std::string& name);
     ~Client();
 
-    void setName(const std::string& newname)
-    { name = newname; }
     const std::string& getName() const
     { return name; }
 
+    const std::string& getHost() const
+    { return host; }
+    const std::string& getUser() const
+    { return user; }
+
 private:
-    std::string address;
+    friend class Connection;
+    
+    std::string user;
+    std::string host;
     std::string name;
 };
 
