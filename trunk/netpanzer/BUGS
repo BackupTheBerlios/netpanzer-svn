@@ -10,3 +10,6 @@
 - sometimes 2 players spawn at the same place
 - game doesn't end when enough objectives are taken - is this still true?
 - irc ping/pong code with reconnect seems to be broken
+- unit count is calculated incorrect (20 in server config - 9 units 
+  available in game)
+
