@@ -1,11 +1,6 @@
 Next release:
--finish serverconsole:
-    * make status page display ips
-    * add a kick command
-    * add a mapchange command
 -finish serverlog with filestamp
 -playtesting+bugfixing
--remember to remove packet debugger before releasing
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map
