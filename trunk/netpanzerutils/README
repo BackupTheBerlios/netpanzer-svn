@@ -1,0 +1,3 @@
+To use the stuff here you should symlink the dirs in the src dir to the
+netpanzer src dir and add "NETPUTILS = pak2bmp til2bmp ;" to your Jamconfig
+file.
