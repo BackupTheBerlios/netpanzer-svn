@@ -251,6 +251,10 @@ BaseGameManager *initialise(int argc, char** argv)
             std::string connecthost = connect_option.value();
             if(connecthost.find("netpanzer://") == 0) {
                 connecthost = connecthost.substr(12, connecthost.size()-12);
+                std::string::size_type p = connecthost.find("/");
+                if(p != std::string::npos) {
+                    connecthost = connecthost.substr(0, p);
+                }
             }
             gameconfig->serverConnect = connecthost;
             gameconfig->quickConnect = true;
