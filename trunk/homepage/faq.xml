@@ -111,9 +111,12 @@
 	  </faq>
 
 	  <faq>
-        <question>What ports are used by netPanzer?</question>
-		<answer>I uses only one port 3030/TCP.</answer>
-      </faq>
+        <question>I'm behind a firewall/router can I still use netpanzer?</question>
+		<answer>Yes. Joining netpanzer games should work without any
+		problems. If you want to open a server, then you have to
+		forward port 3030tcp to your machine.
+		</answer>
+	</faq>
 
     </faq-list>
   </section>
