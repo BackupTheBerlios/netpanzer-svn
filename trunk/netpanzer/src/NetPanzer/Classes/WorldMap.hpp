@@ -21,91 +21,77 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Endian.hpp"
 #include "MapFile.hpp"
 #include "WadMapTable.hpp"
-
-typedef unsigned short MapElementType;
+#include <stdint.h>
+#include <string>
 
 class WorldMap
 {
-protected:
-    bool map_loaded;
-    MapFile map_info;
-    MapElementType *map_buffer;
-
 public:
-
+    typedef uint16_t MapElementType;
+    
     WorldMap();
+    ~WorldMap();
 
-    void loadMapFile( const char *file_path );
+    void loadMapFile(const std::string& filename);
 
     void reMap( WadMapTable &mapping_table );
 
-    inline bool isMapLoaded( void )
+    bool isMapLoaded() const
     {
-        return( map_loaded );
+        return map_loaded;
     }
 
-    inline unsigned char * getName( void )
+    std::string getName() const
     {
-        return( map_info.name );
+        return std::string(map_info.name);
     }
 
-    inline unsigned short getXsize( void )
+    size_t getWidth() const
     {
-        return( map_info.x_size );
+        return map_info.width;
     }
 
-    inline unsigned short getYsize( void )
+    size_t getHeight() const
     {
-        return( map_info.y_size );
+        return map_info.height;
     }
 
-    inline unsigned long getMapSize( void )
+    size_t getSize() const
     {
-        return( map_info.x_size * map_info.y_size );
+        return getWidth() * getHeight();
     }
 
-    inline void offsetToMapXY( unsigned long offset, unsigned short *map_x, unsigned short *map_y )
+    MapElementType getValue(size_t x, size_t y) const
     {
-        *map_y = (unsigned short ) ( offset / map_info.x_size );
-        *map_x = (unsigned short ) ( offset - ( (*map_y) * map_info.x_size ) );
+        assert(x < getWidth());
+        assert(y < getHeight());
+        return map_buffer[y*getWidth() + x];
     }
 
-    inline void mapXYtoOffset( unsigned short map_x, unsigned short map_y, unsigned long *offset )
+    /** @deprecatet */
+    MapElementType getValue(size_t offset) const
     {
-        *offset = (map_y * map_info.x_size ) + map_x;
+        assert(offset < getSize());
+        return map_buffer[offset];
     }
 
-    inline MapElementType mapValue( unsigned short map_x, unsigned short map_y )
+    void setMapValue(size_t x, size_t y, MapElementType value)
     {
-        unsigned long offset;
-        mapXYtoOffset( map_x, map_y, &offset );
-
-        return mapValue(offset);
+        assert(x < getWidth());
+        assert(y < getHeight());
+       
+        map_buffer[y*getWidth() + x] = value;
     }
 
-    inline MapElementType mapValue( unsigned long offset )
+    const char* getAssocTileSet() const
     {
-        return ltoh16(map_buffer[offset]);
+        return map_info.tile_set;
     }
 
-    void setMapValue(unsigned short map_x, unsigned short map_y,
-            MapElementType value)
-    {
-        unsigned long offset;
-        mapXYtoOffset( map_x, map_y, &offset );
-
-        setMapValue(offset, value);
-    }
-
-    void setMapValue(unsigned long mapIndex, MapElementType value)
-    {
-        map_buffer[mapIndex] = htol16(value);
-    }
-
-    char * getAssocTileSet( void )
-    {
-        return( map_info.tile_set );
-    }
+private:
+    bool map_loaded;               
+    MapFile map_info;
+    MapElementType *map_buffer;
 };
 
 #endif // ** _WORLDMAP_HPP

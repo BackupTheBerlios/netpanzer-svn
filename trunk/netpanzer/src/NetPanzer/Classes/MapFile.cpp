@@ -26,9 +26,9 @@ void MapFile::load(ReadFile& file)
     id = file.readULE16();
     file.read(&name, sizeof(name), 1);
     file.read(&description, sizeof(description), 1);
-    x_size = file.readULE16();
-    y_size = file.readULE16();
+    width = file.readULE16();
+    height = file.readULE16();
     file.read(&tile_set, sizeof(tile_set), 1);
-    thumbnail_x_pix = file.readULE16();
-    thumbnail_y_pix = file.readULE16();
+    thumbnail_width = file.readULE16();
+    thumbnail_height = file.readULE16();
 }

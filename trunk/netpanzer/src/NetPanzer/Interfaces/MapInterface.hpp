@@ -45,70 +45,63 @@ protected:
     static void buildMiniMapSurface( void );
 
 public:
-    static inline void getMapPointSize(iXY *map_size)
+    static void getMapPointSize(iXY *map_size)
     {
-        map_size->x = main_map.getXsize() * tile_set.getTileXsize();
-        map_size->y = main_map.getYsize() * tile_set.getTileYsize();
+        map_size->x = main_map.getWidth() * tile_set.getTileXsize();
+        map_size->y = main_map.getHeight() * tile_set.getTileYsize();
     }
 
-    static inline void getMapSize(iXY *map_size)
+    static iXY getSize()
     {
-        map_size->x = main_map.getXsize();
-        map_size->y = main_map.getYsize();
+        return iXY(main_map.getWidth(), main_map.getHeight());
     }
 
-    static inline iXY getMapSize()
+    static size_t getWidth()
     {
-        return( iXY( main_map.getXsize(), main_map.getYsize() ) );
+        return main_map.getWidth();
     }
 
-    static inline unsigned long getMapXsize()
+    static size_t getHeight()
     {
-        return( (unsigned long) (main_map.getXsize()) );
+        return main_map.getHeight();
     }
 
-    static inline unsigned long getMapYsize()
+    static WorldMap::MapElementType MapValue(size_t x, size_t y)
     {
-        return( (unsigned long) (main_map.getYsize()) );
+        return main_map.getValue(x, y);
     }
 
-    static inline MapElementType MapValue(unsigned short map_x,
-                                          unsigned short map_y)
+    static WorldMap::MapElementType MapValue(size_t offset)
     {
-        return( main_map.mapValue(map_x, map_y) );
+        return main_map.getValue(offset);
     }
 
-    static inline MapElementType MapValue(unsigned long offset)
+    static void offsetToPointXY(size_t offset, size_t* point_x, size_t *point_y )
     {
-        return( main_map.mapValue(offset) );
-    }
+        *point_y = ( offset  /  main_map.getWidth() );
 
-    static void offsetToPointXY( unsigned long offset,
-                                 unsigned long *point_x, unsigned long *point_y )
-    {
-        *point_y = ( offset  /  main_map.getXsize() );
-
-        *point_x = ( offset - ( (*point_y) * main_map.getXsize() ) ) * 32
+        *point_x = ( offset - ( (*point_y) * main_map.getWidth() ) ) * 32
                    + (32 / 2);
 
         *point_y = (*point_y) * 32 + (32 / 2);
     }
 
-    static inline void offsetToMapXY( unsigned long offset, unsigned short *map_x, unsigned short *map_y )
+    static void offsetToMapXY(size_t offset, size_t& x, size_t& y)
     {
-        main_map.offsetToMapXY( offset, map_x, map_y );
+        y = offset / main_map.getWidth();
+        x = offset - y * main_map.getWidth();
     }
 
-    static inline void offsetToMapXY( unsigned long offset, iXY *map_loc )
+    static void offsetToMapXY(size_t offset, iXY *map_loc)
     {
-        unsigned short map_x, map_y;
-        main_map.offsetToMapXY( offset, &map_x, &map_y );
+        size_t map_x, map_y;
+        offsetToMapXY(offset, map_x, map_y);
         map_loc->x = map_x;
         map_loc->y = map_y;
     }
 
     static void mapXYtoPointXY( unsigned short map_x, unsigned short map_y,
-                                unsigned long *point_x, unsigned long *point_y )
+                                size_t *point_x, size_t *point_y )
     {
         *point_x = (map_x * 32) + (32 / 2);
         *point_y = (map_y * 32) + (32 / 2);
@@ -120,41 +113,40 @@ public:
         loc->y = (map_loc.y * 32) + (32 / 2);
     }
 
-    static inline void pointXYtoMapXY( unsigned long point_x,
-                                       unsigned long point_y, unsigned short *map_x, unsigned short *map_y )
+    static void pointXYtoMapXY( size_t point_x,
+                                       size_t point_y, unsigned short *map_x, unsigned short *map_y )
     {
         *map_x = (unsigned short )  point_x  / 32;
         *map_y = (unsigned short )  point_y /  32;
     }
 
-    static inline void pointXYtoMapXY( iXY point, iXY *map_loc )
+    static void pointXYtoMapXY( iXY point, iXY *map_loc )
     {
         map_loc->x = (unsigned short )  point.x  / 32;
         map_loc->y = (unsigned short )  point.y  / 32;
     }
 
-    static inline void mapXYtoOffset( unsigned short map_x, unsigned short map_y,
-                                      unsigned long *offset )
+    static void mapXYtoOffset(size_t map_x, size_t map_y, size_t *offset )
     {
-        main_map.mapXYtoOffset( map_x, map_y, offset );
+        *offset = map_y * main_map.getWidth() + map_x;
     }
 
-    static inline void mapXYtoOffset( iXY &map_loc, unsigned long *offset )
+    static void mapXYtoOffset( iXY &map_loc, size_t *offset )
     {
-        main_map.mapXYtoOffset( map_loc.x, map_loc.y, offset );
+        *offset = map_loc.y * main_map.getWidth() + map_loc.x;
     }
 
-    static inline void markLocHack( const iXY &loc )
+    static void markLocHack( const iXY &loc )
     {
         main_map.setMapValue(loc.x, loc.y, 27);
     }
 
-    static inline void unmarkLocHack( const iXY &loc )
+    static void unmarkLocHack( const iXY &loc )
     {
         main_map.setMapValue(loc.x, loc.y, 28);
     }
 
-    static void normalizePointXY( unsigned long point_x, unsigned long point_y, unsigned long *norm_x, unsigned long *norm_y )
+    static void normalizePointXY( size_t point_x, size_t point_y, size_t *norm_x, size_t *norm_y )
     {
         unsigned short map_x, map_y;
 
@@ -162,7 +154,7 @@ public:
         mapXYtoPointXY( map_x, map_y, norm_x, norm_y );
     }
 
-    static inline WorldMap * getMap( void )
+    static WorldMap * getMap( void )
     {
         return( &main_map );
     }
@@ -171,15 +163,15 @@ protected:
     static void finishMapLoad();
 
 public:
-    static bool startMapLoad(const char *file_path, bool load_tiles, unsigned long partitions);
+    static bool startMapLoad(const char *file_path, bool load_tiles, size_t partitions);
     static bool loadMap( int *percent_complete );
 
-    static inline bool isMapLoaded()
+    static bool isMapLoaded()
     {
         return( main_map.isMapLoaded() );
     }
 
-    static inline Surface * getMiniMapSurface()
+    static Surface * getMiniMapSurface()
     {
         return ( &mini_map_surface );
     }
@@ -190,12 +182,12 @@ public:
 
     static unsigned char getAverageColorMapXY( iXY &map_loc );
 
-    static inline void getFreeSpawnPoint( iXY *spawn_loc )
+    static void getFreeSpawnPoint( iXY *spawn_loc )
     {
         spawn_list.getFreeSpawnPoint( spawn_loc );
     }
 
-    static inline SpawnList * getSpawnList( void )
+    static SpawnList * getSpawnList( void )
     {
         return( &spawn_list );
     }

@@ -512,7 +512,16 @@ bool GameManager::startClientGameSetup( NetMessage *message, int *result_code )
     startGameTimer();
     game_elapsed_time_offset = game_setup->elapsed_time;
 
-    startGameMapLoad( game_setup->map_name, 20);
+    try {
+        startGameMapLoad( game_setup->map_name, 20);
+    } catch(std::exception& e) {
+        LOGGER.warning("Error while loading map '%s': %s",
+                game_setup->map_name, e.what());
+        *result_code = _mapload_result_no_map_file;
+        return false;
+    }
+
+    *result_code = _mapload_result_success;
     return true;
 }
 

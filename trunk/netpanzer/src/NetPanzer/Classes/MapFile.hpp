@@ -18,22 +18,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _MAPFILE_HPP
 #define _MAPFILE_HPP
 
+#include <stdint.h>
 #include "Util/FileSystem.hpp"
 
 class MapFile {
 public:
     void load(ReadFile& file);
 
-    unsigned char   netp_id_header[64];
-    unsigned short  id;
-    unsigned char   name[256];
-    unsigned char   description[1024];
-    unsigned short  x_size;
-    unsigned short  y_size;
-    char            tile_set[256];
+    char netp_id_header[64];
+    uint16_t id;
+    char name[256];
+    char description[1024];
+    uint16_t width;
+    uint16_t height;
+    char tile_set[256];
 
-    unsigned short  thumbnail_x_pix;
-    unsigned short  thumbnail_y_pix;
+    uint16_t thumbnail_width;
+    uint16_t thumbnail_height;
 };
 
 #endif // ** _MAPFILE_HPP

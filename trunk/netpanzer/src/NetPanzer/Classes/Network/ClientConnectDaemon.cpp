@@ -338,12 +338,9 @@ void ClientConnectDaemon::connectFsm( NetMessage *message )
 
                         GameManager::startClientGameSetup( message, &result_code );
 
-
                         if( result_code == _mapload_result_no_map_file ) {
                             sprintf( str_buf, "MAP %s NOT FOUND!", game_setup->map_name );
                             lobbyView->scrollAndUpdate( str_buf);
-                            lobbyView->scrollAndUpdate( "please download this map from" );
-                            lobbyView->scrollAndUpdate( "www.pyrosoftgames.com" );
                             connection_state = _connect_state_connect_failure;
                             failure_display_timer.reset();
                         } else

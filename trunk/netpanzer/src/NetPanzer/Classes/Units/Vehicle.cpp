@@ -1316,7 +1316,7 @@ void Vehicle::aiFsmManualMove( void )
 {
     bool end_cycle = false;
     signed char offset_x, offset_y;
-    unsigned long next_square;
+    size_t next_square;
 
     do {
         switch( aiFsmManualMove_state ) {
@@ -1325,7 +1325,7 @@ void Vehicle::aiFsmManualMove( void )
                 orientationToOffset( aiFsmManualMove_move_orientation, &offset_x, &offset_y );
                 aiFsmManualMove_next_loc.x += offset_x;
                 aiFsmManualMove_next_loc.y += offset_y;
-                MapInterface::mapXYtoOffset( aiFsmManualMove_next_loc, &next_square );
+                MapInterface::mapXYtoOffset(aiFsmManualMove_next_loc, &next_square);
 
                 if ( MapInterface::getMovementValue( aiFsmManualMove_next_loc ) == 0xFF ) {
                     setAiFsmDefendHold();

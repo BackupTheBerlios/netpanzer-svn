@@ -24,9 +24,8 @@ BitArray UnitBlackBoard::unit_loc_map;
 
 void UnitBlackBoard::initializeBlackBoard( void )
 {
-    unit_loc_map.initialize( MapInterface::getMapXsize(),
-                             MapInterface::getMapYsize()
-                           );
+    unit_loc_map.initialize( MapInterface::getWidth(),
+                             MapInterface::getHeight() );
 
     unit_loc_map.clear();
 }

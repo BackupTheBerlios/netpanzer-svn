@@ -36,7 +36,7 @@ void TileEngine::blitWorld()
 
     unsigned char  *double_buffer;
 
-    MapElementType  tile_type;
+    WorldMap::MapElementType tile_type;
 
     unsigned short map_width;
     unsigned short map_height;
@@ -55,9 +55,9 @@ void TileEngine::blitWorld()
                               &world_x, &world_y);
     pointXYtoMapXY( world_x, world_y, &map_x, &map_y );
 
-    map_width = main_map.getXsize();
+    map_width = main_map.getWidth();
 
-    map_height = main_map.getYsize();
+    map_height = main_map.getHeight();
 
     double_buffer = screen->mem;
 
@@ -90,7 +90,7 @@ void TileEngine::blitWorld()
 
     // THE TOP ROW
 
-    tile_type = main_map.mapValue(world_row);
+    tile_type = main_map.getValue(world_row);
 
     tile_offset = tile_set.getTile( tile_type );
     tile_offset = tile_offset + (y_top_offset * tile_size ) + x_left_offset;
@@ -101,7 +101,7 @@ void TileEngine::blitWorld()
 
     world_row++;
 
-    tile_type = main_map.mapValue(world_row);
+    tile_type = main_map.getValue(world_row);
 
     tile_offset = tile_set.getTile( tile_type );
     tile_offset = tile_offset + (y_top_offset * tile_size );
@@ -109,7 +109,7 @@ void TileEngine::blitWorld()
     buffer_offset += x_left_length;
 
     for( i=0; i < complete_columns; i++ ) {
-        tile_type = main_map.mapValue(world_row);
+        tile_type = main_map.getValue(world_row);
 
         tile_offset = tile_set.getTile( tile_type );
         tile_offset = tile_offset + (y_top_offset * tile_size );
@@ -121,7 +121,7 @@ void TileEngine::blitWorld()
     }
 
     if( x_right_end_flag == true ) {
-        tile_type = main_map.mapValue(world_row);
+        tile_type = main_map.getValue(world_row);
         tile_offset = tile_set.getTile( tile_type );
         tile_offset = tile_offset + (y_top_offset * tile_size );
 
@@ -141,7 +141,7 @@ void TileEngine::blitWorld()
     // THE MIDDLE ROWS
 
     for( k=0; k < complete_rows; k++) {
-        tile_type = main_map.mapValue(world_row);
+        tile_type = main_map.getValue(world_row);
 
         tile_offset = tile_set.getTile( tile_type );
         tile_offset = tile_offset + x_left_offset;
@@ -149,12 +149,12 @@ void TileEngine::blitWorld()
         blit_partial_xy( tile_offset, buffer_offset, tile_size, x_left_length);
 
         world_row++;
-        tile_type = main_map.mapValue(world_row);
+        tile_type = main_map.getValue(world_row);
         tile_offset = tile_set.getTile( tile_type );
         buffer_offset += x_left_length;
 
         for( i=0; i < complete_columns; i++ ) {
-            tile_type = main_map.mapValue(world_row);
+            tile_type = main_map.getValue(world_row);
             tile_offset = tile_set.getTile( tile_type );
             
             blit_partial_y( tile_offset, buffer_offset, tile_size );
@@ -165,7 +165,7 @@ void TileEngine::blitWorld()
 
 
         if( x_right_end_flag == true ) {
-            tile_type = main_map.mapValue(world_row);
+            tile_type = main_map.getValue(world_row);
             tile_offset = tile_set.getTile( tile_type );
             if (tile_size > 0 && x_right_length > 0) {
                 blit_partial_xy( tile_offset, buffer_offset, tile_size, x_right_length );
@@ -184,7 +184,7 @@ void TileEngine::blitWorld()
 
     // NOW THE LAST ROW IF NEEDED
     if( y_bottom_end_flag == true ) {
-        tile_type = main_map.mapValue(world_row);
+        tile_type = main_map.getValue(world_row);
 
         tile_offset = tile_set.getTile( tile_type );
         tile_offset = tile_offset + x_left_offset;
@@ -195,14 +195,14 @@ void TileEngine::blitWorld()
 
         world_row++;
 
-        tile_type = main_map.mapValue(world_row);
+        tile_type = main_map.getValue(world_row);
 
         tile_offset = tile_set.getTile( tile_type );
 
         buffer_offset += x_left_length;
 
         for( i=0; i < complete_columns; i++ ) {
-            tile_type = main_map.mapValue(world_row);
+            tile_type = main_map.getValue(world_row);
             tile_offset = tile_set.getTile( tile_type );
             
             if (y_bottom_length > 0) {
@@ -213,7 +213,7 @@ void TileEngine::blitWorld()
         }
 
         if( x_right_end_flag == true ) {
-            tile_type = main_map.mapValue(world_row);
+            tile_type = main_map.getValue(world_row);
             tile_offset = tile_set.getTile( tile_type );
             
             if (y_bottom_length > 0 && x_right_length > 0) {

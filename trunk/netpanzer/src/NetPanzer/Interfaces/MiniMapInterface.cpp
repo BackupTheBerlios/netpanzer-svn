@@ -208,8 +208,8 @@ void MiniMapInterface::annotateMiniMap( Surface &map_surface )
 
     if ( pathing_debug_mode == true ) {
         BitArray *bit_array;
-        unsigned long map_x_size = MapInterface::getMapXsize();
-        unsigned long map_y_size = MapInterface::getMapYsize();
+        unsigned long map_x_size = MapInterface::getWidth();
+        unsigned long map_y_size = MapInterface::getHeight();
 
         bit_array = PathScheduler::getLongPatherSetArray( );
 

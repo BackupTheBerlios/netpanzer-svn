@@ -84,7 +84,7 @@ void UnitInterface::initialize( unsigned long max_units )
 
     unit_lists = new UnitList [ max_players ];
 
-    unit_bucket_array.initialize( MapInterface::getMapSize(), TileInterface::getTileSize() );
+    unit_bucket_array.initialize(MapInterface::getSize(), TileInterface::getTileSize() );
 
     unique_generator = 0;
     message_timer.changeRate( 8 );
@@ -108,7 +108,7 @@ void UnitInterface::reset( void )
         unit_lists[i].clear();
     }
 
-    unit_bucket_array.initialize( MapInterface::getMapSize(), TileInterface::getTileSize() );
+    unit_bucket_array.initialize( MapInterface::getSize(), TileInterface::getTileSize() );
 }
 
 // ******************************************************************

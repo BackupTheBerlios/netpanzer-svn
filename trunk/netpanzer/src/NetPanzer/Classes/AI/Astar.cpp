@@ -32,8 +32,8 @@ void Astar::initializeAstar( unsigned long node_list_size,
                              unsigned long step_limit,
                              long heuristic_weight )
 {
-    open_set.initialize( getMapXsize(),  getMapYsize() );
-    closed_set.initialize( getMapXsize(), getMapYsize() );
+    open_set.initialize( MapInterface::getWidth(),  MapInterface::getHeight());
+    closed_set.initialize( MapInterface::getWidth(), MapInterface::getHeight());
 
     initializeNodeList( node_list_size );
 
@@ -165,18 +165,18 @@ void Astar::initializePath( iXY &start, iXY &goal, unsigned short path_type )
     total_pathing_time += now() - timer_ini_mark;
 }
 
-unsigned long Astar::mapXYtoAbsloc( iXY map_loc )
+size_t Astar::mapXYtoAbsloc(iXY map_loc)
 {
-    unsigned long abs;
+    size_t abs;
 
-    if ( ( map_loc.x < 0 ) || (map_loc.x >= main_map.getXsize() ) ||
-            ( map_loc.y < 0 ) || (map_loc.y >= main_map.getYsize() )
+    if ( ( map_loc.x < 0 ) || ((size_t) map_loc.x >= main_map.getWidth() ) ||
+            ( map_loc.y < 0 ) || ((size_t) map_loc.y >= main_map.getHeight() )
        )
         return( 0xFFFFFFFF );
 
-    main_map.mapXYtoOffset( map_loc.x, map_loc.y, &abs );
+    MapInterface::mapXYtoOffset( map_loc.x, map_loc.y, &abs );
 
-    return( abs );
+    return abs;
 }
 
 
@@ -451,7 +451,8 @@ void Astar::setDebugMode( bool on_off )
     debug_mode_flag = on_off;
 
     if ( debug_mode_flag == true ) {
-        astar_set_array.initialize( MapInterface::getMapXsize(), MapInterface::getMapYsize() );
+        astar_set_array.initialize( MapInterface::getWidth(),
+                MapInterface::getHeight() );
     } else {
         astar_set_array.deallocate();
     }

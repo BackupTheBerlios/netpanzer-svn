@@ -30,7 +30,8 @@ WadMapTable MapInterface::wad_mapping_table;
 Surface MapInterface::mini_map_surface;
 char MapInterface::map_path[256];
 
-bool MapInterface::startMapLoad( const char *file_path, bool load_tiles, unsigned long partitions )
+bool MapInterface::startMapLoad( const char *file_path, bool load_tiles,
+        size_t partitions )
 {
     char path[256];
     char tile_set_path[256];
@@ -122,11 +123,11 @@ void MapInterface::LoadMap( const char *file_path, bool load_tiles )
 void MapInterface::generateMappingTable()
 {
     unsigned short tile_count;
-    unsigned long  map_size;
-    unsigned long  map_index;
+    size_t map_size;
+    size_t map_index;
 
     tile_count = tile_set.getTileCount();
-    map_size = main_map.getMapSize();
+    map_size = main_map.getSize();
 
     wad_mapping_table.initialize( tile_count );
     wad_mapping_table.resetMappingTable();
@@ -135,7 +136,7 @@ void MapInterface::generateMappingTable()
     unsigned short tile_index;
 
     for ( map_index = 0; map_index < map_size; map_index++ ) {
-        tile_index = main_map.mapValue(map_index);
+        tile_index = main_map.getValue(map_index);
         wad_mapping_table[ tile_index ].is_used = true;
     } // ** for
 
@@ -157,16 +158,16 @@ void MapInterface::buildMiniMapSurface()
 {
     unsigned long map_x_size, x_index;
     unsigned long map_y_size, y_index;
-    MapElementType map_value;
+    WorldMap::MapElementType map_value;
     unsigned char  avg_color;
 
-    map_x_size = main_map.getXsize();
-    map_y_size = main_map.getYsize();
+    map_x_size = main_map.getWidth();
+    map_y_size = main_map.getHeight();
     mini_map_surface.create( map_x_size, map_y_size );
 
     for( y_index = 0; y_index < map_y_size; y_index++ ) {
         for ( x_index = 0; x_index < map_x_size; x_index++ ) {
-            map_value = main_map.mapValue( x_index, y_index );
+            map_value = main_map.getValue( x_index, y_index );
             avg_color = tile_set.getAverageTileColor( map_value );
             mini_map_surface._putPixel( x_index, y_index, (PIX) avg_color );
         } // ** for x_index
@@ -178,10 +179,10 @@ unsigned char MapInterface::getMovementValue( iXY map_loc )
     unsigned short tile_val;
     char move_val;
 
-    if (      (map_loc.x >= 0) && (map_loc.x < main_map.getXsize() )
-              && (map_loc.y >= 0) && (map_loc.y < main_map.getYsize() )
+    if (      (map_loc.x >= 0) && ((size_t) map_loc.x < main_map.getWidth() )
+              && (map_loc.y >= 0) && ((size_t) map_loc.y < main_map.getHeight() )
        ) {
-        tile_val = main_map.mapValue( (unsigned short) map_loc.x, (unsigned short) map_loc.y ) ;
+        tile_val = main_map.getValue( (unsigned short) map_loc.x, (unsigned short) map_loc.y ) ;
         move_val = tile_set.getTileMovementValue( tile_val );
 
         switch( move_val ) {
@@ -213,12 +214,8 @@ unsigned char MapInterface::getMovementValue( iXY map_loc )
 
 unsigned char MapInterface::getAverageColorPointXY( iXY &point_loc )
 {
-    unsigned long offset;
-    unsigned short map_value;
-
-    main_map.mapXYtoOffset( (unsigned short )  point_loc.x  / 32, (unsigned short )  point_loc.y  / 32, &offset );
-
-    map_value = main_map.mapValue( offset );
+    WorldMap::MapElementType map_value =
+        main_map.getValue(point_loc.x/32, point_loc.y/32);
 
     return( tile_set.getAverageTileColor( map_value ) );
 }
@@ -227,7 +224,7 @@ unsigned char MapInterface::getAverageColorMapXY( iXY &map_loc )
 {
     unsigned short map_value;
 
-    map_value = main_map.mapValue( map_loc.x, map_loc.y );
+    map_value = main_map.getValue( map_loc.x, map_loc.y );
 
     return( tile_set.getAverageTileColor( map_value ) );
 }

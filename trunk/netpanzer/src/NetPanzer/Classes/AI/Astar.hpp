@@ -105,7 +105,7 @@ private:
     bool dynamic_node_management_flag;
 
 protected:
-    unsigned long mapXYtoAbsloc( iXY map_loc );
+    size_t mapXYtoAbsloc( iXY map_loc );
 
     AstarNode current_node;
     AstarNode goal_node;

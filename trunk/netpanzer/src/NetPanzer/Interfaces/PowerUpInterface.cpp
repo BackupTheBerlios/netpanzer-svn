@@ -109,8 +109,8 @@ void PowerUpInterface::generatePowerUp()
     iXY loc;
 
     if( (powerup_list.size() < (size_t) power_up_limit) ) {
-        map_size_x = MapInterface::getMapXsize();
-        map_size_y = MapInterface::getMapYsize();
+        map_size_x = MapInterface::getWidth();
+        map_size_y = MapInterface::getHeight();
 
         do {
             loc.x = rand() % map_size_x;
@@ -184,8 +184,8 @@ void PowerUpInterface::resetLogic( void )
 
     powerup_list.clear();
 
-    map_size_x = MapInterface::getMapXsize();
-    map_size_y = MapInterface::getMapYsize();
+    map_size_x = MapInterface::getWidth();
+    map_size_y = MapInterface::getHeight();
 
     setPowerUpLimits( map_size_x, map_size_y );
 

@@ -29,32 +29,26 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Endian.hpp"
 
 WorldMap::WorldMap()
+    : map_loaded(false), map_buffer(0)
 {
-    map_buffer = 0;
+}
+
+WorldMap::~WorldMap()
+{
+    delete[] map_buffer;
 }
 
 void WorldMap::reMap( WadMapTable &mapping_table )
 {
-    unsigned long map_size;
-    unsigned long map_index;
-    unsigned short tile_value;
-
-    map_size = map_info.x_size * map_info.y_size;
-
-    for ( map_index = 0; map_index < map_size; map_index++ ) {
-        tile_value = mapValue(map_index);
-        setMapValue(map_index, mapping_table[tile_value].remap_index);
+    for(size_t i = 0; i < getSize(); ++i) {
+        map_buffer[i] = mapping_table[map_buffer[i]].remap_index;
     }
-
 }
 
-
-void WorldMap::loadMapFile( const char *file_path )
+void WorldMap::loadMapFile(const std::string& filename)
 {
     try {
-	unsigned long map_size;
-
-	std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
+	std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
 
 	if ( map_loaded == true ) {
 	    delete[] map_buffer;
@@ -64,16 +58,17 @@ void WorldMap::loadMapFile( const char *file_path )
 
 	map_info.load(*file);
 
-	map_size = (map_info.x_size * map_info.y_size);
+	size_t map_size = map_info.width * map_info.height;
 
 	map_buffer = new MapElementType [ map_size ];
-	assert( map_buffer != 0 );
 
-	file->read(map_buffer, map_size, sizeof(MapElementType));
+        for(size_t i = 0; i < map_size; ++i) {
+            map_buffer[i] = file->readULE16();
+        }
 	
 	map_loaded = true;
     } catch(std::exception& e) {
 	throw Exception("Error while reading mapfile '%s': %s",
-		file_path, e.what());
+		filename.c_str(), e.what());
     }
 }

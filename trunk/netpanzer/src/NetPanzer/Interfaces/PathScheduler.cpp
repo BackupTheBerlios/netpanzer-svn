@@ -377,8 +377,8 @@ void PathScheduler::initialize( void )
     if( MapInterface::isMapLoaded() == true ) {
         unsigned long resources;
         size_t path_list_size;
-        float map_x_size = MapInterface::getMapXsize();
-        float map_y_size = MapInterface::getMapYsize();
+        float map_x_size = MapInterface::getWidth();
+        float map_y_size = MapInterface::getHeight();
         float map_size = (map_x_size * map_y_size);
 
         resources = (unsigned long) ( (map_size * 0.019018) + 4018.0 );

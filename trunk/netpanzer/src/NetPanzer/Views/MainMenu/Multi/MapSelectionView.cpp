@@ -198,16 +198,16 @@ int MapSelectionView::loadMaps()
 	    	    0, 0, mapinfo->name, 0);
 	    sprintf(mapinfo->description, "%s", netPanzerMapHeader.description);
 
-	    mapinfo->cells.x = netPanzerMapHeader.x_size;
-	    mapinfo->cells.y = netPanzerMapHeader.y_size;
+	    mapinfo->cells.x = netPanzerMapHeader.width;
+	    mapinfo->cells.y = netPanzerMapHeader.height;
 
 	    int seekAmount = mapinfo->cells.getArea() * sizeof(uint16_t);
 
 	    file->seek(file->tell()+seekAmount);
 
 	    iXY pix;
-	    pix.x = netPanzerMapHeader.thumbnail_x_pix;
-	    pix.y = netPanzerMapHeader.thumbnail_y_pix;
+	    pix.x = netPanzerMapHeader.thumbnail_width;
+	    pix.y = netPanzerMapHeader.thumbnail_height;
 
 	    mapinfo->thumbnail.create(pix, pix.x, 1);
 	    
