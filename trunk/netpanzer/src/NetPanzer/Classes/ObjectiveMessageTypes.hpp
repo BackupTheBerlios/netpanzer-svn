@@ -36,7 +36,8 @@ __attribute__((packed));
 enum { _objective_mesg_update_occupation,
        _objective_mesg_change_unit_generation,
        _objective_mesg_disown_player_objective,
-       _objective_mesg_sync_objective
+       _objective_mesg_sync_objective,
+       _objective_mesg_change_output_location
      };
 
 class UpdateOccupationsStatus : public ObjectiveMessage
@@ -105,6 +106,22 @@ public:
         SyncObjective::occupation_status = occupation_status;
         SyncObjective::occupying_player = occupying_player;
         message_type = _objective_mesg_sync_objective;
+    }
+
+}
+__attribute__((packed));
+
+class ChangeOutputLocation : public ObjectiveMessage
+{
+public:
+   iXY new_point;
+  
+    void set( unsigned short id,
+              iXY point)
+    {
+        objective_id = id;
+        new_point = point;
+        message_type = _objective_mesg_change_output_location;
     }
 
 }

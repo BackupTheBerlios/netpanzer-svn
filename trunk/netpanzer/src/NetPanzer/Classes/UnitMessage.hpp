@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITMESSAGE_HPP
 #define _UNITMESSAGE_HPP
 
+#include <stdint.h>
 #include "UnitID.hpp"
 
 enum { _umesg_flag_unique          = 0x01,
@@ -29,14 +30,16 @@ enum { _umesg_flag_unique          = 0x01,
        _umesg_flag_manager_request = 0x40
      };
 
+#ifdef MSVC
+#pragma pack(1)
+#endif
 
 class UnitMessage
 {
 public:
     UnitID unit_id;
-    unsigned char message_id;
-    unsigned char message_flags;
-
+    uint8_t message_id;
+    uint8_t message_flags;
 
 public:
 
@@ -63,7 +66,11 @@ public:
 
         return( false );
     }
+}
+__attribute__((packed));
 
-};
+#ifdef MSVC
+#pragma pack()
+#endif
 
 #endif // ** _UNITMESSAGE_HPP

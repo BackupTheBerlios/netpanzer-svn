@@ -40,10 +40,10 @@ enum { _command_move_to_loc,
 class UMesgAICommand : public UnitMessage
 {
 public:
-    unsigned char command;
+    uint8_t command;
     iXY goal_loc;
-    UnitID   target_id;
-    unsigned char manual_move_orientation;
+    UnitID target_id;
+    uint8_t manual_move_orientation;
     iXY target_loc;
 
     UMesgAICommand()

@@ -48,6 +48,7 @@ protected:
     // ** Message Handlers **
     void objectiveMesgChangeUnitGeneration( ObjectiveMessage *message );
     void objectiveMesgDisownPlayerObjective( ObjectiveMessage *message );
+    void objectiveMesgChangeOutputLocation( ObjectiveMessage *message );
 
 public:
 

@@ -143,10 +143,11 @@ void MiniMapInterface::annotateObjectives( Surface &map_surface )
     iRect world_rect, map_rect;
     unsigned char objective_disposition;
     PIX color;
+    int objective_id;
 
     ObjectiveInterface::startObjectivePositionEnumeration();
 
-    while( ObjectiveInterface::objectivePositionEnumeration( &world_rect, &objective_disposition, 0 ) ) {
+    while( ObjectiveInterface::objectivePositionEnumeration( &world_rect, &objective_disposition, &objective_id ) ) {
         switch( objective_disposition ) {
         case _objective_disposition_unoccupied :
             color = Color::white;
@@ -183,6 +184,28 @@ void MiniMapInterface::annotateObjectives( Surface &map_surface )
         } else {
             assert(false);
         }
+
+        ObjectiveState * obj_state = ObjectiveInterface::getObjectiveState(objective_id); 
+        //LOG(("%d", obj_state.outpost_type));
+        if(obj_state->outpost_type == 0){
+            //outpost_type is never used, I assume it determine the type of objective and 0 is for outpost 
+            // Actually, outpost is the only type of objective
+            
+            if(objective_disposition == _objective_disposition_player){
+              OutpostStatus status = ObjectiveInterface::getOutpostStatus(objective_id);
+                //Only draw our unit collection location
+              iXY dest, src;
+              MapInterface::mapXYtoPointXY(status.unit_collection_loc, &dest);
+              dest.x = int(float(dest.x) / scale_factor.x);
+              dest.y = int(float(dest.y) / scale_factor.y);
+
+              src.x  = int(float(obj_state->location.x) / scale_factor.x);
+              src.y  = int(float(obj_state->location.y) / scale_factor.y);
+              map_surface.drawLine(src.x, src.y, dest.x, dest.y, color);
+            }
+        }
+
+
     } // ** while
 }
 

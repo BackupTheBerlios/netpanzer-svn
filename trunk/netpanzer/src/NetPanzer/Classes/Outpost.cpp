@@ -29,7 +29,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitNetMessage.hpp"
 #include "ObjectiveNetMessage.hpp"
 #include "UnitMessageTypes.hpp"
-
 Outpost::Outpost( short ID, iXY location, BoundBox area )
         : Objective( ID, location, area )
 {
@@ -38,12 +37,13 @@ Outpost::Outpost( short ID, iXY location, BoundBox area )
     objective_state.selection_box.min = location + iXY( -224, -128 );
     objective_state.area.min = iXY( -400, -144 );
     objective_state.area.max = iXY(  400,  240 );
-
+    objective_state.outpost_type = 0;
+    
 
     unit_generation_type = _unit_type_humvee;
     occupation_status_timer.changePeriod( 3 );
     unit_generation_timer.changePeriod( 1 );
-    unit_collection_loc = iXY( 13, 13 );
+    unit_collection_loc = outpost_map_loc + iXY( 13, 13 );
     unit_generation_loc = iXY( 1, 3 );
     occupation_pad_offset = iXY( 224, 48 );
     unit_generation_on_flag = false;
@@ -167,7 +167,7 @@ void Outpost::generateUnits( void )
                     PlacementMatrix placement_matrix;
                     iXY collection_loc, loc;
 
-                    collection_loc = outpost_map_loc + unit_collection_loc;
+                    collection_loc = /*outpost_map_loc +*/ unit_collection_loc;
 
                     placement_matrix.reset( collection_loc );
                     placement_matrix.getNextEmptyLoc( &loc );
@@ -197,6 +197,14 @@ void Outpost::updateStatus( void )
 
     generateUnits();
 
+}
+
+void Outpost::objectiveMesgChangeOutputLocation( ObjectiveMessage *message ){
+    ChangeOutputLocation *msg;
+    msg = (ChangeOutputLocation *) message;
+    iXY temp;
+    MapInterface::pointXYtoMapXY( msg->new_point, &temp );
+    unit_collection_loc = temp;
 }
 
 void Outpost::objectiveMesgChangeUnitGeneration( ObjectiveMessage *message )
@@ -252,6 +260,7 @@ void Outpost::getOutpostStatus( OutpostStatus &status )
 
     status.unit_generation_type = unit_generation_type;
     status.unit_generation_on_off = unit_generation_on_flag;
+    status.unit_collection_loc = unit_collection_loc;
 
     if ( unit_generation_type != _unit_type_null ) {
         profile = UnitProfileInterface::getUnitProfile( unit_generation_type );
@@ -277,6 +286,9 @@ void Outpost::processMessage( ObjectiveMessage *message )
 
     case _objective_mesg_disown_player_objective :
         objectiveMesgDisownPlayerObjective( message );
+        break;
+    case _objective_mesg_change_output_location :
+        objectiveMesgChangeOutputLocation( message );
         break;
     } // ** switch
 

@@ -77,6 +77,7 @@ WorldInputCmdProcessor::WorldInputCmdProcessor()
     keyboard_input_mode = _keyboard_input_mode_command;
 
     selection_box_active = false;
+    outpost_goal_selection = -1;
     previous_manual_control_state = false;
     manual_control_state = false;
     manual_fire_state = false;
@@ -152,12 +153,6 @@ void WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos )
             right_mouse_scrolled_pos.x+=x_move;
             right_mouse_scrolled_pos.y+=y_move;
         }
-        return;
-    }
-
-    if(((bool)gameconfig->fullscreen)!=true) {
-        // don't do border scrolling on windowed mode because
-        //  the window isn't always on the edge of the screen.
         return;
     }
 
@@ -622,16 +617,27 @@ void WorldInputCmdProcessor::evaluateMouseEvents( void )
     //updateScrollStatus( mouse_pos );
 
     if ( (MouseInterface::buttonHeld( _LEFT_BUTTON_MASK ) == true)
-            && (manual_control_state == false) && (manual_fire_state == false)
-       ) {
-        if ( selection_box_active == false ) {
-            selection_box_active = true;
+	 && (manual_control_state == false) && (manual_fire_state == false)
+	 ) {
+        
+      /*        Objective *objective;
+        PlayerID player_id;
+	
+        player_id = PlayerInterface::getLocalPlayerID();
+        unsigned char status = ObjectiveInterface::quearyObjectiveLocationStatus( world_pos, player_id, &objective );
+        if(status != _player_occupied_objective_found){*/
+        if(outpost_goal_selection == -1){
+            if ( selection_box_active == false ) {
+                selection_box_active = true;
+            }
         }
     } else {
         if ( selection_box_active == true ) {
             selection_box_active = false;
             box_release = world_pos;
             left_button_hold_action_complete = selectBoundBoxUnits();
+        }else{
+          
         }
     }
 
@@ -669,20 +675,60 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
 
     } else {
         if ( event.event == MouseEvent::EVENT_DOWN ) {
-            if ( selection_box_active == false ) {
-                WorldViewInterface::clientXYtoWorldXY( world_win, event.down_pos, &world_pos );
+	    WorldViewInterface::clientXYtoWorldXY( world_win, event.down_pos, &world_pos );
+            Objective *objective;
+            PlayerID player_id;
+	
+            player_id = PlayerInterface::getLocalPlayerID();
+            click_status = ObjectiveInterface::quearyObjectiveLocationStatus( world_pos, player_id, &objective );
+	
+            if ( (click_status == _player_occupied_objective_found) ) {
                 box_press = world_pos;
                 box_release = world_pos;
+                                
+                if ( outpost_goal_selection == -1){
+                    outpost_goal_selection = objective->objective_state.ID;
+                    output_pos_press = objective->objective_state.location;
+                }
+            
+            }else{
+                if ( selection_box_active == false) {
+                    WorldViewInterface::clientXYtoWorldXY( world_win, event.down_pos, &world_pos );
+                    box_press = world_pos;
+                    box_release = world_pos;
+                }else{
+              
+                }
             }
         } // ** _event_mbutton_down
 
+        if ( event.event == MouseEvent::EVENT_UP ) {
+            if (outpost_goal_selection != -1 ){
+                iXY temp;
+                MouseInterface::getMousePosition( &temp.x, &temp.y );
+                WorldViewInterface::clientXYtoWorldXY( world_win, temp, &world_pos );
+                
+                TerminalOutpostOutputLocRequest term_mesg;
+
+                term_mesg.output_loc_request.set( outpost_goal_selection,
+                                                  world_pos);
+
+                CLIENT->sendMessage( &term_mesg, sizeof(TerminalOutpostOutputLocRequest), 0 );
+
+                if ( NetworkState::status == _network_state_client ) {
+                
+                    ObjectiveInterface::sendMessage( &(term_mesg.output_loc_request) );
+                }
+                outpost_goal_selection = -1;
+            }
+        }
 
         if ( (event.event == MouseEvent::EVENT_CLICK) &&
                 (left_button_hold_action_complete == false) ) {
             WorldViewInterface::clientXYtoWorldXY( world_win, event.down_pos, &world_pos );
             click_status = getCursorStatus( world_pos );
 
-            switch ( click_status ) {
+	    switch ( click_status ) {
             case _cursor_player_unit : {
                     if( (KeyboardInterface::getKeyState( SDLK_LSHIFT ) == true) ||
                             (KeyboardInterface::getKeyState( SDLK_RSHIFT ) == true)
@@ -704,7 +750,9 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
 
             case _cursor_move:
             case _cursor_blocked: {
-                    sendMoveCommand( world_pos );
+                    if(outpost_goal_selection == -1){
+                        sendMoveCommand( world_pos );
+                    }
                 }
                 break;
 
@@ -1071,6 +1119,15 @@ void WorldInputCmdProcessor::updateControls( void )
             screen->drawVLine( mouse_pos.x, mouse_pos.y, client_pos.y, 252 );
         }
 
+    }
+
+    if (outpost_goal_selection != -1){
+        MouseInterface::getMousePosition( &mouse_pos.x, &mouse_pos.y );
+
+        WorldViewInterface::getViewWindow( &world_win );
+        WorldViewInterface::worldXYtoClientXY( world_win, output_pos_press, &client_pos );
+
+        screen->drawLine(client_pos.x, client_pos.y, mouse_pos.x, mouse_pos.y,252 );
     }
 }
 

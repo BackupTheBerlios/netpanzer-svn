@@ -64,6 +64,12 @@ void ServerMessageRouter::classTerminalMessages( NetMessage *message )
         }
         break;
 
+    case _net_message_id_term_output_loc: {
+            TerminalOutpostOutputLocRequest * terminal_command;
+            terminal_command = (TerminalOutpostOutputLocRequest *) message;
+            ObjectiveInterface::sendMessage( &(terminal_command->output_loc_request));
+        }
+        break;
 
     } // ** switch
 

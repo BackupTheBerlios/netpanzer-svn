@@ -43,3 +43,4 @@ fixe ...
   outpost
 - bernhard reports that the bots crash when the server closes
 - sometimes 2 players spawn at the same place
+- game end when all objectives occupation is complete is broken again

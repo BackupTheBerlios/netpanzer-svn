@@ -1,3 +1,7 @@
+21-Nov-2003 by Matthias Braun
+-Applied a patch by Michel Metzger (metzger@essi.fr) which makes it possible to
+ select the location where built units move.
+
 20-Nov-2003 by Matthias Braun
 -removed lots of remaining nonused code handling with UDP networking
 -convert PlayerStats to use STL

@@ -31,6 +31,10 @@ protected:
 
     bool selection_box_active;
     iXY box_press, box_release;
+
+    short outpost_goal_selection; //number of the outpost, -1 if none
+    iXY output_pos_press;
+
     iXY right_mouse_scroll_pos;
     iXY right_mouse_scrolled_pos;
     bool right_mouse_scroll;

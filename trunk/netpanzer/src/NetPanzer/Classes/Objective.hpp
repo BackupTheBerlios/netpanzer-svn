@@ -60,6 +60,7 @@ public:
     bool        unit_generation_on_off;
     float          unit_generation_time;
     float          unit_generation_time_remaining;
+    iXY unit_collection_loc;
 };
 
 class Objective

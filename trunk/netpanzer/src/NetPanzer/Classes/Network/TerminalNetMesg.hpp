@@ -24,7 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 enum { _net_message_id_term_unit_cmd,
-       _net_message_id_term_unit_gen
+       _net_message_id_term_unit_gen,
+       _net_message_id_term_output_loc
      };
 
 #ifdef MSVC
@@ -53,6 +54,20 @@ public:
     {
         message_class = _net_message_class_terminal;
         message_id = _net_message_id_term_unit_gen;
+    }
+
+}
+__attribute__((packed));
+
+class TerminalOutpostOutputLocRequest : public NetMessage
+{
+public:
+    ChangeOutputLocation output_loc_request;
+
+    TerminalOutpostOutputLocRequest()
+    {
+        message_class = _net_message_class_terminal;
+        message_id = _net_message_id_term_output_loc;
     }
 
 }
