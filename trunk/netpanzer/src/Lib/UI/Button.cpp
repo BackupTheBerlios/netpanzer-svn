@@ -73,39 +73,31 @@ namespace UI
             painter.drawImage(textSurface, textPosition);
     }
 
-//     void Button::mouseEvent(MouseEvent me){
-
-//         if(me.getEventType() & UI::MOUSE_ENTERED)
-//             LOG(("Mouse Entered"));
-
-//         if(me.getEventType() & UI::MOUSE_EXITED)
-//             LOG(("Mouse Exited"));
-
-//         //if(me.getEventType() & UI::MOUSE_CLICKED)
-//             // LOG(("Mouse Click"));
-            
-//     }
-
     void Button::mouseEntered(MouseEventParameter param){
-        //LOG(("Mouse Entered"));
+        // LOG(("%s : Mouse Entered", getName().c_str()));
         bgColor = ::Color::blue;
     }
 
 
     void Button::mouseExited(MouseEventParameter param){
-        //LOG(("Mouse Exited"));
+        //LOG(("%s : Mouse Exited", getName().c_str()));
         clickState = false;
         bgColor = ::Color::green;
     }
     
     void Button::mousePressed(MouseEventParameter param){
+        //LOG(("%s : Mouse pressed", getName().c_str()));
         if(param.getButtons() & SDL_BUTTON_LEFT)
             clickState = true;
 
     }
     void Button::mouseReleased(MouseEventParameter param){
-        if(clickState)
-            LOG(("%s : Click", getName().c_str()));
+        if(clickState){
+            //LOG(("%s : Click", getName().c_str()));
+            std::list<ButtonCallback *>::iterator i;
+            for(i = callbacks.begin(); i != callbacks.end(); i++)
+                (*i)->buttonPressed(param, *this);
+        }
     }
 }
     

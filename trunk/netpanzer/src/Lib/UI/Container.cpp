@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <iostream>
 #include "Util/Log.hpp"
 #include "2D/Color.hpp"
+#include "config.h"
 
 namespace UI{
     Container::Container(iRect area):Component(area), previousMousePosition(-1,-1){
@@ -96,7 +97,7 @@ namespace UI{
     
             if(int mouseChange = previousMouseState ^ param.getButtons()){
                 // On mouse button changed (pressed or released)
-                std::cerr << getName() <<  " : Mouse changed " << std::hex << mouseChange << std::endl;
+                //std::cerr << getName() <<  " : Mouse changed in " << c->getName() << ". new state : " <<std::hex << mouseChange << std::endl;
 
                 Uint8 releasedButtons = previousMouseState & mouseChange;
                 Uint8 pressedButtons = param.getButtons() & mouseChange;
@@ -116,7 +117,7 @@ namespace UI{
     }
 
     void Container::mouseEntered(MouseEventParameter param){
-        LOG(("%s : Mouse Entered", getName().c_str()));
+        //LOG(("%s : Mouse Entered", getName().c_str()));
 //         iXY p = param.getPosition() - area.min;
 //         Component * c = findContainingComponent(p);
 //         if(c != 0)
@@ -125,7 +126,7 @@ namespace UI{
 
 
     void Container::mouseExited(MouseEventParameter param){
-        LOG(("%s : Mouse Exited", getName().c_str()));
+        //LOG(("%s : Mouse Exited", getName().c_str()));
     }
     
 

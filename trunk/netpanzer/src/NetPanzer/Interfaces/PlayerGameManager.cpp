@@ -125,7 +125,6 @@ PlayerGameManager::PlayerGameManager()
 {
     fontManager.loadFont("fixed10", "fonts/fixed10.pcf", 10);
 
-    testpanel = new Panels::TestPanel(iXY(30, 60), &fontManager);
     showNewPanel = false;
 }
 
@@ -233,6 +232,11 @@ void PlayerGameManager::initializeWindowSubSystem()
 
     Desktop::checkResolution(iXY(640,480), iXY(screen->getPix()));
     Desktop::checkViewPositions(screen->getPix());
+
+
+    //Test for new UI
+    testpanel = new Panels::TestPanel(iXY(30, 60), &fontManager);
+
 }
 //-----------------------------------------------------------------
 void PlayerGameManager::inputLoop()

@@ -29,17 +29,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 namespace Panels{
 
-    class TestPanel : public UI::Container{
+    class TestPanel : public UI::Container, public UI::ButtonCallback{
 
     public:
         TestPanel(iXY position, UI::FontManager * fm);
         void draw(UI::Painter & painter); //draw a white border for debug only
+
+        void buttonPressed(UI::MouseEventParameter & event, UI::Button & source);
 
     private:
         const static int WIDTH;
         const static int HEIGHT;
         UI::Container * subBox1;
         UI::Container * subBox2;
+        UI::Label * label1;
+        int col;
         
     };
 

@@ -36,9 +36,9 @@ namespace UI{
 
     void FontManager::loadFont(std::string name, const char * fileName, int ptSize){
         TTF_Font * font = TTF_OpenFont(fileName, ptSize);
-        if(!font){
+        if(font == 0){
             LOG(("Warning: in FontManager::loadFont : %s", TTF_GetError()));
-        }else{
+        }else{ 
             fontCollection[name] = font;
         }
     }

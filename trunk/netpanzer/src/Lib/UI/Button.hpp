@@ -20,15 +20,33 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Component.hpp"
 #include "FontManager.hpp"
+
+#include "Label.hpp"
+
 #include "Util/Log.hpp"
 #include <iostream>
+#include <list>
 
 namespace UI{
+
+    class Button;
+    class ButtonCallback{
+    public:
+        virtual void buttonPressed(MouseEventParameter & event, Button & source) = 0;
+    };
 
     class Button : public Component{
     public:
         Button(const std::string& text, iRect area, FontManager * fm);
         void draw(Painter & painter);
+
+        void addCallback(ButtonCallback * callback){
+            callbacks.push_front(callback);
+        }
+
+        void removeCallback(ButtonCallback * callback){
+            callbacks.remove(callback);
+        }
 
     protected:
         std::string textLabel;
@@ -37,6 +55,8 @@ namespace UI{
         iXY textPosition;
 
         Color bgColor;
+
+        std::list<ButtonCallback *> callbacks;
 
         void initialiseTextSurface(FontManager * fm);
 
