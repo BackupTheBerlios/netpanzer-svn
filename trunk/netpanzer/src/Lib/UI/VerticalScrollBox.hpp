@@ -15,17 +15,33 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "Component.hpp"
+#ifndef __UI_VERTICAL_SCROLL_BOX_HPP__
+#define __UI_VERTICAL_SCROLL_BOX_HPP__
+
+
+#include "Container.hpp"
+
+#include "Button.hpp"
 
 namespace UI{
-
-    UI::Component::Component(iRect area){
-        this->area = area;
-    }
-
-    iRect UI::Component::getArea(void) const{
-        return area;
-    }
-
+    class VerticalScrollBox : public Component, public ButtonCallback{
+    public:
+        VerticalScrollBox(iRect area);
+        void draw(Painter & painter);
     
+        void buttonPressed(MouseEventParameter & event, Button * source);
+        
+        void mouseEntered(MouseEventParameter param);
+        void mouseExited(MouseEventParameter param);
+        void mousePressed(MouseEventParameter param);
+        void mouseReleased(MouseEventParameter param);
+
+
+    private:
+        Button * scrollDown;
+        Button * scrollUp;
+        Container * viewPort;
+    };
 }
+
+#endif

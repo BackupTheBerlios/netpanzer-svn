@@ -37,7 +37,9 @@ namespace UI{
 
     class Button : public Component{
     public:
-        Button(const std::string& text, iRect area, FontManager * fm);
+        Button(const char * backgroundFileNameUp, const char * backgroundFileNameDown, const std::string& text, iRect area, FontManager * fm);
+        Button(const char * backgroundFileNameUp, const char * backgroundFileNameDown, iRect area, FontManager * fm);
+        virtual ~Button(void);
         void draw(Painter & painter);
 
         void addCallback(ButtonCallback * callback){
@@ -48,25 +50,22 @@ namespace UI{
             callbacks.remove(callback);
         }
 
-    protected:
-        std::string textLabel;
-        SDL_Surface * textSurface;
-        
-        iXY textPosition;
-
-        Color bgColor;
-
-        std::list<ButtonCallback *> callbacks;
-
-        void initialiseTextSurface(FontManager * fm);
-
         void mouseEntered(MouseEventParameter param);
         void mouseExited(MouseEventParameter param);
         void mousePressed(MouseEventParameter param);
         void mouseReleased(MouseEventParameter param);
 
+
+    protected:
+        Label * textLabel;
+        SDL_Surface * bgSurfaceUp;
+        SDL_Surface * bgSurfaceDown;
+
+        std::list<ButtonCallback *> callbacks;
+
     private:
         bool clickState;
+        void initialize(const char * backgroundFileNameUp, const char * backgroundFileNameDown);
 
     };
 }

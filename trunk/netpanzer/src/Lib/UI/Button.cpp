@@ -20,42 +20,67 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Color.hpp"
 #include "2D/Palette.hpp"
 #include "Util/Log.hpp"
+#include "Util/FileSystem.hpp"
+#include "Util/Exception.hpp"
 
-
+#include "SDL_image.h"
 
 #include <string>
+#include <memory>
 
 namespace UI
 {
-    Button::Button(const std::string& text, iRect area, FontManager * fm)
-        : Component(area), textLabel(text),  bgColor(157)
+    Button::Button(const char * backgroundFileNameUp, const char * backgroundFileNameDown, const std::string& text,iRect area, FontManager * fm)
+        : Component(area)
     {
-        initialiseTextSurface(fm);
-        clickState = false;
+        initialize(backgroundFileNameUp, backgroundFileNameDown);
+        textLabel = new Label(text, area, fm, V_CENTER|H_CENTER);
         setName(text);
     }
 
-    void Button::initialiseTextSurface(FontManager * fm)
+    Button::Button(const char * backgroundFileNameUp, const char * backgroundFileNameDown, iRect area, FontManager * fm)
+        : Component(area)
     {
-        
-        TTF_Font * font = fm->getFont("fixed10");
-        if(font == 0){
-            LOG(("Button::Button : unknown font: fixed10"));
-            textSurface = 0;
-        }else{
-            //TODO : throw away indexed colors. Use 24 bits !
-            Palette p;
-            RGBColor c = p[::Color::white];
-            SDL_Color c2;
-            c2.r = c.red;
-            c2.g = c.green;
-            c2.b = c.blue;
-            textSurface = TTF_RenderText_Solid(font, textLabel.c_str(), c2);
-            
-            textPosition.x =  area.min.x + ((area.max.x - area.min.x) - textSurface->w) /2;
-            textPosition.y =  area.min.y + ((area.max.y - area.min.y) - textSurface->h) /2;
+        initialize(backgroundFileNameUp, backgroundFileNameUp);
+        textLabel = 0;
+        setName("unknown");
 
-            //LOG(("area %d:%d->%d:%d", area.min.x, area.min.y, area.max.x, area.max.y));
+    }
+
+    Button::~Button(void){
+        if(bgSurfaceUp)
+            SDL_FreeSurface(bgSurfaceUp);
+        if(bgSurfaceDown)
+            SDL_FreeSurface(bgSurfaceDown);
+                
+    }
+
+    void Button::initialize(const char * backgroundFileNameUp, const char * backgroundFileNameDown){
+        clickState = false;
+        try{
+            ReadFile * fileDown = FileSystem::openRead(backgroundFileNameDown);
+            SDL_RWops * t = fileDown->getSDLRWOps();
+            bgSurfaceDown = IMG_Load_RW(t, false);
+            free(t);
+            if(bgSurfaceDown == 0)
+                throw Exception("Couldn't load image: %s.", IMG_GetError());
+            delete fileDown;
+        }catch(std::exception& e) {
+            LOGGER.info("Couldn't load image '%s': %s.", backgroundFileNameDown, e.what());
+            bgSurfaceDown = 0;
+        }
+
+        try{
+            ReadFile * fileUp = FileSystem::openRead(backgroundFileNameUp);
+            SDL_RWops * t = fileUp->getSDLRWOps();
+            bgSurfaceUp = IMG_Load_RW(t, false);
+            free(t);
+            if(bgSurfaceUp == 0)
+                throw Exception("Couldn't load image: %s.", IMG_GetError());
+            delete fileUp;
+        }catch(std::exception& e) {
+            LOGGER.info("Couldn't load image '%s': %s.", backgroundFileNameUp, e.what());
+            bgSurfaceUp = 0;
         }
     }
 
@@ -63,26 +88,23 @@ namespace UI
     {
         //LOG(("DrawButton"));
         painter.setBrushColor(::Color::white);
-        
-        painter.setFillColor(bgColor);
-        iRect t = area;
-        t.max = iXY(area.max.x-1,area.max.y-1);
-        painter.fillRect(t);
-        painter.drawRect(t);
-        if(textSurface != 0)
-            painter.drawImage(textSurface, textPosition);
+        if(!clickState && bgSurfaceUp)
+            painter.drawImage(bgSurfaceUp, area.min);
+        else if(clickState && bgSurfaceDown)
+            painter.drawImage(bgSurfaceDown, area.min);
+
+        if(textLabel)
+            textLabel->draw(painter);
     }
 
     void Button::mouseEntered(MouseEventParameter param){
         // LOG(("%s : Mouse Entered", getName().c_str()));
-        bgColor = ::Color::blue;
     }
 
 
     void Button::mouseExited(MouseEventParameter param){
         //LOG(("%s : Mouse Exited", getName().c_str()));
         clickState = false;
-        bgColor = ::Color::green;
     }
     
     void Button::mousePressed(MouseEventParameter param){
@@ -93,6 +115,7 @@ namespace UI
     }
     void Button::mouseReleased(MouseEventParameter param){
         if(clickState){
+            clickState = false;
             //LOG(("%s : Click", getName().c_str()));
             std::list<ButtonCallback *>::iterator i;
             for(i = callbacks.begin(); i != callbacks.end(); i++)
@@ -100,4 +123,3 @@ namespace UI
         }
     }
 }
-    

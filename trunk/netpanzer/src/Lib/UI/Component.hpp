@@ -39,7 +39,6 @@ namespace UI{
         virtual ~Component(void){
         }
 
-        void setArea(iRect area);
         iRect getArea(void) const;
         
         virtual void draw(Painter & painter) = 0;

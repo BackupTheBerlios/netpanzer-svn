@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <iostream>
 namespace UI{
 
-    Label::Label(std::string text, iRect area, FontManager *fm, int alignment): Component(area){
+    Label::Label(const std::string& text, iRect area, FontManager *fm, int alignment): Component(area){
         fontManager = fm;
         this->alignment = alignment;
         textColor = transformColor(::Color::white);
@@ -65,7 +65,7 @@ namespace UI{
 
     }
 
-    void Label::setText(std::string newText){
+    void Label::setText(const std::string& newText){
         if(this->text != newText){
             this->text = newText;
             updateTextSurface();
@@ -89,19 +89,12 @@ namespace UI{
 
     void Label::setTextColor(Color col){
         textColor = transformColor(col);
-//         std::cerr.flags ( std::ios_base::right | std::ios_base::hex | std::ios_base::showbase );
-//         std::cerr << "Text Color : " << textColor.r << "," << textColor.g << "," << textColor.b << std::endl;
         updateTextSurface();
     }
 
 
     void Label::draw(Painter & painter){
-
         if(textSurface != 0)
             painter.drawImage(textSurface, textPosition);
-        iRect t = area;
-        t.max = iXY(area.max.x-1,area.max.y-1);
-        painter.drawRect(t);
-
     }
 }

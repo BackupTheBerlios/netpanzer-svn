@@ -45,7 +45,7 @@ namespace UI{
             ReadFile* file (FileSystem::openRead(fileName));
             TTF_Font * font = TTF_OpenFontRW(file->getSDLRWOps(), true, ptSize);
             if(font == 0)
-                throw Exception("Couldn't load font: %s.", TTF_GetError());
+                throw Exception("Couldn't load font: %s.", TTF_GetError());            
             fontCollection[name] = font;
         } catch(std::exception& e) {
             LOGGER.info("Couldn't load font '%s': %s.", fileName, e.what());
