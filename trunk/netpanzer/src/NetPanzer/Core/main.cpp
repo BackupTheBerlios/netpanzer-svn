@@ -19,8 +19,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #ifdef WIN32
 #include <windows.h>
+#else
+#include <sys/types.h>
+#include <unistd.h>
 #endif
 
+#include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -43,8 +47,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 //---------------------------------------------------------------------------
 
+static std::string pidfile;
+
 void shutdown()
 {
+#ifndef WIN32
+    if(pidfile != "") {
+        unlink(pidfile.c_str());
+    }
+#endif
+    
     SDL_Quit();
     if(gameconfig)
         gameconfig->saveConfig();
@@ -130,7 +142,9 @@ BaseGameManager *initialise(int argc, char** argv)
     option<bool, false, false> protocol_option('\0', "protocol",
             "Show version of network protocol", false);
     commandline.add(&protocol_option);
-    
+    option<std::string, true, false> pidfile_option(0, "pidfile",
+            "Create a pidfile at the specified location", "");
+    commandline.add(&pidfile_option);
 
     if(!commandline.process() || commandline.help() || commandline.version())
         exit(0);
@@ -199,6 +213,23 @@ BaseGameManager *initialise(int argc, char** argv)
     srand48(time(0));
 #endif
 
+    // create a pidfile
+#ifndef WIN32
+    pidfile = pidfile_option.value();
+    if(pidfile != "") {
+        std::ofstream out(pidfile.c_str());
+        if(!out.good()) {
+            fprintf(stderr, "Couldn't create pidfile '%s'.\n", pidfile.c_str());
+            shutdown();
+            exit(1);
+        }
+        out << getpid() << std::endl;
+        out.close();
+    }
+#else
+    fprintf(stderr, "Pidfiles not supported on win32.\n");
+#endif
+    
     BaseGameManager *manager;
     // finally initialize the game objects
     try {
