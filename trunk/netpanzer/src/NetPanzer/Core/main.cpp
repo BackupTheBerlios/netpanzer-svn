@@ -150,7 +150,7 @@ void signalhandler(int signum)
 BaseGameManager *initialise(int argc, char** argv)
 {
 #ifndef WIN32
-    // Install signal handler
+    // Install signal handlers for a clean shutdown
     signal(SIGILL, signalhandler);
     signal(SIGINT, signalhandler);
     signal(SIGHUP, signalhandler);
@@ -174,8 +174,10 @@ BaseGameManager *initialise(int argc, char** argv)
     option<std::string, true, false> bot_option('b', "bot",
             "connect as bot to specific server", "");
     commandline.add(&bot_option);
+#if 0
     option<int> port_option('p', "port", "run server on specific port", 0);
     commandline.add(&port_option);
+#endif
     bool_option debug_option('g', "debug",
             "enable debug output", false);
     commandline.add(&debug_option);
