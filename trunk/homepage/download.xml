@@ -10,24 +10,26 @@
 	<li>Gentoo</li>
 	<li>PLD Linux Distribution</li>
       </ul>
-      <subsubsection title="Suse">
-	rpm files for Suse and other distributions can be found at the
-	<a
-	href="http://developer.berlios.de/project/showfiles.php?group_id=1250">
-	netPanzer download section</a>.
-      </subsubsection>
+	  <subsubsection title="Suse">
+	<p>
+	rpm files for Suse and Fedora distributions can be found at the
+	<a href="http://developer.berlios.de/project/showfiles.php?group_id=1250">
+		netPanzer download section</a>.</p>
+	<p>SuSE packages provided by Sander Erkamp aka Storm 
+	<a href="mailto:panux@2itb.com">panux@2itb.com</a>.</p>
+	<p>Fedora packages provided by Daniel Pereda aka pegardan
+	<a href="maito:dannyedu@adinet.com.uy">dannyedu@adinet.com.uy</a>.</p>
+	 </subsubsection>
       <subsubsection title="Debian">
         <p>If you're using Debian unstable (Sid), you can add the following	
-          lines to your <tt>/etc/apt/sources.list</tt> file:
+          line to your <tt>/etc/apt/sources.list</tt> file:
 
           <div style="margin: 1em; background-color: black; color: lightgrey; border-style: solid; border-width: thin; padding: 1em;">
-            <tt>deb http://mentors.debian.net/debian unstable main contrib non-free</tt><br />
-            <tt>deb-src http://mentors.debian.net/debian unstable main contrib non-free</tt><br />
+            <tt>deb http://mentors.debian.net/debian unstable main</tt><br />
           </div>
          
-	  run <tt>apt-get update</tt> and then <tt>apt-get install
-            netpanzer</tt>.</p>
-        <p>Debian packages are provided by Bartosz Fenski aka fEnIo 
+	  then run <tt>apt-get update &amp;&amp; apt-get install netpanzer</tt>.</p>
+        <p>Debian packages provided by Bartosz Fenski aka fEnIo 
           <a href="mailto:fenio@o2.pl">fenio@o2.pl</a></p>      
       </subsubsection>
       <subsubsection title="Installer, Static Binary">
@@ -35,8 +37,14 @@
 	works.</p>
       </subsubsection>
     </subsection>
-    <subsection title="Windows">
-      <p>A windows version with installer is in the works.</p>
+	<subsection title="Windows">
+	<p>A windows version with installer can be found at the
+    <a href="http://developer.berlios.de/project/showfiles.php?group_id=1250">
+	netPanzer download section</a>.</p>
+	<p>Windows version provided by Matthias Braun 
+	<a href="mailto:matze@braunis.de">matze@braunis.de</a> (binary) 
+	along with Bartosz Fenski aka fEnIo 
+	<a href="fenio@o2.pl">fenio@o2.pl</a> (installer).</p>
     </subsection>
     <subsection title="MacOSX">
       <p>Currently netpanzer code does not work correctly on big-endian
@@ -47,7 +55,7 @@
       <p>
         You need both the
         gamedata and the source if you want to compile yourself, in
-        addition you need Jam, PhysicsFS, SDL, SDL_net, SDL_mixer, 
+		addition you need Jam, PhysicsFS, libxml, SDL, SDL_net, SDL_mixer, 
         SDL_image and SDL_ttf, see the README for details.
       </p>
 
