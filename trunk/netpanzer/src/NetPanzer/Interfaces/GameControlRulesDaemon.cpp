@@ -374,7 +374,7 @@ void GameControlRulesDaemon::checkGameRules( void )
 
         case _gametype_objective : {
                 if ( PlayerInterface::testRuleObjectiveRatio(
-                            gameconfig->objectiveoccupationpercentage, &player_state ) == true ) {
+                            gameconfig->objectiveoccupationpercentage / 100.0, &player_state ) == true ) {
                     onObjectiveGameCompleted( );
                 }
             }

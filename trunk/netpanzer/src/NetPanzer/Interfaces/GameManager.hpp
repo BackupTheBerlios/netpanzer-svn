@@ -124,9 +124,6 @@ protected:
     // ** Game Rules Methods
     static void spawnPlayer( PlayerState *player_state );
     static void respawnAllPlayers();
-    static void fraglimitGameCompleted( PlayerState *winner_player_state );
-    static void objectiveGameCompleted( PlayerState *winner_player_state );
-    static void evaluateGameRules();
 
     // ** Network Message Handlers
     static void netMessageSetView( NetMessage *message );

@@ -795,83 +795,6 @@ void GameManager::spawnPlayer( PlayerState *player_state )
 
 // ******************************************************************
 
-void GameManager::fraglimitGameCompleted( PlayerState *winner_player_state )
-{
-    SystemViewControl view_control;
-
-    view_control.set( "WinnerMesgView", _view_control_flag_visible_on | _view_control_flag_close_all );
-
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("GameView", true);
-    Desktop::setVisibility( "WinnerMesgView", true );
-
-    SERVER->sendMessage( &view_control, sizeof( SystemViewControl ), 0 );
-
-    game_state = _game_state_completed;
-}
-
-void GameManager::objectiveGameCompleted( PlayerState *winner_player_state )
-{
-    SystemViewControl view_control;
-
-    view_control.set( "WinnerMesgView", _view_control_flag_visible_on | _view_control_flag_close_all );
-
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("GameView", true);
-    Desktop::setVisibility( "WinnerMesgView", true );
-
-    SERVER->sendMessage( &view_control, sizeof( SystemViewControl ), 0 );
-
-    game_state = _game_state_completed;
-}
-
-// ******************************************************************
-void GameManager::evaluateGameRules()
-{
-    PlayerState *player_state;
-
-    if ( game_state == _game_state_in_progress ) {
-        if ( NetworkState::status == _network_state_server ) {
-            unsigned char game_type;
-            game_type = gameconfig->gametype;
-
-            switch( game_type ) {
-
-            case _gametype_fraglimit : {
-                    if ( PlayerInterface::testRuleScoreLimit(gameconfig->fraglimit, &player_state ) == true ) {
-                        fraglimitGameCompleted( player_state );
-                    }
-                }
-                break;
-
-            case _gametype_objective : {
-                    if ( PlayerInterface::testRuleObjectiveRatio(
-                                gameconfig->objectiveoccupationpercentage, &player_state ) == true ) {
-                        objectiveGameCompleted( player_state );
-                    }
-                }
-                break;
-
-            } // ** switch
-
-            // ** Check for Player Respawns **
-            bool respawn_rule_complete = false;
-            while( respawn_rule_complete == false ) {
-                if ( PlayerInterface::testRulePlayerRespawn( &respawn_rule_complete, &player_state ) ) {
-                    spawnPlayer( player_state );
-                } // ** if testRulePlayerRespawn
-
-            } // ** while
-
-
-        } // ** if NetworkState::status == _network_state_server
-    }
-
-
-}
-
-// ******************************************************************
-
 void GameManager::netMessageSetView( NetMessage *message )
 {
     SystemSetPlayerView *set_view;
@@ -1462,7 +1385,6 @@ void GameManager::simLoop()
     ParticleSystem2D::simAll();
     Particle2D::simAll();
 
-    //evaluateGameRules();
     GameControlRulesDaemon::updateGameControlFlow();
 }
 
@@ -1541,7 +1463,6 @@ void GameManager::dedicatedSimLoop()
 
     Physics::sim();
 
-    //evaluateGameRules();
     GameControlRulesDaemon::updateGameControlFlow();
 }
 
