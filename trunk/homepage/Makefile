@@ -17,6 +17,10 @@ upload: all
 	scp $(OUTPUTFILES) matzebraun@shell.berlios.de:/home/groups/netpanzer/htdocs
 	scp -r images matzebraun@shell.berlios.de:/home/groups/netpanzer/htdocs
 
+fenio: all
+	scp $(OUTPUTFILES) fenio@shell.berlios.de:/home/groups/netpanzer/htdocs
+	scp -r images fenio@shell.berlios.de:/home/groups/netpanzer/htdocs
+
 commit: all
 	cvs commit -m "automatic webpage update"
 
