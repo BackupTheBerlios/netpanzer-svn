@@ -29,7 +29,7 @@ using namespace masterserver;
 
 static MasterServer* masterserv = 0;
 
-static void signalhandler(int signum)
+static void signalhandler(int )
 {
     delete masterserv;
     masterserv = 0;
@@ -38,7 +38,7 @@ static void signalhandler(int signum)
     exit(1);
 }
 
-int main(int argc, char** argv)
+int main(int , char** )
 {   
     signal(SIGINT, signalhandler);
 

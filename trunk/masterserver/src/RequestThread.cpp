@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "MasterServer.hpp"
 #include "Tokenizer.hpp"
+#include "Log.hpp"
 
 namespace masterserver
 {
@@ -77,7 +78,7 @@ void RequestThread::run()
                     break;
             }
         } else {
-            std::cout << "Unknown request: '" << query << "'\n";
+            *log << "Unknown request: '" << query << "'\n" << std::flush;
             *stream << "\\error\\Unknown request\\final\\" << std::flush;
             // ignore everything until next final
             while(!stream->eof() && running) {

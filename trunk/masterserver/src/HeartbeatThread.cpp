@@ -102,7 +102,6 @@ void HeartbeatThread::requestMasterServerList()
     readNeighborCache(addresses);
 
     // query addresses for masterserverlist
-    bool havelist = false;
     for(std::vector<std::string>::iterator addr = addresses.begin();
             addr != addresses.end(); ++addr) {
         // lookup server address

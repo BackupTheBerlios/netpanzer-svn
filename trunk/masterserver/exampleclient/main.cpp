@@ -6,7 +6,7 @@
 #include "HeartbeatThread.hpp"
 #include "InfoThread.hpp"
 
-int main(int argc, char** argv)
+int main(int , char** )
 {
     HeartbeatThread* heartbeatThread = 0;
     InfoThread* infoThread = 0;

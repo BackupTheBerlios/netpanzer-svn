@@ -146,7 +146,7 @@ void MasterServer::run()
                 ++i;
             }               
         }
-        if(threads.size() > serverconfig.getIntValue("connection-limit")) {
+        if(threads.size() > (size_t) serverconfig.getIntValue("connection-limit")) {
             // drop the client, we're too busy
             close(clientsock);
             continue;

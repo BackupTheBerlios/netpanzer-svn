@@ -35,6 +35,18 @@ AC_C_CONST
 AC_C_VOLATILE
 AC_TYPE_SIZE_T
 
+AC_MSG_CHECKING(for debug mode)
+AC_ARG_ENABLE(debug,
+              AC_HELP_STRING([--enable-debug], [enable debugging mode]),
+              enable_debug="$enableval", enable_debug="no")
+if test "x${enable_debug}" != "xno"; then
+    CXXFLAGS="$CXXFLAGS -Wall -W -Werror -DDEBUG -g -O0"
+    CFLAGS="$CFLAGS -Wall -W -Werror -DDEBUG -g -O0"
+    AC_MSG_RESULT([enabled])
+else
+    AC_MSG_RESULT([disabled])
+fi
+
 AC_CONFIG_FILES([Makefile docs/Makefile src/Makefile exampleclient/Makefile])
 AC_OUTPUT
 
