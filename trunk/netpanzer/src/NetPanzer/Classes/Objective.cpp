@@ -37,8 +37,8 @@ void Objective::objectiveMesgUpdateOccupation( ObjectiveMessage *message )
     occupation_update = (UpdateOccupationsStatus *) message;
 
     objective_state.occupation_status = occupation_update->occupation_status;
-    objective_state.occupying_player 
-        = PlayerInterface::getPlayerID(occupation_update->occupying_player_id);
+    objective_state.occupying_player
+        = PlayerInterface::getPlayerID(occupation_update->getOccupyingPlayerID());
 
     if( objective_state.occupation_status != _occupation_status_unoccupied ) {
         PlayerState *player_state;
@@ -57,7 +57,7 @@ void Objective::objectiveMesgSync( ObjectiveMessage *message )
 
     objective_state.objective_status = sync_mesg->objective_status;
     objective_state.occupation_status = sync_mesg->occupation_status;
-    objective_state.occupying_player.setIndex(sync_mesg->occupying_player_id);
+    objective_state.occupying_player.setIndex(sync_mesg->getOccupyingPlayerID());
 }
 
 

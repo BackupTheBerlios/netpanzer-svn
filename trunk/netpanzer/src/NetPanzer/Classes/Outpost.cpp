@@ -200,7 +200,7 @@ void Outpost::objectiveMesgChangeOutputLocation( ObjectiveMessage *message ){
     ChangeOutputLocation *msg;
     msg = (ChangeOutputLocation *) message;
     iXY temp;
-    MapInterface::pointXYtoMapXY(iXY(msg->new_point_x, msg->new_point_y),
+    MapInterface::pointXYtoMapXY(iXY(msg->getPointX(), msg->getPointY()),
             &temp );
     unit_collection_loc = temp;
 }
@@ -226,7 +226,7 @@ void Outpost::objectiveMesgDisownPlayerObjective( ObjectiveMessage *message )
     disown_mesg = (DisownPlayerObjective *) message;
 
     if( objective_state.occupation_status == _occupation_status_occupied ) {
-        if (disown_mesg->disowned_player_id ==
+        if (disown_mesg->getDisownedPlayerID() ==
                 objective_state.occupying_player.getIndex() ) {
             objective_state.occupation_status = _occupation_status_unoccupied;
 

@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _OBJECTIVE_MESSSAGE_TYPES_HPP
 
 #include "PlayerState.hpp"
+#include "Types/iXY.hpp"
 
 #ifdef MSVC
 #pragma pack(1)
@@ -28,7 +29,12 @@ class ObjectiveMessage
 {
 public:
     uint8_t message_type;
+private:
     uint16_t objective_id;
+
+public:
+    uint16_t getObjectiveID(void);
+    void setObjectiveID(uint16_t id);
 } __attribute__((packed));
 
 enum { _objective_mesg_update_occupation,
@@ -42,15 +48,12 @@ class UpdateOccupationsStatus : public ObjectiveMessage
 {
 public:
     uint8_t occupation_status;
+private:
     uint16_t occupying_player_id;
 
-    void set( unsigned short id, unsigned char status, PlayerID &player )
-    {
-        objective_id = id;
-        occupation_status = status;
-        occupying_player_id = player.getIndex();
-        message_type = _objective_mesg_update_occupation;
-    }
+public:
+    void set(unsigned short id, unsigned char status, PlayerID &player);
+    uint16_t getOccupyingPlayerID(void);
 } __attribute__((packed));
 
 class ChangeUnitGeneration : public ObjectiveMessage
@@ -59,28 +62,19 @@ public:
     unsigned char unit_type;
     bool unit_gen_on;
 
-    void set( unsigned short id, unsigned char unit_type, bool unit_generation_on )
-    {
-        objective_id = id;
-        ChangeUnitGeneration::unit_type = unit_type;
-        unit_gen_on = unit_generation_on;
-        message_type = _objective_mesg_change_unit_generation;
-    }
-
+    void set(unsigned short id, unsigned char unit_type,
+        bool unit_generation_on);
 }
 __attribute__((packed));
 
 class DisownPlayerObjective : public ObjectiveMessage
 {
-public:
+private:
     uint16_t disowned_player_id;
 
-    void set( unsigned short id, PlayerID &disowned_player )
-    {
-        objective_id = id;
-        disowned_player_id = disowned_player.getIndex();
-        message_type = _objective_mesg_disown_player_objective;
-    }
+public:
+    void set(unsigned short id, PlayerID &disowned_player);
+    uint16_t getDisownedPlayerID(void);
 } __attribute__((packed));
 
 class SyncObjective : public ObjectiveMessage
@@ -88,35 +82,27 @@ class SyncObjective : public ObjectiveMessage
 public:
     uint8_t objective_status;
     uint8_t occupation_status;
+private:
     uint16_t occupying_player_id;
 
-    void set( unsigned short id,
+public:
+    void set(unsigned short id,
                   unsigned char objective_status,
                   unsigned char occupation_status,
-                  PlayerID occupying_player )
-    {
-        objective_id = id;
-        message_type = _objective_mesg_sync_objective;
-
-        SyncObjective::objective_status = objective_status;
-        SyncObjective::occupation_status = occupation_status;
-        SyncObjective::occupying_player_id = occupying_player.getIndex();
-    }
+                  PlayerID occupying_player);
+    uint16_t getOccupyingPlayerID(void);
 } __attribute__((packed));
 
 class ChangeOutputLocation : public ObjectiveMessage
 {
-public:
+private:
     int32_t new_point_x;
     int32_t new_point_y;
   
-    void set(unsigned short id, iXY point)
-    {
-        objective_id = id;
-        new_point_x = point.x;
-        new_point_y = point.y;
-        message_type = _objective_mesg_change_output_location;
-    }
+public:
+    void set(unsigned short id, iXY point);
+    int32_t getPointX(void);
+    int32_t getPointY(void);
 } __attribute__((packed));
 
 #ifdef MSVC

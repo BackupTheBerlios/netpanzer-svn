@@ -131,7 +131,7 @@ quearyObjectiveLocationStatus( iXY &loc,
 
 void ObjectiveInterface::sendMessage(ObjectiveMessage *message)
 {
-    objective_list[message->objective_id]->processMessage( message );
+    objective_list[message->getObjectiveID()]->processMessage( message );
 }
 
 
