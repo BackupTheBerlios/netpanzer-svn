@@ -44,6 +44,9 @@ public:
     void run();
 
     bool addServer(const std::string& gamename, struct sockaddr_in address);
+
+    void getServerList(std::vector<const ServerInfo*>& list,
+            const std::string& gamename);
     
 private:
     friend class RequestThread;
@@ -64,12 +67,12 @@ private:
     void parseQuit(std::iostream& stream,
             struct sockaddr_in* addr, Tokenizer& tokenizer);
 
+    /** this function is threadsafe */
+    void checkTimeouts();
+
     void parseKeyValues(std::map<std::string, std::string>& keyvalues,
             std::iostream& stream, Tokenizer& tokenizer);
 
-    /** this function is threadsafe */
-    void writeNeighborCache();
-    
     int sock;
     struct sockaddr_in serveraddr;
     pthread_mutex_t serverlist_mutex;

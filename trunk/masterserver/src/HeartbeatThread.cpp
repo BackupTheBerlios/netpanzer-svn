@@ -51,10 +51,6 @@ HeartbeatThread::HeartbeatThread(MasterServer* newmasterserver)
     *log << "Querying neighbor masterserver." << std::endl;
     requestMasterServerList();
    
-    if(serveraddresses.size() == 0) {
-        *log << "No additional masterservers found." << std::endl;
-    }
-    
     // start thread
     pthread_create(&thread, 0, threadMain, this);
 }
@@ -65,10 +61,18 @@ HeartbeatThread::~HeartbeatThread()
     if(running) {
         pthread_cancel(thread);
     }
+
+    writeNeighborCache();
+    std::stringstream packet;
+    packet << "\\quit\\gamename\\master\\password\\"
+        << config->getSection("server").getValue("masterserver-password")
+        << "\\port\\" << config->getSection("server").getValue("port")
+        << "\\final\\";
+    sendPacket(packet.str());
 }
 
 void
-HeartbeatThread::readNeighborCache(std::vector<std::string>& list)
+HeartbeatThread::readNeighborCache()
 {
     iniparser::Store neighborini;
 
@@ -84,47 +88,67 @@ HeartbeatThread::readNeighborCache(std::vector<std::string>& list)
 
     iniparser::Section& neighbors = neighborini.getSection("neighbors");
     for(int i=0;  ; ++i) {
-        std::stringstream keyname;
-        keyname << "ip" << i;
+        std::stringstream keynamestr;
+        keynamestr << "ip" << i;
         
-        if(!neighbors.exists(keyname.str()))
+        std::string keyname = keynamestr.str();
+        if(!neighbors.exists(keyname))
             break;
         
-        const std::string& ip = neighbors.getValue(keyname.str());
-        list.push_back(ip);
+        const std::string& ip = neighbors.getValue(keyname);
+
+        int port = 28900;
+        std::stringstream portnamestr;
+        portnamestr << "port" << i;
+        std::string portname = portnamestr.str();
+        if(neighbors.exists(portname)) {
+            port = neighbors.getIntValue(portname);
+        }
+
+        in_addr_t in_addr = inet_addr(ip.c_str());
+        if(in_addr == 0) {
+            *log << "Invalid entry in neighbor file: " << ip << std::endl;
+            continue;
+        }
+
+        struct sockaddr_in addr;
+        memset(&addr, 0, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_addr.s_addr = in_addr;
+        addr.sin_port = htons(port);
+    
+        masterserver->addServer("master", addr);
     }
 }
 
 void HeartbeatThread::requestMasterServerList()
 {
-    std::vector<std::string> addresses;
-    
     // parse config
-    readNeighborCache(addresses);
+    readNeighborCache();
 
     // query addresses for masterserverlist
-    for(std::vector<std::string>::iterator addr = addresses.begin();
-            addr != addresses.end(); ++addr) {
-        // lookup server address
-        struct hostent* hentry = gethostbyname(addr->c_str());
-        if(!hentry) {
-            *log << "Couldn't resolve address of masterserver '"
-                << *addr << "'" << std::endl;
-            continue;
+    std::vector<const ServerInfo*> list;
+    masterserver->getServerList(list, "master");
+    for(std::vector<const ServerInfo*>::iterator i = list.begin();
+            i != list.end(); ++i) {
+        const ServerInfo* info = *i;
+        try {
+            requestMasterServerList2(info->address);
+            break;
+        } catch(std::exception& e) {
+            *log << "Failed contacting neighbor " 
+                << inet_ntoa(info->address.sin_addr)
+                << ":" << ntohs(info->address.sin_port) << std::endl;
         }
+    }
 
-        struct sockaddr_in serveraddr;
-        memset(&serveraddr, 0, sizeof(serveraddr));
-        serveraddr.sin_family = AF_INET;
-        serveraddr.sin_addr.s_addr = ((struct in_addr*) hentry->h_addr)->s_addr;
-        serveraddr.sin_port =
-            htons(config->getSection("server").getIntValue("port"));
-       
-        requestMasterServerList2(&serveraddr); 
+    masterserver->getServerList(list, "master");
+    if(list.size() == 0) {
+        *log << "No additional master servers found." << std::endl;
     }
 }
 
-void HeartbeatThread::requestMasterServerList2(struct sockaddr_in* addr)
+void HeartbeatThread::requestMasterServerList2(struct sockaddr_in addr)
 {
     int sock = -1;
 
@@ -137,8 +161,8 @@ void HeartbeatThread::requestMasterServerList2(struct sockaddr_in* addr)
         }
         
         // connect to server
-        int res = connect(sock, (struct sockaddr*) addr,
-                sizeof(struct sockaddr_in));
+        int res = connect(sock, (struct sockaddr*) &addr,
+                sizeof(addr));
         if(res < 0) {
             std::stringstream msg;
             msg << "Couldn't connect to masterserver: "
@@ -151,14 +175,19 @@ void HeartbeatThread::requestMasterServerList2(struct sockaddr_in* addr)
         
         stream << "\\list\\gamename\\master\\final\\" << std::flush;
         Tokenizer* tokenizer = new Tokenizer(stream);
+        std::string ip = "";
+        int port = 28900;
         while(!stream.eof()) {
             std::string token = tokenizer->getNextToken();
             if(token == "ip") {
-                std::string server = tokenizer->getNextToken();
-                addMasterServer(server);
+                if(ip != "")
+                    addMasterServer(ip, port);
+
+                ip = tokenizer->getNextToken();
+                port = 28900;
             } else if(token == "port") {
-                // ignore always assume 28900
-                tokenizer->getNextToken();
+                std::stringstream portstr(tokenizer->getNextToken());
+                portstr >> port;
             } else if(token == "final") {
                 break;
             } else {
@@ -166,6 +195,8 @@ void HeartbeatThread::requestMasterServerList2(struct sockaddr_in* addr)
                     token << std::endl;
             }
         }
+        if(ip != "")
+            addMasterServer(ip, port);
 
         delete tokenizer;
     } catch(std::exception& e) {
@@ -181,7 +212,7 @@ void HeartbeatThread::requestMasterServerList2(struct sockaddr_in* addr)
 }
 
 void
-HeartbeatThread::addMasterServer(const std::string& address)
+HeartbeatThread::addMasterServer(const std::string& address, int port)
 {
     // lookup server address
     struct hostent* hentry = gethostbyname(address.c_str());
@@ -195,8 +226,7 @@ HeartbeatThread::addMasterServer(const std::string& address)
     memset(&serveraddr, 0, sizeof(struct sockaddr_in));
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_addr.s_addr = ((struct in_addr*) hentry->h_addr)->s_addr;
-    serveraddr.sin_port =
-        htons(config->getSection("server").getIntValue("port"));
+    serveraddr.sin_port = htons(port);
 
     if (!masterserver->addServer("master", serveraddr)) {
         *log << "Not adding additional masterserver '" << address
@@ -204,7 +234,6 @@ HeartbeatThread::addMasterServer(const std::string& address)
         return;                                                         
     }                                                                   
 
-    serveraddresses.push_back(serveraddr);
     *log << "Found additional masterserver '" << address << "'" << std::endl;
 }
 
@@ -214,31 +243,40 @@ void* HeartbeatThread::threadMain(void* data)
    
     _this->running = true;
     while(_this->running) {
-        _this->sendHeartbeats();
+        std::stringstream packet;
+        packet << "\\heartbeat\\port\\" <<
+            config->getSection("server").getValue("port")
+               << "\\gamename\\master\\password\\" << 
+               config->getSection("server").getValue("masterserver-password")
+               << "\\final\\";
+        _this->sendPacket(packet.str());
 
         // use nanosleep to have a thread cancelation point
         timespec sleeptime = {
             config->getSection("server").
                 getIntValue("masterserver-heartbeat-interval"), 0 };
         nanosleep(&sleeptime, 0);
+
+        _this->writeNeighborCache();
     }
 
     return 0;
 }
 
 void
-HeartbeatThread::sendHeartbeats()
+HeartbeatThread::sendPacket(const std::string& packet)
 {
-    if(serveraddresses.size())
-        *log << "Sending Heartbeat to other masters" << std::endl;
-
-    for(std::vector<struct sockaddr_in>::iterator i = serveraddresses.begin();
-            i != serveraddresses.end(); ++i) {
+    std::vector<const ServerInfo*> list;
+    masterserver->getServerList(list, "master");   
+    for(std::vector<const ServerInfo*>::iterator i = list.begin();
+            i != list.end(); ++i) {
+        const ServerInfo* info = *i;
         try {
-            sendHeartbeat(& (*i));
+            sendPacket(info->address, packet);
         } catch(std::exception& e) {
             *log << "Couldn't send heartbeat packet to '"
-                << inet_ntoa(i->sin_addr) << "': " << e.what() << std::endl;
+                << inet_ntoa(info->address.sin_addr) 
+                << "': " << e.what() << std::endl;
         } catch(...) {
             *log << "Unexpected exception while sending heartbeat."<< std::endl;
         }
@@ -246,7 +284,8 @@ HeartbeatThread::sendHeartbeats()
 }
 
 void
-HeartbeatThread::sendHeartbeat(struct sockaddr_in* serveraddr)
+HeartbeatThread::sendPacket(struct sockaddr_in serveraddr,
+        const std::string& packet)
 {
     int sock = -1;
     int res;
@@ -257,10 +296,9 @@ HeartbeatThread::sendHeartbeat(struct sockaddr_in* serveraddr)
             msg << "Couldn't create socket: " << strerror(errno);
             throw std::runtime_error(msg.str());
         }
-        
+
         // connect to server
-        res = connect(sock, (struct sockaddr*) serveraddr,
-                sizeof(struct sockaddr_in));
+        res = connect(sock, (struct sockaddr*) &serveraddr, sizeof(serveraddr));
         if(res < 0) {
             std::stringstream msg;
             msg << "Couldn't connect to masterserver: "
@@ -271,16 +309,45 @@ HeartbeatThread::sendHeartbeat(struct sockaddr_in* serveraddr)
         // send heartbeat packet
         SocketStream stream(sock);
         sock = -1; // stream has control of socket now
-    
-        stream << "\\heartbeat\\port\\" <<
-            config->getSection("server").getValue("port")
-               << "\\gamename\\master\\password\\" << 
-               config->getSection("server").getValue("masterserver-password")
-               << "\\final\\" << std::flush;
+
+        stream << packet << std::flush;
     } catch(...) {
         if(sock>=0)
             close(sock);
         throw;
+    }
+}
+
+void
+HeartbeatThread::writeNeighborCache()
+{
+    iniparser::Store neighborini;
+    iniparser::Section& neighbors = neighborini.getSection("neighbors");
+
+    std::vector<const ServerInfo*> serverlist;
+    masterserver->getServerList(serverlist, "master");
+
+    int idx = 0;
+    for(std::vector<const ServerInfo*>::iterator i = serverlist.begin();
+            i != serverlist.end(); ++i) {
+        const ServerInfo* info = *i;
+        std::stringstream key;
+        key << "ip" << idx;
+        neighbors.setValue(key.str(), inet_ntoa(info->address.sin_addr));
+        std::stringstream port;
+        port << "port" << idx;
+        neighbors.setIntValue(port.str(), ntohs(info->address.sin_port));
+        idx++;
+    }
+
+    const std::string& neighborcachefile 
+        = config->getSection("server").getValue("neighborcachefile");
+    std::ofstream out(neighborcachefile.c_str());
+    neighborini.save(out);
+    if(!out.good()) {
+        *log << "Couldn't write neighborcachefile '" << neighborcachefile
+            << "'." << std::endl;
+        return;
     }
 }
 

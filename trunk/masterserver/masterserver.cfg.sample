@@ -18,7 +18,7 @@ client-request-timeout=30
 connection-limit=10
 
 # Interval other masterservers are notified that we're still alive
-masterserver-heartbeat-interval=350
+masterserver-heartbeat-interval=360
 # Password for masterserver heartbeats
 masterserver-password=xxx
 

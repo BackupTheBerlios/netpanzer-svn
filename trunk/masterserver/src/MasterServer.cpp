@@ -118,8 +118,6 @@ MasterServer::MasterServer()
 
 MasterServer::~MasterServer()
 {
-    writeNeighborCache();
-
     for(std::list<RequestThread*>::iterator i = threads.begin();
             i != threads.end(); ++i) {
         delete *i;
@@ -228,21 +226,23 @@ void MasterServer::parseHeartbeat(std::iostream& stream,
         }     
     }
 
+    checkTimeouts();
+
     pthread_mutex_lock(&serverlist_mutex);
     
     ServerInfo* info = 0;
-    std::vector<ServerInfo>::iterator i;
-    for(i = serverlist.begin(); i != serverlist.end(); ++i) {
+    for(std::vector<ServerInfo>::iterator i = serverlist.begin();
+            i != serverlist.end(); ++i) {
         if(i->address.sin_addr.s_addr == addr->sin_addr.s_addr
             && i->address.sin_port == htons(queryport)) {
             *log << "Heartbeat from " << inet_ntoa(addr->sin_addr) 
-                 << ":" << queryport << std::endl;
+                 << ":" << queryport << " (" << gamename << ")" << std::endl;
             info = &(*i);
         }
     }
     if(info == 0) {
         *log << "New server at " << inet_ntoa(addr->sin_addr) 
-             << ":" << queryport << std::endl;
+             << ":" << queryport << " (" << gamename << ")" << std::endl;
         serverlist.push_back(ServerInfo());
         info = & (serverlist.back());
     }
@@ -265,7 +265,7 @@ MasterServer::addServer(const std::string& gamename, struct sockaddr_in addr)
     if(addr.sin_addr.s_addr == serveraddr.sin_addr.s_addr
         && addr.sin_port == serveraddr.sin_port)
         return false;
-    
+
     pthread_mutex_lock(&serverlist_mutex);
     std::vector<ServerInfo>::iterator i;
     for(i = serverlist.begin(); i != serverlist.end(); ++i) {
@@ -314,20 +314,13 @@ MasterServer::parseList(std::iostream& stream, struct sockaddr_in* addr,
     const std::string& gamename = v->second;
     *log << "List query for game '" << gamename << "' from "
         << inet_ntoa(addr->sin_addr) << std::endl;
+
+    checkTimeouts();
             
     pthread_mutex_lock(&serverlist_mutex);
     std::map<std::string, std::string>::iterator v2;
     for(std::vector<ServerInfo>::iterator i = serverlist.begin();
-            i != serverlist.end(); /* nothing */) {
-        if(currenttime - i->lastheartbeat >=
-                serverconfig.getIntValue("server-alive-timeout")) {
-            // remove server from list
-            *log << "server timeout at " << inet_ntoa(addr->sin_addr)
-                 << std::endl;
-            i = serverlist.erase(i);
-            continue;
-        }
-
+            i != serverlist.end(); ++i) {
         // match against requested key/values
         bool match = true;
         for(v = keyvalues.begin(); v != keyvalues.end(); ++v) {
@@ -342,18 +335,17 @@ MasterServer::parseList(std::iostream& stream, struct sockaddr_in* addr,
                 break;
             }
         }
-        if(match) {
-            if(!gameSpyHacks) {
-                stream << "\\ip\\" << inet_ntoa(i->address.sin_addr)
-                    << "\\port\\" << ntohs(i->address.sin_port);
-            } else {
-                // gamespy hack
-                stream << "\\ip\\" << inet_ntoa(i->address.sin_addr)
-                    << ":" << ntohs(i->address.sin_port);
-            }
+        if(!match)
+            continue;
+        
+        if(!gameSpyHacks) {
+            stream << "\\ip\\" << inet_ntoa(i->address.sin_addr)
+                << "\\port\\" << ntohs(i->address.sin_port);
+        } else {
+            // qstat/gamespy hack
+            stream << "\\ip\\" << inet_ntoa(i->address.sin_addr)
+                << ":" << ntohs(i->address.sin_port);
         }
-            
-        ++i;
     }
     pthread_mutex_unlock(&serverlist_mutex);
 
@@ -370,64 +362,94 @@ void
 MasterServer::parseQuit(std::iostream& stream, struct sockaddr_in* addr,
         Tokenizer& tokenizer)
 {
-    std::string token = tokenizer.getNextToken();
-    std::stringstream strstream(token);
-    
-    int queryport;
-    strstream >> queryport;
+    std::map<std::string, std::string> keyvalues;
+    parseKeyValues(keyvalues, stream, tokenizer);
+
+    int port = 0;
+    std::map<std::string, std::string>::iterator v
+        = keyvalues.find("port");
+    if(v == keyvalues.end()) {
+        *log << "Missing port in Quit message from " 
+            << inet_ntoa(addr->sin_addr) << std::endl;
+        stream << "\\error\\missing port in quit message\\final\\"
+            << std::flush;
+        return;
+    }
+    std::stringstream portstr(v->second);
+    portstr >> port;
+        
+    checkTimeouts();
 
     pthread_mutex_lock(&serverlist_mutex);
     bool found = false;
     for(std::vector<ServerInfo>::iterator i = serverlist.begin();
             i != serverlist.end(); ++i) {
-        if(i->address.sin_addr.s_addr == addr->sin_addr.s_addr
-            && i->address.sin_port == htons(queryport)) {
-            *log << "Quit from server at " << inet_ntoa(i->address.sin_addr) 
-                 << ":" << ntohs(i->address.sin_port) << std::endl;
-            serverlist.erase(i);
-            found = true;
-            break;
-        }
+        if(i->address.sin_addr.s_addr != addr->sin_addr.s_addr
+            || i->address.sin_port != htons(port))
+            continue;
+
+        *log << "Quit from server at " << inet_ntoa(i->address.sin_addr) 
+            << ":" << ntohs(i->address.sin_port) << " ("
+            << i->settings["gamename"] << ")" << std::endl;
+        serverlist.erase(i);
+        found = true;
+        break;
     }
     pthread_mutex_unlock(&serverlist_mutex);
     
     if(!found) {
-        *log << "No server known for quit request." << std::endl;
-        stream << "\\error\\no server known";
+        *log << "No server known for quit request (from " << 
+            inet_ntoa(addr->sin_addr) << " server at " << port
+            << ")" << std::endl;
     }
     stream << "\\final\\" << std::flush;
 }
 
 void
-MasterServer::writeNeighborCache()
+MasterServer::checkTimeouts()
 {
-    iniparser::Store neighborini;
-    iniparser::Section& neighbors = neighborini.getSection("neighbors");
-
+    time_t currenttime = time(0);
+    
     pthread_mutex_lock(&serverlist_mutex);
-    int idx = 0;
-    for(std::vector<ServerInfo>::iterator i = serverlist.begin();
-            i != serverlist.end(); ++i) {
-        std::map<std::string, std::string>::iterator v =
-            i->settings.find("gamename");
-        if(v == i->settings.end() || v->second != "master")
+    for(std::vector<ServerInfo>::iterator i = serverlist.begin();        
+            i != serverlist.end(); /* nothing */) {
+        const ServerInfo& info = *i;
+        if(currenttime - info.lastheartbeat >=
+                serverconfig.getIntValue("server-alive-timeout")) {
+            // remove server from list
+            *log << "server timeout at " 
+                << inet_ntoa(info.address.sin_addr)
+                << ":" << ntohs(info.address.sin_port) << std::endl;
+            i = serverlist.erase(i);
             continue;
-        
-        std::stringstream key;
-        key << "ip" << idx++;
-        neighbors.setValue(key.str(), inet_ntoa(i->address.sin_addr));
+        }
+
+        ++i;
     }
     pthread_mutex_unlock(&serverlist_mutex);
+}
 
-    const std::string neighborcachefile = 
-        config->getSection("server").getValue("neighborcachefile");
-    std::ofstream out(neighborcachefile.c_str());
-    if(!out.good()) {
-        *log << "Couldn't write neighborcachefile '" << neighborcachefile
-            << "'." << std::endl;
-        return;
+void
+MasterServer::getServerList(std::vector<const ServerInfo*>& list,
+        const std::string& gamename)
+{
+    checkTimeouts();
+
+    list.clear();
+    pthread_mutex_lock(&serverlist_mutex);
+    for(std::vector<ServerInfo>::iterator i = serverlist.begin();
+            i != serverlist.end(); ++i) {
+        const ServerInfo& info = *i;
+        std::map<std::string, std::string>::const_iterator i 
+            = info.settings.find("gamename");
+        if(i == info.settings.end())
+            continue;
+        if(i->second != gamename)
+            continue;
+
+        list.push_back(&info);
     }
-    neighborini.save(out);
+    pthread_mutex_unlock(&serverlist_mutex);
 }
 
 }

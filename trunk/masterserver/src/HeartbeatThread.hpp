@@ -40,19 +40,19 @@ public:
 
 private:
     static void* threadMain(void* data);
-    void sendHeartbeats();
-    void sendHeartbeat(struct sockaddr_in* address);
+    void sendPacket(const std::string& packet);
+    void sendPacket(struct sockaddr_in address, const std::string& packet);
 
-    void readNeighborCache(std::vector<std::string>& list);
-    
     void requestMasterServerList();
-    void requestMasterServerList2(struct sockaddr_in* address);
-    void addMasterServer(const std::string& address);
+    void requestMasterServerList2(struct sockaddr_in address);
+    void addMasterServer(const std::string& address, int port);
+
+    void readNeighborCache();
+    void writeNeighborCache();
 
     MasterServer* masterserver;
     
     volatile bool running;
-    std::vector<struct sockaddr_in> serveraddresses;
     pthread_t thread;
 };
 
