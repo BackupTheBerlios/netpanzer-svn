@@ -20,20 +20,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include <string>
 #include "SplitPath.hpp"
-#include "FindFirst.hpp"
 #include "MapSelectionView.hpp"
 #include "GameConfig.hpp"
 #include "GameViewGlobals.hpp"
 #include "HostOptionsView.hpp"
 #include "UtilInterface.hpp"
 #include "MapFileStruct.hpp"
-#include "Exception.hpp"
 #include "FileSystem.hpp"
+#include "Exception.hpp"
 #include "Log.hpp"
 
 cGrowList <MapInfo> MapSelectionView::mapList;
 int MapSelectionView::curMap = 0;
-
 
 static void bNextMap()
 {
@@ -133,6 +131,20 @@ void MapSelectionView::doDraw(const Surface &viewArea, const Surface &clientArea
 
 } // end MapSelectionView::doDraw
 
+static inline void readLine(char* buffer, size_t bufsize, ReadFile* file)
+{
+    for(size_t i=0; i<bufsize; i++) {
+        if(file->read(buffer+i, 1, 1) != 1) {
+            buffer[i] = 0;
+            break;
+        }
+        if(buffer[i] == '\n') {
+            buffer[i] = 0;
+            break;
+        }
+    }
+}
+
 // loadMaps
 //---------------------------------------------------------------------------
 int MapSelectionView::loadMaps()
@@ -166,16 +178,19 @@ int MapSelectionView::loadMaps()
     mapList.setNum(mapfiles.size());
 
     for (unsigned int i = 0; i < mapfiles.size(); i++) {
-        FILE *fp =
-            fopen(FileSystem::getRealName(mapfiles[i].c_str()).c_str(), "rb");
-        if (fp == 0) {
-            LOGGER.warning("cannot open map file '%s'", mapfiles[i].c_str());
+        std::auto_ptr<ReadFile> file;
+        try {
+            file = std::auto_ptr<ReadFile> (FileSystem::openRead(mapfiles[i].c_str()));
+        } catch(Exception& e) {
+            LOGGER.warning("cannot open map file '%s': %s", 
+                           mapfiles[i].c_str(), e.getMessage());
             continue;
         }
 
         MAP_HEADER netPanzerMapHeader;
 
-        fread(&netPanzerMapHeader, sizeof(netPanzerMapHeader), 1, fp);
+        if(file->read(&netPanzerMapHeader, sizeof(netPanzerMapHeader), 1) != 1)
+            continue;
         /*
                     if (strlen(netPanzerMapHeader.name) > 255)
                     {
@@ -195,7 +210,7 @@ int MapSelectionView::loadMaps()
 
         int seekAmount = mapList[i].cells.getArea() * sizeof(WORD);
 
-        fseek(fp, seekAmount, SEEK_CUR);
+        file->seek(file->tell()+seekAmount);
 
         iXY pix;
         pix.x = netPanzerMapHeader.thumbnail_x_pix;
@@ -205,17 +220,20 @@ int MapSelectionView::loadMaps()
 
         int numBytes = pix.getArea();
 
-        fread(mapList[i].thumbnail.frame0, numBytes, 1, fp);
-
-        fclose(fp);
+        if(file->read(mapList[i].thumbnail.frame0, numBytes, 1) != 1)
+            continue;
 
         mapList[i].thumbnail.scale(100);
 
         // Now try to get the outpost count from the outpost file.
         int objectiveCount = 0;
         sprintf(strBuf, "%s%s.opt", mapsPath, mapList[i].name);
-        fp = fopen(strBuf, "rb");
-        if (fp == 0 || (!fscanf(fp, "ObjectiveCount: %d", &objectiveCount))) {
+
+        file = std::auto_ptr<ReadFile> (FileSystem::openRead(strBuf));
+       
+        char buffer[128];
+        readLine(buffer, sizeof(buffer), &(*file)); 
+        if(!sscanf(buffer, "ObjectiveCount: %d", &objectiveCount)) {
             GameConfig::setGameMapName("");
             return 1;
         }

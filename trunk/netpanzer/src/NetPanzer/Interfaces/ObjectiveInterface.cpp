@@ -19,9 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ObjectiveInterface.hpp"
 
 #include <stdio.h>
+#include <memory>
 
 #include "MapInterface.hpp"
 #include "PlayerInterface.hpp"
+#include "FileSystem.hpp"
 #include "Outpost.hpp"
 
 #include "ObjectiveNetMessage.hpp"
@@ -59,12 +61,12 @@ void ObjectiveInterface::resetLogic( void )
 
 void ObjectiveInterface::loadObjectiveList( char *file_path )
 {
-    FILE *infile;
     unsigned long objective_count;
     unsigned long objective_index;
     char comment[64];
 
-    infile = fopen( file_path, "rt" );
+    // XXX FIX THIS! Make it using physfs!!!
+    FILE* infile = fopen(FileSystem::getRealName(file_path).c_str(), "rt" );
     assert( infile != 0 );
 
     cleanUpObjectiveList();
@@ -91,7 +93,6 @@ void ObjectiveInterface::loadObjectiveList( char *file_path )
 
         objective_list.add( objective_obj, objective_index );
     } // ** for
-
 }
 
 unsigned char ObjectiveInterface::

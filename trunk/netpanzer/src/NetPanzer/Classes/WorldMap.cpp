@@ -20,9 +20,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <memory>
 
 #include "WorldMap.hpp"
 #include "MapData.hpp"
+#include "FileSystem.hpp"
 #include "Exception.hpp"
 
 WorldMap::WorldMap()
@@ -48,44 +50,9 @@ void WorldMap::reMap( WadMapTable &mapping_table )
 
 void WorldMap::loadMapFile( const char *file_path )
 {
-    FILE *infile;
-    //map_file_header_type map_header;
     unsigned long map_size;
 
-    /*
-      infile = fopen( file_path, "rb" );  
-      assert( infile != 0 );  
-     
-      if ( map_loaded == true )
-       {
-        delete[] map_buffer;
-        map_buffer = 0;
-        map_loaded = false;
-       }
-      
-      fread( &map_header, sizeof( map_file_header_type ), 1, infile );
-     
-      map_info.x_size = map_header.map_x_size;
-     
-      map_info.y_size = map_header.map_y_size;
-     
-      strcpy( (char *) map_info.name, map_header.map_name );
-        
-      map_buffer = new MapElementType [ map_header.map_data_size ];
-      assert( map_buffer != 0 );
-        
-      fread( map_buffer, map_header.map_data_size, 1, infile );
-     
-      fclose( infile );    
-      
-      map_loaded = true;
-      
-    */
-    //*****************************************************************
-
-    infile = fopen( file_path, "rb" );
-    if(infile == 0)
-        throw Exception("couldn't open mapfile '%s'.", file_path);
+    std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
 
     if ( map_loaded == true ) {
         delete[] map_buffer;
@@ -93,17 +60,18 @@ void WorldMap::loadMapFile( const char *file_path )
         map_loaded = false;
     }
 
-    fread( &map_info, sizeof( MAP_HEADER ), 1, infile );
+    if(file->read(&map_info, sizeof( MAP_HEADER ), 1) != 1)
+        throw Exception("Couldn't load mapfile '%s' (while reading mapinfo)",
+                        file_path);
 
     map_size = (map_info.x_size * map_info.y_size);
 
     map_buffer = new MapElementType [ map_size ];
     assert( map_buffer != 0 );
 
-    fread( map_buffer, map_size, sizeof(MapElementType), infile );
-
-    fclose( infile );
+    if(file->read(map_buffer, map_size, sizeof(MapElementType)) != sizeof(MapElementType))
+        throw Exception("Couldn't load mapfile '%s' (while reading elements)",
+                        file_path);
 
     map_loaded = true;
-
 }

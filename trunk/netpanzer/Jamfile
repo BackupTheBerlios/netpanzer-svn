@@ -2,7 +2,7 @@ SubDir TOP ;
 
 # construct some clean targets
 Clean distclean : config.log config.status config.cache aclocal.m4
-		  Jamconfig config.h ;
+		  Jamconfig config.h out.txt log.txt stamp-h1 ;
 CleanDir distclean : autom4te.cache out ;
 Depends distclean : clean ;
 

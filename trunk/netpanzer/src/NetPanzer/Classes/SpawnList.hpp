@@ -45,7 +45,7 @@ public:
 
     SpawnList( unsigned long size );
 
-    void loadSpawnFile( char *file_path );
+    void loadSpawnFile(const char *file_path );
 
     void getFreeSpawnPoint( iXY *spawn_loc );
 

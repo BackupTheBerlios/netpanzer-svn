@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include <string>
 #include <algorithm>
-#include "FindFirst.hpp"
 #include "Log.hpp"
 #include "Surface.hpp"
 #include "FileSystem.hpp"

@@ -49,7 +49,7 @@ FileList::~FileList()
     }
 }
 
-void FileList::addString( char *string )
+void FileList::addString(const char *string )
 {
     strcpy( array[contains], string );
     contains++;

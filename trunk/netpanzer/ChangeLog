@@ -2,6 +2,7 @@
 -converted lots of code to use physfs (not completely done yet)
 -removed the automake system
 -added a jam build system
+-added README
 
 23-Sep-2003 by Ivo Danihelka
 -Added bots, press 'b' for enable

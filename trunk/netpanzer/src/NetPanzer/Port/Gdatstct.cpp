@@ -22,9 +22,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <memory>
 
 #include "Log.hpp"
 #include "Exception.hpp"
+#include "FileSystem.hpp"
 
 //*****************************************************************************
 
@@ -35,39 +37,33 @@ tile_dbase::tile_dbase( void )
 }
 //*****************************************************************************
 
-short tile_dbase::load_dbase( char *dbase_path )
+void tile_dbase::load_dbase( char *dbase_path )
 {
-    FILE *infile;
     long  tile_buffer_size;
 
-    infile = fopen( dbase_path, "rb" );
+    std::auto_ptr<ReadFile> file (FileSystem::openRead(dbase_path));
 
-    if ( infile == 0 ) {
-        LOG ( ("ERROR: Could Not Open tile set : %s", dbase_path) );
-        return( false );
-    }
-
-    fread( &header, sizeof( tile_dbase_header_type ), 1, infile );
+    if(file->read( &header, sizeof( tile_dbase_header_type ), 1) != 1)
+        throw Exception("Error while reading database %s", dbase_path);
 
     tile_buffer_size = header.tile_size * header.tile_count;
 
     tile_data = (unsigned char *) malloc( sizeof(unsigned char) * tile_buffer_size );
 
-    fread( tile_data, tile_buffer_size, 1, infile );
+    if(file->read(tile_data, tile_buffer_size, 1) != 1)
+        throw Exception("Error while reading database %s", dbase_path);
 
     dbase_loaded = true;
-
-    return( true );
 }
 
 //*****************************************************************************
 
-short tile_dbase::unload_dbase( void )
+void tile_dbase::unload_dbase()
 {
-    if ( dbase_loaded == true ) {
-        free( tile_data );
-        return( true );
-    }
+    if(!dbase_loaded)
+        return;
 
-    return( false );
+    free(tile_data);
+    tile_data = 0;
+    dbase_loaded = false;
 }

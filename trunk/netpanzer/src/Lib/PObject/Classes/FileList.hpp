@@ -38,7 +38,7 @@ public:
 
     ~FileList();
 
-    void addString( char *string );
+    void addString(const char *string );
 
     char * getString( unsigned long index );
 

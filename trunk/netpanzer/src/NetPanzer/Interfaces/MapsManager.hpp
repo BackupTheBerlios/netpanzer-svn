@@ -33,18 +33,18 @@ public:
     MapsManager();
     ~MapsManager();
 
-    static void initialize( void );
+    static void initialize();
 
-    static void scanMaps( void );
+    static void scanMaps();
 
     static void scanMaps( const char *map_directory );
 
-    static void resetMapCycling( void );
-    static void cycleNextMapName( char *map_name );
-    static void getCurrentMap( char *map_name );
-    static void setCycleStartMap( char *map_name );
+    static void resetMapCycling();
+    static void cycleNextMapName(char *map_name );
+    static void getCurrentMap(char *map_name );
+    static void setCycleStartMap(const char *map_name );
 
-    static int  checkMapValidity( char *map_name );
+    static int  checkMapValidity(const char *map_name );
 };
 
 

@@ -38,9 +38,9 @@ public:
     tile_dbase_header_type header;
     unsigned char *tile_data;
 
-    tile_dbase( void );
-    short load_dbase( char *dbase_path );
-    short unload_dbase( void );
+    tile_dbase();
+    void load_dbase( char *dbase_path );
+    void unload_dbase();
 };
 
 #endif

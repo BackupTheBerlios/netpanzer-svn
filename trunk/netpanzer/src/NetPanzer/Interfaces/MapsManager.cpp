@@ -19,7 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdio.h>
 #include <string.h>
-#include "FindFirst.hpp"
+#include <memory>
+#include "FileSystem.hpp"
 #include "MapsManager.hpp"
 #include "MapFileStruct.hpp"
 
@@ -48,33 +49,15 @@ void MapsManager::scanMaps( void )
 
 void MapsManager::scanMaps( const char *map_directory )
 {
-    char search_path[1024];
-    char temp_path[1024];
-
-    _finddata_t map_file_info;
-    int* hFile;
-
-    strcpy( search_path, map_directory );
-    strcat( search_path, "*.npm" );
-
-    hFile = _findfirst( search_path, &map_file_info );
-
-    if( hFile != ((int*) -1L) ) {
-        strcpy( temp_path, map_directory );
-        strcat( temp_path, map_file_info.name );
-
-        master_maps_list.addString( temp_path );
-
-        while( _findnext( hFile, &map_file_info ) == 0 ) {
-            strcpy( temp_path, map_directory );
-            strcat( temp_path, map_file_info.name );
-
-            master_maps_list.addString( temp_path );
+    char** list = FileSystem::enumerateFiles(map_directory);
+    for(char** file = list; *file != 0; file++) {
+        std::string path = map_directory;
+        path += *file;
+        if(path.find(".npm") != std::string::npos) {
+            master_maps_list.addString(path.c_str());
         }
-
-        _findclose( hFile );
     }
-
+    FileSystem::freeList(list);
 }
 
 void MapsManager::resetMapCycling( void )
@@ -82,7 +65,7 @@ void MapsManager::resetMapCycling( void )
     map_cycle_index = 0;
 }
 
-void MapsManager::cycleNextMapName( char *map_name )
+void MapsManager::cycleNextMapName(char *map_name )
 {
     if ( (map_cycle_index + 1) < master_maps_list.containsItems() ) {
         map_cycle_index++;
@@ -93,12 +76,12 @@ void MapsManager::cycleNextMapName( char *map_name )
     master_maps_list.getFilename( map_cycle_index, map_name );
 }
 
-void MapsManager::getCurrentMap( char *map_name )
+void MapsManager::getCurrentMap(char *map_name )
 {
     master_maps_list.getFilename( map_cycle_index, map_name );
 }
 
-void MapsManager::setCycleStartMap( char *map_name )
+void MapsManager::setCycleStartMap(const char *map_name )
 {
     int list_size;
     char cycle_map_name[256];
@@ -114,7 +97,7 @@ void MapsManager::setCycleStartMap( char *map_name )
     }
 }
 
-int MapsManager::checkMapValidity( char *map_name )
+int MapsManager::checkMapValidity(const char *map_name )
 {
     bool found = false;
     int list_size;
@@ -133,7 +116,6 @@ int MapsManager::checkMapValidity( char *map_name )
         return( _mapfile_not_found );
     }
 
-    FILE *fp;
     char temp_path[256];
     MAP_HEADER map_info;
 
@@ -141,21 +123,18 @@ int MapsManager::checkMapValidity( char *map_name )
     strcat( temp_path, map_name);
     strcat( temp_path, ".npm" );
 
-    fp = fopen( temp_path, "rb" );
+    std::auto_ptr<ReadFile> file (FileSystem::openRead(temp_path));
 
-    fread( &map_info, sizeof( MAP_HEADER ), 1, fp );
-
-    fclose( fp );
+    if(file->read( &map_info, sizeof( MAP_HEADER ), 1) != 1) {
+        return -1;
+    }
 
     strcpy( temp_path, "wads/");
     strcat( temp_path, map_info.tile_set );
 
-    fp = fopen( temp_path, "rb" );
+    if(!FileSystem::exists(temp_path))
+        return _wadfile_not_found;
 
-    if( fp == 0 ) {
-        return( _wadfile_not_found );
-    }
-
-    fclose( fp );
     return( _mapfile_valid );
 }
+
