@@ -36,8 +36,8 @@ public:
 
     unsigned char  unit_type;
 
-    bool        select;
-    iXY       location;
+    bool           select;
+    iXY            location;
     BoundBox       bbox;
 
     AngleInt       body_angle;
@@ -48,17 +48,14 @@ public:
     unsigned short speed_factor;
 
     unsigned short reload_time;
-    short	      max_hit_points;
+    short	   max_hit_points;
     short          hit_points;
     unsigned short damage_factor;
     unsigned long  weapon_range;
     unsigned long  defend_range;
 
-    unsigned short fuel_level;
-
     unsigned char  threat_level;
     unsigned char  lifecycle_state;
-    unsigned char  ai_lifecycle_state;
 
     UnitState( );
 

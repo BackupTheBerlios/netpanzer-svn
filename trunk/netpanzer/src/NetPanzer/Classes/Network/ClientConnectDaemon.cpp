@@ -60,7 +60,7 @@ void ClientConnectDaemon::shutdownConnectDaemon( void )
 {
     ConnectMesgNetPanzerClientDisconnect client_disconnect;
 
-    client_disconnect.client_id = PlayerInterface::getLocalPlayerID();
+    client_disconnect.client_id = PlayerInterface::getLocalPlayerID().getIndex();
 
     CLIENT->sendMessage( &client_disconnect, sizeof(ConnectMesgNetPanzerClientDisconnect), 0 );
 

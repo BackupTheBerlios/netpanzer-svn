@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ClientServerNetMessage.hpp"
 #include "ServerConnectDaemon.hpp"
 
+#include "PlayerInterface.hpp"
 #include "ConsoleInterface.hpp"
 
 //***************************************************************
@@ -190,7 +191,8 @@ void NetworkServer::netMessageClientKeepAlive( NetMessage *message )
     ServerMesgKeepAlive  *client_keepalive = 0;
     client_keepalive = (ServerMesgKeepAlive *) message;
 
-    client_data = client_list.getClientData( client_keepalive->client_id );
+    client_data = client_list.getClientData(
+        PlayerInterface::getPlayerID(client_keepalive->client_id) );
 
     if( client_data == 0 ) {
         LOG( ("Invalid ClientID for KeepAlive") );
@@ -210,7 +212,10 @@ void NetworkServer::netMessageServerPingRequest( NetMessage *message )
 
     ping_request_mesg = (ServerMesgPingRequest *) message;
 
-    sendMessage( ping_request_mesg->client_id, &ping_ack_mesg, sizeof( ClientMesgPingAck ), _network_send_no_guarantee );
+    PlayerID playerid =
+        PlayerInterface::getPlayerID(ping_request_mesg->client_id);
+    sendMessage(playerid, &ping_ack_mesg,
+            sizeof( ClientMesgPingAck ), _network_send_no_guarantee );
 }
 
 void NetworkServer::netMessageTransportClientAccept( NetMessage *message )

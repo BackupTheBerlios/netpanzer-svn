@@ -34,13 +34,15 @@ enum { _net_message_id_powerup_create,
 class PowerUpCreateMesg : public NetMessage
 {
 public:
-    iXY     map_loc;
+    int32_t map_loc_x;
+    int32_t map_loc_y;
     int32_t ID;
     int32_t type;
 
     void set( iXY map_loc, int ID, int type )
     {
-        PowerUpCreateMesg::map_loc = map_loc;
+        PowerUpCreateMesg::map_loc_x = map_loc.x;
+        PowerUpCreateMesg::map_loc_y = map_loc.y;
         PowerUpCreateMesg::ID = ID;
         PowerUpCreateMesg::type = type;
     }
@@ -50,23 +52,21 @@ public:
         message_class = _net_message_class_powerup;
         message_id = _net_message_id_powerup_create;
     }
-
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class PowerUpHitMesg : public NetMessage
 {
 public:
     int32_t  ID;
     UnitID   unit_id;
-    PlayerID player_id;
+    uint16_t player_id;
     int32_t  unit_powerup_type;
 
     void set( int ID, UnitID unit_id, PlayerID player_id )
     {
         PowerUpHitMesg::ID = ID;
         PowerUpHitMesg::unit_id = unit_id;
-        PowerUpHitMesg::player_id = player_id;
+        PowerUpHitMesg::player_id = player_id.getIndex();
     }
 
     PowerUpHitMesg()
@@ -75,8 +75,7 @@ public:
         message_id = _net_message_id_powerup_hit;
     }
 
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 #ifdef MSVC
 #pragma pack()

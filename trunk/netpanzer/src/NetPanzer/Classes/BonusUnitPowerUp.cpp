@@ -138,7 +138,7 @@ void BonusUnitPowerUp::onHit( PowerUpHitMesg *message  )
 
     local_player_id = PlayerInterface::getLocalPlayerID();
 
-    if( local_player_id == message->player_id ) {
+    if( local_player_id.getIndex() == message->player_id ) {
         ConsoleInterface::postMessage( "YOU GOT A BONUS UNITS POWERUP" );
     }
 

@@ -141,7 +141,8 @@ void NetworkClient::updateKeepAliveState( void )
         if ( keep_alive_emit_timer.count() ) {
             ServerMesgKeepAlive keep_alive_mesg;
 
-            keep_alive_mesg.client_id = PlayerInterface::getLocalPlayerID();
+            keep_alive_mesg.client_id =
+                PlayerInterface::getLocalPlayerID().getIndex();
 
             sendMessage( &keep_alive_mesg, sizeof(ServerMesgKeepAlive), 0 );
         }
@@ -149,7 +150,8 @@ void NetworkClient::updateKeepAliveState( void )
 
     if( ping_timer.count() ) {
         ServerMesgPingRequest  ping_request_mesg;
-        ping_request_mesg.client_id = PlayerInterface::getLocalPlayerID( );
+        ping_request_mesg.client_id =
+            PlayerInterface::getLocalPlayerID().getIndex();
 
         NetworkState::ping_time_stamp = now();
 

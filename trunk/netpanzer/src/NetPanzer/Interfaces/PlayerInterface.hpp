@@ -63,24 +63,24 @@ public:
     static void lockPlayerStats( void );
     static void unlockPlayerStats( void );
 
-    static inline unsigned short getMaxPlayers( )
+    static unsigned short getMaxPlayers( )
     {
         return( max_players );
     }
 
-    static inline PlayerState * getPlayerState( const PlayerID& player )
+    static PlayerState * getPlayerState( const PlayerID& player )
     {
         assert( player.getIndex() < max_players );
         return( &player_lists[ player.getIndex() ] );
     }
 
-    static inline PlayerState * getPlayerState( unsigned short player_index )
+    static PlayerState * getPlayerState( unsigned short player_index )
     {
         assert( player_index < max_players );
         return( &player_lists[ player_index ] );
     }
 
-    static inline PlayerState * getLocalPlayerState( void )
+    static PlayerState * getLocalPlayerState( void )
     {
         if( local_player_index == 0xFFFF ) {
             return( &local_player_state);
@@ -89,7 +89,7 @@ public:
         return( &player_lists[ local_player_index ] );
     }
 
-    static inline PlayerID getLocalPlayerID( void )
+    static PlayerID getLocalPlayerID( void )
     {
         if( local_player_index == 0xFFFF ) {
             return( local_player_state.getPlayerID() );
@@ -98,24 +98,24 @@ public:
         return( player_lists[ local_player_index ].getPlayerID() );
     }
 
-    static inline unsigned short getLocalPlayerIndex( void )
+    static unsigned short getLocalPlayerIndex( void )
     {
         return( local_player_index );
     }
 
-    static inline PlayerID getPlayerID( unsigned short player_index )
+    static PlayerID getPlayerID( unsigned short player_index )
     {
         assert( player_index < max_players );
         return( player_lists[ player_index ].getPlayerID() );
     }
 
-    static inline unsigned short getPlayerStatus( const PlayerID& player )
+    static unsigned short getPlayerStatus( const PlayerID& player )
     {
         assert( player.getIndex() < max_players );
         return( player_lists[ player.getIndex() ].getStatus() );
     }
 
-    static inline unsigned short getPlayerStatus( unsigned short player_index )
+    static unsigned short getPlayerStatus( unsigned short player_index )
     {
         assert( player_index < max_players );
         return( player_lists[ player_index ].getStatus() );

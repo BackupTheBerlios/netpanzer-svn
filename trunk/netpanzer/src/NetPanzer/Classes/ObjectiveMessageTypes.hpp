@@ -42,13 +42,13 @@ class UpdateOccupationsStatus : public ObjectiveMessage
 {
 public:
     uint8_t occupation_status;
-    PlayerID occupying_player;
+    uint16_t occupying_player_id;
 
     void set( unsigned short id, unsigned char status, PlayerID &player )
     {
         objective_id = id;
         occupation_status = status;
-        occupying_player = player;
+        occupying_player_id = player.getIndex();
         message_type = _objective_mesg_update_occupation;
     }
 } __attribute__((packed));
@@ -73,17 +73,15 @@ __attribute__((packed));
 class DisownPlayerObjective : public ObjectiveMessage
 {
 public:
-    PlayerID disowned_player_id;
+    uint16_t disowned_player_id;
 
     void set( unsigned short id, PlayerID &disowned_player )
     {
         objective_id = id;
-        disowned_player_id = disowned_player;
+        disowned_player_id = disowned_player.getIndex();
         message_type = _objective_mesg_disown_player_objective;
     }
-
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class SyncObjective : public ObjectiveMessage
 {

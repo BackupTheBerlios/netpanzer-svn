@@ -230,7 +230,8 @@ void Outpost::objectiveMesgDisownPlayerObjective( ObjectiveMessage *message )
     disown_mesg = (DisownPlayerObjective *) message;
 
     if( objective_state.occupation_status == _occupation_status_occupied ) {
-        if ( disown_mesg->disowned_player_id == objective_state.occupying_player ) {
+        if (disown_mesg->disowned_player_id ==
+                objective_state.occupying_player.getIndex() ) {
             objective_state.occupation_status = _occupation_status_unoccupied;
 
             ObjectiveOccupationUpdate update_mesg;

@@ -158,7 +158,8 @@ void ServerConnectDaemon::netMessageClientDisconnect( NetMessage *message )
 
     client_disconnect = (ConnectMesgNetPanzerClientDisconnect *) message;
 
-    startDisconnectionProcess( client_disconnect->client_id );
+    startDisconnectionProcess(
+            PlayerInterface::getPlayerID(client_disconnect->client_id) );
 }
 
 void ServerConnectDaemon::netMessageClientJoinRequest( NetMessage *message )

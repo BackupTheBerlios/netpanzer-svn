@@ -107,7 +107,7 @@ void EnemyRadarPowerUp::onHit( PowerUpHitMesg *message  )
 
     local_player_id = PlayerInterface::getLocalPlayerID();
 
-    if( local_player_id == message->player_id ) {
+    if( local_player_id.getIndex() == message->player_id ) {
         MiniMapInterface::setShowEnemyRadar( 180 );
         ConsoleInterface::postMessage( "YOU GOT A ENEMY RADAR POWERUP" );
     }

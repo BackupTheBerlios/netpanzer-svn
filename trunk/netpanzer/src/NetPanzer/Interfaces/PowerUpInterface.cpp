@@ -248,15 +248,21 @@ void PowerUpInterface::netMessagePowerUpCreate( NetMessage *message )
 
     switch( create_mesg->type ) {
     case _powerup_bonus_units :
-        power_up = new BonusUnitPowerUp( create_mesg->map_loc, create_mesg->type  );
+        power_up = new BonusUnitPowerUp( 
+                iXY(create_mesg->map_loc_x, create_mesg->map_loc_y),
+                create_mesg->type  );
         break;
 
     case _powerup_unit :
-        power_up = new UnitPowerUp( create_mesg->map_loc, create_mesg->type );
+        power_up = new UnitPowerUp(
+                iXY(create_mesg->map_loc_x, create_mesg->map_loc_y),
+                create_mesg->type );
         break;
 
     case _powerup_enemy_radar :
-        power_up = new EnemyRadarPowerUp( create_mesg->map_loc, create_mesg->type );
+        power_up = new EnemyRadarPowerUp(
+                iXY(create_mesg->map_loc_x, create_mesg->map_loc_y),
+                    create_mesg->type );
         break;
         
     default:

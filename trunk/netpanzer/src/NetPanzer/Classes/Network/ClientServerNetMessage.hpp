@@ -67,28 +67,24 @@ __attribute__((packed));
 class ClientMesgServerId : public NetMessage
 {
 public:
-    SocketClient::ID server_id;
+    uint32_t server_id;
 
     ClientMesgServerId()
     {
         message_class = _net_message_class_client_server;
         message_id = _net_message_id_client_server_id;
     }
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class ClientMesgKeepAlive : public NetMessage
 {
 public :
-
     ClientMesgKeepAlive()
     {
         message_class = _net_message_class_client_server;
         message_id = _net_message_id_client_keep_alive;
     }
-
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class ClientMesgSetKeepAlive : public NetMessage
 {
@@ -101,51 +97,45 @@ public :
         message_id = _net_message_id_client_set_keepalive_state;
     }
 
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 
 class ServerMesgClientDisconnect : public NetMessage
 {
-public :
-    PlayerID client_player_id;
+public:
+    uint16_t client_player_id;
 
     ServerMesgClientDisconnect()
     {
         message_class = _net_message_class_client_server;
         message_id = _net_message_id_server_client_disconnect;
     }
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 
 class ServerMesgKeepAlive: public NetMessage
 {
 public:
-    PlayerID client_id;
+    uint16_t client_id;
 
     ServerMesgKeepAlive()
     {
         message_class = _net_message_class_client_server;
         message_id = _net_message_id_server_keep_alive;
     }
-
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class ServerMesgPingRequest: public NetMessage
 {
 public:
-    PlayerID client_id;
+    uint16_t client_id;
 
     ServerMesgPingRequest()
     {
         message_class = _net_message_class_client_server;
         message_id = _net_message_id_server_ping_request;
     }
-
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 class ClientMesgPingAck: public NetMessage
 {
@@ -155,8 +145,7 @@ public:
         message_class = _net_message_class_client_server;
         message_id = _net_message_id_client_ping_ack;
     }
-}
-__attribute__((packed));
+} __attribute__((packed));
 
 #ifdef MSVC
 #pragma pack()

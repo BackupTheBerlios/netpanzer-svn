@@ -240,7 +240,7 @@ __attribute__((packed));
 class ConnectMesgNetPanzerClientDisconnect : public NetMessage
 {
 public:
-    PlayerID client_id;
+    uint16_t client_id;
 
     ConnectMesgNetPanzerClientDisconnect()
     {
