@@ -2,8 +2,8 @@
 <page title="netPanzer - An Online Multiplayer Tactical Warfare Game">
   <section title="Downloads">
     <subsection title="Linux">
-      <p>Some linux distributions already come with netpanzer packages by
-      default. You might just be able to install netpanzer with your
+      <p>Some linux distributions already come with netPanzer packages by
+      default. You might just be able to install netPanzer with your
       distributions software setup tool. This is true for at least the
       following distributions</p>
       <ul>
@@ -47,7 +47,7 @@
 	<a href="fenio@o2.pl">fenio@o2.pl</a> (installer).</p>
     </subsection>
     <subsection title="MacOSX">
-      <p>Currently netpanzer code does not work correctly on big-endian
+      <p>Currently netPanzer code does not work correctly on big-endian
       machines like PPC. However we're trying to fix this for future versions.
       Help in this area is welcome.</p>
     </subsection>
