@@ -1,11 +1,8 @@
 Next release:
 -after having a full nodelist in A* the server is getting slow
     - no idea how to solve this, have to leave it open I guess...
--server status command returns wrong player names (seems to happen after sudden
-        client disconnects) - was probably people with ppc trying to join
 -netpanzer fails on win98se
 -add netpanzer:// registration to netpanzer installer
--you can't move panzers around on ppc - maybe ok (needs testing)
 -deadlock detector easily runs amok...
 
 -this resulted in an endless loop in the server

@@ -100,7 +100,7 @@ void DedicatedGameManager::initializeInputDevices()
 void DedicatedGameManager::inputLoop()
 {
     if(infothread) {
-        printf("lastf update.\n");
+        //printf("lastf update.\n");
         infothread->lastFrame = now();
     }
     
