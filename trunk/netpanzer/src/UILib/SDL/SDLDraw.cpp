@@ -18,11 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "SDLDraw.hpp"
 
-// XXX fixme, need sensefull values here
-unsigned long X_CLIP_OFS = 0;
-unsigned long Y_CLIP_OFS = 0;
-unsigned long OFFSET_TO_VIEW = 0;
-
 SDLDraw::SDLDraw()
 	: FrontBuffer(0)
 {

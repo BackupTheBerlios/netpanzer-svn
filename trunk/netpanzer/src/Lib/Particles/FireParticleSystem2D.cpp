@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Log.hpp"
 #include "FireParticleSystem2D.hpp"
 #include "TimerInterface.hpp"
+#include "Palette.hpp"
 
 BYTE FireParticleSystem2D::fireColor[12];
 

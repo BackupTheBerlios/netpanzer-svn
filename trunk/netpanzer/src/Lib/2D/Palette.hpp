@@ -25,12 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "RGBColor.hpp"
 #include "String.hpp"
 
-
-typedef	BYTE PIX; // Used for variable color depths.
-
-
 const size_t PALETTE_LENGTH = 256;
-
 
 //--------------------------------------------------------------------------
 class Palette

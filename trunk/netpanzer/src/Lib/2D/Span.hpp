@@ -22,10 +22,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 extern int allowSpanBlitting; // Used for debugging.
 
-void bltTransSpan(PIX *dRow, const PIX *sRow, int pixelsPerRow);
-void bltBlendSpan(PIX *dRow, const PIX *sRow, int pixelsPerRow, const BYTE *table);
-void bltBlendScaleSpan(PIX *dRow, const PIX *sRow, int srcX1FracWithCount, int stepAndDecCount, int stepWholePart, const BYTE *table);
-void bltLookupSpan(PIX *dRow, int pixelsPerRow, const PIX *table);
-void bltScaleSpan(PIX *dRow, const PIX *sRow, int srcX1FracWithCount, int stepAndDecCount, int stepWholePart);
+void bltBlendSpan(PIX *dRow, const PIX *sRow, size_t pixelsPerRow, const uint8_t* table);
+void bltBlendScaleSpan(PIX *dRow, const PIX *sRow, int srcX1FracWithCount,
+		int	stepAndDecCount, int stepWholePart, const uint8_t* table);
+void bltLookupSpan(PIX *dRow, size_t pixelsPerRow, const PIX *table);
+void bltScaleSpan(PIX *dRow, const PIX *sRow, int srcX1FracWithCount,
+		int stepAndDecCount, int stepWholePart);
 
 #endif // end __Span_hpp__

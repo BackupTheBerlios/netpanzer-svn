@@ -26,9 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <windows.h>
 #endif
 
-// ** netPanzer Core Includes
-#include "gapp.hpp"
-
 // ** Direct X Includes
 #ifdef WIN32
 #include "DirectDrawGlobals.hpp"
@@ -480,7 +477,6 @@ void GameManager::initializeGameObjects()
 	MapsManager::scanMaps();
   
 	Physics::init();
-	Math::init();
 	Weapon::init();
 
 	ConsoleInterface::initialize(25);

@@ -58,18 +58,6 @@ public:
 	{ return curBPP; }      	
 }; // end DirectDraw
 
-// XXX some global vars, these should be avoided or at least moved inside the
-// UIDraw class!!!
-#if 0
-extern unsigned long DBUFFER_WIDTH;
-extern unsigned long DBUFFER_HEIGHT;
-extern unsigned long DBUFFER_VIEW_WIDTH;
-extern unsigned long DBUFFER_VIEW_HEIGHT;
-#endif
-extern unsigned long X_CLIP_OFS;
-extern unsigned long Y_CLIP_OFS;
-extern unsigned long OFFSET_TO_VIEW;
-
 extern UIDraw *Screen;
 
 #endif // end __UIDraw_hpp__

@@ -31,7 +31,7 @@ float Math::sinTable[360 + 1];
 //--------------------------------------------------------------------------
 int Math::rad2Deg(float radian)
 {
-	return int(radian * rad2DegConversion);
+	return int(radian * (180.0 / M_PI));
 
 } // end Math::rad2Deg
 
@@ -41,7 +41,7 @@ int Math::rad2Deg(float radian)
 //--------------------------------------------------------------------------
 float Math::deg2Rad(int degree)
 {
-	return degree * deg2RadConversion;
+	return degree * (M_PI / 180.0);
 
 } // end Math::deg2Rad
 
@@ -101,7 +101,7 @@ fXY Math::unitDirectionEast(const fXY &northDirection)
 {
 	float angle = radAngle(northDirection.x, northDirection.y);
 
-	angle += PI_DIV_2;
+	angle += M_PI / 2.0;
 
 	return unitDirection(angle);
 
@@ -113,7 +113,7 @@ fXY Math::unitDirectionWest(const fXY &northDirection)
 {
 	float angle = radAngle(northDirection.x, northDirection.y);
 
-	angle -= PI_DIV_2;
+	angle -= M_PI / 2.0;
 
 	return unitDirection(angle);
 
@@ -141,7 +141,7 @@ float Math::getSin(int angle)
 
 // init
 //--------------------------------------------------------------------------
-void Math::init()
+Math::Math()
 {
 	for (int i = 0; i <= 360; i++)
 	{
@@ -150,5 +150,6 @@ void Math::init()
 		cosTable[i] = cos(radians);
 		sinTable[i] = sin(radians);
 	}
-
 } // end Math::init
+
+Math math;

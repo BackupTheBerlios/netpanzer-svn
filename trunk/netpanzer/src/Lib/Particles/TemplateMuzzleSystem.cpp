@@ -15,8 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #include <config.h>
+
 #include "TemplateMuzzleSystem.hpp"
 #include "VectorPuffParticle2D.hpp"
 #include "Math.hpp"
@@ -57,11 +57,15 @@ TemplateMuzzleSystem::TemplateMuzzleSystem(	const fXYZ         &pos,
 //	static int   flashLayer;
 
 	// Chunk a flash in!
-	new FlashParticle2D(pos, 0.3f, 0.2f, 0.1f, ExplosionSystem::flashLayer);
+	try {
+		new FlashParticle2D(pos, 0.3f, 0.2f, 0.1f, ExplosionSystem::flashLayer);
+	} catch(...) {
+	}
 
 	if (m.muzzleType == MuzzleSystem::SINGLE)
 	{
-		new VectorPuffParticle2D(	pos,
+		try {
+			new VectorPuffParticle2D(	pos,
 									direction,
 									m.puffMinScale,
 									m.puffRandScale,
@@ -72,10 +76,13 @@ TemplateMuzzleSystem::TemplateMuzzleSystem(	const fXYZ         &pos,
 									m.lifetimeMin,
 									m.lifetimeRand,
 									MuzzleSystem::windScale);
+		} catch(...) {
+		}
 	}
 	else if (m.muzzleType == MuzzleSystem::TRIPLE)
 	{
-		new VectorPuffParticle2D(	pos,
+		try {
+			new VectorPuffParticle2D(	pos,
 									direction,
 									m.puffMinScale,
 									m.puffRandScale,
@@ -86,10 +93,13 @@ TemplateMuzzleSystem::TemplateMuzzleSystem(	const fXYZ         &pos,
 									m.lifetimeMin,
 									m.lifetimeRand,
 									MuzzleSystem::windScale);
+		} catch(...) {
+		}
 
 		fXY eastDirection(Math::unitDirectionEast(fXY(direction.x, direction.z)));
 
-		new VectorPuffParticle2D(	pos,
+		try {
+			new VectorPuffParticle2D(	pos,
 									fXYZ(eastDirection.x, 0, eastDirection.y),
 									m.puffMinScale,
 									m.puffRandScale,
@@ -100,10 +110,13 @@ TemplateMuzzleSystem::TemplateMuzzleSystem(	const fXYZ         &pos,
 									m.lifetimeMin,
 									m.lifetimeRand,
 									MuzzleSystem::windScale);
+		} catch(...) {
+		}
 
 		fXY westDirection(Math::unitDirectionWest(fXY(direction.x, direction.z)));
 
-		new VectorPuffParticle2D(	pos,
+		try {
+			new VectorPuffParticle2D(	pos,
 									fXYZ(westDirection.x, 0, westDirection.y),
 									m.puffMinScale,
 									m.puffRandScale,
@@ -114,6 +127,8 @@ TemplateMuzzleSystem::TemplateMuzzleSystem(	const fXYZ         &pos,
 									m.lifetimeMin,
 									m.lifetimeRand,
 									MuzzleSystem::windScale);
+		} catch(...) {
+		}
 	} else
 	{
 		assert(false);

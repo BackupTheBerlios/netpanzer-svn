@@ -18,9 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __cGrowlist_hpp__
 #define __cGrowlist_hpp__
 
+#include <new>
 #include <assert.h>
-#include "codewiz.hpp"
-
+#include <string.h>
 
 template <class TYPE>
 class cGrowList {
@@ -138,7 +138,7 @@ bool cGrowList<TYPE>::setAlloced(int nAlloced, bool gottaHaveIt) {
 			memset(array + alloced, 0x00, sizeof(array[0]) * (nAlloced - alloced));
 		#endif
 		do {
-			new (array + alloced) TYPE();
+			new(array + alloced) TYPE();
 			++alloced;
 		} while (alloced < nAlloced);
 	}

@@ -15,8 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #include <config.h>
+
 #include "TemplateExplosionSystem.hpp"
 #include "ChunkTrajectoryParticle2D.hpp"
 #include "FlameParticle2D.hpp"
@@ -63,7 +63,10 @@ TemplateExplosionSystem::TemplateExplosionSystem(	const fXYZ            &pos,
 	if (pixMovementValue != 5 &&
 		pixMovementValue != 4)
 	{
-		new CraterParticle2D(pos);
+		try {
+			new CraterParticle2D(pos);
+		} catch(...) {
+		}
 	}
 
 	// If this is water, we can not have smoke.
@@ -99,12 +102,18 @@ TemplateExplosionSystem::TemplateExplosionSystem(	const fXYZ            &pos,
 		ParticleInterface::gExplosionFlameFlashCullMissCount++;
 
 		// Add the flame(s).
-		new FlameParticle2D(pos, e.flameMinScale, e.flameRandScale, e.flameLifetime, ExplosionSystem::flameLayer);
+		try {
+			new FlameParticle2D(pos, e.flameMinScale, e.flameRandScale, e.flameLifetime, ExplosionSystem::flameLayer);
+		} catch(...) {
+		}
 		
 		// Add the flash(s).
 		//if (e.flashCount <= 1)
 		//{
+		try {
 			new FlashParticle2D(pos, e.flashMinScale, e.flashRandScale, e.flashLifetime, ExplosionSystem::flashLayer);
+		} catch(...) {
+		}
 		//}
 
 		//for (int i = 0; i < e.flashCount - 1; i++)
@@ -154,7 +163,8 @@ TemplateExplosionSystem::TemplateExplosionSystem(	const fXYZ            &pos,
 		offset.y = pos.y;
 		offset.z = pos.z - (rand() % bounds.getSizeY()) + halfBoundsY;
 
-		new ChunkTrajectoryParticle2D(	offset,
+		try {
+			new ChunkTrajectoryParticle2D(	offset,
 										int(maxSpeed),
 										scaleMin,
 										scaleRand,
@@ -165,6 +175,8 @@ TemplateExplosionSystem::TemplateExplosionSystem(	const fXYZ            &pos,
 										(rand() % 2) ? true : false,
 										isFarAway || fpsLow,
 										canHaveSmoke);
+		} catch(...) {
+		}
 	}}
 
 	// Medium smoke.
@@ -180,7 +192,8 @@ TemplateExplosionSystem::TemplateExplosionSystem(	const fXYZ            &pos,
 		offset.y = pos.y;
 		offset.z = pos.z - (rand() % bounds.getSizeY()) + halfBoundsY;
 
-		new ChunkTrajectoryParticle2D(	pos,
+		try {
+			new ChunkTrajectoryParticle2D(	pos,
 										int(maxSpeed),
 										scaleMin,
 										scaleRand,
@@ -191,6 +204,8 @@ TemplateExplosionSystem::TemplateExplosionSystem(	const fXYZ            &pos,
 										true,
 										isFarAway || fpsLow,
 										canHaveSmoke);
+		} catch(...) {
+		}
 	}}
 
 	// Large smoke.
@@ -206,8 +221,8 @@ TemplateExplosionSystem::TemplateExplosionSystem(	const fXYZ            &pos,
 		offset.y = pos.y;
 		offset.z = pos.z - (rand() % bounds.getSizeY()) + halfBoundsY;
 
-
-		new ChunkTrajectoryParticle2D(	pos,
+		try {
+			new ChunkTrajectoryParticle2D(	pos,
 										int(maxSpeed),
 										scaleMin,
 										scaleRand,
@@ -218,6 +233,8 @@ TemplateExplosionSystem::TemplateExplosionSystem(	const fXYZ            &pos,
 										true,
 										isFarAway || fpsLow,
 										canHaveSmoke);
+		} catch(...) {
+		}
 	}}
 
 	// Kill me after I release my particles.

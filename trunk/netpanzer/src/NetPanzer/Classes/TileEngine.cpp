@@ -96,7 +96,7 @@ void TileEngine::blitWorld()
 	world_row =  map_buffer + (map_y * map_width) + map_x;
 
 	// XXX
-	next_tile_row_offset = Screen->getWidth() * (tile_size - 1) + X_CLIP_OFS;
+	next_tile_row_offset = Screen->getWidth() * (tile_size - 1);
 
 	next_map_row_offset = map_width - complete_columns - 1;
 
@@ -107,8 +107,7 @@ void TileEngine::blitWorld()
 	tile_offset = tile_set.getTile( tile_type ); 
 	tile_offset = tile_offset + (y_top_offset * tile_size ) + x_left_offset; 
  
-	// XXX is this correct?
-	buffer_offset = double_buffer /*+ OFFSET_TO_VIEW*/;
+	buffer_offset = double_buffer;
 
 	blit_partial_xy( tile_offset, buffer_offset, y_top_length, x_left_length );
 
@@ -143,15 +142,13 @@ void TileEngine::blitWorld()
 			blit_partial_xy(tile_offset, buffer_offset, y_top_length, x_right_length);
 		}
 
-		// XXX
-		buffer_offset += ( Screen->getWidth() * (y_top_length-1)) + X_CLIP_OFS + x_right_length;
+		buffer_offset += ( Screen->getWidth() * (y_top_length-1)) + x_right_length;
 
 		world_row = world_row + next_map_row_offset;
 	}
 	else
 	{
-		// XXX
-		//buffer_offset += (Screen->getWidth() * (y_top_length-1)) + X_CLIP_OFS;
+		buffer_offset += (Screen->getWidth() * (y_top_length-1));
 
 		world_row = world_row + next_map_row_offset;
 	}               
@@ -245,15 +242,13 @@ void TileEngine::blitWorld()
 				blit_partial_xy( tile_offset, buffer_offset, y_bottom_length, x_right_length );
 			}
 
-			// XXX
-			buffer_offset += (Screen->getWidth() * (y_bottom_length-1)) + X_CLIP_OFS + x_right_length;
+			buffer_offset += (Screen->getWidth() * (y_bottom_length-1)) + x_right_length;
 
 			world_row = world_row + next_map_row_offset;
 		}
 		else
 		{
-			// XXX
-			buffer_offset += (Screen->getWidth() * (y_bottom_length-1)) + X_CLIP_OFS;
+			buffer_offset += (Screen->getWidth() * (y_bottom_length-1));
 
 			world_row = world_row + next_map_row_offset;
 		}

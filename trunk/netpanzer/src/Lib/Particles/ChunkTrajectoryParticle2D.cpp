@@ -15,8 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #include <config.h>
+
 #include "ChunkTrajectoryParticle2D.hpp"
 #include "TimerInterface.hpp"
 #include "PuffParticle2D.hpp"
@@ -147,7 +147,10 @@ void ChunkTrajectoryParticle2D::sim()
 
 		if (smokeCurWait > smokeWaitTime)
 		{
-			new PuffParticle2D(fXYZ(pos.x, pos.y, pos.z - arcYPix), fXYZ(pos.x - arcYPix, pos.y, pos.z), particleType, scaleMin, scaleRand, smokeFPSMin, smokeFPSRand, smokeLayer, smokeShadowLayer, smokeWindScale, isFarAway);
+			try {
+				new PuffParticle2D(fXYZ(pos.x, pos.y, pos.z - arcYPix), fXYZ(pos.x - arcYPix, pos.y, pos.z), particleType, scaleMin, scaleRand, smokeFPSMin, smokeFPSRand, smokeLayer, smokeShadowLayer, smokeWindScale, isFarAway);
+			} catch(...) {
+			}
 			
 			smokeWaitTime = (float(rand()) / float(RAND_MAX)) * waitRand + waitMin;
 			

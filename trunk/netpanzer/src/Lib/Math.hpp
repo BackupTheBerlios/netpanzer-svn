@@ -27,10 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define	M_PI 3.14159265358979323846
 #endif
 
-const  double PI_DIV_2          = M_PI / 2.0;
-const  double deg2RadConversion = M_PI / 180.0;
-const  double rad2DegConversion = 180.0 / M_PI;
-
 //--------------------------------------------------------------------------
 class Math
 {
@@ -39,6 +35,8 @@ private:
 	static float sinTable[360 + 1];
 
 public:
+	Math();
+
 	static int   rad2Deg(float radian);
 	static float deg2Rad(int degree);
 	static float radAngle(const iXY &a, const iXY &b);
@@ -54,7 +52,8 @@ public:
 	static float getSin(int angle);
 	
 	static void init();
-
 }; // end Math
+
+extern Math math;
 
 #endif // end __Math_hpp__

@@ -16,13 +16,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#ifdef WIN32
-#include <io.h>
-#endif
+
 #include "SplitPath.hpp"
 #include "FindFirst.hpp"
 #include "MapSelectionView.hpp"
-#include "gapp.hpp"
 #include "GameConfig.hpp"
 #include "GameViewGlobals.hpp"
 #include "HostOptionsView.hpp"

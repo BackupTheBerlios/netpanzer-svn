@@ -15,8 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #include <config.h>
+
 #include "VectorPuffParticle2D.hpp"
 #include "PuffParticle2D.hpp"
 #include "TimerInterface.hpp"
@@ -69,7 +69,8 @@ void VectorPuffParticle2D::sim()
 
 		if (particleType == 0)
 		{
-			new PuffParticle2D(	pos,
+			try {
+				new PuffParticle2D(	pos,
 								LIGHT,
 								scaleMin,
 								scaleRand,
@@ -79,10 +80,13 @@ void VectorPuffParticle2D::sim()
 								smokeShadowLayer,
 								windScale,
 								0);
+			} catch(...) {
+			}
 		}
 		else if (particleType == 1)
 		{
-			new PuffParticle2D(	pos,
+			try {
+				new PuffParticle2D(	pos,
 								DARK,
 								scaleMin,
 								scaleRand,
@@ -92,11 +96,16 @@ void VectorPuffParticle2D::sim()
 								smokeShadowLayer,
 								windScale,
 								0);
+			} catch(...) {
+			}
 		}
 	
 		waitTime = 0.0f;
 
-		//new cSparkParticle2D(fXYZ(pos.x, pos.y, zPos));
+		try {
+			//new cSparkParticle2D(fXYZ(pos.x, pos.y, zPos));
+		} catch(...) {
+		}
 	}
 
 	if (age > lifetime)

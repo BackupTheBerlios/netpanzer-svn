@@ -15,8 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #include <config.h>
+
 #include "SmolderParticleSystem2D.hpp"
 #include "TimerInterface.hpp"
 
@@ -81,7 +81,10 @@ void SmolderParticleSystem2D::sim()
 			}
 			
 			// Generate a new smolder particle.
-			new PuffParticle2D(offset, particleType, 0.0f, 1.0f, smokeFPSMin, smokeFPSRand, smokeLayer, smokeShadowLayer, smokeWindScale, Particle2D::getFarAway(offset));
+			try {
+				new PuffParticle2D(offset, particleType, 0.0f, 1.0f, smokeFPSMin, smokeFPSRand, smokeLayer, smokeShadowLayer, smokeWindScale, Particle2D::getFarAway(offset));
+			} catch(...) {
+			}
 
 			waitTime = 0.0f;
 		}

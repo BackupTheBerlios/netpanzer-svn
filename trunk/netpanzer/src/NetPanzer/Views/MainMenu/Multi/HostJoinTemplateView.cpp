@@ -16,14 +16,13 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
 #include <ctype.h>
 #include "HostJoinTemplateView.hpp"
 #include "Desktop.hpp"
 #include "HostJoinTemplateView.hpp"
 #include "GameConfig.hpp"
 #include "GameManager.hpp"
-#include "DirectPlay.h"
-#include "gapp.hpp"
 #include "DDHardSurface.hpp"
 #include "FontSystem2D.hpp"
 #include "HostView.hpp"
@@ -31,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapSelectionView.hpp"
 #include "PlayerNameView.hpp"
 #include "FlagSelectionView.hpp"
+#include "Palette.hpp"
 #include "GameViewGlobals.hpp"
 
 #include "Client.hpp"

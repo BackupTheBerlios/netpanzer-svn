@@ -18,10 +18,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __Surface_hpp__
 #define __Surface_hpp__
 
+#include <assert.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include "iXY.hpp"
 #include "iRect.hpp"
-#include "Palette.hpp"
-#include "String.hpp"
+
+class ColorTable;
+class Palette;
+typedef uint8_t PIX;
 
 // This must be called before any of the string blitting functions are used.
 void initFont();
@@ -52,23 +58,23 @@ void initFont();
 class FletchTileHeader
 {
 public:
-	BYTE    minVer;    // Version number
-	BYTE    majVer;    // Version number
-	WORD    headSize;  // Size (in bytes) of header.  Also offset of data
-	DWORD   xSize;     // Horizontal pixel count
-	DWORD   ySize;     // Vertical pixel count
-	DWORD   frameCount; // Number of frames
-	BYTE    avgR;      // Average color in 24-bit format
-	BYTE    avgG;      // .
-	BYTE    avgB;      // .
-	BYTE    avgIndex;  // Closest palette entry to the average color
+	uint8_t    minVer;    // Version number
+	uint8_t    majVer;    // Version number
+	uint16_t   headSize;  // Size (in bytes) of header.  Also offset of data
+	uint32_t   xSize;     // Horizontal pixel count
+	uint32_t   ySize;     // Vertical pixel count
+	uint32_t   frameCount; // Number of frames
+	uint8_t    avgR;      // Average color in 24-bit format
+	uint8_t    avgG;      // .
+	uint8_t    avgB;      // .
+	uint8_t    avgIndex;  // Closest palette entry to the average color
 } __attribute__((packed)); // end FletchTileHeader
 
 //struct PIC_HEAD
 //{
-//	DWORD xPix;         // Horizontal pixel count.
-//	DWORD yPix;         // Vertical pixel count.
-//	DWORD frameCount;    // Number of frames.
+//	uint32_t xPix;         // Horizontal pixel count.
+//	uint32_t yPix;         // Vertical pixel count.
+//	uint32_t frameCount;    // Number of frames.
 //} __attribute__((packed));
 
 #ifdef MSVC
@@ -386,7 +392,7 @@ public:
 	int  saveRAW(const char *filename) const;
 	void saveRAW(FILE *fp) const;
 	bool saveRAW();
-	virtual int  loadTIL(String filename);
+	virtual int  loadTIL(const char* filename);
 	virtual void loadTIL(FILE *fp);
 	int  saveTIL(const char *filename);
 	void saveTIL(FILE *fp);
@@ -515,7 +521,7 @@ public:
     void saveBMP(FILE *fp, Palette &pal );
     int  saveBMP( const char *filename, Palette &pal ); 
 
-	void mapFromPalette(String oldPalette);
+	void mapFromPalette(const char* oldPalette);
 
 	void drawBoxCorners(const iRect &rect, int cornerLength, PIX color) const;
 	inline void drawBoxCorners(const iXY &min, const iXY &max, int cornerLength, PIX color) const

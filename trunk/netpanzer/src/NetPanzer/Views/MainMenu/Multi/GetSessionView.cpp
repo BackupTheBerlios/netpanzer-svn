@@ -15,22 +15,18 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #include <config.h>
+
 #include "GetSessionView.hpp"
 #include "GetSessionHostView.hpp"
 #include "Desktop.hpp"
 #include "GameConfig.hpp"
 #include "GameManager.hpp"
-#include "DirectPlay.h"
-#include "gapp.hpp"
 #include "MouseInterface.hpp"
 #include "GameViewGlobals.hpp"
 
 //winsock hack
 #include "IPAddressView.h"
-#include "WinsockClient.h"
 
 #include "Server.hpp"
 #include "Client.hpp"

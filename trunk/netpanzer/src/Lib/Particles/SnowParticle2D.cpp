@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "Log.hpp"
+#include "Color.hpp"
 #include "SnowParticle2D.hpp"
 
 class SnowParticleSystem2D;

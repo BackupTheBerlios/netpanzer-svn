@@ -20,9 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "IPAddressView.h"
 #include "Desktop.hpp"
 #include "GameViewGlobals.hpp"
-#include "gapp.hpp"
-#include "WinsockClient.h"
-#include "winsockglobals.h"
 
 #include "Client.hpp"
 

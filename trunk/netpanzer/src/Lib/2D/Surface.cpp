@@ -23,9 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UtilInterface.hpp"
 #include "cGrowList.hpp"
 #include "fXY.hpp"
-#include "gapp.hpp"
 #include "TimerInterface.hpp"
 #include "Span.hpp"
+#include "Palette.hpp"
 #include "Exception.hpp"
 
 using std::swap;
@@ -1961,7 +1961,7 @@ void Surface::bltBlendScale(const Surface &source, const iRect &destRect, ColorT
 	assert(mem        != 0);
 	assert(source.mem != 0);
 
-	int pixelsPerRow = max.x-min.x;
+	size_t pixelsPerRow = max.x-min.x;
 	int numRows      = max.y-min.y;
 
 	int srcX1 = 0;
@@ -2672,9 +2672,9 @@ int Surface::saveRAW(const char *filename) const
 
 // loadTIL
 //---------------------------------------------------------------------------
-int Surface::loadTIL(String filename)
+int Surface::loadTIL(const char* filename)
 {
-	FILE *fp = fopen((const char *) filename, "rb");
+	FILE *fp = fopen(filename, "rb");
 	
 	if (fp == 0)
 	{
@@ -5033,7 +5033,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
 //--------------------------------------------------------------------------
 // Purpose: Maps this image from the specified palette to the current palette.
 //--------------------------------------------------------------------------
-void Surface::mapFromPalette(String oldPalette)
+void Surface::mapFromPalette(const char* oldPalette)
 {
 	// Load the source palette.
 	BYTE     bestFitArray[256];

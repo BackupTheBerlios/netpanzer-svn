@@ -1,3 +1,8 @@
+10-Sep-2003 by Matze Braun
+-more random cleanups
+-more cleanups so that the Stub directory is empty now
+-fixed the bug where the TileEngine didn't correctly draw the last line
+
 9-Sep-2003 by Matze Braun
 -worked around issues with the block allocator code for Particl2D (new operator
  is overloaded, but laste C++ draft doesn't allow to return 0 from such an

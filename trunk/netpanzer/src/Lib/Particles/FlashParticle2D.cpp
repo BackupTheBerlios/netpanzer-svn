@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Exception.hpp"
 #include "FlashParticle2D.hpp"
 #include "UtilInterface.hpp"
+#include "Palette.hpp"
 
 PackedSurface FlashParticle2D::staticPackedFlash;
 

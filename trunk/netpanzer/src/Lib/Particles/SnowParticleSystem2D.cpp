@@ -55,7 +55,10 @@ void SnowParticleSystem2D::init()
 {
 	FUNC("SnowParticleSystem2D::init");
 
+	try {
 	snowParticles = new SnowParticle2D [SNOW_PARTICLE_COUNT];
+	} catch(...) {
+	}
 	assert(snowParticles != 0);
 
 	for (unsigned num = 0; num < SNOW_PARTICLE_COUNT; num++)

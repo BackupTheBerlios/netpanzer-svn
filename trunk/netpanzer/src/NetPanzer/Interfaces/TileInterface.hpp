@@ -19,29 +19,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _TILEINTERFACE_HPP
 
 #include "PObject.hpp"
+#include "Surface.hpp"
 #include "TileSet.hpp"
 #include "Palette.hpp"
 #include "Point.hpp"
 
 class TileInterface : virtual PObject
- {
-  protected: 
-   static TileSet tile_set;
+{
+protected: 
+ 	static TileSet tile_set;
 
-  public:
-
-  static void loadTileSet( const char *file_path );
+public:
+  	static void loadTileSet( const char *file_path );
    
-  static inline TileSet * getTileSet( void )
-   {
-    return ( &tile_set );
-   }
+	static inline TileSet * getTileSet( void )
+	{
+		return ( &tile_set );
+	}
 
-  static PointXYi getTileSize( void );
+	static PointXYi getTileSize( void );
 
-  static PIX  getWorldPixColor(int worldX, int worldY);
-  static long getWorldPixMovementValue(int worldX, int worldY);
-
- };
+	static PIX  getWorldPixColor(int worldX, int worldY);
+	static long getWorldPixMovementValue(int worldX, int worldY);
+};
 
 #endif // ** _TILEINTERFACE_HPP

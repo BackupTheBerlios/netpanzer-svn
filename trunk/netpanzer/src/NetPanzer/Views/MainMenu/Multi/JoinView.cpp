@@ -16,12 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
 #include "JoinView.hpp"
 #include "Desktop.hpp"
 #include "GameConfig.hpp"
 #include "GameManager.hpp"
-#include "DirectPlay.h"
-#include "gapp.hpp"
 #include "GameManager.hpp"
 #include "GameViewGlobals.hpp"
 
