@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "WinSockServer.h"
 #include "WinSockClient.h"
 #include "Server.hpp"
-
+#include "UIDraw.hpp"
 #include "PlayerInterface.hpp"
 #include "GameManager.hpp"
 #include "cMouse.hpp"
@@ -91,15 +91,15 @@ LRESULT CALLBACK PanzerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         if ( fActive == TRUE )
          {
           LOG( ("WM_ACTIVATEAPP : GDI FALSE") );
-          DDraw.restoreAll();
-          DDraw.setGDIStatus( FALSE ); 
+          Screen->restoreAll();
+          Screen->setGDIStatus( FALSE ); 
           //DDraw.palette.activateCurrentPalette();
          }
         
         if ( fActive == FALSE )
          {
           LOG( ("WM_ACTIVATEAPP : GDI TRUE") );
-          DDraw.setGDIStatus( TRUE ); 
+          Screen->setGDIStatus( TRUE ); 
           //DDraw.palette.activateSystemPalette();
          }
        

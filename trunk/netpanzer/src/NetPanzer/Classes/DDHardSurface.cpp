@@ -30,7 +30,7 @@ DDHardSurface::DDHardSurface(  )
  
 void DDHardSurface::create(int xPix, int yPix, int nStride, int nNumFrames) 
  {
-  DDraw.createFrameBuffer( xPix, yPix, 8 );
+  Screen->createFrameBuffer( xPix, yPix, 8 );
   stride	  = nStride;
   pix         = iXY( xPix, yPix ); 
   stride      = nStride;
@@ -43,7 +43,7 @@ void DDHardSurface::lock( void )
  {
   //assert( lock_status == _FALSE );
   
-  DDraw.lockDoubleBuffer( (unsigned char **) &frame0 );
+  Screen->lockDoubleBuffer( (unsigned char **) &frame0 );
   mem = frame0;
   
   doesExist = _TRUE;
@@ -54,7 +54,7 @@ void DDHardSurface::unlock( void )
  {
   //assert( lock_status == _TRUE );
   
-  DDraw.unlockDoubleBuffer();
+  Screen->unlockDoubleBuffer();
  
   doesExist = _FALSE;
   lock_status = _FALSE; 
@@ -64,5 +64,5 @@ void DDHardSurface::copyToVideoFlip( void )
  {
   assert( lock_status == _FALSE );
   
-  DDraw.copyDoubleBufferandFlip();
+  Screen->copyDoubleBufferandFlip();
  }

@@ -66,7 +66,7 @@ int NetworkServerDPlay::hostSession( void )
   HRESULT hr;
   BOOL minimize;
 
-  DDraw.setGDIStatus(true);
+  Screen->setGDIStatus(true);
   minimize = MinimizeOrNot( gapp.hwndApp );    
 
   //SetServProv( gapp.hwndApp, TCPIP );
@@ -75,13 +75,13 @@ int NetworkServerDPlay::hostSession( void )
   
   if (minimize == _FALSE)
    { 
-    DDraw.setGDIStatus(false);
+    Screen->setGDIStatus(false);
    }  
   else
    {
     OpenIcon( gapp.hwndApp ); 
-    DDraw.restoreAll();
-    DDraw.setGDIStatus( FALSE ); 
+    Screen->restoreAll();
+    Screen->setGDIStatus( FALSE ); 
    }
 
   MouseInterface::hideHardwareCursor();   

@@ -70,7 +70,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /G5 /MTd /W3 /GX /Zi /Od /Ob1 /I "..\..\..\directX\ddraw" /I "..\..\..\directX\directInput" /I "..\..\..\directX\directPlay" /I "..\..\..\directX\directSound" /I "..\..\..\Win32" /I "..\..\..\Lib" /I "..\..\..\Lib\interfaces" /I "..\..\..\netPanzer\structs" /I "..\..\..\netPanzer\views" /I "..\..\..\netPanzer\port" /I "..\..\..\netPanzer\Interfaces" /I "..\..\..\netPanzer\Classes" /I "..\..\..\netPanzer\Classes\AI" /I "..\..\..\netPanzer\Classes\Network" /I "..\..\..\netPanzer\Core" /I "..\..\..\Lib\2D" /I "..\..\..\Lib\Interfaces" /I "..\..\..\Lib\Types" /I "..\..\..\Lib\View" /I "..\..\..\Lib\Particles" /I "..\..\..\netPanzer\Classes\weapons" /I "..\..\..\netPanzer\views\mainmenu" /I "..\..\..\netPanzer\views\mainmenu\options" /I "..\..\..\netPanzer\views\mainmenu\multi" /I "..\..\..\netPanzer\views\game" /I "..\..\..\netPanzer\classes\units" /I "..\..\..\Lib\PObject\Classes" /I "..\..\..\Lib\PObject\Templates" /I "..\..\..\netPanzer\resources" /I "..\..\..\Win32\WinSock" /I "..\..\..\Lua\Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_LOGGING_ON" /YX"stdafx.hpp" /FD /c
+# ADD CPP /nologo /G5 /MTd /W3 /GX /Zi /Od /Ob1 /I "..\..\..\UILib" /I "..\..\..\UILib\SDL" /I "..\..\..\directX\ddraw" /I "..\..\..\directX\directInput" /I "..\..\..\directX\directPlay" /I "..\..\..\directX\directSound" /I "..\..\..\Win32" /I "..\..\..\Lib" /I "..\..\..\Lib\interfaces" /I "..\..\..\netPanzer\structs" /I "..\..\..\netPanzer\views" /I "..\..\..\netPanzer\port" /I "..\..\..\netPanzer\Interfaces" /I "..\..\..\netPanzer\Classes" /I "..\..\..\netPanzer\Classes\AI" /I "..\..\..\netPanzer\Classes\Network" /I "..\..\..\netPanzer\Core" /I "..\..\..\Lib\2D" /I "..\..\..\Lib\Interfaces" /I "..\..\..\Lib\Types" /I "..\..\..\Lib\View" /I "..\..\..\Lib\Particles" /I "..\..\..\netPanzer\Classes\weapons" /I "..\..\..\netPanzer\views\mainmenu" /I "..\..\..\netPanzer\views\mainmenu\options" /I "..\..\..\netPanzer\views\mainmenu\multi" /I "..\..\..\netPanzer\views\game" /I "..\..\..\netPanzer\classes\units" /I "..\..\..\Lib\PObject\Classes" /I "..\..\..\Lib\PObject\Templates" /I "..\..\..\netPanzer\resources" /I "..\..\..\Win32\WinSock" /I "..\..\..\Lua\Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_LOGGING_ON" /FR /YX"stdafx.hpp" /FD /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o "NUL" /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o "NUL" /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -80,7 +80,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 dplayx.lib dsound.lib dinput.lib dxguid.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib ddraw.lib wsock32.lib /nologo /subsystem:windows /debug /machine:I386 /out:".\Debug\netPanzerD.exe"
+# ADD LINK32 dplayx.lib dsound.lib dinput.lib dxguid.lib odbc32.lib odbccp32.lib winmm.lib ddraw.lib wsock32.lib SDL.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /debug /machine:I386 /out:".\Debug\netPanzerD.exe"
 # SUBTRACT LINK32 /profile /pdb:none /incremental:no
 
 !ENDIF 
@@ -2371,6 +2371,26 @@ SOURCE=..\..\..\Lib\Physics.hpp
 # Begin Source File
 
 SOURCE=..\..\..\Lib\terminate.cpp
+# End Source File
+# End Group
+# Begin Group "UILib"
+
+# PROP Default_Filter ""
+# Begin Group "SDL"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\..\UILib\SDL\SDLDraw.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\UILib\SDL\SDLDraw.hpp
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=..\..\..\UILib\UIDraw.hpp
 # End Source File
 # End Group
 # End Target

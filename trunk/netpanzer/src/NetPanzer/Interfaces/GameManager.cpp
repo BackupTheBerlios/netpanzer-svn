@@ -172,9 +172,9 @@ boolean GameManager::initializeDirectXSubSystem( void )
   if( execution_mode == _execution_mode_loop_back_server)
    { 
     LOG( ( "Initializing Direct Draw" ) );
-    if( ( DDraw.initialize() ) == _FALSE ) 
+    if( ( Screen->initialize() ) == _FALSE ) 
      {
-  	  MessageBox(gapp.hwndApp, "DDraw.Initialize Failed", "Fatal Error", MB_OK);
+  	  MessageBox(gapp.hwndApp, "Screen->Initialize Failed", "Fatal Error", MB_OK);
 	  return ( _FALSE );
      }
  
@@ -195,7 +195,7 @@ void GameManager::shutdownDirectXSubSystem( void )
   //ShutdownWinSockServer();
 
   DirectInput::shutdown();
-  DDraw.shutdown();	  
+  Screen->shutdown();	  
  }
 
 // ******************************************************************
@@ -334,12 +334,12 @@ boolean GameManager::initializeWindowSubSystem( void )
 // ******************************************************************
 boolean GameManager::setVideoMode( PointXYi mode_res )
  {
-  if ( DDraw.isDisplayModeAvailable( mode_res.x, mode_res.y, 8 ) == _TRUE	)
+  if ( Screen->isDisplayModeAvailable( mode_res.x, mode_res.y, 8 ) == _TRUE	)
    {
     previous_video_mode_res = current_video_mode_res;
 	   current_video_mode_res = mode_res;
 
-	if (!DDraw.setVideoMode(current_video_mode_res.x, current_video_mode_res.y, 8, current_mode_flags)) return FALSE;
+	if (!Screen->setVideoMode(current_video_mode_res.x, current_video_mode_res.y, 8, current_mode_flags)) return FALSE;
     
 	WorldViewInterface::setCameraSize( current_video_mode_res.x, current_video_mode_res.y );
     FRAME_BUFFER.create(current_video_mode_res.x, current_video_mode_res.y, current_video_mode_res.x, 1 );
@@ -367,7 +367,7 @@ void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
   screen.bltStringCenter(string, color);
   FRAME_BUFFER.unlock();
   screen.unlock();
-  DDraw.copyDoubleBufferandFlip(); 
+  Screen->copyDoubleBufferandFlip(); 
  }
 
 // ******************************************************************
@@ -442,7 +442,8 @@ void GameManager::loadPalette( char *palette_path )
 	
 	Palette pal;
 
-	DDraw.palette.loadLibPalette(pal, DDraw.lpFrontBuffer);
+//	Screen->palette.loadLibPalette(pal, Screen->lpFrontBuffer);
+	Screen->setPalette(pal.color);
  }
 
 // ******************************************************************
@@ -454,7 +455,8 @@ void increaseBrightness(const char *filename)
 
 	Palette pal;
 
-	DDraw.palette.loadLibPalette(pal, DDraw.lpFrontBuffer);
+//	Screen->palette.loadLibPalette(pal, Screen->lpFrontBuffer);
+	Screen->setPalette(pal.color);
 	ConsoleInterface::postMessage( "Increasing Brightness");
 
 } // end increaseBrightness
@@ -468,7 +470,8 @@ void decreaseBrightness(const char *filename)
 
 	Palette pal;
 
-	DDraw.palette.loadLibPalette(pal, DDraw.lpFrontBuffer);
+//	Screen->palette.loadLibPalette(pal, Screen->lpFrontBuffer);
+	Screen->setPalette(pal.color);
 	ConsoleInterface::postMessage( "Decreasing Brightness");
 
 } // end increaseBrightness
@@ -1644,7 +1647,7 @@ void displayHostMultiPlayerGameProgress(const int &curNum)
 	FRAME_BUFFER.unlock();
 	screen.unlock();
 
-	DDraw.copyDoubleBufferandFlip(); 
+	Screen->copyDoubleBufferandFlip(); 
 	}
 }
 
@@ -1660,7 +1663,7 @@ void GameManager::hostMultiPlayerGame( void )
 
     //winsock hack
     //fix dialup problem--
-	//DDraw.setGDIStatus(true);
+	//Screen->setGDIStatus(true);
 	//minimize = MinimizeOrNot( gapp.hwndApp );    
 	
     /*
@@ -1669,13 +1672,13 @@ void GameManager::hostMultiPlayerGame( void )
 
 	if (minimize == _FALSE)
 	 { 
-      DDraw.setGDIStatus(false);
+      Screen->setGDIStatus(false);
 	 }  
     else
      {
       OpenIcon( gapp.hwndApp ); 
-      DDraw.restoreAll();
-      DDraw.setGDIStatus( FALSE ); 
+      Screen->restoreAll();
+      Screen->setGDIStatus( FALSE ); 
      }
 	*/
     
@@ -2107,7 +2110,7 @@ void GameManager::graphicsLoop( void )
   FRAME_BUFFER.unlock();
   screen.unlock();
 
-  DDraw.copyDoubleBufferandFlip(); 
+  Screen->copyDoubleBufferandFlip(); 
 
  }
 

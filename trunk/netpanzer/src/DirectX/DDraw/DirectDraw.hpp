@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "stdafx.hpp"
 #include "DirectDrawPalette.hpp"
+#include "UIDraw.hpp"
 
 
 enum { VIDEO_MODE_WINDOWED          = 0x01,
@@ -57,11 +58,8 @@ typedef struct
  
 // DirectDraw class declarations
 //---------------------------------------------------------------------------
-class DirectDraw
+class DirectDraw: public UIDraw
 {
-public:
-	DirectDrawPalette palette;
-    
 protected:
 	int defaultVideoMode;
     
@@ -93,9 +91,10 @@ protected:
     
     HRESULT DDBltRects( LPDIRECTDRAWSURFACE pSrc, LPDIRECTDRAWSURFACE pDest,
                         long nRects, RECT *pSrcRects, RECT *pDestRects       );
+
+	DirectDrawPalette palette;
      		
 
-public:
 	//directdraw surface description--
 	DDSURFACEDESC DDPrimaryDesc;
 	DDSURFACEDESC DDDoubleBuffDesc;
@@ -115,6 +114,8 @@ public:
 	BYTE  currentModeFlags;
 	
 	DisplayMode currentDisplayMode;
+
+public:
 
 	DirectDraw();
         		
@@ -139,6 +140,8 @@ public:
   void loadPaletteACT(char *filename);
   void resetDisplayModeList();
   int  addDisplayMode(int width, int height, int bpp);
+
+  void setPalette(RGBColor *color);
 
   BOOL isDisplayModeAvailable(int width, int height, int bpp);
   BOOL decreaseDisplayModeResolution( int *width, int *height );

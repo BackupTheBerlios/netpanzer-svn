@@ -43,8 +43,6 @@ void BlitRectsMemcpy( unsigned char *pSrc, long srcPitch, unsigned char *pDest, 
 
 //extern globalApp gapp;
 
-DirectDraw DDraw;
-
 unsigned char *DOUBLE_BUFFER = NULL;
 
 unsigned long DBUFFER_WIDTH;
@@ -369,6 +367,11 @@ void DirectDraw::getViewableRect(RECT *rect)
 	rect->bottom = DBufferDesc.height - DBufferDesc.y_clip_offset;
 	rect->right  = DBufferDesc.width;   
 } // end getViewableRect
+
+void DirectDraw::setPalette(RGBColor *color)
+{
+		palette.loadLibPalette(color, lpFrontBuffer);
+}
 
 // setVideoMode
 //---------------------------------------------------------------------------

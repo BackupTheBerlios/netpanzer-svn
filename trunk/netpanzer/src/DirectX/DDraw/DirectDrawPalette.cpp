@@ -387,13 +387,13 @@ void DirectDrawPalette::loadACTPalette(const char *filename, LPDIRECTDRAWSURFACE
 
 
 //---------------------------------------------------------------------------
-void DirectDrawPalette::loadLibPalette(const Palette &libPalette, LPDIRECTDRAWSURFACE lpAttachSurface)
+void DirectDrawPalette::loadLibPalette(const RGBColor *color, LPDIRECTDRAWSURFACE lpAttachSurface)
 {
 	for(int i = 0; i < 256; i++)
 	{
-		paletteTable[i].peRed   = libPalette.color[i].red;
-		paletteTable[i].peGreen = libPalette.color[i].green; 
-		paletteTable[i].peBlue  = libPalette.color[i].blue;
+		paletteTable[i].peRed   = color[i].red;
+		paletteTable[i].peGreen = color[i].green; 
+		paletteTable[i].peBlue  = color[i].blue;
 		paletteTable[i].peFlags = PC_NOCOLLAPSE;
 	}
 

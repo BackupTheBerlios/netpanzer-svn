@@ -59,7 +59,7 @@ public:
 	void cleanUp();
 	void initialize( LPDIRECTDRAW lpDirectDraw, int paletteMode );
 	void loadACTPalette(const char *filename, LPDIRECTDRAWSURFACE lpAttachSurface);
-	void loadLibPalette(const Palette &mattLibPalette, LPDIRECTDRAWSURFACE lpAttachSurface);
+	void loadLibPalette(const RGBColor *colors, LPDIRECTDRAWSURFACE lpAttachSurface);
 	void activateSystemPalette(void);
 	void activateCurrentPalette(void);
 };

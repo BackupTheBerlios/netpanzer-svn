@@ -83,14 +83,14 @@ int NetworkClientDPlay::startEnumeration( )
   HRESULT hr;
   BOOL minimize;
 
-  DDraw.setGDIStatus(true);
+  Screen->setGDIStatus(true);
   
   minimize = MinimizeOrNot(gapp.hwndApp);
   hr =	EnumerateGames( gapp.hwndApp );
 
   if (minimize == _FALSE)
    {
-	DDraw.setGDIStatus(false);
+	Screen->setGDIStatus(false);
    }
 
   if( (hr == DPERR_USERCANCEL) || (hr == DPERR_EXCEPTION) || (hr == DPERR_GENERIC) )

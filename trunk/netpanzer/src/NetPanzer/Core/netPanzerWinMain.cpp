@@ -35,6 +35,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//clear out the GlobalApp data--
 	memset((void *) &gapp, 0, sizeof(gapp));
 
+	SDL_Init(SDL_INIT_EVERYTHING);
+
 	//Initialize the Windows portion of PanzerKrieg (create a window,
 	//fill in the contents of our GlobalApp structure, etc.)
 	if( WinInit( hInstance, nCmdShow) == FALSE) return FALSE;

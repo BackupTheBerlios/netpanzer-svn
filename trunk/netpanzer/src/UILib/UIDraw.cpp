@@ -15,17 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef __DirectDrawglobals_hpp__
-#define __DirectDrawglobals_hpp__
 
+#include "stdafx.hpp"
 #include "DirectDraw.hpp"
+#include "UIDraw.hpp"
+#include "SDLDraw.hpp"
 
-extern unsigned long DBUFFER_WIDTH;
-extern unsigned long DBUFFER_HEIGHT;
-extern unsigned long DBUFFER_VIEW_WIDTH;
-extern unsigned long DBUFFER_VIEW_HEIGHT;
-extern unsigned long X_CLIP_OFS;
-extern unsigned long Y_CLIP_OFS;
-extern unsigned long OFFSET_TO_VIEW;
+//UIDraw *Screen = new SDLDraw();
+UIDraw *Screen = new DirectDraw();
 
-#endif // end __DirectDrawglobals_hpp__
