@@ -209,7 +209,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                         ObjectiveInterface::resetLogic();
 
                         GameManager::dedicatedLoadGameMap(
-                                gameconfig->map.c_str() );
+                                gameconfig->map.c_str());
 
                         GameManager::resetGameLogic();
 

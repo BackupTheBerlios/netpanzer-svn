@@ -25,6 +25,8 @@ class Console
 public:
     static void initialize();
     static void shutdown();
+
+    static void mapSwitch(const std::string& mapname);
    
     static std::ostream* server;
 };

@@ -676,19 +676,16 @@ void UnitInterface::unitManagerMesgEndLifecycle(const UnitMessage* message)
     UnitBase* unit2 = getUnit(lifecycle_update->getDestroyed());
     PlayerState* player1 = unit1->player;
     PlayerState* player2 = unit2->player;
-    
-    // show score on server display
-    /*const std::string& unitname1 = 
-        UnitProfileInterface::getUnitProfile(lifecycle_update->unit_type)->unitname;*/
-    //int unittype2 = unit2->unit_state.unit_type;
-    /*const std::string& unitname2 =
-        UnitProfileInterface::getUnitProfile(unittype2)->unitname;*/
-    // TODO display unit names...
-    /*
-    *Console::server << "'" << player1->getName() << "' killed a '" << unitname1
+
+    int unittype1 = unit1->unit_state.unit_type;
+    const std::string& unitname1 = 
+        UnitProfileInterface::getUnitProfile(unittype1)->unitname;
+    int unittype2 = unit2->unit_state.unit_type;
+    const std::string& unitname2 =
+        UnitProfileInterface::getUnitProfile(unittype2)->unitname;
+    *Console::server << "'" << player1->getName() << "' killed a '" << unitname2
             << "' from '" << player2->getName() 
-            << "' with his '" << unitname2 << "'." << std::endl;
-    */
+            << "' with his '" << unitname1 << "'." << std::endl;
 
     // killing own units doesn't give score
     if(player1 != player2) {

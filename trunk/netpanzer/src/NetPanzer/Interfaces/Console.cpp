@@ -17,14 +17,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#ifdef USE_READLINE
-#include <stdio.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#endif
+#include <sstream>
 
 #include "Console.hpp"
 #include "GameConfig.hpp"
+#include "Util/FileSystem.hpp"
+#include "Util/FileStream.hpp"
+#include "Util/Log.hpp"
+
+static inline void makeTimeStamp(char* buffer, size_t bufsize) {
+    time_t curtime = time(0);
+    struct tm* loctime = localtime(&curtime);
+    strftime(buffer, bufsize, "<%F %T>", loctime);
+}
+    
 
 /** A streambuf implementation that wraps around an existing streambuf and
  * outputs the current timestampe after each newline
@@ -32,11 +38,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class FileStampStreamBuf : public std::streambuf
 {
 public:
-    FileStampStreamBuf()
+    FileStampStreamBuf(std::ostream* file)
         : needstamp(true)
     {
         stream = &std::cout;
+        this->file = file;
         setp(buf, buf+sizeof(buf));
+    }
+
+    FileStampStreamBuf::~FileStampStreamBuf()
+    {
+        sync();
+        if(file)
+            delete file;
     }
 
     virtual int overflow(int c)
@@ -54,6 +68,8 @@ public:
             if(*p == '\n') {
                 // output data in buffer so far
                 stream->write(chunkstart, p-chunkstart+1);
+                if(file)
+                    file->write(chunkstart, p-chunkstart+1);
                 redisplay_prompt();
                 if(p < pptr()-1)
                     outputdate();
@@ -64,9 +80,13 @@ public:
         }
         // output the rest
         stream->write(chunkstart, pptr() - chunkstart);
+        if(file)
+            file->write(chunkstart, pptr() - chunkstart);
 
         if(c != traits_type::eof()) {
             *stream << (char) c;
+            if(file)
+                *file << (char) c;
             if(c == '\n') {
                 needstamp = true;
                 redisplay_prompt();
@@ -80,6 +100,8 @@ public:
     {
         overflow(traits_type::eof());
         stream->flush();
+        if(file)
+            file->flush();
         return 0;
     }
 
@@ -91,15 +113,16 @@ private:
         struct tm* loctime = localtime(&curtime);
         strftime(timestamp, sizeof(timestamp), "<%F %T>", loctime);
         *stream << "\r" << timestamp;
+        if(file)
+            *file << timestamp;
     }
 
     void redisplay_prompt()
     {
-        // XXX doesn't work reliably...
-        //*stream << "netpanzer-server: ";
     }
 
     std::ostream* stream;
+    std::ostream* file;
 
     bool needstamp;
     char buf[1024];
@@ -108,8 +131,8 @@ private:
 class OFileStampStream : public std::ostream
 {
 public:
-    OFileStampStream()
-        : std::ostream(new FileStampStreamBuf)
+    OFileStampStream(std::ostream* file)
+        : std::ostream(new FileStampStreamBuf(file))
     { }
 
     ~OFileStampStream()
@@ -122,12 +145,47 @@ public:
 
 std::ostream* Console::server;
 
-void Console::initialize()
+void
+Console::initialize()
 {
-    server = new OFileStampStream();
+    server = new OFileStampStream(0);
 }
 
-void Console::shutdown()
+void
+Console::shutdown()
 {
     delete server;
+}
+
+void
+Console::mapSwitch(const std::string& mapname)
+{
+    if(gameconfig->logging) {
+        if(!filesystem::exists("logs")) {
+            filesystem::mkdir("logs");
+        }
+        if(!filesystem::isDirectory("logs")) {
+            LOGGER.warning("logs is not a directory?!?");
+            return;
+        }
+
+        char timestamp[64];
+        time_t curtime = time(0);
+        struct tm* loctime = localtime(&curtime);
+        strftime(timestamp, sizeof(timestamp), "%F_%H-%M-%S", loctime);
+        
+        std::stringstream filenamestr;
+        filenamestr << "logs/" << timestamp << '_' << mapname << ".log";
+        std::string filename = filenamestr.str();
+        
+        try {
+            OFileStream* stream = new OFileStream(filenamestr.str());
+            delete server;
+            server = new OFileStampStream(stream);
+        } catch(std::exception& e) {
+            LOGGER.warning("Couldn't open logfile '%s': %s",
+                filename.c_str(), e.what());
+            return;
+        }
+    }
 }

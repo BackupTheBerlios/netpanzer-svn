@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <time.h>
 #include "GameConfig.hpp"
 #include "Util/Log.hpp"
+#include "Console.hpp"
 
 bool ConsoleInterface::stdout_pipe;
 
@@ -111,13 +112,8 @@ void ConsoleInterface::postMessage(const char *format, ...)
 
     LOGGER.debug("C: %s", temp_str);
 
-    if ( stdout_pipe == true ) {
-        char timestamp[128];
-        time_t curtime = time(0);
-        struct tm* loctime = localtime(&curtime);
-        strftime(timestamp, sizeof(timestamp), "<%F %T>", loctime);
-        printf("%s %s\n", timestamp, temp_str);
-        fflush(stdout);
+    if (stdout_pipe == true) {
+        *Console::server << temp_str << std::endl;
     }
 
     temp_str_ptr = temp_str;

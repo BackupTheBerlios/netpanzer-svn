@@ -192,23 +192,7 @@ bool DedicatedGameManager::launchNetPanzerGame()
     *Console::server << "starting dedicated netPanzer server\n";
 
     gameconfig->map = MapsManager::getNextMap("");
-    
-    *Console::server << "Server Settings:\n"
-        << "Map: " << gameconfig->map << "\n"
-        << "MaxPlayers: " << gameconfig->maxplayers << "\n"
-        << "MaxUnits: " << gameconfig->maxunits << "\n"
-        << "Gametype: " << gameconfig->getGameTypeString() << "\n"
-        << "ObjectivePercentage: " <<
-            gameconfig->objectiveoccupationpercentage << "\n"
-        << "TimeLimit: " << gameconfig->timelimit << "\n"
-        << "FragLimit: " << gameconfig->fraglimit << "\n"
-        << "RespawnType: " << gameconfig->getRespawnTypeString() << "\n"
-        << "Mapcycle: " << gameconfig->mapcycle << "\n"
-        << "Powerups: " << (gameconfig->powerups ? "yes" : "no") << "\n"
-        << "AllowAllies: " << (gameconfig->allowallies ? "yes" : "no") << "\n"
-        << "CloudCoverage: " << gameconfig->cloudcoverage << " (Windspeed "
-           << gameconfig->windspeed << ")" << std::endl;
-        
+
     GameManager::dedicatedLoadGameMap(gameconfig->map.c_str());
 
     GameManager::reinitializeGameLogic();

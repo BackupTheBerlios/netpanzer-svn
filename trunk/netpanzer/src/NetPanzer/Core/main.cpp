@@ -96,7 +96,8 @@ BaseGameManager *initialise(int argc, char** argv)
     // Parse commandline
     using namespace optionmm;
     command_line commandline(PACKAGE_NAME, PACKAGE_VERSION,
-            "Copyright(c) 1998 Pyrosoft Inc. and others", "", argc, argv);
+            "Copyright(c) 1998 Pyrosoft Inc. and nepanzer-devel team", "",
+            argc, argv);
 
     option<std::string, true, false> connect_option('c', "connect",
             "directly connect to the specified netpanzer server", "");

@@ -301,6 +301,23 @@ void GameManager::finishGameMapLoad()
 
 void GameManager::dedicatedLoadGameMap(const char *map_name )
 {
+    Console::mapSwitch(map_name);
+    *Console::server << "Server Settings:\n"
+        << "Map: " << gameconfig->map << "\n"
+        << "MaxPlayers: " << gameconfig->maxplayers << "\n"
+        << "MaxUnits: " << gameconfig->maxunits << "\n"
+        << "Gametype: " << gameconfig->getGameTypeString() << "\n"
+        << "ObjectivePercentage: " <<
+            gameconfig->objectiveoccupationpercentage << "\n"
+        << "TimeLimit: " << gameconfig->timelimit << "\n"
+        << "FragLimit: " << gameconfig->fraglimit << "\n"
+        << "RespawnType: " << gameconfig->getRespawnTypeString() << "\n"
+        << "Mapcycle: " << gameconfig->mapcycle << "\n"
+        << "Powerups: " << (gameconfig->powerups ? "yes" : "no") << "\n"
+        << "AllowAllies: " << (gameconfig->allowallies ? "yes" : "no") << "\n"
+        << "CloudCoverage: " << gameconfig->cloudcoverage << " (Windspeed "
+           << gameconfig->windspeed << ")" << std::endl;
+    
     map_path = "maps/";
     map_path.append(map_name);
 
@@ -313,9 +330,7 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
     Particle2D::setCreateParticles(false);
 }
 
-
 // ******************************************************************
-
 void GameManager::spawnPlayer( const PlayerID &player )
 {
     sound->stopTankIdle();
