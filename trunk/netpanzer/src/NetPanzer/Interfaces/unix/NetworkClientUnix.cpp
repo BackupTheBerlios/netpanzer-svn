@@ -86,9 +86,9 @@ int NetworkClientUnix::joinSession(const char* session_name)
     try {
         clientsocket = new ClientSocket(session_name, _NETPANZER_DEFAULT_PORT_TCP);
     } catch(Exception e) {
-        LOG( ( "Couldn't connect to server:\n%s.", e.getMessage()) );
+        LOG( ( "Couldn't connect to server:\n%s.", e.what()) );
         char text[128];
-        snprintf(text, 128, "connection error: %s", e.getMessage());
+        snprintf(text, 128, "connection error: %s", e.what());
         lobbyView->scrollAndUpdate(text);
         return false;
     }

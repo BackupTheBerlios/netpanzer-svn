@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string.h>
 #include "Exception.hpp"
 
-Exception::Exception(const char* msg, ...)
+Exception::Exception(const char* msg, ...) throw()
 {
     va_list args;
     va_start(args, msg);
@@ -33,19 +33,19 @@ Exception::Exception(const char* msg, ...)
     va_end(args);
 }
 
-Exception::Exception(const Exception& other)
+Exception::Exception(const Exception& other) throw()
 {
     size_t len = strlen(other.message);
     message = new char[len+1];
     memcpy(message, other.message, len+1);
 }
 
-Exception::~Exception()
+Exception::~Exception() throw()
 {
     delete[] message;
 }
 
-const char* Exception::getMessage()
+const char* Exception::what() const throw()
 {
     return message;
 }

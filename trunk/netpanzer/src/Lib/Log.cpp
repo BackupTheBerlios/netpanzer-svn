@@ -54,7 +54,7 @@ Logger::openLogFile(const char* filename)
     try {
         m_logfile = FileSystem::openWrite(filename);
     } catch(Exception& e) {                                                    
-        fprintf(stderr, "cannot open '%s': %s\n", filename, e.getMessage());
+        fprintf(stderr, "cannot open '%s': %s\n", filename, e.what());
         m_logfile = 0;
     }    
 }

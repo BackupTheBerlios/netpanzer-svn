@@ -186,7 +186,7 @@ void BaseGameManager::initialize()
         initializeNetworkSubSystem();
         initializeInputDevices();
     } catch(Exception &e) {
-        LOGGER.warning("Initialisation failed:\n%s", e.getMessage());
+        LOGGER.warning("Initialisation failed:\n%s", e.what());
         shutdown();
         throw Exception("bootstrap failed.");
     }

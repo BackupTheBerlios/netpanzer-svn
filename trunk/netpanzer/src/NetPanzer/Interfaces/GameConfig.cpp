@@ -26,10 +26,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 GameConfig::GameConfig(const std::string& newconfigfile)
     // VariableName("Name", value [, minimum, maximum])
-    : gametype("gametype", _gametype_objective, 0, _gametype_last-1),
-      hostorjoin("hostorjoin", _game_session_join, 0, _game_session_last-1),
+    : hostorjoin("hostorjoin", _game_session_join, 0, _game_session_last-1),
       playername("name", "Player"),
-      vehicelgeneration("vehiclegeneration", true),
+
+      gametype("gametype", _gametype_objective, 0, _gametype_last-1),
       maxplayers("maxplayers", 8, 1, 25),
       maxunits("maxunits", 500, 25, 10000),
       initialunits("initialunits", 5, 0, 100),
@@ -42,8 +42,8 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       cloudcoverage("cloudcoverage", 0),
       respawntype("respawntype", _game_config_respawn_type_random, 0,
                 _game_config_respawn_type_last-1),
-      windspeed("windspeed", 0),
-      map("map"),
+      windspeed("windspeed", 30),
+      map("map", "Bad Neuburg"),
       
       screenresolution("resolution", 0, 0, 2),
       fullscreen("fullscreen", true),
@@ -77,12 +77,11 @@ GameConfig::GameConfig(const std::string& newconfigfile)
 {
     configfile = newconfigfile;
 
-    gamesettings.push_back(&gametype);
     //gamesettings.push_back(&hostorjoin);
 
     playersettings.push_back(&playername);
 
-    serversettings.push_back(&vehicelgeneration);
+    serversettings.push_back(&gametype);
     serversettings.push_back(&maxplayers);
     serversettings.push_back(&maxunits);
     serversettings.push_back(&initialunits);
@@ -130,7 +129,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
     try {
         loadConfig();
     } catch(Exception e) {
-        LOG(("couldn't read game configuration: %s", e.getMessage()));
+        LOG(("couldn't read game configuration: %s", e.what()));
     }
 }
 
@@ -139,7 +138,7 @@ GameConfig::~GameConfig()
     try {
         saveConfig();
     } catch(Exception e) {
-        LOG(("couldn't save game configuration: %s", e.getMessage()));
+        LOG(("couldn't save game configuration: %s", e.what()));
     }
 }
 
@@ -188,7 +187,7 @@ void GameConfig::loadSettings(XmlConfig& config, const char* name,
                         section.readString(confstring->getName().c_str());
             } catch(Exception& e) {
                 LOG(("Skipping config '%s': %s", var->getName().c_str(),
-                            e.getMessage()));
+                            e.what()));
             }
         }
     } catch(Exception& e) {

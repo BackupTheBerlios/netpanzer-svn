@@ -142,7 +142,7 @@ void PlayerGameManager::initializeSoundSubSystem()
     try {
         sound = new SDLSound();
     } catch(Exception e) {
-        LOGGER.warning("Couldn't initialize sound: %s", e.getMessage());
+        LOGGER.warning("Couldn't initialize sound: %s", e.what());
         sound = new DummySound();
     }
 

@@ -183,7 +183,7 @@ int MapSelectionView::loadMaps()
             file = std::auto_ptr<ReadFile> (FileSystem::openRead(mapfiles[i].c_str()));
         } catch(Exception& e) {
             LOGGER.warning("cannot open map file '%s': %s", 
-                           mapfiles[i].c_str(), e.getMessage());
+                           mapfiles[i].c_str(), e.what());
             continue;
         }
 

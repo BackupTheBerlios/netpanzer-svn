@@ -18,17 +18,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __SOCKET_EXCEPTION_H__
 #define __SOCKET_EXCEPTION_H__
 
-#include <config.h>
+#include <exception>
 
-class Exception
+class Exception : public std::exception
 {
 public:
-    Exception(const char* message, ...)
+    Exception(const char* message, ...) throw()
     __attribute__((format (__printf__, 2, 3)));
-    Exception(const Exception& other);
-    ~Exception();
+    Exception(const Exception& other) throw();
+    virtual ~Exception() throw();
 
-    const char* getMessage();
+    const char* what() const throw();
 
 private:
     char* message;

@@ -76,7 +76,7 @@ void MouseInterface::initialize()
             surface->setOffsetCenter();
             cursors.insert(std::pair<std::string,Surface*> (*i, surface));
         } catch(Exception& e) {
-            LOG(("Couldn't load cursorfile '%s': %s", *i, e.getMessage()));
+            LOG(("Couldn't load cursorfile '%s': %s", *i, e.what()));
         }
     }
     FileSystem::freeList(cursorfiles);

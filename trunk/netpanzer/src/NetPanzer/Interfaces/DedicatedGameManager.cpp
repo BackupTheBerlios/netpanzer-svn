@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particle2D.hpp"
 #include "ParticleInterface.hpp"
 #include "Physics.hpp"
+#include "Log.hpp"
 #include "Server.hpp"
 
 //-----------------------------------------------------------------
@@ -111,127 +112,29 @@ void DedicatedGameManager::inputLoop()
     }
 #endif
 }
-//-----------------------------------------------------------------
-// custom version of readString that doesn't return the trailing \n
-static inline void readString(char* buffer, size_t buffersize, FILE* file)
-{
-    fgets(buffer, buffersize, file);
-    buffer[strlen(buffer)-1] = '\0';
-}
+
 //-----------------------------------------------------------------
 bool DedicatedGameManager::launchNetPanzerGame()
 {
     ConsoleInterface::postMessage( "netPanzer Dedicated Server");
 
-    char input_str[256];
-
-    MapsManager::getCurrentMap( input_str );
-    gameconfig->map = input_str;
+    LOGGER.info("Server Settings:"); 
+    LOGGER.info("Map: %s", gameconfig->map.c_str());
+    LOGGER.info("MaxPlayers: %d", (int) gameconfig->maxplayers);
+    LOGGER.info("MaxUnits: %d", (int) gameconfig->maxunits);
+    LOGGER.info("Gametype: %s", gameconfig->getGameTypeString());
+    LOGGER.info("ObjectivePercentage: %d",
+            (int) gameconfig->objectiveoccupationpercentage);
+    LOGGER.info("TimeLimit: %d", (int) gameconfig->timelimit);   
+    LOGGER.info("FragLimit: %d", (int) gameconfig->fraglimit);
+    LOGGER.info("RespawnType: %s", gameconfig->getRespawnTypeString());
+    LOGGER.info("MapCycling: %s", gameconfig->mapcycling ? "yes" : "no");
+    LOGGER.info("Powerups: %s", gameconfig->powerups ? "yes" : "no");
+    LOGGER.info("AllowAllies: %s", gameconfig->allowallies ? "yes" : "no");
+    LOGGER.info("CloudCoverage: %d (WindSpeed %d)", 
+            (int) gameconfig->cloudcoverage, (int) gameconfig->windspeed);
 
     const char* mapname = gameconfig->map.c_str();
-    printf( "Map Name <%s> : ", mapname);
-    fflush(stdout);
-    readString(input_str, 256, stdin);
-    if ( strlen(input_str) > 0 ) {
-        gameconfig->map = input_str;
-    }
-
-    printf( "Players <%d> : ", (int) gameconfig->maxplayers );
-    fflush(stdout);
-    readString(input_str, 256, stdin);
-    if ( strlen(input_str) > 0 ) {
-        int players;
-        sscanf( input_str, "%d", &players );
-        gameconfig->maxplayers = players;
-    }
-
-    printf( "Units <%d> : ", (int) gameconfig->maxunits );
-    fflush(stdout);
-    readString(input_str, 256, stdin);
-    if ( strlen(input_str) > 0 ) {
-        int units;
-        sscanf( input_str, "%d", &units );
-        gameconfig->maxunits = units;
-    }
-
-    int game_type = 1;
-
-    do {
-        printf( "Game Type\n" );
-        printf( "(1) Objective \n");
-        printf( "(2) Frag Limit \n" );
-        printf( "(3) Time Limit \n" );
-        printf( "Choose <1>: " );
-        fflush(stdout);
-        readString(input_str, 256, stdin);
-        sscanf( input_str, "%d", &game_type );
-    } while( (game_type < 1) || (game_type > 3) );
-
-    switch( game_type ) {
-    case 1 : {
-            gameconfig->gametype = _gametype_objective;
-            printf( "Outpost Occupation <%d %%> : ",
-                    (int) gameconfig->objectiveoccupationpercentage );
-            fflush(stdout);
-            readString(input_str, 256, stdin);
-            if ( strlen(input_str) > 0 ) {
-                int percent;
-                sscanf( input_str, "%d", &percent );
-                gameconfig->objectiveoccupationpercentage = percent;
-            }
-        }
-        break;
-
-    case 2 : {
-            gameconfig->gametype = _gametype_fraglimit;
-            printf( "Frag Limit <%d> frags : ", (int) gameconfig->fraglimit );
-            fflush(stdout);
-            readString(input_str, 256, stdin);
-            if ( strlen(input_str) > 0 ) {
-                int frags;
-                sscanf( input_str, "%d", &frags);
-                gameconfig->fraglimit = frags;
-            }
-        }
-        break;
-
-    case 3 : {
-            gameconfig->gametype = _gametype_timelimit;
-            printf( "Time Limit <%d> minutes: ", (int) gameconfig->timelimit );
-            fflush(stdout);
-            readString(input_str, 256, stdin);
-            if ( strlen(input_str) > 0 ) {
-                int time_limit;
-                sscanf( input_str, "%d", &time_limit );
-                gameconfig->timelimit = time_limit;
-            }
-        }
-        break;
-
-    } // ** switch
-
-    printf( "PowerUps <%s> (Y/N) : ",
-            (bool) gameconfig->powerups ? "Y" : "N" );
-    fflush(stdout);
-    readString(input_str, 256, stdin);
-    if ( strlen(input_str) > 0 ) {
-        if ( strcasecmp( "y", input_str ) == 0 ) {
-            gameconfig->powerups = true;
-        } else {
-            gameconfig->powerups = false;
-        }
-    }
-
-    printf( "Server Name <%s> :", gameconfig->playername.c_str() );
-    fflush(stdout);
-    readString(input_str, 256, stdin);
-    if ( strlen(input_str) > 0 ) {
-        gameconfig->playername = input_str;
-    } else {
-        gameconfig->playername = "Dedicated Server";
-    }
-
-    mapname = gameconfig->map.c_str();
     MapsManager::setCycleStartMap(mapname);
     GameManager::dedicatedLoadGameMap(mapname);
 
@@ -252,5 +155,3 @@ bool DedicatedGameManager::launchNetPanzerGame()
     GameManager::startGameTimer();
     return true;
 }
-
-

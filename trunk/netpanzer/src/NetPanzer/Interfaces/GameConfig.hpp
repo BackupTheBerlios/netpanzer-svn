@@ -67,7 +67,6 @@ enum { _connection_tcpip,
 
 enum { _game_config_respawn_type_round_robin,
        _game_config_respawn_type_random,
-       _game_config_respawn_type_max,
        _game_config_respawn_type_last
      };
 
@@ -105,15 +104,17 @@ public:
     GameConfig(const std::string& configfile);
     ~GameConfig();
 
+    void loadConfig();
+    void saveConfig();
+
     // game Settings
-    ConfigInt gametype;             //Objectives, FragLimit, TimeLimit
     ConfigInt hostorjoin;           //1=host, 2=join
 
     // player settings
     ConfigString playername;
 
     // server settings
-    ConfigBool  vehicelgeneration;
+    ConfigInt   gametype;             //Objectives, FragLimit, TimeLimit
     ConfigInt   maxplayers;
     ConfigInt   maxunits;
     ConfigInt   initialunits;
@@ -196,10 +197,6 @@ public:
 
         case _game_config_respawn_type_random :
             return( "Random" );
-            break;
-
-        case _game_config_respawn_type_max :
-            return( "Max" );
             break;
         } // ** switch
 
@@ -285,9 +282,6 @@ private:
         return( Color::white );
     }
 
-    void loadConfig();
-    void saveConfig();
-    
     void loadSettings(XmlConfig& config, const char* name,
             std::vector<ConfigVariable*>& settings);
     void saveSettings(XmlStore& config, const char* name,

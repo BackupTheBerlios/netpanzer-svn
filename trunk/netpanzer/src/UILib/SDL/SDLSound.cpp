@@ -193,7 +193,7 @@ void SDLSound::loadSound(const char* directory)
                 }
             } catch (Exception &e) {
                 LOG (("Couldn't load wav '%s': %s",
-                      filename.c_str(), e.getMessage()));
+                      filename.c_str(), e.what()));
             }
         }
     }
@@ -292,7 +292,7 @@ void SDLSound::nextSong()
             }
         } catch (Exception &e) {
             LOG (("Failed to load song '%s': %s",
-                  toplay, e.getMessage()));
+                  toplay, e.what()));
         }
 #else
         music = Mix_LoadMUS(FileSystem::getRealName(toplay).c_str());

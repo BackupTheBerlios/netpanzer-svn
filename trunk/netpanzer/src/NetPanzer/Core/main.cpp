@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "cMouse.hpp"
 
 #include "BaseGameManager.hpp"
+#include "GameConfig.hpp"
 #include "DedicatedGameManager.hpp"
 #include "BotGameManager.hpp"
 #include "PlayerGameManager.hpp"
@@ -110,6 +111,7 @@ bool HandleSDLEvents()
 void shutdown()
 {
     SDL_Quit();
+    gameconfig->saveConfig();
     LOGGER.closeLogFile();
     FileSystem::shutdown();
 }
@@ -134,9 +136,10 @@ void signalhandler(int signum)
         default: sigtype = "UNKNOWN"; break;
     }
         
-    std::cerr << "Received signal " << sigtype << "(" << signum << ")" <<
-        "aborting and trying to shutdown." << std::endl;
+    std::cerr << "Received signal " << sigtype << "(" << signum << ")"
+        << std::endl << "aborting and trying to shutdown." << std::endl;
     shutdown();
+    raise(signum);
 }
 
 //-----------------------------------------------------------------
@@ -186,8 +189,8 @@ BaseGameManager *initialise(int argc, char** argv)
     // Initialize libphysfs
     try {
         FileSystem::initialize(argv[0], "netpanzer", "netpanzer");
-    } catch(Exception e) {
-        fprintf(stderr, "%s", e.getMessage());
+    } catch(std::exception& e) {
+        fprintf(stderr, "%s", e.what());
         shutdown();
         exit(1);
     }
@@ -229,7 +232,7 @@ BaseGameManager *initialise(int argc, char** argv)
         manager->initialize();
         return manager;
     } catch(Exception e) {
-        LOGGER.warning("Couldn't initialize the game: %s", e.getMessage());
+        LOGGER.warning("Couldn't initialize the game: %s", e.what());
         shutdown();
         exit(1);
     }
@@ -260,7 +263,7 @@ int netpanzer_main(int argc, char** argv)
         shutdown();
     } catch(Exception e) {
         LOGGER.warning("An unexpected exception occured: %s\nShutdown needed.",
-                e.getMessage());
+                e.what());
         shutdown();
         throw;
     } catch(...) {

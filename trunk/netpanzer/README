@@ -5,7 +5,9 @@ Contents:
 1. Introduction
 2. Building and Installation
 3. Gameplay
-4. Contact
+4. Dedicated Server and Game Configuration
+5. Bot Player
+6. Contact
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -86,10 +88,6 @@ You can start the game by typing
 
 netpanzer
 
-a dedicated server can be started with
-
-netpanzer -d
-
 Note that on first startup the game needs some time to precalculate some data.
 This might take up to 5 minutes. So just wait a bit when you have a black
 screen.
@@ -103,11 +101,91 @@ trust your intuition :)
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-4. Contact
+4. Dedicated Server and Configuration Files
 
-You can contact is at the netpanzer-devel mailinglist at Savannah:
+You can start a dedicated netpanzer server (a pure server, without any video
+output). By starting netpanzer with the -d commandline option.
 
-http://mail.nongnu.org/mailman/listinfo/netpanzer-devel
+The server reads the configuration from
+    $HOME/.netpanzer/config/netpanzer-dedicated.xml
+. The format is basically the same as the normal configuration file of
+netpanzer. Here's a short introduction into the option specific to a server in
+the server section of the xml file:
 
+*maxplayers [number], default 8
+    Number of players and bots that are able to play simultaneously on the
+    server.
+
+*map [name], default "Bad Neuburg"
+    Name of the map to start.
+
+*maxunits [number], default 500
+    Number of maximum available units for all players. (Each
+            player will be able to have maxplayers/maxunits units at once)
+    
+*initialunits [number], default 5
+    Number of units that each player starts with when he joins or after he's
+    been killed.
+
+*gametpye [0,1,2], default 0
+    Type of game: (0=Objectives, 1=FragLimit, 2=TimeLimit)
+
+*timelimit [number], default 50
+    timelimit of the map in minutes (used when gametype = 2)
+
+*fraglimit [number], default 500
+    fraglimit of the map (used when gametype=1)
+
+*objectivepercentage [number], default 50
+    Percentage of outposts that has to be captured to win the game.
+    (used when gametype=0)
+
+*mapcycling [yes,no], default no
+    cycle to next map after a map ended. (Currently not working correctly...)
+
+*poweups [yes,no], default yes
+    enable/disable powerups
+
+*allowallies [yes,no], default yes
+    allow/disallow players to allie
+
+*cloudcoverage [number], default 65
+    Number of clouds flying over the map.
+
+*windspeed [number], default 30
+    windspeed that affects particles and clouds
+
+*respawntype [0,1], default 1
+    Spawn mode: 0=Round Robin, 1=Random
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+5. Bot Players
+
+Netpanzer provides a bot player for these times when you don't have a human
+opponent. You can start netpanzer in a special mode where it connects to a
+server and simulates a real player. You can start netpanzer like this to connect
+as bot to a server:
+
+netpanzer -b servername
+
+Example:
+This example shows how you can play locally against 2 bots:
+
+netpanzer -d &
+netpanzer -b localhost &
+netpanzer -b localhost &
+netpanzer
+
+... now press multiplayer and join to server address localhost ...
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+6. Contact
+
+Bugs should be reported to the bug trackker on savannah:
+    https://savannah.nongnu.org/bugs/?group=netpanzer
+You can contact us at the netpanzer-devel mailinglist at Savannah:
+    http://mail.nongnu.org/mailman/listinfo/netpanzer-devel
 or you might be able to catch us in irc at irc.freenode.net #netpanzer.
 

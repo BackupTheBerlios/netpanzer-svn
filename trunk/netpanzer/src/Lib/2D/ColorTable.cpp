@@ -117,7 +117,7 @@ void ColorTable::createBrightenFilter(
             return;
         } catch(Exception e) {
             LOG( ("Error while loading palette '%s': %s", filename,
-                  e.getMessage()) );
+                  e.what()) );
         }
     }
 
@@ -155,7 +155,7 @@ void ColorTable::createBrightenFilter(
         saveTable(filename);
     } catch(Exception e) {
         LOG ( ("Caching of ColorTable '%s' failed: %s", filename,
-               e.getMessage()) );
+               e.what()) );
     }
 } // end createBrightenFilter
 
@@ -170,7 +170,7 @@ void ColorTable::createDarkenFilter(const char *filename, float fudgeValue)
             loadTable(filename);
             return;
         } catch(Exception e) {
-            LOG( ("Error while loading palette'%s': %s", filename, e.getMessage()) );
+            LOG( ("Error while loading palette'%s': %s", filename, e.what()) );
         }
     }
 
@@ -199,7 +199,7 @@ void ColorTable::createDarkenFilter(const char *filename, float fudgeValue)
         saveTable(filename);
     } catch(Exception e) {
         LOG ( ("Caching of ColorTable '%s' failed: %s", filename,
-               e.getMessage()) );
+               e.what()) );
     }
 } // end createDarkenFilter
 
@@ -217,7 +217,7 @@ void ColorTable::create(
             loadTable(filename);
             return;
         } catch(Exception e) {
-            LOG( ("Error while loading palette'%s': %s", filename, e.getMessage()) );
+            LOG( ("Error while loading palette'%s': %s", filename, e.what()) );
         }
     }
 
@@ -269,7 +269,7 @@ void ColorTable::create(
         saveTable(filename);
     } catch(Exception e) {
         LOG ( ("Caching of ColorTable '%s' failed: %s", filename,
-               e.getMessage()) );
+               e.what()) );
     }
 } // end ColorTable::create
 
@@ -328,7 +328,7 @@ void ColorTable::createTrans0(
             loadTable(filename);
             return;
         } catch(Exception e) {
-            LOG( ("Error while loading palette'%s': %s", filename, e.getMessage()) );
+            LOG( ("Error while loading palette'%s': %s", filename, e.what()) );
         }
     }
 
@@ -371,7 +371,7 @@ void ColorTable::createTrans0(
         saveTable(filename);
     } catch(Exception e) {
         LOG ( ("Caching of ColorTable '%s' failed: %s",
-               filename, e.getMessage()) );
+               filename, e.what()) );
     }
 } // end ColorTable::createTrans0
 
@@ -393,7 +393,7 @@ void ColorTable::createLightDarkFilter(const char *filename)
             loadTable(filename);
             return;
         } catch(Exception e) {
-            LOG( ("Error while loading palette'%s': %s", filename, e.getMessage()) );
+            LOG( ("Error while loading palette'%s': %s", filename, e.what()) );
         }
     }
 
@@ -427,6 +427,6 @@ void ColorTable::createLightDarkFilter(const char *filename)
     try {
         saveTable(filename);
     } catch(Exception e) {
-        LOG ( ("Caching of ColorTable '%s' failed: %s", filename, e.getMessage()) );
+        LOG ( ("Caching of ColorTable '%s' failed: %s", filename, e.what()) );
     }
 } // end ColorTable::createLightDarkFilter
