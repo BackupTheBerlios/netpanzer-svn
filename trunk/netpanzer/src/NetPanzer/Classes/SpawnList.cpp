@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "SpawnList.hpp"
 #include "Util/FileSystem.hpp"
+#include "Util/FileStream.hpp"
 #include "Util/Exception.hpp"
 #include "GameConfig.hpp"
 
@@ -32,49 +33,41 @@ SpawnList::SpawnList( unsigned long size )
     initialize( size );
 }
 
-static inline void readLine(char* buffer, size_t bufsize, ReadFile* file)
-{
-    size_t i;
-    try {
-	for(i=0; i<bufsize; i++) {
-	    buffer[i] = file->read8();
-        if(buffer[i] == '\n')
-	    break;
-	}
-    } catch(std::exception& e) {
-	// ignored
-    }
-    buffer[i] = 0;
-}
-
 void SpawnList::loadSpawnFile(const char *file_path)
 {
     unsigned long spawn_count;
     unsigned long spawn_index;
-    char comment[64];
-    char buffer[128];
 
-    std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
+    try {
+        IFileStream in(file_path);
 
-    deallocate();
+        deallocate();
 
-    readLine(buffer, sizeof(buffer), &(*file));
-    sscanf(buffer, "%s %lu", comment, &spawn_count );
-    initialize( spawn_count );
+        std::string dummy;
+        in >> dummy >> spawn_count;
+        if(!in.good())
+            throw Exception("file too short");
+        initialize( spawn_count );
 
-    long x, y;
-    SpawnPoint *spawn;
-    for ( spawn_index = 0; spawn_index < spawn_count; spawn_index++ ) {
-        readLine(buffer, sizeof(buffer), &(*file));
-        sscanf(buffer, "%s %lu %lu", comment, &x, &y );
-        spawn = &array[ spawn_index ];
-        spawn->map_loc.x = x;
-        spawn->map_loc.y = y;
-        spawn->spawn_delay.changePeriod( 30 );
-        spawn->spawn_delay.zero();
+        long x, y;
+        SpawnPoint *spawn;
+        for ( spawn_index = 0; spawn_index < spawn_count; spawn_index++ ) {
+            in >> dummy >> x >> y;
+            if(!in.good())
+                throw Exception("file too short");
+            
+            spawn = &array[ spawn_index ];
+            spawn->map_loc.x = x;
+            spawn->map_loc.y = y;
+            spawn->spawn_delay.changePeriod( 30 );
+            spawn->spawn_delay.zero();
+        }
+
+        last_spawn_index = 0;
+    } catch(std::exception& e) {
+        throw Exception("Couldn't load spawnpoints in '%s': %s",
+                file_path, e.what());
     }
-
-    last_spawn_index = 0;
 }
 
 void SpawnList::getFreeSpawnPoint( iXY *spawn_loc )

@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/UtilInterface.hpp"
 #include "MapFile.hpp"
 #include "Util/FileSystem.hpp"
+#include "Util/FileStream.hpp"
 #include "Util/Exception.hpp"
 #include "Util/Log.hpp"
 
@@ -138,21 +139,6 @@ void MapSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 
 } // end MapSelectionView::doDraw
 
-static inline void readLine(char* buffer, size_t bufsize, ReadFile* file)
-{
-    size_t i;
-    try {
-	for(i=0; i<bufsize; i++) {
-	    buffer[i] = file->read8();
-	    if(buffer[i] == '\n')
-		break;
-	}
-    } catch(std::exception& e) {
-	// ignore
-    }
-    buffer[i] = 0;
-}
-
 // loadMaps
 //---------------------------------------------------------------------------
 int MapSelectionView::loadMaps()
@@ -221,14 +207,12 @@ int MapSelectionView::loadMaps()
 	    int objectiveCount = 0;
 	    sprintf(strBuf, "%s%s.opt", mapsPath, mapinfo->name);
 
-	    file = std::auto_ptr<ReadFile> (FileSystem::openRead(strBuf));
-       
-	    char buffer[128];
-	    readLine(buffer, sizeof(buffer), &(*file)); 
-	    if(!sscanf(buffer, "ObjectiveCount: %d", &objectiveCount)) {
-		gameconfig->map = "";
-		return 1;
-	    }
+            IFileStream in(strBuf);
+      
+            std::string dummy;
+            in >> dummy >> objectiveCount;
+            if(!in.good())
+                continue;
 
 	    mapinfo->objectiveCount = objectiveCount;
 	    mapList.push_back(mapinfo);

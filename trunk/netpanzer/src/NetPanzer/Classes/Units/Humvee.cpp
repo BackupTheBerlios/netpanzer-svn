@@ -42,31 +42,7 @@ void Humvee::setUnitProperties( void )
     unit_state.weapon_range = profile->attack_range;
     unit_state.unit_type = _unit_type_humvee;
     select_info_box.setHitBarAttributes( profile->hit_points, Color::yellow );
-
 }
-
-/*
-void Humvee::offloadGraphics( SpriteSorter &sorter )
- {
-  body_anim_shadow.setWorldPos( unit_state.location);
- 
-  if ( sorter.cullSprite( body_anim_shadow ) == false )
-   {  
-    body_anim.setWorldPos( unit_state.location );
-    body_anim.setFrame( unit_state.body_angle.angle_int );
- 
-    body_anim_shadow.setFrame( unit_state.body_angle.angle_int );
- 
-    select_info_box.setBoxState( unit_state.select );
-    select_info_box.setAttrib( unit_state.location, 1 );
-    select_info_box.setHitPoints( unit_state.hit_points );
-   
-    sorter.forceAddSprite( &body_anim_shadow );
-   }
-       
-  //sorter.addSprite( &body_anim_shadow );
- }
-*/
 
 Humvee::Humvee( iXY initial_loc, unsigned char color, unsigned char flag )
         : Vehicle( initial_loc )

@@ -70,7 +70,7 @@ struct fRect
 
     fRect operator | (const fRect &a);
 
-    bool getContains(const fXY &a) const
+    bool contains(const fXY &a) const
     {
         return
             a.x >= min.x && a.x < max.x &&
