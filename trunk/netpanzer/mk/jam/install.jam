@@ -6,6 +6,11 @@
 EXEMODE = 0755 ;
 FILEMODE = 0644 ;
 
+if ! $(DESTDIR)
+{
+    DESTDIR = "" ;
+}
+
 ##  InstallApplication applicationname [ : subdir [ : options ] ]
 ##    Install an application into the bindir directory.  A subdirectory
 ##    relative to the bindir can be specified.  Possible options are "console"
