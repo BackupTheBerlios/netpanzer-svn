@@ -4,7 +4,7 @@
 VERSION=`autoconf -t AC_INIT | sed -e 's/[^:]*:[^:]*:[^:]*:[^:]*:\([^:]*\):.*/\1/g'`
 
 SOURCERELEASE=release/netpanzer-$VERSION
-DATARELEASE=release/netpanzerdata-$VERSION
+DATARELEASE=release/netpanzer-data-$VERSION
 
 # first clean the directories up
 echo "*** Cleaning up"
@@ -88,6 +88,6 @@ cp -p --parents $TEXTS $DATARELEASE
 
 echo "*** Packing Data"
 cd release
-tar -c --bzip2 -f netpanzer-data-$VERSION.tar.bz2 netpanzerdata-$VERSION
+tar -c --bzip2 -f netpanzer-data-$VERSION.tar.bz2 netpanzer-data-$VERSION
 cd -
 
