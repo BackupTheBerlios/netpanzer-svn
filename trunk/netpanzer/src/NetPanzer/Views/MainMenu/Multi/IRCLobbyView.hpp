@@ -31,6 +31,7 @@ class IRCLobbyView : public View
  const GameServer *displayed_servers[64];
  int total_displayed_servers;
 public:
+ static std::string lobby_server;
  static cInputFieldString szChat;
  static IRCLobby *lobby_connection;
  IRCLobbyView();

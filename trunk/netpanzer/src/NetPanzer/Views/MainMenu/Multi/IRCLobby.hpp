@@ -36,7 +36,7 @@ class IRCLobbyView;
 class IRCLobby
 {
 public:
-    IRCLobby(const std::string& servername, int serverport,
+    IRCLobby(const std::string& servername,
              const std::string& nickname,
              const std::string& channel);
     ~IRCLobby();
@@ -44,6 +44,7 @@ public:
     void sendChatMessage(const std::string& user, const std::string& line);
     void sendIRCMessageLine(const std::string& line);
     void refreshServerList();
+    void refreshUserList();
 
 private:
     void startMessagesThread();
@@ -58,9 +59,9 @@ private:
     void sendIRCLine(const std::string& line);
     void sendIRCMessageLine(const std::string& line, const std::string& to);
     void readIRCLine(char *buf, size_t buf_len);
-    void connectToServer(const std::string& serveraddr, int port, 
-            const std::string& nickname, const std::string& channel_name);
+    void connectToServer();
     void addChatMessage(const std::string& user, const std::string& message);
+    int isConnected() { return irc_server_socket!=NULL?1:0; }
 
     SDL_mutex *game_servers_mutex;   
 
@@ -68,6 +69,9 @@ private:
     TCPsocket irc_server_socket;
 
     std::string channel_name;
+    std::string nickname;
+    std::string serveraddress;
+    int serverport;
     std::list<IRCChatMessage> chat_messages;
     GameServerList* game_servers;
     

@@ -29,15 +29,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 static const char* ask_server_running_mess = "Who's running a server?";
 static const char* server_running_mess = "I'm running";
 
-IRCLobby::IRCLobby(const std::string& servername, int serverport,
-        const std::string& nickname,
+IRCLobby::IRCLobby(const std::string& server,
+        const std::string& nick,
         const std::string& newchannelname)
-    : irc_server_socket(0), channel_name(newchannelname), game_servers(0),
-      running_thread(0)
+    : irc_server_socket(0), channel_name(newchannelname), nickname(nick),
+        game_servers(0), running_thread(0)
 {
+    unsigned int colon=server.find(':',0);
+    if(colon==std::string::npos) {
+        serveraddress=server;
+        serverport=6667;
+    }
+    else {
+        serveraddress=server.substr(0,colon);
+        colon++;
+        std::string port_str(server.substr(colon,server.length()-colon));
+        serverport=atoi(port_str.c_str());
+    }
     game_servers=new GameServerList();
     game_servers_mutex=SDL_CreateMutex();
-    connectToServer(servername, serverport, nickname, channel_name);
     startMessagesThread();
 }
 
@@ -82,20 +92,30 @@ void IRCLobby::sendServerInfo(const std::string& dest)
     return sendIRCMessageLine(buffer.str(), dest);
 }
 
-void IRCLobby::connectToServer(const std::string& serveraddress, int port,
-        const std::string& nickname, const std::string& channel)
+void IRCLobby::connectToServer()
 {
     IPaddress addr;
     // some old versions of SDL_net take a char* instead of const char*
     if(SDLNet_ResolveHost(&addr, const_cast<char*>(serveraddress.c_str()), 6667)
-            < 0)
-        throw Exception("Couldn't resolve server address for '%s'",
-                serveraddress.c_str());
+            < 0) {
+        std::string err_mess("Couldn't resolve server address for "+
+                serveraddress);
+        addChatMessage("",err_mess);
+        LOG((err_mess.c_str()));
+        return;
+    }
         
     irc_server_socket = SDLNet_TCP_Open(&addr);
-    if(!irc_server_socket)
-        throw Exception("Couldn't connect to irc server: %s",
-                SDLNet_GetError());
+    if(!irc_server_socket) {
+        std::string err_mess("Couldn't connect to irc server: " +serveraddress
+            + ":" );
+        err_mess+= serverport;
+        err_mess+= "Err:";
+        err_mess+= SDLNet_GetError();
+        addChatMessage("",err_mess);
+        LOG(("%s",err_mess.c_str()));
+        return;
+    }
 
     // login
     const char *playername = nickname.c_str();
@@ -147,9 +167,16 @@ void IRCLobby::refreshServerList()
     sendIRCMessageLine(buffer.str());
 }
 
+void IRCLobby::refreshUserList()
+{
+    std::string str("NAMES "+channel_name);
+    sendIRCLine(str);
+}
+
 int IRCLobby::messagesThreadEntry(void* data)
 {
     IRCLobby* t = (IRCLobby*) data;
+    t->connectToServer();
     t->processMessages();
     return 0;
 }
@@ -166,6 +193,10 @@ void IRCLobby::startMessagesThread()
 
 void IRCLobby::processMessages()
 {
+    if(irc_server_socket == 0) {
+        return;
+    }
+
     while(1) {
         try {
             processMessage();
@@ -181,11 +212,24 @@ void IRCLobby::processMessages()
 void IRCLobby::addChatMessage(const std::string& user,
                               const std::string& message)
 {
-    // only save latest 20 messages
-    while(chat_messages.size() > 20)
-        chat_messages.pop_front();
+    static const unsigned int max_chat_cols=42;
+    int ch_upto=0;
+    while(1) {
+        // only save latest 20 messages
+        while(chat_messages.size() > 20)
+            chat_messages.pop_front();
 
-    chat_messages.push_back(IRCChatMessage(user, message));
+        if((message.length()-ch_upto)>max_chat_cols) {
+            // split a long message up...
+            chat_messages.push_back(IRCChatMessage(user, message.substr(ch_upto,max_chat_cols)));
+            ch_upto+=max_chat_cols;
+        }
+        else {
+            // insert the whole message
+            chat_messages.push_back(IRCChatMessage(user, message.substr(ch_upto,message.length()-ch_upto)));
+            break;
+        }
+    }
 }
 
 // read a line of irc and process it.
@@ -207,28 +251,56 @@ void IRCLobby::processMessage()
     while(*code && isspace(*code)) { code++; }
 
     int code_i=atoi(code);
+    if((mess=strchr(buf+1,':'))==NULL) {
+        return;
+    }
+    mess++;
+
     if(code_i>=400 && code_i<500) {
+        addChatMessage("Error",mess);
         LOG(("IRC:%s",buf));
+    }
+    if(code_i==353) {
+        addChatMessage("Lobby",mess);
+        return;
     }
 
     // get remote user/host
-    // niknah_!~chatzilla@CPE-203-51-77-123.nsw.bigpond.net.au PRIVMSG #netpanzerlob :asfd
     if(
         (host=strchr(buf,'@'))==0
-        || (mess=strchr(buf+1,':'))==0
         || (user_end=strchr(buf,'!'))==0
     ) {
         return;
     }
     *host++=0;
     *user_end++=0;
-    mess++;
+
+    if(strncmp(code,"JOIN ",5)==0) {
+        std::string joined(buf+1);
+        joined+=" has arrived in lobby";
+        addChatMessage("",joined);
+        if(gameconfig->hostorjoin== _game_session_host) {
+            LOG(("%s",joined.c_str()));
+        }
+        return;
+    }
+    if(strncmp(code,"PART ",5)==0 || strncmp(code,"QUIT ",5)==0) {
+        std::string leave(buf+1);
+        leave+=" has left the lobby";
+        addChatMessage("",leave);
+        if(gameconfig->hostorjoin== _game_session_host) {
+            LOG(("%s",leave.c_str()));
+        }
+        return;
+    }
+
+
     if((host_end=strchr(host,' '))==0) {
         return;
     }
     *host_end++=0;
     while(isspace(*host_end)) host_end++;
-    if(strncmp(host_end,"PRIVMSG",7)!=0) {
+    if(strncmp(host_end,"PRIVMSG ",8)!=0) {
         return;
     }
 

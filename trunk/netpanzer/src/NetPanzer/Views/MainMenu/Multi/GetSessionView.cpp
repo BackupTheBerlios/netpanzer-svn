@@ -141,8 +141,10 @@ void bNext()
 
 
         Desktop::setVisibility("IPAddressView", true);
-        Desktop::setVisibility("IRCLobbyView", true);
-        IRCLobbyView::startIRC();
+        if(!IRCLobbyView::lobby_server.empty()) {
+            Desktop::setVisibility("IRCLobbyView", true);
+            IRCLobbyView::startIRC();
+        }
         //Desktop::setVisibility("JoinView", true);
         //Desktop::setVisibility("GetSessionHostView", true);
         //Desktop::setVisibility("UnitSelectionView", true);

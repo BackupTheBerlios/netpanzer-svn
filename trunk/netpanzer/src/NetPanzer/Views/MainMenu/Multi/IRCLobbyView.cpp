@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Client.hpp"
 
 IRCLobby *IRCLobbyView::lobby_connection=0;
+std::string IRCLobbyView::lobby_server("irc.freenode.net:6667");
 
 cInputFieldString IRCLobbyView::szChat;
 
@@ -37,6 +38,7 @@ cInputFieldString IRCLobbyView::szChat;
 static void buttonRefresh(void)
 {
     IRCLobbyView::lobby_connection->refreshServerList();
+    IRCLobbyView::lobby_connection->refreshUserList();
 }
 
 static void chatReturnPressed(cInputField* )
@@ -63,7 +65,7 @@ IRCLobbyView::IRCLobbyView() : View()
     setAllowMove(false);
     setVisible(false);
 
-    moveTo(iXY(bodyTextRect.min.x, bodyTextRect.min.y + 200));
+    moveTo(iXY(bodyTextRect.max.x-400, bodyTextRect.min.y + 200));
 
     iXY  area_size = iXY(400, lobby_view_height);
     resizeClientArea(area_size);
@@ -92,28 +94,33 @@ void IRCLobbyView::doDraw(Surface &viewArea, Surface &clientArea)
     if(lobby_connection==0) { return; }
 
 //~~~ todo: scrollbar for large list of servers
-    SDL_mutexP(lobby_connection->game_servers_mutex);
-    
-    GameServerList::iterator i;
-    GameServerList* serverlist = lobby_connection->game_servers;
-    disp_server_upto=0;
-    for(i=serverlist->begin(); i!=serverlist->end(); i++) {
-        const GameServer* server = &(*i);
-
-        std::stringstream playerstr;
-        playerstr << server->playercount << "/" << server->max_players;
-        
-        clientArea.bltString(iXY(0,y),server->user.c_str(), Color::white);
-        clientArea.bltString(iXY(140,y),playerstr.str().c_str(), Color::white);
-        clientArea.bltString(iXY(200,y),server->map.c_str(), Color::white);
-        
-        displayed_servers[disp_server_upto++]=server;
-        y += Surface::getFontHeight();
-        if(y >= server_list_end_y)
-            break;
+    if(!lobby_connection->isConnected()) {
+        clientArea.bltString(iXY(0,0),"Not connected to lobby", Color::white);
     }
-    SDL_mutexV(lobby_connection->game_servers_mutex);
-    total_displayed_servers=disp_server_upto;
+    else {
+        SDL_mutexP(lobby_connection->game_servers_mutex);
+        
+        GameServerList::iterator i;
+        GameServerList* serverlist = lobby_connection->game_servers;
+        disp_server_upto=0;
+        for(i=serverlist->begin(); i!=serverlist->end(); i++) {
+            const GameServer* server = &(*i);
+
+            std::stringstream playerstr;
+            playerstr << server->playercount << "/" << server->max_players;
+            
+            clientArea.bltString(iXY(0,y),server->user.c_str(), Color::white);
+            clientArea.bltString(iXY(140,y),playerstr.str().c_str(), Color::white);
+            clientArea.bltString(iXY(200,y),server->map.c_str(), Color::white);
+            
+            displayed_servers[disp_server_upto++]=server;
+            y += Surface::getFontHeight();
+            if(y >= server_list_end_y)
+                break;
+        }
+        SDL_mutexV(lobby_connection->game_servers_mutex);
+        total_displayed_servers=disp_server_upto;
+    }
 
     std::list<IRCChatMessage>::reverse_iterator m;
     y = chat_list_end_y - Surface::getFontHeight();
@@ -154,8 +161,9 @@ int IRCLobbyView::lMouseUp(const iXY &down_pos,const iXY &up_pos)
 void IRCLobbyView::startIRC()
 {
     try {
+        if(lobby_server.empty()) { return; }
         stopIRC();
-        lobby_connection = new IRCLobby("irc.freenode.net", 6667,
+        lobby_connection=new IRCLobby(lobby_server,
                 gameconfig->playername, "#netpanzerlob");
     } catch(std::exception& e) {
         LOG(("Couldn't connect to irc lobby: %s", e.what()));

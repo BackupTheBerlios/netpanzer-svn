@@ -38,6 +38,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "DedicatedGameManager.hpp"
 #include "BotGameManager.hpp"
 #include "PlayerGameManager.hpp"
+#include "IRCLobbyView.hpp"
 
 /** This functions iterates throgh the SDL event queue.
  * It returns true if a quit message has been received, otherwise false.
@@ -178,6 +179,9 @@ BaseGameManager *initialise(int argc, char** argv)
     bool_option debug_option('g', "debug",
             "enable debug output", false);
     commandline.add(&debug_option);
+    option<char *> lobby_server_option('\0', "lobby_server",
+        "Use an empty lobby server if you dont want to use the lobby", false);
+    commandline.add(&lobby_server_option);
 
     if(!commandline.process() || commandline.help() || commandline.version())
         exit(0);
@@ -185,6 +189,9 @@ BaseGameManager *initialise(int argc, char** argv)
     if (debug_option.value()) {
         LOGGER.setLogLevel(Logger::LEVEL_DEBUG);
         LOGGER.debug("debug option enabled");
+    }
+    if (lobby_server_option.value()) {
+        IRCLobbyView::lobby_server=lobby_server_option.value();
     }
 
     // Initialize SDL
