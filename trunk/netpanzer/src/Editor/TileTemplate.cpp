@@ -26,7 +26,7 @@ TileTemplate::TileTemplate(TileSet* newtileset, const std::string& newname)
     filename += "/";
     filename += name;
     
-    std::auto_ptr<ReadFile> file (FileSystem::openRead(filename.c_str()));
+    std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
 
     try {
         sizex = file->readULE32();
@@ -49,7 +49,7 @@ void TileTemplate::save()
     filename += "/";
     filename += name;
     
-    std::auto_ptr<WriteFile> file(FileSystem::openWrite(filename.c_str()));
+    std::auto_ptr<WriteFile> file(FileSystem::openWrite(filename));
 
     try {
         file->writeULE32(sizex);

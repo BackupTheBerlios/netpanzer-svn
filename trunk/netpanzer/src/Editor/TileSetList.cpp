@@ -119,9 +119,9 @@ static void CopyDirs(const std::string& dest, const std::string& source)
             CopyDirs(file, dfile);
         } else {
             std::auto_ptr<ReadFile> readfile
-                (FileSystem::openRead(file.c_str()));
+                (FileSystem::openRead(file));
             std::auto_ptr<WriteFile> writefile
-                (FileSystem::openWrite(dfile.c_str()));
+                (FileSystem::openWrite(dfile));
             std::cout << "Copy: " << file << " - " << dfile << std::endl;
 
             size_t p;
