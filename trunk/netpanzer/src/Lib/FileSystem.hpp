@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __LIB_FILESYSTEM_HPP__
 #define __LIB_FILESYSTEM_HPP__
 
+#include <SDL.h>
 #include <string>
 #include <stdint.h>
 #include <stdlib.h>
@@ -70,9 +71,20 @@ public:
 	int64_t readSBE64();
 	uint64_t readUBE64();
 
+	// Returns the SDL_RWops structure which can be used in several SDL
+	// commands. Note that you have to free this structure with SDL_FreeRWops.
+	// (Most SDL commands also have a freesrc parameter in their calls which you
+	// can simply set to 1)
+	SDL_RWops* getSDLRWOps();
+
 protected:
 	ReadFile(PHYSFS_file* file);
 	friend class FileSystem;
+
+private:
+	static int RWOps_Read(SDL_RWops* context, void* ptr, int size, int maxnum);
+	static int RWOps_Seek(SDL_RWops* context, int offset, int whence);
+	static int RWOps_Close(SDL_RWops* context);
 };
 
 //---------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 14-Sep-2003 by Matze Braun
 -applied sound patch by Ivo Danihelka (thanks alot)
+-added code to construct SDL_RWops in physfs files
 
 12-Sep-2003 by Matze Braun
 -use the physfs for the colortable cache now

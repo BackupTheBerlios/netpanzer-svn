@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string.h>
 #include <physfs.h>
 #include "Exception.hpp"
+#include "Log.hpp"
 #include "FileSystem.hpp"
 
 void FileSystem::initialize(const char* argv0, const char* company,
@@ -242,6 +243,49 @@ ReadFile::ReadFile(PHYSFS_file* file)
 int64_t ReadFile::read(void* buffer, size_t objsize, size_t objcount)
 {
 	return PHYSFS_read(file, buffer, objsize, objcount);
+}
+
+SDL_RWops* ReadFile::getSDLRWOps()
+{
+	SDL_RWops* rwops = (SDL_RWops*) malloc(sizeof(SDL_RWops));
+	memset(rwops, 0, sizeof(SDL_RWops));
+	rwops->read = RWOps_Read;
+	rwops->seek = RWOps_Seek;
+	rwops->close = RWOps_Close;
+	rwops->hidden.unknown.data1 = this;
+
+	return rwops;
+}
+
+int ReadFile::RWOps_Read(SDL_RWops* context, void* ptr, int size, int maxnum)
+{
+	ReadFile* file = (ReadFile*) context->hidden.unknown.data1;
+	return file->read(ptr, size, maxnum);
+}
+
+int ReadFile::RWOps_Seek(SDL_RWops* context, int offset, int whence)
+{
+	ReadFile* file = (ReadFile*) context->hidden.unknown.data1;
+	try { // catch exceptions
+		switch(whence) {
+			case SEEK_SET: file->seek(offset); break;
+			case SEEK_CUR: file->seek(file->tell() + offset); break;
+			case SEEK_END: file->seek(file->fileLength() + offset); break;
+		}
+	} catch(...) {
+		LOG(("Unexpected exception while seeking in file."));
+		return -1;
+	}
+
+	return file->tell();
+}
+
+int ReadFile::RWOps_Close(SDL_RWops* context)
+{
+	ReadFile* file = (ReadFile*) context->hidden.unknown.data1;
+	delete file;
+	context->hidden.unknown.data1 = 0;
+	return 1;
 }
 
 int16_t ReadFile::readSLE16()
