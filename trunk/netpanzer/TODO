@@ -33,6 +33,7 @@ Next release:
 <fEnIo> Shutdown needed.
 -if I can't solve the server hand, add a new thread that shuts the server down
  after a 5 minutes of hang or so...
+-include Christian Hausknechts patch from the mailing list
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map
