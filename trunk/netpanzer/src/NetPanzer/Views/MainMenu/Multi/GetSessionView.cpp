@@ -162,41 +162,20 @@ void GetSessionView::drawInfo(Surface &dest)
 //---------------------------------------------------------------------------
 void GetSessionView::drawHostInfo(Surface &dest, const iRect &rect)
 {
-    static char	tcpipInfo[] =	"HOSTING LAN GAMES\n"
-                              "\n"
-                              "Over LAN systems up to 25 players can be supported. For games "
-                              "that large you should use the dedicated server option. Start "
-                              "netPanzerTest from a dosbox using the -dedicated command line "
-                              "argument.\n"
-                              "\n"
-                              "HOSTING INTERNET GAMES\n"
-                              "\n"
-                              "Over the Internet varying numbers of players can be "
-                              "supported depending on connection speed and quality. "
-                              "Use the -dedicated command line argument to host large "
-                              "scale games.\n"
-                              "\n"
-                              "Maximum Internet Player Recommendations:\n"
-                              "\n"
-                              "  28.8 modem:      4\n"
-                              "  33.6 modem:      6\n"
-                              "  56.6 modem:      8\n"
-                              "  ISDN or faster: 25\n"
-                              "\n"
-                              "If you need to know what your machine's IP address is "
-                              "so that others can join your game you can go to the "
-                              "windows Start menu, click on 'Programs' and select the"
-                              "'PyroSoft' entry. Then select Winipcfg. The winipcfg "
-                              "dialog box appears. Get the IP address for the adapter "
-                              "you are using, either LAN or PPP. NOTE: most Internet "
-                              "Service Providers give you a different IP address "
-                              "each time you connect to the Internet. Therefore, if "
-                              "for some reason your Internet connection is dropped by "
-                              "your ISP, you will have to check your IP address after "
-                              "you reconnect.\n"
-                              "\n"
-                              "Click the Next button to proceed";
-
+    static char	tcpipInfo[] =
+        "HOSTING INTERNET GAMES\n"
+        "\n"
+        "Over the Internet varying numbers of players can be "
+        "supported depending on connection speed and quality. "
+        "\n"
+        "Maximum Internet Player Recommendations:\n"
+        "\n"
+        "  28.8 modem:      4\n"
+        "  33.6 modem:      6\n"
+        "  56.6 modem:      8\n"
+        "  ISDN or faster: 25\n"
+        "\n"
+        "Click the Next button to proceed";
 
     dest.bltStringInBox(rect, tcpipInfo, Color::white, 12);
 }
@@ -204,13 +183,14 @@ void GetSessionView::drawHostInfo(Surface &dest, const iRect &rect)
 //---------------------------------------------------------------------------
 void GetSessionView::drawJoinInfo(Surface &dest, const iRect &rect)
 {
-    static char	tcpipInfo[] =	"JOINING LAN OR INTERNET GAMES\n"
-                              "\n"
-                              "netPanzerTest will prompt you for an IP address when you "
-                              "try to join a game. You must specify the IP address or the "
-                              "name of the host computer.\n"
-                              "\n"
-                              "Click the Next button to proceed.";
+    static char	tcpipInfo[] =
+        "JOINING LAN OR INTERNET GAMES\n"
+        "\n"
+        "netPanzerTest will show you a list of servers on the internet"
+        "which you can join. Alternatively you can specify the IP Address"
+        "of the server manually which us usefull in a LAN.\n"
+        "\n"
+        "Click the Next button to proceed.";
 
 
     dest.bltStringInBox(rect, tcpipInfo, Color::white, 12);
