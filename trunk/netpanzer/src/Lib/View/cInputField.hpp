@@ -107,7 +107,7 @@ public:
     void setExcludedCharacters(const char *excludedCharacters);
     void addChar(int newChar);
     void addExtendedChar(int newExtendedChar);
-    void draw(Surface &dest);
+   void draw(Surface &dest);
     void drawHighlighted(Surface &dest);
     void checkCursor();
 

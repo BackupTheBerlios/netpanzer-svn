@@ -125,10 +125,10 @@ void cInputField::addChar(int newChar)
 {
     // Check if the character should be excluded.
     if (strchr(excludedCharacters, newChar) == 0) {
+        size_t length = strlen(destString) + 1;
+        
         // Add the character.
         destString[cursorPos] = newChar;
-
-        size_t length = strlen(destString) + 1;
         if (length <= maxCharCount) {
             destString[length] = '\0';
         } else {
