@@ -155,7 +155,7 @@ ServerSocket::readClientTCP(SocketClient* client)
         return;
     }
 
-    short size;
+    int16_t size;
     static short missingbytes = 0;
     static short recvoffset = 0;
     char* tempbuffer = client->tempbuffer;
@@ -167,7 +167,7 @@ ServerSocket::readClientTCP(SocketClient* client)
             //are going to copy one byte to the TempBuffer
             client->tempoffset++;
 
-            memcpy(&size, tempbuffer, 2);
+            size = htol16(*((int16_t*) tempbuffer));
 
             if ( (size < 0) || (size > _MAX_NET_PACKET_SIZE) ) {
                 LOG( ("OnReadStreamServer : Invalid Packet Size %d", size) );
@@ -221,7 +221,8 @@ ServerSocket::readClientTCP(SocketClient* client)
             if (recvsize >= missingbytes) {
                 memcpy(tempbuffer + client->tempoffset,
                        recvbuffer, missingbytes);
-                memcpy(&size, tempbuffer, 2);
+
+                size = htol16(*((int16_t*) tempbuffer));
 
                 if ( (size < 0) || (size > _MAX_NET_PACKET_SIZE) ) {
                     LOG( ("OnReadStreamServer : Invalid Packet Size %d", size) );
@@ -263,7 +264,7 @@ ServerSocket::readClientTCP(SocketClient* client)
                 recvsize = 0;
                 client->headerincomplete = true;
             } else if (recvsize >= 2) {
-                memcpy(&size, recvbuffer + recvoffset, 2);
+                size = htol16(*((int16_t*) (recvbuffer + recvoffset)));
 
                 if( (size < 0) || (size > _MAX_NET_PACKET_SIZE) ) {
                     LOG( ("OnReadStreamServer : Invalid Packet Size %d", size) );

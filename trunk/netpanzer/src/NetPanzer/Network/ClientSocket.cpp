@@ -89,7 +89,7 @@ void ClientSocket::read()
         return;
     }
 
-    short Size;
+    int16_t Size;
     //parse the received data for netpanzer messages--
     while (iBytesReceived) {
         if (bHeaderIncomplete) {
@@ -98,8 +98,7 @@ void ClientSocket::read()
             //are going to copy one byte to the TempBuffer
             TempOffset++;
 
-            memcpy(&Size, TempBuffer, 2);
-            Size = ltoh16(Size);
+            Size = htol16(*((int16_t*) TempBuffer));
 
             if ((iBytesReceived + 1) >= Size) {
                 //memcpy(TempBuffer, RecvBuffer + 1, (Size - 2));
