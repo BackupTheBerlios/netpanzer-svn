@@ -46,7 +46,7 @@ private:
     void queryServers();
 
     volatile bool running;
-    volatile network::SocketStream* stream;
+    network::SocketStream* stream;
     SDL_mutex* shutdown_mutex;
     SDL_Thread* thread;
     

@@ -9,6 +9,8 @@ Next release:
  (which is only be 66% of all outposts)
 -after having a full nodelist the server is getting slow
 -when typing empty messages they are sent anyway
+-the refresh button should be disabled in the serverlist window while the
+ refreshing is in progress
 -when starting to build a titan 2minutes is displayed for a short time
 
 *** New Masterserver code

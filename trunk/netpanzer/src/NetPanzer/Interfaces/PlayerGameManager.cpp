@@ -449,7 +449,7 @@ bool PlayerGameManager::mainLoop()
 
     // handle SDL Events
     if(handleSDLEvents())
-        return true;
+        return false;
 
     return BaseGameManager::mainLoop();
 }

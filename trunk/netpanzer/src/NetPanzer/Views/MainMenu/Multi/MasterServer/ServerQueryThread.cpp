@@ -58,19 +58,23 @@ ServerQueryThread::ServerQueryThread(ServerList* newserverlist)
     udpsocket = new network::UDPSocket(false);
    
     shutdown_mutex = SDL_CreateMutex();
+    printf("startit.\n");
     thread = SDL_CreateThread(threadMain, this);
 }
 
 ServerQueryThread::~ServerQueryThread()
 {
+    printf("killit\n");
     SDL_mutexP(shutdown_mutex);
     running = false;
     if(stream) {
-        network::SocketStream* temp = (network::SocketStream*) stream;
-        temp->cancel();
+        printf("cancel.\n");
+        stream->cancel();
     }
     SDL_mutexV(shutdown_mutex);
+    printf("waitit.\n");
     SDL_WaitThread(thread, 0);
+    printf("Joined.\n");
 
     delete udpsocket;
     SDL_DestroyMutex(shutdown_mutex);
@@ -106,6 +110,8 @@ ServerQueryThread::run()
         }
     } catch(std::exception& e) {
         LOGGER.warning("Unexpected exception in query thread: %s", e.what());
+    } catch(...) {
+        LOGGER.warning("Unexpected exception in query thread");
     }
 }
 
@@ -121,13 +127,18 @@ ServerQueryThread::queryMasterServer()
     network::TCPSocket* tcpsocket = 0;
 
     try {
+        printf("Resolve.\n");
         network::Address ip
             = network::Address::resolve(masterservers.back(), 28900);
 
+        printf("Connect.\n");
         tcpsocket = new network::TCPSocket(ip, false);
+        printf("Connok.\n");
         stream = new network::SocketStream(*tcpsocket);
-        network::SocketStream* stream = (network::SocketStream*) this->stream;
         StreamTokenizer tokenizer(*stream, '\\');
+
+        if(!running)
+            throw std::runtime_error("query aborted");
 
         // send query
         *stream << "\\list\\gamename\\master\\final"
@@ -150,8 +161,10 @@ ServerQueryThread::queryMasterServer()
             } else if(token == "final") {
                 break;
             } else {
-                std::cerr << "Unknown token '" << token
-                          << "' when querying masterserverlist.\n";
+                std::stringstream msg;
+                msg << "Unknown token '" 
+                    << token << "' when querying masterserver (master list)";
+                throw std::runtime_error(msg.str());
             }
         }
 
@@ -177,20 +190,23 @@ ServerQueryThread::queryMasterServer()
             } else if(token == "final") {
                 break;
             } else {
-                std::cerr << "Unknown token '" << token
-                    << "' from masterserver.\n";
+                std::stringstream msg;
+                msg << "Unknown token '" 
+                    << token << "' when querying masterserver (game list)";
+                throw std::runtime_error(msg.str());
             }
         }
 
         state = STATE_QUERYSERVERS;
-
         gameconfig->masterservers = newMasterServers;
     } catch(std::exception& e) {
         LOGGER.warning("Problem querying masterserver: %s.", e.what());
         masterservers.pop_back();
     }
 
+    printf("trydel.\n");
     SDL_mutexP(shutdown_mutex);
+    printf("delstream.\n");
     delete stream;
     stream = 0;
     delete tcpsocket;
