@@ -5,7 +5,7 @@ Next release:
 -server status command returns wrong player names (seems to happen after sudden
         client disconnects)
 -netpanzer fails on win98se
--win32 doesn't show time in serverlogs
+-win32 doesn't show time in serverlogs - should be ok, needs testing
 -you can't move panzers around on ppc (also often connection errors on ppc:
         <cypmac> cyp@itouch:~$ netpanzer -c 194.167.156.7
         <cypmac> open /dev/sequencer: No such device
@@ -31,6 +31,8 @@ Next release:
 <fEnIo> query for worldpixmovement outside map (2518,6662)
 <fEnIo> An unexpected exception occured: Send error: Couldn't send all data.
 <fEnIo> Shutdown needed.
+-if I can't solve the server hand, add a new thread that shuts the server down
+ after a 5 minutes of hang or so...
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map
