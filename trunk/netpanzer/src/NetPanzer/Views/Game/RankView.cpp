@@ -32,7 +32,7 @@ RankView::RankView() : GameTemplateView()
 {
     setSearchName("RankView");
     setTitle("Rankings");
-    setSubTitle(" - F6");
+    setSubTitle(" - TAB");
 
     setAllowResize(false);
     moveTo(gameconfig->rankposition);
