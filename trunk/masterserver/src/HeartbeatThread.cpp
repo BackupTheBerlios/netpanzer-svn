@@ -200,6 +200,7 @@ HeartbeatThread::addMasterServer(const std::string& address)
     serveraddresses.push_back(serveraddr);
 
     masterserver->addServer("master", serveraddr);
+    *log << "Found additional masterserver '" << address << "'\n";
 }
 
 void* HeartbeatThread::threadMain(void* data)
@@ -223,6 +224,9 @@ void* HeartbeatThread::threadMain(void* data)
 void
 HeartbeatThread::sendHeartbeats()
 {
+    if(serveraddresses.size())
+        *log << "Sending Heartbeat to other masters\n";
+
     for(std::vector<struct sockaddr_in>::iterator i = serveraddresses.begin();
             i != serveraddresses.end(); ++i) {
         try {
