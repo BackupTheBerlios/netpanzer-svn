@@ -2,6 +2,55 @@
 <page title="netPanzer - News">
   <section title="News">
     <news>
+      <item date="10. Nov 2004">
+       <p>Thanks to Tobias Blerch we now have a <a
+       href="http://netpanzer.n-d-m.net">php serverbrowser</a> for
+       netpanzer. Additional thanks goes out for Jan Brenner who setup the
+       script on his server and created a nice template design for the output.
+       </p>
+      </item>
+      <item date="8. Nov 2004">
+       <p>netPanze 0.2.0 release candidate 4</p>
+       <p>This is a prerelease open for public testing. Especiacially the new
+          ppc code needs more testing. I'd be happy about some feedback if it
+          works or not (matze@braunis.de).
+       </p>
+       <p>Downloads available here: <a
+         href="http://developer.berlios.de/project/showfiles.php?group_id=1250">
+         http://developer.berlios.de/project/showfiles.php?group_id=1250</a>.
+         Changes:
+      </p>
+      <ul>
+        <li>Really fixed Duell map</li>
+        <li>Fixed servercrash introduced in rc3</li>
+        <li>Fixed connecting to servers on different port than 3030</li>
+      </ul>
+      </item>
+      <item date="3. Nov 2004">
+        <p>netPanzer 0.2.0 release candidate 3</p>
+        <p>This is a prerelease open for public testing. Especiacially the new
+        ppc code needs more testing. I'd be happy about some feedback if it
+        works or not (matze@braunis.de).
+        </p>
+        <p>Downloads available here: <a
+        href="http://developer.berlios.de/project/showfiles.php?group_id=1250">
+http://developer.berlios.de/project/showfiles.php?group_id=1250</a>. Changes:</p>
+        <ul>
+        <li>Fixed Duell map</li>
+        <li>Fixed servers not always registering at all masterservers but only
+        one</li>
+        <li>Fixed some crashs in game</li>
+        <li>Fixed several crashs and misbehaviour in the serverlist</li>
+        <li>open a new console for win32 server and bot</li>
+        <li>Fixed problem in log code that manifested on linux/ppc (thanks to
+        Johannes Mockenhaupt for report+patch)</li>
+        <li>Adding units with shift key now also works for groups and boxes
+        (thanks to Rex Tsai for the patch)</li>
+        <li>packet handling is more robust against malformed packets</li>
+        <li>Added Support for pidfiles in server</li>
+        <li>Wrote a HowTo on setting up a dedicated server</li>
+        </ul>
+      </item>
       <item date="15. Oct 2004">
         <p>netPanzer 0.2.0 release candidate 2</p>
         <p>This is a prerelease open for public testing. Especiacially the new
