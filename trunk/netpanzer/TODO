@@ -1,31 +1,21 @@
 *** Lobby Code
-- Dedicated server always try to announce themself on the netpanzer lobby. User
-  should be able to disable this. - implemented
-- Non-Dedicated servers don't announce themselfes at the lobby. - implemented
-- There's no check if the irc-server connection is still available. We should
-  use some ping/pong messages there. - implemented
-- the player nickname is often already used by someone else in irc. We should
-  add a netpanzer postfix to them. (ie. MatzeB|netp). If you try to use the name
-  of another netpanzer player, then you should be warned and given a chance to
-  reconnect with another name - implemented
-- It should be possible to use different ports than the default one for the
-  netpanzer server - implemented
+-use new more stable IRC code from Lib/IRC
 
 *** Improvements
--let dedicated server output statistics on console at the end of a round
+-let dedicated server output statistics on console or in some log files. So that
+ you can generate nice html pages with statistics of the players :)
 -Convert the 256 color stuff to truecolor
 -Add timeout/keepalive handling to network layer to correctly detect connection
- losses and try reconnects
+ losses and try reconnects (we should think about this again, doesn't TCP
+ already do similar things?)
 -impelement 'initialunits' param in PlayerUnitConfig::initialize()
--bots should have different names and different flags
+-bots should have different names and different flags - partly implemented
 -the collection of flags has to be the same on all clients at the moment. This
 should be changed (clients should send the name of their flag). The collest
 solution would be transfering of unknown flags.
--the unit profiles should be possible to set on the server. They should be
-distributed to the clients while they connect.
--limit fps to a fixed value so that we are nicer to the CPU on the system.
 -make it possible to have different colors for different players - DONE
 -make the code endian safe. It should run on big endian boxes too.
+-display alliances in the status screens.
 
 *** Tools
 -write a map and tileset editor
@@ -34,10 +24,14 @@ distributed to the clients while they connect.
 *** Feature Additions
 
 -Improve userinterface:
-        * Make usual shortcuts (known from other RTSes) work. Like
-          CTRL+number for defining groups, a possibility to set spawnpoint
-          of units, scroll map with right mouse, scrolling map with cursor keys
-          ...
+        * Make usual shortcuts (known from other RTSes) work:
+            -CTRL+Number for defining groups - done
+            -Scroll map with right mouse - done
+            -scrolling map with cursor keys
+            -Space jumps to last action - done
+            -a key to cycle through all (offline) outposts
+            -add possibilty for setting waypoints (ALT+leftclick?)
+            -...
         * Create a nice static! skin which is at the bottom of the screen
           and combines a map, statusdisplay of selected units and outpost
           buildmenu
@@ -48,12 +42,14 @@ distributed to the clients while they connect.
           moment)
 -Create possibilities to save and play replays of the matches
 -Create possibility to save and restore matches
--Convert the 256 color stuff to truecolor
--add code for masterserver registration/browsing
+-Convert the 256 color stuff to truecolor and eventually use opengl for
+ displaying stuff.
+-add code for masterserver registration/browsing (this would be additional to
+        the irc lobby code, so that we could get integration into server
+        browsing tools like xqf done eventually)
 -create UDP broadcast code for announcing servers in LANs
 -make it possible to configure the mapcycle
 -add a (readline based?) serverconsole
--add possibilty for setting waypoints (ALT+leftclick?)
 
 *** gameplay
 Note that these are just random idea. We should be very careful when tuning the
