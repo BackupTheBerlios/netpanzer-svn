@@ -19,3 +19,6 @@
   are visible.
 - it is reported that in timelimit mode games might end too early (ie. client
   display 40/60 and game ends)
+- Astar sometimes calculates strange paths. Very obvious if you try to capture
+  and outpost from the left side: Your panzers will drive around it before
+  entering it.
