@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <assert.h>
 #include "blitters.h"
 #include "codewiz.hpp"
+#include <string.h>
+#include "UIDraw.hpp"
 
 void blit_partial_xy( unsigned char *tile_ptr,unsigned char *buffer_ptr,short y_size,short x_size)
 {
@@ -27,8 +29,16 @@ void blit_partial_xy( unsigned char *tile_ptr,unsigned char *buffer_ptr,short y_
 	assert(y_size > 0);
 	assert(x_size > 0);
 
-	// XXX disabled msvc assembler
-#ifdef MSVC
+	int y;
+	
+// XXX 32 should be at least a define, but probably a variable.  Pass in class instead of data pointer.
+	for(y=0; y<y_size; y++) {
+	  memcpy(buffer_ptr, tile_ptr, x_size);
+	  buffer_ptr += Screen->getWidth()-x_size;
+	  tile_ptr   += 32-x_size;
+	}
+
+#if 0
   __asm
  {
                         mov  esi,tile_ptr;
@@ -95,8 +105,14 @@ void blit_partial_y( unsigned char *tile_ptr, unsigned char *buffer_ptr, short y
 
 void blit_partial_y( unsigned char *tile_ptr, unsigned char *buffer_ptr, short y_size)
 {
-	// XXX disabled msvc assembler
-#ifdef MSVC
+	int y;
+	// XXX remove 'magic' 32
+	for(y=0; y<y_size; y++) {
+	  memcpy(tile_ptr, buffer_ptr, 32);
+	  tile_ptr += 32;
+	  buffer_ptr += Screen->getWidth()-32;
+	}
+#if 0
   __asm
  { 
                         mov  esi,tile_ptr;
@@ -167,9 +183,18 @@ void blit_partial_y( unsigned char *tile_ptr, unsigned char *buffer_ptr, short y
 void general_blitter( unsigned char x_size, unsigned char y_size, unsigned long frame_offset, 
                       unsigned char *buffer_ptr, unsigned char *dbuffer_ptr )
  {
+  int x,y;
+  dbuffer_ptr += frame_offset;
+  for(y=0; y<y_size; y++) {
+    for(x=0; x<x_size; x++) {
+      if(buffer_ptr[x] != 0)
+        dbuffer_ptr[x]=buffer_ptr[x];
+    }
+    buffer_ptr += Screen->getWidth()-x_size;
+    dbuffer_ptr += Screen->getWidth()-x_size;
+  }
 
-	 // XXX disabled msvc assembler
-#ifdef MSVC
+#if 0
   __asm
   {
                         mov  ebx,0
@@ -219,8 +244,18 @@ transparent_gb:         add  edi,1
 void blit_selector_square( unsigned char x_size, unsigned char y_size,
                            unsigned long frame_offset, unsigned char *dbuffer_ptr )
  {
-	 // XXX disabled msvc assembler
-#ifdef MSVC
+	int y;
+	const char color = 0x47;
+	dbuffer_ptr += frame_offset;
+	memset(dbuffer_ptr, color, x_size);  //top
+	dbuffer_ptr += Screen->getWidth()-x_size;
+	for(y = 1; y < (y_size-1); y++) {
+	  dbuffer_ptr[0] = color;  //left 
+	  dbuffer_ptr[x_size-1] = color;  //right
+	  dbuffer_ptr += Screen->getWidth()-x_size;
+	}
+	memset(dbuffer_ptr, color, x_size); //bottom
+#if 0
   __asm
    {
                         mov  ebx,0

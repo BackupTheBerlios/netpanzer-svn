@@ -46,8 +46,6 @@ void BlitRectsMemcpy( unsigned char *pSrc, long srcPitch, unsigned char *pDest, 
 
 unsigned char *DOUBLE_BUFFER = 0;
 
-unsigned long DBUFFER_WIDTH;
-unsigned long DBUFFER_HEIGHT;
 unsigned long DBUFFER_VIEW_WIDTH;
 unsigned long DBUFFER_VIEW_HEIGHT;
 unsigned long X_CLIP_OFS;
@@ -390,7 +388,9 @@ bool DirectDraw::setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE modeFla
 	{
 		result = fullScreenSurfaceInitialization(width, height, bpp, modeFlags);
 	}
-
+        curWidth = width;
+        curHeight = height;
+        curBPP = bpp;
 
 	return( result ); 
 } // end setVideoMode

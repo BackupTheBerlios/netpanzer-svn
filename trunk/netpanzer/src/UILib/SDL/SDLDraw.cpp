@@ -19,8 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SDLDraw.hpp"
 
 // XXX fixme, need sensefull values here
-unsigned long DBUFFER_WIDTH;
-unsigned long DBUFFER_HEIGHT;
 unsigned long DBUFFER_VIEW_WIDTH;
 unsigned long DBUFFER_VIEW_HEIGHT;
 unsigned long X_CLIP_OFS;
@@ -52,6 +50,10 @@ bool SDLDraw::setVideoMode(DWORD width, DWORD height, DWORD bpp, BYTE mode_flags
 	if(FrontBuffer==NULL)
 		return false;
 
+	curWidth = width;
+	curHeight = height;
+	curBPP = bpp;
+	
 	// let's scare the mouse :)
 	SDL_ShowCursor(SDL_DISABLE);
 	// and set a window title

@@ -127,7 +127,7 @@ world_sprite::world_sprite( void )
 
   //WorldViewInterface::getViewStart( 640, 480, &view_start_x, &view_start_y );
   
-  frame_offset = ((y - (view_start_y)) * DBUFFER_WIDTH) + (x - (view_start_x)) + OFFSET_TO_VIEW;
+  frame_offset = ((y - (view_start_y)) * Screen->getWidth()) + (x - (view_start_x)) + OFFSET_TO_VIEW;
 
   Screen->lockDoubleBuffer( &double_buffer );
 
@@ -143,7 +143,7 @@ world_sprite::world_sprite( void )
      x_size = (bbox_x2 - select_x_cut) - (bbox_x1 + select_x_cut);
      y_size = (bbox_y2 - select_y_cut) - (bbox_y1 + select_y_cut);
 
-     //frame_offset = ((y - (SCREEN_Y)) * DBUFFER_WIDTH) + (x - (SCREEN_X)) + OFFSET_TO_VIEW;
+     //frame_offset = ((y - (SCREEN_Y)) * Screen->getWidth()) + (x - (SCREEN_X)) + OFFSET_TO_VIEW;
 
      //blit_selector_square( x_size, y_size, frame_offset, DOUBLE_BUFFER); 
     }
@@ -293,7 +293,7 @@ void world_animation::frame_update( void )
   
   //WorldViewInterface::getViewStart( 640, 480, &view_start_x, &view_start_y );
   
-  frame_offset = ((y - (view_start_y)) * DBUFFER_WIDTH) + (x - (view_start_x)) + OFFSET_TO_VIEW;
+  frame_offset = ((y - (view_start_y)) * Screen->getWidth()) + (x - (view_start_x)) + OFFSET_TO_VIEW;
 
   frame_data = anim->data + (anim->frame_size * frame_counter) + (direct * anim->direct_size);
   
@@ -309,7 +309,7 @@ void world_animation::frame_update( void )
      x_size = (bbox_x2 - select_x_cut) - (bbox_x1 + select_x_cut);
      y_size = (bbox_y2 - select_y_cut) - (bbox_y1 + select_y_cut);
 
-     frame_offset = ((y - (view_start_y)) * DBUFFER_WIDTH) + (x - (view_start_x)) + OFFSET_TO_VIEW;
+     frame_offset = ((y - (view_start_y)) * Screen->getWidth()) + (x - (view_start_x)) + OFFSET_TO_VIEW;
 
      blit_selector_square( x_size, y_size, frame_offset, double_buffer ); 
     }

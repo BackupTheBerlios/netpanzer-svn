@@ -25,9 +25,8 @@ int allowSpanBlitting = 1;
 //--------------------------------------------------------------------------
 void bltTransSpan(PIX *dRow, const PIX *sRow, int pixelsPerRow)
 {
-
-	// XXX msvc assembler disabled...
-#ifdef MSVC
+	memcpy(dRow, sRow, pixelsPerRow*sizeof(PIX));
+#if 0
 		_asm {
 			mov edi, [dRow]
 			mov esi, [sRow]
@@ -116,8 +115,13 @@ void bltBlendSpan(PIX *dRow, const PIX *sRow, int pixelsPerRow, const BYTE *tabl
 {
 	if (!allowSpanBlitting) { return; } // Remove for release candidate.
 
-	// XXX disable msvc assembler
-#ifdef MSVC
+	int idx;
+
+	for(idx=0;idx<pixelsPerRow;idx++) {
+	  dRow[idx] = table[ (dRow[idx]<<8)+sRow[idx] ];
+	}
+
+#if 0
 		_asm {
 			mov edi, [dRow]
 			mov esi, [sRow]
@@ -293,8 +297,12 @@ void bltLookupSpan(PIX *dRow, int pixelsPerRow, const PIX *table)
 
 	if (!allowSpanBlitting) { return; } // Remove for release candidate.
 
-	// XXX disabled msvc assembler
-#ifdef MSVC
+        int idx;
+
+	for(idx=0;idx<pixelsPerRow;idx++)
+	  dRow[idx] = table[dRow[idx]];
+
+#if 0
 		_asm {
 			mov edi, [dRow]
 			mov ecx, [pixelsPerRow]
@@ -361,7 +369,6 @@ spanDone:
 void bltScaleSpan(PIX *dRow, const PIX *sRow, int srcX1FracWithCount, int stepAndDecCount, int stepWholePart)
 {
 	if (!allowSpanBlitting) { return; } // Remove for release candidate.
-
 	// XXX disabled msvc assembler
 #ifdef MSVC
 		_asm {

@@ -31,6 +31,9 @@ enum { VIDEO_MODE_WINDOWED          = 0x01,
 //---------------------------------------------------------------------------
 class UIDraw
 {
+protected:
+  int curWidth, curHeight, curBPP;
+
 public:
   virtual bool initialize() = 0;
   virtual void shutdown() = 0;
@@ -43,6 +46,10 @@ public:
   virtual void restoreAll()=0;
   virtual bool copyDoubleBufferandFlip()=0;
   virtual void setPalette(RGBColor *color)=0;
+
+  int getWidth(void) { return curWidth; }
+  int getHeight(void) { return curHeight; }
+  int getBPP(void) { return curBPP; }
 }; // end DirectDraw
 
 // XXX some global vars, these should be avoided or at least moved inside the
