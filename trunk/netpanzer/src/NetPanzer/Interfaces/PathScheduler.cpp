@@ -76,7 +76,7 @@ void PathCache::add(PathRequest &path_request)
     if (cache_size <= 0 )
         return;
 
-    if (path_request.path->listCount() >= add_path_length_threshold) {
+    if (path_request.path->size() >= add_path_length_threshold) {
         entry_replace_index = (entry_replace_index % cache_size);
 
         cache_list[ entry_replace_index ].set( path_request.start,
@@ -156,7 +156,7 @@ void PathGenerator::pathingFsmFullPath( void )
     do {
         switch ( pathing_fsm_state ) {
         case _pathing_fsm_state_initialize : {
-                path_request.path->reset();
+                path_request.path->clear();
                 pathing_fsm_state = _pathing_fsm_state_generate_path;
             }
             break;
@@ -199,18 +199,19 @@ void PathGenerator::pathingFsmUpdatePath( void )
         case _pathing_fsm_state_initialize : {
                 unsigned long abs_new_goal;
                 iXY new_goal;
-                unsigned long path_length;
+                size_t path_length;
 
-                path_length = path_request.path->listCount();
+                path_length = path_request.path->size();
 
                 if ( path_length <= path_update_threshold ) {
-                    path_request.path->reset();
+                    path_request.path->clear();
                 } else {
                     for ( unsigned long i = 0; i < path_update_length; i++ ) {
-                        path_request.path->popFirst( &abs_new_goal );
+                        new_goal = path_request.path->front();
+                        path_request.path->pop_front();
                     }
 
-                    MapInterface::offsetToMapXY( abs_new_goal, &new_goal);
+                    abs_new_goal = MapInterface::mapXYtoOffset(new_goal);
                     path_request.goal = new_goal;
                 }
 
@@ -257,10 +258,11 @@ void PathGenerator::pathingFsmCachePath( void )
                 working_goal  = path_request.goal;
 
                 for ( unsigned long i = 0; i < path_splice_length; i++ ) {
-                    path_request.path->popFirst( &abs_new_goal );
+                    new_goal = path_request.path->front();
+                    path_request.path->pop_front();
                 }
 
-                MapInterface::offsetToMapXY( abs_new_goal, &new_goal);
+                abs_new_goal = MapInterface::mapXYtoOffset(new_goal);
                 path_request.goal = new_goal;
 
                 pathing_fsm_state = _pathing_fsm_state_generate_path_part_a;
@@ -287,10 +289,11 @@ void PathGenerator::pathingFsmCachePath( void )
                 iXY new_goal;
 
                 for ( unsigned long i = 0; i < path_splice_length; i++ ) {
-                    path_request.path->popLast( &abs_new_goal );
+                    new_goal = path_request.path->back();
+                    path_request.path->pop_back();
                 }
 
-                MapInterface::offsetToMapXY( abs_new_goal, &new_goal);
+                abs_new_goal = MapInterface::mapXYtoOffset(new_goal);
                 path_request.goal = new_goal;
                 path_request.start = working_goal;
 

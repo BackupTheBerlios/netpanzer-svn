@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapInterface.hpp"
 #include "UnitID.hpp"
 #include "UnitBlackBoard.hpp"
-#include "PathList.hpp"
+#include "Path.hpp"
 
 enum { _path_request_full, _path_request_update };
 enum { _slot_status_free, _slot_status_busy, _slot_status_wait, _slot_status_flush };
@@ -41,13 +41,13 @@ public:
     UnitID         unit_id;
     iXY       start;
     iXY       goal;
-    PathList      *path;
+    Path*     path;
 
     void set( UnitID &unit_id,
                   iXY &start,
                   iXY &goal,
                   unsigned short path_type,
-                  PathList *path,
+                  Path* path,
                   unsigned short request_type )
     {
         PathRequest::unit_id = unit_id;
@@ -137,7 +137,7 @@ protected:
 
     PathRequest *path_request_ptr;
     unsigned short path_merge_type;
-
+    
     void initializePath( iXY &start, iXY &goal, unsigned short path_type );
 
     long heuristic( iXY &pointA, iXY &pointB );
@@ -145,7 +145,7 @@ protected:
     unsigned char generateSucc( unsigned short direction, AstarNode *node,
                                 AstarNode *succ );
 
-    bool process_succ( PathList *path, int *result_code );
+    bool process_succ(Path* path, int *result_code );
     
 public:
     Astar();

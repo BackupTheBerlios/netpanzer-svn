@@ -37,7 +37,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 enum{ _rotate_and_move, _rotate_stop_move };
 
 Vehicle::Vehicle(iXY initial_loc)
-    : path(1000)
 {
     smolderWait    = 0.0f;
     smolderWaitMin = 0.0f;
@@ -779,17 +778,16 @@ void Vehicle::aiFsmMoveToLoc( void )
             // *************************************************************
 
         case _aiFsmMoveToLoc_next_move : {
-
-                // CurrentPathComplete: is Unit at the end of the current path
-                aiFsmMoveToLoc_path_not_finished = path.popFirst( &aiFsmMoveToLoc_next_square );
-                MapInterface::offsetToMapXY( aiFsmMoveToLoc_next_square, &aiFsmMoveToLoc_next_loc );
-
-
-                if ( !aiFsmMoveToLoc_path_not_finished ) {
+                // CurrentPathComplete: is Unit at the end of the current path?
+                if ( path.empty() ) {
                     // Rule: CurrentPathComplete is true
                     // Action : check if unit is at the goal
                     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_check_goal;
                 } else {
+                    aiFsmMoveToLoc_next_loc = path.front();
+                    aiFsmMoveToLoc_next_square =
+                        MapInterface::mapXYtoOffset(aiFsmMoveToLoc_next_loc);
+                    path.pop_front();
                     // Rule: CurrentPathComplete is false
                     // Action: Check if next location is empty
                     aiFsmMoveToLoc_prev_loc = unit_state.location;
@@ -1054,15 +1052,16 @@ void Vehicle::aiFsmAttackUnit( void )
             // *************************************************************
 
         case _aiFsmAttackUnit_next_move : {
-                // CurrentPathComplete: is Unit at the end of the current path
-                aiFsmAttackUnit_path_not_finished = path.popFirst( &aiFsmAttackUnit_next_square );
-                MapInterface::offsetToMapXY( aiFsmAttackUnit_next_square, &aiFsmAttackUnit_next_loc );
-
-                if ( !aiFsmAttackUnit_path_not_finished ) {
+                if (path.empty()) {
                     // Rule: CurrentPathComplete is true
                     // Action : check if unit is at the goal
                     aiFsmAttackUnit_state = _aiFsmAttackUnit_range_check;
                 } else {
+                    aiFsmAttackUnit_next_loc = path.front();
+                    path.pop_front();
+                    aiFsmAttackUnit_next_square =
+                        MapInterface::mapXYtoOffset(aiFsmAttackUnit_next_loc);
+
                     // Rule: CurrentPathComplete is false
                     // Action: Check if next location is empty
                     aiFsmAttackUnit_prev_loc = unit_state.location;
@@ -1325,7 +1324,8 @@ void Vehicle::aiFsmManualMove( void )
                 orientationToOffset( aiFsmManualMove_move_orientation, &offset_x, &offset_y );
                 aiFsmManualMove_next_loc.x += offset_x;
                 aiFsmManualMove_next_loc.y += offset_y;
-                MapInterface::mapXYtoOffset(aiFsmManualMove_next_loc, &next_square);
+                next_square =
+                    MapInterface::mapXYtoOffset(aiFsmManualMove_next_loc);
 
                 if ( MapInterface::getMovementValue( aiFsmManualMove_next_loc ) == 0xFF ) {
                     setAiFsmDefendHold();

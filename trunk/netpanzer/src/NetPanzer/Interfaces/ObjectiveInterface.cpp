@@ -82,7 +82,7 @@ void ObjectiveInterface::loadObjectiveList( const char *file_path )
                 throw Exception("file too short");
             in >> dummy >> loc_x >> loc_y;
             if(!in.good())
-                throw Exception("file too short");
+                throw Exception("file too short (at %s)", name.c_str());
             
             MapInterface::mapXYtoPointXY( loc_x, loc_y, &world_x, &world_y );
 
@@ -94,7 +94,7 @@ void ObjectiveInterface::loadObjectiveList( const char *file_path )
             objective_list.push_back(objective_obj);
         } // ** for
     } catch(std::exception& e) {
-        throw Exception("Error while reading outpost definion '%s': %s",
+        throw Exception("Error while reading outpost definition '%s': %s",
                 file_path, e.what());
     }
 }

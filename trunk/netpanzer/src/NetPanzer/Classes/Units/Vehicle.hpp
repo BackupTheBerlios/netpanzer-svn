@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitBase.hpp"
 #include "ArrayUtil/Timer.hpp"
 #include "UnitMessageTypes.hpp"
-#include "PathList.hpp"
+#include "Path.hpp"
 #include "UnitOpcodes.hpp"
 
 #include "Sprite.hpp"
@@ -84,7 +84,7 @@ protected:
     Timer fsm_timer;
     bool fsm_active_list[ 7 ];
 
-    PathList path;
+    Path path;
     bool path_generated;
     bool critical_ai_section;
     bool ai_fsm_transition_complete;

@@ -118,7 +118,8 @@ void DedicatedGameManager::inputLoop()
                     << gameconfig->serverport << "\n"
                     << "Map: " << gameconfig-> map << "\n"
                     << "ID Player    Ki  Lo  P\n";
-                for(size_t i = 0; i<PlayerInterface::getMaxPlayers(); ++i) {
+                size_t playercount = PlayerInterface::countPlayers();
+                for(size_t i = 0; i<playercount; ++i) {
                     PlayerState* playerstate =
                         PlayerInterface::getPlayerState(i);
                     *Console::server

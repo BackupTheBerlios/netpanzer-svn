@@ -30,6 +30,8 @@ protected:
             return traits_type::eof();
         
         size_t bytesread = file->_read(buf, 1, sizeof(buf));
+        if(bytesread == 0)
+            return traits_type::eof();
         setg(buf, buf, buf + bytesread);
 
         return buf[0];

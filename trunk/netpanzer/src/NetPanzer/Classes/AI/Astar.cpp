@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <functional>
+#include "Path.hpp"
 #include "Astar.hpp"
 #include "ArrayUtil/Timer.hpp"
 #include "PathingState.hpp"
@@ -174,7 +175,7 @@ size_t Astar::mapXYtoAbsloc(iXY map_loc)
        )
         return( 0xFFFFFFFF );
 
-    MapInterface::mapXYtoOffset( map_loc.x, map_loc.y, &abs );
+    abs = MapInterface::mapXYtoOffset( map_loc.x, map_loc.y);
 
     return abs;
 }
@@ -278,11 +279,10 @@ bool Astar::generatePath( PathRequest *path_request,
     return ( process_succ( path_request->path, result_code ) );
 }
 
-bool Astar::process_succ( PathList *path, int *result_code )
+bool Astar::process_succ(Path* path, int *result_code )
 {
     AstarNode *node;
     AstarNode temp_node;
-    unsigned long temp;
     bool done = false;
     unsigned short succ_loop;
     bool goal_reachable = true;
@@ -389,26 +389,16 @@ bool Astar::process_succ( PathList *path, int *result_code )
 
         node = best_node;
         while ( (node != 0) && (insert_successful == true) ) {
-
-            if ( path_merge_type == _path_merge_front ) {
-                insert_successful = path->pushFirst( node->abs_loc );
-            } else {
-                insert_successful = path->pushLast( node->abs_loc );
-            }
+            path->push_back( node->map_loc );
 
             node = node->parent;
             path_length++;
 
         }
 
-        if ( insert_successful == false ) {
-            path->reset();
-        } else {
-            if ( path_merge_type == _path_merge_front ) {
-                path->popFirst( &temp );
-            } else {
-                path->popLast( &temp );
-            }
+        path->pop_back();
+        if ( path_merge_type == _path_merge_front ) {
+            std::reverse(path->begin(), path->end());
         }
 
         cleanUp();

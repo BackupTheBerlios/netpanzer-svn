@@ -4,6 +4,7 @@
  datastructures
 -fixed some bugs in IOFileStream classes (no sync when destructing)
 -added new INIFile parser to replace the xml code/congigfiles
+-cleaned up pathfinding code a bit in preparation for further experiments
 
 18-Mar-2004 by Matthias Braun
 -integrated masterserver support into the dedicated server

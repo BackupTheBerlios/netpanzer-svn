@@ -126,14 +126,14 @@ public:
         map_loc->y = (unsigned short )  point.y  / 32;
     }
 
-    static void mapXYtoOffset(size_t map_x, size_t map_y, size_t *offset )
+    static size_t mapXYtoOffset(size_t map_x, size_t map_y)
     {
-        *offset = map_y * main_map.getWidth() + map_x;
+        return map_y * main_map.getWidth() + map_x;
     }
 
-    static void mapXYtoOffset( iXY &map_loc, size_t *offset )
+    static size_t mapXYtoOffset(iXY &map_loc)
     {
-        *offset = map_loc.y * main_map.getWidth() + map_loc.x;
+        return map_loc.y * main_map.getWidth() + map_loc.x;
     }
 
     static void markLocHack( const iXY &loc )
