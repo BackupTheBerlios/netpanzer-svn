@@ -19,12 +19,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __IRCLobby_h__
 
 #include <string>
+#include <vector>
 
 #include <SDL.h>
 #include <SDL_thread.h>
 #include <SDL_net.h>
 
 #include "Channel.hpp"
+#include "Callback.hpp"
 
 namespace IRC
 {
@@ -35,11 +37,14 @@ public:
     Connection(const std::string& servername, const std::string& nickname);
     virtual ~Connection();
 
+    void setCallback(Callback* callback);
+
     void setNickName(const std::string& newnick);
     const std::string& getNickName()
     { return nickname; }
 
     Channel* joinChannel(const std::string& channelname);
+    Channel* findChannel(const std::string& channelname);
     
 private:
     friend class Channel;
@@ -56,6 +61,10 @@ private:
     void send(const std::string& text);
     void read(std::string& buffer);
 
+    void parseResponse(const std::string& buffer);
+
+    Client* getCreateClient(const std::string& name);
+
     TCPsocket irc_server_socket;
 
     std::string nickname;
@@ -63,6 +72,11 @@ private:
     int server_port;
     
     SDL_Thread *running_thread;
+
+    std::vector<Channel*> channels;
+    std::vector<Client*> clients;
+
+    Callback* callback;
 };
 
 } // end of namespace IRC

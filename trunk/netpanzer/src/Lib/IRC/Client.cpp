@@ -15,43 +15,20 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef __IRC_CHANNEL_HPP__
-#define __IRC_CHANNEL_HPP__
+#include <config.h>
 
-#include <vector>
-#include <string>
+#include "Client.hpp"
 
 namespace IRC
 {
 
-class Client;
-class ChannelCallback;
-
-class Channel
+Client::Client(const std::string& newname)
+    : name(newname)
 {
-public:
-    ~Channel();
-    
-    const std::string& getName()
-    { return name; }
+}
 
-    void send(const std::string& message);
-
-    void setCallback(ChannelCallback* newcallback)
-    { callback = newcallback; }
-
-private:
-    friend class Connection;
-    Channel(Connection* newconnection, const std::string& newname);
-
-    Connection* connection;
-    std::string name;
-    std::vector<Client*> people;
-
-    ChannelCallback* callback;
-};
+Client::~Client()
+{
+}
 
 } // end of namespace IRC
-
-#endif
-
