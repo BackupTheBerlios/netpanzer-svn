@@ -42,6 +42,7 @@ IRCLobbyView::IRCLobbyView()
     setAllowResize(false);
     setAllowMove(false);
     setVisible(false);
+    topViewableItem=0;
 
     moveTo(iXY(bodyTextRect.max.x-400, bodyTextRect.min.y + 200));
 
@@ -54,6 +55,23 @@ IRCLobbyView::IRCLobbyView()
     szChat.init("  ", 34);
     cInputField* input = addInputField(iXY(4, chat_y), &szChat, "", true);
     input->setReturnAction(chatReturnPressed);
+
+    server_list_end_y=lobby_view_height-(Surface::getFontHeight()*6);
+    chat_list_end_y=server_list_end_y+(Surface::getFontHeight()*4);      
+    server_list_end_x=(getClientRect().getSizeX()-12);
+
+    iXY size(12, 12);
+
+    iXY pos(getClientRect().getSizeX() - size.x, 0);
+    upButton.setLabel("-");
+    upButton.setBounds(iRect(pos, pos + size));
+    add(&upButton);
+
+    pos = iXY(getClientRect().getSizeX() - size.x, server_list_end_y-size.y);
+    downButton.setLabel("+");
+    downButton.setBounds(iRect(pos, pos + size));
+    add(&downButton);
+
 
     // XXX ugly ugly ugly
     if(!lobby_view)
@@ -71,10 +89,7 @@ void IRCLobbyView::doDraw(Surface &viewArea, Surface &clientArea)
     
     int y=0;
     int disp_server_upto=0;
-    int server_list_end_y=lobby_view_height-(Surface::getFontHeight()*6);
-    int chat_list_end_y=server_list_end_y+(Surface::getFontHeight()*4);      
 
-// XXX todo: scrollbar for large list of servers
     if(lobby_connection == 0 || !lobby_connection->isConnected()) {
         clientArea.bltString(iXY(0,0),"Not connected to lobby", Color::white);
         View::doDraw(viewArea, clientArea);
@@ -86,12 +101,17 @@ void IRCLobbyView::doDraw(Surface &viewArea, Surface &clientArea)
         GameServerList::iterator i;
         GameServerList* serverlist = lobby_connection->game_servers;
         disp_server_upto=0;
+        int upto=0;
         for(i=serverlist->begin(); i!=serverlist->end(); i++) {
+            if(upto>=topViewableItem) { break; }
+            upto++;
+        }
+        for(; i!=serverlist->end(); i++) {
             const GameServer* server = &(*i);
 
             std::stringstream playerstr;
             playerstr << server->playercount << "/" << server->max_players;
-            
+         
             clientArea.bltString(iXY(0,y),server->user.c_str(), Color::white);
             clientArea.bltString(iXY(140,y),playerstr.str().c_str(), Color::white);
             clientArea.bltString(iXY(200,y),server->map.c_str(), Color::white);
@@ -125,19 +145,45 @@ void IRCLobbyView::doDraw(Surface &viewArea, Surface &clientArea)
 int IRCLobbyView::lMouseUp(const iXY &down_pos,const iXY &up_pos)
 {
     assert(this!=0);
-    int idx_down=down_pos.y/Surface::getFontHeight();
-    int idx=up_pos.y/Surface::getFontHeight();
-    if(idx>=0 && idx_down==idx && idx<total_displayed_servers) {
-        const GameServer *server=displayed_servers[idx];
-        assert(server!=0);
+    int fontHeight=Surface::getFontHeight();
+    int down_y=(down_pos.y-2);
+    int up_y=(up_pos.y-2);
+    if(up_pos.y<0 || down_pos.y<0) { return View::lMouseUp(down_pos,up_pos); }
+    int idx_down=down_y/fontHeight;
+    int idx=up_y/fontHeight;
 
-        // connect to this game
-        std::stringstream server_host;
-        server_host << server->host.c_str() <<":"<<server->port;
-        IPAddressView::szServer.setString(server_host.str().c_str());
+    if(up_pos.x<server_list_end_x && down_pos.x<server_list_end_x) {
+        if(idx_down==idx && idx<total_displayed_servers) {
+            const GameServer *server=displayed_servers[idx];
+            assert(server!=0);
+
+            // connect to this game
+            std::stringstream server_host;
+            server_host << server->host.c_str() <<":"<<server->port;
+            IPAddressView::szServer.setString(server_host.str().c_str());
+        }
     }
     return View::lMouseUp(down_pos,up_pos);
 }
+
+
+void IRCLobbyView::actionPerformed(mMouseEvent me)
+{
+    if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED) {
+        if (me.getSource(upButton)) {
+            if (--topViewableItem < 0) {
+                topViewableItem = 0;
+            }
+        } else if (me.getSource(downButton)) {
+            int max_size=lobby_connection->game_servers->size()-1;
+            ++topViewableItem;
+            if (max_size>0 && topViewableItem >= max_size) {
+                topViewableItem = max_size;
+            }
+        }
+    }
+}
+
 
 void IRCLobbyView::buttonRefresh()
 {

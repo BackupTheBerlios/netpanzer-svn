@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "View.hpp"
 #include "Surface.hpp"
 #include "GameServer.hpp"
+#include "Button.hpp"
 
 //---------------------------------------------------------------------------
 class IRCLobbyView : public View
@@ -36,11 +37,16 @@ public:
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea); 
     virtual int lMouseUp(const iXY &up_pos,const iXY &down_pos);
+    virtual void actionPerformed(mMouseEvent me);
 
 private:
     static void buttonRefresh();
     static void chatReturnPressed(cInputField* input);
     
+    int server_list_end_y;
+    int server_list_end_x;
+    int chat_list_end_y;
+    int topViewableItem;
     int lobby_view_height;
     const GameServer *displayed_servers[64];
     int total_displayed_servers;
@@ -48,9 +54,11 @@ private:
     std::string error_message;
     cInputFieldString szChat;
     IRCLobby *lobby_connection;
+
+    Button upButton;
+    Button downButton;
 };
 
 extern IRCLobbyView* lobby_view;
 
 #endif
-
