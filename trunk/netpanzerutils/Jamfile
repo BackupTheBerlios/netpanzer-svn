@@ -1,4 +1,0 @@
-SubDir TOP ;
-
-# Decend into subdirs
-SubInclude TOP src ;

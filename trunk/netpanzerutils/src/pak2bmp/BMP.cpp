@@ -65,7 +65,7 @@ __attribute__((packed));
 
 void BMPSaver::save(const std::string& filename, Surface* surface, Palette& pal)
 {
-  std::auto_ptr<WriteFile> file(FileSystem::openWrite(filename.c_str()));
+  std::auto_ptr<WriteFile> file(FileSystem::openWrite(filename));
 
   BitmapFileHeader file_header;
   BitmapInfoHeader info_header;

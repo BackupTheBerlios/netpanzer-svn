@@ -19,11 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <memory>
 
-#include "Surface.hpp"
-#include "Exception.hpp"
-#include "FileSystem.hpp"
+#include "2D/Surface.hpp"
+#include "Util/Exception.hpp"
+#include "Util/FileSystem.hpp"
 #include "Tile.hpp"
-#include "iXY.hpp"
+#include "Types/iXY.hpp"
 
 // A ".til" file.
 class FletchTileHeader

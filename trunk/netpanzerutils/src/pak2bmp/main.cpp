@@ -18,13 +18,30 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <exception>
+#include <sstream>
 #include <SDL.h>
 #include "optionmm/option.hpp"
 #include "2D/Surface.hpp"
-#include "Tile.hpp"
+#include "2D/PackedSurface.hpp"
 #include "BMP.hpp"
 #include "optionmm/command_line.hpp"
 #include "Util/FileSystem.hpp"
+
+std::string extractName(const std::string& imagefile)
+{
+    size_t lastslash = 0;
+    size_t firstdot = imagefile.size();
+    for(size_t pos = 0; pos < imagefile.size()-1; ++pos) {
+        if(imagefile[pos] == '/') {
+            lastslash = pos+1;
+            firstdot = imagefile.size();
+        }
+        if(imagefile[pos] == '.')
+            firstdot = pos;
+    }
+                                                                                
+    return imagefile.substr(lastslash, firstdot - lastslash);
+}
 
 int realmain(int argc, char** argv)
 {
@@ -32,7 +49,7 @@ int realmain(int argc, char** argv)
 
     try {
         SDL_Init(0);
-        FileSystem::initialize(argv[0], "til2bmp", "til2bmp");
+        FileSystem::initialize(argv[0], "pak2bmp", "pak2bmp");
 
         command_line commandline(PACKAGE_NAME, PACKAGE_VERSION,
                 "Copyright(c) 2003 Matthias Braun", "", argc, argv);
@@ -40,9 +57,6 @@ int realmain(int argc, char** argv)
         option<std::string, true, false> inputfile_option('i', "input",
                 "input file", "");
         commandline.add(&inputfile_option);
-        option<std::string, true, false> output_option('o', "output",
-                "output file", "");
-        commandline.add(&output_option);
         option<std::string, true, false> pal_option('p', "palette",
                 "palette file", "");
         commandline.add(&pal_option);
@@ -51,14 +65,29 @@ int realmain(int argc, char** argv)
                 commandline.version())
             exit(0);
 
-        if(inputfile_option.value() == "" || output_option.value() == "")
+        if(inputfile_option.value() == "")
             exit(0);
 
-        Surface* surface = TileLoader::load(inputfile_option.value());
+        PackedSurface* paksurface = new PackedSurface();
+        paksurface->load(inputfile_option.value().c_str());
         Palette::init(pal_option.value().c_str());
-        
+        Surface* surface = new Surface(paksurface->getPix(),
+                paksurface->getPixX(), 1);
+
         Palette pal;
-        BMPSaver::save(output_option.value(), surface, pal); 
+      
+        for(int i=0; i<paksurface->getFrameCount(); ++i) {
+            paksurface->setFrame(i);
+            paksurface->blt(*surface, 0, 0);
+            std::stringstream filenamestr;
+            filenamestr << extractName(inputfile_option.value())
+                << "-" << i << ".bmp";
+            std::cout << "Writing: " << filenamestr.str() << std::endl;
+            BMPSaver::save(filenamestr.str(), surface, pal);
+        }
+
+        delete paksurface;
+        delete surface;
         
         SDL_Quit();
     } catch(std::exception& e) {
