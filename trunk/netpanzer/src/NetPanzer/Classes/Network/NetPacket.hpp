@@ -89,7 +89,7 @@ public:
 
     size_t realSize()
     {
-        return( sizeof( MultiMessage ) - _MULTI_PACKET_LIMIT + message_size );
+        return( sizeof( MultiMessage ) - _MULTI_PACKET_LIMIT + getSize() );
     }
 
     void setSize(uint16_t newsize)
