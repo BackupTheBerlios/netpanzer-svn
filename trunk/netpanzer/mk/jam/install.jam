@@ -14,7 +14,7 @@ FILEMODE = 0644 ;
 ##    need to call it manually.
 rule InstallApplication
 {
-  local dir = [ FDirName $(bindir) $(2) ] ;
+  local dir = [ FDirName $(DESTDIR)$(bindir) $(2) ] ;
   local target = $(<:R=$(dir):G=install) ;
 
   CheckOptions console : $(3) : $(<) ;
@@ -30,7 +30,7 @@ rule InstallApplication
 ##    need to call it manually.
 rule InstallLibrary
 {
-  local dir = [ FDirName $(libdir) $(2) ] ;
+  local dir = [ FDirName $(DESTDIR)$(libdir) $(2) ] ;
   local target = $(<:R=$(dir):G=install) ;
   
   Install $(target) : $(<) ;
@@ -43,7 +43,7 @@ rule InstallLibrary
 ##    relative to the includedir can be specified.
 rule InstallHeader
 {
-  local dir = [ FDirName $(includedir) $(2) ] ;
+  local dir = [ FDirName $(DESTDIR)$(includedir) $(2) ] ;
   local target = $(<:R=$(dir):G=install) ;
     
   Install $(target) : $(<) ;
@@ -56,7 +56,7 @@ rule InstallHeader
 ##    relative to the bindir can be specified.
 rule InstallShellScript
 {
-  local dir = [ FDirName $(bindir) $(2) ] ;
+  local dir = [ FDirName $(DESTDIR)$(bindir) $(2) ] ;
   local target = $(<:R=$(dir):G=install) ;
   
   Install $(target) : $(<) ;
@@ -69,7 +69,7 @@ rule InstallShellScript
 ##    to the datadir can be specified.
 rule InstallData
 {
-  local dir = [ FDirName $(datadir) $(2) ] ;
+  local dir = [ FDirName $(DESTDIR)$(datadir) $(2) ] ;
 
   local target i ;
   for i in $(<) {
@@ -93,23 +93,23 @@ rule InstallMan
     switch $(i)
     {
       case *.1 :
-        dir = [ FDirName $(mandir) man1 ] ;
+        dir = [ FDirName $(DESTDIR)$(mandir) man1 ] ;
       case *.2 :
-        dir = [ FDirName $(mandir) man2 ] ;
+        dir = [ FDirName $(DESTDIR)$(mandir) man2 ] ;
       case *.3 :
-        dir = [ FDirName $(mandir) man3 ] ;
+        dir = [ FDirName $(DESTDIR)$(mandir) man3 ] ;
       case *.4 :
-        dir = [ FDirName $(mandir) man4 ] ;
+        dir = [ FDirName $(DESTDIR)$(mandir) man4 ] ;
       case *.5 :
-        dir = [ FDirName $(mandir) man5 ] ;
+        dir = [ FDirName $(DESTDIR)$(mandir) man5 ] ;
       case *.6 :
-        dir = [ FDirName $(mandir) man6 ] ;
+        dir = [ FDirName $(DESTDIR)$(mandir) man6 ] ;
       case *.7 :
-        dir = [ FDirName $(mandir) man7 ] ;
+        dir = [ FDirName $(DESTDIR)$(mandir) man7 ] ;
       case *.8 :
-        dir = [ FDirName $(mandir) man8 ] ;
+        dir = [ FDirName $(DESTDIR)$(mandir) man8 ] ;
       case *.9 :
-        dir = [ FDirName $(mandir) man9 ] ;
+        dir = [ FDirName $(DESTDIR)$(mandir) man9 ] ;
       case * :
         echo "WARNING: manfile has no *.[0-9] ending." ;
     }
@@ -159,3 +159,4 @@ actions CopyDirs
 {
   cp -R "$(>)" "$(<)"
 }
+

@@ -1,3 +1,6 @@
+11-Jan-2003 by Matthias Braun
+-implement possibility to set DESTDIR for installation
+
 10-Jan-2003 by Matthias Braun
 -implemented tiletemplate view in editor
 -fixed several bugs and problems in the editor
