@@ -92,6 +92,9 @@ BaseGameManager *initialise(int argc, char** argv)
     signal(SIGTRAP, signalhandler);
     signal(SIGSYS, signalhandler);
 #endif
+#if !defined(WIN32)
+    signal(SIGPIPE, SIG_IGN);
+#endif
         
     // Parse commandline
     using namespace optionmm;
