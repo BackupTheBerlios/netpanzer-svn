@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __UI_Font_Manager_hpp__
 #define __UI_Font_Manager_hpp__
 
-#include <SDL/SDL_ttf.h>
+#include <SDL_ttf.h>
 
 #include <string>
 #include <map>

@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __UI_Mouse_EventParameter_hpp__
 #define __UI_Mouse_EventParameter_hpp__
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include "Types/iXY.hpp"
 #include "EventParameter.hpp"
 
