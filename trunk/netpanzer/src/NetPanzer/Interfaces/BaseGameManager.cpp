@@ -141,6 +141,9 @@ void BaseGameManager::loadGameData()
     if(UNIT_FLAGS_SURFACE.getFrameCount() == 0) {
         throw Exception("Couldn't find any flag in pics/flags/.");
     }
+    if(gameconfig->playerflag<0) {
+        gameconfig->playerflag=rand()%UNIT_FLAGS_SURFACE.getFrameCount();
+    }
 }
 //-----------------------------------------------------------------
 void BaseGameManager::initializeNetworkSubSystem()
