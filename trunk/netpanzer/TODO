@@ -1,7 +1,5 @@
 Next release:
 -win32 somtimes crashs in lobby window
--with 75% objective setting you can win the Cramped with 2 outposts already
- (which is only be 66% of all outposts)
 -after having a full nodelist in A* the server is getting slow
 -when starting to build a titan 2minutes is displayed for a short time
 -display a message when the round is over ("blabla captured xx% of outposts,

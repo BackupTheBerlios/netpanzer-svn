@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerInterface.hpp"
 #include "NetworkState.hpp"
 #include "ScreenSurface.hpp"
+#include "ObjectiveInterface.hpp"
 
 static int getPlayerFrags()
 {
@@ -34,6 +35,12 @@ static int getPlayerFrags()
 
     player_state = PlayerInterface::getLocalPlayerState();
     return( (int) player_state->getTotal() );
+}
+
+static int getPlayerObjectives()
+{
+    PlayerState* player_state = PlayerInterface::getLocalPlayerState();
+    return player_state->getObjectivesHeld();
 }
 
 static const char* getPlayerTime()
@@ -100,6 +107,9 @@ void GameInfoView::doDraw(Surface &viewArea, Surface &clientArea)
     char pingBuf[64];
     char gameBuf[64];
     char fpsBuf[64];
+    char objectiveBuf[64];
+
+    ObjectiveInterface::updatePlayerObjectiveCounts();
 
     iXY pos(2, 2);
 
@@ -108,7 +118,8 @@ void GameInfoView::doDraw(Surface &viewArea, Surface &clientArea)
     gameInfoRect = getClientRect();
     //gameInfoRect.max.x = 0;
 
-    sprintf(gameBuf, "game   %s", gameconfig->getGameTypeString() );
+    snprintf(gameBuf, sizeof(gameBuf), "game   %s",
+            gameconfig->getGameTypeString() );
     checkGameInfoRect(gameBuf);
 
 
@@ -117,11 +128,27 @@ void GameInfoView::doDraw(Surface &viewArea, Surface &clientArea)
     checkGameInfoRect(unitsBuf);
 
     if( gameconfig->gametype == _gametype_fraglimit ) {
-        sprintf(fragsBuf, "frags  %d/%d", getPlayerFrags(), (int) gameconfig->fraglimit);
+        snprintf(fragsBuf, sizeof(fragsBuf), "frags  %d/%d", getPlayerFrags(),
+                (int) gameconfig->fraglimit);
         checkGameInfoRect(fragsBuf);
     } else {
-        sprintf(fragsBuf, "frags  NA" );
+        snprintf(fragsBuf, sizeof(fragsBuf), "frags  %d", getPlayerFrags() );
         checkGameInfoRect(fragsBuf);
+    }
+
+    if(gameconfig->gametype == _gametype_objective) {
+        float percentage 
+            = (float) gameconfig->objectiveoccupationpercentage / 100.0;
+        int wincount = (int) (
+                ((float) ObjectiveInterface::getObjectiveCount()) * percentage
+                + 0.999);
+        if(wincount == 0)
+            wincount = 1;
+        snprintf(objectiveBuf, sizeof(objectiveBuf), "Objectives %d/%d",
+                getPlayerObjectives(), wincount);
+    } else {
+        snprintf(objectiveBuf, sizeof(objectiveBuf), "Objectives %d",
+                getPlayerObjectives());
     }
 
     /*
@@ -155,8 +182,10 @@ void GameInfoView::doDraw(Surface &viewArea, Surface &clientArea)
     pos.y += 12;
     clientArea.bltStringShadowed(pos, fragsBuf, Color::white, Color::black);
     pos.y += 12;
+    clientArea.bltStringShadowed(pos, objectiveBuf, Color::white, Color::black);
+    pos.y += 12;
     /*
-       clientArea.bltStringShadowed(pos, killsBuf, Color::white, Color::black);
+    clientArea.bltStringShadowed(pos, killsBuf, Color::white, Color::black);
     pos.y += 12;
     clientArea.bltStringShadowed(pos, lossesBuf, Color::white, Color::black);
     pos.y += 12;

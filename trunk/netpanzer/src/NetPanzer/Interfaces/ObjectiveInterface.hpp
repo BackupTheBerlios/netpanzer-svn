@@ -70,6 +70,11 @@ public:
 
     static OutpostStatus getOutpostStatus( short objective_id );
 
+    static size_t getObjectiveCount()
+    {
+        return objective_list.size();
+    }
+
     static void updatePlayerObjectiveCounts();
 
 protected:

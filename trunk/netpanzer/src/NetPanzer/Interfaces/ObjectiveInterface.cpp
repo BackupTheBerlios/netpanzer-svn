@@ -186,7 +186,7 @@ bool ObjectiveInterface::
 testRuleObjectiveOccupationRatio(unsigned short player_index, float precentage)
 {
     size_t occupation_ratio = (size_t)
-        roundf( ((float) objective_list.size()) * precentage );
+        ( ((float) objective_list.size()) * precentage  + 0.999);
 
     if (occupation_ratio == 0)
         occupation_ratio = 1;

@@ -484,7 +484,9 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
     if (MapSelectionView::curMap >= 0 && MapSelectionView::mapList.size() > 0) {
         int objectiveCount =
             MapSelectionView::mapList[MapSelectionView::curMap]->objectiveCount;
-        sprintf(strBuf, "%d%% - %d of %d", getObjectiveCapturePercent(), int(float(objectiveCount) * (float(getObjectiveCapturePercent()) / 100.0f)), objectiveCount);
+        sprintf(strBuf, "%d%% - %d of %d", getObjectiveCapturePercent(),
+                int(float(objectiveCount) * (float(getObjectiveCapturePercent()
+                            ) / 100.0f) + 0.999), objectiveCount);
     } else {
         sprintf(strBuf, "Map Data Needed");
     }
