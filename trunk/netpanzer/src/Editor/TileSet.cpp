@@ -143,10 +143,8 @@ void TileSet::readTemplates(const std::string& newdir)
     
     char** files = FileSystem::enumerateFiles(templatedir.c_str());
     for(char** file = files; *file != 0; file++) {
-        std::string filename = templatedir;
-        filename += *file;
-
-        // ...
+        TileTemplate* templ = new TileTemplate(this, *file);
+        templates.push_back(templ);
     }
 
     FileSystem::freeList(files);
@@ -163,7 +161,11 @@ void TileSet::save()
     if(tilesize * header->tilecount != 0)
         file->write(tiledata, tilesize, header->tilecount);
 
-    // TODO save templates
+    std::vector<TileTemplate*>::iterator i;
+    for(i = templates.begin(); i != templates.end(); i++) {
+        TileTemplate* templ = *i;
+        templ->save();
+    }
 }
 
 const std::string& TileSet::getDirectory() const

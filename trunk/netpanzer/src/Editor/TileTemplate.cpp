@@ -23,7 +23,7 @@ TileTemplate::TileTemplate(TileSet* newtileset, const std::string& newname)
     name = newname;
     
     std::string filename = tileset->getDirectory();
-    filename += "/";
+    filename += "/templates/";
     filename += name;
     
     std::auto_ptr<ReadFile> file (FileSystem::openRead(filename));
@@ -45,7 +45,12 @@ TileTemplate::TileTemplate(TileSet* newtileset, const std::string& newname)
 
 void TileTemplate::save()
 {
-    std::string filename = tileset->getDirectory();
+    std::string templatedir = tileset->getDirectory();
+    templatedir += "/templates";
+    if(!FileSystem::isDirectory(templatedir))
+        FileSystem::mkdir(templatedir);
+    
+    std::string filename = templatedir;
     filename += "/";
     filename += name;
     

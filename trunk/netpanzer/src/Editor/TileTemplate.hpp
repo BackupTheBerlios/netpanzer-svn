@@ -24,6 +24,11 @@ public:
 
     void save();
 
+    void setName(const std::string& newname)
+    { name = newname; }
+    const std::string& getName() const
+    { return name; }
+
     void setTile(size_t x, size_t y, size_t tilenum)
     { 
         assert(x < sizex);

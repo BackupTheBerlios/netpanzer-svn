@@ -157,12 +157,24 @@ public:
     { return openWrite(filename.c_str()); }
 
     static void mkdir(const char* dirname);
+    static void mkdir(const std::string& dirname)
+    { mkdir(dirname.c_str()); }
     static void remove(const char* filename);
+    static void remove(const std::string& filename)
+    { remove(filename.c_str()); }
 
     static bool exists(const char* filename);
+    static bool exists(const std::string& filename)
+    { return exists(filename.c_str()); }
     static bool isDirectory(const char* filename);
+    static bool isDirectory(const std::string& filename)
+    { return isDirectory(filename.c_str()); }
     static bool isSymbolicLink(const char* filename);
+    static bool isSymbolicLink(const std::string& filename)
+    { return isSymbolicLink(filename.c_str()); }
     static int64_t getLastModTime(const char* filename);
+    static int64_t getLastModTime(const std::string& filename)
+    { return getLastModTime(filename.c_str()); }
 };
 
 #endif

@@ -167,7 +167,7 @@ TileTemplate* TemplateSelectWidget::createTemplate(TileSet* tileset)
             tiletemplate->setTile(x, y, tile);
         }
     }
-
+            
     TileTemplate* result = tiletemplate.get();
     tileset->addTemplate(tiletemplate.release());
     return result;

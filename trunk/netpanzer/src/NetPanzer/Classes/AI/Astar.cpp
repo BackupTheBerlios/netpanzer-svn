@@ -417,10 +417,10 @@ bool Astar::process_succ( PathList *path, int *result_code )
             PathingState::astar_gen_time = total_pathing_time;
             PathingState::astar_gen_time_total += total_pathing_time;
             *result_code = _path_result_goal_unreachable;
-            return( true );
+            return true;
         }
 
-    return( false );
+    return false;
 }
 
 void Astar::cleanUp( void )

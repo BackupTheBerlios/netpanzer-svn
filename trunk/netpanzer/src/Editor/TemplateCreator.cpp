@@ -4,9 +4,10 @@
 #include <exception>
 #include <SDL_image.h>
 
+#include "Util/Exception.hpp"
 #include "TemplateCreator.hpp"
 #include "TemplateSelectWidget.hpp"
-#include "Util/Exception.hpp"
+#include "TileTemplate.hpp"
 
 TemplateCreator::TemplateCreator(wxWindow* parent,
         TileSet* newtileset, const std::string& filename)
@@ -50,8 +51,7 @@ void TemplateCreator::OnCreateTemplate(wxCommandEvent& )
     try {
         TileTemplate* tiletemplate = selectwidget->createTemplate(tileset);
 
-        (void) tiletemplate;
-        // XXX TODO
+        tiletemplate->setName((const char*) templatenamectrl->GetValue());
 
         Close();
     } catch(std::exception& e) {
