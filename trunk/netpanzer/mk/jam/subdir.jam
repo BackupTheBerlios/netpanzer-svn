@@ -3,9 +3,9 @@
 #	(until jampeople accept my patches :-/ )
 #============================================================================
 
-LOCATE_OBJECTS ?= $(top_builddir)/out/$(target) ;
+LOCATE_OBJECTS ?= $(top_builddir)/build/$(target) ;
 LOCATE_TARGETS ?= $(top_builddir) ;
-LOCATE_DOCS ?= $(top_builddir)/out ;
+LOCATE_DOCS ?= $(top_builddir)/build ;
 
 SUBDIRRULES += FixSubDirPath ;
 

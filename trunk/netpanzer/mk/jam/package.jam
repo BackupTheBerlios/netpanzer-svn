@@ -5,7 +5,7 @@
 PACKAGE_FILES = ;
 PACKAGE_FILE = $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.bz2 ;
 PACKAGE_DIR = $(PACKAGE_NAME)-$(PACKAGE_VERSION) ;
-LOCATE_DISTTEMP ?= $(top_builddir)/out/dist ;
+LOCATE_DISTTEMP ?= $(top_builddir)/build/dist ;
 
 ##  Package files
 ##    Add files to distribution package

@@ -21,24 +21,7 @@ if ! $(NO_DATA)
 UseAutoconf ;
 
 if ! $(NO_SRC) {
-    icondir ?= [ ConcatDirs $(datadir) pixmaps ] ;
-    applicationsdir ?= [ ConcatDirs $(datadir) applications ] ;
-
-    ##  InstallIcon files [ : subdir ]
-    ##    Installs an icon
-    rule InstallIcon
-    {
-        LOCATE on $(<:G=installicon) = $(SUBDIR) ;
-        Depends install_data : [ DoInstall $(<:G=installicon) : $(icondir) $(2) ] ;
-    }
-
-    rule InstallDesktop
-    {
-        LOCATE on $(<:G=installdesktop) = $(SUBDIR) ;
-        Depends install_data : [ DoInstall $(<:G=installdesktop) : $(applicationsdir) $(2) ] ;
-    }
-
-    InstallIcon netpanzer.png netpanzer.xpm ;
-    InstallDoc ChangeLog README TODO RELNOTES docs/tipofday.txt docs/serverhowto.html ;
+    InstallPixmap netpanzer.png netpanzer.xpm ;
     InstallDesktop netpanzer.desktop ;
+    InstallDoc ChangeLog README TODO RELNOTES docs/tipofday.txt docs/serverhowto.html ;
 }
