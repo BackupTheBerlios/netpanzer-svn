@@ -70,7 +70,7 @@ public:
         target_loc_x = target_loc_y = 0;
     }
 
-    void setMoveToLoc(iXY &goal)
+    void setMoveToLoc(const iXY& goal)
     {
         message_id = _umesg_ai_command;
         command = _command_move_to_loc;
@@ -101,7 +101,7 @@ public:
         manual_move_orientation = 0;
     }
 
-    void setManualFire(iXY &target)
+    void setManualFire(const iXY& target)
     {
         message_id = _umesg_ai_command;
         command = _command_manual_fire;
@@ -146,7 +146,7 @@ public:
         return ltoh16(owner_id);
     }
 
-    void setHitLocation(iXY point)
+    void setHitLocation(const iXY& point)
     {
         hit_location_x = htol32(point.x);
         hit_location_y = htol32(point.y);

@@ -44,30 +44,33 @@ protected:
     bool previous_manual_control_state;
     bool manual_fire_state;
 
+    /// timer that detects double keypressed (for centering selected unit group)
+    TimeStamp lastSelectTime;
+
     SelectionList selection_group_lists[10];
     SelectionList working_list;
     unsigned long current_selection_list_index;
     unsigned int current_selection_list_bits;
     SelectionList target_list;
 
-    void switchSelectionList( unsigned long new_list_index );
-    void setSelectionList( unsigned long new_list_index );
-    void cycleSelectedUnits( unsigned long new_list_index );
+    void switchSelectionList(unsigned long new_list_index);
+    void setSelectionList(unsigned long new_list_index);
+    void cycleSelectedUnits(unsigned long new_list_index);
 
-    unsigned char getCursorStatus( iXY &loc );
-    void setMouseCursor( unsigned char world_cursor_status );
+    unsigned char getCursorStatus(const iXY& loc);
+    void setMouseCursor(unsigned char world_cursor_status);
 
     void getManualControlStatus();
 
-    void sendManualMoveCommand( unsigned char orientation,
-                                bool start_stop );
-    void sendManualFireCommand( iXY &world_pos );
-    void sendMoveCommand( iXY &world_pos );
-    void sendAttackCommand( iXY &world_pos );
-    void sendAllianceRequest( iXY &world_pos, bool make_break );
+    void sendManualMoveCommand(unsigned char orientation,
+                                bool start_stop);
+    void sendManualFireCommand(const iXY &world_pos);
+    void sendMoveCommand(const iXY &world_pos);
+    void sendAttackCommand(const iXY &world_pos);
+    void sendAllianceRequest(const iXY &world_pos, bool make_break);
 
-    void evalLeftMButtonEvents( MouseEvent &event );
-    void evalRightMButtonEvents( MouseEvent &event );
+    void evalLeftMButtonEvents(const MouseEvent &event);
+    void evalRightMButtonEvents(const MouseEvent &event);
 
     void evaluateMouseEvents();
 
@@ -87,27 +90,30 @@ protected:
     void evaluateKeyboardEvents();
 
     void jumpLastAttackedUnit();
+    /** move camera to a position that shows the currently selected group of
+     * tank
+     */
+    void centerSelectedUnits();
 
-    bool getConsoleInputString( char *input_string );
+    bool getConsoleInputString(char *input_string);
 
     static short selected_objective_id;
 
 public:
-
     WorldInputCmdProcessor();
 
     void process();
 
     void inFocus();
 
-    void updateScrollStatus( const iXY &mouse_pos );
+    void updateScrollStatus(const iXY &mouse_pos);
 
     void draw();
 
     void closeSelectionBox();
 
-    static bool  isObjectiveSelected();
-    static char *   getSelectedObjectiveName();
+    static bool isObjectiveSelected();
+    static const char* getSelectedObjectiveName();
     static iXY getSelectedObjectiveWorldPos();            
 };
 

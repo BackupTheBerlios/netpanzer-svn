@@ -11,6 +11,8 @@ SubInclude TOP units ;
 SubInclude TOP wads ;
 SubInclude TOP fonts ;
 
+UseAutoconf ;
+
 appicondir ?= [ ConcatDirs $(datadir) pixmaps $(PACKAGE_NAME) ] ;
 
 ##  InstallIcon files [ : subdir ]

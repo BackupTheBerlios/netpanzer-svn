@@ -16,6 +16,9 @@ rule FixSubDirPath
 {
     LOCATE_SOURCE = [ ConcatDirs $(LOCATE_OBJECTS) $(SUBDIR_TOKENS) ] ;
     LOCATE_TARGET = [ ConcatDirs $(LOCATE_OBJECTS) $(SUBDIR_TOKENS) ] ;
+
+    # We need to package the Jamfile (a bit hacky here...)
+    Package Jamfile ;
 }
 
 # fix bug in Jambase where SubInclude in the middle of a jam file made it break

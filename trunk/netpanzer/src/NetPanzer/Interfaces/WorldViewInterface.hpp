@@ -29,70 +29,70 @@ protected:
 public:
     WorldViewInterface();
 
-    static inline void scroll_right( long scroll_increment )
+    static inline void scroll_right(long scroll_increment)
     {
         main_camera->scrollPlusX(scroll_increment);
     }
 
-    static inline void scroll_left( long scroll_increment )
+    static inline void scroll_left(long scroll_increment)
     {
         main_camera->scrollMinusX(scroll_increment);
     }
 
-    static inline void scroll_up( long scroll_increment )
+    static inline void scroll_up(long scroll_increment)
     {
         main_camera->scrollMinusY(scroll_increment);
     }
 
-    static inline void scroll_down( long scroll_increment )
+    static inline void scroll_down(long scroll_increment)
     {
         main_camera->scrollPlusY(scroll_increment);
     }
 
-    static inline void setCameraPosition( const iXY &world_loc )
+    static inline void setCameraPosition(const iXY &world_loc)
     {
-        main_camera->setCamera( world_loc );
+        main_camera->setCamera(world_loc);
     }
 
-    static inline void setCameraSize( unsigned long view_size_x, unsigned long view_size_y )
+    static inline void setCameraSize(unsigned long view_size_x, unsigned long view_size_y)
     {
         main_camera->setCameraSize( iXY( view_size_x, view_size_y ) );
     }
 
-    static inline void getViewWindow( iRect *view_win )
+    static inline void getViewWindow(iRect *view_win)
     {
         main_camera->getViewWindow( view_win );
     }
 
-    static inline void clientXYtoWorldXY( iRect &view_win,
-                                          iXY &client, iXY *world )
+    static inline void clientXYtoWorldXY(const iRect& view_win,
+                                          const iXY& client, iXY *world)
     {
         world->x = view_win.min.x + client.x;
         world->y = view_win.min.y + client.y;
     }
 
-    static inline void worldXYtoClientXY( iRect &view_win,
-                                          iXY &world, iXY *client )
+    static inline void worldXYtoClientXY(const iRect& view_win,
+                                          const iXY& world, iXY *client )
     {
         client->x = world.x - view_win.min.x;
         client->y = world.y - view_win.min.y;
     }
 
-    static inline iRect getViewWindow( void )
+    static inline iRect getViewWindow()
     {
         iRect view_win;
         main_camera->getViewWindow( &view_win );
         return( view_win );
     }
 
-    static inline iXY getViewWindowMin( void )
+    static inline iXY getViewWindowMin()
     {
         iRect view_win;
         main_camera->getViewWindow( &view_win );
         return( view_win.min );
     }
 
-    static inline long getCameraDistance( iXY &world_loc )
+    static inline long getCameraDistance(const iXY& world_loc)
     {
         return( main_camera->getCameraDistance( world_loc ) );
     }

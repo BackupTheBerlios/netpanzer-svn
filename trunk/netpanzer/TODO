@@ -1,5 +1,6 @@
 Next release:
 -after having a full nodelist in A* the server is getting slow
+    - no idea how to solve this, have to leave it open I guess...
 -make 1024x768 default resolution - ok
 -update server text (no knetpanzerbrowser anymore) - ok
 -server status command returns wrong player names (seems to happen after sudden
@@ -31,7 +32,7 @@ Next release:
 <fEnIo> query for worldpixmovement outside map (2518,6662)
 <fEnIo> An unexpected exception occured: Send error: Couldn't send all data.
 <fEnIo> Shutdown needed.
--if I can't solve the server hand, add a new thread that shuts the server down
+-if I can't solve the server hang, add a new thread that shuts the server down
  after a 5 minutes of hang or so...
 -include Christian Hausknechts patch from the mailing list
 

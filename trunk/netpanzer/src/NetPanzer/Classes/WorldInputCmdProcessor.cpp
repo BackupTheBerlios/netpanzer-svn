@@ -82,29 +82,32 @@ WorldInputCmdProcessor::WorldInputCmdProcessor()
     right_mouse_scroll = false;
 }
 
-void WorldInputCmdProcessor::switchSelectionList( unsigned long new_list_index )
+void
+WorldInputCmdProcessor::switchSelectionList(unsigned long new_list_index)
 {
     working_list.copyList( selection_group_lists[ new_list_index ] );
     working_list.select();
 }
 
-void WorldInputCmdProcessor::setSelectionList( unsigned long new_list_index )
+void WorldInputCmdProcessor::setSelectionList(unsigned long new_list_index)
 {
-    selection_group_lists[ new_list_index ].copyList( working_list );
+    selection_group_lists[new_list_index].copyList(working_list);
     working_list.select();
 }
 
-void WorldInputCmdProcessor::cycleSelectedUnits( unsigned long new_list_index )
+void
+WorldInputCmdProcessor::cycleSelectedUnits(unsigned long new_list_index)
 {
-    if ( current_selection_list_index != new_list_index ) {
-        working_list.copyList( selection_group_lists[ new_list_index ] );
+    if (current_selection_list_index != new_list_index) {
+        working_list.copyList(selection_group_lists[new_list_index]);
         current_selection_list_index = new_list_index;
     }
 
     working_list.cycleNextUnit();
 }
 
-void WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos )
+void
+WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos)
 {
     iXY screen_size;
     double time_slice;
@@ -115,7 +118,7 @@ void WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos )
     time_slice = TimerInterface::getTimeSlice();
     scroll_rate = gameconfig->scrollrate;
 
-    scroll_increment = (long) ( scroll_rate * time_slice );
+    scroll_increment = (long) (scroll_rate * time_slice);
 
     if(right_mouse_scroll) {
         int x,y;
@@ -164,7 +167,8 @@ void WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos )
 }
 
 
-unsigned char WorldInputCmdProcessor::getCursorStatus(iXY &loc)
+unsigned char
+WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
 {
     iXY map_loc;
     unsigned char unit_loc_status;
@@ -198,8 +202,8 @@ unsigned char WorldInputCmdProcessor::getCursorStatus(iXY &loc)
     return _cursor_regular;
 }
 
-void WorldInputCmdProcessor::
-setMouseCursor(unsigned char world_cursor_status)
+void
+WorldInputCmdProcessor::setMouseCursor(unsigned char world_cursor_status)
 {
     switch(world_cursor_status) {
         case _cursor_regular :
@@ -232,7 +236,8 @@ setMouseCursor(unsigned char world_cursor_status)
     }
 }
 
-void WorldInputCmdProcessor::getManualControlStatus()
+void
+WorldInputCmdProcessor::getManualControlStatus()
 {
     if ( KeyboardInterface::getKeyState( SDLK_LCTRL ) ||
             KeyboardInterface::getKeyState( SDLK_RCTRL )
@@ -243,7 +248,8 @@ void WorldInputCmdProcessor::getManualControlStatus()
     }
 }
 
-void WorldInputCmdProcessor::evaluateKeyCommands()
+void
+WorldInputCmdProcessor::evaluateKeyCommands()
 {
     if ( (KeyboardInterface::getKeyPressed( SDLK_o ) == true) ) {
         toggleDisplayOutpostNames();
@@ -288,7 +294,8 @@ void WorldInputCmdProcessor::evaluateKeyCommands()
     }
 }
 
-void WorldInputCmdProcessor::jumpLastAttackedUnit()
+void
+WorldInputCmdProcessor::jumpLastAttackedUnit()
 {
     const UnitInterface::Units& units = UnitInterface::getUnits();
     for(UnitInterface::Units::const_iterator i = units.begin();
@@ -304,14 +311,14 @@ void WorldInputCmdProcessor::jumpLastAttackedUnit()
     }
 }
 
-void WorldInputCmdProcessor::evaluateGroupingKeys()
+void
+WorldInputCmdProcessor::evaluateGroupingKeys()
 {
     bool alt_status = false;
     bool ctrl_status = false;
 
-    if( (KeyboardInterface::getKeyState( SDLK_LCTRL ) == true) ||
-            (KeyboardInterface::getKeyState( SDLK_RCTRL ) == true)
-      ) {
+    if( (KeyboardInterface::getKeyState(SDLK_LCTRL) == true) ||
+            (KeyboardInterface::getKeyState(SDLK_RCTRL) == true)) {
         ctrl_status = true;
     }
 
@@ -320,6 +327,7 @@ void WorldInputCmdProcessor::evaluateGroupingKeys()
       ) {
         alt_status = true;
     }
+    
     unsigned selected_bits=0;
     int released=0;
     for(int key_code=SDLK_0;  key_code<=SDLK_9; key_code++) {
@@ -332,6 +340,7 @@ void WorldInputCmdProcessor::evaluateGroupingKeys()
             released++;
         }
     }
+    
     if(released==0 && selected_bits>0 && selected_bits!=current_selection_list_bits) {
         // we've pressed down a number key
         if(ctrl_status != true && alt_status != true &&
@@ -359,12 +368,19 @@ void WorldInputCmdProcessor::evaluateGroupingKeys()
         }
         if(alt_status != true) {
             working_list.select();
+            if(ctrl_status != true) {
+                if(now() - lastSelectTime < .4) {
+                    centerSelectedUnits();
+                }
+                lastSelectTime = now();
+            }
         }
     }
     current_selection_list_bits=selected_bits;
 }
 
-void WorldInputCmdProcessor::keyboardInputModeCommand()
+void
+WorldInputCmdProcessor::keyboardInputModeCommand()
 {
     getManualControlStatus();
 
@@ -375,7 +391,8 @@ void WorldInputCmdProcessor::keyboardInputModeCommand()
     previous_manual_control_state = manual_control_state;
 }
 
-void WorldInputCmdProcessor::setKeyboardInputModeChatMesg()
+void
+WorldInputCmdProcessor::setKeyboardInputModeChatMesg()
 {
     ConsoleInterface::setInputStringStatus( true );
     ConsoleInterface::resetInputString( "Message All: " );
@@ -386,7 +403,8 @@ void WorldInputCmdProcessor::setKeyboardInputModeChatMesg()
     keyboard_input_mode = _keyboard_input_mode_chat_mesg;
 }
 
-void WorldInputCmdProcessor::keyboardInputModeChatMesg()
+void
+WorldInputCmdProcessor::keyboardInputModeChatMesg()
 {
     char chat_string[256];
     if (getConsoleInputString(chat_string)) {
@@ -397,7 +415,8 @@ void WorldInputCmdProcessor::keyboardInputModeChatMesg()
     }
 }
 
-void WorldInputCmdProcessor::setKeyboardInputModeAllieChatMesg()
+void
+WorldInputCmdProcessor::setKeyboardInputModeAllieChatMesg()
 {
     ConsoleInterface::setInputStringStatus( true );
     ConsoleInterface::resetInputString( "Message Allies : " );
@@ -408,7 +427,8 @@ void WorldInputCmdProcessor::setKeyboardInputModeAllieChatMesg()
     keyboard_input_mode = _keyboard_input_mode_allie_mesg;
 }
 
-void WorldInputCmdProcessor::keyboardInputModeAllieChatMesg()
+void
+WorldInputCmdProcessor::keyboardInputModeAllieChatMesg()
 {
     char chat_string[256];
     if ( getConsoleInputString( chat_string ) == true ) {
@@ -418,7 +438,8 @@ void WorldInputCmdProcessor::keyboardInputModeAllieChatMesg()
     }
 }
 
-void WorldInputCmdProcessor::evaluateKeyboardEvents()
+void
+WorldInputCmdProcessor::evaluateKeyboardEvents()
 {
     switch( keyboard_input_mode ) {
     case _keyboard_input_mode_command :
@@ -435,7 +456,8 @@ void WorldInputCmdProcessor::evaluateKeyboardEvents()
     }
 }
 
-bool WorldInputCmdProcessor::selectBoundBoxUnits()
+bool
+WorldInputCmdProcessor::selectBoundBoxUnits()
 {
     bool select_success;
     long x,y;
@@ -473,7 +495,8 @@ bool WorldInputCmdProcessor::selectBoundBoxUnits()
     }
 }
 
-void WorldInputCmdProcessor::evaluateMouseEvents()
+void
+WorldInputCmdProcessor::evaluateMouseEvents()
 {
     iXY world_pos;
     iXY mouse_pos;
@@ -500,7 +523,8 @@ void WorldInputCmdProcessor::evaluateMouseEvents()
     }
 }
 
-void WorldInputCmdProcessor::evalLeftMButtonEvents(MouseEvent &event)
+void
+WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
 {
     iXY world_pos;
     unsigned char click_status;
@@ -618,7 +642,8 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents(MouseEvent &event)
     }
 }
 
-void WorldInputCmdProcessor::evalRightMButtonEvents( MouseEvent &event )
+void
+WorldInputCmdProcessor::evalRightMButtonEvents(const MouseEvent& event)
 {
     if (event.event == MouseEvent::EVENT_DOWN ) {
         right_mouse_scroll=true;
@@ -635,7 +660,8 @@ void WorldInputCmdProcessor::evalRightMButtonEvents( MouseEvent &event )
     }
 }
 
-void WorldInputCmdProcessor::sendMoveCommand(iXY& world_pos)
+void
+WorldInputCmdProcessor::sendMoveCommand(const iXY& world_pos)
 {
     iXY map_pos;
     PlacementMatrix matrix;
@@ -678,7 +704,8 @@ void WorldInputCmdProcessor::sendMoveCommand(iXY& world_pos)
     sound->playSound("move");
 }
 
-void WorldInputCmdProcessor::sendAttackCommand(iXY &world_pos)
+void
+WorldInputCmdProcessor::sendAttackCommand(const iXY &world_pos)
 {
     TerminalUnitCmdRequest comm_mesg;
 
@@ -721,8 +748,9 @@ void WorldInputCmdProcessor::sendAttackCommand(iXY &world_pos)
     }
 }
 
-void WorldInputCmdProcessor::sendManualMoveCommand( unsigned char orientation,
-        bool start_stop )
+void
+WorldInputCmdProcessor::sendManualMoveCommand(unsigned char orientation,
+        bool start_stop)
 {
     TerminalUnitCmdRequest comm_mesg;
     size_t id_list_index;
@@ -755,7 +783,8 @@ void WorldInputCmdProcessor::sendManualMoveCommand( unsigned char orientation,
     }
 }
 
-void WorldInputCmdProcessor::sendManualFireCommand( iXY &world_pos )
+void
+WorldInputCmdProcessor::sendManualFireCommand(const iXY &world_pos)
 {
     TerminalUnitCmdRequest comm_mesg;
 
@@ -790,7 +819,8 @@ void WorldInputCmdProcessor::sendManualFireCommand( iXY &world_pos )
     } // ** if containsItems() > 0
 }
 
-void WorldInputCmdProcessor::sendAllianceRequest(iXY &world_pos, bool make_break)
+void
+WorldInputCmdProcessor::sendAllianceRequest(const iXY& world_pos, bool make_break)
 {
     UnitBase *target_ptr;
 
@@ -814,7 +844,8 @@ void WorldInputCmdProcessor::sendAllianceRequest(iXY &world_pos, bool make_break
     }
 }
 
-void WorldInputCmdProcessor::process()
+void
+WorldInputCmdProcessor::process()
 {
     evaluateKeyboardEvents();
     evaluateMouseEvents();
@@ -822,7 +853,8 @@ void WorldInputCmdProcessor::process()
     working_list.validateList();
 }
 
-bool WorldInputCmdProcessor::getConsoleInputString( char *input_string )
+bool
+WorldInputCmdProcessor::getConsoleInputString(char *input_string)
 {
     int key_char;
     while (KeyboardInterface::getChar(key_char)) {
@@ -835,7 +867,7 @@ bool WorldInputCmdProcessor::getConsoleInputString( char *input_string )
                     if (enter_key_hit_count == 2) {
 			KeyboardInterface::setTextMode(false);
                         ConsoleInterface::getInputString( input_string );
-                        return( true );
+                        return true;
                     }
                 }
             }
@@ -844,10 +876,11 @@ bool WorldInputCmdProcessor::getConsoleInputString( char *input_string )
         }
 
     }
-    return( false );
+    return false;
 }
 
-void WorldInputCmdProcessor::inFocus()
+void
+WorldInputCmdProcessor::inFocus()
 {
     iXY world_pos;
     iXY mouse_pos;
@@ -860,7 +893,8 @@ void WorldInputCmdProcessor::inFocus()
     selection_box_active = false;
 }
 
-void WorldInputCmdProcessor::draw()
+void
+WorldInputCmdProcessor::draw()
 {
     if (selection_box_active == true && box_press != box_release) {
         WorldViewInterface::getViewWindow(&world_win);
@@ -882,7 +916,8 @@ void WorldInputCmdProcessor::draw()
     }
 }
 
-void WorldInputCmdProcessor::closeSelectionBox()
+void
+WorldInputCmdProcessor::closeSelectionBox()
 {
     iXY world_pos;
     iXY mouse_pos;
@@ -899,30 +934,143 @@ void WorldInputCmdProcessor::closeSelectionBox()
     }
 }
 
-bool WorldInputCmdProcessor::isObjectiveSelected()
+bool
+WorldInputCmdProcessor::isObjectiveSelected()
 {
-    if (Desktop::getVisible("VehicleSelectionView") == true ) {
+    if (Desktop::getVisible("VehicleSelectionView") == true) {
         return true;
     }
                                                                                 
     return false;
 }
                                                                                 
-char*  WorldInputCmdProcessor::getSelectedObjectiveName()
+const char*
+WorldInputCmdProcessor::getSelectedObjectiveName()
 {
     ObjectiveState *objective_state;
                                                                                 
-    objective_state = ObjectiveInterface::getObjectiveState( selected_objective_id );
+    objective_state = ObjectiveInterface::getObjectiveState(selected_objective_id);
                                                                                 
     return objective_state->name;
 }
 
-iXY WorldInputCmdProcessor::getSelectedObjectiveWorldPos()
+iXY
+WorldInputCmdProcessor::getSelectedObjectiveWorldPos()
 {
     ObjectiveState *objective_state;
                                                                                 
-    objective_state = ObjectiveInterface::getObjectiveState( selected_objective_id );
+    objective_state = ObjectiveInterface::getObjectiveState(selected_objective_id);
                                                                                 
     return objective_state->location;
 }
 
+void
+WorldInputCmdProcessor::centerSelectedUnits()
+{
+    /** When you want to center the camera on a group of units you have the
+     * problem of where to center the camera. The following nice idea+patch is
+     * from Christian Hausknecht <christian.hausknecht@gmx.de>.
+     *
+     * I check, in which direction most of the units in that group go, and
+     * based upon that pick up the unit, which is the most advanced one in this
+     * direction. So in most cases you will have a focus on the right end of a
+     * group (if that group is in a very long queue passing the map).
+     */
+    
+    UnitBase *maxyunit = 0;
+    UnitBase *maxxunit = 0;
+    UnitBase *minyunit = 0;
+    UnitBase *minxunit = 0;
+
+    // Direction initialize
+    int direction[8];
+    for(int i=0;i<8;++i)
+        direction[i]=0;
+    
+    // Vote direction
+    bool firstunit = true;
+    for(unsigned int id_list_index = 0; id_list_index < working_list.unit_list.size(); id_list_index++) {
+        UnitBase* unit_ptr = UnitInterface::getUnit(working_list.unit_list[id_list_index]);
+
+        if(unit_ptr == 0)
+            continue;
+                
+            // increment one direction
+        direction[unit_ptr->unit_state.orientation]+=1;
+            // initialize some pointers, get them from first unit
+        if(firstunit) {
+            maxyunit = unit_ptr;
+            maxxunit = unit_ptr;
+            minyunit = unit_ptr;
+            minxunit = unit_ptr;
+            firstunit = false;
+        } // choose extremest in each direction
+        else {
+            if(maxyunit->unit_state.location.y < unit_ptr->unit_state.location.y)
+                maxyunit=unit_ptr;
+            if(maxxunit->unit_state.location.x < unit_ptr->unit_state.location.x)
+                maxxunit=unit_ptr;
+            if(minyunit->unit_state.location.y > unit_ptr->unit_state.location.y)
+                minyunit=unit_ptr;
+            if(minxunit->unit_state.location.x > unit_ptr->unit_state.location.x)
+                minxunit=unit_ptr;
+        }
+    }
+    
+    // Index of chosen direction (which is most used by all units of a group)
+    int preferred_direction = 0;
+    int max = -1;
+    for(int i=0;i<8;++i) {
+        if(direction[i] > max) {
+            max=direction[i];
+            preferred_direction = i;
+        }
+    }
+        
+    // Chose Best unit correspondig to chosen direction
+    UnitBase* unit = 0;
+    switch(preferred_direction) {
+      case 0:
+          unit = maxxunit;
+          break;
+      case 1:
+          if(direction[0]>direction[2])
+              unit = maxxunit;
+          else
+              unit = minyunit;
+          break;
+      case 2:
+          unit = minyunit;
+          break;
+      case 3:
+          if(direction[4]>direction[2])
+              unit = minxunit;
+          else
+              unit = minyunit;
+          break;
+      case 4:
+          unit = minxunit;
+          break;
+      case 5:
+          if(direction[4]>direction[6])
+              unit = minxunit;
+          else
+              unit = maxyunit;
+          break;
+      case 6:
+          unit = maxyunit;
+          break;
+      case 7:
+          if(direction[6]>direction[0])
+              unit = maxyunit;
+          else
+              unit = maxxunit;
+          break;
+      default:
+          assert(false);
+          break;
+    }
+    
+    if(unit != 0)
+        WorldViewInterface::setCameraPosition(unit->unit_state.location);
+}
