@@ -23,6 +23,7 @@ SUBDIRS =
     Interfaces
     Interfaces/unix
     Bot
+    Panels
 ;
 
 for i in $(SUBDIRS)
@@ -33,7 +34,7 @@ for i in $(SUBDIRS)
 
 Application netpanzer : $(SOURCES) ;
 LinkWith netpanzer : netpanzertypes netpanzerutil netpanzersys netpanzerxml
-                     netpanzer2d netpanzerarrayutil optionmm
+                     netpanzer2d netpanzerarrayutil optionmm netpanzerui
 ;
 
 CFlags netpanzer : -DDATADIR=\\\"$(datadir)\\\" ;

@@ -19,10 +19,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _PLAYERGAMEMANAGER_HPP
 
 #include "BaseGameManager.hpp"
+#include "ScreenSurface.hpp"
+
+#include "UI/Painter.hpp"
+#include "Panels/TestPanel.hpp"
 
 class PlayerGameManager : public BaseGameManager
 {
 private:
+    UI::Painter painter;
+    Panels::TestPanel test;
+    bool showNewPanel;
+
     void initializeWindowSubSystem();
     void processSystemKeys();
 
@@ -42,6 +50,10 @@ public:
     virtual bool launchNetPanzerGame();
 
     static void launchMultiPlayerGame();
+
+    PlayerGameManager():painter(), test(iXY(350,280)){
+        showNewPanel = false;
+    }
 };
 
 #endif

@@ -32,7 +32,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "MouseInterface.hpp"
 #include "KeyboardInterface.hpp"
-#include "ScreenSurface.hpp"
 #include "GameConfig.hpp"
 #include "TileInterface.hpp"
 #include "TileEngine.hpp"
@@ -130,6 +129,7 @@ void PlayerGameManager::initializeVideoSubSystem()
 
     lobbyView = new LobbyView();
     progressView = new ProgressView();
+    painter.setSurface(screen);
 }
 //-----------------------------------------------------------------
 void PlayerGameManager::shutdownVideoSubSystem()
@@ -244,12 +244,19 @@ void PlayerGameManager::graphicsLoop()
     screen->lock();
 
     Desktop::draw(*screen);
+
+    //TODO : clean this ugly test :)
+    if(showNewPanel && Desktop::getVisible("GameView")){
+        //Game started, draw interface
+        test.draw(painter);
+    }
+
     if (Desktop::getVisible("GameView")) {
         ConsoleInterface::update(*screen);
     }
 
     mouse.draw(*screen);
-    MouseInterface::updateCursor();
+    MouseInterface::updateCursor();     
 
     screen->unlock();
     screen->copyToVideoFlip();
@@ -382,6 +389,10 @@ void PlayerGameManager::joinMultiPlayerGame()
 void PlayerGameManager::processSystemKeys()
 {
     if (Desktop::getVisible("GameView")) {
+        if (KeyboardInterface::getKeyPressed( SDLK_F12 )){
+            showNewPanel = !showNewPanel;
+        }
+        
         if (KeyboardInterface::getKeyPressed( SDLK_F5 )) {
             //  DEBUG VIEW
             Desktop::toggleVisibility( "LibView" );
