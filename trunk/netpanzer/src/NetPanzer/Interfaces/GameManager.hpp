@@ -60,7 +60,8 @@ protected:
 
 public:
     static void dedicatedLoadGameMap(const char *map_file_path );
-    static bool startGameMapLoad(const char *map_file_path, unsigned long partitions, int *result_code );
+    static void startGameMapLoad(const char *map_file_path,
+                                 unsigned long partitions);
     static bool gameMapLoad( int *percent_complete );
 
     // ** Game Rules Methods

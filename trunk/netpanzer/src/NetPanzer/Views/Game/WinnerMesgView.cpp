@@ -35,90 +35,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "GameConfig.hpp"
 
-static void bReturnToMainMenu()
+static void bOk()
 {
-    if ( gameconfig->mapcycling == true ) {
-        progressView->open();
-        progressView->scrollAndUpdate( "Waiting for next game map ..." );
-    } else {
-        sound->stopTankIdle();
-
-        // Blank the screen.
-        GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
-
-        ParticleSystem2D::removeAll();
-        Particle2D::removeAll();
-        sprintf(MenuTemplateView::currentMultiView, "GetSessionView");
-
-        // put all code in here for shutdown.
-        //----------------------
-        GameManager::quitNetPanzerGame();
-        //----------------------
-
-        // Swap to the menu resolution.
-        //GameManager::setVideoMode(iXY(640, 480), false);
-
-        GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
-
-        GameManager::loadPalette("wads/netpmenu.act");
-
-        Desktop::setVisibilityAllWindows(false);
-
-        View *v = Desktop::getView("OptionsView");
-        if (v != 0) {
-            v->removeAllButtons();
-            ((OptionsTemplateView *)v)->initButtons();
-            ((MenuTemplateView *)v)->initButtons();
-        } else {
-            assert(false);
-        }
-
-        v = Desktop::getView("SoundView");
-        if (v != 0) {
-            v->removeAllButtons();
-            ((OptionsTemplateView *)v)->initButtons();
-            ((MenuTemplateView *)v)->initButtons();
-            ((SoundView *)v)->initButtons();
-        } else {
-            assert(false);
-        }
-
-        v = Desktop::getView("ControlsView");
-        if (v != 0) {
-            v->removeAllButtons();
-            ((OptionsTemplateView *)v)->initButtons();
-            ((MenuTemplateView *)v)->initButtons();
-            ((ControlsView *)v)->initButtons();
-        } else {
-            assert(false);
-        }
-
-        v = Desktop::getView("VisualsView");
-        if (v != 0) {
-            v->removeAllButtons();
-            ((OptionsTemplateView *)v)->initButtons();
-            ((MenuTemplateView *)v)->initButtons();
-            ((VisualsView *)v)->initButtons();
-        } else {
-            assert(false);
-        }
-
-        v = Desktop::getView("InterfaceView");
-        if (v != 0) {
-            v->removeAllButtons();
-            ((OptionsTemplateView *)v)->initButtons();
-            ((MenuTemplateView *)v)->initButtons();
-            ((InterfaceView *)v)->initButtons();
-        } else {
-            assert(false);
-        }
-
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("MainView", true);
-    }
+    progressView->open();
+    progressView->scrollAndUpdate( "Waiting for next game map ..." );
 }
-
-
 
 char WinnerMesgView::player_name[64];
 int WinnerMesgView::player_index = 0;
@@ -144,7 +65,7 @@ WinnerMesgView::WinnerMesgView() : GameTemplateView()
     int x           = (getClientRect().getSize().x - buttonSizeX) / 2;
     int y           = getClientRect().getSize().y - 15;
 
-    addButtonCenterText(iXY(x, y), buttonSizeX, "OK", "", bReturnToMainMenu);
+    addButtonCenterText(iXY(x, y), buttonSizeX, "OK", "", bOk);
 
     const unsigned MAX_NAME_CHARS   = 30;
     const unsigned MAX_FLAG_CHARS   =  8;

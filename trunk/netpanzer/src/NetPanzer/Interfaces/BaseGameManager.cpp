@@ -105,9 +105,6 @@ void BaseGameManager::initializeGameObjects()
 {
     loadGameData();
 
-    MapsManager::initialize();
-    MapsManager::scanMaps();
-
     Physics::init();
     Weapon::init();
 

@@ -116,8 +116,8 @@ the server section of the xml file:
     Number of players and bots that are able to play simultaneously on the
     server.
 
-*map [name], default "Bad Neuburg"
-    Name of the map to start.
+*mapcycle [name], default "Cramped, Tight Quarters, Two Villages"
+    A comma separated list of maps that this server will use.
 
 *maxunits [number], default 500
     Number of maximum available units for all players. (Each

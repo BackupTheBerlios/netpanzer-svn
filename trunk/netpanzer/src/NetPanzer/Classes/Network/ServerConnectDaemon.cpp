@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SystemNetMessage.hpp"
 
 #include "ConsoleInterface.hpp"
+#include "Util/Log.hpp"
 
 enum { _connect_state_idle,
        _connect_state_wait_for_connect_request,
@@ -143,6 +144,11 @@ void ServerConnectDaemon::netMessageClientDisconnect( NetMessage *message )
 
     client_disconnect = (ConnectMesgNetPanzerClientDisconnect *) message;
 
+    if(client_disconnect->client_id >= PlayerInterface::getMaxPlayers()) {
+        LOGGER.warning("Received malformed disconnection message.");
+        return;
+    }
+    
     startDisconnectionProcess(
             PlayerInterface::getPlayerID(client_disconnect->client_id) );
 }

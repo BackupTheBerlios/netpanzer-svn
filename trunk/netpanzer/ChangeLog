@@ -1,3 +1,8 @@
+21-Feb-2004 by Matthias Braun
+-added a mapcycle variable to the server config.
+-fixed a bug in map loading while mapcycling on the client
+-changed some keybinding (m for minimapview, disabled some obsolete views)
+
 01-Feb-2004 by Matthias Braun
 -added a jam rule to create doxygen documentation
 -implemented scrolling in netpanzeredit mapview

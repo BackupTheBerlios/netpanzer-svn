@@ -21,124 +21,57 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string.h>
 #include <memory>
 
-#include "Util/FileSystem.hpp"
-#include "Util/SplitPath.hpp"
 #include "MapsManager.hpp"
-#include "MapFileStruct.hpp"
+#include "GameConfig.hpp"
 
-std::vector<std::string> MapsManager::master_maps_list;
-unsigned long MapsManager::map_cycle_index;
-
-
-MapsManager::MapsManager()
+/// removes leading and trailing whitespaces from a string
+static inline std::string trim(const std::string& str)
 {
+    using std::string;
+    
+    string::size_type start = str.find_first_not_of(" \t\n\r");
+    string::size_type end = str.find_last_not_of(" \t\n\r");
+
+    return string(str, start, end-start+1);
 }
 
-MapsManager::~MapsManager()
+std::string MapsManager::getNextMap(const std::string& map)
 {
-}
+    using std::string;
+    std::cout << "NextMap from '" << map << "': ";
 
-void MapsManager::initialize()
-{
-    map_cycle_index = 0;
-}
+    // parse the mapcycle in the config
+    const string& mapcycle = gameconfig->mapcycle;
+    string::size_type i = mapcycle.find(',', 0);
+    string::size_type lasti = 0;
+    if(i == string::npos)
+        i = mapcycle.size() - 1;
+    string currentMap = trim(string(mapcycle, 0, i));
+    string firstmap = currentMap;
 
-void MapsManager::scanMaps()
-{
-    scanMaps( "maps/" );
-}
-
-void MapsManager::scanMaps( const char *map_directory )
-{
-    char** list = FileSystem::enumerateFiles(map_directory);
-    for(char** file = list; *file != 0; file++) {
-        std::string path = map_directory;
-        path += *file;
+    bool takeNext = false;
+    do {
+        if(takeNext) {
+            std::cout << currentMap << "\n";
+            return currentMap;
+        }
+        if(currentMap == map)
+            takeNext = true;
         
-        if(path.find(".npm") != std::string::npos) {
-            master_maps_list.push_back(path);
+        if(i == mapcycle.size())
+            break;
+        lasti = i;
+        i = mapcycle.find(',', i+1);
+        if(i == string::npos) {
+            i = mapcycle.size();
         }
-    }
-    FileSystem::freeList(list);
-}
+        std::cout << "check: '" << string(mapcycle, lasti+1, i-lasti+1) << "'\n";
+        std::cout << "c2: '" << trim(string(mapcycle, lasti+1, i-lasti+1)) <<
+                "'\n";
+        currentMap = trim(string(mapcycle, lasti+1, i-lasti+1));
+    } while(1);
 
-void MapsManager::resetMapCycling()
-{
-    map_cycle_index = 0;
-}
-
-void MapsManager::cycleNextMapName(char *map_name )
-{
-    if ( (map_cycle_index + 1) < master_maps_list.size() ) {
-        map_cycle_index++;
-    } else {
-        map_cycle_index = 0;
-    }
-
-    _splitpath(master_maps_list[map_cycle_index].c_str(), 0, 0, map_name, 0);
-}
-
-void MapsManager::getCurrentMap(char *map_name )
-{
-    _splitpath(master_maps_list[map_cycle_index].c_str(), 0, 0, map_name, 0);
-}
-
-void MapsManager::setCycleStartMap(const char *map_name )
-{
-    size_t list_size;
-    char cycle_map_name[256];
-
-    list_size = master_maps_list.size();
-
-    for(size_t i = 0; i < list_size; i++ ) {
-        _splitpath(master_maps_list[i].c_str(), 0, 0, cycle_map_name, 0);
-
-        if( strcasecmp( cycle_map_name, map_name ) == 0 ) {
-            map_cycle_index = i;
-            return;
-        }
-    }
-}
-
-int MapsManager::checkMapValidity(const char *map_name )
-{
-    bool found = false;
-    size_t list_size;
-    char cycle_map_name[256];
-
-    list_size = master_maps_list.size();
-
-    for(size_t i = 0; i < list_size; i++) {
-        _splitpath(master_maps_list[i].c_str(), 0, 0, cycle_map_name, 0);
-
-        if( strcasecmp( cycle_map_name, map_name ) == 0 ) {
-            found = true;
-        }
-    }
-
-    if( found == false ) {
-        return( _mapfile_not_found );
-    }
-
-    char temp_path[256];
-    MAP_HEADER map_info;
-
-    strcpy( temp_path, "maps/");
-    strcat( temp_path, map_name);
-    strcat( temp_path, ".npm" );
-
-    std::auto_ptr<ReadFile> file (FileSystem::openRead(temp_path));
-
-    if(file->read( &map_info, sizeof( MAP_HEADER ), 1) != 1) {
-        return -1;
-    }
-
-    strcpy( temp_path, "wads/");
-    strcat( temp_path, map_info.tile_set );
-
-    if(!FileSystem::exists(temp_path))
-        return _wadfile_not_found;
-
-    return( _mapfile_valid );
+    std::cout << firstmap << "(first) \n";
+    return firstmap;
 }
 

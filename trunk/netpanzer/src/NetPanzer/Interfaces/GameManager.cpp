@@ -40,6 +40,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConnectNetMessage.hpp"
 
 #include "Util/Log.hpp"
+#include "Util/Exception.hpp"
 #include "MouseInterface.hpp"
 #include "KeyboardInterface.hpp"
 #include "ScreenSurface.hpp"
@@ -79,7 +80,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "HostView.hpp"
 #include "GetSessionView.hpp"
 #include "GetSessionHostView.hpp"
-#include "ChatView.hpp"
 #include "WinnerMesgView.hpp"
 #include "RankView.hpp"
 #include "VehicleSelectionView.hpp"
@@ -265,31 +265,14 @@ void GameManager::shutdownParticleSystems()
 }
 
 // ******************************************************************
-bool GameManager::startGameMapLoad(const char *map_file_path, unsigned long partitions, int *result_code )
+void GameManager::startGameMapLoad(const char *map_file_path,
+                                   unsigned long partitions)
 {
-    int check_return_code;
-    check_return_code = MapsManager::checkMapValidity( map_file_path );
-
-    if( check_return_code == _mapfile_not_found ) {
-        *result_code = _mapload_result_no_map_file;
-        return false;
-    } else
-        if( check_return_code == _wadfile_not_found ) {
-            *result_code = _mapload_result_no_wad_file;
-            return false;
-        } else {
-            *result_code = _mapload_result_success;
-        }
-
     map_path = "maps/";
     map_path.append(map_file_path);
 
-    if ( MapInterface::startMapLoad( map_path.c_str(), true, partitions ) == false ) {
-        finishGameMapLoad();
-        return false;
-    }
-
-    return true;
+    if (!MapInterface::startMapLoad( map_path.c_str(), true, partitions))
+        throw Exception("map format error.");
 }
 
 // ******************************************************************
@@ -473,11 +456,10 @@ void GameManager::getServerGameSetup( NetMessage *message )
 
     game_setup->max_players = gameconfig->maxplayers;
     game_setup->max_units = gameconfig->maxunits;
-    MapsManager::getCurrentMap( game_setup->map_name );
+    snprintf(game_setup->map_name, 32, gameconfig->map.c_str()); 
     game_setup->cloud_coverage = gameconfig->cloudcoverage;
     game_setup->wind_speed = gameconfig->windspeed;
     game_setup->game_type = gameconfig->gametype;
-    game_setup->map_cycle_state = gameconfig->mapcycling;
     game_setup->powerup_state = gameconfig->powerups;
     game_setup->frag_limit = gameconfig->fraglimit;
     game_setup->time_limit = gameconfig->timelimit;
@@ -523,7 +505,6 @@ bool GameManager::startClientGameSetup( NetMessage *message, int *result_code )
     gameconfig->maxunits = game_setup->max_units;
     gameconfig->cloudcoverage = game_setup->cloud_coverage;
     gameconfig->windspeed = (int) game_setup->wind_speed;
-    gameconfig->mapcycling = game_setup->map_cycle_state;
     gameconfig->powerups = game_setup->powerup_state;
     gameconfig->gametype = game_setup->game_type;
     gameconfig->fraglimit = game_setup->frag_limit;
@@ -532,7 +513,7 @@ bool GameManager::startClientGameSetup( NetMessage *message, int *result_code )
     startGameTimer();
     game_elapsed_time_offset = game_setup->elapsed_time;
 
-    startGameMapLoad( game_setup->map_name, 20, result_code );
+    startGameMapLoad( game_setup->map_name, 20);
     return true;
 }
 

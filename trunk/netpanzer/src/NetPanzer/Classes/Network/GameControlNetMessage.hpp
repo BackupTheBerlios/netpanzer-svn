@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _GAME_CONTROL_NET_MESSAGE_HPP
 #define _GAME_CONTROL_NET_MESSAGE_HPP
 
+#include <stdio.h>
 #include <string.h>
 
 #include "NetPacket.hpp"
@@ -34,11 +35,11 @@ enum { _net_message_id_game_control_cycle_map,
 class GameControlCycleMap : public NetMessage
 {
 public:
-    char map_name[32];
+    char map_name[128];
 
-    void set( const char *map_name )
+    void set(const char* newmap_name)
     {
-        strcpy( GameControlCycleMap::map_name, map_name);
+        snprintf(map_name, sizeof(map_name), newmap_name);
     }
 
     GameControlCycleMap()

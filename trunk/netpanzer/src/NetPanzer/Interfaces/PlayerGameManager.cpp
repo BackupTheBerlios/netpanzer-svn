@@ -16,6 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
+#include <exception>
+
 #include "PlayerGameManager.hpp"
 
 #include "Server.hpp"
@@ -66,7 +69,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "HostView.hpp"
 #include "GetSessionView.hpp"
 #include "GetSessionHostView.hpp"
-#include "ChatView.hpp"
 #include "WinnerMesgView.hpp"
 #include "RankView.hpp"
 #include "VehicleSelectionView.hpp"
@@ -121,7 +123,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 PlayerGameManager::PlayerGameManager()
     : sdlVideo(0)
 {
-    fontManager.loadFont("fixed10", "Fonts/fixed10.pcf", 10);
+    fontManager.loadFont("fixed10", "fonts/fixed10.pcf", 10);
 
     testpanel = new Panels::TestPanel(iXY(30, 60), &fontManager);
     showNewPanel = false;
@@ -187,8 +189,6 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add( &miniMapView );
     Desktop::add(new CodeStatsView());
     Desktop::add(new LibView());
-    //Desktop::add(new DesktopView());
-    //Desktop::add(new UnitColorView());
     Desktop::add(new HelpScrollView());
     Desktop::add(new GameInfoView());
 
@@ -201,9 +201,6 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(progressView);
 
     GameManager::loadPalette("wads/netpmenu.act");
-
-    //chatView.init();
-    //Desktop::add(&chatView);
 
     Desktop::add(new MapSelectionView());
     Desktop::add(new MainMenuView());
@@ -301,9 +298,6 @@ void PlayerGameManager::hostMultiPlayerGame()
     Timer wait;
 
     progressView->open();
-
-    //InitStreamServer(gapp.hwndApp);
-
     progressView->scrollAndUpdateDirect( "Launching Server ..." );
     try {
         SERVER->hostSession();
@@ -324,19 +318,14 @@ void PlayerGameManager::hostMultiPlayerGame()
 
     progressView->scrollAndUpdateDirect( "Loading Game Data ..." );
 
+    gameconfig->map = MapsManager::getNextMap("");
     const char* mapname = gameconfig->map.c_str();
-    MapsManager::setCycleStartMap(mapname);
 
-    int result_code;
-    GameManager::startGameMapLoad(mapname, 20, &result_code);
-
-    if( result_code == _mapload_result_no_wad_file ) {
-        progressView->scrollAndUpdateDirect( "MAP TILE SET NOT FOUND!" );
-        progressView->scrollAndUpdateDirect( "please download the appropriate tileset" );
-        progressView->scrollAndUpdateDirect( "from www.pyrosoftgames.com" );
-        wait.changePeriod( 12 );
-        while( !wait.count() );
-
+    try {
+        GameManager::startGameMapLoad(mapname, 20);
+    } catch(std::exception& e) {
+        LOGGER.warning("Error while loading map '%s':", mapname);
+        LOGGER.warning(e.what());
         progressView->toggleMainMenu();
         return;
     }
@@ -429,10 +418,6 @@ void PlayerGameManager::processSystemKeys()
             //  DEBUG VIEW
             Desktop::toggleVisibility( "LibView" );
         }
-
-        if (KeyboardInterface::getKeyPressed( SDLK_F3 )) {
-            Desktop::toggleVisibility( "UnitColorView" );
-        }
     }
 
     if (KeyboardInterface::getKeyState( SDLK_LALT ) ||
@@ -441,18 +426,13 @@ void PlayerGameManager::processSystemKeys()
             gameconfig->fullscreen.toggle();
             GameManager::setVideoMode();
         }
-
     } // ** LFT_ALT or RGT_ALT pressed
 
     if (Desktop::getView("GameView")->getVisible()) {
-        if (KeyboardInterface::getKeyPressed(SDLK_F8)) {
+        if (KeyboardInterface::getKeyPressed(SDLK_m)) {
             Desktop::toggleVisibility( "MiniMapView" );
         }
-        if (KeyboardInterface::getKeyPressed(SDLK_F7)) {
-            Desktop::toggleVisibility( "ChatView" );
-        }
-        if (KeyboardInterface::getKeyPressed(SDLK_F6) ||
-            KeyboardInterface::getKeyPressed(SDLK_TAB) ) {
+        if (KeyboardInterface::getKeyPressed(SDLK_TAB) ) {
             Desktop::toggleVisibility( "RankView" );
         }
         if (KeyboardInterface::getKeyPressed(SDLK_F3)) {

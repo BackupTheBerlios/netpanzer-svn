@@ -48,7 +48,6 @@ solution would be transfering of unknown flags.
         the irc lobby code, so that we could get integration into server
         browsing tools like xqf done eventually)
 -create UDP broadcast code for announcing servers in LANs
--make it possible to configure the mapcycle
 -add a (readline based?) serverconsole
 
 *** gameplay

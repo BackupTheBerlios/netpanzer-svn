@@ -46,7 +46,6 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       initialunits("initialunits", 5, 0, 100),
       timelimit("timelimit", 50, 1),
       fraglimit("fraglimit", 500, 50),
-      mapcycling("mapcycling", false),
       powerups("powerups", true),
       objectiveoccupationpercentage("objectivepercentage", 100, 1, 100),
       allowallies("allowallies", true),
@@ -55,6 +54,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
                 _game_config_respawn_type_last-1),
       windspeed("windspeed", 30),
       map("map", "Bad Neuburg"),
+      mapcycle("mapcycle", "Cramped, Tight Quarters, Two Villages"),
       
       screenresolution("resolution", 0, 0, 2),
       fullscreen("fullscreen", true),
@@ -120,14 +120,14 @@ GameConfig::GameConfig(const std::string& newconfigfile)
     serversettings.push_back(&initialunits);
     serversettings.push_back(&timelimit);
     serversettings.push_back(&fraglimit);
-    serversettings.push_back(&mapcycling);
     serversettings.push_back(&powerups);
     serversettings.push_back(&objectiveoccupationpercentage);
     serversettings.push_back(&allowallies);
     serversettings.push_back(&cloudcoverage);
     serversettings.push_back(&respawntype);
     serversettings.push_back(&windspeed);
-    serversettings.push_back(&map);
+    //serversettings.push_back(&map);
+    serversettings.push_back(&mapcycle);
    
     visualssettings.push_back(&screenresolution);
     visualssettings.push_back(&fullscreen);

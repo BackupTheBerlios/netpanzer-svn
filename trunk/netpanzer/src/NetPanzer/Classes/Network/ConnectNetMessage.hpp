@@ -200,7 +200,6 @@ public:
     int32_t  cloud_coverage;
     float    wind_speed;
     int32_t  game_type;
-    uint8_t  map_cycle_state;
     uint8_t  powerup_state;
     int32_t  frag_limit;
     int32_t  time_limit;

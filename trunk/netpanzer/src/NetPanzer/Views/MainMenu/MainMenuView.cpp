@@ -51,7 +51,7 @@ void MainMenuView::doDraw(Surface &viewArea, Surface &clientArea)
         "NetPanzer only supports TCP/IP multiplayer games over "
         "LAN systems and over the Internet. "
         "We're still searching for talented coders "
-        "and artists. Look at http://www.nongnu.org/netpanzer for details. ";
+        "and artists.";
 
     viewArea.bltStringInBox(bodyTextRect, text, Color::white, 12);
 } // end MainMenuView::doDraw

@@ -21,9 +21,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <iostream>
 #include <string>
 
+#include "Util/NoCopy.hpp"
 #include "Types/iXY.hpp"
 
-class ConfigVariable
+class ConfigVariable : public NoCopy
 {
 public:
     ConfigVariable(const std::string& name);

@@ -93,8 +93,7 @@ void ClientConnectDaemon::netMessageLinkAck( NetMessage *message )
     case _join_request_result_invalid_protocol :
         lobbyView->scrollAndUpdate( "Link to Server FAILED!" );
         lobbyView->scrollAndUpdate( "Incorrect Network Protocol Revision" );
-        lobbyView->scrollAndUpdate( "Please update your netPanzer executable at" );
-        lobbyView->scrollAndUpdate( "www.nongnu.org/netpanzer" );
+        lobbyView->scrollAndUpdate( "Please get a newer netPanzer version." );
         sprintf( buf, "Server Protocol Version: %u",
 		join_request_ack_mesg->server_protocol_version);
         lobbyView->scrollAndUpdate( buf );

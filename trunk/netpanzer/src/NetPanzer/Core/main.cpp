@@ -198,6 +198,8 @@ BaseGameManager *initialise(int argc, char** argv)
     if (debug_option.value()) {
         LOGGER.setLogLevel(Logger::LEVEL_DEBUG);
         LOGGER.debug("debug option enabled");
+    } else if (dedicated_option.value()) {
+        LOGGER.setLogLevel(Logger::LEVEL_INFO);
     }
 
     // Initialize SDL

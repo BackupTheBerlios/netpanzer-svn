@@ -127,7 +127,6 @@ public:
     ConfigInt   initialunits;
     ConfigInt   timelimit;
     ConfigInt   fraglimit;
-    ConfigBool  mapcycling;
     ConfigBool  powerups;
     ConfigInt   objectiveoccupationpercentage;
     ConfigBool  allowallies;
@@ -135,6 +134,7 @@ public:
     ConfigInt   respawntype;
     ConfigInt   windspeed;
     ConfigString map;
+    ConfigString mapcycle;
 
     // Visuals Settings
     ConfigInt   screenresolution;

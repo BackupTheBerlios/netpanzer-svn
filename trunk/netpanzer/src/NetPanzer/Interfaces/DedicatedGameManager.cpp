@@ -77,6 +77,8 @@ bool DedicatedGameManager::launchNetPanzerGame()
 {
     ConsoleInterface::postMessage( "netPanzer Dedicated Server");
 
+    gameconfig->map = MapsManager::getNextMap("");
+    
     LOGGER.info("Server Settings:"); 
     LOGGER.info("Map: %s", gameconfig->map.c_str());
     LOGGER.info("MaxPlayers: %d", (int) gameconfig->maxplayers);
@@ -87,15 +89,13 @@ bool DedicatedGameManager::launchNetPanzerGame()
     LOGGER.info("TimeLimit: %d", (int) gameconfig->timelimit);   
     LOGGER.info("FragLimit: %d", (int) gameconfig->fraglimit);
     LOGGER.info("RespawnType: %s", gameconfig->getRespawnTypeString());
-    LOGGER.info("MapCycling: %s", gameconfig->mapcycling ? "yes" : "no");
+    LOGGER.info("Mapcycle: %s", gameconfig->mapcycle.c_str());
     LOGGER.info("Powerups: %s", gameconfig->powerups ? "yes" : "no");
     LOGGER.info("AllowAllies: %s", gameconfig->allowallies ? "yes" : "no");
     LOGGER.info("CloudCoverage: %d (WindSpeed %d)", 
             (int) gameconfig->cloudcoverage, (int) gameconfig->windspeed);
 
-    const char* mapname = gameconfig->map.c_str();
-    MapsManager::setCycleStartMap(mapname);
-    GameManager::dedicatedLoadGameMap(mapname);
+    GameManager::dedicatedLoadGameMap(gameconfig->map.c_str());
 
     GameManager::reinitializeGameLogic();
 

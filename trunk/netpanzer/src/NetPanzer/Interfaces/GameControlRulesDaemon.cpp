@@ -60,8 +60,8 @@ enum { _game_state_idle,
 int GameControlRulesDaemon::execution_mode = _execution_mode_loop_back_server;
 unsigned char GameControlRulesDaemon::game_state  = _game_state_idle;
 
-#define _MAP_CYCLE_ENDGAME_WAIT_PERIOD  (30) // seconds
-#define _MAP_CYCLE_MAP_LOAD_WAIT_PERIOD (20) // seconds
+#define _MAP_CYCLE_ENDGAME_WAIT_PERIOD  (20) // seconds
+#define _MAP_CYCLE_MAP_LOAD_WAIT_PERIOD (7) // seconds
 
 int GameControlRulesDaemon::map_cycle_fsm_server_state = _map_cycle_server_state_idle;
 Timer GameControlRulesDaemon::map_cycle_fsm_server_endgame_timer;
@@ -83,16 +83,11 @@ void GameControlRulesDaemon::setDedicatedServer()
 }
 
 //-----------------------------------------------------------------
-void GameControlRulesDaemon::mapCycleFsmClient( void )
+void GameControlRulesDaemon::mapCycleFsmClient()
 {
-    bool end_cycle = false;
-
-    do {
-        switch( map_cycle_fsm_client_state ) {
-        case _map_cycle_client_idle : {
-                end_cycle = true;
-            }
-            break;
+    switch( map_cycle_fsm_client_state ) {
+        case _map_cycle_client_idle :
+            return;
 
         case _map_cycle_client_start_map_load : {
                 progressView->open();
@@ -100,20 +95,26 @@ void GameControlRulesDaemon::mapCycleFsmClient( void )
                 GameManager::shutdownParticleSystems();
                 ObjectiveInterface::resetLogic();
 
+                gameconfig->map = map_cycle_fsm_client_map_name;
+
+                char buf[256];
+                snprintf(buf, sizeof(buf), "Next Map '%s'.",
+                        gameconfig->map.c_str());
+                progressView->scrollAndUpdate( buf);
                 progressView->scrollAndUpdate( "Loading Game Map ..." );
 
-                int result_code;
-                GameManager::startGameMapLoad( map_cycle_fsm_client_map_name, 16, &result_code );
-
-                if( result_code != _mapload_result_success ) {
-                    mapLoadFailureResponse( result_code, map_cycle_fsm_client_map_name );
+                try {
+                    GameManager::startGameMapLoad(gameconfig->map.c_str(), 16);
+                } catch(std::exception& e) {
+                    progressView->scrollAndUpdate("Error while loading map:");
+                    progressView->scrollAndUpdate(e.what());
                     map_cycle_fsm_client_state = _map_cycle_client_idle;
-                } else {
-                    GameManager::resetGameLogic();
-
-                    map_cycle_fsm_client_state = _map_cycle_client_load_map;
+                    return;
                 }
-                end_cycle = true;
+                
+                GameManager::resetGameLogic();
+                map_cycle_fsm_client_state = _map_cycle_client_load_map;
+                return;
             }
             break;
 
@@ -133,9 +134,8 @@ void GameControlRulesDaemon::mapCycleFsmClient( void )
                     progressView->update( str_buf );
                 }
 
-                end_cycle = true;
+                return;
             }
-            break;
 
         case _map_cycle_client_wait_for_respawn_ack : {
                 if( map_cycle_fsm_client_respawn_ack_flag == true ) {
@@ -144,26 +144,18 @@ void GameControlRulesDaemon::mapCycleFsmClient( void )
                     map_cycle_fsm_client_state = _map_cycle_client_idle;
                 }
 
-                end_cycle = true;
+                return;
             }
             break;
 
-        } // ** switch
-    } while ( end_cycle == false );
-
+    } // ** switch
 }
 
 
-void GameControlRulesDaemon::mapCycleFsmServer( void )
+void GameControlRulesDaemon::mapCycleFsmServer()
 {
-    bool end_cycle = false;
-
-    do {
-        switch( map_cycle_fsm_server_state ) {
-
-        case _map_cycle_server_state_idle : {
-                end_cycle = true;
-            }
+    switch( map_cycle_fsm_server_state ) {
+        case _map_cycle_server_state_idle:
             break;
 
         case _map_cycle_server_state_display_endgame_views: {
@@ -185,7 +177,6 @@ void GameControlRulesDaemon::mapCycleFsmServer( void )
                 map_cycle_fsm_server_endgame_timer.reset();
 
                 map_cycle_fsm_server_state = _map_cycle_server_state_cycle_next_map;
-                end_cycle = true;
             }
             break;
 
@@ -193,23 +184,21 @@ void GameControlRulesDaemon::mapCycleFsmServer( void )
                 if ( map_cycle_fsm_server_endgame_timer.count() &&
                         (ServerConnectDaemon::isConnecting() == false)
                    ) {
-                    char map_name[256];
-
                     GameManager::shutdownParticleSystems();
 
-                    MapsManager::cycleNextMapName( map_name );
-                    gameconfig->map = map_name;
-                    LOGGER.info("Next Map: %s", map_name);
+                    gameconfig->map = MapsManager::getNextMap(gameconfig->map);
+                    LOGGER.info("Next Map: %s", gameconfig->map.c_str());
 
                     GameControlCycleMap cycle_map_mesg;
-                    cycle_map_mesg.set( map_name );
+                    cycle_map_mesg.set( gameconfig->map.c_str() );
 
                     SERVER->sendMessage( &cycle_map_mesg, sizeof( GameControlCycleMap ), 0 );
 
                     if ( GameControlRulesDaemon::execution_mode == _execution_mode_dedicated_server ) {
                         ObjectiveInterface::resetLogic();
 
-                        GameManager::dedicatedLoadGameMap( map_name );
+                        GameManager::dedicatedLoadGameMap(
+                                gameconfig->map.c_str() );
 
                         GameManager::resetGameLogic();
 
@@ -222,23 +211,23 @@ void GameControlRulesDaemon::mapCycleFsmServer( void )
                         progressView->scrollAndUpdate( "Loading Game Map ..." );
                         ObjectiveInterface::resetLogic();
 
-                        int result_code;
-
-                        GameManager::startGameMapLoad( map_name, 16, &result_code );
-
-                        if( result_code != _mapload_result_success ) {
-                            mapLoadFailureResponse( result_code, map_name );
+                        try {
+                            GameManager::startGameMapLoad
+                                (gameconfig->map.c_str(), 16);
+                        } catch(std::exception& e) {
+                            progressView->scrollAndUpdate(
+                                    "Error while loading map:");
+                            progressView->scrollAndUpdate(e.what());
                             map_cycle_fsm_server_state = _map_cycle_server_state_idle;
-                        } else {
-                            GameManager::resetGameLogic();
-
-                            map_cycle_fsm_server_state = _map_cycle_server_state_load_map;
+                            return;
                         }
+                        
+                        GameManager::resetGameLogic();
+                        map_cycle_fsm_server_state = _map_cycle_server_state_load_map;
+                        return;
                     }
 
                 }
-
-                end_cycle = true;
             }
             break;
 
@@ -252,8 +241,6 @@ void GameControlRulesDaemon::mapCycleFsmServer( void )
 
                 sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
                 progressView->update( str_buf );
-
-                end_cycle = true;
             }
             break;
 
@@ -261,8 +248,6 @@ void GameControlRulesDaemon::mapCycleFsmServer( void )
                 if ( map_cycle_fsm_server_map_load_timer.count() ) {
                     map_cycle_fsm_server_state = _map_cycle_server_state_respawn_players;
                 }
-
-                end_cycle = true;
             }
             break;
 
@@ -285,91 +270,43 @@ void GameControlRulesDaemon::mapCycleFsmServer( void )
                 map_cycle_fsm_server_state = _map_cycle_server_state_idle;
 
                 ServerConnectDaemon::unlockConnectProcess();
-                end_cycle = true;
             }
             break;
 
-        } // ** switch
-    } while ( end_cycle == false );
-
+    } // ** switch
 }
 
-void GameControlRulesDaemon::onTimelimitGameCompleted( void )
+void GameControlRulesDaemon::onTimelimitGameCompleted()
 {
     PlayerInterface::lockPlayerStats();
 
-    if( gameconfig->mapcycling == true ) {
-        map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;
-        GameControlRulesDaemon::game_state = _game_state_completed;
-    } else {
-        SystemViewControl view_control;
-
-        view_control.set( "WinnerMesgView", _view_control_flag_visible_on | _view_control_flag_close_all );
-
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("GameView", true);
-        Desktop::setVisibility("WinnerMesgView", true );
-
-        SERVER->sendMessage( &view_control, sizeof( SystemViewControl ), 0 );
-
-        GameControlRulesDaemon::game_state = _game_state_completed;
-    }
+    map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;
+    GameControlRulesDaemon::game_state = _game_state_completed;
 }
 
-void GameControlRulesDaemon::onFraglimitGameCompleted( void )
+void GameControlRulesDaemon::onFraglimitGameCompleted()
 {
     PlayerInterface::lockPlayerStats();
 
-    if( gameconfig->mapcycling == true ) {
-        map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;
-        GameControlRulesDaemon::game_state = _game_state_completed;
-    } else {
-        SystemViewControl view_control;
-
-        view_control.set( "WinnerMesgView", _view_control_flag_visible_on | _view_control_flag_close_all );
-
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("GameView", true);
-        Desktop::setVisibility("WinnerMesgView", true );
-
-        SERVER->sendMessage( &view_control, sizeof( SystemViewControl ), 0 );
-
-        GameControlRulesDaemon::game_state = _game_state_completed;
-    }
-
+    map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;
+    GameControlRulesDaemon::game_state = _game_state_completed;
 }
 
-void GameControlRulesDaemon::onObjectiveGameCompleted( void )
+void GameControlRulesDaemon::onObjectiveGameCompleted()
 {
     PlayerInterface::lockPlayerStats();
 
-    if( gameconfig->mapcycling == true ) {
-        map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;
-        GameControlRulesDaemon::game_state = _game_state_completed;
-    } else {
-        SystemViewControl view_control;
-
-        view_control.set( "WinnerMesgView", _view_control_flag_visible_on | _view_control_flag_close_all );
-
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("GameView", true);
-        Desktop::setVisibility("WinnerMesgView", true );
-
-        SERVER->sendMessage( &view_control, sizeof( SystemViewControl ), 0 );
-
-        GameControlRulesDaemon::game_state = _game_state_completed;
-    }
+    map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;
+    GameControlRulesDaemon::game_state = _game_state_completed;
 }
 
-void GameControlRulesDaemon::forceMapCycle( void )
+void GameControlRulesDaemon::forceMapCycle()
 {
-    if( gameconfig->mapcycling == true ) {
-        map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;
-        GameControlRulesDaemon::game_state = _game_state_completed;
-    }
+    map_cycle_fsm_server_state = _map_cycle_server_state_display_endgame_views;
+    GameControlRulesDaemon::game_state = _game_state_completed;
 }
 
-void GameControlRulesDaemon::checkGameRules( void )
+void GameControlRulesDaemon::checkGameRules()
 {
     PlayerState *player_state;
 
@@ -422,8 +359,8 @@ void GameControlRulesDaemon::netMessageCycleMap( NetMessage *message )
     GameControlCycleMap *cycle_map_mesg;
 
     cycle_map_mesg = (GameControlCycleMap *) message;
-    strcpy(map_cycle_fsm_client_map_name, cycle_map_mesg->map_name);
-    map_cycle_fsm_client_state =_map_cycle_client_start_map_load;
+    snprintf(map_cycle_fsm_client_map_name, 256, cycle_map_mesg->map_name);
+    map_cycle_fsm_client_state = _map_cycle_client_start_map_load;
 }
 
 void GameControlRulesDaemon::netMessageCycleRespawnAck( NetMessage *message )
@@ -445,7 +382,7 @@ void GameControlRulesDaemon::processNetMessage( NetMessage *message )
     }
 }
 
-void GameControlRulesDaemon::updateGameControlFlow( void )
+void GameControlRulesDaemon::updateGameControlFlow()
 {
     if ( NetworkState::status == _network_state_server ) {
         mapCycleFsmServer();
@@ -456,19 +393,14 @@ void GameControlRulesDaemon::updateGameControlFlow( void )
     checkGameRules();
 }
 
-void GameControlRulesDaemon::mapLoadFailureResponse( int result_code, char *map_name )
+void GameControlRulesDaemon::mapLoadFailureResponse( int result_code, const char *map_name )
 {
     char str_buf[128];
 
     if( result_code == _mapload_result_no_map_file ) {
         sprintf( str_buf, "MAP %s NOT FOUND!", map_name );
         progressView->scrollAndUpdate( str_buf);
-        progressView->scrollAndUpdate( "please download this map from" );
-        progressView->scrollAndUpdate( "www.pyrosoftgames.com" );
-    } else
-        if( result_code == _mapload_result_no_wad_file ) {
+    } else if( result_code == _mapload_result_no_wad_file ) {
             progressView->scrollAndUpdate( "MAP TILE SET NOT FOUND!" );
-            progressView->scrollAndUpdate( "please download the appropriate tileset" );
-            progressView->scrollAndUpdate( "from www.pyrosoftgames.com" );
-        }
+    }
 }

@@ -21,32 +21,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 #include <vector>
 
-enum { _mapfile_valid, _mapfile_not_found, _wadfile_not_found };
-
 class MapsManager
 {
-protected:
-    static std::vector<std::string> master_maps_list;
-    static unsigned long map_cycle_index;
-
 public:
-
-    MapsManager();
-    ~MapsManager();
-
-    static void initialize();
-
-    static void scanMaps();
-
-    static void scanMaps( const char *map_directory );
-
-    static void resetMapCycling();
-    static void cycleNextMapName(char *map_name );
-    static void getCurrentMap(char *map_name );
-    static void setCycleStartMap(const char *map_name );
-
-    static int  checkMapValidity(const char *map_name );
+    static std::string getNextMap(const std::string& map);
 };
 
-
 #endif
+

@@ -43,7 +43,7 @@ protected:
 
     static void checkGameRules();
 
-    static void mapLoadFailureResponse( int result_code, char *map_name );
+    static void mapLoadFailureResponse(int result_code, const char *map_name);
 
     static void netMessageCycleMap(NetMessage *message);
     static void netMessageCycleRespawnAck(NetMessage *message);

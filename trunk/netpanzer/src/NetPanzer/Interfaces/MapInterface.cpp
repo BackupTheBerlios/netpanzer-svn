@@ -50,16 +50,16 @@ bool MapInterface::startMapLoad( const char *file_path, bool load_tiles, unsigne
     if ( load_tiles == true ) {
         if ( tile_set.startPartitionTileSetLoad( tile_set_path, wad_mapping_table, partitions ) == false ) {
             finishMapLoad();
-            return( false );
+            return false;
         }
 
     } else {
         tile_set.loadTileSetInfo( tile_set_path, wad_mapping_table );
         finishMapLoad();
-        return( false );
+        return false;
     }
 
-    return( true );
+    return true;
 }
 
 bool MapInterface::loadMap( int *percent_complete )
