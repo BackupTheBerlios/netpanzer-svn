@@ -46,6 +46,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #endif
 
 #include "UILib/UIDraw.hpp"
+#include "UILib/Sound.hpp"
 
 // ** PObject netPanzer Network Includes
 #include "Server.hpp"

@@ -16,6 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+#ifdef WIN32
 #include "netPanzerThread.h"
 #include "netPanzerGlobals.h"
 #include "netPanzerMain.h"
@@ -39,5 +40,6 @@ void PanzerThread(void* ptr)
    PANZER_THREAD_FINISHED = true;
 
    // XXX
-   _endthread();
+   // _endthread();
 }
+#endif
