@@ -39,7 +39,7 @@ private:
     {
         return double(t) / 1000.0;
     }
-    inline static long secsToTicks(float s)
+    inline static Ticks secsToTicks(float s)
     {
         return (Ticks) (s * 1000.0);
     }
@@ -79,25 +79,25 @@ public:
 
     double operator -(const TIMESTAMP &a) const
     {
-        return ticksToSecs(long(v - a.v));
+        return ticksToSecs(v - a.v);
     }
-    int operator < (const TIMESTAMP &a) const
+    bool operator < (const TIMESTAMP &a) const
     {
         return v < a.v;
     }
-    int operator <=(const TIMESTAMP &a) const
+    bool operator <=(const TIMESTAMP &a) const
     {
         return v <= a.v;
     }
-    int operator >=(const TIMESTAMP &a) const
+    bool operator >=(const TIMESTAMP &a) const
     {
         return v >= a.v;
     }
-    int operator > (const TIMESTAMP &a) const
+    bool operator > (const TIMESTAMP &a) const
     {
         return v > a.v;
     }
-    int operator ==(const TIMESTAMP &a) const
+    bool operator ==(const TIMESTAMP &a) const
     {
         return v == a.v;
     }
