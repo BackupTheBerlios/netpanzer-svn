@@ -59,10 +59,7 @@ void ProgressView::doDraw(Surface &viewArea, Surface &clientArea)
     }
 
     backgroundSurface.blt(clientArea);
-
-    //MenuTemplateView::doDraw(viewArea, clientArea);
-
-    background.blt(clientArea, 179, 153);
+    background.blt(clientArea, iXY(179, 153));
 
     View::doDraw(viewArea, clientArea);
 } // end ProgressView::doDraw
@@ -84,25 +81,8 @@ void ProgressView::update(const char *text)
 
 void ProgressView::updateDirect(const char *text)
 {
-    screen->lock();
-
-    if (!backgroundSurface.getDoesExist()) {
-        loadBackgroundSurface();
-    }
-
-    backgroundSurface.blt(*screen, min);
-
-    int CHAR_YPIX = Surface::getFontHeight();
-    int yOffset = background.getPix().y-CHAR_YPIX - 1;
-
-    // Clear the area for the text and draw the new text.
-    background.fillRect(0, yOffset, background.getPix().x, yOffset + CHAR_YPIX, Color::black);
-    background.bltString(0, background.getPix().y - CHAR_YPIX - 1, text, Color::white);
-
-    background.blt(*screen, min + iXY(179, 153));
-
-    screen->unlock();
-    screen->copyToVideoFlip();
+    update(text);
+    blitToScreen();
 }
 
 // scroll
@@ -121,57 +101,31 @@ void ProgressView::scroll()
 
 void ProgressView::scrollDirect()
 {
-    Surface tempSurface;
-
-    screen->lock();
-
-    if (!backgroundSurface.getDoesExist()) {
-        loadBackgroundSurface();
-    }
-
-    backgroundSurface.blt(*screen, min);
-
-    tempSurface.copy(background);
-
-    // Move the current text up by the height of the app font.
-    tempSurface.blt(background, 0, - Surface::getFontHeight() - 1);
-
-    background.blt(*screen, min + iXY(179, 153));
-
-    screen->unlock();
-    screen->copyToVideoFlip();
+    scroll();
+    blitToScreen();
 } // end ProgressView::scrollDirect
 
 void ProgressView::scrollAndUpdateDirect(const char *text)
 {
-    Surface tempSurface;
+    scroll();
+    update(text);
+    blitToScreen();
+} // end ProgressView::scrollDirect
 
+void ProgressView::blitToScreen()
+{
     screen->lock();
-
+                                                  
     if (!backgroundSurface.getDoesExist()) {
         loadBackgroundSurface();
     }
-
-    backgroundSurface.blt(*screen);
-
-    tempSurface.copy(background);
-
-    // Move the current text up by the height of the app font.
-    tempSurface.blt(background, 0, - Surface::getFontHeight() - 1);
-
-    int yOffset = background.getPix().y- Surface::getFontHeight() - 1;
-
-    // Clear the area for the text and draw the new text.
-    background.fillRect(0, yOffset, background.getPix().x, yOffset + 
-            Surface::getFontHeight(), Color::black);
-    background.bltString(0, background.getPix().y - Surface::getFontHeight() - 1, text, Color::white);
-
-    background.blt(*screen, 179, 153);
-
+                                                  
+    backgroundSurface.blt(*screen, min);
+    background.blt(*screen, min + iXY(179, 153));
+                                                  
     screen->unlock();
     screen->copyToVideoFlip();
-} // end ProgressView::scrollDirect
-
+}
 
 void ProgressView::reset()
 {

@@ -60,6 +60,8 @@ public:
     void toggleGameView();
     void toggleMainMenu();
 
+private:
+    void blitToScreen();
 }; // end ProgressView
 
 extern ProgressView progressView;
