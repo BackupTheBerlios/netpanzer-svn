@@ -8,6 +8,8 @@ Next release:
 -with 75% objective setting you can win the Cramped with 2 outposts already
  (which is only be 66% of all outposts)
 -after having a full nodelist the server is getting slow
+-when typing empty messages they are sent anyway
+-when starting to build a titan 2minutes is displayed for a short time
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map

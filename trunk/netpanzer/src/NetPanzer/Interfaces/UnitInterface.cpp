@@ -123,7 +123,7 @@ void UnitInterface::reset()
     units.clear();
 }
 
-void UnitInterface::sendMessage( UnitMessage *message )
+void UnitInterface::sendMessage(UnitMessage *message)
 {
     UnitBase *unit;
     // ** NOTE: INCOMPLETE

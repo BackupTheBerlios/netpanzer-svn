@@ -901,11 +901,11 @@ void Vehicle::aiFsmAttackUnit()
 {
     bool end_cycle = false;
 
-    UnitBase *target_unit_ptr;
     UnitState *target_unit_state = 0;
     iXY range_vector;
 
-    target_unit_ptr = UnitInterface::getUnit( aiFsmAttackUnit_target_ID );
+    UnitBase* target_unit_ptr 
+        = UnitInterface::getUnit( aiFsmAttackUnit_target_ID );
     if ( target_unit_ptr == 0 ) {
         aiFsmAttackUnit_target_destroyed = true;
         if(aiFsmAttackUnit_state != _aiFsmAttackUnit_move_wait) {
@@ -923,10 +923,9 @@ void Vehicle::aiFsmAttackUnit()
                 setAiFsmDefendHold();
                 aiFsmAttackUnit_OnExitCleanUp();
                 return;
-            } // ** if
-
-        } // ** if
-    } // ** if
+            }
+        }
+    }
 
     do {
         switch ( aiFsmAttackUnit_state ) {
@@ -1111,11 +1110,8 @@ void Vehicle::aiFsmAttackUnit()
                 if ( fsm_active_list[ _control_move_map_square ] == false ) {
                     UnitBlackBoard::unmarkUnitLoc( aiFsmAttackUnit_prev_loc );
                     aiFsmAttackUnit_state = _aiFsmAttackUnit_check_fsm_transition;
-                    end_cycle = true;
-                } else {
-                    end_cycle = true;
-                } // ** else
-
+                }
+                end_cycle = true;
             }
             break;
 
@@ -1580,40 +1576,37 @@ void Vehicle::messageAICommand( UnitMessage *message )
 }
 
 
-void Vehicle::messageWeaponHit( UnitMessage *message )
+void Vehicle::messageWeaponHit(const UnitMessage *message)
 {
-    UMesgWeaponHit *weapon_hit;
+    const UMesgWeaponHit *weapon_hit = (const UMesgWeaponHit *) message;
 
-    weapon_hit = (UMesgWeaponHit *) message;
+    if (!unit_state.bounds(weapon_hit->getHitLocation()))
+        return;
+    
+    unit_state.hit_points -= weapon_hit->getDamageFactor();
+    unit_state.threat_level = _threat_level_under_attack;
+    threat_level_under_attack_timer.changePeriod(
+            gameconfig->attacknotificationtime);
 
-    if (unit_state.bounds(weapon_hit->getHitLocation()) == true ) {
-        unit_state.hit_points -= weapon_hit->getDamageFactor();
+    UpdateStateUnitOpcode update_state_opcode;
 
-        unit_state.threat_level = _threat_level_under_attack;
-        threat_level_under_attack_timer.changePeriod(
-                gameconfig->attacknotificationtime );
+    update_state_opcode.setUnitID(id);
+    update_state_opcode.hit_points = unit_state.hit_points;
+    UnitInterface::sendOpcode( &update_state_opcode );
 
-        UpdateStateUnitOpcode update_state_opcode;
+    if ( unit_state.hit_points <= 0 ) {
+        unit_state.lifecycle_state = _UNIT_LIFECYCLE_PENDING_DESTRUCT;
+        external_ai_event = _external_event_pending_unit_destruct;
 
-        update_state_opcode.setUnitID(id);
-        update_state_opcode.hit_points = unit_state.hit_points;
-        UnitInterface::sendOpcode( &update_state_opcode );
+        UMesgEndLifeCycleUpdate lifecycle_update;
+        lifecycle_update.set(id, weapon_hit->getOwnerUnitID(),
+                unit_state.unit_type);
+        UnitInterface::sendMessage(&lifecycle_update);
 
-        if ( unit_state.hit_points <= 0 ) {
-            unit_state.lifecycle_state = _UNIT_LIFECYCLE_PENDING_DESTRUCT;
-            external_ai_event = _external_event_pending_unit_destruct;
-
-            UMesgEndLifeCycleUpdate lifecycle_update;
-            lifecycle_update.set(id, weapon_hit->getOwnerUnitID(),
-                    unit_state.unit_type);
-            UnitInterface::sendMessage(&lifecycle_update);
-
-            // ** Note: Temp
-            iXY current_map_loc;
-            MapInterface::pointXYtoMapXY( unit_state.location, &current_map_loc );
-            UnitBlackBoard::unmarkUnitLoc( current_map_loc );
-        }
-
+        // ** Note: Temp
+        iXY current_map_loc;
+        MapInterface::pointXYtoMapXY(unit_state.location, &current_map_loc);
+        UnitBlackBoard::unmarkUnitLoc(current_map_loc);
     }
 }
 

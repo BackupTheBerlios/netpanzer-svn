@@ -50,67 +50,6 @@ void Weapon::init()
     gMissleGroundLightPackedSurface.load("pics/particles/lights/pak/missleGroundLight.pak");
 }
 
-void Weapon::packFiles()
-{
-    throw Exception("not support anymore");
-#if 0
-    Surface       tempSurface;
-    Surface       tempRotateSurface;
-    PackedSurface tempPackSurface;
-    Surface       tempMissleSurface;
-    int           i;
-
-    // Medium
-    tempSurface.loadPCX("pics/particles/missles/pcx/missle1.pcx");
-
-    // Pack the missles.
-    tempMissleSurface.create(tempSurface.getPix(), tempSurface.getPixX(), 360);
-
-    for (i = 0; i < 360; i++) {
-        tempRotateSurface.copy(tempSurface);
-        tempRotateSurface.rotate(i);
-
-        tempMissleSurface.setFrame(i);
-        tempRotateSurface.blt(tempMissleSurface);
-    }
-
-    tempPackSurface.pack(tempMissleSurface);
-    tempPackSurface.save("pics/particles/missles/pak/misslesMedium.pak");
-
-    // Small
-    tempSurface.loadPCX("pics/particles/missles/pcx/missle0.pcx");
-
-    // Pack the missles.
-    tempMissleSurface.create(tempSurface.getPix(), tempSurface.getPixX(), 360);
-
-    for (i = 0; i < 360; i++) {
-        tempRotateSurface.copy(tempSurface);
-        tempRotateSurface.rotate(i);
-
-        tempMissleSurface.setFrame(i);
-        tempRotateSurface.blt(tempMissleSurface);
-    }
-
-    tempPackSurface.pack(tempMissleSurface);
-    tempPackSurface.save("pics/particles/missles/pak/misslesSmall.pak");
-
-    // Pack the shells.
-    //Surface tempShellSurface(gShellSurface.getPix(), gShellSurface.getPixX(), 360);
-    //
-    //for (i = 0; i < 360; i++)
-    //{
-    //	tempRotateSurface.copy(gShellSurface);
-    //	tempRotateSurface.rotate(i);
-    //
-    //	tempShellSurface.setFrame(i);
-    //	tempRotateSurface.blt(tempShellSurface);
-    //}
-    //
-    //tempPackSurface.pack(tempShellSurface);
-    //tempPackSurface.save("pics/particles/shells/pak/shells.pak");
-#endif
-}
-
 Weapon::Weapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end)
 {
     // I use this to line things up, so leave this in here when this
@@ -138,25 +77,21 @@ void Weapon::fsmFlight( void )
 
     do {
         switch( fsmFlight_state ) {
-        case _fsmFlight_idle : {
+            case _fsmFlight_idle:
                 end_cycle = true;
-            }
-            break;
+                break;
 
-        case _fsmFlight_in_flight : {
+            case _fsmFlight_in_flight:
                 if ( path.increment( &location, 4 ) == true ) {
                     fsmFlight_state = _fsmFlight_on_target;
-                    end_cycle = true;
-                } else {
-                    end_cycle = true;
                 }
-            }
-            break;
+                end_cycle = true;
+                break;
 
-        case _fsmFlight_on_target : {
+            case _fsmFlight_on_target: {
                 UMesgWeaponHit weapon_hit;
 
-                if ( NetworkState::status == _network_state_server ) {
+                if (NetworkState::status == _network_state_server) {
                     weapon_hit.setHeader( _umesg_flag_broadcast );
                     weapon_hit.message_id = _umesg_weapon_hit;
                     weapon_hit.setOwnerUnitID(owner_id);
@@ -175,14 +110,10 @@ void Weapon::fsmFlight( void )
                 iXY loc = iXY( location.x, location.y );
                 ParticleInterface::addMiss(loc, Weapon::owner_type_id);
                 end_cycle = true;
+                break;
             }
-            break;
-
-
-        } // ** switch
-
+        }
     } while ( end_cycle == false );
-
 }
 
 void Weapon::updateStatus( void )

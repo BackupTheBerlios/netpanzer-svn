@@ -84,9 +84,7 @@ public:
     { }
 
     static void init();
-    static void packFiles();
     static int  getGoalAngle(const iXY &start, const iXY &end);
-
 };
 
 #endif // ** _WEAPON_HPP

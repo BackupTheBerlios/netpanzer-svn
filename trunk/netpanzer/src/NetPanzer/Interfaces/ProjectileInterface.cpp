@@ -48,9 +48,9 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
 {
     Projectile *temp;
 
-    if (projectile_type == Weapon::_none) {
-        assert(false);
-    } else if (projectile_type == Weapon::_quad_missile) {
+    assert(projectile_type != Weapon::_none);
+    
+    if (projectile_type == Weapon::_quad_missile) {
         // The following code launches 4 missles spaced out evenly like they would be in a
         // missle bay.
         iXY startPos;
@@ -144,7 +144,7 @@ void ProjectileInterface::updateStatus()
         
         projectile->updateStatus();
         ++i;
-    } // ** while
+    }
 }
 
 void ProjectileInterface::offloadGraphics( SpriteSorter &sorter )

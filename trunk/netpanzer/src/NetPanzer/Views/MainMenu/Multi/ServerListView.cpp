@@ -58,11 +58,14 @@ ServerListView::~ServerListView()
 void
 ServerListView::refresh()
 {
+    delete queryThread;
+   
+    // don't clear before the delete or after the new, as the thread contains
+    // pointers to the serverlist
     SDL_mutexP(serverlist.mutex);
     serverlist.clear();
     SDL_mutexV(serverlist.mutex);
-    
-    delete queryThread;
+
     queryThread = new masterserver::ServerQueryThread(&serverlist);   
 }
 

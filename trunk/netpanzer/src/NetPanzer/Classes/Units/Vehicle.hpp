@@ -229,7 +229,7 @@ protected:
     void setCommandManualFire( UMesgAICommand *message );
 
     void messageAICommand( UnitMessage *message );
-    void messageWeaponHit( UnitMessage *message );
+    void messageWeaponHit(const UnitMessage* message);
     void messageSelectBoxUpdate( UnitMessage *message );
     void messageSelfDestruct( UnitMessage *message );
 
