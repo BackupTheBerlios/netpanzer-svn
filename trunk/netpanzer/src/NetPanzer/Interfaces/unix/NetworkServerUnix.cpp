@@ -71,7 +71,7 @@ int NetworkServerUnix::sendMessage(const PlayerID& player_id,
 
     try {
         serversocket->sendMessage(player_id.getNetworkID(),	(char *) message,
-                                  message->size, ! (flags & _network_send_no_guarantee));
+                                  size, ! (flags & _network_send_no_guarantee));
     } catch(Exception e) {
         LOG ( ("Network send error when sending to client %d: %s",
                player_id.getNetworkID(), e.what()) );
@@ -79,7 +79,7 @@ int NetworkServerUnix::sendMessage(const PlayerID& player_id,
         return _network_failed;
     }
 
-    NetworkState::incPacketsSent(message->size);
+    NetworkState::incPacketsSent(size);
 
 #ifdef NETWORKDEBUG
     NetPacketDebugger::logMessage("S", message);
