@@ -595,12 +595,11 @@ iXY View::getScreenToClientPos(const iXY &pos)
     assert(this != 0);
 
     if (getBordered()) {
-        return iXY(	pos.x - (min.x + borderSize),
+        return iXY( pos.x - (min.x + borderSize),
                     pos.y - (min.y + borderSize + moveAreaHeight));
     }
 
     return getScreenToViewPos(pos);
-
 } // end View::getScreenToClientPos
 
 // getScreenToViewPos
@@ -614,7 +613,6 @@ iXY View::getScreenToViewPos(const iXY &pos)
     assert(this != 0);
 
     return iXY(pos.x - min.x, pos.y - min.y);
-
 } // end getScreenToViewPos
 
 // getViewArea
@@ -626,18 +624,12 @@ Surface View::getViewArea(Surface& dest)
     assert(this != 0);
 
     iRect rect(min, max);
-    return Surface(dest, rect.min, rect.max, false);
+    Surface surface(dest, rect.min, rect.max, false);
+
+    assert(surface.mem != 0);
+    
+    return surface;
 } // end View::getViewArea
-
-// getViewRect
-//---------------------------------------------------------------------------
-// Purpose: Returns an iRect of the view's dimensions.
-//---------------------------------------------------------------------------
-iRect View::getViewRect() const
-{
-    return iRect(0, 0, getSizeX(), getSizeY());
-
-} // end getViewRect
 
 #if 0
 // getClientArea
@@ -669,12 +661,14 @@ void View::getClientArea(Surface &dest)
 Surface View::getClientArea(Surface& dest)
 {
     if (getBordered()) {
-        return Surface( getViewArea(dest),
-                        iXY(borderSize,
-                            borderSize + moveAreaHeight),
+        Surface surface(getViewArea(dest),
+                        iXY(borderSize, borderSize+moveAreaHeight),
                         iXY(getSizeX() - borderSize,
-                            getSizeY() - borderSize),
-                        false);
+                            getSizeY() - borderSize), false);
+
+        assert(surface.mem != 0);
+        
+        return surface;
     }
 
     return getViewArea(dest);

@@ -5,6 +5,10 @@
  crashes.
 -add signal handlers to make it abort more nicely in error case (don't stay in
  mouse/keyboard grab mode)
+-fixed a series of bugs where I accidently passed a Surface pointer instead of a
+ Surface to the blit functions. C++ was evil enough to use the
+ Surface::Surface(bool) constructor to create a new Surface instead of getting
+ me an error.
 
 11-Oct-2003 by Matthias Braun
 -added a release script

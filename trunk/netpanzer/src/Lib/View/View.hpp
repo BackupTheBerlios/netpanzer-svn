@@ -361,9 +361,7 @@ public:
 
     virtual int getMouseActions(const iXY &p) const;
 
-    iRect getViewRect() const;
     iRect getClientRect() const;
-}
-; // end View
+};
 
 #endif // end __View_hpp__

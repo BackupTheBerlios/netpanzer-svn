@@ -152,7 +152,7 @@ void ProgressView::scrollAndUpdateDirect(const char *text)
         loadBackgroundSurface();
     }
 
-    backgroundSurface.blt(screen);
+    backgroundSurface.blt(*screen);
 
     tempSurface.copy(background);
 
@@ -166,7 +166,7 @@ void ProgressView::scrollAndUpdateDirect(const char *text)
             Surface::getFontHeight(), Color::black);
     background.bltString(0, background.getPix().y - Surface::getFontHeight() - 1, text, Color::white);
 
-    background.blt(screen, 179, 153);
+    background.blt(*screen, 179, 153);
 
     screen->unlock();
     screen->copyToVideoFlip();

@@ -176,20 +176,6 @@ Surface::Surface()
     totalByteCount += sizeof(Surface);
 } // end Surface::Surface
 
-//---------------------------------------------------------------------------
-Surface::Surface(bool nMyMem)
-{
-    assert(this != 0);
-
-    reset();
-    myMem     = nMyMem;
-    doesExist = true;
-
-    totalSurfaceCount++;
-    totalByteCount += sizeof(Surface);
-
-} // end Surface::Surface
-
 // Surface
 //---------------------------------------------------------------------------
 Surface::Surface(const iXY &nPix, int nStride, int nFrameCount)
@@ -512,6 +498,8 @@ void Surface::blt(const Surface &dest, iXY min) const
     assert(getDoesExist());
     assert(dest.getDoesExist());
     assert(this != 0);
+    assert(mem != 0);
+    assert(dest.mem != 0);    
 
     // Add in the offset factor.
     min += offset;
@@ -523,16 +511,8 @@ void Surface::blt(const Surface &dest, iXY min) const
 
     iXY max;
     max = min + pix;
-    //int	x2 = x1 + pix.x;
-    //int	y2 = y1 + pix.y;
-    if (max.x <= 0) return;
-    if (max.y <= 0) return;
-
-    // Something is overlapping, so we need to verify that both
-    // surfaces are valid.
-    assert(mem != 0);
-    assert(dest.mem != 0);
-    if (mem == 0 || dest.mem == 0) return;
+    if (max.x < 0) return;
+    if (max.y < 0) return;
 
     int	pixelsPerRow = pix.x;
     int	numRows      = pix.y;
@@ -574,10 +554,8 @@ void Surface::blt(const Surface &dest, iXY min) const
     // to draw.  I should - because I checked for trivial
     // rejection first.  These asserts just make sure
     // my clipping is working...
-    if (signed(pixelsPerRow) <= 0) return;
-    if (signed(numRows) <= 0) return;
-    assert(signed(pixelsPerRow) > 0);
-    assert(signed(numRows) > 0);
+    assert(pixelsPerRow > 0);
+    assert(numRows > 0);
 
     // Now blt the sucker!  But first, see if we can do it in one
     // big blt, without doing each row individually...
@@ -603,6 +581,8 @@ void Surface::bltTrans(const Surface &dest, iXY min) const
     assert(getDoesExist());
     assert(dest.getDoesExist());
     assert(this != 0);
+    assert(mem != 0);
+    assert(dest.mem != 0);    
 
     // Add in the offset factor.
     min += offset;
@@ -616,14 +596,8 @@ void Surface::bltTrans(const Surface &dest, iXY min) const
     max = min + pix;
     //int	x2 = x1 + pix.x;
     //int	y2 = y1 + pix.y;
-    if (max.x <= 0) return;
-    if (max.y <= 0) return;
-
-    // Something is overlapping, so we need to verify that both
-    // surfaces are valid.
-    assert(mem != 0);
-    assert(dest.mem != 0);
-    if (mem == 0 || dest.mem == 0) return;
+    if (max.x < 0) return;
+    if (max.y < 0) return;
 
     int	pixelsPerRow = pix.x;
     int	numRows      = pix.y;
@@ -665,10 +639,8 @@ void Surface::bltTrans(const Surface &dest, iXY min) const
     // to draw.  I should - because I checked for trivial
     // rejection first.  These asserts just make sure
     // my clipping is working...
-    if (signed(pixelsPerRow) <= 0) return;
-    if (signed(numRows) <= 0) return;
-    assert(signed(pixelsPerRow) > 0);
-    assert(signed(numRows) > 0);
+    assert(pixelsPerRow > 0);
+    assert(numRows > 0);
 
     int srcAdjustment  = stride      - pixelsPerRow;
     int destAdjustment = dest.stride - pixelsPerRow;
@@ -698,6 +670,8 @@ void Surface::bltTransColor(const Surface &dest, iXY min, const uint8_t &color) 
     assert(getDoesExist());
     assert(dest.getDoesExist());
     assert(this != 0);
+    assert(mem != 0);
+    assert(dest.mem != 0);    
 
     // Add in the offset factor.
     min += offset;
@@ -709,16 +683,8 @@ void Surface::bltTransColor(const Surface &dest, iXY min, const uint8_t &color) 
 
     iXY max;
     max = min + pix;
-    //int	x2 = x1 + pix.x;
-    //int	y2 = y1 + pix.y;
-    if (max.x <= 0) return;
-    if (max.y <= 0) return;
-
-    // Something is overlapping, so we need to verify that both
-    // surfaces are valid.
-    assert(mem != 0);
-    assert(dest.mem != 0);
-    if (mem == 0 || dest.mem == 0) return;
+    if (max.x < 0) return;
+    if (max.y < 0) return;
 
     int	pixelsPerRow = pix.x;
     int	numRows      = pix.y;
@@ -760,10 +726,8 @@ void Surface::bltTransColor(const Surface &dest, iXY min, const uint8_t &color) 
     // to draw.  I should - because I checked for trivial
     // rejection first.  These asserts just make sure
     // my clipping is working...
-    if (signed(pixelsPerRow) <= 0) return;
-    if (signed(numRows) <= 0) return;
-    assert(signed(pixelsPerRow) > 0);
-    assert(signed(numRows) > 0);
+    assert(pixelsPerRow > 0);
+    assert(numRows > 0);
 
     int srcAdjustment  = stride      - pixelsPerRow;
     int destAdjustment = dest.stride - pixelsPerRow;
@@ -1663,25 +1627,21 @@ void Surface::bltLookup(const iRect &destRect, const PIX table[]) const
 {
     assert(getDoesExist());
     assert(this != 0);
+    assert(mem != 0);
 
     iXY min = destRect.min + offset;
-
     if (min.x >= pix.x) return;
     if (min.y >= pix.y) return;
 
     iXY max = destRect.max + offset;
-
-    if (max.x <= 0) return;
-    if (max.y <= 0) return;
+    if (max.x < 0) return;
+    if (max.y < 0) return;
 
     // Clip destination rectangle
-
     if (min.x < 0) min.x = 0;
     if (min.y < 0) min.y = 0;
-    if (max.x > pix.x) max.x = pix.x;
-    if (max.y > pix.y) max.y = pix.y;
-
-    assert(mem != 0);
+    if (max.x >= pix.x) max.x = pix.x;
+    if (max.y >= pix.y) max.y = pix.y;
 
     size_t pixelsPerRow = max.x - min.x;
     size_t numRows      = max.y - min.y;
@@ -2092,98 +2052,6 @@ void Surface::bltBrightness(const Surface &dest, const iXY &pos, const float &pe
     }
 
 } // end Surface::bltBrightness
-
-/*
-// bltBrightness
-void Surface::bltBrightness(const Surface &dest, const iXY pos, ColorTable &colorTable)
-{
-	assert(getDoesExist());
-	assert(dest.getDoesExist());
-	assert(this != 0);
-	assert(colorTable.getColorCount() == 256 * 100);
- 
-	iXY min(pos);
- 
-	min += offset;
- 
-	if (min.x >= dest.pix.x) return;
-	if (min.y >= dest.pix.y) return;
- 
-	iXY max(min + pix);
-	if (max.x <= 0) return;
-	if (max.y <= 0) return;
- 
-	// Something is overlapping, so we need to verify that both
-	// surfaces are valid.
-	assert(mem      != 0);
-	assert(dest.mem != 0);
- 
-	int        pixelsPerRow = pix.x;
-	int        numRows      = pix.y;
-	const PIX *sRow         = mem;        // Pointer to the this (source) Surface
-	PIX       *dRow         = dest.mem;   // Pointer to the dest Surface
- 
-	// CLIP LEFT
-	if (min.x < 0)
-	{
-		pixelsPerRow += min.x;
-		sRow         -= min.x;
-	}	else
-		{
-			dRow += min.x;
-		}
- 
-	// CLIP RIGHT
-	if (max.x > dest.pix.x) { pixelsPerRow -= max.x - dest.pix.x; }
- 
-	// CLIP TOP
-	if (min.y < 0)
-	{
-		numRows += min.y;
-		sRow    -= (min.y * stride);
-	}	else
-		{				    
-			dRow += (min.y * dest.stride);
-		}
- 
-	// CLIP BOTTOM
-	if (max.y > dest.pix.y) { numRows -= max.y - dest.pix.y; }
- 
-	// Check to make sure the clipping is working.
-	//if (signed(pixelsPerRow) <= 0) return;
-	//if (signed(numRows) <= 0) return;
-	assert(signed(pixelsPerRow) > 0);
-	assert(signed(numRows) > 0);
- 
-	PIX *d;
-	int xCount;
-	int sc;
-	int dc;
- 
-	for (int yCount = 0 ; yCount < numRows ; yCount++)
-	{
-		const PIX *s = sRow;
-		d            = dRow;
-		xCount       = pixelsPerRow;
- 
-		while (xCount > 0)
-		{
-			sc = *s;
-			dc = *d;
- 
-			assert(dc + ((Palette::brightness256[sc]) << 8) < 256 * 100);
- 
-			*d = colorTable[dc + ((Palette::brightness256[sc]) << 8)];
-      
-			xCount--;
-			s++;
-			d++;
-		}
- 
-		sRow += stride;
-		dRow += dest.stride;
-	}
-} // end bltBrightness*/
 
 static uint8_t quickHack[65536];
 
@@ -3136,6 +3004,5 @@ void Surface::drawLookupBorder(const PIX table[]) const
     // Right
     r = iRect(pix.x - 1, 0, pix.x, pix.y - 1);
     bltLookup(r, table);
-
 } // end Surface::drawLookupBorder
 

@@ -209,11 +209,9 @@ protected:
 
 public:
     Surface();
-    Surface(bool nMyMem);
     Surface(const iXY &nPix, int nStride, int nFrameCount);
     Surface(int xPix, int yPix, int nStride, int nFrameCount);
     Surface(const Surface &source, const iXY &min, const iXY &max, bool doGrab);
-    //Surface(const Surface &source, int x1, int y1, int x2, int y2, bool doGrab);
     Surface(void *nFrame0, const iXY &nPix, int nStride, int nFrameCount);
 
     virtual ~Surface();

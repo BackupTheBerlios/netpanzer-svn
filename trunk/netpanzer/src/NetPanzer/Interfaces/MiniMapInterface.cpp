@@ -27,9 +27,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ObjectiveInterface.hpp"
 #include "GameConfig.hpp"
 
-fXY      MiniMapInterface::scale_factor;
+fXY MiniMapInterface::scale_factor;
 iXY MiniMapInterface::mini_map_size;
-bool  MiniMapInterface::pathing_debug_mode = false;
+bool MiniMapInterface::pathing_debug_mode = false;
 
 PIX MiniMapInterface::player_unit_color;
 PIX MiniMapInterface::allie_unit_color;
@@ -44,10 +44,10 @@ bool        MiniMapInterface::radar_blink_flag;
 TimerFrameBase MiniMapInterface::show_enemy_radar_timer;
 bool        MiniMapInterface::show_enemy_radar_flag;
 
-iRect MiniMapInterface::getWorldWindow( void )
+iRect MiniMapInterface::getWorldWindow()
 {
     iRect world_win;
-    WorldViewInterface::getViewWindow( &world_win );
+    WorldViewInterface::getViewWindow(&world_win);
 
     world_win.min.x = int(float(world_win.min.x) / scale_factor.x);
     world_win.min.y = int(float(world_win.min.y) / scale_factor.y);

@@ -178,23 +178,14 @@ void MiniMapView::doDraw(const Surface &viewArea, const Surface &clientArea)
     viewArea.drawLookupBorder(Palette::darkGray256.getColorArray());
 
     // Draw the world view box.
-    clientArea.bltLookup(MiniMapInterface::getWorldWindow(), Palette::darkGray256.getColorArray());
-
+    iRect boxpos = MiniMapInterface::getWorldWindow();
+    boxpos.translate(iXY(1,1));                           
+    
+    clientArea.bltLookup(boxpos, Palette::darkGray256.getColorArray());
     // Draw the units and such on the minimap.
     MiniMapInterface::annotateMiniMap((Surface &) clientArea);
-
     // Draw the world view box corners.
-    iRect boxpos = MiniMapInterface::getWorldWindow();
-    boxpos.translate(iXY(1,1));
     clientArea.drawBoxCorners(boxpos, 5, Color::white);
-
-    // Draw an inner black rect inside the outer white rect, for visibility reasons.
-    //iRect innerRect(MiniMapInterface::getWorldWindow());
-    //
-    //innerRect.min += 1;
-    //innerRect.max -= 1;
-    //
-    //clientArea.drawBoxCorners(innerRect, 4, Color::black);
 
     // If the mouse is over the client area, then change the cursor.
     if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos()))) {

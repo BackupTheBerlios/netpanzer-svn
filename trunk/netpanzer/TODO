@@ -1,7 +1,8 @@
 -Improve userinterface:
         * Make usual shortcuts (known from other RTSes) work. Like
           CTRL+number for defining groups, a possibility to set spawnpoint
-          of units, scroll map with right mouse, ...
+          of units, scroll map with right mouse, scrolling map with cursor keys
+          ...
         * Create a nice static! skin which is at the bottom of the screen
           and combines a map, statusdisplay of selected units and outpost
           buildmenu

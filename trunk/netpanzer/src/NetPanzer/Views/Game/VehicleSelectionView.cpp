@@ -716,7 +716,8 @@ void VehicleSelectionView::drawMiniProductionStatus(const Surface &dest)
                     //pos.y = (miniProductionRect.getSizeY() - CHAR_YPIX) / 2 + miniProductionRect.min.y;
 
                     // Objective is off.
-                    dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
+                    // XXX
+                    //dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
 
                     dest.bltString(pos, outpostNameBuf, Color::white);
                     pos.y += 16;
@@ -750,7 +751,8 @@ void VehicleSelectionView::drawMiniProductionStatus(const Surface &dest)
                                 % 60);
                     checkMiniProductionRect(timeLeftBuf);
 
-                    dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
+                    // XXX
+                    // dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
 
                     dest.bltString(pos, outpostNameBuf, Color::white);
                     pos.y += 16;
@@ -799,7 +801,8 @@ void VehicleSelectionView::drawMiniProductionStatus(const Surface &dest)
                     }
                     checkMiniProductionRect(outpostNameBuf);
 
-                    dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
+                    // XXX
+                    //dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
 
                     dest.bltString(pos, outpostNameBuf, Color::white);
                 }

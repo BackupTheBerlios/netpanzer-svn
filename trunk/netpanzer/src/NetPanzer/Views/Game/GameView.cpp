@@ -104,7 +104,7 @@ void GameView::doDraw(const Surface &viewArea, const Surface &clientArea)
 
     SPRITE_SORTER.blitLists(screen);
 
-    VehicleSelectionView::drawMiniProductionStatus(screen);
+    VehicleSelectionView::drawMiniProductionStatus(*screen);
 
     COMMAND_PROCESSOR.updateControls();
 
