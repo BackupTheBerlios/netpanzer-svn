@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ObjectiveInterface.hpp"
 #include "MapsManager.hpp"
 #include "ConsoleInterface.hpp"
+#include "ChatInterface.hpp"
 
 #include "NetworkState.hpp"
 #include "SystemNetMessage.hpp"
@@ -162,6 +163,9 @@ void GameControlRulesDaemon::mapCycleFsmServer()
             break;
 
         case _map_cycle_server_state_display_endgame_views: {
+                ChatInterface::setMessageScopeServer();
+                ChatInterface::sendCurrentMessage("Round is over");
+                                                                
                 SystemViewControl view_control;
 
                 ServerConnectDaemon::lockConnectProcess();
