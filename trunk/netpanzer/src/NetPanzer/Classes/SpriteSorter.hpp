@@ -18,14 +18,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SPRITESORTER_HPP
 #define _SPRITESORTER_HPP
 
+#include <vector>
 #include "Sprite.hpp"
-#include "PArrayGrowable.hpp"
 
 class SpriteSorter
  {  
   protected:
    iRect world_window;
-   PArrayGrowable sprite_lists[ _MAX_HEIGHT_LEVELS ];
+   std::vector<Sprite*> sprite_lists[ _MAX_HEIGHT_LEVELS ];
    unsigned long  list_counts[ _MAX_HEIGHT_LEVELS ];
  
    void sortLists( void );
@@ -62,11 +62,9 @@ class SpriteSorter
 
    void blitLists( Surface *render_surf );
  
-   unsigned long getMaxSprites( unsigned long height_level );
- };
-
+   unsigned long getMaxSprites(unsigned long height_level) const;
+};
 
 extern SpriteSorter SPRITE_SORTER;
-
 
 #endif // _SPRITESORTER_HPP

@@ -17,59 +17,36 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <algorithm>
+#include <functional>
 #include "Exception.hpp"
 #include "SpriteSorter.hpp"
 
 SpriteSorter SPRITE_SORTER;
 
+class SpriteCompare 
+	: public std::binary_function<const Sprite*, const Sprite*, bool>
+{
+public:
+	bool operator()(const Sprite* sprite1, const Sprite* sprite2) const
+	{
+		long y1 = sprite1->world_pos.y;
+		long y2 = sprite2->world_pos.y;
 
-int sprite_key( const void *elem1, const void *elem2 )
- {
+		//if (y1 > y2) return +1;
+		if (y1 < y2) return true; else return false;
 
-  // !KLUDGE! for stupid Micro$oft.......
-  //
-  // Their stupid qsort implementation compares the same element
-  // against itself.  We must safeguard against this and return
-  // "same" in this case.  (And only in this case.....)
-
-  if (elem1 == elem2) return 0;
-
-  Sprite *sprite1 = *(Sprite **) (elem1);
-  Sprite *sprite2 = *(Sprite **) (elem2);
-
-  long y1 = sprite1->world_pos.y;
-  long y2 = sprite2->world_pos.y;
-
-  // @FD 06/25/98 - Rewrote these tests.  I think there was a bug on
-  // with (y1 > y1) test.  Also, for sprites that tie, I will impose
-  // a second comparison to break the tie, so that our comparison
-  // function is always consistent.  Whoever the bonehead at Microsoft
-  // was who wrote their qsort not only compares the same element
-  // against itself, but they also coded it in such a way that it
-  // can get stuck in a loop and never terminate (or even crash) if
-  // the comparison function is not consistent.  Morons.
+		// Tie based on the real comparison basis - impose an arbitrary 
+		// but consistent sort order to break the tie.
   
-  //if( y1 > y1 )
-  // return( 1 );
-  //else
-  // if( y1 < y2 )
-  //  return( -1 );
+		//if (sprite1 > sprite2) return +1;
+		if (sprite1 < sprite2) return true; else return false;
 
-  if (y1 > y2) return +1;
-  if (y1 < y2) return -1;
-
-  // Tie based on the real comparison basis - impose an arbitrary 
-  // but consistent sort order to break the tie.
-  
-  if (sprite1 > sprite2) return +1;
-  if (sprite1 < sprite2) return -1;
-
-  // We should never get here, unless the same sprite is
-  // inserted in the list twice
-  throw Exception("sprite_key called to compare the same sprite against itself!");
-  return 0;
-}
-
+		// We should never get here, unless the same sprite is
+		// inserted in the list twice
+		throw Exception("sprite_key called to compare the same sprite against itself!");
+	}
+};
 
 SpriteSorter::SpriteSorter( )
  {
@@ -82,26 +59,25 @@ void SpriteSorter::initialize( )
 
   for ( i = 0; i < 3; i++ )
    {
-    sprite_lists[ i ].initialize( 50, 50, 0xFFFFFFFF );    
-	list_counts[ i ] = 0;
+    sprite_lists[i].resize(50);    
+	list_counts[i] = 0;
    }
 
-  sprite_lists[ 3 ].initialize( 500, 100, 0xFFFFFFFF );
-  sprite_lists[ 4 ].initialize( 500, 100, 0xFFFFFFFF );
-  sprite_lists[ 5 ].initialize( 500, 100, 0xFFFFFFFF );
+  sprite_lists[3].resize(500);
+  sprite_lists[4].resize(500);
+  sprite_lists[5].resize(500);
 
   for ( i = 6; i < _MAX_HEIGHT_LEVELS; i++ )
    {
-    sprite_lists[ i ].initialize( 50, 50, 0xFFFFFFFF );
-    list_counts[ i ] = 0;
+    sprite_lists[i].resize(50);
+    list_counts[i] = 0;
    }
 
   for ( i = 0; i < _MAX_HEIGHT_LEVELS; i++ )
    {
-    max_sprite_stats[ i ] = 0;
+    max_sprite_stats[i] = 0;
    }
-
- }
+}
 
 void SpriteSorter::reset( void )
  {
@@ -120,72 +96,75 @@ void SpriteSorter::reset( iRect &world_win )
   reset();
  }
 
-void SpriteSorter::addSprite( Sprite *sprite )
- {
-  unsigned char height;
+void SpriteSorter::addSprite(Sprite *sprite)
+{
+   	unsigned char height;
   
-  if ( sprite->isVisible( world_window ) )
-   {
-    height = sprite->getHeight();
+	if ( sprite->isVisible( world_window ) )
+	{
+		height = sprite->getHeight();
+	
+		assert( height < _MAX_HEIGHT_LEVELS );
+	 
+		if(sprite_lists[height].size() < list_counts[height])
+			sprite_lists[height].resize(list_counts[height]);
+		sprite_lists[height] [list_counts[height]] = sprite;
+		list_counts[ height ]++;
+	} 
+}
+ 
+void SpriteSorter::forceAddSprite(Sprite *sprite)
+{
+  	unsigned char height;
+
+	height = sprite->getHeight();
 	
 	assert( height < _MAX_HEIGHT_LEVELS );
-	 
-	sprite_lists[ height ].add( sprite, list_counts[ height ] );
-    list_counts[ height ]++;
-   }
- 
- }
 
- 
-void SpriteSorter::forceAddSprite( Sprite *sprite )
- {
-  unsigned char height;
+	if(sprite_lists[height].size() < list_counts[height])
+		sprite_lists[height].resize(list_counts[height]);
+	sprite_lists[height] [list_counts[height]] = sprite;
+  
+	list_counts[ height ]++;
+}
 
-  height = sprite->getHeight();
-	
-  assert( height < _MAX_HEIGHT_LEVELS );
-	 
-  sprite_lists[ height ].add( sprite, list_counts[ height ] );
-  list_counts[ height ]++;
- }
+void SpriteSorter::sortLists()
+{
+	unsigned long i;
 
+	for ( i = 0; i < _MAX_HEIGHT_LEVELS; i++ )
+	{
+		sort(sprite_lists[i].begin(), sprite_lists[i].end(),
+			 SpriteCompare());
 
-void SpriteSorter::sortLists( void ) 
- {
-  unsigned long i;
-
-  for ( i = 0; i < _MAX_HEIGHT_LEVELS; i++ )
-   {
-    sprite_lists[ i ].sort( list_counts[ i ], sprite_key );   
-   }
- 
- }
-
+		//sprite_lists[ i ].sort( list_counts[ i ], sprite_key );   
+	}
+}
 
 void SpriteSorter::blitLists( Surface *render_surf )
- {
-  Sprite *sprite;
-  unsigned long list_index, sprite_index;
+{
+  	Sprite *sprite;
+	unsigned long list_index, sprite_index;
 
-  //sortLists();
+	//sortLists();
 
-  for ( list_index = 0; list_index < _MAX_HEIGHT_LEVELS; list_index++ )
-   {
-    for ( sprite_index = 0; sprite_index < list_counts[ list_index]; sprite_index++ )
-	 {
-	  sprite = (Sprite *) sprite_lists[ list_index ][ sprite_index ];
-	  sprite->blitAll( render_surf, world_window );   
-     }
+	for ( list_index = 0; list_index < _MAX_HEIGHT_LEVELS; list_index++ )
+	{
+		for ( sprite_index = 0; sprite_index < list_counts[ list_index]; sprite_index++ )
+		{
+			sprite = (Sprite *) sprite_lists[ list_index ][ sprite_index ];
+			sprite->blitAll( render_surf, world_window );   
+		}
    
-    if ( list_counts[ list_index ] > max_sprite_stats[ list_index ] )
-	 {
-	  max_sprite_stats[ list_index ] = list_counts[ list_index ];
-	 } 
-   }
+		if ( list_counts[ list_index ] > max_sprite_stats[ list_index ] )
+		{
+			max_sprite_stats[ list_index ] = list_counts[ list_index ];
+		} 
+	}	
+}
 
- }
+unsigned long SpriteSorter::getMaxSprites(unsigned long height_level) const
+{
+   	return( max_sprite_stats[ height_level ] );
+}
 
-unsigned long SpriteSorter::getMaxSprites( unsigned long height_level )
- {
-  return( max_sprite_stats[ height_level ] );
- }
