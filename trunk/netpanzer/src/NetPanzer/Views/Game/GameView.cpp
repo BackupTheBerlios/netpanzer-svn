@@ -164,7 +164,7 @@ void GameView::mouseMove(const iXY & prevPos, const iXY &newPos)
 	{
 		Desktop::setFocusView(this);
 		//Desktop::setActiveView(this);
-		MouseInterface::setCursor(MouseInterface::defaultcursor);
+		MouseInterface::setCursor("default.bmp");
 	}
 
 } // end GameView::mouseMove

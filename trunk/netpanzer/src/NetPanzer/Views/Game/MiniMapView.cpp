@@ -522,14 +522,14 @@ void MiniMapView::mouseMove(const iXY &prevPos, const iXY &newPos)
 			{
 				if (MiniMapInterface::isValidUnitMove(newPos))
 				{
-					MouseInterface::setCursor(MouseInterface::move);
+					MouseInterface::setCursor("move.bmp");
 				} else
 				{
-					MouseInterface::setCursor(MouseInterface::noentry);
+					MouseInterface::setCursor("noentry.bmp");
 				}
 			} else
 			{
-				MouseInterface::setCursor(MouseInterface::defaultcursor);
+				MouseInterface::setCursor("default.bmp");
 			}
 
 			if (!selectionAnchor)
@@ -541,7 +541,7 @@ void MiniMapView::mouseMove(const iXY &prevPos, const iXY &newPos)
 			selectionAnchor       = true;
 			
 			// Set the selection cursor.
-			MouseInterface::setCursor(MouseInterface::select);
+			MouseInterface::setCursor("select.bmp");
 
 		} else
 		{

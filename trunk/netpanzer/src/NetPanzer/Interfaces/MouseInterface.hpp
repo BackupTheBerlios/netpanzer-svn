@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _MOUSEINTERFACE_HPP
 
 #include <string>
-#include <vector>
+#include <map>
 #include "QueueTemplate.hpp"
 #include "Surface.hpp"
 
@@ -53,12 +53,8 @@ private:
    	static unsigned char cursor_x_size;
 	static unsigned char cursor_y_size;
 
-	struct MouseCursorEntry
-	{
-		std::string name;
-		Surface cursor;
-	};
-	std::vector<MouseCursorEntry> cursors;
+	typedef std::map<std::string,Surface*> cursors_t;
+	static cursors_t cursors;
 
 protected:
   	static iXY mouse_pos;  
@@ -102,6 +98,7 @@ public:
 	static MouseEventQueue event_queue;        
    
 	static void initialize();
+	static void shutdown();
    
 	static inline void getMousePosition( long *x, long *y )
 	{
@@ -129,7 +126,7 @@ public:
    static void setMiddleButtonUp();
    static void setMiddleButtonDoubleDown();
    
-   static void setCursor(CursorType type); 
+   static void setCursor(const char* cursorname);
    static void updateCursor();
 };
 

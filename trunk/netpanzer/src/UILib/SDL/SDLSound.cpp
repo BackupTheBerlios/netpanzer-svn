@@ -27,6 +27,7 @@
 #include <SDL_mixer.h>
 #include "Log.hpp"
 #include "Exception.hpp"
+#include "FileSystem.hpp"
 #include "SDLSound.hpp"
 
 musics_t SDLSound::musicfiles;
@@ -138,16 +139,14 @@ int SDLSound::playSoundRepeatedly(const char* name)
  * Stop playing the channel.
  * @param channel channel to stop
  */
-	void
-SDLSound::stopChannel(int channel)
+void SDLSound::stopChannel(int channel)
 {
 	if (channel != -1) {
 		Mix_HaltChannel(channel);
 	}
 }
 //-----------------------------------------------------------------
-	int
-SDLSound::getSoundVolume(long distance)
+int SDLSound::getSoundVolume(long distance)
 {
 	//0 to 2 800x600 screen widths away--
 	if( (distance < 640000)) return MIX_MAX_VOLUME;
@@ -172,8 +171,7 @@ SDLSound::getSoundVolume(long distance)
  * Load all *.wav from directory.
  * @param directory path to the directory
  */
-	void
-SDLSound::loadSound(const char* directory)
+void SDLSound::loadSound(const char* directory)
 {
 	DIR* dir = opendir(directory);
 	if(!dir) {
@@ -189,7 +187,8 @@ SDLSound::loadSound(const char* directory)
 
 		std::string filename = directory;
 		filename += entry->d_name;
-		Mix_Chunk *chunk = Mix_LoadWAV(filename.c_str());
+		ReadFile* file = FileSystem::openRead(filename.c_str());
+		Mix_Chunk *chunk = Mix_LoadWAV_RW(file->getSDLRWOps(), 1);
 		if (!chunk) {
 			LOG (("Couldn't load wav '%s': %s",
 						filename.c_str(), Mix_GetError()));
@@ -205,8 +204,7 @@ SDLSound::loadSound(const char* directory)
  * Hash filename to idName.
  * @return id name
  */
-	std::string
-SDLSound::getIdName(const char *filename)
+std::string SDLSound::getIdName(const char *filename)
 {
 	std::string name = filename;
 	std::string::size_type pos = name.find_first_of("._");

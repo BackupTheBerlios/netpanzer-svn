@@ -3933,3 +3933,76 @@ void Surface::drawLookupBorder(const PIX table[]) const
 	bltLookup(r, table);
 
 } // end Surface::drawLookupBorder
+
+
+void Surface::saveBMP(const char *fname, Palette &pal )
+ {
+ FILE* fp = fopen(fname, "wb");
+
+  BitmapFileHeader file_header;
+  BitmapInfoHeader info_header;
+  RGBQuad palette[256];
+                                                                                
+  file_header.bfType = 0x4D42;
+  file_header.bfOffBits = sizeof(BitmapFileHeader) + sizeof(BitmapInfoHeader)
+                           + (sizeof(RGBQuad) * 256);
+  file_header.bfSize = file_header.bfOffBits + (pix.x * pix.y);
+  file_header.bfReserved1 = 0;
+  file_header.bfReserved2 = 0;
+                                                                                
+  info_header.biSize = sizeof(BitmapInfoHeader);
+  info_header.biWidth = pix.x;
+  info_header.biHeight = pix.y;
+  info_header.biPlanes = 1;
+  info_header.biBitCount = 8;
+  info_header.biCompression = BI_RGB;
+  info_header.biSizeImage= pix.x * pix.y;
+  info_header.biXPelsPerMeter = 0;
+  info_header.biYPelsPerMeter = 0;
+  info_header.biClrUsed = 256;
+  info_header.biClrImportant = 256;
+                                                                                
+  fwrite( &file_header, sizeof(BitmapFileHeader), 1, fp );
+  fwrite( &info_header, sizeof(BitmapInfoHeader), 1, fp );
+                                                                                
+  for(int index = 0; index < 256; index++)
+   {
+    RGBColor color;
+                                                                                
+    color = pal[ index ];
+                                                                                
+    palette[index].rgbRed = color.red;
+    palette[index].rgbGreen = color.green;
+    palette[index].rgbBlue = color.blue;
+    palette[index].rgbReserved = 0;
+   }//end for index that loads the palette
+                                                                                
+  fwrite( palette, sizeof(RGBQuad), 256, fp );
+                                                                                
+  flipVertical();
+                                                                                
+    if ( (info_header.biWidth % 4) == 0 )
+     {
+      fwrite( mem, info_header.biSizeImage, 1, fp );
+     }
+    else
+     {
+      int padding = ((info_header.biWidth / 4 + 1) * 4) - info_header.biWidth;
+                                                                                
+      PIX buffer[10];
+      int numRows = pix.y;
+                                                                                
+      //PIX *sPtr = mem;
+                                                                                
+      for (int row = 0; row < numRows; row++)
+       {
+        fwrite( mem, pix.x, 1, fp );
+        fwrite( buffer, padding, 1, fp);
+        mem += stride;
+       }
+     }
+                                                                                
+  flipVertical();
+fclose(fp);
+ }
+

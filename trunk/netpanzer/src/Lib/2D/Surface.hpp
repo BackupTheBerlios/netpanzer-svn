@@ -464,6 +464,7 @@ public:
 	void bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color) const;
 
     void loadBMP(const char *fileName, bool needAlloc = true, void *returnPalette = 0);
+	void saveBMP(const char* filename, Palette& pal);
 
 	void mapFromPalette(const char* oldPalette);
 

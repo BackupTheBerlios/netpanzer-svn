@@ -18,18 +18,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <SDL.h>
+
 #include "MouseInterface.hpp"
-
-#include "DDHardSurface.hpp"
-
+#include "FileSystem.hpp"
+#include "Exception.hpp"
+#include "Log.hpp"
 #include "cMouse.hpp"
-
-#include "Gdatstct.hpp"
-sprite_dbase CURSOR_DBASE;
 
 unsigned char MouseInterface::cursor_x_size;
 unsigned char MouseInterface::cursor_y_size;
-Surface	  MouseInterface::mouse_cursor( false );
 
 iXY MouseInterface::mouse_pos;  
    
@@ -59,12 +56,42 @@ TIMESTAMP MouseInterface::middle_button_hold_time;
 unsigned char MouseInterface::button_mask;
 
 MouseEventQueue MouseInterface::event_queue;
+MouseInterface::cursors_t MouseInterface::cursors;
 
+#include "Gdatstct.hpp"
 void MouseInterface::initialize()
 {
 	event_queue.initialize( 20 );
-	mouse_cursor.setOffsetCenter();
-	CURSOR_DBASE.load_dbase( "gdbase/cursor.dbs" );
+
+	sprite_dbase CURSOR_DBASE;
+	CURSOR_DBASE.load_dbase( "./gdbase/cursor.dbs");
+	
+
+	const char* cursorpath = "pics/cursors/";
+	char** cursorfiles = FileSystem::enumerateFiles(cursorpath);
+	for(char** i = cursorfiles; *i != 0; i++) {
+		if(*i[0]=='.')
+			continue;
+		Surface* surface = new Surface;
+		try {
+			std::string filename = cursorpath;
+			filename += *i;
+			surface->loadBMP(filename.c_str());
+			surface->setOffsetCenter();
+			cursors.insert(std::pair<std::string,Surface*> (*i, surface));
+		} catch(Exception& e) {
+			LOG(("Couldn't load cursorfile '%s': %s", *i, e.getMessage()));
+		}
+	}
+	FileSystem::freeList(cursorfiles);
+}
+
+void MouseInterface::shutdown()
+{
+	cursors_t::iterator i = cursors.begin();
+	for( ; i != cursors.end(); i++) {
+		delete i->second;
+	}
 }
     
 bool MouseInterface::buttonHeld(unsigned char mask)
@@ -260,96 +287,13 @@ void MouseInterface::setMiddleButtonDoubleDown()
 	middle_button_hold_time = now();
 }
 
-void MouseInterface::setCursor(CursorType type)
+void MouseInterface::setCursor(const char* cursorname)
 {
-	
-	
-  	switch(type)
- 	{
-    case defaultcursor:
-		cursor_x_size = CURSOR_DBASE.sprite_list[ 0 ].x_size;
-		cursor_y_size = CURSOR_DBASE.sprite_list[ 0 ].y_size;
-   		mouse_cursor.setTo( (void *) CURSOR_DBASE.sprite_list[ 0 ].data,
-				iXY( cursor_x_size, cursor_y_size ),
-				cursor_x_size, 1);
+	cursors_t::iterator i = cursors.find(cursorname);
+	if(i == cursors.end())
+		throw Exception("mouse cursor '%s' not found.", cursorname);
 
-		mouse_cursor.setOffsetCenter();
-		mouse.setPointer( &mouse_cursor );
-		break;
-
-    case noentry:
-     cursor_x_size = CURSOR_DBASE.sprite_list[ 4 ].x_size;
-     cursor_y_size = CURSOR_DBASE.sprite_list[ 4 ].y_size;
-     mouse_cursor.setTo( (void *) CURSOR_DBASE.sprite_list[ 4 ].data,
-	                     iXY( cursor_x_size, cursor_y_size ),
-						 cursor_x_size, 
-						 1 
-                       );
-     mouse_cursor.setOffsetCenter();
-     mouse.setPointer( &mouse_cursor );
-	break;          
-
-    case move:
-     cursor_x_size = CURSOR_DBASE.sprite_list[ 3 ].x_size;
-     cursor_y_size = CURSOR_DBASE.sprite_list[ 3 ].y_size;
-     mouse_cursor.setTo( (void *) CURSOR_DBASE.sprite_list[ 3 ].data,
- 	                     iXY( cursor_x_size, cursor_y_size ),
-						 cursor_x_size,
-						 1 
-                       );
-     mouse_cursor.setOffsetCenter();
-     mouse.setPointer( &mouse_cursor );
-	break;
-
-    case select:
-     cursor_x_size = CURSOR_DBASE.sprite_list[ 1 ].x_size;
-     cursor_y_size = CURSOR_DBASE.sprite_list[ 1 ].y_size;
-	 mouse_cursor.setTo( (void *) CURSOR_DBASE.sprite_list[ 1 ].data,
-	                     iXY( cursor_x_size, cursor_y_size ),
-	 					 cursor_x_size, 
-						 1 
-                       );
-     mouse_cursor.setOffsetCenter();
-     mouse.setPointer( &mouse_cursor );
-	break;
-        
-    case target:   
-     cursor_x_size = CURSOR_DBASE.sprite_list[ 2 ].x_size;
-     cursor_y_size = CURSOR_DBASE.sprite_list[ 2 ].y_size;
-	 mouse_cursor.setTo( (void *) CURSOR_DBASE.sprite_list[ 2 ].data,
-	                     iXY( cursor_x_size, cursor_y_size ),
-						 cursor_x_size, 
-						 1 
-                       );
-     mouse_cursor.setOffsetCenter();
-     mouse.setPointer( &mouse_cursor );
-    break;
-
-    case allie:   
-     cursor_x_size = CURSOR_DBASE.sprite_list[ 5 ].x_size;
-     cursor_y_size = CURSOR_DBASE.sprite_list[ 5 ].y_size;
-	 mouse_cursor.setTo( (void *) CURSOR_DBASE.sprite_list[ 5 ].data,
-	                     iXY( cursor_x_size, cursor_y_size ),
-						 cursor_x_size, 
-						 1 
-                       );
-     mouse_cursor.setOffsetCenter();
-     mouse.setPointer( &mouse_cursor );
-    break;
-
-    case break_allie:
-     cursor_x_size = CURSOR_DBASE.sprite_list[ 6 ].x_size;
-     cursor_y_size = CURSOR_DBASE.sprite_list[ 6 ].y_size;
-	 mouse_cursor.setTo( (void *) CURSOR_DBASE.sprite_list[ 6 ].data,
-	                     iXY( cursor_x_size, cursor_y_size ),
-						 cursor_x_size, 
-						 1 
-                       );
-     mouse_cursor.setOffsetCenter();
-     mouse.setPointer( &mouse_cursor );
-    break;
-
-   } // ** switch 
+	mouse.setPointer(i->second);
 }
     
 void MouseInterface::updateCursor()

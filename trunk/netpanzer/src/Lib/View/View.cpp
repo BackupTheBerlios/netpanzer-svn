@@ -1533,7 +1533,7 @@ void View::setSearchName(const char *searchName)
 		View::searchName = strdup(searchName);
 		if (View::searchName == 0)
 		{
-			throw Exception("ERROR: Unable to allocate searchName: ", searchName);
+			throw Exception("ERROR: Unable to allocate searchName: %s", searchName);
 		}
 	}
 } // end View::setSearchName
@@ -1555,7 +1555,7 @@ void View::setTitle(const char *title)
 		View::title = strdup(title);
 		if (View::title == 0)
 		{
-			throw Exception("ERROR: Unable to allocate title: ", title);
+			throw Exception("ERROR: Unable to allocate title: %s", title);
 		}
 	}
 } // end View::setTitle
@@ -1577,7 +1577,7 @@ void View::setSubTitle(const char *subTitle)
 		View::subTitle = strdup(subTitle);
 		if (View::subTitle == 0)
 		{
-			throw Exception("ERROR: Unable to allocate subTitle: ", subTitle);
+			throw Exception("ERROR: Unable to allocate subTitle: %s", subTitle);
 		}
 	}
 } // end View::setSubTitle

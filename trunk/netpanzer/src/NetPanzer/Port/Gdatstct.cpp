@@ -95,6 +95,18 @@ short sprite_dbase::load_dbase( char *dbase_path )
 
   dbase_loaded = true;
 
+	for(int i=0; i<header.sprite_count; i++) {
+		sprite_data* sprite = &sprite_list[i];
+		String filename = sprite->name;
+		filename += ".bmp";
+		
+		Surface surf(false);
+		surf.setTo(sprite->data, iXY(32, 32), 32, 1);
+		Palette pal;
+		surf.saveBMP(filename, pal);
+	}
+  
+
   return( true ); 
 }
 

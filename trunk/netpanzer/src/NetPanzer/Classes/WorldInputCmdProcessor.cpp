@@ -191,45 +191,41 @@ unsigned char WorldInputCmdProcessor::getCursorStatus( iXY &loc )
 
 void WorldInputCmdProcessor::
         setMouseCursor( unsigned char world_cursor_status )
- {
+{
 	// XXX yet another abstraction here? probably convert the cursor types to
 	// simple strings (which are the names of the cursor images at the same
 	// time) and get rid of all this code here and in MouseInterface
-  switch( world_cursor_status )
-   {
-    case _cursor_regular :
-     MouseInterface::setCursor( MouseInterface::defaultcursor );
-    break;
+  	switch( world_cursor_status )
+   	{
+	   	case _cursor_regular :
+			MouseInterface::setCursor("default.bmp");
+			break;
+			
+		case _cursor_move :
+			MouseInterface::setCursor("move.bmp");
+			break;
+			
+		case _cursor_blocked :
+			MouseInterface::setCursor("noentry.bmp");
+			break;
 
-    case _cursor_move :
-     MouseInterface::setCursor( MouseInterface::move );
-    break;
+		case _cursor_player_unit :
+			MouseInterface::setCursor("select.bmp");
+			break;
 
-    case _cursor_blocked :
-     MouseInterface::setCursor( MouseInterface::noentry );
-    break;
-
-    case _cursor_player_unit :
-     MouseInterface::setCursor( MouseInterface::select );
-    break;
-
-    case _cursor_enemy_unit :
-     MouseInterface::setCursor( MouseInterface::target );
-    break;
+		case _cursor_enemy_unit :
+			MouseInterface::setCursor("target.bmp");
+			break;
   
-    case _cursor_make_allie :
-     MouseInterface::setCursor( MouseInterface::allie );
-    break;
+		case _cursor_make_allie :
+			MouseInterface::setCursor("allie.bmp");
+			break;
      
-    case _cursor_break_allie :
-     MouseInterface::setCursor( MouseInterface::break_allie );
-    break;
-
-    break;
-   } // ** switch
-
- 
- }
+		case _cursor_break_allie :
+			MouseInterface::setCursor("breakallie.bmp");
+			break;
+	} // ** switch
+}
 
 void WorldInputCmdProcessor::cycleNextUnitAndChangeFocus( void )
  {
