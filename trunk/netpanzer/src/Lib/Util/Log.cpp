@@ -77,7 +77,7 @@ Logger::log(int priority, const char *fmt, va_list ap)
     
     if (m_logfile != 0) {
         char buf[512];
-        vsnprintf(buf, 511, fmt, ap);
+        vsnprintf(buf, sizeof(buf), fmt, ap);
         strcat(buf, "\n");
 	try {
 	    m_logfile->write(buf, strlen(buf), 1);
