@@ -1,5 +1,6 @@
 -send quit message to other masterservers when we're quitting
--write docu about the protocol and rethink it.
+-write docu about the protocol and rethink it. - should be ok
 -add support for queries with different settings.
- Esp. protocolversion is important.
-
+ Esp. protocolversion is important. - done
+-thread handling in RequestThread in case of cancelation isn't proper yet, we
+ may leak some memory.
