@@ -1,0 +1,3 @@
+SubDir TOP wads ;
+
+InstallData [ WildcardPath *.act *.tls ] : wads ;

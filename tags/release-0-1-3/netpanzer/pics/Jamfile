@@ -1,0 +1,29 @@
+SubDir TOP pics ;
+
+PARTICELPATHS = 
+        particles/puff/dirt/pak
+        particles/puff/smokeDark/pak
+        particles/puff/smokeLight/pak
+        particles/clouds/pak
+        particles/craters/pak
+        particles/explosion/explosion0/pak
+        particles/explosion/explosion1/pak
+        particles/lights/pak
+        particles/missles/pak
+        particles/chunks/pak
+        particles/shells/pak
+;
+
+for p in $(PARTICELPATHS) {
+    FILES += [ WildcardPath $(p) : *.pak ] ;
+}
+
+FILES += [ WildcardPath flags : *.bmp ]
+         [ WildcardPath cursors : *.bmp ]
+         [ WildcardPath menus/vehicleSelectionView : *.bmp ]
+         [ WildcardPath backgrounds/menus/buttons/default/pak : *.pak ]
+         [ WildcardPath backgrounds/menus/menu/pak : *.pak ]
+         [ WildcardPath backgrounds/menus/menu : *.bmp ]
+         chars5x5.raw chars8x8.raw grass.bmp ;
+
+InstallData $(FILES) : pics ;

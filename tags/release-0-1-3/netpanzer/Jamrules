@@ -1,0 +1,32 @@
+if ! $(BUILDTOP)
+{
+	BUILDTOP = $(TOP) ;
+}
+
+JAMCONFIG ?= $(BUILDTOP)/Jamconfig ;
+include $(JAMCONFIG) ;
+if ! $(JAMCONFIG_READ)
+{
+  EXIT "Couldn't find config. Please run 'configure' first." ;
+}
+
+COMPILER.CFLAGS += -Wall ;
+COMPILER.CFLAGS.optimize += -O3 -g3 ;
+COMPILER.LFLAGS.optimize += -O3 -g3 ;
+COMPILER.CFLAGS.debug += -DDEBUG -g3 ;
+COMPILER.LFLAGS.debug += -g3 ;
+COMPILER.CFLAGS.profile += -DDEBUG -g3 -pg ;
+COMPILER.LFLAGS.profile += -g3 -pg ;
+
+# Put output files into out/systemname.
+LOCATE.OBJECTS = $(BUILDTOP)/out/$(OSFULL[1]:L) ;
+LOCATE.TARGETS = $(BUILDTOP) ;
+
+# change some install paths from autoconf defaults
+datadir = $(datadir)/netpanzer ;
+
+# Include build rules
+include $(TOP)/mk/jam/build.jam ;
+
+# Include Dirs
+IncludeDir $(BUILDTOP) ; # for config.h

@@ -1,0 +1,4 @@
+SubDir TOP units ;
+
+InstallData [ WildcardPath pics/pak : *.pak ]
+            [ WildcardPath profiles : *.pfl ] : units ;

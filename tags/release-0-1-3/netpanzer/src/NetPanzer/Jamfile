@@ -1,0 +1,48 @@
+SubDir TOP src NetPanzer ;
+
+SUBDIRS =
+    .
+    Core
+    Port
+    View
+    Views
+    Views/Game
+    Views/MainMenu
+    Views/MainMenu/Multi
+    Views/MainMenu/Options
+    Classes
+    Classes/AI
+    Classes/Units
+    Classes/Weapons
+    Classes/Network
+    Particles
+    IRCLobby
+    Network
+    Resources
+    Structs
+    Interfaces
+    Interfaces/unix
+    Bot
+    Panels
+;
+
+for i in $(SUBDIRS)
+{
+  SearchSubdir $(i) ;
+  SOURCES += [ Wildcard $(i) : *.cpp *.hpp ] ;
+}
+
+Application netpanzer : $(SOURCES) ;
+LinkWith netpanzer : netpanzertypes netpanzerutil netpanzersys netpanzerxml
+                     netpanzer2d netpanzerarrayutil optionmm netpanzerui
+;
+
+CFlags netpanzer : -DDATADIR=\\\"$(datadir)\\\" ;
+ExternalLibs netpanzer : XML SDLNET SDLMIXER SDLIMAGE SDL PHYSFS ;
+Help netpanzer : "Build the main netpanzer executable" ;
+
+for i in $(SUBDIRS)
+{
+  IncludeDir netpanzer : $(i) ;
+}
+

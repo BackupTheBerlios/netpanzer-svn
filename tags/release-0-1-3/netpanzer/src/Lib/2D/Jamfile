@@ -1,0 +1,10 @@
+SubDir TOP src Lib 2D ;
+
+Library netpanzer2d 
+    : [ Wildcard *.cpp *.hpp ]
+    : noinstall
+;
+LinkWith netpanzer2d : netpanzertypes netpanzerutil ;
+ExternalLibs netpanzer2d : XML SDL PHYSFS ;
+Help netpanzer2d : "Build the netpanzer 2d support library" ;
+

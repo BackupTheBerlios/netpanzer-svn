@@ -1,0 +1,37 @@
+*** 0.1 ***
+
+Initial linux port
+
+-----------------------------------------------------------------------------
+*** 0.1.1 ***
+
+    * checkboxes are clickable now
+    * game no longer crashes after output occupation
+
+-----------------------------------------------------------------------------
+*** 0.1.2 ***
+
+netPanzer 0.1.2 is available now:
+
+    * A new lobby view and server browser has been added
+    * a man page has been added
+    * The deciated server reads it's setting from a configuration file now
+    * The bot player can now be started as a separate process.
+    * polish and swedish flag has been added (we happily accept more flags)
+    * several smaller bugfixes and improvements
+
+-----------------------------------------------------------------------------
+*** 0.1.3 ***
+
+This is still a maintenance and bugfix release. We're working on an editor and a
+UI rewrite, but these have to wait for a later release. Changes:
+
+    -fix bug where the lobby view would always display 0/x players
+    -some robustness and usability fixes for the irc lobby code
+    -new slovakian flag
+    -lots of code cleanups and rewrites (and still lots more to do)
+    -unit spawnpoint can be choosen at the outposts now
+    -some small UI improvements
+    -reorganised build environment
+    -network packets are smaller and more robust now
+

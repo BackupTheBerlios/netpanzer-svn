@@ -1,0 +1,79 @@
+*** Lobby Code
+- Dedicated server always try to announce themself on the netpanzer lobby. User
+  should be able to disable this. - implemented
+- Non-Dedicated servers don't announce themselfes at the lobby.
+- There's no check if the irc-server connection is still available. We should
+  use some ping/pong messages there.
+- the player nickname is often already used by someone else in irc. We should
+  add a netpanzer postfix to them. (ie. MatzeB|netp). If you try to use the name
+  of another netpanzer player, then you should be warned and given a chance to
+  reconnect with another name
+- It should be possible to use different ports than the default one for the
+  netpanzer server
+
+*** Improvements
+-let dedicated server output statistics on console at the end of a round
+-Convert the 256 color stuff to truecolor
+-Add timeout/keepalive handling to network layer to correctly detect connection
+ losses and try reconnects
+-impelement 'initialunits' param in PlayerUnitConfig::initialize()
+-bots should have different names and different flags
+-the collection of flags has to be the same on all clients at the moment. This
+should be changed (clients should send the name of their flag). The collest
+solution would be transfering of unknown flags.
+-the unit profiles should be possible to set on the server. They should be
+distributed to the clients while they connect.
+-limit fps to a fixed value so that we are nicer to the CPU on the system.
+-make it possible to have different colors for different players
+-make the code endian safe. It should run on big endian boxes too.
+
+*** Tools
+-write a map and tileset editor
+-tool for changing the (server?) configuration
+
+*** Feature Additions
+
+-Improve userinterface:
+        * Make usual shortcuts (known from other RTSes) work. Like
+          CTRL+number for defining groups, a possibility to set spawnpoint
+          of units, scroll map with right mouse, scrolling map with cursor keys
+          ...
+        * Create a nice static! skin which is at the bottom of the screen
+          and combines a map, statusdisplay of selected units and outpost
+          buildmenu
+        * Redesign menus and UI code (use new font code, sfont or freefont
+          maybe?)
+-Build additional tools:
+        * Build a map and tileset editor (That's what I'm up to at the
+          moment)
+-Create possibilities to save and play replays of the matches
+-Create possibility to save and restore matches
+-Convert the 256 color stuff to truecolor
+-add code for masterserver registration/browsing
+-create UDP broadcast code for announcing servers in LANs
+-make it possible to configure the mapcycle
+-add a (readline based?) serverconsole
+-add possibilty for setting waypoints (ALT+leftclick?)
+
+*** gameplay
+Note that these are just random idea. We should be very careful when tuning the
+gameplay. 1 of the strengths of netpanzer is that it is simple to understand
+andplay. We should try hard not to destroy this by adding too many options.
+
+-Add a mode where nothing is produced (maps without outposts). Players can
+ select some tanks based on a points system and can then fight with this fixed
+ amount of tanks
+-Add different types of outposts. (only selected types of panzers, possibility
+        to repair units at helipad, ...)
+-Add possibilities to repair units (helipad at outpost or repair tank)
+-Add fog of war (eventually with special things like radar jammers or radar
+        tanks?)
+-add infantry? anti-tank style ones, and anti-infantry ones?
+-different terrain types (some terrain where you can move slower) maybe also
+ with a heightmap.
+-more map elements? bridges that can be destroyed (and repaired?)
+-a unit that can deploy mines
+-special game modes and objectives? capture the flag or "escort a VIP", or
+ defend an objective would be things that come to mind
+-make panzers always hit their targets instead of missing moving units?
+

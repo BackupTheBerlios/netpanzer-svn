@@ -1,0 +1,11 @@
+SubDir TOP src Editor ;
+
+if $(WX_AVAILABLE) = "yes" {
+
+Application netpanzeredit : [ Wildcard *.cpp *.hpp ] ;
+CFlags netpanzeredit : -DDATADIR=\\\"$(datadir)\\\" ;
+LinkWith netpanzeredit : netpanzertypes netpanzerutil ;
+ExternalLibs netpanzeredit : WX SDL SDLIMAGE PHYSFS ;
+Help netpanzeredit : "Build the netpanzer editor" ;
+
+}
