@@ -15,25 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __CODEWIZ_H_INCLUDED__
 #define __CODEWIZ_H_INCLUDED__
 
-#include "Util.hpp"
 #include "Types/LibTypes.hpp"
 
-//***************************************************************************
-// favorite consts
-//***************************************************************************
-const bool GOTTA_HAVE_IT   = true;
-const bool LIVE_WITHOUT_IT = false;
-
-// XXX changed this, as it was stupid code (on unix this failed from time to
-// time
-inline bool isValidPtr(const void *ptr) {
-	//return (ptr > 0) && (ptr < (void *)0x90000000);
-	return ptr != 0;
-}
-
-//***************************************************************************
 #endif // #ifndef __CODEWIZ_H_INCLUDED__

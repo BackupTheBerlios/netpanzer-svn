@@ -186,18 +186,18 @@ void ParticleSystem2D::drawAll(const Surface &clientArea, SpriteSorter &sorter)
 	void ParticleSystem2D::verifyList()
 	{
 /*		// Verify head/tail node
-		assert(isValidPtr(zParticleSystem2D));
-		assert(isValidPtr(zParticleSystem2D->next));
-		assert(isValidPtr(zParticleSystem2D->prev));
+		assert(zParticleSystem2D != 0);
+		assert(zParticleSystem2D->next != 0);
+		assert(zParticleSystem2D->prev != 0);
 
 		// Go through links and verify nodes match up
 		ParticleSystem2D *e = zParticleSystem2D;
 		int numLeftToCount = particleSystemCount+1;
     do
 		{
-			assert(isValidPtr(e));
-			assert(isValidPtr(e->next));
-			assert(isValidPtr(e->prev));
+			assert(e != 0);
+			assert(e->next != 0);
+			assert(e->prev != 0);
 
 			assert(e->prev->next == e);
 			assert(e->next->prev == e);

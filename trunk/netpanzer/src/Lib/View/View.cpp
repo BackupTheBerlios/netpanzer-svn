@@ -233,7 +233,7 @@ void View::reset()
 //---------------------------------------------------------------------------
 void View::drawBorder(const Surface &viewArea)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 #ifdef GRAPHIC_BORDERS
 	// Straight edges.
@@ -286,7 +286,7 @@ void View::drawBorder(const Surface &viewArea)
 //---------------------------------------------------------------------------
 void View::drawButtons(const Surface &viewArea)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	//pics.setFrame(CLOSE);
 	//pics.blt(viewArea, iXY(getSizeX()-pics.getPix().x-borderSize-2, borderSize+2));
@@ -303,7 +303,7 @@ void View::drawButtons(const Surface &viewArea)
 //---------------------------------------------------------------------------
 void View::drawTitle(const Surface &viewArea)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	iRect r(borderSize, borderSize, getSizeX() - borderSize, borderSize + moveAreaHeight - 1);
 
@@ -511,7 +511,7 @@ void View::loadPics()
 //---------------------------------------------------------------------------
 void View::draw()
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	if (getVisible())
 	{
@@ -610,7 +610,7 @@ void View::doDraw(const Surface &viewArea, const Surface &clientArea)
 //---------------------------------------------------------------------------
 void View::doActivate()
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	// Tell all the components the mouse entered the view.
 	for (int i = 0; i < componentsUsedCount; i++)
@@ -635,7 +635,7 @@ void View::doActivate()
 //---------------------------------------------------------------------------
 void View::doDeactivate()
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 		
 	// Tell all the components the mouse exited the view.
 	for (int i = 0; i < componentsUsedCount; i++)
@@ -656,7 +656,7 @@ void View::doDeactivate()
 //---------------------------------------------------------------------------
 int View::getMouseActions(const iXY &pos) const
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	int actions = 0;
 
@@ -730,7 +730,7 @@ int View::getMouseActions(const iXY &pos) const
 //---------------------------------------------------------------------------
 iXY View::getScreenToClientPos(const iXY &pos)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	if (getBordered())
 	{
@@ -750,7 +750,7 @@ iXY View::getScreenToClientPos(const iXY &pos)
 //---------------------------------------------------------------------------
 iXY View::getScreenToViewPos(const iXY &pos)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	return iXY(pos.x - min.x, pos.y - min.y);
 
@@ -762,7 +762,7 @@ iXY View::getScreenToViewPos(const iXY &pos)
 //---------------------------------------------------------------------------
 void View::getViewArea(Surface &dest)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	iRect rect(min, max);
 	
@@ -820,7 +820,7 @@ void View::checkSnapToEdges(const iXY &min, const iXY &max, iXY &newMin, iXY &ne
 //---------------------------------------------------------------------------
 Surface View::getViewArea()
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	iRect rect(min, max);
 	//iRect rect;
@@ -848,7 +848,7 @@ iRect View::getViewRect() const
 //---------------------------------------------------------------------------
 void View::getClientArea(Surface &dest)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	if (getBordered())
 	{
@@ -1229,7 +1229,7 @@ void View::mouseEnter(const iXY &pos)
 //---------------------------------------------------------------------------
 void View::mouseExit(const iXY &pos)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	// Check all components for a exited event.
 	for (int i = 0; i < componentsUsedCount; i++)
@@ -1358,7 +1358,7 @@ void View::drawInputFields(const Surface &clientArea)
 //---------------------------------------------------------------------------
 void View::drawHighlightedButton(const Surface &clientArea)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	if (highlightedButton < 0)
 	{
@@ -1473,7 +1473,7 @@ void View::addButtonSurfaceSingle(const iXY &pos, Surface &source, const char *t
 void View::addButton(const iXY &pos, const char *name, const char *toolTip,
 											 ITEM_FUNC func)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	// Grow the list
 	buttons.setNum(buttons.getCount()+1);
@@ -1490,7 +1490,7 @@ void View::addButtonPCX(const iXY &pos,
                        const char *toolTip,
                        ITEM_FUNC func)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	// Grow the list.
 	buttons.setNum(buttons.getCount()+1);
@@ -1508,7 +1508,7 @@ void View::addButton(	const iXY &pos,
 						ITEM_FUNC leftClickFunc, 
 						ITEM_FUNC rightClickFunc)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	// Grow the list
 	buttons.setNum(buttons.getCount()+1);
@@ -1636,7 +1636,7 @@ void View::drawStatus(const Surface &dest)
 //---------------------------------------------------------------------------
 int View::findButtonContaining(const iXY &pos)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	for (int num = 0; num < buttons.getCount(); num++)
 	{
@@ -1655,7 +1655,7 @@ int View::findButtonContaining(const iXY &pos)
 //---------------------------------------------------------------------------
 int View::findInputFieldContaining(const iXY &pos)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	for (int num = 0; num < inputFields.getCount(); num++)
 	{
@@ -1673,7 +1673,7 @@ int View::findInputFieldContaining(const iXY &pos)
 //---------------------------------------------------------------------------
 void View::drawPressedButton(const Surface &clientArea)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	if (pressedButton < 0 || buttons[pressedButton].topSurface.getFrameCount() < 2) return;
 	if (highlightedButton != pressedButton) return;
@@ -1692,7 +1692,7 @@ void View::drawPressedButton(const Surface &clientArea)
 //---------------------------------------------------------------------------
 void View::drawToolTip(const Surface &dest)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	iRect rect;
 	rect.min.x = 0;
@@ -2141,8 +2141,8 @@ void View::add(DEFAULT_VIEW_BUTTON button)
 
 //void View::add(Component *Component)
 //{
-//	assert(isValidPtr(this));
-//	assert(isValidPtr(Component));
+//	assert(this != 0);
+//	assert(Component != 0);
 //
 //	// First remove it from the list if we already have it somehow.
 //	remove(Component);

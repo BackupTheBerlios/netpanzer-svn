@@ -26,41 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // This must be called before any of the string blitting functions are used.
 void initFont();
 
-
-// orderCoords
-//---------------------------------------------------------------------------
-// Purpose: Orders a pair of (x,y) coordinates
-//---------------------------------------------------------------------------
-template <class T>
-inline void orderCoords(T &a, T &b)
-{
-	if (a > b) SWAP(a, b);
-} // end orderCoords
-
-// orderCoords
-//---------------------------------------------------------------------------
-// Purpose: Orders a 2 pairs of (x,y) coordinates, making sure x1 <= x2 and y1 <= y2.
-//---------------------------------------------------------------------------
-template <class T>
-inline void orderCoords(T &x1, T &y1, T &x2, T &y2)
-{
-	if (x1 > x2) SWAP(x1, x2);
-	if (y1 > y2) SWAP(y1, y2);
-} // end orderCoords
-
-inline void orderCoords(iRect &bounds)
-{
-	if (bounds.min.x > bounds.max.x)
-	{
-		SWAP(bounds.min.x, bounds.max.x);
-	}
-	if (bounds.min.y > bounds.max.y)
-	{
-		SWAP(bounds.min.y, bounds.max.y);
-	}
-} // end orderCoords
-
-
 /////////////////////////////////////////////////////////////////////////////
 // Defines.
 /////////////////////////////////////////////////////////////////////////////

@@ -16,12 +16,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
+#include <algorithm>
 #include "Desktop.hpp"
 #include "KeyboardInterface.hpp"
 #include "loadPics.hpp"
 #include "TimerInterface.hpp"
 #include "MouseInterface.hpp"
 
+using std::min;
+using std::max;
 
 float     Desktop::totalMouseDownTime   = 0.0;
 float     Desktop::currentMouseDownTime = 0.0;
@@ -484,7 +488,7 @@ void Desktop::draw()
 //--------------------------------------------------------------------------
 void Desktop::add(View *view, bool autoActivate /* = true */)
 {
-  assert(isValidPtr(view));
+  assert(view != 0);
 
 	//printf("Initting Window: %s\n", view->getTitle());
 
@@ -738,22 +742,22 @@ void Desktop::doMouseActions(const iXY &mousePos)
 
 		if (mouseActions & View::MA_RESIZE_LEFT)
 		{
-			resizeMin.x = MIN(	mousePos.x - mouseActionOffset.x,
+			resizeMin.x = min(	mousePos.x - mouseActionOffset.x,
 								lMouseView->max.x - View::RESIZE_XMINSIZE);
 		}
 		if (mouseActions & View::MA_RESIZE_TOP)
 		{
-			resizeMin.y = MIN(	mousePos.y + mouseActionOffset.y,
+			resizeMin.y = min(	mousePos.y + mouseActionOffset.y,
 								lMouseView->max.y - View::RESIZE_XMINSIZE);
 		}
 		if (mouseActions & View::MA_RESIZE_RIGHT)
 		{
-			resizeMax.x = MAX(	mousePos.x + mouseActionOffset.x,
+			resizeMax.x = max(	mousePos.x + mouseActionOffset.x,
 								lMouseView->min.x + View::RESIZE_XMINSIZE);
 		}
 		if (mouseActions & View::MA_RESIZE_BOTTOM)
 		{
-			resizeMax.y = MAX(	mousePos.y + mouseActionOffset.y,
+			resizeMax.y = max(	mousePos.y + mouseActionOffset.y,
 								lMouseView->min.y + View::RESIZE_YMINSIZE);
 		}
 

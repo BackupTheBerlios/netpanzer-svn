@@ -15,9 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #include <config.h>
+
+#include <algorithm>
 #include "MiniMapView.hpp"
 #include "cMouse.hpp"
 #include "MiniMapInterface.hpp"
@@ -40,7 +40,7 @@ int   MiniMapView::increaseSize = 0;
 //---------------------------------------------------------------------------
 MiniMapView::MiniMapView() : GameTemplateView()
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	setSearchName("MiniMapView");
     setTitle("MiniMapView");
@@ -96,7 +96,7 @@ void MiniMapView::init()
 //---------------------------------------------------------------------------
 void MiniMapView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 	assert(viewArea.getDoesExist());
 	assert(clientArea.getDoesExist());
 
@@ -254,7 +254,7 @@ void MiniMapView::doDraw(const Surface &viewArea, const Surface &clientArea)
 //--------------------------------------------------------------------------
 void MiniMapView::setViewWindow(const iXY &pos)
 { 
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	iXY size(getViewRect().getSize());
 
@@ -272,7 +272,7 @@ void MiniMapView::setViewWindow(const iXY &pos)
 //--------------------------------------------------------------------------
 void MiniMapView::drawMouseBox(const Surface &dest)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 	assert(dest.getDoesExist());
 
     iRect r(MiniMapInterface::getWorldWindow());
@@ -291,7 +291,7 @@ void MiniMapView::drawMouseBox(const Surface &dest)
 //--------------------------------------------------------------------------
 void MiniMapView::lMouseDown(const iXY &pos)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos())))
 	{
@@ -317,8 +317,8 @@ void MiniMapView::rMouseDown(const iXY &pos)
 void MiniMapView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
 {
 	// Let the map go up to the min screen dimension.
-	//maxMapSize = MIN(SCREEN_XPIX, SCREEN_YPIX);
-	maxMapSize = MIN(640, 480);
+	//maxMapSize = std::min(SCREEN_XPIX, SCREEN_YPIX);
+	maxMapSize = std::min(640, 480);
 
 	moveTo(min + newPos - prevPos);
 

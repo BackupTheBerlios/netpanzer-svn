@@ -102,7 +102,7 @@ public:
 
 	inline bool contains(iXY pos)
 	{
-		assert(isValidPtr(this));
+		assert(this != 0);
 
 		if (	pos.x >= bounds.min.x &&
 				pos.y >=  bounds.min.y &&

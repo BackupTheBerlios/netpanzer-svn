@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //---------------------------------------------------------------------------
 ControlPaletteView::ControlPaletteView() : View()
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	setSearchName("ControlPaletteView");
 	setTitle("Control Palette");
@@ -71,7 +71,7 @@ ControlPaletteView::ControlPaletteView() : View()
 void ControlPaletteView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
 	FUNC("ControlPaletteView::doDraw");
-	assert(isValidPtr(this));
+	assert(this != 0);
 	assert(viewArea.getDoesExist());
 	assert(clientArea.getDoesExist());
 

@@ -77,7 +77,7 @@ private: // Functions
 
 	//static View const &topWindow() const { assertTopWindowExist(); return *top; }
 	static View &topView() { assertTopViewExist(); return *top; }
-	static void   assertTopViewExist() { assert(isValidPtr(top)); }
+	static void   assertTopViewExist() { assert(top != 0); }
 	static bool   isMouseInView(int mouseX, int mouseY);
 	static View *findViewContaining(iXY p);
 	static void   doMouseActions(const iXY &mousePos);

@@ -18,24 +18,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __fXY_hpp__
 #define __fXY_hpp__
 
-
-#if _MSC_VER > 1000
-	#pragma once
-#endif
-
-
-struct fXY
+class fXY
 {
+public:
 	float x, y;
 
-	inline fXY() {}
-	inline fXY(float x, float y)
+	fXY()
+	{}
+	fXY(float x, float y)
 	{
 		fXY::x = x;
 		fXY::y = y;
 	}
-	
-	inline fXY(const fXY &a)
+	fXY(const fXY &a)
 	{
 		x = a.x;
 		y = a.y;
@@ -80,7 +75,7 @@ struct fXY
 	inline fXY operator * (float      a) const { return fXY(x *   a, y *   a); }
 	inline fXY operator / (float      a) const { return fXY(x /   a, y /   a); }
 
-	inline bool operator ==(const fXY &a)
+	inline bool operator ==(const fXY &a) const
 	{
 		return x == a.x && y == a.y;
 	}
@@ -90,7 +85,7 @@ struct fXY
 		return x == a && y == a;
 	}
 
-	inline bool operator !=(const fXY &a)
+	inline bool operator !=(const fXY &a) const
 	{
 		return x != a.x || y != a.y;
 	}

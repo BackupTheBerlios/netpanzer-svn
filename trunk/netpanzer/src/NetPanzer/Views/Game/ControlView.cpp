@@ -55,7 +55,7 @@ ControlView::ControlView(const char *title) : View()
 	setTitle("Control");
 	setSubTitle("");
 
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	setTitle(title);
 	setAllowResize(false);
@@ -88,7 +88,7 @@ ControlView::ControlView(const char *title) : View()
 //---------------------------------------------------------------------------
 void ControlView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 	assert(viewArea.getDoesExist());
 	assert(clientArea.getDoesExist());
 

@@ -48,7 +48,7 @@ ChunkTrajectoryParticle2D::ChunkTrajectoryParticle2D(	const fXYZ &pos,
 														int         isFarAway      /* = 0 */,
 														int         canHaveSmoke   /* = 1 */) : TrajectoryParticle2D(pos, maxSpeed, (rand() % (90 - minTrajectoryAngle)) + minTrajectoryAngle, dieAtMidFlight)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 	assert(minTrajectoryAngle >= 0 && minTrajectoryAngle <= 90);
 
 	ChunkTrajectoryParticle2D::isFarAway    = isFarAway;
@@ -118,7 +118,7 @@ void ChunkTrajectoryParticle2D::init()
 //---------------------------------------------------------------------------
 void ChunkTrajectoryParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	packedSurface.setAttrib(PointXYi((int) pos.x, (int) (pos.z - arcYPix)), layer);
 	sorter.addSprite(&packedSurface);
@@ -137,7 +137,7 @@ void ChunkTrajectoryParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 //---------------------------------------------------------------------------
 void ChunkTrajectoryParticle2D::sim()
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 	
 	arcYPix = pos.y * arcScale;
 

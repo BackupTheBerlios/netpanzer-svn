@@ -17,9 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#ifdef WIN32
-#include <io.h>
-#endif
 #include "FindFirst.hpp"
 #include "PackedSurface.hpp"
 #include "Surface.hpp"
@@ -405,7 +402,7 @@ nextRow:
 /*
 void PackedSurface::setTo(const PackedSurface &source, iRect bounds)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	free();
 	reset();
@@ -438,7 +435,7 @@ void PackedSurface::setTo(const PackedSurface &source, iRect bounds)
 //---------------------------------------------------------------------------
 void PackedSurface::setTo(const PackedSurface &source)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	free();
 

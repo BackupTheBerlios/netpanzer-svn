@@ -17,10 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#ifdef WIN32
-#include <io.h>
-#endif
-
+#include <algorithm>
 #include "FindFirst.hpp"
 #include "Surface.hpp"
 #include "UtilInterface.hpp"
@@ -30,6 +27,43 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "TimerInterface.hpp"
 #include "Span.hpp"
 #include "Exception.hpp"
+
+using std::swap;
+using std::min;
+using std::max;
+
+// orderCoords
+//---------------------------------------------------------------------------
+// Purpose: Orders a pair of (x,y) coordinates
+//---------------------------------------------------------------------------
+template <class T>
+inline void orderCoords(T &a, T &b)
+{
+	if (a > b) swap(a, b);
+} // end orderCoords
+
+// orderCoords
+//---------------------------------------------------------------------------
+// Purpose: Orders a 2 pairs of (x,y) coordinates, making sure x1 <= x2 and y1 <= y2.
+//---------------------------------------------------------------------------
+template <class T>
+inline void orderCoords(T &x1, T &y1, T &x2, T &y2)
+{
+	if (x1 > x2) swap(x1, x2);
+	if (y1 > y2) swap(y1, y2);
+} // end orderCoords
+
+inline void orderCoords(iRect &bounds)
+{
+	if (bounds.min.x > bounds.max.x)
+	{
+		swap(bounds.min.x, bounds.max.x);
+	}
+	if (bounds.min.y > bounds.max.y)
+	{
+		swap(bounds.min.y, bounds.max.y);
+	}
+} // end orderCoords
 
 #ifdef MSVC
 #pragma pack(1)
@@ -146,7 +180,7 @@ int Surface::totalByteCount    = 0;
 //---------------------------------------------------------------------------
 Surface::Surface()
 { 
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	reset();
 
@@ -158,7 +192,7 @@ Surface::Surface()
 //---------------------------------------------------------------------------
 Surface::Surface(bool nMyMem)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	reset();
 	myMem     = nMyMem;
@@ -173,7 +207,7 @@ Surface::Surface(bool nMyMem)
 //---------------------------------------------------------------------------
 Surface::Surface(const iXY &nPix, int nStride, int nFrameCount)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	reset();
 	alloc(nPix, true, nStride, nFrameCount);
@@ -188,7 +222,7 @@ Surface::Surface(const iXY &nPix, int nStride, int nFrameCount)
 //---------------------------------------------------------------------------
 Surface::Surface(int xPix, int yPix, int nStride, int nFrameCount)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 	reset();
 
 	create(iXY(xPix, yPix), nStride, nFrameCount);
@@ -202,7 +236,7 @@ Surface::Surface(int xPix, int yPix, int nStride, int nFrameCount)
 //---------------------------------------------------------------------------
 Surface::Surface(const Surface &source, const iXY &min, const iXY &max, bool doGrab)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 	assert(source.getDoesExist());
 
 	reset();
@@ -227,7 +261,7 @@ Surface::Surface(const Surface &source, const iXY &min, const iXY &max, bool doG
 Surface::Surface(void *nFrame0, const iXY &nPix, int nStride, int nFrameCount)
 {
 	assert(nFrame0 != 0);
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	reset();
 	setTo(nFrame0, nPix, nStride, nFrameCount);
@@ -276,7 +310,7 @@ void Surface::free()
 //---------------------------------------------------------------------------
 void Surface::reset()
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	pix	        = 0;
 	stride      = 0;
@@ -300,7 +334,7 @@ void Surface::reset()
 void Surface::setOffsetCenter()
 { 
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	offset = iXY(-center.x, -center.y);
 
@@ -317,7 +351,7 @@ bool Surface::alloc(const iXY  &pix,
                     int         stride,
                     int         frameCount)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	free();
 
@@ -381,7 +415,7 @@ void Surface::createNoAlloc(const iXY &nPix)
 void Surface::resize(const iXY &pix)
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	create(pix, pix.x, frameCount);
 
@@ -396,7 +430,7 @@ void Surface::resize(const iXY &pix)
 void Surface::setTo(const Surface &source, iRect bounds)
 {
 	assert(source.getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	free();
 	orderCoords(bounds);
@@ -424,7 +458,7 @@ void Surface::setTo(void *frame0,
                     int frameCount)
 {
 	assert(frame0 != 0);
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	free();
 
@@ -447,7 +481,7 @@ void Surface::setTo(void *frame0,
 //---------------------------------------------------------------------------
 void Surface::setTo(const Surface &source)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 	assert(source.getDoesExist());
 
 	free();
@@ -475,7 +509,7 @@ bool Surface::grab(const Surface &source,
                    int   stride)
 {
 	assert(source.getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	free();
 	orderCoords(bounds);
@@ -502,7 +536,7 @@ void Surface::blt(const Surface &dest, iXY min) const
 	assert(screenLocked);
 	assert(getDoesExist());
 	assert(dest.getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	// Add in the offset factor.
 	min += offset;
@@ -600,7 +634,7 @@ void Surface::bltTrans(const Surface &dest, iXY min) const
 	assert(screenLocked);
 	assert(getDoesExist());
 	assert(dest.getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	// Add in the offset factor.
 	min += offset;
@@ -714,7 +748,7 @@ void Surface::bltTransColor(const Surface &dest, iXY min, const BYTE &color) con
 	assert(screenLocked);
 	assert(getDoesExist());
 	assert(dest.getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	// Add in the offset factor.
 	min += offset;
@@ -812,7 +846,7 @@ void Surface::drawHLine(int x1, int y, int x2, const PIX &color) const
 {
 	assert(screenLocked);
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	// Check for trivial rejection
 	if (y < 0 || x2 <= 0 || y >= pix.y || x1 >= pix.x) return;
@@ -849,7 +883,7 @@ void Surface::drawVLine(int x, int y1, int y2, const PIX &color) const
 {
 	assert(screenLocked);
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	// Check for trivial rejection
 	if (x < 0 || y2 <= 0 || x >= pix.x || y1 >= pix.y) return;
@@ -899,7 +933,7 @@ void Surface::fill(const PIX &color) const
 {
 	assert(screenLocked);
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	if (pix.x == 0 || pix.y == 0) return;
 
@@ -928,7 +962,7 @@ void Surface::fillRect(iRect bounds, const PIX &color) const
 {
 	assert(screenLocked);
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	if (pix == 0) return;
 
@@ -969,7 +1003,7 @@ void Surface::drawRect(iRect bounds, const PIX &color) const
 {
 	assert(screenLocked);
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	if (pix == 0) return;
 
@@ -1001,7 +1035,7 @@ void Surface::drawLine(int x1, int y1, int x2, int y2, const PIX &color) const
 {
 	assert(screenLocked);
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	// Check for horizontal lines
 	if (y1 == y2)
@@ -1102,7 +1136,7 @@ void Surface::outOfMem(size_t requestedBytes)
 void Surface::extractPCX(const char *filename, int nCols, int gapSpace)
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	Surface pcx;
 	pcx.loadPCX(filename);
@@ -1169,7 +1203,7 @@ struct PCX_HEADER
 void Surface::loadPCX(const char *fileName, bool needAlloc /* = true */,
 	                  void *returnPalette /* = 0 */)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	if (needAlloc) free();
 
@@ -1244,7 +1278,7 @@ void Surface::loadPCX(const char *fileName, bool needAlloc /* = true */,
 void Surface::flipHorizontal()
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	Surface tempSurface(pix, stride, 1);
 
@@ -1273,7 +1307,7 @@ void Surface::flipHorizontal()
 void Surface::flipVertical()
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	Surface tempSurface(pix, stride, 1);
 
@@ -1303,7 +1337,7 @@ void Surface::flipVertical()
 void Surface::copy(Surface &source)
 {
 	assert(source.getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	// Create a Surface the surface the same size as the source.
 	create(source);
@@ -1373,7 +1407,7 @@ void Surface::rotate(int angle)
 //---------------------------------------------------------------------------
 void Surface::loadRAW(const char *filename, bool needAlloc /* = true */)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	if (needAlloc) free();
 
@@ -1443,7 +1477,7 @@ void Surface::shade(iRect bounds, PIX color /* = cBLACK */) const
 {
 	assert(screenLocked);
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	assert(bounds.min >= 0);
 	assert(bounds.max <= pix);
@@ -1477,7 +1511,7 @@ void Surface::shade(iRect bounds, PIX color /* = cBLACK */) const
 void Surface::scale(const iXY &pix)
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	if (pix.x <= 0) { return; }
 	if (pix.y <= 0) { return; }
@@ -1564,7 +1598,7 @@ void Surface::scale(const iXY &pix)
 void Surface::verticalWave3DAll(int numWaves, float percent)
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	float curOffset  = 0;
 	float offsetStep = 100.0 / float(frameCount);
@@ -1582,7 +1616,7 @@ void Surface::verticalWave3DAll(int numWaves, float percent)
 void Surface::verticalWave3D(int numWaves, float percent, int offset)
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	Surface temp;
 	temp.create(pix.x, pix.y, pix.x, 1);
@@ -1596,7 +1630,7 @@ void Surface::verticalWave3D(int numWaves, float percent, int offset)
 	int y = 0;
 	for (int offset1 = 0; offset1 < pix.x * pix.y; offset1 += pix.x)
 	{
-		int offset2 = MAX(MIN(int(((cos(angleRadians) * amplitude + y))), pix.y - 1), 0) * pix.x;
+		int offset2 = max(min(int(((cos(angleRadians) * amplitude + y))), pix.y - 1), 0) * pix.x;
 		y++;
 		memcpy((mem + offset1), (temp.mem + offset2), pix.x);
 
@@ -1609,7 +1643,7 @@ void Surface::verticalWave3D(int numWaves, float percent, int offset)
 void Surface::horizontalWave3DAll(int numWaves, float percent)
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	float curOffset  = 0;
 	float offsetStep = 100.0 / float(frameCount);
@@ -1627,7 +1661,7 @@ void Surface::horizontalWave3DAll(int numWaves, float percent)
 void Surface::horizontalWave3D(int numWaves, float percent, int offset)
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	Surface temp;
 	temp.create(pix.x, pix.y, pix.x, 1);
@@ -1640,7 +1674,7 @@ void Surface::horizontalWave3D(int numWaves, float percent, int offset)
 
 	for (int x = 0; x < pix.x; x++)
 	{
-		int xOffset = MAX(MIN((int)((cos(angleRadians) * amplitude + x)), pix.x - 1), 0);
+		int xOffset = max(min((int)((cos(angleRadians) * amplitude + x)), pix.x - 1), 0);
 		for (int yOffset = 0; yOffset < pix.x * pix.y; yOffset += pix.x)
 		{
 			mem[x + yOffset] = temp.mem[xOffset + yOffset];
@@ -1654,7 +1688,7 @@ void Surface::horizontalWave3D(int numWaves, float percent, int offset)
 void Surface::rippleAll(int numWaves, float percent)
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	float curOffset  = 0;
 	float offsetStep = 100.0 / float(frameCount);
@@ -1672,7 +1706,7 @@ void Surface::rippleAll(int numWaves, float percent)
 void Surface::ripple(int numWaves, float percent, int offset)
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	Surface temp(pix.x, pix.y, pix.x, 1);
 
@@ -1710,7 +1744,7 @@ void Surface::ripple(int numWaves, float percent, int offset)
 void Surface::horizontalWaveAll(int numWaves, float percent)
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	float curOffset  = 0;
 	float offsetStep = 100.0 / float(frameCount);
@@ -1728,7 +1762,7 @@ void Surface::horizontalWaveAll(int numWaves, float percent)
 void Surface::horizontalWave(int numWaves, float percent, int offset)
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	Surface temp(pix.x, pix.y, pix.x, 1);
 	blt(temp, 0, 0);
@@ -1758,7 +1792,7 @@ void Surface::horizontalWave(int numWaves, float percent, int offset)
 void Surface::verticalWaveAll(int numWaves, float percent)
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	float curOffset  = 0;
 	float offsetStep = 100.0 / float(frameCount);
@@ -1776,7 +1810,7 @@ void Surface::verticalWaveAll(int numWaves, float percent)
 void Surface::verticalWave(int numWaves, float percent, int offset)
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	Surface temp(pix.x, pix.y, pix.x, 1);
 	blt(temp, 0, 0);
@@ -1810,7 +1844,7 @@ void Surface::drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightCo
 {
 	assert(screenLocked);
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	orderCoords(bounds);
 
@@ -1838,7 +1872,7 @@ void Surface::blendIn(const Surface &source, iXY min, ColorTable &colorTable) co
 	assert(screenLocked);
 	assert(getDoesExist());
 	assert(source.getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 	assert(colorTable.getColorCount() == 256 * 256);
 
 	min += source.offset;
@@ -1913,7 +1947,7 @@ void Surface::bltBlendScale(const Surface &source, const iRect &destRect, ColorT
 	assert(screenLocked);
 	assert(getDoesExist());
 	assert(source.getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 	assert(colorTable.getColorCount() == 256 * 256);
 
 	iXY min = destRect.min + source.offset;
@@ -2001,7 +2035,7 @@ void Surface::bltLookup(const iRect &destRect, const PIX table[]) const
 {
 	assert(screenLocked);
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	iXY min = destRect.min + offset;
 
@@ -2042,7 +2076,7 @@ void Surface::bltScale(const Surface &source, const iRect &destRect) const
 	assert(screenLocked);
 	assert(getDoesExist());
 	assert(source.getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	iXY min = destRect.min + source.offset;
 	iXY max = destRect.max + source.offset;
@@ -2138,7 +2172,7 @@ void Surface::blendRect(iRect bounds, ColorTable &colorTable) const
 {
 	assert(screenLocked);
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 	assert(Palette::brightness256.getColorCount() == 256);
 
 	if (pix == 0) return;
@@ -2215,7 +2249,7 @@ void Surface::blendRect(iRect bounds, ColorTable &colorTable) const
 void Surface::shrinkWrap()
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	// Start the bounds values in the center of the surface.
 	iRect bounds;
@@ -2414,7 +2448,7 @@ void frac(int *matrix, int stride, int x1, int y1, int x2, int y2, float ruggedn
 void Surface::createFractal(const float &minY, const float &maxY, const float &ruggedness)
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	// Create some temp buffer to generate the values in.
 	int *tempBuf = (int *) malloc(stride * pix.y * sizeof(int));
@@ -2536,7 +2570,7 @@ void Surface::fire(int *dest, int xSize, int ySize)
 void Surface::smooth()
 {
 	assert(getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	const int XP = pix.x;
 	const int ZP = pix.y;
@@ -2809,7 +2843,7 @@ void Surface::bltBrightness(const Surface &dest, const iXY &pos, const float &pe
 	assert(screenLocked);
 	assert(getDoesExist());
 	assert(dest.getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 	assert(Palette::colorTableBrighten.getColorCount() == 256 * 256);
 	assert(Palette::brightness256.getColorCount() == 256);
 
@@ -2898,7 +2932,7 @@ void Surface::bltBrightness(const Surface &dest, const iXY pos, ColorTable &colo
 {
 	assert(getDoesExist());
 	assert(dest.getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 	assert(colorTable.getColorCount() == 256 * 100);
 
 	iXY min(pos);
@@ -3150,7 +3184,7 @@ void Surface::bltAdd(const Surface &dest, iXY min) const
 	assert(screenLocked);
 	assert(getDoesExist());
 	assert(dest.getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	static BYTE saturateTable[512];
 
@@ -3726,7 +3760,7 @@ class Surface24Bit
 int loadTGA(FILE *file, cPixel24Bit *dest)
 {
 
-	assert(isValidPtr(&this));
+	assert(&this != 0);
 
 	// Read in the TGA header.
 	cTGAHeader TGAheader;
@@ -4248,7 +4282,7 @@ void Surface::bltTransVGradient(const Surface &dest, iXY min, ColorTable &colorT
 	assert(screenLocked);
 	assert(getDoesExist());
 	assert(dest.getDoesExist());
-	assert(isValidPtr(this));
+	assert(this != 0);
 	assert(colorTable.getColorCount() > 0);
 
 	// Add in the offset factor.
@@ -4682,7 +4716,7 @@ void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
 	BitmapFileHeader file_header;
     BitmapInfoHeader info_header;
 
-    assert(isValidPtr(this));
+    assert(this != 0);
 
 	if (needAlloc) free();
 

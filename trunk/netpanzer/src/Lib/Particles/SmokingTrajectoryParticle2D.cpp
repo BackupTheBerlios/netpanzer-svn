@@ -30,7 +30,7 @@ SmokingTrajectoryParticle2D::SmokingTrajectoryParticle2D(	const fXYZ &pos,
 	// XXX had to add an angle here
 	: TrajectoryParticle2D(pos, maxSpeed, 0)
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	SmokingTrajectoryParticle2D::waitMin  = waitMin;
 	SmokingTrajectoryParticle2D::waitRand = waitRand;
@@ -46,7 +46,7 @@ SmokingTrajectoryParticle2D::SmokingTrajectoryParticle2D(	const fXYZ &pos,
 //---------------------------------------------------------------------------
 void SmokingTrajectoryParticle2D::sim()
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 	assert(false);
 
 //	waitTime += TimerInterface::getTimeSlice();

@@ -19,7 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __FINDFIRST_HPP__
 
 // unix emulation of the win32 _findfirst and _findnext functions
-#ifdef UNIX
+#ifdef WIN32
+
+#include <io.h>
+
+#else
 
 struct _finddata_t
 {

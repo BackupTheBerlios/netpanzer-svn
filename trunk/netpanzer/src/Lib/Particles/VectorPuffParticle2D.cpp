@@ -55,7 +55,7 @@ VectorPuffParticle2D::VectorPuffParticle2D(
 //---------------------------------------------------------------------------
 void VectorPuffParticle2D::sim()
 {
-	assert(isValidPtr(this));
+	assert(this != 0);
 
 	float dt = TimerInterface::getTimeSlice();
 

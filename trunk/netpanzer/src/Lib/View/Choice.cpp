@@ -15,12 +15,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #include <config.h>
+
+#include <algorithm>
 #include "Choice.hpp"
 #include "View.hpp"
-
 
 //---------------------------------------------------------------------------
 void Choice::reset()
@@ -42,7 +41,7 @@ void Choice::addItem(const String &item)
 
 	int borderSpace = borderSize * 2;
 
-	size.x = MAX(int(strlen(item) * CHAR_XPIX + borderSpace), size.y);
+	size.x = std::max(int(strlen(item) * CHAR_XPIX + borderSpace), size.y);
 	size.y = ChoiceItemHeight;
 }
 
@@ -55,7 +54,7 @@ void Choice::addItemDefault(const String &item)
 
 	int borderSpace = borderSize * 2;
 
-	size.x = MAX(int(strlen(item) * CHAR_XPIX + borderSpace), size.y);
+	size.x = std::max(int(strlen(item) * CHAR_XPIX + borderSpace), size.y);
 	size.y = CHAR_XPIX + borderSpace;
 
 	select(item);
@@ -286,8 +285,8 @@ void Choice::add(const String &item)
 	int borderSpace = borderSize * 2;
 	int length      = strlen((const char *) item);
 
-	size.x = MAX(int(length * CHAR_XPIX + borderSpace), size.y);
-	size.x = MAX(minWidth, size.x);
+	size.x = std::max(int(length * CHAR_XPIX + borderSpace), size.y);
+	size.x = std::max(minWidth, size.x);
 
 } // end Choice::add
 

@@ -35,8 +35,8 @@ public:
 	cGrowList(int initSize = 0);
 
 	TYPE *add(const TYPE &a);
-	bool  setAlloced(int nAlloced, bool gottaHaveIt = GOTTA_HAVE_IT);
-	bool  setNum(int nNum, bool gottaHaveIt = GOTTA_HAVE_IT);
+	bool  setAlloced(int nAlloced, bool gottaHaveIt = true);
+	bool  setNum(int nNum, bool gottaHaveIt = true);
 	void  free();
 	void  removeByIndex(int index);
 	void  sort( int (* compare)( const void *elem1, const void *elem2 ));
@@ -86,7 +86,7 @@ cGrowList<TYPE>::cGrowList(int initSize /* = 0 */) {
 	array     = 0;
 	alloced   = 0;
 
-	setNum(initSize, GOTTA_HAVE_IT);
+	setNum(initSize, true);
 
 	assertValid();
 }
@@ -95,7 +95,7 @@ cGrowList<TYPE>::cGrowList(int initSize /* = 0 */) {
 
 //---------------------------------------------------------------------------
 template <class TYPE>
-bool cGrowList<TYPE>::setAlloced(int nAlloced, bool gottaHaveIt /* = GOTTA_HAVE_IT */) {
+bool cGrowList<TYPE>::setAlloced(int nAlloced, bool gottaHaveIt) {
 	assertValid();
 
 	if (nAlloced == alloced) return true;
@@ -158,7 +158,7 @@ TYPE *cGrowList<TYPE>::add(const TYPE &a) {
 
 //---------------------------------------------------------------------------
 template <class TYPE>
-bool cGrowList<TYPE>::setNum(int nNum, bool gottaHaveIt /* = GOTTA_HAVE_IT */) {
+bool cGrowList<TYPE>::setNum(int nNum, bool gottaHaveIt) {
 	assertValid();
 
 	if (nNum > alloced) {
@@ -185,8 +185,8 @@ template <class TYPE>
 void cGrowList<TYPE>::free() {
 	assertValid();
 
-	setNum(0, GOTTA_HAVE_IT);
-	setAlloced(0, GOTTA_HAVE_IT);
+	setNum(0, true);
+	setAlloced(0, true);
 }
 
 

@@ -26,23 +26,20 @@ struct fRect
 	fXY min;
 	fXY max;
 
-	inline fRect() {}
-	
-	inline fRect(float x1, float y1, float x2, float y2)
+	fRect() {}
+	fRect(float x1, float y1, float x2, float y2)
 	{
 		min.x = x1;
 		min.y = y1;
 		max.x = x2;
 		max.y = y2;
 	}
-	
-	inline fRect(const fRect &a)
+	fRect(const fRect &a)
 	{
 		min = a.min;
 		max = a.max;
 	}
-	
-	inline fRect(fXY &min, fXY &max)
+	fRect(const fXY& min, const fXY& max)
 	{
 		fRect::min = min;
 		fRect::max = max;
@@ -92,12 +89,12 @@ struct fRect
 			a.y >= min.y && a.y < max.y;
 	}
 
-	inline bool operator ==(const fRect &a)
+	inline bool operator ==(const fRect &a) const
 	{
 		return min == a.max && min == a.max;
 	}
 
-	inline bool operator !=(const fRect &a)
+	inline bool operator !=(const fRect &a) const
 	{
 		return min.x != a.max.x || min.y != a.max.y;
 	}
