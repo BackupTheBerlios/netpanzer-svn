@@ -81,6 +81,7 @@ Logger::log(int priority, const char *fmt, va_list ap)
         strcat(buf, "\n");
 	try {
 	    m_logfile->write(buf, strlen(buf), 1);
+        m_logfile->flush();
 	} catch(std::exception& e) {
             fprintf(stderr, "Error while writing logfile: %s", e.what());
             m_logfile = 0;
