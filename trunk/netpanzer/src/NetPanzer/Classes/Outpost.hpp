@@ -32,7 +32,7 @@ class Outpost : public Objective
   PointXYi unit_collection_loc;
   PointXYi occupation_pad_offset;
   unsigned short unit_generation_type;
-  boolean unit_generation_on_flag;
+  bool unit_generation_on_flag;
 
   SelectionBoxSprite select_box;
 
@@ -63,6 +63,5 @@ class Outpost : public Objective
 
  };
 
-
-
 #endif // ** _OUTPOST_HPP
+
