@@ -30,3 +30,5 @@
 - still SIGSEGV when client disconnect - fixed
 - does not display unit pictures in factory - fixed
 - objective game cannot finish - fixed
+- Astar priority_queue "open" are not clear anytime
+- in LinkListDoubleTemplate.addFront sometime is (front==0 && rear != 0)
