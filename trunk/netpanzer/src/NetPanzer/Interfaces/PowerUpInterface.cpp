@@ -37,7 +37,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 PowerUpList PowerUpInterface::powerup_list;
 
-int PowerUpInterface::powerupids = 0;
 int PowerUpInterface::power_up_limit;
 int PowerUpInterface::power_up_regen_time_upper_bound = 300;
 int PowerUpInterface::power_up_regen_time_lower_bound = 60;
@@ -78,6 +77,13 @@ PowerUp* PowerUpList::find(int ID)
     return( 0 );
 }
 
+void PowerUpList::addWithID(PowerUp *powerup)
+{
+    powerup->powerup_state.ID = id_counter++;
+    push_back(powerup);
+}
+
+//-----------------------------------------------------------------
 void PowerUpInterface::setPowerUpLimits(unsigned long map_size_x,
         unsigned long map_size_y )
 {
@@ -136,8 +142,7 @@ void PowerUpInterface::generatePowerUp()
             return;
         }
 
-        power_up->powerup_state.ID = powerupids++;
-        powerup_list.push_back(power_up);
+        powerup_list.addWithID(power_up);
 
         create_mesg.set( power_up->powerup_state.map_loc,
                          power_up->powerup_state.ID,
@@ -205,21 +210,22 @@ void PowerUpInterface::updateState()
         }
     }
 
-    PowerUpList::iterator i;
-    for(i=powerup_list.begin(); i!=powerup_list.end(); i++) {
-        PowerUp* powerup = *i;
+    for (PowerUpList::iterator i = powerup_list.begin();
+            i != powerup_list.end(); i++)
+    {
+        PowerUpList::iterator cur = i;
+        PowerUp* powerup = *cur;
 
         if(powerup->powerup_state.life_cycle_state ==
                 _power_up_lifecycle_state_inactive) {
             delete powerup;
-            
-            powerup_list.erase(i);
-            i = powerup_list.begin();
+            --i;
+            powerup_list.erase(cur);
         } else {
             powerup->updateState();
         }
     }
-}
+ }
 
 void PowerUpInterface::offloadGraphics( SpriteSorter &sorter )
 {

@@ -35,6 +35,7 @@ public:
     ~PowerUpList();
 
     PowerUp* find(int ID);
+    void addWithID(PowerUp *powerup);
 };
 
 class PowerUpInterface
@@ -42,7 +43,6 @@ class PowerUpInterface
 protected:
     static PowerUpList powerup_list;
 
-    static int powerupids;
     static int power_up_limit;
     static int power_up_regen_time_upper_bound;
     static int power_up_regen_time_lower_bound;
