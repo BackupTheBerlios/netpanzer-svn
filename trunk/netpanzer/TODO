@@ -4,7 +4,6 @@ Next release:
 -when starting to build a titan 2minutes is displayed for a short time
 -display a message when the round is over ("blabla captured xx% of outposts,
         "time is over", "blabla reached xxx frags")
--in objective mode show number of objectives captured/needed to win
 -remember to disable packet debugger
 
 *** New Masterserver code
