@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PathScheduler.hpp"
 #include "ObjectiveInterface.hpp"
 #include "GameConfig.hpp"
-#include "MiniMapView.hpp"
 
 fXY MiniMapInterface::scale_factor;
 bool MiniMapInterface::pathing_debug_mode = false;
@@ -89,7 +88,7 @@ void MiniMapInterface::annotateUnits( Surface &map_surface )
 
     while( UnitInterface::unitPositionEnumeration( &unit_dispostion,&unit_state ) ) {
         map_loc.x = int(float(unit_state->location.x) / scale_factor.x);
-        map_loc.y = int(float(unit_state->location.y) / scale_factor.y)+MiniMapView::buttonSize.y;
+        map_loc.y = int(float(unit_state->location.y) / scale_factor.y);
 
         if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
             unitRect = iRect(map_loc, map_loc + iXY(1,1));
@@ -170,8 +169,6 @@ void MiniMapInterface::annotateObjectives( Surface &map_surface )
         map_rect.min.y = int(float(world_rect.min.y) / scale_factor.y);
         map_rect.max.x = int(float(world_rect.max.x) / scale_factor.x);
         map_rect.max.y = int(float(world_rect.max.y) / scale_factor.y);
-        map_rect.min.y+=MiniMapView::buttonSize.y;
-        map_rect.max.y+=MiniMapView::buttonSize.y;
 
         // Removed black borders to the text.
         if (gameconfig->radar_objectivedrawmode == _mini_map_objective_draw_mode_solid_rect) {
@@ -203,8 +200,6 @@ void MiniMapInterface::annotateObjectives( Surface &map_surface )
 
               src.x  = int(float(obj_state->location.x) / scale_factor.x);
               src.y  = int(float(obj_state->location.y) / scale_factor.y);
-              src.y+=MiniMapView::buttonSize.y;
-              dest.y+=MiniMapView::buttonSize.y;
               map_surface.drawLine(src.x, src.y, dest.x, dest.y, color);
             }
         }

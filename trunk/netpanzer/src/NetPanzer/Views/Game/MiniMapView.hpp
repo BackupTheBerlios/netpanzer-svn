@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "View.hpp"
 #include "2D/Surface.hpp"
 #include "GameTemplateView.hpp"
-#include "Button.hpp"
 
 
 enum MAP_DRAW_TYPES
@@ -34,7 +33,6 @@ enum MAP_DRAW_TYPES
     MAP_BLEND_GREEN,
     MAP_BLACK,
     MAP_TRANSPARENT,
-    MAP_DRAW_TYPES_MAX
 };
 
 //---------------------------------------------------------------------------
@@ -50,10 +48,6 @@ private:
     bool    selectionAnchor;
     iXY     selectionAnchorDownPos;
     iXY     selectionAnchorCurPos;
-    Button  scaleUpButton;
-    Button  scaleDownButton;
-    Button  dotSizeButton;
-    Button  shadeButton;
 
     void doDecreaseSize(int value);
     void doIncreaseSize(int value);
@@ -69,18 +63,14 @@ public:
     virtual void lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
     virtual void rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
     virtual void rMouseDown(const iXY &pos);
-    virtual void actionPerformed(mMouseEvent me);
     virtual void mouseMove(const iXY &prevPos, const iXY &newPos);
 
-    void setMapScale();
     void drawMouseBox(Surface &dest);
     void setViewWindow(const iXY &pos);
-    void setMapDrawType(int type);
-    bool setViewWindowFromMouse(const iXY &pos);
+    void setMapDrawType(MAP_DRAW_TYPES type);
 
     static float          scaleDelta;
 
-    static iXY     buttonSize;
     static int decreaseSize;
     static int increaseSize;
 

@@ -26,17 +26,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ScreenSurface.hpp"
 #include "WorldInputCmdProcessor.hpp"
 #include "GameConfig.hpp"
-#include "GameViewGlobals.hpp"
-#include "Util/Log.hpp"
 
+MiniMapView miniMapView;
 
 
 float MiniMapView::scaleDelta   = 400.0f;
 int   MiniMapView::decreaseSize = 0;
 int   MiniMapView::increaseSize = 0;
-iXY   MiniMapView::buttonSize(12,12);
-
-MiniMapView miniMapView;
 
 // MiniMapView
 //---------------------------------------------------------------------------
@@ -56,27 +52,6 @@ MiniMapView::MiniMapView() : GameTemplateView()
     add(CLOSE_VIEW_BUTTON);
     add(MINMAX_VIEW_BUTTON);
 
-    iXY pos(1,1);
-    scaleDownButton.setLabel("<"); 
-    scaleDownButton.setBounds(iRect(pos, pos + buttonSize)); 
-    add(&scaleDownButton);
-    pos.x+=buttonSize.x;
-
-    scaleUpButton.setLabel(">"); 
-    scaleUpButton.setBounds(iRect(pos, pos + buttonSize)); 
-    add(&scaleUpButton);
-    pos.x+=buttonSize.x;
-
-    shadeButton.setLabel("o"); 
-    shadeButton.setBounds(iRect(pos, pos + buttonSize)); 
-    add(&shadeButton);
-    pos.x+=buttonSize.x;
-
-    dotSizeButton.setLabel("."); 
-    dotSizeButton.setBounds(iRect(pos, pos + buttonSize)); 
-    add(&dotSizeButton);
-    pos.x+=buttonSize.x;
-
     resize(100, 100);
 } // end MiniMapView::MiniMapView
 
@@ -88,18 +63,19 @@ void MiniMapView::init()
     miniMap = MiniMapInterface::getMiniMap();
 
     //iXY size = miniMap->getPix();
-    iXY size(((const iXY &)gameconfig->minimapsize)+iXY(2,2+buttonSize.y));
+    iXY size(((const iXY &)gameconfig->minimapsize)+iXY(2,2));
     resize(size);
 
     if(gameconfig->minimapposition.isDefaultValue()) {
         gameconfig->minimapposition = iXY(0, screen->getPix().y - 196);
     }
     moveTo(gameconfig->minimapposition);
+    checkArea(screen->getPix());
 
     //int xOffset = size.x;
     //int yOffset = 0;
 
-    setMapScale();
+    MiniMapInterface::setMapScale(getSize() - iXY(2,2));
     checkArea(screen->getPix());
 
     minMapSize =  64;
@@ -138,13 +114,6 @@ void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
     Surface *miniMap;
     miniMap = MiniMapInterface::getMiniMap();
 
-    iRect r(iXY(0,0), getSize());
-    iRect buttonsRect(r);
-
-    buttonsRect.max.y=buttonSize.y+1;
-    r.min.y+=buttonSize.y;
-    bltBlendRect(viewArea,buttonsRect);
-
     if (needScale) {
         scaleGroupWait += dt;
 
@@ -152,7 +121,7 @@ void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
             miniMapSurface.create(getSize(), getSize().x , 1);
 
             //miniMapSurface.scale(getViewRect().getSize());
-//            iRect r(iXY(0, 0), getSize());
+            iRect r(iXY(0, 0), getSize());
 
             miniMapSurface.bltScale(*miniMap, r);
 
@@ -161,6 +130,7 @@ void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
         }
     }
 
+    iRect r(iXY(0,0), getSize());
 
     int mapDrawType=gameconfig->minimapdrawtype;
     if (needScale) {
@@ -212,7 +182,7 @@ void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
 
     // Draw the world view box.
     iRect boxpos = MiniMapInterface::getWorldWindow();
-    boxpos.translate(iXY(1,1+buttonSize.y));
+    boxpos.translate(iXY(1,1));                           
     
     clientArea.bltLookup(boxpos, Palette::darkGray256.getColorArray());
     // Draw the units and such on the minimap.
@@ -222,7 +192,7 @@ void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
 
     // If the mouse is over the client area, then change the cursor.
     if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos()))) {
-        if (selectionAnchor && mouse.getScreenPos().y>=buttonSize.y) {
+        if (selectionAnchor) {
             // Since we are selecting units, draw the selection box.
             clientArea.drawRect(selectionAnchorDownPos, selectionAnchorCurPos, Color::white);
         } else {
@@ -266,9 +236,7 @@ void MiniMapView::drawMouseBox(Surface &dest)
     iXY   pos(getScreenToClientPos(mouse.getScreenPos()));
 
     //dest.drawRect(pos - size - 1, pos + size - 1, Color::yellow);
-    if(pos.y>=buttonSize.y) {
-        dest.drawBoxCorners(pos - size - iXY(1,1), iXY(pos.x + size.x - 1, pos.y + size.y), 5, Color::red);
-    }
+    dest.drawBoxCorners(pos - size - iXY(1,1), iXY(pos.x + size.x - 1, pos.y + size.y), 5, Color::red);
 
 } // end MiniMapView::drawMouseBox
 
@@ -281,44 +249,15 @@ void MiniMapView::lMouseDown(const iXY &pos)
 {
     assert(this != 0);
 
-    if(!setViewWindowFromMouse(pos)) {
-        GameTemplateView::lMouseDown(pos);
+    if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos()))) {
+        if (!selectionAnchor) {
+            setViewWindow(pos);
+        }
     }
+
+    GameTemplateView::lMouseDown(pos);
+
 } // end MiniMapView::lMouseDown
-
-bool MiniMapView::setViewWindowFromMouse(const iXY &pos)
-{
-    if (pos.y>=buttonSize.y) {
-        if(getClientRect().contains(getScreenToClientPos(mouse.getScreenPos()))
-            && !selectionAnchor) {
-            setViewWindow(pos-iXY(0,buttonSize.y));
-        }
-        return true;
-    }
-    return false;
-}
-
-
-void MiniMapView::actionPerformed(mMouseEvent me)
-{
-    assert(this != 0);
-
-
-    if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED) {
-        if (me.getSource(shadeButton)) {
-            int newtype=(gameconfig->minimapdrawtype+1)%MAP_DRAW_TYPES_MAX;
-            setMapDrawType(newtype);
-        } else if (me.getSource(scaleUpButton)) {
-            increaseSize = -1;
-        } else if (me.getSource(scaleDownButton)) {
-            decreaseSize = -1;
-        } else if (me.getSource(dotSizeButton)) {
-            gameconfig->radar_unitsize = gameconfig->radar_unitsize==_mini_map_unit_size_large?_mini_map_unit_size_small:_mini_map_unit_size_large;
-        }
-    }
-    GameTemplateView::actionPerformed(me);
-}
-
 
 // rMouseDown
 //--------------------------------------------------------------------------
@@ -328,7 +267,7 @@ void MiniMapView::rMouseDown(const iXY &pos)
 
 } // end MiniMapView::rMouseDown
 
-void MiniMapView::setMapDrawType(int type)
+void MiniMapView::setMapDrawType(MAP_DRAW_TYPES type)
 {
     gameconfig->minimapdrawtype=type;
 }
@@ -369,13 +308,6 @@ void MiniMapView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &
     }
 
 } // end MiniMapView::rMouseDrag
-
-
-void MiniMapView::setMapScale()
-{
-    MiniMapInterface::setMapScale(getSize() - iXY(2,2+buttonSize.y));
-}
-
 
 // doIncreaseSize
 //--------------------------------------------------------------------------
@@ -447,7 +379,7 @@ void MiniMapView::doIncreaseSize(int value)
         }
     }
 
-    setMapScale();
+    MiniMapInterface::setMapScale(getSize() - iXY(2,2));
 
     needScale      = true;
     scaleGroupWait = 0.0f;
@@ -474,7 +406,7 @@ void MiniMapView::doDecreaseSize(int value)
         resize(iXY(minMapSize, minMapSize));
     }
 
-    setMapScale();
+    MiniMapInterface::setMapScale(getSize() - iXY(2,2));
 
     needScale      = true;
     scaleGroupWait = 0.0f;
@@ -561,8 +493,6 @@ void MiniMapView::mouseMove(const iXY &prevPos, const iXY &newPos)
 //--------------------------------------------------------------------------
 void MiniMapView::lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
 {
-//    lMouseDown(newPos);
-    setViewWindowFromMouse(newPos);
+    lMouseDown(newPos);
 
 } // end MiniMapView::lMouseDrag
-
