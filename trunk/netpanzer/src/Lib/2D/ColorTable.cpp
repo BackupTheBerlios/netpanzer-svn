@@ -361,7 +361,7 @@ void ColorTable::saveTable(const char *filename) const
 
 	FILE *fp = fopen(strBuf, "wb");
 	if (fp == 0)
-		throw Exception("couldn't save colortable to '%s'.", filename);	
+		throw Exception("couldn't save colortable to '%s'.", strBuf);	
 
 	saveTable(fp);
 

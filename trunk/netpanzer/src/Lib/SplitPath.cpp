@@ -52,7 +52,7 @@ void _splitpath(const char* path, char* drive, char* dir,
 		if(lastslash == 0)
 			strcpy(dir, "");
 		else
-			strcpypart(dir, path, lastslash - path);
+			strcpypart(dir, path, lastslash - path + 1);
 	}
 	
 	// Step2: Get the (last) dot in the filename

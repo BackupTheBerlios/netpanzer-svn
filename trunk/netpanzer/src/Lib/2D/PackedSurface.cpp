@@ -193,8 +193,12 @@ void PackedSurface::pack(const Surface &source)
 //--------------------------------------------------------------------------
 void PackedSurface::load(const char *filename) {
 	FILE *f = fopen(filename, "rb");
-	if (f == 0) throw Exception("Can't open %s", filename);
+	
+	if (f == 0)
+		throw Exception("Can't open %s", filename);
+	
 	load(f);
+
 	fclose(f);
 }
 
@@ -239,7 +243,8 @@ void PackedSurface::load(FILE *f) {
 
 	// Quick check for error
 
-	if (ferror(f)) throw Exception("Error reading packed surface file!");
+	if (ferror(f))
+		throw Exception("Error reading packed surface file!");
 
 	// Add size of rowTableOffset.
 	totalByteCount += (pix.y * frameCount + 1) * sizeof(*rowOffsetTable);

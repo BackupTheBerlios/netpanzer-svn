@@ -94,7 +94,7 @@ GameInfoView::GameInfoView() : GameTemplateView()
 
 	moveTo(iXY(0, 0));
 	//resizeClientArea(iXY(100, 2 * 2 + 12 * 3 + 8));
-	resizeClientArea(iXY(140, 2 * 2 + 12 * 4 + 8));
+	resizeClientArea(iXY(140, 2 * 2 + 12 * 5 + 8));
 
 	// Start it in the top-left corner.
 	moveTo(iXY(10000, 0));
@@ -112,6 +112,7 @@ void GameInfoView::doDraw(const Surface &viewArea, const Surface &clientArea)
     char timeBuf[64];
     char pingBuf[64];
     char gameBuf[64];
+	char fpsBuf[64];
     	
 	iXY pos(2, 2);
 
@@ -162,6 +163,9 @@ void GameInfoView::doDraw(const Surface &viewArea, const Surface &clientArea)
 	sprintf(pingBuf, "ping   %.0f ms", NetworkState::ping_time );
 	checkGameInfoRect(pingBuf);
 
+	sprintf(fpsBuf, "FPS    %f", TimerInterface::getFPSAvg() );
+	checkGameInfoRect(fpsBuf);                                     		
+
 	bltViewBackground(viewArea);
 
 	clientArea.bltStringShadowed(pos, gameBuf, Color::white, Color::black);
@@ -180,13 +184,14 @@ void GameInfoView::doDraw(const Surface &viewArea, const Surface &clientArea)
 	pos.y += 12;
 	clientArea.bltStringShadowed(pos, pingBuf, Color::white, Color::black);
 	pos.y += 12;
+	clientArea.bltStringShadowed(pos, fpsBuf, Color::white, Color::black);
+	pos.y += 12;                                                           	
 
 	View::doDraw(viewArea, clientArea);
 
 	// Make sure the view stays in the screen when the view is resized.
 	//resizeClientArea(gameInfoRect.getSize());
 	//moveTo(min);
-
 } // end GameInfoView::doDraw
 
 // checkGameInfoRect
