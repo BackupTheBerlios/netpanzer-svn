@@ -62,13 +62,13 @@ bool PathCache::search( PathRequest &path_request )
 
             if ( (start_mag <= start_proximity_threshold) && (goal_mag <= goal_proximity_threshold) ) {
                 *(path_request.path) = cache_entry->path;
-                return ( true );
+                return true;
             }
         } // ** if ( cache_entry->valid == true )
 
     } // ** for
 
-    return( false );
+    return false;
 }
 
 void PathCache::add(PathRequest &path_request)
@@ -88,7 +88,7 @@ void PathCache::add(PathRequest &path_request)
     }
 }
 
-void PathGenerator::initialize( void )
+void PathGenerator::initialize()
 {
     initialize( 4000, 10 );
 }
@@ -148,8 +148,7 @@ void PathGenerator::terminatePathGeneration( UnitID &unit_id )
 
 }
 
-
-void PathGenerator::pathingFsmFullPath( void )
+void PathGenerator::pathingFsmFullPath()
 {
     bool end_cycle = false;
 
@@ -190,7 +189,7 @@ void PathGenerator::pathingFsmFullPath( void )
 
 }
 
-void PathGenerator::pathingFsmUpdatePath( void )
+void PathGenerator::pathingFsmUpdatePath()
 {
     bool end_cycle = false;
 
@@ -243,7 +242,7 @@ void PathGenerator::pathingFsmUpdatePath( void )
 
 }
 
-void PathGenerator::pathingFsmCachePath( void )
+void PathGenerator::pathingFsmCachePath()
 {
     bool end_cycle = false;
 
@@ -372,7 +371,7 @@ PathGenerator PathScheduler::short_pather[1];
 
 long PathScheduler::short_queue_distance_threshold;
 
-void PathScheduler::initialize( void )
+void PathScheduler::initialize()
 {
     if( MapInterface::isMapLoaded() == true ) {
         unsigned long resources;
@@ -400,9 +399,7 @@ void PathScheduler::initialize( void )
 
 void PathScheduler::initialize( unsigned long short_queue_size, unsigned long long_queue_size )
 {
-
     initialize( short_queue_size, long_queue_size, 2000, 8000 );
-
 }
 
 void PathScheduler::initialize( unsigned long short_queue_size,
@@ -486,7 +483,7 @@ void PathScheduler::killRequest( UnitID &unit_id )
 
 }
 
-void PathScheduler::run( void )
+void PathScheduler::run()
 {
     unsigned long i;
     PathRequest request;

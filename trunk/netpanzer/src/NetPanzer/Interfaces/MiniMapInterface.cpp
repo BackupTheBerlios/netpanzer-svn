@@ -207,7 +207,6 @@ void MiniMapInterface::annotateObjectives( Surface &map_surface )
 
 void MiniMapInterface::annotateMiniMap( Surface &map_surface )
 {
-
     if ( pathing_debug_mode == true ) {
         BitArray *bit_array;
         unsigned long map_x_size = MapInterface::getWidth();
@@ -237,7 +236,6 @@ void MiniMapInterface::annotateMiniMap( Surface &map_surface )
         annotateObjectives( map_surface );
         annotateUnits( map_surface );
     }
-
 }
 
 void MiniMapInterface::setPathingDebugMode( bool on_off )

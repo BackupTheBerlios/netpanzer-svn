@@ -23,14 +23,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PathingState.hpp"
 #include "Util/Log.hpp"
 
+#define HEURISTIC_WEIGHT    10
+
 Astar::Astar()
 {
     node_list = 0;
 }
 
 void Astar::initializeAstar( unsigned long node_list_size,
-                             unsigned long step_limit,
-                             long heuristic_weight )
+                             unsigned long step_limit)
 {
     open_set.initialize( MapInterface::getWidth(),
             MapInterface::getHeight() );
@@ -40,30 +41,17 @@ void Astar::initializeAstar( unsigned long node_list_size,
     initializeNodeList( node_list_size );
 
     Astar::step_limit = step_limit;
-    Astar::heuristic_weight = heuristic_weight;
 
     ini_flag = true;
 }
 
-void Astar::initializeAstar( unsigned long node_list_size )
-{
-    initializeAstar( node_list_size, 50, 30 );
-}
-
-
-void Astar::initializeAstar()
-{
-    initializeAstar( 4000, 50, 30 );
-}
-
-
-AstarNode*  Astar::getNewNode()
+AstarNode* Astar::getNewNode()
 {
     AstarNode *node_ptr;
 
     if ( dynamic_node_management_flag == true ) {
         if (free_list_ptr == 0) {
-            LOG(("No new node1"));
+            LOG(("No new node! (freelist empty)"));
             return 0;
         } else {
             node_ptr = free_list_ptr;
@@ -72,7 +60,7 @@ AstarNode*  Astar::getNewNode()
         }
     } else {
         if ( node_index >= node_list_size ) {
-            LOG(("no new node 2"));
+            LOG(("no new node! (nodelist full)"));
             return 0;
         }
 
@@ -92,11 +80,11 @@ void Astar::releaseNode( AstarNode *node )
 }
 
 
-void Astar::resetNodeList( void )
+void Astar::resetNodeList()
 {
     node_index = 0;
 
-    if ( dynamic_node_management_flag == true ) {
+    if (dynamic_node_management_flag == true) {
         int node_list_index;
         int node_list_start;
 
@@ -110,7 +98,6 @@ void Astar::resetNodeList( void )
 
         free_list_ptr = &(node_list[ 0 ]);
     }
-
 }
 
 void Astar::initializeNodeList( unsigned long initial_size )
@@ -118,13 +105,8 @@ void Astar::initializeNodeList( unsigned long initial_size )
     node_index = 0;
     node_list_size = initial_size;
 
-    if ( node_list != 0 ) {
-        free( node_list );
-        node_list = 0;
-    }
-
-    node_list = (AstarNode *) malloc( sizeof( AstarNode) * node_list_size );
-    assert( node_list != 0 );
+    delete[] node_list;
+    node_list = new AstarNode[node_list_size];
 }
 
 
@@ -151,7 +133,7 @@ void Astar::initializePath( iXY &start, iXY &goal, unsigned short path_type )
     best_node = 0;
     best_node = getNewNode();
 
-    assert( best_node != 0 );
+    assert(best_node != 0);
 
     best_node->map_loc = start;
     best_node->abs_loc = mapXYtoAbsloc( start );
@@ -160,6 +142,7 @@ void Astar::initializePath( iXY &start, iXY &goal, unsigned short path_type )
     best_node->f = best_node->g + best_node->h;
     best_node->parent = 0;
 
+    assert(open.size() == 0);
     open.push(best_node);
 
     open_set.setBit( best_node->map_loc.x, best_node->map_loc.y );
@@ -190,11 +173,11 @@ long Astar::heuristic( iXY &pointA, iXY &pointB )
     delta_x = labs( pointA.x - pointB.x );
     delta_y = labs( pointA.y - pointB.y );
 
-#if 0
+#if 1
     // we can move diagonal...
-    return heuristic_weight * std::max(delta_x, delta_y);
+    return HEURISTIC_WEIGHT * std::max(delta_x, delta_y);
 #else
-    return heuristic_weight * (delta_x + delta_y);
+    return HEURISTIC_WEIGHT * (delta_x + delta_y);
 #endif
 }
 
@@ -209,35 +192,35 @@ unsigned char Astar::generateSucc( unsigned short direction, AstarNode *node, As
 
     switch( direction ) {
     case 0: {
-            succ->map_loc.x =  1; succ->map_loc.y =  0; succ->g = 1;
+            succ->map_loc.x =  1; succ->map_loc.y =  0; succ->g = 0;
         }
         break;
     case 1: {
-            succ->map_loc.x =  1; succ->map_loc.y = -1; succ->g = 0;
+            succ->map_loc.x =  1; succ->map_loc.y = -1; succ->g = 1;
         }
         break;
     case 2: {
-            succ->map_loc.x =  0; succ->map_loc.y = -1; succ->g = 1;
+            succ->map_loc.x =  0; succ->map_loc.y = -1; succ->g = 0;
         }
         break;
     case 3: {
-            succ->map_loc.x = -1; succ->map_loc.y = -1; succ->g = 0;
+            succ->map_loc.x = -1; succ->map_loc.y = -1; succ->g = 1;
         }
         break;
     case 4: {
-            succ->map_loc.x = -1; succ->map_loc.y =  0; succ->g = 1;
+            succ->map_loc.x = -1; succ->map_loc.y =  0; succ->g = 0;
         }
         break;
     case 5: {
-            succ->map_loc.x = -1; succ->map_loc.y =  1; succ->g = 0;
+            succ->map_loc.x = -1; succ->map_loc.y =  1; succ->g = 1;
         }
         break;
     case 6: {
-            succ->map_loc.x =  0; succ->map_loc.y =  1; succ->g = 1;
+            succ->map_loc.x =  0; succ->map_loc.y =  1; succ->g = 0;
         }
         break;
     case 7: {
-            succ->map_loc.x =  1; succ->map_loc.y =  1; succ->g = 0;
+            succ->map_loc.x =  1; succ->map_loc.y =  1; succ->g = 1;
         }
         break;
     }
@@ -246,7 +229,6 @@ unsigned char Astar::generateSucc( unsigned short direction, AstarNode *node, As
     succ->abs_loc = mapXYtoAbsloc( succ->map_loc );
 
     movement_val = getMovementValue( succ->map_loc );
-
     if ( movement_val != 0xFF )
         if ( ( (UnitBlackBoard::unitOccupiesLoc( succ->map_loc ) == true ) &&
                 (succ->map_loc != goal_node.map_loc) )
@@ -261,7 +243,7 @@ unsigned char Astar::generateSucc( unsigned short direction, AstarNode *node, As
 
     succ->parent = 0;
 
-    return( movement_val );
+    return movement_val;
 }
 
 bool Astar::generatePath( PathRequest *path_request,
@@ -349,9 +331,8 @@ bool Astar::process_succ( PathList *path, int *result_code )
 
         } // **else
 
-        open_set.clearBit( best_node->map_loc.x, best_node->map_loc.y );
-
-        closed_set.setBit( best_node->map_loc.x, best_node->map_loc.y );
+        open_set.clearBit(best_node->map_loc.x, best_node->map_loc.y);
+        closed_set.setBit(best_node->map_loc.x, best_node->map_loc.y);
 
         if ( start_sampling_flag == true)
             astar_set_array.setBit(best_node->map_loc.x, best_node->map_loc.y);
@@ -426,7 +407,7 @@ bool Astar::process_succ( PathList *path, int *result_code )
     return false;
 }
 
-void Astar::cleanUp( void )
+void Astar::cleanUp()
 {
     TimeStamp timer_cleanup_mark = now();
 
@@ -473,3 +454,4 @@ BitArray * Astar::getSampledSetArrays( void )
 {
     return( &astar_set_array );
 }
+
