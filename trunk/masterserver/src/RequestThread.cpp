@@ -69,12 +69,16 @@ void RequestThread::run()
             break;
         } else if(query == "heartbeat") {
             masterserver->parseHeartbeat(*stream, &addr, *tokenizer);
+            // drop client after he sent his heartbeat
+            break;
         } else if(query == "list") {
             masterserver->parseList(*stream, &addr, *tokenizer, isGameSpy);
             if(isGameSpy) // gamespy drops connection now
                 break;
         } else if(query == "quit") {
             masterserver->parseQuit(*stream, &addr, *tokenizer);
+            // drop clietn after quiet command
+            break;
         } else if(query == "gamename") {
             // this is probably an old gamespy type query...
             // ignore everything until next final
