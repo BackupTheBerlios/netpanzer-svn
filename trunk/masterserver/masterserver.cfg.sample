@@ -19,7 +19,7 @@ connection-limit=10
 
 # Interval other masterservers are notified that we're still alive
 masterserver-heartbeat-interval=350
-# Passwort for masterserver heartbeats
+# Password for masterserver heartbeats
 masterserver-password=xxx
 
 # Paths, Enable them if you don't want the default paths
