@@ -51,7 +51,7 @@ HeartbeatThread::HeartbeatThread(MasterServer* newmasterserver)
     requestMasterServerList();
    
     if(serveraddresses.size() == 0) {
-        *log << "No additional masterservers found.\n";
+        *log << "No additional masterservers found." << std::endl;
     }
     
     // start thread
@@ -76,7 +76,7 @@ HeartbeatThread::readNeighborCache(std::vector<std::string>& list)
     std::ifstream in(neighborcachefile.c_str());
     if(!in.good()) {
         *log << "Couldn't open neighborcache file '" << neighborcachefile
-            << "'.\n";
+            << "'." << std::endl;
         return;
     }
     neighborini.load(in);
@@ -108,7 +108,7 @@ void HeartbeatThread::requestMasterServerList()
         struct hostent* hentry = gethostbyname(addr->c_str());
         if(!hentry) {
             *log << "Couldn't resolve address of masterserver '"
-                << *addr << "'\n";
+                << *addr << "'" << std::endl;
             continue;
         }
 
@@ -162,7 +162,7 @@ void HeartbeatThread::requestMasterServerList2(struct sockaddr_in* addr)
                 break;
             } else {
                 *log << "Unknown token when querying for masterserverlist: " <<
-                    token << "\n";
+                    token << std::endl;
             }
         }
 
@@ -171,7 +171,7 @@ void HeartbeatThread::requestMasterServerList2(struct sockaddr_in* addr)
         if(sock>=0)
             close(sock);
         *log << "Couldn't request a list of other masterservers: " << e.what()
-            << "\n";
+            << std::endl;
     } catch(...) {
         if(sock>=0)
             close(sock);
@@ -186,7 +186,7 @@ HeartbeatThread::addMasterServer(const std::string& address)
     struct hostent* hentry = gethostbyname(address.c_str());
     if(!hentry) {
         *log << "Couldn't lookup address of masterserver '"
-            << address << "'\n";
+            << address << "'" << std::endl;
         return;
     }
 
@@ -199,12 +199,12 @@ HeartbeatThread::addMasterServer(const std::string& address)
 
     if (!masterserver->addServer("master", serveraddr)) {
         *log << "Not adding additional masterserver '" << address
-            << "': already in list.\n";
+            << "': already in list." << std::endl;
         return;                                                         
     }                                                                   
 
     serveraddresses.push_back(serveraddr);
-    *log << "Found additional masterserver '" << address << "'\n";
+    *log << "Found additional masterserver '" << address << "'" << std::endl;
 }
 
 void* HeartbeatThread::threadMain(void* data)
@@ -229,7 +229,7 @@ void
 HeartbeatThread::sendHeartbeats()
 {
     if(serveraddresses.size())
-        *log << "Sending Heartbeat to other masters\n";
+        *log << "Sending Heartbeat to other masters" << std::endl;
 
     for(std::vector<struct sockaddr_in>::iterator i = serveraddresses.begin();
             i != serveraddresses.end(); ++i) {
@@ -237,9 +237,9 @@ HeartbeatThread::sendHeartbeats()
             sendHeartbeat(& (*i));
         } catch(std::exception& e) {
             *log << "Couldn't send heartbeat packet to '"
-                << inet_ntoa(i->sin_addr) << "': " << e.what() << "\n";
+                << inet_ntoa(i->sin_addr) << "': " << e.what() << std::endl;
         } catch(...) {
-            *log << "Unexpected exception while sending heartbeat.\n";
+            *log << "Unexpected exception while sending heartbeat."<< std::endl;
         }
     }
 }
