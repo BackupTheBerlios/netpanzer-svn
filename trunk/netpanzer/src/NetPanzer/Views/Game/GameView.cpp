@@ -118,7 +118,7 @@ void GameView::doDraw(Surface &viewArea, Surface &clientArea)
 void GameView::doActivate()
 {
     View::doActivate();
-    MouseInterface::event_queue.reset();
+    // MouseInterface::event_queue.clear();
     MouseInterface::resetButtonHoldStatus();
     COMMAND_PROCESSOR.inFocus();
 

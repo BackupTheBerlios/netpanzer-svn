@@ -58,6 +58,7 @@ void ProgressView::doDraw(Surface &viewArea, Surface &clientArea)
         loadBackgroundSurface();
     }
 
+    screen->fill(Color::black);
     backgroundSurface.blt(clientArea);
     background.blt(clientArea, iXY(179, 153));
 
@@ -100,7 +101,8 @@ void ProgressView::blitToScreen()
     if (!backgroundSurface.getDoesExist()) {
         loadBackgroundSurface();
     }
-                                                  
+    
+    screen->fill(Color::black);
     backgroundSurface.blt(*screen, min);
     background.blt(*screen, min + iXY(179, 153));
                                                   

@@ -1,7 +1,12 @@
+07-Nov-2003 by Matthias Braun
+-fixed HOM effect while joining server
+
 06-Nov-2003 by Matthias Braun
 -cleanups and imporvements to the IRC Lobby code
 -added a callback ability to input lines, when enter is pressed
 -removed chat button and make chat happen on return key
+-eleminated usage of DoubleLinkList template in PowerupInterface (using
+        std::vector now)
 
 05-Nov-2003 by Matthias Braun
 -added manpage contributed by Bartosz Fesnky <fenio@o2.pl>

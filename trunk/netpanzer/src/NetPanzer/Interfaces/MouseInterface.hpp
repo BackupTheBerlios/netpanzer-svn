@@ -20,7 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 #include <map>
-#include "QueueTemplate.hpp"
+#include <queue>
+
 #include "Surface.hpp"
 
 #include "cTimeStamp.hpp"
@@ -44,7 +45,7 @@ public:
     iXY   up_pos;
 };
 
-typedef QueueTemplate< MouseEvent > MouseEventQueue;
+typedef std::queue<MouseEvent> MouseEventQueue;
 
 class MouseInterface
 {

@@ -36,6 +36,8 @@ public:
     virtual void close() {};
     virtual void toggleGameView();
     virtual void toggleMainMenu();
+private:
+    virtual void blitToScreen() { }
 };
 
 #endif

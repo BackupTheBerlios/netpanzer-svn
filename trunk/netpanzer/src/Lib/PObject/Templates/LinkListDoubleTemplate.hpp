@@ -18,10 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _LINKLISTDOUBLETEMPLATE_HPP
 #define _LINKLISTDOUBLETEMPLATE_HPP
 
-#include <stdlib.h>
+#include "NoCopy.hpp"
 
 template< class TYPE >
-class LinkListDoubleTemplate
+class LinkListDoubleTemplate : public NoCopy
 {
 protected:
     TYPE *front;
@@ -35,58 +35,53 @@ public:
 
     LinkListDoubleTemplate( unsigned long size );
 
-    ~LinkListDoubleTemplate( void );
+    ~LinkListDoubleTemplate();
 
     void initialize( unsigned long size );
 
-    inline TYPE * getFront( void )
+    TYPE* getFront() const
     {
-        return( front );
+        return front;
     }
 
-    inline TYPE * getRear( void )
+    TYPE * getRear() const
     {
-        return( rear );
+        return rear;
     }
 
-    inline void addRear( TYPE *object )
+    void addRear(TYPE *object)
     {
         object->next = 0;
-        object->prev = 0;
+        object->prev = rear;
 
-        if ( (front == 0) && (rear == 0) ) {
+        if (rear == 0) {
             front = object;
             rear = object;
         } else {
-            object->prev = rear;
             rear->next = object;
             rear = object;
         }
     }
 
-    inline void addFront( TYPE *object )
+    void addFront(TYPE *object)
     {
-        object->next = 0;
+        object->next = front;
         object->prev = 0;
 
-        if ( (front == 0) && (rear == 0) ) {
+        if (front == 0) {
             front = object;
             rear = object;
         } else {
-            object->next = front;
             front->prev = object;
             front = object;
         }
     }
 
-    inline void insertAfter( TYPE *after, TYPE *object )
+    void insertAfter(TYPE *after, TYPE *object)
     {
-        assert( after != 0 );
+        assert(after != 0);
 
-        object->next = 0;
-        object->prev = 0;
-
-        if( after->next != 0 ) {
+        if(after->next != 0) {
             after->next->prev = object;
         }
 
@@ -94,19 +89,16 @@ public:
         after->next = object;
         object->prev = after;
 
-        if( after == rear ) {
+        if(after == rear) {
             rear = object;
         }
     }
 
-    inline void insertBefore( TYPE *before, TYPE *object )
+    void insertBefore(TYPE *before, TYPE *object)
     {
-        assert( before != 0 );
+        assert(before != 0);
 
-        object->next = 0;
-        object->prev = 0;
-
-        if( before->prev != 0 ) {
+        if(before->prev != 0) {
             before->prev->next = object;
         }
 
@@ -114,12 +106,108 @@ public:
         before->prev = object;
         object->next = before;
 
-        if( before == front ) {
+        if(before == front) {
             front = object;
         }
     }
 
-    inline void deleteObject( TYPE *object )
+    void deleteObject(TYPE *object)
+    {
+        if( object->prev != 0 ) {
+            object->prev->next = object->next;
+        }
+
+        if( object->next != 0 ) {
+            object->next->prev = object->prev;
+        }
+
+        if(object == front) {
+            front = object->next;
+        }
+
+        if(object == rear) {
+            rear = object->prev;
+        }
+
+        delete object;
+    }
+
+    void deleteFront()
+    {
+        TYPE *oldfront = front;
+
+        if (front != 0) {
+            if (front == rear) {
+                front = 0;
+                rear = 0;
+            } else {
+                front = front->next;
+                front->prev = 0;
+            }
+        }
+
+        delete oldfront;
+    }
+
+    void deleteRear()
+    {
+        TYPE *oldrear = rear;
+
+        if ( rear != 0 ) {
+            if (front == rear) {
+                front = 0;
+                rear = 0;
+            } else {
+                rear = rear->prev;
+                rear->next = 0;
+            }
+        }
+
+        delete oldrear;
+    }
+
+    void deleteAfter(TYPE *after)
+    {
+        assert( after != 0 );
+
+        TYPE* object = after->next;
+
+        if(object != 0) {
+            after->next = object->next;
+
+            if(object->next != 0) {
+                object->next->prev = after;
+            }
+
+            if(object == rear) {
+                rear = after;
+            }
+        }
+
+        delete oldobject;
+    }
+
+    void deleteBefore(TYPE *before)
+    {
+        assert( before != 0 );
+
+        TYPE *object = before->prev;
+
+        if( object != 0 ) {
+            before->prev = object->prev;            
+
+            if(object->prev != 0) {
+                object->prev->next = before;
+            }
+
+            if(delete_ptr == front) {
+                front = before;
+            }
+        }
+        delete object;
+    }
+
+    void removeObject(TYPE *object)
     {
         if( object->prev != 0 ) {
             object->prev->next = object->next;
@@ -136,11 +224,10 @@ public:
         if( object == rear ) {
             rear = object->prev;
         }
-
-        delete( object );
     }
 
-    inline void deleteFront( void )
+
+    TYPE* removeFront()
     {
         TYPE *delete_ptr;
 
@@ -155,11 +242,13 @@ public:
                 front->prev = 0;
             }
 
-            delete( delete_ptr );
+            return( delete_ptr );
         }
+
+        return( 0 );
     }
 
-    inline void deleteRear( void )
+    TYPE* removeRear()
     {
         TYPE *delete_ptr;
 
@@ -174,11 +263,12 @@ public:
                 rear->next = 0;
             }
 
-            delete( delete_ptr );
+            return( delete_ptr );
         }
+        return( 0 );
     }
 
-    inline void deleteAfter( TYPE *after )
+    TYPE* removeAfter( TYPE *after )
     {
         TYPE *delete_ptr;
         assert( after != 0 );
@@ -197,120 +287,13 @@ public:
                 rear = after;
             }
 
-            delete( delete_ptr );
-        }
-    }
-
-    inline void deleteBefore( TYPE *before )
-    {
-        TYPE *delete_ptr;
-        assert( before != 0 );
-
-        delete_ptr = before->prev;
-
-        if( before->prev != 0 ) {
-            if( before->prev->prev != 0 ) {
-                before->prev->prev->next = before;
-                before->prev = before->prev->prev;
-            } else {
-                before->prev = 0;
-            }
-
-            if( delete_ptr == front ) {
-                front = before;
-            }
-
-            delete( delete_ptr );
-        }
-    }
-
-    inline void removeObject( TYPE *object )
-    {
-        if( object->prev != 0 ) {
-            object->prev->next = object->next;
-        }
-
-        if( object->next != 0 ) {
-            object->next->prev = object->prev;
-        }
-
-        if( object == front ) {
-            front = object->next;
-        }
-
-        if( object == rear ) {
-            rear = object->prev;
-        }
-    }
-
-
-    inline TYPE* removeFront( void )
-    {
-        TYPE *delete_ptr;
-
-        delete_ptr = front;
-
-        if ( front != 0 ) {
-            if (front == rear) {
-                front = 0;
-                rear = 0;
-            } else {
-                front = front->next;
-                front->prev = 0;
-            }
-
             return( delete_ptr );
         }
 
         return( 0 );
     }
 
-    inline TYPE* removeRear( void )
-    {
-        TYPE *delete_ptr;
-
-        delete_ptr = rear;
-
-        if ( rear != 0 ) {
-            if (front == rear) {
-                front = 0;
-                rear = 0;
-            } else {
-                rear = rear->prev;
-                rear->next = 0;
-            }
-
-            return( delete_ptr );
-        }
-        return( 0 );
-    }
-
-    inline TYPE* removeAfter( TYPE *after )
-    {
-        TYPE *delete_ptr;
-        assert( after != 0 );
-
-        delete_ptr = after->next;
-
-        if( after->next != 0 ) {
-            if( after->next->next != 0 ) {
-                after->next->next->prev = after;
-                after->next = after->next->next ;
-            } else {
-                after->next = 0;
-            }
-
-            if( delete_ptr == rear ) {
-                rear = after;
-            }
-
-            return( delete_ptr );
-        }
-
-        return( 0 );
-    }
-
-    inline TYPE* removeBefore( TYPE *before )
+    TYPE* removeBefore( TYPE *before )
     {
         TYPE *delete_ptr;
         assert( before != 0 );
@@ -335,7 +318,7 @@ public:
     }
 
 
-    inline unsigned long getSize( void )
+    unsigned long getSize()
     {
         TYPE *traversal_ptr;
         unsigned long count = 0;
@@ -349,7 +332,7 @@ public:
         return( count );
     }
 
-    inline void deallocate( void )
+    void deallocate()
     {
         TYPE *traversal_ptr;
         TYPE *delete_ptr;
@@ -365,10 +348,7 @@ public:
         front = 0;
         rear = 0;
     }
-
-};
-
-
+} __attribute__((deprecated));
 
 template< class TYPE >
 LinkListDoubleTemplate< TYPE >::LinkListDoubleTemplate( unsigned long size )
@@ -378,7 +358,7 @@ LinkListDoubleTemplate< TYPE >::LinkListDoubleTemplate( unsigned long size )
 }
 
 template< class TYPE >
-LinkListDoubleTemplate< TYPE >::~LinkListDoubleTemplate( void )
+LinkListDoubleTemplate< TYPE >::~LinkListDoubleTemplate()
 {
     deallocate();
 }
@@ -396,7 +376,6 @@ void LinkListDoubleTemplate< TYPE >::initialize( unsigned long size )
         object = new TYPE;
         addRear( object );
     }
-
 }
 
 

@@ -20,10 +20,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <assert.h>
 #include "LinkListDoubleTemplate.hpp"
-
+#include "NoCopy.hpp"
 
 template< class TYPE >
-class BucketArrayTemplate
+class BucketArrayTemplate : public NoCopy
 {
 protected:
     unsigned long size;

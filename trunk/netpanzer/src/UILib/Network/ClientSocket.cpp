@@ -30,7 +30,7 @@ ClientSocket::ClientSocket(const char* servername, Uint16 port)
     
     // resolve server name
     IPaddress serverip;
-    // XXX why deosn't ResolveHost take a const char*? Is this cast safe?
+    // some old version of SDL_net take a char* instead of a const char*
     if(SDLNet_ResolveHost(&serverip, const_cast<char*>(servername),
                           port) < 0) {
         throw Exception("couldn't resolve name '%s'.", servername);

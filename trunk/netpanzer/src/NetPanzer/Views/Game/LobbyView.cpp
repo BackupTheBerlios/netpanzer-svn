@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "LobbyView.hpp"
 #include "Desktop.hpp"
 #include "GameManager.hpp"
+#include "ScreenSurface.hpp"
 
 LoadingView *lobbyView = 0;
 
@@ -69,10 +70,8 @@ void LobbyView::doDraw(Surface &viewArea, Surface &clientArea)
         loadBackgroundSurface();
     }
 
+    screen->fill(Color::black);
     backgroundSurface.blt(clientArea);
-
-    //MenuTemplateView::doDraw(viewArea, clientArea);
-
     background.blt(clientArea, 179, 153);
 
     View::doDraw(viewArea, clientArea);

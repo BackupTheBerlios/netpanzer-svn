@@ -165,6 +165,5 @@ public:
     bool deleteUnitBucketPointer( UnitID unit_id, iXY world_loc );
 };
 
-
-
 #endif // ** _UNIT_BUCKET_ARRAY_HPP
+

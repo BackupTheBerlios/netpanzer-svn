@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITLIST_HPP
 #define _UNITLIST_HPP
 
-#include "PArray.hpp"
 #include "UnitBase.hpp"
 #include "UnitID.hpp"
 #include "LinkListSingleTemplate.hpp"

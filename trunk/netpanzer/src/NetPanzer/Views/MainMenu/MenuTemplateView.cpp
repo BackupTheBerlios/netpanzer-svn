@@ -222,8 +222,7 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 	// When in mainmenu, make background dark and draw menu image
         if(screen->getPixX() > 640 ||
            screen->getPixY() > 480)
-            screen->fillRect(0, 0, screen->getPixX(), screen->getPixY(),
-                            Color::black);
+            screen->fill(Color::black);
         
         // Set the following to get does exist.
         if (backgroundSurface.getFrameCount() > 0) {

@@ -31,7 +31,7 @@ fixe ...
 - still SIGSEGV when client disconnect - fixed
 - does not display unit pictures in factory - fixed
 - objective game cannot finish - fixed
+- HOM effect outside the progressview window -fixed
 - Astar priority_queue "open" are not clear anytime
 - in LinkListDoubleTemplate.addFront sometime is (front==0 && rear != 0)
-- HOM effect outside the progressview window
 
