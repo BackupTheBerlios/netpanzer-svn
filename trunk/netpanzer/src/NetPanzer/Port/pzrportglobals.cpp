@@ -18,24 +18,5 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "Globals.h"
 
-short DISPLAY_PAGE_STATE;
-
-
 unsigned char *TILE_DATA;
 
-unsigned char *INTERFACE_BUFFER;
-
-//#############################################################################
-long SCREEN_X=0,SCREEN_Y=0;
-
-long VIEW_START_X, VIEW_START_Y, VIEW_END_X, VIEW_END_Y; 
-long VIEW_X_SIZE, VIEW_Y_SIZE;
-
-long SCREEN_X_BOUND = 480,SCREEN_Y_BOUND = 480;
-
-int GAME_STATE_PAUSED = false;
-
-int NETWORK_STATE; 
-
-int maxplayers;
-int dedicated = 0;

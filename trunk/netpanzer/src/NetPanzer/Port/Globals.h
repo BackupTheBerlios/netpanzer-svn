@@ -18,30 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _GLOBALS_H
 #define _GLOBALS_H
 
-#if 0
-extern short DISPLAY_PAGE_STATE;
-
-//short CURRENT_BANK;
-//#pragma aux CURRENT_BANK "CURRENT_BANK_"
-
-extern unsigned short *WORLD; //map of city
-
-//unsigned long WORLD_WIDTH =  2560;
-//unsigned long WORLD_HEIGHT = 2720;
-
-extern unsigned char *INTERFACE_BUFFER;
-
-//#############################################################################
-extern long SCREEN_X,SCREEN_Y;
-
-extern long VIEW_START_X, VIEW_START_Y, VIEW_END_X, VIEW_END_Y; 
-extern long VIEW_X_SIZE, VIEW_Y_SIZE;
-
-extern long SCREEN_X_BOUND,SCREEN_Y_BOUND;
-
-//byte SCROLL_LEFT,SCROLL_RIGHT,SCROLL_UP,SCROLL_DOWN;
-#endif
-
 extern unsigned char *TILE_DATA;
 
 #endif
