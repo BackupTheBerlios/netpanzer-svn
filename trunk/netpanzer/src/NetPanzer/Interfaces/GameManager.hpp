@@ -64,8 +64,8 @@ public:
     static bool gameMapLoad( int *percent_complete );
 
     // ** Game Rules Methods
+    static void spawnPlayer( const PlayerID &player );
     static void spawnPlayer( PlayerState *player_state );
-
     static void respawnAllPlayers();
 
     static void initializeGameLogic();
@@ -81,15 +81,11 @@ public:
 
 
 public:
-    static void shutdown();
-
     static void exitNetPanzer();
 
     static void quitNetPanzerGame();
 
     static void setNetPanzerGameOptions();
-
-    static void spawnPlayer( const PlayerID &player );
 
     static void requestNetworkPing();
 
