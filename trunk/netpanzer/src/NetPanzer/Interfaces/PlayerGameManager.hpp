@@ -28,6 +28,26 @@ class SDLVideo;
 
 class PlayerGameManager : public BaseGameManager
 {
+protected:
+    virtual void initializeInputDevices();
+
+    virtual void initializeVideoSubSystem();
+    virtual void shutdownVideoSubSystem();
+
+    virtual void initializeSoundSubSystem();
+
+    virtual bool mainLoop();
+
+    virtual void inputLoop();
+    virtual void graphicsLoop();
+
+public:
+    PlayerGameManager();
+    
+    virtual bool launchNetPanzerGame();
+
+    static void launchMultiPlayerGame();
+
 private:
     Panels::TestPanel * testpanel;
     UI::FontManager fontManager;
@@ -39,26 +59,6 @@ private:
 
     static void hostMultiPlayerGame();
     static void joinMultiPlayerGame();
-
-protected:
-    virtual void initializeInputDevices();
-
-    virtual void initializeVideoSubSystem();
-    virtual void shutdownVideoSubSystem();
-
-    virtual void initializeSoundSubSystem();
-
-    virtual void mainLoop();
-
-    virtual void inputLoop();
-    virtual void graphicsLoop();
-
-public:
-    PlayerGameManager();
-    
-    virtual bool launchNetPanzerGame();
-
-    static void launchMultiPlayerGame();
 };
 
 #endif

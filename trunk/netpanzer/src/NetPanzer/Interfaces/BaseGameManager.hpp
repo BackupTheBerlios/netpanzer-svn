@@ -22,11 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class BaseGameManager
 {
-private:
-    static const int TIMEINTERVAL = 20;
-    void loadGameData();
-    void LoadUnitSurfaces();
-    void sleeping();
 protected:
     virtual void initializeNetworkSubSystem();
     virtual void shutdownNetworkSubSystem();
@@ -53,15 +48,31 @@ protected:
 
     virtual void shutdownSubSystems();
 public:
+    BaseGameManager();
+    virtual ~BaseGameManager();
+
     virtual void shutdown();
-    virtual ~BaseGameManager() { }
 
     virtual void initialize(const std::string& configfile = "");
 
-    // cyclic executive for loop back server / client
-    virtual void mainLoop();
+    /// mainloop, return false if you want to quit
+    virtual bool mainLoop();
+    /// stop the mainloop
+    void stopMainLoop();
 
     virtual bool launchNetPanzerGame() = 0;
+
+private:
+    void loadGameData();
+    void LoadUnitSurfaces();
+    void sleeping();                       
+    
+    static const int TIMEINTERVAL = 20;
+    /// this should be set to false if you want to quit netpanzer
+    bool running;
 };
+
+/// the currently active gamemanager
+extern BaseGameManager* gamemanager;
 
 #endif

@@ -30,82 +30,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
-#include "MouseInterface.hpp"
-#include "KeyboardInterface.hpp"
-#include "cMouse.hpp"
 
 #include "BaseGameManager.hpp"
 #include "GameConfig.hpp"
 #include "DedicatedGameManager.hpp"
 #include "BotGameManager.hpp"
 #include "PlayerGameManager.hpp"
-
-/** This functions iterates throgh the SDL event queue.
- * It returns true if a quit message has been received, otherwise false.
- */
-bool HandleSDLEvents()
-{
-    static SDL_Event event;
-
-    KeyboardInterface::sampleKeyboard();
-    while(SDL_PollEvent(&event)) {
-        switch (event.type) {
-        case SDL_QUIT:
-            return true;
-            break;
-        case SDL_MOUSEBUTTONDOWN:
-            switch(event.button.button) {
-            case 1:
-                MouseInterface::setLeftButtonDown();
-                cMouse::setButtonMask(LMOUSE_BUTTON_MASK);
-                break;
-            case 3:
-                MouseInterface::setRightButtonDown();
-                cMouse::setButtonMask(RMOUSE_BUTTON_MASK);
-                break;
-            case 2:
-                MouseInterface::setMiddleButtonDown();
-                cMouse::setButtonMask(MMOUSE_BUTTON_MASK);
-                break;
-            }
-            break;
-        case SDL_MOUSEBUTTONUP:
-            switch(event.button.button) {
-            case 1:
-                MouseInterface::setLeftButtonUp();
-                cMouse::clearButtonMask(!LMOUSE_BUTTON_MASK);
-                break;
-            case 3:
-                MouseInterface::setRightButtonUp();
-                cMouse::clearButtonMask(!RMOUSE_BUTTON_MASK);
-                break;
-            case 2:
-                MouseInterface::setMiddleButtonUp();
-                cMouse::clearButtonMask(!MMOUSE_BUTTON_MASK);
-                break;
-            }
-            break;
-        case SDL_KEYDOWN: {
-                KeyboardInterface::keyPressed(event.key.keysym.sym);
-                char c = event.key.keysym.unicode & 0x7F;
-                if (isprint(c)) {
-                    KeyboardInterface::putChar(c);
-                } else {
-                    // it's not a normal char put the 0 into the char buffer to
-                    // indicate extended chars...
-                    KeyboardInterface::putChar(0);
-                    KeyboardInterface::putChar(event.key.keysym.sym);
-                }
-                break;
-            }
-        case SDL_KEYUP:
-            KeyboardInterface::keyReleased(event.key.keysym.sym);
-            break;
-        }
-    }
-
-    return false;
-}
 
 //---------------------------------------------------------------------------
 
@@ -204,11 +134,17 @@ BaseGameManager *initialise(int argc, char** argv)
     // Initialize SDL (we have to start the video subsystem as well so that
     // the eventloop is started, otherwise we'll have problems in dedicated
     // server)
-    SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER | SDL_INIT_VIDEO);
+    if (SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER) < 0) {
+        fprintf(stderr, "SDL_Init error: %s.\n", SDL_GetError());
+        exit(1);
+    }
     SDL_EnableUNICODE(1);
 
     // Initialize SDL_net
-    SDLNet_Init();
+    if(SDLNet_Init() < 0) {
+        fprintf(stderr, "SDLNet_Init error: %s.\n", SDLNet_GetError());
+        exit(1);
+    }
 
     // Initialize libphysfs
     try {
@@ -283,17 +219,12 @@ int netpanzer_main(int argc, char** argv)
 {
     BaseGameManager *manager = initialise(argc, argv);
 
-    // we'll catch every exception here, just to be sure the user gets at least
+    // we'll catch every exception here, to be sure the user gets at least
     // a usefull error message and SDL has a chance to shutdown...
     try {
-        if (manager->launchNetPanzerGame()) {;
-            while(1) {
-                if(HandleSDLEvents() == true) {
-                    break;
-                }
-
-                manager->mainLoop();
-            }
+        if (manager->launchNetPanzerGame()) {
+            while(manager->mainLoop())
+                ;
         }
 
         manager->shutdown();

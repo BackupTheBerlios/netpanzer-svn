@@ -1,3 +1,7 @@
+04-Jun-2004 by Matthias Braun
+-applied KROM_X's patch, but revised the mainloop parts by moving
+ handleSDLEvents to NetPanzer/System.
+
 07-Mai-2004 by Matthias Braun
 -started work on new serverbrowsing window
 -nearly eleminated deprecated UtilInterface class

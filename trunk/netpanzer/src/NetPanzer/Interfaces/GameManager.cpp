@@ -107,8 +107,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapSelectionView.hpp"
 #include "PlayerNameView.hpp"
 #include "GameInfoView.hpp"
-
-//winsock hack
+#include "BaseGameManager.hpp"
 #include "IPAddressView.hpp"
 
 //** Physics/Particle Stuff
@@ -580,7 +579,6 @@ void GameManager::requestNetworkPing()
 
 void GameManager::setNetPanzerGameOptions()
 {
-
     MiniMapInterface::setProperties( gameconfig->getPlayerRadarUnitColor(),
                                      gameconfig->getSelectedRadarUnitColor(),
                                      gameconfig->getAlliedRadarUnitColor(),
@@ -594,13 +592,8 @@ void GameManager::exitNetPanzer()
 {
     quitNetPanzerGame();
 
-    SDL_Event event;
-    event.type = SDL_QUIT;
-    if(SDL_PushEvent(&event) < 0) {
-        std::cerr << "Couldn't push quit event: " << SDL_GetError() << "\n";
-    }
+    gamemanager->stopMainLoop();
 }
-
 
 void GameManager::quitNetPanzerGame()
 {

@@ -64,6 +64,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Physics.hpp"
 #include "Util/TimerInterface.hpp"
 
+BaseGameManager* gamemanager = 0;
+
+//------------------------------------------------------------------
+BaseGameManager::BaseGameManager()
+    : running(true)
+{
+    assert(gamemanager == 0);
+    gamemanager = this;
+}
+
+//------------------------------------------------------------------
+BaseGameManager::~BaseGameManager()
+{
+    gamemanager = 0;
+}
+
 //-----------------------------------------------------------------
 void BaseGameManager::initializeSoundSubSystem()
 {
@@ -194,7 +210,7 @@ void BaseGameManager::shutdownSubSystems()
     shutdownGameConfig();
 }
 //-----------------------------------------------------------------
-void BaseGameManager::mainLoop()
+bool BaseGameManager::mainLoop()
 {
     TimerInterface::start();
 
@@ -204,6 +220,8 @@ void BaseGameManager::mainLoop()
 
     sleeping();
     TimerInterface::update();
+
+    return running;
 }
 //-----------------------------------------------------------------
 /**
@@ -410,4 +428,11 @@ void BaseGameManager::LoadUnitSurfaces()
 
     gArcherTurretShadow.load( "units/pics/pak/ArchTSSD.pak" );
     gArcherBodyShadow.load( "units/pics/pak/ArchHSSD.pak" );
+}
+
+//---------------------------------------------------------------------
+void
+BaseGameManager::stopMainLoop()
+{
+    running = false;
 }

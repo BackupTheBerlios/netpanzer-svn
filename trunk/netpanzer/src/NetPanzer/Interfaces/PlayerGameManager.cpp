@@ -112,6 +112,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/SDLSound.hpp"
 #include "System/SDLVideo.hpp"
 #include "System/DummySound.hpp"
+#include "System/SDLEvents.hpp"
 #include "GameManager.hpp"
 #include "GameControlRulesDaemon.hpp"
 
@@ -390,7 +391,7 @@ void PlayerGameManager::joinMultiPlayerGame()
     sound->playTankIdle();
 }
 
-void PlayerGameManager::mainLoop()
+bool PlayerGameManager::mainLoop()
 {
     // this is a bit ugly...
     static bool firstrun = true;
@@ -403,7 +404,11 @@ void PlayerGameManager::mainLoop()
         }
     }
 
-    BaseGameManager::mainLoop();
+    // handle SDL Events
+    if(handleSDLEvents())
+        return true;
+
+    return BaseGameManager::mainLoop();
 }
 
 //-----------------------------------------------------------------
