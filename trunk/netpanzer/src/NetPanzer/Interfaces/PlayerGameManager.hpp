@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Panels/TestPanel.hpp"
 
 class SDLVideo;
+class HeartbeatThread;
+class InfoThread;
 
 class PlayerGameManager : public BaseGameManager
 {
@@ -36,6 +38,8 @@ protected:
 
     virtual void initializeSoundSubSystem();
 
+    virtual void shutdownNetworkSubSystem();
+
     virtual bool mainLoop();
 
     virtual void inputLoop();
@@ -46,7 +50,7 @@ public:
     
     virtual bool launchNetPanzerGame();
 
-    static void launchMultiPlayerGame();
+    void launchMultiPlayerGame();
 
 private:
     Panels::TestPanel * testpanel;
@@ -54,11 +58,14 @@ private:
     SDLVideo* sdlVideo;
     bool showNewPanel;
 
+    HeartbeatThread* heartbeatthread;
+    InfoThread* infothread;
+
     void initializeWindowSubSystem();
     void processSystemKeys();
 
-    static void hostMultiPlayerGame();
-    static void joinMultiPlayerGame();
+    void hostMultiPlayerGame();
+    void joinMultiPlayerGame();
 };
 
 #endif

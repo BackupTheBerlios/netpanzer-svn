@@ -116,12 +116,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameManager.hpp"
 #include "GameControlRulesDaemon.hpp"
 
+#include "InfoThread.hpp"
+#include "HeartbeatThread.hpp"
+
 //** User interface
 #include "UI/Painter.hpp"
 
 
 PlayerGameManager::PlayerGameManager()
-    : sdlVideo(0)
+    : sdlVideo(0), heartbeatthread(0), infothread(0)
 {
     fontManager.loadFont("fixed10", "fonts/fixed10.pcf", 10);
 
@@ -291,6 +294,17 @@ void PlayerGameManager::launchMultiPlayerGame()
         joinMultiPlayerGame();
     }
 }
+
+//-----------------------------------------------------------------
+void PlayerGameManager::shutdownNetworkSubSystem()
+{
+    delete infothread;
+    infothread = 0;
+    delete heartbeatthread;
+    heartbeatthread = 0;
+    BaseGameManager::shutdownNetworkSubSystem();
+}
+
 //-----------------------------------------------------------------
 void PlayerGameManager::hostMultiPlayerGame()
 {
@@ -302,6 +316,22 @@ void PlayerGameManager::hostMultiPlayerGame()
     progressView->scrollAndUpdateDirect( "Launching Server ..." );
     try {
         SERVER->hostSession();
+
+        if((bool) gameconfig->publicServer &&
+                (const std::string&) gameconfig->masterservers != "") {
+            try {
+                delete infothread;
+                delete heartbeatthread;
+                infothread = new InfoThread(gameconfig->serverport);
+                heartbeatthread = new HeartbeatThread();
+            } catch(std::exception& e) {
+                LOGGER.warning("heartbeats disabled: %s", e.what());
+                delete infothread;
+                infothread = 0;
+                delete heartbeatthread;
+                heartbeatthread = 0;
+            }
+        }
     } catch(std::exception& e) {
         progressView->scrollAndUpdateDirect( "SERVER LAUNCH FAILED" );
         progressView->scrollAndUpdateDirect(e.what());

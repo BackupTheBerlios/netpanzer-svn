@@ -403,12 +403,10 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     add(&choiceWindSpeed);
     xChoiceOffset += minWidth + 10;
 
-    /*
-    checkMapCycle.setLabel("Cycle Maps");
-    checkMapCycle.setState(gameconfig->mapcycling);
-    checkMapCycle.setLocation(2, 125);
-    add(&checkMapCycle);
-    */
+    checkPublic.setLabel("Public");
+    checkPublic.setState(gameconfig->publicServer);
+    checkPublic.setLocation(2, 125);
+    add(&checkPublic);
 
     checkPowerUp.setLabel("PowerUps");
     checkPowerUp.setState(gameconfig->powerups);
@@ -524,12 +522,10 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
 //---------------------------------------------------------------------------
 void HostOptionsView::actionPerformed(mMouseEvent me)
 {
-    if (me.getSource(checkMapCycle)) {
-        /*
+    if (me.getSource(checkPublic)) {
         if ( getVisible() ) {
-            gameconfig->mapcycling = checkMapCycle.getState();
+            gameconfig->publicServer = checkPublic.getState();
         }
-        */
     } else if (me.getSource(checkPowerUp)) {
         if ( getVisible() ) {
             gameconfig->powerups = checkPowerUp.getState();

@@ -194,7 +194,8 @@ bool DedicatedGameManager::launchNetPanzerGame()
     Particle2D::setCreateParticles(false);
 
     *Console::server << "contacting masterserver." << std::endl;
-    if((const std::string&) gameconfig->masterservers != "") {
+    if((bool) gameconfig->publicServer &&
+        (const std::string&) gameconfig->masterservers != "") {
         try {
             infothread = new InfoThread(gameconfig->serverport);
             heartbeatthread = new HeartbeatThread();

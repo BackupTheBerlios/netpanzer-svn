@@ -58,6 +58,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       map("map", "Bad Neuburg"),
       mapcycle("mapcycle", "Cramped, Tight Quarters, Two Villages"),
       logging("logging", false),
+      publicServer("public", true),
       
       screenresolution("resolution", 0, 0, 2),
       fullscreen("fullscreen", true),
@@ -131,6 +132,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
     //serversettings.push_back(&map);
     serversettings.push_back(&mapcycle);
     serversettings.push_back(&logging);
+    serversettings.push_back(&publicServer);
    
     visualssettings.push_back(&screenresolution);
     visualssettings.push_back(&fullscreen);

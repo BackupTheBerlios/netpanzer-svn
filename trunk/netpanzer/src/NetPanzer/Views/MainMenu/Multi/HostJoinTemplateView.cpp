@@ -91,8 +91,8 @@ static void bNext()
 
     MenuTemplateView::backgroundSurface.free();
 
-    //TODO: I don't like static methods
-    PlayerGameManager::launchMultiPlayerGame();
+    PlayerGameManager* manager = (PlayerGameManager*) gamemanager;
+    manager->launchMultiPlayerGame();
 }
 
 // HostJoinTemplateView

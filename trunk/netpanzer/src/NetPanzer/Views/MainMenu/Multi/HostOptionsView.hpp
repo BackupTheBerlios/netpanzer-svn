@@ -38,8 +38,8 @@ private:
 
     enum { BORDER_SPACE = 4 };
 
-    CheckBox checkMapCycle;
     CheckBox checkPowerUp;
+    CheckBox checkPublic;
 
     Choice choiceGameType;
     Choice choiceWindSpeed;

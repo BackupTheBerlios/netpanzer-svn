@@ -175,11 +175,9 @@ ServerQueryThread::queryServers()
     Uint32 now = SDL_GetTicks();
     
     // check for timed out servers
-    printf("QSize: %u.\n", querying.size());
     for(std::vector<ServerInfo*>::iterator i = querying.begin();
             i != querying.end(); ) {
         ServerInfo& server = *(*i);
-        printf("TO: %u.\n", now - server.querystartticks);
         if(now - server.querystartticks > QUERY_TIMEOUT) {
             server.name = "Timeout (" + server.address + ")";
             server.address = "";
@@ -212,7 +210,6 @@ ServerQueryThread::queryServers()
 
         server.querystartticks = now;
         querying.push_back(&server);
-        printf("Putback: %u\n", querying.size());
     }
 
     // part2 receive data

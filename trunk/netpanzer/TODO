@@ -1,17 +1,10 @@
 Next release:
--rewrite ServerBrowser for new protocol - can be avoided by using qstat, patches
- in qstat and xqf - done
 -finish serverconsole:
     * make status page display ips
     * add a kick command
     * add a mapchange command
 -finish serverlog with filestamp
--finish infothread - ok
--implement TIP OF DAY  - no idea how to create graphics for the GUI, so this
- will be delayed for next release. :-/
--implement forcing of different flags at server
 -playtesting+bugfixing
--add checkbox if servers hosted by menu should be made public in the internet
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map

@@ -78,7 +78,7 @@ HeartbeatThread::~HeartbeatThread()
     thread = 0;
 
     std::stringstream packet;
-    packet << "\\quit\\" << gameconfig->serverport << "\\final\\";
+    packet << "\\quit\\port\\" << gameconfig->serverport << "\\final\\";
     masterquery = 1; // do not query for masterserverlist now
     sendPacket(packet.str());
 
