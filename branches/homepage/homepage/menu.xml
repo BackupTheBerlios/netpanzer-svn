@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<menu>
+  <item file="news.html">News</item>
+  <item file="index.html">About</item>
+  <item file="screenshots.html">Screenshot</item>
+  <item file="units.html">Units</item>
+  <item file="faq.html">FAQ</item>
+  <item file="download.html">Download</item>
+  <item file="survey.html">Survey</item>
+  <!--<item file="documentation.html">Docs</item>-->
+  <item file="joinus.html">Join Us!</item> 
+  <!-- <item file="contact.html">Contact</item> -->
+  <item file="http://developer.berlios.de/projects/netpanzer">Developer</item>
+</menu>
