@@ -173,7 +173,7 @@ ServerQueryThread::queryMasterServer()
             std::string token = tokenizer.getNextToken();
             if(token == "ip") {
                 ServerInfo info;
-                info.querying = true;
+                info.status = ServerInfo::QUERYING;
                 info.address = tokenizer.getNextToken();
                 if(info.address == "")
                     break;
@@ -224,9 +224,7 @@ ServerQueryThread::queryServers()
             i != querying.end(); ) {
         ServerInfo& server = *(*i);
         if(now - server.querystartticks > QUERY_TIMEOUT) {
-            server.name = "Timeout (" + server.address + ")";
-            server.address = "";
-            server.querying = false;
+            server.status = ServerInfo::TIMEOUT;
             i = querying.erase(i);
             continue;
         }
@@ -301,7 +299,7 @@ ServerQueryThread::queryServers()
             // handle more tokens...
         }
     }
-    server->querying = false;
+    server->status = ServerInfo::RUNNING;
     for(std::vector<ServerInfo*>::iterator i = querying.begin();
             i != querying.end(); ) {
         if((*i) == server)                                          

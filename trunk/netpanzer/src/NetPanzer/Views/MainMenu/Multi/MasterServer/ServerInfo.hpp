@@ -32,6 +32,12 @@ namespace masterserver
 class ServerInfo
 {
 public:
+    enum Status {
+        RUNNING,
+        QUERYING,
+        TIMEOUT
+    };
+    
     ServerInfo();
     ~ServerInfo();
     
@@ -39,7 +45,7 @@ public:
     std::string address;
     int port;
 
-    bool querying;
+    Status status;
     int players;
     int maxplayers;
     std::string map;
