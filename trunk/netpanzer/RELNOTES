@@ -7,6 +7,8 @@
 * open a new console for win32 server and bot
 * Fixed problem in log code that manifested on linux/ppc (thanks to Johannes
    Mockenhaupt for report+patch)
+* Adding units with shift key now also works for groups and boxes (thanks to
+   Rex Tsai for the patch)
 * packet handling is more robust against malformed packets
 
 *** 2.0.0-rc2 ***

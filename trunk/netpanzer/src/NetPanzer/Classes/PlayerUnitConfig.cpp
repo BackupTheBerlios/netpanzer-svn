@@ -40,11 +40,6 @@ PlayerUnitConfig::PlayerUnitConfig()
     initialize(10000);
 }
 
-PlayerUnitConfig::PlayerUnitConfig( unsigned char max_allowed_units )
-{
-    initialize( max_allowed_units );
-}
-
 void PlayerUnitConfig::initialize( unsigned char max_allowed_units )
 {
     PlayerUnitConfig::max_allowed_units = max_allowed_units;

@@ -41,7 +41,7 @@ protected:
 
 public:
 
-    static void initialize( unsigned short maxPlayers, unsigned char max_spawn_units );
+    static void initialize(unsigned short maxPlayers);
 
     static void reset();
 

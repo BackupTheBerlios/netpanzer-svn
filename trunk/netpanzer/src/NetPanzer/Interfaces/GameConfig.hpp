@@ -126,7 +126,6 @@ public:
     ConfigInt    gametype;             //Objectives, FragLimit, TimeLimit
     ConfigInt    maxplayers;
     ConfigInt    maxunits;
-    ConfigInt    initialunits;
     ConfigInt    timelimit;
     ConfigInt    fraglimit;
     ConfigBool   powerups;

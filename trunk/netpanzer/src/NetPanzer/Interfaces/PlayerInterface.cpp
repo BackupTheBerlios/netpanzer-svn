@@ -48,7 +48,7 @@ unsigned short PlayerInterface::respawn_rule_player_index = 0;
 
 SDL_mutex* PlayerInterface::mutex = 0;
 
-void PlayerInterface::initialize( unsigned short maxPlayers, unsigned char max_spawn_units )
+void PlayerInterface::initialize(unsigned short maxPlayers)
 {
     char temp_str[64];
     PlayerID player_id;
@@ -64,7 +64,7 @@ void PlayerInterface::initialize( unsigned short maxPlayers, unsigned char max_s
         player_lists[ player_index ].resetStats();
         player_lists[ player_index ].setStatus( _player_state_free );
         player_lists[ player_index ].setFlag( 0 );
-        player_lists[ player_index ].unit_config.initialize( max_spawn_units );
+        player_lists[ player_index ].unit_config.initialize();
         sprintf( temp_str, "Player %lu", player_index );
         player_lists[ player_index ].setName( temp_str );
     }

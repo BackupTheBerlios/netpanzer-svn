@@ -46,7 +46,6 @@ GameConfig::GameConfig(const std::string& newconfigfile)
       gametype("gametype", _gametype_objective, 0, _gametype_last-1),
       maxplayers("maxplayers", 8, 1, 25),
       maxunits("maxunits", 500, 25, 10000),
-      initialunits("initialunits", 5, 0, 100),
       timelimit("timelimit", 50, 1),
       fraglimit("fraglimit", 500, 50),
       powerups("powerups", true),
@@ -122,7 +121,6 @@ GameConfig::GameConfig(const std::string& newconfigfile)
     serversettings.push_back(&gametype);
     serversettings.push_back(&maxplayers);
     serversettings.push_back(&maxunits);
-    serversettings.push_back(&initialunits);
     serversettings.push_back(&timelimit);
     serversettings.push_back(&fraglimit);
     serversettings.push_back(&powerups);

@@ -215,8 +215,7 @@ void GameManager::setVideoMode()
 // ******************************************************************
 void GameManager::initializeGameLogic()
 {
-    PlayerInterface::initialize( gameconfig->maxplayers,
-                                 gameconfig->initialunits );
+    PlayerInterface::initialize(gameconfig->maxplayers);
     UnitBlackBoard::initializeBlackBoard();
     UnitInterface::initialize( gameconfig->GetUnitsPerPlayer() );
     PathScheduler::initialize();

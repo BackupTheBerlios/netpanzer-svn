@@ -42,9 +42,7 @@ protected:
 public:
     PlayerUnitConfig();
 
-    PlayerUnitConfig( unsigned char max_allowed_units );
-
-    void initialize( unsigned char max_allowed_units );
+    void initialize( unsigned char max_allowed_units = 5);
 
     inline unsigned char getSpawnUnitCount( unsigned char unit_type ) const
     {
