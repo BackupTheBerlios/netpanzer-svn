@@ -3,7 +3,6 @@ SubDir TOP src ;
 IncludeDir Lib ;
 
 SubInclude TOP src Lib ;
-SubInclude TOP src Editor ;
 SubInclude TOP src NetPanzer ;
 SubInclude TOP src ServerBrowser ;
 

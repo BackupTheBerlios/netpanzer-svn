@@ -1,6 +1,7 @@
 07-Mai-2004 by Matthias Braun
 -started work on new serverbrowsing window
 -nearly eleminated deprecated UtilInterface class
+-dropped incomplete editor. (There's flexlay now)
 
 04-Mai-2004 by Matthias Braun
 -fixed some gcc 3.4 issues and warnings

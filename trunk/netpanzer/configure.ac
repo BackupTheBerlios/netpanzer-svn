@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------------
 # Autoconf input script. Start the ./autgen.sh script for producing a
-# the configure script.
+# configure script.
 #----------------------------------------------------------------------------
 AC_PREREQ([2.54])
 
@@ -25,7 +25,7 @@ AH_TOP([
 
 AC_C_BIGENDIAN()
 
-# stupid autoconf is adding default -g -O2 flags when we don't do this :-/
+# stupid autoconf is adding default -g -O2 flags when we don't want this :-/
 test ".$CXXFLAGS" = "." && CXXFLAGS=" "
 
 #----------------------------------------------------------------------------
@@ -138,12 +138,6 @@ NP_FINDLIB([READLINE], [readline], [readline],
     [char* test = readline("test"); add_history(test);]), [], 
         [-lreadline -lhistory -lncurses],
         [AC_DEFINE([USE_READLINE], [], [use readline library])], [])
-
-AM_OPTIONS_WXCONFIG
-AM_PATH_WXCONFIG(2.4.0, [
-        WX_AVAILABLE="yes"
-        AC_SUBST([WX_AVAILABLE])
-        ])
 
 AC_INIT_JAM
 AC_CONFIG_FILES([Jamconfig])
