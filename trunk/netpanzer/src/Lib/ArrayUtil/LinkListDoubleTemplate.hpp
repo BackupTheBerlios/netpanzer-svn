@@ -28,23 +28,21 @@ protected:
     TYPE *rear;
 
 public:
-
     LinkListDoubleTemplate()
             : front(0), rear(0)
     { }
 
-    LinkListDoubleTemplate( unsigned long size );
+    ~LinkListDoubleTemplate()
+    {
+        deallocate();
+    }
 
-    ~LinkListDoubleTemplate();
-
-    void initialize( unsigned long size );
-
-    TYPE* getFront() const
+    TYPE* getFront()
     {
         return front;
     }
 
-    TYPE * getRear() const
+    TYPE* getRear()
     {
         return rear;
     }
@@ -134,16 +132,17 @@ public:
 
     void deleteFront()
     {
-        TYPE *oldfront = front;
+        if(front == 0)
+            return;
 
-        if (front != 0) {
-            if (front == rear) {
-                front = 0;
-                rear = 0;
-            } else {
-                front = front->next;
-                front->prev = 0;
-            }
+        TYPE* oldfront = front;
+
+        if (front == rear) {
+            front = 0;
+            rear = 0;
+        } else {
+            front = front->next;
+            front->prev = 0;
         }
 
         delete oldfront;
@@ -151,16 +150,17 @@ public:
 
     void deleteRear()
     {
+        if(rear == 0)
+            return;
+
         TYPE *oldrear = rear;
 
-        if ( rear != 0 ) {
-            if (front == rear) {
-                front = 0;
-                rear = 0;
-            } else {
-                rear = rear->prev;
-                rear->next = 0;
-            }
+        if (front == rear) {
+            front = 0;
+            rear = 0;
+        } else {
+            rear = rear->prev;
+            rear->next = 0;
         }
 
         delete oldrear;
@@ -172,19 +172,20 @@ public:
 
         TYPE* object = after->next;
 
-        if(object != 0) {
-            after->next = object->next;
+        if(object == 0)
+            return;
 
-            if(object->next != 0) {
-                object->next->prev = after;
-            }
+        after->next = object->next;
 
-            if(object == rear) {
-                rear = after;
-            }
+        if(object->next != 0) {
+            object->next->prev = after;
         }
 
-        delete oldobject;
+        if(object == rear) {
+            rear = after;
+        }
+
+        delete object;
     }
 
     void deleteBefore(TYPE *before)
@@ -192,18 +193,20 @@ public:
         assert( before != 0 );
 
         TYPE *object = before->prev;
+        
+        if(object == 0)
+            return;
 
-        if( object != 0 ) {
-            before->prev = object->prev;            
+        before->prev = object->prev;            
 
-            if(object->prev != 0) {
-                object->prev->next = before;
-            }
-
-            if(delete_ptr == front) {
-                front = before;
-            }
+        if(object->prev != 0) {
+            object->prev->next = before;
         }
+
+        if(delete_ptr == front) {
+            front = before;
+        }
+
         delete object;
     }
 
@@ -263,9 +266,9 @@ public:
                 rear->next = 0;
             }
 
-            return( delete_ptr );
+            return delete_ptr;
         }
-        return( 0 );
+        return 0;
     }
 
     TYPE* removeAfter( TYPE *after )
@@ -287,10 +290,10 @@ public:
                 rear = after;
             }
 
-            return( delete_ptr );
+            return delete_ptr;
         }
 
-        return( 0 );
+        return 0;
     }
 
     TYPE* removeBefore( TYPE *before )
@@ -312,24 +315,21 @@ public:
                 front = before;
             }
 
-            return( delete_ptr );
+            return delete_ptr;
         }
-        return( 0 );
+        return 0;
     }
 
 
-    unsigned long getSize()
+    size_t getSize() const
     {
         TYPE *traversal_ptr;
-        unsigned long count = 0;
+        size_t count = 0;
 
-        traversal_ptr = front;
-        while( traversal_ptr != 0 ) {
-            traversal_ptr = traversal_ptr->next;
+        for(TYPE* p = front; p != 0; p = p->next)
             count++;
-        }
 
-        return( count );
+        return count;
     }
 
     void deallocate()
@@ -342,7 +342,7 @@ public:
         while( traversal_ptr != 0 ) {
             delete_ptr = traversal_ptr;
             traversal_ptr = traversal_ptr->next;
-            delete( delete_ptr );
+            delete delete_ptr;
         }
 
         front = 0;
@@ -350,33 +350,5 @@ public:
     }
 };
 
-template< class TYPE >
-LinkListDoubleTemplate< TYPE >::LinkListDoubleTemplate( unsigned long size )
-        : front(0), rear(0)
-{
-    initialize( size );
-}
-
-template< class TYPE >
-LinkListDoubleTemplate< TYPE >::~LinkListDoubleTemplate()
-{
-    deallocate();
-}
-
-template< class TYPE >
-void LinkListDoubleTemplate< TYPE >::initialize( unsigned long size )
-{
-    TYPE *object;
-
-    if( front != 0 ) {
-        deallocate();
-    }
-
-    for( unsigned long i; i < size; i++ ) {
-        object = new TYPE;
-        addRear( object );
-    }
-}
-
-
 #endif // ** _LINKLISTDOUBLETEMPLATE_HPP
+

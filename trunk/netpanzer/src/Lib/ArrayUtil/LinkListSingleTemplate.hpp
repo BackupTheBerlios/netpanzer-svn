@@ -28,45 +28,38 @@ protected:
     TYPE *rear;
 
 public:
-
     LinkListSingleTemplate()
             : front(0), rear(0)
     {}
 
-    LinkListSingleTemplate( unsigned long size );
+    ~LinkListSingleTemplate()
+    {
+        deallocate();
+    }
 
-    ~LinkListSingleTemplate( void );
-
-    void initialize( unsigned long size );
-
-    inline void addRear( TYPE *object )
+    void addRear(TYPE *object)
     {
         object->next = 0;
 
-        if ( (front == 0) && (rear == 0) ) {
-            front = object;
-            rear = object;
-        } else {
+        if(rear != 0)
             rear->next = object;
-            rear = rear->next;
+        else {
+            front = object;
         }
+        
+        rear = object;
     }
 
-    inline void addFront( TYPE *object )
+    void addFront( TYPE *object )
     {
-        object->next = 0;
+        object->next = front;
+        front = object;
 
-        if ( (front == 0) && (rear == 0) ) {
-            front = object;
+        if(rear == 0)
             rear = object;
-            object->next = 0;
-        } else {
-            object->next = front;
-            front = object;
-        }
     }
 
-    inline void insertAfter( TYPE *after, TYPE *object )
+    void insertAfter( TYPE *after, TYPE *object )
     {
         assert( after != 0 );
 
@@ -77,7 +70,7 @@ public:
         }
     }
 
-    inline void deleteFront( void )
+    void deleteFront()
     {
         TYPE *delete_ptr;
 
@@ -95,7 +88,7 @@ public:
         }
     }
 
-    inline void deleteAfter( TYPE *after )
+    void deleteAfter( TYPE *after )
     {
         TYPE *delete_ptr;
         assert( after != 0 );
@@ -108,15 +101,14 @@ public:
             rear = after;
         }
 
-        delete( delete_ptr );
+        delete delete_ptr;
     }
 
-    inline TYPE * removeFront( void )
+    TYPE* removeFront()
     {
-        TYPE *delete_ptr;
         assert( front != 0 );
-
-        delete_ptr = front;
+        
+        TYPE *delete_ptr = front;
 
         if ( front != 0 ) {
             if (front == rear) {
@@ -126,45 +118,40 @@ public:
                 front = front->next;
             }
 
-            return( delete_ptr );
+            return delete_ptr;
         }
 
-        return( 0 );
+        return 0;
     }
 
-    inline TYPE * removeAfter( TYPE *after )
+    TYPE* removeAfter(TYPE *after)
     {
-        TYPE *delete_ptr;
         assert( after != 0 );
+        
+        TYPE *delete_ptr;
 
         delete_ptr = after->next;
 
         after->next = delete_ptr->next;
 
-        if( delete_ptr == rear ) {
+        if(delete_ptr == rear) {
             rear = after;
         }
 
-        return( delete_ptr );
+        return delete_ptr;
     }
-
-
-
-    inline unsigned long getSize( void )
+    
+    size_t getSize() const
     {
-        TYPE *traversal_ptr;
-        unsigned long count = 0;
+        size_t count = 0;
 
-        traversal_ptr = front;
-        while( traversal_ptr != 0 ) {
-            traversal_ptr = traversal_ptr->next;
+        for(TYPE* p = front; p != 0; p = p->next)
             count++;
-        }
 
-        return( count );
+        return count;
     }
 
-    inline void deallocate( void )
+    void deallocate()
     {
         TYPE *traversal_ptr;
         TYPE *delete_ptr;
@@ -174,45 +161,12 @@ public:
         while( traversal_ptr != 0 ) {
             delete_ptr = traversal_ptr;
             traversal_ptr = traversal_ptr->next;
-            delete( delete_ptr );
+            delete delete_ptr;
         }
 
         front = 0;
         rear = 0;
     }
-
 };
-
-
-
-template< class TYPE >
-LinkListSingleTemplate< TYPE >::LinkListSingleTemplate( unsigned long size )
-        : front(0), rear(0)
-{
-    initialize( size );
-}
-
-template< class TYPE >
-LinkListSingleTemplate< TYPE >::~LinkListSingleTemplate( void )
-{
-    deallocate();
-}
-
-template< class TYPE >
-void LinkListSingleTemplate<TYPE>::initialize( unsigned long size )
-{
-    TYPE *object;
-
-    if( front != 0 ) {
-        deallocate();
-    }
-
-    for( unsigned long i; i < size; i++ ) {
-        object = new TYPE;
-        addRear( object );
-    }
-
-}
-
 
 #endif // ** _LINKLISTSINGLETEMPLATE_HPP

@@ -26,149 +26,84 @@ template< class TYPE >
 class BucketArrayTemplate : public NoCopy
 {
 protected:
-    unsigned long size;
-    unsigned long row_size;
-    unsigned long column_size;
+    size_t size;
+    size_t row_size;
+    size_t column_size;
     LinkListDoubleTemplate< TYPE > *array;
 
 public:
-
-    BucketArrayTemplate( );
-
-    ~BucketArrayTemplate( );
-
-    BucketArrayTemplate( unsigned long size );
-
-    BucketArrayTemplate( unsigned long rows, unsigned long columns );
-
-    void initialize( unsigned long size );
-
-    void initialize( unsigned long rows, unsigned long columns );
-
-    void deallocate( void );
-
-    inline unsigned long getSize( void ) const
+    BucketArrayTemplate()
+        : size(0), row_size(0), column_size(0), array(0)
     {
-        return( size );
     }
 
-    inline void addObject( unsigned long bucket_index, TYPE *object )
+    BucketArrayTemplate(size_t rows, size_t columns)
+        : size(0), row_size(0), column_size(0), array(0)
+    {
+        initialize(rows, columns);
+    }
+
+    ~BucketArrayTemplate()
+    {
+        deallocate();
+    }
+
+    void initialize(size_t rows, size_t columns)
+    {
+        deallocate();
+
+        row_size = rows;
+        column_size = columns;
+
+        size = row_size * column_size;
+
+        array = new LinkListDoubleTemplate< TYPE > [ size ];
+    }
+
+    void deallocate()
+    {
+        delete[] array;
+
+        array = 0;
+        size = 0;
+        row_size = 0;
+        column_size = 0;
+    }
+
+    size_t getSize() const
+    {
+        return size;
+    }
+
+    void addObject(size_t bucket_index, TYPE *object)
     {
         assert( bucket_index < size );
 
         array[ bucket_index ].addFront( object );
     }
 
-    inline void addObject( unsigned long row, unsigned long column, TYPE *object )
+    void addObject(size_t row, size_t column, TYPE *object)
     {
-        unsigned long bucket_index;
-
-        bucket_index = (row * column_size) + column;
+        size_t bucket_index = (row * column_size) + column;
         assert( bucket_index < size );
 
         array[ bucket_index ].addFront( object );
     }
 
-    inline LinkListDoubleTemplate< TYPE > * getBucket( unsigned long bucket_index )
+    LinkListDoubleTemplate< TYPE > * getBucket(size_t bucket_index)
     {
         assert( bucket_index < size );
         return( &(array[ bucket_index ]) );
     }
 
-    inline LinkListDoubleTemplate< TYPE > * getBucket( unsigned long row, unsigned long column )
+    LinkListDoubleTemplate< TYPE > * getBucket(size_t row,
+            size_t column )
     {
-        unsigned long bucket_index;
-
-        bucket_index = (row * column_size) + column;
+        size_t bucket_index = (row * column_size) + column;
 
         assert( bucket_index < size );
         return( &(array[ bucket_index ]) );
     }
-
 };
-
-
-template< class TYPE >
-BucketArrayTemplate< TYPE >::BucketArrayTemplate( )
-{
-    array = 0;
-    size = 0;
-    row_size = 0;
-    column_size = 0;
-}
-
-template< class TYPE >
-BucketArrayTemplate< TYPE >::~BucketArrayTemplate()
-{
-    deallocate();
-}
-
-
-template< class TYPE >
-BucketArrayTemplate< TYPE >::BucketArrayTemplate( unsigned long size )
-{
-    array = 0;
-    size = 0;
-    row_size = 0;
-    column_size = 0;
-    initialize( size );
-}
-
-template< class TYPE >
-BucketArrayTemplate< TYPE >::BucketArrayTemplate( unsigned long rows, unsigned long columns )
-{
-    array = 0;
-    size = 0;
-    row_size = 0;
-    column_size = 0;
-    initialize( rows, columns );
-}
-
-template< class TYPE >
-void BucketArrayTemplate< TYPE >::initialize( unsigned long size )
-{
-    if ( array != 0 ) {
-        deallocate();
-    }
-
-    BucketArrayTemplate< TYPE >::size = size;
-
-    array = new LinkListDoubleTemplate< TYPE > [ size ];
-
-    assert( array != 0 );
-}
-
-template< class TYPE >
-void BucketArrayTemplate< TYPE >::initialize( unsigned long rows, unsigned long columns )
-{
-    if ( array != 0 ) {
-        deallocate();
-    }
-
-    row_size = rows;
-    column_size = columns;
-
-    BucketArrayTemplate< TYPE >::size = row_size * column_size;
-
-    array = new LinkListDoubleTemplate< TYPE > [ size ];
-
-    assert( array != 0 );
-}
-
-
-template< class TYPE >
-void BucketArrayTemplate< TYPE >::deallocate( void )
-{
-    for( unsigned long bucket_index = 0; bucket_index < size; bucket_index++ ) {
-        array[ bucket_index ].deallocate();
-    }
-
-    delete[] array;
-
-    array = 0;
-    size = 0;
-    row_size = 0;
-    column_size = 0;
-}
 
 #endif // ** _BUCKETARRAYTEMPLATE_HPP
