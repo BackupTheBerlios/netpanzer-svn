@@ -2,6 +2,30 @@
 <page title="netPanzer - News">
   <section title="News">
     <news>
+      <item date="15. Oct 2004">
+        <p>netPanzer 0.2.0 release candidate 1</p>
+        <p>This is a prerelease open for public testing. Especiacially the new
+        ppc code is not tested yet. I'd be happy about some feedback if it
+        works or not (matze@braunis.de).
+        </p>
+        <p>Downloads available here: <a
+        href="http://developer.berlios.de/project/showfiles.php?group_id=1250">
+http://developer.berlios.de/project/showfiles.php?group_id=1250</a>. Changes:</p>
+        <ul>
+        <li>New masterserver protocol (next release of <a
+                href="http://xqf.sf.net">xqf</a> will contain support for
+                netpanzer)</li>
+        <li>Added a serverconsole</li>
+        <li>Fixed endianess problems. PPC users can play with x86 users
+        now.</li>
+        <li>The server creates logfiles now that can be used for statistics or
+        reports on webpages</li>
+        <li>Replaced SDL_net with custom socket wrappers.</li>
+        <li>libxml2 replaced with simple ini parser</li>
+        <li>gcc 3.4 fixes</li>
+        <li>lots of bugfixes</li>
+        </ul>
+      </item>
       <item date="17. Mar 2004">
         <p>We're looking for someone who'd host a masterserver for netpanzer</p>
         <p>To avoid the current problems with irc in the future we'd like to
