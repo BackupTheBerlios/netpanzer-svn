@@ -39,9 +39,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "IRCLobbyView.hpp"
 
 //-----------------------------------------------------------------
-void DedicatedGameManager::initializeGameConfig()
+void DedicatedGameManager::initializeGameConfig(const std::string& configfile)
 {
-    gameconfig = new GameConfig("config/netpanzer-dedicated.xml");
+    if(configfile == "")
+        gameconfig = new GameConfig("/config/netpanzer-dedicated.xml");
+    else
+        gameconfig = new GameConfig(configfile.c_str());
 }
 //-----------------------------------------------------------------
 void DedicatedGameManager::initializeInputDevices()

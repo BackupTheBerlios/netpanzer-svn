@@ -24,7 +24,7 @@ class DedicatedGameManager : public BaseGameManager
 {
 protected:
     virtual void initializeInputDevices();
-    virtual void initializeGameConfig();
+    virtual void initializeGameConfig(const std::string& configfile);
 
     virtual void inputLoop();
 public:

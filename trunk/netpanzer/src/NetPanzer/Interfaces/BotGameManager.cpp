@@ -27,7 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Client.hpp"
 #include "ClientConnectDaemon.hpp"
 #include "Exception.hpp"
-#include "XmlParser.hpp"
 
 //-----------------------------------------------------------------
 BotGameManager::BotGameManager(const std::string &serverHost)
@@ -39,14 +38,12 @@ BotGameManager::BotGameManager(const std::string &serverHost)
 /**
  * Bot uses name = playername + "-" + rand() % 1000
  */
-void BotGameManager::initializeGameConfig()
+void BotGameManager::initializeGameConfig(const std::string& configfile)
 {
-    gameconfig = new GameConfig("config/netpanzer-bot.xml");
-    std::string::size_type pos =
-        ((std::string)gameconfig->playername).rfind("-");
-    std::string botname(gameconfig->playername, 0, pos);
-    gameconfig->playername = botname + "-"
-        + XmlParser::toString(rand() % 1000);
+    if(configfile == "")
+        gameconfig = new GameConfig("/config/netpanzer-bot.xml");
+    else
+        gameconfig = new GameConfig(configfile);
 }
 //-----------------------------------------------------------------
 void BotGameManager::initializeInputDevices()

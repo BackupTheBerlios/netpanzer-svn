@@ -94,9 +94,12 @@ void BaseGameManager::shutdownSoundSubSystem()
     }
 }
 //-----------------------------------------------------------------
-void BaseGameManager::initializeGameConfig()
+void BaseGameManager::initializeGameConfig(const std::string& configfile)
 {
-    gameconfig = new GameConfig("config/netpanzer.xml");
+    if(configfile == "")
+        gameconfig = new GameConfig("config/netpanzer.xml");
+    else
+        gameconfig = new GameConfig(configfile);
 }
 //-----------------------------------------------------------------
 void BaseGameManager::shutdownGameConfig()
@@ -177,12 +180,12 @@ void BaseGameManager::shutdownNetworkSubSystem()
 }
 //-----------------------------------------------------------------
 // boots up netPanzer; initializes all subsystems, game objects etc.
-void BaseGameManager::initialize()
+void BaseGameManager::initialize(const std::string& configfile)
 {
     try {
         if(!FileSystem::exists("config"))
             FileSystem::mkdir("config");
-        initializeGameConfig();
+        initializeGameConfig(configfile);
         initializeSoundSubSystem();
         initializeVideoSubSystem();
         initializeGameObjects();

@@ -27,7 +27,7 @@ class BotGameManager : public BaseGameManager
 private:
     std::string m_serverHost;
 protected:
-    void initializeGameConfig();
+    void initializeGameConfig(const std::string& configfile);
 
     virtual void initializeInputDevices();
     virtual void shutdownInputDevices();

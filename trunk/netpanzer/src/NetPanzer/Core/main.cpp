@@ -182,6 +182,10 @@ BaseGameManager *initialise(int argc, char** argv)
     option<std::string, true, false> lobby_server_option('\0', "lobby_server",
         "Use 'none' if you dont want to use the lobby", "");
     commandline.add(&lobby_server_option);
+    option<std::string, true, false> game_config_option('c', "game_config",
+        "Which config file should be used (only files inside config directory)",
+        "");
+    commandline.add(&game_config_option);
 
     if(!commandline.process() || commandline.help() || commandline.version())
         exit(0);
@@ -238,8 +242,12 @@ BaseGameManager *initialise(int argc, char** argv)
             }
         }
 
-
-        manager->initialize();
+        std::string game_config;
+        if(game_config_option.value() != "") {
+            game_config = "/config/";
+            game_config += game_config_option.value();
+        }
+        manager->initialize(game_config);
 
         // gameconfig exists now...
         if (lobby_server_option.value().size() > 0) {

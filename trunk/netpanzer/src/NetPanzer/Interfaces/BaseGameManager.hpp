@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _BASEGAMEMANAGER_HPP
 #define _BASEGAMEMANAGER_HPP
 
+#include <string>
+
 class BaseGameManager
 {
 private:
@@ -38,7 +40,7 @@ protected:
     virtual void initializeSoundSubSystem();
     virtual void shutdownSoundSubSystem();
 
-    virtual void initializeGameConfig();
+    virtual void initializeGameConfig(const std::string& configfile);
     virtual void shutdownGameConfig();
 
     // initialize all static objects / interfaces;
@@ -54,7 +56,7 @@ protected:
 public:
     virtual ~BaseGameManager() { shutdown(); }
 
-    void initialize();
+    void initialize(const std::string& configfile = "");
 
     // cyclic executive for loop back server / client
     void mainLoop();

@@ -1,6 +1,8 @@
 21-Nov-2003 by Matthias Braun
 -Applied a patch by Michel Metzger (metzger@essi.fr) which makes it possible to
  select the location where built units move.
+-added a possibility to use custom config files. This makes it possible to
+ spawn several different bots or servers on the same user account.
 
 20-Nov-2003 by Matthias Braun
 -removed lots of remaining nonused code handling with UDP networking
