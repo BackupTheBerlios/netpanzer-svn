@@ -194,7 +194,7 @@ unsigned char MapInterface::getMovementValue( iXY map_loc )
 
 /*
    if (   (map_loc.x  >= 0) && (map_loc.x < main_map.getXsize() ) 
-         && (map_loc.y >= 0) && (map_loc.y < main_map.getXsize() ) 
+         && (map_loc.y >= 0) && (map_loc.y < main_map.getYsize() ) 
           )
    { 
   
@@ -243,7 +243,7 @@ unsigned char MapInterface::getMovementValue( iXY map_loc )
   //*****************************************************************
  
   if (      (map_loc.x >= 0) && (map_loc.x < main_map.getXsize() ) 
-         && (map_loc.y >= 0) && (map_loc.y < main_map.getXsize() ) 
+         && (map_loc.y >= 0) && (map_loc.y < main_map.getYsize() ) 
      )
    { 
     tile_val = main_map.mapValue( (unsigned short) map_loc.x, (unsigned short) map_loc.y ) ;
