@@ -11,8 +11,8 @@ if ! $(JAMCONFIG_READ)
 }
 
 COMPILER.CFLAGS += -Wall ;
-COMPILER.CFLAGS.optimize += -O3 ;
-COMPILER.LFLAGS.optimize += -O3 ;
+COMPILER.CFLAGS.optimize += -O3 -g3 ;
+COMPILER.LFLAGS.optimize += -O3 -g3 ;
 COMPILER.CFLAGS.debug += -DDEBUG -g3 ;
 COMPILER.LFLAGS.debug += -g3 ;
 COMPILER.CFLAGS.profile += -DDEBUG -g3 -pg ;
