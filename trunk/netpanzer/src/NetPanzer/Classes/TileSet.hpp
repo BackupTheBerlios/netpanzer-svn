@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "TileSetStruct.hpp"
 #include "WadMapTable.hpp"
 
+class ReadFile;
+
 class TileSet
 {
 protected:
@@ -33,7 +35,7 @@ protected:
     unsigned long tile_count;
     void computeTileConsts( void );
 
-    int           partition_load_fhandle;
+    ReadFile* partition_load_fhandle;
     unsigned long partition_load_partition_count;
     unsigned long partition_load_tile_index;
     unsigned long partition_load_mapped_index;

@@ -72,7 +72,7 @@ void MouseInterface::initialize()
             if(FileSystem::isDirectory(filename.c_str())) {
                 continue;
             }
-            surface->loadBMP(FileSystem::getRealName(filename.c_str()).c_str());
+            surface->loadBMP(filename.c_str());
             surface->setOffsetCenter();
             cursors.insert(std::pair<std::string,Surface*> (*i, surface));
         } catch(Exception& e) {

@@ -305,9 +305,7 @@ void HostJoinTemplateView::addVehicleButtons(const iXY &pos)
     // Add the vehicle buttons.
     // Get the dimensions of the buttons to draw.
     Surface tempSurface;
-    if (!tempSurface.loadTIL("pics/vehicleSelectionMenu/light.til")) {
-        throw Exception("ERROR: Unable to open pics/vehicleSelectionMenu/light.til to find the size to make the buttons.");
-    }
+    tempSurface.loadTIL("pics/vehicleSelectionMenu/light.til");
 
     iXY buttonSize(tempSurface.getPix());
     int arrowButtonWidth =  16;

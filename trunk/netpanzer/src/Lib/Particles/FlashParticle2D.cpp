@@ -70,9 +70,7 @@ void FlashParticle2D::packFiles()
 
     //surface.loadBMP("pics/particles/lights/bmp/flash.bmp");
 
-    if (!surface.loadTIL("pics/particles/lights/til/flash2.til")) {
-        throw Exception("ERROR: Unable to load ""pics/particles/lights/til/flash2.til""");
-    }
+    surface.loadTIL("pics/particles/lights/til/flash2.til");
 
     const float minFlashSize =  10.0f;
     const float maxFlashSize = 200.0f;

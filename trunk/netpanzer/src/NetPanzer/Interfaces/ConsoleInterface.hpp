@@ -41,8 +41,6 @@ enum { _console_overlap, _console_full };
 class ConsoleInterface
 {
 protected:
-    static FILE *con_file;
-    static bool log_file_active;
     static bool stdout_pipe;
 
     static long console_size;
@@ -69,8 +67,6 @@ public:
 
     static void setToSurfaceSize( iXY pix );
 
-    static void openLogFile( void );
-    static void closeLogFile( void );
     static void setStdoutPipe( bool on_off );
 
     static void update( Surface &surface );

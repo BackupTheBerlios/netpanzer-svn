@@ -49,9 +49,7 @@ void Weapon::init()
         gMissleThrustPackedSurface.load("pics/particles/lights/pak/missleThrust.pak");
     } else {
         // Missle thrust lighting.
-        if (!temp.loadTIL("pics/particles/lights/til/missleThrust.til")) {
-            throw Exception("SHIT!");
-        }
+        temp.loadTIL("pics/particles/lights/til/missleThrust.til");
         temp.setOffsetCenter();
         pack.pack(temp);
         pack.save("pics/particles/lights/pak/missleThrust.pak");
@@ -61,9 +59,7 @@ void Weapon::init()
         gMissleGroundLightPackedSurface.load("pics/particles/lights/pak/missleGroundLight.pak");
     } else {
         // Missle ground lighting.
-        if (!temp.loadTIL("pics/particles/lights/til/missleGroundLight.til")) {
-            throw Exception("SHIT!");
-        }
+        temp.loadTIL("pics/particles/lights/til/missleGroundLight.til");
         temp.setOffsetCenter();
         pack.pack(temp);
         pack.save("pics/particles/lights/pak/missleGroundLight.pak");

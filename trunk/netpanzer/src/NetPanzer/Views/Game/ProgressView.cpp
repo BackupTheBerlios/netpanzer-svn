@@ -271,8 +271,5 @@ void ProgressView::loadBackgroundSurface()
 {
     String string = "pics/backgrounds/menus/menu/til/loadingMB.til";
 
-    if (!backgroundSurface.loadTIL(string)) {
-        throw Exception("ERROR: Unable to load menu background surface: %s", (const char *) string);
-    }
-
+    backgroundSurface.loadTIL(string);
 } // end MenuTemplateView::loadBackgroundSurface

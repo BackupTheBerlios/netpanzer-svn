@@ -672,7 +672,7 @@ bool GameManager::startGameMapLoad( char *map_file_path, unsigned long partition
             *result_code = _mapload_result_success;
         }
 
-    strcpy( map_path, "./maps/" );
+    strcpy( map_path, "maps/" );
     strcat( map_path, map_file_path );
 
     if ( MapInterface::startMapLoad( map_path, true, partitions ) == false ) {
@@ -716,7 +716,7 @@ void GameManager::finishGameMapLoad()
 
 void GameManager::dedicatedLoadGameMap( char *map_name )
 {
-    strcpy( map_path, "./maps/" );
+    strcpy( map_path, "maps/" );
     strcat( map_path, map_name );
 
     MapInterface::startMapLoad( map_path, false, 0 );

@@ -268,9 +268,7 @@ void MenuTemplateView::loadBackgroundSurface()
 //---------------------------------------------------------------------------
 void MenuTemplateView::doLoadBackgroundSurface(String string)
 {
-    if (!backgroundSurface.loadTIL(string)) {
-        throw Exception("ERROR: Unable to load menu background surface: %s", (const char *) string);
-    }
+    backgroundSurface.loadTIL(string);
 } // end MenuTemplateView::doLoadBackgroundSurface
 
 // loadTitleSurface
@@ -298,7 +296,9 @@ void MenuTemplateView::doLoadTitleSurface(String string)
     } else {
         Surface titleSurface;
 
-        if (!titleSurface.loadTIL(string)) {
+        try {
+            titleSurface.loadTIL(string);
+        } catch(Exception&) {
             titleSurface.create(300, 50, 300, 1);
             titleSurface.fill(128);
             titleSurface.bltStringCenter("No title image", Color::white);

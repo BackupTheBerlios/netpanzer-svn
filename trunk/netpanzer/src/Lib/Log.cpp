@@ -22,6 +22,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <errno.h>
 #include <string.h>
 #include <string>
+
+#include "Exception.hpp"
+#include "FileSystem.hpp"
 #include "Log.hpp"
 
 Logger LOGGER;
@@ -36,36 +39,52 @@ const int Logger::LEVEL_WARNING = 4;
  */
 Logger::Logger()
 {
-    static const char *LOGNAME = "log.txt";
-
     m_logLevel = LEVEL_INFO;
-    m_logfile = fopen(LOGNAME, "w");
-    if (m_logfile == 0) {
-        fprintf(stderr, "cannot open '%s': %s\n", LOGNAME, strerror(errno));
-    }
+    m_logfile = 0;
 }
 //-----------------------------------------------------------------
 Logger::~Logger()
 {
-    if (m_logfile != 0) {
-        fclose(m_logfile);
-    }
+    delete m_logfile;
 }
 //-----------------------------------------------------------------
-    void
+void
+Logger::openLogFile(const char* filename)
+{
+    try {
+        m_logfile = FileSystem::openWrite(filename);
+    } catch(Exception& e) {                                                    
+        fprintf(stderr, "cannot open '%s': %s\n", filename, e.getMessage());
+        m_logfile = 0;
+    }    
+}
+//-----------------------------------------------------------------
+void
+Logger::closeLogFile()
+{
+    delete m_logfile;
+    m_logfile = 0;
+}
+//-----------------------------------------------------------------
+void
 Logger::log(int priority, const char *fmt, va_list ap)
 {
     if (m_logLevel >= priority) {
         vfprintf(stderr, fmt, ap);
         fprintf(stderr, "\n");
         if (m_logfile != 0) {
-            vfprintf(m_logfile, fmt, ap);
-            fprintf(m_logfile, "\n");
+            char buf[512];
+            vsnprintf(buf, 511, fmt, ap);
+            strcat(buf, "\n");
+            if(m_logfile->write(buf, strlen(buf), 1) != 1) {
+                fprintf(stderr, "Error while writing logfile");
+                m_logfile = 0;
+            }
         }
     }
 }
 //-----------------------------------------------------------------
-    void
+void
 Logger::debug(const char *fmt, ...)
 {
     va_list ap;
@@ -77,7 +96,7 @@ Logger::debug(const char *fmt, ...)
     va_end(ap);
 }
 //-----------------------------------------------------------------
-    void
+void
 Logger::info(const char *fmt, ...)
 {
     va_list ap;
@@ -87,7 +106,7 @@ Logger::info(const char *fmt, ...)
     va_end(ap);
 }
 //-----------------------------------------------------------------
-    void
+void
 Logger::warning(const char *fmt, ...)
 {
     va_list ap;

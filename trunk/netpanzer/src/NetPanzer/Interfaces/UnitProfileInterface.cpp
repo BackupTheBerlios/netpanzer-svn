@@ -16,13 +16,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
 #include "UnitProfileInterface.hpp"
-
-#include <stdlib.h>
+#include "Exception.hpp"
+#include "FileSystem.hpp"
+#include <memory>
 #include <string.h>
-#include <stdio.h>
-
-
 
 typedef
 struct
@@ -164,7 +163,7 @@ void string_to_params( char *string, parameter_list *params )
 }
 
 
-void read_vehicle_profile( char *file_path, UnitProfile *profile)
+void read_vehicle_profile(const char *file_path, UnitProfile *profile)
 {
     int field;
     char temp_str[80];
@@ -172,14 +171,23 @@ void read_vehicle_profile( char *file_path, UnitProfile *profile)
     int temp_int;
     short not_done = true;
 
-    FILE *file_ptr = 0;
-
-    file_ptr = fopen ( file_path, "rt" );
-    assert( file_ptr != 0 );
+    std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
 
     while( not_done ) {
 
-        get_line( temp_str, 80, file_ptr );
+        for(int i=0; i<80; i++) {
+            if(file->read(&(temp_str[i]), 1, 1)!=1) {
+                temp_str[i] = 0;
+                if(i==0)
+                    throw Exception("Error hile reading file '%s': too short",
+                                    file_path);
+                break;
+            }
+            if(temp_str[i] == '\n') {
+                temp_str[i] = 0;
+                break;
+            }
+        }
         string_to_params( temp_str, &param_list );
         find_keyword( param_list.params[0], &field, (char * ) field_headers, max_field_key );
 

@@ -40,7 +40,7 @@ bool MapInterface::startMapLoad( const char *file_path, bool load_tiles, unsigne
     strcat( path, ".npm" );
     main_map.loadMapFile( path );
 
-    strcpy( tile_set_path, "./wads/" );
+    strcpy( tile_set_path, "wads/" );
     strcat( tile_set_path, main_map.getAssocTileSet() );
 
     tile_set.loadTileSetInfo( tile_set_path );

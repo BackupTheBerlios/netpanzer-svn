@@ -104,6 +104,7 @@ bool HandleSDLEvents()
 void shutdown()
 {
     SDL_Quit();
+    LOGGER.closeLogFile();
     FileSystem::shutdown();
 }
 
@@ -146,6 +147,8 @@ void initialise(int argc, char** argv)
         shutdown();
         exit(1);
     }
+
+    LOGGER.openLogFile("log.txt");
 
     // Initialize random number generator
     srand(time(0));

@@ -56,9 +56,7 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
         sprintf(strBuf, "pics/backgrounds/menus/buttons/default/til/%sbutover.til", (const char *) prefix);
 
         // Create.
-        if (!tempSurface.loadTIL(strBuf)) {
-            throw Exception("shit");
-        }
+        tempSurface.loadTIL(strBuf);
 
         //-------------------
         //tempSurface.fill(0);
@@ -73,9 +71,7 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
 
         sprintf(strBuf, "pics/backgrounds/menus/buttons/default/til/%sbuton.til", (const char *) prefix);
 
-        if (!tempSurface.loadTIL(strBuf)) {
-            throw Exception("shit");
-        }
+        tempSurface.loadTIL(strBuf);
 
         //-------------------
         //tempSurface.fill(0);
@@ -87,9 +83,7 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *labelString
         // Unhighlight.
         sprintf(strBuf, "pics/backgrounds/menus/buttons/default/til/%sbutoff.til", (const char *) prefix);
 
-        if (!tempSurface.loadTIL(strBuf)) {
-            throw Exception("shit");
-        }
+        tempSurface.loadTIL(strBuf);
 
         //-------------------
         //tempSurface.fill(0);

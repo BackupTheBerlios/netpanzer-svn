@@ -407,54 +407,34 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     Surface tempSurface;
     int i = 0;
 
-    if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/manta.til")) {
-        throw Exception("Shit!");
-    }
+    tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/manta.til");
     unitImages.setFrame(i++);
     tempSurface.blt(unitImages);
-    if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/panther1.til")) {
-        throw Exception("Shit!");
-    }
+    tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/panther1.til");
     unitImages.setFrame(i++);
     tempSurface.blt(unitImages);
-    if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/titan.til")) {
-        throw Exception("Shit!");
-    }
+    tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/titan.til");
     unitImages.setFrame(i++);
     tempSurface.blt(unitImages);
-    if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/stinger.til")) {
-        throw Exception("Shit!");
-    }
+    tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/stinger.til");
     unitImages.setFrame(i++);
     tempSurface.blt(unitImages);
-    if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/bobcat.til")) {
-        throw Exception("Shit!");
-    }
+    tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/bobcat.til");
     unitImages.setFrame(i++);
     tempSurface.blt(unitImages);
-    if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/bear.til")) {
-        throw Exception("Shit!");
-    }
+    tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/bear.til");
     unitImages.setFrame(i++);
     tempSurface.blt(unitImages);
-    if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/archer.til")) {
-        throw Exception("Shit!");
-    }
+    tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/archer.til");
     unitImages.setFrame(i++);
     tempSurface.blt(unitImages);
-    if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/wolf.til")) {
-        throw Exception("Shit!");
-    }
+    tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/wolf.til");
     unitImages.setFrame(i++);
     tempSurface.blt(unitImages);
-    if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/drake.til")) {
-        throw Exception("Shit!");
-    }
+    tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/drake.til");
     unitImages.setFrame(i++);
     tempSurface.blt(unitImages);
-    if (!tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/scout.til")) {
-        throw Exception("Shit!");
-    }
+    tempSurface.loadTIL("pics/menus/vehicleSelectionView/til/scout.til");
     unitImages.setFrame(i++);
     tempSurface.blt(unitImages);
     unitImages.setFrame(i++);

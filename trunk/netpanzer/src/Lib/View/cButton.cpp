@@ -112,9 +112,7 @@ void cButton::createTIL(iXY pos,
     Surface tempTopSurface;
 
     Surface tempSurface;
-    if(!tempSurface.loadTIL(imageName)) {
-        throw Exception("ERROR: Unable to open button TIL file: %s", imageName);
-    }
+    tempSurface.loadTIL(imageName);
 
     tempTopSurface.create(tempSurface.getPix(), tempSurface.getPix().x, 3);
 

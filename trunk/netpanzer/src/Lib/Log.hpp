@@ -20,7 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __LIB_LOG_HPP__
 
 #include <stdarg.h>
-#include <stdio.h>
+
+class WriteFile;
 
 class Logger
 {
@@ -31,6 +32,9 @@ public:
 
     Logger();
     ~Logger();
+
+    void openLogFile(const char* filename);
+    void closeLogFile();
 
     void setLogLevel(int logLevel) { m_logLevel = logLevel; }
     int getLogLevel() { return m_logLevel; }
@@ -46,7 +50,7 @@ private:
     void log(int priority, const char *fmt, va_list ap);
 
     int m_logLevel;
-    FILE* m_logfile;
+    WriteFile* m_logfile;
 };
 
 extern Logger LOGGER;

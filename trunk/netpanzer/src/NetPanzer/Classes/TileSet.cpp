@@ -15,17 +15,18 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include  "TileSet.hpp"
+#include <config.h>
 
-#include  <fcntl.h>
-#include  <stdio.h>
-#include  <stdlib.h>
+#include "TileSet.hpp"
 
-// for read below :-/
+#include <memory>
+#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
+#include "FileSystem.hpp"
 #include "Exception.hpp"
-#include  "Gdatstct.hpp"
+#include "Gdatstct.hpp"
 
 TileSet::TileSet( )
 {
@@ -42,11 +43,7 @@ void TileSet::computeTileConsts( void )
 
 void TileSet::loadTileSetInfo( const char *file_path )
 {
-    FILE *infile;
-
-    infile = fopen( file_path, "rb" );
-
-    assert( infile != 0 );
+    std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
 
     if ( tile_set_loaded == true ) {
         if ( tile_data != 0 ) {
@@ -62,59 +59,22 @@ void TileSet::loadTileSetInfo( const char *file_path )
         tile_set_loaded = false;
     }
 
-
-    fread( &tile_set_info, sizeof(TILE_DBASE_HEADER), 1, infile );
+    if(file->read( &tile_set_info, sizeof(TILE_DBASE_HEADER), 1) != 1) {
+        throw Exception("error reading tilesetinfo from '%s'", file_path);
+    }
 
     tile_count = tile_set_info.tile_count;
 
     tile_set_loaded = true;
 
     computeTileConsts();
-
 }
-
 
 void TileSet::loadTileSet( const char *file_path )
 {
-    FILE *infile;
     unsigned long  tile_buffer_size;
-    //tile_dbase_header_type header;
 
-    /*
-      infile = fopen( file_path, "rb" );
-      
-      assert( infile != 0 );  
-      
-      if ( tile_set_loaded == true )
-       {
-        delete[] tile_data;
-        tile_set_loaded = false;
-       }
-      
-      fread( &header, sizeof( tile_dbase_header_type ), 1, infile );
-      
-      tile_set_info.x_pix = header.tile_x_size;
-      tile_set_info.y_pix = header.tile_y_size;
-      tile_set_info.tile_count = header.tile_count;
-      
-      tile_buffer_size = header.tile_size * header.tile_count;
-        
-      tile_data =  new unsigned char [ tile_buffer_size ];
-      assert( tile_data != 0 );
-     
-      fread( tile_data, tile_buffer_size, 1, infile );
-     
-      tile_set_loaded = true;
-     
-      computeTileConsts(); 
-      
-    */
-    //*****************************************************************
-
-
-    infile = fopen( file_path, "rb" );
-
-    assert( infile != 0 );
+    std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
 
     if ( tile_set_loaded == true ) {
         if ( tile_data != 0 ) {
@@ -130,7 +90,9 @@ void TileSet::loadTileSet( const char *file_path )
         tile_set_loaded = false;
     }
 
-    fread( &tile_set_info, sizeof(TILE_DBASE_HEADER), 1, infile );
+    if(file->read( &tile_set_info, sizeof(TILE_DBASE_HEADER), 1) != 1) {
+        throw Exception("error reading tileset '%s'", file_path);
+    }
 
     tile_buffer_size = (tile_set_info.x_pix * tile_set_info.y_pix) * tile_set_info.tile_count;
 
@@ -140,26 +102,26 @@ void TileSet::loadTileSet( const char *file_path )
     tile_data =  new unsigned char[tile_buffer_size];
     assert( tile_data != 0 );
 
-    fread( tile_info, tile_set_info.tile_count, sizeof(TILE_HEADER), infile );
+    if (file->read(tile_info, tile_set_info.tile_count, sizeof(TILE_HEADER)) != sizeof(TILE_HEADER)) {
+        throw Exception("Error reading tileset %s", file_path);
+    }
 
-    fread( tile_data, tile_buffer_size, 1, infile );
+    if (file->read( tile_data, tile_buffer_size, 1) != 1) {
+        throw Exception("Error reading tileset %s", file_path);
+    }
 
     tile_set_loaded = true;
 
     computeTileConsts();
-
 }
 
 
 void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
 {
-    FILE *infile;
     unsigned long  tile_buffer_size;
     unsigned long  tile_size;
 
-    infile = fopen( file_path, "rb" );
-    if(infile == 0)
-        throw Exception("Couldn't load tileset.");
+    std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
 
     if ( tile_set_loaded == true ) {
         if ( tile_data != 0 ) {
@@ -176,7 +138,8 @@ void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
     }
 
     // ** Read Header Info **
-    fread( &tile_set_info, sizeof(TILE_DBASE_HEADER), 1, infile );
+    if(file->read( &tile_set_info, sizeof(TILE_DBASE_HEADER), 1) != 1)
+        throw Exception("error reading filesetinfo %s", file_path);
 
     // ** Read in Tile Info **
     tile_info =  new TILE_HEADER [ mapping_table.used_tile_count ];
@@ -193,10 +156,12 @@ void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
 
     for ( tile_index = 0; tile_index < tile_count; tile_index++ ) {
         if ( mapping_table[ tile_index ].is_used == true ) {
-            fread( (tile_info + mapped_index), sizeof ( TILE_HEADER ), 1, infile );
+            if (file->read( (tile_info + mapped_index), sizeof ( TILE_HEADER ), 1) != 1) {
+                throw Exception("Error reading tilset %s", file_path);
+            }
             mapped_index++;
         } else {
-            fseek( infile, sizeof( TILE_HEADER ), SEEK_CUR );
+            file->seek(file->tell() + sizeof( TILE_HEADER ));
         }
     }
 
@@ -222,7 +187,7 @@ void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
 
         if ( tile_index < tile_count) {
             if (unused_tile_count != 0) {
-                fseek( infile, tile_size * unused_tile_count, SEEK_CUR );
+                file->seek(file->tell()+ tile_size * unused_tile_count);
             }
 
             while( (tile_index < tile_count) && (mapping_table[ tile_index ].is_used == true) ) {
@@ -231,7 +196,8 @@ void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
             }
 
             if (used_tile_count != 0) {
-                fread( (tile_data + (mapped_index*tile_size)), tile_size , used_tile_count, infile );
+                if(file->read( (tile_data + (mapped_index*tile_size)), tile_size , used_tile_count) != used_tile_count)
+                    throw Exception("error reading tileset %s", file_path);
                 mapped_index += used_tile_count;
             }
 
@@ -240,7 +206,6 @@ void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
 
     }
 
-    fclose( infile );
     tile_set_loaded = true;
 
     TileSet::tile_count = mapping_table.used_tile_count;
@@ -250,11 +215,7 @@ void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
 
 void TileSet::loadTileSetInfo( const char *file_path, WadMapTable &mapping_table )
 {
-    FILE *infile;
-
-    infile = fopen( file_path, "rb" );
-    if(infile == 0)
-        throw Exception("Unable to load tilesetinfo.");
+    std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
 
     if ( tile_set_loaded == true ) {
         if ( tile_data != 0 ) {
@@ -271,7 +232,8 @@ void TileSet::loadTileSetInfo( const char *file_path, WadMapTable &mapping_table
     }
 
     // ** Read Header Info **
-    fread( &tile_set_info, sizeof(TILE_DBASE_HEADER), 1, infile );
+    if(file->read(&tile_set_info, sizeof(TILE_DBASE_HEADER), 1) != 1) 
+        throw Exception("error reading tileset %s", file_path);
 
     // ** Read in Tile Info **
     tile_info =  new TILE_HEADER [ mapping_table.used_tile_count ];
@@ -285,30 +247,26 @@ void TileSet::loadTileSetInfo( const char *file_path, WadMapTable &mapping_table
 
     for ( tile_index = 0; tile_index < tile_count; tile_index++ ) {
         if ( mapping_table[ tile_index ].is_used == true ) {
-            fread( (tile_info + mapped_index), sizeof ( TILE_HEADER ), 1, infile );
+            if(file->read((tile_info + mapped_index), sizeof ( TILE_HEADER ), 1) != 1)
+                throw Exception("Error reading tileset %s", file_path);
             mapped_index++;
         } else {
-            fseek( infile, sizeof( TILE_HEADER ), SEEK_CUR );
+            file->seek(file->tell()+sizeof( TILE_HEADER ));
         }
     }
 
-    fclose( infile );
     tile_set_loaded = true;
 
     TileSet::tile_count = mapping_table.used_tile_count;
     computeTileConsts();
 }
 
-
-
 bool TileSet::startPartitionTileSetLoad( const char *file_path, WadMapTable &mapping_table, unsigned long partitions )
 {
     unsigned long  tile_buffer_size;
     unsigned long  tile_size;
-    //int fhandle;
 
-    // XXX changed _O_BINARY to 0
-    partition_load_fhandle = open( file_path, 0 );
+    partition_load_fhandle = FileSystem::openRead(file_path);
 
     if ( tile_set_loaded == true ) {
         if ( tile_data != 0 ) {
@@ -325,8 +283,7 @@ bool TileSet::startPartitionTileSetLoad( const char *file_path, WadMapTable &map
     }
 
     // ** Read Header Info **
-    //fread( &tile_set_info, sizeof(TILE_DBASE_HEADER), 1, infile );
-    read( partition_load_fhandle, &tile_set_info, sizeof(TILE_DBASE_HEADER ) );
+    partition_load_fhandle->read(&tile_set_info, sizeof(TILE_DBASE_HEADER ), 1);
 
     // ** Read in Tile Info **
     tile_info =  new TILE_HEADER [ mapping_table.used_tile_count ];
@@ -340,12 +297,10 @@ bool TileSet::startPartitionTileSetLoad( const char *file_path, WadMapTable &map
 
     for ( tile_index = 0; tile_index < tile_count; tile_index++ ) {
         if ( mapping_table[ tile_index ].is_used == true ) {
-            read( partition_load_fhandle, (tile_info + mapped_index), sizeof ( TILE_HEADER ) );
-            //fread( (tile_info + mapped_index), sizeof ( TILE_HEADER ), 1, infile );
+            partition_load_fhandle->read((tile_info + mapped_index), sizeof ( TILE_HEADER ), 1 );
             mapped_index++;
         } else {
-            lseek( partition_load_fhandle, sizeof( TILE_HEADER ), SEEK_CUR );
-            //fseek( infile, sizeof( TILE_HEADER ), SEEK_CUR );
+            partition_load_fhandle->seek(partition_load_fhandle->tell()+sizeof( TILE_HEADER ));
         }
     }
 
@@ -368,8 +323,6 @@ bool TileSet::startPartitionTileSetLoad( const char *file_path, WadMapTable &map
         partition_load_partition_count = tile_count / partitions;
         return( true );
     }
-
-
 }
 
 bool TileSet::partitionTileSetLoad( WadMapTable &mapping_table, int *percent_complete )
@@ -381,10 +334,10 @@ bool TileSet::partitionTileSetLoad( WadMapTable &mapping_table, int *percent_com
 
     while( (partition_load_tile_index < tile_count) && (partition_index < partition_load_partition_count) ) {
         if ( mapping_table[ partition_load_tile_index ].is_used == true ) {
-            read( partition_load_fhandle, (tile_data + (partition_load_mapped_index*tile_size)), tile_size );
+            partition_load_fhandle->read((tile_data + (partition_load_mapped_index*tile_size)), tile_size, 1);
             partition_load_mapped_index++;
         } else {
-            lseek( partition_load_fhandle, tile_size, SEEK_CUR );
+            partition_load_fhandle->seek(partition_load_fhandle->tell()+tile_size);
         }
 
         partition_index++;
@@ -392,20 +345,21 @@ bool TileSet::partitionTileSetLoad( WadMapTable &mapping_table, int *percent_com
     }
 
     if ( partition_load_tile_index == tile_count ) {
-        close( partition_load_fhandle );
+        delete partition_load_fhandle;
+        partition_load_fhandle = 0;
         tile_set_loaded = true;
 
         TileSet::tile_count = mapping_table.used_tile_count;
         computeTileConsts();
 
         *percent_complete = 100;
-        return( false );
+        return false;
     } else {
         float percent;
         percent = ( ( (float) partition_load_tile_index) / ( (float) tile_count ) ) * 100;
         *percent_complete = (int) percent;
 
         partition_index = 0;
-        return( true );
+        return true;
     }
 }

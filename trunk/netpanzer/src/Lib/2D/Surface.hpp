@@ -482,11 +482,7 @@ public:
 
     PIX getAverageColor();
 
-    virtual int  loadTIL(const char* filename);
-    virtual void loadTIL(FILE *fp);
-    int  saveTIL(const char *filename);
-    void saveTIL(FILE *fp);
-    void saveAllTIL(const char *path);
+    virtual void loadTIL(const char* filename);
 
     void scale(const iXY &pix);
     inline void scale(int x, int y)
@@ -584,7 +580,6 @@ public:
     void bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color) const;
 
     void loadBMP(const char *fileName, bool needAlloc = true, void *returnPalette = 0);
-    void saveBMP(const char* filename, Palette& pal);
 
     void mapFromPalette(const char* oldPalette);
 

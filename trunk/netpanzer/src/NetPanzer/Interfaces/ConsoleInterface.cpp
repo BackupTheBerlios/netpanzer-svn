@@ -20,10 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameConfig.hpp"
 
 //GameConfig::getConsoleTextColor()
-
-
-FILE *  ConsoleInterface::con_file;
-bool ConsoleInterface::log_file_active;
 bool ConsoleInterface::stdout_pipe;
 
 long ConsoleInterface::console_size;
@@ -74,7 +70,6 @@ void ConsoleInterface::initialize( long size )
         line_list[ line_loop ].life_timer.changePeriod( 8 );
     }
 
-    log_file_active = false;
     stdout_pipe = false;
 }
 
@@ -87,18 +82,6 @@ void ConsoleInterface::setToSurfaceSize( iXY pix )
     bounds.max = pix - 5;
 
     max_char_per_line = (bounds.max.x - bounds.min.x) / CHAR_XPIX;
-}
-
-void ConsoleInterface::openLogFile( void )
-{
-    con_file = fopen( "console.log", "wt" );
-    log_file_active = true;
-}
-
-void ConsoleInterface::closeLogFile( void )
-{
-    fclose( con_file );
-    log_file_active = false;
 }
 
 void ConsoleInterface::setStdoutPipe( bool on_off )
@@ -131,12 +114,6 @@ void ConsoleInterface::postMessage( PIX color, const char *format, ... )
         fflush(stdout);
     }
     va_end( vap );
-
-    if( log_file_active == true ) {
-        fprintf( con_file, temp_str );
-        fprintf( con_file, "\n");
-    }
-
 
     temp_str_ptr = temp_str;
     temp_str_length = (long) strlen(temp_str);
@@ -193,11 +170,6 @@ void ConsoleInterface::postMessage( const char *format, ... )
         vprintf( format_str, vap );
     }
     va_end( vap );
-
-    if( log_file_active == true ) {
-        fprintf( con_file, temp_str );
-        fprintf( con_file, "\n");
-    }
 
     temp_str_ptr = temp_str;
     temp_str_length = (long) strlen(temp_str);

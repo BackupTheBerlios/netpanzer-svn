@@ -1,0 +1,17 @@
+#============================================================================
+# Work around problems the SubDir rule of Jambase 
+#	(until jampeople accept my patches :-/ )
+#============================================================================
+
+LOCATE.OBJECTS ?= $(BUILDTOP)/out/$(OSFULL[1]:L) ;
+LOCATE.TARGETS ?= $(BUILDTOP) ;
+LOCATE.DOCS ?= $(BUILDTOP)/out ;
+
+SUBDIRRULES += FixSubDirPath ;
+
+rule FixSubDirPath
+{
+    LOCATE_SOURCE = [ FDirName $(LOCATE.OBJECTS) $(SUBDIR_TOKENS) ] ;
+    LOCATE_TARGET = [ FDirName $(LOCATE.OBJECTS) $(SUBDIR_TOKENS) ] ;
+}
+       

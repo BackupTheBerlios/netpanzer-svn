@@ -11,7 +11,6 @@ AC_CONFIG_AUX_DIR([mk/autoconf])
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
-AM_INIT_AUTOMAKE
 
 #----------------------------------------------------------------------------
 # Configuration header
@@ -38,6 +37,23 @@ case $host_os in
 	AC_DEFINE([UNIX], [], [define when compiling for a unix/posix system])
 	;;
 esac
+
+#----------------------------------------------------------------------------
+# Check for build variant (debug, profile, optimize)
+#----------------------------------------------------------------------------
+VARIANT=optimize
+AC_ARG_ENABLE([optimize], [AC_HELP_STRING([--enable-optimize],
+    [build with optimizations enabled (default YES)])],
+    [test "$enableval" = "yes" && VARIANT=optimize])
+                                                                                
+AC_ARG_ENABLE([debug], [AC_HELP_STRING([--enable-debug],
+    [build with debugging information (default NO)])],
+    [test "$enableval" = "yes" && VARIANT=debug])
+                                                                                
+AC_ARG_ENABLE([profile], [AC_HELP_STRING([--enable-profile],
+    [build with profiling information (default NO)])],
+    [test "$enableval" = "yes" && VARIANT=profile])
+AC_SUBST([VARIANT])
 
 #----------------------------------------------------------------------------
 # find applications
@@ -98,6 +114,8 @@ NP_FINDLIB([PHYSFS], [physfs >= 1.9],
 	[],
 	[AC_MSG_ERROR([Please install physfs >= 0.1.9])])
 
-AC_CONFIG_FILES([Makefile src/Makefile])
+CS_INIT_JAMFILE
+CS_OUTPUT_INSTALLDIRS
+AC_CONFIG_FILES([Jamconfig])
 AC_OUTPUT
 

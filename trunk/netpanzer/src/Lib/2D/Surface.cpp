@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <memory>
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -2022,30 +2023,12 @@ PIX Surface::getAverageColor()
 
 // loadTIL
 //---------------------------------------------------------------------------
-int Surface::loadTIL(const char* filename)
+void Surface::loadTIL(const char* filename)
 {
-    FILE *fp = fopen(filename, "rb");
-
-    if (fp == 0) {
-        return 0;
-    }
-
-    loadTIL(fp);
-
-    fclose(fp);
-
-    return 1;
-
-} // end Surface::loadTIL
-
-// loadTIL
-//---------------------------------------------------------------------------
-void Surface::loadTIL(FILE *fp)
-{
-    if (fp == 0) return;
+    std::auto_ptr<ReadFile> file(FileSystem::openRead(filename));
 
     FletchTileHeader fletchTileHeader;
-    fread(&fletchTileHeader, sizeof(FletchTileHeader), 1, fp);
+    file->read(&fletchTileHeader, sizeof(FletchTileHeader), 1);
 
     if (frame0 == 0 || mem == 0 || pix.x != int(fletchTileHeader.xSize) || pix.y != int(fletchTileHeader.ySize)) {
         create(fletchTileHeader.xSize, fletchTileHeader.ySize, fletchTileHeader.xSize, 1);
@@ -2058,81 +2041,9 @@ void Surface::loadTIL(FILE *fp)
         throw Exception("ERROR: This should not happen.");
     }
 
-    fread(mem, numBytes, 1, fp);
-
+    if(file->read(mem, numBytes, 1) != 1)
+        throw Exception("Error reading .TIL '%s'", filename);
 } // end Surface::loadTIL
-
-// saveTIL
-void Surface::saveAllTIL(const char *path)
-{
-    char strBuf[256];
-    int  num = 0;
-
-    for (int i = 0; i < frameCount; i++) {
-        sprintf(strBuf, "%s/dump%04d.til", path, num);
-        setFrame(num);
-
-        FILE *fp = fopen(strBuf, "wb");
-        if (fp == 0) {
-            continue;
-        }
-
-        saveTIL(fp);
-
-        fclose(fp);
-
-        num++;
-    }
-} // end Surface::saveTIL
-
-// saveTIL
-int Surface::saveTIL(const char *filename)
-{
-    FILE *fp = fopen(filename, "wb");
-    if (fp == 0) return 0;
-
-    saveTIL(fp);
-
-    fclose(fp);
-
-    return 1;
-
-} // end Surface::saveTIL
-
-// saveTIL
-void Surface::saveTIL(FILE *fp)
-{
-    if (fp == 0) return;
-
-    FletchTileHeader fletchTileHeader;
-
-    fletchTileHeader.minVer    = 0;
-    fletchTileHeader.majVer    = 0;
-    fletchTileHeader.headSize  = sizeof(FletchTileHeader);
-    fletchTileHeader.xSize     = pix.x;
-    fletchTileHeader.ySize     = pix.y;
-    fletchTileHeader.frameCount = frameCount;
-
-    // Add functions for the average color values.
-    fletchTileHeader.avgR      = 0;
-    fletchTileHeader.avgG      = 0;
-    fletchTileHeader.avgB      = 0;
-    fletchTileHeader.avgIndex  = getAverageColor();
-
-    fwrite(&fletchTileHeader, sizeof(FletchTileHeader), 1, fp);
-
-    int numBytes = pix.x * pix.y * sizeof(BYTE);
-
-    if (numBytes <= 0) {
-        throw Exception("ERROR: Trying to write surface when (numBytes <= 0).");
-    }
-    if (mem == 0) {
-        throw Exception("ERROR: Trying to write surface when (mem == 0).");
-    }
-
-    fwrite(mem, numBytes, 1, fp);
-
-} // end Surface::saveTIL
 
 // setBrightness
 void Surface::setBrightness(int percent)
@@ -2613,9 +2524,7 @@ int Surface::loadAllTILInDirectory(const char *path)
             filenames.push_back(name);
 
             // Get the max image size.
-            if (!tempSurface.loadTIL(name.c_str())) {
-                throw Exception("ERROR: This should not happen!");
-            }
+            tempSurface.loadTIL(name.c_str());
             if (maxSize.x < tempSurface.getPix().x) {
                 maxSize.x = tempSurface.getPix().x;
             }
@@ -2638,15 +2547,12 @@ int Surface::loadAllTILInDirectory(const char *path)
     for (size_t i = 0; i < filenames.size(); i++) {
         setFrame(i);
 
-        if (!tempSurface.loadTIL(filenames[i].c_str())) {
-            return 0;
-        } else {
-            iXY myOffset;
-            myOffset = maxSize - tempSurface.getPix();
+        tempSurface.loadTIL(filenames[i].c_str());
+        iXY myOffset;
+        myOffset = maxSize - tempSurface.getPix();
 
-            fill(Color::black);
-            tempSurface.blt(*this, myOffset);
-        }
+        fill(Color::black);
+        tempSurface.blt(*this, myOffset);
     }
 
     return 1;
@@ -2716,20 +2622,19 @@ void initFont()
         // NOTE: Make sure the file size is 128 characters.
         char charfilename[] = "pics/chars8x8.raw";
 
-        FILE *fp = fopen(charfilename, "rb");
-        if (fp == 0)
-            throw Exception("couldn't load font '%s'.", charfilename);
+        std::auto_ptr<ReadFile> file (FileSystem::openRead(charfilename));
 
         for (int y = 0; y < ascii8x8.getPix().y; y++) {
             for (int curChar = 0; curChar < ascii8x8.getFrameCount(); curChar++) {
                 ascii8x8.setFrame(curChar);
                 int yOffset = y * ascii8x8.getPix().x;
 
-                fread(ascii8x8.getMem() + yOffset, ascii8x8.getPix().x, 1, fp);
+                if (file->read(ascii8x8.getMem() + yOffset, ascii8x8.getPix().x, 1) != 1) {
+                    throw Exception("Error while reading font '%s'.",
+                                    charfilename);
+                }
             }
         }
-
-        fclose(fp);
     }
 
     {
@@ -2738,20 +2643,19 @@ void initFont()
 
         // NOTE: Make sure the file size is 128 characters.
         char charfilename[] = "pics/chars5x5.raw";
-
-        FILE *fp = fopen(charfilename, "rb");
-        if (fp == 0)
-            throw Exception("couldn't load font '%s'.", charfilename);
-
+        
+        std::auto_ptr<ReadFile> file (FileSystem::openRead(charfilename));
+        
         for (int y = 0; y < ascii5x5.getPix().y; y++) {
             for (int curChar = 0; curChar < ascii5x5.getFrameCount(); curChar++) {
                 ascii5x5.setFrame(curChar);
                 int yOffset = y * ascii5x5.getPix().x;
 
-                fread(ascii5x5.getMem() + yOffset, ascii5x5.getPix().x, 1, fp);
+                if (file->read(ascii5x5.getMem() + yOffset, ascii5x5.getPix().x, 1) != 1) {
+                    throw Exception("error loading font '%s'.", charfilename);
+                }
             }
         }
-        fclose(fp);
     }
 
 } // Surface::initFont
@@ -3100,35 +3004,22 @@ void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
 
     if (needAlloc) free();
 
-    FILE *fp = fopen(fileName,"rb");
-    if (fp == 0) {
-        throw Exception("Unable to open %s", fileName);
-    }
+    std::auto_ptr<ReadFile> file (FileSystem::openRead(fileName));
 
-    fread( &file_header, sizeof(BitmapFileHeader), 1, fp );
-
-    if (ferror(fp)) {
+    if(file->read( &file_header, sizeof(BitmapFileHeader), 1) != 1)
         throw Exception("Error reading .bmp file %s", fileName);
-    }
 
     if ( file_header.bfType != 0x4d42 ) // file_header.bfType != "BM"
-    {
         throw Exception("%s is not a valid 8-bit BMP file", fileName);
-    }
 
-    fread( &info_header, sizeof(BitmapInfoHeader), 1, fp );
-
-    if (ferror(fp)) {
+    if(file->read(&info_header, sizeof(BitmapInfoHeader), 1) != 1)
         throw Exception("Error reading .bmp file %s", fileName);
-    }
 
-    if ( info_header.biBitCount != 8 ) {
+    if ( info_header.biBitCount != 8 )
         throw Exception("%s is not a 8-bit BMP file", fileName);
-    }
 
-    if ( info_header.biCompression != BI_RGB ) {
+    if ( info_header.biCompression != BI_RGB )
         throw Exception("%s is not a 8-bit UnCompressed BMP file", fileName);
-    }
 
     if (needAlloc) {
 
@@ -3142,11 +3033,11 @@ void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
             throw Exception("Not enough memory to load BMP image %s", fileName);
     }
 
-    fseek(fp, file_header.bfOffBits, SEEK_SET);
-
+    file->seek(file_header.bfOffBits);
 
     if ( (info_header.biWidth % 4) == 0 ) {
-        fread(mem, pix.x * pix.y, 1, fp);
+        if (file->read(mem, pix.x * pix.y, 1) != 1)
+            throw Exception("error while reading bmp image %s", fileName);
     } else {
         int padding = ((info_header.biWidth / 4 + 1) * 4) - info_header.biWidth;
 
@@ -3156,16 +3047,12 @@ void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
         //PIX *sPtr = mem;
 
         for (int row = 0; row < numRows; row++) {
-            fread( mem, pix.x, 1, fp );
-            fread( buffer, padding, 1, fp);
+            if(file->read(mem, pix.x, 1) != 1 ||
+               file->read(buffer, padding, 1) != 1)
+                throw Exception("error reading file %s.", fileName);
             mem += stride;
         }
     }
-
-    if (ferror(fp)) {
-        throw Exception("Error reading .bmp file %s", fileName);
-    }
-    fclose(fp);
 
     flipVertical();
 }
@@ -3270,15 +3157,13 @@ void Surface::mapFromPalette(const char* oldPalette)
     BYTE     bestFitArray[256];
     RGBColor sourceColor[256];
 
-    ReadFile* file = FileSystem::openRead(oldPalette);
+    std::auto_ptr<ReadFile> file (FileSystem::openRead(oldPalette));
 
     for (int i = 0; i < 256; i++) {
         if(file->read(&sourceColor[i], 3, 1) != 1) {
-            delete file;
             throw Exception("Error while loading palette '%s'.", oldPalette);
         }
     }
-    delete file;
 
     for (int i = 0; i < 256; i++) {
         bestFitArray[i] = Palette::findNearestColor(sourceColor[i]);
@@ -3349,71 +3234,4 @@ void Surface::drawLookupBorder(const PIX table[]) const
     bltLookup(r, table);
 
 } // end Surface::drawLookupBorder
-
-
-void Surface::saveBMP(const char *fname, Palette &pal )
-{
-    FILE* fp = fopen(fname, "wb");
-
-    BitmapFileHeader file_header;
-    BitmapInfoHeader info_header;
-    RGBQuad palette[256];
-
-    file_header.bfType = 0x4D42;
-    file_header.bfOffBits = sizeof(BitmapFileHeader) + sizeof(BitmapInfoHeader)
-                            + (sizeof(RGBQuad) * 256);
-    file_header.bfSize = file_header.bfOffBits + (pix.x * pix.y);
-    file_header.bfReserved1 = 0;
-    file_header.bfReserved2 = 0;
-
-    info_header.biSize = sizeof(BitmapInfoHeader);
-    info_header.biWidth = pix.x;
-    info_header.biHeight = pix.y;
-    info_header.biPlanes = 1;
-    info_header.biBitCount = 8;
-    info_header.biCompression = BI_RGB;
-    info_header.biSizeImage= pix.x * pix.y;
-    info_header.biXPelsPerMeter = 0;
-    info_header.biYPelsPerMeter = 0;
-    info_header.biClrUsed = 256;
-    info_header.biClrImportant = 256;
-
-    fwrite( &file_header, sizeof(BitmapFileHeader), 1, fp );
-    fwrite( &info_header, sizeof(BitmapInfoHeader), 1, fp );
-
-    for(int index = 0; index < 256; index++) {
-        RGBColor color;
-
-        color = pal[ index ];
-
-        palette[index].rgbRed = color.red;
-        palette[index].rgbGreen = color.green;
-        palette[index].rgbBlue = color.blue;
-        palette[index].rgbReserved = 0;
-    }//end for index that loads the palette
-
-    fwrite( palette, sizeof(RGBQuad), 256, fp );
-
-    flipVertical();
-
-    if ( (info_header.biWidth % 4) == 0 ) {
-        fwrite( mem, info_header.biSizeImage, 1, fp );
-    } else {
-        int padding = ((info_header.biWidth / 4 + 1) * 4) - info_header.biWidth;
-
-        PIX buffer[10];
-        int numRows = pix.y;
-
-        //PIX *sPtr = mem;
-
-        for (int row = 0; row < numRows; row++) {
-            fwrite( mem, pix.x, 1, fp );
-            fwrite( buffer, padding, 1, fp);
-            mem += stride;
-        }
-    }
-
-    flipVertical();
-    fclose(fp);
-}
 
