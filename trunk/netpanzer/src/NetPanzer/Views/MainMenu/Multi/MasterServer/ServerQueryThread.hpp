@@ -37,6 +37,10 @@ public:
     ~ServerQueryThread();
 
     const char* getStateMessage() const;
+    bool isRunning() const
+    {
+        return running;
+    }
 
 private:
     static int threadMain(void* data);

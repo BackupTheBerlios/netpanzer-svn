@@ -58,6 +58,9 @@ ServerListView::~ServerListView()
 void
 ServerListView::refresh()
 {
+    if(queryThread && queryThread->isRunning())
+        return;
+    
     delete queryThread;
    
     // don't clear before the delete or after the new, as the thread contains

@@ -58,23 +58,17 @@ ServerQueryThread::ServerQueryThread(ServerList* newserverlist)
     udpsocket = new network::UDPSocket(false);
    
     shutdown_mutex = SDL_CreateMutex();
-    printf("startit.\n");
     thread = SDL_CreateThread(threadMain, this);
 }
 
 ServerQueryThread::~ServerQueryThread()
 {
-    printf("killit\n");
     SDL_mutexP(shutdown_mutex);
-    running = false;
     if(stream) {
-        printf("cancel.\n");
         stream->cancel();
     }
     SDL_mutexV(shutdown_mutex);
-    printf("waitit.\n");
     SDL_WaitThread(thread, 0);
-    printf("Joined.\n");
 
     delete udpsocket;
     SDL_DestroyMutex(shutdown_mutex);
@@ -102,6 +96,9 @@ ServerQueryThread::run()
                 case STATE_QUERYSERVERS:
                     queryServers();
                     break;
+                case STATE_DONE:
+                    running = false;
+                    break;
                 default:
                     break;
             }
@@ -127,13 +124,10 @@ ServerQueryThread::queryMasterServer()
     network::TCPSocket* tcpsocket = 0;
 
     try {
-        printf("Resolve.\n");
         network::Address ip
             = network::Address::resolve(masterservers.back(), 28900);
 
-        printf("Connect.\n");
         tcpsocket = new network::TCPSocket(ip, false);
-        printf("Connok.\n");
         stream = new network::SocketStream(*tcpsocket);
         StreamTokenizer tokenizer(*stream, '\\');
 
@@ -205,9 +199,7 @@ ServerQueryThread::queryMasterServer()
         masterservers.pop_back();
     }
 
-    printf("trydel.\n");
     SDL_mutexP(shutdown_mutex);
-    printf("delstream.\n");
     delete stream;
     stream = 0;
     delete tcpsocket;
@@ -253,6 +245,11 @@ ServerQueryThread::queryServers()
 
         server->querystartticks = now;
         querying.push_back(server);
+    }
+
+    if(not_queried.empty() && querying.empty()) {
+        state = STATE_DONE;
+        return;
     }
 
     // part2 receive data

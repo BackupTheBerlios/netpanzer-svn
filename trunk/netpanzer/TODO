@@ -1,12 +1,9 @@
 Next release:
--playtesting+bugfixing
 -win32 somtimes crashs in lobby window
 -objective count is wrong in status window
 -with 75% objective setting you can win the Cramped with 2 outposts already
  (which is only be 66% of all outposts)
 -after having a full nodelist in A* the server is getting slow
--the refresh button should be disabled in the serverlist window while the
- refreshing is in progress
 -when starting to build a titan 2minutes is displayed for a short time
 -display a message when the round is over ("blabla captured xx% of outposts,
         "time is over", "blabla reached xxx frags")
