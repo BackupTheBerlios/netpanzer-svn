@@ -64,8 +64,6 @@ void NetworkServer::removeClientFromSendList(const PlayerID &client_player_id)
             return;
         }
     }
-
-    assert(false);
 }
 
 void NetworkServer::netPacketClientKeepAlive(const NetPacket* )
