@@ -24,10 +24,10 @@ class Leopard : public Vehicle
  {
   protected:
    void setUnitProperties( void );
-   virtual void  fireWeapon( PointXYi &target_loc );
+   virtual void  fireWeapon( iXY &target_loc );
  
   public:
-   Leopard( PointXYi initial_loc, unsigned char color, unsigned char flag );
+   Leopard( iXY initial_loc, unsigned char color, unsigned char flag );
 
  };
 

@@ -44,7 +44,7 @@ void Abrams::setUnitProperties( void )
 
 }
  
-Abrams::Abrams( PointXYi initial_loc, unsigned char color, unsigned char flag )
+Abrams::Abrams( iXY initial_loc, unsigned char color, unsigned char flag )
    : Vehicle( initial_loc )
  {
   setUnitProperties();
@@ -64,19 +64,19 @@ Abrams::Abrams( PointXYi initial_loc, unsigned char color, unsigned char flag )
   turret_anim_shadow.setData( gAbramsTurretShadow );
   
  
-  body_anim.setAttrib( PointXYi(0,0), PointXYi(0,0), unitLayer ); 
-  turret_anim.setAttrib( PointXYi(0,0), PointXYi(0,0), unitLayer );
-  body_anim_shadow.setAttrib( PointXYi(0,0), PointXYi(0,0), unitLayer);
-  turret_anim_shadow.setAttrib( PointXYi(0,0), PointXYi(0,0), unitLayer); 
+  body_anim.setAttrib( iXY(0,0), iXY(0,0), unitLayer ); 
+  turret_anim.setAttrib( iXY(0,0), iXY(0,0), unitLayer );
+  body_anim_shadow.setAttrib( iXY(0,0), iXY(0,0), unitLayer);
+  turret_anim_shadow.setAttrib( iXY(0,0), iXY(0,0), unitLayer); 
 
   select_info_box.setBoxAttributes( BoundBox( -30, -30, 30, 30), Color::blue );
   select_info_box.setBoxState( false );
   select_info_box.setFlag( flag );
 
-  body_anim_shadow.attachSprite( &body_anim, PointXYi(0,0) );
-  body_anim_shadow.attachSprite( &turret_anim_shadow, PointXYi(0,0) ); 
-  body_anim_shadow.attachSprite( &turret_anim, PointXYi(0,0) ); 
-  body_anim_shadow.attachSprite( &select_info_box, PointXYi(0,0) );
+  body_anim_shadow.attachSprite( &body_anim, iXY(0,0) );
+  body_anim_shadow.attachSprite( &turret_anim_shadow, iXY(0,0) ); 
+  body_anim_shadow.attachSprite( &turret_anim, iXY(0,0) ); 
+  body_anim_shadow.attachSprite( &select_info_box, iXY(0,0) );
 
   //FLAGS_DBASE.get_sprite_index( flag, select_info_box.unit_flag );
   //FLAGS_DBASE.get_sprite_name( "allie", select_info_box.allie_flag );
@@ -84,7 +84,7 @@ Abrams::Abrams( PointXYi initial_loc, unsigned char color, unsigned char flag )
 
  }
 
-void  Abrams::fireWeapon( PointXYi &target_loc )
+void  Abrams::fireWeapon( iXY &target_loc )
 {
   reload_counter = 0;
   ProjectileInterface::newProjectile( 3, unit_state.unit_type, unit_id, unit_state.damage_factor, 

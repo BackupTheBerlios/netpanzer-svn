@@ -64,7 +64,7 @@ void GroundExplosionParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 #if 0
 	groundParticleSurface.setTo(groundParticleSprite0);
 
-	groundParticleSurface.setAttrib(PointXYi(pos.x, zPos), 3);
+	groundParticleSurface.setAttrib(iXY(pos.x, zPos), 3);
 	sorter.addSprite(&groundParticleSurface);
 #endif
 } // end GroundExplosionParticle2D::draw

@@ -50,7 +50,7 @@ protected:
 	unsigned short owner_type_id;
 	
 	unsigned short damage_factor;
-	PointXYi       location;
+	iXY       location;
 	BresenhamLine  path;
 	Timer          fsm_timer;
 	unsigned char  fsmFlight_state;
@@ -61,7 +61,7 @@ protected:
 
 public:
 
-	Weapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, PointXYi &start, PointXYi &end); 
+	Weapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end); 
 
 	virtual ~Weapon()
 	{ }

@@ -20,21 +20,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapInterface.hpp"
 #include "UnitBlackBoard.hpp"
 
-void PlacementMatrix::reset( PointXYi ini_map_loc )
+void PlacementMatrix::reset( iXY ini_map_loc )
  {
   ini_loc = ini_map_loc;
-  current_offset = PointXYi( 0, 0 );
+  current_offset = iXY( 0, 0 );
   current_loc =	ini_loc;
   run_length = 0;
   run_counter = 0;
   placement_state = _placement_state_base_case;
  }
 
-bool PlacementMatrix::verifyLocation( PointXYi &loc )
+bool PlacementMatrix::verifyLocation( iXY &loc )
  {
   long x_offset, y_offset;
   long free_count = 0; 
-  PointXYi succ;
+  iXY succ;
   unsigned long direction_index;
 
   if ( ( MapInterface::getMovementValue( loc ) >= 0xFF) || 
@@ -79,7 +79,7 @@ bool PlacementMatrix::verifyLocation( PointXYi &loc )
  }
 
 
-bool PlacementMatrix::getNextEmptyLoc( PointXYi *loc )
+bool PlacementMatrix::getNextEmptyLoc( iXY *loc )
  {
   bool end_cycle = false;
   
@@ -216,7 +216,7 @@ bool PlacementMatrix::getNextEmptyLoc( PointXYi *loc )
  }
 
 /*
-void PlacementMatrix::reset( PointXYi ini_map_loc )
+void PlacementMatrix::reset( iXY ini_map_loc )
  {
   *
   ini_loc = ini_map_loc;
@@ -224,12 +224,12 @@ void PlacementMatrix::reset( PointXYi ini_map_loc )
   direction = 0;
  }
  
-bool PlacementMatrix::getNextEmptyLoc( PointXYi *loc )
+bool PlacementMatrix::getNextEmptyLoc( iXY *loc )
  {
   long x_offset, y_offset;
-  PointXYi succ;
-  PointXYi succ_right;
-  PointXYi succ_left;
+  iXY succ;
+  iXY succ_right;
+  iXY succ_left;
 
   while ( level < 50 )
    {

@@ -27,7 +27,7 @@ PowerUp::PowerUp()
   powerup_state.life_cycle_state = _power_up_lifecycle_state_active;
  }
 
-PowerUp::PowerUp(PointXYi map_loc, int ID, int type)
+PowerUp::PowerUp(iXY map_loc, int ID, int type)
  {
   powerup_state.map_loc = map_loc;
   powerup_state.ID = ID;
@@ -37,7 +37,7 @@ PowerUp::PowerUp(PointXYi map_loc, int ID, int type)
   powerup_state.life_cycle_state = _power_up_lifecycle_state_active;
  }
 
-PowerUp::PowerUp(PointXYi map_loc, int type)
+PowerUp::PowerUp(iXY map_loc, int type)
  {
   powerup_state.map_loc = map_loc;
   powerup_state.ID = -1;

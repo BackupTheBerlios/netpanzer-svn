@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "NetPacket.hpp"
 
-#include "Point.hpp"
 #include "UnitID.hpp"
 #include "PlayerID.hpp"
 
@@ -31,11 +30,11 @@ enum { _net_message_id_powerup_create,
 class PowerUpCreateMesg : public NetMessage
  {
   public:
-   PointXYi map_loc;
+   iXY map_loc;
    int      ID;
    int      type;
    
-  void set( PointXYi map_loc, int ID, int type )
+  void set( iXY map_loc, int ID, int type )
    {
     PowerUpCreateMesg::map_loc = map_loc;     
     PowerUpCreateMesg::ID = ID;

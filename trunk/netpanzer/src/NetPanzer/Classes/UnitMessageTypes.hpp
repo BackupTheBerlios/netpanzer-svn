@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "UnitMessage.hpp"
 #include "UnitID.hpp"
-#include "Point.hpp"
 
 enum { _umesg_ai_command,
        _umesg_weapon_hit,
@@ -38,10 +37,10 @@ class UMesgAICommand : public UnitMessage
  {
   public:
    unsigned char command;
-   PointXYi goal_loc;
+   iXY goal_loc;
    UnitID   target_id;
    unsigned char manual_move_orientation;
-   PointXYi target_loc;
+   iXY target_loc;
    
   UMesgAICommand() {}
   
@@ -51,7 +50,7 @@ class UMesgAICommand : public UnitMessage
    
    }
 
-  inline void setMoveToLoc( PointXYi &goal )
+  inline void setMoveToLoc( iXY &goal )
    {
     message_id = _umesg_ai_command;
 	command = _command_move_to_loc;
@@ -78,7 +77,7 @@ class UMesgAICommand : public UnitMessage
 	command = _command_stop_manual_move;
    }
 
-  inline void setManualFire( PointXYi &target )
+  inline void setManualFire( iXY &target )
    {
     message_id = _umesg_ai_command;
 	command = _command_manual_fire;
@@ -91,7 +90,7 @@ class UMesgWeaponHit : public UnitMessage
  { 
   public:
    UnitID owner_id;
-   PointXYi hit_location;
+   iXY hit_location;
    unsigned short damage_factor;
 
  };

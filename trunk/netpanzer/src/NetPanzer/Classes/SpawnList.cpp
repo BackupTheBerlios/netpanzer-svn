@@ -59,7 +59,7 @@ void SpawnList::loadSpawnFile( char *file_path )
   last_spawn_index = 0;
  }
 
-void SpawnList::getFreeSpawnPoint( PointXYi *spawn_loc )
+void SpawnList::getFreeSpawnPoint( iXY *spawn_loc )
  {
   unsigned long spawn_index;
 

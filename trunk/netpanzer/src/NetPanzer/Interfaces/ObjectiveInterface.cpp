@@ -86,7 +86,7 @@ void ObjectiveInterface::loadObjectiveList( char *file_path )
    
     MapInterface::mapXYtoPointXY( loc_x, loc_y, &world_x, &world_y );
 
-    objective_obj = new Outpost( objective_index, PointXYi( world_x, world_y ),
+    objective_obj = new Outpost( objective_index, iXY( world_x, world_y ),
                                  BoundBox( -48, -32, 48, 32 )
                                );
     
@@ -98,7 +98,7 @@ void ObjectiveInterface::loadObjectiveList( char *file_path )
  }
   
 unsigned char ObjectiveInterface::
-              quearyObjectiveLocationStatus( PointXYi &loc, 
+              quearyObjectiveLocationStatus( iXY &loc, 
                                              PlayerID &player,
                                              Objective **objective_ptr )
  {
@@ -298,7 +298,7 @@ void ObjectiveInterface::startObjectivePositionEnumeration( void )
   objective_position_enum_player_id = PlayerInterface::getLocalPlayerID();
  }
 
-bool ObjectiveInterface::objectivePositionEnumeration( Recti *objective_rect, unsigned char *objective_disposition, int *objective_id  )
+bool ObjectiveInterface::objectivePositionEnumeration( iRect *objective_rect, unsigned char *objective_disposition, int *objective_id  )
  {
   ObjectiveState *objective_state;
   

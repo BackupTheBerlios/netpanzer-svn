@@ -170,8 +170,8 @@ bool GameManager::display_network_info_flag;
 int GameManager::execution_mode;
 
 unsigned char GameManager::game_state  = _game_state_idle;
-PointXYi GameManager::previous_video_mode_res;
-PointXYi GameManager::current_video_mode_res;
+iXY GameManager::previous_video_mode_res;
+iXY GameManager::current_video_mode_res;
 BYTE     GameManager::current_mode_flags;
 
 
@@ -186,7 +186,7 @@ void GameManager::initializeVideoSubSystem()
 
 	LOG( ( "Setting Default Video Sub-system" ) );
   
-	current_video_mode_res = PointXYi(640,480); 
+	current_video_mode_res = iXY(640,480); 
 	// don't go fullscreen for now
 	setVideoMode(current_video_mode_res, false);
 	loadPalette("wads/netp.act");
@@ -296,7 +296,7 @@ void GameManager::initializeWindowSubSystem()
 }
 
 // ******************************************************************
-void GameManager::setVideoMode(const PointXYi& mode_res, bool fullscreen)
+void GameManager::setVideoMode(const iXY& mode_res, bool fullscreen)
 {
    	if(!Screen->isDisplayModeAvailable( mode_res.x, mode_res.y, 8 ))
 		throw Exception("desired Video mode not available.");
@@ -336,7 +336,7 @@ void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
 
 void GameManager::increaseDisplayResolution()
 {
-  	PointXYi new_mode;
+  	iXY new_mode;
   
 	drawTextCenteredOnScreen("Changing Resolution", Color::white);
 
@@ -367,7 +367,7 @@ void GameManager::increaseDisplayResolution()
 
 void GameManager::decreaseDisplayResolution()
  {
-  PointXYi new_mode;
+  iXY new_mode;
   
   drawTextCenteredOnScreen("Changing Resolution", Color::white);
 
@@ -1089,7 +1089,7 @@ void GameManager::dedicatedShutdown()
 
 void GameManager::spawnPlayer( const PlayerID &player )
 {
-  PointXYi spawn_point;
+  iXY spawn_point;
 
   sound->StopTankIdle(); 
   
@@ -1098,7 +1098,7 @@ void GameManager::spawnPlayer( const PlayerID &player )
   PlayerInterface::spawnPlayer( player, spawn_point ); 
   
   //** Change the location of the view camera to the spawn point **
-  PointXYi world_loc;  
+  iXY world_loc;  
   MapInterface::mapXYtoPointXY( spawn_point, &world_loc );  
   if ( PlayerInterface::getLocalPlayerIndex() == player.getIndex() )
    {

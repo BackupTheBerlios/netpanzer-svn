@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _WORLDVIEWINTERFACE_HPP
 #define _WORLDVIEWINTERFACE_HPP
 
-#include "Point.hpp"
 #include "ViewCamera.hpp"
 
 class WorldViewInterface
@@ -42,50 +41,50 @@ public:
 	static inline void scroll_down( long scroll_increment )
 	{ main_camera->scrollPlusY(scroll_increment); }
 
-	static inline void setCameraPosition( const PointXYi &world_loc )
+	static inline void setCameraPosition( const iXY &world_loc )
 	{
 		main_camera->setCamera( world_loc );
 	}
 
 	static inline void setCameraSize( unsigned long view_size_x, unsigned long view_size_y )
 	{
-		main_camera->setCameraSize( PointXYi( view_size_x, view_size_y ) );
+		main_camera->setCameraSize( iXY( view_size_x, view_size_y ) );
 	}
     
-	static inline void getViewWindow( Recti *view_win )
+	static inline void getViewWindow( iRect *view_win )
 	{
 		main_camera->getViewWindow( view_win );
 	}
 
-	static inline void clientXYtoWorldXY( Recti &view_win,
-			PointXYi &client, PointXYi *world )
+	static inline void clientXYtoWorldXY( iRect &view_win,
+			iXY &client, iXY *world )
 	{
    		world->x = view_win.min.x + client.x;
 		world->y = view_win.min.y + client.y;   
 	}
 
- 	static inline void worldXYtoClientXY( Recti &view_win,
-			PointXYi &world, PointXYi *client )
+ 	static inline void worldXYtoClientXY( iRect &view_win,
+			iXY &world, iXY *client )
 	{
    		client->x = world.x - view_win.min.x; 
 	  	client->y = world.y - view_win.min.y;
 	}
 
-   static inline Recti getViewWindow( void )
+   static inline iRect getViewWindow( void )
    {
-	   Recti view_win;
+	   iRect view_win;
 	   main_camera->getViewWindow( &view_win );
 	   return( view_win );
    }
    
-   static inline PointXYi getViewWindowMin( void ) 
+   static inline iXY getViewWindowMin( void ) 
    {
-	   Recti view_win;
+	   iRect view_win;
 	   main_camera->getViewWindow( &view_win );
 	   return( view_win.min );
    }
   
-   static inline long getCameraDistance( PointXYi &world_loc ) 
+   static inline long getCameraDistance( iXY &world_loc ) 
    {
   	   return( main_camera->getCameraDistance( world_loc ) );
    }

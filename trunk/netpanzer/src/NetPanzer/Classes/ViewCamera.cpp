@@ -26,8 +26,8 @@ ViewCamera::ViewCamera()
 
 void ViewCamera::scrollPlusX( long scroll_increment )
  {
-  PointXYi view;
-  PointXYi map_size;
+  iXY view;
+  iXY map_size;
 
   view.x = loc.x + scroll_increment;
   view.x = view.x - (view.x % 4);
@@ -43,8 +43,8 @@ void ViewCamera::scrollPlusX( long scroll_increment )
 
 void ViewCamera::scrollMinusX( long scroll_increment )
  {
-  PointXYi view;
-  PointXYi map_size;
+  iXY view;
+  iXY map_size;
 
   view.x = loc.x - scroll_increment;
   view.x = view.x - (view.x % 4);
@@ -60,8 +60,8 @@ void ViewCamera::scrollMinusX( long scroll_increment )
 
 void ViewCamera::scrollMinusY( long scroll_increment )
  {
-  PointXYi view;
-  PointXYi map_size;
+  iXY view;
+  iXY map_size;
 
   view.y = loc.y - scroll_increment;
   view.y = view.y - (view.y % 4);
@@ -76,8 +76,8 @@ void ViewCamera::scrollMinusY( long scroll_increment )
 
 void ViewCamera::scrollPlusY( long scroll_increment )
  {
-  PointXYi view;
-  PointXYi map_size;
+  iXY view;
+  iXY map_size;
 
   view.y = loc.y + scroll_increment;
   view.y = view.y - (view.y % 4);
@@ -94,7 +94,7 @@ void ViewCamera::scrollPlusY( long scroll_increment )
  void ViewCamera::getViewStart( unsigned long view_size_x, unsigned long view_size_y,
                                 unsigned long *view_start_x, unsigned long *view_start_y )
 {
-  	PointXYi map_size;
+  	iXY map_size;
    	unsigned long view_offset_x;
 	unsigned long view_offset_y;
 	long start_x, start_y;

@@ -127,8 +127,8 @@ class PlayerInterface
  
    static PlayerState * allocateNewPlayer( void );
 
-   static void spawnPlayer( unsigned short player_index, const PointXYi &location );
-   static void spawnPlayer( const PlayerID &player, const PointXYi &location );
+   static void spawnPlayer( unsigned short player_index, const iXY &location );
+   static void spawnPlayer( const PlayerID &player, const iXY &location );
    
    static bool testRuleScoreLimit( long score_limit, PlayerState ** player_state );
    

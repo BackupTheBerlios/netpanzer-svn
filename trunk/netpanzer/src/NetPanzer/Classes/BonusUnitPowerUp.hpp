@@ -38,7 +38,7 @@ class BonusUnitPowerUp : public PowerUp
    virtual ~BonusUnitPowerUp()
    { }
 
-   BonusUnitPowerUp(PointXYi map_loc, int type);
+   BonusUnitPowerUp(iXY map_loc, int type);
 
    virtual void updateState( void );
 

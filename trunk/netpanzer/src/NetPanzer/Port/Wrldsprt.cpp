@@ -59,7 +59,7 @@ world_sprite::world_sprite( void )
 
  short world_sprite::is_visible( void )
  {  
-  PointXYi loc( x_loc + bbox_x1 + attach_x, y_loc + bbox_y1 + attach_y );
+  iXY loc( x_loc + bbox_x1 + attach_x, y_loc + bbox_y1 + attach_y );
   
   //return( WorldViewInterface::inView( 640, 480, loc ) );
   return( true );
@@ -164,7 +164,7 @@ world_animation::world_animation( void )
 
  short world_animation::is_visible( void )
  {
-  PointXYi loc( x_loc + bbox_x1 + attach_x, y_loc + bbox_y1 + attach_y );
+  iXY loc( x_loc + bbox_x1 + attach_x, y_loc + bbox_y1 + attach_y );
   
   //return( WorldViewInterface::inView( 640, 480, loc ) );
   return( true );

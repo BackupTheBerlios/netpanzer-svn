@@ -173,7 +173,7 @@ void PowerUpInterface::generatePowerUp( void )
   PowerUp *power_up;
   float next_regen_interval;
   PowerUpCreateMesg create_mesg;
-  PointXYi loc;
+  iXY loc;
 
   if( (powerup_list.getItemCount() < power_up_limit) )     
    {

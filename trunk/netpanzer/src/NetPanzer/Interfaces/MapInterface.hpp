@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "WorldMap.hpp"
 #include "SpawnList.hpp"
 #include "WadMapTable.hpp"
-#include "Point.hpp"
 
 #include "Surface.hpp"
 
@@ -40,21 +39,21 @@ protected:
 	static void buildMiniMapSurface( void );
 
 public: 
-   static inline void getMapPointSize(PointXYi *map_size)
+   static inline void getMapPointSize(iXY *map_size)
    {
   	   map_size->x = main_map.getXsize() * tile_set.getTileXsize();
 	   map_size->y = main_map.getYsize() * tile_set.getTileYsize(); 
    }
    
-   static inline void getMapSize(PointXYi *map_size)
+   static inline void getMapSize(iXY *map_size)
    {
 	   map_size->x = main_map.getXsize();
 	   map_size->y = main_map.getYsize(); 
    }
 
-   static inline PointXYi getMapSize()
+   static inline iXY getMapSize()
    {
-	   return( PointXYi( main_map.getXsize(), main_map.getYsize() ) ); 
+	   return( iXY( main_map.getXsize(), main_map.getYsize() ) ); 
    }
       
    static inline unsigned long getMapXsize()
@@ -94,7 +93,7 @@ public:
  	   main_map.offsetToMapXY( offset, map_x, map_y );
    }
                
-   static inline void offsetToMapXY( unsigned long offset, PointXYi *map_loc )
+   static inline void offsetToMapXY( unsigned long offset, iXY *map_loc )
    {
  	   unsigned short map_x, map_y;
   	   main_map.offsetToMapXY( offset, &map_x, &map_y );
@@ -109,7 +108,7 @@ public:
   	   *point_y = (map_y * 32) + (32 / 2); 
    }
 
-   static void mapXYtoPointXY( PointXYi map_loc, PointXYi *loc )
+   static void mapXYtoPointXY( iXY map_loc, iXY *loc )
    {
 	   loc->x = (map_loc.x * 32) + (32 / 2);
 	   loc->y = (map_loc.y * 32) + (32 / 2); 
@@ -122,7 +121,7 @@ public:
 	   *map_y = (unsigned short )  point_y /  32; 
    }
 
-   static inline void pointXYtoMapXY( PointXYi point, PointXYi *map_loc )
+   static inline void pointXYtoMapXY( iXY point, iXY *map_loc )
    {
 	   map_loc->x = (unsigned short )  point.x  / 32;
 	   map_loc->y = (unsigned short )  point.y  / 32; 
@@ -134,12 +133,12 @@ public:
 	   main_map.mapXYtoOffset( map_x, map_y, offset );
    }
 
-   static inline void mapXYtoOffset( PointXYi &map_loc, unsigned long *offset )
+   static inline void mapXYtoOffset( iXY &map_loc, unsigned long *offset )
    {
 	   main_map.mapXYtoOffset( map_loc.x, map_loc.y, offset );
    } 
 
-   static inline void markLocHack( const PointXYi &loc )
+   static inline void markLocHack( const iXY &loc )
    {
 	   unsigned short *map_buffer;
 	   unsigned long offset;
@@ -148,7 +147,7 @@ public:
 	   map_buffer[ offset ] = 27;
    }
    
-   static inline void unmarkLocHack( const PointXYi &loc )
+   static inline void unmarkLocHack( const iXY &loc )
    {
 	   unsigned short *map_buffer;
 	   unsigned long offset;
@@ -189,13 +188,13 @@ public:
 	   return ( &mini_map_surface );
    }
    
-   static unsigned char getMovementValue( PointXYi map_loc );
+   static unsigned char getMovementValue( iXY map_loc );
 
-   static unsigned char getAverageColorPointXY( PointXYi &point_loc );
+   static unsigned char getAverageColorPointXY( iXY &point_loc );
  
-   static unsigned char getAverageColorMapXY( PointXYi &map_loc );
+   static unsigned char getAverageColorMapXY( iXY &map_loc );
             
-   static inline void getFreeSpawnPoint( PointXYi *spawn_loc )
+   static inline void getFreeSpawnPoint( iXY *spawn_loc )
    {
 	   spawn_list.getFreeSpawnPoint( spawn_loc );
    }

@@ -59,7 +59,7 @@ class UnitIniSyncMessage : public NetMessage
   public:
    unsigned char unit_type;
    UnitID unit_id;
-   PointXYi location;
+   iXY location;
    UnitState unit_state;
 
   UnitIniSyncMessage()
@@ -95,7 +95,7 @@ class UnitRemoteCreate : public NetMessage
  {
   public:
    UnitID new_unit_id;
-   PointXYi location;
+   iXY location;
    unsigned char unit_type;
 
   UnitRemoteCreate()

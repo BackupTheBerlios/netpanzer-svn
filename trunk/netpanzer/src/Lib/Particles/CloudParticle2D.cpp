@@ -185,12 +185,12 @@ void CloudParticle2D::sim()
 //---------------------------------------------------------------------------
 void CloudParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 {
-	packedSurface.setAttrib(PointXYi(int(pos.x), int(pos.z)), layer);
+	packedSurface.setAttrib(iXY(int(pos.x), int(pos.z)), layer);
 	sorter.addSprite(&packedSurface);
 
 	if (GameConfig::getDisplayShadowsFlag())
 	{
-		packedSurfaceShadow.setAttrib(PointXYi(int(pos.x - 300), int(pos.z)), shadowLayer);
+		packedSurfaceShadow.setAttrib(iXY(int(pos.x - 300), int(pos.z)), shadowLayer);
 		sorter.addSprite(&packedSurfaceShadow);
 	}
 

@@ -410,7 +410,7 @@ void ParticleInterface::addSmolderSystem(const iXY &worldPos, const iRect &bound
 //--------------------------------------------------------------------------
 void ParticleInterface::addCloudParticle(const iXY &worldPos, const iXY &worldSize)
 {
-	PointXYi shit;
+	iXY shit;
 	MapInterface::getMapPointSize(&shit);
 
 	fXYZ  pos(worldPos.x, 0, worldPos.y);
@@ -424,7 +424,7 @@ void ParticleInterface::addCloudParticle(const iXY &worldPos, const iXY &worldSi
 //--------------------------------------------------------------------------
 void ParticleInterface::addCloudParticleSystem(int maxParticleCount)
 {
-    PointXYi shit;
+    iXY shit;
     MapInterface::getMapPointSize(&shit);
 
     for (int i = 0; i < maxParticleCount; i++)
@@ -450,7 +450,7 @@ void ParticleInterface::testSim()
 		// XXX
         // dsound.PlayAmbientSound( _not_applicable, _blow_up_tank, 0 );
 
-		Recti gameViewRect;
+		iRect gameViewRect;
 		WorldViewInterface::getViewWindow(&gameViewRect);
 
 		UnitState unitState;
@@ -473,7 +473,7 @@ void ParticleInterface::testSim()
 		// XXX
         // dsound.PlayAmbientSound( _not_applicable, _blow_up_tank, 0 );
 
-		Recti gameViewRect;
+		iRect gameViewRect;
 		WorldViewInterface::getViewWindow(&gameViewRect);
 
 		iXY location;
@@ -876,7 +876,7 @@ void ParticleInterface::addCloudParticle(int count /* = 1 */)
 {
     assert(count >= 0);
 
-	PointXYi shit;
+	iXY shit;
     MapInterface::getMapPointSize(&shit);
 
     for (int i = 0; i < count; i++)
@@ -904,7 +904,7 @@ void ParticleInterface::initParticleSystems()
         //DirtKickParticle2D::init();
         //RadarPingParticle2D::init();
 
-        //PointXYi shit;
+        //iXY shit;
         //MapInterface::getMapPointSize(&shit);
         //addCloudParticle(iXY(400, 400), iXY(shit.x, shit.y));
 

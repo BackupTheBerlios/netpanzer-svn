@@ -48,7 +48,7 @@ void UnitBlackBoard::updateUnitLocs( void )
    for ( k = 0; k < x_limit; k++ )
     {
      if ( unit_loc_map.getBit( k, i ) == true )
-	  MapInterface::markLocHack( PointXYi( k, i ) );
+	  MapInterface::markLocHack( iXY( k, i ) );
 	}
 
  }

@@ -19,19 +19,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "BoundBox.hpp"
 
-bool BoundBox::bounds( PointXYi &center, PointXYi &test )
+bool BoundBox::bounds( iXY &center, iXY &test )
  {   
-  PointXYi new_max( center + max );
-  PointXYi new_min( center + min );
+  iXY new_max( center + max );
+  iXY new_min( center + min );
 
   return( test.x >= new_min.x && test.x < new_max.x &&
           test.y >= new_min.y && test.y < new_max.y
         );   
  }
 
-void BoundBox::setBounds(const PointXYi &nMin, const PointXYi &nMax )
+void BoundBox::setBounds(const iXY &nMin, const iXY &nMax )
  {
-  min = PointXYi(nMin);
-  max = PointXYi(nMax);
+  min = iXY(nMin);
+  max = iXY(nMax);
   assert( min.x <= 0 && min.y <= 0 && max.x >= 0 && max.y >= 0 );  
  }

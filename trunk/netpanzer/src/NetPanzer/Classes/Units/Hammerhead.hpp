@@ -24,10 +24,10 @@ class Hammerhead : public Vehicle
  {
   protected:
    void setUnitProperties( void );
-   virtual void  fireWeapon( PointXYi &target_loc );
+   virtual void  fireWeapon( iXY &target_loc );
  
   public:
-   Hammerhead( PointXYi initial_loc, unsigned char color, unsigned char flag );
+   Hammerhead( iXY initial_loc, unsigned char color, unsigned char flag );
 
  };
 

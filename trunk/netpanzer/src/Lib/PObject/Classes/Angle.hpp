@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _ANGLE_HPP
 #define _ANGLE_HPP
 
-#include "math.h"
-#include "Point.hpp"
+#include <math.h>
+#include "iXY.hpp"
 
 class Angle
 {
@@ -41,12 +41,12 @@ public:
 	  	angle = (double) atan2( (double) -y, (double) x );                 
   	}
    
-   	Angle(const PointXYi& vec)
+   	Angle(const iXY& vec)
    	{
 	  	set( vec );
 	}
  
-	inline void set( const PointXYi &vec  )
+	inline void set( const iXY &vec  )
 	{
 		angle = (double) atan( ((double) -vec.y / (double) vec.x) ); 
      
@@ -123,7 +123,7 @@ public:
 		angle_int = DegreesInt();         
 	}
    
- 	AngleInt( PointXYi &vec )
+ 	AngleInt( iXY &vec )
 		: Angle( vec )
 	{
 	   	angle_int = DegreesInt();     

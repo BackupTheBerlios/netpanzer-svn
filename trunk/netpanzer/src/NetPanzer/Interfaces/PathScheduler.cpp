@@ -216,7 +216,7 @@ void PathGenerator::pathingFsmUpdatePath( void )
 	  case _pathing_fsm_state_initialize :
 	   {
         unsigned long abs_new_goal; 
-        PointXYi new_goal;
+        iXY new_goal;
         unsigned long path_length;
   
         path_length = path_request.path->listCount();
@@ -276,7 +276,7 @@ void PathGenerator::pathingFsmCachePath( void )
 	  case _pathing_fsm_state_initialize_part_a :
 	   {
 		unsigned long abs_new_goal;  
-		PointXYi new_goal;
+		iXY new_goal;
  
 		working_start = path_request.start;
 		working_goal  = path_request.goal;
@@ -311,7 +311,7 @@ void PathGenerator::pathingFsmCachePath( void )
 	  case _pathing_fsm_state_initialize_part_b : 
 	   {
 		unsigned long abs_new_goal;  
-		PointXYi new_goal;
+		iXY new_goal;
          
 		for ( unsigned long i = 0; i < path_splice_length; i++ )
          { path_request.path->popLast( &abs_new_goal ); }

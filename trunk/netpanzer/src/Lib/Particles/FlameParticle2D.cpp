@@ -180,7 +180,7 @@ void FlameParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 		return;
 	}
 
-	packedSurface.setAttrib(PointXYi((int)pos.x, (int)pos.z), layer);
+	packedSurface.setAttrib(iXY((int)pos.x, (int)pos.z), layer);
 	sorter.addSprite(&packedSurface);
 
 } // end FlameParticle2D::draw

@@ -42,9 +42,9 @@ public:
      box_state = on_off;
     }
   
-   virtual bool isVisible(const Recti &world_win ) const;
+   virtual bool isVisible(const iRect &world_win ) const;
     
-   virtual void blit( Surface *surface, const Recti &world_win ); 
+   virtual void blit( Surface *surface, const iRect &world_win ); 
 };
 
 class UnitSelectionBox : public SelectionBoxSprite
@@ -100,7 +100,7 @@ class UnitSelectionBox : public SelectionBoxSprite
      allie_state = is_allied;
     }
 
-   virtual void blit( Surface *surface, const Recti &world_win );
+   virtual void blit( Surface *surface, const iRect &world_win );
 };
 
 #endif // ** _SELECTION_BOX_SPRITE_HPP 

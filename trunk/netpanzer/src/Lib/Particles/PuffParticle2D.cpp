@@ -159,7 +159,7 @@ void PuffParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 
 	packedSurfaceShadow.nextFrame();
 
-	packedSurface.setAttrib(PointXYi((int) pos.x, (int) pos.z), layer);
+	packedSurface.setAttrib(iXY((int) pos.x, (int) pos.z), layer);
 	sorter.addSprite(&packedSurface);
 
 	if (GameConfig::getDisplayShadowsFlag())
@@ -169,7 +169,7 @@ void PuffParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 			shadowPos.x = pos.x - ((float(index) / float(staticPackedSmokeLightPuff.getCount())) * packedSurfaceShadow.getCurFrame() * 10);
 		}
 
-		packedSurfaceShadow.setAttrib(PointXYi((int) shadowPos.x, (int) shadowPos.z), shadowLayer);
+		packedSurfaceShadow.setAttrib(iXY((int) shadowPos.x, (int) shadowPos.z), shadowLayer);
 		sorter.addSprite(&packedSurfaceShadow);
 	}
 

@@ -75,7 +75,7 @@ void SparkParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 	}	else
 		{
 			packedSurface.setFrame(curFrame);
-			packedSurface.setAttrib( PointXYi((int) pos.x, (int) pos.z), 3);
+			packedSurface.setAttrib( iXY((int) pos.x, (int) pos.z), 3);
 			sorter.addSprite(&packedSurface);
 			//spark.blt(dest, iXY(x, z));
 		} 

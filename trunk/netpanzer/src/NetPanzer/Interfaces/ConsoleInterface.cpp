@@ -30,9 +30,9 @@ bool ConsoleInterface::stdout_pipe;
 long ConsoleInterface::console_size; 
 ConsoleLineArray ConsoleInterface::line_list;
 
-PointXYi ConsoleInterface::surface_size;
-Recti    ConsoleInterface::bounds;
-PointXYi ConsoleInterface::line_offset;
+iXY ConsoleInterface::surface_size;
+iRect    ConsoleInterface::bounds;
+iXY ConsoleInterface::line_offset;
 long     ConsoleInterface::vertical_spacing;
 long     ConsoleInterface::horizontal_spacing;
 long     ConsoleInterface::max_char_per_line;
@@ -55,8 +55,8 @@ void ConsoleInterface::initialize( long size )
 
   line_index = console_size - 1;
 
-  surface_size = PointXYi( 640, 480 );
-  bounds = Recti( 5, 5, 640 - 5, 480 - 5 );
+  surface_size = iXY( 640, 480 );
+  bounds = iRect( 5, 5, 640 - 5, 480 - 5 );
  
   max_char_per_line = (bounds.max.x - bounds.min.x) / 8;
     
@@ -80,7 +80,7 @@ void ConsoleInterface::initialize( long size )
   stdout_pipe = false;
  }
 
-void ConsoleInterface::setToSurfaceSize( PointXYi pix )
+void ConsoleInterface::setToSurfaceSize( iXY pix )
  {
   surface_size = pix;
   
@@ -250,7 +250,7 @@ void ConsoleInterface::postMessage( const char *format, ... )
  
 void ConsoleInterface::update_overlap( Surface &surface )
  {
-  PointXYi current_line;
+  iXY current_line;
   long  index; 
   short visible_count;
   
@@ -299,7 +299,7 @@ void ConsoleInterface::update_overlap( Surface &surface )
   
   if( input_string_active == true )
    {  
-    PointXYi input_offset;
+    iXY input_offset;
     unsigned long max_char_space;
     unsigned long input_string_length;
     char *string_ptr;

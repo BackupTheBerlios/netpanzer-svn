@@ -24,11 +24,11 @@ class Humvee : public Vehicle
  {
   protected:
    void setUnitProperties( void );
-   virtual void  fireWeapon( PointXYi &target_loc );
+   virtual void  fireWeapon( iXY &target_loc );
    
 
   public:
-   Humvee( PointXYi initial_loc, unsigned char color, unsigned char flag );
+   Humvee( iXY initial_loc, unsigned char color, unsigned char flag );
 
    //virtual void offloadGraphics( SpriteSorter &sorter );
 

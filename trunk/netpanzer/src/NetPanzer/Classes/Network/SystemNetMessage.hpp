@@ -20,9 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string.h>
 
-#include "Point.hpp"
 #include "PlayerState.hpp"
 #include "NetPacket.hpp"
+#include "iXY.hpp"
 
 #ifdef MSVC
 #pragma pack(1)
@@ -42,7 +42,7 @@ enum { _net_message_id_system_set_view,
 class SystemSetPlayerView : public NetMessage
  {
   public:
-   PointXYi camera_loc;
+   iXY camera_loc;
 
   SystemSetPlayerView()
    {

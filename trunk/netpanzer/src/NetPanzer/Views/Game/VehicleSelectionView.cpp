@@ -513,7 +513,7 @@ void VehicleSelectionView::doDraw(const Surface &viewArea, const Surface &client
 	{if (WorldInputCmdProcessor::isObjectiveSelected())
 	{
 		// Draw a line connecting the vehicleSelectionView and the objective.
-		Recti gameViewRect;
+		iRect gameViewRect;
 		WorldViewInterface::getViewWindow(&gameViewRect);
 	   
 		iXY objectivePos(WorldInputCmdProcessor::getSelectedObjectiveWorldPos());

@@ -51,7 +51,7 @@ class UnitInterface
 
 
    static UnitBase * newUnit( unsigned short unit_type, 
-                              const PointXYi &location, 
+                              const iXY &location, 
                               unsigned short player_index );
    
    static void addNewUnit( UnitBase *unit, const PlayerID &player  );
@@ -133,10 +133,10 @@ class UnitInterface
    static void offloadGraphics( SpriteSorter &sorter );
 
    static UnitBase * createUnit( unsigned short unit_type, 
-		   						 const PointXYi &location,
+		   						 const iXY &location,
 								 const PlayerID &player );
 
-   static void spawnPlayerUnits( const PointXYi &location, 
+   static void spawnPlayerUnits( const iXY &location, 
 		   						const PlayerID &player,
 								const PlayerUnitConfig &unit_config );   
 
@@ -147,21 +147,21 @@ class UnitInterface
                                         bool find_first ); 
     
    static bool quearyClosestUnit( UnitBase **closest_unit_ptr,
-                                     PointXYi &loc,
+                                     iXY &loc,
                                      PlayerID &player_id, 
                                      unsigned char search_flags );
 
    static bool quearyClosestUnit( UnitBase **closest_unit_ptr, 
-                                     Recti &bounding_rect, 
-                                     PointXYi &loc );
+                                     iRect &bounding_rect, 
+                                     iXY &loc );
 
    static bool quearyClosestEnemyUnit( UnitBase **closest_unit_ptr,
-                                          PointXYi &loc,
+                                          iXY &loc,
                                           unsigned short player_index );
 
-   static bool quearyUnitAtMapLoc( PointXYi map_loc, UnitID *queary_unit_id );
+   static bool quearyUnitAtMapLoc( iXY map_loc, UnitID *queary_unit_id );
 
-   static unsigned char quearyUnitLocationStatus( PointXYi loc );
+   static unsigned char quearyUnitLocationStatus( iXY loc );
     
 
    protected:
@@ -174,10 +174,10 @@ class UnitInterface
    public: 
     // Unit positions, almost exclusivly for mini map
     static void startUnitPositionEnumeration( void );
-    static bool unitPositionEnumeration( PointXYi *position, unsigned char *unit_disposition, unsigned char *threat_level );
+    static bool unitPositionEnumeration( iXY *position, unsigned char *unit_disposition, unsigned char *threat_level );
 
     static void resetUnitCycleIterator( unsigned long *iterator );
-    static PointXYi unitPositionCycle( unsigned long *iterator );
+    static iXY unitPositionCycle( unsigned long *iterator );
    
    protected:
     // Unit Message Handler Methods  

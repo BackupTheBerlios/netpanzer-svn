@@ -27,7 +27,7 @@ class MiniMapInterface
  {
   protected:
    static fXY            scale_factor;
-   static PointXYi       mini_map_size;
+   static iXY       mini_map_size;
    static bool        pathing_debug_mode;	 
    
    static TimerFrameBase radar_blink_timer;
@@ -45,8 +45,8 @@ class MiniMapInterface
      
    static void annotateUnits( Surface &map_surface );
    static void annotateObjectives( Surface &map_surface );
-   static void drawLargeUnitDot( const Surface &dest, const PointXYi &location, unsigned char color );
-   static void drawSmallUnitDot( const Surface &dest, const PointXYi &location, unsigned char color );
+   static void drawLargeUnitDot( const Surface &dest, const iXY &location, unsigned char color );
+   static void drawSmallUnitDot( const Surface &dest, const iXY &location, unsigned char color );
   
   public:
     
@@ -55,20 +55,20 @@ class MiniMapInterface
      return( MapInterface::getMiniMapSurface() );
     }
   
-   static Recti getWorldWindow( void );
+   static iRect getWorldWindow( void );
 
-   static void setMapScale(const PointXYi &mini_map_size);
-   static const PointXYi &getMapScale() { return mini_map_size; }
+   static void setMapScale(const iXY &mini_map_size);
+   static const iXY &getMapScale() { return mini_map_size; }
 
-   static void setWorldWindowPosition( PointXYi world_loc ); 
+   static void setWorldWindowPosition( iXY world_loc ); 
 
    static void annotateMiniMap( Surface &map_surface );
 
    static bool isUnitSelected( void );
    static void deselectUnits( void );
-   static bool selectUnits( Recti bound_box );
-   static bool isValidUnitMove( PointXYi location );
-   static bool moveUnits( PointXYi location );
+   static bool selectUnits( iRect bound_box );
+   static bool isValidUnitMove( iXY location );
+   static bool moveUnits( iXY location );
    
   
    static void setPathingDebugMode( bool on_off );

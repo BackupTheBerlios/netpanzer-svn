@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Surface.hpp"
 #include "TileSet.hpp"
 #include "Palette.hpp"
-#include "Point.hpp"
 
 class TileInterface
 {
@@ -36,7 +35,7 @@ public:
 		return ( &tile_set );
 	}
 
-	static PointXYi getTileSize( void );
+	static iXY getTileSize( void );
 
 	static PIX  getWorldPixColor(int worldX, int worldY);
 	static long getWorldPixMovementValue(int worldX, int worldY);

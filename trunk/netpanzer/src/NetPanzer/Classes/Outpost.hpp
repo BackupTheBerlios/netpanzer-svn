@@ -27,10 +27,10 @@ class Outpost : public Objective
  {
   protected:
   unsigned char outpost_state;
-  PointXYi outpost_map_loc;
-  PointXYi unit_generation_loc;
-  PointXYi unit_collection_loc;
-  PointXYi occupation_pad_offset;
+  iXY outpost_map_loc;
+  iXY unit_generation_loc;
+  iXY unit_collection_loc;
+  iXY occupation_pad_offset;
   unsigned short unit_generation_type;
   bool unit_generation_on_flag;
 
@@ -51,7 +51,7 @@ class Outpost : public Objective
 
   public:
   
-  Outpost( short ID, PointXYi location, BoundBox area );
+  Outpost( short ID, iXY location, BoundBox area );
 
   void getOutpostStatus( OutpostStatus &status );
   

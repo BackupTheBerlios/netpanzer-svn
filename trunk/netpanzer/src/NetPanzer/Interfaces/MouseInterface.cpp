@@ -39,29 +39,29 @@ unsigned char MouseInterface::cursor_x_size;
 unsigned char MouseInterface::cursor_y_size;
 Surface	  MouseInterface::mouse_cursor( false );
 
-PointXYi MouseInterface::mouse_pos;  
+iXY MouseInterface::mouse_pos;  
    
 float    MouseInterface::button_hold_threshold = (const float) .10;
 
 bool   MouseInterface::left_button_down = false;
 bool   MouseInterface::left_button_up = false;
 bool   MouseInterface::left_button_dbclick_active = false;
-PointXYi  MouseInterface::left_button_down_pos;
-PointXYi  MouseInterface::left_button_up_pos;
+iXY  MouseInterface::left_button_down_pos;
+iXY  MouseInterface::left_button_up_pos;
 TIMESTAMP MouseInterface::left_button_hold_time;
      
 bool   MouseInterface::right_button_down = false;
 bool   MouseInterface::right_button_up = false;
 bool   MouseInterface::right_button_dbclick_active = false;
-PointXYi  MouseInterface::right_button_down_pos;
-PointXYi  MouseInterface::right_button_up_pos;
+iXY  MouseInterface::right_button_down_pos;
+iXY  MouseInterface::right_button_up_pos;
 TIMESTAMP MouseInterface::right_button_hold_time;
    
 bool   MouseInterface::middle_button_down = false;
 bool   MouseInterface::middle_button_up = false;
 bool   MouseInterface::middle_button_dbclick_active = false;
-PointXYi  MouseInterface::middle_button_down_pos;
-PointXYi  MouseInterface::middle_button_up_pos;
+iXY  MouseInterface::middle_button_down_pos;
+iXY  MouseInterface::middle_button_up_pos;
 TIMESTAMP MouseInterface::middle_button_hold_time;
    
 unsigned char MouseInterface::button_mask;

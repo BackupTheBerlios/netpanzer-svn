@@ -29,7 +29,7 @@ private:
 	virtual void setSurface();
 
 public:
-	BulletWeapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, PointXYi &start, PointXYi &end);
+	BulletWeapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end);
 	virtual void updateStatus();
 	virtual void offloadGraphics( SpriteSorter &sorter );
 

@@ -72,7 +72,7 @@ void DirtKickParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 #if 0
 	// I can't use nextFrame() below, because there are multiple
 	// particles which share the same Surface.
-	dirtKickSurface.setAttrib(PointXYi(pos.x, pos.z), 3);
+	dirtKickSurface.setAttrib(iXY(pos.x, pos.z), 3);
 	sorter.addSprite(&dirtKickSurface);
 #endif
 

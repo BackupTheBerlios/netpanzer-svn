@@ -121,7 +121,7 @@ protected:
 //class SpriteBltNormal : public SpriteSurface
 //{
 //public:
-//	virtual void blit(Surface *surface, Recti &world_win);
+//	virtual void blit(Surface *surface, iRect &world_win);
 //
 //}; // end SpriteBltNormal
 //
@@ -130,7 +130,7 @@ protected:
 //class SpriteBlt
 //{
 //public:
-//	virtual void blit(Surface *surface, Recti &world_win);
+//	virtual void blit(Surface *surface, iRect &world_win);
 //
 //	ColorTable *colorTable;
 //	
@@ -143,7 +143,7 @@ protected:
 //class SpriteBltTrans : public SpriteSurface
 //{
 //public:
-//	virtual void blit(Surface *surface, Recti &world_win);
+//	virtual void blit(Surface *surface, iRect &world_win);
 //
 //}; // end SpriteBltTrans
 //
@@ -154,7 +154,7 @@ protected:
 //public:
 //	float brightness;
 //
-//	virtual void blit(Surface *surface, Recti &world_win);
+//	virtual void blit(Surface *surface, iRect &world_win);
 //
 //}; // end SpriteBltTrans
 //
@@ -168,7 +168,7 @@ protected:
 //public:
 //	SpriteBltBlendRandom();
 //	
-//	virtual void blit(Surface *surface, Recti &world_win);
+//	virtual void blit(Surface *surface, iRect &world_win);
 //
 //}; // end SpriteBltBlendRandom
 //
@@ -183,7 +183,7 @@ protected:
 //	SpriteBltBlendRandomScale();
 //	float yPos;
 //	
-//	virtual void blit(Surface *surface, Recti &world_win);
+//	virtual void blit(Surface *surface, iRect &world_win);
 //
 //}; // end SpriteBltBlendRandomScale
 //
@@ -197,7 +197,7 @@ protected:
 //		colorTable = 0;
 //	}
 //	
-//	virtual void blit(Surface *surface, Recti &world_win);
+//	virtual void blit(Surface *surface, iRect &world_win);
 //
 //	ColorTable *colorTable;
 //	float       scale;
@@ -215,7 +215,7 @@ protected:
 //		useBlend   = 1;
 //	}
 //	
-//	virtual void blit(Surface *surface, Recti &world_win);
+//	virtual void blit(Surface *surface, iRect &world_win);
 //
 //	ColorTable *colorTable;
 //	char        useBlend;
@@ -229,7 +229,7 @@ protected:
 //public:
 //	SpriteBltScale() {}
 //	
-//	virtual void blit(Surface *surface, Recti &world_win);
+//	virtual void blit(Surface *surface, iRect &world_win);
 //
 //	float scale;
 //
@@ -242,7 +242,7 @@ protected:
 //public:
 //	PackedSurfacePreScaled() {}
 //
-//	virtual void blit(Surface *surface, Recti &world_win);
+//	virtual void blit(Surface *surface, iRect &world_win);
 //	virtual void setTo(const PackedSurface &source);
 //
 //}; // end PackedSurfacePreScaled
@@ -254,7 +254,7 @@ protected:
 //public:
 //	SpritePackedBlt() {}
 //
-//	virtual void blit( Surface *surface, Recti &world_win );
+//	virtual void blit( Surface *surface, iRect &world_win );
 //
 //}; // end SpritePackedBlt
 

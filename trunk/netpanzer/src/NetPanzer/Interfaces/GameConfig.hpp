@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <assert.h>
 #include <string.h>
 
-#include "Point.hpp"
 #include "Surface.hpp"
 #include "Color.hpp"
 #include "PlayerUnitConfig.hpp"
@@ -955,24 +954,24 @@ class GameConfig
 	  return( "Invalid Mode" );
 	 }
 
-	static inline PointXYi getGameScreenResolutionSize( void )
+	static inline iXY getGameScreenResolutionSize( void )
 	 {
 	  switch(screen_resolution_enum)
 	   {
 	   	case _game_config_standard_res_640x480 :
-		 return( PointXYi( 640, 480) );
+		 return( iXY( 640, 480) );
 		break;
 
 		case _game_config_standard_res_800x600 :
-		 return( PointXYi( 800, 600) );
+		 return( iXY( 800, 600) );
 		break;
 
 		case _game_config_standard_res_1024x768 :
-		 return( PointXYi(1024, 768) );		
+		 return( iXY(1024, 768) );		
 		break;
 	   } 
 	 
-      return( PointXYi( 640, 480) );
+      return( iXY( 640, 480) );
 	 }
 
    //*********************************************************** 

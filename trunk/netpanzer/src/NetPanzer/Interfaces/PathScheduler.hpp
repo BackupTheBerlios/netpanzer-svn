@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PATHSCHEDULER_HPP
 #define _PATHSCHEDULER_HPP
 
-#include "Point.hpp"
 #include "Astar.hpp"
 #include "PathList.hpp"
 #include "UnitID.hpp"
@@ -29,12 +28,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class PathCacheEntry
  {
   public:
-   PointXYi  start;
-   PointXYi  goal;
+   iXY  start;
+   iXY  goal;
    PathList  path;			    
    bool   valid;
    
-  inline void set( PointXYi start, PointXYi goal, PathList &path )			    
+  inline void set( iXY start, iXY goal, PathList &path )			    
    {
     PathCacheEntry::start = start;
     PathCacheEntry::goal = goal;
@@ -115,8 +114,8 @@ class PathGenerator
    unsigned long path_update_length;
    void pathingFsmUpdatePath( void );
 
-   PointXYi working_start;
-   PointXYi working_goal;
+   iXY working_start;
+   iXY working_goal;
    unsigned long path_splice_length;
    void pathingFsmCachePath( void );
 

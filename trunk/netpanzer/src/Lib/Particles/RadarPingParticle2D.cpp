@@ -68,7 +68,7 @@ void RadarPingParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 	{
 		// I can't use nextFrame() below, because there are multiple
 		// particles which share the same Surface.
-		radarPingSurface.setAttrib(PointXYi(pos.x, pos.z), 3);
+		radarPingSurface.setAttrib(iXY(pos.x, pos.z), 3);
 		sorter.addSprite(&radarPingSurface);
 	}
 	else if (Particle2D::bltTo == BLT_TO_SURFACE)

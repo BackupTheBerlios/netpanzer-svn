@@ -27,9 +27,9 @@ void TileInterface::loadTileSet( const char *file_path )
   tile_set.loadTileSet( file_path );
  } 
 
-PointXYi TileInterface::getTileSize( void )
+iXY TileInterface::getTileSize( void )
  {
-  return( PointXYi( tile_set.getTileXsize(), tile_set.getTileYsize() ) ); 
+  return( iXY( tile_set.getTileXsize(), tile_set.getTileYsize() ) ); 
  }
 
 PIX TileInterface::getWorldPixColor(int worldX, int worldY)

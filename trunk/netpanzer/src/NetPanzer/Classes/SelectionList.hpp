@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitState.hpp"
 #include "UnitInterface.hpp"
 #include "UnitIDList.hpp"
-#include "Point.hpp"
 
 class SelectionList
  {
@@ -37,13 +36,13 @@ class SelectionList
   void initialize( unsigned long size, unsigned long growIncrement, 
                    unsigned long growLimit );
 
-  bool selectUnit( PointXYi point );
+  bool selectUnit( iXY point );
 
-  bool addUnit( PointXYi point );
+  bool addUnit( iXY point );
  
-  bool selectTarget( PointXYi point ); 
+  bool selectTarget( iXY point ); 
   
-  bool selectBounded( Recti bounds );
+  bool selectBounded( iRect bounds );
 
   inline bool isSelected( void )
    {

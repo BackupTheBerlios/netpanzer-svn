@@ -36,16 +36,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 SpritePacked BONUS_POWERUP_ANIM;
 SpritePacked BONUS_POWERUP_ANIM_SHADOW;
 
-BonusUnitPowerUp::BonusUnitPowerUp(PointXYi map_loc, int type)
+BonusUnitPowerUp::BonusUnitPowerUp(iXY map_loc, int type)
   : PowerUp( map_loc, type )
  {
   bonus_unit_type = rand() % _unit_type_humvee;
 
   bonus_unit_animation.setData( BONUS_POWERUP_ANIM );
-  bonus_unit_animation.setAttrib( powerup_state.world_loc, PointXYi(0,0), 5 ); 
+  bonus_unit_animation.setAttrib( powerup_state.world_loc, iXY(0,0), 5 ); 
 
   bonus_unit_animation_shadow.setData( BONUS_POWERUP_ANIM_SHADOW );
-  bonus_unit_animation_shadow.setAttrib( powerup_state.world_loc, PointXYi(0,0), 4 ); 
+  bonus_unit_animation_shadow.setAttrib( powerup_state.world_loc, iXY(0,0), 4 ); 
   bonus_unit_animation_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
 
  }
@@ -56,7 +56,7 @@ void BonusUnitPowerUp::spawnBonusUnits( UnitID &unit_id )
   UnitBase *unit;
   PlacementMatrix placement_matrix;
   PlayerID player_id;
-  PointXYi map_loc;
+  iXY map_loc;
   
   sound->PlayPowerUpSound();
 
@@ -72,7 +72,7 @@ void BonusUnitPowerUp::spawnBonusUnits( UnitID &unit_id )
     for( int i = 0; i < 9; i++ )
      {
       UnitBase *new_unit;
-      PointXYi spawn_loc;
+      iXY spawn_loc;
        
       placement_matrix.getNextEmptyLoc( &spawn_loc );
     

@@ -19,19 +19,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _UNITBLACKBOARD_HPP
 
 #include "BitArray.hpp"
-#include "Point.hpp"
+#include "iXY.hpp"
 
 class UnitBlackBoard
  {
   protected:
    static BitArray unit_loc_map;
      
-   static inline void markUnitLoc( PointXYi &unit_map_loc )
+   static inline void markUnitLoc( iXY &unit_map_loc )
     {
      unit_loc_map.setBit( unit_map_loc.x, unit_map_loc.y );
 	}
   
-   static inline void unmarkUnitLoc( PointXYi &unit_map_loc )
+   static inline void unmarkUnitLoc( iXY &unit_map_loc )
     {
      unit_loc_map.clearBit( unit_map_loc.x, unit_map_loc.y );
 	}
@@ -43,7 +43,7 @@ class UnitBlackBoard
 
    static void updateUnitLocs( void );
 
-   static inline bool unitOccupiesLoc( PointXYi &unit_map_loc )
+   static inline bool unitOccupiesLoc( iXY &unit_map_loc )
     {
      return( unit_loc_map.getBit( unit_map_loc.x, unit_map_loc.y ) );
 	}

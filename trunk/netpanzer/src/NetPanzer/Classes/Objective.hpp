@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _OBJECTIVE_HPP
 #define _OBJECTIVE_HPP
 
-#include "Point.hpp"
 #include "BoundBox.hpp"
 #include "SpriteSorter.hpp"
 #include "PlayerState.hpp"
@@ -36,17 +35,17 @@ class ObjectiveState
   public:
    short ID;
    bool  selection_state;
-   Recti    selection_box;
+   iRect    selection_box;
    unsigned char outpost_type;
    char name[64];   
-   PointXYi location;
+   iXY location;
    BoundBox capture_area;
    BoundBox area;
    unsigned char objective_status;
    unsigned char occupation_status;
    PlayerID occupying_player;
  
-  inline bool isBounded( PointXYi &test )
+  inline bool isBounded( iXY &test )
    {
     return( capture_area.bounds( location, test ) );
    }
@@ -72,7 +71,7 @@ class Objective
   public:
    ObjectiveState objective_state;
   
-   Objective( short ID, PointXYi location, BoundBox area );
+   Objective( short ID, iXY location, BoundBox area );
 
    void getSyncData( SyncObjective &objective_sync_mesg );
 

@@ -22,9 +22,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 int selectKey( void *key, UnitState *comp )
  {
-  PointXYi *point;
+  iXY *point;
 
-  point = (PointXYi *) key;
+  point = (iXY *) key;
 
   if ( comp->bounds( *point ) == true )
    return( 0 );
@@ -34,9 +34,9 @@ int selectKey( void *key, UnitState *comp )
 
 int boundKey( void *key, UnitState *comp )
  {
-  Recti *bound;
+  iRect *bound;
 
-  bound = (Recti *) key;
+  bound = (iRect *) key;
 
   if ( bound->contains( comp->location ) == true )
    return( 0 );
@@ -52,7 +52,7 @@ void SelectionList::initialize( unsigned long size,
  }
 
 
-bool SelectionList::selectUnit( PointXYi point )
+bool SelectionList::selectUnit( iXY point )
  {
   PlayerID player_id;
 
@@ -79,7 +79,7 @@ bool SelectionList::selectUnit( PointXYi point )
   return( false );
  }
 
-bool SelectionList::addUnit( PointXYi point )
+bool SelectionList::addUnit( iXY point )
  {
   PlayerID player_id;
 
@@ -106,7 +106,7 @@ bool SelectionList::addUnit( PointXYi point )
  }
 
   
-bool SelectionList::selectTarget( PointXYi point )
+bool SelectionList::selectTarget( iXY point )
  {
   PlayerID player_id;
 
@@ -133,7 +133,7 @@ bool SelectionList::selectTarget( PointXYi point )
  }
 
 
-bool SelectionList::selectBounded( Recti bounds )
+bool SelectionList::selectBounded( iRect bounds )
  {
   PlayerID player_id;
   bool found_units;

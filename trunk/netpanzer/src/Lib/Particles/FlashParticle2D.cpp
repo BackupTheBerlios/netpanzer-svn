@@ -134,7 +134,7 @@ void FlashParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 
 	packedSurface.setFrame(frame);
 
-	packedSurface.setAttrib(PointXYi((int)pos.x, (int)pos.z), layer);
+	packedSurface.setAttrib(iXY((int)pos.x, (int)pos.z), layer);
 	sorter.addSprite(&packedSurface);
 
 	// Since we only want a single frame of the flash, kill it after it is done.

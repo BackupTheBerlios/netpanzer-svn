@@ -42,7 +42,7 @@ void StaticsInterface::loadStatics( const char *file_path )
    {
     fscanf( input_file,  "%d %d %d", &type, &x_loc, &y_loc );
 	
-	sprite->setAttrib( PointXYi( x_loc, y_loc ), 0 );
+	sprite->setAttrib( iXY( x_loc, y_loc ), 0 );
 
 	static_sprite_list.add( sprite, static_count );
 	static_count++;

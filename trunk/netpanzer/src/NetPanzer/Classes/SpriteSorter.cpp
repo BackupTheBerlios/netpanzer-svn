@@ -114,7 +114,7 @@ void SpriteSorter::reset( void )
 
  }
 
-void SpriteSorter::reset( Recti &world_win )
+void SpriteSorter::reset( iRect &world_win )
  {
   world_window = world_win;
   reset();

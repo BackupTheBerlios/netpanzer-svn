@@ -37,14 +37,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 SpritePacked ENEMY_RADAR_POWERUP_ANIM;
 SpritePacked ENEMY_RADAR_POWERUP_ANIM_SHADOW;
 
-EnemyRadarPowerUp::EnemyRadarPowerUp(PointXYi map_loc, int type)
+EnemyRadarPowerUp::EnemyRadarPowerUp(iXY map_loc, int type)
   : PowerUp( map_loc, type )
  {
   enemy_radar_animation.setData( ENEMY_RADAR_POWERUP_ANIM );
-  enemy_radar_animation.setAttrib( powerup_state.world_loc, PointXYi(0,0), 5 ); 
+  enemy_radar_animation.setAttrib( powerup_state.world_loc, iXY(0,0), 5 ); 
 
   enemy_radar_animation_shadow.setData( ENEMY_RADAR_POWERUP_ANIM_SHADOW );
-  enemy_radar_animation_shadow.setAttrib( powerup_state.world_loc, PointXYi(0,0), 4 ); 
+  enemy_radar_animation_shadow.setAttrib( powerup_state.world_loc, iXY(0,0), 4 ); 
   enemy_radar_animation_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
   
  }

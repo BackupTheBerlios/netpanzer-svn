@@ -187,7 +187,7 @@ void MapInterface::buildMiniMapSurface()
 	} // ** for y_index   
 }
 
-unsigned char MapInterface::getMovementValue( PointXYi map_loc )
+unsigned char MapInterface::getMovementValue( iXY map_loc )
  {
   unsigned short tile_val;
   char move_val;
@@ -279,7 +279,7 @@ unsigned char MapInterface::getMovementValue( PointXYi map_loc )
 
  }
    
-unsigned char MapInterface::getAverageColorPointXY( PointXYi &point_loc )
+unsigned char MapInterface::getAverageColorPointXY( iXY &point_loc )
  {
   unsigned long offset; 
   unsigned short map_value;
@@ -291,7 +291,7 @@ unsigned char MapInterface::getAverageColorPointXY( PointXYi &point_loc )
   return( tile_set.getAverageTileColor( map_value ) ); 
  }
  
-unsigned char MapInterface::getAverageColorMapXY( PointXYi &map_loc )
+unsigned char MapInterface::getAverageColorMapXY( iXY &map_loc )
  {
   unsigned short map_value;
 

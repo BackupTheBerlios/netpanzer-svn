@@ -40,7 +40,7 @@ SpriteSurface::SpriteSurface( void *data, int xPix, int yPix, int numFrames )
   setData( data, xPix, yPix, numFrames );
  }
 
-bool SpriteSurface::isVisible(const Recti &world_win ) const
+bool SpriteSurface::isVisible(const iRect &world_win ) const
  {
   long min_x;
   long min_y;
@@ -66,20 +66,20 @@ bool SpriteSurface::isVisible(const Recti &world_win ) const
   return( true );	 
 
   /*
-  PointXYi temp_pix = pix;
+  iXY temp_pix = pix;
   temp_pix.x = temp_pix.x/2;
   temp_pix.y = temp_pix.y/2;
      
-  if ( world_win.clip( Recti( world_pos - temp_pix, world_pos + temp_pix) ) )  
+  if ( world_win.clip( iRect( world_pos - temp_pix, world_pos + temp_pix) ) )  
    return( false );
 
   return( true );
   */
  }
 
-void SpriteSurface::blit( Surface *surface, const Recti &world_win )
+void SpriteSurface::blit( Surface *surface, const iRect &world_win )
  {
-  PointXYi blit_offset;
+  iXY blit_offset;
 
   blit_offset = (world_pos + attach_offset) - world_win.min; 
   printf("NormalSpriteBlit %d %d\n", blit_offset.x, blit_offset.y);
@@ -102,7 +102,7 @@ SpritePacked::SpritePacked( PackedSurface &source )
 	drawMode   = SOLID;
  }
 
-bool SpritePacked::isVisible(const Recti &world_win ) const
+bool SpritePacked::isVisible(const iRect &world_win ) const
  {
   long min_x;
   long min_y;
@@ -128,20 +128,20 @@ bool SpritePacked::isVisible(const Recti &world_win ) const
   return( true );	 
   
  /*
-  PointXYi temp_pix = pix;
+  iXY temp_pix = pix;
   temp_pix.x = temp_pix.x/2;
   temp_pix.y = temp_pix.y/2;
      
-  if ( world_win.clip( Recti( world_pos - temp_pix, world_pos + temp_pix) ) )  
+  if ( world_win.clip( iRect( world_pos - temp_pix, world_pos + temp_pix) ) )  
    return( false );
 
   return( true );  
   */
  }
 
-void SpritePacked::blit( Surface *surface, const Recti &world_win )
+void SpritePacked::blit( Surface *surface, const iRect &world_win )
  {
-  PointXYi blit_offset;
+  iXY blit_offset;
 
   blit_offset = (world_pos + attach_offset) - world_win.min; 
 

@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _POWERUP_HPP
 #define _POWERUP_HPP
 
-#include "Point.hpp"
 #include "UnitID.hpp"
 #include "SpriteSorter.hpp"
 #include "PowerUpNetMessage.hpp"
@@ -30,8 +29,8 @@ enum { _power_up_lifecycle_state_active,
 class PowerUpState
  {
   public:
-   PointXYi map_loc;
-   PointXYi world_loc;
+   iXY map_loc;
+   iXY world_loc;
    int      ID;
    int      type;
    int      life_cycle_state;
@@ -48,9 +47,9 @@ class PowerUp
   public: 
    PowerUp();
 
-   PowerUp(PointXYi map_loc, int ID, int type);
+   PowerUp(iXY map_loc, int ID, int type);
 
-   PowerUp(PointXYi map_loc, int type);
+   PowerUp(iXY map_loc, int type);
 
    virtual void updateState( void ) { }
 

@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string.h>
 #include "BoundBox.hpp"
-#include "Point.hpp"
 #include "Angle.hpp"
 
 #include "UnitLifecycles.hpp"
@@ -38,7 +37,7 @@ class UnitState
    unsigned char  unit_type;
 
    bool        select;
-   PointXYi       location;
+   iXY       location;
    BoundBox       bbox;
 
    AngleInt       body_angle;
@@ -63,7 +62,7 @@ class UnitState
    
    UnitState( );
    
-   inline bool bounds( PointXYi &loc )
+   inline bool bounds( iXY &loc )
     {
      return( bbox.bounds( location, loc ) );
     } 

@@ -137,7 +137,7 @@ void Weapon::packFiles()
 	//tempPackSurface.save("pics/particles/shells/pak/shells.pak");
 }
 
-Weapon::Weapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, PointXYi &start, PointXYi &end) 
+Weapon::Weapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end) 
 {
 	// I use this to line things up, so leave this in here when this
 	// get redone.  thank you.
@@ -223,7 +223,7 @@ void Weapon::updateStatus( void )
    fsmFlight();
  
   // ** NOTE: Temp unit new sprites put in
-  Recti world_win;
+  iRect world_win;
 
   shell.setWorldPos( location );
 

@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapInterface.hpp"
 #include "UnitID.hpp"
 #include "UnitBlackBoard.hpp"
-#include "Point.hpp"
 #include "PathList.hpp"
 
 enum { _path_request_full, _path_request_update };
@@ -39,13 +38,13 @@ class PathRequest
    unsigned short request_type;
    unsigned short path_type;
    UnitID         unit_id;
-   PointXYi       start;
-   PointXYi       goal;
+   iXY       start;
+   iXY       goal;
    PathList      *path;
  
    void set( UnitID &unit_id, 
-             PointXYi &start, 
-			 PointXYi &goal, 
+             iXY &start, 
+			 iXY &goal, 
 			 unsigned short path_type, 
 			 PathList *path,
 			 unsigned short request_type )
@@ -71,7 +70,7 @@ class PathRequest
 class AstarNode
  {
   public:
-  PointXYi map_loc;
+  iXY map_loc;
   unsigned long abs_loc;
   long f;
   long g; 
@@ -99,7 +98,7 @@ class Astar : private MapInterface
    bool dynamic_node_management_flag;
   
   protected:
-   unsigned long mapXYtoAbsloc( PointXYi map_loc );
+   unsigned long mapXYtoAbsloc( iXY map_loc );
    
 
    AstarNode current_node;
@@ -133,9 +132,9 @@ class Astar : private MapInterface
    PathRequest *path_request_ptr;
    unsigned short path_merge_type;
    
-   void initializePath( PointXYi &start, PointXYi &goal, unsigned short path_type );
+   void initializePath( iXY &start, iXY &goal, unsigned short path_type );
     
-   long heuristic( PointXYi &pointA, PointXYi &pointB );
+   long heuristic( iXY &pointA, iXY &pointB );
  
    unsigned char generateSucc( unsigned short direction, AstarNode *node, AstarNode *succ ); 
 

@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _MOUSEINTERFACE_HPP
 #define _MOUSEINTERFACE_HPP
 
-#include "Point.hpp" 
 #include "QueueTemplate.hpp"
 #include "Surface.hpp"
 
@@ -39,8 +38,8 @@ public:
 	};
   	unsigned char button;
 	unsigned char event;
-	PointXYi down_pos;
-	PointXYi   up_pos;
+	iXY down_pos;
+	iXY   up_pos;
 };
 
 typedef QueueTemplate< MouseEvent > MouseEventQueue;  
@@ -53,29 +52,29 @@ private:
 	static unsigned char cursor_y_size;
   
 protected:
-  	static PointXYi mouse_pos;  
+  	static iXY mouse_pos;  
    
    	static float    button_hold_threshold;
 
 	static bool  left_button_down;
 	static bool  left_button_up;
 	static bool  left_button_dbclick_active; 
-	static PointXYi left_button_down_pos;
-	static PointXYi left_button_up_pos;
+	static iXY left_button_down_pos;
+	static iXY left_button_up_pos;
 	static TIMESTAMP left_button_hold_time;
      
 	static bool right_button_down;
 	static bool right_button_up;
 	static bool right_button_dbclick_active;
-	static PointXYi right_button_down_pos;
-	static PointXYi right_button_up_pos;
+	static iXY right_button_down_pos;
+	static iXY right_button_up_pos;
 	static TIMESTAMP right_button_hold_time;
    
 	static bool middle_button_down;
 	static bool middle_button_up;
 	static bool middle_button_dbclick_active;
-	static PointXYi middle_button_down_pos;
-	static PointXYi middle_button_up_pos;
+	static iXY middle_button_down_pos;
+	static iXY middle_button_up_pos;
 	static TIMESTAMP middle_button_hold_time;
    
 	static unsigned char button_mask;

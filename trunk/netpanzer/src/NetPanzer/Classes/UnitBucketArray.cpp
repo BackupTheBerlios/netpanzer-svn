@@ -32,12 +32,12 @@ UnitBucketArray::~UnitBucketArray( )
   
  }
 
-void UnitBucketArray::initialize( PointXYi map_size, PointXYi tile_size )
+void UnitBucketArray::initialize( iXY map_size, iXY tile_size )
  {
   initialize( map_size, tile_size, 10, 10 );
  }
 
-void UnitBucketArray::initialize( PointXYi map_size, PointXYi tile_size, long x_super_sample, long y_super_sample )
+void UnitBucketArray::initialize( iXY map_size, iXY tile_size, long x_super_sample, long y_super_sample )
  {
   unsigned long rows, columns;
  
@@ -67,7 +67,7 @@ void UnitBucketArray::initialize( PointXYi map_size, PointXYi tile_size, long x_
   UnitBucketArrayTemplate::initialize( rows, columns );
  }
 
-Recti UnitBucketArray::worldRectToBucketRectClip( Recti &world_rect )
+iRect UnitBucketArray::worldRectToBucketRectClip( iRect &world_rect )
  {
   long bucket_max_x;
   long bucket_max_y;
@@ -80,7 +80,7 @@ Recti UnitBucketArray::worldRectToBucketRectClip( Recti &world_rect )
   if ( bucket_max_y >= (long) row_size )   
    { bucket_max_y = row_size  - 1; }
  
-  return( Recti( world_rect.min.x / pixel_x_sample_factor,
+  return( iRect( world_rect.min.x / pixel_x_sample_factor,
                  world_rect.min.y / pixel_y_sample_factor,
                  bucket_max_x,
                  bucket_max_y
@@ -89,7 +89,7 @@ Recti UnitBucketArray::worldRectToBucketRectClip( Recti &world_rect )
  }
 
 
-UnitBucketList * UnitBucketArray::getBucketAssocWorldLoc( PointXYi world_loc )
+UnitBucketList * UnitBucketArray::getBucketAssocWorldLoc( iXY world_loc )
  {
   long bucket_index;
 
@@ -101,7 +101,7 @@ UnitBucketList * UnitBucketArray::getBucketAssocWorldLoc( PointXYi world_loc )
   return( &(array[ bucket_index ]) );
  }
 
-UnitBucketList * UnitBucketArray::getBucketAssocMapLoc( PointXYi map_loc )
+UnitBucketList * UnitBucketArray::getBucketAssocMapLoc( iXY map_loc )
  {
   long bucket_index;
 
@@ -218,7 +218,7 @@ UnitBase * UnitBucketArray::getUnit( UnitID unit_id, unsigned long bucket_index 
   return( 0 );
  }
 
-UnitBase * UnitBucketArray::getUnitAtWorldLoc( UnitID unit_id, PointXYi world_loc )
+UnitBase * UnitBucketArray::getUnitAtWorldLoc( UnitID unit_id, iXY world_loc )
  {
   long bucket_index;
   unsigned long unique_index;
@@ -245,7 +245,7 @@ UnitBase * UnitBucketArray::getUnitAtWorldLoc( UnitID unit_id, PointXYi world_lo
   return( 0 );
  }
 
-UnitBase * UnitBucketArray::getUnitAtMapLoc( UnitID unit_id, PointXYi map_loc )
+UnitBase * UnitBucketArray::getUnitAtMapLoc( UnitID unit_id, iXY map_loc )
  {
   long bucket_index;
   unsigned long unique_index;
@@ -313,7 +313,7 @@ bool UnitBucketArray::moveUnit( UnitID unit_id, unsigned long from_bucket_index,
   return( true );
  }
 
-bool UnitBucketArray::deleteUnitBucketPointer( UnitID unit_id, PointXYi world_loc )
+bool UnitBucketArray::deleteUnitBucketPointer( UnitID unit_id, iXY world_loc )
  {
   long bucket_index;
   unsigned long unique_index;

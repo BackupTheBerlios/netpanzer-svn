@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "UnitBase.hpp"
 #include "UnitID.hpp"
-#include "Point.hpp"
 
 class UnitBucketPointer 
  {
@@ -69,18 +68,18 @@ class UnitBucketArray : public UnitBucketArrayTemplate
    long map_y_sample_factor;
    long pixel_x_sample_factor;
    long pixel_y_sample_factor;
-   PointXYi map_size;
+   iXY map_size;
    long map_size_x;
    long map_size_y;
-   PointXYi tile_size;
+   iXY tile_size;
 
   public:
 
   UnitBucketArray( );
   ~UnitBucketArray( );
 
-  void initialize( PointXYi map_size, PointXYi tile_size);
-  void initialize( PointXYi map_size, PointXYi tile_size, long x_super_sample, long y_super_sample );
+  void initialize( iXY map_size, iXY tile_size);
+  void initialize( iXY map_size, iXY tile_size, long x_super_sample, long y_super_sample );
 
   inline long getXSample( void )
    { return( map_x_sample_factor ); }
@@ -88,10 +87,10 @@ class UnitBucketArray : public UnitBucketArrayTemplate
   inline long getYSample( void )
    { return( map_y_sample_factor ); }
   
-  inline PointXYi getSample( void )
-   { return( PointXYi( map_x_sample_factor, map_y_sample_factor) ); }
+  inline iXY getSample( void )
+   { return( iXY( map_x_sample_factor, map_y_sample_factor) ); }
   
-  inline unsigned long mapLocToBucketIndex( PointXYi map_loc )
+  inline unsigned long mapLocToBucketIndex( iXY map_loc )
    {
     long bucket_index;
 
@@ -101,7 +100,7 @@ class UnitBucketArray : public UnitBucketArrayTemplate
     return( bucket_index );
    }
 
-  inline unsigned long worldLocToBucketIndex( PointXYi world_loc )
+  inline unsigned long worldLocToBucketIndex( iXY world_loc )
    {
     long bucket_index;
 
@@ -111,39 +110,39 @@ class UnitBucketArray : public UnitBucketArrayTemplate
     return( bucket_index );
    }
   
-  inline PointXYi mapLocToBucketLoc( PointXYi map_loc )
+  inline iXY mapLocToBucketLoc( iXY map_loc )
    {
-    return( PointXYi( (map_loc.x / map_x_sample_factor), (map_loc.y / map_y_sample_factor) ) );
+    return( iXY( (map_loc.x / map_x_sample_factor), (map_loc.y / map_y_sample_factor) ) );
    }
 
-  inline PointXYi worldLocToBucketLoc( PointXYi world_loc )
+  inline iXY worldLocToBucketLoc( iXY world_loc )
    {
-    return( PointXYi(  (world_loc.x / pixel_x_sample_factor) , (world_loc.y / pixel_y_sample_factor) ) );
+    return( iXY(  (world_loc.x / pixel_x_sample_factor) , (world_loc.y / pixel_y_sample_factor) ) );
    }
   
-  inline Recti worldRectToBucketRect( Recti &world_rect )
+  inline iRect worldRectToBucketRect( iRect &world_rect )
    {
-    return( Recti( world_rect.min.x / pixel_x_sample_factor,
+    return( iRect( world_rect.min.x / pixel_x_sample_factor,
                    world_rect.min.y / pixel_y_sample_factor,
                    world_rect.max.x / pixel_x_sample_factor,
                    world_rect.max.y / pixel_y_sample_factor  )
           );
    }
 
-  Recti worldRectToBucketRectClip( Recti &world_rect );
+  iRect worldRectToBucketRectClip( iRect &world_rect );
 
 
-  inline Recti mapRectToBucketRect( Recti &map_rect )
+  inline iRect mapRectToBucketRect( iRect &map_rect )
    {
-    return( Recti( map_rect.min.x / map_x_sample_factor,
+    return( iRect( map_rect.min.x / map_x_sample_factor,
                    map_rect.min.y / map_y_sample_factor,
                    map_rect.max.x / map_x_sample_factor,
                    map_rect.max.y / map_y_sample_factor  )
           );
    }
 
-  UnitBucketList * getBucketAssocWorldLoc( PointXYi world_loc );
-  UnitBucketList * getBucketAssocMapLoc( PointXYi map_loc );
+  UnitBucketList * getBucketAssocWorldLoc( iXY world_loc );
+  UnitBucketList * getBucketAssocMapLoc( iXY map_loc );
  
   void addUnit( UnitBase *unit );
   void addUnit( UnitBucketPointer *unit_bucket_ptr );
@@ -152,12 +151,12 @@ class UnitBucketArray : public UnitBucketArrayTemplate
 
   UnitBase * getUnit( UnitID unit_id );
   UnitBase * getUnit( UnitID unit_id, unsigned long bucket_index );
-  UnitBase * getUnitAtWorldLoc( UnitID unit_id, PointXYi world_loc );
-  UnitBase * getUnitAtMapLoc( UnitID unit_id, PointXYi map_loc );
+  UnitBase * getUnitAtWorldLoc( UnitID unit_id, iXY world_loc );
+  UnitBase * getUnitAtMapLoc( UnitID unit_id, iXY map_loc );
 
   bool moveUnit( UnitID unit_id, unsigned long from_bucket_index, unsigned long to_bucket_index );
   
-  bool deleteUnitBucketPointer( UnitID unit_id, PointXYi world_loc );
+  bool deleteUnitBucketPointer( UnitID unit_id, iXY world_loc );
  };
 
 

@@ -115,8 +115,8 @@ public:
 protected:
 	iXY   offset;     // Used like a hot spot for drawing.
 	float fps;        // The speed to change the frames. Make sure TimerInterface::getTimeSlice() is being updated.
-	iXY	  pix;        // # of pixels in the x and y diRection.
-	iXY	  center;     // Center of the pixels in the x and y diRection.
+	iXY	  pix;        // # of pixels in the x and y diiRecton.
+	iXY	  center;     // Center of the pixels in the x and y diiRecton.
 	int   stride;     // Number of bytes from one row to the next.
 	int	  frameCount; // Number of frames.
 	float curFrame;   // Current frame of frameCount.

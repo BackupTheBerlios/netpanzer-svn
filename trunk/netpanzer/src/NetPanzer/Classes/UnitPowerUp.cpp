@@ -50,15 +50,15 @@ enum { _unit_powerup_hitpoints,
 SpritePacked UNIT_POWERUP_ANIM;
 SpritePacked UNIT_POWERUP_ANIM_SHADOW;
 
-UnitPowerUp::UnitPowerUp(PointXYi map_loc, int type)
+UnitPowerUp::UnitPowerUp(iXY map_loc, int type)
   : PowerUp( map_loc, type )
  {
   unit_powerup_type = rand() % _unit_powerup_enum_count;
   unit_powerup_animation.setData( UNIT_POWERUP_ANIM );
-  unit_powerup_animation.setAttrib( powerup_state.world_loc, PointXYi(0,0), 5 ); 
+  unit_powerup_animation.setAttrib( powerup_state.world_loc, iXY(0,0), 5 ); 
 
   unit_powerup_animation_shadow.setData( UNIT_POWERUP_ANIM_SHADOW );
-  unit_powerup_animation_shadow.setAttrib( powerup_state.world_loc, PointXYi(0,0), 4 ); 
+  unit_powerup_animation_shadow.setAttrib( powerup_state.world_loc, iXY(0,0), 4 ); 
   unit_powerup_animation_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
 
  }

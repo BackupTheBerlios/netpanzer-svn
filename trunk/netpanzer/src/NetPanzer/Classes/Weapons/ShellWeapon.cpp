@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "FlashParticle2D.hpp"
 
 
-ShellWeapon::ShellWeapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, PointXYi &start, PointXYi &end)
+ShellWeapon::ShellWeapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end)
 : Weapon(owner, owner_type_id, damage, start, end)
 {
 	fXYZ muzzleStart(start.x + direction.x * 25, 0.0f, start.y + direction.y * 25);

@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameConfig.hpp"
 
 fXY      MiniMapInterface::scale_factor;
-PointXYi MiniMapInterface::mini_map_size;
+iXY MiniMapInterface::mini_map_size;
 bool  MiniMapInterface::pathing_debug_mode = false;	 
 
 PIX MiniMapInterface::player_unit_color;
@@ -44,9 +44,9 @@ bool        MiniMapInterface::radar_blink_flag;
 TimerFrameBase MiniMapInterface::show_enemy_radar_timer;
 bool        MiniMapInterface::show_enemy_radar_flag;
   
-Recti MiniMapInterface::getWorldWindow( void )
+iRect MiniMapInterface::getWorldWindow( void )
  {
-  Recti world_win;
+  iRect world_win;
   WorldViewInterface::getViewWindow( &world_win );
   
   world_win.min.x = int(float(world_win.min.x) / scale_factor.x);
@@ -57,9 +57,9 @@ Recti MiniMapInterface::getWorldWindow( void )
   return( world_win ); 
  }
 
-void MiniMapInterface::setMapScale(const PointXYi &mini_map_size)
+void MiniMapInterface::setMapScale(const iXY &mini_map_size)
  {
-  PointXYi map_size;
+  iXY map_size;
 
   MiniMapInterface::mini_map_size = mini_map_size;
 
@@ -68,7 +68,7 @@ void MiniMapInterface::setMapScale(const PointXYi &mini_map_size)
   scale_factor.y = float(map_size.y) / float(mini_map_size.y);
  }
 
-void MiniMapInterface::setWorldWindowPosition( PointXYi world_loc ) 
+void MiniMapInterface::setWorldWindowPosition( iXY world_loc ) 
  {
   world_loc.x = int(float(world_loc.x) * scale_factor.x);
   world_loc.y = int(float(world_loc.y) * scale_factor.y);
@@ -78,7 +78,7 @@ void MiniMapInterface::setWorldWindowPosition( PointXYi world_loc )
 
 void MiniMapInterface::annotateUnits( Surface &map_surface )
  {
-  PointXYi world_loc, map_loc;
+  iXY world_loc, map_loc;
   unsigned char unit_dispostion;
   unsigned char threat_level;
 
@@ -152,7 +152,7 @@ void MiniMapInterface::annotateUnits( Surface &map_surface )
 
 void MiniMapInterface::annotateObjectives( Surface &map_surface )
  {
-  Recti world_rect, map_rect;
+  iRect world_rect, map_rect;
   unsigned char objective_disposition;
   PIX color;
 
@@ -246,7 +246,7 @@ bool MiniMapInterface::isUnitSelected( void )
   return( COMMAND_PROCESSOR.isUnitSelected() );
  }
 
-bool MiniMapInterface::selectUnits( Recti bound_box )
+bool MiniMapInterface::selectUnits( iRect bound_box )
  {
   bound_box.min.x = int(float(bound_box.min.x) * scale_factor.x);
   bound_box.min.y = int(float(bound_box.min.y) * scale_factor.y);
@@ -261,7 +261,7 @@ void MiniMapInterface::deselectUnits( void )
   COMMAND_PROCESSOR.deselectUnitsExternal(); 
  }
 
-bool MiniMapInterface::isValidUnitMove( PointXYi location )
+bool MiniMapInterface::isValidUnitMove( iXY location )
  {
   location.x = location.x * scale_factor.x;
   location.y = location.y * scale_factor.y;
@@ -269,7 +269,7 @@ bool MiniMapInterface::isValidUnitMove( PointXYi location )
   return( COMMAND_PROCESSOR.isValidMoveLocation( location ) );
  }
 
-bool MiniMapInterface::moveUnits( PointXYi location )
+bool MiniMapInterface::moveUnits( iXY location )
  {
   location.x = location.x * scale_factor.x;
   location.y = location.y * scale_factor.y;
@@ -309,7 +309,7 @@ void MiniMapInterface::setProperties( PIX player_unit_color,
   show_enemy_radar_flag = false;
  }
 
-void MiniMapInterface::drawLargeUnitDot( const Surface &dest, const PointXYi &location, unsigned char color )
+void MiniMapInterface::drawLargeUnitDot( const Surface &dest, const iXY &location, unsigned char color )
 {
 	// Center
 	dest.putPixel( location.x,     location.y,     color );
@@ -330,7 +330,7 @@ void MiniMapInterface::drawLargeUnitDot( const Surface &dest, const PointXYi &lo
 	//dest.putPixel( location.x + 2, location.y + 1, Color::black );
 }
 
-void MiniMapInterface::drawSmallUnitDot( const Surface &dest, const PointXYi &location, unsigned char color )
+void MiniMapInterface::drawSmallUnitDot( const Surface &dest, const iXY &location, unsigned char color )
 {
 	dest.putPixel( location, color );
 }

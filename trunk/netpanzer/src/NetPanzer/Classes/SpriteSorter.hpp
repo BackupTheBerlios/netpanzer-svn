@@ -20,12 +20,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Sprite.hpp"
 #include "PArrayGrowable.hpp"
-#include "Point.hpp"
 
 class SpriteSorter
  {  
   protected:
-   Recti world_window;
+   iRect world_window;
    PArrayGrowable sprite_lists[ _MAX_HEIGHT_LEVELS ];
    unsigned long  list_counts[ _MAX_HEIGHT_LEVELS ];
  
@@ -42,14 +41,14 @@ class SpriteSorter
 
    void reset( void );
 
-   void reset( Recti &world_win );
+   void reset( iRect &world_win );
 
-   inline void setWorldWindow( Recti &world_win )
+   inline void setWorldWindow( iRect &world_win )
     { 
      world_window = world_win;
     }
    
-   inline Recti getWorldWindow( void )
+   inline iRect getWorldWindow( void )
     {
      return( world_window );
     }

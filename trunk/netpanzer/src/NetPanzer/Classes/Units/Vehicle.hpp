@@ -108,7 +108,7 @@ class Vehicle : public Unit
   unsigned short shortestRotation( AngleInt &angle, long goal_angle, long *delta );
   unsigned short mapXYtoOrientation( unsigned long square, long *goal_angle  );
   void orientationToOffset( unsigned short orientation, signed char *offset_x, signed char *offset_y ); 
-  void locationOffset( unsigned long square, PointXYi &offset );
+  void locationOffset( unsigned long square, iXY &offset );
 
   // ** FSMs and AI FSMs 
   unsigned short fsmBodyRotate_rotation;
@@ -139,10 +139,10 @@ class Vehicle : public Unit
   void setFsmMoveMapSquare( unsigned long square );
   bool fsmMoveMapSquare( void );   
   
-  PointXYi fsmTurretTrackPoint_target;
+  iXY fsmTurretTrackPoint_target;
   Angle fsmTurretTrackPoint_target_angle;
   bool fsmTurretTrackPoint_on_target;
-  void setFsmTurretTrackPoint( PointXYi &target );
+  void setFsmTurretTrackPoint( iXY &target );
   void clearFsmTurretTrackPoint( void );
   void syncFsmTurretTrackPoint( void );
   void fsmTurretTrackPoint( void );
@@ -154,8 +154,8 @@ class Vehicle : public Unit
   void syncFsmTurretTrackTarget( void );
   void fsmTurretTrackTarget( void );
     
-  PointXYi fsmGunneryLocation_target; 
-  void setFsmGunneryLocation( PointXYi &target ); 
+  iXY fsmGunneryLocation_target; 
+  void setFsmGunneryLocation( iXY &target ); 
   void clearFsmGunneryLocation( void );
   void fsmGunneryLocation( void );
   
@@ -172,11 +172,11 @@ class Vehicle : public Unit
   void setAiFsmDefendHold( void );
   void aiFsmDefendHold( void );
   
-  PointXYi aiFsmMoveToLoc_goal; 
+  iXY aiFsmMoveToLoc_goal; 
   unsigned char aiFsmMoveToLoc_state;
   unsigned long aiFsmMoveToLoc_next_square;
-  PointXYi aiFsmMoveToLoc_next_loc;
-  PointXYi aiFsmMoveToLoc_prev_loc;
+  iXY aiFsmMoveToLoc_next_loc;
+  iXY aiFsmMoveToLoc_prev_loc;
   Timer	   aiFsmMoveToLoc_wait_timer;
   bool  aiFsmMoveToLoc_path_not_finished;
   bool ruleMoveToLoc_GoalReached( void );
@@ -184,11 +184,11 @@ class Vehicle : public Unit
   void aiFsmMoveToLoc( void );
   
   UnitID   aiFsmAttackUnit_target_ID;
-  PointXYi aiFsmAttackUnit_target_goal_loc;
+  iXY aiFsmAttackUnit_target_goal_loc;
   unsigned char aiFsmAttackUnit_state;
   unsigned long aiFsmAttackUnit_next_square;
-  PointXYi aiFsmAttackUnit_next_loc;
-  PointXYi aiFsmAttackUnit_prev_loc;
+  iXY aiFsmAttackUnit_next_loc;
+  iXY aiFsmAttackUnit_prev_loc;
   Timer	   aiFsmAttackUnit_wait_timer;
   bool  aiFsmAttackUnit_path_not_finished;
   bool  aiFsmAttackUnit_target_destroyed;
@@ -198,11 +198,11 @@ class Vehicle : public Unit
   
   unsigned char aiFsmManualMove_move_orientation;
   unsigned char aiFsmManualMove_state;
-  PointXYi aiFsmManualMove_next_loc;
-  PointXYi aiFsmManualMove_prev_loc;
+  iXY aiFsmManualMove_next_loc;
+  iXY aiFsmManualMove_prev_loc;
   void aiFsmManualMove( void );
    
-  virtual void fireWeapon( PointXYi &target_loc );
+  virtual void fireWeapon( iXY &target_loc );
 
   
   TimerFrameBase threat_level_under_attack_timer;
@@ -242,7 +242,7 @@ class Vehicle : public Unit
  
   public:
 
-  Vehicle( PointXYi initial_loc );
+  Vehicle( iXY initial_loc );
 
   virtual void updateState( void );
 

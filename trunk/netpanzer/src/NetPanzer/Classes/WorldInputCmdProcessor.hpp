@@ -25,12 +25,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class WorldInputCmdProcessor
  {  
   protected:
-   Recti world_win;
+   iRect world_win;
         
    bool left_button_hold_action_complete;
 
    bool selection_box_active;
-   PointXYi box_press, box_release;      
+   iXY box_press, box_release;      
    bool selectBoundBoxUnits( void );
 
    bool local_key_table[256];
@@ -54,17 +54,17 @@ class WorldInputCmdProcessor
    static bool unit_flag_visibility_state;
    void toggleUnitFlagVisibility( void );
 
-   unsigned char getCursorStatus( PointXYi &loc ); 
+   unsigned char getCursorStatus( iXY &loc ); 
    void setMouseCursor( unsigned char world_cursor_status );
 
    void getManualControlStatus( void );
  
    void sendManualMoveCommand( unsigned char orientation, 
                                bool start_stop );
-   void sendManualFireCommand( PointXYi &world_pos );
-   void sendMoveCommand( PointXYi &world_pos );
-   void sendAttackCommand( PointXYi &world_pos );
-   void sendAllianceRequest( PointXYi &world_pos, bool make_break );
+   void sendManualFireCommand( iXY &world_pos );
+   void sendMoveCommand( iXY &world_pos );
+   void sendAttackCommand( iXY &world_pos );
+   void sendAllianceRequest( iXY &world_pos, bool make_break );
 
    void evalLeftMButtonEvents( MouseEvent &event );
    void evalRightMButtonEvents( MouseEvent &event );
@@ -98,7 +98,7 @@ class WorldInputCmdProcessor
    
    void inFocus( void );
    
-   void updateScrollStatus( const PointXYi &mouse_pos );
+   void updateScrollStatus( const iXY &mouse_pos );
 
    void updateControls( void );
     
@@ -106,9 +106,9 @@ class WorldInputCmdProcessor
      
    // ** methods for external input control
    bool isUnitSelected( void );
-   bool selectUnits( Recti bound_box );
-   bool isValidMoveLocation( PointXYi location );
-   bool sendMoveCommandExternal( PointXYi location );
+   bool selectUnits( iRect bound_box );
+   bool isValidMoveLocation( iXY location );
+   bool sendMoveCommandExternal( iXY location );
    void    deselectUnitsExternal( void );
   
    void startChatMessageAll( void );
@@ -119,7 +119,7 @@ class WorldInputCmdProcessor
 
    static bool  isObjectiveSelected( void );
    static char *   getSelectedObjectiveName( void );
-   static PointXYi getSelectedObjectiveWorldPos( void ); 
+   static iXY getSelectedObjectiveWorldPos( void ); 
  }; 
 
 extern WorldInputCmdProcessor COMMAND_PROCESSOR;

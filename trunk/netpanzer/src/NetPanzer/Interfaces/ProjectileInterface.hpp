@@ -36,7 +36,7 @@ class ProjectileInterface
   static void newProjectile( unsigned short projectile_type,
                              unsigned short owner_type_id,
                              UnitID &owner, unsigned short damage, 
-                             PointXYi &start, PointXYi &end );
+                             iXY &start, iXY &end );
 
   static void updateStatus( void );
 

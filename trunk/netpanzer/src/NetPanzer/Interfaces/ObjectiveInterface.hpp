@@ -51,7 +51,7 @@ class ObjectiveInterface
   
    static void loadObjectiveList( char *file_path );
   
-   static unsigned char quearyObjectiveLocationStatus( PointXYi &loc, 
+   static unsigned char quearyObjectiveLocationStatus( iXY &loc, 
                                                        PlayerID &player,
                                                        Objective **objective_ptr );
 
@@ -87,7 +87,7 @@ class ObjectiveInterface
     
   public:
    static void    startObjectivePositionEnumeration( void );
-   static bool objectivePositionEnumeration( Recti *objective_rect, unsigned char *objective_disposition, int *objective_id );
+   static bool objectivePositionEnumeration( iRect *objective_rect, unsigned char *objective_disposition, int *objective_id );
  
  };
 

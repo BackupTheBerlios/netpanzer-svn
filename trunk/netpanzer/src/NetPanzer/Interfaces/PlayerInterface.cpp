@@ -254,7 +254,7 @@ PlayerState * PlayerInterface::allocateNewPlayer( void )
   return( 0 );
  }
 
-void PlayerInterface::spawnPlayer( unsigned short player_index, const PointXYi &location )
+void PlayerInterface::spawnPlayer( unsigned short player_index, const iXY &location )
  {
   assert( player_index < max_players );
 
@@ -263,7 +263,7 @@ void PlayerInterface::spawnPlayer( unsigned short player_index, const PointXYi &
               ); 
  }
 
-void PlayerInterface::spawnPlayer( const PlayerID &player, const PointXYi &location )
+void PlayerInterface::spawnPlayer( const PlayerID &player, const iXY &location )
  {
   unsigned short player_index;
   

@@ -18,15 +18,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SPAWNLIST_HPP
 #define _SPAWNLIST_HPP
 
-#include "Point.hpp"
 #include "Timer.hpp"
 #include "ArrayTemplate.hpp"
+#include "iXY.hpp"
 
 class SpawnPoint
  {
   public:
   char          name[32];
-  PointXYi      map_loc;
+  iXY      map_loc;
   unsigned char capacity;
   Timer         spawn_delay;
  };
@@ -44,7 +44,7 @@ class SpawnList : public ArrayTemplate< SpawnPoint >
   
   void loadSpawnFile( char *file_path );
   
-  void getFreeSpawnPoint( PointXYi *spawn_loc );
+  void getFreeSpawnPoint( iXY *spawn_loc );
 
  };
 

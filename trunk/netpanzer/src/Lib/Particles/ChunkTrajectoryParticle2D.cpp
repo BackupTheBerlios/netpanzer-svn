@@ -120,12 +120,12 @@ void ChunkTrajectoryParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
 {
 	assert(this != 0);
 
-	packedSurface.setAttrib(PointXYi((int) pos.x, (int) (pos.z - arcYPix)), layer);
+	packedSurface.setAttrib(iXY((int) pos.x, (int) (pos.z - arcYPix)), layer);
 	sorter.addSprite(&packedSurface);
 
 	if (GameConfig::getDisplayShadowsFlag())
 	{
-		packedSurfaceShadow.setAttrib(PointXYi((int) (pos.x - arcYPix), (int) pos.z), shadowLayer);
+		packedSurfaceShadow.setAttrib(iXY((int) (pos.x - arcYPix), (int) pos.z), shadowLayer);
 		sorter.addSprite(&packedSurfaceShadow);
 	}
 

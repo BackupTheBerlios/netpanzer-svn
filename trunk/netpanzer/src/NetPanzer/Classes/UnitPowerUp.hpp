@@ -47,7 +47,7 @@ class UnitPowerUp : public PowerUp
 
   public:
 
-   UnitPowerUp(PointXYi map_loc, int type);
+   UnitPowerUp(iXY map_loc, int type);
    virtual ~UnitPowerUp()
    { }
 

@@ -32,22 +32,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "codewiz.hpp"
 
-Outpost::Outpost( short ID, PointXYi location, BoundBox area )
+Outpost::Outpost( short ID, iXY location, BoundBox area )
   : Objective( ID, location, area )
  {
   MapInterface::pointXYtoMapXY( location, &outpost_map_loc );
-  objective_state.selection_box.max = location + PointXYi( 64, 32 );
-  objective_state.selection_box.min = location + PointXYi( -224, -128 );
-  objective_state.area.min = PointXYi( -400, -144 );
-  objective_state.area.max = PointXYi(  400,  240 );
+  objective_state.selection_box.max = location + iXY( 64, 32 );
+  objective_state.selection_box.min = location + iXY( -224, -128 );
+  objective_state.area.min = iXY( -400, -144 );
+  objective_state.area.max = iXY(  400,  240 );
 
 
   unit_generation_type = _unit_type_humvee;
   occupation_status_timer.changePeriod( 3 );
   unit_generation_timer.changePeriod( 1 );
-  unit_collection_loc = PointXYi( 13, 13 );
-  unit_generation_loc = PointXYi( 1, 3 );
-  occupation_pad_offset = PointXYi( 224, 48 );
+  unit_collection_loc = iXY( 13, 13 );
+  unit_generation_loc = iXY( 1, 3 );
+  occupation_pad_offset = iXY( 224, 48 );
   unit_generation_on_flag = false;
  
   select_box.setAttrib( location, 3 );
@@ -117,8 +117,8 @@ void Outpost::checkOccupationStatus( void )
    {
     PlayerID null_id;
     UnitBase *unit_ptr;
-    Recti bounding_area;
-    PointXYi occupation_pad_loc;
+    iRect bounding_area;
+    iXY occupation_pad_loc;
 
     occupation_pad_loc = objective_state.location + occupation_pad_offset;        
     bounding_area = objective_state.capture_area.getAbsRect( occupation_pad_loc );
@@ -131,7 +131,7 @@ void Outpost::checkOccupationStatus( void )
      
     if ( unit_ptr != 0 )
      {
-      PointXYi unit_loc;
+      iXY unit_loc;
       unit_loc = unit_ptr->unit_state.location;
       if ( objective_state.capture_area.bounds( occupation_pad_loc, unit_loc ) )
        {
@@ -158,7 +158,7 @@ void Outpost::generateUnits( void )
         )
        {
         UnitBase *unit;
-        PointXYi gen_loc;
+        iXY gen_loc;
         gen_loc = outpost_map_loc + unit_generation_loc;
        
         unit = UnitInterface::createUnit(unit_generation_type,
@@ -176,7 +176,7 @@ void Outpost::generateUnits( void )
  
           UMesgAICommand ai_command;
           PlacementMatrix placement_matrix;
-          PointXYi collection_loc, loc;
+          iXY collection_loc, loc;
        
           collection_loc = outpost_map_loc + unit_collection_loc;
 

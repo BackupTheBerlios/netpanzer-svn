@@ -24,10 +24,10 @@ class Abrams : public Vehicle
  {
   protected:
    void setUnitProperties( void );
-   virtual void  fireWeapon( PointXYi &target_loc );
+   virtual void  fireWeapon( iXY &target_loc );
  
   public:
-   Abrams( PointXYi initial_loc, unsigned char color, unsigned char flag );
+   Abrams( iXY initial_loc, unsigned char color, unsigned char flag );
 
  };
 

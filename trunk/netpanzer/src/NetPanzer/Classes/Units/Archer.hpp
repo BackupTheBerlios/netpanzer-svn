@@ -24,10 +24,10 @@ class Archer : public Vehicle
  {
   protected:
    void setUnitProperties( void );
-   virtual void  fireWeapon( PointXYi &target_loc );
+   virtual void  fireWeapon( iXY &target_loc );
  
   public:
-   Archer( PointXYi initial_loc, unsigned char color, unsigned char flag );
+   Archer( iXY initial_loc, unsigned char color, unsigned char flag );
 
  };
 

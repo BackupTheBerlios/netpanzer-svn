@@ -20,13 +20,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "MapInterface.hpp"
 #include "TileInterface.hpp"
-#include "Point.hpp"
 
 class ViewCamera : private MapInterface
 {
 protected:
- 	PointXYi loc;
-  	PointXYi view_size;   
+ 	iXY loc;
+  	iXY view_size;   
   
 public:
  	ViewCamera();
@@ -35,13 +34,13 @@ public:
 	void scrollMinusY( long scroll_increment );
 	void scrollPlusY( long scroll_increment );
    
-	inline void setCamera( const PointXYi &new_loc )
+	inline void setCamera( const iXY &new_loc )
 	{     
 		loc.x = new_loc.x - (new_loc.x % 4);
 		loc.y = new_loc.y - (new_loc.y % 4);	
 	}
 
-	inline void setCameraSize( const PointXYi &size )
+	inline void setCameraSize( const iXY &size )
 	{
 		view_size = size;
 	}
@@ -49,7 +48,7 @@ public:
 	void getViewStart( unsigned long view_size_x, unsigned long view_size_y,
 			unsigned long *view_start_x, unsigned long *view_start_y );
 
- 	inline void getViewWindow( Recti *view_win )
+ 	inline void getViewWindow( iRect *view_win )
  	{
 		unsigned long view_start_x, view_start_y; 
 	   	getViewStart( view_size.x, view_size.y, &view_start_x, &view_start_y );
@@ -59,7 +58,7 @@ public:
 		view_win->max.y = view_start_y + view_size.y;
 	}
  
-	inline long getCameraDistance( const PointXYi &world_loc )
+	inline long getCameraDistance( const iXY &world_loc )
 	{
 		return( (long) (loc - world_loc).mag2() );
 	}

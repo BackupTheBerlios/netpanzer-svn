@@ -100,7 +100,7 @@ void GameView::doDraw(const Surface &viewArea, const Surface &clientArea)
 		//ParticleInterface::testSimText(viewArea);
 	}
 
-	Recti world_win;
+	iRect world_win;
 	WorldViewInterface::getViewWindow( &world_win );
 	SPRITE_SORTER.reset(world_win);
 

@@ -117,7 +117,7 @@ void ControlView::drawIconBorder(const Surface &dest)
 
 void ControlView::drawZoomMap(const Surface &dest)
 {
-    Recti world_win;
+    iRect world_win;
     world_win = MiniMapInterface::getWorldWindow();
 
 	// Offset the map drawing area from the sector markers.

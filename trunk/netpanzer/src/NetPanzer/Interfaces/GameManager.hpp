@@ -22,10 +22,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdint.h>
 #include "PlayerState.hpp"
 #include "NetPacket.hpp"
-#include "Point.hpp"
 #include "ClientConnectDaemon.hpp"
 #include "ServerConnectDaemon.hpp"
 #include "GameControlRulesDaemon.hpp"
+#include "iXY.hpp"
 
 enum { _execution_mode_loop_back_server,
        _execution_mode_dedicated_server
@@ -60,8 +60,8 @@ protected:
    
 	static int execution_mode;
    
-	static PointXYi previous_video_mode_res;
-	static PointXYi current_video_mode_res;
+	static iXY previous_video_mode_res;
+	static iXY current_video_mode_res;
 	static uint8_t  current_mode_flags;
 
 protected:
@@ -176,7 +176,7 @@ public:
 
 	static void processSystemMessage( NetMessage *message );
 
-	static void setVideoMode(const PointXYi& newmode, bool fullscreen);
+	static void setVideoMode(const iXY& newmode, bool fullscreen);
 	static void	restorePreviousVideoMode();
    
 	static void increaseDisplayResolution();

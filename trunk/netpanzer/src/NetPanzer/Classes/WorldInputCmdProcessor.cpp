@@ -121,9 +121,9 @@ void WorldInputCmdProcessor::cycleSelectedUnits( unsigned long new_list_index )
   working_list.cycleNextUnit(); 
  } 
 
-void WorldInputCmdProcessor::updateScrollStatus(const PointXYi &mouse_pos )
+void WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos )
 {
-  	PointXYi screen_size;
+  	iXY screen_size;
    	double time_slice;
 	long  scroll_increment;
 	float scroll_rate;
@@ -156,9 +156,9 @@ void WorldInputCmdProcessor::updateScrollStatus(const PointXYi &mouse_pos )
  }
 
 
-unsigned char WorldInputCmdProcessor::getCursorStatus( PointXYi &loc )
+unsigned char WorldInputCmdProcessor::getCursorStatus( iXY &loc )
  {
-  PointXYi map_loc;
+  iXY map_loc;
   unsigned char unit_loc_status;
 
   if( (manual_control_state == true) || (manual_fire_state == true) )
@@ -234,7 +234,7 @@ void WorldInputCmdProcessor::
 
 void WorldInputCmdProcessor::cycleNextUnitAndChangeFocus( void )
  {
-  PointXYi world_pos;
+  iXY world_pos;
 
   world_pos = UnitInterface::unitPositionCycle( &unit_cycle_search_iterator );
   WorldViewInterface::setCameraPosition( world_pos );   
@@ -555,11 +555,11 @@ bool WorldInputCmdProcessor::selectBoundBoxUnits( void )
 	box_release.y = y;
    }
       
-  select_success = working_list.selectBounded( Recti( box_press, box_release ) );
+  select_success = working_list.selectBounded( iRect( box_press, box_release ) );
 	 
   if ( select_success == false )
    {
-	PointXYi box_size;
+	iXY box_size;
 	box_size = box_release - box_press;
 	if ( (box_size.x > 40) || (box_size.y > 40) )
 	 select_success = true; 
@@ -576,8 +576,8 @@ bool WorldInputCmdProcessor::selectBoundBoxUnits( void )
 
 void WorldInputCmdProcessor::evaluateMouseEvents( void )
  {
-  PointXYi world_pos;
-  PointXYi mouse_pos;
+  iXY world_pos;
+  iXY mouse_pos;
 
   MouseInterface::getMousePosition( (long *)  &mouse_pos.x, (long *) &mouse_pos.y );
 
@@ -626,7 +626,7 @@ void WorldInputCmdProcessor::evaluateMouseEvents( void )
 
 void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
  {
-  PointXYi world_pos;
+  iXY world_pos;
   unsigned char click_status;
 
   if ( (manual_control_state == true) ||
@@ -713,7 +713,7 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
 
 void WorldInputCmdProcessor::evalRightMButtonEvents( MouseEvent &event )
  {
-  PointXYi world_pos;
+  iXY world_pos;
   unsigned char click_status;
  
   Objective *objective;
@@ -764,9 +764,9 @@ void WorldInputCmdProcessor::evalRightMButtonEvents( MouseEvent &event )
  
  }
 
-void WorldInputCmdProcessor::sendMoveCommand( PointXYi &world_pos )
+void WorldInputCmdProcessor::sendMoveCommand( iXY &world_pos )
  {
-  PointXYi map_pos;
+  iXY map_pos;
   PlacementMatrix matrix;
 
   unsigned long id_list_index;
@@ -820,7 +820,7 @@ void WorldInputCmdProcessor::sendMoveCommand( PointXYi &world_pos )
   sound->PlayUnitVoice(working_list.getHeadUnitType(), Sound::_move_to);  
  }
 
-void WorldInputCmdProcessor::sendAttackCommand( PointXYi &world_pos )
+void WorldInputCmdProcessor::sendAttackCommand( iXY &world_pos )
  {
   TerminalUnitCmdRequest comm_mesg;
   MultiMessage *encode_message;
@@ -921,7 +921,7 @@ void WorldInputCmdProcessor::sendManualMoveCommand( unsigned char orientation,
  
  }
 
-void WorldInputCmdProcessor::sendManualFireCommand( PointXYi &world_pos )
+void WorldInputCmdProcessor::sendManualFireCommand( iXY &world_pos )
  {
   TerminalUnitCmdRequest comm_mesg;
   MultiMessage *encode_message;
@@ -969,7 +969,7 @@ void WorldInputCmdProcessor::sendManualFireCommand( PointXYi &world_pos )
 
  }
  
-void WorldInputCmdProcessor::sendAllianceRequest( PointXYi &world_pos, bool make_break )
+void WorldInputCmdProcessor::sendAllianceRequest( iXY &world_pos, bool make_break )
  {
   UnitBase *target_ptr;
 
@@ -1037,8 +1037,8 @@ bool WorldInputCmdProcessor::getConsoleInputString( char *input_string )
 
 void WorldInputCmdProcessor::inFocus( void )
  {
-  PointXYi world_pos;
-  PointXYi mouse_pos;
+  iXY world_pos;
+  iXY mouse_pos;
 
   MouseInterface::getMousePosition( (long *)  &mouse_pos.x, (long *) &mouse_pos.y );
 
@@ -1052,8 +1052,8 @@ void WorldInputCmdProcessor::inFocus( void )
 
 void WorldInputCmdProcessor::updateControls( void )
  {
-  PointXYi client_pos;
-  PointXYi mouse_pos;
+  iXY client_pos;
+  iXY mouse_pos;
 
   if ( selection_box_active == true )
    {
@@ -1089,8 +1089,8 @@ void WorldInputCmdProcessor::updateControls( void )
 
 void WorldInputCmdProcessor::closeSelectionBox( void )
  {
-  PointXYi world_pos;
-  PointXYi mouse_pos;
+  iXY world_pos;
+  iXY mouse_pos;
 
   MouseInterface::getMousePosition( (long *)  &mouse_pos.x, (long *) &mouse_pos.y );
 
@@ -1120,7 +1120,7 @@ bool WorldInputCmdProcessor::isUnitSelected( void )
    { return( false ); }
  }
 
-bool WorldInputCmdProcessor::selectUnits( Recti bound_box )
+bool WorldInputCmdProcessor::selectUnits( iRect bound_box )
  {
   long x,y;
  
@@ -1141,7 +1141,7 @@ bool WorldInputCmdProcessor::selectUnits( Recti bound_box )
   return( working_list.selectBounded( bound_box ) );
  }
 
-bool WorldInputCmdProcessor::isValidMoveLocation( PointXYi location )
+bool WorldInputCmdProcessor::isValidMoveLocation( iXY location )
  {
   int click_status;
   
@@ -1152,7 +1152,7 @@ bool WorldInputCmdProcessor::isValidMoveLocation( PointXYi location )
   return( true ); 
  }
 
-bool WorldInputCmdProcessor::sendMoveCommandExternal( PointXYi location )
+bool WorldInputCmdProcessor::sendMoveCommandExternal( iXY location )
  {
   int click_status;
   
@@ -1211,7 +1211,7 @@ char *  WorldInputCmdProcessor::getSelectedObjectiveName( void )
   return( objective_state->name );
  }
 
-PointXYi WorldInputCmdProcessor::getSelectedObjectiveWorldPos( void )
+iXY WorldInputCmdProcessor::getSelectedObjectiveWorldPos( void )
  {
   ObjectiveState *objective_state;
 

@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include "ArrayTemplate.hpp"
 #include "Timer.hpp"
-#include "Point.hpp"
 #include "Surface.hpp"
 
 
@@ -49,9 +48,9 @@ class ConsoleInterface
   static long console_size; 
   static ConsoleLineArray line_list;
 
-  static PointXYi surface_size;
-  static Recti    bounds;
-  static PointXYi line_offset;
+  static iXY surface_size;
+  static iRect    bounds;
+  static iXY line_offset;
   static long     vertical_spacing;
   static long     horizontal_spacing;
   static long     max_char_per_line;
@@ -69,7 +68,7 @@ class ConsoleInterface
 
   static void initialize( long size );
 
-  static void setToSurfaceSize( PointXYi pix );
+  static void setToSurfaceSize( iXY pix );
 
   static void openLogFile( void );
   static void closeLogFile( void );

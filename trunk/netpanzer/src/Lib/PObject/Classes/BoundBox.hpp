@@ -19,39 +19,39 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _BOUNDBOX_HPP
 
 #include <assert.h>
-#include "Point.hpp"
+#include "iRect.hpp"
 
-class BoundBox : public Recti
+class BoundBox : public iRect
  {
   public:
 
    BoundBox( void ) {}
 
    BoundBox(int x1, int y1, int x2, int y2)
-     : Recti( x1, y1, x2, y2 )
+     : iRect( x1, y1, x2, y2 )
         {
      assert( min.x <= 0 && min.y <= 0 && max.x >= 0 && max.y >= 0 );  
     }
   
    BoundBox(const BoundBox &a)
-     : Recti( a )
+     : iRect( a )
         {
      assert( min.x <= 0 && min.y <= 0 && max.x >= 0 && max.y >= 0 );   
     }
         
-   BoundBox(PointXYi &nMin, PointXYi &nMax)
-     : Recti( nMin, nMax )
+   BoundBox(iXY &nMin, iXY &nMax)
+     : iRect( nMin, nMax )
         {
      assert( min.x <= 0 && min.y <= 0 && max.x >= 0 && max.y >= 0 );  
     }
  
-   bool bounds( PointXYi &center, PointXYi &test );
+   bool bounds( iXY &center, iXY &test );
 
-   void setBounds(const PointXYi &nMin, const PointXYi &nMax );
+   void setBounds(const iXY &nMin, const iXY &nMax );
 
-   inline Recti getAbsRect( PointXYi &center )
+   inline iRect getAbsRect( iXY &center )
    {
-	 return( Recti( center + min, center + max ) );
+	 return( iRect( center + min, center + max ) );
    }
     
 };

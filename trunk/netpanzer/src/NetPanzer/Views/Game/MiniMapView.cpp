@@ -260,7 +260,7 @@ void MiniMapView::setViewWindow(const iXY &pos)
 
 	if ((pos.x >= 0) && (pos.x < size.x) && (pos.y >= 0) && (pos.y < size.y))
 	{
-		MiniMapInterface::setWorldWindowPosition( PointXYi( pos.x, pos.y ) );
+		MiniMapInterface::setWorldWindowPosition( iXY( pos.x, pos.y ) );
 	} 
 
 } // end MiniMapView::setViewWindow
@@ -567,8 +567,8 @@ void MiniMapView::mouseMove(const iXY &prevPos, const iXY &newPos)
 //	}
 
    //static bool isUnitSelected( void );
-   //static bool selectUnits( Recti bound_box );
-   //static void moveUnits( PointXYi location );
+   //static bool selectUnits( iRect bound_box );
+   //static void moveUnits( iXY location );
 
 } // end MiniMapView::mouseMove
 

@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "BresenhamLine.hpp"
 
-void BresenhamLine::set_path( PointXYi &start, PointXYi &end ) 
+void BresenhamLine::set_path( iXY &start, iXY &end ) 
  {
 
   finished = 0;
@@ -100,7 +100,7 @@ void BresenhamLine::set_path( PointXYi &start, PointXYi &end )
  }
 
 
-short BresenhamLine::increment(  PointXYi *update, short times )        
+short BresenhamLine::increment(  iXY *update, short times )        
  {
   
   while ( (times != 0) && (finished == false) )

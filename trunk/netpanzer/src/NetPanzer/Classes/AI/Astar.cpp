@@ -155,7 +155,7 @@ void Astar::initializeNodeList( unsigned long initial_size )
  }
   
 
-void Astar::initializePath( PointXYi &start, PointXYi &goal, unsigned short path_type )
+void Astar::initializePath( iXY &start, iXY &goal, unsigned short path_type )
  {
   TIMESTAMP timer_ini_mark = now();
 
@@ -194,7 +194,7 @@ void Astar::initializePath( PointXYi &start, PointXYi &goal, unsigned short path
   total_pathing_time += now() - timer_ini_mark;
  }                  
 
-unsigned long Astar::mapXYtoAbsloc( PointXYi map_loc )
+unsigned long Astar::mapXYtoAbsloc( iXY map_loc )
  {
   unsigned long abs;
 
@@ -209,7 +209,7 @@ unsigned long Astar::mapXYtoAbsloc( PointXYi map_loc )
  }
 
 
-long Astar::heuristic( PointXYi &pointA, PointXYi &pointB )
+long Astar::heuristic( iXY &pointA, iXY &pointB )
  {
   long delta_x;
   long delta_y;

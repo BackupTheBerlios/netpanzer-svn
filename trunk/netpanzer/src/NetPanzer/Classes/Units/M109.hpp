@@ -24,10 +24,10 @@ class M109 : public Vehicle
  {
   protected:
    void setUnitProperties( void );
-   virtual void  fireWeapon( PointXYi &target_loc );
+   virtual void  fireWeapon( iXY &target_loc );
  
   public:
-   M109( PointXYi initial_loc, unsigned char color, unsigned char flag );
+   M109( iXY initial_loc, unsigned char color, unsigned char flag );
 
  };
 

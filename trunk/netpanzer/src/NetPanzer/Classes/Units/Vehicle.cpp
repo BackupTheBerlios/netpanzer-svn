@@ -40,12 +40,12 @@ animation_dbase COLOR_VEHICLE_DBASE;
 
 enum{ _rotate_and_move, _rotate_stop_move };
 
-Vehicle::Vehicle( PointXYi initial_loc )
+Vehicle::Vehicle( iXY initial_loc )
  {
 	smolderWait    = 0.0f;
 	smolderWaitMin = 0.0f;
 
-  PointXYi loc;
+  iXY loc;
   MapInterface::mapXYtoPointXY( initial_loc, &loc ); 
   unit_state.location = loc;
   markUnitLoc( initial_loc );    
@@ -122,7 +122,7 @@ void Vehicle::orientationToOffset( unsigned short orientation, signed char *offs
 
 unsigned short Vehicle::mapXYtoOrientation( unsigned long square, long *goal_angle )
  {
-  PointXYi current_loc, next_loc;
+  iXY current_loc, next_loc;
 
   MapInterface::pointXYtoMapXY( unit_state.location, &current_loc );
   MapInterface::offsetToMapXY( square, &next_loc );
@@ -207,10 +207,10 @@ unsigned short Vehicle::shortestRotation( AngleInt &angle, long goal_angle, long
  }
 
 
-void Vehicle::locationOffset( unsigned long square, PointXYi &offset )
+void Vehicle::locationOffset( unsigned long square, iXY &offset )
  {
-  PointXYi square_map_loc;
-  PointXYi unit_map_loc;
+  iXY square_map_loc;
+  iXY unit_map_loc;
 
   MapInterface::offsetToMapXY( square, &square_map_loc );
   MapInterface::pointXYtoMapXY( unit_state.location, &unit_map_loc );
@@ -361,7 +361,7 @@ void Vehicle::setFsmMoveMapSquare( unsigned long square )
  
   if ( NetworkState::status == _network_state_server )  
    {
-	PointXYi loc_offset;
+	iXY loc_offset;
 
 	move_opcode.opcode = _UNIT_OPCODE_MOVE;
     move_opcode.unit_index = unit_id.getIndex();
@@ -434,9 +434,9 @@ bool Vehicle::fsmMoveMapSquare( void )
  }
     
 
-void Vehicle::setFsmTurretTrackPoint( PointXYi &target )
+void Vehicle::setFsmTurretTrackPoint( iXY &target )
  {
-  PointXYi direction_vector;
+  iXY direction_vector;
   
   fsmTurretTrackPoint_target = target;
   direction_vector = fsmTurretTrackPoint_target - unit_state.location;
@@ -500,7 +500,7 @@ void Vehicle::fsmTurretTrackPoint( void )
   long goal_angle;
   long delta;
   unsigned short rotation;
-  PointXYi direction_vector;
+  iXY direction_vector;
 
   direction_vector = fsmTurretTrackPoint_target - unit_state.location;
   fsmTurretTrackPoint_target_angle.set( direction_vector );
@@ -575,7 +575,7 @@ void Vehicle::fsmTurretTrackTarget( void )
   long delta;
   unsigned short rotation;
   UnitBase *target_unit_ptr;
-  PointXYi direction_vector;
+  iXY direction_vector;
 
   target_unit_ptr = getUnit( fsmTurretTrackTarget_target_id );
   
@@ -601,7 +601,7 @@ void Vehicle::fsmTurretTrackTarget( void )
 
 
 
-void Vehicle::setFsmGunneryLocation( PointXYi &target )
+void Vehicle::setFsmGunneryLocation( iXY &target )
  {  
   if ( fsm_active_list[ _control_gunnery_target ] == true )
    {
@@ -621,7 +621,7 @@ void Vehicle::clearFsmGunneryLocation( void )
 
 void Vehicle::fsmGunneryLocation( void )
  {
-  PointXYi range_vector;
+  iXY range_vector;
  
   range_vector = fsmGunneryLocation_target - unit_state.location;
        
@@ -663,7 +663,7 @@ void Vehicle::fsmGunneryTarget( void )
  {
   UnitBase *target_unit_ptr;
   UnitState *target_unit_state;
-  PointXYi range_vector;
+  iXY range_vector;
 
   target_unit_ptr = getUnit( fsmGunneryTarget_target_id );
   if ( target_unit_ptr == 0 )
@@ -708,7 +708,7 @@ void Vehicle::aiFsmIdle( void )
 
 bool Vehicle::ruleMoveToLoc_GoalReached( void )
  {
-  PointXYi map_loc;
+  iXY map_loc;
   MapInterface::pointXYtoMapXY( unit_state.location, &map_loc );
   if ( map_loc == aiFsmMoveToLoc_goal )
    return( true );
@@ -739,7 +739,7 @@ void Vehicle::aiFsmMoveToLoc( void )
          // Action : Exit fsm gracefully
          aiFsmMoveToLoc_OnExitCleanUp();
          
-         PointXYi current_map_loc; 
+         iXY current_map_loc; 
          MapInterface::pointXYtoMapXY( unit_state.location, &current_map_loc );
          unmarkUnitLoc( current_map_loc );   
          
@@ -793,7 +793,7 @@ void Vehicle::aiFsmMoveToLoc( void )
 		  {
 		   //  Rule: GoalReached is false AND Unit is at the end of path
            //  Action : Request path generation to goal       
-           PointXYi start;
+           iXY start;
 		   PathRequest path_request;
 
 		   //LOG( ("Incomplete Path -- Regenerating Path") );
@@ -980,7 +980,7 @@ void Vehicle::aiFsmAttackUnit( void )
   
   UnitBase *target_unit_ptr;
   UnitState *target_unit_state = 0;
-  PointXYi range_vector;
+  iXY range_vector;
 
   target_unit_ptr = getUnit( aiFsmAttackUnit_target_ID );
   if ( target_unit_ptr == 0 )
@@ -1022,7 +1022,7 @@ void Vehicle::aiFsmAttackUnit( void )
          // Action : Exit fsm gracefully
          aiFsmAttackUnit_OnExitCleanUp();
 
-         PointXYi current_map_loc; 
+         iXY current_map_loc; 
          MapInterface::pointXYtoMapXY( unit_state.location, &current_map_loc );
          unmarkUnitLoc( current_map_loc );   
 
@@ -1071,7 +1071,7 @@ void Vehicle::aiFsmAttackUnit( void )
         {
 		 if ( aiFsmAttackUnit_path_not_finished == false )
 		  {
-		   PointXYi start;
+		   iXY start;
 		   MapInterface::pointXYtoMapXY( unit_state.location, &start );
 
 		   PathRequest path_request;
@@ -1274,8 +1274,8 @@ void Vehicle::aiFsmAttackUnit( void )
 	 
     case _aiFsmAttackUnit_check_path_deviation :
 	 {
-      PointXYi deviation_vector;
-      PointXYi goal_point_loc;
+      iXY deviation_vector;
+      iXY goal_point_loc;
 	  
 	  MapInterface::mapXYtoPointXY( aiFsmAttackUnit_target_goal_loc, &goal_point_loc );
       deviation_vector = target_unit_state->location - goal_point_loc;
@@ -1324,7 +1324,7 @@ void Vehicle::aiFsmDefendHold( void )
   UnitBase  *target_unit_ptr;
   UnitState *target_unit_state;
  
-  PointXYi range_vector;
+  iXY range_vector;
 
   do
   {
@@ -1522,7 +1522,7 @@ void Vehicle::aiFsmManualMove( void )
 
  }
 
-void Vehicle::fireWeapon( PointXYi &target_loc )
+void Vehicle::fireWeapon( iXY &target_loc )
  {
   reload_counter = 0;
   ProjectileInterface::newProjectile( 0, unit_state.unit_type, unit_id, unit_state.damage_factor, 
@@ -1638,7 +1638,7 @@ void Vehicle::checkPendingAICommStatus( void )
 
 void Vehicle::setCommandMoveToLoc( UMesgAICommand *message  )
  {
-  PointXYi start;
+  iXY start;
   
   if ( fsm_active_list[ _control_gunnery_location ] == true )
    {
@@ -1664,14 +1664,14 @@ void Vehicle::setCommandMoveToLoc( UMesgAICommand *message  )
   path_request.set( unit_id, start, aiFsmMoveToLoc_goal, 0, &path, _path_request_full );
   PathScheduler::requestPath( path_request );                			   
   
-  PointXYi target;
+  iXY target;
   MapInterface::mapXYtoPointXY( aiFsmMoveToLoc_goal, &target);
   setFsmTurretTrackPoint( target );
  } 
 
 void Vehicle::setCommandAttackUnit( UMesgAICommand *message )
  {
-  PointXYi start;
+  iXY start;
   UnitBase *target_unit_ptr;
   UnitState *target_unit_state;
 
@@ -1777,7 +1777,7 @@ void Vehicle::messageWeaponHit( UnitMessage *message )
       sendMessage( &lifecycle_update );
 
       // ** Note: Temp
-      PointXYi current_map_loc; 
+      iXY current_map_loc; 
       MapInterface::pointXYtoMapXY( unit_state.location, &current_map_loc );
       unmarkUnitLoc( current_map_loc );   
      }
@@ -1818,7 +1818,7 @@ void Vehicle::messageSelfDestruct( UnitMessage *message )
   external_ai_event = _external_event_pending_unit_destruct;     
   
   // ** Note: Temp
-  PointXYi current_map_loc; 
+  iXY current_map_loc; 
   MapInterface::pointXYtoMapXY( unit_state.location, &current_map_loc );
   unmarkUnitLoc( current_map_loc );   
  }
@@ -1861,8 +1861,8 @@ void Vehicle::unitOpcodeMove( UnitOpcodeStruct *opcode )
 
   move_opcode = (MoveOpcode *) opcode;
 
-  PointXYi sync_loc;
-  PointXYi current_loc;
+  iXY sync_loc;
+  iXY current_loc;
 
   MapInterface::offsetToMapXY( move_opcode->square, &sync_loc );
   sync_loc.x = sync_loc.x + move_opcode->loc_x_offset;
@@ -1891,7 +1891,7 @@ void Vehicle::unitOpcodeTrackPoint( UnitOpcodeStruct *opcode )
  
   if ( track_point_opcode->activate == true )
    {
-    PointXYi target;
+    iXY target;
     target.x = track_point_opcode->x;
     target.y = track_point_opcode->y;
     setFsmTurretTrackPoint( target );      
@@ -1933,7 +1933,7 @@ void Vehicle::unitOpcodeTrackTarget( UnitOpcodeStruct *opcode )
 
 void Vehicle::unitOpcodeFireWeapon( UnitOpcodeStruct *opcode )
  {
-  PointXYi target_loc;
+  iXY target_loc;
   
   if ( ( (in_sync_flag == false) && !(opcode->flags & _unit_opcode_flag_sync) ) || 
        ( (in_sync_flag == true) && (opcode->flags & _unit_opcode_flag_sync) )

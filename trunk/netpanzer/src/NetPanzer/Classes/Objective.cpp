@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerInterface.hpp"
 #include "ConsoleInterface.hpp"
 
-Objective::Objective( short ID, PointXYi location, BoundBox area )
+Objective::Objective( short ID, iXY location, BoundBox area )
  {
   objective_state.selection_state = false;
   objective_state.ID = ID;

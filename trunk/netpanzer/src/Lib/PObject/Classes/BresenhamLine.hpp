@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _BRESENHAMLINE_HPP
 #define _BRESENHAMLINE_HPP
 
-#include "Point.hpp"
+#include "iXY.hpp"
 
 class BresenhamLine
  {
@@ -53,9 +53,9 @@ class BresenhamLine
 
   BresenhamLine( void ) { }
 
-  void set_path( PointXYi &start, PointXYi &end );
+  void set_path( iXY &start, iXY &end );
   
-  short increment( PointXYi *update, short times );
+  short increment( iXY *update, short times );
   
 
  };

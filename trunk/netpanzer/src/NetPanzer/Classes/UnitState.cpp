@@ -25,7 +25,7 @@ UnitState::UnitState()
  
   // ** NOTE: TEMPORARY UNTIL UNIT PROPERITIES CODED
 
-  bbox.setBounds( PointXYi( -25, -15 ), PointXYi( 25, 35 ) );
+  bbox.setBounds( iXY( -25, -15 ), iXY( 25, 35 ) );
    
   select = false;
   orientation = 0;

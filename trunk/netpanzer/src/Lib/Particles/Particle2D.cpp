@@ -322,7 +322,7 @@ float Particle2D::getLifetime(float lifetimeMin, float lifetimeRand)
 int Particle2D::getFarAway(const fXYZ &worldPos)
 {
 	// Get the distance of the particle from the gameView.
-	Recti gameViewRect;
+	iRect gameViewRect;
 	WorldViewInterface::getViewWindow(&gameViewRect);
 
 	iXY gameViewCenter;

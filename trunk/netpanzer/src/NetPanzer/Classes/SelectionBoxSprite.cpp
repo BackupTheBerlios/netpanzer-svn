@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Surface UNIT_FLAGS_SURFACE;
 
-bool SelectionBoxSprite::isVisible(const Recti &world_win) const
+bool SelectionBoxSprite::isVisible(const iRect &world_win) const
  {      
   if (
       (world_win.contains( world_pos + selection_area.min ) && (visible == true ) ) ||
@@ -35,9 +35,9 @@ bool SelectionBoxSprite::isVisible(const Recti &world_win) const
  }
 
 
-void SelectionBoxSprite::blit( Surface *surface, const Recti &world_win )
+void SelectionBoxSprite::blit( Surface *surface, const iRect &world_win )
  {
-  PointXYi min_abs, max_abs;
+  iXY min_abs, max_abs;
   
   if ( box_state == false )
    return;
@@ -76,9 +76,9 @@ UnitSelectionBox::UnitSelectionBox( )
  }
 
 
-void UnitSelectionBox::blit( Surface *surface, const Recti &world_win )
+void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
 {
-  PointXYi min_abs, max_abs;
+  iXY min_abs, max_abs;
   
   min_abs = (world_pos + selection_area.min) - world_win.min;
   max_abs = (world_pos + selection_area.max) - world_win.min; 

@@ -251,8 +251,8 @@ void UnitInterface::updateUnitStatus( void )
 
 void UnitInterface::offloadGraphics( SpriteSorter &sorter )
  {
-  Recti world_window_rect;
-  Recti bucket_rect;
+  iRect world_window_rect;
+  iRect bucket_rect;
   UnitBucketList *bucket_list;
   UnitBucketPointer *traversal_ptr;
 
@@ -310,7 +310,7 @@ unsigned short UnitInterface::uniqueIndex( void )
 
 
 UnitBase * UnitInterface::newUnit( unsigned short unit_type, 
-                                   const PointXYi &location, 
+                                   const iXY &location, 
                                    unsigned short player_index )
  {
   UnitBase *unit = 0;
@@ -461,7 +461,7 @@ void UnitInterface::sortBucketArray( void )
 
 // ******************************************************************
 UnitBase * UnitInterface::createUnit( unsigned short unit_type, 
-                                      const PointXYi &location, 
+                                      const iXY &location, 
                                       const PlayerID &player 
                                     )
  {
@@ -482,10 +482,10 @@ UnitBase * UnitInterface::createUnit( unsigned short unit_type,
 
 // ******************************************************************
 
-void UnitInterface::spawnPlayerUnits( const PointXYi &location,
+void UnitInterface::spawnPlayerUnits( const iXY &location,
 		const PlayerID &player, const PlayerUnitConfig &unit_config )
  {
-  PointXYi next_loc;
+  iXY next_loc;
   UnitBase *unit;
   UnitRemoteCreate create_mesg;
   unsigned long unit_type_index; 
@@ -504,11 +504,11 @@ void UnitInterface::spawnPlayerUnits( const PointXYi &location,
    {
     for( long map_x = 0; map_x < map_x_size; map_x++ )
    	 {
-	  if ( MapInterface::getMovementValue( PointXYi( map_x, map_y ) ) != 0xFF )
+	  if ( MapInterface::getMovementValue( iXY( map_x, map_y ) ) != 0xFF )
 	   {
 		if( unit_count < 1000 )	//  <- CHANGE YOUR UNIT COUNT HERE
 		 {
-          unit = createUnit( _unit_type_humvee, PointXYi( map_x, map_y ), player );    
+          unit = createUnit( _unit_type_humvee, iXY( map_x, map_y ), player );    
 		  unit_count++;
 		 }
 	   }
@@ -600,7 +600,7 @@ bool UnitInterface::
 // ******************************************************************
 
 bool UnitInterface::quearyClosestUnit( UnitBase **closest_unit_ptr,
-                                          PointXYi &loc,
+                                          iXY &loc,
                                           PlayerID &player_id, 
                                           unsigned char search_flags )
  {
@@ -625,7 +625,7 @@ bool UnitInterface::quearyClosestUnit( UnitBase **closest_unit_ptr,
         unit_ptr = unit_lists[ list_index ].incIteratorPtr( &iterator );
         while( unit_ptr != 0 )
          {
-          PointXYi delta;
+          iXY delta;
           long temp_mag;    
         
           if ( closest_unit == 0 )
@@ -663,11 +663,11 @@ bool UnitInterface::quearyClosestUnit( UnitBase **closest_unit_ptr,
   return( false );
  }
 
-bool UnitInterface::quearyClosestUnit( UnitBase **closest_unit_ptr, Recti &bounding_rect, PointXYi &loc )
+bool UnitInterface::quearyClosestUnit( UnitBase **closest_unit_ptr, iRect &bounding_rect, iXY &loc )
  {
   UnitBase *closest_unit = 0;
   long closest_magnitude;
-  Recti bucket_rect;
+  iRect bucket_rect;
   UnitBucketList *bucket_list;
   UnitBucketPointer *traversal_ptr;
 
@@ -683,7 +683,7 @@ bool UnitInterface::quearyClosestUnit( UnitBase **closest_unit_ptr, Recti &bound
 
       while( traversal_ptr != 0 )
        {
-        PointXYi delta;
+        iXY delta;
         long temp_mag;    
         
         if ( closest_unit == 0 )
@@ -721,7 +721,7 @@ bool UnitInterface::quearyClosestUnit( UnitBase **closest_unit_ptr, Recti &bound
 
 // ******************************************************************
 bool UnitInterface::quearyClosestEnemyUnit( UnitBase **closest_unit_ptr,
-                                               PointXYi &loc,
+                                               iXY &loc,
                                                unsigned short player_index 
                                               )
  {
@@ -742,7 +742,7 @@ bool UnitInterface::quearyClosestEnemyUnit( UnitBase **closest_unit_ptr,
       unit_ptr = unit_lists[ list_index ].incIteratorPtr( &iterator );
       while( unit_ptr != 0 )
        {
-        PointXYi delta;
+        iXY delta;
         long temp_mag;    
         
         if ( closest_unit == 0 )
@@ -783,7 +783,7 @@ bool UnitInterface::quearyClosestEnemyUnit( UnitBase **closest_unit_ptr,
 // ******************************************************************
 
 
-unsigned char UnitInterface::quearyUnitLocationStatus( PointXYi loc )
+unsigned char UnitInterface::quearyUnitLocationStatus( iXY loc )
  {
   PlayerID player_id;
   unsigned long player_index;
@@ -824,13 +824,13 @@ unsigned char UnitInterface::quearyUnitLocationStatus( PointXYi loc )
 
 // ******************************************************************
 
-bool UnitInterface::quearyUnitAtMapLoc( PointXYi map_loc, UnitID *queary_unit_id )
+bool UnitInterface::quearyUnitAtMapLoc( iXY map_loc, UnitID *queary_unit_id )
  {
   UnitBase *unit_ptr;
   UnitState *unit_state;
   UnitPointer *iterator;
   unsigned long list_index;
-  PointXYi unit_map_loc;
+  iXY unit_map_loc;
    
 
   for( list_index = 0; list_index < max_players; list_index++)
@@ -869,7 +869,7 @@ void UnitInterface::startUnitPositionEnumeration( void )
 
 // ******************************************************************
 
-bool UnitInterface::unitPositionEnumeration( PointXYi *position, unsigned char *unit_disposition, unsigned char *threat_level  )
+bool UnitInterface::unitPositionEnumeration( iXY *position, unsigned char *unit_disposition, unsigned char *threat_level  )
  {
   UnitBase *unit_ptr;
     
@@ -912,13 +912,13 @@ void UnitInterface::resetUnitCycleIterator( unsigned long *iterator )
  }
 
 // ******************************************************************
-PointXYi UnitInterface::unitPositionCycle( unsigned long *iterator )
+iXY UnitInterface::unitPositionCycle( unsigned long *iterator )
  {
   UnitBase *unit_ptr;
   bool  completed;
  
   if ( unit_lists[ unit_cycle_player_index ].containsItems() == 0 )
-   return( PointXYi( 0, 0 ) );
+   return( iXY( 0, 0 ) );
   
   unit_ptr = unit_lists[ unit_cycle_player_index ].incIteratorAsync( iterator, &completed );
   
@@ -1145,7 +1145,7 @@ bool UnitInterface::syncRemoteUnits( int *send_return_code, int *percent_complet
    }
   else
    {
-    PointXYi unit_map_loc;
+    iXY unit_map_loc;
     MapInterface::pointXYtoMapXY( unit->unit_state.location, &unit_map_loc );
 
     sync_message.unit_type  = unit->unit_state.unit_type;

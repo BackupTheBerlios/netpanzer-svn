@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _SURFACEDESC_HPP
 
 #include "PObject.hpp"
-#include "Point.hpp"
 
 enum { _surfdesc_system_mem = 0x01, _surfdesc_hardware_mem = 0x02 };
 enum { _surfdesc_double_buffer = 0x01, _surfdesc_page_flipped = 0x02,
@@ -28,9 +27,9 @@ enum { _surfdesc_double_buffer = 0x01, _surfdesc_page_flipped = 0x02,
 class SurfaceDesc : virtual PObject
  {
   public:
-   PointXYi size;
-   Recti    viewable;
-   PointXYi clipOffset;  
+   iXY size;
+   iRect    viewable;
+   iXY clipOffset;  
    unsigned int      bpp;
 
    unsigned long offset_to_view;

@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PLACEMENTMATRIX_HPP
 #define _PLACEMENTMATRIX_HPP
 
-#include "Point.hpp"
+#include "iXY.hpp"
 
 class PlacementMatrix
  {
@@ -33,21 +33,21 @@ class PlacementMatrix
    unsigned char placement_state;
    long run_length;
    long run_counter;
-   PointXYi current_offset; 
-   PointXYi current_loc;
-   PointXYi ini_loc;
+   iXY current_offset; 
+   iXY current_loc;
+   iXY ini_loc;
     
-   bool verifyLocation( PointXYi &loc );
+   bool verifyLocation( iXY &loc );
   
   protected:
   //long level;
   //long direction;
-  //PointXYi ini_loc;
+  //iXY ini_loc;
    
   public:
-   void reset( PointXYi ini_map_loc );
+   void reset( iXY ini_map_loc );
  
-   bool getNextEmptyLoc( PointXYi *loc );
+   bool getNextEmptyLoc( iXY *loc );
    
    
  };
