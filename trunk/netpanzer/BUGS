@@ -1,4 +1,4 @@
-- Astar priority_queue "open" are not clear anytime
+- Astar priority_queue "open" are not clear anytime - can't reproduce
 - in LinkListDoubleTemplate.addFront sometime is (front==0 && rear != 0)
     - Matze: I checked LinkListDoubleTemplate alot, the class seems to be
       correct. Most probably the memory corruption happens elsewhere
@@ -7,8 +7,9 @@
 - when the bot occupied an outpost and you occupy it back, then the build menu
   shows the panzer you built last, but the one choosen by the bot comes out the
   outpost
-- bernhard reports that the bots crash when the server closes
+- bernhard reports that the bots crash when the server closes - can't reproduce
 - sometimes 2 players spawn at the same place
 - game doesn't end when enough objectives are taken
 - irc ping/pong code with reconnect seems to be broken
-- powerups don't work anymore
+- powerups don't work anymore - fixed
+- the build window doesn't come up anymore
