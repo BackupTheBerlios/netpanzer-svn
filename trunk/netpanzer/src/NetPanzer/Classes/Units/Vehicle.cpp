@@ -34,9 +34,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConsoleInterface.hpp"
 #include "ParticleInterface.hpp"
 
-animation_dbase VEHICLE_DBASE;
-animation_dbase COLOR_VEHICLE_DBASE;
-
 enum{ _rotate_and_move, _rotate_stop_move };
 
 Vehicle::Vehicle( iXY initial_loc )

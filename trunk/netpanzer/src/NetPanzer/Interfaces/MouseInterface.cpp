@@ -58,14 +58,9 @@ unsigned char MouseInterface::button_mask;
 MouseEventQueue MouseInterface::event_queue;
 MouseInterface::cursors_t MouseInterface::cursors;
 
-#include "Gdatstct.hpp"
 void MouseInterface::initialize()
 {
 	event_queue.initialize( 20 );
-
-	sprite_dbase CURSOR_DBASE;
-	CURSOR_DBASE.load_dbase( "./gdbase/cursor.dbs");
-	
 
 	const char* cursorpath = "pics/cursors/";
 	char** cursorfiles = FileSystem::enumerateFiles(cursorpath);

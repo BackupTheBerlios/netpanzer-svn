@@ -26,11 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Sprite.hpp"
 #include "SelectionBoxSprite.hpp"
 
-// NOTE: Temp until new sprites put in
-#include "Gdatstct.hpp"
-extern animation_dbase VEHICLE_DBASE;
-extern animation_dbase COLOR_VEHICLE_DBASE;
-
 enum { _control_idle, 
        _control_move, 
 	   _control_move_map_square,
