@@ -4,7 +4,6 @@ Next release:
 -display a message when the round is over ("blabla captured xx% of outposts,
         "time is over", "blabla reached xxx frags")
 -remember to disable packet debugger
--building and changing generation place stopped working
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map
