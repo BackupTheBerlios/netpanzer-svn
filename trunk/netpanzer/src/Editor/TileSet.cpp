@@ -135,7 +135,8 @@ SDL_Surface* TileSet::getTile(size_t num)
 {
     SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(
         tiledata + (tilesize*num), header->tilewidth, header->tileheight,
-        header->tilebitsperpixel, header->tilewidth, 
+        header->tilebitsperpixel, header->tilewidth * (header->tilebitsperpixel
+            / 8), 
         0x000000ff, 0x0000ff00, 0x00ff0000, 0);
     if(!surface)
         throw Exception(
@@ -154,7 +155,8 @@ void TileSet::addTile(SDL_Surface* surface, SDL_Rect* srcrect)
     SDL_Rect* rect = srcrect;
     if(rect == 0) {
         rect = new SDL_Rect;
-        rect->x = rect->y = 0;
+        rect->x = 0;
+        rect->y = 0;
         rect->w = header->tilewidth;
         rect->h = header->tileheight;            
     } else {
@@ -173,26 +175,20 @@ void TileSet::addTile(SDL_Surface* surface, SDL_Rect* srcrect)
         resizeBuffer(tilebuffersize * 2 + tilesize);
 
     int bpp = surface->format->BytesPerPixel;
+    std::cout << "BPP:" << bpp << std::endl;
+    std::cout << "Pitch:" << surface->pitch << std::endl;
     char* sptr = ((char*) surface->pixels) +
         rect->y * surface->pitch + rect->x * bpp;
     char* dptr = tiledata + (tilesize * header->tilecount);
+    //size_t align = surface->pitch - rect->w * bpp;
+    size_t linesize = rect->w * bpp;
+    //std::cout << "Align: " << align << std::endl;
 
     for(int lines=rect->h-1; lines>=0; lines--) {
-        for(int x=0;x<rect->w; x++) {
-            // XXX slow... this switch should be put outside the loop...
-            switch(bpp) {
-                case 3:
-                    memcpy(dptr, sptr, 3);
-                    break;
-                case 4:
-                    *((uint32_t*) dptr) = *((uint32_t*) sptr);
-                    break;
-                default:
-                    throw Exception("unsupported bpp");
-            }
-            sptr += bpp;
-        }
+        memcpy(dptr, sptr, linesize);
+        
         sptr += surface->pitch;
+        dptr += linesize;
     }
 
     header->tilecount++;
