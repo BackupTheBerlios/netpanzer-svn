@@ -88,6 +88,6 @@ cp -p --parents $TEXTS $DATARELEASE
 
 echo "*** Packing Data"
 cd release
-tar -c --bzip2 -f netpanzerdata-$VERSION.tar.bz2 netpanzerdata-$VERSION
+tar -c --bzip2 -f netpanzer-data-$VERSION.tar.bz2 netpanzerdata-$VERSION
 cd -
 
