@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetPacket.hpp"
 #include "UnitState.hpp"
 #include "UnitID.hpp"
+#include "UnitOpcodes.hpp"
 
 #define _OPCODE_MESSAGE_LIMIT 488
 
@@ -37,20 +38,20 @@ enum { _net_message_id_opcode_mesg,
 
 class UnitOpcodeMessage : public NetMessage
 {
-public:
+    friend class NetPacketDebugger;
+private:
     uint16_t code_size;
     uint8_t opcode_count;
-
     uint8_t data[ _OPCODE_MESSAGE_LIMIT ];
 
-    UnitOpcodeMessage()
-    {
-        message_class = _net_message_class_unit;
-        message_id = _net_message_id_opcode_mesg;
-        memset(data, 0, _OPCODE_MESSAGE_LIMIT);
-    }
-
+public:
+    UnitOpcodeMessage();
     unsigned short realSize( void );
+    void reset(void);
+    bool isFull(void);
+    bool isEmpty(void);
+    void add(UnitOpcode *opcode);
+    bool extract(int opcodeNum, UnitOpcodeStruct* dest);
 
 } __attribute__((packed));
 

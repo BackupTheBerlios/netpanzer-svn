@@ -16,52 +16,27 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "UnitOpcodeEncoder.hpp"
 
+#include "UnitOpcodeEncoder.hpp"
 #include "Server.hpp"
 #include "NetworkState.hpp"
-
 #include "ConsoleInterface.hpp"
 #include "OpcodeDebugger.hpp"
+#include "UnitNetMessage.hpp"
 
 void UnitOpcodeEncoder::initialize( int send_method )
 {
     UnitOpcodeEncoder::send_method = send_method;
-    resetEncoder();
-}
-
-void UnitOpcodeEncoder::resetEncoder( void )
-{
-    opcode_message.code_size = 0;
-    opcode_message.opcode_count = 0;
-    memset( opcode_message.data, 0, _OPCODE_MESSAGE_LIMIT );
-    opcode_message.message_class = _net_message_class_unit;
-    opcode_message.message_id = _net_message_id_opcode_mesg;
+    opcode_message.reset();
 }
 
 void UnitOpcodeEncoder::encodeOpcode( UnitOpcode *opcode )
 {
-    unsigned char *current_code_ptr;
+    opcode_message.add(opcode);
 
-    if ( ( opcode_message.code_size + sizeof( UnitOpcodeStruct ) ) >
-            _OPCODE_MESSAGE_LIMIT
-       ) {
-        if( send_method == _opcode_encoder_send_method_guarantee ) {
-            SERVER->sendMessage( &opcode_message, opcode_message.realSize(), 0 );
-        } else {
-            SERVER->sendMessage( &opcode_message, opcode_message.realSize(), _network_send_no_guarantee );
-        }
-
-        resetEncoder( );
+    if (opcode_message.isFull()) {
+        sendOpcodeMessage();
     }
-
-    current_code_ptr =  ( (unsigned char *) &opcode_message.data) + opcode_message.code_size;
-    memcpy(current_code_ptr, opcode, sizeof( UnitOpcodeStruct ));
-
-    opcode_message.code_size += sizeof( UnitOpcodeStruct );
-    opcode_message.opcode_count++;
-
-    NetworkState::incOpcodesSent();
 }
 
 void UnitOpcodeEncoder::setDecodeMessage( UnitOpcodeMessage *message )
@@ -72,15 +47,8 @@ void UnitOpcodeEncoder::setDecodeMessage( UnitOpcodeMessage *message )
 
 bool UnitOpcodeEncoder::decodeMessage( UnitOpcodeStruct *opcode )
 {
-    unsigned char *current_code_ptr;
-
-    if ( current_decode_opcode == decode_message.opcode_count )
-        return ( false );
-
-    current_code_ptr = ( (unsigned char *) &decode_message.data)
-                       + sizeof(UnitOpcodeStruct)*current_decode_opcode;
-
-    memcpy( opcode, current_code_ptr, sizeof(UnitOpcodeStruct) );
+    if (!decode_message.extract(current_decode_opcode, opcode))
+        return false;
 
     current_decode_opcode++;
 
@@ -91,14 +59,15 @@ bool UnitOpcodeEncoder::decodeMessage( UnitOpcodeStruct *opcode )
 
 void UnitOpcodeEncoder::sendOpcodeMessage( void )
 {
-    if ( opcode_message.opcode_count > 0 ) {
+    if (!opcode_message.isEmpty()) {
         if( send_method == _opcode_encoder_send_method_guarantee ) {
             SERVER->sendMessage( &opcode_message, opcode_message.realSize(), 0 );
         } else {
             SERVER->sendMessage( &opcode_message, opcode_message.realSize(), _network_send_no_guarantee );
         }
 
-        resetEncoder( );
+        opcode_message.reset();
     }
 
+    NetworkState::incOpcodesSent();
 }

@@ -16,9 +16,54 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
 #include "UnitNetMessage.hpp"
+#include "UnitOpcodes.hpp"
+
+UnitOpcodeMessage::UnitOpcodeMessage()
+{
+    message_class = _net_message_class_unit;
+    message_id = _net_message_id_opcode_mesg;
+    memset(data, 0, _OPCODE_MESSAGE_LIMIT);
+}
 
 unsigned short UnitOpcodeMessage::realSize( void )
 {
     return( ( sizeof( UnitOpcodeMessage ) - _OPCODE_MESSAGE_LIMIT ) + code_size );
+}
+
+void UnitOpcodeMessage::reset(void)
+{
+    code_size = 0;
+    opcode_count = 0;
+    memset(data, 0, _OPCODE_MESSAGE_LIMIT);
+    message_class = _net_message_class_unit;
+    message_id = _net_message_id_opcode_mesg;
+}
+
+bool UnitOpcodeMessage::isEmpty(void)
+{
+    return opcode_count != 0;
+}
+
+bool UnitOpcodeMessage::isFull(void)
+{
+    return (code_size + sizeof(UnitOpcodeStruct)) > _OPCODE_MESSAGE_LIMIT;
+}
+
+void UnitOpcodeMessage::add(UnitOpcode *opcode)
+{
+    memcpy(data + code_size, opcode, sizeof(UnitOpcodeStruct));
+    code_size += sizeof(UnitOpcodeStruct);
+    opcode_count++;
+}
+
+bool UnitOpcodeMessage::extract(int opcodeNum, UnitOpcodeStruct* dest)
+{
+    if (opcodeNum >= opcode_count)
+        return false;
+
+    memcpy(dest, data + sizeof(UnitOpcodeStruct) * opcodeNum,
+        sizeof(UnitOpcodeStruct));
+    return true;
 }
