@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __LibView_hpp__
 
 #include "GameTemplateView.hpp"
-#include "Surface.hpp"
+#include "2D/Surface.hpp"
 #include "CheckBox.hpp"
 
 extern bool gDrawGameTiles;

@@ -16,29 +16,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef __DirtKickParticle2D_hpp__
-#define __DirtKickParticle2D_hpp__
+#include <config.h>
+#include "Angle.hpp"
 
-
-
-#include "Particle2D.hpp"
-
-
-// DirtKickParticle2D
-//--------------------------------------------------------------------------
-class DirtKickParticle2D : public Particle2D
-{
-public:
-    DirtKickParticle2D(fXYZ pos);
-
-    static void init();
-
-protected:
-    Surface static dirtKickSprite;
-
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
-
-}
-; // end DirtKickParticle2D
-
-#endif // __DirtKickParticle2D_hpp__
+double Angle::deg_const = 57.2957795132;
+double Angle::pi_const =  3.14159265359;
