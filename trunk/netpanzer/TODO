@@ -54,6 +54,7 @@
    browsing tools like xqf done eventually)
  * create UDP broadcast code for announcing servers in LANs
  * add a (readline based?) serverconsole along with "chat" command
+ * add an in-game console like in quake-like games
 
 *** gameplay
 / Note that these are just random ideas. We should be very careful when 
