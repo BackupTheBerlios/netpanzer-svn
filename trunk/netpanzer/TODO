@@ -34,7 +34,7 @@ Next release:
 <fEnIo> Shutdown needed.
 -if I can't solve the server hang, add a new thread that shuts the server down
  after a 5 minutes of hang or so...
--include Christian Hausknechts patch from the mailing list
+-include Christian Hausknechts patch from the mailing list - ok
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map
@@ -76,7 +76,7 @@ Next release:
  * Improve userinterface:
  * Make usual shortcuts (known from other RTSes) work:
   -CTRL+Number for defining groups - done
-  -pressing a number twice to center screen on the group
+  -pressing a number twice to center screen on the group - done
   -Scroll map with right mouse - done
   -scrolling map with cursor keys
   -Space jumps to last action - done
