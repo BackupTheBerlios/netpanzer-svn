@@ -63,7 +63,6 @@ enum { _keyboard_input_mode_command,
        _keyboard_input_mode_allie_mesg,
      };
 
-bool WorldInputCmdProcessor::unit_flag_visibility_state = false;
 short WorldInputCmdProcessor::selected_objective_id = 0;
 
 WorldInputCmdProcessor::WorldInputCmdProcessor()
@@ -235,15 +234,6 @@ void WorldInputCmdProcessor::cycleNextUnitAndChangeFocus( void )
   WorldViewInterface::setCameraPosition( world_pos );   
  } 
 
-void WorldInputCmdProcessor::toggleUnitFlagVisibility( void )
- {
-  if ( GameConfig::getDisplayUnitFlags() == true )
-   { GameConfig::setDisplayUnitFlags( false ); }
-  else
-   { GameConfig::setDisplayUnitFlags( true ); } 
- }
-
-
 void WorldInputCmdProcessor::getManualControlStatus( void )
  { 
   if ( KeyboardInterface::getKeyState( SDLK_LCTRL ) ||
@@ -267,8 +257,12 @@ void WorldInputCmdProcessor::evaluateKeyCommands( void )
   if ( (KeyboardInterface::getKeyPressed( SDLK_o ) == true) )
    { toggleDisplayOutpostNames();  }
 
-  if ( (KeyboardInterface::getKeyPressed( SDLK_f ) == true) )
-   { toggleUnitFlagVisibility();  }
+  if ( (KeyboardInterface::getKeyPressed( SDLK_f ) == true) ) { 
+   GameConfig::toggleDisplayUnitFlags();
+  }
+  if ( (KeyboardInterface::getKeyPressed( SDLK_d ) == true) ) { 
+   GameConfig::toggleDrawUnitDamage();
+  }
 
   if ( (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true)
 		  && (KeyboardInterface::getKeyState( SDLK_LALT ) == false)

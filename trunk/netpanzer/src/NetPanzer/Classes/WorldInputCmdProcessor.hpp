@@ -51,9 +51,6 @@ class WorldInputCmdProcessor
    unsigned long unit_cycle_search_iterator;
    void cycleNextUnitAndChangeFocus( void ); 
    
-   static bool unit_flag_visibility_state;
-   void toggleUnitFlagVisibility( void );
-
    unsigned char getCursorStatus( iXY &loc ); 
    void setMouseCursor( unsigned char world_cursor_status );
 
