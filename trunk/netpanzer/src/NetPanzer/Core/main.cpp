@@ -117,6 +117,7 @@ void shutdown()
     FileSystem::shutdown();
 }
 
+#ifndef WIN32
 void signalhandler(int signum)
 {
     // set signal handler back to default
@@ -142,10 +143,12 @@ void signalhandler(int signum)
     shutdown();
     raise(signum);
 }
+#endif
 
 //-----------------------------------------------------------------
 BaseGameManager *initialise(int argc, char** argv)
 {
+#ifndef WIN32
     // Install signal handler
     signal(SIGILL, signalhandler);
     signal(SIGINT, signalhandler);
@@ -157,6 +160,7 @@ BaseGameManager *initialise(int argc, char** argv)
     signal(SIGABRT, signalhandler);
     signal(SIGTRAP, signalhandler);
     signal(SIGSYS, signalhandler);
+#endif
         
     // Parse commandline
     using namespace optionmm;
