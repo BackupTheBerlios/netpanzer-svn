@@ -58,6 +58,6 @@ void _splitpath(const char* path, char* drive, char* dir,
 			strcpy(ext, lastdot);
 	}
 
-	printf ("Splitted Path : %s => %s - %s - %s - %s.\n", path,
-			drive, dir, fname, ext);
+	//printf ("Splitted Path : %s => %s - %s - %s - %s.\n", path,
+	//		drive, dir, fname, ext);
 }

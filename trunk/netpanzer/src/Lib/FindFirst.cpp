@@ -16,17 +16,12 @@ int* _findfirst(const char* dir, _finddata_t* fileinfo)
 	findhandle_t* handle = new findhandle_t;
 	memset(handle, 0, sizeof(findhandle_t));
 
-	printf ("Start globbing for: %s\n", dir);
-		
 	if(glob(dir, 0, 0, &handle->globbuf) != 0)
 		return (int*) -1;
-
-	printf ("Number: %d\n", handle->globbuf.gl_pathc);
 
 	if (_findnext((int*) handle, fileinfo) < 0)
 		return (int*) -1;
 
-	printf ("ok so far.\n");
 	return (int*) handle;
 }
 
@@ -45,13 +40,11 @@ int _findnext(int* ihandle, _finddata_t* fileinfo)
 	fileinfo->name = lastslash;
 	handle->pos++;
 
-	printf ("matched: %s.\n", fileinfo->name);
 	return 0;
 }
 
 void _findclose(int* ihandle)
 {
 	findhandle_t* handle = (findhandle_t*) ihandle;
-	printf ("closed glob");
 	globfree(&handle->globbuf);
 } 
