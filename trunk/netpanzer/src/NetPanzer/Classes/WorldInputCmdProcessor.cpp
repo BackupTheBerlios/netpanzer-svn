@@ -354,7 +354,6 @@ void WorldInputCmdProcessor::evaluateGroupingKeys( void )
                 continue;
             }
             working_list.addList( selection_group_lists[ n ] );
-//LOG(("select:%i,working:%i,",n,working_list.unit_list.contains));
         }
         if(alt_status != true) {
             working_list.select();
@@ -713,17 +712,31 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
                 iXY temp;
                 MouseInterface::getMousePosition( &temp.x, &temp.y );
                 WorldViewInterface::clientXYtoWorldXY( world_win, temp, &world_pos );
-                
-                TerminalOutpostOutputLocRequest term_mesg;
 
-                term_mesg.output_loc_request.set( outpost_goal_selection,
-                                                  world_pos);
+                Objective *objective;
+                PlayerID player_id = PlayerInterface::getLocalPlayerID();
+                int cs = ObjectiveInterface::quearyObjectiveLocationStatus( world_pos, player_id, &objective );
 
-                CLIENT->sendMessage( &term_mesg, sizeof(TerminalOutpostOutputLocRequest), 0 );
+                if ( (cs == _player_occupied_objective_found) 
+                    && outpost_goal_selection == objective->objective_state.ID
+                    ) {
+                    // we've let go of the mouse on the building so we're
+                    //  not changing the spawn point
+                    selected_objective_id = CURRENT_SELECTED_OUTPOST_ID = objective->objective_state.ID;
+                    activateVehicleSelectionView( selected_objective_id );
+                }
+                else {
+                    TerminalOutpostOutputLocRequest term_mesg;
 
-                if ( NetworkState::status == _network_state_client ) {
-                
-                    ObjectiveInterface::sendMessage( &(term_mesg.output_loc_request) );
+                    term_mesg.output_loc_request.set( outpost_goal_selection,
+                                                      world_pos);
+
+                    CLIENT->sendMessage( &term_mesg, sizeof(TerminalOutpostOutputLocRequest), 0 );
+
+                    if ( NetworkState::status == _network_state_client ) {
+                    
+                        ObjectiveInterface::sendMessage( &(term_mesg.output_loc_request) );
+                    }
                 }
                 outpost_goal_selection = -1;
             }
@@ -733,6 +746,8 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
                 (left_button_hold_action_complete == false) ) {
             WorldViewInterface::clientXYtoWorldXY( world_win, event.down_pos, &world_pos );
             click_status = getCursorStatus( world_pos );
+
+
 
 	    switch ( click_status ) {
             case _cursor_player_unit : {
@@ -808,25 +823,8 @@ void WorldInputCmdProcessor::evalRightMButtonEvents( MouseEvent &event )
         return;
     }
 
-    if (event.event == MouseEvent::EVENT_CLICK ) {
-
-        if ( (KeyboardInterface::getKeyState(SDLK_LCTRL) ||
-                KeyboardInterface::getKeyState(SDLK_RCTRL) ) ) {
-            WorldViewInterface::clientXYtoWorldXY( world_win, event.down_pos, &world_pos );
-            player_id = PlayerInterface::getLocalPlayerID();
-            click_status = ObjectiveInterface::quearyObjectiveLocationStatus( world_pos, player_id, &objective );
-
-            if ( (click_status == _player_occupied_objective_found) ) {
-                selected_objective_id = CURRENT_SELECTED_OUTPOST_ID = objective->objective_state.ID;
-                activateVehicleSelectionView( selected_objective_id );
-            } else
-                if ( (click_status == _enemy_occupied_objective_found) ||
-                        (click_status == _unoccupied_objective_found)
-                   ) {
-                }
-        }
-//        else { working_list.unGroup(); }
-    }  // ** _event_mbutton_click
+//    if (event.event == MouseEvent::EVENT_CLICK ) {
+//    }  // ** _event_mbutton_click
 
 
     if (event.event == MouseEvent::EVENT_DBCLICK ) {
