@@ -47,4 +47,4 @@ solution would be transfering of unknown flags.
 -add code for masterserver registration/browsing
 -create UDP broadcast code for announcing servers in LANs
 -make it possible to configure the mapcycle
-
+-add a (readline based?) serverconsole
