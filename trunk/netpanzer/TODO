@@ -24,7 +24,7 @@ solution would be transfering of unknown flags.
 -the unit profiles should be possible to set on the server. They should be
 distributed to the clients while they connect.
 -limit fps to a fixed value so that we are nicer to the CPU on the system.
--make it possible to have different colors for different players
+-make it possible to have different colors for different players - DONE
 -make the code endian safe. It should run on big endian boxes too.
 
 *** Tools
