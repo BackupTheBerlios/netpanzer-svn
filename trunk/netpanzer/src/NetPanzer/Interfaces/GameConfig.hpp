@@ -377,7 +377,9 @@ class GameConfig
 	 { return (_GAME_CONFIG_INITIAL_UNIT_LIMIT_LOWER ); }
 
 	static inline void SetPlayerName(const char *player_name)
-	{	memmove(PlayerName, player_name, 64);}
+	{	strncpy(PlayerName, player_name, 64);
+		PlayerName[63] = '\0';
+	}
 
 	static inline char *GetPlayerName()
 	{	return(PlayerName);}

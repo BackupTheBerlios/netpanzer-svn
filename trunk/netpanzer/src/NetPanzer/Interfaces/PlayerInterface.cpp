@@ -83,7 +83,7 @@ void PlayerInterface::reset( void )
 void PlayerInterface::cleanUp( void )
  {
   delete [ ] player_lists;
-  delete( alliance_matrix );
+  delete [] alliance_matrix;
   max_players = 0;
  }
 

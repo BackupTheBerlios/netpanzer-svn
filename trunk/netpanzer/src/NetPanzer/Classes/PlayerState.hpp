@@ -48,7 +48,8 @@ class PlayerState
 
    void setName( const char *player_name )
     {
-     strcpy( name, player_name );
+     strncpy(name, player_name, 64);
+     name[63] = '\0';
     }
 
    void setID( PlayerID player_id )

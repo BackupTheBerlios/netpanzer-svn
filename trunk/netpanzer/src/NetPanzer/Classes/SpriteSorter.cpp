@@ -60,7 +60,6 @@ void SpriteSorter::initialize( )
   for ( i = 0; i < 3; i++ )
    {
     sprite_lists[i].resize(50);    
-	list_counts[i] = 0;
    }
 
   sprite_lists[3].resize(500);
@@ -70,11 +69,11 @@ void SpriteSorter::initialize( )
   for ( i = 6; i < _MAX_HEIGHT_LEVELS; i++ )
    {
     sprite_lists[i].resize(50);
-    list_counts[i] = 0;
    }
 
   for ( i = 0; i < _MAX_HEIGHT_LEVELS; i++ )
    {
+    list_counts[i] = 0;
     max_sprite_stats[i] = 0;
    }
 }
@@ -98,18 +97,9 @@ void SpriteSorter::reset( iRect &world_win )
 
 void SpriteSorter::addSprite(Sprite *sprite)
 {
-   	unsigned char height;
-  
 	if ( sprite->isVisible( world_window ) )
 	{
-		height = sprite->getHeight();
-	
-		assert( height < _MAX_HEIGHT_LEVELS );
-	 
-		if(sprite_lists[height].size() < list_counts[height])
-			sprite_lists[height].resize(list_counts[height]);
-		sprite_lists[height] [list_counts[height]] = sprite;
-		list_counts[ height ]++;
+		forceAddSprite(sprite);
 	} 
 }
  
@@ -121,8 +111,8 @@ void SpriteSorter::forceAddSprite(Sprite *sprite)
 	
 	assert( height < _MAX_HEIGHT_LEVELS );
 
-	if(sprite_lists[height].size() < list_counts[height])
-		sprite_lists[height].resize(list_counts[height]);
+	if(sprite_lists[height].size() <= list_counts[height])
+		sprite_lists[height].resize(1 + list_counts[height]);
 	sprite_lists[height] [list_counts[height]] = sprite;
   
 	list_counts[ height ]++;

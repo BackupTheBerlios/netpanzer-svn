@@ -481,7 +481,7 @@ void PackedSurface::bltBlend(const Surface &dest, int destX, int destY, ColorTab
 	iXY srcMin;
 	if (destX < 0) {
 		srcMin.x = -destX;
-		if (srcMin >= pix.x) return; // off left
+		if (srcMin.x >= pix.x) return; // off left
 		needClipX = 1;
 	} else {
 		srcMin.x = 0;

@@ -495,6 +495,13 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 	unitImages.setFrame(i++);
 	unitImages.fill(Color::blue);
 
+	maxHitPoints = 1;
+	maxAttackFactor = 1;
+	maxAttackRange = 1;
+	maxDefendRange = 1;
+	maxTotalSpeed = 1;
+	maxReloadTime = 1;
+	maxRegenTime = 1;
 	getProfileData();
 
 	highlightedUnitType = 0;
