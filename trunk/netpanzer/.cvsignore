@@ -14,4 +14,5 @@ netpanzer
 Jamconfig
 Jamconfig.in
 out
+stamp-h.in
 
