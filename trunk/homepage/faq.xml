@@ -112,7 +112,7 @@
 
 	  <faq>
         <question>What ports are used by netPanzer?</question>
-		<answer>3030/TCP, 3032/TCP, 3031/UDP and 3032/UDP.</answer>
+		<answer>I uses only one port 3030/TCP.</answer>
       </faq>
 
     </faq-list>
