@@ -32,8 +32,8 @@ public:
     Logger();
     ~Logger();
 
-    void setLogLevel(int logLevel);
-    int getLogLevel();
+    void setLogLevel(int logLevel) { m_logLevel = logLevel; }
+    int getLogLevel() { return m_logLevel; }
 
     void debug(const char *fmt, ...)
         __attribute__((format (__printf__, 2, 3)));
@@ -49,9 +49,9 @@ private:
     FILE* m_logfile;
 };
 
-extern Logger logger;
+extern Logger LOGGER;
 #ifdef DO_LOGGING
-#define LOG(x)         logger.info x
+#define LOG(x)         LOGGER.info x
 #else
 #define LOG(x)
 #endif // DO_LOGGING

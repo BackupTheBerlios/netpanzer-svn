@@ -202,8 +202,8 @@ void PackedSurface::load(const char* filename)
     }
     if (version > CURRENT_PAK_VERSION) {
         delete file;
-        throw Exception("PAK file version of '%s' is newer(%d) than the .exe
-		(%d) you are using, which only supports up to version",
+        throw Exception("PAK file version of '%s' is newer(%d) than "
+                "the currently supported version(%d)",
 		filename, version, CURRENT_PAK_VERSION);
     }
     file->read(&pix, sizeof(pix), 1);

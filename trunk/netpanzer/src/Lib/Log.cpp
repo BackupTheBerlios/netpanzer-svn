@@ -21,10 +21,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdarg.h>
 #include <errno.h>
 #include <string.h>
+#include <string>
 #include "Log.hpp"
 
 #ifdef DO_LOGGING
-Logger logger;
+Logger LOGGER;
 #endif
 
 // like syslog levels
@@ -71,8 +72,10 @@ Logger::debug(const char *fmt, ...)
 {
     va_list ap;
 
+    std::string buffer("DEBUG: ");
+    buffer.append(fmt);
     va_start(ap, fmt);
-    log(Logger::LEVEL_DEBUG, fmt, ap);
+    log(Logger::LEVEL_DEBUG, buffer.c_str(), ap);
     va_end(ap);
 }
 //-----------------------------------------------------------------

@@ -112,16 +112,24 @@ void initialise(int argc, char** argv)
     // Parse commandline
     using namespace optionmm;
     command_line commandline(PACKAGE_NAME, PACKAGE_VERSION,
-                             "Copyright(c) 1998 Pyrosoft Inc. and others", "", argc, argv);
+            "Copyright(c) 1998 Pyrosoft Inc. and others", "", argc, argv);
 
     option<bool, false, false> dedicated_option('d', "dedicated",
             "run as dedicated server", false);
     commandline.add(&dedicated_option);
-    option<int>	 port_option('p', "port", "run server on specific port", 0);
+    option<int> port_option('p', "port", "run server on specific port", 0);
     commandline.add(&port_option);
+    option<bool, false, false> debug_option('g', "debug",
+            "enable debug output", false);
+    commandline.add(&debug_option);
 
     if(!commandline.process() || commandline.help() || commandline.version())
         exit(0);
+
+    if (debug_option.value()) {
+        LOGGER.setLogLevel(Logger::LEVEL_DEBUG);
+        LOGGER.debug("debug option enabled");
+    }
 
     // Initialize SDL
     SDL_Init(SDL_INIT_TIMER);

@@ -36,7 +36,7 @@ Exception::Exception(const char* msg, ...)
 Exception::Exception(const Exception& other)
 {
     size_t len = strlen(other.message);
-    message = new char[len];
+    message = new char[len+1];
     memcpy(message, other.message, len+1);
 }
 

@@ -113,7 +113,6 @@ protected:
     static void dedicatedLoadGameMap( char *map_file_path );
 
     static bool loadGameData();
-    static void dedicatedLoadGameData();
 
     static void initializeGameLogic();
     static void reinitializeGameLogic();

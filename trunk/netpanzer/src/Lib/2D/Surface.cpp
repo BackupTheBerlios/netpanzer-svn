@@ -2843,10 +2843,10 @@ int Surface::loadAllTILInDirectory(const char *path)
     Surface tempSurface;
     iXY maxSize;
     for(char** file = list; *file != 0; file++) {
-	std::string name = path;
-	name += *file;
-	if(name.find(".til") != std::string::npos) {
-	    filenames.push_back(name);
+        std::string name = path;
+        name += *file;
+        if(name.find(".til") != std::string::npos) {
+            filenames.push_back(name);
 
             // Get the max image size.
             if (!tempSurface.loadTIL(name.c_str())) {
@@ -2858,7 +2858,7 @@ int Surface::loadAllTILInDirectory(const char *path)
             if (maxSize.y < tempSurface.getPix().y) {
                 maxSize.y = tempSurface.getPix().y;
             }
-	}
+        }
     }
 
     FileSystem::freeList(list);
@@ -2896,12 +2896,12 @@ int Surface::loadAllBMPInDirectory(const char *path)
     
     std::vector<std::string> filenames;
     Surface tempSurface;
-    iXY maxSize;
+    iXY maxSize(0, 0);
     for(char** file = list; *file != 0; file++) {
-	std::string name = path;
-	name += *file;
-	if(name.find(".til") != std::string::npos) {
-	    filenames.push_back(name);
+        std::string name = path;
+        name += *file;
+        if(name.find(".bmp") != std::string::npos) {
+            filenames.push_back(name);
 
             // Get the max image size.
             tempSurface.loadBMP(name.c_str());
@@ -2911,7 +2911,7 @@ int Surface::loadAllBMPInDirectory(const char *path)
             if (maxSize.y < tempSurface.getPix().y) {
                 maxSize.y = tempSurface.getPix().y;
             }
-	}
+        }
     }
 
     FileSystem::freeList(list);

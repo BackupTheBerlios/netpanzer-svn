@@ -640,16 +640,6 @@ bool GameManager::loadGameData()
 }
 
 // ******************************************************************
-void GameManager::dedicatedLoadGameData()
-{
-    UnitProfileInterface::loadUnitProfiles();
-    LoadUnitSurfaces();
-    UNIT_FLAGS_SURFACE.loadAllBMPInDirectory("pics/flags/");
-    if(UNIT_FLAGS_SURFACE.getFrameCount() == 0)
-        throw Exception("Couldn't find any flag in pics/flags/.");
-}
-
-// ******************************************************************
 bool GameManager::startGameMapLoad( char *map_file_path, unsigned long partitions, int *result_code )
 {
     int check_return_code;
@@ -768,7 +758,7 @@ void GameManager::dedicatedBootStrap()
             FileSystem::mkdir("config");
         GameConfig::initialize("config/netpanzer-dedicated.cfg");
         initializeSoundSubSystem(); // we load a dummy sound driver
-        dedicatedLoadGameData();
+        loadGameData();
         initializeGameObjects();
         initializeGameLogic();
         initializeNetworkSubSystem();
@@ -1424,18 +1414,18 @@ void GameManager::launchDedicatedServer()
         GameConfig::SetNumberUnits( units );
     }
 
-    int game_type;
+    int game_type = 1;
 
     do {
         printf( "Game Type\n" );
         printf( "(1) Objective \n");
         printf( "(2) Frag Limit \n" );
         printf( "(3) Time Limit \n" );
-        printf( "Choose : " );
+        printf( "Choose <1>: " );
         fflush(stdout);
         readString(input_str, 256, stdin);
         sscanf( input_str, "%d", &game_type );
-    } while( (game_type < 1) && (game_type > 3) );
+    } while( (game_type < 1) || (game_type > 3) );
 
     switch( game_type ) {
     case 1 : {
