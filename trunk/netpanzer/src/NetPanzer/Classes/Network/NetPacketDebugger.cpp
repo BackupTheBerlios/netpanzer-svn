@@ -157,7 +157,7 @@ void NetPacketDebugger::logAICommand(std::ostream& log,
         }
         case _command_attack_unit:
         {
-            log << "Attack: " << cmd.target_id.unique;
+            log << "Attack: " << cmd.target_id.getUnique();
             break;
         }
         case _command_start_manual_move:

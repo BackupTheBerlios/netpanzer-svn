@@ -65,7 +65,7 @@ Bot::moveUnit(UnitBase *unit, iXY map_pos)
     m_tasks.setUnitTask(unit, BotTaskList::TASK_MOVE);
 
     LOGGER.debug("bot: moveUnit %d to %dx%d",
-            unit->unit_id.index, map_pos.x, map_pos.y);
+            unit->unit_id.getIndex(), map_pos.x, map_pos.y);
 }
 //-----------------------------------------------------------------
 void
@@ -82,7 +82,7 @@ Bot::attackUnit(UnitBase *unit, UnitBase *enemyUnit)
     m_tasks.setUnitTask(unit, BotTaskList::TASK_ATTACK);
 
     LOGGER.debug("bot: attackUnit %d to %d",
-            unit->unit_id.index, enemyUnit->unit_id.index);
+            unit->unit_id.getIndex(), enemyUnit->unit_id.getIndex());
 }
 //-----------------------------------------------------------------
 void

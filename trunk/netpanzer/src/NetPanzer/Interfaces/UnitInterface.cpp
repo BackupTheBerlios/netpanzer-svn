@@ -346,9 +346,7 @@ void UnitInterface::addNewUnit( UnitBase *unit, const PlayerID &player )
 
     unit_lists[player_index].insert( unit, new_index );
 
-    unit->unit_id.index = new_index;
-    unit->unit_id.player = player_index;
-    unit->unit_id.unique = 0;
+    unit->unit_id.set(player_index, new_index, 0);
 
     unit_bucket_array.addUnit( unit );
 }

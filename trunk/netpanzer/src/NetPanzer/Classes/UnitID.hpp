@@ -28,78 +28,22 @@ class UnitID
 {
 public:
     uint8_t player;
+private:
     uint16_t index;
     uint16_t unique;
 
-    UnitID()
-        : player(0xff), index(0xffff), unique(0xffff)
-    { }
-
-    void set(uint8_t player, uint16_t index, uint16_t unique )
-    {
-        UnitID::player = player;
-        UnitID::index = index;
-        UnitID::unique = unique;
-    }
-
-    void set( uint8_t player, uint16_t index )
-    {
-        UnitID::player = player;
-        UnitID::index = index;
-    }
-
-    uint8_t getPlayer() const
-    {
-        return player;
-    }
-
-    uint16_t getIndex() const
-    {
-        return index;
-    }
-
-    bool operator==( const UnitID& Uid ) const
-    {
-        if ( (player == Uid.player) && (index == Uid.index)
-                && (unique == Uid.unique)
-           )
-            return true;
-
-        return false;
-    }
-
-    bool operator!=( const UnitID& Uid ) const
-    {
-        if ( (player != Uid.player) || (index != Uid.index)
-                || (unique != Uid.unique)
-           )
-            return true;
-
-        return false;
-    }
-
-    bool operator<( const UnitID& Uid ) const
-    {
-        return (player < Uid.player
-                || (player == Uid.player && index < Uid.index)
-                || (player == Uid.player && index == Uid.index
-                    && unique < Uid.unique));
-    }
-
-    bool playerEqual( const UnitID& Uid ) const
-    {
-        if ( (player == Uid.player) )
-            return true;
-
-        return false;
-    }
-
-    void operator=( const UnitID& Uid )
-    {
-        player = Uid.player;
-        index  = Uid.index;
-        unique = Uid.unique;
-    }
+public:
+    UnitID();
+    void set(uint8_t player, uint16_t index, uint16_t unique );
+    void set( uint8_t player, uint16_t index );
+    uint8_t getPlayer() const;
+    uint16_t getIndex() const;
+    uint16_t getUnique() const;
+    bool operator==( const UnitID& Uid ) const;
+    bool operator!=( const UnitID& Uid ) const;
+    bool operator<( const UnitID& Uid ) const;
+    bool playerEqual( const UnitID& Uid ) const;
+    void operator=( const UnitID& Uid );
 } __attribute__((packed));
 
 #ifdef MSVC
