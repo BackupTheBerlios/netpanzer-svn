@@ -111,7 +111,8 @@ bool HandleSDLEvents()
 void shutdown()
 {
     SDL_Quit();
-    gameconfig->saveConfig();
+    if(gameconfig)
+        gameconfig->saveConfig();
     LOGGER.closeLogFile();
     FileSystem::shutdown();
 }
