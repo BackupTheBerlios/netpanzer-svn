@@ -4168,33 +4168,17 @@ void Surface::bltStringVGradient(const iXY &pos, const char *string, ColorTable 
 	}
 }
 
-// Blit a string of text with a horizontal gradient.
 //---------------------------------------------------------------------------
-void Surface::bltStringHGradient(const iXY &pos, const char *string, ColorTable &colorTable) const
+void Surface::bltChar8x8VGradient(const iXY &pos, const char &character,
+								  ColorTable &colorTable) const
 {
 	assert(screenLocked);
-
-	int xSize = strlen(string) * CHAR_XPIX;
-
-	Surface tempSurface(xSize, CHAR_YPIX, xSize, 1);
-
-	tempSurface.bltString(iXY(0, 0), string, Color::white);
-
-	tempSurface.bltTransHGradient(*this, pos, colorTable);
-}
-
-//---------------------------------------------------------------------------
-void Surface::bltChar8x8VGradient(const iXY &pos, const char &character, ColorTable &colorTable) const
-{
-	assert(screenLocked);
-
 #ifdef _DEBUG
 	if (character > ascii8x8.getFrameCount())
 	{
 		assert(false);
 	}
 #endif
-
 	ascii8x8.setFrame(character);
 	ascii8x8.bltTransVGradient(*this, pos, colorTable);
 }
@@ -4299,173 +4283,6 @@ void Surface::bltTransVGradient(const Surface &dest, iXY min, ColorTable &colorT
 	}
 }
 
-//---------------------------------------------------------------------------
-void Surface::bltTransHGradient(const Surface &dest, const iXY &pos, ColorTable &colorTable) const
-{
-	assert(screenLocked);
-
-}
-
-//---------------------------------------------------------------------------
-int Surface::savePCX( Palette &pal )
-{
-        char strBuf[256];
-        int  num = 0;
-
-        // Incrementally create screen shots.
-        for(;;)
-        {
-                sprintf(strBuf, "shot%04d.pcx", num);
-
-                if (UtilInterface::getFileSize(strBuf) <= 0)
-                {
-              if (!savePCX(strBuf, pal))
-                        {
-                     return false;
-                        }
-                        return true;
-                } else num++;
-        }
-        return true;
-
- }
-
-//---------------------------------------------------------------------------
-inline long pcx_putc( unsigned long c, unsigned long n, FILE *fp )
-{
-        if ( (n > 1) || ( (c & 0xc0) == 0xc0 ) )
-        {  while ( n > 0x3f )
-              if ( pcx_putc( c, 0x3f, fp ) )
-                 return ( 1 );
-              else n -= 0x3f;
-
-           if ( !n )
-              return (0);
-
-           if ( fputc( 0xc0 | n, fp ) == EOF )
-              return ( 1 );
-        };
-
-        if ( fputc( c, fp ) == EOF )
-           return ( 1 );
-
-        return (0);
-}
-
-//---------------------------------------------------------------------------
-inline long pcx_xputc( long c, FILE *fp )
-{
-        long i;
-        static long csave = -1, n = -1;
-
-        if ( c == -1 )
-        {  if ( csave != -1 )
-              if ( pcx_putc( csave, n, fp ) )
-                 return ( 1 );      
-           csave = n = -1;
-           return (0);
-        };
-
-        if ( c == csave )
-        {  n++;
-           return (0);
-        };
-
-        if ( csave != -1 )
-        {  
-		   // XXX is this = intended here? (I added the braces to avoid the
-		   // warning now...)
-		   if ( (i = pcx_putc( csave, n, fp )) )
-              return i;
-           csave = n = -1;
-        };
-
-        csave = c;
-        n = 1;
-        return (0);
-}
-
-//---------------------------------------------------------------------------
-void Surface::savePCX(FILE *fp, Palette &pal )
-{
-	PcxHeader header;
-
-	header.manufacturer = 10;
-	header.version = 5;
-	header.encoding = 1;
-	header.bits_per_pixel = 8;
-	header.x = 0;
-	header.y = 0;                        //upper left of image
-	header.width = getPix().x - 1;
-	header.height = getPix().y - 1;      //size of the image
-	header.horz_res = 150;               //horizontal resolution
-	header.vert_res = 150;               //vertical resolution
-	header.reserved = 0;
-	header.num_color_planes = 1;
-	header.bytes_per_line = getPix().x;
-	header.palette_type = 1; 
-
-	memset( header.padding, 0, 58 );
-    fwrite( &header, 1, sizeof( PcxHeader ), fp );
-
-	//int h_res = header.bytes_per_line;
-	//int v_res = (header.height - header.x) + 2;
-
-	int h_res = getPix().x;
-	int v_res = getPix().y;
-
-	PIX *buff_ptr = mem;
-
-	for ( int y = 0; y < v_res; y++ )
-	{
-		for ( int x = 0; x < h_res; x++ )
-		{  
-			if ( pcx_xputc( *buff_ptr++, fp ) )
-			return; 
-		} 
-	 pcx_xputc( -1, fp );
-    }
-
-	pcx_xputc( -1, fp );
-
-	unsigned char c = 12; // indicates VGA pallete
-
-	fwrite ( &c, 1, 1, fp );
-
-	//now load the palette into the vga registers
-	for(int index = 0; index < 256; index++)
-	{
-		RGBColor color;
-
-		color = pal[ index ];
-    
-		c = color.red;
-		fwrite ( &c, 1, 1, fp );
-
-		c = color.green;
-		fwrite ( &c, 1, 1, fp );
-
-		c = color.blue;
-		fwrite ( &c, 1, 1, fp );
-
-	}//end for index that loads the palette
-
-}
-
-//---------------------------------------------------------------------------
-int Surface::savePCX( const char *filename, Palette &pal ) 
-{
-	FILE *fp = fopen(filename, "wb");
-
-	if (fp == 0) return 0;
-
-	savePCX(fp, pal);
-
-	fclose(fp);
-
-	return 1;
-}
-
 // convertTransColor
 //---------------------------------------------------------------------------
 void Surface::convertTransColor(const PIX &color)
@@ -4487,84 +4304,6 @@ void Surface::convertTransColor(const PIX &color)
 	}
 } // end Surface::convertTransColor
 
-// saveSUR
-//---------------------------------------------------------------------------
-int  Surface::saveSUR(const char *filename)
-{
-	FILE *fp = fopen(filename, "wb");
-	if (fp == 0)	{ return 0; }
-
-	saveSUR(fp);
-
-	fclose(fp);
-
-	return 1;
-
-} // end Surface::saveSUR
-
-// saveSUR
-//---------------------------------------------------------------------------
-void Surface::saveSUR(FILE *fp)
-{
-	SurfaceHeader surfaceHeader;
-
-	surfaceHeader.pixX		 = pix.x;
-	surfaceHeader.pixY		 = pix.y;
-	surfaceHeader.offsetX	 = offset.x;
-	surfaceHeader.offsetY	 = offset.y;
-	surfaceHeader.frameCount = frameCount;
-	surfaceHeader.fps        = fps;
-
-	fwrite(&surfaceHeader, sizeof(SurfaceHeader), 1, fp);
-
-	// Write the actual data...
-	for (int i = 0; i < frameCount; i++)
-	{
-		setFrame(i);
-
-		fwrite(mem, sizeof(PIX), pix.x * pix.y, fp);
-	}
-
-} // end Surface::saveSUR
-
-// loadSUR
-//---------------------------------------------------------------------------
-int  Surface::loadSUR(const char *filename)
-{
-	FILE *fp = fopen(filename, "rb");
-	if (fp == 0)	{ return 0; }
-
-	loadSUR(fp);
-
-	fclose(fp);
-
-	return 1;
-
-} // end Surface::loadSUR
-
-// loadSUR
-//---------------------------------------------------------------------------
-void Surface::loadSUR(FILE *fp)
-{
-	SurfaceHeader surfaceHeader;
-
-	fread(&surfaceHeader, sizeof(SurfaceHeader), 1, fp);
-
-	create(surfaceHeader.pixX, surfaceHeader.pixY, surfaceHeader.pixX, surfaceHeader.frameCount);
-
-	setOffset(iXY(surfaceHeader.offsetX, surfaceHeader.offsetY));
-	setFPS((int) surfaceHeader.fps);
-
-	// Write the actual data...
-	for (int i = 0; i < frameCount; i++)
-	{
-		setFrame(i);
-
-		fread(mem, sizeof(PIX), pix.x * pix.y, fp);
-	}
-
-} // end Surface::loadSUR
-
 // lock
 //---------------------------------------------------------------------------
 void Surface::lock(PIX *memBuf)
@@ -4572,8 +4311,6 @@ void Surface::lock(PIX *memBuf)
 	screenLocked = true;
 	frame0 = mem = memBuf;
 	doesExist    = true;
-	
-
 } // end Surface::lock
 
 // unlock
@@ -4583,8 +4320,6 @@ void Surface::unlock()
 	screenLocked = true;
 	frame0 = mem = 0;
 	doesExist    = false;
-
-
 } // end Surface::unlock
 
 // create
@@ -4717,125 +4452,7 @@ void Surface::loadBMP(const char *fileName, bool needAlloc /* = true */,
 	fclose(fp);
    
    flipVertical();  
-  }
-
-
-
-void Surface::saveBMP(FILE *fp, Palette &pal )
- {
-  BitmapFileHeader file_header;
-  BitmapInfoHeader info_header;
-  RGBQuad palette[256];
-
-  file_header.bfType = 0x4D42;
-  file_header.bfOffBits = sizeof(BitmapFileHeader) + sizeof(BitmapInfoHeader) 
-                           + (sizeof(RGBQuad) * 256);
-  file_header.bfSize = file_header.bfOffBits + (pix.x * pix.y);
-  file_header.bfReserved1 = 0;
-  file_header.bfReserved2 = 0;
-
-  info_header.biSize = sizeof(BitmapInfoHeader);
-  info_header.biWidth = pix.x;
-  info_header.biHeight = pix.y;
-  info_header.biPlanes = 1;
-  info_header.biBitCount = 8;
-  info_header.biCompression = BI_RGB;
-  info_header.biSizeImage= pix.x * pix.y;
-  info_header.biXPelsPerMeter = 0;
-  info_header.biYPelsPerMeter = 0;
-  info_header.biClrUsed = 256;
-  info_header.biClrImportant = 256;
-
-  fwrite( &file_header, sizeof(BitmapFileHeader), 1, fp ); 
-  fwrite( &info_header, sizeof(BitmapInfoHeader), 1, fp ); 
-  
-  for(int index = 0; index < 256; index++)
-   {
-	RGBColor color;
-
-	color = pal[ index ];
-    
-	palette[index].rgbRed = color.red;
-	palette[index].rgbGreen = color.green;
-	palette[index].rgbBlue = color.blue;
-    palette[index].rgbReserved = 0;
-   }//end for index that loads the palette
-
-  fwrite( palette, sizeof(RGBQuad), 256, fp );
- 
-  flipVertical();
-
-    if ( (info_header.biWidth % 4) == 0 )
-     { 
-      fwrite( mem, info_header.biSizeImage, 1, fp );
-     }
-    else
-     { 
-      int padding = ((info_header.biWidth / 4 + 1) * 4) - info_header.biWidth; 
-
-	  PIX buffer[10];
-      int numRows = pix.y;
-
-      //PIX *sPtr = mem;
-
-      for (int row = 0; row < numRows; row++)
-       {
-        fwrite( mem, pix.x, 1, fp );
-        fwrite( buffer, padding, 1, fp);
-	    mem += stride;
-	   } 
-     }
-
-
-  flipVertical();
- }
-
-// saveBMP
-//--------------------------------------------------------------------------
-int Surface::saveBMP(Palette &pal)
-{
-	char strBuf[256];
-	int  count = 0;
-
-	// Incrementally create screen shots.
-	for(;;)
-	{
-		sprintf(strBuf, "shot%04d.bmp", count);
-
-		if (UtilInterface::getFileSize(strBuf) <= 0)
-		{
-			if (!saveBMP(strBuf, pal))
-			{
-				return false;
-			}
-
-			return true;
-		} 
-		else
-		{
-			count++;
-		}
-
-	}
-	return true;
-
-} // end Surface::saveBMP
- 
-// saveBMP
-//--------------------------------------------------------------------------
-int Surface::saveBMP( const char *filename, Palette &pal )
-{
-	FILE *fp = fopen(filename, "wb");
-
-	if (fp == 0) return 0;
-
-	saveBMP(fp, pal);
-
-	fclose(fp);
-
-	return 1;
-
-} // end Surface::saveBMP
+}
 
 // drawWindowsBorder
 //--------------------------------------------------------------------------

@@ -251,10 +251,6 @@ public:
     inline void bltTransVGradient(const Surface &dest, ColorTable &colorTable) const { bltTransVGradient(dest, iXY(0, 0), colorTable); }
     inline void bltTransVGradient(const Surface &dest, int x, int y, ColorTable &colorTable) const { bltTransVGradient(dest, iXY(x, y), colorTable); }
 
-	void bltTransHGradient(const Surface &dest, const iXY &pos, ColorTable &colorTable) const;
-    inline void bltTransHGradient(const Surface &dest, ColorTable &colorTable) const { bltTransHGradient(dest, iXY(0, 0), colorTable); }
-    inline void bltTransHGradient(const Surface &dest, int x, int y, ColorTable &colorTable) const { bltTransHGradient(dest, iXY(x, y), colorTable); }
-
 	void drawHLine(int x1, int y,  int x2, const PIX &color) const;
 	void drawVLine(int x,  int y1, int y2, const PIX &color) const;
 
@@ -400,11 +396,6 @@ public:
 	int  loadRAW(const char *filename, const iXY pix);
 	void loadRAW(FILE *fp, const iXY pix);
 	
-	int  saveSUR(const char *filename);
-	void saveSUR(FILE *fp);
-	int  loadSUR(const char *filename);
-	void loadSUR(FILE *fp);
-
 	void scale(const iXY &pix);
 	inline void scale(int x, int y) { scale(iXY(x, y)); }
 	inline void scale(int x) { scale(iXY(x, x)); }
@@ -473,13 +464,6 @@ public:
 		bltStringVGradient(iXY(x, y), string, colorTable);
 	}
 
-	// Blit a string of text with a horizontal gradient.
-	void bltStringHGradient(const iXY &pos, const char *string, ColorTable &colorTable) const;
-	inline void bltStringHGradient(int x, int y, const char *string, ColorTable &colorTable) const
-	{
-		bltStringHGradient(iXY(x, y), string, colorTable);
-	}
-
 	// Blit a string of text.
 	void bltString5x5(const iXY &pos, const char *string, const PIX &color) const;
 
@@ -512,14 +496,7 @@ public:
 	void bltStringCenteredAtPoint(const iXY &pos, const char *string, const PIX &color) const;
 	void bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color) const;
 
-    int  savePCX(Palette &pal);
-    void savePCX(FILE *fp, Palette &pal );
-    int  savePCX( const char *filename, Palette &pal ); 
-
     void loadBMP(const char *fileName, bool needAlloc = true, void *returnPalette = 0);
-    int  saveBMP(Palette &pal);
-    void saveBMP(FILE *fp, Palette &pal );
-    int  saveBMP( const char *filename, Palette &pal ); 
 
 	void mapFromPalette(const char* oldPalette);
 

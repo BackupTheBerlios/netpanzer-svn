@@ -39,8 +39,8 @@ typedef ArrayTemplate< ConsoleLine > ConsoleLineArray;
 enum { _console_overlap, _console_full };
 
 class ConsoleInterface 
- {
-  protected:
+{
+protected:
   static FILE *con_file;
   static bool log_file_active;
   static bool stdout_pipe;
@@ -64,8 +64,7 @@ class ConsoleInterface
   static char inputPrompt[256];
   static int  cursorPos;
 
-  public:
-
+public:
   static void initialize( long size );
 
   static void setToSurfaceSize( iXY pix );
@@ -81,18 +80,12 @@ class ConsoleInterface
   
   static void postMessage( const char *format, ... ); 
   
-  static void printf( const char *format, ... );
-
   /* Input String Methods */
   static void setInputStringStatus( bool on_off );
   static void resetInputString( char *prompt );
   static void addChar(int newChar);
   static void addExtendedChar(int newExtendedChar);
   static void getInputString( char *string );
-    
-
- };
-
-
+};
 
 #endif // ** _CONSOLEINTERFACE_HPP

@@ -347,17 +347,17 @@ void ConsoleInterface::getInputString( char *string )
 void ConsoleInterface::addChar(int newChar)
 {
 	// Check if the character should be excluded.
-		// Add the character.
-		int length = strlen(inputString) + 1;
+	// Add the character.
+	int length = strlen(inputString) + 1;
 		
-		inputString[cursorPos] = newChar;
+	inputString[cursorPos] = newChar;
 
-		inputString[length] = '\0';
+	inputString[length] = '\0';
 		
-		if (cursorPos < maxCharCount - 1)
-		{
-			cursorPos++;
-		} 
+	if (cursorPos < maxCharCount - 1)
+	{
+		cursorPos++;
+	} 
 } // addChar
 
 void ConsoleInterface::addExtendedChar(int newExtendedChar)

@@ -1859,55 +1859,45 @@ void GameManager::inputLoop()
 
 // ******************************************************************
 void GameManager::graphicsLoop()
- {
-  FRAME_BUFFER.lock();
-  screen.lock(FRAME_BUFFER.mem);
+{
+  	FRAME_BUFFER.lock();
+	screen.lock(FRAME_BUFFER.mem);
   
-  Desktop::draw();
+	Desktop::draw();
   
-  FontSystem2D::drawAll();
+	FontSystem2D::drawAll();
 
-  if ( KeyboardInterface::getKeyPressed( SDLK_F9 ) )
-   {
-	Palette pal;
-    if (!screen.saveBMP(pal) )
-	 { ConsoleInterface::postMessage("Error taking screen shot."); }
-    else
-	 { /* ConsoleInterface::postMessage("Screen shot taken."); */ }
-   }
-  
-  char strBuf[256];
+	char strBuf[256];
 
-  if (display_frame_rate_flag == true)
-  {
-	sprintf(strBuf, "%3.1f : %3.1f" , TimerInterface::getFPS(), TimerInterface::getFPSAvg());
-	screen.bltString5x5(iXY(2, 2), strBuf, Color::white);
-  }
+	if (display_frame_rate_flag == true)
+	{
+		sprintf(strBuf, "%3.1f : %3.1f" , TimerInterface::getFPS(), TimerInterface::getFPSAvg());
+		screen.bltString5x5(iXY(2, 2), strBuf, Color::white);
+	}
  
-  if (display_network_info_flag == true)
-  {
-   sprintf(strBuf, "|| %.4f : %.4f || %.4f : %.4f ||" , NetworkState::packets_sent_per_sec, NetworkState::bytes_sent_per_sec,
-                                                        NetworkState::packets_received_per_sec, NetworkState::bytes_received_per_sec  );
-   screen.bltString5x5(iXY(60, 2), strBuf, Color::white);
-  }
+	if (display_network_info_flag == true)
+	{
+		sprintf(strBuf, "|| %.4f : %.4f || %.4f : %.4f ||" , NetworkState::packets_sent_per_sec, NetworkState::bytes_sent_per_sec,
+				NetworkState::packets_received_per_sec, NetworkState::bytes_received_per_sec  );
+	 	screen.bltString5x5(iXY(60, 2), strBuf, Color::white);
+	}
 
-  if (Desktop::getVisible("GameView"))
-   { ConsoleInterface::update( FRAME_BUFFER ); }
+	if (Desktop::getVisible("GameView"))
+	{ ConsoleInterface::update( FRAME_BUFFER ); }
 
-  mouse.draw(screen);
+	mouse.draw(screen);
 
-  //char strBuf[256];
-  //sprintf(strBuf, "%d, %d", mouse.getScreenPos().x, mouse.getScreenPos().y);
-  //screen.bltString(40, 2, strBuf, Color::white);
+	//char strBuf[256];
+	//sprintf(strBuf, "%d, %d", mouse.getScreenPos().x, mouse.getScreenPos().y);
+	//screen.bltString(40, 2, strBuf, Color::white);
 
-  MouseInterface::updateCursor(); 
+	MouseInterface::updateCursor(); 
      
-  FRAME_BUFFER.unlock();
-  screen.unlock();
+	FRAME_BUFFER.unlock();
+	screen.unlock();
 
-  Screen->copyDoubleBufferandFlip(); 
-
- }
+	Screen->copyDoubleBufferandFlip();
+}
 
 // ******************************************************************
 void GameManager::dedicatedGameLoop()
