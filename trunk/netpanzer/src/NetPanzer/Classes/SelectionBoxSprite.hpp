@@ -24,14 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 extern Surface UNIT_FLAGS_SURFACE;
 
 class SelectionBoxSprite : public Sprite
- { 
-  protected:
-   BoundBox selection_area;
-   unsigned char box_color;
-   bool box_state;
+{ 
+protected:
+ 	BoundBox selection_area;
+  	unsigned char box_color;
+   	bool box_state;
       
-  public:
-  
+public:
    inline void setBoxAttributes( BoundBox box, unsigned char box_color ) 
     {
      selection_area = box;
@@ -45,9 +44,8 @@ class SelectionBoxSprite : public Sprite
   
    virtual bool isVisible(const Recti &world_win ) const;
     
-   virtual void blit( Surface *surface, const Recti &world_win );
- 
- };
+   virtual void blit( Surface *surface, const Recti &world_win ); 
+};
 
 class UnitSelectionBox : public SelectionBoxSprite
  {
@@ -102,8 +100,7 @@ class UnitSelectionBox : public SelectionBoxSprite
      allie_state = is_allied;
     }
 
-   virtual void blit( Surface *surface, Recti &world_win );
-
- };
+   virtual void blit( Surface *surface, const Recti &world_win );
+};
 
 #endif // ** _SELECTION_BOX_SPRITE_HPP 

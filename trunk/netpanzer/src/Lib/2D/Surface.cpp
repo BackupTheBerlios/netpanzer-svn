@@ -2029,7 +2029,8 @@ void Surface::bltLookup(const iRect &destRect, const PIX table[]) const
 
 	for (int yCount = 0 ; yCount < numRows ; yCount++)
 	{
-		bltLookupSpan(dRow, pixelsPerRow, table);
+		for(size_t x=0; x<pixelsPerRow; x++)
+			dRow[x] = table[dRow[x]];
 
 		dRow += stride;
 	}

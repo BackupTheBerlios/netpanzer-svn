@@ -16,6 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
 #include "SelectionBoxSprite.hpp"
 #include "GameConfig.hpp"
 
@@ -74,8 +75,8 @@ UnitSelectionBox::UnitSelectionBox( )
  }
 
 
-void UnitSelectionBox::blit( Surface *surface, Recti &world_win )
- {
+void UnitSelectionBox::blit( Surface *surface, const Recti &world_win )
+{
   PointXYi min_abs, max_abs;
   
   min_abs = (world_pos + selection_area.min) - world_win.min;
@@ -103,7 +104,7 @@ void UnitSelectionBox::blit( Surface *surface, Recti &world_win )
 	} else { assert(false); }
 
    } // ** box_state == true
- 
+
     // Draw the unit hitpoints.
 	if ( GameConfig::getDrawUnitDamage() || (box_state == true) )
 	{
@@ -133,7 +134,6 @@ void UnitSelectionBox::blit( Surface *surface, Recti &world_win )
 		r = iRect(min_abs.x + 2, max_abs.y - 4, min_abs.x + 2 + hit_bar_size, max_abs.y - 3);
 
 		surface->drawRect(r, hitBarColor);
-
 
 		// Solid method.
 		//surface->drawHLine(min_abs.x+1, max_abs.y-1, min_abs.x + hit_bar_size, hit_bar_color);
