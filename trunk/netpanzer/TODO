@@ -23,6 +23,7 @@ solution would be transfering of unknown flags.
 
 *** Feature Additions
 
+-Display tip of the day while loading the map.
 -Improve userinterface:
         * Make usual shortcuts (known from other RTSes) work:
             -CTRL+Number for defining groups - done
