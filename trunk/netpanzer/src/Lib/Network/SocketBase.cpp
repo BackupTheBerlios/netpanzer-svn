@@ -28,6 +28,7 @@ namespace network
 
 #ifdef WINSOCK
 class WinSockInit {
+public:
     WinSockInit() {
         WSADATA wsaData;
         WORD wVers = MAKEWORD(2, 0);
