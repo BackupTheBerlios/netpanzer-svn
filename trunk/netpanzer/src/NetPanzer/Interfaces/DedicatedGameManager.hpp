@@ -21,7 +21,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <queue>
 #include <SDL.h>
 #include "BaseGameManager.hpp"
+#include "ServerConsole.hpp"
 #include "ServerCommand.hpp"
+
+class ServerConsole;
 
 class DedicatedGameManager : public BaseGameManager
 {
@@ -34,14 +37,20 @@ protected:
 
     virtual void inputLoop();
 
+public:
+    DedicatedGameManager();
+    virtual ~DedicatedGameManager();
+    
+    virtual bool launchNetPanzerGame();
+
     /** this function is threadsafe */
     void pushCommand(const ServerCommand& command);
-public:
-    virtual bool launchNetPanzerGame();
 
 private:
     std::queue<ServerCommand> commandqueue;
     SDL_mutex* commandqueue_mutex;
+
+    ServerConsole* console;
 };
 
 #endif

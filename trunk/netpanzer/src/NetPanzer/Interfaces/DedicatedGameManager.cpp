@@ -42,6 +42,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ProgressView.hpp"
 #include "ConsoleLoadingView.hpp"
 
+DedicatedGameManager::DedicatedGameManager()
+    : commandqueue_mutex(0), console(0)
+{
+}
+
+DedicatedGameManager::~DedicatedGameManager()
+{
+    delete console;
+}
+
 void DedicatedGameManager::initializeVideoSubSystem()
 {
     lobbyView = new ConsoleLoadingView();
@@ -52,8 +62,13 @@ void DedicatedGameManager::initializeVideoSubSystem()
 void DedicatedGameManager::shutdownVideoSubSystem()
 {
     delete lobbyView;
+    lobbyView = 0;
     delete progressView;
+    progressView = 0;
+    delete console;
+    console = 0;
     SDL_DestroyMutex(commandqueue_mutex);
+    commandqueue_mutex = 0;
 }
 
 //-----------------------------------------------------------------
@@ -75,10 +90,32 @@ void DedicatedGameManager::inputLoop()
     // handle server commands
     SDL_mutexP(commandqueue_mutex);
     while(!commandqueue.empty()) {
+        const ServerCommand& command = commandqueue.front();
 
-
-
+        switch(command.type) {
+            case ServerCommand::QUIT:
+            {
+                std::cout << "QUIT.\n";
+                GameManager::exitNetPanzer();
+                break;
+            }
+            case ServerCommand::CHAT:
+                break;
+            case ServerCommand::MAPCHANGE:
+                break;
+            case ServerCommand::KICK:
+                break;
+        }
+        commandqueue.pop();
     }
+    SDL_mutexV(commandqueue_mutex);
+}
+
+//-----------------------------------------------------------------
+void DedicatedGameManager::pushCommand(const ServerCommand& command)
+{
+    SDL_mutexP(commandqueue_mutex);
+    commandqueue.push(command);
     SDL_mutexV(commandqueue_mutex);
 }
 
@@ -133,6 +170,10 @@ bool DedicatedGameManager::launchNetPanzerGame()
 
     ConsoleInterface::postMessage("game started.");
 
+    console = new ServerConsole(this);
+    console->startThread();
+
     GameManager::startGameTimer();
     return true;
 }
+

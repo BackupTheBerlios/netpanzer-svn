@@ -25,12 +25,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 namespace UI{
     
-    FontManager::FontManager(void){
+    FontManager::FontManager(){
         if(!TTF_WasInit())
             TTF_Init();
     }
 
-    FontManager::~FontManager(void){
+    FontManager::~FontManager(){
         std::map<std::string, TTF_Font * >::iterator i;
 
         for(i = fontCollection.begin(); i != fontCollection.end(); i++)

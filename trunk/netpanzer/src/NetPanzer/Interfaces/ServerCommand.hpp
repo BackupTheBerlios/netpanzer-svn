@@ -12,6 +12,10 @@ public:
     
     CommandType type;
     std::string argument;
+
+    ServerCommand(CommandType newtype)
+        : type(newtype)
+    { }
 };
 
 #endif

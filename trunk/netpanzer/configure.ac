@@ -130,6 +130,17 @@ NP_FINDLIB([PHYSFS], [physfs], [physfs >= 1.9],
 	[],
 	[AC_MSG_ERROR([Please install physfs >= 0.1.9])])
 
+NP_FINDLIB([READLINE], [readline], [readline],
+        NP_LANG_PROGRAM(
+            [
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+],
+    [char* test = readline("test"); add_history(test);]), [], 
+        [-lreadline -lhistory -lncurses],
+        [AC_DEFINE([USE_READLINE], [], [use readline library])], [])
+
 AM_OPTIONS_WXCONFIG
 AM_PATH_WXCONFIG(2.4.0, [
         WX_AVAILABLE="yes"

@@ -202,8 +202,10 @@ BaseGameManager *initialise(int argc, char** argv)
         LOGGER.setLogLevel(Logger::LEVEL_INFO);
     }
 
-    // Initialize SDL
-    SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER);
+    // Initialize SDL (we have to start the video subsystem as well so that
+    // the eventloop is started, otherwise we'll have problems in dedicated
+    // server)
+    SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER | SDL_INIT_VIDEO);
     SDL_EnableUNICODE(1);
 
     // Initialize SDL_net
@@ -287,7 +289,6 @@ int netpanzer_main(int argc, char** argv)
     try {
         if (manager->launchNetPanzerGame()) {;
             while(1) {
-                SDL_PumpEvents();
                 if(HandleSDLEvents() == true) {
                     break;
                 }

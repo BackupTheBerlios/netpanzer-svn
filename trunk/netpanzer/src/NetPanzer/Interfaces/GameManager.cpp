@@ -590,7 +590,9 @@ void GameManager::exitNetPanzer()
 
     SDL_Event event;
     event.type = SDL_QUIT;
-    SDL_PushEvent(&event);
+    if(SDL_PushEvent(&event) < 0) {
+        std::cerr << "Couldn't push quit event: " << SDL_GetError() << "\n";
+    }
 }
 
 
