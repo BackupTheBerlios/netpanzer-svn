@@ -22,6 +22,8 @@ include $(jamrulesdir)/clean.jam ;
 include $(jamrulesdir)/objects.jam ;
 include $(jamrulesdir)/compiler.jam ;
 
+include $(jamrulesdir)/autoconf.jam ;
+
 include $(jamrulesdir)/flags.jam ;
 include $(jamrulesdir)/library.jam ;
 include $(jamrulesdir)/application.jam ;

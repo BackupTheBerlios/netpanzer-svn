@@ -7,7 +7,7 @@ JAMCONFIG ?= $(BUILDTOP)/Jamconfig ;
 include $(JAMCONFIG) ;
 if ! $(JAMCONFIG_READ)
 {
-  EXIT "Couldn't find config. Please run configure first." ;
+  EXIT "Couldn't find config. Please run 'configure' first." ;
 }
 
 COMPILER.CFLAGS += -Wall ;
