@@ -83,19 +83,19 @@ public:
     }
     int operator < (const TIMESTAMP &a) const
     {
-        return long(v - a.v) <  0L;
+        return v < a.v;
     }
     int operator <=(const TIMESTAMP &a) const
     {
-        return long(v - a.v) <= 0L;
+        return v <= a.v;
     }
     int operator >=(const TIMESTAMP &a) const
     {
-        return long(v - a.v) >= 0L;
+        return v >= a.v;
     }
     int operator > (const TIMESTAMP &a) const
     {
-        return long(v - a.v) >  0L;
+        return v > a.v;
     }
     int operator ==(const TIMESTAMP &a) const
     {
