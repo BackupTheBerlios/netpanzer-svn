@@ -2,7 +2,8 @@ Next release:
 -rewrite ServerBrowser for new protocol
 -finish serverconsole
 -finish infothread - ok
--implement TIP OF DAY  - no idea how to create graphics for the GUI :-/
+-implement TIP OF DAY  - no idea how to create graphics for the GUI, so this
+ will be delayed for next release. :-/
 
 *** New Masterserver code
  * Get list of masterservers when connecting

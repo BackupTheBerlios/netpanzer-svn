@@ -86,7 +86,7 @@ void InfoThread::handleStatusRequests()
     while(res == 0) {
         res = SDLNet_UDP_Recv(socket, packet);
         // bleh... we need blocking calls...
-        SDL_Delay(50);
+        SDL_Delay(20);
     }
     if(res < 0) {
         SDLNet_FreePacket(packet);
@@ -111,7 +111,7 @@ void InfoThread::handleStatusRequests()
             sendRules(response);
             sendPlayers(response);
             PlayerInterface::unLock();
-            response << "\\final\\";
+            response << "final\\";
 
             std::string responsestr = response.str();
             LOGGER.debug("Send back query response, size %d",
@@ -191,10 +191,10 @@ void InfoThread::sendPlayers(std::stringstream& out)
     for(int i = 0; i < PlayerInterface::countPlayers(); ++i) {
         PlayerState* playerState = PlayerInterface::getPlayerState(i);
         out << "player_" << i << "\\" << playerState->getName() << "\\"
-            << "objectives_" << i << "\\" 
-                << playerState->getObjectivesHeld() << "\\"
             << "kills_" << i << "\\" << playerState->getKills() << "\\"
-            << "losses_" << i << "\\" << playerState->getLosses() << "\\";
+            << "losses_" << i << "\\" << playerState->getLosses() << "\\"
+            << "objectives_" << i << "\\" 
+                << playerState->getObjectivesHeld() << "\\";
     }
     // TODO add team/alliance info
 }
