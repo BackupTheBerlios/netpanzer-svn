@@ -139,7 +139,9 @@ ServerListView::lMouseUp(const iXY& down_pos, const iXY& up_pos)
         return View::lMouseUp(down_pos, up_pos);
 
     const masterserver::ServerInfo& server = *(serverlist[listpos]);
-    IPAddressView::szServer.setString(server.address);
+    std::stringstream addr;
+    addr << server.address << ':' << server.port;
+    IPAddressView::szServer.setString(addr.str());
     
     return View::lMouseUp(down_pos, up_pos);
 }
