@@ -4,9 +4,9 @@
 #include <memory>
 #include <string>
 
-#include "Exception.hpp"
+#include "Util/Exception.hpp"
 #include "TileSet.hpp"
-#include "FileSystem.hpp"
+#include "Util/FileSystem.hpp"
 #include "TileSetList.hpp"
 
 TileSetList::TileSetList(wxWindow* parent)

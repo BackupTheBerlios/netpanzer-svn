@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "SDLView.hpp"
-#include "Exception.hpp"
+#include "Util/Exception.hpp"
 
 SDLView::SDLView(wxWindow* parent, wxWindowID id,
         const wxPoint& pos, const wxSize& size, long style,

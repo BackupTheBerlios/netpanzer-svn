@@ -5,8 +5,8 @@
 #include <SDL/SDL.h>
 
 #include "Editor.hpp"
-#include "FileSystem.hpp"
-#include "Exception.hpp"
+#include "Util/FileSystem.hpp"
+#include "Util/Exception.hpp"
 
 class EditorApplication : public wxApp
 {

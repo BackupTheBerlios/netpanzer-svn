@@ -4,11 +4,11 @@
 #include <stdint.h>
 #include <memory>
 
-#include "NoCopy.hpp"
+#include "Util/NoCopy.hpp"
+#include "Util/FileSystem.hpp"
+#include "Util/Exception.hpp"
+#include "Util/Log.hpp"
 #include "TileSet.hpp"
-#include "FileSystem.hpp"
-#include "Exception.hpp"
-#include "Log.hpp"
 
 static const char* MAGICSTRING="TLST";
 static const uint32_t FILEFORMATVERSION=0001;

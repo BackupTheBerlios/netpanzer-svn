@@ -3,7 +3,8 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include "NoCopy.hpp"
+
+#include "Util/NoCopy.hpp"
 
 class ReadFile;
 class TileSet;

@@ -6,7 +6,7 @@
 
 #include "TemplateCreator.hpp"
 #include "TemplateSelectWidget.hpp"
-#include "Exception.hpp"
+#include "Util/Exception.hpp"
 
 TemplateCreator::TemplateCreator(wxWindow* parent,
         TileSet* newtileset, const std::string& filename)

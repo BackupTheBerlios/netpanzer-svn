@@ -3,8 +3,8 @@
 #include <iostream>
 #include <SDL/SDL_image.h>
 
+#include "Util/Exception.hpp"
 #include "ImageListView.hpp"
-#include "Exception.hpp"
 
 class ImageLoaderThread : public wxThread
 {

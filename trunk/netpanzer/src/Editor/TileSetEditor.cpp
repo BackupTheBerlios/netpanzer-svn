@@ -10,8 +10,8 @@
 #include "TileSetView.hpp"
 #include "TileSetList.hpp"
 #include "ImageViewer.hpp"
-#include "Exception.hpp"
-#include "FileSystem.hpp"
+#include "Util/Exception.hpp"
+#include "Util/FileSystem.hpp"
 
 TileSetEditor::TileSetEditor(wxWindow* parent)
     : wxSplitterWindow(parent), currenttileset(0)

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <stdio.h>
 
-#include "iXY.hpp"
+#include "Types/iXY.hpp"
 #include "TemplateCreator.hpp"
 #include "TileSetView.hpp"
 #include "TileSet.hpp"

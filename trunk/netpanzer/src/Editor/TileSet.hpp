@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 
-#include "iXY.hpp"
+#include "Types/iXY.hpp"
 
 class TileSetHeader;
 class ReadFile;

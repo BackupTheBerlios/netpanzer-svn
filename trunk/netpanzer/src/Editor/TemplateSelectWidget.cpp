@@ -4,7 +4,7 @@
 #include <algorithm>
 
 #include "TemplateSelectWidget.hpp"
-#include "Exception.hpp"
+#include "Util/Exception.hpp"
 #include "TileSet.hpp"
 
 #define XSIZE 32

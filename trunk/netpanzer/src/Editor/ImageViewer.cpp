@@ -9,7 +9,7 @@
 
 #include "ImageViewer.hpp"
 #include "ImageListView.hpp"
-#include "Exception.hpp"
+#include "Util/Exception.hpp"
 
 ImageViewer::ImageViewer(wxWindow* parent)
     : wxSplitterWindow(parent), dirctrl(0)
