@@ -1,7 +1,7 @@
 -Fix or completely remove the Joystick code. (IMO we should remove it, because
- controling this game with joystick isn't a good idea)
+ controling this game with joystick isn't a good idea) - OK
 -Fix FileList.cpp to use only ANSI-C functions, so that we don't need the win32
- _splitpath anymore. The same is in UtilInterface.cpp
+ _splitpath anymore. The same is in UtilInterface.cpp - OK
 -Fix PackedSurface.cpp, Surface.cpp to not use _findfirst anymore... same in
  MapsManager.cpp - OK
 -Write new timercode the assembler cTimeStamp.cpp isn't portable - OK
@@ -18,15 +18,10 @@
 -need new mousecode in MouseInterface.cpp - OK
 -need new directplay code in NetworkClientDPlay.cpp, NetworkServerDPlay.cpp
 -need new code instead of winsock in NetworkClientWinsock.cpp
--rewrite all the windows specific code in NetPanzer/Core
+-rewrite all the windows specific code in NetPanzer/Core - partly done
 -check if the functions and stuff in Lib/terminate.cpp is really needed (looks
  like some strange hacks for the logging functions to me) Can we remove
  this strange code?
--Fix the win32 stuff in Lib/Util/UtilInterface.cpp
+-Fix the win32 stuff in Lib/Util/UtilInterface.cpp - OK
 -rewrite win32 event loop to use a SDL event loop. Don't forget to pump mouse
- events to MouseInterface then.
--The brightness adjustment code generates 256 version of all palettes again at
- the beginning, leading to excessive calculations on the CPU ~9 seconds from 11
- seconds startup time are spend calculating these palettes. We should change
- behaviour here I assume. (Restrict 5 or 10 values, people can tune their
- monitor too and don't need to tune ingame!)
+ events to MouseInterface then. - partly done
