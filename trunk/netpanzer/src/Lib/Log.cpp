@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <stdarg.h>
+#include <errno.h>
+#include <string.h>
 #include "Log.hpp"
 
 #ifdef DO_LOGGING
@@ -30,9 +32,18 @@ const int Logger::LEVEL_DEBUG = 7;
 const int Logger::LEVEL_INFO = 6;
 const int Logger::LEVEL_WARNING = 4;
 //-----------------------------------------------------------------
+/**
+ * Default log level is INFO.
+ */
 Logger::Logger()
 {
-    m_logfile = fopen("log.txt", "w");
+    static const char *LOGNAME = "log.txt";
+
+    m_logLevel = LEVEL_INFO;
+    m_logfile = fopen(LOGNAME, "w");
+    if (m_logfile == 0) {
+        fprintf(stderr, "cannot open '%s': %s\n", LOGNAME, strerror(errno));
+    }
 }
 //-----------------------------------------------------------------
 Logger::~Logger()
@@ -47,8 +58,10 @@ Logger::log(int priority, const char *fmt, va_list ap)
 {
     if (m_logLevel >= priority) {
         vfprintf(stderr, fmt, ap);
+        fprintf(stderr, "\n");
         if (m_logfile != 0) {
             vfprintf(m_logfile, fmt, ap);
+            fprintf(m_logfile, "\n");
         }
     }
 }
