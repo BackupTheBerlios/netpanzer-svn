@@ -65,7 +65,7 @@ find powerups \( -name "*.pak" -o -name "Jamfile" \) -exec cp -p --parents {} $D
 find units \( -name "*.pfl" -o -name "*.pak" -o -name "Jamfile" \) -exec cp -p --parents {} $DATARELEASE ';'
 find sound \( -name "*.wav" -o -name "Jamfile" \) -exec cp -p --parents {} $DATARELEASE ';'
 find maps \( -name "*.npm" -o -name "*.opt" -o -name "*.spn" -o -name "Jamfile" \) -exec cp -p --parents {} $DATARELEASE ';'
-find fonts \( -name "*.pcf" \) -exec cp -p --parents {} $DATARELEASE ;
+find fonts \( -name "*.pcf" \) -exec cp -p --parents {} $DATARELEASE ';'
 cp -p --parents $AUTOFILES $DATARELEASE
 cp -p --parents $JAMFILES $DATARELEASE
 cp -p --parents $TEXTS $DATARELEASE
