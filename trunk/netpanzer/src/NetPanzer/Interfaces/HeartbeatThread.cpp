@@ -88,9 +88,7 @@ HeartbeatThread::~HeartbeatThread()
 
     std::stringstream packet;
     packet << "\\quit\\" << gameconfig->serverport << "\\final\\" << std::flush;
-    const void* data = packet.str().c_str();
-    size_t datasize = packet.str().size();
-    sendPacket(data, datasize);                        
+    sendPacket(packet.str());
 }
 
 int
@@ -124,14 +122,15 @@ HeartbeatThread::sendHeartbeat()
            << "\\port\\" << gameconfig->serverport                     
            << "\\protocol\\" << NETPANZER_PROTOCOL_VERSION
            << "\\final\\" << std::flush;
-    const void* data = packet.str().c_str();
-    size_t datasize = packet.str().size();
-    sendPacket(data, datasize);
+    sendPacket(packet.str());
 }
 
 void
-HeartbeatThread::sendPacket(const void* data, size_t datalen)
+HeartbeatThread::sendPacket(const std::string& str)
 {
+    const void* data = str.c_str();
+    size_t datalen = str.size();
+    
     for(std::vector<IPaddress>::iterator i = serveraddrs.begin();
             i != serveraddrs.end(); ++i) {
         IPaddress addr = *i;
