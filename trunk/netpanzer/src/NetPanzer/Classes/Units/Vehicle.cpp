@@ -47,12 +47,8 @@ Vehicle::Vehicle(iXY initial_loc)
     fsm_timer.changeRate( 10 );
     unit_state_timer.changeRate( 10 );
     setAiFsmDefendHold();
-    reload_counter = 0;
-    critical_ai_section = false;
-    ai_fsm_transition_complete = false;
     pending_AI_comm = false;
     unit_state.lifecycle_state = _UNIT_LIFECYCLE_ACTIVE;
-    external_ai_event = _external_event_null;
     memset( fsm_active_list, 0, sizeof( bool ) * 7 );
 
     in_sync_flag = true;
@@ -60,6 +56,31 @@ Vehicle::Vehicle(iXY initial_loc)
     body_anim_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
     turret_anim_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
 
+    path_generated = false;
+    critical_ai_section = false;
+    ai_fsm_transition_complete = false;
+    
+    reload_counter = 0;
+    death_counter = 0;
+
+    ai_command_state = 0;
+    external_ai_event = _external_event_null;
+
+    fsmBodyRotate_rotation = 0;
+    fsmBodyRotate_goal_angle = 0;
+    fsmTurretRotate_rotation = 0;
+    fsmTurretRotate_goal_angle = 0;
+    
+    interpolation_speed = 0;
+    fsmMove_first_stamp = false;
+    fsmMove_offset_x = fsmMove_offset_y = 0;
+    fsmMove_moves_counter = 0;
+    fsmMove_moves_per_square = 0;
+
+    move_opcode_sent = false;
+    fsmMoveMapSquare_movement_type = 0;
+
+    aiFsmDefendHold_state = 0;  
 }
 
 void Vehicle::updateUnitStateProperties( void )

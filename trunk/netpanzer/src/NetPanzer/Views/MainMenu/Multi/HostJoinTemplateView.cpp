@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "FlagSelectionView.hpp"
 #include "Palette.hpp"
 #include "GameViewGlobals.hpp"
+#include "IPAddressView.hpp"
 #include "IRCLobbyView.hpp"
 
 #include "Client.hpp"
@@ -63,21 +64,8 @@ static void bBack()
 
 void bReady()
 {
-    char temp_str[64];
-
-    if (strlen(PlayerNameView::playerName.getString()) <= 0) {
+    if ((const std::string&) gameconfig->playername == "")
         return;
-    }
-
-    strcpy( temp_str, PlayerNameView::playerName.getString() );
-
-    // make string lowercase
-    for(char* p = temp_str; *p != 0; p++) {
-        *p = tolower(*p);
-    }
-    if (strstr( temp_str, "server" ) != 0 ) {
-        return;
-    }
 
     // Check a few things which should be ok.
     if (strlen(HostJoinTemplateView::gameTypeBuf) == 0) {
@@ -86,9 +74,8 @@ void bReady()
     if (MapSelectionView::curMap == -1) {
         return;
     }
-
-    // Set the player name.
-    gameconfig->playername = PlayerNameView::playerName.getString();
+    if (strcmp(IPAddressView::szServer.getString(), "") == 0)
+        return;
 
     // Set the player flag.
     gameconfig->playerflag = playerFlagSelected;
@@ -119,103 +106,10 @@ void bReady()
     MenuTemplateView::backgroundSurface.free();
     //MenuTemplateView::titleSurface.free();
 
-    IRCLobbyView::stopIRC();
+    lobby_view->stopIRC();
     //TODO: I don't like static methods
     PlayerGameManager::launchMultiPlayerGame();
 }
-/*
-enum  { _unit_type_valentine,
-        _unit_type_leopard,
-        _unit_type_abrams,
-        _unit_type_hammerhead,
-        _unit_type_humvee,
-*/
-
-#if 0
-// Increase unit count.
-static void bIncreaseHumvee()
-{
-    gameconfig->unit_spawn_config.incrementSpawnUnitCount(_unit_type_humvee);
-}
-
-static void bIncreaseLightTank()
-{
-    gameconfig->unit_spawn_config.incrementSpawnUnitCount(_unit_type_valentine);
-}
-
-static void bIncreaseMediumTank()
-{
-    gameconfig->unit_spawn_config.incrementSpawnUnitCount(_unit_type_leopard);
-}
-
-static void bIncreaseHeavyTank()
-{
-    gameconfig->unit_spawn_config.incrementSpawnUnitCount(_unit_type_abrams);
-}
-
-static void bIncreaseMissleLauncher()
-{
-    gameconfig->unit_spawn_config.incrementSpawnUnitCount(_unit_type_hammerhead);
-}
-
-// Decrease unit count.
-static void bDecreaseHumvee()
-{
-    gameconfig->unit_spawn_config.decrementSpawnUnitCount(_unit_type_humvee);
-}
-
-static void bDecreaseLightTank()
-{
-    gameconfig->unit_spawn_config.decrementSpawnUnitCount(_unit_type_valentine);
-}
-
-static void bDecreaseMediumTank()
-{
-    gameconfig->unit_spawn_config.decrementSpawnUnitCount(_unit_type_leopard);
-}
-
-static void bDecreaseHeavyTank()
-{
-    gameconfig->unit_spawn_config.decrementSpawnUnitCount(_unit_type_abrams);
-}
-
-static void bDecreaseMissleLauncher()
-{
-    gameconfig->unit_spawn_config.decrementSpawnUnitCount(_unit_type_hammerhead);
-}
-
-// Get unit count.
-static int getHumveeCount()
-{
-    return gameconfig->unit_spawn_config.getSpawnUnitCount(_unit_type_humvee);
-}
-
-static int getLightTankCount()
-{
-    return gameconfig->unit_spawn_config.getSpawnUnitCount(_unit_type_valentine);
-}
-
-static int getMediumTankCount()
-{
-    return gameconfig->unit_spawn_config.getSpawnUnitCount(_unit_type_leopard);
-}
-
-static int getHeavyTankCount()
-{
-    return gameconfig->unit_spawn_config.getSpawnUnitCount(_unit_type_abrams);
-}
-
-static int getMissleLauncherCount()
-{
-    return gameconfig->unit_spawn_config.getSpawnUnitCount(_unit_type_hammerhead);
-}
-
-static int getSelectionsRemaining()
-{
-    return gameconfig->unit_spawn_config.getMaxAllowedUnits() - gameconfig->unit_spawn_config.unitTotal();
-}
-#endif
-
 
 // HostJoinTemplateView
 //---------------------------------------------------------------------------
@@ -234,181 +128,7 @@ HostJoinTemplateView::HostJoinTemplateView() : MenuTemplateView()
     addSpecialButton(	readyPos,
                       "Ready",
                       bReady);
-
-    //addVehicleButtons(iXY(220, 195));
-    /*
-    	Surface s(20, 15, 20, 1);
-    	x = 84;
-    	cDarkBlue   = pal.findNearestColor(RGB_COLOR(0, 0, 100));
-    	cLightBlue  = pal.findNearestColor(RGB_COLOR(173, 216, 230));
-    	cLightGreen = pal.findNearestColor(RGB_COLOR(0, 160, 0));
-    	cOrange     = pal.findNearestColor(RGB_COLOR(255, 128, 0));
-    	
-    	y += 20;
-    	// Dark Blue
-    	s.fill(cDarkBlue);
-    	s.drawButtonBorder(Color::white, Color::gray64);
-    	addButtonSurface(iXY(x, y), s, "Dark Blue", bSetColorDarkBlue);
-    	x += xOffset;
-     
-    	// Light Blue
-    	s.fill(cLightBlue);
-    	s.drawButtonBorder(Color::white, Color::gray64);
-    	addButtonSurface(iXY(x, y), s, "Light Blue", bSetColorLightBlue);
-    	x += xOffset;
-     
-    	// Light Green
-    	s.fill(cLightGreen);
-    	s.drawButtonBorder(Color::white, Color::gray64);
-    	addButtonSurface(iXY(x, y), s, "Light Green", bSetColorLightGreen);
-    	x += xOffset;
-     
-    	// Red
-    	s.fill(Color::red);
-    	s.drawButtonBorder(Color::white, Color::gray64);
-    	addButtonSurface(iXY(x, y), s, "Red", bSetColorRed);
-    	x += xOffset;
-     
-    	// Orange
-    	s.fill(cOrange);
-    	s.drawButtonBorder(Color::white, Color::gray64);
-    	addButtonSurface(iXY(x, y), s, "Orange", bSetColorOrange);
-    	x += xOffset;
-     
-    	// Surface for the player's current color.
-    	playerColor.create(20, 15, 20, 1);
-    	playerColor.fill(cDarkBlue);
-    */
-    //for (int i = 0; i < NUM_FLAGS; i++)
-    //{
-    //	playerFlag.setFrame(i);
-    //	playerFlag.fill(rand() % 256);
-    //	playerFlag.drawButtonBorder(Color::white, Color::gray64);
-    //
-    //	sprintf(strBuf, "%d", i);
-    //	bltString(playerFlag, 2, 3, strBuf, Color::white);
-    //
-    //	// Create a button off the created surface.
-    //	addButtonSurface(iXY(x, 38), playerFlag, strBuf, 0);
-    //	x += xOffset;
-    //}
-
 } // end HostJoinTemplateView constructor
-
-#if 0
-// addVehicleButtons
-//---------------------------------------------------------------------------
-void HostJoinTemplateView::addVehicleButtons(const iXY &pos)
-{
-    // Add the vehicle buttons.
-    // Get the dimensions of the buttons to draw.
-    Surface tempSurface;
-    tempSurface.loadTIL("pics/vehicleSelectionMenu/light.bmp");
-
-    iXY buttonSize(tempSurface.getPix());
-    int arrowButtonWidth =  16;
-
-    int x;
-    int y;
-
-    x = pos.x;
-
-    y = pos.y;
-
-    addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/humvee.bmp", "", 0);
-    x += buttonSize.x + 1;
-
-    addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/light.bmp", "", 0);
-    x += buttonSize.x + 1;
-
-    addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/medium.bmp", "", 0);
-    x += buttonSize.x + 1;
-
-    addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/heavy.bmp", "", 0);
-    x += buttonSize.x + 1;
-
-    addButtonTILBordered(iXY(x, y), "pics/vehicleSelectionMenu/missle.bmp", "", 0);
-    x += buttonSize.x + 1;
-
-    // Draw the arrows to change the numbers.
-    x = pos.x;
-    y = pos.y + buttonSize.y;
-
-    x = pos.x + (buttonSize.x + 1) * 0;
-    x += (buttonSize.x - (arrowButtonWidth * 2)) / 2;
-    addButtonCenterText(iXY(x, y), arrowButtonWidth, "<", "", bDecreaseHumvee);
-    addButtonCenterText(iXY(x + arrowButtonWidth, y), arrowButtonWidth, ">", "", bIncreaseHumvee);
-
-    x = pos.x + (buttonSize.x + 1) * 1;
-    x += (buttonSize.x - (arrowButtonWidth * 2)) / 2;
-    addButtonCenterText(iXY(x, y), arrowButtonWidth, "<", "", bDecreaseLightTank);
-    addButtonCenterText(iXY(x + arrowButtonWidth, y), arrowButtonWidth, ">", "", bIncreaseLightTank);
-
-    x = pos.x + (buttonSize.x + 1) * 2;
-    x += (buttonSize.x - (arrowButtonWidth * 2)) / 2;
-    addButtonCenterText(iXY(x, y), arrowButtonWidth, "<", "", bDecreaseMediumTank);
-    addButtonCenterText(iXY(x + arrowButtonWidth, y), arrowButtonWidth, ">", "", bIncreaseMediumTank);
-
-    x = pos.x + (buttonSize.x + 1) * 3;
-    x += (buttonSize.x - (arrowButtonWidth * 2)) / 2;
-    addButtonCenterText(iXY(x, y), arrowButtonWidth, "<", "", bDecreaseHeavyTank);
-    addButtonCenterText(iXY(x + arrowButtonWidth, y), arrowButtonWidth, ">", "", bIncreaseHeavyTank);
-
-    x = pos.x + (buttonSize.x + 1) * 4;
-    x += (buttonSize.x - (arrowButtonWidth * 2)) / 2;
-    addButtonCenterText(iXY(x, y), arrowButtonWidth, "<", "", bDecreaseMissleLauncher);
-    addButtonCenterText(iXY(x + arrowButtonWidth, y), arrowButtonWidth, ">", "", bIncreaseMissleLauncher);
-
-
-} // end HostJoinTemplateView::addVehicleButtons
-
-void HostJoinTemplateView::drawVehicleInfo(Surface &dest, const iXY &pos)
-{
-    // Draw the dimmed background.
-    iXY size(580, 118);
-    iRect mapBorder(pos.x, pos.y, pos.x + size.x, pos.y + size.y);
-    dest.bltLookup(mapBorder, Palette::darkGray256.getColorArray());
-    dest.drawButtonBorder(mapBorder, Color::lightGreen, Color::darkGreen);
-
-    // Draw the text.
-    char strBuf[256];
-    const PIX color = Color::lightGreen;
-    int x = pos.x + 10;
-    int y = pos.y + 10;
-
-    const int yOffset = 15;
-
-    sprintf(strBuf, "VEHICLE SELECTION");
-    //dest.bltString(x, y, strBuf, color);
-    dest.bltStringVGradient(x, y, strBuf, Palette::gradientWhite2Green);
-    y += yOffset;
-
-    sprintf(strBuf, " Humvee          - %2d", getHumveeCount());
-    dest.bltString(x, y, strBuf, color);
-    y += yOffset;
-
-    sprintf(strBuf, " Light Tank      - %2d", getLightTankCount());
-    dest.bltString(x, y, strBuf, color);
-    y += yOffset;
-
-    sprintf(strBuf, " Medium Tank     - %2d", getMediumTankCount());
-    dest.bltString(x, y, strBuf, color);
-    y += yOffset;
-
-    sprintf(strBuf, " Heavy Tank      - %2d", getHeavyTankCount());
-    dest.bltString(x, y, strBuf, color);
-    y += yOffset;
-
-    sprintf(strBuf, " Missle Launcher - %2d", getMissleLauncherCount());
-    dest.bltString(x, y, strBuf, color);
-    y += yOffset;
-
-    sprintf(strBuf, " Selections Remaining - %2d", getSelectionsRemaining());
-    dest.bltString(x, y, strBuf, color);
-    y += yOffset;
-
-} // end HostView::drawVehicleInfo
-#endif
 
 // doDraw
 //---------------------------------------------------------------------------
@@ -416,27 +136,7 @@ void HostJoinTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     MenuTemplateView::doDraw(viewArea, clientArea);
 
-    //iXY pos(420, 38);
-    //clientArea.bltString(pos, "Are You", Color::white);
-
-    // Display the game type.
-    //sprintf(strBuf, "Game Type: Call game type function.");
-    //clientArea.bltStringShadowed(5, y, strBuf, Color::white, Color::gray64);
-
-    //yOffset
-    // Display the player count.
-    //sprintf(strBuf, "Player Count: Call player count function.");
-    //clientArea.bltString(5, 78, strBuf, Color::white);
-
-    //sprintf(strBuf, "Player Name                        Flag   Status");
-    //clientArea.bltStringShadowed(5, 96, strBuf, Color::white, Color::gray64);
-
-    //clientArea.drawButtonBorder(iRECT(4, 106, getClientRect().size().x - 5, 210), Color::white, Color::gray64);
-    //iXY pos(7, 108);
-    //drawPlayerInfo(clientArea, pos);
-
     View::doDraw(viewArea, clientArea);
-
 } // end doDraw
 
 // drawNameInfo

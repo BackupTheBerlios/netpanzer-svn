@@ -34,7 +34,10 @@ fixe ...
 - HOM effect outside the progressview window -fixed
 - Astar priority_queue "open" are not clear anytime
 - in LinkListDoubleTemplate.addFront sometime is (front==0 && rear != 0)
-- the lobby views disappears when you switch to options menu and back
+    - Matze: I checked LinkListDoubleTemplate alot, the class seems to be
+      correct. Most probably the memory corruption happens elsewhere
+- the lobby views disappears when you switch to options menu and back - party
+  fixed, after a connection error the lobby view still isn't visible anymore
 - when the bot occupied an outpost and you occupy it back, then the build menu
   shows the panzer you built last, but the one choosen by the bot comes out the
   outpost

@@ -25,24 +25,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //---------------------------------------------------------------------------
 class PlayerNameView : public View
 {
-private:
-    enum { BORDER_SPACE           =  4 };
-    enum { INPUT_FIELD_CHARACTERS = 16 };
-
 public:
     PlayerNameView();
-    virtual ~PlayerNameView()
-    {}
+    virtual ~PlayerNameView();
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void drawBorder(Surface &windowArea)
     {}
 
-    static cInputFieldString playerName;
-
     void init();
 
-}
-; // end PlayerNameView
+private:
+    static void returnPressed(cInputField* input);
+    
+    enum { BORDER_SPACE           =  4 };    
+    enum { INPUT_FIELD_CHARACTERS = 16 };
+
+    cInputFieldString playerName;
+}; // end PlayerNameView
+
+extern PlayerNameView* playernameview;
 
 #endif // end __PlayerNameView_hpp__

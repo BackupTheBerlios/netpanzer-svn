@@ -64,8 +64,12 @@ public:
     {
         flags = 0;
         opcode = _UNIT_OPCODE_MOVE;
-    }
 
+        square = 0;
+        loc_x_offset = 0;
+        loc_y_offset = 0;
+        pad[0] = 0;
+    }
 }
 __attribute__((packed));
 
@@ -83,6 +87,10 @@ public:
     {
         flags = 0;
         opcode = _UNIT_OPCODE_TURRET_TRACK_POINT;
+
+        x = y = 0;
+        activate = false;
+        pad[0] = pad[1] = 0;
     }
 
 }
@@ -103,6 +111,11 @@ public:
     {
         flags = 0;
         opcode = _UNIT_OPCODE_TURRET_TRACK_TARGET;
+
+        target_player_index = 0;
+        target_unit_index = 0;
+        activate = false;
+        pad[0] = pad[1] = pad[2] = 0;
     }
 
 }
@@ -121,6 +134,9 @@ public:
     {
         flags = 0;
         opcode = _UNIT_OPCODE_FIRE_WEAPON;
+
+        x = y = 0;
+        pad[0] = pad[1] = pad[2] = 0;
     }
 }
 __attribute__((packed));
@@ -136,6 +152,9 @@ public:
     {
         flags = 0;
         opcode = _UNIT_OPCODE_SYNC_UNIT;
+
+        for(int i=0;i<7;i++)
+            pad[i] = 0;
     }
 
 }
@@ -154,7 +173,6 @@ public:
         flags = 0;
         opcode = _UNIT_OPCODE_UPDATE_STATE;
     }
-
 }
 __attribute__((packed));
 

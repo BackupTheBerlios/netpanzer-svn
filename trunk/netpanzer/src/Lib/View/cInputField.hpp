@@ -122,8 +122,6 @@ private:
     ACTION_FUNC_PTR returnaction;
 
     void reset();
-
-}
-; // end cInputField
+}; // end cInputField
 
 #endif // end __cInputField_hpp__

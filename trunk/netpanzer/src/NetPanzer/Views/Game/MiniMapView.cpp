@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ScreenSurface.hpp"
 #include "WorldInputCmdProcessor.hpp"
 
-
 MiniMapView miniMapView;
 
 MAP_DRAW_TYPES MiniMapView::mapDrawType;
@@ -34,7 +33,6 @@ MAP_DRAW_TYPES MiniMapView::mapDrawType;
 float MiniMapView::scaleDelta   = 400.0f;
 int   MiniMapView::decreaseSize = 0;
 int   MiniMapView::increaseSize = 0;
-
 
 // MiniMapView
 //---------------------------------------------------------------------------

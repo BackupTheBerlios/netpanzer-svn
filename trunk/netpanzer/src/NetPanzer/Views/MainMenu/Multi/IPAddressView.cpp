@@ -25,53 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 cInputFieldString IPAddressView::szServer;
 
-
-static void buttonOkay(void)
-{
-    ConnectionAddress address;
-    char * szServerName;
-
-    szServerName = (char *)IPAddressView::szServer.getString();
-
-    strcpy( address.string_rep, szServerName );
-
-    // XXX No server info view yet
-#if 0
-    ret_val = CLIENT->startEnumeration( address );
-    ret_val = 1;
-
-    if(ret_val == 1) {
-        Desktop::setVisibility("IPAddressView", false);
-
-        Desktop::setVisibility("JoinView", true);
-        Desktop::setVisibility("GetSessionHostView", true);
-        Desktop::setVisibility("UnitSelectionView", true);
-        Desktop::setVisibility("FlagSelectionView", true);
-        Desktop::setVisibility("PlayerNameView", true);
-
-    } else {
-        CLIENT->closeSession();
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("GetSessionView", true);
-    }
-#endif
-}
-////////////////////////////////////////////
-//END buttonOkay////////////////////////////
-
-
-static void buttonCancel(void)
-{
-    CLIENT->closeSession();
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("GetSessionView", true);
-
-}
-////////////////////////////////////////////
-//END buttonCancel//////////////////////////
-
-
-
 // IPAddressView
 //---------------------------------------------------------------------------
 IPAddressView::IPAddressView() : View()
@@ -86,27 +39,19 @@ IPAddressView::IPAddressView() : View()
 
     moveTo(iXY(bodyTextRect.min.x, bodyTextRect.min.y + 50));
 
-    iXY  area_size = iXY(280, 110);
+    iXY  area_size = iXY(
+            30 * 8 + 16,
+            Surface::getFontHeight() + 4 + 8);
     resizeClientArea(area_size);
-
-    addButtonCenterText(iXY(185, 10 ), 80,  "Okay", "", buttonOkay);
-    addButtonCenterText(iXY(185, 35 ), 80,  "Cancel", "", buttonCancel);
-
-    //addButtonCenterText(iXY(16, 50 ), area_size.x - 40,  "Cancel", "", buttonCancel);
 
     Init();
 } // end IPAddressView constructor
 
-
-
 void IPAddressView::Init()
 {
-    szServer.init("  ", 100);
-    addInputField(iXY(10, 80), &szServer, "", true);
+    szServer.init("", 50);
+    addInputField(iXY(8, 8), &szServer, "", true);
 } // end IPAddressView::init
-
-
-
 
 // doDraw
 //---------------------------------------------------------------------------
@@ -115,3 +60,4 @@ void IPAddressView::doDraw(Surface &viewArea, Surface &clientArea)
     clientArea.fill(Color::black);
     View::doDraw(viewArea, clientArea);
 } // end IPAddressView::doDraw
+

@@ -16,12 +16,13 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
+#include <SDL/SDL.h>
+
 #include "PlayerNameView.hpp"
 #include "GameViewGlobals.hpp"
+#include "IRCLobbyView.hpp"
 #include "GameConfig.hpp"
-
-cInputFieldString PlayerNameView::playerName;
-
 
 // PlayerNameView
 //---------------------------------------------------------------------------
@@ -44,15 +45,23 @@ PlayerNameView::PlayerNameView() : View()
 
     init();
 
+    // XXX ugly
+    if(!playernameview)
+        playernameview = this;
 } // end PlayerNameView::PlayerNameView
+
+PlayerNameView::~PlayerNameView()
+{
+}
 
 // init
 //---------------------------------------------------------------------------
 void PlayerNameView::init()
 {
     playerName.init(gameconfig->playername.c_str(), INPUT_FIELD_CHARACTERS);
-    addInputField(iXY(BORDER_SPACE, BORDER_SPACE), &playerName, "", true);
-
+    cInputField* input 
+        = addInputField(iXY(BORDER_SPACE, BORDER_SPACE), &playerName, "", true);
+    input->setReturnAction(returnPressed);
 } // end PlayerNameView::init
 
 // doDraw
@@ -63,5 +72,18 @@ void PlayerNameView::doDraw(Surface &viewArea, Surface &clientArea)
     //viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
 
     View::doDraw(viewArea, clientArea);
-
 } // end PlayerNameView::doDraw
+
+void PlayerNameView::returnPressed(cInputField* input)
+{
+    gameconfig->playername = input->getDestString();
+    if(lobby_view) {
+        // the crude method for nickname change...
+        lobby_view->stopIRC();
+        SDL_Delay(500);
+        lobby_view->startIRC();
+    }
+}
+
+// sometime we shoudl eleminate all these global vars...
+PlayerNameView* playernameview = 0;

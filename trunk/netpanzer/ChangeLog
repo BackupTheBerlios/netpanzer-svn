@@ -1,3 +1,9 @@
+11-Nov-2003 by Matthias Braun
+-fixed irclobby view to not crash on refresh button, when connection is broken
+-report exceptions in the irclobby view
+-fixed serveraddress view to not contain the ok and abort buttons
+-make irc lobby change nickname when the player changes it's name
+
 07-Nov-2003 by Matthias Braun
 -fixed HOM effect while joining server
 -added new poland flag by Bartosz Fenski

@@ -216,7 +216,8 @@ void cInputField::addExtendedChar(int newExtendedChar)
 
     case SDLK_KP_ENTER:
     case SDLK_RETURN: {
-        returnaction(this);
+        if(returnaction != 0)
+            returnaction(this);
     }
 
     default: break;

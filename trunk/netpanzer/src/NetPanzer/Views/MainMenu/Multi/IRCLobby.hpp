@@ -46,6 +46,9 @@ public:
     void refreshServerList();
     void refreshUserList();
 
+    bool isConnected() const
+    { return irc_server_socket != 0; }
+
 private:
     void startMessagesThread();
     void stopThread();
@@ -61,7 +64,6 @@ private:
     void readIRCLine(char *buf, size_t buf_len);
     void connectToServer();
     void addChatMessage(const std::string& user, const std::string& message);
-    int isConnected() { return irc_server_socket!=NULL?1:0; }
 
     SDL_mutex *game_servers_mutex;   
 

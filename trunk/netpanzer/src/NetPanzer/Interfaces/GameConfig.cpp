@@ -28,6 +28,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
     // VariableName("Name", value [, minimum, maximum])
     : hostorjoin("hostorjoin", _game_session_join, 0, _game_session_last-1),
       playername("name", "Player"),
+      lobbyserver("lobbyserver", "irc.freenode.net:6667"),
 
       gametype("gametype", _gametype_objective, 0, _gametype_last-1),
       maxplayers("maxplayers", 8, 1, 25),
@@ -81,6 +82,7 @@ GameConfig::GameConfig(const std::string& newconfigfile)
     //gamesettings.push_back(&hostorjoin);
 
     playersettings.push_back(&playername);
+    playersettings.push_back(&lobbyserver);
 
     serversettings.push_back(&gametype);
     serversettings.push_back(&maxplayers);

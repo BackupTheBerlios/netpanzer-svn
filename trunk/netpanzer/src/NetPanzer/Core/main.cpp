@@ -192,9 +192,8 @@ BaseGameManager *initialise(int argc, char** argv)
         LOGGER.setLogLevel(Logger::LEVEL_DEBUG);
         LOGGER.debug("debug option enabled");
     }
-    if (lobby_server_option.value()) {
-        IRCLobbyView::lobby_server=lobby_server_option.value();
-    }
+    if (lobby_server_option.value())
+        gameconfig->lobbyserver = lobby_server_option.value();
 
     // Initialize SDL
     SDL_Init(SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER);

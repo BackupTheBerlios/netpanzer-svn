@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __IRCLobbyView_h__
 #define __IRCLobbyView_h__
 
+#include <string>
+
 #include "IRCLobby.hpp"
 #include "View.hpp"
 #include "Surface.hpp"
@@ -26,22 +28,30 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //---------------------------------------------------------------------------
 class IRCLobbyView : public View
 {
- int lobby_view_height;
- const GameServer *mouse_down_server;
- const GameServer *displayed_servers[64];
- int total_displayed_servers;
 public:
- static std::string lobby_server;
- static cInputFieldString szChat;
- static IRCLobby *lobby_connection;
- IRCLobbyView();
+    IRCLobbyView();
 
- static void startIRC();
- static void stopIRC();
+    void startIRC();
+    void stopIRC();
 
- virtual void doDraw(Surface &windowArea, Surface &clientArea); 
- virtual int lMouseUp(const iXY &up_pos,const iXY &down_pos);
+    virtual void doDraw(Surface &windowArea, Surface &clientArea); 
+    virtual int lMouseUp(const iXY &up_pos,const iXY &down_pos);
+
+private:
+    static void buttonRefresh();
+    static void chatReturnPressed(cInputField* input);
+    
+    int lobby_view_height;
+    const GameServer *mouse_down_server;
+    const GameServer *displayed_servers[64];
+    int total_displayed_servers;
+
+    std::string error_message;
+    cInputFieldString szChat;
+    IRCLobby *lobby_connection;
 };
+
+extern IRCLobbyView* lobby_view;
 
 #endif
 

@@ -48,6 +48,8 @@ IRCLobby::IRCLobby(const std::string& server,
     }
     game_servers=new GameServerList();
     game_servers_mutex=SDL_CreateMutex();
+
+    connectToServer();
     startMessagesThread();
 }
 
@@ -96,25 +98,15 @@ void IRCLobby::connectToServer()
 {
     IPaddress addr;
     // some old versions of SDL_net take a char* instead of const char*
-    if(SDLNet_ResolveHost(&addr, const_cast<char*>(serveraddress.c_str()), 6667)
-            < 0) {
-        std::string err_mess("Couldn't resolve server address for "+
-                serveraddress);
-        addChatMessage("",err_mess);
-        LOG((err_mess.c_str()));
-        return;
-    }
+    if(SDLNet_ResolveHost(&addr, const_cast<char*>(serveraddress.c_str()),
+                serverport) < 0)
+        throw Exception("Couldn't resolve server address '%s:%d'",
+                serveraddress.c_str(), serverport);
         
     irc_server_socket = SDLNet_TCP_Open(&addr);
-    if(!irc_server_socket) {
-        std::stringstream err_mess;
-        err_mess << "Couldn't connect to irc server: " << serveraddress
-            << ":" << serverport << " Err:" << SDLNet_GetError();
-        addChatMessage("",err_mess.str());
-
-        LOG(("%s",err_mess.str().c_str()));
-        return;
-    }
+    if(!irc_server_socket)
+        throw Exception("Couldn't connect to irc server '%s:%d': %s",
+                serveraddress.c_str(), serverport, SDLNet_GetError());
 
     // login
     const char *playername = nickname.c_str();
@@ -175,7 +167,6 @@ void IRCLobby::refreshUserList()
 int IRCLobby::messagesThreadEntry(void* data)
 {
     IRCLobby* t = (IRCLobby*) data;
-    t->connectToServer();
     t->processMessages();
     return 0;
 }

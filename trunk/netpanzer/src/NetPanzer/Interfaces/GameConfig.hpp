@@ -112,6 +112,7 @@ public:
 
     // player settings
     ConfigString playername;
+    ConfigString lobbyserver;
 
     // server settings
     ConfigInt   gametype;             //Objectives, FragLimit, TimeLimit

@@ -152,7 +152,9 @@ bool DedicatedGameManager::launchNetPanzerGame()
     gameconfig->hostorjoin=_game_session_host;
 
     Particle2D::setCreateParticles(false);
-    IRCLobbyView::startIRC();
+    if(!lobby_view)
+        lobby_view = new IRCLobbyView;
+    lobby_view->startIRC();
 
     ConsoleInterface::postMessage( "Game Launched, Server Ready...");
 

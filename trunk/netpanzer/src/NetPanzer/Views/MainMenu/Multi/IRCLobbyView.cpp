@@ -29,31 +29,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Client.hpp"
 
-IRCLobby *IRCLobbyView::lobby_connection=0;
-std::string IRCLobbyView::lobby_server("irc.freenode.net:6667");
-
-cInputFieldString IRCLobbyView::szChat;
-
-
-static void buttonRefresh(void)
+IRCLobbyView::IRCLobbyView() 
+    : View()
 {
-    IRCLobbyView::lobby_connection->refreshServerList();
-    IRCLobbyView::lobby_connection->refreshUserList();
-}
-
-static void chatReturnPressed(cInputField* )
-{
-    IRCLobbyView::lobby_connection->sendChatMessage(
-        gameconfig->playername,
-        IRCLobbyView::szChat.getString());
-    IRCLobbyView::szChat.setString("");
-}
-
-
-// IRCLobbyView
-//---------------------------------------------------------------------------
-IRCLobbyView::IRCLobbyView() : View()
-{
+    lobby_connection=0;
     lobby_view_height=160;
     mouse_down_server=0;
     total_displayed_servers=0;
@@ -76,6 +55,10 @@ IRCLobbyView::IRCLobbyView() : View()
     szChat.init("  ", 34);
     cInputField* input = addInputField(iXY(4, chat_y), &szChat, "", true);
     input->setReturnAction(chatReturnPressed);
+
+    // XXX ugly ugly ugly
+    if(!lobby_view)
+        lobby_view = this;
 } 
 
 
@@ -91,7 +74,12 @@ void IRCLobbyView::doDraw(Surface &viewArea, Surface &clientArea)
     int server_list_end_y=lobby_view_height-(Surface::getFontHeight()*6);
     int chat_list_end_y=server_list_end_y+(Surface::getFontHeight()*4);      
 
-    if(lobby_connection==0) { return; }
+    if(lobby_connection == 0) {
+        clientArea.bltString(iXY(0,0), "Not connected to lobby:", Color::white);
+        clientArea.bltString(iXY(0, Surface::getFontHeight()),
+                error_message.c_str(), Color::white);
+        return;
+    }
 
 //~~~ todo: scrollbar for large list of servers
     if(!lobby_connection->isConnected()) {
@@ -154,19 +142,37 @@ int IRCLobbyView::lMouseUp(const iXY &down_pos,const iXY &up_pos)
     return View::lMouseUp(down_pos,up_pos);
 }
 
+void IRCLobbyView::buttonRefresh()
+{
+    if(!lobby_view->lobby_connection)
+        return;
+    
+    lobby_view->lobby_connection->refreshServerList();
+    lobby_view->lobby_connection->refreshUserList();
+}
 
+void IRCLobbyView::chatReturnPressed(cInputField* )
+{
+    lobby_view->lobby_connection->sendChatMessage(
+        gameconfig->playername,
+        lobby_view->szChat.getString());
+    lobby_view->szChat.setString("");
+}
 
 // connect to remote irc
 //---------------------------------------------------------------------------
 void IRCLobbyView::startIRC()
 {
+    if((const std::string&) gameconfig->lobbyserver == "")
+        return;
+
     try {
-        if(lobby_server.empty()) { return; }
         stopIRC();
-        lobby_connection=new IRCLobby(lobby_server,
+        lobby_connection=new IRCLobby(gameconfig->lobbyserver,
                 gameconfig->playername, "#netpanzerlob");
     } catch(std::exception& e) {
         LOG(("Couldn't connect to irc lobby: %s", e.what()));
+        error_message = e.what();
     }
 }
 
@@ -176,3 +182,4 @@ void IRCLobbyView::stopIRC()
     lobby_connection=0;
 }
 
+IRCLobbyView* lobby_view = 0;

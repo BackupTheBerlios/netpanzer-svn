@@ -141,9 +141,9 @@ void bNext()
 
 
         Desktop::setVisibility("IPAddressView", true);
-        if(!IRCLobbyView::lobby_server.empty()) {
+        if((const std::string&) gameconfig->lobbyserver != "") {
             Desktop::setVisibility("IRCLobbyView", true);
-            IRCLobbyView::startIRC();
+            lobby_view->startIRC();
         }
         //Desktop::setVisibility("JoinView", true);
         //Desktop::setVisibility("GetSessionHostView", true);
