@@ -16,11 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "SpawnList.hpp"
-
-
 #include <stdlib.h>
 #include <stdio.h>
+
+#include "SpawnList.hpp"
+#include "Exception.hpp"
 
 SpawnList::SpawnList( unsigned long size )
  {
@@ -36,7 +36,8 @@ void SpawnList::loadSpawnFile( char *file_path )
   char comment[64];
 
   infile = fopen( file_path, "rt" );
-  assert( infile != 0 );
+  if(infile == 0)
+	  throw Exception("couldn't open spawn file '%s'.", file_path);
   
   deallocate();
 

@@ -16,14 +16,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
 #include "Gdatstct.hpp"
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "Globals.h"
-
-
+#include "Log.hpp"
+#include "Exception.hpp"
 
 sprite_dbase FLAGS_DBASE;
 
@@ -68,9 +69,9 @@ short sprite_dbase::load_dbase( char *dbase_path )
   unload_dbase();
   
   infile = fopen( dbase_path, "rb" );
+  if(infile == 0)
+	  throw Exception("couldn't load sprite database '%s'.", dbase_path);
   
-  assert( infile != 0 );
-
   fread( &header, sizeof (sprite_dbase_header_type ), 1, infile );
   
   sprite_count = header.sprite_count;
@@ -229,9 +230,9 @@ short animation_dbase::load_dbase( char *dbase_path )
   unload_dbase();
   
   infile = fopen( dbase_path, "rb" );
+  if(infile == 0)
+	  throw Exception("couldn't load dbase '%s'.", dbase_path);
   
-  assert( infile != 0 );
- 
   fread( &header, sizeof (anim_dbase_header_type ), 1, infile );
   
   animation_count = header.animation_count;
@@ -378,7 +379,7 @@ short tile_dbase::load_dbase( char *dbase_path )
   
   if ( infile == 0 )
    {
-    //debug_mesg( _disp_log, "ERROR: Could Not Open tile set : %s", dbase_path );
+    LOG ( ("ERROR: Could Not Open tile set : %s", dbase_path) );
     return( false );
    }
  

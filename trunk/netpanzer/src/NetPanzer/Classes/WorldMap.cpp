@@ -16,13 +16,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "WorldMap.hpp"
-#include "MapData.hpp"
 
 #include <stdlib.h>
-
 #include <stdio.h>
 #include <string.h>
+
+#include "WorldMap.hpp"
+#include "MapData.hpp"
+#include "Exception.hpp"
 
 WorldMap::WorldMap()
  {
@@ -84,7 +85,8 @@ void WorldMap::loadMapFile( const char *file_path )
   //*****************************************************************
   
   infile = fopen( file_path, "rb" );  
-  assert( infile != 0 );  
+  if(infile == 0)
+	  throw Exception("couldn't open mapfile '%s'.", file_path);
 
   if ( map_loaded == true )
    {

@@ -135,9 +135,8 @@ DWORD UtilInterface::getNumFilesInDirectory(String path)
 			numFiles++;
 
 		} while (_findnext(hFile, &myFile) == 0);
+		_findclose(hFile);
 	} 
-
-	_findclose(hFile);
 
 	return numFiles;
 } // end UtilInterface::getNumFilesInDirectory

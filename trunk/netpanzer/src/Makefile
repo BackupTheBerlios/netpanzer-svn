@@ -31,6 +31,10 @@ GOAL = ../netpanzer.exe
 CFLAGS += -DWIN32 -Iw32api -D_DEBUG -Wno-unknown-pragmas
 LINKFLAGS += -lgdi32 -lshell32 -lddraw -ldinput -ldplayx -ldsound -lws2_32 -ldsetup -lwinmm -ldxguid -lole32
 endif
+ifeq ($(PROFILING),yes)
+CFLAGS += -pg
+LINKFLAGS += -pg
+endif
 	   
 SOURCES = $(foreach dir, $(DIRS), $(wildcard $(dir)/*.cpp))
 OBJECTS = $(SOURCES:.cpp=.o)

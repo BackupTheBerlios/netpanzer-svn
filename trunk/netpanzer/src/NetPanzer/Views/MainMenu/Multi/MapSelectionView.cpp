@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "HostOptionsView.hpp"
 #include "UtilInterface.hpp"
 #include "MapFileStruct.hpp"
-
+#include "Exception.hpp"
 
 cGrowList <MapInfo> MapSelectionView::mapList;
 int MapSelectionView::curMap = 0;
@@ -149,7 +149,7 @@ int MapSelectionView::loadMaps()
 	if (fileCount <= 0)
 	{
 		GameConfig::setGameMapName("");
-		return 0;
+		throw Exception("couldn't find any mapfile.");
 	}
 
 	struct _finddata_t myFile;
