@@ -30,10 +30,10 @@ echo $CXX
 echo Creating config.mak
 rm -f config.mak
 touch config.mak
+echo "SYSTEM=$OS" >> config.mak
+echo "CC=$CC" >> config.mak
+echo "CXX=$CXX" >> config.mak
 if [ -n "$MAKEDEPEND" ]; then
-	echo "SYSTEM=$OS" >> config.mak
     echo "MAKEDEPEND=$MAKEDEPEND" >> config.mak
-    echo "CC=$CC" >> config.mak
-    echo "CXX=$CXX" >> config.mak
 fi
 
