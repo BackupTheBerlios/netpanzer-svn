@@ -56,6 +56,10 @@
  * add a (readline based?) serverconsole along with "chat" command
  * add an in-game console like in quake-like games
 
+*** Graphics
+ * pulsing circle on the radar at places where battle happens (bigger circle if
+   heaver)
+
 *** gameplay
 / Note that these are just random ideas. We should be very careful when 
 / tuning the gameplay. 1 of the strengths of netpanzer is that it is simple 
