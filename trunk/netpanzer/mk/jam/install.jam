@@ -129,11 +129,11 @@ Help install : "Install $(PACKAGE_NAME)" ;
 
 actions Install1
 {
-  $(INSTALL) $(>) $(<:D) $(INSTALLFLAGS) ;
+  $(INSTALL) "$(>)" "$(<:D)" $(INSTALLFLAGS) ;
 }
 
 actions CopyDirs
 {
-  $(COPYDIRS) $(>) $(<)
+  $(COPYDIRS) "$(>)" "$(<)"
 }
 
