@@ -6,6 +6,8 @@ if test ! -f configure.ac ; then
   exit 1
 fi
 
+export WANT_AUTOMAKE=1.7
+
 aclocal
 automake -a
 autoheader
