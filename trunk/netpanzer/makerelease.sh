@@ -8,8 +8,12 @@ DATARELEASE=release/netpanzerdata-$VERSION
 
 # first clean the directories up
 echo "*** Cleaning up"
-./autogen.sh
-./configure
+if test ! -f configure; then
+    ./autogen.sh
+fi
+if test ! -f Jamconfig; then
+    ./configure
+fi
 rm -rf out
 rm -rf release
 jam distclean
@@ -17,7 +21,7 @@ jam distclean
 echo "*** Scanning for files"
 AUTOFILES="autogen.sh configure.ac configure config.h.in `find mk/autoconf/ -name "*.m4" -o -name "config.*"` mk/autoconf/install-sh"
 JAMFILES="Jamrules Jamconfig.in `find mk/jam -name "*.jam"`"
-ICONS=*.png *.xpm
+ICONS="*.png *.xpm"
 TEXTS="COPYING README TODO ChangeLog"
 SOURCES="`find src -name "*.cpp" -o -name "*.hpp" -o -name "Jamfile"`"
 DOCS="docs/*.[1-9] docs/Jamfile"
@@ -25,7 +29,7 @@ DOCS="docs/*.[1-9] docs/Jamfile"
 echo "*** Creating Sourcepackage"
 mkdir -p $SOURCERELEASE
 # Create a new Jamfile
-cat > $SOURCERELEASE/Jamfile << __END__
+cat > $SOURCERELEASE/Jamfile << '__END__'
 SubDir TOP ;
 
 SubInclude TOP src ;
