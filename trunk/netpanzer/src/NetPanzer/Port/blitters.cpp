@@ -111,7 +111,7 @@ void blit_partial_y(const unsigned char *tile_ptr, unsigned char *buffer_ptr,
 	for(y=0; y<y_size; y++) {
 	  memcpy(buffer_ptr, tile_ptr, 32);
 	  tile_ptr += 32;
-	  buffer_ptr += Screen->getWidth() /*-32*/;
+	  buffer_ptr += Screen->getWidth();
 	}
 
 #if 0
@@ -194,8 +194,8 @@ void general_blitter(unsigned char x_size, unsigned char y_size,
 			if(buffer_ptr[x] != 0)
 				dbuffer_ptr[x]=buffer_ptr[x];
 		}
-		buffer_ptr += Screen->getWidth()-x_size;
-		dbuffer_ptr += Screen->getWidth()-x_size;
+		buffer_ptr += Screen->getWidth();
+		dbuffer_ptr += Screen->getWidth();
 	}
 
 #if 0
@@ -252,11 +252,11 @@ void blit_selector_square( unsigned char x_size, unsigned char y_size,
 	const char color = 0x47;
 	dbuffer_ptr += frame_offset;
 	memset(dbuffer_ptr, color, x_size);  //top
-	dbuffer_ptr += Screen->getWidth()-x_size;
+	dbuffer_ptr += Screen->getWidth();
 	for(y = 1; y < (y_size-1); y++) {
 	  dbuffer_ptr[0] = color;  //left 
 	  dbuffer_ptr[x_size-1] = color;  //right
-	  dbuffer_ptr += Screen->getWidth()-x_size;
+	  dbuffer_ptr += Screen->getWidth();
 	}
 	memset(dbuffer_ptr, color, x_size); //bottom
 #if 0

@@ -3002,7 +3002,7 @@ static void bltLightDarkSpan(int n, PIX *d, const BYTE *i, const PIX *s)
 	if (n < 1) return;
 	
 	// Align to 4-byte dest
-	
+#if 0	
 	while (int(d) & 3)
 	{
 		//assert(((*s << 8) + *i) < 256 * 256);
@@ -3072,7 +3072,7 @@ static void bltLightDarkSpan(int n, PIX *d, const BYTE *i, const PIX *s)
 		}
 #endif
 	}
-
+#endif
 	while (n > 0)
 	{
 		//assert(((*s << 8) + *i) < 256 * 256);
@@ -3248,6 +3248,7 @@ void Surface::bltAdd(const Surface &dest, iXY min) const
 		PIX *d = dPtr;
 		PIX *s = sPtr;
 		int n = pixelsPerRow;
+#if 0
 		while (n > 0 && int(d) & 3) {
 			*d = saturateTable[int(*d) + int(*s)];
 			++d;
@@ -3311,7 +3312,7 @@ void Surface::bltAdd(const Surface &dest, iXY min) const
 			}
 #endif
 		}
-		
+#endif		
 		// Cleanup
 		while (n > 0) {
 			*d = saturateTable[int(*d) + int(*s)];

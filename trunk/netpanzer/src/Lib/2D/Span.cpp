@@ -203,9 +203,19 @@ spanDone:
 void bltBlendScaleSpan(PIX *dRow, const PIX *sRow, int srcX1FracWithCount, int stepAndDecCount, int stepWholePart, const BYTE *table)
 {
 	if (!allowSpanBlitting) { return; } // Remove for release candidate.
-
-	// XXX disabled msvc assembler routines
-#ifdef MSVC
+	int stepDecPart = stepAndDecCount>>16;
+	int stepCount=srcX1FracWithCount>>16;
+	for(int i=0;i<srcX1FracWithCount&0xffff;i++) {
+  	  dRow[i] = table[(dRow[i]<<8)+*sRow];
+	  sRow+=stepWholePart;
+	  stepCount+=stepDecPart;
+	  if(stepCount>0xffff) {
+	    stepCount-=0xffff;
+	    sRow+=1;
+	  }	  
+	}
+	
+#if 0
 		_asm {
 			mov edi, [dRow]
 			mov esi, [sRow]
@@ -367,10 +377,19 @@ void bltScaleSpan(PIX *dRow, const PIX *sRow, int srcX1FracWithCount,
 				  int stepAndDecCount, int stepWholePart)
 {
 	if (!allowSpanBlitting) { return; } // Remove for release candidate.
-	// XXX not needed anymore at the moment...
+	int stepDecPart = stepAndDecCount>>16;
+	int stepCount=srcX1FracWithCount>>16;
+	for(int i=0;i<srcX1FracWithCount&0xffff;i++) {
+  	  dRow[i] = *sRow;
+	  sRow+=stepWholePart;
+	  stepCount+=stepDecPart;
+	  if(stepCount>0xffff) {
+	    stepCount-=0xffff;
+	    sRow+=1;
+	  }	  
+	}
 
-	// XXX disabled msvc assembler
-#ifdef MSVC
+#if 0
 		_asm {
 			mov edi, [dRow]
 			mov esi, [sRow]

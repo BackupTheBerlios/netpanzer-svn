@@ -50,6 +50,10 @@ public:
 	{ return curWidth; }
 	inline int getHeight() const
 	{ return curHeight; }
+	inline int getViewWidth() const
+	{ return curWidth; }
+	inline int getViewHeight() const
+	{ return curHeight; }
 	inline int getBPP()
 	{ return curBPP; }      	
 }; // end DirectDraw
