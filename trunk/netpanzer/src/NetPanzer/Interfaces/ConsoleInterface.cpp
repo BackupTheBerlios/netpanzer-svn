@@ -130,6 +130,7 @@ void ConsoleInterface::postMessage( PIX color, const char *format, ... )
     strcpy( format_str, format );
     strcat( format_str, "\n" ); 
     vprintf( format_str, vap );
+    fflush(stdout);
    }    
   va_end( vap );
    

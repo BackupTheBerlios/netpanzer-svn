@@ -32,7 +32,7 @@ SOURCES = $(foreach dir, $(DIRS), $(wildcard $(dir)/*.cpp))
 OBJECTS = $(SOURCES:.cpp=.o)
 # eventually disable if you don't have makedep installed (but you don't have
 # dependency checking then)
-MAKEDEPEND=makedepend
+#MAKEDEPEND=makedepend
 
 LINKFLAGS += -g3
 INCLUDEDIRS=$(DIRS) NetPanzer/Classes/Network
