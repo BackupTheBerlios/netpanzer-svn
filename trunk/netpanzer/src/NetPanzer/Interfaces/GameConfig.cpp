@@ -38,7 +38,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
   int   GameConfig::TimeLimit = 50;          //in minutes
   int   GameConfig::FragLimit = 1000;        //in frags;
 
-  bool      GameConfig::map_cycling_on_off = true;
+  bool      GameConfig::map_cycling_on_off = false;
   bool      GameConfig::powerups_on_off = false;
 
   float        GameConfig::objective_occupation_percentage = 100.0;
