@@ -187,7 +187,7 @@ void GameManager::initializeSoundSubSystem()
 	}
 
 	// start some music
-	sound->playMusic("sfx/music/");
+	sound->playMusic("sound/music/");
 }
 
 // ******************************************************************
