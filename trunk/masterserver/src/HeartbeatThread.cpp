@@ -196,10 +196,14 @@ HeartbeatThread::addMasterServer(const std::string& address)
     serveraddr.sin_addr.s_addr = ((struct in_addr*) hentry->h_addr)->s_addr;
     serveraddr.sin_port =
         htons(config->getSection("server").getIntValue("port"));
-    
-    serveraddresses.push_back(serveraddr);
 
-    masterserver->addServer("master", serveraddr);
+    if (!masterserver->addServer("master", serveraddr)) {
+        *log << "Not adding additional masterserver '" << address
+            << "': already in list.\n";
+        return;                                                         
+    }                                                                   
+
+    serveraddresses.push_back(serveraddr);
     *log << "Found additional masterserver '" << address << "'\n";
 }
 

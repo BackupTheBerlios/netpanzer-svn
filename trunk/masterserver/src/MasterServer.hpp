@@ -42,7 +42,7 @@ public:
 
     void run();
 
-    void addServer(const std::string& gamename, struct sockaddr_in address);
+    bool addServer(const std::string& gamename, struct sockaddr_in address);
     
 private:
     friend class RequestThread;

@@ -89,6 +89,19 @@ MasterServer::MasterServer()
             throw std::runtime_error(msg.str());
         }
 
+        // eventually resolve fake address
+        if(serverconfig.getValue("ip") != "") {
+            hentry = gethostbyname(serverconfig.getValue("ip").c_str());
+            if(!hentry) {
+                std::stringstream msg;
+                msg << "Couldn't resolve ip-address '"
+                    << serverconfig.getValue("ip") << "'.";
+                throw std::runtime_error(msg.str());
+            }
+            serveraddr.sin_addr.s_addr = 
+                ((struct in_addr*) hentry->h_addr)->s_addr;
+        }
+
         res = listen(sock, 20);
         if(res < 0) {
             std::stringstream msg;
@@ -250,13 +263,13 @@ void MasterServer::parseHeartbeat(std::iostream& stream,
     stream << "\\final\\" << std::flush;
 }
 
-void
+bool
 MasterServer::addServer(const std::string& gamename, struct sockaddr_in addr)
 {
     // don't add yourself
     if(addr.sin_addr.s_addr == serveraddr.sin_addr.s_addr
         && addr.sin_port == serveraddr.sin_port)
-        return;
+        return false;
     
     pthread_mutex_lock(&serverlist_mutex);
     std::vector<ServerInfo>::iterator i;
@@ -269,7 +282,7 @@ MasterServer::addServer(const std::string& gamename, struct sockaddr_in addr)
                     std::make_pair(std::string("gamename"), gamename));
             i->lastheartbeat = time(0);
             pthread_mutex_unlock(&serverlist_mutex);
-            return;
+            return false;
         }
     }
 
@@ -281,6 +294,8 @@ MasterServer::addServer(const std::string& gamename, struct sockaddr_in addr)
     
     serverlist.push_back(info);
     pthread_mutex_unlock(&serverlist_mutex);
+
+    return true;
 }
 
 void
@@ -349,12 +364,8 @@ MasterServer::parseList(std::iostream& stream, struct sockaddr_in* addr,
 
     // we're a masterserver ourself (TODO handle additional match criteria)
     if(gamename == "master") {
-        stream << "\\ip\\";
-        if(serverconfig.getValue("ip") != "")
-            stream << serverconfig.getValue("ip");
-        else
-            stream << inet_ntoa(serveraddr.sin_addr);
-        stream << "\\port\\" << ntohs(serveraddr.sin_port);
+        stream << "\\ip\\" << inet_ntoa(serveraddr.sin_addr)
+            << "\\port\\" << ntohs(serveraddr.sin_port);
     }
     
     stream << "\\final\\" << std::flush;
