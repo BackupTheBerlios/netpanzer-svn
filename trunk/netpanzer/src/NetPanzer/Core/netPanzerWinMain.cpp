@@ -109,12 +109,14 @@ static bool WinInit( HANDLE hInstance, int nCmdShow)
 
 	if( !RegisterClass( &wc )) return false;
 
-    client_win_rect.left = 0;
-    client_win_rect.right = 640;
-    client_win_rect.top = 0;
-    client_win_rect.bottom = 480;
+	// XXX can we somehow avoid to disaply the windo already here? The
+	// dedicated server shouldn't open a window at all...
+       	client_win_rect.left = 0;
+	client_win_rect.right = 640;
+	client_win_rect.top = 0;
+	client_win_rect.bottom = 480;
 
-    AdjustWindowRect( &client_win_rect, WS_SYSMENU | WS_BORDER | WS_CAPTION | WS_VISIBLE | WS_MINIMIZEBOX, false );
+	AdjustWindowRect( &client_win_rect, WS_SYSMENU | WS_BORDER | WS_CAPTION | WS_VISIBLE | WS_MINIMIZEBOX, false );
     
     gapp.hwndApp = CreateWindowEx(
 		WS_EX_APPWINDOW,
@@ -130,8 +132,9 @@ static bool WinInit( HANDLE hInstance, int nCmdShow)
 		(HINSTANCE) hInstance,
 		0 );
 
-	if( gapp.hwndApp == 0) return false;
-	 else 
+    if( gapp.hwndApp == 0) 
+	return false;
+    else 
 	return true;
 }
 #endif

@@ -188,12 +188,12 @@ bool GameManager::initializeDirectXSubSystem( void )
   	  MessageBox(gapp.hwndApp, "DDraw.Initialize Failed", "Fatal Error", MB_OK);
 	  return ( false );
      }
- 
-    LOG( ( "Initializing Direct Input\n" ) );
-    if ( DirectInput::initialize() == false )
-     return ( false ); 
    }
-  printf ("DXInit\n");
+
+   LOG( ( "Initializing Direct Input\n" ) );
+   if ( DirectInput::initialize() == false )
+     return ( false ); 
+   printf ("DXInit\n");
 
   return( true );
  }
@@ -500,10 +500,13 @@ bool GameManager::initializeInputDevices( void )
  {
   LOG( ("Initializing Direct Keyboard Input") );
   
-  if( execution_mode == _execution_mode_loop_back_server)
+  // XXX commented out, since the main window isn't hidden as intended... I
+  // dunno why. If a key is pressed in the main window, then we need a defined
+  // DirectInput Handler.
+  //if( execution_mode == _execution_mode_loop_back_server)
    {
-    if ( DirectInput::initializeDirectKeyboard() == false )
-     return ( false );
+    if (!DirectInput::initializeDirectKeyboard())
+     return false;
    }
 
   //JoystickInterface::init();
@@ -1101,6 +1104,8 @@ bool GameManager::bootStrap( void )
  
   if ( success == false )
    {  
+    printf("Initialisation failed at stage %d.\n", i);
+    fflush(stdout);
     shutdown( i );
     return ( false );
    }
@@ -1157,6 +1162,8 @@ bool GameManager::dedicatedBootStrap( void )
  
   if ( success == false )
    {  
+    printf("Server Initialization failed at stage %d.\n", i);
+    fflush(stdout);
     dedicatedShutdown( i );
     return ( false );
    }
