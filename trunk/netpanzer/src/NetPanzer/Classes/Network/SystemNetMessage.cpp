@@ -87,7 +87,7 @@ SystemConnectAlert::SystemConnectAlert()
 
 void SystemConnectAlert::set(const PlayerID &player, unsigned char alert_type )
 {
-    player_id = player.getIndex();
+    player_id = htol16(player.getIndex());
     alert_enum = alert_type;
 }
 

@@ -2,7 +2,11 @@ Next release:
 -after having a full nodelist in A* the server is getting slow
     - no idea how to solve this, have to leave it open I guess...
 -netpanzer fails on win98se
--add netpanzer:// registration to netpanzer installer
+-another server crash with this message:
+    <Gwal> 2 messages showed up in my terminal last time I was a host: Unit in
+    EndLifeCycle message doesn't exist anymore(u1: 56 u2: 187)
+    <Gwal> Unit in EndLifeCycle message doesn't exist anymore(u1: 243 u2: 295)
+-client often displays: "Message has unknown message class 6."
 
 *** New Masterserver code
  * Create UDP broadcast code for LAN games
