@@ -113,7 +113,7 @@ void InfoThread::handleStatusRequests()
 
             std::string responsestr = response.str();
             LOGGER.debug("Send back query response, size %d",
-                    responsestr.size());
+                    (int)responsestr.size());
             const void* data = responsestr.c_str();
             size_t datasize = responsestr.size();
             UDPpacket* sendpacket = SDLNet_AllocPacket(datasize);
