@@ -46,7 +46,7 @@ void loadConfig()
     server.setValue("server-alive-timeout", "720");
     server.setValue("client-request-timeout", "30");
     server.setValue("connection-limit", "10");
-    server.setValue("masterserver-heartbeat-interval", "360");
+    server.setValue("masterserver-heartbeat-interval", "300");
     server.setValue("masterserver-password", "");
     server.setValue("masterserver-neighboors", "");
 
