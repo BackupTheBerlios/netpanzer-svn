@@ -5,12 +5,12 @@
       <faq>
         <question>Where can I find public servers?</question>
         <answer>
-          There are currently no public servers available, but if you
-          want to play netPanzer and search for other players and
-          servers, join the IRC channel <tt>#netpanzer</tt> at
-          <tt>irc.freenode.net</tt>, you will find there players and
-          developers and sometimes people will give you an IP to join
-          a match.
+          <p>netPanzer contains a builtin server browser. You should see a list
+          of currently running servers when you are in the Join-Game view.</p>
+          <p>If you're using linux with KDE, then you can also use
+          <a
+          href="http://www.suselinuxsupport.de/index.php?location=download&amp;language=EN">KNetPanzerBrowser</a>
+          a nice server browser for netpanzer.</p>
         </answer>
       </faq>
 
@@ -51,10 +51,8 @@
           connection?</question> 
 
         <answer>
-          A skirmish mode will be available for those without a ready
-          network connection. The computer player available in skirmish
-          mode can also be used in regular multiplayer games as
-          well.
+          You can play against bots. Take a look into the README file on how
+          to start a server with bots.
         </answer>
       </faq>
       
