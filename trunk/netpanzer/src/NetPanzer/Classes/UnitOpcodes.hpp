@@ -213,7 +213,7 @@ public:
 
     iXY getTarget() const
     {
-        return iXY(ltoh32(x), ltoh32(y));
+        return iXY(ltoh16(x), ltoh16(y));
     }
 } __attribute__((packed));
 
@@ -243,8 +243,9 @@ ASSERT_SIZE(SyncUnitOpcode, 7 + sizeof(UnitOpcode))
 
 class UpdateStateUnitOpcode : public UnitOpcode
 {
-public:
+private:
     int16_t hit_points;
+public:
     uint8_t pad[5];
 
     UpdateStateUnitOpcode( )
@@ -254,6 +255,16 @@ public:
 
         for(int i=0; i<5; i++)
             pad[i] = 0;
+    }
+
+    void setHitPoints(int16_t newhitpoints)
+    {
+        hit_points = htol16(newhitpoints);
+    }
+
+    int16_t getHitPoints() const
+    {
+        return ltoh16(hit_points);
     }
 } __attribute__((packed));
 

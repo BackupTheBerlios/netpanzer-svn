@@ -99,8 +99,10 @@ void DedicatedGameManager::initializeInputDevices()
 //-----------------------------------------------------------------
 void DedicatedGameManager::inputLoop()
 {
-    if(infothread)
+    if(infothread) {
+        printf("lastf update.\n");
         infothread->lastFrame = now();
+    }
     
     // handle server commands
     SDL_mutexP(commandqueue_mutex);

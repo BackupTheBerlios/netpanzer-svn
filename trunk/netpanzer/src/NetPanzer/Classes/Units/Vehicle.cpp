@@ -1591,7 +1591,7 @@ void Vehicle::messageWeaponHit(const UnitMessage *message)
     UpdateStateUnitOpcode update_state_opcode;
 
     update_state_opcode.setUnitID(id);
-    update_state_opcode.hit_points = unit_state.hit_points;
+    update_state_opcode.setHitPoints(unit_state.hit_points);
     UnitInterface::sendOpcode( &update_state_opcode );
 
     if ( unit_state.hit_points <= 0 ) {
@@ -1762,7 +1762,7 @@ void Vehicle::unitOpcodeUpdateState(const UnitOpcode* opcode )
     const UpdateStateUnitOpcode *update_state_opcode
         = (const UpdateStateUnitOpcode *) opcode;
 
-    unit_state.hit_points = update_state_opcode->hit_points;
+    unit_state.hit_points = update_state_opcode->getHitPoints();
 
     unit_state.threat_level = _threat_level_under_attack;
     threat_level_under_attack_timer.changePeriod( 30 );

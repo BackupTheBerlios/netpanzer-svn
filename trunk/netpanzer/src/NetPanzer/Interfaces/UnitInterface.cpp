@@ -126,7 +126,7 @@ void UnitInterface::reset()
 void UnitInterface::sendMessage(const UnitMessage* message)
 {
     if (message->isFlagged(_umesg_flag_unique)) {
-        UnitBase* unit = getUnit(message->unit_id);
+        UnitBase* unit = getUnit(message->getUnitID());
         if(unit == 0)
             return;
 
@@ -812,7 +812,7 @@ void UnitInterface::processNetMessage(const NetMessage* net_message)
 void UnitInterface::destroyPlayerUnits(uint16_t player_id)
 {
     UMesgSelfDestruct self_destruct;
-    self_destruct.setHeader( _umesg_flag_unique );
+    self_destruct.setHeader(0, _umesg_flag_unique);
 
     PlayerUnitList& unitlist = playerUnitLists[player_id];
     for(PlayerUnitList::iterator i = unitlist.begin();

@@ -76,6 +76,11 @@ public:
         return TimeStamp(v - secsToTicks(seconds));
     }
 
+    double getSecs() const
+    {
+        return ticksToSecs(v);
+    }
+
     double operator -(const TimeStamp &a) const
     {
         return ticksToSecs(v - a.v);

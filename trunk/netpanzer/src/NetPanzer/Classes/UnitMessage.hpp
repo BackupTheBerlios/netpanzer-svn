@@ -36,30 +36,44 @@ enum { _umesg_flag_unique          = 0x01,
 
 class UnitMessage
 {
+private:
+    uint16_t unit_id;
 public:
-    UnitID unit_id;
     uint8_t message_id;
     uint8_t message_flags;
 
 public:
-
     UnitMessage()
-    {}
-    UnitMessage( UnitID unit_id, unsigned char flags );
-    UnitMessage( unsigned char flags );
-
-    inline void setHeader( UnitID unit_id, unsigned char flags )
     {
-        UnitMessage::unit_id = unit_id;
+        this->unit_id = 0xBADBADBA;
+        message_id = 0;
+        message_flags = 0;
+    }
+
+    UnitMessage(UnitID unit_Id, unsigned char flags)
+    {
+        setHeader(unit_Id, flags);
+    }
+
+    UnitID getUnitID() const
+    {
+        return ltoh16(unit_id);
+    }
+
+    void setHeader(UnitID unit_id, unsigned char flags )
+    {
+        this->unit_id = htol16(unit_id);
         message_flags = flags;
     }
 
-    inline void setHeader( unsigned char flags )
+#if 0
+    void setHeader(unsigned char flags)
     {
         message_flags = flags;
     }
+#endif
 
-    inline bool isFlagged(unsigned char flags) const
+    bool isFlagged(unsigned char flags) const
     {
         if ( (flags & message_flags) == flags )
             return true;

@@ -71,7 +71,7 @@ void OpcodeDebugger::logOpcode(std::ostream& log, UnitOpcode* opcode)
         {
             UpdateStateUnitOpcode* updatecode = 
                 (UpdateStateUnitOpcode*) opcode;
-            log << "upd: HP:" << (int) updatecode->hit_points;
+            log << "upd: HP:" << (int) updatecode->getHitPoints();
             break;
         }
         case _UNIT_OPCODE_DESTRUCT:

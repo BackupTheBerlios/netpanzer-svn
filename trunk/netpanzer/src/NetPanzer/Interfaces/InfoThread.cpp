@@ -133,6 +133,10 @@ void shutdown();
 void
 InfoThread::checkServerHang()
 {
+    /*
+    printf("CheckServerHang: Now: %f lastf: %f Diff: %f.\n", 
+            now().getSecs(), lastFrame.getSecs(), now() - lastFrame);
+    */
     if(now() - lastFrame > SERVER_HANG_TIME) {
         ConsoleInterface::postMessage("Detected endless loop. Shutting down.");
 

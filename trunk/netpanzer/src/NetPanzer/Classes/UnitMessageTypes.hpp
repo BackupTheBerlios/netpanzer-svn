@@ -50,7 +50,6 @@ private:
     int32_t target_loc_x;
     int32_t target_loc_y;
 public:
-
     UMesgAICommand()
     {
         command = 0;
@@ -206,12 +205,12 @@ enum { _select_box_allie_visibility,
 class UMesgUpdateSelectBoxInfo : public UnitMessage
 {
 public:
-    unsigned char request_type;
-    bool allie_flag_visiblity;
-    bool flag_visiblity;
-    bool allied_state;
+    uint8_t request_type;
+    uint8_t allie_flag_visiblity;
+    uint8_t flag_visiblity;
+    uint8_t allied_state;
 
-    void set( unsigned char request, bool state_value )
+    void set(unsigned char request, bool state_value)
     {
         message_id = _umesg_update_select_box_info;
         request_type = request;

@@ -59,7 +59,7 @@ void BulletWeapon::fsmFlight()
             case _fsmFlight_on_target:
                 if (NetworkState::status == _network_state_server) {
                     UMesgWeaponHit weapon_hit;
-                    weapon_hit.setHeader( _umesg_flag_broadcast );
+                    weapon_hit.setHeader(0, _umesg_flag_broadcast);
                     weapon_hit.message_id = _umesg_weapon_hit;
                     weapon_hit.setOwnerUnitID(owner_id);
                     weapon_hit.setHitLocation(location);

@@ -92,7 +92,7 @@ void Weapon::fsmFlight( void )
                 UMesgWeaponHit weapon_hit;
 
                 if (NetworkState::status == _network_state_server) {
-                    weapon_hit.setHeader( _umesg_flag_broadcast );
+                    weapon_hit.setHeader(0, _umesg_flag_broadcast);
                     weapon_hit.message_id = _umesg_weapon_hit;
                     weapon_hit.setOwnerUnitID(owner_id);
                     weapon_hit.setHitLocation(location);

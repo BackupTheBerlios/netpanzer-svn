@@ -6,6 +6,7 @@ Next release:
 -netpanzer fails on win98se
 -add netpanzer:// registration to netpanzer installer
 -you can't move panzers around on ppc - maybe ok (needs testing)
+-deadlock detector easily runs amok...
 
 -this resulted in an endless loop in the server
 <fEnIo> Connection lost of Client 64: Read error: Connection timed out.
