@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerState.hpp"
 #include "ArrayUtil/Timer.hpp"
 #include "PlacementMatrix.hpp"
-#include "UnitIDList.hpp"
-
 
 #include "UnitNetMessage.hpp"
 #include "UnitOpcodeEncoder.hpp"
