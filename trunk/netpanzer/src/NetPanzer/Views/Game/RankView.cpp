@@ -35,13 +35,15 @@ RankView::RankView() : GameTemplateView()
     setAllowResize(false);
     moveTo(iXY(0, 0));
     resize(iXY(450, 200));
-    centerAbsolute();
 
     const unsigned MAX_NAME_CHARS      = 20;
     const unsigned MAX_FLAG_CHARS      =  5;
     const unsigned MAX_KILLS_CHARS     =  6;
     const unsigned MAX_LOSSES_CHARS    =  7;
     const unsigned MAX_POINTS_CHARS    =  7;
+
+    // hardcoded for now
+    int CHAR_XPIX = 8;
 
     //addLabel(iXY nPos, char *nLabel, BYTE color);
     unsigned xOffset = 0;
@@ -134,6 +136,7 @@ void RankView::drawPlayerStats(const Surface &dest)
     //}
 
     for (int i = 0; i < numPlayers; i++) {
+        int CHAR_YPIX = Surface::getFontHeight();
         offset.x = 2;
         flagOffset.x = offset.x + 160;
         offset.y = 40 + i * (CHAR_YPIX + (UNIT_FLAGS_SURFACE.getPixY() - CHAR_YPIX) );

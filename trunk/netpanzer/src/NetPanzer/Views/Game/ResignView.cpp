@@ -64,8 +64,7 @@ void ResignView::init()
     setAllowResize(false);
     setDisplayStatusBar(false);
 
-    moveTo(0, 0);
-    resize(SCREEN_PIX);
+    resize(iXY(480, 80));
 
     iXY buttonSize(150, 15);
     //int BUTTON_COUNT = 2;
@@ -73,7 +72,7 @@ void ResignView::init()
     int y;
     int yOffset      = buttonSize.y * 2;
 
-    y = SCREEN_YCENTER - 30;
+    y = 0;
     addButtonCenterText(iXY(x, y), buttonSize.x, "Resign", "Returns to the MainView.", bResign);
     y += yOffset;
     addButtonCenterText(iXY(x, y), buttonSize.x, "Exit netPanzer", "Exits to Windows.", bExitNetPanzer);
@@ -86,15 +85,12 @@ void ResignView::init()
 //---------------------------------------------------------------------------
 void ResignView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
-    iXY   pos(0, 0);
-    iXY   size(SCREEN_PIX);
-    iRect r(pos, pos + size);
+    iRect r(0, 0, currentscreen->getPixX(), currentscreen->getPixY());
 
-    viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
-    viewArea.drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
+    currentscreen->bltLookup(r, Palette::darkGray256.getColorArray());
+    currentscreen->drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
 
     View::doDraw(viewArea, clientArea);
-
 } // end ResignView::doDraw
 
 // doActivate

@@ -20,13 +20,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ProgressView.hpp"
 #include "Exception.hpp"
 #include "Desktop.hpp"
-#include "UIDraw.hpp"
-#include "DDHardSurface.hpp"
+#include "ScreenSurface.hpp"
 #include "GameManager.hpp"
 
-
 ProgressView progressView;
-
 
 // ProgressView
 //---------------------------------------------------------------------------
@@ -50,7 +47,6 @@ void ProgressView::init()
     background.create(628 - 179, 302 - 153, 628 - 179, 1);
     background.fill(0);
 
-    moveTo(0, 0);
     resize(640, 480);
 } // end ProgressView::init
 
@@ -69,7 +65,6 @@ void ProgressView::doDraw(const Surface &viewArea, const Surface &clientArea)
     background.blt(clientArea, 179, 153);
 
     View::doDraw(viewArea, clientArea);
-
 } // end ProgressView::doDraw
 
 // update
@@ -79,36 +74,35 @@ void ProgressView::doDraw(const Surface &viewArea, const Surface &clientArea)
 //---------------------------------------------------------------------------
 void ProgressView::update(const char *text)
 {
+    int CHAR_YPIX = Surface::getFontHeight();
     int yOffset = background.getPix().y-CHAR_YPIX - 1;
 
     // Clear the area for the text and draw the new text.
     background.fillRect(0, yOffset, background.getPix().x, yOffset + CHAR_YPIX, Color::black);
     background.bltString(0, background.getPix().y - CHAR_YPIX - 1, text, Color::white);
-
 } // end ProgressView::update
 
 void ProgressView::updateDirect(const char *text)
 {
-    FRAME_BUFFER.lock();
-    screen.lock(FRAME_BUFFER.mem);
+    screen->lock();
 
     if (!backgroundSurface.getDoesExist()) {
         loadBackgroundSurface();
     }
 
-    backgroundSurface.blt(screen);
+    backgroundSurface.blt(*screen, min);
 
+    int CHAR_YPIX = Surface::getFontHeight();
     int yOffset = background.getPix().y-CHAR_YPIX - 1;
 
     // Clear the area for the text and draw the new text.
     background.fillRect(0, yOffset, background.getPix().x, yOffset + CHAR_YPIX, Color::black);
     background.bltString(0, background.getPix().y - CHAR_YPIX - 1, text, Color::white);
 
-    background.blt(screen, 179, 153);
+    background.blt(*screen, min + iXY(179, 153));
 
-    FRAME_BUFFER.unlock();
-    screen.unlock();
-    Screen->copyDoubleBufferandFlip();
+    screen->unlock();
+    screen->copyToVideoFlip();
 }
 
 // scroll
@@ -122,42 +116,37 @@ void ProgressView::scroll()
     tempSurface.copy(background);
 
     // Move the current text up by the height of the app font.
-    tempSurface.blt(background, 0, -CHAR_YPIX - 1);
-
+    tempSurface.blt(background, 0, - Surface::getFontHeight() - 1);
 } // end ProgressView::scroll
 
 void ProgressView::scrollDirect()
 {
     Surface tempSurface;
 
-    FRAME_BUFFER.lock();
-    screen.lock(FRAME_BUFFER.mem);
+    screen->lock();
 
     if (!backgroundSurface.getDoesExist()) {
         loadBackgroundSurface();
     }
 
-    backgroundSurface.blt(screen);
+    backgroundSurface.blt(*screen, min);
 
     tempSurface.copy(background);
 
     // Move the current text up by the height of the app font.
-    tempSurface.blt(background, 0, -CHAR_YPIX - 1);
+    tempSurface.blt(background, 0, - Surface::getFontHeight() - 1);
 
-    background.blt(screen, 179, 153);
+    background.blt(*screen, min + iXY(179, 153));
 
-    FRAME_BUFFER.unlock();
-    screen.unlock();
-    Screen->copyDoubleBufferandFlip();
-
+    screen->unlock();
+    screen->copyToVideoFlip();
 } // end ProgressView::scrollDirect
 
 void ProgressView::scrollAndUpdateDirect(const char *text)
 {
     Surface tempSurface;
 
-    FRAME_BUFFER.lock();
-    screen.lock(FRAME_BUFFER.mem);
+    screen->lock();
 
     if (!backgroundSurface.getDoesExist()) {
         loadBackgroundSurface();
@@ -168,20 +157,19 @@ void ProgressView::scrollAndUpdateDirect(const char *text)
     tempSurface.copy(background);
 
     // Move the current text up by the height of the app font.
-    tempSurface.blt(background, 0, -CHAR_YPIX - 1);
+    tempSurface.blt(background, 0, - Surface::getFontHeight() - 1);
 
-    int yOffset = background.getPix().y-CHAR_YPIX - 1;
+    int yOffset = background.getPix().y- Surface::getFontHeight() - 1;
 
     // Clear the area for the text and draw the new text.
-    background.fillRect(0, yOffset, background.getPix().x, yOffset + CHAR_YPIX, Color::black);
-    background.bltString(0, background.getPix().y - CHAR_YPIX - 1, text, Color::white);
+    background.fillRect(0, yOffset, background.getPix().x, yOffset + 
+            Surface::getFontHeight(), Color::black);
+    background.bltString(0, background.getPix().y - Surface::getFontHeight() - 1, text, Color::white);
 
     background.blt(screen, 179, 153);
 
-    FRAME_BUFFER.unlock();
-    screen.unlock();
-    Screen->copyDoubleBufferandFlip();
-
+    screen->unlock();
+    screen->copyToVideoFlip();
 } // end ProgressView::scrollDirect
 
 
@@ -193,8 +181,6 @@ void ProgressView::reset()
 void ProgressView::open()
 {
     if ( Desktop::getView("ProgressView")->getVisible() == false ) {
-        //GameManager::setVideoMode(iXY(640, 480), false);
-
         GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
         GameManager::loadPalette("wads/netpmenu.act");
@@ -204,16 +190,12 @@ void ProgressView::open()
     }
 }
 
-
 //---------------------------------------------------------------------------
 void ProgressView::close()
 {
     if ( Desktop::getView("ProgressView")->getVisible() > 0 ) {
         reset();
         GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
-
-        //GameManager::restorePreviousVideoMode();
-        Desktop::checkViewPositions();
 
         GameManager::loadPalette("wads/netp.act");
 
@@ -230,9 +212,6 @@ void ProgressView::toggleGameView()
     backgroundSurface.free();
     GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
-    //GameManager::restorePreviousVideoMode();
-    Desktop::checkViewPositions();
-
     // Set the palette to the game palette.
     GameManager::loadPalette("wads/netp.act");
 
@@ -243,7 +222,6 @@ void ProgressView::toggleGameView()
     Desktop::setVisibility("GameInfoView", true);
     Desktop::setVisibility("MiniMapView", true);
     Desktop::setVisibility("GameView", true);
-
 } // end ProgressView::toggleGameView
 
 // toggleMainMenu
@@ -254,7 +232,6 @@ void ProgressView::toggleMainMenu()
     backgroundSurface.free();
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("MainView", true);
-
 } // end ProgressView::toggleMainMenu
 
 // doActivate
@@ -262,14 +239,11 @@ void ProgressView::toggleMainMenu()
 void ProgressView::doActivate()
 {
     Desktop::setActiveView(this);
-
 } // end VehicleSelectionView::doActivate
 
 // loadBackgroundSurface
 //---------------------------------------------------------------------------
 void ProgressView::loadBackgroundSurface()
 {
-    String string = "pics/backgrounds/menus/menu/til/loadingMB.til";
-
-    backgroundSurface.loadTIL(string);
+    backgroundSurface.loadTIL("pics/backgrounds/menus/menu/til/loadingMB.til");
 } // end MenuTemplateView::loadBackgroundSurface

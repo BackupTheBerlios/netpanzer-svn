@@ -322,6 +322,10 @@ int Particle2D::getFarAway(const fXYZ &worldPos)
 
     int speedUpDistance;
 
+    // XXX hacked around
+    int SCREEN_XPIX = 1024;
+    int SCREEN_YPIX = 768;
+        
     if ((SCREEN_XPIX == 640) && (SCREEN_YPIX == 480)) {
         speedUpDistance = 480;
     } else if ((SCREEN_XPIX == 800) && (SCREEN_YPIX == 600)) {

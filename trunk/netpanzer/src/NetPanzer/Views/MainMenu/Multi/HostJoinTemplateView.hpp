@@ -43,7 +43,6 @@ private:
     void drawVehicleInfo(const Surface &dest, const iXY &pos);
     void drawFlagInfo(const Surface &dest, const iXY &pos);
     void drawPlayerInfo(const Surface &dest, const iXY &pos);
-    void drawMapInfo(const Surface &dest, const iXY &pos);
     void drawNameInfo(const Surface &clientArea, const iXY &pos);
 
     virtual void loadBackgroundSurface();

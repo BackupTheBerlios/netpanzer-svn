@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "WorldViewInterface.hpp"
 #include "ObjectiveInterface.hpp"
 #include "UnitProfileInterface.hpp"
+#include "ScreenSurface.hpp"
 #include "Math.hpp"
 #include "ObjectiveInterface.hpp"
 #include "UnitTypes.hpp"
@@ -293,6 +294,9 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     add(&buttonPower);
     pos.y += yOffset;
 
+    // XXX hardcoded for now
+    int CHAR_XPIX = 8;
+    
     pos.x = 0;
     addLabel(pos + 2, "Production:", Color::white);
     productionUnitPos.x = (strlen("Current Unit:") + 1) * CHAR_XPIX + 2;
@@ -400,8 +404,6 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     buttonOk.setBounds(iRect(pos, pos + iXY(100, 15)));
     add(&buttonOk);
 
-    centerAbsolute();
-
     unitImages.create(48, 48, 48, _MAX_UNIT_TYPES);
 
     Surface tempSurface;
@@ -496,7 +498,7 @@ void VehicleSelectionView::doDraw(const Surface &viewArea, const Surface &client
 
             iRect r(objectivePos - objectiveOutlineSize, objectivePos + objectiveOutlineSize);
             //bltBlendRect(screen, r);
-            screen.fillRect(r, Color::white);
+            screen->fillRect(r, Color::white);
 
             //int xOffset = (strlen(WorldInputCmdProcessor::getSelectedObjectiveName()) * CHAR_XPIX) / 2;
 
@@ -522,8 +524,8 @@ void VehicleSelectionView::doDraw(const Surface &viewArea, const Surface &client
                 r = iRect(cornerPos - oos, cornerPos + oos);
             }
 
-            screen.drawLine(cornerPos, b, Color::white);
-            screen.fillRect(r, Color::white);
+            screen->drawLine(cornerPos, b, Color::white);
+            screen->fillRect(r, Color::white);
 
             //screen.bltLookup(r, Palette::darkGray256.getColorArray());
             //screen.drawButtonBorder(r, Color::white, Color::gray96);
@@ -677,7 +679,7 @@ void VehicleSelectionView::drawMiniProductionStatus(const Surface &dest)
 
                 outpostStatus = ObjectiveInterface::getOutpostStatus(objectiveID);
 
-                assert(screen.getDoesExist());
+                assert(screen->getDoesExist());
 
                 miniProductionRect.min   = objectiveScreenPos;
                 miniProductionRect.max.x = 0;
@@ -773,7 +775,7 @@ void VehicleSelectionView::drawMiniProductionStatus(const Surface &dest)
                     objectiveScreenPos.x -= 0;
                     objectiveScreenPos.y -= 0;
 
-                    assert(screen.getDoesExist());
+                    assert(screen->getDoesExist());
 
                     miniProductionRect.min   = objectiveScreenPos;
                     miniProductionRect.max.x = 0;
@@ -817,7 +819,7 @@ void VehicleSelectionView::drawMiniProductionStatus(const Surface &dest)
 //---------------------------------------------------------------------------
 void VehicleSelectionView::checkMiniProductionRect(String string)
 {
-    int length = (strlen(string) * CHAR_XPIX + 54);
+    int length = Surface::getTextLength(string) + 54;
 
     if (length > miniProductionRect.getSizeX()) {
         miniProductionRect.max.x = miniProductionRect.min.x + length;
@@ -926,7 +928,7 @@ void VehicleSelectionView::drawUnitProfileInfo(const Surface &dest, const iXY &p
 
 void VehicleSelectionView::drawBar(const Surface &dest, const iXY &pos, int length, float percent)
 {
-    iXY size(int(float(length) * percent), CHAR_YPIX);
+    iXY size(int(float(length) * percent), Surface::getFontHeight());
 
     dest.fillRect(iRect(pos.x, pos.y, pos.x + size.x, pos.y + size.y), Color::red);
 }

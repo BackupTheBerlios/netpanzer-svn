@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Desktop.hpp"
 #include "Stats.hpp"
 #include "Sound.hpp"
-#include "DDHardSurface.hpp"
 #include "ParticleSystem2D.hpp"
 #include "Particle2D.hpp"
 #include "GameManager.hpp"
@@ -156,6 +155,10 @@ WinnerMesgView::WinnerMesgView() : GameTemplateView()
 
     x =  2;
     y = 12;
+
+    // XXX hardcoded for now...
+    int CHAR_XPIX = 8;
+    
     addLabel(iXY(x, y), "Name", Color::red);
     x += MAX_NAME_CHARS * CHAR_XPIX;
     addLabel(iXY(x, y), "Flag", Color::red);
@@ -183,8 +186,6 @@ void WinnerMesgView::setWinnerInfoHack( char *name, int player_index )
 //---------------------------------------------------------------------------
 void WinnerMesgView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
-    centerAbsolute();
-
     bltViewBackground(viewArea);
 
     char strBuf[256];
@@ -213,7 +214,7 @@ void WinnerMesgView::doDraw(const Surface &viewArea, const Surface &clientArea)
 
     for (int i = 0; i < numPlayers; i++) {
         offset.x = 2;
-        offset.y = 32 + i * (CHAR_YPIX + ITEM_GAP_SPACE / 2);
+        offset.y = 32 + i * (Surface::getFontHeight() + ITEM_GAP_SPACE / 2);
 
         Stats::GetPlayerStats(playerFlagName,
                               &playerKills,
@@ -248,6 +249,9 @@ void WinnerMesgView::doDraw(const Surface &viewArea, const Surface &clientArea)
         } // ** switch
 
 
+        // XXX hardcoded for now
+        int CHAR_XPIX = 8;
+        
         // Add player flag name.
         sprintf(strBuf, "%-30s", playerName);
         clientArea.bltString(offset.x, offset.y, strBuf, color);

@@ -15,9 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #include <config.h>
+
 #include "MiniMapOptionsView.hpp"
 #include "GameViewGlobals.hpp"
 #include "GameConfig.hpp"
@@ -279,7 +278,6 @@ MiniMapOptionsView::MiniMapOptionsView() : GameTemplateView()
     setAllowResize(false);
     moveTo(iXY(0, 0));
     resize(iXY(400, 320));
-    centerAbsolute();
 
     //yourUnits.add("White");
     //yourUnits.add("Black");

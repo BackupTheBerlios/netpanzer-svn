@@ -133,6 +133,4 @@ void SpecialButtonView::mouseMove(const iXY & prevPos, const iXY &newPos)
 //--------------------------------------------------------------------------
 void SpecialButtonView::doActivate()
 {
-    centerAbsolute();
-
 } // end SpecialButtonView::doActivate

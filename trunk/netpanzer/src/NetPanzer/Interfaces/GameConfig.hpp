@@ -164,7 +164,7 @@ protected:
     static int          attackNotificationTime;
     static bool      blendSmoke;
 
-    static char         game_map_name[256];
+    static std::string game_map_name;
 
     // ** Visuals Configuration **
     static unsigned int  screen_resolution;
@@ -645,8 +645,10 @@ public:
         return( wind_speed );
     }
 
-    static void setGameMapName( char *map_name );
-    static char * getGameMapName( void );
+    static void setGameMapName(const std::string& mapname)
+    { game_map_name = mapname; }
+    static const std::string& getGameMapName()
+    { return game_map_name; }
 
     // ** Visuals Configuration Methods **
     static inline float getScrollRate( void )

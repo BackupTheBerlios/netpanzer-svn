@@ -80,6 +80,8 @@ void MouseInterface::initialize()
         }
     }
     FileSystem::freeList(cursorfiles);
+
+    setCursor("default.bmp");
 }
 
 void MouseInterface::shutdown()

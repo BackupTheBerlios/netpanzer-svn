@@ -51,7 +51,7 @@ int          GameConfig::cloud_coverage;
 float        GameConfig::wind_speed;
 unsigned int GameConfig::respawn_type = _game_config_respawn_type_round_robin;
 
-char    GameConfig::game_map_name[256];
+std::string GameConfig::game_map_name;
 
 // ** Visuals Configuration **
 unsigned int GameConfig::screen_resolution = 0;
@@ -205,12 +205,3 @@ void GameConfig::saveConfig()
     xmlStore.save(configfile.c_str());
 }
 
-void GameConfig::setGameMapName( char *map_name )
-{
-    strcpy( game_map_name, map_name );
-}
-
-char * GameConfig::getGameMapName( void )
-{
-    return( game_map_name );
-}

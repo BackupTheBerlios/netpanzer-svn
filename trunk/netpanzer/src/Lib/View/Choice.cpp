@@ -43,7 +43,7 @@ void Choice::addItem(const String &item)
 
     int borderSpace = borderSize * 2;
 
-    size.x = std::max(int(strlen(item) * CHAR_XPIX + borderSpace), size.y);
+    size.x = std::max((Surface::getTextLength(item) + borderSpace), size.y);
     size.y = ChoiceItemHeight;
 }
 
@@ -186,7 +186,7 @@ void Choice::draw(const Surface &dest)
 
     //pos.x = min.x - strlen((const char *) label) * CHAR_XPIX - CHAR_XPIX;
     pos.x = min.x;
-    pos.y = min.y - CHAR_YPIX - 4;
+    pos.y = min.y - Surface::getFontHeight() - 4;
 
     // Draw the name of the choice.
     dest.bltStringShadowed(min.x, pos.y + adjustedY, (const char *) name, Color::white, Color::black);
@@ -237,9 +237,8 @@ void Choice::add(const String &item)
     choiceList[choiceList.getCount() - 1] = item;
 
     int borderSpace = borderSize * 2;
-    int length      = strlen((const char *) item);
 
-    size.x = std::max(int(length * CHAR_XPIX + borderSpace), size.y);
+    size.x = std::max(Surface::getTextLength(item) + borderSpace, size.y);
     size.x = std::max(minWidth, size.x);
 
 } // end Choice::add

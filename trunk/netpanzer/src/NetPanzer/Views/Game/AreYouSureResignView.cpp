@@ -19,13 +19,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "AreYouSureResignView.hpp"
 #include "Desktop.hpp"
-#include "DDHardSurface.hpp"
 #include "GameManager.hpp"
 #include "ParticleSystem2D.hpp"
 #include "Particle2D.hpp"
 #include "MenuTemplateView.hpp"
 #include "Sound.hpp"
 #include "SoundView.hpp"
+#include "ScreenSurface.hpp"
 #include "ControlsView.hpp"
 #include "VisualsView.hpp"
 #include "Palette.hpp"
@@ -115,7 +115,6 @@ AreYouSureResignView::AreYouSureResignView() : SpecialButtonView()
     setSearchName("AreYouSureResignView");
     setTitle("Resign");
     setSubTitle("");
-
 } // end AreYouSureResignView::AreYouSureResignView
 
 // init
@@ -128,11 +127,11 @@ void AreYouSureResignView::init()
     setAllowResize(false);
     setDisplayStatusBar(false);
 
-    moveTo(0, 0);
-    resize(SCREEN_PIX);
+    resize(screen->getPix());
+    moveTo(0,0);
 
     int x = (getClientRect().getSize().x - (141 * 2 + 20)) / 2;
-    int y = SCREEN_YCENTER + 30;
+    int y = getClientRect().getSize().y/2 + 30;
     addSpecialButton(	iXY(x, y),
                       "YES",
                       bYES);
@@ -148,9 +147,7 @@ void AreYouSureResignView::init()
 //---------------------------------------------------------------------------
 void AreYouSureResignView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
-    iXY   pos(0, 0);
-    iXY   size(SCREEN_PIX);
-    iRect r(pos, pos + size);
+    iRect r(min, max);
 
     viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
     //viewArea.drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
@@ -158,14 +155,14 @@ void AreYouSureResignView::doDraw(const Surface &viewArea, const Surface &client
     viewArea.bltStringCenter("Are you sure you wish to Resign?", Color::white);
 
     View::doDraw(viewArea, clientArea);
-
 } // end AreYouSureResignView::doDraw
 
 // doActivate
 //---------------------------------------------------------------------------
 void AreYouSureResignView::doActivate()
 {
+    printf("DoActivate\n");
     init();
     Desktop::setActiveView(this);
-
 } // end AreYouSureResignView::doActivate
+

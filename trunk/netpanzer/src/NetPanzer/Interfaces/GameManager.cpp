@@ -43,8 +43,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Log.hpp"
 #include "MouseInterface.hpp"
 #include "KeyboardInterface.hpp"
-#include "KeyActionEnum.hpp"
-#include "DDHardSurface.hpp"
+#include "ScreenSurface.hpp"
 #include "GameConfig.hpp"
 #include "TileInterface.hpp"
 #include "TileEngine.hpp"
@@ -87,7 +86,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "WinnerMesgView.hpp"
 #include "RankView.hpp"
 #include "VehicleSelectionView.hpp"
-#include "ControlPaletteView.hpp"
 #include "MiniMapView.hpp"
 #include "OptionsTemplateView.hpp"
 #include "OrderingView.hpp"
@@ -125,7 +123,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ParticleInterface.hpp"
 #include "Physics.hpp"
 #include "TimerInterface.hpp"
-#include "FontSystem2D.hpp"
 #include "Math.hpp"
 
 #include "Bot.hpp"
@@ -155,7 +152,6 @@ void GameManager::initializeVideoSubSystem()
     Screen = new SDLDraw();
 
     setVideoMode();
-    loadPalette("wads/netp.act");
 }
 
 void GameManager::shutdownVideoSubSystem()
@@ -201,9 +197,8 @@ void GameManager::initializeWindowSubSystem()
 {
     LOG(("Initializing Game Viewing System"));
 
-    // Use this when needing to create colorfilters.
     loadPalette("wads/netp.act");
-
+    
     initFont();
     loadPics();
 
@@ -227,10 +222,10 @@ void GameManager::initializeWindowSubSystem()
     progressView.init();
     Desktop::add(&progressView);
 
+    loadPalette("wads/netpmenu.act");
+
     //chatView.init();
     //Desktop::add(&chatView);
-
-    loadPalette( "wads/netpmenu.act" );
 
     Desktop::add(new MapSelectionView());
     Desktop::add(new MainMenuView());
@@ -257,13 +252,16 @@ void GameManager::initializeWindowSubSystem()
 
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("MainView", true);
+    
+    Desktop::checkResolution(iXY(640,480), iXY(screen->getPix()));
+    Desktop::checkViewPositions(screen->getPix());
 }
 
 // ******************************************************************
 void GameManager::setVideoMode()
 {
-    iXY lastResolution(SCREEN_XPIX, SCREEN_YPIX);
     iXY mode_res;
+    iXY old_res = screen ? screen->getPix() : iXY(0,0) ;
     bool fullscreen = GameConfig::getFullscreen();
 
     int mode;
@@ -275,7 +273,7 @@ void GameManager::setVideoMode()
         case 3: mode_res = iXY(1280, 1024); break;
         }
 
-        if(Screen->isDisplayModeAvailable( mode_res.x, mode_res.y, 8 )) {
+        if(Screen->isDisplayModeAvailable(mode_res.x, mode_res.y, 8, fullscreen)) {
             GameConfig::setScreenResolution(mode);
             break;
         }
@@ -283,35 +281,32 @@ void GameManager::setVideoMode()
     if(mode<0)
         throw Exception("couldn't find a usable video mode");
 
-    if (!Screen->setVideoMode(mode_res.x,
-                              mode_res.y, 8, fullscreen))
-        throw Exception("failed to set video mode.");
+    Screen->setVideoMode(mode_res.x, mode_res.y, 8, fullscreen);
 
     WorldViewInterface::setCameraSize( mode_res.x, mode_res.y );
-    FRAME_BUFFER.create(mode_res.x, mode_res.y, mode_res.x, 1 );
-    screen.createNoAlloc(mode_res);
+    delete screen;
+    screen = new ScreenSurface(Screen, mode_res.x, mode_res.y, 8);
     gameView.setSize(mode_res);
 
-    Desktop::checkResolution(lastResolution);
-    Desktop::checkViewPositions();
+    Desktop::checkResolution(old_res, mode_res);
+    Desktop::checkViewPositions(mode_res);
     //ConsoleInterface::setToSurfaceSize( mode_res );
 
     // reset palette
-    Palette pal;
-    Screen->setPalette(pal.color);
+    Screen->setPalette(Palette::color);
 }
 
 // ******************************************************************
 
 void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
 {
-    FRAME_BUFFER.lock();
-    screen.lock(FRAME_BUFFER.mem);
-    screen.fill(0);
-    screen.bltStringCenter(string, color);
-    FRAME_BUFFER.unlock();
-    screen.unlock();
-    Screen->copyDoubleBufferandFlip();
+    screen->lock();
+    
+    screen->fill(0);
+    screen->bltStringCenter(string, color);
+    
+    screen->unlock();
+    screen->copyToVideoFlip();
 }
 
 // ******************************************************************
@@ -319,10 +314,7 @@ void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
 void GameManager::loadPalette(char *palette_path)
 {
     Palette::init(palette_path);
-
-    Palette pal;
-
-    Screen->setPalette(pal.color);
+    Screen->setPalette(Palette::color);
 }
 
 // ******************************************************************
@@ -656,7 +648,7 @@ bool GameManager::loadGameData()
 }
 
 // ******************************************************************
-bool GameManager::startGameMapLoad( char *map_file_path, unsigned long partitions, int *result_code )
+bool GameManager::startGameMapLoad(const char *map_file_path, unsigned long partitions, int *result_code )
 {
     int check_return_code;
     check_return_code = MapsManager::checkMapValidity( map_file_path );
@@ -714,7 +706,7 @@ void GameManager::finishGameMapLoad()
 
 // ******************************************************************
 
-void GameManager::dedicatedLoadGameMap( char *map_name )
+void GameManager::dedicatedLoadGameMap(const char *map_name )
 {
     strcpy( map_path, "maps/" );
     strcat( map_path, map_name );
@@ -1181,44 +1173,41 @@ void displayHostMultiPlayerGameProgress(const int &curNum)
     iXY pos(0, 140);
 
     {
-        FRAME_BUFFER.lock();
+        screen->lock();
 
-        screen.lock(FRAME_BUFFER.mem);
-        hostLoadSurface.blt(screen);
+        hostLoadSurface.blt(*screen);
         char strBuf[256];
 
         sprintf(strBuf, "SPAWNING HOST");
         pos.x = 179;
         pos.y = 153;
-        screen.bltString(pos, strBuf, Color::white);
+        screen->bltString(pos, strBuf, Color::white);
 
         pos.y += yOffset;
         pos.y += yOffset;
 
         sprintf(strBuf, "Load Game Map...................%s", (curNum > 1) ? "DONE" : "");
         pos.y += yOffset;
-        screen.bltString(pos, strBuf, Color::white);
+        screen->bltString(pos, strBuf, Color::white);
 
         sprintf(strBuf, "Initialize Game Logic...........%s", (curNum > 2) ? "DONE" : "");
         pos.y += yOffset;
-        screen.bltString(pos, strBuf, Color::white);
+        screen->bltString(pos, strBuf, Color::white);
 
         sprintf(strBuf, "Initializing Connection Type....%s", (curNum > 3) ? "DONE" : "");
         pos.y += yOffset;
-        screen.bltString(pos, strBuf, Color::white);
+        screen->bltString(pos, strBuf, Color::white);
 
         sprintf(strBuf, "Allocating Server...............%s", (curNum > 4) ? "DONE" : "");
         pos.y += yOffset;
-        screen.bltString(pos, strBuf, Color::white);
+        screen->bltString(pos, strBuf, Color::white);
 
         sprintf(strBuf, "Spawning Player.................%s", (curNum > 5) ? "DONE" : "");
         pos.y += yOffset;
-        screen.bltString(pos, strBuf, Color::white);
+        screen->bltString(pos, strBuf, Color::white);
 
-        FRAME_BUFFER.unlock();
-        screen.unlock();
-
-        Screen->copyDoubleBufferandFlip();
+        screen->unlock();
+        screen->copyToVideoFlip();
     }
 }
 
@@ -1274,10 +1263,10 @@ void GameManager::hostMultiPlayerGame()
 
     progressView.scrollAndUpdateDirect( "Loading Game Data ..." );
 
-    MapsManager::setCycleStartMap( GameConfig::getGameMapName() );
+    MapsManager::setCycleStartMap( GameConfig::getGameMapName().c_str() );
 
     int result_code;
-    startGameMapLoad( GameConfig::getGameMapName(), 20, &result_code );
+    startGameMapLoad(GameConfig::getGameMapName().c_str(), 20, &result_code);
 
     if( result_code == _mapload_result_no_wad_file ) {
         progressView.scrollAndUpdateDirect( "MAP TILE SET NOT FOUND!" );
@@ -1405,7 +1394,7 @@ void GameManager::launchDedicatedServer()
     MapsManager::getCurrentMap( input_str );
     GameConfig::setGameMapName( input_str );
 
-    printf( "Map Name <%s> : ", GameConfig::getGameMapName() );
+    printf( "Map Name <%s> : ", GameConfig::getGameMapName().c_str() );
     fflush(stdout);
     readString(input_str, 256, stdin);
     if ( strlen(input_str) > 0 ) {
@@ -1502,8 +1491,8 @@ void GameManager::launchDedicatedServer()
     }
 
 
-    MapsManager::setCycleStartMap( GameConfig::getGameMapName() );
-    dedicatedLoadGameMap( GameConfig::getGameMapName() );
+    MapsManager::setCycleStartMap( GameConfig::getGameMapName().c_str() );
+    dedicatedLoadGameMap( GameConfig::getGameMapName().c_str() );
 
     reinitializeGameLogic();
 
@@ -1562,8 +1551,6 @@ void GameManager::gameLoop()
     if (once) {
         once = false;
         Desktop::setVisibility("MainView", true);
-        // XXX hack, original resolution was 640x480
-        Desktop::checkResolution(iXY(640, 480));
     }
 
     TimerInterface::start();
@@ -1598,7 +1585,6 @@ void GameManager::simLoop()
 
     ParticleSystem2D::simAll();
     Particle2D::simAll();
-    FontSystem2D::simAll();
 
     //evaluateGameRules();
     GameControlRulesDaemon::updateGameControlFlow();
@@ -1617,37 +1603,32 @@ void GameManager::inputLoop()
 // ******************************************************************
 void GameManager::graphicsLoop()
 {
-    FRAME_BUFFER.lock();
-    screen.lock(FRAME_BUFFER.mem);
+    screen->lock();
 
-    Desktop::draw();
-
-    FontSystem2D::drawAll();
+    Desktop::draw(*screen);
 
     char strBuf[256];
 
     if (display_frame_rate_flag == true) {
         sprintf(strBuf, "%3.1f : %3.1f" , TimerInterface::getFPS(), TimerInterface::getFPSAvg());
-        screen.bltString5x5(iXY(2, 2), strBuf, Color::white);
+        screen->bltString5x5(iXY(2, 2), strBuf, Color::white);
     }
 
     if (display_network_info_flag == true) {
         sprintf(strBuf, "|| %.4f : %.4f || %.4f : %.4f ||" , NetworkState::packets_sent_per_sec, NetworkState::bytes_sent_per_sec,
                 NetworkState::packets_received_per_sec, NetworkState::bytes_received_per_sec  );
-        screen.bltString5x5(iXY(60, 2), strBuf, Color::white);
+        screen->bltString5x5(iXY(60, 2), strBuf, Color::white);
     }
 
     if (Desktop::getVisible("GameView")) {
-        ConsoleInterface::update( FRAME_BUFFER );
+        ConsoleInterface::update(*screen);
     }
 
-    mouse.draw(screen);
+    mouse.draw(*screen);
     MouseInterface::updateCursor();
 
-    FRAME_BUFFER.unlock();
-    screen.unlock();
-
-    Screen->copyDoubleBufferandFlip();
+    screen->unlock();
+    screen->copyToVideoFlip();
 }
 
 // ******************************************************************

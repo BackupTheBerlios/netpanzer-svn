@@ -81,6 +81,7 @@ void ConsoleInterface::setToSurfaceSize( iXY pix )
     bounds.min.y = 5;
     bounds.max = pix - 5;
 
+    int CHAR_XPIX = 8; // XXX hardcoded
     max_char_per_line = (bounds.max.x - bounds.min.x) / CHAR_XPIX;
 }
 
@@ -262,6 +263,7 @@ void ConsoleInterface::update_overlap( Surface &surface )
 
         surface.bltStringShadowed(current_line, inputPrompt, GameConfig::getConsoleTextColor(), Color::black );
 
+        int CHAR_XPIX = 8; // XXX hardcoded
         input_offset.x = current_line.x + ( (long) strlen( inputPrompt ) ) * CHAR_XPIX;
         input_offset.y = current_line.y;
 

@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <SDL.h>
 
-#include "RGBColor.hpp"
 #include "UIDraw.hpp"
 
 // DirectDraw class declarations
@@ -34,17 +33,14 @@ public:
     SDLDraw();
     virtual ~SDLDraw();
 
-    bool setVideoMode(DWORD width, DWORD height, DWORD bpp, bool fullscreen);
-    bool isDisplayModeAvailable(int width, int height, int bpp);
-    bool lockDoubleBuffer(BYTE **DoubleBuffer);
-    bool unlockDoubleBuffer();
-    bool createFrameBuffer(DWORD width, DWORD height, DWORD bpp);
-    void setGDIStatus(bool enable);
-    void restoreAll();
-    bool copyDoubleBufferandFlip();
+    void setVideoMode(int width, int height, int bpp, bool fullscreen);
+    bool isDisplayModeAvailable(int width, int height, int bpp, bool fullscreen);
+    void lockDoubleBuffer(unsigned char **DoubleBuffer);
+    void unlockDoubleBuffer();
+    void copyDoubleBufferandFlip();
     void setPalette(RGBColor *color);
 
-    virtual bool isFullScreen() const;
+    bool isFullScreen() const;
 }
 ; // end DirectDraw
 

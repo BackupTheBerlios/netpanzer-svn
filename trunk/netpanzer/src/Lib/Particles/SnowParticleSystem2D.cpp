@@ -55,7 +55,7 @@ void SnowParticleSystem2D::init()
     assert(snowParticles != 0);
 
     for (unsigned num = 0; num < SNOW_PARTICLE_COUNT; num++) {
-        snowParticles[num].init(fXYZ(rand() % SCREEN_XPIX, 0, rand() % SCREEN_YPIX), 2 + rand() % 5);
+        snowParticles[num].init(fXYZ(rand() % 1024, 0, rand() % 768), 2 + rand() % 5);
     }
 
 } // end SnowParticleSystem2D::init
@@ -85,5 +85,5 @@ void SnowParticleSystem2D::draw(const Surface &dest, SpriteSorter &sorter)
 {
     //for (unsigned num = 0; num < NUM_SNOW_PARTICLES; num++)
     //	snowParticles[num].draw(dest);
-
 } // end SnowParticleSystem2D::draw
+

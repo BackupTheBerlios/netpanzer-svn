@@ -157,9 +157,6 @@ __attribute__((packed));
 #pragma pack()
 #endif
 
-bool Surface::screenLocked = true;
-
-Surface screen;
 Surface ascii8x8;
 Surface ascii5x5;
 
@@ -511,7 +508,6 @@ bool Surface::grab(const Surface &source,
 //---------------------------------------------------------------------------
 void Surface::blt(const Surface &dest, iXY min) const
 {
-    assert(screenLocked);
     assert(getDoesExist());
     assert(dest.getDoesExist());
     assert(this != 0);
@@ -603,7 +599,6 @@ void Surface::blt(const Surface &dest, iXY min) const
 //---------------------------------------------------------------------------
 void Surface::bltTrans(const Surface &dest, iXY min) const
 {
-    assert(screenLocked);
     assert(getDoesExist());
     assert(dest.getDoesExist());
     assert(this != 0);
@@ -699,7 +694,6 @@ void Surface::bltTrans(const Surface &dest, iXY min) const
 //---------------------------------------------------------------------------
 void Surface::bltTransColor(const Surface &dest, iXY min, const BYTE &color) const
 {
-    assert(screenLocked);
     assert(getDoesExist());
     assert(dest.getDoesExist());
     assert(this != 0);
@@ -792,7 +786,6 @@ void Surface::bltTransColor(const Surface &dest, iXY min, const BYTE &color) con
 //---------------------------------------------------------------------------
 void Surface::drawHLine(int x1, int y, int x2, const PIX &color) const
 {
-    assert(screenLocked);
     assert(getDoesExist());
     assert(this != 0);
 
@@ -827,7 +820,6 @@ void Surface::drawHLine(int x1, int y, int x2, const PIX &color) const
 //---------------------------------------------------------------------------
 void Surface::drawVLine(int x, int y1, int y2, const PIX &color) const
 {
-    assert(screenLocked);
     assert(getDoesExist());
     assert(this != 0);
 
@@ -875,7 +867,6 @@ void Surface::fillAll(const PIX &color)
 //---------------------------------------------------------------------------
 void Surface::fill(const PIX &color) const
 {
-    assert(screenLocked);
     assert(getDoesExist());
     assert(this != 0);
 
@@ -901,7 +892,6 @@ void Surface::fill(const PIX &color) const
 //---------------------------------------------------------------------------
 void Surface::fillRect(iRect bounds, const PIX &color) const
 {
-    assert(screenLocked);
     assert(getDoesExist());
     assert(this != 0);
 
@@ -941,7 +931,6 @@ void Surface::fillRect(iRect bounds, const PIX &color) const
 //---------------------------------------------------------------------------
 void Surface::drawRect(iRect bounds, const PIX &color) const
 {
-    assert(screenLocked);
     assert(getDoesExist());
     assert(this != 0);
 
@@ -973,7 +962,6 @@ void Surface::drawRect(iRect bounds, const PIX &color) const
 //---------------------------------------------------------------------------
 void Surface::drawLine(int x1, int y1, int x2, int y2, const PIX &color) const
 {
-    assert(screenLocked);
     assert(getDoesExist());
     assert(this != 0);
 
@@ -1156,39 +1144,6 @@ void Surface::rotate(int angle)
         }
     }
 } // end ROTATE
-
-// shade
-//---------------------------------------------------------------------------
-// Purpose: Shades every other pixel which gies the surface a mesh look.  The
-//          default shade color is BLACK.  It can be specified otherwise.
-//---------------------------------------------------------------------------
-void Surface::shade(iRect bounds, PIX color /* = cBLACK */) const
-{
-    assert(screenLocked);
-    assert(getDoesExist());
-    assert(this != 0);
-
-    assert(bounds.min >= 0);
-    assert(bounds.max <= pix);
-
-    //for(int x = bounds.min.x; x < bounds.max.x; x += 2)
-    //	for(int y = bounds.min.y; y < bounds.max.y; y++)
-    //	{
-    //		if (y & 2 == 0) mem[y * screen.pix.x + x + 1] = color;
-    //		else mem[y * screen.pix.x + x] = color;
-    //	}
-    int x, y, which;
-    for (y = bounds.min.y; y < bounds.max.y; y++) {
-        which = (y % 2);
-        for (x = bounds.min.x; x < bounds.max.x; x += 2) {
-            if (which)
-                mem[y * screen.pix.x + x + 1] = color;
-            else
-                mem[y * screen.pix.x + x] = color;
-        }
-    }
-
-} // end Surface::shade
 
 // scale
 //---------------------------------------------------------------------------
@@ -1517,7 +1472,6 @@ void Surface::verticalWave(int numWaves, float percent, int offset)
 //---------------------------------------------------------------------------
 void Surface::drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightColor) const
 {
-    assert(screenLocked);
     assert(getDoesExist());
     assert(this != 0);
 
@@ -1544,7 +1498,6 @@ void Surface::drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightCo
 //---------------------------------------------------------------------------
 void Surface::blendIn(const Surface &source, iXY min, ColorTable &colorTable) const
 {
-    assert(screenLocked);
     assert(getDoesExist());
     assert(source.getDoesExist());
     assert(this != 0);
@@ -1618,7 +1571,6 @@ void Surface::blendIn(const Surface &source, iXY min, ColorTable &colorTable) co
 //---------------------------------------------------------------------------
 void Surface::bltBlendScale(const Surface &source, const iRect &destRect, ColorTable &colorTable) const
 {
-    assert(screenLocked);
     assert(getDoesExist());
     assert(source.getDoesExist());
     assert(this != 0);
@@ -1708,7 +1660,6 @@ void Surface::bltBlendScale(const Surface &source, const iRect &destRect, ColorT
 
 void Surface::bltLookup(const iRect &destRect, const PIX table[]) const
 {
-    assert(screenLocked);
     assert(getDoesExist());
     assert(this != 0);
 
@@ -1747,7 +1698,6 @@ void Surface::bltLookup(const iRect &destRect, const PIX table[]) const
 //---------------------------------------------------------------------------
 void Surface::bltScale(const Surface &source, const iRect &destRect) const
 {
-    assert(screenLocked);
     assert(getDoesExist());
     assert(source.getDoesExist());
     assert(this != 0);
@@ -1839,7 +1789,6 @@ void Surface::bltScale(const Surface &source, const iRect &destRect) const
 //---------------------------------------------------------------------------
 void Surface::blendRect(iRect bounds, ColorTable &colorTable) const
 {
-    assert(screenLocked);
     assert(getDoesExist());
     assert(this != 0);
     assert(Palette::brightness256.getColorCount() == 256);
@@ -2060,7 +2009,6 @@ void Surface::setBrightness(int percent)
 // bltBrightness
 void Surface::bltBrightness(const Surface &dest, const iXY &pos, const float &percent)
 {
-    assert(screenLocked);
     assert(getDoesExist());
     assert(dest.getDoesExist());
     assert(this != 0);
@@ -2394,8 +2342,6 @@ void Surface::setToBrightnessIndexes128()
 
 void Surface::bltAdd(const Surface &dest, iXY min) const
 {
-
-    assert(screenLocked);
     assert(getDoesExist());
     assert(dest.getDoesExist());
     assert(this != 0);
@@ -2659,6 +2605,16 @@ void initFont()
 
 } // Surface::initFont
 
+int Surface::getFontHeight()
+{
+    return ascii8x8.getPixY();
+}
+
+int Surface::getTextLength(const char* text)
+{
+    return ascii8x8.getPixX() * strlen(text);
+}
+
 // bltChar8x8
 //---------------------------------------------------------------------------
 // Purpose: Blits the specied rom character to the screen at the specified
@@ -2666,8 +2622,6 @@ void initFont()
 //---------------------------------------------------------------------------
 void Surface::bltChar8x8(const iXY &pos, const char &character, const PIX &color) const
 {
-    assert(screenLocked);
-
 #ifdef _DEBUG
     if (character > ascii8x8.getFrameCount()) {
         assert(false);
@@ -2683,8 +2637,6 @@ void Surface::bltChar8x8(const iXY &pos, const char &character, const PIX &color
 //---------------------------------------------------------------------------
 void Surface::bltChar5x5(const iXY &pos, const char &character, const PIX &color) const
 {
-    assert(screenLocked);
-
 #ifdef _DEBUG
     if (character > ascii5x5.getFrameCount()) {
         assert(false);
@@ -2704,8 +2656,6 @@ void Surface::bltChar5x5(const iXY &pos, const char &character, const PIX &color
 //---------------------------------------------------------------------------
 void Surface::bltString(const iXY &pos, const char *string, const BYTE &color) const
 {
-    assert(screenLocked);
-
     for (int index = 0; string[index] != 0; index++) {
         // Don't attempt blank spaces.
         if (string[index] == 32) {
@@ -2725,8 +2675,6 @@ void Surface::bltString(const iXY &pos, const char *string, const BYTE &color) c
 //---------------------------------------------------------------------------
 void Surface::bltString5x5(const iXY &pos, const char *string, const BYTE &color) const
 {
-    assert(screenLocked);
-
     for (int index = 0; string[index] != 0; index++) {
         bltChar5x5(iXY(pos.x + (index * 5), pos.y), string[index], color);
     }
@@ -2737,26 +2685,12 @@ void Surface::bltString5x5(const iXY &pos, const char *string, const BYTE &color
 //---------------------------------------------------------------------------
 void Surface::bltStringShadowed(const iXY &pos, char const *string, const BYTE &textColor, const BYTE &shadowColor) const
 {
-    assert(screenLocked);
-
     for (int index = 0; string[index] != 0; index++) {
         bltChar8x8(pos.x + (index << 3) + 1, pos.y + 1, string[index], shadowColor);
         bltChar8x8(pos.x + (index << 3),     pos.y,     string[index], textColor);
     }
 
 } // end Surface::bltStringShadowed
-
-// bltStringSafe
-//---------------------------------------------------------------------------
-// Purpose: Blit a string of text and makes sure to lock and unlock the DDraw
-//          buffer.  This should be used when you are wanting to display some
-//          text outside the make renderloop. Does not handle wrapping.
-//---------------------------------------------------------------------------
-void Surface::bltStringSafe(const iXY &pos, const char *string, PIX color) const
-{
-    assert(screenLocked);
-
-} // end Surface::bltStringSafe
 
 // bltStringCenter
 //---------------------------------------------------------------------------
@@ -2765,11 +2699,9 @@ void Surface::bltStringSafe(const iXY &pos, const char *string, PIX color) const
 //---------------------------------------------------------------------------
 void Surface::bltStringCenter(const char *string, PIX color) const
 {
-    assert(screenLocked);
-
     iXY pos;
-    pos.x = (getPix().x - (strlen(string) * CHAR_XPIX)) / 2;
-    pos.y = (getPix().y - CHAR_YPIX) / 2;
+    pos.x = (getPix().x - (strlen(string) * ascii8x8.getPixX())) / 2;
+    pos.y = (getPix().y - getFontHeight()) / 2;
 
     bltString(pos, string, color);
 
@@ -2782,11 +2714,9 @@ void Surface::bltStringCenter(const char *string, PIX color) const
 //---------------------------------------------------------------------------
 void Surface::bltStringShadowedCenter(const char *string, PIX foreground, PIX background) const
 {
-    assert(screenLocked);
-
     iXY pos;
-    pos.x = (getPix().x - (strlen(string) * CHAR_XPIX)) / 2;
-    pos.y = (getPix().y - CHAR_YPIX) / 2;
+    pos.x = (getPix().x - (strlen(string) * ascii8x8.getPixX())) / 2;
+    pos.y = (getPix().y - getFontHeight()) / 2;
 
     bltStringShadowed(pos, string, foreground, background);
 
@@ -2798,11 +2728,9 @@ void Surface::bltStringShadowedCenter(const char *string, PIX foreground, PIX ba
 //---------------------------------------------------------------------------
 void Surface::bltStringCenteredAtPoint(const iXY &pos, const char *string, const PIX &color) const
 {
-    assert(screenLocked);
-
     iXY destPos;
-    destPos.x = pos.x - (strlen(string) * CHAR_XPIX) / 2;
-    destPos.y = pos.y - CHAR_YPIX / 2;
+    destPos.x = pos.x - (strlen(string) * ascii8x8.getPixX()) / 2;
+    destPos.y = pos.y - getFontHeight() / 2;
 
     for (int i = 0; string[i] != 0; i++) {
         bltChar8x8(destPos.x + (i << 3), destPos.y, string[i], color);
@@ -2815,13 +2743,11 @@ void Surface::bltStringCenteredAtPoint(const iXY &pos, const char *string, const
 //---------------------------------------------------------------------------
 void Surface::bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color) const
 {
-    assert(screenLocked);
-
     int length = strlen(string);
 
     iXY destPos;
-    destPos.x = rect.min.x + (rect.getSizeX() - (length * CHAR_XPIX)) / 2;
-    destPos.y = rect.min.y + (rect.getSizeY() - CHAR_YPIX) / 2;
+    destPos.x = rect.min.x + (rect.getSizeX() - (length * ascii8x8.getPixX())) / 2;
+    destPos.y = rect.min.y + (rect.getSizeY() - getFontHeight()) / 2;
 
     for (int i = 0; string[i] != 0; i++) {
         bltChar8x8(destPos.x + (i << 3), destPos.y, string[i], color);
@@ -2833,8 +2759,6 @@ void Surface::bltStringCenteredInRect(const iRect &rect, const char *string, con
 //---------------------------------------------------------------------------
 void Surface::bltStringVGradient(const iXY &pos, const char *string, ColorTable &colorTable) const
 {
-    assert(screenLocked);
-
     for (int index = 0; string[index] != 0; index++) {
         bltChar8x8VGradient(iXY(pos.x + (index << 3), pos.y), string[index], colorTable);
     }
@@ -2844,7 +2768,6 @@ void Surface::bltStringVGradient(const iXY &pos, const char *string, ColorTable 
 void Surface::bltChar8x8VGradient(const iXY &pos, const char &character,
                                   ColorTable &colorTable) const
 {
-    assert(screenLocked);
 #ifdef _DEBUG
     if (character > ascii8x8.getFrameCount()) {
         assert(false);
@@ -2857,7 +2780,6 @@ void Surface::bltChar8x8VGradient(const iXY &pos, const char &character,
 //---------------------------------------------------------------------------
 void Surface::bltTransVGradient(const Surface &dest, iXY min, ColorTable &colorTable) const
 {
-    assert(screenLocked);
     assert(getDoesExist());
     assert(dest.getDoesExist());
     assert(this != 0);
@@ -2948,24 +2870,6 @@ void Surface::bltTransVGradient(const Surface &dest, iXY min, ColorTable &colorT
         dPtr += destAdjustment;
     }
 }
-
-// lock
-//---------------------------------------------------------------------------
-void Surface::lock(PIX *memBuf)
-{
-    screenLocked = true;
-    frame0 = mem = memBuf;
-    doesExist    = true;
-} // end Surface::lock
-
-// unlock
-//---------------------------------------------------------------------------
-void Surface::unlock()
-{
-    screenLocked = true;
-    frame0 = mem = 0;
-    doesExist    = false;
-} // end Surface::unlock
 
 // create
 //---------------------------------------------------------------------------
@@ -3107,7 +3011,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
 
         // Remove any spaces.
         while (string[length] == ' ') {
-            pos.x += CHAR_XPIX;
+            pos.x += ascii8x8.getPixX();
             length++;
         }
 
@@ -3128,7 +3032,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
 
         strBuf[strBufLength] = '\0';
 
-        if ((int) (pos.x + strlen(strBuf) * CHAR_XPIX) > rect.max.x) {
+        if ((int) (pos.x + strlen(strBuf) * ascii8x8.getPixX()) > rect.max.x) {
             pos.x = rect.min.x;
             pos.y += gapSpace;
         }
@@ -3139,7 +3043,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
             return;
         }
 
-        pos.x += strlen(strBuf) * CHAR_XPIX;
+        pos.x += strlen(strBuf) * ascii8x8.getPixX();
 
         length += strBufLength;
     }

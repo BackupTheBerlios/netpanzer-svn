@@ -15,12 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
-
 #include <config.h>
-#include "ScrollBar.hpp"
 
+#include "ScrollBar.hpp"
 
 // ScrollBar
 //---------------------------------------------------------------------------
@@ -150,7 +147,7 @@ void ScrollBar::draw(const Surface &dest)
 
         surface.setTo(dest, r);
         //surface.fill(Color::gray128);
-        surface.shade(Color::white);
+        //surface.shade(Color::white);
 
         //surface.drawButtonBorder(Color::gray192, Color::gray64);
         if (orientation == VERTICAL) {
@@ -233,7 +230,7 @@ void ScrollBar::draw(const Surface &dest)
 
     } else {
         //surface.fill(background);
-        surface.shade(Color::red);
+        //surface.shade(Color::red);
     }
 
 } // end ScrollBar::draw

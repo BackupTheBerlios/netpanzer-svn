@@ -20,10 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Exception.hpp"
 #include "LobbyView.hpp"
 #include "Desktop.hpp"
-#include "UIDraw.hpp"
-#include "DDHardSurface.hpp"
 #include "GameManager.hpp"
-
 
 LobbyView lobbyView;
 
@@ -90,10 +87,10 @@ void LobbyView::doDraw(const Surface &viewArea, const Surface &clientArea)
 void LobbyView::update(const char *text)
 {
     //int yOffset = background.getPix().y-CHAR_YPIX - 1;
-    int yOffset = CHAR_YPIX * currentline;
+    int yOffset = Surface::getFontHeight() * currentline;
 
     // Clear the area for the text and draw the new text.
-    background.fillRect(0, yOffset, background.getPix().x, yOffset + CHAR_YPIX, Color::black);
+    background.fillRect(0, yOffset, background.getPix().x, yOffset + Surface::getFontHeight(), Color::black);
     background.bltString(0, yOffset, text, Color::white);
 
 } // end LobbyView::update
@@ -105,12 +102,12 @@ void LobbyView::update(const char *text)
 //---------------------------------------------------------------------------
 void LobbyView::scroll()
 {
-    if(currentline * CHAR_YPIX > background.getPix().y - CHAR_YPIX) {
+    if(currentline * Surface::getFontHeight() > background.getPix().y - Surface::getFontHeight()) {
         Surface tempSurface;
         tempSurface.copy(background);
 
         // Move the current text up by the height of the app font.
-        tempSurface.blt(background, CHAR_YPIX, 0);
+        tempSurface.blt(background, Surface::getFontHeight(), 0);
     } else {
         currentline++;
     }

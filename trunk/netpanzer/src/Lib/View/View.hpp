@@ -104,10 +104,9 @@ public:
 protected:
     virtual void     actionPerformed(mMouseEvent me)
     {}
-    void             getViewArea(Surface &dest);
-    Surface          getViewArea();
-    virtual void     getClientArea(Surface &dest);
-    virtual Surface  getClientArea();
+    Surface          getViewArea(Surface& dest);
+    //virtual void     getClientArea(Surface& dest);
+    virtual Surface  getClientArea(Surface& dest);
 
     int              pressedButton;
     int              prevPressedButton;
@@ -150,7 +149,6 @@ protected:
     enum { STATUS_BORDERED           = (1U << 5) };
     enum { STATUS_DISPLAY_STATUS_BAR = (1U << 6) };
     enum { STATUS_SCROLL_BAR         = (1U << 7) };
-    enum { STATUS_ALLOW_AUTO_RESIZE  = (1U << 8) };
 
     // Mouse actions
     enum { MA_RESIZE_TOP    = (1U <<  0) };
@@ -184,7 +182,6 @@ protected:
     void setAllowMove       (const bool &newStatus);
     void setActive          (const bool &newStatus);
     //void setScrollBar       (const bool &newStatus);
-    void setAllowAutoResize (const bool &newStatus);
 
     // Scroll bar functions.
 
@@ -221,28 +218,23 @@ protected:
     void  setSubTitle(const char *subTitle);
     void  drawTitle(const Surface &windowArea);
 
-    // ToolTip Functions.
-    void  drawToolTip         (const Surface &dest);
-    void  drawToolTip         (const Surface &dest, const char *toolTip);
-
     // Input Field Functions
     void addInputField(const iXY &pos, cInputFieldString *string, const char *excludedCharacters, const bool &isSelected);
     int  findInputFieldContaining(const iXY &pos);
     void drawInputFields(const Surface &clientArea);
 
     /////////////////////////////////
-    void draw();
+    void draw(Surface& drawon);
     void showStatus(const char *string);
     void drawStatus(const Surface &dest);
-    void centerAbsolute();
-    void checkResolution(iXY lastResolution);
+    void checkResolution(iXY oldResolution, iXY newResolution);
+    void checkArea(iXY viewarea);
     void toggleView();
     iXY  getScreenToClientPos(const iXY &pos);
     iXY  getScreenToViewPos(const iXY &pos);
     /////////////////////////////////
 
     // These options can be modified on a per View type basis
-    virtual Surface *getMouseCursor(const iXY &p);
     virtual void drawButtons(const Surface &windowArea);
     virtual void drawBorder(const Surface &windowArea);
     virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
@@ -264,10 +256,6 @@ protected:
     //virtual void keyUp();
     void scrollBarMove(const iXY &prevpos, const iXY &newpos);
 
-    //void drawToolTip();
-
-    void checkViewSize(iXY &pix);
-
     void resize(const iXY &size);
     inline void resize(const int &x, const int &y)
     {
@@ -282,11 +270,11 @@ protected:
 
     virtual void processEvents();
 
-    void checkSnapToEdges(const iXY &min, const iXY &max, iXY &newMin, iXY &newMax);
-
     int moveAreaHeight;
     int borderSize;
     int snapToTolerance;
+
+    Surface* currentscreen; // HACK
 
 public:
     // Hack city, should be protected???????
@@ -367,10 +355,6 @@ public:
     inline int getScrollBar() const
     {
         return status & STATUS_SCROLL_BAR;
-    }
-    inline int getAllowAutoResize() const
-    {
-        return status & STATUS_ALLOW_AUTO_RESIZE;
     }
 
     virtual int getMouseActions(const iXY &p) const;

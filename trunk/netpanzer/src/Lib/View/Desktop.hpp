@@ -22,9 +22,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 #include "LibTypes.hpp"
-#include "Surface.hpp"
 #include "View.hpp"
 #include "cTimeStamp.hpp"
+
+class Surface;
 
 class Desktop
 {
@@ -83,7 +84,7 @@ public:
     static void toggleVisibilityNoDoAnything(const char *viewName);
     static void setVisibilityNoDoAnything(const char *viewName, int isVisible);
     static void add(View *view, bool autoActivate = true);
-    static void draw();
+    static void draw(Surface& surface);
 
     static iXY      getMouseActionOffset  ()
     {
@@ -153,8 +154,8 @@ public:
         return 0;
     }
 
-    static void checkViewPositions();
-    static void checkResolution(iXY lastResolution);
+    static void checkViewPositions(iXY viewarea);
+    static void checkResolution(iXY oldResolution, iXY newResolution);
 
     static const View *getFocus()
     {

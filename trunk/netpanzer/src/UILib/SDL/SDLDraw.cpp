@@ -16,13 +16,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+#include "Exception.hpp"
 #include "SDLDraw.hpp"
 
 SDLDraw::SDLDraw()
         : FrontBuffer(0)
 {
     SDL_InitSubSystem(SDL_INIT_VIDEO);
-    // XXX SDL contains a bug, that makes it loose the unicode state :-/
+    // XXX unfortunately SDL initializes the keyboard again :-/
     SDL_EnableUNICODE(1);
 }
 
@@ -31,14 +32,15 @@ SDLDraw::~SDLDraw()
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-bool SDLDraw::setVideoMode(DWORD width, DWORD height, DWORD bpp, bool fullscreen)
+void SDLDraw::setVideoMode(int width, int height, int bpp, bool fullscreen)
 {
     Uint32 flags = 0;
     flags |= fullscreen ? SDL_FULLSCREEN : 0;
     flags |= SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_HWPALETTE;
     FrontBuffer = SDL_SetVideoMode(width, height, bpp, flags);
-    if(FrontBuffer==NULL)
-        return false;
+    if(!FrontBuffer)
+        throw Exception("Couldn't set display mode (%dx%d:%d, %d)",
+                        width, height, bpp, flags);
 
     curWidth = width;
     curHeight = height;
@@ -47,51 +49,40 @@ bool SDLDraw::setVideoMode(DWORD width, DWORD height, DWORD bpp, bool fullscreen
     // let's scare the mouse :)
     SDL_ShowCursor(SDL_DISABLE);
     // and set a window title
-    SDL_WM_SetCaption("NetPanzer - Linux Port", 0);
-
-    return true;
+    SDL_WM_SetCaption("NetPanzer", 0);
 }
 
-bool SDLDraw::isDisplayModeAvailable(int width, int height, int bpp)
+bool SDLDraw::isDisplayModeAvailable(int width, int height, int bpp,
+                                     bool fullscreen)
 {
-    if(SDL_VideoModeOK(width, height, bpp, 0 /*SDL_FULLSCREEN | SDL_DOUBLEBUF | SDL_HWSURFACE*/))
-        return true;
+    Uint32 flags = fullscreen ? SDL_FULLSCREEN : 0;
+    flags |= SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_HWPALETTE;
 
-    return false;
+    return SDL_VideoModeOK(width, height, bpp, flags);
 }
 
-bool SDLDraw::lockDoubleBuffer(BYTE **DoubleBuffer)
+void SDLDraw::lockDoubleBuffer(unsigned char **DoubleBuffer)
 {
-    if(SDL_LockSurface(FrontBuffer)<0)
-        return false;
+    if(SDL_MUSTLOCK(FrontBuffer) && !SDL_LockSurface(FrontBuffer))
+        throw Exception("Couldn't lock display buffer");
 
     *DoubleBuffer = (unsigned char *)FrontBuffer->pixels;
-
-    return true;
 }
 
-bool SDLDraw::unlockDoubleBuffer()
+void SDLDraw::unlockDoubleBuffer()
 {
-    SDL_LockSurface(FrontBuffer);
-    return true;
+    if(SDL_MUSTLOCK(FrontBuffer))
+        SDL_UnlockSurface(FrontBuffer);
 }
 
-bool SDLDraw::createFrameBuffer(DWORD width, DWORD height, DWORD bpp)
+void SDLDraw::copyDoubleBufferandFlip()
 {
-    return true;
-}
-
-void SDLDraw::setGDIStatus(bool enable)
-{}
-
-void SDLDraw::restoreAll()
-{}
-
-bool SDLDraw::copyDoubleBufferandFlip()
-{
-    if(SDL_Flip(FrontBuffer)==0)
-        return true;
-    return false;
+    if(FrontBuffer->flags & SDL_DOUBLEBUF) {
+        if (!SDL_Flip(FrontBuffer))
+            throw Exception("Error while swapping double buffer");
+    } else {
+        SDL_UpdateRect(FrontBuffer, 0, 0, 0, 0);
+    }
 }
 
 void SDLDraw::setPalette(RGBColor *color)

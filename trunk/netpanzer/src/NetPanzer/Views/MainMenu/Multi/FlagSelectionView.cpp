@@ -106,7 +106,8 @@ void FlagSelectionView::doDraw(const Surface &viewArea, const Surface &clientAre
 
     char strBuf[256];
     sprintf(strBuf, "Current:");
-    clientArea.bltStringShadowed(BORDER_SPACE, BORDER_SPACE + (playerFlag.getPixY() - CHAR_YPIX) / 2, strBuf, windowTextColor, windowTextColorShadow);
+    int CHAR_XPIX = 8; // XXX hardcoded
+    clientArea.bltStringShadowed(BORDER_SPACE, BORDER_SPACE + (playerFlag.getPixY() - Surface::getFontHeight()) / 2, strBuf, windowTextColor, windowTextColorShadow);
     playerFlag.setFrame(playerFlagSelected);
     playerFlag.blt(clientArea, BORDER_SPACE + strlen(strBuf) * CHAR_XPIX + BORDER_SPACE, BORDER_SPACE);
 

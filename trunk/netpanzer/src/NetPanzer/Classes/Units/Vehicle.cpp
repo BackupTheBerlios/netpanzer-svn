@@ -27,7 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Sound.hpp"
 
 // NOTE: Temp unit new sprites put in
-#include "DDHardSurface.hpp"
 #include "GameConfig.hpp"
 
 #include "codewiz.hpp"

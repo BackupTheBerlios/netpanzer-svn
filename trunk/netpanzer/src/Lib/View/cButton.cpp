@@ -57,12 +57,12 @@ void cButton::createCenterText(iXY pos,
 
     const unsigned GAP_SPACE = 6;
 
-    int ySize = CHAR_YPIX+GAP_SPACE;
+    int ySize = Surface::getFontHeight() + GAP_SPACE;
     tempTopSurface.create(iXY(xSize, ySize), xSize, 3);
 
     // Find out the horizontal offset to put the button name on the button.
     int xOffset;
-    if (nName != 0) xOffset = (xSize-(strlen(nName)*CHAR_XPIX))/2;
+    if (nName != 0) xOffset = (xSize-(Surface::getTextLength(nName)))/2;
     else xOffset = xSize/2;
 
     // Make the unselected button

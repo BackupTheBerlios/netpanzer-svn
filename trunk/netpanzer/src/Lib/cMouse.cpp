@@ -59,5 +59,5 @@ void cMouse::setPointer(Surface *pointer)
     assert(pointer != 0);
 
     cMouse::pointer = pointer;
-
 } // end setPointer
+

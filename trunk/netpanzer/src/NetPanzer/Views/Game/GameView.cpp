@@ -26,14 +26,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ObjectiveInterface.hpp"
 #include "WorldInputCmdProcessor.hpp"
 #include "WorldViewInterface.hpp"
-#include "DDHardSurface.hpp"
+#include "ScreenSurface.hpp"
 #include "ConsoleInterface.hpp"
 #include "Particle2D.hpp"
 #include "ParticleSystem2D.hpp"
 #include "cMouse.hpp"
 #include "ViewGlobals.hpp"
-#include "FontSystem2D.hpp"
-#include "MiniRankView.hpp"
 #include "ParticleInterface.hpp"
 #include "PackedSurface.hpp"
 #include "VehicleSelectionView.hpp"
@@ -70,7 +68,7 @@ void GameView::init()
     setVisible(false);
 
     moveTo(iXY(0, 0));
-    resize(iXY(SCREEN_XPIX, SCREEN_YPIX));
+    resize(iXY(screen->getPixX(), screen->getPixY()));
 
 } // end GameView::init
 
@@ -80,7 +78,7 @@ void GameView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
     // Added for debugging, accesible through LibView.
     if (gDrawSolidBackground) {
-        screen.fill(250);
+        screen->fill(250);
     } else {
         TileEngine::blitWorld();
     }
@@ -104,14 +102,14 @@ void GameView::doDraw(const Surface &viewArea, const Surface &clientArea)
     ObjectiveInterface::offloadGraphics( SPRITE_SORTER );
     PowerUpInterface::offloadGraphics( SPRITE_SORTER );
 
-    SPRITE_SORTER.blitLists( &FRAME_BUFFER );
+    SPRITE_SORTER.blitLists(screen);
 
     VehicleSelectionView::drawMiniProductionStatus(screen);
 
     COMMAND_PROCESSOR.updateControls();
 
     // Make sure the console info is the last thing drawn.
-    ConsoleInterface::update( FRAME_BUFFER );
+    ConsoleInterface::update(*screen);
 
 } // end GameView::doDraw
 

@@ -65,7 +65,6 @@ public:
         return getScreenPos().y;
     }
 
-
     static inline void setButtonMask( unsigned char mask )
     {
         button_mask = button_mask | mask;

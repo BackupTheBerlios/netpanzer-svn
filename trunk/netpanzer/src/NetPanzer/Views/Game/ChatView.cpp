@@ -52,8 +52,6 @@ void ChatView::init()
     moveTo(0, 0);
     resize(400, 200);
 
-    centerAbsolute();
-
     int x = 0;
     int y = 0;
     //int buttonXSize = 60;

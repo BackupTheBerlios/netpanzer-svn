@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Desktop.hpp"
 #include "GameViewGlobals.hpp"
 #include "KeyboardInterface.hpp"
+#include "ScreenSurface.hpp"
 
 #include "WorldInputCmdProcessor.hpp"
 
@@ -50,6 +51,7 @@ void GameTemplateView::rMouseDrag(const iXY &downPos, const iXY &prevPos, const 
     }
 
     moveTo(min + newPos - prevPos);
+    checkArea(screen->getPix());
 }
 
 // doActivate

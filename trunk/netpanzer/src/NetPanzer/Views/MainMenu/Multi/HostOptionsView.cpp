@@ -268,7 +268,7 @@ void HostOptionsView::doDraw(const Surface &viewArea, const Surface &clientArea)
     iXY pos;
 
     pos.x = 4;
-    pos.y = clientArea.getPixY() - CHAR_YPIX;
+    pos.y = clientArea.getPixY() - Surface::getFontHeight();
 
     clientArea.bltString(pos, "Note: Use the right mouse button to accomplish fast mouse clicking.", Color::white);
 

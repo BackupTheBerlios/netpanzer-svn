@@ -32,14 +32,13 @@ public:
     virtual ~UIDraw()
     { }
 
-    virtual bool setVideoMode(DWORD width, DWORD height, DWORD bpp, bool fullscreen) = 0;
-    virtual bool isDisplayModeAvailable(int width, int height, int bpp) = 0;
-    virtual bool lockDoubleBuffer(unsigned char **DoubleBuffer) = 0;
-    virtual bool unlockDoubleBuffer() = 0;
-    virtual bool createFrameBuffer(DWORD width, DWORD height, DWORD bpp) = 0;
-    virtual void setGDIStatus(bool enable) = 0;
-    virtual void restoreAll()=0;
-    virtual bool copyDoubleBufferandFlip()=0;
+    virtual void setVideoMode(int width, int height, int bpp,
+                              bool fullscreen) = 0;
+    virtual bool isDisplayModeAvailable(int width, int height, int bpp,
+                                        bool fullscreen) = 0;
+    virtual void lockDoubleBuffer(unsigned char **DoubleBuffer) = 0;
+    virtual void unlockDoubleBuffer() = 0;
+    virtual void copyDoubleBufferandFlip()=0;
     virtual void setPalette(RGBColor *color)=0;
 
     virtual bool isFullScreen() const = 0;

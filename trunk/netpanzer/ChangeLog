@@ -1,3 +1,12 @@
+02-Oct-2003 by Matthias Braun
+-did refactoring work on the surface/DDHardSurface interfaces. DDHardSurface is
+ now called ScreenSurface, and is used in 99% of all cases where we need to
+ access video memory.
+-screen is defined in ScreenSurface.hpp now. Consequently no code in the Lib
+ subdir has the ability to know details about the screen which makes the
+ separation alot cleaner.
+-Removed some unused code
+    
 24-Sep-2003 by Matthias Braun
 -converted lots of code to use physfs (not completely done yet)
 -removed the automake system

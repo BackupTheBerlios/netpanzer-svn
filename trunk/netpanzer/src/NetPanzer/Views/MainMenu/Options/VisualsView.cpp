@@ -44,7 +44,7 @@ VisualsView::VisualsView() : OptionsTemplateView()
 
     // Settings
     //----------------------------------------------------------------------
-    int minWidth = 19 * CHAR_XPIX;
+    int minWidth = 19 * 8;
 
     x = xTextStart + 10;
     y = 100;

@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MouseInterface.hpp"
 #include "KeyboardInterface.hpp"
 #include "fXY.hpp"
-#include "loadPics.hpp"
 #include "ViewGlobals.hpp"
 #include "Exception.hpp"
 #include "InputEvent.hpp"
@@ -72,6 +71,7 @@ void View::add(Component *component)
 // View
 //---------------------------------------------------------------------------
 View::View()
+    : currentscreen(0)
 {
     reset();
     loadPics();
@@ -151,8 +151,6 @@ void View::reset()
     setAlwaysOnBottom(false);
 
     //setScrollBar(false);
-    setAllowAutoResize(false);
-
 } // end reset
 
 // drawBorder
@@ -394,14 +392,15 @@ void View::loadPics()
 
 // draw
 //---------------------------------------------------------------------------
-void View::draw()
+void View::draw(Surface& surface)
 {
     assert(this != 0);
 
     if (!getVisible())
         return;
 
-    doDraw(getViewArea(), getClientArea());
+    currentscreen = &surface; // hack
+    doDraw(getViewArea(surface), getClientArea(surface));
 } // end draw
 
 // activate
@@ -476,8 +475,6 @@ void View::doDraw(const Surface &viewArea, const Surface &clientArea)
         drawTitle(viewArea);
         drawBorder(viewArea);
     }
-
-    //drawToolTip(clientArea);
 } // end View::doDraw
 
 // doActivate
@@ -622,70 +619,14 @@ iXY View::getScreenToViewPos(const iXY &pos)
 
 // getViewArea
 //---------------------------------------------------------------------------
-// Purpose: Sets the specified surface to the dimensions of the view.
-//---------------------------------------------------------------------------
-void View::getViewArea(Surface &dest)
-{
-    assert(this != 0);
-
-    iRect rect(min, max);
-
-    //iRect rect;
-    //checkSnapToEdges(min, max, rect.min, rect.max);
-    //dest.setTo(screen, rect);
-
-    dest.setTo(screen, rect);
-
-} // end getViewArea
-
-// checkSnapToEdges
-//---------------------------------------------------------------------------
-// Purpose: Checks to see if the edges of the window is close enough to the
-//          set snap-to tolerance and if so, new values are returned for
-//          the view position.
-//---------------------------------------------------------------------------
-void View::checkSnapToEdges(const iXY &min, const iXY &max, iXY &newMin, iXY &newMax)
-{
-    const int SNAP_TOLERANCE = 20;
-
-    newMin = min;
-    newMax = max;
-
-    iXY size(newMax - newMin);
-
-    // Snap To Screen edges!
-    if (min.x < SNAP_TOLERANCE) {
-        newMin.x = 0;
-        newMax.x = size.x;
-    } else if (max.x > SCREEN_XPIX - SNAP_TOLERANCE) {
-        newMin.x = SCREEN_XPIX - 1 - size.x;
-        newMax.x = SCREEN_XPIX - 1;
-    }
-
-    if (min.y < SNAP_TOLERANCE) {
-        newMin.y = 0;
-        newMax.y = size.y;
-    } else if (max.y > SCREEN_YPIX - SNAP_TOLERANCE) {
-        newMin.y = SCREEN_YPIX - 1 - size.y;
-        newMax.y = SCREEN_YPIX - 1;
-    }
-
-} // end View::checkSnapToEdges
-
-// getViewArea
-//---------------------------------------------------------------------------
 // Purpose: Returns a Surface of the view's dimensions.
 //---------------------------------------------------------------------------
-Surface View::getViewArea()
+Surface View::getViewArea(Surface& dest)
 {
     assert(this != 0);
 
     iRect rect(min, max);
-    //iRect rect;
-    //checkSnapToEdges(min, max, rect.min, rect.max);
-
-    return Surface(screen, rect.min, rect.max, false);
-
+    return Surface(dest, rect.min, rect.max, false);
 } // end View::getViewArea
 
 // getViewRect
@@ -698,6 +639,7 @@ iRect View::getViewRect() const
 
 } // end getViewRect
 
+#if 0
 // getClientArea
 //---------------------------------------------------------------------------
 // Purpose: Sets the destination surface to the specified coodinates within
@@ -717,17 +659,17 @@ void View::getClientArea(Surface &dest)
     } else {
         getViewArea(dest);
     }
-
 } // end View::getClientArea
+#endif
 
 // getClientArea
 //---------------------------------------------------------------------------
 // Purpose:
 //---------------------------------------------------------------------------
-Surface View::getClientArea()
+Surface View::getClientArea(Surface& dest)
 {
     if (getBordered()) {
-        return Surface( getViewArea(),
+        return Surface( getViewArea(dest),
                         iXY(borderSize,
                             borderSize + moveAreaHeight),
                         iXY(getSizeX() - borderSize,
@@ -735,8 +677,7 @@ Surface View::getClientArea()
                         false);
     }
 
-    return getViewArea();
-
+    return getViewArea(dest);
 } // end View::getClientArea
 
 // getClientRect
@@ -755,17 +696,6 @@ iRect View::getClientRect() const
     return iRect(0, 0, getSizeX(), getSizeY());
 
 } // end View::getClientRect
-
-// getMouseCursor
-//---------------------------------------------------------------------------
-// Purpose: Tells you the current state of the mouse cursor.
-//---------------------------------------------------------------------------
-Surface *View::getMouseCursor(const iXY & /* pos */)
-{
-    // Draw the mouse pointer last
-    return &mouseArrow;
-
-} // end View::getMouseCursor
 
 // mouseMove
 //---------------------------------------------------------------------------
@@ -1370,7 +1300,7 @@ void View::drawStatus(const Surface &dest)
 
     // Draw the status text.
     if (statusText != 0) {
-        int pos = (DEFAULT_STATUS_BAR_HEIGHT - CHAR_YPIX) >> 1;
+        int pos = (DEFAULT_STATUS_BAR_HEIGHT - Surface::getFontHeight()) >> 1;
 
         s.bltString(pos, pos, statusText, Color::black);
     }
@@ -1430,94 +1360,31 @@ void View::drawPressedButton(const Surface &clientArea)
     buttons[pressedButton].topSurface.setFrame(0);
 } // drawPressedButton
 
-// DRAW TOOL TIP
-//---------------------------------------------------------------------------
-// Purpose: Draws the tooltip of the button the mouse is currently over.
-//---------------------------------------------------------------------------
-void View::drawToolTip(const Surface &dest)
-{
-    assert(this != 0);
-
-    iRect rect;
-    rect.min.x = 0;
-    rect.min.y = getClientRect().max.y - moveAreaHeight + 2;
-    rect.max.x = getClientRect().getSizeX()+1;
-    rect.max.y = getClientRect().max.y+1;
-    int xOffset = 5;
-
-    if (highlightedButton < 0) {
-        if (statusText != 0) {
-            iRect tRect(rect.min.x, rect.min.y, rect.max.x, rect.max.y);
-            dest.fillRect(tRect, Color::black);
-            dest.drawButtonBorder(tRect, Color::gray32, Color::gray64);
-            dest.bltString(rect.min.x+xOffset+1, rect.min.y+2, statusText, Color::black);
-            dest.bltString(rect.min.x+xOffset, rect.min.y+1, statusText, Color::white);
-        }
-        return;
-    } else {
-        if (strlen(buttons[highlightedButton].getToolTip()) == 0) {
-            return;
-        }
-
-        int length = strlen(buttons[highlightedButton].getToolTip()) * CHAR_XPIX;
-
-        // min is this window's min derived from iRect.
-        iRect r(buttons[highlightedButton].getBounds());
-        iRect r2(r.min.x + min.x, r.max.y + min.y, r.min.x + length + 4 + min.x, r.max.y + CHAR_YPIX + 4 + min.y);
-
-        // Keep the tooltip on the screen as best as possible.
-        if (r2.max.x > SCREEN_XPIX) {
-            int xOffset = r2.max.x - SCREEN_XPIX;
-            r2.min.x -= xOffset;
-            r2.max.x -= xOffset;
-        }
-
-        dest.fillRect(r2, Color::black);
-        dest.drawButtonBorder(r2, Color::white, Color::gray64);
-        dest.bltString(r2.min.x + 2, r2.min.y + 2, buttons[highlightedButton].getToolTip(), Color::white);
-        //dest.bltString(rect.min.x+xOffset, rect.min.y+1, buttons[highlightedButton].getToolTip(), Color::white);
-    }
-} // end drawToolTip
-
-// drawToolTip
-//---------------------------------------------------------------------------
-// Purpose: Draws the tooltip of the button the mouse is currently over.
-//---------------------------------------------------------------------------
-void View::drawToolTip(const Surface &dest, const char *toolTip)
-{
-    if (strlen(toolTip) == 0) {
-        return;
-    }
-
-    dest.bltString(4, 1, toolTip,      0);
-    dest.bltString(3, 0, toolTip, Color::white);
-} // end drawToolTip
-
-// centerAbsolute
-//---------------------------------------------------------------------------
-// Purpose: Centers the window horizontally and vertically on the screen.
-//---------------------------------------------------------------------------
-void View::centerAbsolute()
-{
-    iXY oldSize = getSize();
-
-    min.x = (SCREEN_XPIX - oldSize.x) >> 1;
-    min.y = (SCREEN_YPIX - oldSize.y) >> 1;
-    max.x = min.x + oldSize.x;
-    max.y = min.y + oldSize.y;
-} // end centerAbsolute
-
 // checkResolution
 //---------------------------------------------------------------------------
 // Purpose: Check position after resolution change
 //---------------------------------------------------------------------------
-void View::checkResolution(iXY lastResolution)
+void View::checkResolution(iXY oldResolution, iXY newResolution)
 {
-    iXY oldSize = getSize();
-    min.x += (SCREEN_XPIX - lastResolution.x) >> 1;
-    min.y += (SCREEN_YPIX - lastResolution.y) >> 1;
-    max = min + oldSize;
+    iXY size = getSize();
+    
+    min.x += (newResolution.x - oldResolution.x)/2;
+    min.y += (newResolution.y - oldResolution.y)/2;
+    max = min + size;
 } // end checkResolution
+
+void View::checkArea(iXY viewarea)
+{
+    if(min.x < 0)
+        moveTo(0, min.y);
+    if(min.y < 0)
+        moveTo(min.x, 0);
+                                                               
+    if(max.x > viewarea.x)
+        moveTo(viewarea.x - getSize().x, min.y);
+    if(max.y > viewarea.y)
+        moveTo(min.x, viewarea.y - getSize().y);
+}
 
 // RESIZE CLIENT AREA
 //---------------------------------------------------------------------------
@@ -1537,22 +1404,6 @@ void View::resizeClientArea(const iXY &size)
     destSize.x += xExtra;
     destSize.y += yExtra;
 
-    // Make sure the window will fit on the screen in the specified size.
-    if (destSize.x > SCREEN_XPIX) {
-        throw Exception("ERROR: Trying to size the client area larger than the screen width.");
-    }
-    if (destSize.y > SCREEN_YPIX) {
-        throw Exception("ERROR: Trying to size the client area larger than the screen height.");
-    }
-
-    // Move the window accordingly to accomodate for the resize.
-    if (min.x + destSize.x > SCREEN_XPIX) {
-        min.x += (SCREEN_XPIX - min.x + destSize.x);
-    }
-    if (min.y + destSize.y > SCREEN_YPIX) {
-        min.y += (SCREEN_YPIX - min.y + destSize.y);
-    }
-
     resize(destSize);
 } // end View::resizeClientArea
 
@@ -1564,21 +1415,7 @@ void View::resize(const iXY &size)
 {
     iXY destSize(size);
 
-    if (destSize.x <= RESIZE_XMINSIZE) {
-        destSize.x = RESIZE_XMINSIZE;
-    }
-    else if (destSize.x >  SCREEN_XPIX - min.x) {
-        destSize.x = SCREEN_XPIX - min.x;
-    }
-
-    if (destSize.y <= RESIZE_YMINSIZE) {
-        destSize.y = RESIZE_YMINSIZE;
-    } else if (destSize.y >  SCREEN_YPIX - min.y) {
-        destSize.y = SCREEN_YPIX - min.y;
-    }
-
     max = min + destSize;
-
 } // end View::resize
 
 // setPressedButton
@@ -1591,7 +1428,6 @@ void View::setPressedButton(const int &button)
 
     prevPressedButton = pressedButton;
     pressedButton     = button;
-
 } // end setPressedButton
 
 // setHighlightedButton
@@ -1604,28 +1440,7 @@ void View::setHighlightedButton(const int &button)
 
     prevHighlightedButton = highlightedButton;
     highlightedButton     = button;
-
 } // end setHighlightedButton
-
-// checkViewSize
-//---------------------------------------------------------------------------
-// Purpose: If the window's dimension is too big or too small, then resize
-//          the window accordingly.
-//---------------------------------------------------------------------------
-void View::checkViewSize(iXY &pix)
-{
-    if      (pix.x >  SCREEN_XPIX) {
-        pix.x = SCREEN_XPIX;
-    } else if (pix.x <= RESIZE_XMINSIZE) {
-        pix.x = RESIZE_XMINSIZE;
-    }
-    if      (pix.y >  SCREEN_YPIX) {
-        pix.y = SCREEN_YPIX;
-    } else if (pix.y <= RESIZE_YMINSIZE) {
-        pix.y = RESIZE_YMINSIZE;
-    }
-
-} // end View::checkViewSize
 
 // moveTo
 //---------------------------------------------------------------------------
@@ -1634,66 +1449,9 @@ void View::checkViewSize(iXY &pix)
 //---------------------------------------------------------------------------
 void View::moveTo(iXY destMin)
 {
-    if (getAllowAutoResize()) {
-        if (getSizeX() > SCREEN_XPIX) {
-            fXY difference;
-
-            difference.x = getSizeX() - SCREEN_XPIX;
-
-            float xRatio = float(difference.x) / float(getSizeX());
-
-            resize(int(getSizeX() - difference.x),
-                    int(float(getSizeY()) * xRatio));
-
-        } else if (getSizeY() > SCREEN_YPIX) {
-            fXY difference;
-
-            difference.y = getSizeY() - SCREEN_YPIX;
-
-            float yRatio = float(difference.y) / float(getSizeY());
-
-            resize(int(float(getSizeY()) * yRatio),
-                    int(getSizeY() - difference.y));
-        }
-    }
-
-    // Used until I rewrite this to keep the view in the size of the screen.
-    int flagFuckMax = 1;
-
-    // Keep the windows within the bounds of the screen
-    if (destMin.x > SCREEN_XPIX - getSizeX()) {
-        destMin.x = SCREEN_XPIX - getSizeX();
-    }
-    if (destMin.x < 0) {
-        destMin.x = 0;
-        if (destMin.x + getSizeX() - 1 >= SCREEN_XPIX) {
-            flagFuckMax = 0;
-            max.x = SCREEN_XPIX - 1;
-            //throw Exception("ERROR: The window is too large for the screen.");
-        }
-
-    }
-
-    if (destMin.y > SCREEN_YPIX - getSizeY()) {
-        destMin.y = SCREEN_YPIX - getSizeY();
-    }
-    if (destMin.y < 0) {
-        destMin.y = 0;
-        if (destMin.y + getSizeY() - 1 >= SCREEN_YPIX) {
-            flagFuckMax = 0;
-            max.y = SCREEN_YPIX - 1;
-
-            //throw Exception("ERROR: The window is too large for the screen.");
-        }
-
-    }
-
-    if (flagFuckMax) {
-        max += destMin - min;
-    }
-
-    min  = destMin;
-
+    iXY size = getSize();
+    min = destMin;
+    max = min + size;
 } // end moveTo
 
 // toggleView
@@ -1714,16 +1472,6 @@ void View::setAllowResize(const bool &newStatus)
     if (newStatus == true) status |=  STATUS_ALLOW_RESIZE;
     else                   status &= ~STATUS_ALLOW_RESIZE;
 } // end setAllowResize
-
-// setAllowAutoResize
-//---------------------------------------------------------------------------
-// Purpose: Allows this view to be resized or not.
-//---------------------------------------------------------------------------
-void View::setAllowAutoResize(const bool &newStatus)
-{
-    if (newStatus == true) status |=  STATUS_ALLOW_AUTO_RESIZE;
-    else                   status &= ~STATUS_ALLOW_AUTO_RESIZE;
-} // end setAllowAutoResize
 
 // setDisplayStatusBar
 //---------------------------------------------------------------------------

@@ -95,8 +95,9 @@ void cInputField::setInputFieldString(cInputFieldString *string)
     this->maxCharCount = string->maxCharCount;
 
     iXY size;
-    size.x = maxCharCount * CHAR_XPIX + 8;
-    size.y = CHAR_YPIX + 4;
+    // XXX (8 is hardcoded here...)
+    size.x = maxCharCount * 8 + 8;
+    size.y = Surface::getFontHeight() + 4;
 
     bounds.max = bounds.min + size;
 
@@ -244,9 +245,11 @@ void cInputField::drawHighlighted(const Surface &dest)
         }
     } else {
         if (cursorPos >= maxCharCount) {
-            inputFieldSurface.bltString(((cursorPos - 1) * CHAR_XPIX) + 4, 2, "_", Color::red);
+            // XXX hardcoded CHAR_PIXX (8)
+            inputFieldSurface.bltString(((cursorPos - 1) * 8) + 4, 2, "_", Color::red);
         } else {
-            inputFieldSurface.bltString(cursorPos * CHAR_XPIX + 4, 2, "_", Color::red);
+            // XXX hardcoded CHAR_PIXX(8)
+            inputFieldSurface.bltString(cursorPos * 8 + 4, 2, "_", Color::red);
         }
     }
 

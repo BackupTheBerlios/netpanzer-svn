@@ -28,7 +28,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerInterface.hpp"
 #include "ChatInterface.hpp"
 
-#include "DDHardSurface.hpp"
 #include "UnitMessageTypes.hpp"
 #include "TerminalNetMesg.hpp"
 #include "PlayerNetMessage.hpp"
@@ -36,6 +35,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetMessageEncoder.hpp"
 #include "PlacementMatrix.hpp"
 #include "Sound.hpp"
+#include "ScreenSurface.hpp"
 
 #include "GameConfig.hpp"
 
@@ -124,7 +124,7 @@ void WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos )
     long  scroll_increment;
     float scroll_rate;
 
-    screen_size = FRAME_BUFFER.getPix();
+    screen_size = screen->getPix();
     time_slice = TimerInterface::getTimeSlice();
     scroll_rate = GameConfig::getScrollRate();
 
@@ -968,19 +968,19 @@ void WorldInputCmdProcessor::updateControls( void )
         WorldViewInterface::worldXYtoClientXY( world_win, box_press, &client_pos );
 
         if ( client_pos.x < mouse_pos.x ) {
-            FRAME_BUFFER.drawHLine( client_pos.x, client_pos.y, mouse_pos.x, 252 );
-            FRAME_BUFFER.drawHLine( client_pos.x, mouse_pos.y, mouse_pos.x, 252 );
+            screen->drawHLine( client_pos.x, client_pos.y, mouse_pos.x, 252 );
+            screen->drawHLine( client_pos.x, mouse_pos.y, mouse_pos.x, 252 );
         } else {
-            FRAME_BUFFER.drawHLine( mouse_pos.x, client_pos.y, client_pos.x, 252 );
-            FRAME_BUFFER.drawHLine( mouse_pos.x, mouse_pos.y, client_pos.x, 252 );
+            screen->drawHLine( mouse_pos.x, client_pos.y, client_pos.x, 252 );
+            screen->drawHLine( mouse_pos.x, mouse_pos.y, client_pos.x, 252 );
         }
 
         if ( client_pos.y < mouse_pos.y ) {
-            FRAME_BUFFER.drawVLine( client_pos.x, client_pos.y, mouse_pos.y, 252 );
-            FRAME_BUFFER.drawVLine( mouse_pos.x, client_pos.y, mouse_pos.y, 252 );
+            screen->drawVLine( client_pos.x, client_pos.y, mouse_pos.y, 252 );
+            screen->drawVLine( mouse_pos.x, client_pos.y, mouse_pos.y, 252 );
         } else {
-            FRAME_BUFFER.drawVLine( client_pos.x, mouse_pos.y, client_pos.y, 252 );
-            FRAME_BUFFER.drawVLine( mouse_pos.x, mouse_pos.y, client_pos.y, 252 );
+            screen->drawVLine( client_pos.x, mouse_pos.y, client_pos.y, 252 );
+            screen->drawVLine( mouse_pos.x, mouse_pos.y, client_pos.y, 252 );
         }
 
     }

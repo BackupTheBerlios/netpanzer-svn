@@ -16,6 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
 #include "GameToolbarView.hpp"
 #include "GameViewGlobals.hpp"
 #include "Desktop.hpp"
@@ -24,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerInterface.hpp"
 #include "WorldInputCmdProcessor.hpp"
 #include "MiniMapView.hpp"
-
+#include "ScreenSurface.hpp"
 
 static void bToggleMiniMap()
 {
@@ -224,8 +225,7 @@ GameToolbarView::GameToolbarView() : GameTemplateView()
     resizeClientArea(iXY(117, pos.y));
 
     // Start it in the bottom-left corner.
-    moveTo(iXY(10000, 10000));
-
+    moveTo(screen->getPix() - getSize());
 } // end GameToolbarView::GameToolbarView
 
 // doDraw

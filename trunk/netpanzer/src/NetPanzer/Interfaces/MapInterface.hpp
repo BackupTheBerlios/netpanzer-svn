@@ -25,6 +25,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Surface.hpp"
 
+class MapLoadCallback
+{
+public:
+    virtual void MapLoadProgress(float percent);
+};
+
 class MapInterface : protected TileInterface
 {
 protected:
@@ -176,8 +182,9 @@ public:
 
 protected:
     static void finishMapLoad();
+
 public:
-    static bool startMapLoad( const char *file_path, bool load_tiles, unsigned long partitions );
+    static bool startMapLoad(const char *file_path, bool load_tiles, unsigned long partitions);
     static bool loadMap( int *percent_complete );
 
     static inline bool isMapLoaded()

@@ -25,15 +25,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Sound.hpp"
 #include "cMouse.hpp"
 #include "ViewGlobals.hpp"
-#include "DDHardSurface.hpp"
-#include "FontSystem2D.hpp"
 #include "RadarPingParticle2D.hpp"
+#include "ScreenSurface.hpp"
 #include "Particle2D.hpp"
 #include "ParticleSystem2D.hpp"
 #include "PackedSurface.hpp"
 #include "UtilInterface.hpp"
 #include "GameManager.hpp"
-#include "UILib/UIDraw.hpp"
 #include "Exception.hpp"
 #include "GameViewGlobals.hpp"
 
@@ -223,9 +221,9 @@ void MenuTemplateView::doDraw(const Surface &viewArea, const Surface &clientArea
 
     } else {
 	// When in mainmenu, make background dark and draw menu image
-        if(Screen->getWidth() > 640 ||
-           Screen->getHeight() > 480)
-            screen.fillRect(0, 0, Screen->getWidth(), Screen->getHeight(),
+        if(screen->getPixX() > 640 ||
+           screen->getPixY() > 480)
+            screen->fillRect(0, 0, screen->getPixX(), screen->getPixY(),
                             Color::black);
         
         // Set the following to get does exist.
@@ -314,7 +312,6 @@ void MenuTemplateView::doLoadTitleSurface(String string)
 //---------------------------------------------------------------------------
 void MenuTemplateView::doDeactivate()
 {
-    FontSystem2D::removeAll();
 } // end doDeactivate
 
 //---------------------------------------------------------------------------
@@ -325,6 +322,5 @@ void MenuTemplateView::loadNetPanzerLogo()
 //---------------------------------------------------------------------------
 void MenuTemplateView::processEvents()
 {
-    centerAbsolute();
 } // end MenuTemplateView::processEvents
 

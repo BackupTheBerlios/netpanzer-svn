@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "TileEngine.hpp"
 #include "blitters.hpp"
-#include "DDHardSurface.hpp"
+#include "ScreenSurface.hpp"
 #include "UILib/UIDraw.hpp"
 
 void TileEngine::blitWorld()
@@ -53,7 +53,7 @@ void TileEngine::blitWorld()
 
     tile_size = tile_set.getTileXsize();
 
-    main_camera->getViewStart(Screen->getWidth(), Screen->getHeight(),
+    main_camera->getViewStart(screen->getPixX(), screen->getPixY(),
                               &world_x, &world_y);
     pointXYtoMapXY( world_x, world_y, &map_x, &map_y );
 
@@ -63,7 +63,7 @@ void TileEngine::blitWorld()
 
     main_map.getRawMapBuffer( &map_buffer );
 
-    double_buffer = (unsigned char*) FRAME_BUFFER.mem;
+    double_buffer = screen->mem;
 
     /*
        x_offset = (world_x % tile_size );
@@ -76,27 +76,27 @@ void TileEngine::blitWorld()
     x_left_offset = (world_x % tile_size);
     x_left_length = (tile_size - x_left_offset);
 
-    complete_columns = (Screen->getWidth() - x_left_length) / tile_size;
+    complete_columns = (screen->getPixX() - x_left_length) / tile_size;
 
     x_right_offset = 0;
-    x_right_length = (Screen->getWidth() - x_left_length) % tile_size;
+    x_right_length = (screen->getPixX() - x_left_length) % tile_size;
     if ( x_right_length > 0 )
         x_right_end_flag = true;
 
     y_top_offset = (world_y % tile_size);
     y_top_length = (tile_size - y_top_offset);
 
-    complete_rows = (Screen->getHeight() - y_top_length) / tile_size;
+    complete_rows = (screen->getPixY() - y_top_length) / tile_size;
 
     y_bottom_offset = 0;
-    y_bottom_length = (Screen->getHeight() - y_top_length) % tile_size;
+    y_bottom_length = (screen->getPixY() - y_top_length) % tile_size;
     if ( y_bottom_length > 0 )
         y_bottom_end_flag = true;
 
     world_row =  map_buffer + (map_y * map_width) + map_x;
 
     // XXX
-    next_tile_row_offset = Screen->getWidth() * (tile_size - 1);
+    next_tile_row_offset = screen->getPixX() * (tile_size - 1);
 
     next_map_row_offset = map_width - complete_columns - 1;
 
@@ -139,11 +139,11 @@ void TileEngine::blitWorld()
             blit_partial_xy(tile_offset, buffer_offset, y_top_length, x_right_length);
         }
 
-        buffer_offset += ( Screen->getWidth() * (y_top_length-1)) + x_right_length;
+        buffer_offset += (screen->getPixX() * (y_top_length-1)) + x_right_length;
 
         world_row = world_row + next_map_row_offset;
     } else {
-        buffer_offset += (Screen->getWidth() * (y_top_length-1));
+        buffer_offset += (screen->getPixX() * (y_top_length-1));
 
         world_row = world_row + next_map_row_offset;
     }
@@ -225,11 +225,11 @@ void TileEngine::blitWorld()
                 blit_partial_xy( tile_offset, buffer_offset, y_bottom_length, x_right_length );
             }
 
-            buffer_offset += (Screen->getWidth() * (y_bottom_length-1)) + x_right_length;
+            buffer_offset += (screen->getPixX() * (y_bottom_length-1)) + x_right_length;
 
             world_row = world_row + next_map_row_offset;
         } else {
-            buffer_offset += (Screen->getWidth() * (y_bottom_length-1));
+            buffer_offset += (screen->getPixX() * (y_bottom_length-1));
 
             world_row = world_row + next_map_row_offset;
         }

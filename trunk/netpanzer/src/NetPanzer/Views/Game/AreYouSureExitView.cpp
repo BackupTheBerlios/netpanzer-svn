@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "AreYouSureExitView.hpp"
 #include "Desktop.hpp"
 #include "Palette.hpp"
+#include "ScreenSurface.hpp"
 #include "GameManager.hpp"
 
 //---------------------------------------------------------------------------
@@ -57,11 +58,11 @@ void AreYouSureExitView::init()
     setAllowResize(false);
     setDisplayStatusBar(false);
 
-    moveTo(0, 0);
-    resize(SCREEN_PIX);
+    resize(screen->getPix());
+    moveTo(0,0);
 
     int x = (getClientRect().getSize().x - (141 * 2 + 20)) / 2;
-    int y = SCREEN_YCENTER + 30;
+    int y = screen->getPixY()/2 + 30;
     addSpecialButton(	iXY(x, y),
                       "YES",
                       bYES);
@@ -77,9 +78,7 @@ void AreYouSureExitView::init()
 //---------------------------------------------------------------------------
 void AreYouSureExitView::doDraw(const Surface &viewArea, const Surface &clientArea)
 {
-    iXY   pos(0, 0);
-    iXY   size(SCREEN_PIX);
-    iRect r(pos, pos + size);
+    iRect r(min, max);
 
     viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
     //viewArea.drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
@@ -87,7 +86,6 @@ void AreYouSureExitView::doDraw(const Surface &viewArea, const Surface &clientAr
     viewArea.bltStringCenter("Are you sure you wish to exit netPanzer?", Color::white);
 
     View::doDraw(viewArea, clientArea);
-
 } // end AreYouSureExitView::doDraw
 
 // doActivate

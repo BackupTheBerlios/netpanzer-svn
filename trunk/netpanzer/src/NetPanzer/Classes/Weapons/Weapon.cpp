@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // NOTE: Temp until new sprites put in
 #include "WorldViewInterface.hpp"
-#include "DDHardSurface.hpp"
+#include "ScreenSurface.hpp"
 
 #include "Exception.hpp"
 #include "Sound.hpp"
@@ -214,9 +214,7 @@ void Weapon::updateStatus( void )
     WorldViewInterface::getViewWindow(&world_win );
 
     if ( shell.isVisible( world_win ) == true ) {
-        //FRAME_BUFFER.lock();
-        shell.blit( &FRAME_BUFFER, world_win );
-        //FRAME_BUFFER.unlock();
+        shell.blit(screen, world_win );
     }
 }
 

@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "HostJoinTemplateView.hpp"
 #include "GameConfig.hpp"
 #include "GameManager.hpp"
-#include "DDHardSurface.hpp"
-#include "FontSystem2D.hpp"
 #include "HostView.hpp"
 #include "Exception.hpp"
 #include "MapSelectionView.hpp"
@@ -122,9 +120,6 @@ void bReady()
     //MenuTemplateView::netPanzerLogo.free();
     MenuTemplateView::backgroundSurface.free();
     //MenuTemplateView::titleSurface.free();
-
-    // Make sure no views were left in weird places from a previous game.
-    Desktop::checkViewPositions();
 
     GameManager::launchNetPanzerGame();
 }
@@ -461,7 +456,7 @@ void HostJoinTemplateView::drawPlayerInfo(const Surface &dest, const iXY &pos)
 
     int x = pos.x;
     sprintf(strBuf, "Player Name");
-    dest.bltString(x, pos.y + (playerColor.getPix().y - CHAR_YPIX) / 2, strBuf, Color::white);
+    dest.bltString(x, pos.y + (playerColor.getPix().y - Surface::getFontHeight()) / 2, strBuf, Color::white);
 
     //x = 236;
     //playerColor.blt(clientArea, x, pos.y);
@@ -471,7 +466,7 @@ void HostJoinTemplateView::drawPlayerInfo(const Surface &dest, const iXY &pos)
 
     x = 342;
     sprintf(strBuf, "Status");
-    dest.bltString(x, pos.y + (playerColor.getPix().y - CHAR_YPIX) / 2, strBuf, Color::white);
+    dest.bltString(x, pos.y + (playerColor.getPix().y - Surface::getFontHeight()) / 2, strBuf, Color::white);
 
 } // end drawPlayerInfo
 
@@ -499,53 +494,6 @@ void HostJoinTemplateView::doActivate()
     sprintf(currentMultiView, searchName);
 
 } // end doActivate
-
-void HostJoinTemplateView::drawMapInfo(const Surface &dest, const iXY &pos)
-{
-    // Draw the dimmed background.
-    iXY size(300, 115);
-    iRect mapBorder(pos.x, pos.y, SCREEN_XPIX - 30, pos.y + size.y);
-    dest.bltLookup(mapBorder, Palette::darkGray256.getColorArray());
-    dest.drawButtonBorder(mapBorder, Color::lightGreen, Color::darkGreen);
-
-    // Draw the text.
-    char strBuf[256];
-    const PIX color = Color::lightGreen;
-    int x = 340;
-    int y = pos.y + 10;
-
-    const int yOffset = 15;
-
-    sprintf(strBuf, "MAP INFORMATION");
-    //dest.bltString(x, y, strBuf, color);
-    dest.bltStringVGradient(x, y, strBuf, Palette::gradientWhite2Green);
-    y += yOffset;
-
-    sprintf(strBuf, " Name");
-    dest.bltString(x, y, strBuf, color);
-    y += yOffset;
-
-    sprintf(strBuf, " Size");
-    dest.bltString(x, y, strBuf, color);
-    y += yOffset;
-    /*
-    	sprintf(strBuf, " Bases");
-    	dest.bltString(x, y, strBuf, color);
-    	y += yOffset;
-     
-    	sprintf(strBuf, " Factories");
-    	dest.bltString(x, y, strBuf, color);
-    	y += yOffset;
-     
-    	sprintf(strBuf, " Spawn Locations");
-    	dest.bltString(x, y, strBuf, color);
-    	y += yOffset;
-     
-    	sprintf(strBuf, " Temperment");
-    	dest.bltString(x, y, strBuf, color);
-    	y += yOffset;
-    */
-} // end HostView::drawMapInfo
 
 // loadBackgroundSurface
 //---------------------------------------------------------------------------

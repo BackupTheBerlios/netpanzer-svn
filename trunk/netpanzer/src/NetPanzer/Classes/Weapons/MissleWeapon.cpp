@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitInterface.hpp"
 #include "NetworkState.hpp"
 #include "WorldViewInterface.hpp"
-#include "DDHardSurface.hpp"
 #include "Sound.hpp"
 #include "ParticleInterface.hpp"
 #include "WeaponGlobals.hpp"

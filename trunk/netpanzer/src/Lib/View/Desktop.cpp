@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <algorithm>
 #include "Desktop.hpp"
 #include "KeyboardInterface.hpp"
-#include "loadPics.hpp"
 #include "TimerInterface.hpp"
 #include "MouseInterface.hpp"
 
@@ -293,11 +292,11 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 //--------------------------------------------------------------------------
 // Purpose:
 //--------------------------------------------------------------------------
-void Desktop::draw()
+void Desktop::draw(Surface& surface)
 {
     std::vector<View*>::reverse_iterator i;
     for(i = views.rbegin(); i != views.rend(); i++) {
-        (*i)->draw();
+        (*i)->draw(surface);
     }
 } // end draw
 
@@ -381,14 +380,15 @@ void Desktop::toggleVisibility(const char *searchName)
 
 // checkViewPositions
 //--------------------------------------------------------------------------
-// Purpose: Makes sure all the view are on the screen.
+// Purpose: Makes sure all the views are on the screen.
 //--------------------------------------------------------------------------
-void Desktop::checkViewPositions()
+void Desktop::checkViewPositions(iXY viewarea)
 {
     std::vector<View*>::iterator i;
     for(i = views.begin(); i != views.end(); i++) {
         View* view = *i;
-        view->moveTo(view->min);
+
+        view->checkArea(viewarea);
     }
 } // end Desktop::checkViewPositions
 
@@ -396,12 +396,12 @@ void Desktop::checkViewPositions()
 //--------------------------------------------------------------------------
 // Purpose: Makes sure all the view are on the position.
 //--------------------------------------------------------------------------
-void Desktop::checkResolution(iXY lastResolution)
+void Desktop::checkResolution(iXY oldResolution, iXY newResolution)
 {
     std::vector<View*>::iterator i;
     for(i = views.begin(); i != views.end(); i++) {
         View* view = *i;
-        view->checkResolution(lastResolution);
+        view->checkResolution(oldResolution, newResolution);
     }
 } // end Desktop::checkResolution
 
@@ -629,7 +629,7 @@ void DesktopView::doDraw(const Surface &viewArea, const Surface &clientArea)
 
         clientArea.bltString(200, yOffset, strBuf, Color::white);
 
-        yOffset += CHAR_YPIX;
+        yOffset += Surface::getFontHeight();
     }
 
     View::doDraw(viewArea, clientArea);

@@ -33,20 +33,6 @@ typedef uint8_t PIX;
 void initFont();
 
 /////////////////////////////////////////////////////////////////////////////
-// Defines.
-/////////////////////////////////////////////////////////////////////////////
-
-#define CHAR_XPIX      (ascii8x8.getPixX())
-#define CHAR_YPIX      (ascii8x8.getPixY())
-
-#define SCREEN_XPIX    (screen.getPixX())
-#define SCREEN_YPIX    (screen.getPixY())
-#define SCREEN_PIX     (screen.getPix())
-#define SCREEN_CENTER  (screen.getCenter())
-#define SCREEN_XCENTER (screen.getCenterX())
-#define SCREEN_YCENTER (screen.getCenterY())
-
-/////////////////////////////////////////////////////////////////////////////
 // structs
 /////////////////////////////////////////////////////////////////////////////
 
@@ -126,12 +112,7 @@ protected:
 
     int   wipeCount;      // Used for font wiping.
 
-    static bool screenLocked;
-
 public:
-    void lock(PIX *memBuf);
-    void unlock();
-
     // Accessor functions.
     inline float  getFPS() const
     {
@@ -382,12 +363,6 @@ public:
     void horizontalWave3DAll(int numWaves, float percent);
     void horizontalWave3D(int numWaves, float percent, int offset);
 
-    void shade(iRect bounds, const PIX color) const;
-    inline void shade(PIX color) const
-    {
-        shade(iRect(0, 0, pix.x, pix.y), color);
-    }
-
     void blendIn(const Surface &source, iXY min, ColorTable &colorTable) const;
     inline void blendIn(const Surface &source, ColorTable &colorTable) const
     {
@@ -563,14 +538,6 @@ public:
         bltStringShadowed(iXY(x, y), string, textColor, shadowColor);
     }
 
-    // Blit a string of text and makes sure to lock and unlock the DDraw buffer.  This should
-    // be used when you are wanting to display some text outside the make renderloop.
-    void bltStringSafe(const iXY &pos, const char *string, PIX color) const;
-    inline void bltStringSafe(int x, int y, const char *string, PIX color) const
-    {
-        bltStringSafe(iXY(x, y), string, color);
-    }
-
     // Blits a string of text and centers it horizontally and vertically on the screen.
     void bltStringCenter(const char *string, PIX color) const;
 
@@ -599,11 +566,8 @@ public:
 
     void drawLookupBorder(const PIX table[]) const;
 
-}
-; // end Surface
-
-extern Surface screen;
-extern Surface ascii8x8;
-extern Surface ascii5x5;
+    static int getFontHeight();
+    static int getTextLength(const char* text);
+}; // end Surface
 
 #endif // __Surface_HPP__

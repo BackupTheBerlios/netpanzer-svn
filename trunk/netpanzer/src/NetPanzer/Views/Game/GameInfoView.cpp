@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerInterface.hpp"
 #include "NetworkState.hpp"
 #include "String.hpp"
+#include "ScreenSurface.hpp"
 
 static int getPlayerFrags()
 {
@@ -80,8 +81,7 @@ GameInfoView::GameInfoView() : GameTemplateView()
     resizeClientArea(iXY(140, 2 * 2 + 12 * 5 + 8));
 
     // Start it in the top-left corner.
-    moveTo(iXY(10000, 0));
-
+    moveTo(screen->getPixX() - getSize().x, 0);
 } // end GameInfoView::GameInfoView
 
 // doDraw
@@ -165,10 +165,6 @@ void GameInfoView::doDraw(const Surface &viewArea, const Surface &clientArea)
     pos.y += 12;
 
     View::doDraw(viewArea, clientArea);
-
-    // Make sure the view stays in the screen when the view is resized.
-    //resizeClientArea(gameInfoRect.getSize());
-    //moveTo(min);
 } // end GameInfoView::doDraw
 
 // checkGameInfoRect
@@ -177,7 +173,7 @@ void GameInfoView::doDraw(const Surface &viewArea, const Surface &clientArea)
 //---------------------------------------------------------------------------
 void GameInfoView::checkGameInfoRect(String string)
 {
-    int length = (strlen(string) * CHAR_XPIX + 2);
+    int length = Surface::getTextLength(string) + 2;
 
     if (length > gameInfoRect.getSizeX()) {
         gameInfoRect.max.x = gameInfoRect.min.x + length;

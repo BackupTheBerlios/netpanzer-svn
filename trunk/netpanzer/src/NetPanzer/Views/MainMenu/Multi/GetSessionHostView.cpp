@@ -69,7 +69,7 @@ GetSessionHostView::GetSessionHostView() : View()
 
     //add(scrollBar);
 
-    maxViewableItems = getClientRect().getSizeY() / (TEXT_GAP_SPACE + CHAR_YPIX) - 1;
+    maxViewableItems = getClientRect().getSizeY() / (TEXT_GAP_SPACE + Surface::getFontHeight()) - 1;
     topViewableItem  = 0;
 
     //iXY size(20, 20);
@@ -127,7 +127,7 @@ void GetSessionHostView::drawHostList(const Surface &dest)
     int curIndex = 0;
     int color;
 
-    Surface tempSurface( getClientRect().getSizeX() - 2, (TEXT_GAP_SPACE + CHAR_YPIX), getClientRect().getSizeX() - 2, 1 );
+    Surface tempSurface( getClientRect().getSizeX() - 2, (TEXT_GAP_SPACE + Surface::getFontHeight()), getClientRect().getSizeX() - 2, 1 );
 
     tempSurface.fill(Color::darkGreen);
     sprintf( host_info_str, "%-24s %-24s %-12s %10s", "Host",
@@ -156,7 +156,7 @@ void GetSessionHostView::drawHostList(const Surface &dest)
             color = Color::green;
         }
 
-        dest.bltString(4, 6 + curIndex * (TEXT_GAP_SPACE + CHAR_YPIX), host_info_str, color);
+        dest.bltString(4, 6 + curIndex * (TEXT_GAP_SPACE + Surface::getFontHeight()), host_info_str, color);
 
         curIndex++;
     }
@@ -290,9 +290,9 @@ int GetSessionHostView::findItemContaining(const iXY &pos)
         iXY tempPos;
 
         tempPos.x = 4;
-        tempPos.y = 6 + curIndex * (TEXT_GAP_SPACE + CHAR_YPIX) + (TEXT_GAP_SPACE + CHAR_YPIX);
+        tempPos.y = 6 + curIndex * (TEXT_GAP_SPACE + Surface::getFontHeight()) + (TEXT_GAP_SPACE + Surface::getFontHeight());
 
-        iRect r(tempPos.x, tempPos.y, tempPos.x + length, tempPos.y + TEXT_GAP_SPACE + CHAR_YPIX);
+        iRect r(tempPos.x, tempPos.y, tempPos.x + length, tempPos.y + TEXT_GAP_SPACE + Surface::getFontHeight());
 
         if (r.contains(pos)) {
             highlightedItem = i;

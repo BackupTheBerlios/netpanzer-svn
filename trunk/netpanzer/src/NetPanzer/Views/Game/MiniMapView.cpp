@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MiniMapInterface.hpp"
 #include "KeyboardInterface.hpp"
 #include "cMouse.hpp"
-#include "loadPics.hpp"
 #include "WorldInputCmdProcessor.hpp"
 
 
@@ -54,21 +53,20 @@ MiniMapView::MiniMapView() : GameTemplateView()
     add(CLOSE_VIEW_BUTTON);
     add(MINMAX_VIEW_BUTTON);
 
+    resize(100, 100);
 } // end MiniMapView::MiniMapView
 
 // init
 //---------------------------------------------------------------------------
 void MiniMapView::init()
 {
-    moveTo(iXY(0, 0));
-
     Surface *miniMap;
     miniMap = MiniMapInterface::getMiniMap();
 
     //iXY size = miniMap->getPix();
     iXY size(196, 196);
-
     resize(size);
+    moveTo(iXY(0, 0));
 
     mapDrawType = MAP_SOLID;
 
@@ -89,7 +87,6 @@ void MiniMapView::init()
 
     selectionAnchorDownPos.zero();
     selectionAnchorCurPos.zero();
-
 } // end MiniMapView::init
 
 // doDraw
@@ -330,6 +327,8 @@ void MiniMapView::doIncreaseSize(int value)
         destSize = maxMapSize;
     }
 
+    // XXX
+#if 0
     // Check the validity of the X dimension.
     if ((min.x + destSize.x) >= SCREEN_XPIX) {
         int xOffset = min.x + destSize.x - SCREEN_XPIX;
@@ -357,6 +356,7 @@ void MiniMapView::doIncreaseSize(int value)
             moveTo(min.x, destYPos);
         }
     }
+#endif
 
     // Resize the x dimension.
     if (destSize.x > getViewRect().getSize().x) {

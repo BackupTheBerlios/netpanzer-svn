@@ -132,7 +132,7 @@ void UnitColorView::doDraw(const Surface &viewArea, const Surface &clientArea)
 
     char strBuf[256];
     sprintf(strBuf, "%1.3f of %1.3f", grayPercent, maxPercent);
-    clientArea.bltString(2, fuckingSurface.getPixY() - CHAR_YPIX - 1, strBuf, Color::white);
+    clientArea.bltString(2, fuckingSurface.getPixY() - Surface::getFontHeight() - 1, strBuf, Color::white);
 
     View::doDraw(viewArea, clientArea);
 

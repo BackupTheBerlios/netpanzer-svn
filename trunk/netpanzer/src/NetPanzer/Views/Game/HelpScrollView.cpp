@@ -112,6 +112,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     insert("  Alt + '-'                        Decrease brightness");
     insert("  Alt + '='                        Increase brightness");
 
+    int CHAR_YPIX = Surface::getFontHeight();
     maxViewableItems = (getClientRect().getSizeY() - (TEXT_GAP_SPACE + CHAR_YPIX)) / (TEXT_GAP_SPACE + CHAR_YPIX) - 1;
     topViewableItem  = 0;
 
@@ -142,7 +143,7 @@ void HelpScrollView::doDraw(const Surface &viewArea, const Surface &clientArea)
     iXY pos;
 
     pos.x = 4;
-    pos.y = clientArea.getPixY() - CHAR_YPIX;
+    pos.y = clientArea.getPixY() - Surface::getFontHeight();
 
     clientArea.bltString(pos, "Note: Use the right mouse button to accomplish fast mouse clicking.", Color::white);
 
@@ -171,7 +172,7 @@ void HelpScrollView::drawHelpText(const Surface &dest, const int &x, const int &
     //
     int curIndex = 0;
     for (int i = topViewableItem; i < topViewableItem + maxViewableItems; i++) {
-        dest.bltString(1, 6 + curIndex * (TEXT_GAP_SPACE + CHAR_YPIX), text[i], color);
+        dest.bltString(1, 6 + curIndex * (TEXT_GAP_SPACE + Surface::getFontHeight()), text[i], color);
         curIndex++;
     }
     //}

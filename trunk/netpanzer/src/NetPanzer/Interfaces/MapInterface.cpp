@@ -94,7 +94,6 @@ void MapInterface::LoadMap( const char *file_path, bool load_tiles )
   
   strcpy( path, file_path );
   strcat( path, ".npm" );
-  main_map.loadMapFile( path );
   
   tile_set.loadTileSetInfo( "./wads/wad.tls" );
   generateMappingTable();
@@ -181,56 +180,6 @@ unsigned char MapInterface::getMovementValue( iXY map_loc )
 {
     unsigned short tile_val;
     char move_val;
-
-    /*
-       if (   (map_loc.x  >= 0) && (map_loc.x < main_map.getXsize() ) 
-             && (map_loc.y >= 0) && (map_loc.y < main_map.getYsize() ) 
-              )
-       { 
-      
-        tile_val = main_map.mapValue( (unsigned short) map_loc.x, (unsigned short) map_loc.y ) ;
-        
-         if (   ( (tile_val >= 816) && (tile_val <= 820) ) || 
-                ( (tile_val >= 829) && (tile_val <= 833) ) || (tile_val == 840) ||
-                ( (tile_val >= 843) && (tile_val <= 844) ) ||
-                ( (tile_val >= 860) && (tile_val <= 861) ) ||
-                ( (tile_val >= 872) && (tile_val <= 873) ) ||
-                ( (tile_val >= 883) && (tile_val <= 885) )
-                                 
-            )
-           {
-            return( 1 );
-           }
-        else
-         if (   ( (tile_val >= 10) && (tile_val <= 26)) ||
-                ( (tile_val >= 30) && (tile_val <= 49))
-            )      
-            {
-             return( 0xFF );
-            }
-        else
-         if ( ( (tile_val >= 2231) && (tile_val <= 2232 ) ) ||
-              ( (tile_val >= 2246) && (tile_val <= 2247 ) ) ||
-              ( (tile_val >= 2262) && (tile_val <= 2263 ) ) ||
-              ( (tile_val >= 2277) && (tile_val <= 2278 ) ) ||
-              ( (tile_val >= 2292) && (tile_val <= 2293 ) ) ||
-               (tile_val == 2215)
-            )
-          {
-           return( 2 );
-          }
-         else
-         if ( tile_val > 317 )
-            return( 0xFF ); 
-     
-         return( 1 );
-       }
-      else
-       {
-         return( 0xFF );
-       }
-    */
-    //*****************************************************************
 
     if (      (map_loc.x >= 0) && (map_loc.x < main_map.getXsize() )
               && (map_loc.y >= 0) && (map_loc.y < main_map.getYsize() )
