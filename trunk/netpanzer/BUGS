@@ -10,3 +10,4 @@
 - bernhard reports that the bots crash when the server closes
 - sometimes 2 players spawn at the same place
 - game doesn't end when enough objectives are taken
+- irc ping/pong code with reconnect seems to be broken
