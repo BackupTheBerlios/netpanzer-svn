@@ -1,5 +1,5 @@
 *** Lobby Code
- * use new more stable IRC code from Lib/IRC
+ * use new masterserver code
 
 *** Improvements
  * let dedicated server output statistics on console or in some log files. 
