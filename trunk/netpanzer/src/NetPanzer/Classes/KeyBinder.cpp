@@ -107,12 +107,12 @@ void KeyBinder::bindAction( unsigned short action_enum, char *action_name, int k
   key_list[ action_enum ].key_scan_code = key_scan_code;
  }
 
-unsigned char KeyBinder::getActionKey( unsigned short action_enum )
+int KeyBinder::getActionKey( unsigned short action_enum )
  {
   return( key_list[ action_enum ].key_scan_code );
  }
 
-unsigned char KeyBinder::getActionKey( char *action_name )
+int KeyBinder::getActionKey( char *action_name )
  {
   KeyBinderElement *key_info;
 

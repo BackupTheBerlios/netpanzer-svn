@@ -48,8 +48,8 @@ public:
 	void unlockKey(int key_scan_code);
    
 	void bindAction(unsigned short action_enum, char *action_name, int key_scan_code );
-	unsigned char getActionKey( unsigned short action_enum );
-	unsigned char getActionKey( char *action_name );
+	int getActionKey( unsigned short action_enum );
+	int getActionKey( char *action_name );
    
    bool isBound(int key_scan_code );
    
