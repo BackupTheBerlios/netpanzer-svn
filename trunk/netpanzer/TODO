@@ -40,6 +40,8 @@
   -add possibility to set markers for allies
   -double clicking on a unit marks all units of the same type on screen
     (tripple clicking marks all units of this type on the map?)
+  -"subclassing" like in WC3: A key that cycles though different unit types in
+   the currently selected group.
   -...
  * Display targets of marked players with lines (ie. a green line if the panzer
    is moving, a red line if it is attacking some point)
