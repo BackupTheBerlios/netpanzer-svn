@@ -4,7 +4,7 @@
 #----------------------------------------------------------------------------
 AC_PREREQ([2.54])
 
-AC_INIT([netpanzer], [0.1.1], [netpanzer-devel@nongnu.org])
+AC_INIT([netpanzer], [0.1.3], [netpanzer-devel@nongnu.org])
 AC_CONFIG_SRCDIR([mk/jam/build.jam])
 AC_CONFIG_AUX_DIR([mk/autoconf])
 
