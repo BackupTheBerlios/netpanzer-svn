@@ -270,7 +270,9 @@ void WorldInputCmdProcessor::evaluateKeyCommands( void )
   if ( (KeyboardInterface::getKeyPressed( SDLK_f ) == true) )
    { toggleUnitFlagVisibility();  }
 
-  if ( (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true) )
+  if ( (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true)
+		  && (KeyboardInterface::getKeyState( SDLK_LALT ) == false)
+		  && (KeyboardInterface::getKeyState( SDLK_RALT ) == false))
    { setKeyboardInputModeChatMesg(); }
 
   if ( ( KeyboardInterface::getKeyState( SDLK_LCTRL ) ||
