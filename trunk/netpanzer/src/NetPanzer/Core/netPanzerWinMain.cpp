@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "netPanzerWinProc.h"
 #include "gapp.hpp"
 #include "netPanzerGlobals.h"
-#include "netPanzerThread.h"
-#include "netPanzerMain.h"
 #include "resource.h"
 #include "GameManager.hpp"
 
@@ -46,13 +44,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     //Initialize the Windows portion of PanzerKrieg (create a window,
     //fill in the contents of our GlobalApp structure, etc.)
     if( WinInit( hInstance, nCmdShow) == false)
-	return false;
+		return false;
 	
-    if( netPanzerInitialize( lpCmdLine ) == false) 
-   	return false;
-
-    //the game loop--
-    //PANZER_THREAD_HANDLE = _beginthread(PanzerThread, 0, 0);
+    if( GameManager::initialize( lpCmdLine ) == false) 
+		return false;
 
     //just cause they do it in the book, for now only--
     ShowCursor( false );
@@ -73,14 +68,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	} // ** if PeekMessage
 	else
 	{
-	    if ( FUCK_THREAD == true )
-	    {
-		FUCK_THREAD = false;
-	    }
-	    
 	    GameManager::mainLoop();
 	}
-    } // ** while
+	} // ** while
 }
 ////////////////////////////////////////////////////////////////
 //END WINMAIN///////////////////////////////////////////////////

@@ -20,19 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "fXY.hpp"
 
-
-extern unsigned short MOUSE_X;
-extern unsigned short MOUSE_Y;
-extern unsigned short MAKE_LEFT_MOUSE_BUTTON;
-extern unsigned short MAKE_RIGHT_MOUSE_BUTTON;
-extern unsigned short MAKE_MID_MOUSE_BUTTON;
-extern unsigned char  MOUSE_BUTTON_MASK;
-
-extern char PANZER_THREAD_ACTIVE;
-extern char PANZER_THREAD_FINISHED;
-extern unsigned long PANZER_THREAD_HANDLE;
-extern char FUCK_THREAD;
-
 extern fXY  gInputOffset;
 extern bool gMainLoopBegin;
 
