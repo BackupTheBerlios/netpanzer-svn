@@ -7,10 +7,6 @@
 - when the bot occupied an outpost and you occupy it back, then the build menu
   shows the panzer you built last, but the one choosen by the bot comes out the
   outpost
-- bernhard reports that the bots crash when the server closes - can't reproduce
 - sometimes 2 players spawn at the same place
-- game doesn't end when enough objectives are taken
+- game doesn't end when enough objectives are taken - is this still true?
 - irc ping/pong code with reconnect seems to be broken
-- powerups don't work anymore - fixed
-- the build window doesn't come up anymore
-- rank view is in wrong order in objective mode
