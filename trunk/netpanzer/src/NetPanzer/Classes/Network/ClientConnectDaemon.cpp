@@ -144,23 +144,23 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(	NetMessage *message )
         break;
 
     case  _connect_state_message_sync_player_info : {
-            lobbyView->scrollAndUpdate( "Sychronizing Player Info ..." );
+            lobbyView->scrollAndUpdate( "Synchronizing Player Info ..." );
         }
         break;
 
     case _connect_state_message_sync_player_info_percent : {
-            sprintf( str_buf, "Sychronizing Player Info ... (%d%%)", state_mesg->getPercentComplete());
+            sprintf( str_buf, "Synchronizing Player Info ... (%d%%)", state_mesg->getPercentComplete());
             lobbyView->update( str_buf );
         }
         break;
 
     case  _connect_state_message_sync_units : {
-            lobbyView->scrollAndUpdate( "Sychronizing Game Elements ..." );
+            lobbyView->scrollAndUpdate( "Synchronizing Game Elements ..." );
         }
         break;
 
     case _connect_state_message_sync_units_percent : {
-            sprintf( str_buf, "Sychronizing Game Elements ... (%d%%)", state_mesg->getPercentComplete());
+            sprintf( str_buf, "Synchronizing Game Elements ... (%d%%)", state_mesg->getPercentComplete());
             lobbyView->update( str_buf );
         }
         break;
