@@ -19,7 +19,7 @@ SUBDIRS =
     Interfaces/unix
     Bot
     System
-    Panels
+#    Panels
 ;
 
 INCLUDEDIRS = $(SUBDIRS)
@@ -40,8 +40,9 @@ for i in $(SUBDIRS)
 
 Application netpanzer : $(SOURCES) ;
 LinkWith netpanzer : netpanzertypes netpanzerutil netpanzeriniparser netpanzer2d
-                     netpanzerarrayutil optionmm netpanzerui netpanzerparticles
+                     netpanzerarrayutil optionmm netpanzerparticles
                      netpanzerviews netpanzernetwork
+#                    netpanzerui
 ;
 
 C++Flags netpanzer : -DNP_DATADIR=\\\"$(appdatadir)\\\" ;

@@ -122,13 +122,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "HeartbeatThread.hpp"
 
 //** User interface
-#include "UI/Painter.hpp"
+//#include "UI/Painter.hpp"
 
 
 PlayerGameManager::PlayerGameManager()
     : sdlVideo(0), heartbeatthread(0), infothread(0)
 {
-    fontManager.loadFont("fixed10", "fonts/fixed10.pcf", 10);
+    //fontManager.loadFont("fixed10", "fonts/fixed10.pcf", 10);
 
     showNewPanel = false;
 }
@@ -238,20 +238,22 @@ void PlayerGameManager::initializeWindowSubSystem()
 
 
     //Test for new UI
-    testpanel = new Panels::TestPanel(iXY(30, 60), &fontManager);
-
+    //testpanel = new Panels::TestPanel(iXY(30, 60), &fontManager);
 }
 //-----------------------------------------------------------------
 void PlayerGameManager::inputLoop()
 {
     processSystemKeys();
 
+#if 0
     if(showNewPanel && Desktop::getVisible("GameView") && testpanel->contains(mouse.getScreenPos()))
     {
         //Game started, draw interface
         testpanel->processEvents(mouse.getScreenPos(), mouse.getButtonMask(), KMOD_NONE);
     }else
-       Desktop::manage(mouse.getScreenPos().x, mouse.getScreenPos().y, mouse.getButtonMask() );
+#endif
+       Desktop::manage(mouse.getScreenPos().x,
+               mouse.getScreenPos().y, mouse.getButtonMask());
 
     COMMAND_PROCESSOR.updateScrollStatus( mouse.getScreenPos() );
 }
@@ -262,6 +264,7 @@ void PlayerGameManager::graphicsLoop()
 
     Desktop::draw(*screen);
 
+#if 0
     //TODO : clean this ugly test :)
     if(showNewPanel && Desktop::getVisible("GameView"))
     {
@@ -270,6 +273,7 @@ void PlayerGameManager::graphicsLoop()
         //Game started, draw interface
         testpanel->draw(painter);
     }
+#endif
 
     if (Desktop::getVisible("GameView")) {
         ConsoleInterface::update(*screen);

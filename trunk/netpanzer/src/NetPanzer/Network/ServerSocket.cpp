@@ -44,6 +44,7 @@ ServerSocket::ServerSocket(const std::string& bindaddress, uint16_t port)
     } catch(...) {
         delete socket;
         delete clientlist;
+        throw;
     }
 }
 

@@ -21,8 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "BaseGameManager.hpp"
 #include "ScreenSurface.hpp"
 
-#include "UI/FontManager.hpp"
-#include "Panels/TestPanel.hpp"
+//#include "UI/FontManager.hpp"
+//#include "Panels/TestPanel.hpp"
 
 class SDLVideo;
 class HeartbeatThread;
@@ -53,8 +53,8 @@ public:
     void launchMultiPlayerGame();
 
 private:
-    Panels::TestPanel * testpanel;
-    UI::FontManager fontManager;
+    //Panels::TestPanel * testpanel;
+    //UI::FontManager fontManager;
     SDLVideo* sdlVideo;
     bool showNewPanel;
 

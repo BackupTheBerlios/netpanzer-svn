@@ -592,6 +592,13 @@ void GameManager::quitNetPanzerGame()
         ServerConnectDaemon::shutdownConnectDaemon();
         SERVER->closeSession();
     }
+
+    ParticleSystem2D::removeAll();
+    Particle2D::removeAll();
+    sound->stopTankIdle();
+    UnitInterface::reset();
+    PlayerInterface::reset();
+    ObjectiveInterface::resetLogic();
 }
 
 void GameManager::startGameTimer()

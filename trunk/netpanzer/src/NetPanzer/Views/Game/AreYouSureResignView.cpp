@@ -40,12 +40,7 @@ static void bYES()
         return;
     }
     
-    sound->stopTankIdle();
-
     GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
-
-    ParticleSystem2D::removeAll();
-    Particle2D::removeAll();
     sprintf(MenuTemplateView::currentMultiView, "GetSessionView");
 
     // Vlad put all code in here for shutdown.

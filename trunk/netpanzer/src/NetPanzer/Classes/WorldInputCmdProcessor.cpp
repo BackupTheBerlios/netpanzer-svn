@@ -165,49 +165,43 @@ void WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos )
 }
 
 
-unsigned char WorldInputCmdProcessor::getCursorStatus( iXY &loc )
+unsigned char WorldInputCmdProcessor::getCursorStatus(iXY &loc)
 {
     iXY map_loc;
     unsigned char unit_loc_status;
 
     if( (manual_control_state == true) || (manual_fire_state == true) ) {
-        return ( _cursor_enemy_unit );
+        return  _cursor_enemy_unit;
     }
 
     MapInterface::pointXYtoMapXY( loc, &map_loc );
 
-    if ( MapInterface::getMovementValue( map_loc ) >= 0xFF ) {
-        return( _cursor_blocked );
+    if (MapInterface::getMovementValue(map_loc) >= 0xFF) {
+        return _cursor_blocked;
     }
 
-    unit_loc_status = UnitInterface::queryUnitLocationStatus( loc );
+    unit_loc_status = UnitInterface::queryUnitLocationStatus(loc);
     if ( unit_loc_status == _unit_player ) {
-        return( _cursor_player_unit );
-    } else
-        if ( (unit_loc_status == _unit_enemy) && KeyboardInterface::getKeyState(
-                    SDLK_a ) ) {
-            return ( _cursor_make_allie );
-        } else
-            if (  (unit_loc_status == _unit_enemy) && working_list.isSelected() ) {
-                return ( _cursor_enemy_unit );
-            } else
-                if ( (unit_loc_status == _unit_allied) && KeyboardInterface::getKeyState(
-                            SDLK_a ) ) {
-                    return ( _cursor_break_allie );
-                }
+        return _cursor_player_unit;
+    } else if ((unit_loc_status == _unit_enemy) 
+            && KeyboardInterface::getKeyState(SDLK_a)) {
+            return _cursor_make_allie;
+    } else if ((unit_loc_status == _unit_enemy) && working_list.isSelected()) {
+        return _cursor_enemy_unit;
+    } else if ( (unit_loc_status == _unit_allied) 
+            && KeyboardInterface::getKeyState(SDLK_a)) {
+        return _cursor_break_allie;
+    }
 
-    if ( working_list.isSelected() )
-        return( _cursor_move );
+    if (working_list.isSelected())
+        return _cursor_move;
 
-    return( _cursor_regular );
+    return _cursor_regular;
 }
 
 void WorldInputCmdProcessor::
-setMouseCursor( unsigned char world_cursor_status )
+setMouseCursor(unsigned char world_cursor_status)
 {
-    // XXX yet another abstraction here? probably convert the cursor types to
-    // simple strings (which are the names of the cursor images at the same
-    // time) and get rid of all this code here and in MouseInterface
     switch( world_cursor_status ) {
     case _cursor_regular :
         MouseInterface::setCursor("default.bmp");
@@ -280,7 +274,7 @@ void WorldInputCmdProcessor::evaluateKeyCommands()
         jumpLastAttackedUnit();
     }
 
-    //If any of the four arrow-keys is pressed, scroll (not in a own function, since it is not necessary)
+    //If any of the four arrow-keys is pressed, scroll
     if( KeyboardInterface::getKeyState( SDLK_UP ) == true ) {
     	WorldViewInterface::scroll_up( 15 );
     }
@@ -422,7 +416,6 @@ void WorldInputCmdProcessor::keyboardInputModeAllieChatMesg()
     }
 }
 
-
 void WorldInputCmdProcessor::evaluateKeyboardEvents()
 {
     switch( keyboard_input_mode ) {
@@ -471,7 +464,6 @@ bool WorldInputCmdProcessor::selectBoundBoxUnits()
         current_selection_list_bits=0;
         return( select_success );
     }
-
 }
 
 void WorldInputCmdProcessor::evaluateMouseEvents()
@@ -517,17 +509,16 @@ void WorldInputCmdProcessor::evaluateMouseEvents()
         MouseInterface::event_queue.pop_front();
 
         if( event.button == MouseInterface::left_button )
-            evalLeftMButtonEvents( event );
+            evalLeftMButtonEvents(event);
 
         if( event.button == MouseInterface::right_button )
-            evalRightMButtonEvents( event );
+            evalRightMButtonEvents(event);
     }
 
     left_button_hold_action_complete = false;
 }
 
-
-void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
+void WorldInputCmdProcessor::evalLeftMButtonEvents(MouseEvent &event)
 {
     iXY world_pos;
     unsigned char click_status;
@@ -609,62 +600,49 @@ void WorldInputCmdProcessor::evalLeftMButtonEvents( MouseEvent &event )
 
         if ( (event.event == MouseEvent::EVENT_CLICK) &&
                 (left_button_hold_action_complete == false) ) {
-            WorldViewInterface::clientXYtoWorldXY( world_win, event.down_pos, &world_pos );
-            click_status = getCursorStatus( world_pos );
+            WorldViewInterface::clientXYtoWorldXY(world_win, event.down_pos,
+                    &world_pos);
+            click_status = getCursorStatus(world_pos);
 
+	    switch(click_status) {
+            case _cursor_player_unit:
+                if( (KeyboardInterface::getKeyState(SDLK_LSHIFT) == true) ||
+                        (KeyboardInterface::getKeyState(SDLK_RSHIFT) == true)) {
+                    working_list.addUnit(world_pos);
+                } else {
+                    working_list.selectUnit(world_pos );
+                }
 
-
-	    switch ( click_status ) {
-            case _cursor_player_unit : {
-                    if( (KeyboardInterface::getKeyState( SDLK_LSHIFT ) == true) ||
-                            (KeyboardInterface::getKeyState( SDLK_RSHIFT ) == true)
-                      ) {
-                        working_list.addUnit( world_pos );
-                    } else {
-                        working_list.selectUnit( world_pos );
-                    }
-
-                    current_selection_list_bits=0;
-                    current_selection_list_index = 0xFFFF;
-                    if (working_list.unit_list.size() > 0) {
-                        UnitBase *unit = UnitInterface::getUnit(working_list.unit_list[0]);
-                        unit->soundSelected();
-                    }
-
+                current_selection_list_bits=0;
+                current_selection_list_index = 0xFFFF;
+                if (working_list.unit_list.size() > 0) {
+                    UnitBase *unit = UnitInterface::getUnit(
+                            working_list.unit_list[0]);
+                    unit->soundSelected();
                 }
                 break;
 
             case _cursor_move:
-            case _cursor_blocked: {
-                    if(outpost_goal_selection == -1){
-                        sendMoveCommand( world_pos );
-                    }
-                }
+            case _cursor_blocked:
+                if(outpost_goal_selection == -1)
+                    sendMoveCommand(world_pos);
                 break;
 
-            case _cursor_enemy_unit : {
-                    sendAttackCommand( world_pos );
-                }
+            case _cursor_enemy_unit:
+                sendAttackCommand(world_pos);
                 break;
 
-            case _cursor_make_allie : {
-                    sendAllianceRequest( world_pos, true );
-                }
+            case _cursor_make_allie:
+                sendAllianceRequest(world_pos, true);
                 break;
 
-            case _cursor_break_allie : {
-                    sendAllianceRequest( world_pos, false );
-                }
+            case _cursor_break_allie:
+                sendAllianceRequest(world_pos, false);
                 break;
-
-            } // ** switch
-
-        }  // ** if _event_mbutton_click
-
-    } // ** else  manual_control_state == false;
-
-} // ** evalLeftMButtonEvents
-
+            }
+        }
+    }
+}
 
 void WorldInputCmdProcessor::evalRightMButtonEvents( MouseEvent &event )
 {
@@ -857,14 +835,13 @@ void WorldInputCmdProcessor::sendManualFireCommand( iXY &world_pos )
         // SFX
         sound->playSound("target");
     } // ** if containsItems() > 0
-
 }
 
-void WorldInputCmdProcessor::sendAllianceRequest( iXY &world_pos, bool make_break )
+void WorldInputCmdProcessor::sendAllianceRequest(iXY &world_pos, bool make_break)
 {
     UnitBase *target_ptr;
 
-    target_list.selectTarget( world_pos );
+    target_list.selectTarget(world_pos);
 
     if ( target_list.isSelected() == true ) {
         target_ptr = UnitInterface::getUnit( target_list.unit_list[0] );
@@ -883,7 +860,6 @@ void WorldInputCmdProcessor::sendAllianceRequest( iXY &world_pos, bool make_brea
         CLIENT->sendMessage( &allie_request, sizeof(PlayerAllianceRequest));
     }
 }
-
 
 void WorldInputCmdProcessor::process()
 {
@@ -917,9 +893,6 @@ bool WorldInputCmdProcessor::getConsoleInputString( char *input_string )
     }
     return( false );
 }
-
-
-
 
 void WorldInputCmdProcessor::inFocus()
 {
@@ -1005,13 +978,13 @@ bool WorldInputCmdProcessor::isObjectiveSelected()
     return( false );
 }
                                                                                 
-char *  WorldInputCmdProcessor::getSelectedObjectiveName()
+char*  WorldInputCmdProcessor::getSelectedObjectiveName()
 {
     ObjectiveState *objective_state;
                                                                                 
     objective_state = ObjectiveInterface::getObjectiveState( selected_objective_id );
                                                                                 
-    return( objective_state->name );
+    return objective_state->name;
 }
 
 iXY WorldInputCmdProcessor::getSelectedObjectiveWorldPos()
@@ -1020,6 +993,6 @@ iXY WorldInputCmdProcessor::getSelectedObjectiveWorldPos()
                                                                                 
     objective_state = ObjectiveInterface::getObjectiveState( selected_objective_id );
                                                                                 
-    return( objective_state->location );
+    return objective_state->location;
 }
 
