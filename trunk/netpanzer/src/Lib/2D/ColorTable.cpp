@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include <io.h>
 #endif
+#include "Log.hpp"
 #include "Exception.hpp"
 #include "ColorTable.hpp"
 #include "Palette.hpp"
@@ -303,31 +304,29 @@ void ColorTable::getDiskName(char *destname, const char *filename) const
 //---------------------------------------------------------------------------
 void ColorTable::loadTableError(const char *filename)
 {
-	if (!loadTable(filename))
-	{
+	try {
+		loadTable(filename);
+	} catch(Exception e) {
+		LOG( ("Error while loading Color Table: %s", e.getMessage()) );
 		FUBAR("ERROR: Unable to load %s", filename);
 	}
-
 } // end ColorTable::loadTableError
 
 // loadTable
 //---------------------------------------------------------------------------
-bool ColorTable::loadTable(const char *filename)
+void ColorTable::loadTable(const char *filename)
 {
 	char strBuf[768];
 
 	getDiskName(strBuf, filename);
 
 	FILE *fp = fopen(strBuf, "rb");
-
-	if (fp == 0)	{ return false;	}
+	if (fp == 0)
+		throw Exception("Couldn't load colortable %s('%s').", strBuf);
 
 	loadTable(fp);
 
 	fclose(fp);
-
-	return true;
-
 } // end ColorTable::loadTable
 
 // loadTable
@@ -343,9 +342,6 @@ void ColorTable::loadTable(FILE *fp)
 	
 	// Put the color table data into the colorArray.
 	fread(colorArray, colorCount, 1, fp);
-
-	fclose(fp);
-
 } // end ColorTable::loadTable
 
 // saveTableError

@@ -64,7 +64,7 @@ public:
 	void createLightDarkFilter(const char *filename);
 	
 	void loadTableError(const char *filename);
-	bool loadTable(const char *filename);
+	void loadTable(const char *filename);
 	void loadTable(FILE *fp);
 
 	void saveTableError(const char *filename) const;
