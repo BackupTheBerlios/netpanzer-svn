@@ -1,5 +1,7 @@
 Next release:
 -playtesting+bugfixing
+-often when a server is started it is only listed in 1 masterserver
+-port/address bindings are not respected when sending to the masterserver
 
 *** New Masterserver code
  * add new options to only show servers which are not empty, with a certain map
