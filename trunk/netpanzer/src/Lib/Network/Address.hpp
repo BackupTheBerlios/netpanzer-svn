@@ -1,9 +1,9 @@
 #ifndef __ADDRESS_HPP__
 #define __ADDRESS_HPP__
 
+#include "SocketHeaders.hpp"
 #include <stdint.h>
 #include <string>
-#include "SocketHeaders.hpp"
 
 namespace network
 {
