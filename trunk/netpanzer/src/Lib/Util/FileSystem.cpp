@@ -420,6 +420,9 @@ uint64_t ReadFile::readUBE64()
 
 void ReadFile::readLine(std::string& buffer)
 {
+    if(isEOF())
+        throw Exception("end of file while reading line");
+
     char c;
     buffer = "";
 

@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdio.h>
 #include <memory>
+#include <string>
 
 #include "MapInterface.hpp"
 #include "PlayerInterface.hpp"
@@ -59,33 +60,42 @@ void ObjectiveInterface::loadObjectiveList( const char *file_path )
     char comment[64] = "";
 
     // XXX FIX THIS! Make it using physfs!!!
-    FILE* infile = fopen(FileSystem::getRealName(file_path).c_str(), "rt" );
-    assert( infile != 0 );
+    try {
+        std::auto_ptr<ReadFile> file (FileSystem::openRead(file_path));
 
-    cleanUpObjectiveList();
+        cleanUpObjectiveList();
 
-    fscanf( infile, "%s %u", comment, &objective_count );
+        std::string line;
+        file->readLine(line);
+        sscanf(line.c_str(), "%s %u", comment, &objective_count );
 
-    size_t loc_x, loc_y;
-    size_t world_x, world_y;
-    char name[64];
-    objective_list.clear();
-    for (int objective_index = 0; objective_index < objective_count; objective_index++ ) {
-        Objective *objective_obj;
+        size_t loc_x, loc_y;
+        size_t world_x, world_y;
+        char name[64];
+        objective_list.clear();
+        for (int objective_index = 0; objective_index < objective_count; objective_index++ ) {
+            Objective *objective_obj;
+            
+            // skip empty lines
+            do {
+                file->readLine(line);
+            } while(line == "");
+            sscanf(line.c_str(), "%s %s", comment, name );
+            file->readLine(line);
+            sscanf(line.c_str(), "%s %u %u", comment, &loc_x, &loc_y );
 
-        fscanf( infile, "%s %s", comment, name );
-        fscanf( infile, "%s %u %u", comment, &loc_x, &loc_y );
+            MapInterface::mapXYtoPointXY( loc_x, loc_y, &world_x, &world_y );
 
-        MapInterface::mapXYtoPointXY( loc_x, loc_y, &world_x, &world_y );
-
-        objective_obj = new Outpost( objective_index, iXY( world_x, world_y ),
-                                     BoundBox( -48, -32, 48, 32 )
-                                   );
-
-        strcpy( objective_obj->objective_state.name, name );
-
-        objective_list.push_back(objective_obj);
-    } // ** for
+            objective_obj = new Outpost(objective_index, iXY(world_x, world_y),
+                    BoundBox( -48, -32, 48, 32 )
+                    );
+            
+            strcpy( objective_obj->objective_state.name, name );
+            objective_list.push_back(objective_obj);
+        } // ** for
+    } catch(std::exception& e) {
+        
+    }
 }
 
 unsigned char ObjectiveInterface::
