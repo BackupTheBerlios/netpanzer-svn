@@ -38,6 +38,8 @@ SubDir TOP ;
 SubInclude TOP src ;
 SubInclude TOP docs ;
 
+UseAutoconf ;
+
 appicondir ?= [ ConcatDirs $(datadir) pixmaps $(PACKAGE_NAME) ] ;
 
 ##  InstallIcon files [ : subdir ]
