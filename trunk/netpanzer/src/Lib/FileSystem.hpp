@@ -131,6 +131,9 @@ public:
                            const char* applicationname);
     static void shutdown();
 
+    static void addToSearchPath(const char* dir, bool append = true);
+    static void removeFromSearchPath(const char* dir);
+
     static const char* getRealDir(const char* filename);
     static std::string getRealName(const char* filename);
     // remember to call freeLisT

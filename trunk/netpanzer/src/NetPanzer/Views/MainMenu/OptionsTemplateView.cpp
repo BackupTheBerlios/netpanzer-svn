@@ -22,22 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "DDHardSurface.hpp"
 #include "GameViewGlobals.hpp"
 
-
-static void bSound()
-{
-    if (Desktop::getVisible("GameView")) {
-        Desktop::setVisibility("ControlsView", false);
-        Desktop::setVisibility("VisualsView", false);
-        Desktop::setVisibility("InterfaceView", false);
-        Desktop::setVisibility("SoundView", false);
-        Desktop::setVisibility("OptionsView", false);
-    } else {
-        Desktop::setVisibilityAllWindows(false);
-    }
-
-    Desktop::setVisibility("SoundView", true);
-}
-
 static void bInterface()
 {
     if (Desktop::getVisible("GameView")) {
@@ -66,21 +50,6 @@ static void bVisuals()
     }
 
     Desktop::setVisibility("VisualsView", true);
-}
-
-static void bControls()
-{
-    if (Desktop::getVisible("GameView")) {
-        Desktop::setVisibility("ControlsView", false);
-        Desktop::setVisibility("VisualsView", false);
-        Desktop::setVisibility("InterfaceView", false);
-        Desktop::setVisibility("SoundView", false);
-        Desktop::setVisibility("OptionsView", false);
-    } else {
-        Desktop::setVisibilityAllWindows(false);
-    }
-
-    Desktop::setVisibility("ControlsView", true);
 }
 
 // OptionsTemplateView

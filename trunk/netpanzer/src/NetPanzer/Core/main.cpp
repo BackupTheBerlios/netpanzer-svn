@@ -138,6 +138,9 @@ void initialise(int argc, char** argv)
     // Initialize libphysfs
     try {
         FileSystem::initialize(argv[0], "netpanzer", "netpanzer");
+#ifdef DATADIR
+        FileSystem::addToSearchPath(DATADIR);
+#endif
     } catch(Exception e) {
         fprintf(stderr, "%s", e.getMessage());
         shutdown();

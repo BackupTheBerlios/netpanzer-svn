@@ -28,23 +28,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkState.hpp"
 #include "String.hpp"
 
-
-static int getPlayerKills()
-{
-    PlayerState *player_state;
-
-    player_state = PlayerInterface::getLocalPlayerState();
-    return( (int) player_state->getKills() );
-}
-
-static int getPlayerLosses()
-{
-    PlayerState *player_state;
-
-    player_state = PlayerInterface::getLocalPlayerState();
-    return( (int) player_state->getLosses() );
-}
-
 static int getPlayerFrags()
 {
     PlayerState *player_state;

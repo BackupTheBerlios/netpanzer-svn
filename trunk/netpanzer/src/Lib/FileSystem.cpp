@@ -92,6 +92,20 @@ void FileSystem::shutdown()
     PHYSFS_deinit();
 }
 
+void FileSystem::addToSearchPath(const char* directory, bool append)
+{
+    if(!PHYSFS_addToSearchPath(directory, append))
+        throw Exception("Couldn't add '%s' to searchpath: %s", directory,
+                        PHYSFS_getLastError());
+}
+
+void FileSystem::removeFromSearchPath(const char* directory)
+{
+    if(!PHYSFS_removeFromSearchPath(directory))
+        throw Exception("Couldn't remove '%s' from searchpath: %s", directory,
+                        PHYSFS_getLastError());
+}
+
 const char* FileSystem::getRealDir(const char* filename)
 {
     return PHYSFS_getRealDir(filename);

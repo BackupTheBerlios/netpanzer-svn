@@ -23,20 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "iRect.hpp"
 #include "PackedSurface.hpp"
 
-
 class Surface;
-
-
-struct ANIMATED_BUTTON_TYPE_PCX
-{
-    char     filename[80];
-    iXY      scale;
-    iXY      size;
-    unsigned numColumns;
-    unsigned numFrames;
-    float    fps;
-    unsigned gapSpace;
-};
 
 class cButton
 {
@@ -80,9 +67,6 @@ public:
 
     void createPacked(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc);
 
-    void createPCX(iXY pos, const char *filename, const char *nToolTip, ITEM_FUNC nLeftClickFunc);
-
-    void create(iXY pos, const char *nName, const char *nToolTip, ITEM_FUNC nLeftClickFunc);
     void createCenterText(iXY pos, int xSize, const char *nName, const char *nToolTip, ITEM_FUNC nLeftClickFunc);
 
     void createTIL(iXY pos, const char *imageName, const char *nToolTip, ITEM_FUNC nLeftClickFunc, bool isBordered);
@@ -106,14 +90,6 @@ public:
     }
 
     void createSurfaceSingle(iXY pos, Surface &source, const char *nToolTip, ITEM_FUNC nLeftClickFunc);
-    void create(iXY pos, const char *imageName0, const char *imageName1,
-                const char *imageName2, const char *nName,
-                const char *nToolTip, ITEM_FUNC nLeftClickFunc);
-
-    void create(iXY pos, ANIMATED_BUTTON_TYPE_PCX topButton,
-                ANIMATED_BUTTON_TYPE_PCX bottomButton,
-                const char *nToolTip, ITEM_FUNC nLeftClickFunc,
-                ITEM_FUNC nRightClickFunc);
 
     inline bool contains(iXY pos)
     {

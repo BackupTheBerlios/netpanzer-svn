@@ -37,47 +37,9 @@ static int getCurMaxPlayersCount()
     return GameConfig::GetNumberPlayers();
 }
 
-static int getMaxPlayersCount()
-{
-    return GameConfig::getNumberUnitsBoundsUpper();
-}
-
 static int  getCurMaxUnitCount()
 {
     return GameConfig::GetNumberUnits();
-}
-
-static int  getMaxUnitCount()
-{
-    return GameConfig::getNumberUnitsBoundsUpper();
-}
-
-static int  getRespawnUnitCount()
-{
-    return GameConfig::GetNumberInitialUnits();
-}
-
-static int  getMaxRespawnUnitCount()
-{
-    return GameConfig::getNumberInitialUnitsBoundUpper();
-}
-
-static const char *getAllowAllies()
-{
-    return GameConfig::getAllieStateString();
-    //return "Yes";
-}
-
-static const char *getSpawnPlacement()
-{
-    return GameConfig::getRespawnTypeString();
-    //return "Round Robin";
-}
-
-static const char *getAllowFogOfWar()
-{
-    //return GameConfig::getAllowFogOfWarString()
-    return "Not available in netPanzerTest.";
 }
 
 static void bDecreasePlayerCount()
@@ -98,58 +60,6 @@ static void bDecreaseMaxUnitCount()
 static void bIncreaseMaxUnitCount()
 {
     GameConfig::SetNumberUnits(GameConfig::GetNumberUnits() + 5);
-}
-
-static void bDecreaseRespawnCount()
-{
-    GameConfig::SetNumberInitialUnits(GameConfig::GetNumberInitialUnits() - 1);
-}
-
-static void bIncreaseRespawnCount()
-{
-    GameConfig::SetNumberInitialUnits(GameConfig::GetNumberInitialUnits() + 1);
-}
-
-static void bSetAllowAlliesFalse()
-{
-    GameConfig::setAllieState(false);
-}
-
-static void bSetAllowAlliesTrue()
-{
-    GameConfig::setAllieState(true);
-}
-
-static void bPreviousSpawnPlacement()
-{
-    GameConfig::setPreviousRespawnType();
-}
-
-static void bNextSpawnPlacement()
-{
-    GameConfig::setNextRespawnType();
-}
-
-static void bIncreaseCloudCoverage()
-{
-    HostOptionsView::setCloudCoverageCount(HostOptionsView::getCloudCoverageCount() + 1);
-
-    if (HostOptionsView::getCloudCoverageCount() > 4) {
-        HostOptionsView::setCloudCoverageCount(4);
-    }
-
-    HostOptionsView::updateGameConfigCloudCoverage();
-}
-
-static void bDecreaseCloudCoverage()
-{
-    HostOptionsView::setCloudCoverageCount(HostOptionsView::getCloudCoverageCount() - 1);
-
-    if (HostOptionsView::getCloudCoverageCount() < 0) {
-        HostOptionsView::setCloudCoverageCount(0);
-    }
-
-    HostOptionsView::updateGameConfigCloudCoverage();
 }
 
 void HostOptionsView::updateGameConfigCloudCoverage()
@@ -240,38 +150,6 @@ static char * getGameTypeString()
 
     }
     return( "Unknown" );
-}
-
-static void bSetAllowFogOfWarFalse()
-{
-    //GameConfig::setAllowFogOfWar(false);
-}
-
-static void bSetAllowFogOfWarTrue()
-{
-    //GameConfig::setAllowFogOfWar(true);
-}
-
-static void bIncreaseWindSpeed()
-{
-    HostOptionsView::setWindSpeed(HostOptionsView::getWindSpeed() + 1);
-
-    if(HostOptionsView::getWindSpeed() > 4) {
-        HostOptionsView::setWindSpeed(4);
-    }
-
-    HostOptionsView::updateWindSpeedString();
-}
-
-static void bDecreaseWindSpeed()
-{
-    HostOptionsView::setWindSpeed(HostOptionsView::getWindSpeed() - 1);
-
-    if(HostOptionsView::getWindSpeed() < 0) {
-        HostOptionsView::setWindSpeed(0);
-    }
-
-    HostOptionsView::updateWindSpeedString();
 }
 
 static void bIncreaseTimeLimit()

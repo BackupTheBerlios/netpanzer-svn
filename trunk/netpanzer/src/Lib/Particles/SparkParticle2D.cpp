@@ -15,14 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #include <config.h>
+
 #include "SparkParticle2D.hpp"
 #include "TimerInterface.hpp"
 
-
 Surface SparkParticle2D::sparkSprite;
-
 
 //---------------------------------------------------------------------------
 SparkParticle2D::SparkParticle2D(fXYZ nPos) : Particle2D(nPos)
@@ -41,8 +39,8 @@ SparkParticle2D::SparkParticle2D(fXYZ nPos) : Particle2D(nPos)
 //---------------------------------------------------------------------------
 void SparkParticle2D::init()
 {
-    sparkSprite.create(iXY(96, 128), 96, 16);
-    sparkSprite.extractPCX("pics/particles/explosion/pcx/flack1.pcx", 5, 0);
+    //sparkSprite.create(iXY(96, 128), 96, 16);
+    //sparkSprite.extractPCX("pics/particles/explosion/pcx/flack1.pcx", 5, 0);
     //sparkSprite.setOffsetCenter();
 
     //explosion.loadRAW("pics/explode/expl0002.raw");

@@ -196,7 +196,6 @@ protected:
 
     // cButton Functions.
     void addButtonPackedSurface(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc);
-    void addButtonPCX(const iXY &pos, const char *filename, const char *toolTip, ITEM_FUNC func);
     void addButtonCenterText(const iXY &pos, const int &xSize, const char *nName, const char *nToolTip, ITEM_FUNC nLeftClickFunc);
     void addButtonTIL(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func, const bool &isBordered);
     inline void addButtonTIL(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func)
@@ -209,8 +208,6 @@ protected:
     }
     void addButtonSurface(const iXY &pos, Surface &source, const char *toolTip, ITEM_FUNC func);
     void addButtonSurfaceSingle(const iXY &pos, Surface &source, const char *toolTip, ITEM_FUNC func);
-    void addButton(const iXY &pos, const char *name, const char *toolTip, ITEM_FUNC func);
-    void addButton(const iXY &pos, const ANIMATED_BUTTON_TYPE_PCX &topButton, const ANIMATED_BUTTON_TYPE_PCX &bottomButton, const char *nToolTip, ITEM_FUNC nLeftClickFunc, ITEM_FUNC nRightClickFunc);
     /*!FIXME!*/ void drawDefinedButtons   (const Surface &clientArea);
     void drawHighlightedButton(const Surface &clientArea);
     void drawPressedButton(const Surface &clientArea);

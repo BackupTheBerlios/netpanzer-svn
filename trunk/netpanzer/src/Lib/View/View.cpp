@@ -1275,56 +1275,6 @@ void View::addButtonSurfaceSingle(const iXY &pos, Surface &source, const char *t
 
 } // end addButtonSurfaceSingle
 
-// ADD cButton
-//---------------------------------------------------------------------------
-// Purpose:
-//---------------------------------------------------------------------------
-void View::addButton(const iXY &pos, const char *name, const char *toolTip,
-                     ITEM_FUNC func)
-{
-    assert(this != 0);
-
-    // Grow the list
-    buttons.setNum(buttons.getCount()+1);
-    cButton &b = buttons[buttons.getCount()-1];
-    b.create(pos, name, toolTip, func);
-} // end ADD cButton
-
-// addButtonPCX
-//---------------------------------------------------------------------------
-// Purpose:  Makes a button out of a PCX image.
-//---------------------------------------------------------------------------
-void View::addButtonPCX(const iXY &pos,
-                        const char *filename,
-                        const char *toolTip,
-                        ITEM_FUNC func)
-{
-    assert(this != 0);
-
-    // Grow the list.
-    buttons.setNum(buttons.getCount()+1);
-    cButton &b = buttons[buttons.getCount()-1];
-
-    // Create the button.
-    b.createPCX(pos, filename, toolTip, func);
-} // end addButtonPCX
-
-//---------------------------------------------------------------------------
-void View::addButton(	const iXY &pos,
-                      const ANIMATED_BUTTON_TYPE_PCX &topButton,
-                      const ANIMATED_BUTTON_TYPE_PCX &bottomButton,
-                      const char *toolTip,
-                      ITEM_FUNC leftClickFunc,
-                      ITEM_FUNC rightClickFunc)
-{
-    assert(this != 0);
-
-    // Grow the list
-    buttons.setNum(buttons.getCount()+1);
-    cButton &b = buttons[buttons.getCount()-1];
-    b.create(pos, topButton, bottomButton, toolTip, leftClickFunc, rightClickFunc);
-} // end ADD cButton
-
 // setSearchName
 //---------------------------------------------------------------------------
 // Purpose: Sets the title of the window.

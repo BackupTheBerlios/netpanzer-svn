@@ -15,8 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #include <config.h>
+
 #include "Exception.hpp"
 #include "FlameParticle2D.hpp"
 
@@ -26,12 +26,6 @@ cGrowList <PackedSurface> FlameParticle2D::staticPackedExplosion1;
 const int explosionFPS = 18;
 
 const char explosionPath[] = "pics/particles/explosion/";
-
-// Used for packing images.
-static int maxLevel       = 7;
-static int minLevel       = 1;
-static int incrementLevel = 1;
-
 
 // FlameParticle2D
 //---------------------------------------------------------------------------
@@ -66,61 +60,7 @@ FlameParticle2D::FlameParticle2D(	const fXYZ  &pos,
     // Check for accelerated flames.
     packedSurface.setFPS(getFPS(explosionFPS, 0));
 
-}
-; // end FlameParticle2D::FlameParticle2D
-
-//---------------------------------------------------------------------------
-void FlameParticle2D::pakFiles()
-{
-    int i;
-
-    Surface       tempSurface;
-    PackedSurface tempPackedSurface;
-
-    char strBuf[256];
-
-    // Explosion 1.
-    for (i = minLevel; i <= maxLevel; i += incrementLevel) {
-        tempSurface.create(iXY(96, 128), 96, 16);
-        sprintf(strBuf, "%s/pcx/flack1.pcx", explosionPath);
-        tempSurface.extractPCX(strBuf, 5, 0);
-
-        iXY newSize;
-
-        float percent = float(i) / float(maxLevel);
-
-        newSize.x = int(float(tempSurface.getPixX()) * percent);
-        newSize.y = int(float(tempSurface.getPixY()) * percent);
-
-        tempSurface.scale(newSize);
-        tempSurface.setFPS(explosionFPS);
-        tempPackedSurface.pack(tempSurface);
-
-        sprintf(strBuf, "%s/pak/explosion1-%04d.pak", explosionPath, i);
-        tempPackedSurface.save(strBuf);
-    }
-
-    // Explosion 2.
-    for (i = minLevel; i <= maxLevel; i += incrementLevel) {
-        tempSurface.create(iXY(128, 96), 128, 15);
-        sprintf(strBuf, "%s/pcx/flack2.pcx", explosionPath);
-        tempSurface.extractPCX(strBuf, 4, 0);
-
-        iXY newSize;
-
-        float percent = float(i) / float(maxLevel);
-
-        newSize.x = int(float(tempSurface.getPixX()) * percent);
-        newSize.y = int(float(tempSurface.getPixY()) * percent);
-
-        tempSurface.scale(newSize);
-        tempSurface.setFPS(explosionFPS);
-        tempPackedSurface.pack(tempSurface);
-
-        sprintf(strBuf, "%s/pak/explosion2-%04d.pak", explosionPath, i);
-        tempPackedSurface.save(strBuf);
-    }
-}
+}; // end FlameParticle2D::FlameParticle2D
 
 // loadPakFiles
 //---------------------------------------------------------------------------

@@ -15,9 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
 #include <config.h>
+
 #include "cButton.hpp"
 #include "Surface.hpp"
 #include "Exception.hpp"
@@ -42,46 +41,6 @@ void cButton::createPacked(const iXY &pos, PackedSurface &source, const char *to
     cButton::bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getPix().x, pos.y + tempTopSurface.getPix().y);
     cButton::leftClickFunc = leftClickFunc;
 }
-
-// CREATE
-//---------------------------------------------------------------------------
-void cButton::create(iXY pos, const char *nName, const char *nToolTip,
-                     ITEM_FUNC nLeftClickFunc)
-{
-    Surface tempTopSurface;
-
-    const unsigned GAP_SPACE = 6;
-    int xSize = strlen(nName) * CHAR_XPIX + GAP_SPACE + 1;
-    int ySize = CHAR_YPIX + GAP_SPACE;
-    tempTopSurface.create(iXY(xSize, ySize), xSize, 3);
-
-    // Make the unselected button
-    tempTopSurface.fill(componentBodyColor);
-    tempTopSurface.drawButtonBorder(iRect(0, 0, xSize, ySize), topLeftBorderColor, bottomRightBorderColor);
-    tempTopSurface.bltString(GAP_SPACE / 2 + 1, GAP_SPACE / 2, nName, componentInActiveTextColor);
-
-    // Make the mouse-over button
-    tempTopSurface.setFrame(1);
-    tempTopSurface.fill(componentBodyColor);
-    tempTopSurface.drawButtonBorder(iRect(0, 0, xSize, ySize), topLeftBorderColor, bottomRightBorderColor);
-    tempTopSurface.bltString(GAP_SPACE / 2 + 1, GAP_SPACE / 2, nName, componentFocusTextColor);
-
-    // Make the selected button
-    tempTopSurface.setFrame(2);
-    tempTopSurface.fill(componentBodyColor);
-    tempTopSurface.drawButtonBorder(iRect(0, 0, xSize, ySize), bottomRightBorderColor, topLeftBorderColor);
-    tempTopSurface.bltString(GAP_SPACE / 2 + 2, GAP_SPACE / 2 + 1, nName, componentActiveTextColor);
-
-    setName(nName); assert(name != 0);
-    toolTip       = strdup(nToolTip); assert(toolTip != 0);
-    bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getPix().x, pos.y + tempTopSurface.getPix().y);
-    leftClickFunc = nLeftClickFunc;
-
-    tempTopSurface.setFrame(0);
-
-    topSurface.pack(tempTopSurface);
-
-} // end CREATE
 
 // createCenterText
 //---------------------------------------------------------------------------
@@ -280,69 +239,6 @@ void cButton::createSurfaceSingle(
 
 } // end createSurfaceSingle
 
-// create
-//---------------------------------------------------------------------------
-void cButton::create(iXY pos,
-                     const char *imageName0,
-                     const char *imageName1,
-                     const char *imageName2,
-                     const char *nName,
-                     const char *nToolTip,
-                     ITEM_FUNC nLeftClickFunc)
-{
-    Surface tempTopSurface;
-
-    tempTopSurface.create(iXY(32, 32), 32, 3);
-    tempTopSurface.setFrame(0);
-    tempTopSurface.loadRAW(imageName0, false);
-    tempTopSurface.setFrame(1);
-    tempTopSurface.loadRAW(imageName1, false);
-    tempTopSurface.setFrame(2);
-    tempTopSurface.loadRAW(imageName2, false);
-    setName(nName); assert(name != 0);
-    toolTip       = strdup(nToolTip); assert(toolTip != 0);
-    bounds        = iRect(pos.x, pos.y, pos.x+tempTopSurface.getPix().x, pos.y+tempTopSurface.getPix().y);
-    leftClickFunc = nLeftClickFunc;
-
-    topSurface.pack(tempTopSurface);
-
-} // end create
-
-// create
-//---------------------------------------------------------------------------
-// Purpose: Adds a button which has 2 animated surfaces as the button.
-//---------------------------------------------------------------------------
-void cButton::create(iXY pos, ANIMATED_BUTTON_TYPE_PCX topButton,
-                     ANIMATED_BUTTON_TYPE_PCX bottomButton,
-                     const char *nToolTip, ITEM_FUNC nLeftClickFunc,
-                     ITEM_FUNC nRightClickFunc)
-{
-    Surface tempTopSurface;
-
-    tempTopSurface.create(iXY(topButton.size.x, topButton.size.y), topButton.size.x, topButton.numFrames);
-    tempTopSurface.extractPCX(topButton.filename, topButton.numColumns, topButton.gapSpace);
-    tempTopSurface.scale(iXY(topButton.scale.x, topButton.scale.y));
-    tempTopSurface.setFPS((int) topButton.fps);
-    /*
-    	bottomSurface.create(iXY(bottomButton.size.x, bottomButton.size.y), bottomButton.size.x, bottomButton.numFrames);
-    	bottomSurface.extractPCX(bottomButton.filename, bottomButton.numColumns, bottomButton.gapSpace);
-    	bottomSurface.scale(iXY(bottomButton.scale.x, bottomButton.scale.y));
-    	bottomSurface.setFPS(bottomButton.fps);
-     
-    	// Make sure the button pics are the same size.
-    	assert(tempTopSurface.getPix().x == bottomSurface.getPix().x &&
-    	tempTopSurface.getPix().y == bottomSurface.getPix().y);
-    */
-    toolTip = strdup(nToolTip); assert(toolTip != 0);
-    bounds  = iRect(pos.x, pos.y, pos.x+tempTopSurface.getPix().x, pos.y+tempTopSurface.getPix().y);
-
-    leftClickFunc  = nLeftClickFunc;
-    rightClickFunc = nRightClickFunc;
-
-    topSurface.pack(tempTopSurface);
-
-} // end create
-
 // RESET
 //---------------------------------------------------------------------------
 void cButton::reset()
@@ -362,45 +258,3 @@ void cButton::setName(const char *buttonName)
     if (buttonName == 0) throw Exception("ERROR: Unable to allocate button name: %s", buttonName);
 } // end SET NAME
 
-// createPCX
-//---------------------------------------------------------------------------
-void cButton::createPCX(iXY pos,
-                        const char *filename,
-                        const char *nToolTip,
-                        ITEM_FUNC nLeftClickFunc)
-{
-    //SURFACE tempSurface;
-    //tempSurface.loadPCX(filename);
-    //tempTopSurface.loadPCX(filename);
-
-    //iXY nSize(tempTopSurface.getPix());
-
-    Surface tempTopSurface;
-
-    tempTopSurface.create(22, 22, 22, 3);
-
-    // Make the unselected button
-    tempTopSurface.setFrame(0);
-    tempTopSurface.loadPCX(filename, false, 0);
-    tempTopSurface.drawButtonBorder(Color::white, Color::gray64);
-
-    // Make the mouse-over button
-    tempTopSurface.setFrame(1);
-    tempTopSurface.loadPCX(filename, false, 0);
-    tempTopSurface.drawButtonBorder(Color::red, Color::red);
-
-    // Make the selected button
-    tempTopSurface.setFrame(2);
-    tempTopSurface.loadPCX(filename, false, 0);
-    tempTopSurface.drawButtonBorder(Color::gray64, Color::white);
-
-    setName(filename); assert(name != 0);
-    toolTip       = strdup(nToolTip); assert(toolTip != 0);
-    bounds        = iRect(pos.x, pos.y, pos.x+tempTopSurface.getPix().x, pos.y+tempTopSurface.getPix().y);
-    leftClickFunc = nLeftClickFunc;
-
-    tempTopSurface.setFrame(0);
-
-    topSurface.pack(tempTopSurface);
-
-} // end createPCX

@@ -250,47 +250,6 @@ static void bSelectArcher()
     bOK();
 }
 
-
-static void bSelectHovercraft()
-{
-    if (vsvSelectedUnit == _unit_type_null && vsvUnitGenOn) {
-        Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
-        return;
-    }
-
-    vsvSelectedUnit = _unit_type_null;
-    changeMade      = true;
-    bSetPowerOn();
-    bOK();
-}
-
-static void bSelectCommKilller()
-{
-    if (vsvSelectedUnit == _unit_type_null && vsvUnitGenOn) {
-        Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
-        return;
-    }
-
-    vsvSelectedUnit = _unit_type_null;
-    changeMade      = true;
-    bSetPowerOn();
-    bOK();
-}
-
-static void bSelectRefuelingTruck()
-{
-    if (vsvSelectedUnit == _unit_type_null && vsvUnitGenOn) {
-        Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
-        return;
-    }
-
-    vsvSelectedUnit = _unit_type_null;
-    changeMade      = true;
-    bSetPowerOn();
-    bOK();
-}
-
-
 // VehicleSelectionView
 //---------------------------------------------------------------------------
 VehicleSelectionView::VehicleSelectionView() : GameTemplateView()

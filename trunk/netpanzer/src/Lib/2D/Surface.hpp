@@ -481,17 +481,12 @@ public:
     }
 
     PIX getAverageColor();
-    void loadPCX(const char *filename, bool needAlloc = true, void *returnPalette = 0);
-    void extractPCX(const char *filename, int nCols, int gapSpace);
-    void loadRAW(const char *fileName, bool needAlloc = true);
 
     virtual int  loadTIL(const char* filename);
     virtual void loadTIL(FILE *fp);
     int  saveTIL(const char *filename);
     void saveTIL(FILE *fp);
     void saveAllTIL(const char *path);
-    int  loadRAW(const char *filename, const iXY pix);
-    void loadRAW(FILE *fp, const iXY pix);
 
     void scale(const iXY &pix);
     inline void scale(int x, int y)

@@ -161,9 +161,9 @@ GameToolbarView::GameToolbarView() : GameTemplateView()
 
     addButtonCenterText(pos, buttonSizeX - (15 + 1) * 2 - 1, "Mini Map", "Toggle the visibility of the mini map", bToggleMiniMap);
     pos.x = buttonSizeX - (15 + 1) * 2;
-    addButton(pos, "-", "", bDecreaseMiniMapSize);
+    addButtonCenterText(pos, 15+1, "-", "", bDecreaseMiniMapSize);
     pos.x += 15 + 1;
-    addButton(pos, "+", "", bIncreaseMiniMapSize);
+    addButtonCenterText(pos, 15+1, "+", "", bIncreaseMiniMapSize);
     pos.x += 15 + 1;
 
     pos.x = 0;
@@ -186,13 +186,13 @@ GameToolbarView::GameToolbarView() : GameTemplateView()
     addLabel(iXY(pos.x + 2, pos.y + 3), "Group", Color::white);
     pos.x += 48 + 1 + 4;
 
-    addButton(pos, "1", "", bSetGroup1);
+    addButtonCenterText(pos, 15+1, "1", "", bSetGroup1);
     pos.x += 15 + 1;
-    addButton(pos, "2", "", bSetGroup2);
+    addButtonCenterText(pos, 15+1, "2", "", bSetGroup2);
     pos.x += 15 + 1;
-    addButton(pos, "3", "", bSetGroup3);
+    addButtonCenterText(pos, 15+1, "3", "", bSetGroup3);
     pos.x += 15 + 1;
-    addButton(pos, "4", "", bSetGroup4);
+    addButtonCenterText(pos, 15+1, "4", "", bSetGroup4);
     pos.x += 15 + 1;
 
     pos.x = 0;
@@ -200,13 +200,13 @@ GameToolbarView::GameToolbarView() : GameTemplateView()
     addLabel(iXY(pos.x + 2, pos.y + 3), "Recall", Color::white);
     pos.x += 48 + 1 + 4;
 
-    addButton(pos, "1", "", bRecallGroup1);
+    addButtonCenterText(pos, 15+1, "1", "", bRecallGroup1);
     pos.x += 15 + 1;
-    addButton(pos, "2", "", bRecallGroup2);
+    addButtonCenterText(pos, 15+1, "2", "", bRecallGroup2);
     pos.x += 15 + 1;
-    addButton(pos, "3", "", bRecallGroup3);
+    addButtonCenterText(pos, 15+1, "3", "", bRecallGroup3);
     pos.x += 15 + 1;
-    addButton(pos, "4", "", bRecallGroup4);
+    addButtonCenterText(pos, 15+1, "4", "", bRecallGroup4);
     pos.x += 15 + 1;
     pos.y += yOffset;
 

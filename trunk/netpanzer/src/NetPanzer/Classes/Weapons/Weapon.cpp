@@ -72,6 +72,8 @@ void Weapon::init()
 
 void Weapon::packFiles()
 {
+    throw Exception("not support anymore");
+#if 0
     Surface       tempSurface;
     Surface       tempRotateSurface;
     PackedSurface tempPackSurface;
@@ -126,6 +128,7 @@ void Weapon::packFiles()
     //
     //tempPackSurface.pack(tempShellSurface);
     //tempPackSurface.save("pics/particles/shells/pak/shells.pak");
+#endif
 }
 
 Weapon::Weapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end)

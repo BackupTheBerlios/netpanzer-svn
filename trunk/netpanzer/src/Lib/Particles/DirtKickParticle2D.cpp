@@ -15,10 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #include <config.h>
-#include "DirtKickParticle2D.hpp"
 
+#include "DirtKickParticle2D.hpp"
 
 Surface DirtKickParticle2D::dirtKickSprite;
 
@@ -43,6 +42,7 @@ DirtKickParticle2D::DirtKickParticle2D(fXYZ pos) : Particle2D(pos)
 //---------------------------------------------------------------------------
 void DirtKickParticle2D::init()
 {
+#if 0
     dirtKickSprite.create(iXY(48, 46), 48, 6);
     dirtKickSprite.extractPCX("pics/particles/dirtKick.pcx", 1, 0);
 
@@ -51,6 +51,7 @@ void DirtKickParticle2D::init()
     dirtKickSprite.setFPS(dirtKickFPS);
     dirtKickSprite.setOffset(iXY(-dirtKickSprite.getCenter().x, -dirtKickSprite.getPix().y));
 
+#endif
 } // end DirtKickParticle2D::init
 
 // draw

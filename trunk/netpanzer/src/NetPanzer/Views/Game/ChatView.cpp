@@ -32,26 +32,6 @@ void addNewChatStringCallBack( const char *message_text )
     chatView.addMessage( message_text );
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// Button functions.
-/////////////////////////////////////////////////////////////////////////////
-
-static void sendMessageAllPlayers()
-{
-    ChatInterface::setMessageScopeAll();
-}
-
-static void sendMessageAllies()
-{
-    ChatInterface::setMessageScopeAllies();
-}
-
-static void sendMessageFoes()
-{
-    ChatInterface::setMessageScopeEnemies();
-}
-
-
 // ChatView
 //---------------------------------------------------------------------------
 ChatView::ChatView() : GameTemplateView()

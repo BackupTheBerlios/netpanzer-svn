@@ -15,11 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef __FlameParticle2D_hpp__
 #define __FlameParticle2D_hpp__
-
-
 
 #include "Particle2D.hpp"
 #include "PackedSurface.hpp"
@@ -44,7 +41,6 @@ protected:
 
     virtual void draw(const Surface &dest, SpriteSorter &sorter);
 
-    static void pakFiles();
     static void loadPakFiles();
 }
 ; // end FlameParticle2D
