@@ -38,7 +38,7 @@ class StatsSortByName
 {
 public:
     bool operator() (PlayerState* state1, PlayerState* state2) {
-        return state1->getName() < state2->getName();
+        return state1->getName() > state2->getName();
     }
 };
 
@@ -47,7 +47,7 @@ class StatsSortByFrags
 {
 public:
     bool operator() (PlayerState* state1, PlayerState* state2) {
-        return state1->getTotal() < state2->getTotal();
+        return state1->getTotal() > state2->getTotal();
     }
 };
 
@@ -56,7 +56,7 @@ class StatsSortByObjectives
 {
 public:
     bool operator() (PlayerState* state1, PlayerState* state2) {
-        return state1->getObjectivesHeld() < state2->getObjectivesHeld();
+        return state1->getObjectivesHeld() > state2->getObjectivesHeld();
     }
 };
 
