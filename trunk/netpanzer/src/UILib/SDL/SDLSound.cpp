@@ -29,6 +29,7 @@
 #include "Exception.hpp"
 #include "FileSystem.hpp"
 #include "SDLSound.hpp"
+#include "FileSystem.hpp"
 
 musics_t SDLSound::musicfiles;
 musics_t::iterator SDLSound::currentsong;
@@ -46,16 +47,17 @@ musics_t::iterator SDLSound::currentsong;
 	loadSound("sound/");
 	Mix_AllocateChannels(16);
 }
-
 //-----------------------------------------------------------------
 SDLSound::~SDLSound()
 {
 	stopMusic();
 	Mix_CloseAudio();
+	for (chunks_t::iterator i = m_chunks.begin(); i != m_chunks.end(); i++) {
+		Mix_FreeChunk(i->second);
+	}
 
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
-
 //-----------------------------------------------------------------
 /**
  * Find a chunk for this name.
@@ -173,31 +175,32 @@ int SDLSound::getSoundVolume(long distance)
  */
 void SDLSound::loadSound(const char* directory)
 {
-	DIR* dir = opendir(directory);
-	if(!dir) {
-		LOG (("Couldn't scan directory '%s': %s",
-					directory, strerror(errno)));
-		return;
-	}
+	char **list = FileSystem::enumerateFiles(directory);
 
-	struct dirent* entry;
-	while( (entry = readdir(dir)) ) {
-		if(entry->d_name[0] == '.')
-			continue;
-
+	for (char **i = list; *i != NULL; i++) {
 		std::string filename = directory;
-		filename += entry->d_name;
-		ReadFile* file = FileSystem::openRead(filename.c_str());
-		Mix_Chunk *chunk = Mix_LoadWAV_RW(file->getSDLRWOps(), 1);
-		if (!chunk) {
-			LOG (("Couldn't load wav '%s': %s",
-						filename.c_str(), Mix_GetError()));
+		filename.append(*i);
+		if (!FileSystem::isDirectory(filename.c_str())) {
+			try {
+				ReadFile *file = FileSystem::openRead(filename.c_str());
+				Mix_Chunk *chunk = Mix_LoadWAV_RW(file->getSDLRWOps(), 1);
+				if (chunk) {
+					std::string idName = getIdName(*i);
+					m_chunks.insert(
+							std::pair<std::string,Mix_Chunk*>(idName, chunk));
+				}
+				else {
+					LOG (("Couldn't load wav_rw '%s': %s",
+								filename.c_str(), Mix_GetError()));
+				}
+			}
+			catch (Exception &e) {
+				LOG (("Couldn't load wav '%s': %s",
+							filename.c_str(), e.getMessage()));
+			}
 		}
-
-		std::string idName = getIdName(entry->d_name);
-		m_chunks.insert(std::pair<std::string,Mix_Chunk *>(idName, chunk));
 	}
-	closedir(dir);
+	FileSystem::freeList(list);
 }
 //-----------------------------------------------------------------
 /**
@@ -219,27 +222,22 @@ std::string SDLSound::getIdName(const char *filename)
 void SDLSound::playMusic(const char* directory)
 {
 	// Part1: scan directory for music files
-	DIR* dir = opendir(directory);
-	if(!dir) {
-		LOG (("Couldn't scan directory '%s': %s",
-					directory, strerror(errno)));
-		return;
-	}
+	char **list = FileSystem::enumerateFiles(directory);
 
 	musicfiles.clear();
-	struct dirent* entry;
-	while( (entry = readdir(dir)) ) {
-		if(entry->d_name[0] == '.')
-			continue;
-
+	for (char **i = list; *i != NULL; i++) {
 		std::string filename = directory;
-		filename += entry->d_name;
-		musicfiles.push_back(filename);
+		filename.append(*i);
+		if (!FileSystem::isDirectory(filename.c_str())) {
+			musicfiles.push_back(filename);
+		}
 	}
-	closedir(dir);
+	FileSystem::freeList(list);
 
-	if(musicfiles.size() == 0)
+	if(musicfiles.size() == 0) {
+		LOG (("Not found any music in '%s'", directory));
 		return;
+	}
 
 	// Part2: play music :)
 	currentsong = musicfiles.end();
@@ -275,22 +273,52 @@ void SDLSound::nextSong()
 	musics_t::iterator lastsong = currentsong;
 	do {
 		const char* toplay = currentsong->c_str();
-		music = Mix_LoadMUS(toplay);
 		currentsong++;
-
-		if(music) {
+#if 0
+		/*
+		 * SDL_Mixer has not Mix_LoadMUS_RW
+		 */
+		try {
+			ReadFile *file = FileSystem::openRead(toplay);
+			music = Mix_LoadMUS_RW(file->getSDLRWOps(), 1);
+			if (music) {
+				if (Mix_PlayMusic(music, 1) == 0) {
+					LOG (("Start playing song '%s'", toplay));
+					break; // break while cycle
+				} else {
+					LOG (("Failed to play song '%s': %s",
+								toplay, Mix_GetError()));
+				}
+			}
+			else {
+				LOG (("Failed to load mus_rw '%s': %s",
+							toplay, Mix_GetError()));
+			}
+		}
+		catch (Exception &e) {
+			LOG (("Failed to load song '%s': %s",
+						toplay, e.getMessage()));
+		}
+#else
+		music = Mix_LoadMUS(toplay);
+		if (music) {
 			if (Mix_PlayMusic(music, 1) == 0) {
-				LOG( ("Start playing song '%s'", toplay) );
+				LOG (("Start playing song '%s'", toplay));
 				break; // break while cycle
 			} else {
-				LOG ( ("Failed to play song '%s': %s", toplay, Mix_GetError()));
+				LOG (("Failed to play song '%s': %s",
+							toplay, Mix_GetError()));
 			}
-		} else {
-			LOG ( ("Failed to load song '%s': %s", toplay, Mix_GetError()));
 		}
+		else {
+			LOG (("Failed to load song '%s': %s",
+						toplay, Mix_GetError()));
+		}
+#endif
 
 		if(currentsong == musicfiles.end()) {
 			currentsong = musicfiles.begin();
 		}
 	} while(currentsong != lastsong);
 }
+

@@ -1,3 +1,6 @@
+14-Sep-2003 by Ivo Danihelka
+-converted sdlsound to use physfs, Mix_LoadMUS_RW is not used yet
+
 14-Sep-2003 by Matze Braun
 -applied sound patch by Ivo Danihelka (thanks alot)
 -added code to construct SDL_RWops in physfs files
