@@ -814,8 +814,8 @@ void View::getClientArea(Surface &dest)
     assert(this != 0);
 
     if (getBordered()) {
-        dest.setTo(	getViewArea(),
-                    iRect(	borderSize,
+        dest.setTo( getViewArea(),
+                    iRect(borderSize,
                            borderSize + moveAreaHeight,
                            getSizeX() - borderSize,
                            getSizeY() - borderSize));
@@ -832,7 +832,7 @@ void View::getClientArea(Surface &dest)
 Surface View::getClientArea()
 {
     if (getBordered()) {
-        return Surface(	getViewArea(),
+        return Surface( getViewArea(),
                         iXY(borderSize,
                             borderSize + moveAreaHeight),
                         iXY(getSizeX() - borderSize,
@@ -851,7 +851,7 @@ Surface View::getClientArea()
 iRect View::getClientRect() const
 {
     if (getBordered()) {
-        return iRect(	borderSize,
+        return iRect( borderSize,
                       borderSize + moveAreaHeight,
                       getSizeX() - borderSize,
                       getSizeY() - borderSize);
@@ -1662,6 +1662,18 @@ void View::centerAbsolute()
     max.y = min.y + oldSize.y;
 } // end centerAbsolute
 
+// checkResolution
+//---------------------------------------------------------------------------
+// Purpose: Check position after resolution change
+//---------------------------------------------------------------------------
+void View::checkResolution(iXY lastResolution)
+{
+    iXY oldSize = getSize();
+    min.x += (SCREEN_XPIX - lastResolution.x) >> 1;
+    min.y += (SCREEN_YPIX - lastResolution.y) >> 1;
+    max = min + oldSize;
+} // end checkResolution
+
 // RESIZE CLIENT AREA
 //---------------------------------------------------------------------------
 // Purpose: Resize the client area of the window.  The window area will be
@@ -1707,22 +1719,17 @@ void View::resize(const iXY &size)
 {
     iXY destSize(size);
 
-    if      (destSize.x <= RESIZE_XMINSIZE) {
-        destSize.y = SCREEN_YPIX - min.y;
+    if (destSize.x <= RESIZE_XMINSIZE) {
+        destSize.x = RESIZE_XMINSIZE;
     }
     else if (destSize.x >  SCREEN_XPIX - min.x) {
         destSize.x = SCREEN_XPIX - min.x;
     }
 
-    if      (destSize.y <= RESIZE_YMINSIZE) {
+    if (destSize.y <= RESIZE_YMINSIZE) {
         destSize.y = RESIZE_YMINSIZE;
     } else if (destSize.y >  SCREEN_YPIX - min.y) {
         destSize.y = SCREEN_YPIX - min.y;
-    }
-
-    // Are we already at the desired size?  Then bail.
-    if (size == getSize()) {
-        return;
     }
 
     max = min + destSize;

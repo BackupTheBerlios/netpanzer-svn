@@ -238,6 +238,7 @@ protected:
     void showStatus(const char *string);
     void drawStatus(const Surface &dest);
     void centerAbsolute();
+    void checkResolution(iXY lastResolution);
     void toggleView();
     iXY  getScreenToClientPos(const iXY &pos);
     iXY  getScreenToViewPos(const iXY &pos);

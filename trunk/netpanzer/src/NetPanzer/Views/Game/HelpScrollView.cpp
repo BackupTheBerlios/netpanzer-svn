@@ -203,18 +203,6 @@ void HelpScrollView::insert(char *string)
 
 } // end HelpScrollView::insert
 
-// processEvents
-//--------------------------------------------------------------------------
-void HelpScrollView::processEvents()
-{
-    if (Desktop::getVisible("GameView")) {
-        centerAbsolute();
-    } else {
-        moveTo(bodyTextRect.min);
-    }
-
-} // end HelpScrollView::processEvents
-
 // actionPerformed
 //--------------------------------------------------------------------------
 void HelpScrollView::actionPerformed(mMouseEvent me)
@@ -237,10 +225,5 @@ void HelpScrollView::actionPerformed(mMouseEvent me)
 //--------------------------------------------------------------------------
 void HelpScrollView::doActivate()
 {
-    if (Desktop::getVisible("GameView")) {
-        centerAbsolute();
-    } else {
-        moveTo(bodyTextRect.min);
-    }
-
+    /* empty */
 } // end HelpScrollView::doActivate

@@ -154,6 +154,7 @@ public:
     }
 
     static void checkViewPositions();
+    static void checkResolution(iXY lastResolution);
 
     static const View *getFocus()
     {

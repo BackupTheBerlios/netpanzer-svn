@@ -24,9 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 #include "Log.hpp"
 
-#ifdef DO_LOGGING
 Logger LOGGER;
-#endif
 
 // like syslog levels
 const int Logger::LEVEL_DEBUG = 7;

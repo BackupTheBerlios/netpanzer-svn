@@ -166,7 +166,8 @@ int MapSelectionView::loadMaps()
     mapList.setNum(mapfiles.size());
 
     for (unsigned int i = 0; i < mapfiles.size(); i++) {
-        FILE *fp = fopen(mapfiles[i].c_str(), "rb");
+        FILE *fp =
+            fopen(FileSystem::getRealName(mapfiles[i].c_str()).c_str(), "rb");
         if (fp == 0) {
             LOGGER.warning("cannot open map file '%s'", mapfiles[i].c_str());
             continue;
@@ -185,7 +186,8 @@ int MapSelectionView::loadMaps()
                             throw Exception("Map description is too long.");
                     }
         */
-        _splitpath(mapfiles[i].c_str(), 0, 0, mapList[i].name, 0);
+        _splitpath(FileSystem::getRealName(mapfiles[i].c_str()).c_str(),
+                0, 0, mapList[i].name, 0);
         sprintf(mapList[i].description, "%s", netPanzerMapHeader.description);
 
         mapList[i].cells.x = netPanzerMapHeader.x_size;

@@ -261,6 +261,7 @@ void GameManager::initializeWindowSubSystem()
 // ******************************************************************
 void GameManager::setVideoMode()
 {
+    iXY lastResolution(SCREEN_XPIX, SCREEN_YPIX);
     iXY mode_res;
     bool fullscreen = GameConfig::getFullscreen();
 
@@ -290,6 +291,7 @@ void GameManager::setVideoMode()
     screen.createNoAlloc(mode_res);
     gameView.setSize(mode_res);
 
+    Desktop::checkResolution(lastResolution);
     Desktop::checkViewPositions();
     //ConsoleInterface::setToSurfaceSize( mode_res );
 
@@ -1546,6 +1548,8 @@ void GameManager::gameLoop()
     if (once) {
         once = false;
         Desktop::setVisibility("MainView", true);
+        // XXX hack, original resolution was 640x480
+        Desktop::checkResolution(iXY(640, 480));
     }
 
     TimerInterface::start();

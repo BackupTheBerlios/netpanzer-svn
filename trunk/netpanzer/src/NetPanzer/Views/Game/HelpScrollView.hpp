@@ -56,7 +56,6 @@ public:
     }
 
     virtual void doDraw(const Surface &windowArea, const Surface &clientArea);
-    virtual void processEvents();
     virtual void actionPerformed(mMouseEvent me);
     virtual void doActivate();
 }

@@ -65,13 +65,14 @@ void MouseInterface::initialize()
     const char* cursorpath = "pics/cursors/";
     char** cursorfiles = FileSystem::enumerateFiles(cursorpath);
     for(char** i = cursorfiles; *i != 0; i++) {
-        if(*i[0]=='.')
-            continue;
         Surface* surface = new Surface;
         try {
             std::string filename = cursorpath;
             filename += *i;
-            surface->loadBMP(filename.c_str());
+            if(FileSystem::isDirectory(filename.c_str())) {
+                continue;
+            }
+            surface->loadBMP(FileSystem::getRealName(filename.c_str()).c_str());
             surface->setOffsetCenter();
             cursors.insert(std::pair<std::string,Surface*> (*i, surface));
         } catch(Exception& e) {

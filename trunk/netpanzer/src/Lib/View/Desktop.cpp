@@ -392,6 +392,19 @@ void Desktop::checkViewPositions()
     }
 } // end Desktop::checkViewPositions
 
+// checkResolution
+//--------------------------------------------------------------------------
+// Purpose: Makes sure all the view are on the position.
+//--------------------------------------------------------------------------
+void Desktop::checkResolution(iXY lastResolution)
+{
+    std::vector<View*>::iterator i;
+    for(i = views.begin(); i != views.end(); i++) {
+        View* view = *i;
+        view->checkResolution(lastResolution);
+    }
+} // end Desktop::checkResolution
+
 // toggleVisibilityNoDoAnything
 //--------------------------------------------------------------------------
 // Purpose: Only changes whether a visibility of the view, no activate or

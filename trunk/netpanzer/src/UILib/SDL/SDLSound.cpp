@@ -295,7 +295,7 @@ void SDLSound::nextSong()
                   toplay, e.getMessage()));
         }
 #else
-        music = Mix_LoadMUS(toplay);
+        music = Mix_LoadMUS(FileSystem::getRealName(toplay).c_str());
         if (music) {
             if (Mix_PlayMusic(music, 1) == 0) {
                 LOG (("Start playing song '%s'", toplay));
