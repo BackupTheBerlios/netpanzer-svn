@@ -150,7 +150,7 @@ void PlayerGameManager::initializeSoundSubSystem()
     delete sound;
     sound = 0;
     
-    LOGGER.info("Initialize sound system.");
+    LOGGER.info("Initializing sound system.");
     try {
         if(gameconfig->enablesound)
             sound = new SDLSound();

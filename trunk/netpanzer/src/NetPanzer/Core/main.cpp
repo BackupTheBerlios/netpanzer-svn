@@ -287,7 +287,6 @@ int netpanzer_main(int argc, char** argv)
             while(1) {
                 SDL_PumpEvents();
                 if(HandleSDLEvents() == true) {
-                    LOG( ("quitting main loop.") );
                     break;
                 }
 
@@ -297,7 +296,7 @@ int netpanzer_main(int argc, char** argv)
 
         manager->shutdown();
         delete manager;
-        LOG ( ("successfull shutdown.") );
+        LOGGER.info("successfull shutdown.");
         shutdown();
     } catch(std::exception& e) {
         LOGGER.warning("An unexpected exception occured: %s\nShutdown needed.",

@@ -70,7 +70,7 @@ void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
     // let's scare the mouse :)
     SDL_ShowCursor(SDL_DISABLE);
     // and set a window title
-    SDL_WM_SetCaption("NetPanzer", 0);
+    SDL_WM_SetCaption(PACKAGE_STRING, 0);
 }
 
 bool SDLVideo::isDisplayModeAvailable(int width, int height, int bpp,

@@ -13,7 +13,8 @@
 
 TileSetView::TileSetView(wxWindow* parent)
     : SDLView(parent),
-      droptarget(0), tileset(0), viewmode(TEMPLATES)
+      droptarget(0), tileset(0), viewmode(TEMPLATES),
+      selection(0)
 {
     droptarget = new DropTarget;
     droptarget->parentwindow = this;
@@ -172,6 +173,27 @@ void TileSetView::paintTiles()
     }
 }
 
+inline static void paintBox(SDL_Surface* surface, int x, int y, int w, int h,
+                            uint32_t color)
+{
+    if(x+w > surface->w)
+        w = surface->w-x;    
+    if(y+h > surface->h)
+        h = surface->h-y;
+
+    size_t bpp = surface->format->BytesPerPixel;
+    size_t pitch = surface->pitch - w*bpp;
+    char* ptr = (char*) surface->pixels + (y * surface->pitch + x*3);    
+    for(int y=0; y < h; ++y) {
+        for(int x = 0; x<w; ++x) {
+            *ptr++ = color & 0xff0000;
+            *ptr++ = color & 0xff00;
+            *ptr++ = color & 0xff;
+        }
+        ptr += pitch;
+    }
+}
+
 void TileSetView::paintTemplates()
 {
     size_t templatenum = templateScrollList.at(scrollpos);
@@ -182,12 +204,17 @@ void TileSetView::paintTemplates()
     size_t rowHeight = 0;
     while(y < height && templatenum < tileset->getTemplateCount()) {
         TileTemplate* tileTemplate = tileset->getTemplate(templatenum);
-        paintTemplate(tileTemplate, x + border.x, y + border.y);
-
         size_t tileWidth 
             = tileTemplate->getSize().x * tileset->getTileSize().x + border.x*2;
         size_t tileHeight 
             = tileTemplate->getSize().y * tileset->getTileSize().y + border.y*2;
+        
+        if((int) templatenum == selection) {
+            paintBox(getSurface(), x, y, tileWidth, tileHeight, 0xff00ffff);
+        }
+
+        paintTemplate(tileTemplate, x + border.x, y + border.y);
+
         if(x + tileWidth < width) {
             x += tileWidth;
         } else {

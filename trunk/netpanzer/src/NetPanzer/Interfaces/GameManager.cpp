@@ -175,7 +175,6 @@ void GameManager::setVideoMode()
     Uint32 flags = gameconfig->fullscreen ? SDL_FULLSCREEN : 0;
     flags |= gameconfig->hardwareSurface ? SDL_HWSURFACE : 0;
     flags |= gameconfig->hardwareDoubleBuffer ? SDL_DOUBLEBUF : 0;
-    LOG(("SetVideoMode flags: %X", flags));
 
     int mode;
     for(mode=gameconfig->screenresolution; mode>=0; mode--) {

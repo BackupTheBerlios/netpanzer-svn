@@ -50,7 +50,7 @@ void MapEditor::setupMenuBar()
 void MapEditor::OnNewMap(wxCommandEvent& event)
 {
     try {
-        map = new Map(10, 10);
+        map = new Map(20, 10);
         map->setName("NewMap");
         mapview->setMap(map);
     } catch(std::exception& e) {

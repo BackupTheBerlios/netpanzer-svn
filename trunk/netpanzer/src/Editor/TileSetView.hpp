@@ -62,6 +62,7 @@ private:
     int tileycount;
     int tileywindow;
     int scrollpos;
+    int selection;
 
     // for template view
     size_t firstTemplate;

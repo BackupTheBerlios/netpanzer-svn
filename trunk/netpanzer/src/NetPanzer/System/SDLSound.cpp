@@ -228,7 +228,7 @@ void SDLSound::playMusic(const char* directory)
     FileSystem::freeList(list);
 
     if(musicfiles.size() == 0) {
-        LOG (("Not found any music in '%s'", directory));
+        LOGGER.info("Couldn't find any music in '%s'", directory);
         return;
     }
 

@@ -39,7 +39,7 @@ const int Logger::LEVEL_WARNING = 4;
  */
 Logger::Logger()
 {
-    m_logLevel = LEVEL_INFO;
+    m_logLevel = LEVEL_WARNING;
     m_logfile = 0;
 }
 //-----------------------------------------------------------------
@@ -62,6 +62,7 @@ Logger::openLogFile(const char* filename)
 void
 Logger::closeLogFile()
 {
+    info("Closing logfile.");
     delete m_logfile;
     m_logfile = 0;
 }
@@ -72,14 +73,15 @@ Logger::log(int priority, const char *fmt, va_list ap)
     if (m_logLevel >= priority) {
         vfprintf(stderr, fmt, ap);
         fprintf(stderr, "\n");
-        if (m_logfile != 0) {
-            char buf[512];
-            vsnprintf(buf, 511, fmt, ap);
-            strcat(buf, "\n");
-            if(m_logfile->write(buf, strlen(buf), 1) != 1) {
-                fprintf(stderr, "Error while writing logfile");
-                m_logfile = 0;
-            }
+    }
+    
+    if (m_logfile != 0) {
+        char buf[512];
+        vsnprintf(buf, 511, fmt, ap);
+        strcat(buf, "\n");
+        if(m_logfile->write(buf, strlen(buf), 1) != 1) {
+            fprintf(stderr, "Error while writing logfile");
+            m_logfile = 0;
         }
     }
 }

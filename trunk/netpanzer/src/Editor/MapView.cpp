@@ -46,17 +46,20 @@ void MapView::updateView()
     size_t mapwidth = maprenderer->getMapWidth();
     size_t mapheight = maprenderer->getMapHeight();
     std::cout << "MapSize:" << mapwidth << "," << mapheight << "\n";
+    std::cout << "SurfaceW: " << getSurface()->w << "," << getSurface()->h;
     
-    if(maprenderer->getMapWidth() > (size_t) getSurface()->w) {
-        SetScrollbar(wxHORIZONTAL, 0, 32, mapwidth - getSurface()->w);
+    if(mapwidth > (size_t) getSurface()->w) {
+        // wx windows doesn't like small range it seems, so we multiply with
+        // 100...
+        SetScrollbar(wxHORIZONTAL, 0, 100, (mapwidth - getSurface()->w) * 100);
     } else {
         SetScrollbar(wxHORIZONTAL, 0, 0, 0);
     }
     
-    if(maprenderer->getMapHeight() > (size_t) getSurface()->h) {
+    if(mapheight > (size_t) getSurface()->h) {
         std::cout << "HorizontalScroll:" << (mapheight - getSurface()->h) <<
             "\n";
-        SetScrollbar(wxVERTICAL, 0, 32, mapheight - getSurface()->h);
+        SetScrollbar(wxVERTICAL, 0, 100, (mapheight - getSurface()->h) * 100);
     } else {
         SetScrollbar(wxVERTICAL, 0, 0, 0);
     }
@@ -67,8 +70,8 @@ void MapView::updateView()
 
 void MapView::OnScroll(wxScrollEvent& event)
 {
-    mapxpos = GetScrollPos(wxHORIZONTAL);
-    mapypos = GetScrollPos(wxVERTICAL);
+    mapxpos = GetScrollPos(wxHORIZONTAL) / 100;
+    mapypos = GetScrollPos(wxVERTICAL) / 100;
     std::cout << "MapPos:" << mapxpos << "," << mapypos << "\n";
 
     paint();
