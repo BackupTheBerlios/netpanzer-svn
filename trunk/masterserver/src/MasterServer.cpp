@@ -224,12 +224,14 @@ void MasterServer::parseHeartbeat(std::iostream& stream,
     for(i = serverlist.begin(); i != serverlist.end(); ++i) {
         if(i->address.sin_addr.s_addr == addr->sin_addr.s_addr
             && i->address.sin_port == htons(queryport)) {
-            *log << "Heartbeat from " << inet_ntoa(addr->sin_addr) << std::endl;
+            *log << "Heartbeat from " << inet_ntoa(addr->sin_addr) 
+                 << ":" << queryport << std::endl;
             info = &(*i);
         }
     }
     if(info == 0) {
-        *log << "New server at " << inet_ntoa(addr->sin_addr) << std::endl;
+        *log << "New server at " << inet_ntoa(addr->sin_addr) 
+             << ":" << queryport << std::endl;
         serverlist.push_back(ServerInfo());
         info = & (serverlist.back());
     }
@@ -294,6 +296,7 @@ MasterServer::parseList(std::iostream& stream, struct sockaddr_in* addr,
         *log << "Missing gamename in list query." << std::endl;
         stream << "\\error\\missing gamename in list query\\final\\" <<
             std::flush;
+        return;
     }
     const std::string& gamename = v->second;
     *log << "List query for game '" << gamename << "' from "

@@ -61,7 +61,7 @@ void RequestThread::run()
     running = true;
     while(!stream->eof() && running) {
         std::string query = tokenizer->getNextToken();
-        if(query == "") {
+        if(query == "" || query == "final") {
             break;
         } else if(query == "heartbeat") {
             masterserver->parseHeartbeat(*stream, &addr, *tokenizer);
@@ -77,11 +77,11 @@ void RequestThread::run()
                     break;
             }
         } else {
-            std::cout << "Unknown request : '" << query << "'\n";
+            std::cout << "Unknown request: '" << query << "'\n";
             *stream << "\\error\\Unknown request\\final\\" << std::flush;
             // ignore everything until next final
             while(!stream->eof() && running) {
-                if(tokenizer->getNextToken() == "final")            
+                if(tokenizer->getNextToken() == "final")
                     break;
             }
         }

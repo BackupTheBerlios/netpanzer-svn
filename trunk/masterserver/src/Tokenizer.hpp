@@ -42,7 +42,7 @@ public:
 
         char c;
         do {
-            in >> c;
+            in.get(c);
         } while(c == '\\' && (!in.eof()));
 
         if(in.eof())
@@ -50,7 +50,7 @@ public:
         
         do {
             result += c;
-            in >> c;
+            in.get(c);
         } while((!in.eof()) && c != '\\');
 
         return result;
