@@ -43,17 +43,11 @@ building it. Here's a list of them:
 * SDL 1.2.5 or later
   http://www.libsdl.org
 
-* SDL_net 1.2.4 or later
-  http://www.libsdl.org/projects/SDL_net/
-
 * SDL_mixer 1.2.4 or later
   http://www.libsdl.org/projects/SDL_mixer/
 
 * SDL_image 1.2.3 or later
   http://www.libsdl.org/projects/SDL_image/
-
-* SDL_ttf 2.0.0 or later
-  http://www.libsdl.org/projects/SDL_ttf/
 
 * PhysicsFS 0.1.9 or later
   http://www.icculus.org/physfs/

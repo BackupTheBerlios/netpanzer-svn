@@ -30,18 +30,15 @@ protected:
     static void chatMessage( NetMessage *message );
 
 public:
-
     static void processChatMessages( NetMessage *message );
 
     // ** ChatView Interface Methods
     static void setNewMessageCallBack( void (* addStringCallBack)( const char *message_text ) );
-    static void setMessageScopeAll( void );
-    static void setMessageScopeAllies( void );
-    static void setMessageScopeEnemies( void );
-    static void setMessageScopeServer( void );
-    static void sendCurrentMessage( const char *message_text  );
-
-
+    static void setMessageScopeAll();
+    static void setMessageScopeAllies();
+    static void setMessageScopeEnemies();
+    static void setMessageScopeServer();
+    static void sendCurrentMessage(const char *message_text);
 };
 
 #endif // ** _CHATINTERFACE_HPP

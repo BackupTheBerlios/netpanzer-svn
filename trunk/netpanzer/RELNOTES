@@ -1,3 +1,17 @@
+*** 2.0.0 ***
+
+* New masterserver protocol which should eleminate all problems with the server
+  browser (also next xqf version will support netpanzer)
+* Added a serverconsole
+* Fixed endianess problems. ppc users can play with x86 users now (not tested,
+  I'd be happy to hear some feedback)
+* The server creates logfiles now that can be used for statistics or reports on
+  webpages
+* Replaced SDL_net with custom socket wrappers (this allows binding servers to
+  addresses and eleminates a dependency)
+* libxml2 replaced with a simple ini parser (eleminates another dependency)
+* lots and lots of bugfixes
+
 *** 0.1.5 ***
 
 This is an emergency bugfix release.

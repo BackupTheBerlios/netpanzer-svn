@@ -83,11 +83,10 @@ void ChatInterface::chatMessageRequest( NetMessage *message )
                 return;
             }
 
-    if ( post_on_server == true ) {
-
+    if (post_on_server == true) {
         PlayerState *player_state;
 
-        player_state = PlayerInterface::getPlayerState( chat_mesg.getSourcePlayerIndex() );
+        player_state = PlayerInterface::getPlayerState(chat_mesg.getSourcePlayerIndex() );
 
         if( (addChatString != 0) ) {
             char mesg_str[256];
@@ -197,12 +196,12 @@ void ChatInterface::setMessageScopeAllies( void )
     current_chat_mesg.setMessageScope( _chat_mesg_scope_alliance );
 }
 
-void ChatInterface::setMessageScopeEnemies( void )
+void ChatInterface::setMessageScopeEnemies()
 {
     current_chat_mesg.setMessageScope( _chat_mesg_scope_enemies );
 }
 
-void ChatInterface::setMessageScopeServer( void )
+void ChatInterface::setMessageScopeServer()
 {
     current_chat_mesg.setMessageScope( _chat_mesg_scope_server );
 }
@@ -221,3 +220,4 @@ void ChatInterface::sendCurrentMessage( const char *message_text )
 
     current_chat_mesg.reset();
 }
+

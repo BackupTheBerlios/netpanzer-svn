@@ -89,8 +89,13 @@ void ServerConsole::executeCommand(const std::string& commandline)
                     ServerCommand(ServerCommand::MAPCHANGE, argument));
         else
             std::cout << "Please specify the name of a map.\n";
+    } else if(command == "say") {
+        if(argument != "")
+            manager->pushCommand(
+                    ServerCommand(ServerCommand::CHAT, argument));
     } else {
-        std::cout << "Unknown command.\n";
+        if(command != "")
+            std::cout << "Unknown command.\n";
     }
 }
 
