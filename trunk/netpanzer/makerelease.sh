@@ -10,12 +10,12 @@ DATARELEASE=release/netpanzer-data-$VERSION
 
 # first clean the directories up
 echo "*** Cleaning up"
-if test ! -f configure; then
+#if test ! -f configure; then
     ./autogen.sh
-fi
-if test ! -f Jamconfig; then
+#fi
+#if test ! -f Jamconfig; then
     ./configure
-fi
+#fi
 rm -rf out
 rm -rf release
 jam docbook

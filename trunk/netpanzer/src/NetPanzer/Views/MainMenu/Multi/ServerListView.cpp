@@ -113,9 +113,9 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
             pingstr << server.ping;
             
             clientArea.bltString(iXY(0, y), server.name, Color::white);
-            clientArea.bltString(iXY(140, y), playerstr.str(), Color::white);
-            clientArea.bltString(iXY(200, y), server.map, Color::white);
-            clientArea.bltString(iXY(300, y), pingstr.str(), Color::white);
+            clientArea.bltString(iXY(250, y), playerstr.str(), Color::white);
+            clientArea.bltString(iXY(300, y), server.map, Color::white);
+            clientArea.bltString(iXY(400, y), pingstr.str(), Color::white);
         }
 
         y += Surface::getFontHeight();

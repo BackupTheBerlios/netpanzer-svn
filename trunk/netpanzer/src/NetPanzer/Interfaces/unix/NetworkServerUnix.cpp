@@ -99,6 +99,9 @@ NetworkServerUnix::sendMessage(NetMessage *message, size_t size)
 {
     for(ClientList::iterator i = client_list.begin(); i != client_list.end();
             ++i) {
+        if((*i)->wannadie)
+            continue;
+
         try {
             sendMessage((*i)->client_id.getNetworkID(), message, size);
         } catch(std::exception& e) {

@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V4.1//EN"
-  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
-
+<page title="Netpanzer Server Setup HowTo">
 <article>
   <articleinfo>
     <title>NetPanzer Server Setup HowTo</title>
@@ -223,4 +221,4 @@ section</ulink> of netpanzer in the misc category.
     </sect2>
   </sect1>
 </article>
-
+</page>
