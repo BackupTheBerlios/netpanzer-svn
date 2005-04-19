@@ -60,7 +60,8 @@ class UnitIniSyncMessage : public NetMessage
 public:
     uint8_t unit_type;
 private:
-    uint16_t player_id;
+    // XXX this should really be uint16_t player_id;
+    uint8_t player_id;
     uint16_t unit_id;
     uint32_t location_x;
     uint32_t location_y;
@@ -68,10 +69,30 @@ public:
     NetworkUnitState unit_state;
 
     UnitIniSyncMessage(uint8_t unit_type, uint16_t player_id, UnitID unit_id,
-        uint32_t location_x, uint32_t location_y);
-    unsigned short realSize() const;
-    uint32_t getLocX() const;
-    uint32_t getLocY() const;
+        uint32_t location_x, uint32_t location_y)
+    {
+        message_class = _net_message_class_unit;
+        message_id = _net_message_id_ini_sync_mesg;
+        this->unit_type = unit_type;
+        //this->player_id = htol16(player_id);
+        this->player_id = (uint8_t) player_id;
+        this->unit_id = htol16(unit_id);
+        this->location_x = htol32(location_x);
+        this->location_y = htol32(location_y);
+    }
+      
+    unsigned short realSize() const
+    {
+        return( sizeof( UnitIniSyncMessage ) );
+    }
+    uint32_t getLocX() const
+    {
+        return ltoh32(location_x);
+    }
+    uint32_t getLocY() const
+    {
+        return ltoh32(location_y);
+    }
 
     UnitID getUnitID() const
     {
@@ -79,7 +100,7 @@ public:
     }
     uint16_t getPlayerID() const
     {
-        return ltoh16(player_id);
+        return player_id;
     }
 } __attribute__((packed));
 
@@ -119,9 +140,25 @@ public:
     uint8_t unit_type;
 
     UnitRemoteCreate(uint16_t player_id, UnitID id,
-            uint32_t x, uint32_t y, uint8_t type);
-    uint32_t getLocX() const;
-    uint32_t getLocY() const;
+            uint32_t x, uint32_t y, uint8_t type)
+    {
+        message_class = _net_message_class_unit;
+        message_id = _net_message_id_create_unit;
+        this->player_id = htol16(player_id);             
+        new_unit_id = htol16(id);
+        location_x = htol32(x);
+        location_y = htol32(y);
+        unit_type = type;
+    }
+        
+    uint32_t getLocX() const
+    {
+        return ltoh32(location_x);
+    }
+    uint32_t getLocY() const
+    {
+        return ltoh32(location_y);
+    }
     UnitID getUnitID() const
     {
         return ltoh16(new_unit_id);

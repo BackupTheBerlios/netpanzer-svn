@@ -39,10 +39,12 @@ protected:
     static WadMapTable wad_mapping_table;
     static Surface mini_map_surface;
     static char map_path[256];
+    static const int TILE_WIDTH = 32;
+    static const int TILE_HEIGHT = 32;
 
 protected:
-    static void generateMappingTable( void );
-    static void buildMiniMapSurface( void );
+    static void generateMappingTable();
+    static void buildMiniMapSurface();
 
 public:
     static void getMapPointSize(iXY *map_size)
@@ -80,10 +82,10 @@ public:
     {
         *point_y = ( offset  /  main_map.getWidth() );
 
-        *point_x = ( offset - ( (*point_y) * main_map.getWidth() ) ) * 32
-                   + (32 / 2);
+        *point_x = ( offset - ( (*point_y) * main_map.getWidth() ) ) * TILE_WIDTH
+                   + (TILE_WIDTH / 2);
 
-        *point_y = (*point_y) * 32 + (32 / 2);
+        *point_y = (*point_y) * TILE_HEIGHT + (TILE_HEIGHT / 2);
     }
 
     static void offsetToMapXY(size_t offset, size_t& x, size_t& y)
@@ -100,53 +102,72 @@ public:
         map_loc->y = map_y;
     }
 
-    static void mapXYtoPointXY( unsigned short map_x, unsigned short map_y,
-                                size_t *point_x, size_t *point_y )
+    static void mapXYtoPointXY(unsigned short map_x, unsigned short map_y,
+                               size_t *point_x, size_t *point_y )
     {
-        *point_x = (map_x * 32) + (32 / 2);
-        *point_y = (map_y * 32) + (32 / 2);
+        iXY loc = mapXYtoPointXY(iXY(map_x, map_y));
+        *point_x = loc.x;
+        *point_y = loc.y;
     }
 
-    static void mapXYtoPointXY( iXY map_loc, iXY *loc )
+    static void mapXYtoPointXY(iXY map_loc, iXY *loc)
     {
-        loc->x = (map_loc.x * 32) + (32 / 2);
-        loc->y = (map_loc.y * 32) + (32 / 2);
+        *loc = mapXYtoPointXY(map_loc);
     }
 
-    static void pointXYtoMapXY( size_t point_x,
-                                       size_t point_y, unsigned short *map_x, unsigned short *map_y )
+    static iXY mapXYtoPointXY(iXY map_loc)
     {
-        *map_x = (unsigned short )  point_x  / 32;
-        *map_y = (unsigned short )  point_y /  32;
+#ifdef DEBUG
+        assert(inside(map_loc));
+#endif
+        return iXY((map_loc.x * TILE_WIDTH) + (TILE_WIDTH / 2),
+                (map_loc.y * TILE_HEIGHT) + (TILE_HEIGHT / 2));
     }
 
-    static void pointXYtoMapXY( iXY point, iXY *map_loc )
+    static void pointXYtoMapXY(size_t point_x, size_t point_y,
+            unsigned short *map_x, unsigned short *map_y )
     {
-        map_loc->x = (unsigned short )  point.x  / 32;
-        map_loc->y = (unsigned short )  point.y  / 32;
+        iXY mapxy = pointXYtoMapXY(iXY(point_x, point_y));
+        *map_x = mapxy.x;
+        *map_y = mapxy.y;
+    }
+
+    static void pointXYtoMapXY(const iXY& point, iXY *map_loc)
+    {
+        *map_loc = pointXYtoMapXY(point);
+    }
+
+    static iXY pointXYtoMapXY(const iXY& point)
+    {
+#ifdef DEBUG
+        assert(point.x >= 0 && point.x >= 0 
+                && point.x < (int) (getWidth() * TILE_WIDTH)
+                && point.y < (int) (getHeight() * TILE_HEIGHT));
+#endif
+        return iXY(point.x / TILE_WIDTH, point.y / TILE_HEIGHT);
     }
 
     static size_t mapXYtoOffset(size_t map_x, size_t map_y)
     {
-        return map_y * main_map.getWidth() + map_x;
+        return mapXYtoOffset(iXY(map_x, map_y));
     }
 
-    static size_t mapXYtoOffset(iXY &map_loc)
+    static size_t mapXYtoOffset(const iXY& map_loc)
     {
         return map_loc.y * main_map.getWidth() + map_loc.x;
     }
 
-    static void markLocHack( const iXY &loc )
+    static void markLocHack(const iXY& loc)
     {
         main_map.setMapValue(loc.x, loc.y, 27);
     }
 
-    static void unmarkLocHack( const iXY &loc )
+    static void unmarkLocHack(const iXY& loc)
     {
         main_map.setMapValue(loc.x, loc.y, 28);
     }
 
-    static void normalizePointXY( size_t point_x, size_t point_y, size_t *norm_x, size_t *norm_y )
+    static void normalizePointXY(size_t point_x, size_t point_y, size_t *norm_x, size_t *norm_y)
     {
         unsigned short map_x, map_y;
 
@@ -154,9 +175,19 @@ public:
         mapXYtoPointXY( map_x, map_y, norm_x, norm_y );
     }
 
-    static WorldMap * getMap( void )
+    static WorldMap* getMap()
     {
         return( &main_map );
+    }
+
+    static bool inside(const iXY& map_loc)
+    {
+        if(map_loc.x < 0 || map_loc.y < 0
+                || map_loc.x >= (int) getWidth() 
+                || map_loc.y >= (int) getHeight())
+            return false;
+
+        return true;
     }
 
 protected:

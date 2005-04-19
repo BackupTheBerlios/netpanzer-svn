@@ -755,12 +755,15 @@ void UnitInterface::unitSyncMessage(const NetMessage *net_message)
     const UnitIniSyncMessage* sync_message 
         = (const UnitIniSyncMessage *) net_message;
 
-    UnitBase* unit = newUnit(sync_message->unit_type,
-            iXY(sync_message->getLocX(), sync_message->getLocY()),
-            sync_message->getPlayerID(), sync_message->getUnitID());
-
-    unit->in_sync_flag = false;
-    addNewUnit(unit);
+    try {
+        UnitBase* unit = newUnit(sync_message->unit_type,
+                iXY(sync_message->getLocX(), sync_message->getLocY()),
+                sync_message->getPlayerID(), sync_message->getUnitID());
+        unit->in_sync_flag = false;
+        addNewUnit(unit);
+    } catch(std::exception& e) {
+        std::cerr << "Couldn't sync unit: " << e.what() << "\n";
+    }
 }
 
 // ******************************************************************
@@ -806,12 +809,15 @@ void UnitInterface::unitCreateMessage(const NetMessage* net_message)
 
     uint16_t player_index = create_mesg->getPlayerID();
 
-    UnitBase* unit = newUnit(create_mesg->unit_type,
-            iXY(create_mesg->getLocX(), create_mesg->getLocY()),
-            player_index,
-            create_mesg->getUnitID());
-
-    addNewUnit(unit);
+    try {
+        UnitBase* unit = newUnit(create_mesg->unit_type,
+                iXY(create_mesg->getLocX(), create_mesg->getLocY()),
+                player_index,
+                create_mesg->getUnitID());
+        addNewUnit(unit);
+    } catch(std::exception& e) {
+        std::cerr << "Couldn't create new unit: " << e.what() << "\n";
+    }
 }
 
 // ******************************************************************

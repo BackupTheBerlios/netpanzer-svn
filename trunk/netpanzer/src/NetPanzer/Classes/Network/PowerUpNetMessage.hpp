@@ -74,6 +74,7 @@ class PowerUpHitMesg : public NetMessage
 {
 private:
     int32_t  ID;
+    uint16_t dummy; // XXX only here for compatibility reasons
     uint16_t player_id;
     int32_t  unit_powerup_type;
 

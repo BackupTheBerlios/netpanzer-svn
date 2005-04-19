@@ -44,9 +44,22 @@ private:
     int32_t camera_loc_y;
 
 public:
-    SystemSetPlayerView(int32_t x, int32_t y);
-    int32_t getCameraLocX() const;
-    int32_t getCameraLocY() const;
+    SystemSetPlayerView(int32_t x, int32_t y)
+    {
+        message_class = _net_message_class_system;
+        message_id = _net_message_id_system_set_view;
+        camera_loc_x = htol32(x);
+        camera_loc_y = htol32(y);
+    }
+        
+    int32_t getCameraLocX() const
+    {
+        return ltoh32(camera_loc_x);
+    }
+    int32_t getCameraLocY() const
+    {
+        return ltoh32(camera_loc_y);
+    }
 }
 __attribute__((packed));
 
@@ -54,7 +67,11 @@ __attribute__((packed));
 class SystemResetGameLogic : public NetMessage
 {
 public:
-    SystemResetGameLogic();
+    SystemResetGameLogic()
+    {
+        message_class = _net_message_class_system;
+        message_id = _net_message_id_system_reset_game_logic;
+    }
 } __attribute__((packed));
 
 enum { _view_control_flag_visible_on  = 0x01,
@@ -66,11 +83,22 @@ enum { _view_control_flag_visible_on  = 0x01,
 class SystemViewControl : public NetMessage
 {
 public:
-    unsigned char action_flags;
+    uint8_t action_flags;
     char view_name[32];
 
-    SystemViewControl();
-    void set( char *name, unsigned char flags );
+    SystemViewControl()
+    {
+        message_class = _net_message_class_system;
+        message_id = _net_message_id_system_view_control;
+        action_flags = 0;                                        
+        memset(view_name, 0, sizeof(view_name));
+    }
+
+    void set(const char *name, unsigned char flags)
+    {
+        snprintf(view_name, sizeof(view_name), "%s", name);
+        action_flags = flags;
+    }
 } __attribute__((packed));
 
 class SystemPingRequest : public NetMessage
@@ -79,14 +107,27 @@ private:
     uint16_t client_player_index;
 
 public:
-    SystemPingRequest(uint16_t playerIndex);
-    uint16_t getClientPlayerIndex() const;
+    SystemPingRequest(uint16_t playerIndex)
+    {
+        message_class = _net_message_class_system;
+        message_id = _net_message_id_system_ping_request;
+        client_player_index = htol16(playerIndex);
+    }
+    
+    uint16_t getClientPlayerIndex() const
+    {
+        return ltoh16(client_player_index);
+    }
 } __attribute__((packed));
 
 class SystemPingAcknowledge : public NetMessage
 {
 public:
-    SystemPingAcknowledge();
+    SystemPingAcknowledge()
+    {
+        message_class = _net_message_class_system;
+        message_id = _net_message_id_system_ping_ack;
+    }
 } __attribute__((packed));
 
 
@@ -100,11 +141,24 @@ class SystemConnectAlert : public NetMessage
 private:
     uint16_t player_id;
 public:
-    unsigned char alert_enum;
+    uint8_t alert_enum;
 
-    SystemConnectAlert();
-    void set(const PlayerID &player, unsigned char alert_type );
-    uint16_t getPlayerID() const;
+    SystemConnectAlert()
+    {
+        message_class = _net_message_class_system;
+        message_id = _net_message_id_system_connect_alert;
+    }
+        
+    void set(const PlayerID &player, unsigned char alert_type)
+    {
+        player_id = htol16(player.getIndex());
+        alert_enum = alert_type;
+    }                                               
+    uint16_t getPlayerID() const
+    {
+        return ltoh16(player_id);
+    }
+
 } __attribute__((packed));
 
 #ifdef MSVC

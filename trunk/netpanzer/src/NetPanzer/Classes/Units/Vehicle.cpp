@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <stdexcept>
+
 #include <string.h>
 #include "Util/Log.hpp"
 #include "Vehicle.hpp"
@@ -42,8 +44,10 @@ Vehicle::Vehicle(PlayerState* player, UnitID id, iXY initial_loc)
     smolderWait    = 0.0f;
     smolderWaitMin = 0.0f;
 
-    iXY loc;
-    MapInterface::mapXYtoPointXY( initial_loc, &loc );
+    if(!MapInterface::inside(initial_loc))
+        throw std::runtime_error("Invalid position");
+
+    iXY loc = MapInterface::mapXYtoPointXY(initial_loc);
     unit_state.location = loc;
     UnitBlackBoard::markUnitLoc( initial_loc );
     fsm_timer.changeRate( 10 );

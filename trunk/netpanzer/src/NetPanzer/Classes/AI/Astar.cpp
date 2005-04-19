@@ -350,7 +350,7 @@ bool Astar::process_succ( PathList *path, int *result_code )
     {
         LOG(("goal unreachable %dx%d",
                     goal_node.map_loc.x, goal_node.map_loc.y));
-                                                              
+
         ini_flag = true;
         cleanUp();
                                                               
