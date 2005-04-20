@@ -46,8 +46,20 @@ TCPListenSocket::TCPListenSocket(const Address& newaddr, bool blocking)
 void
 TCPListenSocket::createBind(bool blocking)
 {
-    int res = bind(sockfd, (struct sockaddr*) &addr.addr,
-            sizeof(addr.addr));
+    int val = 1;
+    int res = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
+#ifdef USE_WINSOCK
+    if(res == SOCKET_ERROR) {
+#else
+    if(res < 0) {
+#endif
+        std::stringstream msg;
+        msg << "Couldn't set SO_REUSEADDR: ";
+        printError(msg);
+        throw std::runtime_error(msg.str());
+    }
+    
+    res = bind(sockfd, (struct sockaddr*) &addr.addr, sizeof(addr.addr));
 #ifdef USE_WINSOCK
     if(res == SOCKET_ERROR) {
 #else
