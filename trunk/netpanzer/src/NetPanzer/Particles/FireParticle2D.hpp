@@ -40,6 +40,8 @@ public:
     {
         reset();
     };
+	virtual ~FireParticle2D()
+	{ }
 
     void reset();
 

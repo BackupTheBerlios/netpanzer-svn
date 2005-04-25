@@ -909,11 +909,6 @@ void VehicleSelectionView::drawUnitProfileInfo(Surface &dest, const iXY &pos, sh
     dest.bltStringShadowed(loc, "Reload Time", Color::white, Color::black);
     drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->reload_time) / float(maxReloadTime));
     loc.y += gapSpace;
-
-    dest.bltStringShadowed(loc, "Regen Time", Color::white, Color::black);
-    drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->regen_time) / float(maxRegenTime));
-    loc.y += gapSpace;
-
 }
 
 void VehicleSelectionView::drawBar(Surface &dest, const iXY &pos, int length, float percent)

@@ -45,10 +45,10 @@ public:
 
 public:
     PowerUp();
-
     PowerUp(iXY map_loc, int ID, int type);
-
     PowerUp(iXY map_loc, int type);
+	virtual ~PowerUp()
+	{ }
 
     virtual void updateState()
     { }

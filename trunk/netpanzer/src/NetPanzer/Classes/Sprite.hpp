@@ -33,9 +33,9 @@ public:
     bool       visible;
 
 public:
-
-    Sprite( );
-
+    Sprite();
+	virtual ~Sprite()
+	{ }
 
     inline void setWorldPos(const iXY &worldPos )
     {

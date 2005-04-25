@@ -182,9 +182,7 @@ This example shows how you can play locally against 2 bots:
 netpanzer -d &
 netpanzer -b localhost &
 netpanzer -b localhost &
-netpanzer
-
-... now press multiplayer and join to server address localhost ...
+netpanzer -c localhost
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

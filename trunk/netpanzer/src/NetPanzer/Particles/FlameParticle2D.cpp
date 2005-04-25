@@ -25,8 +25,6 @@ PackedSurfaceList FlameParticle2D::staticPackedExplosion1;
 
 const int explosionFPS = 18;
 
-const char explosionPath[] = "pics/particles/explosion/";
-
 // FlameParticle2D
 //---------------------------------------------------------------------------
 FlameParticle2D::FlameParticle2D(	const fXYZ  &pos,

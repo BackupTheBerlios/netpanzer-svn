@@ -23,6 +23,9 @@ class Component;
 class StateChangedCallback
 {
 public:
+	virtual ~StateChangedCallback()
+	{ }
+
     virtual void stateChanged(Component* source) = 0;
 };
 

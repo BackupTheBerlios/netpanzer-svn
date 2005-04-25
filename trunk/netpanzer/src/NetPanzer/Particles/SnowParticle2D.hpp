@@ -39,6 +39,8 @@ private:
 
 public:
     SnowParticle2D();
+	virtual ~SnowParticle2D()
+	{ }
 
     void init(fXYZ pos, unsigned size);
     void reset();

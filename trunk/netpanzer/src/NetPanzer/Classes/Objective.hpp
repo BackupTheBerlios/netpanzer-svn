@@ -72,6 +72,8 @@ public:
     ObjectiveState objective_state;
 
     Objective(uint16_t ID, iXY location, BoundBox area );
+	virtual ~Objective()
+	{ }
 
     void getSyncData( SyncObjective &objective_sync_mesg );
 
