@@ -10,6 +10,10 @@ Next release:
 -create a new netpanzer-music package which adds pronobozos music to the game
 -shorten time netpanzer is trying to access the masterserver
 -compile SDL_mixer on windows with mp3 and ogg support
+-setting allowallies=no in config has no effect
+-make sure flag resolution works correctly (2 players with same flags). Someone
+reported that after someone else joined he could only build panzers with
+different flags, while his old tanks stayed the same.
 
 *** Miscelaneous
  * I had an offer from http://forgottenhope.bf1942files.com/main.html people to
