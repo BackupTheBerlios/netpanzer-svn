@@ -4,54 +4,28 @@
     <subsection title="Linux">
       <p>Some linux distributions already come with NetPanzer packages by
       default. You might just be able to install NetPanzer with your
-      distributions software setup tool. This is true for at least the
-      following distributions</p>
-    <ul>
-	<li><a href="http://packages.debian.org/netpanzer">Debian</a>
-		- packages are maintained by Bartosz Fenski aka fEnIo 
-		<a href="mailto:fenio@o2.pl">fenio@o2.pl</a></li>	  
-	<li>Gentoo</li>
-	<li>Mandrake</li>	  
-	<li>PLD Linux Distribution</li>
+      distributions software setup tool. All other users should try the
+      autopackage or building from source.</p>
+      <ul>
+        <li>Debian (included)</li>
+	<li>Gentoo (included)</li>
+	<li>Mandrake (included)</li>
+	<li>PLD Linux Distribution (included)</li>
+        <li>x86 Linux Installer (made with <a
+                href="http://www.autopackage.org">autopackage</a>): <a
+        href="http://download.berlios.de/netpanzer/netpanzer-0.8.x86.package">
+        netpanzer-0.8.x86.package</a> (11MB)</li>
       </ul>
-	  <subsubsection title="RPM">
-        <p>There are no packages for 0.8 yet, plase contribute!</p>
-        <p><b>Old Release</b>:
-	rpm files for Suse and Fedora distributions can be found at the
-	<a href="http://developer.berlios.de/project/showfiles.php?group_id=1250">
-		NetPanzer download section</a>.</p>
-	<p>SuSE packages provided by Sander Erkamp aka Storm 
-	<a href="mailto:panux@2itb.com">panux@2itb.com</a>.</p>
-	<p>Fedora packages provided by Daniel Pereda aka pegardan
-	<a href="maito:dannyedu@adinet.com.uy">dannyedu@adinet.com.uy</a>.</p>
-	 </subsubsection>
-	<subsubsection title="Installer &amp; Static Binary">
-        <p>A static binary for 0.8 is not yet available</p>
-        <p><b>Old Release:</b><br/>
-	<a href="http://download.berlios.de/netpanzer/netpanzer-0.1.5-linux-i386-installer.run">
-	Loki installer - netpanzer-0.1.5-linux-i386-installer.run (13.44MB)
-	</a></p>
-	<p><a href="http://download.berlios.de/netpanzer/netpanzer-0.1.5-binary-linux-i386.tar.bz2">
-	Linux static binary - netpanzer-0.1.5-binary-linux-i386.tar.bz2 (12.23MB)
-	</a></p>
-	<p>
-	Above files provided by Matthias Braun 
-	<a href="mailto:matze@braunis.de">matze@braunis.de</a> and Bartosz
-	Fenski aka fEnIo <a href="fenio@o2.pl">fenio@o2.pl</a>.</p>
-    </subsubsection>
     </subsection>
-	<subsection title="Windows">
-	<p><a href="http://download.berlios.de/netpanzer/netpanzer-0.8-windows-installer.exe">
-	NetPanzer Windows installer - netpanzer-0.8-windows-installer.exe
-(11MB)
-	</a></p>
-	<p>Windows version provided by Matthias Braun 
-	<a href="mailto:matze@braunis.de">matze@braunis.de</a> (binary) 
-	along with Bartosz Fenski aka fEnIo 
-	<a href="fenio@o2.pl">fenio@o2.pl</a> (installer).</p>
+    <subsection title="Windows">
+    	<p>NetPanzer Windows Intaller: <a
+        href="http://download.berlios.de/netpanzer/netpanzer-0.8-windows-installer.exe">netpanzer-0.8-windows-installer.exe</a>
+        (11MB)</p>
     </subsection>
     <subsection title="MacOSX">
-      <p>No packages yet. Someone wants to submit some?</p>
+      <p>NetPanzer MacOSX package: <a
+      href="http://download.berlios.de/netpanzer/netpanzer-0.8.dmg">netpanzer-0.8.dmg</a>
+      (12MB)</p>
     </subsection>
     <subsection title="Source Code">
       <p>
@@ -67,21 +41,22 @@
         NetPanzer Source - netpanzer-0.8.tar.bz2 (350KB)</a></li>
         <li><a
         href="http://download.berlios.de/netpanzer/netpanzer-data-0.8.tar.bz2">
-        NetPanzer Gamedata - netpanzer-data-0.8.0.tar.bz2 (9.32MB)</a></li>
+        NetPanzer Gamedata - netpanzer-data-0.2.0.tar.bz2 (9.32MB)</a></li>
       </ul>
 
-      <p>
-        Older releases and other files are available via the <a
-        href="http://developer.berlios.de/project/showfiles.php?group_id=1250">Berlios's Filelist</a>.
-      </p>
-
       <subsubsection title="CVS">
-        <p>
+        <p>                                                                       
           Source Code is also available via CVS. Look at the
           <a href="http://developer.berlios.de/cvs/?group_id=1250">netpanzer
           cvs</a> page for details.
         </p>
       </subsubsection>
+    </subsection>
+    <subsection title="Old Releases">
+      <p>
+        Older releases and other files are available via the <a
+        href="http://developer.berlios.de/project/showfiles.php?group_id=1250">Berlios's Filelist</a>.
+      </p>
     </subsection>
   </section>
   <p />
