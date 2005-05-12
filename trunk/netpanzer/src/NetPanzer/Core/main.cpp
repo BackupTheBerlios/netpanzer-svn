@@ -192,7 +192,7 @@ BaseGameManager *initialise(int argc, char** argv)
     try {
       std::ostringstream dir;
       dir << PHYSFS_getBaseDir() << "/NetPanzer.app/Contents/Resources/";
-      filesystem::addToSearchPath(temp.str().c_str());
+      filesystem::addToSearchPath(dir.str().c_str());
     } catch(...)
     { }
 #endif
