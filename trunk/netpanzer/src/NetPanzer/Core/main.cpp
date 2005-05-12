@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #endif
 
 #include <fstream>
+#include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -182,6 +183,16 @@ BaseGameManager *initialise(int argc, char** argv)
 #ifdef NP_DATADIR
     try {
 	filesystem::addToSearchPath(NP_DATADIR);
+    } catch(...)
+    { }
+#endif
+
+#ifdef MACOSX_FRAMEWORKS
+    // Mac OS X puts the data files into NetPanzer.app/Contents/Resources
+    try {
+      std::ostringstream dir;
+      dir << PHYSFS_getBaseDir() << "/NetPanzer.app/Contents/Resources/";
+      filesystem::addToSearchPath(temp.str());
     } catch(...)
     { }
 #endif
