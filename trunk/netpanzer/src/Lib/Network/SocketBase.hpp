@@ -39,11 +39,7 @@ protected:
     void close();
     void printError(std::ostream& out);
 
-#ifdef USE_WINSOCK
     SOCKET sockfd;
-#else    
-    int sockfd;
-#endif
 };
 
 }

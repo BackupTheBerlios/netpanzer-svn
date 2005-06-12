@@ -51,7 +51,7 @@ private:
     friend class SocketStreamBuf;
 
     TCPSocket();
-    TCPSocket(int fd, const Address& addr);
+    TCPSocket(SOCKET fd, const Address& addr);
 
     void init(const Address& bindaddr, bool blocking);
 

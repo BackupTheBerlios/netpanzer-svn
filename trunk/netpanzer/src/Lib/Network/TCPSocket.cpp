@@ -129,7 +129,7 @@ TCPSocket::TCPSocket()
 {
 }
 
-TCPSocket::TCPSocket(int fd, const Address& newaddr)
+TCPSocket::TCPSocket(SOCKET fd, const Address& newaddr)
     : addr(newaddr)
 {
     sockfd = fd;

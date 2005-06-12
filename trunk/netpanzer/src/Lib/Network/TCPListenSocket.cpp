@@ -46,11 +46,13 @@ TCPListenSocket::TCPListenSocket(const Address& newaddr, bool blocking)
 void
 TCPListenSocket::createBind(bool blocking)
 {
-    int val = 1;
-    int res = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
 #ifdef USE_WINSOCK
+    char val = 1;
+    int res = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
     if(res == SOCKET_ERROR) {
 #else
+    int val = 1;
+    int res = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
     if(res < 0) {
 #endif
         std::stringstream msg;
@@ -94,7 +96,7 @@ TCPListenSocket::accept()
 {
     Address addr;
     socklen_t socklen = sizeof(addr.addr);
-    int clientsockfd 
+    SOCKET clientsockfd 
         = ::accept(sockfd, (struct sockaddr*) &addr.addr, &socklen);
 #ifdef USE_WINSOCK
     if(clientsockfd == INVALID_SOCKET) {
