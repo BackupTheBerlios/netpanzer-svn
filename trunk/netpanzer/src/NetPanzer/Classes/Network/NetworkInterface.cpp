@@ -17,20 +17,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <assert.h>
 #include "Util/Log.hpp"
 #include "NetworkInterface.hpp"
 
-void EnqueueIncomingPacket(void *message, unsigned long message_size,
-                           SocketClient::ID toID, SocketClient::ID fromID )
+void EnqueueIncomingPacket(const void *message, uint16_t message_size,
+                           NetClientID toID, NetClientID fromID )
 {
     static NetPacket TEMP_PACKET;
 
     TEMP_PACKET.toID = toID;
     TEMP_PACKET.fromID = fromID;
-    if( message_size > _MAX_NET_PACKET_SIZE ) {
-        LOG( ("ERROR: NetPacket Overflow") );
-        return;
-    }
+    assert(message_size <= _MAX_NET_PACKET_SIZE);
 
     memcpy(TEMP_PACKET.data, message, message_size);
     NetworkInterface::receive_queue.enqueue( TEMP_PACKET );

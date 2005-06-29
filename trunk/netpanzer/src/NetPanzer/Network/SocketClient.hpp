@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __SOCKETCLIENT_HPP__
 
 #include <stdint.h>
+#include "NetPacket.hpp"
 
 class ServerSocket;
 
@@ -36,19 +37,14 @@ public:
 
     network::TCPSocket* socket;
     
-    char tempbuffer[512];
-
-    bool headerincomplete;
-    bool messageincomplete;
-    bool udpenabled;
-    short tempoffset;
+    char tempbuffer[_MAX_NET_PACKET_SIZE];
+    uint16_t tempoffset;
 
     /// this variable is set to true, when the Client should be removed from
     /// client list in the next iteratrion
     bool wantstodie;
 
-    typedef uint32_t ID;
-    ID id;
+    NetClientID id;
 
     ServerSocket* server;
 };

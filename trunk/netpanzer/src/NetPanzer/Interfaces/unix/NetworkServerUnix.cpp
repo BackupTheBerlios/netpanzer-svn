@@ -39,13 +39,13 @@ NetworkServerUnix::~NetworkServerUnix()
 }
 
 std::string
-NetworkServerUnix::getIP(SocketClient::ID id) const
+NetworkServerUnix::getIP(NetClientID id) const
 {
     return serversocket->getClientIP(id);
 }
 
 void
-NetworkServerUnix::shutdownClientTransport(SocketClient::ID client_id)
+NetworkServerUnix::shutdownClientTransport(NetClientID client_id)
 {
     assert(serversocket != 0);
     serversocket->removeClient(client_id);
@@ -62,7 +62,7 @@ NetworkServerUnix::hostSession(bool loopback)
     serversocket = new ServerSocket(gameconfig->bindaddress,
             gameconfig->serverport);
     if(loopback) {
-        SocketClient::ID id = serversocket->addLoopbackClient();
+        NetClientID id = serversocket->addLoopbackClient();
         assert(id == 0);
     }
 }
@@ -75,7 +75,7 @@ NetworkServerUnix::closeSession()
 }
 
 void
-NetworkServerUnix::sendMessage(SocketClient::ID network_id, NetMessage* message,
+NetworkServerUnix::sendMessage(NetClientID network_id, NetMessage* message,
         size_t size)
 {
     if(serversocket == 0)

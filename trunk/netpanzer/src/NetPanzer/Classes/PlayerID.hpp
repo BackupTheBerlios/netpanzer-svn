@@ -28,7 +28,7 @@ public:
             : index_id(0xFFFF), networkid(0xFFFFFFFF)
     { }
 
-    PlayerID(uint16_t index, SocketClient::ID newid)
+    PlayerID(uint16_t index, NetClientID newid)
             : index_id(index), networkid(newid)
     { }
 
@@ -52,12 +52,12 @@ public:
         return index_id;
     }
 
-    void setNetworkID(SocketClient::ID newid)
+    void setNetworkID(NetClientID newid)
     {
         networkid = newid;
     }
 
-    SocketClient::ID getNetworkID() const
+    NetClientID getNetworkID() const
     {
         return networkid;
     }
@@ -72,7 +72,7 @@ public:
 
 private:
     uint16_t index_id;
-    SocketClient::ID networkid;
+    NetClientID networkid;
 };
 
 #endif // ** _PLAYERID_HPP

@@ -106,7 +106,7 @@ void NetworkServer::processNetPacket(const NetPacket* packet)
 }
 
 void
-NetworkServer::dropClient(SocketClient::ID network_id)
+NetworkServer::dropClient(NetClientID network_id)
 {
     for(ClientList::iterator i = client_list.begin(); i != client_list.end();
             ++i) {

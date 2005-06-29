@@ -1,5 +1,5 @@
 //
-// $Id: command_line.hpp,v 1.4 2004/01/17 12:39:57 matzebraun Exp $
+// $Id$
 //
 //  optionmm::command_line
 //  Copyright (C) 2002 Christian Holm Christensen <cholm@nbi.dk>

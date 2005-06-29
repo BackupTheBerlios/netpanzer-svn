@@ -42,7 +42,7 @@ SocketClient* ClientList::add(ServerSocket* server, network::TCPSocket* socket)
     return client;
 }
 
-SocketClient* ClientList::getClientFromID(SocketClient::ID id)
+SocketClient* ClientList::getClientFromID(NetClientID id)
 {
     for(ClientIterator i = begin(); i != end(); i++) {
         SocketClient* client = *i;

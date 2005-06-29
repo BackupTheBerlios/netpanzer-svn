@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <string.h>
+#include <assert.h>
 #include <sstream>
 #include "Util/Log.hpp"
 #include "ServerSocket.hpp"
@@ -25,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ClientServerNetMessage.hpp"
 #include "NetworkInterface.hpp"
 #include "NetPacket.hpp"
+#include "NetMessage.hpp"
 #include "NetworkGlobals.hpp"
 #include "GameConfig.hpp"
 #include "PlayerInterface.hpp"
@@ -55,7 +57,7 @@ ServerSocket::~ServerSocket()
 }
 
 std::string
-ServerSocket::getClientIP(SocketClient::ID clientid) const
+ServerSocket::getClientIP(NetClientID clientid) const
 {
     SocketClient* client = clientlist->getClientFromID(clientid);
     if(!client)
@@ -102,7 +104,7 @@ ServerSocket::acceptNewClients()
     }
 }
 
-SocketClient::ID
+NetClientID
 ServerSocket::addLoopbackClient()
 {
     SocketClient* client = clientlist->add(this, 0);
@@ -153,171 +155,77 @@ ServerSocket::readTCP()
 void
 ServerSocket::readClientTCP(SocketClient* client)
 {
-    static char recvbuffer[10240];
+    static char recvbuffer[4096];
 
-    int recvsize;
+    int bytesleft;
     try {
-        recvsize = client->socket->recv(recvbuffer, sizeof(recvbuffer));
+        bytesleft = client->socket->recv(recvbuffer, sizeof(recvbuffer));
     } catch(std::exception& e) {
-        LOGGER.warning("Connection lost of Client %u: %s.",
-                client->id, e.what());
+        LOGGER.warning("Connection lost for Client %u(%s): %s.",
+                client->id, getClientIP(client->id).c_str(), e.what());
         client->wantstodie = true;
         return;
     }
 
-    int16_t size;
-    static short missingbytes = 0;
-    static short recvoffset = 0;
-    char* tempbuffer = client->tempbuffer;
+    const char* bufptr = recvbuffer;
+    while(bytesleft > 0) {
+        if(bytesleft == 1 && client->tempoffset == 0) {
+            memcpy(client->tempbuffer, bufptr, 1);
+            client->tempoffset = 1;
+            return;
+        }
+        uint16_t size;
+        if(client->tempoffset > 0) {
+            if(client->tempoffset == 1) {
+                memcpy(client->tempbuffer + client->tempoffset, bufptr, 1);
+            }
+            size = htol16( *((uint16_t*) client->tempbuffer) );
+        } else {
+            assert(bytesleft >= 2);
+            size = htol16( *((uint16_t*) bufptr) );
+        }
 
-    while(recvsize > 0) {
-        if (client->headerincomplete) {
-            memcpy(tempbuffer + client->tempoffset, recvbuffer, 1);
-            //Need to increase TempOffset by one by if you
-            //are going to copy one byte to the TempBuffer
-            client->tempoffset++;
+        if(size < sizeof(NetMessage) || size > _MAX_NET_PACKET_SIZE) {
+            LOGGER.warning(
+                "OnReadStreamServer: Invalid Packet Size %d from client %u"
+                "(%s) Dropping client.", size, client->id,
+                getClientIP(client->id).c_str());
+            client->wantstodie = true;
+            return;
+        }
 
-            size = htol16(*((int16_t*) tempbuffer));
+        if(client->tempoffset > 0) {
+            int tempmissing = size - client->tempoffset;
+            assert(tempmissing > 0);
+            if(bytesleft >= tempmissing) {
+                memcpy(client->tempbuffer + client->tempoffset,
+                       bufptr, tempmissing);
 
-            if ( (size < 0) || (size > _MAX_NET_PACKET_SIZE) ) {
-                LOG( ("OnReadStreamServer : Invalid Packet Size %d", size) );
-                recvoffset = 0;
-                client->headerincomplete = false;
+                EnqueueIncomingPacket(client->tempbuffer, size, 0, client->id);
+
                 client->tempoffset = 0;
+                bytesleft -= tempmissing;
+                bufptr += tempmissing;
+                continue;
+            } else {
+                memcpy(client->tempbuffer + client->tempoffset,
+                       bufptr, bytesleft);
+                client->tempoffset += bytesleft;
                 return;
             }
-
-            if ((recvsize + 1) >= size) {
-                //memcpy(TempBuffer, RecvBuffer + 1, (Size - 2));
-                //memcpy call above overwrites first 2 bytes of
-                //TempBuffer which you just copied in the block above
-                //this causes a bad packet to be sent to EnqueueIncomingPacket
-                memcpy(tempbuffer + client->tempoffset,
-                       recvbuffer + 1, (size - 2));
-
-                EnqueueIncomingPacket(tempbuffer,
-                                      (unsigned long) size, 0, client->id);
-
-                recvoffset += (size - 1);
-                recvsize -= (size - 1);
-                client->headerincomplete = false;
-                client->tempoffset = 0;
-            } else if ((recvsize + 1) < size) {
-                //memcpy(TempBuffer, RecvBuffer, (iBytesReceived - 1));
-                //same 2 byte overwrite problem with this memcpy
-                //as with the one above, also RecvBuffer need to be offset
-                //by 1 because you just copied the first byte of the incomplete
-                //header above into the tempbuffer.
-                memcpy(tempbuffer + client->tempoffset, recvbuffer + 1,
-                       (recvsize - 1));
-
-                //We also need to move the TempOffset because we have a
-                //incomplete message and we don't know how many other segements
-                //it may be received as.
-                client->tempoffset += (recvsize - 1);
-
-                client->messageincomplete = true;
-
-                //MissingBytes = Size - (iBytesReceived - 1);
-                //The ammount of bytes we are missing is
-                //(iBytesReceived + 1) because we already have the
-                //first byte in the TempBuffer at the beginning of
-                //bHeaderIncomplete code block
-                missingbytes = size - (recvsize + 1);
-
-                recvsize = 0;
+        } else {
+            if(bytesleft >= size) {
+                EnqueueIncomingPacket(bufptr, size, 0, client->id);
+                bytesleft -= size;
+                bufptr += size;
+                continue;
+            } else {
+                memcpy(client->tempbuffer, bufptr, bytesleft);
+                client->tempoffset = bytesleft;
+                return;
             }
-        } else if (client->messageincomplete) {
-            if (recvsize >= missingbytes) {
-                memcpy(tempbuffer + client->tempoffset,
-                       recvbuffer, missingbytes);
-
-                size = htol16(*((int16_t*) tempbuffer));
-
-                if ( (size < 0) || (size > _MAX_NET_PACKET_SIZE) ) {
-                    LOG( ("OnReadStreamServer : Invalid Packet Size %d", size) );
-                    recvoffset = 0;
-                    client->messageincomplete = false;
-                    client->tempoffset = 0;
-                    return;
-                }
-
-                EnqueueIncomingPacket(tempbuffer,
-                                      (unsigned long) size, 0, client->id);
-
-                client->tempoffset = 0;
-                client->messageincomplete = false;
-                recvoffset += missingbytes;
-                recvsize -= missingbytes;
-                missingbytes = 0;
-            } else if (recvsize < missingbytes) {
-                memcpy(tempbuffer + client->tempoffset,
-                       recvbuffer, recvsize);
-                client->tempoffset += recvsize;
-
-                //Since we just copied a portion of the MissingBytes into
-                //the TempBuffer we need decrease the ammount of MissingBytes by
-                //the ammount of bytes received. Not decreasing the MissingBytes
-                //causes the parser to wait until more than the complete packet
-                //has been received before enqueueing the packet.
-                missingbytes -= recvsize;
-
-                recvsize = 0;
-            }
-        } else //MAIN MESSAGE PARSING
-        {
-            if (recvsize == 1) //HEADER INCOMPLETE
-            {
-                //copy that one byte to tempbuffer--
-                memcpy(tempbuffer, recvbuffer + recvoffset, 1);
-                client->tempoffset++;
-                recvsize = 0;
-                client->headerincomplete = true;
-            } else if (recvsize >= 2) {
-                size = htol16(*((int16_t*) (recvbuffer + recvoffset)));
-
-                if( (size < 0) || (size > _MAX_NET_PACKET_SIZE) ) {
-                    LOG( ("OnReadStreamServer : Invalid Packet Size %d", size) );
-                    recvoffset = 0;
-                    client->tempoffset = 0;
-                    return;
-                }
-
-                if (recvsize >= size) //MESSAGE OKAY
-                {
-                    EnqueueIncomingPacket(recvbuffer + recvoffset,
-                                          (unsigned long) size,
-                                          0, client->id);
-
-                    //take care of parsing variables--
-                    recvoffset += size;
-                    recvsize -= size;
-
-                    if (recvsize < 0)
-                    {
-                        //major problem here--
-                        throw Exception("got bad packet.");
-                    }//if iBytesReceived < 0
-                }//if iBytesReceived >= Size
-                else if (recvsize < size) //MESSAGE INCOMPLETE
-                {
-                    //TempOffset should be zero at this point
-                    //because we are about to start parsing a incomplete message.
-                    client->tempoffset = 0;
-
-                    //copy bytes to tempbuffer
-                    memcpy(tempbuffer, recvbuffer + recvoffset, recvsize);
-                    client->tempoffset += recvsize;
-                    client->messageincomplete = true;
-                    missingbytes = size - recvsize;
-                    recvsize = 0;
-                }
-            }//end if iBytesReceived >= 2
-        }//end MAIN MESSAGE PARSING else
-
-    }//end while
-
-    recvoffset = 0;
+        }
+    }
 }
 
 /** this function interfaces the network AI code to winsock
@@ -330,7 +238,7 @@ ServerSocket::readClientTCP(SocketClient* client)
  * it handles both TCP and UDP sends--
  */
 void
-ServerSocket::sendMessage(SocketClient::ID toclient, const void* data,
+ServerSocket::sendMessage(NetClientID toclient, const void* data,
         size_t datasize)
 {
     SocketClient* client = clientlist->getClientFromID(toclient);
@@ -352,7 +260,7 @@ ServerSocket::closeConnection(SocketClient* client)
 }
 
 void
-ServerSocket::removeClient(SocketClient::ID clientid)
+ServerSocket::removeClient(NetClientID clientid)
 {
     // TODO notify client about disconnect...
     SocketClient* client = clientlist->getClientFromID(clientid);

@@ -226,7 +226,7 @@ void PlayerState::setObjectivesHeld( short objectives )
     objectives_held = objectives;
 }
 
-void PlayerState::setID( unsigned short index, SocketClient::ID networkid  )
+void PlayerState::setID( unsigned short index, NetClientID networkid  )
 {
     ID.setIndex(index);
     ID.setNetworkID(networkid);
@@ -237,7 +237,7 @@ void PlayerState::setID( unsigned short index )
     ID.setIndex( index );
 }
 
-void PlayerState::setID( SocketClient::ID networkid )
+void PlayerState::setID( NetClientID networkid )
 {
     ID.setNetworkID(networkid);
 }

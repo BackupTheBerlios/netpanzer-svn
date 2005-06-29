@@ -35,16 +35,16 @@ public:
     virtual void closeSession();
 
     virtual void sendMessage(NetMessage *message, size_t size);
-    virtual void sendMessage(SocketClient::ID network_id,
+    virtual void sendMessage(NetClientID network_id,
             NetMessage *message, size_t size);
 
     virtual bool getPacket(NetPacket* message);
 
-    virtual void shutdownClientTransport(SocketClient::ID network_id);
+    virtual void shutdownClientTransport(NetClientID network_id);
 
     virtual void checkIncoming();
 
-    std::string getIP(SocketClient::ID network_id) const;
+    std::string getIP(NetClientID network_id) const;
 
 private:
     ServerSocket* serversocket;

@@ -21,11 +21,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdint.h>
 #include <string.h>
 
-#include "Network/SocketClient.hpp"
 #include "Util/Endian.hpp"
 #include "NetMessage.hpp"
 
-#define _MAX_NET_PACKET_SIZE 512
+static const uint16_t _MAX_NET_PACKET_SIZE=512;
+typedef uint32_t NetClientID;
 
 #ifdef MSVC
 #pragma pack(1)
@@ -33,8 +33,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class NetPacket
 {
 public:
-    SocketClient::ID toID;
-    SocketClient::ID fromID;
+    NetClientID toID;
+    NetClientID fromID;
 
     uint8_t  data[ _MAX_NET_PACKET_SIZE ];
 
@@ -45,7 +45,7 @@ public:
 
     size_t getSize() const
     {
-        return sizeof(SocketClient::ID) * 2 + getNetMessage()->getSize();
+        return sizeof(NetClientID) * 2 + getNetMessage()->getSize();
     }
 }
 __attribute__((packed));

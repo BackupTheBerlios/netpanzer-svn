@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 
+#include "NetPacket.hpp"
 #include "ProxyServer.hpp"
 #include "Network/TCPSocket.hpp"
 
@@ -37,6 +38,9 @@ private:
     void readTCP();
 
     network::TCPSocket* socket;
+
+    char tempbuffer[_MAX_NET_PACKET_SIZE];
+    uint16_t tempoffset;
 };
 
 #endif

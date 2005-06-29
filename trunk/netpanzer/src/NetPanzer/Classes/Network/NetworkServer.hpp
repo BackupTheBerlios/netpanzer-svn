@@ -69,7 +69,7 @@ public:
     virtual void closeSession() = 0;
 
     virtual void sendMessage(NetMessage *message, size_t size) = 0;
-    virtual void sendMessage(SocketClient::ID network_id, NetMessage* message,
+    virtual void sendMessage(NetClientID network_id, NetMessage* message,
             size_t size) = 0;
     void sendMessage(const PlayerID& player_id, NetMessage *message,
             size_t size) {
@@ -78,8 +78,8 @@ public:
 
     virtual bool getPacket(NetPacket* packet) = 0;
 
-    virtual void dropClient(SocketClient::ID client_id);
-    virtual void shutdownClientTransport(SocketClient::ID network_id) = 0;
+    virtual void dropClient(NetClientID client_id);
+    virtual void shutdownClientTransport(NetClientID network_id) = 0;
 
     virtual void checkIncoming() = 0;
 };

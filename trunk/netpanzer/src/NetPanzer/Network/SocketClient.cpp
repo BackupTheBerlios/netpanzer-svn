@@ -23,9 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SocketClient.hpp"
 
 SocketClient::SocketClient(ServerSocket* newserver)
-        : socket(0), headerincomplete(false),
-        messageincomplete(0), udpenabled(false), tempoffset(0),
-        wantstodie(false), id(0), server(newserver)
+        : socket(0), tempoffset(0), wantstodie(false), id(0), server(newserver)
 {
 }
 

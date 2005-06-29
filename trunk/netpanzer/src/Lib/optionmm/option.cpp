@@ -1,5 +1,5 @@
 //
-// $Id: option.cpp,v 1.4 2004/10/26 20:44:09 matzebraun Exp $
+// $Id$
 //
 //  option::option
 //  Copyright (C) 2002 Christian Holm Christensen <cholm@nbi.dk>

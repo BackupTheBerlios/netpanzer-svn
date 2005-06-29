@@ -107,15 +107,15 @@ public:
     void decObjectivesHeld();
     short getObjectivesHeld() const;
     void setObjectivesHeld( short objectives );
-    void setID( unsigned short index, SocketClient::ID networkid  );
+    void setID( unsigned short index, NetClientID networkid  );
     void setID( unsigned short index );
-    void setID( SocketClient::ID networkid );
+    void setID( NetClientID networkid );
     PlayerID getPlayerID() const;
-    SocketClient::ID getNetworkID() const
+    NetClientID getNetworkID() const
     {
         return ID.getNetworkID();
     }
-    void setNetworkID(SocketClient::ID id)
+    void setNetworkID(NetClientID id)
     {
         ID.setNetworkID(id);
     }

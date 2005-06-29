@@ -30,12 +30,12 @@ public:
     ~ServerSocket();
 
     void read();
-    void sendMessage(SocketClient::ID toclient, const void* data,
+    void sendMessage(NetClientID toclient, const void* data,
             size_t datasize);
-    void removeClient(SocketClient::ID clientid);
-    SocketClient::ID addLoopbackClient();
+    void removeClient(NetClientID clientid);
+    NetClientID addLoopbackClient();
 
-    std::string getClientIP(SocketClient::ID) const;
+    std::string getClientIP(NetClientID) const;
 
 protected:
     friend class SocketClient;

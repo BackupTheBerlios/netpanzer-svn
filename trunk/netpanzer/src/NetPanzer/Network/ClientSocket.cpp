@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Network/Address.hpp"
 
 ClientSocket::ClientSocket(const std::string& whole_servername)
-    : socket(0)
+    : socket(0), tempoffset(0)
 {
     try {
         proxy.setProxy(gameconfig->proxyserver,
@@ -69,159 +69,70 @@ ClientSocket::~ClientSocket()
 
 void ClientSocket::read()
 {
-    // XXX OHOH this static stuff is bad, as we can only have 1 ClientSocket
-    // instance then (and don't try to use this in a multithreaded app...)
-    static char RecvBuffer[10240];
-    size_t RecvOffset = 0;
-    static char TempBuffer[512];
-    static size_t TempOffset = 0;
-    static short MissingBytes = 0;
-    static bool bMessageIncomplete = false;
-    static bool bHeaderIncomplete = false;
+    static char RecvBuffer[4096];
 
-    int iBytesReceived;
+    int bytesleft;
     try {
-        iBytesReceived = socket->recv(RecvBuffer, sizeof(RecvBuffer));
-        if(iBytesReceived == 0)
+        bytesleft = socket->recv(RecvBuffer, sizeof(RecvBuffer));
+        if(bytesleft == 0)
             return;
     } catch(std::exception& e) {
         LOG( ("Connection lost to server: %s", e.what()) );
         return;
     }
 
-    int16_t Size;
-    //parse the received data for netpanzer messages--
-    while (iBytesReceived) {
-        if (bHeaderIncomplete) {
-            memcpy(TempBuffer + TempOffset, RecvBuffer, 1);
-            //Need to increase TempOffset by one by if you
-            //are going to copy one byte to the TempBuffer
-            TempOffset++;
+    const char* bufptr = RecvBuffer;    
+    while (bytesleft > 0) {
+        if(bytesleft == 1 && tempoffset == 0) {
+            memcpy(tempbuffer, bufptr, 1);
+            tempoffset = 1;
+            return;
+        }
 
-            Size = htol16(*((int16_t*) TempBuffer));
+        uint16_t size;
+        if(tempoffset > 0) {
+            if(tempoffset == 1) {
+                memcpy(tempbuffer + tempoffset, bufptr, 1);
+            }
+            size = htol16( *((uint16_t*) tempbuffer) );
+        } else {
+            assert(bytesleft >= 2);
+            size = htol16( *((uint16_t*) bufptr) );
+        }
 
-            if ((iBytesReceived + 1) >= Size) {
-                //memcpy(TempBuffer, RecvBuffer + 1, (Size - 2));
-                //memcpy call above overwrites first 2 bytes of
-                //TempBuffer which you just copied in the block above
-                //this causes a bad packet to be sent to EnqueueIncomingPacket
-                memcpy(TempBuffer + TempOffset, RecvBuffer + 1, (Size - 2));
+        if(size < sizeof(NetMessage) || size > _MAX_NET_PACKET_SIZE) {
+            LOGGER.warning("Read: Invalid packet size (%u) from server", size);
+            return;
+        }
 
-                EnqueueIncomingPacket( TempBuffer,
-                                       (unsigned long) Size, 1, 0);
-
-                RecvOffset += (Size - 1);
-                iBytesReceived -= (Size - 1);
-                bHeaderIncomplete = false;
-                TempOffset = 0;
-            } else
-                if ((iBytesReceived + 1) < Size) {
-                    //memcpy(TempBuffer, RecvBuffer, (iBytesReceived - 1));
-                    //same 2 byte overwrite problem with this memcpy
-                    //as with the one above, also RecvBuffer need to be offset
-                    //by 1 because you just copied the first byte of the incomplete
-                    //header above into the tempbuffer.
-                    memcpy(TempBuffer + TempOffset, RecvBuffer + 1, (iBytesReceived - 1));
-
-                    //We also need to move the TempOffset because we have a
-                    //incomplete message and we don't know how many other segements
-                    //it may be received as.
-                    TempOffset += (iBytesReceived - 1);
-
-                    bMessageIncomplete = true;
-
-                    //MissingBytes = Size - (iBytesReceived - 1);
-                    //The ammount of bytes we are missing is
-                    //(iBytesReceived + 1) because we already have the
-                    //first byte in the TempBuffer at the beginning of
-                    //bHeaderIncomplete code block
-                    MissingBytes = Size - (iBytesReceived + 1);
-
-                    iBytesReceived = 0;
-                }
-        }//end if(bHeaderIncomplete)
-        else
-            if (bMessageIncomplete) {
-                if (iBytesReceived >= MissingBytes) {
-                    memcpy(TempBuffer + TempOffset, RecvBuffer, MissingBytes);
-                    memcpy(&Size, TempBuffer, 2);
-                    Size = ltoh16(Size);
-
-                    EnqueueIncomingPacket( TempBuffer,
-                                           (unsigned long) Size, 1, 0);
-
-                    TempOffset = 0;
-                    RecvOffset += MissingBytes;
-                    iBytesReceived -= MissingBytes;
-                    MissingBytes = 0;
-                    bMessageIncomplete = false;
-                } else
-                    if (iBytesReceived < MissingBytes) {
-                        memcpy(TempBuffer + TempOffset, RecvBuffer, iBytesReceived);
-                        TempOffset += iBytesReceived;
-
-                        //Since we just copied a portion of the MissingBytes into
-                        //the TempBuffer we need decrease the ammount of MissingBytes by
-                        //the ammount of bytes received. Not decreasing the MissingBytes
-                        //causes the parser to wait until more than the complete packet
-                        //has been received before enqueueing the packet.
-                        MissingBytes -= iBytesReceived;
-
-                        iBytesReceived = 0;
-                    }
-            }//end if(bMessageIncomplete)
-
-            else //MAIN MESSAGE PARSING
-            {
-                if (iBytesReceived == 1) //HEADER INCOMPLETE
-                {
-                    //copy that one byte to tempbuffer--
-                    memcpy(TempBuffer, RecvBuffer + RecvOffset, 1);
-                    TempOffset++;
-                    iBytesReceived = 0;
-                    bHeaderIncomplete = true;
-                } else
-                    if (iBytesReceived >= 2) {
-                        memcpy(&Size, RecvBuffer + RecvOffset, 2);
-                        Size = ltoh16(Size);
-
-                        if (iBytesReceived >= Size) //MESSAGE OKAY
-                        {
-                            //copy netp message to vlad
-                            EnqueueIncomingPacket( RecvBuffer + RecvOffset,
-                                                   (unsigned long) Size, 0, 1);
-
-                            //take care of parsing variables--
-                            RecvOffset += Size;
-                            iBytesReceived -= Size;
-
-                            if (iBytesReceived < 0)
-                            {
-                                throw Exception("major problem here :/ (not sure yet why...)");
-                                //major problem here--
-                                //TODO: first let user know what problem is
-                            }//if iBytesReceived < 0
-                        }//if iBytesReceived >= Size
-                        else
-                            if (iBytesReceived < Size) //MESSAGE INCOMPLETE
-                            {
-                                //TempOffset should be zero at this point
-                                //because we are about to start parsing a incomplete message.
-                                TempOffset = 0;
-
-                                //copy bytes to tempbuffer
-                                memcpy(TempBuffer, RecvBuffer + RecvOffset, iBytesReceived);
-                                TempOffset += iBytesReceived;
-                                bMessageIncomplete = true;
-                                MissingBytes = Size - iBytesReceived;
-                                iBytesReceived = 0;
-                            }
-                    }//end if iBytesReceived >= 2
-            }//end MAIN MESSAGE PARSING else
-
-    }//end while
-
-    RecvOffset = 0;
+        if(tempoffset > 0) {
+            int tempmissing = size - tempoffset;
+            assert(tempmissing > 0);
+            if(bytesleft >= tempmissing) {
+                memcpy(tempbuffer + tempoffset, bufptr, tempmissing);
+                EnqueueIncomingPacket(tempbuffer, size, 0, 0);
+                tempoffset = 0;
+                bytesleft -= tempmissing;
+                bufptr += tempmissing;
+                continue;
+            } else {
+                memcpy(tempbuffer + tempoffset, bufptr, bytesleft);
+                tempoffset += bytesleft;
+                return;
+            }
+        } else {
+            if(bytesleft >= size) {
+                EnqueueIncomingPacket(bufptr, size, 0, 0);
+                bytesleft -= size;
+                bufptr += size;
+                continue;
+            } else {
+                memcpy(tempbuffer, bufptr, bytesleft);
+                tempoffset = bytesleft;
+                return;
+            }
+        }
+    }
 }
 
 void ClientSocket::sendMessage(const void* data, size_t size)

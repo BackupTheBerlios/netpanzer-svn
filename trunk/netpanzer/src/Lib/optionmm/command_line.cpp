@@ -1,5 +1,5 @@
 //
-// $Id: command_line.cpp,v 1.3 2004/10/26 20:44:09 matzebraun Exp $
+// $Id$
 //
 //  option::command_line
 //  Copyright (C) 2002 Christian Holm Christensen <cholm@nbi.dk>

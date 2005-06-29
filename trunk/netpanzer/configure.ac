@@ -59,7 +59,7 @@ AC_TRY_COMPILE([], [
 #ifndef __GNUC__
 #error no gcc compiler found (__GNUC__ not defined)
 #endif
-#if __GNUC__ < 3 || (__GNUC__ == 3 && __GNUC__ < 2)
+#if __GNUC__ < 3 || (__GNUC__ == 3 && __GNUC_MINOR__ < 2)
 #error gcc compiler too old. Need at least version 3.2.0
 #endif
 ], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([no])

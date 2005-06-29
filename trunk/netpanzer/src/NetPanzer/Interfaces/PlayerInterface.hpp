@@ -85,7 +85,7 @@ public:
         return &player_lists[id];
     }
 
-    static PlayerState* getPlayerByNetworkID(SocketClient::ID id);
+    static PlayerState* getPlayerByNetworkID(NetClientID id);
 
     static PlayerState* getLocalPlayer()
     {

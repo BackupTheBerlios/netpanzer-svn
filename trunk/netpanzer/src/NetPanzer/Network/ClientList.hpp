@@ -32,7 +32,7 @@ public:
 
     SocketClient* add(ServerSocket* server, network::TCPSocket* socket);
 
-    SocketClient* getClientFromID(SocketClient::ID id);
+    SocketClient* getClientFromID(NetClientID id);
 
     typedef std::vector<SocketClient*>::iterator ClientIterator;
     ClientIterator begin()
@@ -52,7 +52,7 @@ public:
 
 private:
     std::vector<SocketClient*> clients;
-    SocketClient::ID nextid;
+    NetClientID nextid;
 };
 
 #endif

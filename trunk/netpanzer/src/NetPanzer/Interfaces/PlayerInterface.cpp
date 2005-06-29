@@ -638,7 +638,7 @@ void PlayerInterface::disconnectPlayerCleanup(const PlayerID &player_id )
 }
 
 PlayerState*
-PlayerInterface::getPlayerByNetworkID(SocketClient::ID id)
+PlayerInterface::getPlayerByNetworkID(NetClientID id)
 {
     for(int i = 0; i < max_players; ++i) {
         PlayerState* state = &player_lists[i];
