@@ -48,56 +48,25 @@ player that just left the game.
 [23:41:58]      *       BenUrban exited the debugger
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<BenUrban> have you encountered either of the pantom tank bugs yet MatzeB ?
+<MatzeB> nope
+<BenUrban> there's one where an actual tank is really there (apparently) but
+just not visible in the client
+<MatzeB> how do you know it's there then?
+<BenUrban> my own tanks shoot at it
+<MatzeB> and it explodes when you shoot long enough on it?
+<BenUrban> i think so
+<xpanthom> the cvs link on berlios is dead, what's the link with svn?
+<BenUrban> not sure though
+* BenUrban points out that netpanzer doesn't use cvs at all
+<xpanthom> it apparently has at some point...
+<BenUrban> the other bug occurs when someone unexpectedly disconnects
+<BenUrban> the positions that their tanks occupied become unavailable
+<BenUrban> until the next server rest
+<BenUrban> or map change
+<BenUrban> that one is far more common
+<BenUrban> and has been known to block off bases completely
+<MatzeB> oh
 
 *** Miscelaneous
  * I had an offer from http://forgottenhope.bf1942files.com/main.html people to

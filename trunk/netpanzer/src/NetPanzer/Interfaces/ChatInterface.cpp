@@ -39,9 +39,16 @@ void ChatInterface::chatMessageRequest(const NetMessage* message)
     ChatMesg chat_mesg;
     const ChatMesgRequest* chat_request = (const ChatMesgRequest*) message;
 
+    if(chat_request->getSourcePlayerIndex() >= PlayerInterface::getMaxPlayers())
+    {
+        LOGGER.warning("Invalid chatMessageRequest");
+        return;
+    }
+
     chat_mesg.setSourcePlayerIndex(chat_request->getSourcePlayerIndex());
     chat_mesg.message_scope = chat_request->message_scope;
-    strcpy( chat_mesg.message_text, chat_request->message_text );
+    snprintf(chat_mesg.message_text, sizeof(chat_mesg.message_text), "%s",
+             chat_request->message_text);
 
     if( chat_request->message_scope == _chat_mesg_scope_all ) {
         SERVER->sendMessage(&chat_mesg, sizeof(ChatMesg));
@@ -125,6 +132,11 @@ void ChatInterface::chatMessage(const NetMessage* message)
 {
     unsigned short local_player_index;
     const ChatMesg *chat_mesg = (const ChatMesg*) message;
+
+    if(chat_mesg->getSourcePlayerIndex() >= PlayerInterface::getMaxPlayers()) {
+        LOGGER.warning("malformed chatmessage packet.");
+        return;
+    }
 
     if( chat_mesg->message_scope == _chat_mesg_scope_server ) {
         ConsoleInterface::postMessage("Server: %s", chat_mesg->message_text );

@@ -295,8 +295,8 @@ NetworkPlayerState PlayerState::getNetworkPlayerState() const
 void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
 {
     char tmp[64];
-    memcpy(tmp, state->name, 64);
-    tmp[63] = '\0';
+    memcpy(tmp, state->name, 64); 
+    tmp[63] = 0;
     name = tmp;
     flag = state->flag;
     ID.setIndex(ltoh16(state->playerindex_id));

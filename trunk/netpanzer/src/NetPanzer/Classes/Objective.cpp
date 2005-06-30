@@ -69,6 +69,11 @@ Objective::objectiveMesgSync(const ObjectiveMessage* message)
 {
     const SyncObjective *sync_mesg = (const SyncObjective*) message;
 
+    if(sync_mesg->getOccupyingPlayerID() >= PlayerInterface::getMaxPlayers()) {
+        LOGGER.warning("Malformed ObjectvieMesgSync");
+        return;
+    }
+
     objective_state.objective_status = sync_mesg->objective_status;
     objective_state.occupation_status = sync_mesg->occupation_status;
     if(objective_state.occupation_status != _occupation_status_unoccupied) {

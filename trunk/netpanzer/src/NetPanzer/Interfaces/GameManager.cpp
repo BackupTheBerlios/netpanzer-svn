@@ -411,6 +411,11 @@ void GameManager::netMessageConnectAlert(const NetMessage* message)
         = (const SystemConnectAlert*) message;
     PlayerState *player_state = 0;
 
+    if(connect_alert->getPlayerID() >= PlayerInterface::getMaxPlayers()) {
+        LOGGER.warning("Malformed connect alert message.");
+        return;
+    }
+
     player_state = PlayerInterface::getPlayerState( connect_alert->getPlayerID() );
 
     switch (connect_alert->alert_enum) {
@@ -470,6 +475,11 @@ void GameManager::netMessagePingRequest(const NetMessage* message)
     PlayerID player_id;
     const SystemPingRequest *ping_request
         = (const SystemPingRequest*) message;
+
+    if(ping_request->getClientPlayerIndex() >= PlayerInterface::getMaxPlayers()) {
+        LOGGER.warning("Invalid pingRequest message");
+        return;
+    }
 
     player_id = PlayerInterface::getPlayerID( ping_request->getClientPlayerIndex() );
 

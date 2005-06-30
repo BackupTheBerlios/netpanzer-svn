@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerNetMessage.hpp"
 #include "Server.hpp"
 #include "NetworkServer.hpp"
+#include "Util/Log.hpp"
 
 #include "ConsoleInterface.hpp"
 // for UNIT_FLAGS_SURFACE
@@ -410,6 +411,10 @@ void PlayerInterface::netMessageConnectID(const NetMessage* message)
         = (const PlayerConnectID *) message;
 
     local_player_index = connect_mesg->connect_state.getPlayerIndex();
+    if(local_player_index >= max_players) {
+        LOGGER.warning("Invalide netMessageConnectID Message");
+        return;
+    }
 
     SDL_mutexP(mutex);
     player_lists[local_player_index].setFromNetworkPlayerState
@@ -423,6 +428,12 @@ void PlayerInterface::netMessageSyncState(const NetMessage* message)
     const PlayerStateSync *sync_mesg
         = (const PlayerStateSync *) message;
     uint16_t player_index = sync_mesg->player_state.getPlayerIndex();
+
+    if(player_index >= max_players) {
+        LOGGER.warning("Malformed MessageSyncState message");
+        return;
+    }
+    
     SDL_mutexP(mutex);
     player_lists[player_index].setFromNetworkPlayerState(&sync_mesg->player_state);
     forceUniquePlayerFlags();
@@ -475,6 +486,14 @@ void PlayerInterface::netMessageScoreUpdate(const NetMessage *message)
     const PlayerScoreUpdate* score_update 
         = (const PlayerScoreUpdate *) message;
 
+    if(score_update->getKillByPlayerIndex() >= PlayerInterface::getMaxPlayers()
+            || score_update->getKillOnPlayerIndex() 
+            >= PlayerInterface::getMaxPlayers())
+    {
+        LOGGER.warning("Malformed scrore update packet.");
+        return;
+    }
+
     PlayerState* player1 = getPlayer(score_update->getKillByPlayerIndex());
     PlayerState* player2 = getPlayer(score_update->getKillOnPlayerIndex());
     setKill(player1, player2, (UnitType) score_update->unit_type );
@@ -486,6 +505,12 @@ void PlayerInterface::netMessageAllianceRequest(const NetMessage *message)
 
     const PlayerAllianceRequest *allie_request
         = (const PlayerAllianceRequest *) message;
+
+    if(allie_request->getAllieByPlayerIndex() >= max_players
+       || allie_request->getAllieWithPlayerIndex() >= max_players) {
+        LOGGER.warning("Invalid alliance request message");
+        return;                                                       
+    }
 
     SDL_mutexP(mutex);
     if ( allie_request->alliance_request_type == _player_make_alliance ) {
@@ -540,6 +565,12 @@ void PlayerInterface::netMessageAllianceUpdate(const NetMessage* message)
 
     const PlayerAllianceUpdate* allie_update
         = (const PlayerAllianceUpdate *) message;
+
+    if(allie_update->getAllieByPlayerIndex() >= max_players
+       || allie_update->getAllieWithPlayerIndex() >= max_players) {
+        LOGGER.warning("Invalid alliance update message");
+        return;
+    }
 
     SDL_mutexP(mutex);
     if (allie_update->alliance_update_type == _player_make_alliance) {

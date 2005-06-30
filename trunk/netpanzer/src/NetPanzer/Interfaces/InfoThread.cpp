@@ -174,15 +174,20 @@ void
 InfoThread::sendPlayers(std::stringstream& out)
 {
     ObjectiveInterface::updatePlayerObjectiveCounts();
-    for(int i = 0; i < PlayerInterface::countPlayers(); ++i) {
+    int n = 0;
+    for(int i = 0; i < PlayerInterface::getMaxPlayers(); ++i) {
         PlayerState* playerState = PlayerInterface::getPlayerState(i);
-        out << "player_" << i << "\\" << playerState->getName() << "\\"
-            << "kills_" << i << "\\" << playerState->getKills() << "\\"
-            << "deaths_" << i << "\\" << playerState->getLosses() << "\\"
-            << "score_" << i << "\\" 
+        if(playerState->getStatus() != _player_state_active)
+            continue;
+        
+        out << "player_" << n << "\\" << playerState->getName() << "\\"
+            << "kills_" << n << "\\" << playerState->getKills() << "\\"
+            << "deaths_" << n << "\\" << playerState->getLosses() << "\\"
+            << "score_" << n << "\\" 
                 << playerState->getObjectivesHeld() << "\\"
-            << "flag_" << i << "\\"
+            << "flag_" << n << "\\"
                 << (int) playerState->getFlag() << "\\";
+        n++;
     }
     // TODO add team/alliance info
 }

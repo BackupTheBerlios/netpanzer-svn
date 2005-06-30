@@ -57,6 +57,12 @@ NetMessageDecoder::decodeMessage(NetMessage **message)
         return false;
 
     *message = (NetMessage *) (decode_message.data + decode_message_index);
+    if( (*message)->getSize() >
+            decode_message.getSize() - decode_message.getHeaderSize() -
+            decode_message_index) {
+        LOGGER.warning("Malformed Multimessage!");
+        return false;
+    }
     decode_message_index += (*message)->getSize();
     decode_current_count++;
 
