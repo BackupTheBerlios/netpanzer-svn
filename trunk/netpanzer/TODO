@@ -68,6 +68,9 @@ just not visible in the client
 <BenUrban> and has been known to block off bases completely
 <MatzeB> oh
 
+- setting maxunits so low that no player can spawn with 9 units makes netpanzer
+  trigger an assertion, should be an error message
+
 *** Miscelaneous
  * I had an offer from http://forgottenhope.bf1942files.com/main.html people to
    share/use their models and sounds in a freeware like license (ie. copyright
