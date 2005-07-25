@@ -133,7 +133,9 @@ void ChatInterface::chatMessage(const NetMessage* message)
     unsigned short local_player_index;
     const ChatMesg *chat_mesg = (const ChatMesg*) message;
 
-    if(chat_mesg->getSourcePlayerIndex() >= PlayerInterface::getMaxPlayers()) {
+    if(chat_mesg->message_scope != _chat_mesg_scope_server 
+            && chat_mesg->getSourcePlayerIndex() 
+            >= PlayerInterface::getMaxPlayers()) {
         LOGGER.warning("malformed chatmessage packet.");
         return;
     }
