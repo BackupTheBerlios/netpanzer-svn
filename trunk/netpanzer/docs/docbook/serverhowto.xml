@@ -183,7 +183,7 @@ sure it is still running.
   <sect1 id="security">
     <title>Security Warning</title>
     <para>
-The code of the server hasn't undergone an in-depth review for secutiry holes
+The code of the server hasn't undergone an in-depth review for security holes
 yet, so you should expect the possibility that attackers can find buffer
 overflows to obtain control over the netpanzer executable and the user account
 the server is running. (Experience shows that this also happens with other
