@@ -13,7 +13,7 @@
   </articleinfo>
   <para>
     This is a preliminary version of the netpanzer server howto. Feedback and
-    improvement to the scripts, tips&amp;tricks are apreciated. Please send them
+    improvement to the scripts, tips&amp;tricks are appreciated. Please send them
     to <ulink url="mailto:matze@braunis.de">matze@braunis.de</ulink>.
   </para>
   <sect1 id="Installation">
@@ -26,16 +26,16 @@ on how to install netpanzer.
   <sect1 id="Configuration">
     <title>Configuration</title>
     <para>
-You can find the server configuration file in your homedirectory in
-.netpanzer/config/netpanzer-dedicated.ini. If this file doesn't exist yet, start
-your server once and quit (by using the quit command) and a file should have
-been created. You can find a description of all config commands in the
+You can find the server configuration file in your home directory in
+<filename>.netpanzer/config/netpanzer-dedicated.ini</filename>. If this file doesn't exist yet, start
+your server once and quit (by using the quit command) and this file should have
+been created. You can find a description of all theconfig commands in the
 netpanzer README.
     </para>
     <sect2 id="firewalls">
       <title>Firewalls</title>
       <para>
-If your server is using a firewall, then you have to forward port 3030 TCP+UDP.
+If your server is using a firewall, you have to forward port 3030 TCP+UDP.
 You can change this port with the port setting in the config file.
       </para>
     </sect2>
@@ -45,7 +45,7 @@ You can change this port with the port setting in the config file.
     <sect2 id="autorestart">
       <title>Restart on crash</title>
       <para>
-Unfortunatley the netpanzer server is not as stable yet as it should be. So you
+Unfortunately the netpanzer server is not as stable yet as it should be. So you
 should install a script that restarts the server automatically in case of a
 crash. This can be achieved with the following script (called
 <filename>start-netpanzer-dedicated.sh</filename>).
@@ -85,8 +85,8 @@ attach/detach at any time.
       </para>
       <para>
 So typically you write another script with your startup parameters like this
-(Also take a look at the Security Warning at the end of this document for the
- commented variants)
+(also take a look at the Security Warning at the end of this document for the
+ commented variants).
         <programlisting role="sh">
 #!/bin/bash
 
@@ -96,7 +96,7 @@ DIR=.
 cd $DIR
 
 # starts the server in a screen. Please consider using 1 of the 2 variants below
-# for increased secutiry
+# for increased security
 screen -A -m -d -S netpanzer ./start-netpanzer-dedicated.sh $@
 
 # This version switches to a more secure user account
@@ -150,7 +150,7 @@ stop() {
     <sect2 id="cron">
       <title>Cron Jobs</title>
       <para>If you can't integrate the server into the initscripts of your
-      system (if you have only a useraccount for example) then you can use cron
+      system (if you have only a user account for example) then you can use cron
       to make sure your server stays running even after system restarts. You
       should write another script that checks for a running server and
       eventually restarts it (called
@@ -169,7 +169,7 @@ cd /usr/local/scripts
       </programlisting>
       </para>
       <para>
-You should start this script regularily in a cronjob. By adding the following
+You should start this script regularly in a cronjob. By adding the following
 line in your crontab (type <command>crontab -e</command> to edit your crontab).
 This will check the server every hour (54 minutes after the full hour) to make
 sure it is still running. 
@@ -183,14 +183,14 @@ sure it is still running.
   <sect1 id="security">
     <title>Security Warning</title>
     <para>
-The code of the server hasn't undergone an in depth review for secutiry holes
+The code of the server hasn't undergone an in-depth review for secutiry holes
 yet, so you should expect the possibility that attackers can find buffer
 overflows to obtain control over the netpanzer executable and the user account
 the server is running. (Experience shows that this also happens with other
-servers that claim to be secure...).
+servers that claim to be secure...)
     </para>
     <para>
-Therefore it is recommended to run the server in a special useraccount with
+Therefore it is recommended to run the server in a special user account with
 limited rights. On linux/bsd you should also consider using a chroot
 environment for increased security. Consult external documentation about
 details. The screen startup script shown above also demonstrates in a comment
@@ -215,7 +215,7 @@ section</ulink> of netpanzer in the misc category.
 (<ulink url="http://www.qstat.org">http://www.qstat.org</ulink>).
       You can query for netpanzer server with the command
       <command>qstat -gsm,netpanzer 81.169.185.36</command>. There are several
-      toold and script available to display server status on homepages with the
+      tools and scripts available to display server status on homepages with the
       help of qstat.
       </para>
     </sect2>

@@ -20,7 +20,7 @@ if $(DOXYGEN) {
 }
 
 # hack for docbook stuff (TODO need a more robust way to do this)
-DBDIR = "/usr/share/sgml/docbook/xsl-stylesheets-1.65.1" ;
+DBDIR = "/usr/share/sgml/docbook/xsl-stylesheets-1.66.1" ;
 actions XsltProc
 {
     xsltproc -o $(<) $(DBDIR)/html/docbook.xsl $(>)
