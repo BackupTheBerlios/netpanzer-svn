@@ -39,7 +39,9 @@ void ChatInterface::chatMessageRequest(const NetMessage* message)
     ChatMesg chat_mesg;
     const ChatMesgRequest* chat_request = (const ChatMesgRequest*) message;
 
-    if(chat_request->getSourcePlayerIndex() >= PlayerInterface::getMaxPlayers())
+    if(chat_request->message_scope != _chat_mesg_scope_server
+            && chat_request->getSourcePlayerIndex() 
+            >= PlayerInterface::getMaxPlayers())
     {
         LOGGER.warning("Invalid chatMessageRequest");
         return;
@@ -53,44 +55,42 @@ void ChatInterface::chatMessageRequest(const NetMessage* message)
     if( chat_request->message_scope == _chat_mesg_scope_all ) {
         SERVER->sendMessage(&chat_mesg, sizeof(ChatMesg));
         post_on_server = true;
-    } else
-        if( chat_request->message_scope == _chat_mesg_scope_alliance ) {
-            unsigned long max_players;
-            unsigned short local_player_index;
-            PlayerID player_id;
+    } else if( chat_request->message_scope == _chat_mesg_scope_alliance ) {
+        unsigned long max_players;
+        unsigned short local_player_index;
+        PlayerID player_id;
 
-            local_player_index = PlayerInterface::getLocalPlayerIndex();
+        local_player_index = PlayerInterface::getLocalPlayerIndex();
 
-            max_players = PlayerInterface::getMaxPlayers();
-            for( unsigned long i = 0; i < max_players; i++ ) {
-                player_id = PlayerInterface::getPlayerID( i );
+        max_players = PlayerInterface::getMaxPlayers();
+        for( unsigned long i = 0; i < max_players; i++ ) {
+            player_id = PlayerInterface::getPlayerID( i );
 
-                if ( (PlayerInterface::getPlayer(i)->getStatus() == _player_state_active) ) {
-                    if( PlayerInterface::isAllied( chat_request->getSourcePlayerIndex(), i ) == true ) {
-                        if ( (local_player_index != i) ) {
-                            SERVER->sendMessage(player_id, &chat_mesg,
-                                    sizeof(ChatMesg));
-                        } else {
-                            post_on_server = true;
-                        }
+            if ( (PlayerInterface::getPlayer(i)->getStatus() == _player_state_active) ) {
+                if( PlayerInterface::isAllied( chat_request->getSourcePlayerIndex(), i ) == true ) {
+                    if ( (local_player_index != i) ) {
+                        SERVER->sendMessage(player_id, &chat_mesg,
+                                sizeof(ChatMesg));
+                    } else {
+                        post_on_server = true;
                     }
                 }
             }
+        }
 
-            if( chat_request->getSourcePlayerIndex() == PlayerInterface::getLocalPlayerIndex() ) {
-                post_on_server = true;
-            } else {
-                SERVER->sendMessage(
+        if( chat_request->getSourcePlayerIndex() == PlayerInterface::getLocalPlayerIndex() ) {
+            post_on_server = true;
+        } else {
+            SERVER->sendMessage(
                     PlayerInterface::getPlayerID(chat_request->getSourcePlayerIndex()),
                     &chat_mesg, sizeof(ChatMesg));
-            }
-        } else
-            if( chat_request->message_scope == _chat_mesg_scope_server ) {
-                SERVER->sendMessage(&chat_mesg, sizeof(ChatMesg));
-                ConsoleInterface::postMessage("Server: %s",
-                        chat_mesg.message_text );
-                return;
-            }
+        }
+    } else if( chat_request->message_scope == _chat_mesg_scope_server ) {
+        SERVER->sendMessage(&chat_mesg, sizeof(ChatMesg));
+        ConsoleInterface::postMessage("Server: %s",
+                chat_mesg.message_text );
+        return;
+    }
 
     if (post_on_server == true) {
         PlayerState *player_state;
