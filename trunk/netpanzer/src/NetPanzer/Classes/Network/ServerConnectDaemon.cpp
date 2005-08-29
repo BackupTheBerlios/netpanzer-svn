@@ -17,9 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 #include "ServerConnectDaemon.hpp"
-
+#include "ChatInterface.hpp"
 #include "NetworkGlobals.hpp"
-
 #include "PlayerInterface.hpp"
 #include "UnitInterface.hpp"
 #include "ObjectiveInterface.hpp"
@@ -205,6 +204,14 @@ void ServerConnectDaemon::sendConnectionAlert(PlayerID &player_id, int alert_enu
             connect_alert.set( player_id, _connect_alert_mesg_connect );
             ConsoleInterface::postMessage( "'%s' has joined the game.",
                     player_state->getName().c_str() );
+           const char* motd=gameconfig->motd.c_str();
+           if (*motd!='\0'){
+               ChatMesg chat_mesg;
+               chat_mesg.message_scope=_chat_mesg_scope_server;
+               snprintf(chat_mesg.message_text, sizeof(chat_mesg.message_text), "%s",gameconfig->motd.c_str());
+               SERVER->sendMessage(player_state->getNetworkID(),&chat_mesg, sizeof(chat_mesg));
+           }
+
         }
         break;
 

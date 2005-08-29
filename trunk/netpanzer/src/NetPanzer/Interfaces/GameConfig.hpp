@@ -136,6 +136,7 @@ public:
     ConfigInt    windspeed;
     ConfigString map;
     ConfigString mapcycle;
+    ConfigString motd;
     ConfigBool   logging;
     ConfigBool   publicServer;
 
@@ -203,6 +204,7 @@ public:
         }
         return( "Unknown" );
     }
+
 
     int GetUnitsPerPlayer() const
     {

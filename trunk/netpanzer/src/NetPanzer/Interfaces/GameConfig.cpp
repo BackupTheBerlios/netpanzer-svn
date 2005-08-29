@@ -58,6 +58,7 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       windspeed("windspeed", 30),
       map("map", "Bad Neuburg"),
       mapcycle("mapcycle", "Cramped, Tight Quarters, Two Villages"),
+      motd("motd",""),
       logging("logging", false),
       publicServer("public", true),
       
@@ -133,6 +134,7 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     serversettings.push_back(&windspeed);
     //serversettings.push_back(&map);
     serversettings.push_back(&mapcycle);
+    serversettings.push_back(&motd);
     serversettings.push_back(&logging);
     serversettings.push_back(&publicServer);
    

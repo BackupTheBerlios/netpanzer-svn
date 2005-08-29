@@ -422,6 +422,7 @@ void GameManager::netMessageConnectAlert(const NetMessage* message)
         case _connect_alert_mesg_connect:
             ConsoleInterface::postMessage("%s has joined the game.",
                     player_state->getName().c_str());
+
             break;
 
         case _connect_alert_mesg_disconnect: 
