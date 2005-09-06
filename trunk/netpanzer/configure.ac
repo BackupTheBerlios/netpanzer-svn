@@ -123,7 +123,9 @@ dnl	[AC_MSG_ERROR([Please install SDL_ttf >= 2.0.0])],
 dnl	[$SDL_CFLAGS], [$SDL_LIBS])
 
 NP_FINDLIB([PHYSFS], [physfs], [physfs >= 0.1.9],
-	NP_LANG_PROGRAM([#include <physfs.h>
+	NP_LANG_PROGRAM([
+#include <stdio.h>
+#include <physfs.h>
 #if PHYSFS_VER_MAJOR < 1
 #if PHYSFS_VER_MINOR < 1
 # error PHYSFS is too old
