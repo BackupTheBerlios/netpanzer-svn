@@ -23,6 +23,11 @@ player that just left the game.
  * Create UDP broadcast code for LAN games
 
 *** Network
+ * Analyse if TCP was really a good choice. Question:
+    - what happens if a client can't keep up with the bandwith, will it stall
+      the server?
+ * An UDP protocol would need to be designed (taking a look at TNL or raknet
+   would also be a good idea)
 
 *** Server related
  * refactor bot code, so that it is possible to directly spawn bots at the
