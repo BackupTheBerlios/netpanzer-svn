@@ -24,7 +24,7 @@
     </subsection>
     <subsection title="MacOSX">
       <p>NetPanzer MacOSX package: <a
-      href="http://download.berlios.de/netpanzer/netpanzer-20050801.dmg">netpanzer-20050801.dmg</a>
+      href="http://download.berlios.de/netpanzer/netpanzer-20050903.dmg">netpanzer-20050903.dmg</a>
       (12MB)</p>
     </subsection>
     <subsection title="Source Code">
@@ -46,9 +46,9 @@
 
       <subsubsection title="CVS">
         <p>                                                                       
-          Source Code is also available via CVS. Look at the
-          <a href="http://developer.berlios.de/cvs/?group_id=1250">netpanzer
-          cvs</a> page for details.
+          Source Code is also available via SVN. Look at the
+          <a href="http://developer.berlios.de/svn/?group_id=1250">netpanzer
+          svn</a> page for details.
         </p>
       </subsubsection>
     </subsection>

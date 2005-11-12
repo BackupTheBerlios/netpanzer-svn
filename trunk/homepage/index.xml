@@ -2,6 +2,14 @@
 <page title="netPanzer - News">
   <section title="News">
     <news>
+      <item date="12. Nov 2005">
+        <p>Looking for a new maintainer</p>
+        <p>The last months I was very busy with university and other open source
+        projects I'm working on. So effectively netpanzer development has
+        halted. I'm looking for someone to take over the netpanzer
+        development. If you're interested write a mail to <a
+        href="mailto:matze@braunis.de">matze@braunis.de</a>.</p>
+      </item>
       <item date="27. Jan 2005">
         <p>NetPanzer 0.8 released</p>
         <p>Downloads available here: <a

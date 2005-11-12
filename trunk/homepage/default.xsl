@@ -3,7 +3,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   
   <xsl:output 
-    method="html" 
+    method="html"
     indent="yes" 
     doctype-public="-//W3C//DTD HTML 4.01//EN" 
     doctype-system="http://www.w3.org/TR/html4/strict.dtd"
@@ -36,7 +36,7 @@
     <html>
       <head>
         <title>netPanzer - An Online Multiplayer Tactical Warfare Game</title>
-        <link rel="stylesheet" type="text/css" href="default.css" />
+        <link rel="stylesheet" type="text/css" href="default.css"/>
       </head>
 
       <body>
