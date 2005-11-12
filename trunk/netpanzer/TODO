@@ -1,75 +1,14 @@
 Next release:
 -after having a full nodelist in A* the server is getting slow
     - no idea how to solve this, have to leave it open I guess...
--netpanzer fails on win98se
--another server crash with this message:
-    <Gwal> 2 messages showed up in my terminal last time I was a host: Unit in
-    EndLifeCycle message doesn't exist anymore(u1: 56 u2: 187)
-    <Gwal> Unit in EndLifeCycle message doesn't exist anymore(u1: 243 u2: 295)
-  -> can't do much here... I can't see any error in this part of the code
 -create a new netpanzer-music package which adds pronobozos music to the game
 -shorten time netpanzer is trying to access the masterserver
 -compile SDL_mixer on windows with mp3 and ogg support
--setting allowallies=no in config has no effect
 -make sure flag resolution works correctly (2 players with same flags). Someone
 reported that after someone else joined he could only build panzers with
 different flags, while his old tanks stayed the same.
 -you get wrong capture messages when capturing an outpost that belonged to a
 player that just left the game.
--update homepage to link to svn and not cvs
-
-[22:43:23]      <BenUrban>      woohoo
-[22:43:26]      <BenUrban>      caught SIGABRT
-[22:43:30]      <BenUrban>      in debugger :D
-[22:45:17]      <BenUrban>      UnitInterface::offloadGraphics(SpriteSorter &)...
-[22:45:41]      <BenUrban>      UnitInterface.cpp:274
-[22:45:59]      <BenUrban>      t->unit->offloadGraphics(sorter);
-[22:50:47]      <BenUrban>      Program received signal:  "SIGABRT".
-[22:50:47]      <BenUrban>      pure virtual method called
-[22:50:49]      <BenUrban>      SIGH
-[23:04:46]      <BenUrban>      virtual void offloadGraphics(SpriteSorter& ) = 0;
-[23:04:47]      <BenUrban>      hmm
-[23:05:05]      *       BenUrban wonders if there's an easy way to inspect what class this particular object is
-[23:06:28]      <BenUrban>      hmm
-[23:06:34]      <BenUrban>      it says it's a UnitBase object
-[23:07:02]      <BenUrban>      of unit_type 2...
-[23:11:02]      <BenUrban>      hmm
-[23:11:13]      <BenUrban>      it must be an actual UnitBase object
-[23:11:26]      <BenUrban>      since the only direct subclass of UnitBase is Vehicle
-[23:11:39]      <BenUrban>      and that does have an offloadGraphics method
-[23:11:42]      <BenUrban>      so...
-[23:11:45]      <BenUrban>      the question...
-[23:11:59]      <BenUrban>      is why did the compilet allow it to create a UnitBase object?
-[23:12:04]      <BenUrban>      *compiler
-[23:12:07]      <BenUrban>      hmm
-[23:12:18]      <BenUrban>      and where did it create it?
-[23:16:29]      <BenUrban>      hmm
-[23:27:09]      <BenUrban>      looks like it's supposed to be a Titan
-[23:41:58]      *       BenUrban exited the debugger
-
-
-<BenUrban> have you encountered either of the pantom tank bugs yet MatzeB ?
-<MatzeB> nope
-<BenUrban> there's one where an actual tank is really there (apparently) but
-just not visible in the client
-<MatzeB> how do you know it's there then?
-<BenUrban> my own tanks shoot at it
-<MatzeB> and it explodes when you shoot long enough on it?
-<BenUrban> i think so
-<xpanthom> the cvs link on berlios is dead, what's the link with svn?
-<BenUrban> not sure though
-* BenUrban points out that netpanzer doesn't use cvs at all
-<xpanthom> it apparently has at some point...
-<BenUrban> the other bug occurs when someone unexpectedly disconnects
-<BenUrban> the positions that their tanks occupied become unavailable
-<BenUrban> until the next server rest
-<BenUrban> or map change
-<BenUrban> that one is far more common
-<BenUrban> and has been known to block off bases completely
-<MatzeB> oh
-
-- setting maxunits so low that no player can spawn with 9 units makes netpanzer
-  trigger an assertion, should be an error message
 
 *** Miscelaneous
  * I had an offer from http://forgottenhope.bf1942files.com/main.html people to
