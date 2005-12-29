@@ -42,9 +42,11 @@ public:
 
     int getIntValue(const std::string& key) const;
     float getFloatValue(const std::string& key) const;
+    bool getBoolValue(const std::string& key) const;
 
     void setIntValue(const std::string& key, int value);
     void setFloatValue(const std::string& key, float value);
+    void setBoolValue(const std::string& key, bool value);
 
 private:
     friend class Store;

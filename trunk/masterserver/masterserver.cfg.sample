@@ -22,6 +22,9 @@ masterserver-heartbeat-interval=300
 # Password for masterserver heartbeats
 masterserver-password=xxx
 
+# write back the list of neighbour servers when the server crashs or quits
+write-back-neighbour-list=no
+
 # Paths, Enable them if you don't want the default paths
 
 # Specifies the location of the logfile

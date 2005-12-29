@@ -327,6 +327,9 @@ HeartbeatThread::sendPacket(struct sockaddr_in serveraddr,
 void
 HeartbeatThread::writeNeighborCache()
 {
+    if(config->getSection("server").getBoolValue("write-back-neighbour-list") == false)
+        return;
+    
     iniparser::Store neighborini;
     iniparser::Section& neighbors = neighborini.getSection("neighbors");
 

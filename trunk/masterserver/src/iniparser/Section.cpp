@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Section.hpp"
 
+#include <ctype.h>
 #include <sstream>
 #include "Log.hpp"
 
@@ -85,6 +86,24 @@ Section::getFloatValue(const std::string& key) const
     return result;
 }
 
+bool
+Section::getBoolValue(const std::string& key) const
+{
+    std::string value = getValue(key);
+    for(int i = 0; i < value.size(); ++i) {
+        value[i] = tolower(value[i]);
+    }
+    if(value == "yes" || value == "true" || value == "1" || value == "on") {
+        return true;
+    } else if(value == "no" || value == "false" || value == "0" || value == "off") {
+        return false;
+    }
+    
+    std::cout << "Warning couldn't parse value '" << 
+        getValue(key) << "' as bool value\n";
+    return false;
+}
+
 void
 Section::setValue(const std::string& key, const std::string& value)
 {
@@ -112,6 +131,12 @@ Section::setFloatValue(const std::string& key, float value)
     str << value;
 
     setValue(key, str.str());
+}
+
+void
+Section::setBoolValue(const std::string& key, bool value)
+{
+    setValue(key, value ? "yes" : "no");
 }
 
 } // end of namespace INI

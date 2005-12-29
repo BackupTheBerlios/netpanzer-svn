@@ -49,6 +49,7 @@ void loadConfig()
     server.setValue("masterserver-heartbeat-interval", "300");
     server.setValue("masterserver-password", "");
     server.setValue("masterserver-neighboors", "");
+    server.setValue("write-back-neighbour-list", "no");
 
     std::ifstream in(CONFIGFILE);
     if(!in.good()) {
