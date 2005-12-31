@@ -47,7 +47,9 @@ InfoThread::InfoThread(int port)
     lastFrame = SDL_GetTicks();
     
     // start the thread
-    thread = SDL_CreateThread(threadMain, this);    
+    thread = SDL_CreateThread(threadMain, this);
+    if(thread == NULL)
+      throw new std::runtime_error("Couldn't create info thread");
 }
 
 InfoThread::~InfoThread()

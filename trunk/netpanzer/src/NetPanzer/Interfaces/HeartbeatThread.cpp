@@ -75,6 +75,9 @@ HeartbeatThread::HeartbeatThread()
 
     // start thread
     thread = SDL_CreateThread(threadMain, this);
+    if(thread == NULL) {
+      throw std::runtime_error("Couldn't create heartbeat thread.");
+    }
 }
 
 HeartbeatThread::~HeartbeatThread()
