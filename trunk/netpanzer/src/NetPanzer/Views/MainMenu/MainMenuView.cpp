@@ -49,7 +49,17 @@ void MainMenuView::doDraw(Surface &viewArea, Surface &clientArea)
         "This application is free software under the terms of the "
         "Gnu General Public license (GPL). See the COPYING file for details."
         "\n"
-        "We're still searching for talented coders and artists.";
+        "We're still searching for talented coders and artists.\n\n\n\n"
+        "Authors\n\n"
+        "Original Game (Pyrosoft)\n"
+        "   Vlad Rahkoy, Skip Rhudy, Matt Bogue, Clint Bogue\n\n"
+        "Linux Port, Polishing\n"
+        "   Matthias Braun, Ivo Danihelka, Hollis Blanchard, Hankin Chick,\n"
+        "   Tyler Nielsesn, Pronobozo\n\n"
+        "Packaging:\n"
+        "   Bastosz Fenski, BenUrban\n\n"
+        "Related Tools:\n"
+        "   Tobias Blerch, Ingo Ruhnke\n";
 
     viewArea.bltStringInBox(bodyTextRect, text, Color::white, 12);
 } // end MainMenuView::doDraw

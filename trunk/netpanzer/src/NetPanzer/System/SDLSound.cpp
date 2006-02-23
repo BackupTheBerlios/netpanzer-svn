@@ -24,11 +24,17 @@
 #include <algorithm>
 
 #include <SDL.h>
+#define USE_RWOPS // we want Mix_LOadMUS_RW
 #include <SDL_mixer.h>
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 #include "SDLSound.hpp"
+
+#if (SDL_MIXER_MAJOR_VERSION > 1) || (SDL_MIXER_MINOR_VERSION > 2) || \
+    ((SDL_MIXER_MINOR_VERSION == 2) && (SDL_MIXER_PATCHLEVEL >= 6))
+#define HAS_LOADMUS_RW
+#endif
 
 musics_t SDLSound::musicfiles;
 musics_t::iterator SDLSound::currentsong;
@@ -273,13 +279,13 @@ void SDLSound::nextSong()
     do {
         const char* toplay = currentsong->c_str();
         currentsong++;
-#if 0
+#ifdef HAS_LOADMUS_RW
         /*
-         * SDL_Mixer has not Mix_LoadMUS_RW
+         * use LoadMUS_RW from newer SDL_mixers
          */
         try {
-            ReadFile *file = filesystem::openRead(toplay);
-            music = Mix_LoadMUS_RW(file->getSDLRWOps(), 1);
+            filesystem::ReadFile *file = filesystem::openRead(toplay);
+            music = Mix_LoadMUS_RW(file->getSDLRWOps());
             if (music) {
                 if (Mix_PlayMusic(music, 1) == 0) {
                     LOG (("Start playing song '%s'", toplay));
