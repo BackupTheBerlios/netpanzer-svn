@@ -18,7 +18,7 @@
     </p>
   </section>
 
-  <subsection title="Features">
+  <section title="Features">
     <ul>
       <li>
         netPanzer is a game designed to fit into the real-time
@@ -66,5 +66,38 @@
         <li>Translucent particles and shadows.</li>
       </ul>
     </subsubsection>
-  </subsection>
+  </section>
+	
+	<section title="Authors">
+		<subsection title="Original Game (Pyrosoft)">
+			<ul>
+				<li><strong>Vlad Rahkoy</strong> - primary game engine, general design and coding.</li>
+				<li><strong>Skip Rhudy</strong> - maps, unit artwork direction, unit design, landscapes, all sound effects, network programming and sound engine.</li>
+				<li><strong>Matt Bogue</strong> - special effects programming, game engine support code.</li>
+				<li><strong>Clint Bogue</strong> - unit design and rendering.</li>
+			</ul>
+		</subsection>
+		<subsection title="Linux Port + Polishing">
+			<ul>
+				<li><strong>Matthias Braun</strong> - linux port, masterserver system, new build system, usability improvements, server console, countless bugfixes and code cleanups, gentoo, autopackage and windows packaging.</li>
+				<li><strong>Ivo Danihelka</strong> - linux port, bot player, bugfixes and cleanups.</li>
+				<li><strong>Hollis Blanchard</strong> - Power PC porting.</li>
+				<li><strong>Hankin Chick</strong> - Old IRC Serverlist code.</li>
+				<li><strong>Tyler Nielsen</strong> - linux port.</li>
+				<li><strong>Pronobozo</strong> - Created the music.</li>
+			</ul>
+		</subsection>
+		<subsection title="Packaging">
+			<ul>
+				<li><strong>Bastosz Fenski</strong> - man page, debian packaging</li>
+				<li><strong>BenUrban (irc nick)</strong> - Mac OS/X packaging</li>
+			</ul>
+		</subsection>
+		<subsection title="Related">
+			<ul>
+				<li><strong>Tobias Blerch</strong> - PHP Serverbrowser, Statistics page.</li>
+				<li><strong>Ingo Ruhnke</strong> - Flexlay support for netpanzer maps.</li>
+			</ul>
+		</subsection>
+	</section>
 </page>

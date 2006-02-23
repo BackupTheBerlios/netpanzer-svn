@@ -60,4 +60,15 @@
     </subsection>
   </section>
   <p />
+  <section title="Contributions">
+ 		<subsection title="Serverbrowser + Toolbox">
+			Tobias Blerch maintains a set of php scripts and tools to add a
+			serverbrowser to a webpage. You can find the files here:
+			<a href="http://developer.berlios.de/project/showfiles.php?group_id=1250&amp;release_id=4745">http://developer.berlios.de/project/showfiles.php?group_id=1250&amp;release_id=4745</a>
+		</subsection>
+		<subsection title="German Manual">
+			Andreas Geppert has written a german manual for the game. You can find it
+			<a href="http://download.berlios.de/netpanzer/Netpanzer-dt._Bedienungsanleitung_Vers._1.0.rtf">here</a>
+		</subsection>
+	</section>
 </page>
