@@ -2,6 +2,19 @@
 <page title="netPanzer - News">
   <section title="News">
     <news>
+			<item date="23. Feb 2005">
+				<p>Credits + Music</p>
+				<p>I just realized that we weren't giving any credits to all the people
+				that work and have worked on netpanzer (esp. Pyrosoft). No we have a
+				credits section in the about page.</p>
+				<p>While writing the credits I remembered that I had some contributed
+				music lying around here for months. A big thanks and sorry for the late
+				uploading to pronobozo. You can now grab
+				<a href="http://download.berlios.de/netpanzer/netpanzer-music.zip">
+				netpanzer-music.zip</a> and unzip it in your netpanzer directory or in
+				<i>$HOME/.netpanzer</i>.</p>
+				<p>PS: We're still searching for a new maintainer.</p>
+			</item>
       <item date="12. Nov 2005">
         <p>Looking for a new maintainer</p>
         <p>The last months I was very busy with university and other open source
