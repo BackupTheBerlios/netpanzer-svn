@@ -34,7 +34,7 @@ public:
     /** resolves a hostname or IP-Number together with a port and returns a
      * new Address object.
      */
-    static Address Address::resolve(const std::string& name, uint16_t port);
+    static Address resolve(const std::string& name, uint16_t port);
 
     /** returns the ip address of this Address as string */
     std::string getIP() const;

@@ -46,7 +46,7 @@ public:
         setp(buf, buf+sizeof(buf));
     }
 
-    FileStampStreamBuf::~FileStampStreamBuf()
+    ~FileStampStreamBuf()
     {
         sync();
         if(file)

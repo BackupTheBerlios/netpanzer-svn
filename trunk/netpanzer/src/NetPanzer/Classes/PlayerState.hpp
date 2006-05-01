@@ -81,8 +81,8 @@ private:
 public:
     PlayerUnitConfig unit_config;
 
-    PlayerState::PlayerState();
-    PlayerState::PlayerState(const PlayerState& other);
+    PlayerState();
+    PlayerState(const PlayerState& other);
 
     void operator= (const PlayerState& other);
 
