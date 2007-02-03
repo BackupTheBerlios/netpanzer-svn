@@ -2,11 +2,43 @@
 <page title="netPanzer - News">
   <section title="News">
     <news>
+			<item date="3. Feb 2007">
+				<p>NetPanzer 0.8.1 released</p>
+				<p>Thanks to Karl Bastiman from
+				<a href="http://amber.org.uk">amber.org.uk</a> who provides new hosting
+				for the netpanzer masterserver! I also created a small bugfix release
+				whose main intention is to set the default masterserver to
+				netpanzer.dyndns.org. If you can't see any games in the ingame server browser, please change your masterservers setting netpanzer.ini to netpanzer.dyndns.org</p>
+				<ul>
+					<li>Change default masterserver to netpanzer.dyndns.org</li>
+					<li>Fix remote DOS when sending invalid frame number (yes, this fixes this "security advisory" by Luigi Auriemma)</li>
+					<li>Fix gcc 4.1 compilation</li>
+					<li>Make server handle clients more gracefully that drop during connect</li>
+				</ul>
+				<p>Please understand that I have no time to create (and test/debug) any 
+				binary packages for this new release.</p>
+			</item>
+			<item date="31. Jan 2007">
+				<p>Development situation and Masterserver</p>
+				<p>Well it's 2007 and unfortunately, there is still noone with
+				sufficient (or any) C++ skills around who wants to take over the
+				project. (Well I got an offer from a company making money with webgames,
+				but I didn't want them to make money with stuff we created for our fun)
+				</p>
+				<p>Even worse I just got notice from Christian Reiss who kindly
+				provided a rock solid and reliable hosting for the masterserver in the
+				last years that he plans to deactivate my account in february to make
+				room for projects in active development. So I would urgently need a new
+				host for the masterserver.</p>
+				<p>It would just need some linux, bsd or solaris box with a	user login
+				where I can setup a cron job and have the server running on	port 28900.
+				</p>
+			</item>
 			<item date="23. Feb 2005">
 				<p>Credits + Music</p>
 				<p>I just realized that we weren't giving any credits to all the people
-				that work and have worked on netpanzer (esp. Pyrosoft). No we have a
-				credits section in the about page.</p>
+				that work and have worked on netpanzer (esp. Pyrosoft). There is a
+				credits section in the about page now.</p>
 				<p>While writing the credits I remembered that I had some contributed
 				music lying around here for months. A big thanks and sorry for the late
 				uploading to pronobozo. You can now grab
