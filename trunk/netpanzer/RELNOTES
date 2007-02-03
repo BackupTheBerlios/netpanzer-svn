@@ -1,3 +1,10 @@
+*** 0.8.1 ***
+
+* Change default masterserver to netpanzer.dyndns.org
+* Fix remote DOS when sending invalid frame number
+* Fix gcc 4.1 compilation
+* Make server handle clients more gracefully that drop during connect
+
 *** 0.8 ***
 
 * Call this final release 0.8 to better reflect the state of development
