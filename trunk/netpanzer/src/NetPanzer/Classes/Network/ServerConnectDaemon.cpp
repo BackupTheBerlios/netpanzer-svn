@@ -37,17 +37,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConsoleInterface.hpp"
 #include "Util/Log.hpp"
 
-enum { _connect_state_idle,
-       _connect_state_wait_for_connect_request,
-       _connect_state_attempt_player_alloc,
-       _connect_state_wait_for_client_settings,
-       _connect_state_wait_for_client_game_setup_ack,
-       _connect_state_player_state_sync,
-       _connect_state_unit_sync
-     };
-
-
-unsigned char       ServerConnectDaemon::connection_state = _connect_state_idle;
+ServerConnectDaemon::ConnectionState
+                    ServerConnectDaemon::connection_state 
+						= ServerConnectDaemon::connect_state_idle;
 bool                ServerConnectDaemon::connection_lock_state = false;
 PlayerID            ServerConnectDaemon::connect_player_id;
 PlayerState*        ServerConnectDaemon::connect_player_state;
@@ -95,7 +87,7 @@ bool ServerConnectDaemon::inConnectQueue( PlayerID &new_player_id )
         }
     }
 
-    if ( (connection_state != _connect_state_idle) &&
+    if ( (connection_state != connect_state_idle) &&
             (connect_player_id.getNetworkID() == new_player_id.getNetworkID()  )
        )
         return true;
@@ -242,7 +234,7 @@ void ServerConnectDaemon::sendConnectionAlert(PlayerID &player_id, int alert_enu
 
 void ServerConnectDaemon::resetConnectFsm()
 {
-    connection_state = _connect_state_idle;
+    connection_state = connect_state_idle;
     time_out_timer.reset();
     time_out_counter = 0;
 }
@@ -256,7 +248,7 @@ bool ServerConnectDaemon::connectStateIdle()
         connect_request   = connect_queue.front();
         connect_queue.pop_front();
         connect_player_id = connect_request.new_player_id;
-        connection_state  = _connect_state_wait_for_connect_request;
+        connection_state  = connect_state_wait_for_connect_request;
 
         ClientConnectStartConnect start_connect;
 
@@ -279,7 +271,7 @@ bool ServerConnectDaemon::connectStateWaitForConnectRequest(
 {
     if (message != 0) {
         if ( message->message_id == _net_message_id_client_connect_request ) {
-            connection_state = _connect_state_attempt_player_alloc;
+            connection_state = connect_state_attempt_player_alloc;
             return false;
         } else {
             if ( time_out_timer.count() ) {
@@ -322,7 +314,9 @@ bool ServerConnectDaemon::connectStateAttemptPlayerAlloc()
                                             sizeof(ClientConnectResult));
 
         time_out_timer.reset();
-        connection_state = _connect_state_wait_for_client_settings;
+		if(connection_state != connect_state_idle) {
+			connection_state = connect_state_wait_for_client_settings;
+		}
         return true;
     }
 
@@ -358,7 +352,9 @@ bool ServerConnectDaemon::connectStateWaitForClientSettings(
             delete server_game_setup;
 
             time_out_timer.reset();
-            connection_state = _connect_state_wait_for_client_game_setup_ack;
+			if(connection_state != connect_state_idle) {
+				connection_state = connect_state_wait_for_client_game_setup_ack;
+			}
             return true;
         } else {
             if ( time_out_timer.count() ) {
@@ -398,7 +394,9 @@ bool ServerConnectDaemon::connectStateWaitForClientGameSetupAck(
             state_mesg.setMessageEnum(_connect_state_message_sync_player_info);
             SERVER->sendMessage(connect_player_id, &state_mesg,
                     sizeof(ConnectProcessStateMessage));
-            connection_state = _connect_state_player_state_sync;
+			if(connection_state != connect_state_idle) {
+				connection_state = connect_state_player_state_sync;
+			}
         } else
             if ( message->message_id == _net_message_id_connect_client_game_setup_ping ) {
                 time_out_timer.reset();
@@ -448,7 +446,9 @@ bool ServerConnectDaemon::connectStatePlayerStateSync()
             (connect_player_state->getNetworkPlayerState());
 
         SERVER->sendMessage(&player_state_update, sizeof(PlayerStateSync));
-        connection_state = _connect_state_unit_sync;
+		if(connection_state != connect_state_idle) {
+			connection_state = connect_state_unit_sync;
+		}
         return true;
     } else if ( percent_complete > 0 ) {
         state_mesg.setMessageEnum(_connect_state_message_sync_player_info_percent);
@@ -502,7 +502,7 @@ bool ServerConnectDaemon::connectStateUnitSync()
             sizeof(ConnectProcessStateMessage));
     sendConnectionAlert( connect_player_id, _connect_alert_mesg_connect );
 
-    connection_state = _connect_state_idle;
+    connection_state = connect_state_idle;
     return true;
 }
 
@@ -512,7 +512,7 @@ void ServerConnectDaemon::connectFsm(const NetMessage* message)
 
     do {
         switch ( connection_state ) {
-        case _connect_state_idle : {
+        case connect_state_idle : {
                 if ( connectStateIdle() ) {
                     end_cycle = true;
                 } else {
@@ -522,7 +522,7 @@ void ServerConnectDaemon::connectFsm(const NetMessage* message)
             }
             break;
 
-        case _connect_state_wait_for_connect_request : {
+        case connect_state_wait_for_connect_request : {
                 if ( connectStateWaitForConnectRequest( message ) ) {
                     end_cycle = true;
                 } else {
@@ -532,7 +532,7 @@ void ServerConnectDaemon::connectFsm(const NetMessage* message)
             break;
 
 
-        case _connect_state_attempt_player_alloc : {
+        case connect_state_attempt_player_alloc : {
                 if ( connectStateAttemptPlayerAlloc( ) ) {
                     end_cycle = true;
                 } else {
@@ -542,7 +542,7 @@ void ServerConnectDaemon::connectFsm(const NetMessage* message)
             break;
 
 
-        case  _connect_state_wait_for_client_settings : {
+        case  connect_state_wait_for_client_settings : {
                 if ( connectStateWaitForClientSettings( message ) ) {
                     end_cycle = true;
                 } else {
@@ -551,7 +551,7 @@ void ServerConnectDaemon::connectFsm(const NetMessage* message)
             }
             break;
 
-        case _connect_state_wait_for_client_game_setup_ack : {
+        case connect_state_wait_for_client_game_setup_ack : {
                 if ( connectStateWaitForClientGameSetupAck( message ) ) {
                     end_cycle = true;
                 } else {
@@ -560,7 +560,7 @@ void ServerConnectDaemon::connectFsm(const NetMessage* message)
             }
             break;
 
-        case _connect_state_player_state_sync : {
+        case connect_state_player_state_sync : {
                 if ( connectStatePlayerStateSync( ) ) {
                     end_cycle = true;
                 } else {
@@ -569,7 +569,7 @@ void ServerConnectDaemon::connectFsm(const NetMessage* message)
             }
             break;
 
-        case _connect_state_unit_sync : {
+        case connect_state_unit_sync : {
                 if ( connectStateUnitSync( ) ) {
                     end_cycle = true;
                 } else {
@@ -577,6 +577,9 @@ void ServerConnectDaemon::connectFsm(const NetMessage* message)
                 }
             }
             break;
+
+		default:
+			assert(false);
 
         } // ** switch
 
@@ -603,6 +606,19 @@ bool ServerConnectDaemon::disconnectClient( PlayerID player_id )
     ObjectiveInterface::disownPlayerObjectives(player_id.getIndex());
     UnitInterface::destroyPlayerUnits(player_id.getIndex());
     PlayerInterface::disconnectPlayerCleanup( player_id );
+
+	for(std::list<ConnectQueueElement>::iterator i = connect_queue.begin();
+			i != connect_queue.end(); /*nothing */) {
+		if(i->new_player_id == player_id) {
+			i = connect_queue.erase(i);
+			continue;
+		}
+
+		++i;
+	}
+	if(connect_player_id == player_id) {
+		connection_state = connect_state_idle;
+	}
 
     return true;
 }
@@ -639,7 +655,7 @@ bool ServerConnectDaemon::getConnectLockStatus()
 
 bool ServerConnectDaemon::isConnecting()
 {
-    if( connection_state == _connect_state_idle ) {
+    if( connection_state == connect_state_idle ) {
         return false;
     }
 

@@ -41,7 +41,17 @@ public:
 class ServerConnectDaemon
 {
 protected:
-    static unsigned char        connection_state;
+	enum ConnectionState {
+		connect_state_idle,
+	 	connect_state_wait_for_connect_request,
+	  	connect_state_attempt_player_alloc,
+	   	connect_state_wait_for_client_settings,
+		connect_state_wait_for_client_game_setup_ack,
+		connect_state_player_state_sync,
+		connect_state_unit_sync,
+     };
+
+    static ConnectionState      connection_state;
     static bool                 connection_lock_state;
     static PlayerID             connect_player_id;
     static PlayerState*         connect_player_state;
