@@ -54,7 +54,7 @@ UnitGameInfo::getUnitPointValue(UnitType unit_type)
 
 PlayerUnitConfig::PlayerUnitConfig()
 {
-    initialize(10000);
+    initialize(9);
 }
 
 void PlayerUnitConfig::initialize( unsigned char max_allowed_units )

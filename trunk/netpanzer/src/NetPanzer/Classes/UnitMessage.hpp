@@ -45,7 +45,7 @@ public:
 public:
     UnitMessage()
     {
-        this->unit_id = 0xBADBADBA;
+        this->unit_id = 0xBADB;
         message_id = 0;
         message_flags = 0;
     }

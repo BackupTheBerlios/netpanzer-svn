@@ -196,7 +196,7 @@ void PathGenerator::pathingFsmUpdatePath()
     do {
         switch ( pathing_fsm_state ) {
         case _pathing_fsm_state_initialize : {
-                unsigned long abs_new_goal;
+                unsigned long abs_new_goal = 0;
                 iXY new_goal;
                 unsigned long path_length;
 
@@ -249,7 +249,7 @@ void PathGenerator::pathingFsmCachePath()
     do {
         switch ( pathing_fsm_state ) {
         case _pathing_fsm_state_initialize_part_a : {
-                unsigned long abs_new_goal;
+                unsigned long abs_new_goal = 0;
                 iXY new_goal;
 
                 working_start = path_request.start;
@@ -282,7 +282,7 @@ void PathGenerator::pathingFsmCachePath()
 
 
         case _pathing_fsm_state_initialize_part_b : {
-                unsigned long abs_new_goal;
+                unsigned long abs_new_goal = 0;
                 iXY new_goal;
 
                 for ( unsigned long i = 0; i < path_splice_length; i++ ) {

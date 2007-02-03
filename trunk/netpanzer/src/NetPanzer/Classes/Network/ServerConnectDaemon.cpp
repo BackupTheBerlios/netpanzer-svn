@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkServer.hpp"
 #include "GameManager.hpp"
 #include "GameConfig.hpp"
+#include "SelectionBoxSprite.hpp"
 
 #include "PlayerNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
@@ -337,7 +338,13 @@ bool ServerConnectDaemon::connectStateWaitForClientSettings(
             client_setting = (ConnectClientSettings *) message;
             connect_player_state->setName( client_setting->player_name );
             connect_player_state->unit_config.setUnitColor( client_setting->unit_color );
-            connect_player_state->setFlag( client_setting->getPlayerFlag() );
+			uint8_t flag = (uint8_t) client_setting->getPlayerFlag();
+			if(flag < UNIT_FLAGS_SURFACE.getFrameCount()) {
+				connect_player_state->setFlag(flag);
+			} else {
+				connect_player_state->setFlag(0);
+				LOGGER.warning("Invalid flag number received");
+		 	}
 
             connect_player_state->setID( connect_player_id.getNetworkID() );
             connect_player_state->setStatus( _player_state_connecting );

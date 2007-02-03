@@ -346,7 +346,7 @@ bool Vehicle::fsmMove()
 
 void Vehicle::setFsmMoveMapSquare( unsigned long square )
 {
-    long goal_angle;
+    long goal_angle = 0;
     long delta;
     unsigned short rotation;
 
@@ -1297,7 +1297,7 @@ void Vehicle::aiFsmDefendHold()
 void Vehicle::aiFsmManualMove()
 {
     bool end_cycle = false;
-    signed char offset_x, offset_y;
+    signed char offset_x = 0, offset_y = 0;
     size_t next_square;
 
     do {

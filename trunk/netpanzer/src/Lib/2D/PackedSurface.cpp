@@ -215,7 +215,7 @@ void PackedSurface::load(const std::string& filename)
 	//fps = float(file->readSLE32()) / 65536;
 	// XXX is this correct?!?
 	int32_t fpsint = file->readSLE32();
-	fps = * ((float*) &fpsint);
+	fps = * ((float*) (void*) &fpsint);
 	offset.x = file->readSLE32();
 	offset.y = file->readSLE32();
     
@@ -257,9 +257,8 @@ void PackedSurface::save(const std::string& filename) const
 	file->writeSLE32(pix.x);
 	file->writeSLE32(pix.y);
     
-	// XXX bad not endian safe :-/
 	// is this correct?!?
-	file->writeSLE32( *((uint32_t*) (&fps)) );
+	file->writeSLE32( *((uint32_t*) (void*) (&fps)) );
 
 	file->writeSLE32(offset.x);
 	file->writeSLE32(offset.y);

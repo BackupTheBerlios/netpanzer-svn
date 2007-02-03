@@ -16,8 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
 #include "Util/Endian.hpp"
+#include "Util/Log.hpp"
 #include "PlayerState.hpp"
+#include "SelectionBoxSprite.hpp"
 
 uint16_t NetworkPlayerState::getPlayerIndex() const
 {
@@ -259,6 +262,7 @@ unsigned char PlayerState::getStatus() const
 
 void PlayerState::setFlag(unsigned char flag)
 {
+	assert(flag < UNIT_FLAGS_SURFACE.getFrameCount());
     PlayerState::flag = flag;
 }
 
@@ -298,7 +302,12 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
     memcpy(tmp, state->name, 64); 
     tmp[63] = 0;
     name = tmp;
-    flag = state->flag;
+	if(state->flag < UNIT_FLAGS_SURFACE.getFrameCount()) {
+		flag = state->flag;
+	} else {
+		flag = 0;
+		LOGGER.warning("Invalid flag number received");
+	}
     ID.setIndex(ltoh16(state->playerindex_id));
     status = state->status;
     kills = ltoh16(state->kills);
