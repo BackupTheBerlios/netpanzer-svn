@@ -68,7 +68,7 @@ protected:
 
     static void updateQueuedClients();
 
-    static void netMessageClientDisconnect(const NetMessage* message);
+    static void netPacketClientDisconnect(const NetPacket* packet);
     static void netPacketClientJoinRequest(const NetPacket* packet);
 
     static void sendConnectionAlert(PlayerID &player_id, int alert_enum);

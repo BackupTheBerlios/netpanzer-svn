@@ -114,19 +114,15 @@ void ServerConnectDaemon::updateQueuedClients()
 
 }
 
-void ServerConnectDaemon::netMessageClientDisconnect(const NetMessage *message)
+void ServerConnectDaemon::netPacketClientDisconnect(const NetPacket *packet)
 {
-    ConnectMesgNetPanzerClientDisconnect *client_disconnect;
-
-    client_disconnect = (ConnectMesgNetPanzerClientDisconnect *) message;
-
-    if(client_disconnect->getPlayerID() >= PlayerInterface::getMaxPlayers()) {
-        LOGGER.warning("Received malformed disconnection message.");
-        return;
-    }
-    
-    startDisconnectionProcess(
-            PlayerInterface::getPlayerID(client_disconnect->getPlayerID()) );
+    // Note: this invalidates the ConnectMesgNetPanzerClientDisconnect playerID
+    // value, just use the networkID, this way avoid possible fake packet
+    // to kick other player.
+    // In a future protocol version PlayerID should be removed from this packet.
+    PlayerState *player = PlayerInterface::getPlayerByNetworkID(packet->fromID);
+    if (player)
+        startDisconnectionProcess(player->getPlayerID());
 }
 
 void ServerConnectDaemon::netPacketClientJoinRequest(const NetPacket* packet)
@@ -171,7 +167,7 @@ void ServerConnectDaemon::processNetPacket(const NetPacket* packet)
 
     switch(message->message_id) {
         case _net_message_id_connect_netPanzer_client_disconnect:
-            netMessageClientDisconnect(message);
+            netPacketClientDisconnect(packet);
             break;
 
         case _net_message_id_connect_join_game_request:
