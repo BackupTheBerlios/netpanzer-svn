@@ -45,32 +45,24 @@ TCPSocket::init(const Address& bindaddr, bool blocking)
     create(true);
 
     try {
-        int res = bind(sockfd, (struct sockaddr*) &bindaddr.addr,
-                sizeof(bindaddr.addr));
-#ifdef USE_WINSOCK
+        int res = bind(sockfd, bindaddr.getSockaddr(), bindaddr.getSockaddrLen());
         if(res == SOCKET_ERROR) {
-#else
-        if(res < 0) {
-#endif
+            int error = GET_NET_ERROR();
             std::stringstream msg;
             msg << "Couldn't bind socket to address '"
                 << bindaddr.getIP() << "' port " << bindaddr.getPort()
                 << ": ";
-            printError(msg);
+            printError(msg,error);
             throw std::runtime_error(msg.str());           
         }
         
-        res = connect(sockfd, (struct sockaddr*) &addr.addr,
-                sizeof(addr.addr));
-#ifdef USE_WINSOCK
+        res = connect(sockfd, addr.getSockaddr(), addr.getSockaddrLen());
         if(res == SOCKET_ERROR) {
-#else
-        if(res < 0) {
-#endif
+            int error = GET_NET_ERROR();
             std::stringstream msg;
             msg << "Couldn't connect to '" << addr.getIP() << "' port "
                 << addr.getPort() << ": ";
-            printError(msg);
+            printError(msg,error);
             throw std::runtime_error(msg.str());
         }
 
@@ -90,10 +82,11 @@ void
 TCPSocket::send(const void* data, size_t size)
 {
     int res = ::send(sockfd, (const char*) data, size, 0);
-    if(res < 0) {
+    if(res == SOCKET_ERROR) {
+        int error = GET_NET_ERROR();
         std::stringstream msg;
         msg << "Send error: ";
-        printError(msg);
+        printError(msg,error);
         throw std::runtime_error(msg.str());
     }
     if(res != (int) size) {
@@ -108,17 +101,13 @@ TCPSocket::recv(void* buffer, size_t size)
 {
     int res = ::recv(sockfd, (char*) buffer, size, 0);
 
-    if(res < 0) {
-#ifdef USE_WINSOCK
-        if(WSAGetLastError() == WSAEWOULDBLOCK)
+    if(res == SOCKET_ERROR) {
+        int error = GET_NET_ERROR();
+        if ( error == NETERROR_WOULDBLOCK)
             return 0;
-#else
-        if(errno == EWOULDBLOCK)
-            return 0;
-#endif
         std::stringstream msg;
         msg << "Read error: ";
-        printError(msg);
+        printError(msg,error);
         throw std::runtime_error(msg.str());
     }
 

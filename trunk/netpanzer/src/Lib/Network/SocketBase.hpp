@@ -37,7 +37,7 @@ protected:
     void create(bool tcp);
     void setNonBlocking();
     void close();
-    void printError(std::ostream& out);
+    void printError(std::ostream& out, int e);
 
     SOCKET sockfd;
 };

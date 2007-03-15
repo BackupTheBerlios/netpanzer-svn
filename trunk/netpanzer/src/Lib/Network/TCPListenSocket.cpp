@@ -46,44 +46,33 @@ TCPListenSocket::TCPListenSocket(const Address& newaddr, bool blocking)
 void
 TCPListenSocket::createBind(bool blocking)
 {
-#ifdef USE_WINSOCK
-    char val = 1;
-    int res = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
-    if(res == SOCKET_ERROR) {
-#else
     int val = 1;
     int res = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
-    if(res < 0) {
-#endif
+    if(res == SOCKET_ERROR) {
+        int error = GET_NET_ERROR();
         std::stringstream msg;
         msg << "Couldn't set SO_REUSEADDR: ";
-        printError(msg);
+        printError(msg,error);
         throw std::runtime_error(msg.str());
     }
     
-    res = bind(sockfd, (struct sockaddr*) &addr.addr, sizeof(addr.addr));
-#ifdef USE_WINSOCK
+    res = bind(sockfd, addr.getSockaddr(), addr.getSockaddrLen());
     if(res == SOCKET_ERROR) {
-#else
-    if(res < 0) {
-#endif
+        int error = GET_NET_ERROR();
         std::stringstream msg;
         msg << "Couldn't bind socket to address '"
             << addr.getIP() << "' port " << addr.getPort()
             << ": ";
-        printError(msg);
+        printError(msg,error);
         throw std::runtime_error(msg.str());
     }
 
     res = listen(sockfd, 20);
-#ifdef USE_WINSOCK
     if(res == SOCKET_ERROR) {
-#else
-    if(res < 0) {
-#endif
+        int error = GET_NET_ERROR();
         std::stringstream msg;
         msg << "Couldn't listen on socket: ";
-        printError(msg);
+        printError(msg,error);
         throw std::runtime_error(msg.str());
     }
 
@@ -95,31 +84,21 @@ TCPSocket*
 TCPListenSocket::accept()
 {
     Address addr;
-    socklen_t socklen = sizeof(addr.addr);
-    SOCKET clientsockfd 
-        = ::accept(sockfd, (struct sockaddr*) &addr.addr, &socklen);
-#ifdef USE_WINSOCK
-    if(clientsockfd == INVALID_SOCKET) {
-#else
-    if(clientsockfd < 0) {
-#endif
-
-#ifdef USE_WINSOCK
-        if(WSAGetLastError() == WSAEWOULDBLOCK)
+    SOCKET newsock;
+    newsock= ::accept(sockfd, addr.getSockaddr(), addr.getSockaddrLenPointer());
+    if (newsock == INVALID_SOCKET) {
+        int error = GET_NET_ERROR();
+        if ( error == NETERROR_WOULDBLOCK )
             return 0;
-#else
-        if(errno == EWOULDBLOCK)
-            return 0;
-#endif
         std::stringstream msg;
         msg << "Accept error: ";
-        printError(msg);
+        printError(msg,error);
         throw std::runtime_error(msg.str());
     }
 
     TCPSocket* result;
     try {
-        result = new TCPSocket(clientsockfd, addr);
+        result = new TCPSocket(newsock, addr);
     } catch(...) {
         close();
         throw;

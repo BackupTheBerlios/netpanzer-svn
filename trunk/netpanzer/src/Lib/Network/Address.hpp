@@ -44,13 +44,15 @@ public:
     void operator=(const Address& other);
     bool operator==(const Address& other) const;
 
+    struct sockaddr * getSockaddr() const { return (struct sockaddr *)&ss; };
+    socklen_t getSockaddrLen() const { return ss_len; };
+    socklen_t * getSockaddrLenPointer() { return &ss_len; };
+    
     static Address ANY;
 
 private:
-    friend class TCPSocket;
-    friend class TCPListenSocket;
-    friend class UDPSocket;
-    struct sockaddr_in addr;
+    socklen_t ss_len;
+    struct sockaddr_storage ss;
 };
 
 }

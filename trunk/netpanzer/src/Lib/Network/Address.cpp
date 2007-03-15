@@ -30,14 +30,16 @@ Address Address::ANY;
 
 Address::Address()
 {
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = INADDR_ANY;
+    memset(&ss, 0, sizeof(ss));
+    ss_len=sizeof(ss);
+    ss.ss_family = AF_INET;
+    //addr.sin_addr.s_addr = INADDR_ANY;
 }
 
 Address::Address(const Address& other)
 {
-    memcpy(&addr, &other.addr, sizeof(addr));
+    memcpy(&ss, &other.ss, sizeof(ss));
+    ss_len=other.ss_len;
 }
 
 void
@@ -45,36 +47,39 @@ Address::operator=(const Address& other)
 {
     if(&other == this) // ignore self assignment
         return;
-    memcpy(&addr, &other.addr, sizeof(addr));
+    memcpy(&ss, &other.ss, sizeof(ss));
+    ss_len=other.ss_len;
 }
 
 bool
 Address::operator==(const Address& other) const
 {
-    if(addr.sin_addr.s_addr == other.addr.sin_addr.s_addr
-            && addr.sin_port == other.addr.sin_port)
-        return true;
-
-    return false;
+    return !memcmp(&ss,&other.ss,ss_len); // todo: check for ss_len too
 }
 
 std::string
 Address::getIP() const
 {
-    return std::string(inet_ntoa(addr.sin_addr));
+    // XXX quick hack to get it working until get full ss support
+    // TODO: make a real ipaddress conversion function
+    return std::string(inet_ntoa(((struct sockaddr_in &)ss).sin_addr));
 }
 
 uint16_t
 Address::getPort() const
 {
-    return ntohs(addr.sin_port);
+    // XXX quick hack to get it working until get full ss support
+    // TODO: make a real port conversion function
+    return ntohs(((struct sockaddr_in &)ss).sin_port);
 }
 
 Address
 Address::resolve(const std::string& name, uint16_t port)
 {
+    // TODO: make a better resolver (ex: getaddrinfo)
     Address result;
-    result.addr.sin_port = htons(port);
+    // XXX quick hack to get it working until get full ss support
+    ((struct sockaddr_in &)result.ss).sin_port = htons(port);
     
     if(name == "") {
         return result;
@@ -94,8 +99,8 @@ Address::resolve(const std::string& name, uint16_t port)
         throw std::runtime_error(msg.str());
 #endif
     }
-
-    result.addr.sin_addr.s_addr = ((struct in_addr*) hentry->h_addr)->s_addr;
+    // XXX quick hack to get it working until get full ss support
+    ((struct sockaddr_in &)result.ss).sin_addr.s_addr = ((struct in_addr*) hentry->h_addr)->s_addr;
 
     return result;
 }

@@ -20,6 +20,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #ifdef USE_WINSOCK
 #include <winsock2.h>
+
+#define GET_NET_ERROR() WSAGetLastError()
+#define NETERROR_WOULDBLOCK WSAEWOULDBLOCK
+
 #else
 #include <unistd.h>
 #include <errno.h>
@@ -31,6 +35,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <fcntl.h>
 
 typedef int SOCKET;
+#define SOCKET_ERROR -1
+#define INVALID_SOCKET -1
+#define closesocket(s) ::close(s)
+#define GET_NET_ERROR() errno
+#define NETERROR_WOULDBLOCK EWOULDBLOCK
+
 #endif
 
 #endif

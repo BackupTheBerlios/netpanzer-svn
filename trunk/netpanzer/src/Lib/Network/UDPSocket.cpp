@@ -43,14 +43,14 @@ UDPSocket::init(const Address& addr, bool blocking)
     create(false);
 
     try {
-        int res = bind(sockfd, (struct sockaddr*) &addr.addr,
-                sizeof(addr.addr));
-        if(res < 0) {
+        int res = bind(sockfd, addr.getSockaddr(), addr.getSockaddrLen());
+        if(res == SOCKET_ERROR) {
+            int error = GET_NET_ERROR();
             std::stringstream msg;
             msg << "Couldn't bind socket to address '"
                 << addr.getIP() << "' port " << addr.getPort()
                 << ": ";
-            printError(msg);
+            printError(msg,error);
             throw std::runtime_error(msg.str());
         }
 
@@ -70,11 +70,12 @@ void
 UDPSocket::send(const Address& addr, const void* data, size_t datasize)
 {
     int res = sendto(sockfd, (const char*) data, datasize, 0,
-            (struct sockaddr*) &addr.addr, sizeof(addr.addr));
-    if(res < 0) {
+                addr.getSockaddr(), addr.getSockaddrLen());
+    if(res == SOCKET_ERROR) {
+        int error = GET_NET_ERROR();
         std::stringstream msg;
         msg << "Send error: ";
-        printError(msg);
+        printError(msg,error);
         throw std::runtime_error(msg.str());
     }
     if(res != (int) datasize) {
@@ -87,20 +88,15 @@ UDPSocket::send(const Address& addr, const void* data, size_t datasize)
 size_t
 UDPSocket::recv(Address& addr, void* buffer, size_t bufsize)
 {
-    socklen_t socklen = sizeof(addr.addr);
     int res = recvfrom(sockfd, (char*) buffer, bufsize, 0,
-            (struct sockaddr*) &addr.addr, &socklen);
-    if(res < 0) {
-#ifdef USE_WINSOCK
-        if(WSAGetLastError() == WSAEWOULDBLOCK)
+            addr.getSockaddr(), addr.getSockaddrLenPointer());
+    if(res == SOCKET_ERROR) {
+        int error = GET_NET_ERROR();
+        if ( error == NETERROR_WOULDBLOCK)
             return 0;
-#else
-        if(errno == EWOULDBLOCK)
-            return 0;
-#endif
         std::stringstream msg;
         msg << "Receive error: " << strerror(errno);
-        printError(msg);
+        printError(msg,error);
         throw std::runtime_error(msg.str());
     }
 
