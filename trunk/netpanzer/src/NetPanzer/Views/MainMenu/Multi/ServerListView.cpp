@@ -119,10 +119,19 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
             std::stringstream pingstr;
             pingstr << server.ping;
             
-            clientArea.bltString(iXY(0, y), server.name, Color::white);
-            clientArea.bltString(iXY(350, y), playerstr.str(), Color::white);
-            clientArea.bltString(iXY(400, y), server.map, Color::white);
-            clientArea.bltString(iXY(550, y), pingstr.str(), Color::white);
+            std::stringstream servaddr;
+            servaddr << server.address << ':' << server.port;
+            
+            uint8_t textcolor = Color::white;
+            
+            if (servaddr.str()==IPAddressView::szServer.getString())
+                textcolor = Color::yellow;
+
+            clientArea.bltString(iXY(0, y), server.name, textcolor);
+            clientArea.bltString(iXY(350, y), playerstr.str(), textcolor);
+            clientArea.bltString(iXY(400, y), server.map, textcolor);
+            clientArea.bltString(iXY(550, y), pingstr.str(), textcolor);
+
         }
 
         y += Surface::getFontHeight();
