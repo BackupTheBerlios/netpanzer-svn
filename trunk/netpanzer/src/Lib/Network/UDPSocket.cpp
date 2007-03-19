@@ -27,33 +27,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 namespace network
 {
 
-UDPSocket::UDPSocket(bool blocking)
+UDPSocket::UDPSocket(bool blocking) : SocketBase(Address::ANY)
 {
-    init(Address::ANY, blocking);
+    init(blocking);
 }
 
-UDPSocket::UDPSocket(const Address& addr, bool blocking)
+UDPSocket::UDPSocket(const Address& bindaddr, bool blocking)
+    : SocketBase(bindaddr)
 {
-    init(addr, blocking);
+    init(blocking);
 }
 
 void
-UDPSocket::init(const Address& addr, bool blocking)
+UDPSocket::init(bool blocking)
 {
     create(false);
 
     try {
-        int res = bind(sockfd, addr.getSockaddr(), addr.getSockaddrLen());
-        if(res == SOCKET_ERROR) {
-            int error = GET_NET_ERROR();
-            std::stringstream msg;
-            msg << "Couldn't bind socket to address '"
-                << addr.getIP() << "' port " << addr.getPort()
-                << ": ";
-            printError(msg,error);
-            throw std::runtime_error(msg.str());
-        }
-
+        bindSocket();
         if(!blocking)
             setNonBlocking();
     } catch(...) {
@@ -67,17 +58,9 @@ UDPSocket::~UDPSocket()
 }
 
 void
-UDPSocket::send(const Address& addr, const void* data, size_t datasize)
+UDPSocket::send(const Address& toaddr, const void* data, size_t datasize)
 {
-    int res = sendto(sockfd, (const char*) data, datasize, 0,
-                addr.getSockaddr(), addr.getSockaddrLen());
-    if(res == SOCKET_ERROR) {
-        int error = GET_NET_ERROR();
-        std::stringstream msg;
-        msg << "Send error: ";
-        printError(msg,error);
-        throw std::runtime_error(msg.str());
-    }
+    int res = doSendTo(toaddr,data,datasize);
     if(res != (int) datasize) {
         std::stringstream msg;
         msg << "Send error: not all data sent.";
@@ -86,21 +69,9 @@ UDPSocket::send(const Address& addr, const void* data, size_t datasize)
 }
 
 size_t
-UDPSocket::recv(Address& addr, void* buffer, size_t bufsize)
+UDPSocket::recv(Address& fromaddr, void* buffer, size_t bufsize)
 {
-    int res = recvfrom(sockfd, (char*) buffer, bufsize, 0,
-            addr.getSockaddr(), addr.getSockaddrLenPointer());
-    if(res == SOCKET_ERROR) {
-        int error = GET_NET_ERROR();
-        if ( error == NETERROR_WOULDBLOCK)
-            return 0;
-        std::stringstream msg;
-        msg << "Receive error: " << strerror(errno);
-        printError(msg,error);
-        throw std::runtime_error(msg.str());
-    }
-
-    return res;
+    return doReceiveFrom(fromaddr,buffer,bufsize);
 }
 
 }

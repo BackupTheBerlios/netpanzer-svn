@@ -74,6 +74,7 @@ HeartbeatThread::HeartbeatThread()
     }
 
     // start thread
+    running = true;
     thread = SDL_CreateThread(threadMain, this);
     if(thread == NULL) {
       throw std::runtime_error("Couldn't create heartbeat thread.");
@@ -99,7 +100,7 @@ HeartbeatThread::~HeartbeatThread()
             gameservers += ",";
         gameservers += i->getIP();
     }
-    gameconfig->masterservers = gameservers;
+    //gameconfig->masterservers = gameservers;
 }
 
 int
@@ -107,7 +108,6 @@ HeartbeatThread::threadMain(void* data)
 {
     HeartbeatThread* _this = reinterpret_cast<HeartbeatThread*> (data);
     
-    _this->running = true;
     while(_this->running) {
         time_t t = time(0);
 

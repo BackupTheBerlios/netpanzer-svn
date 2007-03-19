@@ -27,45 +27,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 namespace network
 {
 
-TCPSocket::TCPSocket(const Address& newaddr, bool blocking)
-    : addr(newaddr)
+TCPSocket::TCPSocket(const Address& newaddr, bool blocking) :SocketBase(newaddr)
 {
-    init(Address::ANY, blocking);
+    create(true);
+    init(blocking);
 }
 
 TCPSocket::TCPSocket(const Address& bindaddr, const Address& newaddr,
-        bool blocking) : addr(newaddr)
+        bool blocking) : SocketBase(newaddr)
 {
-    init(bindaddr, blocking);
+    create(true);
+    bindSocketTo(bindaddr);
+    init(blocking);
 }
 
 void
-TCPSocket::init(const Address& bindaddr, bool blocking)
+TCPSocket::init(bool blocking)
 {
-    create(true);
-
     try {
-        int res = bind(sockfd, bindaddr.getSockaddr(), bindaddr.getSockaddrLen());
-        if(res == SOCKET_ERROR) {
-            int error = GET_NET_ERROR();
-            std::stringstream msg;
-            msg << "Couldn't bind socket to address '"
-                << bindaddr.getIP() << "' port " << bindaddr.getPort()
-                << ": ";
-            printError(msg,error);
-            throw std::runtime_error(msg.str());           
-        }
-        
-        res = connect(sockfd, addr.getSockaddr(), addr.getSockaddrLen());
-        if(res == SOCKET_ERROR) {
-            int error = GET_NET_ERROR();
-            std::stringstream msg;
-            msg << "Couldn't connect to '" << addr.getIP() << "' port "
-                << addr.getPort() << ": ";
-            printError(msg,error);
-            throw std::runtime_error(msg.str());
-        }
-
+        doConnect();
         if(!blocking)
             setNonBlocking();
     } catch(...) {
@@ -81,14 +61,7 @@ TCPSocket::~TCPSocket()
 void
 TCPSocket::send(const void* data, size_t size)
 {
-    int res = ::send(sockfd, (const char*) data, size, 0);
-    if(res == SOCKET_ERROR) {
-        int error = GET_NET_ERROR();
-        std::stringstream msg;
-        msg << "Send error: ";
-        printError(msg,error);
-        throw std::runtime_error(msg.str());
-    }
+    int res = doSend(data,size);
     if(res != (int) size) {
         std::stringstream msg;
         msg << "Send error: Couldn't send all data.";
@@ -99,29 +72,15 @@ TCPSocket::send(const void* data, size_t size)
 size_t
 TCPSocket::recv(void* buffer, size_t size)
 {
-    int res = ::recv(sockfd, (char*) buffer, size, 0);
-
-    if(res == SOCKET_ERROR) {
-        int error = GET_NET_ERROR();
-        if ( error == NETERROR_WOULDBLOCK)
-            return 0;
-        std::stringstream msg;
-        msg << "Read error: ";
-        printError(msg,error);
-        throw std::runtime_error(msg.str());
-    }
-
-    return res;
+    return doReceive(buffer,size);
 }
 
 TCPSocket::TCPSocket()
 {
 }
 
-TCPSocket::TCPSocket(SOCKET fd, const Address& newaddr)
-    : addr(newaddr)
+TCPSocket::TCPSocket(SOCKET fd, const Address& newaddr) : SocketBase(fd,newaddr)
 {
-    sockfd = fd;
 }
 
 }

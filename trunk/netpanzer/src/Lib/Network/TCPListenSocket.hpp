@@ -19,12 +19,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __TCPLISTENSOCKET_HPP__
 
 #include <assert.h>
-#include "TCPSocket.hpp"
+#include "SocketBase.hpp"
 
 namespace network
 {
 
-class TCPListenSocket : public TCPSocket
+class TCPListenSocket : public SocketBase
 {
 public:
     /** creates a new listen socket and binds it to the specified address */
@@ -36,8 +36,6 @@ public:
     TCPSocket* accept();
 
 private:
-    void createBind(bool blocking);
-    
     // forbidden on listening socket
     void send(const void* , size_t )
     { assert(false); }

@@ -49,7 +49,7 @@ ServerQueryThread::ServerQueryThread(ServerList* newserverlist)
     while( (server = tokenizer.getNextToken()) != "") {
         masterservers.push_back(removeSurroundingSpaces(server));
     }
-    std::random_shuffle(masterservers.begin(), masterservers.end());
+    //std::random_shuffle(masterservers.begin(), masterservers.end());
 
     if(masterservers.size() == 0) {
         state = STATE_NOSERVERS;
@@ -97,10 +97,10 @@ ServerQueryThread::run()
                 case STATE_QUERYSERVERS:
                     queryServers();
                     break;
+                case STATE_NOSERVERS:
+                case STATE_ERROR:
                 case STATE_DONE:
                     running = false;
-                    break;
-                default:
                     break;
             }
             // sleep a little bit
@@ -117,95 +117,103 @@ void
 ServerQueryThread::queryMasterServer()
 {
     if(masterservers.empty()) {
-        LOGGER.warning("No success querying masterserver.");
+        LOGGER.warning("masterservers list is empty.");
         state = STATE_ERROR;
         return;
     }
 
-    network::TCPSocket* tcpsocket = 0;
 
-    try {
-        network::Address ip
-            = network::Address::resolve(masterservers.back(), 28900);
-
-        tcpsocket = new network::TCPSocket(ip, false);
-        stream = new network::SocketStream(*tcpsocket);
-        StreamTokenizer tokenizer(*stream, '\\');
-
-        if(!running)
-            throw std::runtime_error("query aborted");
-
-        // send query
-        *stream << "\\list\\gamename\\master\\final"
-                << "\\list\\gamename\\netpanzer"
-                // << "\\protocol\\" << NETPANZER_PROTOCOL_VERSION 
-                << "\\final\\" << std::flush;
-        
-        ServerInfo* lastserver = 0;
-        std::string newMasterServers;
-
-        // parse master server list
-        while(!stream->eof() && running) {
-            std::string token = tokenizer.getNextToken();
-            if(token == "ip") {
-                if(newMasterServers != "")
-                    newMasterServers += ",";
-                newMasterServers += tokenizer.getNextToken();
-            } else if(token == "port") {
-                tokenizer.getNextToken();
-                // ignored
-            } else if(token == "final") {
-                break;
-            } else {
-                std::stringstream msg;
-                msg << "Unknown token '" 
-                    << token << "' when querying masterserver (master list)";
-                throw std::runtime_error(msg.str());
-            }
-        }
-
-        // parse server list
-        while(!stream->eof() && running) {
-            std::string token = tokenizer.getNextToken();
-            if(token == "ip") {
-                ServerInfo* info = new ServerInfo();
-                info->status = ServerInfo::QUERYING;
-                info->address = tokenizer.getNextToken();
-                if(info->address == "")
-                    break;
+    while (!masterservers.empty()) {
+        try {
+            std::string masterserverip = masterservers.back();
+            masterservers.pop_back();
             
-                // add server into list
-                SDL_mutexP(serverlist->mutex);
-                serverlist->push_back(info);
-                not_queried.push_back(info);
-                lastserver = info;
-                SDL_mutexV(serverlist->mutex);
-            } else if(token == "port") {
-                std::stringstream portstr(tokenizer.getNextToken());
-                portstr >> lastserver->port;
-            } else if(token == "final") {
-                break;
-            } else {
-                std::stringstream msg;
-                msg << "Unknown token '" 
-                    << token << "' when querying masterserver (game list)";
-                throw std::runtime_error(msg.str());
+            network::Address ip
+                = network::Address::resolve(masterserverip, 28900);
+
+            network::TCPSocket* tcpsocket = new network::TCPSocket(ip, false);
+            stream = new network::SocketStream(*tcpsocket);
+            StreamTokenizer tokenizer(*stream, '\\');
+
+            if(!running)
+                throw std::runtime_error("query aborted");
+
+            // send query
+            *stream << "\\list\\gamename\\master\\final"
+                    << "\\list\\gamename\\netpanzer"
+                    // << "\\protocol\\" << NETPANZER_PROTOCOL_VERSION 
+                    << "\\final\\" << std::flush;
+
+            ServerInfo* lastserver = 0;
+            std::string newMasterServers;
+
+            // parse master server list
+            while(!stream->eof() && running) {
+                std::string token = tokenizer.getNextToken();
+                if(token == "ip") {
+                    if(newMasterServers != "")
+                        newMasterServers += ",";
+                    newMasterServers += tokenizer.getNextToken();
+                } else if(token == "port") {
+                    tokenizer.getNextToken();
+                    // ignored
+                } else if(token == "final") {
+                    break;
+                } else {
+                    std::stringstream msg;
+                    msg << "Unknown token '" 
+                        << token << "' when querying masterserver (master list)";
+                    throw std::runtime_error(msg.str());
+                }
             }
+
+            // parse server list
+            while(!stream->eof() && running) {
+                std::string token = tokenizer.getNextToken();
+                if(token == "ip") {
+                    ServerInfo* info = new ServerInfo();
+                    info->status = ServerInfo::QUERYING;
+                    info->address = tokenizer.getNextToken();
+                    if(info->address == "")
+                        break;
+
+                    // add server into list
+                    SDL_mutexP(serverlist->mutex);
+                    serverlist->push_back(info);
+                    not_queried.push_back(info);
+                    lastserver = info;
+                    SDL_mutexV(serverlist->mutex);
+                } else if(token == "port") {
+                    std::stringstream portstr(tokenizer.getNextToken());
+                    portstr >> lastserver->port;
+                } else if(token == "final") {
+                    break;
+                } else {
+                    std::stringstream msg;
+                    msg << "Unknown token '" 
+                        << token << "' when querying masterserver (game list)";
+                    throw std::runtime_error(msg.str());
+                }
+            }
+            delete stream;
+            stream=0;
+            delete tcpsocket;
+            
+            //if(newMasterServers != "")
+            //    gameconfig->masterservers = newMasterServers;
+        } catch(std::exception& e) {
+            LOGGER.warning("Problem querying masterserver: %s.", e.what());
+            //masterservers.pop_back();
         }
+    } // while
 
-        state = STATE_QUERYSERVERS;
-        if(newMasterServers != "")
-            gameconfig->masterservers = newMasterServers;
-    } catch(std::exception& e) {
-        LOGGER.warning("Problem querying masterserver: %s.", e.what());
-        masterservers.pop_back();
-    }
+    state = STATE_QUERYSERVERS;
 
-    SDL_mutexP(shutdown_mutex);
-    delete stream;
-    stream = 0;
-    delete tcpsocket;
-    SDL_mutexV(shutdown_mutex);
+//    SDL_mutexP(shutdown_mutex);
+//    delete stream;
+//    stream = 0;
+//    delete tcpsocket;
+//    SDL_mutexV(shutdown_mutex);
 }
 
 void

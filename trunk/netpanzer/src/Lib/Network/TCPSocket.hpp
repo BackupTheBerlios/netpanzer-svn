@@ -40,22 +40,13 @@ public:
      */
     size_t recv(void* buffer, size_t bufsize);
 
-    /** returns the address associated with this socket */
-    const Address& getAddress() const
-    {
-        return addr;
-    }
-
 private:
     friend class TCPListenSocket;
-    friend class SocketStreamBuf;
 
     TCPSocket();
     TCPSocket(SOCKET fd, const Address& addr);
 
-    void init(const Address& bindaddr, bool blocking);
-
-    Address addr;
+    void init(bool blocking);
 };
 
 }

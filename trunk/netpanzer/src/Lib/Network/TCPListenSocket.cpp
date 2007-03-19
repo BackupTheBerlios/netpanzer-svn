@@ -28,12 +28,17 @@ namespace network
 {
     
 TCPListenSocket::TCPListenSocket(const Address& newaddr, bool blocking)
+    : SocketBase(newaddr)
 {
-    addr = newaddr;
-    create(true);
-
     try {
-        createBind(blocking);
+        create(true);
+        setReuseAddr();
+        bindSocket();
+        doListen();
+    
+        if(!blocking)
+            setNonBlocking();
+
     } catch(...) {
         close();
         throw;
@@ -43,62 +48,17 @@ TCPListenSocket::TCPListenSocket(const Address& newaddr, bool blocking)
 #endif
 }
 
-void
-TCPListenSocket::createBind(bool blocking)
-{
-    int val = 1;
-    int res = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
-    if(res == SOCKET_ERROR) {
-        int error = GET_NET_ERROR();
-        std::stringstream msg;
-        msg << "Couldn't set SO_REUSEADDR: ";
-        printError(msg,error);
-        throw std::runtime_error(msg.str());
-    }
-    
-    res = bind(sockfd, addr.getSockaddr(), addr.getSockaddrLen());
-    if(res == SOCKET_ERROR) {
-        int error = GET_NET_ERROR();
-        std::stringstream msg;
-        msg << "Couldn't bind socket to address '"
-            << addr.getIP() << "' port " << addr.getPort()
-            << ": ";
-        printError(msg,error);
-        throw std::runtime_error(msg.str());
-    }
-
-    res = listen(sockfd, 20);
-    if(res == SOCKET_ERROR) {
-        int error = GET_NET_ERROR();
-        std::stringstream msg;
-        msg << "Couldn't listen on socket: ";
-        printError(msg,error);
-        throw std::runtime_error(msg.str());
-    }
-
-    if(!blocking)
-        setNonBlocking();
-}
-
 TCPSocket*
 TCPListenSocket::accept()
 {
-    Address addr;
+    Address newaddr;
     SOCKET newsock;
-    newsock= ::accept(sockfd, addr.getSockaddr(), addr.getSockaddrLenPointer());
-    if (newsock == INVALID_SOCKET) {
-        int error = GET_NET_ERROR();
-        if ( error == NETERROR_WOULDBLOCK )
-            return 0;
-        std::stringstream msg;
-        msg << "Accept error: ";
-        printError(msg,error);
-        throw std::runtime_error(msg.str());
-    }
-
+    newsock = doAccept(newaddr);
+    if (newsock == INVALID_SOCKET)
+        return 0; 
     TCPSocket* result;
     try {
-        result = new TCPSocket(newsock, addr);
+        result = new TCPSocket(newsock, newaddr);
     } catch(...) {
         close();
         throw;

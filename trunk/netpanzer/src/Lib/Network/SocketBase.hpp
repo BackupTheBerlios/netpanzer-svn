@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <iostream>
 #include "SocketHeaders.hpp"
+#include "Address.hpp"
 #include "Util/NoCopy.hpp"
 
 namespace network
@@ -28,8 +29,17 @@ namespace network
 /** Base class for sockets, this is intended for internal use only */
 class SocketBase : public NoCopy
 {
+public:
+    const Address& getAddress() const
+    {
+        return addr;
+    }
 protected:
     SocketBase();
+    SocketBase(SOCKET fd) : sockfd(fd) {};
+    SocketBase(const Address &a) : addr(a) {};
+    SocketBase(SOCKET fd, const Address &a) : sockfd(fd), addr(a) {};
+    
     ~SocketBase();
 
 protected:
@@ -38,8 +48,22 @@ protected:
     void setNonBlocking();
     void close();
     void printError(std::ostream& out, int e);
+    
+    void bindSocketTo(const Address& toaddr);
+    void bindSocket() { bindSocketTo(addr); };
+    void setReuseAddr();
+    void doListen();
+    void doConnect();
+    int  doSend(const void* data, size_t len);
+    int  doReceive(void* buffer, size_t len);
+    int  doSendTo(const Address& toaddr, const void* data, size_t len);
+    size_t  doReceiveFrom(Address& fromaddr, void* buffer, size_t len);
+    SOCKET doAccept(Address& fromaddr);
 
+private:    
     SOCKET sockfd;
+    Address addr;
+
 };
 
 }
