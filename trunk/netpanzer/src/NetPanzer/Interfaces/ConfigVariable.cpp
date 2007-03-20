@@ -49,6 +49,7 @@ int ConfigInt::operator = (int newvalue)
                 getName().c_str(), newvalue, min, max);
 
     value = newvalue;
+    setNonDefaultValue();
     return value;
 }
 
@@ -65,6 +66,7 @@ ConfigXY::~ConfigXY()
 const iXY& ConfigXY::operator = (const iXY& newvalue)
 {
     value = newvalue;
+    setNonDefaultValue();
     return value;
 }
 //---------------------------------------------------------------------------
@@ -81,6 +83,7 @@ ConfigBool::~ConfigBool()
 bool ConfigBool::operator = (bool newvalue)
 {
     value = newvalue;
+    setNonDefaultValue();
     return value;
 }
 
@@ -99,6 +102,7 @@ ConfigString::~ConfigString()
 const std::string& ConfigString::operator= (const std::string& newvalue)
 {
     value = newvalue;
+    setNonDefaultValue();
     return value;
 }
 
@@ -106,3 +110,38 @@ std::ostream& operator<< (std::ostream& o, const ConfigString& string)
 {
     return o << ( (const std::string&) string);
 }
+
+//---------------------------------------------------------------------------
+
+ConfigStringSpecialChars::ConfigStringSpecialChars(const std::string& newname,
+                           const std::string& newvalue)
+    : ConfigString(newname,newvalue)
+{
+    removeSpecialChars();
+}
+
+ConfigStringSpecialChars::~ConfigStringSpecialChars()
+{
+}
+
+const std::string& ConfigStringSpecialChars::operator= (const std::string& newvalue)
+{
+    value = newvalue;
+    removeSpecialChars();
+    setNonDefaultValue();
+    return value;
+}
+
+std::ostream& operator<< (std::ostream& o, const ConfigStringSpecialChars& string)
+{
+    return o << ( (const std::string&) string);
+}
+
+void
+ConfigStringSpecialChars::removeSpecialChars()
+{
+    std::string::size_type p;
+    while((p=value.find('\\')) != std::string::npos)
+        value.erase(p,1);
+}
+

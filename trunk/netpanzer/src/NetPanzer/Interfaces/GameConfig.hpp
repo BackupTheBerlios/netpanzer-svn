@@ -114,7 +114,7 @@ public:
     ConfigString    serverConnect;      // server to connect to
 
     // player settings
-    ConfigString playername;
+    ConfigStringSpecialChars playername;
     ConfigString masterservers;
 
     // server settings

@@ -212,6 +212,11 @@ void GameConfig::loadConfig()
 
     loadSettings(inifile.getSection("game"), gamesettings);
     loadSettings(inifile.getSection("player"), playersettings);
+    if (playername.c_str()[0]==0) {
+        std::stringstream default_player;
+        default_player << "Player" << (rand()%1000);
+        playername=default_player.str();
+    }
     loadSettings(inifile.getSection("visuals"), visualssettings);
     loadSettings(inifile.getSection("sound"), soundsettings);
     loadSettings(inifile.getSection("interface"), interfacesettings);
@@ -229,13 +234,16 @@ void GameConfig::loadSettings(const INI::Section& section,
 
             try {
                 ConfigInt* confint = dynamic_cast<ConfigInt*> (var);
-                if(confint)
+                if(confint) {
                     *confint = section.getIntValue(confint->getName());
+                    continue;
+                }
 
                 ConfigXY* confxy = dynamic_cast<ConfigXY*> (var);
                 if(confxy) {
                     confxy->set(section.getIntValue(confxy->getName() + "_x"),
                             section.getIntValue(confxy->getName() + "_y"));
+                    continue;
                 }
 
                 ConfigBool* confbool = dynamic_cast<ConfigBool*> (var);
@@ -249,14 +257,23 @@ void GameConfig::loadSettings(const INI::Section& section,
                     else
                         throw Exception("No boolean value for setting '%s'.",
                                         confbool->getName().c_str());
+                    continue;
                 }
 
+                ConfigStringSpecialChars* confstringspecial = dynamic_cast<ConfigStringSpecialChars*> (var);
+                if(confstringspecial) {
+                    *confstringspecial = section.getValue(confstringspecial->getName());
+                    continue;
+                }
+                
                 ConfigString* confstring = dynamic_cast<ConfigString*> (var);
                 if(confstring)
                     *confstring = section.getValue(confstring->getName());
 
+
                 // we have a value from config file in the variable now
-                var->setNonDefaultValue();
+                //var->setNonDefaultValue();
+                // now each subclass changethis if the value has been changed
             } catch(std::exception& e) {
                 LOG(("Skipping config '%s': %s", var->getName().c_str(),
                             e.what()));

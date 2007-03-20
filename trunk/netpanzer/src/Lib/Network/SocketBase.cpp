@@ -100,7 +100,7 @@ SocketBase::bindSocketTo(const Address& toaddr)
 void
 SocketBase::setReuseAddr()
 {
-    int val = 1;
+    SETSOCKOPT_PARAMTYPE val = 1;
     int res = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
     if(res == SOCKET_ERROR) {
         int error = GET_NET_ERROR();

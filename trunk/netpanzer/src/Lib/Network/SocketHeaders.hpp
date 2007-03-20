@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #define GET_NET_ERROR() WSAGetLastError()
 #define NETERROR_WOULDBLOCK WSAEWOULDBLOCK
+#define SETSOCKOPT_PARAMTYPE char
 
 #else
 #include <unistd.h>
@@ -40,6 +41,7 @@ typedef int SOCKET;
 #define closesocket(s) ::close(s)
 #define GET_NET_ERROR() errno
 #define NETERROR_WOULDBLOCK EWOULDBLOCK
+#define SETSOCKOPT_PARAMTYPE int
 
 #endif
 

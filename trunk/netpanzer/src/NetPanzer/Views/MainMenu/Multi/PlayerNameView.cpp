@@ -57,6 +57,7 @@ void PlayerNameView::init()
     cInputField* input 
         = addInputField(iXY(BORDER_SPACE, BORDER_SPACE), &playerName, "", true);
     input->setTextAction(textChanged);
+    input->setExcludedCharacters("\\");
 } // end PlayerNameView::init
 
 // doDraw

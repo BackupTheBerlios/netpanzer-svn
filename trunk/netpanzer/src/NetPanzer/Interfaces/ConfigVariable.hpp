@@ -122,11 +122,24 @@ public:
 
     const std::string& operator= (const std::string& newvalue);
 
-private:
+protected:
     std::string value;
 };
 
 std::ostream& operator<< (std::ostream& o, const ConfigString& string);
+
+class ConfigStringSpecialChars : public ConfigString
+{
+public:
+    ConfigStringSpecialChars(const std::string& name, const std::string& value="");
+    ~ConfigStringSpecialChars();
+
+    const std::string& operator= (const std::string& newvalue);
+protected:
+    void removeSpecialChars();
+};
+
+std::ostream& operator<< (std::ostream& o, const ConfigStringSpecialChars& string);
 
 #endif
 
