@@ -54,19 +54,55 @@ UnitGameInfo::getUnitPointValue(UnitType unit_type)
 
 PlayerUnitConfig::PlayerUnitConfig()
 {
-    initialize(9);
 }
 
 void PlayerUnitConfig::initialize( unsigned char max_allowed_units )
 {
-    PlayerUnitConfig::max_allowed_units = max_allowed_units;
+    PlayerUnitConfig::max_allowed_units = gameconfig->maxunits / gameconfig->maxplayers;
     memset( unit_spawn_list, 0, sizeof( unsigned char ) * _MAX_UNIT_TYPES );
-    // *******************  CHANGE UNIT COUNT HERE **************************
-    unit_spawn_list[ _unit_type_valentine ] = 2;        // <-- RIGHT HERE
-    unit_spawn_list[ _unit_type_leopard ] = 2;          // <-- RIGHT HERE
-    unit_spawn_list[ _unit_type_abrams ] = 2;           // <-- RIGHT HERE
-    unit_spawn_list[ _unit_type_hammerhead ] = 1;       // <-- RIGHT HERE
-    unit_spawn_list[ _unit_type_humvee ] = 2;           // <-- RIGHT HERE
+    unsigned char rem_units = PlayerUnitConfig::max_allowed_units;
+    unsigned char numunits;
+
+    numunits = (rem_units < gameconfig->archer)?rem_units:gameconfig->archer;
+    rem_units-=numunits;
+    unit_spawn_list[ _unit_type_archer ] = numunits;
+    
+    numunits = (rem_units < gameconfig->bear)?rem_units:gameconfig->bear;
+    rem_units-=numunits;
+    unit_spawn_list[ _unit_type_spahpanzer ] = numunits;
+    
+    numunits = (rem_units < gameconfig->bobcat)?rem_units:gameconfig->bobcat;
+    rem_units-=numunits;
+    unit_spawn_list[ _unit_type_lynx ] = numunits;
+    
+    numunits = (rem_units < gameconfig->drake)?rem_units:gameconfig->drake;
+    rem_units-=numunits;
+    unit_spawn_list[ _unit_type_m109 ] = numunits;
+    
+    numunits = (rem_units < gameconfig->manta)?rem_units:gameconfig->manta;
+    rem_units-=numunits;
+    unit_spawn_list[ _unit_type_valentine ] = numunits;
+    
+    numunits = (rem_units < gameconfig->panther1)?rem_units:gameconfig->panther1;
+    rem_units-=numunits;
+    unit_spawn_list[ _unit_type_leopard ] = numunits;
+    
+    numunits = (rem_units < gameconfig->spanzer)?rem_units:gameconfig->spanzer;
+    rem_units-=numunits;
+    unit_spawn_list[ _unit_type_humvee ] = numunits;
+    
+    numunits = (rem_units < gameconfig->stinger)?rem_units:gameconfig->stinger;
+    rem_units-=numunits;
+    unit_spawn_list[ _unit_type_hammerhead ] = numunits;
+    
+    numunits = (rem_units < gameconfig->titan)?rem_units:gameconfig->titan;
+    rem_units-=numunits;
+    unit_spawn_list[ _unit_type_abrams ] = numunits;
+    
+    numunits = (rem_units < gameconfig->wolf)?rem_units:gameconfig->wolf;
+    rem_units-=numunits;
+    unit_spawn_list[ _unit_type_scorpion ] = numunits;
+    
     unit_color = 0;
 }
 

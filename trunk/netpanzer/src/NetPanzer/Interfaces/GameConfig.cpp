@@ -105,7 +105,18 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       radar_enemyoutpostcolor("enemyoutpostcolor", _color_red, 0, _color_last-1),
       radar_unitsize("unitsize", _mini_map_unit_size_small, 0, _mini_map_unit_size_last-1),
       radar_objectivedrawmode("objectivedrawmode", _mini_map_objective_draw_mode_outline_rect, 0, _mini_map_objective_draw_mode_last-1),
-      radar_resizerate("resizerate", 400, 10, 1000)      
+      radar_resizerate("resizerate", 400, 10, 1000),
+      
+      titan("titan",2),
+      manta("manta",2),
+      panther1("panther1",2),
+      stinger("stinger",1),
+      spanzer("spanzer",2),
+      bobcat("bobcat",0),
+      wolf("wolf",0),
+      bear("bear",0),
+      drake("drake",0),
+      archer("archer",0)
 {
     this->configfile = configfile;
     this->usePhysFS = usePhysFS;
@@ -182,6 +193,17 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     radarsettings.push_back(&radar_objectivedrawmode);
     radarsettings.push_back(&radar_resizerate);
     
+    spawnsettings.push_back(&titan);
+    spawnsettings.push_back(&manta);
+    spawnsettings.push_back(&panther1);
+    spawnsettings.push_back(&stinger);
+    spawnsettings.push_back(&spanzer);
+    spawnsettings.push_back(&bobcat);
+    spawnsettings.push_back(&wolf);
+    spawnsettings.push_back(&bear);
+    spawnsettings.push_back(&drake);
+    spawnsettings.push_back(&archer);
+    
     try {
         loadConfig();
     } catch(std::exception& e) {
@@ -222,6 +244,7 @@ void GameConfig::loadConfig()
     loadSettings(inifile.getSection("interface"), interfacesettings);
     loadSettings(inifile.getSection("radar"), radarsettings);
     loadSettings(inifile.getSection("server"), serversettings);
+    loadSettings(inifile.getSection("spawnconfig"),spawnsettings);
 }
 
 void GameConfig::loadSettings(const INI::Section& section,
@@ -296,6 +319,7 @@ void GameConfig::saveConfig()
     saveSettings(inifile.getSection("interface"), interfacesettings);
     saveSettings(inifile.getSection("radar"), radarsettings);
     saveSettings(inifile.getSection("server"), serversettings);
+    saveSettings(inifile.getSection("spawnconfig"),spawnsettings);
 
     if(usePhysFS) {
         OFileStream out (configfile);

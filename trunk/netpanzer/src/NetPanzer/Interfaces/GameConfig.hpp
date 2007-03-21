@@ -188,6 +188,20 @@ public:
     ConfigInt   radar_unitsize;
     ConfigInt   radar_objectivedrawmode;
     ConfigInt   radar_resizerate;
+    
+    // spawnconfig settings
+    ConfigInt   titan;
+    ConfigInt   manta;
+    ConfigInt   panther1;
+    ConfigInt   stinger;
+    ConfigInt   spanzer;
+    ConfigInt   bobcat;
+    ConfigInt   wolf;
+    ConfigInt   bear;
+    ConfigInt   drake;
+    ConfigInt   archer;
+    
+    
 
     PlayerUnitConfig unit_spawn_config;
     
@@ -321,7 +335,8 @@ private:
     std::vector<ConfigVariable*> visualssettings;
     std::vector<ConfigVariable*> soundsettings;
     std::vector<ConfigVariable*> interfacesettings;
-    std::vector<ConfigVariable*> radarsettings;    
+    std::vector<ConfigVariable*> radarsettings;   
+    std::vector<ConfigVariable*> spawnsettings;
 };
 
 extern GameConfig* gameconfig;
