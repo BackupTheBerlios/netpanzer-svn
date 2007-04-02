@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkClient.hpp"
 #include "Network/ClientSocket.hpp"
 
-class NetworkClientUnix : public NetworkClient
+class NetworkClientUnix : public NetworkClient, public ClientSocketObserver
 {
 public:
     NetworkClientUnix();
@@ -34,6 +34,10 @@ public:
     virtual bool getMessage(NetMessage *message);
 
     virtual void checkIncoming();
+protected:
+    void onClientConnected(ClientSocket *s);
+    void onClientDisconected(ClientSocket *s);    
+    
 private:
     ClientSocket* clientsocket;
 };

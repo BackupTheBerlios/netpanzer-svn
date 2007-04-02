@@ -24,29 +24,46 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 namespace network
 {
 
+class TCPSocket;    
+    
+class TCPSocketObserver {
+public:    
+    TCPSocketObserver() {};
+    virtual ~TCPSocketObserver() {};
+protected:
+    friend class TCPSocket;
+    virtual void onDataReceived(TCPSocket *so, const char *data, const int len) = 0;
+    virtual void onConnected(TCPSocket *so) = 0;
+    virtual void onDisconected(TCPSocket *so) = 0;
+};
+
 class TCPSocket : public SocketBase
 {
 public:
-    /** connects to a remote host */
-    TCPSocket(const Address& address, bool blocking = true);
-    TCPSocket(const Address& bindaddr, const Address& address,
-            bool blocking = true);
-    ~TCPSocket();
+//    TCPSocket(const Address& bindaddr, const Address& address, bool blocking = true);
 
-    /** send data to the socket */
+
+    TCPSocket(const Address& address, TCPSocketObserver *o);
+
+    void destroy();
+
     void send(const void* data, size_t datasize);
-    /** receives data from the socket and copies it into the buffer.
-     * returns number of read bytes
-     */
-    size_t recv(void* buffer, size_t bufsize);
-
+    
+protected:
+    ~TCPSocket();
+    void onDataReady();
+    void onConnected();
+    void onDisconected();
+    
 private:
     friend class TCPListenSocket;
 
     TCPSocket();
-    TCPSocket(SOCKET fd, const Address& addr);
+    TCPSocket(SOCKET fd, const Address& addr, TCPSocketObserver *o);
 
     void init(bool blocking);
+    
+    TCPSocketObserver *observer;
 };
 
 }

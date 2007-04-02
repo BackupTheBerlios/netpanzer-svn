@@ -22,6 +22,9 @@
 #include "KeyboardInterface.hpp"
 #include "MouseInterface.hpp"
 #include "cMouse.hpp"
+#include "SDLVideo.hpp"
+#include "2D/Palette.hpp"
+#include "GameConfig.hpp"
 
 bool handleSDLEvents()
 {
@@ -81,6 +84,13 @@ bool handleSDLEvents()
         case SDL_KEYUP:
             KeyboardInterface::keyReleased(event.key.keysym.sym);
             break;
+       
+        case SDL_ACTIVEEVENT:
+            if ( (event.active.state&SDL_APPACTIVE)
+                 && (event.active.gain==1)
+                 && gameconfig->fullscreen )
+                Screen->setPalette(Palette::color);
+             break;
         }
     }
 

@@ -24,12 +24,10 @@ namespace masterserver
 
 ServerList::ServerList()
 {
-    mutex = SDL_CreateMutex();
 }
 
 ServerList::~ServerList()
 {
-    SDL_DestroyMutex(mutex);
 }
 
 } // end of namespace masterserver

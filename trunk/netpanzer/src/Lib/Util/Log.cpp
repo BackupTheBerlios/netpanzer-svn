@@ -70,8 +70,12 @@ Logger::closeLogFile()
 void
 Logger::log(int priority, const char *fmt, va_list ap)
 {
-    char buf[512];
-    vsnprintf(buf, sizeof(buf)-1, fmt, ap);
+    char buf[2048];
+    time_t curtime = time(0);
+    struct tm* loctime = localtime(&curtime);
+    int timelen = strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S ", loctime);
+    
+    vsnprintf(buf+timelen, sizeof(buf)-timelen-1, fmt, ap);
     strcat(buf, "\n");
     
     if (m_logLevel >= priority) {

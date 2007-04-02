@@ -18,12 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNIXSERVER_H
 #define _UNIXSERVER_H
 
+#include <map>
 #include <stdint.h>
-#include "ClientList.hpp"
 #include "Network/TCPListenSocket.hpp"
-#include "Network/SocketSet.hpp"
+#include "ClientSocket.hpp"
 
-class ServerSocket
+
+class ServerSocket : public network::TCPListenSocketObserver, public ClientSocketObserver
 {
 public:
     ServerSocket(const std::string& bindaddress, uint16_t port);
@@ -35,20 +36,24 @@ public:
     void removeClient(NetClientID clientid);
     NetClientID addLoopbackClient();
 
-    std::string getClientIP(NetClientID) const;
+    std::string getClientIP(NetClientID);
+    void disconectClient(NetClientID c);
 
 protected:
+    network::TCPSocketObserver * onNewConnection(network::TCPListenSocket *so,const network::Address &fromaddr);
+    void onClientConnected(ClientSocket *s);
+    void onClientDisconected(ClientSocket *s);
     friend class SocketClient;
-    void closeConnection(SocketClient* client);
+    //void closeConnection(SocketClient* client);
 
 private:
-    void acceptNewClients();
-    void readTCP();
-    void readClientTCP(SocketClient* client);
+    //void acceptNewClients();
+    //void readTCP();
+    //void readClientTCP(SocketClient* client);
 
-    network::TCPListenSocket* socket;
-    network::SocketSet sockets;
-    ClientList* clientlist;
+    network::TCPListenSocket * socket;
+    std::map<NetClientID, ClientSocket *> clients;
+    //ClientList * clientlist;
 };
 
 #endif

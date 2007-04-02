@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2004 by Matthias Braun <matze@braunis.de>
+Copyright (C) 2007 by Aaron Perez <aaronps@gmail.com>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,39 +15,25 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef __SOCKETCLIENT_HPP__
-#define __SOCKETCLIENT_HPP__
 
-#include <stdint.h>
-#include "NetPacket.hpp"
+#ifndef _DISCONECTEDVIEW_HPP
+#define _DISCONECTEDVIEW_HPP
 
-class ServerSocket;
+#include "SpecialButtonView.hpp"
+#include "2D/Surface.hpp"
 
-namespace network {
-class TCPSocket;
-}
-
-/** This class keep data from a single client that is connected to the server
- */
-class SocketClient
+//---------------------------------------------------------------------------
+class DisconectedView : public SpecialButtonView
 {
+private:
+    void init();
+    static void buttonOk();
+
 public:
-    SocketClient(ServerSocket* server);
-    ~SocketClient();
+    DisconectedView();
 
-    network::TCPSocket* socket;
-    
-    char tempbuffer[_MAX_NET_PACKET_SIZE];
-    uint16_t tempoffset;
-
-    /// this variable is set to true, when the Client should be removed from
-    /// client list in the next iteratrion
-    bool wantstodie;
-
-    NetClientID id;
-
-    ServerSocket* server;
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doActivate();
 };
 
 #endif
-

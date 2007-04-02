@@ -44,13 +44,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ProgressView.hpp"
 #include "ConsoleLoadingView.hpp"
 #include "Console.hpp"
-#include "HeartbeatThread.hpp"
-#include "InfoThread.hpp"
+#include "Heartbeat.hpp"
+#include "InfoSocket.hpp"
 #include "Util/Log.hpp"
 #include "unix/NetworkServerUnix.hpp"
 
 DedicatedGameManager::DedicatedGameManager()
-    : commandqueue_mutex(0), console(0), heartbeatthread(0), infothread(0)
+    : commandqueue_mutex(0), console(0), heartbeat(0), infosocket(0)
 {
     commandqueue_mutex = SDL_CreateMutex();
     Console::initialize();
@@ -59,8 +59,10 @@ DedicatedGameManager::DedicatedGameManager()
 DedicatedGameManager::~DedicatedGameManager()
 {
     delete console;
-    delete heartbeatthread;
-    delete infothread;
+    if ( heartbeat )
+        delete heartbeat;
+    if ( infosocket )
+        delete infosocket;
     Console::shutdown();
 
     SDL_DestroyMutex(commandqueue_mutex);
@@ -99,10 +101,6 @@ void DedicatedGameManager::initializeInputDevices()
 //-----------------------------------------------------------------
 void DedicatedGameManager::inputLoop()
 {
-    if(infothread) {
-        infothread->lastFrame = SDL_GetTicks();
-    }
-    
     // handle server commands
     SDL_mutexP(commandqueue_mutex);
     while(!commandqueue.empty()) {
@@ -184,6 +182,15 @@ void DedicatedGameManager::inputLoop()
     SDL_mutexV(commandqueue_mutex);
 }
 
+bool
+DedicatedGameManager::mainLoop()
+{
+    if ( heartbeat )
+        heartbeat->checkHeartbeat();
+    return BaseGameManager::mainLoop();
+}
+
+
 //-----------------------------------------------------------------
 void DedicatedGameManager::pushCommand(const ServerCommand& command)
 {
@@ -220,12 +227,26 @@ bool DedicatedGameManager::launchNetPanzerGame()
     if((bool) gameconfig->publicServer &&
         (const std::string&) gameconfig->masterservers != "") {
         try {
-            infothread = new InfoThread(gameconfig->serverport);
-            heartbeatthread = new HeartbeatThread();
+            if ( infosocket ) {
+                delete infosocket;
+                infosocket = 0;
+            }
+            infosocket = new InfoSocket(gameconfig->serverport);
+            if ( heartbeat ) {
+                delete heartbeat;
+                heartbeat = 0;
+            }
+            heartbeat = new Heartbeat();
         } catch(std::exception& e) {
             LOGGER.warning("heartbeats disabled: %s", e.what());
-            delete infothread; infothread = 0;
-            delete heartbeatthread; heartbeatthread = 0;
+            if ( infosocket ) {
+                delete infosocket;
+                infosocket = 0;
+            }
+            if ( heartbeat ) {
+                delete heartbeat;
+                heartbeat = 0;
+            }
         }
     }
 
@@ -248,9 +269,14 @@ DedicatedGameManager::initializeNetworkSubSystem()
 void
 DedicatedGameManager::shutdownNetworkSubSystem()
 {
-    delete infothread;
-    infothread = 0;
-    delete heartbeatthread;
-    heartbeatthread = 0;
+    if ( infosocket ) {
+        delete infosocket;
+        infosocket = 0;
+    }
+
+    if ( heartbeat ) {
+        delete heartbeat;
+        heartbeat=0;
+    }
     BaseGameManager::shutdownNetworkSubSystem();
 }

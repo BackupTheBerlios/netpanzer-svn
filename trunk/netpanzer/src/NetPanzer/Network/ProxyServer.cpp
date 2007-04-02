@@ -76,8 +76,9 @@ ProxyServer::sendProxyConnect(network::TCPSocket& socket,
     int line=0;
     while(1) {
         char ch;
-        if(socket.recv(&ch, 1)!=1)
-            break;
+        //XXX
+        //if(socket.recv(&ch, 1)!=1)
+            //break;
         *b++=ch;
         if(ch=='\r') 
             continue;

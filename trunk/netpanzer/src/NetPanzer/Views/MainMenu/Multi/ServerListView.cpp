@@ -59,21 +59,30 @@ ServerListView::~ServerListView()
 void
 ServerListView::refresh()
 {
-    if(queryThread && queryThread->isRunning())
-        return;
-    
-    delete queryThread;
+    if ( queryThread ) { 
+        if (queryThread->isRunning())
+            return;
+        else
+            delete queryThread;
+    }
    
     // don't clear before the delete or after the new, as the thread contains
     // pointers to the serverlist
-    SDL_mutexP(serverlist.mutex);
     for(std::vector<masterserver::ServerInfo*>::iterator i = serverlist.begin();
             i != serverlist.end(); ++i)
         delete *i;
     serverlist.clear();
-    SDL_mutexV(serverlist.mutex);
 
     queryThread = new masterserver::ServerQueryThread(&serverlist);   
+}
+
+void
+ServerListView::endQuery()
+{
+    if (queryThread) {
+        delete queryThread;
+        queryThread=0;
+    }
 }
 
 void
@@ -86,7 +95,11 @@ void
 ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
 {
     clientArea.fill(Color::black);
-
+    
+    if(queryThread && queryThread->isRunning()) {
+        queryThread->checkTimeOuts();
+    }
+    
     if(serverlist.empty()) {
         const char* msg = queryThread->getStateMessage();
         clientArea.bltString(iXY(0, 0), msg, Color::white);
@@ -94,7 +107,6 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
         return;
     }
 
-    SDL_mutexP(serverlist.mutex);
     int y = 0;
     for(std::vector<masterserver::ServerInfo*>::iterator i = serverlist.begin();
             i != serverlist.end(); ++i) {
@@ -138,7 +150,6 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
         if(y >= clientArea.getPixY())
             break;                             
     }
-    SDL_mutexV(serverlist.mutex);
 
     View::doDraw(windowArea, clientArea);
 }

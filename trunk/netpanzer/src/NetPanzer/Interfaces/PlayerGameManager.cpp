@@ -90,6 +90,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ResignView.hpp"
 #include "AreYouSureResignView.hpp"
 #include "AreYouSureExitView.hpp"
+#include "DisconectedView.hpp"
 #include "UnitSelectionView.hpp"
 #include "FlagSelectionView.hpp"
 #include "UnitColorView.hpp"
@@ -117,15 +118,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameManager.hpp"
 #include "GameControlRulesDaemon.hpp"
 
-#include "InfoThread.hpp"
-#include "HeartbeatThread.hpp"
+#include "InfoSocket.hpp"
+#include "Heartbeat.hpp"
 
 //** User interface
 //#include "UI/Painter.hpp"
 
 
 PlayerGameManager::PlayerGameManager()
-    : sdlVideo(0), heartbeatthread(0), infothread(0)
+    : sdlVideo(0), heartbeat(0), infosocket(0)
 {
     //fontManager.loadFont("fixed10", "fonts/fixed10.pcf", 10);
 
@@ -224,6 +225,7 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new ResignView());
     Desktop::add(new AreYouSureResignView());
     Desktop::add(new AreYouSureExitView());
+    Desktop::add(new DisconectedView());
 
     Desktop::add(new IPAddressView());
     Desktop::add(new ServerListView());
@@ -241,9 +243,6 @@ void PlayerGameManager::initializeWindowSubSystem()
 //-----------------------------------------------------------------
 void PlayerGameManager::inputLoop()
 {
-    if(infothread)
-        infothread->lastFrame = SDL_GetTicks();
-
     processSystemKeys();
 
 #if 0
@@ -305,10 +304,14 @@ void PlayerGameManager::launchMultiPlayerGame()
 //-----------------------------------------------------------------
 void PlayerGameManager::shutdownNetworkSubSystem()
 {
-    delete infothread;
-    infothread = 0;
-    delete heartbeatthread;
-    heartbeatthread = 0;
+    if ( infosocket ) {
+        delete infosocket;
+        infosocket = 0;
+    }
+    if ( heartbeat ) {
+        delete heartbeat;
+        heartbeat = 0;
+    }
     BaseGameManager::shutdownNetworkSubSystem();
 }
 
@@ -327,16 +330,26 @@ void PlayerGameManager::hostMultiPlayerGame()
         if((bool) gameconfig->publicServer &&
                 (const std::string&) gameconfig->masterservers != "") {
             try {
-                delete infothread;
-                delete heartbeatthread;
-                infothread = new InfoThread(gameconfig->serverport);
-                heartbeatthread = new HeartbeatThread();
+                if ( infosocket ) {
+                    delete infosocket;
+                    infosocket = 0;
+                }
+                infosocket = new InfoSocket(gameconfig->serverport);
+                if ( heartbeat ) {
+                    delete heartbeat;
+                    heartbeat = 0;
+                }
+                heartbeat = new Heartbeat();
             } catch(std::exception& e) {
                 LOGGER.warning("heartbeats disabled: %s", e.what());
-                delete infothread;
-                infothread = 0;
-                delete heartbeatthread;
-                heartbeatthread = 0;
+                if ( infosocket ) {
+                    delete infosocket;
+                    infosocket = 0;
+                }
+                if ( heartbeat ) {
+                    delete heartbeat;
+                    heartbeat = 0;
+                }
             }
         }
     } catch(std::exception& e) {
@@ -418,10 +431,14 @@ void PlayerGameManager::hostMultiPlayerGame()
 
 void PlayerGameManager::quitGame()
 {
-    delete infothread;
-    infothread = 0;
-    delete heartbeatthread;    
-    heartbeatthread = 0;
+    if ( infosocket ) {
+        delete infosocket;
+        infosocket = 0;
+    }
+    if ( heartbeat ) {
+        delete heartbeat;
+        heartbeat = 0;
+    }
 }
 
 //-----------------------------------------------------------------
@@ -449,6 +466,9 @@ bool PlayerGameManager::mainLoop()
             launchMultiPlayerGame();
         }
     }
+
+    if ( heartbeat )
+        heartbeat->checkHeartbeat();
 
     // handle SDL Events
     if(handleSDLEvents())

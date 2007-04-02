@@ -30,8 +30,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Endian.hpp"
 #include "Network/Address.hpp"
 
-ClientSocket::ClientSocket(const std::string& whole_servername)
-    : socket(0), tempoffset(0)
+ClientSocket::ClientSocket(ClientSocketObserver *o, const std::string& whole_servername)
+    : observer(0), socket(0), tempoffset(0)
 {
     try {
         proxy.setProxy(gameconfig->proxyserver,
@@ -48,7 +48,7 @@ ClientSocket::ClientSocket(const std::string& whole_servername)
         network::Address serveraddr 
             = network::Address::resolve(servername, port);
         
-        socket = new network::TCPSocket(serveraddr, false);
+        socket = new network::TCPSocket(serveraddr, this);
 
         if(proxy.proxyserver != "") {
             proxy.sendProxyConnect(*socket, whole_servername);
@@ -56,86 +56,143 @@ ClientSocket::ClientSocket(const std::string& whole_servername)
                     whole_servername.c_str(),
                     proxy.proxyserver.c_str());
         }
+
+        initId();
+        observer = o;
     } catch(...) {
-        delete socket;
+        if (socket)
+            socket->destroy();
         throw;
     }
+}
+ClientSocket::ClientSocket(ClientSocketObserver *o)
+    : observer(0), socket(0), tempoffset(0)
+{
+    initId();
+    observer = o;
+}
+
+void
+ClientSocket::initId()
+{
+    static NetClientID curid=0;
+    id=curid++;
 }
 
 ClientSocket::~ClientSocket()
 {
-    delete socket;
-}
-
-void ClientSocket::read()
-{
-    static char RecvBuffer[4096];
-
-    int bytesleft;
-    try {
-        bytesleft = socket->recv(RecvBuffer, sizeof(RecvBuffer));
-        if(bytesleft == 0)
-            return;
-    } catch(std::exception& e) {
-        LOG( ("Connection lost to server: %s", e.what()) );
-        return;
-    }
-
-    const char* bufptr = RecvBuffer;    
-    while (bytesleft > 0) {
-        if(bytesleft == 1 && tempoffset == 0) {
-            memcpy(tempbuffer, bufptr, 1);
-            tempoffset = 1;
-            return;
-        }
-
-        uint16_t size;
-        if(tempoffset > 0) {
-            if(tempoffset == 1) {
-                memcpy(tempbuffer + tempoffset, bufptr, 1);
-            }
-            size = htol16( *((uint16_t*) tempbuffer) );
-        } else {
-            assert(bytesleft >= 2);
-            size = htol16( *((uint16_t*) bufptr) );
-        }
-
-        if(size < sizeof(NetMessage) || size > _MAX_NET_PACKET_SIZE) {
-            LOGGER.warning("Read: Invalid packet size (%u) from server", size);
-            return;
-        }
-
-        if(tempoffset > 0) {
-            int tempmissing = size - tempoffset;
-            assert(tempmissing > 0);
-            if(bytesleft >= tempmissing) {
-                memcpy(tempbuffer + tempoffset, bufptr, tempmissing);
-                EnqueueIncomingPacket(tempbuffer, size, 0, 0);
-                tempoffset = 0;
-                bytesleft -= tempmissing;
-                bufptr += tempmissing;
-                continue;
-            } else {
-                memcpy(tempbuffer + tempoffset, bufptr, bytesleft);
-                tempoffset += bytesleft;
-                return;
-            }
-        } else {
-            if(bytesleft >= size) {
-                EnqueueIncomingPacket(bufptr, size, 0, 0);
-                bytesleft -= size;
-                bufptr += size;
-                continue;
-            } else {
-                memcpy(tempbuffer, bufptr, bytesleft);
-                tempoffset = bytesleft;
-                return;
-            }
-        }
-    }
+    if (socket)
+        socket->destroy();
 }
 
 void ClientSocket::sendMessage(const void* data, size_t size)
 {
-    socket->send(data, size);
+    if (socket)
+        socket->send(data, size);
 }
+
+void
+ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const int len)
+{
+    int dataptr = 0;
+    unsigned int remaining = len;
+    uint16_t packetsize=0;
+//    LOGGER.warning("Len is [%d]",len);
+    while (remaining) {
+        //LOGGER.warning("-tempoffset[%d], remaining[%d], dataptr[%d]", tempoffset,remaining,dataptr);
+        if ( !tempoffset ) {
+            if ( remaining >= sizeof(NetMessage) && remaining >= (packetsize=htol16(*((uint16_t*)(data+dataptr))) ) ){
+                //LOGGER.warning("--Packet size is [%d]",packetsize);
+                if ( packetsize < sizeof(NetMessage) )
+                    packetsize = sizeof(NetMessage);
+                if ( packetsize > _MAX_NET_PACKET_SIZE ) {
+                    LOGGER.warning("Received wrong packetsize [%d]", packetsize);
+                    break; // received a wrong packet size
+                }
+                
+                //LOGGER.warning("---Sending packet [%d]",packetsize);
+                EnqueueIncomingPacket(data+dataptr, packetsize, 0, id);
+                remaining-=packetsize;
+                dataptr+=packetsize;
+            } else { // XXX check someone funny doesn't send a big msg
+                //LOGGER.warning("--half packet start, remaining[%d]",remaining);
+                if ( remaining > _MAX_NET_PACKET_SIZE ) {
+                    // The only possibility of getting in here is...
+                    LOGGER.warning("Received wrong packetsize (remaining) [%d]",remaining);
+                    break;
+                }
+                
+                memcpy(tempbuffer,data+dataptr,remaining);
+                tempoffset = remaining;
+                remaining=0;
+            }
+        } else {
+            if ( tempoffset < sizeof(NetMessage) ) {
+                // copy the needed until netMessage
+                LOGGER.warning("--Reading more for head");
+                unsigned int needsize = sizeof(NetMessage)-tempoffset;
+                unsigned int tocopy = (remaining>needsize)?needsize:remaining;
+                memcpy(tempbuffer+tempoffset, data+dataptr, tocopy);
+                remaining-=tocopy;
+                tempoffset+=tocopy;
+                dataptr+=tocopy;
+            }
+            
+            if ( tempoffset >= sizeof(NetMessage) ) {
+                packetsize=htol16(*((uint16_t*)tempbuffer));
+                LOGGER.warning("ClientSocket::onDataReceived(%d) Head ok, size[%d]", id, packetsize);
+                if ( packetsize < sizeof(NetMessage) )
+                    break;
+
+                if ( packetsize > _MAX_NET_PACKET_SIZE ) {
+                    LOGGER.warning("ClientSocket::onDataReceived(%d) Received wrong packetsize (half) [%d]", id, packetsize);
+                    tempoffset=0;
+                    break; // received a wrong packet size
+                }
+                
+                if ( (tempoffset < packetsize) && remaining ) {
+                    LOGGER.warning("ClientSocket::onDataReceived(%d) need more packet and has remaining", id);
+                    unsigned int needsize = packetsize-tempoffset;
+                    unsigned int tocopy = (remaining>needsize)?needsize:remaining;
+                    memcpy(tempbuffer+tempoffset, data+dataptr, tocopy);
+                    remaining-=tocopy;
+                    tempoffset+=tocopy;
+                    dataptr+=tocopy;
+                }
+                
+                if ( tempoffset == packetsize ) {
+                    LOGGER.warning("ClientSocket::onDataReceived(%d) Sending half packet [%d]", id, packetsize);
+                    EnqueueIncomingPacket(tempbuffer, packetsize, 0, id);
+                    tempoffset = 0;
+                }
+            }
+        }
+    } // while
+//    LOGGER.warning("Len was [%d], remainin",len);
+}
+
+void
+ClientSocket::onConnected(network::TCPSocket *so)
+{
+    LOGGER.warning("ClientSocket:: Connected to socket");
+    socket = so;
+    observer->onClientConnected(this);
+}
+
+void
+ClientSocket::onDisconected(network::TCPSocket *so)
+{
+    LOGGER.warning("ClientSocket:: Disconected NetId[%d]!", id);
+    socket=0;
+    observer->onClientDisconected(this);
+}
+
+std::string
+ClientSocket::getIPAddress()
+{
+    std::stringstream ip;
+    ip << socket->getAddress().getIP();
+    ip << ':' << socket->getAddress().getPort();
+    return ip.str();
+}
+

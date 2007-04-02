@@ -54,6 +54,8 @@ public:
 
     network::Address ipaddress;
     Uint32 querystartticks;
+    
+    int tryNum;
 };
 
 } // masterserver

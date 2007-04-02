@@ -20,17 +20,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 #include <string>
+#include <map>
 #include <SDL_thread.h>
 #include "Network/TCPSocket.hpp"
 #include "Network/UDPSocket.hpp"
-#include "Network/SocketStream.hpp"
+#include "Network/Address.hpp"
 
 #include "ServerList.hpp"
 
+using namespace std;
+
 namespace masterserver
 {
+    
+class MSInfo;
 
-class ServerQueryThread
+class ServerQueryThread : public network::TCPSocketObserver, public network::UDPSocketObserver
 {
 public:
     ServerQueryThread(ServerList* serverlist);
@@ -41,18 +46,24 @@ public:
     {
         return running;
     }
-
+    void checkTimeOuts();
+    
+protected:
+    void onDataReceived(network::TCPSocket *s, const char *data, const int len);
+    void onConnected(network::TCPSocket *s);
+    void onDisconected(network::TCPSocket *s);    
+    void onDataReceived(network::UDPSocket *s, const network::Address &from, const char *data, const int len);
+    
 private:
-    static int threadMain(void* data);
-    void run();
+    
+    void parseServerData(ServerInfo *server, string &data);
+    void sendNextQuery();
+    void sendQuery(ServerInfo *server);
 
     void queryMasterServer();
     void queryServers();
 
-    volatile bool running;
-    network::SocketStream* stream;
-    SDL_mutex* shutdown_mutex;
-    SDL_Thread* thread;
+    bool running;
     
     ServerList* serverlist;
 
@@ -70,8 +81,10 @@ private:
     network::UDPSocket* udpsocket;
 
     std::vector<ServerInfo*> not_queried;
-    std::vector<ServerInfo*> querying;
     int queries; // number of currently running queries
+    
+    map<network::TCPSocket *,MSInfo *> querying_msdata;
+    map<string, ServerInfo *> querying_server;
 };
 
 } // masterserver

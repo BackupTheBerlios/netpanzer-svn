@@ -30,8 +30,6 @@ class ServerList : public std::vector<ServerInfo*>
 public:
     ServerList();
     ~ServerList();
-    
-    SDL_mutex* mutex;
 };
 
 } // end of namespace masterserver

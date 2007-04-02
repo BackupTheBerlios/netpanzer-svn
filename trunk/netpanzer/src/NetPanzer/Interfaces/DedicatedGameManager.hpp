@@ -24,9 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ServerConsole.hpp"
 #include "ServerCommand.hpp"
 
+#include "InfoSocket.hpp"
+#include "Heartbeat.hpp"
+
 class ServerConsole;
-class HeartbeatThread;
-class InfoThread;
 
 class DedicatedGameManager : public BaseGameManager
 {
@@ -41,6 +42,7 @@ protected:
     virtual void shutdownNetworkSubSystem();
 
     virtual void inputLoop();
+    virtual bool mainLoop();
 
 public:
     DedicatedGameManager();
@@ -56,8 +58,8 @@ private:
     SDL_mutex* commandqueue_mutex;
 
     ServerConsole* console;
-    HeartbeatThread* heartbeatthread;
-    InfoThread* infothread;
+    Heartbeat * heartbeat;
+    InfoSocket * infosocket;
 };
 
 #endif

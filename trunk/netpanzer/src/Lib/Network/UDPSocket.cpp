@@ -27,15 +27,32 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 namespace network
 {
 
-UDPSocket::UDPSocket(bool blocking) : SocketBase(Address::ANY)
+//UDPSocket::UDPSocket(bool blocking) : SocketBase(Address::ANY) { init(blocking); }
+
+//UDPSocket::UDPSocket(const Address& bindaddr, bool blocking) : SocketBase(bindaddr) { init(blocking); }
+
+UDPSocket::UDPSocket(UDPSocketObserver *o) : SocketBase(Address::ANY)
 {
-    init(blocking);
+    observer=o;
+    init(false);
 }
 
-UDPSocket::UDPSocket(const Address& bindaddr, bool blocking)
+UDPSocket::UDPSocket(const Address& bindaddr, UDPSocketObserver *o)
     : SocketBase(bindaddr)
 {
-    init(blocking);
+    observer=o;
+    init(false);
+}
+
+UDPSocket::~UDPSocket()
+{
+}
+
+void
+UDPSocket::destroy()
+{
+    observer=0;
+    doClose();
 }
 
 void
@@ -48,13 +65,9 @@ UDPSocket::init(bool blocking)
         if(!blocking)
             setNonBlocking();
     } catch(...) {
-        close();
+        doClose();
         throw;
     }
-}
-
-UDPSocket::~UDPSocket()
-{
 }
 
 void
@@ -72,6 +85,19 @@ size_t
 UDPSocket::recv(Address& fromaddr, void* buffer, size_t bufsize)
 {
     return doReceiveFrom(fromaddr,buffer,bufsize);
+}
+
+void
+UDPSocket::onDataReady()
+{
+    Address a;
+    char buffer[4096];
+    int len;
+    do {
+        len=doReceiveFrom(a,buffer,sizeof(buffer));
+        if (len && observer)
+            observer->onDataReceived(this,a,buffer,len);
+    } while (len);
 }
 
 }

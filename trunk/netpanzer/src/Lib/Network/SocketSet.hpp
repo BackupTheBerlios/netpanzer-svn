@@ -31,10 +31,16 @@ public:
     SocketSet();
     ~SocketSet();
 
+    void clear();
+    
     /** add a socket to the set that should be watched */
     void add(const SocketBase& socket);
+    void add(const SocketBase* socket);
+    void addWrite(const SocketBase* socket);
+    
     /** removes a socket from the set */
     void remove(const SocketBase& socket);
+    void removeWrite(const SocketBase* socket);
     /** Waits for input on the sockets in the set until a socket has input or a
      * timeout occurs. Returns false in case of timeout.
      */
@@ -44,12 +50,26 @@ public:
      */
     bool dataPending(const SocketBase& socketbase) const
     {
-        return FD_ISSET(socketbase.sockfd, &testset);
+        return FD_ISSET(socketbase.sockfd, &testreadset);
     }
     
+    bool dataAvailable(const SocketBase* socketbase) const
+    {
+        return FD_ISSET(socketbase->sockfd, &testreadset);
+    }
+    
+    bool isWriteable(const SocketBase* socketbase) const
+    {
+        return FD_ISSET(socketbase->sockfd,&testwriteset);
+    }
+    
+    
 private:
-    fd_set set;
-    fd_set testset;
+    SOCKET maxfd;
+    fd_set readset;
+    fd_set writeset;
+    fd_set testreadset;
+    fd_set testwriteset;
 };
 
 }

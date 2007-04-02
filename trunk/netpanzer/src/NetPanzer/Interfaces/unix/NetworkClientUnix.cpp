@@ -25,6 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkClientUnix.hpp"
 #include "LobbyView.hpp"
 
+#include "Desktop.hpp"
+
+#include "Network/SocketManager.hpp"
+
 //#define NETWORKDEBUG
 
 #ifdef NETWORKDEBUG
@@ -40,14 +44,29 @@ NetworkClientUnix::~NetworkClientUnix()
     delete clientsocket;
 }
 
+void
+NetworkClientUnix::onClientConnected(ClientSocket *s)
+{
+
+}
+
+void
+NetworkClientUnix::onClientDisconected(ClientSocket *s)
+{
+    Desktop::setVisibility("DisconectedView", true);
+    delete clientsocket;
+    clientsocket=0;
+}
+
 bool NetworkClientUnix::joinServer(const std::string& server_name)
 {
-    delete clientsocket;
+    if ( clientsocket )
+        delete clientsocket;
     clientsocket = 0;
     
     LOG( ("Trying to join server '%s'.\n", server_name.c_str()) );
     try {
-        clientsocket = new ClientSocket(server_name);
+        clientsocket = new ClientSocket(this, server_name);
     } catch(std::exception& e) {
         LOG( ( "Couldn't connect to server:\n%s.", e.what()) );
         char text[128];
@@ -63,7 +82,8 @@ bool NetworkClientUnix::joinServer(const std::string& server_name)
 
 void NetworkClientUnix::partServer()
 {
-    delete clientsocket;
+    if ( clientsocket )
+        delete clientsocket;
     clientsocket = 0;
 }
 
@@ -119,8 +139,6 @@ bool NetworkClientUnix::getMessage(NetMessage *message)
 
 void NetworkClientUnix::checkIncoming()
 {
-    if(!clientsocket)
-        return;
+   
     
-    clientsocket->read();
 }

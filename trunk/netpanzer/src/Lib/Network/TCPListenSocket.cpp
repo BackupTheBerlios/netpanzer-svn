@@ -27,54 +27,45 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 namespace network
 {
     
-TCPListenSocket::TCPListenSocket(const Address& newaddr, bool blocking)
+TCPListenSocket::TCPListenSocket(const Address& newaddr, TCPListenSocketObserver *o)
     : SocketBase(newaddr)
 {
+    observer = o;
     try {
         create(true);
         setReuseAddr();
         bindSocket();
         doListen();
-    
-        if(!blocking)
-            setNonBlocking();
-
+        setNonBlocking();
     } catch(...) {
-        close();
+        doClose();
         throw;
     }
-#ifdef USE_WINSOCK
-    this->blocking = blocking;
-#endif
 }
 
-TCPSocket*
-TCPListenSocket::accept()
+void
+TCPListenSocket::destroy()
+{
+    
+    
+    
+}
+
+void
+TCPListenSocket::onDataReady()
 {
     Address newaddr;
     SOCKET newsock;
-    newsock = doAccept(newaddr);
-    if (newsock == INVALID_SOCKET)
-        return 0; 
-    TCPSocket* result;
-    try {
-        result = new TCPSocket(newsock, newaddr);
-    } catch(...) {
-        close();
-        throw;
+    TCPSocketObserver * newobserver;
+    while ( (newsock=doAccept(newaddr)) != INVALID_SOCKET) {
+        
+        newobserver = observer->onNewConnection(this, newaddr);
+        TCPSocket * newcon = new TCPSocket(newsock,newaddr,newobserver);
+        newcon->setNonBlocking();
+        newcon->onConnected();
+        
     }
-
-#ifdef USE_WINSOCK
-    try {
-        if(!blocking)
-            result->setNonBlocking();
-    } catch(...) {
-        delete result;
-        throw;
-    }
-#endif
-
-    return result;
 }
+
 
 }

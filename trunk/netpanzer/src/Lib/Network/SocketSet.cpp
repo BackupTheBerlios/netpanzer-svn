@@ -27,9 +27,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 namespace network
 {
 
-SocketSet::SocketSet()
+SocketSet::SocketSet() : maxfd(0)
 {
-    FD_ZERO(&set);
+    FD_ZERO(&readset);
+    FD_ZERO(&writeset);
 }
 
 SocketSet::~SocketSet()
@@ -37,15 +38,53 @@ SocketSet::~SocketSet()
 }
 
 void
+SocketSet::clear()
+{
+    maxfd=0;
+    FD_ZERO(&readset);
+    FD_ZERO(&writeset);
+}
+
+void
 SocketSet::add(const SocketBase& socket)
 {
-    FD_SET(socket.sockfd, &set);
+    FD_SET(socket.sockfd, &readset);
+#ifndef USE_WINSOCK
+    if (socket.sockfd > maxfd)
+        maxfd=socket.sockfd;
+#endif
+}
+
+void
+SocketSet::add(const SocketBase* socket)
+{
+    FD_SET(socket->sockfd, &readset);
+#ifndef USE_WINSOCK
+    if (socket->sockfd > maxfd)
+        maxfd=socket->sockfd;
+#endif
+}
+
+void
+SocketSet::addWrite(const SocketBase* socket)
+{
+    FD_SET(socket->sockfd, &writeset);
+#ifndef USE_WINSOCK
+    if (socket->sockfd > maxfd)
+        maxfd=socket->sockfd;
+#endif
 }
 
 void
 SocketSet::remove(const SocketBase& socket)
 {
-    FD_CLR(socket.sockfd, &set);
+    FD_CLR(socket.sockfd, &readset);
+}
+
+void
+SocketSet::removeWrite(const SocketBase* socket)
+{
+    FD_CLR(socket->sockfd, &writeset);
 }
 
 bool
@@ -56,12 +95,13 @@ SocketSet::select(unsigned int usec)
     timeout.tv_usec = usec%1000000;
 
 #ifdef USE_WINSOCK
-    if(set.fd_count == 0)
+    if( (readset.fd_count==0) && (writeset.fd_count==0) )
 	return false;
 #endif
     
-    testset = set;
-    int res = ::select(FD_SETSIZE, &testset, 0, 0, &timeout);
+    testreadset = readset;
+    testwriteset = writeset;
+    int res = ::select(maxfd+1, &testreadset, &testwriteset, 0, &timeout);
 #ifdef USE_WINSOCK
     if(res < 0) {
         std::stringstream msg;

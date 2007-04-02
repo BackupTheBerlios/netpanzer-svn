@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2004 by Matthias Braun <matze@braunis.de>
+Copyright (C) 2007 by Aaron Perez <aaronps@gmail.com>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,22 +15,30 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include <config.h>
 
-#include <string.h>
-#include <assert.h>
-#include "ServerSocket.hpp"
-#include "SocketClient.hpp"
+#ifndef _INFOSOCKET_HPP
+#define _INFOSOCKET_HPP
 
-SocketClient::SocketClient(ServerSocket* newserver)
-        : socket(0), tempoffset(0), wantstodie(false), id(0), server(newserver)
+#include "Network/UDPSocket.hpp"
+#include <string>
+
+using namespace std;
+using namespace network;
+
+class InfoSocket : public UDPSocketObserver
 {
-}
+public:
+    InfoSocket(int p);
+    ~InfoSocket();
 
-SocketClient::~SocketClient()
-{
-    assert(wantstodie == true);
+protected:
+    void onDataReceived(UDPSocket *so, const Address &from, const char *data, const int len);
+    
+private:
+    string prepareStatusPacket();
+    string statusHead;
+    UDPSocket * socket;
+    
+};
 
-    server->closeConnection(this);
-}
-
+#endif

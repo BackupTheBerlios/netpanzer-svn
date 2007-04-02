@@ -34,19 +34,26 @@ public:
     {
         return addr;
     }
+
+    bool isConnecting() { return _isConnecting; };
 protected:
     SocketBase();
-    SocketBase(SOCKET fd) : sockfd(fd) {};
     SocketBase(const Address &a) : addr(a) {};
-    SocketBase(SOCKET fd, const Address &a) : sockfd(fd), addr(a) {};
+    SocketBase(SOCKET fd, const Address &a);
     
-    ~SocketBase();
+    virtual ~SocketBase();
+    
+    virtual void onDataReady() = 0;
+    virtual void onDisconected() {};
+    virtual void onConnected() {};
+    virtual void destroy() = 0;
 
 protected:
     friend class SocketSet;
+    friend class SocketManager;
     void create(bool tcp);
     void setNonBlocking();
-    void close();
+    void doClose();
     void printError(std::ostream& out, int e);
     
     void bindSocketTo(const Address& toaddr);
@@ -59,11 +66,18 @@ protected:
     int  doSendTo(const Address& toaddr, const void* data, size_t len);
     size_t  doReceiveFrom(Address& fromaddr, void* buffer, size_t len);
     SOCKET doAccept(Address& fromaddr);
-
-private:    
+    
+private:
+    
+    void connectionFinished() 
+    {
+        _isConnecting = false;
+        onConnected();
+    };
+    
+    bool _isConnecting;
     SOCKET sockfd;
     Address addr;
-
 };
 
 }

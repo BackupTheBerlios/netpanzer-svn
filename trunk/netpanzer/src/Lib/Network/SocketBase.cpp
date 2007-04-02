@@ -17,11 +17,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <iostream>
+using namespace std;
+
 #include <sstream>
 #include <stdexcept>
 
 #include "SocketHeaders.hpp"
 #include "SocketBase.hpp"
+#include "SocketManager.hpp"
+#include "Util/Log.hpp"
 
 namespace network
 {
@@ -52,7 +57,12 @@ SocketBase::SocketBase()
 
 SocketBase::~SocketBase()
 {
-    close();
+    //doClose();
+}
+
+SocketBase::SocketBase(SOCKET fd, const Address &a) : sockfd(fd), addr(a)
+{
+    SocketManager::addSocket(this);
 }
 
 void
@@ -68,11 +78,14 @@ SocketBase::printError(std::ostream& out, int e)
 void
 SocketBase::create(bool tcp)
 {
-    if(tcp)
+    if(tcp) {
         sockfd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    else
+    } else {
         sockfd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    }
 
+    LOGGER.debug("SocketBase:: Create [%s:%d] socket", (tcp)?"tcp":"udp",sockfd);
+    
     if(sockfd == INVALID_SOCKET) {
         int error = GET_NET_ERROR();
 	std::stringstream msg;
@@ -80,6 +93,8 @@ SocketBase::create(bool tcp)
         printError(msg,error);
 	throw std::runtime_error(msg.str());
     }
+    _isConnecting = false;
+    SocketManager::addSocket(this);
 }
 
 void
@@ -149,6 +164,10 @@ SocketBase::doConnect()
     int res = connect(sockfd, addr.getSockaddr(), addr.getSockaddrLen());
     if(res == SOCKET_ERROR) {
         int error = GET_NET_ERROR();
+        if (IS_CONNECT_INPROGRESS(error)) {
+            _isConnecting = true;
+            return;
+        }
         std::stringstream msg;
         msg << "Couldn't connect to '" << addr.getIP() << "' port "
             << addr.getPort() << ": ";
@@ -160,9 +179,17 @@ SocketBase::doConnect()
 int
 SocketBase::doSend(const void* data, size_t len)
 {
-    int res = send(sockfd, (const char*) data, len, 0);
+    int res = send(sockfd, (const char*) data, len, SEND_FLAGS);
     if(res == SOCKET_ERROR) {
         int error = GET_NET_ERROR();
+        if ( IS_DISCONECTED(error) ) {
+            onDisconected();
+            return 0;
+        }
+        
+        if ( IS_IGNORABLE_ERROR(error) )
+            return 0; // xxx WARNING should do something if can't send now
+        
         std::stringstream msg;
         msg << "Send error: ";
         printError(msg,error);
@@ -174,23 +201,35 @@ SocketBase::doSend(const void* data, size_t len)
 int
 SocketBase::doReceive(void* buffer, size_t len)
 {
-    int res = recv(sockfd, (char*) buffer, len, 0);
+    int res = recv(sockfd, (char*) buffer, len, RECV_FLAGS);
     if(res == SOCKET_ERROR) {
         int error = GET_NET_ERROR();
-        if ( error == NETERROR_WOULDBLOCK)
+        if ( IS_DISCONECTED(error) ) {
+            onDisconected();
             return 0;
+        }
+        
+        if ( IS_IGNORABLE_ERROR(error) )
+            return 0;
+
         std::stringstream msg;
         msg << "Read error: ";
         printError(msg,error);
         throw std::runtime_error(msg.str());
     }
+    
+    if (!res) {
+        LOGGER.debug("SocketBase::doReceive Disconected from server");
+        onDisconected();
+    }
+    
     return res;
 }
 
 int
 SocketBase::doSendTo(const Address& toaddr, const void* data, size_t len)
 {
-    int res = sendto(sockfd, (const char*) data, len, 0,
+    int res = sendto(sockfd, (const char*) data, len, SEND_FLAGS,
                 toaddr.getSockaddr(), toaddr.getSockaddrLen());
     if(res == SOCKET_ERROR) {
         int error = GET_NET_ERROR();
@@ -205,12 +244,13 @@ SocketBase::doSendTo(const Address& toaddr, const void* data, size_t len)
 size_t
 SocketBase::doReceiveFrom(Address& fromaddr, void* buffer, size_t len)
 {
-    int res = recvfrom(sockfd, (char*) buffer, len, 0,
+    int res = recvfrom(sockfd, (char*) buffer, len, RECV_FLAGS,
             fromaddr.getSockaddr(), fromaddr.getSockaddrLenPointer());
     if(res == SOCKET_ERROR) {
         int error = GET_NET_ERROR();
-        if ( error == NETERROR_WOULDBLOCK)
+        if ( IS_IGNORABLE_ERROR(error) )
             return 0;
+
         std::stringstream msg;
         msg << "Receive error: " << strerror(errno);
         printError(msg,error);
@@ -226,7 +266,7 @@ SocketBase::doAccept(Address& fromaddr)
     newsock= accept(sockfd, fromaddr.getSockaddr(), fromaddr.getSockaddrLenPointer());
     if (newsock == INVALID_SOCKET) {
         int error = GET_NET_ERROR();
-        if ( error == NETERROR_WOULDBLOCK )
+        if ( IS_ACCEPT_IGNORABLE(error) )
             return INVALID_SOCKET; // XXX this could be better
         std::stringstream msg;
         msg << "Accept error: ";
@@ -237,8 +277,10 @@ SocketBase::doAccept(Address& fromaddr)
 }
 
 void
-SocketBase::close()
+SocketBase::doClose()
 {
+    LOGGER.debug("SocketBase:: Closing [%d] socket", sockfd);
+    SocketManager::removeSocket(this);
     closesocket(sockfd);
 }
 

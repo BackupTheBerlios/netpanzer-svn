@@ -24,23 +24,46 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ProxyServer.hpp"
 #include "Network/TCPSocket.hpp"
 
-class ClientSocket
+class ClientSocket;
+
+class ClientSocketObserver
 {
 public:
-    ClientSocket(const std::string& serveraddress);
+    ClientSocketObserver(){};
+    virtual ~ClientSocketObserver(){};
+protected:
+    friend class ClientSocket;
+    virtual void onClientConnected(ClientSocket *cso) = 0;
+    virtual void onClientDisconected(ClientSocket *cso) = 0;
+};
+
+class ClientSocket : public network::TCPSocketObserver
+{
+public:
+    ClientSocket(ClientSocketObserver *o, const std::string& serveraddress);
+    ClientSocket(ClientSocketObserver *o);
     ~ClientSocket();
 
-    void read();
+    //void read();
     void sendMessage(const void* data, size_t datasize);
     ProxyServer proxy;
 
-private:
-    void readTCP();
+    NetClientID getId() { return id; };
+    std::string getIPAddress();
+    
+protected:
+    void onDataReceived(network::TCPSocket *so, const char *data, const int len);
+    void onConnected(network::TCPSocket *so);
+    void onDisconected(network::TCPSocket *so);
 
+private:
+    void initId();
+    ClientSocketObserver * observer;
     network::TCPSocket* socket;
 
     char tempbuffer[_MAX_NET_PACKET_SIZE];
     uint16_t tempoffset;
+    NetClientID id;
 };
 
 #endif

@@ -194,28 +194,28 @@ unsigned char Astar::generateSucc(unsigned short direction, AstarNode *node, Ast
 
     switch(direction) {
         case 0:
-            succ->map_loc.x =  1; succ->map_loc.y =  0; succ->g = 7;
+            succ->map_loc.x =  1; succ->map_loc.y =  0; succ->g = 0;
             break;
         case 1:
-            succ->map_loc.x =  1; succ->map_loc.y = -1; succ->g = 8;
+            succ->map_loc.x =  1; succ->map_loc.y = -1; succ->g = 1;
             break;
         case 2:
-            succ->map_loc.x =  0; succ->map_loc.y = -1; succ->g = 7;
+            succ->map_loc.x =  0; succ->map_loc.y = -1; succ->g = 0;
             break;
         case 3:
-            succ->map_loc.x = -1; succ->map_loc.y = -1; succ->g = 8;
+            succ->map_loc.x = -1; succ->map_loc.y = -1; succ->g = 1;
             break;
         case 4:
-            succ->map_loc.x = -1; succ->map_loc.y =  0; succ->g = 7;
+            succ->map_loc.x = -1; succ->map_loc.y =  0; succ->g = 0;
             break;
         case 5:
-            succ->map_loc.x = -1; succ->map_loc.y =  1; succ->g = 8;
+            succ->map_loc.x = -1; succ->map_loc.y =  1; succ->g = 1;
             break;
         case 6:
-            succ->map_loc.x =  0; succ->map_loc.y =  1; succ->g = 7;
+            succ->map_loc.x =  0; succ->map_loc.y =  1; succ->g = 0;
             break;
         case 7:
-            succ->map_loc.x =  1; succ->map_loc.y =  1; succ->g = 8;
+            succ->map_loc.x =  1; succ->map_loc.y =  1; succ->g = 1;
             break;
     }
 
@@ -227,7 +227,7 @@ unsigned char Astar::generateSucc(unsigned short direction, AstarNode *node, Ast
         if ( ( (UnitBlackBoard::unitOccupiesLoc( succ->map_loc ) == true ) &&
                 (succ->map_loc != goal_node.map_loc) )
            ) {
-            movement_val += 10;
+            movement_val = 200;
         }
 
     succ->g += node->g + movement_val;

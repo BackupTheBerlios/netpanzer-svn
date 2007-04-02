@@ -25,6 +25,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 namespace network
 {
+    
+class UDPSocket;    
+    
+class UDPSocketObserver {
+public:    
+    UDPSocketObserver() {};
+    virtual ~UDPSocketObserver() {};
+protected:
+    friend class UDPSocket;
+    virtual void onDataReceived(UDPSocket *so, const Address &from, const char *data, const int len) = 0;
+};
+
 
 class UDPSocket : public SocketBase
 {
@@ -32,9 +44,12 @@ public:
     /** creates a new socket and binds it to the specified address and port or a
      * random port if port == 0
      */
-    UDPSocket(bool blocking = true);
-    UDPSocket(const Address& bindaddr, bool blocking = true);
-    ~UDPSocket();
+//    UDPSocket(bool blocking = true);
+//    UDPSocket(const Address& bindaddr, bool blocking = true);
+    UDPSocket(UDPSocketObserver *o);
+    UDPSocket(const Address& bindaddr, UDPSocketObserver *o);
+
+    void destroy();
 
     /** send data to the specified address */
     void send(const Address& toaddr, const void* data, size_t datasize);
@@ -42,9 +57,13 @@ public:
      * the address of the client who sent the data in addr.
      */
     size_t recv(Address& fromaddr, void* buffer, size_t bufsize);
+protected:
+    ~UDPSocket();
+    void onDataReady();
 
 private:
     void init(bool blocking);
+    UDPSocketObserver *observer;
 };
 
 }

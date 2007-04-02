@@ -27,20 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 namespace network
 {
 
-TCPSocket::TCPSocket(const Address& newaddr, bool blocking) :SocketBase(newaddr)
-{
-    create(true);
-    init(blocking);
-}
-
-TCPSocket::TCPSocket(const Address& bindaddr, const Address& newaddr,
-        bool blocking) : SocketBase(newaddr)
-{
-    create(true);
-    bindSocketTo(bindaddr);
-    init(blocking);
-}
-
 void
 TCPSocket::init(bool blocking)
 {
@@ -49,19 +35,27 @@ TCPSocket::init(bool blocking)
         if(!blocking)
             setNonBlocking();
     } catch(...) {
-        close();
+        doClose();
         throw;
     }
 }
 
 TCPSocket::~TCPSocket()
+{ }
+
+void
+TCPSocket::destroy()
 {
+    doClose();
+    observer=0;
 }
 
 void
 TCPSocket::send(const void* data, size_t size)
 {
     int res = doSend(data,size);
+    if (!res && !observer) // disconnected
+        return;
     if(res != (int) size) {
         std::stringstream msg;
         msg << "Send error: Couldn't send all data.";
@@ -69,19 +63,55 @@ TCPSocket::send(const void* data, size_t size)
     }
 }
 
-size_t
+/*size_t
 TCPSocket::recv(void* buffer, size_t size)
 {
     return doReceive(buffer,size);
-}
+}*/
 
 TCPSocket::TCPSocket()
 {
 }
 
-TCPSocket::TCPSocket(SOCKET fd, const Address& newaddr) : SocketBase(fd,newaddr)
+TCPSocket::TCPSocket(SOCKET fd, const Address& newaddr, TCPSocketObserver *o) 
+    : SocketBase(fd,newaddr)
 {
+    observer=o;
+}
+
+TCPSocket::TCPSocket(const Address& address, TCPSocketObserver *o) : SocketBase(address)
+{
+    observer=o;
+    create(true);
+    setNonBlocking();
+    doConnect();
+ }
+
+void
+TCPSocket::onConnected()
+{
+    if (observer)
+        observer->onConnected(this);
+}
+
+void
+TCPSocket::onDisconected()
+{
+    if (observer)
+        observer->onDisconected(this);
+    destroy();
+}
+
+void
+TCPSocket::onDataReady()
+{
+    char buffer[4096];
+    int len;
+    len = doReceive(buffer,sizeof(buffer));
+    if (len) {
+        if (observer)
+            observer->onDataReceived(this, buffer,len);
+    }
 }
 
 }
-

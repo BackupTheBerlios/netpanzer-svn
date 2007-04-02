@@ -21,12 +21,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "BaseGameManager.hpp"
 #include "ScreenSurface.hpp"
 
+#include "InfoSocket.hpp"
+#include "Heartbeat.hpp"
+
 //#include "UI/FontManager.hpp"
 //#include "Panels/TestPanel.hpp"
 
 class SDLVideo;
-class HeartbeatThread;
-class InfoThread;
 
 class PlayerGameManager : public BaseGameManager
 {
@@ -59,8 +60,8 @@ private:
     SDLVideo* sdlVideo;
     bool showNewPanel;
 
-    HeartbeatThread* heartbeatthread;
-    InfoThread* infothread;
+    Heartbeat * heartbeat;
+    InfoSocket * infosocket;
 
     void initializeWindowSubSystem();
     void processSystemKeys();

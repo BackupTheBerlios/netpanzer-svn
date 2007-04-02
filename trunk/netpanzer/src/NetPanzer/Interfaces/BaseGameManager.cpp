@@ -64,6 +64,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Physics.hpp"
 #include "Util/TimerInterface.hpp"
 
+#include "Network/SocketManager.hpp"
+
 BaseGameManager* gamemanager = 0;
 
 //------------------------------------------------------------------
@@ -242,8 +244,10 @@ BaseGameManager::sleeping()
 //-----------------------------------------------------------------
 void BaseGameManager::simLoop()
 {
-    CLIENT->checkIncoming();
-    SERVER->checkIncoming();
+    //CLIENT->checkIncoming();
+    network::SocketManager::handleEvents();
+    
+    //SERVER->checkIncoming();
     if ( NetworkState::status == _network_state_server ) {
         ServerMessageRouter::routeMessages();
     } else {

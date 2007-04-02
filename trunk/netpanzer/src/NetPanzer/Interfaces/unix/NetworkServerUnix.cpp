@@ -47,8 +47,8 @@ NetworkServerUnix::getIP(NetClientID id) const
 void
 NetworkServerUnix::shutdownClientTransport(NetClientID client_id)
 {
-    assert(serversocket != 0);
-    serversocket->removeClient(client_id);
+    if (serversocket)
+        serversocket->disconectClient(client_id);
 }
 
 void
@@ -147,7 +147,7 @@ void
 NetworkServerUnix::checkIncoming()
 {
     cleanupClients();
-    if(serversocket)
-        serversocket->read();
+    //if(serversocket)
+        //serversocket->read();
 }
 

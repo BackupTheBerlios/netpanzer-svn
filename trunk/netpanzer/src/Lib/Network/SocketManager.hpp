@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2004 by Matthias Braun <matze@braunis.de>
+Copyright (C) 2007 by Aaron Perez <aaronps@gmail.com>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,45 +15,50 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef __TCPLISTENSOCKET_HPP__
-#define __TCPLISTENSOCKET_HPP__
 
-#include <assert.h>
+#ifndef _SOCKETMANAGER_HPP
+#define _SOCKETMANAGER_HPP
+
+#include <list>
 #include "SocketBase.hpp"
 #include "TCPSocket.hpp"
+#include "SocketSet.hpp"
 
-namespace network
-{
-    
-class TCPListenSocket;    
-    
-class TCPListenSocketObserver {
-public:    
-    TCPListenSocketObserver() {};
-    virtual ~TCPListenSocketObserver() {};
-protected:
-    friend class TCPListenSocket;
-    virtual TCPSocketObserver * onNewConnection(TCPListenSocket *so, const Address &fromaddr) = 0;
-};
-    
+using namespace std;
 
-class TCPListenSocket : public SocketBase
+namespace network {
+    
+class SocketManager
 {
 public:
-    TCPListenSocket(const Address& bindaddr, TCPListenSocketObserver *o);
-    void destroy();
+    SocketManager() {};
+    ~SocketManager() {};
+    
+    static void handleEvents();
     
 protected:
-    ~TCPListenSocket() {};
+    friend class SocketBase; // the only allowed to add/remove
+    static void addSocket(SocketBase *s)
+    {
+        newSockets.push_front(s);
+    }
     
-    void onDataReady();
+    static void removeSocket(SocketBase *s)
+    {
+        deletedSockets.push_front(s);
+    }
 
+    
+    
 private:
-    TCPListenSocketObserver * observer;
+    
+    static SocketSet sset;
+    static list<SocketBase *> socketList;
+    static list<SocketBase *> newSockets;
+    static list<SocketBase *> deletedSockets;
     
 };
 
-}
+} // namespace
 
 #endif
-
