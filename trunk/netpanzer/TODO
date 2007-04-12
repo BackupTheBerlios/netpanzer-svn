@@ -25,7 +25,7 @@ player that just left the game.
 *** Network
  * Analyse if TCP was really a good choice. Question:
     - what happens if a client can't keep up with the bandwith, will it stall
-      the server?
+      the server? (kromxp: no, it will be dropped from server)
  * An UDP protocol would need to be designed (taking a look at TNL or raknet
    would also be a good idea)
 
@@ -38,6 +38,7 @@ player that just left the game.
     - done
  * the Server has a massive memory leak somewhere - might be fixed now
  * impelement 'initialunits' param in PlayerUnitConfig::initialize()
+     - kromxp: this is done, but in other way.
  * synchronize resources between server and clients, both should have same flags
    collection and map. Let them automatically download these things.
  * server console doesn't react really way with all the messages of players
@@ -117,3 +118,5 @@ player that just left the game.
    defend an objective would be things that come to mind
  * make panzers always hit their targets instead of missing moving units?
 
+kromxp:
+   wow i have also many of the same ideas explained here.

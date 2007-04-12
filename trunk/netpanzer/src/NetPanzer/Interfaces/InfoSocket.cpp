@@ -16,6 +16,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "config.h"
+
 #include "InfoSocket.hpp"
 #include "Util/StringTokenizer.hpp"
 
@@ -41,7 +43,8 @@ InfoSocket::InfoSocket(int p) : socket(0)
     // others I plan to be modificable while game is running.
     stringstream s;
     s << "gamename\\netpanzer\\protocol\\" << NETPANZER_PROTOCOL_VERSION
-      << "\\hostname\\" << gameconfig->playername;
+      << "\\hostname\\" << gameconfig->playername
+      << "\\gameversion\\" << PACKAGE_VERSION;
     statusHead = s.str();
 }
 
@@ -55,6 +58,7 @@ InfoSocket::~InfoSocket()
 void
 InfoSocket::onDataReceived(UDPSocket *s, const Address &from, const char *data, const int len)
 {
+    (void)s;
     string querypacket(data,len);
     StringTokenizer qtokenizer(querypacket, '\\');
     
@@ -110,6 +114,7 @@ InfoSocket::prepareStatusPacket()
           << "\\kills_"  << n << "\\" << playerState->getKills()
           << "\\deaths_" << n << "\\" << playerState->getLosses()
           << "\\score_"  << n << "\\" << playerState->getObjectivesHeld()
+          << "\\points_"  << n << "\\" << playerState->getTotal()
           << "\\flag_"   << n << "\\" << (int) playerState->getFlag();
         n++;
     }

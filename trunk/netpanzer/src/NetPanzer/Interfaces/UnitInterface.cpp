@@ -104,6 +104,7 @@ void UnitInterface::initialize( unsigned long max_units )
 
 void UnitInterface::cleanUp()
 {
+    // XXX why doesn't clean the unit_bucket_array?
     delete[] playerUnitLists;
     playerUnitLists = 0;
 
@@ -762,7 +763,7 @@ void UnitInterface::unitSyncMessage(const NetMessage *net_message)
         unit->in_sync_flag = false;
         addNewUnit(unit);
     } catch(std::exception& e) {
-        std::cerr << "Couldn't sync unit: " << e.what() << "\n";
+        LOGGER.warning("UnitInterface::unitSyncMessage() Couldn't sync unit '%s'", e.what());
     }
 }
 
@@ -816,7 +817,7 @@ void UnitInterface::unitCreateMessage(const NetMessage* net_message)
                 create_mesg->getUnitID());
         addNewUnit(unit);
     } catch(std::exception& e) {
-        std::cerr << "Couldn't create new unit: " << e.what() << "\n";
+        LOGGER.warning("UnitInterface::unitSyncMessage() Couldn't create new unit '%s'", e.what());
     }
 }
 

@@ -31,6 +31,7 @@ public:
     virtual void partServer();
 
     virtual void sendMessage(NetMessage* message, size_t size);
+    void sendRemaining() { if ( clientsocket ) clientsocket->sendRemaining(); };
     virtual bool getMessage(NetMessage *message);
 
     virtual void checkIncoming();

@@ -47,7 +47,7 @@ public:
 
     void destroy();
 
-    void send(const void* data, size_t datasize);
+    size_t send(const void* data, size_t datasize);
     
 protected:
     ~TCPSocket();

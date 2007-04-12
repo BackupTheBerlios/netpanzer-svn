@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __UNITSYNC_HPP__
 #define __UNITSYNC_HPP__
 
-#include "UnitInterface.hpp"
-#include "UnitList.hpp"
+
+#include "PlayerID.hpp"
 #include "UnitBase.hpp"
 
 class UnitSync
@@ -28,10 +28,6 @@ public:
     UnitSync();
     ~UnitSync();
 
-    /** returns the percentage of units, the iterator has traveled so far
-     * (the number might ne slightly inaccurate, but won't be bigger than
-     * 100)
-     */
     int getPercentComplete() const;
     
     bool sendNextUnit(PlayerID playerid);
@@ -39,6 +35,8 @@ public:
 private:
     size_t count;
     UnitID unitid;
+    size_t unitstosync;
+    UnitID lastunit;
 };
 
 #endif

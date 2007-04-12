@@ -17,17 +17,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include <iostream>
-
-#include "PlayerInterface.hpp"
-#include "MapInterface.hpp"
 #include "UnitSync.hpp"
 #include "Server.hpp"
 #include "NetworkServer.hpp"
+#include "UnitInterface.hpp"
+#include "UnitBase.hpp"
+#include "MapInterface.hpp"
+#include "UnitNetMessage.hpp"
+
+
+
 
 UnitSync::UnitSync()
-    : count(0), unitid(0)
+    : count(0), unitid(0), unitstosync(0), lastunit(0)
 {
+    unitstosync = UnitInterface::getTotalUnitCount();
+    if ( unitstosync ) {
+        lastunit = UnitInterface::getUnits().rbegin()->first;
+    }
 }
 
 UnitSync::~UnitSync()
@@ -35,15 +42,17 @@ UnitSync::~UnitSync()
 
 int UnitSync::getPercentComplete() const
 {
-    return  int (
-            100.0 / UnitInterface::getTotalUnitCount() * float(count));
+    if ( unitstosync )
+        return  (100 * count ) / unitstosync;
+    else
+        return 100;
 }
 
 bool UnitSync::sendNextUnit(PlayerID toplayer)
 {
     const UnitInterface::Units& units = UnitInterface::getUnits();
     UnitInterface::Units::const_iterator i = units.lower_bound(unitid);
-    if(i == units.end()) {
+    if(i == units.end() || i->first > lastunit ) {
         return false;
     }
     
@@ -53,14 +62,18 @@ bool UnitSync::sendNextUnit(PlayerID toplayer)
     iXY unit_map_loc;
     MapInterface::pointXYtoMapXY(unit->unit_state.location, &unit_map_loc);
 
-    UnitIniSyncMessage sync_message(unit->unit_state.unit_type,
-            unit->player->getID(), unit->id, unit_map_loc.x, unit_map_loc.y);
-    sync_message.unit_state = unit->unit_state.getNetworkUnitState();
-
-    SERVER->sendMessage(toplayer, &sync_message, sizeof(UnitIniSyncMessage));
-
-    unit->syncUnit();
+    UnitRemoteCreate create_message(unit->player->getID(),
+                                    unit->id,
+                                    unit_map_loc.x,
+                                    unit_map_loc.y,
+                                    unit->unit_state.unit_type);
+    SERVER->sendMessage(toplayer, &create_message, sizeof(create_message));
+    
+    // XXX when send units to new players it also send sync command to all players
+    // This will change in future
+    //unit->syncUnit();
     unitid++;
+    count++;
 
     return true;
 }

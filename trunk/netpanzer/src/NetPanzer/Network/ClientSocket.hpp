@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Network/TCPSocket.hpp"
 
 class ClientSocket;
+#define SEND_BUFFER_LEN 32768
 
 class ClientSocketObserver
 {
@@ -46,6 +47,7 @@ public:
 
     //void read();
     void sendMessage(const void* data, size_t datasize);
+    void sendRemaining();
     ProxyServer proxy;
 
     NetClientID getId() { return id; };
@@ -61,6 +63,8 @@ private:
     ClientSocketObserver * observer;
     network::TCPSocket* socket;
 
+    char sendbuffer[SEND_BUFFER_LEN];
+    unsigned int sendpos;
     char tempbuffer[_MAX_NET_PACKET_SIZE];
     uint16_t tempoffset;
     NetClientID id;

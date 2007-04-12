@@ -268,6 +268,7 @@ ServerQueryThread::sendQuery(ServerInfo *server)
 void
 ServerQueryThread::onDataReceived(network::UDPSocket *s, const network::Address& from, const char *data, const int len)
 {
+    (void)s;
     stringstream fromaddress;
     fromaddress << from.getIP() << ":" << from.getPort();
     

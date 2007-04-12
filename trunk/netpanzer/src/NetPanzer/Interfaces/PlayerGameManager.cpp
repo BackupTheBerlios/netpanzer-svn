@@ -325,7 +325,7 @@ void PlayerGameManager::hostMultiPlayerGame()
     progressView->open();
     progressView->scrollAndUpdateDirect( "Launching Server ..." );
     try {
-        SERVER->hostSession(true);
+        SERVER->hostSession();
 
         if((bool) gameconfig->publicServer &&
                 (const std::string&) gameconfig->masterservers != "") {

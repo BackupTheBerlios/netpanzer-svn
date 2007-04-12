@@ -50,24 +50,14 @@ TCPSocket::destroy()
     observer=0;
 }
 
-void
+size_t
 TCPSocket::send(const void* data, size_t size)
 {
     int res = doSend(data,size);
     if (!res && !observer) // disconnected
-        return;
-    if(res != (int) size) {
-        std::stringstream msg;
-        msg << "Send error: Couldn't send all data.";
-        throw std::runtime_error(msg.str());
-    }
+        return size; // as is disconnected, avoid catching of unsend data
+    return res;
 }
-
-/*size_t
-TCPSocket::recv(void* buffer, size_t size)
-{
-    return doReceive(buffer,size);
-}*/
 
 TCPSocket::TCPSocket()
 {

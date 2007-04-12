@@ -47,12 +47,13 @@ NetworkClientUnix::~NetworkClientUnix()
 void
 NetworkClientUnix::onClientConnected(ClientSocket *s)
 {
-
+    (void)s;
 }
 
 void
 NetworkClientUnix::onClientDisconected(ClientSocket *s)
 {
+    (void)s;
     Desktop::setVisibility("DisconectedView", true);
     delete clientsocket;
     clientsocket=0;

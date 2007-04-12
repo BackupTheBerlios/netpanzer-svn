@@ -41,7 +41,8 @@ PIX TileInterface::getWorldPixColor(int worldX, int worldY)
     int subPixY = worldY % tile_set.getTileYsize();
 
     if(tileX >= (int) MapInterface::getWidth()
-            || tileY >= (int) MapInterface::getHeight()) 
+            || tileY >= (int) MapInterface::getHeight()
+            || tileX < 0 || tileY < 0 ) 
     {
         LOGGER.warning("query for worldpixcolor outside map (%d,%d)",
                 worldX, worldY);
@@ -59,7 +60,8 @@ long TileInterface::getWorldPixMovementValue(int worldX, int worldY)
     int tileY = worldY / tile_set.getTileYsize();
 
     if(tileX >= (int) MapInterface::getWidth()
-            || tileY >= (int) MapInterface::getHeight()) 
+            || tileY >= (int) MapInterface::getHeight()
+            || tileX < 0 || tileY < 0 ) 
     {
         LOGGER.warning("query for worldpixmovement outside map (%d,%d)",
                 worldX, worldY);

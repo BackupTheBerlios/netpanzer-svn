@@ -63,6 +63,7 @@ SocketBase::~SocketBase()
 SocketBase::SocketBase(SOCKET fd, const Address &a) : sockfd(fd), addr(a)
 {
     SocketManager::addSocket(this);
+    _isConnecting=false;
 }
 
 void
@@ -188,7 +189,7 @@ SocketBase::doSend(const void* data, size_t len)
         }
         
         if ( IS_IGNORABLE_ERROR(error) )
-            return 0; // xxx WARNING should do something if can't send now
+            return 0;
         
         std::stringstream msg;
         msg << "Send error: ";
@@ -233,6 +234,8 @@ SocketBase::doSendTo(const Address& toaddr, const void* data, size_t len)
                 toaddr.getSockaddr(), toaddr.getSockaddrLen());
     if(res == SOCKET_ERROR) {
         int error = GET_NET_ERROR();
+        if ( IS_SENDTO_IGNORABLE(error) )
+            return 0;
         std::stringstream msg;
         msg << "Send error: ";
         printError(msg,error);
@@ -248,11 +251,11 @@ SocketBase::doReceiveFrom(Address& fromaddr, void* buffer, size_t len)
             fromaddr.getSockaddr(), fromaddr.getSockaddrLenPointer());
     if(res == SOCKET_ERROR) {
         int error = GET_NET_ERROR();
-        if ( IS_IGNORABLE_ERROR(error) )
+        if ( IS_RECVFROM_IGNORABLE(error) )
             return 0;
 
         std::stringstream msg;
-        msg << "Receive error: " << strerror(errno);
+        msg << "Receive error: ";
         printError(msg,error);
         throw std::runtime_error(msg.str());
     }

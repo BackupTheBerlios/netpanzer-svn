@@ -244,10 +244,8 @@ BaseGameManager::sleeping()
 //-----------------------------------------------------------------
 void BaseGameManager::simLoop()
 {
-    //CLIENT->checkIncoming();
     network::SocketManager::handleEvents();
     
-    //SERVER->checkIncoming();
     if ( NetworkState::status == _network_state_server ) {
         ServerMessageRouter::routeMessages();
     } else {
@@ -268,6 +266,10 @@ void BaseGameManager::simLoop()
     Particle2D::simAll();
 
     GameControlRulesDaemon::updateGameControlFlow();
+    if ( SERVER )
+        SERVER->sendRemaining();
+    if ( CLIENT )
+        CLIENT->sendRemaining();
 }
 //-----------------------------------------------------------------
 void BaseGameManager::inputLoop()

@@ -31,12 +31,13 @@ public:
     virtual ~NetworkServerUnix();
 
     virtual void openSession();
-    virtual void hostSession(bool loopback = false);
+    virtual void hostSession();
     virtual void closeSession();
 
     virtual void sendMessage(NetMessage *message, size_t size);
     virtual void sendMessage(NetClientID network_id,
             NetMessage *message, size_t size);
+    void sendRemaining() { if ( serversocket ) serversocket->sendRemaining(); };
 
     virtual bool getPacket(NetPacket* message);
 

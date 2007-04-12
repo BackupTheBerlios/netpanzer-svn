@@ -46,16 +46,19 @@ PlayerState*        ServerConnectDaemon::connect_player_state;
 std::list<ConnectQueueElement> ServerConnectDaemon::connect_queue;
 Timer		    ServerConnectDaemon::time_out_timer;
 int	            ServerConnectDaemon::time_out_counter;
+Timer               ServerConnectDaemon::sendunitpercent_timer;
 UnitSync*           ServerConnectDaemon::connect_unit_sync = 0;
 
 #define _SERVER_CONNECT_TIME_OUT_TIME (20.0)
 #define _SERVER_CONNECT_RETRY_LIMIT   (5)
+#define _SENDUNITPERCENT_TIME (1)
 
 
 void ServerConnectDaemon::initialize(unsigned long max_players)
 {
     (void) max_players;
     time_out_timer.changePeriod( _SERVER_CONNECT_TIME_OUT_TIME );
+    sendunitpercent_timer.changePeriod( _SENDUNITPERCENT_TIME );
     connect_unit_sync = 0;
 }
 
@@ -63,6 +66,7 @@ void ServerConnectDaemon::startConnectDaemon( unsigned long max_players )
 {
     (void) max_players;
     time_out_timer.changePeriod( _SERVER_CONNECT_TIME_OUT_TIME );
+    sendunitpercent_timer.changePeriod( _SENDUNITPERCENT_TIME );
 }
 
 void ServerConnectDaemon::shutdownConnectDaemon()
@@ -432,6 +436,7 @@ bool ServerConnectDaemon::connectStatePlayerStateSync()
                 sizeof(ConnectProcessStateMessage));
         delete connect_unit_sync;
         connect_unit_sync = new UnitSync();
+        sendunitpercent_timer.reset();
 
         state_mesg.setMessageEnum(_connect_state_message_sync_units);
         SERVER->sendMessage( connect_player_id, &state_mesg,
@@ -463,16 +468,19 @@ bool ServerConnectDaemon::connectStateUnitSync()
 
     // send a unit
     if(connect_unit_sync->sendNextUnit(connect_player_id)) {
-        state_mesg.setMessageEnum(_connect_state_message_sync_units_percent);
-        state_mesg.setPercentComplete(percent_complete);
-        SERVER->sendMessage(connect_player_id, &state_mesg,
-                sizeof(ConnectProcessStateMessage));
+        if ( sendunitpercent_timer.count() ) {
+            state_mesg.setMessageEnum(_connect_state_message_sync_units_percent);
+            state_mesg.setPercentComplete(percent_complete);
+            SERVER->sendMessage(connect_player_id, &state_mesg,
+                    sizeof(ConnectProcessStateMessage));
+            sendunitpercent_timer.reset();
+        }
         return true;
     }
 
     // Sending finished
     state_mesg.setMessageEnum(_connect_state_message_sync_units_percent);
-    state_mesg.setPercentComplete(percent_complete);
+    state_mesg.setPercentComplete(100);
     SERVER->sendMessage( connect_player_id, &state_mesg,
             sizeof(ConnectProcessStateMessage));
 
@@ -508,80 +516,39 @@ void ServerConnectDaemon::connectFsm(const NetMessage* message)
 
     do {
         switch ( connection_state ) {
-        case connect_state_idle : {
-                if ( connectStateIdle() ) {
-                    end_cycle = true;
-                } else {
-                    end_cycle = false;
-                }
+            case connect_state_idle:
+                end_cycle = connectStateIdle();
+                break;
 
-            }
-            break;
+            case connect_state_wait_for_connect_request:
+                end_cycle = connectStateWaitForConnectRequest( message );
+                break;
 
-        case connect_state_wait_for_connect_request : {
-                if ( connectStateWaitForConnectRequest( message ) ) {
-                    end_cycle = true;
-                } else {
-                    end_cycle = false;
-                }
-            }
-            break;
+            case connect_state_attempt_player_alloc:
+                end_cycle = connectStateAttemptPlayerAlloc();
+                break;
 
+            case  connect_state_wait_for_client_settings:
+                end_cycle = connectStateWaitForClientSettings( message );
+                break;
 
-        case connect_state_attempt_player_alloc : {
-                if ( connectStateAttemptPlayerAlloc( ) ) {
-                    end_cycle = true;
-                } else {
-                    end_cycle = false;
-                }
-            }
-            break;
+            case connect_state_wait_for_client_game_setup_ack:
+                end_cycle = connectStateWaitForClientGameSetupAck( message );
+                break;
 
+            case connect_state_player_state_sync:
+                end_cycle = connectStatePlayerStateSync();
+                break;
 
-        case  connect_state_wait_for_client_settings : {
-                if ( connectStateWaitForClientSettings( message ) ) {
-                    end_cycle = true;
-                } else {
-                    end_cycle = false;
-                }
-            }
-            break;
+            case connect_state_unit_sync:
+                end_cycle = connectStateUnitSync();
+                break;
 
-        case connect_state_wait_for_client_game_setup_ack : {
-                if ( connectStateWaitForClientGameSetupAck( message ) ) {
-                    end_cycle = true;
-                } else {
-                    end_cycle = false;
-                }
-            }
-            break;
-
-        case connect_state_player_state_sync : {
-                if ( connectStatePlayerStateSync( ) ) {
-                    end_cycle = true;
-                } else {
-                    end_cycle = false;
-                }
-            }
-            break;
-
-        case connect_state_unit_sync : {
-                if ( connectStateUnitSync( ) ) {
-                    end_cycle = true;
-                } else {
-                    end_cycle = false;
-                }
-            }
-            break;
-
-		default:
-			assert(false);
+            default:
+                assert("Bad connection state" == 0);
 
         } // ** switch
-
     } while( end_cycle == false );
-
-
 }
 
 void ServerConnectDaemon::connectProcess(const NetMessage* message)

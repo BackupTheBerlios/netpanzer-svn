@@ -60,6 +60,8 @@ public:
     virtual void partServer() = 0;
 
     virtual void sendMessage(NetMessage* message, size_t size) = 0;
+    virtual void sendRemaining() = 0;
+
     virtual bool getMessage(NetMessage *message) = 0;
 
     virtual void checkIncoming() = 0;

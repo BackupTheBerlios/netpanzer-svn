@@ -58,6 +58,7 @@ protected:
     static UnitSync*            connect_unit_sync;
     static Timer		time_out_timer;
     static int	                time_out_counter;
+    static Timer                sendunitpercent_timer;
     static std::list<ConnectQueueElement> connect_queue;
 
     static bool inConnectQueue( PlayerID &new_player_id );

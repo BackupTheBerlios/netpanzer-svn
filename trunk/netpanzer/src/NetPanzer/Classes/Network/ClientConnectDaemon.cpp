@@ -397,6 +397,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                     lobbyView->toggleMainMenu();
                     connection_state = _connect_state_idle;
                 }
+                end_cycle = true;
             }
             break;
 

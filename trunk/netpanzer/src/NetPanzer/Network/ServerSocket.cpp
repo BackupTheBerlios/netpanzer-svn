@@ -16,35 +16,21 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-
-#include <string.h>
-#include <assert.h>
-#include <sstream>
-#include "Util/Log.hpp"
 #include "ServerSocket.hpp"
-
+#include "ClientSocket.hpp"
 #include "ClientServerNetMessage.hpp"
 #include "NetworkInterface.hpp"
-#include "NetPacket.hpp"
-#include "NetMessage.hpp"
-#include "NetworkGlobals.hpp"
-#include "GameConfig.hpp"
-#include "PlayerInterface.hpp"
-#include "Client.hpp"
-#include "ConsoleInterface.hpp"
 #include "Util/Exception.hpp"
+#include "Util/Log.hpp"
 
-#include "ClientSocket.hpp"
 
-
-ServerSocket::ServerSocket(const std::string& bindaddress, uint16_t port)
+ServerSocket::ServerSocket(const string& bindaddress, uint16_t port)
         : socket(0)
 {
   
     try {
-        network::Address addr
-            = network::Address::resolve(bindaddress, port);        
-        socket = new network::TCPListenSocket(addr, this);
+        Address addr = Address::resolve(bindaddress, port);        
+        socket = new TCPListenSocket(addr, this);
 
     } catch(...) {
         if (socket)
@@ -58,7 +44,7 @@ ServerSocket::~ServerSocket()
     if (socket)
         socket->destroy();
     
-    std::map<NetClientID, ClientSocket *>::iterator ci = clients.begin();
+    map<NetClientID, ClientSocket *>::iterator ci = clients.begin();
     while ( ci != clients.end() ) {
         delete ci->second;
         ci++;
@@ -66,16 +52,18 @@ ServerSocket::~ServerSocket()
     clients.clear();
 }
 
-network::TCPSocketObserver *
-ServerSocket::onNewConnection(network::TCPListenSocket *so, const network::Address &fromaddr)
+TCPSocketObserver *
+ServerSocket::onNewConnection(TCPListenSocket *so, const Address &fromaddr)
 {
+    (void)so;
+    (void)fromaddr;
     return new ClientSocket(this);
 }
 
 void
 ServerSocket::onClientConnected(ClientSocket *s)
 {
-    LOGGER.warning("Client Connected [%d]", s->getId());
+    LOGGER.debug("ServerSocket::onClientConnected() [%d]", s->getId());
     clients[s->getId()] = s;
     TransportClientAccept clientacceptmessage;
     clientacceptmessage.setSize(sizeof(TransportClientAccept));
@@ -86,7 +74,7 @@ ServerSocket::onClientConnected(ClientSocket *s)
 void
 ServerSocket::onClientDisconected(ClientSocket *s)
 {
-    LOGGER.warning("Client Disconnected [%d]", s->getId());
+    LOGGER.debug("ServerSocket::onClientDisconnected() [%d]", s->getId());
     clients.erase(s->getId());
     delete s;
 }
@@ -101,35 +89,37 @@ ServerSocket::getClientIP(NetClientID clientid)
     return s->getIPAddress();
 }
 
-NetClientID
-ServerSocket::addLoopbackClient()
-{
-    //SocketClient* client = clientlist->add(this, 0);
-    //return client->id;
-    return 0;
-}
-
 void
 ServerSocket::sendMessage(NetClientID toclient, const void* data, size_t datasize)
 {
-    ClientSocket *cs = clients[toclient];
-    if ( !cs ) {
+    map<NetClientID, ClientSocket *>::iterator ci = clients.find(toclient);
+    if ( ci == clients.end() ) {
         throw Exception("message sent to unknown client.");
     }
 
-    cs->sendMessage(data, datasize);
+    ci->second->sendMessage(data, datasize);
 }
 
 void
 ServerSocket::disconectClient(NetClientID c)
 {
-    LOGGER.warning("Disconecting client [%d]", c);
-    ClientSocket *s = clients[c];
-    if ( s ) {
-        delete s;
-        clients.erase(c);
+    LOGGER.debug("ServerSocket::disconectClient() [%d]", c);
+    map<NetClientID, ClientSocket *>::iterator ci = clients.find(c);
+    if ( ci != clients.end() ) {
+        delete ci->second;
+        clients.erase(ci);
     } else {
-        LOGGER.warning("Disconecting unknown client [%d]", c);
+        LOGGER.warning("ServerSocket::disconectClient() Disconecting unknown client [%d]", c);
+    }
+}
+
+void
+ServerSocket::sendRemaining()
+{
+    map<NetClientID, ClientSocket *>::iterator ci = clients.begin();
+    while ( ci != clients.end() ) {
+        ci->second->sendRemaining();
+        ci++;
     }
 }
 

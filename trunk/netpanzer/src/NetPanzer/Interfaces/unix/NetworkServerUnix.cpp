@@ -35,7 +35,8 @@ NetworkServerUnix::NetworkServerUnix()
 
 NetworkServerUnix::~NetworkServerUnix()
 {
-    delete serversocket;
+    if ( serversocket )
+        delete serversocket;
 }
 
 std::string
@@ -56,21 +57,21 @@ NetworkServerUnix::openSession()
 {}
 
 void
-NetworkServerUnix::hostSession(bool loopback)
+NetworkServerUnix::hostSession()
 {
-    delete serversocket;
+    if ( serversocket ) {
+        delete serversocket;
+        serversocket = 0;
+    }
     serversocket = new ServerSocket(gameconfig->bindaddress,
             gameconfig->serverport);
-    if(loopback) {
-        NetClientID id = serversocket->addLoopbackClient();
-        assert(id == 0);
-    }
 }
 
 void
 NetworkServerUnix::closeSession()
 {
-    delete serversocket;
+    if ( serversocket )
+        delete serversocket;
     serversocket = 0;
 }
 
@@ -147,7 +148,5 @@ void
 NetworkServerUnix::checkIncoming()
 {
     cleanupClients();
-    //if(serversocket)
-        //serversocket->read();
 }
 

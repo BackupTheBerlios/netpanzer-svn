@@ -65,7 +65,7 @@ public:
     void removeClientFromSendList(const PlayerID& client_player_id);
 
     virtual void openSession() = 0;
-    virtual void hostSession(bool loopback = false) = 0;
+    virtual void hostSession() = 0;
     virtual void closeSession() = 0;
 
     virtual void sendMessage(NetMessage *message, size_t size) = 0;
@@ -75,6 +75,7 @@ public:
             size_t size) {
         sendMessage(player_id.getNetworkID(), message, size);
     }
+    virtual void sendRemaining() = 0;
 
     virtual bool getPacket(NetPacket* packet) = 0;
 

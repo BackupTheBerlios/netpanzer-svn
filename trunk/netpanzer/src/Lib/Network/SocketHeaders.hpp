@@ -28,7 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define IS_ACCEPT_IGNORABLE(code) ((code==WSAEWOULDBLOCK)||(code==WSAECONNRESET)||(code==WSAEINTR)||(code==WSAEINPROGRESS))
 #define IS_DISCONECTED(code) ((code==WSAENETRESET)||(code==WSAECONNABORTED)||(code==WSAETIMEDOUT)||(code==WSAECONNRESET))
 #define IS_IGNORABLE_ERROR(code) (code==WSAEWOULDBLOCK)
-#define NETERROR_WOULDBLOCK WSAEWOULDBLOCK
+#define IS_RECVFROM_IGNORABLE(code) ((code==WSAEWOULDBLOCK)||(code==WSAECONNRESET))
+#define IS_SENDTO_IGNORABLE(code) ((code==WSAEWOULDBLOCK)||(code==WSAECONNRESET))
 #define SETSOCKOPT_PARAMTYPE char
 #define SEND_FLAGS 0
 #define RECV_FLAGS 0
@@ -53,7 +54,8 @@ typedef int SOCKET;
 #define IS_ACCEPT_IGNORABLE(code) ((code==EAGAIN)||(code==ECONNABORTED)||(code==EINTR))
 #define IS_DISCONECTED(code) ((code==ECONNREFUSED)||(code==ECONNRESET)||(code==EPIPE)||(code==ENOTCONN))
 #define IS_IGNORABLE_ERROR(code) ((code==EAGAIN)||(code==EINTR))
-#define NETERROR_WOULDBLOCK EWOULDBLOCK
+#define IS_RECVFROM_IGNORABLE(code) ((code==EAGAIN)||(code==EINTR)||(code==ECONNREFUSED))
+#define IS_SENDTO_IGNORABLE(code) ((code==EAGAIN)||(code==EWOULDBLOCK)||(code==EINTR)||(code==EPIPE)||(code==ECONNRESET))
 #define SETSOCKOPT_PARAMTYPE int
 #define SEND_FLAGS MSG_NOSIGNAL
 #define RECV_FLAGS MSG_NOSIGNAL
