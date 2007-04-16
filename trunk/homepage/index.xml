@@ -2,51 +2,95 @@
 <page title="netPanzer - News">
   <section title="News">
     <news>
-			<item date="3. Feb 2007">
-				<p>NetPanzer 0.8.1 released</p>
-				<p>Thanks to Karl Bastiman from
-				<a href="http://amber.org.uk">amber.org.uk</a> who provides new hosting
-				for the netpanzer masterserver! I also created a small bugfix release
-				whose main intention is to set the default masterserver to
-				netpanzer.dyndns.org. If you can't see any games in the ingame server browser, please change your masterservers setting netpanzer.ini to netpanzer.dyndns.org</p>
-				<ul>
-					<li>Change default masterserver to netpanzer.dyndns.org</li>
-					<li>Fix remote DOS when sending invalid frame number (yes, this fixes this "security advisory" by Luigi Auriemma)</li>
-					<li>Fix gcc 4.1 compilation</li>
-					<li>Make server handle clients more gracefully that drop during connect</li>
-				</ul>
-				<p>Please understand that I have no time to create (and test/debug) any 
-				binary packages for this new release.</p>
-			</item>
-			<item date="31. Jan 2007">
-				<p>Development situation and Masterserver</p>
-				<p>Well it's 2007 and unfortunately, there is still noone with
-				sufficient (or any) C++ skills around who wants to take over the
-				project. (Well I got an offer from a company making money with webgames,
-				but I didn't want them to make money with stuff we created for our fun)
-				</p>
-				<p>Even worse I just got notice from Christian Reiss who kindly
-				provided a rock solid and reliable hosting for the masterserver in the
-				last years that he plans to deactivate my account in february to make
-				room for projects in active development. So I would urgently need a new
-				host for the masterserver.</p>
-				<p>It would just need some linux, bsd or solaris box with a	user login
-				where I can setup a cron job and have the server running on	port 28900.
-				</p>
-			</item>
-			<item date="23. Feb 2005">
-				<p>Credits + Music</p>
-				<p>I just realized that we weren't giving any credits to all the people
-				that work and have worked on netpanzer (esp. Pyrosoft). There is a
-				credits section in the about page now.</p>
-				<p>While writing the credits I remembered that I had some contributed
-				music lying around here for months. A big thanks and sorry for the late
-				uploading to pronobozo. You can now grab
-				<a href="http://download.berlios.de/netpanzer/netpanzer-music.zip">
-				netpanzer-music.zip</a> and unzip it in your netpanzer directory or in
-				<i>$HOME/.netpanzer</i>.</p>
-				<p>PS: We're still searching for a new maintainer.</p>
-			</item>
+    	<item date="3. Apr 2007">
+		<p>Develpment status</p>
+		<p>Hi! I'm kromxp, a new developer of Netpanzer. In the past two weeks there has been many changes in the code. It seems to be more stable now, i created a server and run for 11 hours, 114 players connected (not at the same time) and many of the 'disconected' players was for an expected reason (see the known problems #1) and there were no server crash (maybe not your case). I think is time to release a test version so more people can check the advances done.</p>
+		<p>For Linux only source code is available, but in Windows, as it is more difficult to compile, I provide a binary update.</p>
+		<p>Changes in the development version</p>
+		<ul>
+			<li>Server browser</li>
+			<ul>
+				<li>The selected server will be highlighted in yellow</li>
+				<li>It will query all the masterservers configured in the .ini files</li>
+				<li>It will try several times to query the servers, if they timeout</li>
+				<li>Won't query/update the masterservers list received from masterserver, must be done by hand</li>
+				<li>Under some conditions pressing the 'refresh' button wouldn't refresh the games list, now should be fixed</li>
+				<li>Stops the query of servers when join one</li>
+				<li>As it has been highly rewritten some other problems should be fixed, yet some new could appear</li>
+			</ul>
+			<li>Networking</li>
+			<ul>
+				<li>All the networking is event based now, and handled in only one thread</li>
+				<li>Proxy functions haven't been updated to new networking model and are not working</li>
+				<li>Heartbeat doesn't unregister from the masterserver when the game quits, it will be removed automatically when it timeouts</li>
+				<li>Compatible with current netpanzer version</li>
+			</ul>
+			<li>Slash (\) character is removed from player and server names (it has special meaning in the server query)</li>
+			<li>When a player is disconected from the server, a window will appear to go back to main menu (no crash/hang)</li>
+			<li>Fixed a bug where it was possible to kick other players</li>
+			<li>Fixed a bug where it was possible to connect or create servers with empty names</li>
+			<li>Fixed a bug in Windows when playing in fullscreen and switching between applications would make the colors to become wrong (thanks to Cellar Door for the report), the problem didn't happen in the old version. The only change related to video is the using of newer SDL library in the Windows version.</li>
+			<li>Added timestamps to all the logs</li>
+			<li>Added possibility to configure starting units, there is a new section in the configuration files [spawnconfig]</li>
+		</ul>
+		<p>Known problems</p>
+		<ul>
+			<li>Players may disconect if their send buffer is full (in the client or in the server)</li>
+			<li>Pathing should be rewritten</li>
+			<li>It has been reported (not verifyed) that on Windows XP with a 64 bit CPU the server uses too much CPU (near 100%) and makes tanks move very slowly</li>
+		</ul>
+		<p>The next step is to fix the problem of sending buffer, but it will require some time. Pathing will be next.</p>
+		<p>To configure the starting units, start netpanzer in normal or dedicated server mode, then quit. Edit the netpanzer.ini or netpanzer-dedicated.ini and the new section should be there [spawnconfig]. Just modify the number of tanks of each type and next time you start a server all the players joining the server will start with that number of units. Note that it is the server who decides what number of units of each type are created.</p>
+		<p>In current state, when there are many units in the game, the server could be slow, and players could be easy to disconect. It would be advisable to keep the number of units per player not to high, around 50 each 'should' be ok.</p>
+		<p>The update is available in the <a href="download.html">Download</a> section</p>
+		<p>By: Krom Xp</p>
+
+	</item>
+	<item date="3. Feb 2007">
+		<p>NetPanzer 0.8.1 released</p>
+		<p>Thanks to Karl Bastiman from
+		<a href="http://amber.org.uk">amber.org.uk</a> who provides new hosting
+		for the netpanzer masterserver! I also created a small bugfix release
+		whose main intention is to set the default masterserver to
+		netpanzer.dyndns.org. If you can't see any games in the ingame server browser, please change your masterservers setting netpanzer.ini to netpanzer.dyndns.org</p>
+		<ul>
+			<li>Change default masterserver to netpanzer.dyndns.org</li>
+			<li>Fix remote DOS when sending invalid frame number (yes, this fixes this "security advisory" by Luigi Auriemma)</li>
+			<li>Fix gcc 4.1 compilation</li>
+			<li>Make server handle clients more gracefully that drop during connect</li>
+		</ul>
+		<p>Please understand that I have no time to create (and test/debug) any 
+		binary packages for this new release.</p>
+	</item>
+	<item date="31. Jan 2007">
+		<p>Development situation and Masterserver</p>
+		<p>Well it's 2007 and unfortunately, there is still noone with
+		sufficient (or any) C++ skills around who wants to take over the
+		project. (Well I got an offer from a company making money with webgames,
+		but I didn't want them to make money with stuff we created for our fun)
+		</p>
+		<p>Even worse I just got notice from Christian Reiss who kindly
+		provided a rock solid and reliable hosting for the masterserver in the
+		last years that he plans to deactivate my account in february to make
+		room for projects in active development. So I would urgently need a new
+		host for the masterserver.</p>
+		<p>It would just need some linux, bsd or solaris box with a	user login
+		where I can setup a cron job and have the server running on	port 28900.
+		</p>
+	</item>
+	<item date="23. Feb 2006">
+		<p>Credits + Music</p>
+		<p>I just realized that we weren't giving any credits to all the people
+		that work and have worked on netpanzer (esp. Pyrosoft). There is a
+		credits section in the about page now.</p>
+		<p>While writing the credits I remembered that I had some contributed
+		music lying around here for months. A big thanks and sorry for the late
+		uploading to pronobozo. You can now grab
+		<a href="http://download.berlios.de/netpanzer/netpanzer-music.zip">
+		netpanzer-music.zip</a> and unzip it in your netpanzer directory or in
+		<i>$HOME/.netpanzer</i>.</p>
+		<p>PS: We're still searching for a new maintainer.</p>
+	</item>
       <item date="12. Nov 2005">
         <p>Looking for a new maintainer</p>
         <p>The last months I was very busy with university and other open source

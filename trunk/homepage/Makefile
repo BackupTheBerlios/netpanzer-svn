@@ -10,6 +10,9 @@ clean :
 %.html :: %.xml default.xsl menu.xml Makefile
 	xsltproc -o $*.html default.xsl $*.xml
 
+kromupload: all
+	scp $(OUTPUTFILES) kromxp@shell.berlios.de:/home/groups/netpanzer/htdocs
+
 uploadhtml: all
 	scp $(OUTPUTFILES) matzebraun@shell.berlios.de:/home/groups/netpanzer/htdocs
 

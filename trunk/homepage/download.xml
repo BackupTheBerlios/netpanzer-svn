@@ -1,5 +1,19 @@
 <?xml version="1.0"?>
 <page title="NetPanzer - An Online Multiplayer Tactical Warfare Game">
+  <section title="Development version">
+    <subsection title="Linux">
+      <p>Source of development version is provided for linux
+         <a href="http://prdownload.berlios.de/netpanzer/netpanzer-svn-r964.tar.bz2">netpanzer-svn-r964.tar.bz2</a>
+	 (377KB)</p>
+      <p>Game data is the same as previous version</p>
+    </subsection>
+    <subsection title="Windows">
+      <p>Windows binary update (development version)
+         <a href="http://prdownload.berlios.de/netpanzer/netpanzer-win32-update-svn-r964.zip">netpanzer-win32-update-svn-r964.zip</a>
+         (664KB)</p>
+      <p>Game must be updated by hand, the instructions are in the file 'update-readme.txt' inside the zip file.</p>
+    </subsection>
+  </section>
   <section title="Downloads">
     <subsection title="Linux">
       <p>Some linux distributions already come with NetPanzer packages by
