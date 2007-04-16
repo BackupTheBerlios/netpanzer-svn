@@ -45,6 +45,16 @@ protected:
     
     static void removeSocket(SocketBase *s)
     {
+        if ( !newSockets.empty() ) {
+            list<SocketBase *>::iterator i = newSockets.begin();
+            while (i != newSockets.end()) {
+                if ( *i == s ) {
+                    newSockets.erase(i);
+                    return;
+                }
+                i++;
+            }
+        }
         deletedSockets.push_front(s);
     }
 

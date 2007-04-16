@@ -17,11 +17,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include <stdexcept>
 #include <sstream>
+#include <string>
+#include <string.h>
 
-#include "SocketHeaders.hpp"
 #include "Address.hpp"
+#include "NetworkException.hpp"
 
 namespace network
 {
@@ -75,6 +76,7 @@ Address::getPort() const
 
 Address
 Address::resolve(const std::string& name, uint16_t port)
+    throw(NetworkException)
 {
     // TODO: make a better resolver (ex: getaddrinfo)
     Address result;
@@ -87,17 +89,15 @@ Address::resolve(const std::string& name, uint16_t port)
 
     struct hostent* hentry = gethostbyname(name.c_str());
     if(!hentry) {
+        std::stringstream msg;
+        msg << "Couldn't resolve address '" << name;
 #ifdef USE_WINSOCK
-        std::stringstream msg;
-        msg << "Couldn't resolve address '" << name << "' (code "
-            << WSAGetLastError() << ")";
-        throw std::runtime_error(msg.str());
+        msg << "' (code " << WSAGetLastError() << ")";
 #else
-        std::stringstream msg;
-        msg << "Couldn't resolve address '" << name << "': "
-            << hstrerror(h_errno);
-        throw std::runtime_error(msg.str());
+        msg << "': " << hstrerror(h_errno);
 #endif
+        throw NetworkException(msg.str());
+
     }
     // XXX quick hack to get it working until get full ss support
     ((struct sockaddr_in &)result.ss).sin_addr.s_addr = ((struct in_addr*) hentry->h_addr)->s_addr;

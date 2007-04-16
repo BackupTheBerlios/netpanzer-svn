@@ -32,7 +32,7 @@ enum MAP_DRAW_TYPES
     MAP_BLEND_DARK_GRAY,
     MAP_BLEND_GREEN,
     MAP_BLACK,
-    MAP_TRANSPARENT,
+    MAP_TRANSPARENT
 };
 
 //---------------------------------------------------------------------------

@@ -56,7 +56,7 @@ FlameParticle2D::FlameParticle2D(	const fXYZ  &pos,
 
     // Check for accelerated flames.
     packedSurface.setFPS(getFPS(explosionFPS, 0));
-}; // end FlameParticle2D::FlameParticle2D
+} // end FlameParticle2D::FlameParticle2D
 
 // loadPakFiles
 //---------------------------------------------------------------------------

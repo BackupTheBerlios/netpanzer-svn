@@ -21,8 +21,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 using namespace std;
 
 #include <sstream>
-#include <stdexcept>
+#include <string.h>
 
+#include "NetworkException.hpp"
 #include "SocketHeaders.hpp"
 #include "SocketBase.hpp"
 #include "SocketManager.hpp"
@@ -32,6 +33,9 @@ namespace network
 {
 
 #ifdef USE_WINSOCK
+
+#define NETSTRERROR(x) "Winsock error: " << x
+
 class WinSockInit {
 public:
     WinSockInit() {
@@ -49,35 +53,37 @@ public:
     }
 };
 WinSockInit _WinSockInit;
+#else
+  // if not windows
+  #define NETSTRERROR(x) strerror(x)
 #endif
-
-SocketBase::SocketBase()
-{
-}
 
 SocketBase::~SocketBase()
 {
-    //doClose();
+
 }
 
-SocketBase::SocketBase(SOCKET fd, const Address &a) : sockfd(fd), addr(a)
+SocketBase::SocketBase(const Address &a, bool isTcp)
+    throw(NetworkException)
+    : addr(a)
+{
+    create(isTcp);
+    SocketManager::addSocket(this);
+    setNonBlocking();
+    _isConnecting=false;
+}
+
+SocketBase::SocketBase(SOCKET fd, const Address &a)
+    throw(NetworkException)
+    : sockfd(fd), addr(a)
 {
     SocketManager::addSocket(this);
+    setNonBlocking();
     _isConnecting=false;
 }
 
 void
-SocketBase::printError(std::ostream& out, int e)
-{
-#ifdef USE_WINSOCK
-    out << "Winsock error " << e;
-#else
-    out << strerror(e);
-#endif
-}
-
-void
-SocketBase::create(bool tcp)
+SocketBase::create (bool tcp) throw(NetworkException)
 {
     if(tcp) {
         sockfd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -88,47 +94,15 @@ SocketBase::create(bool tcp)
     LOGGER.debug("SocketBase:: Create [%s:%d] socket", (tcp)?"tcp":"udp",sockfd);
     
     if(sockfd == INVALID_SOCKET) {
-        int error = GET_NET_ERROR();
-	std::stringstream msg;
-	msg << "Couldn't create socket: ";
-        printError(msg,error);
-	throw std::runtime_error(msg.str());
-    }
-    _isConnecting = false;
-    SocketManager::addSocket(this);
-}
-
-void
-SocketBase::bindSocketTo(const Address& toaddr)
-{
-    int res = bind(sockfd, toaddr.getSockaddr(), toaddr.getSockaddrLen());
-    if(res == SOCKET_ERROR) {
-        int error = GET_NET_ERROR();
+        lastError = GET_NET_ERROR();
         std::stringstream msg;
-        msg << "Couldn't bind socket to address '"
-            << toaddr.getIP() << "' port " << toaddr.getPort()
-            << ": ";
-        printError(msg,error);
-        throw std::runtime_error(msg.str());           
+        msg << "Couldn't create socket: " << NETSTRERROR(lastError);
+        throw NetworkException(msg.str());
     }
 }
 
 void
-SocketBase::setReuseAddr()
-{
-    SETSOCKOPT_PARAMTYPE val = 1;
-    int res = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
-    if(res == SOCKET_ERROR) {
-        int error = GET_NET_ERROR();
-        std::stringstream msg;
-        msg << "Couldn't set SO_REUSEADDR: ";
-        printError(msg,error);
-        throw std::runtime_error(msg.str());
-    }
-}
-
-void
-SocketBase::setNonBlocking()
+SocketBase::setNonBlocking() throw(NetworkException)
 {
     int res;
 #ifdef USE_WINSOCK
@@ -138,85 +112,112 @@ SocketBase::setNonBlocking()
     res = fcntl(sockfd, F_SETFL, O_NONBLOCK);
 #endif
     if ( res == SOCKET_ERROR ) {
-        int error = GET_NET_ERROR();
-	std::stringstream msg;
-	msg << "Couldn't set socket to nonblocking mode: ";
-        printError(msg,error);
-	throw std::runtime_error(msg.str());
+        lastError = GET_NET_ERROR();
+        doClose();
+        std::stringstream msg;
+        msg << "Couldn't set socket to nonblocking mode: " << NETSTRERROR(lastError);
+        throw NetworkException(msg.str());
     }
 }
 
 void
-SocketBase::doListen()
+SocketBase::bindSocketTo(const Address& toaddr) throw(NetworkException)
+{
+    int res = bind(sockfd, toaddr.getSockaddr(), toaddr.getSockaddrLen());
+    if(res == SOCKET_ERROR) {
+        lastError = GET_NET_ERROR();
+        doClose();
+        std::stringstream msg;
+        msg << "Couldn't bind socket to address '"
+            << toaddr.getIP() << "' port " << toaddr.getPort()
+            << ": " << NETSTRERROR(lastError);
+        throw NetworkException(msg.str());           
+    }
+}
+
+void
+SocketBase::setReuseAddr() throw(NetworkException)
+{
+    SETSOCKOPT_PARAMTYPE val = 1;
+    int res = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
+    if(res == SOCKET_ERROR) {
+        lastError = GET_NET_ERROR();
+        doClose();
+        std::stringstream msg;
+        msg << "Couldn't set SO_REUSEADDR: " << NETSTRERROR(lastError);
+        throw NetworkException(msg.str());
+    }
+}
+
+void
+SocketBase::doListen() throw(NetworkException)
 {
     int res = listen(sockfd, 20);
     if(res == SOCKET_ERROR) {
-        int error = GET_NET_ERROR();
+        lastError = GET_NET_ERROR();
+        doClose();
         std::stringstream msg;
-        msg << "Couldn't listen on socket: ";
-        printError(msg,error);
-        throw std::runtime_error(msg.str());
+        msg << "Couldn't listen on socket: " << NETSTRERROR(lastError);
+        throw NetworkException(msg.str());
     }
 }
 
 void
-SocketBase::doConnect()
+SocketBase::doConnect() throw(NetworkException)
 {
     int res = connect(sockfd, addr.getSockaddr(), addr.getSockaddrLen());
     if(res == SOCKET_ERROR) {
-        int error = GET_NET_ERROR();
-        if (IS_CONNECT_INPROGRESS(error)) {
+        lastError = GET_NET_ERROR();
+        if (IS_CONNECT_INPROGRESS(lastError)) {
             _isConnecting = true;
             return;
         }
+        doClose();
         std::stringstream msg;
         msg << "Couldn't connect to '" << addr.getIP() << "' port "
-            << addr.getPort() << ": ";
-        printError(msg,error);
-        throw std::runtime_error(msg.str());
+            << addr.getPort() << ": " << NETSTRERROR(lastError);
+        throw NetworkException(msg.str());
     }
 }
 
 int
-SocketBase::doSend(const void* data, size_t len)
+SocketBase::doSend(const void* data, size_t len) throw(NetworkException)
 {
     int res = send(sockfd, (const char*) data, len, SEND_FLAGS);
     if(res == SOCKET_ERROR) {
-        int error = GET_NET_ERROR();
-        if ( IS_DISCONECTED(error) ) {
+        lastError = GET_NET_ERROR();
+        if ( IS_DISCONECTED(lastError) ) {
             onDisconected();
             return 0;
         }
         
-        if ( IS_IGNORABLE_ERROR(error) )
+        if ( IS_IGNORABLE_ERROR(lastError) )
             return 0;
         
         std::stringstream msg;
-        msg << "Send error: ";
-        printError(msg,error);
-        throw std::runtime_error(msg.str());
+        msg << "Send error: " << NETSTRERROR(lastError);
+        throw NetworkException(msg.str());
     }
     return res;
 }
 
 int
-SocketBase::doReceive(void* buffer, size_t len)
+SocketBase::doReceive(void* buffer, size_t len) throw(NetworkException)
 {
     int res = recv(sockfd, (char*) buffer, len, RECV_FLAGS);
     if(res == SOCKET_ERROR) {
-        int error = GET_NET_ERROR();
-        if ( IS_DISCONECTED(error) ) {
+        lastError = GET_NET_ERROR();
+        if ( IS_DISCONECTED(lastError) ) {
             onDisconected();
             return 0;
         }
         
-        if ( IS_IGNORABLE_ERROR(error) )
+        if ( IS_IGNORABLE_ERROR(lastError) )
             return 0;
 
         std::stringstream msg;
-        msg << "Read error: ";
-        printError(msg,error);
-        throw std::runtime_error(msg.str());
+        msg << "Read error: " << NETSTRERROR(lastError);
+        throw NetworkException(msg.str());
     }
     
     if (!res) {
@@ -228,53 +229,50 @@ SocketBase::doReceive(void* buffer, size_t len)
 }
 
 int
-SocketBase::doSendTo(const Address& toaddr, const void* data, size_t len)
+SocketBase::doSendTo(const Address& toaddr, const void* data, size_t len) throw(NetworkException)
 {
     int res = sendto(sockfd, (const char*) data, len, SEND_FLAGS,
                 toaddr.getSockaddr(), toaddr.getSockaddrLen());
     if(res == SOCKET_ERROR) {
-        int error = GET_NET_ERROR();
-        if ( IS_SENDTO_IGNORABLE(error) )
+        lastError = GET_NET_ERROR();
+        if ( IS_SENDTO_IGNORABLE(lastError) )
             return 0;
         std::stringstream msg;
-        msg << "Send error: ";
-        printError(msg,error);
-        throw std::runtime_error(msg.str());
+        msg << "Send error: " << NETSTRERROR(lastError);
+        throw NetworkException(msg.str());
     }
     return res;
 }
 
 size_t
-SocketBase::doReceiveFrom(Address& fromaddr, void* buffer, size_t len)
+SocketBase::doReceiveFrom(Address& fromaddr, void* buffer, size_t len) throw(NetworkException)
 {
     int res = recvfrom(sockfd, (char*) buffer, len, RECV_FLAGS,
             fromaddr.getSockaddr(), fromaddr.getSockaddrLenPointer());
     if(res == SOCKET_ERROR) {
-        int error = GET_NET_ERROR();
-        if ( IS_RECVFROM_IGNORABLE(error) )
+        lastError = GET_NET_ERROR();
+        if ( IS_RECVFROM_IGNORABLE(lastError) )
             return 0;
 
         std::stringstream msg;
-        msg << "Receive error: ";
-        printError(msg,error);
-        throw std::runtime_error(msg.str());
+        msg << "Receive error: " << NETSTRERROR(lastError);
+        throw NetworkException(msg.str());
     }
     return res;
 }
 
 SOCKET
-SocketBase::doAccept(Address& fromaddr)
+SocketBase::doAccept(Address& fromaddr) throw(NetworkException)
 {
     SOCKET newsock;
     newsock= accept(sockfd, fromaddr.getSockaddr(), fromaddr.getSockaddrLenPointer());
     if (newsock == INVALID_SOCKET) {
-        int error = GET_NET_ERROR();
-        if ( IS_ACCEPT_IGNORABLE(error) )
+        lastError = GET_NET_ERROR();
+        if ( IS_ACCEPT_IGNORABLE(lastError) )
             return INVALID_SOCKET; // XXX this could be better
         std::stringstream msg;
-        msg << "Accept error: ";
-        printError(msg,error);
-        throw std::runtime_error(msg.str());
+        msg << "Accept error: " << NETSTRERROR(lastError);
+        throw NetworkException(msg.str());
     }
     return newsock;
 }

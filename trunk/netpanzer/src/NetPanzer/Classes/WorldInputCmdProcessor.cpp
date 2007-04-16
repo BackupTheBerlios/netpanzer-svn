@@ -64,7 +64,7 @@ enum { _cursor_regular,
 
 enum { _keyboard_input_mode_command,
        _keyboard_input_mode_chat_mesg,
-       _keyboard_input_mode_allie_mesg,
+       _keyboard_input_mode_allie_mesg
      };
 
 short WorldInputCmdProcessor::selected_objective_id = 0;

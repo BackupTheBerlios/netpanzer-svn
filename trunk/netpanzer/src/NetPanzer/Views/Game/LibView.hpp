@@ -29,7 +29,7 @@ enum
 {
     LIBVIEW_MODE_SURFACE_INFO,
     LIBVIEW_MODE_PARTICLE_INFO,
-    LIBVIEW_MODE_ENVIRONMENT_INFO,
+    LIBVIEW_MODE_ENVIRONMENT_INFO
 };
 
 //--------------------------------------------------------------------------

@@ -18,10 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __UDPSOCKET_HPP__
 #define __UDPSOCKET_HPP__
 
-#include <stdint.h>
-#include <string.h>
 #include "SocketBase.hpp"
 #include "Address.hpp"
+#include "NetworkException.hpp"
 
 namespace network
 {
@@ -46,23 +45,19 @@ public:
      */
 //    UDPSocket(bool blocking = true);
 //    UDPSocket(const Address& bindaddr, bool blocking = true);
-    UDPSocket(UDPSocketObserver *o);
-    UDPSocket(const Address& bindaddr, UDPSocketObserver *o);
+    UDPSocket(UDPSocketObserver *o) throw(NetworkException);
+    UDPSocket(const Address& bindaddr, UDPSocketObserver *o) throw(NetworkException);
 
     void destroy();
 
     /** send data to the specified address */
-    void send(const Address& toaddr, const void* data, size_t datasize);
-    /** receives data from socket. Returns the number of bytes read and stores
-     * the address of the client who sent the data in addr.
-     */
-    size_t recv(Address& fromaddr, void* buffer, size_t bufsize);
+    void send(const Address& toaddr, const void* data, size_t datasize) throw(NetworkException);
+
 protected:
     ~UDPSocket();
     void onDataReady();
 
 private:
-    void init(bool blocking);
     UDPSocketObserver *observer;
 };
 

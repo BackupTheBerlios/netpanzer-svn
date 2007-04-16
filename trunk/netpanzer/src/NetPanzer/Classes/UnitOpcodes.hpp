@@ -78,7 +78,7 @@ public:
     }
 } __attribute__((packed));
 
-ASSERT_SIZE(UnitOpcode, sizeof(UnitOpcodeStruct)-7);
+ASSERT_SIZE(UnitOpcode, sizeof(UnitOpcodeStruct)-7)
 
 #define _UNIT_OPCODE_MOVE 1
 

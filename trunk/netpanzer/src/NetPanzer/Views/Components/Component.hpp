@@ -60,7 +60,7 @@ public:
         CENTER_ALIGNMENT,
         LEFT_ALIGNMENT,
         RIGHT_ALIGNMENT,
-        TOP_ALIGNMENT,
+        TOP_ALIGNMENT
     };
 
     Component()

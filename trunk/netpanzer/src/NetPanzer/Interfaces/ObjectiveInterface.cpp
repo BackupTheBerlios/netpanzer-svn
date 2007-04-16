@@ -401,16 +401,16 @@ ObjectiveInterface::syncObjectives(PlayerID connect_player)
 {
     ObjectiveSyncMesg sync_mesg;
 
-    NetMessageEncoder* encoder = new NetMessageEncoder(connect_player);
+    NetMessageEncoder encoder(connect_player);
 
     std::vector<Objective*>::iterator i;
     for(i = objective_list.begin(); i != objective_list.end(); ++i) {
         (*i)->getSyncData( sync_mesg.sync_data );
 
-        encoder->encodeMessage(&sync_mesg, sizeof(ObjectiveSyncMesg));
+        encoder.encodeMessage(&sync_mesg, sizeof(ObjectiveSyncMesg));
     }
 
-    encoder->sendEncodedMessage();
+    encoder.sendEncodedMessage();
 }
 
 void

@@ -18,9 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __TCPLISTENSOCKET_HPP__
 #define __TCPLISTENSOCKET_HPP__
 
-#include <assert.h>
 #include "SocketBase.hpp"
 #include "TCPSocket.hpp"
+#include "NetworkException.hpp"
 
 namespace network
 {

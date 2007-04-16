@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <optionmm/command_line.hpp>
 
 #include "Util/Log.hpp"
-#include "Util/Exception.hpp"
+//#include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 
 #include "BaseGameManager.hpp"
@@ -310,7 +310,7 @@ int netpanzer_main(int argc, char** argv)
 // stack backtrace
 #if !defined(DEBUG) || defined(WIN32)
     catch(std::exception& e) {
-        LOGGER.warning("An unexpected exception occured: %s\nShutdown needed.",
+        LOGGER.warning("An unexpected exception occured: '%s'\nShutdown needed.",
                 e.what());
         shutdown();
         return 1;

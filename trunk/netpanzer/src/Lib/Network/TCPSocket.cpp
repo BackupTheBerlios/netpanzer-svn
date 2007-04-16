@@ -23,21 +23,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SocketHeaders.hpp"
 #include "Address.hpp"
 #include "TCPSocket.hpp"
+#include "Util/Log.hpp"
+
 
 namespace network
 {
 
-void
-TCPSocket::init(bool blocking)
+TCPSocket::TCPSocket(SOCKET fd, const Address& newaddr, TCPSocketObserver *o)
+    throw(NetworkException)
+    : SocketBase(fd,newaddr), observer(o)
 {
-    try {
-        doConnect();
-        if(!blocking)
-            setNonBlocking();
-    } catch(...) {
-        doClose();
-        throw;
-    }
+
+}
+
+TCPSocket::TCPSocket(const Address& address, TCPSocketObserver *o)
+    throw(NetworkException)
+    : SocketBase(address,true), observer(o)
+{
+    doConnect();
 }
 
 TCPSocket::~TCPSocket()
@@ -46,36 +49,18 @@ TCPSocket::~TCPSocket()
 void
 TCPSocket::destroy()
 {
-    doClose();
     observer=0;
+    doClose();
 }
 
 size_t
-TCPSocket::send(const void* data, size_t size)
+TCPSocket::send(const void* data, size_t size) throw(NetworkException)
 {
     int res = doSend(data,size);
     if (!res && !observer) // disconnected
         return size; // as is disconnected, avoid catching of unsend data
     return res;
 }
-
-TCPSocket::TCPSocket()
-{
-}
-
-TCPSocket::TCPSocket(SOCKET fd, const Address& newaddr, TCPSocketObserver *o) 
-    : SocketBase(fd,newaddr)
-{
-    observer=o;
-}
-
-TCPSocket::TCPSocket(const Address& address, TCPSocketObserver *o) : SocketBase(address)
-{
-    observer=o;
-    create(true);
-    setNonBlocking();
-    doConnect();
- }
 
 void
 TCPSocket::onConnected()
@@ -97,11 +82,11 @@ TCPSocket::onDataReady()
 {
     char buffer[4096];
     int len;
-    len = doReceive(buffer,sizeof(buffer));
-    if (len) {
-        if (observer)
+    do {
+        len = doReceive(buffer,sizeof(buffer));
+        if (len && observer)
             observer->onDataReceived(this, buffer,len);
-    }
+    } while (len && observer);
 }
 
 }

@@ -44,11 +44,10 @@ protected:
 	enum ConnectionState {
 		connect_state_idle,
 	 	connect_state_wait_for_connect_request,
-	  	connect_state_attempt_player_alloc,
 	   	connect_state_wait_for_client_settings,
 		connect_state_wait_for_client_game_setup_ack,
 		connect_state_player_state_sync,
-		connect_state_unit_sync,
+		connect_state_unit_sync
      };
 
     static ConnectionState      connection_state;
@@ -79,7 +78,6 @@ protected:
     // ** FSM States
     static bool connectStateIdle();
     static bool connectStateWaitForConnectRequest(const NetMessage* message);
-    static bool connectStateAttemptPlayerAlloc();
     static bool connectStateWaitForClientSettings(const NetMessage* message);
     static bool connectStateWaitForClientGameSetupAck(const NetMessage* message);
     static bool connectStatePlayerStateSync();

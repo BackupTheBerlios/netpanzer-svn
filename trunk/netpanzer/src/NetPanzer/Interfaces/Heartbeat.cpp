@@ -110,9 +110,17 @@ Heartbeat::startHeartbeat()
 {
     vector<Address>::iterator iter = mslist.begin();
     while ( iter != mslist.end() ) {
-        TCPSocket *s = new TCPSocket(*iter, this);
-        MasterserverInfo * msi = new MasterserverInfo();
-        masterservers[s]=msi;
+        TCPSocket *s = 0;
+        MasterserverInfo *msi = 0;
+        try {
+            s = new TCPSocket(*iter, this);
+            msi = new MasterserverInfo();
+            masterservers[s]=msi;
+        } catch (NetworkException e) {
+            LOGGER.warning("Error '%s' connecting to masterserver '%s'", e.what(), (*iter).getIP().c_str());
+            if (msi)
+                delete msi;
+        }
         iter++;
     }
 }

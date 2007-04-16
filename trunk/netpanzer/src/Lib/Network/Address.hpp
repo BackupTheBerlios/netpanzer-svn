@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __ADDRESS_HPP__
 
 #include "SocketHeaders.hpp"
-#include <stdint.h>
+#include "NetworkException.hpp"
 #include <string>
 
 namespace network
@@ -34,7 +34,7 @@ public:
     /** resolves a hostname or IP-Number together with a port and returns a
      * new Address object.
      */
-    static Address resolve(const std::string& name, uint16_t port);
+    static Address resolve(const std::string& name, uint16_t port) throw(NetworkException);
 
     /** returns the ip address of this Address as string */
     std::string getIP() const;

@@ -757,6 +757,12 @@ void UnitInterface::unitSyncMessage(const NetMessage *net_message)
         = (const UnitIniSyncMessage *) net_message;
 
     try {
+        std::map<UnitID, UnitBase*>::iterator uit = units.find(sync_message->getUnitID());
+        if ( uit != units.end() ) {
+            LOGGER.warning("UnitInterface::unitSyncMessage() Received an existing unit [%d]",
+                            sync_message->getUnitID());
+            return;
+        }
         UnitBase* unit = newUnit(sync_message->unit_type,
                 iXY(sync_message->getLocX(), sync_message->getLocY()),
                 sync_message->getPlayerID(), sync_message->getUnitID());
@@ -811,6 +817,12 @@ void UnitInterface::unitCreateMessage(const NetMessage* net_message)
     uint16_t player_index = create_mesg->getPlayerID();
 
     try {
+        std::map<UnitID, UnitBase*>::iterator uit = units.find(create_mesg->getUnitID());
+        if ( uit != units.end() ) {
+            LOGGER.warning("UnitInterface::unitCreateMessage() Received an existing unit [%d]",
+                            create_mesg->getUnitID());
+            return;
+        }
         UnitBase* unit = newUnit(create_mesg->unit_type,
                 iXY(create_mesg->getLocX(), create_mesg->getLocY()),
                 player_index,

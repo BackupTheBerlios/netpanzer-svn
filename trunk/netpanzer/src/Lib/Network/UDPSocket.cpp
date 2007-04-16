@@ -15,33 +15,28 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
 #include <config.h>
 
-#include <sstream>
-#include <stdexcept>
-
-#include "SocketHeaders.hpp"
 #include "UDPSocket.hpp"
-#include "Address.hpp"
+#include <sstream>
+
 
 namespace network
 {
 
-//UDPSocket::UDPSocket(bool blocking) : SocketBase(Address::ANY) { init(blocking); }
-
-//UDPSocket::UDPSocket(const Address& bindaddr, bool blocking) : SocketBase(bindaddr) { init(blocking); }
-
-UDPSocket::UDPSocket(UDPSocketObserver *o) : SocketBase(Address::ANY)
+UDPSocket::UDPSocket(UDPSocketObserver *o)
+    throw(NetworkException) 
+    : SocketBase(Address::ANY,false), observer(o)
 {
-    observer=o;
-    init(false);
+    bindSocket();
 }
 
 UDPSocket::UDPSocket(const Address& bindaddr, UDPSocketObserver *o)
-    : SocketBase(bindaddr)
+    throw(NetworkException)
+    : SocketBase(bindaddr,false), observer(o)
 {
-    observer=o;
-    init(false);
+    bindSocket();
 }
 
 UDPSocket::~UDPSocket()
@@ -56,35 +51,15 @@ UDPSocket::destroy()
 }
 
 void
-UDPSocket::init(bool blocking)
-{
-    create(false);
-
-    try {
-        bindSocket();
-        if(!blocking)
-            setNonBlocking();
-    } catch(...) {
-        doClose();
-        throw;
-    }
-}
-
-void
 UDPSocket::send(const Address& toaddr, const void* data, size_t datasize)
+    throw(NetworkException)
 {
     int res = doSendTo(toaddr,data,datasize);
     if(res != (int) datasize) {
         std::stringstream msg;
         msg << "Send error: not all data sent.";
-        throw std::runtime_error(msg.str());
+        throw NetworkException(msg.str());
     }
-}
-
-size_t
-UDPSocket::recv(Address& fromaddr, void* buffer, size_t bufsize)
-{
-    return doReceiveFrom(fromaddr,buffer,bufsize);
 }
 
 void
@@ -97,7 +72,7 @@ UDPSocket::onDataReady()
         len=doReceiveFrom(a,buffer,sizeof(buffer));
         if (len && observer)
             observer->onDataReceived(this,a,buffer,len);
-    } while (len);
+    } while (len && observer);
 }
 
 }

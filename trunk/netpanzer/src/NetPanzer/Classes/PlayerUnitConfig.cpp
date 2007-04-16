@@ -56,12 +56,12 @@ PlayerUnitConfig::PlayerUnitConfig()
 {
 }
 
-void PlayerUnitConfig::initialize( unsigned char max_allowed_units )
+void PlayerUnitConfig::initialize()
 {
-    PlayerUnitConfig::max_allowed_units = gameconfig->maxunits / gameconfig->maxplayers;
-    memset( unit_spawn_list, 0, sizeof( unsigned char ) * _MAX_UNIT_TYPES );
-    unsigned char rem_units = PlayerUnitConfig::max_allowed_units;
-    unsigned char numunits;
+    max_allowed_units = gameconfig->maxunits / gameconfig->maxplayers;
+    memset( unit_spawn_list, 0, sizeof(unit_spawn_list));
+    int rem_units = max_allowed_units;
+    unsigned int numunits;
 
     numunits = (rem_units < gameconfig->archer)?rem_units:gameconfig->archer;
     rem_units-=numunits;
@@ -106,10 +106,10 @@ void PlayerUnitConfig::initialize( unsigned char max_allowed_units )
     unit_color = 0;
 }
 
-unsigned char PlayerUnitConfig::unitTotal( void )
+unsigned int PlayerUnitConfig::unitTotal( void )
 {
-    unsigned char total = 0;
-    unsigned char i;
+    unsigned int total = 0;
+    unsigned int i;
 
     for( i = 0; i < _MAX_UNIT_TYPES; i++ ) {
         total += unit_spawn_list[ i ];

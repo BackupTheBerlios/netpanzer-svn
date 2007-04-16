@@ -174,7 +174,7 @@ private:
     enum DRAW_MODE
     {
         BLEND,
-        SOLID,
+        SOLID
     };
 
     ColorTable *colorTable;

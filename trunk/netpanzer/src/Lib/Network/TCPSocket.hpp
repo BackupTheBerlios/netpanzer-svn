@@ -43,11 +43,11 @@ public:
 //    TCPSocket(const Address& bindaddr, const Address& address, bool blocking = true);
 
 
-    TCPSocket(const Address& address, TCPSocketObserver *o);
+    TCPSocket(const Address& address, TCPSocketObserver *o) throw(NetworkException);
 
     void destroy();
 
-    size_t send(const void* data, size_t datasize);
+    size_t send(const void* data, size_t datasize) throw(NetworkException);
     
 protected:
     ~TCPSocket();
@@ -58,11 +58,8 @@ protected:
 private:
     friend class TCPListenSocket;
 
-    TCPSocket();
-    TCPSocket(SOCKET fd, const Address& addr, TCPSocketObserver *o);
+    TCPSocket(SOCKET fd, const Address& addr, TCPSocketObserver *o) throw(NetworkException);
 
-    void init(bool blocking);
-    
     TCPSocketObserver *observer;
 };
 

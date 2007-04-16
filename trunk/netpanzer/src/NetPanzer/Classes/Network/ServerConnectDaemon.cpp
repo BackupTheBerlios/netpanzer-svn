@@ -269,64 +269,35 @@ bool ServerConnectDaemon::connectStateIdle()
 bool ServerConnectDaemon::connectStateWaitForConnectRequest(
         const NetMessage* message)
 {
-    if (message != 0) {
-        if ( message->message_id == _net_message_id_client_connect_request ) {
-            connection_state = connect_state_attempt_player_alloc;
-            return false;
-        } else {
-            if ( time_out_timer.count() ) {
-                resetConnectFsm();
-                return true;
-            }
+    if (message && message->message_id == _net_message_id_client_connect_request ) {
 
-            return true;
-        }
+        ClientConnectResult connect_result;
+        connect_player_state = PlayerInterface::allocateNewPlayer();
 
-    } // ** if ( message != 0 )
-    else {
-        if ( time_out_timer.count() ) {
+        if ( connect_player_state == 0 ) {
+            connect_result.result_code = _connect_result_server_full;
             resetConnectFsm();
-            return true;
+        } else {
+            connect_result.result_code = _connect_result_success;
+            time_out_timer.reset();
         }
 
-        return true;
-    }
+        SERVER->sendMessage( connect_player_id, &connect_result,
+                                                sizeof(ClientConnectResult));
+
+        if ( connection_state != connect_state_idle )
+            connection_state = connect_state_wait_for_client_settings;
+
+    } else if ( time_out_timer.count() )
+        resetConnectFsm();
 
     return true;
-}
-
-bool ServerConnectDaemon::connectStateAttemptPlayerAlloc()
-{
-    ClientConnectResult connect_result;
-    connect_player_state = PlayerInterface::allocateNewPlayer();
-
-    if ( connect_player_state == 0 ) {
-        connect_result.result_code = _connect_result_server_full;
-
-        SERVER->sendMessage( connect_player_id, &connect_result,
-                                            sizeof(ClientConnectResult));
-        resetConnectFsm();
-        return true;
-    } else {
-        connect_result.result_code = _connect_result_success;
-
-        SERVER->sendMessage( connect_player_id, &connect_result,
-                                            sizeof(ClientConnectResult));
-
-        time_out_timer.reset();
-		if(connection_state != connect_state_idle) {
-			connection_state = connect_state_wait_for_client_settings;
-		}
-        return true;
-    }
-
 }
 
 bool ServerConnectDaemon::connectStateWaitForClientSettings(
         const NetMessage* message )
 {
-    if ( message != 0 ) {
-        if ( message->message_id == _net_message_id_connect_client_settings ) {
+    if ( message && message->message_id == _net_message_id_connect_client_settings ) {
             ConnectClientSettings *client_setting;
 
             client_setting = (ConnectClientSettings *) message;
@@ -356,23 +327,11 @@ bool ServerConnectDaemon::connectStateWaitForClientSettings(
 				connection_state = connect_state_wait_for_client_game_setup_ack;
 			}
             return true;
-        } else {
-            if ( time_out_timer.count() ) {
-                connect_player_state->setStatus( _player_state_free );
-                resetConnectFsm();
-                return true;
-            }
+    }
 
-            return true;
-        }
-    } else {
-        if ( time_out_timer.count() ) {
-            connect_player_state->setStatus( _player_state_free );
-            resetConnectFsm();
-            return true;
-        }
-
-        return true;
+    if ( time_out_timer.count() ) {
+        connect_player_state->setStatus( _player_state_free );
+        resetConnectFsm();
     }
 
     return true;
@@ -397,28 +356,16 @@ bool ServerConnectDaemon::connectStateWaitForClientGameSetupAck(
 			if(connection_state != connect_state_idle) {
 				connection_state = connect_state_player_state_sync;
 			}
-        } else
-            if ( message->message_id == _net_message_id_connect_client_game_setup_ping ) {
-                time_out_timer.reset();
-                return true;
-            } else {
-                if ( time_out_timer.count() ) {
-                    connect_player_state->setStatus( _player_state_free );
-                    resetConnectFsm();
-                    return true;
-                }
-
-                return true;
-            }
-
-    } else {
-        if ( time_out_timer.count() ) {
-            connect_player_state->setStatus( _player_state_free );
-            resetConnectFsm();
+			return true;
+        } else if ( message->message_id == _net_message_id_connect_client_game_setup_ping ) {
+            time_out_timer.reset();
             return true;
         }
+    }
 
-        return true;
+    if ( time_out_timer.count() ) {
+        connect_player_state->setStatus( _player_state_free );
+        resetConnectFsm();
     }
 
     return true;
@@ -522,10 +469,6 @@ void ServerConnectDaemon::connectFsm(const NetMessage* message)
 
             case connect_state_wait_for_connect_request:
                 end_cycle = connectStateWaitForConnectRequest( message );
-                break;
-
-            case connect_state_attempt_player_alloc:
-                end_cycle = connectStateAttemptPlayerAlloc();
                 break;
 
             case  connect_state_wait_for_client_settings:

@@ -48,7 +48,7 @@ public:
 enum DEFAULT_VIEW_BUTTON
 {
     CLOSE_VIEW_BUTTON,
-    MINMAX_VIEW_BUTTON,
+    MINMAX_VIEW_BUTTON
 };
 
 class View : public iRect

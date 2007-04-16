@@ -36,7 +36,7 @@ DirtKickParticle2D::DirtKickParticle2D(fXYZ pos) : Particle2D(pos)
     //dirtKickSurface.setTo(dirtKickSprite);
 
 }
-; // end DirtKickParticle2D::DirtKickParticle2D
+ // end DirtKickParticle2D::DirtKickParticle2D
 
 // init
 //---------------------------------------------------------------------------

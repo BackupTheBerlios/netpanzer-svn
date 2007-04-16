@@ -24,7 +24,7 @@ enum { _net_message_id_player_connect_id,
        _net_message_id_player_sync_state,
        _net_message_id_player_score_update,
        _net_message_id_player_alliance_request,
-       _net_message_id_player_alliance_update,
+       _net_message_id_player_alliance_update
      };
 
 #ifdef MSVC

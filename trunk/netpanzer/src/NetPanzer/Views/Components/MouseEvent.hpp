@@ -40,7 +40,7 @@ public:
         MOUSE_EVENT_EXITED,
         MOUSE_EVENT_MOVED,
         MOUSE_EVENT_PRESSED,
-        MOUSE_EVENT_RELEASED,
+        MOUSE_EVENT_RELEASED
     };
 
     mMouseEvent(Component *source, int id, TimeStamp when, int modifiers, int x, int y, int clickCount, bool popupTrigger)

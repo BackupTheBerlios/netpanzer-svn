@@ -38,7 +38,7 @@ RadarPingParticle2D::RadarPingParticle2D(fXYZ pos) : Particle2D(pos)
 #endif
 
 }
-; // end RadarPingParticle2D::RadarPingParticle2D
+ // end RadarPingParticle2D::RadarPingParticle2D
 
 // init
 //---------------------------------------------------------------------------

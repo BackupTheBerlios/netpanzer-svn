@@ -17,38 +17,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include <sstream>
-#include <stdexcept>
-
-#include "SocketHeaders.hpp"
-#include "TCPSocket.hpp"
 #include "TCPListenSocket.hpp"
+#include "Util/Log.hpp"
 
 namespace network
 {
     
 TCPListenSocket::TCPListenSocket(const Address& newaddr, TCPListenSocketObserver *o)
-    : SocketBase(newaddr)
+    : SocketBase(newaddr,true), observer(o)
 {
-    observer = o;
-    try {
-        create(true);
-        setReuseAddr();
-        bindSocket();
-        doListen();
-        setNonBlocking();
-    } catch(...) {
-        doClose();
-        throw;
-    }
+    setReuseAddr();
+    bindSocket();
+    doListen();
 }
 
 void
 TCPListenSocket::destroy()
 {
-    
-    
-    
+    doClose();
 }
 
 void
@@ -57,13 +43,14 @@ TCPListenSocket::onDataReady()
     Address newaddr;
     SOCKET newsock;
     TCPSocketObserver * newobserver;
-    while ( (newsock=doAccept(newaddr)) != INVALID_SOCKET) {
-        
-        newobserver = observer->onNewConnection(this, newaddr);
-        TCPSocket * newcon = new TCPSocket(newsock,newaddr,newobserver);
-        newcon->setNonBlocking();
-        newcon->onConnected();
-        
+    try {
+        while ( (newsock=doAccept(newaddr)) != INVALID_SOCKET) {
+            newobserver = observer->onNewConnection(this, newaddr);
+            TCPSocket * newcon = new TCPSocket(newsock,newaddr,newobserver);
+            newcon->onConnected();
+        }
+    } catch (NetworkException e) {
+        LOGGER.warning("Error Accepting new connections: '%s'", e.what());
     }
 }
 

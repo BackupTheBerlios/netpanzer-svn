@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __SOCKETBASE_HPP__
 
 #include <iostream>
+#include <stdexcept>
+#include "NetworkException.hpp"
 #include "SocketHeaders.hpp"
 #include "Address.hpp"
 #include "Util/NoCopy.hpp"
@@ -37,37 +39,35 @@ public:
 
     bool isConnecting() { return _isConnecting; };
 protected:
-    SocketBase();
-    SocketBase(const Address &a) : addr(a) {};
-    SocketBase(SOCKET fd, const Address &a);
-    
+    friend class SocketSet;
+    friend class SocketManager;
+
     virtual ~SocketBase();
     
+    SocketBase(const Address &a, bool isTcp) throw(NetworkException);
+    SocketBase(SOCKET fd, const Address &a) throw(NetworkException);
+        
     virtual void onDataReady() = 0;
     virtual void onDisconected() {};
     virtual void onConnected() {};
     virtual void destroy() = 0;
 
-protected:
-    friend class SocketSet;
-    friend class SocketManager;
-    void create(bool tcp);
-    void setNonBlocking();
+    void setReuseAddr() throw(NetworkException);
     void doClose();
-    void printError(std::ostream& out, int e);
     
-    void bindSocketTo(const Address& toaddr);
-    void bindSocket() { bindSocketTo(addr); };
-    void setReuseAddr();
-    void doListen();
-    void doConnect();
-    int  doSend(const void* data, size_t len);
-    int  doReceive(void* buffer, size_t len);
-    int  doSendTo(const Address& toaddr, const void* data, size_t len);
-    size_t  doReceiveFrom(Address& fromaddr, void* buffer, size_t len);
-    SOCKET doAccept(Address& fromaddr);
+    void bindSocketTo(const Address& toaddr) throw(NetworkException);
+    void bindSocket() throw(NetworkException) { bindSocketTo(addr); };
+    void doListen() throw(NetworkException);
+    void doConnect() throw(NetworkException);
+    int  doSend(const void* data, size_t len) throw(NetworkException);
+    int  doReceive(void* buffer, size_t len) throw(NetworkException);
+    int  doSendTo(const Address& toaddr, const void* data, size_t len) throw(NetworkException);
+    size_t  doReceiveFrom(Address& fromaddr, void* buffer, size_t len) throw(NetworkException);
+    SOCKET doAccept(Address& fromaddr) throw(NetworkException);
     
 private:
+    void create(bool tcp) throw(NetworkException);
+    void setNonBlocking() throw(NetworkException);
     
     void connectionFinished() 
     {
@@ -78,6 +78,7 @@ private:
     bool _isConnecting;
     SOCKET sockfd;
     Address addr;
+    int lastError;
 };
 
 }

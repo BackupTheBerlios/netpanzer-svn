@@ -46,7 +46,7 @@ Timer PowerUpInterface::regen_timer;
 
 enum { _powerup_bonus_units,
        _powerup_unit,
-       _powerup_enemy_radar,
+       _powerup_enemy_radar
      };
 
 int  powerup_probability_table[3] = { _powerup_unit,

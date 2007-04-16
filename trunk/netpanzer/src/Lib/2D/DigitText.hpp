@@ -27,7 +27,7 @@ enum DIGIT_BLT_MODES
     NORMAL_TRANS,
     NO_SPACE_TRANS,
     NORMAL_SOLID,
-    NO_SPACE_SOLID,
+    NO_SPACE_SOLID
 };
 
 class DigitText

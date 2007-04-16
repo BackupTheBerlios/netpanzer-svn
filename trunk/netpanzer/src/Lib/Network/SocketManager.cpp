@@ -33,14 +33,6 @@ SocketManager::handleEvents()
     list<SocketBase *>::iterator i;
 
     if (!newSockets.empty() || !deletedSockets.empty()) {
-        if (!newSockets.empty()) {
-            for (i = newSockets.begin(); i!=newSockets.end(); i++) {
-                LOGGER.debug("SocketManager:: Adding socket [%d,%08lx]",(*i)->sockfd, (unsigned long)(*i));
-                socketList.push_front(*i);
-            }
-            newSockets.clear();
-        }
-
         if (!deletedSockets.empty()) {
             for (i = deletedSockets.begin(); i!=deletedSockets.end(); i++) {
                 LOGGER.debug("SocketManager:: Removing socket [%d,%08lx]",(*i)->sockfd, (unsigned long)(*i));
@@ -50,6 +42,13 @@ SocketManager::handleEvents()
             deletedSockets.clear();
         }
 
+        if (!newSockets.empty()) {
+            for (i = newSockets.begin(); i!=newSockets.end(); i++) {
+                LOGGER.debug("SocketManager:: Adding socket [%d,%08lx]",(*i)->sockfd, (unsigned long)(*i));
+                socketList.push_front(*i);
+            }
+            newSockets.clear();
+        }
 
         sset.clear();
         for (i = socketList.begin(); i!=socketList.end(); i++) {
@@ -63,8 +62,6 @@ SocketManager::handleEvents()
         }
     }
     
-    //std::cout << "NUM SOCKETS " << socketList.size() << endl;
- 
     if (!sset.select(0))
         return;
 

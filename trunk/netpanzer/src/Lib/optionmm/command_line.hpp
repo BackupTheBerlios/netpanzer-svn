@@ -218,7 +218,6 @@ struct toggle_value<bool>
         x.flip();
     }
 #endif
-
 };
 
 /// Explit specialisatation as a typedef

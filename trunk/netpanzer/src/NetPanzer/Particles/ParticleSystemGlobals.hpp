@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 enum
 {
     BLT_TO_SURFACE,
-    BLT_TO_SPRITE_SORTER,
+    BLT_TO_SPRITE_SORTER
 };
 
 enum PUFF_TYPE
@@ -38,14 +38,14 @@ enum PUFF_TYPE
     LIGHT,
     DARK,
     SMOKE,
-    DIRT,
+    DIRT
 };
 
 enum EXPLOSION_TYPE
 {
     GROUND,
     PLAYER,
-    NONPLAYER,
+    NONPLAYER
 };
 
 // All Particles.
@@ -95,7 +95,7 @@ public:
     enum MUZZLE_TYPE
     {
         SINGLE,
-        TRIPLE,
+        TRIPLE
     };
 
     int    speedMin;
