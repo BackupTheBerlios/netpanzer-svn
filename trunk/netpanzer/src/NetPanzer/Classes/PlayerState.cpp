@@ -295,7 +295,7 @@ unsigned char PlayerState::getStatus() const
 
 void PlayerState::setFlag(unsigned char newflag)
 {
-    if ( newflag > UNIT_FLAGS_SURFACE.getFrameCount() )
+    if ( newflag >= UNIT_FLAGS_SURFACE.getFrameCount() )
         newflag=0;
     flag = newflag;
     
@@ -311,7 +311,7 @@ void PlayerState::setFlag(unsigned char newflag)
                     || ps->status==_player_state_active )
                     && ps->flag == flag ) {
                 flag++;
-                if ( flag > UNIT_FLAGS_SURFACE.getFrameCount() )
+                if ( flag >= UNIT_FLAGS_SURFACE.getFrameCount() )
                     flag = 0;
                     
                 if ( flag != newflag ) // there are no free flags if it is ==

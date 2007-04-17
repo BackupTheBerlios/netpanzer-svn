@@ -304,12 +304,7 @@ bool ServerConnectDaemon::connectStateWaitForClientSettings(
             connect_player_state->setName( client_setting->player_name );
             connect_player_state->unit_config.setUnitColor( client_setting->unit_color );
 			uint8_t flag = (uint8_t) client_setting->getPlayerFlag();
-			if(flag < UNIT_FLAGS_SURFACE.getFrameCount()) {
-				connect_player_state->setFlag(flag);
-			} else {
-				connect_player_state->setFlag(0);
-				LOGGER.warning("Invalid flag number received");
-		 	}
+            connect_player_state->setFlag(flag);
 
             connect_player_state->setID( connect_player_id.getNetworkID() );
             connect_player_state->setStatus( _player_state_connecting );
