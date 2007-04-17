@@ -121,7 +121,7 @@ public:
     }
     void setStatus( unsigned char status );
     unsigned char getStatus() const;
-    void setFlag(unsigned char flag);
+    void setFlag(unsigned char newflag);
     unsigned char getFlag() const;
     short getTotal() const;
     NetworkPlayerState getNetworkPlayerState() const;

@@ -293,10 +293,36 @@ unsigned char PlayerState::getStatus() const
     return status;
 }
 
-void PlayerState::setFlag(unsigned char flag)
+void PlayerState::setFlag(unsigned char newflag)
 {
-	assert(flag < UNIT_FLAGS_SURFACE.getFrameCount());
-    PlayerState::flag = flag;
+    if ( newflag > UNIT_FLAGS_SURFACE.getFrameCount() )
+        newflag=0;
+    flag = newflag;
+    
+    bool recheck;
+    do {
+        recheck = false;
+        for (uint16_t p=0; p<PlayerInterface::getMaxPlayers(); p++) {
+            if ( p == ID.getIndex() )
+                continue;
+                
+            PlayerState *ps=PlayerInterface::getPlayerState(p);
+            if ( (ps->status==_player_state_connecting 
+                    || ps->status==_player_state_active )
+                    && ps->flag == flag ) {
+                flag++;
+                if ( flag > UNIT_FLAGS_SURFACE.getFrameCount() )
+                    flag = 0;
+                    
+                if ( flag != newflag ) // there are no free flags if it is ==
+                    recheck = true;
+                else
+                    LOGGER.warning("No more free flags");
+                    
+                break;
+            }
+        }
+    } while (recheck);
 }
 
 unsigned char PlayerState::getFlag() const

@@ -147,8 +147,6 @@ protected:
     static void netMessageAllianceRequest(const NetMessage *message );
     static void netMessageAllianceUpdate(const NetMessage *message );
 
-    static void forceUniquePlayerFlags();
-
 public:
     static void startPlayerStateSync(const PlayerID &connect_player);
     static bool syncPlayerState(int *percent_complete);
