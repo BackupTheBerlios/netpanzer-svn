@@ -34,8 +34,6 @@ namespace network
 
 #ifdef USE_WINSOCK
 
-#define NETSTRERROR(x) "Winsock error: " << x
-
 class WinSockInit {
 public:
     WinSockInit() {
@@ -53,9 +51,6 @@ public:
     }
 };
 WinSockInit _WinSockInit;
-#else
-  // if not windows
-  #define NETSTRERROR(x) strerror(x)
 #endif
 
 SocketBase::~SocketBase()

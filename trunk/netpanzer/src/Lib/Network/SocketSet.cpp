@@ -17,12 +17,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "SocketHeaders.hpp"
-
 #include <sstream>
-#include <stdexcept>
 
+#include "SocketHeaders.hpp"
 #include "SocketSet.hpp"
+#include "NetworkException.hpp"
 
 namespace network
 {
@@ -46,39 +45,23 @@ SocketSet::clear()
 }
 
 void
-SocketSet::add(const SocketBase& socket)
-{
-    FD_SET(socket.sockfd, &readset);
-#ifndef USE_WINSOCK
-    if (socket.sockfd > maxfd)
-        maxfd=socket.sockfd;
-#endif
-}
-
-void
 SocketSet::add(const SocketBase* socket)
 {
     FD_SET(socket->sockfd, &readset);
-#ifndef USE_WINSOCK
-    if (socket->sockfd > maxfd)
-        maxfd=socket->sockfd;
-#endif
+    SETMAXFD(maxfd,socket->sockfd);
 }
 
 void
 SocketSet::addWrite(const SocketBase* socket)
 {
     FD_SET(socket->sockfd, &writeset);
-#ifndef USE_WINSOCK
-    if (socket->sockfd > maxfd)
-        maxfd=socket->sockfd;
-#endif
+    SETMAXFD(maxfd,socket->sockfd);
 }
 
 void
-SocketSet::remove(const SocketBase& socket)
+SocketSet::remove(const SocketBase* socket)
 {
-    FD_CLR(socket.sockfd, &readset);
+    FD_CLR(socket->sockfd, &readset);
 }
 
 void
@@ -88,7 +71,7 @@ SocketSet::removeWrite(const SocketBase* socket)
 }
 
 bool
-SocketSet::select(unsigned int usec)
+SocketSet::select(unsigned int usec) throw(NetworkException)
 {
     struct timeval timeout;
     timeout.tv_sec = usec/1000000;
@@ -102,19 +85,12 @@ SocketSet::select(unsigned int usec)
     testreadset = readset;
     testwriteset = writeset;
     int res = ::select(maxfd+1, &testreadset, &testwriteset, 0, &timeout);
-#ifdef USE_WINSOCK
-    if(res < 0) {
+    if ( res == SOCKET_ERROR ) {
+        int error = GET_NET_ERROR();
         std::stringstream msg;
-        msg << "Select failed: winsock error " << WSAGetLastError();
-        throw std::runtime_error(msg.str());
+        msg << "Select failed: " << NETSTRERROR(error);
+        throw NetworkException(msg.str());
     }
-#else
-    if(res < 0) {
-        std::stringstream msg;
-        msg << "Select failed: " << strerror(errno);
-        throw std::runtime_error(msg.str());
-    }
-#endif
 
     return res != 0;
 }

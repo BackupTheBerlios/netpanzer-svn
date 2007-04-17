@@ -58,8 +58,6 @@ protected:
         deletedSockets.push_front(s);
     }
 
-    
-    
 private:
     
     static SocketSet sset;

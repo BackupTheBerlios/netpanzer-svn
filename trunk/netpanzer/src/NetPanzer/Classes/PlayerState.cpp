@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "PlayerState.hpp"
 #include "SelectionBoxSprite.hpp"
+#include "PlayerInterface.hpp"
+#include <sstream>
 
 uint16_t NetworkPlayerState::getPlayerIndex() const
 {
@@ -134,7 +136,38 @@ void PlayerState::operator= (const PlayerState& other)
 
 void PlayerState::setName(const std::string& newname)
 {
-    name = newname;
+    if ( newname.length() > 63 )
+        name = newname.substr(0,63);
+    else
+        name = newname;
+
+    int namenum=1;
+    bool recheck;
+    do {
+        recheck = false;
+        for (uint16_t p=0; p<PlayerInterface::getMaxPlayers(); p++) {
+            if ( p == ID.getIndex() )
+                continue;
+                
+            PlayerState *ps=PlayerInterface::getPlayerState(p);
+            if ( (ps->status==_player_state_connecting 
+                    || ps->status==_player_state_active )
+                    && ps->name == name ) {
+                std::stringstream ssnamenum;
+                ssnamenum << "(" << namenum++ << ")";
+                std::string strnum=ssnamenum.str();
+                
+                std::string::size_type newlen = newname.length();
+                if ( newlen+strnum.length() > 63 ) {
+                    newlen -= strnum.length() - (63 - newlen);  
+                }
+                
+                name = newname.substr(0,newlen)+strnum;
+                recheck=true;
+                break;
+            }
+        }
+    } while (recheck);
 }
 
 void PlayerState::setPlayerID(PlayerID player_id)
