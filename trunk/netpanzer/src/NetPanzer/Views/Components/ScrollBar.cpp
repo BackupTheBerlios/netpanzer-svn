@@ -133,12 +133,12 @@ void ScrollBar::draw(Surface &dest)
         iXY drawMin;
 
         if (orientation == VERTICAL) {
-            drawMin.x = dest.getPixX() - size.x;
+            drawMin.x = dest.getWidth() - size.x;
             drawMin.y = MINOR_AXIS_SIZE;
 
         } else if (orientation == HORIZONTAL) {
             drawMin.x = MINOR_AXIS_SIZE;
-            drawMin.y = dest.getPixY() - size.y;
+            drawMin.y = dest.getHeight() - size.y;
         } else {
             assert(false);
         }

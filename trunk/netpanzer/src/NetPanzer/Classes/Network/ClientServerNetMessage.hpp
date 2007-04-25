@@ -18,8 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _CLIENT_SERVER_NETMESSAGE_HPP
 #define _CLIENT_SERVER_NETMESSAGE_HPP
 
-#include <stdint.h>
-
 #include "NetMessage.hpp"
 #include "PlayerID.hpp"
 

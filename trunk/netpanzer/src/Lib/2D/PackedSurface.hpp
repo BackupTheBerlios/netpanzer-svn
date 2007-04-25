@@ -37,7 +37,7 @@ class PackedSurface : public NoCopy
 public:
     static int totalDrawCount;     // The number of bytes of the surfaces alive.
 
-    typedef void (*SPAN_FUNC)(const uint8_t *src, uint8_t *dest, int count);
+    typedef void (*SPAN_FUNC)(const Uint8 *src, Uint8 *dest, int count);
 
     void pack(const Surface &src);
 
@@ -107,11 +107,11 @@ public:
     {
         return pix;
     }
-    int    getPixX() const
+    int    getWidth() const
     {
         return pix.x;
     }
-    int    getPixY() const
+    int    getHeight() const
     {
         return pix.y;
     }
@@ -163,7 +163,7 @@ public:
     {
         return rowOffsetTable;
     }
-    uint8_t *getPackedDataChunk() const
+    Uint8 *getPackedDataChunk() const
     {
         return packedDataChunk;
     }
@@ -181,7 +181,7 @@ protected:
     iXY   center;
     iXY   pix;
     int  *rowOffsetTable;
-    uint8_t *packedDataChunk;
+    Uint8 *packedDataChunk;
     bool  myMem;
 
     static int totalSurfaceCount;  // The number of surfaces alive.

@@ -54,10 +54,12 @@ static void rebuildGrayColorTable()
     // 256 shades of gray.
     gray256.init(256);
     for (int num = 0; num < 256; num++) {
-        int c            = Palette::color[num].getBrightnessInt();
+        int c = int(Palette::color[num].r+Palette::color[num].g+Palette::color[num].b)/3; //brightness
+
         int nearestColor = Palette::findNearestColor(
-                RGBColor(int(c * grayPercent), int(c * grayPercent),
-                         int(c * grayPercent)));
+                        int(c * grayPercent),
+                        int(c * grayPercent),
+                        int(c * grayPercent));
         gray256.setColor(num, nearestColor);
     }
     gray256.setColor(255, 0);
@@ -99,12 +101,12 @@ UnitColorView::UnitColorView() : View()
 
     grassSurface.loadBMP("pics/grass.bmp");
 
-    fuckingSurface.create(packedTurret.getPixX(), packedTurret.getPixY(), packedTurret.getPixX(), 1);
+    fuckingSurface.create(packedTurret.getWidth(), packedTurret.getHeight(), 1);
     fuckingSurface.fill(0);
 
-    resizeClientArea(packedTurret.getPixX(), packedTurret.getPixY());
+    resizeClientArea(packedTurret.getWidth(), packedTurret.getHeight());
 
-    int size = packedTurret.getPixX() / 2;
+    int size = packedTurret.getWidth() / 2;
     addButtonCenterText(iXY(0, 0), size, "Up", "", bIncreaseBrightness);
     addButtonCenterText(iXY(size, 0), size, "Down", "", bDecreaseBrightness);
 
@@ -127,12 +129,12 @@ void UnitColorView::doDraw(Surface &viewArea, Surface &clientArea)
     packedTurret.blt(fuckingSurface, 0, 0);
     fuckingSurface.bltLookup(fuckingSurface.getRect(), colorTable->getColorArray());
 
-    grassSurface.blt(clientArea);
-    fuckingSurface.bltTrans(clientArea);
+    grassSurface.blt(clientArea, 0, 0);
+    fuckingSurface.bltTrans(clientArea, 0, 0);
 
     char strBuf[256];
     sprintf(strBuf, "%1.3f of %1.3f", grayPercent, maxPercent);
-    clientArea.bltString(2, fuckingSurface.getPixY() - Surface::getFontHeight() - 1, strBuf, Color::white);
+    clientArea.bltString(2, fuckingSurface.getHeight() - Surface::getFontHeight() - 1, strBuf, Color::white);
 
     View::doDraw(viewArea, clientArea);
 

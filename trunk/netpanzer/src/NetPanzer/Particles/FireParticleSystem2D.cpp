@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/TimerInterface.hpp"
 #include "2D/Palette.hpp"
 
-uint8_t FireParticleSystem2D::fireColor[12];
+Uint8 FireParticleSystem2D::fireColor[12];
 
 // FireParticleSystem2D
 //---------------------------------------------------------------------------
@@ -59,18 +59,18 @@ void FireParticleSystem2D::init()
 //---------------------------------------------------------------------------
 void FireParticleSystem2D::initColors()
 {
-    fireColor[ 0] = Palette::findNearestColor(RGBColor(255, 237, 146));
-    fireColor[ 1] = Palette::findNearestColor(RGBColor(255, 229, 126));
-    fireColor[ 2] = Palette::findNearestColor(RGBColor(255, 198, 130));
-    fireColor[ 3] = Palette::findNearestColor(RGBColor(253, 191,  62));
-    fireColor[ 4] = Palette::findNearestColor(RGBColor(250, 160,  52));
-    fireColor[ 5] = Palette::findNearestColor(RGBColor(251, 157,  12));
-    fireColor[ 6] = Palette::findNearestColor(RGBColor(243, 130,   3));
-    fireColor[ 7] = Palette::findNearestColor(RGBColor(238, 105,   1));
-    fireColor[ 8] = Palette::findNearestColor(RGBColor(223,  67,   0));
-    fireColor[ 9] = Palette::findNearestColor(RGBColor(201,  53,   1));
-    fireColor[10] = Palette::findNearestColor(RGBColor(171,  21,   0));
-    fireColor[11] = Palette::findNearestColor(RGBColor(140,   3,   0));
+    fireColor[ 0] = Palette::findNearestColor(255, 237, 146);
+    fireColor[ 1] = Palette::findNearestColor(255, 229, 126);
+    fireColor[ 2] = Palette::findNearestColor(255, 198, 130);
+    fireColor[ 3] = Palette::findNearestColor(253, 191,  62);
+    fireColor[ 4] = Palette::findNearestColor(250, 160,  52);
+    fireColor[ 5] = Palette::findNearestColor(251, 157,  12);
+    fireColor[ 6] = Palette::findNearestColor(243, 130,   3);
+    fireColor[ 7] = Palette::findNearestColor(238, 105,   1);
+    fireColor[ 8] = Palette::findNearestColor(223,  67,   0);
+    fireColor[ 9] = Palette::findNearestColor(201,  53,   1);
+    fireColor[10] = Palette::findNearestColor(171,  21,   0);
+    fireColor[11] = Palette::findNearestColor(140,   3,   0);
 
 } // end FireParticleSystem2D::initColors
 

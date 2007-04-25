@@ -66,7 +66,7 @@ private:
     char sendbuffer[SEND_BUFFER_LEN];
     unsigned int sendpos;
     char tempbuffer[_MAX_NET_PACKET_SIZE];
-    uint16_t tempoffset;
+    Uint16 tempoffset;
     NetClientID id;
 };
 

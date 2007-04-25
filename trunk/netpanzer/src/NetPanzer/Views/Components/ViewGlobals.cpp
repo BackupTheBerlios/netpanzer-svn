@@ -20,15 +20,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ViewGlobals.hpp"
 
 
-uint8_t gForeground = 0;
-uint8_t gBackground = 0;
+Uint8 gForeground = 0;
+Uint8 gBackground = 0;
 
-void setForeground(uint8_t color)
+void setForeground(Uint8 color)
 {
     gForeground = color;
 }
 
-void setBackground(uint8_t color)
+void setBackground(Uint8 color)
 {
     gBackground = color;
 }

@@ -20,11 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 #include <stdio.h>
-#include <stdint.h>
 
 #include "Color.hpp"
 #include "ColorTable.hpp"
-#include "RGBColor.hpp"
 
 const size_t PALETTE_LENGTH = 256;
 
@@ -38,7 +36,6 @@ private:
 public:
     Palette();
 
-    static void        setBrightness(float brightness);
 
     // Best color match blending tables.
     static ColorTable	colorTable2080;
@@ -82,44 +79,28 @@ public:
     static ColorTable gradientWhite2Red;
 
     // The current loaded palette.
-    static RGBColor color[PALETTE_LENGTH];         // This has any brightness value added to it.
-    static RGBColor originalColor[PALETTE_LENGTH]; // This is the original source loaded values.
+    static SDL_Color color[PALETTE_LENGTH];         // This has any brightness value added to it.
+    static SDL_Color originalColor[PALETTE_LENGTH]; // This is the original source loaded values.
 
-    RGBColor &operator [](size_t index)
+    SDL_Color &operator [](size_t index)
     {
         assert(index < PALETTE_LENGTH);
         return color[index];
     }
 
-    inline const RGBColor &operator [](size_t index) const
+    inline const SDL_Color &operator [](size_t index) const
     {
         assert(index < PALETTE_LENGTH);
         return color[index];
     }
 
-    static bool read(FILE *fp)
-    {
-        assert(fp != 0);
-        return fread(&color, sizeof(color[0]), PALETTE_LENGTH, fp) == PALETTE_LENGTH;
-    }
-
-    //static bool write(FILE *fp)
-    //{
-    //assert(fp != 0);
-    //return fwrite(this, sizeof(color[0]), PALETTE_LENGTH, fp) == PALETTE_LENGTH;
-    //}
-
-    static void ramp(RGBColor table [], int startRGB, int r1, int g1, int b1, int endRGB, int r2, int g2, int b2);
-    static void setEarth();
-    static void setFire();
+    static void ramp(SDL_Color table [], int startRGB, int r1, int g1, int b1, int endRGB, int r2, int g2, int b2);
     static void loadACT(const std::string& filename);
-    static uint8_t findNearestColor(const RGBColor &rgb, const bool &ignoreIndexZero = false);
+    static Uint8 findNearestColor(int r, int g, int b, const bool &ignoreIndexZero = false);
     static void init(const std::string& name);
-    static void initNoColorTables(const std::string& name);
     static void setColors();
     static void setColorTables();
 
-    static void setBrightnessRelative(float delta);
     static void setBrightnessAbsolute(float brightness);
 };
 

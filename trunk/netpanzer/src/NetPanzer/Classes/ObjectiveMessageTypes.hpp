@@ -29,16 +29,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class ObjectiveMessage
 {
 public:
-    uint8_t message_type;
+    Uint8 message_type;
 private:
-    uint16_t objective_id;
+    Uint16 objective_id;
 
 public:
-    uint16_t getObjectiveID() const
+    Uint16 getObjectiveID() const
     {
         return ltoh16(objective_id);
     }
-    void setObjectiveID(uint16_t id)
+    void setObjectiveID(Uint16 id)
     {
         objective_id = htol16(id);
     }
@@ -54,17 +54,17 @@ enum { _objective_mesg_update_occupation,
 class UpdateOccupationsStatus : public ObjectiveMessage
 {
 public:
-    uint8_t occupation_status;
+    Uint8 occupation_status;
 private:
-    uint16_t occupying_player_id;
-    uint32_t timeleft;
+    Uint16 occupying_player_id;
+    Uint32 timeleft;
 
 public:
-    uint8_t  unit_type;
+    Uint8  unit_type;
     bool     unit_gen_on;
         
-    void set(uint16_t id, uint8_t status, uint16_t player_id,
-            bool unit_gen_on, uint8_t unit_type, uint32_t timeleft)
+    void set(Uint16 id, Uint8 status, Uint16 player_id,
+            bool unit_gen_on, Uint8 unit_type, Uint32 timeleft)
     {
         message_type = _objective_mesg_update_occupation;
         setObjectiveID(id);
@@ -75,11 +75,11 @@ public:
         this->unit_type = unit_type;
     }
    
-    uint16_t getOccupyingPlayerID() const
+    Uint16 getOccupyingPlayerID() const
     {
         return ltoh16(occupying_player_id);
     }
-    uint32_t getTimeLeft() const
+    Uint32 getTimeLeft() const
     {
         return ltoh32(timeleft);
     }
@@ -88,10 +88,10 @@ public:
 class ChangeUnitGeneration : public ObjectiveMessage
 {
 public:
-    uint8_t unit_type;
-    uint8_t unit_gen_on;
+    Uint8 unit_type;
+    Uint8 unit_gen_on;
 
-    void set(uint16_t id, uint8_t unit_type, bool unit_generation_on)
+    void set(Uint16 id, Uint8 unit_type, bool unit_generation_on)
     {
         setObjectiveID(id);
         this->unit_type = unit_type;
@@ -104,16 +104,16 @@ __attribute__((packed));
 class DisownPlayerObjective : public ObjectiveMessage
 {
 private:
-    uint16_t disowned_player_id;
+    Uint16 disowned_player_id;
 
 public:
-    void set(uint16_t id, uint16_t disowned_player)
+    void set(Uint16 id, Uint16 disowned_player)
     {
         setObjectiveID(id);
         disowned_player_id = htol16(disowned_player);
         message_type = _objective_mesg_disown_player_objective;        
     }
-    uint16_t getDisownedPlayerID() const
+    Uint16 getDisownedPlayerID() const
     {
         return ltoh16(disowned_player_id);
     }
@@ -122,14 +122,14 @@ public:
 class SyncObjective : public ObjectiveMessage
 {
 public:
-    uint8_t objective_status;
-    uint8_t occupation_status;
+    Uint8 objective_status;
+    Uint8 occupation_status;
 private:
-    uint16_t occupying_player_id;
+    Uint16 occupying_player_id;
 
 public:
-    void set(uint16_t id, uint8_t objective_status,
-            uint8_t occupation_status, uint16_t occupying_player)
+    void set(Uint16 id, Uint8 objective_status,
+            Uint8 occupation_status, Uint16 occupying_player)
     {
         setObjectiveID(id);
         message_type = _objective_mesg_sync_objective;
@@ -138,7 +138,7 @@ public:
         this->occupation_status = occupation_status;
         this->occupying_player_id = htol16(occupying_player);
     }
-    uint16_t getOccupyingPlayerID() const
+    Uint16 getOccupyingPlayerID() const
     {
         return ltoh16(occupying_player_id);
     }
@@ -147,22 +147,22 @@ public:
 class ChangeOutputLocation : public ObjectiveMessage
 {
 private:
-    int32_t new_point_x;
-    int32_t new_point_y;
+    Sint32 new_point_x;
+    Sint32 new_point_y;
   
 public:
-    void set(uint16_t id, iXY point)
+    void set(Uint16 id, iXY point)
     {
         setObjectiveID(id);
         new_point_x = htol32(point.x);
         new_point_y = htol32(point.y);
         message_type = _objective_mesg_change_output_location;
     }
-    int32_t getPointX() const
+    Sint32 getPointX() const
     {
         return ltoh32(new_point_x);
     }
-    int32_t getPointY() const
+    Sint32 getPointY() const
     {
         return ltoh32(new_point_y);
     }

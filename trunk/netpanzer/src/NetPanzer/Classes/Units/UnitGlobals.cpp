@@ -130,14 +130,16 @@ void colorMapGray(PackedSurface &source, PackedSurface &dest, ColorTable &colorT
     //colormapping gray scheme.
     Surface tempSurface;
 
-    tempSurface.create(source.getPix(), source.getPixX(), source.getFrameCount());
+    tempSurface.create(source.getWidth(),source.getHeight(), source.getFrameCount());
 
     for (int i = 0; i < source.getFrameCount(); i++) {
         tempSurface.setFrame(i);
         tempSurface.fill(Color::white);
         source.setFrame(i);
         source.blt(tempSurface, 0, 0);
-        tempSurface.bltLookup(colorTable.getColorArray());
+        tempSurface.bltLookup(iRect( 0, 0,
+                        tempSurface.getWidth(), tempSurface.getHeight() ),
+                        colorTable.getColorArray());
     }
 
     dest.pack(tempSurface);
@@ -186,10 +188,11 @@ void LoadUnitSurfaces( void )
     // 256 shades of gray.
     gray256.init(256);
     for (int num = 0; num < 256; num++) {
-        int c            = Palette::color[num].getBrightnessInt();
+        int c = int(Palette::color[num].r+Palette::color[num].g+Palette::color[num].b)/3; //brightness
         int nearestColor = Palette::findNearestColor(
-		RGBColor(int(c * grayPercent), int(c * grayPercent),
-			 int(c * grayPercent)));
+                    int(c * grayPercent),
+                    int(c * grayPercent),
+                    int(c * grayPercent));
         gray256.setColor(num, nearestColor);
     }
 

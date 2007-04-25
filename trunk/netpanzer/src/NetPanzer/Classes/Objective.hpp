@@ -33,7 +33,7 @@ enum { _occupation_status_unoccupied,
 class ObjectiveState
 {
 public:
-    uint16_t ID;
+    Uint16 ID;
     bool  selection_state;
     iRect    selection_box;
     unsigned char outpost_type;
@@ -71,7 +71,7 @@ protected:
 public:
     ObjectiveState objective_state;
 
-    Objective(uint16_t ID, iXY location, BoundBox area );
+    Objective(Uint16 ID, iXY location, BoundBox area );
 	virtual ~Objective()
 	{ }
 

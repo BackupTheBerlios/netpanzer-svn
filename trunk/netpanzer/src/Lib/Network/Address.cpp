@@ -66,7 +66,7 @@ Address::getIP() const
     return std::string(inet_ntoa(((struct sockaddr_in &)ss).sin_addr));
 }
 
-uint16_t
+Uint16
 Address::getPort() const
 {
     // XXX quick hack to get it working until get full ss support
@@ -75,7 +75,7 @@ Address::getPort() const
 }
 
 Address
-Address::resolve(const std::string& name, uint16_t port)
+Address::resolve(const std::string& name, Uint16 port)
     throw(NetworkException)
 {
     // TODO: make a better resolver (ex: getaddrinfo)

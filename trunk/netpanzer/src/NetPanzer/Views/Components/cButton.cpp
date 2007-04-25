@@ -26,9 +26,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 void cButton::createPacked(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc)
 {
-    Surface tempTopSurface(source.getPixX(), source.getPixY(), source.getPixX(), source.getFrameCount());
+    Surface tempTopSurface(source.getWidth(), source.getHeight(), source.getFrameCount());
 
-    for (int i = 0; i < tempTopSurface.getFrameCount(); i++) {
+    for (int i = 0; i < tempTopSurface.getNumFrames(); i++) {
         tempTopSurface.setFrame(i);
         tempTopSurface.fill(0);
         source.setFrame(i);
@@ -38,7 +38,7 @@ void cButton::createPacked(const iXY &pos, PackedSurface &source, const char *to
     topSurface.pack(tempTopSurface);
 
     cButton::toolTip       = strdup(toolTip); assert(toolTip != 0);
-    cButton::bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getPix().x, pos.y + tempTopSurface.getPix().y);
+    cButton::bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getWidth(), pos.y + tempTopSurface.getHeight());
     cButton::leftClickFunc = leftClickFunc;
 }
 
@@ -58,7 +58,7 @@ void cButton::createCenterText(iXY pos,
     const unsigned GAP_SPACE = 6;
 
     int ySize = Surface::getFontHeight() + GAP_SPACE;
-    tempTopSurface.create(iXY(xSize, ySize), xSize, 3);
+    tempTopSurface.create(xSize, ySize, 3);
 
     // Find out the horizontal offset to put the button name on the button.
     int xOffset;
@@ -89,7 +89,7 @@ void cButton::createCenterText(iXY pos,
     toolTip = strdup(nToolTip); assert(toolTip != 0);
 
     // Save the bounds of the button.
-    bounds = iRect(pos.x, pos.y, pos.x+tempTopSurface.getPix().x, pos.y+tempTopSurface.getPix().y);
+    bounds = iRect(pos.x, pos.y, pos.x+tempTopSurface.getWidth(), pos.y+tempTopSurface.getHeight());
 
     // Save the function associated with the button.
     leftClickFunc = nLeftClickFunc;
@@ -114,22 +114,22 @@ void cButton::createBMP(iXY pos,
     Surface tempSurface;
     tempSurface.loadBMP(imageName);
 
-    tempTopSurface.create(tempSurface.getPix(), tempSurface.getPix().x, 3);
+    tempTopSurface.create(tempSurface.getWidth(), tempSurface.getHeight(), 3);
 
     tempTopSurface.setFrame(0);
-    tempSurface.blt(tempTopSurface);
+    tempSurface.blt(tempTopSurface, 0, 0);
     if (isBordered) {
         tempTopSurface.drawButtonBorder(Color::darkGray, Color::darkGray);
     }
 
     tempTopSurface.setFrame(1);
-    tempSurface.blt(tempTopSurface);
+    tempSurface.blt(tempTopSurface, 0, 0);
     if (isBordered) {
         tempTopSurface.drawButtonBorder(Color::red, Color::red);
     }
 
     tempTopSurface.setFrame(2);
-    tempSurface.blt(tempTopSurface);
+    tempSurface.blt(tempTopSurface, 0, 0);
     if (isBordered) {
         tempTopSurface.drawButtonBorder(Color::darkGray, Color::darkGray);
     }
@@ -138,7 +138,7 @@ void cButton::createBMP(iXY pos,
 
     setName("TIL file");
     toolTip       = strdup(nToolTip); assert(toolTip != 0);
-    bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getPix().x, pos.y + tempTopSurface.getPix().y);
+    bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getWidth(), pos.y + tempTopSurface.getHeight());
     leftClickFunc = nLeftClickFunc;
 
     topSurface.pack(tempTopSurface);
@@ -155,23 +155,23 @@ void cButton::createSurface(
 {
     Surface tempTopSurface;
 
-    tempTopSurface.create(source.getPix(), source.getPix().x, 3);
+    tempTopSurface.create(source.getWidth(), source.getHeight(), 3);
 
     tempTopSurface.setFrame(0);
     source.setFrame(0);
-    source.blt(tempTopSurface);
+    source.blt(tempTopSurface, 0, 0);
 
     tempTopSurface.setFrame(1);
-    if (source.getFrameCount() > 1) {
+    if (source.getNumFrames() > 1) {
         source.setFrame(1);
-        source.blt(tempTopSurface);
+        source.blt(tempTopSurface, 0, 0);
 
         if (isBordered) {
             tempTopSurface.drawButtonBorder(Color::lightGreen, Color::darkGreen);
         }
 
     } else {
-        source.blt(tempTopSurface);
+        source.blt(tempTopSurface, 0, 0);
 
         if (isBordered) {
             tempTopSurface.drawButtonBorder(Color::lightRed, Color::darkRed);
@@ -179,11 +179,11 @@ void cButton::createSurface(
     }
 
     tempTopSurface.setFrame(2);
-    if (source.getFrameCount() > 2) {
+    if (source.getNumFrames() > 2) {
         source.setFrame(2);
-        source.blt(tempTopSurface);
+        source.blt(tempTopSurface, 0, 0);
     } else {
-        source.blt(tempTopSurface);
+        source.blt(tempTopSurface, 0, 0);
 
         if (isBordered) {
             tempTopSurface.drawButtonBorder(Color::darkGreen, Color::lightGreen);
@@ -194,7 +194,7 @@ void cButton::createSurface(
 
     setName("Surface Single");
     toolTip       = strdup(nToolTip); assert(toolTip != 0);
-    bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getPix().x, pos.y + tempTopSurface.getPix().y);
+    bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getWidth(), pos.y + tempTopSurface.getHeight());
     leftClickFunc = nLeftClickFunc;
 
     topSurface.pack(tempTopSurface);
@@ -211,25 +211,25 @@ void cButton::createSurfaceSingle(
 {
     Surface tempTopSurface;
 
-    tempTopSurface.create(source.getPix(), source.getPix().x, 3);
+    tempTopSurface.create(source.getWidth(), source.getHeight(), 3);
 
     tempTopSurface.setFrame(0);
-    source.blt(tempTopSurface);
+    source.blt(tempTopSurface, 0, 0);
     //tempTopSurface.drawButtonBorder(Color::white, Color::gray128);
 
     tempTopSurface.setFrame(1);
-    source.blt(tempTopSurface);
+    source.blt(tempTopSurface, 0, 0);
     tempTopSurface.drawButtonBorder(Color::red, Color::darkRed);
 
     tempTopSurface.setFrame(2);
-    source.blt(tempTopSurface);
+    source.blt(tempTopSurface, 0, 0);
     tempTopSurface.drawButtonBorder(Color::green, Color::darkGreen);
 
     tempTopSurface.setFrame(0);
 
     setName("Surface Single");
     toolTip       = strdup(nToolTip); assert(toolTip != 0);
-    bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getPix().x, pos.y + tempTopSurface.getPix().y);
+    bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getWidth(), pos.y + tempTopSurface.getHeight());
     leftClickFunc = nLeftClickFunc;
 
     topSurface.pack(tempTopSurface);

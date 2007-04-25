@@ -59,7 +59,7 @@ void LobbyView::init()
     setVisible(false);
     setBordered(false);
 
-    background.create(628 - 179, 302 - 153, 628 - 179, 1);
+    background.create(628 - 179, 302 - 153, 1);
     background.fill(0);
 
     moveTo(0, 0);
@@ -79,7 +79,7 @@ void LobbyView::doDraw(Surface &viewArea, Surface &clientArea)
     }
 
     screen->fill(Color::black);
-    backgroundSurface.blt(clientArea);
+    backgroundSurface.blt(clientArea, 0, 0);
     background.blt(clientArea, 179, 153);
 
     View::doDraw(viewArea, clientArea);
@@ -98,7 +98,7 @@ void LobbyView::update(const char *text)
     LOGGER.info("%s %s", "Lobby:", text);
 
     // Clear the area for the text and draw the new text.
-    background.fillRect(0, yOffset, background.getPix().x, yOffset + Surface::getFontHeight(), Color::black);
+    background.fillRect(iRect( 0, yOffset, background.getWidth(), yOffset + Surface::getFontHeight()), Color::black);
     background.bltString(0, yOffset, text, Color::white);
 
 } // end LobbyView::update
@@ -110,7 +110,7 @@ void LobbyView::update(const char *text)
 //---------------------------------------------------------------------------
 void LobbyView::scroll()
 {
-    if(currentline * Surface::getFontHeight() > background.getPix().y - Surface::getFontHeight()) {
+    if(currentline * Surface::getFontHeight() > background.getHeight() - Surface::getFontHeight()) {
         Surface tempSurface;
         tempSurface.copy(background);
 

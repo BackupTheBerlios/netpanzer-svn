@@ -23,7 +23,7 @@
 #include <errno.h>
 #include <algorithm>
 
-#include <SDL.h>
+#include "SDL.h"
 #define USE_RWOPS // we want Mix_LOadMUS_RW
 #include <SDL_mixer.h>
 #include "Util/Log.hpp"

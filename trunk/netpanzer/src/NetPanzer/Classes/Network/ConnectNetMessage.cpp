@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <string.h>
-#include <stdint.h>
 
 #include "ConnectNetMessage.hpp"
 #include "Util/Endian.hpp"
@@ -29,12 +28,12 @@ ClientConnectJoinRequest::ClientConnectJoinRequest()
     message_id = _net_message_id_connect_join_game_request;
 }
 
-uint32_t ClientConnectJoinRequest::getProtocolVersion() const
+Uint32 ClientConnectJoinRequest::getProtocolVersion() const
 {
     return ltoh32(protocol_version);
 }
 
-void ClientConnectJoinRequest::setProtocolVersion(uint32_t version)
+void ClientConnectJoinRequest::setProtocolVersion(Uint32 version)
 {
     protocol_version = htol32(version);
 }
@@ -45,22 +44,22 @@ ClientConnectJoinRequestAck::ClientConnectJoinRequestAck()
     message_id = _net_message_id_connect_join_game_request_ack;
 }
 
-int32_t ClientConnectJoinRequestAck::getResultCode() const
+Sint32 ClientConnectJoinRequestAck::getResultCode() const
 {
     return ltoh32(result_code);
 }
 
-void ClientConnectJoinRequestAck::setResultCode(int32_t result)
+void ClientConnectJoinRequestAck::setResultCode(Sint32 result)
 {
     result_code = htol32(result);
 }
 
-uint32_t ClientConnectJoinRequestAck::getServerProtocolVersion() const
+Uint32 ClientConnectJoinRequestAck::getServerProtocolVersion() const
 {
     return ltoh32(server_protocol_version);
 }
 
-void ClientConnectJoinRequestAck::setServerProtocolVersion(uint32_t protocol_version)
+void ClientConnectJoinRequestAck::setServerProtocolVersion(Uint32 protocol_version)
 {
     server_protocol_version = htol32(protocol_version);
 }
@@ -72,12 +71,12 @@ ConnectProcessUpdate::ConnectProcessUpdate()
     message_id = _net_message_id_client_connect_process_update;
 }
 
-uint32_t ConnectProcessUpdate::getQueuePosition() const
+Uint32 ConnectProcessUpdate::getQueuePosition() const
 {
     return ltoh32(queue_position);
 }
 
-void ConnectProcessUpdate::setQueuePosition(uint32_t position)
+void ConnectProcessUpdate::setQueuePosition(Uint32 position)
 {
     queue_position = htol32(position);
 }
@@ -89,22 +88,22 @@ ConnectProcessStateMessage::ConnectProcessStateMessage()
     message_id = _net_message_id_client_connect_process_state_mesg;
 }
 
-uint32_t ConnectProcessStateMessage::getMessageEnum() const
+Uint32 ConnectProcessStateMessage::getMessageEnum() const
 {
     return ltoh32(message_enum);
 }
 
-void ConnectProcessStateMessage::setMessageEnum(uint32_t message)
+void ConnectProcessStateMessage::setMessageEnum(Uint32 message)
 {
     message_enum = htol32(message);
 }
 
-int32_t ConnectProcessStateMessage::getPercentComplete() const
+Sint32 ConnectProcessStateMessage::getPercentComplete() const
 {
     return ltoh32(percent_complete);
 }
 
-void ConnectProcessStateMessage::setPercentComplete(int32_t percent)
+void ConnectProcessStateMessage::setPercentComplete(Sint32 percent)
 {
     percent_complete = htol32(percent);
 }
@@ -117,13 +116,13 @@ ConnectClientSettings::ConnectClientSettings()
     memset(&player_name, 0, sizeof(player_name));
 }
 
-int16_t ConnectClientSettings::getPlayerFlag() const
+Sint16 ConnectClientSettings::getPlayerFlag() const
 {
     return ltoh16(player_flag);
 }
 
-void ConnectClientSettings::set(const char *player_name, uint8_t unit_color,
-        uint16_t player_flag )
+void ConnectClientSettings::set(const char *player_name, Uint8 unit_color,
+        Uint16 player_flag )
 {
     strncpy(ConnectClientSettings::player_name, player_name, 64);
     ConnectClientSettings::player_name[63] = '\0';
@@ -139,83 +138,83 @@ ConnectMesgServerGameSettings::ConnectMesgServerGameSettings()
     memset(map_name, 0, sizeof(map_name));
 }
 
-uint16_t ConnectMesgServerGameSettings::getMaxPlayers() const
+Uint16 ConnectMesgServerGameSettings::getMaxPlayers() const
 {
     return ltoh16(max_players);
 }
 
-void ConnectMesgServerGameSettings::setMaxPlayers(uint16_t maxPlayers)
+void ConnectMesgServerGameSettings::setMaxPlayers(Uint16 maxPlayers)
 {
     max_players = htol16(maxPlayers);
 }
 
-uint16_t ConnectMesgServerGameSettings::getMaxUnits() const
+Uint16 ConnectMesgServerGameSettings::getMaxUnits() const
 {
     return ltoh16(max_units);
 }
 
-void ConnectMesgServerGameSettings::setMaxUnits(uint16_t maxUnits)
+void ConnectMesgServerGameSettings::setMaxUnits(Uint16 maxUnits)
 {
     max_units = htol16(maxUnits);
 }
 
-int32_t ConnectMesgServerGameSettings::getCloudCoverage() const
+Sint32 ConnectMesgServerGameSettings::getCloudCoverage() const
 {
     return ltoh32(cloud_coverage);
 }
 
-void ConnectMesgServerGameSettings::setCloudCoverage(int32_t cloudCoverage)
+void ConnectMesgServerGameSettings::setCloudCoverage(Sint32 cloudCoverage)
 {
     cloud_coverage = htol32(cloudCoverage);
 }
 
 float ConnectMesgServerGameSettings::getWindSpeed() const
 {
-    return (float)ltoh32((uint32_t)wind_speed);
+    return (float)ltoh32((Uint32)wind_speed);
 }
 
 void ConnectMesgServerGameSettings::setWindSpeed(float windSpeed)
 {
-    wind_speed = (float)htol32((uint32_t)windSpeed);
+    wind_speed = (float)htol32((Uint32)windSpeed);
 }
 
-int32_t ConnectMesgServerGameSettings::getGameType() const
+Sint32 ConnectMesgServerGameSettings::getGameType() const
 {
     return ltoh32(game_type);
 }
 
-void ConnectMesgServerGameSettings::setGameType(int32_t gameType)
+void ConnectMesgServerGameSettings::setGameType(Sint32 gameType)
 {
     game_type = htol32(gameType);
 }
 
-int32_t ConnectMesgServerGameSettings::getFragLimit() const
+Sint32 ConnectMesgServerGameSettings::getFragLimit() const
 {
     return ltoh32(frag_limit);
 }
 
-void ConnectMesgServerGameSettings::setFragLimit(int32_t fragLimit)
+void ConnectMesgServerGameSettings::setFragLimit(Sint32 fragLimit)
 {
     frag_limit = htol32(fragLimit);
 }
 
-int32_t ConnectMesgServerGameSettings::getTimeLimit() const
+Sint32 ConnectMesgServerGameSettings::getTimeLimit() const
 {
     return ltoh32(time_limit);
 }
 
-void ConnectMesgServerGameSettings::setTimeLimit(int32_t timeLimit)
+void ConnectMesgServerGameSettings::setTimeLimit(Sint32 timeLimit)
 {
     time_limit = htol32(timeLimit);
 }
 
 time_t ConnectMesgServerGameSettings::getElapsedTime() const
 {
-    return (time_t)ltoh32((uint32_t)elapsed_time);
+    return (time_t)ltoh32((Uint32)elapsed_time);
 }
 
 void ConnectMesgServerGameSettings::setElapsedTime(time_t elapsedTime)
 {
-    elapsed_time = (time_t)htol32((uint32_t)elapsedTime);
+    elapsed_time = (time_t)htol32((Uint32)elapsedTime);
 }
 

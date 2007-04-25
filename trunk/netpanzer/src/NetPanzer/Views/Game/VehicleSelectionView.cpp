@@ -404,41 +404,41 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     buttonOk.setBounds(iRect(pos, pos + iXY(100, 15)));
     add(&buttonOk);
 
-    unitImages.create(48, 48, 48, _MAX_UNIT_TYPES);
+    unitImages.create(48, 48, _MAX_UNIT_TYPES);
 
     Surface tempSurface;
     int i = 0;
 
     tempSurface.loadBMP("pics/menus/vehicleSelectionView/manta.bmp");
     unitImages.setFrame(i++);
-    tempSurface.blt(unitImages);
+    tempSurface.blt(unitImages, 0, 0);
     tempSurface.loadBMP("pics/menus/vehicleSelectionView/panther1.bmp");
     unitImages.setFrame(i++);
-    tempSurface.blt(unitImages);
+    tempSurface.blt(unitImages, 0, 0);
     tempSurface.loadBMP("pics/menus/vehicleSelectionView/titan.bmp");
     unitImages.setFrame(i++);
-    tempSurface.blt(unitImages);
+    tempSurface.blt(unitImages, 0, 0);
     tempSurface.loadBMP("pics/menus/vehicleSelectionView/stinger.bmp");
     unitImages.setFrame(i++);
-    tempSurface.blt(unitImages);
+    tempSurface.blt(unitImages, 0, 0);
     tempSurface.loadBMP("pics/menus/vehicleSelectionView/bobcat.bmp");
     unitImages.setFrame(i++);
-    tempSurface.blt(unitImages);
+    tempSurface.blt(unitImages, 0, 0);
     tempSurface.loadBMP("pics/menus/vehicleSelectionView/bear.bmp");
     unitImages.setFrame(i++);
-    tempSurface.blt(unitImages);
+    tempSurface.blt(unitImages, 0, 0);
     tempSurface.loadBMP("pics/menus/vehicleSelectionView/archer.bmp");
     unitImages.setFrame(i++);
-    tempSurface.blt(unitImages);
+    tempSurface.blt(unitImages, 0, 0);
     tempSurface.loadBMP("pics/menus/vehicleSelectionView/wolf.bmp");
     unitImages.setFrame(i++);
-    tempSurface.blt(unitImages);
+    tempSurface.blt(unitImages, 0, 0);
     tempSurface.loadBMP("pics/menus/vehicleSelectionView/drake.bmp");
     unitImages.setFrame(i++);
-    tempSurface.blt(unitImages);
+    tempSurface.blt(unitImages, 0, 0);
     tempSurface.loadBMP("pics/menus/vehicleSelectionView/scout.bmp");
     unitImages.setFrame(i++);
-    tempSurface.blt(unitImages);
+    tempSurface.blt(unitImages, 0, 0);
     unitImages.setFrame(i++);
     unitImages.fill(Color::red);
     unitImages.setFrame(i++);
@@ -541,21 +541,30 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 
     if (vsvUnitGenOn) {
         sprintf(strBuf, "%s", getUnitName(vsvSelectedUnit));
-        clientArea.bltString(productionUnitPos, strBuf, color);
+        clientArea.bltString(   productionUnitPos.x, productionUnitPos.y, 
+                                strBuf, color);
 
-        sprintf(strBuf, "%01d:%02d/%01d:%02d", ((int)outpost_status.unit_generation_time_remaining ) / 60, ((int)outpost_status.unit_generation_time_remaining) % 60, ((int)outpost_status.unit_generation_time) / 60, ((int)outpost_status.unit_generation_time) % 60);
-        clientArea.bltString(timeRequiredPos, strBuf, color);
+        sprintf(strBuf, "%01d:%02d/%01d:%02d",
+                    ((int)outpost_status.unit_generation_time_remaining) / 60,
+                    ((int)outpost_status.unit_generation_time_remaining) % 60,
+                    ((int)outpost_status.unit_generation_time) / 60,
+                    ((int)outpost_status.unit_generation_time) % 60);
+         
+        clientArea.bltString(   timeRequiredPos.x, timeRequiredPos.y, 
+                                strBuf, color);
     } else {
         sprintf(strBuf, "power off");
-        clientArea.bltString(productionUnitPos, strBuf, color);
+        clientArea.bltString(   productionUnitPos.x, productionUnitPos.y, 
+                                strBuf, color);
 
         sprintf(strBuf, "power off");
-        clientArea.bltString(timeRequiredPos, strBuf, color);
+        clientArea.bltString(   timeRequiredPos.x, timeRequiredPos.y, 
+                                strBuf, color);
     }
 
     int unitPerPlayer = gameconfig->maxunits / gameconfig->maxplayers;
     sprintf(strBuf, "%d/%d", int(UnitInterface::getUnitCount(PlayerInterface::getLocalPlayerIndex())), unitPerPlayer);
-    clientArea.bltString(unitsBuiltPos, strBuf, color);
+    clientArea.bltString(unitsBuiltPos.x, unitsBuiltPos.y, strBuf, color);
 
     drawUnitProfileInfo(clientArea, iXY(0, unitProfileDataY), highlightedUnitType);
 
@@ -571,7 +580,7 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 void VehicleSelectionView::drawUnitImage(Surface &dest, const iXY &pos, int unitType)
 {
     unitImages.setFrame(unitType);
-    unitImages.blt(dest, pos);
+    unitImages.blt(dest, pos.x, pos.y);
 
 } // end VehicleSelectionView::drawUnitImage
 
@@ -707,15 +716,15 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                     // Objective is off.
                     dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
 
-                    dest.bltString(pos, outpostNameBuf, Color::white);
+                    dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
                     pos.y += 16;
-                    dest.bltString(pos, "Production Off", Color::white);
+                    dest.bltString(pos.x, pos.y, "Production Off", Color::white);
 
                 } else {
                     // Objective is on.
 
                     iXY pos;
-                    pos.x = miniProductionRect.min.x + unitImages.getPixX() + 4;
+                    pos.x = miniProductionRect.min.x + unitImages.getWidth() + 4;
                     pos.y = miniProductionRect.min.y + 4;
 
                     // Make sure the name will fit reasonably in the area.
@@ -743,11 +752,11 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                     dest.bltLookup(miniProductionRect,
                             Palette::darkGray256.getColorArray());
 
-                    dest.bltString(pos, outpostNameBuf, Color::white);
+                    dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
                     pos.y += 16;
-                    dest.bltString(pos, productionUnitBuf, Color::white);
+                    dest.bltString(pos.x, pos.y, productionUnitBuf, Color::white);
                     pos.y += 16;
-                    dest.bltString(pos, timeLeftBuf, Color::white);
+                    dest.bltString(pos.x, pos.y, timeLeftBuf, Color::white);
                     pos.y += 16;
 
                     // Draw the current production unit image.
@@ -792,7 +801,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
 
                     dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
 
-                    dest.bltString(pos, outpostNameBuf, Color::white);
+                    dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
                 }
             }
             break;
@@ -826,7 +835,7 @@ void VehicleSelectionView::doActivate()
         pos = mouse.getScreenPos() - getSize() / 2;
 
         moveTo(pos);
-        checkArea(screen->getPix());
+        checkArea(iXY(screen->getWidth(),screen->getHeight()));
     }
 
     GameTemplateView::doActivate();
@@ -886,27 +895,27 @@ void VehicleSelectionView::drawUnitProfileInfo(Surface &dest, const iXY &pos, sh
     const int barOffset = 105;
     int       barLength = getClientRect().getSizeX() - barOffset;
 
-    dest.bltStringShadowed(loc, "Hit Points", Color::white, Color::black);
+    dest.bltStringShadowed(loc.x, loc.y, "Hit Points", Color::white, Color::black);
     drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->hit_points) / float(maxHitPoints));
     loc.y += gapSpace;
 
-    dest.bltStringShadowed(loc, "Attack Power", Color::white, Color::black);
+    dest.bltStringShadowed(loc.x, loc.y, "Attack Power", Color::white, Color::black);
     drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->attack_factor) / float(maxAttackFactor));
     loc.y += gapSpace;
 
-    dest.bltStringShadowed(loc, "Attack Range", Color::white, Color::black);
+    dest.bltStringShadowed(loc.x, loc.y, "Attack Range", Color::white, Color::black);
     drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(sqrt(profile->attack_range)) / float(maxAttackRange));
     loc.y += gapSpace;
 
-    dest.bltStringShadowed(loc, "Defend Range", Color::white, Color::black);
+    dest.bltStringShadowed(loc.x, loc.y, "Defend Range", Color::white, Color::black);
     drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(sqrt(profile->defend_range)) / float(maxDefendRange));
     loc.y += gapSpace;
 
-    dest.bltStringShadowed(loc, "Speed", Color::white, Color::black);
+    dest.bltStringShadowed(loc.x, loc.y, "Speed", Color::white, Color::black);
     drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->speed_factor + profile->speed_rate) / float(maxTotalSpeed));
     loc.y += gapSpace;
 
-    dest.bltStringShadowed(loc, "Reload Time", Color::white, Color::black);
+    dest.bltStringShadowed(loc.x, loc.y, "Reload Time", Color::white, Color::black);
     drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->reload_time) / float(maxReloadTime));
     loc.y += gapSpace;
 }

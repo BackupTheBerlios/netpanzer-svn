@@ -283,7 +283,7 @@ void PlayerInterface::spawnPlayer( unsigned short player_index, const iXY &locat
 
 void PlayerInterface::spawnPlayer( const PlayerID &player, const iXY &location )
 {
-    uint16_t player_index = player.getIndex();
+    Uint16 player_index = player.getIndex();
     assert( player_index < max_players );
 
     SDL_mutexP(mutex);
@@ -426,7 +426,7 @@ void PlayerInterface::netMessageSyncState(const NetMessage* message)
 {
     const PlayerStateSync *sync_mesg
         = (const PlayerStateSync *) message;
-    uint16_t player_index = sync_mesg->player_state.getPlayerIndex();
+    Uint16 player_index = sync_mesg->player_state.getPlayerIndex();
 
     if(player_index >= max_players) {
         LOGGER.warning("Malformed MessageSyncState message");

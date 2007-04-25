@@ -15,32 +15,3 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-#include <config.h>
-#include "RGBColor.hpp"
-
-
-RGBColor::RGBColor(uint8_t red, uint8_t green, uint8_t blue)
-{
-    RGBColor::red   = red;
-    RGBColor::green = green;
-    RGBColor::blue  = blue;
-} // end RGBColor::RGBColor
-
-// getBrightnessInt
-//--------------------------------------------------------------------------
-// Purpose: Returns an int between [0...255]
-//--------------------------------------------------------------------------
-int RGBColor::getBrightnessInt()
-{
-    return (int) (255.0f / 768.0f * float(red + blue + green));
-}
-
-// getBrightnessFloat
-//--------------------------------------------------------------------------
-// Purpose: Returns an int between [+0.0...+1.0]
-//--------------------------------------------------------------------------
-int RGBColor::getBrightnessFloat()
-{
-    return (int) (float(red + blue + green) / 768.0f);
-}

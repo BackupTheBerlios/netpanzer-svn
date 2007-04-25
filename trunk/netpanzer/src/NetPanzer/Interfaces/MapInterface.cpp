@@ -163,13 +163,13 @@ void MapInterface::buildMiniMapSurface()
 
     map_x_size = main_map.getWidth();
     map_y_size = main_map.getHeight();
-    mini_map_surface.create( map_x_size, map_y_size );
+    mini_map_surface.create( map_x_size, map_y_size, 1 );
 
     for( y_index = 0; y_index < map_y_size; y_index++ ) {
         for ( x_index = 0; x_index < map_x_size; x_index++ ) {
             map_value = main_map.getValue( x_index, y_index );
             avg_color = tile_set.getAverageTileColor( map_value );
-            mini_map_surface._putPixel( x_index, y_index, (PIX) avg_color );
+            mini_map_surface.putPixel( x_index, y_index, (PIX) avg_color );
         } // ** for x_index
     } // ** for y_index
 }

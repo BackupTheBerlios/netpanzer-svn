@@ -53,14 +53,14 @@ void FireParticle2D::sim()
 void FireParticle2D::draw(Surface& dest, SpriteSorter&)
 {
     //if (!isAlive) return;
-    dest.fillRect(100, 100, 110, 110, Color::red);
+    dest.fillRect(iRect(100, 100, 110, 110), Color::red);
 
     //int x = (int) pos.x;
     //int y = pos.y;
     //int z = (int) pos.z;
 
-    //color = uint8_t(totalTime * 44); // This 44 is based on the life of 0.25 secs and 12 colors possible.
-    color = uint8_t(totalTime * 22); // This 22 is based on the life of 0.50 secs and 12 colors possible.
+    //color = Uint8(totalTime * 44); // This 44 is based on the life of 0.25 secs and 12 colors possible.
+    color = Uint8(totalTime * 22); // This 22 is based on the life of 0.50 secs and 12 colors possible.
 
     //if (color >= 12) throw Exception("ERROR: Invalid color reached for fire.");
     assert(color < 12);

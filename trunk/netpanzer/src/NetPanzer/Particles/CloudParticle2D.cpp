@@ -109,7 +109,7 @@ void CloudParticle2D::sim()
     // NOTE - Rand will not randomly place the clouds over the whole map,
     //        when the maps get larger than RAND_MAX in pixel dimension.
     // Handle the wrap around.
-    if (pos.x + packedSurface.getPixX() < 0) {
+    if (pos.x + packedSurface.getWidth() < 0) {
         pos.x = worldSize.x + packedSurface.getCenterX();
 
         if (!worldWraps) {
@@ -124,7 +124,7 @@ void CloudParticle2D::sim()
         }
     }
 
-    if (pos.z + packedSurface.getPixY() < 0) {
+    if (pos.z + packedSurface.getHeight() < 0) {
         pos.z = worldSize.y + packedSurface.getCenterY();
 
         if (!worldWraps) {

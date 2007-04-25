@@ -34,10 +34,10 @@ enum { _net_message_id_powerup_create,
 class PowerUpCreateMesg : public NetMessage
 {
 private:
-    int32_t map_loc_x;
-    int32_t map_loc_y;
-    int32_t ID;
-    int32_t type;
+    Sint32 map_loc_x;
+    Sint32 map_loc_y;
+    Sint32 ID;
+    Sint32 type;
 
 public:
     PowerUpCreateMesg()
@@ -52,19 +52,19 @@ public:
         this->ID = htol32(ID);                      
         this->type = htol32(type);
     }
-    int32_t getLocX() const
+    Sint32 getLocX() const
     {
         return ltoh32(map_loc_x);
     }
-    int32_t getLocY() const
+    Sint32 getLocY() const
     {
         return ltoh32(map_loc_y);
     }
-    int32_t getID() const
+    Sint32 getID() const
     {
         return ltoh32(ID);
     }
-    int32_t getType() const
+    Sint32 getType() const
     {
         return ltoh32(type);
     }
@@ -73,10 +73,10 @@ public:
 class PowerUpHitMesg : public NetMessage
 {
 private:
-    int32_t  ID;
-    uint16_t dummy; // XXX only here for compatibility reasons
-    uint16_t player_id;
-    int32_t  unit_powerup_type;
+    Sint32  ID;
+    Uint16 dummy; // XXX only here for compatibility reasons
+    Uint16 player_id;
+    Sint32  unit_powerup_type;
 
 public:
     PowerUpHitMesg()
@@ -84,21 +84,21 @@ public:
         message_class = _net_message_class_powerup;
         message_id = _net_message_id_powerup_hit;
     }
-    void set(int ID, uint16_t player_id, int type=0)
+    void set(int ID, Uint16 player_id, int type=0)
     {
         this->ID = htol32(ID);
         this->player_id = htol16(player_id);
         this->unit_powerup_type = htol32(type);
     }
-    int32_t getID() const
+    Sint32 getID() const
     {
         return ltoh32(ID);
     }
-    uint16_t getPlayerID() const
+    Uint16 getPlayerID() const
     {
         return ltoh16(player_id);
     }
-    int32_t getUnitPowerupType() const
+    Sint32 getUnitPowerupType() const
     {
         return ltoh32(unit_powerup_type);
     }

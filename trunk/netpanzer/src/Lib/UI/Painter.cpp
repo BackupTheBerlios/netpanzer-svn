@@ -79,7 +79,7 @@ namespace UI
     {
         currentTransform.apply(pos);
         Palette p;
-        RGBColor c = p[brushColor];
+        SDL_Color c = p[brushColor];
         SDL_Color c2;
         c2.r = c.red;
         c2.g = c.green;

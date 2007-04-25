@@ -109,12 +109,10 @@ WorldInputCmdProcessor::cycleSelectedUnits(unsigned long new_list_index)
 void
 WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos)
 {
-    iXY screen_size;
     double time_slice;
     long  scroll_increment;
     float scroll_rate;
 
-    screen_size = screen->getPix();
     time_slice = TimerInterface::getTimeSlice();
     scroll_rate = gameconfig->scrollrate;
 
@@ -149,7 +147,7 @@ WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos)
         return;
     }
 
-    if(mouse_pos.x >= (screen_size.x - 1)) {
+    if(mouse_pos.x >= (screen->getWidth() - 1)) {
         WorldViewInterface::scroll_right(scroll_increment);
     }
 
@@ -157,7 +155,7 @@ WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos)
         WorldViewInterface::scroll_left(scroll_increment);
     }
 
-    if( mouse_pos.y >= (screen_size.y - 1)) {
+    if( mouse_pos.y >= (screen->getHeight() - 1)) {
         WorldViewInterface::scroll_down(scroll_increment);
     }
 
@@ -828,7 +826,7 @@ WorldInputCmdProcessor::sendAllianceRequest(const iXY& world_pos, bool make_brea
     if ( target_list.isSelected() == true ) {
         target_ptr = UnitInterface::getUnit( target_list.unit_list[0] );
 
-        uint8_t type;
+        Uint8 type;
         if ( make_break ) {
             type = _player_make_alliance;
         } else {
@@ -901,7 +899,7 @@ WorldInputCmdProcessor::draw()
         WorldViewInterface::worldXYtoClientXY(world_win, box_press, &box1);
         WorldViewInterface::worldXYtoClientXY(world_win, box_release, &box2);
 
-        screen->drawRect(box1, box2, Color::white);
+        screen->drawRect(iRect(box1, box2), Color::white);
     }
 
     if (outpost_goal_selection != -1) {

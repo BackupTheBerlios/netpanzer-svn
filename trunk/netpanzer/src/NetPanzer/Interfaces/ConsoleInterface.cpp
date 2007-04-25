@@ -184,7 +184,7 @@ void ConsoleInterface::update_overlap( Surface &surface )
 
     do {
         if ( line_list[ index ].visible ) {
-            surface.bltStringShadowed(current_line, line_list[ index ].string, line_list[ index ].color, Color::black );
+            surface.bltStringShadowed(current_line.x, current_line.y, line_list[ index ].string, line_list[ index ].color, Color::black );
 
             current_line.y = current_line.y - line_offset.y;
         }
@@ -202,7 +202,7 @@ void ConsoleInterface::update_overlap( Surface &surface )
 
         current_line.y = current_line.y - line_offset.y;
 
-        surface.bltStringShadowed(current_line, inputPrompt, Color::white,
+        surface.bltStringShadowed(current_line.x, current_line.y, inputPrompt, Color::white,
                 Color::black );
 
         int CHAR_XPIX = 8; // XXX hardcoded
@@ -218,12 +218,12 @@ void ConsoleInterface::update_overlap( Surface &surface )
             string_ptr = inputString;
         }
 
-        surface.bltStringShadowed(input_offset, string_ptr , Color::white,
+        surface.bltStringShadowed(input_offset.x, input_offset.y, string_ptr , Color::white,
                 Color::black );
 
-        surface.bltStringShadowed(
-                iXY(input_offset.x + cursorPos * CHAR_XPIX, input_offset.y),
-                "_", Color::white, Color::black );
+        surface.bltStringShadowed(  input_offset.x + cursorPos * CHAR_XPIX,
+                                    input_offset.y,
+                                    "_", Color::white, Color::black );
     }
 }
 

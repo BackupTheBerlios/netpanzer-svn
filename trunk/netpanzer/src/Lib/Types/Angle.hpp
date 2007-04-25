@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _ANGLE_HPP
 
 #include <math.h>
-#include <stdint.h>
 
 #include "Types/iXY.hpp"
 #include "Util/Endian.hpp"
@@ -109,9 +108,9 @@ public:
     { }
     
 private:
-    int32_t angle_int;
-    uint32_t grain;
-    int32_t angle_limit;
+    Sint32 angle_int;
+    Uint32 grain;
+    Sint32 angle_limit;
 
     friend class AngleInt;
 } __attribute__((packed));

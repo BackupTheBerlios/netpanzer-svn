@@ -79,7 +79,7 @@ void ColorTable::init(int colorCount)
 
 // setColor
 //---------------------------------------------------------------------------
-void ColorTable::setColor(int index, uint8_t color)
+void ColorTable::setColor(int index, Uint8 color)
 {
     assert(index < colorCount);
 
@@ -137,16 +137,16 @@ void ColorTable::createBrightenFilter(
             curOffset = (y * 256) + x;
 
             // !SOMDEDAY! Try holding a threshold when any value gets to 255.
-            curRed   = (int) (nb + Palette::color[y].red);
-            curGreen = (int) (nb + Palette::color[y].green);
-            curBlue  = (int) (nb + Palette::color[y].blue);
+            curRed   = (int) (nb + Palette::color[y].r);
+            curGreen = (int) (nb + Palette::color[y].g);
+            curBlue  = (int) (nb + Palette::color[y].b);
 
             if (curRed   > 255) curRed   = 255;
             if (curGreen > 255) curGreen = 255;
             if (curBlue  > 255) curBlue  = 255;
             //curColor = Palette::color[y];
 
-            setColor(curOffset, Palette::findNearestColor(RGBColor(curRed, curGreen, curBlue)));
+            setColor(curOffset, Palette::findNearestColor(curRed, curGreen, curBlue));
         }
     }
 
@@ -178,7 +178,7 @@ void ColorTable::createDarkenFilter(const char *filename, float fudgeValue)
     // it to a file.
     float    curPercent;
     int      curOffset;
-    RGBColor curColor;
+    SDL_Color curColor;
     const float percent = fudgeValue;
 
     for (int y = 0; y < 256; y++) {
@@ -186,11 +186,11 @@ void ColorTable::createDarkenFilter(const char *filename, float fudgeValue)
             curPercent = (float(255 - x) / 255.0f) * percent + 1.0f - percent;
             curOffset  = (y * 256) + x;
 
-            curColor.red   = (uint8_t) (curPercent * float(Palette::color[y].red));
-            curColor.green = (uint8_t) (curPercent * float(Palette::color[y].green));
-            curColor.blue  = (uint8_t) (curPercent * float(Palette::color[y].blue));
+            curColor.r   = (Uint8) (curPercent * float(Palette::color[y].r));
+            curColor.g = (Uint8) (curPercent * float(Palette::color[y].g));
+            curColor.b  = (Uint8) (curPercent * float(Palette::color[y].b));
 
-            setColor(curOffset, Palette::findNearestColor(curColor));
+            setColor(curOffset, Palette::findNearestColor(curColor.r, curColor.g, curColor.b));
         }
     }
 
@@ -205,8 +205,8 @@ void ColorTable::createDarkenFilter(const char *filename, float fudgeValue)
 // create
 //---------------------------------------------------------------------------
 void ColorTable::create(
-    const int  &color1Percent,
-    const int  &color2Percent,
+    const int  color1Percent,
+    const int  color2Percent,
     const char *filename)
 {
     init(256 * 256);
@@ -231,26 +231,31 @@ void ColorTable::create(
     // it to a file.
     unsigned curOffset = 0;
 
+    float color1 = float(color1Percent) / 100.0f;
+    float color2 = float(color2Percent) / 100.0f;
+
     for (unsigned index = 0; index < 256; index++) {
-        float color1 = float(color1Percent) / 100.0f;
-        float color2 = float(color2Percent) / 100.0f;
-        const RGBColor col = Palette::color[index];
+        const SDL_Color col = Palette::color[index];
 
         for (unsigned indexPic = 0; indexPic < 256; indexPic++) {
-            const RGBColor colPic = Palette::color[indexPic];
+            const SDL_Color colPic = Palette::color[indexPic];
 
             curOffset = (int(index) << 8) + indexPic;
 
-            RGBColor curColor((uint8_t) (color1 * col.red   + color2 * colPic.red),
-                              (uint8_t) (color1 * col.green + color2 * colPic.green),
-                              (uint8_t) (color1 * col.blue  + color2 * colPic.blue));
+//            SDL_Color curColor((Uint8) (color1 * col.r   + color2 * colPic.r),
+//                              (Uint8) (color1 * col.g + color2 * colPic.g),
+//                              (Uint8) (color1 * col.b  + color2 * colPic.b));
+            SDL_Color curColor;
+            curColor.r = (Uint8) (color1 * col.r + color2 * colPic.r);
+            curColor.g = (Uint8) (color1 * col.g + color2 * colPic.g);
+            curColor.b = (Uint8) (color1 * col.b + color2 * colPic.b);
 
             // Makes the color table use color 0 as transparent.
             if (indexPic == 0) {
                 setColor(curOffset, index);
 
             } else {
-                setColor(curOffset, Palette::findNearestColor(curColor));
+                setColor(curOffset, Palette::findNearestColor(curColor.r, curColor.g, curColor.b));
             }
 
             // Display a progress update every 1%.
@@ -281,9 +286,11 @@ void ColorTable::loadTable(const char *filename)
 
     	// make sure palette in file is the same as current one
 	for(size_t i=0; i<PALETTE_LENGTH; i++) {
-	    RGBColor checkcolor;
-	    file->read(&checkcolor, sizeof(uint8_t), 3);
-	    if(Palette::originalColor[i] != checkcolor)
+	    SDL_Color checkcolor;
+	    file->read(&checkcolor, sizeof(Uint8), 3);
+	    if(    Palette::originalColor[i].r != checkcolor.r
+            || Palette::originalColor[i].g != checkcolor.g
+            || Palette::originalColor[i].b != checkcolor.b )
 	       	throw Exception("couldn't load colortable '%s': "
 	   		"palettes don't match", filename);
 	}
@@ -343,16 +350,20 @@ void ColorTable::createTrans0(
     unsigned curOffset = 0;
 
     for (unsigned index = 0; index < 256; index++) {
-        const RGBColor col = Palette::color[index];
+        const SDL_Color col = Palette::color[index];
 
         for (unsigned indexPic = 0; indexPic < 256; indexPic++) {
-            const RGBColor colPic = Palette::color[indexPic];
+            const SDL_Color colPic = Palette::color[indexPic];
 
             curOffset = (int(index) << 8) + indexPic;
 
-            RGBColor curColor((int) (color1 * col.red   + color2 * colPic.red),
-                              (int) (color1 * col.green + color2 * colPic.green),
-                              (int) (color1 * col.blue  + color2 * colPic.blue));
+//            SDL_Color curColor((int) (color1 * col.r   + color2 * colPic.r),
+//                              (int) (color1 * col.g + color2 * colPic.g),
+//                              (int) (color1 * col.b  + color2 * colPic.b));
+            SDL_Color curColor;
+            curColor.r = (int) (color1 * col.r   + color2 * colPic.r);
+            curColor.g = (int) (color1 * col.g + color2 * colPic.g);
+            curColor.b = (int) (color1 * col.b  + color2 * colPic.b);
 
             // Makes the color table use color 0 as transparent.
 
@@ -360,7 +371,7 @@ void ColorTable::createTrans0(
                 setColor(curOffset, index);
             } else {
 
-                setColor(curOffset, Palette::findNearestColor(curColor));
+                setColor(curOffset, Palette::findNearestColor(curColor.r, curColor.g, curColor.b));
             }
         }
     }
@@ -406,19 +417,19 @@ void ColorTable::createLightDarkFilter(const char *filename)
         int x;
         for (x = 0; x <= 128; x++) {
             curOffset = x + (y << 8);
-            curRed   = Palette::color[y].red   * x / 128;
-            curGreen = Palette::color[y].green * x / 128;
-            curBlue  = Palette::color[y].blue  * x / 128;
+            curRed   = Palette::color[y].r   * x / 128;
+            curGreen = Palette::color[y].g * x / 128;
+            curBlue  = Palette::color[y].b  * x / 128;
 
-            setColor(curOffset, Palette::findNearestColor(RGBColor(curRed, curGreen, curBlue)));
+            setColor(curOffset, Palette::findNearestColor(curRed, curGreen, curBlue));
         }
         for (x = 129; x < 256; x++) {
             curOffset = x + (y << 8);
-            curRed   = Palette::color[y].red + ((255 - Palette::color[y].red) * (x-128) / 127);
-            curGreen = Palette::color[y].green + ((255 - Palette::color[y].green) * (x-128) / 127);
-            curBlue  = Palette::color[y].blue + ((255 - Palette::color[y].blue) * (x-128) / 127);
+            curRed   = Palette::color[y].r + ((255 - Palette::color[y].r) * (x-128) / 127);
+            curGreen = Palette::color[y].g + ((255 - Palette::color[y].g) * (x-128) / 127);
+            curBlue  = Palette::color[y].b + ((255 - Palette::color[y].b) * (x-128) / 127);
 
-            setColor(curOffset, Palette::findNearestColor(RGBColor(curRed, curGreen, curBlue)));
+            setColor(curOffset, Palette::findNearestColor(curRed, curGreen, curBlue));
         }
     }
 

@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _MAPFILE_HPP
 #define _MAPFILE_HPP
 
-#include <stdint.h>
+#include "SDL.h"
 
 namespace filesystem
 {
@@ -30,15 +30,15 @@ public:
     void load(filesystem::ReadFile& file);
 
     char netp_id_header[64];
-    uint16_t id;
+    Uint16 id;
     char name[256];
     char description[1024];
-    uint16_t width;
-    uint16_t height;
+    Uint16 width;
+    Uint16 height;
     char tile_set[256];
 
-    uint16_t thumbnail_width;
-    uint16_t thumbnail_height;
+    Uint16 thumbnail_width;
+    Uint16 thumbnail_height;
 };
 
 #endif // ** _MAPFILE_HPP

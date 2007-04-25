@@ -217,7 +217,7 @@ void MiniMapInterface::annotateMiniMap( Surface &map_surface )
         for( unsigned long map_x_index = 0; map_x_index < map_x_size; map_x_index++ ) {
             for( unsigned long map_y_index = 0; map_y_index < map_y_size; map_y_index++ ) {
                 if( bit_array->getBit( map_x_index, map_y_index ) ) {
-                    map_surface.putPixel( iXY( map_x_index, map_y_index), Color::lightYellow );
+                    map_surface.putPixel( map_x_index, map_y_index, Color::lightYellow );
                 }
             } // ** for
         } // ** for
@@ -285,5 +285,5 @@ void MiniMapInterface::drawLargeUnitDot(Surface &dest,
 void MiniMapInterface::drawSmallUnitDot(Surface &dest, const iXY &location,
         unsigned char color )
 {
-    dest.putPixel( location, color );
+    dest.putPixel( location.x, location.y, color );
 }

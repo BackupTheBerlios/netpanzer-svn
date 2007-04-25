@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "InputEvent.hpp"
 
-
 Surface View::topBorder;
 Surface View::leftBorder;
 Surface View::bottomBorder;
@@ -169,7 +168,7 @@ void View::drawBorder(Surface &viewArea)
 {
     assert(this != 0);
     
-    viewArea.drawWindowsBorder(Color::white, Color::lightGray, Color::gray);
+    viewArea.drawWindowsBorder();
 } // end drawBorder
 
 // drawButtons
@@ -633,8 +632,10 @@ Surface* View::getViewArea(Surface& dest)
     assert(this != 0);
 
     iRect rect(min, max);
-    
-    return new Surface(dest, rect.min, rect.max, false);
+    Surface *ns;
+    ns = new Surface();
+    ns->setTo(dest,rect);
+    return ns;
 } // end View::getViewArea
 
 // getClientArea
@@ -645,12 +646,12 @@ Surface* View::getClientArea(Surface& dest)
 {
     Surface* viewarea = getViewArea(dest);
     if (getBordered()) {
-        Surface* surface = new Surface(*viewarea,
-                        iXY(borderSize, borderSize+moveAreaHeight),
-                        iXY(getSizeX() - borderSize,
-                            getSizeY() - borderSize), false);
+        iRect rect( borderSize, borderSize+moveAreaHeight,
+                    getSizeX() - borderSize, getSizeY() - borderSize );
+        Surface *ns = new Surface();
+        ns->setTo(*viewarea, rect);
         delete viewarea;
-        return surface;
+        return ns;
     }
 
     return viewarea;
@@ -1048,12 +1049,15 @@ void View::drawLabels(Surface &clientArea)
 
     for (int num = 0; num < numLabels; num++) {
         if (labels[num].isShadowed) {
-            clientArea.bltStringShadowed(iXY(labels[num].pos.x,
-                        labels[num].pos.y),
-                    labels[num].label, labels[num].foreColor,
-                    labels[num].backColor);
-        } else clientArea.bltString(labels[num].pos.x, labels[num].pos.y,
-                labels[num].label, labels[num].foreColor);
+            clientArea.bltStringShadowed( labels[num].pos.x,
+                                          labels[num].pos.y,
+                                          labels[num].label,
+                                          labels[num].foreColor,
+                                          labels[num].backColor);
+        } else clientArea.bltString( labels[num].pos.x,
+                                     labels[num].pos.y,
+                                     labels[num].label,
+                                     labels[num].foreColor);
     }
 } // end DRAW LABELS
 

@@ -24,7 +24,7 @@ int allowSpanBlitting = 1;
 
 //--------------------------------------------------------------------------
 void bltBlendSpan(PIX *dRow, const PIX *sRow, size_t pixelsPerRow,
-                  const uint8_t *table)
+                  const Uint8 *table)
 {
     if (!allowSpanBlitting) {
         return;
@@ -37,7 +37,7 @@ void bltBlendSpan(PIX *dRow, const PIX *sRow, size_t pixelsPerRow,
 
 //--------------------------------------------------------------------------
 void bltBlendScaleSpan(PIX *dRow, const PIX *sRow, int srcX1FracWithCount, int
-                       stepAndDecCount, int stepWholePart, const uint8_t *table)
+                       stepAndDecCount, int stepWholePart, const Uint8 *table)
 {
     if (!allowSpanBlitting) {
         return;

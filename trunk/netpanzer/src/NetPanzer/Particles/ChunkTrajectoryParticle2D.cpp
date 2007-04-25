@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PuffParticle2D.hpp"
 #include "GameConfig.hpp"
 #include "Util/Math.hpp"
-#include "2D/RGBColor.hpp"
 #include "TileInterface.hpp"
 #include "UnitGlobals.hpp"
 #include "ParticleInterface.hpp"
@@ -161,8 +160,8 @@ void ChunkTrajectoryParticle2D::createGroundChunks()
     Surface       tempSurface;
 
     // Build a table of the ground colors.
-    tempSurface.create(2, 2, 2, 256);
-    for (int i = 0; i < tempSurface.getFrameCount(); i++) {
+    tempSurface.create(2, 2, 256);
+    for (int i = 0; i < tempSurface.getNumFrames(); i++) {
         tempSurface.setFrame(i);
         tempSurface.fill(i);
 
@@ -204,26 +203,26 @@ void ChunkTrajectoryParticle2D::createUnitBodyGrayChunks()
 {
     // Blt the green titan body onto a surface to pull colors from.
     Surface tempUnitBodyGray;
-    tempUnitBodyGray.create(gAbramsBodyDarkBlue.getPixX(), gAbramsBodyDarkBlue.getPixY(), gAbramsBodyDarkBlue.getPixX(), 1);
+    tempUnitBodyGray.create(gAbramsBodyDarkBlue.getWidth(), gAbramsBodyDarkBlue.getHeight(), 1);
     tempUnitBodyGray.fill(0);
     gAbramsBodyDarkBlue.blt(tempUnitBodyGray, 0, 0);
 
     // Build a table of the green unit colors.
-    Surface tempSurface(2, 2, 2, 64);
+    Surface tempSurface(2, 2, 64);
 
-    int x = 0;
-    int y = 0;
+    unsigned int x = 0;
+    unsigned int y = 0;
 
-    for (int i = 0; i < tempSurface.getFrameCount(); i++) {
+    for (unsigned int i = 0; i < tempSurface.getNumFrames(); i++) {
         tempSurface.setFrame(i);
 
         while (tempUnitBodyGray.getPixel(x, y) == 0) {
             x++;
 
-            if (x > tempUnitBodyGray.getPixX() - 1) {
+            if (x > tempUnitBodyGray.getWidth() - 1) {
                 x = 0;
                 y++;
-            } else if (y > tempUnitBodyGray.getPixY() - 1) {
+            } else if (y > tempUnitBodyGray.getHeight() - 1) {
                 assert(false);
             }
         }
@@ -248,26 +247,26 @@ void ChunkTrajectoryParticle2D::createUnitBodyGreenChunks()
 
     // Blt the green titan body onto a surface to pull colors from.
     Surface tempUnitBodyGray;
-    tempUnitBodyGray.create(gAbramsBody.getPixX(), gAbramsBody.getPixY(), gAbramsBody.getPixX(), 1);
+    tempUnitBodyGray.create(gAbramsBody.getWidth(), gAbramsBody.getHeight(), 1);
     tempUnitBodyGray.fill(0);
     gAbramsBody.blt(tempUnitBodyGray, 0, 0);
 
     // Build a table of the green unit colors.
-    Surface tempSurface(2, 2, 2, 64);
+    Surface tempSurface(2, 2, 64);
 
-    int x = 0;
-    int y = 0;
+    unsigned int x = 0;
+    unsigned int y = 0;
 
-    for (int i = 0; i < tempSurface.getFrameCount(); i++) {
+    for (unsigned int i = 0; i < tempSurface.getNumFrames(); i++) {
         tempSurface.setFrame(i);
 
         while (tempUnitBodyGray.getPixel(x, y) == 0) {
             x++;
 
-            if (x > tempUnitBodyGray.getPixX() - 1) {
+            if (x > tempUnitBodyGray.getWidth() - 1) {
                 x = 0;
                 y++;
-            } else if (y > tempUnitBodyGray.getPixY() - 1) {
+            } else if (y > tempUnitBodyGray.getHeight() - 1) {
                 assert(false);
             }
         }
@@ -290,44 +289,44 @@ void ChunkTrajectoryParticle2D::createUnitBodyGreenChunks()
 void ChunkTrajectoryParticle2D::createBurnGroundChunks()
 {
     Surface       tempSurface;
-    tempSurface.create(2, 2, 2, 26);
+    tempSurface.create(2, 2, 26);
 
     int curFrame = 0;
 
     // Browns.
-    tempSurface.fill(Palette::findNearestColor(RGBColor(204, 144, 9)));
+    tempSurface.fill(Palette::findNearestColor(204, 144, 9));
     tempSurface.setFrame(curFrame++);
-    tempSurface.fill(Palette::findNearestColor(RGBColor(212, 158, 29)));
+    tempSurface.fill(Palette::findNearestColor(212, 158, 29));
     tempSurface.setFrame(curFrame++);
-    tempSurface.fill(Palette::findNearestColor(RGBColor(149, 103, 19)));
+    tempSurface.fill(Palette::findNearestColor(149, 103, 19));
     tempSurface.setFrame(curFrame++);
-    tempSurface.fill(Palette::findNearestColor(RGBColor(170, 116, 17)));
+    tempSurface.fill(Palette::findNearestColor(170, 116, 17));
     tempSurface.setFrame(curFrame++);
-    tempSurface.fill(Palette::findNearestColor(RGBColor(173, 126, 44)));
+    tempSurface.fill(Palette::findNearestColor(173, 126, 44));
     tempSurface.setFrame(curFrame++);
-    tempSurface.fill(Palette::findNearestColor(RGBColor(206, 161, 75)));
+    tempSurface.fill(Palette::findNearestColor(206, 161, 75));
     tempSurface.setFrame(curFrame++);
-    tempSurface.fill(Palette::findNearestColor(RGBColor(235, 202, 150)));
+    tempSurface.fill(Palette::findNearestColor(235, 202, 150));
     tempSurface.setFrame(curFrame++);
-    tempSurface.fill(Palette::findNearestColor(RGBColor(190, 112, 0)));
+    tempSurface.fill(Palette::findNearestColor(190, 112, 0));
     tempSurface.setFrame(curFrame++);
-    tempSurface.fill(Palette::findNearestColor(RGBColor(229, 191, 136)));
+    tempSurface.fill(Palette::findNearestColor(229, 191, 136));
     tempSurface.setFrame(curFrame++);
-    tempSurface.fill(Palette::findNearestColor(RGBColor(140, 79, 1)));
+    tempSurface.fill(Palette::findNearestColor(140, 79, 1));
     tempSurface.setFrame(curFrame++);
-    tempSurface.fill(Palette::findNearestColor(RGBColor(156, 133, 101)));
+    tempSurface.fill(Palette::findNearestColor(156, 133, 101));
     tempSurface.setFrame(curFrame++);
-    tempSurface.fill(Palette::findNearestColor(RGBColor(213, 176, 135)));
+    tempSurface.fill(Palette::findNearestColor(213, 176, 135));
     tempSurface.setFrame(curFrame++);
-    tempSurface.fill(Palette::findNearestColor(RGBColor(107, 81, 57)));
+    tempSurface.fill(Palette::findNearestColor(107, 81, 57));
     tempSurface.setFrame(curFrame++);
-    tempSurface.fill(Palette::findNearestColor(RGBColor(141, 63, 0)));
+    tempSurface.fill(Palette::findNearestColor(141, 63, 0));
     tempSurface.setFrame(curFrame++);
-    tempSurface.fill(Palette::findNearestColor(RGBColor(149, 147, 146)));
+    tempSurface.fill(Palette::findNearestColor(149, 147, 146));
     tempSurface.setFrame(curFrame++);
-    tempSurface.fill(Palette::findNearestColor(RGBColor(22, 10, 7)));
+    tempSurface.fill(Palette::findNearestColor(22, 10, 7));
     tempSurface.setFrame(curFrame++);
-    tempSurface.fill(Palette::findNearestColor(RGBColor(111, 108, 109)));
+    tempSurface.fill(Palette::findNearestColor(111, 108, 109));
 
     PackedSurface tempPackedSurface;
     tempPackedSurface.pack(tempSurface);
@@ -341,20 +340,20 @@ void ChunkTrajectoryParticle2D::createBurnGroundChunks()
 
 // Greens.
 //tempSurface.setFrame(curFrame++);
-//tempSurface.fill(Palette::findNearestColor(RGBColor(26, 88, 36)));
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(26, 88, 36)));
 //tempSurface.setFrame(curFrame++);
-//tempSurface.fill(Palette::findNearestColor(RGBColor(58, 74, 60)));
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(58, 74, 60)));
 //tempSurface.setFrame(curFrame++);
-//tempSurface.fill(Palette::findNearestColor(RGBColor(185, 235, 190)));
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(185, 235, 190)));
 //tempSurface.setFrame(curFrame++);
-//tempSurface.fill(Palette::findNearestColor(RGBColor(42, 58, 43)));
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(42, 58, 43)));
 //tempSurface.setFrame(curFrame++);
-//tempSurface.fill(Palette::findNearestColor(RGBColor(9, 149, 17)));
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(9, 149, 17)));
 //tempSurface.setFrame(curFrame++);
-//tempSurface.fill(Palette::findNearestColor(RGBColor(31, 166, 36)));
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(31, 166, 36)));
 //tempSurface.setFrame(curFrame++);
-//tempSurface.fill(Palette::findNearestColor(RGBColor(133, 180, 133)));
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(133, 180, 133)));
 //tempSurface.setFrame(curFrame++);
-//tempSurface.fill(Palette::findNearestColor(RGBColor(141, 179, 136)));
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(141, 179, 136)));
 //tempSurface.setFrame(curFrame++);
-//tempSurface.fill(Palette::findNearestColor(RGBColor(147, 159, 115)));
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(147, 159, 115)));

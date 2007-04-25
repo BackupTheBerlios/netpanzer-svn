@@ -68,7 +68,7 @@ void GameView::init()
     setVisible(false);
 
     moveTo(iXY(0, 0));
-    resize(iXY(screen->getPixX(), screen->getPixY()));
+    resize(iXY(screen->getWidth(), screen->getHeight()));
 
 } // end GameView::init
 

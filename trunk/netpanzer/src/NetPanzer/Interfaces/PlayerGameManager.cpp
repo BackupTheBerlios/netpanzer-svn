@@ -233,8 +233,8 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("MainView", true);
 
-    Desktop::checkResolution(iXY(640,480), iXY(screen->getPix()));
-    Desktop::checkViewPositions(screen->getPix());
+    Desktop::checkResolution(iXY(640,480), iXY(screen->getWidth(),screen->getHeight()));
+    Desktop::checkViewPositions(iXY(screen->getWidth(),screen->getHeight()));
 
 
     //Test for new UI
@@ -410,7 +410,7 @@ void PlayerGameManager::hostMultiPlayerGame()
     progressView->updateDirect( "Spawning Player ... (100%)" );
 
     wait.changePeriod( 3 );
-    while( !wait.count() );
+    //while( !wait.count() );
 
     GameManager::startGameTimer();
 

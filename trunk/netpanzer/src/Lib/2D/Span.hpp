@@ -22,9 +22,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 extern int allowSpanBlitting; // Used for debugging.
 
-void bltBlendSpan(PIX *dRow, const PIX *sRow, size_t pixelsPerRow, const uint8_t* table);
+void bltBlendSpan(PIX *dRow, const PIX *sRow, size_t pixelsPerRow, const Uint8* table);
 void bltBlendScaleSpan(PIX *dRow, const PIX *sRow, int srcX1FracWithCount,
-                       int	stepAndDecCount, int stepWholePart, const uint8_t* table);
+                       int	stepAndDecCount, int stepWholePart, const Uint8* table);
 void bltLookupSpan(PIX *dRow, size_t pixelsPerRow, const PIX *table);
 void bltScaleSpan(PIX *dRow, const PIX *sRow, int srcX1FracWithCount,
                   int stepAndDecCount, int stepWholePart);

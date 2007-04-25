@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitProfileInterface.hpp"
 #include "Util/Log.hpp"
 
-Objective::Objective(uint16_t ID, iXY location, BoundBox area)
+Objective::Objective(Uint16 ID, iXY location, BoundBox area)
 {
     objective_state.ID = ID;
     objective_state.selection_state = false;
@@ -86,7 +86,7 @@ Objective::objectiveMesgSync(const ObjectiveMessage* message)
 
 void Objective::getSyncData(SyncObjective& objective_sync_mesg)
 {
-    uint16_t player_id = 0;
+    Uint16 player_id = 0;
     if(objective_state.occupation_status != _occupation_status_unoccupied
             && objective_state.occupying_player) {
         player_id = objective_state.occupying_player->getID();

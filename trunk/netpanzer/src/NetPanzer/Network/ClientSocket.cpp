@@ -139,10 +139,10 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
     (void)so;
     int dataptr = 0;
     unsigned int remaining = len;
-    uint16_t packetsize=0;
+    Uint16 packetsize=0;
     while (remaining) {
         if ( !tempoffset ) {
-            if ( remaining >= sizeof(NetMessage) && remaining >= (packetsize=htol16(*((uint16_t*)(data+dataptr))) ) ){
+            if ( remaining >= sizeof(NetMessage) && remaining >= (packetsize=htol16(*((Uint16*)(data+dataptr))) ) ){
                 if ( packetsize < sizeof(NetMessage) )
                     packetsize = sizeof(NetMessage);
                 if ( packetsize > _MAX_NET_PACKET_SIZE ) {
@@ -177,7 +177,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             }
             
             if ( tempoffset >= sizeof(NetMessage) ) {
-                packetsize=htol16(*((uint16_t*)tempbuffer));
+                packetsize=htol16(*((Uint16*)tempbuffer));
                 LOGGER.warning("ClientSocket::onDataReceived(%d) Head ok, size[%d]", id, packetsize);
                 if ( packetsize < sizeof(NetMessage) )
                     packetsize = sizeof(NetMessage);

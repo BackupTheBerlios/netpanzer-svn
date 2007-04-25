@@ -79,13 +79,9 @@ void CheckBox::drawCheck(Surface &dest)
 //---------------------------------------------------------------------------
 void CheckBox::drawLabel(Surface &dest)
 {
-    iXY pos;
-
-    //pos.x = min.x - strlen((const char *) label) * CHAR_XPIX - CHAR_XPIX;
-    pos.x = min.x + size.x + 8;
-    pos.y = min.y + (size.y - Surface::getFontHeight()) / 2;
-
-    dest.bltString(pos, label.c_str(), Color::white);
+    dest.bltString( min.x + size.x + 8,
+                    min.y + (size.y - Surface::getFontHeight()) / 2,
+                    label.c_str(), Color::white);
 } // end CheckBox::drawLabel
 
 // actionPerformed

@@ -205,7 +205,7 @@ int MapSelectionView::loadMaps()
 	    mapinfo->cells.x = netPanzerMapHeader.width;
 	    mapinfo->cells.y = netPanzerMapHeader.height;
 
-	    int seekAmount = mapinfo->cells.getArea() * sizeof(uint16_t);
+	    int seekAmount = mapinfo->cells.getArea() * sizeof(Uint16);
 
 	    file->seek(file->tell()+seekAmount);
 
@@ -213,13 +213,13 @@ int MapSelectionView::loadMaps()
 	    pix.x = netPanzerMapHeader.thumbnail_width;
 	    pix.y = netPanzerMapHeader.thumbnail_height;
 
-	    mapinfo->thumbnail.create(pix, pix.x, 1);
+	    mapinfo->thumbnail.create(pix.x, pix.y, 1);
 	    
 	    int numBytes = pix.getArea();
 
-	    file->read(mapinfo->thumbnail.frame0, numBytes, 1);
+	    file->read(mapinfo->thumbnail.getFrame0(), numBytes, 1);
 
-	    mapinfo->thumbnail.scale(100);
+	    mapinfo->thumbnail.scale(100,100);
 	
 	    // Now try to get the outpost count from the outpost file.
 	    int objectiveCount = 0;
@@ -268,16 +268,16 @@ void MapSelectionView::drawCurMapInfo(Surface &dest, const iXY &pos)
     const int yOffset = 15;
 
     sprintf(strBuf, "Name:       %s", mapList[curMap]->name.c_str());
-    dest.bltStringShadowed(iXY(x, y), strBuf, windowTextColor, windowTextColorShadow);
+    dest.bltStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
     y += yOffset;
 
     int sizeX = (mapList[curMap]->cells.y * 32) / 480;
     int sizeY = (mapList[curMap]->cells.x * 32) / 640;
     sprintf(strBuf, "Size:       %d x %d", sizeX, sizeY);
-    dest.bltStringShadowed(iXY(x, y), strBuf, windowTextColor, windowTextColorShadow);
+    dest.bltStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
     y += yOffset;
 
     sprintf(strBuf, "Objectives: %d", mapList[curMap]->objectiveCount);
-    dest.bltStringShadowed(iXY(x, y), strBuf, windowTextColor, windowTextColorShadow);
+    dest.bltStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
 
 } // end MapSelectionView::drawMapInfo

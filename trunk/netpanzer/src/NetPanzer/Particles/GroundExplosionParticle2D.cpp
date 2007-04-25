@@ -42,7 +42,7 @@ GroundExplosionParticle2D::GroundExplosionParticle2D(const fXYZ& pos,
 // init
 void GroundExplosionParticle2D::init()
 {
-    groundParticleSprite0.create(4, 4, 4, 1);
+    groundParticleSprite0.create(4, 4, 1);
     groundParticleSprite0.fill(Color::brown);
     //groundParticleSprite0.loadTIL("pics/particles/puff/dirt/Smoke16.til");
     //groundParticleSprite0.shrinkWrap();

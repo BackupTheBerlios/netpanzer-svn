@@ -18,10 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETWORKINTERFACE_HPP
 #define _NETWORKINTERFACE_HPP
 
-#include <stdint.h>
 #include "NetPacketQueues.hpp"
 
-void EnqueueIncomingPacket(const void *message, uint16_t message_size,
+void EnqueueIncomingPacket(const void *message, Uint16 message_size,
                            NetClientID toID, NetClientID fromID);
 
 class NetworkInterface

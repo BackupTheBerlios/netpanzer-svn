@@ -176,17 +176,17 @@ void Choice::draw(Surface &dest)
     pos.y = min.y - Surface::getFontHeight() - 4;
 
     // Draw the name of the choice.
-    dest.bltStringShadowed(iXY(min.x, pos.y + adjustedY),
-            name.c_str(), Color::white, Color::black);
+    dest.bltStringShadowed( min.x, pos.y + adjustedY,
+                            name.c_str(), Color::white, Color::black);
 
     getBounds(r);
 
     s.setTo(dest, r);
 
     // Draw the border.
-    s.drawRect(iRect(0, 0, s.getPixX() - 2, s.getPixY() - 2), Color::gray96);
-    s.drawRect(iRect(1, 1, s.getPixX() - 1, s.getPixY() - 1), Color::white);
-    s.fillRect(iRect(1, 1, s.getPixX() - 2, s.getPixY() - 2), Color::terreVerte);
+    s.drawRect(iRect(0, 0, s.getWidth() - 2, s.getHeight() - 2), Color::gray96);
+    s.drawRect(iRect(1, 1, s.getWidth() - 1, s.getHeight() - 1), Color::white);
+    s.fillRect(iRect(1, 1, s.getWidth() - 2, s.getHeight() - 2), Color::terreVerte);
 
     if (!isOpen)	{
         s.bltStringShadowedCenter(choiceList[index].c_str(), Color::white, Color::black);

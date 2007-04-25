@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _CONNECTNETMESSAGE_HPP
 
 #include <time.h>
-#include <stdint.h>
 #include "NetMessage.hpp"
 #include "PlayerState.hpp"
 
@@ -46,12 +45,12 @@ enum { _net_message_id_connect_join_game_request,
 class ClientConnectJoinRequest : public NetMessage
 {
 private:
-    uint32_t protocol_version;
+    Uint32 protocol_version;
     
 public:
     ClientConnectJoinRequest();
-    uint32_t getProtocolVersion() const;
-    void setProtocolVersion(uint32_t version);
+    Uint32 getProtocolVersion() const;
+    void setProtocolVersion(Uint32 version);
 } __attribute__((packed));
 
 enum { _join_request_result_success,
@@ -62,16 +61,16 @@ enum { _join_request_result_success,
 class ClientConnectJoinRequestAck : public NetMessage
 {
 private:
-    int32_t  result_code;
-    uint32_t server_protocol_version;
+    Sint32  result_code;
+    Uint32 server_protocol_version;
 
 public:
     ClientConnectJoinRequestAck();
 
-    int32_t getResultCode() const;
-    void setResultCode(int32_t result);
-    uint32_t getServerProtocolVersion() const;
-    void setServerProtocolVersion(uint32_t protocol_version);
+    Sint32 getResultCode() const;
+    void setResultCode(Sint32 result);
+    Uint32 getServerProtocolVersion() const;
+    void setServerProtocolVersion(Uint32 protocol_version);
 } __attribute__((packed));
 
 class ClientConnectStartConnect : public NetMessage
@@ -102,7 +101,7 @@ enum { _connect_result_success,
 class ClientConnectResult : public NetMessage
 {
 public:
-    uint8_t result_code;
+    Uint8 result_code;
 
     ClientConnectResult()
     {
@@ -115,12 +114,12 @@ public:
 class ConnectProcessUpdate : public NetMessage
 {
 private:
-    uint32_t queue_position;
+    Uint32 queue_position;
 
 public:
     ConnectProcessUpdate();
-    uint32_t getQueuePosition() const;
-    void setQueuePosition(uint32_t position);
+    Uint32 getQueuePosition() const;
+    void setQueuePosition(Uint32 position);
 } __attribute__((packed));
 
 enum { _connect_state_message_load_game_data,
@@ -134,15 +133,15 @@ enum { _connect_state_message_load_game_data,
 class ConnectProcessStateMessage : public NetMessage
 {
 private:
-    uint32_t message_enum;
-    int32_t  percent_complete;
+    Uint32 message_enum;
+    Sint32  percent_complete;
 
 public:
     ConnectProcessStateMessage();
-    uint32_t getMessageEnum() const;
-    void setMessageEnum(uint32_t message);
-    int32_t getPercentComplete() const;
-    void setPercentComplete(int32_t percent);
+    Uint32 getMessageEnum() const;
+    void setMessageEnum(Uint32 message);
+    Sint32 getPercentComplete() const;
+    void setPercentComplete(Sint32 percent);
 } __attribute__((packed));
 
 class ConnectClientSettings : public NetMessage
@@ -150,52 +149,52 @@ class ConnectClientSettings : public NetMessage
 public:
     char player_name[64];
 private:
-    int16_t player_flag;
+    Sint16 player_flag;
 public:
-    uint8_t unit_color;
+    Uint8 unit_color;
 
     ConnectClientSettings();
-    int16_t getPlayerFlag() const;
-    void set(const char *player_name, uint8_t unit_color,
-             uint16_t player_flag );
+    Sint16 getPlayerFlag() const;
+    void set(const char *player_name, Uint8 unit_color,
+             Uint16 player_flag );
 } __attribute__((packed));
 
 class ConnectMesgServerGameSettings : public NetMessage
 {
 private:
-    uint16_t max_players;
-    uint16_t max_units;
+    Uint16 max_players;
+    Uint16 max_units;
 public:
     char     map_name[32];
 private:
-    int32_t  cloud_coverage;
+    Sint32  cloud_coverage;
     float    wind_speed;
-    int32_t  game_type;
+    Sint32  game_type;
 public:
-    uint8_t  powerup_state;
+    Uint8  powerup_state;
 private:
-    int32_t  frag_limit;
-    int32_t  time_limit;
+    Sint32  frag_limit;
+    Sint32  time_limit;
     time_t   elapsed_time;
 
 public:
     ConnectMesgServerGameSettings();
-    uint16_t getMaxPlayers() const;
-    void setMaxPlayers(uint16_t maxPlayers);
-    uint16_t getMaxUnits() const;
-    void setMaxUnits(uint16_t maxUnits);
-    int32_t getCloudCoverage() const;
-    void setCloudCoverage(int32_t cloudCoverage);
+    Uint16 getMaxPlayers() const;
+    void setMaxPlayers(Uint16 maxPlayers);
+    Uint16 getMaxUnits() const;
+    void setMaxUnits(Uint16 maxUnits);
+    Sint32 getCloudCoverage() const;
+    void setCloudCoverage(Sint32 cloudCoverage);
     float getWindSpeed() const;
     void setWindSpeed(float windSpeed);
-    int32_t getGameType() const;
-    void setGameType(int32_t gameType);
-    uint8_t getPowerupState() const;
-    void setPowerupState(uint8_t powerupState);
-    int32_t getFragLimit() const;
-    void setFragLimit(int32_t fragLimit);
-    int32_t getTimeLimit() const;
-    void setTimeLimit(int32_t timeLimit);
+    Sint32 getGameType() const;
+    void setGameType(Sint32 gameType);
+    Uint8 getPowerupState() const;
+    void setPowerupState(Uint8 powerupState);
+    Sint32 getFragLimit() const;
+    void setFragLimit(Sint32 fragLimit);
+    Sint32 getTimeLimit() const;
+    void setTimeLimit(Sint32 timeLimit);
     time_t getElapsedTime() const;
     void setElapsedTime(time_t elapsedTime);
 } __attribute__((packed));
@@ -223,7 +222,7 @@ public:
 class ConnectMesgNetPanzerClientDisconnect : public NetMessage
 {
 private:
-    uint16_t player_id;
+    Uint16 player_id;
 
 public:
     ConnectMesgNetPanzerClientDisconnect()
@@ -232,11 +231,11 @@ public:
         message_id = _net_message_id_connect_netPanzer_client_disconnect;
     }
 
-    void setPlayerID(uint16_t id)
+    void setPlayerID(Uint16 id)
     {
         player_id = htol16(id);
     }
-    uint16_t getPlayerID() const
+    Uint16 getPlayerID() const
     {
         return ltoh16(player_id);
     }

@@ -18,57 +18,57 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __ENDIAN_HPP__
 #define __ENDIAN_HPP__
 
-#include <stdint.h>
+#include "SDL.h"
 
-static inline uint16_t __swap16(uint16_t val)
+static inline Uint16 __swap16(Uint16 val)
 {
-    return  (((uint16_t)(val) & (uint16_t)0x00ffU) << 8) |
-            (((uint16_t)(val) & (uint16_t)0xff00U) >> 8);
+    return  (((Uint16)(val) & (Uint16)0x00ffU) << 8) |
+            (((Uint16)(val) & (Uint16)0xff00U) >> 8);
 }
 
-static inline uint32_t __swap32(uint32_t val)
+static inline Uint32 __swap32(Uint32 val)
 {
-    return  (((uint32_t)(val) & (uint32_t)0xff000000U) >> 24) |
-            (((uint32_t)(val) & (uint32_t)0x00ff0000U) >> 8) |
-            (((uint32_t)(val) & (uint32_t)0x0000ff00U) << 8) |
-            (((uint32_t)(val) & (uint32_t)0x000000ffU) << 24);
+    return  (((Uint32)(val) & (Uint32)0xff000000U) >> 24) |
+            (((Uint32)(val) & (Uint32)0x00ff0000U) >> 8) |
+            (((Uint32)(val) & (Uint32)0x0000ff00U) << 8) |
+            (((Uint32)(val) & (Uint32)0x000000ffU) << 24);
 }
 
 #ifdef WORDS_BIGENDIAN
 
-static inline uint16_t htol16(uint16_t val) { return __swap16(val); }
-static inline uint32_t htol32(uint32_t val) { return __swap32(val); }
+static inline Uint16 htol16(Uint16 val) { return __swap16(val); }
+static inline Uint32 htol32(Uint32 val) { return __swap32(val); }
 
-static inline uint16_t ltoh16(uint16_t val) { return __swap16(val); }
-static inline uint32_t ltoh32(uint32_t val) { return __swap32(val); }
+static inline Uint16 ltoh16(Uint16 val) { return __swap16(val); }
+static inline Uint32 ltoh32(Uint32 val) { return __swap32(val); }
 
-static inline uint16_t htob16(uint16_t val) { return val; }
-static inline uint32_t htob32(uint32_t val) { return val; }
+static inline Uint16 htob16(Uint16 val) { return val; }
+static inline Uint32 htob32(Uint32 val) { return val; }
 
-static inline uint16_t btoh16(uint16_t val) { return val; }
-static inline uint32_t btoh32(uint32_t val) { return val; }
+static inline Uint16 btoh16(Uint16 val) { return val; }
+static inline Uint32 btoh32(Uint32 val) { return val; }
 
 #else // WORDS_BIGENDIAN
 
 /** convert a 16bit value from host to little-endian format */
-static inline uint16_t htol16(uint16_t val) { return val; }
+static inline Uint16 htol16(Uint16 val) { return val; }
 /** convert a 32bit value from host to little-endian format */
-static inline uint32_t htol32(uint32_t val) { return val; }
+static inline Uint32 htol32(Uint32 val) { return val; }
 
 /** convert a 16bit value from little-endian to host format */
-static inline uint16_t ltoh16(uint16_t val) { return val; }
+static inline Uint16 ltoh16(Uint16 val) { return val; }
 /** convert a 32bit value from little-endian to host format */
-static inline uint32_t ltoh32(uint32_t val) { return val; }
+static inline Uint32 ltoh32(Uint32 val) { return val; }
 
 /** convert a 16bit value from host to big-endian format */
-static inline uint16_t htob16(uint16_t val) { return __swap16(val); }
+static inline Uint16 htob16(Uint16 val) { return __swap16(val); }
 /** convert a 32bit value from host to big-endian format */
-static inline uint32_t htob32(uint32_t val) { return __swap32(val); }
+static inline Uint32 htob32(Uint32 val) { return __swap32(val); }
 
 /** convert a 16bit value from big-endian to host format */
-static inline uint16_t btoh16(uint16_t val) { return __swap16(val); }
+static inline Uint16 btoh16(Uint16 val) { return __swap16(val); }
 /** convert a 32bit value from big-endian to host format */
-static inline uint32_t btoh32(uint32_t val) { return __swap32(val); }
+static inline Uint32 btoh32(Uint32 val) { return __swap32(val); }
 
 #endif // WORDS_BIGENDIAN
 

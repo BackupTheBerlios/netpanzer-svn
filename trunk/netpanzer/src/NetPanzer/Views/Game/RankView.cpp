@@ -41,7 +41,7 @@ RankView::RankView() : GameTemplateView()
     setAllowResize(false);
     moveTo(gameconfig->rankposition);
     resize(iXY(450, 200));
-    checkArea(screen->getPix());
+    checkArea(iXY(screen->getWidth(),screen->getHeight()));
 
     const unsigned MAX_NAME_CHARS      = 20;
     const unsigned MAX_FLAG_CHARS      =  5;
@@ -52,7 +52,7 @@ RankView::RankView() : GameTemplateView()
     // hardcoded for now
     int CHAR_XPIX = 8;
 
-    //addLabel(iXY nPos, char *nLabel, uint8_t color);
+    //addLabel(iXY nPos, char *nLabel, Uint8 color);
     unsigned xOffset = 0;
     unsigned yOffset = 16;
     addLabel(iXY(xOffset, yOffset), "Name", Color::red);
@@ -80,8 +80,8 @@ RankView::RankView() : GameTemplateView()
 void RankView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     // make sure the window is big enough for all players
-    int CHAR_YPIX = Surface::getFontHeight();
-    int entryheight = std::max(CHAR_YPIX, UNIT_FLAGS_SURFACE.getPixY()) + 2;
+    unsigned int CHAR_YPIX = Surface::getFontHeight();
+    unsigned int entryheight = std::max(CHAR_YPIX, UNIT_FLAGS_SURFACE.getHeight()) + 2;
     resize(iXY(450, 60 + entryheight * PlayerInterface::countPlayers()));
     
     bltViewBackground(viewArea);
@@ -146,10 +146,10 @@ void RankView::drawPlayerStats(Surface &dest)
             break;
     }
 
-    int CHAR_YPIX = Surface::getFontHeight();
-    int entryHeight = std::max(CHAR_YPIX, UNIT_FLAGS_SURFACE.getPixY()) + 2;
+    unsigned int CHAR_YPIX = Surface::getFontHeight();
+    unsigned int entryHeight = std::max(CHAR_YPIX, UNIT_FLAGS_SURFACE.getHeight()) + 2;
     iXY offset(2, 40);
-    iXY flagOffset(162, 40 + (CHAR_YPIX - UNIT_FLAGS_SURFACE.getPixY())/2);
+    iXY flagOffset(162, 40 + (CHAR_YPIX - UNIT_FLAGS_SURFACE.getHeight())/2);
 
     for(std::vector<const PlayerState*>::iterator i = states.begin();
             i != states.end(); ++i) {

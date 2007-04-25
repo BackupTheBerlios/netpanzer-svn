@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _UNITOPCODES_HPP
 
 #include "UnitBase.hpp"
-#include <stdint.h>
 #include <queue>
 
 enum { _unit_opcode_flag_sync = 0x01 };
@@ -41,13 +40,13 @@ enum { _unit_opcode_flag_sync = 0x01 };
 struct UnitOpcodeStruct
 {
 public:
-    uint8_t opcode;
+    Uint8 opcode;
 private:
-    uint16_t unit_index;
+    Uint16 unit_index;
 public:
-    uint8_t flags;
+    Uint8 flags;
 private:
-    uint8_t op_data[7];
+    Uint8 op_data[7];
 } __attribute__((packed));
 
 typedef std::queue<UnitOpcodeStruct> UnitOpcodeQueue;
@@ -55,12 +54,12 @@ typedef std::queue<UnitOpcodeStruct> UnitOpcodeQueue;
 class UnitOpcode
 {
 public:
-    uint8_t opcode;
-    //uint8_t player_index;
+    Uint8 opcode;
+    //Uint8 player_index;
 private:
-    uint16_t unit_id;
+    Uint16 unit_id;
 public:
-    uint8_t flags;
+    Uint8 flags;
 
     static size_t getSize()
     {
@@ -85,12 +84,12 @@ ASSERT_SIZE(UnitOpcode, sizeof(UnitOpcodeStruct)-7)
 class MoveOpcode : public UnitOpcode
 {
 private:
-    uint32_t square;
+    Uint32 square;
 
 public:
-    int8_t loc_x_offset;
-    int8_t loc_y_offset;
-    uint8_t pad[1];
+    Sint8 loc_x_offset;
+    Sint8 loc_y_offset;
+    Uint8 pad[1];
 
     MoveOpcode( )
     {
@@ -103,12 +102,12 @@ public:
         pad[0] = 0;
     }
 
-    void setSquare(uint32_t square)
+    void setSquare(Uint32 square)
     {
         this->square = htol32(square);
     }
 
-    uint32_t getSquare() const
+    Uint32 getSquare() const
     {
         return ltoh32(square);
     }
@@ -121,12 +120,12 @@ ASSERT_SIZE(MoveOpcode, 7 + sizeof(UnitOpcode))
 class TurretTrackPointOpcode : public UnitOpcode
 {
 private:
-    uint16_t target_x;
-    uint16_t target_y;
+    Uint16 target_x;
+    Uint16 target_y;
 
 public:
-    uint8_t  activate;
-    uint8_t pad[2];
+    Uint8  activate;
+    Uint8 pad[2];
 
     TurretTrackPointOpcode( )
     {
@@ -157,10 +156,10 @@ ASSERT_SIZE(TurretTrackPointOpcode, 7 + sizeof(UnitOpcode))
 class TurretTrackTargetOpcode : public UnitOpcode
 {
 private:
-    uint16_t targetUnitID;
+    Uint16 targetUnitID;
 public:
-    uint8_t activate;
-    uint8_t pad[4];
+    Uint8 activate;
+    Uint8 pad[4];
 
     TurretTrackTargetOpcode( )
     {
@@ -190,9 +189,9 @@ ASSERT_SIZE(TurretTrackTargetOpcode, 7 + sizeof(UnitOpcode))
 class FireWeaponOpcode : public UnitOpcode
 {
 private:
-    uint16_t x;
-    uint16_t y;
-    uint8_t pad[3];
+    Uint16 x;
+    Uint16 y;
+    Uint8 pad[3];
     
 public:
 
@@ -224,7 +223,7 @@ ASSERT_SIZE(FireWeaponOpcode, 7 + sizeof(UnitOpcode))
 class SyncUnitOpcode : public UnitOpcode
 {
 public:
-    uint8_t pad[7];
+    Uint8 pad[7];
 
     SyncUnitOpcode( )
     {
@@ -244,9 +243,9 @@ ASSERT_SIZE(SyncUnitOpcode, 7 + sizeof(UnitOpcode))
 class UpdateStateUnitOpcode : public UnitOpcode
 {
 private:
-    int16_t hit_points;
+    Sint16 hit_points;
 public:
-    uint8_t pad[5];
+    Uint8 pad[5];
 
     UpdateStateUnitOpcode( )
     {
@@ -257,12 +256,12 @@ public:
             pad[i] = 0;
     }
 
-    void setHitPoints(int16_t newhitpoints)
+    void setHitPoints(Sint16 newhitpoints)
     {
         hit_points = htol16(newhitpoints);
     }
 
-    int16_t getHitPoints() const
+    Sint16 getHitPoints() const
     {
         return ltoh16(hit_points);
     }

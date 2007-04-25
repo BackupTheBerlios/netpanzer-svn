@@ -109,20 +109,11 @@ void SDLVideo::copyDoubleBufferandFlip()
         throw Exception("Error while swapping double buffer");        
 }
 
-void SDLVideo::setPalette(RGBColor *color)
+void SDLVideo::setPalette(SDL_Color *color)
 {
-    SDL_Color c[256];
-    int i;
-
-    for(i=0; i<256; i++) {
-        c[i].r = color[i].red;
-        c[i].g = color[i].green;
-        c[i].b = color[i].blue;
-    }
-
-    SDL_SetColors(backBuffer, c, 0, 256);
+    SDL_SetColors(backBuffer, color, 0, 256);
     if(frontBuffer != backBuffer && frontBuffer->format->BitsPerPixel == 8)
-        SDL_SetColors(frontBuffer, c, 0, 256);
+        SDL_SetColors(frontBuffer, color, 0, 256);
 }
 
 SDL_Surface* SDLVideo::getSurface()

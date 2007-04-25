@@ -212,16 +212,16 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
     if (Desktop::getVisible("GameView")) {
 	// When ingame, tint the game into gray
         clientArea.bltLookup(getClientRect(), Palette::darkGray256.getColorArray());
-        clientArea.drawWindowsBorder(Color::white, Color::white, Color::white);
+        clientArea.drawWindowsBorder();
 
     } else {
 	// When in mainmenu, make background dark and draw menu image
-        if(screen->getPixX() > 640 ||
-           screen->getPixY() > 480)
+        if(screen->getWidth() > 640 ||
+           screen->getHeight() > 480)
             screen->fill(Color::black);
         
         // Set the following to get does exist.
-        if (backgroundSurface.getFrameCount() > 0) {
+        if (backgroundSurface.getNumFrames() > 0) {
             backgroundSurface.blt(viewArea, 0, 0);
         } else {
             throw Exception("Where is the background surface?");

@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _CHATNETMESSAGE_HPP
 #define _CHATNETMESSAGE_HPP
 
-#include <stdint.h>
 #include <string.h>
 #include <assert.h>
 #include "NetMessage.hpp"
@@ -37,11 +36,11 @@ enum { _chat_mesg_scope_player_set,
 class ChatMesgRequest : public NetMessage
 {
 public:
-    uint8_t message_scope;
+    Uint8 message_scope;
     char player_set[32];
 
 private:
-    uint16_t source_player_index;
+    Uint16 source_player_index;
 public:
     char message_text[150];
 
@@ -58,7 +57,7 @@ public:
         message_scope = _chat_mesg_scope_all;
     }
 
-    void setPlayerSet(uint16_t player_index)
+    void setPlayerSet(Uint16 player_index)
     {
         assert(player_index < sizeof(player_set));
         
@@ -75,7 +74,7 @@ public:
         player_set[index] = player_set[index] | mask;
     }
     
-    void clearPlayerSet(uint16_t player_index)
+    void clearPlayerSet(Uint16 player_index)
     {
         assert(player_index < sizeof(player_set));
         
@@ -90,11 +89,11 @@ public:
         
         player_set[ index ] = player_set[index] & mask;
     }
-    uint16_t getSourcePlayerIndex() const
+    Uint16 getSourcePlayerIndex() const
     {
         return ltoh16(source_player_index);
     }
-    void setSourcePlayerIndex(uint16_t playerIndex)
+    void setSourcePlayerIndex(Uint16 playerIndex)
     {
         source_player_index = htol16(playerIndex);
     }
@@ -106,7 +105,7 @@ class ChatMesg: public NetMessage
 public:
     unsigned char  message_scope;
 private:
-    uint16_t source_player_index;
+    Uint16 source_player_index;
 public:
     char message_text[150];
 
@@ -117,11 +116,11 @@ public:
         memset(message_text, 0, sizeof(message_text));
     }
 
-    uint16_t getSourcePlayerIndex() const
+    Uint16 getSourcePlayerIndex() const
     {
         return ltoh16(source_player_index);
     }
-    void setSourcePlayerIndex(uint16_t playerIndex)
+    void setSourcePlayerIndex(Uint16 playerIndex)
     {
         source_player_index = htol16(playerIndex);
     }

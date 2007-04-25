@@ -73,13 +73,13 @@ public:
         return &player_lists[ player.getIndex() ];
     }
 
-    static PlayerState* getPlayerState(uint16_t player_index)
+    static PlayerState* getPlayerState(Uint16 player_index)
     {
         assert(player_index < max_players);
         return &player_lists[player_index];
     }
 
-    static PlayerState* getPlayer(uint16_t id)
+    static PlayerState* getPlayer(Uint16 id)
     {
         assert(id < max_players);
         return &player_lists[id];
@@ -102,12 +102,12 @@ public:
         return player_lists[ local_player_index ].getPlayerID();
     }
 
-    static uint16_t getLocalPlayerIndex()
+    static Uint16 getLocalPlayerIndex()
     {
         return local_player_index;
     }
 
-    static PlayerID getPlayerID(uint16_t player_index )
+    static PlayerID getPlayerID(Uint16 player_index )
     {
         assert( player_index < max_players );
         return player_lists[ player_index ].getPlayerID();
@@ -122,7 +122,7 @@ public:
     static PlayerState * allocateNewPlayer();
     static int countPlayers();
 
-    static void spawnPlayer( uint16_t player_index, const iXY &location );
+    static void spawnPlayer( Uint16 player_index, const iXY &location );
     static void spawnPlayer( const PlayerID &player, const iXY &location );
 
     static bool testRuleScoreLimit( long score_limit, PlayerState ** player_state );
@@ -136,8 +136,8 @@ public:
 
 protected:
     static NetMessageEncoder* message_encoder;
-    static uint16_t player_sync_index;
-    static uint16_t player_sync_connect_player_index;
+    static Uint16 player_sync_index;
+    static Uint16 player_sync_connect_player_index;
     static PlayerID player_sync_connect_id;
     static Timer player_sync_timer;
 

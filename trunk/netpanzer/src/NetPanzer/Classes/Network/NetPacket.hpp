@@ -18,14 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETPACKET_HPP
 #define _NETPACKET_HPP
 
-#include <stdint.h>
 #include <string.h>
 
 #include "Util/Endian.hpp"
 #include "NetMessage.hpp"
 
-static const uint16_t _MAX_NET_PACKET_SIZE=512;
-typedef uint32_t NetClientID;
+static const Uint16 _MAX_NET_PACKET_SIZE=512;
+typedef Uint32 NetClientID;
 
 #ifdef MSVC
 #pragma pack(1)
@@ -36,7 +35,7 @@ public:
     NetClientID toID;
     NetClientID fromID;
 
-    uint8_t  data[ _MAX_NET_PACKET_SIZE ];
+    Uint8  data[ _MAX_NET_PACKET_SIZE ];
 
     const NetMessage* getNetMessage() const
     {
@@ -52,11 +51,11 @@ __attribute__((packed));
 
 struct NetMessageStruct
 {
-    uint16_t size;
-    uint8_t  message_class;
-    uint8_t  message_id;
+    Uint16 size;
+    Uint8  message_class;
+    Uint8  message_id;
 
-    uint8_t  data[ _MAX_NET_PACKET_SIZE - 4 ];
+    Uint8  data[ _MAX_NET_PACKET_SIZE - 4 ];
 }
 __attribute__((packed));
 
@@ -66,13 +65,13 @@ class MultiMessage : public NetMessage
 {
 public:
     /* header part */
-    uint8_t  message_count;
+    Uint8  message_count;
     /* data */
-    uint8_t  data[ _MULTI_PACKET_LIMIT ];
+    Uint8  data[ _MULTI_PACKET_LIMIT ];
 
     static size_t getHeaderSize()
     {
-        return sizeof(NetMessage) + sizeof(uint8_t);
+        return sizeof(NetMessage) + sizeof(Uint8);
     }
 } __attribute__((packed));
 

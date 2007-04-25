@@ -110,9 +110,10 @@ void PackedSurface::pack(const Surface &source)
 {
     free();
 
-    pix        = source.getPix();
+    pix.x      = source.getWidth();
+    pix.y      = source.getHeight();
     offset     = source.getOffset();
-    frameCount = source.getFrameCount();
+    frameCount = source.getNumFrames();
     fps        = source.getFPS();
 
     rowOffsetTable = (int *) malloc((pix.y*frameCount + 1) * sizeof(*rowOffsetTable));
@@ -130,7 +131,7 @@ void PackedSurface::pack(const Surface &source)
         ((Surface *)&source)->setFrame(frame);
         for (int y = 0 ; y < pix.y ; ++y) {
             rowOffsetTable[frame*pix.y + y] = curByteOffset;
-            const PIX *rowPtr = source.rowPtr(y);
+            const PIX *rowPtr = source.pixPtr(0,y);
 
             int x = 0;
             while (x < pix.x) {
@@ -156,7 +157,7 @@ void PackedSurface::pack(const Surface &source)
                 int newSize = (curByteOffset + sizeof(SpanHead) + spanLen*sizeof(PIX) + 3) & ~3;
                 if (newSize > bytesAlloced) {
                     bytesAlloced = newSize + 16*1024;
-                    packedDataChunk = (uint8_t *)realloc(packedDataChunk, bytesAlloced);
+                    packedDataChunk = (Uint8 *)realloc(packedDataChunk, bytesAlloced);
                     if (packedDataChunk == 0) {
                         throw Exception("ERROR: Out of memory for packedDataChunk for PackedSurface.");
                     }
@@ -180,7 +181,7 @@ void PackedSurface::pack(const Surface &source)
 
     // Shrink buffer to the size we really need
 
-    packedDataChunk = (uint8_t *) realloc(packedDataChunk, curByteOffset);
+    packedDataChunk = (Uint8 *) realloc(packedDataChunk, curByteOffset);
     if (packedDataChunk == 0) throw Exception("Hell froze");
 
     // Restore source surface frame number, so the function
@@ -197,7 +198,7 @@ void PackedSurface::load(const std::string& filename)
                 filesystem::openRead(filename));
 
 	free();
-	int32_t version = file->readSLE32();
+	Sint32 version = file->readSLE32();
 	if (version < 1)
 	    throw Exception("Invalid PAK file version: %d", version);
 	if (version > CURRENT_PAK_VERSION)
@@ -214,7 +215,7 @@ void PackedSurface::load(const std::string& filename)
 	// the existing files :-/
 	//fps = float(file->readSLE32()) / 65536;
 	// XXX is this correct?!?
-	int32_t fpsint = file->readSLE32();
+	Sint32 fpsint = file->readSLE32();
 	fps = * ((float*) (void*) &fpsint);
 	offset.x = file->readSLE32();
 	offset.y = file->readSLE32();
@@ -227,7 +228,7 @@ void PackedSurface::load(const std::string& filename)
 	    rowOffsetTable[i] = file->readSLE32();
 	}
     
-	packedDataChunk = (uint8_t *)malloc(rowOffsetTable[pix.y*frameCount]);
+	packedDataChunk = (Uint8 *)malloc(rowOffsetTable[pix.y*frameCount]);
 	if (packedDataChunk == 0) {
 	    throw Exception(
 		"ERROR: Unable to allocate packedDataChunk for PackedSurface.");
@@ -252,13 +253,13 @@ void PackedSurface::save(const std::string& filename) const
 	std::auto_ptr<filesystem::WriteFile> file(
                 filesystem::openWrite(filename));
 
-	int32_t version = CURRENT_PAK_VERSION;
+	Sint32 version = CURRENT_PAK_VERSION;
 	file->writeSLE32(version);
 	file->writeSLE32(pix.x);
 	file->writeSLE32(pix.y);
     
 	// is this correct?!?
-	file->writeSLE32( *((uint32_t*) (void*) (&fps)) );
+	file->writeSLE32( *((Uint32*) (void*) (&fps)) );
 
 	file->writeSLE32(offset.x);
 	file->writeSLE32(offset.y);
@@ -287,9 +288,9 @@ void PackedSurface::blt(Surface &dest, int destX, int destY) const
     int needClipX = 0;
 
     iXY srcMax;
-    srcMax.x = dest.getPixX() - destX;
+    srcMax.x = dest.getWidth() - destX;
     if (srcMax.x <= 0) return; // off right
-    srcMax.y = dest.getPixY() - destY;
+    srcMax.y = dest.getHeight() - destY;
     if (srcMax.y <= 0) return; // off bottom
 
     iXY srcMin;
@@ -319,11 +320,11 @@ void PackedSurface::blt(Surface &dest, int destX, int destY) const
     const int *table = &rowOffsetTable[int(curFrame)*pix.y];
 
     if (needClipX) {
-        const uint8_t *rowData = packedDataChunk + table[srcMin.y];
-        PIX *destRowPtr = dest.rowPtr(destY + srcMin.y) + destX;
+        const Uint8 *rowData = packedDataChunk + table[srcMin.y];
+        PIX *destRowPtr = dest.pixPtr(0, destY + srcMin.y) + destX;
         for (int y = srcMin.y ; y < srcMax.y ; ++y) {
 
-            const uint8_t *rowEnd = packedDataChunk + table[y+1];
+            const Uint8 *rowEnd = packedDataChunk + table[y+1];
 
             // Search for first span which is not completely off to the left
 
@@ -380,14 +381,14 @@ void PackedSurface::blt(Surface &dest, int destX, int destY) const
 
 nextRow:
             assert(rowData == rowEnd);
-            destRowPtr += dest.getStride();
+            destRowPtr += dest.getPitch();
         }
     } else {
-        const uint8_t *rowData = packedDataChunk + table[srcMin.y];
-        PIX *destRowPtr = dest.rowPtr(destY + srcMin.y) + destX;
+        const Uint8 *rowData = packedDataChunk + table[srcMin.y];
+        PIX *destRowPtr = dest.pixPtr(0,destY + srcMin.y) + destX;
         for (int y = srcMin.y ; y < srcMax.y ; ++y) {
 
-            const uint8_t *rowEnd = packedDataChunk + table[y+1];
+            const Uint8 *rowEnd = packedDataChunk + table[y+1];
 
             while (rowData < rowEnd) {
                 SpanHead *span = (SpanHead *)rowData;
@@ -396,7 +397,7 @@ nextRow:
                 rowData += (sizeof(*span) + ltoh16(span->len)*sizeof(PIX) + 3) & ~3;
             }
             assert(rowData == rowEnd);
-            destRowPtr += dest.getStride();
+            destRowPtr += dest.getPitch();
         }
     }
 
@@ -456,9 +457,9 @@ void PackedSurface::bltBlend(Surface &dest, int destX, int destY, ColorTable &co
     int needClipX = 0;
 
     iXY srcMax;
-    srcMax.x = dest.getPixX() - destX;
+    srcMax.x = dest.getWidth() - destX;
     if (srcMax.x <= 0) return; // off right
-    srcMax.y = dest.getPixY() - destY;
+    srcMax.y = dest.getHeight() - destY;
     if (srcMax.y <= 0) return; // off bottom
 
     iXY srcMin;
@@ -485,15 +486,15 @@ void PackedSurface::bltBlend(Surface &dest, int destX, int destY, ColorTable &co
         srcMax.y = pix.y;
     }
 
-    const uint8_t *cTable = colorTable.getColorArray();
+    const Uint8 *cTable = colorTable.getColorArray();
     const int  *table  = &rowOffsetTable[int(curFrame)*pix.y];
 
     if (needClipX) {
-        const uint8_t *rowData = packedDataChunk + table[srcMin.y];
-        PIX *destRowPtr = dest.rowPtr(destY + srcMin.y) + destX;
+        const Uint8 *rowData = packedDataChunk + table[srcMin.y];
+        PIX *destRowPtr = dest.pixPtr(0, destY + srcMin.y) + destX;
         for (int y = srcMin.y ; y < srcMax.y ; ++y) {
 
-            const uint8_t *rowEnd = packedDataChunk + table[y+1];
+            const Uint8 *rowEnd = packedDataChunk + table[y+1];
 
             // Search for first span which is not completely off to the left
 
@@ -551,14 +552,14 @@ void PackedSurface::bltBlend(Surface &dest, int destX, int destY, ColorTable &co
 
 nextRow:
             assert(rowData == rowEnd);
-            destRowPtr += dest.getStride();
+            destRowPtr += dest.getPitch();
         }
     } else {
-        const uint8_t *rowData = packedDataChunk + table[srcMin.y];
-        PIX *destRowPtr = dest.rowPtr(destY + srcMin.y) + destX;
+        const Uint8 *rowData = packedDataChunk + table[srcMin.y];
+        PIX *destRowPtr = dest.pixPtr(0, destY + srcMin.y) + destX;
         for (int y = srcMin.y ; y < srcMax.y ; ++y) {
 
-            const uint8_t *rowEnd = packedDataChunk + table[y+1];
+            const Uint8 *rowEnd = packedDataChunk + table[y+1];
 
             while (rowData < rowEnd) {
                 SpanHead *span = (SpanHead *)rowData;
@@ -569,7 +570,7 @@ nextRow:
                 rowData += (sizeof(*span) + ltoh16(span->len)*sizeof(PIX) + 3) & ~3;
             }
             assert(rowData == rowEnd);
-            destRowPtr += dest.getStride();
+            destRowPtr += dest.getPitch();
         }
     }
 

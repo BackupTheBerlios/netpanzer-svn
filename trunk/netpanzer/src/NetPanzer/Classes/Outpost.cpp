@@ -74,7 +74,7 @@ Outpost::attemptOccupationChange(UnitID unit_id)
                         objective_state.occupying_player->getID(),
                         unit_generation_on_flag,
                         unit_generation_type,
-                        uint32_t(unit_generation_timer.getTimeLeft() * 128.0));
+                        Uint32(unit_generation_timer.getTimeLeft() * 128.0));
             SERVER->sendMessage(&update_mesg, sizeof(ObjectiveOccupationUpdate));
 
             const PlayerState *player_state = objective_state.occupying_player;
@@ -92,7 +92,7 @@ Outpost::attemptOccupationChange(UnitID unit_id)
                         objective_state.occupying_player->getID(),
                         unit_generation_on_flag,
                         unit_generation_type,
-                        uint32_t(unit_generation_timer.getTimeLeft() * 128));
+                        Uint32(unit_generation_timer.getTimeLeft() * 128));
                 SERVER->sendMessage(&update_mesg,
                         sizeof(ObjectiveOccupationUpdate));
                 const PlayerState *player = objective_state.occupying_player;

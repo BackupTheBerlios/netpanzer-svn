@@ -88,11 +88,11 @@ GameInfoView::GameInfoView() : GameTemplateView()
 
     if(gameconfig->gameinfoposition.isDefaultValue()) {
         // Start it in the top-right corner.
-        iXY pos(screen->getPixX() - getSize().x,0);
+        iXY pos(screen->getWidth() - getSize().x,0);
         gameconfig->gameinfoposition=pos;
     }
     moveTo(gameconfig->gameinfoposition); 
-    checkArea(screen->getPix());
+    checkArea(iXY(screen->getWidth(),screen->getHeight()));
 } // end GameInfoView::GameInfoView
 
 // doDraw
@@ -169,13 +169,13 @@ void GameInfoView::doDraw(Surface &viewArea, Surface &clientArea)
 
     bltViewBackground(viewArea);
 
-    clientArea.bltStringShadowed(pos, gameBuf, Color::white, Color::black);
+    clientArea.bltStringShadowed(pos.x, pos.y, gameBuf, Color::white, Color::black);
     pos.y += 12;
-    clientArea.bltStringShadowed(pos, unitsBuf, Color::white, Color::black);
+    clientArea.bltStringShadowed(pos.x, pos.y, unitsBuf, Color::white, Color::black);
     pos.y += 12;
-    clientArea.bltStringShadowed(pos, fragsBuf, Color::white, Color::black);
+    clientArea.bltStringShadowed(pos.x, pos.y, fragsBuf, Color::white, Color::black);
     pos.y += 12;
-    clientArea.bltStringShadowed(pos, objectiveBuf, Color::white, Color::black);
+    clientArea.bltStringShadowed(pos.x, pos.y, objectiveBuf, Color::white, Color::black);
     pos.y += 12;
     /*
     clientArea.bltStringShadowed(pos, killsBuf, Color::white, Color::black);
@@ -183,11 +183,11 @@ void GameInfoView::doDraw(Surface &viewArea, Surface &clientArea)
     clientArea.bltStringShadowed(pos, lossesBuf, Color::white, Color::black);
     pos.y += 12;
     */
-    clientArea.bltStringShadowed(pos, timeBuf, Color::white, Color::black);
+    clientArea.bltStringShadowed(pos.x, pos.y, timeBuf, Color::white, Color::black);
     pos.y += 12;
     /*clientArea.bltStringShadowed(pos, pingBuf, Color::white, Color::black);
     pos.y += 12;*/
-    clientArea.bltStringShadowed(pos, fpsBuf, Color::white, Color::black);
+    clientArea.bltStringShadowed(pos.x, pos.y, fpsBuf, Color::white, Color::black);
     pos.y += 12;
 
     View::doDraw(viewArea, clientArea);

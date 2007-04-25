@@ -79,7 +79,7 @@ namespace UI{
     SDL_Color Label::transformColor(Color col){
         SDL_Color sdlc;
         Palette p;
-        RGBColor c = p[col];
+        SDL_Color c = p[col];
         
         sdlc.r = c.red;
         sdlc.g = c.green;

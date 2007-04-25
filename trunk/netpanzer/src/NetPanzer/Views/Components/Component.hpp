@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __Component_hpp__
 
 #include <string>
-#include <stdint.h>
 
 #include "2D/Color.hpp"
 #include "2D/Surface.hpp"
@@ -33,8 +32,8 @@ class mMouseEvent;
 class Component : public NoCopy
 {
 protected:
-    uint8_t    background;
-    uint8_t    foreground;
+    Uint8    background;
+    Uint8    foreground;
     iXY     size;
     iXY     min;
     Surface surface;
@@ -76,7 +75,7 @@ public:
     {
         return contains(p.x, p.y);
     }
-           uint8_t     getBackground() const
+           Uint8     getBackground() const
     {
         return background;
     }
@@ -85,7 +84,7 @@ public:
         r.min = min;
         r.max = min + size;
     }
-           uint8_t     getForeground() const
+           Uint8     getForeground() const
     {
         return foreground;
     }

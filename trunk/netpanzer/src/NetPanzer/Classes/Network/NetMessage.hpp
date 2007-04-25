@@ -40,18 +40,18 @@ enum { _net_message_class_multi = 0,
 class NetMessage
 {
 private:
-    uint16_t size;
+    Uint16 size;
 
 public:
-    uint8_t  message_class;
-    uint8_t  message_id;
+    Uint8  message_class;
+    Uint8  message_id;
 
-    uint16_t getSize() const
+    Uint16 getSize() const
     {
         return ltoh16(size);
     }
 
-    void setSize(uint16_t newsize)
+    void setSize(Uint16 newsize)
     {
         size = htol16(newsize);
     }

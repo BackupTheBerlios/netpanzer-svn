@@ -68,13 +68,13 @@ public:
         attach_offset.y = 0;
     }
 
-    inline void setHeight( unsigned char height )
+    inline void setSpriteHeight( unsigned char height )
     {
         assert( height < _MAX_HEIGHT_LEVELS );
         Sprite::height = height;
     }
 
-    inline unsigned char getHeight() const
+    inline unsigned char getSpriteHeight() const
     {
         return( height );
     }
@@ -122,14 +122,6 @@ class SpriteSurface : public Surface, public Sprite
 public:
 
     SpriteSurface();
-
-    SpriteSurface( void *data, int xPix, int yPix, int numFrames );
-
-    inline void setData( void *data, int xPix, int yPix, int numFrames )
-    {
-        setTo( data, iXY( xPix, yPix ), xPix, numFrames );
-        setOffsetCenter();
-    }
 
     inline void setData( Surface &surface )
     {

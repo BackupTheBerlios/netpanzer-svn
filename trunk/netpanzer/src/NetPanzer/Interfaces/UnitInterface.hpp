@@ -54,7 +54,7 @@ private:
     static size_t units_per_player;
     static PlacementMatrix unit_placement_matrix;
 
-    static uint16_t lastUnitID;
+    static Uint16 lastUnitID;
     static UnitID newUnitID();
 
     static UnitBase* newUnit(unsigned short unit_type,
@@ -76,7 +76,7 @@ public:
         return units;
     }
 
-    static const PlayerUnitList& getPlayerUnits(uint16_t player_id)
+    static const PlayerUnitList& getPlayerUnits(Uint16 player_id)
     {
         assert(player_id < max_players);
         return playerUnitLists[player_id];
@@ -113,23 +113,23 @@ public:
 
     static UnitBase* createUnit( unsigned short unit_type,
                                   const iXY &location,
-                                  uint16_t player_id);
+                                  Uint16 player_id);
 
     static void spawnPlayerUnits( const iXY &location,
-                                  uint16_t player_id,
+                                  Uint16 player_id,
                                   const PlayerUnitConfig &unit_config );
 
     static void queryUnitsAt(std::vector<UnitID>& working_list,
-                             const iXY& point, uint16_t player_id,
+                             const iXY& point, Uint16 player_id,
                              unsigned char search_flags);
 
     static void queryUnitsAt(std::vector<UnitID>& working_list,
-                            const iRect& rect, uint16_t player_id,
+                            const iRect& rect, Uint16 player_id,
                             unsigned char search_flags);
 
     static bool queryClosestUnit( UnitBase **closest_unit_ptr,
                                    iXY &loc,
-                                   uint16_t player_id,
+                                   Uint16 player_id,
                                    unsigned char search_flags );
 
     static bool queryClosestUnit( UnitBase **closest_unit_ptr,
@@ -138,7 +138,7 @@ public:
 
     static bool queryClosestEnemyUnit(UnitBase **closest_unit_ptr,
                                       iXY &loc,
-                                      uint16_t player_index);
+                                      Uint16 player_index);
 
     static bool queryUnitAtMapLoc( iXY map_loc, UnitID *query_unit_id );
 
@@ -181,7 +181,7 @@ protected:
 
 public:
     static void processNetMessage(const NetMessage *net_message );
-    static void destroyPlayerUnits(uint16_t player_id);
+    static void destroyPlayerUnits(Uint16 player_id);
 };
 
 #endif // ** _UNITINTERFACE_HPP

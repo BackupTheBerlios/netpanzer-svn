@@ -110,7 +110,7 @@ void NetPacketDebugger::logMessage(const char* domain, const NetMessage* message
 
     log->flags(std::ios::hex);
     log->fill('0');
-    uint8_t* data = (uint8_t *) message;
+    Uint8* data = (Uint8 *) message;
     for (size_t i=sizeof(NetMessage); i<message->getSize(); ++i) {
         if ((i%4) == 0)
             *log << " ";
@@ -346,8 +346,8 @@ void NetPacketDebugger::logUnitOpcodeMessage(std::ostream& log,
         const NetMessage* message)
 {
     UnitOpcodeMessage* opcodes = (UnitOpcodeMessage*) message;
-    uint8_t* dataptr = opcodes->data;
-    uint8_t* dataend 
+    Uint8* dataptr = opcodes->data;
+    Uint8* dataend 
         = dataptr + (message->getSize() - UnitOpcodeMessage::getHeaderSize());
     while(dataptr < dataend) {
         log << "\n  ";

@@ -32,9 +32,9 @@ private:
     fXYZ  pos;
     float totalTime;
     float color;
-    uint8_t  size;
+    Uint8  size;
     float age;
-    uint8_t  lifetime;
+    Uint8  lifetime;
     float timeElapsedPeriod;
 
 public:

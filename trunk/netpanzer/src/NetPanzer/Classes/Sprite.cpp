@@ -33,12 +33,6 @@ SpriteSurface::SpriteSurface()
 {
 }
 
-SpriteSurface::SpriteSurface( void *data, int xPix, int yPix, int numFrames )
-        : Sprite()
-{
-    setData( data, xPix, yPix, numFrames );
-}
-
 bool SpriteSurface::isVisible(const iRect &world_win ) const
 {
     long min_x;
@@ -48,8 +42,8 @@ bool SpriteSurface::isVisible(const iRect &world_win ) const
     long pix_x;
     long pix_y;
 
-    pix_x = pix.x >> 1;
-    pix_y = pix.y >> 1;
+    pix_x = getWidth() >> 1;
+    pix_y = getHeight() >> 1;
 
     min_x = world_pos.x - pix_x;
     min_y = world_pos.y - pix_y;

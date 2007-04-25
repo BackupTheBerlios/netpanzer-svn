@@ -277,12 +277,9 @@ void HostOptionsView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     drawMeterInfo(clientArea, iXY(BORDER_SPACE, BORDER_SPACE));
 
-    iXY pos;
-
-    pos.x = 4;
-    pos.y = clientArea.getPixY() - Surface::getFontHeight();
-
-    clientArea.bltString(pos, "Note: Use the right mouse button to accomplish fast mouse clicking.", Color::white);
+    clientArea.bltString( 4, clientArea.getHeight() - Surface::getFontHeight(),
+                    "Note: Use the right mouse button to accomplish fast mouse clicking.",
+                    Color::white);
 
     View::doDraw(viewArea, clientArea);
 
@@ -436,7 +433,7 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
     int x = pos.x + 270 + arrowButtonWidth;
     int y = pos.y;
 
-    Surface tempSurface(meterWidth, 14, meterWidth, 1);
+    Surface tempSurface(meterWidth, 14, 1);
     tempSurface.fill(meterColor);
 
     // Game Max Player Count

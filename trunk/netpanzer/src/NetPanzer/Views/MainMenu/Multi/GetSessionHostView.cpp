@@ -124,7 +124,9 @@ void GetSessionHostView::drawHostList(Surface &dest)
     int curIndex = 0;
     int color;
 
-    Surface tempSurface( getClientRect().getSizeX() - 2, (TEXT_GAP_SPACE + Surface::getFontHeight()), getClientRect().getSizeX() - 2, 1 );
+    Surface tempSurface( getClientRect().getSizeX() - 2,
+                         TEXT_GAP_SPACE + Surface::getFontHeight(),
+                         1 );
 
     tempSurface.fill(Color::darkGreen);
     sprintf( host_info_str, "%-24s %-24s %-12s %10s", "Host",

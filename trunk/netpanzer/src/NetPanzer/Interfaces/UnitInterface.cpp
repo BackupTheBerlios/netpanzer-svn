@@ -363,7 +363,7 @@ void UnitInterface::addNewUnit(UnitBase *unit)
 {
     units.insert(std::make_pair(unit->id, unit));
    
-    uint16_t player_index = unit->player->getID();
+    Uint16 player_index = unit->player->getID();
     playerUnitLists[player_index].push_back(unit);
 
     unit_bucket_array.addUnit(unit);
@@ -416,7 +416,7 @@ UnitInterface::getUnit(UnitID id)
 // ******************************************************************
 UnitBase* UnitInterface::createUnit( unsigned short unit_type,
                                       const iXY &location,
-                                      uint16_t player_id)
+                                      Uint16 player_id)
 {
     if (playerUnitLists[player_id].size() >= units_per_player)
 	return 0;
@@ -430,7 +430,7 @@ UnitBase* UnitInterface::createUnit( unsigned short unit_type,
 // ******************************************************************
 
 void UnitInterface::spawnPlayerUnits(const iXY &location,
-                                     uint16_t player_id,
+                                     Uint16 player_id,
                                      const PlayerUnitConfig &unit_config)
 {
     iXY next_loc;
@@ -464,7 +464,7 @@ void UnitInterface::spawnPlayerUnits(const iXY &location,
 
 void
 UnitInterface::queryUnitsAt(std::vector<UnitID>& working_list,
-        const iXY& point, uint16_t player_id, unsigned char search_flags)
+        const iXY& point, Uint16 player_id, unsigned char search_flags)
 {
     for(Units::iterator i = units.begin(); i != units.end(); ++i) {
         UnitBase* unit = i->second;
@@ -486,7 +486,7 @@ UnitInterface::queryUnitsAt(std::vector<UnitID>& working_list,
 
 void
 UnitInterface::queryUnitsAt(std::vector<UnitID>& working_list,
-        const iRect& rect, uint16_t player_id, unsigned char search_flags)
+        const iRect& rect, Uint16 player_id, unsigned char search_flags)
 {
     for(Units::iterator i = units.begin(); i != units.end(); ++i) {
         UnitBase* unit = i->second;
@@ -507,7 +507,7 @@ UnitInterface::queryUnitsAt(std::vector<UnitID>& working_list,
 /****************************************************************************/
 
 bool UnitInterface::queryClosestUnit( UnitBase **closest_unit_ptr,
-                                       iXY &loc, uint16_t player_id,
+                                       iXY &loc, Uint16 player_id,
                                        unsigned char search_flags )
 {
     long closest_magnitude = 0;
@@ -601,14 +601,14 @@ bool UnitInterface::queryClosestUnit( UnitBase **closest_unit_ptr, iRect &boundi
 // ******************************************************************
 
 bool UnitInterface::queryClosestEnemyUnit(UnitBase **closest_unit_ptr,
-        iXY &loc, uint16_t player_index)
+        iXY &loc, Uint16 player_index)
 {
     UnitBase *closest_unit = 0;
     long closest_magnitude = 0;
 
     for(Units::iterator i = units.begin(); i != units.end(); ++i) {
         UnitBase* unit = i->second;
-        uint16_t unitPlayerID = unit->player->getID();
+        Uint16 unitPlayerID = unit->player->getID();
         
         if(unitPlayerID == player_index
                 || PlayerInterface::isAllied(player_index, unitPlayerID))
@@ -645,7 +645,7 @@ bool UnitInterface::queryClosestEnemyUnit(UnitBase **closest_unit_ptr,
 
 unsigned char UnitInterface::queryUnitLocationStatus(iXY loc)
 {
-    uint16_t player_id = PlayerInterface::getLocalPlayerIndex();
+    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
 
     std::vector<UnitID> locUnits;
     queryUnitsAt(locUnits, loc, player_id, 0);
@@ -814,7 +814,7 @@ void UnitInterface::unitCreateMessage(const NetMessage* net_message)
     const UnitRemoteCreate* create_mesg 
         = (const UnitRemoteCreate *) net_message;
 
-    uint16_t player_index = create_mesg->getPlayerID();
+    Uint16 player_index = create_mesg->getPlayerID();
 
     try {
         std::map<UnitID, UnitBase*>::iterator uit = units.find(create_mesg->getUnitID());
@@ -876,7 +876,7 @@ void UnitInterface::processNetMessage(const NetMessage* net_message)
 
 // ******************************************************************
 
-void UnitInterface::destroyPlayerUnits(uint16_t player_id)
+void UnitInterface::destroyPlayerUnits(Uint16 player_id)
 {
     UMesgSelfDestruct self_destruct;
     self_destruct.setHeader(0, _umesg_flag_unique);

@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _SERVERSOCKET_H
 
 #include <map>
-#include <stdint.h>
 #include "Network/TCPListenSocket.hpp"
 #include "ClientSocket.hpp"
 
@@ -29,7 +28,7 @@ using namespace std;
 class ServerSocket : public TCPListenSocketObserver, public ClientSocketObserver
 {
 public:
-    ServerSocket(const string& bindaddress, uint16_t port);
+    ServerSocket(const string& bindaddress, Uint16 port);
     ~ServerSocket();
 
     void sendMessage(NetClientID toclient, const void* data,

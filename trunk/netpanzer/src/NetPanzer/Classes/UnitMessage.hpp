@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITMESSAGE_HPP
 #define _UNITMESSAGE_HPP
 
-#include <stdint.h>
 #include "UnitBase.hpp"
 
 enum { _umesg_flag_unique          = 0x01,
@@ -37,10 +36,10 @@ enum { _umesg_flag_unique          = 0x01,
 class UnitMessage
 {
 private:
-    uint16_t unit_id;
+    Uint16 unit_id;
 public:
-    uint8_t message_id;
-    uint8_t message_flags;
+    Uint8 message_id;
+    Uint8 message_flags;
 
 public:
     UnitMessage()

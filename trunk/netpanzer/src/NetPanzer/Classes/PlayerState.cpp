@@ -24,13 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerInterface.hpp"
 #include <sstream>
 
-uint16_t NetworkPlayerState::getPlayerIndex() const
+Uint16 NetworkPlayerState::getPlayerIndex() const
 {
     return ltoh16(playerindex_id);
 }
 
 //If you modify this array, also modify the constant above
-uint8_t *playerColorArray[] = {
+Uint8 *playerColorArray[] = {
 	&Color::red,
 	&Color::green,
 	&Color::brown,
@@ -92,13 +92,13 @@ uint8_t *playerColorArray[] = {
 };
 
 static const size_t playerColorCount 
-    = sizeof(playerColorArray) / sizeof(uint8_t*);
+    = sizeof(playerColorArray) / sizeof(Uint8*);
 
-void PlayerState::setColor(uint32_t index) {
+void PlayerState::setColor(Uint32 index) {
     colorIndex = index % playerColorCount;
 }
 
-uint8_t PlayerState::getColor() const {
+Uint8 PlayerState::getColor() const {
     assert(colorIndex < playerColorCount);
     return ( *playerColorArray[ colorIndex ] );
 }
@@ -145,7 +145,7 @@ void PlayerState::setName(const std::string& newname)
     bool recheck;
     do {
         recheck = false;
-        for (uint16_t p=0; p<PlayerInterface::getMaxPlayers(); p++) {
+        for (Uint16 p=0; p<PlayerInterface::getMaxPlayers(); p++) {
             if ( p == ID.getIndex() )
                 continue;
                 
@@ -295,14 +295,14 @@ unsigned char PlayerState::getStatus() const
 
 void PlayerState::setFlag(unsigned char newflag)
 {
-    if ( newflag >= UNIT_FLAGS_SURFACE.getFrameCount() )
+    if ( newflag >= UNIT_FLAGS_SURFACE.getNumFrames() )
         newflag=0;
     flag = newflag;
     
     bool recheck;
     do {
         recheck = false;
-        for (uint16_t p=0; p<PlayerInterface::getMaxPlayers(); p++) {
+        for (Uint16 p=0; p<PlayerInterface::getMaxPlayers(); p++) {
             if ( p == ID.getIndex() )
                 continue;
                 
@@ -311,7 +311,7 @@ void PlayerState::setFlag(unsigned char newflag)
                     || ps->status==_player_state_active )
                     && ps->flag == flag ) {
                 flag++;
-                if ( flag >= UNIT_FLAGS_SURFACE.getFrameCount() )
+                if ( flag >= UNIT_FLAGS_SURFACE.getNumFrames() )
                     flag = 0;
                     
                 if ( flag != newflag ) // there are no free flags if it is ==
@@ -361,7 +361,7 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
     memcpy(tmp, state->name, 64); 
     tmp[63] = 0;
     name = tmp;
-	if(state->flag < UNIT_FLAGS_SURFACE.getFrameCount()) {
+	if(state->flag < UNIT_FLAGS_SURFACE.getNumFrames()) {
 		flag = state->flag;
 	} else {
 		flag = 0;

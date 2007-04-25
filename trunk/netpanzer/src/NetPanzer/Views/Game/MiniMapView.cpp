@@ -67,16 +67,16 @@ void MiniMapView::init()
     resize(size);
 
     if(gameconfig->minimapposition.isDefaultValue()) {
-        gameconfig->minimapposition = iXY(0, screen->getPix().y - 196);
+        gameconfig->minimapposition = iXY(0, screen->getHeight() - 196);
     }
     moveTo(gameconfig->minimapposition);
-    checkArea(screen->getPix());
+    checkArea(iXY(screen->getWidth(),screen->getHeight()));
 
     //int xOffset = size.x;
     //int yOffset = 0;
 
     MiniMapInterface::setMapScale(getSize() - iXY(2,2));
-    checkArea(screen->getPix());
+    checkArea(iXY(screen->getWidth(),screen->getHeight()));
 
     minMapSize =  64;
     maxMapSize = 480;
@@ -118,7 +118,7 @@ void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
         scaleGroupWait += dt;
 
         if (scaleGroupWait > 1.0f) {
-            miniMapSurface.create(getSize(), getSize().x , 1);
+            miniMapSurface.create(getSizeX(), getSizeY(), 1);
 
             //miniMapSurface.scale(getViewRect().getSize());
             iRect r(iXY(0, 0), getSize());
@@ -135,18 +135,12 @@ void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
     int mapDrawType=gameconfig->minimapdrawtype;
     if (needScale) {
         // Draw the slow on the fly scaled map.
-        if (mapDrawType == MAP_SOLID) {
+        if (    mapDrawType == MAP_SOLID
+             || mapDrawType == MAP_2080
+             || mapDrawType == MAP_4060 
+             || mapDrawType == MAP_BLEND_GREEN ) {
             clientArea.bltScale(*miniMap, r);
-        } else if (mapDrawType == MAP_2080) {
-            clientArea.bltBlendScale(*miniMap, r, Palette::colorTable2080);
-        } else if (mapDrawType == MAP_4060) {
-            clientArea.bltBlendScale(*miniMap, r, Palette::colorTable4060);
-        }
-        //else if (mapDrawType == MAP_BLEND_GREEN)
-        //{
-        //clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::green256.getColorArray());
-        //}
-        else if (mapDrawType == MAP_BLEND_GRAY) {
+        } else if (mapDrawType == MAP_BLEND_GRAY) {
             clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::gray256.getColorArray());
         } else if (mapDrawType == MAP_BLEND_DARK_GRAY) {
             clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::darkGray256.getColorArray());
@@ -156,18 +150,12 @@ void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
     }
     else {
         // Draw the fast not on the fly scaled map.
-        if (mapDrawType == MAP_SOLID) {
+        if (   mapDrawType == MAP_SOLID 
+             || mapDrawType == MAP_2080
+             || mapDrawType == MAP_4060
+             || mapDrawType == MAP_BLEND_GREEN ) {
             miniMapSurface.blt(clientArea, 0, 0);
-        } else if (mapDrawType == MAP_2080) {
-            clientArea.blendIn(miniMapSurface, iXY(0, 0), Palette::colorTable2080);
-        } else if (mapDrawType == MAP_4060) {
-            clientArea.blendIn(miniMapSurface, iXY(0, 0), Palette::colorTable4060);
-        }
-        //else if (mapDrawType == MAP_BLEND_GREEN)
-        //{
-        //clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::green256.getColorArray());
-        //}
-        else if (mapDrawType == MAP_BLEND_GRAY) {
+        } else if (mapDrawType == MAP_BLEND_GRAY) {
             clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::gray256.getColorArray());
         } else if (mapDrawType == MAP_BLEND_DARK_GRAY) {
             clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::darkGray256.getColorArray());
@@ -178,7 +166,7 @@ void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
 
     // Draw a hairline border.
     //viewArea.drawRect(Color::white);
-    viewArea.drawLookupBorder(Palette::darkGray256.getColorArray());
+    viewArea.drawRect(iRect(0,0,viewArea.getWidth(), viewArea.getHeight()),Color::gray);
 
     // Draw the world view box.
     iRect boxpos = MiniMapInterface::getWorldWindow();
@@ -194,7 +182,7 @@ void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
     if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos()))) {
         if (selectionAnchor) {
             // Since we are selecting units, draw the selection box.
-            clientArea.drawRect(selectionAnchorDownPos, selectionAnchorCurPos, Color::white);
+            clientArea.drawRect(iRect(selectionAnchorDownPos, selectionAnchorCurPos), Color::white);
         } else {
             // Draw a box which show where the area which you click will be located.
             drawMouseBox(clientArea);
@@ -280,7 +268,7 @@ void MiniMapView::rMouseDrag(const iXY&, const iXY &prevPos, const iXY &newPos)
     iXY map_pos=min + newPos - prevPos;
     moveTo(map_pos);
     gameconfig->minimapposition=map_pos;
-    checkArea(screen->getPix());
+    checkArea(iXY(screen->getWidth(),screen->getHeight()));
 
     // Check for map blending mode change.
     if (KeyboardInterface::getKeyPressed(SDLK_1)) {
@@ -328,8 +316,8 @@ void MiniMapView::doIncreaseSize(int value)
     }
 
     // Check the validity of the X dimension.
-    if ((min.x + destSize.x) >= screen->getPixX()) {
-        int xOffset = min.x + destSize.x - screen->getPixX();
+    if ((min.x + destSize.x) >= screen->getWidth()) {
+        int xOffset = min.x + destSize.x - screen->getWidth();
 
         int destXPos = min.x - xOffset;
 
@@ -339,12 +327,12 @@ void MiniMapView::doIncreaseSize(int value)
         } else {
             moveTo(destXPos, min.y);
         }
-        checkArea(screen->getPix());
+        checkArea(iXY(screen->getWidth(),screen->getHeight()));
     }
 
     // Check the validity of the Y dimension.
-    if ((min.y + destSize.y) >= screen->getPixY()) {
-        int yOffset = min.y + destSize.y - screen->getPixY();
+    if ((min.y + destSize.y) >= screen->getHeight()) {
+        int yOffset = min.y + destSize.y - screen->getHeight();
 
         int destYPos = min.y - yOffset;
 
@@ -354,7 +342,7 @@ void MiniMapView::doIncreaseSize(int value)
         } else {
             moveTo(min.x, destYPos);
         }
-        checkArea(screen->getPix());
+        checkArea(iXY(screen->getWidth(),screen->getHeight()));
     }
 
     // Resize the x dimension.

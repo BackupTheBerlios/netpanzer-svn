@@ -37,7 +37,7 @@ enum { _player_state_free,
 class NetworkPlayerState
 {
 public:
-    uint16_t getPlayerIndex() const;
+    Uint16 getPlayerIndex() const;
 
 private:
     NetworkPlayerState() 
@@ -45,16 +45,16 @@ private:
     friend class PlayerState;    
     
     char name[64];
-    uint8_t flag;
-    uint16_t playerindex_id;
-    uint8_t status;
-    int16_t kills;
-    int16_t kill_points;
-    int16_t losses;
-    int16_t loss_points;
-    int16_t total;
-    int16_t objectives_held;
-    uint32_t colorIndex;
+    Uint8 flag;
+    Uint16 playerindex_id;
+    Uint8 status;
+    Sint16 kills;
+    Sint16 kill_points;
+    Sint16 losses;
+    Sint16 loss_points;
+    Sint16 total;
+    Sint16 objectives_held;
+    Uint32 colorIndex;
 }
 __attribute__((packed));
 
@@ -76,7 +76,7 @@ private:
     short total;
     short objectives_held;
     bool stats_locked;
-    uint32_t colorIndex;
+    Uint32 colorIndex;
 
 public:
     PlayerUnitConfig unit_config;
@@ -88,7 +88,7 @@ public:
 
     void setName(const std::string& newname);
     void setPlayerID( PlayerID player_id );
-    uint16_t getID() const
+    Uint16 getID() const
     {
         return ID.getIndex();
     }
@@ -126,8 +126,8 @@ public:
     short getTotal() const;
     NetworkPlayerState getNetworkPlayerState() const;
     void setFromNetworkPlayerState(const NetworkPlayerState* state);
-    void setColor( uint32_t index );
-    uint8_t getColor() const;
+    void setColor( Uint32 index );
+    Uint8 getColor() const;
 };
 
 #endif // ** _PLAYERSTATE_HPP

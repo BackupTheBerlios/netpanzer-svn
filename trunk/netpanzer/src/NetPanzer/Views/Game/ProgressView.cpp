@@ -44,7 +44,7 @@ void ProgressView::init()
     setVisible(false);
     setBordered(false);
 
-    background.create(628 - 179, 302 - 153, 628 - 179, 1);
+    background.create(628 - 179, 302 - 153, 1);
     background.fill(0);
 
     resize(640, 480);
@@ -59,8 +59,8 @@ void ProgressView::doDraw(Surface &viewArea, Surface &clientArea)
     }
 
     screen->fill(Color::black);
-    backgroundSurface.blt(clientArea);
-    background.blt(clientArea, iXY(179, 153));
+    backgroundSurface.blt(clientArea, 0, 0);
+    background.blt(clientArea, 179, 153);
 
     View::doDraw(viewArea, clientArea);
 } // end ProgressView::doDraw
@@ -73,11 +73,11 @@ void ProgressView::doDraw(Surface &viewArea, Surface &clientArea)
 void ProgressView::update(const char *text)
 {
     int CHAR_YPIX = Surface::getFontHeight();
-    int yOffset = background.getPix().y-CHAR_YPIX - 1;
+    int yOffset = background.getHeight()-CHAR_YPIX - 1;
 
     // Clear the area for the text and draw the new text.
-    background.fillRect(0, yOffset, background.getPix().x, yOffset + CHAR_YPIX, Color::black);
-    background.bltString(0, background.getPix().y - CHAR_YPIX - 1, text, Color::white);
+    background.fillRect(iRect(0, yOffset, background.getWidth(), yOffset + CHAR_YPIX), Color::black);
+    background.bltString(0, background.getHeight() - CHAR_YPIX - 1, text, Color::white);
 } // end ProgressView::update
 
 // scroll
@@ -103,8 +103,8 @@ void ProgressView::blitToScreen()
     }
     
     screen->fill(Color::black);
-    backgroundSurface.blt(*screen, min);
-    background.blt(*screen, min + iXY(179, 153));
+    backgroundSurface.blt(*screen, min.x, min.y);
+    background.blt(*screen, min.x+179, min.y+153);
                                                   
     screen->unlock();
     screen->copyToVideoFlip();

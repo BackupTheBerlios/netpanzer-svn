@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdio.h>
 #include <assert.h>
-#include <stdint.h>
+#include "SDL.h"
 
 //--------------------------------------------------------------------------
 class ColorTable
@@ -31,7 +31,7 @@ protected:
     static char *extension;
 
     int   colorCount;
-    uint8_t *colorArray;
+    Uint8 *colorArray;
 
     static int totalColorArrayCount;
     static int totalByteCount;
@@ -41,10 +41,10 @@ public:
     ~ColorTable();
 
     void init(int colorCount);
-    void setColor(int index, uint8_t color);
+    void setColor(int index, Uint8 color);
 
     // Give us an array index into the table.
-    inline uint8_t operator[](int index) const
+    inline Uint8 operator[](int index) const
     {
         assert(index < colorCount);
         return *(colorArray + index);
@@ -54,7 +54,7 @@ public:
     {
         return colorCount;
     }
-    inline const uint8_t *getColorArray()
+    inline const Uint8 *getColorArray()
     {
         return colorArray;
     }
@@ -68,7 +68,7 @@ public:
         return totalByteCount;
     }
 
-    void create(const int &color1Percent, const int &color2Percent, const char *filename);
+    void create(const int color1Percent, const int color2Percent, const char *filename);
     void createTrans0(const int &color1Percent, const int &color2Percent, const char *filename);
     void createBrightenFilter(const char *filename, const int &brightness);
     void createDarkenFilter(const char *filename, float fudgeValue);

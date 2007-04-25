@@ -62,10 +62,10 @@ public:
 class PlayerScoreUpdate : public NetMessage
 {
 private:
-    uint16_t kill_by_player_index;
-    uint16_t kill_on_player_index;
+    Uint16 kill_by_player_index;
+    Uint16 kill_on_player_index;
 public:
-    uint8_t  unit_type;
+    Uint8  unit_type;
 
     PlayerScoreUpdate()
     {
@@ -73,27 +73,27 @@ public:
         message_id = _net_message_id_player_score_update;
     }
 
-    void set(uint16_t kill_by_index, uint16_t kill_on_index, uint8_t unit_type)
+    void set(Uint16 kill_by_index, Uint16 kill_on_index, Uint8 unit_type)
     {
         kill_by_player_index = htol16(kill_by_index);
         kill_on_player_index = htol16(kill_on_index);
         this->unit_type = unit_type;
     }
 
-    void setKillByPlayerIndex(uint16_t kill_by_index)
+    void setKillByPlayerIndex(Uint16 kill_by_index)
     {
         kill_by_player_index = htol16(kill_by_index);
     }
-    uint16_t getKillByPlayerIndex() const
+    Uint16 getKillByPlayerIndex() const
     {
         return ltoh16(kill_by_player_index);
     }
 
-    void setKillOnPlayerIndex(uint16_t kill_on_index)
+    void setKillOnPlayerIndex(Uint16 kill_on_index)
     {
         kill_on_player_index = htol16(kill_on_index);
     }
-    uint16_t getKillOnPlayerIndex() const
+    Uint16 getKillOnPlayerIndex() const
     {
         return ltoh16(kill_on_player_index);
     }
@@ -108,10 +108,10 @@ enum { _player_make_alliance,
 class PlayerAllianceRequest : public NetMessage
 {
 private:
-    uint16_t allie_by_player_index;
-    uint16_t allie_with_player_index;
+    Uint16 allie_by_player_index;
+    Uint16 allie_with_player_index;
 public:
-    uint8_t  alliance_request_type;
+    Uint8  alliance_request_type;
 
     PlayerAllianceRequest()
     {
@@ -119,18 +119,18 @@ public:
         message_id = _net_message_id_player_alliance_request;
     }
 
-    void set(uint16_t allie_by_player_index, uint16_t allie_with_player_index,
-            uint8_t alliance_request_type)
+    void set(Uint16 allie_by_player_index, Uint16 allie_with_player_index,
+            Uint8 alliance_request_type)
     {
         this->allie_by_player_index = htol16(allie_by_player_index);
         this->allie_with_player_index = htol16(allie_with_player_index);
         this->alliance_request_type = alliance_request_type;
     }
-    uint16_t getAllieByPlayerIndex() const
+    Uint16 getAllieByPlayerIndex() const
     {
         return ltoh16(allie_by_player_index);
     }
-    uint16_t getAllieWithPlayerIndex() const
+    Uint16 getAllieWithPlayerIndex() const
     {
         return ltoh16(allie_with_player_index);
     }
@@ -141,10 +141,10 @@ __attribute__((packed));
 class PlayerAllianceUpdate : public NetMessage
 {
 private:
-    uint16_t allie_by_player_index;
-    uint16_t allie_with_player_index;
+    Uint16 allie_by_player_index;
+    Uint16 allie_with_player_index;
 public:
-    uint8_t  alliance_update_type;
+    Uint8  alliance_update_type;
 
     PlayerAllianceUpdate()
     {
@@ -152,19 +152,19 @@ public:
         message_id = _net_message_id_player_alliance_update;
     }
 
-    void set(uint16_t by_player_index, uint16_t with_player_index,
-            uint8_t update_type )
+    void set(Uint16 by_player_index, Uint16 with_player_index,
+            Uint8 update_type )
     {
         allie_by_player_index = htol16(by_player_index);
         allie_with_player_index = htol16(with_player_index);
         alliance_update_type = update_type;
     }
 
-    uint16_t getAllieByPlayerIndex() const
+    Uint16 getAllieByPlayerIndex() const
     {
         return ltoh16(allie_by_player_index);
     }
-    uint16_t getAllieWithPlayerIndex() const
+    Uint16 getAllieWithPlayerIndex() const
     {
         return ltoh16(allie_with_player_index);
     }

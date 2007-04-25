@@ -34,7 +34,7 @@ public:
     void init();
 
     static void initColors();
-    static uint8_t fireColor[12];
+    static Uint8 fireColor[12];
 
     FireParticle2D fireParticles[100];
 

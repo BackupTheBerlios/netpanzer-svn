@@ -26,17 +26,19 @@ ScreenSurface::ScreenSurface(SDLVideo* newdraw, int width, int height)
         : Surface(), draw(newdraw)
 {
     myMem = false;
-    frameCount = 1;
+    numFrames = 1;
 
-    pix = iXY(width, height);
-    stride = width;
-    center = iXY(width/2, height/2);
-    frameCount = 1;
+    twidth =width;
+    theight=height;
+    tpitch = width;
+    
+    numFrames = 1;
     doesExist = false;
 }
 
 void ScreenSurface::lock()
 {
+    // XXX HERE HERE 
     assert(doesExist == false);
     draw->lockDoubleBuffer( (unsigned char **) &frame0 );
     mem = frame0;

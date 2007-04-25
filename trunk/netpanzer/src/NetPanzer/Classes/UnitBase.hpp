@@ -25,7 +25,7 @@ class UnitOpcode;
 class SpriteSorter;
 class PlayerState;
 
-typedef uint16_t UnitID;
+typedef Uint16 UnitID;
 
 class UnitBase
 {

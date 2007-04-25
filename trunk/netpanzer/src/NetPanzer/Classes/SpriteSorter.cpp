@@ -102,7 +102,7 @@ void SpriteSorter::forceAddSprite(Sprite *sprite)
 {
     unsigned char height;
 
-    height = sprite->getHeight();
+    height = sprite->getSpriteHeight();
 
     assert( height < _MAX_HEIGHT_LEVELS );
 

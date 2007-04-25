@@ -44,9 +44,9 @@ RadarPingParticle2D::RadarPingParticle2D(fXYZ pos) : Particle2D(pos)
 //---------------------------------------------------------------------------
 void RadarPingParticle2D::init()
 {
-    radarPingSprite.create(iXY(48, 46), 48, 6);
+    radarPingSprite.create(48, 46, 6);
 
-    radarPingSprite.setOffset(iXY(-radarPingSprite.getCenter().x, -radarPingSprite.getPix().y));
+    radarPingSprite.setOffset(iXY(-radarPingSprite.getCenter().x, -radarPingSprite.getHeight()));
 
 } // end RadarPingParticle2D::init
 
@@ -71,7 +71,7 @@ void RadarPingParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
         radarPingSurface.setAttrib(iXY(pos.x, pos.z), 3);
         sorter.addSprite(&radarPingSurface);
     } else if (Particle2D::bltTo == BLT_TO_SURFACE) {
-        iRect r(pos.x, pos.z, pos.x + radarPingSurface.getPixX(), pos.z + radarPingSurface.getPixY());
+        iRect r(pos.x, pos.z, pos.x + radarPingSurface.getWidth(), pos.z + radarPingSurface.getHeight());
         dest.bltScale(radarPingSurface, r);
         //radarPingSurface.bltTrans(dest, pos.x, pos.z);
     } else {

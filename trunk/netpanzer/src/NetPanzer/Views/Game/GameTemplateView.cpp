@@ -52,7 +52,7 @@ void GameTemplateView::rMouseDrag(const iXY&, const iXY &prevPos, const iXY &new
     }
 
     moveTo(min + newPos - prevPos);
-    checkArea(screen->getPix());
+    checkArea(iXY(screen->getWidth(),screen->getHeight()));
     notifyMoveTo();
 }
 

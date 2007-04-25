@@ -58,11 +58,11 @@ void AreYouSureExitView::init()
     setAllowResize(false);
     setDisplayStatusBar(false);
 
-    resize(screen->getPix());
+    resize(screen->getWidth(), screen->getHeight());
     moveTo(0,0);
 
     int x = (getClientRect().getSize().x - (141 * 2 + 20)) / 2;
-    int y = screen->getPixY()/2 + 30;
+    int y = screen->getHeight()/2 + 30;
     addSpecialButton(	iXY(x, y),
                       "YES",
                       bYES);

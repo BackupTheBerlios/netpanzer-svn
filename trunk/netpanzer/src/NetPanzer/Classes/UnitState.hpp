@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _UNITSTATE_HPP
 
 #include <string.h>
-#include <stdint.h>
 
 #include "ArrayUtil/BoundBox.hpp"
 #include "Types/Angle.hpp"
@@ -42,31 +41,31 @@ public:
     { }
 
 private:
-    uint8_t     unit_type;
+    Uint8     unit_type;
 
-    int32_t     location_x;
-    int32_t     location_y;
-    int32_t     bbox_min_x;
-    int32_t     bbox_min_y;
-    int32_t     bbox_max_x;
-    int32_t     bbox_max_y;
+    Sint32     location_x;
+    Sint32     location_y;
+    Sint32     bbox_min_x;
+    Sint32     bbox_min_y;
+    Sint32     bbox_max_x;
+    Sint32     bbox_max_y;
     
     NetworkAngleInt body_angle;
     NetworkAngleInt turret_angle;
 
-    uint16_t    orientation;
-    uint16_t    speed_rate;
-    uint16_t    speed_factor;
+    Uint16    orientation;
+    Uint16    speed_rate;
+    Uint16    speed_factor;
 
-    uint16_t    reload_time;
-    int16_t     max_hit_points;
-    int16_t     hit_points;
-    uint16_t    damage_factor;
-    uint32_t    weapon_range;
-    uint32_t    defend_range;
+    Uint16    reload_time;
+    Sint16     max_hit_points;
+    Sint16     hit_points;
+    Uint16    damage_factor;
+    Uint32    weapon_range;
+    Uint32    defend_range;
 
-    uint8_t threat_level;
-    uint8_t lifecycle_state;
+    Uint8 threat_level;
+    Uint8 lifecycle_state;
 
     friend class UnitState;
 } __attribute__((packed));

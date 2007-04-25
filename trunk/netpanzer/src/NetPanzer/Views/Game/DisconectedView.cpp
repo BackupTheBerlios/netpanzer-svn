@@ -120,7 +120,7 @@ DisconectedView::init()
     setAllowResize(false);
     setDisplayStatusBar(false);
 
-    resize(screen->getPix());
+    resize(screen->getWidth(),screen->getHeight());
     moveTo(0,0);
 
     int bsize = Surface::getTextLength(" ") * 8;

@@ -39,7 +39,7 @@ enum { _net_message_id_opcode_mesg,
 class UnitOpcodeMessage : public NetMessage
 {
 public:
-    uint8_t data[ _OPCODE_MESSAGE_LIMIT ];
+    Uint8 data[ _OPCODE_MESSAGE_LIMIT ];
     
     UnitOpcodeMessage()
     {
@@ -58,24 +58,24 @@ public:
 class UnitIniSyncMessage : public NetMessage
 {
 public:
-    uint8_t unit_type;
+    Uint8 unit_type;
 private:
-    // XXX this should really be uint16_t player_id;
-    uint8_t player_id;
-    uint16_t unit_id;
-    uint32_t location_x;
-    uint32_t location_y;
+    // XXX this should really be Uint16 player_id;
+    Uint8 player_id;
+    Uint16 unit_id;
+    Uint32 location_x;
+    Uint32 location_y;
 public:
     NetworkUnitState unit_state;
 
-    UnitIniSyncMessage(uint8_t unit_type, uint16_t player_id, UnitID unit_id,
-        uint32_t location_x, uint32_t location_y)
+    UnitIniSyncMessage(Uint8 unit_type, Uint16 player_id, UnitID unit_id,
+        Uint32 location_x, Uint32 location_y)
     {
         message_class = _net_message_class_unit;
         message_id = _net_message_id_ini_sync_mesg;
         this->unit_type = unit_type;
         //this->player_id = htol16(player_id);
-        this->player_id = (uint8_t) player_id;
+        this->player_id = (Uint8) player_id;
         this->unit_id = htol16(unit_id);
         this->location_x = htol32(location_x);
         this->location_y = htol32(location_y);
@@ -85,11 +85,11 @@ public:
     {
         return( sizeof( UnitIniSyncMessage ) );
     }
-    uint32_t getLocX() const
+    Uint32 getLocX() const
     {
         return ltoh32(location_x);
     }
-    uint32_t getLocY() const
+    Uint32 getLocY() const
     {
         return ltoh32(location_y);
     }
@@ -98,7 +98,7 @@ public:
     {
         return ltoh16(unit_id);
     }
-    uint16_t getPlayerID() const
+    Uint16 getPlayerID() const
     {
         return player_id;
     }
@@ -109,7 +109,7 @@ public:
 class UnitRemoteDestroy : public NetMessage
 {
 private:
-    uint16_t unit_to_destroy;
+    Uint16 unit_to_destroy;
 
 public:
     UnitRemoteDestroy()
@@ -132,15 +132,15 @@ public:
 class UnitRemoteCreate : public NetMessage
 {
 private:
-    uint16_t player_id;
-    uint16_t new_unit_id;
-    uint32_t location_x;
-    uint32_t location_y;
+    Uint16 player_id;
+    Uint16 new_unit_id;
+    Uint32 location_x;
+    Uint32 location_y;
 public:
-    uint8_t unit_type;
+    Uint8 unit_type;
 
-    UnitRemoteCreate(uint16_t player_id, UnitID id,
-            uint32_t x, uint32_t y, uint8_t type)
+    UnitRemoteCreate(Uint16 player_id, UnitID id,
+            Uint32 x, Uint32 y, Uint8 type)
     {
         message_class = _net_message_class_unit;
         message_id = _net_message_id_create_unit;
@@ -151,11 +151,11 @@ public:
         unit_type = type;
     }
         
-    uint32_t getLocX() const
+    Uint32 getLocX() const
     {
         return ltoh32(location_x);
     }
-    uint32_t getLocY() const
+    Uint32 getLocY() const
     {
         return ltoh32(location_y);
     }
@@ -163,7 +163,7 @@ public:
     {
         return ltoh16(new_unit_id);
     }
-    uint16_t getPlayerID() const
+    Uint16 getPlayerID() const
     {
         return ltoh16(player_id);
     }

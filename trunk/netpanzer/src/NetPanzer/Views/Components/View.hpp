@@ -19,8 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __View_hpp__
 #define __View_hpp__
 
-#include <stdint.h>
-
 #include "cMouse.hpp"
 #include "cButton.hpp"
 #include "2D/Surface.hpp"
@@ -40,8 +38,8 @@ class cLabel
 public:
     iXY   pos;
     char *label;
-    uint8_t  foreColor;
-    uint8_t  backColor;
+    Uint8  foreColor;
+    Uint8  backColor;
     bool  isShadowed;
 }; // end cLabel
 
@@ -245,7 +243,7 @@ protected:
     virtual void rMouseUp();
     virtual void rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
     virtual void rMouseDouble(const iXY &pos);
-    //virtual void keyDown(uint8_t keyCode);
+    //virtual void keyDown(Uint8 keyCode);
     virtual void mouseEnter(const iXY &pos);
     virtual void mouseExit(const iXY &pos);
     //virtual void keyUp();

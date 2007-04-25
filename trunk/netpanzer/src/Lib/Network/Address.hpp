@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __ADDRESS_HPP__
 #define __ADDRESS_HPP__
 
+#include "SDL.h"
 #include "SocketHeaders.hpp"
 #include "NetworkException.hpp"
 #include <string>
@@ -34,12 +35,12 @@ public:
     /** resolves a hostname or IP-Number together with a port and returns a
      * new Address object.
      */
-    static Address resolve(const std::string& name, uint16_t port) throw(NetworkException);
+    static Address resolve(const std::string& name, Uint16 port) throw(NetworkException);
 
     /** returns the ip address of this Address as string */
     std::string getIP() const;
     /** returns the port of this address */
-    uint16_t getPort() const;
+    Uint16 getPort() const;
 
     void operator=(const Address& other);
     bool operator==(const Address& other) const;

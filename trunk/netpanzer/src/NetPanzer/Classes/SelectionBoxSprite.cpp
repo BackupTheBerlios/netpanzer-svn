@@ -49,7 +49,7 @@ void SelectionBoxSprite::blit( Surface *surface, const iRect &world_win )
         surface->drawVLine(min_abs.x, min_abs.y, max_abs.y, box_color);
     }
 
-    if( (max_abs.x < surface->getPix().x)  ) {
+    if( (max_abs.x < surface->getWidth())  ) {
         surface->drawVLine(max_abs.x, min_abs.y, max_abs.y, box_color);
     }
 
@@ -57,7 +57,7 @@ void SelectionBoxSprite::blit( Surface *surface, const iRect &world_win )
         surface->drawHLine(min_abs.x, min_abs.y, max_abs.x, box_color);
     }
 
-    if ( (max_abs.y < surface->getPix().y) ) {
+    if ( (max_abs.y < surface->getHeight()) ) {
         surface->drawHLine(min_abs.x, max_abs.y, max_abs.x+1, box_color);
     }
 
@@ -90,7 +90,7 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
         // Draw the selection box.
         if (gameconfig->unitselectionmode == _unit_selection_box_draw_mode_rect) {
             // Draw the rectangle selection box.
-            surface->drawRect(min_abs.x, min_abs.y, max_abs.x, max_abs.y, selectionBoxColor);
+            surface->drawRect(iRect(min_abs, max_abs), selectionBoxColor);
         } else if (gameconfig->unitselectionmode == _unit_selection_box_draw_mode_rect_edges) {
             surface->drawBoxCorners(
                     iRect(min_abs.x, min_abs.y, max_abs.x, max_abs.y),
@@ -105,7 +105,7 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
     // Draw the unit hitpoints.
     if ( gameconfig->drawunitdamage || (box_state == true) ) {
         // Draw a color coded hit bar.
-        uint8_t hitBarColor;
+        Uint8 hitBarColor;
 
         float hitPointPercent = float(hit_points) / float(max_hit_points);
 
@@ -135,8 +135,8 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
 
     if ( gameconfig->drawunitflags == true ) {
         //unit_flag.blt( *surface, iXY( min_abs.x, min_abs.y - unit_flag.getPix().y ) );
-        //surface->bltString5x5(min_abs.x + 2, min_abs.y - 6, "Panther1", Color::white);
-        unit_flag.blt( *surface, iXY(min_abs.x, min_abs.y - unit_flag.getPixY() - 1) );
+        //surface->bltString(min_abs.x + 2, min_abs.y - 6, "Panther1", Color::white);
+        unit_flag.blt( *surface, min_abs.x, min_abs.y-unit_flag.getHeight()-1 );
     }
 
     /*

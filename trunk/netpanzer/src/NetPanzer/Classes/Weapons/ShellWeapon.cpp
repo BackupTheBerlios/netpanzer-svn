@@ -49,14 +49,14 @@ ShellWeapon::ShellWeapon(UnitID &owner, unsigned short owner_type_id, unsigned s
 
     shell.setData(gShellPackedSurface);
     shell.setFrame(frame360);
-    shell.setHeight(weaponLayer);
+    shell.setSpriteHeight(weaponLayer);
 
     shell.setDrawModeSolid();
 
     shellShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
     shellShadow.setData(gShellPackedSurface);
     shellShadow.setFrame(getGoalAngle(start, end));
-    shellShadow.setHeight(weaponShadowLayer);
+    shellShadow.setSpriteHeight(weaponShadowLayer);
 }
 
 void ShellWeapon::fsmFlight()

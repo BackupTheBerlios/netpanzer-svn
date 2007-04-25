@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _OBJECTIVEINTERFACE_HPP
 #define _OBJECTIVEINTERFACE_HPP
 
-#include <SDL.h>
+#include "SDL.h"
 
 #include "Objective.hpp"
 #include "ArrayUtil/ArrayTemplate.hpp"
@@ -57,7 +57,7 @@ public:
     static void loadObjectiveList( const char *file_path );
 
     static unsigned char quearyObjectiveLocationStatus(iXY &loc,
-            uint16_t player_id, Objective **objective_ptr);
+            Uint16 player_id, Objective **objective_ptr);
 
     static void processTerminalNetPacket(const NetPacket* packet);
     static void sendMessage(const ObjectiveMessage* message,
@@ -69,10 +69,10 @@ public:
 
     static void offloadGraphics( SpriteSorter &sorter );
 
-    static bool testRuleObjectiveOccupationRatio(uint16_t player_index,
+    static bool testRuleObjectiveOccupationRatio(Uint16 player_index,
             float precentage );
 
-    static void disownPlayerObjectives(uint16_t player_id);
+    static void disownPlayerObjectives(Uint16 player_id);
 
     static ObjectiveState * getObjectiveState( short objective_id );
 

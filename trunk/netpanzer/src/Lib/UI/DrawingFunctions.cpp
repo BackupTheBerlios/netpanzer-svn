@@ -28,7 +28,7 @@ namespace UI{
                                 Color color)
     {
         // XXX hardcoded to 8 bit for now...
-        uint8_t* pixels = (uint8_t*) surface->pixels;
+        Uint8* pixels = (Uint8*) surface->pixels;
 
         //is this cast safe ?
         if(x >= (size_t)surface->clip_rect.x &&

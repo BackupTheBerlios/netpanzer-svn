@@ -521,11 +521,11 @@ void ParticleInterface::testSimText(Surface &dest)
     int yOffset = 10;
 
     sprintf(strBuf, "particleSystemCount: %d", ParticleSystem2D::getParticleSystemCount());
-    dest.bltString5x5(iXY(2, y), strBuf, Color::white);
+    dest.bltString(2, y, strBuf, Color::white);
     y += yOffset;
 
     sprintf(strBuf, "particleCount:       %d", Particle2D::getFrameCount());
-    dest.bltString5x5(iXY(2, y), strBuf, Color::white);
+    dest.bltString(2, y, strBuf, Color::white);
 }
 
 //--------------------------------------------------------------------------
@@ -670,7 +670,7 @@ float ParticleInterface::getFrameRateAdjustment()
 }
 
 //--------------------------------------------------------------------------
-void ParticleInterface::addMiss(const iXY &worldPos, uint8_t unitType)
+void ParticleInterface::addMiss(const iXY &worldPos, Uint8 unitType)
 {
     /*
       short hit_points;
@@ -764,7 +764,7 @@ void ParticleInterface::buildUnitTables()
 }
 
 //--------------------------------------------------------------------------
-void ParticleInterface::addMissleFlightPuff(const iXY &worldPos, const fXY &direction, float &curWait, float &totalWait, uint8_t unitType)
+void ParticleInterface::addMissleFlightPuff(const iXY &worldPos, const fXY &direction, float &curWait, float &totalWait, Uint8 unitType)
 {
     (void) unitType;
     iXY thrustOffset(int(-10.0f * direction.x), int(-10.0f * direction.y));
@@ -794,7 +794,7 @@ void ParticleInterface::addMissleFlightPuff(const iXY &worldPos, const fXY &dire
 }
 
 //--------------------------------------------------------------------------
-void ParticleInterface::addMissleLaunchPuff(const iXY &worldPos, const fXY &direction, uint8_t unitType)
+void ParticleInterface::addMissleLaunchPuff(const iXY &worldPos, const fXY &direction, Uint8 unitType)
 {
     (void) worldPos;
     (void) direction;
@@ -831,7 +831,7 @@ void ParticleInterface::addMissleExplosion(const iXY &worldPos)
 }
 
 //--------------------------------------------------------------------------
-void ParticleInterface::addMuzzlePuff(const fXYZ &worldPos, const fXYZ &direction, int frame, uint8_t unitType)
+void ParticleInterface::addMuzzlePuff(const fXYZ &worldPos, const fXYZ &direction, int frame, Uint8 unitType)
 {
     // Cull out any muzzle puffs which are far away.
     if (Particle2D::getFarAway(worldPos)) {
@@ -1058,7 +1058,7 @@ void ParticleInterface::getUnitParticleInfo()
 void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTips[36])
 {
     // Copy all the packed images onto regular surfaces.
-    Surface source(packedSource.getPix(), packedSource.getPixX(), packedSource.getFrameCount());
+    Surface source(packedSource.getWidth(), packedSource.getHeight(), packedSource.getFrameCount());
     {
         for (int i = 0; i < packedSource.getFrameCount(); i++) {
             source.setFrame(i);
@@ -1080,7 +1080,7 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
 
             for (int offset = 0; offset < source.getCenterX(); offset++) {
                 int yy = offset;
-                for (int x = source.getPixX() - offset; x >= 0; x--) {
+                for (int x = source.getWidth() - offset; x >= 0; x--) {
                     if (source.getPixel(x, yy) != 0) {
                         muzzleTips[i] = iXY(x, yy) - source.getCenter();
                         done = true;
@@ -1091,8 +1091,8 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
                     break;
                 }
 
-                int xx = source.getPixX() - 1 - offset;
-                for (int y = offset; y < source.getPixY(); y++) {
+                int xx = source.getWidth() - 1 - offset;
+                for (unsigned int y = offset; y < source.getHeight(); y++) {
                     if (source.getPixel(xx, y) != 0) {
                         muzzleTips[i] = iXY(xx, y) - source.getCenter();
                         done = true;
@@ -1116,7 +1116,7 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
 
             for (int offset = 0; offset < source.getCenterX(); offset++) {
                 int yy = offset;
-                for (int x = offset; x < source.getPixX(); x++) {
+                for (unsigned int x = offset; x < source.getWidth(); x++) {
                     if (source.getPixel(x, yy) != 0) {
                         muzzleTips[i] = iXY(x, yy) - source.getCenter();
                         done = true;
@@ -1128,7 +1128,7 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
                 }
 
                 int xx = offset;
-                for (int y = offset; y < source.getPixY(); y++) {
+                for (unsigned int y = offset; y < source.getHeight(); y++) {
                     if (source.getPixel(xx, y) != 0) {
                         muzzleTips[i] = iXY(xx, y) - source.getCenter();
                         done = true;
@@ -1151,8 +1151,8 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
             source.setFrame(i);
 
             for (int offset = 0; offset < source.getCenterX(); offset++) {
-                int yy = source.getPixY() - 1 - offset;
-                for (int x = source.getPixX() - 1 - offset; x > 0; x--) {
+                int yy = source.getHeight() - 1 - offset;
+                for (int x = source.getWidth() - 1 - offset; x > 0; x--) {
                     if (source.getPixel(x, yy) != 0) {
                         muzzleTips[i] = iXY(x, yy) - source.getCenter();
                         done = true;
@@ -1164,7 +1164,7 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
                 }
 
                 int xx = offset;
-                for (int y = source.getPixY() - 1; y >= 0; y--) {
+                for (int y = source.getHeight() - 1; y >= 0; y--) {
                     if (source.getPixel(xx, y) != 0) {
                         muzzleTips[i] = iXY(xx, y) - source.getCenter();
                         done = true;
@@ -1186,9 +1186,9 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
         {
             source.setFrame(i);
 
-            for (int offset = 0; offset < source.getCenterX(); offset++) {
-                int yy = source.getPixY() - 1 - offset;
-                for (int x = offset; x < source.getPixX(); x++) {
+            for (unsigned int offset = 0; offset < source.getCenterX(); offset++) {
+                int yy = source.getHeight() - 1 - offset;
+                for (unsigned int x = offset; x < source.getWidth(); x++) {
                     if (source.getPixel(x, yy) != 0) {
                         muzzleTips[i] = iXY(x, yy) - source.getCenter();
                         done = true;
@@ -1199,8 +1199,8 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
                     break;
                 }
 
-                int xx = source.getPixX() - 1 - offset;
-                for (int y = source.getPixY() - 1; y >= 0; y--) {
+                int xx = source.getWidth() - 1 - offset;
+                for (int y = source.getHeight() - 1; y >= 0; y--) {
                     if (source.getPixel(xx, y) != 0) {
                         muzzleTips[i] = iXY(xx, y) - source.getCenter();
                         done = true;
@@ -1222,7 +1222,7 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
 void ParticleInterface::getMinBounds(PackedSurface &packedSource, iRect &minBounds)
 {
     // Copy all the packed images onto regular surfaces.
-    Surface source(packedSource.getPix(), packedSource.getPixX(), packedSource.getFrameCount());
+    Surface source(packedSource.getWidth(), packedSource.getHeight(), packedSource.getFrameCount());
     for (int i = 0; i < packedSource.getFrameCount(); i++) {
         source.setFrame(i);
         source.fill(0);
@@ -1245,7 +1245,7 @@ void ParticleInterface::getMinBounds(PackedSurface &packedSource, iRect &minBoun
 
     // Get the maxY.
     x = source.getCenterX();
-    y = source.getPixY() - 1;
+    y = source.getHeight() - 1;
     source.setFrame(0);
     while (source.getPixel(x, y) == 0) {
         y--;
@@ -1262,7 +1262,7 @@ void ParticleInterface::getMinBounds(PackedSurface &packedSource, iRect &minBoun
     }
 
     // Get the maxX.
-    x = source.getPixX() - 1;
+    x = source.getWidth() - 1;
     y = source.getCenterY();
     source.setFrame(9);
     while (source.getPixel(x, y) == 0) {

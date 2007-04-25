@@ -102,7 +102,7 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
     
     if(serverlist.empty()) {
         const char* msg = queryThread->getStateMessage();
-        clientArea.bltString(iXY(0, 0), msg, Color::white);
+        clientArea.bltString(0, 0, msg, Color::white);
         View::doDraw(windowArea, clientArea);
         return;
     }
@@ -113,17 +113,17 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
         const masterserver::ServerInfo& server = *(*i);
 
         if(server.status == masterserver::ServerInfo::QUERYING) {
-            clientArea.bltString(iXY(0, y), server.address, Color::gray);
-            clientArea.bltString(iXY(140, y), "querying...", Color::gray);
+            clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
+            clientArea.bltString(140, y, "querying...", Color::gray);
         } else if(server.status == masterserver::ServerInfo::TIMEOUT) {
-            clientArea.bltString(iXY(0, y), server.address, Color::gray);
-            clientArea.bltString(iXY(140, y), "timeout", Color::gray);
+            clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
+            clientArea.bltString(140, y, "timeout", Color::gray);
         } else if(server.protocol < NETPANZER_PROTOCOL_VERSION) {
-            clientArea.bltString(iXY(0, y), server.address, Color::gray);
-            clientArea.bltString(iXY(140, y), "server protocol too old", Color::gray);
+            clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
+            clientArea.bltString(140, y, "server protocol too old", Color::gray);
         } else if(server.protocol > NETPANZER_PROTOCOL_VERSION) {
-            clientArea.bltString(iXY(0, y), server.address, Color::gray);
-            clientArea.bltString(iXY(140, y), "server protocol too new", Color::gray);
+            clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
+            clientArea.bltString(140, y, "server protocol too new", Color::gray);
         } else {
             std::stringstream playerstr;
             playerstr << server.players << "/" << server.maxplayers;
@@ -134,20 +134,24 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
             std::stringstream servaddr;
             servaddr << server.address << ':' << server.port;
             
-            uint8_t textcolor = Color::white;
+            Uint8 textcolor = Color::white;
             
-            if (servaddr.str()==IPAddressView::szServer.getString())
+            if (servaddr.str()==IPAddressView::szServer.getString()) {
                 textcolor = Color::yellow;
+                clientArea.fillRect(
+                    iRect(0,y,clientArea.getWidth(),y+Surface::getFontHeight()),
+                    Color::blue);
+            }
 
-            clientArea.bltString(iXY(0, y), server.name, textcolor);
-            clientArea.bltString(iXY(350, y), playerstr.str(), textcolor);
-            clientArea.bltString(iXY(400, y), server.map, textcolor);
-            clientArea.bltString(iXY(550, y), pingstr.str(), textcolor);
+            clientArea.bltString(0,   y, server.name.c_str(), textcolor);
+            clientArea.bltString(350, y, playerstr.str().c_str(), textcolor);
+            clientArea.bltString(400, y, server.map.c_str(), textcolor);
+            clientArea.bltString(550, y, pingstr.str().c_str(), textcolor);
 
         }
 
         y += Surface::getFontHeight();
-        if(y >= clientArea.getPixY())
+        if(y >= clientArea.getHeight())
             break;                             
     }
 

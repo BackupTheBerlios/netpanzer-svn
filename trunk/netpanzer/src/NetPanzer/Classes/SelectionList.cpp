@@ -26,7 +26,7 @@ bool SelectionList::selectUnit(iXY point)
     deselect();
     unit_list.clear();
 
-    uint16_t player_id = PlayerInterface::getLocalPlayerIndex();
+    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
     UnitInterface::queryUnitsAt(unit_list, point, player_id, _search_player);
 
     select();
@@ -41,7 +41,7 @@ bool SelectionList::addUnit(iXY point)
 {
     deselect();
 
-    uint16_t player_id = PlayerInterface::getLocalPlayerIndex();
+    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
     UnitInterface::queryUnitsAt(unit_list, point, player_id, _search_player);
 
     select();
@@ -58,7 +58,7 @@ bool SelectionList::selectTarget(iXY point)
     deselect();
     unit_list.clear();
 
-    uint16_t player_id = PlayerInterface::getLocalPlayerIndex();
+    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
     UnitInterface::queryUnitsAt(unit_list, point, player_id,
             _search_exclude_player);
 
@@ -71,7 +71,7 @@ bool SelectionList::selectTarget(iXY point)
 
 bool SelectionList::selectBounded(iRect bounds, bool addunits)
 {
-    uint16_t player_id = PlayerInterface::getLocalPlayerIndex();
+    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
 
     if(!addunits) {
         deselect();

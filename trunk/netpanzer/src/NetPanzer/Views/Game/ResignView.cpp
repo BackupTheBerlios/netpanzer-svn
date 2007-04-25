@@ -85,7 +85,7 @@ void ResignView::init()
 //---------------------------------------------------------------------------
 void ResignView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    iRect r(0, 0, currentscreen->getPixX(), currentscreen->getPixY());
+    iRect r(0, 0, currentscreen->getWidth(), currentscreen->getHeight());
 
     currentscreen->bltLookup(r, Palette::darkGray256.getColorArray());
     currentscreen->drawButtonBorder(r, Color::lightGreen, Color::darkGreen);

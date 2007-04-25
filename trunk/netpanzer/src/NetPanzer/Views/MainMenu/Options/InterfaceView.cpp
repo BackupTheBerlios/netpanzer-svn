@@ -91,7 +91,7 @@ void InterfaceView::doDraw(Surface &viewArea, Surface &clientArea)
     int   x               = optionsMeterStartX + arrowButtonWidth;
     int   y               = bodyTextRect.min.y + 15;
 
-    Surface tempSurface(optionsMeterWidth, 14, optionsMeterWidth, 1);
+    Surface tempSurface(optionsMeterWidth, 14, 1);
 
     // Scroll Rate
     tempSurface.fill(meterColor);

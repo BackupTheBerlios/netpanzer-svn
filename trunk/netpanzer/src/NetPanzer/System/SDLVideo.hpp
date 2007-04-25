@@ -18,8 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __SDLVideo_hpp__
 #define __SDLVideo_hpp__
 
-#include <SDL.h>
-#include "2D/RGBColor.hpp"
+#include "SDL.h"
 
 // DirectDraw class declarations
 //---------------------------------------------------------------------------
@@ -38,7 +37,7 @@ public:
     void lockDoubleBuffer(unsigned char **DoubleBuffer);
     void unlockDoubleBuffer();
     void copyDoubleBufferandFlip();
-    void setPalette(RGBColor *color);
+    void setPalette(SDL_Color *color);
 
     SDL_Surface* getSurface();
 }; // end DirectDraw

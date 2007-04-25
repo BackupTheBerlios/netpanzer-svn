@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PLAYERID_HPP
 #define _PLAYERID_HPP
 
-#include <stdint.h>
 #include "NetPacket.hpp"
 
 class PlayerID
@@ -28,7 +27,7 @@ public:
             : index_id(0xFFFF), networkid(0xFFFFFFFF)
     { }
 
-    PlayerID(uint16_t index, NetClientID newid)
+    PlayerID(Uint16 index, NetClientID newid)
             : index_id(index), networkid(newid)
     { }
 
@@ -42,12 +41,12 @@ public:
         networkid = other.networkid;
     }
 
-    void setIndex(uint16_t index)
+    void setIndex(Uint16 index)
     {
         index_id = index;
     }
 
-    uint16_t getIndex() const
+    Uint16 getIndex() const
     {
         return index_id;
     }
@@ -71,7 +70,7 @@ public:
     }
 
 private:
-    uint16_t index_id;
+    Uint16 index_id;
     NetClientID networkid;
 };
 

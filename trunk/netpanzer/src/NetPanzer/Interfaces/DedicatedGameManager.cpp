@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <fcntl.h>
 #include <string>
 #include <iomanip>
-#include <SDL.h>
+#include "SDL.h"
 
 #include "ChatInterface.hpp"
 #include "ConsoleInterface.hpp"
@@ -165,7 +165,7 @@ void DedicatedGameManager::inputLoop()
                 break;
             case ServerCommand::KICK:
                 std::stringstream idstream(command.argument);
-                uint16_t id = 0xffff;
+                Uint16 id = 0xffff;
                 idstream >> id;
                 if(id >= PlayerInterface::getMaxPlayers()) {
                     std::cout << "Unknown player." << std::endl;

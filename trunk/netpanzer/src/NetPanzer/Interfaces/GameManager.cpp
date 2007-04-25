@@ -165,7 +165,7 @@ void GameManager::setVideoMode()
 
     // construct flags
     iXY mode_res;
-    iXY old_res = screen ? screen->getPix() : iXY(0,0) ;
+    iXY old_res = screen ? iXY(screen->getWidth(), screen->getHeight()): iXY(0,0);
     Uint32 flags = gameconfig->fullscreen ? SDL_FULLSCREEN : 0;
     flags |= gameconfig->hardwareSurface ? SDL_HWSURFACE : 0;
     flags |= gameconfig->hardwareDoubleBuffer ? SDL_DOUBLEBUF : 0;
@@ -200,9 +200,9 @@ void GameManager::setVideoMode()
         // users can get annoyed when they see a black screen for half a minute
         // so we display something here... (we're just hoping that palette1 is
         // not black)
-        Palette::color[255].red = 255;
-        Palette::color[255].green = 255;
-        Palette::color[255].blue = 255;
+        Palette::color[255].r = 255;
+        Palette::color[255].g = 255;
+        Palette::color[255].b = 255;
         Screen->setPalette(Palette::color);
         drawTextCenteredOnScreen("Please wait... generating palettes", 255);
     }

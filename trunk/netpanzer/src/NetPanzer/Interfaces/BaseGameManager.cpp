@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "BaseGameManager.hpp"
 
-#include <SDL.h>
+#include "SDL.h"
 #include "NetworkServerUnix.hpp"
 #include "NetworkClientUnix.hpp"
 
@@ -140,11 +140,11 @@ void BaseGameManager::loadGameData()
     UnitProfileInterface::loadUnitProfiles();
     LoadUnitSurfaces();
     UNIT_FLAGS_SURFACE.loadAllBMPInDirectory("pics/flags/");
-    if(UNIT_FLAGS_SURFACE.getFrameCount() == 0) {
+    if(UNIT_FLAGS_SURFACE.getNumFrames() == 0) {
         throw Exception("Couldn't find any flag in pics/flags/.");
     }
     if(gameconfig->playerflag.isDefaultValue()) {
-        gameconfig->playerflag=rand()%UNIT_FLAGS_SURFACE.getFrameCount();
+        gameconfig->playerflag=rand()%UNIT_FLAGS_SURFACE.getNumFrames();
     }
 }
 //-----------------------------------------------------------------
@@ -323,9 +323,9 @@ void BaseGameManager::LoadUnitSurfaces()
     // 256 shades of gray.
     gray256.init(256);
     for (int num = 0; num < 256; num++) {
-        int c            = Palette::color[num].getBrightnessInt();
+        int c = int(Palette::color[num].r+Palette::color[num].g+Palette::color[num].b)/3; //brightness
         int nearestColor = Palette::findNearestColor(
-		RGBColor(int(c * grayPercent), int(c * grayPercent),
+		SDL_Color(int(c * grayPercent), int(c * grayPercent),
 			 int(c * grayPercent)));
         gray256.setColor(num, nearestColor);
     }

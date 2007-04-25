@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 
 
-ServerSocket::ServerSocket(const string& bindaddress, uint16_t port)
+ServerSocket::ServerSocket(const string& bindaddress, Uint16 port)
         : socket(0)
 {
   

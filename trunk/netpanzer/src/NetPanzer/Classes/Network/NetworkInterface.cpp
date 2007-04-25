@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "NetworkInterface.hpp"
 
-void EnqueueIncomingPacket(const void *message, uint16_t message_size,
+void EnqueueIncomingPacket(const void *message, Uint16 message_size,
                            NetClientID toID, NetClientID fromID )
 {
     static NetPacket TEMP_PACKET;

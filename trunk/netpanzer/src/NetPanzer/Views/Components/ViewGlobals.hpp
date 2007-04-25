@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __ViewGlobals_hpp__
 #define __ViewGlobals_hpp__
 
-#include <stdint.h>
+#include "SDL.h"
 
 #define topLeftBorderColor           (Color::white)
 #define bottomRightBorderColor       (Color::black)
@@ -34,10 +34,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define inactiveWindowTitleTextColor (Color::black)
 #define inactiveWindowTitleBodyColor (Color::terreVerte)
 
-extern uint8_t gForeground;
-extern uint8_t gBackground;
+extern Uint8 gForeground;
+extern Uint8 gBackground;
 
-void setForeground(uint8_t color);
-void setBackground(uint8_t color);
+void setForeground(Uint8 color);
+void setBackground(Uint8 color);
 
 #endif // end __ViewGlobals_hpp__

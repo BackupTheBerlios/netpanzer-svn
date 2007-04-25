@@ -34,7 +34,7 @@ void blit_partial_xy(const unsigned char *tile_ptr, unsigned char *buffer_ptr,
     // Pass in class instead of data pointer.
     for(int y=0; y<y_size; y++) {
         memcpy(buffer_ptr, tile_ptr, x_size);
-        buffer_ptr += screen->getPixX();
+        buffer_ptr += screen->getWidth();
         tile_ptr   += 32;
     }
 }
@@ -47,7 +47,7 @@ void blit_partial_y(const unsigned char *tile_ptr, unsigned char *buffer_ptr,
     for(y=0; y<y_size; y++) {
         memcpy(buffer_ptr, tile_ptr, 32);
         tile_ptr += 32;
-        buffer_ptr += screen->getPixX();
+        buffer_ptr += screen->getWidth();
     }
 }
 
@@ -63,8 +63,8 @@ void general_blitter(unsigned char x_size, unsigned char y_size,
             if(buffer_ptr[x] != 0)
                 dbuffer_ptr[x]=buffer_ptr[x];
         }
-        buffer_ptr += screen->getPixX();
-        dbuffer_ptr += screen->getPixX();
+        buffer_ptr += screen->getWidth();
+        dbuffer_ptr += screen->getWidth();
     }
 }
 
@@ -76,11 +76,11 @@ void blit_selector_square( unsigned char x_size, unsigned char y_size,
     const char color = 0x47;
     dbuffer_ptr += frame_offset;
     memset(dbuffer_ptr, color, x_size);  //top
-    dbuffer_ptr += screen->getPixX();
+    dbuffer_ptr += screen->getWidth();
     for(y = 1; y < (y_size-1); y++) {
         dbuffer_ptr[0] = color;  //left
         dbuffer_ptr[x_size-1] = color;  //right
-        dbuffer_ptr += screen->getPixX();
+        dbuffer_ptr += screen->getWidth();
     }
     memset(dbuffer_ptr, color, x_size); //bottom
 }

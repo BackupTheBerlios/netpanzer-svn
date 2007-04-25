@@ -40,11 +40,11 @@ enum { _net_message_id_system_set_view,
 class SystemSetPlayerView : public NetMessage
 {
 private:
-    int32_t camera_loc_x;
-    int32_t camera_loc_y;
+    Sint32 camera_loc_x;
+    Sint32 camera_loc_y;
 
 public:
-    SystemSetPlayerView(int32_t x, int32_t y)
+    SystemSetPlayerView(Sint32 x, Sint32 y)
     {
         message_class = _net_message_class_system;
         message_id = _net_message_id_system_set_view;
@@ -52,11 +52,11 @@ public:
         camera_loc_y = htol32(y);
     }
         
-    int32_t getCameraLocX() const
+    Sint32 getCameraLocX() const
     {
         return ltoh32(camera_loc_x);
     }
-    int32_t getCameraLocY() const
+    Sint32 getCameraLocY() const
     {
         return ltoh32(camera_loc_y);
     }
@@ -83,7 +83,7 @@ enum { _view_control_flag_visible_on  = 0x01,
 class SystemViewControl : public NetMessage
 {
 public:
-    uint8_t action_flags;
+    Uint8 action_flags;
     char view_name[32];
 
     SystemViewControl()
@@ -104,17 +104,17 @@ public:
 class SystemPingRequest : public NetMessage
 {
 private:
-    uint16_t client_player_index;
+    Uint16 client_player_index;
 
 public:
-    SystemPingRequest(uint16_t playerIndex)
+    SystemPingRequest(Uint16 playerIndex)
     {
         message_class = _net_message_class_system;
         message_id = _net_message_id_system_ping_request;
         client_player_index = htol16(playerIndex);
     }
     
-    uint16_t getClientPlayerIndex() const
+    Uint16 getClientPlayerIndex() const
     {
         return ltoh16(client_player_index);
     }
@@ -139,9 +139,9 @@ enum { _connect_alert_mesg_connect,
 class SystemConnectAlert : public NetMessage
 {
 private:
-    uint16_t player_id;
+    Uint16 player_id;
 public:
-    uint8_t alert_enum;
+    Uint8 alert_enum;
 
     SystemConnectAlert()
     {
@@ -154,7 +154,7 @@ public:
         player_id = htol16(player.getIndex());
         alert_enum = alert_type;
     }                                               
-    uint16_t getPlayerID() const
+    Uint16 getPlayerID() const
     {
         return ltoh16(player_id);
     }

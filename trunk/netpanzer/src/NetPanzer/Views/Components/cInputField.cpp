@@ -170,7 +170,7 @@ void cInputField::setInputFieldString(cInputFieldString *string)
 
     bounds.max = bounds.min + size;
 
-    inputFieldSurface.create(size, size.x, 1);
+    inputFieldSurface.create(size.x, size.y, 1);
     inputFieldSurface.fill(Color::black);
 
 } // end setInputFieldString
@@ -317,7 +317,7 @@ void cInputField::draw(Surface &dest)
     inputFieldSurface.fill(Color::black);
     inputFieldSurface.drawButtonBorder(Color::white, Color::gray64);
     inputFieldSurface.bltString(4, 2, destString+strDisplayStart, Color::white);
-    inputFieldSurface.blt(dest, pos);
+    inputFieldSurface.blt(dest, pos.x, pos.y);
 } // draw
 
 // drawHighlighted
@@ -329,8 +329,10 @@ void cInputField::drawHighlighted(Surface &dest)
 
     inputFieldSurface.fill(Color::black);
     inputFieldSurface.drawButtonBorder(Color::darkGray, Color::white);
-    inputFieldSurface.bltStringShadowed(iXY(4, 2),
-            destString+strDisplayStart, Color::white, Color::black);
+    inputFieldSurface.bltStringShadowed(4, 2,
+                                        destString+strDisplayStart,
+                                        Color::white,
+                                        Color::black);
 
     static float timeForBlink = 0.0f;
     if ((timeForBlink += TimerInterface::getTimeSlice()) > 0.25f) {
@@ -348,7 +350,7 @@ void cInputField::drawHighlighted(Surface &dest)
         }
     }
 
-    inputFieldSurface.blt(dest, pos);
+    inputFieldSurface.blt(dest, pos.x, pos.y);
 } // drawHighlighted
 
 // checkCursor

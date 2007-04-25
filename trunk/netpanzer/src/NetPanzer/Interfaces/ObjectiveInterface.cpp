@@ -160,7 +160,7 @@ ObjectiveInterface::loadObjectiveList(const char *file_path)
 
 unsigned char
 ObjectiveInterface::quearyObjectiveLocationStatus(iXY &loc,
-        uint16_t player_id, Objective **objective_ptr )
+        Uint16 player_id, Objective **objective_ptr )
 {
     std::vector<Objective*>::iterator i;
     for(i = objective_list.begin(); i != objective_list.end(); i++) {
@@ -289,7 +289,7 @@ ObjectiveInterface::offloadGraphics( SpriteSorter &sorter )
 
 bool
 ObjectiveInterface::testRuleObjectiveOccupationRatio(
-        uint16_t player_index, float precentage)
+        Uint16 player_index, float precentage)
 {
     size_t occupation_ratio = (size_t)
         ( ((float) objective_list.size()) * precentage  + 0.999);
@@ -302,7 +302,7 @@ ObjectiveInterface::testRuleObjectiveOccupationRatio(
     for(i = objective_list.begin(); i != objective_list.end(); i++) {
         ObjectiveState *objective_state = & ((*i)->objective_state);
         if(objective_state->occupation_status == _occupation_status_occupied) {
-            uint16_t occuping_player_index 
+            Uint16 occuping_player_index 
                 = objective_state->occupying_player->getID();
 
             if ( occuping_player_index == player_index ) {
@@ -323,11 +323,11 @@ ObjectiveInterface::testRuleObjectiveOccupationRatio(
 }
 
 void
-ObjectiveInterface::disownPlayerObjectives(uint16_t player_id)
+ObjectiveInterface::disownPlayerObjectives(Uint16 player_id)
 {
     DisownPlayerObjective disown_player_objective;
 
-    for(uint16_t i = 0; i < objective_list.size(); i++) {
+    for(Uint16 i = 0; i < objective_list.size(); i++) {
         disown_player_objective.set(i, player_id);
         sendMessage(&disown_player_objective);
     }

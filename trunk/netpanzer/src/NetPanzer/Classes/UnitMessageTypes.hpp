@@ -39,16 +39,16 @@ enum { _command_move_to_loc,
 class UMesgAICommand : public UnitMessage
 {
 public:
-    uint8_t command;
+    Uint8 command;
 private:
-    int32_t goal_loc_x;
-    int32_t goal_loc_y;
-    uint16_t target_id;
+    Sint32 goal_loc_x;
+    Sint32 goal_loc_y;
+    Uint16 target_id;
 public:
-    uint8_t manual_move_orientation;
+    Uint8 manual_move_orientation;
 private:
-    int32_t target_loc_x;
-    int32_t target_loc_y;
+    Sint32 target_loc_x;
+    Sint32 target_loc_y;
 public:
     UMesgAICommand()
     {
@@ -129,10 +129,10 @@ __attribute__((packed));
 class UMesgWeaponHit : public UnitMessage
 {
 private:
-    uint16_t owner_id;
-    int32_t  hit_location_x;
-    int32_t  hit_location_y;
-    uint16_t damage_factor;
+    Uint16 owner_id;
+    Sint32  hit_location_x;
+    Sint32  hit_location_y;
+    Uint16 damage_factor;
         
 public:
     void setOwnerUnitID(UnitID id)
@@ -156,11 +156,11 @@ public:
         return iXY(ltoh32(hit_location_x), ltoh32(hit_location_y));
     }
 
-    void setDamageFactor(uint16_t damage_factor)
+    void setDamageFactor(Uint16 damage_factor)
     {
         this->damage_factor = htol16(damage_factor);
     }
-    uint16_t getDamageFactor() const
+    Uint16 getDamageFactor() const
     {
         return ltoh16(damage_factor);
     }
@@ -169,11 +169,11 @@ public:
 class UMesgEndLifeCycleUpdate : public UnitMessage
 {
 private:
-    uint16_t destroyed;
-    uint16_t destroyer;
+    Uint16 destroyed;
+    Uint16 destroyer;
 
 public:
-    uint8_t unit_type;
+    Uint8 unit_type;
 
     void set(UnitID destroyed_unit, UnitID destroyer_unit,
             unsigned char unit_type )
@@ -205,10 +205,10 @@ enum { _select_box_allie_visibility,
 class UMesgUpdateSelectBoxInfo : public UnitMessage
 {
 public:
-    uint8_t request_type;
-    uint8_t allie_flag_visiblity;
-    uint8_t flag_visiblity;
-    uint8_t allied_state;
+    Uint8 request_type;
+    Uint8 allie_flag_visiblity;
+    Uint8 flag_visiblity;
+    Uint8 allied_state;
 
     void set(unsigned char request, bool state_value)
     {

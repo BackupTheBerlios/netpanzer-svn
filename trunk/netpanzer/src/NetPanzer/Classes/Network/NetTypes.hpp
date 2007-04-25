@@ -18,30 +18,29 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __NETTYPES_HPP__
 #define __NETTYPES_HPP__
 
-#include <stdint.h>
 #include "Util/Endian.hpp"
 
 namespace net
 {
 
-typedef uint8_t UInt8;
-typedef int8_t Int8;
+typedef Uint8 UInt8;
+typedef Sint8 Int8;
 
 class UInt32
 {
 private:
-    uint32_t val;
+    Uint32 val;
 public:
-    UInt32(uint32_t val)
+    UInt32(Uint32 val)
     {
         *this = val;
     }
 
-    operator uint32_t() const
+    operator Uint32() const
     {
         return ltoh32(val);
     }
-    void operator=(uint32_t val)
+    void operator=(Uint32 val)
     {
         this->val = htol32(val);
         return val;
@@ -51,18 +50,18 @@ public:
 class UInt16
 {
 private:
-    uint16_t val;
+    Uint16 val;
 public:
-    UInt32(uint16_t val)
+    UInt32(Uint16 val)
     {
         *this = val;
     }
 
-    operator uint16_t() const
+    operator Uint16() const
     {
         return ltoh16(val);
     }
-    void operator=(uint16_t val)
+    void operator=(Uint16 val)
     {
         this->val = htol16(val);
         return val;

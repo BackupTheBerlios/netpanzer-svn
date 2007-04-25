@@ -201,6 +201,7 @@ void ServerConnectDaemon::sendConnectionAlert(PlayerID &player_id, int alert_enu
            if (*motd!='\0'){
                ChatMesg chat_mesg;
                chat_mesg.message_scope=_chat_mesg_scope_server;
+               chat_mesg.setSourcePlayerIndex(0);
                snprintf(chat_mesg.message_text, sizeof(chat_mesg.message_text), "%s",gameconfig->motd.c_str());
                SERVER->sendMessage(player_state->getNetworkID(),&chat_mesg, sizeof(chat_mesg));
            }
@@ -303,7 +304,7 @@ bool ServerConnectDaemon::connectStateWaitForClientSettings(
             client_setting = (ConnectClientSettings *) message;
             connect_player_state->setName( client_setting->player_name );
             connect_player_state->unit_config.setUnitColor( client_setting->unit_color );
-			uint8_t flag = (uint8_t) client_setting->getPlayerFlag();
+			Uint8 flag = (Uint8) client_setting->getPlayerFlag();
             connect_player_state->setFlag(flag);
 
             connect_player_state->setID( connect_player_id.getNetworkID() );
@@ -346,6 +347,7 @@ bool ServerConnectDaemon::connectStateWaitForClientGameSetupAck(
 
             ConnectProcessStateMessage state_mesg;
             state_mesg.setMessageEnum(_connect_state_message_sync_player_info);
+            state_mesg.setPercentComplete(0);
             SERVER->sendMessage(connect_player_id, &state_mesg,
                     sizeof(ConnectProcessStateMessage));
 			if(connection_state != connect_state_idle) {
