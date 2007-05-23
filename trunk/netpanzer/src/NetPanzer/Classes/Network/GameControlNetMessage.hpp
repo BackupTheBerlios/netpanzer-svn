@@ -18,9 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _GAME_CONTROL_NET_MESSAGE_HPP
 #define _GAME_CONTROL_NET_MESSAGE_HPP
 
-#include <stdio.h>
-#include <string.h>
-
 #include "NetMessage.hpp"
 
 enum { _net_message_id_game_control_cycle_map,
@@ -38,14 +35,14 @@ public:
 
     void set(const char* newmap_name)
     {
-        snprintf(map_name, sizeof(map_name), newmap_name);
+        SDL_snprintf(map_name, sizeof(map_name), newmap_name);
     }
 
     GameControlCycleMap()
     {
         message_class = _net_message_class_game_control;
         message_id = _net_message_id_game_control_cycle_map;
-        memset(map_name, 0, sizeof(map_name));
+        SDL_memset(map_name, 0, sizeof(map_name));
     }
 
 }

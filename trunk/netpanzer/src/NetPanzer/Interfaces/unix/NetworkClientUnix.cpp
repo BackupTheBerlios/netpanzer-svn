@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "Util/Exception.hpp"
 #include "Util/Log.hpp"
 #include "Desktop.hpp"
 #include "NetworkGlobals.hpp"
@@ -71,7 +70,7 @@ bool NetworkClientUnix::joinServer(const std::string& server_name)
     } catch(std::exception& e) {
         LOG( ( "Couldn't connect to server:\n%s.", e.what()) );
         char text[128];
-        snprintf(text, 128, "connection error: %s", e.what());
+        SDL_snprintf(text, 128, "connection error: %s", e.what());
         lobbyView->scrollAndUpdate(text);
         return false;
     }
@@ -95,7 +94,7 @@ void NetworkClientUnix::sendMessage(NetMessage* message, size_t size)
     if (connection_type == _connection_loop_back) {
         net_packet.fromID = 0;
         net_packet.toID = 0;
-        memcpy(net_packet.data, message, size);
+        SDL_memcpy(net_packet.data, message, size);
         loop_back_recv_queue.enqueue(net_packet);
 #ifdef NETWORKDEBUG
         NetPacketDebugger::logMessage("LS", message);
@@ -123,7 +122,7 @@ bool NetworkClientUnix::getMessage(NetMessage *message)
         return false;
     
     receive_queue.dequeue( &net_packet );
-    memcpy(message, net_packet.data, net_packet.getSize());
+    SDL_memcpy(message, net_packet.data, net_packet.getSize());
 
 #ifdef NETWORKDEBUG
     NetPacketDebugger::logMessage("R", message);

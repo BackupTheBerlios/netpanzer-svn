@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Desktop.hpp"
 #include "MenuTemplateView.hpp"
 #include "OptionsTemplateView.hpp"
-#include "SoundView.hpp"
-#include "ControlsView.hpp"
 #include "VisualsView.hpp"
 #include "InterfaceView.hpp"
 #include "ScreenSurface.hpp"
@@ -64,22 +62,6 @@ DisconectedView::buttonOk()
 
     if (v != 0) {
         ((OptionsTemplateView *)v)->initButtons();
-        ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-    } else {
-        assert(false);
-    }
-
-    v = Desktop::getView("SoundView");
-    if (v != 0) {
-        ((SoundView *)v)->initButtons();
-        ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-    } else {
-        assert(false);
-    }
-
-    v = Desktop::getView("ControlsView");
-    if (v != 0) {
-        ((ControlsView *)v)->initButtons();
         ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
     } else {
         assert(false);
@@ -132,9 +114,13 @@ DisconectedView::init()
 void
 DisconectedView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    iRect r(min, max);
+    iRect r( viewArea.getCenterX() - 200,
+             viewArea.getCenterY() - 20,
+             viewArea.getCenterX() + 200,
+             viewArea.getCenterY() + 60);
 
-    viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
+    viewArea.fillRect(r, 0);
+    viewArea.drawRect(r, Color::white);
     viewArea.bltStringCenter("You have been disconected from server", Color::white);
 
     View::doDraw(viewArea, clientArea);

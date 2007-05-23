@@ -30,7 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "WorldViewInterface.hpp"
 #include "ScreenSurface.hpp"
 
-#include "Util/Exception.hpp"
 #include "System/Sound.hpp"
 #include "ParticleInterface.hpp"
 #include "WeaponGlobals.hpp"
@@ -39,15 +38,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 void Weapon::init()
 {
     //packFiles();
-    gMissleMediumPackedSurface.load("pics/particles/missles/pak/misslesMedium.pak");
-    gMissleSmallPackedSurface.load("pics/particles/missles/pak/misslesSmall.pak");
-    gShellPackedSurface.load("pics/particles/shells/pak/shells.pak");
+    gMissleMediumPackedSurface.loadPAK("pics/particles/missles/pak/misslesMedium.pak");
+    gMissleSmallPackedSurface.loadPAK("pics/particles/missles/pak/misslesSmall.pak");
+    gShellPackedSurface.loadPAK("pics/particles/shells/pak/shells.pak");
 
-    Surface       temp;
-    PackedSurface pack;
-
-    gMissleThrustPackedSurface.load("pics/particles/lights/pak/missleThrust.pak");
-    gMissleGroundLightPackedSurface.load("pics/particles/lights/pak/missleGroundLight.pak");
+    gMissleThrustPackedSurface.loadPAK("pics/particles/lights/pak/missleThrust.pak");
+    gMissleGroundLightPackedSurface.loadPAK("pics/particles/lights/pak/missleGroundLight.pak");
 }
 
 Weapon::Weapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end)

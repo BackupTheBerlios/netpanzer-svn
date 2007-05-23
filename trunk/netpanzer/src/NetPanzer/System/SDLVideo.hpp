@@ -34,7 +34,7 @@ public:
 
     void setVideoMode(int width, int height, int bpp, Uint32 flags);
     bool isDisplayModeAvailable(int width, int height, int bpp, Uint32 flags);
-    void lockDoubleBuffer(unsigned char **DoubleBuffer);
+    void lockDoubleBuffer();
     void unlockDoubleBuffer();
     void copyDoubleBufferandFlip();
     void setPalette(SDL_Color *color);

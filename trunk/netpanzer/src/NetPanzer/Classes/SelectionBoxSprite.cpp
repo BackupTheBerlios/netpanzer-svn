@@ -49,7 +49,7 @@ void SelectionBoxSprite::blit( Surface *surface, const iRect &world_win )
         surface->drawVLine(min_abs.x, min_abs.y, max_abs.y, box_color);
     }
 
-    if( (max_abs.x < surface->getWidth())  ) {
+    if( ((unsigned int)max_abs.x < surface->getWidth())  ) {
         surface->drawVLine(max_abs.x, min_abs.y, max_abs.y, box_color);
     }
 
@@ -57,7 +57,7 @@ void SelectionBoxSprite::blit( Surface *surface, const iRect &world_win )
         surface->drawHLine(min_abs.x, min_abs.y, max_abs.x, box_color);
     }
 
-    if ( (max_abs.y < surface->getHeight()) ) {
+    if ( ((unsigned int)max_abs.y < surface->getHeight()) ) {
         surface->drawHLine(min_abs.x, max_abs.y, max_abs.x+1, box_color);
     }
 
@@ -121,7 +121,7 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
 
         iRect r(min_abs.x + 1, max_abs.y - 5, max_abs.x - 1, max_abs.y - 1);
 
-        surface->bltLookup(r, Palette::darkGray256.getColorArray());
+        surface->fillRect(r,Color::darkGray);
 
         r = iRect(min_abs.x + 2, max_abs.y - 4, min_abs.x + 2 + hit_bar_size, max_abs.y - 3);
 

@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __GAMECONFIG_HPP
 
 #include <assert.h>
-#include <string.h>
 #include <vector>
 #include <string>
 
@@ -170,11 +169,9 @@ public:
     ConfigInt   scrollrate;
     ConfigXY    minimapposition;
     ConfigXY    minimapsize;
-    ConfigInt   minimapdrawtype;
     ConfigXY    gameinfoposition;
     ConfigXY    toolbarposition;
     ConfigXY    rankposition;
-    ConfigInt   viewdrawbackgroundmode;
 
     // radar settings
     ConfigBool  radar_displayclouds;

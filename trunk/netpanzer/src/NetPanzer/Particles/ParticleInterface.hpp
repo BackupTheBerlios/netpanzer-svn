@@ -28,10 +28,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitState.hpp"
 
 class Surface;
-class PackedSurface;
-
-// Random waits for particles.
-#define MISSLE_LAUNCH_PUFF_RANDNUM ((float(rand()) / float(RAND_MAX)) * 0.01f)
 
 class UnitParticleInfo
 {
@@ -48,48 +44,14 @@ private:
     static int unitBodyMaxArea;
 
     static void getUnitParticleInfo();
-    static void getMuzzleTips(PackedSurface &packedSource, iXY muzzleTips [36]);
-    static void getMinBounds(PackedSurface &packedSource, iRect &minBounds);
+    static void getMuzzleTips(Surface &packedSource, iXY muzzleTips [36]);
+    static void getMinBounds(Surface &packedSource, iRect &minBounds);
 
     static int   unitHitPointTable[_MAX_UNIT_TYPES];
     static int   unitAttackFactorTable[_MAX_UNIT_TYPES];
 
     static void  buildUnitTables();
     static float getFrameRateAdjustment();
-
-    static void addPuffSystem(const iXY &worldPos, const iRect &bounds, int maxParticleCount, PUFF_TYPE particleType, float minScale, float randScale, int minFPS, int randFPS, int layer);
-    static void addGroundExplosionSystem(const iXY &worldPos, const iRect &bounds, int maxParticleCount, int maxParticleSpeed);
-
-    static void addDirtPuffParticle(const iXY &worldPos);
-    static void addDirtPuffSystem(const iXY &worldPos, const iRect &bounds);
-    static void addExplosionDirtSystem(const iXY &worldPos, const iRect &bounds);
-
-    static void addPuffParticle(const iXY &worldPos, PUFF_TYPE type, float minSize, float randSize, int minFPS, int randFPS, int layer, float windScale = 1.0f, float incrementScale = 0.0f);
-    static void addSmokePuffParticle(const iXY &worldPos);
-    static void addSmokePuffParticle(const iXY &worldPos, PUFF_TYPE type);
-    static void addSmokePuffParticle(const iXY &worldPos, float minScale, float randScale, int minFPS, int randFPS, int layer, float windScale = 1.0f, float incrementScale = 0.0f);
-    static void addSmokePuffSystem(const iXY &worldPos, const iRect &bounds, int maxParticleCount);
-
-    static void addVehicleExplosionFlameParticle(const iXY &worldPos);
-    static void addVehicleExplosionFlashParticle(const iXY &worldPos);
-
-    static void addMissleExplosionFlameParticle(const iXY &worldPos);
-    static void addMissleExplosionFlashParticle(const iXY &worldPos);
-
-    static void addFlashParticle(const iXY &worldPos, float minScale, float randScale, float lifetime, int layer, bool singleFrame = false);
-    static void addExplosionFlameParticle(const iXY &worldPos, const float &minScale, const float &randScale, const int &layer);
-
-    static void addMissleBurnParticle(const iXY &worldPos);
-
-    static void addExplosionSmokeParticle(const iXY &worldPos, int maxParticleSpeed);
-    static void addExplosionSmokeSystem(const iXY &worldPos, const iRect &bounds, int maxParticleCount, int maxParticleSpeed);
-
-    static void addSmolderSystem(const iXY &worldPos, const iRect &bounds, float lifetime, float percent);
-
-    static void addCloudParticle(const iXY &worldPos, const iXY &worldSize);
-    static void addCloudParticleSystem(int maxParticleCount);
-
-    static void addMovementDirtPuffParticle(const iXY &worldPos);
 
 public:
     static int gParticlesCanHaveSmoke;
@@ -127,13 +89,9 @@ public:
     static void addHit(const UnitState &unitState);
     static void addMiss(const iXY &worldPos, Uint8 unitType);
 
-    static void addMissleLaunchPuff(const iXY &worldPos, const fXY &direction, Uint8 unitType);
     static void addMissleFlightPuff(const iXY &worldPos, const fXY &direction, float &curWait, float &totalWait, Uint8 unitType);
-    static void addMissleExplosion(const iXY &worldPos);
 
-    //static void addMuzzlePuff(const fXYZ &muzzlePos, const fXYZ &direction, Uint8 unitType);
     static void addMuzzlePuff(const fXYZ &worldPos, const fXYZ &direction, int frame, Uint8 unitType);
-    static void addDirtKick(const iXY &worldPos);
 
     static void addCloudParticle(int count = 1);
 

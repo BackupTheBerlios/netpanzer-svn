@@ -15,25 +15,3 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
-#ifndef __MovementDirtPuffParticle2D_hpp__
-#define __MovementDirtPuffParticle2D_hpp__
-
-
-
-#include "PuffParticle2D.hpp"
-
-
-// MovementDirtPuffParticle2D
-//--------------------------------------------------------------------------
-class MovementDirtPuffParticle2D : public PuffParticle2D
-{
-public:
-    MovementDirtPuffParticle2D(fXYZ pos) : PuffParticle2D(pos, DIRT_PUFF, movePuffMinScale, movePuffRandScale, movePuffMinFPS, movePuffRandFPS, movePuffLayer, movePuffWindScale)
-    {}
-
-}
-; // end MovementDirtPuffParticle2D
-
-#endif // __MovementDirtPuffParticle2D_hpp__

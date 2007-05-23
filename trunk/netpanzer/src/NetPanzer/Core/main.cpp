@@ -26,17 +26,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <fstream>
 #include <sstream>
-#include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
-#include <ctype.h>
 #include <signal.h>
 #include "SDL.h"
 
 #include <optionmm/command_line.hpp>
 
 #include "Util/Log.hpp"
-//#include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 
 #include "BaseGameManager.hpp"

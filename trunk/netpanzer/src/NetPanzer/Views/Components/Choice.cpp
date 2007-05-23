@@ -171,7 +171,7 @@ void Choice::draw(Surface &dest)
     // Draw the label.
     iXY pos;
 
-    //pos.x = min.x - strlen((const char *) label) * CHAR_XPIX - CHAR_XPIX;
+    //pos.x = min.x - SDL_strlen((const char *) label) * CHAR_XPIX - CHAR_XPIX;
     pos.x = min.x;
     pos.y = min.y - Surface::getFontHeight() - 4;
 

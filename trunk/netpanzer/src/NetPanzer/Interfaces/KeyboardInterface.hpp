@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _KEYBOARDINTERFACE_HPP
 
 #include "SDL.h"
-#include <string.h>
 
 #define _CHAR_BUFFER_SIZE 256
 #define _CHAR_BUFFER_MOD  255
@@ -37,8 +36,8 @@ protected:
 public:
     static void clearKeyTable()
     {
-        memset(key_table, 0, sizeof(key_table));
-        memset(previous_key_state, 0, sizeof(previous_key_state));
+        SDL_memset(key_table, 0, sizeof(key_table));
+        SDL_memset(previous_key_state, 0, sizeof(previous_key_state));
     }
 
     static void sampleKeyboard();

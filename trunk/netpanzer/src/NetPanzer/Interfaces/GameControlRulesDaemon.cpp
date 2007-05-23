@@ -16,6 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+#include "SDL.h"
 #include "GameControlRulesDaemon.hpp"
 
 #include "GameManager.hpp"
@@ -102,7 +103,7 @@ void GameControlRulesDaemon::mapCycleFsmClient()
                 gameconfig->map = map_cycle_fsm_client_map_name;
 
                 char buf[256];
-                snprintf(buf, sizeof(buf), "Next Map '%s'.",
+                SDL_snprintf(buf, sizeof(buf), "Next Map '%s'.",
                         gameconfig->map.c_str());
                 progressView->scrollAndUpdate( buf);
                 progressView->scrollAndUpdate( "Loading Game Map ..." );
@@ -129,12 +130,12 @@ void GameControlRulesDaemon::mapCycleFsmClient()
                 if ( GameManager::gameMapLoad( &percent_complete ) == false ) {
                     map_cycle_fsm_client_state = _map_cycle_client_wait_for_respawn_ack;
 
-                    sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
+                    SDL_snprintf( str_buf, sizeof(str_buf), "Loading Game Map ... (%d%%)", percent_complete);
                     progressView->update( str_buf );
 
                     progressView->scrollAndUpdate( "Waiting to respawn ..." );
                 } else {
-                    sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
+                    SDL_snprintf( str_buf, sizeof(str_buf), "Loading Game Map ... (%d%%)", percent_complete);
                     progressView->update( str_buf );
                 }
 
@@ -254,7 +255,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                     map_cycle_fsm_server_state = _map_cycle_server_state_respawn_players;
                 }
 
-                sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
+                SDL_snprintf( str_buf, sizeof(str_buf), "Loading Game Map ... (%d%%)", percent_complete);
                 progressView->update( str_buf );
             }
             break;
@@ -379,7 +380,7 @@ void GameControlRulesDaemon::netMessageCycleMap(const NetMessage* message)
     GameControlCycleMap *cycle_map_mesg;
 
     cycle_map_mesg = (GameControlCycleMap *) message;
-    snprintf(map_cycle_fsm_client_map_name, 256, cycle_map_mesg->map_name);
+    SDL_snprintf(map_cycle_fsm_client_map_name, 256, cycle_map_mesg->map_name);
     map_cycle_fsm_client_state = _map_cycle_client_start_map_load;
 }
 
@@ -423,7 +424,7 @@ void GameControlRulesDaemon::mapLoadFailureResponse(int result_code, const char 
     char str_buf[128];
 
     if( result_code == _mapload_result_no_map_file ) {
-        sprintf( str_buf, "MAP %s NOT FOUND!", map_name );
+        SDL_snprintf( str_buf, sizeof(str_buf), "MAP %s NOT FOUND!", map_name );
         progressView->scrollAndUpdate( str_buf);
     } else if( result_code == _mapload_result_no_wad_file ) {
             progressView->scrollAndUpdate( "MAP TILE SET NOT FOUND!" );

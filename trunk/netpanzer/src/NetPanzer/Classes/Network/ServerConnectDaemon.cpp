@@ -202,7 +202,7 @@ void ServerConnectDaemon::sendConnectionAlert(PlayerID &player_id, int alert_enu
                ChatMesg chat_mesg;
                chat_mesg.message_scope=_chat_mesg_scope_server;
                chat_mesg.setSourcePlayerIndex(0);
-               snprintf(chat_mesg.message_text, sizeof(chat_mesg.message_text), "%s",gameconfig->motd.c_str());
+               SDL_snprintf(chat_mesg.message_text, sizeof(chat_mesg.message_text), "%s",gameconfig->motd.c_str());
                SERVER->sendMessage(player_state->getNetworkID(),&chat_mesg, sizeof(chat_mesg));
            }
 

@@ -15,23 +15,3 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef __ResignView_hpp__
-#define __ResignView_hpp__
-
-#include "View.hpp"
-#include "2D/Surface.hpp"
-
-//---------------------------------------------------------------------------
-class ResignView : public View
-{
-private:
-    void init();
-
-public:
-    ResignView();
-
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    virtual void doActivate();
-}; // end ResignView
-
-#endif // end __ResignView_hpp__

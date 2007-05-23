@@ -124,7 +124,7 @@ private:
     char    *excludedCharacters;
     iRect    bounds;
     size_t   cursorPos;
-    Surface inputFieldSurface;
+    Surface  * inputFieldSurface;
     ACTION_FUNC_PTR textaction;
 
     void pressKey(int ch);

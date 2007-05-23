@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "BonusUnitPowerUp.hpp"
 
-#include <stdlib.h>
 #include "UnitTypes.hpp"
 #include "UnitInterface.hpp"
 #include "PlayerInterface.hpp"
@@ -44,10 +43,6 @@ BonusUnitPowerUp::BonusUnitPowerUp(iXY map_loc, int type)
 
     bonus_unit_animation.setData( BONUS_POWERUP_ANIM );
     bonus_unit_animation.setAttrib( powerup_state.world_loc, iXY(0,0), 5 );
-
-    bonus_unit_animation_shadow.setData( BONUS_POWERUP_ANIM_SHADOW );
-    bonus_unit_animation_shadow.setAttrib( powerup_state.world_loc, iXY(0,0), 4 );
-    bonus_unit_animation_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
 
 }
 
@@ -111,10 +106,8 @@ void BonusUnitPowerUp::updateState( void )
 void BonusUnitPowerUp::offloadGraphics( SpriteSorter &sorter )
 {
     bonus_unit_animation.nextFrame();
-    bonus_unit_animation_shadow.setFrame( bonus_unit_animation.getCurFrame() );
 
     sorter.addSprite( &bonus_unit_animation );
-    sorter.addSprite( &bonus_unit_animation_shadow );
 }
 
 void BonusUnitPowerUp::onHit( PowerUpHitMesg *message  )

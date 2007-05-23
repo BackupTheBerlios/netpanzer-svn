@@ -22,8 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <algorithm>
 #include <stdexcept>
 #include <sstream>
-#include <ctype.h>
-#include "Util/Exception.hpp"
 #include "GameConfig.hpp"
 #include "Core/NetworkGlobals.hpp"
 #include "Util/StringTokenizer.hpp"
@@ -123,8 +121,13 @@ ServerQueryThread::onConnected(network::TCPSocket *s)
     char query[] = "\\list\\gamename\\netpanzer\\final\\";
 
     querying_msdata[s]->touch();
-    s->send(query,sizeof(query)-1);
-
+    try {
+        s->send(query,sizeof(query)-1);
+    } catch (NetworkException &e) {
+        LOGGER.warning("MASTERSERVER error [%s]: %s", s->getAddress().getIP().c_str(), e.what());
+        delete querying_msdata[s];
+        querying_msdata.erase(s);
+    }
 }
 
 void

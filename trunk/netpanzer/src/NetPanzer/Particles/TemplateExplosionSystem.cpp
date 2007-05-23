@@ -96,9 +96,10 @@ TemplateExplosionSystem::TemplateExplosionSystem(const fXYZ& pos,
         // Add the flash(s).
         //if (e.flashCount <= 1)
         //{
-        try {
-            new FlashParticle2D(pos, e.flashMinScale, e.flashRandScale, e.flashLifetime, ExplosionSystem::flashLayer);
-        } catch(...) {}
+// XXX removed flash
+//        try {
+//            new FlashParticle2D(pos, e.flashMinScale, e.flashRandScale, e.flashLifetime, ExplosionSystem::flashLayer);
+//        } catch(...) {}
         //}
 
         //for (int i = 0; i < e.flashCount - 1; i++)

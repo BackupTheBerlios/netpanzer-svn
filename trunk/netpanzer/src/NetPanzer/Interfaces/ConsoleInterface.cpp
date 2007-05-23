@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameConfig.hpp"
 #include "Util/Log.hpp"
 #include "Console.hpp"
+#include "SDL.h"
 
 bool ConsoleInterface::stdout_pipe;
 
@@ -107,7 +108,7 @@ void ConsoleInterface::postMessage(const char *format, ...)
     va_list vap;
 
     va_start( vap, format );
-    vsnprintf( temp_str, 256, format, vap );
+    SDL_vsnprintf( temp_str, 256, format, vap );
     va_end( vap );
 
     LOGGER.debug("C: %s", temp_str);
@@ -117,7 +118,7 @@ void ConsoleInterface::postMessage(const char *format, ...)
     }
 
     temp_str_ptr = temp_str;
-    temp_str_length = (long) strlen(temp_str);
+    temp_str_length = (long) SDL_strlen(temp_str);
 
     if( temp_str_length > max_char_per_line ) {
         long partion_count = temp_str_length / max_char_per_line;
@@ -128,7 +129,7 @@ void ConsoleInterface::postMessage(const char *format, ...)
             else
                 line_index = (line_index - 1) % console_size;
 
-            strncpy( line_list[ line_index ].string, temp_str_ptr, max_char_per_line);
+            SDL_strlcpy( line_list[ line_index ].string, temp_str_ptr, max_char_per_line);
             line_list[ line_index ].string[ max_char_per_line ] = 0;
 
             line_list[ line_index ].color = Color::white;
@@ -145,7 +146,7 @@ void ConsoleInterface::postMessage(const char *format, ...)
     else
         line_index = (line_index - 1) % console_size;
 
-    strcpy( line_list[ line_index ].string, temp_str_ptr );
+    SDL_strlcpy( line_list[line_index].string, temp_str_ptr, CONSOLE_LINESIZE);
 
     line_list[ line_index ].color = Color::white;
     line_list[ line_index ].visible = true;
@@ -206,11 +207,11 @@ void ConsoleInterface::update_overlap( Surface &surface )
                 Color::black );
 
         int CHAR_XPIX = 8; // XXX hardcoded
-        input_offset.x = current_line.x + ( (long) strlen( inputPrompt ) ) * CHAR_XPIX;
+        input_offset.x = current_line.x + ( (long) SDL_strlen( inputPrompt ) ) * CHAR_XPIX;
         input_offset.y = current_line.y;
 
         max_char_space = (bounds.max.x - input_offset.x ) / CHAR_XPIX;
-        input_string_length = strlen(inputString);
+        input_string_length = SDL_strlen(inputString);
 
         if( input_string_length > max_char_space ) {
             string_ptr = inputString + (input_string_length - (max_char_space - 1) );
@@ -237,19 +238,20 @@ void ConsoleInterface::resetInputString( char *prompt )
     cursorPos = 0;
     inputString[0] = 0;
     maxCharCount = 256;
-    strcpy( inputPrompt, prompt );
+    SDL_strlcpy( inputPrompt, prompt, sizeof(inputPrompt) );
 }
 
 void ConsoleInterface::getInputString( char *string )
 {
-    strcpy( string, inputString );
+    // XXX DANGER (it is ok, but)
+    SDL_strlcpy( string, inputString, sizeof(inputString));
 }
 
 void ConsoleInterface::addChar(int newChar)
 {
     // Check if the character should be excluded.
     // Add the character.
-    int length = strlen(inputString) + 1;
+    int length = SDL_strlen(inputString) + 1;
 
     inputString[cursorPos] = newChar;
 
@@ -280,7 +282,7 @@ void ConsoleInterface::addExtendedChar(int newExtendedChar)
         break;
 
     case SDLK_RIGHT: {
-            int length = strlen(inputString);
+            int length = SDL_strlen(inputString);
             if(++cursorPos > length) {
                 if (cursorPos > maxCharCount) {
                     cursorPos = maxCharCount - 1;
@@ -292,7 +294,7 @@ void ConsoleInterface::addExtendedChar(int newExtendedChar)
         break;
 
     case SDLK_END: {
-            cursorPos = strlen(inputString);
+            cursorPos = SDL_strlen(inputString);
 
             if (cursorPos > maxCharCount) {
                 cursorPos = maxCharCount - 1;
@@ -304,21 +306,21 @@ void ConsoleInterface::addExtendedChar(int newExtendedChar)
         break;
 
     case SDLK_DELETE: {
-            if (cursorPos == (int) strlen(inputString + cursorPos)) {
+            if (cursorPos == (int) SDL_strlen(inputString + cursorPos)) {
                 break;
             }
 
-            memcpy(inputString + cursorPos, inputString + cursorPos + 1, strlen(inputString + cursorPos + 1) + 1);
+            SDL_memcpy(inputString + cursorPos, inputString + cursorPos + 1, SDL_strlen(inputString + cursorPos + 1) + 1);
         }
         break;
 
     case SDLK_BACKSPACE: {
             if (cursorPos >= 1) {
-                int byteCount = strlen(inputString + cursorPos);
+                int byteCount = SDL_strlen(inputString + cursorPos);
 
                 // Only do this if we are not at the end of the string.
                 if (byteCount > 0) {
-                    memcpy(inputString + cursorPos - 1, inputString + cursorPos, byteCount);
+                    SDL_memcpy(inputString + cursorPos - 1, inputString + cursorPos, byteCount);
                 }
 
                 cursorPos--;

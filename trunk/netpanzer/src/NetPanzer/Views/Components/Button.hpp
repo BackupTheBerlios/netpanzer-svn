@@ -29,6 +29,8 @@ protected:
     std::string actionCommand;
     bool   highlighted;
     bool   clicked;
+private:
+    void drawBorder(Surface &viewArea, iRect &bounds, Uint32 topLeftColor, Uint32 bottomRightColor);
 
 public:
     Button() : Component()

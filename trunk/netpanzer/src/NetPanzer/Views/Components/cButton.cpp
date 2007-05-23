@@ -23,42 +23,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Color.hpp"
 #include "ViewGlobals.hpp"
 
-
-void cButton::createPacked(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc)
-{
-    Surface tempTopSurface(source.getWidth(), source.getHeight(), source.getFrameCount());
-
-    for (int i = 0; i < tempTopSurface.getNumFrames(); i++) {
-        tempTopSurface.setFrame(i);
-        tempTopSurface.fill(0);
-        source.setFrame(i);
-        source.blt(tempTopSurface, 0, 0);
-    }
-
-    topSurface.pack(tempTopSurface);
-
-    cButton::toolTip       = strdup(toolTip); assert(toolTip != 0);
-    cButton::bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getWidth(), pos.y + tempTopSurface.getHeight());
-    cButton::leftClickFunc = leftClickFunc;
-}
-
 // createCenterText
 //---------------------------------------------------------------------------
 // Purpose: Creates a button with the name centered in the absolute horizontal
 //          middle of the button.
 //---------------------------------------------------------------------------
-void cButton::createCenterText(iXY pos,
-                               int xSize,
-                               const char *nName,
-                               const char *nToolTip,
-                               ITEM_FUNC nLeftClickFunc)
+cButton::cButton(   const iXY &pos,
+                    int xSize,
+                    const char *nName,
+                    const char *nToolTip,
+                    ITEM_FUNC nLeftClickFunc)
 {
-    Surface tempTopSurface;
-
     const unsigned GAP_SPACE = 6;
 
     int ySize = Surface::getFontHeight() + GAP_SPACE;
-    tempTopSurface.create(xSize, ySize, 3);
+    Surface tempTopSurface(xSize, ySize, 3);
 
     // Find out the horizontal offset to put the button name on the button.
     int xOffset;
@@ -67,26 +46,26 @@ void cButton::createCenterText(iXY pos,
 
     // Make the unselected button
     tempTopSurface.fill(componentBodyColor);
-    tempTopSurface.drawButtonBorder(topLeftBorderColor, bottomRightBorderColor);
+    drawBorder(tempTopSurface, topLeftBorderColor, bottomRightBorderColor);
     tempTopSurface.bltString(xOffset, GAP_SPACE/2, nName, componentInActiveTextColor);
 
     // Make the mouse-over button
     tempTopSurface.setFrame(1);
     tempTopSurface.fill(componentBodyColor);
-    tempTopSurface.drawButtonBorder(topLeftBorderColor, bottomRightBorderColor);
+    drawBorder(tempTopSurface, topLeftBorderColor, bottomRightBorderColor);
     tempTopSurface.bltString(xOffset, GAP_SPACE/2, nName, componentFocusTextColor);
 
     // Make the selected button
     tempTopSurface.setFrame(2);
     tempTopSurface.fill(componentBodyColor);
-    tempTopSurface.drawButtonBorder(bottomRightBorderColor, topLeftBorderColor);
+    drawBorder(tempTopSurface, bottomRightBorderColor, topLeftBorderColor);
     tempTopSurface.bltString(xOffset+1, GAP_SPACE/2+1, nName, componentActiveTextColor);
 
     // Save the button name.
     setName(nName); assert(name != 0);
 
     // Save the button tool tip.
-    toolTip = strdup(nToolTip); assert(toolTip != 0);
+    toolTip = SDL_strdup(nToolTip); assert(toolTip != 0);
 
     // Save the bounds of the button.
     bounds = iRect(pos.x, pos.y, pos.x+tempTopSurface.getWidth(), pos.y+tempTopSurface.getHeight());
@@ -97,65 +76,64 @@ void cButton::createCenterText(iXY pos,
     // Reset the button to unselected status.
     tempTopSurface.setFrame(0);
 
-    topSurface.pack(tempTopSurface);
+//    topSurface.pack(tempTopSurface);
+    topSurface.copy(tempTopSurface);
+    topSurface.setAllColorKey(0);
 
 } // end createCenterText
 
 // createBMP
 //---------------------------------------------------------------------------
-void cButton::createBMP(iXY pos,
-                        const char *imageName,
-                        const char *nToolTip,
-                        ITEM_FUNC nLeftClickFunc,
-                        bool isBordered)
+cButton::cButton(   const iXY &pos,
+                    const char *imageName,
+                    const char *nToolTip,
+                    ITEM_FUNC nLeftClickFunc,
+                    bool isBordered)
 {
-    Surface tempTopSurface;
-
     Surface tempSurface;
     tempSurface.loadBMP(imageName);
-
-    tempTopSurface.create(tempSurface.getWidth(), tempSurface.getHeight(), 3);
+    
+    Surface tempTopSurface(tempSurface.getWidth(), tempSurface.getHeight(), 3);
 
     tempTopSurface.setFrame(0);
     tempSurface.blt(tempTopSurface, 0, 0);
     if (isBordered) {
-        tempTopSurface.drawButtonBorder(Color::darkGray, Color::darkGray);
+        drawBorder(tempTopSurface, Color::darkGray, Color::darkGray);
     }
 
     tempTopSurface.setFrame(1);
     tempSurface.blt(tempTopSurface, 0, 0);
     if (isBordered) {
-        tempTopSurface.drawButtonBorder(Color::red, Color::red);
+        drawBorder(tempTopSurface, Color::red, Color::red);
     }
 
     tempTopSurface.setFrame(2);
     tempSurface.blt(tempTopSurface, 0, 0);
     if (isBordered) {
-        tempTopSurface.drawButtonBorder(Color::darkGray, Color::darkGray);
+        drawBorder(tempTopSurface, Color::darkGray, Color::darkGray);
     }
 
     tempTopSurface.setFrame(0);
 
     setName("TIL file");
-    toolTip       = strdup(nToolTip); assert(toolTip != 0);
+    toolTip       = SDL_strdup(nToolTip); assert(toolTip != 0);
     bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getWidth(), pos.y + tempTopSurface.getHeight());
     leftClickFunc = nLeftClickFunc;
 
-    topSurface.pack(tempTopSurface);
+    topSurface.copy(tempTopSurface);
+    topSurface.setAllColorKey(0);
 } // end createBMP
 
 // createSurface
 //---------------------------------------------------------------------------
-void cButton::createSurface(
-    iXY         pos,
+cButton::cButton(
+    const iXY  &pos,
     Surface    &source,
     const char *nToolTip,
     ITEM_FUNC   nLeftClickFunc,
     bool        isBordered)
 {
-    Surface tempTopSurface;
-
-    tempTopSurface.create(source.getWidth(), source.getHeight(), 3);
+    Surface tempTopSurface(source.getWidth(), source.getHeight(), 3);
 
     tempTopSurface.setFrame(0);
     source.setFrame(0);
@@ -167,14 +145,14 @@ void cButton::createSurface(
         source.blt(tempTopSurface, 0, 0);
 
         if (isBordered) {
-            tempTopSurface.drawButtonBorder(Color::lightGreen, Color::darkGreen);
+            drawBorder(tempTopSurface, Color::lightGreen, Color::darkGreen);
         }
 
     } else {
         source.blt(tempTopSurface, 0, 0);
 
         if (isBordered) {
-            tempTopSurface.drawButtonBorder(Color::lightRed, Color::darkRed);
+            drawBorder(tempTopSurface, Color::lightRed, Color::darkRed);
         }
     }
 
@@ -186,19 +164,19 @@ void cButton::createSurface(
         source.blt(tempTopSurface, 0, 0);
 
         if (isBordered) {
-            tempTopSurface.drawButtonBorder(Color::darkGreen, Color::lightGreen);
+            drawBorder(tempTopSurface, Color::darkGreen, Color::lightGreen);
         }
     }
 
     tempTopSurface.setFrame(0);
 
     setName("Surface Single");
-    toolTip       = strdup(nToolTip); assert(toolTip != 0);
+    toolTip       = SDL_strdup(nToolTip); assert(toolTip != 0);
     bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getWidth(), pos.y + tempTopSurface.getHeight());
     leftClickFunc = nLeftClickFunc;
 
-    topSurface.pack(tempTopSurface);
-
+    topSurface.copy(tempTopSurface);
+    topSurface.setAllColorKey(0);
 } // end createSurface
 
 // createSurfaceSingle
@@ -209,30 +187,29 @@ void cButton::createSurfaceSingle(
     const char *nToolTip,
     ITEM_FUNC nLeftClickFunc)
 {
-    Surface tempTopSurface;
-
-    tempTopSurface.create(source.getWidth(), source.getHeight(), 3);
+    Surface tempTopSurface(source.getWidth(), source.getHeight(), 3);
 
     tempTopSurface.setFrame(0);
     source.blt(tempTopSurface, 0, 0);
-    //tempTopSurface.drawButtonBorder(Color::white, Color::gray128);
 
     tempTopSurface.setFrame(1);
     source.blt(tempTopSurface, 0, 0);
-    tempTopSurface.drawButtonBorder(Color::red, Color::darkRed);
+    drawBorder(tempTopSurface, Color::red, Color::darkRed);
 
     tempTopSurface.setFrame(2);
     source.blt(tempTopSurface, 0, 0);
-    tempTopSurface.drawButtonBorder(Color::green, Color::darkGreen);
+    drawBorder(tempTopSurface, Color::green, Color::darkGreen);
 
     tempTopSurface.setFrame(0);
 
     setName("Surface Single");
-    toolTip       = strdup(nToolTip); assert(toolTip != 0);
+    toolTip       = SDL_strdup(nToolTip); assert(toolTip != 0);
     bounds        = iRect(pos.x, pos.y, pos.x + tempTopSurface.getWidth(), pos.y + tempTopSurface.getHeight());
     leftClickFunc = nLeftClickFunc;
 
-    topSurface.pack(tempTopSurface);
+//    topSurface.pack(tempTopSurface);
+    topSurface.copy(tempTopSurface);
+    topSurface.setAllColorKey(0);
 
 } // end createSurfaceSingle
 
@@ -251,7 +228,15 @@ void cButton::reset()
 //---------------------------------------------------------------------------
 void cButton::setName(const char *buttonName)
 {
-    name = strdup(buttonName);
+    name = SDL_strdup(buttonName);
     if (buttonName == 0) throw Exception("ERROR: Unable to allocate button name: %s", buttonName);
 } // end SET NAME
 
+void
+cButton::drawBorder(Surface &viewArea, Uint32 topLeftColor, Uint32 bottomRightColor)
+{
+    viewArea.drawHLine(0 , 0, viewArea.getWidth() , topLeftColor);
+    viewArea.drawVLine(0 , 0, viewArea.getHeight(), topLeftColor);
+    viewArea.drawHLine(0 ,viewArea.getHeight()-1, viewArea.getWidth(), bottomRightColor);
+    viewArea.drawVLine(viewArea.getWidth()-1, 0, viewArea.getHeight(), bottomRightColor);
+}

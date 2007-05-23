@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "EnemyRadarPowerUp.hpp"
 
-#include <stdlib.h>
 #include "UnitTypes.hpp"
 #include "UnitInterface.hpp"
 #include "PlayerInterface.hpp"
@@ -43,10 +42,6 @@ EnemyRadarPowerUp::EnemyRadarPowerUp(iXY map_loc, int type)
 {
     enemy_radar_animation.setData( ENEMY_RADAR_POWERUP_ANIM );
     enemy_radar_animation.setAttrib( powerup_state.world_loc, iXY(0,0), 5 );
-
-    enemy_radar_animation_shadow.setData( ENEMY_RADAR_POWERUP_ANIM_SHADOW );
-    enemy_radar_animation_shadow.setAttrib( powerup_state.world_loc, iXY(0,0), 4 );
-    enemy_radar_animation_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
 
 }
 
@@ -87,11 +82,8 @@ void
 EnemyRadarPowerUp::offloadGraphics( SpriteSorter &sorter )
 {
     enemy_radar_animation.nextFrame();
-    enemy_radar_animation_shadow.setFrame( enemy_radar_animation.getCurFrame() );
 
     sorter.addSprite( &enemy_radar_animation );
-    sorter.addSprite( &enemy_radar_animation_shadow );
-
 }
 
 void

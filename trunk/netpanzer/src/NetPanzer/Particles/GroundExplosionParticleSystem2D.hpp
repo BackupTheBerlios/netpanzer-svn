@@ -15,23 +15,3 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-#ifndef __GroundExplosionParticle2D_hpp__
-#define __GroundExplosionParticle2D_hpp__
-
-
-
-#include "ParticleSystem2D.hpp"
-
-
-// GroundExplosionParticleSystem2D
-//--------------------------------------------------------------------------
-class GroundExplosionParticleSystem2D : public ParticleSystem2D
-{
-public:
-    GroundExplosionParticleSystem2D(fXYZ pos, iRect bounds, int maxParticleCount, int maxParticleSpeed);
-
-}
-; // end GroundExplosionParticleSystem2D
-
-#endif // __GroundExplosionParticle2D_hpp__

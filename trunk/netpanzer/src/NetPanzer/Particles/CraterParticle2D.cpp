@@ -25,7 +25,7 @@ int CraterParticle2D::cacheHitCount  = 1;
 int CraterParticle2D::cacheMissCount = 1;
 int CraterParticle2D::halfBoundsSize = 24;
 
-PackedSurface CraterParticle2D::staticPackedCrater;
+Surface CraterParticle2D::staticPackedCrater;
 
 std::vector<CraterCacheInfo> CraterParticle2D::craterCache;
 int CraterParticle2D::curCraterIndex = 0;
@@ -36,10 +36,8 @@ int CraterParticle2D::curCraterIndex = 0;
 CraterParticle2D::CraterParticle2D(const fXYZ  &pos) : Particle2D(pos)
 {
     packedSurface.setData(staticPackedCrater);
-
-    packedSurface.setDrawModeSolid();
-
-    packedSurface.setFrame(rand() % staticPackedCrater.getFrameCount());
+//    packedSurface.setDrawModeSolid();
+    packedSurface.setFrame(rand() % staticPackedCrater.getNumFrames());
 
     // Check to see if this is valid crater ground.
 
@@ -84,7 +82,7 @@ void CraterParticle2D::init()
         craterCache[i].pos.zero();
     }
 
-    staticPackedCrater.load("pics/particles/craters/pak/craters.pak");
+    staticPackedCrater.loadPAK("pics/particles/craters/pak/craters.pak");
 } // end CraterParticle2D::init
 
 // draw
@@ -114,14 +112,6 @@ void CraterParticle2D::sim()
             craterCache[cacheIndex].bounds.zero();
             craterCache[cacheIndex].pos.zero();
         }
-    } else if (age > lifetime * 0.9f) {
-        packedSurface.setDrawModeBlend(&Palette::colorTable8020);
-    } else if (age > lifetime * 0.8f) {
-        packedSurface.setDrawModeBlend(&Palette::colorTable6040);
-    } else if (age > lifetime * 0.7f) {
-        packedSurface.setDrawModeBlend(&Palette::colorTable4060);
-    } else if (age > lifetime * 0.6f) {
-        packedSurface.setDrawModeBlend(&Palette::colorTable2080);
     }
 
     Particle2D::sim();

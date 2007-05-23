@@ -119,7 +119,7 @@ void ServerMessageRouter::routeMessages()
             packet.fromID = temp_packet.fromID;
             NetMessage* mmessage;
             while(message_decoder.decodeMessage(&mmessage)) {
-                memcpy(packet.data, mmessage, mmessage->getSize());
+                SDL_memcpy(packet.data, mmessage, mmessage->getSize());
                 routePacket(&packet);
             }
         } else {

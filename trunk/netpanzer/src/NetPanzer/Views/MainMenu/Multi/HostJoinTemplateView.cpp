@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include <ctype.h>
 #include <sstream>
 #include "HostJoinTemplateView.hpp"
 #include "Desktop.hpp"
@@ -25,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameConfig.hpp"
 #include "PlayerGameManager.hpp"
 #include "HostView.hpp"
-#include "Util/Exception.hpp"
 #include "MapSelectionView.hpp"
 #include "PlayerNameView.hpp"
 #include "FlagSelectionView.hpp"
@@ -72,14 +70,14 @@ static void bNext()
         return;
 
     // Check a few things which should be ok.
-    if (strlen(HostJoinTemplateView::gameTypeBuf) == 0) {
+    if (SDL_strlen(HostJoinTemplateView::gameTypeBuf) == 0) {
         return;
     }
     if (MapSelectionView::curMap == -1) {
         return;
     }
     if (gameconfig->hostorjoin == _game_session_join &&
-        strcmp(IPAddressView::szServer.getString(), "") == 0)
+        SDL_strcmp(IPAddressView::szServer.getString(), "") == 0)
         return;
 
     // Set the player flag.
@@ -95,7 +93,9 @@ static void bNext()
     
     serverlistview->endQuery();
 
-    MenuTemplateView::backgroundSurface.free();
+    if ( MenuTemplateView::backgroundSurface )
+        delete MenuTemplateView::backgroundSurface;
+    MenuTemplateView::backgroundSurface = 0;
 
     PlayerGameManager* manager = (PlayerGameManager*) gamemanager;
     manager->launchMultiPlayerGame();

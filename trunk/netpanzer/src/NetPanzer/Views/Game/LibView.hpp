@@ -42,7 +42,6 @@ protected:
 
     CheckBox checkBoxAllowParticleGeneration;
     CheckBox checkBoxAllowTimeSlice;
-    CheckBox checkBoxAllowSpanBlitting;
     CheckBox checkBoxParticlesCanHaveSmoke;
     CheckBox checkBoxSolidColorExplosionParticles;
     CheckBox checkBoxParticleInterfaceSim;

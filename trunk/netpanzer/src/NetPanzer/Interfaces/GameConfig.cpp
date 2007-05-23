@@ -90,12 +90,10 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       scrollrate("scrollrate", 1000, 100, 10000),
       minimapposition("minimapposition", iXY(0,0)),
       minimapsize("minimapsize", iXY(194,194)),
-      minimapdrawtype("minimapdrawtype", MAP_SOLID),
       gameinfoposition("gameinfoposition", iXY(0,0)),
       toolbarposition("toolbarposition", iXY(0,0)),
       rankposition("rankposition", iXY(0,0)),
-      viewdrawbackgroundmode("viewdrawbackgroundmode",(int)VIEW_BACKGROUND_DARK_GRAY_BLEND),
-                  
+
       radar_displayclouds("displayclouds", false),
       radar_playerunitcolor("playerunitcolor", _color_aqua, 0, _color_last-1),
       radar_selectedunitcolor("selectedunitcolor", _color_white, 0, _color_last-1),
@@ -177,11 +175,9 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     interfacesettings.push_back(&scrollrate);
     interfacesettings.push_back(&minimapposition);
     interfacesettings.push_back(&minimapsize);
-    interfacesettings.push_back(&minimapdrawtype);
     interfacesettings.push_back(&gameinfoposition);
     interfacesettings.push_back(&toolbarposition);
     interfacesettings.push_back(&rankposition);
-    interfacesettings.push_back(&viewdrawbackgroundmode);
 
     radarsettings.push_back(&radar_displayclouds);
     radarsettings.push_back(&radar_playerunitcolor);

@@ -17,8 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include <string.h>
-
 #include "ConnectNetMessage.hpp"
 #include "Util/Endian.hpp"
 
@@ -113,7 +111,7 @@ ConnectClientSettings::ConnectClientSettings()
 {
     message_class = _net_message_class_connect;
     message_id = _net_message_id_connect_client_settings;
-    memset(&player_name, 0, sizeof(player_name));
+    SDL_memset(&player_name, 0, sizeof(player_name));
 }
 
 Sint16 ConnectClientSettings::getPlayerFlag() const
@@ -124,7 +122,7 @@ Sint16 ConnectClientSettings::getPlayerFlag() const
 void ConnectClientSettings::set(const char *player_name, Uint8 unit_color,
         Uint16 player_flag )
 {
-    strncpy(ConnectClientSettings::player_name, player_name, 64);
+    SDL_strlcpy(ConnectClientSettings::player_name, player_name, 64);
     ConnectClientSettings::player_name[63] = '\0';
     ConnectClientSettings::unit_color = unit_color;
     ConnectClientSettings::player_flag = htol16(player_flag);
@@ -135,7 +133,7 @@ ConnectMesgServerGameSettings::ConnectMesgServerGameSettings()
 {
     message_class = _net_message_class_connect;
     message_id = _net_message_id_connect_server_game_setup;
-    memset(map_name, 0, sizeof(map_name));
+    SDL_memset(map_name, 0, sizeof(map_name));
 }
 
 Uint16 ConnectMesgServerGameSettings::getMaxPlayers() const

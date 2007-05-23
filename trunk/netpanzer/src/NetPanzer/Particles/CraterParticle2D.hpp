@@ -39,7 +39,7 @@ public:
 
     static void init();
 
-    static PackedSurface staticPackedCrater;
+    static Surface staticPackedCrater;
 
     static int getCacheHitCount()
     {

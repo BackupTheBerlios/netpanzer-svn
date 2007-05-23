@@ -19,11 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <stdarg.h>
-#include <errno.h>
-#include <string.h>
-#include <string>
-
-#include "Exception.hpp"
+#include <exception>
+#include "SDL.h"
 #include "FileSystem.hpp"
 #include "Log.hpp"
 
@@ -75,8 +72,8 @@ Logger::log(int priority, const char *fmt, va_list ap)
     struct tm* loctime = localtime(&curtime);
     int timelen = strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S ", loctime);
     
-    vsnprintf(buf+timelen, sizeof(buf)-timelen-1, fmt, ap);
-    strcat(buf, "\n");
+    SDL_vsnprintf(buf+timelen, sizeof(buf)-timelen-1, fmt, ap);
+    SDL_strlcat(buf, "\n", sizeof(buf));
     
     if (m_logLevel >= priority) {
         fprintf(stderr, buf);
@@ -84,7 +81,7 @@ Logger::log(int priority, const char *fmt, va_list ap)
     
     if (m_logfile != 0) {
 	try {
-	    m_logfile->write(buf, strlen(buf), 1);
+	    m_logfile->write(buf, SDL_strlen(buf), 1);
             m_logfile->flush();
 	} catch(std::exception& e) {
             fprintf(stderr, "Error while writing logfile: %s", e.what());

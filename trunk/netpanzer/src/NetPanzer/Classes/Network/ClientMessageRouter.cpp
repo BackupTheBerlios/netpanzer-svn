@@ -45,12 +45,12 @@ NetMessageDecoder ClientMessageRouter::message_decoder;
 
 void ClientMessageRouter::initialize()
 {
-    temp_message = (NetMessage *) malloc( sizeof( NetMessageStruct ) );
+    temp_message = (NetMessage *) SDL_malloc( sizeof( NetMessageStruct ) );
 }
 
 void ClientMessageRouter::cleanUp()
 {
-    free(temp_message);
+    SDL_free(temp_message);
 }
 
 void

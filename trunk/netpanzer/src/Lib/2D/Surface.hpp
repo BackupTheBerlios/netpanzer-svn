@@ -19,13 +19,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __Surface_hpp__
 
 #include <string>
+#include <vector>
 #include <assert.h>
-#include <stdlib.h>
-#include <stdio.h>
 
 #include "Types/iXY.hpp"
 #include "Types/iRect.hpp"
 #include "Util/NoCopy.hpp"
+#include "Util/Exception.hpp"
 
 #include "SDL.h"
 
@@ -52,8 +52,10 @@ public:
 
     virtual ~Surface();
     
-    void create(unsigned int w, unsigned int h, unsigned int nframes);
-    void free();
+    void setColorKey(Uint32 c) { SDL_SetColorKey(thisFrame, SDL_SRCCOLORKEY|SDL_RLEACCEL, c); }
+    void setAllColorKey(Uint32 c);
+    void setColors(const std::string& paletteName);
+    void setAllColorsBlack();
 
     void setOffset(const iXY &o) { offset = o; }
     void setOffsetX(int ox)     { offset.x = ox; }
@@ -61,148 +63,151 @@ public:
     void setFPS(int f)          { fps = f; }
     void setOffsetCenter();
 
-    void setFrame0(PIX *f0)
-    {
-        assert(frame0 != 0);
-        frame0 = f0;
-    }
-
     // Accessor functions.
-    unsigned int getWidth()  const { return twidth; }
-    unsigned int getHeight() const { return theight; }
-    unsigned int getPitch()  const { return tpitch; }
+    unsigned int getWidth()  const { return thisFrame->w; }
+    unsigned int getHeight() const { return thisFrame->h; }
+    unsigned int getPitch()  const { return thisFrame->pitch; }
     
     iXY     getCenter()     const { return iXY(getWidth()>>1, getHeight()>>1); }
-    int     getCenterX()    const { return getWidth()>>1; }
-    int     getCenterY()    const { return getHeight()>>1; }
+    unsigned int getCenterX()    const { return getWidth()>>1; }
+    unsigned int getCenterY()    const { return getHeight()>>1; }
 
     unsigned int getNumFrames() const { return numFrames; }
+    
+    int  loadAllBMPInDirectory(const char *path);
+    void loadBMP(const char *fileName);
+    void loadPAK(const std::string& filename);
 
-
-    float  getFPS()         const { return fps; }
-    bool   getDoesExist()   const { return doesExist; }
-    int    getCurFrame ()   const { return (int) curFrame; }
-    PIX   *getMem()         const { return mem; }
-    PIX   *getFrame0()      const { return frame0; }
-    iXY    getOffset()      const { return offset; }
-    int    getOffsetX()     const { return offset.x; }
-    int    getOffsetY()     const { return offset.y; }
-    int    getArea()        const { return getWidth() * getHeight(); }
-
-    float  getAspectXOverY() const
-    {
-        return float(getWidth()) / float(getHeight());
+    unsigned int getFPS()      const { return fps; }
+    float        getCurFrame() const { return curFrame; }
+    iXY          getOffset()   const { return offset; }
+    int          getOffsetX()  const { return offset.x; }
+    int          getOffsetY()  const { return offset.y; }
+    Uint8 * getMem() const
+    { 
+        if ( ! thisFrame->pixels )
+            throw Exception("Surface::getMem() Error, surface must be locked");
+        return (PIX *)thisFrame->pixels;
     }
-    float  getAspectYOverX() const
-    {
-        return float(getHeight()) / float(getWidth());
-    }
+
     iRect  getRect() const
     {
-        return iRect(0, 0, getWidth() - 1, getWidth() - 1);
+        return iRect(0, 0, getWidth() - 1, getHeight() - 1);
     }
 
-    void putPixel(unsigned int x, unsigned int y, const PIX &color) 
+    void putPixel(unsigned int x, unsigned int y, Uint32 color) 
     {
-        if ( x >= getWidth() || y >= getHeight())
+        if ( x >= getWidth() || y >= getHeight() )
             return;
-        *(mem + (y * getPitch()) + x) = color;
+            
+        Uint8 * mp = getMem() + (y * thisFrame->pitch);
+        switch (thisFrame->format->BytesPerPixel) {
+            case 1:
+                mp+=x;
+                *mp=color;
+                break;
+            case 2:
+                mp+=x<<1;
+                *(Uint16 *)mp=color;
+                break;
+            case 3:
+                throw Exception("putPixel: Not supported for 3 byte surfaces");
+            case 4:
+                mp+=x;
+                *(Uint32 *)mp=color;
+                break;
+            default:
+                throw Exception("putPixel here we are");
+        }
+//        *(pixPtr(x,y)) = color;
     }
 
-    PIX getPixel(unsigned int x, unsigned int y) const
+    Uint32 getPixel(unsigned int x, unsigned int y) const
     {
-        return *pixPtr(x,y);
+        if ( x >= getWidth() || y >= getHeight() )
+            return 0;
+    
+        Uint8 * mp = getMem() + (y * thisFrame->pitch);
+        Uint32 val=0;
+        switch (thisFrame->format->BytesPerPixel) {
+            case 1:
+                mp+=x;
+                val=*mp;
+                break;
+            case 2:
+                mp+=x<<1;
+                val=*(Uint16 *)mp;
+                break;
+            case 3:
+                throw Exception("getPixel: Not supported for 3 byte surfaces");
+            case 4:
+                mp+=x<<2;
+                val=*(Uint32 *)mp;
+                break;
+            default:
+                throw Exception("getPixel here we are");
+        }
+        return val;
     }
 
-    void drawRect(iRect bounds, const PIX &color);
-    void fillRect(iRect bounds, const PIX &color);
+    void fill(Uint32 color);
+    void fillRect(iRect bounds, Uint32 color);
+    void drawRect(iRect bounds, Uint32 color);
+    void drawHLine(int x1, int y,  int x2, Uint32 color);
+    void drawVLine(int x,  int y1, int y2, Uint32 color);
+    void drawLine(int x1, int y1, int x2, int y2, Uint32 color);
 
 private:
     friend class ScreenSurface;
-    friend class PackedSurface;
-    PIX   *mem;       // Pointer to upperleft most pixel
-    PIX   *frame0;    // Pointer to first frame
-    
-    void alloc(unsigned int w, unsigned int h, int nframes);
-    bool grab(const Surface &s, iRect bounds);
+    SDL_Surface **frames;
+    SDL_Surface *thisFrame;
 
-    PIX *pixPtr(unsigned int x, unsigned int y) const
-    {
-        assert((y * getPitch() + x) < getPitch() * getHeight());
-        return mem + (y * getPitch()) + x;
-    }
-
-protected:
     iXY   offset;     // Used like a hot spot for drawing.
-    float fps;        // The speed to change the frames. Make sure TimerInterface::getTimeSlice() is being updated.
-    unsigned int twidth;
-    unsigned int theight;
-    unsigned int tpitch;     // Number of bytes from one row to the next.
+    unsigned int fps;        // The speed to change the frames. Make sure TimerInterface::getTimeSlice() is being updated.
     unsigned int numFrames;
-
     float curFrame;   // Current frame of frameCount.
-    bool  myMem;	  // Am I the owner of this surface, or am I mapped to some other surface.
-    bool  doesExist;  // Is it ok o write to this surface?
 
     static int totalSurfaceCount;  // The number of surfaces alive.
     static int totalByteCount;     // The number of bytes of the surfaces alive.
+    
+    void alloc(unsigned int w, unsigned int h, int nframes);
+    void freedata();
 
-    void        reset();
+    Uint8 * pixPtr(unsigned int x, unsigned int y) const
+    {
+        if ( ! thisFrame->pixels )
+            throw Exception("Surface Needs to be locked");
+            
+        if ( x > getWidth() || y > getHeight() )
+            throw Exception("Point out of Surface");
+            
+        return getMem() + (y * getPitch()) + (x*thisFrame->format->BytesPerPixel);
+    }
+
 
 public:
     
-    void resize(int xPix, int yPix);
-
     void setTo(const Surface &s, iRect bounds);
     void setTo(const Surface &source);
 
     void blt(Surface &dest, int x, int y) const;
-    void bltTrans(Surface &dest, int x, int y) const;
-    void bltTransColor(Surface &dest, int x, int y, const PIX &color) const;
     void bltScale(const Surface &source, const iRect &destRect);
-    void bltLookup(const iRect &destRect, const PIX table[]);
-
-
-    void drawHLine(int x1, int y,  int x2, const PIX &color);
-    void drawVLine(int x,  int y1, int y2, const PIX &color);
-
-    void drawLine(int x1, int y1, int x2, int y2, const PIX &color);
-
-    void drawLine(const iXY &a, const iXY &b, const PIX &color)
-    {
-        drawLine(a.x, a.y, b.x, b.y, color);
-    }
 
     // Surface Effects.
-    void drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightColor);
-    void drawButtonBorder(PIX topLeftColor, PIX bottomRightColor)
-    {
-        drawButtonBorder(iRect(0, 0, getWidth(), getHeight()), topLeftColor, bottomRightColor);
-    }
-
-    void drawWindowsBorder();
-    
-    void fill(const PIX &color);
-    void flipVertical();
     void rotate(int angle);
     void copy(const Surface &source);
 
     int nextFrame();
 
-    void setFrame(const float &frameNum)
+    void setFrame(const unsigned int frameNum)
     {
-        assert(frameNum >= 0.0);
         assert(frameNum < getNumFrames());
-        mem = frame0 + (getHeight() * getPitch()) * int(frameNum);
+        curFrame=frameNum;
+        thisFrame = frames[frameNum];
     }
-
-    PIX getAverageColor();
 
     void scale(unsigned int x, unsigned int y);
 
-    void shrinkWrap();
-
-    int  loadAllBMPInDirectory(const char *path);
 
     // Blit a single character of text.
     void bltChar8x8(int x, int y, unsigned char character, const PIX &color);
@@ -218,25 +223,30 @@ public:
     void bltStringShadowedCenter(const char *string, PIX foreground, PIX background);
     void bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color);
 
-    void loadBMP(const char *fileName, bool needAlloc = true);
 
-    void mapFromPalette(const std::string& oldPalette);
-
-    void drawBoxCorners(const iRect &rect, int cornerLength, PIX color);
-    void drawBoxCorners(const iXY &min, const iXY &max,
-            int cornerLength, PIX color)
-    {
-        drawBoxCorners(iRect(min.x, min.y, max.x, max.y), cornerLength, color);
-    }
-    void drawBoxCorners(int cornerLength, PIX color)
-    {
-        drawBoxCorners(iRect(0, 0, getWidth() - 1, getHeight() - 1), cornerLength, color);
-    }
+    void drawBoxCorners(const iRect &rect, int cornerLength, Uint32 color);
 
     static unsigned int getFontHeight();
     static int getTextLength(const char* text);
     static int getTextLength(const std::string& text)
     { return getTextLength(text.c_str()); } 
 }; // end Surface
+
+class SurfaceList : public std::vector<Surface*>
+{
+public:
+    SurfaceList()
+    { }
+
+    ~SurfaceList()
+    {
+        std::vector<Surface*>::iterator i;
+        for(i = begin(); i != end(); i++)
+            delete *i;
+    }
+};
+
+int loadAllPAKInDirectory(const char *path, SurfaceList& list);
+
 
 #endif // __Surface_HPP__

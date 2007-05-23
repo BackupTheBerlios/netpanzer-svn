@@ -26,11 +26,11 @@ int gMissleThrustForce = 5;
 
 int gBulletVelocity    = 60;
 
-PackedSurface gShellPackedSurface;
-PackedSurface gMissleSmallPackedSurface;
-PackedSurface gMissleMediumPackedSurface;
-PackedSurface gMissleThrustPackedSurface;
-PackedSurface gMissleGroundLightPackedSurface;
+Surface gShellPackedSurface;
+Surface gMissleSmallPackedSurface;
+Surface gMissleMediumPackedSurface;
+Surface gMissleThrustPackedSurface;
+Surface gMissleGroundLightPackedSurface;
 
 int weaponLayer        = 3;
 int weaponShadowLayer  = 2;

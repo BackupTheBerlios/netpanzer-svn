@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETPACKETQUEUES_HPP
 #define _NETPACKETQUEUES_HPP
 
-#include <string.h>
 #include "NetPacket.hpp"
 #include "ArrayUtil/QueueTemplate.hpp"
 #include "ArrayUtil/ArrayTemplate.hpp"
@@ -29,14 +28,14 @@ class NetPacketQueue : public QueueTemplate< NetPacket >
 public:
     void add(NetPacket *object, unsigned long index)
     {
-        memcpy(&array[index], object, sizeof(NetPacket));
+        SDL_memcpy(&array[index], object, sizeof(NetPacket));
     }
 
     void dequeue(NetPacket *object)
     {
         assert( front != rear );
         front = ( front + 1 ) % size;
-        memcpy(object, &array[ front ], sizeof(NetPacket));
+        SDL_memcpy(object, &array[ front ], sizeof(NetPacket));
     }
 
     void enqueue(NetPacket &object)

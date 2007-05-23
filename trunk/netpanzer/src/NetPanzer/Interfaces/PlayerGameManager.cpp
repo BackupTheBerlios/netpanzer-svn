@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkServer.hpp"
 #include "Client.hpp"
 #include "NetworkClient.hpp"
+#include "unix/NetworkClientUnix.hpp"
 #include "ClientMessageRouter.hpp"
 #include "ClientConnectDaemon.hpp"
 #include "ServerConnectDaemon.hpp"
@@ -58,7 +59,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MapsManager.hpp"
 #include "PowerUpInterface.hpp"
 #include "ChatInterface.hpp"
-#include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 
 #include "cMouse.hpp"
@@ -77,8 +77,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "OrderingView.hpp"
 #include "SkirmishView.hpp"
 #include "HelpView.hpp"
-#include "SoundView.hpp"
-#include "ControlsView.hpp"
 #include "InterfaceView.hpp"
 #include "VisualsView.hpp"
 #include "LobbyView.hpp"
@@ -87,13 +85,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ViewGlobals.hpp"
 #include "LibView.hpp"
 #include "HelpScrollView.hpp"
-#include "ResignView.hpp"
 #include "AreYouSureResignView.hpp"
 #include "AreYouSureExitView.hpp"
 #include "DisconectedView.hpp"
-#include "UnitSelectionView.hpp"
 #include "FlagSelectionView.hpp"
-#include "UnitColorView.hpp"
 #include "HostOptionsView.hpp"
 #include "MapSelectionView.hpp"
 #include "PlayerNameView.hpp"
@@ -214,15 +209,12 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new OptionsTemplateView());
     Desktop::add(new OrderingView());
     Desktop::add(new HelpView());
-    Desktop::add(new SoundView());
-    Desktop::add(new ControlsView());
     Desktop::add(new VisualsView());
     Desktop::add(new InterfaceView());
     Desktop::add(new FlagSelectionView());
     Desktop::add(new HostOptionsView());
     PlayerNameView *playernameview=new PlayerNameView();
     Desktop::add(playernameview);
-    Desktop::add(new ResignView());
     Desktop::add(new AreYouSureResignView());
     Desktop::add(new AreYouSureExitView());
     Desktop::add(new DisconectedView());
@@ -245,14 +237,7 @@ void PlayerGameManager::inputLoop()
 {
     processSystemKeys();
 
-#if 0
-    if(showNewPanel && Desktop::getVisible("GameView") && testpanel->contains(mouse.getScreenPos()))
-    {
-        //Game started, draw interface
-        testpanel->processEvents(mouse.getScreenPos(), mouse.getButtonMask(), KMOD_NONE);
-    }else
-#endif
-       Desktop::manage(mouse.getScreenPos().x,
+    Desktop::manage(mouse.getScreenPos().x,
                mouse.getScreenPos().y, mouse.getButtonMask());
 
     COMMAND_PROCESSOR.updateScrollStatus( mouse.getScreenPos() );
@@ -263,17 +248,6 @@ void PlayerGameManager::graphicsLoop()
     screen->lock();
 
     Desktop::draw(*screen);
-
-#if 0
-    //TODO : clean this ugly test :)
-    if(showNewPanel && Desktop::getVisible("GameView"))
-    {
-        UI::Painter painter(Screen->getSurface(), &fontManager);
-
-        //Game started, draw interface
-        testpanel->draw(painter);
-    }
-#endif
 
     if (Desktop::getVisible("GameView")) {
         ConsoleInterface::update(*screen);
@@ -325,6 +299,11 @@ void PlayerGameManager::hostMultiPlayerGame()
     progressView->open();
     progressView->scrollAndUpdateDirect( "Launching Server ..." );
     try {
+        if (CLIENT) {
+            delete CLIENT;
+            CLIENT=0;
+        }
+        CLIENT = new NetworkClientUnix();
         SERVER->hostSession();
 
         if((bool) gameconfig->publicServer &&
@@ -519,23 +498,11 @@ void PlayerGameManager::processSystemKeys()
         if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE)) {
             if (Desktop::getView("GameView")->getVisible()) {
                 if (!Desktop::getView("OptionsView")->getVisible() &&
-                        !Desktop::getView("SoundView")->getVisible() &&
-                        !Desktop::getView("ControlsView")->getVisible() &&
                         !Desktop::getView("InterfaceView")->getVisible() &&
                         !Desktop::getView("VisualsView")->getVisible()) {
                     View *v = Desktop::getView("OptionsView");
                     assert(v != 0);
                     ((OptionsTemplateView *)v)->initButtons();
-                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
-
-                    v = Desktop::getView("SoundView");
-                    assert(v != 0);
-                    ((SoundView *)v)->initButtons();
-                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
-
-                    v = Desktop::getView("ControlsView");
-                    assert(v != 0);
-                    ((ControlsView *)v)->initButtons();
                     ((OptionsTemplateView *)v)->setAlwaysOnBottom(false);
 
                     v = Desktop::getView("VisualsView");
@@ -566,15 +533,6 @@ void PlayerGameManager::processSystemKeys()
                     ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
                     ((OptionsTemplateView *)v)->setVisible(false);
 
-                    v = Desktop::getView("SoundView");
-                    assert(v != 0);
-                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-                    ((OptionsTemplateView *)v)->setVisible(false);
-
-                    v = Desktop::getView("ControlsView");
-                    assert(v != 0);
-                    ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
-                    ((OptionsTemplateView *)v)->setVisible(false);
                 }
             }
         }

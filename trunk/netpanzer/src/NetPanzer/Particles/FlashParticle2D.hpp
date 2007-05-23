@@ -38,7 +38,7 @@ public:
 
     static void init();
 
-    static PackedSurface staticPackedFlash;
+    static Surface staticPackedFlash;
 
 protected:
     // The size relative to the original image.  This is so we can keep

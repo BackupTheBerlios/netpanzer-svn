@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 #include <memory>
-#include <string.h>
 
 typedef
 struct
@@ -72,7 +71,7 @@ void find_keyword(char *string, int *command, char *key_list, char max_key_list 
     str = extract_spaces(string,0);
 
     for(comindex=0; ( (comindex < max_key_list )  && notfound); comindex++ ) {
-        notfound = strncasecmp( str, &key_list[ comindex * _MAX_KEY_LENGTH ], strlen( &key_list[ comindex * _MAX_KEY_LENGTH ]) );
+        notfound = strncasecmp( str, &key_list[ comindex * _MAX_KEY_LENGTH ], SDL_strlen( &key_list[ comindex * _MAX_KEY_LENGTH ]) );
     }
 
     comindex = comindex-1;
@@ -199,112 +198,112 @@ void read_vehicle_profile(const std::string& unitName, UnitProfile *profile)
 	    switch(field) {
 		case _hit_points:
 		    {
- 			sscanf( param_list.params[1], "%d", &temp_int );
+ 			SDL_sscanf( param_list.params[1], "%d", &temp_int );
 			profile->hit_points = (short) temp_int;
 		    }
 		    break;
 
 		case _attack_x:
 		    {
-   			sscanf( param_list.params[1], "%d", &temp_int );
+   			SDL_sscanf( param_list.params[1], "%d", &temp_int );
 			profile->attack_factor = (short) temp_int;
 		    }
 		    break;
 
 		case _reload_time:
 		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
+			SDL_sscanf( param_list.params[1], "%d", &temp_int );
 			profile->reload_time = (char) temp_int;
 		    }
 		    break;
 
 		case _react_time :
 		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
+			SDL_sscanf( param_list.params[1], "%d", &temp_int );
 			profile->reaction_time = (char) temp_int;
 		    }
 		    break;
 
 		case _range_max : 
 		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
+			SDL_sscanf( param_list.params[1], "%d", &temp_int );
 			profile->attack_range = (long) temp_int;
 		    }
 		    break;
 
 		case _regen_time: 
 		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
+			SDL_sscanf( param_list.params[1], "%d", &temp_int );
 			profile->regen_time = (short) temp_int;
 		    }
 		    break;
 
 		case _defend_range: 
 		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
+			SDL_sscanf( param_list.params[1], "%d", &temp_int );
 			profile->defend_range = (long) temp_int;
 		    }
 		    break;
 
 		case _speed_rate: 
 		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
+			SDL_sscanf( param_list.params[1], "%d", &temp_int );
 			profile->speed_rate = (char) temp_int;
 		    }
 		    break;
 
 		case _speed_factor:
 		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
+			SDL_sscanf( param_list.params[1], "%d", &temp_int );
 			profile->speed_factor = (char) temp_int;
 		    }
 		    break;
 
 		case _repath_time: 
 		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
+			SDL_sscanf( param_list.params[1], "%d", &temp_int );
 			profile->repath_time = (char) temp_int;
 		    }
 		    break;
 
 		case _fuel_capacity:
 		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
+			SDL_sscanf( param_list.params[1], "%d", &temp_int );
 			profile->fuel_capacity = (short ) temp_int;
 		    }
 		    break;
 
 		case _tracking_rate:
 		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
+			SDL_sscanf( param_list.params[1], "%d", &temp_int );
 			profile->tracking_rate = (char) temp_int;
 		    }
 		    break;
 
 		case _jamm_able:
 		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
+			SDL_sscanf( param_list.params[1], "%d", &temp_int );
 			profile->jammable = (char) temp_int;
 		    }
 		    break;
 
 		case _jamming_time:
 		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
+			SDL_sscanf( param_list.params[1], "%d", &temp_int );
 			profile->jamming_time = (char) temp_int;
 		    }
 		    break;
 
 		case _jamming_range:
 		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
+			SDL_sscanf( param_list.params[1], "%d", &temp_int );
 			profile->jamming_range = (long) temp_int;
 		    }
 		    break;
 
 		case _fueling_range:
 		    {
-			sscanf( param_list.params[1], "%d", &temp_int );
+			SDL_sscanf( param_list.params[1], "%d", &temp_int );
 			profile->fueling_range = (long) temp_int;
 		    }
 		    break;

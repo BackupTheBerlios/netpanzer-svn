@@ -18,8 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "ClientConnectDaemon.hpp"
 
-#include <stdio.h>
-
+#include "SDL.h"
 #include "PlayerInterface.hpp"
 #include "UnitInterface.hpp"
 #include "Client.hpp"
@@ -86,7 +85,7 @@ void ClientConnectDaemon::netMessageLinkAck(const NetMessage* message)
     switch( join_request_ack_mesg->getResultCode() ) {
     case _join_request_result_success :
         lobbyView->scrollAndUpdate( "Link to Server Established" );
-        sprintf( buf, "Protocol Version: %u",
+        SDL_snprintf( buf, sizeof(buf), "Protocol Version: %u",
                 join_request_ack_mesg->getServerProtocolVersion());
         lobbyView->scrollAndUpdate( buf );
         break;
@@ -95,7 +94,7 @@ void ClientConnectDaemon::netMessageLinkAck(const NetMessage* message)
         lobbyView->scrollAndUpdate( "Link to Server FAILED!" );
         lobbyView->scrollAndUpdate( "Incorrect Network Protocol Revision" );
         lobbyView->scrollAndUpdate( "Please get a newer netPanzer version." );
-        sprintf( buf, "Server Protocol Version: %u",
+        SDL_snprintf( buf, sizeof(buf), "Server Protocol Version: %u",
                 join_request_ack_mesg->getServerProtocolVersion());
         lobbyView->scrollAndUpdate( buf );
         connection_state = _connect_state_connect_failure;
@@ -124,7 +123,7 @@ void ClientConnectDaemon::netMessageConnectProcessUpdate(const NetMessage* messa
     process_update = (ConnectProcessUpdate *) message;
 
     char buf[80];
-    snprintf(buf, sizeof(buf), "Your Position In Queue is %d ",
+    SDL_snprintf(buf, sizeof(buf), "Your Position In Queue is %d ",
             process_update->getQueuePosition());
 
     lobbyView->scrollAndUpdate( buf );
@@ -150,7 +149,7 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(const NetMessage* mess
         break;
 
     case _connect_state_message_sync_player_info_percent : {
-            snprintf(str_buf, sizeof(str_buf),
+            SDL_snprintf(str_buf, sizeof(str_buf),
                     "Synchronizing Player Info ... (%d%%)",
                     state_mesg->getPercentComplete());
             lobbyView->update( str_buf );
@@ -163,7 +162,7 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(const NetMessage* mess
         break;
 
     case _connect_state_message_sync_units_percent : {
-            snprintf(str_buf, sizeof(str_buf),
+            SDL_snprintf(str_buf, sizeof(str_buf),
                     "Synchronizing Game Elements ... (%d%%)",
                     state_mesg->getPercentComplete());
             lobbyView->update( str_buf );
@@ -342,7 +341,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                         GameManager::startClientGameSetup( message, &result_code );
 
                         if( result_code == _mapload_result_no_map_file ) {
-                            sprintf( str_buf, "MAP %s NOT FOUND!", game_setup->map_name );
+                            SDL_snprintf( str_buf, sizeof(str_buf), "MAP %s NOT FOUND!", game_setup->map_name );
                             lobbyView->scrollAndUpdate( str_buf);
                             connection_state = _connect_state_connect_failure;
                             failure_display_timer.reset();
@@ -374,7 +373,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                 if ( GameManager::clientGameSetup( &percent_complete ) == false ) {
                     ConnectMesgClientGameSetupAck client_game_setup_ack;
 
-                    sprintf( str_buf, "Loading Game Data ... (%d%%)", percent_complete);
+                    SDL_snprintf( str_buf, sizeof(str_buf), "Loading Game Data ... (%d%%)", percent_complete);
                     lobbyView->update( str_buf );
 
                     CLIENT->sendMessage( &client_game_setup_ack, sizeof(ConnectMesgClientGameSetupAck));
@@ -382,7 +381,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                 } else {
                     ConnectMesgClientGameSetupPing client_game_setup_ping;
 
-                    sprintf( str_buf, "Loading Game Data ... (%d%%)", percent_complete);
+                    SDL_snprintf( str_buf, sizeof(str_buf), "Loading Game Data ... (%d%%)", percent_complete);
                     lobbyView->update( str_buf );
                     CLIENT->sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
                 }

@@ -75,22 +75,22 @@ void SpriteSurface::blit( Surface *surface, const iRect &world_win )
     iXY blit_offset;
 
     blit_offset = (world_pos + attach_offset) - world_win.min;
-    bltTrans( *surface, blit_offset.x, blit_offset.y );
+    blt( *surface, blit_offset.x, blit_offset.y );
 }
 
 SpritePacked::SpritePacked()
         : Sprite()
 {
-    colorTable = 0;
-    drawMode   = SOLID;
+//    colorTable = 0;
+//    drawMode   = SOLID;
 }
 
-SpritePacked::SpritePacked( PackedSurface &source )
+SpritePacked::SpritePacked( Surface &source )
         : Sprite()
 {
     setTo( source );
-    colorTable = 0;
-    drawMode   = SOLID;
+//    colorTable = 0;
+//    drawMode   = SOLID;
 }
 
 bool SpritePacked::isVisible(const iRect &world_win ) const
@@ -102,8 +102,8 @@ bool SpritePacked::isVisible(const iRect &world_win ) const
     long pix_x;
     long pix_y;
 
-    pix_x = pix.x >> 1;
-    pix_y = pix.y >> 1;
+    pix_x = getWidth() >> 1;
+    pix_y = getHeight() >> 1;
 
     min_x = world_pos.x - pix_x;
     min_y = world_pos.y - pix_y;
@@ -136,12 +136,11 @@ void SpritePacked::blit( Surface *surface, const iRect &world_win )
 
     blit_offset = (world_pos + attach_offset) - world_win.min;
 
-    if (drawMode == BLEND) {
-        bltBlend(*surface, blit_offset.x, blit_offset.y, *colorTable);
-
-    } else if (drawMode == SOLID) {
-        blt(*surface, blit_offset);
-    } else {
-        assert(false);
-    }
+//    if (drawMode == BLEND) {
+//        bltBlend(*surface, blit_offset.x, blit_offset.y, *colorTable);
+//    } else if (drawMode == SOLID) {
+        blt(*surface, blit_offset.x, blit_offset.y);
+//    } else {
+//        assert(false);
+//    }
 }

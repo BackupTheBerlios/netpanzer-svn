@@ -30,7 +30,8 @@ void cMouse::draw(Surface &dest)
 
     if (pointer) {
         pointer->nextFrame();
-        pointer->bltTrans(dest, getScreenPos().x, getScreenPos().y);
+        //pointer->bltTrans(dest, getScreenPos().x, getScreenPos().y);
+        pointer->blt(dest, getScreenPos().x, getScreenPos().y);
     }
 } // end draw
 

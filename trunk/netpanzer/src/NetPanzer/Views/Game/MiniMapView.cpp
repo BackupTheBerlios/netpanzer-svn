@@ -36,7 +36,7 @@ int   MiniMapView::increaseSize = 0;
 
 // MiniMapView
 //---------------------------------------------------------------------------
-MiniMapView::MiniMapView() : GameTemplateView()
+MiniMapView::MiniMapView() : GameTemplateView(), miniMapSurface(0)
 {
     assert(this != 0);
 
@@ -82,7 +82,11 @@ void MiniMapView::init()
     maxMapSize = 480;
 
     // Get the original version of the minimap.
-    miniMapSurface.copy(*miniMap);
+    if ( miniMapSurface )
+        delete miniMapSurface;
+    
+    miniMapSurface = new Surface();
+    miniMapSurface->copy(*miniMap);
 
     scaleGroupWait  = 0.0f;
     needScale       = true;
@@ -96,10 +100,6 @@ void MiniMapView::init()
 //---------------------------------------------------------------------------
 void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    assert(this != 0);
-    assert(viewArea.getDoesExist());
-    assert(clientArea.getDoesExist());
-
     if (decreaseSize != 0) {
         doDecreaseSize(decreaseSize);
         decreaseSize = 0;
@@ -118,12 +118,15 @@ void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
         scaleGroupWait += dt;
 
         if (scaleGroupWait > 1.0f) {
-            miniMapSurface.create(getSizeX(), getSizeY(), 1);
+            if ( miniMapSurface )
+                delete miniMapSurface;
+
+            miniMapSurface = new Surface(getSizeX(), getSizeY(), 1);
 
             //miniMapSurface.scale(getViewRect().getSize());
             iRect r(iXY(0, 0), getSize());
 
-            miniMapSurface.bltScale(*miniMap, r);
+            miniMapSurface->bltScale(*miniMap, r);
 
             needScale      = false;
             scaleGroupWait = 0.0f;
@@ -132,47 +135,19 @@ void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
 
     iRect r(iXY(0,0), getSize());
 
-    int mapDrawType=gameconfig->minimapdrawtype;
     if (needScale) {
-        // Draw the slow on the fly scaled map.
-        if (    mapDrawType == MAP_SOLID
-             || mapDrawType == MAP_2080
-             || mapDrawType == MAP_4060 
-             || mapDrawType == MAP_BLEND_GREEN ) {
-            clientArea.bltScale(*miniMap, r);
-        } else if (mapDrawType == MAP_BLEND_GRAY) {
-            clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::gray256.getColorArray());
-        } else if (mapDrawType == MAP_BLEND_DARK_GRAY) {
-            clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::darkGray256.getColorArray());
-        } else if (mapDrawType == MAP_BLACK) {
-            clientArea.fill(Color::black);
-        } else if (mapDrawType == MAP_TRANSPARENT) {}
-    }
-    else {
-        // Draw the fast not on the fly scaled map.
-        if (   mapDrawType == MAP_SOLID 
-             || mapDrawType == MAP_2080
-             || mapDrawType == MAP_4060
-             || mapDrawType == MAP_BLEND_GREEN ) {
-            miniMapSurface.blt(clientArea, 0, 0);
-        } else if (mapDrawType == MAP_BLEND_GRAY) {
-            clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::gray256.getColorArray());
-        } else if (mapDrawType == MAP_BLEND_DARK_GRAY) {
-            clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::darkGray256.getColorArray());
-        } else if (mapDrawType == MAP_BLACK) {
-            clientArea.fill(Color::black);
-        } else if (mapDrawType == MAP_TRANSPARENT) {}
+        clientArea.bltScale(*miniMap, r);
+    } else {
+        miniMapSurface->blt(clientArea, 0, 0);
     }
 
     // Draw a hairline border.
-    //viewArea.drawRect(Color::white);
-    viewArea.drawRect(iRect(0,0,viewArea.getWidth(), viewArea.getHeight()),Color::gray);
+    viewArea.drawRect(iRect(0,0,viewArea.getWidth()-1, viewArea.getHeight()-1),Color::gray);
 
     // Draw the world view box.
     iRect boxpos = MiniMapInterface::getWorldWindow();
     boxpos.translate(iXY(1,1));                           
     
-    clientArea.bltLookup(boxpos, Palette::darkGray256.getColorArray());
     // Draw the units and such on the minimap.
     MiniMapInterface::annotateMiniMap((Surface &) clientArea);
     // Draw the world view box corners.
@@ -216,15 +191,12 @@ void MiniMapView::setViewWindow(const iXY &pos)
 //--------------------------------------------------------------------------
 void MiniMapView::drawMouseBox(Surface &dest)
 {
-    assert(this != 0);
-    assert(dest.getDoesExist());
-
     iRect r(MiniMapInterface::getWorldWindow());
     iXY   size(r.getSize() / 2);
     iXY   pos(getScreenToClientPos(mouse.getScreenPos()));
 
     //dest.drawRect(pos - size - 1, pos + size - 1, Color::yellow);
-    dest.drawBoxCorners(pos - size - iXY(1,1), iXY(pos.x + size.x - 1, pos.y + size.y), 5, Color::red);
+    dest.drawBoxCorners(iRect(pos - size - iXY(1,1), iXY(pos.x + size.x - 1, pos.y + size.y)), 5, Color::red);
 
 } // end MiniMapView::drawMouseBox
 
@@ -253,11 +225,6 @@ void MiniMapView::rMouseDown(const iXY&)
 {
 } // end MiniMapView::rMouseDown
 
-void MiniMapView::setMapDrawType(MAP_DRAW_TYPES type)
-{
-    gameconfig->minimapdrawtype=type;
-}
-
 //--------------------------------------------------------------------------
 void MiniMapView::rMouseDrag(const iXY&, const iXY &prevPos, const iXY &newPos)
 {
@@ -269,23 +236,6 @@ void MiniMapView::rMouseDrag(const iXY&, const iXY &prevPos, const iXY &newPos)
     moveTo(map_pos);
     gameconfig->minimapposition=map_pos;
     checkArea(iXY(screen->getWidth(),screen->getHeight()));
-
-    // Check for map blending mode change.
-    if (KeyboardInterface::getKeyPressed(SDLK_1)) {
-        setMapDrawType(MAP_SOLID);
-    } else if (KeyboardInterface::getKeyPressed(SDLK_2)) {
-        setMapDrawType(MAP_2080);
-    } else if (KeyboardInterface::getKeyPressed(SDLK_3)) {
-        setMapDrawType(MAP_4060);
-    } else if (KeyboardInterface::getKeyPressed(SDLK_4)) {
-        setMapDrawType(MAP_BLEND_GRAY);
-    } else if (KeyboardInterface::getKeyPressed(SDLK_5)) {
-        setMapDrawType(MAP_BLEND_DARK_GRAY);
-    } else if (KeyboardInterface::getKeyPressed(SDLK_6)) {
-        setMapDrawType(MAP_BLACK);
-    } else if (KeyboardInterface::getKeyPressed(SDLK_7)) {
-        setMapDrawType(MAP_TRANSPARENT);
-    }
 
     if (KeyboardInterface::getKeyState(SDLK_KP_PLUS)) {
         increaseSize = -1;
@@ -316,7 +266,7 @@ void MiniMapView::doIncreaseSize(int value)
     }
 
     // Check the validity of the X dimension.
-    if ((min.x + destSize.x) >= screen->getWidth()) {
+    if ((unsigned int)(min.x + destSize.x) >= screen->getWidth()) {
         int xOffset = min.x + destSize.x - screen->getWidth();
 
         int destXPos = min.x - xOffset;
@@ -331,7 +281,7 @@ void MiniMapView::doIncreaseSize(int value)
     }
 
     // Check the validity of the Y dimension.
-    if ((min.y + destSize.y) >= screen->getHeight()) {
+    if ((unsigned int)(min.y + destSize.y) >= screen->getHeight()) {
         int yOffset = min.y + destSize.y - screen->getHeight();
 
         int destYPos = min.y - yOffset;

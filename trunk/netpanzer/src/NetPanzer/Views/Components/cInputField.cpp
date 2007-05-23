@@ -17,8 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include <string.h>
-#include <ctype.h>
+#include "SDL.h"
 #include "2D/Color.hpp"
 #include "Util/Exception.hpp"
 #include "cInputField.hpp"
@@ -41,8 +40,9 @@ void cInputFieldString::init(const char *string, int maxCharCount, int maxWidth)
 
     cInputFieldString::string = new char [maxCharCount + 1];
 
-    if (strlen(string) > 0 && strlen(string) < (size_t) maxCharCount) {
-        strcpy(cInputFieldString::string, string);
+    size_t len = SDL_strlen(string);
+    if (len > 0 && len < (size_t) maxCharCount) {
+        SDL_strlcpy(cInputFieldString::string, string, maxCharCount);
     } else {
         cInputFieldString::string[0] = '\0';
     }
@@ -53,7 +53,7 @@ void cInputFieldString::init(const char *string, int maxCharCount, int maxWidth)
 void cInputFieldString::setString(const std::string& string)
 {
     // XXX notify cinputfield to resetString positions
-    strncpy(this->string, string.c_str(), maxCharCount);
+    SDL_strlcpy(this->string, string.c_str(), maxCharCount);
 } // end setString
 
 // reset
@@ -69,7 +69,7 @@ void cInputFieldString::reset()
 // cInputField definitions.
 ////////////////////////////////////////////////////////////////////////////
 
-cInputField::cInputField()
+cInputField::cInputField() : inputFieldSurface(0)
 {
     reset();
 }
@@ -84,16 +84,19 @@ cInputField::cInputField(const cInputField& other)
     cursorPos(other.cursorPos), textaction(other.textaction)
 {
     if(other.excludedCharacters) {
-        excludedCharacters = new char[strlen(other.excludedCharacters)+1];
-        strcpy(excludedCharacters, other.excludedCharacters);
+        int len = SDL_strlen(other.excludedCharacters);
+        excludedCharacters = new char[len+1];
+        SDL_strlcpy(excludedCharacters, other.excludedCharacters, len+1);
     } else {
         excludedCharacters = 0;
     }
-    inputFieldSurface.copy(other.inputFieldSurface);
+    inputFieldSurface->copy(*other.inputFieldSurface);
 }
 
 cInputField::~cInputField()
 {
+    if ( inputFieldSurface )
+        delete inputFieldSurface;
     delete[] excludedCharacters;
 }
 
@@ -108,8 +111,9 @@ void cInputField::operator= (const cInputField& other)
     insertMode = other.insertMode;
     destString = other.destString;
     if(other.excludedCharacters) {
-        excludedCharacters = new char[strlen(other.excludedCharacters) +1];
-        strcpy(excludedCharacters, other.excludedCharacters);
+        int len = SDL_strlen(other.excludedCharacters);
+        excludedCharacters = new char[len +1];
+        SDL_strlcpy(excludedCharacters, other.excludedCharacters, len+1);
     } else {
         excludedCharacters = 0;
     }
@@ -117,7 +121,7 @@ void cInputField::operator= (const cInputField& other)
     bounds = other.bounds;
     cursorPos = other.cursorPos;
     textaction = other.textaction;
-    inputFieldSurface.copy(other.inputFieldSurface);
+    inputFieldSurface->copy(*other.inputFieldSurface);
 }
 
 // reset
@@ -170,8 +174,10 @@ void cInputField::setInputFieldString(cInputFieldString *string)
 
     bounds.max = bounds.min + size;
 
-    inputFieldSurface.create(size.x, size.y, 1);
-    inputFieldSurface.fill(Color::black);
+    if ( inputFieldSurface )
+        delete inputFieldSurface;
+    inputFieldSurface = new Surface(size.x, size.y, 1);
+    inputFieldSurface->fill(Color::black);
 
 } // end setInputFieldString
 
@@ -179,12 +185,13 @@ void cInputField::setInputFieldString(cInputFieldString *string)
 //--------------------------------------------------------------------------
 void cInputField::setExcludedCharacters(const char *excludedCharacters)
 {
-    this->excludedCharacters = new char [strlen(excludedCharacters) + 1];
+    int len = SDL_strlen(excludedCharacters);
+    this->excludedCharacters = new char [len + 1];
     if (this->excludedCharacters == 0) {
         throw Exception("ERROR: Unable to allocate cInputField excludedCharacters.");
     }
 
-    strcpy(this->excludedCharacters, excludedCharacters);
+    SDL_strlcpy(this->excludedCharacters, excludedCharacters,len+1);
 } // setExcludedCharacters
 
 // addChar
@@ -193,13 +200,13 @@ void cInputField::addChar(int newChar)
 {
     pressKey(newChar);
     // Check if the character should be excluded.
-    if (strchr(excludedCharacters, newChar) == 0) {
+    if (SDL_strchr(excludedCharacters, newChar) == 0) {
         
         // Add the character.
         if(insertMode) {
             // ins, move stuff forward
             if((cursorPos+1)<maxCharCount) {
-                memmove(destString+cursorPos+1,destString+cursorPos,
+                SDL_memmove(destString+cursorPos+1,destString+cursorPos,
                     maxCharCount-(cursorPos+1));
             }
         }
@@ -246,7 +253,7 @@ void cInputField::addExtendedChar(int newExtendedChar)
         break;
 
     case SDLK_RIGHT: {
-            size_t length = strlen(destString);
+            size_t length = SDL_strlen(destString);
             if(++cursorPos > length) {
                 if (cursorPos > maxCharCount) {
                     cursorPos = maxCharCount - 1;
@@ -258,7 +265,7 @@ void cInputField::addExtendedChar(int newExtendedChar)
         break;
 
     case SDLK_END: {
-            cursorPos = strlen(destString);
+            cursorPos = SDL_strlen(destString);
 
             if (cursorPos >= maxCharCount) {
                 cursorPos = maxCharCount - 1;
@@ -272,21 +279,21 @@ void cInputField::addExtendedChar(int newExtendedChar)
         break;
 
     case SDLK_DELETE: {
-            if (cursorPos == strlen(destString)) {
+            if (cursorPos == SDL_strlen(destString)) {
                 break;
             }
 
-            memcpy(destString + cursorPos, destString + cursorPos + 1, strlen(destString + cursorPos + 1) + 1);
+            SDL_memcpy(destString + cursorPos, destString + cursorPos + 1, SDL_strlen(destString + cursorPos + 1) + 1);
         }
         break;
 
     case SDLK_BACKSPACE: {
             if (cursorPos >= 1) {
-                int byteCount = strlen(destString + cursorPos);
+                int byteCount = SDL_strlen(destString + cursorPos);
 
                 // Only do this if we are not at the end of the string.
                 if (byteCount > 0) {
-                    memcpy(destString + cursorPos - 1, destString + cursorPos, byteCount);
+                    SDL_memcpy(destString + cursorPos - 1, destString + cursorPos, byteCount);
                 }
 
                 cursorPos--;
@@ -314,10 +321,10 @@ void cInputField::draw(Surface &dest)
     checkCursor();
     checkRepeat();
 
-    inputFieldSurface.fill(Color::black);
-    inputFieldSurface.drawButtonBorder(Color::white, Color::gray64);
-    inputFieldSurface.bltString(4, 2, destString+strDisplayStart, Color::white);
-    inputFieldSurface.blt(dest, pos.x, pos.y);
+    inputFieldSurface->fill(Color::black);
+    inputFieldSurface->drawRect(inputFieldSurface->getRect(), Color::gray64);
+    inputFieldSurface->bltString(4, 2, destString+strDisplayStart, Color::white);
+    inputFieldSurface->blt(dest, pos.x, pos.y);
 } // draw
 
 // drawHighlighted
@@ -327,9 +334,10 @@ void cInputField::drawHighlighted(Surface &dest)
     checkCursor();
     checkRepeat();
 
-    inputFieldSurface.fill(Color::black);
-    inputFieldSurface.drawButtonBorder(Color::darkGray, Color::white);
-    inputFieldSurface.bltStringShadowed(4, 2,
+    inputFieldSurface->fill(Color::black);
+    inputFieldSurface->drawRect(inputFieldSurface->getRect(), Color::white);
+
+    inputFieldSurface->bltStringShadowed(4, 2,
                                         destString+strDisplayStart,
                                         Color::white,
                                         Color::black);
@@ -343,14 +351,14 @@ void cInputField::drawHighlighted(Surface &dest)
         int cursorPos=cInputField::cursorPos-strDisplayStart;
         if ((size_t)cursorPos >= maxCharCount) {
             // XXX hardcoded CHAR_PIXX (8)
-            inputFieldSurface.bltString(((cursorPos - 1) * 8) + 4, 2, "_", Color::red);
+            inputFieldSurface->bltString(((cursorPos - 1) * 8) + 4, 2, "_", Color::red);
         } else {
             // XXX hardcoded CHAR_PIXX(8)
-            inputFieldSurface.bltString(cursorPos * 8 + 4, 2, "_", Color::red);
+            inputFieldSurface->bltString(cursorPos * 8 + 4, 2, "_", Color::red);
         }
     }
 
-    inputFieldSurface.blt(dest, pos.x, pos.y);
+    inputFieldSurface->blt(dest, pos.x, pos.y);
 } // drawHighlighted
 
 // checkCursor
@@ -360,8 +368,8 @@ void cInputField::drawHighlighted(Surface &dest)
 //--------------------------------------------------------------------------
 void cInputField::checkCursor()
 {
-    if (cursorPos > strlen(destString)) {
-        cursorPos = strlen(destString);
+    if (cursorPos > SDL_strlen(destString)) {
+        cursorPos = SDL_strlen(destString);
     }
     if(((size_t)strDisplayStart)>cursorPos) {
         strDisplayStart=cursorPos;

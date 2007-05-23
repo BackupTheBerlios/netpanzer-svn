@@ -19,8 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PlayerUnitConfig.hpp"
 #include "GameConfig.hpp"
 
-#include <string.h>
-
 int
 UnitGameInfo::getUnitPointValue(UnitType unit_type)
 {
@@ -59,7 +57,7 @@ PlayerUnitConfig::PlayerUnitConfig()
 void PlayerUnitConfig::initialize()
 {
     max_allowed_units = gameconfig->maxunits / gameconfig->maxplayers;
-    memset( unit_spawn_list, 0, sizeof(unit_spawn_list));
+    SDL_memset( unit_spawn_list, 0, sizeof(unit_spawn_list));
     int rem_units = max_allowed_units;
     unsigned int numunits;
 

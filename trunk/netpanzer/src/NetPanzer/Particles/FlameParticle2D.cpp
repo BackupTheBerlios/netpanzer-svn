@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "FlameParticle2D.hpp"
 
-PackedSurfaceList FlameParticle2D::staticPackedExplosion0;
-PackedSurfaceList FlameParticle2D::staticPackedExplosion1;
+SurfaceList FlameParticle2D::staticPackedExplosion0;
+SurfaceList FlameParticle2D::staticPackedExplosion1;
 
 const int explosionFPS = 18;
 

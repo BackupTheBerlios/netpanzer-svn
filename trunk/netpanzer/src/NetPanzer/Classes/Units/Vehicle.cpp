@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdexcept>
 
-#include <string.h>
 #include "Util/Log.hpp"
 #include "Vehicle.hpp"
 #include "MapInterface.hpp"
@@ -55,12 +54,9 @@ Vehicle::Vehicle(PlayerState* player, UnitID id, iXY initial_loc)
     setAiFsmDefendHold();
     pending_AI_comm = false;
     unit_state.lifecycle_state = _UNIT_LIFECYCLE_ACTIVE;
-    memset( fsm_active_list, 0, sizeof( bool ) * 7 );
+    SDL_memset( fsm_active_list, 0, sizeof( bool ) * 7 );
 
     in_sync_flag = true;
-
-    body_anim_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
-    turret_anim_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
 
     path_generated = false;
     critical_ai_section = false;
@@ -1570,7 +1566,7 @@ void Vehicle::messageAICommand(const UnitMessage* message)
         if (command_mesg->command == _command_manual_fire) {
             setCommandManualFire( command_mesg );
         } else {
-            memcpy(&pending_AI_comm_mesg, command_mesg, sizeof(UMesgAICommand));
+            SDL_memcpy(&pending_AI_comm_mesg, command_mesg, sizeof(UMesgAICommand));
             pending_AI_comm = true;
         }
     }

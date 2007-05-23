@@ -29,7 +29,7 @@ unsigned long KeyboardInterface::char_buffer_rear = 0;
 
 void KeyboardInterface::sampleKeyboard()
 {
-    memcpy(previous_key_state, key_table, sizeof(key_table));
+    SDL_memcpy(previous_key_state, key_table, sizeof(key_table));
 }
 
 void KeyboardInterface::keyPressed(int scancode)

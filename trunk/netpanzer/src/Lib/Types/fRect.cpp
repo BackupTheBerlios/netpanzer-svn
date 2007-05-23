@@ -15,19 +15,3 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include <config.h>
-
-#include <algorithm>
-#include "fRect.hpp"
-
-fRect fRect::operator | (const fRect &a)
-{
-    if (isEmpty())
-        return a;
-    if (a.isEmpty())
-        return *this;
-
-    return fRect(std::min(min.x, a.min.x), std::min(min.y, a.min.y),
-                 std::max(max.x, a.max.x), std::max(max.y, a.max.y));
-}
-

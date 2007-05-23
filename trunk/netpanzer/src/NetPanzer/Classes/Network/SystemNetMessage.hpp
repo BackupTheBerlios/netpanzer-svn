@@ -18,8 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SYSTEMNETMESSAGE_HPP
 #define _SYSTEMNETMESSAGE_HPP
 
-#include <string.h>
-
 #include "PlayerState.hpp"
 #include "NetMessage.hpp"
 #include "Types/iXY.hpp"
@@ -91,12 +89,12 @@ public:
         message_class = _net_message_class_system;
         message_id = _net_message_id_system_view_control;
         action_flags = 0;                                        
-        memset(view_name, 0, sizeof(view_name));
+        SDL_memset(view_name, 0, sizeof(view_name));
     }
 
     void set(const char *name, unsigned char flags)
     {
-        snprintf(view_name, sizeof(view_name), "%s", name);
+        SDL_snprintf(view_name, sizeof(view_name), "%s", name);
         action_flags = flags;
     }
 } __attribute__((packed));

@@ -339,8 +339,8 @@ NetworkPlayerState PlayerState::getNetworkPlayerState() const
 {
     NetworkPlayerState state;
 
-    memset(state.name, 0, sizeof(state.name));
-    strncpy(state.name, name.c_str(), sizeof(state.name)-1);
+    SDL_memset(state.name, 0, sizeof(state.name));
+    SDL_strlcpy(state.name, name.c_str(), sizeof(state.name)-1);
     state.flag = flag;
     state.playerindex_id = htol16(ID.getIndex());
     state.status = status;
@@ -358,7 +358,7 @@ NetworkPlayerState PlayerState::getNetworkPlayerState() const
 void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
 {
     char tmp[64];
-    memcpy(tmp, state->name, 64); 
+    SDL_memcpy(tmp, state->name, 64); 
     tmp[63] = 0;
     name = tmp;
 	if(state->flag < UNIT_FLAGS_SURFACE.getNumFrames()) {

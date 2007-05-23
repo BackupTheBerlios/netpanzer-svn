@@ -22,34 +22,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ScreenSurface* screen = 0;
 
-ScreenSurface::ScreenSurface(SDLVideo* newdraw, int width, int height)
+ScreenSurface::ScreenSurface(SDLVideo* newdraw)
         : Surface(), draw(newdraw)
 {
-    myMem = false;
     numFrames = 1;
 
-    twidth =width;
-    theight=height;
-    tpitch = width;
-    
-    numFrames = 1;
-    doesExist = false;
+    frames=new SDL_Surface*;
+    frames[0]=newdraw->getSurface();
+    frames[0]->refcount++;
+    thisFrame=frames[0];
+    curFrame=0.0;
+
 }
 
 void ScreenSurface::lock()
 {
-    // XXX HERE HERE 
-    assert(doesExist == false);
-    draw->lockDoubleBuffer( (unsigned char **) &frame0 );
-    mem = frame0;
-    doesExist = true;
+    draw->lockDoubleBuffer();
 }
 
 void ScreenSurface::unlock() 
 {
-    assert(doesExist == true);
     draw->unlockDoubleBuffer();
-    doesExist = false;
 }
 
 void ScreenSurface::copyToVideoFlip()

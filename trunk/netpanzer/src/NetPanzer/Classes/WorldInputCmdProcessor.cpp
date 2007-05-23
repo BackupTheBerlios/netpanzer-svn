@@ -147,7 +147,7 @@ WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos)
         return;
     }
 
-    if(mouse_pos.x >= (screen->getWidth() - 1)) {
+    if((unsigned int)mouse_pos.x >= (screen->getWidth() - 1)) {
         WorldViewInterface::scroll_right(scroll_increment);
     }
 
@@ -155,7 +155,7 @@ WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos)
         WorldViewInterface::scroll_left(scroll_increment);
     }
 
-    if( mouse_pos.y >= (screen->getHeight() - 1)) {
+    if( (unsigned int)mouse_pos.y >= (screen->getHeight() - 1)) {
         WorldViewInterface::scroll_down(scroll_increment);
     }
 
@@ -406,7 +406,7 @@ WorldInputCmdProcessor::keyboardInputModeChatMesg()
 {
     char chat_string[256];
     if (getConsoleInputString(chat_string)) {
-        if(strcmp(chat_string, "") != 0)
+        if(SDL_strcmp(chat_string, "") != 0)
             ChatInterface::sendCurrentMessage( chat_string );
         keyboard_input_mode = _keyboard_input_mode_command;
         ConsoleInterface::setInputStringStatus(false);             
@@ -557,8 +557,8 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
         if (selection_box_active) {
             selection_box_active = false;
             box_release = world_pos;
-            if(abs(box_release.x - box_press.x) > 3
-		    && abs(box_release.y - box_press.y) > 3) {
+            if(SDL_abs(box_release.x - box_press.x) > 3
+		    && SDL_abs(box_release.y - box_press.y) > 3) {
                 selectBoundBoxUnits();
                 return;
             }
@@ -909,7 +909,7 @@ WorldInputCmdProcessor::draw()
         WorldViewInterface::getViewWindow( &world_win );
         iXY pos;
         WorldViewInterface::worldXYtoClientXY(world_win, output_pos_press,&pos);
-        screen->drawLine(pos, mouse_pos, Color::blue);
+        screen->drawLine(pos.x, pos.y, mouse_pos.x, mouse_pos.y, Color::blue);
     }
 }
 

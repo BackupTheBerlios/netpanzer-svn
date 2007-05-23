@@ -25,22 +25,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "2D/Surface.hpp"
 
-class MapLoadCallback
-{
-public:
-	virtual ~MapLoadCallback()
-	{ }
-
-    virtual void MapLoadProgress(float percent);
-};
-
 class MapInterface : protected TileInterface
 {
 protected:
     static WorldMap main_map;
     static SpawnList spawn_list;
     static WadMapTable wad_mapping_table;
-    static Surface mini_map_surface;
+    static Surface * mini_map_surface;
     static char map_path[256];
     static const int TILE_WIDTH = 32;
     static const int TILE_HEIGHT = 32;
@@ -207,7 +198,7 @@ public:
 
     static Surface * getMiniMapSurface()
     {
-        return ( &mini_map_surface );
+        return ( mini_map_surface );
     }
 
     static unsigned char getMovementValue( iXY map_loc );

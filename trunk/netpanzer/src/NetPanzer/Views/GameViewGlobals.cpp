@@ -59,17 +59,5 @@ bool gDrawGameHelp          = false;
 //--------------------------------------------------------------------------
 void bltViewBackground(Surface &dest)
 {
-    bltBlendRect(dest, dest.getRect());
-}
-
-//--------------------------------------------------------------------------
-void bltBlendRect(Surface &dest, const iRect &r)
-{
-    if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_DARK_GRAY_BLEND) {
-        dest.bltLookup(r, Palette::darkGray256.getColorArray());
-    } else if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_LIGHT_GRAY_BLEND) {
-        dest.bltLookup(r, Palette::gray256.getColorArray());
-    } else if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_SOLID_BLACK) {
-        dest.fillRect(r, Color::black);
-    } else if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_TRANSPARENT) {}
+    dest.fill(0);
 }

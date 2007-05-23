@@ -14,24 +14,3 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include <config.h>
-
-#include "Component.hpp"
-
-namespace UI{
-
-    UI::Component::Component(iRect area){
-        this->area = area;
-    }
-
-    iRect UI::Component::getArea(void) const{
-        return area;
-    }
-
-    void Component::drawFrame(Painter & painter){
-        iRect t = area;
-        t.max = iXY(area.max.x-1,area.max.y-1);
-        painter.drawRect(t);
-    }
-
-}

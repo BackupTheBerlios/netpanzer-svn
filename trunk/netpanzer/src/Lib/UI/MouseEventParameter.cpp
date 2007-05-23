@@ -14,27 +14,3 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include <config.h>
-
-#include "MouseEventParameter.hpp"
-
-namespace UI{
-    MouseEventParameter::MouseEventParameter(Uint8 buttonMask, iXY pos, SDLMod modifier):EventParameter(modifier){
-        button = buttonMask;
-        position = pos;
-    }
-
-    MouseEventParameter::MouseEventParameter(MouseEventParameter & parentParam, iXY newPos):EventParameter(parentParam.getModifier()){
-        button = parentParam.button;
-        position = newPos;
-    }
-
-    Uint8 MouseEventParameter::getButtons(void) const{
-        return button;
-    }
-    
-    iXY MouseEventParameter::getPosition(void) const{
-        return position;
-    }
-
-}

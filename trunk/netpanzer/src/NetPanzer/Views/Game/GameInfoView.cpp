@@ -50,7 +50,7 @@ static const char* getPlayerTime()
     int hrs = (GameManager::getGameTime() / 3600);
     int min = (GameManager::getGameTime() / 60) % 60;
 
-    snprintf(time_string, 256, "%d:%d", hrs, min);
+    SDL_snprintf(time_string, 256, "%d:%d", hrs, min);
 
     return time_string;
 }
@@ -118,7 +118,7 @@ void GameInfoView::doDraw(Surface &viewArea, Surface &clientArea)
     gameInfoRect = getClientRect();
     //gameInfoRect.max.x = 0;
 
-    snprintf(gameBuf, sizeof(gameBuf), "game   %s",
+    SDL_snprintf(gameBuf, sizeof(gameBuf), "game   %s",
             gameconfig->getGameTypeString() );
     checkGameInfoRect(gameBuf);
 
@@ -128,19 +128,19 @@ void GameInfoView::doDraw(Surface &viewArea, Surface &clientArea)
     checkGameInfoRect(unitsBuf);
 
     if( gameconfig->gametype == _gametype_fraglimit ) {
-        snprintf(fragsBuf, sizeof(fragsBuf), "frags  %d/%d", getPlayerFrags(),
+        SDL_snprintf(fragsBuf, sizeof(fragsBuf), "frags  %d/%d", getPlayerFrags(),
                 (int) gameconfig->fraglimit);
         checkGameInfoRect(fragsBuf);
     } else {
-        snprintf(fragsBuf, sizeof(fragsBuf), "frags  %d", getPlayerFrags() );
+        SDL_snprintf(fragsBuf, sizeof(fragsBuf), "frags  %d", getPlayerFrags() );
         checkGameInfoRect(fragsBuf);
     }
 
     if(gameconfig->gametype == _gametype_objective) {
-        snprintf(objectiveBuf, sizeof(objectiveBuf), "obj.   %d/%d",
+        SDL_snprintf(objectiveBuf, sizeof(objectiveBuf), "obj.   %d/%d",
                 getPlayerObjectives(), ObjectiveInterface::getObjectiveLimit());
     } else {
-        snprintf(objectiveBuf, sizeof(objectiveBuf), "obj.   %d",
+        SDL_snprintf(objectiveBuf, sizeof(objectiveBuf), "obj.   %d",
                 getPlayerObjectives());
     }
 
@@ -153,11 +153,11 @@ void GameInfoView::doDraw(Surface &viewArea, Surface &clientArea)
     */
 
     if( gameconfig->gametype == _gametype_timelimit ) {
-        snprintf(timeBuf, 64, "time   %s/%s", getPlayerTime(),
+        SDL_snprintf(timeBuf, 64, "time   %s/%s", getPlayerTime(),
                 (const char*) getTimeLimit() );
         checkGameInfoRect(timeBuf);
     } else {
-        snprintf(timeBuf, 64, "time   %s", getPlayerTime() );
+        SDL_snprintf(timeBuf, 64, "time   %s", getPlayerTime() );
         checkGameInfoRect(timeBuf);
     }
 

@@ -18,10 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __UILIB_SDLSOUND_HPP__
 #define __UILIB_SDLSOUND_HPP__
 
-#include <string>
 #include <vector>
 #include <map>
-#include <SDL_mixer.h>
+#include "SDL_mixer.h"
 #include "System/Sound.hpp"
 
 typedef std::multimap<std::string,Mix_Chunk*> chunks_t;

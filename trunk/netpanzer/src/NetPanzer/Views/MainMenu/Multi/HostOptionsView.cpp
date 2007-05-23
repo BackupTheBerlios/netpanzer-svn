@@ -430,14 +430,15 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
     const int arrowButtonWidth = 16;
     const int yOffset          = 15;
 
-    int x = pos.x + 270 + arrowButtonWidth;
+    int x = pos.x + 270 + arrowButtonWidth-1; // xxx hack
     int y = pos.y;
 
-    Surface tempSurface(meterWidth, 14, 1);
+    Surface tempSurface(meterWidth+1, 14, 1);
     tempSurface.fill(meterColor);
 
     // Game Max Player Count
-    tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
+    tempSurface.drawHLine(0,0,tempSurface.getWidth(),meterTopLeftBorderColor);
+    tempSurface.drawHLine(0,tempSurface.getHeight()-1,tempSurface.getWidth(),meterBottomRightBorderColor);
     sprintf(strBuf, "%d", getCurMaxPlayersCount());
     tempSurface.bltStringCenter(strBuf, meterTextColor);
     tempSurface.blt(dest, x, y);
@@ -445,39 +446,16 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
     // Game Max Unit Count
     y += yOffset;
     tempSurface.fill(meterColor);
-    tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
+    tempSurface.drawHLine(0,0,tempSurface.getWidth(),meterTopLeftBorderColor);
+    tempSurface.drawHLine(0,tempSurface.getHeight()-1,tempSurface.getWidth(),meterBottomRightBorderColor);
     sprintf(strBuf, "%d - %d max per player", getCurMaxUnitCount(), getCurMaxUnitCount() / getCurMaxPlayersCount());
     tempSurface.bltStringCenter(strBuf, meterTextColor);
     tempSurface.blt(dest, x, y);
-    /*
-    	// Respawn Unit Count
-    	y += yOffset;
-    	tempSurface.fill(meterColor);
-    	tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
-    	sprintf(strBuf, "%d", getRespawnUnitCount());
-    	tempSurface.bltStringCenter(strBuf, meterTextColor);
-    	tempSurface.blt(dest, x, y);
-    */
-    // Allow Allies
-    //y += yOffset;
-    //tempSurface.fill(meterColor);
-    //tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
-    //sprintf(strBuf, "%s", getAllowAllies());
-    //tempSurface.bltStringCenter(strBuf, meterTextColor);
-    //tempSurface.blt(dest, x, y);
-    //
-    //// Spawn Placement
-    //y += yOffset;
-    //tempSurface.fill(meterColor);
-    //tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
-    //sprintf(strBuf, "%s", getSpawnPlacement());
-    //tempSurface.bltStringCenter(strBuf, meterTextColor);
-    //tempSurface.blt(dest, x, y);
-
     // Objective Capture Percent
     y += yOffset;
     tempSurface.fill(meterColor);
-    tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
+    tempSurface.drawHLine(0,0,tempSurface.getWidth(),meterTopLeftBorderColor);
+    tempSurface.drawHLine(0,tempSurface.getHeight()-1,tempSurface.getWidth(),meterBottomRightBorderColor);
     if (MapSelectionView::curMap >= 0 && MapSelectionView::mapList.size() > 0) {
         int objectiveCount =
             MapSelectionView::mapList[MapSelectionView::curMap]->objectiveCount;
@@ -492,28 +470,19 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
 
     y += yOffset;
     tempSurface.fill(meterColor);
-    tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
+    tempSurface.drawHLine(0,0,tempSurface.getWidth(),meterTopLeftBorderColor);
+    tempSurface.drawHLine(0,tempSurface.getHeight()-1,tempSurface.getWidth(),meterBottomRightBorderColor);
     sprintf(strBuf, "%d:%d", getTimeLimitHours(), getTimeLimitMinutes() );
     tempSurface.bltStringCenter(strBuf, meterTextColor);
     tempSurface.blt(dest, x, y);
 
     y += yOffset;
     tempSurface.fill(meterColor);
-    tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
+    tempSurface.drawHLine(0,0,tempSurface.getWidth(),meterTopLeftBorderColor);
+    tempSurface.drawHLine(0,tempSurface.getHeight()-1,tempSurface.getWidth(),meterBottomRightBorderColor);
     sprintf(strBuf, "%d Frags", getFragLimit() );
     tempSurface.bltStringCenter(strBuf, meterTextColor);
     tempSurface.blt(dest, x, y);
-
-
-    /*
-    	// Fog of War
-    	y += yOffset;
-    	tempSurface.fill(meterColor);
-    	tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
-    	sprintf(strBuf, "%s", getAllowFogOfWar());
-    	tempSurface.bltStringCenter(strBuf, meterTextColor);
-    	tempSurface.blt(dest, x, y);
-    */
 
 } // end HostOptionsView::drawMeterInfo
 

@@ -19,11 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "TileSet.hpp"
 
-#include <memory>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
 
@@ -57,25 +52,7 @@ void TileSet::computeTileConsts( void )
     tile_size = tile_set_info.x_pix * tile_set_info.y_pix;
 }
 
-void TileSet::loadTileSetInfo( const char *file_path )
-{
-    std::auto_ptr<filesystem::ReadFile> file (filesystem::openRead(file_path));
-
-    delete[] tile_data;
-    tile_data = 0;
-    delete[] tile_info;
-    tile_info = 0;
-    tile_set_loaded = false;
-
-    readTileDbHeader(*file, &tile_set_info);
-
-    tile_count = tile_set_info.tile_count;
-
-    tile_set_loaded = true;
-
-    computeTileConsts();
-}
-
+/*
 void TileSet::loadTileSet( const char *file_path )
 {
     unsigned long  tile_buffer_size;
@@ -164,7 +141,7 @@ void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
 	    used_tile_count = 0;
 	    unused_tile_count = 0;
 
-	    //** find the next used tile
+	    // ** find the next used tile
 	    while( (tile_index < tile_count) && (mapping_table[ tile_index ].is_used == false) ) {
 		unused_tile_count++;
 		tile_index++;
@@ -198,48 +175,68 @@ void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
 		file_path, e.what());
     }
 }
+*/
 
+void TileSet::loadTileSetInfo( const char *file_path )
+{
+    std::auto_ptr<filesystem::ReadFile> file (filesystem::openRead(file_path));
+
+    delete[] tile_data;
+    tile_data = 0;
+    delete[] tile_info;
+    tile_info = 0;
+    tile_set_loaded = false;
+
+    readTileDbHeader(*file, &tile_set_info);
+
+    tile_count = tile_set_info.tile_count;
+
+    tile_set_loaded = true;
+
+    computeTileConsts();
+}
 
 void TileSet::loadTileSetInfo( const char *file_path, WadMapTable &mapping_table )
 {
     try {
-	std::auto_ptr<filesystem::ReadFile> file(
-                filesystem::openRead(file_path));
+        std::auto_ptr<filesystem::ReadFile> file(
+                    filesystem::openRead(file_path));
 
-	delete[] tile_data;
-	tile_data = 0;
-	delete[] tile_info;
-	tile_info = 0;
-	tile_set_loaded = false;
+        delete[] tile_data;
+        tile_data = 0;
+        delete[] tile_info;
+        tile_info = 0;
+        tile_set_loaded = false;
 
-	// ** Read Header Info **
-	readTileDbHeader(*file, &tile_set_info);
+        // ** Read Header Info **
+        readTileDbHeader(*file, &tile_set_info);
 
-	// ** Read in Tile Info **
-	tile_info =  new TILE_HEADER [ mapping_table.used_tile_count ];
+        // ** Read in Tile Info **
+        tile_info =  new TILE_HEADER [ mapping_table.used_tile_count ];
 
-	unsigned short tile_count   = 0;
-	unsigned long  tile_index   = 0;
-	unsigned long  mapped_index = 0;
+        unsigned short tile_count   = 0;
+        unsigned long  tile_index   = 0;
+        unsigned long  mapped_index = 0;
 
-	tile_count = getTileCount();
+        tile_count = getTileCount();
 
-	for ( tile_index = 0; tile_index < tile_count; tile_index++ ) {
-	    if ( mapping_table[ tile_index ].is_used == true ) {
-		file->read((tile_info + mapped_index), sizeof ( TILE_HEADER ), 1);
-		mapped_index++;
-	    } else {
-		file->seek(file->tell()+sizeof( TILE_HEADER ));
-	    }
-	}
+        for ( tile_index = 0; tile_index < tile_count; tile_index++ ) {
+            if ( mapping_table[ tile_index ].is_used == true ) {
+                file->read((tile_info + mapped_index), sizeof ( TILE_HEADER ), 1);
+                mapped_index++;
+            } else {
+                file->seek(file->tell()+sizeof( TILE_HEADER ));
+            }
+        }
 
-	tile_set_loaded = true;
+        tile_set_loaded = true;
 
-	TileSet::tile_count = mapping_table.used_tile_count;
-	computeTileConsts();
+        TileSet::tile_count = mapping_table.used_tile_count;
+        computeTileConsts();
     } catch(std::exception& e) {
-	throw Exception("Error while reading tileset '%s': %s", file_path,
-		e.what());
+        throw Exception("Error while reading tileset '%s': %s",
+                        file_path,
+                        e.what());
     }
 }
 

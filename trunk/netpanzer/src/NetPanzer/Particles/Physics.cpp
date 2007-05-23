@@ -17,8 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include <string.h>
-#include <stdlib.h>
 #include "Physics.hpp"
 #include "Util/TimerInterface.hpp"
 #include "Util/Math.hpp"
@@ -32,7 +30,7 @@ fXY  Physics::directionTable[DIRECTION_TABLE_COUNT];
 void Physics::init()
 {
     // Clear out the velocity table.
-    memset(&directionTable, 0, sizeof(fXYZ));
+    SDL_memset(&directionTable, 0, sizeof(fXYZ));
 
     gravity = 32 * 12;
 

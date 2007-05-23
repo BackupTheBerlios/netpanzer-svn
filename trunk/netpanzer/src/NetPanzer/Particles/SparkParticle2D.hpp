@@ -15,25 +15,3 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef __SparkParticle2D_hpp__
-#define __SparkParticle2D_hpp__
-
-#include "Particle2D.hpp"
-
-class SparkParticle2D : public Particle2D
-{
-public:
-    SparkParticle2D(fXYZ pos);
-
-    //cSpriteBltTrans static spark;
-
-    static Surface sparkSprite;
-
-    float           curFrame;
-
-    static void init();
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
-}
-; // end SparkParticle2D
-
-#endif // __SparkParticle2D_hpp__

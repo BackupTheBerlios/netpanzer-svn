@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "RMouseHackView.hpp"
 #include "2D/Surface.hpp"
-#include "ScrollBar.hpp"
 
 extern Surface playerFlag;
 extern int     playerFlagSelected;
@@ -29,7 +28,6 @@ extern int     playerFlagSelected;
 class FlagSelectionView : public RMouseHackView
 {
 private:
-    ScrollBar *scrollBar;
     Surface    flags;
 
     enum { BORDER_SPACE = 4 };
@@ -38,7 +36,6 @@ public:
     FlagSelectionView();
     virtual ~FlagSelectionView()
     {
-        delete scrollBar;
     }
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);

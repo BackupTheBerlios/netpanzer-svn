@@ -19,18 +19,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _CONSOLEINTERFACE_HPP
 
 #include <stdarg.h>
-#include <stdio.h>
 #include "ArrayUtil/ArrayTemplate.hpp"
 #include "Util/Timer.hpp"
 #include "2D/Surface.hpp"
 
+#define CONSOLE_LINESIZE 256
 
 class ConsoleLine
 {
 public:
     bool visible;
     PIX     color;
-    char    string[256];
+    char    string[CONSOLE_LINESIZE];
     Timer   life_timer;
 };
 

@@ -49,12 +49,12 @@ public:
     void readTileDbHeader(filesystem::ReadFile& file, TILE_DBASE_HEADER *header);
     void loadTileSetInfo( const char *file_path );
     void loadTileSetInfo( const char *file_path, WadMapTable &mapping_table );
-    void loadTileSet( const char *file_path, WadMapTable &mapping_table );
+//    void loadTileSet( const char *file_path, WadMapTable &mapping_table );
+//    void loadTileSet( const char *file_path );
 
     bool startPartitionTileSetLoad( const char *file_path, WadMapTable &mapping_table, unsigned long partitions );
     bool partitionTileSetLoad( WadMapTable &mapping_table, int *percent_complete );
 
-    void loadTileSet( const char *file_path );
     inline unsigned char * getTile(unsigned long index) const
     {
         return( tile_data + (index * tile_size) );

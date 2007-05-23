@@ -19,9 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "SpecialButtonView.hpp"
 #include "2D/Surface.hpp"
-#include "2D/PackedSurface.hpp"
 #include "Desktop.hpp"
-#include "Util/Exception.hpp"
 #include "WorldInputCmdProcessor.hpp"
 
 // addSpecialButton
@@ -43,8 +41,8 @@ void SpecialButtonView::addSpecialButton(const iXY &pos, const char *,
     sprintf(strBuf, "pics/backgrounds/menus/buttons/default/pak/%s%s.pak",
             prefix.c_str(), fileString);
 
-    PackedSurface tempPack;
-    tempPack.load(strBuf);
+    Surface tempPack;
+    tempPack.loadPAK(strBuf);
     addButtonPackedSurface(pos, tempPack, "", function);
 } // end SpecialButtonView::addSpecialButton
 

@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __SERVERLIST_HPP__
 
 #include <vector>
-#include <SDL_mutex.h>
 #include "ServerInfo.hpp"
 
 namespace masterserver

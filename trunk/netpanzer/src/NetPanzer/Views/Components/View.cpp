@@ -82,12 +82,6 @@ View::View(const iXY &pos, const iXY &size, const char *title)
 {
     reset();
 
-    // If the button is bordered, then put a close button on it.
-    //if (status & STATUS_ISBORDERED)
-    //LOG(("About to addButton"));
-    //addButton(iXY(getSizeX()-10, getSizeY()-10), "pics/buttons/wclose.raw", "Close the current window", View::toggleWindow);
-    //LOG(("Past addButton"));
-
     moveTo(pos);
     resize(size);
     setTitle(title);
@@ -108,10 +102,10 @@ View::~View()
         delete *f;
     }
     
-    free(title);
-    free(subTitle);
-    free(labels);
-    free(searchName);
+    SDL_free(title);
+    SDL_free(subTitle);
+    SDL_free(labels);
+    SDL_free(searchName);
 } // end ~View::View
 
 // reset
@@ -139,12 +133,11 @@ void View::reset()
     setTitle("donut");
     setSubTitle("donut");
 
-    //scrollBar             = 0;
     labels                = 0;
     componentsUsedCount   = 0;
 
     assert(MAX_COMPONENT_COUNT > 0);
-    memset(componentList, 0, sizeof(Component *) * MAX_COMPONENT_COUNT);
+    SDL_memset(componentList, 0, sizeof(Component *) * MAX_COMPONENT_COUNT);
 
     moveAreaHeight  = DEFAULT_MOVE_AREA_HEIGHT;
     borderSize      = DEFAULT_BORDER_SIZE;
@@ -168,7 +161,7 @@ void View::drawBorder(Surface &viewArea)
 {
     assert(this != 0);
     
-    viewArea.drawWindowsBorder();
+    viewArea.drawRect(viewArea.getRect(), Color::darkGray);
 } // end drawBorder
 
 // drawButtons
@@ -179,12 +172,6 @@ void View::drawButtons(Surface &viewArea)
 {
     assert(this != 0);
     (void) viewArea;
-
-    //pics.setFrame(CLOSE);
-    //pics.blt(viewArea, iXY(getSizeX()-pics.getPix().x-borderSize-2, borderSize+2));
-
-    //pics.setFrame(MINIMIZE);
-    //pics.blt(viewArea, getSizeX()-pics.xSize*2-borderSize*2-2, borderSize+2);
 
 } // end View::drawButtons
 
@@ -216,40 +203,40 @@ void View::drawTitle(Surface &viewArea)
             iXY verticalPos(borderSize, getSizeY() - borderSize - moveAreaHeight + 1);
             iXY horizontalPos(borderSize + moveAreaHeight - 1, getSizeY() - borderSize);
 
-            viewArea.drawLine(verticalPos, horizontalPos, Color::white);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::white);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray224);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray192);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
         }
@@ -259,40 +246,40 @@ void View::drawTitle(Surface &viewArea)
             iXY verticalPos(borderSize, borderSize + moveAreaHeight - 1);
             iXY horizontalPos(borderSize + moveAreaHeight - 1, borderSize);
 
-            viewArea.drawLine(verticalPos, horizontalPos, Color::white);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::white);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray224);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray192);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
         }
@@ -302,40 +289,40 @@ void View::drawTitle(Surface &viewArea)
             iXY verticalPos(getSizeX() - borderSize, borderSize + moveAreaHeight - 1);
             iXY horizontalPos(getSizeX() - borderSize - moveAreaHeight, borderSize - 1);
 
-            viewArea.drawLine(verticalPos, horizontalPos, Color::white);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::white);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray224);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray192);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
         }
@@ -345,40 +332,40 @@ void View::drawTitle(Surface &viewArea)
             iXY verticalPos(getSizeX() - borderSize, getSizeY() - borderSize - moveAreaHeight + 1);
             iXY horizontalPos(getSizeX() - borderSize - moveAreaHeight + 1, getSizeY() - borderSize);
 
-            viewArea.drawLine(verticalPos, horizontalPos, Color::white);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::white);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray224);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray192);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            viewArea.drawLine(verticalPos.x, verticalPos.y, horizontalPos.x, horizontalPos.y, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
         }
@@ -390,8 +377,7 @@ void View::drawTitle(Surface &viewArea)
 //---------------------------------------------------------------------------
 void View::loadPics()
 {
-    // Are we already loaded?  Then bail.
-    if (pics.getFrame0() != 0) return;
+
 } // end loadPics
 
 // draw
@@ -549,8 +535,8 @@ int View::getMouseActions(const iXY &pos) const
         iXY minOff;
         iXY maxOff;
 
-        minOff.x = abs(pos.x); maxOff.x = abs(pos.x - getSizeX());
-        minOff.y = abs(pos.y); maxOff.y = abs(pos.y - getSizeY());
+        minOff.x = SDL_abs(pos.x); maxOff.x = SDL_abs(pos.x - getSizeX());
+        minOff.y = SDL_abs(pos.y); maxOff.y = SDL_abs(pos.y - getSizeY());
 
         // Check the left,  then the right
         if      (minOff.x < RESIZE_XMIN) actions |= MA_RESIZE_LEFT;
@@ -575,18 +561,9 @@ int View::getMouseActions(const iXY &pos) const
 
     // Check for moving the window via the move area.
     if (getAllowMove()) {
-        //iRect titleBar(borderSize, borderSize, getSizeX()-borderSize, borderSize + moveAreaHeight);
         iRect titleBar(borderSize, borderSize, getSizeX() - borderSize, borderSize + moveAreaHeight);
         if (titleBar.contains(pos)) return actions |= MA_MOVE;
     }
-
-    // Check for moving the window via the status bar.
-    //if (getAllowMove())
-    //{
-    //	//iRect titleBar(borderSize, borderSize, getSizeX()-borderSize, borderSize + moveAreaHeight);
-    //	iRect titleBar(borderSize, getSizeY() - borderSize - DEFAULT_STATUS_BAR_HEIGHT, getSizeX() - borderSize, getSizeY() - borderSize);
-    //	if (titleBar.contains(pos)) return actions |= MA_MOVE;
-    //}
 
     return actions;
 } // end getMouseActions
@@ -711,20 +688,6 @@ void View::mouseMove(const iXY & prevPos, const iXY &newPos)
         }
     }
 
-    /*  // THIS DOES NOT WORK!!!!!!!!!!
-    	bool flagNewPos  = contains(newPos);
-    	bool flagPrevPos = contains(prevPos);
-     
-    	// Check for status of mouseEnter and mouseExit.
-    	if (flagNewPos && !flagPrevPos)
-    	{
-    		mouseEnter(newPos);
-    	}
-    	else if (!flagNewPos && flagPrevPos)
-    	{
-    		mouseExit(prevPos);
-    	}
-    */
 } // end mouseMove
 
 // lMouseDown
@@ -1023,10 +986,10 @@ void View::addLabelShadowed(const iXY &pos, char *label, const PIX &foreColor,
 void View::addLabel(const iXY &pos, char *label, const bool &isShadowed, const PIX &foreColor,
                     const PIX &backColor)
 {
-    labels = (cLabel *) realloc(labels, (numLabels+1)*sizeof(cLabel));
+    labels = (cLabel *) SDL_realloc(labels, (numLabels+1)*sizeof(cLabel));
     if (labels == 0) throw Exception("ERROR: Unable to allocate label.");
 
-    labels[numLabels].label = strdup(label);
+    labels[numLabels].label = SDL_strdup(label);
     assert(labels[numLabels].label != 0);
     labels[numLabels].foreColor  = foreColor;
     labels[numLabels].backColor  = backColor;
@@ -1043,10 +1006,6 @@ void View::addLabel(const iXY &pos, char *label, const bool &isShadowed, const P
 //---------------------------------------------------------------------------
 void View::drawLabels(Surface &clientArea)
 {
-    if (!clientArea.getDoesExist()) {
-        throw Exception("ERROR: Client area does not exist.");
-    }
-
     for (int num = 0; num < numLabels; num++) {
         if (labels[num].isShadowed) {
             clientArea.bltStringShadowed( labels[num].pos.x,
@@ -1070,8 +1029,9 @@ void View::drawDefinedButtons(Surface &clientArea)
     std::vector<cButton*>::iterator i;
     for(i = buttons.begin(); i != buttons.end(); i++) {
         cButton* button = *i;
-        button->topSurface.blt(clientArea,
-                iXY(button->getBounds().min.x, button->getBounds().min.y));
+        button->topSurface.blt( clientArea,
+                                button->getBounds().min.x,
+                                button->getBounds().min.y);
     }
 } // end drawDefinedButtons
 
@@ -1100,7 +1060,7 @@ void View::drawHighlightedButton(Surface &clientArea)
 
     if (highlightedButton < 0) {
         return;
-    } else if (buttons[highlightedButton]->topSurface.getFrameCount() < 2) {
+    } else if (buttons[highlightedButton]->topSurface.getNumFrames() < 2) {
         cButton* button = buttons[highlightedButton];
         clientArea.drawRect(iRect(button->getBounds().min.x,
                                   button->getBounds().min.y,
@@ -1121,16 +1081,15 @@ void View::drawHighlightedButton(Surface &clientArea)
     // Change to the highlight button frame.
     buttons[highlightedButton]->topSurface.setFrame(1);
     buttons[highlightedButton]->topSurface.blt(clientArea,
-            iXY(buttons[highlightedButton]->getBounds().min.x,
-                buttons[highlightedButton]->getBounds().min.y));
+                buttons[highlightedButton]->getBounds().min.x,
+                buttons[highlightedButton]->getBounds().min.y);
     buttons[highlightedButton]->topSurface.setFrame(0);
 
 } // end drawHighlightedButton
 
-void View::addButtonPackedSurface(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc)
+void View::addButtonPackedSurface(const iXY &pos, Surface &source, const char *toolTip, ITEM_FUNC leftClickFunc)
 {
-    cButton* button = new cButton;
-    button->createPacked(pos, source, toolTip, leftClickFunc);
+    cButton* button = new cButton(pos, source, toolTip, leftClickFunc, false);
     buttons.push_back(button);
 }
 
@@ -1144,8 +1103,7 @@ void View::addButtonCenterText(const iXY &pos,
                                const char *toolTip,
                                ITEM_FUNC leftClickFunc)
 {
-    cButton* button = new cButton;
-    button->createCenterText(pos, xSize, name, toolTip, leftClickFunc);
+    cButton* button = new cButton(pos, xSize, name, toolTip, leftClickFunc);
     buttons.push_back(button);
 } // end addButtonCenterText
 
@@ -1153,16 +1111,9 @@ void View::addButtonCenterText(const iXY &pos,
 //---------------------------------------------------------------------------
 // Purpose: Adds a button of a TIL image.
 //---------------------------------------------------------------------------
-void View::addButtonBMP(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func, const bool &isBordered)
+void View::addButtonBMP(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func, const bool isBordered)
 {
-    cButton* button = new cButton;
-    if (isBordered) {
-        button->createBMPBordered(pos, imageName, toolTip, func);
-
-    } else {
-        button->createBMP(pos, imageName, toolTip, func);
-    }
-
+    cButton* button = new cButton(pos, imageName, toolTip, func, isBordered);
     buttons.push_back(button);
 } // end addButtonBMP
 
@@ -1172,8 +1123,7 @@ void View::addButtonBMP(const iXY &pos, const char *imageName, const char *toolT
 //---------------------------------------------------------------------------
 void View::addButtonSurface(const iXY &pos, Surface &source, const char *toolTip, ITEM_FUNC func)
 {
-    cButton* button = new cButton;
-    button->createSurface(pos, source, toolTip, func);
+    cButton* button = new cButton(pos, source, toolTip, func, false);
     buttons.push_back(button);
 } // end addButtonSurface
 
@@ -1194,11 +1144,11 @@ void View::addButtonSurfaceSingle(const iXY &pos, Surface &source, const char *t
 //---------------------------------------------------------------------------
 void View::setSearchName(const char *searchName)
 {
-    free(View::searchName);
+    SDL_free(View::searchName);
     View::searchName = 0;
 
     if (searchName != 0) {
-        View::searchName = strdup(searchName);
+        View::searchName = SDL_strdup(searchName);
         if (View::searchName == 0) {
             throw Exception("ERROR: Unable to allocate searchName: %s", searchName);
         }
@@ -1212,12 +1162,12 @@ void View::setSearchName(const char *searchName)
 void View::setTitle(const char *title)
 {
     if (View::title != 0) {
-        free(View::title);
+        SDL_free(View::title);
         View::title = 0;
     }
 
     if (title != 0) {
-        View::title = strdup(title);
+        View::title = SDL_strdup(title);
         if (View::title == 0) {
             throw Exception("ERROR: Unable to allocate title: %s", title);
         }
@@ -1231,12 +1181,12 @@ void View::setTitle(const char *title)
 void View::setSubTitle(const char *subTitle)
 {
     if (View::subTitle != 0) {
-        free(View::subTitle);
+        SDL_free(View::subTitle);
         View::subTitle = 0;
     }
 
     if (subTitle != 0) {
-        View::subTitle = strdup(subTitle);
+        View::subTitle = SDL_strdup(subTitle);
         if (View::subTitle == 0) {
             throw Exception("ERROR: Unable to allocate subTitle: %s", subTitle);
         }
@@ -1250,12 +1200,12 @@ void View::setSubTitle(const char *subTitle)
 void View::showStatus(const char *string)
 {
     if (statusText != 0) {
-        free(statusText);
+        SDL_free(statusText);
         statusText = 0;
     }
 
     if (string != 0) {
-        statusText = strdup(string);
+        statusText = SDL_strdup(string);
         if(statusText == 0) {
             throw Exception("ERROR: statusText == 0");
         }
@@ -1330,15 +1280,15 @@ void View::drawPressedButton(Surface &clientArea)
 {
     assert(this != 0);
 
-    if (pressedButton < 0 || buttons[pressedButton]->topSurface.getFrameCount() < 2) return;
+    if (pressedButton < 0 || buttons[pressedButton]->topSurface.getNumFrames() < 2) return;
     if (highlightedButton != pressedButton) return;
     assert(pressedButton < (int) buttons.size());
 
     // Chage to the highlight button frame.
     buttons[pressedButton]->topSurface.setFrame(2);
     buttons[pressedButton]->topSurface.blt(clientArea,
-            iXY(buttons[pressedButton]->getBounds().min.x,
-                buttons[pressedButton]->getBounds().min.y));
+                buttons[pressedButton]->getBounds().min.x,
+                buttons[pressedButton]->getBounds().min.y);
     buttons[pressedButton]->topSurface.setFrame(0);
 } // drawPressedButton
 

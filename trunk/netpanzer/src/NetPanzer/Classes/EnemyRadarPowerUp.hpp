@@ -28,7 +28,6 @@ class EnemyRadarPowerUp : public PowerUp
 {
 protected:
     SpritePacked enemy_radar_animation;
-    SpritePacked enemy_radar_animation_shadow;
 
     void setRadar( UnitID &unit_id );
 

@@ -52,7 +52,8 @@ void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
             SDL_FreeSurface(backBuffer);
     }
     
-    flags |= SDL_HWPALETTE | SDL_ANYFORMAT;
+    //flags |= SDL_HWPALETTE | SDL_ANYFORMAT;
+    flags |= SDL_HWPALETTE;
     frontBuffer = SDL_SetVideoMode(width, height, bpp, flags);
     if(!frontBuffer)
         throw Exception("Couldn't set display mode (%dx%d, %X): %s",
@@ -76,17 +77,18 @@ void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
 bool SDLVideo::isDisplayModeAvailable(int width, int height, int bpp,
                                      Uint32 flags)
 {
-    flags |= SDL_HWPALETTE | SDL_ANYFORMAT;
-
+    //flags |= SDL_HWPALETTE | SDL_ANYFORMAT;
+    flags |= SDL_HWPALETTE;
+    
     return SDL_VideoModeOK(width, height, bpp, flags);
 }
 
-void SDLVideo::lockDoubleBuffer(unsigned char **buffer)
+void SDLVideo::lockDoubleBuffer()
 {
-    if(SDL_MUSTLOCK(backBuffer) && SDL_LockSurface(frontBuffer))
+    if(SDL_MUSTLOCK(backBuffer) && SDL_LockSurface(backBuffer))
         throw Exception("Couldn't lock display buffer");
 
-    *buffer = (unsigned char *)backBuffer->pixels;
+    //*buffer = (unsigned char *)backBuffer->pixels;
 }
 
 void SDLVideo::unlockDoubleBuffer()
@@ -98,22 +100,21 @@ void SDLVideo::unlockDoubleBuffer()
 void SDLVideo::copyDoubleBufferandFlip()
 {
     if(! (frontBuffer->flags & SDL_DOUBLEBUF)) {
-        if(SDL_MUSTLOCK(frontBuffer) && SDL_LockSurface(frontBuffer))
-            throw Exception("Couldn't lock display buffer");
         SDL_BlitSurface(backBuffer, 0, frontBuffer, 0);
-        if(SDL_MUSTLOCK(frontBuffer))
-            SDL_UnlockSurface(frontBuffer);
+        SDL_UpdateRect(frontBuffer, 0, 0, 0, 0);
+    } else {
+        if (SDL_Flip(frontBuffer))
+            throw Exception("Error while swapping double buffer");
     }
-
-    if (SDL_Flip(frontBuffer))
-        throw Exception("Error while swapping double buffer");        
 }
 
 void SDLVideo::setPalette(SDL_Color *color)
 {
-    SDL_SetColors(backBuffer, color, 0, 256);
-    if(frontBuffer != backBuffer && frontBuffer->format->BitsPerPixel == 8)
-        SDL_SetColors(frontBuffer, color, 0, 256);
+    if (backBuffer->format->BytesPerPixel == 1) {
+        SDL_SetColors(backBuffer, color, 0, 256);
+        if(frontBuffer != backBuffer && frontBuffer->format->BitsPerPixel == 8)
+            SDL_SetColors(frontBuffer, color, 0, 256);
+    }
 }
 
 SDL_Surface* SDLVideo::getSurface()

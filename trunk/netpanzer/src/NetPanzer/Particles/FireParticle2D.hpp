@@ -15,38 +15,3 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
-#ifndef __FireParticle2D_hpp_
-#define __FireParticle2D_hpp_
-
-
-
-#include "2D/Surface.hpp"
-#include "SpriteSorter.hpp"
-#include "Types/fXYZ.hpp"
-
-
-class FireParticle2D
-{
-public:
-    float totalTime;
-    Uint8  color;
-    fXYZ  pos;
-    bool  isAlive;
-
-public:
-    FireParticle2D()
-    {
-        reset();
-    };
-	virtual ~FireParticle2D()
-	{ }
-
-    void reset();
-
-    virtual void sim();
-    virtual void draw(Surface &dest, SpriteSorter &sorter);
-}; // end FireParticle2D
-
-#endif // __FireParticle2D_hpp_

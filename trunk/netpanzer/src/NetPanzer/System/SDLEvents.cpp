@@ -17,7 +17,6 @@
  */
 #include <config.h>
 
-#include <ctype.h>
 #include "SDL.h"
 #include "KeyboardInterface.hpp"
 #include "MouseInterface.hpp"

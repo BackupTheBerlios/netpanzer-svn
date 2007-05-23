@@ -18,8 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITSTATE_HPP
 #define _UNITSTATE_HPP
 
-#include <string.h>
-
 #include "ArrayUtil/BoundBox.hpp"
 #include "Types/Angle.hpp"
 

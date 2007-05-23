@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _CHATNETMESSAGE_HPP
 #define _CHATNETMESSAGE_HPP
 
-#include <string.h>
 #include <assert.h>
+#include "SDL.h"
 #include "NetMessage.hpp"
 
 enum { _net_message_id_chat_mesg_req,
@@ -53,7 +53,7 @@ public:
     {
         message_class = _net_message_class_chat;
         message_id = _net_message_id_chat_mesg_req;
-        memset(player_set, 0, sizeof(player_set));
+        SDL_memset(player_set, 0, sizeof(player_set));
         message_scope = _chat_mesg_scope_all;
     }
 
@@ -113,7 +113,7 @@ public:
     {
         message_class = _net_message_class_chat;
         message_id = _net_message_id_chat_mesg;
-        memset(message_text, 0, sizeof(message_text));
+        SDL_memset(message_text, 0, sizeof(message_text));
     }
 
     Uint16 getSourcePlayerIndex() const

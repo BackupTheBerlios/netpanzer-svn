@@ -17,17 +17,17 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
+#include "SDL.h"
+
 #include <string>
-#include <string.h>
 #include <sstream>
 #include <stdexcept>
 
 #include "Util/Log.hpp"
-#include "Util/Exception.hpp"
 #include "NetworkInterface.hpp"
 #include "NetworkGlobals.hpp"
 #include "ClientSocket.hpp"
-#include "Util/UtilInterface.hpp"
 #include "GameConfig.hpp"
 #include "Util/Endian.hpp"
 #include "Network/Address.hpp"
@@ -45,10 +45,19 @@ ClientSocket::ClientSocket(ClientSocketObserver *o, const std::string& whole_ser
         // resolve server name
         int port = NETPANZER_DEFAULT_PORT_TCP;
         std::string servername;
-        const char *server= proxy.proxyserver != ""
-                ? proxy.proxyserver.c_str() : whole_servername.c_str();
-        UtilInterface::splitServerPort(server, servername, &port);
-
+        std::string server= proxy.proxyserver != ""
+                ? proxy.proxyserver : whole_servername;
+                
+        std::string::size_type colon = server.find(':',0);
+        if(colon == std::string::npos) {
+            servername=server;
+        } else {
+            servername=server.substr(0, colon);
+            colon++;
+            std::string port_str(server.substr(colon, server.length() - colon));
+            port = SDL_atoi(port_str.c_str());
+        }
+        
         network::Address serveraddr 
             = network::Address::resolve(servername, port);
         
@@ -100,7 +109,7 @@ void ClientSocket::sendMessage(const void* data, size_t size)
                 errmsg << "send buffer full 1 [" << id << "]";
                 throw runtime_error(errmsg.str());
             }
-            memcpy(sendbuffer+sendpos,data,size);
+            SDL_memcpy(sendbuffer+sendpos,data,size);
             sendpos+=size;
             sendRemaining();
         } else {
@@ -111,7 +120,7 @@ void ClientSocket::sendMessage(const void* data, size_t size)
                     errmsg << "send buffer full 2 [" << id << "]";
                     throw runtime_error(errmsg.str());
                 }
-                memcpy(sendbuffer+sendpos,data,size);
+                SDL_memcpy(sendbuffer+sendpos,data,size);
                 sendpos+=size;
             }
         }
@@ -126,7 +135,7 @@ ClientSocket::sendRemaining()
         if (!s)
             return;
         if ( s != sendpos ) {
-            memmove(sendbuffer,sendbuffer+s,sendpos-s);
+            SDL_memmove(sendbuffer,sendbuffer+s,sendpos-s);
             sendpos-=s;
         } else
             sendpos = 0;
@@ -160,7 +169,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
                     break;
                 }
                 
-                memcpy(tempbuffer,data+dataptr,remaining);
+                SDL_memcpy(tempbuffer,data+dataptr,remaining);
                 tempoffset = remaining;
                 remaining=0;
             }
@@ -170,7 +179,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
                 LOGGER.warning("ClientSocket::onDataReceived(%d) Reading more for head", id);
                 unsigned int needsize = sizeof(NetMessage)-tempoffset;
                 unsigned int tocopy = (remaining>needsize)?needsize:remaining;
-                memcpy(tempbuffer+tempoffset, data+dataptr, tocopy);
+                SDL_memcpy(tempbuffer+tempoffset, data+dataptr, tocopy);
                 remaining-=tocopy;
                 tempoffset+=tocopy;
                 dataptr+=tocopy;
@@ -191,7 +200,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
                 if ( (tempoffset < packetsize) && remaining ) {
                     unsigned int needsize = packetsize-tempoffset;
                     unsigned int tocopy = (remaining>needsize)?needsize:remaining;
-                    memcpy(tempbuffer+tempoffset, data+dataptr, tocopy);
+                    SDL_memcpy(tempbuffer+tempoffset, data+dataptr, tocopy);
                     remaining-=tocopy;
                     tempoffset+=tocopy;
                     dataptr+=tocopy;

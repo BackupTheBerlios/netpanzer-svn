@@ -15,22 +15,3 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef __ParticleTweakView_hpp__
-#define __ParticleTweakView_hpp__
-
-#include "View.hpp"
-#include "2D/Surface.hpp"
-
-
-class ParticleTweakView : public View
-{
-protected:
-
-public:
-    ParticleTweakView();
-
-    virtual void doDraw (Surface &viewArea, Surface &clientArea);
-}; // end ParticleTweakView
-
-
-#endif // end __ParticleTweakView_hpp__

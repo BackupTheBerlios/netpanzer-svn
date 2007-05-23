@@ -82,14 +82,6 @@ public:
         return playerUnitLists[player_id];
     }
 
-#if 0
-    static UnitList * getUnitList(size_t player)
-    {
-        assert( (player < max_players) );
-        return ( &unit_lists[ player ] );
-    }
-#endif
-
     static size_t getUnitCount(unsigned short player_index)
     {
         assert( (player_index < max_players) );

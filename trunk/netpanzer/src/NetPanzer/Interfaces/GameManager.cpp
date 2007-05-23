@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "GameManager.hpp"
 
-#include <stdio.h>
 #include <fcntl.h>
 
 #include "System/Sound.hpp"
@@ -83,8 +82,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "OrderingView.hpp"
 #include "SkirmishView.hpp"
 #include "HelpView.hpp"
-#include "SoundView.hpp"
-#include "ControlsView.hpp"
 #include "InterfaceView.hpp"
 #include "VisualsView.hpp"
 #include "LobbyView.hpp"
@@ -93,12 +90,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ViewGlobals.hpp"
 #include "LibView.hpp"
 #include "HelpScrollView.hpp"
-#include "ResignView.hpp"
 #include "AreYouSureResignView.hpp"
 #include "AreYouSureExitView.hpp"
-#include "UnitSelectionView.hpp"
 #include "FlagSelectionView.hpp"
-#include "UnitColorView.hpp"
 #include "HostOptionsView.hpp"
 #include "MapSelectionView.hpp"
 #include "PlayerNameView.hpp"
@@ -190,7 +184,7 @@ void GameManager::setVideoMode()
 
     WorldViewInterface::setCameraSize( mode_res.x, mode_res.y);
     delete screen;
-    screen = new ScreenSurface(Screen, mode_res.x, mode_res.y);
+    screen = new ScreenSurface(Screen);
     gameView.setSize(mode_res);
 
     Desktop::checkResolution(old_res, mode_res);
@@ -457,7 +451,7 @@ ConnectMesgServerGameSettings* GameManager::getServerGameSetup()
 
     game_setup->setMaxPlayers(gameconfig->maxplayers);
     game_setup->setMaxUnits(gameconfig->maxunits);
-    snprintf(game_setup->map_name, 32, gameconfig->map.c_str()); 
+    SDL_snprintf(game_setup->map_name, 32, gameconfig->map.c_str()); 
     game_setup->setCloudCoverage(gameconfig->cloudcoverage);
     game_setup->setWindSpeed(gameconfig->windspeed);
     game_setup->setGameType(gameconfig->gametype);

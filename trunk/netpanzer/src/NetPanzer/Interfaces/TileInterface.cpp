@@ -22,17 +22,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 TileSet TileInterface::tile_set;
 
-void TileInterface::loadTileSet( const char *file_path )
-{
-    tile_set.loadTileSet( file_path );
-}
-
 iXY TileInterface::getTileSize( void )
 {
     return( iXY( tile_set.getTileXsize(), tile_set.getTileYsize() ) );
 }
 
-PIX TileInterface::getWorldPixColor(int worldX, int worldY)
+Uint8 TileInterface::getWorldPixColor(int worldX, int worldY)
 {
     int tileX = worldX / tile_set.getTileXsize();
     int tileY = worldY / tile_set.getTileYsize();

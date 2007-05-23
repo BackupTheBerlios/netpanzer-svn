@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "UnitPowerUp.hpp"
 
-#include <stdlib.h>
 #include "UnitTypes.hpp"
 #include "UnitInterface.hpp"
 #include "UnitMessageTypes.hpp"
@@ -55,10 +54,6 @@ UnitPowerUp::UnitPowerUp(iXY map_loc, int type)
     unit_powerup_type = rand() % _unit_powerup_enum_count;
     unit_powerup_animation.setData( UNIT_POWERUP_ANIM );
     unit_powerup_animation.setAttrib( powerup_state.world_loc, iXY(0,0), 5 );
-
-    unit_powerup_animation_shadow.setData( UNIT_POWERUP_ANIM_SHADOW );
-    unit_powerup_animation_shadow.setAttrib( powerup_state.world_loc, iXY(0,0), 4 );
-    unit_powerup_animation_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
 
 }
 
@@ -222,10 +217,8 @@ void UnitPowerUp::updateState( void )
 void UnitPowerUp::offloadGraphics( SpriteSorter &sorter )
 {
     unit_powerup_animation.nextFrame();
-    unit_powerup_animation_shadow.setFrame( unit_powerup_animation.getCurFrame() );
-
+ 
     sorter.addSprite( &unit_powerup_animation );
-    sorter.addSprite( &unit_powerup_animation_shadow );
 }
 
 void UnitPowerUp::onHit( PowerUpHitMesg *message  )
