@@ -62,6 +62,9 @@ public:
     void setOffsetY(int oy)     { offset.y = oy; }
     void setFPS(int f)          { fps = f; }
     void setOffsetCenter();
+    
+    void lockFrame() { if ( SDL_MUSTLOCK(thisFrame) ) SDL_LockSurface(thisFrame); }
+    void unlockFrame() { if ( SDL_MUSTLOCK(thisFrame) ) SDL_UnlockSurface(thisFrame); }
 
     // Accessor functions.
     unsigned int getWidth()  const { return thisFrame->w; }
@@ -86,7 +89,7 @@ public:
     Uint8 * getMem() const
     { 
         if ( ! thisFrame->pixels )
-            throw Exception("Surface::getMem() Error, surface must be locked");
+            assert("Surface::getMem() Error, surface must be locked"==0);
         return (PIX *)thisFrame->pixels;
     }
 

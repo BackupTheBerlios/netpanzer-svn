@@ -598,11 +598,12 @@ void ParticleInterface::getMuzzleTips(Surface &source, iXY muzzleTips[36])
 
     memset(muzzleTips, 0, sizeof(iXY) * 36);
     float saveframe=source.getCurFrame();
-
+    int i;
     // Frame 0 - 8
-    {for (int  i = 0; i < 9; i++)
+    for (int  i = 0; i < 9; i++)
         {
             source.setFrame(i);
+            source.lockFrame();
 
             for (unsigned int offset = 0; offset < source.getCenterX(); offset++) {
                 int yy = offset;
@@ -614,6 +615,7 @@ void ParticleInterface::getMuzzleTips(Surface &source, iXY muzzleTips[36])
                 }
 
                 if (done) {
+                    source.unlockFrame();
                     break;
                 }
 
@@ -626,19 +628,22 @@ void ParticleInterface::getMuzzleTips(Surface &source, iXY muzzleTips[36])
                 }
 
                 if (done) {
+                    source.unlockFrame();
                     break;
                 }
             }
 
             done = false;
-        }}
+            source.unlockFrame();
+        }
 
     done = false;
 
     // Frame 9 - 17
-    {for (int i = 9; i < 18; i++)
+    for (i = 9; i < 18; i++)
         {
             source.setFrame(i);
+            source.lockFrame();
 
             for (unsigned int offset = 0; offset < source.getCenterX(); offset++) {
                 int yy = offset;
@@ -650,6 +655,7 @@ void ParticleInterface::getMuzzleTips(Surface &source, iXY muzzleTips[36])
                 }
 
                 if (done) {
+                    source.unlockFrame();
                     break;
                 }
 
@@ -662,19 +668,22 @@ void ParticleInterface::getMuzzleTips(Surface &source, iXY muzzleTips[36])
                 }
 
                 if (done) {
+                    source.unlockFrame();
                     break;
                 }
             }
 
             done = false;
-        }}
+            source.unlockFrame();
+        }
 
     done = false;
 
     // Frame 18 - 26
-    {for (int i = 18; i < 27; i++)
+    for (i = 18; i < 27; i++)
         {
             source.setFrame(i);
+            source.lockFrame();
 
             for (unsigned int offset = 0; offset < source.getCenterX(); offset++) {
                 int yy = source.getHeight() - 1 - offset;
@@ -686,6 +695,7 @@ void ParticleInterface::getMuzzleTips(Surface &source, iXY muzzleTips[36])
                 }
 
                 if (done) {
+                    source.unlockFrame();
                     break;
                 }
 
@@ -698,19 +708,22 @@ void ParticleInterface::getMuzzleTips(Surface &source, iXY muzzleTips[36])
                 }
 
                 if (done) {
+                    source.unlockFrame();
                     break;
                 }
             }
 
             done = false;
-        }}
+            source.unlockFrame();
+        }
 
     done = false;
 
     // Frame 27 - 35
-    {for (int i = 27; i < 36; i++)
+    for (i = 27; i < 36; i++)
         {
             source.setFrame(i);
+            source.lockFrame();
 
             for (unsigned int offset = 0; offset < source.getCenterX(); offset++) {
                 int yy = source.getHeight() - 1 - offset;
@@ -722,6 +735,7 @@ void ParticleInterface::getMuzzleTips(Surface &source, iXY muzzleTips[36])
                 }
 
                 if (done) {
+                    source.unlockFrame();
                     break;
                 }
 
@@ -734,12 +748,14 @@ void ParticleInterface::getMuzzleTips(Surface &source, iXY muzzleTips[36])
                 }
 
                 if (done) {
+                    source.unlockFrame();
                     break;
                 }
             }
 
             done = false;
-        }}
+            source.unlockFrame();
+        }
         
     
     source.setFrame(saveframe);
