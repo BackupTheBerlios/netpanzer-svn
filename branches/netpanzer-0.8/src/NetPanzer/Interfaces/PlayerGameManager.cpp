@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkServer.hpp"
 #include "Client.hpp"
 #include "NetworkClient.hpp"
+#include "NetworkClientUnix.hpp"
 #include "ClientMessageRouter.hpp"
 #include "ClientConnectDaemon.hpp"
 #include "ServerConnectDaemon.hpp"
@@ -325,6 +326,11 @@ void PlayerGameManager::hostMultiPlayerGame()
     progressView->open();
     progressView->scrollAndUpdateDirect( "Launching Server ..." );
     try {
+    	if (CLIENT) {
+		delete CLIENT;
+		CLIENT=0;
+	}
+	CLIENT = new NetworkClientUnix();
         SERVER->hostSession();
 
         if((bool) gameconfig->publicServer &&
