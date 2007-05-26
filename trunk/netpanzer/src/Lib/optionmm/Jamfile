@@ -5,4 +5,5 @@ Library optionmm
     : noinstall
 ;
 Help optionmm : "Build the optionmm support library" ;
+C++Flags optionmm : $(SDL_CFLAGS) ;
 
