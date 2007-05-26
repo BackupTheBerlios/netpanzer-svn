@@ -1,6 +1,14 @@
 <?xml version="1.0"?>
 <page title="netPanzer - News">
   <section title="News">
+	  <news>
+		  <item date="26. Mai 2007">
+				<p>New Maintainer</p>
+				<p>As I don't have the time for continued development on netpanzer
+				anymore, I decided to pass over maintainership to kromxp. I wish him
+				good luck and	hope to see some new exciting netpanzer versions.</p>
+			</item>
+		</news>
     <news>
     	<item date="3. Apr 2007">
 		<p>Develpment status</p>
