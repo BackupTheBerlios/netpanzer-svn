@@ -1,0 +1,23 @@
+SubDir TOP src NetPanzer Views ;
+
+SUBDIRS =
+    Game
+    MainMenu
+    MainMenu/Multi
+    MainMenu/Multi/MasterServer
+    MainMenu/Options
+    Components
+    .
+;
+
+SOURCES = ;
+for i in $(SUBDIRS)
+{
+    SOURCES += [ Wildcard $(i) : *.cpp *.hpp ] ;
+}
+
+Library netpanzerviews : $(SOURCES) : noinstall ;
+ExternalLibs netpanzerviews : SDL SDLTTF PHYSFS ;
+IncludeDir netpanzerviews : $(SUBDIRS) ../Interfaces ../Classes
+                            ../Structs ../Classes/Network ../Classes/Weapons
+                            ../Classes/AI ../Particles ../IRCLobby .. ;

@@ -1,0 +1,3 @@
+SubDir TOP powerups ;
+
+InstallData [ Wildcard *.pak ] : powerups ;

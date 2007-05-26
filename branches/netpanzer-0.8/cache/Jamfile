@@ -1,0 +1,10 @@
+SubDir TOP cache ;
+
+PATHS = colorfilters/netp
+        colorfilters/netpmenu
+;
+
+for p in $(PATHS) {
+    InstallData [ Wildcard $(p) : *.tbl ] : cache $(p) ;
+}
+

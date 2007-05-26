@@ -1,0 +1,27 @@
+SubDir TOP ;
+
+# Decend into subdirs
+if ! $(NO_SRC)
+{
+    SubInclude TOP src ;
+    SubInclude TOP docs ;
+}
+if ! $(NO_DATA)
+{
+    SubInclude TOP pics ;
+    SubInclude TOP maps ;
+    SubInclude TOP sound ;
+    SubInclude TOP powerups ;
+    SubInclude TOP units ;
+    SubInclude TOP wads ;
+#    SubInclude TOP fonts ;
+    SubInclude TOP cache ;
+}
+
+UseAutoconf ;
+
+if ! $(NO_SRC) {
+    InstallPixmap netpanzer.png netpanzer.xpm ;
+    InstallDesktop netpanzer.desktop ;
+    InstallDoc ChangeLog README TODO RELNOTES docs/tipofday.txt docs/serverhowto.html ;
+}

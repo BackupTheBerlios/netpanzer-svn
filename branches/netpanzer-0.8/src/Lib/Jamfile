@@ -1,0 +1,11 @@
+SubDir TOP src Lib ;
+
+SubInclude TOP src Lib Types ;
+SubInclude TOP src Lib Util ;
+SubInclude TOP src Lib ArrayUtil ;
+SubInclude TOP src Lib 2D ;
+SubInclude TOP src Lib optionmm ;
+# disabled for now...
+# SubInclude TOP src Lib UI ;
+SubInclude TOP src Lib INIParser ;
+SubInclude TOP src Lib Network ;

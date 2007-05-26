@@ -1,0 +1,3 @@
+SubDir TOP maps ;
+
+InstallData [ Wildcard *.npm *.opt *.spn ] : maps ;

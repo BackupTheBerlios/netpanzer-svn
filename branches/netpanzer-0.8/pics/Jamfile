@@ -1,0 +1,27 @@
+SubDir TOP pics ;
+
+PATHS = 
+        particles/puff/dirt/pak
+        particles/puff/smokeDark/pak
+        particles/puff/smokeLight/pak
+        particles/clouds/pak
+        particles/craters/pak
+        particles/explosion/explosion0/pak
+        particles/explosion/explosion1/pak
+        particles/lights/pak
+        particles/missles/pak
+        particles/chunks/pak
+        particles/shells/pak
+        flags
+        cursors
+        menus/vehicleSelectionView
+        backgrounds/menus/buttons/default/pak
+        backgrounds/menus/menu/pak
+        backgrounds/menus/menu
+        .
+;
+
+for p in $(PATHS) {
+    InstallData [ Wildcard $(p) : *.bmp *.pak *.raw ] : pics $(p) ;
+}
+

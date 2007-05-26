@@ -1,0 +1,63 @@
+/*
+Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
+ 
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+ 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+ 
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+#ifndef __UI_Container_hpp__
+#define __UI_Container_hpp__
+
+#include "UI/Component.hpp"
+#include <list>
+
+namespace UI{
+    
+    class Container : public Component{
+    protected:
+        std::list<Component *> components;
+
+        Component * findContainingComponent(iXY point);
+
+        Component * lastFocusedComponent;
+        int previousMouseState;
+        iXY previousMousePosition;
+
+        bool draw_frame;
+
+    public:
+        Container(iRect area);
+        Container(iXY position, iXY size);
+
+        virtual ~Container(void);
+
+        void draw(Painter & painter);
+
+        void addComponent(Component * comp);
+        void removeComponent(Component * comp);
+
+        void processEvents(iXY mousePosition, int mouseButtons, SDLMod modifier);
+
+        void mouseMoved(MouseEventParameter param);
+        void mouseEntered(MouseEventParameter param);
+        void mouseExited(MouseEventParameter param);
+
+        void setDrawFrame(bool b){
+            draw_frame = b;
+        }
+
+    };
+}
+
+#endif
