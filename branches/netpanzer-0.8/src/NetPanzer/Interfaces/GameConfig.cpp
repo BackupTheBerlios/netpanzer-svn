@@ -69,6 +69,9 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       displayshadows("displayshadows", true),
       blendsmoke("blendsmoke", true),
       screengamma("gamma", 50, 0, 100),
+#ifdef _WIN32
+      usedirectx("usedirectx", true),
+#endif
 
       enablesound("enable", true),
       enablemusic("music", true),
@@ -156,6 +159,9 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     visualssettings.push_back(&displayshadows);
     visualssettings.push_back(&blendsmoke);
     visualssettings.push_back(&screengamma);
+#ifdef _WIN32
+    visualssettings.push_back(&usedirectx);
+#endif
 
     soundsettings.push_back(&enablesound);
     soundsettings.push_back(&enablemusic);
