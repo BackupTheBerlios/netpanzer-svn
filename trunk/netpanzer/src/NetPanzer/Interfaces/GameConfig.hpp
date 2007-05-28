@@ -146,6 +146,9 @@ public:
     ConfigBool  displayshadows;
     ConfigBool  blendsmoke;
     ConfigInt   screengamma;
+#ifdef _WIN32
+    ConfigBool  usedirectx;
+#endif
 
     // sound settings
     ConfigBool  enablesound;
