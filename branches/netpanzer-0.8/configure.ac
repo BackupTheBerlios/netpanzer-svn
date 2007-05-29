@@ -107,12 +107,13 @@ NP_FINDLIB([SDLMIXER], [SDL_mixer], [SDL_mixer >= 1.2],
 	[AC_MSG_ERROR([Please install SDLMixer >=1.2.2])],
 	[$SDL_CFLAGS], [$SDL_LIBS])
 
-NP_FINDLIB([SDLIMAGE], [SDL_image], [SDL_image >= 1.2],
-	NP_LANG_PROGRAM([#include <SDL_image.h>], [IMG_Load("");]),
-	[], [-lSDL_image],
-	[],
-	[AC_MSG_ERROR([Please install SDLImage >= 1.2.1])],
-	[$SDL_CFLAGS], [$SDL_LIBS])
+dnl SDL_image disabled for now, when use in future reenable it.
+dnl NP_FINDLIB([SDLIMAGE], [SDL_image], [SDL_image >= 1.2],
+dnl	NP_LANG_PROGRAM([#include <SDL_image.h>], [IMG_Load("");]),
+dnl	[], [-lSDL_image],
+dnl	[],
+dnl	[AC_MSG_ERROR([Please install SDLImage >= 1.2.1])],
+dnl	[$SDL_CFLAGS], [$SDL_LIBS])
 
 dnl disabled for now, reenable if you work further on the UI
 dnl NP_FINDLIB([SDLTTF], [SDL_ttf], [SDL_ttf >= 2.0.0],
