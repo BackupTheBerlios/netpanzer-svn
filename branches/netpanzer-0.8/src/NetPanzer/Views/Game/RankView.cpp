@@ -149,7 +149,7 @@ void RankView::drawPlayerStats(Surface &dest)
     unsigned int CHAR_YPIX = Surface::getFontHeight();
     unsigned int entryHeight = std::max(CHAR_YPIX, UNIT_FLAGS_SURFACE.getHeight()) + 2;
     iXY offset(2, 40);
-    iXY flagOffset(162, 40 + (CHAR_YPIX - UNIT_FLAGS_SURFACE.getHeight())/2);
+    iXY flagOffset(162, 40 + (int(CHAR_YPIX - UNIT_FLAGS_SURFACE.getHeight()))/2);
 
     for(std::vector<const PlayerState*>::iterator i = states.begin();
             i != states.end(); ++i) {

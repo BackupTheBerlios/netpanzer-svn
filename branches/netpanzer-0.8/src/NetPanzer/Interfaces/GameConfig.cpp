@@ -37,7 +37,7 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       serverConnect("serverconnect", ""),
     
       playername("name", "Player"),
-      masterservers("masterservers", "netpanzer.dyndns.org"),
+      masterservers("masterservers", "masterserver.netpanzer.org, masterserver2.netpanzer.org, masterserver.netpanzer.info"),
       
       serverport("serverport", NETPANZER_DEFAULT_PORT_TCP,0,65535),
       proxyserver("proxyserver",""),
