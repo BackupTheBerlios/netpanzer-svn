@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "TileSetStruct.hpp"
 #include "WadMapTable.hpp"
+#include "2D/Surface.hpp"
 
 namespace filesystem {
 class ReadFile;
@@ -27,6 +28,9 @@ class ReadFile;
 
 class TileSet
 {
+private:
+    Surface **tiles;
+    
 protected:
     bool tile_set_loaded;
     TILE_DBASE_HEADER tile_set_info;
@@ -49,8 +53,6 @@ public:
     void readTileDbHeader(filesystem::ReadFile& file, TILE_DBASE_HEADER *header);
     void loadTileSetInfo( const char *file_path );
     void loadTileSetInfo( const char *file_path, WadMapTable &mapping_table );
-//    void loadTileSet( const char *file_path, WadMapTable &mapping_table );
-//    void loadTileSet( const char *file_path );
 
     bool startPartitionTileSetLoad( const char *file_path, WadMapTable &mapping_table, unsigned long partitions );
     bool partitionTileSetLoad( WadMapTable &mapping_table, int *percent_complete );
