@@ -101,7 +101,12 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
     }
     
     if(serverlist.empty()) {
-        const char* msg = queryThread->getStateMessage();
+        const char* msg;
+        if ( queryThread ) {
+            msg = queryThread->getStateMessage();
+        } else {
+            msg = "Resolving masterserver address";
+        }
         clientArea.bltString(0, 0, msg, Color::white);
         View::doDraw(windowArea, clientArea);
         return;
