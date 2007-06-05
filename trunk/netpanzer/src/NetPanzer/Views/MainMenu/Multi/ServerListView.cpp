@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameViewGlobals.hpp"
 #include "MasterServer/ServerInfo.hpp"
 #include "Core/NetworkGlobals.hpp"
+// XXX ultrahack
+#include "ScreenSurface.hpp"
+#include "Desktop.hpp"
 
 ServerListView* serverlistview = 0;
 
@@ -65,6 +68,7 @@ ServerListView::refresh()
         else
             delete queryThread;
     }
+    queryThread = 0;
    
     // don't clear before the delete or after the new, as the thread contains
     // pointers to the serverlist
@@ -72,6 +76,9 @@ ServerListView::refresh()
             i != serverlist.end(); ++i)
         delete *i;
     serverlist.clear();
+
+    Desktop::draw(*screen); // XXX ultrahack
+    screen->copyToVideoFlip(); // XXX uberhack
 
     queryThread = new masterserver::ServerQueryThread(&serverlist);   
 }

@@ -31,8 +31,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkServer.hpp"
 #include "Server.hpp"
 #include "Client.hpp"
-// XXX ultrahack
-#include "ScreenSurface.hpp"
 
 static int previousSessionType = _game_session_join;
 
@@ -66,8 +64,6 @@ void bNext()
 
         Desktop::setVisibility("IPAddressView", true);
         Desktop::setVisibility("ServerListView", true);
-        Desktop::draw(*screen); // XXX ultrahack
-        screen->copyToVideoFlip(); // XXX uberhack
         serverlistview->refresh();
     }
 }
