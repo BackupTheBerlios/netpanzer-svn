@@ -280,7 +280,8 @@ ServerQueryThread::onDataReceived(network::UDPSocket *s, const network::Address&
         parseServerData(server,str);
         querying_server.erase(fromaddress.str());
     } else {
-        LOGGER.warning("Received answer from [%s]", fromaddress.str().c_str());
+        LOGGER.warning("Received answer from unknown server [%s]", fromaddress.str().c_str());
+        querying_server.erase(fromaddress.str()); // Quick & Dirty, should use find()
     }
     
     sendNextQuery();
