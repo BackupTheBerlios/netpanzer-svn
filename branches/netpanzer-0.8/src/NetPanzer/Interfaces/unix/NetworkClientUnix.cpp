@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "LobbyView.hpp"
 
 #include "Desktop.hpp"
+#include "DisconectedView.hpp"
 
 #include "Network/SocketManager.hpp"
 
@@ -51,9 +52,11 @@ NetworkClientUnix::onClientConnected(ClientSocket *s)
 }
 
 void
-NetworkClientUnix::onClientDisconected(ClientSocket *s)
+NetworkClientUnix::onClientDisconected(ClientSocket *s, const char *msg)
 {
     (void)s;
+    DisconectedView *dv = (DisconectedView *)Desktop::getView("DisconectedView");
+    dv->setMsg(msg);
     Desktop::setVisibility("DisconectedView", true);
     delete clientsocket;
     clientsocket=0;

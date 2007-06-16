@@ -35,7 +35,7 @@ public:
 protected:
     friend class ClientSocket;
     virtual void onClientConnected(ClientSocket *cso) = 0;
-    virtual void onClientDisconected(ClientSocket *cso) = 0;
+    virtual void onClientDisconected(ClientSocket *cso, const char * msg) = 0;
 };
 
 class ClientSocket : public network::TCPSocketObserver

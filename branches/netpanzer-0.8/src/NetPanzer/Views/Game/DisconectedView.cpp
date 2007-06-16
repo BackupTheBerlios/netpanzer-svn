@@ -116,9 +116,8 @@ DisconectedView::init()
 {
     removeAllButtons();
 
-    setBordered(false);
+    setBordered(true);
     setAllowResize(false);
-    setDisplayStatusBar(false);
 
     resize(screen->getWidth(),screen->getHeight());
     moveTo(0,0);
@@ -135,7 +134,7 @@ DisconectedView::doDraw(Surface &viewArea, Surface &clientArea)
     iRect r(min, max);
 
     viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
-    viewArea.bltStringCenter("You have been disconected from server", Color::white);
+    viewArea.bltStringCenter(disconectMsg.c_str(), Color::white);
 
     View::doDraw(viewArea, clientArea);
 }

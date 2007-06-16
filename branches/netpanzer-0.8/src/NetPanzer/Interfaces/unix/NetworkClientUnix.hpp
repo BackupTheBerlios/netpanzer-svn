@@ -37,7 +37,7 @@ public:
     virtual void checkIncoming();
 protected:
     void onClientConnected(ClientSocket *s);
-    void onClientDisconected(ClientSocket *s);    
+    void onClientDisconected(ClientSocket *s, const char *msg);    
     
 private:
     ClientSocket* clientsocket;

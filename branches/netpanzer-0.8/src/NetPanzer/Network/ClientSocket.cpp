@@ -147,6 +147,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
                     packetsize = sizeof(NetMessage);
                 if ( packetsize > _MAX_NET_PACKET_SIZE ) {
                     LOGGER.warning("Received wrong packetsize [%d]", packetsize);
+                    observer->onClientDisconected(this, "Received wrong packet size");
                     break; // received a wrong packet size
                 }
                 
@@ -157,6 +158,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
                 if ( remaining > _MAX_NET_PACKET_SIZE ) {
                     // The only possibility of getting in here is...
                     LOGGER.warning("Received wrong packetsize (remaining) [%d]",remaining);
+                    observer->onClientDisconected(this, "Received wrong packet size");
                     break;
                 }
                 
@@ -184,7 +186,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
 
                 if ( packetsize > _MAX_NET_PACKET_SIZE ) {
                     LOGGER.warning("ClientSocket::onDataReceived(%d) Received wrong packetsize (half) [%d]", id, packetsize);
-                    tempoffset=0;
+                    observer->onClientDisconected(this, "Received wrong packet size");
                     break; // received a wrong packet size
                 }
                 
@@ -220,7 +222,7 @@ ClientSocket::onDisconected(network::TCPSocket *so)
     (void)so;
     LOGGER.warning("ClientSocket:: Disconected NetId[%d]!", id);
     socket=0;
-    observer->onClientDisconected(this);
+    observer->onClientDisconected(this, "Network connection closed");
 }
 
 std::string
