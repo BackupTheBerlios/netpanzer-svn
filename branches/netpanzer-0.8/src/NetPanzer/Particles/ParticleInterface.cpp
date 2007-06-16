@@ -1186,7 +1186,7 @@ void ParticleInterface::getMuzzleTips(PackedSurface &packedSource, iXY muzzleTip
         {
             source.setFrame(i);
 
-            for (unsigned int offset = 0; offset < source.getCenterX(); offset++) {
+            for (unsigned int offset = 0; offset < (unsigned int)source.getCenterX(); offset++) {
                 int yy = source.getHeight() - 1 - offset;
                 for (unsigned int x = offset; x < source.getWidth(); x++) {
                     if (source.getPixel(x, yy) != 0) {

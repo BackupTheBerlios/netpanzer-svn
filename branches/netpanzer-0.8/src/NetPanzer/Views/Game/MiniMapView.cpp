@@ -316,7 +316,7 @@ void MiniMapView::doIncreaseSize(int value)
     }
 
     // Check the validity of the X dimension.
-    if ((min.x + destSize.x) >= screen->getWidth()) {
+    if ((min.x + destSize.x) >= (int)screen->getWidth()) {
         int xOffset = min.x + destSize.x - screen->getWidth();
 
         int destXPos = min.x - xOffset;
@@ -331,7 +331,7 @@ void MiniMapView::doIncreaseSize(int value)
     }
 
     // Check the validity of the Y dimension.
-    if ((min.y + destSize.y) >= screen->getHeight()) {
+    if ((min.y + destSize.y) >= (int)screen->getHeight()) {
         int yOffset = min.y + destSize.y - screen->getHeight();
 
         int destYPos = min.y - yOffset;

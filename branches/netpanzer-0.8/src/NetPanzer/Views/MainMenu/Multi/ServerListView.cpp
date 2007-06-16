@@ -127,7 +127,7 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
         return;
     }
 
-    int y = 0;
+    unsigned int y = 0;
     for(std::vector<masterserver::ServerInfo*>::iterator i = serverlist.begin();
             i != serverlist.end(); ++i) {
         const masterserver::ServerInfo& server = *(*i);

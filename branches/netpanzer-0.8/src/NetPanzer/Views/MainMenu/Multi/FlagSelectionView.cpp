@@ -80,7 +80,7 @@ void FlagSelectionView::init()
     int x = flagStartOffset.x;
     int y = flagStartOffset.y;
 
-    for (int i = 0; i < playerFlag.getNumFrames(); i++) {
+    for (unsigned int i = 0; i < playerFlag.getNumFrames(); i++) {
         playerFlag.setFrame(i);
         //playerFlag.drawButtonBorder(Color::white, Color::gray64);
 
@@ -88,7 +88,7 @@ void FlagSelectionView::init()
 
         x += xOffset;
 
-        if (x > flagStartOffset.x + getClientRect().getSizeX() - BORDER_SPACE - playerFlag.getWidth()) {
+        if (x > flagStartOffset.x + getClientRect().getSizeX() - BORDER_SPACE - (int)playerFlag.getWidth()) {
             x = flagStartOffset.x;
             y += yOffset;
         }
@@ -158,7 +158,7 @@ int FlagSelectionView::lMouseUp(const iXY &downPos, const iXY &upPos)
 
     const int buttonsBeforeFlags = 0;
 
-    if (getPrevPressedButton() >= buttonsBeforeFlags && getPrevPressedButton() < playerFlag.getNumFrames() + buttonsBeforeFlags) {
+    if (getPrevPressedButton() >= buttonsBeforeFlags && getPrevPressedButton() < (int)playerFlag.getNumFrames() + buttonsBeforeFlags) {
         playerFlagSelected = getPrevPressedButton() - buttonsBeforeFlags;
     }
 

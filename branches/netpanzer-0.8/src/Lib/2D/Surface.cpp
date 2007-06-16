@@ -362,7 +362,7 @@ void Surface::blt(Surface &dest, int x, int y) const
 
     // Trivial clipping rejection - no overlap.
     // Also will jump out immediately if either image has zero size.
-    if ((unsigned int)x >= dest.getWidth() || (unsigned int)y >= dest.getHeight())
+    if (x >= (int)dest.getWidth() || y >= (int)dest.getHeight())
         return;
 
     int end_x = x + getWidth();
@@ -447,7 +447,7 @@ void Surface::bltTrans(Surface &dest, int x, int y) const
 
     // Trivial clipping rejection - no overlap.
     // Also will jump out immediately if either image has zero size.
-    if ((unsigned int)x >= dest.getWidth() || (unsigned int)y >= dest.getHeight())
+    if (x >= (int)dest.getWidth() || y >= (int)dest.getHeight())
         return;
 
     int end_x = x + getWidth();
@@ -536,7 +536,7 @@ void Surface::bltTransColor(Surface &dest, int x, int y, const Uint8 &color) con
 
     // Trivial clipping rejection - no overlap.
     // Also will jump out immediately if either image has zero size.
-    if ((unsigned int)x >= dest.getWidth() || (unsigned int)y >= dest.getHeight())
+    if (x >= (int)dest.getWidth() || y >= (int)dest.getHeight())
         return;
 
     int end_x = x + getWidth();
@@ -615,8 +615,8 @@ void Surface::drawHLine(int x1, int y, int x2, const PIX &color)
 
     // Check for trivial rejection
     if ( y < 0 || x2 <= 0
-         || (unsigned int)y >= getHeight()
-         || (unsigned int)x1 >= getWidth() )
+         || y >= (int)getHeight()
+         || x1 >= (int)getWidth() )
          return;
 
     assert(mem != 0);
@@ -635,7 +635,7 @@ void Surface::drawHLine(int x1, int y, int x2, const PIX &color)
     }
 
     // CLIP RIGHT
-    if ((unsigned int)x2 >= getWidth()) length -= (x2 - getWidth());
+    if (x2 >= (int)getWidth()) length -= (x2 - getWidth());
 
     memset(ptr, color, length * sizeof(PIX));
 
@@ -652,8 +652,8 @@ void Surface::drawVLine(int x, int y1, int y2, const PIX &color)
 
     // Check for trivial rejection
     if ( x < 0 || y2 <= 0
-        || (unsigned int)x >= getWidth()
-        || (unsigned int)y1 >= getHeight() )
+        || x >= (int)getWidth()
+        || y1 >= (int)getHeight() )
         return;
 
     assert(mem != 0);
@@ -665,7 +665,7 @@ void Surface::drawVLine(int x, int y1, int y2, const PIX &color)
     if (y1 < 0) y1 = 0;
 
     // CLIP BOTTOM
-    if ((unsigned int)y2 >= getHeight()) y2 = getHeight()-1;
+    if (y2 >= (int)getHeight()) y2 = getHeight()-1;
 
     PIX	*ptr	= mem+y1*getPitch()+x;
 
@@ -720,14 +720,14 @@ void Surface::fillRect(iRect bounds, const PIX &color)
     //if (bounds.max < 0 || bounds.min >= pix) return;
     if (bounds.max.x <  0)     return;
     if (bounds.max.y <  0)     return;
-    if (bounds.min.x >= getWidth()) return;
-    if (bounds.min.y >= getHeight()) return;
+    if (bounds.min.x >= (int)getWidth()) return;
+    if (bounds.min.y >= (int)getHeight()) return;
 
     // Check for clipping
     if (bounds.min.x <  0)     bounds.min.x = 0;
     if (bounds.min.y <  0)     bounds.min.y = 0;
-    if (bounds.max.x > getWidth())  bounds.max.x = getWidth();
-    if (bounds.max.y > getHeight()) bounds.max.y = getHeight();
+    if (bounds.max.x > (int)getWidth())  bounds.max.x = getWidth();
+    if (bounds.max.y > (int)getHeight()) bounds.max.y = getHeight();
 
     iXY diff;
     diff = (bounds.max - bounds.min);
@@ -758,14 +758,14 @@ void Surface::drawRect(iRect bounds, const PIX &color)
     // Check for trivial rejection
     if      (bounds.max.x <  0)     return;
     else if (bounds.max.y <  0)     return;
-    else if (bounds.min.x >= getWidth()) return;
-    else if (bounds.min.y >= getHeight()) return;
+    else if (bounds.min.x >= (int)getWidth()) return;
+    else if (bounds.min.y >= (int)getHeight()) return;
 
     // Check for clipping
     if (bounds.min.x <  0)     bounds.min.x = 0;
     if (bounds.min.y <  0)     bounds.min.y = 0;
-    if (bounds.max.x >= getWidth())  bounds.max.x = getWidth() - 1;
-    if (bounds.max.y >= getHeight()) bounds.max.y = getHeight() - 1;
+    if (bounds.max.x >= (int)getWidth())  bounds.max.x = getWidth() - 1;
+    if (bounds.max.y >= (int)getHeight()) bounds.max.y = getHeight() - 1;
 
     drawHLine(bounds.min.x, bounds.min.y, bounds.max.x,   color);
     drawHLine(bounds.min.x, bounds.max.y, bounds.max.x+1, color);
@@ -1035,8 +1035,8 @@ void Surface::bltLookup(const iRect &destRect, const PIX table[])
     assert(mem != 0);
 
     iXY min = destRect.min + offset;
-    if (min.x >= getWidth()) return;
-    if (min.y >= getHeight()) return;
+    if (min.x >= (int)getWidth()) return;
+    if (min.y >= (int)getHeight()) return;
 
     iXY max = destRect.max + offset;
     if (max.x <= 0) return;
@@ -1045,8 +1045,8 @@ void Surface::bltLookup(const iRect &destRect, const PIX table[])
     // Clip destination rectangle
     if (min.x < 0) min.x = 0;
     if (min.y < 0) min.y = 0;
-    if (max.x >= getWidth())  max.x = getWidth();
-    if (max.y >= getHeight()) max.y = getHeight();
+    if (max.x >= (int)getWidth())  max.x = getWidth();
+    if (max.y >= (int)getHeight()) max.y = getHeight();
 
     size_t pixelsPerRow = max.x - min.x;
     size_t numRows      = max.y - min.y;
@@ -1071,8 +1071,8 @@ void Surface::bltScale(const Surface &source, const iRect &destRect)
     iXY min = destRect.min + source.offset;
     iXY max = destRect.max + source.offset;
 
-    if (min.x >= getWidth()) return;
-    if (min.y >= getHeight()) return;
+    if (min.x >= (int)getWidth()) return;
+    if (min.y >= (int)getHeight()) return;
 
     // Something is overlapping, so we need to verify that both
     // surfaces are valid.
@@ -1102,7 +1102,7 @@ void Surface::bltScale(const Surface &source, const iRect &destRect)
     }
 
     // CLIP RIGHT
-    if (max.x > getWidth()) {
+    if (max.x > (int)getWidth()) {
         pixelsPerRow -= max.x - getWidth();
     }
 
@@ -1115,7 +1115,7 @@ void Surface::bltScale(const Surface &source, const iRect &destRect)
     }
 
     // CLIP BOTTOM
-    if (max.y > getHeight()) {
+    if (max.y > (int)getHeight()) {
         numRows -= max.y-getHeight();
     }
 
@@ -1166,7 +1166,7 @@ void Surface::shrinkWrap()
     bounds.min.y = center_y;
     bounds.max.y = center_y;
 
-    int num;
+    unsigned int num;
     for (num = 0; num < getNumFrames(); num++) {
         setFrame(num);
         //LOG(("curFrame:  %d", curFrame));
@@ -1178,10 +1178,10 @@ void Surface::shrinkWrap()
         for (unsigned int y = 0; y < getHeight(); y++) {
             for (unsigned int x = 0; x < getWidth(); x++) {
                 if (getPixel(x, y) != 0) {
-                    if (x < bounds.min.x) {
+                    if (x < (unsigned int)bounds.min.x) {
                         bounds.min.x = x;
                     }
-                    if (x > bounds.max.x) {
+                    if (x > (unsigned int)bounds.max.x) {
                         bounds.max.x = x;
                     }
                 }
@@ -1192,10 +1192,10 @@ void Surface::shrinkWrap()
         for (unsigned int x = 0; x < getWidth(); x++) {
             for (unsigned int y = 0; y < getHeight(); y++) {
                 if (getPixel(x, y) != 0) {
-                    if (y < bounds.min.y) {
+                    if (y < (unsigned int)bounds.min.y) {
                         bounds.min.y = y;
                     }
-                    if (y > bounds.max.y) {
+                    if (y > (unsigned int)bounds.max.y) {
                         bounds.max.y = y;
                     }
                 }
@@ -1287,10 +1287,10 @@ int Surface::loadAllBMPInDirectory(const char *path)
 
             // Get the max image size.
             tempSurface.loadBMP(name.c_str());
-            if (maxSize.x < tempSurface.getWidth()) {
+            if (maxSize.x < (int)tempSurface.getWidth()) {
                 maxSize.x = tempSurface.getWidth();
             }
-            if (maxSize.y < tempSurface.getHeight()) {
+            if (maxSize.y < (int)tempSurface.getHeight()) {
                 maxSize.y = tempSurface.getHeight();
             }
         }

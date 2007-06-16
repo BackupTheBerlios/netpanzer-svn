@@ -28,7 +28,7 @@ void cButton::createPacked(const iXY &pos, PackedSurface &source, const char *to
 {
     Surface tempTopSurface(source.getWidth(), source.getHeight(), source.getFrameCount());
 
-    for (int i = 0; i < tempTopSurface.getNumFrames(); i++) {
+    for (unsigned int i = 0; i < tempTopSurface.getNumFrames(); i++) {
         tempTopSurface.setFrame(i);
         tempTopSurface.fill(0);
         source.setFrame(i);

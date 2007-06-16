@@ -147,7 +147,7 @@ WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos)
         return;
     }
 
-    if(mouse_pos.x >= (screen->getWidth() - 1)) {
+    if((unsigned int)mouse_pos.x >= (screen->getWidth() - 1)) {
         WorldViewInterface::scroll_right(scroll_increment);
     }
 
@@ -155,7 +155,7 @@ WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos)
         WorldViewInterface::scroll_left(scroll_increment);
     }
 
-    if( mouse_pos.y >= (screen->getHeight() - 1)) {
+    if( (unsigned int)mouse_pos.y >= (screen->getHeight() - 1)) {
         WorldViewInterface::scroll_down(scroll_increment);
     }
 

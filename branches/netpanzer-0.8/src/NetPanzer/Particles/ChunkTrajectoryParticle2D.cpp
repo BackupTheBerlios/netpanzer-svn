@@ -161,7 +161,7 @@ void ChunkTrajectoryParticle2D::createGroundChunks()
 
     // Build a table of the ground colors.
     tempSurface.create(2, 2, 256);
-    for (int i = 0; i < tempSurface.getNumFrames(); i++) {
+    for (unsigned int i = 0; i < tempSurface.getNumFrames(); i++) {
         tempSurface.setFrame(i);
         tempSurface.fill(i);
 
