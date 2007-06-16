@@ -163,7 +163,9 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
                     Color::blue);
             }
 
-            clientArea.bltString(0,   y, server.name.c_str(), textcolor);
+            char ssn[44];
+            SDL_strlcpy(ssn, server.name.c_str(), sizeof(ssn));
+            clientArea.bltString(0,   y, ssn, textcolor);
             clientArea.bltString(350, y, playerstr.str().c_str(), textcolor);
             clientArea.bltString(400, y, server.map.c_str(), textcolor);
             clientArea.bltString(550, y, pingstr.str().c_str(), textcolor);
