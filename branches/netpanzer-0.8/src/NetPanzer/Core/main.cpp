@@ -198,11 +198,11 @@ BaseGameManager *initialise(int argc, char** argv)
 #endif
 
     if(dedicated_option.value())
-        LOGGER.openLogFile("log-server.txt");
+        LOGGER.openLogFile("server");
     else if(bot_option.value().size() > 0)
-        LOGGER.openLogFile("log-bot.txt");
+        LOGGER.openLogFile("bot");
     else
-        LOGGER.openLogFile("log.txt");
+        LOGGER.openLogFile("netpanzer");
 
 #ifdef WIN32
     // SDL redirects stdout and stderr to 2 textfiles, better open a new console

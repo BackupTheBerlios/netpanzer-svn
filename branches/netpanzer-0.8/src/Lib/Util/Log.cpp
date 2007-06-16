@@ -22,10 +22,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <errno.h>
 #include <string.h>
 #include <string>
+#include <sstream>
+#include <vector>
+#include <exception>
+#include <iomanip>
 
 #include "Exception.hpp"
 #include "FileSystem.hpp"
 #include "Log.hpp"
+#include "SDL.h"
+
+#define MAX_LOG_FILES 25
+#define MAX_LOGFILE_SIZE 10000000
 
 Logger LOGGER;
 
@@ -41,6 +49,7 @@ Logger::Logger()
 {
     m_logLevel = LEVEL_WARNING;
     m_logfile = 0;
+    used_size = 0;
 }
 //-----------------------------------------------------------------
 Logger::~Logger()
@@ -51,12 +60,43 @@ Logger::~Logger()
 void
 Logger::openLogFile(const char* filename)
 {
-    try {
-        m_logfile = filesystem::openWrite(filename);
-    } catch(std::exception& e) {
-        fprintf(stderr, "cannot open '%s': %s\n", filename, e.what());
-        m_logfile = 0;
-    }    
+    if ( filename && SDL_strlen(filename) )
+        prefix = filename;
+    else
+        prefix = "netpanzer";
+        
+    openNext();
+}
+//-----------------------------------------------------------------
+void
+Logger::cleanLogs()
+{
+    info("Cleaning old log files");
+    char** list = filesystem::enumerateFiles("/");
+    
+    std::vector<std::string> filenames;
+    for(char** file = list; *file != 0; file++) {
+        std::string name = *file;
+        if( !name.compare(0, prefix.length(), prefix)
+            && ! name.compare(name.length()-4, 4, ".log") ) {
+            filenames.push_back(name);
+        }
+    }
+
+    filesystem::freeList(list);
+
+    int todelete = filenames.size() - MAX_LOG_FILES;
+    if ( todelete > 0 ) {
+        std::sort(filenames.begin(), filenames.end());
+        for (int n=0; n<todelete; n++) {
+            try {
+                info("Deleting '%s'", filenames.at(n).c_str());
+                filesystem::remove(filenames.at(n).c_str());
+            } catch (std::exception &e) {
+                warning("Some error happened cleaning logs '%s'", e.what());
+            }
+        }
+    }
 }
 //-----------------------------------------------------------------
 void
@@ -65,6 +105,41 @@ Logger::closeLogFile()
     info("Closing logfile.");
     delete m_logfile;
     m_logfile = 0;
+}
+//-----------------------------------------------------------------
+void
+Logger::openNext()
+{
+    std::string filename=prefix;
+    
+    char buf[256];
+    time_t curtime = time(0);
+    struct tm* loctime = localtime(&curtime);
+    int timelen = strftime(buf, sizeof(buf), "-%Y%m%d_%H%M%S", loctime);
+
+    if ( timelen )
+        filename += buf;
+        
+    filename += ".log";
+
+    if ( m_logfile ) {
+        info("Closing log file for switch");
+        delete m_logfile;
+        m_logfile=0;
+    }
+    
+    try {
+        m_logfile = filesystem::openWrite(filename.c_str());
+
+        used_size = 0;
+        info("Log file open");
+        cleanLogs();
+
+    } catch(std::exception& e) {
+        fprintf(stderr, "cannot open log file '%s': %s\n", filename.c_str(), e.what());
+        m_logfile = 0;
+    }    
+
 }
 //-----------------------------------------------------------------
 void
@@ -84,8 +159,14 @@ Logger::log(int priority, const char *fmt, va_list ap)
     
     if (m_logfile != 0) {
 	try {
-	    m_logfile->write(buf, strlen(buf), 1);
-            m_logfile->flush();
+	    int blen = strlen(buf);
+	    m_logfile->write(buf, blen, 1);
+        m_logfile->flush();
+        used_size += blen;
+        if ( used_size >= MAX_LOGFILE_SIZE ) {
+            used_size=0;
+            openNext();
+        }
 	} catch(std::exception& e) {
             fprintf(stderr, "Error while writing logfile: %s", e.what());
             m_logfile = 0;
