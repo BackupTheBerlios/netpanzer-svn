@@ -286,8 +286,16 @@ void Surface::setTo(const Surface &source, iRect bounds)
     myMem      = false;
     frame0     = source.pixPtr(bounds.min.x, bounds.min.y);
     mem	       = frame0;
-    twidth     = bounds.getSizeX();
-    theight    = bounds.getSizeY();
+    if ( (unsigned int)bounds.max.x > source.getWidth() )
+        twidth = source.getWidth() - bounds.min.x;
+    else
+        twidth     = bounds.getSizeX();
+        
+    if ( (unsigned int)bounds.max.y > source.getHeight() )
+        theight = source.getHeight() - bounds.min.y;
+    else
+        theight    = bounds.getSizeY();
+        
     tpitch     = source.getPitch();
     numFrames  = source.getNumFrames();
     fps        = source.getFPS();

@@ -177,14 +177,18 @@ void cInputField::setInputFieldString(cInputFieldString *string)
 
 // setExcludedCharacters
 //--------------------------------------------------------------------------
-void cInputField::setExcludedCharacters(const char *excludedCharacters)
+void cInputField::setExcludedCharacters(const char *exChars)
 {
-    this->excludedCharacters = new char [strlen(excludedCharacters) + 1];
-    if (this->excludedCharacters == 0) {
+    if ( excludedCharacters ) {
+        delete excludedCharacters;
+        excludedCharacters = 0;
+    }
+    excludedCharacters = new char [strlen(exChars) + 1];
+    if (excludedCharacters == 0) {
         throw Exception("ERROR: Unable to allocate cInputField excludedCharacters.");
     }
 
-    strcpy(this->excludedCharacters, excludedCharacters);
+    strcpy(excludedCharacters, exChars);
 } // setExcludedCharacters
 
 // addChar
@@ -247,12 +251,11 @@ void cInputField::addExtendedChar(int newExtendedChar)
 
     case SDLK_RIGHT: {
             size_t length = strlen(destString);
-            if(++cursorPos > length) {
-                if (cursorPos > maxCharCount) {
-                    cursorPos = maxCharCount - 1;
-                } else {
-                    cursorPos = length;
-                }
+            ++cursorPos;
+            if ( cursorPos >= maxCharCount ) {
+                cursorPos = maxCharCount - 1;
+            } else if ( cursorPos > length ) {
+                cursorPos = length;
             }
         }
         break;
