@@ -218,10 +218,7 @@ void ServerConnectDaemon::sendConnectionAlert(PlayerID &player_id, int alert_enu
 
     case _connect_alert_mesg_client_drop : {
             connect_alert.set( player_id, _connect_alert_mesg_client_drop );
-            ConsoleInterface::postMessage(
-                    "Connection to '%s' has been unexpectedly broken.",
-                    player_state->getName().c_str() );
-            ConsoleInterface::postMessage( "'%s' has left the game.",
+            ConsoleInterface::postMessage( "'%s' has left the game for some reason.",
                     player_state->getName().c_str() );
         }
         break;

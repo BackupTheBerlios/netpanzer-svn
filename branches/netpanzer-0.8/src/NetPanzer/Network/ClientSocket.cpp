@@ -93,29 +93,28 @@ ClientSocket::~ClientSocket()
 
 void ClientSocket::sendMessage(const void* data, size_t size)
 {
-    if (socket) {
-        if (sendpos) {
-            if (sendpos+size > sizeof(sendbuffer)) {
-                stringstream errmsg;
-                errmsg << "send buffer full 1 [" << id << "]";
-                throw runtime_error(errmsg.str());
+    if ( socket ) {
+        if ( sendpos ) {
+            if ( sendpos+size > sizeof(sendbuffer) ) {
+                observer->onClientDisconected(this, "Send buffer full, need to disconnect");
+                return;
             }
-            memcpy(sendbuffer+sendpos,data,size);
-            sendpos+=size;
+            memcpy(sendbuffer+sendpos, data, size);
+            sendpos += size;
             sendRemaining();
         } else {
             size_t s = socket->send(data, size);
             if ( s != size ) {
-                if (sendpos+size > sizeof(sendbuffer)) {
-                    stringstream errmsg;
-                    errmsg << "send buffer full 2 [" << id << "]";
-                    throw runtime_error(errmsg.str());
+                size_t remain = size-s;
+                if ( remain > sizeof(sendbuffer) ) {
+                    observer->onClientDisconected(this, "Send data bigger than buffer, need to disconnect");
+                    return;
                 }
-                memcpy(sendbuffer+sendpos,data,size);
-                sendpos+=size;
+                memcpy(sendbuffer, (char *)data+s, remain);
+                sendpos = remain;
             }
         }
-    }        
+    }
 }
 
 void
@@ -123,11 +122,11 @@ ClientSocket::sendRemaining()
 {
     if ( socket && sendpos ) {
         size_t s = socket->send(sendbuffer, sendpos);
-        if (!s)
+        if ( !s )
             return;
         if ( s != sendpos ) {
-            memmove(sendbuffer,sendbuffer+s,sendpos-s);
-            sendpos-=s;
+            memmove(sendbuffer, sendbuffer+s, sendpos-s);
+            sendpos -= s;
         } else
             sendpos = 0;
     }
@@ -140,10 +139,10 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
     int dataptr = 0;
     unsigned int remaining = len;
     Uint16 packetsize=0;
-    while (remaining) {
+    while ( remaining ) {
         if ( !tempoffset ) {
             if ( remaining < sizeof(NetMessage) ) {
-                memcpy(tempbuffer,data+dataptr,remaining);
+                memcpy(tempbuffer, data+dataptr, remaining);
                 tempoffset = remaining;
                 break; // no more data
             }
@@ -164,10 +163,10 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             
             if ( remaining >= packetsize ) {
                 EnqueueIncomingPacket(data+dataptr, packetsize, 0, id);
-                remaining-=packetsize;
-                dataptr+=packetsize;
+                remaining -= packetsize;
+                dataptr   += packetsize;
             } else {
-                memcpy(tempbuffer,data+dataptr,remaining);
+                memcpy(tempbuffer, data+dataptr, remaining);
                 tempoffset = remaining;
                 remaining=0;
             }
@@ -176,11 +175,11 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
                 // copy the needed until netMessage
                 LOGGER.debug("ClientSocket::onDataReceived(%d) Reading more for head", id);
                 unsigned int needsize = sizeof(NetMessage)-tempoffset;
-                unsigned int tocopy = (remaining>needsize)?needsize:remaining;
+                unsigned int tocopy   = (remaining>needsize)?needsize:remaining;
                 memcpy(tempbuffer+tempoffset, data+dataptr, tocopy);
-                remaining-=tocopy;
-                tempoffset+=tocopy;
-                dataptr+=tocopy;
+                remaining  -= tocopy;
+                tempoffset += tocopy;
+                dataptr    += tocopy;
             }
             
             if ( tempoffset < sizeof(NetMessage) )
@@ -203,11 +202,11 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             if ( (tempoffset < packetsize) && remaining ) {
                 LOGGER.debug("ClientSocket::onDataReceived(%d) Reading more data", id);
                 unsigned int needsize = packetsize-tempoffset;
-                unsigned int tocopy = (remaining>needsize)?needsize:remaining;
+                unsigned int tocopy   = (remaining>needsize)?needsize:remaining;
                 memcpy(tempbuffer+tempoffset, data+dataptr, tocopy);
-                remaining-=tocopy;
-                tempoffset+=tocopy;
-                dataptr+=tocopy;
+                remaining  -= tocopy;
+                tempoffset += tocopy;
+                dataptr    += tocopy;
             }
             
             if ( tempoffset == packetsize ) {
