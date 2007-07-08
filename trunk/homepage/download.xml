@@ -1,20 +1,23 @@
 <?xml version="1.0"?>
 <page title="NetPanzer - An Online Multiplayer Tactical Warfare Game">
-  <section title="Development version">
-    <subsection title="Linux">
-      <p>Source of development version is provided for linux
-         <a href="http://prdownload.berlios.de/netpanzer/netpanzer-svn-r964.tar.bz2">netpanzer-svn-r964.tar.bz2</a>
-	 (377KB)</p>
-      <p>Game data is the same as previous version</p>
+  <section title="Downloads">
+    <subsection title="Linux and Source Code">
+      <p>For linux only source is provided for now, hopefully the distributions
+      will generate packages optimized for them.</p>
+      <p>Source:
+        <a href="http://download.berlios.de/netpanzer/netpanzer-0.8.2.tar.bz2">netpanzer-0.8.2.tar.bz2</a>
+	(10 MB)</p>
+      <p>You only need this file to compile &amp; play, the data files are included,
+      in other releases it was split in 2 files (source and data). You will also need Jam, PhysicsFS, SDL and SDL_mixer
+      to compile it.</p>
     </subsection>
     <subsection title="Windows">
-      <p>Windows binary update (development version)
-         <a href="http://prdownload.berlios.de/netpanzer/netpanzer-win32-update-svn-r964.zip">netpanzer-win32-update-svn-r964.zip</a>
-         (664KB)</p>
-      <p>Game must be updated by hand, the instructions are in the file 'update-readme.txt' inside the zip file.</p>
+      <p>Windows installer: 
+	<a href="http://download.berlios.de/netpanzer/netpanzer-0.8.2.exe">netpanzer-0.8.2.exe</a>
+        (9.5 MB)</p>
     </subsection>
   </section>
-  <section title="Downloads">
+  <section title="Older downloads (0.8)">
     <subsection title="Linux">
       <p>Some linux distributions already come with NetPanzer packages by
       default. You might just be able to install NetPanzer with your

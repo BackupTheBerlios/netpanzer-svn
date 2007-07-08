@@ -6,11 +6,12 @@
   <item file="units.html">Units</item>
   <item file="faq.html">FAQ</item>
   <item file="download.html">Download</item>
-  <item file="http://www.netpanzer.info/games.php">Servers</item>
-	<item file="http://www.netpanzer.org">Community</item>
+  <item file="http://www.netpanzer.info/games.php">Your Statistics</item>
+  <item file="http://www.netpanzer.org/serverbrowser/">Server Browser</item>
+  <item file="http://www.netpanzer.org/forum/">Forum</item>
   <!-- <item file="survey.html">Survey</item> -->
   <!--<item file="documentation.html">Docs</item>-->
-  <item file="joinus.html">Join Us!</item> 
+  <!--<item file="joinus.html">Join Us!</item>-->
   <!-- <item file="contact.html">Contact</item> -->
   <item file="http://developer.berlios.de/projects/netpanzer">Developer</item>
 </menu>

@@ -1,15 +1,75 @@
 <?xml version="1.0"?>
 <page title="netPanzer - News">
   <section title="News">
-	  <news>
-		  <item date="26. Mai 2007">
-				<p>New Maintainer</p>
-				<p>As I don't have the time for continued development on netpanzer
-				anymore, I decided to pass over maintainership to kromxp. I wish him
-				good luck and	hope to see some new exciting netpanzer versions.</p>
-			</item>
-		</news>
     <news>
+	<item date="08. Jul 2007">
+		<p>NetPanzer 0.8.2</p>
+		<p>After years of waiting, broken pipes, illegal exceptions, 
+		cores and needed shutdowns, the netPanzer team is proud to 
+		present the release of netPanzer 0.8.2</p>
+		<p>Hi, I'm kromxp (again), and as you can see (in the previous
+		news) I'm the new maintainer, I should be writing the news from
+		now on.</p>
+		<p>This version fix many of the problems that made netPanzer
+		crash. I still haven't write a full changelog, but you can get
+		an idea by reading the		
+		<a href="http://svn.berlios.de/wsvn/netpanzer/?op=log&amp;rev=0&amp;sc=0&amp;isdir=1">SVN log</a>
+		</p>
+		<p>Some of the changes include posibility of configuring the
+		starting units, remove duplicated names (it will add a number
+		after the name if there is a player with that name) and the
+		player flags now are not duplicated and doesn't change (before
+		the flags of one player could change when a new player joined
+		the game)</p>
+		<p>We now have 3 masterservers managed by 3 different people:</p>
+			<ul>
+				<li>masterserver.netpanzer.org</li>
+				<li>masterserver2.netpanzer.org</li>
+				<li>masterserver.netpanzer.info</li>
+			</ul>
+		<p>We have a <a href="http://www.netpanzer.org/forum">forum</a>,
+		where we pass the days kicking the spambots. You can come there
+		and help us kicking them while we speak about the future of
+		netpanzer. Also if you have any problem with the game, you can 
+		post there and hopefully someone will help you.</p>
+		<p>In the forum we can give support in English, German and
+		Spanish. We created boards for other languages (like French and
+		Portuguese) but we still don't have anyone to answer on those
+		boards. You are invited to join the forum and if you want a
+		board in your language (to help people in your language),
+		you can ask!!!</p>
+		<p>If you use IRC you can meet us (and idle with us) in 
+		#netpanzer in freenode.net, note that IRC is not for the faint of
+		heart, you could join and ask, and the answer could be delayed
+		(say 2 hours, thats the magic of real time communication)</p>
+		<p>Abitos has been improving his server browser and now is back
+		and running, you can find it 
+		<a href="http://www.netpanzer.org/serverbrowser">here</a>.
+		It can filter servers (full, empty, old servers), generate the 
+		minimap images directly from map files, and has a better catching
+		of the servers.</p>
+		<p>Lohengrin maintains
+		<a href="http://www.netpanzer.info/">netpanzer.info</a> community.
+		There you can find, new maps for download, a heavy modified server
+		browser (based on previous versions of the server browser) and
+		the most interesting is the ranking, will you be able to get to
+		the top on his 
+		<a href="http://www.netpanzer.info/netpanzer_hall_of_fame.php">list</a>?</p>
+		<p>During the testing phase, we have been forcing Cellar-Door
+		to play with newer versions, but he is still alive, so we
+		thought is time to release</p>
+		<p>And the last note, even if this version is new for your,
+		it is old for me, there are many changes already done for
+		next version (0.9) not included in 0.8.2</p>
+		<p>To get the new version, go to the
+		<a href="download.html">Download</a> section</p>
+	</item>
+	<item date="26. May 2007">
+		<p>New Maintainer</p>
+		<p>As I don't have the time for continued development on netpanzer
+		anymore, I decided to pass over maintainership to kromxp. I wish him
+		good luck and	hope to see some new exciting netpanzer versions.</p>
+	</item>
     	<item date="3. Apr 2007">
 		<p>Develpment status</p>
 		<p>Hi! I'm kromxp, a new developer of Netpanzer. In the past two weeks there has been many changes in the code. It seems to be more stable now, i created a server and run for 11 hours, 114 players connected (not at the same time) and many of the 'disconected' players was for an expected reason (see the known problems #1) and there were no server crash (maybe not your case). I think is time to release a test version so more people can check the advances done.</p>
