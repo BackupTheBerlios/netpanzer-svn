@@ -30,7 +30,7 @@ void EnqueueIncomingPacket(const void *message, Uint16 message_size,
     TEMP_PACKET.fromID = fromID;
     assert(message_size <= _MAX_NET_PACKET_SIZE);
 
-    SDL_memcpy(TEMP_PACKET.data, message, message_size);
+    memcpy(TEMP_PACKET.data, message, message_size);
     NetworkInterface::receive_queue.enqueue( TEMP_PACKET );
 }
 

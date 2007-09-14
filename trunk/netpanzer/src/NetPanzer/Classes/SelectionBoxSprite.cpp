@@ -121,7 +121,7 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
 
         iRect r(min_abs.x + 1, max_abs.y - 5, max_abs.x - 1, max_abs.y - 1);
 
-        surface->fillRect(r,Color::darkGray);
+        surface->bltLookup(r, Palette::darkGray256.getColorArray());
 
         r = iRect(min_abs.x + 2, max_abs.y - 4, min_abs.x + 2 + hit_bar_size, max_abs.y - 3);
 

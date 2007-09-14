@@ -22,6 +22,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Surface.hpp"
 #include "GameTemplateView.hpp"
 
+
+enum MAP_DRAW_TYPES
+{
+    MAP_SOLID,
+    MAP_2080,
+    MAP_4060,
+    MAP_BLEND_GRAY,
+    MAP_BLEND_DARK_GRAY,
+    MAP_BLEND_GREEN,
+    MAP_BLACK,
+    MAP_TRANSPARENT
+};
+
 //---------------------------------------------------------------------------
 class MiniMapView : public GameTemplateView
 {
@@ -29,7 +42,7 @@ private:
     int     deltaSize;
     int     minMapSize;
     int     maxMapSize;
-    Surface * miniMapSurface;
+    Surface miniMapSurface;
     bool    needScale;
     float   scaleGroupWait;
     bool    selectionAnchor;
@@ -54,6 +67,7 @@ public:
 
     void drawMouseBox(Surface &dest);
     void setViewWindow(const iXY &pos);
+    void setMapDrawType(MAP_DRAW_TYPES type);
 
     static float          scaleDelta;
 

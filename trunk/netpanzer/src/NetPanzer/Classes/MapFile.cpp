@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "MapFile.hpp"
 #include "Util/FileSystem.hpp"
+#include "Util/Exception.hpp"
 
 void MapFile::load(filesystem::ReadFile& file)
 {

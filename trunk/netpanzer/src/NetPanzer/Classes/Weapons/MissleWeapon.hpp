@@ -28,8 +28,8 @@ class MissleWeapon : public Weapon
     float acceleration;
     bool  launched;      // Has this been launched?
 
-//    SpritePacked thrust;
-//    SpritePacked groundLight;
+    SpritePacked thrust;
+    SpritePacked groundLight;
 
     float curWait;
     float totalWait;

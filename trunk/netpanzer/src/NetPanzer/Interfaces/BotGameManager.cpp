@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Client.hpp"
 #include "NetworkClient.hpp"
 #include "ClientConnectDaemon.hpp"
+#include "Util/Exception.hpp"
 #include "LobbyView.hpp"
 #include "ProgressView.hpp"
 #include "ConsoleLoadingView.hpp"

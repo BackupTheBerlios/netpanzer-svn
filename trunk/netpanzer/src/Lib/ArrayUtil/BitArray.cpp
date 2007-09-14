@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <config.h>
 #include <assert.h>
+#include <string.h>
 #include "BitArray.hpp"
-#include "SDL.h"
 
 
 BitArray::BitArray( void )
@@ -85,13 +85,13 @@ void BitArray::deallocate( void )
 //************************************************************************
 void BitArray::clear( void )
 {
-    SDL_memset( array, 0, size );
+    memset( array, 0, size );
 }
 
 //************************************************************************
 void BitArray::set( void )
 {
-    SDL_memset( array, 0xFF, size );
+    memset( array, 0xFF, size );
 }
 
 //************************************************************************

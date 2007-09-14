@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "NetMessageEncoder.hpp"
 
+#include <string.h>
+
 #include "NetworkState.hpp"
 #include "Server.hpp"
 #include "NetworkServer.hpp"
@@ -48,7 +50,7 @@ void NetMessageEncoder::resetEncoder()
     encode_message.message_class = _net_message_class_multi ;
     encode_message.message_id = 0;
     encode_message.message_count = 0;
-    SDL_memset(encode_message.data, 0, _MULTI_PACKET_LIMIT);
+    memset(encode_message.data, 0, _MULTI_PACKET_LIMIT);
     encode_message_index = 0;
 }
 
@@ -62,7 +64,7 @@ void NetMessageEncoder::encodeMessage(NetMessage *message, size_t size)
     }
 
     message->setSize(size);
-    SDL_memcpy(encode_message.data + encode_message_index, message, size);
+    memcpy(encode_message.data + encode_message_index, message, size);
 
     encode_message_index += size;
     encode_message.message_count++;

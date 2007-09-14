@@ -364,7 +364,7 @@ void Desktop::toggleVisibility(const char *searchName)
     std::vector<View*>::iterator i;
     for(i = views.begin(); i != views.end(); i++) {
         View* view = *i;
-        if (SDL_strcmp(view->searchName, searchName) == 0) {
+        if (strcmp(view->searchName, searchName) == 0) {
             view->status ^= View::STATUS_VISIBLE;
 
             if (view->status & View::STATUS_VISIBLE) {
@@ -415,7 +415,7 @@ void Desktop::toggleVisibilityNoDoAnything(const char *searchName)
     std::vector<View*>::iterator i;
     for(i = views.begin(); i != views.end(); i++) {
         View* view = *i;
-        if (SDL_strcmp(view->searchName, searchName) == 0) {
+        if (strcmp(view->searchName, searchName) == 0) {
             view->status ^= View::STATUS_VISIBLE;
             break;
         }
@@ -431,7 +431,7 @@ void Desktop::setActiveView(const char *searchName)
     std::vector<View*>::iterator i;
     for(i = views.begin(); i != views.end(); i++) {
         View* view = *i;
-        if (SDL_strcmp(view->searchName, searchName) == 0) {
+        if (strcmp(view->searchName, searchName) == 0) {
             // If the view is not active set the view active.
             if (!view->getActive()) {
                 activate(view);
@@ -538,7 +538,7 @@ int Desktop::getViewStatus(const char *searchName)
     for(i = views.begin(); i != views.end(); i++) {
         View* view = *i;
 
-        if (SDL_strcmp(view->searchName, searchName) == 0) {
+        if (strcmp(view->searchName, searchName) == 0) {
             return view->status;
         }
     }
@@ -556,7 +556,7 @@ void Desktop::setVisibility(const char *searchName, int isVisible)
     for(i = views.begin(); i != views.end(); i++) {
         View* view = *i;
 
-        if (SDL_strcmp(view->searchName, searchName) == 0) {
+        if (strcmp(view->searchName, searchName) == 0) {
             if (isVisible) {
                 view->status |= View::STATUS_VISIBLE;
                 view->doActivate();
@@ -581,7 +581,7 @@ void Desktop::setVisibilityNoDoAnything(const char *searchName, int isVisible)
     for(i = views.begin(); i != views.end(); i++) {
         View* view = *i;
 
-        if (SDL_strcmp(view->searchName, searchName) == 0) {
+        if (strcmp(view->searchName, searchName) == 0) {
             if (isVisible) {
                 view->status |= View::STATUS_VISIBLE;
             } else {

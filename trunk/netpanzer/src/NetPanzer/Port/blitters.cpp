@@ -18,9 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <assert.h>
-#include "SDL.h"
 #include "blitters.hpp"
 #include "ScreenSurface.hpp"
+#include <string.h>
 
 void blit_partial_xy(const unsigned char *tile_ptr, unsigned char *buffer_ptr,
                      short y_size, short x_size)
@@ -33,8 +33,8 @@ void blit_partial_xy(const unsigned char *tile_ptr, unsigned char *buffer_ptr,
     // XXX 32 should be at least a define, but probably a variable.
     // Pass in class instead of data pointer.
     for(int y=0; y<y_size; y++) {
-        SDL_memcpy(buffer_ptr, tile_ptr, x_size);
-        buffer_ptr += screen->getPitch();
+        memcpy(buffer_ptr, tile_ptr, x_size);
+        buffer_ptr += screen->getWidth();
         tile_ptr   += 32;
     }
 }
@@ -45,9 +45,9 @@ void blit_partial_y(const unsigned char *tile_ptr, unsigned char *buffer_ptr,
     int y;
     // XXX remove 'magic' 32
     for(y=0; y<y_size; y++) {
-        SDL_memcpy(buffer_ptr, tile_ptr, 32);
+        memcpy(buffer_ptr, tile_ptr, 32);
         tile_ptr += 32;
-        buffer_ptr += screen->getPitch();
+        buffer_ptr += screen->getWidth();
     }
 }
 
@@ -63,8 +63,8 @@ void general_blitter(unsigned char x_size, unsigned char y_size,
             if(buffer_ptr[x] != 0)
                 dbuffer_ptr[x]=buffer_ptr[x];
         }
-        buffer_ptr += screen->getPitch();
-        dbuffer_ptr += screen->getPitch();
+        buffer_ptr += screen->getWidth();
+        dbuffer_ptr += screen->getWidth();
     }
 }
 
@@ -75,13 +75,13 @@ void blit_selector_square( unsigned char x_size, unsigned char y_size,
     int y;
     const char color = 0x47;
     dbuffer_ptr += frame_offset;
-    SDL_memset(dbuffer_ptr, color, x_size);  //top
-    dbuffer_ptr += screen->getPitch();
+    memset(dbuffer_ptr, color, x_size);  //top
+    dbuffer_ptr += screen->getWidth();
     for(y = 1; y < (y_size-1); y++) {
         dbuffer_ptr[0] = color;  //left
         dbuffer_ptr[x_size-1] = color;  //right
-        dbuffer_ptr += screen->getPitch();
+        dbuffer_ptr += screen->getWidth();
     }
-    SDL_memset(dbuffer_ptr, color, x_size); //bottom
+    memset(dbuffer_ptr, color, x_size); //bottom
 }
 

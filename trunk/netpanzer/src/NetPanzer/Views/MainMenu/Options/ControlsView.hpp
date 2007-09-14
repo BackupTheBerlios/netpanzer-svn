@@ -15,3 +15,34 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#ifndef __ControlsView_hpp__
+#define __ControlsView_hpp__
+
+#include "View.hpp"
+//#include "2D/Surface.hpp"
+#include "OptionsTemplateView.hpp"
+
+/////////////////////////////////////////////////////////////////////////////
+// forward declarations
+/////////////////////////////////////////////////////////////////////////////
+
+class Surface;
+
+/////////////////////////////////////////////////////////////////////////////
+// types
+/////////////////////////////////////////////////////////////////////////////
+
+//--------------------------------------------------------------------------
+class ControlsView : public OptionsTemplateView
+{
+protected:
+    virtual void loadTitleSurface();
+
+public:
+    ControlsView();
+
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void initButtons();
+}; // end ControlsView
+
+#endif // end __ControlsView_hpp__

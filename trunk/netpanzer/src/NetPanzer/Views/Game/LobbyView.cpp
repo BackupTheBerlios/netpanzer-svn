@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include "Util/Exception.hpp"
 #include "Util/Log.hpp"
 #include "LobbyView.hpp"
 #include "Desktop.hpp"
@@ -41,7 +42,7 @@ static void bAbort()
 
 // LobbyView
 //---------------------------------------------------------------------------
-LobbyView::LobbyView() : LoadingView(), currentline(0), background(0), backgroundSurface(0)
+LobbyView::LobbyView() : LoadingView(), currentline(0)
 {} // end LobbyView::LobbyView
 
 // init
@@ -58,10 +59,8 @@ void LobbyView::init()
     setVisible(false);
     setBordered(false);
 
-    if ( background )
-        delete background;
-    background = new Surface(628 - 179, 302 - 153, 1);
-    background->fill(0);
+    background.create(628 - 179, 302 - 153, 1);
+    background.fill(0);
 
     moveTo(0, 0);
     resize(640, 480);
@@ -75,9 +74,13 @@ void LobbyView::init()
 //---------------------------------------------------------------------------
 void LobbyView::doDraw(Surface &viewArea, Surface &clientArea)
 {
+    if (!backgroundSurface.getDoesExist()) {
+        loadBackgroundSurface();
+    }
+
     screen->fill(Color::black);
-    backgroundSurface->blt(clientArea, 0, 0);
-    background->blt(clientArea, 179, 153);
+    backgroundSurface.blt(clientArea, 0, 0);
+    background.blt(clientArea, 179, 153);
 
     View::doDraw(viewArea, clientArea);
 } // end LobbyView::doDraw
@@ -95,8 +98,8 @@ void LobbyView::update(const char *text)
     LOGGER.info("%s %s", "Lobby:", text);
 
     // Clear the area for the text and draw the new text.
-    background->fillRect(iRect( 0, yOffset, background->getWidth(), yOffset + Surface::getFontHeight()), 0);
-    background->bltString(0, yOffset, text, Color::white);
+    background.fillRect(iRect( 0, yOffset, background.getWidth(), yOffset + Surface::getFontHeight()), Color::black);
+    background.bltString(0, yOffset, text, Color::white);
 
 } // end LobbyView::update
 
@@ -107,12 +110,12 @@ void LobbyView::update(const char *text)
 //---------------------------------------------------------------------------
 void LobbyView::scroll()
 {
-    if(currentline * Surface::getFontHeight() > background->getHeight() - Surface::getFontHeight()) {
-        Surface * tempSurface = new Surface(background->getWidth(), background->getHeight(), 1);
-        background->blt(*tempSurface,Surface::getFontHeight(),0);
-        delete background;
-        background=tempSurface;
+    if(currentline * Surface::getFontHeight() > background.getHeight() - Surface::getFontHeight()) {
+        Surface tempSurface;
+        tempSurface.copy(background);
 
+        // Move the current text up by the height of the app font.
+        tempSurface.blt(background, Surface::getFontHeight(), 0);
     } else {
         currentline++;
     }
@@ -122,7 +125,7 @@ void LobbyView::scroll()
 
 void LobbyView::reset()
 {
-    background->fill(0);
+    background.fill(0);
 }
 
 void LobbyView::open()
@@ -141,9 +144,7 @@ void LobbyView::open()
 //---------------------------------------------------------------------------
 void LobbyView::close()
 {
-    if ( backgroundSurface )
-        delete backgroundSurface;
-    backgroundSurface = 0;
+    backgroundSurface.free();
     Desktop::setVisibility("LobbyView", false);
 } // end LobbyView::close
 
@@ -152,9 +153,7 @@ void LobbyView::close()
 void LobbyView::toggleGameView()
 {
     reset();
-    if ( backgroundSurface )
-        delete backgroundSurface;
-    backgroundSurface = 0;
+    backgroundSurface.free();
     GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
     // Set the palette to the game palette.
@@ -174,9 +173,7 @@ void LobbyView::toggleGameView()
 void LobbyView::toggleMainMenu()
 {
     reset();
-    if ( backgroundSurface )
-        delete backgroundSurface;
-    backgroundSurface = 0;
+    backgroundSurface.free();
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("MainView", true);
 
@@ -186,9 +183,14 @@ void LobbyView::toggleMainMenu()
 //---------------------------------------------------------------------------
 void LobbyView::doActivate()
 {
-    backgroundSurface = new Surface();
-    backgroundSurface->loadBMP("pics/backgrounds/menus/menu/loadingMB.bmp");
     Desktop::setActiveView(this);
 
 } // end VehicleSelectionView::doActivate
+
+// loadBackgroundSurface
+//---------------------------------------------------------------------------
+void LobbyView::loadBackgroundSurface()
+{
+    backgroundSurface.loadBMP("pics/backgrounds/menus/menu/loadingMB.bmp");
+} // end MenuTemplateView::loadBackgroundSurface
 

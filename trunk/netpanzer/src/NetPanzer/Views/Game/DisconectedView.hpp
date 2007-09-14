@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "SpecialButtonView.hpp"
 #include "2D/Surface.hpp"
+#include <string>
 
 //---------------------------------------------------------------------------
 class DisconectedView : public SpecialButtonView
@@ -28,12 +29,14 @@ class DisconectedView : public SpecialButtonView
 private:
     void init();
     static void buttonOk();
+    std::string disconectMsg;
 
 public:
     DisconectedView();
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void doActivate();
+    void setMsg(const char * msg) { disconectMsg=msg; }
 };
 
 #endif

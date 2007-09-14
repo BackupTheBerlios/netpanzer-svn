@@ -202,7 +202,7 @@ void ServerConnectDaemon::sendConnectionAlert(PlayerID &player_id, int alert_enu
                ChatMesg chat_mesg;
                chat_mesg.message_scope=_chat_mesg_scope_server;
                chat_mesg.setSourcePlayerIndex(0);
-               SDL_snprintf(chat_mesg.message_text, sizeof(chat_mesg.message_text), "%s",gameconfig->motd.c_str());
+               snprintf(chat_mesg.message_text, sizeof(chat_mesg.message_text), "%s",gameconfig->motd.c_str());
                SERVER->sendMessage(player_state->getNetworkID(),&chat_mesg, sizeof(chat_mesg));
            }
 
@@ -218,10 +218,7 @@ void ServerConnectDaemon::sendConnectionAlert(PlayerID &player_id, int alert_enu
 
     case _connect_alert_mesg_client_drop : {
             connect_alert.set( player_id, _connect_alert_mesg_client_drop );
-            ConsoleInterface::postMessage(
-                    "Connection to '%s' has been unexpectedly broken.",
-                    player_state->getName().c_str() );
-            ConsoleInterface::postMessage( "'%s' has left the game.",
+            ConsoleInterface::postMessage( "'%s' has left the game for some reason.",
                     player_state->getName().c_str() );
         }
         break;

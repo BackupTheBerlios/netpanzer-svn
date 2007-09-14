@@ -74,6 +74,11 @@ void BulletWeapon::fsmFlight()
                 sound->playAmbientSound("hit",
                         WorldViewInterface::getCameraDistance(location) );
 
+                // **  Particle Shit
+                {
+                    iXY loc = iXY( location.x, location.y );
+                    ParticleInterface::addDirtKick(loc);
+                }
                 end_cycle = true;
                 break;
             default:

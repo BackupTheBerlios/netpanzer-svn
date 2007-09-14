@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "GameConfig.hpp"
 
-
-extern Surface UNIT_FLAGS_SURFACE;
 Surface playerFlag;
 int     playerFlagSelected = 0;
 
@@ -45,8 +43,21 @@ FlagSelectionView::FlagSelectionView() : RMouseHackView()
     moveTo(bodyTextRect.min.x + bodyTextRect.getSizeX() / 2 + 10 + 30,
            bodyTextRect.min.y + 50);
 
+    // Load the flag images.
+    //flags.loadAllBMPInDirectory("pics/flags/");
+
     resizeClientArea(bodyTextRect.getSizeX() / 2 - 10 - 30, 108);
 
+    // Define the scrollBar fot this view.
+    //scrollBar = new ScrollBar(HORIZONTAL, 0, 1, 0, flags.getFrameCount());
+    //if (scrollBar == 0)
+    //{
+    //	throw Exception("ERROR: Unable to allocate scrollBar.");
+    //}
+    //
+    //scrollBar->setViewableAmount(getClientRect().getSizeX() / flags.getWidth());
+    //
+    //add(scrollBar);
 
     init();
 
@@ -59,6 +70,7 @@ void FlagSelectionView::init()
     if (playerFlag.loadAllBMPInDirectory("pics/flags/") <= 0)
         throw Exception("Couldn't find flags for menu in '%s'.",
                         "pics/flags/");
+    playerFlag.mapFromPalette("netp");
 
     iXY flagStartOffset(BORDER_SPACE, BORDER_SPACE * 2 + playerFlag.getHeight());
 
@@ -70,12 +82,13 @@ void FlagSelectionView::init()
 
     for (unsigned int i = 0; i < playerFlag.getNumFrames(); i++) {
         playerFlag.setFrame(i);
+        //playerFlag.drawButtonBorder(Color::white, Color::gray64);
 
         addButtonSurfaceSingle(iXY(x, y), playerFlag, "", 0);
 
         x += xOffset;
 
-        if (x > flagStartOffset.x + getClientRect().getSizeX() - BORDER_SPACE - playerFlag.getWidth()) {
+        if (x > flagStartOffset.x + getClientRect().getSizeX() - BORDER_SPACE - (int)playerFlag.getWidth()) {
             x = flagStartOffset.x;
             y += yOffset;
         }
@@ -93,6 +106,9 @@ void FlagSelectionView::init()
 //---------------------------------------------------------------------------
 void FlagSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 {
+    //iRect r(getViewRect());
+    //viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
+
     char strBuf[256];
     sprintf(strBuf, "Current:");
     int CHAR_XPIX = 8; // XXX hardcoded
@@ -101,7 +117,7 @@ void FlagSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
             BORDER_SPACE + (playerFlag.getHeight() - Surface::getFontHeight()) / 2,
             strBuf, windowTextColor, windowTextColorShadow);
     playerFlag.setFrame(playerFlagSelected);
-    playerFlag.blt(clientArea, BORDER_SPACE + SDL_strlen(strBuf) * CHAR_XPIX + BORDER_SPACE, BORDER_SPACE);
+    playerFlag.blt(clientArea, BORDER_SPACE + strlen(strBuf) * CHAR_XPIX + BORDER_SPACE, BORDER_SPACE);
 
     //char strBuf[256];
     //sprintf(strBuf, "%d", scrollBar->getValue());
@@ -142,7 +158,7 @@ int FlagSelectionView::lMouseUp(const iXY &downPos, const iXY &upPos)
 
     const int buttonsBeforeFlags = 0;
 
-    if (getPrevPressedButton() >= buttonsBeforeFlags && getPrevPressedButton() < playerFlag.getNumFrames() + buttonsBeforeFlags) {
+    if (getPrevPressedButton() >= buttonsBeforeFlags && getPrevPressedButton() < (int)playerFlag.getNumFrames() + buttonsBeforeFlags) {
         playerFlagSelected = getPrevPressedButton() - buttonsBeforeFlags;
     }
 

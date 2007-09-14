@@ -55,6 +55,7 @@ public:
 
 protected:
     SpritePacked shell;
+    SpritePacked shellShadow;
 
 protected:
     UnitID         owner_id;

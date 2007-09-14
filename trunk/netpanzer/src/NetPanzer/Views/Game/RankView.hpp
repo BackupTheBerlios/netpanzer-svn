@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "View.hpp"
 #include "2D/Surface.hpp"
 #include "GameTemplateView.hpp"
+#include "ScrollBar.hpp"
 
 
 //---------------------------------------------------------------------------
@@ -33,10 +34,13 @@ private:
     enum { ITEM_GAP_SPACE = 10 };
     void drawPlayerStats(Surface &dest);
 
+    ScrollBar *scrollBar;
+
 public:
     RankView();
     virtual ~RankView()
     {
+        delete scrollBar;
     }
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);

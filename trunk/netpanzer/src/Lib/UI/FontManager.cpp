@@ -14,3 +14,49 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
+
+#include <memory>
+
+#include "FontManager.hpp"
+#include "Util/FileSystem.hpp"
+#include "Util/Exception.hpp"
+#include "Util/Log.hpp"
+
+namespace UI{
+    
+    FontManager::FontManager(){
+        if(!TTF_WasInit())
+            TTF_Init();
+    }
+
+    FontManager::~FontManager(){
+        std::map<std::string, TTF_Font * >::iterator i;
+
+        for(i = fontCollection.begin(); i != fontCollection.end(); i++)
+            TTF_CloseFont((*i).second);
+    }
+
+    void FontManager::loadFont(const std::string name, const char * fileName, int ptSize){
+        try {
+            LOGGER.info("Load font : %s",  filesystem::getRealName(fileName).c_str());
+	    // XXX memory leak. We need to leave the file open as long as the
+	    // font is open. Ugly hack for now
+            filesystem::ReadFile* file (filesystem::openRead(fileName));
+            TTF_Font * font = TTF_OpenFontRW(file->getSDLRWOps(), true, ptSize);
+            if(font == 0)
+                throw Exception("Couldn't load font: %s.", TTF_GetError());            
+            fontCollection[name] = font;
+        } catch(std::exception& e) {
+            LOGGER.info("Couldn't load font '%s': %s.", fileName, e.what());
+        }
+    }
+
+    TTF_Font * FontManager::getFont(const std::string & name){
+        if(fontCollection.find(name) != fontCollection.end()){
+            return fontCollection[name];
+        }else{
+            return 0;
+        }
+    }
+}

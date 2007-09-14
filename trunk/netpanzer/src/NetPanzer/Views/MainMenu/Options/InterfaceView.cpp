@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameConfig.hpp"
 #include "GameViewGlobals.hpp"
 #include "Desktop.hpp"
-#include "SDL.h"
 
 
 static void bIncreaseScrollRate()
@@ -88,17 +87,16 @@ void InterfaceView::doDraw(Surface &viewArea, Surface &clientArea)
 
     char strBuf[256];
 
-    const int arrowButtonWidth = 15;
+    const int arrowButtonWidth = 16;
     int   x               = optionsMeterStartX + arrowButtonWidth;
     int   y               = bodyTextRect.min.y + 15;
 
-    Surface tempSurface(optionsMeterWidth+1, 14, 1);
+    Surface tempSurface(optionsMeterWidth, 14, 1);
 
     // Scroll Rate
     tempSurface.fill(meterColor);
-    tempSurface.drawHLine(0,0,tempSurface.getWidth(),meterTopLeftBorderColor);
-    tempSurface.drawHLine(0,tempSurface.getHeight()-1,tempSurface.getWidth(),meterBottomRightBorderColor);
-    SDL_snprintf(strBuf, sizeof(strBuf), "%d %%", int((float(getScrollRate()) / 
+    tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
+    sprintf(strBuf, "%d %%", int((float(getScrollRate()) / 
                     float(gameconfig->scrollrate.getMax())) * 100.0f));
     tempSurface.bltStringCenter(strBuf, meterTextColor);
     tempSurface.blt(clientArea, x, y);

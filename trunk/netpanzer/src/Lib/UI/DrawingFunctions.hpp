@@ -15,3 +15,20 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#ifndef __UI_DRAWING_FUNCTIONS_HPP__
+#define __UI_DRAWING_FUNCTIONS_HPP__
+
+#include "SDL.h"
+
+#include "Types/iXY.hpp"
+#include "Types/iRect.hpp"
+#include "Color.hpp"
+
+namespace UI
+{
+    void drawLine(SDL_Surface* surface, iXY from, iXY to, Color color);
+    void drawRect(SDL_Surface* surface, iRect rect, Color color);
+    void fillRect(SDL_Surface* surface, iRect rect, Color color);
+} 
+
+#endif

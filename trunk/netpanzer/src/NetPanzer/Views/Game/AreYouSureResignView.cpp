@@ -24,7 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particle2D.hpp"
 #include "MenuTemplateView.hpp"
 #include "System/Sound.hpp"
+#include "SoundView.hpp"
 #include "ScreenSurface.hpp"
+#include "ControlsView.hpp"
 #include "VisualsView.hpp"
 #include "2D/Palette.hpp"
 #include "InterfaceView.hpp"
@@ -67,6 +69,22 @@ static void bYES()
         assert(false);
     }
 
+    v = Desktop::getView("SoundView");
+    if (v != 0) {
+        ((SoundView *)v)->initButtons();
+        ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
+    } else {
+        assert(false);
+    }
+
+    v = Desktop::getView("ControlsView");
+    if (v != 0) {
+        ((ControlsView *)v)->initButtons();
+        ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);
+    } else {
+        assert(false);
+    }
+
     v = Desktop::getView("VisualsView");
     if (v != 0) {
         ((VisualsView *)v)->initButtons();
@@ -88,6 +106,7 @@ static void bYES()
 static void bNO()
 {
     Desktop::setVisibility("AreYouSureResignView", false);
+    //Desktop::setVisibility("ResignView", true);
 }
 
 // AreYouSureResignView
@@ -129,13 +148,11 @@ void AreYouSureResignView::init()
 //---------------------------------------------------------------------------
 void AreYouSureResignView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    iRect r( viewArea.getCenterX() - 200,
-             viewArea.getCenterY() - 20,
-             viewArea.getCenterX() + 200,
-             viewArea.getCenterY() + 60);
+    iRect r(min, max);
 
-    viewArea.fillRect(r, 0);
-    viewArea.drawRect(r, Color::white);
+    viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
+    //viewArea.drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
+
     viewArea.bltStringCenter("Are you sure you wish to Resign?", Color::white);
 
     View::doDraw(viewArea, clientArea);

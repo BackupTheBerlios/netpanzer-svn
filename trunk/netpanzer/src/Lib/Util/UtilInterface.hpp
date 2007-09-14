@@ -15,3 +15,19 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+#ifndef __UtilInterface_hpp__
+#define __UtilInterface_hpp__
+
+//--------------------------------------------------------------------------
+/**
+ * @deprecated This interface is deprecated and shouldn't be used in new code
+ */
+class UtilInterface
+{
+public:
+    // get servername/port from a string, doesn't always set the port
+    static void splitServerPort(const std::string &server,std::string &address,int *port);
+}; // end UtilInterface
+
+#endif // __UtilInterface_hpp__

@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "ProgressView.hpp"
+#include "Util/Exception.hpp"
 #include "Desktop.hpp"
 #include "ScreenSurface.hpp"
 #include "GameManager.hpp"
@@ -26,7 +27,7 @@ LoadingView *progressView = 0;
 
 // ProgressView
 //---------------------------------------------------------------------------
-ProgressView::ProgressView() : LoadingView(), background(0), backgroundSurface(0)
+ProgressView::ProgressView() : LoadingView()
 {} // end ProgressView::ProgressView
 
 // init
@@ -43,11 +44,8 @@ void ProgressView::init()
     setVisible(false);
     setBordered(false);
 
-    if ( background )
-        delete background;
-    
-    background = new Surface(628 - 179, 302 - 153, 1);
-    background->fill(0);
+    background.create(628 - 179, 302 - 153, 1);
+    background.fill(0);
 
     resize(640, 480);
 } // end ProgressView::init
@@ -56,9 +54,13 @@ void ProgressView::init()
 //---------------------------------------------------------------------------
 void ProgressView::doDraw(Surface &viewArea, Surface &clientArea)
 {
+    if (!backgroundSurface.getDoesExist()) {
+        loadBackgroundSurface();
+    }
+
     screen->fill(Color::black);
-    backgroundSurface->blt(clientArea, 0, 0);
-    background->blt(clientArea, 179, 153);
+    backgroundSurface.blt(clientArea, 0, 0);
+    background.blt(clientArea, 179, 153);
 
     View::doDraw(viewArea, clientArea);
 } // end ProgressView::doDraw
@@ -71,11 +73,11 @@ void ProgressView::doDraw(Surface &viewArea, Surface &clientArea)
 void ProgressView::update(const char *text)
 {
     int CHAR_YPIX = Surface::getFontHeight();
-    int yOffset = background->getHeight()-CHAR_YPIX - 1;
+    int yOffset = background.getHeight()-CHAR_YPIX - 1;
 
     // Clear the area for the text and draw the new text.
-    background->fillRect(iRect(0, yOffset, background->getWidth(), yOffset + CHAR_YPIX), 0);
-    background->bltString(0, background->getHeight() - CHAR_YPIX - 1, text, Color::white);
+    background.fillRect(iRect(0, yOffset, background.getWidth(), yOffset + CHAR_YPIX), Color::black);
+    background.bltString(0, background.getHeight() - CHAR_YPIX - 1, text, Color::white);
 } // end ProgressView::update
 
 // scroll
@@ -85,27 +87,32 @@ void ProgressView::update(const char *text)
 //---------------------------------------------------------------------------
 void ProgressView::scroll()
 {
-    Surface * tempSurface = new Surface(background->getWidth(), background->getHeight(), 1);
-    background->blt(*tempSurface, 0, - Surface::getFontHeight() - 1);
-    delete background;
-    background = tempSurface;
+    Surface tempSurface;
+    tempSurface.copy(background);
+
+    // Move the current text up by the height of the app font.
+    tempSurface.blt(background, 0, - Surface::getFontHeight() - 1);
 } // end ProgressView::scroll
 
 void ProgressView::blitToScreen()
 {
-//    screen->lock();
+    screen->lock();
                                                   
+    if (!backgroundSurface.getDoesExist()) {
+        loadBackgroundSurface();
+    }
+    
     screen->fill(Color::black);
-    backgroundSurface->blt(*screen, min.x, min.y);
-    background->blt(*screen, min.x+179, min.y+153);
+    backgroundSurface.blt(*screen, min.x, min.y);
+    background.blt(*screen, min.x+179, min.y+153);
                                                   
-//    screen->unlock();
+    screen->unlock();
     screen->copyToVideoFlip();
 }
 
 void ProgressView::reset()
 {
-    background->fill(0);
+    background.fill(0);
 }
 
 void ProgressView::open()
@@ -129,10 +136,7 @@ void ProgressView::close()
 
         GameManager::loadPalette("netp");
 
-        if ( backgroundSurface )
-            delete backgroundSurface;
-        backgroundSurface = 0;
-
+        backgroundSurface.free();
         Desktop::setVisibility("ProgressView", false);
     }
 } // end ProgressView::close
@@ -142,10 +146,7 @@ void ProgressView::close()
 void ProgressView::toggleGameView()
 {
     reset();
-    if ( backgroundSurface )
-        delete backgroundSurface;
-    backgroundSurface = 0;
-
+    backgroundSurface.free();
     GameManager::drawTextCenteredOnScreen("Sec...", Color::white);
 
     // Set the palette to the game palette.
@@ -164,10 +165,7 @@ void ProgressView::toggleGameView()
 void ProgressView::toggleMainMenu()
 {
     reset();
-    if ( backgroundSurface )
-        delete backgroundSurface;
-    backgroundSurface = 0;
-
+    backgroundSurface.free();
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("MainView", true);
 } // end ProgressView::toggleMainMenu
@@ -176,8 +174,13 @@ void ProgressView::toggleMainMenu()
 //---------------------------------------------------------------------------
 void ProgressView::doActivate()
 {
-    backgroundSurface = new Surface();
-    backgroundSurface->loadBMP("pics/backgrounds/menus/menu/loadingMB.bmp");
-
     Desktop::setActiveView(this);
 } // end VehicleSelectionView::doActivate
+
+// loadBackgroundSurface
+//---------------------------------------------------------------------------
+void ProgressView::loadBackgroundSurface()
+{
+    backgroundSurface.loadBMP("pics/backgrounds/menus/menu/loadingMB.bmp");
+} // end MenuTemplateView::loadBackgroundSurface
+

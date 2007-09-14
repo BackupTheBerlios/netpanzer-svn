@@ -24,8 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 static void bInterface()
 {
     if (Desktop::getVisible("GameView")) {
+        Desktop::setVisibility("ControlsView", false);
         Desktop::setVisibility("VisualsView", false);
         Desktop::setVisibility("InterfaceView", false);
+        Desktop::setVisibility("SoundView", false);
         Desktop::setVisibility("OptionsView", false);
     } else {
         Desktop::setVisibilityAllWindows(false);
@@ -37,8 +39,10 @@ static void bInterface()
 static void bVisuals()
 {
     if (Desktop::getVisible("GameView")) {
+        Desktop::setVisibility("ControlsView", false);
         Desktop::setVisibility("VisualsView", false);
         Desktop::setVisibility("InterfaceView", false);
+        Desktop::setVisibility("SoundView", false);
         Desktop::setVisibility("OptionsView", false);
     } else {
         Desktop::setVisibilityAllWindows(false);
@@ -119,4 +123,4 @@ void OptionsTemplateView::loadTitleSurface()
 {
     doLoadTitleSurface("optionsTitle");
 
-} // end loadTitleSurface
+} // end ControlsView::loadTitleSurface

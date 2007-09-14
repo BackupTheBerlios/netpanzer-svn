@@ -25,16 +25,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/Sound.hpp"
 #include "cMouse.hpp"
 #include "ViewGlobals.hpp"
+#include "RadarPingParticle2D.hpp"
 #include "ScreenSurface.hpp"
 #include "Particle2D.hpp"
 #include "ParticleSystem2D.hpp"
-#include "2D/Surface.hpp"
+#include "2D/PackedSurface.hpp"
 #include "GameManager.hpp"
 #include "Util/Exception.hpp"
 #include "GameViewGlobals.hpp"
 
-Surface * MenuTemplateView::backgroundSurface = 0;
-Surface   MenuTemplateView::titleSurface;
+Surface       MenuTemplateView::backgroundSurface;
+PackedSurface MenuTemplateView::titlePackedSurface;
+
+//PackedSurface MenuTemplateView::netPanzerLogo;
 
 char MenuTemplateView::currentMultiView[] = "GetSessionView";
 char MenuTemplateView::currentView[]      = "";
@@ -47,17 +50,18 @@ static void bMain()
 
 static void bMulti()
 {
-    if (SDL_strcmp(MenuTemplateView::currentMultiView, "GetSessionView") == 0) {
+    if (strcmp(MenuTemplateView::currentMultiView, "GetSessionView") == 0) {
         Desktop::setVisibilityAllWindows(false);
         Desktop::setVisibility("GetSessionView", true);
-    } else if (SDL_strcmp(MenuTemplateView::currentMultiView, "HostView") == 0) {
+    } else if (strcmp(MenuTemplateView::currentMultiView, "HostView") == 0) {
         Desktop::setVisibilityAllWindows(false);
         Desktop::setVisibility("HostView", true);
+        Desktop::setVisibility("UnitSelectionView", true);
         Desktop::setVisibility("FlagSelectionView", true);
         Desktop::setVisibility("HostOptionsView", true);
         Desktop::setVisibility("MapSelectionView", true);
         Desktop::setVisibility("PlayerNameView", true);
-    } else if (SDL_strcmp(MenuTemplateView::currentMultiView, "JoinView") == 0) {
+    } else if (strcmp(MenuTemplateView::currentMultiView, "JoinView") == 0) {
         Desktop::setVisibilityAllWindows(false);
         Desktop::setVisibility("JoinView", true);
         Desktop::setVisibility("FlagSelectionView", true);
@@ -90,8 +94,10 @@ static void bExit()
 //---------------------------------------------------------------------------
 static void bResign()
 {
+    Desktop::setVisibility("ControlsView", false);
     Desktop::setVisibility("VisualsView", false);
     Desktop::setVisibility("InterfaceView", false);
+    Desktop::setVisibility("SoundView", false);
     Desktop::setVisibility("OptionsView", false);
 
     Desktop::setVisibility("AreYouSureResignView", true);
@@ -102,16 +108,20 @@ static void bCloseOptions()
 {
     GameManager::setNetPanzerGameOptions();
 
+    Desktop::setVisibility("ControlsView", false);
     Desktop::setVisibility("VisualsView", false);
     Desktop::setVisibility("InterfaceView", false);
+    Desktop::setVisibility("SoundView", false);
     Desktop::setVisibility("OptionsView", false);
 }
 
 //---------------------------------------------------------------------------
 static void bExitNetPanzer()
 {
+    Desktop::setVisibility("ControlsView", false);
     Desktop::setVisibility("VisualsView", false);
     Desktop::setVisibility("InterfaceView", false);
+    Desktop::setVisibility("SoundView", false);
     Desktop::setVisibility("OptionsView", false);
 
     Desktop::setVisibility("AreYouSureExitView", true);
@@ -200,21 +210,25 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     //setWorldRect();
     if (Desktop::getVisible("GameView")) {
-        clientArea.fillRect(getClientRect(), 0);
-        viewArea.drawRect(viewArea.getRect(), Color::darkGray);
+	// When ingame, tint the game into gray
+        clientArea.bltLookup(getClientRect(), Palette::darkGray256.getColorArray());
+        clientArea.drawWindowsBorder();
+
     } else {
 	// When in mainmenu, make background dark and draw menu image
-        if(screen->getWidth() > 640 || screen->getHeight() > 480)
+        if(screen->getWidth() > 640 ||
+           screen->getHeight() > 480)
             screen->fill(Color::black);
         
         // Set the following to get does exist.
-        if ( backgroundSurface ) {
-            backgroundSurface->blt(viewArea, 0, 0);
+        if (backgroundSurface.getNumFrames() > 0) {
+            backgroundSurface.blt(viewArea, 0, 0);
         } else {
             throw Exception("Where is the background surface?");
         }
 
-        titleSurface.blt(clientArea, bodyTextRect.min.x, 390);
+        //titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
+        titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, 390, Palette::colorTable6040);
     }
 
     View::doDraw(viewArea, clientArea);
@@ -246,9 +260,7 @@ void MenuTemplateView::loadBackgroundSurface()
 //---------------------------------------------------------------------------
 void MenuTemplateView::doLoadBackgroundSurface(const std::string& string)
 {
-    if ( !backgroundSurface )
-        backgroundSurface = new Surface();
-    backgroundSurface->loadBMP(string.c_str());
+    backgroundSurface.loadBMP(string.c_str());
 } // end MenuTemplateView::doLoadBackgroundSurface
 
 // loadTitleSurface
@@ -269,7 +281,7 @@ void MenuTemplateView::doLoadTitleSurface(const std::string& string)
     pakString += string;
     pakString += ".pak";
 
-    titleSurface.loadPAK(pakString);
+    titlePackedSurface.load(pakString);
 } // end MenuTemplateView::doLoadTitleSurface
 
 // doDeactivate

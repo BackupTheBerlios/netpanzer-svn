@@ -57,9 +57,9 @@ TemplateMuzzleSystem::TemplateMuzzleSystem(	const fXYZ         &pos,
     //	static int   flashLayer;
 
     // Chunk a flash in!
-//    try {
-//        new FlashParticle2D(pos, 0.3f, 0.2f, 0.1f, ExplosionSystem::flashLayer);
-//    } catch(...) {}
+    try {
+        new FlashParticle2D(pos, 0.3f, 0.2f, 0.1f, ExplosionSystem::flashLayer);
+    } catch(...) {}
 
     if (m.muzzleType == MuzzleSystem::SINGLE) {
         try {

@@ -69,7 +69,7 @@ void CheckBox::drawCheck(Surface &dest)
 
     iXY length(size - iXY(4,4));
 
-    dest.drawLine(pos.x, pos.y, pos.x + length.x, pos.y + length.y, Color::white);
+    dest.drawLine(pos, pos + length, Color::white);
 
     dest.drawLine(pos.x + length.x, pos.y, pos.x, pos.y + length.y, Color::white);
 

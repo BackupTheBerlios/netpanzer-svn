@@ -27,6 +27,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "WeaponGlobals.hpp"
 #include "Util/Math.hpp"
 #include "GameConfig.hpp"
+#include "FlashParticle2D.hpp"
+
 
 float MissleWeapon::thrustForce = gMissleThrustForce;
 
@@ -42,20 +44,27 @@ MissleWeapon::MissleWeapon(UnitID &owner, unsigned short owner_type_id, unsigned
     // Set the correct missle type.
     if (owner_type_id == _unit_type_archer) {
         shell.setData(gMissleMediumPackedSurface);
+        shellShadow.setData(gMissleMediumPackedSurface);
+
     } else {
         shell.setData(gMissleSmallPackedSurface);
+        shellShadow.setData(gMissleSmallPackedSurface);
     }
 
     shell.setFrame(getGoalAngle(start, end));
     shell.setAttrib(location, weaponLayer);
 
-//    thrust.setDrawModeBlend(&Palette::colorTableBrighten);
-//    thrust.setData(gMissleThrustPackedSurface);
-//    thrust.setAttrib(location, weaponPuffLayer);
+    shellShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
+    shellShadow.setFrame(getGoalAngle(start, end));
+    shellShadow.setAttrib(location, weaponShadowLayer);
 
-//    groundLight.setDrawModeBlend(&Palette::colorTableBrighten);
-//    groundLight.setData(gMissleGroundLightPackedSurface);
-//    groundLight.setAttrib(location, weaponPuffLayer);
+    thrust.setDrawModeBlend(&Palette::colorTableBrighten);
+    thrust.setData(gMissleThrustPackedSurface);
+    thrust.setAttrib(location, weaponPuffLayer);
+
+    groundLight.setDrawModeBlend(&Palette::colorTableBrighten);
+    groundLight.setData(gMissleGroundLightPackedSurface);
+    groundLight.setAttrib(location, weaponPuffLayer);
 }
 
 void MissleWeapon::fsmFlight()
@@ -135,18 +144,27 @@ void MissleWeapon::updateStatus( void )
 
     shell.setWorldPos(location);
 
-//    iXY thrustOffset(int(-10.0f * direction.x), int(-10.0f * direction.y));
-//    thrust.setWorldPos(location + thrustOffset);
+    iXY thrustOffset(int(-10.0f * direction.x), int(-10.0f * direction.y));
 
-//    int heightFromGround = 14;
-//    groundLight.setWorldPos(location.x + thrustOffset.x, location.y + thrustOffset.y + heightFromGround);
+    thrust.setWorldPos(location + thrustOffset);
+
+    int heightFromGround = 14;
+
+    groundLight.setWorldPos(location.x + thrustOffset.x, location.y + thrustOffset.y + heightFromGround);
+
+    if (gameconfig->displayshadows) {
+        shellShadow.setWorldPos(location.x - 20, location.y);
+    }
 }
 
 void MissleWeapon::offloadGraphics(SpriteSorter &sorter)
 {
     sorter.addSprite(&shell);
-    //sorter.addSprite(&thrust);
+    sorter.addSprite(&thrust);
     //sorter.addSprite(&groundLight);
 
+    if (gameconfig->displayshadows) {
+        sorter.addSprite(&shellShadow);
+    }
 }
 

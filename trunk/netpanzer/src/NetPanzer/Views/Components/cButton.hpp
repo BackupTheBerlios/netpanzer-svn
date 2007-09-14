@@ -18,16 +18,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __cButton_hpp__
 #define __cButton_hpp__
 
+#include <stdlib.h>
 #include "Types/iXY.hpp"
 #include "Types/iRect.hpp"
-#include "2D/Surface.hpp"
+#include "2D/PackedSurface.hpp"
 #include "Util/NoCopy.hpp"
 
 class Surface;
 
 class cButton : public NoCopy
 {
-private:
 public:
     cButton()
     {
@@ -35,16 +35,16 @@ public:
     }
     ~cButton()
     {
-        if (name    != 0) SDL_free(name);
-        if (toolTip != 0) SDL_free(toolTip);
+        if (name    != 0) free(name);
+        if (toolTip != 0) free(toolTip);
     }
 
     typedef void (*ITEM_FUNC)(void);
 
     ITEM_FUNC rightClickFunc;
     ITEM_FUNC leftClickFunc;
-    Surface topSurface;
-    Surface bottomSurface;
+    PackedSurface topSurface;
+    PackedSurface bottomSurface;
 
     iRect getBounds    () const
     {
@@ -63,9 +63,29 @@ public:
         return toolTip;
     }
 
-    cButton(const iXY &pos, int xSize, const char *nName, const char *nToolTip, ITEM_FUNC nLeftClickFunc);
-    cButton(const iXY &pos, const char *imageName, const char *nToolTip, ITEM_FUNC nLeftClickFunc, bool isBordered);
-    cButton(const iXY &pos, Surface &source, const char *nToolTip, ITEM_FUNC nLeftClickFunc, bool isBordered);
+    void createPacked(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc);
+
+    void createCenterText(iXY pos, int xSize, const char *nName, const char *nToolTip, ITEM_FUNC nLeftClickFunc);
+
+    void createBMP(iXY pos, const char *imageName, const char *nToolTip, ITEM_FUNC nLeftClickFunc, bool isBordered);
+    inline void createBMP(iXY pos, const char *imageName, const char *nToolTip, ITEM_FUNC nLeftClickFunc)
+    {
+        createBMP(pos, imageName, nToolTip, nLeftClickFunc, false);
+    }
+    inline void createBMPBordered(iXY pos, const char *imageName, const char *nToolTip, ITEM_FUNC nLeftClickFunc)
+    {
+        createBMP(pos, imageName, nToolTip, nLeftClickFunc, true);
+    }
+
+    void createSurface(iXY pos, Surface &source, const char *nToolTip, ITEM_FUNC nLeftClickFunc, bool isBordered);
+    inline void createSurface(iXY pos, Surface &source, const char *nToolTip, ITEM_FUNC nLeftClickFunc)
+    {
+        createSurface(pos, source, nToolTip, nLeftClickFunc, false);
+    }
+    inline void createSurfaceBordered(iXY pos, Surface &source, const char *nToolTip, ITEM_FUNC nLeftClickFunc)
+    {
+        createSurface(pos, source, nToolTip, nLeftClickFunc, true);
+    }
 
     void createSurfaceSingle(iXY pos, Surface &source, const char *nToolTip, ITEM_FUNC nLeftClickFunc);
 
@@ -91,7 +111,6 @@ private:
     char  *name;
 
     void  reset();
-    void  drawBorder(Surface &viewArea, Uint32 topLeftColor, Uint32 bottomRightColor);
 
 protected:
     void setName(const char *buttonName);

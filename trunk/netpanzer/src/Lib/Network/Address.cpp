@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <sstream>
 #include <string>
-#include "SDL.h"
+#include <string.h>
 
 #include "Address.hpp"
 #include "NetworkException.hpp"
@@ -31,7 +31,7 @@ Address Address::ANY;
 
 Address::Address()
 {
-    SDL_memset(&ss, 0, sizeof(ss));
+    memset(&ss, 0, sizeof(ss));
     ss_len=sizeof(ss);
     ss.ss_family = AF_INET;
     //addr.sin_addr.s_addr = INADDR_ANY;
@@ -39,7 +39,7 @@ Address::Address()
 
 Address::Address(const Address& other)
 {
-    SDL_memcpy(&ss, &other.ss, sizeof(ss));
+    memcpy(&ss, &other.ss, sizeof(ss));
     ss_len=other.ss_len;
 }
 
@@ -48,14 +48,14 @@ Address::operator=(const Address& other)
 {
     if(&other == this) // ignore self assignment
         return;
-    SDL_memcpy(&ss, &other.ss, sizeof(ss));
+    memcpy(&ss, &other.ss, sizeof(ss));
     ss_len=other.ss_len;
 }
 
 bool
 Address::operator==(const Address& other) const
 {
-    return !SDL_memcmp(&ss,&other.ss,ss_len); // todo: check for ss_len too
+    return !memcmp(&ss,&other.ss,ss_len); // todo: check for ss_len too
 }
 
 std::string

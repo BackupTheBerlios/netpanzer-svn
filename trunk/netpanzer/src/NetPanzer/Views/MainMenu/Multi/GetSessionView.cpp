@@ -51,6 +51,7 @@ void bNext()
         Desktop::setVisibilityAllWindows(false);
 
         Desktop::setVisibility("HostView", true);
+        Desktop::setVisibility("UnitSelectionView", true);
         Desktop::setVisibility("FlagSelectionView", true);
         Desktop::setVisibility("HostOptionsView", true);
         Desktop::setVisibility("MapSelectionView", true);

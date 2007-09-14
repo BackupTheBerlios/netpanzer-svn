@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 UnitOpcodeDecoder::UnitOpcodeDecoder()
 {
-    SDL_memset(&opcode_message, 0, sizeof(opcode_message));
+    memset(&opcode_message, 0, sizeof(opcode_message));
     reset();
 }
 
@@ -41,12 +41,12 @@ UnitOpcodeDecoder::setMessage(const NetMessage* message)
 {
     if(message->getSize() > sizeof(opcode_message)) {
         LOGGER.warning("Opcodemessage too big.");
-        SDL_memset(&opcode_message, 0, sizeof(opcode_message));
+        memset(&opcode_message, 0, sizeof(opcode_message));
         reset();
         return;
     }
 
-    SDL_memcpy(&opcode_message, message, message->getSize());
+    memcpy(&opcode_message, message, message->getSize());
     reset();
 }
 

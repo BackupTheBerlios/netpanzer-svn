@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "SDL.h"
 #include "ChatInterface.hpp"
 #include "2D/Color.hpp"
 #include "PlayerInterface.hpp"
@@ -50,7 +49,7 @@ void ChatInterface::chatMessageRequest(const NetMessage* message)
 
     chat_mesg.setSourcePlayerIndex(chat_request->getSourcePlayerIndex());
     chat_mesg.message_scope = chat_request->message_scope;
-    SDL_snprintf(chat_mesg.message_text, sizeof(chat_mesg.message_text), "%s",
+    snprintf(chat_mesg.message_text, sizeof(chat_mesg.message_text), "%s",
              chat_request->message_text);
 
     if( chat_request->message_scope == _chat_mesg_scope_all ) {
@@ -100,7 +99,7 @@ void ChatInterface::chatMessageRequest(const NetMessage* message)
 
         if( (addChatString != 0) ) {
             char mesg_str[256];
-            SDL_snprintf( mesg_str, sizeof(mesg_str), " ---- %s ----", player_state->getName().c_str() );
+            sprintf( mesg_str, " ---- %s ----", player_state->getName().c_str() );
 
             addChatString( mesg_str );
             addChatString( chat_mesg.message_text );
@@ -154,7 +153,7 @@ void ChatInterface::chatMessage(const NetMessage* message)
 
     if ( (addChatString != 0) ) {
         char mesg_str[144];
-        SDL_snprintf( mesg_str, sizeof(mesg_str), " ---- %s ----", player_state->getName().c_str() );
+        sprintf( mesg_str, " ---- %s ----", player_state->getName().c_str() );
 
         addChatString( mesg_str );
         addChatString( chat_mesg->message_text );
@@ -227,7 +226,7 @@ void ChatInterface::setMessageScopeServer()
 void ChatInterface::sendCurrentMessage( const char *message_text )
 {
     current_chat_mesg.setSourcePlayerIndex(PlayerInterface::getLocalPlayerIndex());
-    SDL_strlcpy( current_chat_mesg.message_text, message_text, 149 );
+    strncpy( current_chat_mesg.message_text, message_text, 149 );
     current_chat_mesg.message_text[ 149 ] = 0;
 
     if ( NetworkState::status == _network_state_client ) {

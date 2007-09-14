@@ -25,7 +25,6 @@
     @brief  Command line parser */
 #include <config.h>
 
-#include "SDL.h"
 #ifndef OPTIONMM_command_line
 #include "command_line.hpp"
 #endif
@@ -199,28 +198,28 @@ optionmm::command_line::handle_long(int& i)
 int
 optionmm::string_to_value<int>::operator()(const char* arg)
 {
-    return SDL_strtol(arg, NULL, 0);
+    return strtol(arg, NULL, 0);
 }
 
 //____________________________________________________________________
 long
 optionmm::string_to_value<long>::operator()(const char* arg)
 {
-    return SDL_strtol(arg, NULL, 0);
+    return strtol(arg, NULL, 0);
 }
 
 //____________________________________________________________________
 float
 optionmm::string_to_value<float>::operator()(const char* arg)
 {
-    return SDL_strtod(arg, NULL);
+    return strtod(arg, NULL);
 }
 
 //____________________________________________________________________
 double
 optionmm::string_to_value<double>::operator()(const char* arg)
 {
-    return SDL_strtod(arg, NULL);
+    return strtod(arg, NULL);
 }
 
 //____________________________________________________________________

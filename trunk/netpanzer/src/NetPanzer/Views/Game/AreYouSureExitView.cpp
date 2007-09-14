@@ -35,6 +35,7 @@ static void bYES()
 static void bNO()
 {
     Desktop::setVisibility("AreYouSureExitView", false);
+    //Desktop::setVisibility("ResignView", true);
 }
 
 // AreYouSureExitView
@@ -77,13 +78,11 @@ void AreYouSureExitView::init()
 //---------------------------------------------------------------------------
 void AreYouSureExitView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    iRect r( viewArea.getCenterX() - 200,
-             viewArea.getCenterY() - 20,
-             viewArea.getCenterX() + 200,
-             viewArea.getCenterY() + 60);
+    iRect r(min, max);
 
-    viewArea.fillRect(r, 0);
-    viewArea.drawRect(r, Color::white);
+    viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
+    //viewArea.drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
+
     viewArea.bltStringCenter("Are you sure you wish to exit netPanzer?", Color::white);
 
     View::doDraw(viewArea, clientArea);

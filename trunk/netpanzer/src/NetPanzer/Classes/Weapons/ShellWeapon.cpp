@@ -28,6 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ParticleInterface.hpp"
 #include "Util/Math.hpp"
 #include "GameConfig.hpp"
+#include "FlashParticle2D.hpp"
+
 
 ShellWeapon::ShellWeapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end)
         : Weapon(owner, owner_type_id, damage, start, end)
@@ -49,7 +51,12 @@ ShellWeapon::ShellWeapon(UnitID &owner, unsigned short owner_type_id, unsigned s
     shell.setFrame(frame360);
     shell.setSpriteHeight(weaponLayer);
 
-//    shell.setDrawModeSolid();
+    shell.setDrawModeSolid();
+
+    shellShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
+    shellShadow.setData(gShellPackedSurface);
+    shellShadow.setFrame(getGoalAngle(start, end));
+    shellShadow.setSpriteHeight(weaponShadowLayer);
 }
 
 void ShellWeapon::fsmFlight()
@@ -112,10 +119,23 @@ void ShellWeapon::updateStatus( void )
     }
 
     shell.setWorldPos(location);
+
+    if (gameconfig->displayshadows) {
+        shellShadow.setWorldPos(location);
+    }
 }
 
 void ShellWeapon::offloadGraphics(SpriteSorter &sorter)
 {
     shell.setWorldPos(location);
+
+    if (gameconfig->displayshadows) {
+        shellShadow.setWorldPos(location.x - 10, location.y);
+    }
+
     sorter.addSprite(&shell);
+
+    if (gameconfig->displayshadows) {
+        sorter.addSprite(&shellShadow);
+    }
 }

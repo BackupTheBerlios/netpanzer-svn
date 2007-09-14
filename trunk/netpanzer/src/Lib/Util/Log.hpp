@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __LIB_LOG_HPP__
 
 #include <stdarg.h>
+#include <string>
 
 namespace filesystem {
 class WriteFile;
@@ -50,7 +51,12 @@ public:
 
 private:
     void log(int priority, const char *fmt, va_list ap);
+    void cleanLogs();
+    void openNext();
 
+    std::string baselogname;
+    std::string prefix;
+    int used_size;
     int m_logLevel;
     filesystem::WriteFile* m_logfile;
 };

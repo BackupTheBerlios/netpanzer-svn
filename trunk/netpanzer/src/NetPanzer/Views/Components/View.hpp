@@ -28,6 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Component.hpp"
 #include "MouseEvent.hpp"
 
+class PackedSurface;
+
 enum { BLANK, MINI_MAP, IMAGE_TILES };
 const int SNAPTO_TOLERANCE = 20;
 
@@ -183,9 +185,9 @@ protected:
     void drawLabels(Surface &clientArea);
 
     // cButton Functions.
-    void addButtonPackedSurface(const iXY &pos, Surface &source, const char *toolTip, ITEM_FUNC leftClickFunc);
+    void addButtonPackedSurface(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc);
     void addButtonCenterText(const iXY &pos, const int &xSize, const char *nName, const char *nToolTip, ITEM_FUNC nLeftClickFunc);
-    void addButtonBMP(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func, const bool isBordered);
+    void addButtonBMP(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func, const bool &isBordered);
     inline void addButtonBMP(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func)
     {
         addButtonBMP(pos, imageName, toolTip, func, false);
@@ -295,7 +297,7 @@ public:
     {
         // Clear out all the previous component data.
         assert(MAX_COMPONENT_COUNT > 0);
-        SDL_memset(componentList, 0, sizeof(Component *) * MAX_COMPONENT_COUNT);
+        memset(componentList, 0, sizeof(Component *) * MAX_COMPONENT_COUNT);
 
         componentsUsedCount = 0;
         focusComponent      = 0;

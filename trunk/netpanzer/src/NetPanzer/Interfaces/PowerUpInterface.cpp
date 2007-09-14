@@ -18,6 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "PowerUpInterface.hpp"
 
+#include <stdlib.h>
+
+
 #include "GameConfig.hpp"
 
 #include "MapInterface.hpp"
@@ -161,9 +164,9 @@ void PowerUpInterface::generatePowerUp()
 
 void PowerUpInterface::initialize( void )
 {
-    BONUS_POWERUP_ANIM.loadPAK( "powerups/Bolt.pak" );
+    BONUS_POWERUP_ANIM.load( "powerups/Bolt.pak" );
     BONUS_POWERUP_ANIM.setFPS( 15 );
-    BONUS_POWERUP_ANIM_SHADOW.loadPAK( "powerups/BoltS.pak" );
+    BONUS_POWERUP_ANIM_SHADOW.load( "powerups/BoltS.pak" );
 
     UNIT_POWERUP_ANIM.setTo( BONUS_POWERUP_ANIM );
     UNIT_POWERUP_ANIM_SHADOW.setTo( BONUS_POWERUP_ANIM_SHADOW );

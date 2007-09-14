@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //---------------------------------------------------------------------------
 class ProgressView : public LoadingView
 {
+protected:
+    virtual void loadBackgroundSurface();
+
 public:
     ProgressView();
 
@@ -33,8 +36,8 @@ public:
     //virtual void lMouseDown(const iXY &p);
     virtual void doActivate();
 
-    Surface * background;
-    Surface * backgroundSurface;
+    Surface background;
+    Surface backgroundSurface;
 
     virtual void init();
     virtual void update(const char *text);

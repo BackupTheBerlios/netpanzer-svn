@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <stdio.h>
+#include <string.h>
 #include <physfs.h>
 #include "Exception.hpp"
 #include "Log.hpp"
@@ -35,15 +37,13 @@ void initialize(const char* argv0, const char* ,
     const char* basedir = PHYSFS_getBaseDir();
     const char* userdir = PHYSFS_getUserDir();
     const char* dirsep = PHYSFS_getDirSeparator();
-    int wdlen = SDL_strlen(userdir) + SDL_strlen(application) + 2;
-    char* writedir = new char[wdlen];
+    char* writedir = new char[strlen(userdir) + strlen(application) + 2];
 
-    SDL_snprintf(writedir, wdlen, "%s.%s", userdir, application);
+    sprintf(writedir, "%s.%s", userdir, application);
     if(!PHYSFS_setWriteDir(writedir)) {
         // try to create the directory...
-        int aplen = SDL_strlen(application+2);
-        char* mkdir = new char[aplen];
-        SDL_snprintf(mkdir, aplen, ".%s", application);
+        char* mkdir = new char[strlen(application)+2];
+        sprintf(mkdir, ".%s", application);
         if(!PHYSFS_setWriteDir(userdir) || ! PHYSFS_mkdir(mkdir)) {
             delete[] writedir;
             delete[] mkdir;
@@ -68,18 +68,17 @@ void initialize(const char* argv0, const char* ,
     if (archiveExt != NULL) {
         char **rc = PHYSFS_enumerateFiles("/");
         char **i;
-        size_t extlen = SDL_strlen(archiveExt);
+        size_t extlen = strlen(archiveExt);
         char *ext;
 
         for (i = rc; *i != NULL; i++) {
-            size_t l = SDL_strlen(*i);
+            size_t l = strlen(*i);
             if ((l > extlen) && ((*i)[l - extlen - 1] == '.')) {
                 ext = (*i) + (l - extlen);
-                if (SDL_strcasecmp(ext, archiveExt) == 0) {
+                if (strcasecmp(ext, archiveExt) == 0) {
                     const char *d = PHYSFS_getRealDir(*i);
-                    int slen = SDL_strlen(d)+SDL_strlen(dirsep)+l+1;
-                    char* str = new char[slen];
-                    SDL_snprintf(str, slen, "%s%s%s", d, dirsep, *i);
+                    char* str = new char[strlen(d) + strlen(dirsep) + l + 1];
+                    sprintf(str, "%s%s%s", d, dirsep, *i);
                     PHYSFS_addToSearchPath(str, 1);
                     delete[] str;
                 } /* if */
@@ -195,9 +194,9 @@ bool isSymbolicLink(const char* filename)
     return PHYSFS_isSymbolicLink(filename);
 }
 
-Sint64 getLastModTime(const char* filename)
+int64_t getLastModTime(const char* filename)
 {
-    Sint64 modtime = PHYSFS_getLastModTime(filename);
+    int64_t modtime = PHYSFS_getLastModTime(filename);
     if(modtime < 0)
         throw Exception("couldn't determine modification time of '%s': %s",
                         filename, PHYSFS_getLastError());
@@ -221,23 +220,23 @@ bool File::eof()
     return PHYSFS_eof(file);
 }
 
-Sint64 File::tell()
+int64_t File::tell()
 {
     return PHYSFS_tell(file);
 }
 
-void File::seek(Uint64 position)
+void File::seek(uint64_t position)
 {
     if(!PHYSFS_seek(file, position))
         throw Exception("Seek operation failed: %s", PHYSFS_getLastError());
 }
 
-Sint64 File::fileLength()
+int64_t File::fileLength()
 {
     return PHYSFS_fileLength(file);
 }
 
-void File::setBuffer(Uint64 bufsize)
+void File::setBuffer(uint64_t bufsize)
 {
     if(!PHYSFS_setBuffer(file, bufsize))
         throw Exception("couldn't adjust buffer size: %s",
@@ -274,8 +273,8 @@ bool ReadFile::isEOF()
 
 SDL_RWops* ReadFile::getSDLRWOps()
 {
-    SDL_RWops* rwops = (SDL_RWops*) SDL_malloc(sizeof(SDL_RWops));
-    SDL_memset(rwops, 0, sizeof(SDL_RWops));
+    SDL_RWops* rwops = (SDL_RWops*) malloc(sizeof(SDL_RWops));
+    memset(rwops, 0, sizeof(SDL_RWops));
     rwops->read = RWOps_Read;
     rwops->seek = RWOps_Seek;
     rwops->close = RWOps_Close;
@@ -395,7 +394,7 @@ Uint32 ReadFile::readUBE32()
     return val;
 }
 
-Sint64 ReadFile::readSLE64()
+int64_t ReadFile::readSLE64()
 {
     PHYSFS_sint64 val;
     if(!PHYSFS_readSLE64(file, &val))
@@ -403,7 +402,7 @@ Sint64 ReadFile::readSLE64()
     return val;
 }
 
-Uint64 ReadFile::readULE64()
+uint64_t ReadFile::readULE64()
 {
     PHYSFS_uint64 val;
     if(!PHYSFS_readULE64(file, &val))
@@ -411,7 +410,7 @@ Uint64 ReadFile::readULE64()
     return val;
 }
 
-Sint64 ReadFile::readSBE64()
+int64_t ReadFile::readSBE64()
 {
     PHYSFS_sint64 val;
     if(!PHYSFS_readSBE64(file, &val))
@@ -419,7 +418,7 @@ Sint64 ReadFile::readSBE64()
     return val;
 }
 
-Uint64 ReadFile::readUBE64()
+uint64_t ReadFile::readUBE64()
 {
     PHYSFS_uint64 val;
     if(!PHYSFS_readUBE64(file, &val))
@@ -508,25 +507,25 @@ void WriteFile::writeUBE32(Uint32 val)
         throw Exception("couldn't write: %s", PHYSFS_getLastError());
 }
 
-void WriteFile::writeSLE64(Sint64 val)
+void WriteFile::writeSLE64(int64_t val)
 {
     if(!PHYSFS_writeSLE64(file, val))
         throw Exception("couldn't write: %s", PHYSFS_getLastError());
 }
 
-void WriteFile::writeULE64(Uint64 val)
+void WriteFile::writeULE64(uint64_t val)
 {
     if(!PHYSFS_writeULE64(file, val))
         throw Exception("couldn't write: %s", PHYSFS_getLastError());
 }
 
-void WriteFile::writeSBE64(Sint64 val)
+void WriteFile::writeSBE64(int64_t val)
 {
     if(!PHYSFS_writeSBE64(file, val))
         throw Exception("couldn't write: %s", PHYSFS_getLastError());
 }
 
-void WriteFile::writeUBE64(Uint64 val)
+void WriteFile::writeUBE64(uint64_t val)
 {
     if(!PHYSFS_writeUBE64(file, val))
         throw Exception("couldn't write: %s", PHYSFS_getLastError());

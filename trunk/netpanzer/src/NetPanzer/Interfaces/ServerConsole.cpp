@@ -60,7 +60,7 @@ void ServerConsole::executeCommand(const std::string& commandline)
 {
     std::string command, argument;
     size_t i;
-    for(i = 0; i < commandline.size() && !SDL_isspace(commandline[i]); ++i) {
+    for(i = 0; i < commandline.size() && !isspace(commandline[i]); ++i) {
         command += commandline[i];
     }
     ++i;
@@ -71,7 +71,7 @@ void ServerConsole::executeCommand(const std::string& commandline)
         std::cout << "Commands:\n";
         for(size_t i = 0; commands[i].name != 0; ++i) {
             std::cout << "   " << commands[i].name;
-            for(size_t a = 0; a < 12-SDL_strlen(commands[i].name); ++a)
+            for(size_t a = 0; a < 12-strlen(commands[i].name); ++a)
                 std::cout << ' ';
             std::cout << commands[i].help << "\n";
         }
@@ -129,7 +129,7 @@ void ServerConsole::run()
         std::cout << "netpanzer-server: ";
         fgets(buf, sizeof(buf), stdin);
         // eleminated \n at the end
-        buf[SDL_strlen(buf)-1] = '\0';
+        buf[strlen(buf)-1] = '\0';
 
         executeCommand(buf);
     }

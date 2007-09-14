@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "Particle2D.hpp"
 #include "Util/TimerInterface.hpp"
-#include "2D/Surface.hpp"
+#include "2D/PackedSurface.hpp"
 #include "WorldViewInterface.hpp"
 
 
@@ -36,9 +36,7 @@ int   Particle2D::createParticles     = 1;
 int   Particle2D::drawParticles       = 1;
 
 // Pre-allocation variables.
-// XXX krom increase value from 340 now PacketSurface is bigger
-const  size_t MAX_PARTICLE_CLASS_SIZE = 512;
-
+const  size_t MAX_PARTICLE_CLASS_SIZE = 340;
 const  int    MAX_PARTICLES           = 3000;
 //static size_t biggestParticle         = 0;
 

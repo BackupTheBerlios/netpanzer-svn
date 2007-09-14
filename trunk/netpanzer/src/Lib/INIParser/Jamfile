@@ -7,5 +7,4 @@ Library netpanzeriniparser
 LinkWith netpanzeriniparser : netpanzertypes ;
 ExternalLibs netpanzeriniparser : PHYSFS ;
 Help netpanzeriniparser : "Build the netpanzer ini-file support library" ;
-C++Flags netpanzeriniparser : $(SDL_CFLAGS) ;
 

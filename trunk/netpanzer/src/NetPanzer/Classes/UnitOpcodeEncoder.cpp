@@ -48,7 +48,7 @@ UnitOpcodeEncoder::encode(const UnitOpcode *opcode)
         send();
     }
    
-    SDL_memcpy(opcode_message.data + opcode_index, opcode, UnitOpcode::getSize());
+    memcpy(opcode_message.data + opcode_index, opcode, UnitOpcode::getSize());
     opcode_index += UnitOpcode::getSize();
 }
 

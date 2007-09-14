@@ -19,14 +19,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "CloudParticle2D.hpp"
 #include "Util/TimerInterface.hpp"
+#include "2D/PackedSurface.hpp"
 #include "GameConfig.hpp"
+#include "Util/Exception.hpp"
 #include "2D/Palette.hpp"
-#include "2D/Surface.hpp"
 #include "Sprite.hpp"
 
 
 // Statics.
-Surface CloudParticle2D::staticPackedCloud;
+PackedSurface CloudParticle2D::staticPackedCloud;
 iXY CloudParticle2D::worldSize(0, 0);
 
 
@@ -59,8 +60,25 @@ void CloudParticle2D::setRandomSurface()
 {
     packedSurface.setData(staticPackedCloud);
 
-    int randFrame = rand() % staticPackedCloud.getNumFrames();
+    int randFrame = rand() % staticPackedCloud.getFrameCount();
     packedSurface.setFrame(randFrame);
+
+    packedSurfaceShadow.setData(staticPackedCloud);
+    packedSurfaceShadow.setFrame(randFrame);
+
+    packedSurfaceShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
+
+    int randColorTable = rand() % 3;
+
+    if (randColorTable == 0) {
+        packedSurface.setDrawModeBlend(&Palette::colorTable2080);
+    } else if(randColorTable == 1) {
+        packedSurface.setDrawModeBlend(&Palette::colorTable4060);
+    } else if(randColorTable == 2) {
+        packedSurface.setDrawModeBlend(&Palette::colorTable6040);
+    } else {
+        assert(false);
+    }
 
 } // end CloudParticle2D::setRandomSurface
 
@@ -71,7 +89,7 @@ void CloudParticle2D::packFiles()
 //---------------------------------------------------------------------------
 void CloudParticle2D::loadPAKFiles()
 {
-    staticPackedCloud.loadPAK("pics/particles/clouds/pak/clouds.pak");
+    staticPackedCloud.load("pics/particles/clouds/pak/clouds.pak");
     staticPackedCloud.setOffsetCenter();
 }
 
@@ -131,5 +149,10 @@ void CloudParticle2D::draw(const Surface&, SpriteSorter &sorter)
 {
     packedSurface.setAttrib(iXY(int(pos.x), int(pos.z)), layer);
     sorter.addSprite(&packedSurface);
+
+    if (gameconfig->displayshadows) {
+        packedSurfaceShadow.setAttrib(iXY(int(pos.x - 300), int(pos.z)), shadowLayer);
+        sorter.addSprite(&packedSurfaceShadow);
+    }
 
 } // end CloudParticle2D::draw

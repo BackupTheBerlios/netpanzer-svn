@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _SPRITE_HPP
 
 #include "2D/Surface.hpp"
+#include "2D/PackedSurface.hpp"
 
 #define _MAX_HEIGHT_LEVELS 8
 
@@ -159,42 +160,40 @@ public:
     virtual void blit( Surface *surface, const iRect &world_win );
 };
 
-class SpritePacked : public Surface, public Sprite
+class SpritePacked : public PackedSurface, public Sprite
 {
 private:
-//    enum DRAW_MODE
-//    {
-//        BLEND,
-//        SOLID
-//    };
+    enum DRAW_MODE
+    {
+        BLEND,
+        SOLID
+    };
 
-//    ColorTable *colorTable;
-//    DRAW_MODE   drawMode;
+    ColorTable *colorTable;
+    DRAW_MODE   drawMode;
 
 public:
 
     SpritePacked();
 
-    SpritePacked( Surface &source );
+    SpritePacked( PackedSurface &source );
 
     virtual ~SpritePacked()
     { }
 
-// XXX NOT NOW MAYBE DELETE
-//    inline void setDrawModeBlend(ColorTable *colorTable)
-//    {
-//        (void)colorTable;
-//        SpritePacked::colorTable = colorTable;
-//        SpritePacked::drawMode   = BLEND;
-//    }
+    inline void setDrawModeBlend(ColorTable *colorTable)
+    {
+        SpritePacked::colorTable = colorTable;
+        SpritePacked::drawMode   = BLEND;
+    }
 
-//    inline void setDrawModeSolid()
-//    {
-//        drawMode = SOLID;
-//    }
+    inline void setDrawModeSolid()
+    {
+        drawMode = SOLID;
+    }
 
 
-    inline void setData( Surface &source )
+    inline void setData( PackedSurface &source )
     {
         setTo( source );
         setOffsetCenter();

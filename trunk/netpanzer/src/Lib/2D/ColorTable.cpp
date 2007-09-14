@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "SDL.h"
 #include "Util/FileSystem.hpp"
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
@@ -68,13 +67,13 @@ void ColorTable::init(int colorCount)
 
     int numBytes = sizeof(PIX) * colorCount;
 
-    colorArray = (PIX *) SDL_malloc(numBytes);
+    colorArray = (PIX *) malloc(numBytes);
     if (colorArray == 0)
         throw Exception("ERROR: Unable to allocate color table.");
 
     totalByteCount += numBytes;
 
-    SDL_memset(&colorArray[0], 7, numBytes);
+    memset(&colorArray[0], 7, numBytes);
 
 } // end ColorTable::init
 
@@ -93,7 +92,7 @@ void ColorTable::setColor(int index, Uint8 color)
 void ColorTable::free()
 {
     if (colorArray != 0) {
-        ::SDL_free(colorArray);
+        ::free(colorArray);
 
         totalByteCount -= colorCount * sizeof(PIX);
         colorArray      = 0;
@@ -243,6 +242,9 @@ void ColorTable::create(
 
             curOffset = (int(index) << 8) + indexPic;
 
+//            SDL_Color curColor((Uint8) (color1 * col.r   + color2 * colPic.r),
+//                              (Uint8) (color1 * col.g + color2 * colPic.g),
+//                              (Uint8) (color1 * col.b  + color2 * colPic.b));
             SDL_Color curColor;
             curColor.r = (Uint8) (color1 * col.r + color2 * colPic.r);
             curColor.g = (Uint8) (color1 * col.g + color2 * colPic.g);

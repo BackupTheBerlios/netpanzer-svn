@@ -72,9 +72,9 @@ ServerSocket::onClientConnected(ClientSocket *s)
 }
 
 void
-ServerSocket::onClientDisconected(ClientSocket *s)
+ServerSocket::onClientDisconected(ClientSocket *s, const char * msg)
 {
-    LOGGER.debug("ServerSocket::onClientDisconnected() [%d]", s->getId());
+    LOGGER.warning("ServerSocket::onClientDisconnected() [%d] %s", s->getId(), msg);
     clients.erase(s->getId());
     delete s;
 }

@@ -21,8 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 
 #include "View.hpp"
-#include "Button.hpp"
 #include "2D/Surface.hpp"
+#include "ScrollBar.hpp"
 
 // Used for sorting a shape.
 int cHostCompareName(const void *elem1, const void *elem2);
@@ -66,6 +66,8 @@ private:
 
     int  maxYOffset;
 
+    ScrollBar *scrollBar;
+
     enum { TEXT_GAP_SPACE = 2 };
 
     Button upButton;
@@ -78,10 +80,12 @@ public:
     GetSessionHostView();
     virtual ~GetSessionHostView()
     {
+        delete scrollBar;
     }
 
 
     void drawHostList(Surface &dest);
+    void updateHostList();
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void lMouseDown(const iXY &pos);

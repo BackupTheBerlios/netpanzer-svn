@@ -19,10 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __LIB_FILESYSTEM_HPP__
 #define __LIB_FILESYSTEM_HPP__
 
-#include "SDL.h"
-#include <physfs.h>
 #include <stdexcept>
+#include "SDL.h"
 #include <string>
+#include <stdlib.h>
+#include <physfs.h>
 
 namespace filesystem
 {
@@ -33,16 +34,16 @@ public:
     ~File();
 
     bool eof();
-    Sint64 tell();
-    void seek(Uint64 position);
-    Sint64 fileLength();
+    int64_t tell();
+    void seek(uint64_t position);
+    int64_t fileLength();
     // conveniance function, since I think this name is more c++ typic
-    Sint64 length()
+    int64_t length()
     {
         return fileLength();
     }
 
-    void setBuffer(Uint64 bufsize);
+    void setBuffer(uint64_t bufsize);
     void flush();
 
 protected:
@@ -73,10 +74,10 @@ public:
     Sint32 readSBE32();
     Uint32 readUBE32();
 
-    Sint64 readSLE64();
-    Uint64 readULE64();
-    Sint64 readSBE64();
-    Uint64 readUBE64();
+    int64_t readSLE64();
+    uint64_t readULE64();
+    int64_t readSBE64();
+    uint64_t readUBE64();
 
     void readLine(std::string& buffer);
 
@@ -114,10 +115,10 @@ public:
     void writeSBE32(Sint32 val);
     void writeUBE32(Uint32 val);
 
-    void writeSLE64(Sint64 val);
-    void writeULE64(Uint64 val);
-    void writeSBE64(Sint64 val);
-    void writeUBE64(Uint64 val);
+    void writeSLE64(int64_t val);
+    void writeULE64(uint64_t val);
+    void writeSBE64(int64_t val);
+    void writeUBE64(uint64_t val);
 
     /// writes the text in the buffer and an additional newline
     void writeLine(const std::string& line);
@@ -173,8 +174,8 @@ static inline bool isDirectory(const std::string& filename)
 bool isSymbolicLink(const char* filename);
 static inline bool isSymbolicLink(const std::string& filename)
 { return isSymbolicLink(filename.c_str()); }
-Sint64 getLastModTime(const char* filename);
-static inline Sint64 getLastModTime(const std::string& filename)
+int64_t getLastModTime(const char* filename);
+static inline int64_t getLastModTime(const std::string& filename)
 { return getLastModTime(filename.c_str()); }
 
 //---------------------------------------------------------------------------

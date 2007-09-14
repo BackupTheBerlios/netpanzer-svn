@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include "Util/Exception.hpp"
 #include "VehicleSelectionView.hpp"
 #include "UnitTypes.hpp"
 #include "GameViewGlobals.hpp"
@@ -46,10 +47,10 @@ Button VehicleSelectionView::buttonOk;
 
 bool changeMade = false;
 
-iRect     VehicleSelectionView::miniProductionRect(0, 0, 0, 0);
-Surface * VehicleSelectionView::unitImages = 0;
-bool      VehicleSelectionView::displayMiniProductionStatus = true;
-bool      VehicleSelectionView::displayOutpostNames = true;
+iRect   VehicleSelectionView::miniProductionRect(0, 0, 0, 0);
+Surface VehicleSelectionView::unitImages;
+bool    VehicleSelectionView::displayMiniProductionStatus = true;
+bool    VehicleSelectionView::displayOutpostNames = true;
 
 unsigned short CURRENT_SELECTED_OUTPOST_ID;
 
@@ -298,19 +299,19 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     
     pos.x = 0;
     addLabel(pos + iXY(2,2), "Production:", Color::white);
-    productionUnitPos.x = (SDL_strlen("Current Unit:") + 1) * CHAR_XPIX + 2;
+    productionUnitPos.x = (strlen("Current Unit:") + 1) * CHAR_XPIX + 2;
     productionUnitPos.y = pos.y + 2;
     pos.y += yOffset;
 
     pos.x = 0;
     addLabel(pos + iXY(2,2), "Time:        ", Color::white);
-    timeRequiredPos.x = (SDL_strlen("Time:        ") + 1) * CHAR_XPIX + 2;
+    timeRequiredPos.x = (strlen("Time:        ") + 1) * CHAR_XPIX + 2;
     timeRequiredPos.y = pos.y + 2;
     pos.y += yOffset;
 
     pos.x = 0;
     addLabel(pos + iXY(2,2), "Unit Built:   ", Color::white);
-    unitsBuiltPos.x = (SDL_strlen("Time:        ") + 1) * CHAR_XPIX + 2;
+    unitsBuiltPos.x = (strlen("Time:        ") + 1) * CHAR_XPIX + 2;
     unitsBuiltPos.y = pos.y + 2;
     pos.y += yOffset;
 
@@ -394,7 +395,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     pos.y += 74;
 
     //addLabel(pos + 2, "Time Remaining:", Color::white);
-    //timeRemainingPos.x = (SDL_strlen("Time Remaining: ") + 1) * CHAR_XPIX + 2;
+    //timeRemainingPos.x = (strlen("Time Remaining: ") + 1) * CHAR_XPIX + 2;
     //timeRemainingPos.y = pos.y + 2;
     //pos.y += yOffset;
 
@@ -403,38 +404,47 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     buttonOk.setBounds(iRect(pos, pos + iXY(100, 15)));
     add(&buttonOk);
 
-    if ( unitImages )
-        delete unitImages;
-    unitImages = new Surface(48, 48, _MAX_UNIT_TYPES);
+    unitImages.create(48, 48, _MAX_UNIT_TYPES);
 
+    Surface tempSurface;
     int i = 0;
 
-    unitImages->setFrame(i++);
-    unitImages->loadBMP("pics/menus/vehicleSelectionView/manta.bmp");
-    unitImages->setFrame(i++);
-    unitImages->loadBMP("pics/menus/vehicleSelectionView/panther1.bmp");
-    unitImages->setFrame(i++);
-    unitImages->loadBMP("pics/menus/vehicleSelectionView/titan.bmp");
-    unitImages->setFrame(i++);
-    unitImages->loadBMP("pics/menus/vehicleSelectionView/stinger.bmp");
-    unitImages->setFrame(i++);
-    unitImages->loadBMP("pics/menus/vehicleSelectionView/bobcat.bmp");
-    unitImages->setFrame(i++);
-    unitImages->loadBMP("pics/menus/vehicleSelectionView/bear.bmp");
-    unitImages->setFrame(i++);
-    unitImages->loadBMP("pics/menus/vehicleSelectionView/archer.bmp");
-    unitImages->setFrame(i++);
-    unitImages->loadBMP("pics/menus/vehicleSelectionView/wolf.bmp");
-    unitImages->setFrame(i++);
-    unitImages->loadBMP("pics/menus/vehicleSelectionView/drake.bmp");
-    unitImages->setFrame(i++);
-    unitImages->loadBMP("pics/menus/vehicleSelectionView/scout.bmp");
-    unitImages->setFrame(i++);
-    unitImages->fill(Color::red);
-    unitImages->setFrame(i++);
-    unitImages->fill(Color::green);
-    unitImages->setFrame(i++);
-    unitImages->fill(Color::blue);
+    tempSurface.loadBMP("pics/menus/vehicleSelectionView/manta.bmp");
+    unitImages.setFrame(i++);
+    tempSurface.blt(unitImages, 0, 0);
+    tempSurface.loadBMP("pics/menus/vehicleSelectionView/panther1.bmp");
+    unitImages.setFrame(i++);
+    tempSurface.blt(unitImages, 0, 0);
+    tempSurface.loadBMP("pics/menus/vehicleSelectionView/titan.bmp");
+    unitImages.setFrame(i++);
+    tempSurface.blt(unitImages, 0, 0);
+    tempSurface.loadBMP("pics/menus/vehicleSelectionView/stinger.bmp");
+    unitImages.setFrame(i++);
+    tempSurface.blt(unitImages, 0, 0);
+    tempSurface.loadBMP("pics/menus/vehicleSelectionView/bobcat.bmp");
+    unitImages.setFrame(i++);
+    tempSurface.blt(unitImages, 0, 0);
+    tempSurface.loadBMP("pics/menus/vehicleSelectionView/bear.bmp");
+    unitImages.setFrame(i++);
+    tempSurface.blt(unitImages, 0, 0);
+    tempSurface.loadBMP("pics/menus/vehicleSelectionView/archer.bmp");
+    unitImages.setFrame(i++);
+    tempSurface.blt(unitImages, 0, 0);
+    tempSurface.loadBMP("pics/menus/vehicleSelectionView/wolf.bmp");
+    unitImages.setFrame(i++);
+    tempSurface.blt(unitImages, 0, 0);
+    tempSurface.loadBMP("pics/menus/vehicleSelectionView/drake.bmp");
+    unitImages.setFrame(i++);
+    tempSurface.blt(unitImages, 0, 0);
+    tempSurface.loadBMP("pics/menus/vehicleSelectionView/scout.bmp");
+    unitImages.setFrame(i++);
+    tempSurface.blt(unitImages, 0, 0);
+    unitImages.setFrame(i++);
+    unitImages.fill(Color::red);
+    unitImages.setFrame(i++);
+    unitImages.fill(Color::green);
+    unitImages.setFrame(i++);
+    unitImages.fill(Color::blue);
 
     maxHitPoints = 1;
     maxAttackFactor = 1;
@@ -487,9 +497,10 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
             //screen.drawLine(a, b, Color::white);
 
             iRect r(objectivePos - objectiveOutlineSize, objectivePos + objectiveOutlineSize);
+            //bltBlendRect(screen, r);
             screen->fillRect(r, Color::white);
 
-            //int xOffset = (SDL_strlen(WorldInputCmdProcessor::getSelectedObjectiveName()) * CHAR_XPIX) / 2;
+            //int xOffset = (strlen(WorldInputCmdProcessor::getSelectedObjectiveName()) * CHAR_XPIX) / 2;
 
             //screen.bltStringShadowed(r.min.x - xOffset, r.min.y - 15, WorldInputCmdProcessor::getSelectedObjectiveName(), Color::white, Color::black);
 
@@ -513,8 +524,11 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
                 r = iRect(cornerPos - oos, cornerPos + oos);
             }
 
-            screen->drawLine(cornerPos.x, cornerPos.y, b.x, b.y, Color::white);
+            screen->drawLine(cornerPos, b, Color::white);
             screen->fillRect(r, Color::white);
+
+            //screen.bltLookup(r, Palette::darkGray256.getColorArray());
+            //screen.drawButtonBorder(r, Color::white, Color::gray96);
 
             // Draw the name of the outpost.
         }}
@@ -565,8 +579,8 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 //---------------------------------------------------------------------------
 void VehicleSelectionView::drawUnitImage(Surface &dest, const iXY &pos, int unitType)
 {
-    unitImages->setFrame(unitType);
-    unitImages->blt(dest, pos.x, pos.y);
+    unitImages.setFrame(unitType);
+    unitImages.blt(dest, pos.x, pos.y);
 
 } // end VehicleSelectionView::drawUnitImage
 
@@ -665,6 +679,8 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
 
                 outpostStatus = ObjectiveInterface::getOutpostStatus(objectiveID);
 
+                assert(screen->getDoesExist());
+
                 miniProductionRect.min   = objectiveScreenPos;
                 miniProductionRect.max.x = 0;
                 miniProductionRect.max.y = miniProductionRect.min.y + 50;
@@ -683,9 +699,9 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
 
 
                     // Make sure the name will fit reasonably in the area.
-                    int length = SDL_strlen( objective_state->name );
+                    int length = strlen( objective_state->name );
                     if (length > 20) {
-                        SDL_strlcpy(strBuf, (const char *) objective_state->name , 20);
+                        strncpy(strBuf, (const char *) objective_state->name , 20);
                         sprintf(outpostNameBuf, "Outpost:    %s...", strBuf);
 
                     } else {
@@ -694,11 +710,11 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                     checkMiniProductionRect(outpostNameBuf);
 
 
-                    //pos.x = (miniProductionRect.getSizeX() - SDL_strlen("Production Off") * CHAR_XPIX) / 2 + miniProductionRect.min.x;
+                    //pos.x = (miniProductionRect.getSizeX() - strlen("Production Off") * CHAR_XPIX) / 2 + miniProductionRect.min.x;
                     //pos.y = (miniProductionRect.getSizeY() - CHAR_YPIX) / 2 + miniProductionRect.min.y;
 
                     // Objective is off.
-                    dest.fillRect(miniProductionRect, 0);
+                    dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
 
                     dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
                     pos.y += 16;
@@ -708,13 +724,13 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                     // Objective is on.
 
                     iXY pos;
-                    pos.x = miniProductionRect.min.x + unitImages->getWidth() + 4;
+                    pos.x = miniProductionRect.min.x + unitImages.getWidth() + 4;
                     pos.y = miniProductionRect.min.y + 4;
 
                     // Make sure the name will fit reasonably in the area.
-                    int length = SDL_strlen( objective_state->name );
+                    int length = strlen( objective_state->name );
                     if (length > 20) {
-                        SDL_strlcpy(strBuf, (const char *) objective_state->name , 20);
+                        strncpy(strBuf, (const char *) objective_state->name , 20);
                         sprintf(outpostNameBuf, "Outpost:    %s...", strBuf);
 
                     } else {
@@ -733,7 +749,8 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                                 % 60);
                     checkMiniProductionRect(timeLeftBuf);
 
-                    dest.fillRect(miniProductionRect, 0);
+                    dest.bltLookup(miniProductionRect,
+                            Palette::darkGray256.getColorArray());
 
                     dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
                     pos.y += 16;
@@ -757,6 +774,8 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                 if( displayOutpostNames == true ) {
                     iXY objectiveScreenPos(objectiveBounds.min - gameViewRect.min);
 
+                    assert(screen->getDoesExist());
+
                     miniProductionRect.min   = objectiveScreenPos;
                     miniProductionRect.max.x = 0;
                     miniProductionRect.max.y = miniProductionRect.min.y + 20;
@@ -770,9 +789,9 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
 
 
                     // Make sure the name will fit reasonably in the area.
-                    int length = SDL_strlen( objective_state->name );
+                    int length = strlen( objective_state->name );
                     if (length > 20) {
-                        SDL_strlcpy(strBuf, (const char *) objective_state->name , 20);
+                        strncpy(strBuf, (const char *) objective_state->name , 20);
                         sprintf(outpostNameBuf, "Outpost:    %s...", strBuf);
 
                     } else {
@@ -780,7 +799,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                     }
                     checkMiniProductionRect(outpostNameBuf);
 
-                    dest.fillRect(miniProductionRect, 0);
+                    dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
 
                     dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
                 }

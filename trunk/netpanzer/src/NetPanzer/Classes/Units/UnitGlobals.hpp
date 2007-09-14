@@ -18,105 +18,109 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITGLOBALS_HPP
 #define _UNITGLOBALS_HPP
 
-#include "2D/Surface.hpp"
+#include "2D/PackedSurface.hpp"
 
-extern Surface gAbramsTurret;
-extern Surface gAbramsBody;
+extern PackedSurface gAbramsTurret;
+extern PackedSurface gAbramsBody;
 
-extern Surface gLeopardTurret;
-extern Surface gLeopardBody;
+extern PackedSurface gLeopardTurret;
+extern PackedSurface gLeopardBody;
 
-extern Surface gValentineTurret;
-extern Surface gValentineBody;
+extern PackedSurface gValentineTurret;
+extern PackedSurface gValentineBody;
 
-extern Surface gHammerheadTurret;
-extern Surface gHammerheadBody;
+extern PackedSurface gHammerheadTurret;
+extern PackedSurface gHammerheadBody;
 
-extern Surface gHumveeBody;
+extern PackedSurface gHumveeBody;
 
-extern Surface gLynxTurret;
-extern Surface gLynxBody;
+extern PackedSurface gLynxTurret;
+extern PackedSurface gLynxBody;
 
-extern Surface gM109Turret;
-extern Surface gM109Body;
+extern PackedSurface gM109Turret;
+extern PackedSurface gM109Body;
 
-extern Surface gBearTurret;
-extern Surface gBearBody;
+extern PackedSurface gBearTurret;
+extern PackedSurface gBearBody;
 
-extern Surface gSpahPanzerTurret;
-extern Surface gSpahPanzerBody;
+extern PackedSurface gSpahPanzerTurret;
+extern PackedSurface gSpahPanzerBody;
 
-extern Surface gScorpionTurret;
-extern Surface gScorpionBody;
+extern PackedSurface gScorpionTurret;
+extern PackedSurface gScorpionBody;
 
-extern Surface gArcherTurret;
-extern Surface gArcherBody;
+extern PackedSurface gArcherTurret;
+extern PackedSurface gArcherBody;
 
 //********** DARK BLUE UNITS ************
-extern Surface gAbramsTurretDarkBlue;
-extern Surface gAbramsBodyDarkBlue;
+extern PackedSurface gAbramsTurretDarkBlue;
+extern PackedSurface gAbramsBodyDarkBlue;
 
-extern Surface gLeopardTurretDarkBlue;
-extern Surface gLeopardBodyDarkBlue;
+extern PackedSurface gLeopardTurretDarkBlue;
+extern PackedSurface gLeopardBodyDarkBlue;
 
-extern Surface gValentineTurretDarkBlue;
-extern Surface gValentineBodyDarkBlue;
+extern PackedSurface gValentineTurretDarkBlue;
+extern PackedSurface gValentineBodyDarkBlue;
 
-extern Surface gHammerheadTurretDarkBlue;
-extern Surface gHammerheadBodyDarkBlue;
+extern PackedSurface gHammerheadTurretDarkBlue;
+extern PackedSurface gHammerheadBodyDarkBlue;
 
-extern Surface gHumveeBodyDarkBlue;
+extern PackedSurface gHumveeBodyDarkBlue;
 
-extern Surface gLynxTurretDarkBlue;
-extern Surface gLynxBodyDarkBlue;
+extern PackedSurface gLynxTurretDarkBlue;
+extern PackedSurface gLynxBodyDarkBlue;
 
-extern Surface gM109TurretDarkBlue;
-extern Surface gM109BodyDarkBlue;
+extern PackedSurface gM109TurretDarkBlue;
+extern PackedSurface gM109BodyDarkBlue;
 
-extern Surface gBearTurretDarkBlue;
-extern Surface gBearBodyDarkBlue;
+extern PackedSurface gBearTurretDarkBlue;
+extern PackedSurface gBearBodyDarkBlue;
 
-extern Surface gSpahPanzerTurretDarkBlue;
-extern Surface gSpahPanzerBodyDarkBlue;
+extern PackedSurface gSpahPanzerTurretDarkBlue;
+extern PackedSurface gSpahPanzerBodyDarkBlue;
 
-extern Surface gScorpionTurretDarkBlue;
-extern Surface gScorpionBodyDarkBlue;
+extern PackedSurface gScorpionTurretDarkBlue;
+extern PackedSurface gScorpionBodyDarkBlue;
 
-extern Surface gArcherTurretDarkBlue;
-extern Surface gArcherBodyDarkBlue;
+extern PackedSurface gArcherTurretDarkBlue;
+extern PackedSurface gArcherBodyDarkBlue;
 
 //********** SHADOWS ************
-extern Surface gAbramsTurretShadow;
-extern Surface gAbramsBodyShadow;
+extern PackedSurface gAbramsTurretShadow;
+extern PackedSurface gAbramsBodyShadow;
 
-extern Surface gLeopardTurretShadow;
-extern Surface gLeopardBodyShadow;
+extern PackedSurface gLeopardTurretShadow;
+extern PackedSurface gLeopardBodyShadow;
 
-extern Surface gValentineTurretShadow;
-extern Surface gValentineBodyShadow;
+extern PackedSurface gValentineTurretShadow;
+extern PackedSurface gValentineBodyShadow;
 
-extern Surface gHammerheadTurretShadow;
-extern Surface gHammerheadBodyShadow;
+extern PackedSurface gHammerheadTurretShadow;
+extern PackedSurface gHammerheadBodyShadow;
 
-extern Surface gHumveeBodyShadow;
+extern PackedSurface gHumveeBodyShadow;
 
-extern Surface gLynxTurretShadow;
-extern Surface gLynxBodyShadow;
+extern PackedSurface gLynxTurretShadow;
+extern PackedSurface gLynxBodyShadow;
 
-extern Surface gM109TurretShadow;
-extern Surface gM109BodyShadow;
+extern PackedSurface gM109TurretShadow;
+extern PackedSurface gM109BodyShadow;
 
-extern Surface gBearTurretShadow;
-extern Surface gBearBodyShadow;
+extern PackedSurface gBearTurretShadow;
+extern PackedSurface gBearBodyShadow;
 
-extern Surface gSpahPanzerTurretShadow;
-extern Surface gSpahPanzerBodyShadow;
+extern PackedSurface gSpahPanzerTurretShadow;
+extern PackedSurface gSpahPanzerBodyShadow;
 
-extern Surface gScorpionTurretShadow;
-extern Surface gScorpionBodyShadow;
+extern PackedSurface gScorpionTurretShadow;
+extern PackedSurface gScorpionBodyShadow;
 
-extern Surface gArcherTurretShadow;
-extern Surface gArcherBodyShadow;
+extern PackedSurface gArcherTurretShadow;
+extern PackedSurface gArcherBodyShadow;
+
+void LoadUnitSurfaces( void );
+
+void RemapGrayUnitsHack( ColorTable &gray256 );
 
 extern int unitLayer;
 

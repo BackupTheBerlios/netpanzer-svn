@@ -45,7 +45,7 @@ public:
     {
         message_class = _net_message_class_unit;
         message_id = _net_message_id_opcode_mesg;
-        SDL_memset(data, 0, sizeof(data));
+        memset(data, 0, sizeof(data));
     }
     
     static size_t getHeaderSize()

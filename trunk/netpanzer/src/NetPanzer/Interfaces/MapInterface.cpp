@@ -17,15 +17,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 #include "MapInterface.hpp"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 #include "Util/Endian.hpp"
 #include "MapData.hpp"
-#include "SDL.h"
 
 WorldMap MapInterface::main_map;
 SpawnList MapInterface::spawn_list;
 WadMapTable MapInterface::wad_mapping_table;
-Surface * MapInterface::mini_map_surface = 0;
+Surface MapInterface::mini_map_surface;
 char MapInterface::map_path[256];
 
 bool MapInterface::startMapLoad( const char *file_path, bool load_tiles,
@@ -34,14 +36,14 @@ bool MapInterface::startMapLoad( const char *file_path, bool load_tiles,
     char path[256];
     char tile_set_path[256];
 
-    SDL_strlcpy(map_path, file_path, sizeof(map_path));
+    strcpy( map_path, file_path );
 
-    SDL_strlcpy(path, file_path, sizeof(path));
-    SDL_strlcat(path, ".npm", sizeof(path));
+    strcpy( path, file_path );
+    strcat( path, ".npm" );
     main_map.loadMapFile( path );
 
-    SDL_strlcpy(tile_set_path, "wads/", sizeof(tile_set_path));
-    SDL_strlcat(tile_set_path, main_map.getAssocTileSet(), sizeof(tile_set_path));
+    strcpy( tile_set_path, "wads/" );
+    strcat( tile_set_path, main_map.getAssocTileSet() );
 
     tile_set.loadTileSetInfo( tile_set_path );
     generateMappingTable();
@@ -81,11 +83,42 @@ void MapInterface::finishMapLoad( void )
 
     buildMiniMapSurface();
 
-    SDL_strlcpy(path, map_path, sizeof(path));
+    strcpy( path, map_path );
 
-    SDL_strlcat(path, ".spn", sizeof(path));
+    strcat( path, ".spn" );
     spawn_list.loadSpawnFile( path );
 }
+
+/*
+void MapInterface::LoadMap( const char *file_path, bool load_tiles )
+ {
+  char path[80];
+  
+  strcpy( path, file_path );
+  strcat( path, ".npm" );
+  
+  tile_set.loadTileSetInfo( "./wads/wad.tls" );
+  generateMappingTable();
+  main_map.reMap( wad_mapping_table );
+  
+  if ( load_tiles == true )
+   {
+    tile_set.loadTileSet( "./wads/wad.tls", wad_mapping_table ); 
+   }
+  else
+   {
+    tile_set.loadTileSetInfo( "./wads/wad.tls", wad_mapping_table ); 
+   }
+ 
+  wad_mapping_table.deallocate();
+  
+  buildMiniMapSurface();
+ 
+  strcpy( path, file_path );
+  strcat( path, ".spn" );
+  spawn_list.loadSpawnFile( path );  
+ }
+*/
 
 void MapInterface::generateMappingTable()
 {
@@ -130,15 +163,13 @@ void MapInterface::buildMiniMapSurface()
 
     map_x_size = main_map.getWidth();
     map_y_size = main_map.getHeight();
-    if ( mini_map_surface )
-        delete mini_map_surface;
-    mini_map_surface = new Surface( map_x_size, map_y_size, 1 );
+    mini_map_surface.create( map_x_size, map_y_size, 1 );
 
     for( y_index = 0; y_index < map_y_size; y_index++ ) {
         for ( x_index = 0; x_index < map_x_size; x_index++ ) {
             map_value = main_map.getValue( x_index, y_index );
             avg_color = tile_set.getAverageTileColor( map_value );
-            mini_map_surface->putPixel( x_index, y_index, (PIX) avg_color );
+            mini_map_surface.putPixel( x_index, y_index, (PIX) avg_color );
         } // ** for x_index
     } // ** for y_index
 }

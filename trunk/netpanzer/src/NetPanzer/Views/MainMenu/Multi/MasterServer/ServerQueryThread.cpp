@@ -22,6 +22,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <algorithm>
 #include <stdexcept>
 #include <sstream>
+#include <ctype.h>
+#include "Util/Exception.hpp"
 #include "GameConfig.hpp"
 #include "Core/NetworkGlobals.hpp"
 #include "Util/StringTokenizer.hpp"
@@ -121,13 +123,8 @@ ServerQueryThread::onConnected(network::TCPSocket *s)
     char query[] = "\\list\\gamename\\netpanzer\\final\\";
 
     querying_msdata[s]->touch();
-    try {
-        s->send(query,sizeof(query)-1);
-    } catch (NetworkException &e) {
-        LOGGER.warning("MASTERSERVER error [%s]: %s", s->getAddress().getIP().c_str(), e.what());
-        delete querying_msdata[s];
-        querying_msdata.erase(s);
-    }
+    s->send(query,sizeof(query)-1);
+
 }
 
 void
@@ -283,7 +280,8 @@ ServerQueryThread::onDataReceived(network::UDPSocket *s, const network::Address&
         parseServerData(server,str);
         querying_server.erase(fromaddress.str());
     } else {
-        LOGGER.warning("Received answer from [%s]", fromaddress.str().c_str());
+        LOGGER.warning("Received answer from unknown server [%s]", fromaddress.str().c_str());
+        querying_server.erase(fromaddress.str()); // Quick & Dirty, should use find()
     }
     
     sendNextQuery();

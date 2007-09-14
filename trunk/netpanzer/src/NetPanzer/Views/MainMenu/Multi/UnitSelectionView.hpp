@@ -15,3 +15,30 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#ifndef __UnitSelectionView_hpp__
+#define __UnitSelectionView_hpp__
+
+#include "View.hpp"
+#include "2D/Surface.hpp"
+#include "ScrollBar.hpp"
+
+
+//---------------------------------------------------------------------------
+class UnitSelectionView : public View
+{
+private:
+    int  maxYOffset;
+
+    ScrollBar *scrollBar;
+
+public:
+    UnitSelectionView();
+    virtual ~UnitSelectionView()
+    {
+        delete scrollBar;
+    }
+
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+}; // end UnitSelectionView
+
+#endif // end __UnitSelectionView_hpp__

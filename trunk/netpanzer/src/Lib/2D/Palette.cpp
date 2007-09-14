@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <math.h>
 
-#include "SDL.h"
 #include "Palette.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
@@ -289,7 +288,7 @@ void Palette::setColorTables()
     }
 
     char tablePath[512];
-    SDL_snprintf(tablePath, 512, "cache/colorfilters/%s", name.c_str());
+    snprintf(tablePath, 512, "cache/colorfilters/%s", name.c_str());
     if(!filesystem::exists(tablePath)) {
         filesystem::mkdir(tablePath);
     }
@@ -297,35 +296,35 @@ void Palette::setColorTables()
     //progressView->scrollAndUpdate("");
 
     // Best color match.
-    SDL_snprintf(strBuf, sizeof(strBuf), "%s/2080.tbl", tablePath);
+    sprintf(strBuf, "%s/2080.tbl", tablePath);
     colorTable2080.create(20, 80, strBuf);
 
-    SDL_snprintf(strBuf, sizeof(strBuf), "%s/4060.tbl", tablePath);
+    sprintf(strBuf, "%s/4060.tbl", tablePath);
     colorTable4060.create(40, 60, strBuf);
 
-    SDL_snprintf(strBuf, sizeof(strBuf), "%s/6040.tbl", tablePath);
+    sprintf(strBuf, "%s/6040.tbl", tablePath);
     colorTable6040.create(60, 40, strBuf);
 
-    SDL_snprintf(strBuf, sizeof(strBuf), "%s/8020.tbl", tablePath);
+    sprintf(strBuf, "%s/8020.tbl", tablePath);
     colorTable8020.create(80, 20, strBuf);
 
-    //SDL_snprintf(strBuf, sizeof(strBuf), "%sSolidTrans0", tablePath);
+    //sprintf(strBuf, "%sSolidTrans0", tablePath);
     //colorTableSolidTrans0.createTrans0(0, 100, strBuf);
 
-    //SDL_snprintf(strBuf, sizeof(strBuf), "%sSolid", tablePath);
+    //sprintf(strBuf, "%sSolid", tablePath);
     //colorTableSolid.create(0, 100, strBuf);
 
     // Brighten.
-    SDL_snprintf(strBuf, sizeof(strBuf), "%s/Brighten.tbl", tablePath);
+    sprintf(strBuf, "%s/Brighten.tbl", tablePath);
     colorTableBrighten.createBrightenFilter(strBuf, 256);
 
     // Darken.
-    SDL_snprintf(strBuf, sizeof(strBuf), "%s/DarkenALot.tbl", tablePath);
+    sprintf(strBuf, "%s/DarkenALot.tbl", tablePath);
     colorTableDarkenALot.createDarkenFilter(strBuf, 0.5f);
-    SDL_snprintf(strBuf, sizeof(strBuf), "%s/DarkenALittle.tbl", tablePath);
+    sprintf(strBuf, "%s/DarkenALittle.tbl", tablePath);
     colorTableDarkenALittle.createDarkenFilter(strBuf, 0.15f);
 
-    SDL_snprintf(strBuf, sizeof(strBuf), "%s/LightDark.tbl", tablePath);
+    sprintf(strBuf, "%s/LightDark.tbl", tablePath);
     colorTableLightDark.createLightDarkFilter(strBuf);
 } // end setColorTables
 

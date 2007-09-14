@@ -17,12 +17,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <string.h>
 #include "NetMessageDecoder.hpp"
 #include "Util/Log.hpp"
 
 NetMessageDecoder::NetMessageDecoder()
 {
-    SDL_memset(&decode_message, 0, sizeof(decode_message));
+    memset(&decode_message, 0, sizeof(decode_message));
 }
 
 NetMessageDecoder::~NetMessageDecoder()
@@ -34,10 +35,10 @@ NetMessageDecoder::setDecodeMessage(const NetMessage* message)
 {
     if(message->getSize() > sizeof(decode_message)) {
         LOGGER.warning("Multimessage with wrong size!");
-        SDL_memset(&decode_message, 0, sizeof(decode_message));
+        memset(&decode_message, 0, sizeof(decode_message));
         return;
     }
-    SDL_memcpy(&decode_message, message, message->getSize());
+    memcpy(&decode_message, message, message->getSize());
     decode_message_index = 0;
     decode_current_count = 0;
 }

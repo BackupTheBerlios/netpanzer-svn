@@ -42,7 +42,7 @@ public:
 protected:
     network::TCPSocketObserver * onNewConnection(TCPListenSocket *so,const Address &fromaddr);
     void onClientConnected(ClientSocket *s);
-    void onClientDisconected(ClientSocket *s);
+    void onClientDisconected(ClientSocket *s, const char * msg);
     friend class SocketClient;
 
 private:

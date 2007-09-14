@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _WADMAPTABLE_HPP
 
 #include "ArrayUtil/ArrayTemplate.hpp"
-#include "SDL.h"
+#include "string.h"
 
 class WadTileMapInfo
 {
@@ -35,7 +35,7 @@ public:
 
     void resetMappingTable( void )
     {
-        SDL_memset( array, 0, (sizeof( WadTileMapInfo ) * size) );
+        memset( array, 0, (sizeof( WadTileMapInfo ) * size) );
     }
 
 

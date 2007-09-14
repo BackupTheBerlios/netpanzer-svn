@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <math.h>
+#include <ctype.h>
+#include <memory>
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -35,19 +37,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 using std::swap;
 using std::min;
 using std::max;
-
-#ifdef MSVC
-#pragma pack (1)
-#endif
-struct SpanHead
-{
-    unsigned short x1;
-    unsigned short len;
-}
-__attribute__((packed));
-#ifdef MSVC
-#pragma pack ()
-#endif
 
 // orderCoords
 //---------------------------------------------------------------------------
@@ -80,7 +69,65 @@ inline void orderCoords(iRect &bounds)
     }
 } // end orderCoords
 
-Surface ascii8x8(8, 8, 128);
+class BitmapFileHeader
+{
+public:
+    Uint16    bfType;
+    Uint32   bfSize;
+    Uint16    bfReserved1;
+    Uint16    bfReserved2;
+    Uint32   bfOffBits;
+
+    BitmapFileHeader(filesystem::ReadFile* file);
+};
+
+BitmapFileHeader::BitmapFileHeader(filesystem::ReadFile* file)
+{
+    bfType = file->readULE16();
+    bfSize = file->readULE32();
+    bfReserved1 = file->readULE16();
+    bfReserved2 = file->readULE16();
+    bfOffBits = file->readULE32();
+}
+
+#define BI_RGB      0L
+#define BI_RLE8     1L
+#define BI_RLE4     2L
+
+class BitmapInfoHeader
+{
+public:
+    Uint32  biSize;
+    Uint32  biWidth;
+    Uint32  biHeight;
+    Uint16   biPlanes;
+    Uint16   biBitCount;
+    Uint32  biCompression;
+    Uint32  biSizeImage;
+    Uint32  biXPelsPerMeter;
+    Uint32  biYPelsPerMeter;
+    Uint32  biClrUsed;
+    Uint32  biClrImportant;
+
+    BitmapInfoHeader(filesystem::ReadFile* file);
+};
+
+BitmapInfoHeader::BitmapInfoHeader(filesystem::ReadFile* file)
+{
+    biSize = file->readULE32();
+    biWidth = file->readULE32();
+    biHeight = file->readULE32();
+    biPlanes = file->readULE16();
+    biBitCount = file->readULE16();
+    biCompression = file->readULE32();
+    biSizeImage = file->readULE32();
+    biXPelsPerMeter = file->readULE32();
+    biYPelsPerMeter = file->readULE32();
+    biClrUsed = file->readULE32();
+    biClrImportant = file->readULE32();
+}
+
+Surface ascii8x8;
 
 int Surface::totalSurfaceCount = 0;
 int Surface::totalByteCount    = 0;
@@ -88,12 +135,9 @@ int Surface::totalByteCount    = 0;
 // Surface
 //---------------------------------------------------------------------------
 
-Surface::Surface() : frames(0), thisFrame(0)
+Surface::Surface()
 {
-    numFrames   = 0;
-    curFrame    = 0.0;
-    fps         = 0;
-    offset.zero();
+    reset();
 
     totalSurfaceCount++;
     totalByteCount += sizeof(Surface);
@@ -102,12 +146,8 @@ Surface::Surface() : frames(0), thisFrame(0)
 // Surface
 //---------------------------------------------------------------------------
 Surface::Surface(unsigned int w, unsigned int h, unsigned int nframes)
-    : frames(0), thisFrame(0)
 {
-    numFrames   = 0;
-    curFrame    = 0.0;
-    fps         = 0;
-    offset.zero();
+    reset();
     
     alloc( w, h, nframes);
 
@@ -119,8 +159,10 @@ Surface::Surface(unsigned int w, unsigned int h, unsigned int nframes)
 //---------------------------------------------------------------------------
 Surface::~Surface()
 {
-    freedata();
-    
+    if ((doesExist != false) && (myMem != false)) {
+        free();
+    }
+
     totalSurfaceCount--;
     assert(totalSurfaceCount >= 0);
 
@@ -129,20 +171,42 @@ Surface::~Surface()
 } // end Surface::~Surface
 
 //---------------------------------------------------------------------------
-void Surface::freedata()
+void Surface::free()
 {
-    if ( frames ) {
-        for ( unsigned int n=0; n<numFrames; n++ ) {
-            SDL_FreeSurface(frames[n]);
-        }
-        delete frames;
-        frames=0;
+    if (myMem && frame0 != 0) {
+        ::free(frame0);
+
+        totalByteCount -= getPitch() * getHeight() * sizeof(PIX) * getNumFrames();
+
+        assert(totalByteCount >= 0);
     }
 
-    thisFrame  = 0;
-    
+    frame0     = 0;
+    mem        = 0;
+    myMem      = false;
+    doesExist  = false;
     numFrames = 0;
 }
+
+// reset
+//---------------------------------------------------------------------------
+void Surface::reset()
+{
+    assert(this != 0);
+
+    twidth      = 0;
+    theight     = 0;
+    tpitch      = 0;
+    
+    mem         = 0;
+    frame0      = 0;
+    myMem       = false;
+    numFrames   = 0;
+    curFrame    = 0;
+    fps         = 0;
+    offset.zero();
+    doesExist   = 0;
+} // end Surface::reset
 
 // setOffsetCenter
 //---------------------------------------------------------------------------
@@ -150,7 +214,11 @@ void Surface::freedata()
 //---------------------------------------------------------------------------
 void Surface::setOffsetCenter()
 {
+    assert(getDoesExist());
+    assert(this != 0);
+
     offset = iXY(-(getWidth()>>1), -(getHeight()>>1));
+
 } // end Surface::setOffsetCenter
 
 // alloc
@@ -164,25 +232,42 @@ Surface::alloc(unsigned int w, unsigned int h, int nframes)
 {
     assert(this != 0);
 
-    freedata();
-    
-    frames = new SDL_Surface*[nframes];
-    for ( int n=0; n<nframes; n++ ) {
-        frames[n] = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 8, 0 ,0 ,0, 0);
-        if ( !frames[n] ) {
-            n--;
-            while (n >= 0) {
-                SDL_FreeSurface(frames[n]);
-                n--;
-            }
-            throw Exception("Can't Create Surface");
-        }
-        SDL_SetColors(frames[n],Palette::color,0,256);
-    }
-    numFrames           = nframes;
-    thisFrame           = frames[0];
+    free();
 
+    twidth = w;
+    theight= h;
+    tpitch = getWidth();
+
+    size_t requestedBytes = getPitch() * getHeight() * sizeof(PIX) * nframes;
+
+    if (requestedBytes > 0) {
+        frame0 = (PIX *) malloc(requestedBytes);
+
+        if (frame0 == 0)
+            throw Exception("out of memory while allocating surface.");
+
+        totalByteCount += requestedBytes;
+        myMem = true;
+    }
+
+    Surface::mem        = frame0;
+    numFrames           = nframes;
+    Surface::doesExist  = true;
 } // end Surface::alloc
+
+// resize
+//---------------------------------------------------------------------------
+// Purpose: Resizes the calling surface to a new length and width, while
+//          remaining the same number of frames.
+//---------------------------------------------------------------------------
+void Surface::resize(int x, int y)
+{
+    assert(getDoesExist());
+    assert(this != 0);
+
+    create(x, y, getNumFrames());
+
+} // end Surface::resize
 
 // setTo
 //---------------------------------------------------------------------------
@@ -192,34 +277,31 @@ Surface::alloc(unsigned int w, unsigned int h, int nframes)
 //---------------------------------------------------------------------------
 void Surface::setTo(const Surface &source, iRect bounds)
 {
-    freedata();
-    
-    frames = new SDL_Surface*[source.numFrames];
-    for (unsigned int n=0; n<source.numFrames; n++) {
-        frames[n] = SDL_CreateRGBSurfaceFrom(
-                        (Uint8 *)source.frames[n]->pixels + (bounds.min.y*source.getPitch())+(bounds.min.x*source.frames[n]->format->BytesPerPixel),
-                        bounds.getSizeX(),
-                        bounds.getSizeY(),
-                        source.frames[n]->format->BitsPerPixel,
-                        source.frames[n]->pitch,
-                        source.frames[n]->format->Rmask,
-                        source.frames[n]->format->Gmask,
-                        source.frames[n]->format->Bmask,
-                        source.frames[n]->format->Amask);
-        if ( source.frames[n]->format->BytesPerPixel == 1) 
-            SDL_SetColors(frames[n],source.frames[n]->format->palette->colors,
-                                0,
-                                source.frames[n]->format->palette->ncolors);
-                        
-    }
-        
-    //orderCoords(bounds);
+    assert(source.getDoesExist());
+    assert(this != 0);
 
-    curFrame   = source.curFrame;
-    thisFrame  = frames[(unsigned int)curFrame];
+    free();
+    orderCoords(bounds);
+
+    myMem      = false;
+    frame0     = source.pixPtr(bounds.min.x, bounds.min.y);
+    mem	       = frame0;
+    if ( (unsigned int)bounds.max.x > source.getWidth() )
+        twidth = source.getWidth() - bounds.min.x;
+    else
+        twidth     = bounds.getSizeX();
+        
+    if ( (unsigned int)bounds.max.y > source.getHeight() )
+        theight = source.getHeight() - bounds.min.y;
+    else
+        theight    = bounds.getSizeY();
+        
+    tpitch     = source.getPitch();
     numFrames  = source.getNumFrames();
     fps        = source.getFPS();
     
+    doesExist  = source.getDoesExist();
+
 } // end Surface::setTo
 
 // setTo
@@ -229,20 +311,45 @@ void Surface::setTo(const Surface &source, iRect bounds)
 //---------------------------------------------------------------------------
 void Surface::setTo(const Surface &source)
 {
-    freedata();
+    assert(this != 0);
+    assert(source.getDoesExist());
 
-    frames = new SDL_Surface*[source.numFrames];
-    for (unsigned int n=0; n<source.numFrames; n++) {
-        frames[n] = source.frames[n];
-        frames[n]->refcount++;
-    }
+    free();
 
-    curFrame   = source.curFrame;
-    thisFrame  = frames[(unsigned int)curFrame];
+    myMem      = false;
+    frame0     = source.getFrame0();
+    mem        = frame0;
+    twidth     = source.getWidth();
+    theight    = source.getHeight();
+    tpitch     = source.getPitch();
     numFrames  = source.getNumFrames();
     fps        = source.getFPS();
     offset     = source.getOffset();
+    doesExist  = source.getDoesExist();
+
 } // end Surface::setTo
+
+// grab
+//---------------------------------------------------------------------------
+// Purpose: Copies a section from another Surface.
+//---------------------------------------------------------------------------
+bool Surface::grab(const Surface &source,
+                   iRect bounds)
+{
+    assert(source.getDoesExist());
+    assert(this != 0);
+
+    free();
+    orderCoords(bounds);
+
+    alloc(bounds.getSizeX(), bounds.getSizeY(), 1);
+    
+    // We can blit like this because everything will be clipped away for us.
+    source.blt(*this, -bounds.min.x, -bounds.min.y);
+
+    return true;
+
+} // end Surface::grab
 
 // blt
 //---------------------------------------------------------------------------
@@ -251,74 +358,438 @@ void Surface::setTo(const Surface &source)
 //---------------------------------------------------------------------------
 void Surface::blt(Surface &dest, int x, int y) const
 {
+    assert(getDoesExist());
+    assert(dest.getDoesExist());
+    assert(this != 0);
+    assert(mem != 0);
+    assert(dest.mem != 0);    
+
     // Add in the offset factor.
     x+=offset.x;
     y+=offset.y;
 
-    SDL_Rect drect= {x,y,0,0};
-    SDL_BlitSurface(thisFrame, 0, dest.thisFrame, &drect);
+    // Trivial clipping rejection - no overlap.
+    // Also will jump out immediately if either image has zero size.
+    if (x >= (int)dest.getWidth() || y >= (int)dest.getHeight())
+        return;
 
+    int end_x = x + getWidth();
+    int end_y = y + getHeight();
+    if ( end_x <= 0 || end_y <= 0 ) return;
+
+    unsigned int pixelsPerRow = getWidth();
+    unsigned int numRows      = getHeight();
+
+    PIX	*sPtr	= mem;      // Pointer to source Surface start of memory.
+    PIX	*dPtr	= dest.mem; // Pointer to destination Surface start of memory.
+
+    // Check for partial clip, calculate number of pixels
+    // per row to copy, and number of rows to copy.  Adjust
+    // sPtr and dPtr.
+
+    // CLIP LEFT
+    if (x < 0) {
+        pixelsPerRow +=  x; // This will subtract the neg. x value.
+        sPtr         += -x; // This will move the sPtr to x = 0, from the neg. x.
+    } else {
+        dPtr += x;
+    }
+
+    // CLIP RIGHT
+    // This subtracts only the portion hanging over the right edge of the
+    // destination Surface
+    if ((unsigned int)end_x > dest.getWidth())
+        pixelsPerRow -= end_x - dest.getWidth();
+
+    // CLIP TOP
+    if (y < 0) {
+        numRows += y;
+        sPtr    -= y * getPitch();
+    } else {
+        dPtr += y * dest.getPitch();
+    }
+
+    // CLIP BOTTOM
+    // This subtracts only the portion hanging over the bottom edge of the
+    // destination Surface
+    if ((unsigned int)end_y > dest.getHeight())
+        numRows -= end_y - dest.getHeight();
+
+    // Now, Check to make sure I actually have something
+    // to draw.  I should - because I checked for trivial
+    // rejection first.  These asserts just make sure
+    // my clipping is working...
+    assert(pixelsPerRow > 0);
+    assert(numRows > 0);
+
+    // Now blt the sucker!  But first, see if we can do it in one
+    // big blt, without doing each row individually...
+    if (getPitch() == pixelsPerRow && dest.getPitch() == pixelsPerRow) {
+        memcpy(dPtr, sPtr, pixelsPerRow * numRows * sizeof(PIX));
+    } else {
+        do {
+            memcpy(dPtr, sPtr, pixelsPerRow * sizeof(PIX));
+            sPtr += getPitch();
+            dPtr += dest.getPitch();
+        } while (--numRows > 0);
+    }
 } // end Surface::blt
 
-void
-Surface::setAllColorKey(Uint32 c)
+// bltTrans
+//---------------------------------------------------------------------------
+// Purpose: Puts the surface onto the destination using the slowest form of
+//          transparency detection (pixel by pixel basis), while performing
+//          clipping on the bounds of the object.
+//---------------------------------------------------------------------------
+void Surface::bltTrans(Surface &dest, int x, int y) const
 {
-    for (unsigned int n=0; n<numFrames; n++) {
-        SDL_SetColorKey(frames[n], SDL_SRCCOLORKEY|SDL_RLEACCEL, c);
-    }
-}
+    assert(getDoesExist());
+    assert(dest.getDoesExist());
+    assert(this != 0);
+    assert(mem != 0);
+    assert(dest.mem != 0);    
 
-void Surface::drawHLine(int x1, int y, int x2, Uint32 color)
-{
-    if (x1>x2) {
-        int xx = x2;
-        x2=x1;
-        x1=xx;
-    }
-    SDL_Rect r = {x1,y,x2-x1,1};
-    SDL_FillRect(thisFrame,&r,color);
-}
+    // Add in the offset factor.
+    x+=offset.x;
+    y+=offset.y;
 
-void Surface::drawVLine(int x, int y1, int y2, Uint32 color)
-{
-    if (y1>y2) {
-        int yy = y2;
-        y2=y1;
-        y1=yy;
+    // Trivial clipping rejection - no overlap.
+    // Also will jump out immediately if either image has zero size.
+    if (x >= (int)dest.getWidth() || y >= (int)dest.getHeight())
+        return;
+
+    int end_x = x + getWidth();
+    int end_y = y + getHeight();
+    if ( end_x <= 0 || end_y <= 0 ) return;
+
+    unsigned int pixelsPerRow = getWidth();
+    unsigned int numRows      = getHeight();
+
+    PIX	*sPtr	= mem;      // Pointer to source Surface start of memory.
+    PIX	*dPtr	= dest.mem; // Pointer to destination Surface start of memory.
+
+    // Check for partial clip, calculate number of pixels
+    // per row to copy, and number of rows to copy.  Adjust
+    // sPtr and dPtr.
+
+    // CLIP LEFT
+    if (x < 0) {
+        pixelsPerRow +=  x; // This will subtract the neg. x value.
+        sPtr         += -x; // This will move the sPtr to x = 0, from the neg. x.
+    } else {
+        dPtr += x;
     }
-    SDL_Rect r = {x,y1,1,y2-y1};
-    SDL_FillRect(thisFrame,&r,color);
+
+    // CLIP RIGHT
+    // This subtracts only the portion hanging over the right edge of the
+    // destination Surface
+    if ((unsigned int)end_x > dest.getWidth())
+        pixelsPerRow -= end_x - dest.getWidth();
+
+    // CLIP TOP
+    if (y < 0) {
+        numRows += y;
+        sPtr    -= y * getPitch();
+    } else {
+        dPtr += y * dest.getPitch();
+    }
+
+    // CLIP BOTTOM
+    // This subtracts only the portion hanging over the bottom edge of the
+    // destination Surface
+    if ((unsigned int)end_y > dest.getHeight())
+        numRows -= end_y - dest.getHeight();
+
+    // Now, Check to make sure I actually have something
+    // to draw.  I should - because I checked for trivial
+    // rejection first.  These asserts just make sure
+    // my clipping is working...
+    assert(pixelsPerRow > 0);
+    assert(numRows > 0);
+
+    int srcAdjustment  = getPitch()      - pixelsPerRow;
+    int destAdjustment = dest.getPitch() - pixelsPerRow;
+    for (unsigned int row = 0; row < numRows; row++) {
+        for (unsigned int col = 0; col < pixelsPerRow; col++) {
+            if (*sPtr != 0)
+                *dPtr = *sPtr;
+            sPtr++;
+            dPtr++;
+        }
+
+        sPtr += srcAdjustment;
+        dPtr += destAdjustment;
+    }
+
+} // end Surface::bltTrans
+
+// bltTransC
+//---------------------------------------------------------------------------
+// Purpose: Puts the surface onto the destination using the slowest form of
+//          transparency detection (pixel by pixel basis), while performing
+//          clipping on the bounds of the object. The non-transparent pixels
+//          are blitted in the specified color.
+//---------------------------------------------------------------------------
+void Surface::bltTransColor(Surface &dest, int x, int y, const Uint8 &color) const
+{
+    assert(getDoesExist());
+    assert(dest.getDoesExist());
+    assert(this != 0);
+    assert(mem != 0);
+    assert(dest.mem != 0);    
+
+    // Add in the offset factor.
+    x+=offset.x;
+    y+=offset.y;
+
+    // Trivial clipping rejection - no overlap.
+    // Also will jump out immediately if either image has zero size.
+    if (x >= (int)dest.getWidth() || y >= (int)dest.getHeight())
+        return;
+
+    int end_x = x + getWidth();
+    int end_y = y + getHeight();
+    if ( end_x <= 0 || end_y <= 0 ) return;
+
+    unsigned int pixelsPerRow = getWidth();
+    unsigned int numRows      = getHeight();
+
+    PIX	*sPtr	= mem;      // Pointer to source Surface start of memory.
+    PIX	*dPtr	= dest.mem; // Pointer to destination Surface start of memory.
+
+    // Check for partial clip, calculate number of pixels
+    // per row to copy, and number of rows to copy.  Adjust
+    // sPtr and dPtr.
+
+    // CLIP LEFT
+    if (x < 0) {
+        pixelsPerRow +=  x; // This will subtract the neg. x value.
+        sPtr         += -x; // This will move the sPtr to x = 0, from the neg. x.
+    } else {
+        dPtr += x;
+    }
+
+    // CLIP RIGHT
+    // This subtracts only the portion hanging over the right edge of the
+    // destination Surface
+    if ((unsigned int)end_x > dest.getWidth())
+        pixelsPerRow -= end_x - dest.getWidth();
+
+    // CLIP TOP
+    if (y < 0) {
+        numRows += y;
+        sPtr    -= y * getPitch();
+    } else {
+        dPtr += y * dest.getPitch();
+    }
+
+    // CLIP BOTTOM
+    // This subtracts only the portion hanging over the bottom edge of the
+    // destination Surface
+    if ((unsigned int)end_y > dest.getHeight())
+        numRows -= end_y - dest.getHeight();
+
+    // Now, Check to make sure I actually have something
+    // to draw.  I should - because I checked for trivial
+    // rejection first.  These asserts just make sure
+    // my clipping is working...
+    assert(pixelsPerRow > 0);
+    assert(numRows > 0);
+
+    int srcAdjustment  = getPitch()      - pixelsPerRow;
+    int destAdjustment = dest.getPitch() - pixelsPerRow;
+
+    for (unsigned int row = 0; row < numRows; row++) {
+        for (unsigned int col = 0; col < pixelsPerRow; col++) {
+            if (*sPtr != 0)
+                *dPtr = color;
+            sPtr++;
+            dPtr++;
+        }
+
+        sPtr += srcAdjustment;
+        dPtr += destAdjustment;
+    }
+} // end Surface::bltTransC
+
+// drawHLine
+//---------------------------------------------------------------------------
+// Purpose: Draws a horizontal drawLine.
+//---------------------------------------------------------------------------
+void Surface::drawHLine(int x1, int y, int x2, const PIX &color)
+{
+    assert(getDoesExist());
+    assert(this != 0);
+
+    // Check for trivial rejection
+    if ( y < 0 || x2 <= 0
+         || y >= (int)getHeight()
+         || x1 >= (int)getWidth() )
+         return;
+
+    assert(mem != 0);
+    if (mem == 0) return;
+
+    orderCoords(x1, x2);
+
+    unsigned length = x2 - x1;
+    PIX *ptr = mem + y * getPitch();
+
+    // CLIP LEFT
+    if (x1 < 0) {
+        length += x1;
+    }	else {
+        ptr += x1;
+    }
+
+    // CLIP RIGHT
+    if (x2 >= (int)getWidth()) length -= (x2 - getWidth());
+
+    memset(ptr, color, length * sizeof(PIX));
+
+} // end Surface::drawHLine
+
+// drawVLine
+//---------------------------------------------------------------------------
+// Purpose: Draws a vertical drawLine.
+//---------------------------------------------------------------------------
+void Surface::drawVLine(int x, int y1, int y2, const PIX &color)
+{
+    assert(getDoesExist());
+    assert(this != 0);
+
+    // Check for trivial rejection
+    if ( x < 0 || y2 <= 0
+        || x >= (int)getWidth()
+        || y1 >= (int)getHeight() )
+        return;
+
+    assert(mem != 0);
+    if (mem == 0) return;
+
+    orderCoords(y1, y2);
+
+    // CLIP TOP
+    if (y1 < 0) y1 = 0;
+
+    // CLIP BOTTOM
+    if (y2 >= (int)getHeight()) y2 = getHeight()-1;
+
+    PIX	*ptr	= mem+y1*getPitch()+x;
+
+    int	width	= y2 - y1;
+
+    while(width > 0) {
+        *ptr	= color;
+        ptr	+= getPitch();
+        width--;
+    }
 } // end Surface::drawVLine
 
-void Surface::fill(Uint32 color)
+// fill
+//---------------------------------------------------------------------------
+// Purpose: Fills the Surface will the specified color.
+//---------------------------------------------------------------------------
+void Surface::fill(const PIX &color)
 {
-    SDL_FillRect(thisFrame,0,color);
-}
+    assert(getDoesExist());
+    assert(this != 0);
 
-void Surface::fillRect(iRect bounds, Uint32 color)
+    if ( !getWidth() || !getHeight() ) return;
+
+    if (getWidth() == getPitch()) {
+        memset(mem, color, getWidth() * getHeight() * sizeof(PIX));
+    }	else {
+        int	n = getHeight();
+        PIX *ptr = mem;
+        do {
+            memset(ptr, color, getWidth());
+            ptr += getPitch();
+        } while (--n > 0);
+    }
+
+} // end Surface::fill
+
+// fillRect
+//---------------------------------------------------------------------------
+// Purpose: Fills the specified rectangle in the calling Surface with the
+//          specified color.
+//---------------------------------------------------------------------------
+void Surface::fillRect(iRect bounds, const PIX &color)
 {
-    SDL_Rect r = {bounds.min.x, bounds.min.y, bounds.getSizeX(), bounds.getSizeY()};
-    SDL_FillRect(thisFrame, &r, color);
+    assert(getDoesExist());
+    assert(this != 0);
+
+    if ( !getWidth() || !getHeight() ) return;
+
+    orderCoords(bounds);
+
+    // Check for trivial rejection
+    //if (bounds.max < 0 || bounds.min >= pix) return;
+    if (bounds.max.x <  0)     return;
+    if (bounds.max.y <  0)     return;
+    if (bounds.min.x >= (int)getWidth()) return;
+    if (bounds.min.y >= (int)getHeight()) return;
+
+    // Check for clipping
+    if (bounds.min.x <  0)     bounds.min.x = 0;
+    if (bounds.min.y <  0)     bounds.min.y = 0;
+    if (bounds.max.x > (int)getWidth())  bounds.max.x = getWidth();
+    if (bounds.max.y > (int)getHeight()) bounds.max.y = getHeight();
+
+    iXY diff;
+    diff = (bounds.max - bounds.min);
+
+    // Set memory to the top-left pixel of the rectangle.
+    PIX	*ptr = mem + bounds.min.y * getPitch() + bounds.min.x;
+
+    for (int y = 0; y < diff.y; y++) {
+        // Lay the horizontal strip.
+        memset(ptr, color, diff.x * sizeof(PIX));
+        ptr += getPitch();
+    }
 } // end Surface::fillRect
 
 // drawRect
 //---------------------------------------------------------------------------
 // Purpose: Draws a rectagle in the specified color on the calling Surface.
 //---------------------------------------------------------------------------
-void Surface::drawRect(iRect bounds, Uint32 color)
+void Surface::drawRect(iRect bounds, const PIX &color)
 {
-    drawHLine(bounds.min.x,   bounds.min.y,   bounds.max.x, color);
-    drawHLine(bounds.min.x,   bounds.max.y,   bounds.max.x+1, color);
-    drawVLine(bounds.min.x,   bounds.min.y,   bounds.max.y, color);
-    drawVLine(bounds.max.x,   bounds.min.y,   bounds.max.y, color);
+    assert(getDoesExist());
+    assert(this != 0);
+
+    if ( !getWidth() || !getHeight() ) return;
+
+    orderCoords(bounds);
+
+    // Check for trivial rejection
+    if      (bounds.max.x <  0)     return;
+    else if (bounds.max.y <  0)     return;
+    else if (bounds.min.x >= (int)getWidth()) return;
+    else if (bounds.min.y >= (int)getHeight()) return;
+
+    // Check for clipping
+    if (bounds.min.x <  0)     bounds.min.x = 0;
+    if (bounds.min.y <  0)     bounds.min.y = 0;
+    if (bounds.max.x >= (int)getWidth())  bounds.max.x = getWidth() - 1;
+    if (bounds.max.y >= (int)getHeight()) bounds.max.y = getHeight() - 1;
+
+    drawHLine(bounds.min.x, bounds.min.y, bounds.max.x,   color);
+    drawHLine(bounds.min.x, bounds.max.y, bounds.max.x+1, color);
+    drawVLine(bounds.min.x, bounds.min.y, bounds.max.y,   color);
+    drawVLine(bounds.max.x, bounds.min.y, bounds.max.y,   color);
 } // end Surface::drawRect
 
 // drawLine
 //---------------------------------------------------------------------------
 // Purpose: Draws a drawLine with any slope.
 //---------------------------------------------------------------------------
-void Surface::drawLine(int x1, int y1, int x2, int y2, Uint32 color)
+void Surface::drawLine(int x1, int y1, int x2, int y2, const PIX &color)
 {
+    assert(getDoesExist());
+    assert(this != 0);
+
     // Check for horizontal lines
     if (y1 == y2) {
         orderCoords(x1, x2);
@@ -381,6 +852,34 @@ void Surface::drawLine(int x1, int y1, int x2, int y2, Uint32 color)
     }
 } //end Surface::drawLine
 
+// flipVertical
+//---------------------------------------------------------------------------
+// Purpose: Goes through all the frames of the surface and flips then
+//          vertically.
+//---------------------------------------------------------------------------
+void Surface::flipVertical()
+{
+    assert(getDoesExist());
+    assert(this != 0);
+
+    Surface tempSurface(getWidth(), getHeight(), 1);
+
+    for (unsigned int frameNum = 0; frameNum < getNumFrames(); frameNum++) {
+        // This sets the mem pointer of the source Surface
+        setFrame(frameNum);
+
+        PIX *sPtr = mem + getWidth() * getHeight() - getWidth();
+        PIX *dPtr = tempSurface.mem;
+
+        for (unsigned int y = 0; y < getHeight(); y++) {
+            memcpy(dPtr, sPtr, getWidth() * sizeof(PIX));
+            sPtr -= getWidth();
+            dPtr += getWidth();
+        }
+        tempSurface.blt(*this,0 ,0);
+    }
+} // end Surface::flipVertical
+
 // copy
 //---------------------------------------------------------------------------
 // Purpose: Copies the specified number of frames from the source Surface to
@@ -388,29 +887,27 @@ void Surface::drawLine(int x1, int y1, int x2, int y2, Uint32 color)
 //---------------------------------------------------------------------------
 void Surface::copy(const Surface &source)
 {
-    freedata();
+    if(!source.getDoesExist())
+        return;
     
-    frames = new SDL_Surface*[source.numFrames];
-    for (unsigned int n=0; n<source.numFrames; n++) {
-        frames[n] = SDL_CreateRGBSurface( SDL_SWSURFACE,
-                        source.frames[n]->w,
-                        source.frames[n]->h,
-                        source.frames[n]->format->BitsPerPixel,
-                        0,0,0,0);
-                        
-        if ( source.frames[n]->format->BytesPerPixel == 1) 
-            SDL_SetColors(frames[n],source.frames[n]->format->palette->colors,
-                                    0,
-                                    source.frames[n]->format->palette->ncolors);
-                                    
-        SDL_BlitSurface(source.frames[n], 0, frames[n], 0);
+    assert(this != 0);
+
+    // XXX ugly ugly ugly
+    Surface& nonconstsource = const_cast<Surface&> (source);
+
+    // Create a Surface the surface the same size as the source.
+    create(source.getWidth(), source.getHeight(), source.getNumFrames());
+
+    PIX* oldmem = source.mem;
+    for (unsigned int frameNum = 0; frameNum < source.getNumFrames(); frameNum++) {
+        // Set the source Surface frame.
+        setFrame(frameNum);
+        nonconstsource.setFrame(frameNum);
+
+        // Blit the source frame to the calling frame
+        source.blt(*this, 0, 0);
     }
-        
-    curFrame   = 0.0;
-    thisFrame  = frames[0];
-    numFrames  = source.getNumFrames();
-    fps        = source.getFPS();
-    
+    nonconstsource.mem = oldmem;
 } // end Surface::copy
 
 // rotate
@@ -471,31 +968,124 @@ void Surface::scale(unsigned int x, unsigned int y)
     iRect r(0, 0, x, y);
 
     // Go through all the frames of the surface.
-    unsigned int n;
-    for (n = 0; n < tempSurface.getNumFrames(); n++) {
-        tempSurface.setFrame(n);
-        Surface::setFrame(n);
+    unsigned int frame;
+    for (frame = 0; frame < tempSurface.getNumFrames(); frame++) {
+        tempSurface.setFrame(frame);
+        Surface::setFrame(frame);
+
         tempSurface.bltScale(*this, r);
     }
 
-    SDL_Surface **t = frames;
-    frames=tempSurface.frames;
-    tempSurface.frames=t;
-    setFrame((unsigned int)curFrame);
+    // Resize the calling surface, then copy all the scaled images on it.
+    Surface::resize(x, y);
 
+    for (frame = 0; frame < tempSurface.getNumFrames(); frame++) {
+        Surface::setFrame(frame);
+        tempSurface.setFrame(frame);
+
+        tempSurface.blt(*this, 0, 0);
+    }
+
+    /* OLD VERSION 6.29.1998
+    	// Find out the number of pix to step in the image.
+    	fXY stepPix;
+    	stepPix.x = float(Surface::pix.x) / float(pix.x);
+    	stepPix.y = float(Surface::pix.y) / float(pix.y);
+     
+    	// Create a temporary surface to scale the image onto.
+    	Surface tempSurface(pix, pix.x, frameCount);
+     
+    	// build a table the first time you go through, then scaling all
+    	// additional frames can be done by getting the values from the table.
+     
+    	fXY curPix;
+    	curPix = 0.0;
+     
+    	// Go through all the frames of the surface.
+    	for (int frame = 0; frame < frameCount; frame++)
+    	{
+    		//LOG(("frame: %d; frameCount: %d", frame, frameCount));
+    		tempSurface.setFrame(frame);
+    		this->setFrame(frame);
+     
+    		for (int x = 0; x < pix.x; x++)
+    		{
+    			for (int y = 0; y < pix.y; y++)
+    			{
+    				tempSurface.putPixel(x, y, this->getPixel(int(curPix.x), int(curPix.y)));
+    				curPix.y += stepPix.y;
+    			}
+    			curPix.y = 0.0;
+    			curPix.x += stepPix.x;
+    		}
+    		curPix.x = 0.0;
+    	}
+     
+    	// Resize the calling surface, then map all the scaled images on it.
+    	this->resize(pix);
+     
+    	assert(frameCount == tempSurface.frameCount);
+     
+    	for (frame = 0; frame < frameCount; frame++)
+    	{
+    		//LOG(("frame: %d; frameCount: %d", frame, frameCount));
+    		this->setFrame(frame);
+    		tempSurface.setFrame(frame);
+    		tempSurface.blt(*this);
+    	}
+    */
 } // end Surface::scale
+
+void Surface::bltLookup(const iRect &destRect, const PIX table[])
+{
+    assert(getDoesExist());
+    assert(this != 0);
+    assert(mem != 0);
+
+    iXY min = destRect.min + offset;
+    if (min.x >= (int)getWidth()) return;
+    if (min.y >= (int)getHeight()) return;
+
+    iXY max = destRect.max + offset;
+    if (max.x <= 0) return;
+    if (max.y <= 0) return;
+
+    // Clip destination rectangle
+    if (min.x < 0) min.x = 0;
+    if (min.y < 0) min.y = 0;
+    if (max.x >= (int)getWidth())  max.x = getWidth();
+    if (max.y >= (int)getHeight()) max.y = getHeight();
+
+    size_t pixelsPerRow = max.x - min.x;
+    size_t numRows      = max.y - min.y;
+
+    PIX *dRow = mem + min.y*getPitch() + min.x;
+
+    for (size_t yCount = 0 ; yCount < numRows ; yCount++) {
+        for(size_t x=0; x<pixelsPerRow; x++)
+            dRow[x] = table[dRow[x]];
+
+        dRow += getPitch();
+    }
+}
 
 //---------------------------------------------------------------------------
 void Surface::bltScale(const Surface &source, const iRect &destRect)
 {
+    assert(getDoesExist());
+    assert(source.getDoesExist());
+    assert(this != 0);
+
     iXY min = destRect.min + source.offset;
     iXY max = destRect.max + source.offset;
 
-    if ((unsigned int)min.x >= getWidth()) return;
-    if ((unsigned int)min.y >= getHeight()) return;
+    if (min.x >= (int)getWidth()) return;
+    if (min.y >= (int)getHeight()) return;
 
     // Something is overlapping, so we need to verify that both
     // surfaces are valid.
+    assert(mem        != 0);
+    assert(source.mem != 0);
 
     size_t pixelsPerRow = max.x-min.x;
     size_t numRows      = max.y-min.y;
@@ -509,7 +1099,8 @@ void Surface::bltScale(const Surface &source, const iRect &destRect)
     int xSrcDelta = int((float(source.getWidth()) / float(max.x - min.x)) * 65536.0);
     int ySrcDelta = int((float(source.getHeight()) / float(max.y - min.y)) * 65536.0);
 
-    PIX *dRow = (PIX *)pixPtr(0,0);
+    PIX  *dRow = mem;			// Pointer to the destination Surface
+
     // CLIP LEFT
     if (min.x < 0) {
         pixelsPerRow += min.x;
@@ -519,7 +1110,7 @@ void Surface::bltScale(const Surface &source, const iRect &destRect)
     }
 
     // CLIP RIGHT
-    if ((unsigned int)max.x > getWidth()) {
+    if (max.x > (int)getWidth()) {
         pixelsPerRow -= max.x - getWidth();
     }
 
@@ -532,7 +1123,7 @@ void Surface::bltScale(const Surface &source, const iRect &destRect)
     }
 
     // CLIP BOTTOM
-    if ((unsigned int)max.y > getHeight()) {
+    if (max.y > (int)getHeight()) {
         numRows -= max.y-getHeight();
     }
 
@@ -540,21 +1131,113 @@ void Surface::bltScale(const Surface &source, const iRect &destRect)
     if (pixelsPerRow <= 0) return;
     if (numRows <= 0) return;
 
+#if 0
+    int stepAndDecCount = (xSrcDelta << 16) | 0xffff;
+    int stepWholePart = xSrcDelta >> 16;
+    int srcX1FracWithCount = (srcX1 << 16) | pixelsPerRow;
+#endif
+
     float xdelta = float(source.getWidth()) / float(max.x - min.x);
     for (size_t yCount = 0 ; yCount < numRows ; yCount++) {
         const PIX *sRow = source.pixPtr(0, srcY >> 16) + (srcX1 >> 16);
 
+#if 0
+        bltScaleSpan(dRow, sRow, srcX1FracWithCount, stepAndDecCount, stepWholePart);
+#else
         // XXX: WARNING SLOW CODE
         float sPos = 0;
         for(size_t x=0; x<pixelsPerRow; x++) {
             dRow[x] = sRow[(size_t) sPos];
             sPos += xdelta;
         }
+#endif
 
         srcY += ySrcDelta;
         dRow += getPitch();
     }
 }
+
+// shrinkWrap
+//---------------------------------------------------------------------------
+void Surface::shrinkWrap()
+{
+    assert(getDoesExist());
+    assert(this != 0);
+    
+    int center_x = getWidth()>>1;
+    int center_y = getHeight()>>1;
+
+    // Start the bounds values in the center of the surface.
+    iRect bounds;
+    bounds.min.x = center_x;
+    bounds.max.x = center_x;
+    bounds.min.y = center_y;
+    bounds.max.y = center_y;
+
+    unsigned int num;
+    for (num = 0; num < getNumFrames(); num++) {
+        setFrame(num);
+        //LOG(("curFrame:  %d", curFrame));
+        //LOG(("frameCount: %d", frameCount));
+        //LOG(("pix.x:     %d", pix.x));
+        //LOG(("pix.y:     %d", pix.y));
+
+        // Check the x bounds.
+        for (unsigned int y = 0; y < getHeight(); y++) {
+            for (unsigned int x = 0; x < getWidth(); x++) {
+                if (getPixel(x, y) != 0) {
+                    if (x < (unsigned int)bounds.min.x) {
+                        bounds.min.x = x;
+                    }
+                    if (x > (unsigned int)bounds.max.x) {
+                        bounds.max.x = x;
+                    }
+                }
+            }
+        }
+
+        // Check the y bounds.
+        for (unsigned int x = 0; x < getWidth(); x++) {
+            for (unsigned int y = 0; y < getHeight(); y++) {
+                if (getPixel(x, y) != 0) {
+                    if (y < (unsigned int)bounds.min.y) {
+                        bounds.min.y = y;
+                    }
+                    if (y > (unsigned int)bounds.max.y) {
+                        bounds.max.y = y;
+                    }
+                }
+            }
+        }
+    }
+
+    int xDiff = bounds.max.x-bounds.min.x;
+    int yDiff = bounds.max.y-bounds.min.y;
+
+    //LOG(("bounds.min.x: %d", bounds.min.x));
+    //LOG(("bounds.max.x: %d", bounds.max.x));
+    //LOG(("bounds.min.y: %d", bounds.min.y));
+    //LOG(("bounds.max.y: %d", bounds.max.y));
+    //LOG(("xDiff:        %d", xDiff));
+    //LOG(("yDiff:        %d", yDiff));
+
+    // Create a temporary surface to draw all the cropped frames onto.
+    Surface tempSurface(xDiff, yDiff, getNumFrames());
+    //tempSurface.create(xDiff, yDiff, xDiff, frameCount);
+
+    // Crop the surface frames onto the temp surface.
+    for (num = 0; num < getNumFrames(); num++) {
+        setFrame(num);
+        tempSurface.setFrame(num);
+        tempSurface.fill(0);
+        blt(tempSurface, -bounds.min.x, -bounds.min.y);
+    }
+
+    resize(xDiff, yDiff);
+
+    copy(tempSurface);
+
+} // end Surface::shrinkWrap
 
 static inline float getRand(float lo, float hi)
 {
@@ -566,33 +1249,86 @@ static inline float calcY(float average, float ruggedness, unsigned distance)
     return average+getRand(-ruggedness, ruggedness)*float(distance);
 }
 
-void
-Surface::setColors(const std::string& paletteName)
+// getAverageColor
+//---------------------------------------------------------------------------
+// Purpose: Recalculates the best single color to represent this Surface.
+//---------------------------------------------------------------------------
+PIX Surface::getAverageColor()
 {
-    std::string lp = Palette::getName();
-    if ( lp != paletteName )
-        Palette::loadACT(paletteName);
-        
-    for (unsigned int fr=0;fr<getNumFrames();fr++)
-        SDL_SetColors(frames[fr], (SDL_Color*)Palette::color,0,256);
-        
-    if ( lp != paletteName )
-        Palette::loadACT(lp);
-}
+    int avgR = 0;
+    int avgG = 0;
+    int avgB = 0;
 
-void
-Surface::setAllColorsBlack()
+    // Go through a single cTile and get all the additive color values.
+    for (unsigned int x = 0; x < getWidth(); x++) {
+        for (unsigned int y = 0; y < getHeight(); y++) {
+            avgR += Palette::color[getPixel(x, y)].r;
+            avgG += Palette::color[getPixel(x, y)].g;
+            avgB += Palette::color[getPixel(x, y)].b;
+        }
+    }
+
+    // Divide each individual amount by the number of bytes in the image.
+    int numPix = getArea();
+
+    avgR /= numPix;
+    avgG /= numPix;
+    avgB /= numPix;
+
+    return Palette::findNearestColor(avgR, avgG, avgB);
+} // end Surface::getAverageColor
+
+// loadAllBMPInDirectory
+//---------------------------------------------------------------------------
+int Surface::loadAllBMPInDirectory(const char *path)
 {
-    if ( ! frames ) {
-        LOGGER.warning("There are no frames..");
-        return;
+    char** list = filesystem::enumerateFiles(path);
+    
+    std::vector<std::string> filenames;
+    Surface tempSurface(8, 8, 1);
+    iXY maxSize(0, 0);
+    for(char** file = list; *file != 0; file++) {
+        std::string name = path;
+        name += *file;
+        if(name.find(".bmp") != std::string::npos) {
+            filenames.push_back(name);
+
+            // Get the max image size.
+            tempSurface.loadBMP(name.c_str());
+            if (maxSize.x < (int)tempSurface.getWidth()) {
+                maxSize.x = tempSurface.getWidth();
+            }
+            if (maxSize.y < (int)tempSurface.getHeight()) {
+                maxSize.y = tempSurface.getHeight();
+            }
+        }
     }
-    SDL_Color c[256];
-    SDL_memset(c,0,sizeof(c));
-    for (unsigned int n=0; n<numFrames; n++) {
-        SDL_SetColors(frames[n], c, 0, 256);
+
+    filesystem::freeList(list);
+
+    std::sort(filenames.begin(), filenames.end());
+
+    // Create the Surface to have the size of the largest image in the
+    // diRectory.  All other images will be centered based off the
+    // largest size.
+    create(maxSize.x, maxSize.y, filenames.size());
+
+    // Now load in the sorted BMP names.
+    for (size_t i = 0; i < filenames.size(); i++) {
+        setFrame(i);
+
+        tempSurface.loadBMP(filenames[i].c_str());
+        iXY myOffset=maxSize;
+        myOffset.x-=tempSurface.getWidth();
+        myOffset.y-=tempSurface.getHeight();
+
+        fill(Color::black);
+        tempSurface.blt(*this, myOffset.x, myOffset.y);
     }
-}
+
+    return 1;
+} // end loadAllBMPInDirectory
+
 // initFont
 //---------------------------------------------------------------------------
 // Purpose: Load all the characters into a surface of 128 frames.  Then the
@@ -601,7 +1337,9 @@ Surface::setAllColorsBlack()
 void initFont()
 {
     try {
-        // already initialized at 8x8x128
+        // Make room for the 128 characters.
+        ascii8x8.create(8, 8, 128);
+
         // NOTE: Make sure the file size is 128 characters.
         char charfilename[] = "pics/chars8x8.raw";
 
@@ -612,12 +1350,11 @@ void initFont()
             for (unsigned int curChar = 0; curChar < ascii8x8.getNumFrames();
 		    curChar++) {
                 ascii8x8.setFrame(curChar);
-                int yOffset = y * ascii8x8.getPitch();
+                int yOffset = y * ascii8x8.getWidth();
+
                 file->read(ascii8x8.getMem() + yOffset, ascii8x8.getWidth(), 1);
             }
         }
-
-        ascii8x8.setAllColorKey(0);
     } catch(std::exception& e) {
 	throw Exception("Error while reading 8x8 font: %s",
 		e.what());
@@ -633,7 +1370,7 @@ Surface::getFontHeight()
 
 int Surface::getTextLength(const char* text)
 {
-    return ascii8x8.getWidth() * SDL_strlen(text);
+    return ascii8x8.getWidth() * strlen(text);
 }
 
 // bltChar8x8
@@ -647,8 +1384,7 @@ void Surface::bltChar8x8(int x, int y, unsigned char character, const PIX &color
         return;
 
     ascii8x8.setFrame(character);
-    SDL_SetColors(ascii8x8.thisFrame, &Palette::color[color],255,1);
-    ascii8x8.blt(*this, x, y);
+    ascii8x8.bltTransColor(*this, x, y, color);
 } // end Surface::bltChar8x8
 
 // bltString
@@ -687,7 +1423,7 @@ void Surface::bltStringShadowed(int x, int y, char const *str, const Uint8 &text
 //---------------------------------------------------------------------------
 void Surface::bltStringCenter(const char *string, PIX color)
 {
-    bltString(  (getWidth() - (SDL_strlen(string) * ascii8x8.getWidth())) / 2,
+    bltString(  (getWidth() - (strlen(string) * ascii8x8.getWidth())) / 2,
                 (getHeight() - getFontHeight()) / 2,
                 string, color);
 
@@ -700,7 +1436,7 @@ void Surface::bltStringCenter(const char *string, PIX color)
 //---------------------------------------------------------------------------
 void Surface::bltStringShadowedCenter(const char *string, PIX foreground, PIX background)
 {
-    bltStringShadowed((getWidth() - (SDL_strlen(string) * ascii8x8.getWidth())) / 2,
+    bltStringShadowed((getWidth() - (strlen(string) * ascii8x8.getWidth())) / 2,
                       (getHeight() - getFontHeight()) / 2,
                       string, foreground, background);
 
@@ -712,7 +1448,7 @@ void Surface::bltStringShadowedCenter(const char *string, PIX foreground, PIX ba
 //---------------------------------------------------------------------------
 void Surface::bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color)
 {
-    int length = SDL_strlen(string);
+    int length = strlen(string);
 
     iXY destPos;
     destPos.x = rect.min.x + (rect.getSizeX() - (length * ascii8x8.getWidth())) / 2;
@@ -723,6 +1459,15 @@ void Surface::bltStringCenteredInRect(const iRect &rect, const char *string, con
     }
 
 } // end Surface::bltStringCenteredInRect
+
+// create
+//---------------------------------------------------------------------------
+void
+Surface::create(unsigned int w, unsigned int h, unsigned int nframes)
+{
+    reset();
+    alloc( w, h, nframes);
+} // end Surface::create
 
 // nextFrame
 //
@@ -735,166 +1480,92 @@ int Surface::nextFrame()
 
     if (curFrame >= getNumFrames()) {
         curFrame = 0.0;
-        thisFrame = frames[0];
         return 0;
     }
 
-    thisFrame=frames[(unsigned int)curFrame];
+    setFrame(curFrame);
     return 1;
 }
 
-// loadAllBMPInDirectory
-//---------------------------------------------------------------------------
-int Surface::loadAllBMPInDirectory(const char *path)
+void Surface::loadBMP(const char *fileName, bool needAlloc)
 {
-    char** list = filesystem::enumerateFiles(path);
-    
-    std::vector<std::string> filenames;
-    
-    for(char** file = list; *file != 0; file++) {
-        std::string name = path;
-        name += *file;
-        if(name.find(".bmp") != std::string::npos)
-            filenames.push_back(name);
-    }
+    assert(this != 0);
 
-    filesystem::freeList(list);
+    if (needAlloc) free();
 
-    std::sort(filenames.begin(), filenames.end());
-
-    // XXX remove alloc and do byhand
-    alloc(1,1,filenames.size());
-
-    // Now load in the sorted BMP names.
-    for (size_t i = 0; i < filenames.size(); i++) {
-        setFrame(i);
-        loadBMP(filenames[i].c_str());
-    }
-
-    return 1;
-} // end loadAllBMPInDirectory
-
-void Surface::loadBMP(const char *fileName)
-{
-    filesystem::ReadFile *f=0;
-    try {
-        f=filesystem::openRead(fileName);
-    } catch(...) {
-        throw;
-    }
-    // SDL_LoadBMP_RW will close the RWOps and free the file;
-    SDL_Surface *s = SDL_LoadBMP_RW(f->getSDLRWOps(),1);
-    //freedata();
-    if ( !numFrames ) {
-        numFrames = 1;
-        curFrame = 0.0;
-        frames = new SDL_Surface*;
-        frames[0] = s;
-        thisFrame = s;
-    } else {
-        SDL_free(thisFrame);
-    }
-    frames[(unsigned int)curFrame]=s;
-    thisFrame=s;
-}
-
-void Surface::loadPAK(const std::string& filename)
-{
-    int  *rowOffsetTable = 0;
-    Uint8 *packedDataChunk = 0;
+    std::auto_ptr<filesystem::ReadFile> file(
+            filesystem::openRead(fileName));
 
     try {
-        std::auto_ptr<filesystem::ReadFile> file(filesystem::openRead(filename));
+        BitmapFileHeader file_header(file.get());
 
-        freedata();
-        Sint32 version = file->readSLE32();
-        if (version < 1)
-            throw Exception("Invalid PAK file version: %d", version);
-        if (version > 1) // this in current and only one, will get rid of paks
-            throw Exception("PAK file version of '%s' is newer(%d) than "
-                "the currently supported version(%d)",
-            filename.c_str(), version, 1);
+        if ( file_header.bfType != 0x4d42 ) // file_header.bfType != "BM"
+            throw Exception("%s is not a valid 8-bit BMP file", fileName);
 
-        Uint32 sizex = file->readSLE32();
-        Uint32 sizey = file->readSLE32();
-        //center = pix / 2;
-
-        Sint32 t;
-        t=file->readSLE32();
-        numFrames = t;
-        // should be done like following but this isn't backward compatible to
-        // the existing files :-/
-        //fps = float(file->readSLE32()) / 65536;
-        // XXX is this correct?!?
-        //Sint32 fpsint = file->readSLE32();
-        //fps = * ((float*) (void*) &fpsint);
-        fps=file->readSLE32();
-
-        offset.x = file->readSLE32();
-        offset.y = file->readSLE32();
+        BitmapInfoHeader info_header(file.get());
         
-        rowOffsetTable = (int *) SDL_malloc((sizey * numFrames + 1) * sizeof(*rowOffsetTable));
-        if (rowOffsetTable == 0)
-            throw Exception(
-            "ERROR: Unable to allocate rowTableOffset for loadPAK.");
-        for(unsigned int i=0;i<(sizey * numFrames+1);i++) {
-            rowOffsetTable[i] = file->readSLE32();
+        if ( info_header.biBitCount != 8 )
+            throw Exception("%s is not a 8-bit BMP file", fileName);
+
+        if ( info_header.biCompression != BI_RGB )
+            throw Exception("%s is not a 8-bit UnCompressed BMP file", fileName);
+
+        if (needAlloc) {
+            alloc(info_header.biWidth, info_header.biHeight, 1);
+
+        } else {
+            // Check and make sure the picture will fit
+            if (getWidth() < (unsigned long) info_header.biWidth|| getHeight() < (unsigned long) info_header.biHeight )
+                throw Exception("Not enough memory to load BMP image %s", fileName);
         }
-    
-        packedDataChunk = (Uint8 *)SDL_malloc(rowOffsetTable[sizey*numFrames]);
-        if (packedDataChunk == 0) {
-            throw Exception(
-            "ERROR: Unable to allocate packedDataChunk for loadPAK.");
-        }
-        file->read(packedDataChunk, rowOffsetTable[sizey*numFrames], 1);
 
-        // Add size of rowTableOffset.
-        //totalByteCount += (pix.y * frameCount + 1) * sizeof(*rowOffsetTable);
+        file->seek(file_header.bfOffBits);
 
-        // Some of the surfaces has an offset too big (millions)
-        //offset.x=0;
-        //offset.y=0;
-        //LOGGER.warning("load packed %s: v=%d,x=%d,y=%d,fc=%d,fps=%d,ox=%d,oy=%d", filename.c_str(),version, pix.x, pix.y, frameCount, fps,offset.x, offset.y);
-        
-        // Add size of packedDataChunk.
-        //totalByteCount += pix.y * frameCount;
-        
-        frames = new SDL_Surface*[numFrames];
-        for (unsigned int nf=0; nf<numFrames; nf++) {
-            frames[nf]=SDL_CreateRGBSurface(SDL_SWSURFACE, sizex, sizey, 8, 0, 0, 0, 0);
-            if ( ! frames[nf] )
-                throw Exception("PacketSurface->load: can't create surface");
-            
-            SDL_SetColors(frames[nf], Palette::color, 0, 256);
-            SDL_FillRect(frames[nf], NULL, 0);
-            
-            Uint8 * data;
-            Uint8 * curpixel = (Uint8 *)frames[nf]->pixels;
-            data = packedDataChunk+rowOffsetTable[nf*sizey];
+        if ( (info_header.biWidth % 4) == 0 ) {
+            file->read(mem, getWidth() * getHeight(), 1);
+        } else {
+            int padding = ((info_header.biWidth / 4 + 1) * 4) - info_header.biWidth;
 
-            for (unsigned int y=0; y<(unsigned int)sizey; y++) {
-                Uint8 * endData = packedDataChunk+rowOffsetTable[(nf*sizey)+y+1];
-                while ( data < endData ) {
-                    Uint16 xstart = data[0] | (data[1] << 8);
-                    Uint16 xlen = data[2] | (data[3] << 8);
-                    data+=4;
-                    SDL_memcpy(&curpixel[(y*frames[nf]->pitch)+xstart], data, xlen);
-                    data+=(xlen+3) & ~3;
-                }
+            PIX buffer[10];
+            int numRows = getHeight();
+
+            //PIX *sPtr = mem;
+
+            for (int row = 0; row < numRows; row++) {
+                file->read(mem, getWidth(), 1);
+                file->read(buffer, padding, 1);
+                mem += getPitch();
             }
-            SDL_SetColorKey(frames[nf],SDL_SRCCOLORKEY|SDL_RLEACCEL,0);
         }
-        thisFrame=frames[0];
-        curFrame=0.0;
-        SDL_free(rowOffsetTable);
-        SDL_free(packedDataChunk);
 
-	
+        flipVertical();
     } catch(std::exception& e) {
-	throw Exception("Error while reading pakfile '%s': %s",
-	    filename.c_str(), e.what());
+        throw Exception("Error reading .bmp file '%s': %s",
+                fileName, e.what());
     }
 }
+
+// drawButtonBorder
+//---------------------------------------------------------------------------
+void Surface::drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightColor)
+{
+    assert(getDoesExist());
+    assert(this != 0);
+
+    orderCoords(bounds);
+    drawHLine(bounds.min.x,bounds.min.y,bounds.max.x-1,topLeftColor);
+    drawVLine(bounds.min.x,bounds.min.y,bounds.max.y-1,topLeftColor);
+    drawHLine(bounds.min.x,bounds.max.y-1,bounds.max.x-1,bottomRightColor);
+    drawVLine(bounds.max.x-1,bounds.min.y,bounds.max.y-1,bottomRightColor);
+
+} // end Surface::drawButtonBorder
+
+// drawWindowsBorder
+//--------------------------------------------------------------------------
+void Surface::drawWindowsBorder()
+{
+    drawRect(iRect(0,0,getWidth(),getHeight()), Color::darkGray);
+} // end Surface::drawWindowsBorder
 
 // bltStringInBox
 //--------------------------------------------------------------------------
@@ -906,7 +1577,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
 
     iXY pos(rect.min);
 
-    int  totalLength = SDL_strlen(string);
+    int  totalLength = strlen(string);
     int  length      = 0;
     int  done        = 0;
 
@@ -924,10 +1595,10 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
         }
 
         char strBuf[256];
-        SDL_memset(strBuf, 0, sizeof(strBuf));
+        memset(strBuf, 0, sizeof(strBuf));
         int strBufLength = 0;
 
-        while (!SDL_isspace(string[length + strBufLength]) && string[length + strBufLength] != '\n') {
+        while (!isspace(string[length + strBufLength]) && string[length + strBufLength] != '\n') {
             if (string[length + strBufLength] == '\0') {
                 done = true;
                 break;
@@ -940,7 +1611,7 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
 
         strBuf[strBufLength] = '\0';
 
-        if ((int) (pos.x + SDL_strlen(strBuf) * ascii8x8.getWidth()) > rect.max.x) {
+        if ((int) (pos.x + strlen(strBuf) * ascii8x8.getWidth()) > rect.max.x) {
             pos.x = rect.min.x;
             pos.y += gapSpace;
         }
@@ -951,19 +1622,51 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
             return;
         }
 
-        pos.x += SDL_strlen(strBuf) * ascii8x8.getWidth();
+        pos.x += strlen(strBuf) * ascii8x8.getWidth();
 
         length += strBufLength;
     }
 
 } // end Surface::bltStringInBox
 
+// mapFromPalette
+//--------------------------------------------------------------------------
+// Purpose: Maps this image from the specified palette to the current palette.
+//--------------------------------------------------------------------------
+void Surface::mapFromPalette(const std::string& oldPalette)
+{
+    // Load the source palette.
+    Uint8     bestFitArray[256];
+    SDL_Color sourceColor[256];
+
+    try {
+        std::string filename = "wads/" + oldPalette + ".act";
+	std::auto_ptr<filesystem::ReadFile> file(
+                filesystem::openRead(filename));
+
+	for (int i = 0; i < 256; i++) {
+	    file->read(&sourceColor[i], 3, 1);
+	}
+
+	for (int i = 0; i < 256; i++) {
+	    bestFitArray[i] = Palette::findNearestColor(sourceColor[i].r,sourceColor[i].g,sourceColor[i].b);
+	}
+
+	for (size_t x = 0; x < (size_t) (getWidth() * getHeight() * getNumFrames()); x++) {
+	    frame0[x] = bestFitArray[frame0[x]];
+	}
+    } catch(std::exception& e) {
+	throw Exception("Error while reading palette '%s': %s",
+		oldPalette.c_str(), e.what());
+    }
+} // end Surface::mapFromPalette
+
 // drawBoxCorners
 //--------------------------------------------------------------------------
 // Purpose: Draws lines in the corners of the surface of the specified length
 //          and color.
 //--------------------------------------------------------------------------
-void Surface::drawBoxCorners(const iRect &rect, int cornerLength, Uint32 color)
+void Surface::drawBoxCorners(const iRect &rect, int cornerLength, PIX color)
 {
     // Make sure the corner lines are not longer than the rect.
     if (rect.getSizeX() < cornerLength) {
@@ -992,32 +1695,3 @@ void Surface::drawBoxCorners(const iRect &rect, int cornerLength, Uint32 color)
     drawVLine(rect.min.x, rect.max.y - 1, rect.max.y - cornerLength, color);
 
 } // end Surface::drawBoxCorners
-
-// loadAllPAKInDirectory
-//---------------------------------------------------------------------------
-int loadAllPAKInDirectory(const char *path, SurfaceList& paklist)
-{
-    char** list = filesystem::enumerateFiles(path);
-
-    std::vector<std::string> filenames;
-    for(char** file = list; *file != 0; file++) {
-	std::string name = path;
-	name += *file;
-	if(name.find(".pak") != std::string::npos)
-	    filenames.push_back(name);
-    }
-
-    filesystem::freeList(list);
-   
-    std::sort(filenames.begin(), filenames.end()); 
-
-    // Now load in the sorted PAK names.
-    for (size_t i = 0; i < filenames.size(); i++) {
-        Surface* surface = new Surface;
-        surface->loadPAK(filenames[i].c_str());
-        paklist.push_back(surface);
-    }
-
-    return filenames.size();
-} // end loadAllPAKInDirectory
-

@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include "Util/Exception.hpp"
 #include "Util/Log.hpp"
 #include "Desktop.hpp"
 #include "NetworkGlobals.hpp"
@@ -25,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "LobbyView.hpp"
 
 #include "Desktop.hpp"
+#include "DisconectedView.hpp"
 
 #include "Network/SocketManager.hpp"
 
@@ -50,9 +52,11 @@ NetworkClientUnix::onClientConnected(ClientSocket *s)
 }
 
 void
-NetworkClientUnix::onClientDisconected(ClientSocket *s)
+NetworkClientUnix::onClientDisconected(ClientSocket *s, const char *msg)
 {
     (void)s;
+    DisconectedView *dv = (DisconectedView *)Desktop::getView("DisconectedView");
+    dv->setMsg(msg);
     Desktop::setVisibility("DisconectedView", true);
     delete clientsocket;
     clientsocket=0;
@@ -70,7 +74,7 @@ bool NetworkClientUnix::joinServer(const std::string& server_name)
     } catch(std::exception& e) {
         LOG( ( "Couldn't connect to server:\n%s.", e.what()) );
         char text[128];
-        SDL_snprintf(text, 128, "connection error: %s", e.what());
+        snprintf(text, 128, "connection error: %s", e.what());
         lobbyView->scrollAndUpdate(text);
         return false;
     }
@@ -94,7 +98,7 @@ void NetworkClientUnix::sendMessage(NetMessage* message, size_t size)
     if (connection_type == _connection_loop_back) {
         net_packet.fromID = 0;
         net_packet.toID = 0;
-        SDL_memcpy(net_packet.data, message, size);
+        memcpy(net_packet.data, message, size);
         loop_back_recv_queue.enqueue(net_packet);
 #ifdef NETWORKDEBUG
         NetPacketDebugger::logMessage("LS", message);
@@ -122,7 +126,7 @@ bool NetworkClientUnix::getMessage(NetMessage *message)
         return false;
     
     receive_queue.dequeue( &net_packet );
-    SDL_memcpy(message, net_packet.data, net_packet.getSize());
+    memcpy(message, net_packet.data, net_packet.getSize());
 
 #ifdef NETWORKDEBUG
     NetPacketDebugger::logMessage("R", message);

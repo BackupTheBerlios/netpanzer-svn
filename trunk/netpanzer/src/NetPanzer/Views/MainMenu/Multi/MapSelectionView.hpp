@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __MapSelectionView_hpp__
 
 #include <vector>
+#include <string.h>
 
 #include "RMouseHackView.hpp"
 #include "2D/Surface.hpp"
@@ -27,14 +28,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class MapInfo
 {
 public:
-    Surface * thumbnail;
+    Surface thumbnail;
     std::string name;
     std::string description;
     iXY     cells;
     int     objectiveCount;
 
-    MapInfo() : thumbnail(0) {}
-    ~MapInfo() { if (thumbnail) delete thumbnail; }
+    MapInfo()
+    {
+    }
 }; // end MapInfo
 
 //---------------------------------------------------------------------------

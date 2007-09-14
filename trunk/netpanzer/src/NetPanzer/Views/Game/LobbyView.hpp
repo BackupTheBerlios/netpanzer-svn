@@ -28,8 +28,10 @@ class LobbyView : public LoadingView
 private:
     int currentline;
 
-    Surface * background;
-    Surface * backgroundSurface;
+    Surface background;
+    Surface backgroundSurface;
+protected:
+    virtual void loadBackgroundSurface();
 
 public:
     LobbyView();

@@ -17,8 +17,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <stdio.h>
 #include <stdarg.h>
-#include "SDL.h"
+#include <string.h>
 #include "Exception.hpp"
 
 Exception::Exception(const char* msg, ...) throw()
@@ -27,7 +28,7 @@ Exception::Exception(const char* msg, ...) throw()
     va_start(args, msg);
 
     message = new char[255];
-    SDL_vsnprintf(message, 255, msg, args);
+    vsnprintf(message, 255, msg, args);
 
     va_end(args);
 }
@@ -35,9 +36,9 @@ Exception::Exception(const char* msg, ...) throw()
 Exception::Exception(const Exception& other) throw()
     : std::exception(other)
 {
-    size_t len = SDL_strlen(other.message);
+    size_t len = strlen(other.message);
     message = new char[len+1];
-    SDL_memcpy(message, other.message, len+1);
+    memcpy(message, other.message, len+1);
 }
 
 Exception::~Exception() throw()

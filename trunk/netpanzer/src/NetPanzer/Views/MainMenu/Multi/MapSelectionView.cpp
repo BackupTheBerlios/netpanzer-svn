@@ -112,6 +112,9 @@ void MapSelectionView::init()
 //---------------------------------------------------------------------------
 void MapSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 {
+    //iRect r(getViewRect());
+    //viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
+
     if (mapList.size() <= 0) {
         // Since there are no maps loaded, try to load some maps.
 
@@ -126,7 +129,7 @@ void MapSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 
     if (mapList.size() > 0) {
         // Since maps were found, draw the selected map.
-        mapList[curMap]->thumbnail->blt(clientArea, BORDER_SPACE, BORDER_SPACE);
+        mapList[curMap]->thumbnail.blt(clientArea, BORDER_SPACE, BORDER_SPACE);
         drawCurMapInfo(clientArea, iXY(MAP_SIZE + BORDER_SPACE * 2, BORDER_SPACE));
     }
 
@@ -210,13 +213,13 @@ int MapSelectionView::loadMaps()
 	    pix.x = netPanzerMapHeader.thumbnail_width;
 	    pix.y = netPanzerMapHeader.thumbnail_height;
 
-	    mapinfo->thumbnail = new Surface(pix.x, pix.y, 1);
+	    mapinfo->thumbnail.create(pix.x, pix.y, 1);
 	    
-	    for (unsigned int cy=0; cy<mapinfo->thumbnail->getHeight(); cy++) {
-	        file->read(mapinfo->thumbnail->getMem()+(cy*mapinfo->thumbnail->getPitch()), pix.x, 1);
-	    }
+	    int numBytes = pix.getArea();
 
-	    mapinfo->thumbnail->scale(100,100);
+	    file->read(mapinfo->thumbnail.getFrame0(), numBytes, 1);
+
+	    mapinfo->thumbnail.scale(100,100);
 	
 	    // Now try to get the outpost count from the outpost file.
 	    int objectiveCount = 0;
@@ -238,7 +241,7 @@ int MapSelectionView::loadMaps()
     }
 
     for (size_t i = 0; i < mapList.size(); i++) {
-        mapList[i]->thumbnail->setColors("netp");
+        mapList[i]->thumbnail.mapFromPalette("netp");
     }
 
     if (mapList.size() == 0) {

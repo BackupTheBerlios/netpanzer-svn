@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "Store.hpp"
-#include "SDL.h"
 
+#include <ctype.h>
 #include "Util/Log.hpp"
 
 namespace INI
@@ -46,7 +46,7 @@ Store::load(std::istream& in)
         getline(in, line);
 
         const char *c = line.c_str();
-        while(SDL_isspace(*c) && *c != 0) {
+        while(isspace(*c) && *c != 0) {
             c++;
         };
 

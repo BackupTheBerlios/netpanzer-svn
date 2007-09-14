@@ -145,7 +145,7 @@ public:
         for(i = views.begin(); i != views.end(); i++) {
             View* view = *i;
 
-            if (SDL_strcmp(view->searchName, searchName) == 0) {
+            if (strcmp(view->searchName, searchName) == 0) {
                 return view;
             }
         }

@@ -19,9 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _ARRAYTEMPLATE_HPP
 
 #include <assert.h>
-
-// for size_t
-#include <stddef.h>
+#include <string.h>
 
 #include "Util/NoCopy.hpp"
 

@@ -60,7 +60,6 @@ void MouseInterface::initialize()
             }
             surface->loadBMP(filename.c_str());
             surface->setOffsetCenter();
-            surface->setColorKey(0);
             cursors.insert(std::pair<std::string,Surface*> (*i, surface));
         } catch(std::exception& e) {
             LOG(("Couldn't load cursorfile '%s': %s", *i, e.what()));

@@ -33,6 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "cMouse.hpp"
 #include "ViewGlobals.hpp"
 #include "ParticleInterface.hpp"
+#include "2D/PackedSurface.hpp"
 #include "VehicleSelectionView.hpp"
 #include "PowerUpInterface.hpp"
 
@@ -92,6 +93,7 @@ void GameView::doDraw(Surface&, Surface &clientArea)
     WorldViewInterface::getViewWindow( &world_win );
     SPRITE_SORTER.reset(world_win);
 
+    PackedSurface::totalDrawCount = 0;
     ParticleSystem2D::drawAll(clientArea, SPRITE_SORTER );
     Particle2D::drawAll(clientArea, SPRITE_SORTER );
 

@@ -25,7 +25,7 @@ PathList::PathList(size_t list_size )
     first = 0;
     last = first;
 
-    list = (unsigned long *) SDL_malloc( sizeof(unsigned long) * list_size );
+    list = (unsigned long *) malloc( sizeof(unsigned long) * list_size );
     assert( list != 0 );
 }
 
@@ -37,7 +37,7 @@ PathList::PathList(const PathList& other)
 
 PathList::~PathList()
 {
-    SDL_free(list);
+    free(list);
 }
 
 void PathList::initialize(size_t list_size )
@@ -45,7 +45,7 @@ void PathList::initialize(size_t list_size )
     size = list_size;
     first = last = 0;
 
-    list = (unsigned long *) SDL_malloc( sizeof(unsigned long) * list_size );
+    list = (unsigned long *) malloc( sizeof(unsigned long) * list_size );
     assert( list != 0 );
 }
 

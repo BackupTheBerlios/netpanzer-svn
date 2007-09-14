@@ -26,8 +26,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameViewGlobals.hpp"
 #include "Util/UtilInterface.hpp"
 #include "Util/TimerInterface.hpp"
+#include "2D/PackedSurface.hpp"
 #include "ParticleInterface.hpp"
-#include "2D/ColorTable.hpp"
+#include "2D/Span.hpp"
 #include "GameView.hpp"
 #include "CraterParticle2D.hpp"
 #include "ScreenSurface.hpp"
@@ -84,6 +85,11 @@ LibView::LibView() : GameTemplateView()
     checkBoxAllowTimeSlice.setLocation(0, 30);
     checkBoxAllowTimeSlice.setState(gTimeSliceFlag);
     add(&checkBoxAllowTimeSlice);
+
+    checkBoxAllowSpanBlitting.setLabel("Allow Blended Span Blitting");
+    checkBoxAllowSpanBlitting.setLocation(0, 45);
+    checkBoxAllowSpanBlitting.setState(allowSpanBlitting);
+    add(&checkBoxAllowSpanBlitting);
 
     checkBoxParticlesCanHaveSmoke.setLabel("Allow Explosion Particle Smoke");
     checkBoxParticlesCanHaveSmoke.setLocation(0, 60);
@@ -156,6 +162,21 @@ void LibView::drawSurfaceInfo(Surface &dest, iXY pos)
     pos.y += yOffset;
 
     sprintf(strBuf, "Mem: %d b, %d k, %3.2f MG", Surface::getTotalByteCount(), Surface::getTotalByteCount() / 1024, float(Surface::getTotalByteCount()) / 1024.0f / 1024.0f);
+    dest.bltString(pos.x, pos.y, strBuf, Color::white);
+    pos.y += yOffset;
+
+    dest.bltString(pos.x, pos.y, "-- Packed Surface Info --", Color::green);
+    pos.y += yOffset;
+
+    sprintf(strBuf, "Alive Count: %d", PackedSurface::getTotalSurfaceCount());
+    dest.bltString(pos.x, pos.y, strBuf, Color::white);
+    pos.y += yOffset;
+
+    sprintf(strBuf, "Draw Count:  %d", PackedSurface::totalDrawCount);
+    dest.bltString(pos.x, pos.y, strBuf, Color::white);
+    pos.y += yOffset;
+
+    sprintf(strBuf, "Mem: %d b, %d k, %3.2f MG", PackedSurface::getTotalByteCount(), PackedSurface::getTotalByteCount() / 1024, float(PackedSurface::getTotalByteCount()) / 1024.0f / 1024.0f);
     dest.bltString(pos.x, pos.y, strBuf, Color::white);
     pos.y += yOffset;
 
@@ -296,6 +317,8 @@ void LibView::actionPerformed(mMouseEvent me)
         Particle2D::setCreateParticles(checkBoxAllowParticleGeneration.getState());
     } else if (me.getSource(checkBoxAllowTimeSlice)) {
         gTimeSliceFlag = checkBoxAllowTimeSlice.getState();
+    } else if (me.getSource(checkBoxAllowSpanBlitting)) {
+        allowSpanBlitting = checkBoxAllowSpanBlitting.getState();
     } else if (me.getSource(checkBoxParticlesCanHaveSmoke)) {
         ParticleInterface::gParticlesCanHaveSmoke = checkBoxParticlesCanHaveSmoke.getState();
     } else if (me.getSource(checkBoxSolidColorExplosionParticles)) {

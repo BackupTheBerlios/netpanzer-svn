@@ -28,6 +28,7 @@ class BonusUnitPowerUp : public PowerUp
 {
 protected:
     SpritePacked bonus_unit_animation;
+    SpritePacked bonus_unit_animation_shadow;
 
     int bonus_unit_type;
 

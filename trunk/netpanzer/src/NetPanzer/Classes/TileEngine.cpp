@@ -59,7 +59,7 @@ void TileEngine::blitWorld()
 
     map_height = main_map.getHeight();
 
-    double_buffer = screen->getMem();
+    double_buffer = screen->getFrame0();
 
     x_left_offset = (world_x % tile_size);
     x_left_length = (tile_size - x_left_offset);

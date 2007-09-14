@@ -44,8 +44,8 @@ void JoinView::doDraw(Surface &viewArea, Surface &clientArea)
 //---------------------------------------------------------------------------
 void JoinView::doDeactivate()
 {
-    if (SDL_strcmp(MenuTemplateView::currentMultiView, searchName) != 0 ||
-            SDL_strcmp(MenuTemplateView::currentView, searchName) != 0) {
+    if (strcmp(MenuTemplateView::currentMultiView, searchName) != 0 ||
+            strcmp(MenuTemplateView::currentView, searchName) != 0) {
         MenuTemplateView::doDeactivate();
         Desktop::setVisibility("GetSessionJoinView", false);
     }

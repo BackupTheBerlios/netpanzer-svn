@@ -15,3 +15,25 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+#ifndef __DirtKickParticle2D_hpp__
+#define __DirtKickParticle2D_hpp__
+
+#include "Particle2D.hpp"
+
+// DirtKickParticle2D
+//--------------------------------------------------------------------------
+class DirtKickParticle2D : public Particle2D
+{
+public:
+    DirtKickParticle2D(fXYZ pos);
+
+    static void init();
+
+protected:
+    static Surface dirtKickSprite;
+
+    virtual void draw(const Surface &dest, SpriteSorter &sorter);
+};
+
+#endif // __DirtKickParticle2D_hpp__

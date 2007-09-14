@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "SpecialButtonView.hpp"
 #include "2D/Surface.hpp"
+#include "2D/PackedSurface.hpp"
 #include "Types/iRect.hpp"
 #include "Types/iXY.hpp"
 
@@ -56,9 +57,11 @@ public:
     static char currentMultiView[256];  // Used to keep track of where you are in the multiplayer menus.
     static char currentView[256];       // Used to keep track of which menu you are currently in.
 
+    //static PackedSurface netPanzerLogo;
     static bool          firstTimeInMenu;
-    static Surface     * backgroundSurface;
-    static Surface       titleSurface;
+    //static PackedSurface globeSurface;
+    static Surface       backgroundSurface;
+    static PackedSurface titlePackedSurface;
 }; // end MenuTemplateView
 
 #endif // end __MenuTemplateView_hpp__

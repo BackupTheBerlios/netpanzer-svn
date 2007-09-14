@@ -104,7 +104,7 @@ public:
     void setPos(iXY pos);
     void setInputFieldString(cInputFieldString *string);
     void setTextAction(ACTION_FUNC_PTR func);
-    void setExcludedCharacters(const char *excludedCharacters);
+    void setExcludedCharacters(const char *exChars);
     void addChar(int newChar);
     void addExtendedChar(int newExtendedChar);
    void draw(Surface &dest);
@@ -124,7 +124,7 @@ private:
     char    *excludedCharacters;
     iRect    bounds;
     size_t   cursorPos;
-    Surface  * inputFieldSurface;
+    Surface inputFieldSurface;
     ACTION_FUNC_PTR textaction;
 
     void pressKey(int ch);

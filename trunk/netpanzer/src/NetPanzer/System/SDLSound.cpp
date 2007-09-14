@@ -18,11 +18,14 @@
  */
 #include <config.h>
 
+#include <sys/types.h>
+#include <dirent.h>
+#include <errno.h>
 #include <algorithm>
 
 #include "SDL.h"
 #define USE_RWOPS // we want Mix_LOadMUS_RW
-#include "SDL_mixer.h"
+#include <SDL_mixer.h>
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"

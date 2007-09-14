@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 #include <stdexcept>
+#include <ctype.h>
 
 #include "ProxyServer.hpp"
 
@@ -86,9 +87,9 @@ ProxyServer::sendProxyConnect(network::TCPSocket& socket,
             lfs++;
             b=buf; 
             if(line==0) {
-                while(!SDL_isspace(*b) && *b) b++;
-                while(SDL_isspace(*b)) b++;
-                if(SDL_atoi(b)!=200) {
+                while(!isspace(*b) && *b) b++;
+                while(isspace(*b)) b++;
+                if(atoi(b)!=200) {
                     std::stringstream msg;
                     msg << "Error when authenticating at proxy: " << b;
                     throw std::runtime_error(msg.str());

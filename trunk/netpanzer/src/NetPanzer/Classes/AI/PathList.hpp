@@ -18,7 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PATHLIST_HPP
 #define _PATHLIST_HPP
 
-#include "SDL.h"
+#include <stdlib.h>
+
+#include <string.h>
 
 class PathList
 {
@@ -134,11 +136,11 @@ public:
         PathList::last  = rhs.last;
 
         if ( PathList::size == rhs.size ) {
-            SDL_memcpy( PathList::list, rhs.list, sizeof( unsigned long ) * rhs.size );
+            memcpy( PathList::list, rhs.list, sizeof( unsigned long ) * rhs.size );
             PathList::size  = rhs.size;
         } else {
-            PathList::list = (unsigned long *) SDL_realloc( PathList::list, sizeof( unsigned long ) * rhs.size );
-            SDL_memcpy( PathList::list, rhs.list, sizeof( unsigned long ) * rhs.size );
+            PathList::list = (unsigned long *) realloc( PathList::list, sizeof( unsigned long ) * rhs.size );
+            memcpy( PathList::list, rhs.list, sizeof( unsigned long ) * rhs.size );
             PathList::size = rhs.size;
         }
     }

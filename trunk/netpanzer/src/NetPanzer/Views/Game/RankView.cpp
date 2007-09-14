@@ -68,6 +68,11 @@ RankView::RankView() : GameTemplateView()
     addLabel(iXY(xOffset, yOffset), "Objective", Color::red);
     xOffset += MAX_POINTS_CHARS*CHAR_XPIX;
 
+    // Define the scrollBar fot this view.
+    scrollBar = new ScrollBar(ScrollBar::VERTICAL, 0, 1, 0, 100);
+    if (scrollBar == 0) {
+        throw Exception("ERROR: Unable to allocate the scrollBar.");
+    }
 } // end RankView::RankView
 
 // doDraw
@@ -77,13 +82,18 @@ void RankView::doDraw(Surface &viewArea, Surface &clientArea)
     // make sure the window is big enough for all players
     unsigned int CHAR_YPIX = Surface::getFontHeight();
     unsigned int entryheight = std::max(CHAR_YPIX, UNIT_FLAGS_SURFACE.getHeight()) + 2;
-    resize(iXY(450, 60 + entryheight * PlayerInterface::countPlayers()));
+    unsigned int newheight = 60 + entryheight * PlayerInterface::countPlayers();
+    
+    if ( newheight != (unsigned int)getSizeY() ) {
+        resize(iXY(450, newheight));
+        return; // this frame draws nothing
+    }
     
     bltViewBackground(viewArea);
 
-    clientArea.drawRect(
+    clientArea.drawButtonBorder(
             iRect(0, 26, getClientRect().getSize().x - 1,
-                getClientRect().getSize().y - 1), Color::gray64);
+                getClientRect().getSize().y - 1), Color::gray64, Color::white);
 
     drawPlayerStats(clientArea);
 
@@ -146,15 +156,12 @@ void RankView::drawPlayerStats(Surface &dest)
     iXY offset(2, 40);
     iXY flagOffset(162, 40 + (int(CHAR_YPIX - UNIT_FLAGS_SURFACE.getHeight()))/2);
 
-    char shortname[21];
     for(std::vector<const PlayerState*>::iterator i = states.begin();
             i != states.end(); ++i) {
         const PlayerState* state = *i;
-        
-        SDL_strlcpy(shortname,state->getName().c_str(),sizeof(shortname));
 
-        SDL_snprintf(statBuf, sizeof(statBuf),
-                "%-20s%10i%7i%6i%10i", shortname,
+        snprintf(statBuf, sizeof(statBuf),
+                "%-20s%10i%7i%6i%10i", state->getName().substr(0,20).c_str(),
                 state->getKills(), state->getLosses(), state->getTotal(),
                 state->getObjectivesHeld());
         dest.bltString(offset.x, offset.y, statBuf, state->getColor());

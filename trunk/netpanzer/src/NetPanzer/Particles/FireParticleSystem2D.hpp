@@ -15,3 +15,39 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+
+#ifndef __FireParticleSystem2D_hpp__
+#define __FireParticleSystem2D_hpp__
+
+
+
+#include "ParticleSystem2D.hpp"
+#include "FireParticle2D.hpp"
+
+
+class FireParticleSystem2D : public ParticleSystem2D
+{
+public:
+    FireParticleSystem2D(fXYZ pos, int isFarAway);
+
+    void init();
+
+    static void initColors();
+    static Uint8 fireColor[12];
+
+    FireParticle2D fireParticles[100];
+
+protected:
+    float combinedTime;
+    float totalTime;
+
+    void reset();
+
+    virtual void sim();
+    virtual void draw(const Surface &dest, SpriteSorter &sorter);
+
+}
+; // end FireParticleSystem2D
+
+#endif // __FireParticleSystem2D_hpp__

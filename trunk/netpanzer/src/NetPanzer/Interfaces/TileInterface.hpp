@@ -18,10 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _TILEINTERFACE_HPP
 #define _TILEINTERFACE_HPP
 
-//#include "2D/Surface.hpp"
+#include "2D/Surface.hpp"
 #include "TileSet.hpp"
-#include "Types/iXY.hpp"
-//#include "2D/Palette.hpp"
+#include "2D/Palette.hpp"
 
 class TileInterface
 {
@@ -29,9 +28,16 @@ protected:
     static TileSet tile_set;
 
 public:
+    static void loadTileSet( const char *file_path );
+
+    static inline TileSet * getTileSet( void )
+    {
+        return ( &tile_set );
+    }
+
     static iXY getTileSize( void );
 
-    static Uint8 getWorldPixColor(int worldX, int worldY);
+    static PIX  getWorldPixColor(int worldX, int worldY);
     static long getWorldPixMovementValue(int worldX, int worldY);
 };
 

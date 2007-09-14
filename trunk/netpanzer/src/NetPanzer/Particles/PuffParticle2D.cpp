@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "PuffParticle2D.hpp"
+#include "2D/PackedSurface.hpp"
 #include "Util/TimerInterface.hpp"
 #include "ParticleSystemGlobals.hpp"
 #include "Util/Exception.hpp"
@@ -25,9 +26,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameConfig.hpp"
 
 // Static images.
-SurfaceList PuffParticle2D::staticPackedSmokeLightPuff;
-SurfaceList PuffParticle2D::staticPackedSmokeDarkPuff;
-SurfaceList PuffParticle2D::staticPackedDirtPuff;
+PackedSurfaceList PuffParticle2D::staticPackedSmokeLightPuff;
+PackedSurfaceList PuffParticle2D::staticPackedSmokeDarkPuff;
+PackedSurfaceList PuffParticle2D::staticPackedDirtPuff;
 
 // PuffParticle2D
 //---------------------------------------------------------------------------
@@ -74,12 +75,37 @@ void PuffParticle2D::create(	PUFF_TYPE particleType,
 
     if (particleType == LIGHT) {
         packedSurface.setData( *(staticPackedSmokeLightPuff[index]) );
+        packedSurfaceShadow.setData( *(staticPackedSmokeLightPuff[index]) );
     } else if (particleType == DARK) {
         packedSurface.setData( *(staticPackedSmokeDarkPuff[index]) );
+        packedSurfaceShadow.setData( *(staticPackedSmokeDarkPuff[index]) );
     } else if (particleType == DIRT) {
         packedSurface.setData( *(staticPackedDirtPuff[index]) );
+        packedSurfaceShadow.setData( *(staticPackedDirtPuff[index]) );
     } else {
         throw Exception("ERROR: Unsupported particleType.");
+    }
+
+    packedSurfaceShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
+
+    if (gameconfig->blendsmoke) {
+        int randColorTable = rand() % 4;
+
+        if (randColorTable == 0) {
+            packedSurface.setDrawModeBlend(&Palette::colorTable2080);
+        } else if(randColorTable == 1) {
+            packedSurface.setDrawModeBlend(&Palette::colorTable4060);
+        } else if(randColorTable == 2) {
+            packedSurface.setDrawModeBlend(&Palette::colorTable6040);
+        } else if(randColorTable == 3) {
+            packedSurface.setDrawModeBlend(&Palette::colorTable8020);
+
+        } else {
+            assert(false);
+        }
+
+    } else {
+        packedSurface.setDrawModeSolid();
     }
 
     packedSurface.setFPS(getFPS(FPSmin, FPSrand));
@@ -88,9 +114,11 @@ void PuffParticle2D::create(	PUFF_TYPE particleType,
     if (isFarAway) {
         assert(packedSurface.getFPS() > 0);
 
-        //packedSurface.setFPS(packedSurface.getFPS() * 2.0f);
-        packedSurface.setFPS(packedSurface.getFPS()<<1);
+        packedSurface.setFPS(packedSurface.getFPS() * 2.0f);
     }
+
+    // Set the shadow FPS to match the non-shadow particle.
+    packedSurfaceShadow.setFPS(packedSurface.getFPS());
 
 } // end PuffParticle2D::create
 
@@ -105,8 +133,20 @@ void PuffParticle2D::draw(const Surface&, SpriteSorter &sorter)
         return;
     }
 
+    packedSurfaceShadow.nextFrame();
+
     packedSurface.setAttrib(iXY((int) pos.x, (int) pos.z), layer);
     sorter.addSprite(&packedSurface);
+
+    if (gameconfig->displayshadows) {
+        if (!userDefinedShadowPos) {
+            shadowPos.x = pos.x - ((float(index) /
+                        float(staticPackedSmokeLightPuff.size())) * packedSurfaceShadow.getCurFrame() * 10);
+        }
+
+        packedSurfaceShadow.setAttrib(iXY((int) shadowPos.x, (int) shadowPos.z), shadowLayer);
+        sorter.addSprite(&packedSurfaceShadow);
+    }
 
 } // end PuffParticle2D::draw
 

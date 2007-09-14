@@ -18,8 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "ObjectiveInterface.hpp"
 
-#include "SDL.h"
-
+#include <stdio.h>
 #include <memory>
 #include <string>
 #include <sstream>
@@ -88,14 +87,14 @@ static inline std::string readToken(std::istream& in, std::string tokenname)
                 in.get(c);
             } while(!in.eof() && c != '\n');
         }
-    } while(!in.eof() && SDL_isspace(c));
+    } while(!in.eof() && isspace(c));
 
     if(in.eof())
         throw std::runtime_error("file too short.");
 
     // read token
     std::string token;
-    while(!in.eof() && !SDL_isspace(c)) {
+    while(!in.eof() && !isspace(c)) {
         token += c;
         in.get(c);
     }
@@ -105,7 +104,7 @@ static inline std::string readToken(std::istream& in, std::string tokenname)
         throw std::runtime_error(msg.str());
     }
 
-    while(!in.eof() && SDL_isspace(c))
+    while(!in.eof() && isspace(c))
         in.get(c);
 
     // read token contents
@@ -149,8 +148,8 @@ ObjectiveInterface::loadObjectiveList(const char *file_path)
             objective_obj = new Outpost(objective_index, iXY(world_x, world_y),
                     BoundBox( -48, -32, 48, 32 )
                     );
-            // 64 = max len of name XXX for the moment
-            SDL_strlcpy(objective_obj->objective_state.name, name.c_str(), 64);
+            
+            strcpy(objective_obj->objective_state.name, name.c_str());
             objective_list.push_back(objective_obj);
         } // ** for
     } catch(std::exception& e) {

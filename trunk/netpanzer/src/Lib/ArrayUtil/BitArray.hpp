@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _BITARRAY_HPP
 #define _BITARRAY_HPP
 
+#include <stdlib.h>
+
 #include "Util/NoCopy.hpp"
 
 class BitArray : public NoCopy

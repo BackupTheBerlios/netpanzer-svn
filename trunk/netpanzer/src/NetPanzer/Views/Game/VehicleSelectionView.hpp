@@ -101,7 +101,7 @@ private:
     iXY            timeRemainingPos;
     iXY            unitsBuiltPos;
 
-    static Surface * unitImages;
+    static Surface unitImages;
 
     static void checkMiniProductionRect(const std::string& string);
 

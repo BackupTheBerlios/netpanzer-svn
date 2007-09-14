@@ -18,7 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "StringUtil.hpp"
-#include "SDL.h"
+
+#include <ctype.h>
 
 std::string removeSurroundingSpaces(const std::string& str)
 {
@@ -26,11 +27,11 @@ std::string removeSurroundingSpaces(const std::string& str)
         return "";
     
     std::string::size_type s = 0;
-    while(s < str.size() && SDL_isspace(str[s]))
+    while(s < str.size() && isspace(str[s]))
         s++;
    
     std::string::size_type e = str.size() - 1;
-    while(SDL_isspace(str[e])) {
+    while(isspace(str[e])) {
         if(e <= 1)
             break;
         e--;

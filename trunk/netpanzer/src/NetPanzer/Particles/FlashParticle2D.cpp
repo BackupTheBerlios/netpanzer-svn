@@ -17,10 +17,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include "Util/Exception.hpp"
 #include "FlashParticle2D.hpp"
 #include "2D/Palette.hpp"
 
-Surface FlashParticle2D::staticPackedFlash;
+PackedSurface FlashParticle2D::staticPackedFlash;
 
 // FlashParticle2D
 //---------------------------------------------------------------------------
@@ -37,7 +38,7 @@ FlashParticle2D::FlashParticle2D(	const fXYZ  &pos,
     FlashParticle2D::lifetime    = lifetime;
 
     packedSurface.setData(staticPackedFlash);
-//    packedSurface.setDrawModeBlend(&Palette::colorTableBrighten);
+    packedSurface.setDrawModeBlend(&Palette::colorTableBrighten);
 
 } // end FlashParticle2D::FlashParticle2D
 
@@ -45,7 +46,7 @@ FlashParticle2D::FlashParticle2D(	const fXYZ  &pos,
 //---------------------------------------------------------------------------
 void FlashParticle2D::init()
 {
-    staticPackedFlash.loadPAK("pics/particles/lights/pak/flash2.pak");
+    staticPackedFlash.load("pics/particles/lights/pak/flash2.pak");
 } // end FlashParticle2D::init
 
 // draw
@@ -67,7 +68,7 @@ void FlashParticle2D::draw(const Surface&, SpriteSorter& sorter)
         curScale = 0.0f;
     }
 
-    int frame = getPakIndex(curScale, packedSurface.getNumFrames());
+    int frame = getPakIndex(curScale, packedSurface.getFrameCount());
 
     packedSurface.setFrame(frame);
 

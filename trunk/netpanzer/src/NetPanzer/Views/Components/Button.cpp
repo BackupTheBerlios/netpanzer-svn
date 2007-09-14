@@ -30,15 +30,15 @@ void Button::draw(Surface &dest)
 
     if (clicked) {
         dest.fillRect(bounds, componentBodyColor);
-        drawBorder(dest, bounds, bottomRightBorderColor, topLeftBorderColor);
+        dest.drawButtonBorder(bounds, bottomRightBorderColor, topLeftBorderColor);
         dest.bltStringCenteredInRect(bounds, label.c_str(), Color::yellow);
     } else if (highlighted) {
         dest.fillRect(bounds, componentBodyColor);
-        drawBorder(dest, bounds, topLeftBorderColor, bottomRightBorderColor);
+        dest.drawButtonBorder(bounds, topLeftBorderColor, bottomRightBorderColor);
         dest.bltStringCenteredInRect(bounds, label.c_str(), Color::red);
     } else {
         dest.fillRect(bounds, componentBodyColor);
-        drawBorder(dest, bounds, topLeftBorderColor, bottomRightBorderColor);
+        dest.drawButtonBorder(bounds, topLeftBorderColor, bottomRightBorderColor);
         dest.bltStringCenteredInRect(bounds, label.c_str(), Color::white);
     }
 
@@ -60,12 +60,3 @@ void Button::actionPerformed(const mMouseEvent &me)
     }
 
 } // end Button::actionPerformed
-
-void
-Button::drawBorder(Surface &viewArea, iRect &bounds, Uint32 topLeftColor, Uint32 bottomRightColor)
-{
-    viewArea.drawHLine(bounds.min.x  ,bounds.min.y  ,bounds.max.x, topLeftColor);
-    viewArea.drawVLine(bounds.min.x  ,bounds.min.y  ,bounds.max.y, topLeftColor);
-    viewArea.drawHLine(bounds.min.x  ,bounds.max.y-1,bounds.max.x, bottomRightColor);
-    viewArea.drawVLine(bounds.max.x-1,bounds.min.y  ,bounds.max.y, bottomRightColor);
-}
