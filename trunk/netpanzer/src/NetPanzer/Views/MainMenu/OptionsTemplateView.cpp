@@ -51,6 +51,22 @@ static void bVisuals()
     Desktop::setVisibility("VisualsView", true);
 }
 
+static void bSound()
+{
+    if (Desktop::getVisible("GameView")) {
+        Desktop::setVisibility("ControlsView", false);
+        Desktop::setVisibility("VisualsView", false);
+        Desktop::setVisibility("InterfaceView", false);
+        //Desktop::setVisibility("SoundView", false);
+        Desktop::setVisibility("OptionsView", false);
+    } else {
+        Desktop::setVisibilityAllWindows(false);
+    }
+    Desktop::setVisibility("SoundView", true);
+    //Desktop::setVisibility("VisualsView", true);
+}
+
+
 // OptionsTemplateView
 //---------------------------------------------------------------------------
 OptionsTemplateView::OptionsTemplateView() : MenuTemplateView()
@@ -73,7 +89,7 @@ void OptionsTemplateView::initButtons()
 
     MenuTemplateView::initButtons();
 
-#if 0 // XXX
+#if 1 // XXX
     // Sound.
     addSpecialButton(	soundPos,
                       "Sound",

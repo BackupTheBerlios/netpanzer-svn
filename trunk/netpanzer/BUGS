@@ -1,10 +1,12 @@
+- when a client connect to a server, it will save the configuration that
+  the server sent to him when exit netpanzer.
 - sometimes 2 players spawn at the same place - hard to fix, low priority
 - it is reported that in timelimit mode games might end too early (ie. client
   display 40/60 and game ends) - is it possible that the client time doesn't
   sync correctly with server time?
 - Astar sometimes calculates strange paths. Very obvious if you try to capture
   and outpost from the left side: Your panzers will drive around it before
-  entering it.
+  entering it. (it is not a complete Astar, needs to rewrite)
 - The no allies flag in the server config has no effect
 - Clients pressing the Abort button when connecting leave a ghost on the server
 which displays no IP. (i think matze fixed this in 0.8.1)

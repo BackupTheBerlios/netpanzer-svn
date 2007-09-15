@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "ConfigVariable.hpp"
 
+#include "Util/Log.hpp"
+
 ConfigVariable::ConfigVariable(const std::string& newname)
     : name(newname), defaultvalue(true)
 {
@@ -44,9 +46,15 @@ ConfigInt::~ConfigInt()
 
 int ConfigInt::operator = (int newvalue)
 {
-    if(newvalue < min || newvalue > max)
-        throw Exception("Configsetting '%s' out of range: %d (min: %d max: %d)",
-                getName().c_str(), newvalue, min, max);
+    if (newvalue < min) {
+        LOGGER.warning("Warning: Using minimum value (%d) for '%s' (wanted %d)",
+                        min, getName().c_str(), newvalue);
+        newvalue = min;
+    } else if ( newvalue > max ) {
+        LOGGER.warning("Warning: Using maximum value (%d) for '%s' (wanted %d)",
+                        max, getName().c_str(), newvalue);
+        newvalue = max;        
+    }
 
     value = newvalue;
     setNonDefaultValue();

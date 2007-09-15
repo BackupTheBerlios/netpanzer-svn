@@ -81,6 +81,11 @@ void GameControlRulesDaemon::setStateServerInProgress()
     GameControlRulesDaemon::game_state = _game_state_in_progress;
 }
 //-----------------------------------------------------------------
+void GameControlRulesDaemon::setStateServerIdle()
+{
+    GameControlRulesDaemon::game_state = _game_state_idle;
+}
+//-----------------------------------------------------------------
 void GameControlRulesDaemon::setDedicatedServer()
 {
     GameControlRulesDaemon::execution_mode = _execution_mode_dedicated_server;

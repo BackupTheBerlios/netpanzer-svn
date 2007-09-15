@@ -21,6 +21,61 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "GameConfig.hpp"
 #include "GameViewGlobals.hpp"
 #include "Desktop.hpp"
+#include "System/Sound.hpp"
+#include "System/SDLSound.hpp"
+#include "System/DummySound.hpp"
+#include "GameControlRulesDaemon.hpp"
+
+static void bDecreaseSoundVolume()
+{
+    unsigned int v = gameconfig->effectsvolume;
+    if (v) {
+        --v;
+        gameconfig->effectsvolume = v;
+        sound->setSoundVolume(v);
+    }
+}
+
+static void bIncreaseSoundVolume()
+{
+    unsigned int v = gameconfig->effectsvolume;
+    if (v<100) {
+        ++v;
+        gameconfig->effectsvolume = v;
+        sound->setSoundVolume(v);
+    }
+}
+
+int getSoundVolume()
+{
+    return gameconfig->effectsvolume;
+}
+
+static void bDecreaseMusicVolume()
+{
+    unsigned int v = gameconfig->musicvolume;
+    if (v) {
+        --v;
+        gameconfig->musicvolume = v;
+        sound->setMusicVolume(v);
+    }
+}
+
+static void bIncreaseMusicVolume()
+{
+    unsigned int v = gameconfig->musicvolume;
+    if (v<100) {
+        ++v;
+        gameconfig->musicvolume = v;
+        sound->setMusicVolume(v);
+    }
+}
+
+int getMusicVolume()
+{
+    return gameconfig->musicvolume;
+}
+
 
 // SoundView
 //---------------------------------------------------------------------------
@@ -37,37 +92,57 @@ void SoundView::initButtons()
 {
     OptionsTemplateView::initButtons();
 
-#if 0
     int xTextStart       = bodyTextRect.min.x;
     int x                = xTextStart;
     int y                = bodyTextRect.min.y;
     int yOffset          =  15;
-    int buttonXSize      =  90;
     int arrowButtonWidth =  16;
-#endif
 
     // Settings
     //----------------------------------------------------------------------
 
-    //x = xTextStart;
-    //addLabel(iXY(x, y), "OPTION                            HOT KEY            SETTING", viewHeadingColor);
-    //y += yOffset;
+    x = xTextStart;
+    addLabel(iXY(x, y), "OPTION                                               SETTING", viewHeadingColor);
+    y += yOffset;
     //
-    //x = xTextStart;
-    //addLabel(iXY(x, y), "Sound State", Color::white);
-    //x = optionsMeterStartX;
-    //addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bSetSoundStateOff);
-    //x += optionsMeterWidth + arrowButtonWidth;
-    //addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bSetSoundStateOn);
-    //y += yOffset;
-    //
-    //x = xTextStart;
-    //addLabel(iXY(x, y), "Sound Volume", Color::white);
-    //x = optionsMeterStartX;
-    //addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseSoundVolume);
-    //x += optionsMeterWidth + arrowButtonWidth;
-    //addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseSoundVolume);
-    //y += yOffset;
+    
+    x = xTextStart;
+    addLabel(iXY(x,y), "Sound Status", Color::white);
+    checkBoxSoundEnabled.setLabel(gameconfig->enablesound?"Enabled":"Disabled");
+    checkBoxSoundEnabled.setState(gameconfig->enablesound);
+    x += Surface::getTextLength("Sound Status: ");
+    checkBoxSoundEnabled.setLocation(x, y-2);
+    checkBoxSoundEnabled.setStateChangedCallback(this);
+    add(&checkBoxSoundEnabled);
+    y += yOffset;
+
+    x = xTextStart;
+    addLabel(iXY(x, y), "Sound Volume", Color::white);
+    x = optionsMeterStartX;
+    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseSoundVolume);
+    x += optionsMeterWidth + arrowButtonWidth;
+    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseSoundVolume);
+    y += yOffset;
+
+    y += yOffset; // add a little separation
+    x = xTextStart;
+    addLabel(iXY(x,y), "Music Status", Color::white);
+    checkBoxMusicEnabled.setLabel(gameconfig->enablemusic?"Enabled":"Disabled");
+    checkBoxMusicEnabled.setState(gameconfig->enablemusic);
+    x += Surface::getTextLength("Music Status: ");
+    checkBoxMusicEnabled.setLocation(x, y-2);
+    checkBoxMusicEnabled.setStateChangedCallback(this);
+    add(&checkBoxMusicEnabled);
+    y += yOffset;
+
+    x = xTextStart;
+    addLabel(iXY(x, y), "Music Volume", Color::white);
+    x = optionsMeterStartX;
+    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseMusicVolume);
+    x += optionsMeterWidth + arrowButtonWidth;
+    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseMusicVolume);
+    y += yOffset;
+
     //
     //x = xTextStart;
     //addLabel(iXY(x, y), "Unit Acknowledgement", Color::white);
@@ -92,35 +167,34 @@ void SoundView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     MenuTemplateView::doDraw(viewArea, clientArea);
 
-    //char strBuf[256];
-    //
-    //const int arrowButtonWidth = 16;
-    //
-    //iRect visualMeter;
-    //int   meterUsageXSize = 0;
-    //float percent         = 0.0f;
-    //int   x               = optionsMeterStartX + arrowButtonWidth;
-    //int   y               = bodyTextRect.min.y + 15;
-    //int   yOffset         = 15;
-    //
-    //Surface tempSurface(optionsMeterWidth, 14, optionsMeterWidth, 1);
-    //
-    //// Sound State
-    //tempSurface.fill(meterColor);
-    //tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
-    //sprintf(strBuf, "%s", getSoundState());
-    //tempSurface.bltStringCenter(strBuf, meterTextColor);
-    //tempSurface.blt(clientArea, x, y);
-    //
-    //// Sound Volume
-    //y += yOffset;
-    //tempSurface.fill(meterColor);
-    //tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
-    //sprintf(strBuf, "%d %%", getSoundVolume());
-    //tempSurface.bltStringCenter(strBuf, meterTextColor);
-    //tempSurface.blt(clientArea, x, y);
+    char strBuf[256];
+    
+    const int arrowButtonWidth = 16;
+    
+    iRect visualMeter;
+    int   x               = optionsMeterStartX + arrowButtonWidth;
+    int   y               = bodyTextRect.min.y + 15;
+    int   yOffset         = 15;
+    
+    Surface tempSurface(optionsMeterWidth, 14, 1);
+    
+    // Sound Volume
+    y += yOffset;
+    tempSurface.fill(meterColor);
+    tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
+    sprintf(strBuf, "%d %%", getSoundVolume());
+    tempSurface.bltStringCenter(strBuf, meterTextColor);
+    tempSurface.blt(clientArea, x, y);
 
-    clientArea.bltStringCenter("Not available for preview", Color::white);
+    // Music Volume
+    y += yOffset*3;
+    tempSurface.fill(meterColor);
+    tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
+    sprintf(strBuf, "%d %%", getMusicVolume());
+    tempSurface.bltStringCenter(strBuf, meterTextColor);
+    tempSurface.blt(clientArea, x, y);
+
+    //clientArea.bltStringCenter("Not available for preview", Color::white);
 
 } // end SoundView::doDraw
 
@@ -131,3 +205,36 @@ void SoundView::loadTitleSurface()
     doLoadTitleSurface("soundTitle");
 
 } // end SoundView::loadTitleSurface
+
+void SoundView::stateChanged(Component* source)
+{
+    if (source == &checkBoxSoundEnabled) {
+        gameconfig->enablesound = checkBoxSoundEnabled.getState();
+        
+        delete sound;
+
+        if ( checkBoxSoundEnabled.getState() ) {
+            sound = new SDLSound();
+            checkBoxSoundEnabled.setLabel("Enabled");
+            if ( GameControlRulesDaemon::getGameState() ) {
+                sound->playTankIdle();
+            }
+            if ( checkBoxMusicEnabled.getState() )
+                sound->playMusic("sound/music/");
+        } else {
+            sound = new DummySound();
+            checkBoxSoundEnabled.setLabel("Disabled");
+        }
+    } else if (source == &checkBoxMusicEnabled) {
+        gameconfig->enablemusic = checkBoxMusicEnabled.getState();
+        
+        if ( checkBoxMusicEnabled.getState() ) {
+            sound->playMusic("sound/music/");
+            checkBoxMusicEnabled.setLabel("Enabled");
+        } else {
+            sound->stopMusic();
+            checkBoxMusicEnabled.setLabel("Disabled");
+        }
+    }
+    
+}

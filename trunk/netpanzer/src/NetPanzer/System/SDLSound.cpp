@@ -25,11 +25,12 @@
 
 #include "SDL.h"
 #define USE_RWOPS // we want Mix_LOadMUS_RW
-#include <SDL_mixer.h>
+#include "SDL_mixer.h"
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 #include "SDLSound.hpp"
+#include "GameConfig.hpp"
 
 #if (SDL_MIXER_MAJOR_VERSION > 1) || (SDL_MIXER_MINOR_VERSION > 2) || \
     ((SDL_MIXER_MINOR_VERSION == 2) && (SDL_MIXER_PATCHLEVEL >= 6))
@@ -196,6 +197,7 @@ void SDLSound::loadSound(const char* directory)
         }
     }
     filesystem::freeList(list);
+    setSoundVolume(gameconfig->effectsvolume);
 }
 //-----------------------------------------------------------------
 /**
@@ -210,9 +212,15 @@ std::string SDLSound::getIdName(const char *filename)
     return name.substr(0, pos);
 }
 
-void SDLSound::setSoundVolume(int )
+void SDLSound::setSoundVolume(unsigned int volume)
 {
-    // TODO...
+    if ( volume > 100 ) volume = 100;
+    unsigned int sdlvol = (volume*100)/MIX_MAX_VOLUME;
+    chunks_t::iterator i = m_chunks.begin();
+    while ( i != m_chunks.end() ) {
+        Mix_VolumeChunk(i->second, sdlvol);
+        ++i;
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -223,6 +231,7 @@ void SDLSound::playMusic(const char* directory)
 {
     // Part1: scan directory for music files
     char **list = filesystem::enumerateFiles(directory);
+    setMusicVolume(gameconfig->musicvolume);
 
     musicfiles.clear();
     for (char **i = list; *i != NULL; i++) {
@@ -250,14 +259,13 @@ void SDLSound::stopMusic()
     // nicely fade the music out for 1 second
     if(Mix_PlayingMusic()) {
         Mix_HookMusicFinished(0);
-        Mix_FadeOutMusic(1000);
-        SDL_Delay(1000);
+        Mix_FadeOutMusic(500);
     }
 }
 
-void SDLSound::setMusicVolume(int volume)
+void SDLSound::setMusicVolume(unsigned int volume)
 {
-    Mix_VolumeMusic(int (float(MIX_MAX_VOLUME) / 100. * volume));
+    Mix_VolumeMusic((volume*100)/MIX_MAX_VOLUME);
 }
 
 void SDLSound::nextSong()

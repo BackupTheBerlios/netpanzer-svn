@@ -38,7 +38,7 @@ public:
 
     void initialize();
 
-    inline unsigned char getSpawnUnitCount( unsigned char unit_type ) const
+    inline unsigned int getSpawnUnitCount( unsigned char unit_type ) const
     {
         return( unit_spawn_list[ unit_type ] );
     }

@@ -627,6 +627,7 @@ void GameManager::quitNetPanzerGame()
     UnitInterface::reset();
     PlayerInterface::reset();
     ObjectiveInterface::resetLogic();
+    GameControlRulesDaemon::setStateServerIdle();
 }
 
 void GameManager::startGameTimer()

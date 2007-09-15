@@ -44,6 +44,7 @@ iXY controlsPos = sub4;
 #else
 iXY visualsPos = sub1;
 iXY interfacePos = sub2;
+iXY soundPos = sub3; // XXX 2
 #endif
 
 iXY hostPos = sub1;

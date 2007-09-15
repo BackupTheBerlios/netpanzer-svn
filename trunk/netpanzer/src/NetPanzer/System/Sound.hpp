@@ -43,12 +43,12 @@ public:
     virtual int playSoundRepeatedly(const char* name) = 0;
     virtual void stopChannel(int channel) = 0;
     /// set sound volume (0-100)
-    virtual void setSoundVolume(int volume) = 0;
+    virtual void setSoundVolume(unsigned int volume) = 0;
 
     virtual void playMusic(const char* directory) = 0;
     virtual void stopMusic() = 0;
     /// set music volume (0-100)
-    virtual void setMusicVolume(int volume) = 0;
+    virtual void setMusicVolume(unsigned int volume) = 0;
 
 private:
     int m_tankIdleChannel;

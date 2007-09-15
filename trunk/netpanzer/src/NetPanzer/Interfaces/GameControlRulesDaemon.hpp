@@ -52,12 +52,14 @@ protected:
 
 public:
     static void setStateServerInProgress();
+    static void setStateServerIdle();
     static void setDedicatedServer();
 
     static void forceMapChange(std::string map);
 
     static void processNetMessage(const NetMessage* message);
     static void updateGameControlFlow();
+    static unsigned char getGameState() { return game_state; }
 };
 
 #endif // ** _GAME_CONTROL_RULES_DAEMON_HPP

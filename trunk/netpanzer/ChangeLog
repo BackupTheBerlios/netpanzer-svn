@@ -1,3 +1,12 @@
+15-Sep-2007 by Aaron Perez
+- fixed problem when starting a game with more than 255 initial units.
+- when using int config variables, use minimum value if requested was less than
+  minimum, and max value if it was more than maximum.
+- fixed stopping the tank idle sound when a player host a non dedicated game 
+  and resigns
+- new sound options window (the base code was already done before), able to 
+  enable/disable and change volumes
+
 ... ChangeLog is not up to date...
 
 21-Feb-2005 by Matthias Braun
