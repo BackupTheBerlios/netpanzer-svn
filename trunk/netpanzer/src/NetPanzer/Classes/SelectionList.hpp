@@ -40,6 +40,7 @@ public:
     bool selectTarget( iXY point );
 
     bool selectBounded(iRect bounds, bool addunits);
+    bool selectSameTypeVisible(iXY point, bool addunits);
 
     bool isSelected()
     {

@@ -39,7 +39,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/Sound.hpp"
 #include "ScreenSurface.hpp"
 #include "Util/Log.hpp"
-#include "Util/Timer.hpp"
+#include "Util/NTimer.hpp"
 
 #include "GameConfig.hpp"
 
@@ -612,29 +612,20 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
         
         click_status = getCursorStatus(world_pos);
         switch(click_status) {
-            case _cursor_player_unit:
-                static Timer dclick_timer;
+            case _cursor_player_unit: {
+                static NTimer dclick_timer(200);
+                bool addunits = false;
                 if( (KeyboardInterface::getKeyState(SDLK_LSHIFT) == true) ||
                         (KeyboardInterface::getKeyState(SDLK_RSHIFT) == true)) {
-                    if ( ! dclick_timer.count() ) {
-                        iRect wr;
-                        WorldViewInterface::getViewWindow(&wr);
-                        working_list.selectBounded(wr,true);
-                        LOGGER.warning("Selected %d units(Added)", working_list.unit_list.size());
-                        break;
-                    } else {
-                        working_list.addUnit(world_pos);
-                    }
+                    addunits = true;
+                }
+                if ( ! dclick_timer.isTimeOut() ) {
+                    working_list.selectSameTypeVisible(world_pos,addunits);
+                    break;
+                } else if (addunits) {
+                    working_list.addUnit(world_pos);
                 } else {
-                    if ( ! dclick_timer.count() ) {
-                        iRect wr;
-                        WorldViewInterface::getViewWindow(&wr);
-                        working_list.selectBounded(wr,false);
-                        LOGGER.warning("Selected %d units", working_list.unit_list.size());
-                        break;
-                    } else {
-                        working_list.selectUnit(world_pos );
-                    }
+                    working_list.selectUnit(world_pos );
                 }
 
                 current_selection_list_bits=0;
@@ -645,9 +636,9 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
                     if(unit)
                         unit->soundSelected();
                 }
-                dclick_timer.changePeriod(0.2);
+                dclick_timer.reset();
                 break;
-
+            } // case
             case _cursor_move:
             case _cursor_blocked:
                 if(outpost_goal_selection == -1)
@@ -672,18 +663,18 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
 void
 WorldInputCmdProcessor::evalRightMButtonEvents(const MouseEvent& event)
 {
-    static Timer mtimer;
+    static NTimer mtimer(100);
     if (event.event == MouseEvent::EVENT_DOWN ) {
         right_mouse_scroll=true;
         right_mouse_scroll_pos=event.pos;
         right_mouse_scrolled_pos.x=right_mouse_scrolled_pos.y=0;
-        mtimer.changePeriod(0.1);
+        mtimer.reset();
     }
     if (right_mouse_scroll && event.event == MouseEvent::EVENT_UP ) {
         right_mouse_scroll=false;
         if ( right_mouse_scrolled_pos.x==0 
                             && right_mouse_scrolled_pos.y==0
-                            && mtimer.count() ) {
+                            && mtimer.isTimeOut() ) {
             // simple right click on the same position
             working_list.unGroup();
         }

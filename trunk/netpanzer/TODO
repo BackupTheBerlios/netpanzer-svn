@@ -2,11 +2,6 @@ Next release:
 -after having a full nodelist in A* the server is getting slow
     - no idea how to solve this, have to leave it open I guess...
 -create a new netpanzer-music package which adds pronobozos music to the game
--shorten time netpanzer is trying to access the masterserver
--compile SDL_mixer on windows with mp3 and ogg support
--make sure flag resolution works correctly (2 players with same flags). Someone
-reported that after someone else joined he could only build panzers with
-different flags, while his old tanks stayed the same.
 -you get wrong capture messages when capturing an outpost that belonged to a
 player that just left the game.
 
@@ -22,23 +17,11 @@ player that just left the game.
 *** New Masterserver code
  * Create UDP broadcast code for LAN games
 
-*** Network
- * Analyse if TCP was really a good choice. Question:
-    - what happens if a client can't keep up with the bandwith, will it stall
-      the server? (kromxp: no, it will be dropped from server)
- * An UDP protocol would need to be designed (taking a look at TNL or raknet
-   would also be a good idea)
-
 *** Server related
  * refactor bot code, so that it is possible to directly spawn bots at the
    server, after that we could easily add a "Skirmish" button to the main menu.
  * let dedicated server output statistics on console or in some log files. 
-   Also all message should be outputted with timestamps.
-   So that you can generate nice html pages with statistics of the players :)
-    - done
  * the Server has a massive memory leak somewhere - might be fixed now
- * impelement 'initialunits' param in PlayerUnitConfig::initialize()
-     - kromxp: this is done, but in other way.
  * synchronize resources between server and clients, both should have same flags
    collection and map. Let them automatically download these things.
  * server console doesn't react really way with all the messages of players
@@ -50,7 +33,6 @@ player that just left the game.
  * Convert the 256 color stuff to truecolor, usage of opengl is probably a good
    idea.
  * bots should have different names and different flags - partly implemented
- * make it possible to have different colors for different players - DONE
  * display alliances in the status screens.
  * think about setting unit spawnpoint/opening outpost view. It's very hard to
    select units standing in your base because of the other 2 functions.
@@ -62,16 +44,12 @@ player that just left the game.
  * Display tip of the day while loading the map.
  * Improve userinterface:
  * Make usual shortcuts (known from other RTSes) work:
-  -CTRL+Number for defining groups - done
-  -pressing a number twice to center screen on the group - done
-  -Scroll map with right mouse - done
-  -scrolling map with cursor keys
-  -Space jumps to last action - done
   -a key to cycle through all (offline) outposts
   -add possibilty for setting waypoints (ALT+leftclick?)
   -add possibility to set markers for allies
-  -double clicking on a unit marks all units of the same type on screen
-    (tripple clicking marks all units of this type on the map?)
+  -double clicking on a unit marks all units of the same type on screen -done
+    (tripple clicking marks all units of this type on the map?
+     or all units in screen?)
   -"subclassing" like in WC3: A key that cycles though different unit types in
    the currently selected group.
   - S key stops tanks
@@ -118,5 +96,3 @@ player that just left the game.
    defend an objective would be things that come to mind
  * make panzers always hit their targets instead of missing moving units?
 
-kromxp:
-   wow i have also many of the same ideas explained here.

@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitInterface.hpp"
 #include "PlayerInterface.hpp"
 #include "Util/Log.hpp"
+#include "UnitBase.hpp"
+#include "WorldViewInterface.hpp"
 #include <algorithm>
 
 bool SelectionList::selectUnit(iXY point)
@@ -81,6 +83,49 @@ bool SelectionList::selectBounded(iRect bounds, bool addunits)
 
     UnitInterface::queryUnitsAt(unit_list, bounds, player_id, _search_player);
 
+    select();
+    if (unit_list.size() == 0)
+        return false;
+    
+    resetUnitCycling();
+    return true;
+}
+
+bool SelectionList::selectSameTypeVisible( iXY point, bool addunits)
+{
+    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
+
+    if(!addunits) {
+        deselect();
+        unit_list.clear();
+    }
+
+    std::vector<UnitID> temp_list;
+
+    UnitInterface::queryUnitsAt(temp_list, point, player_id, _search_player);
+    
+    if ( temp_list.empty() )
+        return false;
+        
+    unsigned char t=UnitInterface::getUnit(temp_list[0])->unit_state.unit_type;
+    temp_list.clear();
+    
+    iRect wr;
+    WorldViewInterface::getViewWindow(&wr);
+    UnitInterface::queryUnitsAt(temp_list, wr, player_id, _search_player);
+    
+    int p = temp_list.size();
+    if ( !p )
+        return false;
+
+    p--;
+    do {
+        if ( UnitInterface::getUnit(temp_list[p])->unit_state.unit_type == t)
+            unit_list.push_back(temp_list[p]);
+    } while (p--);
+
+    temp_list.clear();
+    
     select();
     if (unit_list.size() == 0)
         return false;
