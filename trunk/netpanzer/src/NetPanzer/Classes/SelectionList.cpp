@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitInterface.hpp"
 #include "PlayerInterface.hpp"
 #include "Util/Log.hpp"
+#include <algorithm>
 
 bool SelectionList::selectUnit(iXY point)
 {
@@ -94,6 +95,9 @@ void SelectionList::select()
     unsigned long id_list_size;
     UnitBase *unit;
 
+    std::sort(unit_list.begin(), unit_list.end());
+    unit_list.erase(std::unique(unit_list.begin(), unit_list.end()), unit_list.end());
+    
     id_list_size = unit_list.size();
 
     for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
@@ -102,6 +106,7 @@ void SelectionList::select()
             unit->unit_state.select = true;
         }
     }
+
 }
 
 void SelectionList::deselect( void )

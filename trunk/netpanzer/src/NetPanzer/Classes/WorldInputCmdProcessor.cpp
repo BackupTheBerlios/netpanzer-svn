@@ -39,6 +39,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/Sound.hpp"
 #include "ScreenSurface.hpp"
 #include "Util/Log.hpp"
+#include "Util/Timer.hpp"
 
 #include "GameConfig.hpp"
 
@@ -170,6 +171,9 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
 {
     iXY map_loc;
     unsigned char unit_loc_status;
+    
+    if (selection_box_active)
+        return _cursor_regular;
 
     if( (manual_control_state == true) || (manual_fire_state == true) ) {
         return  _cursor_enemy_unit;
@@ -459,25 +463,30 @@ WorldInputCmdProcessor::selectBoundBoxUnits()
 {
     bool select_success;
     long x,y;
-
+    iRect r;
+    
     if ( box_press.x > box_release.x ) {
-        x = box_press.x;
-        box_press.x = box_release.x;
-        box_release.x = x;
+        r.min.x=box_release.x;
+        r.max.x=box_press.x;
+    } else {
+        r.min.x=box_press.x;
+        r.max.x=box_release.x;
     }
 
     if ( box_press.y > box_release.y ) {
-        y = box_press.y;
-        box_press.y = box_release.y;
-        box_release.y = y;
+        r.min.y=box_release.y;
+        r.max.y=box_press.y;
+    } else {
+        r.min.y=box_press.y;
+        r.max.y=box_release.y;
     }
 
     bool addunits = false;
     if(KeyboardInterface::getKeyState(SDLK_LSHIFT) ||
             KeyboardInterface::getKeyState(SDLK_RSHIFT))
         addunits = true;
-    select_success = working_list.selectBounded(iRect( box_press, box_release),
-            addunits);
+
+    select_success = working_list.selectBounded(r, addunits);
 
     if ( select_success == false ) {
         iXY box_size;
@@ -507,6 +516,10 @@ WorldInputCmdProcessor::evaluateMouseEvents()
 
     if(selection_box_active) {
         box_release = world_pos;
+        if(abs(box_release.x - box_press.x) > 3
+                    && abs(box_release.y - box_press.y) > 3) {
+            selectBoundBoxUnits();
+        }
     }
 
     while( !MouseInterface::event_queue.empty() ) {
@@ -559,7 +572,6 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
             box_release = world_pos;
             if(abs(box_release.x - box_press.x) > 3
 		    && abs(box_release.y - box_press.y) > 3) {
-                selectBoundBoxUnits();
                 return;
             }
         }
@@ -601,11 +613,28 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
         click_status = getCursorStatus(world_pos);
         switch(click_status) {
             case _cursor_player_unit:
+                static Timer dclick_timer;
                 if( (KeyboardInterface::getKeyState(SDLK_LSHIFT) == true) ||
                         (KeyboardInterface::getKeyState(SDLK_RSHIFT) == true)) {
-                    working_list.addUnit(world_pos);
+                    if ( ! dclick_timer.count() ) {
+                        iRect wr;
+                        WorldViewInterface::getViewWindow(&wr);
+                        working_list.selectBounded(wr,true);
+                        LOGGER.warning("Selected %d units(Added)", working_list.unit_list.size());
+                        break;
+                    } else {
+                        working_list.addUnit(world_pos);
+                    }
                 } else {
-                    working_list.selectUnit(world_pos );
+                    if ( ! dclick_timer.count() ) {
+                        iRect wr;
+                        WorldViewInterface::getViewWindow(&wr);
+                        working_list.selectBounded(wr,false);
+                        LOGGER.warning("Selected %d units", working_list.unit_list.size());
+                        break;
+                    } else {
+                        working_list.selectUnit(world_pos );
+                    }
                 }
 
                 current_selection_list_bits=0;
@@ -616,6 +645,7 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
                     if(unit)
                         unit->soundSelected();
                 }
+                dclick_timer.changePeriod(0.2);
                 break;
 
             case _cursor_move:
@@ -642,14 +672,18 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
 void
 WorldInputCmdProcessor::evalRightMButtonEvents(const MouseEvent& event)
 {
+    static Timer mtimer;
     if (event.event == MouseEvent::EVENT_DOWN ) {
         right_mouse_scroll=true;
         right_mouse_scroll_pos=event.pos;
         right_mouse_scrolled_pos.x=right_mouse_scrolled_pos.y=0;
+        mtimer.changePeriod(0.1);
     }
     if (right_mouse_scroll && event.event == MouseEvent::EVENT_UP ) {
         right_mouse_scroll=false;
-        if(right_mouse_scrolled_pos.x==0 && right_mouse_scrolled_pos.y==0) {
+        if ( right_mouse_scrolled_pos.x==0 
+                            && right_mouse_scrolled_pos.y==0
+                            && mtimer.count() ) {
             // simple right click on the same position
             working_list.unGroup();
         }
@@ -898,6 +932,8 @@ WorldInputCmdProcessor::draw()
         iXY box1, box2;
         WorldViewInterface::worldXYtoClientXY(world_win, box_press, &box1);
         WorldViewInterface::worldXYtoClientXY(world_win, box_release, &box2);
+        --box2.x;
+        box2.y-=3;
 
         screen->drawRect(iRect(box1, box2), Color::white);
     }
