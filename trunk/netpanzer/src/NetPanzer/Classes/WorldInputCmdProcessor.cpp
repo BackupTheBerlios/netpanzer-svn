@@ -462,7 +462,6 @@ bool
 WorldInputCmdProcessor::selectBoundBoxUnits()
 {
     bool select_success;
-    long x,y;
     iRect r;
     
     if ( box_press.x > box_release.x ) {
@@ -614,13 +613,23 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
         switch(click_status) {
             case _cursor_player_unit: {
                 static NTimer dclick_timer(200);
+                static int click_times = 0;
                 bool addunits = false;
                 if( (KeyboardInterface::getKeyState(SDLK_LSHIFT) == true) ||
                         (KeyboardInterface::getKeyState(SDLK_RSHIFT) == true)) {
                     addunits = true;
                 }
                 if ( ! dclick_timer.isTimeOut() ) {
-                    working_list.selectSameTypeVisible(world_pos,addunits);
+                    if ( click_times ) {
+                        iRect wr;
+                        WorldViewInterface::getViewWindow(&wr);
+                        working_list.selectBounded(wr, addunits);
+                        click_times=0;
+                    } else {
+                        working_list.selectSameTypeVisible(world_pos,addunits);
+                        dclick_timer.reset();
+                        click_times++;
+                    }
                     break;
                 } else if (addunits) {
                     working_list.addUnit(world_pos);
@@ -637,6 +646,7 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
                         unit->soundSelected();
                 }
                 dclick_timer.reset();
+                click_times=0;
                 break;
             } // case
             case _cursor_move:
