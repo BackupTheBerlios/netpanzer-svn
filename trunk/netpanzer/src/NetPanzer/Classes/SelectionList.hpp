@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SELECTIONLIST_HPP
 #define _SELECTIONLIST_HPP
 
-#include "UnitState.hpp"
-#include "UnitInterface.hpp"
+#include "Classes/UnitState.hpp"
+#include "Interfaces/UnitInterface.hpp"
 
 class SelectionList
 {

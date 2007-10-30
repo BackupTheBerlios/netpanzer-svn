@@ -18,20 +18,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "LibView.hpp"
-#include "Desktop.hpp"
-#include "ParticleSystem2D.hpp"
-#include "Particle2D.hpp"
-#include "GameConfig.hpp"
-#include "HostOptionsView.hpp"
-#include "GameViewGlobals.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Particles/ParticleSystem2D.hpp"
+#include "Particles/Particle2D.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Views/MainMenu/Multi/HostOptionsView.hpp"
+#include "Views/GameViewGlobals.hpp"
 #include "Util/UtilInterface.hpp"
 #include "Util/TimerInterface.hpp"
 #include "2D/PackedSurface.hpp"
-#include "ParticleInterface.hpp"
+#include "Particles/ParticleInterface.hpp"
 #include "2D/Span.hpp"
 #include "GameView.hpp"
-#include "CraterParticle2D.hpp"
-#include "ScreenSurface.hpp"
+#include "Particles/CraterParticle2D.hpp"
+#include "Classes/ScreenSurface.hpp"
 
 bool gDrawGameTiles = true;
 bool gDrawUnitTips  = false;

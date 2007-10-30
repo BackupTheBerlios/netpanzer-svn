@@ -21,20 +21,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string.h>
 #include "Util/Log.hpp"
-#include "Vehicle.hpp"
-#include "MapInterface.hpp"
-#include "PathScheduler.hpp"
-#include "ProjectileInterface.hpp"
-#include "UnitInterface.hpp"
-#include "UnitBlackBoard.hpp"
-#include "NetworkState.hpp"
+#include "Classes/UnitBlackBoard.hpp"
+#include "Classes/Units/Vehicle.hpp"
+#include "Classes/Network/NetworkState.hpp"
+#include "Interfaces/PathScheduler.hpp"
+#include "Interfaces/MapInterface.hpp"
+#include "Interfaces/ProjectileInterface.hpp"
+#include "Interfaces/UnitInterface.hpp"
 #include "System/Sound.hpp"
 
 // NOTE: Temp unit new sprites put in
-#include "GameConfig.hpp"
+#include "Interfaces/GameConfig.hpp"
 
-#include "ConsoleInterface.hpp"
-#include "ParticleInterface.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
+#include "Particles/ParticleInterface.hpp"
 
 enum{ _rotate_and_move, _rotate_stop_move };
 

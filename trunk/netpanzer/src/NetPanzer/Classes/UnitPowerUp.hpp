@@ -18,9 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNIT_POWERUP_HPP
 #define _UNIT_POWERUP_HPP
 
-#include "PowerUp.hpp"
-#include "Sprite.hpp"
-#include "UnitState.hpp"
+#include "Classes/PowerUp.hpp"
+#include "Classes/Sprite.hpp"
+#include "Classes/UnitState.hpp"
 
 extern SpritePacked UNIT_POWERUP_ANIM;
 extern SpritePacked UNIT_POWERUP_ANIM_SHADOW;

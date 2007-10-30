@@ -18,10 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __HostView_hpp__
 #define __HostView_hpp__
 
-#include "View.hpp"
+#include "Views/Components/View.hpp"
 #include "2D/Surface.hpp"
 #include "HostJoinTemplateView.hpp"
-#include "Choice.hpp"
+#include "Views/Components/Choice.hpp"
 
 
 

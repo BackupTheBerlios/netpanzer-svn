@@ -16,7 +16,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "Button.hpp"
+#include "Views/Components/Button.hpp"
 #include "2D/Color.hpp"
 #include "2D/Palette.hpp"
 #include "Util/Log.hpp"

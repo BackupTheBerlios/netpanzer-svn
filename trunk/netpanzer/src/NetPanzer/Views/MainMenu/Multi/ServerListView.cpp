@@ -22,12 +22,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <iostream>
 #include <sstream>
 #include "IPAddressView.hpp"
-#include "GameViewGlobals.hpp"
+#include "Views/GameViewGlobals.hpp"
 #include "MasterServer/ServerInfo.hpp"
 #include "Core/NetworkGlobals.hpp"
 // XXX ultrahack
-#include "ScreenSurface.hpp"
-#include "Desktop.hpp"
+#include "Classes/ScreenSurface.hpp"
+#include "Views/Components/Desktop.hpp"
 
 
 ServerListView* serverlistview = 0;

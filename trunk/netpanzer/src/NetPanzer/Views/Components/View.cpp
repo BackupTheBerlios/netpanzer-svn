@@ -17,10 +17,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "View.hpp"
-#include "Desktop.hpp"
-#include "MouseInterface.hpp"
-#include "KeyboardInterface.hpp"
+#include "Views/Components/View.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Interfaces/MouseInterface.hpp"
+#include "Interfaces/KeyboardInterface.hpp"
 #include "Types/fXY.hpp"
 #include "ViewGlobals.hpp"
 #include "Util/Exception.hpp"

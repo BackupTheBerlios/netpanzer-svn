@@ -21,11 +21,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "InfoSocket.hpp"
 #include "Util/StringTokenizer.hpp"
 
-#include "NetworkGlobals.hpp"
-#include "GameConfig.hpp"
-#include "PlayerInterface.hpp"
-#include "ObjectiveInterface.hpp"
-#include "GameManager.hpp"
+#include "Core/NetworkGlobals.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/ObjectiveInterface.hpp"
+#include "Interfaces/GameManager.hpp"
 
 #include "Util/Log.hpp"
 

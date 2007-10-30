@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PLAYERGAMEMANAGER_HPP
 #define _PLAYERGAMEMANAGER_HPP
 
-#include "BaseGameManager.hpp"
-#include "ScreenSurface.hpp"
+#include "Interfaces/BaseGameManager.hpp"
+#include "Classes/ScreenSurface.hpp"
 
 #include "InfoSocket.hpp"
 #include "Heartbeat.hpp"

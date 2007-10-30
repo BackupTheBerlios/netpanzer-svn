@@ -22,10 +22,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include <string>
 
-#include "SpecialButtonView.hpp"
+#include "Views/MainMenu/SpecialButtonView.hpp"
 #include "2D/Surface.hpp"
-#include "ScrollBar.hpp"
-#include "Button.hpp"
+#include "Views/Components/ScrollBar.hpp"
+#include "Views/Components/Button.hpp"
 
 //---------------------------------------------------------------------------
 class HelpScrollView : public SpecialButtonView

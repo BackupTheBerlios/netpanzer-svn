@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Util/Endian.hpp"
 #include "MapFile.hpp"
-#include "WadMapTable.hpp"
+#include "Classes/WadMapTable.hpp"
 #include <string>
 
 class WorldMap

@@ -18,18 +18,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "Outpost.hpp"
 
-#include "UnitInterface.hpp"
-#include "UnitProfileInterface.hpp"
-#include "PlayerInterface.hpp"
-#include "MapInterface.hpp"
-#include "ConsoleInterface.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Interfaces/UnitProfileInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/MapInterface.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
 
-#include "Server.hpp"
-#include "NetworkServer.hpp"
-#include "NetworkState.hpp"
-#include "UnitNetMessage.hpp"
-#include "ObjectiveNetMessage.hpp"
-#include "UnitMessageTypes.hpp"
+#include "Interfaces/Server.hpp"
+#include "Classes/Network/NetworkServer.hpp"
+#include "Classes/Network/NetworkState.hpp"
+#include "Classes/Network/UnitNetMessage.hpp"
+#include "Classes/Network/ObjectiveNetMessage.hpp"
+#include "Classes/UnitMessageTypes.hpp"
 
 Outpost::Outpost( short ID, iXY location, BoundBox area )
         : Objective( ID, location, area )

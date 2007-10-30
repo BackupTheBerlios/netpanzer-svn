@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SDLVideo.hpp"
 #include <stdlib.h>
 #ifdef _WIN32
-  #include "GameConfig.hpp"
+  #include "Interfaces/GameConfig.hpp"
 #endif
 
 SDLVideo* Screen; // get rid of this later...

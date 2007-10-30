@@ -18,9 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _TILEENGINE_HPP
 #define _TILEENGINE_HPP
 
-#include "WorldViewInterface.hpp"
-#include "MapInterface.hpp"
-#include "TileInterface.hpp"
+#include "Interfaces/WorldViewInterface.hpp"
+#include "Interfaces/MapInterface.hpp"
+#include "Interfaces/TileInterface.hpp"
 
 class TileEngine : private WorldViewInterface, private MapInterface
 {

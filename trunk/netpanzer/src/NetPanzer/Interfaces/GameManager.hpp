@@ -21,11 +21,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <time.h>
 #include <string>
 
-#include "PlayerState.hpp"
-#include "NetPacket.hpp"
-#include "ClientConnectDaemon.hpp"
-#include "ServerConnectDaemon.hpp"
-#include "GameControlRulesDaemon.hpp"
+#include "Classes/PlayerState.hpp"
+#include "Classes/Network/NetPacket.hpp"
+#include "Classes/Network/ClientConnectDaemon.hpp"
+#include "Classes/Network/ServerConnectDaemon.hpp"
+#include "Interfaces/GameControlRulesDaemon.hpp"
 #include "Types/iXY.hpp"
 
 enum { _mapload_result_success,

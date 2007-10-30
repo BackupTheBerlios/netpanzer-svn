@@ -20,12 +20,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "TemplateExplosionSystem.hpp"
 #include "ChunkTrajectoryParticle2D.hpp"
 #include "FlameParticle2D.hpp"
-#include "FlashParticle2D.hpp"
-#include "Particle2D.hpp"
+#include "Particles/FlashParticle2D.hpp"
+#include "Particles/Particle2D.hpp"
 #include "Util/TimerInterface.hpp"
 #include "CraterParticle2D.hpp"
-#include "TileInterface.hpp"
-#include "ParticleInterface.hpp"
+#include "Interfaces/TileInterface.hpp"
+#include "Particles/ParticleInterface.hpp"
 
 
 // TemplateExplosionSystem

@@ -19,18 +19,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "GetSessionView.hpp"
 #include "GetSessionHostView.hpp"
-#include "Desktop.hpp"
-#include "GameConfig.hpp"
-#include "GameManager.hpp"
-#include "MouseInterface.hpp"
-#include "GameViewGlobals.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "Interfaces/MouseInterface.hpp"
+#include "Views/GameViewGlobals.hpp"
 
 #include "IPAddressView.hpp"
 #include "ServerListView.hpp"
 
-#include "NetworkServer.hpp"
-#include "Server.hpp"
-#include "Client.hpp"
+#include "Classes/Network/NetworkServer.hpp"
+#include "Interfaces/Server.hpp"
+#include "Interfaces/Client.hpp"
 
 static int previousSessionType = _game_session_join;
 

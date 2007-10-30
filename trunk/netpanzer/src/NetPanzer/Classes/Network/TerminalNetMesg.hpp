@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _TERMINALNETMESG_HPP
 
 #include "NetMessage.hpp"
-#include "UnitMessageTypes.hpp"
-#include "ObjectiveMessageTypes.hpp"
+#include "Classes/UnitMessageTypes.hpp"
+#include "Classes/ObjectiveMessageTypes.hpp"
 
 enum { _net_message_id_term_unit_cmd,
        _net_message_id_term_unit_gen,

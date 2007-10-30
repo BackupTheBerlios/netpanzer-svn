@@ -18,11 +18,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "ProjectileInterface.hpp"
 
-#include "ParticleInterface.hpp"
-#include "MissleWeapon.hpp"
-#include "BulletWeapon.hpp"
-#include "ShellWeapon.hpp"
-#include "WorldViewInterface.hpp"
+#include "Particles/ParticleInterface.hpp"
+#include "Classes/Weapons/MissleWeapon.hpp"
+#include "Classes/Weapons/BulletWeapon.hpp"
+#include "Classes/Weapons/ShellWeapon.hpp"
+#include "Interfaces/WorldViewInterface.hpp"
 #include "Util/Math.hpp"
 
 std::list<Projectile*> ProjectileInterface::projectiles;

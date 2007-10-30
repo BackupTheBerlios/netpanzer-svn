@@ -19,9 +19,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Util/Endian.hpp"
 #include "Util/Log.hpp"
-#include "PlayerState.hpp"
-#include "SelectionBoxSprite.hpp"
-#include "PlayerInterface.hpp"
+#include "Classes/PlayerState.hpp"
+#include "Classes/SelectionBoxSprite.hpp"
+#include "Interfaces/PlayerInterface.hpp"
 #include <sstream>
 
 Uint16 NetworkPlayerState::getPlayerIndex() const

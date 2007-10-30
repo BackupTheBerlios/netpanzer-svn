@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <time.h>
 #include "NetMessage.hpp"
-#include "PlayerState.hpp"
+#include "Classes/PlayerState.hpp"
 
 enum { _net_message_id_connect_join_game_request,
        _net_message_id_connect_join_game_request_ack,

@@ -17,12 +17,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 #include "Humvee.hpp"
-#include "UnitProfileInterface.hpp"
+#include "Interfaces/UnitProfileInterface.hpp"
 #include "2D/Color.hpp"
-#include "WorldViewInterface.hpp"
-#include "Weapon.hpp"
+#include "Interfaces/WorldViewInterface.hpp"
+#include "Classes/Weapons/Weapon.hpp"
 #include "System/Sound.hpp"
-#include "GameConfig.hpp"
+#include "Interfaces/GameConfig.hpp"
 
 #include "UnitGlobals.hpp"
 

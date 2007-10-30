@@ -19,13 +19,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <assert.h>
 #include "Util/Log.hpp"
-#include "NetworkGlobals.hpp"
-#include "GameConfig.hpp"
-#include "NetworkState.hpp"
+#include "Core/NetworkGlobals.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Classes/Network/NetworkState.hpp"
 #include "Util/Exception.hpp"
 #include "NetworkServerUnix.hpp"
 
-#include "NetPacketDebugger.hpp"
+#include "Classes/Network/NetPacketDebugger.hpp"
 
 //#define NETWORKDEBUG
 

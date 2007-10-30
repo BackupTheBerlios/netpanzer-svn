@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __ShellWeapon_hpp__
 #define __ShellWeapon_hpp__
 
-#include "Weapon.hpp"
+#include "Classes/Weapons/Weapon.hpp"
 
 class ShellWeapon : public Weapon
 {

@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
 #include "Util/Log.hpp"
-#include "cMouse.hpp"
+#include "Views/Components/cMouse.hpp"
 
 unsigned char MouseInterface::cursor_x_size;
 unsigned char MouseInterface::cursor_y_size;

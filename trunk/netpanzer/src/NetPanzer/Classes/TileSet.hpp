@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _TILESET_HPP
 #define _TILESET_HPP
 
-#include "TileSetStruct.hpp"
-#include "WadMapTable.hpp"
+#include "Structs/TileSetStruct.hpp"
+#include "Classes/WadMapTable.hpp"
 
 namespace filesystem {
 class ReadFile;

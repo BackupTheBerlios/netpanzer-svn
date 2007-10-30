@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _POWERUP_HPP
 
 #include "SpriteSorter.hpp"
-#include "PowerUpNetMessage.hpp"
+#include "Classes/Network/PowerUpNetMessage.hpp"
 
 enum { _power_up_lifecycle_state_active,
        _power_up_lifecycle_state_inactive

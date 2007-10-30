@@ -17,22 +17,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "MenuTemplateView.hpp"
+#include "Views/MainMenu/MenuTemplateView.hpp"
 #include "2D/Palette.hpp"
-#include "Desktop.hpp"
-#include "GameConfig.hpp"
-#include "GameManager.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Interfaces/GameManager.hpp"
 #include "System/Sound.hpp"
-#include "cMouse.hpp"
-#include "ViewGlobals.hpp"
-#include "RadarPingParticle2D.hpp"
-#include "ScreenSurface.hpp"
-#include "Particle2D.hpp"
-#include "ParticleSystem2D.hpp"
+#include "Views/Components/cMouse.hpp"
+#include "Views/Components/ViewGlobals.hpp"
+#include "Particles/RadarPingParticle2D.hpp"
+#include "Classes/ScreenSurface.hpp"
+#include "Particles/Particle2D.hpp"
+#include "Particles/ParticleSystem2D.hpp"
 #include "2D/PackedSurface.hpp"
-#include "GameManager.hpp"
+#include "Interfaces/GameManager.hpp"
 #include "Util/Exception.hpp"
-#include "GameViewGlobals.hpp"
+#include "Views/GameViewGlobals.hpp"
 
 Surface       MenuTemplateView::backgroundSurface;
 PackedSurface MenuTemplateView::titlePackedSurface;

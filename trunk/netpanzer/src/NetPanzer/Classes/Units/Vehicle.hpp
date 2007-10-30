@@ -18,14 +18,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _VEHICLE_HPP
 #define _VEHICLE_HPP
 
-#include "UnitBase.hpp"
+#include "Classes/UnitBase.hpp"
 #include "Util/Timer.hpp"
-#include "UnitMessageTypes.hpp"
-#include "UnitOpcodes.hpp"
-#include "PathList.hpp"
+#include "Classes/UnitMessageTypes.hpp"
+#include "Classes/UnitOpcodes.hpp"
+#include "Classes/AI/PathList.hpp"
 
-#include "Sprite.hpp"
-#include "SelectionBoxSprite.hpp"
+#include "Classes/Sprite.hpp"
+#include "Classes/SelectionBoxSprite.hpp"
 
 enum { _control_idle,
        _control_move,

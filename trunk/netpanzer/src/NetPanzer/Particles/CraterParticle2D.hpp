@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __CraterParticle2D_hpp__
 
 #include <vector>
-#include "Particle2D.hpp"
+#include "Particles/Particle2D.hpp"
 
 class Surface;
 

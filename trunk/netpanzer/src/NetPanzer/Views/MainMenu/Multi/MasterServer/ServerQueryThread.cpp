@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sstream>
 #include <ctype.h>
 #include "Util/Exception.hpp"
-#include "GameConfig.hpp"
+#include "Interfaces/GameConfig.hpp"
 #include "Core/NetworkGlobals.hpp"
 #include "Util/StringTokenizer.hpp"
 #include "Util/StreamTokenizer.hpp"

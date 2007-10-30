@@ -18,9 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <algorithm>
-#include "Choice.hpp"
-#include "View.hpp"
-#include "StateChangedCallback.hpp"
+#include "Views/Components/Choice.hpp"
+#include "Views/Components/View.hpp"
+#include "Views/Components/StateChangedCallback.hpp"
 
 //---------------------------------------------------------------------------
 void Choice::reset()

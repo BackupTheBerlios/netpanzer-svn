@@ -39,12 +39,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //#include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 
-#include "BaseGameManager.hpp"
-#include "GameConfig.hpp"
-#include "DedicatedGameManager.hpp"
-#include "BotGameManager.hpp"
-#include "PlayerGameManager.hpp"
-#include "NetworkGlobals.hpp"
+#include "Interfaces/BaseGameManager.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Interfaces/DedicatedGameManager.hpp"
+#include "Interfaces/BotGameManager.hpp"
+#include "Interfaces/PlayerGameManager.hpp"
+#include "Core/NetworkGlobals.hpp"
 
 //---------------------------------------------------------------------------
 

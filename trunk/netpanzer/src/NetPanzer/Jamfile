@@ -22,16 +22,6 @@ SUBDIRS =
 #    Panels
 ;
 
-INCLUDEDIRS = $(SUBDIRS)
-    Views/MainMenu
-    Views/MainMenu/Multi
-    Views/MainMenu/Options
-    Views/Game
-    Views/Components
-    Views
-    Particles
-;
-
 SOURCES = ;
 for i in $(SUBDIRS)
 {
@@ -48,9 +38,4 @@ LinkWith netpanzer : netpanzertypes netpanzerutil netpanzeriniparser netpanzer2d
 C++Flags netpanzer : -DNP_DATADIR=\\\"$(appdatadir)\\\" ;
 ExternalLibs netpanzer : SDLMIXER SDLTTF SDLIMAGE SDL READLINE ;
 Help netpanzer : "Build the main netpanzer executable" ;
-
-for i in $(INCLUDEDIRS)
-{
-  IncludeDir netpanzer : $(i) ;
-}
 

@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __SparkParticle2D_hpp__
 #define __SparkParticle2D_hpp__
 
-#include "Particle2D.hpp"
+#include "Particles/Particle2D.hpp"
 
 class SparkParticle2D : public Particle2D
 {

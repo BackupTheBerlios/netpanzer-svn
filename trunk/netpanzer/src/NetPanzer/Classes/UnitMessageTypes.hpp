@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITMESSAGETYPES_HPP
 #define _UNITMESSAGETYPES_HPP
 
-#include "UnitMessage.hpp"
+#include "Classes/UnitMessage.hpp"
 
 enum { _umesg_ai_command,
        _umesg_weapon_hit,

@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __SpecialButtonView_hpp__
 #define __SpecialButtonView_hpp__
 
-#include "RMouseHackView.hpp"
+#include "Views/MainMenu/RMouseHackView.hpp"
 
 //--------------------------------------------------------------------------
 class SpecialButtonView : public RMouseHackView

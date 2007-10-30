@@ -20,10 +20,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "CloudParticle2D.hpp"
 #include "Util/TimerInterface.hpp"
 #include "2D/PackedSurface.hpp"
-#include "GameConfig.hpp"
+#include "Interfaces/GameConfig.hpp"
 #include "Util/Exception.hpp"
 #include "2D/Palette.hpp"
-#include "Sprite.hpp"
+#include "Classes/Sprite.hpp"
 
 
 // Statics.

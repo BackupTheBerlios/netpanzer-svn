@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ParticleSystemGlobals.hpp"
 #include "Util/Exception.hpp"
 #include "2D/Palette.hpp"
-#include "GameConfig.hpp"
+#include "Interfaces/GameConfig.hpp"
 
 // Static images.
 PackedSurfaceList PuffParticle2D::staticPackedSmokeLightPuff;

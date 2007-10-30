@@ -18,9 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __FlagSelectionView_hpp__
 #define __FlagSelectionView_hpp__
 
-#include "RMouseHackView.hpp"
+#include "Views/MainMenu/RMouseHackView.hpp"
 #include "2D/Surface.hpp"
-#include "ScrollBar.hpp"
+#include "Views/Components/ScrollBar.hpp"
 
 extern Surface playerFlag;
 extern int     playerFlagSelected;

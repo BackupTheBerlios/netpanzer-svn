@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _WORLDINPUTCMDPROCESSOR_HPP
 
 #include "SelectionList.hpp"
-#include "MouseInterface.hpp"
+#include "Interfaces/MouseInterface.hpp"
 #include "Util/Timer.hpp"
 
 class WorldInputCmdProcessor

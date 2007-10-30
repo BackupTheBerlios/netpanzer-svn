@@ -20,11 +20,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ChunkTrajectoryParticle2D.hpp"
 #include "Util/TimerInterface.hpp"
 #include "PuffParticle2D.hpp"
-#include "GameConfig.hpp"
+#include "Interfaces/GameConfig.hpp"
 #include "Util/Math.hpp"
-#include "TileInterface.hpp"
-#include "UnitGlobals.hpp"
-#include "ParticleInterface.hpp"
+#include "Interfaces/TileInterface.hpp"
+#include "Classes/Units/UnitGlobals.hpp"
+#include "Particles/ParticleInterface.hpp"
 
 
 PackedSurface ChunkTrajectoryParticle2D::staticPackedGroundChunks;

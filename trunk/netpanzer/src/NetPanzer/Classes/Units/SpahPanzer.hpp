@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SPAHPANZER_HPP
 #define _SPAHPANZER_HPP
 
-#include "Vehicle.hpp"
+#include "Classes/Units/Vehicle.hpp"
 
 class SpahPanzer : public Vehicle
 {

@@ -18,10 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "AreYouSureExitView.hpp"
-#include "Desktop.hpp"
+#include "Views/Components/Desktop.hpp"
 #include "2D/Palette.hpp"
-#include "ScreenSurface.hpp"
-#include "GameManager.hpp"
+#include "Classes/ScreenSurface.hpp"
+#include "Interfaces/GameManager.hpp"
 
 //---------------------------------------------------------------------------
 static void bYES()

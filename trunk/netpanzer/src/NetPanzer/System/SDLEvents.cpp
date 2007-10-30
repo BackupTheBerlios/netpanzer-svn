@@ -19,12 +19,12 @@
 
 #include <ctype.h>
 #include "SDL.h"
-#include "KeyboardInterface.hpp"
-#include "MouseInterface.hpp"
-#include "cMouse.hpp"
+#include "Interfaces/KeyboardInterface.hpp"
+#include "Interfaces/MouseInterface.hpp"
+#include "Views/Components/cMouse.hpp"
 #include "SDLVideo.hpp"
 #include "2D/Palette.hpp"
-#include "GameConfig.hpp"
+#include "Interfaces/GameConfig.hpp"
 
 bool handleSDLEvents()
 {

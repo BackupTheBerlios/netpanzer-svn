@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sstream>
 
 #include "Console.hpp"
-#include "GameConfig.hpp"
+#include "Interfaces/GameConfig.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/FileStream.hpp"
 #include "Util/Log.hpp"

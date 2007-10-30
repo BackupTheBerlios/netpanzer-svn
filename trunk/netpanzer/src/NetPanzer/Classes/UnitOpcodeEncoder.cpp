@@ -17,13 +17,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "UnitOpcodeEncoder.hpp"
-#include "Server.hpp"
-#include "NetworkServer.hpp"
-#include "NetworkState.hpp"
-#include "ConsoleInterface.hpp"
-#include "OpcodeDebugger.hpp"
-#include "UnitNetMessage.hpp"
+#include "Classes/UnitOpcodeEncoder.hpp"
+#include "Interfaces/Server.hpp"
+#include "Classes/Network/NetworkServer.hpp"
+#include "Classes/Network/NetworkState.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
+#include "Classes/OpcodeDebugger.hpp"
+#include "Classes/Network/UnitNetMessage.hpp"
 #include "Util/Log.hpp"
 
 UnitOpcodeEncoder::UnitOpcodeEncoder()

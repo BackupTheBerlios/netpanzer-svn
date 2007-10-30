@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETWORK_SERVER_UNIX_HPP
 #define _NETWORK_SERVER_UNIX_HPP
 
-#include "NetworkServer.hpp"
+#include "Classes/Network/NetworkServer.hpp"
 #include "Network/ServerSocket.hpp"
 
 /** This class implements a bsd/unix socket implementation of the

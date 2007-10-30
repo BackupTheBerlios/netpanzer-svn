@@ -17,19 +17,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 #include <stdexcept>
-#include "PlayerInterface.hpp"
 
-#include "UnitInterface.hpp"
-#include "ObjectiveInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/Server.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Interfaces/ObjectiveInterface.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
 
-#include "PlayerNetMessage.hpp"
-#include "Server.hpp"
-#include "NetworkServer.hpp"
+#include "Classes/Network/PlayerNetMessage.hpp"
+#include "Classes/Network/NetworkServer.hpp"
+#include "Classes/SelectionBoxSprite.hpp"
 #include "Util/Log.hpp"
 
-#include "ConsoleInterface.hpp"
 // for UNIT_FLAGS_SURFACE
-#include "SelectionBoxSprite.hpp"
 
 // ** PlayerInterface Statics
 PlayerState   *PlayerInterface::player_lists = 0;

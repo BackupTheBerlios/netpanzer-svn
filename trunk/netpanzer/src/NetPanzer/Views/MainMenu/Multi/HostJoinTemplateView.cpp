@@ -20,25 +20,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <ctype.h>
 #include <sstream>
 #include "HostJoinTemplateView.hpp"
-#include "Desktop.hpp"
+#include "Views/Components/Desktop.hpp"
 #include "HostJoinTemplateView.hpp"
-#include "GameConfig.hpp"
-#include "PlayerGameManager.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Interfaces/PlayerGameManager.hpp"
 #include "HostView.hpp"
 #include "Util/Exception.hpp"
 #include "MapSelectionView.hpp"
 #include "PlayerNameView.hpp"
 #include "FlagSelectionView.hpp"
 #include "2D/Palette.hpp"
-#include "GameViewGlobals.hpp"
+#include "Views/GameViewGlobals.hpp"
 #include "IPAddressView.hpp"
 #include "ServerListView.hpp"
 
 
-#include "Client.hpp"
-#include "Server.hpp"
-#include "NetworkClient.hpp"
-#include "NetworkServer.hpp"
+#include "Interfaces/Client.hpp"
+#include "Interfaces/Server.hpp"
+#include "Classes/Network/NetworkClient.hpp"
+#include "Classes/Network/NetworkServer.hpp"
 
 char HostJoinTemplateView::gameTypeBuf[256];
 

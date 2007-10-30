@@ -18,11 +18,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "VisualsView.hpp"
-#include "ParticleSystemGlobals.hpp"
-#include "GameConfig.hpp"
-#include "GameManager.hpp"
-#include "GameViewGlobals.hpp"
-#include "Desktop.hpp"
+#include "Particles/ParticleSystemGlobals.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "Views/GameViewGlobals.hpp"
+#include "Views/Components/Desktop.hpp"
 
 // VisualsView
 //---------------------------------------------------------------------------

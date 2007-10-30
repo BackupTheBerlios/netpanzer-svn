@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETWORK_CLIENT_UNIX_HPP
 #define _NETWORK_CLIENT_UNIX_HPP
 
-#include "NetworkClient.hpp"
+#include "Classes/Network/NetworkClient.hpp"
 #include "Network/ClientSocket.hpp"
 
 class NetworkClientUnix : public NetworkClient, public ClientSocketObserver

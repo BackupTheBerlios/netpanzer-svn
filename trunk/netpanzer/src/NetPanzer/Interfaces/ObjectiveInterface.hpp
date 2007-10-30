@@ -20,11 +20,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "SDL.h"
 
-#include "Objective.hpp"
+#include "Classes/Objective.hpp"
 #include "ArrayUtil/ArrayTemplate.hpp"
 
-#include "NetPacket.hpp"
-#include "NetMessageEncoder.hpp"
+#include "Classes/Network/NetPacket.hpp"
+#include "Classes/Network/NetMessageEncoder.hpp"
 
 enum { _no_objective_found,
        _player_occupied_objective_found,

@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef BOTTASKS_H
 #define BOTTASKS_H
 
-#include "UnitBase.hpp"
+#include "Classes/UnitBase.hpp"
 #include "BotTaskList.hpp"
 
 class BotTask {

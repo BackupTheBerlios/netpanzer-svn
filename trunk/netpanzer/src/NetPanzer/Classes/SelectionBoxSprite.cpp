@@ -17,9 +17,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "SelectionBoxSprite.hpp"
+#include "Classes/SelectionBoxSprite.hpp"
 #include "2D/Palette.hpp"
-#include "GameConfig.hpp"
+#include "Interfaces/GameConfig.hpp"
 
 Surface UNIT_FLAGS_SURFACE;
 

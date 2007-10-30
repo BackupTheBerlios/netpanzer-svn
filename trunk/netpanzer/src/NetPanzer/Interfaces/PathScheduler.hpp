@@ -18,9 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PATHSCHEDULER_HPP
 #define _PATHSCHEDULER_HPP
 
-#include "Astar.hpp"
-#include "PathList.hpp"
-#include "UnitBase.hpp"
+#include "Classes/AI/Astar.hpp"
+#include "Classes/AI/PathList.hpp"
+#include "Classes/UnitBase.hpp"
 #include "ArrayUtil/QueueTemplate.hpp"
 #include "ArrayUtil/ArrayTemplate.hpp"
 

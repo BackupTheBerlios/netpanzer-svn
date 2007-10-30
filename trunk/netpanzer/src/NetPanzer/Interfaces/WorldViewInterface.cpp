@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "WorldViewInterface.hpp"
+#include "Interfaces/WorldViewInterface.hpp"
 
 ViewCamera   WorldViewInterface::camera_list[10];
 ViewCamera * WorldViewInterface::main_camera = &camera_list[0];

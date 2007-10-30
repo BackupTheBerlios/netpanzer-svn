@@ -18,13 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _WEAPON_HPP
 #define _WEAPON_HPP
 
-#include "UnitBase.hpp"
-#include "Projectile.hpp"
+#include "Classes/UnitBase.hpp"
+#include "Classes/Projectile.hpp"
 #include "Util/BresenhamLine.hpp"
 #include "Util/Timer.hpp"
-#include "Sprite.hpp"
+#include "Classes/Sprite.hpp"
 #include "Types/fXY.hpp"
-#include "Particle2D.hpp"
+#include "Particles/Particle2D.hpp"
 
 enum
 {

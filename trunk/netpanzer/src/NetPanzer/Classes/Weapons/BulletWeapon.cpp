@@ -18,12 +18,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "BulletWeapon.hpp"
-#include "UnitMessageTypes.hpp"
-#include "UnitInterface.hpp"
-#include "NetworkState.hpp"
-#include "WorldViewInterface.hpp"
+#include "Classes/UnitMessageTypes.hpp"
+#include "Classes/Network/NetworkState.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Interfaces/WorldViewInterface.hpp"
 #include "System/Sound.hpp"
-#include "ParticleInterface.hpp"
+#include "Particles/ParticleInterface.hpp"
 #include "WeaponGlobals.hpp"
 
 float BulletWeapon::velocity = gBulletVelocity;

@@ -24,8 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Types/iRect.hpp"
 #include "PuffParticle2D.hpp"
 #include "ParticleSystemGlobals.hpp"
-#include "UnitTypes.hpp"
-#include "UnitState.hpp"
+#include "Structs/UnitTypes.hpp"
+#include "Classes/UnitState.hpp"
 
 class Surface;
 class PackedSurface;

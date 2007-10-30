@@ -18,15 +18,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "CodeStatsView.hpp"
-#include "GameViewGlobals.hpp"
-#include "SpriteSorter.hpp"
-#include "NetworkState.hpp"
-#include "PathingState.hpp"
-#include "PathScheduler.hpp"
-#include "MiniMapInterface.hpp"
-#include "PlayerInterface.hpp"
-#include "UnitInterface.hpp"
-#include "NetworkInterface.hpp"
+#include "Views/GameViewGlobals.hpp"
+#include "Classes/SpriteSorter.hpp"
+#include "Classes/Network/NetworkState.hpp"
+#include "Classes/AI/PathingState.hpp"
+#include "Interfaces/PathScheduler.hpp"
+#include "Interfaces/MiniMapInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Classes/Network/NetworkInterface.hpp"
 
 enum{ _display_mode_network_stats,
       _display_mode_pathing_stats,

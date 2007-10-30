@@ -19,15 +19,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Util/Log.hpp"
 #include "GameInfoView.hpp"
-#include "GameViewGlobals.hpp"
-#include "Desktop.hpp"
-#include "GameConfig.hpp"
-#include "GameManager.hpp"
-#include "UnitInterface.hpp"
-#include "PlayerInterface.hpp"
-#include "NetworkState.hpp"
-#include "ScreenSurface.hpp"
-#include "ObjectiveInterface.hpp"
+#include "Views/GameViewGlobals.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Classes/Network/NetworkState.hpp"
+#include "Classes/ScreenSurface.hpp"
+#include "Interfaces/ObjectiveInterface.hpp"
 
 static int getPlayerFrags()
 {

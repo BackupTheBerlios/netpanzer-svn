@@ -16,11 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "Objective.hpp"
+#include "Classes/Objective.hpp"
 #include "Outpost.hpp"
-#include "PlayerInterface.hpp"
-#include "ConsoleInterface.hpp"
-#include "UnitProfileInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
+#include "Interfaces/UnitProfileInterface.hpp"
 #include "Util/Log.hpp"
 
 Objective::Objective(Uint16 ID, iXY location, BoundBox area)

@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __MenuTemplateView_hpp__
 #define __MenuTemplateView_hpp__
 
-#include "SpecialButtonView.hpp"
+#include "Views/MainMenu/SpecialButtonView.hpp"
 #include "2D/Surface.hpp"
 #include "2D/PackedSurface.hpp"
 #include "Types/iRect.hpp"

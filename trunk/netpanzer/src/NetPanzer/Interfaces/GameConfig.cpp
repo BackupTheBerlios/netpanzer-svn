@@ -25,10 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "INIParser/Store.hpp"
 #include "INIParser/Section.hpp"
-#include "GameConfig.hpp"
-#include "NetworkGlobals.hpp"
-#include "MiniMapView.hpp"
-#include "GameViewGlobals.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Core/NetworkGlobals.hpp"
+#include "Views/Game/MiniMapView.hpp"
+#include "Views/GameViewGlobals.hpp"
 
 GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     // VariableName("Name", value [, minimum, maximum])

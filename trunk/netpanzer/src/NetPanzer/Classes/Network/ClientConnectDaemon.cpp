@@ -16,22 +16,22 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "ClientConnectDaemon.hpp"
+#include "Classes/Network/ClientConnectDaemon.hpp"
 
 #include <stdio.h>
 
-#include "PlayerInterface.hpp"
-#include "UnitInterface.hpp"
-#include "Client.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Interfaces/Client.hpp"
 #include "NetworkClient.hpp"
-#include "GameConfig.hpp"
-#include "GameManager.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Interfaces/GameManager.hpp"
 
 #include "Util/Log.hpp"
 #include "ConnectNetMessage.hpp"
-#include "ConsoleInterface.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
 
-#include "LobbyView.hpp"
+#include "Views/Game/LobbyView.hpp"
 
 enum { _connect_state_idle,
        _connect_state_wait_for_connect_start,

@@ -19,13 +19,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <algorithm>
 #include "MiniMapView.hpp"
-#include "cMouse.hpp"
-#include "MiniMapInterface.hpp"
-#include "KeyboardInterface.hpp"
-#include "cMouse.hpp"
-#include "ScreenSurface.hpp"
-#include "WorldInputCmdProcessor.hpp"
-#include "GameConfig.hpp"
+#include "Views/Components/cMouse.hpp"
+#include "Interfaces/MiniMapInterface.hpp"
+#include "Interfaces/KeyboardInterface.hpp"
+#include "Classes/ScreenSurface.hpp"
+#include "Classes/WorldInputCmdProcessor.hpp"
+#include "Interfaces/GameConfig.hpp"
 
 MiniMapView miniMapView;
 

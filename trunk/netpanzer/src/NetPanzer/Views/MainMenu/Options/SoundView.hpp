@@ -18,10 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __SoundView_hpp__
 #define __SoundView_hpp__
 
-#include "View.hpp"
-#include "OptionsTemplateView.hpp"
-#include "CheckBox.hpp"
-#include "StateChangedCallback.hpp"
+#include "Views/Components/View.hpp"
+#include "Views/MainMenu/OptionsTemplateView.hpp"
+#include "Views/Components/CheckBox.hpp"
+#include "Views/Components/StateChangedCallback.hpp"
 
 /////////////////////////////////////////////////////////////////////////////
 // forward declarations

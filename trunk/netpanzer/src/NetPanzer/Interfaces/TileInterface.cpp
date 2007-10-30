@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 #include "TileInterface.hpp"
-#include "MapInterface.hpp"
+#include "Interfaces/MapInterface.hpp"
 #include "Util/Log.hpp"
 
 TileSet TileInterface::tile_set;

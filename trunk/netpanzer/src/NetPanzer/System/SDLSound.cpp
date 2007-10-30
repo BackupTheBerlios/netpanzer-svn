@@ -30,7 +30,7 @@
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 #include "SDLSound.hpp"
-#include "GameConfig.hpp"
+#include "Interfaces/GameConfig.hpp"
 
 #if (SDL_MIXER_MAJOR_VERSION > 1) || (SDL_MIXER_MINOR_VERSION > 2) || \
     ((SDL_MIXER_MINOR_VERSION == 2) && (SDL_MIXER_PATCHLEVEL >= 6))

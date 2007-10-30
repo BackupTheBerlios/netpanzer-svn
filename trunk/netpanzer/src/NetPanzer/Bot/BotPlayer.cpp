@@ -25,14 +25,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "BotPlayer.hpp"
 
-#include "PlayerInterface.hpp"
-#include "PlayerID.hpp"
-#include "UnitInterface.hpp"
-#include "MapInterface.hpp"
-#include "UnitBase.hpp"
-#include "ObjectiveInterface.hpp"
-#include "Objective.hpp"
-#include "Vehicle.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Classes/PlayerID.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Interfaces/MapInterface.hpp"
+#include "Classes/UnitBase.hpp"
+#include "Interfaces/ObjectiveInterface.hpp"
+#include "Classes/Objective.hpp"
+#include "Classes/Units/Vehicle.hpp"
 #include "Util/Log.hpp"
 
 //-----------------------------------------------------------------

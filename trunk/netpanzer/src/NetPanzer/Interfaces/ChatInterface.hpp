@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _CHATINTERFACE_HPP
 #define _CHATINTERFACE_HPP
 
-#include "ChatNetMessage.hpp"
+#include "Classes/Network/ChatNetMessage.hpp"
 
 class ChatInterface
 {

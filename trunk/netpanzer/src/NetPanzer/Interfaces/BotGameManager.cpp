@@ -18,19 +18,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "BotGameManager.hpp"
 
-#include "Bot.hpp"
-#include "BotPlayer.hpp"
+#include "Bot/Bot.hpp"
+#include "Bot/BotPlayer.hpp"
 
-#include "GameManager.hpp"
-#include "GameConfig.hpp"
-#include "NetworkState.hpp"
-#include "Client.hpp"
-#include "NetworkClient.hpp"
-#include "ClientConnectDaemon.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Interfaces/Client.hpp"
+
+#include "Classes/Network/NetworkState.hpp"
+#include "Classes/Network/NetworkClient.hpp"
+#include "Classes/Network/ClientConnectDaemon.hpp"
+
 #include "Util/Exception.hpp"
-#include "LobbyView.hpp"
-#include "ProgressView.hpp"
-#include "ConsoleLoadingView.hpp"
+#include "Views/Game/LobbyView.hpp"
+#include "Views/Game/ProgressView.hpp"
+#include "Views/Game/ConsoleLoadingView.hpp"
 
 //-----------------------------------------------------------------
 BotGameManager::BotGameManager(const std::string &serverHost)

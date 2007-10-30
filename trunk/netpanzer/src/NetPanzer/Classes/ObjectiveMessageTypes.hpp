@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _OBJECTIVE_MESSSAGE_TYPES_HPP
 #define _OBJECTIVE_MESSSAGE_TYPES_HPP
 
-#include "PlayerState.hpp"
+#include "Classes/PlayerState.hpp"
 #include "Types/iXY.hpp"
 #include "Util/Endian.hpp"
 

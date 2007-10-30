@@ -16,25 +16,25 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "ServerConnectDaemon.hpp"
-#include "ChatInterface.hpp"
-#include "NetworkGlobals.hpp"
-#include "PlayerInterface.hpp"
-#include "UnitInterface.hpp"
-#include "ObjectiveInterface.hpp"
-#include "PowerUpInterface.hpp"
-#include "MapInterface.hpp"
-#include "Server.hpp"
-#include "NetworkServer.hpp"
-#include "GameManager.hpp"
-#include "GameConfig.hpp"
-#include "SelectionBoxSprite.hpp"
+#include "Classes/Network/ServerConnectDaemon.hpp"
+#include "Interfaces/ChatInterface.hpp"
+#include "Core/NetworkGlobals.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Interfaces/ObjectiveInterface.hpp"
+#include "Interfaces/PowerUpInterface.hpp"
+#include "Interfaces/MapInterface.hpp"
+#include "Interfaces/Server.hpp"
+#include "Classes/Network/NetworkServer.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Classes/SelectionBoxSprite.hpp"
 
 #include "PlayerNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
 #include "SystemNetMessage.hpp"
 
-#include "ConsoleInterface.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
 #include "Util/Log.hpp"
 
 ServerConnectDaemon::ConnectionState

@@ -18,27 +18,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "ClientMessageRouter.hpp"
 
-#include "Client.hpp"
+#include "Interfaces/Client.hpp"
 #include "NetworkClient.hpp"
-#include "ClientConnectDaemon.hpp"
+#include "Classes/Network/ClientConnectDaemon.hpp"
 
-#include "GameManager.hpp"
+#include "Interfaces/GameManager.hpp"
 
-#include "UnitNetMessage.hpp"
+#include "Classes/Network/UnitNetMessage.hpp"
 #include "PlayerNetMessage.hpp"
 #include "SystemNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
 #include "ObjectiveNetMessage.hpp"
 
-#include "ObjectiveInterface.hpp"
-#include "UnitInterface.hpp"
-#include "PlayerInterface.hpp"
-#include "ChatInterface.hpp"
-#include "GameControlRulesDaemon.hpp"
-#include "PowerUpInterface.hpp"
+#include "Interfaces/ObjectiveInterface.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/ChatInterface.hpp"
+#include "Interfaces/GameControlRulesDaemon.hpp"
+#include "Interfaces/PowerUpInterface.hpp"
 #include "Util/Log.hpp"
 
-#include "NetworkState.hpp"
+#include "Classes/Network/NetworkState.hpp"
 
 NetMessage * ClientMessageRouter::temp_message;
 NetMessageDecoder ClientMessageRouter::message_decoder;

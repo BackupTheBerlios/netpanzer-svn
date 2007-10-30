@@ -18,6 +18,4 @@ for i in $(SUBDIRS)
 
 Library netpanzerviews : $(SOURCES) : noinstall ;
 ExternalLibs netpanzerviews : SDL SDLTTF PHYSFS ;
-IncludeDir netpanzerviews : $(SUBDIRS) ../Interfaces ../Classes
-                            ../Structs ../Classes/Network ../Classes/Weapons
-                            ../Classes/AI ../Particles ../IRCLobby .. ;
+

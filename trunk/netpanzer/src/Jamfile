@@ -1,6 +1,7 @@
 SubDir TOP src ;
 
 IncludeDir Lib ;
+IncludeDir NetPanzer ;
 
 SubInclude TOP src Lib ;
 SubInclude TOP src NetPanzer ;

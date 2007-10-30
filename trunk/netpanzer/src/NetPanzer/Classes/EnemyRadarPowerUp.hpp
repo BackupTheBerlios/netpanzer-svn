@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _ENEMY_RADAR_POWERUP_HPP
 #define _ENEMY_RADAR_POWERUP_HPP
 
-#include "PowerUp.hpp"
-#include "Sprite.hpp"
+#include "Classes/PowerUp.hpp"
+#include "Classes/Sprite.hpp"
 
 extern SpritePacked ENEMY_RADAR_POWERUP_ANIM;
 extern SpritePacked ENEMY_RADAR_POWERUP_ANIM_SHADOW;

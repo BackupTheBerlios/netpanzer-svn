@@ -20,10 +20,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include <string>
 #include "MapSelectionView.hpp"
-#include "GameConfig.hpp"
-#include "GameViewGlobals.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Views/GameViewGlobals.hpp"
 #include "HostOptionsView.hpp"
-#include "MapFile.hpp"
+#include "Classes/MapFile.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/FileStream.hpp"
 #include "Util/Exception.hpp"

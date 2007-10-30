@@ -19,11 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __VehicleSelectionView_hpp__
 
 #include "2D/Surface.hpp"
-#include "View.hpp"
+#include "Views/Components/View.hpp"
 #include "GameTemplateView.hpp"
-#include "UnitProfileInterface.hpp"
-#include "AbstractButton.hpp"
-#include "Button.hpp"
+#include "Interfaces/UnitProfileInterface.hpp"
+#include "Views/Components/AbstractButton.hpp"
+#include "Views/Components/Button.hpp"
 
 
 // The following may be used some day.

@@ -18,14 +18,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "ServerMessageRouter.hpp"
 
-#include "Server.hpp"
-#include "NetworkServer.hpp"
-#include "ServerConnectDaemon.hpp"
-#include "UnitInterface.hpp"
-#include "PlayerInterface.hpp"
-#include "ObjectiveInterface.hpp"
-#include "GameManager.hpp"
-#include "ChatInterface.hpp"
+#include "Interfaces/Server.hpp"
+#include "Classes/Network/NetworkServer.hpp"
+#include "Classes/Network/ServerConnectDaemon.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/ObjectiveInterface.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "Interfaces/ChatInterface.hpp"
 
 #include "TerminalNetMesg.hpp"
 #include "SystemNetMessage.hpp"

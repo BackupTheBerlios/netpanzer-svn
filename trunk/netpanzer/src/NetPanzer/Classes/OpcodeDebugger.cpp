@@ -22,8 +22,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include <unistd.h>
 
-#include "OpcodeDebugger.hpp"
-#include "UnitOpcodes.hpp"
+#include "Classes/OpcodeDebugger.hpp"
+#include "Classes/UnitOpcodes.hpp"
 
 void OpcodeDebugger::logOpcode(std::ostream& log, UnitOpcode* opcode)
 {

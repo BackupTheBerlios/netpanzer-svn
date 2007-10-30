@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _CLIENTCONNECTDAEMON_HPP
 #define _CLIENTCONNECTDAEMON_HPP
 
-#include "PlayerState.hpp"
-#include "NetPacket.hpp"
+#include "Classes/PlayerState.hpp"
+#include "Classes/Network/NetPacket.hpp"
 #include "Util/Timer.hpp"
 
 class ClientConnectDaemon

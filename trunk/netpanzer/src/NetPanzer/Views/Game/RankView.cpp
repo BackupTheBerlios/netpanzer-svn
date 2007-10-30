@@ -22,13 +22,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Util/Exception.hpp"
 #include "RankView.hpp"
-#include "GameViewGlobals.hpp"
-#include "ScreenSurface.hpp"
-#include "PlayerInterface.hpp"
-#include "GameConfig.hpp"
-#include "ObjectiveInterface.hpp"
+#include "Views/GameViewGlobals.hpp"
+#include "Classes/ScreenSurface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Interfaces/ObjectiveInterface.hpp"
 
-#include "SelectionBoxSprite.hpp"
+#include "Classes/SelectionBoxSprite.hpp"
 
 // RankView
 //---------------------------------------------------------------------------

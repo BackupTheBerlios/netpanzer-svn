@@ -16,13 +16,13 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "MapInterface.hpp"
+#include "Interfaces/MapInterface.hpp"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
 #include "Util/Endian.hpp"
-#include "MapData.hpp"
+#include "Port/MapData.hpp"
 
 WorldMap MapInterface::main_map;
 SpawnList MapInterface::spawn_list;

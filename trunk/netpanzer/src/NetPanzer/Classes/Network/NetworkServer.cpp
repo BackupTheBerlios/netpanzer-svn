@@ -18,13 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "Util/Log.hpp"
-#include "NetworkServer.hpp"
+#include "Classes/Network/NetworkServer.hpp"
 
 #include "ClientServerNetMessage.hpp"
-#include "ServerConnectDaemon.hpp"
+#include "Classes/Network/ServerConnectDaemon.hpp"
 
-#include "PlayerInterface.hpp"
-#include "ConsoleInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
 
 NetworkServer::NetworkServer()
         : NetworkInterface()

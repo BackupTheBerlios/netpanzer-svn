@@ -16,14 +16,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "NetMessageEncoder.hpp"
+#include "Classes/Network/NetMessageEncoder.hpp"
 
 #include <string.h>
 
-#include "NetworkState.hpp"
-#include "Server.hpp"
-#include "NetworkServer.hpp"
-#include "Client.hpp"
+#include "Classes/Network/NetworkState.hpp"
+#include "Interfaces/Server.hpp"
+#include "Classes/Network/NetworkServer.hpp"
+#include "Interfaces/Client.hpp"
 #include "NetworkClient.hpp"
 
 NetMessageEncoder::NetMessageEncoder(bool sendAsClient)

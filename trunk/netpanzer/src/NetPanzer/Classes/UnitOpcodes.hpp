@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITOPCODES_HPP
 #define _UNITOPCODES_HPP
 
-#include "UnitBase.hpp"
+#include "Classes/UnitBase.hpp"
 #include <queue>
 
 enum { _unit_opcode_flag_sync = 0x01 };

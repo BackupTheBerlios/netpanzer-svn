@@ -19,9 +19,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _PLAYERINTERFACE_HPP
 
 #include <SDL_thread.h>
-#include "PlayerState.hpp"
-#include "UnitInterface.hpp"
-#include "NetMessageEncoder.hpp"
+#include "Classes/PlayerState.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Classes/Network/NetMessageEncoder.hpp"
 
 class PlayerInterface
 {

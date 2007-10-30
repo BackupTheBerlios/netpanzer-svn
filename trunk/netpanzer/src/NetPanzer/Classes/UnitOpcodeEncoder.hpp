@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITOPCODEENCODER_HPP
 #define _UNITOPCODEENCODER_HPP
 
-#include "UnitOpcodes.hpp"
-#include "UnitNetMessage.hpp"
+#include "Classes/UnitOpcodes.hpp"
+#include "Classes/Network/UnitNetMessage.hpp"
 
 class UnitOpcodeEncoder
 {

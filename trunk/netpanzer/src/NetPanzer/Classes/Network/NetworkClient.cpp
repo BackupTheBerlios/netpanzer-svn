@@ -18,19 +18,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "Util/Log.hpp"
-#include "NetworkGlobals.hpp"
+#include "Core/NetworkGlobals.hpp"
 
 #include "NetworkClient.hpp"
 
-#include "NetworkState.hpp"
+#include "Classes/Network/NetworkState.hpp"
 
 #include "ClientServerNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
 
-#include "PlayerInterface.hpp"
-#include "ClientConnectDaemon.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Classes/Network/ClientConnectDaemon.hpp"
 
-#include "ConsoleInterface.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
 
 NetworkClient::NetworkClient( void )
         : NetworkInterface()

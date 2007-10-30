@@ -18,11 +18,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __HostOptionsView_hpp__
 #define __HostOptionsView_hpp__
 
-#include "RMouseHackView.hpp"
+#include "Views/MainMenu/RMouseHackView.hpp"
 #include "2D/Surface.hpp"
-#include "Choice.hpp"
+#include "Views/Components/Choice.hpp"
 
-#include "CheckBox.hpp"
+#include "Views/Components/CheckBox.hpp"
 
 //---------------------------------------------------------------------------
 class HostOptionsView : public RMouseHackView

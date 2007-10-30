@@ -21,11 +21,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <memory>
 
-#include "SpawnList.hpp"
+#include "Classes/SpawnList.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/FileStream.hpp"
 #include "Util/Exception.hpp"
-#include "GameConfig.hpp"
+#include "Interfaces/GameConfig.hpp"
 
 SpawnList::SpawnList()
 {

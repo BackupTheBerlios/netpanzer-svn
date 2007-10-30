@@ -24,11 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
-#include "NetworkInterface.hpp"
-#include "NetworkGlobals.hpp"
-#include "ClientSocket.hpp"
+#include "Classes/Network/NetworkInterface.hpp"
+#include "Core/NetworkGlobals.hpp"
+#include "Network/ClientSocket.hpp"
 #include "Util/UtilInterface.hpp"
-#include "GameConfig.hpp"
+#include "Interfaces/GameConfig.hpp"
 #include "Util/Endian.hpp"
 #include "Network/Address.hpp"
 

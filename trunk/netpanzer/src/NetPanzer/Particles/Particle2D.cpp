@@ -19,10 +19,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "Util/Exception.hpp"
-#include "Particle2D.hpp"
+#include "Particles/Particle2D.hpp"
 #include "Util/TimerInterface.hpp"
 #include "2D/PackedSurface.hpp"
-#include "WorldViewInterface.hpp"
+#include "Interfaces/WorldViewInterface.hpp"
 
 
 static Particle2D theRealZParticle2D(fXYZ(0, 0, 0));

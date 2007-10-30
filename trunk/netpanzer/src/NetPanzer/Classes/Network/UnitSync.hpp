@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __UNITSYNC_HPP__
 
 
-#include "PlayerID.hpp"
-#include "UnitBase.hpp"
+#include "Classes/PlayerID.hpp"
+#include "Classes/UnitBase.hpp"
 
 class UnitSync
 {

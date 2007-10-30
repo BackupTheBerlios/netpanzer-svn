@@ -21,14 +21,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Bot.hpp"
 
-#include "PlacementMatrix.hpp"
-#include "TerminalNetMesg.hpp"
-#include "Client.hpp"
-#include "NetworkClient.hpp"
-#include "ObjectiveInterface.hpp"
-#include "UnitBase.hpp"
-#include "NetworkState.hpp"
-#include "Objective.hpp"
+#include "Classes/PlacementMatrix.hpp"
+#include "Classes/UnitBase.hpp"
+#include "Classes/Objective.hpp"
+#include "Classes/Network/TerminalNetMesg.hpp"
+#include "Classes/Network/NetworkClient.hpp"
+#include "Classes/Network/NetworkState.hpp"
+#include "Interfaces/Client.hpp"
+#include "Interfaces/ObjectiveInterface.hpp"
 #include "Util/Log.hpp"
 
 Bot *Bot::s_bot = 0;

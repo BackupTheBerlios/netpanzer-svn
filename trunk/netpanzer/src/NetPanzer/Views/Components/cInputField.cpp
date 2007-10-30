@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "cInputField.hpp"
 #include "Util/TimerInterface.hpp"
-#include "KeyboardInterface.hpp"
+#include "Interfaces/KeyboardInterface.hpp"
 #include "Util/Log.hpp"
 
 ////////////////////////////////////////////////////////////////////////////

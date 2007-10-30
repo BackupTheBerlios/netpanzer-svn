@@ -18,13 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "MainMenuView.hpp"
-#include "Desktop.hpp"
-#include "GameManager.hpp"
-#include "GameViewGlobals.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "Views/GameViewGlobals.hpp"
 
-#include "HostJoinTemplateView.hpp"
-#include "GetSessionView.hpp"
-#include "GameConfig.hpp"
+#include "Views/MainMenu/Multi/HostJoinTemplateView.hpp"
+#include "Views/MainMenu/Multi/GetSessionView.hpp"
+#include "Interfaces/GameConfig.hpp"
 
 // MainMenuView
 //---------------------------------------------------------------------------

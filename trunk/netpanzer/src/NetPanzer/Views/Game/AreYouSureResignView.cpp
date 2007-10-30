@@ -18,19 +18,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "AreYouSureResignView.hpp"
-#include "Desktop.hpp"
-#include "GameManager.hpp"
-#include "ParticleSystem2D.hpp"
-#include "Particle2D.hpp"
-#include "MenuTemplateView.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "Particles/ParticleSystem2D.hpp"
+#include "Particles/Particle2D.hpp"
+#include "Views/MainMenu/MenuTemplateView.hpp"
 #include "System/Sound.hpp"
-#include "SoundView.hpp"
-#include "ScreenSurface.hpp"
-#include "ControlsView.hpp"
-#include "VisualsView.hpp"
+#include "Views/MainMenu/Options/SoundView.hpp"
+#include "Classes/ScreenSurface.hpp"
+#include "Views/MainMenu/Options/ControlsView.hpp"
+#include "Views/MainMenu/Options/VisualsView.hpp"
 #include "2D/Palette.hpp"
-#include "InterfaceView.hpp"
-#include "GameConfig.hpp"
+#include "Views/MainMenu/Options/InterfaceView.hpp"
+#include "Interfaces/GameConfig.hpp"
 
 //---------------------------------------------------------------------------
 static void bYES()

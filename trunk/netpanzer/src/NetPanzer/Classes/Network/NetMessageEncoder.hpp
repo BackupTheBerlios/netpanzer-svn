@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _NETMESSAGEENCODER_HPP
 #define _NETMESSAGEENCODER_HPP
 
-#include "NetPacket.hpp"
-#include "PlayerID.hpp"
+#include "Classes/Network/NetPacket.hpp"
+#include "Classes/PlayerID.hpp"
 
 class NetMessageEncoder
 {

@@ -18,13 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "GameTemplateView.hpp"
-#include "Desktop.hpp"
-#include "GameViewGlobals.hpp"
-#include "KeyboardInterface.hpp"
-#include "ScreenSurface.hpp"
-#include "GameConfig.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Views/GameViewGlobals.hpp"
+#include "Interfaces/KeyboardInterface.hpp"
+#include "Classes/ScreenSurface.hpp"
+#include "Interfaces/GameConfig.hpp"
 
-#include "WorldInputCmdProcessor.hpp"
+#include "Classes/WorldInputCmdProcessor.hpp"
 
 // GameTemplateView
 //---------------------------------------------------------------------------

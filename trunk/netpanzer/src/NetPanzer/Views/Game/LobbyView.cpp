@@ -19,11 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Util/Exception.hpp"
 #include "Util/Log.hpp"
-#include "LobbyView.hpp"
-#include "Desktop.hpp"
-#include "GameManager.hpp"
-#include "GameConfig.hpp"
-#include "ScreenSurface.hpp"
+#include "Views/Game/LobbyView.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Classes/ScreenSurface.hpp"
 #include "System/Sound.hpp"
 
 LoadingView *lobbyView = 0;

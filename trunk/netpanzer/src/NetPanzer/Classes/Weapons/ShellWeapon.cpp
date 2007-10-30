@@ -18,17 +18,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "ShellWeapon.hpp"
-#include "UnitMessageTypes.hpp"
-#include "UnitInterface.hpp"
-#include "NetworkState.hpp"
-#include "WorldViewInterface.hpp"
+#include "Classes/UnitMessageTypes.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Classes/Network/NetworkState.hpp"
+#include "Interfaces/WorldViewInterface.hpp"
 #include "System/Sound.hpp"
-#include "Particle2D.hpp"
+#include "Particles/Particle2D.hpp"
 #include "WeaponGlobals.hpp"
-#include "ParticleInterface.hpp"
+#include "Particles/ParticleInterface.hpp"
 #include "Util/Math.hpp"
-#include "GameConfig.hpp"
-#include "FlashParticle2D.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Particles/FlashParticle2D.hpp"
 
 
 ShellWeapon::ShellWeapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end)

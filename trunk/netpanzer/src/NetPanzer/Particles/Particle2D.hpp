@@ -23,8 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Types/iRect.hpp"
 #include "Types/iXY.hpp"
 #include "Types/fXYZ.hpp"
-#include "Sprite.hpp"
-#include "SpriteSorter.hpp"
+#include "Classes/Sprite.hpp"
+#include "Classes/SpriteSorter.hpp"
 #include "ParticleSystemGlobals.hpp"
 
 

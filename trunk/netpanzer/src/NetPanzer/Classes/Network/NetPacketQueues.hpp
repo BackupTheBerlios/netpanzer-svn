@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _NETPACKETQUEUES_HPP
 
 #include <string.h>
-#include "NetPacket.hpp"
+#include "Classes/Network/NetPacket.hpp"
 #include "ArrayUtil/QueueTemplate.hpp"
 #include "ArrayUtil/ArrayTemplate.hpp"
 #include "Util/Timer.hpp"

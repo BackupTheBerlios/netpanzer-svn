@@ -16,26 +16,27 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "GameControlRulesDaemon.hpp"
+#include "Interfaces/GameControlRulesDaemon.hpp"
 
-#include "GameManager.hpp"
-#include "GameConfig.hpp"
-#include "PlayerInterface.hpp"
-#include "ObjectiveInterface.hpp"
-#include "MapsManager.hpp"
-#include "ConsoleInterface.hpp"
-#include "ChatInterface.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/ObjectiveInterface.hpp"
+#include "Interfaces/MapsManager.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
+#include "Interfaces/ChatInterface.hpp"
 
-#include "NetworkState.hpp"
-#include "SystemNetMessage.hpp"
-#include "GameControlNetMessage.hpp"
-#include "Server.hpp"
-#include "NetworkServer.hpp"
-#include "Client.hpp"
-#include "ServerConnectDaemon.hpp"
+#include "Interfaces/Server.hpp"
+#include "Interfaces/Client.hpp"
+#include "Classes/Network/NetworkState.hpp"
+#include "Classes/Network/SystemNetMessage.hpp"
+#include "Classes/Network/GameControlNetMessage.hpp"
+#include "Classes/Network/NetworkServer.hpp"
+#include "Classes/Network/ServerConnectDaemon.hpp"
 
-#include "Desktop.hpp"
-#include "ProgressView.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Views/Game/ProgressView.hpp"
+
 #include "Util/Log.hpp"
 
 enum { _map_cycle_server_state_idle,

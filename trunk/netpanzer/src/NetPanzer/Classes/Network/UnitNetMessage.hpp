@@ -19,9 +19,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _UNITNETMESSAGE_HPP
 
 #include "NetMessage.hpp"
-#include "UnitState.hpp"
-#include "UnitBase.hpp"
-#include "UnitOpcodes.hpp"
+#include "Classes/UnitState.hpp"
+#include "Classes/UnitBase.hpp"
+#include "Classes/UnitOpcodes.hpp"
 
 #define _OPCODE_MESSAGE_LIMIT 488
 

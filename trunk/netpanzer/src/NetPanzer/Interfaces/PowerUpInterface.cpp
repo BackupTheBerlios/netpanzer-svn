@@ -16,25 +16,25 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "PowerUpInterface.hpp"
+#include "Interfaces/PowerUpInterface.hpp"
 
 #include <stdlib.h>
 
 
-#include "GameConfig.hpp"
+#include "Interfaces/GameConfig.hpp"
 
-#include "MapInterface.hpp"
-#include "PlayerInterface.hpp"
+#include "Interfaces/MapInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
 
-#include "BonusUnitPowerUp.hpp"
-#include "UnitPowerUp.hpp"
-#include "EnemyRadarPowerUp.hpp"
+#include "Classes/BonusUnitPowerUp.hpp"
+#include "Classes/UnitPowerUp.hpp"
+#include "Classes/EnemyRadarPowerUp.hpp"
 
 #include "Util/Log.hpp"
-#include "NetworkState.hpp"
-#include "Server.hpp"
-#include "NetworkServer.hpp"
-#include "PowerUpNetMessage.hpp"
+#include "Classes/Network/NetworkState.hpp"
+#include "Interfaces/Server.hpp"
+#include "Classes/Network/NetworkServer.hpp"
+#include "Classes/Network/PowerUpNetMessage.hpp"
 
 PowerUpList PowerUpInterface::powerup_list;
 

@@ -22,8 +22,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string.h>
 #include <memory>
 
-#include "WorldMap.hpp"
-#include "MapData.hpp"
+#include "Classes/WorldMap.hpp"
+#include "Port/MapData.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
 #include "Util/Endian.hpp"

@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __View_hpp__
 #define __View_hpp__
 
-#include "cMouse.hpp"
+#include "Views/Components/cMouse.hpp"
 #include "cButton.hpp"
 #include "2D/Surface.hpp"
 #include "cInputField.hpp"

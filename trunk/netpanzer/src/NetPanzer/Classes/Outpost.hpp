@@ -18,10 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _OUTPOST_HPP
 #define _OUTPOST_HPP
 
-#include "Objective.hpp"
+#include "Classes/Objective.hpp"
 #include "Util/Timer.hpp"
-#include "SelectionBoxSprite.hpp"
-#include "UnitBase.hpp"
+#include "Classes/SelectionBoxSprite.hpp"
+#include "Classes/UnitBase.hpp"
 
 class Outpost : public Objective
 {

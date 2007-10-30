@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _SPRITESORTER_HPP
 
 #include <vector>
-#include "Sprite.hpp"
+#include "Classes/Sprite.hpp"
 
 class SpriteSorter
 {

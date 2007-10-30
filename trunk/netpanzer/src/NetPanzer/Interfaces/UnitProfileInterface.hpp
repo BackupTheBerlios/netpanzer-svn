@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 
-#include "UnitTypes.hpp"
-#include "UnitState.hpp"
+#include "Structs/UnitTypes.hpp"
+#include "Classes/UnitState.hpp"
 
 class UnitProfile
 {

@@ -16,17 +16,17 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "MiniMapInterface.hpp"
+#include "Interfaces/MiniMapInterface.hpp"
 
-#include "WorldInputCmdProcessor.hpp"
+#include "Classes/WorldInputCmdProcessor.hpp"
 
-#include "UnitInterface.hpp"
-#include "PlayerInterface.hpp"
-#include "WorldViewInterface.hpp"
-#include "MapInterface.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/WorldViewInterface.hpp"
+#include "Interfaces/MapInterface.hpp"
 #include "PathScheduler.hpp"
-#include "ObjectiveInterface.hpp"
-#include "GameConfig.hpp"
+#include "Interfaces/ObjectiveInterface.hpp"
+#include "Interfaces/GameConfig.hpp"
 
 fXY MiniMapInterface::scale_factor;
 bool MiniMapInterface::pathing_debug_mode = false;

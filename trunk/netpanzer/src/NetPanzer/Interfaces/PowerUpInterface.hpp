@@ -20,10 +20,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 
-#include "PowerUp.hpp"
+#include "Classes/PowerUp.hpp"
 #include "Util/Timer.hpp"
-#include "PlayerID.hpp"
-#include "NetPacket.hpp"
+#include "Classes/PlayerID.hpp"
+#include "Classes/Network/NetPacket.hpp"
 
 class PowerUpList : public std::vector<PowerUp*>
 {

@@ -19,9 +19,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _MAPINTERFACE_HPP
 
 #include "TileInterface.hpp"
-#include "WorldMap.hpp"
-#include "SpawnList.hpp"
-#include "WadMapTable.hpp"
+#include "Classes/WorldMap.hpp"
+#include "Classes/SpawnList.hpp"
+#include "Classes/WadMapTable.hpp"
 
 #include "2D/Surface.hpp"
 

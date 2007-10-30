@@ -17,11 +17,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 #include "SelectionList.hpp"
-#include "UnitInterface.hpp"
-#include "PlayerInterface.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
 #include "Util/Log.hpp"
-#include "UnitBase.hpp"
-#include "WorldViewInterface.hpp"
+#include "Classes/UnitBase.hpp"
+#include "Interfaces/WorldViewInterface.hpp"
 #include <algorithm>
 
 bool SelectionList::selectUnit(iXY point)

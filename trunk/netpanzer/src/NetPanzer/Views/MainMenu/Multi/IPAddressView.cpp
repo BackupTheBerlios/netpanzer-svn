@@ -18,10 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "IPAddressView.hpp"
-#include "Desktop.hpp"
-#include "GameViewGlobals.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Views/GameViewGlobals.hpp"
 
-#include "Client.hpp"
+#include "Interfaces/Client.hpp"
 
 cInputFieldString IPAddressView::szServer;
 

@@ -17,10 +17,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "InterfaceView.hpp"
-#include "GameConfig.hpp"
-#include "GameViewGlobals.hpp"
-#include "Desktop.hpp"
+#include "Views/MainMenu/Options/InterfaceView.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Views/GameViewGlobals.hpp"
+#include "Views/Components/Desktop.hpp"
 
 
 static void bIncreaseScrollRate()

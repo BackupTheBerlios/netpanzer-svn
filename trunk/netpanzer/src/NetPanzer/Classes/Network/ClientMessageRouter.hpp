@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _CLIENTMESSAGEROUTER_HPP
 #define _CLIENTMESSAGEROUTER_HPP
 
-#include "NetPacket.hpp"
+#include "Classes/Network/NetPacket.hpp"
 #include "NetMessageDecoder.hpp"
 
 class ClientMessageRouter

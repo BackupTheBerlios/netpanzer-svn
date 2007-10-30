@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __InterfaceView_hpp__
 #define __InterfaceView_hpp__
 
-#include "View.hpp"
-#include "OptionsTemplateView.hpp"
+#include "Views/Components/View.hpp"
+#include "Views/MainMenu/OptionsTemplateView.hpp"
 
 /////////////////////////////////////////////////////////////////////////////
 // forward declarations

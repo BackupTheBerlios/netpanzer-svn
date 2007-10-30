@@ -20,15 +20,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 #include <map>
-#include "UnitList.hpp"
-#include "UnitBucketArray.hpp"
-#include "UnitMessage.hpp"
-#include "PlayerState.hpp"
+#include "Classes/UnitList.hpp"
+#include "Classes/UnitBucketArray.hpp"
+#include "Classes/UnitMessage.hpp"
+#include "Classes/PlayerState.hpp"
 #include "Util/Timer.hpp"
-#include "PlacementMatrix.hpp"
+#include "Classes/PlacementMatrix.hpp"
 
-#include "UnitNetMessage.hpp"
-#include "UnitOpcodeEncoder.hpp"
+#include "Classes/Network/UnitNetMessage.hpp"
+#include "Classes/UnitOpcodeEncoder.hpp"
 
 enum { _search_all_players,
        _search_player,

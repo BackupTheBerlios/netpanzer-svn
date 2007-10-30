@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 
-#include "Particle2D.hpp"
+#include "Particles/Particle2D.hpp"
 #include "2D/PackedSurface.hpp"
 
 // FlameParticle2D

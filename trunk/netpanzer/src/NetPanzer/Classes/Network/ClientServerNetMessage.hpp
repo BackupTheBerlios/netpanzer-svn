@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _CLIENT_SERVER_NETMESSAGE_HPP
 
 #include "NetMessage.hpp"
-#include "PlayerID.hpp"
+#include "Classes/PlayerID.hpp"
 
 enum { _net_message_id_transport_client_accept,
        _net_message_id_client_connect_ack,

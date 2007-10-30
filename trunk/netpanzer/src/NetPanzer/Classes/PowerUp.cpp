@@ -16,11 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "PowerUp.hpp"
+#include "Classes/PowerUp.hpp"
 
-#include "UnitBlackBoard.hpp"
-#include "UnitInterface.hpp"
-#include "MapInterface.hpp"
+#include "Classes/UnitBlackBoard.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Interfaces/MapInterface.hpp"
 
 PowerUp::PowerUp()
 {

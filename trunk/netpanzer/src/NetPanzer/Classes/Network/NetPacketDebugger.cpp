@@ -23,13 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <fstream>
 #include <sstream>
 
-#include "NetPacket.hpp"
-#include "UnitNetMessage.hpp"
+#include "Classes/Network/NetPacket.hpp"
+#include "Classes/Network/UnitNetMessage.hpp"
 #include "TerminalNetMesg.hpp"
-#include "UnitOpcodes.hpp"
+#include "Classes/UnitOpcodes.hpp"
 
 #include "NetPacketDebugger.hpp"
-#include "OpcodeDebugger.hpp"
+#include "Classes/OpcodeDebugger.hpp"
 #include "ClientServerNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
 

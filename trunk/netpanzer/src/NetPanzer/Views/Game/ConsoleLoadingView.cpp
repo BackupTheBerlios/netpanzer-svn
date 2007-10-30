@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConsoleLoadingView.hpp"
 
 #include "Util/Log.hpp"
-#include "GameManager.hpp"
+#include "Interfaces/GameManager.hpp"
 
 // update
 //---------------------------------------------------------------------------

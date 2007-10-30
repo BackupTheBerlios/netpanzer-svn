@@ -19,38 +19,38 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sstream>
 #include "WorldInputCmdProcessor.hpp"
 
-#include "MouseInterface.hpp"
-#include "KeyboardInterface.hpp"
+#include "Interfaces/MouseInterface.hpp"
+#include "Interfaces/KeyboardInterface.hpp"
 
-#include "WorldViewInterface.hpp"
-#include "MapInterface.hpp"
-#include "UnitInterface.hpp"
-#include "ObjectiveInterface.hpp"
-#include "PlayerInterface.hpp"
-#include "ChatInterface.hpp"
+#include "Interfaces/WorldViewInterface.hpp"
+#include "Interfaces/MapInterface.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Interfaces/ObjectiveInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/ChatInterface.hpp"
 
-#include "UnitMessageTypes.hpp"
-#include "TerminalNetMesg.hpp"
-#include "PlayerNetMessage.hpp"
-#include "Client.hpp"
-#include "NetworkClient.hpp"
-#include "NetMessageEncoder.hpp"
-#include "PlacementMatrix.hpp"
+#include "Interfaces/Client.hpp"
+#include "Classes/UnitMessageTypes.hpp"
+#include "Classes/Network/TerminalNetMesg.hpp"
+#include "Classes/Network/PlayerNetMessage.hpp"
+#include "Classes/Network/NetworkClient.hpp"
+#include "Classes/Network/NetMessageEncoder.hpp"
+#include "Classes/PlacementMatrix.hpp"
 #include "System/Sound.hpp"
-#include "ScreenSurface.hpp"
+#include "Classes/ScreenSurface.hpp"
 #include "Util/Log.hpp"
 #include "Util/NTimer.hpp"
 
-#include "GameConfig.hpp"
+#include "Interfaces/GameConfig.hpp"
 
-#include "VehicleSelectionView.hpp"
-#include "Desktop.hpp"
+#include "Views/Game/VehicleSelectionView.hpp"
+#include "Views/Components/Desktop.hpp"
 
-#include "NetworkState.hpp"
+#include "Classes/Network/NetworkState.hpp"
 
-#include "ConsoleInterface.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
 
-#include "Vehicle.hpp"
+#include "Classes/Units/Vehicle.hpp"
 
 WorldInputCmdProcessor COMMAND_PROCESSOR;
 

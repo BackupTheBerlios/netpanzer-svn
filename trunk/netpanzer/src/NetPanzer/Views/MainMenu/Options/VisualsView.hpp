@@ -19,11 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __VisualsView_hpp__
 #define __VisualsView_hpp__
 
-#include "View.hpp"
-#include "OptionsTemplateView.hpp"
-#include "CheckBox.hpp"
-#include "Choice.hpp"
-#include "StateChangedCallback.hpp"
+#include "Views/Components/View.hpp"
+#include "Views/MainMenu/OptionsTemplateView.hpp"
+#include "Views/Components/CheckBox.hpp"
+#include "Views/Components/Choice.hpp"
+#include "Views/Components/StateChangedCallback.hpp"
 
 /////////////////////////////////////////////////////////////////////////////
 // forward declarations

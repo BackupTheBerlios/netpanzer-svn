@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "ObjectiveInterface.hpp"
+#include "Interfaces/ObjectiveInterface.hpp"
 
 #include <stdio.h>
 #include <memory>
@@ -25,20 +25,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdexcept>
 #include <iostream>
 
-#include "MapInterface.hpp"
-#include "PlayerInterface.hpp"
+#include "Interfaces/MapInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileStream.hpp"
 #include "Util/Log.hpp"
-#include "Outpost.hpp"
-#include "GameConfig.hpp"
+#include "Classes/Outpost.hpp"
+#include "Interfaces/GameConfig.hpp"
 
-#include "ObjectiveNetMessage.hpp"
-#include "TerminalNetMesg.hpp"
-#include "NetPacket.hpp"
+#include "Classes/Network/ObjectiveNetMessage.hpp"
+#include "Classes/Network/TerminalNetMesg.hpp"
+#include "Classes/Network/NetPacket.hpp"
 
-#include "Server.hpp"
+#include "Interfaces/Server.hpp"
 
 std::vector<Objective*> ObjectiveInterface::objective_list;
 

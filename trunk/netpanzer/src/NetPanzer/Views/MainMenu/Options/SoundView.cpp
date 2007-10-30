@@ -18,13 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "SoundView.hpp"
-#include "GameConfig.hpp"
-#include "GameViewGlobals.hpp"
-#include "Desktop.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Views/GameViewGlobals.hpp"
+#include "Views/Components/Desktop.hpp"
 #include "System/Sound.hpp"
 #include "System/SDLSound.hpp"
 #include "System/DummySound.hpp"
-#include "GameControlRulesDaemon.hpp"
+#include "Interfaces/GameControlRulesDaemon.hpp"
 
 static void bDecreaseSoundVolume()
 {

@@ -16,9 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "PlacementMatrix.hpp"
-#include "MapInterface.hpp"
-#include "UnitBlackBoard.hpp"
+#include "Classes/PlacementMatrix.hpp"
+#include "Interfaces/MapInterface.hpp"
+#include "Classes/UnitBlackBoard.hpp"
 
 void PlacementMatrix::reset( iXY ini_map_loc )
 {

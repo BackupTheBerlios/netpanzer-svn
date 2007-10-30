@@ -19,17 +19,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "BonusUnitPowerUp.hpp"
 
 #include <stdlib.h>
-#include "UnitTypes.hpp"
-#include "UnitInterface.hpp"
-#include "PlayerInterface.hpp"
-#include "MapInterface.hpp"
-#include "ConsoleInterface.hpp"
+#include "Structs/UnitTypes.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/MapInterface.hpp"
+#include "Interfaces/ConsoleInterface.hpp"
 
-#include "Server.hpp"
-#include "NetworkServer.hpp"
-#include "NetworkState.hpp"
-#include "UnitNetMessage.hpp"
-#include "PowerUpNetMessage.hpp"
+#include "Interfaces/Server.hpp"
+#include "Classes/Network/NetworkServer.hpp"
+#include "Classes/Network/NetworkState.hpp"
+#include "Classes/Network/UnitNetMessage.hpp"
+#include "Classes/Network/PowerUpNetMessage.hpp"
 
 #include "System/Sound.hpp"
 

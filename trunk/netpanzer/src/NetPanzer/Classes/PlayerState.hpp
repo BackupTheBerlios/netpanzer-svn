@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 #include <string.h>
-#include "PlayerID.hpp"
-#include "PlayerUnitConfig.hpp"
+#include "Classes/PlayerID.hpp"
+#include "Classes/PlayerUnitConfig.hpp"
 #include "2D/Palette.hpp"
 
 enum { _player_state_free,

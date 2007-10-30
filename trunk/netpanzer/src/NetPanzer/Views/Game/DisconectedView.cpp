@@ -18,16 +18,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "DisconectedView.hpp"
 
-#include "GameManager.hpp"
-#include "GameConfig.hpp"
-#include "Desktop.hpp"
-#include "MenuTemplateView.hpp"
-#include "OptionsTemplateView.hpp"
-#include "SoundView.hpp"
-#include "ControlsView.hpp"
-#include "VisualsView.hpp"
-#include "InterfaceView.hpp"
-#include "ScreenSurface.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Views/MainMenu/MenuTemplateView.hpp"
+#include "Views/MainMenu/OptionsTemplateView.hpp"
+#include "Views/MainMenu/Options/SoundView.hpp"
+#include "Views/MainMenu/Options/ControlsView.hpp"
+#include "Views/MainMenu/Options/VisualsView.hpp"
+#include "Views/MainMenu/Options/InterfaceView.hpp"
+#include "Classes/ScreenSurface.hpp"
 
 #include "Util/Log.hpp"
 

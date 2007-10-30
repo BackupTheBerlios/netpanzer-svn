@@ -18,10 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include <algorithm>
-#include "Desktop.hpp"
-#include "KeyboardInterface.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Interfaces/KeyboardInterface.hpp"
 #include "Util/TimerInterface.hpp"
-#include "MouseInterface.hpp"
+#include "Interfaces/MouseInterface.hpp"
 
 using std::min;
 using std::max;

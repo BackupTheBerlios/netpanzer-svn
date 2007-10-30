@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ArrayUtil/BoundBox.hpp"
 #include "SpriteSorter.hpp"
-#include "PlayerState.hpp"
-#include "ObjectiveMessageTypes.hpp"
+#include "Classes/PlayerState.hpp"
+#include "Classes/ObjectiveMessageTypes.hpp"
 
 enum { _objective_status_null };
 

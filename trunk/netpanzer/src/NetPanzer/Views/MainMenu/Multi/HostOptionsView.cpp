@@ -17,11 +17,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 #include "HostOptionsView.hpp"
-#include "GameConfig.hpp"
+#include "Interfaces/GameConfig.hpp"
 #include "HostView.hpp"
-#include "ParticleSystemGlobals.hpp"
+#include "Particles/ParticleSystemGlobals.hpp"
 #include "MapSelectionView.hpp"
-#include "GameViewGlobals.hpp"
+#include "Views/GameViewGlobals.hpp"
 
 int HostOptionsView::cloudCoverageCount = 1;
 int HostOptionsView::windSpeed          = 1;

@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Color.hpp"
 #include "Util/NoCopy.hpp"
 #include "ConfigVariable.hpp"
-#include "PlayerUnitConfig.hpp"
+#include "Classes/PlayerUnitConfig.hpp"
 
 enum { _mini_map_objective_draw_mode_solid_rect,
        _mini_map_objective_draw_mode_outline_rect,

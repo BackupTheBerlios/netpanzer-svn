@@ -19,14 +19,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Util/Exception.hpp"
 #include "Util/Log.hpp"
-#include "Desktop.hpp"
-#include "NetworkGlobals.hpp"
-#include "NetworkState.hpp"
-#include "NetworkClientUnix.hpp"
-#include "LobbyView.hpp"
+#include "Core/NetworkGlobals.hpp"
+#include "Classes/Network/NetworkState.hpp"
+#include "Interfaces/unix/NetworkClientUnix.hpp"
 
-#include "Desktop.hpp"
-#include "DisconectedView.hpp"
+#include "Views/Components/Desktop.hpp"
+#include "Views/Game/LobbyView.hpp"
+#include "Views/Game/DisconectedView.hpp"
 
 #include "Network/SocketManager.hpp"
 

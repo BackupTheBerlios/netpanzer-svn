@@ -18,12 +18,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "UnitSync.hpp"
-#include "Server.hpp"
-#include "NetworkServer.hpp"
-#include "UnitInterface.hpp"
-#include "UnitBase.hpp"
-#include "MapInterface.hpp"
-#include "UnitNetMessage.hpp"
+#include "Interfaces/Server.hpp"
+#include "Classes/Network/NetworkServer.hpp"
+#include "Interfaces/UnitInterface.hpp"
+#include "Classes/UnitBase.hpp"
+#include "Interfaces/MapInterface.hpp"
+#include "Classes/Network/UnitNetMessage.hpp"
 
 
 
