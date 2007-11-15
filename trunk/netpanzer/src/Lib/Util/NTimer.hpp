@@ -28,7 +28,8 @@ public:
     NTimer(Uint32 t) : starttime(0), timeout(t) {};
     
     inline void reset()              { starttime = SDL_GetTicks(); }
-
+    inline void reset(Uint32 t)      { starttime = t; }
+    
     inline Uint32 getStartTime()     { return starttime; }
 
     inline void setTimeOut(Uint32 t) { timeout = t; }
@@ -36,6 +37,7 @@ public:
     inline Uint32 getTimeOut()       { return timeout; }
     
     inline bool isTimeOut() { return (SDL_GetTicks()-starttime)>timeout; }
+    inline bool isTimeOut(Uint32 t) { return (t-starttime)>timeout; }
     
 private:
     Uint32 starttime;

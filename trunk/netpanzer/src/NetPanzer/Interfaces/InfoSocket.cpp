@@ -56,6 +56,12 @@ InfoSocket::~InfoSocket()
 }
 
 void
+InfoSocket::onSocketError(UDPSocket *so)
+{
+    LOGGER.debug("InfoSocket: socket error");
+}
+
+void
 InfoSocket::onDataReceived(UDPSocket *s, const Address &from, const char *data, const int len)
 {
     (void)s;
@@ -74,7 +80,8 @@ InfoSocket::onDataReceived(UDPSocket *s, const Address &from, const char *data, 
             break;
         } else if(query == "echo") {
             string echotoken = qtokenizer.getNextToken();
-            socket->send(from, echotoken.c_str(), echotoken.size());
+            if ( echotoken.size() )
+                socket->send(from, echotoken.c_str(), echotoken.size());
         }
     }
 }

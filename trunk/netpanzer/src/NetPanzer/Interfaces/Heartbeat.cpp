@@ -35,20 +35,19 @@ using namespace network;
 
 class MasterserverInfo {
 public:
-    MasterserverInfo(){ touch(); };
+    MasterserverInfo() : timer(MSQUERY_TIMEOUT){ };
     ~MasterserverInfo(){};
-    void touch() { lastTicks = SDL_GetTicks(); };
+    inline void touch() { timer.reset(); };
     string recdata;
-    Uint32 lastTicks;
+    NTimer timer;
     
 };
 
-Heartbeat::Heartbeat()
+Heartbeat::Heartbeat() : nextHeartbeat(HEARTBEAT_INTERVAL)
 {
     StringTokenizer mstokenizer(gameconfig->masterservers, ',');
     string servname;
-    while( (servname = mstokenizer.getNextToken()) != "") {
-        servname = removeSurroundingSpaces(servname);
+    while( (servname = removeSurroundingSpaces(mstokenizer.getNextToken())) != "") {
         try {
             Address addr = Address::resolve(servname, MASTERSERVER_PORT);
             mslist.push_back(addr);
@@ -63,7 +62,6 @@ Heartbeat::Heartbeat()
         << "\\final\\";
     
     hb_message=msg.str();
-    nextHeartbeatTicks = SDL_GetTicks() + HEARTBEAT_INTERVAL;
     startHeartbeat();
     
 }
@@ -89,17 +87,14 @@ Heartbeat::checkHeartbeat()
     if ( !masterservers.empty() ) {
         map<TCPSocket *, MasterserverInfo *>::iterator msiter;
         for (msiter=masterservers.begin(); msiter!=masterservers.end(); msiter++) {
-            if ( now - msiter->second->lastTicks > MSQUERY_TIMEOUT ) {
+            if ( msiter->second->timer.isTimeOut(now) ) {
                 LOGGER.warning("Masterserver timeout [%s]", msiter->first->getAddress().getIP().c_str());
                 delete msiter->second;
                 msiter->first->destroy();
                 masterservers.erase(msiter);
             }
         }
-    }
-    
-    if ( now > nextHeartbeatTicks ) {
-        nextHeartbeatTicks += HEARTBEAT_INTERVAL;
+    } else if ( nextHeartbeat.isTimeOut(now) ) {
         startHeartbeat();
     }
 
@@ -109,12 +104,14 @@ void
 Heartbeat::startHeartbeat()
 {
     vector<Address>::iterator iter = mslist.begin();
+    Uint32 now = SDL_GetTicks();
     while ( iter != mslist.end() ) {
         TCPSocket *s = 0;
         MasterserverInfo *msi = 0;
         try {
             s = new TCPSocket(*iter, this);
             msi = new MasterserverInfo();
+            msi->timer.reset(now);
             masterservers[s]=msi;
         } catch (NetworkException e) {
             LOGGER.warning("Error '%s' connecting to masterserver '%s'", e.what(), (*iter).getIP().c_str());
@@ -123,6 +120,7 @@ Heartbeat::startHeartbeat()
         }
         iter++;
     }
+    nextHeartbeat.reset();
 }
 
 void
@@ -142,11 +140,26 @@ Heartbeat::onDisconected(TCPSocket *so)
 }
 
 void
+Heartbeat::onSocketError(TCPSocket *so)
+{
+    LOGGER.debug("Masterserver socket error [%s]", so->getAddress().getIP().c_str());
+    delete masterservers[so];
+    masterservers.erase(so);
+}
+
+void
 Heartbeat::onDataReceived(TCPSocket *so, const char *data, const int len)
 {
     string str;
     
-    MasterserverInfo * msi = masterservers[so];
+    MSMapIterator i = masterservers.find(so);
+    if ( i == masterservers.end() ) {
+        LOGGER.warning("Received data from Unknown masterserver [%s]", so->getAddress().getIP().c_str());
+        so->destroy();
+        return;
+    }
+    
+    MasterserverInfo * msi = i->second;
     msi->touch();
     str = msi->recdata;
     str.append(data,len);
@@ -156,35 +169,40 @@ Heartbeat::onDataReceived(TCPSocket *so, const char *data, const int len)
         delete msi;
         masterservers.erase(so);
         so->destroy();
-        return; // invalid answer;
+        return; // invalid answer, needs '\\' at beggining;
     }
     
-    string lastpart;
-    if (str[str.length()-1] != '\\') {
-        // received incomplete
-        string::size_type p = str.rfind('\\');
-        msi->recdata = str.substr(p);
-        str.erase(p);
-    } else {
-        msi->recdata = "\\";
+    string::size_type strpos = str.find('\\',1);
+    if ( strpos == string::npos ) {
+        msi->recdata=str;
+        return; // unfinished token, needs '\\' at end
     }
     
-    StringTokenizer tknizer(str,'\\');
-    
-    string token = tknizer.getNextToken();
-    while ( !token.empty()) {
+    string token = str.substr(1,strpos-1);
+    if ( !token.empty() ) {
         if ( token == "error" ) {
-            LOGGER.warning("Masterserver returns error: '%s'", tknizer.getNextToken().c_str());
+            string::size_type msgend = str.find('\\',strpos+1);
+            if ( msgend == string::npos ) {
+                return; // need '\\' at end, continue with the socket
+            } else if ( msgend == strpos+1 ) {
+                LOGGER.warning("Masterserver returns empty error");
+            } else {
+                LOGGER.warning("Masterserver returns error: '%s'", str.substr(strpos+1,msgend-strpos-1).c_str());
+            }
+            return;
         } else if ( token == "final") {
             LOGGER.debug("Masterserver answer ok, disconecting [%s]", so->getAddress().getIP().c_str());
-            delete msi;
-            masterservers.erase(so);
-            so->destroy();
-            break;
         } else {
-            LOGGER.warning("Masterservend sent unknown answer: '%s'", tknizer.getNextToken().c_str());
+            LOGGER.warning("Masterservend sent unknown answer: '%s'", token.c_str());
+            msi->recdata=str.substr(strpos); // includes the initial '\\'
+            return; // continues with the socket;
         }
+        
+        delete msi;
+        masterservers.erase(so);
+        so->destroy();
     }
+
 }
 
 

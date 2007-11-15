@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _HEARTBEAT_HPP
 
 #include "Network/TCPSocket.hpp"
+#include "Util/NTimer.hpp"
 #include "SDL.h"
 #include <vector>
 #include <map>
@@ -40,13 +41,16 @@ protected:
     void onConnected(TCPSocket *so);
     void onDisconected(TCPSocket *so);
     void onDataReceived(TCPSocket *so, const char *data, const int len);
+    void onSocketError(TCPSocket *so);
     void startHeartbeat();
     
 private:
-    Uint32 nextHeartbeatTicks;
+    NTimer nextHeartbeat;
     string hb_message;
     vector<Address> mslist;
-    map<TCPSocket *, MasterserverInfo *> masterservers;
+    typedef map<TCPSocket *, MasterserverInfo *> MSMap;
+    typedef MSMap::iterator MSMapIterator;
+    MSMap masterservers;
 };
 
 #endif

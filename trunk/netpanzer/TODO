@@ -1,4 +1,20 @@
-Next release:
+TODO Now:
+- In SocketManager, replace list with vector, use direct access to list, and
+  change the way the sockets are added/removed.
+- In heartbeat, change the way the received information is parsed, the same method
+  should be used for other communications that use a similar protocol, like server
+  query.
+- Recreate the fd_sets in each iteration in SocketSet, and/or remove SocketSet
+  class and handle it in SocketManager.
+- Remove exception code from networking.
+- Create a task manager for the game main loop. These tasks will run each loop,
+  with a defined priority to select the running order,
+  should have a "runable" like interface.
+- Move all units related classes to src/NetPanzer/Units
+- Import physfs code into netpanzer trunk
+- Import lua code into netpanzer trunk 
+
+*** Old todo
 -after having a full nodelist in A* the server is getting slow
     - no idea how to solve this, have to leave it open I guess...
 -create a new netpanzer-music package which adds pronobozos music to the game

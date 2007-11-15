@@ -50,7 +50,9 @@ protected:
     virtual void onDataReady() = 0;
     virtual void onDisconected() {};
     virtual void onConnected() {};
+    virtual void onSocketError() = 0;
     virtual void destroy() = 0;
+    
 
     void setReuseAddr() throw(NetworkException);
     void doClose();

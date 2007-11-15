@@ -38,6 +38,13 @@ TCPListenSocket::destroy()
 }
 
 void
+TCPListenSocket::onSocketError()
+{
+    if ( observer )
+        observer->onSocketError(this);
+}
+
+void
 TCPListenSocket::onDataReady()
 {
     Address newaddr;

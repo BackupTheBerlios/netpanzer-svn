@@ -40,14 +40,17 @@ public:
     void sendRemaining();
 
 protected:
-    network::TCPSocketObserver * onNewConnection(TCPListenSocket *so,const Address &fromaddr);
+    TCPSocketObserver * onNewConnection(TCPListenSocket *so,const Address &fromaddr);
+    void onSocketError(TCPListenSocket *so);
     void onClientConnected(ClientSocket *s);
     void onClientDisconected(ClientSocket *s, const char * msg);
     friend class SocketClient;
 
 private:
     TCPListenSocket * socket;
-    map<NetClientID, ClientSocket *> clients;
+    typedef map<NetClientID, ClientSocket *> ClientsMap;
+    typedef ClientsMap::iterator ClientsMapIterator;
+    ClientsMap clients;
 
 };
 

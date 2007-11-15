@@ -51,6 +51,13 @@ UDPSocket::destroy()
 }
 
 void
+UDPSocket::onSocketError()
+{
+    if ( observer )
+        observer->onSocketError(this);
+}
+
+void
 UDPSocket::send(const Address& toaddr, const void* data, size_t datasize)
     throw(NetworkException)
 {

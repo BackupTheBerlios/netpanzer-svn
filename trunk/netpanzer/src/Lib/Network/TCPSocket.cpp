@@ -89,4 +89,12 @@ TCPSocket::onDataReady()
     } while (len && observer);
 }
 
+void
+TCPSocket::onSocketError()
+{
+    if (observer)
+        observer->onSocketError(this);
+    destroy();
+}
+
 }

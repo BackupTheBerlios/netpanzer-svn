@@ -220,7 +220,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
 void
 ClientSocket::onConnected(network::TCPSocket *so)
 {
-    LOGGER.warning("ClientSocket:: Connected to socket");
+    LOGGER.warning("ClientSocket: connected, id=%d", id);
     socket = so;
     observer->onClientConnected(this);
 }
@@ -229,9 +229,18 @@ void
 ClientSocket::onDisconected(network::TCPSocket *so)
 {
     (void)so;
-    LOGGER.warning("ClientSocket:: Disconected NetId[%d]!", id);
+    LOGGER.warning("ClientSocket: Disconected id=%d", id);
     socket=0;
     observer->onClientDisconected(this, "Network connection closed");
+}
+
+void
+ClientSocket::onSocketError(network::TCPSocket *so)
+{
+    (void)so;
+    LOGGER.warning("ClientSocket: Network connection error id=%d", id);
+    socket=0;
+    observer->onClientDisconected(this, "Network connection error");
 }
 
 std::string

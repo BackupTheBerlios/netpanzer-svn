@@ -136,6 +136,21 @@ ServerQueryThread::onDisconected(network::TCPSocket *s)
 }
 
 void
+ServerQueryThread::onSocketError(network::TCPSocket *s)
+{
+    LOGGER.warning("MASTERSERVER Socket error [%s]", s->getAddress().getIP().c_str());
+    delete querying_msdata[s];
+    querying_msdata.erase(s);    
+}
+
+void
+ServerQueryThread::onSocketError(network::UDPSocket *s)
+{
+    LOGGER.warning("SERVER query socket error [%s]", s->getAddress().getIP().c_str());
+    udpsocket = 0;
+}
+
+void
 ServerQueryThread::onDataReceived(network::TCPSocket *s, const char *data, const int len)
 {
     string str;

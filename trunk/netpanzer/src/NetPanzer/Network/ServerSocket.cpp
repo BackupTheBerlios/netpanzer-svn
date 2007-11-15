@@ -44,12 +44,19 @@ ServerSocket::~ServerSocket()
     if (socket)
         socket->destroy();
     
-    map<NetClientID, ClientSocket *>::iterator ci = clients.begin();
+    ClientsMapIterator ci = clients.begin();
     while ( ci != clients.end() ) {
         delete ci->second;
         ci++;
     }
     clients.clear();
+}
+
+void
+ServerSocket::onSocketError(TCPListenSocket *so)
+{
+    LOGGER.debug("ServerSocket: Listen Socket error");
+
 }
 
 TCPSocketObserver *
@@ -63,8 +70,13 @@ ServerSocket::onNewConnection(TCPListenSocket *so, const Address &fromaddr)
 void
 ServerSocket::onClientConnected(ClientSocket *s)
 {
-    LOGGER.debug("ServerSocket::onClientConnected() [%d]", s->getId());
-    clients[s->getId()] = s;
+    NetClientID id = s->getId();
+    if ( clients.find(id) != clients.end() ) {
+        LOGGER.warning("ServerSocket: client connected already in list [%d]", id);
+        return;
+    }
+    LOGGER.debug("ServerSocket: client connected [%d]", id);
+    clients[id] = s;
     TransportClientAccept clientacceptmessage;
     clientacceptmessage.setSize(sizeof(TransportClientAccept));
     EnqueueIncomingPacket(&clientacceptmessage,
@@ -74,26 +86,32 @@ ServerSocket::onClientConnected(ClientSocket *s)
 void
 ServerSocket::onClientDisconected(ClientSocket *s, const char * msg)
 {
-    LOGGER.warning("ServerSocket::onClientDisconnected() [%d] %s", s->getId(), msg);
-    clients.erase(s->getId());
-    delete s;
+    NetClientID id = s->getId();
+    ClientsMapIterator i = clients.find(id);
+    if ( i == clients.end() ) {
+        LOGGER.warning("ServerSocket: disconnected client not in map %d, msg=%s", id, msg);
+    } else {
+        LOGGER.warning("ServerSocket: disconnected client %d msg=%s", id, msg);
+        clients.erase(i);
+        delete s;
+    }
 }
 
 std::string
 ServerSocket::getClientIP(NetClientID clientid)
 {
-    ClientSocket *s = clients[clientid];
-    if ( !s )
+    ClientsMapIterator i = clients.find(clientid);
+    if ( i == clients.end() )
         return "Not a client";
     
-    return s->getIPAddress();
+    return i->second->getIPAddress();
 }
 
 void
 ServerSocket::sendMessage(NetClientID toclient, const void* data, size_t datasize)
 {
-    map<NetClientID, ClientSocket *>::iterator ci = clients.find(toclient);
-    if ( ci == clients.end() ) {
+    ClientsMapIterator ci = clients.find(toclient);
+    if ( ci == clients.end() ) { // XXX remove the throw
         throw Exception("message sent to unknown client.");
     }
 
@@ -103,20 +121,20 @@ ServerSocket::sendMessage(NetClientID toclient, const void* data, size_t datasiz
 void
 ServerSocket::disconectClient(NetClientID c)
 {
-    LOGGER.debug("ServerSocket::disconectClient() [%d]", c);
-    map<NetClientID, ClientSocket *>::iterator ci = clients.find(c);
+    ClientsMapIterator ci = clients.find(c);
     if ( ci != clients.end() ) {
+        LOGGER.warning("ServerSocket: disconnect client [%d]", ci->second->getId());
         delete ci->second;
         clients.erase(ci);
     } else {
-        LOGGER.warning("ServerSocket::disconectClient() Disconecting unknown client [%d]", c);
+        LOGGER.warning("ServerSocket: disconnect client not in list [%d]", c);
     }
 }
 
 void
 ServerSocket::sendRemaining()
 {
-    map<NetClientID, ClientSocket *>::iterator ci = clients.begin();
+    ClientsMapIterator ci = clients.begin();
     while ( ci != clients.end() ) {
         ci->second->sendRemaining();
         ci++;

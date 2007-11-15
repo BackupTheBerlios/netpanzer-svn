@@ -57,6 +57,7 @@ protected:
     void onDataReceived(network::TCPSocket *so, const char *data, const int len);
     void onConnected(network::TCPSocket *so);
     void onDisconected(network::TCPSocket *so);
+    void onSocketError(network::TCPSocket *so);
 
 private:
     void initId();
