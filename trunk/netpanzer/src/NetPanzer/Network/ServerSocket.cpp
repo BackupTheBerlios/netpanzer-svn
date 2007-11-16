@@ -55,6 +55,7 @@ ServerSocket::~ServerSocket()
 void
 ServerSocket::onSocketError(TCPListenSocket *so)
 {
+    (void)so;
     LOGGER.debug("ServerSocket: Listen Socket error");
 
 }

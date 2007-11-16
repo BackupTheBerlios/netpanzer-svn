@@ -123,24 +123,38 @@ dnl	[],
 dnl	[AC_MSG_ERROR([Please install SDL_ttf >= 2.0.0])],
 dnl	[$SDL_CFLAGS], [$SDL_LIBS])
 
-NP_FINDLIB([PHYSFS], [physfs], [physfs >= 0.1.9],
-	NP_LANG_PROGRAM([
-#include <stdio.h>
-#include <physfs.h>
-#if PHYSFS_VER_MAJOR < 1
-#if PHYSFS_VER_MINOR < 1
-# error PHYSFS is too old
-#else
-# if PHYSFS_VER_MINOR == 1
-#  if PHYSFS_VER_PATCH < 9
-#   error PHYSFS is too old
-#  endif
-# endif
-#endif
-#endif]),
-	[], [-lphysfs],
-	[],
-	[AC_MSG_ERROR([Please install physfs >= 0.1.9])])
+dnl NP_FINDLIB([PHYSFS], [physfs], [physfs >= 0.1.9],
+dnl 	NP_LANG_PROGRAM([
+dnl #include <stdio.h>
+dnl #include <physfs.h>
+dnl #if PHYSFS_VER_MAJOR < 1
+dnl #if PHYSFS_VER_MINOR < 1
+dnl # error PHYSFS is too old
+dnl #else
+dnl # if PHYSFS_VER_MINOR == 1
+dnl #  if PHYSFS_VER_PATCH < 9
+dnl #   error PHYSFS is too old
+dnl #  endif
+dnl # endif
+dnl #endif
+dnl #endif]),
+dnl 	[], [-lphysfs],
+dnl 	[],
+dnl 	[AC_MSG_ERROR([Please install physfs >= 0.1.9])])
+
+AC_MSG_CHECKING([for CDROM support])
+AC_TRY_COMPILE([#include <sys/ucred.h>],,cdsupport="SYS_UCRED_H",)
+if test -z "$cdsupport" ; then
+   AC_TRY_COMPILE([#include <mntent.h>],,cdsupport="MNTENT_H",)
+fi
+
+if test -n "$cdsupport" ; then
+    AC_MSG_RESULT([yes])
+    CFLAGS="$CFLAGS -DPHYSFS_HAVE_${cdsupport}=1"
+    CPPFLAGS="$CPPFLAGS -DPHYSFS_HAVE_${cdsupport}=1"
+else
+    AC_MSG_RESULT([no])
+fi
 
 AC_INIT_JAM
 AC_CONFIG_FILES([Jamconfig])

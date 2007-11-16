@@ -58,6 +58,7 @@ InfoSocket::~InfoSocket()
 void
 InfoSocket::onSocketError(UDPSocket *so)
 {
+    (void)so;
     LOGGER.debug("InfoSocket: socket error");
 }
 
