@@ -142,7 +142,7 @@ dnl 	[], [-lphysfs],
 dnl 	[],
 dnl 	[AC_MSG_ERROR([Please install physfs >= 0.1.9])])
 
-AC_MSG_CHECKING([for CDROM support])
+AC_MSG_CHECKING([for physfs CDROM support])
 AC_TRY_COMPILE([#include <sys/ucred.h>],,cdsupport="SYS_UCRED_H",)
 if test -z "$cdsupport" ; then
    AC_TRY_COMPILE([#include <mntent.h>],,cdsupport="MNTENT_H",)
@@ -154,7 +154,21 @@ if test -n "$cdsupport" ; then
     CPPFLAGS="$CPPFLAGS -DPHYSFS_HAVE_${cdsupport}=1"
 else
     AC_MSG_RESULT([no])
+    CFLAGS="$CFLAGS -DPHYSFS_NO_CDROM_SUPPORT=1"
+    CPPFLAGS="$CPPFLAGS -DPHYSFS_NO_CDROM_SUPPORT=1"
 fi
+
+AC_MSG_CHECKING([for physfs thread support])
+AC_TRY_COMPILE([#include <pthread.h>],,threadsupport="yes",)
+if test -n "$threadsupport" ; then
+    AC_MSG_RESULT([yes])
+else
+    AC_MSG_RESULT([no])
+    CFLAGS="$CFLAGS -DPHYSFS_NO_PTHREADS_SUPPORT=1"
+    CPPFLAGS="$CPPFLAGS -DPHYSFS_NO_PTHREADS_SUPPORT=1"
+fi
+
+CFLAGS="$CFLAGS -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1"
 
 AC_INIT_JAM
 AC_CONFIG_FILES([Jamconfig])
