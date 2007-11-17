@@ -195,7 +195,7 @@ void ServerConnectDaemon::sendConnectionAlert(PlayerID &player_id, int alert_enu
     switch( alert_enum ) {
     case _connect_alert_mesg_connect : {
             connect_alert.set( player_id, _connect_alert_mesg_connect );
-            ConsoleInterface::postMessage( "'%s' has joined the game.",
+            ConsoleInterface::postMessage(Color::cyan, "'%s' has joined the game.",
                     player_state->getName().c_str() );
            const char* motd=gameconfig->motd.c_str();
            if (*motd!='\0'){
@@ -211,14 +211,14 @@ void ServerConnectDaemon::sendConnectionAlert(PlayerID &player_id, int alert_enu
 
     case _connect_alert_mesg_disconnect : {
             connect_alert.set( player_id, _connect_alert_mesg_disconnect );
-            ConsoleInterface::postMessage( "'%s' has left the game.",
+            ConsoleInterface::postMessage(Color::cyan, "'%s' has left the game.",
                     player_state->getName().c_str() );
         }
         break;
 
     case _connect_alert_mesg_client_drop : {
             connect_alert.set( player_id, _connect_alert_mesg_client_drop );
-            ConsoleInterface::postMessage( "'%s' has left the game for some reason.",
+            ConsoleInterface::postMessage(Color::cyan, "'%s' has left the game for some reason.",
                     player_state->getName().c_str() );
         }
         break;

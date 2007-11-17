@@ -71,7 +71,7 @@ void ConsoleInterface::initialize( long size )
     for ( line_loop = 0; line_loop < console_size; line_loop++ ) {
         line_list[ line_loop ].color = Color::white;
         line_list[ line_loop ].string[0] = 0;
-        line_list[ line_loop ].life_timer.changePeriod( 8 );
+        line_list[ line_loop ].life_timer.changePeriod( 30 );
     }
 
     stdout_pipe = false;
@@ -99,7 +99,7 @@ void ConsoleInterface::update( Surface &surface )
     update_overlap( surface );
 }
 
-void ConsoleInterface::postMessage(const char *format, ...)
+void ConsoleInterface::postMessage(PIX msgcolor, const char *format, ...)
 {
     char temp_str[256];
     char *temp_str_ptr;
@@ -131,7 +131,7 @@ void ConsoleInterface::postMessage(const char *format, ...)
             strncpy( line_list[ line_index ].string, temp_str_ptr, max_char_per_line);
             line_list[ line_index ].string[ max_char_per_line ] = 0;
 
-            line_list[ line_index ].color = Color::white;
+            line_list[ line_index ].color = msgcolor;
             line_list[ line_index ].visible = true;
             line_list[ line_index ].life_timer.reset();
 
@@ -147,7 +147,7 @@ void ConsoleInterface::postMessage(const char *format, ...)
 
     strcpy( line_list[ line_index ].string, temp_str_ptr );
 
-    line_list[ line_index ].color = Color::white;
+    line_list[ line_index ].color = msgcolor;
     line_list[ line_index ].visible = true;
     line_list[ line_index ].life_timer.reset();
 }

@@ -543,7 +543,7 @@ void ParticleInterface::addHit(const UnitState &unitState)
     if (gDrawExplosionParticleCount) {
         char strBuf[256];
         sprintf(strBuf, "%d", e.particleCount);
-        ConsoleInterface::postMessage(strBuf);
+        ConsoleInterface::postMessage(Color::white, strBuf);
     }
 
     float hitPointScale = 1.0f;
@@ -703,7 +703,7 @@ void ParticleInterface::addMiss(const iXY &worldPos, Uint8 unitType)
     if (gDrawExplosionParticleCount) {
         char strBuf[256];
         sprintf(strBuf, "%d", e.particleCount);
-        ConsoleInterface::postMessage(strBuf);
+        ConsoleInterface::postMessage(Color::white, strBuf);
     }
 
     float attackScale = 1.0f;

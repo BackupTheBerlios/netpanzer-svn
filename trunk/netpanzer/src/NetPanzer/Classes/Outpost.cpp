@@ -78,7 +78,7 @@ Outpost::attemptOccupationChange(UnitID unit_id)
             SERVER->sendMessage(&update_mesg, sizeof(ObjectiveOccupationUpdate));
 
             const PlayerState *player_state = objective_state.occupying_player;
-            ConsoleInterface::postMessage( "'%s' has been occupied by '%s'",
+            ConsoleInterface::postMessage(Color::cyan, "'%s' has been occupied by '%s'",
                     objective_state.name, player_state->getName().c_str() );
         }
     } else {
@@ -96,7 +96,7 @@ Outpost::attemptOccupationChange(UnitID unit_id)
                 SERVER->sendMessage(&update_mesg,
                         sizeof(ObjectiveOccupationUpdate));
                 const PlayerState *player = objective_state.occupying_player;
-                ConsoleInterface::postMessage("'%s' has been occupied by '%s'",
+                ConsoleInterface::postMessage(Color::cyan, "'%s' has been occupied by '%s'",
                         objective_state.name, player->getName().c_str() );
             }
         }

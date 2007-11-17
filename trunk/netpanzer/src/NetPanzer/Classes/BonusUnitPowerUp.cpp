@@ -91,7 +91,7 @@ void BonusUnitPowerUp::spawnBonusUnits( UnitID &unit_id )
     powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive;
 
     if(unit->player == PlayerInterface::getLocalPlayer()) {
-        ConsoleInterface::postMessage( "YOU GOT A BONUS UNITS POWERUP" );
+        ConsoleInterface::postMessage(Color::unitAqua, "YOU GOT A BONUS UNITS POWERUP" );
     }
 }
 
@@ -127,7 +127,7 @@ void BonusUnitPowerUp::onHit( PowerUpHitMesg *message  )
     local_player_id = PlayerInterface::getLocalPlayerID();
 
     if( local_player_id.getIndex() == message->getPlayerID() ) {
-        ConsoleInterface::postMessage( "YOU GOT A BONUS UNITS POWERUP" );
+        ConsoleInterface::postMessage( Color::unitAqua, "YOU GOT A BONUS UNITS POWERUP" );
     }
 
 }

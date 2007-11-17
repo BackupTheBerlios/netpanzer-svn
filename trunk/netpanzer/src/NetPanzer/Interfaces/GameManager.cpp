@@ -422,18 +422,18 @@ void GameManager::netMessageConnectAlert(const NetMessage* message)
 
     switch (connect_alert->alert_enum) {
         case _connect_alert_mesg_connect:
-            ConsoleInterface::postMessage("%s has joined the game.",
+            ConsoleInterface::postMessage(Color::cyan, "%s has joined the game.",
                     player_state->getName().c_str());
 
             break;
 
         case _connect_alert_mesg_disconnect: 
-            ConsoleInterface::postMessage("%s has left the game.",
+            ConsoleInterface::postMessage(Color::cyan, "%s has left the game.",
                     player_state->getName().c_str());
             break;
 
         case _connect_alert_mesg_client_drop:
-            ConsoleInterface::postMessage(
+            ConsoleInterface::postMessage(Color::cyan,
                     "Connection to %s has been unexpectedly broken.",
                     player_state->getName().c_str());
             break;

@@ -359,7 +359,7 @@ WorldInputCmdProcessor::evaluateGroupingKeys()
                 setSelectionList(n);
                 std::stringstream s;
                 s << "Group " << n << " Created";
-                ConsoleInterface::postMessage( s.str().c_str() );
+                ConsoleInterface::postMessage(Color::brown, s.str().c_str() );
                 continue;
             }
             if(alt_status == true) {
