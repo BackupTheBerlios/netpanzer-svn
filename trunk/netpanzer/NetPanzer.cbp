@@ -39,6 +39,7 @@
 			<Add directory="./src/NetPanzer" />
 			<Add directory="./" />
 			<Add directory="./src/Lib/physfs" />
+			<Add directory="./src/Lib/physfs/zlib123" />
 		</Compiler>
 		<Linker>
 			<Add option="`sdl-config --libs`" />
