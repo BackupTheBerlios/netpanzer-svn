@@ -189,6 +189,120 @@
 		<Unit filename="src/Lib/Util/TimerInterface.hpp" />
 		<Unit filename="src/Lib/Util/UtilInterface.cpp" />
 		<Unit filename="src/Lib/Util/UtilInterface.hpp" />
+		<Unit filename="src/Lib/lua/lapi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lapi.h" />
+		<Unit filename="src/Lib/lua/lauxlib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lauxlib.h" />
+		<Unit filename="src/Lib/lua/lbaselib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lcode.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lcode.h" />
+		<Unit filename="src/Lib/lua/ldblib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/ldebug.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/ldebug.h" />
+		<Unit filename="src/Lib/lua/ldo.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/ldo.h" />
+		<Unit filename="src/Lib/lua/ldump.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lfunc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lfunc.h" />
+		<Unit filename="src/Lib/lua/lgc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lgc.h" />
+		<Unit filename="src/Lib/lua/linit.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/liolib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/llex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/llex.h" />
+		<Unit filename="src/Lib/lua/llimits.h" />
+		<Unit filename="src/Lib/lua/lmathlib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lmem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lmem.h" />
+		<Unit filename="src/Lib/lua/loadlib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lobject.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lobject.h" />
+		<Unit filename="src/Lib/lua/lopcodes.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lopcodes.h" />
+		<Unit filename="src/Lib/lua/loslib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lparser.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lparser.h" />
+		<Unit filename="src/Lib/lua/lstate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lstate.h" />
+		<Unit filename="src/Lib/lua/lstring.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lstring.h" />
+		<Unit filename="src/Lib/lua/lstrlib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/ltable.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/ltable.h" />
+		<Unit filename="src/Lib/lua/ltablib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/ltm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/ltm.h" />
+		<Unit filename="src/Lib/lua/lua.h" />
+		<Unit filename="src/Lib/lua/lua.hpp" />
+		<Unit filename="src/Lib/lua/luaconf.h" />
+		<Unit filename="src/Lib/lua/lualib.h" />
+		<Unit filename="src/Lib/lua/lundump.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lundump.h" />
+		<Unit filename="src/Lib/lua/lvm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lvm.h" />
+		<Unit filename="src/Lib/lua/lzio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/Lib/lua/lzio.h" />
+		<Unit filename="src/Lib/lua/print.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/Lib/optionmm/command_line.cpp" />
 		<Unit filename="src/Lib/optionmm/command_line.hpp" />
 		<Unit filename="src/Lib/optionmm/option.cpp" />

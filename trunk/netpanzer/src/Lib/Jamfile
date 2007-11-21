@@ -10,3 +10,4 @@ SubInclude TOP src Lib optionmm ;
 SubInclude TOP src Lib INIParser ;
 SubInclude TOP src Lib Network ;
 SubInclude TOP src Lib physfs ;
+SubInclude TOP src Lib lua ;
