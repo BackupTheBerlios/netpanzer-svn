@@ -1,0 +1,8 @@
+SubDir TOP src Lib lua ;
+
+IncludeDir . ;
+
+SOURCES = [ Wildcard *.c *.h ] ;
+
+Library nplua : $(SOURCES) : noinstall ;
+
