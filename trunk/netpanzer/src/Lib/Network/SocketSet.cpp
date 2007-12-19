@@ -82,9 +82,7 @@ SocketSet::select(unsigned int usec) throw(NetworkException)
 	return false;
 #endif
     
-    testreadset = readset;
-    testwriteset = writeset;
-    int res = ::select(maxfd+1, &testreadset, &testwriteset, 0, &timeout);
+    int res = ::select(maxfd+1, &readset, &writeset, 0, &timeout);
     if ( res == SOCKET_ERROR ) {
         int error = GET_NET_ERROR();
         std::stringstream msg;

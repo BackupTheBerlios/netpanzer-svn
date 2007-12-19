@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SOCKETMANAGER_HPP
 #define _SOCKETMANAGER_HPP
 
-#include <list>
+#include <set>
 #include "SocketBase.hpp"
 #include "TCPSocket.hpp"
 #include "SocketSet.hpp"
@@ -40,31 +40,32 @@ protected:
     friend class SocketBase; // the only allowed to add/remove
     static void addSocket(SocketBase *s)
     {
-        newSockets.push_front(s);
+        SocketsIterator i = deletedSockets.find(s);
+        if ( i != deletedSockets.end() ) {
+            deletedSockets.erase(i);
+        } else {
+            newSockets.insert(s);
+        }
     }
     
     static void removeSocket(SocketBase *s)
     {
-        if ( !newSockets.empty() ) {
-            list<SocketBase *>::iterator i = newSockets.begin();
-            while (i != newSockets.end()) {
-                if ( *i == s ) {
-                    newSockets.erase(i);
-                    return;
-                }
-                i++;
-            }
+        SocketsIterator i = newSockets.find(s);
+        if ( i != newSockets.end() ) {
+            newSockets.erase(i);
+        } else {
+            deletedSockets.insert(s);
         }
-        deletedSockets.push_front(s);
     }
 
 private:
+    typedef set<SocketBase *> Sockets;
+    typedef set<SocketBase *>::iterator SocketsIterator;
     
     static SocketSet sset;
-    static list<SocketBase *> socketList;
-    static list<SocketBase *> newSockets;
-    static list<SocketBase *> deletedSockets;
-    
+    static Sockets socketList;
+    static Sockets newSockets;
+    static Sockets deletedSockets;
 };
 
 } // namespace

@@ -51,12 +51,12 @@ public:
     
     bool dataAvailable(const SocketBase* socketbase) const
     {
-        return FD_ISSET(socketbase->sockfd, &testreadset);
+        return FD_ISSET(socketbase->sockfd, &readset);
     }
     
     bool isWriteable(const SocketBase* socketbase) const
     {
-        return FD_ISSET(socketbase->sockfd,&testwriteset);
+        return FD_ISSET(socketbase->sockfd,&writeset);
     }
     
     
@@ -64,8 +64,6 @@ private:
     SOCKET maxfd;
     fd_set readset;
     fd_set writeset;
-    fd_set testreadset;
-    fd_set testwriteset;
 };
 
 }

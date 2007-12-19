@@ -22,21 +22,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 namespace network {
 
-list<SocketBase *> SocketManager::socketList;
-list<SocketBase *> SocketManager::newSockets;
-list<SocketBase *> SocketManager::deletedSockets;
+SocketManager::Sockets SocketManager::socketList;
+SocketManager::Sockets SocketManager::newSockets;
+SocketManager::Sockets SocketManager::deletedSockets;
 SocketSet SocketManager::sset;
 
 void
 SocketManager::handleEvents()
 {
-    list<SocketBase *>::iterator i;
+    SocketsIterator i;
 
     if (!newSockets.empty() || !deletedSockets.empty()) {
         if (!deletedSockets.empty()) {
             for (i = deletedSockets.begin(); i!=deletedSockets.end(); i++) {
                 LOGGER.debug("SocketManager:: Removing socket [%d,%08lx]",(*i)->sockfd, (unsigned long)(*i));
-                socketList.remove(*i);
+                socketList.erase(*i);
                 delete *i;
             }
             deletedSockets.clear();
@@ -45,23 +45,22 @@ SocketManager::handleEvents()
         if (!newSockets.empty()) {
             for (i = newSockets.begin(); i!=newSockets.end(); i++) {
                 LOGGER.debug("SocketManager:: Adding socket [%d,%08lx]",(*i)->sockfd, (unsigned long)(*i));
-                socketList.push_front(*i);
+                socketList.insert(*i);
             }
             newSockets.clear();
         }
+    }
 
-        sset.clear();
-        for (i = socketList.begin(); i!=socketList.end(); i++) {
-            if ((*i)->isConnecting()) {
-                LOGGER.debug("SocketManager:: Setting socket [%d,%08lx] to write",(*i)->sockfd, (unsigned long)(*i));
-                sset.addWrite(*i);
-            } else {
-                LOGGER.debug("SocketManager:: Setting socket [%d,%08lx] to read",(*i)->sockfd, (unsigned long)(*i));
-                sset.add(*i);
-            }
+    // Make the socketset every time, not all OS works the same way
+    SocketSet sset;
+    for (i = socketList.begin(); i!=socketList.end(); i++) {
+        if ((*i)->isConnecting()) {
+            sset.addWrite(*i);
+        } else {
+            sset.add(*i);
         }
     }
-    
+
     if (!sset.select(0))
         return;
 
