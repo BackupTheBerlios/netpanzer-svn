@@ -1,0 +1,833 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="NetPanzer" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="netpanzer-debug.exe" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="netpanzer.exe" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-D_GNU_SOURCE=1" />
+			<Add option="-D_FORTIFY_SOURCE=2" />
+			<Add option="-DPHYSFS_HAVE_MNTENT_H=1" />
+			<Add option="-DPHYSFS_SUPPORTS_ZIP=1" />
+			<Add option="-DZ_PREFIX=1" />
+			<Add directory=".\src\Lib" />
+			<Add directory=".\src\NetPanzer" />
+			<Add directory=".\" />
+			<Add directory=".\src\Lib\physfs" />
+			<Add directory=".\src\Lib\physfs\zlib123" />
+			<Add directory="c:\mingw\include\SDL" />
+		</Compiler>
+		<Linker>
+			<Add option="-mwindows" />
+			<Add library="c:\mingw\lib\SDL_Mixer.lib" />
+			<Add library="wsock32" />
+			<Add library="mingw32" />
+			<Add library="SDLmain" />
+			<Add library="SDL" />
+		</Linker>
+		<Unit filename="src\Lib\2D\Color.cpp" />
+		<Unit filename="src\Lib\2D\Color.hpp" />
+		<Unit filename="src\Lib\2D\ColorTable.cpp" />
+		<Unit filename="src\Lib\2D\ColorTable.hpp" />
+		<Unit filename="src\Lib\2D\DigitText.cpp" />
+		<Unit filename="src\Lib\2D\DigitText.hpp" />
+		<Unit filename="src\Lib\2D\FontSystem2D.hpp" />
+		<Unit filename="src\Lib\2D\PackedSurface.cpp" />
+		<Unit filename="src\Lib\2D\PackedSurface.hpp" />
+		<Unit filename="src\Lib\2D\Palette.cpp" />
+		<Unit filename="src\Lib\2D\Palette.hpp" />
+		<Unit filename="src\Lib\2D\RGBColor.cpp" />
+		<Unit filename="src\Lib\2D\RGBColor.hpp" />
+		<Unit filename="src\Lib\2D\Span.cpp" />
+		<Unit filename="src\Lib\2D\Span.hpp" />
+		<Unit filename="src\Lib\2D\Surface.cpp" />
+		<Unit filename="src\Lib\2D\Surface.hpp" />
+		<Unit filename="src\Lib\ArrayUtil\ArrayTemplate.hpp" />
+		<Unit filename="src\Lib\ArrayUtil\BitArray.cpp" />
+		<Unit filename="src\Lib\ArrayUtil\BitArray.hpp" />
+		<Unit filename="src\Lib\ArrayUtil\BoundBox.cpp" />
+		<Unit filename="src\Lib\ArrayUtil\BoundBox.hpp" />
+		<Unit filename="src\Lib\ArrayUtil\BucketArrayTemplate.hpp" />
+		<Unit filename="src\Lib\ArrayUtil\LinkListDoubleTemplate.hpp" />
+		<Unit filename="src\Lib\ArrayUtil\QueueTemplate.hpp" />
+		<Unit filename="src\Lib\INIParser\Section.cpp" />
+		<Unit filename="src\Lib\INIParser\Section.hpp" />
+		<Unit filename="src\Lib\INIParser\Store.cpp" />
+		<Unit filename="src\Lib\INIParser\Store.hpp" />
+		<Unit filename="src\Lib\Network\Address.cpp" />
+		<Unit filename="src\Lib\Network\Address.hpp" />
+		<Unit filename="src\Lib\Network\NetworkException.hpp" />
+		<Unit filename="src\Lib\Network\SocketBase.cpp" />
+		<Unit filename="src\Lib\Network\SocketBase.hpp" />
+		<Unit filename="src\Lib\Network\SocketHeaders.hpp" />
+		<Unit filename="src\Lib\Network\SocketManager.cpp" />
+		<Unit filename="src\Lib\Network\SocketManager.hpp" />
+		<Unit filename="src\Lib\Network\SocketSet.cpp" />
+		<Unit filename="src\Lib\Network\SocketSet.hpp" />
+		<Unit filename="src\Lib\Network\TCPListenSocket.cpp" />
+		<Unit filename="src\Lib\Network\TCPListenSocket.hpp" />
+		<Unit filename="src\Lib\Network\TCPSocket.cpp" />
+		<Unit filename="src\Lib\Network\TCPSocket.hpp" />
+		<Unit filename="src\Lib\Network\UDPSocket.cpp" />
+		<Unit filename="src\Lib\Network\UDPSocket.hpp" />
+		<Unit filename="src\Lib\Types\Angle.cpp" />
+		<Unit filename="src\Lib\Types\Angle.hpp" />
+		<Unit filename="src\Lib\Types\fRect.cpp" />
+		<Unit filename="src\Lib\Types\fRect.hpp" />
+		<Unit filename="src\Lib\Types\fXY.hpp" />
+		<Unit filename="src\Lib\Types\fXYZ.cpp" />
+		<Unit filename="src\Lib\Types\fXYZ.hpp" />
+		<Unit filename="src\Lib\Types\iRect.cpp" />
+		<Unit filename="src\Lib\Types\iRect.hpp" />
+		<Unit filename="src\Lib\Types\iXY.cpp" />
+		<Unit filename="src\Lib\Types\iXY.hpp" />
+		<Unit filename="src\Lib\UI\Button.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\Button.hpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\Color.hpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\Component.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\Component.hpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\Container.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\Container.hpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\DrawingFunctions.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\DrawingFunctions.hpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\EventParameter.hpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\FontManager.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\FontManager.hpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\Label.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\Label.hpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\MouseEventParameter.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\MouseEventParameter.hpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\Painter.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\Painter.hpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\VerticalScrollBox.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\UI\VerticalScrollBox.hpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\Lib\Util\BresenhamLine.cpp" />
+		<Unit filename="src\Lib\Util\BresenhamLine.hpp" />
+		<Unit filename="src\Lib\Util\Endian.hpp" />
+		<Unit filename="src\Lib\Util\Exception.cpp" />
+		<Unit filename="src\Lib\Util\Exception.hpp" />
+		<Unit filename="src\Lib\Util\FileStream.hpp" />
+		<Unit filename="src\Lib\Util\FileSystem.cpp" />
+		<Unit filename="src\Lib\Util\FileSystem.hpp" />
+		<Unit filename="src\Lib\Util\FileUtil.cpp" />
+		<Unit filename="src\Lib\Util\FileUtil.hpp" />
+		<Unit filename="src\Lib\Util\Log.cpp" />
+		<Unit filename="src\Lib\Util\Log.hpp" />
+		<Unit filename="src\Lib\Util\Math.cpp" />
+		<Unit filename="src\Lib\Util\Math.hpp" />
+		<Unit filename="src\Lib\Util\NTimer.hpp" />
+		<Unit filename="src\Lib\Util\NoCopy.hpp" />
+		<Unit filename="src\Lib\Util\StreamTokenizer.hpp" />
+		<Unit filename="src\Lib\Util\StringTokenizer.hpp" />
+		<Unit filename="src\Lib\Util\StringUtil.cpp" />
+		<Unit filename="src\Lib\Util\StringUtil.hpp" />
+		<Unit filename="src\Lib\Util\TimeStamp.cpp" />
+		<Unit filename="src\Lib\Util\TimeStamp.hpp" />
+		<Unit filename="src\Lib\Util\Timer.cpp" />
+		<Unit filename="src\Lib\Util\Timer.hpp" />
+		<Unit filename="src\Lib\Util\TimerInterface.cpp" />
+		<Unit filename="src\Lib\Util\TimerInterface.hpp" />
+		<Unit filename="src\Lib\Util\UtilInterface.cpp" />
+		<Unit filename="src\Lib\Util\UtilInterface.hpp" />
+		<Unit filename="src\Lib\lua\lapi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lapi.h" />
+		<Unit filename="src\Lib\lua\lauxlib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lauxlib.h" />
+		<Unit filename="src\Lib\lua\lbaselib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lcode.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lcode.h" />
+		<Unit filename="src\Lib\lua\ldblib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\ldebug.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\ldebug.h" />
+		<Unit filename="src\Lib\lua\ldo.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\ldo.h" />
+		<Unit filename="src\Lib\lua\ldump.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lfunc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lfunc.h" />
+		<Unit filename="src\Lib\lua\lgc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lgc.h" />
+		<Unit filename="src\Lib\lua\linit.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\liolib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\llex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\llex.h" />
+		<Unit filename="src\Lib\lua\llimits.h" />
+		<Unit filename="src\Lib\lua\lmathlib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lmem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lmem.h" />
+		<Unit filename="src\Lib\lua\loadlib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lobject.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lobject.h" />
+		<Unit filename="src\Lib\lua\lopcodes.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lopcodes.h" />
+		<Unit filename="src\Lib\lua\loslib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lparser.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lparser.h" />
+		<Unit filename="src\Lib\lua\lstate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lstate.h" />
+		<Unit filename="src\Lib\lua\lstring.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lstring.h" />
+		<Unit filename="src\Lib\lua\lstrlib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\ltable.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\ltable.h" />
+		<Unit filename="src\Lib\lua\ltablib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\ltm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\ltm.h" />
+		<Unit filename="src\Lib\lua\lua.h" />
+		<Unit filename="src\Lib\lua\lua.hpp" />
+		<Unit filename="src\Lib\lua\luaconf.h" />
+		<Unit filename="src\Lib\lua\lualib.h" />
+		<Unit filename="src\Lib\lua\lundump.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lundump.h" />
+		<Unit filename="src\Lib\lua\lvm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lvm.h" />
+		<Unit filename="src\Lib\lua\lzio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\lua\lzio.h" />
+		<Unit filename="src\Lib\lua\print.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\optionmm\command_line.cpp" />
+		<Unit filename="src\Lib\optionmm\command_line.hpp" />
+		<Unit filename="src\Lib\optionmm\option.cpp" />
+		<Unit filename="src\Lib\optionmm\option.hpp" />
+		<Unit filename="src\Lib\physfs\archivers\dir.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\archivers\zip.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\physfs.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\physfs.h" />
+		<Unit filename="src\Lib\physfs\physfs_byteorder.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\physfs_casefolding.h" />
+		<Unit filename="src\Lib\physfs\physfs_internal.h" />
+		<Unit filename="src\Lib\physfs\physfs_platforms.h" />
+		<Unit filename="src\Lib\physfs\physfs_unicode.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\platform\beos.cpp" />
+		<Unit filename="src\Lib\physfs\platform\macosx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\platform\os2.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\platform\pocketpc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\platform\posix.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\platform\unix.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\platform\windows.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\zlib123\adler32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\zlib123\compress.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\zlib123\crc32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\zlib123\crc32.h" />
+		<Unit filename="src\Lib\physfs\zlib123\deflate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\zlib123\deflate.h" />
+		<Unit filename="src\Lib\physfs\zlib123\gzio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\zlib123\infback.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\zlib123\inffast.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\zlib123\inffast.h" />
+		<Unit filename="src\Lib\physfs\zlib123\inffixed.h" />
+		<Unit filename="src\Lib\physfs\zlib123\inflate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\zlib123\inflate.h" />
+		<Unit filename="src\Lib\physfs\zlib123\inftrees.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\zlib123\inftrees.h" />
+		<Unit filename="src\Lib\physfs\zlib123\trees.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\zlib123\trees.h" />
+		<Unit filename="src\Lib\physfs\zlib123\uncompr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\zlib123\zconf.h" />
+		<Unit filename="src\Lib\physfs\zlib123\zlib.h" />
+		<Unit filename="src\Lib\physfs\zlib123\zutil.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\Lib\physfs\zlib123\zutil.h" />
+		<Unit filename="src\NetPanzer\Bot\Bot.cpp" />
+		<Unit filename="src\NetPanzer\Bot\Bot.hpp" />
+		<Unit filename="src\NetPanzer\Bot\BotPlayer.cpp" />
+		<Unit filename="src\NetPanzer\Bot\BotPlayer.hpp" />
+		<Unit filename="src\NetPanzer\Bot\BotTask.hpp" />
+		<Unit filename="src\NetPanzer\Bot\BotTaskList.cpp" />
+		<Unit filename="src\NetPanzer\Bot\BotTaskList.hpp" />
+		<Unit filename="src\NetPanzer\Classes\AI\Astar.cpp" />
+		<Unit filename="src\NetPanzer\Classes\AI\Astar.hpp" />
+		<Unit filename="src\NetPanzer\Classes\AI\PathList.cpp" />
+		<Unit filename="src\NetPanzer\Classes\AI\PathList.hpp" />
+		<Unit filename="src\NetPanzer\Classes\AI\PathingState.cpp" />
+		<Unit filename="src\NetPanzer\Classes\AI\PathingState.hpp" />
+		<Unit filename="src\NetPanzer\Classes\BonusUnitPowerUp.cpp" />
+		<Unit filename="src\NetPanzer\Classes\BonusUnitPowerUp.hpp" />
+		<Unit filename="src\NetPanzer\Classes\EnemyRadarPowerUp.cpp" />
+		<Unit filename="src\NetPanzer\Classes\EnemyRadarPowerUp.hpp" />
+		<Unit filename="src\NetPanzer\Classes\MapFile.cpp" />
+		<Unit filename="src\NetPanzer\Classes\MapFile.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\ChatNetMessage.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\ClientConnectDaemon.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\ClientConnectDaemon.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\ClientMessageRouter.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\ClientMessageRouter.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\ClientServerNetMessage.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\ConnectNetMessage.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\ConnectNetMessage.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\GameControlNetMessage.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetMessage.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetMessageDecoder.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetMessageDecoder.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetMessageEncoder.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetMessageEncoder.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetPacket.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetPacketDebugger.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetPacketDebugger.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetPacketQueues.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetPacketQueues.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetTypes.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetworkClient.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetworkClient.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetworkInterface.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetworkInterface.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetworkReturnCodes.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetworkServer.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetworkServer.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetworkState.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\NetworkState.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\ObjectiveNetMessage.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\PlayerNetMessage.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\PowerUpNetMessage.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\ServerConnectDaemon.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\ServerConnectDaemon.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\ServerMessageRouter.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\ServerMessageRouter.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\SystemNetMessage.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\TerminalNetMesg.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\UnitNetMessage.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\UnitSync.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Network\UnitSync.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Objective.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Objective.hpp" />
+		<Unit filename="src\NetPanzer\Classes\ObjectiveMessageTypes.hpp" />
+		<Unit filename="src\NetPanzer\Classes\OpcodeDebugger.cpp" />
+		<Unit filename="src\NetPanzer\Classes\OpcodeDebugger.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Outpost.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Outpost.hpp" />
+		<Unit filename="src\NetPanzer\Classes\PlacementMatrix.cpp" />
+		<Unit filename="src\NetPanzer\Classes\PlacementMatrix.hpp" />
+		<Unit filename="src\NetPanzer\Classes\PlayerID.cpp" />
+		<Unit filename="src\NetPanzer\Classes\PlayerID.hpp" />
+		<Unit filename="src\NetPanzer\Classes\PlayerState.cpp" />
+		<Unit filename="src\NetPanzer\Classes\PlayerState.hpp" />
+		<Unit filename="src\NetPanzer\Classes\PlayerUnitConfig.cpp" />
+		<Unit filename="src\NetPanzer\Classes\PlayerUnitConfig.hpp" />
+		<Unit filename="src\NetPanzer\Classes\PowerUp.cpp" />
+		<Unit filename="src\NetPanzer\Classes\PowerUp.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Projectile.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Projectile.hpp" />
+		<Unit filename="src\NetPanzer\Classes\ScreenSurface.cpp" />
+		<Unit filename="src\NetPanzer\Classes\ScreenSurface.hpp" />
+		<Unit filename="src\NetPanzer\Classes\SelectionBoxSprite.cpp" />
+		<Unit filename="src\NetPanzer\Classes\SelectionBoxSprite.hpp" />
+		<Unit filename="src\NetPanzer\Classes\SelectionList.cpp" />
+		<Unit filename="src\NetPanzer\Classes\SelectionList.hpp" />
+		<Unit filename="src\NetPanzer\Classes\SpawnList.cpp" />
+		<Unit filename="src\NetPanzer\Classes\SpawnList.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Sprite.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Sprite.hpp" />
+		<Unit filename="src\NetPanzer\Classes\SpriteSorter.cpp" />
+		<Unit filename="src\NetPanzer\Classes\SpriteSorter.hpp" />
+		<Unit filename="src\NetPanzer\Classes\SurfaceDesc.hpp" />
+		<Unit filename="src\NetPanzer\Classes\TileEngine.cpp" />
+		<Unit filename="src\NetPanzer\Classes\TileEngine.hpp" />
+		<Unit filename="src\NetPanzer\Classes\TileSet.cpp" />
+		<Unit filename="src\NetPanzer\Classes\TileSet.hpp" />
+		<Unit filename="src\NetPanzer\Classes\TipOfDay.cpp" />
+		<Unit filename="src\NetPanzer\Classes\TipOfDay.hpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitBase.hpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitBlackBoard.cpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitBlackBoard.hpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitBucketArray.cpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitBucketArray.hpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitLifecycles.hpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitList.hpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitMessage.hpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitMessageTypes.hpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitOpcodeDecoder.cpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitOpcodeDecoder.hpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitOpcodeEncoder.cpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitOpcodeEncoder.hpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitOpcodes.hpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitPowerUp.cpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitPowerUp.hpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitState.cpp" />
+		<Unit filename="src\NetPanzer\Classes\UnitState.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Abrams.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Abrams.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Archer.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Archer.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Hammerhead.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Hammerhead.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Humvee.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Humvee.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Leopard.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Leopard.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Lynx.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Lynx.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\M109.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\M109.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Scorpion.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Scorpion.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\SpahPanzer.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\SpahPanzer.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\UnitGlobals.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\UnitGlobals.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Valentine.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Valentine.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Vehicle.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Units\Vehicle.hpp" />
+		<Unit filename="src\NetPanzer\Classes\ViewCamera.cpp" />
+		<Unit filename="src\NetPanzer\Classes\ViewCamera.hpp" />
+		<Unit filename="src\NetPanzer\Classes\WadMapTable.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Weapons\BulletWeapon.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Weapons\BulletWeapon.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Weapons\MissleWeapon.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Weapons\MissleWeapon.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Weapons\ShellWeapon.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Weapons\ShellWeapon.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Weapons\Weapon.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Weapons\Weapon.hpp" />
+		<Unit filename="src\NetPanzer\Classes\Weapons\WeaponGlobals.cpp" />
+		<Unit filename="src\NetPanzer\Classes\Weapons\WeaponGlobals.hpp" />
+		<Unit filename="src\NetPanzer\Classes\WorldInputCmdProcessor.cpp" />
+		<Unit filename="src\NetPanzer\Classes\WorldInputCmdProcessor.hpp" />
+		<Unit filename="src\NetPanzer\Classes\WorldMap.cpp" />
+		<Unit filename="src\NetPanzer\Classes\WorldMap.hpp" />
+		<Unit filename="src\NetPanzer\Core\NetworkGlobals.cpp" />
+		<Unit filename="src\NetPanzer\Core\NetworkGlobals.hpp" />
+		<Unit filename="src\NetPanzer\Core\main.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\BaseGameManager.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\BaseGameManager.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\BotGameManager.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\BotGameManager.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\ChatInterface.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\ChatInterface.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\Client.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\Client.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\ConfigVariable.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\ConfigVariable.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\Console.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\Console.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\ConsoleInterface.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\ConsoleInterface.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\DedicatedGameManager.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\DedicatedGameManager.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\GameConfig.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\GameConfig.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\GameControlRulesDaemon.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\GameControlRulesDaemon.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\GameManager.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\GameManager.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\Heartbeat.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\Heartbeat.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\InfoSocket.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\InfoSocket.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\KeyboardInterface.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\KeyboardInterface.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\MapInterface.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\MapInterface.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\MapsManager.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\MapsManager.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\MiniMapInterface.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\MiniMapInterface.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\MouseInterface.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\MouseInterface.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\ObjectiveInterface.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\ObjectiveInterface.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\PathScheduler.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\PathScheduler.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\PlayerGameManager.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\PlayerGameManager.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\PlayerInterface.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\PlayerInterface.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\PowerUpInterface.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\PowerUpInterface.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\ProjectileInterface.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\ProjectileInterface.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\Server.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\Server.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\ServerCommand.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\ServerConsole.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\ServerConsole.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\TileInterface.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\TileInterface.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\UnitInterface.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\UnitInterface.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\UnitProfileInterface.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\UnitProfileInterface.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\WorldViewInterface.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\WorldViewInterface.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\unix\NetworkClientUnix.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\unix\NetworkClientUnix.hpp" />
+		<Unit filename="src\NetPanzer\Interfaces\unix\NetworkServerUnix.cpp" />
+		<Unit filename="src\NetPanzer\Interfaces\unix\NetworkServerUnix.hpp" />
+		<Unit filename="src\NetPanzer\Network\ClientSocket.cpp" />
+		<Unit filename="src\NetPanzer\Network\ClientSocket.hpp" />
+		<Unit filename="src\NetPanzer\Network\ProxyServer.cpp" />
+		<Unit filename="src\NetPanzer\Network\ProxyServer.hpp" />
+		<Unit filename="src\NetPanzer\Network\ServerSocket.cpp" />
+		<Unit filename="src\NetPanzer\Network\ServerSocket.hpp" />
+		<Unit filename="src\NetPanzer\Panels\TestPanel.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\NetPanzer\Panels\TestPanel.hpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src\NetPanzer\Particles\ChunkTrajectoryParticle2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\ChunkTrajectoryParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\CloudParticle2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\CloudParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\CraterParticle2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\CraterParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\DirtKickParticle2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\DirtKickParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\ExplosionFlashParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\FireParticle2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\FireParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\FireParticleSystem2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\FireParticleSystem2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\FlameParticle2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\FlameParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\FlashParticle2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\FlashParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\GroundExplosionParticle2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\GroundExplosionParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\GroundExplosionParticleSystem2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\GroundExplosionParticleSystem2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\MovementDirtPuffParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\Particle2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\Particle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\ParticleInterface.cpp" />
+		<Unit filename="src\NetPanzer\Particles\ParticleInterface.hpp" />
+		<Unit filename="src\NetPanzer\Particles\ParticleSystem2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\ParticleSystem2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\ParticleSystemGlobals.cpp" />
+		<Unit filename="src\NetPanzer\Particles\ParticleSystemGlobals.hpp" />
+		<Unit filename="src\NetPanzer\Particles\ParticleTweakView.cpp" />
+		<Unit filename="src\NetPanzer\Particles\ParticleTweakView.hpp" />
+		<Unit filename="src\NetPanzer\Particles\Physics.cpp" />
+		<Unit filename="src\NetPanzer\Particles\Physics.hpp" />
+		<Unit filename="src\NetPanzer\Particles\PuffParticle2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\PuffParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\RadarPingParticle2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\RadarPingParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\SmokingTrajectoryParticle2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\SmokingTrajectoryParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\SmolderParticleSystem2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\SmolderParticleSystem2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\SnowParticle2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\SnowParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\SnowParticleSystem2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\SnowParticleSystem2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\SparkParticle2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\SparkParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\TemplateExplosionSystem.cpp" />
+		<Unit filename="src\NetPanzer\Particles\TemplateExplosionSystem.hpp" />
+		<Unit filename="src\NetPanzer\Particles\TemplateMuzzleSystem.cpp" />
+		<Unit filename="src\NetPanzer\Particles\TemplateMuzzleSystem.hpp" />
+		<Unit filename="src\NetPanzer\Particles\TrajectoryParticle2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\TrajectoryParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\VectorPuffParticle2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\VectorPuffParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Particles\WindParticle2D.cpp" />
+		<Unit filename="src\NetPanzer\Particles\WindParticle2D.hpp" />
+		<Unit filename="src\NetPanzer\Port\MapData.hpp" />
+		<Unit filename="src\NetPanzer\Port\blitters.cpp" />
+		<Unit filename="src\NetPanzer\Port\blitters.hpp" />
+		<Unit filename="src\NetPanzer\Structs\TileSetStruct.hpp" />
+		<Unit filename="src\NetPanzer\Structs\UnitTypes.hpp" />
+		<Unit filename="src\NetPanzer\System\DummySound.cpp" />
+		<Unit filename="src\NetPanzer\System\DummySound.hpp" />
+		<Unit filename="src\NetPanzer\System\SDLEvents.cpp" />
+		<Unit filename="src\NetPanzer\System\SDLEvents.hpp" />
+		<Unit filename="src\NetPanzer\System\SDLSound.cpp" />
+		<Unit filename="src\NetPanzer\System\SDLSound.hpp" />
+		<Unit filename="src\NetPanzer\System\SDLVideo.cpp" />
+		<Unit filename="src\NetPanzer\System\SDLVideo.hpp" />
+		<Unit filename="src\NetPanzer\System\Sound.cpp" />
+		<Unit filename="src\NetPanzer\System\Sound.hpp" />
+		<Unit filename="src\NetPanzer\Views\Components\AbstractButton.cpp" />
+		<Unit filename="src\NetPanzer\Views\Components\AbstractButton.hpp" />
+		<Unit filename="src\NetPanzer\Views\Components\Button.cpp" />
+		<Unit filename="src\NetPanzer\Views\Components\Button.hpp" />
+		<Unit filename="src\NetPanzer\Views\Components\CheckBox.cpp" />
+		<Unit filename="src\NetPanzer\Views\Components\CheckBox.hpp" />
+		<Unit filename="src\NetPanzer\Views\Components\Choice.cpp" />
+		<Unit filename="src\NetPanzer\Views\Components\Choice.hpp" />
+		<Unit filename="src\NetPanzer\Views\Components\Component.cpp" />
+		<Unit filename="src\NetPanzer\Views\Components\Component.hpp" />
+		<Unit filename="src\NetPanzer\Views\Components\Desktop.cpp" />
+		<Unit filename="src\NetPanzer\Views\Components\Desktop.hpp" />
+		<Unit filename="src\NetPanzer\Views\Components\InputEvent.hpp" />
+		<Unit filename="src\NetPanzer\Views\Components\MouseEvent.hpp" />
+		<Unit filename="src\NetPanzer\Views\Components\ScrollBar.cpp" />
+		<Unit filename="src\NetPanzer\Views\Components\ScrollBar.hpp" />
+		<Unit filename="src\NetPanzer\Views\Components\StateChangedCallback.hpp" />
+		<Unit filename="src\NetPanzer\Views\Components\View.cpp" />
+		<Unit filename="src\NetPanzer\Views\Components\View.hpp" />
+		<Unit filename="src\NetPanzer\Views\Components\ViewGlobals.cpp" />
+		<Unit filename="src\NetPanzer\Views\Components\ViewGlobals.hpp" />
+		<Unit filename="src\NetPanzer\Views\Components\cButton.cpp" />
+		<Unit filename="src\NetPanzer\Views\Components\cButton.hpp" />
+		<Unit filename="src\NetPanzer\Views\Components\cInputField.cpp" />
+		<Unit filename="src\NetPanzer\Views\Components\cInputField.hpp" />
+		<Unit filename="src\NetPanzer\Views\Components\cMouse.cpp" />
+		<Unit filename="src\NetPanzer\Views\Components\cMouse.hpp" />
+		<Unit filename="src\NetPanzer\Views\GameViewGlobals.cpp" />
+		<Unit filename="src\NetPanzer\Views\GameViewGlobals.hpp" />
+		<Unit filename="src\NetPanzer\Views\Game\AreYouSureExitView.cpp" />
+		<Unit filename="src\NetPanzer\Views\Game\AreYouSureExitView.hpp" />
+		<Unit filename="src\NetPanzer\Views\Game\AreYouSureResignView.cpp" />
+		<Unit filename="src\NetPanzer\Views\Game\AreYouSureResignView.hpp" />
+		<Unit filename="src\NetPanzer\Views\Game\CodeStatsView.cpp" />
+		<Unit filename="src\NetPanzer\Views\Game\CodeStatsView.hpp" />
+		<Unit filename="src\NetPanzer\Views\Game\ConsoleLoadingView.cpp" />
+		<Unit filename="src\NetPanzer\Views\Game\ConsoleLoadingView.hpp" />
+		<Unit filename="src\NetPanzer\Views\Game\DisconectedView.cpp" />
+		<Unit filename="src\NetPanzer\Views\Game\DisconectedView.hpp" />
+		<Unit filename="src\NetPanzer\Views\Game\GameInfoView.cpp" />
+		<Unit filename="src\NetPanzer\Views\Game\GameInfoView.hpp" />
+		<Unit filename="src\NetPanzer\Views\Game\GameTemplateView.cpp" />
+		<Unit filename="src\NetPanzer\Views\Game\GameTemplateView.hpp" />
+		<Unit filename="src\NetPanzer\Views\Game\GameView.cpp" />
+		<Unit filename="src\NetPanzer\Views\Game\GameView.hpp" />
+		<Unit filename="src\NetPanzer\Views\Game\HelpScrollView.cpp" />
+		<Unit filename="src\NetPanzer\Views\Game\HelpScrollView.hpp" />
+		<Unit filename="src\NetPanzer\Views\Game\LibView.cpp" />
+		<Unit filename="src\NetPanzer\Views\Game\LibView.hpp" />
+		<Unit filename="src\NetPanzer\Views\Game\LoadingView.hpp" />
+		<Unit filename="src\NetPanzer\Views\Game\LobbyView.cpp" />
+		<Unit filename="src\NetPanzer\Views\Game\LobbyView.hpp" />
+		<Unit filename="src\NetPanzer\Views\Game\MiniMapView.cpp" />
+		<Unit filename="src\NetPanzer\Views\Game\MiniMapView.hpp" />
+		<Unit filename="src\NetPanzer\Views\Game\ProgressView.cpp" />
+		<Unit filename="src\NetPanzer\Views\Game\ProgressView.hpp" />
+		<Unit filename="src\NetPanzer\Views\Game\RankView.cpp" />
+		<Unit filename="src\NetPanzer\Views\Game\RankView.hpp" />
+		<Unit filename="src\NetPanzer\Views\Game\ResignView.cpp" />
+		<Unit filename="src\NetPanzer\Views\Game\ResignView.hpp" />
+		<Unit filename="src\NetPanzer\Views\Game\VehicleSelectionView.cpp" />
+		<Unit filename="src\NetPanzer\Views\Game\VehicleSelectionView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\HelpView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\HelpView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\MainMenuView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\MainMenuView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\MenuTemplateView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\MenuTemplateView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\FlagSelectionView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\FlagSelectionView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\GetSessionHostView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\GetSessionHostView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\GetSessionView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\GetSessionView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\HostJoinTemplateView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\HostJoinTemplateView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\HostOptionsView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\HostOptionsView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\HostView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\HostView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\IPAddressView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\IPAddressView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\JoinView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\JoinView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\MapSelectionView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\MapSelectionView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\MasterServer\ServerInfo.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\MasterServer\ServerInfo.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\MasterServer\ServerList.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\MasterServer\ServerList.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\MasterServer\ServerQueryThread.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\MasterServer\ServerQueryThread.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\PlayerNameView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\PlayerNameView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\ServerListView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\ServerListView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\UnitColorView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\UnitColorView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\UnitSelectionView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Multi\UnitSelectionView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\OptionsTemplateView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\OptionsTemplateView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Options\ControlsView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Options\ControlsView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Options\InterfaceView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Options\InterfaceView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Options\SoundView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Options\SoundView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Options\VisualsView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\Options\VisualsView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\OrderingView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\OrderingView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\RMouseHackView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\RMouseHackView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\SkirmishView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\SkirmishView.hpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\SpecialButtonView.cpp" />
+		<Unit filename="src\NetPanzer\Views\MainMenu\SpecialButtonView.hpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
