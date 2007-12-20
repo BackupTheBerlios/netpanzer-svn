@@ -32,6 +32,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define IS_IGNORABLE_ERROR(code) (code==WSAEWOULDBLOCK)
 #define IS_RECVFROM_IGNORABLE(code) ((code==WSAEWOULDBLOCK)||(code==WSAECONNRESET))
 #define IS_SENDTO_IGNORABLE(code) ((code==WSAEWOULDBLOCK)||(code==WSAECONNRESET))
+#define IS_INVALID_SOCKET(code) (code==WSAENOTSOCK)
+#define IS_INTERRUPTED(code) (code==WSAEINTR)
 #define SETSOCKOPT_PARAMTYPE char
 #define SEND_FLAGS 0
 #define RECV_FLAGS 0
@@ -61,6 +63,8 @@ typedef int SOCKET;
 #define IS_IGNORABLE_ERROR(code) ((code==EAGAIN)||(code==EINTR))
 #define IS_RECVFROM_IGNORABLE(code) ((code==EAGAIN)||(code==EINTR)||(code==ECONNREFUSED))
 #define IS_SENDTO_IGNORABLE(code) ((code==EAGAIN)||(code==EWOULDBLOCK)||(code==EINTR)||(code==EPIPE)||(code==ECONNRESET))
+#define IS_INVALID_SOCKET(code) (code==EBADF)
+#define IS_INTERRUPTED(code) (code==EINTR)
 #define SETSOCKOPT_PARAMTYPE int
 #define SEND_FLAGS MSG_NOSIGNAL
 #define RECV_FLAGS MSG_NOSIGNAL

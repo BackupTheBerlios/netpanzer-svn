@@ -87,7 +87,6 @@
 		<Unit filename="src\Lib\Network\SocketHeaders.hpp" />
 		<Unit filename="src\Lib\Network\SocketManager.cpp" />
 		<Unit filename="src\Lib\Network\SocketManager.hpp" />
-		<Unit filename="src\Lib\Network\SocketSet.cpp" />
 		<Unit filename="src\Lib\Network\SocketSet.hpp" />
 		<Unit filename="src\Lib\Network\TCPListenSocket.cpp" />
 		<Unit filename="src\Lib\Network\TCPListenSocket.hpp" />

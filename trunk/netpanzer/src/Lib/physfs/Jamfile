@@ -1,0 +1,11 @@
+SubDir TOP src Lib physfs ;
+
+IncludeDir . ;
+
+SOURCES = [ Wildcard *.c *.h ] ;
+SOURCES += [ Wildcard archivers : *.c ] ;
+SOURCES += [ Wildcard platform : *.c *.cpp ] ;
+SOURCES += [ Wildcard zlib123 : *.c *.h ] ;
+
+Library npphysfs : $(SOURCES) : noinstall ;
+

@@ -57,6 +57,8 @@ protected:
             deletedSockets.insert(s);
         }
     }
+    
+    static void removeInvalidSockets();
 
 private:
     typedef set<SocketBase *> Sockets;

@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <list>
+#include <sstream>
 #include "SocketManager.hpp"
 #include "Util/Log.hpp"
 
@@ -32,27 +32,25 @@ SocketManager::handleEvents()
 {
     SocketsIterator i;
 
-    if (!newSockets.empty() || !deletedSockets.empty()) {
-        if (!deletedSockets.empty()) {
-            for (i = deletedSockets.begin(); i!=deletedSockets.end(); i++) {
-                LOGGER.debug("SocketManager:: Removing socket [%d,%08lx]",(*i)->sockfd, (unsigned long)(*i));
-                socketList.erase(*i);
-                delete *i;
-            }
-            deletedSockets.clear();
+    if (!deletedSockets.empty()) {
+        for (i = deletedSockets.begin(); i!=deletedSockets.end(); i++) {
+            LOGGER.debug("SocketManager:: Removing socket [%d,%08lx]",(*i)->sockfd, (unsigned long)(*i));
+            socketList.erase(*i);
+            delete *i;
         }
+        deletedSockets.clear();
+    }
 
-        if (!newSockets.empty()) {
-            for (i = newSockets.begin(); i!=newSockets.end(); i++) {
-                LOGGER.debug("SocketManager:: Adding socket [%d,%08lx]",(*i)->sockfd, (unsigned long)(*i));
-                socketList.insert(*i);
-            }
-            newSockets.clear();
+    if (!newSockets.empty()) {
+        for (i = newSockets.begin(); i!=newSockets.end(); i++) {
+            LOGGER.debug("SocketManager:: Adding socket [%d,%08lx]",(*i)->sockfd, (unsigned long)(*i));
+            socketList.insert(*i);
         }
+        newSockets.clear();
     }
 
     // Make the socketset every time, not all OS works the same way
-    SocketSet sset;
+    sset.clear();
     for (i = socketList.begin(); i!=socketList.end(); i++) {
         if ((*i)->isConnecting()) {
             sset.addWrite(*i);
@@ -61,19 +59,58 @@ SocketManager::handleEvents()
         }
     }
 
-    if (!sset.select(0))
+    int r = sset.select(0);
+    if ( !r ) // most common first
         return;
-
-    for (i = socketList.begin(); i!=socketList.end(); i++) {
-        if ((*i)->isConnecting()) {
-            if (sset.isWriteable(*i)) {
-                sset.removeWrite(*i);
-                sset.add(*i);
-                (*i)->connectionFinished();
+    
+    if ( r > 0 ) {    
+        for (i = socketList.begin(); i!=socketList.end(); i++) {
+            if ((*i)->isConnecting()) {
+                if (sset.isWriteable(*i)) {
+                    (*i)->connectionFinished();
+                }
+            } else {
+                if (sset.dataAvailable(*i)) {
+                    (*i)->onDataReady();
+                }
             }
+        }
+    } else { // some error happened
+        int error = sset.getError();
+        if ( IS_INVALID_SOCKET(error) ) {
+            removeInvalidSockets();
+        } else if ( !IS_INTERRUPTED(error) ) { // beware: is NOT interrupted
+            std::stringstream msg;
+            msg << "SocketManager: BAD BAD ERROR " << NETSTRERROR(error);
+            LOGGER.debug(msg.str().c_str());
+        }
+    }
+}
+
+void
+SocketManager::removeInvalidSockets()
+{
+    LOGGER.debug("Finding invalid sockets in the set...");
+    SocketsIterator i;
+    int error;
+    for (i = socketList.begin(); i!=socketList.end(); i++) {
+        sset.clear();
+        if ((*i)->isConnecting()) {
+            sset.addWrite(*i);
         } else {
-            if (sset.dataAvailable(*i)) {
-                (*i)->onDataReady();
+            sset.add(*i);
+        }
+
+        if ( sset.select() < 0 ) {
+            error = GET_NET_ERROR();
+            if ( IS_INVALID_SOCKET(error) ) {
+                LOGGER.warning("SocketManager: FOUND Invalid socket, removing...");
+                (*i)->onSocketError();
+                removeSocket(*i);
+            } else {
+                std::stringstream msg;
+                msg << "SocketManager: Error while finding invalid sockets " << NETSTRERROR(error);
+                LOGGER.debug(msg.str().c_str());
             }
         }
     }
