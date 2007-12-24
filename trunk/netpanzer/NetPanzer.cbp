@@ -168,8 +168,6 @@
 		<Unit filename="src/Lib/Util/FileStream.hpp" />
 		<Unit filename="src/Lib/Util/FileSystem.cpp" />
 		<Unit filename="src/Lib/Util/FileSystem.hpp" />
-		<Unit filename="src/Lib/Util/FileUtil.cpp" />
-		<Unit filename="src/Lib/Util/FileUtil.hpp" />
 		<Unit filename="src/Lib/Util/Log.cpp" />
 		<Unit filename="src/Lib/Util/Log.hpp" />
 		<Unit filename="src/Lib/Util/Math.cpp" />
