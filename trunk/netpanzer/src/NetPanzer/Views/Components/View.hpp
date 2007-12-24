@@ -22,16 +22,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/cMouse.hpp"
 #include "cButton.hpp"
 #include "2D/Surface.hpp"
+#include "2D/PackedSurface.hpp"
 #include "cInputField.hpp"
 #include "Types/iRect.hpp"
 #include "Types/iXY.hpp"
 #include "Component.hpp"
 #include "MouseEvent.hpp"
-
-class PackedSurface;
-
-enum { BLANK, MINI_MAP, IMAGE_TILES };
-const int SNAPTO_TOLERANCE = 20;
 
 class cLabel
 {
@@ -111,25 +107,11 @@ protected:
     char            *title;
     char            *subTitle;
     int              status;
-    static Surface   pics;
-    static Surface   topBorder;
-    static Surface   leftBorder;
-    static Surface   bottomBorder;
-    static Surface   rightBorder;
-    static Surface   topLeftCornerLarge;
-    static Surface   topLeftCornerSmall;
-    static Surface   topRightCornerLarge;
-    static Surface   topRightCornerSmall;
-    static Surface   bottomLeftCornerLarge;
-    static Surface   bottomLeftCornerSmall;
-    static Surface   bottomRightCornerLarge;
-    static Surface   bottomRightCornerSmall;
 
     int              numLabels;
     cLabel          *labels;
     char            *statusText;
 
-    enum { MINIMIZE, CLOSE      };
     enum { RESIZE_XMINSIZE = 15 };
     enum { RESIZE_YMINSIZE = 15 };
 
@@ -161,12 +143,9 @@ protected:
     void        reset     ();
     void        activate  ();
     void        deactivate();
-    static void loadPics  ();
 
 protected:
     typedef void (*ITEM_FUNC)(void);
-
-    enum { BACK_COLOR = 0 };
 
     // View Status Functions.
     void setAllowResize     (const bool &newStatus);
@@ -228,7 +207,6 @@ protected:
     /////////////////////////////////
 
     // These options can be modified on a per View type basis
-    virtual void drawButtons(Surface &windowArea);
     virtual void drawBorder(Surface &windowArea);
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void doActivate();

@@ -89,28 +89,12 @@ void OptionsTemplateView::initButtons()
 
     MenuTemplateView::initButtons();
 
-#if 1 // XXX
-    // Sound.
-    addSpecialButton(	soundPos,
-                      "Sound",
-                      bSound);
-#endif
-
-    // Interface.
-    addSpecialButton(	interfacePos,
-                      "Interface",
-                      bInterface);
-
-    // Visuals.
-    addSpecialButton(	visualsPos,
-                      "Visuals",
-                      bVisuals);
+    addSpecialButton( soundPos,     "Sound",     bSound);
+    addSpecialButton( interfacePos, "Interface", bInterface);
+    addSpecialButton( visualsPos,   "Visuals",   bVisuals);
 
 #if 0 // XXX
-    // Contols.
-    addSpecialButton(	controlsPos,
-                      "Controls",
-                      bControls);
+    addSpecialButton( controlsPos,  "Controls",  bControls);
 #endif
 
 } // end OptionsTemplateView::initButtons

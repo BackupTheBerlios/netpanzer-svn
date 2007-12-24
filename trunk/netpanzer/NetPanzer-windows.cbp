@@ -703,7 +703,6 @@
 		<Unit filename="src\NetPanzer\System\SDLVideo.hpp" />
 		<Unit filename="src\NetPanzer\System\Sound.cpp" />
 		<Unit filename="src\NetPanzer\System\Sound.hpp" />
-		<Unit filename="src\NetPanzer\Views\Components\AbstractButton.cpp" />
 		<Unit filename="src\NetPanzer\Views\Components\AbstractButton.hpp" />
 		<Unit filename="src\NetPanzer\Views\Components\Button.cpp" />
 		<Unit filename="src\NetPanzer\Views\Components\Button.hpp" />

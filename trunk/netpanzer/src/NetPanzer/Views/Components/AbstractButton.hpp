@@ -24,43 +24,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //--------------------------------------------------------------------------
 class AbstractButton : public Button
 {
-protected:
-    std::string label;
-    std::string actionCommand;
-    std::string text;
-
-    Surface image;
-
 public:
-    AbstractButton()
-    {}
-    AbstractButton(const std::string& s) : Button(s)
-    {}
-    virtual ~AbstractButton()
-    {}
+    AbstractButton() {}
+    AbstractButton(const std::string& s) : Button(s) {}
+    virtual ~AbstractButton() {}
 
-    void init(const std::string& text, const Surface* image)
+    virtual void actionPerformed(const mMouseEvent &me)
     {
-        this->text = text;
-        this->image.copy(*image);
+        Button::actionPerformed(me);
     }
-
-    const std::string& getText() const
-    {
-        return text;
-    }
-
-    // XXX doesn't seem to be defined
-    //bool isRolloverEnabled() { return isRolloverEnabled; }
-
-    void setEnabled(bool b)
-    {
-        enabled = b;
-    }
-
-    virtual void actionPerformed(const mMouseEvent &me);
-    virtual void draw(Surface& )
-    {}
+    virtual void draw(Surface& ) {}
 }; // end AbstractButton
 
 #endif // end __AbstractButton_hpp__

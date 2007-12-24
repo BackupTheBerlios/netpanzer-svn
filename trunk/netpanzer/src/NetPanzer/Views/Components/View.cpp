@@ -26,30 +26,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "InputEvent.hpp"
 
-Surface View::topBorder;
-Surface View::leftBorder;
-Surface View::bottomBorder;
-Surface View::rightBorder;
-Surface View::topLeftCornerLarge;
-Surface View::topLeftCornerSmall;
-Surface View::topRightCornerLarge;
-Surface View::topRightCornerSmall;
-Surface View::bottomLeftCornerLarge;
-Surface View::bottomLeftCornerSmall;
-Surface View::bottomRightCornerLarge;
-Surface View::bottomRightCornerSmall;
-
 const int RESIZE_WIDTH = 10;
 const int RESIZE_XMIN  = RESIZE_WIDTH;
 const int RESIZE_XMAX  = RESIZE_WIDTH * 3;
 const int RESIZE_YMIN  = RESIZE_WIDTH;
 const int RESIZE_YMAX  = RESIZE_WIDTH * 3;
-
-/////////////////////////////////////////////////////////////////////////////
-// Statics.
-/////////////////////////////////////////////////////////////////////////////
-
-Surface View::pics;
 
 // add
 //---------------------------------------------------------------------------
@@ -73,7 +54,6 @@ View::View()
     : currentscreen(0)
 {
     reset();
-    loadPics();
 } // end View::View
 
 // View
@@ -91,7 +71,6 @@ View::View(const iXY &pos, const iXY &size, const char *title)
     moveTo(pos);
     resize(size);
     setTitle(title);
-    loadPics();
 
 } // end View::View
 
@@ -170,23 +149,6 @@ void View::drawBorder(Surface &viewArea)
     
     viewArea.drawWindowsBorder();
 } // end drawBorder
-
-// drawButtons
-//---------------------------------------------------------------------------
-// Purpose: Draws the buttons of the window.
-//---------------------------------------------------------------------------
-void View::drawButtons(Surface &viewArea)
-{
-    assert(this != 0);
-    (void) viewArea;
-
-    //pics.setFrame(CLOSE);
-    //pics.blt(viewArea, iXY(getSizeX()-pics.getPix().x-borderSize-2, borderSize+2));
-
-    //pics.setFrame(MINIMIZE);
-    //pics.blt(viewArea, getSizeX()-pics.xSize*2-borderSize*2-2, borderSize+2);
-
-} // end View::drawButtons
 
 // drawTitle
 //---------------------------------------------------------------------------
@@ -386,14 +348,6 @@ void View::drawTitle(Surface &viewArea)
 
 } // end View::drawTitle
 
-// loadPics
-//---------------------------------------------------------------------------
-void View::loadPics()
-{
-    // Are we already loaded?  Then bail.
-    if (pics.getFrame0() != 0) return;
-} // end loadPics
-
 // draw
 //---------------------------------------------------------------------------
 void View::draw(Surface& surface)
@@ -458,7 +412,6 @@ void View::doDraw(Surface &viewArea, Surface &clientArea)
         drawStatus(clientArea);
     }
 
-    drawButtons(viewArea);
     drawDefinedButtons(clientArea);
     drawInputFields(clientArea);
     drawLabels(clientArea);
@@ -1070,8 +1023,7 @@ void View::drawDefinedButtons(Surface &clientArea)
     std::vector<cButton*>::iterator i;
     for(i = buttons.begin(); i != buttons.end(); i++) {
         cButton* button = *i;
-        button->topSurface.blt(clientArea,
-                iXY(button->getBounds().min.x, button->getBounds().min.y));
+        button->topSurface.blt(clientArea, button->getBounds().min);
     }
 } // end drawDefinedButtons
 
