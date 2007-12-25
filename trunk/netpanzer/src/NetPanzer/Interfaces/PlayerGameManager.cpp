@@ -63,7 +63,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Units/UnitGlobals.hpp"
 
 #include "2D/Palette.hpp"
-#include "Views/Components/cMouse.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/ViewGlobals.hpp"
 #include "Views/MainMenu/MainMenuView.hpp"
@@ -240,18 +239,10 @@ void PlayerGameManager::initializeWindowSubSystem()
 void PlayerGameManager::inputLoop()
 {
     processSystemKeys();
+    Desktop::manage(MouseInterface::getMouseX(),
+               MouseInterface::getMouseY(), MouseInterface::getButtonMask());
 
-#if 0
-    if(showNewPanel && Desktop::getVisible("GameView") && testpanel->contains(mouse.getScreenPos()))
-    {
-        //Game started, draw interface
-        testpanel->processEvents(mouse.getScreenPos(), mouse.getButtonMask(), KMOD_NONE);
-    }else
-#endif
-       Desktop::manage(mouse.getScreenPos().x,
-               mouse.getScreenPos().y, mouse.getButtonMask());
-
-    COMMAND_PROCESSOR.updateScrollStatus( mouse.getScreenPos() );
+    COMMAND_PROCESSOR.updateScrollStatus( MouseInterface::getMousePosition() );
 }
 //-----------------------------------------------------------------
 void PlayerGameManager::graphicsLoop()
@@ -260,23 +251,11 @@ void PlayerGameManager::graphicsLoop()
 
     Desktop::draw(*screen);
 
-#if 0
-    //TODO : clean this ugly test :)
-    if(showNewPanel && Desktop::getVisible("GameView"))
-    {
-        UI::Painter painter(Screen->getSurface(), &fontManager);
-
-        //Game started, draw interface
-        testpanel->draw(painter);
-    }
-#endif
-
     if (Desktop::getVisible("GameView")) {
         ConsoleInterface::update(*screen);
     }
 
-    mouse.draw(*screen);
-    MouseInterface::updateCursor();     
+    MouseInterface::draw(*screen);
 
     screen->unlock();
     screen->copyToVideoFlip();

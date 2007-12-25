@@ -83,7 +83,7 @@ void GameTemplateView::mouseMove(const iXY & prevPos, const iXY &newPos)
 {
     View::mouseMove(prevPos, newPos);
 
-    if (!mouse.getButtonMask() && Desktop::getFocus() != this) {
+    if (!MouseInterface::getButtonMask() && Desktop::getFocus() != this) {
         Desktop::setFocusView(this);
 
         COMMAND_PROCESSOR.closeSelectionBox();

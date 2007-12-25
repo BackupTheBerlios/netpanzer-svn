@@ -101,10 +101,10 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
     //
     //////////////////////////////////////////////////////////////////////////
 
-    if (curButton & LMOUSE_BUTTON_MASK) {
+    if (curButton & MouseInterface::left_button_mask) {
         // The button is down.  See if it just got pressed, or if it was pressed
         // before and is being dragged.
-        if (!(prevButton & LMOUSE_BUTTON_MASK)) {
+        if (!(prevButton & MouseInterface::left_button_mask)) {
             // The mouse button just got pressed. Remember the initial place
             // where it got pressed.
             lMouseDownPos = mousePos;
@@ -202,7 +202,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
     } else {
         // The mouse button is up.
         //See if it just got released, or if it was up before.
-        if (prevButton & LMOUSE_BUTTON_MASK) {
+        if (prevButton & MouseInterface::left_button_mask) {
             // The mouse button just got released.  If it was on top of a window
             // before, then tell the window that the button was released
             if (lMouseView != 0) {
@@ -223,10 +223,10 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
     //
     //////////////////////////////////////////////////////////////////////////
 
-    if (curButton & RMOUSE_BUTTON_MASK) {
+    if (curButton & MouseInterface::right_button_mask) {
         // The button is down.  See if it just got pressed, or if it was pressed
         // before and is being dragged.
-        if (!(prevButton & RMOUSE_BUTTON_MASK)) {
+        if (!(prevButton & MouseInterface::right_button_mask)) {
             // The mouse button just got pressed. Remember the initial place
             // where it got pressed.
             rMouseDownPos = mousePos;
@@ -259,7 +259,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
     } else {
         // The mouse button is up.
         //See if it just got released, or if it was up before.
-        if (prevButton & RMOUSE_BUTTON_MASK) {
+        if (prevButton & MouseInterface::right_button_mask) {
             // The mouse button just got released.  If it was on top of a window
             // before, then tell the window that the button was released
             if (rMouseView != 0) {

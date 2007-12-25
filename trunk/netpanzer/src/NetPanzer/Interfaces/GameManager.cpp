@@ -68,7 +68,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Units/UnitGlobals.hpp"
 
 #include "2D/Palette.hpp"
-#include "Views/Components/cMouse.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/ViewGlobals.hpp"
 #include "Views/MainMenu/MainMenuView.hpp"

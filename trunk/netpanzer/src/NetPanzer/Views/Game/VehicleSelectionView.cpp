@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Structs/UnitTypes.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Views/Components/Desktop.hpp"
-#include "Views/Components/cMouse.hpp"
 #include "Classes/Network/TerminalNetMesg.hpp"
 #include "Interfaces/Client.hpp"
 #include "Classes/Network/NetworkClient.hpp"
@@ -832,7 +831,7 @@ void VehicleSelectionView::doActivate()
     if (Desktop::getFocus() != this) {
         iXY pos;
 
-        pos = mouse.getScreenPos() - getSize() / 2;
+        pos = MouseInterface::getMousePosition() - getSize() / 2;
 
         moveTo(pos);
         checkArea(iXY(screen->getWidth(),screen->getHeight()));

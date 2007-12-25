@@ -576,9 +576,6 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
         }
         
         if (outpost_goal_selection != -1 ){
-            iXY temp;
-            MouseInterface::getMousePosition( &temp.x, &temp.y );
-            
             Objective *objective = 0;
             int cs = ObjectiveInterface::quearyObjectiveLocationStatus(
                     world_pos, PlayerInterface::getLocalPlayerIndex(),

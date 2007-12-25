@@ -727,8 +727,6 @@
 		<Unit filename="src\NetPanzer\Views\Components\cButton.hpp" />
 		<Unit filename="src\NetPanzer\Views\Components\cInputField.cpp" />
 		<Unit filename="src\NetPanzer\Views\Components\cInputField.hpp" />
-		<Unit filename="src\NetPanzer\Views\Components\cMouse.cpp" />
-		<Unit filename="src\NetPanzer\Views\Components\cMouse.hpp" />
 		<Unit filename="src\NetPanzer\Views\GameViewGlobals.cpp" />
 		<Unit filename="src\NetPanzer\Views\GameViewGlobals.hpp" />
 		<Unit filename="src\NetPanzer\Views\Game\AreYouSureExitView.cpp" />

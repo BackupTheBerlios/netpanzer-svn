@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <algorithm>
 #include "MiniMapView.hpp"
-#include "Views/Components/cMouse.hpp"
 #include "Interfaces/MiniMapInterface.hpp"
 #include "Interfaces/KeyboardInterface.hpp"
 #include "Classes/ScreenSurface.hpp"
@@ -178,7 +177,7 @@ void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
     clientArea.drawBoxCorners(boxpos, 5, Color::white);
 
     // If the mouse is over the client area, then change the cursor.
-    if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos()))) {
+    if (getClientRect().contains(getScreenToClientPos(MouseInterface::getMousePosition()))) {
         if (selectionAnchor) {
             // Since we are selecting units, draw the selection box.
             clientArea.drawRect(iRect(selectionAnchorDownPos, selectionAnchorCurPos), Color::white);
@@ -220,7 +219,7 @@ void MiniMapView::drawMouseBox(Surface &dest)
 
     iRect r(MiniMapInterface::getWorldWindow());
     iXY   size(r.getSize() / 2);
-    iXY   pos(getScreenToClientPos(mouse.getScreenPos()));
+    iXY   pos(getScreenToClientPos(MouseInterface::getMousePosition()));
 
     //dest.drawRect(pos - size - 1, pos + size - 1, Color::yellow);
     dest.drawBoxCorners(pos - size - iXY(1,1), iXY(pos.x + size.x - 1, pos.y + size.y), 5, Color::red);
@@ -236,7 +235,7 @@ void MiniMapView::lMouseDown(const iXY &pos)
 {
     assert(this != 0);
 
-    if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos()))) {
+    if (getClientRect().contains(getScreenToClientPos(MouseInterface::getMousePosition()))) {
         if (!selectionAnchor) {
             setViewWindow(pos);
         }
@@ -409,7 +408,7 @@ int MiniMapView::lMouseUp(const iXY &downPos, const iXY &upPos)
 //--------------------------------------------------------------------------
 void MiniMapView::mouseMove(const iXY &prevPos, const iXY &newPos)
 {
-    if (getClientRect().contains(getScreenToClientPos(mouse.getScreenPos()))) {
+    if (getClientRect().contains(getScreenToClientPos(MouseInterface::getMousePosition()))) {
         if (	(KeyboardInterface::getKeyState(SDLK_LCTRL) ||
                 KeyboardInterface::getKeyState(SDLK_RCTRL))) {
 

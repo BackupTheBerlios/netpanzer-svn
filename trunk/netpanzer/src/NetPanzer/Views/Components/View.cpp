@@ -450,8 +450,10 @@ void View::doActivate()
     for (int i = 0; i < componentsUsedCount; i++) {
         assert(componentList[i] != 0);
 
-        if (componentList[i]->contains(mouse.getScreenPos())) {
-            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, mouse.getScreenX(), mouse.getScreenY(), 0, false);
+        if (componentList[i]->contains(MouseInterface::getMousePosition())) {
+            mMouseEvent me(componentList[i],
+                mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, 
+                MouseInterface::getMouseX(), MouseInterface::getMouseY(), 0, false);
 
             componentList[i]->actionPerformed(me);
 
@@ -470,7 +472,9 @@ void View::doDeactivate()
 
     // Tell all the components the mouse exited the view.
     for (int i = 0; i < componentsUsedCount; i++) {
-        mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, mouse.getScreenX(), mouse.getScreenY(), 0, false);
+        mMouseEvent me(componentList[i],
+            mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, 
+            MouseInterface::getMouseX(), MouseInterface::getMouseY(), 0, false);
 
         componentList[i]->actionPerformed(me);
 

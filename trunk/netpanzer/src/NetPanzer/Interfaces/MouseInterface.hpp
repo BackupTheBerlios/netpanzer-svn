@@ -22,20 +22,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <map>
 #include <deque>
 
+#include "SDL.h"
 #include "2D/Surface.hpp"
-
-#include "Util/TimeStamp.hpp"
-
-#define _LEFT_BUTTON_MASK    0x01
-#define _MIDDLE_BUTTON_MASK  0x02
-#define _RIGHT_BUTTON_MASK   0x04
 
 class MouseEvent
 {
 public:
     enum {
-        EVENT_DOWN = 0x04,
-        EVENT_UP = 0x08
+        EVENT_DOWN = SDL_MOUSEBUTTONDOWN,
+        EVENT_UP = SDL_MOUSEBUTTONUP
     };
     unsigned char button;
     unsigned char event;
@@ -47,7 +42,7 @@ typedef std::deque<MouseEvent> MouseEventQueue;
 class MouseInterface
 {
 private:
-    static Surface mouse_cursor;
+    static Surface * cursor;
     static unsigned char cursor_x_size;
     static unsigned char cursor_y_size;
 
@@ -57,24 +52,21 @@ private:
 protected:
     static iXY mouse_pos;
 
-    static float    button_hold_threshold;
-
-    static bool  left_button_down;
-    static bool  left_button_up;
-
-    static bool right_button_down;
-    static bool right_button_up;
-
-    static bool middle_button_down;
-    static bool middle_button_up;
-
     static unsigned char button_mask;
 
 public:
     enum {
-        left_button = 0x01,
-        middle_button = 0x02,
-        right_button = 0x04
+        left_button   = SDL_BUTTON_LEFT,
+        middle_button = SDL_BUTTON_MIDDLE,
+        right_button  = SDL_BUTTON_RIGHT,
+        wheel_up      = SDL_BUTTON_WHEELUP,
+        wheel_down    = SDL_BUTTON_WHEELDOWN
+    };
+    
+    enum {
+        left_button_mask   = SDL_BUTTON_LMASK,
+        middle_button_mask = SDL_BUTTON_MMASK,
+        right_button_mask  = SDL_BUTTON_RMASK
     };
 
     enum CursorType {
@@ -85,6 +77,14 @@ public:
 
     static void initialize();
     static void shutdown();
+    
+    static void draw(Surface &dest)
+    {
+        if (cursor) {
+            cursor->nextFrame();
+            cursor->bltTrans(dest, mouse_pos.x, mouse_pos.y);
+        }
+    }
 
     static inline void getMousePosition( int *x, int *y )
     {
@@ -97,17 +97,21 @@ public:
         return( button_mask );
     }
 
-    static void setLeftButtonDown();
-    static void setLeftButtonUp();
-
-    static void setRightButtonDown();
-    static void setRightButtonUp();
-
-    static void setMiddleButtonDown();
-    static void setMiddleButtonUp();
+    static void onMouseButtonDown(SDL_MouseButtonEvent *e);
+    static void onMouseButtonUp(SDL_MouseButtonEvent *e);
 
     static void setCursor(const char* cursorname);
-    static void updateCursor();
+    static inline void onMouseMoved(SDL_MouseMotionEvent *e)
+    {
+        mouse_pos.x = e->x;
+        mouse_pos.y = e->y;
+    }
+    
+    static inline iXY getMousePosition()   { return mouse_pos; }
+    
+    static inline unsigned int getMouseX() { return mouse_pos.x; }
+    static inline unsigned int getMouseY() { return mouse_pos.y; }
+    
 };
 
 #endif // ** _MOUSEINTERFACE_HPP

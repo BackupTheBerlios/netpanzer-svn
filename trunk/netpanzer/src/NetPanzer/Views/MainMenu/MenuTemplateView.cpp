@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "System/Sound.hpp"
-#include "Views/Components/cMouse.hpp"
 #include "Views/Components/ViewGlobals.hpp"
 #include "Particles/RadarPingParticle2D.hpp"
 #include "Classes/ScreenSurface.hpp"

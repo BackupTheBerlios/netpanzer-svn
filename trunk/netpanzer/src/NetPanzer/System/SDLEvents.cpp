@@ -21,7 +21,6 @@
 #include "SDL.h"
 #include "Interfaces/KeyboardInterface.hpp"
 #include "Interfaces/MouseInterface.hpp"
-#include "Views/Components/cMouse.hpp"
 #include "SDLVideo.hpp"
 #include "2D/Palette.hpp"
 #include "Interfaces/GameConfig.hpp"
@@ -37,36 +36,13 @@ bool handleSDLEvents()
             return true;
             break;
         case SDL_MOUSEBUTTONDOWN:
-            switch(event.button.button) {
-            case 1:
-                MouseInterface::setLeftButtonDown();
-                mouse.setButtonMask(LMOUSE_BUTTON_MASK);
-                break;
-            case 3:
-                MouseInterface::setRightButtonDown();
-                mouse.setButtonMask(RMOUSE_BUTTON_MASK);
-                break;
-            case 2:
-                MouseInterface::setMiddleButtonDown();
-                mouse.setButtonMask(MMOUSE_BUTTON_MASK);
-                break;
-            }
+            MouseInterface::onMouseButtonDown(&event.button);
             break;
         case SDL_MOUSEBUTTONUP:
-            switch(event.button.button) {
-            case 1:
-                MouseInterface::setLeftButtonUp();
-                mouse.clearButtonMask(!LMOUSE_BUTTON_MASK);
-                break;
-            case 3:
-                MouseInterface::setRightButtonUp();
-                mouse.clearButtonMask(!RMOUSE_BUTTON_MASK);
-                break;
-            case 2:
-                MouseInterface::setMiddleButtonUp();
-                mouse.clearButtonMask(!MMOUSE_BUTTON_MASK);
-                break;
-            }
+            MouseInterface::onMouseButtonUp(&event.button);
+            break;
+        case SDL_MOUSEMOTION:
+            MouseInterface::onMouseMoved(&event.motion);
             break;
         case SDL_KEYDOWN: {
                 KeyboardInterface::keyPressed(event.key.keysym.sym);

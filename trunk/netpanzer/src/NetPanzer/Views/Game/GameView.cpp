@@ -30,7 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleSystem2D.hpp"
-#include "Views/Components/cMouse.hpp"
 #include "Views/Components/ViewGlobals.hpp"
 #include "Particles/ParticleInterface.hpp"
 #include "2D/PackedSurface.hpp"
@@ -147,7 +146,7 @@ void GameView::mouseMove(const iXY & prevPos, const iXY &newPos)
 {
     View::mouseMove(prevPos, newPos);
 
-    if (!mouse.getButtonMask() && Desktop::getFocus() != this) {
+    if (!MouseInterface::getButtonMask() && Desktop::getFocus() != this) {
         Desktop::setFocusView(this);
         //Desktop::setActiveView(this);
         MouseInterface::setCursor("default.bmp");
