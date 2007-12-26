@@ -100,66 +100,6 @@
 		<Unit filename="src/Lib/Types/iRect.hpp" />
 		<Unit filename="src/Lib/Types/iXY.cpp" />
 		<Unit filename="src/Lib/Types/iXY.hpp" />
-		<Unit filename="src/Lib/UI/Button.cpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/Button.hpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/Color.hpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/Component.cpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/Component.hpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/Container.cpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/Container.hpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/DrawingFunctions.cpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/DrawingFunctions.hpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/EventParameter.hpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/FontManager.cpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/FontManager.hpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/Label.cpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/Label.hpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/MouseEventParameter.cpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/MouseEventParameter.hpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/Painter.cpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/Painter.hpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/VerticalScrollBox.cpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/Lib/UI/VerticalScrollBox.hpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
 		<Unit filename="src/Lib/Util/BresenhamLine.cpp" />
 		<Unit filename="src/Lib/Util/BresenhamLine.hpp" />
 		<Unit filename="src/Lib/Util/Endian.hpp" />
@@ -619,12 +559,6 @@
 		<Unit filename="src/NetPanzer/Network/ProxyServer.hpp" />
 		<Unit filename="src/NetPanzer/Network/ServerSocket.cpp" />
 		<Unit filename="src/NetPanzer/Network/ServerSocket.hpp" />
-		<Unit filename="src/NetPanzer/Panels/TestPanel.cpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="src/NetPanzer/Panels/TestPanel.hpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
 		<Unit filename="src/NetPanzer/Particles/ChunkTrajectoryParticle2D.cpp" />
 		<Unit filename="src/NetPanzer/Particles/ChunkTrajectoryParticle2D.hpp" />
 		<Unit filename="src/NetPanzer/Particles/CloudParticle2D.cpp" />

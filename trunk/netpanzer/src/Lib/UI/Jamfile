@@ -1,9 +1,0 @@
-SubDir TOP src Lib UI ;
-
-Library netpanzerui 
-    : [ Wildcard *.cpp *.hpp ]
-    : noinstall
-;
-
-LinkWith netpanzerui : netpanzertypes netpanzer2d ;
-ExternalLibs netpanzerui : SDL SDLTTF PHYSFS ;
