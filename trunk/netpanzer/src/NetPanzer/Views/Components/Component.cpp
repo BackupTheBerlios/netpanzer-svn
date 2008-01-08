@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
-#include "Util/Exception.hpp"
 #include "Component.hpp"
 #include "ViewGlobals.hpp"
 #include "Views/Components/View.hpp"
@@ -36,11 +35,6 @@ void Component::reset()
     visible    = true;
     parent     = 0;
 
-    //name = strdup("");
-    //if (name = 0)
-    //{
-    //	throw Exception("ERROR: Unable to allocate component name.");
-    //}
 } // end Component::reset
 
 // contains
@@ -62,22 +56,6 @@ void Component::setParent(void *parent)
     Component::parent = parent;
 }
 
-// setEnabled
-//---------------------------------------------------------------------------
-void Component::setEnabled(bool enabled)
-{
-    Component::enabled = enabled;
-
-} // end Component::setEnabled
-
-// setForeground
-//---------------------------------------------------------------------------
-void Component::setForeground(PIX foreground)
-{
-    Component::foreground = foreground;
-
-} // end Component::setForeground
-
 // setLocation
 //---------------------------------------------------------------------------
 void Component::setLocation(int x, int y)
@@ -86,3 +64,4 @@ void Component::setLocation(int x, int y)
     min.y = y;
 
 } // end Component::setLocation
+

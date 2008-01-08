@@ -70,53 +70,21 @@ public:
     {}
 
     // Accessor functions.
-    bool contains(int x, int y) const;
-    bool            contains(iXY p) const
-    {
-        return contains(p.x, p.y);
-    }
-           Uint8     getBackground() const
-    {
-        return background;
-    }
     void getBounds(iRect &r)
     {
         r.min = min;
         r.max = min + size;
     }
-           Uint8     getForeground() const
-    {
-        return foreground;
-    }
-    Surface& getGraphics()
-    {
-        return surface;
-    }
-    const std::string& getName() const
-    {
-        return name;
-    }
-    const  iXY     &getSize() const
-    {
-        return size;
-    }
-    int             getSizeX() const
-    {
-        return size.x;
-    }
-    int             getSizeY() const
-    {
-        return size.y;
-    }
-           bool     isEnabled() const
-    {
-        return enabled;
-    }
-    //const bool &isValid() {}
-           bool     isVisible() const
-    {
-        return visible;
-    }
+    bool contains(int x, int y) const;
+    bool contains(iXY p) const { return contains(p.x, p.y); }
+//    Uint8 getBackground() const { return background; }
+//    Uint8 getForeground() const { return foreground; }
+//    const std::string& getName() const { return name; }
+//    const iXY &getSize() const { return size; }
+//    int getSizeX() const { return size.x; }
+//    int getSizeY() const { return size.y; }
+//    bool isEnabled() const { return enabled; }
+//    bool isVisible() const { return visible; }
 
     void setBounds(const iRect &r)
     {
@@ -124,23 +92,13 @@ public:
         size = r.getSize();
     }
 
-    void setEnabled(bool enabled);
-    void setForeground(PIX foreground);
+//    void setEnabled(bool _enabled) { enabled = _enabled; }
+//    void setForeground(PIX _foreground) { foreground = _foreground; }
     void setLocation(int x, int y);
-    void setLocation(const iXY &p)
-    {
-        setLocation(p.x, p.y);
-    }
-    void setName(const std::string& name)
-    {
-        Component::name = name;
-    }
-    void setSize(int, int)
-    {}
-    void setSize(const iXY &d)
-    {
-        setSize(d.x, d.y);
-    }
+    void setLocation(const iXY &p) { setLocation(p.x, p.y); }
+    void setName(const std::string& name) { Component::name = name; }
+    void setSize(int, int) {}
+    void setSize(const iXY &d) { setSize(d.x, d.y); }
 
     virtual void draw(Surface &dest) = 0;
     virtual void actionPerformed(const mMouseEvent &me) = 0;
