@@ -66,8 +66,13 @@ typedef int SOCKET;
 #define IS_INVALID_SOCKET(code) (code==EBADF)
 #define IS_INTERRUPTED(code) (code==EINTR)
 #define SETSOCKOPT_PARAMTYPE int
-#define SEND_FLAGS MSG_NOSIGNAL
-#define RECV_FLAGS MSG_NOSIGNAL
+#ifdef __APPLE__
+  #define SEND_FLAGS 0
+  #define RECV_FLAGS 0
+#else
+  #define SEND_FLAGS MSG_NOSIGNAL
+  #define RECV_FLAGS MSG_NOSIGNAL
+#endif
 
 #define SETMAXFD(d,o) d=(d>o)?d:o
 

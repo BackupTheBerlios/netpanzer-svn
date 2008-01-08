@@ -46,7 +46,14 @@ public:
     bool operator==(const Address& other) const;
 
     struct sockaddr * getSockaddr() const { return (struct sockaddr *)&ss; };
-    socklen_t getSockaddrLen() const { return ss_len; };
+    socklen_t getSockaddrLen() const
+    {
+#ifdef __APPLE__
+        return sizeof(sockaddr_in); 
+#else
+        return ss_len;
+#endif
+    };
     socklen_t * getSockaddrLenPointer() { return &ss_len; };
     
     static Address ANY;

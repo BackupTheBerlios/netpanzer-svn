@@ -189,7 +189,7 @@ BaseGameManager *initialise(int argc, char** argv)
     { }
 #endif
 
-#ifdef MACOSX_FRAMEWORKS
+#ifdef __APPLE__
     // Mac OS X puts the data files into NetPanzer.app/Contents/Resources
     try {
       std::ostringstream dir;

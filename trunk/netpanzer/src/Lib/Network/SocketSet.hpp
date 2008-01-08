@@ -85,12 +85,12 @@ public:
     
     inline bool dataAvailable(const SocketBase* socketbase) const
     {
-        return FD_ISSET(socketbase->sockfd, &readset);
+        return FD_ISSET(socketbase->sockfd, (fd_set *)&readset);
     }
     
     inline bool isWriteable(const SocketBase* socketbase) const
     {
-        return FD_ISSET(socketbase->sockfd,&writeset);
+        return FD_ISSET(socketbase->sockfd, (fd_set *)&writeset);
     }
     
     inline int getError() const { return select_error; }
