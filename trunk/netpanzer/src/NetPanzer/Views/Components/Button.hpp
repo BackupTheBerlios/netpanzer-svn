@@ -27,8 +27,12 @@ class Button : public Component
 protected:
     std::string label;
     std::string actionCommand;
-    bool   highlighted;
-    bool   clicked;
+    
+    PIX borderTop;
+    PIX borderBottom;
+    PIX textColor;
+    
+    void render();
 
 public:
     Button() : Component()
@@ -39,7 +43,7 @@ public:
     Button(const std::string& s) : Component()
     {
         reset();
-
+        
         label         = s;
         actionCommand = label;
     }
@@ -48,15 +52,8 @@ public:
 
     void reset()
     {
-        highlighted   = false;
-        clicked       = false;
         label         = "";
         actionCommand = "";
-    }
-
-    bool isHighlighted()
-    {
-        return highlighted;
     }
 
     void setActionCommand(const std::string& l)
@@ -66,6 +63,7 @@ public:
     void setLabel(const std::string& l)
     {
         label = l;
+        dirty = true;
     }
 
     const std::string& getLabel() const

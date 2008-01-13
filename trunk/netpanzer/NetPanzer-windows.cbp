@@ -50,6 +50,7 @@
 			<Add library="SDLmain" />
 			<Add library="SDL" />
 		</Linker>
+		<Unit filename="src\Lib\2D\BuiltinFont.cpp" />
 		<Unit filename="src\Lib\2D\Color.cpp" />
 		<Unit filename="src\Lib\2D\Color.hpp" />
 		<Unit filename="src\Lib\2D\ColorTable.cpp" />

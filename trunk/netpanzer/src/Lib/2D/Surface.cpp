@@ -38,6 +38,11 @@ using std::swap;
 using std::min;
 using std::max;
 
+extern char staticFont[8192];
+#define FONT_HEIGHT 8
+#define FONT_WIDTH 8
+#define FONT_MAXCHAR 127
+
 // orderCoords
 //---------------------------------------------------------------------------
 // Purpose: Orders a pair of (x,y) coordinates
@@ -1336,30 +1341,19 @@ int Surface::loadAllBMPInDirectory(const char *path)
 //---------------------------------------------------------------------------
 void initFont()
 {
-    try {
-        // Make room for the 128 characters.
-        ascii8x8.create(8, 8, 128);
+    ascii8x8.create(8, 8, 128);
 
-        // NOTE: Make sure the file size is 128 characters.
-        char charfilename[] = "pics/chars8x8.raw";
-
-        std::auto_ptr<filesystem::ReadFile> file(
-                filesystem::openRead(charfilename));
-                
-        for (unsigned int y = 0; y < ascii8x8.getHeight(); y++) {
-            for (unsigned int curChar = 0; curChar < ascii8x8.getNumFrames();
-		    curChar++) {
-                ascii8x8.setFrame(curChar);
-                int yOffset = y * ascii8x8.getWidth();
-
-                file->read(ascii8x8.getMem() + yOffset, ascii8x8.getWidth(), 1);
-            }
-        }
-    } catch(std::exception& e) {
-	throw Exception("Error while reading 8x8 font: %s",
-		e.what());
+    for ( int c = 0; c < 128; c++) {
+        ascii8x8.setFrame(c);
+        char * fptr = (char *)&staticFont + (c * FONT_WIDTH);
+        PIX * dptr = ascii8x8.getMem();
+        int n = FONT_HEIGHT;
+        do {
+            memcpy(dptr,fptr,FONT_WIDTH);
+            dptr += FONT_WIDTH;
+            fptr += FONT_WIDTH*128;
+        } while (--n);
     }
-
 } // Surface::initFont
 
 unsigned int
@@ -1371,6 +1365,56 @@ Surface::getFontHeight()
 int Surface::getTextLength(const char* text)
 {
     return ascii8x8.getWidth() * strlen(text);
+}
+
+// renderText
+//---------------------------------------------------------------------------
+// Purpose: Renders a string of text to the surface using color and background
+//          color. The surface is created, if it was already created and is
+//          the exact size needed, clears it and use it, if size is different
+//          will delete it and create new one
+// Parameters:
+//   str     = string to render
+//   color   = foreground color
+//   bgcolor = background color
+//---------------------------------------------------------------------------
+void
+Surface::renderText(const char *str, PIX color, PIX bgcolor)
+{
+    if ( !str )
+        return;
+    
+    int len = strlen(str);
+    if ( !len )
+        return;
+
+    unsigned int need_width = len * FONT_WIDTH;
+    unsigned int need_height = FONT_HEIGHT;
+    
+    if ( frame0 != 0 ) {
+        if ( getWidth() != need_width || getHeight() != need_height ) {
+            free();
+            create( need_width, need_height, 1);
+        }
+    } else {
+        create( need_width, need_height, 1);
+    }
+    
+    for ( int line = 0; line < FONT_HEIGHT; ++line) {
+        PIX * dptr = getFrame0() + (line * getPitch());
+        const char * pstr = str;
+        for ( unsigned char c = *pstr; c; c= *(++pstr)) {
+            if ( c >=128 ) c = ' ';
+            
+            char * fptr = staticFont + (c*FONT_WIDTH) + (128*FONT_WIDTH*line);
+            PIX * eptr = dptr+FONT_WIDTH;
+            do {
+                *(dptr++) = *(fptr++)?color:bgcolor;
+            } while ( dptr < eptr );
+            
+        }
+        
+    }
 }
 
 // bltChar8x8
@@ -1465,7 +1509,7 @@ void Surface::bltStringCenteredInRect(const iRect &rect, const char *string, con
 void
 Surface::create(unsigned int w, unsigned int h, unsigned int nframes)
 {
-    reset();
+    //reset();
     alloc( w, h, nframes);
 } // end Surface::create
 

@@ -28,61 +28,30 @@ void CheckBox::draw(Surface &dest)
     iRect bounds;
 
     getBounds(bounds);
+    if ( dirty )
+        render();
 
-    if (state) {
-        drawCheckBox(dest);
-        drawCheck(dest);
-    } else {
-        drawCheckBox(dest);
-    }
-
-    drawLabel(dest);
+    surface.blt(dest, bounds.min.x, bounds.min.y);
 
 } // end CheckBox::draw
 
-// drawCheckBox
-//---------------------------------------------------------------------------
-void CheckBox::drawCheckBox(Surface &dest)
+void
+CheckBox::render()
 {
-    iRect bounds;
-
-    getBounds(bounds);
-
-    iRect r;
-
-    r = iRect(bounds.min.x, bounds.min.y, bounds.max.x - 2, bounds.max.y - 2);
-    dest.drawRect(r, Color::gray96);
-
-    r = iRect(bounds.min.x + 1, bounds.min.y + 1, bounds.max.x - 1, bounds.max.y - 1);
-    dest.drawRect(r, Color::white);
-
-    r = iRect(bounds.min.x + 1, bounds.min.y + 1, bounds.max.x - 2, bounds.max.y - 2);
-    dest.fillRect(r, Color::black);
-
-} // end CheckBox::drawCheckBox
-
-// drawCheck
-//---------------------------------------------------------------------------
-void CheckBox::drawCheck(Surface &dest)
-{
-    iXY pos(min + iXY(2,2));
-
-    iXY length(size - iXY(4,4));
-
-    dest.drawLine(pos, pos + length, Color::white);
-
-    dest.drawLine(pos.x + length.x, pos.y, pos.x, pos.y + length.y, Color::white);
-
-} // end CheckBox::drawCheck
-
-// drawLabel
-//---------------------------------------------------------------------------
-void CheckBox::drawLabel(Surface &dest)
-{
-    dest.bltString( min.x + size.x + 8,
-                    min.y + (size.y - Surface::getFontHeight()) / 2,
-                    label.c_str(), Color::white);
-} // end CheckBox::drawLabel
+    surface.fill(Color::black);
+    Surface text;
+    text.renderText( label.c_str(), textColor, 0);
+    surface.drawRect( iRect(0,0,12,12), Color::gray96);
+    surface.drawRect( iRect(1,1,13,13), Color::white);
+    surface.drawRect( iRect(1,1,12,12), Color::black);
+    if (state) {
+        surface.drawLine( 2, 2, 11, 11, Color::white);
+        surface.drawLine( 2, 11, 11, 2, Color::white);
+    }
+    
+    text.blt( surface, 14+2, (surface.getHeight()/2) - (text.getHeight()/2) );
+    dirty = false;
+}
 
 // actionPerformed
 //---------------------------------------------------------------------------
@@ -93,6 +62,14 @@ void CheckBox::actionPerformed(const mMouseEvent &me)
         state = !state;
         if(callback)
             callback->stateChanged(this);
+        dirty = true;
+    } else if (me.getID() == mMouseEvent::MOUSE_EVENT_ENTERED) {
+        textColor = Color::yellow;
+        dirty = true; // draw text in red
+    } else if (me.getID() == mMouseEvent::MOUSE_EVENT_EXITED) {
+        textColor = Color::white;
+        dirty = true; // draw defaults;
     }
+
 
 } // end CheckBox::actionPerformed

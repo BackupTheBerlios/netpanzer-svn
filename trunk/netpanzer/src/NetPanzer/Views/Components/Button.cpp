@@ -28,35 +28,47 @@ void Button::draw(Surface &dest)
     iRect bounds;
     getBounds(bounds);
 
-    if (clicked) {
-        dest.fillRect(bounds, componentBodyColor);
-        dest.drawButtonBorder(bounds, bottomRightBorderColor, topLeftBorderColor);
-        dest.bltStringCenteredInRect(bounds, label.c_str(), Color::yellow);
-    } else if (highlighted) {
-        dest.fillRect(bounds, componentBodyColor);
-        dest.drawButtonBorder(bounds, topLeftBorderColor, bottomRightBorderColor);
-        dest.bltStringCenteredInRect(bounds, label.c_str(), Color::red);
-    } else {
-        dest.fillRect(bounds, componentBodyColor);
-        dest.drawButtonBorder(bounds, topLeftBorderColor, bottomRightBorderColor);
-        dest.bltStringCenteredInRect(bounds, label.c_str(), Color::white);
-    }
+    if ( dirty )
+        render();
 
+    surface.blt(dest, bounds.min.x, bounds.min.y);
+    
 } // end Button::draw
+
+// render
+void
+Button::render()
+{
+    surface.fill(componentBodyColor);
+    surface.drawButtonBorder(borderTop, borderBottom);
+    
+    Surface text;
+    text.renderText( label.c_str(), textColor, 0);
+    // blit centered and transparent
+    text.bltTrans(surface, (surface.getWidth()/2) - (text.getWidth()/2),
+                           (surface.getHeight()/2) - (text.getHeight()/2));
+    dirty = false;
+}
 
 // actionPerformed
 //---------------------------------------------------------------------------
 void Button::actionPerformed(const mMouseEvent &me)
 {
-    if (me.getID() == mMouseEvent::MOUSE_EVENT_ENTERED) {
-        highlighted = true;
+    if (me.getID() == mMouseEvent::MOUSE_EVENT_ENTERED
+                || me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED) {
+        textColor = Color::red;
+        borderTop = topLeftBorderColor;
+        borderBottom = bottomRightBorderColor;
+        dirty = true; // draw text in red
     } else if (me.getID() == mMouseEvent::MOUSE_EVENT_EXITED) {
-        highlighted = false;
-        clicked = false;
+        textColor = Color::white;
+        borderTop = topLeftBorderColor;
+        borderBottom = bottomRightBorderColor;
+        dirty = true; // draw defaults;
     } else if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED) {
-        clicked = true;
-    } else if (me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED) {
-        clicked = false;
+        borderTop = bottomRightBorderColor;
+        borderBottom = topLeftBorderColor;
+        textColor = Color::yellow;
+        dirty = true;
     }
-
 } // end Button::actionPerformed

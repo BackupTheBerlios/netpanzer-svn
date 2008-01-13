@@ -32,21 +32,25 @@ protected:
     bool   state;
     StateChangedCallback* callback;
 
-    virtual void drawCheckBox(Surface &dest);
-    virtual void drawCheck(Surface &dest);
-    virtual void drawLabel(Surface &dest);
+    PIX textColor;
+
+    void render();
 
 public:
     CheckBox(StateChangedCallback* newcallback = 0)
             : Component(), state(false), callback(newcallback)
     {
-        size = iXY(14, 14);
+        setSize(14, 14);
+        textColor = Color::white;
     }
 
     CheckBox(const std::string& newlabel, bool newstate = false)
             : Component(), label(newlabel), state(newstate), callback(0)
     {
-        size = iXY(14, 14);
+        setSize(14+label.length()*8,14);
+        textColor = Color::white;
+        dirty = true;
+        //size = iXY(14, 14);
     }
 
     virtual ~CheckBox()
@@ -64,6 +68,8 @@ public:
     void setLabel(const std::string& label)
     {
         CheckBox::label = label;
+        setSize(14+label.length()*8,14);
+        dirty = true;
     }
     void setState(bool state)
     {

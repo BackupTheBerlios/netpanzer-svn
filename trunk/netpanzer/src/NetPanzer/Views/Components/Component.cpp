@@ -34,6 +34,7 @@ void Component::reset()
     enabled    = true;
     visible    = true;
     parent     = 0;
+    surface.free();
 
 } // end Component::reset
 

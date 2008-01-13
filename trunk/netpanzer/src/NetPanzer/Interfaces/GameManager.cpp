@@ -135,13 +135,17 @@ static Surface hostLoadSurface;
 
 void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
 {
-    screen->lock();
+        Surface text;
+        text.renderText(string, color, 0);
+        screen->lock();
     
-    screen->fill(0);
-    screen->bltStringCenter(string, color);
+        screen->fill(0);
+        int x = (screen->getWidth() / 2) - (text.getWidth() / 2);
+        int y = (screen->getHeight() / 2) - (text.getHeight() / 2);
+        text.blt(*screen,x,y);
     
-    screen->unlock();
-    screen->copyToVideoFlip();
+        screen->unlock();
+        screen->copyToVideoFlip();
 }
 
 // ******************************************************************

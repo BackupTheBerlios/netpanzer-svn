@@ -56,16 +56,10 @@ public:
     void free();
 
     void setOffset(const iXY &o) { offset = o; }
-    void setOffsetX(int ox)     { offset.x = ox; }
-    void setOffsetY(int oy)     { offset.y = oy; }
-    void setFPS(int f)          { fps = f; }
+    void setOffsetX(int ox)      { offset.x = ox; }
+    void setOffsetY(int oy)      { offset.y = oy; }
+    void setFPS(unsigned int f)  { fps = f; }
     void setOffsetCenter();
-
-    void setFrame0(PIX *f0)
-    {
-        assert(frame0 != 0);
-        frame0 = f0;
-    }
 
     // Accessor functions.
     unsigned int getWidth()  const { return twidth; }
@@ -77,7 +71,6 @@ public:
     int     getCenterY()    const { return getHeight()>>1; }
 
     unsigned int getNumFrames() const { return numFrames; }
-
 
     float  getFPS()         const { return fps; }
     bool   getDoesExist()   const { return doesExist; }
@@ -204,6 +197,9 @@ public:
 
     int  loadAllBMPInDirectory(const char *path);
 
+    // Text rendering functions
+    void renderText(const char *str, PIX color, PIX bgcolor);
+    
     // Blit a single character of text.
     void bltChar8x8(int x, int y, unsigned char character, const PIX &color);
     void bltString(int x, int y, const char * str, const PIX& color);

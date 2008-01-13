@@ -40,6 +40,7 @@ protected:
     std::string name;
     bool    enabled;
     bool    visible;
+    bool    dirty;
 
     static int borderSize;
 
@@ -90,15 +91,23 @@ public:
     {
         min  = r.min;
         size = r.getSize();
+        surface.create(r.getSizeX(), r.getSizeY(), 1);
+        dirty = true;
     }
+    void setSize(int x, int y)
+    {
+        size.x=x;
+        size.y=y;
+        surface.create(x,y,1);
+        dirty=true;
+    }
+    void setSize(const iXY &d) { setSize(d.x, d.y); }
 
 //    void setEnabled(bool _enabled) { enabled = _enabled; }
 //    void setForeground(PIX _foreground) { foreground = _foreground; }
     void setLocation(int x, int y);
     void setLocation(const iXY &p) { setLocation(p.x, p.y); }
     void setName(const std::string& name) { Component::name = name; }
-    void setSize(int, int) {}
-    void setSize(const iXY &d) { setSize(d.x, d.y); }
 
     virtual void draw(Surface &dest) = 0;
     virtual void actionPerformed(const mMouseEvent &me) = 0;
