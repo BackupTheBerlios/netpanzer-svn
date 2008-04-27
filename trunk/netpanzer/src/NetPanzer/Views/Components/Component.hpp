@@ -32,8 +32,8 @@ class mMouseEvent;
 class Component : public NoCopy
 {
 protected:
-    Uint8    background;
-    Uint8    foreground;
+    PIX    background;
+    PIX    foreground;
     iXY     size;
     iXY     min;
     Surface surface;

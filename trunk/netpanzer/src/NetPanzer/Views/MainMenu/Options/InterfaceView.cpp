@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Views/Components/Desktop.hpp"
+#include "Views/Components/Label.hpp"
 
 
 static void bIncreaseScrollRate()
@@ -67,11 +68,11 @@ void InterfaceView::initButtons()
     //----------------------------------------------------------------------
 
     x = xTextStart;
-    addLabel(iXY(x, y), "OPTION                                               SETTING", viewHeadingColor);
+    add( new Label( x, y, "OPTION                                               SETTING", viewHeadingColor) );
     y += yOffset;
 
     x = xTextStart;
-    addLabel(iXY(x, y), "Scroll Rate", Color::white);
+    add( new Label( x, y, "Scroll Rate", Color::white) );
     x = optionsMeterStartX;
     addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseScrollRate);
     x += optionsMeterWidth + arrowButtonWidth;

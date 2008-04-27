@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/TimerInterface.hpp"
 #include "Interfaces/MouseInterface.hpp"
 
+#include "Views/Components/Label.hpp"
+
 using std::min;
 using std::max;
 
@@ -618,8 +620,8 @@ DesktopView::DesktopView() : View()
     resizeClientArea(iXY(320, 400));
     moveTo(iXY(0, 0));
 
-    addLabel(iXY(0, 0),   "Name", Color::white);
-    addLabel(iXY(200, 0), "Status", Color::white);
+    add( new Label( 0, 0,   "Name", Color::white) );
+    add( new Label( 200, 0, "Status", Color::white) );
 
 } // end DesktopView::DesktopView
 

@@ -2,6 +2,8 @@
 - removed unused line in MenuTemplateView
 - removed classes LobbyView, ProgressView and ConsoleLoadingView functionality
   is done by LoadingView
+- View uses a list for components now.
+- removed cLabel from View and created a Label component
 
 16-Sep-2007 by Aaron Perez
 - added a timer to the right click function to unselect units only if some

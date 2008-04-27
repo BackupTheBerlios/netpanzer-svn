@@ -28,15 +28,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Component.hpp"
 #include "MouseEvent.hpp"
 
-class cLabel
-{
-public:
-    iXY   pos;
-    char *label;
-    Uint8  foreColor;
-    Uint8  backColor;
-    bool  isShadowed;
-}; // end cLabel
+#include <list>
+
+using namespace std;
 
 enum DEFAULT_VIEW_BUTTON
 {
@@ -52,13 +46,11 @@ public:
     void add(DEFAULT_VIEW_BUTTON button);
 
 public:
-    enum
-    {
-        MAX_COMPONENT_COUNT = 30
-    };
-
-    Component *componentList[MAX_COMPONENT_COUNT];
-    int        componentsUsedCount;
+    typedef list<Component *> ComponentList;
+    typedef ComponentList::iterator ComponentsIterator;
+    
+    ComponentList components;
+    
     Component *focusComponent;
 
     std::vector<cButton*>     buttons;
@@ -107,8 +99,6 @@ protected:
     char            *subTitle;
     int              status;
 
-    int              numLabels;
-    cLabel          *labels;
     char            *statusText;
 
     enum { RESIZE_XMINSIZE = 15 };
@@ -155,12 +145,6 @@ protected:
     //void setScrollBar       (const bool &newStatus);
 
     // Scroll bar functions.
-
-    // cLabel Functions.
-    void addLabel(const iXY &pos, char *label, const PIX &color);
-    void addLabelShadowed(const iXY &pos, char *label, const PIX &foreColor, const PIX &backColor);
-    void addLabel(const iXY &pos, char *label, const bool &isShadowed, const PIX &foreColor, const PIX &backColor);
-    void drawLabels(Surface &clientArea);
 
     // cButton Functions.
     void addButtonPackedSurface(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc);
@@ -272,11 +256,13 @@ public:
     }
     void removeComponents()
     {
-        // Clear out all the previous component data.
-        assert(MAX_COMPONENT_COUNT > 0);
-        memset(componentList, 0, sizeof(Component *) * MAX_COMPONENT_COUNT);
-
-        componentsUsedCount = 0;
+        ComponentsIterator i = components.begin();
+        while ( i != components.end() )
+        {
+            delete *i;
+            i++;
+        }
+        components.clear(); // XXX delete them?
         focusComponent      = 0;
     }
 

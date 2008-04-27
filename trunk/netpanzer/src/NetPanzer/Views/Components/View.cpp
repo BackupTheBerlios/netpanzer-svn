@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Views/Components/View.hpp"
 #include "Views/Components/Desktop.hpp"
+#include "Views/Components/Label.hpp"
 #include "Interfaces/MouseInterface.hpp"
 #include "Interfaces/KeyboardInterface.hpp"
 #include "Types/fXY.hpp"
@@ -36,16 +37,10 @@ const int RESIZE_YMAX  = RESIZE_WIDTH * 3;
 //---------------------------------------------------------------------------
 void View::add(Component *component)
 {
-    assert(component != 0);
-
-    if (componentsUsedCount < MAX_COMPONENT_COUNT - 1) {
-        componentList[componentsUsedCount] = component;
-        componentList[componentsUsedCount]->setParent(this);
-        componentsUsedCount++;
-    } else {
-        throw Exception("ERROR: Trying to add more componentList than pre-allocated, increase the pre-allocated amount.");
+    if ( component ) {
+        components.push_back(component);
+        component->setParent(this);
     }
-
 } // end View::add
 
 // View
@@ -89,7 +84,6 @@ View::~View()
     
     free(title);
     free(subTitle);
-    free(labels);
     free(searchName);
 } // end ~View::View
 
@@ -102,7 +96,6 @@ void View::reset()
     min.zero();
     max.zero();
     status                =  0;
-    numLabels             =  0;
     pressedButton         = -1;
     prevPressedButton     = -1;
     highlightedButton     = -1;
@@ -119,11 +112,8 @@ void View::reset()
     setSubTitle("donut");
 
     //scrollBar             = 0;
-    labels                = 0;
-    componentsUsedCount   = 0;
 
-    assert(MAX_COMPONENT_COUNT > 0);
-    memset(componentList, 0, sizeof(Component *) * MAX_COMPONENT_COUNT);
+    removeComponents();
 
     moveAreaHeight  = DEFAULT_MOVE_AREA_HEIGHT;
     borderSize      = DEFAULT_BORDER_SIZE;
@@ -414,16 +404,14 @@ void View::doDraw(Surface &viewArea, Surface &clientArea)
 
     drawDefinedButtons(clientArea);
     drawInputFields(clientArea);
-    drawLabels(clientArea);
     drawHighlightedButton(clientArea);
     drawPressedButton(clientArea);
 
     // Draw all non-selected components.
-    for (int i = 0; i < componentsUsedCount; i++) {
-        assert(componentList[i] != 0);
-
-        if (componentList[i] != focusComponent) {
-            componentList[i]->draw(clientArea);
+    ComponentsIterator i;
+    for ( i=components.begin(); i != components.end(); i++) {
+        if (*i != focusComponent) {
+            (*i)->draw(clientArea);
         }
     }
 
@@ -444,18 +432,16 @@ void View::doDraw(Surface &viewArea, Surface &clientArea)
 //---------------------------------------------------------------------------
 void View::doActivate()
 {
-    assert(this != 0);
-
     // Tell all the components the mouse entered the view.
-    for (int i = 0; i < componentsUsedCount; i++) {
-        assert(componentList[i] != 0);
-
-        if (componentList[i]->contains(MouseInterface::getMousePosition())) {
-            mMouseEvent me(componentList[i],
+    ComponentsIterator i;
+    for ( i=components.begin(); i != components.end(); i++)
+    {
+        if ((*i)->contains(MouseInterface::getMousePosition())) {
+            mMouseEvent me((*i),
                 mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, 
                 MouseInterface::getMouseX(), MouseInterface::getMouseY(), 0, false);
 
-            componentList[i]->actionPerformed(me);
+            (*i)->actionPerformed(me);
 
             actionPerformed(me);
         }
@@ -468,15 +454,14 @@ void View::doActivate()
 //---------------------------------------------------------------------------
 void View::doDeactivate()
 {
-    assert(this != 0);
-
-    // Tell all the components the mouse exited the view.
-    for (int i = 0; i < componentsUsedCount; i++) {
-        mMouseEvent me(componentList[i],
+    ComponentsIterator i;
+    for ( i=components.begin(); i != components.end(); i++)
+    {
+        mMouseEvent me((*i),
             mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, 
             MouseInterface::getMouseX(), MouseInterface::getMouseY(), 0, false);
 
-        componentList[i]->actionPerformed(me);
+        (*i)->actionPerformed(me);
 
         actionPerformed(me);
     }
@@ -642,27 +627,27 @@ void View::mouseMove(const iXY & prevPos, const iXY &newPos)
     highlightedButton     = findButtonContaining(newPos);
 
     // Check all components for a clicked event.
-    for (int i = 0; i < componentsUsedCount; i++) {
-        assert(componentList[i] != 0);
-
-        bool containsPrev=componentList[i]->contains(prevPos);
-        bool containsNew=componentList[i]->contains(newPos);
+    ComponentsIterator i;
+    for ( i=components.begin(); i != components.end(); i++)
+    {        
+        bool containsPrev=(*i)->contains(prevPos);
+        bool containsNew=(*i)->contains(newPos);
         if (containsPrev && !containsNew) {
-            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, newPos.x, newPos.y, 0, false);
+            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, newPos.x, newPos.y, 0, false);
 
-            componentList[i]->actionPerformed(me);
+            (*i)->actionPerformed(me);
 
             actionPerformed(me);
         } else if (!containsPrev && containsNew) {
-            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, newPos.x, newPos.y, 0, false);
+            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, newPos.x, newPos.y, 0, false);
 
-            componentList[i]->actionPerformed(me);
+            (*i)->actionPerformed(me);
 
             actionPerformed(me);
         } else if (containsNew && newPos!=prevPos) {
-            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_MOVED, now(), 0, newPos.x, newPos.y, 0, false);
+            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_MOVED, now(), 0, newPos.x, newPos.y, 0, false);
 
-            componentList[i]->actionPerformed(me);
+            (*i)->actionPerformed(me);
 
             actionPerformed(me);
         }
@@ -700,14 +685,15 @@ void View::lMouseDown(const iXY &pos)
     focusComponent = 0;
 
     // Check all components for a pressed event.
-    for (int i = 0; i < componentsUsedCount; i++) {
-        assert(componentList[i] != 0);
-        if (componentList[i]->contains(pos)) {
-            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_PRESSED, now(), InputEvent::BUTTON1_MASK, pos.x, pos.y, 0, false);
+    ComponentsIterator i;
+    for ( i=components.begin(); i != components.end(); i++)
+    {        
+        if ((*i)->contains(pos)) {
+            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_PRESSED, now(), InputEvent::BUTTON1_MASK, pos.x, pos.y, 0, false);
 
-            componentList[i]->actionPerformed(me);
+            (*i)->actionPerformed(me);
 
-            focusComponent = componentList[i];
+            focusComponent = (*i);
 
             actionPerformed(me);
         }
@@ -736,26 +722,28 @@ int View::lMouseUp(const iXY &downPos, const iXY &upPos)
     pressedButton     = -1;
 
     // Check all components for a clicked event.
-    {for (int i = 0; i < componentsUsedCount; i++)
-        {
-            assert(componentList[i] != 0);
-            if (componentList[i]->contains(downPos) && componentList[i]->contains(upPos)) {
-                mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
+    {    
+        ComponentsIterator i;
+        for ( i=components.begin(); i != components.end(); i++)
+        {        
+            if ((*i)->contains(downPos) && (*i)->contains(upPos)) {
+                mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
 
-                componentList[i]->actionPerformed(me);
+                (*i)->actionPerformed(me);
 
                 actionPerformed(me);
             }
         }}
 
     // Report a mouse release to all components except for a clicked one.
-    {for (int i = 0; i < componentsUsedCount; i++)
-        {
-            assert(componentList[i] != 0);
-            if (componentList[i]->contains(upPos)) {
-                mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
+    {    
+        ComponentsIterator i;
+        for ( i=components.begin(); i != components.end(); i++)
+        {        
+            if ((*i)->contains(upPos)) {
+                mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON1_MASK, upPos.x, upPos.y, 0, false);
 
-                componentList[i]->actionPerformed(me);
+                (*i)->actionPerformed(me);
 
                 actionPerformed(me);
             }
@@ -775,14 +763,15 @@ void View::lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
     //mouseMove(prevPos, newPos);
 
     // Check all components for a dragged event.
-    for (int i = 0; i < componentsUsedCount; i++) {
-        assert(componentList[i] != 0);
-        if (componentList[i]->contains(newPos) && componentList[i]->contains(downPos) && newPos!=prevPos) {
-            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON1_MASK, newPos.x, newPos.y, 0, false);
+    ComponentsIterator i;
+    for ( i=components.begin(); i != components.end(); i++)
+    {        
+        if ((*i)->contains(newPos) && (*i)->contains(downPos) && newPos!=prevPos) {
+            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON1_MASK, newPos.x, newPos.y, 0, false);
 
-            componentList[i]->actionPerformed(me);
+            (*i)->actionPerformed(me);
 
-            focusComponent = componentList[i];
+            focusComponent = (*i);
 
             actionPerformed(me);
         }
@@ -805,14 +794,15 @@ void View::rMouseDown(const iXY &pos)
     focusComponent = 0;
 
     // Check all components for a pressed event.
-    for (int i = 0; i < componentsUsedCount; i++) {
-        assert(componentList[i] != 0);
-        if (componentList[i]->contains(pos)) {
-            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_PRESSED, now(), InputEvent::BUTTON2_MASK, pos.x, pos.y, 0, false);
+    ComponentsIterator i;
+    for ( i=components.begin(); i != components.end(); i++)
+    {        
+        if ((*i)->contains(pos)) {
+            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_PRESSED, now(), InputEvent::BUTTON2_MASK, pos.x, pos.y, 0, false);
 
-            componentList[i]->actionPerformed(me);
+            (*i)->actionPerformed(me);
 
-            focusComponent = componentList[i];
+            focusComponent = (*i);
 
             actionPerformed(me);
         }
@@ -827,12 +817,13 @@ void View::rMouseUp(const iXY &downPos, const iXY &upPos)
     int reportRelease = true;
 
     // Check all components for a clicked event.
-    for (int i = 0; i < componentsUsedCount; i++) {
-        assert(componentList[i] != 0);
-        if (componentList[i]->contains(downPos) && componentList[i]->contains(upPos)) {
-            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);
+    ComponentsIterator i;
+    for ( i=components.begin(); i != components.end(); i++)
+    {        
+        if ((*i)->contains(downPos) && (*i)->contains(upPos)) {
+            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_CLICKED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);
 
-            componentList[i]->actionPerformed(me);
+            (*i)->actionPerformed(me);
 
             reportRelease = false;
 
@@ -844,12 +835,13 @@ void View::rMouseUp(const iXY &downPos, const iXY &upPos)
     // mouse press positions, then report a release to an
     if (reportRelease) {
         // Check all components for a release event.
-        for (int i = 0; i < componentsUsedCount; i++) {
-            assert(componentList[i] != 0);
-            if (componentList[i]->contains(upPos)) {
-                mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);
+        ComponentsIterator i;
+        for ( i=components.begin(); i != components.end(); i++)
+        {        
+            if ((*i)->contains(upPos)) {
+                mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_RELEASED, now(), InputEvent::BUTTON2_MASK, upPos.x, upPos.y, 0, false);
 
-                componentList[i]->actionPerformed(me);
+                (*i)->actionPerformed(me);
 
                 reportRelease = false;
 
@@ -874,14 +866,15 @@ void View::rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos)
     focusComponent = 0;
 
     // Check all components for a moved event.
-    for (int i = 0; i < componentsUsedCount; i++) {
-        assert(componentList[i] != 0);
-        if (componentList[i]->contains(newPos)  && componentList[i]->contains(downPos) && newPos!=prevPos) {
-            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON2_MASK, newPos.x, newPos.y, 0, false);
+    ComponentsIterator i;
+    for ( i=components.begin(); i != components.end(); i++)
+    {        
+        if ((*i)->contains(newPos)  && (*i)->contains(downPos) && newPos!=prevPos) {
+            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_DRAGGED, now(), InputEvent::BUTTON2_MASK, newPos.x, newPos.y, 0, false);
 
-            componentList[i]->actionPerformed(me);
+            (*i)->actionPerformed(me);
 
-            focusComponent = componentList[i];
+            focusComponent = (*i);
 
             actionPerformed(me);
         }
@@ -904,12 +897,13 @@ void View::rMouseDouble(const iXY &pos)
 void View::mouseEnter(const iXY &pos)
 {
     // Check all components for a entered event.
-    for (int i = 0; i < componentsUsedCount; i++) {
-        assert(componentList[i] != 0);
-        if (componentList[i]->contains(pos)) {
-            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, pos.x, pos.y, 0, false);
+    ComponentsIterator i;
+    for ( i=components.begin(); i != components.end(); i++)
+    {        
+        if ((*i)->contains(pos)) {
+            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, pos.x, pos.y, 0, false);
 
-            componentList[i]->actionPerformed(me);
+            (*i)->actionPerformed(me);
 
             actionPerformed(me);
         }
@@ -926,12 +920,13 @@ void View::mouseExit(const iXY &pos)
     assert(this != 0);
 
     // Check all components for a exited event.
-    for (int i = 0; i < componentsUsedCount; i++) {
-        assert(componentList[i] != 0);
-        if (componentList[i]->contains(pos)) {
-            mMouseEvent me(componentList[i], mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, pos.x, pos.y, 0, false);
+    ComponentsIterator i;
+    for ( i=components.begin(); i != components.end(); i++)
+    {        
+        if ((*i)->contains(pos)) {
+            mMouseEvent me((*i), mMouseEvent::MOUSE_EVENT_EXITED, now(), 0, pos.x, pos.y, 0, false);
 
-            componentList[i]->actionPerformed(me);
+            (*i)->actionPerformed(me);
 
             actionPerformed(me);
         }
@@ -953,70 +948,6 @@ void View::scrollBarMove(const iXY &prevPos, const iXY &newPos)
     //}
 } // end scrollBarMove
 
-// addLabel
-//---------------------------------------------------------------------------
-// Purpose:
-//---------------------------------------------------------------------------
-void View::addLabel(const iXY &pos, char *label, const PIX &color)
-{
-    addLabel(pos, label, false, color, Color::black);
-
-} // end addLabel
-
-// addLabelShadowed
-//---------------------------------------------------------------------------
-// Purpose:
-//---------------------------------------------------------------------------
-void View::addLabelShadowed(const iXY &pos, char *label, const PIX &foreColor,
-                            const PIX &backColor)
-{
-    addLabel(pos, label, true, foreColor, backColor);
-} // end addLabelShadowed
-
-// addLabel
-//---------------------------------------------------------------------------
-// Purpose:
-//---------------------------------------------------------------------------
-void View::addLabel(const iXY &pos, char *label, const bool &isShadowed, const PIX &foreColor,
-                    const PIX &backColor)
-{
-    labels = (cLabel *) realloc(labels, (numLabels+1)*sizeof(cLabel));
-    if (labels == 0) throw Exception("ERROR: Unable to allocate label.");
-
-    labels[numLabels].label = strdup(label);
-    assert(labels[numLabels].label != 0);
-    labels[numLabels].foreColor  = foreColor;
-    labels[numLabels].backColor  = backColor;
-    labels[numLabels].isShadowed = isShadowed;
-
-    labels[numLabels].pos = pos;
-    numLabels++;
-
-} // end View::addLabel
-
-// DRAW LABELS
-//---------------------------------------------------------------------------
-// Purpose:
-//---------------------------------------------------------------------------
-void View::drawLabels(Surface &clientArea)
-{
-    if (!clientArea.getDoesExist()) {
-        throw Exception("ERROR: Client area does not exist.");
-    }
-
-    for (int num = 0; num < numLabels; num++) {
-        if (labels[num].isShadowed) {
-            clientArea.bltStringShadowed( labels[num].pos.x,
-                                          labels[num].pos.y,
-                                          labels[num].label,
-                                          labels[num].foreColor,
-                                          labels[num].backColor);
-        } else clientArea.bltString( labels[num].pos.x,
-                                     labels[num].pos.y,
-                                     labels[num].label,
-                                     labels[num].foreColor);
-    }
-} // end DRAW LABELS
 
 // drawDefinedButtons
 //---------------------------------------------------------------------------

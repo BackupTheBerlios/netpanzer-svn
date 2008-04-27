@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleSystemGlobals.hpp"
 #include "MapSelectionView.hpp"
 #include "Views/GameViewGlobals.hpp"
+#include "Views/Components/Label.hpp"
 
 int HostOptionsView::cloudCoverageCount = 1;
 int HostOptionsView::windSpeed          = 1;
@@ -300,7 +301,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     int xControlStart = 270;
 
     x = xTextStart;
-    addLabelShadowed(iXY(x, y), "Max Players", windowTextColor, windowTextColorShadow);
+    add( new Label(x, y, "Max Players", windowTextColor, windowTextColorShadow, true) );
     x += xControlStart;
     addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreasePlayerCount);
     x += arrowButtonWidth + meterWidth;
@@ -308,7 +309,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     y += yOffset;
 
     x = xTextStart;
-    addLabelShadowed(iXY(x, y), "Game Max Unit Count", windowTextColor, windowTextColorShadow);
+    add( new Label(x, y, "Game Max Unit Count", windowTextColor, windowTextColorShadow, true) );
     x += xControlStart;
     addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseMaxUnitCount);
     x += arrowButtonWidth + meterWidth;
@@ -316,7 +317,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     y += yOffset;
     /*
     	x = xTextStart;
-    	addLabelShadowed(iXY(x, y), "Player Respawn Unit Count", windowTextColor, windowTextColorShadow);
+    	//addLabelShadowed(iXY(x, y), "Player Respawn Unit Count", windowTextColor, windowTextColorShadow);
     	x += xControlStart;
     	addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseRespawnCount);
     	x += arrowButtonWidth + meterWidth;
@@ -340,7 +341,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     //y += yOffset;
 
     x = xTextStart;
-    addLabelShadowed(iXY(x, y), "Objective Capture Percent", windowTextColor, windowTextColorShadow);
+    add( new Label( x, y, "Objective Capture Percent", windowTextColor, windowTextColorShadow, true) );
     x += xControlStart;
     addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseObjectiveCapturePercent);
     x += arrowButtonWidth + meterWidth;
@@ -348,7 +349,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     y += yOffset;
 
     x = xTextStart;
-    addLabelShadowed(iXY(x, y), "Time Limit", windowTextColor, windowTextColorShadow);
+    add( new Label( x, y, "Time Limit", windowTextColor, windowTextColorShadow, true) );
     x += xControlStart;
     addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseTimeLimit);
     x += arrowButtonWidth + meterWidth;
@@ -356,7 +357,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     y += yOffset;
 
     x = xTextStart;
-    addLabelShadowed(iXY(x, y), "Frag Limit", windowTextColor, windowTextColorShadow);
+    add( new Label( x, y, "Frag Limit", windowTextColor, windowTextColorShadow, true) );
     x += xControlStart;
     addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseFragLimit);
     x += arrowButtonWidth + meterWidth;
@@ -413,7 +414,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
 
     /*
     	x = xTextStart;
-    	addLabelShadowed(iXY(x, y), "Allow Fog Of War", windowTextColor, windowTextColorShadow);
+    	//addLabelShadowed(iXY(x, y), "Allow Fog Of War", windowTextColor, windowTextColorShadow);
     	x += xControlStart;
     	addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bSetAllowFogOfWarFalse);
     	x += arrowButtonWidth + meterWidth;

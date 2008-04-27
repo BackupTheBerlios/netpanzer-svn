@@ -38,6 +38,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Views/Components/ViewGlobals.hpp"
+#include "Views/Components/Label.hpp"
 
 
 Button VehicleSelectionView::buttonStaticDisplay;
@@ -276,7 +277,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     iXY pos(0 ,0);
 
     pos.x = 0;
-    addLabel(pos + iXY(2,2), "Static Display:", Color::white);
+    add( new Label( pos.x+2, pos.y+2, "Static Display:", Color::white) );
 
     pos.x = getClientRect().getSizeX() - 100;
     buttonStaticDisplay.setLabel("On");
@@ -285,7 +286,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     pos.y += yOffset;
 
     pos.x = 0;
-    addLabel(pos + iXY(2,2) , "Power:", Color::white);
+    add( new Label( pos.x+2, pos.y+2, "Power:", Color::white) );
 
     pos.x = getClientRect().getSizeX() - 100;
     buttonPower.setLabel("Off");
@@ -297,19 +298,19 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     int CHAR_XPIX = 8;
     
     pos.x = 0;
-    addLabel(pos + iXY(2,2), "Production:", Color::white);
+    add( new Label( pos.x+2, pos.y+2, "Production:", Color::white) );
     productionUnitPos.x = (strlen("Current Unit:") + 1) * CHAR_XPIX + 2;
     productionUnitPos.y = pos.y + 2;
     pos.y += yOffset;
 
     pos.x = 0;
-    addLabel(pos + iXY(2,2), "Time:        ", Color::white);
+    add( new Label( pos.x+2, pos.y+2, "Time:        ", Color::white) );
     timeRequiredPos.x = (strlen("Time:        ") + 1) * CHAR_XPIX + 2;
     timeRequiredPos.y = pos.y + 2;
     pos.y += yOffset;
 
     pos.x = 0;
-    addLabel(pos + iXY(2,2), "Unit Built:   ", Color::white);
+    add( new Label( pos.x+2, pos.y+2, "Unit Built:   ", Color::white) );
     unitsBuiltPos.x = (strlen("Time:        ") + 1) * CHAR_XPIX + 2;
     unitsBuiltPos.y = pos.y + 2;
     pos.y += yOffset;

@@ -28,6 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/ObjectiveInterface.hpp"
 
+#include "Views/Components/Label.hpp"
+
 #include "Classes/SelectionBoxSprite.hpp"
 
 // RankView
@@ -52,20 +54,19 @@ RankView::RankView() : GameTemplateView()
     // hardcoded for now
     int CHAR_XPIX = 8;
 
-    //addLabel(iXY nPos, char *nLabel, Uint8 color);
     unsigned xOffset = 0;
     unsigned yOffset = 16;
-    addLabel(iXY(xOffset, yOffset), "Name", Color::red);
+    add( new Label( xOffset, yOffset, "Name", Color::red) );
     xOffset += MAX_NAME_CHARS*CHAR_XPIX;
-    addLabel(iXY(xOffset, yOffset), "Flag", Color::red);
+    add( new Label( xOffset, yOffset, "Flag", Color::red) );
     xOffset += MAX_FLAG_CHARS*CHAR_XPIX;
-    addLabel(iXY(xOffset, yOffset), "Kills", Color::red);
+    add( new Label( xOffset, yOffset, "Kills", Color::red) );
     xOffset += MAX_KILLS_CHARS*CHAR_XPIX;
-    addLabel(iXY(xOffset, yOffset), "Losses", Color::red);
+    add( new Label( xOffset, yOffset, "Losses", Color::red) );
     xOffset += MAX_LOSSES_CHARS*CHAR_XPIX;
-    addLabel(iXY(xOffset, yOffset), "Points", Color::red);
+    add( new Label( xOffset, yOffset, "Points", Color::red) );
     xOffset += MAX_POINTS_CHARS*CHAR_XPIX;
-    addLabel(iXY(xOffset, yOffset), "Objective", Color::red);
+    add( new Label( xOffset, yOffset, "Objective", Color::red) );
     xOffset += MAX_POINTS_CHARS*CHAR_XPIX;
 
     // Define the scrollBar fot this view.

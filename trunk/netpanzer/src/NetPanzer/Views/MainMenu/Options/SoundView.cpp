@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Views/Components/Desktop.hpp"
+#include "Views/Components/Label.hpp"
 #include "System/Sound.hpp"
 #include "System/SDLSound.hpp"
 #include "System/DummySound.hpp"
@@ -102,12 +103,12 @@ void SoundView::initButtons()
     //----------------------------------------------------------------------
 
     x = xTextStart;
-    addLabel(iXY(x, y), "OPTION                                               SETTING", viewHeadingColor);
+    add( new Label( x, y, "OPTION                                               SETTING", viewHeadingColor) );
     y += yOffset;
     //
     
     x = xTextStart;
-    addLabel(iXY(x,y), "Sound Status", Color::white);
+    add( new Label( x, y, "Sound Status", Color::white) );
     checkBoxSoundEnabled.setLabel(gameconfig->enablesound?"Enabled":"Disabled");
     checkBoxSoundEnabled.setState(gameconfig->enablesound);
     x += Surface::getTextLength("Sound Status: ");
@@ -117,7 +118,7 @@ void SoundView::initButtons()
     y += yOffset;
 
     x = xTextStart;
-    addLabel(iXY(x, y), "Sound Volume", Color::white);
+    add( new Label( x, y, "Sound Volume", Color::white) );
     x = optionsMeterStartX;
     addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseSoundVolume);
     x += optionsMeterWidth + arrowButtonWidth;
@@ -126,7 +127,7 @@ void SoundView::initButtons()
 
     y += yOffset; // add a little separation
     x = xTextStart;
-    addLabel(iXY(x,y), "Music Status", Color::white);
+    add( new Label( x, y, "Music Status", Color::white) );
     checkBoxMusicEnabled.setLabel(gameconfig->enablemusic?"Enabled":"Disabled");
     checkBoxMusicEnabled.setState(gameconfig->enablemusic);
     x += Surface::getTextLength("Music Status: ");
@@ -136,7 +137,7 @@ void SoundView::initButtons()
     y += yOffset;
 
     x = xTextStart;
-    addLabel(iXY(x, y), "Music Volume", Color::white);
+    add( new Label( x, y, "Music Volume", Color::white) );
     x = optionsMeterStartX;
     addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseMusicVolume);
     x += optionsMeterWidth + arrowButtonWidth;
