@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/unix/NetworkClientUnix.hpp"
 
 #include "Views/Components/Desktop.hpp"
-#include "Views/Game/LobbyView.hpp"
+#include "Views/Game/LoadingView.hpp"
 #include "Views/Game/DisconectedView.hpp"
 
 #include "Network/SocketManager.hpp"
@@ -74,7 +74,7 @@ bool NetworkClientUnix::joinServer(const std::string& server_name)
         LOG( ( "Couldn't connect to server:\n%s.", e.what()) );
         char text[128];
         snprintf(text, 128, "connection error: %s", e.what());
-        lobbyView->scrollAndUpdate(text);
+        LoadingView::append(text);
         return false;
     }
 

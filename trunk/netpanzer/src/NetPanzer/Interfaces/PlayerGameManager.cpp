@@ -86,10 +86,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/Options/ControlsView.hpp"
 #include "Views/MainMenu/Options/InterfaceView.hpp"
 #include "Views/MainMenu/Options/VisualsView.hpp"
+
 #include "Views/Game/RankView.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
-#include "Views/Game/LobbyView.hpp"
-#include "Views/Game/ProgressView.hpp"
 #include "Views/Game/CodeStatsView.hpp"
 #include "Views/Game/LibView.hpp"
 #include "Views/Game/HelpScrollView.hpp"
@@ -100,6 +99,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/GameInfoView.hpp"
 #include "Views/Game/MiniMapView.hpp"
 #include "Views/Game/DisconectedView.hpp"
+#include "Views/Game/LoadingView.hpp"
 
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleSystem2D.hpp"
@@ -190,13 +190,7 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new HelpScrollView());
     Desktop::add(new GameInfoView());
 
-    lobbyView = new LobbyView();
-    lobbyView->init();
-    Desktop::add(lobbyView);
-
-    progressView = new ProgressView();    
-    progressView->init();
-    Desktop::add(progressView);
+    Desktop::add(new LoadingView());
 
     GameManager::loadPalette("netpmenu");
 
@@ -297,8 +291,9 @@ void PlayerGameManager::hostMultiPlayerGame()
     PlayerState *player_state;
     Timer wait;
 
-    progressView->open();
-    progressView->scrollAndUpdateDirect( "Launching Server ..." );
+    LoadingView::show();
+    // refresh the view in each append
+    LoadingView::append( "Launching Server ..." );
     try {
     	if (CLIENT) {
 		delete CLIENT;
@@ -333,22 +328,25 @@ void PlayerGameManager::hostMultiPlayerGame()
             }
         }
     } catch(std::exception& e) {
-        progressView->scrollAndUpdateDirect( "SERVER LAUNCH FAILED" );
-        progressView->scrollAndUpdateDirect(e.what());
+        LoadingView::append( "SERVER LAUNCH FAILED" );
+        LoadingView::append(e.what());
         wait.changePeriod( 4 );
         while( !wait.count() );
 
-        progressView->toggleMainMenu();
+        LoadingView::loadError();
         return;
     }
-
-    progressView->updateDirect( "Launching Server ... (100%) " );
+    
+    // refresh views
+    LoadingView::update( "Launching Server ... (100%) " );
+    graphicsLoop();
 
     GameControlRulesDaemon::setStateServerInProgress();
     NetworkState::setNetworkStatus( _network_state_server );
 
-    progressView->scrollAndUpdateDirect( "Loading Game Data ..." );
-
+    LoadingView::append( "Loading Game Data ..." );
+    graphicsLoop();
+    
     gameconfig->map = MapsManager::getNextMap("");
     const char* mapname = gameconfig->map.c_str();
 
@@ -357,7 +355,7 @@ void PlayerGameManager::hostMultiPlayerGame()
     } catch(std::exception& e) {
         LOGGER.warning("Error while loading map '%s':", mapname);
         LOGGER.warning(e.what());
-        progressView->toggleMainMenu();
+        LoadingView::loadError();
         return;
     }
 
@@ -368,18 +366,24 @@ void PlayerGameManager::hostMultiPlayerGame()
 
     while( GameManager::gameMapLoad( &percent_complete ) == true ) {
         sprintf( strbuf, "Loading Game Data ... (%d%%)", percent_complete);
-        progressView->updateDirect( strbuf );
+        LoadingView::update( strbuf );
+        graphicsLoop();
     }
 
     sprintf( strbuf, "Loading Game Data ... (%d%%)", percent_complete);
-    progressView->updateDirect( strbuf );
+    LoadingView::update( strbuf );
+    graphicsLoop();
 
 
-    progressView->scrollAndUpdateDirect( "Initializing Game Logic ..." );
+    LoadingView::append( "Initializing Game Logic ..." );
+    graphicsLoop();
     GameManager::reinitializeGameLogic();
-    progressView->updateDirect( "Initializing Game Logic ... (100%) " );
-
-    progressView->scrollAndUpdateDirect( "Spawning Player ..." );
+    LoadingView::update( "Initializing Game Logic ... (100%) " );
+    graphicsLoop();
+    
+    LoadingView::append( "Spawning Player ..." );
+    graphicsLoop();
+    
     player_state = PlayerInterface::allocateLoopBackPlayer();
     player_state->setNetworkID(0);
     const char* playername = gameconfig->playername.c_str();
@@ -387,14 +391,15 @@ void PlayerGameManager::hostMultiPlayerGame()
     player_state->setFlag((unsigned char) gameconfig->playerflag);
     player = PlayerInterface::getLocalPlayerID();
     GameManager::spawnPlayer( player );
-    progressView->updateDirect( "Spawning Player ... (100%)" );
+    LoadingView::update( "Spawning Player ... (100%)" );
+    graphicsLoop();
 
     wait.changePeriod( 3 );
     //while( !wait.count() );
 
     GameManager::startGameTimer();
 
-    progressView->close();
+    LoadingView::hide();
 
     // Set the palette to the game palette.
     GameManager::loadPalette( "netp");
@@ -429,6 +434,7 @@ void PlayerGameManager::joinMultiPlayerGame()
     NetworkState::setNetworkStatus( _network_state_client );
 
     CLIENT->joinServer(gameconfig->serverConnect);
+    LoadingView::show();
 
     ClientConnectDaemon::startConnectionProcess();
     sound->playTankIdle();
@@ -441,8 +447,7 @@ bool PlayerGameManager::mainLoop()
     if(firstrun) {
         firstrun = false;
         if(gameconfig->quickConnect == true) {
-            Desktop::setVisibilityAllWindows(false);
-            Desktop::setVisibility("LobbyView", true);
+            LoadingView::show();
             launchMultiPlayerGame();
         }
     }

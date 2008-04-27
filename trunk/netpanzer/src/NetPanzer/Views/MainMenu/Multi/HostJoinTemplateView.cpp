@@ -87,7 +87,6 @@ static void bNext()
 
     // Close all menu views.
     Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("LobbyView", true);
 
     if(gameconfig->hostorjoin == _game_session_join) {
         gameconfig->serverConnect = IPAddressView::szServer.getString();

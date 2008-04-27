@@ -1,4 +1,9 @@
-16-Sep-2006 by Aaron Perez
+27-Apr-2008 by Aaron Perez
+- removed unused line in MenuTemplateView
+- removed classes LobbyView, ProgressView and ConsoleLoadingView functionality
+  is done by LoadingView
+
+16-Sep-2007 by Aaron Perez
 - added a timer to the right click function to unselect units only if some
   time passed. (100 miliseconds)
 - units are selected while moving the mouse on real time

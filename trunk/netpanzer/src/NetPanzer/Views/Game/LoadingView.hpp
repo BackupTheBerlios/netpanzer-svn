@@ -19,47 +19,89 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __LOADINGVIEW_HPP__
 
 #include "Views/Components/View.hpp"
+#include "Views/Components/Desktop.hpp"
 #include "2D/Surface.hpp"
+#include "Util/Log.hpp"
+#include <list>
+#include <string>
+
+#include "Interfaces/GameManager.hpp"
+
+using namespace std;
+
+#define LINELIMIT 100
 
 //---------------------------------------------------------------------------
 class LoadingView : public View
 {
 public:
+    static void update(const string text)
+    {
+        LOGGER.info("Loading: %s", text.c_str());
+        lines.pop_back();
+        lines.push_back(text);
+        dirty=true;
+    }
+    
+    static void append(const string text)
+    {
+        LOGGER.info("Loading: %s", text.c_str());
+        if ( lines.size() >= LINELIMIT )
+        {
+            lines.pop_front();
+        }
+        lines.push_back(text);
+        dirty=true;
+    }
+    
+    LoadingView()
+    {
+        init();
+    }
+    
+    static void loadFinish()
+    {
+        GameManager::setNetPanzerGameOptions();
+        Desktop::setVisibilityAllWindows(false);
+        GameManager::loadPalette("netp");
+        Desktop::setVisibility("GameInfoView", true);
+        Desktop::setVisibility("MiniMapView", true);
+        Desktop::setVisibility("GameView", true);
+    }
+
+    static void loadError()
+    {
+        GameManager::loadPalette("netpmenu");
+        Desktop::setVisibilityAllWindows(false);
+        Desktop::setVisibility("MainView", true);
+
+    }
+    
+    static void show()
+    {
+        Desktop::setVisibility("LoadingView", true);
+    }
+    
+    static void hide()
+    {
+        Desktop::setVisibility("LoadingView", false);
+    }
+
     virtual ~LoadingView() {}
-
-    virtual void init() = 0;
-    virtual void update(const char *text) = 0;
-    virtual void scroll() = 0;
-    void scrollAndUpdate(const char *text)
-    {
-        scroll();
-        update(text);
-    }
-    void scrollDirect()
-    {
-        scroll();
-        blitToScreen();
-    }
-    void scrollAndUpdateDirect(const char *text)
-    {
-        scroll();
-        update(text);
-        blitToScreen();
-    }
-    void updateDirect(const char *text)
-    {
-        update(text);
-        blitToScreen();
-    }
-
-    virtual void reset() = 0;
-
-    virtual void open() = 0;
-    virtual void close() = 0;
-    virtual void toggleGameView() = 0;
-    virtual void toggleMainMenu() = 0;
+    
+    virtual void init();
+    virtual void doActivate();
+    virtual void doDeactivate();
+    
+    void doDraw(Surface &viewArea, Surface &clientArea);
+    void render();
+    
 private:
-    virtual void blitToScreen() {};
+    static list<string> lines;
+    static bool dirty;
+    
+    Surface backgroundSurface;
+    Surface surface;
 };
 
 #endif // end __LOADINGVIEW_HPP__

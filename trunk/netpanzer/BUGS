@@ -11,6 +11,7 @@
 - The no allies flag in the server config has no effect
 - Clients pressing the Abort button when connecting leave a ghost on the server
 which displays no IP. (i think matze fixed this in 0.8.1)
+- The Abort button when connecting doesn't really aborts the operation, just hide the window
 -netpanzer fails on win98se
 -setting allowallies=no in config has no effect
 
@@ -34,8 +35,3 @@ just not visible in the client
 <BenUrban> that one is far more common
 <BenUrban> and has been known to block off bases completely
 <MatzeB> oh
-
-- setting maxunits so low that no player can spawn with 9 units makes netpanzer
-  trigger an assertion, should be an error message
-
-

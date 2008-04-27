@@ -92,8 +92,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/Options/VisualsView.hpp"
 #include "Views/Game/RankView.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
-#include "Views/Game/LobbyView.hpp"
-#include "Views/Game/ProgressView.hpp"
 #include "Views/Game/CodeStatsView.hpp"
 #include "Views/Game/LibView.hpp"
 #include "Views/Game/HelpScrollView.hpp"

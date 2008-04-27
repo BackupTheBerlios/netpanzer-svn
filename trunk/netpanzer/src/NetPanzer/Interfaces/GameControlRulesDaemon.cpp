@@ -35,7 +35,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/ServerConnectDaemon.hpp"
 
 #include "Views/Components/Desktop.hpp"
-#include "Views/Game/ProgressView.hpp"
+#include "Views/Game/LoadingView.hpp"
 
 #include "Util/Log.hpp"
 
@@ -100,7 +100,7 @@ void GameControlRulesDaemon::mapCycleFsmClient()
             return;
 
         case _map_cycle_client_start_map_load : {
-                progressView->open();
+                LoadingView::show();
 
                 GameManager::shutdownParticleSystems();
                 ObjectiveInterface::resetLogic();
@@ -110,14 +110,14 @@ void GameControlRulesDaemon::mapCycleFsmClient()
                 char buf[256];
                 snprintf(buf, sizeof(buf), "Next Map '%s'.",
                         gameconfig->map.c_str());
-                progressView->scrollAndUpdate( buf);
-                progressView->scrollAndUpdate( "Loading Game Map ..." );
+                LoadingView::append( buf);
+                LoadingView::append( "Loading Game Map ..." );
 
                 try {
                     GameManager::startGameMapLoad(gameconfig->map.c_str(), 16);
                 } catch(std::exception& e) {
-                    progressView->scrollAndUpdate("Error while loading map:");
-                    progressView->scrollAndUpdate(e.what());
+                    LoadingView::append("Error while loading map:");
+                    LoadingView::append(e.what());
                     map_cycle_fsm_client_state = _map_cycle_client_idle;
                     return;
                 }
@@ -136,12 +136,12 @@ void GameControlRulesDaemon::mapCycleFsmClient()
                     map_cycle_fsm_client_state = _map_cycle_client_wait_for_respawn_ack;
 
                     sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
-                    progressView->update( str_buf );
+                    LoadingView::update( str_buf );
 
-                    progressView->scrollAndUpdate( "Waiting to respawn ..." );
+                    LoadingView::append( "Waiting to respawn ..." );
                 } else {
                     sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
-                    progressView->update( str_buf );
+                    LoadingView::update( str_buf );
                 }
 
                 return;
@@ -149,7 +149,7 @@ void GameControlRulesDaemon::mapCycleFsmClient()
 
         case _map_cycle_client_wait_for_respawn_ack : {
                 if( map_cycle_fsm_client_respawn_ack_flag == true ) {
-                    progressView->toggleGameView();
+                    LoadingView::loadFinish();
                     map_cycle_fsm_client_respawn_ack_flag = false;
                     map_cycle_fsm_client_state = _map_cycle_client_idle;
                 }
@@ -179,7 +179,6 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 view_control.set("RankView", _view_control_flag_visible_on | _view_control_flag_close_all );
 
                 if ( GameControlRulesDaemon::execution_mode == _execution_mode_loop_back_server ) {
-                    Desktop::setVisibilityAllWindows(false);
                     Desktop::setVisibility("GameView", true);
                     Desktop::setVisibility("RankView", true );
                 }
@@ -227,18 +226,18 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                         map_cycle_fsm_server_map_load_timer.reset();
                         map_cycle_fsm_server_state = _map_cycle_server_state_wait_for_client_map_load;
                     } else {
-                        progressView->open();
+                        LoadingView::show();
 
-                        progressView->scrollAndUpdate( "Loading Game Map ..." );
+                        LoadingView::append( "Loading Game Map ..." );
                         ObjectiveInterface::resetLogic();
 
                         try {
                             GameManager::startGameMapLoad
                                 (gameconfig->map.c_str(), 16);
                         } catch(std::exception& e) {
-                            progressView->scrollAndUpdate(
+                            LoadingView::append(
                                     "Error while loading map:");
-                            progressView->scrollAndUpdate(e.what());
+                            LoadingView::append(e.what());
                             map_cycle_fsm_server_state = _map_cycle_server_state_idle;
                             return;
                         }
@@ -261,7 +260,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 }
 
                 sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
-                progressView->update( str_buf );
+                LoadingView::update( str_buf );
             }
             break;
 
@@ -284,7 +283,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 PlayerInterface::unlockPlayerStats();
                 GameControlRulesDaemon::game_state = _game_state_in_progress;
 
-                progressView->toggleGameView();
+                LoadingView::loadFinish();
 
                 GameControlCycleRespawnAck respawn_ack_mesg;
                 SERVER->sendMessage( &respawn_ack_mesg, sizeof(GameControlCycleRespawnAck));
@@ -430,8 +429,8 @@ void GameControlRulesDaemon::mapLoadFailureResponse(int result_code, const char 
 
     if( result_code == _mapload_result_no_map_file ) {
         sprintf( str_buf, "MAP %s NOT FOUND!", map_name );
-        progressView->scrollAndUpdate( str_buf);
+        LoadingView::append( str_buf);
     } else if( result_code == _mapload_result_no_wad_file ) {
-            progressView->scrollAndUpdate( "MAP TILE SET NOT FOUND!" );
+            LoadingView::append( "MAP TILE SET NOT FOUND!" );
     }
 }

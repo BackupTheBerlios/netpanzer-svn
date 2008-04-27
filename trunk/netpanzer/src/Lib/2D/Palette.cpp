@@ -294,7 +294,6 @@ void Palette::setColorTables()
         filesystem::mkdir(tablePath);
     }
     char strBuf[512];
-    //progressView->scrollAndUpdate("");
 
     // Best color match.
     sprintf(strBuf, "%s/2080.tbl", tablePath);

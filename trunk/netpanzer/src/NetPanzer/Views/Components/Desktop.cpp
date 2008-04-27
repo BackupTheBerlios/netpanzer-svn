@@ -312,6 +312,17 @@ void Desktop::add(View *view, bool autoActivate)
         activate(view);
 } // end add
 
+// remove
+//--------------------------------------------------------------------------
+// Purpose: Removes a window from the list.
+//--------------------------------------------------------------------------
+void Desktop::remove(View *view)
+{
+    if ( view )
+        std::remove(views.begin(), views.end(), view);
+} // end add
+
+
 // activate
 //--------------------------------------------------------------------------
 // Purpose:

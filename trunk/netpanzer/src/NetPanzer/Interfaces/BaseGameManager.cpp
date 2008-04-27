@@ -50,9 +50,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameControlRulesDaemon.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
-#include "Views/Game/LobbyView.hpp"
-#include "Views/Game/ProgressView.hpp"
-#include "Views/Game/ConsoleLoadingView.hpp"
 #include "Classes/SelectionBoxSprite.hpp"
 
 #include "Classes/Units/UnitGlobals.hpp"

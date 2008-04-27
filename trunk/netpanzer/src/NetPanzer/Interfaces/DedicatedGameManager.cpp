@@ -45,9 +45,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleInterface.hpp"
 #include "Particles/Physics.hpp"
 
-#include "Views/Game/LobbyView.hpp"
-#include "Views/Game/ProgressView.hpp"
-#include "Views/Game/ConsoleLoadingView.hpp"
 #include "Util/Log.hpp"
 
 DedicatedGameManager::DedicatedGameManager()
@@ -72,16 +69,12 @@ DedicatedGameManager::~DedicatedGameManager()
 
 void DedicatedGameManager::initializeVideoSubSystem()
 {
-    lobbyView = new ConsoleLoadingView();
-    progressView = new ConsoleLoadingView();
+    //LoadingView::setLoadingView(new ConsoleLoadingView());
 }
 
 void DedicatedGameManager::shutdownVideoSubSystem()
 {
-    delete lobbyView;
-    lobbyView = 0;
-    delete progressView;
-    progressView = 0;
+    //LoadingView::deleteLoadingView();
     delete console;
     console = 0;
 }
