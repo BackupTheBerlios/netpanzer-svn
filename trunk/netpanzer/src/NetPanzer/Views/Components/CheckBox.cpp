@@ -21,20 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MouseEvent.hpp"
 #include "Views/Components/StateChangedCallback.hpp"
 
-// draw
-//---------------------------------------------------------------------------
-void CheckBox::draw(Surface &dest)
-{
-    iRect bounds;
-
-    getBounds(bounds);
-    if ( dirty )
-        render();
-
-    surface.blt(dest, bounds.min.x, bounds.min.y);
-
-} // end CheckBox::draw
-
 void
 CheckBox::render()
 {

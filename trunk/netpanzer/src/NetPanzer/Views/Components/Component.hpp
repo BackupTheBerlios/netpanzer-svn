@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Types/iXY.hpp"
 #include "Types/iRect.hpp"
 #include "Util/NoCopy.hpp"
+#include "Util/Log.hpp"
 
 class mMouseEvent;
 
@@ -35,9 +36,9 @@ protected:
     PIX    background;
     PIX    foreground;
     iXY     size;
-    iXY     min;
+    iXY    position;
     Surface surface;
-    std::string name;
+    std::string componentName;
     bool    enabled;
     bool    visible;
     bool    dirty;
@@ -67,14 +68,21 @@ public:
     {
         reset();
     }
+    
+    Component(const std::string &cname) : componentName(cname)
+    {
+        reset();
+    }
+    
     virtual ~Component()
-    {}
+    {
+    }
 
     // Accessor functions.
     void getBounds(iRect &r)
     {
-        r.min = min;
-        r.max = min + size;
+        r.min = position;
+        r.max = position + size;
     }
     bool contains(int x, int y) const;
     bool contains(iXY p) const { return contains(p.x, p.y); }
@@ -89,27 +97,38 @@ public:
 
     void setBounds(const iRect &r)
     {
-        min  = r.min;
+        position  = r.min;
         size = r.getSize();
-        surface.create(r.getSizeX(), r.getSizeY(), 1);
+        //surface.create(r.getSizeX(), r.getSizeY(), 1);
         dirty = true;
     }
-    void setSize(int x, int y)
+    
+    virtual void setSize(int x, int y)
     {
         size.x=x;
         size.y=y;
         surface.create(x,y,1);
         dirty=true;
     }
-    void setSize(const iXY &d) { setSize(d.x, d.y); }
 
 //    void setEnabled(bool _enabled) { enabled = _enabled; }
 //    void setForeground(PIX _foreground) { foreground = _foreground; }
     void setLocation(int x, int y);
     void setLocation(const iXY &p) { setLocation(p.x, p.y); }
-    void setName(const std::string& name) { Component::name = name; }
+    void setName(const std::string& name) { Component::componentName = name; }
 
-    virtual void draw(Surface &dest) = 0;
+    virtual void draw(Surface &dest)
+    {
+        iRect bounds;
+        getBounds(bounds);
+        
+        if ( dirty )
+            render();
+        
+        surface.blt(dest, bounds.min.x, bounds.min.y);
+    }
+    
+    virtual void render() = 0;
     virtual void actionPerformed(const mMouseEvent &me) = 0;
 }; // end Component
 

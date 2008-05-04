@@ -33,11 +33,16 @@ public:
         background = bgcolor;
         foreground = color;
         shadowed = shadow;
-        min.x = x;
-        min.y = y;
+        position.x = x;
+        position.y = y;
     }
     
     void draw(Surface &dest);
+    
+    virtual void render()
+    {
+        
+    }
     
     void actionPerformed(const mMouseEvent &me) {}
     

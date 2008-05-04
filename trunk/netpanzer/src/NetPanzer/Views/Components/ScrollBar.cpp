@@ -24,6 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ScrollBar::ScrollBar() : Component()
 {
     reset();
+    decrease = new Button( "decreaseButton");
+    decrease->setLabel("-");
+    
+    increase = new Button( "increaseButton");
+    increase->setLabel("+");
+
 
 } // end ScrollBar::ScrollBar
 
@@ -34,6 +40,11 @@ ScrollBar::ScrollBar(Orientation orientation)
     reset();
 
     ScrollBar::orientation = orientation;
+    decrease = new Button( "decreaseButton");
+    decrease->setLabel("-");
+    
+    increase = new Button( "increaseButton");
+    increase->setLabel("+");
 
 } // end ScrollBar::ScrollBar
 
@@ -48,9 +59,15 @@ ScrollBar::ScrollBar(Orientation orientation, int value, int visible, int minimu
     ScrollBar::value       = visible;
     ScrollBar::minimum     = minimum;
     ScrollBar::maximum     = maximum;
-
-    decrease.setSize(MINOR_AXIS_SIZE, MINOR_AXIS_SIZE);
-    increase.setSize(MINOR_AXIS_SIZE, MINOR_AXIS_SIZE);
+ 
+    decrease = new Button( "decreaseButton");
+    decrease->setLabel("-");
+    
+    increase = new Button( "increaseButton");
+    increase->setLabel("+");
+    
+    decrease->setSize(MINOR_AXIS_SIZE, MINOR_AXIS_SIZE);
+    increase->setSize(MINOR_AXIS_SIZE, MINOR_AXIS_SIZE);
 
 } // end ScrollBar::ScrollBar
 
@@ -76,12 +93,12 @@ void ScrollBar::setLocation()
     if (parent != 0) {
         if (orientation == HORIZONTAL) {
             // MINOR_AXIS_SIZE * 2 is room for the click buttons.
-            min.x = ((View *) parent)->getClientRect().min.x + MINOR_AXIS_SIZE;
-            min.y = ((View *) parent)->getClientRect().max.y - MINOR_AXIS_SIZE;
+            position.x = ((View *) parent)->getClientRect().min.x + MINOR_AXIS_SIZE;
+            position.y = ((View *) parent)->getClientRect().max.y - MINOR_AXIS_SIZE;
         } else if (orientation == VERTICAL) {
             // MINOR_AXIS_SIZE * 2 is room for the click buttons.
-            min.x = ((View *) parent)->getClientRect().max.x - MINOR_AXIS_SIZE;
-            min.y = ((View *) parent)->getClientRect().min.y + MINOR_AXIS_SIZE;
+            position.x = ((View *) parent)->getClientRect().max.x - MINOR_AXIS_SIZE;
+            position.y = ((View *) parent)->getClientRect().min.y + MINOR_AXIS_SIZE;
         } else {
             assert(false);
         }
@@ -119,11 +136,11 @@ void ScrollBar::draw(Surface &dest)
 
     // Set the button locations.
     if (orientation == VERTICAL) {
-        decrease.setLocation(min.x, min.y - MINOR_AXIS_SIZE);
-        increase.setLocation(min.x, min.y + MINOR_AXIS_SIZE);
+        decrease->setLocation(position.x, position.y - MINOR_AXIS_SIZE);
+        increase->setLocation(position.x, position.y + MINOR_AXIS_SIZE);
     } else if (orientation == HORIZONTAL) {
-        decrease.setLocation(min.x - MINOR_AXIS_SIZE, min.y);
-        increase.setLocation(min.x + MINOR_AXIS_SIZE, min.y);
+        decrease->setLocation(position.x - MINOR_AXIS_SIZE, position.y);
+        increase->setLocation(position.x + MINOR_AXIS_SIZE, position.y);
     } else {
         assert(false);
     }

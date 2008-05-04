@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/View.hpp"
 #include "GameTemplateView.hpp"
 #include "Interfaces/UnitProfileInterface.hpp"
-#include "Views/Components/AbstractButton.hpp"
+#include "Views/Components/Component.hpp"
 #include "Views/Components/Button.hpp"
 
 
@@ -62,22 +62,12 @@ void toggleDisplayOutpostNames( void );
 class VehicleSelectionView : public GameTemplateView
 {
 private:
+    friend class UnitSelectionButton;
     int highlightedUnitType;
 
-    AbstractButton abstractButtonValentine;
-    AbstractButton abstractButtonLeopard;
-    AbstractButton abstractButtonAbrams;
-    AbstractButton abstractButtonHammerhead;
-    AbstractButton abstractButtonLynx;
-    AbstractButton abstractButtonM109;
-    AbstractButton abstractButtonSpahpanzer;
-    AbstractButton abstractButtonScorpion;
-    AbstractButton abstractButtonHumvee;
-    AbstractButton abstractButtonArcher;
-
-    static Button buttonStaticDisplay;
-    static Button buttonPower;
-    static Button buttonOk;
+    static Button * buttonStaticDisplay;
+    static Button * buttonPower;
+    static Button * buttonOk;
 
     int maxHitPoints;
     int maxAttackFactor;

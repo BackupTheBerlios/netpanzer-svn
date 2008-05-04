@@ -83,7 +83,7 @@ static void bNext()
         return;
 
     // Set the player flag.
-    gameconfig->playerflag = playerFlagSelected;
+    gameconfig->playerflag = FlagSelectionView::getSelectedFlag();
 
     // Close all menu views.
     Desktop::setVisibilityAllWindows(false);

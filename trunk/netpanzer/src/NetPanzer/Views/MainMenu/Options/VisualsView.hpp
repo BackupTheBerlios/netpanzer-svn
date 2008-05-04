@@ -42,17 +42,17 @@ private:
     int      selectedColorStartY;
 
     // Option check boxes.
-    CheckBox checkBoxDrawAllShadows;
-    CheckBox checkBoxBlendSmoke;
-    CheckBox checkBoxFullscreen;
+    CheckBox * checkBoxDrawAllShadows;
+    CheckBox * checkBoxBlendSmoke;
+    CheckBox * checkBoxFullscreen;
     //CheckBox drawUnitReload;
 
     // Option choices.
-    Choice   choiceResolution;
-    Choice   choiceGameViewBackgroundColor;
-    Choice   choiceMiniMapObjectiveDrawMode;
-    Choice   choiceMiniMapUnitSize;
-    Choice   choiceUnitSelectionDrawMode;
+    Choice   * choiceResolution;
+    Choice   * choiceGameViewBackgroundColor;
+    Choice   * choiceMiniMapObjectiveDrawMode;
+    Choice   * choiceMiniMapUnitSize;
+    Choice   * choiceUnitSelectionDrawMode;
 
     //Choice   choiceUnitInfoDrawLayer;
 

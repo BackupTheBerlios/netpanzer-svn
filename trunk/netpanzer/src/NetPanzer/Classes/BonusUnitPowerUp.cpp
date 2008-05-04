@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
+#include "Interfaces/UnitProfileInterface.hpp"
 
 #include "Interfaces/Server.hpp"
 #include "Classes/Network/NetworkServer.hpp"
@@ -40,7 +41,7 @@ SpritePacked BONUS_POWERUP_ANIM_SHADOW;
 BonusUnitPowerUp::BonusUnitPowerUp(iXY map_loc, int type)
         : PowerUp( map_loc, type )
 {
-    bonus_unit_type = rand() % _unit_type_humvee;
+    bonus_unit_type = rand() % UnitProfileInterface::getNumUnitTypes();
 
     bonus_unit_animation.setData( BONUS_POWERUP_ANIM );
     bonus_unit_animation.setAttrib( powerup_state.world_loc, iXY(0,0), 5 );

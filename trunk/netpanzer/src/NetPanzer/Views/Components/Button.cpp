@@ -18,35 +18,42 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "Views/Components/Button.hpp"
-#include "ViewGlobals.hpp"
+#include "Util/Log.hpp"
+
 #include "MouseEvent.hpp"
 
-// draw
-//---------------------------------------------------------------------------
-void Button::draw(Surface &dest)
-{
-    iRect bounds;
-    getBounds(bounds);
-
-    if ( dirty )
-        render();
-
-    surface.blt(dest, bounds.min.x, bounds.min.y);
-    
-} // end Button::draw
 
 // render
 void
 Button::render()
 {
-    surface.fill(componentBodyColor);
-    surface.drawButtonBorder(borderTop, borderBottom);
+    if ( bimage.getNumFrames() == 1 ) {
+        bimage.blt(surface, extraBorder, extraBorder);
+    }
+    else if ( bimage.getNumFrames() == 3 )
+    {
+        bimage.setFrame(bstate);
+        bimage.blt(surface, extraBorder, extraBorder);
+    }
+    else
+    {
+        surface.fill(componentBodyColor);        
+    }
+
+    if ( borders[bstate][0]|extraBorder ) // only 1 | (binary or)
+    {
+        surface.drawButtonBorder(borders[bstate][0], borders[bstate][1]);
+    }
     
-    Surface text;
-    text.renderText( label.c_str(), textColor, 0);
-    // blit centered and transparent
-    text.bltTrans(surface, (surface.getWidth()/2) - (text.getWidth()/2),
-                           (surface.getHeight()/2) - (text.getHeight()/2));
+    if ( label.length() )
+    {
+        Surface text;
+        text.renderText( label.c_str(), textColor, 0);
+        // blit centered and transparent
+        text.bltTrans(surface, (surface.getWidth()/2) - (text.getWidth()/2),
+                      (surface.getHeight()/2) - (text.getHeight()/2));        
+    }
+    
     dirty = false;
 }
 
@@ -56,18 +63,15 @@ void Button::actionPerformed(const mMouseEvent &me)
 {
     if (me.getID() == mMouseEvent::MOUSE_EVENT_ENTERED
                 || me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED) {
+        bstate = BOVER;
         textColor = Color::red;
-        borderTop = topLeftBorderColor;
-        borderBottom = bottomRightBorderColor;
         dirty = true; // draw text in red
     } else if (me.getID() == mMouseEvent::MOUSE_EVENT_EXITED) {
+        bstate = BNORMAL;
         textColor = Color::white;
-        borderTop = topLeftBorderColor;
-        borderBottom = bottomRightBorderColor;
         dirty = true; // draw defaults;
     } else if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED) {
-        borderTop = bottomRightBorderColor;
-        borderBottom = topLeftBorderColor;
+        bstate = BPRESSED;
         textColor = Color::yellow;
         dirty = true;
     }

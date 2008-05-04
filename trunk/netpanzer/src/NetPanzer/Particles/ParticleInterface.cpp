@@ -59,8 +59,8 @@ int ParticleInterface::gExplosionFlameFlashCullHitCount  = 1;
 int ParticleInterface::gMuzzleSystemCullMissCount        = 1;
 int ParticleInterface::gMuzzleSystemCullHitCount         = 1;
 
-int ParticleInterface::unitHitPointTable[_MAX_UNIT_TYPES];
-int ParticleInterface::unitAttackFactorTable[_MAX_UNIT_TYPES];
+vector<int> ParticleInterface::unitHitPointTable;
+vector<int> ParticleInterface::unitAttackFactorTable;
 
 
 //--------------------------------------------------------------------------
@@ -488,7 +488,7 @@ void ParticleInterface::testSim()
         unitState.location.y = gameViewRect.min.y + 100 + (rand() % (gameViewRect.getSizeY() - 200));
 
         // Hack until all the units are actually used.
-        unitState.unit_type = rand() % _MAX_UNIT_TYPES;
+        unitState.unit_type = rand() % UnitProfileInterface::getNumUnitTypes();
         //unitState.unit_type = rand() % 7;
 
         addHit(unitState);
@@ -508,7 +508,7 @@ void ParticleInterface::testSim()
         location.x = gameViewRect.min.x + 100 + (rand() % (gameViewRect.getSizeX() - 200));
         location.y = gameViewRect.min.y + 100 + (rand() % (gameViewRect.getSizeY() - 200));
 
-        addMiss(location, rand() % _MAX_UNIT_TYPES);
+        addMiss(location, rand() % UnitProfileInterface::getNumUnitTypes());
     }
 }
 
@@ -755,7 +755,10 @@ void ParticleInterface::addMiss(const iXY &worldPos, Uint8 unitType)
 
 void ParticleInterface::buildUnitTables()
 {
-    for (int i = 0; i < _MAX_UNIT_TYPES; i++) {
+    unitHitPointTable.resize(UnitProfileInterface::getNumUnitTypes());
+    unitAttackFactorTable.resize(UnitProfileInterface::getNumUnitTypes());
+    
+    for (int i = 0; i < UnitProfileInterface::getNumUnitTypes(); i++) {
         UnitProfile *p = UnitProfileInterface::getUnitProfile(i);
 
         unitHitPointTable[i]     = int(sqrt(p->hit_points));
@@ -855,11 +858,12 @@ void ParticleInterface::addMuzzlePuff(const fXYZ &worldPos, const fXYZ &directio
     m.puffRandScale  = 0.1f;
     m.puffType       = DARK;
 
-    if (unitType == _unit_type_m109) {
-        m.muzzleType = MuzzleSystem::TRIPLE;
-    } else {
+// XXX CHECK
+//    if (unitType == _unit_type_m109) {
+//        m.muzzleType = MuzzleSystem::TRIPLE;
+//    } else {
         m.muzzleType = MuzzleSystem::SINGLE;
-    }
+//    }
 
     assert(frame < 36 && frame >= 0);
     fXYZ muzzlePos;
@@ -977,81 +981,18 @@ void ParticleInterface::addMoveDirtPuff(const UnitState &unitState)
     }
 }
 
-//enum  { _unit_type_valentine,
-//        _unit_type_leopard,
-//        _unit_type_abrams,
-//        _unit_type_hammerhead,
-//        _unit_type_lynx,
-//        _unit_type_m109,
-//        _unit_type_spahpanzer,
-//        _unit_type_scorpion,
-//        _unit_type_humvee,
-//        _unit_type_hover_craft,
-//        _unit_type_comm_killer,
-//        _unit_type_refueler,
-//        _unit_type_null
-//      };
-
 //--------------------------------------------------------------------------
 void ParticleInterface::getUnitParticleInfo()
 {
-    assert(gValentineTurret.getFrameCount() > 0);
-
     // Create the correct number of unit information slots.
-    unitParticleInfo.resize(_MAX_UNIT_TYPES);
-
-    // _unit_type_valentine
-    getMuzzleTips(gValentineTurret, unitParticleInfo[_unit_type_valentine].muzzleTip);
-    getMinBounds(gValentineBody, unitParticleInfo[_unit_type_valentine].minBounds);
-
-    // _unit_type_leopard
-    getMuzzleTips(gLeopardTurret, unitParticleInfo[_unit_type_leopard].muzzleTip);
-    getMinBounds(gLeopardBody, unitParticleInfo[_unit_type_leopard].minBounds);
-
-    // _unit_type_abrams
-    getMuzzleTips(gAbramsTurret, unitParticleInfo[_unit_type_abrams].muzzleTip);
-    getMinBounds(gAbramsBody, unitParticleInfo[_unit_type_abrams].minBounds);
-
-    // _unit_type_hammerhead
-    getMuzzleTips(gHammerheadTurret, unitParticleInfo[_unit_type_hammerhead].muzzleTip);
-    getMinBounds(gHammerheadBody, unitParticleInfo[_unit_type_hammerhead].minBounds);
-
-    // _unit_type_humvee
-    getMuzzleTips(gSpahPanzerBody, unitParticleInfo[_unit_type_humvee].muzzleTip);
-    getMinBounds(gSpahPanzerBody, unitParticleInfo[_unit_type_humvee].minBounds);
-
-    // _unit_type_lynx
-    getMuzzleTips(gLynxTurret, unitParticleInfo[_unit_type_lynx].muzzleTip);
-    getMinBounds(gLynxBody, unitParticleInfo[_unit_type_lynx].minBounds);
-
-    // _unit_type_m109
-    getMuzzleTips(gM109Turret, unitParticleInfo[_unit_type_m109].muzzleTip);
-    getMinBounds(gM109Body, unitParticleInfo[_unit_type_m109].minBounds);
-
-    // _unit_type_spahpanzer
-    getMuzzleTips(gBearTurret, unitParticleInfo[_unit_type_spahpanzer].muzzleTip);
-    getMinBounds(gBearBody, unitParticleInfo[_unit_type_spahpanzer].minBounds);
-
-    // _unit_type_scorpion
-    getMuzzleTips(gScorpionTurret, unitParticleInfo[_unit_type_scorpion].muzzleTip);
-    getMinBounds(gScorpionBody, unitParticleInfo[_unit_type_scorpion].minBounds);
-
-    // _unit_type_hover_craft
-    //getMuzzleTips(gHoverCraftBody, unitParticleInfo[_unit_type_hover_craft].muzzleTip);
-    //getMinBounds(gHoverCraftBody, unitParticleInfo[_unit_type_hover_craft].minBounds);
-
-    // _unit_type_comm_killer
-    //getMuzzleTips(gCommKillerBody, unitParticleInfo[_unit_type_comm_killer].muzzleTip);
-    //getMinBounds(gCommKillerBody, unitParticleInfo[_unit_type_comm_killer].minBounds);
-
-    // _unit_type_refueler
-    //getMuzzleTips(gRefuelerBody, unitParticleInfo[_unit_type_refueler].muzzleTip);
-    //getMinBounds(gRefuelerBody, unitParticleInfo[_unit_type_refueler].minBounds);
-
-    // _unit_type_archer
-    getMuzzleTips(gArcherTurret, unitParticleInfo[_unit_type_archer].muzzleTip);
-    getMinBounds(gArcherBody, unitParticleInfo[_unit_type_archer].minBounds);
-
+    unitParticleInfo.resize(UnitProfileInterface::getNumUnitTypes());
+    
+    for ( int i=0; i< UnitProfileInterface::getNumUnitTypes(); i++ )
+    {
+        UnitProfile * uprofile = UnitProfileInterface::getUnitProfile(i);
+        getMuzzleTips(uprofile->turretSprite, unitParticleInfo[i].muzzleTip);
+        getMinBounds(uprofile->bodySprite, unitParticleInfo[i].minBounds);        
+    }
 }
 
 //--------------------------------------------------------------------------

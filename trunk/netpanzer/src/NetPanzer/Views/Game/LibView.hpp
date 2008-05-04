@@ -40,14 +40,14 @@ protected:
     void drawParticleInfo(Surface &clientArea, iXY pos);
     void drawEnvironmentInfo(Surface &dest, iXY pos);
 
-    CheckBox checkBoxAllowParticleGeneration;
-    CheckBox checkBoxAllowTimeSlice;
-    CheckBox checkBoxAllowSpanBlitting;
-    CheckBox checkBoxParticlesCanHaveSmoke;
-    CheckBox checkBoxSolidColorExplosionParticles;
-    CheckBox checkBoxParticleInterfaceSim;
-    CheckBox checkBoxSolidBackground;
-    CheckBox checkBoxDrawExplosionParticleCount;
+    CheckBox * checkBoxAllowParticleGeneration;
+    CheckBox * checkBoxAllowTimeSlice;
+    CheckBox * checkBoxAllowSpanBlitting;
+    CheckBox * checkBoxParticlesCanHaveSmoke;
+    CheckBox * checkBoxSolidColorExplosionParticles;
+    CheckBox * checkBoxParticleInterfaceSim;
+    CheckBox * checkBoxSolidBackground;
+    CheckBox * checkBoxDrawExplosionParticleCount;
 
 public:
     LibView();

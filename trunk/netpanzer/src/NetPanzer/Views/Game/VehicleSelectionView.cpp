@@ -21,42 +21,119 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "VehicleSelectionView.hpp"
 #include "Structs/UnitTypes.hpp"
 #include "Views/GameViewGlobals.hpp"
-#include "Views/Components/Desktop.hpp"
 #include "Classes/Network/TerminalNetMesg.hpp"
-#include "Interfaces/Client.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
-#include "Interfaces/WorldViewInterface.hpp"
-#include "Interfaces/ObjectiveInterface.hpp"
-#include "Interfaces/UnitProfileInterface.hpp"
 #include "Classes/ScreenSurface.hpp"
 #include "Util/Math.hpp"
-#include "Interfaces/ObjectiveInterface.hpp"
 #include "Structs/UnitTypes.hpp"
+#include "Interfaces/WorldViewInterface.hpp"
+#include "Interfaces/ObjectiveInterface.hpp"
+#include "Interfaces/Client.hpp"
+#include "Interfaces/UnitProfileInterface.hpp"
+#include "Interfaces/ObjectiveInterface.hpp"
 #include "Interfaces/UnitInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Views/Components/Desktop.hpp"
 #include "Views/Components/ViewGlobals.hpp"
 #include "Views/Components/Label.hpp"
 
+int vsvSelectedUnit   = 0;
+int vsvUnitGenOn      = true;
+bool changeMade       = false;
+unsigned short CURRENT_SELECTED_OUTPOST_ID;
 
-Button VehicleSelectionView::buttonStaticDisplay;
-Button VehicleSelectionView::buttonPower;
-Button VehicleSelectionView::buttonOk;
+static void sendOutpostStatus()
+{
+    if (!changeMade) {
+        return;
+    }
+    
+    // Send the server the selected unit and whether factory power is on.
+    TerminalOutpostUnitGenRequest term_mesg;
+    
+    term_mesg.unit_gen_request.set( CURRENT_SELECTED_OUTPOST_ID,
+                                   (char) vsvSelectedUnit,
+                                   vsvUnitGenOn );
+    
+    CLIENT->sendMessage(&term_mesg, sizeof(term_mesg));
+    
+    if(NetworkState::status == _network_state_client) {
+        ObjectiveInterface::sendMessage( &(term_mesg.unit_gen_request) );
+    }
+}
 
-bool changeMade = false;
+static void bOK()
+{
+    Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
+    sendOutpostStatus();
+    changeMade = false;
+}
+
+static void bSetPowerOn()
+{
+    vsvUnitGenOn = true;
+    changeMade   = true;
+    
+    VehicleSelectionView::setPowerOn();
+}
+
+class UnitSelectionButton : public Button
+{
+protected:
+    unsigned short unitType;
+    VehicleSelectionView * p;
+public:
+    UnitSelectionButton(VehicleSelectionView * vsv, const char *cname, int unit_type, int x, int y, const Surface &s)
+        : Button(cname), unitType(unit_type), p(vsv)
+    {
+        bimage.copy(s);
+        setSize( bimage.getWidth(), bimage.getHeight());
+        setLocation(x, y);
+        setUnitSelectionBorder();
+    }
+    
+    void actionPerformed( const mMouseEvent &e )
+    {        
+        if ( e.getID() == mMouseEvent::MOUSE_EVENT_PRESSED )
+        {
+            resetState();
+            if (vsvSelectedUnit == unitType && vsvUnitGenOn) {
+                Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
+                return;
+            }
+            
+            vsvSelectedUnit = unitType;
+            changeMade      = true;
+            bSetPowerOn();
+            bOK();
+        }
+        else if ( e.getID() == mMouseEvent::MOUSE_EVENT_ENTERED )
+        {
+            Button::actionPerformed(e);
+            p->highlightedUnitType = unitType;
+        }
+        else if ( e.getID() == mMouseEvent::MOUSE_EVENT_EXITED )
+        {
+            Button::actionPerformed(e);
+            if ( p->highlightedUnitType == unitType )
+                p->highlightedUnitType = -1;
+        }
+    }
+};
+
+Button * VehicleSelectionView::buttonStaticDisplay = 0;
+Button * VehicleSelectionView::buttonPower = 0;
+Button * VehicleSelectionView::buttonOk = 0;
 
 iRect   VehicleSelectionView::miniProductionRect(0, 0, 0, 0);
 Surface VehicleSelectionView::unitImages;
 bool    VehicleSelectionView::displayMiniProductionStatus = true;
 bool    VehicleSelectionView::displayOutpostNames = true;
 
-unsigned short CURRENT_SELECTED_OUTPOST_ID;
 
-
-int vsvSelectedUnit   = _unit_type_valentine;
-int vsvUnitGenOn      = true;
 
 void activateVehicleSelectionView(unsigned short outpost_id)
 {
@@ -82,175 +159,6 @@ void toggleDisplayOutpostNames( void )
     VehicleSelectionView::displayOutpostNames = !VehicleSelectionView::displayOutpostNames;
 }
 
-
-
-static void sendOutpostStatus()
-{
-    if (!changeMade) {
-        return;
-    }
-    assert(vsvSelectedUnit != _unit_type_null);
-
-    // Send the server the selected unit and whether factory power is on.
-    TerminalOutpostUnitGenRequest term_mesg;
-
-    term_mesg.unit_gen_request.set( CURRENT_SELECTED_OUTPOST_ID,
-                                    (char) vsvSelectedUnit,
-                                    vsvUnitGenOn );
-
-    CLIENT->sendMessage(&term_mesg, sizeof(term_mesg));
-
-    if(NetworkState::status == _network_state_client) {
-        ObjectiveInterface::sendMessage( &(term_mesg.unit_gen_request) );
-    }
-}
-
-static void bOK()
-{
-    Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
-    sendOutpostStatus();
-    changeMade = false;
-}
-
-static void bSetPowerOn()
-{
-    vsvUnitGenOn = true;
-    changeMade   = true;
-
-    VehicleSelectionView::setPowerOn();
-}
-
-
-static void bSelectScout()
-{
-    if (vsvSelectedUnit == _unit_type_humvee && vsvUnitGenOn) {
-        Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
-        return;
-    }
-
-    vsvSelectedUnit = _unit_type_humvee;
-    changeMade      = true;
-    bSetPowerOn();
-    bOK();
-}
-
-static void bSelectManta()
-{
-    if (vsvSelectedUnit == _unit_type_valentine && vsvUnitGenOn) {
-        Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
-        return;
-    }
-
-    vsvSelectedUnit = _unit_type_valentine;
-    changeMade      = true;
-    bSetPowerOn();
-    bOK();
-}
-
-static void bSelectPanther1()
-{
-    if (vsvSelectedUnit == _unit_type_leopard && vsvUnitGenOn) {
-        Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
-        return;
-    }
-
-    vsvSelectedUnit = _unit_type_leopard;
-    changeMade      = true;
-    bSetPowerOn();
-    bOK();
-}
-
-static void bSelectTitan()
-{
-    if (vsvSelectedUnit == _unit_type_abrams && vsvUnitGenOn) {
-        Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
-        return;
-    }
-
-    vsvSelectedUnit = _unit_type_abrams;
-    changeMade      = true;
-    bSetPowerOn();
-    bOK();
-}
-
-static void bSelectStinger()
-{
-    if (vsvSelectedUnit == _unit_type_hammerhead && vsvUnitGenOn) {
-        Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
-        return;
-    }
-
-    vsvSelectedUnit = _unit_type_hammerhead;
-    changeMade      = true;
-    bSetPowerOn();
-    bOK();
-}
-
-static void bSelectBobcat()
-{
-    if (vsvSelectedUnit == _unit_type_lynx && vsvUnitGenOn) {
-        Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
-        return;
-    }
-
-    vsvSelectedUnit = _unit_type_lynx;
-    changeMade      = true;
-    bSetPowerOn();
-    bOK();
-}
-
-static void bSelectWolf()
-{
-    if (vsvSelectedUnit == _unit_type_scorpion && vsvUnitGenOn) {
-        Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
-        return;
-    }
-
-    vsvSelectedUnit = _unit_type_scorpion;
-    changeMade      = true;
-    bSetPowerOn();
-    bOK();
-}
-
-static void bSelectBear()
-{
-    if (vsvSelectedUnit == _unit_type_spahpanzer && vsvUnitGenOn) {
-        Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
-        return;
-    }
-
-    vsvSelectedUnit = _unit_type_spahpanzer;
-    changeMade      = true;
-    bSetPowerOn();
-    bOK();
-}
-
-static void bSelectDrake()
-{
-    if (vsvSelectedUnit == _unit_type_m109 && vsvUnitGenOn) {
-        Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
-        return;
-    }
-
-    vsvSelectedUnit = _unit_type_m109;
-    changeMade      = true;
-    bSetPowerOn();
-    bOK();
-}
-
-static void bSelectArcher()
-{
-    if (vsvSelectedUnit == _unit_type_archer && vsvUnitGenOn) {
-        Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
-        return;
-    }
-
-    vsvSelectedUnit = _unit_type_archer;
-    changeMade      = true;
-    bSetPowerOn();
-    bOK();
-}
-
 // VehicleSelectionView
 //---------------------------------------------------------------------------
 VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
@@ -266,8 +174,6 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 
     moveTo(iXY(0, 0));
 
-    char      strBuf[256];
-    int       unit_regen_time;
     const int yOffset  = 15;
     const int gapSpace =  1;
 
@@ -280,18 +186,27 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     add( new Label( pos.x+2, pos.y+2, "Static Display:", Color::white) );
 
     pos.x = getClientRect().getSizeX() - 100;
-    buttonStaticDisplay.setLabel("On");
-    buttonStaticDisplay.setBounds(iRect(pos, pos + iXY(100, 15)));
-    add(&buttonStaticDisplay);
+    if ( !buttonStaticDisplay )
+        buttonStaticDisplay = new Button( "ButtonStaticDisplay");
+    buttonStaticDisplay->setLabel("On");
+    buttonStaticDisplay->setLocation(pos.x, pos.y);
+    buttonStaticDisplay->setSize( 100, 15);
+    buttonStaticDisplay->setNormalBorder();
+    add(buttonStaticDisplay);
     pos.y += yOffset;
 
     pos.x = 0;
     add( new Label( pos.x+2, pos.y+2, "Power:", Color::white) );
 
     pos.x = getClientRect().getSizeX() - 100;
-    buttonPower.setLabel("Off");
-    buttonPower.setBounds(iRect(pos, pos + iXY(100, 15)));
-    add(&buttonPower);
+    if ( !buttonPower )
+        buttonPower = new Button( "ButtonPower");
+    
+    buttonPower->setLabel("Off");
+    buttonPower->setLocation(pos.x,pos.y);
+    buttonPower->setSize( 100, 15);
+    buttonPower->setNormalBorder();
+    add(buttonPower);
     pos.y += yOffset;
 
     // XXX hardcoded for now
@@ -317,80 +232,43 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 
     pos.x = 0;
 
-    // Unit images.
-    unit_regen_time = getUnitRegenTime(_unit_type_humvee);
-    sprintf(strBuf, "SpahPanzer - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-    addButtonBMPBordered(pos, "pics/menus/vehicleSelectionView/scout.bmp", strBuf, bSelectScout);
-    abstractButtonHumvee.setBounds(iRect(pos, pos + iXY(48,48)));
-    add(&abstractButtonHumvee);
-
-    pos.x += 48 + gapSpace;
-    unit_regen_time = getUnitRegenTime(_unit_type_valentine);
-    sprintf(strBuf, "Manta - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-    addButtonBMPBordered(pos, "pics/menus/vehicleSelectionView/manta.bmp", strBuf, bSelectManta);
-    abstractButtonValentine.setBounds(iRect(pos, pos + iXY(48,48)));
-    add(&abstractButtonValentine);
-
-    pos.x += 48 + gapSpace;
-    unit_regen_time = getUnitRegenTime(_unit_type_leopard);
-    sprintf(strBuf, "Panther1 - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-    addButtonBMPBordered(pos, "pics/menus/vehicleSelectionView/panther1.bmp", strBuf, bSelectPanther1);
-    abstractButtonLeopard.setBounds(iRect(pos, pos + iXY(48,48)));
-    add(&abstractButtonLeopard);
-
-    pos.x += 48 + gapSpace;
-    unit_regen_time = getUnitRegenTime(_unit_type_abrams);
-    sprintf(strBuf, "Titan - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-    addButtonBMPBordered(pos, "pics/menus/vehicleSelectionView/titan.bmp", strBuf, bSelectTitan);
-    abstractButtonAbrams.setBounds(iRect(pos, pos + iXY(48,48)));
-    add(&abstractButtonAbrams);
-
-    pos.x += 48 + gapSpace;
-    unit_regen_time = getUnitRegenTime(_unit_type_hammerhead);
-    sprintf(strBuf, "Stinger - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-    addButtonBMPBordered(pos, "pics/menus/vehicleSelectionView/stinger.bmp", strBuf, bSelectStinger);
-    abstractButtonHammerhead.setBounds(iRect(pos, pos + iXY(48,48)));
-    add(&abstractButtonHammerhead);
-
-    pos.x = 0;
-    pos.y += 48 + gapSpace;
-    unit_regen_time = getUnitRegenTime(_unit_type_lynx);
-    sprintf(strBuf, "Bobcat - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-    addButtonBMPBordered(pos, "pics/menus/vehicleSelectionView/bobcat.bmp", strBuf, bSelectBobcat);
-    abstractButtonLynx.setBounds(iRect(pos, pos + iXY(48,48)));
-    add(&abstractButtonLynx);
-
-    pos.x += 48 + gapSpace;
-    unit_regen_time = getUnitRegenTime(_unit_type_scorpion);
-    sprintf(strBuf, "Wolf - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-    addButtonBMPBordered(pos, "pics/menus/vehicleSelectionView/wolf.bmp", strBuf, bSelectWolf);
-    abstractButtonScorpion.setBounds(iRect(pos, pos + iXY(48, 48)));
-    add(&abstractButtonScorpion);
-
-    pos.x += 48 + gapSpace;
-    unit_regen_time = getUnitRegenTime(_unit_type_spahpanzer);
-    sprintf(strBuf, "Bear - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-    addButtonBMPBordered(pos, "pics/menus/vehicleSelectionView/bear.bmp", strBuf, bSelectBear);
-    abstractButtonSpahpanzer.setBounds(iRect(pos, pos + iXY(48, 48)));
-    add(&abstractButtonSpahpanzer);
-
-    pos.x += 48 + gapSpace;
-    unit_regen_time = getUnitRegenTime(_unit_type_m109);
-    sprintf(strBuf, "Drake - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-    addButtonBMPBordered(pos, "pics/menus/vehicleSelectionView/drake.bmp", strBuf, bSelectDrake);
-    abstractButtonM109.setBounds(iRect(pos, pos + iXY(48, 48)));
-    add(&abstractButtonM109);
-
-    pos.x += 48 + gapSpace;
-    unit_regen_time = getUnitRegenTime(_unit_type_archer);
-    sprintf(strBuf, "Archer - Build Time: %01d:%02d", unit_regen_time / 60, unit_regen_time % 60);
-    addButtonBMPBordered(pos, "pics/menus/vehicleSelectionView/archer.bmp", strBuf, bSelectArcher);
-    abstractButtonArcher.setBounds(iRect(pos, pos + iXY(48, 48)));
-    add(&abstractButtonArcher);
-
-    pos.y += 48 + gapSpace * 4;
-    pos.x = 0;
-
+    Surface tempSurface;
+    
+    UnitSelectionButton *usb;
+    UnitProfile *uprofile;
+    unitImages.create(48, 48, UnitProfileInterface::getNumUnitTypes());
+    // XXX order by something?
+    for ( int ut=0; ut < UnitProfileInterface::getNumUnitTypes(); ut++)
+    {
+        uprofile = UnitProfileInterface::getUnitProfile(ut);
+        
+        tempSurface.loadBMP(uprofile->imagefile.c_str());
+        unitImages.setFrame(ut);
+        tempSurface.blt(unitImages, 0, 0);
+        
+        usb = new UnitSelectionButton(this, uprofile->unitname.c_str(),
+                                      ut, pos.x, pos.y, tempSurface);
+        
+        add(usb);
+        
+        pos.x += 48 + gapSpace;
+        if ( pos.x+48 > max.x-min.x )
+        {
+            pos.x = 0;
+            pos.y += 48 + gapSpace;
+        }
+    }
+    
+    if ( pos.x == 0 )
+    {
+        pos.y += gapSpace * 3; // and the one just added before = 4
+    }
+    else
+    {
+        pos.y += 48 + gapSpace * 4;
+        pos.x = 0;
+    }
+    
     unitProfileDataY = pos.y;
     pos.y += 74;
 
@@ -400,51 +278,14 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     //pos.y += yOffset;
 
     pos.x = (getClientRect().getSizeX() - 100) / 2;
-    buttonOk.setLabel("Ok");
-    buttonOk.setBounds(iRect(pos, pos + iXY(100, 15)));
-    add(&buttonOk);
-
-    unitImages.create(48, 48, _MAX_UNIT_TYPES);
-
-    Surface tempSurface;
-    int i = 0;
-
-    tempSurface.loadBMP("pics/menus/vehicleSelectionView/manta.bmp");
-    unitImages.setFrame(i++);
-    tempSurface.blt(unitImages, 0, 0);
-    tempSurface.loadBMP("pics/menus/vehicleSelectionView/panther1.bmp");
-    unitImages.setFrame(i++);
-    tempSurface.blt(unitImages, 0, 0);
-    tempSurface.loadBMP("pics/menus/vehicleSelectionView/titan.bmp");
-    unitImages.setFrame(i++);
-    tempSurface.blt(unitImages, 0, 0);
-    tempSurface.loadBMP("pics/menus/vehicleSelectionView/stinger.bmp");
-    unitImages.setFrame(i++);
-    tempSurface.blt(unitImages, 0, 0);
-    tempSurface.loadBMP("pics/menus/vehicleSelectionView/bobcat.bmp");
-    unitImages.setFrame(i++);
-    tempSurface.blt(unitImages, 0, 0);
-    tempSurface.loadBMP("pics/menus/vehicleSelectionView/bear.bmp");
-    unitImages.setFrame(i++);
-    tempSurface.blt(unitImages, 0, 0);
-    tempSurface.loadBMP("pics/menus/vehicleSelectionView/archer.bmp");
-    unitImages.setFrame(i++);
-    tempSurface.blt(unitImages, 0, 0);
-    tempSurface.loadBMP("pics/menus/vehicleSelectionView/wolf.bmp");
-    unitImages.setFrame(i++);
-    tempSurface.blt(unitImages, 0, 0);
-    tempSurface.loadBMP("pics/menus/vehicleSelectionView/drake.bmp");
-    unitImages.setFrame(i++);
-    tempSurface.blt(unitImages, 0, 0);
-    tempSurface.loadBMP("pics/menus/vehicleSelectionView/scout.bmp");
-    unitImages.setFrame(i++);
-    tempSurface.blt(unitImages, 0, 0);
-    unitImages.setFrame(i++);
-    unitImages.fill(Color::red);
-    unitImages.setFrame(i++);
-    unitImages.fill(Color::green);
-    unitImages.setFrame(i++);
-    unitImages.fill(Color::blue);
+    if ( !buttonOk )
+        buttonOk = new Button( "buttonClose");
+    
+    buttonOk->setLabel("Close");
+    buttonOk->setLocation(pos.x,pos.y);
+    buttonOk->setSize(100, 15);
+    buttonOk->setNormalBorder();
+    add(buttonOk);
 
     maxHitPoints = 1;
     maxAttackFactor = 1;
@@ -455,7 +296,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     maxRegenTime = 1;
     getProfileData();
 
-    highlightedUnitType = 0;
+    highlightedUnitType = -1;
 
 } // end VehicleSelectionView::VehicleSelectionView
 
@@ -588,7 +429,14 @@ void VehicleSelectionView::drawUnitImage(Surface &dest, const iXY &pos, int unit
 //---------------------------------------------------------------------------
 const char *VehicleSelectionView::getUnitName(int unitType)
 {
-    if (unitType == _unit_type_valentine) {
+    UnitProfile *p = UnitProfileInterface::getUnitProfile(unitType);
+    if ( p )
+    {
+        return p->unitname.c_str();
+    }
+    return "Invalid unit type.";
+    
+ /*   if (unitType == _unit_type_valentine) {
         return "Manta";
     } else if (unitType == _unit_type_leopard) {
         return "Panther 1";
@@ -615,6 +463,7 @@ const char *VehicleSelectionView::getUnitName(int unitType)
     } else {
         return "Invalid unit type.";
     }
+  */
 
 } // end VehicleSelectionView::getUnitName
 
@@ -622,16 +471,11 @@ const char *VehicleSelectionView::getUnitName(int unitType)
 //---------------------------------------------------------------------------
 int VehicleSelectionView::getUnitRegenTime(unsigned short unitType)
 {
-    UnitProfile *profile;
-
-    if (unitType != _unit_type_null) {
-        profile = UnitProfileInterface::getUnitProfile(unitType);
+    UnitProfile *profile = UnitProfileInterface::getUnitProfile(unitType);
+    if ( profile )
         return (int) profile->regen_time;
-    }
 
-    assert(false);
     return 0;
-
 } // end VehicleSelectionView::getUnitRegenTime
 
 // mouseMove
@@ -640,9 +484,16 @@ void VehicleSelectionView::mouseMove(const iXY &prevPos, const iXY &newPos)
 {
     GameTemplateView::mouseMove(prevPos, newPos);
 
-    if (highlightedButton >= 0) {
-        showStatus(buttons[highlightedButton]->getToolTip());
-    } else {
+    if ( highlightedUnitType >= 0 )
+    {
+        char strBuf[256];
+        int rtime = getUnitRegenTime(highlightedUnitType);
+        snprintf(strBuf, sizeof(strBuf)-1, "%s - Build Time: %01d:%02d",
+                 getUnitName(highlightedUnitType), rtime / 60, rtime % 60);
+        showStatus(strBuf);
+    }
+    else
+    {
         showStatus("Select a unit for production");
     }
 
@@ -846,7 +697,7 @@ void VehicleSelectionView::doActivate()
 //---------------------------------------------------------------------------
 void VehicleSelectionView::getProfileData()
 {
-    for (int i = 0; i < _unit_type_null; i++) {
+    for (int i = 0; i < UnitProfileInterface::getNumUnitTypes(); i++) {
         const UnitProfile *p = UnitProfileInterface::getUnitProfile(i);
 
         checkMaxValues(*p);
@@ -932,21 +783,21 @@ void VehicleSelectionView::drawBar(Surface &dest, const iXY &pos, int length, fl
 void VehicleSelectionView::actionPerformed(mMouseEvent me)
 {
     if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED) {
-        if (me.getSource(buttonStaticDisplay)) {
-            if (buttonStaticDisplay.getLabel() == "On") {
-                buttonStaticDisplay.setLabel("Off");
+        if (me.getSource()==buttonStaticDisplay) {
+            if (buttonStaticDisplay->getLabel() == "On") {
+                buttonStaticDisplay->setLabel("Off");
             } else {
-                buttonStaticDisplay.setLabel("On");
+                buttonStaticDisplay->setLabel("On");
             }
 
             VehicleSelectionView::displayMiniProductionStatus = !VehicleSelectionView::displayMiniProductionStatus;
         }
 
-        if (me.getSource(buttonPower)) {
-            if (buttonPower.getLabel() == "On") {
-                buttonPower.setLabel("Off");
+        if (me.getSource()==buttonPower) {
+            if (buttonPower->getLabel() == "On") {
+                buttonPower->setLabel("Off");
             } else {
-                buttonPower.setLabel("On");
+                buttonPower->setLabel("On");
             }
 
             vsvUnitGenOn = !vsvUnitGenOn;
@@ -954,51 +805,19 @@ void VehicleSelectionView::actionPerformed(mMouseEvent me)
             sendOutpostStatus();
         }
 
-        if (me.getSource(buttonOk)) {
+        if (me.getSource()==buttonOk) {
             Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
             sendOutpostStatus();
             changeMade = false;
         }
-    } else if (me.getID() == mMouseEvent::MOUSE_EVENT_ENTERED) {
-        if (me.getSource(abstractButtonValentine)) {
-            highlightedUnitType = _unit_type_valentine;
-        }
-        if (me.getSource(abstractButtonLeopard)) {
-            highlightedUnitType = _unit_type_leopard;
-        }
-        if (me.getSource(abstractButtonAbrams)) {
-            highlightedUnitType = _unit_type_abrams;
-        }
-        if (me.getSource(abstractButtonHammerhead)) {
-            highlightedUnitType = _unit_type_hammerhead;
-        }
-        if (me.getSource(abstractButtonLynx)) {
-            highlightedUnitType = _unit_type_lynx;
-        }
-        if (me.getSource(abstractButtonM109)) {
-            highlightedUnitType = _unit_type_m109;
-        }
-        if (me.getSource(abstractButtonSpahpanzer)) {
-            highlightedUnitType = _unit_type_spahpanzer;
-        }
-        if (me.getSource(abstractButtonScorpion)) {
-            highlightedUnitType = _unit_type_scorpion;
-        }
-        if (me.getSource(abstractButtonHumvee)) {
-            highlightedUnitType = _unit_type_humvee;
-        }
-        if (me.getSource(abstractButtonArcher)) {
-            highlightedUnitType = _unit_type_archer;
-        }
     }
-
 } // end VehicleSelectionView::actionPerformed
 
 // setPowerOn
 //---------------------------------------------------------------------------
 void VehicleSelectionView::setPowerOn()
 {
-    buttonPower.setLabel("On");
+    buttonPower->setLabel("On");
 
 } // end VehicleSelectionView::setPowerOn
 
@@ -1006,7 +825,7 @@ void VehicleSelectionView::setPowerOn()
 //---------------------------------------------------------------------------
 void VehicleSelectionView::setPowerOff()
 {
-    buttonPower.setLabel("Off");
+    buttonPower->setLabel("Off");
 
 } // end VehicleSelectionView::setPowerOff
 

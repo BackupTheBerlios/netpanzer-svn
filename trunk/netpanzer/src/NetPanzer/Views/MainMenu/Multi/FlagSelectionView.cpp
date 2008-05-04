@@ -22,10 +22,45 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/GameViewGlobals.hpp"
 #include "Util/Exception.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Views/Components/Button.hpp"
+#include "Views/Components/MouseEvent.hpp"
+#include "2D/Color.hpp"
 
-Surface playerFlag;
-int     playerFlagSelected = 0;
+unsigned char FlagSelectionView::playerFlagSelected = 0;
 
+class FlagButton : public Button
+{
+protected:
+    unsigned char fcode;
+public:
+    FlagButton(int x, int y, Surface &s, unsigned char flagCode)
+        : Button("flag")
+    {
+        setLocation(x, y);
+        setSize(s.getWidth(), s.getHeight());
+        bimage.create(s.getWidth(), s.getHeight(), 1);
+        s.blt(bimage, 0, 0);
+        fcode = flagCode;
+        
+        setExtraBorder();
+        borders[1][0] = Color::red;
+        borders[1][1] = Color::darkRed;
+        borders[2][0] = Color::green;
+        borders[2][1] = Color::darkGreen;
+    }
+    
+    void actionPerformed( const mMouseEvent &e)
+    {
+        if ( e.getID() == mMouseEvent::MOUSE_EVENT_CLICKED )
+        {
+            FlagSelectionView::setSelectedFlag(fcode);
+        }
+        else
+        {
+            Button::actionPerformed(e);
+        }
+    }
+};
 
 // FlagSelectionView
 //---------------------------------------------------------------------------
@@ -43,21 +78,7 @@ FlagSelectionView::FlagSelectionView() : RMouseHackView()
     moveTo(bodyTextRect.min.x + bodyTextRect.getSizeX() / 2 + 10 + 30,
            bodyTextRect.min.y + 50);
 
-    // Load the flag images.
-    //flags.loadAllBMPInDirectory("pics/flags/");
-
     resizeClientArea(bodyTextRect.getSizeX() / 2 - 10 - 30, 108);
-
-    // Define the scrollBar fot this view.
-    //scrollBar = new ScrollBar(HORIZONTAL, 0, 1, 0, flags.getFrameCount());
-    //if (scrollBar == 0)
-    //{
-    //	throw Exception("ERROR: Unable to allocate scrollBar.");
-    //}
-    //
-    //scrollBar->setViewableAmount(getClientRect().getSizeX() / flags.getWidth());
-    //
-    //add(scrollBar);
 
     init();
 
@@ -67,39 +88,39 @@ FlagSelectionView::FlagSelectionView() : RMouseHackView()
 //---------------------------------------------------------------------------
 void FlagSelectionView::init()
 {
-    if (playerFlag.loadAllBMPInDirectory("pics/flags/") <= 0)
+    if (flags.loadAllBMPInDirectory("pics/flags/") <= 0)
         throw Exception("Couldn't find flags for menu in '%s'.",
                         "pics/flags/");
-    playerFlag.mapFromPalette("netp");
+    flags.mapFromPalette("netp");
 
-    iXY flagStartOffset(BORDER_SPACE, BORDER_SPACE * 2 + playerFlag.getHeight());
+    iXY flagStartOffset(BORDER_SPACE, BORDER_SPACE * 2 + flags.getHeight());
 
-    int xOffset = playerFlag.getWidth() + 2;
-    int yOffset = playerFlag.getHeight() + 2;
+    int xOffset = flags.getWidth() + 2;
+    int yOffset = flags.getHeight() + 2;
 
     int x = flagStartOffset.x;
     int y = flagStartOffset.y;
 
-    for (unsigned int i = 0; i < playerFlag.getNumFrames(); i++) {
-        playerFlag.setFrame(i);
-        //playerFlag.drawButtonBorder(Color::white, Color::gray64);
+    for (unsigned int i = 0; i < flags.getNumFrames(); i++) {
+        flags.setFrame(i);
 
-        addButtonSurfaceSingle(iXY(x, y), playerFlag, "", 0);
+        add( new FlagButton( x, y, flags, i) );
 
         x += xOffset;
 
-        if (x > flagStartOffset.x + getClientRect().getSizeX() - BORDER_SPACE - (int)playerFlag.getWidth()) {
+        if (x > flagStartOffset.x + getClientRect().getSizeX() - BORDER_SPACE - (int)flags.getWidth()) {
             x = flagStartOffset.x;
             y += yOffset;
         }
     }
 
-    playerFlag.setFrame(0);
     if(gameconfig->playerflag.isDefaultValue()) {
         // new player, no flag...
-        gameconfig->playerflag=rand()%playerFlag.getNumFrames();
+        gameconfig->playerflag=rand()%flags.getNumFrames();
     }
+    
     playerFlagSelected = gameconfig->playerflag;
+    flags.setFrame(playerFlagSelected);
 } // end FlagSelectionView::init
 
 // doDraw
@@ -114,53 +135,11 @@ void FlagSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
     int CHAR_XPIX = 8; // XXX hardcoded
     clientArea.bltStringShadowed(
             BORDER_SPACE,
-            BORDER_SPACE + (playerFlag.getHeight() - Surface::getFontHeight()) / 2,
+            BORDER_SPACE + (flags.getHeight() - Surface::getFontHeight()) / 2,
             strBuf, windowTextColor, windowTextColorShadow);
-    playerFlag.setFrame(playerFlagSelected);
-    playerFlag.blt(clientArea, BORDER_SPACE + strlen(strBuf) * CHAR_XPIX + BORDER_SPACE, BORDER_SPACE);
-
-    //char strBuf[256];
-    //sprintf(strBuf, "%d", scrollBar->getValue());
-    //clientArea.bltStringCenter(strBuf, Color::white);
-    //
-    //// The -12 is a cheeze hack to take into account the scrollBar minor axis size.
-    //int x;
-    //int y = (clientArea.getHeight() - flags.getHeight() - 12) / 2;
-    //
-    //int minFlag = scrollBar->getValue();
-    //int maxFlag = scrollBar->getValue() + scrollBar->getViewableAmount();
-    //
-    //if (maxFlag > flags.getFrameCount() - 1)
-    //{
-    //	assert(false);
-    //	maxFlag = flags.getFrameCount() - 1;
-    //}
-    //
-    ////for (int i = 0; i < flags.getFrameCount(); i++)
-    //
-    //for (int i = minFlag; i < maxFlag; i++)
-    //{
-    //	x = flags.getWidth() * (i - minFlag);
-    //
-    //	flags.setFrame(i);
-    //	flags.blt(clientArea, x, y);
-    //}
+    flags.setFrame(playerFlagSelected);
+    flags.blt(clientArea, BORDER_SPACE + strlen(strBuf) * CHAR_XPIX + BORDER_SPACE, BORDER_SPACE);
 
     View::doDraw(viewArea, clientArea);
 
 } // end FlagSelectionView::doDraw
-
-// lMouseUp
-//--------------------------------------------------------------------------
-int FlagSelectionView::lMouseUp(const iXY &downPos, const iXY &upPos)
-{
-    View::lMouseUp(downPos, upPos);
-
-    const int buttonsBeforeFlags = 0;
-
-    if (getPrevPressedButton() >= buttonsBeforeFlags && getPrevPressedButton() < (int)playerFlag.getNumFrames() + buttonsBeforeFlags) {
-        playerFlagSelected = getPrevPressedButton() - buttonsBeforeFlags;
-    }
-
-    return true;
-} // end FlagSelectionViewlMouseUp

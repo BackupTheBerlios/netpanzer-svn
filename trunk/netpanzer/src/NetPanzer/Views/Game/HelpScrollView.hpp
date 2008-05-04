@@ -43,8 +43,8 @@ protected:
     enum { TEXT_GAP_SPACE = 2 };
     void insert(const char *string);
 
-    Button upButton;
-    Button downButton;
+    Button * upButton;
+    Button * downButton;
 
     int maxViewableItems;
     int topViewableItem;

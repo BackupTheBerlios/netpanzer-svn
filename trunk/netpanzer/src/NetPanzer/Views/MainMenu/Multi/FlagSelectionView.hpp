@@ -20,31 +20,35 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Views/MainMenu/RMouseHackView.hpp"
 #include "2D/Surface.hpp"
-#include "Views/Components/ScrollBar.hpp"
-
-extern Surface playerFlag;
-extern int     playerFlagSelected;
 
 //---------------------------------------------------------------------------
 class FlagSelectionView : public RMouseHackView
 {
 private:
-    ScrollBar *scrollBar;
     Surface    flags;
-
+    static unsigned char playerFlagSelected;
+    
     enum { BORDER_SPACE = 4 };
 
 public:
     FlagSelectionView();
     virtual ~FlagSelectionView()
+    {}
+    
+    static void setSelectedFlag(unsigned char code)
     {
-        delete scrollBar;
+        playerFlagSelected = code;
+    }
+    
+    static unsigned char getSelectedFlag()
+    {
+        return playerFlagSelected;
     }
 
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
-    virtual int  lMouseUp(const iXY &downPos, const iXY &upPos);
-    virtual void drawBorder(Surface& )
-    {}
+    //virtual int  lMouseUp(const iXY &downPos, const iXY &upPos);
+    //virtual void drawBorder(Surface& )
+    //{}
 
     void init();
 }

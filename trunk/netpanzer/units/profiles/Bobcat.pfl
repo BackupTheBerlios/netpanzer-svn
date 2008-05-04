@@ -1,25 +1,22 @@
 HITPOINTS      200;
-
 DAMAGE_FACTOR    0;
-
 ATTACK_FACTOR   30;
-
 RELOAD_TIME     20;
-
 REACTION_TIME    8;
-
 RANGE_MAX     122500;
-
 REGEN_TIME     20;
-
 DEFEND_RANGE  73500;
-
 SPEED_RATE       20;
-
 SPEED_FACTOR      4;
-
 REPATH_TIME      20;
-
 FUEL_CAPACITY  2000;
-
+IMAGE "pics/menus/vehicleSelectionView/bobcat.bmp"
+BODYSPRITE "units/pics/pak/BobcHNSD.pak"
+BODYSHADOW "units/pics/pak/BobcHSSD.pak"
+TURRETSPRITE "units/pics/pak/BobcTNSD.pak"
+TURRETSHADOW "units/pics/pak/BobcTSSD.pak"
+SOUNDSELECTED "lt-selected"
+FIRESOUND "lt-fire"
+WEAPON "SHELL"
+BOUNDBOX 60
 END;

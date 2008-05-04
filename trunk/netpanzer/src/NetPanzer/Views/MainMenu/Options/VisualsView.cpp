@@ -36,74 +36,90 @@ VisualsView::VisualsView() : OptionsTemplateView()
 
     initButtons();
 
-    int xTextStart       = bodyTextRect.min.x;
-    int x                = xTextStart + 10;
-    int y                = bodyTextRect.min.y;
-    int yOffset          =  20;
-
-    // Settings
-    //----------------------------------------------------------------------
-    int minWidth = 19 * 8;
-
-    x = xTextStart + 10;
-    y = 100;
-    choiceResolution.setName("Resolution");
-    choiceResolution.addItem("640x480");
-    choiceResolution.addItem("800x600");
-    choiceResolution.addItem("1024x768");
-    choiceResolution.setLocation(x, y);
-    choiceResolution.select(gameconfig->screenresolution);
-    choiceResolution.setMinWidth(minWidth);
-    choiceResolution.setStateChangedCallback(this);
-
-    checkBoxFullscreen.setLabel("Fullscreen");
-    checkBoxFullscreen.setState(gameconfig->fullscreen);    
-    checkBoxFullscreen.setLocation(x+ 200, y);
-    checkBoxFullscreen.setStateChangedCallback(this);
-    y += yOffset;
-    y += yOffset;
-
-    choiceMiniMapUnitSize.setName("Mini Map Unit Size");
-    choiceMiniMapUnitSize.addItem("Small");
-    choiceMiniMapUnitSize.addItem("Large");
-    choiceMiniMapUnitSize.setLocation(x, y);
-    choiceMiniMapUnitSize.select(gameconfig->radar_unitsize);
-    choiceMiniMapUnitSize.setMinWidth(minWidth);
-    choiceMiniMapUnitSize.setStateChangedCallback(this);
-    y += yOffset;
-    y += yOffset;
-
-
-    // Other visual options to add.
-    // Gamma
-    // Blend Mouse.
-
-    checkBoxDrawAllShadows.setLabel("Draw All Shadows");
-    checkBoxDrawAllShadows.setState(gameconfig->displayshadows);
-    checkBoxDrawAllShadows.setLocation(x, y);
-    checkBoxDrawAllShadows.setStateChangedCallback(this);
-    y += yOffset;
-
-    checkBoxBlendSmoke.setLabel("Blend Smoke");
-    checkBoxBlendSmoke.setState(gameconfig->blendsmoke);
-    checkBoxBlendSmoke.setLocation(x, y);
-    checkBoxBlendSmoke.setStateChangedCallback(this);
-    y += yOffset;
 } // end VisualsView::VisualsView
 
 // initButtons
 //---------------------------------------------------------------------------
 void VisualsView::initButtons()
 {
-    OptionsTemplateView::initButtons();
+    OptionsTemplateView::initButtons(); // XXX this clears buttons and delete components
+    
+    int xTextStart       = bodyTextRect.min.x;
+    int x                = xTextStart + 10;
+    int y                = bodyTextRect.min.y;
+    int yOffset          =  20;
+    
+    // Settings
+    //----------------------------------------------------------------------
+    int minWidth = 19 * 8;
+    
+    x = xTextStart + 10;
+    y = 100;
+    
+    choiceResolution = new Choice();
+    choiceResolution->setName("Resolution");
+    choiceResolution->addItem("640x480");
+    choiceResolution->addItem("800x600");
+    choiceResolution->addItem("1024x768");
+    choiceResolution->setLocation(x, y);
+    choiceResolution->select(gameconfig->screenresolution);
+    choiceResolution->setMinWidth(minWidth);
+    choiceResolution->setStateChangedCallback(this);
+    add(choiceResolution);
+    
+    checkBoxFullscreen = new CheckBox();
+    checkBoxFullscreen->setLabel("Fullscreen");
+    checkBoxFullscreen->setState(gameconfig->fullscreen);    
+    checkBoxFullscreen->setLocation(x+ 200, y);
+    checkBoxFullscreen->setStateChangedCallback(this);
+    add(checkBoxFullscreen);
+    y += yOffset;
+    y += yOffset;
+    
+    choiceMiniMapUnitSize = new Choice();
+    choiceMiniMapUnitSize->setName("Mini Map Unit Size");
+    choiceMiniMapUnitSize->addItem("Small");
+    choiceMiniMapUnitSize->addItem("Large");
+    choiceMiniMapUnitSize->setLocation(x, y);
+    choiceMiniMapUnitSize->select(gameconfig->radar_unitsize);
+    choiceMiniMapUnitSize->setMinWidth(minWidth);
+    choiceMiniMapUnitSize->setStateChangedCallback(this);
+    add(choiceMiniMapUnitSize);
+    y += yOffset;
+    y += yOffset;
+    
+    
+    // Other visual options to add.
+    // Gamma
+    // Blend Mouse.
+    
+    checkBoxDrawAllShadows = new CheckBox();
+    checkBoxDrawAllShadows->setLabel("Draw All Shadows");
+    checkBoxDrawAllShadows->setState(gameconfig->displayshadows);
+    checkBoxDrawAllShadows->setLocation(x, y);
+    checkBoxDrawAllShadows->setStateChangedCallback(this);
+    add(checkBoxDrawAllShadows);
+    y += yOffset;
+    
+    checkBoxBlendSmoke = new CheckBox();
+    checkBoxBlendSmoke->setLabel("Blend Smoke");
+    checkBoxBlendSmoke->setState(gameconfig->blendsmoke);
+    checkBoxBlendSmoke->setLocation(x, y);
+    checkBoxBlendSmoke->setStateChangedCallback(this);
+    add(checkBoxBlendSmoke);
+    y += yOffset;
+    
+    
+    //removeAllButtons();
+    //removeComponents();
+    
 
-    add(&checkBoxDrawAllShadows);
-    add(&checkBoxBlendSmoke);
-    add(&checkBoxFullscreen);
-    add(&choiceResolution);
+
+    
+    
     //add(&choiceGameViewBackgroundColor);
     //add(&choiceMiniMapObjectiveDrawMode);
-    add(&choiceMiniMapUnitSize);
+    
     //add(&choiceUnitSelectionDrawMode);
     //add(&choiceUnitInfoDrawLayer);
     //add(&choiceYourRadarUnit);
@@ -144,26 +160,26 @@ void VisualsView::loadTitleSurface()
 void VisualsView::stateChanged(Component* source)
 {
     // Check Box Draw All Shadows
-    if (source == &checkBoxDrawAllShadows) {
-        gameconfig->displayshadows = checkBoxDrawAllShadows.getState();
+    if (source == checkBoxDrawAllShadows) {
+        gameconfig->displayshadows = checkBoxDrawAllShadows->getState();
     }
     // Check Box Blend Smoke
-    else if (source == &checkBoxBlendSmoke) {
-        gameconfig->blendsmoke = checkBoxBlendSmoke.getState();
-    } else if (source == &checkBoxFullscreen) {
-        gameconfig->fullscreen = checkBoxFullscreen.getState();
+    else if (source == checkBoxBlendSmoke) {
+        gameconfig->blendsmoke = checkBoxBlendSmoke->getState();
+    } else if (source == checkBoxFullscreen) {
+        gameconfig->fullscreen = checkBoxFullscreen->getState();
         GameManager::setVideoMode();
     }
     // Choice Resolution
-    else if (source == &choiceResolution) {
-        gameconfig->screenresolution = choiceResolution.getSelectedIndex();
+    else if (source == choiceResolution) {
+        gameconfig->screenresolution = choiceResolution->getSelectedIndex();
         GameManager::setVideoMode();
     }
     // Choice Mini Map Unit Size
-    else if (source == &choiceMiniMapUnitSize) {
-        if (choiceMiniMapUnitSize.getSelectedIndex() == 0) {
+    else if (source == choiceMiniMapUnitSize) {
+        if (choiceMiniMapUnitSize->getSelectedIndex() == 0) {
             gameconfig->radar_unitsize = _mini_map_unit_size_small;
-        } else if (choiceMiniMapUnitSize.getSelectedIndex() == 1) {
+        } else if (choiceMiniMapUnitSize->getSelectedIndex() == 1) {
             gameconfig->radar_unitsize = _mini_map_unit_size_large;
         }
     }

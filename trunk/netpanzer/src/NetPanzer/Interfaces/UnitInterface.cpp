@@ -26,16 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/WorldViewInterface.hpp"
 
 #include "Classes/Units/Vehicle.hpp"
-#include "Classes/Units/Abrams.hpp"
-#include "Classes/Units/Valentine.hpp"
-#include "Classes/Units/Leopard.hpp"
-#include "Classes/Units/Hammerhead.hpp"
-#include "Classes/Units/Humvee.hpp"
-#include "Classes/Units/Lynx.hpp"
-#include "Classes/Units/Scorpion.hpp"
-#include "Classes/Units/SpahPanzer.hpp"
-#include "Classes/Units/M109.hpp"
-#include "Classes/Units/Archer.hpp"
 
 #include "Types/iXY.hpp"
 #include "Util/Timer.hpp"
@@ -309,49 +299,13 @@ UnitBase * UnitInterface::newUnit( unsigned short unit_type,
     PlayerState* player = PlayerInterface::getPlayerState( player_index );
     unit_flag = player->getFlag();
 
-    switch(unit_type) {
-        case _unit_type_valentine:
-            unit = new Valentine(player, id, location, color_flag, unit_flag);
-            break;
-
-        case _unit_type_leopard:
-            unit = new Leopard(player, id, location, color_flag, unit_flag);
-            break;
-
-        case _unit_type_abrams:
-            unit = new Abrams(player, id, location, color_flag, unit_flag);
-            break;
-
-        case _unit_type_hammerhead:
-            unit = new Hammerhead(player, id, location, color_flag, unit_flag);
-            break;
-
-        case _unit_type_humvee:
-            unit = new Humvee(player, id, location, color_flag, unit_flag);
-            break;
-
-        case _unit_type_lynx:
-            unit = new Lynx(player, id, location, color_flag, unit_flag);
-            break;
-
-        case _unit_type_m109:
-            unit = new M109(player, id, location, color_flag, unit_flag);
-            break;
-
-        case _unit_type_spahpanzer:
-            unit = new SpahPanzer(player, id, location, color_flag, unit_flag);
-            break;
-
-        case _unit_type_scorpion:
-            unit = new Scorpion(player, id, location, color_flag, unit_flag);
-            break;
-
-        case _unit_type_archer:
-            unit = new Archer(player, id, location, color_flag, unit_flag);
-            break;
-
-        default:
-            assert("unknown unit_type" == 0);
+    if ( unit_type < UnitProfileInterface::getNumUnitTypes() )
+    {
+        unit = new Vehicle(player, unit_type, id, location);        
+    }
+    else
+    {   // XXX change for a error window
+        assert("unknown unit_type" == 0);        
     }
 
     return unit;
@@ -443,7 +397,7 @@ void UnitInterface::spawnPlayerUnits(const iXY &location,
 
     unit_placement_matrix.reset( location );
 
-    for ( unit_type_index = 0; unit_type_index < _MAX_UNIT_TYPES; unit_type_index++ ) {
+    for ( unit_type_index = 0; unit_type_index < UnitProfileInterface::getNumUnitTypes(); unit_type_index++ ) {
 
         unit_spawn_count = unit_config.getSpawnUnitCount( unit_type_index );
         for ( unit_spawn_index = 0; unit_spawn_index < unit_spawn_count; unit_spawn_index++ ) {

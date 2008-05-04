@@ -23,22 +23,26 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Classes/UnitBlackBoard.hpp"
 #include "Classes/Units/Vehicle.hpp"
+#include "Classes/Units/UnitGlobals.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Interfaces/PathScheduler.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/ProjectileInterface.hpp"
 #include "Interfaces/UnitInterface.hpp"
+#include "Interfaces/UnitProfileInterface.hpp"
 #include "System/Sound.hpp"
+
 
 // NOTE: Temp unit new sprites put in
 #include "Interfaces/GameConfig.hpp"
 
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Particles/ParticleInterface.hpp"
+#include "Interfaces/WorldViewInterface.hpp"
 
 enum{ _rotate_and_move, _rotate_stop_move };
 
-Vehicle::Vehicle(PlayerState* player, UnitID id, iXY initial_loc)
+Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initial_loc)
     : UnitBase(player, id)
 {
     smolderWait    = 0.0f;
@@ -86,8 +90,72 @@ Vehicle::Vehicle(PlayerState* player, UnitID id, iXY initial_loc)
     move_opcode_sent = false;
     fsmMoveMapSquare_movement_type = 0;
 
-    aiFsmDefendHold_state = 0;  
+    aiFsmDefendHold_state = 0;
+
+    // from unit profiles
+    setUnitProperties(utype);
+    iXY zero;
+    zero.zero();
+    body_anim.setAttrib( zero, zero, unitLayer );
+    turret_anim.setAttrib( zero, zero, unitLayer );
+    body_anim_shadow.setAttrib( zero, zero, unitLayer);
+    turret_anim_shadow.setAttrib( zero, zero, unitLayer);
+    
+    select_info_box.setBoxState( false );
+    select_info_box.setFlag( player->getFlag() );
+    
+    body_anim_shadow.attachSprite( &body_anim, zero );
+    body_anim_shadow.attachSprite( &turret_anim_shadow, zero );
+    body_anim_shadow.attachSprite( &turret_anim, zero );
+    body_anim_shadow.attachSprite( &select_info_box, zero );
 }
+
+void Vehicle::setUnitProperties( unsigned char utype )
+{
+    UnitProfile *profile;
+    
+    profile = UnitProfileInterface::getUnitProfile( utype );
+    
+    unit_state.hit_points = profile->hit_points;
+    unit_state.max_hit_points = profile->hit_points;
+    unit_state.damage_factor = profile->attack_factor;
+    unit_state.defend_range = profile->defend_range;
+    unit_state.speed_factor = profile->speed_factor;
+    unit_state.speed_rate = profile->speed_rate;
+    unit_state.reload_time = profile->reload_time;
+    unit_state.weapon_range = profile->attack_range;
+    unit_state.unit_type = utype;
+    select_info_box.setHitBarAttributes( profile->hit_points, Color::yellow );
+    body_anim.setData( profile->bodySprite );
+    body_anim_shadow.setData( profile->bodyShadow );
+    turret_anim.setData( profile->turretSprite );
+    turret_anim_shadow.setData( profile->turretShadow );
+    soundSelect = profile->soundSelected;
+    fireSound = profile->fireSound;
+    if ( profile->weaponType == "QUADMISSILE" )
+    {
+        weaponType = Weapon::_quad_missile;
+    }
+    else if ( profile->weaponType == "BULLET" )
+    {
+        weaponType = Weapon::_bullet;
+    }
+    else if ( profile->weaponType == "SHELL" )
+    {
+        weaponType = Weapon::_shell;
+    }
+    else if ( profile->weaponType == "DOUBLEMISSILE" )
+    {
+        weaponType = Weapon::_double_missile;
+    }
+    else
+    {
+        weaponType = Weapon::_bullet;
+    }
+    int bsize = profile->boundBox / 2;
+    select_info_box.setBoxAttributes( BoundBox( -bsize, -bsize, bsize, bsize), Color::blue);
+}
+
 
 void Vehicle::updateUnitStateProperties()
 {
@@ -1386,7 +1454,7 @@ void Vehicle::fireWeapon( iXY &target_loc )
 //-----------------------------------------------------------------
 void Vehicle::soundSelected()
 {
-    sound->playSound("yessir");
+        sound->playSound( soundSelect.size()?soundSelect.c_str():"yessir");
 }
 
 void Vehicle::accessThreatLevels()
@@ -1399,6 +1467,17 @@ void Vehicle::accessThreatLevels()
 
 }
 
+//-----------------------------------------------------------------
+unsigned short Vehicle::launchProjectile()
+{
+    long distance = WorldViewInterface::getCameraDistance(unit_state.location);
+    sound->playAmbientSound(fireSound.c_str(), distance );
+    sound->playBattle();
+    
+    return weaponType;
+}
+
+//-----------------------------------------------------------------
 void Vehicle::updateFsmState()
 {
     if ( fsm_timer.count() ) {

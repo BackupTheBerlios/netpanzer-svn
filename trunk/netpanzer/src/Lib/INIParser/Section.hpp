@@ -28,6 +28,10 @@ namespace INI
  * This class represents a section in an ini file. It contains a key/value map
  * for the settings
  */
+    
+    typedef std::map<std::string, std::string> valuesMap;
+    typedef valuesMap::const_iterator valuesIterator;
+    
 class Section
 {
 public:
@@ -44,12 +48,22 @@ public:
     void setIntValue(const std::string& key, int value);
     void setFloatValue(const std::string& key, float value);
 
+    valuesIterator getValuesBegin() const
+    {
+        return values.begin();
+    }
+    
+    valuesIterator getValuesEnd() const
+    {
+        return values.end();
+    }
+    
 private:
     friend class Store;
     Section(const std::string& name);
     
     std::string name;
-    std::map<std::string, std::string> values;
+    valuesMap values;
 };
 
 } // end of namespace INI

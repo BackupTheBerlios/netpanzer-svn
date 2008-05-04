@@ -89,29 +89,29 @@ void Choice::actionPerformed(const mMouseEvent &me)
         size.y = choiceList.size() * ChoiceItemHeight;
 
         // Make sure the choice fits on the screen.
-        if (min.y + size.y >= parentDimensions.y) {
+        if (position.y + size.y >= parentDimensions.y) {
             // Check to see if it will fit above the base position.
-            if ((min.y + ChoiceItemHeight) - size.y > 0) {
+            if ((position.y + ChoiceItemHeight) - size.y > 0) {
                 // Since it fits above, put it there.
                 adjustedY =  size.y - ChoiceItemHeight;
-                min.y     -= adjustedY;
+                position.y     -= adjustedY;
 
             } else {
                 // Since it does not fit above, just put it below and keep it on the screen.
-                adjustedY =  min.y + size.y - parentDimensions.y;
-                min.y     -= adjustedY + 1;
+                adjustedY =  position.y + size.y - parentDimensions.y;
+                position.y     -= adjustedY + 1;
             }
 
 
             // Make sure the choice is still on the screen.
-            assert (min.y >= 0);
+            assert (position.y >= 0);
         }
     } else if (me.getID() == mMouseEvent::MOUSE_EVENT_DRAGGED &&
                 (me.getModifiers() & InputEvent::BUTTON1_MASK)) {
         isOpen = true;
         size.y = choiceList.size() * ChoiceItemHeight;
 
-        iRect r(min.x, min.y, min.x + size.x, min.y + ChoiceItemHeight);
+        iRect r(position.x, position.y, position.x + size.x, position.y + ChoiceItemHeight);
 
         for (size_t i = 0; i < choiceList.size(); i++) {
             // Find the selected item.
@@ -131,7 +131,7 @@ void Choice::actionPerformed(const mMouseEvent &me)
         size.y = ChoiceItemHeight;
 
         // Move the choice back to its original location.
-        min.y += adjustedY;
+        position.y += adjustedY;
         adjustedY = 0;
 
         // set new element
@@ -151,7 +151,7 @@ void Choice::actionPerformed(const mMouseEvent &me)
         size.y = ChoiceItemHeight;
 
         // Move the choice back to its original location.
-        min.y += adjustedY;
+        position.y += adjustedY;
         adjustedY = 0;
 
         // set new element
@@ -172,12 +172,12 @@ void Choice::draw(Surface &dest)
     iXY pos;
 
     //pos.x = min.x - strlen((const char *) label) * CHAR_XPIX - CHAR_XPIX;
-    pos.x = min.x;
-    pos.y = min.y - Surface::getFontHeight() - 4;
+    pos.x = position.x;
+    pos.y = position.y - Surface::getFontHeight() - 4;
 
     // Draw the name of the choice.
-    dest.bltStringShadowed( min.x, pos.y + adjustedY,
-                            name.c_str(), Color::white, Color::black);
+    dest.bltStringShadowed( position.x, pos.y + adjustedY,
+                            componentName.c_str(), Color::white, Color::black);
 
     getBounds(r);
 
@@ -191,7 +191,7 @@ void Choice::draw(Surface &dest)
     if (!isOpen)	{
         s.bltStringShadowedCenter(choiceList[index].c_str(), Color::white, Color::black);
     } else {
-        r = iRect(min.x, min.y, min.x + size.x, min.y + ChoiceItemHeight);
+        r = iRect(position.x, position.y, position.x + size.x, position.y + ChoiceItemHeight);
 
         size_t count = choiceList.size();
 

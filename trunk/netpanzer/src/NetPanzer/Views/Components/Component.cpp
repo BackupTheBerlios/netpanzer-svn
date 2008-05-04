@@ -30,7 +30,7 @@ void Component::reset()
     foreground = gForeground;
     background = gBackground;
     size.zero();
-    min.zero();
+    position.zero();
     enabled    = true;
     visible    = true;
     parent     = 0;
@@ -42,10 +42,10 @@ void Component::reset()
 //---------------------------------------------------------------------------
 bool Component::contains(int x, int y) const
 {
-    return (x >= min.x &&
-            x < min.x + size.x &&
-            y >= min.y &&
-            y < min.y + size.y);
+    return (x >= position.x &&
+            x < position.x + size.x &&
+            y >= position.y &&
+            y < position.y + size.y);
 
 } // end Component::contains
 
@@ -61,8 +61,8 @@ void Component::setParent(void *parent)
 //---------------------------------------------------------------------------
 void Component::setLocation(int x, int y)
 {
-    min.x = x;
-    min.y = y;
+    position.x = x;
+    position.y = y;
 
 } // end Component::setLocation
 

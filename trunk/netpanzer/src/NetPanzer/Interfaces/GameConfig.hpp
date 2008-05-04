@@ -203,11 +203,19 @@ public:
     ConfigInt   drake;
     ConfigInt   archer;
     
-    
-
-    PlayerUnitConfig unit_spawn_config;
+    std::vector<ConfigVariable*> spawnsettings;
     
 public:
+    void clearSpawnSettings()
+    {
+        std::vector<ConfigVariable*>::iterator i = spawnsettings.begin();
+        while ( i != spawnsettings.end() )
+        {
+            delete *i;
+            i++;
+        }
+        spawnsettings.clear();
+    }
     const char* getGameTypeString() const
     {
         switch(gametype) {
@@ -329,6 +337,8 @@ private:
 
     void loadSettings(const INI::Section&,
             std::vector<ConfigVariable*>& settings);
+    void loadSpawnSettings(const INI::Section& section,
+                           std::vector<ConfigVariable*>& settings);
     void saveSettings(INI::Section&, std::vector<ConfigVariable*>& settings);
 
     std::vector<ConfigVariable*> gamesettings;
@@ -337,8 +347,7 @@ private:
     std::vector<ConfigVariable*> visualssettings;
     std::vector<ConfigVariable*> soundsettings;
     std::vector<ConfigVariable*> interfacesettings;
-    std::vector<ConfigVariable*> radarsettings;   
-    std::vector<ConfigVariable*> spawnsettings;
+    std::vector<ConfigVariable*> radarsettings;
 };
 
 extern GameConfig* gameconfig;

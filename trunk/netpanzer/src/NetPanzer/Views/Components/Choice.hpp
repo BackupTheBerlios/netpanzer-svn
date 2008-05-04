@@ -70,6 +70,9 @@ public:
     }
 
     virtual void draw(Surface &dest);
+    virtual void render()
+    {
+    }
     virtual void actionPerformed(const mMouseEvent &me);
 
 private:

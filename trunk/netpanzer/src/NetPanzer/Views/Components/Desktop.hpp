@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include "Views/Components/View.hpp"
 #include "Util/TimeStamp.hpp"
+#include "Util/Log.hpp"
 
 class Surface;
 

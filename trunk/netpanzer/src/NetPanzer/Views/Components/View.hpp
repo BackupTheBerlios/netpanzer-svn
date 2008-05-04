@@ -149,17 +149,6 @@ protected:
     // cButton Functions.
     void addButtonPackedSurface(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc);
     void addButtonCenterText(const iXY &pos, const int &xSize, const char *nName, const char *nToolTip, ITEM_FUNC nLeftClickFunc);
-    void addButtonBMP(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func, const bool &isBordered);
-    inline void addButtonBMP(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func)
-    {
-        addButtonBMP(pos, imageName, toolTip, func, false);
-    }
-    inline void addButtonBMPBordered(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func)
-    {
-        addButtonBMP(pos, imageName, toolTip, func, true);
-    }
-    void addButtonSurface(const iXY &pos, Surface &source, const char *toolTip, ITEM_FUNC func);
-    void addButtonSurfaceSingle(const iXY &pos, Surface &source, const char *toolTip, ITEM_FUNC func);
     /*!FIXME!*/ void drawDefinedButtons   (Surface &clientArea);
     void drawHighlightedButton(Surface &clientArea);
     void drawPressedButton(Surface &clientArea);
@@ -252,17 +241,18 @@ public:
     }
     void removeAllButtons()
     {
-        buttons.clear();
+        buttons.clear(); // XXX LEAK
     }
     void removeComponents()
     {
         ComponentsIterator i = components.begin();
         while ( i != components.end() )
         {
-            delete *i;
+            Component *c = *i;
             i++;
+            delete c;
         }
-        components.clear(); // XXX delete them?
+        components.clear();
         focusComponent      = 0;
     }
 

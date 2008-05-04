@@ -20,17 +20,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Structs/UnitTypes.hpp"
 
-class UnitGameInfo
-{
-public:
-    int getUnitPointValue(UnitType unit_type);
-};
+#include <vector>
 
-class PlayerUnitConfig : public UnitGameInfo
+using namespace std;
+
+class PlayerUnitConfig
 {
 protected:
     unsigned int max_allowed_units;
-    unsigned int unit_spawn_list[ _MAX_UNIT_TYPES ];
+    vector<unsigned int> unit_spawn_list;
     char unit_color;
 
 public:
@@ -40,23 +38,32 @@ public:
 
     inline unsigned int getSpawnUnitCount( unsigned char unit_type ) const
     {
-        return( unit_spawn_list[ unit_type ] );
+        if ( unit_type < unit_spawn_list.size() )
+            return unit_spawn_list[unit_type];
+        return 0;
     }
 
     inline void incrementSpawnUnitCount( unsigned char unit_type )
     {
-        unit_spawn_list[ unit_type ]++;
-        if ( unitTotal() > max_allowed_units ) {
-            unit_spawn_list[ unit_type ]--;
+        if ( unit_type < unit_spawn_list.size() )
+        {
+            unit_spawn_list[ unit_type ]++;
+            if ( unitTotal() > max_allowed_units )
+            {
+                unit_spawn_list[ unit_type ]--;
+            }
         }
     }
 
-    inline void decrementSpawnUnitCount( unsigned char  unit_type )
+    inline void decrementSpawnUnitCount( unsigned char unit_type )
     {
-        if ( (unit_spawn_list[ unit_type ] > 0) &&
-                (unitTotal() > 1)
-           ) {
-            unit_spawn_list[ unit_type ]--;
+        if ( unit_type < unit_spawn_list.size() )
+        {
+            if ( (unit_spawn_list[ unit_type ] > 0) &&
+                 (unitTotal() > 1) )
+            {
+                unit_spawn_list[ unit_type ]--;
+            }
         }
     }
 

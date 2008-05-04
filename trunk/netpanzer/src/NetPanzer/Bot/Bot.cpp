@@ -100,7 +100,8 @@ Bot::manualFire(UnitBase *unit, iXY world_pos)
 void
 Bot::produceUnit(int outpostID, int selectedProduce)
 {
-    assert(selectedProduce <= _unit_type_humvee);
+    LOGGER.debug("bot: produceUnit outpost=%d selectedProduce=%d",
+                 outpostID, selectedProduce);
 
     // Send the server the selected unit and whether factory power is on.
     TerminalOutpostUnitGenRequest term_mesg;
@@ -113,7 +114,5 @@ Bot::produceUnit(int outpostID, int selectedProduce)
     if (NetworkState::status == _network_state_client) {
         ObjectiveInterface::sendMessage(&(term_mesg.unit_gen_request));
     }
-    LOGGER.debug("bot: produceUnit outpost=%d selectedProduce=%d",
-            outpostID, selectedProduce);
-}
+ }
 

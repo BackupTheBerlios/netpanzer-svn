@@ -31,8 +31,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 float MissleWeapon::thrustForce = gMissleThrustForce;
-
-MissleWeapon::MissleWeapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end)
+// size 0 = small 1 = medium
+MissleWeapon::MissleWeapon(UnitID &owner, unsigned short owner_type_id, unsigned short size, unsigned short damage, iXY &start, iXY &end)
         : Weapon(owner, owner_type_id, damage, start, end)
 {
     velocity     = thrustForce * 2;
@@ -42,7 +42,7 @@ MissleWeapon::MissleWeapon(UnitID &owner, unsigned short owner_type_id, unsigned
     totalWait    = 0.0f;
 
     // Set the correct missle type.
-    if (owner_type_id == _unit_type_archer) {
+    if ( size ) {
         shell.setData(gMissleMediumPackedSurface);
         shellShadow.setData(gMissleMediumPackedSurface);
 

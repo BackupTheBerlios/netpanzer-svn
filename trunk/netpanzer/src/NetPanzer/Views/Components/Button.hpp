@@ -20,62 +20,124 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __Button_hpp__
 
 #include "Component.hpp"
+#include "2D/Color.hpp"
+#include "ViewGlobals.hpp"
+
+typedef enum
+{
+    BNORMAL =   0,
+    BOVER   =   1,
+    BPRESSED=   2
+} ButtonState;
 
 //--------------------------------------------------------------------------
 class Button : public Component
 {
+private:
+    int extraBorder;
 protected:
     std::string label;
-    std::string actionCommand;
-    
-    PIX borderTop;
-    PIX borderBottom;
+        
+    PIX borders[3][2];
     PIX textColor;
     
+    Surface bimage;
+    
     void render();
+    ButtonState bstate;
+    
+    void resetState()
+    {
+        bstate = BNORMAL;
+        textColor = Color::white;
+        dirty = true;
+    }
 
 public:
-    Button() : Component()
+    Button(const std::string &cname) : Component(cname)
     {
-        reset();
+        position.zero();
+        label.clear();
+        bstate = BNORMAL;
+        textColor = Color::white;
+        memset(borders, 0, sizeof(borders));
+        extraBorder = 0;
     }
 
-    Button(const std::string& s) : Component()
-    {
-        reset();
-        
-        label         = s;
-        actionCommand = label;
-    }
     virtual ~Button()
     {}
 
-    void reset()
-    {
-        label         = "";
-        actionCommand = "";
-    }
-
-    void setActionCommand(const std::string& l)
-    {
-        label = l;
-    }
     void setLabel(const std::string& l)
     {
         label = l;
         dirty = true;
+    }
+    
+    void setImage(const Surface &s)
+    {
+        if ( s.getNumFrames() ) {
+            bimage.copy(s);
+            setSize(bimage.getWidth(), bimage.getHeight());
+        } else {
+            bimage.free();
+        }
+        dirty = true;
+    }
+    void clearImage()
+    {
+        bimage.free();
+    }
+    
+    void setUnitSelectionBorder()
+    {
+        borders[0][0] = Color::darkGray;
+        borders[0][1] = Color::darkGray;
+        borders[1][0] = Color::red;
+        borders[1][1] = Color::red;
+        borders[2][0] = Color::darkGray;
+        borders[2][1] = Color::darkGray;
+        dirty = true;
+    }
+    
+    void setNormalBorder()
+    {
+        borders[0][0] = topLeftBorderColor;
+        borders[0][1] = bottomRightBorderColor;
+        borders[1][0] = topLeftBorderColor;
+        borders[1][1] = bottomRightBorderColor;
+        borders[2][0] = bottomRightBorderColor;
+        borders[2][1] = topLeftBorderColor;
+        dirty=true;
+    }
+
+    void clearBorder()
+    {
+        memset(borders, 0, sizeof(borders));
+        dirty = true;
+    }
+    
+    void setSize(int x, int y)
+    {
+        Component::setSize(x+(extraBorder*2), y+(extraBorder*2));
+    }
+    
+    void setExtraBorder()
+    {
+        extraBorder = 1;
+        setSize( size.x, size.y);
+    }
+    
+    void clearExtraBorder()
+    {
+        extraBorder = 0;
+        setSize( size.x, size.y);
     }
 
     const std::string& getLabel() const
     {
         return label;
     }
-    const std::string& getActionCommand() const
-    {
-        return actionCommand;
-    }
 
-    virtual void draw(Surface &dest);
     virtual void actionPerformed(const mMouseEvent &me);
 }; // end Button
 

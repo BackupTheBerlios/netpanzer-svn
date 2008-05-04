@@ -1036,45 +1036,6 @@ void View::addButtonCenterText(const iXY &pos,
     buttons.push_back(button);
 } // end addButtonCenterText
 
-// addButtonTIL
-//---------------------------------------------------------------------------
-// Purpose: Adds a button of a TIL image.
-//---------------------------------------------------------------------------
-void View::addButtonBMP(const iXY &pos, const char *imageName, const char *toolTip, ITEM_FUNC func, const bool &isBordered)
-{
-    cButton* button = new cButton;
-    if (isBordered) {
-        button->createBMPBordered(pos, imageName, toolTip, func);
-
-    } else {
-        button->createBMP(pos, imageName, toolTip, func);
-    }
-
-    buttons.push_back(button);
-} // end addButtonBMP
-
-// addButtonSurface
-//---------------------------------------------------------------------------
-// Purpose: Adds a button of a Surface image.
-//---------------------------------------------------------------------------
-void View::addButtonSurface(const iXY &pos, Surface &source, const char *toolTip, ITEM_FUNC func)
-{
-    cButton* button = new cButton;
-    button->createSurface(pos, source, toolTip, func);
-    buttons.push_back(button);
-} // end addButtonSurface
-
-// addButtonSurfaceSingle
-//---------------------------------------------------------------------------
-// Purpose: Adds a button of a Surface image.
-//---------------------------------------------------------------------------
-void View::addButtonSurfaceSingle(const iXY &pos, Surface &source, const char *toolTip, ITEM_FUNC func)
-{
-    cButton* button = new cButton;
-    button->createSurfaceSingle(pos, source, toolTip, func);
-    buttons.push_back(button);
-} // end addButtonSurfaceSingle
-
 // setSearchName
 //---------------------------------------------------------------------------
 // Purpose: Sets the title of the window.

@@ -76,45 +76,53 @@ LibView::LibView() : GameTemplateView()
     addButtonCenterText(iXY((getClientRect().getSize().x / 3) * 1, 0), getClientRect().getSize().x / 3, "Particles", "", bParticleInfo);
     addButtonCenterText(iXY((getClientRect().getSize().x / 3) * 2, 0), getClientRect().getSize().x / 3, "Environment", "", bEnvironmentInfo);
 
-    checkBoxAllowParticleGeneration.setLabel("Allow Particle Generation");
-    checkBoxAllowParticleGeneration.setLocation(0, 15);
-    checkBoxAllowParticleGeneration.setState(Particle2D::getCreateParticles());
-    add(&checkBoxAllowParticleGeneration);
+    checkBoxAllowParticleGeneration = new CheckBox();
+    checkBoxAllowParticleGeneration->setLabel("Allow Particle Generation");
+    checkBoxAllowParticleGeneration->setLocation(0, 15);
+    checkBoxAllowParticleGeneration->setState(Particle2D::getCreateParticles());
+    add(checkBoxAllowParticleGeneration);
 
-    checkBoxAllowTimeSlice.setLabel("Allow Time Slice");
-    checkBoxAllowTimeSlice.setLocation(0, 30);
-    checkBoxAllowTimeSlice.setState(gTimeSliceFlag);
-    add(&checkBoxAllowTimeSlice);
+    checkBoxAllowTimeSlice = new CheckBox();
+    checkBoxAllowTimeSlice->setLabel("Allow Time Slice");
+    checkBoxAllowTimeSlice->setLocation(0, 30);
+    checkBoxAllowTimeSlice->setState(gTimeSliceFlag);
+    add(checkBoxAllowTimeSlice);
 
-    checkBoxAllowSpanBlitting.setLabel("Allow Blended Span Blitting");
-    checkBoxAllowSpanBlitting.setLocation(0, 45);
-    checkBoxAllowSpanBlitting.setState(allowSpanBlitting);
-    add(&checkBoxAllowSpanBlitting);
+    checkBoxAllowSpanBlitting = new CheckBox();
+    checkBoxAllowSpanBlitting->setLabel("Allow Blended Span Blitting");
+    checkBoxAllowSpanBlitting->setLocation(0, 45);
+    checkBoxAllowSpanBlitting->setState(allowSpanBlitting);
+    add(checkBoxAllowSpanBlitting);
 
-    checkBoxParticlesCanHaveSmoke.setLabel("Allow Explosion Particle Smoke");
-    checkBoxParticlesCanHaveSmoke.setLocation(0, 60);
-    checkBoxParticlesCanHaveSmoke.setState(ParticleInterface::gParticlesCanHaveSmoke);
-    add(&checkBoxParticlesCanHaveSmoke);
+    checkBoxParticlesCanHaveSmoke = new CheckBox();
+    checkBoxParticlesCanHaveSmoke->setLabel("Allow Explosion Particle Smoke");
+    checkBoxParticlesCanHaveSmoke->setLocation(0, 60);
+    checkBoxParticlesCanHaveSmoke->setState(ParticleInterface::gParticlesCanHaveSmoke);
+    add(checkBoxParticlesCanHaveSmoke);
 
-    checkBoxSolidColorExplosionParticles.setLabel("Solid Color Explosion Particles");
-    checkBoxSolidColorExplosionParticles.setLocation(0, 75);
-    checkBoxSolidColorExplosionParticles.setState(ParticleInterface::gSolidColorExplosionParticles);
-    add(&checkBoxSolidColorExplosionParticles);
+    checkBoxSolidColorExplosionParticles = new CheckBox();
+    checkBoxSolidColorExplosionParticles->setLabel("Solid Color Explosion Particles");
+    checkBoxSolidColorExplosionParticles->setLocation(0, 75);
+    checkBoxSolidColorExplosionParticles->setState(ParticleInterface::gSolidColorExplosionParticles);
+    add(checkBoxSolidColorExplosionParticles);
 
-    checkBoxParticleInterfaceSim.setLabel("Particle Interface Sim");
-    checkBoxParticleInterfaceSim.setLocation(0, 90);
-    checkBoxParticleInterfaceSim.setState(ParticleInterface::gTestSim);
-    add(&checkBoxParticleInterfaceSim);
+    checkBoxParticleInterfaceSim = new CheckBox();
+    checkBoxParticleInterfaceSim->setLabel("Particle Interface Sim");
+    checkBoxParticleInterfaceSim->setLocation(0, 90);
+    checkBoxParticleInterfaceSim->setState(ParticleInterface::gTestSim);
+    add(checkBoxParticleInterfaceSim);
 
-    checkBoxSolidBackground.setLabel("Solid Background");
-    checkBoxSolidBackground.setLocation(0, 105);
-    checkBoxSolidBackground.setState(GameView::gDrawSolidBackground);
-    add(&checkBoxSolidBackground);
+    checkBoxSolidBackground = new CheckBox();
+    checkBoxSolidBackground->setLabel("Solid Background");
+    checkBoxSolidBackground->setLocation(0, 105);
+    checkBoxSolidBackground->setState(GameView::gDrawSolidBackground);
+    add(checkBoxSolidBackground);
 
-    checkBoxDrawExplosionParticleCount.setLabel("Draw Explosion Particle Count");
-    checkBoxDrawExplosionParticleCount.setLocation(0, 120);
-    checkBoxDrawExplosionParticleCount.setState(ParticleInterface::gDrawExplosionParticleCount);
-    add(&checkBoxDrawExplosionParticleCount);
+    checkBoxDrawExplosionParticleCount = new CheckBox();
+    checkBoxDrawExplosionParticleCount->setLabel("Draw Explosion Particle Count");
+    checkBoxDrawExplosionParticleCount->setLocation(0, 120);
+    checkBoxDrawExplosionParticleCount->setState(ParticleInterface::gDrawExplosionParticleCount);
+    add(checkBoxDrawExplosionParticleCount);
 
 } // end LibView::LibView
 
@@ -313,22 +321,22 @@ void LibView::drawEnvironmentInfo(Surface &dest, iXY pos)
 //---------------------------------------------------------------------------
 void LibView::actionPerformed(mMouseEvent me)
 {
-    if (me.getSource(checkBoxAllowParticleGeneration)) {
-        Particle2D::setCreateParticles(checkBoxAllowParticleGeneration.getState());
-    } else if (me.getSource(checkBoxAllowTimeSlice)) {
-        gTimeSliceFlag = checkBoxAllowTimeSlice.getState();
-    } else if (me.getSource(checkBoxAllowSpanBlitting)) {
-        allowSpanBlitting = checkBoxAllowSpanBlitting.getState();
-    } else if (me.getSource(checkBoxParticlesCanHaveSmoke)) {
-        ParticleInterface::gParticlesCanHaveSmoke = checkBoxParticlesCanHaveSmoke.getState();
-    } else if (me.getSource(checkBoxSolidColorExplosionParticles)) {
-        ParticleInterface::gSolidColorExplosionParticles = checkBoxSolidColorExplosionParticles.getState();
-    } else if (me.getSource(checkBoxParticleInterfaceSim)) {
-        ParticleInterface::gTestSim = checkBoxParticleInterfaceSim.getState();
-    } else if (me.getSource(checkBoxSolidBackground)) {
-        GameView::gDrawSolidBackground = checkBoxSolidBackground.getState();
-    } else if (me.getSource(checkBoxDrawExplosionParticleCount)) {
-        ParticleInterface::gDrawExplosionParticleCount = checkBoxDrawExplosionParticleCount.getState();
+    if (me.getSource()==checkBoxAllowParticleGeneration) {
+        Particle2D::setCreateParticles(checkBoxAllowParticleGeneration->getState());
+    } else if (me.getSource()==checkBoxAllowTimeSlice) {
+        gTimeSliceFlag = checkBoxAllowTimeSlice->getState();
+    } else if (me.getSource()==checkBoxAllowSpanBlitting) {
+        allowSpanBlitting = checkBoxAllowSpanBlitting->getState();
+    } else if (me.getSource()==checkBoxParticlesCanHaveSmoke) {
+        ParticleInterface::gParticlesCanHaveSmoke = checkBoxParticlesCanHaveSmoke->getState();
+    } else if (me.getSource()==checkBoxSolidColorExplosionParticles) {
+        ParticleInterface::gSolidColorExplosionParticles = checkBoxSolidColorExplosionParticles->getState();
+    } else if (me.getSource()==checkBoxParticleInterfaceSim) {
+        ParticleInterface::gTestSim = checkBoxParticleInterfaceSim->getState();
+    } else if (me.getSource()==checkBoxSolidBackground) {
+        GameView::gDrawSolidBackground = checkBoxSolidBackground->getState();
+    } else if (me.getSource()==checkBoxDrawExplosionParticleCount) {
+        ParticleInterface::gDrawExplosionParticleCount = checkBoxDrawExplosionParticleCount->getState();
     }
 
 } // end LibView::actionPerformed

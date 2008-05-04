@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "BotPlayer.hpp"
 
 #include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/UnitProfileInterface.hpp"
 #include "Classes/PlayerID.hpp"
 #include "Interfaces/UnitInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
@@ -237,8 +238,7 @@ BotPlayer::outpostProduce()
         OutpostStatus outpostStatus =
             ObjectiveInterface::getOutpostStatus(*i);
         if (outpostStatus.unit_generation_on_off == false) {
-            // XXX hack, _unit_type_humvee is expected to be last accesible
-            produceUnit(*i, rand() % (_unit_type_humvee + 1));
+            produceUnit(*i, rand() % UnitProfileInterface::getNumUnitTypes() );
         }
     }
 }

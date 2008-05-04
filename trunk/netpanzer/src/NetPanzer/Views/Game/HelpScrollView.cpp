@@ -113,14 +113,20 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     iXY size(20, 20);
     iXY pos(getClientRect().getSizeX() - size.x, 0);
 
-    upButton.setLabel("+");
-    upButton.setBounds(iRect(pos, pos + size));
-    add(&upButton);
+    upButton = new Button("upButton");
+    upButton->setLabel("+");
+    upButton->setLocation(pos.x, pos.y);
+    upButton->setSize(size.x, size.y);
+    upButton->setNormalBorder();
+    add(upButton);
 
     pos = iXY(getClientRect().getSizeX() - size.x, getClientRect().getSizeY() - size.y);
-    downButton.setLabel("-");
-    downButton.setBounds(iRect(pos, pos + size));
-    add(&downButton);
+    downButton = new Button("downButton");
+    downButton->setLabel("-");
+    downButton->setLocation(pos.x, pos.y);
+    downButton->setSize(size.x, size.y);
+    downButton->setNormalBorder();
+    add(downButton);
 
 } // end HelpScrollView::HelpScrollView
 
@@ -184,11 +190,11 @@ void HelpScrollView::insert(const char *string)
 void HelpScrollView::actionPerformed(mMouseEvent me)
 {
     if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED) {
-        if (me.getSource(upButton)) {
+        if (me.getSource()==upButton) {
             if (--topViewableItem < 0) {
                 topViewableItem = 0;
             }
-        } else if (me.getSource(downButton)) {
+        } else if (me.getSource()==downButton) {
             if (++topViewableItem >= (long) text.size() - maxViewableItems) {
                 topViewableItem = (long) text.size() - maxViewableItems;
             }

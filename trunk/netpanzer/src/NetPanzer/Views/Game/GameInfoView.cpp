@@ -75,17 +75,17 @@ GameInfoView::GameInfoView() : GameTemplateView()
     setSearchName("GameInfoView");
     setTitle("Information");
     setSubTitle("");
-
+    
     setAllowResize(false);
     setAllowMove(false);
     setDisplayStatusBar(false);
     setVisible(false);
     setBordered(true);
-
+    
     moveTo(iXY(0,0));
     //resizeClientArea(iXY(100, 2 * 2 + 12 * 3 + 8));
     resizeClientArea(iXY(140, 2 * 2 + 5 * 12 + 8));
-
+    
     if(gameconfig->gameinfoposition.isDefaultValue()) {
         // Start it in the top-right corner.
         iXY pos(screen->getWidth() - getSize().x,0);

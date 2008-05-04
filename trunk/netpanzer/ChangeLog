@@ -1,3 +1,23 @@
+04-May-2008 by Aaron Perez
+- Deleted AbstractButton
+- Deleted the classes for each unit type, only use Vehicle now.
+- Removed LoadUnitSurfaces functions (2 in 2 different places)
+- fix bug in Surface::getRect()
+- fix #include in FileSystem.cpp
+- GameConfig will load the spawnconfig as list
+- Added some fields to UnitProfile: image, bodysprite, bodyshadow, turretsprite, turretshadow, soundselected, firesound, weapon, boundbox
+- UnitProfileInterface, PlayerUnitConfig and ParticleInterface  uses a vector instead of static array
+- UnitProfileInterface new functions getProfileByName and getNumUnitTypes, it will also load the unit sprites when loading the profile
+- MissleWeapon has new parameter for missile size, 0 for small 1 for medium
+- Player POINTS for killing tanks are NOT counted any more.
+- Removed some of the cButton types in View and added to Button or in some case in a dedicated Button class
+- VehicleSelectionView creates the buttons (custom button) and order the buttons in the order the unit profiles are loaded. May order them by strength in future.
+- FlagSelectionView uses a custom button
+- Updated unit profiles with new configuration
+
+01-May-2008 by Aaron Perez
+- Deleted GetSessionHostView.* it was not used.
+
 27-Apr-2008 by Aaron Perez
 - removed unused line in MenuTemplateView
 - removed classes LobbyView, ProgressView and ConsoleLoadingView functionality

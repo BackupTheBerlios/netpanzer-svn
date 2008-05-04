@@ -27,6 +27,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Structs/UnitTypes.hpp"
 #include "Classes/UnitState.hpp"
 
+#include <vector>
+
+using namespace std;
+
 class Surface;
 class PackedSurface;
 
@@ -51,8 +55,8 @@ private:
     static void getMuzzleTips(PackedSurface &packedSource, iXY muzzleTips [36]);
     static void getMinBounds(PackedSurface &packedSource, iRect &minBounds);
 
-    static int   unitHitPointTable[_MAX_UNIT_TYPES];
-    static int   unitAttackFactorTable[_MAX_UNIT_TYPES];
+    static vector<int>   unitHitPointTable;
+    static vector<int>   unitAttackFactorTable;
 
     static void  buildUnitTables();
     static float getFrameRateAdjustment();

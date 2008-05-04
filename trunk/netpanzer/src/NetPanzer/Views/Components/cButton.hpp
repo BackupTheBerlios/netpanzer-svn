@@ -67,28 +67,6 @@ public:
 
     void createCenterText(iXY pos, int xSize, const char *nName, const char *nToolTip, ITEM_FUNC nLeftClickFunc);
 
-    void createBMP(iXY pos, const char *imageName, const char *nToolTip, ITEM_FUNC nLeftClickFunc, bool isBordered);
-    inline void createBMP(iXY pos, const char *imageName, const char *nToolTip, ITEM_FUNC nLeftClickFunc)
-    {
-        createBMP(pos, imageName, nToolTip, nLeftClickFunc, false);
-    }
-    inline void createBMPBordered(iXY pos, const char *imageName, const char *nToolTip, ITEM_FUNC nLeftClickFunc)
-    {
-        createBMP(pos, imageName, nToolTip, nLeftClickFunc, true);
-    }
-
-    void createSurface(iXY pos, Surface &source, const char *nToolTip, ITEM_FUNC nLeftClickFunc, bool isBordered);
-    inline void createSurface(iXY pos, Surface &source, const char *nToolTip, ITEM_FUNC nLeftClickFunc)
-    {
-        createSurface(pos, source, nToolTip, nLeftClickFunc, false);
-    }
-    inline void createSurfaceBordered(iXY pos, Surface &source, const char *nToolTip, ITEM_FUNC nLeftClickFunc)
-    {
-        createSurface(pos, source, nToolTip, nLeftClickFunc, true);
-    }
-
-    void createSurfaceSingle(iXY pos, Surface &source, const char *nToolTip, ITEM_FUNC nLeftClickFunc);
-
     inline bool contains(iXY pos)
     {
         assert(this != 0);

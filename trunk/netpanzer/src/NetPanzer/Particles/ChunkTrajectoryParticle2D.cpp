@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/TileInterface.hpp"
 #include "Classes/Units/UnitGlobals.hpp"
 #include "Particles/ParticleInterface.hpp"
+#include "Interfaces/UnitProfileInterface.hpp"
 
 
 PackedSurface ChunkTrajectoryParticle2D::staticPackedGroundChunks;
@@ -203,9 +204,11 @@ void ChunkTrajectoryParticle2D::createUnitBodyGrayChunks()
 {
     // Blt the green titan body onto a surface to pull colors from.
     Surface tempUnitBodyGray;
-    tempUnitBodyGray.create(gAbramsBodyDarkBlue.getWidth(), gAbramsBodyDarkBlue.getHeight(), 1);
+    UnitProfile * uprofile = UnitProfileInterface::getUnitProfile(0);
+
+    tempUnitBodyGray.create(uprofile->bodySprite.getWidth(), uprofile->bodySprite.getHeight(), 1);
     tempUnitBodyGray.fill(0);
-    gAbramsBodyDarkBlue.blt(tempUnitBodyGray, 0, 0);
+    uprofile->bodySprite.blt(tempUnitBodyGray, 0, 0);
 
     // Build a table of the green unit colors.
     Surface tempSurface(2, 2, 64);
@@ -247,9 +250,11 @@ void ChunkTrajectoryParticle2D::createUnitBodyGreenChunks()
 
     // Blt the green titan body onto a surface to pull colors from.
     Surface tempUnitBodyGray;
-    tempUnitBodyGray.create(gAbramsBody.getWidth(), gAbramsBody.getHeight(), 1);
+    UnitProfile * uprofile = UnitProfileInterface::getUnitProfile(0);
+    
+    tempUnitBodyGray.create(uprofile->bodySprite.getWidth(), uprofile->bodySprite.getHeight(), 1);
     tempUnitBodyGray.fill(0);
-    gAbramsBody.blt(tempUnitBodyGray, 0, 0);
+    uprofile->bodySprite.blt(tempUnitBodyGray, 0, 0);
 
     // Build a table of the green unit colors.
     Surface tempSurface(2, 2, 64);

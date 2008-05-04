@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Component.hpp"
 #include "MouseEvent.hpp"
+#include "Util/Log.hpp"
 
 class StateChangedCallback;
 
@@ -40,21 +41,21 @@ public:
     CheckBox(StateChangedCallback* newcallback = 0)
             : Component(), state(false), callback(newcallback)
     {
-        setSize(14, 14);
+        setSize( 14, 14);
         textColor = Color::white;
     }
 
     CheckBox(const std::string& newlabel, bool newstate = false)
             : Component(), label(newlabel), state(newstate), callback(0)
     {
-        setSize(14+label.length()*8,14);
+        setSize( 14+label.length()*8, 14);
         textColor = Color::white;
         dirty = true;
-        //size = iXY(14, 14);
     }
 
     virtual ~CheckBox()
-    { }
+    {
+    }
 
     const std::string& getLabel() const
     {
@@ -68,7 +69,7 @@ public:
     void setLabel(const std::string& label)
     {
         CheckBox::label = label;
-        setSize(14+label.length()*8,14);
+        setSize( 14+label.length()*8, 14);
         dirty = true;
     }
     void setState(bool state)
@@ -80,7 +81,6 @@ public:
         callback = newcallback;
     }
 
-    virtual void draw(Surface &dest);
     virtual void actionPerformed(const mMouseEvent &me);
 }; // end CheckBox
 

@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #ifndef _VEHICLE_HPP
 #define _VEHICLE_HPP
+#include <string>
 
 #include "Classes/UnitBase.hpp"
 #include "Util/Timer.hpp"
@@ -79,6 +80,10 @@ protected:
     SpritePacked turret_anim_shadow;
 
     UnitSelectionBox select_info_box;
+    
+    std::string soundSelect;
+    std::string fireSound;
+    unsigned short weaponType;
 
     Timer unit_state_timer;
     Timer fsm_timer;
@@ -195,7 +200,7 @@ protected:
     void aiFsmManualMove();
 
     void fireWeapon( iXY &target_loc );
-    virtual unsigned short launchProjectile() = 0;
+    virtual unsigned short launchProjectile();
     virtual void soundSelected();
 
     TimerFrameBase threat_level_under_attack_timer;
@@ -232,9 +237,11 @@ protected:
     void messageWeaponHit(const UnitMessage* message);
     void messageSelectBoxUpdate(const UnitMessage* message);
     void messageSelfDestruct(const UnitMessage* message);
+    
+    void setUnitProperties( unsigned char utype );
 
 public:
-    Vehicle(PlayerState* player, UnitID id, iXY initial_loc);
+    Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initial_loc);
 
     virtual void updateState();
 

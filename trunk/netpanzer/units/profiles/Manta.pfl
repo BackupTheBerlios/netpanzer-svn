@@ -1,25 +1,22 @@
 HITPOINTS      350;
-
 DAMAGE_FACTOR    0;
-
 ATTACK_FACTOR   50;
-
 RELOAD_TIME     35;
-
 REACTION_TIME    8;
-
 RANGE_MAX     230400;
-
 REGEN_TIME     30;
-
 DEFEND_RANGE  138000;
-
 SPEED_RATE       20;
-
 SPEED_FACTOR      4;
-
 REPATH_TIME      2;
-
 FUEL_CAPACITY  2000;
-
+IMAGE "pics/menus/vehicleSelectionView/manta.bmp"
+BODYSPRITE "units/pics/pak/MantHNSD.pak"
+BODYSHADOW "units/pics/pak/MantHSSD.pak"
+TURRETSPRITE "units/pics/pak/MantTNSD.pak"
+TURRETSHADOW "units/pics/pak/MantTSSD.pak"
+SOUNDSELECTED "lt-selected"
+FIRESOUND "lt-fire"
+WEAPON "SHELL"
+BOUNDBOX 40
 END;

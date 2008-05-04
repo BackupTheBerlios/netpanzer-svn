@@ -199,17 +199,6 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     radarsettings.push_back(&radar_objectivedrawmode);
     radarsettings.push_back(&radar_resizerate);
     
-    spawnsettings.push_back(&titan);
-    spawnsettings.push_back(&manta);
-    spawnsettings.push_back(&panther1);
-    spawnsettings.push_back(&stinger);
-    spawnsettings.push_back(&spanzer);
-    spawnsettings.push_back(&bobcat);
-    spawnsettings.push_back(&wolf);
-    spawnsettings.push_back(&bear);
-    spawnsettings.push_back(&drake);
-    spawnsettings.push_back(&archer);
-    
     try {
         loadConfig();
     } catch(std::exception& e) {
@@ -250,7 +239,7 @@ void GameConfig::loadConfig()
     loadSettings(inifile.getSection("interface"), interfacesettings);
     loadSettings(inifile.getSection("radar"), radarsettings);
     loadSettings(inifile.getSection("server"), serversettings);
-    loadSettings(inifile.getSection("spawnconfig"),spawnsettings);
+    loadSpawnSettings(inifile.getSection("spawnconfig"),spawnsettings);
 }
 
 void GameConfig::loadSettings(const INI::Section& section,
@@ -313,6 +302,19 @@ void GameConfig::loadSettings(const INI::Section& section,
                     section.getName().c_str()));
     }
 }
+
+void GameConfig::loadSpawnSettings(const INI::Section& section,
+                                   std::vector<ConfigVariable*>& settings)
+{
+    INI::valuesIterator i = section.getValuesBegin();
+    while ( i != section.getValuesEnd() )
+    {
+        ConfigInt * intvar = new ConfigInt( i->first, section.getIntValue(i->first) );
+        settings.push_back(intvar);
+        i++;
+    }
+}
+
 
 void GameConfig::saveConfig()
 {

@@ -66,7 +66,7 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
         endPos    = iXY(end.x + (rand() % endRadius << 1) - endRadius, end.y + (rand() % endRadius << 1) - endRadius);
         offsetPos = Math::unitDirectionWest(direction) * startRadius * 2;
         startPos = start + iXY(int(offsetPos.x), int(offsetPos.y));
-        temp = new MissleWeapon( owner, owner_type_id, damage, startPos, endPos);
+        temp = new MissleWeapon( owner, owner_type_id, 0, damage, startPos, endPos);
         projectiles.push_back(temp);
 
         ParticleInterface::addMissleLaunchPuff(startPos, direction, owner_type_id);
@@ -75,7 +75,7 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
         endPos    = iXY(end.x + (rand() % endRadius << 1) - endRadius, end.y + (rand() % endRadius << 1) - endRadius);
         offsetPos = Math::unitDirectionWest(direction) * startRadius;
         startPos = start + iXY(int(offsetPos.x), int(offsetPos.y));
-        temp = new MissleWeapon( owner, owner_type_id, damage, startPos, endPos);
+        temp = new MissleWeapon( owner, owner_type_id, 0, damage, startPos, endPos);
         projectiles.push_back(temp);
         ParticleInterface::addMissleLaunchPuff(startPos, direction, owner_type_id);
 
@@ -83,7 +83,7 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
         endPos    = iXY(end.x + (rand() % endRadius << 1) - endRadius, end.y + (rand() % endRadius << 1) - endRadius);
         offsetPos = Math::unitDirectionEast(direction) * startRadius;
         startPos = start + iXY(int(offsetPos.x), int(offsetPos.y));
-        temp = new MissleWeapon( owner, owner_type_id, damage, startPos, endPos);
+        temp = new MissleWeapon( owner, owner_type_id, 0, damage, startPos, endPos);
         projectiles.push_back(temp);
         ParticleInterface::addMissleLaunchPuff(startPos, direction, owner_type_id);
 
@@ -91,7 +91,7 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
         endPos    = iXY(end.x + (rand() % endRadius << 1) - endRadius, end.y + (rand() % endRadius << 1) - endRadius);
         offsetPos = Math::unitDirectionEast(direction) * startRadius * 2;
         startPos = start + iXY(int(offsetPos.x), int(offsetPos.y));
-        temp = new MissleWeapon( owner, owner_type_id, damage, startPos, endPos);
+        temp = new MissleWeapon( owner, owner_type_id, 0, damage, startPos, endPos);
         projectiles.push_back(temp);
         ParticleInterface::addMissleLaunchPuff(startPos, direction, owner_type_id);
     } else if (projectile_type == Weapon::_bullet) {
@@ -116,7 +116,7 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
         endPos    = iXY(end.x + (rand() % endRadius << 1) - endRadius, end.y + (rand() % endRadius << 1) - endRadius);
         offsetPos = Math::unitDirectionWest(direction) * startRadius;
         startPos = start + iXY(int(offsetPos.x), int(offsetPos.y));
-        temp = new MissleWeapon( owner, owner_type_id, damage, startPos, endPos);
+        temp = new MissleWeapon( owner, owner_type_id, 1, damage, startPos, endPos);
         projectiles.push_back(temp);
         ParticleInterface::addMissleLaunchPuff(startPos, direction, owner_type_id);
 
@@ -124,7 +124,7 @@ void ProjectileInterface::newProjectile( unsigned short projectile_type,
         endPos    = iXY(end.x + (rand() % endRadius << 1) - endRadius, end.y + (rand() % endRadius << 1) - endRadius);
         offsetPos = Math::unitDirectionEast(direction) * startRadius;
         startPos = start + iXY(int(offsetPos.x), int(offsetPos.y));
-        temp = new MissleWeapon( owner, owner_type_id, damage, startPos, endPos);
+        temp = new MissleWeapon( owner, owner_type_id, 1, damage, startPos, endPos);
         projectiles.push_back(temp);
         ParticleInterface::addMissleLaunchPuff(startPos, direction, owner_type_id);
     }

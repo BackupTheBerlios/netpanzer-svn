@@ -47,8 +47,8 @@ private:
     int   viewableAmount; // The total number of viewable items.
     float percent;
 
-    Button decrease;
-    Button increase;
+    Button * decrease;
+    Button * increase;
 
 protected:
     void clicked(const iXY &pos);
@@ -115,6 +115,10 @@ public:
     }
 
     virtual void draw(Surface &dest);
+    virtual void render()
+    {
+        
+    }
     virtual void actionPerformed(const mMouseEvent& me);
 }; // end ScrollBar
 

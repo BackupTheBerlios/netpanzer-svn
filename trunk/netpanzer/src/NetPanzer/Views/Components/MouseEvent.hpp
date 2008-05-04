@@ -98,13 +98,9 @@ public:
         return popupTrigger;
     }
 
-    bool getSource(const Component &source) const
+    Component * getSource() const
     {
-        if (mMouseEvent::source == &source) {
-            return true;
-        }
-
-        return false;
+        return source;
     }
 
 }

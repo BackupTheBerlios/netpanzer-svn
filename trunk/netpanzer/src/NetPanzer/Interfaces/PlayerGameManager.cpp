@@ -73,7 +73,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/Multi/JoinView.hpp"
 #include "Views/MainMenu/Multi/HostView.hpp"
 #include "Views/MainMenu/Multi/GetSessionView.hpp"
-#include "Views/MainMenu/Multi/GetSessionHostView.hpp"
 #include "Views/MainMenu/Multi/UnitSelectionView.hpp"
 #include "Views/MainMenu/Multi/FlagSelectionView.hpp"
 #include "Views/MainMenu/Multi/UnitColorView.hpp"
@@ -199,7 +198,6 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new JoinView());
     Desktop::add(new HostView());
     Desktop::add(new GetSessionView());
-    Desktop::add(new GetSessionHostView());
     Desktop::add(new OptionsTemplateView());
     Desktop::add(new OrderingView());
     Desktop::add(new HelpView());
@@ -502,12 +500,15 @@ void PlayerGameManager::processSystemKeys()
         }
 
         if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE)) {
-            if (Desktop::getView("GameView")->getVisible()) {
+            if (Desktop::getView("GameView")->getVisible())
+            {
                 if (!Desktop::getView("OptionsView")->getVisible() &&
                         !Desktop::getView("SoundView")->getVisible() &&
                         !Desktop::getView("ControlsView")->getVisible() &&
                         !Desktop::getView("InterfaceView")->getVisible() &&
-                        !Desktop::getView("VisualsView")->getVisible()) {
+                        !Desktop::getView("VisualsView")->getVisible())
+                {
+                    
                     View *v = Desktop::getView("OptionsView");
                     assert(v != 0);
                     ((OptionsTemplateView *)v)->initButtons();
@@ -535,7 +536,9 @@ void PlayerGameManager::processSystemKeys()
 
                     Desktop::setVisibility("OptionsView", true);
                     Desktop::setActiveView("OptionsView");
-                } else {
+                }
+                else
+                {
                     View *v = Desktop::getView("OptionsView");
                     assert(v != 0);
                     ((OptionsTemplateView *)v)->setAlwaysOnBottom(true);

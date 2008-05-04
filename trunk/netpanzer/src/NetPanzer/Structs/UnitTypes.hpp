@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITTYPES_HPP
 #define _UNITTYPES_HPP
 
-#define _MAX_UNIT_TYPES 13
+#define _MAX_UNIT_TYPES 10
 
 enum UnitType {
     _unit_type_valentine = 0,   // now called manta

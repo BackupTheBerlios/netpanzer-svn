@@ -309,6 +309,7 @@ void Desktop::draw(Surface& surface)
 void Desktop::add(View *view, bool autoActivate)
 {
     assert(view != 0);
+    LOGGER.warning("Desktop:add(%x) name=%s", (unsigned int)view, view->searchName);
     views.push_back(view);
     if (autoActivate)
         activate(view);
@@ -340,7 +341,7 @@ void Desktop::activate(View *view)
             focus->deactivate();
         }
 
-        if (!(view->getAlwaysOnBottom())) {
+         if (!(view->getAlwaysOnBottom())) {
             for(size_t i = 0; i<views.size(); i++) {
                 if(views[i] == view) {
                     for(size_t i2 = i; i2 >= 1; i2--)
@@ -349,7 +350,7 @@ void Desktop::activate(View *view)
                     break;
                 }
             }
-        }
+        } 
         focus = view;
         view->activate();
     }

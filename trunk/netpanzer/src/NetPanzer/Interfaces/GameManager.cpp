@@ -78,7 +78,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/Multi/JoinView.hpp"
 #include "Views/MainMenu/Multi/HostView.hpp"
 #include "Views/MainMenu/Multi/GetSessionView.hpp"
-#include "Views/MainMenu/Multi/GetSessionHostView.hpp"
 #include "Views/MainMenu/Multi/UnitSelectionView.hpp"
 #include "Views/MainMenu/Multi/FlagSelectionView.hpp"
 #include "Views/MainMenu/Multi/UnitColorView.hpp"

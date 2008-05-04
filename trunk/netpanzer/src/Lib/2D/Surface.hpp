@@ -92,7 +92,7 @@ public:
     }
     iRect  getRect() const
     {
-        return iRect(0, 0, getWidth() - 1, getWidth() - 1);
+        return iRect(0, 0, getWidth() - 1, getHeight() - 1);
     }
 
     void putPixel(unsigned int x, unsigned int y, const PIX &color) 

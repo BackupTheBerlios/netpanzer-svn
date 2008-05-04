@@ -19,14 +19,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _UNITPROFILEINTERFACE_HPP
 
 #include <string>
+#include <vector>
+
+using namespace std;
 
 #include "Structs/UnitTypes.hpp"
 #include "Classes/UnitState.hpp"
+#include "2D/PackedSurface.hpp"
 
 class UnitProfile
 {
 public:
     std::string unitname;
+    unsigned short unit_type;
 
     short hit_points;
     short attack_factor;
@@ -46,16 +51,31 @@ public:
     long  fueling_range;
     // ** for ecm truck only **
     long  jamming_range;
+    std::string imagefile;
+    PackedSurface bodySprite;
+    PackedSurface bodyShadow;
+    PackedSurface turretSprite;
+    PackedSurface turretShadow;
+    std::string soundSelected;
+    std::string fireSound;
+    std::string weaponType;
+    short boundBox;
 };
 
 class UnitProfileInterface
 {
 protected:
-    static UnitProfile profile_table[ _MAX_UNIT_TYPES ];
-
+    static vector<UnitProfile *> profiles;
+    static void clearProfiles();
+    
 public:
     static void loadUnitProfiles( void );
     static UnitProfile * getUnitProfile( unsigned short unit_type );
+    static UnitProfile * getProfileByName( const std::string &name );
+    static unsigned short getNumUnitTypes()
+    {
+        return profiles.size();
+    }
 };
 
 

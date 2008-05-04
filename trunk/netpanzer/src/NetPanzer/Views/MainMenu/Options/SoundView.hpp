@@ -38,8 +38,8 @@ class SoundView : public OptionsTemplateView, public StateChangedCallback
 {
 protected:
     virtual void loadTitleSurface();
-    CheckBox checkBoxSoundEnabled;
-    CheckBox checkBoxMusicEnabled;
+    CheckBox * checkBoxSoundEnabled;
+    CheckBox * checkBoxMusicEnabled;
 
 public:
     SoundView();

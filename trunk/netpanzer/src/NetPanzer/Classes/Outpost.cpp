@@ -137,14 +137,14 @@ Outpost::checkOccupationStatus()
 
 void
 Outpost::generateUnits()
-{
-    if ( NetworkState::status == _network_state_server ) {
-
-        if ( (unit_generation_type != _unit_type_null) &&
-                (objective_state.occupation_status == _occupation_status_occupied) ) {
-            if( (unit_generation_timer.count() == true) &&
-                    (unit_generation_on_flag == true)
-              ) {
+{   // XXX CHECK
+    if ( NetworkState::status == _network_state_server )
+    {
+        if ( (unit_generation_on_flag == true) &&
+            (objective_state.occupation_status == _occupation_status_occupied) )
+        {
+            if( (unit_generation_timer.count() == true) )
+            {
                 UnitBase *unit;
                 iXY gen_loc;
                 gen_loc = outpost_map_loc + unit_generation_loc;
@@ -152,7 +152,8 @@ Outpost::generateUnits()
                 unit = UnitInterface::createUnit(unit_generation_type,
                         gen_loc, objective_state.occupying_player->getID());
 
-                if ( unit != 0 ) {
+                if ( unit != 0 )
+                {
                     UnitRemoteCreate create_mesg(unit->player->getID(),
                             unit->id, gen_loc.x, gen_loc.y,
                             unit_generation_type);
@@ -174,8 +175,10 @@ Outpost::generateUnits()
             } // ** if
         } // ** if
     } // ** if ( objective_state.occupation_status == _occupation_status_unoccupied )
-    else {
-        if( (unit_generation_timer.count() == true) ) {
+    else
+    {
+        if( (unit_generation_timer.count() == true) )
+        {
             unit_generation_timer.reset();
         }
     }
@@ -258,12 +261,11 @@ Outpost::getOutpostStatus( OutpostStatus &status )
     status.unit_generation_on_off = unit_generation_on_flag;
     status.unit_collection_loc = unit_collection_loc;
 
-    if ( unit_generation_type != _unit_type_null ) {
-        profile = UnitProfileInterface::getUnitProfile( unit_generation_type );
+    profile = UnitProfileInterface::getUnitProfile( unit_generation_type );
+    if ( profile )
         status.unit_generation_time = (float) profile->regen_time;
-    } else {
+    else
         status.unit_generation_time = 0;
-    }
 
     if ( unit_generation_on_flag == true ) {
         status.unit_generation_time_remaining = unit_generation_timer.getTimeLeft();

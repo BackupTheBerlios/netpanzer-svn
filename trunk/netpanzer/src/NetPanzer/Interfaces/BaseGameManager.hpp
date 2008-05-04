@@ -64,7 +64,6 @@ public:
 
 private:
     void loadGameData();
-    void LoadUnitSurfaces();
     void sleeping();                       
     
     static const int TIMEINTERVAL = 20;

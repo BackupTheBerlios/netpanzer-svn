@@ -522,23 +522,23 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
 //---------------------------------------------------------------------------
 void HostOptionsView::actionPerformed(mMouseEvent me)
 {
-    if (me.getSource(checkPublic)) {
+    if (me.getSource()==&checkPublic) {
         if ( getVisible() ) {
             gameconfig->publicServer = checkPublic.getState();
         }
-    } else if (me.getSource(checkPowerUp)) {
+    } else if (me.getSource()==&checkPowerUp) {
         if ( getVisible() ) {
             gameconfig->powerups = checkPowerUp.getState();
         }
-    } else if (me.getSource(choiceWindSpeed)) {
+    } else if (me.getSource()==&choiceWindSpeed) {
         windSpeed = choiceWindSpeed.getSelectedIndex();
 
         updateWindSpeedString();
-    } else if (me.getSource(choiceCloudCoverage)) {
+    } else if (me.getSource()==&choiceCloudCoverage) {
         cloudCoverageCount = choiceCloudCoverage.getSelectedIndex();
 
         updateGameConfigCloudCoverage();
-    } else if (me.getSource(choiceGameType)) {
+    } else if (me.getSource()==&choiceGameType) {
         if ( getVisible() ) {
             gameType = choiceGameType.getSelectedIndex();
 
