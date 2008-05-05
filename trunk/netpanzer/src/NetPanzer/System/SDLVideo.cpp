@@ -92,7 +92,7 @@ bool SDLVideo::isDisplayModeAvailable(int width, int height, int bpp,
 
 void SDLVideo::lockDoubleBuffer(unsigned char **buffer)
 {
-    if(SDL_MUSTLOCK(backBuffer) && SDL_LockSurface(frontBuffer))
+    if(SDL_MUSTLOCK(backBuffer) && SDL_LockSurface(backBuffer))
         throw Exception("Couldn't lock display buffer");
 
     *buffer = (unsigned char *)backBuffer->pixels;
@@ -107,11 +107,7 @@ void SDLVideo::unlockDoubleBuffer()
 void SDLVideo::copyDoubleBufferandFlip()
 {
     if(! (frontBuffer->flags & SDL_DOUBLEBUF)) {
-        if(SDL_MUSTLOCK(frontBuffer) && SDL_LockSurface(frontBuffer))
-            throw Exception("Couldn't lock display buffer");
         SDL_BlitSurface(backBuffer, 0, frontBuffer, 0);
-        if(SDL_MUSTLOCK(frontBuffer))
-            SDL_UnlockSurface(frontBuffer);
     }
 
     if (SDL_Flip(frontBuffer))
