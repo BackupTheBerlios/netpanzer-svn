@@ -309,7 +309,7 @@ void Desktop::draw(Surface& surface)
 void Desktop::add(View *view, bool autoActivate)
 {
     assert(view != 0);
-    LOGGER.warning("Desktop:add(%x) name=%s", (unsigned int)view, view->searchName);
+    LOGGER.warning("Desktop:add(%p) name=%s", view, view->searchName);
     views.push_back(view);
     if (autoActivate)
         activate(view);

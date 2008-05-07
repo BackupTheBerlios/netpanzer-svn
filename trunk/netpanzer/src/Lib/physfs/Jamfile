@@ -1,6 +1,6 @@
 SubDir TOP src Lib physfs ;
 
-IncludeDir . ;
+IncludeDir . zlib123 ;
 
 SOURCES = [ Wildcard *.c *.h ] ;
 SOURCES += [ Wildcard archivers : *.c ] ;

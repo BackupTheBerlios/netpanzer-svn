@@ -409,9 +409,9 @@ void Surface::blt(Surface &dest, int x, int y) const
     // CLIP TOP
     if (y < 0) {
         numRows += y;
-        sPtr    -= y * getPitch();
+        sPtr    -= y * (int)getPitch();
     } else {
-        dPtr += y * dest.getPitch();
+        dPtr += y * (int)dest.getPitch();
     }
 
     // CLIP BOTTOM
@@ -494,9 +494,9 @@ void Surface::bltTrans(Surface &dest, int x, int y) const
     // CLIP TOP
     if (y < 0) {
         numRows += y;
-        sPtr    -= y * getPitch();
+        sPtr    -= y * (int)getPitch();
     } else {
-        dPtr += y * dest.getPitch();
+        dPtr += y * (int)dest.getPitch();
     }
 
     // CLIP BOTTOM
@@ -583,9 +583,9 @@ void Surface::bltTransColor(Surface &dest, int x, int y, const Uint8 &color) con
     // CLIP TOP
     if (y < 0) {
         numRows += y;
-        sPtr    -= y * getPitch();
+        sPtr    -= y * (int)getPitch();
     } else {
-        dPtr += y * dest.getPitch();
+        dPtr += y * (int)dest.getPitch();
     }
 
     // CLIP BOTTOM
@@ -638,7 +638,7 @@ void Surface::drawHLine(int x1, int y, int x2, const PIX &color)
     orderCoords(x1, x2);
 
     unsigned length = x2 - x1;
-    PIX *ptr = mem + y * getPitch();
+    PIX *ptr = mem + y * (int)getPitch();
 
     // CLIP LEFT
     if (x1 < 0) {
@@ -680,7 +680,7 @@ void Surface::drawVLine(int x, int y1, int y2, const PIX &color)
     // CLIP BOTTOM
     if (y2 >= (int)getHeight()) y2 = getHeight()-1;
 
-    PIX	*ptr	= mem+y1*getPitch()+x;
+    PIX	*ptr	= mem+y1*(int)getPitch()+x;
 
     int	width	= y2 - y1;
 
@@ -746,7 +746,7 @@ void Surface::fillRect(iRect bounds, const PIX &color)
     diff = (bounds.max - bounds.min);
 
     // Set memory to the top-left pixel of the rectangle.
-    PIX	*ptr = mem + bounds.min.y * getPitch() + bounds.min.x;
+    PIX	*ptr = mem + bounds.min.y * (int)getPitch() + bounds.min.x;
 
     for (int y = 0; y < diff.y; y++) {
         // Lay the horizontal strip.
@@ -1064,7 +1064,7 @@ void Surface::bltLookup(const iRect &destRect, const PIX table[])
     size_t pixelsPerRow = max.x - min.x;
     size_t numRows      = max.y - min.y;
 
-    PIX *dRow = mem + min.y*getPitch() + min.x;
+    PIX *dRow = mem + min.y*(int)getPitch() + min.x;
 
     for (size_t yCount = 0 ; yCount < numRows ; yCount++) {
         for(size_t x=0; x<pixelsPerRow; x++)
@@ -1124,7 +1124,7 @@ void Surface::bltScale(const Surface &source, const iRect &destRect)
         numRows += min.y;
         srcY   -= min.y*ySrcDelta;
     }	else {
-        dRow += (min.y*getPitch());
+        dRow += (min.y*(int)getPitch());
     }
 
     // CLIP BOTTOM
@@ -1401,7 +1401,7 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
     }
     
     for ( int line = 0; line < FONT_HEIGHT; ++line) {
-        PIX * dptr = getFrame0() + (line * getPitch());
+        PIX * dptr = getFrame0() + (line * (int)getPitch());
         const char * pstr = str;
         for ( unsigned char c = *pstr; c; c= *(++pstr)) {
             if ( c >=128 ) c = ' ';
