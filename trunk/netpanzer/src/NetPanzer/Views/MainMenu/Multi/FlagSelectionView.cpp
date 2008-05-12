@@ -120,6 +120,9 @@ void FlagSelectionView::init()
     }
     
     playerFlagSelected = gameconfig->playerflag;
+    if ( playerFlagSelected >= flags.getNumFrames() )
+        playerFlagSelected = 0;
+    
     flags.setFrame(playerFlagSelected);
 } // end FlagSelectionView::init
 
