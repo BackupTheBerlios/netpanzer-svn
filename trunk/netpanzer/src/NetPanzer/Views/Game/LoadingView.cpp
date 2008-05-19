@@ -11,6 +11,10 @@
 
 #include "Interfaces/GameConfig.hpp"
 #include "System/Sound.hpp"
+#include "2D/Palette.hpp"
+#include "Classes/ScreenSurface.hpp"
+#include "Interfaces/GameManager.hpp"
+#include "Views/Components/Desktop.hpp"
 
 list<string> LoadingView::lines;
 bool LoadingView::dirty = true;
@@ -50,10 +54,15 @@ LoadingView::init()
 void
 LoadingView::doDraw(Surface &viewArea, Surface &clientArea)
 {
+    if ( Palette::getName() != "netpmenu" )
+    {
+        GameManager::loadPalette("netpmenu");
+    }
+    
     if (dirty)
         render();
     
-    //screen->fill(Color::black);
+    screen->fill(Color::black);
     backgroundSurface.blt(clientArea, 0, 0);
     surface.blt(clientArea, 179, 153);
     

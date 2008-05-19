@@ -149,8 +149,10 @@ void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
 
 void GameManager::loadPalette(const std::string& palette_name)
 {
-    Palette::init(palette_name);
-    Screen->setPalette(Palette::color);
+    if ( Screen ) {
+        Palette::init(palette_name);
+        Screen->setPalette(Palette::color);
+    }
 }
 
 // ******************************************************************

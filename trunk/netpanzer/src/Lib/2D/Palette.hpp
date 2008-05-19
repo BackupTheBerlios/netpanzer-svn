@@ -98,6 +98,10 @@ public:
     static void loadACT(const std::string& filename);
     static Uint8 findNearestColor(int r, int g, int b, const bool &ignoreIndexZero = false);
     static void init(const std::string& name);
+    static std::string getName()
+    {
+        return name;
+    }
     static void setColors();
     static void setColorTables();
 
