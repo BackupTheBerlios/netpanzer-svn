@@ -101,7 +101,7 @@ void MiniMapInterface::annotateUnits( Surface &map_surface )
                 PIX unit_color=player_unit_color;
                 if(unit_state.select) { unit_color=selected_unit_color; }
                 if (gameconfig->radar_unitsize == _mini_map_unit_size_small) {
-                    drawSmallUnitDot( map_surface, map_loc, player_unit_color );
+                    drawSmallUnitDot( map_surface, map_loc, unit_color );
                 } else if (gameconfig->radar_unitsize == _mini_map_unit_size_large) {
                     drawLargeUnitDot( map_surface, map_loc, unit_color );
                 } else {
