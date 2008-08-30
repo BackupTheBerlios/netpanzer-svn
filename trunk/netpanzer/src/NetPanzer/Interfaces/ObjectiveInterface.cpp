@@ -38,8 +38,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/TerminalNetMesg.hpp"
 #include "Classes/Network/NetPacket.hpp"
 
-#include "Interfaces/Server.hpp"
-
 std::vector<Objective*> ObjectiveInterface::objective_list;
 
 unsigned long ObjectiveInterface::objective_position_enum_list_size;

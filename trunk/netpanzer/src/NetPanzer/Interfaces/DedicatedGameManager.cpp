@@ -36,10 +36,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/InfoSocket.hpp"
 #include "Interfaces/ObjectiveInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
-#include "Interfaces/Server.hpp"
-#include "Interfaces/unix/NetworkServerUnix.hpp"
 
 #include "Classes/Network/NetworkState.hpp"
+#include "Classes/Network/NetworkServer.hpp"
 
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleInterface.hpp"
@@ -126,7 +125,6 @@ void DedicatedGameManager::inputLoop()
                     << std::setw(4) << "Lost" << " "
                     << std::setw(5) << "Score" << " "
                     << std::setw(21) << "IP\n";
-                NetworkServerUnix* server = (NetworkServerUnix*) SERVER;
                 for(size_t i = 0; i<PlayerInterface::getMaxPlayers(); ++i) {
                     PlayerState* playerstate =
                         PlayerInterface::getPlayerState(i);
@@ -140,7 +138,7 @@ void DedicatedGameManager::inputLoop()
                         << std::setw(4) << playerstate->getLosses() << " "
                         << std::setw(5) << playerstate->getTotal() << " "
                         << std::setw(21) 
-                        << server->getIP(playerstate->getNetworkID())
+                        << SERVER->getIP(playerstate->getNetworkID())
                         << "\n";
                 }
                 //*Console::server << std::flush;

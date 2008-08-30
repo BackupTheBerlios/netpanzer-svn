@@ -22,23 +22,31 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ClientServerNetMessage.hpp"
 #include "Classes/Network/ServerConnectDaemon.hpp"
+#include "Classes/Network/NetworkState.hpp"
 
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
+#include "Interfaces/GameConfig.hpp"
+
+NetworkServer* SERVER = 0;
 
 NetworkServer::NetworkServer()
-        : NetworkInterface()
+        : NetworkInterface(), serversocket(0)
 {
+    // nothing
 }
 
 NetworkServer::~NetworkServer()
 {
+    if ( serversocket )
+        delete serversocket;
 }
 
 void NetworkServer::resetClientList()
 {
     for(ClientList::iterator i = client_list.begin(); i != client_list.end();
-            ++i) {
+            ++i)
+    {
         delete *i;
     }
     client_list.clear();
@@ -106,16 +114,141 @@ void NetworkServer::processNetPacket(const NetPacket* packet)
 }
 
 void
+NetworkServer::openSession()
+{
+    // nothing
+}
+
+void
+NetworkServer::hostSession()
+{
+    if ( serversocket )
+    {
+        delete serversocket;
+        serversocket = 0;
+    }
+    
+    serversocket = new ServerSocket(gameconfig->bindaddress,
+                                    gameconfig->serverport);
+    
+}
+
+void
+NetworkServer::closeSession()
+{
+    if ( serversocket )
+        delete serversocket;
+    
+    serversocket = 0;
+}
+
+void
+NetworkServer::sendMessage(NetMessage *message, size_t size)
+{
+    ClientList::iterator i = client_list.begin();
+    while ( i != client_list.end() )
+    {
+        if((*i)->wannadie)
+        {
+            ++i;
+            continue;
+        }
+
+        try
+        {
+            sendMessage((*i)->client_id.getNetworkID(), message, size);
+        }
+        catch(std::exception& e)
+        {
+            LOG( ("Error while sending network packet.") );
+            return;
+        }
+        
+        ++i;
+    }
+}
+
+void
+NetworkServer::sendMessage(NetClientID network_id, NetMessage* message,
+        size_t size)
+{
+    if(serversocket == 0)
+        return;
+    
+    message->setSize(size);
+
+    try
+    {
+        serversocket->sendMessage(network_id, message, size);
+    }
+    catch(std::exception& e)
+    {
+        LOG ( ("Network send error when sending to client %d: %s",
+               network_id, e.what()) );
+        dropClient(network_id);
+        return;
+    }
+
+    NetworkState::incPacketsSent(size);
+
+#ifdef NETWORKDEBUG
+    NetPacketDebugger::logMessage("S", message);
+#endif
+}
+
+bool
+NetworkServer::getPacket(NetPacket* packet)
+{
+    if ( loop_back_recv_queue.isReady() )
+    {
+        loop_back_recv_queue.dequeue(packet);
+
+#ifdef NETWORKDEBUG
+        NetPacketDebugger::logPacket("R", packet);
+#endif
+        return true;
+    }
+    else if (receive_queue.isReady())
+    {
+        receive_queue.dequeue(packet);
+        NetworkState::incPacketsReceived(packet->getSize());
+
+        if (packet->getNetMessage()->message_class 
+                == _net_message_class_client_server)
+        {
+            processNetPacket(packet);
+        }
+
+#ifdef NETWORKDEBUG
+        NetPacketDebugger::logPacket("R", packet);
+#endif
+        return true;
+    }
+
+    return false;
+}
+
+void
 NetworkServer::dropClient(NetClientID network_id)
 {
-    for(ClientList::iterator i = client_list.begin(); i != client_list.end();
-            ++i) {
+    ClientList::iterator i = client_list.begin();
+    while( i != client_list.end() )
+    {
         ServerClientListData* data = *i;
-        if(data->client_id.getNetworkID() == network_id) {
+        if(data->client_id.getNetworkID() == network_id)
+        {
             ServerConnectDaemon::startClientDropProcess(data->client_id);
             return;
         }
+        ++i;
     }
+}
+
+void
+NetworkServer::shutdownClientTransport(NetClientID client_id)
+{
+    if (serversocket)
+        serversocket->disconectClient(client_id);
 }
 
 void
@@ -133,3 +266,24 @@ NetworkServer::cleanupClients()
     }
 }
 
+void
+NetworkServer::checkIncoming()
+{
+    cleanupClients();
+}
+
+void
+NetworkServer::sendRemaining()
+{
+    if ( serversocket )
+        serversocket->sendRemaining();
+}
+
+std::string
+NetworkServer::getIP(NetClientID id) const
+{
+    if ( serversocket )
+        return serversocket->getClientIP(id);
+
+    return "No server";
+}

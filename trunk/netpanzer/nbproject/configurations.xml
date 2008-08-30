@@ -370,8 +370,6 @@
           <logicalFolder name="unix" displayName="unix" projectFiles="true">
             <itemPath>src/NetPanzer/Interfaces/unix/NetworkClientUnix.cpp</itemPath>
             <itemPath>src/NetPanzer/Interfaces/unix/NetworkClientUnix.hpp</itemPath>
-            <itemPath>src/NetPanzer/Interfaces/unix/NetworkServerUnix.cpp</itemPath>
-            <itemPath>src/NetPanzer/Interfaces/unix/NetworkServerUnix.hpp</itemPath>
           </logicalFolder>
           <itemPath>src/NetPanzer/Interfaces/BaseGameManager.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/BaseGameManager.hpp</itemPath>
@@ -401,7 +399,6 @@
           <itemPath>src/NetPanzer/Interfaces/InfoSocket.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/KeyboardInterface.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/KeyboardInterface.hpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/LogicManager.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/MapInterface.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/MapInterface.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/MapsManager.cpp</itemPath>
@@ -422,8 +419,6 @@
           <itemPath>src/NetPanzer/Interfaces/PowerUpInterface.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ProjectileInterface.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ProjectileInterface.hpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/Server.cpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/Server.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ServerCommand.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ServerConsole.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ServerConsole.hpp</itemPath>
@@ -1747,9 +1742,6 @@
       <item path="src/NetPanzer/Interfaces/KeyboardInterface.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Interfaces/LogicManager.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Interfaces/MapInterface.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -1810,12 +1802,6 @@
       <item path="src/NetPanzer/Interfaces/ProjectileInterface.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Interfaces/Server.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/Server.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Interfaces/ServerCommand.hpp">
         <itemTool>3</itemTool>
       </item>
@@ -1853,12 +1839,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/unix/NetworkClientUnix.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/unix/NetworkServerUnix.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/unix/NetworkServerUnix.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Network/ClientSocket.cpp">
@@ -3515,9 +3495,6 @@
       <item path="src/NetPanzer/Interfaces/KeyboardInterface.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Interfaces/LogicManager.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Interfaces/MapInterface.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -3578,12 +3555,6 @@
       <item path="src/NetPanzer/Interfaces/ProjectileInterface.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Interfaces/Server.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/Server.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Interfaces/ServerCommand.hpp">
         <itemTool>3</itemTool>
       </item>
@@ -3621,12 +3592,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/unix/NetworkClientUnix.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/unix/NetworkServerUnix.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/unix/NetworkServerUnix.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Network/ClientSocket.cpp">

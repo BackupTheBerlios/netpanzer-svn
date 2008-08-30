@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ChatInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
-#include "Interfaces/Server.hpp"
 #include "Interfaces/Client.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/NetworkServer.hpp"

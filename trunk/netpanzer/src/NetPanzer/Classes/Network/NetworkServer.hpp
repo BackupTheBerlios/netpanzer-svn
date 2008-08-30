@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <list>
 #include "NetworkInterface.hpp"
 #include "NetworkReturnCodes.hpp"
+#include "Network/ServerSocket.hpp"
 
 #include "Util/Timer.hpp"
 #include "Classes/PlayerID.hpp"
@@ -64,25 +65,37 @@ public:
     bool addClientToSendList(const PlayerID& client_player_id);
     void removeClientFromSendList(const PlayerID& client_player_id);
 
-    virtual void openSession() = 0;
-    virtual void hostSession() = 0;
-    virtual void closeSession() = 0;
+    void openSession();
+    
+    void hostSession();
+    
+    void closeSession();
 
-    virtual void sendMessage(NetMessage *message, size_t size) = 0;
-    virtual void sendMessage(NetClientID network_id, NetMessage* message,
-            size_t size) = 0;
+    void sendMessage(NetMessage *message, size_t size);
+    
+    void sendMessage(NetClientID network_id, NetMessage* message,
+            size_t size);
+    
     void sendMessage(const PlayerID& player_id, NetMessage *message,
-            size_t size) {
+            size_t size)
+    {
         sendMessage(player_id.getNetworkID(), message, size);
     }
-    virtual void sendRemaining() = 0;
+    
+    void sendRemaining();
 
-    virtual bool getPacket(NetPacket* packet) = 0;
+    bool getPacket(NetPacket* packet);
 
-    virtual void dropClient(NetClientID client_id);
-    virtual void shutdownClientTransport(NetClientID network_id) = 0;
+    void dropClient(NetClientID client_id);
+    void shutdownClientTransport(NetClientID network_id);
 
-    virtual void checkIncoming() = 0;
+    void checkIncoming();
+    std::string getIP(NetClientID network_id) const;
+
+private:
+    ServerSocket* serversocket;
 };
+
+extern NetworkServer *SERVER;
 
 #endif // ** _NETWORKSERVER_HPP

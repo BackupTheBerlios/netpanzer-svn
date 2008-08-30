@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 
-#include "Interfaces/Server.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/UnitNetMessage.hpp"

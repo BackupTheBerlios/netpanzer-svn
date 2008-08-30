@@ -28,7 +28,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ServerListView.hpp"
 
 #include "Classes/Network/NetworkServer.hpp"
-#include "Interfaces/Server.hpp"
 #include "Interfaces/Client.hpp"
 
 static int previousSessionType = _game_session_join;

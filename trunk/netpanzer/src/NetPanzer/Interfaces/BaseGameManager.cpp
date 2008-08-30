@@ -19,16 +19,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "BaseGameManager.hpp"
 
 #include "SDL.h"
-#include "Interfaces/unix/NetworkServerUnix.hpp"
 #include "Interfaces/unix/NetworkClientUnix.hpp"
 
 // ** PObject netPanzer Network Includes
-#include "Interfaces/Server.hpp"
 #include "Interfaces/Client.hpp"
 #include "Classes/Network/ClientMessageRouter.hpp"
 #include "Classes/Network/ServerConnectDaemon.hpp"
 #include "Classes/Network/ServerMessageRouter.hpp"
 #include "Classes/Network/NetworkState.hpp"
+#include "Classes/Network/NetworkServer.hpp"
 
 #include "Util/Log.hpp"
 #include "Interfaces/GameConfig.hpp"
@@ -146,7 +145,7 @@ void BaseGameManager::loadGameData()
 //-----------------------------------------------------------------
 void BaseGameManager::initializeNetworkSubSystem()
 {
-    SERVER = new NetworkServerUnix();
+    SERVER = new NetworkServer();
     CLIENT = new NetworkClientUnix();
 
     ServerMessageRouter::initialize();
