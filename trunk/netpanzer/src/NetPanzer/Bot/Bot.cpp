@@ -27,7 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/TerminalNetMesg.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkState.hpp"
-#include "Interfaces/Client.hpp"
 #include "Interfaces/ObjectiveInterface.hpp"
 #include "Util/Log.hpp"
 

@@ -30,7 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Structs/UnitTypes.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
 #include "Interfaces/ObjectiveInterface.hpp"
-#include "Interfaces/Client.hpp"
 #include "Interfaces/UnitProfileInterface.hpp"
 #include "Interfaces/ObjectiveInterface.hpp"
 #include "Interfaces/UnitInterface.hpp"

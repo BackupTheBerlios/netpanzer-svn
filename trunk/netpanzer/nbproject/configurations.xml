@@ -367,18 +367,12 @@
           <itemPath>src/NetPanzer/Core/NetworkGlobals.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="Interfaces" displayName="Interfaces" projectFiles="true">
-          <logicalFolder name="unix" displayName="unix" projectFiles="true">
-            <itemPath>src/NetPanzer/Interfaces/unix/NetworkClientUnix.cpp</itemPath>
-            <itemPath>src/NetPanzer/Interfaces/unix/NetworkClientUnix.hpp</itemPath>
-          </logicalFolder>
           <itemPath>src/NetPanzer/Interfaces/BaseGameManager.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/BaseGameManager.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/BotGameManager.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/BotGameManager.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ChatInterface.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ChatInterface.hpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/Client.cpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/Client.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ConfigVariable.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ConfigVariable.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/Console.cpp</itemPath>
@@ -1676,12 +1670,6 @@
       <item path="src/NetPanzer/Interfaces/ChatInterface.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Interfaces/Client.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/Client.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Interfaces/ConfigVariable.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -1833,12 +1821,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/WorldViewInterface.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/unix/NetworkClientUnix.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/unix/NetworkClientUnix.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Network/ClientSocket.cpp">
@@ -3429,12 +3411,6 @@
       <item path="src/NetPanzer/Interfaces/ChatInterface.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Interfaces/Client.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/Client.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Interfaces/ConfigVariable.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -3586,12 +3562,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/WorldViewInterface.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/unix/NetworkClientUnix.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/unix/NetworkClientUnix.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Network/ClientSocket.cpp">

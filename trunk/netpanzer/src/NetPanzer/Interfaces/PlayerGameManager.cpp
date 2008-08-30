@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/BaseGameManager.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/ChatInterface.hpp"
-#include "Interfaces/Client.hpp"
 #include "Interfaces/Console.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/MouseInterface.hpp"
@@ -42,7 +41,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/UnitInterface.hpp"
 #include "Interfaces/UnitProfileInterface.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
-#include "Interfaces/unix/NetworkClientUnix.hpp"
 
 #include "Classes/ScreenSurface.hpp"
 #include "Classes/TileEngine.hpp"
@@ -55,6 +53,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/ServerConnectDaemon.hpp"
 #include "Classes/Network/ServerMessageRouter.hpp"
 #include "Classes/Network/NetworkServer.hpp"
+#include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/SystemNetMessage.hpp"
 #include "Classes/Network/ConnectNetMessage.hpp"
@@ -296,7 +295,7 @@ void PlayerGameManager::hostMultiPlayerGame()
 		delete CLIENT;
 		CLIENT=0;
 	}
-	CLIENT = new NetworkClientUnix();
+	CLIENT = new NetworkClient();
         SERVER->hostSession();
 
         if((bool) gameconfig->publicServer &&

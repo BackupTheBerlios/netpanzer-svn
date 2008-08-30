@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "NetworkInterface.hpp"
 #include "NetworkReturnCodes.hpp"
+#include "Network/ClientSocket.hpp"
 
 #include "Util/Timer.hpp"
 #include "Classes/PlayerID.hpp"
@@ -39,7 +40,7 @@ enum { _connection_status_no_connection,
 #define _SERVER_KEEP_ALIVE_THRESHOLD     (120)  // in seconds
 #define _SERVER_PING_INTERVAL              (5)  // in seconds
 
-class NetworkClient : public NetworkInterface
+class NetworkClient : public NetworkInterface, ClientSocketObserver
 {
 protected:
     NetPacket net_packet;
@@ -52,19 +53,29 @@ protected:
     void netMessageClientConnectAck(const NetMessage* message);
 
     void processNetMessage(const NetMessage* message);
+
+    void onClientConnected(ClientSocket *s);
+    void onClientDisconected(ClientSocket *s, const char *msg);    
+
 public:
     NetworkClient ();
     virtual ~NetworkClient ();
 
-    virtual bool joinServer(const std::string& server_name) = 0;
-    virtual void partServer() = 0;
+    bool joinServer(const std::string& server_name);
+    void partServer();
 
-    virtual void sendMessage(NetMessage* message, size_t size) = 0;
-    virtual void sendRemaining() = 0;
+    void sendMessage(NetMessage* message, size_t size);
+    void sendRemaining();
 
-    virtual bool getMessage(NetMessage *message) = 0;
+    bool getMessage(NetMessage *message);
 
-    virtual void checkIncoming() = 0;
+
+    void checkIncoming();
+
+private:
+    ClientSocket* clientsocket;
 };
+
+extern NetworkClient *CLIENT;
 
 #endif // ** _NETWORK_CLIENT_HPP
