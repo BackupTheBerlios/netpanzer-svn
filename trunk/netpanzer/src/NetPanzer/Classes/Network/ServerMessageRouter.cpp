@@ -108,20 +108,27 @@ void ServerMessageRouter::routeMessages()
 {
     ServerConnectDaemon::connectProcess();
 
-    while(SERVER->getPacket(&temp_packet) == true) {
+    while(SERVER->getPacket(&temp_packet) == true)
+    {
         const NetMessage* message = temp_packet.getNetMessage();
-        if (message->message_class == _net_message_class_multi) {
+        if (message->message_class == _net_message_class_multi)
+        {
             message_decoder.setDecodeMessage((const MultiMessage *) message);
 
             NetPacket packet;
             packet.toID = temp_packet.toID;
             packet.fromID = temp_packet.fromID;
+            packet.fromClient = temp_packet.fromClient;
+            
             NetMessage* mmessage;
-            while(message_decoder.decodeMessage(&mmessage)) {
+            while(message_decoder.decodeMessage(&mmessage))
+            {
                 memcpy(packet.data, mmessage, mmessage->getSize());
                 routePacket(&packet);
             }
-        } else {
+        }
+        else
+        {
             routePacket(&temp_packet);
         }
     }

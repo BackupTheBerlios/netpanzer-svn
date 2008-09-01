@@ -53,6 +53,11 @@ public:
     NetClientID getId() { return id; };
     std::string getIPAddress();
     
+    int getPlayerIndex()
+    {
+        return playerIndex;
+    }
+    
 protected:
     void onDataReceived(network::TCPSocket *so, const char *data, const int len);
     void onConnected(network::TCPSocket *so);
@@ -60,6 +65,7 @@ protected:
     void onSocketError(network::TCPSocket *so);
 
 private:
+    friend class ServerConnectDaemon;
     void initId();
     ClientSocketObserver * observer;
     network::TCPSocket* socket;
@@ -69,6 +75,7 @@ private:
     char tempbuffer[_MAX_NET_PACKET_SIZE];
     Uint16 tempoffset;
     NetClientID id;
+    int playerIndex;
 };
 
 #endif

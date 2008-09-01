@@ -33,13 +33,13 @@ static int getPlayerFrags()
 {
     PlayerState *player_state;
 
-    player_state = PlayerInterface::getLocalPlayerState();
+    player_state = PlayerInterface::getLocalPlayer();
     return( (int) player_state->getTotal() );
 }
 
 static int getPlayerObjectives()
 {
-    PlayerState* player_state = PlayerInterface::getLocalPlayerState();
+    PlayerState* player_state = PlayerInterface::getLocalPlayer();
     return player_state->getObjectivesHeld();
 }
 

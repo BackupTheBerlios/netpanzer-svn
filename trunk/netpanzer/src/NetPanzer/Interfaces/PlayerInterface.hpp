@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <SDL_thread.h>
 #include "Classes/PlayerState.hpp"
 #include "Interfaces/UnitInterface.hpp"
-#include "Classes/Network/NetMessageEncoder.hpp"
 
 class PlayerInterface
 {
@@ -73,16 +72,13 @@ public:
         return &player_lists[ player.getIndex() ];
     }
 
-    static PlayerState* getPlayerState(Uint16 player_index)
+    static PlayerState* getPlayer(Uint16 player_index)
     {
-        assert(player_index < max_players);
-        return &player_lists[player_index];
-    }
-
-    static PlayerState* getPlayer(Uint16 id)
-    {
-        assert(id < max_players);
-        return &player_lists[id];
+        if ( player_index < max_players )
+        {
+            return &player_lists[player_index];
+        }
+        return NULL;
     }
 
     static PlayerState* getPlayerByNetworkID(NetClientID id);
@@ -90,11 +86,6 @@ public:
     static PlayerState* getLocalPlayer()
     {
         return &player_lists[ local_player_index ];
-    }
-    
-    static PlayerState * getLocalPlayerState()
-    {
-        return getLocalPlayer();
     }
 
     static PlayerID getLocalPlayerID()
@@ -123,7 +114,6 @@ public:
     static int countPlayers();
 
     static void spawnPlayer( Uint16 player_index, const iXY &location );
-    static void spawnPlayer( const PlayerID &player, const iXY &location );
 
     static bool testRuleScoreLimit( long score_limit, PlayerState ** player_state );
 
@@ -135,10 +125,8 @@ public:
     static bool testRulePlayerRespawn( bool *completed, PlayerState **player_state );
 
 protected:
-    static NetMessageEncoder* message_encoder;
     static Uint16 player_sync_index;
     static Uint16 player_sync_connect_player_index;
-    static PlayerID player_sync_connect_id;
     static Timer player_sync_timer;
 
     static void netMessageConnectID(const NetMessage *message );
@@ -148,10 +136,10 @@ protected:
     static void netMessageAllianceUpdate(const NetMessage *message );
 
 public:
-    static void startPlayerStateSync(const PlayerID &connect_player);
-    static bool syncPlayerState(int *percent_complete);
+    static void startPlayerStateSync(Uint16 player_index);
+    static bool syncNextPlayerState( NetworkPlayerState &dest, int *percent_complete);
     static void processNetMessage(const NetMessage *message );
-    static void disconnectPlayerCleanup(const PlayerID &player_id );
+    static void disconnectPlayerCleanup( Uint16 index );
 };
 
 #endif // ** _PLAYERINTERFACE_HP

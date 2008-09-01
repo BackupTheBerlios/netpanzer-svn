@@ -35,7 +35,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 using namespace std;
 
 ClientSocket::ClientSocket(ClientSocketObserver *o, const std::string& whole_servername)
-    : observer(0), socket(0), sendpos(0), tempoffset(0)
+    : observer(0), socket(0), sendpos(0), tempoffset(0), playerIndex(-1)
 {
     try {
         proxy.setProxy(gameconfig->proxyserver,
@@ -72,10 +72,9 @@ ClientSocket::ClientSocket(ClientSocketObserver *o, const std::string& whole_ser
     }
 }
 ClientSocket::ClientSocket(ClientSocketObserver *o)
-    : observer(o), socket(0), sendpos(0), tempoffset(0)
+    : observer(o), socket(0), sendpos(0), tempoffset(0), playerIndex(-1)
 {
     initId();
-    observer = o;
 }
 
 void
@@ -93,20 +92,27 @@ ClientSocket::~ClientSocket()
 
 void ClientSocket::sendMessage(const void* data, size_t size)
 {
-    if ( socket ) {
-        if ( sendpos ) {
-            if ( sendpos+size > sizeof(sendbuffer) ) {
+    if ( socket )
+    {
+        if ( sendpos )
+        {
+            if ( sendpos+size > sizeof(sendbuffer) )
+            {
                 observer->onClientDisconected(this, "Send buffer full, need to disconnect");
                 return;
             }
             memcpy(sendbuffer+sendpos, data, size);
             sendpos += size;
             sendRemaining();
-        } else {
+        }
+        else
+        {
             size_t s = socket->send(data, size);
-            if ( s != size ) {
+            if ( s != size )
+            {
                 size_t remain = size-s;
-                if ( remain > sizeof(sendbuffer) ) {
+                if ( remain > sizeof(sendbuffer) )
+                {
                     observer->onClientDisconected(this, "Send data bigger than buffer, need to disconnect");
                     return;
                 }
@@ -162,7 +168,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             }
             
             if ( remaining >= packetsize ) {
-                EnqueueIncomingPacket(data+dataptr, packetsize, 0, id);
+                EnqueueIncomingPacket(data+dataptr, packetsize, 0, id, this);
                 remaining -= packetsize;
                 dataptr   += packetsize;
             } else {
@@ -210,7 +216,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             }
             
             if ( tempoffset == packetsize ) {
-                EnqueueIncomingPacket(tempbuffer, packetsize, 0, id);
+                EnqueueIncomingPacket(tempbuffer, packetsize, 0, id, this);
                 tempoffset = 0;
             }
         }

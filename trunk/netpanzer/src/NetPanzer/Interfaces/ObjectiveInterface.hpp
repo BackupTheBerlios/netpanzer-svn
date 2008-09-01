@@ -91,7 +91,7 @@ protected:
     static NetMessageEncoder message_encoder;
 
 public:
-    static void syncObjectives( PlayerID connect_player );
+    static void syncObjectives( ClientSocket * client );
 
     // Objective positions, almost exclusivly for mini map
 protected:

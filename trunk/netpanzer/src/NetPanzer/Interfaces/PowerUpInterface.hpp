@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Timer.hpp"
 #include "Classes/PlayerID.hpp"
 #include "Classes/Network/NetPacket.hpp"
+#include "Network/ClientSocket.hpp"
 
 class PowerUpList : public std::vector<PowerUp*>
 {
@@ -66,7 +67,7 @@ public:
 
     static void processNetMessages(const NetMessage* message );
 
-    static void syncPowerUps( PlayerID player_id );
+    static void syncPowerUps( ClientSocket * client );
 };
 
 #endif // ** _POWERUP_INTERFACE_HPP

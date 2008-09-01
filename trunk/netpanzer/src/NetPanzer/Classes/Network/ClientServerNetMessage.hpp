@@ -36,16 +36,6 @@ enum { _net_message_id_transport_client_accept,
 #pragma pack(1)
 #endif
 
-class TransportClientAccept : public NetMessage
-{
-public:
-    TransportClientAccept()
-    {
-        message_class = _net_message_class_client_server;
-        message_id = _net_message_id_transport_client_accept;
-    }
-} __attribute__((packed));
-
 class ClientMesgConnectAck : public NetMessage
 {
 public:

@@ -16,6 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+#include <algorithm>
+
+#include "NetMessage.hpp"
 
 #include "Util/Log.hpp"
 #include "Classes/Network/NetworkServer.hpp"
@@ -31,15 +34,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 NetworkServer* SERVER = 0;
 
 NetworkServer::NetworkServer()
-        : NetworkInterface(), serversocket(0)
+        : NetworkInterface(), socket(0)
 {
     // nothing
 }
 
 NetworkServer::~NetworkServer()
 {
-    if ( serversocket )
-        delete serversocket;
+    if ( socket )
+        socket->destroy();
 }
 
 void NetworkServer::resetClientList()
@@ -47,31 +50,20 @@ void NetworkServer::resetClientList()
     for(ClientList::iterator i = client_list.begin(); i != client_list.end();
             ++i)
     {
+        delete (*i)->client_socket;
         delete *i;
     }
     client_list.clear();
 }
 
-bool NetworkServer::addClientToSendList(const PlayerID& client_player_id)
+bool NetworkServer::addClientToSendList( ClientSocket * client )
 {
     ServerClientListData *client_data = new ServerClientListData;
 
-    client_data->client_id = client_player_id;
+    client_data->client_socket = client;
     client_list.push_back(client_data);
 
     return true;
-}
-
-void NetworkServer::removeClientFromSendList(const PlayerID &client_player_id)
-{
-    for(ClientList::iterator i = client_list.begin(); i != client_list.end();
-            ++i) {
-        ServerClientListData* data = *i;
-        if(data->client_id == client_player_id) {
-            data->wannadie = true;
-            return;
-        }
-    }
 }
 
 void NetworkServer::netPacketClientKeepAlive(const NetPacket* )
@@ -82,12 +74,6 @@ void NetworkServer::netPacketClientKeepAlive(const NetPacket* )
 void NetworkServer::netPacketServerPingRequest(const NetPacket* )
 {
     // nothing
-}
-
-void NetworkServer::netPacketTransportClientAccept(const NetPacket* packet)
-{
-    ClientMesgConnectAck connect_ack_mesg;
-    sendMessage(packet->fromID, &connect_ack_mesg,sizeof(ClientMesgConnectAck));
 }
 
 void NetworkServer::processNetPacket(const NetPacket* packet)
@@ -102,10 +88,6 @@ void NetworkServer::processNetPacket(const NetPacket* packet)
             netPacketServerPingRequest(packet);
             break;
 
-        case _net_message_id_transport_client_accept:
-            netPacketTransportClientAccept(packet);
-            break;
-            
         default:
             LOGGER.warning("Unknown networkserverpacket: id:%d.",
                     message->message_id);
@@ -122,24 +104,38 @@ NetworkServer::openSession()
 void
 NetworkServer::hostSession()
 {
-    if ( serversocket )
+    if ( socket )
     {
-        delete serversocket;
-        serversocket = 0;
+        socket->destroy();
+        socket = 0;
     }
+
+    resetClientList();
     
-    serversocket = new ServerSocket(gameconfig->bindaddress,
-                                    gameconfig->serverport);
-    
+    try
+    {
+        Address addr = Address::resolve(gameconfig->bindaddress,
+                                        gameconfig->serverport);
+        
+        socket = new TCPListenSocket(addr, this);
+
+    }
+    catch(...)
+    {
+        if (socket)
+            socket->destroy();
+        socket = 0;
+        throw;
+    }
 }
 
 void
 NetworkServer::closeSession()
 {
-    if ( serversocket )
-        delete serversocket;
+    if ( socket )
+        socket->destroy();
     
-    serversocket = 0;
+    socket = 0;
 }
 
 void
@@ -156,10 +152,12 @@ NetworkServer::sendMessage(NetMessage *message, size_t size)
 
         try
         {
-            sendMessage((*i)->client_id.getNetworkID(), message, size);
+            message->setSize(size);
+            (*i)->client_socket->sendMessage( message, size);
         }
         catch(std::exception& e)
         {
+            // XXX handle properly
             LOG( ("Error while sending network packet.") );
             return;
         }
@@ -172,28 +170,40 @@ void
 NetworkServer::sendMessage(NetClientID network_id, NetMessage* message,
         size_t size)
 {
-    if(serversocket == 0)
+    if( socket == 0 )
         return;
     
-    message->setSize(size);
-
-    try
+    ClientList::iterator i = client_list.begin();
+    while ( i != client_list.end() && (*i)->client_socket->getId() != network_id )
     {
-        serversocket->sendMessage(network_id, message, size);
-    }
-    catch(std::exception& e)
-    {
-        LOG ( ("Network send error when sending to client %d: %s",
-               network_id, e.what()) );
-        dropClient(network_id);
-        return;
+        ++i;
     }
 
-    NetworkState::incPacketsSent(size);
+    if ( i != client_list.end() )
+    {
+        try
+        {
+            message->setSize(size);
+            (*i)->client_socket->sendMessage( message, size);
 
+            NetworkState::incPacketsSent(size);
+            
 #ifdef NETWORKDEBUG
-    NetPacketDebugger::logMessage("S", message);
+            NetPacketDebugger::logMessage("S", message);
 #endif
+
+        }
+        catch (NetworkException e)
+        {
+            LOG ( ("Network send error when sending to client %d: %s",
+                   network_id, e.what()) );
+            dropClient((*i)->client_socket);
+        }
+    }
+    else
+    {
+        LOGGER.warning("NetworkServer: sendMessage to unknown client: %d", network_id);
+    }
 }
 
 bool
@@ -229,38 +239,54 @@ NetworkServer::getPacket(NetPacket* packet)
 }
 
 void
-NetworkServer::dropClient(NetClientID network_id)
+NetworkServer::dropClient(ClientSocket * client)
 {
     ClientList::iterator i = client_list.begin();
-    while( i != client_list.end() )
+    while( i != client_list.end() && (*i)->client_socket != client )
     {
-        ServerClientListData* data = *i;
-        if(data->client_id.getNetworkID() == network_id)
+        ++i;
+    }
+    
+    if ( i != client_list.end() )
+    {
+        ServerConnectDaemon::startClientDropProcess((*i)->client_socket);
+    }
+}
+
+void
+NetworkServer::shutdownClientTransport( ClientSocket * client )
+{
+    
+    ClientList::iterator i = client_list.begin();
+    while ( i != client_list.end() && (*i)->client_socket != client)
+    {
+        if ( (*i)->client_socket == client )
         {
-            ServerConnectDaemon::startClientDropProcess(data->client_id);
-            return;
+            LOGGER.warning("NetworkServer: disconnecting client [%d]", client->getId());
+            client_list.erase(i);
+            delete (*i)->client_socket;
+            delete *i;
+            break;
         }
         ++i;
     }
 }
 
 void
-NetworkServer::shutdownClientTransport(NetClientID client_id)
-{
-    if (serversocket)
-        serversocket->disconectClient(client_id);
-}
-
-void
 NetworkServer::cleanupClients()
 {
-    for(ClientList::iterator i = client_list.begin(); i != client_list.end();
-            ) {
+    ClientList::iterator i = client_list.begin();
+    while( i != client_list.end() )
+    {
         ServerClientListData* data = *i;
-        if(data->wannadie) {
+        if(data->wannadie)
+        {
+            delete data->client_socket;
             delete data;
             i = client_list.erase(i);
-        } else {
+        }
+        else
+        {
             ++i;
         }
     }
@@ -275,15 +301,99 @@ NetworkServer::checkIncoming()
 void
 NetworkServer::sendRemaining()
 {
-    if ( serversocket )
-        serversocket->sendRemaining();
+    ClientList::iterator i = client_list.begin();
+    while ( i != client_list.end() )
+    {
+        (*i)->client_socket->sendRemaining();
+        i++;
+    }
 }
 
 std::string
-NetworkServer::getIP(NetClientID id) const
+NetworkServer::getIP(NetClientID id)
 {
-    if ( serversocket )
-        return serversocket->getClientIP(id);
+    ClientList::iterator i = client_list.begin();
+    while ( i != client_list.end() )
+    {
+        if ( (*i)->client_socket->getId() == id )
+        {
+            return (*i)->client_socket->getIPAddress();
+        }
+        
+        i++;
+    }
 
-    return "No server";
+    return "Not a client";
+}
+
+void
+NetworkServer::onSocketError(TCPListenSocket *so)
+{
+    (void)so;
+    LOGGER.warning("NetworkServer: Listen Socket error, something bad could happen from now");
+
+}
+
+TCPSocketObserver *
+NetworkServer::onNewConnection(TCPListenSocket *so, const Address &fromaddr)
+{
+    (void)so;
+    (void)fromaddr;
+    return new ClientSocket(this);
+}
+
+void
+NetworkServer::onClientConnected(ClientSocket *s)
+{
+    NetClientID id = s->getId();
+    LOGGER.debug("NetworkServer: client connected [%d]", id);
+    //clients[id] = s;
+    
+    // this class handle this packet and it only sends the answer
+    // send it here right now
+    ClientMesgConnectAck connect_ack_mesg;
+    connect_ack_mesg.setSize(sizeof(ClientMesgConnectAck));
+    s->sendMessage( &connect_ack_mesg,sizeof(ClientMesgConnectAck));
+}
+
+void
+NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
+{
+    // XXX WARNING possible double free when shutdownclienttransport is called
+    LOGGER.warning("NetworkServer::onClientDisconected( %d, '%s')", s->getId(), msg);
+    if ( ServerConnectDaemon::inConnectQueue(s) )
+    {
+        LOGGER.warning("NetworkServer: client bad disconnected while connecting [%d]", s->getId());
+        ServerConnectDaemon::startClientDropProcess(s);
+    }
+    else
+    {
+        ClientList::iterator i = client_list.begin();
+        while ( i != client_list.end() )
+        {
+            if ( (*i)->client_socket == s )
+            {
+                LOGGER.warning("NetworkServer: client bad disconnection [%d]", s->getId());
+                ServerConnectDaemon::startClientDropProcess(s);
+                break;
+            }
+            ++i;
+        }
+    }
+}
+
+ClientSocket *
+NetworkServer::getClientSocketByPlayerIndex ( Uint16 index )
+{
+    ClientList::iterator i = client_list.begin();
+    while ( i != client_list.end() )
+    {
+        if ( (*i)->client_socket->getPlayerIndex() == index )
+        {
+            return (*i)->client_socket;
+        }
+        i++;
+    }
+    
+    return NULL;
 }

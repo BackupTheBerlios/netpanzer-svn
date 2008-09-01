@@ -139,7 +139,7 @@ enum { _connect_alert_mesg_connect,
 class SystemConnectAlert : public NetMessage
 {
 private:
-    Uint16 player_id;
+    Uint16 player_index;
 public:
     Uint8 alert_enum;
 
@@ -149,14 +149,15 @@ public:
         message_id = _net_message_id_system_connect_alert;
     }
         
-    void set(const PlayerID &player, unsigned char alert_type)
+    void set(const Uint16 player_idx, unsigned char alert_type)
     {
-        player_id = htol16(player.getIndex());
+        player_index = htol16(player_idx);
         alert_enum = alert_type;
     }                                               
+    
     Uint16 getPlayerID() const
     {
-        return ltoh16(player_id);
+        return ltoh16(player_index);
     }
 
 } __attribute__((packed));

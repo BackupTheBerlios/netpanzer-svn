@@ -18,21 +18,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __UNITSYNC_HPP__
 #define __UNITSYNC_HPP__
 
-
-#include "Classes/PlayerID.hpp"
 #include "Classes/UnitBase.hpp"
+
+class ClientSocket;
 
 class UnitSync
 {
 public:
-    UnitSync();
+    UnitSync(ClientSocket * c);
     ~UnitSync();
 
     int getPercentComplete() const;
     
-    bool sendNextUnit(PlayerID playerid);
+    bool sendNextUnit();
 
 private:
+    ClientSocket * client;
     size_t count;
     UnitID unitid;
     size_t unitstosync;

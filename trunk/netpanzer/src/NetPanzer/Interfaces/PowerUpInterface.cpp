@@ -307,10 +307,11 @@ void PowerUpInterface::processNetMessages(const NetMessage* message )
     }
 }
 
-void PowerUpInterface::syncPowerUps( PlayerID player_id )
+void PowerUpInterface::syncPowerUps( ClientSocket * client )
 {
     PowerUpList::iterator i;
-    for(i=powerup_list.begin(); i!=powerup_list.end(); i++) {
+    for(i=powerup_list.begin(); i!=powerup_list.end(); i++)
+    {
         PowerUp* powerup_ptr = *i;
 
         PowerUpCreateMesg create_mesg;
@@ -318,8 +319,9 @@ void PowerUpInterface::syncPowerUps( PlayerID player_id )
                          powerup_ptr->powerup_state.ID,
                          powerup_ptr->powerup_state.type
                        );
+        create_mesg.setSize(sizeof(PowerUpCreateMesg));
 
-        SERVER->sendMessage(player_id, &create_mesg, sizeof(PowerUpCreateMesg));
+        client->sendMessage( &create_mesg, sizeof(PowerUpCreateMesg));
     }
 }
 

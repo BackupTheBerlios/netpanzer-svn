@@ -295,7 +295,7 @@ UnitBase * UnitInterface::newUnit( unsigned short unit_type,
         color_flag = false;
     }
 
-    PlayerState* player = PlayerInterface::getPlayerState( player_index );
+    PlayerState* player = PlayerInterface::getPlayer( player_index );
     unit_flag = player->getFlag();
 
     if ( unit_type < UnitProfileInterface::getNumUnitTypes() )

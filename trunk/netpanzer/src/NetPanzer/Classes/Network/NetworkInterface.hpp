@@ -21,12 +21,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetPacketQueues.hpp"
 
 void EnqueueIncomingPacket(const void *message, Uint16 message_size,
-                           NetClientID toID, NetClientID fromID);
+                           NetClientID toID, NetClientID fromID,
+                           ClientSocket *fromClient);
 
 class NetworkInterface
 {
 public:
-    static NetPacketQueue loop_back_send_queue;
     static NetPacketQueue loop_back_recv_queue;
     static NetPacketQueue receive_queue;
 

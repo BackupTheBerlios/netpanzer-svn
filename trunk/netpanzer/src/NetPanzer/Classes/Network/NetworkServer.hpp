@@ -21,23 +21,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <list>
 #include "NetworkInterface.hpp"
 #include "NetworkReturnCodes.hpp"
-#include "Network/ServerSocket.hpp"
+#include "Network/TCPListenSocket.hpp"
+#include "Network/ClientSocket.hpp"
 
 #include "Util/Timer.hpp"
 #include "Classes/PlayerID.hpp"
 
+using namespace network;
+
 class ServerClientListData
 {
 public:
-    PlayerID    client_id;
-    bool        wannadie;
+    bool          wannadie;
+    ClientSocket *client_socket;
 
     ServerClientListData()
-        : wannadie(false)
+        : wannadie(false), client_socket(0)
     { }
 };
 
-class NetworkServer : public NetworkInterface
+class NetworkServer : public NetworkInterface,
+                      public TCPListenSocketObserver,
+                      public ClientSocketObserver
 {
 protected:
     typedef std::list<ServerClientListData*> ClientList;
@@ -52,18 +57,17 @@ protected:
 
     void netPacketClientKeepAlive(const NetPacket* packet);
     void netPacketServerPingRequest(const NetPacket* packet);
-    void netPacketTransportClientAccept(const NetPacket* packet);
 
     void processNetPacket(const NetPacket* packet);
 
     /// removes client that have the wannadie flag set to true
     void cleanupClients();
+    
 public:
     NetworkServer();
     virtual ~NetworkServer();
 
-    bool addClientToSendList(const PlayerID& client_player_id);
-    void removeClientFromSendList(const PlayerID& client_player_id);
+    bool addClientToSendList( ClientSocket * client );
 
     void openSession();
     
@@ -86,14 +90,22 @@ public:
 
     bool getPacket(NetPacket* packet);
 
-    void dropClient(NetClientID client_id);
-    void shutdownClientTransport(NetClientID network_id);
+    void dropClient(ClientSocket * client);
+    void shutdownClientTransport( ClientSocket * client );
+    
+    ClientSocket * getClientSocketByPlayerIndex ( Uint16 index );
 
     void checkIncoming();
-    std::string getIP(NetClientID network_id) const;
+    std::string getIP(NetClientID network_id);
+
+protected:
+    TCPSocketObserver * onNewConnection(TCPListenSocket *so,const Address &fromaddr);
+    void onSocketError(TCPListenSocket *so);
+    void onClientConnected(ClientSocket *s);
+    void onClientDisconected(ClientSocket *s, const char * msg);
 
 private:
-    ServerSocket* serversocket;
+    TCPListenSocket * socket;
 };
 
 extern NetworkServer *SERVER;

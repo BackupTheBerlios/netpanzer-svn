@@ -22,32 +22,31 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkInterface.hpp"
 
 void EnqueueIncomingPacket(const void *message, Uint16 message_size,
-                           NetClientID toID, NetClientID fromID )
+                           NetClientID toID, NetClientID fromID,
+                           ClientSocket *fromClient)
 {
     static NetPacket TEMP_PACKET;
 
     TEMP_PACKET.toID = toID;
     TEMP_PACKET.fromID = fromID;
+    TEMP_PACKET.fromClient = fromClient;
     assert(message_size <= _MAX_NET_PACKET_SIZE);
 
     memcpy(TEMP_PACKET.data, message, message_size);
     NetworkInterface::receive_queue.enqueue( TEMP_PACKET );
 }
 
-NetPacketQueue NetworkInterface::loop_back_send_queue;
 NetPacketQueue NetworkInterface::loop_back_recv_queue;
 NetPacketQueue NetworkInterface::receive_queue;
 
 NetworkInterface::NetworkInterface()
 {
-    loop_back_send_queue.initialize( 25 );
     loop_back_recv_queue.initialize( 100 );
     receive_queue.initialize( 200 );
 }
 
 NetworkInterface::~NetworkInterface()
 {
-    loop_back_send_queue.deallocate();
     loop_back_recv_queue.deallocate();
     receive_queue.deallocate();
 }

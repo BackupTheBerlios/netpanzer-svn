@@ -27,8 +27,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 
-UnitSync::UnitSync()
-    : count(0), unitid(0), unitstosync(0), lastunit(0)
+UnitSync::UnitSync(ClientSocket * c)
+    : client(c), count(0), unitid(0), unitstosync(0), lastunit(0)
 {
     unitstosync = UnitInterface::getTotalUnitCount();
     if ( unitstosync ) {
@@ -47,7 +47,7 @@ int UnitSync::getPercentComplete() const
         return 100;
 }
 
-bool UnitSync::sendNextUnit(PlayerID toplayer)
+bool UnitSync::sendNextUnit()
 {
     const UnitInterface::Units& units = UnitInterface::getUnits();
     UnitInterface::Units::const_iterator i = units.lower_bound(unitid);
@@ -66,7 +66,8 @@ bool UnitSync::sendNextUnit(PlayerID toplayer)
                                     unit_map_loc.x,
                                     unit_map_loc.y,
                                     unit->unit_state.unit_type);
-    SERVER->sendMessage(toplayer, &create_message, sizeof(create_message));
+    create_message.setSize(sizeof(UnitRemoteCreate));
+    client->sendMessage( &create_message, sizeof(create_message));
     
     // XXX when send units to new players it also send sync command to all players
     // This will change in future

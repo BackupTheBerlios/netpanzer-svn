@@ -136,7 +136,7 @@ void RankView::drawPlayerStats(Surface &dest)
 
     std::vector<const PlayerState*> states;
     for(size_t i = 0; i < PlayerInterface::getMaxPlayers(); ++i) {
-        PlayerState* state = PlayerInterface::getPlayerState(i);
+        PlayerState* state = PlayerInterface::getPlayer(i);
         if(state->getStatus() != _player_state_active)
             continue;
         states.push_back(state);

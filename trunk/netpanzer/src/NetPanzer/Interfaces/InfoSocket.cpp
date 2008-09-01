@@ -115,7 +115,7 @@ InfoSocket::prepareStatusPacket()
     ObjectiveInterface::updatePlayerObjectiveCounts();
     int n = 0;
     for(int i = 0; i < maxPlayers; ++i) {
-        PlayerState* playerState = PlayerInterface::getPlayerState(i);
+        PlayerState* playerState = PlayerInterface::getPlayer(i);
         if(playerState->getStatus() != _player_state_active)
             continue;
         s << "\\player_" << n << "\\" << playerState->getName()

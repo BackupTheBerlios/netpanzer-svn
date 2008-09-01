@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 static const Uint16 _MAX_NET_PACKET_SIZE=512;
 typedef Uint32 NetClientID;
+class ClientSocket;
 
 #ifdef MSVC
 #pragma pack(1)
@@ -34,6 +35,7 @@ class NetPacket
 public:
     NetClientID toID;
     NetClientID fromID;
+    ClientSocket *fromClient;
 
     Uint8  data[ _MAX_NET_PACKET_SIZE ];
 

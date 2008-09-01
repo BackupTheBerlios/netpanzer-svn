@@ -127,7 +127,7 @@ void DedicatedGameManager::inputLoop()
                     << std::setw(21) << "IP\n";
                 for(size_t i = 0; i<PlayerInterface::getMaxPlayers(); ++i) {
                     PlayerState* playerstate =
-                        PlayerInterface::getPlayerState(i);
+                        PlayerInterface::getPlayer(i);
                     if(playerstate->getStatus() != _player_state_active)
                         continue;
                     //*Console::server
@@ -163,10 +163,9 @@ void DedicatedGameManager::inputLoop()
                     std::cout << "Unknown player." << std::endl;
                     break;
                 }
-                PlayerState* playerstate = PlayerInterface::getPlayerState(id);
-                SERVER->shutdownClientTransport(playerstate->getNetworkID());
-                PlayerInterface::disconnectPlayerCleanup(
-                        playerstate->getPlayerID());
+                PlayerState* playerstate = PlayerInterface::getPlayer(id);
+                SERVER->shutdownClientTransport(SERVER->getClientSocketByPlayerIndex(id));
+                PlayerInterface::disconnectPlayerCleanup(id);
                 break;
         }
         commandqueue.pop();

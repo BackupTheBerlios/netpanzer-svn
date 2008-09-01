@@ -149,7 +149,7 @@ void PlayerState::setName(const std::string& newname)
             if ( p == ID.getIndex() )
                 continue;
                 
-            PlayerState *ps=PlayerInterface::getPlayerState(p);
+            PlayerState *ps=PlayerInterface::getPlayer(p);
             if ( (ps->status==_player_state_connecting 
                     || ps->status==_player_state_active )
                     && ps->name == name ) {
@@ -306,7 +306,7 @@ void PlayerState::setFlag(unsigned char newflag)
             if ( p == ID.getIndex() )
                 continue;
                 
-            PlayerState *ps=PlayerInterface::getPlayerState(p);
+            PlayerState *ps=PlayerInterface::getPlayer(p);
             if ( (ps->status==_player_state_connecting 
                     || ps->status==_player_state_active )
                     && ps->flag == flag ) {

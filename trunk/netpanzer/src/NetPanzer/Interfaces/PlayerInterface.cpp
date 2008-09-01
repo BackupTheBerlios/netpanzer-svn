@@ -36,10 +36,8 @@ unsigned short PlayerInterface::max_players = 0;
 bool *      PlayerInterface::alliance_matrix = 0;
 unsigned short PlayerInterface::local_player_index = 0xFFFF;
 
-NetMessageEncoder* PlayerInterface::message_encoder = 0;
 unsigned short PlayerInterface::player_sync_index;
 unsigned short PlayerInterface::player_sync_connect_player_index;
-PlayerID PlayerInterface::player_sync_connect_id;
 Timer PlayerInterface::player_sync_timer;
 
 unsigned short PlayerInterface::respawn_rule_player_index = 0;
@@ -256,11 +254,14 @@ PlayerState * PlayerInterface::allocateNewPlayer()
     unsigned long player_index;
 
     SDL_mutexP(mutex);
-    for ( player_index = 0; player_index < max_players; player_index++ ) {
-        if ( player_lists[ player_index ].getStatus() == _player_state_free ) {
+    for ( player_index = 0; player_index < max_players; player_index++ )
+    {
+        if ( player_lists[ player_index ].getStatus() == _player_state_free )
+        {
             player_lists[ player_index ].setStatus( _player_state_allocated );
             player_lists[ player_index ].resetStats();
 	    player_lists[ player_index ].setColor( player_index );
+            player_lists[ player_index ].setID((unsigned short)player_index);
             SDL_mutexV(mutex);
             return( &player_lists[ player_index ] );
         } // ** if
@@ -273,26 +274,18 @@ PlayerState * PlayerInterface::allocateNewPlayer()
 
 void PlayerInterface::spawnPlayer( unsigned short player_index, const iXY &location )
 {
-    assert( player_index < max_players );
-
-    spawnPlayer( player_lists[ player_index ].getPlayerID(),
-                 location
-               );
-}
-
-void PlayerInterface::spawnPlayer( const PlayerID &player, const iXY &location )
-{
-    Uint16 player_index = player.getIndex();
-    assert( player_index < max_players );
-
-    SDL_mutexP(mutex);
-    if ( player_lists[player_index].getStatus() != _player_state_free ) {
-        UnitInterface::spawnPlayerUnits(location,
-                                         player_index,
-                                         player_lists[ player_index ].unit_config
-                                       );
-    } // ** if _player_state_active
-    SDL_mutexV(mutex);
+    if ( player_index < max_players )
+    {
+        SDL_mutexP(mutex);
+        if ( player_lists[player_index].getStatus() != _player_state_free )
+        {
+            UnitInterface::spawnPlayerUnits( location,
+                                             player_index,
+                                             player_lists[ player_index ].unit_config
+                                           );
+        } // ** if _player_state_active
+        SDL_mutexV(mutex);
+    }
 }
 
 
@@ -350,57 +343,45 @@ bool PlayerInterface::testRulePlayerRespawn( bool *completed, PlayerState **play
     return( false );
 }
 
-void PlayerInterface::startPlayerStateSync(const PlayerID &connect_player)
+void PlayerInterface::startPlayerStateSync(Uint16 player_index)
 {
     player_sync_index = 0;
-    player_sync_connect_player_index = connect_player.getIndex();
-    player_sync_connect_id = connect_player;
+    player_sync_connect_player_index = player_index;
     player_sync_timer.changeRate( 4 );
-    delete message_encoder;
-    message_encoder = new NetMessageEncoder(connect_player);
 }
 
-bool PlayerInterface::syncPlayerState(int *percent_complete)
+bool
+PlayerInterface::syncNextPlayerState( NetworkPlayerState &dest, int *percent_complete)
 {
-    unsigned short player_count = 0;
+    bool hasUpdatedData = false;
 
     *percent_complete = -1;
 
-    SDL_mutexP(mutex);
-    if ( player_sync_timer.count() ) {
-
-        while( (player_sync_index != max_players) &&
-                (player_count < 5)
-             ) {
-            if( player_sync_index != player_sync_connect_player_index ) {
-                PlayerStateSync sync_mesg
-                    (player_lists[player_sync_index].getNetworkPlayerState());
-
-                message_encoder->encodeMessage(&sync_mesg, sizeof(PlayerStateSync));
-            }
-
-            player_sync_index++;
-            player_count++;
-
-        }
-
-        message_encoder->sendEncodedMessage();
-
-        if( (player_sync_index == max_players) ) {
-            *percent_complete = 100;
-            SDL_mutexV(mutex);
-            delete message_encoder;
-            message_encoder = 0;
-            return true;
-        } // ** if
-
+    if ( player_sync_index == player_sync_connect_player_index )
+    {
+        ++player_sync_index;
+    }
+    
+    if ( player_sync_index < max_players )
+    {
+        dest = player_lists[player_sync_index].getNetworkPlayerState();
+        ++player_sync_index;
+        hasUpdatedData = true;
+    }
+    
+    if ( player_sync_index >= max_players )
+    {
+        *percent_complete = 100;
+    }
+    else
+    {
         float percent;
         percent = ( ( (float) player_sync_index) / ( (float) max_players ) ) * 100;
-        *percent_complete = (int) percent;
-    } // ** if
 
-    SDL_mutexV(mutex);
-    return false;
+        *percent_complete = (int) percent;
+    }
+    
+    return hasUpdatedData;
 }
 
 
@@ -475,13 +456,13 @@ void PlayerInterface::netMessageAllianceRequest(const NetMessage *message)
                 allie_request->getAllieWithPlayerIndex());
 
         if( (allie_request->getAllieByPlayerIndex() == local_player_index) ) {
-            player_state = getPlayerState(
+            player_state = getPlayer(
                     allie_request->getAllieWithPlayerIndex());
             ConsoleInterface::postMessage(Color::yellow, "Alliance created with %s.",
                     player_state->getName().c_str() );
         } else
             if( (allie_request->getAllieWithPlayerIndex() == local_player_index) ) {
-                player_state = getPlayerState(
+                player_state = getPlayer(
                         allie_request->getAllieByPlayerIndex());
                 ConsoleInterface::postMessage(Color::yellow, "%s has allied with you.",
                         player_state->getName().c_str() );
@@ -491,14 +472,14 @@ void PlayerInterface::netMessageAllianceRequest(const NetMessage *message)
                        allie_request->getAllieWithPlayerIndex());
 
         if( (allie_request->getAllieByPlayerIndex() == local_player_index) ) {
-            player_state = getPlayerState(
+            player_state = getPlayer(
                     allie_request->getAllieWithPlayerIndex());
             ConsoleInterface::postMessage(Color::yellow, "Alliance broken with %s.",
                     player_state->getName().c_str() );
         } else
             if( (allie_request->getAllieWithPlayerIndex()
                         == local_player_index) ) {
-                player_state = getPlayerState(
+                player_state = getPlayer(
                         allie_request->getAllieByPlayerIndex());
                 ConsoleInterface::postMessage(Color::yellow,
                         "%s has broken their alliance with you.",
@@ -529,40 +510,43 @@ void PlayerInterface::netMessageAllianceUpdate(const NetMessage* message)
     }
 
     SDL_mutexP(mutex);
-    if (allie_update->alliance_update_type == _player_make_alliance) {
+    if (allie_update->alliance_update_type == _player_make_alliance)
+    {
         setAlliance(
                 allie_update->getAllieByPlayerIndex(),
                 allie_update->getAllieWithPlayerIndex());
 
-        if( (allie_update->getAllieByPlayerIndex() == local_player_index) ) {
-            player_state =
-                getPlayerState(allie_update->getAllieWithPlayerIndex());
+        if( (allie_update->getAllieByPlayerIndex() == local_player_index) )
+        {
+            player_state = getPlayer(allie_update->getAllieWithPlayerIndex());
             ConsoleInterface::postMessage(Color::yellow, "Alliance created with %s.",
-                    player_state->getName().c_str() );
-        } else
-            if( (allie_update->getAllieWithPlayerIndex() == local_player_index) ) {
-                player_state = getPlayerState(
-                        allie_update->getAllieByPlayerIndex());
-                ConsoleInterface::postMessage(Color::yellow, "%s has allied with you.",
-                        player_state->getName().c_str() );
-            }
-    } else {
+                                          player_state->getName().c_str() );
+        }
+        else if( allie_update->getAllieWithPlayerIndex() == local_player_index )
+        {
+            player_state = getPlayer(allie_update->getAllieByPlayerIndex());
+            ConsoleInterface::postMessage(Color::yellow, "%s has allied with you.",
+                                          player_state->getName().c_str() );
+        }
+    }
+    else
+    {
         clearAlliance(allie_update->getAllieByPlayerIndex(),
                 allie_update->getAllieWithPlayerIndex());
 
-        if( (allie_update->getAllieByPlayerIndex() == local_player_index) ) {
-            player_state = getPlayerState(
-                    allie_update->getAllieWithPlayerIndex());
+        if( allie_update->getAllieByPlayerIndex() == local_player_index )
+        {
+            player_state = getPlayer(allie_update->getAllieWithPlayerIndex());
             ConsoleInterface::postMessage(Color::yellow, "Alliance broken with %s.",
-                    player_state->getName().c_str() );
-        } else
-            if( (allie_update->getAllieWithPlayerIndex() == local_player_index) ) {
-                player_state = getPlayerState(
-                        allie_update->getAllieByPlayerIndex());
-                ConsoleInterface::postMessage(Color::yellow,
-                        "%s has broken their alliance with you.",
-                        player_state->getName().c_str() );
-            }
+                                          player_state->getName().c_str() );
+        }
+        else if( allie_update->getAllieWithPlayerIndex() == local_player_index )
+        {
+            player_state = getPlayer( allie_update->getAllieByPlayerIndex());
+            ConsoleInterface::postMessage(Color::yellow,
+                                    "%s has broken their alliance with you.",
+                                    player_state->getName().c_str() );
+        }
     }
     SDL_mutexV(mutex);
 }
@@ -592,38 +576,42 @@ void PlayerInterface::processNetMessage(const NetMessage* message)
     }
 }
 
-void PlayerInterface::disconnectPlayerCleanup(const PlayerID &player_id )
+void PlayerInterface::disconnectPlayerCleanup( Uint16 index )
 {
-    PlayerAllianceUpdate allie_update;
+    PlayerState *player_state = getPlayer( index );
+    if ( player_state )
+    {
+        PlayerAllianceUpdate allie_update;
 
-    unsigned short player_index;
-    unsigned short disconnect_player_index;
+        unsigned short player_index;
+        unsigned short disconnect_player_index;
 
-    disconnect_player_index = player_id.getIndex();
+        disconnect_player_index = index;
 
-    SDL_mutexP(mutex);
-    for ( player_index = 0; player_index < max_players; player_index++ ) {
-        if ( isAllied( disconnect_player_index, player_index ) == true ) {
-            allie_update.set( disconnect_player_index, player_index, _player_break_alliance );
-            SERVER->sendMessage(&allie_update, sizeof(PlayerAllianceUpdate));
+        SDL_mutexP(mutex);
+        for ( player_index = 0; player_index < max_players; player_index++ )
+        {
+            if ( isAllied( disconnect_player_index, player_index ) == true )
+            {
+                allie_update.set( disconnect_player_index, player_index, _player_break_alliance );
+                SERVER->sendMessage(&allie_update, sizeof(PlayerAllianceUpdate));
+            }
+
+            if ( isAllied( player_index, disconnect_player_index ) == true )
+            {
+                allie_update.set( player_index, disconnect_player_index, _player_break_alliance );
+                SERVER->sendMessage(&allie_update, sizeof(PlayerAllianceUpdate));
+            }
         }
 
-        if ( isAllied( player_index, disconnect_player_index ) == true ) {
-            allie_update.set( player_index, disconnect_player_index, _player_break_alliance );
-            SERVER->sendMessage(&allie_update, sizeof(PlayerAllianceUpdate));
-        }
+        player_state->setStatus( _player_state_free );
+
+        PlayerStateSync player_state_update(player_state->getNetworkPlayerState());
+        SDL_mutexV(mutex);
+
+        SERVER->sendMessage(&player_state_update, sizeof(PlayerStateSync));
     }
-
-    player_lists[ disconnect_player_index ].setStatus( _player_state_free );
-
-    PlayerState *player_state = getPlayerState( player_id );
-
-    PlayerStateSync player_state_update(player_state->getNetworkPlayerState());
-    SDL_mutexV(mutex);
-
-    SERVER->sendMessage(&player_state_update, sizeof(PlayerStateSync));
 }
-
 PlayerState*
 PlayerInterface::getPlayerByNetworkID(NetClientID id)
 {

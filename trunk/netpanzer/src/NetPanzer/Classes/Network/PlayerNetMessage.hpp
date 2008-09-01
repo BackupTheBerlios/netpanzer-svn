@@ -50,7 +50,13 @@ class PlayerStateSync : public NetMessage
 {
 public:
     NetworkPlayerState player_state;
-
+    
+    PlayerStateSync()
+    {
+        message_class = _net_message_class_player;
+        message_id = _net_message_id_player_sync_state;
+    }
+    
     PlayerStateSync(NetworkPlayerState state)
         : player_state(state)
     {

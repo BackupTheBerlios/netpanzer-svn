@@ -337,7 +337,7 @@ void GameManager::spawnPlayer( const PlayerID &player )
 
     // ** Get a new spawn point and spawn the player **
     iXY spawn_point = MapInterface::getFreeSpawnPoint();
-    PlayerInterface::spawnPlayer( player, spawn_point );
+    PlayerInterface::spawnPlayer( player.getIndex(), spawn_point );
 
     //** Change the location of the view camera to the spawn point **
     iXY world_loc;
@@ -361,7 +361,7 @@ void GameManager::respawnAllPlayers()
     max_players = PlayerInterface::getMaxPlayers();
 
     for( player_index = 0; player_index < max_players; player_index++ ) {
-        player_state = PlayerInterface::getPlayerState( player_index );
+        player_state = PlayerInterface::getPlayer( player_index );
         if ( player_state->getStatus() == _player_state_active ) {
             spawnPlayer( player_state->getPlayerID() );
         }
@@ -418,7 +418,7 @@ void GameManager::netMessageConnectAlert(const NetMessage* message)
         return;
     }
 
-    player_state = PlayerInterface::getPlayerState( connect_alert->getPlayerID() );
+    player_state = PlayerInterface::getPlayer( connect_alert->getPlayerID() );
 
     switch (connect_alert->alert_enum) {
         case _connect_alert_mesg_connect:

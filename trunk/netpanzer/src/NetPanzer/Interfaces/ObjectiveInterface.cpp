@@ -37,6 +37,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/ObjectiveNetMessage.hpp"
 #include "Classes/Network/TerminalNetMesg.hpp"
 #include "Classes/Network/NetPacket.hpp"
+#include "Network/ClientSocket.hpp"
 
 std::vector<Objective*> ObjectiveInterface::objective_list;
 
@@ -395,20 +396,27 @@ ObjectiveInterface::objectivePositionEnumeration(iRect *objective_rect,
 }
 
 void
-ObjectiveInterface::syncObjectives(PlayerID connect_player)
+ObjectiveInterface::syncObjectives( ClientSocket * client )
 {
-    ObjectiveSyncMesg sync_mesg;
-
-    NetMessageEncoder encoder(connect_player);
-
+    unsigned char buffer[_MAX_NET_PACKET_SIZE];
+    unsigned int buffer_pos = 0;
+    ObjectiveSyncMesg msg;
+    msg.setSize(sizeof(ObjectiveSyncMesg));
     std::vector<Objective*>::iterator i;
-    for(i = objective_list.begin(); i != objective_list.end(); ++i) {
-        (*i)->getSyncData( sync_mesg.sync_data );
-
-        encoder.encodeMessage(&sync_mesg, sizeof(ObjectiveSyncMesg));
+    for(i = objective_list.begin(); i != objective_list.end(); ++i)
+    {
+        if ( buffer_pos+sizeof(ObjectiveSyncMesg) > sizeof(buffer) )
+        {
+            client->sendMessage(buffer,buffer_pos);
+            buffer_pos=0;
+        }
+        
+        (*i)->getSyncData( msg.sync_data );
+        memcpy(buffer+buffer_pos, &msg, sizeof(ObjectiveSyncMesg));
+        buffer_pos += sizeof(ObjectiveSyncMesg);
     }
 
-    encoder.sendEncodedMessage();
+    client->sendMessage(buffer,buffer_pos);
 }
 
 void
@@ -425,7 +433,7 @@ ObjectiveInterface::updatePlayerObjectiveCounts()
     player_count = PlayerInterface::getMaxPlayers();
 
     for( player_index = 0; player_index < player_count; player_index++ ) {
-        player_state = PlayerInterface::getPlayerState( (unsigned short) player_index );
+        player_state = PlayerInterface::getPlayer( (unsigned short) player_index );
         player_state->setObjectivesHeld( 0 );
     }
 

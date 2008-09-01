@@ -430,8 +430,6 @@
           <itemPath>src/NetPanzer/Network/ClientSocket.hpp</itemPath>
           <itemPath>src/NetPanzer/Network/ProxyServer.cpp</itemPath>
           <itemPath>src/NetPanzer/Network/ProxyServer.hpp</itemPath>
-          <itemPath>src/NetPanzer/Network/ServerSocket.cpp</itemPath>
-          <itemPath>src/NetPanzer/Network/ServerSocket.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="Particles" displayName="Particles" projectFiles="true">
           <itemPath>src/NetPanzer/Particles/ChunkTrajectoryParticle2D.cpp</itemPath>
@@ -1833,12 +1831,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Network/ProxyServer.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Network/ServerSocket.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Network/ServerSocket.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Particles/ChunkTrajectoryParticle2D.cpp">
@@ -3574,12 +3566,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Network/ProxyServer.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Network/ServerSocket.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Network/ServerSocket.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Particles/ChunkTrajectoryParticle2D.cpp">

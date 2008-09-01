@@ -23,20 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/PlayerState.hpp"
 #include "ArrayUtil/QueueTemplate.hpp"
 #include "Classes/Network/NetPacket.hpp"
+#include "Network/ClientSocket.hpp"
 #include "Util/Timer.hpp"
 #include "UnitSync.hpp"
-
-enum { _connect_status_waiting,
-       _connect_status_abort,
-       _connect_status_connecting
-     };
-
-class ConnectQueueElement
-{
-public:
-    PlayerID       new_player_id;
-    unsigned short connect_status;
-};
 
 class ServerConnectDaemon
 {
@@ -52,26 +41,26 @@ protected:
 
     static ConnectionState      connection_state;
     static bool                 connection_lock_state;
-    static PlayerID             connect_player_id;
-    static PlayerState*         connect_player_state;
-    static UnitSync*            connect_unit_sync;
+    static ClientSocket         *connect_client;
+    static UnitSync             *connect_unit_sync;
     static Timer		time_out_timer;
     static int	                time_out_counter;
     static Timer                sendunitpercent_timer;
-    static std::list<ConnectQueueElement> connect_queue;
-
-    static bool inConnectQueue( PlayerID &new_player_id );
-
+    
+    typedef std::list<ClientSocket *> ConnectQueue;
+    typedef ConnectQueue::iterator ConnectQueueIterator;
+    static ConnectQueue connect_queue;
+    
     static void connectFsm(const NetMessage* message);
     static void connectProcess(const NetMessage* message);
-    static bool disconnectClient(PlayerID player_id);
+    static bool disconnectClient( ClientSocket * client );
 
     static void updateQueuedClients();
 
     static void netPacketClientDisconnect(const NetPacket* packet);
     static void netPacketClientJoinRequest(const NetPacket* packet);
 
-    static void sendConnectionAlert(PlayerID &player_id, int alert_enum);
+    static void sendConnectionAlert( ClientSocket * client );
 
     static void resetConnectFsm();
 
@@ -90,8 +79,9 @@ public:
 
     static void shutdownConnectDaemon();
 
-    static void startDisconnectionProcess( PlayerID player_id );
-    static void startClientDropProcess( PlayerID player_id );
+    static void startDisconnectionProcess( ClientSocket * client );
+    static void startClientDropProcess( ClientSocket * client );
+    static bool inConnectQueue( ClientSocket *client );
 
     static void connectProcess();
 

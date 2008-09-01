@@ -94,7 +94,7 @@ void ChatInterface::chatMessageRequest(const NetMessage* message)
     if (post_on_server == true) {
         PlayerState *player_state;
 
-        player_state = PlayerInterface::getPlayerState(chat_mesg.getSourcePlayerIndex() );
+        player_state = PlayerInterface::getPlayer(chat_mesg.getSourcePlayerIndex() );
 
         if( (addChatString != 0) ) {
             char mesg_str[256];
@@ -148,7 +148,7 @@ void ChatInterface::chatMessage(const NetMessage* message)
 
     PlayerState *player_state;
 
-    player_state = PlayerInterface::getPlayerState( chat_mesg->getSourcePlayerIndex() );
+    player_state = PlayerInterface::getPlayer( chat_mesg->getSourcePlayerIndex() );
 
     if ( (addChatString != 0) ) {
         char mesg_str[144];

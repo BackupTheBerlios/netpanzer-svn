@@ -43,6 +43,7 @@ private:
     NetworkPlayerState() 
     {}
     friend class PlayerState;    
+    friend class PlayerStateSync;
     
     char name[64];
     Uint8 flag;
