@@ -331,20 +331,23 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
 }
 
 // ******************************************************************
-void GameManager::spawnPlayer( const PlayerID &player )
+void GameManager::spawnPlayer( Uint16 player )
 {
     sound->stopTankIdle();
 
     // ** Get a new spawn point and spawn the player **
     iXY spawn_point = MapInterface::getFreeSpawnPoint();
-    PlayerInterface::spawnPlayer( player.getIndex(), spawn_point );
+    PlayerInterface::spawnPlayer( player, spawn_point );
 
     //** Change the location of the view camera to the spawn point **
     iXY world_loc;
     MapInterface::mapXYtoPointXY( spawn_point, &world_loc );
-    if ( PlayerInterface::getLocalPlayerIndex() == player.getIndex() ) {
+    if ( PlayerInterface::getLocalPlayerIndex() == player )
+    {
         WorldViewInterface::setCameraPosition( world_loc );
-    } else {
+    }
+    else
+    {
         SystemSetPlayerView set_view(world_loc.x, world_loc.y);
         SERVER->sendMessage(player, &set_view, sizeof(SystemSetPlayerView));
     }
@@ -360,18 +363,14 @@ void GameManager::respawnAllPlayers()
 
     max_players = PlayerInterface::getMaxPlayers();
 
-    for( player_index = 0; player_index < max_players; player_index++ ) {
+    for( player_index = 0; player_index < max_players; player_index++ )
+    {
         player_state = PlayerInterface::getPlayer( player_index );
-        if ( player_state->getStatus() == _player_state_active ) {
-            spawnPlayer( player_state->getPlayerID() );
+        if ( player_state->getStatus() == _player_state_active )
+        {
+            spawnPlayer( player_index );
         }
     }
-}
-
-// ******************************************************************
-void GameManager::spawnPlayer( PlayerState *player_state )
-{
-    spawnPlayer( player_state->getPlayerID() );
 }
 
 // ******************************************************************
@@ -475,23 +474,25 @@ ConnectMesgServerGameSettings* GameManager::getServerGameSetup()
 
 void GameManager::netMessagePingRequest(const NetMessage* message)
 {
-    PlayerID player_id;
     const SystemPingRequest *ping_request
         = (const SystemPingRequest*) message;
 
-    if(ping_request->getClientPlayerIndex() >= PlayerInterface::getMaxPlayers()) {
+    if(ping_request->getClientPlayerIndex() >= PlayerInterface::getMaxPlayers())
+    {
         LOGGER.warning("Invalid pingRequest message");
         return;
     }
 
-    player_id = PlayerInterface::getPlayerID( ping_request->getClientPlayerIndex() );
+    PlayerState * player;
+    player = PlayerInterface::getPlayer( ping_request->getClientPlayerIndex() );
 
     SystemPingAcknowledge ping_ack;
 
-    if ( (PlayerInterface::getPlayer(player_id.getIndex())->getStatus() == _player_state_active) &&
-            (ping_request->getClientPlayerIndex() != 0)
-       ) {
-        SERVER->sendMessage(player_id, &ping_ack, sizeof(SystemPingAcknowledge));
+    if ( player->getStatus() == _player_state_active
+         && ping_request->getClientPlayerIndex() != 0
+       )
+    {
+        SERVER->sendMessage(player->getID(), &ping_ack, sizeof(SystemPingAcknowledge));
     }
 }
 

@@ -27,7 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/UnitProfileInterface.hpp"
-#include "Classes/PlayerID.hpp"
 #include "Interfaces/UnitInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Classes/UnitBase.hpp"

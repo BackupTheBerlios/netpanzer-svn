@@ -162,8 +162,7 @@ void NetworkClient::sendMessage(NetMessage* message, size_t size)
     
     if (connection_type == _connection_loop_back)
     {
-        net_packet.fromID = 0;
-        net_packet.toID = 0;
+        net_packet.fromClient = clientsocket;
         memcpy(net_packet.data, message, size);
         loop_back_recv_queue.enqueue(net_packet);
 #ifdef NETWORKDEBUG

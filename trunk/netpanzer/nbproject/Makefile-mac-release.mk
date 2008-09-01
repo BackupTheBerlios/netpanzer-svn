@@ -232,7 +232,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi/MapSelectionView.o \
 	${OBJECTDIR}/src/NetPanzer/Views/Components/Label.o \
 	${OBJECTDIR}/src/NetPanzer/Views/Components/Component.o \
-	${OBJECTDIR}/src/NetPanzer/Classes/PlayerID.o \
 	${OBJECTDIR}/src/NetPanzer/Interfaces/Heartbeat.o \
 	${OBJECTDIR}/src/NetPanzer/Particles/TemplateMuzzleSystem.o \
 	${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi/FlagSelectionView.o \
@@ -1140,10 +1139,6 @@ ${OBJECTDIR}/src/NetPanzer/Views/Components/Label.o: src/NetPanzer/Views/Compone
 ${OBJECTDIR}/src/NetPanzer/Views/Components/Component.o: src/NetPanzer/Views/Components/Component.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Views/Components
 	$(COMPILE.cc) -O2 -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Views/Components/Component.o src/NetPanzer/Views/Components/Component.cpp
-
-${OBJECTDIR}/src/NetPanzer/Classes/PlayerID.o: src/NetPanzer/Classes/PlayerID.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Classes
-	$(COMPILE.cc) -O2 -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Classes/PlayerID.o src/NetPanzer/Classes/PlayerID.cpp
 
 ${OBJECTDIR}/src/NetPanzer/Interfaces/Heartbeat.o: src/NetPanzer/Interfaces/Heartbeat.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Interfaces

@@ -68,7 +68,6 @@ unsigned long   UnitInterface::sync_units_in_sync_count;
 unsigned long   UnitInterface::sync_units_in_sync_partial_count;
 size_t          UnitInterface::units_per_player;
 Timer		UnitInterface::sync_units_packet_timer;
-//PlayerID	UnitInterface::sync_units_remote_player;
 
 
 // ******************************************************************
@@ -124,10 +123,11 @@ UnitInterface::processNetPacket(const NetPacket* packet)
         (const TerminalUnitCmdRequest*) message;
 
     const PlayerState* player 
-        = PlayerInterface::getPlayerByNetworkID(packet->fromID);
-    if(player == 0) {
-        LOGGER.warning("No player found for Network ID '%u'?!?",
-                packet->fromID);
+        = PlayerInterface::getPlayer(packet->fromClient->getPlayerIndex());
+    if(player == 0)
+    {
+        LOGGER.warning("UnitInterface: Player not found '%u'?!?",
+                packet->fromClient->getPlayerIndex());
         return;
     }
     
@@ -697,7 +697,7 @@ void UnitInterface::unitManagerMesgEndLifecycle(const UnitMessage* message)
         PlayerScoreUpdate score_update;
         score_update.set(player1->getID(), player2->getID(),
                 (UnitType) lifecycle_update->unit_type);
-        SERVER->sendMessage(&score_update, sizeof(PlayerScoreUpdate));
+        SERVER->broadcastMessage(&score_update, sizeof(PlayerScoreUpdate));
     }
 }
 

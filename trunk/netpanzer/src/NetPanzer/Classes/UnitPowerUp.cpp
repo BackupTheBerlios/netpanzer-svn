@@ -167,7 +167,7 @@ void UnitPowerUp::selectPowerUp( UnitID &unit_id )
 
     PowerUpHitMesg hit_mesg;
     hit_mesg.set(powerup_state.ID, unit->player->getID(), unit_powerup_type);
-    SERVER->sendMessage(&hit_mesg, sizeof(PowerUpHitMesg));
+    SERVER->broadcastMessage(&hit_mesg, sizeof(PowerUpHitMesg));
 
     powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive;
 
@@ -229,15 +229,13 @@ void UnitPowerUp::offloadGraphics( SpriteSorter &sorter )
 
 void UnitPowerUp::onHit( PowerUpHitMesg *message  )
 {
-    PlayerID local_player_id;
-
     sound->playPowerUpSound();
     powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive;
 
-    local_player_id = PlayerInterface::getLocalPlayerID();
-
-    if( local_player_id.getIndex() == message->getPlayerID() ) {
-        ConsoleInterface::postMessage(Color::unitAqua, "YOU GOT A %s POWERUP", powerupTypeToString( message->getUnitPowerupType() ) );
+    if( PlayerInterface::getLocalPlayerIndex() == message->getPlayerID() )
+    {
+        ConsoleInterface::postMessage(Color::unitAqua, "YOU GOT A %s POWERUP",
+                        powerupTypeToString( message->getUnitPowerupType() ) );
     }
 
 }

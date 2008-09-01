@@ -79,14 +79,14 @@ void BonusUnitPowerUp::spawnBonusUnits( UnitID &unit_id )
         if ( new_unit != 0 ) {
             UnitRemoteCreate create_mesg(new_unit->player->getID(),
                     new_unit->id, spawn_loc.x, spawn_loc.y, bonus_unit_type);
-            SERVER->sendMessage( &create_mesg, sizeof( UnitRemoteCreate ));
+            SERVER->broadcastMessage( &create_mesg, sizeof( UnitRemoteCreate ));
         }
 
     }
 
     PowerUpHitMesg hit_mesg;
     hit_mesg.set( powerup_state.ID, unit->player->getID() );
-    SERVER->sendMessage( &hit_mesg, sizeof( PowerUpHitMesg ));
+    SERVER->broadcastMessage( &hit_mesg, sizeof( PowerUpHitMesg ));
 
     powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive;
 
@@ -119,15 +119,11 @@ void BonusUnitPowerUp::offloadGraphics( SpriteSorter &sorter )
 
 void BonusUnitPowerUp::onHit( PowerUpHitMesg *message  )
 {
-    PlayerID local_player_id;
-
     sound->playPowerUpSound();
     powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive;
 
-    local_player_id = PlayerInterface::getLocalPlayerID();
-
-    if( local_player_id.getIndex() == message->getPlayerID() ) {
+    if( PlayerInterface::getLocalPlayerIndex() == message->getPlayerID() )
+    {
         ConsoleInterface::postMessage( Color::unitAqua, "YOU GOT A BONUS UNITS POWERUP" );
     }
-
 }

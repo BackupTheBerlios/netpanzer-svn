@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetPacketQueues.hpp"
 
 void EnqueueIncomingPacket(const void *message, Uint16 message_size,
-                           NetClientID toID, NetClientID fromID,
                            ClientSocket *fromClient);
 
 class NetworkInterface

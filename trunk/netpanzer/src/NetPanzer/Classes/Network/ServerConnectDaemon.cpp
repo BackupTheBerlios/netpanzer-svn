@@ -78,7 +78,7 @@ void ServerConnectDaemon::shutdownConnectDaemon()
     connect_unit_sync = 0;
     ConnectMesgNetPanzerServerDisconnect server_disconnect;
 
-    SERVER->sendMessage( &server_disconnect,
+    SERVER->broadcastMessage( &server_disconnect,
                          sizeof(ConnectMesgNetPanzerServerDisconnect));
 }
 
@@ -208,7 +208,7 @@ void ServerConnectDaemon::sendConnectionAlert(ClientSocket * client)
         client->sendMessage( &chat_mesg, sizeof(chat_mesg));
     }
 
-    SERVER->sendMessage( &connect_alert, sizeof(SystemConnectAlert));
+    SERVER->broadcastMessage( &connect_alert, sizeof(SystemConnectAlert));
 }
 
 void ServerConnectDaemon::resetConnectFsm()
@@ -297,7 +297,7 @@ bool ServerConnectDaemon::connectStateWaitForClientSettings(
             Uint8 flag = (Uint8) client_setting->getPlayerFlag();
             player->setFlag(flag);
 
-            player->setID( connect_client->getId() );
+            player->setID( connect_client->getPlayerIndex() );
             player->setStatus( _player_state_connecting );
 
             // ** send server game setting map, units, player, etc.
@@ -416,7 +416,7 @@ bool ServerConnectDaemon::connectStatePlayerStateSync()
         PlayerState *p = PlayerInterface::getPlayer(connect_client->getPlayerIndex());
         PlayerStateSync player_state_update( p->getNetworkPlayerState() );
         player_state_update.setSize(sizeof(PlayerStateSync));
-        SERVER->sendMessage(&player_state_update, sizeof(PlayerStateSync));
+        SERVER->broadcastMessage(&player_state_update, sizeof(PlayerStateSync));
         
         if(connection_state != connect_state_idle)
         {
@@ -465,15 +465,16 @@ bool ServerConnectDaemon::connectStateUnitSync()
 
     PowerUpInterface::syncPowerUps( connect_client );
 
+    GameManager::spawnPlayer( connect_client->getPlayerIndex() );
+
     PlayerState * player = PlayerInterface::getPlayer(connect_client->getPlayerIndex());
-    GameManager::spawnPlayer( player );
 
     player->setStatus( _player_state_active );
 
     PlayerStateSync player_state_update
         (player->getNetworkPlayerState());
 
-    SERVER->sendMessage( &player_state_update, sizeof(PlayerStateSync));
+    SERVER->broadcastMessage( &player_state_update, sizeof(PlayerStateSync));
 
     state_mesg.setMessageEnum(_connect_state_sync_complete);
     // size already set
@@ -568,7 +569,7 @@ void ServerConnectDaemon::startDisconnectionProcess( ClientSocket * client )
     ConsoleInterface::postMessage(Color::cyan, "'%s' has left the game.",
                                   (player)?player->getName().c_str():"");
 
-    SERVER->sendMessage(&msg, sizeof(msg));
+    SERVER->broadcastMessage(&msg, sizeof(msg));
 }
 
 void ServerConnectDaemon::startClientDropProcess( ClientSocket * client )
@@ -583,7 +584,7 @@ void ServerConnectDaemon::startClientDropProcess( ClientSocket * client )
     ConsoleInterface::postMessage(Color::cyan, "'%s' has left the game for some reason.",
                                   (player)?player->getName().c_str():"");
 
-    SERVER->sendMessage(&msg, sizeof(msg));
+    SERVER->broadcastMessage(&msg, sizeof(msg));
 
 }
 

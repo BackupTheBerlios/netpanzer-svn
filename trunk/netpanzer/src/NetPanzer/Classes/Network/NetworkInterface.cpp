@@ -21,14 +21,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "NetworkInterface.hpp"
 
-void EnqueueIncomingPacket(const void *message, Uint16 message_size,
-                           NetClientID toID, NetClientID fromID,
-                           ClientSocket *fromClient)
+void EnqueueIncomingPacket(const void *message, Uint16 message_size, ClientSocket *fromClient)
 {
     static NetPacket TEMP_PACKET;
 
-    TEMP_PACKET.toID = toID;
-    TEMP_PACKET.fromID = fromID;
     TEMP_PACKET.fromClient = fromClient;
     assert(message_size <= _MAX_NET_PACKET_SIZE);
 

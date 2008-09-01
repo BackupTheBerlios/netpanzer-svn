@@ -94,11 +94,15 @@ Uint8 *playerColorArray[] = {
 static const size_t playerColorCount 
     = sizeof(playerColorArray) / sizeof(Uint8*);
 
-void PlayerState::setColor(Uint32 index) {
+void
+PlayerState::setColor(Uint32 index)
+{
     colorIndex = index % playerColorCount;
 }
 
-Uint8 PlayerState::getColor() const {
+Uint8
+PlayerState::getColor() const
+{
     assert(colorIndex < playerColorCount);
     return ( *playerColorArray[ colorIndex ] );
 }
@@ -111,8 +115,8 @@ PlayerState::PlayerState()
 }
 
 PlayerState::PlayerState(const PlayerState& other)
-    : name(other.name), flag(other.flag), status(other.status),
-      kills(other.kills), kill_points(other.kill_points),
+    : name(other.name), flag(other.flag), player_index(other.player_index),
+      status(other.status), kills(other.kills), kill_points(other.kill_points),
       losses(other.losses), loss_points(other.loss_points),
       total(other.total), objectives_held(other.objectives_held),
       stats_locked(other.stats_locked), unit_config(other.unit_config)
@@ -132,33 +136,43 @@ void PlayerState::operator= (const PlayerState& other)
     objectives_held = other.objectives_held;
     stats_locked = other.stats_locked;
     unit_config = other.unit_config;
+    player_index = other.player_index;
 }
 
 void PlayerState::setName(const std::string& newname)
 {
     if ( newname.length() > 63 )
+    {
         name = newname.substr(0,63);
+    }
     else
+    {
         name = newname;
+    }
 
     int namenum=1;
     bool recheck;
-    do {
+    do
+    {
         recheck = false;
-        for (Uint16 p=0; p<PlayerInterface::getMaxPlayers(); p++) {
-            if ( p == ID.getIndex() )
+        for (Uint16 p=0; p<PlayerInterface::getMaxPlayers(); p++)
+        {
+            if ( p == player_index )
                 continue;
                 
             PlayerState *ps=PlayerInterface::getPlayer(p);
-            if ( (ps->status==_player_state_connecting 
-                    || ps->status==_player_state_active )
-                    && ps->name == name ) {
+            if (   (ps->status==_player_state_connecting 
+                   || ps->status==_player_state_active )
+                  && ps->name == name
+               )
+            {
                 std::stringstream ssnamenum;
                 ssnamenum << "(" << namenum++ << ")";
                 std::string strnum=ssnamenum.str();
                 
                 std::string::size_type newlen = newname.length();
-                if ( newlen+strnum.length() > 63 ) {
+                if ( newlen+strnum.length() > 63 )
+                {
                     newlen -= strnum.length() - (63 - newlen);  
                 }
                 
@@ -168,11 +182,6 @@ void PlayerState::setName(const std::string& newname)
             }
         }
     } while (recheck);
-}
-
-void PlayerState::setPlayerID(PlayerID player_id)
-{
-    ID = player_id;
 }
 
 void PlayerState::resetStats()
@@ -213,7 +222,8 @@ short PlayerState::getLosses() const
 
 void PlayerState::incKills(UnitType unit_type)
 {
-    if ( stats_locked == true ) return;
+    if ( stats_locked == true )
+        return;
     kills++;
     //kill_points += 2 * unit_config.getUnitPointValue(unit_type);
 }
@@ -221,13 +231,15 @@ void PlayerState::incKills(UnitType unit_type)
 void PlayerState::decKills(UnitType unit_type)
 {
     (void) unit_type;
-    if ( stats_locked == true ) return;
+    if ( stats_locked == true )
+        return;
     kills--;
 }
 
 void PlayerState::incLosses(UnitType unit_type)
 {
-    if ( stats_locked == true ) return;
+    if ( stats_locked == true )
+        return;
     losses++;
     //loss_points += unit_config.getUnitPointValue(unit_type);
 }
@@ -235,19 +247,22 @@ void PlayerState::incLosses(UnitType unit_type)
 void PlayerState::decLosses(UnitType unit_type)
 {
     (void) unit_type;
-    if ( stats_locked == true ) return;
+    if ( stats_locked == true )
+        return;
     losses--;
 }
 
 void PlayerState::incObjectivesHeld()
 {
-    if ( stats_locked == true ) return;
+    if ( stats_locked == true )
+        return;
     objectives_held++;
 }
 
 void PlayerState::decObjectivesHeld()
 {
-    if ( stats_locked == true ) return;
+    if ( stats_locked == true )
+        return;
     objectives_held++;
 }
 
@@ -258,29 +273,14 @@ short PlayerState::getObjectivesHeld() const
 
 void PlayerState::setObjectivesHeld( short objectives )
 {
-    if ( stats_locked == true ) return;
+    if ( stats_locked == true )
+        return;
     objectives_held = objectives;
-}
-
-void PlayerState::setID( unsigned short index, NetClientID networkid  )
-{
-    ID.setIndex(index);
-    ID.setNetworkID(networkid);
 }
 
 void PlayerState::setID( unsigned short index )
 {
-    ID.setIndex( index );
-}
-
-void PlayerState::setID( NetClientID networkid )
-{
-    ID.setNetworkID(networkid);
-}
-
-PlayerID PlayerState::getPlayerID() const
-{
-    return ID;
+    player_index = index;
 }
 
 void PlayerState::setStatus( unsigned char status )
@@ -296,29 +296,39 @@ unsigned char PlayerState::getStatus() const
 void PlayerState::setFlag(unsigned char newflag)
 {
     if ( newflag >= UNIT_FLAGS_SURFACE.getNumFrames() )
+    {
         newflag=0;
+    }
+    
     flag = newflag;
     
     bool recheck;
-    do {
+    do
+    {
         recheck = false;
-        for (Uint16 p=0; p<PlayerInterface::getMaxPlayers(); p++) {
-            if ( p == ID.getIndex() )
+        for (Uint16 p=0; p<PlayerInterface::getMaxPlayers(); p++)
+        {
+            if ( p == player_index )
                 continue;
                 
             PlayerState *ps=PlayerInterface::getPlayer(p);
-            if ( (ps->status==_player_state_connecting 
-                    || ps->status==_player_state_active )
-                    && ps->flag == flag ) {
+            if (  (ps->status==_player_state_connecting 
+                  || ps->status==_player_state_active )
+                 && ps->flag == flag
+               )
+            {
                 flag++;
                 if ( flag >= UNIT_FLAGS_SURFACE.getNumFrames() )
                     flag = 0;
                     
                 if ( flag != newflag ) // there are no free flags if it is ==
+                {
                     recheck = true;
+                }
                 else
+                {
                     LOGGER.warning("No more free flags");
-                    
+                }   
                 break;
             }
         }
@@ -342,7 +352,7 @@ NetworkPlayerState PlayerState::getNetworkPlayerState() const
     memset(state.name, 0, sizeof(state.name));
     strncpy(state.name, name.c_str(), sizeof(state.name)-1);
     state.flag = flag;
-    state.playerindex_id = htol16(ID.getIndex());
+    state.playerindex_id = htol16(player_index);
     state.status = status;
     state.kills = htol16(kills);
     state.kill_points = htol16(kill_points);
@@ -361,13 +371,16 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
     memcpy(tmp, state->name, 64); 
     tmp[63] = 0;
     name = tmp;
-	if(state->flag < UNIT_FLAGS_SURFACE.getNumFrames()) {
+	if(state->flag < UNIT_FLAGS_SURFACE.getNumFrames())
+        {
 		flag = state->flag;
-	} else {
+	}
+        else
+        {
 		flag = 0;
 		LOGGER.warning("Invalid flag number received");
 	}
-    ID.setIndex(ltoh16(state->playerindex_id));
+    player_index = ltoh16(state->playerindex_id);
     status = state->status;
     kills = ltoh16(state->kills);
     kill_points = ltoh16(state->kill_points);
@@ -377,4 +390,3 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
     objectives_held = ltoh16(state->objectives_held);
     colorIndex = ltoh32(state->colorIndex);
 }
-

@@ -47,21 +47,20 @@ SDL_mutex* PlayerInterface::mutex = 0;
 void PlayerInterface::initialize(unsigned short maxPlayers)
 {
     char temp_str[64];
-    PlayerID player_id;
-    unsigned long player_index;
+    Uint16 player_index;
     max_players = maxPlayers;
 
     delete[] player_lists;
     player_lists = new PlayerState[max_players];
 
-    for ( player_index = 0; player_index < max_players; player_index++ ) {
-        player_id.setIndex( player_index );
-        player_lists[player_index].setPlayerID( player_id );
+    for ( player_index = 0; player_index < max_players; player_index++ )
+    {
+        player_lists[ player_index ].setID( player_index );
         player_lists[ player_index ].resetStats();
         player_lists[ player_index ].setStatus( _player_state_free );
         player_lists[ player_index ].setFlag( 0 );
         player_lists[ player_index ].unit_config.initialize();
-        sprintf( temp_str, "Player %lu", player_index );
+        sprintf( temp_str, "Player %u", player_index );
         player_lists[ player_index ].setName( temp_str );
     }
 
@@ -70,7 +69,8 @@ void PlayerInterface::initialize(unsigned short maxPlayers)
     resetAllianceMatrix();
 
     mutex = SDL_CreateMutex();
-    if(!mutex) {
+    if(!mutex)
+    {
         throw std::runtime_error("Couldn't create PlayerInterface mutex.");
     }
 }
@@ -112,17 +112,6 @@ void PlayerInterface::setKill(PlayerState* by_player, PlayerState* on_player,
     SDL_mutexV(mutex);
 }
 
-void PlayerInterface::setAlliance( const PlayerID& by_player, const PlayerID& with_player )
-{
-    assert( (by_player.getIndex() < max_players) && (with_player.getIndex() < max_players) );
-
-    SDL_mutexP(mutex);
-    *(alliance_matrix + (with_player.getIndex() * max_players) + by_player.getIndex() ) = true;
-    //*(alliance_matrix + (by_player.getIndex() * max_players) + with_player.getIndex() ) = true;
-    SDL_mutexV(mutex);
-}
-
-
 void PlayerInterface::setAlliance( unsigned short by_player, unsigned short with_player )
 {
     assert( (by_player < max_players) && (with_player < max_players) );
@@ -140,18 +129,6 @@ void PlayerInterface::clearAlliance( unsigned short by_player, unsigned short wi
     SDL_mutexP(mutex);
     *(alliance_matrix + (with_player * max_players) + by_player ) = false;
     SDL_mutexV(mutex);
-}
-
-bool PlayerInterface::isAllied( const PlayerID& player, const PlayerID& with_player )
-{
-    bool val;
-
-    assert( (player.getIndex() < max_players) && (with_player.getIndex() < max_players) );
-
-    val = *(alliance_matrix + (with_player.getIndex() * max_players) + player.getIndex() );
-
-    return( val );
-
 }
 
 bool PlayerInterface::isAllied( unsigned short player, unsigned short with_player )
@@ -321,19 +298,20 @@ bool PlayerInterface::testRuleObjectiveRatio( float precentage, PlayerState ** p
 
 bool PlayerInterface::testRulePlayerRespawn( bool *completed, PlayerState **player_state )
 {
-    PlayerID player;
-
-    if ( respawn_rule_player_index == max_players ) {
+    if ( respawn_rule_player_index == max_players )
+    {
         respawn_rule_player_index = 0;
         *completed = true;
         return( false );
-    } else {
+    }
+    else
+    {
         *completed = false;
     }
-    player = player_lists[ respawn_rule_player_index ].getPlayerID();
-
+    
     if ( player_lists[ respawn_rule_player_index ].getStatus() == _player_state_active )
-        if ( UnitInterface::getUnitCount( player.getIndex() ) == 0 ) {
+        if ( UnitInterface::getUnitCount( respawn_rule_player_index ) == 0 )
+        {
             *player_state = &player_lists[ respawn_rule_player_index ];
             respawn_rule_player_index++;
             return( true );
@@ -493,7 +471,7 @@ void PlayerInterface::netMessageAllianceRequest(const NetMessage *message)
     allie_update.set(allie_request->getAllieByPlayerIndex(),
                      allie_request->getAllieWithPlayerIndex(),
                      allie_request->alliance_request_type);
-    SERVER->sendMessage(&allie_update, sizeof(PlayerAllianceUpdate));
+    SERVER->broadcastMessage(&allie_update, sizeof(PlayerAllianceUpdate));
 }
 
 void PlayerInterface::netMessageAllianceUpdate(const NetMessage* message)
@@ -594,13 +572,13 @@ void PlayerInterface::disconnectPlayerCleanup( Uint16 index )
             if ( isAllied( disconnect_player_index, player_index ) == true )
             {
                 allie_update.set( disconnect_player_index, player_index, _player_break_alliance );
-                SERVER->sendMessage(&allie_update, sizeof(PlayerAllianceUpdate));
+                SERVER->broadcastMessage(&allie_update, sizeof(PlayerAllianceUpdate));
             }
 
             if ( isAllied( player_index, disconnect_player_index ) == true )
             {
                 allie_update.set( player_index, disconnect_player_index, _player_break_alliance );
-                SERVER->sendMessage(&allie_update, sizeof(PlayerAllianceUpdate));
+                SERVER->broadcastMessage(&allie_update, sizeof(PlayerAllianceUpdate));
             }
         }
 
@@ -609,20 +587,6 @@ void PlayerInterface::disconnectPlayerCleanup( Uint16 index )
         PlayerStateSync player_state_update(player_state->getNetworkPlayerState());
         SDL_mutexV(mutex);
 
-        SERVER->sendMessage(&player_state_update, sizeof(PlayerStateSync));
+        SERVER->broadcastMessage(&player_state_update, sizeof(PlayerStateSync));
     }
 }
-PlayerState*
-PlayerInterface::getPlayerByNetworkID(NetClientID id)
-{
-    for(int i = 0; i < max_players; ++i) {
-        PlayerState* state = &player_lists[i];
-        if(state->getStatus() != _player_state_active)
-            continue;
-        if(state->getNetworkID() == id)
-            return state;
-    }
-
-    return 0;
-}
-

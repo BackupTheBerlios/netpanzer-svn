@@ -80,7 +80,7 @@ ClientSocket::ClientSocket(ClientSocketObserver *o)
 void
 ClientSocket::initId()
 {
-    static NetClientID curid=1;
+    static int curid=1;
     id=curid++;
 }
 
@@ -168,7 +168,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             }
             
             if ( remaining >= packetsize ) {
-                EnqueueIncomingPacket(data+dataptr, packetsize, 0, id, this);
+                EnqueueIncomingPacket(data+dataptr, packetsize, this);
                 remaining -= packetsize;
                 dataptr   += packetsize;
             } else {
@@ -216,7 +216,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             }
             
             if ( tempoffset == packetsize ) {
-                EnqueueIncomingPacket(tempbuffer, packetsize, 0, id, this);
+                EnqueueIncomingPacket(tempbuffer, packetsize, this);
                 tempoffset = 0;
             }
         }

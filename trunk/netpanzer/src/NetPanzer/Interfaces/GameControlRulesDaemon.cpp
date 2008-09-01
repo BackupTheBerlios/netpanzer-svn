@@ -181,7 +181,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                     Desktop::setVisibility("RankView", true );
                 }
 
-                SERVER->sendMessage(&view_control, sizeof(SystemViewControl));
+                SERVER->broadcastMessage(&view_control, sizeof(SystemViewControl));
 
                 map_cycle_fsm_server_endgame_timer.changePeriod( _MAP_CYCLE_ENDGAME_WAIT_PERIOD );
                 map_cycle_fsm_server_endgame_timer.reset();
@@ -210,7 +210,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                     GameControlCycleMap cycle_map_mesg;
                     cycle_map_mesg.set( gameconfig->map.c_str() );
 
-                    SERVER->sendMessage( &cycle_map_mesg, sizeof( GameControlCycleMap ));
+                    SERVER->broadcastMessage( &cycle_map_mesg, sizeof( GameControlCycleMap ));
 
                     if ( GameControlRulesDaemon::execution_mode == _execution_mode_dedicated_server ) {
                         ObjectiveInterface::resetLogic();
@@ -274,7 +274,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 SystemResetGameLogic reset_game_logic_mesg;
 
                 GameManager::resetGameLogic();
-                SERVER->sendMessage( &reset_game_logic_mesg, sizeof(SystemResetGameLogic));
+                SERVER->broadcastMessage( &reset_game_logic_mesg, sizeof(SystemResetGameLogic));
 
                 GameManager::respawnAllPlayers();
 
@@ -284,7 +284,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 LoadingView::loadFinish();
 
                 GameControlCycleRespawnAck respawn_ack_mesg;
-                SERVER->sendMessage( &respawn_ack_mesg, sizeof(GameControlCycleRespawnAck));
+                SERVER->broadcastMessage( &respawn_ack_mesg, sizeof(GameControlCycleRespawnAck));
 
                 map_cycle_fsm_server_state = _map_cycle_server_state_idle;
 
@@ -335,43 +335,49 @@ void GameControlRulesDaemon::checkGameRules()
 
     if ( (GameControlRulesDaemon::game_state == _game_state_in_progress) &&
             (NetworkState::status == _network_state_server)
-       ) {
+       )
+    {
         unsigned char game_type;
         game_type = gameconfig->gametype;
 
-        switch( game_type ) {
-        case  _gametype_timelimit : {
+        switch( game_type )
+        {
+            case  _gametype_timelimit:
                 int game_minutes = GameManager::getGameTime() / 60;
-                if( game_minutes >= gameconfig->timelimit ) {
+                if( game_minutes >= gameconfig->timelimit )
+                {
                     onTimelimitGameCompleted();
                 }
-            }
-
-        case _gametype_fraglimit : {
-                if ( PlayerInterface::testRuleScoreLimit( gameconfig->fraglimit, &player_state ) == true ) {
+                break;
+                
+            case _gametype_fraglimit:
+                if ( PlayerInterface::testRuleScoreLimit( gameconfig->fraglimit, &player_state ) == true )
+                {
                     onFraglimitGameCompleted();
                 }
-            }
-            break;
+                break;
 
-        case _gametype_objective:
-                float ratio 
-                    = (float) gameconfig->objectiveoccupationpercentage / 100.0;
-                if (PlayerInterface::testRuleObjectiveRatio(
-                            ratio, &player_state)) {
+            case _gametype_objective:
+                float ratio = (float) gameconfig->objectiveoccupationpercentage / 100.0;
+                if (PlayerInterface::testRuleObjectiveRatio( ratio, &player_state))
+                {
                     onObjectiveGameCompleted( );
                 }
-            break;
-        } // ** switch
+                break;
+            default:
+                // nothing
+                ;
+        }
 
         // ** Check for Player Respawns **
         bool respawn_rule_complete = false;
-        while( respawn_rule_complete == false ) {
-            if ( PlayerInterface::testRulePlayerRespawn( &respawn_rule_complete, &player_state ) ) {
-                GameManager::spawnPlayer( player_state );
-            } // ** if testRulePlayerRespawn
-
-        } // ** while
+        while( respawn_rule_complete == false )
+        {
+            if ( PlayerInterface::testRulePlayerRespawn( &respawn_rule_complete, &player_state ) )
+            {
+                GameManager::spawnPlayer( player_state->getID() );
+            }
+        }
 
     }
 

@@ -67,7 +67,7 @@ void ServerMessageRouter::processTerminalPacket(const NetPacket* packet)
         }
         default:
             LOGGER.warning("unnown Terminal Message (id %d, player %u)",
-                    message->message_id, packet->fromID);
+                    message->message_id, packet->fromClient->getPlayerIndex());
     }
 }
 
@@ -116,8 +116,6 @@ void ServerMessageRouter::routeMessages()
             message_decoder.setDecodeMessage((const MultiMessage *) message);
 
             NetPacket packet;
-            packet.toID = temp_packet.toID;
-            packet.fromID = temp_packet.fromID;
             packet.fromClient = temp_packet.fromClient;
             
             NetMessage* mmessage;

@@ -306,8 +306,6 @@
           <itemPath>src/NetPanzer/Classes/Outpost.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/PlacementMatrix.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/PlacementMatrix.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/PlayerID.cpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/PlayerID.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/PlayerState.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/PlayerState.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/PlayerUnitConfig.cpp</itemPath>
@@ -1435,12 +1433,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/PlacementMatrix.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/PlayerID.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/PlayerID.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/PlayerState.cpp">
@@ -3170,12 +3162,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/PlacementMatrix.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/PlayerID.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/PlayerID.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/PlayerState.cpp">

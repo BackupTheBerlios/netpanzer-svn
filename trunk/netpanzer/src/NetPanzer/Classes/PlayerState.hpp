@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 #include <string.h>
-#include "Classes/PlayerID.hpp"
 #include "Classes/PlayerUnitConfig.hpp"
 #include "2D/Palette.hpp"
 
@@ -68,7 +67,7 @@ class PlayerState
 private:
     std::string name;
     unsigned char flag;
-    PlayerID ID;
+    Uint16 player_index;
     unsigned char status;
     short kills;
     short kill_points;
@@ -88,10 +87,10 @@ public:
     void operator= (const PlayerState& other);
 
     void setName(const std::string& newname);
-    void setPlayerID( PlayerID player_id );
+
     Uint16 getID() const
     {
-        return ID.getIndex();
+        return player_index;
     }
 
     void resetStats();
@@ -108,18 +107,7 @@ public:
     void decObjectivesHeld();
     short getObjectivesHeld() const;
     void setObjectivesHeld( short objectives );
-    void setID( unsigned short index, NetClientID networkid  );
     void setID( unsigned short index );
-    void setID( NetClientID networkid );
-    PlayerID getPlayerID() const;
-    NetClientID getNetworkID() const
-    {
-        return ID.getNetworkID();
-    }
-    void setNetworkID(NetClientID id)
-    {
-        ID.setNetworkID(id);
-    }
     void setStatus( unsigned char status );
     unsigned char getStatus() const;
     void setFlag(unsigned char newflag);

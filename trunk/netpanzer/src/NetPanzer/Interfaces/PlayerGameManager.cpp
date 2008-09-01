@@ -283,7 +283,6 @@ void PlayerGameManager::shutdownNetworkSubSystem()
 //-----------------------------------------------------------------
 void PlayerGameManager::hostMultiPlayerGame()
 {
-    PlayerID player;
     PlayerState *player_state;
     Timer wait;
 
@@ -381,13 +380,14 @@ void PlayerGameManager::hostMultiPlayerGame()
     graphicsLoop();
     
     player_state = PlayerInterface::allocateLoopBackPlayer();
-    player_state->setNetworkID(0);
     const char* playername = gameconfig->playername.c_str();
     player_state->setName(playername);
     player_state->setFlag((unsigned char) gameconfig->playerflag);
-    player = PlayerInterface::getLocalPlayerID();
-    GameManager::spawnPlayer( player );
+    
+    GameManager::spawnPlayer( PlayerInterface::getLocalPlayerIndex() );
+    
     LoadingView::update( "Spawning Player ... (100%)" );
+    
     graphicsLoop();
 
     wait.changePeriod( 3 );

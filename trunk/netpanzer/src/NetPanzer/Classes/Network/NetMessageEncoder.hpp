@@ -19,20 +19,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _NETMESSAGEENCODER_HPP
 
 #include "Classes/Network/NetPacket.hpp"
-#include "Classes/PlayerID.hpp"
 
 class NetMessageEncoder
 {
 private:
     bool sendAsClient;
     bool usePlayerID;
-    PlayerID playerID;
+    Uint16 player;
     MultiMessage encode_message;
     unsigned long encode_message_index;
 
 public:
     NetMessageEncoder(bool sendAsClient = false);
-    NetMessageEncoder(const PlayerID& id);
+    NetMessageEncoder(Uint16 player_index);
     ~NetMessageEncoder();
     
     void resetEncoder();

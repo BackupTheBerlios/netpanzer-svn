@@ -66,8 +66,7 @@ public:
     static bool gameMapLoad( int *percent_complete );
 
     // ** Game Rules Methods
-    static void spawnPlayer( const PlayerID &player );
-    static void spawnPlayer( PlayerState *player_state );
+    static void spawnPlayer( Uint16 player );
     static void respawnAllPlayers();
 
     static void initializeGameLogic();

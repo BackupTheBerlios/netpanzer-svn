@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetMessage.hpp"
 
 static const Uint16 _MAX_NET_PACKET_SIZE=512;
-typedef Uint32 NetClientID;
 class ClientSocket;
 
 #ifdef MSVC
@@ -33,8 +32,6 @@ class ClientSocket;
 class NetPacket
 {
 public:
-    NetClientID toID;
-    NetClientID fromID;
     ClientSocket *fromClient;
 
     Uint8  data[ _MAX_NET_PACKET_SIZE ];
@@ -46,7 +43,7 @@ public:
 
     size_t getSize() const
     {
-        return sizeof(NetClientID) * 2 + getNetMessage()->getSize();
+        return sizeof(ClientSocket *) + getNetMessage()->getSize();
     }
 }
 __attribute__((packed));

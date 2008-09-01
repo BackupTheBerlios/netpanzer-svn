@@ -50,7 +50,7 @@ public:
     void sendRemaining();
     ProxyServer proxy;
 
-    NetClientID getId() { return id; };
+    int getId() { return id; };
     std::string getIPAddress();
     
     int getPlayerIndex()
@@ -66,6 +66,7 @@ protected:
 
 private:
     friend class ServerConnectDaemon;
+    friend class NetworkClient;
     void initId();
     ClientSocketObserver * observer;
     network::TCPSocket* socket;
@@ -74,7 +75,7 @@ private:
     unsigned int sendpos;
     char tempbuffer[_MAX_NET_PACKET_SIZE];
     Uint16 tempoffset;
-    NetClientID id;
+    int id;
     int playerIndex;
 };
 

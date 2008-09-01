@@ -97,7 +97,7 @@ public:
 protected:
     static unsigned long objective_position_enum_index;
     static unsigned long objective_position_enum_list_size;
-    static PlayerID      objective_position_enum_player_id;
+    static Uint16        objective_position_enum_player_id;
 
 public:
     static void    startObjectivePositionEnumeration();

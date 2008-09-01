@@ -49,13 +49,10 @@ public:
     static void setKill(PlayerState* by_player, PlayerState* on_player,
             UnitType unit_type );
 
-    static void setAlliance( const PlayerID& by_player, const PlayerID& with_player );
-
     static void setAlliance( unsigned short by_player, unsigned short with_player );
 
     static void clearAlliance( unsigned short by_player, unsigned short with_player );
 
-    static bool isAllied(const PlayerID& player, const PlayerID& with_player);
     static bool isAllied(unsigned short player, unsigned short with_player);
 
     static void lockPlayerStats();
@@ -64,12 +61,6 @@ public:
     static unsigned short getMaxPlayers( )
     {
         return max_players;
-    }
-
-    static PlayerState* getPlayerState(const PlayerID& player)
-    {
-        assert(player.getIndex() < max_players);
-        return &player_lists[ player.getIndex() ];
     }
 
     static PlayerState* getPlayer(Uint16 player_index)
@@ -81,27 +72,14 @@ public:
         return NULL;
     }
 
-    static PlayerState* getPlayerByNetworkID(NetClientID id);
-
     static PlayerState* getLocalPlayer()
     {
         return &player_lists[ local_player_index ];
     }
 
-    static PlayerID getLocalPlayerID()
-    {
-        return player_lists[ local_player_index ].getPlayerID();
-    }
-
     static Uint16 getLocalPlayerIndex()
     {
         return local_player_index;
-    }
-
-    static PlayerID getPlayerID(Uint16 player_index )
-    {
-        assert( player_index < max_players );
-        return player_lists[ player_index ].getPlayerID();
     }
 
     static void resetPlayerStats();

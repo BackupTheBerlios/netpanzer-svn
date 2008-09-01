@@ -174,7 +174,6 @@ protected:
     static bool	      sync_units_complete_flag;
     static unsigned short sync_units_list_index;
     static Timer	  sync_units_packet_timer;
-//    static PlayerID	  sync_units_remote_player;
     static unsigned long  sync_units_in_sync_count;
     static unsigned long  sync_units_in_sync_partial_count;
     static unsigned long  sync_units_total_units;

@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Network/ClientSocket.hpp"
 
 #include "Util/Timer.hpp"
-#include "Classes/PlayerID.hpp"
 
 using namespace network;
 
@@ -75,17 +74,11 @@ public:
     
     void closeSession();
 
-    void sendMessage(NetMessage *message, size_t size);
+    void broadcastMessage(NetMessage *message, size_t size);
     
-    void sendMessage(NetClientID network_id, NetMessage* message,
+    void sendMessage(Uint16 player_index, NetMessage* message,
             size_t size);
-    
-    void sendMessage(const PlayerID& player_id, NetMessage *message,
-            size_t size)
-    {
-        sendMessage(player_id.getNetworkID(), message, size);
-    }
-    
+        
     void sendRemaining();
 
     bool getPacket(NetPacket* packet);
@@ -96,7 +89,7 @@ public:
     ClientSocket * getClientSocketByPlayerIndex ( Uint16 index );
 
     void checkIncoming();
-    std::string getIP(NetClientID network_id);
+    std::string getIP(Uint16 player_index);
 
 protected:
     TCPSocketObserver * onNewConnection(TCPListenSocket *so,const Address &fromaddr);

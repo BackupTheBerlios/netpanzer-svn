@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __NETMESSAGEDECODER_HPP__
 
 #include "Classes/Network/NetPacket.hpp"
-#include "Classes/PlayerID.hpp"
 
 class NetMessageDecoder
 {

@@ -149,7 +149,7 @@ void PowerUpInterface::generatePowerUp()
                          power_up->powerup_state.type
                        );
 
-        SERVER->sendMessage(&create_mesg, sizeof(PowerUpCreateMesg));
+        SERVER->broadcastMessage(&create_mesg, sizeof(PowerUpCreateMesg));
 
         do {
             next_regen_interval = rand() % (power_up_regen_time_upper_bound + 1);

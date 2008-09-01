@@ -43,7 +43,7 @@ std::vector<Objective*> ObjectiveInterface::objective_list;
 
 unsigned long ObjectiveInterface::objective_position_enum_list_size;
 unsigned long ObjectiveInterface::objective_position_enum_index;
-PlayerID      ObjectiveInterface::objective_position_enum_player_id;
+Uint16        ObjectiveInterface::objective_position_enum_player_id;
 
 NetMessageEncoder ObjectiveInterface::message_encoder;
 
@@ -207,15 +207,15 @@ ObjectiveInterface::processTerminalNetPacket(const NetPacket* packet)
         default:
             LOGGER.warning(
                     "Unknown objective terminal message (id %u, player %u)",
-                    message->message_id, packet->fromID);
+                    message->message_id, packet->fromClient->getPlayerIndex());
             return;
     }                                       
 
     const PlayerState* player 
-        = PlayerInterface::getPlayerByNetworkID(packet->fromID);
+        = PlayerInterface::getPlayer(packet->fromClient->getPlayerIndex());
     if(!player) {
-        LOGGER.warning("Couldn't find player for packet from NetworkID %u.",
-                packet->fromID);
+        LOGGER.warning("Couldn't find player for packet %u.",
+                packet->fromClient->getPlayerIndex());
         return;
     }
     
@@ -357,7 +357,7 @@ ObjectiveInterface::startObjectivePositionEnumeration()
 {
     objective_position_enum_index	= 0;
     objective_position_enum_list_size = objective_list.size();
-    objective_position_enum_player_id = PlayerInterface::getLocalPlayerID();
+    objective_position_enum_player_id = PlayerInterface::getLocalPlayerIndex();
 }
 
 bool
@@ -366,25 +366,36 @@ ObjectiveInterface::objectivePositionEnumeration(iRect *objective_rect,
 {
     ObjectiveState *objective_state;
 
-    if( objective_position_enum_index <  objective_position_enum_list_size ) {
+    if( objective_position_enum_index <  objective_position_enum_list_size )
+    {
         objective_state = &(objective_list[ objective_position_enum_index ]->objective_state);
 
         (*objective_rect) = objective_state->area.getAbsRect( objective_state->location );
-        if( objective_id != 0 ) {
+        if( objective_id != 0 )
+        {
             (*objective_id) = objective_position_enum_index;
         }
 
-        if ( objective_state->occupation_status == _occupation_status_occupied ) {
-            if ( objective_position_enum_player_id.getIndex() != objective_state->occupying_player->getID() ) {
-                if (PlayerInterface::isAllied(objective_state->occupying_player->getID() , objective_position_enum_player_id.getIndex())  ) {
+        if ( objective_state->occupation_status == _occupation_status_occupied )
+        {
+            if ( objective_position_enum_player_id != objective_state->occupying_player->getID() )
+            {
+                if (PlayerInterface::isAllied(objective_state->occupying_player->getID() , objective_position_enum_player_id)  )
+                {
                     (*objective_disposition) = _objective_disposition_allie;
-                } else {
+                }
+                else
+                {
                     (*objective_disposition) = _objective_disposition_enemy;
                 }
-            } else {
+            }
+            else
+            {
                 (*objective_disposition) = _objective_disposition_player;
             }
-        } else {
+        }
+        else
+        {
             (*objective_disposition) = _objective_disposition_unoccupied;
         }
 

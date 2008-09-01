@@ -31,11 +31,11 @@ NetMessageEncoder::NetMessageEncoder(bool sendAsClient)
     resetEncoder();
 }
 
-NetMessageEncoder::NetMessageEncoder(const PlayerID& id)
+NetMessageEncoder::NetMessageEncoder(Uint16 player_index)
 {
     usePlayerID = true;
     sendAsClient = false;
-    playerID = id;
+    player = player_index;
     resetEncoder();
 }
 
@@ -73,11 +73,11 @@ void NetMessageEncoder::sendEncodedMessage()
     if (encode_message.message_count > 0) {
         size_t size = encode_message_index + encode_message.getHeaderSize();
         if(usePlayerID) {
-            SERVER->sendMessage(playerID, &encode_message, size);
+            SERVER->sendMessage(player, &encode_message, size);
         } else if(sendAsClient) {
             CLIENT->sendMessage(&encode_message, size);
         } else if(NetworkState::status == _network_state_server) {
-            SERVER->sendMessage(&encode_message, size);
+            SERVER->broadcastMessage(&encode_message, size);
         } else {
             CLIENT->sendMessage(&encode_message, size);
         }

@@ -139,7 +139,7 @@ NetworkServer::closeSession()
 }
 
 void
-NetworkServer::sendMessage(NetMessage *message, size_t size)
+NetworkServer::broadcastMessage(NetMessage *message, size_t size)
 {
     ClientList::iterator i = client_list.begin();
     while ( i != client_list.end() )
@@ -167,14 +167,14 @@ NetworkServer::sendMessage(NetMessage *message, size_t size)
 }
 
 void
-NetworkServer::sendMessage(NetClientID network_id, NetMessage* message,
+NetworkServer::sendMessage(Uint16 player_index, NetMessage* message,
         size_t size)
 {
     if( socket == 0 )
         return;
     
     ClientList::iterator i = client_list.begin();
-    while ( i != client_list.end() && (*i)->client_socket->getId() != network_id )
+    while ( i != client_list.end() && (*i)->client_socket->getPlayerIndex() != player_index )
     {
         ++i;
     }
@@ -195,14 +195,14 @@ NetworkServer::sendMessage(NetClientID network_id, NetMessage* message,
         }
         catch (NetworkException e)
         {
-            LOG ( ("Network send error when sending to client %d: %s",
-                   network_id, e.what()) );
+            LOG ( ("Network send error when sending to client (index) %d: %s",
+                   player_index, e.what()) );
             dropClient((*i)->client_socket);
         }
     }
     else
     {
-        LOGGER.warning("NetworkServer: sendMessage to unknown client: %d", network_id);
+        LOGGER.warning("NetworkServer: sendMessage to unknown client: (index) %d", player_index);
     }
 }
 
@@ -262,7 +262,7 @@ NetworkServer::shutdownClientTransport( ClientSocket * client )
     {
         if ( (*i)->client_socket == client )
         {
-            LOGGER.warning("NetworkServer: disconnecting client [%d]", client->getId());
+            LOGGER.warning("NetworkServer: disconnecting client [%d]", client->getPlayerIndex());
             client_list.erase(i);
             delete (*i)->client_socket;
             delete *i;
@@ -310,12 +310,12 @@ NetworkServer::sendRemaining()
 }
 
 std::string
-NetworkServer::getIP(NetClientID id)
+NetworkServer::getIP(Uint16 player_index)
 {
     ClientList::iterator i = client_list.begin();
     while ( i != client_list.end() )
     {
-        if ( (*i)->client_socket->getId() == id )
+        if ( (*i)->client_socket->getPlayerIndex() == player_index )
         {
             return (*i)->client_socket->getIPAddress();
         }
@@ -345,7 +345,7 @@ NetworkServer::onNewConnection(TCPListenSocket *so, const Address &fromaddr)
 void
 NetworkServer::onClientConnected(ClientSocket *s)
 {
-    NetClientID id = s->getId();
+    int id = s->getId();
     LOGGER.debug("NetworkServer: client connected [%d]", id);
     //clients[id] = s;
     

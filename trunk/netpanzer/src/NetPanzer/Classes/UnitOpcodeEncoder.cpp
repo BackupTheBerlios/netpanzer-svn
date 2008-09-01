@@ -58,7 +58,7 @@ UnitOpcodeEncoder::send()
         return;
 
     size_t size = opcode_message.getHeaderSize() + opcode_index;
-    SERVER->sendMessage(&opcode_message, size);
+    SERVER->broadcastMessage(&opcode_message, size);
 
     reset();
     NetworkState::incOpcodesSent();
