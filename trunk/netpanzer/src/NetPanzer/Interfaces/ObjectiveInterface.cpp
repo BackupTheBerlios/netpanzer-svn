@@ -207,15 +207,15 @@ ObjectiveInterface::processTerminalNetPacket(const NetPacket* packet)
         default:
             LOGGER.warning(
                     "Unknown objective terminal message (id %u, player %u)",
-                    message->message_id, packet->fromClient->getPlayerIndex());
+                    message->message_id, packet->fromPlayer);
             return;
     }                                       
 
     const PlayerState* player 
-        = PlayerInterface::getPlayer(packet->fromClient->getPlayerIndex());
+        = PlayerInterface::getPlayer(packet->fromPlayer);
     if(!player) {
         LOGGER.warning("Couldn't find player for packet %u.",
-                packet->fromClient->getPlayerIndex());
+                packet->fromPlayer);
         return;
     }
     

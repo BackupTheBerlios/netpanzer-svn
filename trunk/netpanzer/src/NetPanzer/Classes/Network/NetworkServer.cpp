@@ -79,7 +79,8 @@ void NetworkServer::netPacketServerPingRequest(const NetPacket* )
 void NetworkServer::processNetPacket(const NetPacket* packet)
 {
     const NetMessage* message = packet->getNetMessage();
-    switch(message->message_id) {
+    switch(message->message_id)
+    {
         case _net_message_id_server_keep_alive: 
             netPacketClientKeepAlive(packet);
             break;
@@ -209,16 +210,7 @@ NetworkServer::sendMessage(Uint16 player_index, NetMessage* message,
 bool
 NetworkServer::getPacket(NetPacket* packet)
 {
-    if ( loop_back_recv_queue.isReady() )
-    {
-        loop_back_recv_queue.dequeue(packet);
-
-#ifdef NETWORKDEBUG
-        NetPacketDebugger::logPacket("R", packet);
-#endif
-        return true;
-    }
-    else if (receive_queue.isReady())
+    if (receive_queue.isReady())
     {
         receive_queue.dequeue(packet);
         NetworkState::incPacketsReceived(packet->getSize());

@@ -20,13 +20,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "NetPacketQueues.hpp"
 
-void EnqueueIncomingPacket(const void *message, Uint16 message_size,
-                           ClientSocket *fromClient);
+void EnqueueIncomingPacket( const void *data, Uint16 size,
+                            Uint16 fromPlayer, ClientSocket *fromClient);
 
 class NetworkInterface
 {
 public:
-    static NetPacketQueue loop_back_recv_queue;
     static NetPacketQueue receive_queue;
 
 public:

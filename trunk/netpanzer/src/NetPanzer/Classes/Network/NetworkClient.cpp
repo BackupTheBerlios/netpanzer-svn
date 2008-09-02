@@ -42,7 +42,6 @@ NetworkClient::NetworkClient( void )
         : NetworkInterface(), clientsocket(0)
 {
     connection_status = _connection_status_no_connection;
-    connection_type = _connection_loop_back;
 }
 
 NetworkClient::~NetworkClient()
@@ -144,8 +143,6 @@ bool NetworkClient::joinServer(const std::string& server_name)
         return false;
     }
 
-    connection_type = _connection_network;
-
     return true;
 }
 
@@ -160,27 +157,19 @@ void NetworkClient::sendMessage(NetMessage* message, size_t size)
 {
     message->setSize(size);
     
-    if (connection_type == _connection_loop_back)
+    if ( !clientsocket )
     {
-        net_packet.fromClient = clientsocket;
-        memcpy(net_packet.data, message, size);
-        loop_back_recv_queue.enqueue(net_packet);
-#ifdef NETWORKDEBUG
-        NetPacketDebugger::logMessage("LS", message);
-#endif
-        return;
+        EnqueueIncomingPacket( message, size, PlayerInterface::getLocalPlayerIndex(), 0);
     }
-
-    if(!clientsocket)
-        return;
+    else
+    {
+        clientsocket->sendMessage(message, size);
+        NetworkState::incPacketsSent(size);        
+    }
 
 #ifdef NETWORKDEBUG
     NetPacketDebugger::logMessage("S", message);
 #endif
-
-    clientsocket->sendMessage(message, size);
-
-    NetworkState::incPacketsSent(size);
 }
 
 bool NetworkClient::getMessage(NetMessage *message)

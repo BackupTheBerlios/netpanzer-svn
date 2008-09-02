@@ -168,7 +168,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             }
             
             if ( remaining >= packetsize ) {
-                EnqueueIncomingPacket(data+dataptr, packetsize, this);
+                EnqueueIncomingPacket(data+dataptr, packetsize, playerIndex, this);
                 remaining -= packetsize;
                 dataptr   += packetsize;
             } else {
@@ -216,7 +216,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             }
             
             if ( tempoffset == packetsize ) {
-                EnqueueIncomingPacket(tempbuffer, packetsize, this);
+                EnqueueIncomingPacket(tempbuffer, packetsize, playerIndex, this);
                 tempoffset = 0;
             }
         }

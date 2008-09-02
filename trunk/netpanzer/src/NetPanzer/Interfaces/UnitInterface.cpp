@@ -123,11 +123,11 @@ UnitInterface::processNetPacket(const NetPacket* packet)
         (const TerminalUnitCmdRequest*) message;
 
     const PlayerState* player 
-        = PlayerInterface::getPlayer(packet->fromClient->getPlayerIndex());
+        = PlayerInterface::getPlayer(packet->fromPlayer);
     if(player == 0)
     {
         LOGGER.warning("UnitInterface: Player not found '%u'?!?",
-                packet->fromClient->getPlayerIndex());
+                packet->fromPlayer);
         return;
     }
     

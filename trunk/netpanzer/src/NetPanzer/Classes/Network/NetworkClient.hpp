@@ -27,10 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Timer.hpp"
 #include "ArrayUtil/ArrayTemplate.hpp"
 
-enum { _connection_loop_back,
-       _connection_network
-     };
-
 enum { _connection_status_no_connection,
        _connection_status_connected
      };
@@ -44,7 +40,6 @@ class NetworkClient : public NetworkInterface, ClientSocketObserver
 protected:
     NetPacket net_packet;
     unsigned short connection_status;
-    unsigned short connection_type;
 
     void netMessageClientKeepAlive(const NetMessage* message);
     void netMessageClientSetKeepAliveState(const NetMessage* message);

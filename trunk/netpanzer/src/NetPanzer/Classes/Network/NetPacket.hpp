@@ -32,6 +32,7 @@ class ClientSocket;
 class NetPacket
 {
 public:
+    Uint16 fromPlayer;
     ClientSocket *fromClient;
 
     Uint8  data[ _MAX_NET_PACKET_SIZE ];
@@ -43,7 +44,9 @@ public:
 
     size_t getSize() const
     {
-        return sizeof(ClientSocket *) + getNetMessage()->getSize();
+        return sizeof(ClientSocket *) 
+                + sizeof(fromPlayer)
+                + getNetMessage()->getSize();
     }
 }
 __attribute__((packed));
