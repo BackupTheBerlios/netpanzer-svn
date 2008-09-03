@@ -33,24 +33,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "System/Sound.hpp"
 
-
-SpritePacked ENEMY_RADAR_POWERUP_ANIM;
-SpritePacked ENEMY_RADAR_POWERUP_ANIM_SHADOW;
-
 EnemyRadarPowerUp::EnemyRadarPowerUp(iXY map_loc, int type)
         : PowerUp( map_loc, type )
 {
-    enemy_radar_animation.setData( ENEMY_RADAR_POWERUP_ANIM );
-    enemy_radar_animation.setAttrib( world_loc, iXY(0,0), 5 );
-
-    enemy_radar_animation_shadow.setData( ENEMY_RADAR_POWERUP_ANIM_SHADOW );
-    enemy_radar_animation_shadow.setAttrib( world_loc, iXY(0,0), 4 );
-    enemy_radar_animation_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
-
 }
 
 void
-EnemyRadarPowerUp::setRadar(UnitID &unit_id)
+EnemyRadarPowerUp::onHit(UnitID unit_id)
 {
     sound->playPowerUpSound();
 
@@ -70,35 +59,7 @@ EnemyRadarPowerUp::setRadar(UnitID &unit_id)
 }
 
 void
-EnemyRadarPowerUp::updateState()
-{
-    UnitID unit_id;
-
-    if ( NetworkState::status == _network_state_server )
-    {
-        if ( life_cycle_state == _power_up_lifecycle_state_active )
-        {
-            if( isPowerUpHit( &unit_id ) == true )
-            {
-                setRadar( unit_id );
-            }
-        }
-    }
-}
-
-void
-EnemyRadarPowerUp::offloadGraphics( SpriteSorter &sorter )
-{
-    enemy_radar_animation.nextFrame();
-    enemy_radar_animation_shadow.setFrame( enemy_radar_animation.getCurFrame() );
-
-    sorter.addSprite( &enemy_radar_animation );
-    sorter.addSprite( &enemy_radar_animation_shadow );
-
-}
-
-void
-EnemyRadarPowerUp::onHit( PowerUpHitMesg *message  )
+EnemyRadarPowerUp::onHitMessage( PowerUpHitMesg *message  )
 {
     sound->playPowerUpSound();
 

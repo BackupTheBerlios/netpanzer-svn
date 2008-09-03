@@ -163,15 +163,9 @@ void PowerUpInterface::generatePowerUp()
 
 void PowerUpInterface::initialize( void )
 {
-    BONUS_POWERUP_ANIM.load( "powerups/Bolt.pak" );
-    BONUS_POWERUP_ANIM.setFPS( 15 );
-    BONUS_POWERUP_ANIM_SHADOW.load( "powerups/BoltS.pak" );
-
-    UNIT_POWERUP_ANIM.setTo( BONUS_POWERUP_ANIM );
-    UNIT_POWERUP_ANIM_SHADOW.setTo( BONUS_POWERUP_ANIM_SHADOW );
-
-    ENEMY_RADAR_POWERUP_ANIM.setTo( BONUS_POWERUP_ANIM );
-    ENEMY_RADAR_POWERUP_ANIM_SHADOW.setTo( BONUS_POWERUP_ANIM_SHADOW );
+    PowerUp::POWERUP_ANIM.load( "powerups/Bolt.pak" );
+    PowerUp::POWERUP_ANIM.setFPS( 15 );
+    PowerUp::POWERUP_ANIM_SHADOW.load( "powerups/BoltS.pak" );
 }
 
 void PowerUpInterface::resetLogic( void )
@@ -285,7 +279,7 @@ void PowerUpInterface::netMessagePowerUpHit(const NetMessage* message)
     power_up = powerup_list.find( hit_mesg->getID() );
 
     if (power_up != 0) {
-        power_up->onHit( hit_mesg );
+        power_up->onHitMessage( hit_mesg );
     }
 }
 

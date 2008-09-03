@@ -19,20 +19,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _BONUS_UNIT_POWERUP_HPP
 
 #include "Classes/PowerUp.hpp"
-#include "Classes/Sprite.hpp"
-
-extern SpritePacked BONUS_POWERUP_ANIM;
-extern SpritePacked BONUS_POWERUP_ANIM_SHADOW;
 
 class BonusUnitPowerUp : public PowerUp
 {
 protected:
-    SpritePacked bonus_unit_animation;
-    SpritePacked bonus_unit_animation_shadow;
-
     int bonus_unit_type;
 
-    void spawnBonusUnits( UnitID &unit_id );
+    virtual void onHit( UnitID unit_id );
 
 public:
     virtual ~BonusUnitPowerUp()
@@ -40,11 +33,7 @@ public:
 
     BonusUnitPowerUp(iXY map_loc, int type);
 
-    virtual void updateState( void );
-
-    virtual void offloadGraphics( SpriteSorter &sorter );
-
-    virtual void onHit( PowerUpHitMesg *message  );
+    virtual void onHitMessage( PowerUpHitMesg *message  );
 
 };
 

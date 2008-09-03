@@ -45,20 +45,10 @@ enum { _unit_powerup_hitpoints,
        _unit_powerup_enum_count
      };
 
-SpritePacked UNIT_POWERUP_ANIM;
-SpritePacked UNIT_POWERUP_ANIM_SHADOW;
-
 UnitPowerUp::UnitPowerUp(iXY map_loc, int type)
         : PowerUp( map_loc, type )
 {
     unit_powerup_type = rand() % _unit_powerup_enum_count;
-    unit_powerup_animation.setData( UNIT_POWERUP_ANIM );
-    unit_powerup_animation.setAttrib( world_loc, iXY(0,0), 5 );
-
-    unit_powerup_animation_shadow.setData( UNIT_POWERUP_ANIM_SHADOW );
-    unit_powerup_animation_shadow.setAttrib( world_loc, iXY(0,0), 4 );
-    unit_powerup_animation_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
-
 }
 
 void UnitPowerUp::powerUpHitPoints( UnitState *unit_state)
@@ -129,7 +119,7 @@ void UnitPowerUp::powerUpDestruct( UnitID unit_id )
 }
 
 
-void UnitPowerUp::selectPowerUp( UnitID &unit_id )
+void UnitPowerUp::onHit( UnitID unit_id )
 {
     sound->playPowerUpSound();
 
@@ -206,33 +196,7 @@ char * UnitPowerUp::powerupTypeToString( int type )
     return("");
 }
 
-
-void UnitPowerUp::updateState( void )
-{
-    UnitID unit_id;
-
-    if ( NetworkState::status == _network_state_server )
-    {
-        if ( life_cycle_state == _power_up_lifecycle_state_active )
-        {
-            if( isPowerUpHit( &unit_id ) == true )
-            {
-                selectPowerUp( unit_id );
-            }
-        }
-    }
-}
-
-void UnitPowerUp::offloadGraphics( SpriteSorter &sorter )
-{
-    unit_powerup_animation.nextFrame();
-    unit_powerup_animation_shadow.setFrame( unit_powerup_animation.getCurFrame() );
-
-    sorter.addSprite( &unit_powerup_animation );
-    sorter.addSprite( &unit_powerup_animation_shadow );
-}
-
-void UnitPowerUp::onHit( PowerUpHitMesg *message  )
+void UnitPowerUp::onHitMessage( PowerUpHitMesg *message  )
 {
     sound->playPowerUpSound();
     life_cycle_state = _power_up_lifecycle_state_inactive;

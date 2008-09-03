@@ -18,7 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _POWERUP_HPP
 #define _POWERUP_HPP
 
-#include "SpriteSorter.hpp"
+#include "Classes/SpriteSorter.hpp"
+#include "Classes/Sprite.hpp"
 #include "Classes/Network/PowerUpNetMessage.hpp"
 
 enum { _power_up_lifecycle_state_active,
@@ -29,8 +30,15 @@ class PowerUp
 {
 protected:
     bool isPowerUpHit( UnitID *unit_id );
+    virtual void onHit( UnitID unit_id ) = 0;
+    
+    SpritePacked sprite;
+    SpritePacked sprite_shadow;
 
 public:
+    static SpritePacked POWERUP_ANIM;
+    static SpritePacked POWERUP_ANIM_SHADOW;
+
     iXY     map_loc;
     iXY     world_loc;
     int     ID;
@@ -44,13 +52,11 @@ public:
     virtual ~PowerUp()
     { }
 
-    virtual void updateState()
-    { }
+    void updateState();
 
-    virtual void offloadGraphics(SpriteSorter& )
-    { }
+    void offloadGraphics(SpriteSorter& );
 
-    virtual void onHit(PowerUpHitMesg* )
+    virtual void onHitMessage(PowerUpHitMesg* )
     { }
     PowerUp *next;
 };

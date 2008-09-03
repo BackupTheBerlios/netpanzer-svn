@@ -33,26 +33,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "System/Sound.hpp"
 
-
-SpritePacked BONUS_POWERUP_ANIM;
-SpritePacked BONUS_POWERUP_ANIM_SHADOW;
-
 BonusUnitPowerUp::BonusUnitPowerUp(iXY map_loc, int type)
         : PowerUp( map_loc, type )
 {
     bonus_unit_type = rand() % UnitProfileInterface::getNumUnitTypes();
-
-    bonus_unit_animation.setData( BONUS_POWERUP_ANIM );
-    bonus_unit_animation.setAttrib( world_loc, iXY(0,0), 5 );
-
-    bonus_unit_animation_shadow.setData( BONUS_POWERUP_ANIM_SHADOW );
-    bonus_unit_animation_shadow.setAttrib( world_loc, iXY(0,0), 4 );
-    bonus_unit_animation_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
-
 }
 
 
-void BonusUnitPowerUp::spawnBonusUnits( UnitID &unit_id )
+void BonusUnitPowerUp::onHit( UnitID unit_id )
 {
     PlacementMatrix placement_matrix;
     iXY map_pos;
@@ -98,32 +86,7 @@ void BonusUnitPowerUp::spawnBonusUnits( UnitID &unit_id )
     }
 }
 
-void BonusUnitPowerUp::updateState( void )
-{
-    UnitID unit_id;
-
-    if ( NetworkState::status == _network_state_server )
-    {
-        if ( life_cycle_state == _power_up_lifecycle_state_active )
-        {
-            if( isPowerUpHit( &unit_id ) == true )
-            {
-                spawnBonusUnits( unit_id );
-            }
-        }
-    }
-}
-
-void BonusUnitPowerUp::offloadGraphics( SpriteSorter &sorter )
-{
-    bonus_unit_animation.nextFrame();
-    bonus_unit_animation_shadow.setFrame( bonus_unit_animation.getCurFrame() );
-
-    sorter.addSprite( &bonus_unit_animation );
-    sorter.addSprite( &bonus_unit_animation_shadow );
-}
-
-void BonusUnitPowerUp::onHit( PowerUpHitMesg *message  )
+void BonusUnitPowerUp::onHitMessage( PowerUpHitMesg *message  )
 {
     sound->playPowerUpSound();
     life_cycle_state = _power_up_lifecycle_state_inactive;

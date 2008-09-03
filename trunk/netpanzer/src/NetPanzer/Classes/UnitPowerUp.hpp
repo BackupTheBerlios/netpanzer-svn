@@ -19,19 +19,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _UNIT_POWERUP_HPP
 
 #include "Classes/PowerUp.hpp"
-#include "Classes/Sprite.hpp"
 #include "Classes/UnitState.hpp"
-
-extern SpritePacked UNIT_POWERUP_ANIM;
-extern SpritePacked UNIT_POWERUP_ANIM_SHADOW;
 
 class UnitPowerUp : public PowerUp
 {
 protected:
-    SpritePacked unit_powerup_animation;
-    SpritePacked unit_powerup_animation_shadow;
-
     int unit_powerup_type;
+
+    virtual void onHit( UnitID unit_id );
 
     void powerUpHitPoints( UnitState *unit_state);
     void powerUpRange( UnitState *unit_state);
@@ -41,8 +36,6 @@ protected:
     void powerUpReload( UnitState *unit_state);
     void powerUpDestruct( UnitID unit_id );
 
-    void selectPowerUp( UnitID &unit_id );
-
     char * powerupTypeToString( int type );
 
 public:
@@ -51,11 +44,7 @@ public:
     virtual ~UnitPowerUp()
     { }
 
-    virtual void updateState( void );
-
-    virtual void offloadGraphics( SpriteSorter &sorter );
-
-    virtual void onHit( PowerUpHitMesg *message  );
+    virtual void onHitMessage( PowerUpHitMesg *message  );
 
 };
 

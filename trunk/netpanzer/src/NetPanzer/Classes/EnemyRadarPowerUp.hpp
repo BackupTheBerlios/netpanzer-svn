@@ -19,18 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _ENEMY_RADAR_POWERUP_HPP
 
 #include "Classes/PowerUp.hpp"
-#include "Classes/Sprite.hpp"
-
-extern SpritePacked ENEMY_RADAR_POWERUP_ANIM;
-extern SpritePacked ENEMY_RADAR_POWERUP_ANIM_SHADOW;
 
 class EnemyRadarPowerUp : public PowerUp
 {
 protected:
-    SpritePacked enemy_radar_animation;
-    SpritePacked enemy_radar_animation_shadow;
-
-    void setRadar( UnitID &unit_id );
+    virtual void onHit( UnitID unit_id );
 
 public:
 
@@ -38,11 +31,7 @@ public:
     virtual ~EnemyRadarPowerUp()
     { }
 
-    virtual void updateState( void );
-
-    virtual void offloadGraphics( SpriteSorter &sorter );
-
-    virtual void onHit( PowerUpHitMesg *message  );
+    virtual void onHitMessage( PowerUpHitMesg *message  );
 
 };
 

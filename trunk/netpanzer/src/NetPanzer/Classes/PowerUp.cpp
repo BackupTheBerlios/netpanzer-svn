@@ -21,6 +21,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/UnitBlackBoard.hpp"
 #include "Interfaces/UnitInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
+#include "Classes/Network/NetworkState.hpp"
+
+SpritePacked PowerUp::POWERUP_ANIM;
+SpritePacked PowerUp::POWERUP_ANIM_SHADOW;
 
 PowerUp::PowerUp()
 {
@@ -34,7 +38,15 @@ PowerUp::PowerUp(iXY map_loc, int ID, int type)
     this->type = type;
 
     MapInterface::mapXYtoPointXY( map_loc, &(this->world_loc) );
+    
     this->life_cycle_state = _power_up_lifecycle_state_active;
+    
+    sprite.setData( POWERUP_ANIM );
+    sprite.setAttrib( world_loc, iXY(0,0), 5 );
+
+    sprite_shadow.setData( POWERUP_ANIM_SHADOW );
+    sprite_shadow.setAttrib( world_loc, iXY(0,0), 4 );
+    sprite_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
 }
 
 PowerUp::PowerUp(iXY map_loc, int type)
@@ -44,16 +56,48 @@ PowerUp::PowerUp(iXY map_loc, int type)
     this->type = type;
 
     MapInterface::mapXYtoPointXY( map_loc, &(this->world_loc) );
+    
     this->life_cycle_state = _power_up_lifecycle_state_active;
+
+    sprite.setData( POWERUP_ANIM );
+    sprite.setAttrib( world_loc, iXY(0,0), 5 );
+
+    sprite_shadow.setData( POWERUP_ANIM_SHADOW );
+    sprite_shadow.setAttrib( world_loc, iXY(0,0), 4 );
+    sprite_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
 }
 
 bool PowerUp::isPowerUpHit(UnitID *unit_id)
 {
-    if(UnitBlackBoard::unitOccupiesLoc(map_loc) == true) {
-        if( UnitInterface::queryUnitAtMapLoc(map_loc, unit_id) == true) {
-            return true;
-        }
+    if( UnitBlackBoard::unitOccupiesLoc(map_loc) 
+        && UnitInterface::queryUnitAtMapLoc(map_loc, unit_id) )
+    {
+        return true;
     }
-
+    
     return false;
 }
+
+void PowerUp::offloadGraphics( SpriteSorter &sorter )
+{
+    sprite.nextFrame();
+    sprite_shadow.setFrame( sprite.getCurFrame() );
+
+    sorter.addSprite( &sprite );
+    sorter.addSprite( &sprite_shadow );
+}
+
+void
+PowerUp::updateState( void )
+{
+    if ( NetworkState::status == _network_state_server
+         && life_cycle_state == _power_up_lifecycle_state_active )
+    {
+        UnitID unit_id;
+        if( isPowerUpHit( &unit_id ) == true )
+        {
+            onHit( unit_id );
+        }
+    }
+}
+
