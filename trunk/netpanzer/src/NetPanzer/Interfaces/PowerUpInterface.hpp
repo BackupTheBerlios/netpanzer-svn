@@ -25,24 +25,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetPacket.hpp"
 #include "Network/ClientSocket.hpp"
 
-class PowerUpList : public std::vector<PowerUp*>
-{
-protected:
-    int id_counter;
-
-public:
-    PowerUpList();
-    ~PowerUpList();
-
-    PowerUp* find(int ID);
-    void addWithID(PowerUp *powerup);
-};
-
 class PowerUpInterface
 {
 protected:
+    typedef std::vector<PowerUp *> PowerUpList;
     static PowerUpList powerup_list;
-
+    
+    static int getNextPowerUpID();
+    
     static int power_up_limit;
     static int power_up_regen_time_upper_bound;
     static int power_up_regen_time_lower_bound;

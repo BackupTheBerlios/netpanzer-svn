@@ -43,6 +43,7 @@ public:
     {
         message_class = _net_message_class_powerup;
         message_id = _net_message_id_powerup_create;
+        setSize(sizeof(*this));
     }
     void set(iXY map_loc, int ID, int type)
     {
@@ -73,8 +74,8 @@ class PowerUpHitMesg : public NetMessage
 {
 private:
     Sint32  ID;
-    Uint16 dummy; // XXX only here for compatibility reasons
-    Uint16 player_id;
+    Uint16  dummy; // XXX only here for compatibility reasons
+    Uint16  player_id;
     Sint32  unit_powerup_type;
 
 public:
@@ -82,6 +83,7 @@ public:
     {
         message_class = _net_message_class_powerup;
         message_id = _net_message_id_powerup_hit;
+        setSize(sizeof(*this));
     }
     void set(int ID, Uint16 player_id, int type=0)
     {
