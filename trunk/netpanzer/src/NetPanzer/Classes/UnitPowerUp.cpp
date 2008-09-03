@@ -53,17 +53,17 @@ UnitPowerUp::UnitPowerUp(iXY map_loc, int type)
 {
     unit_powerup_type = rand() % _unit_powerup_enum_count;
     unit_powerup_animation.setData( UNIT_POWERUP_ANIM );
-    unit_powerup_animation.setAttrib( powerup_state.world_loc, iXY(0,0), 5 );
+    unit_powerup_animation.setAttrib( world_loc, iXY(0,0), 5 );
 
     unit_powerup_animation_shadow.setData( UNIT_POWERUP_ANIM_SHADOW );
-    unit_powerup_animation_shadow.setAttrib( powerup_state.world_loc, iXY(0,0), 4 );
+    unit_powerup_animation_shadow.setAttrib( world_loc, iXY(0,0), 4 );
     unit_powerup_animation_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
 
 }
 
 void UnitPowerUp::powerUpHitPoints( UnitState *unit_state)
 {
-    /*
+    /* wtf someone did test lua here before!!!
     lua_Object hit_points;
 
     lua_pushnumber( (double) (unit_state->hit_points) );
@@ -135,41 +135,42 @@ void UnitPowerUp::selectPowerUp( UnitID &unit_id )
 
     UnitBase* unit = UnitInterface::getUnit( unit_id );
 
-    switch( unit_powerup_type ) {
-    case _unit_powerup_hitpoints :
-        powerUpHitPoints( &(unit->unit_state) );
-        break;
+    switch( unit_powerup_type )
+    {
+        case _unit_powerup_hitpoints:
+            powerUpHitPoints( &(unit->unit_state) );
+            break;
 
-    case _unit_powerup_range :
-        powerUpRange( &(unit->unit_state) );
-        break;
+        case _unit_powerup_range:
+            powerUpRange( &(unit->unit_state) );
+            break;
 
-    case _unit_powerup_firepower :
-        powerUpFirePower( &(unit->unit_state) );
-        break;
+        case _unit_powerup_firepower:
+            powerUpFirePower( &(unit->unit_state) );
+            break;
 
-    case _unit_powerup_speed :
-        powerUpSpeed( &(unit->unit_state) );
-        break;
+        case _unit_powerup_speed:
+            powerUpSpeed( &(unit->unit_state) );
+            break;
 
-    case _unit_powerup_repair :
-        powerUpRepair( &(unit->unit_state) );
-        break;
+        case _unit_powerup_repair:
+            powerUpRepair( &(unit->unit_state) );
+            break;
 
-    case _unit_powerup_reload :
-        powerUpReload( &(unit->unit_state) );
-        break;
+        case _unit_powerup_reload:
+            powerUpReload( &(unit->unit_state) );
+            break;
 
-    case _unit_powerup_destruct :
-        powerUpDestruct( unit_id );
-        break;
+        case _unit_powerup_destruct:
+            powerUpDestruct( unit_id );
+            break;
     }
 
     PowerUpHitMesg hit_mesg;
-    hit_mesg.set(powerup_state.ID, unit->player->getID(), unit_powerup_type);
+    hit_mesg.set(ID, unit->player->getID(), unit_powerup_type);
     SERVER->broadcastMessage(&hit_mesg, sizeof(PowerUpHitMesg));
 
-    powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive;
+    life_cycle_state = _power_up_lifecycle_state_inactive;
 
     if(unit->player == PlayerInterface::getLocalPlayer()) {
         ConsoleInterface::postMessage(Color::unitAqua, "YOU GOT A %s POWERUP", powerupTypeToString( unit_powerup_type ) );
@@ -178,27 +179,28 @@ void UnitPowerUp::selectPowerUp( UnitID &unit_id )
 
 char * UnitPowerUp::powerupTypeToString( int type )
 {
-    switch( type ) {
-    case _unit_powerup_hitpoints :
-        return( "UNIT HITPOINTS" );
+    switch( type )
+    {
+        case _unit_powerup_hitpoints:
+            return( "UNIT HITPOINTS" );
 
-    case _unit_powerup_range :
-        return( "UNIT WEAPON RANGE" );
+        case _unit_powerup_range:
+            return( "UNIT WEAPON RANGE" );
 
-    case _unit_powerup_firepower :
-        return( "UNIT FIREPOWER" );
+        case _unit_powerup_firepower:
+            return( "UNIT FIREPOWER" );
 
-    case _unit_powerup_speed :
-        return( "UNIT SPEED" );
+        case _unit_powerup_speed:
+            return( "UNIT SPEED" );
 
-    case _unit_powerup_repair :
-        return( "UNIT REPAIR" );
+        case _unit_powerup_repair:
+            return( "UNIT REPAIR" );
 
-    case _unit_powerup_reload :
-        return( "UNIT RELOAD TIME" );
+        case _unit_powerup_reload:
+            return( "UNIT RELOAD TIME" );
 
-    case _unit_powerup_destruct :
-        return( "UNIT DESTRUCT" );
+        case _unit_powerup_destruct:
+            return( "UNIT DESTRUCT" );
     }
 
     return("");
@@ -209,9 +211,12 @@ void UnitPowerUp::updateState( void )
 {
     UnitID unit_id;
 
-    if ( NetworkState::status == _network_state_server ) {
-        if ( powerup_state.life_cycle_state == _power_up_lifecycle_state_active ) {
-            if( isPowerUpHit( &unit_id ) == true ) {
+    if ( NetworkState::status == _network_state_server )
+    {
+        if ( life_cycle_state == _power_up_lifecycle_state_active )
+        {
+            if( isPowerUpHit( &unit_id ) == true )
+            {
                 selectPowerUp( unit_id );
             }
         }
@@ -230,7 +235,7 @@ void UnitPowerUp::offloadGraphics( SpriteSorter &sorter )
 void UnitPowerUp::onHit( PowerUpHitMesg *message  )
 {
     sound->playPowerUpSound();
-    powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive;
+    life_cycle_state = _power_up_lifecycle_state_inactive;
 
     if( PlayerInterface::getLocalPlayerIndex() == message->getPlayerID() )
     {

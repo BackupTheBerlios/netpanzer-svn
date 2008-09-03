@@ -25,30 +25,24 @@ enum { _power_up_lifecycle_state_active,
        _power_up_lifecycle_state_inactive
      };
 
-class PowerUpState
-{
-public:
-    iXY map_loc;
-    iXY world_loc;
-    int      ID;
-    int      type;
-    int      life_cycle_state;
-};
-
 class PowerUp
 {
 protected:
     bool isPowerUpHit( UnitID *unit_id );
 
 public:
-    PowerUpState powerup_state;
+    iXY     map_loc;
+    iXY     world_loc;
+    int     ID;
+    int     type;
+    int     life_cycle_state;
 
 public:
     PowerUp();
     PowerUp(iXY map_loc, int ID, int type);
     PowerUp(iXY map_loc, int type);
-	virtual ~PowerUp()
-	{ }
+    virtual ~PowerUp()
+    { }
 
     virtual void updateState()
     { }

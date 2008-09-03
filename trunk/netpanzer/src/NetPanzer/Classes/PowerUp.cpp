@@ -24,33 +24,33 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 PowerUp::PowerUp()
 {
-    powerup_state.life_cycle_state = _power_up_lifecycle_state_active;
+    life_cycle_state = _power_up_lifecycle_state_active;
 }
 
 PowerUp::PowerUp(iXY map_loc, int ID, int type)
 {
-    powerup_state.map_loc = map_loc;
-    powerup_state.ID = ID;
-    powerup_state.type = type;
+    this->map_loc = map_loc;
+    this->ID = ID;
+    this->type = type;
 
-    MapInterface::mapXYtoPointXY( map_loc, &(powerup_state.world_loc) );
-    powerup_state.life_cycle_state = _power_up_lifecycle_state_active;
+    MapInterface::mapXYtoPointXY( map_loc, &(this->world_loc) );
+    this->life_cycle_state = _power_up_lifecycle_state_active;
 }
 
 PowerUp::PowerUp(iXY map_loc, int type)
 {
-    powerup_state.map_loc = map_loc;
-    powerup_state.ID = -1;
-    powerup_state.type = type;
+    this->map_loc = map_loc;
+    this->ID = -1;
+    this->type = type;
 
-    MapInterface::mapXYtoPointXY( map_loc, &(powerup_state.world_loc) );
-    powerup_state.life_cycle_state = _power_up_lifecycle_state_active;
+    MapInterface::mapXYtoPointXY( map_loc, &(this->world_loc) );
+    this->life_cycle_state = _power_up_lifecycle_state_active;
 }
 
 bool PowerUp::isPowerUpHit(UnitID *unit_id)
 {
-    if(UnitBlackBoard::unitOccupiesLoc(powerup_state.map_loc) == true) {
-        if( UnitInterface::queryUnitAtMapLoc(powerup_state.map_loc, unit_id) == true) {
+    if(UnitBlackBoard::unitOccupiesLoc(map_loc) == true) {
+        if( UnitInterface::queryUnitAtMapLoc(map_loc, unit_id) == true) {
             return true;
         }
     }

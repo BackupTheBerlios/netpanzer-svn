@@ -70,7 +70,7 @@ PowerUp* PowerUpList::find(int ID)
 {
     for(iterator i=begin(); i!=end(); i++) {
         PowerUp* powerup = *i;
-        if(powerup->powerup_state.ID == ID)
+        if(powerup->ID == ID)
             return powerup;
     }
 
@@ -79,7 +79,7 @@ PowerUp* PowerUpList::find(int ID)
 
 void PowerUpList::addWithID(PowerUp *powerup)
 {
-    powerup->powerup_state.ID = id_counter++;
+    powerup->ID = id_counter++;
     push_back(powerup);
 }
 
@@ -144,9 +144,9 @@ void PowerUpInterface::generatePowerUp()
 
         powerup_list.addWithID(power_up);
 
-        create_mesg.set( power_up->powerup_state.map_loc,
-                         power_up->powerup_state.ID,
-                         power_up->powerup_state.type
+        create_mesg.set( power_up->map_loc,
+                         power_up->ID,
+                         power_up->type
                        );
 
         SERVER->broadcastMessage(&create_mesg, sizeof(PowerUpCreateMesg));
@@ -215,7 +215,7 @@ void PowerUpInterface::updateState()
     {
         PowerUp* powerup = *i;
 
-        if(powerup->powerup_state.life_cycle_state ==
+        if(powerup->life_cycle_state ==
                 _power_up_lifecycle_state_inactive) {
             delete powerup;
             i = powerup_list.erase(i);
@@ -270,7 +270,7 @@ void PowerUpInterface::netMessagePowerUpCreate(const NetMessage* message)
         return;
     }
 
-    power_up->powerup_state.ID = create_mesg->getID();
+    power_up->ID = create_mesg->getID();
 
     powerup_list.push_back(power_up);
 }
@@ -315,9 +315,9 @@ void PowerUpInterface::syncPowerUps( ClientSocket * client )
         PowerUp* powerup_ptr = *i;
 
         PowerUpCreateMesg create_mesg;
-        create_mesg.set( powerup_ptr->powerup_state.map_loc,
-                         powerup_ptr->powerup_state.ID,
-                         powerup_ptr->powerup_state.type
+        create_mesg.set( powerup_ptr->map_loc,
+                         powerup_ptr->ID,
+                         powerup_ptr->type
                        );
         create_mesg.setSize(sizeof(PowerUpCreateMesg));
 

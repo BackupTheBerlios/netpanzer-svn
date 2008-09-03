@@ -41,10 +41,10 @@ EnemyRadarPowerUp::EnemyRadarPowerUp(iXY map_loc, int type)
         : PowerUp( map_loc, type )
 {
     enemy_radar_animation.setData( ENEMY_RADAR_POWERUP_ANIM );
-    enemy_radar_animation.setAttrib( powerup_state.world_loc, iXY(0,0), 5 );
+    enemy_radar_animation.setAttrib( world_loc, iXY(0,0), 5 );
 
     enemy_radar_animation_shadow.setData( ENEMY_RADAR_POWERUP_ANIM_SHADOW );
-    enemy_radar_animation_shadow.setAttrib( powerup_state.world_loc, iXY(0,0), 4 );
+    enemy_radar_animation_shadow.setAttrib( world_loc, iXY(0,0), 4 );
     enemy_radar_animation_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
 
 }
@@ -56,16 +56,17 @@ EnemyRadarPowerUp::setRadar(UnitID &unit_id)
 
     UnitBase* unit = UnitInterface::getUnit(unit_id);
 
-    if(unit->player == PlayerInterface::getLocalPlayer()) {
+    if(unit->player == PlayerInterface::getLocalPlayer())
+    {
         MiniMapInterface::setShowEnemyRadar( 180 );
         ConsoleInterface::postMessage(Color::unitAqua, "YOU GOT AN ENEMY RADAR POWERUP" );
     }
 
     PowerUpHitMesg hit_mesg;
-    hit_mesg.set(powerup_state.ID, unit->player->getID());
+    hit_mesg.set( ID, unit->player->getID());
     SERVER->broadcastMessage( &hit_mesg, sizeof( PowerUpHitMesg ));
 
-    powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive;
+    life_cycle_state = _power_up_lifecycle_state_inactive;
 }
 
 void
@@ -73,9 +74,12 @@ EnemyRadarPowerUp::updateState()
 {
     UnitID unit_id;
 
-    if ( NetworkState::status == _network_state_server ) {
-        if ( powerup_state.life_cycle_state == _power_up_lifecycle_state_active ) {
-            if( isPowerUpHit( &unit_id ) == true ) {
+    if ( NetworkState::status == _network_state_server )
+    {
+        if ( life_cycle_state == _power_up_lifecycle_state_active )
+        {
+            if( isPowerUpHit( &unit_id ) == true )
+            {
                 setRadar( unit_id );
             }
         }
@@ -104,5 +108,5 @@ EnemyRadarPowerUp::onHit( PowerUpHitMesg *message  )
         ConsoleInterface::postMessage(Color::unitAqua, "YOU GOT AN ENEMY RADAR POWERUP" );
     }
 
-    powerup_state.life_cycle_state = _power_up_lifecycle_state_inactive;
+    life_cycle_state = _power_up_lifecycle_state_inactive;
 }
