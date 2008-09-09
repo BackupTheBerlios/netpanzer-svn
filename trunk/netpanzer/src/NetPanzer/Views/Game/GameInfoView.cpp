@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/ScreenSurface.hpp"
-#include "Interfaces/ObjectiveInterface.hpp"
+#include "Objectives/ObjectiveInterface.hpp"
 
 static int getPlayerFrags()
 {

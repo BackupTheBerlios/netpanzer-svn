@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/UnitInterface.hpp"
 #include "Interfaces/ProjectileInterface.hpp"
 #include "Interfaces/MouseInterface.hpp"
-#include "Interfaces/ObjectiveInterface.hpp"
+#include "Objectives/ObjectiveInterface.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
 #include "Classes/ScreenSurface.hpp"

@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "Interfaces/ObjectiveInterface.hpp"
+#include "Objectives/ObjectiveInterface.hpp"
 
 #include <stdio.h>
 #include <memory>
@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "Util/FileStream.hpp"
 #include "Util/Log.hpp"
-#include "Classes/Outpost.hpp"
+#include "Objectives/Outpost.hpp"
 #include "Interfaces/GameConfig.hpp"
 
 #include "Classes/Network/ObjectiveNetMessage.hpp"

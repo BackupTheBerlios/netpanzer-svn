@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/ServerConnectDaemon.hpp"
 #include "Interfaces/UnitInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
-#include "Interfaces/ObjectiveInterface.hpp"
+#include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/ChatInterface.hpp"
 

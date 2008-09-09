@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _OUTPOST_HPP
 #define _OUTPOST_HPP
 
-#include "Classes/Objective.hpp"
+#include "Objectives/Objective.hpp"
 #include "Util/Timer.hpp"
 #include "Classes/SelectionBoxSprite.hpp"
 #include "Classes/UnitBase.hpp"

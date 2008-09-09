@@ -293,13 +293,9 @@
           </logicalFolder>
           <itemPath>src/NetPanzer/Classes/MapFile.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/MapFile.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/Objective.cpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/Objective.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/ObjectiveMessageTypes.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/OpcodeDebugger.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/OpcodeDebugger.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/Outpost.cpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/Outpost.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/PlacementMatrix.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/PlacementMatrix.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/PlayerState.cpp</itemPath>
@@ -392,8 +388,6 @@
           <itemPath>src/NetPanzer/Interfaces/MiniMapInterface.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/MouseInterface.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/MouseInterface.hpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/ObjectiveInterface.cpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/ObjectiveInterface.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/PathScheduler.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/PathScheduler.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/PlayerGameManager.cpp</itemPath>
@@ -419,6 +413,14 @@
           <itemPath>src/NetPanzer/Network/ClientSocket.hpp</itemPath>
           <itemPath>src/NetPanzer/Network/ProxyServer.cpp</itemPath>
           <itemPath>src/NetPanzer/Network/ProxyServer.hpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="Objectives" displayName="Objectives" projectFiles="true">
+          <itemPath>src/NetPanzer/Objectives/Objective.cpp</itemPath>
+          <itemPath>src/NetPanzer/Objectives/Objective.hpp</itemPath>
+          <itemPath>src/NetPanzer/Objectives/ObjectiveInterface.cpp</itemPath>
+          <itemPath>src/NetPanzer/Objectives/ObjectiveInterface.hpp</itemPath>
+          <itemPath>src/NetPanzer/Objectives/Outpost.cpp</itemPath>
+          <itemPath>src/NetPanzer/Objectives/Outpost.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="Particles" displayName="Particles" projectFiles="true">
           <itemPath>src/NetPanzer/Particles/ChunkTrajectoryParticle2D.cpp</itemPath>
@@ -1399,12 +1401,6 @@
       <item path="src/NetPanzer/Classes/Network/UnitSync.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/Objective.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Objective.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/ObjectiveMessageTypes.hpp">
         <itemTool>3</itemTool>
       </item>
@@ -1412,12 +1408,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/OpcodeDebugger.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Outpost.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Outpost.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/PlacementMatrix.cpp">
@@ -1726,12 +1716,6 @@
       <item path="src/NetPanzer/Interfaces/MouseInterface.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Interfaces/ObjectiveInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/ObjectiveInterface.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Interfaces/PathScheduler.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -1799,6 +1783,24 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Network/ProxyServer.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/Objective.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/Objective.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/ObjectiveInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/ObjectiveInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/Outpost.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/Outpost.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Particles/ChunkTrajectoryParticle2D.cpp">
@@ -3131,12 +3133,6 @@
       <item path="src/NetPanzer/Classes/Network/UnitSync.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/Objective.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Objective.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/ObjectiveMessageTypes.hpp">
         <itemTool>3</itemTool>
       </item>
@@ -3144,12 +3140,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/OpcodeDebugger.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Outpost.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Outpost.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/PlacementMatrix.cpp">
@@ -3458,12 +3448,6 @@
       <item path="src/NetPanzer/Interfaces/MouseInterface.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Interfaces/ObjectiveInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/ObjectiveInterface.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Interfaces/PathScheduler.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -3531,6 +3515,24 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Network/ProxyServer.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/Objective.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/Objective.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/ObjectiveInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/ObjectiveInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/Outpost.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/Outpost.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Particles/ChunkTrajectoryParticle2D.cpp">
