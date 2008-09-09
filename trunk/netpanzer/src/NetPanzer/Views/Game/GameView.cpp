@@ -34,7 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleInterface.hpp"
 #include "2D/PackedSurface.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
-#include "Interfaces/PowerUpInterface.hpp"
+#include "PowerUps/PowerUpInterface.hpp"
 
 GameView gameView;
 int GameView::gDrawSolidBackground = 0;

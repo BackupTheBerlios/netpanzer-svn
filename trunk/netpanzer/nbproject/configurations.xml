@@ -291,10 +291,6 @@
             <itemPath>src/NetPanzer/Classes/Weapons/WeaponGlobals.cpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Weapons/WeaponGlobals.hpp</itemPath>
           </logicalFolder>
-          <itemPath>src/NetPanzer/Classes/BonusUnitPowerUp.cpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/BonusUnitPowerUp.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/EnemyRadarPowerUp.cpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/EnemyRadarPowerUp.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/MapFile.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/MapFile.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/Objective.cpp</itemPath>
@@ -310,8 +306,6 @@
           <itemPath>src/NetPanzer/Classes/PlayerState.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/PlayerUnitConfig.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/PlayerUnitConfig.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/PowerUp.cpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/PowerUp.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/Projectile.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/Projectile.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/ScreenSurface.cpp</itemPath>
@@ -347,8 +341,6 @@
           <itemPath>src/NetPanzer/Classes/UnitOpcodeEncoder.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/UnitOpcodeEncoder.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/UnitOpcodes.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/UnitPowerUp.cpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/UnitPowerUp.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/UnitState.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/UnitState.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/ViewCamera.cpp</itemPath>
@@ -408,8 +400,6 @@
           <itemPath>src/NetPanzer/Interfaces/PlayerGameManager.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/PlayerInterface.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/PlayerInterface.hpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/PowerUpInterface.cpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/PowerUpInterface.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ProjectileInterface.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ProjectileInterface.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ServerCommand.hpp</itemPath>
@@ -494,6 +484,18 @@
           <itemPath>src/NetPanzer/Port/blitters.cpp</itemPath>
           <itemPath>src/NetPanzer/Port/blitters.hpp</itemPath>
           <itemPath>src/NetPanzer/Port/MapData.hpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="PowerUps" displayName="PowerUps" projectFiles="true">
+          <itemPath>src/NetPanzer/PowerUps/BonusUnitPowerUp.cpp</itemPath>
+          <itemPath>src/NetPanzer/PowerUps/BonusUnitPowerUp.hpp</itemPath>
+          <itemPath>src/NetPanzer/PowerUps/EnemyRadarPowerUp.cpp</itemPath>
+          <itemPath>src/NetPanzer/PowerUps/EnemyRadarPowerUp.hpp</itemPath>
+          <itemPath>src/NetPanzer/PowerUps/PowerUp.cpp</itemPath>
+          <itemPath>src/NetPanzer/PowerUps/PowerUp.hpp</itemPath>
+          <itemPath>src/NetPanzer/PowerUps/PowerUpInterface.cpp</itemPath>
+          <itemPath>src/NetPanzer/PowerUps/PowerUpInterface.hpp</itemPath>
+          <itemPath>src/NetPanzer/PowerUps/UnitPowerUp.cpp</itemPath>
+          <itemPath>src/NetPanzer/PowerUps/UnitPowerUp.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="Structs" displayName="Structs" projectFiles="true">
           <itemPath>src/NetPanzer/Structs/TileSetStruct.hpp</itemPath>
@@ -1268,18 +1270,6 @@
       <item path="src/NetPanzer/Classes/AI/PathingState.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/BonusUnitPowerUp.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/BonusUnitPowerUp.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/EnemyRadarPowerUp.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/EnemyRadarPowerUp.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/MapFile.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -1448,12 +1438,6 @@
       <item path="src/NetPanzer/Classes/PlayerUnitConfig.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/PowerUp.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/PowerUp.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/Projectile.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -1557,12 +1541,6 @@
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/UnitOpcodes.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitPowerUp.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitPowerUp.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/UnitState.cpp">
@@ -1770,12 +1748,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/PlayerInterface.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/PowerUpInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/PowerUpInterface.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/ProjectileInterface.cpp">
@@ -2010,6 +1982,36 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Port/blitters.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/BonusUnitPowerUp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/BonusUnitPowerUp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/EnemyRadarPowerUp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/EnemyRadarPowerUp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/PowerUp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/PowerUp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/PowerUpInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/PowerUpInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/UnitPowerUp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/UnitPowerUp.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Structs/TileSetStruct.hpp">
@@ -3000,18 +3002,6 @@
       <item path="src/NetPanzer/Classes/AI/PathingState.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/BonusUnitPowerUp.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/BonusUnitPowerUp.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/EnemyRadarPowerUp.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/EnemyRadarPowerUp.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/MapFile.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -3180,12 +3170,6 @@
       <item path="src/NetPanzer/Classes/PlayerUnitConfig.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/PowerUp.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/PowerUp.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/Projectile.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -3289,12 +3273,6 @@
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/UnitOpcodes.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitPowerUp.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitPowerUp.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/UnitState.cpp">
@@ -3502,12 +3480,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/PlayerInterface.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/PowerUpInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/PowerUpInterface.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/ProjectileInterface.cpp">
@@ -3742,6 +3714,36 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Port/blitters.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/BonusUnitPowerUp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/BonusUnitPowerUp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/EnemyRadarPowerUp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/EnemyRadarPowerUp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/PowerUp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/PowerUp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/PowerUpInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/PowerUpInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/UnitPowerUp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/UnitPowerUp.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Structs/TileSetStruct.hpp">

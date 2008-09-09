@@ -40,7 +40,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PathScheduler.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
 #include "Interfaces/PlayerInterface.hpp"
-#include "Interfaces/PowerUpInterface.hpp"
+#include "PowerUps/PowerUpInterface.hpp"
 #include "Interfaces/ProjectileInterface.hpp"
 #include "Interfaces/TileInterface.hpp"
 #include "Interfaces/UnitInterface.hpp"

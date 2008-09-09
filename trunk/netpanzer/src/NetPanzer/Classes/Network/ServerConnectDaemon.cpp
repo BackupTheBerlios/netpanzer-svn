@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/UnitInterface.hpp"
 #include "Interfaces/ObjectiveInterface.hpp"
-#include "Interfaces/PowerUpInterface.hpp"
+#include "PowerUps/PowerUpInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Interfaces/GameManager.hpp"

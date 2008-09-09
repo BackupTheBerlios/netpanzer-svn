@@ -83,7 +83,6 @@ case $host_os in
         AC_MSG_RESULT([assume posix])
         ;;
 esac
-
 #----------------------------------------------------------------------------
 # find libraries
 #----------------------------------------------------------------------------
@@ -170,6 +169,12 @@ fi
 
 CFLAGS="$CFLAGS -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1"
 
+dnl add extra flags/libs depending on system
+case $host_os in
+    darwin*)
+        LDFLAGS="$LDFLAGS -framework IOKit"
+        ;;
+esac
 AC_INIT_JAM
 AC_CONFIG_FILES([Jamconfig])
 AC_OUTPUT

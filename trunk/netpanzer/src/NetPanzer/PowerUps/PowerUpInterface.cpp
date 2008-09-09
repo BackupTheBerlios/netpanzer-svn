@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
-#include "Interfaces/PowerUpInterface.hpp"
+#include "PowerUps/PowerUpInterface.hpp"
 
 #include <stdlib.h>
 
@@ -26,9 +26,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 
-#include "Classes/BonusUnitPowerUp.hpp"
-#include "Classes/UnitPowerUp.hpp"
-#include "Classes/EnemyRadarPowerUp.hpp"
+#include "PowerUps/BonusUnitPowerUp.hpp"
+#include "PowerUps/UnitPowerUp.hpp"
+#include "PowerUps/EnemyRadarPowerUp.hpp"
 
 #include "Util/Log.hpp"
 #include "Classes/Network/NetworkState.hpp"

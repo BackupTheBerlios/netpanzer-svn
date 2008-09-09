@@ -19,6 +19,7 @@ SUBDIRS =
     Interfaces/unix
     Bot
     System
+    PowerUps
 #    Panels
 ;
 
