@@ -360,6 +360,7 @@
           <itemPath>src/NetPanzer/Classes/WorldMap.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="Core" displayName="Core" projectFiles="true">
+          <itemPath>src/NetPanzer/Core/CoreTypes.hpp</itemPath>
           <itemPath>src/NetPanzer/Core/main.cpp</itemPath>
           <itemPath>src/NetPanzer/Core/NetworkGlobals.cpp</itemPath>
           <itemPath>src/NetPanzer/Core/NetworkGlobals.hpp</itemPath>
@@ -1631,6 +1632,9 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/WorldMap.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Core/CoreTypes.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Core/NetworkGlobals.cpp">
@@ -3360,6 +3364,9 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/WorldMap.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Core/CoreTypes.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Core/NetworkGlobals.cpp">

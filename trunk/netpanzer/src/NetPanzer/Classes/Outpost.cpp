@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/ObjectiveNetMessage.hpp"
 #include "Classes/UnitMessageTypes.hpp"
 
-Outpost::Outpost( short ID, iXY location, BoundBox area )
+Outpost::Outpost( ObjectiveID ID, iXY location, BoundBox area )
         : Objective( ID, location, area )
 {
     MapInterface::pointXYtoMapXY( location, &outpost_map_loc );

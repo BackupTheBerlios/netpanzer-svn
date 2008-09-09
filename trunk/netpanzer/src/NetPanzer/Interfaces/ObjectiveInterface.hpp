@@ -74,9 +74,9 @@ public:
 
     static void disownPlayerObjectives(Uint16 player_id);
 
-    static ObjectiveState * getObjectiveState( short objective_id );
+    static ObjectiveState * getObjectiveState( ObjectiveID objective_id );
 
-    static OutpostStatus getOutpostStatus( short objective_id );
+    static OutpostStatus getOutpostStatus( ObjectiveID objective_id );
 
     static size_t getObjectiveCount()
     {
@@ -95,13 +95,13 @@ public:
 
     // Objective positions, almost exclusivly for mini map
 protected:
-    static unsigned long objective_position_enum_index;
+    static ObjectiveID   objective_position_enum_index;
     static unsigned long objective_position_enum_list_size;
     static Uint16        objective_position_enum_player_id;
 
 public:
-    static void    startObjectivePositionEnumeration();
-    static bool objectivePositionEnumeration(iRect *objective_rect, unsigned char *objective_disposition, int *objective_id);
+    static void startObjectivePositionEnumeration();
+    static bool objectivePositionEnumeration(iRect *objective_rect, unsigned char *objective_disposition, ObjectiveID *objective_id);
 };
 
 

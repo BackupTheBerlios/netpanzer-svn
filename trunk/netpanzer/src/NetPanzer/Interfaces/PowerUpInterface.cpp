@@ -72,10 +72,10 @@ void PowerUpInterface::setPowerUpLimits(unsigned long map_size_x,
     power_up_regen_time_lower_bound =  60;
 }
 
-int
+PowerUpID
 PowerUpInterface::getNextPowerUpID()
 {
-    static unsigned int nextid = 0;
+    static PowerUpID nextid = 0;
     return nextid++;
 }
 

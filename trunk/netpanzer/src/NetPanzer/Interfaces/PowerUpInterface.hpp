@@ -31,7 +31,7 @@ protected:
     typedef std::vector<PowerUp *> PowerUpList;
     static PowerUpList powerup_list;
     
-    static int getNextPowerUpID();
+    static PowerUpID getNextPowerUpID();
     
     static int power_up_limit;
     static int power_up_regen_time_upper_bound;

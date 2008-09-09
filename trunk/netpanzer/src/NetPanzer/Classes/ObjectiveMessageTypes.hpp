@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _OBJECTIVE_MESSSAGE_TYPES_HPP
 #define _OBJECTIVE_MESSSAGE_TYPES_HPP
 
+#include "Core/CoreTypes.hpp"
 #include "Classes/PlayerState.hpp"
 #include "Types/iXY.hpp"
 #include "Util/Endian.hpp"
@@ -31,16 +32,16 @@ class ObjectiveMessage
 public:
     Uint8 message_type;
 private:
-    Uint16 objective_id;
+    ObjectiveID objective_id;
 
 public:
-    Uint16 getObjectiveID() const
+    ObjectiveID getObjectiveID() const
     {
-        return ltoh16(objective_id);
+        return ObjectiveID_fromPortable(objective_id); // XXX protocol
     }
-    void setObjectiveID(Uint16 id)
+    void setObjectiveID(ObjectiveID id)
     {
-        objective_id = htol16(id);
+        objective_id = ObjectiveID_toPortable(id); // XXX protocol
     }
 } __attribute__((packed));
 
@@ -61,9 +62,9 @@ private:
 
 public:
     Uint8  unit_type;
-    bool     unit_gen_on;
+    bool   unit_gen_on;
         
-    void set(Uint16 id, Uint8 status, Uint16 player_id,
+    void set(ObjectiveID id, Uint8 status, Uint16 player_id,
             bool unit_gen_on, Uint8 unit_type, Uint32 timeleft)
     {
         message_type = _objective_mesg_update_occupation;
@@ -91,7 +92,7 @@ public:
     Uint8 unit_type;
     Uint8 unit_gen_on;
 
-    void set(Uint16 id, Uint8 unit_type, bool unit_generation_on)
+    void set(ObjectiveID id, Uint8 unit_type, bool unit_generation_on)
     {
         setObjectiveID(id);
         this->unit_type = unit_type;
@@ -107,7 +108,7 @@ private:
     Uint16 disowned_player_id;
 
 public:
-    void set(Uint16 id, Uint16 disowned_player)
+    void set(ObjectiveID id, Uint16 disowned_player)
     {
         setObjectiveID(id);
         disowned_player_id = htol16(disowned_player);
@@ -128,7 +129,7 @@ private:
     Uint16 occupying_player_id;
 
 public:
-    void set(Uint16 id, Uint8 objective_status,
+    void set(ObjectiveID id, Uint8 objective_status,
             Uint8 occupation_status, Uint16 occupying_player)
     {
         setObjectiveID(id);
@@ -151,7 +152,7 @@ private:
     Sint32 new_point_y;
   
 public:
-    void set(Uint16 id, iXY point)
+    void set(ObjectiveID id, iXY point)
     {
         setObjectiveID(id);
         new_point_x = htol32(point.x);

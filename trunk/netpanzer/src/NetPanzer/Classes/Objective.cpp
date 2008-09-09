@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/UnitProfileInterface.hpp"
 #include "Util/Log.hpp"
 
-Objective::Objective(Uint16 ID, iXY location, BoundBox area)
+Objective::Objective(ObjectiveID ID, iXY location, BoundBox area)
 {
     objective_state.ID = ID;
     objective_state.selection_state = false;

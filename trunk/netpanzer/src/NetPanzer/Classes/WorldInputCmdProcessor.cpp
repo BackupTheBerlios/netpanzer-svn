@@ -67,14 +67,14 @@ enum { _keyboard_input_mode_command,
        _keyboard_input_mode_allie_mesg
      };
 
-short WorldInputCmdProcessor::selected_objective_id = 0;
+ObjectiveID WorldInputCmdProcessor::selected_objective_id = 0;
 
 WorldInputCmdProcessor::WorldInputCmdProcessor()
 {
     keyboard_input_mode = _keyboard_input_mode_command;
 
     selection_box_active = false;
-    outpost_goal_selection = -1;
+    outpost_goal_selection = OBJECTIVE_NONE;
     previous_manual_control_state = false;
     manual_control_state = false;
     manual_fire_state = false;
@@ -174,26 +174,35 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
     if (selection_box_active)
         return _cursor_regular;
 
-    if( (manual_control_state == true) || (manual_fire_state == true) ) {
+    if( (manual_control_state == true) || (manual_fire_state == true) )
+    {
         return  _cursor_enemy_unit;
     }
 
     MapInterface::pointXYtoMapXY( loc, &map_loc );
 
-    if (MapInterface::getMovementValue(map_loc) >= 0xFF) {
+    if (MapInterface::getMovementValue(map_loc) >= 0xFF)
+    {
         return _cursor_blocked;
     }
 
     unit_loc_status = UnitInterface::queryUnitLocationStatus(loc);
-    if ( unit_loc_status == _unit_player ) {
+    if ( unit_loc_status == _unit_player )
+    {
         return _cursor_player_unit;
-    } else if ((unit_loc_status == _unit_enemy) 
-            && KeyboardInterface::getKeyState(SDLK_a)) {
-            return _cursor_make_allie;
-    } else if ((unit_loc_status == _unit_enemy) && working_list.isSelected()) {
+    }
+    else if ((unit_loc_status == _unit_enemy) 
+            && KeyboardInterface::getKeyState(SDLK_a))
+    {
+        return _cursor_make_allie;
+    }
+    else if ((unit_loc_status == _unit_enemy) && working_list.isSelected())
+    {
         return _cursor_enemy_unit;
-    } else if ( (unit_loc_status == _unit_allied) 
-            && KeyboardInterface::getKeyState(SDLK_a)) {
+    }
+    else if ( (unit_loc_status == _unit_allied) 
+            && KeyboardInterface::getKeyState(SDLK_a))
+    {
         return _cursor_break_allie;
     }
 
@@ -206,7 +215,8 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
 void
 WorldInputCmdProcessor::setMouseCursor(unsigned char world_cursor_status)
 {
-    switch(world_cursor_status) {
+    switch(world_cursor_status)
+    {
         case _cursor_regular :
             MouseInterface::setCursor("default.bmp");
             break;
@@ -242,9 +252,12 @@ WorldInputCmdProcessor::getManualControlStatus()
 {
     if ( KeyboardInterface::getKeyState( SDLK_LCTRL ) ||
             KeyboardInterface::getKeyState( SDLK_RCTRL )
-       ) {
+       )
+    {
         manual_fire_state = true;
-    } else {
+    }
+    else
+    {
         manual_fire_state = false;
     }
 }
@@ -252,45 +265,57 @@ WorldInputCmdProcessor::getManualControlStatus()
 void
 WorldInputCmdProcessor::evaluateKeyCommands()
 {
-    if ( (KeyboardInterface::getKeyPressed( SDLK_o ) == true) ) {
+    if ( (KeyboardInterface::getKeyPressed( SDLK_o ) == true) )
+    {
         toggleDisplayOutpostNames();
     }
 
-    if ( (KeyboardInterface::getKeyPressed( SDLK_f ) == true) ) {
+    if ( (KeyboardInterface::getKeyPressed( SDLK_f ) == true) )
+    {
         gameconfig->drawunitflags.toggle();
     }
-    if ( (KeyboardInterface::getKeyPressed( SDLK_d ) == true) ) {
+    
+    if ( (KeyboardInterface::getKeyPressed( SDLK_d ) == true) )
+    {
         gameconfig->drawunitdamage.toggle();
     }
 
     if ( (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true)
             && (KeyboardInterface::getKeyState( SDLK_LALT ) == false)
-            && (KeyboardInterface::getKeyState( SDLK_RALT ) == false)) {
+            && (KeyboardInterface::getKeyState( SDLK_RALT ) == false))
+    {
         setKeyboardInputModeChatMesg();
     }
 
     if ( ( KeyboardInterface::getKeyState( SDLK_LCTRL ) ||
             KeyboardInterface::getKeyState( SDLK_RCTRL ) )
-            && (KeyboardInterface::getKeyPressed( SDLK_a ) == true) ) {
+            && (KeyboardInterface::getKeyPressed( SDLK_a ) == true) )
+    {
         setKeyboardInputModeAllieChatMesg();
     }
 
     //If space is pressed, jump to first currently attacked unit
-    if( KeyboardInterface::getKeyState( SDLK_SPACE ) == true ) {
+    if( KeyboardInterface::getKeyState( SDLK_SPACE ) == true )
+    {
         jumpLastAttackedUnit();
     }
 
     //If any of the four arrow-keys is pressed, scroll
-    if( KeyboardInterface::getKeyState( SDLK_UP ) == true ) {
+    if( KeyboardInterface::getKeyState( SDLK_UP ) == true )
+    {
     	WorldViewInterface::scroll_up( 15 );
     }
-    else if( KeyboardInterface::getKeyState( SDLK_DOWN ) == true ) {
+    else if( KeyboardInterface::getKeyState( SDLK_DOWN ) == true )
+    {
     	WorldViewInterface::scroll_down( 15 );
     }
-    if( KeyboardInterface::getKeyState( SDLK_RIGHT ) == true ) {
+    
+    if( KeyboardInterface::getKeyState( SDLK_RIGHT ) == true )
+    {
     	WorldViewInterface::scroll_right( 15 );
     }
-    else if( KeyboardInterface::getKeyState( SDLK_LEFT ) == true ) {
+    else if( KeyboardInterface::getKeyState( SDLK_LEFT ) == true )
+    {
     	WorldViewInterface::scroll_left( 15 );
     }
 }
@@ -300,12 +325,14 @@ WorldInputCmdProcessor::jumpLastAttackedUnit()
 {
     const UnitInterface::Units& units = UnitInterface::getUnits();
     for(UnitInterface::Units::const_iterator i = units.begin();
-            i != units.end(); ++i) {
+            i != units.end(); ++i)
+    {
         UnitBase* unit = i->second;
         if(unit->player != PlayerInterface::getLocalPlayer())
             continue;
 
-        if (unit->unit_state.threat_level == _threat_level_under_attack) {
+        if (unit->unit_state.threat_level == _threat_level_under_attack)
+        {
             WorldViewInterface::setCameraPosition(unit->unit_state.location);
 	    break;
         }
@@ -543,38 +570,49 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
     if ( (manual_control_state == true) ||
             KeyboardInterface::getKeyState( SDLK_LCTRL ) ||
             KeyboardInterface::getKeyState( SDLK_RCTRL )
-       ) {
+       )
+    {
 
         if (event.event == MouseEvent::EVENT_DOWN )
         {
             sendManualFireCommand( world_pos );
         }
 
-    } else if (event.event == MouseEvent::EVENT_DOWN) {
+    }
+    else if (event.event == MouseEvent::EVENT_DOWN)
+    {
         Objective *objective = 0;
         click_status = ObjectiveInterface::quearyObjectiveLocationStatus(
             world_pos, PlayerInterface::getLocalPlayerIndex(), &objective);
 	
-        if ( (click_status == _player_occupied_objective_found) ) {
+        if ( click_status == _player_occupied_objective_found )
+        {
             selection_box_active = false;
             outpost_goal_selection = objective->objective_state.ID;
             output_pos_press = objective->objective_state.location; 
-        } else {
+        }
+        else
+        {
             box_press = world_pos;
             box_release = world_pos;
             selection_box_active = true;
         }
-    } else if(event.event == MouseEvent::EVENT_UP) {
-        if (selection_box_active) {
+    }
+    else if(event.event == MouseEvent::EVENT_UP)
+    {
+        if (selection_box_active)
+        {
             selection_box_active = false;
             box_release = world_pos;
             if(abs(box_release.x - box_press.x) > 3
-		    && abs(box_release.y - box_press.y) > 3) {
+		    && abs(box_release.y - box_press.y) > 3)
+            {
                 return;
             }
         }
         
-        if (outpost_goal_selection != -1 ){
+        if (outpost_goal_selection != OBJECTIVE_NONE )
+        {
             Objective *objective = 0;
             int cs = ObjectiveInterface::quearyObjectiveLocationStatus(
                     world_pos, PlayerInterface::getLocalPlayerIndex(),
@@ -582,13 +620,15 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
             
             if ( (cs == _player_occupied_objective_found) 
                     && outpost_goal_selection == objective->objective_state.ID
-               ) {
+               )
+            {
                 // we've let go of the mouse on the building so we're
                 //  not changing the spawn point
-                selected_objective_id = CURRENT_SELECTED_OUTPOST_ID = objective->objective_state.ID;
+                selected_objective_id = objective->objective_state.ID;
                 activateVehicleSelectionView( selected_objective_id );
             }
-            else {
+            else
+            {
                 TerminalOutpostOutputLocRequest term_mesg;
                 
                 term_mesg.output_loc_request.set( outpost_goal_selection,
@@ -596,46 +636,58 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
                 
                 CLIENT->sendMessage(&term_mesg, sizeof(TerminalOutpostOutputLocRequest));
 
-                if ( NetworkState::status == _network_state_client ) {
-                    
+                if ( NetworkState::status == _network_state_client )
+                {    
                     ObjectiveInterface::sendMessage( &(term_mesg.output_loc_request) );
                 }
             }
-            outpost_goal_selection = -1;
+            outpost_goal_selection = OBJECTIVE_NONE;
             return;
         }
         
         click_status = getCursorStatus(world_pos);
-        switch(click_status) {
-            case _cursor_player_unit: {
+        switch(click_status)
+        {
+            case _cursor_player_unit:
+            {
                 static NTimer dclick_timer(200);
                 static int click_times = 0;
                 bool addunits = false;
                 if( (KeyboardInterface::getKeyState(SDLK_LSHIFT) == true) ||
-                        (KeyboardInterface::getKeyState(SDLK_RSHIFT) == true)) {
+                        (KeyboardInterface::getKeyState(SDLK_RSHIFT) == true))
+                {
                     addunits = true;
                 }
-                if ( ! dclick_timer.isTimeOut() ) {
-                    if ( click_times ) {
+                if ( ! dclick_timer.isTimeOut() )
+                {
+                    if ( click_times )
+                    {
                         iRect wr;
                         WorldViewInterface::getViewWindow(&wr);
                         working_list.selectBounded(wr, addunits);
                         click_times=0;
-                    } else {
+                    }
+                    else
+                    {
                         working_list.selectSameTypeVisible(world_pos,addunits);
                         dclick_timer.reset();
                         click_times++;
                     }
                     break;
-                } else if (addunits) {
+                }
+                else if (addunits)
+                {
                     working_list.addUnit(world_pos);
-                } else {
+                }
+                else
+                {
                     working_list.selectUnit(world_pos );
                 }
 
                 current_selection_list_bits=0;
                 current_selection_list_index = 0xFFFF;
-                if (working_list.unit_list.size() > 0) {
+                if (working_list.unit_list.size() > 0)
+                {
                     UnitBase *unit = UnitInterface::getUnit(
                             working_list.unit_list[0]);
                     if(unit)
@@ -644,10 +696,10 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
                 dclick_timer.reset();
                 click_times=0;
                 break;
-            } // case
+            }
             case _cursor_move:
             case _cursor_blocked:
-                if(outpost_goal_selection == -1)
+                if(outpost_goal_selection == OBJECTIVE_NONE)
                     sendMoveCommand(world_pos);
                 break;
 
@@ -924,7 +976,8 @@ WorldInputCmdProcessor::inFocus()
 void
 WorldInputCmdProcessor::draw()
 {
-    if (selection_box_active == true && box_press != box_release) {
+    if (selection_box_active == true && box_press != box_release)
+    {
         WorldViewInterface::getViewWindow(&world_win);
         iXY box1, box2;
         WorldViewInterface::worldXYtoClientXY(world_win, box_press, &box1);
@@ -935,7 +988,8 @@ WorldInputCmdProcessor::draw()
         screen->drawRect(iRect(box1, box2), Color::white);
     }
 
-    if (outpost_goal_selection != -1) {
+    if (outpost_goal_selection != OBJECTIVE_NONE)
+    {
         iXY mouse_pos;
         MouseInterface::getMousePosition( &mouse_pos.x, &mouse_pos.y );
 

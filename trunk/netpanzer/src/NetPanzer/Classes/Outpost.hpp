@@ -56,7 +56,7 @@ private:
 
 public:
 
-    Outpost( short ID, iXY location, BoundBox area );
+    Outpost( ObjectiveID ID, iXY location, BoundBox area );
 
     void getOutpostStatus( OutpostStatus &status );
 

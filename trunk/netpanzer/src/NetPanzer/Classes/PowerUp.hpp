@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _POWERUP_HPP
 #define _POWERUP_HPP
 
+#include "Core/CoreTypes.hpp"
 #include "Classes/SpriteSorter.hpp"
 #include "Classes/Sprite.hpp"
 #include "Classes/Network/PowerUpNetMessage.hpp"
@@ -39,15 +40,15 @@ public:
     static SpritePacked POWERUP_ANIM;
     static SpritePacked POWERUP_ANIM_SHADOW;
 
-    iXY     map_loc;
-    iXY     world_loc;
-    int     ID;
-    int     type;
-    int     life_cycle_state;
+    iXY       map_loc;
+    iXY       world_loc;
+    PowerUpID ID;
+    int       type;
+    int       life_cycle_state;
 
 public:
     PowerUp();
-    PowerUp(iXY map_loc, int ID, int type);
+    PowerUp(iXY map_loc, PowerUpID ID, int type);
     PowerUp(iXY map_loc, int type);
     virtual ~PowerUp()
     { }

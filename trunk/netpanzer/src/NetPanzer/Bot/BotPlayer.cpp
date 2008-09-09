@@ -173,7 +173,7 @@ BotPlayer::getOutposts(int disposition)
     outpostList_t outposts;
     iRect objRect;
     unsigned char objectiveDisposition;
-    int objectiveID;
+    ObjectiveID   objectiveID;
 
     ObjectiveInterface::startObjectivePositionEnumeration();
     while (ObjectiveInterface::objectivePositionEnumeration(&objRect,
@@ -195,7 +195,7 @@ BotPlayer::getRandomOutpost(int disposition)
     ObjectiveState *result = 0;
     outpostList_t outposts = getOutposts(disposition);
     if (outposts.size() > 0) {
-        int outpostID = outposts[rand() % outposts.size()];
+        ObjectiveID outpostID = outposts[rand() % outposts.size()];
         result = ObjectiveInterface::getObjectiveState(outpostID);
     }
     return result;

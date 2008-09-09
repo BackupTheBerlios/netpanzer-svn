@@ -32,7 +32,7 @@ protected:
     bool selection_box_active;
     iXY box_press, box_release;
 
-    short outpost_goal_selection; //number of the outpost, -1 if none
+    ObjectiveID outpost_goal_selection; //number of the outpost, -1 if none
     iXY output_pos_press;
 
     iXY right_mouse_scroll_pos;
@@ -97,7 +97,7 @@ protected:
 
     bool getConsoleInputString(char *input_string);
 
-    static short selected_objective_id;
+    static ObjectiveID selected_objective_id;
 
 public:
     WorldInputCmdProcessor();

@@ -18,14 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITBASE_HPP
 #define _UNITBASE_HPP
 
+#include "Core/CoreTypes.hpp"
 #include "Classes/UnitState.hpp"
 
 class UnitMessage;
 class UnitOpcode;
 class SpriteSorter;
 class PlayerState;
-
-typedef Uint16 UnitID;
 
 class UnitBase
 {

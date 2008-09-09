@@ -37,7 +37,7 @@ class Bot {
         void moveUnit(UnitBase *unit, iXY map_pos);
         void attackUnit(UnitBase *unit, UnitBase *enemyUnit);
         void manualFire(UnitBase *unit, iXY world_pos);
-        void produceUnit(int outpostID, int selectedProduce);
+        void produceUnit(ObjectiveID outpostID, int selectedProduce);
     protected:
         BotTaskList m_tasks;
 };

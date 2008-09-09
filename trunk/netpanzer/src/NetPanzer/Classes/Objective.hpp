@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _OBJECTIVE_HPP
 #define _OBJECTIVE_HPP
 
+#include "Core/CoreTypes.hpp"
 #include "ArrayUtil/BoundBox.hpp"
 #include "SpriteSorter.hpp"
 #include "Classes/PlayerState.hpp"
@@ -33,17 +34,17 @@ enum { _occupation_status_unoccupied,
 class ObjectiveState
 {
 public:
-    Uint16 ID;
-    bool  selection_state;
-    iRect    selection_box;
+    ObjectiveID   ID;
+    bool          selection_state;
+    iRect         selection_box;
     unsigned char outpost_type;
-    char name[64];
-    iXY location;
-    BoundBox capture_area;
-    BoundBox area;
+    char          name[64];
+    iXY           location;
+    BoundBox      capture_area;
+    BoundBox      area;
     unsigned char objective_status;
     unsigned char occupation_status;
-    PlayerState* occupying_player;
+    PlayerState*  occupying_player;
 
     inline bool isBounded( iXY &test )
     {
@@ -56,7 +57,7 @@ class OutpostStatus
 {
 public:
     unsigned short unit_generation_type;
-    bool        unit_generation_on_off;
+    bool           unit_generation_on_off;
     float          unit_generation_time;
     float          unit_generation_time_remaining;
     iXY unit_collection_loc;
@@ -71,9 +72,9 @@ protected:
 public:
     ObjectiveState objective_state;
 
-    Objective(Uint16 ID, iXY location, BoundBox area );
-	virtual ~Objective()
-	{ }
+    Objective(ObjectiveID ID, iXY location, BoundBox area );
+    virtual ~Objective()
+    { }
 
     void getSyncData( SyncObjective &objective_sync_mesg );
 

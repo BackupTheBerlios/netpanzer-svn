@@ -42,7 +42,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 std::vector<Objective*> ObjectiveInterface::objective_list;
 
 unsigned long ObjectiveInterface::objective_position_enum_list_size;
-unsigned long ObjectiveInterface::objective_position_enum_index;
+ObjectiveID   ObjectiveInterface::objective_position_enum_index;
 Uint16        ObjectiveInterface::objective_position_enum_player_id;
 
 NetMessageEncoder ObjectiveInterface::message_encoder;
@@ -119,9 +119,10 @@ static inline std::string readToken(std::istream& in, std::string tokenname)
 void
 ObjectiveInterface::loadObjectiveList(const char *file_path)
 {
-    int objective_count = 0;
+    ObjectiveID objective_count = 0;
 
-    try {
+    try
+    {
         IFileStream in(file_path);
 
         cleanUpObjectiveList();
@@ -134,7 +135,8 @@ ObjectiveInterface::loadObjectiveList(const char *file_path)
         size_t world_x, world_y;
         std::string name;
         cleanUpObjectiveList();
-        for (int objective_index = 0; objective_index < objective_count; objective_index++ ) {
+        for (ObjectiveID objective_index = 0; objective_index < objective_count; objective_index++ )
+        {
             Objective *objective_obj;
        
             name = readToken(in, "Name:");
@@ -151,7 +153,9 @@ ObjectiveInterface::loadObjectiveList(const char *file_path)
             strcpy(objective_obj->objective_state.name, name.c_str());
             objective_list.push_back(objective_obj);
         } // ** for
-    } catch(std::exception& e) {
+    }
+    catch(std::exception& e)
+    {
         throw Exception("Error while reading outpost definition '%s': %s",
                 file_path, e.what());
     }
@@ -333,13 +337,13 @@ ObjectiveInterface::disownPlayerObjectives(Uint16 player_id)
 }
 
 ObjectiveState*
-ObjectiveInterface::getObjectiveState( short objective_id )
+ObjectiveInterface::getObjectiveState( ObjectiveID objective_id )
 {
     return & (objective_list.at(objective_id)->objective_state);
 }
 
 OutpostStatus
-ObjectiveInterface::getOutpostStatus( short objective_id )
+ObjectiveInterface::getOutpostStatus( ObjectiveID objective_id )
 {
     OutpostStatus outpost_status;
     
@@ -362,7 +366,7 @@ ObjectiveInterface::startObjectivePositionEnumeration()
 
 bool
 ObjectiveInterface::objectivePositionEnumeration(iRect *objective_rect,
-        unsigned char *objective_disposition, int *objective_id)
+        unsigned char *objective_disposition, ObjectiveID *objective_id)
 {
     ObjectiveState *objective_state;
 

@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef BOTPLAYER_H
 #define BOTPLAYER_H
 
+#include "Core/CoreTypes.hpp"
 #include "Bot.hpp"
 #include "Util/Timer.hpp"
 
@@ -26,7 +27,7 @@ class ObjectiveState;
 
 #include <vector>
 typedef std::vector<int> playerList_t;
-typedef std::vector<int> outpostList_t;
+typedef std::vector<ObjectiveID> outpostList_t;
 
 class BotPlayer : public Bot {
     private:

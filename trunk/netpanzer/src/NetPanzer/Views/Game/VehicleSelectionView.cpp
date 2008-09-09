@@ -42,7 +42,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 int vsvSelectedUnit   = 0;
 int vsvUnitGenOn      = true;
 bool changeMade       = false;
-unsigned short CURRENT_SELECTED_OUTPOST_ID;
+ObjectiveID CURRENT_SELECTED_OUTPOST_ID;
 
 static void sendOutpostStatus()
 {
@@ -134,7 +134,7 @@ bool    VehicleSelectionView::displayOutpostNames = true;
 
 
 
-void activateVehicleSelectionView(unsigned short outpost_id)
+void activateVehicleSelectionView(ObjectiveID outpost_id)
 {
     OutpostStatus outpost_status;
 
@@ -379,7 +379,8 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 
     outpost_status = ObjectiveInterface::getOutpostStatus( CURRENT_SELECTED_OUTPOST_ID );
 
-    if (vsvUnitGenOn) {
+    if (vsvUnitGenOn)
+    {
         sprintf(strBuf, "%s", getUnitName(vsvSelectedUnit));
         clientArea.bltString(   productionUnitPos.x, productionUnitPos.y, 
                                 strBuf, color);
@@ -392,7 +393,9 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
          
         clientArea.bltString(   timeRequiredPos.x, timeRequiredPos.y, 
                                 strBuf, color);
-    } else {
+    }
+    else
+    {
         sprintf(strBuf, "power off");
         clientArea.bltString(   productionUnitPos.x, productionUnitPos.y, 
                                 strBuf, color);
@@ -506,7 +509,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
     unsigned char objectiveOwner;
     iRect         gameViewRect;
     OutpostStatus outpostStatus;
-    int           objectiveID = 0;
+    ObjectiveID   objectiveID = 0;
 
     WorldViewInterface::getViewWindow(&gameViewRect);
     ObjectiveInterface::startObjectivePositionEnumeration();

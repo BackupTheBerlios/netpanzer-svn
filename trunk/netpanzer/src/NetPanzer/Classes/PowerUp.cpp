@@ -31,7 +31,7 @@ PowerUp::PowerUp()
     life_cycle_state = _power_up_lifecycle_state_active;
 }
 
-PowerUp::PowerUp(iXY map_loc, int ID, int type)
+PowerUp::PowerUp(iXY map_loc, PowerUpID ID, int type)
 {
     this->map_loc = map_loc;
     this->ID = ID;

@@ -97,7 +97,7 @@ Bot::manualFire(UnitBase *unit, iXY world_pos)
 }
 //-----------------------------------------------------------------
 void
-Bot::produceUnit(int outpostID, int selectedProduce)
+Bot::produceUnit(ObjectiveID outpostID, int selectedProduce)
 {
     LOGGER.debug("bot: produceUnit outpost=%d selectedProduce=%d",
                  outpostID, selectedProduce);

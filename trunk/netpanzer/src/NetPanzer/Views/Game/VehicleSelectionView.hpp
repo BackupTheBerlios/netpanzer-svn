@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __VehicleSelectionView_hpp__
 #define __VehicleSelectionView_hpp__
 
+#include "Core/CoreTypes.hpp"
 #include "2D/Surface.hpp"
 #include "Views/Components/View.hpp"
 #include "GameTemplateView.hpp"
@@ -53,9 +54,7 @@ public:
 extern int vsvSelectedUnit;     // Vehicle Selection View Selected Unit
 extern int vsvTempSelectedUnit; // Vehicle Selection View Temp Selected Unit
 
-extern unsigned short CURRENT_SELECTED_OUTPOST_ID;
-
-void activateVehicleSelectionView( unsigned short outpost_id );
+void activateVehicleSelectionView( ObjectiveID outpost_id );
 void toggleDisplayOutpostNames( void );
 
 //--------------------------------------------------------------------------

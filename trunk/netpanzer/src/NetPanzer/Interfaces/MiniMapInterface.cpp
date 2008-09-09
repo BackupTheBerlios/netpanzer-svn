@@ -138,7 +138,7 @@ void MiniMapInterface::annotateObjectives( Surface &map_surface )
     iRect world_rect, map_rect;
     unsigned char objective_disposition;
     PIX color;
-    int objective_id;
+    ObjectiveID objective_id;
 
     ObjectiveInterface::startObjectivePositionEnumeration();
 
