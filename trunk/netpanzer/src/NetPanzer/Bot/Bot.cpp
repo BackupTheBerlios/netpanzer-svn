@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Bot.hpp"
 
 #include "Classes/PlacementMatrix.hpp"
-#include "Classes/UnitBase.hpp"
+#include "Units/UnitBase.hpp"
 #include "Objectives/Objective.hpp"
 #include "Classes/Network/TerminalNetMesg.hpp"
 #include "Classes/Network/NetworkClient.hpp"

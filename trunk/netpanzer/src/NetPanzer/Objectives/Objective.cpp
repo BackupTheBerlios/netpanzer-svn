@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Outpost.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
-#include "Interfaces/UnitProfileInterface.hpp"
+#include "Units/UnitProfileInterface.hpp"
 #include "Util/Log.hpp"
 
 Objective::Objective(ObjectiveID ID, iXY location, BoundBox area)

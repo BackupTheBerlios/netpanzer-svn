@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "UnitSync.hpp"
 #include "Classes/Network/NetworkServer.hpp"
-#include "Interfaces/UnitInterface.hpp"
-#include "Classes/UnitBase.hpp"
+#include "Units/UnitInterface.hpp"
+#include "Units/UnitBase.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Classes/Network/UnitNetMessage.hpp"
 

@@ -17,10 +17,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 #include "SelectionList.hpp"
-#include "Interfaces/UnitInterface.hpp"
+#include "Units/UnitInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Util/Log.hpp"
-#include "Classes/UnitBase.hpp"
+#include "Units/UnitBase.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
 #include <algorithm>
 

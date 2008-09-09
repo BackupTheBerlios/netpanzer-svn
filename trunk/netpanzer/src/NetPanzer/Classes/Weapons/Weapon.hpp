@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _WEAPON_HPP
 #define _WEAPON_HPP
 
-#include "Classes/UnitBase.hpp"
+#include "Units/UnitBase.hpp"
 #include "Classes/Projectile.hpp"
 #include "Util/BresenhamLine.hpp"
 #include "Util/Timer.hpp"

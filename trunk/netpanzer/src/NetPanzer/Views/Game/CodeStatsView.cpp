@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PathScheduler.hpp"
 #include "Interfaces/MiniMapInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
-#include "Interfaces/UnitInterface.hpp"
+#include "Units/UnitInterface.hpp"
 #include "Classes/Network/NetworkInterface.hpp"
 
 enum{ _display_mode_network_stats,

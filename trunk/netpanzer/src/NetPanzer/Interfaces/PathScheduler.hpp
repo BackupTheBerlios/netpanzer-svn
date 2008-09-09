@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/AI/Astar.hpp"
 #include "Classes/AI/PathList.hpp"
-#include "Classes/UnitBase.hpp"
+#include "Units/UnitBase.hpp"
 #include "ArrayUtil/QueueTemplate.hpp"
 #include "ArrayUtil/ArrayTemplate.hpp"
 

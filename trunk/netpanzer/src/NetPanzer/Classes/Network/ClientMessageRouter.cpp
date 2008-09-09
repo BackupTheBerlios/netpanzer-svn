@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ObjectiveNetMessage.hpp"
 
 #include "Objectives/ObjectiveInterface.hpp"
-#include "Interfaces/UnitInterface.hpp"
+#include "Units/UnitInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/ChatInterface.hpp"
 #include "Interfaces/GameControlRulesDaemon.hpp"

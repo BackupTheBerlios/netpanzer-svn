@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdexcept>
 
 #include "Interfaces/PlayerInterface.hpp"
-#include "Interfaces/UnitInterface.hpp"
+#include "Units/UnitInterface.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 

@@ -15,38 +15,26 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include <config.h>
-#include "Classes/UnitBlackBoard.hpp"
+#ifndef _UNITOPCODEENCODER_HPP
+#define _UNITOPCODEENCODER_HPP
 
-#include "Interfaces/MapInterface.hpp"
+#include "Units/UnitOpcodes.hpp"
+#include "Classes/Network/UnitNetMessage.hpp"
 
-BitArray UnitBlackBoard::unit_loc_map;
-
-void UnitBlackBoard::initializeBlackBoard( void )
+class UnitOpcodeEncoder
 {
-    unit_loc_map.initialize( MapInterface::getWidth(),
-                             MapInterface::getHeight() );
+private:
+    UnitOpcodeMessage opcode_message;
+    size_t opcode_index;
 
-    unit_loc_map.clear();
-}
+    void reset();
 
-void UnitBlackBoard::resetBlackBoard()
-{
-    unit_loc_map.clear();
-}
+public:
+    UnitOpcodeEncoder();
+    ~UnitOpcodeEncoder();
+    
+    void encode(const UnitOpcode *opcode);
+    void send();
+};
 
-
-void UnitBlackBoard::updateUnitLocs( void )
-{
-    unsigned long i,k,x_limit,y_limit;
-
-    x_limit = unit_loc_map.x_size;
-    y_limit = unit_loc_map.y_size;
-
-    for( i = 0; i < y_limit; i++ )
-        for ( k = 0; k < x_limit; k++ ) {
-            if ( unit_loc_map.getBit( k, i ) == true )
-                MapInterface::markLocHack( iXY( k, i ) );
-        }
-
-}
+#endif

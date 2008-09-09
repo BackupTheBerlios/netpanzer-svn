@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetPacket.hpp"
 #include "Classes/Network/UnitNetMessage.hpp"
 #include "TerminalNetMesg.hpp"
-#include "Classes/UnitOpcodes.hpp"
+#include "Units/UnitOpcodes.hpp"
 
 #include "NetPacketDebugger.hpp"
 #include "Classes/OpcodeDebugger.hpp"

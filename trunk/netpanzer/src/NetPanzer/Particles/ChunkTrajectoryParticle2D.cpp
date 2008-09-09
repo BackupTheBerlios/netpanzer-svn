@@ -23,9 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Util/Math.hpp"
 #include "Interfaces/TileInterface.hpp"
-#include "Classes/Units/UnitGlobals.hpp"
+#include "Units/UnitGlobals.hpp"
 #include "Particles/ParticleInterface.hpp"
-#include "Interfaces/UnitProfileInterface.hpp"
+#include "Units/UnitProfileInterface.hpp"
 
 
 PackedSurface ChunkTrajectoryParticle2D::staticPackedGroundChunks;

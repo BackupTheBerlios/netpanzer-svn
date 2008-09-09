@@ -19,21 +19,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <iostream>
 
-#include "Interfaces/UnitInterface.hpp"
-#include "Interfaces/UnitProfileInterface.hpp"
+#include "Units/UnitInterface.hpp"
+#include "Units/UnitProfileInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
 
-#include "Classes/Units/Vehicle.hpp"
+#include "Units/Vehicle.hpp"
 
 #include "Types/iXY.hpp"
 #include "Util/Timer.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/NetMessageEncoder.hpp"
-#include "Console.hpp"
-#include "Classes/UnitOpcodeDecoder.hpp"
+#include "Interfaces/Console.hpp"
+#include "Units/UnitOpcodeDecoder.hpp"
 
 #include "Classes/UnitMessageTypes.hpp"
 #include "Classes/Network/PlayerNetMessage.hpp"

@@ -21,15 +21,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string.h>
 #include "Util/Log.hpp"
-#include "Classes/UnitBlackBoard.hpp"
-#include "Classes/Units/Vehicle.hpp"
-#include "Classes/Units/UnitGlobals.hpp"
+#include "Units/UnitBlackBoard.hpp"
+#include "Units/Vehicle.hpp"
+#include "Units/UnitGlobals.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Interfaces/PathScheduler.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/ProjectileInterface.hpp"
-#include "Interfaces/UnitInterface.hpp"
-#include "Interfaces/UnitProfileInterface.hpp"
+#include "Units/UnitInterface.hpp"
+#include "Units/UnitProfileInterface.hpp"
 #include "System/Sound.hpp"
 
 

@@ -9,7 +9,6 @@ SUBDIRS =
     Port
     Classes
     Classes/AI
-    Classes/Units
     Classes/Weapons
     Classes/Network
     Network
@@ -21,7 +20,7 @@ SUBDIRS =
     System
     PowerUps
     Objectives
-#    Panels
+    Units
 ;
 
 SOURCES = ;

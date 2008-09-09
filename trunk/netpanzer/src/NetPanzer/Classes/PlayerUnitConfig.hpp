@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PLAYERUNITCONFIG_HPP
 #define _PLAYERUNITCONFIG_HPP
 
-#include "Structs/UnitTypes.hpp"
+#include "Units/UnitTypes.hpp"
 
 #include <vector>
 

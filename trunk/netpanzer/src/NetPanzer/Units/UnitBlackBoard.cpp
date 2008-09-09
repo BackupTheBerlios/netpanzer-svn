@@ -15,27 +15,38 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef __UNITOPCODEDECODER_HPP__
-#define __UNITOPCODEDECODER_HPP__
+#include <config.h>
+#include "Units/UnitBlackBoard.hpp"
 
-#include "Classes/UnitOpcodes.hpp"
-#include "Classes/Network/UnitNetMessage.hpp"
+#include "Interfaces/MapInterface.hpp"
 
-class UnitOpcodeDecoder
+BitArray UnitBlackBoard::unit_loc_map;
+
+void UnitBlackBoard::initializeBlackBoard( void )
 {
-private:
-    UnitOpcodeMessage opcode_message;
-    size_t opcode_index;
+    unit_loc_map.initialize( MapInterface::getWidth(),
+                             MapInterface::getHeight() );
 
-    void reset();
-    
-public:
-    UnitOpcodeDecoder();
-    ~UnitOpcodeDecoder();
-    
-    void setMessage(const NetMessage* message);
-    bool decode(UnitOpcode** opcode);
-};
+    unit_loc_map.clear();
+}
 
-#endif
+void UnitBlackBoard::resetBlackBoard()
+{
+    unit_loc_map.clear();
+}
 
+
+void UnitBlackBoard::updateUnitLocs( void )
+{
+    unsigned long i,k,x_limit,y_limit;
+
+    x_limit = unit_loc_map.x_size;
+    y_limit = unit_loc_map.y_size;
+
+    for( i = 0; i < y_limit; i++ )
+        for ( k = 0; k < x_limit; k++ ) {
+            if ( unit_loc_map.getBit( k, i ) == true )
+                MapInterface::markLocHack( iXY( k, i ) );
+        }
+
+}

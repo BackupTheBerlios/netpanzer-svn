@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _UNIT_POWERUP_HPP
 
 #include "PowerUps/PowerUp.hpp"
-#include "Classes/UnitState.hpp"
+#include "Units/UnitState.hpp"
 
 class UnitPowerUp : public PowerUp
 {

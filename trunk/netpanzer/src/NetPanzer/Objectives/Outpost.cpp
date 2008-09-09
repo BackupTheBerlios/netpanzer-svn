@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "Outpost.hpp"
 
-#include "Interfaces/UnitInterface.hpp"
-#include "Interfaces/UnitProfileInterface.hpp"
+#include "Units/UnitInterface.hpp"
+#include "Units/UnitProfileInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"

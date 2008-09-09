@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _UNITBASE_HPP
 
 #include "Core/CoreTypes.hpp"
-#include "Classes/UnitState.hpp"
+#include "Units/UnitState.hpp"
 
 class UnitMessage;
 class UnitOpcode;

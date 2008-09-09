@@ -15,26 +15,27 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef _UNITOPCODEENCODER_HPP
-#define _UNITOPCODEENCODER_HPP
+#ifndef __UNITOPCODEDECODER_HPP__
+#define __UNITOPCODEDECODER_HPP__
 
-#include "Classes/UnitOpcodes.hpp"
+#include "Units/UnitOpcodes.hpp"
 #include "Classes/Network/UnitNetMessage.hpp"
 
-class UnitOpcodeEncoder
+class UnitOpcodeDecoder
 {
 private:
     UnitOpcodeMessage opcode_message;
     size_t opcode_index;
 
     void reset();
-
-public:
-    UnitOpcodeEncoder();
-    ~UnitOpcodeEncoder();
     
-    void encode(const UnitOpcode *opcode);
-    void send();
+public:
+    UnitOpcodeDecoder();
+    ~UnitOpcodeDecoder();
+    
+    void setMessage(const NetMessage* message);
+    bool decode(UnitOpcode** opcode);
 };
 
 #endif
+

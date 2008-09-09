@@ -19,12 +19,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "BonusUnitPowerUp.hpp"
 
 #include <stdlib.h>
-#include "Structs/UnitTypes.hpp"
-#include "Interfaces/UnitInterface.hpp"
+#include "Units/UnitTypes.hpp"
+#include "Units/UnitInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
-#include "Interfaces/UnitProfileInterface.hpp"
+#include "Units/UnitProfileInterface.hpp"
 
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkState.hpp"

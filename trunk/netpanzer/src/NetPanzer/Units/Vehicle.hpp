@@ -19,10 +19,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _VEHICLE_HPP
 #include <string>
 
-#include "Classes/UnitBase.hpp"
+#include "Units/UnitBase.hpp"
 #include "Util/Timer.hpp"
 #include "Classes/UnitMessageTypes.hpp"
-#include "Classes/UnitOpcodes.hpp"
+#include "Units/UnitOpcodes.hpp"
 #include "Classes/AI/PathList.hpp"
 
 #include "Classes/Sprite.hpp"

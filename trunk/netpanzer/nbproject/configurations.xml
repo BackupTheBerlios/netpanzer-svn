@@ -274,10 +274,6 @@
             <itemPath>src/NetPanzer/Classes/Network/UnitSync.hpp</itemPath>
           </logicalFolder>
           <logicalFolder name="Units" displayName="Units" projectFiles="true">
-            <itemPath>src/NetPanzer/Classes/Units/UnitGlobals.cpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Units/UnitGlobals.hpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Units/Vehicle.cpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Units/Vehicle.hpp</itemPath>
           </logicalFolder>
           <logicalFolder name="Weapons" displayName="Weapons" projectFiles="true">
             <itemPath>src/NetPanzer/Classes/Weapons/BulletWeapon.cpp</itemPath>
@@ -323,22 +319,8 @@
           <itemPath>src/NetPanzer/Classes/TileSet.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/TipOfDay.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/TipOfDay.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/UnitBase.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/UnitBlackBoard.cpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/UnitBlackBoard.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/UnitBucketArray.cpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/UnitBucketArray.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/UnitLifecycles.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/UnitList.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/UnitMessage.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/UnitMessageTypes.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/UnitOpcodeDecoder.cpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/UnitOpcodeDecoder.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/UnitOpcodeEncoder.cpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/UnitOpcodeEncoder.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/UnitOpcodes.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/UnitState.cpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/UnitState.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/ViewCamera.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/ViewCamera.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/WadMapTable.hpp</itemPath>
@@ -401,10 +383,6 @@
           <itemPath>src/NetPanzer/Interfaces/ServerConsole.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/TileInterface.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/TileInterface.hpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/UnitInterface.cpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/UnitInterface.hpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/UnitProfileInterface.cpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/UnitProfileInterface.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/WorldViewInterface.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/WorldViewInterface.hpp</itemPath>
         </logicalFolder>
@@ -501,7 +479,6 @@
         </logicalFolder>
         <logicalFolder name="Structs" displayName="Structs" projectFiles="true">
           <itemPath>src/NetPanzer/Structs/TileSetStruct.hpp</itemPath>
-          <itemPath>src/NetPanzer/Structs/UnitTypes.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="System" displayName="System" projectFiles="true">
           <itemPath>src/NetPanzer/System/DummySound.cpp</itemPath>
@@ -514,6 +491,31 @@
           <itemPath>src/NetPanzer/System/SDLVideo.hpp</itemPath>
           <itemPath>src/NetPanzer/System/Sound.cpp</itemPath>
           <itemPath>src/NetPanzer/System/Sound.hpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="Units" displayName="Units" projectFiles="true">
+          <itemPath>src/NetPanzer/Units/UnitBase.hpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitBlackBoard.cpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitBlackBoard.hpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitBucketArray.cpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitBucketArray.hpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitGlobals.cpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitGlobals.hpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitInterface.cpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitInterface.hpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitLifecycles.hpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitList.hpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitOpcodeDecoder.cpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitOpcodeDecoder.hpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitOpcodeEncoder.cpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitOpcodeEncoder.hpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitOpcodes.hpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitProfileInterface.cpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitProfileInterface.hpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitState.cpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitState.hpp</itemPath>
+          <itemPath>src/NetPanzer/Units/UnitTypes.hpp</itemPath>
+          <itemPath>src/NetPanzer/Units/Vehicle.cpp</itemPath>
+          <itemPath>src/NetPanzer/Units/Vehicle.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="Views" displayName="Views" projectFiles="true">
           <logicalFolder name="Components" displayName="Components" projectFiles="true">
@@ -1491,64 +1493,10 @@
       <item path="src/NetPanzer/Classes/TipOfDay.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/UnitBase.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitBlackBoard.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitBlackBoard.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitBucketArray.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitBucketArray.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitLifecycles.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitList.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/UnitMessage.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/UnitMessageTypes.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitOpcodeDecoder.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitOpcodeDecoder.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitOpcodeEncoder.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitOpcodeEncoder.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitOpcodes.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitState.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitState.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Units/UnitGlobals.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Units/UnitGlobals.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Units/Vehicle.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Units/Vehicle.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/ViewCamera.cpp">
@@ -1753,18 +1701,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/TileInterface.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/UnitInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/UnitInterface.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/UnitProfileInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/UnitProfileInterface.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/WorldViewInterface.cpp">
@@ -2019,9 +1955,6 @@
       <item path="src/NetPanzer/Structs/TileSetStruct.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Structs/UnitTypes.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/System/DummySound.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -2050,6 +1983,75 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/System/Sound.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBase.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBlackBoard.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBlackBoard.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBucketArray.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBucketArray.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitGlobals.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitGlobals.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitLifecycles.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitList.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodeDecoder.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodeDecoder.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodeEncoder.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodeEncoder.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitProfileInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitProfileInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitState.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitState.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitTypes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/Vehicle.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/Vehicle.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Components/Button.cpp">
@@ -3223,64 +3225,10 @@
       <item path="src/NetPanzer/Classes/TipOfDay.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/UnitBase.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitBlackBoard.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitBlackBoard.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitBucketArray.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitBucketArray.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitLifecycles.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitList.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/UnitMessage.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/UnitMessageTypes.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitOpcodeDecoder.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitOpcodeDecoder.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitOpcodeEncoder.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitOpcodeEncoder.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitOpcodes.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitState.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/UnitState.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Units/UnitGlobals.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Units/UnitGlobals.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Units/Vehicle.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Units/Vehicle.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/ViewCamera.cpp">
@@ -3485,18 +3433,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/TileInterface.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/UnitInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/UnitInterface.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/UnitProfileInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/UnitProfileInterface.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/WorldViewInterface.cpp">
@@ -3751,9 +3687,6 @@
       <item path="src/NetPanzer/Structs/TileSetStruct.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Structs/UnitTypes.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/System/DummySound.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -3782,6 +3715,75 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/System/Sound.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBase.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBlackBoard.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBlackBoard.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBucketArray.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBucketArray.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitGlobals.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitGlobals.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitLifecycles.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitList.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodeDecoder.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodeDecoder.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodeEncoder.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodeEncoder.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitProfileInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitProfileInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitState.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitState.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitTypes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/Vehicle.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/Vehicle.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Components/Button.cpp">
