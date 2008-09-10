@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <math.h>
 
-#include "Classes/Weapons/Weapon.hpp"
+#include "Weapons/Weapon.hpp"
 
 #include "Classes/UnitMessageTypes.hpp"
 #include "Units/UnitInterface.hpp"

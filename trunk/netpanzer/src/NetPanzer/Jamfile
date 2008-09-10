@@ -9,18 +9,17 @@ SUBDIRS =
     Port
     Classes
     Classes/AI
-    Classes/Weapons
     Classes/Network
     Network
     Resources
     Structs
     Interfaces
-    Interfaces/unix
     Bot
     System
     PowerUps
     Objectives
     Units
+    Weapons
 ;
 
 SOURCES = ;

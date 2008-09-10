@@ -273,20 +273,6 @@
             <itemPath>src/NetPanzer/Classes/Network/UnitSync.cpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/UnitSync.hpp</itemPath>
           </logicalFolder>
-          <logicalFolder name="Units" displayName="Units" projectFiles="true">
-          </logicalFolder>
-          <logicalFolder name="Weapons" displayName="Weapons" projectFiles="true">
-            <itemPath>src/NetPanzer/Classes/Weapons/BulletWeapon.cpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Weapons/BulletWeapon.hpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Weapons/MissleWeapon.cpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Weapons/MissleWeapon.hpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Weapons/ShellWeapon.cpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Weapons/ShellWeapon.hpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Weapons/Weapon.cpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Weapons/Weapon.hpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Weapons/WeaponGlobals.cpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Weapons/WeaponGlobals.hpp</itemPath>
-          </logicalFolder>
           <itemPath>src/NetPanzer/Classes/MapFile.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/MapFile.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/ObjectiveMessageTypes.hpp</itemPath>
@@ -641,6 +627,18 @@
           </logicalFolder>
           <itemPath>src/NetPanzer/Views/GameViewGlobals.cpp</itemPath>
           <itemPath>src/NetPanzer/Views/GameViewGlobals.hpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="Weapons" displayName="Weapons" projectFiles="true">
+          <itemPath>src/NetPanzer/Weapons/BulletWeapon.cpp</itemPath>
+          <itemPath>src/NetPanzer/Weapons/BulletWeapon.hpp</itemPath>
+          <itemPath>src/NetPanzer/Weapons/MissleWeapon.cpp</itemPath>
+          <itemPath>src/NetPanzer/Weapons/MissleWeapon.hpp</itemPath>
+          <itemPath>src/NetPanzer/Weapons/ShellWeapon.cpp</itemPath>
+          <itemPath>src/NetPanzer/Weapons/ShellWeapon.hpp</itemPath>
+          <itemPath>src/NetPanzer/Weapons/Weapon.cpp</itemPath>
+          <itemPath>src/NetPanzer/Weapons/Weapon.hpp</itemPath>
+          <itemPath>src/NetPanzer/Weapons/WeaponGlobals.cpp</itemPath>
+          <itemPath>src/NetPanzer/Weapons/WeaponGlobals.hpp</itemPath>
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
@@ -1508,36 +1506,6 @@
       <item path="src/NetPanzer/Classes/WadMapTable.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/Weapons/BulletWeapon.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/BulletWeapon.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/MissleWeapon.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/MissleWeapon.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/ShellWeapon.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/ShellWeapon.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/Weapon.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/Weapon.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/WeaponGlobals.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/WeaponGlobals.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/WorldInputCmdProcessor.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -2379,6 +2347,36 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/SpecialButtonView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/BulletWeapon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/BulletWeapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/MissleWeapon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/MissleWeapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/ShellWeapon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/ShellWeapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/Weapon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/Weapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/WeaponGlobals.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/WeaponGlobals.hpp">
         <itemTool>3</itemTool>
       </item>
     </conf>
@@ -3240,36 +3238,6 @@
       <item path="src/NetPanzer/Classes/WadMapTable.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/Weapons/BulletWeapon.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/BulletWeapon.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/MissleWeapon.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/MissleWeapon.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/ShellWeapon.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/ShellWeapon.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/Weapon.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/Weapon.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/WeaponGlobals.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Weapons/WeaponGlobals.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/WorldInputCmdProcessor.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -4111,6 +4079,36 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/SpecialButtonView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/BulletWeapon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/BulletWeapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/MissleWeapon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/MissleWeapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/ShellWeapon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/ShellWeapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/Weapon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/Weapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/WeaponGlobals.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/WeaponGlobals.hpp">
         <itemTool>3</itemTool>
       </item>
     </conf>

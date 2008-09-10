@@ -15,23 +15,34 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#ifndef __ShellWeapon_hpp__
-#define __ShellWeapon_hpp__
+#ifndef __MissleWeapon_hpp__
+#define __MissleWeapon_hpp__
 
-#include "Classes/Weapons/Weapon.hpp"
+#include "Weapons/Weapon.hpp"
+#include "Types/fXY.hpp"
+#include "Particles/Particle2D.hpp"
 
-class ShellWeapon : public Weapon
+class MissleWeapon : public Weapon
 {
     float velocity;
+    float acceleration;
+    bool  launched;      // Has this been launched?
+
+    SpritePacked thrust;
+    SpritePacked groundLight;
+
+    float curWait;
+    float totalWait;
+
+    static float thrustForce;
 
     virtual void fsmFlight();
 
 public:
-    ShellWeapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end);
-
+    MissleWeapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, unsigned short size, iXY &start, iXY &end);
     virtual void updateStatus();
-
     virtual void offloadGraphics( SpriteSorter &sorter );
+
 };
 
-#endif // __ShellWeapon_hpp__
+#endif // __MissleWeapon_hpp__

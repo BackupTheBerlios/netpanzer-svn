@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __BulletWeapon_hpp__
 #define __BulletWeapon_hpp__
 
-#include "Classes/Weapons/Weapon.hpp"
+#include "Weapons/Weapon.hpp"
 
 class BulletWeapon : public Weapon
 {
