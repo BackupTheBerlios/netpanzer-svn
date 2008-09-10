@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Desktop.hpp"
 #include "Classes/TileEngine.hpp"
 #include "Units/UnitInterface.hpp"
-#include "Interfaces/ProjectileInterface.hpp"
+#include "Weapons/ProjectileInterface.hpp"
 #include "Interfaces/MouseInterface.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"

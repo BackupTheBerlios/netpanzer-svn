@@ -284,8 +284,6 @@
           <itemPath>src/NetPanzer/Classes/PlayerState.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/PlayerUnitConfig.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/PlayerUnitConfig.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/Projectile.cpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/Projectile.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/ScreenSurface.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/ScreenSurface.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/SelectionBoxSprite.cpp</itemPath>
@@ -362,8 +360,6 @@
           <itemPath>src/NetPanzer/Interfaces/PlayerGameManager.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/PlayerInterface.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/PlayerInterface.hpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/ProjectileInterface.cpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/ProjectileInterface.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ServerCommand.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ServerConsole.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ServerConsole.hpp</itemPath>
@@ -633,6 +629,10 @@
           <itemPath>src/NetPanzer/Weapons/BulletWeapon.hpp</itemPath>
           <itemPath>src/NetPanzer/Weapons/MissleWeapon.cpp</itemPath>
           <itemPath>src/NetPanzer/Weapons/MissleWeapon.hpp</itemPath>
+          <itemPath>src/NetPanzer/Weapons/Projectile.cpp</itemPath>
+          <itemPath>src/NetPanzer/Weapons/Projectile.hpp</itemPath>
+          <itemPath>src/NetPanzer/Weapons/ProjectileInterface.cpp</itemPath>
+          <itemPath>src/NetPanzer/Weapons/ProjectileInterface.hpp</itemPath>
           <itemPath>src/NetPanzer/Weapons/ShellWeapon.cpp</itemPath>
           <itemPath>src/NetPanzer/Weapons/ShellWeapon.hpp</itemPath>
           <itemPath>src/NetPanzer/Weapons/Weapon.cpp</itemPath>
@@ -1428,12 +1428,6 @@
       <item path="src/NetPanzer/Classes/PlayerUnitConfig.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/Projectile.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Projectile.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/ScreenSurface.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -1648,12 +1642,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/PlayerInterface.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/ProjectileInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/ProjectileInterface.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/ServerCommand.hpp">
@@ -2359,6 +2347,18 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Weapons/MissleWeapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/Projectile.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/Projectile.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/ProjectileInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/ProjectileInterface.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Weapons/ShellWeapon.cpp">
@@ -3160,12 +3160,6 @@
       <item path="src/NetPanzer/Classes/PlayerUnitConfig.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/Projectile.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Projectile.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/ScreenSurface.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -3380,12 +3374,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/PlayerInterface.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/ProjectileInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/ProjectileInterface.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/ServerCommand.hpp">
@@ -4091,6 +4079,18 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Weapons/MissleWeapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/Projectile.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/Projectile.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/ProjectileInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/ProjectileInterface.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Weapons/ShellWeapon.cpp">

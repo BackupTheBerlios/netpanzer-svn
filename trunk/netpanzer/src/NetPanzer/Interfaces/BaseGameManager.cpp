@@ -39,7 +39,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleSystem2D.hpp"
 #include "Particles/ParticleInterface.hpp"
 #include "PathScheduler.hpp"
-#include "Interfaces/ProjectileInterface.hpp"
+#include "Weapons/ProjectileInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"

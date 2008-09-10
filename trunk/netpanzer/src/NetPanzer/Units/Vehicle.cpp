@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkState.hpp"
 #include "Interfaces/PathScheduler.hpp"
 #include "Interfaces/MapInterface.hpp"
-#include "Interfaces/ProjectileInterface.hpp"
+#include "Weapons/ProjectileInterface.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
 #include "System/Sound.hpp"

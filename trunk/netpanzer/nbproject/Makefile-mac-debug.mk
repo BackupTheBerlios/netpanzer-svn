@@ -46,7 +46,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/NetPanzer/Particles/TemplateMuzzleSystem.o \
 	${OBJECTDIR}/src/Lib/2D/BuiltinFont.o \
 	${OBJECTDIR}/src/NetPanzer/Particles/ParticleInterface.o \
-	${OBJECTDIR}/src/NetPanzer/Classes/Projectile.o \
 	${OBJECTDIR}/src/NetPanzer/Particles/ParticleTweakView.o \
 	${OBJECTDIR}/src/NetPanzer/Classes/Network/NetworkServer.o \
 	${OBJECTDIR}/src/NetPanzer/Bot/BotPlayer.o \
@@ -135,6 +134,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/NetPanzer/Interfaces/BotGameManager.o \
 	${OBJECTDIR}/src/NetPanzer/Interfaces/ConsoleInterface.o \
 	${OBJECTDIR}/src/NetPanzer/PowerUps/UnitPowerUp.o \
+	${OBJECTDIR}/src/NetPanzer/Weapons/ProjectileInterface.o \
 	${OBJECTDIR}/src/NetPanzer/Views/Game/GameInfoView.o \
 	${OBJECTDIR}/src/NetPanzer/Units/UnitOpcodeDecoder.o \
 	${OBJECTDIR}/src/Lib/physfs/zlib123/uncompr.o \
@@ -182,7 +182,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/Lib/Util/Exception.o \
 	${OBJECTDIR}/src/Lib/ArrayUtil/BoundBox.o \
 	${OBJECTDIR}/src/NetPanzer/Interfaces/MouseInterface.o \
-	${OBJECTDIR}/src/NetPanzer/Interfaces/ProjectileInterface.o \
 	${OBJECTDIR}/src/NetPanzer/Particles/VectorPuffParticle2D.o \
 	${OBJECTDIR}/src/NetPanzer/Views/Game/MiniMapView.o \
 	${OBJECTDIR}/src/NetPanzer/Interfaces/ConfigVariable.o \
@@ -198,6 +197,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/NetPanzer/Views/Components/Component.o \
 	${OBJECTDIR}/src/NetPanzer/Classes/Network/UnitSync.o \
 	${OBJECTDIR}/src/NetPanzer/Views/Components/Label.o \
+	${OBJECTDIR}/src/NetPanzer/Weapons/Projectile.o \
 	${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi/HostView.o \
 	${OBJECTDIR}/src/NetPanzer/Units/UnitBucketArray.o \
 	${OBJECTDIR}/src/Lib/Util/UtilInterface.o \
@@ -395,10 +395,6 @@ ${OBJECTDIR}/src/Lib/2D/BuiltinFont.o: src/Lib/2D/BuiltinFont.cpp
 ${OBJECTDIR}/src/NetPanzer/Particles/ParticleInterface.o: src/NetPanzer/Particles/ParticleInterface.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Particles
 	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Particles/ParticleInterface.o src/NetPanzer/Particles/ParticleInterface.cpp
-
-${OBJECTDIR}/src/NetPanzer/Classes/Projectile.o: src/NetPanzer/Classes/Projectile.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Classes
-	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Classes/Projectile.o src/NetPanzer/Classes/Projectile.cpp
 
 ${OBJECTDIR}/src/NetPanzer/Particles/ParticleTweakView.o: src/NetPanzer/Particles/ParticleTweakView.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Particles
@@ -752,6 +748,10 @@ ${OBJECTDIR}/src/NetPanzer/PowerUps/UnitPowerUp.o: src/NetPanzer/PowerUps/UnitPo
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/PowerUps
 	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/PowerUps/UnitPowerUp.o src/NetPanzer/PowerUps/UnitPowerUp.cpp
 
+${OBJECTDIR}/src/NetPanzer/Weapons/ProjectileInterface.o: src/NetPanzer/Weapons/ProjectileInterface.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Weapons
+	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Weapons/ProjectileInterface.o src/NetPanzer/Weapons/ProjectileInterface.cpp
+
 ${OBJECTDIR}/src/NetPanzer/Views/Game/GameInfoView.o: src/NetPanzer/Views/Game/GameInfoView.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Views/Game
 	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Views/Game/GameInfoView.o src/NetPanzer/Views/Game/GameInfoView.cpp
@@ -940,10 +940,6 @@ ${OBJECTDIR}/src/NetPanzer/Interfaces/MouseInterface.o: src/NetPanzer/Interfaces
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Interfaces
 	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Interfaces/MouseInterface.o src/NetPanzer/Interfaces/MouseInterface.cpp
 
-${OBJECTDIR}/src/NetPanzer/Interfaces/ProjectileInterface.o: src/NetPanzer/Interfaces/ProjectileInterface.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Interfaces
-	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Interfaces/ProjectileInterface.o src/NetPanzer/Interfaces/ProjectileInterface.cpp
-
 ${OBJECTDIR}/src/NetPanzer/Particles/VectorPuffParticle2D.o: src/NetPanzer/Particles/VectorPuffParticle2D.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Particles
 	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Particles/VectorPuffParticle2D.o src/NetPanzer/Particles/VectorPuffParticle2D.cpp
@@ -1003,6 +999,10 @@ ${OBJECTDIR}/src/NetPanzer/Classes/Network/UnitSync.o: src/NetPanzer/Classes/Net
 ${OBJECTDIR}/src/NetPanzer/Views/Components/Label.o: src/NetPanzer/Views/Components/Label.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Views/Components
 	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Views/Components/Label.o src/NetPanzer/Views/Components/Label.cpp
+
+${OBJECTDIR}/src/NetPanzer/Weapons/Projectile.o: src/NetPanzer/Weapons/Projectile.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Weapons
+	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Weapons/Projectile.o src/NetPanzer/Weapons/Projectile.cpp
 
 ${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi/HostView.o: src/NetPanzer/Views/MainMenu/Multi/HostView.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi

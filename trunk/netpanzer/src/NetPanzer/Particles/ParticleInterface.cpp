@@ -708,8 +708,6 @@ void ParticleInterface::addMiss(const iXY &worldPos, Uint8 unitType)
 
     float attackScale = 1.0f;
 
-    UnitProfile *p = UnitProfileInterface::getUnitProfile(unitType);
-    assert(p != 0);
     attackScale = float(unitAttackFactorTable[unitType]) / 15.0f;
 
     e.percentScaleMin    = 0.8f;

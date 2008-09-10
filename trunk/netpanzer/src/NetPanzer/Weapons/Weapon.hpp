@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _WEAPON_HPP
 #define _WEAPON_HPP
 
-#include "Units/UnitBase.hpp"
-#include "Classes/Projectile.hpp"
+#include "Core/CoreTypes.hpp"
+#include "Weapons/Projectile.hpp"
 #include "Util/BresenhamLine.hpp"
 #include "Util/Timer.hpp"
 #include "Classes/Sprite.hpp"
@@ -73,7 +73,7 @@ protected:
 
 public:
 
-    Weapon(UnitID &owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end);
+    Weapon(UnitID owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end);
 
     virtual ~Weapon()
     { }
