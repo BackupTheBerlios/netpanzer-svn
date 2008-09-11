@@ -18,10 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SELECTION_BOX_SPRITE_HPP
 #define _SELECTION_BOX_SPRITE_HPP
 
+#include "Core/CoreTypes.hpp"
+#include "Resources/ResourceManager.hpp"
 #include "ArrayUtil/BoundBox.hpp"
 #include "Classes/Sprite.hpp"
-
-extern Surface UNIT_FLAGS_SURFACE;
 
 class SelectionBoxSprite : public Sprite
 {
@@ -57,11 +57,10 @@ protected:
     bool allied_visiblity_state;
     bool allie_state;
     bool flag_visibility_state;
+    
+    Surface * unit_flag;
 
 public:
-    Surface unit_flag;
-    Surface allie_flag;
-
     UnitSelectionBox( );
 
     virtual ~UnitSelectionBox()
@@ -80,9 +79,9 @@ public:
             hit_points = 0;
     }
 
-    inline void setFlag( int flag_enum )
+    inline void setFlag( FlagID flag_enum )
     {
-        unit_flag.setFrame( flag_enum );
+        unit_flag = ResourceManager::getFlag( flag_enum );
     }
 
     inline void setFlagIcon( bool flag_state )

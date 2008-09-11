@@ -48,9 +48,6 @@ Outpost::Outpost( ObjectiveID ID, iXY location, BoundBox area )
     unit_generation_loc = iXY( 1, 3 );
     occupation_pad_offset = iXY( 224, 48 );
     unit_generation_on_flag = false;
-
-    select_box.setAttrib( location, 3 );
-    select_box.setBoxAttributes( area, 252 );
 }
 
 void
@@ -297,7 +294,4 @@ Outpost::processMessage(const ObjectiveMessage* message)
 void
 Outpost::offloadGraphics( SpriteSorter &sorter )
 {
-    if( objective_state.selection_state == true ) {
-        sorter.addSprite( &select_box );
-    }
 }

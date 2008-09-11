@@ -20,8 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/SelectionBoxSprite.hpp"
 #include "2D/Palette.hpp"
 #include "Interfaces/GameConfig.hpp"
-
-Surface UNIT_FLAGS_SURFACE;
+#include "Resources/ResourceManager.hpp"
 
 bool SelectionBoxSprite::isVisible(const iRect &world_win) const
 {
@@ -68,7 +67,7 @@ UnitSelectionBox::UnitSelectionBox( )
     allied_visiblity_state = false;
     allie_state = false;
     flag_visibility_state = false;
-    unit_flag.setTo( UNIT_FLAGS_SURFACE );
+    unit_flag = ResourceManager::getEmptyImage();
 }
 
 
@@ -136,7 +135,7 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
     if ( gameconfig->drawunitflags == true ) {
         //unit_flag.blt( *surface, iXY( min_abs.x, min_abs.y - unit_flag.getPix().y ) );
         //surface->bltString(min_abs.x + 2, min_abs.y - 6, "Panther1", Color::white);
-        unit_flag.blt( *surface, min_abs.x, min_abs.y-unit_flag.getHeight()-1 );
+        unit_flag->blt( *surface, min_abs.x, min_abs.y-unit_flag->getHeight()-1 );
     }
 
     /*

@@ -195,8 +195,6 @@ public:
 
     void shrinkWrap();
 
-    int  loadAllBMPInDirectory(const char *path);
-
     // Text rendering functions
     void renderText(const char *str, PIX color, PIX bgcolor);
     

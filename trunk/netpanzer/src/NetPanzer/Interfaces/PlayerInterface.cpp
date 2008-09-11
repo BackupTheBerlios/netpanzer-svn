@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetworkServer.hpp"
-#include "Classes/SelectionBoxSprite.hpp"
 #include "Util/Log.hpp"
 
 // for UNIT_FLAGS_SURFACE

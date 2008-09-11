@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __FontSystem2D_hpp__
 #define __FontSystem2D_hpp__
 
-#include "iXY.hpp"
+#include "Types/iXY.hpp"
 #include "Surface.hpp"
 
 //--------------------------------------------------------------------------

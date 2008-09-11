@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Objectives/Objective.hpp"
 #include "Util/Timer.hpp"
-#include "Classes/SelectionBoxSprite.hpp"
 #include "Units/UnitBase.hpp"
 
 class Outpost : public Objective
@@ -34,9 +33,6 @@ private:
 public:
     unsigned short unit_generation_type;
     bool unit_generation_on_flag;
-
-private:
-    SelectionBoxSprite select_box;
 
 public:
     Timer occupation_status_timer;

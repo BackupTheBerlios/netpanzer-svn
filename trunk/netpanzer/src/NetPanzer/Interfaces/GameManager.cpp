@@ -51,7 +51,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/TileEngine.hpp"
 #include "Units/UnitBlackBoard.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
-#include "Classes/SelectionBoxSprite.hpp"
 #include "Classes/SpriteSorter.hpp"
 #include "Classes/Network/ClientMessageRouter.hpp"
 #include "Classes/Network/ClientConnectDaemon.hpp"

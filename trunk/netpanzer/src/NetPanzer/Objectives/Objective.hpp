@@ -35,7 +35,6 @@ class ObjectiveState
 {
 public:
     ObjectiveID   ID;
-    bool          selection_state;
     iRect         selection_box;
     unsigned char outpost_type;
     char          name[64];

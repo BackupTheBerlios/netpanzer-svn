@@ -32,7 +32,7 @@ class RankView : public GameTemplateView
 private:
     int viewableMessageCount;
     enum { ITEM_GAP_SPACE = 10 };
-    void drawPlayerStats(Surface &dest);
+    void drawPlayerStats(Surface &dest, unsigned int flagHeight);
 
     ScrollBar *scrollBar;
 

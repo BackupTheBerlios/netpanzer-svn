@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include "Resources/ResourceManager.hpp"
+
 #include <vector>
 #include <algorithm>
 
@@ -29,8 +31,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Objectives/ObjectiveInterface.hpp"
 
 #include "Views/Components/Label.hpp"
-
-#include "Classes/SelectionBoxSprite.hpp"
 
 // RankView
 //---------------------------------------------------------------------------
@@ -82,7 +82,8 @@ void RankView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     // make sure the window is big enough for all players
     unsigned int CHAR_YPIX = Surface::getFontHeight();
-    unsigned int entryheight = std::max(CHAR_YPIX, UNIT_FLAGS_SURFACE.getHeight()) + 2;
+    unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
+    unsigned int entryheight = std::max(CHAR_YPIX, flagHeight) + 2;
     unsigned int newheight = 60 + entryheight * PlayerInterface::countPlayers();
     
     if ( newheight != (unsigned int)getSizeY() ) {
@@ -96,7 +97,7 @@ void RankView::doDraw(Surface &viewArea, Surface &clientArea)
             iRect(0, 26, getClientRect().getSize().x - 1,
                 getClientRect().getSize().y - 1), Color::gray64, Color::white);
 
-    drawPlayerStats(clientArea);
+    drawPlayerStats(clientArea, flagHeight);
 
     View::doDraw(viewArea, clientArea);
 } // end doDraw
@@ -128,7 +129,7 @@ public:
 //---------------------------------------------------------------------------
 // Purpose:
 //---------------------------------------------------------------------------
-void RankView::drawPlayerStats(Surface &dest)
+void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
 {
     char statBuf[256];
 
@@ -153,9 +154,10 @@ void RankView::drawPlayerStats(Surface &dest)
     }
 
     unsigned int CHAR_YPIX = Surface::getFontHeight();
-    unsigned int entryHeight = std::max(CHAR_YPIX, UNIT_FLAGS_SURFACE.getHeight()) + 2;
+    unsigned int entryHeight = std::max(CHAR_YPIX, flagHeight) + 2;
     iXY offset(2, 40);
-    iXY flagOffset(162, 40 + (int(CHAR_YPIX - UNIT_FLAGS_SURFACE.getHeight()))/2);
+    iXY flagOffset(162, 40 + (int(CHAR_YPIX - flagHeight))/2);
+    Surface * flag = 0;
 
     for(std::vector<const PlayerState*>::iterator i = states.begin();
             i != states.end(); ++i) {
@@ -166,8 +168,9 @@ void RankView::drawPlayerStats(Surface &dest)
                 state->getKills(), state->getLosses(), state->getTotal(),
                 state->getObjectivesHeld());
         dest.bltString(offset.x, offset.y, statBuf, state->getColor());
-        UNIT_FLAGS_SURFACE.setFrame(state->getFlag());
-        UNIT_FLAGS_SURFACE.blt( dest, flagOffset.x, flagOffset.y );
+        
+        flag = ResourceManager::getFlag(state->getFlag());
+        flag->blt( dest, flagOffset.x, flagOffset.y );
 
         offset.y += entryHeight;
         flagOffset.y += entryHeight;        

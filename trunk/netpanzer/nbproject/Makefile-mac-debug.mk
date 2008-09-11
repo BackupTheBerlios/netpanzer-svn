@@ -100,6 +100,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/NetPanzer/Classes/OpcodeDebugger.o \
 	${OBJECTDIR}/src/NetPanzer/System/DummySound.o \
 	${OBJECTDIR}/src/Lib/lua/lfunc.o \
+	${OBJECTDIR}/src/NetPanzer/Resources/ResourceManager.o \
 	${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi/UnitColorView.o \
 	${OBJECTDIR}/src/NetPanzer/Units/UnitState.o \
 	${OBJECTDIR}/src/NetPanzer/Particles/SmolderParticleSystem2D.o \
@@ -271,8 +272,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/Lib/Network/UDPSocket.o \
 	${OBJECTDIR}/src/NetPanzer/Interfaces/PathScheduler.o \
 	${OBJECTDIR}/src/NetPanzer/Classes/TipOfDay.o \
-	${OBJECTDIR}/src/NetPanzer/Particles/TemplateExplosionSystem.o \
 	${OBJECTDIR}/src/Lib/physfs/platform/unix.o \
+	${OBJECTDIR}/src/NetPanzer/Particles/TemplateExplosionSystem.o \
 	${OBJECTDIR}/src/NetPanzer/Classes/SpawnList.o \
 	${OBJECTDIR}/src/Lib/lua/ldebug.o \
 	${OBJECTDIR}/src/Lib/ArrayUtil/BitArray.o \
@@ -611,6 +612,10 @@ ${OBJECTDIR}/src/NetPanzer/System/DummySound.o: src/NetPanzer/System/DummySound.
 ${OBJECTDIR}/src/Lib/lua/lfunc.o: src/Lib/lua/lfunc.c 
 	${MKDIR} -p ${OBJECTDIR}/src/Lib/lua
 	$(COMPILE.c) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/Lib/lua/lfunc.o src/Lib/lua/lfunc.c
+
+${OBJECTDIR}/src/NetPanzer/Resources/ResourceManager.o: src/NetPanzer/Resources/ResourceManager.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Resources
+	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Resources/ResourceManager.o src/NetPanzer/Resources/ResourceManager.cpp
 
 ${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi/UnitColorView.o: src/NetPanzer/Views/MainMenu/Multi/UnitColorView.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi
@@ -1296,13 +1301,13 @@ ${OBJECTDIR}/src/NetPanzer/Classes/TipOfDay.o: src/NetPanzer/Classes/TipOfDay.cp
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Classes
 	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Classes/TipOfDay.o src/NetPanzer/Classes/TipOfDay.cpp
 
-${OBJECTDIR}/src/NetPanzer/Particles/TemplateExplosionSystem.o: src/NetPanzer/Particles/TemplateExplosionSystem.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Particles
-	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Particles/TemplateExplosionSystem.o src/NetPanzer/Particles/TemplateExplosionSystem.cpp
-
 ${OBJECTDIR}/src/Lib/physfs/platform/unix.o: src/Lib/physfs/platform/unix.c 
 	${MKDIR} -p ${OBJECTDIR}/src/Lib/physfs/platform
 	$(COMPILE.c) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/Lib/physfs/platform/unix.o src/Lib/physfs/platform/unix.c
+
+${OBJECTDIR}/src/NetPanzer/Particles/TemplateExplosionSystem.o: src/NetPanzer/Particles/TemplateExplosionSystem.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Particles
+	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Particles/TemplateExplosionSystem.o src/NetPanzer/Particles/TemplateExplosionSystem.cpp
 
 ${OBJECTDIR}/src/NetPanzer/Classes/SpawnList.o: src/NetPanzer/Classes/SpawnList.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Classes

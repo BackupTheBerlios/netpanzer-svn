@@ -48,8 +48,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameControlRulesDaemon.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
-#include "Classes/SelectionBoxSprite.hpp"
-
+#include "Resources/ResourceManager.hpp"
 #include "Units/UnitGlobals.hpp"
 #include "2D/ColorTable.hpp"
 #include "2D/Palette.hpp"
@@ -133,12 +132,16 @@ void BaseGameManager::shutdownGameObjects()
 void BaseGameManager::loadGameData()
 {
     UnitProfileInterface::loadUnitProfiles();
-    UNIT_FLAGS_SURFACE.loadAllBMPInDirectory("pics/flags/");
-    if(UNIT_FLAGS_SURFACE.getNumFrames() == 0) {
+    
+    int numflags = ResourceManager::loadDefaultFlags();
+    if ( numflags <= 0 )
+    {
         throw Exception("Couldn't find any flag in pics/flags/.");
     }
-    if(gameconfig->playerflag.isDefaultValue()) {
-        gameconfig->playerflag=rand()%UNIT_FLAGS_SURFACE.getNumFrames();
+
+    if(gameconfig->playerflag.isDefaultValue())
+    {
+        gameconfig->playerflag=rand()%numflags;
     }
 }
 //-----------------------------------------------------------------

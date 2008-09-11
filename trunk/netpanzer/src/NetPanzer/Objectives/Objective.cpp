@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Objective::Objective(ObjectiveID ID, iXY location, BoundBox area)
 {
     objective_state.ID = ID;
-    objective_state.selection_state = false;
     objective_state.location = location;
     objective_state.capture_area = area;
     objective_state.objective_status = _objective_status_null;

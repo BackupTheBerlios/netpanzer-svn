@@ -27,57 +27,6 @@ Sprite::Sprite( )
 
 }
 
-
-SpriteSurface::SpriteSurface()
-        : Sprite()
-{
-}
-
-bool SpriteSurface::isVisible(const iRect &world_win ) const
-{
-    long min_x;
-    long min_y;
-    long max_x;
-    long max_y;
-    long pix_x;
-    long pix_y;
-
-    pix_x = getWidth() >> 1;
-    pix_y = getHeight() >> 1;
-
-    min_x = world_pos.x - pix_x;
-    min_y = world_pos.y - pix_y;
-
-    max_x = world_pos.x + pix_x;
-    max_y = world_pos.y + pix_y;
-
-    if ( (min_y >= world_win.max.y) || (max_y <= world_win.min.y)	||
-            (min_x >= world_win.max.x) || (max_x <= world_win.min.x)
-       )
-        return( false );
-
-    return( true );
-
-    /*
-    iXY temp_pix = pix;
-    temp_pix.x = temp_pix.x/2;
-    temp_pix.y = temp_pix.y/2;
-       
-    if ( world_win.clip( iRect( world_pos - temp_pix, world_pos + temp_pix) ) )  
-     return( false );
-
-    return( true );
-    */
-}
-
-void SpriteSurface::blit( Surface *surface, const iRect &world_win )
-{
-    iXY blit_offset;
-
-    blit_offset = (world_pos + attach_offset) - world_win.min;
-    bltTrans( *surface, blit_offset.x, blit_offset.y );
-}
-
 SpritePacked::SpritePacked()
         : Sprite()
 {

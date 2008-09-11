@@ -117,49 +117,6 @@ protected:
 
 };
 
-class SpriteSurface : public Surface, public Sprite
-{
-public:
-
-    SpriteSurface();
-
-    inline void setData( Surface &surface )
-    {
-        setTo(surface);
-        setOffsetCenter();
-    }
-
-    inline void setAttrib( iXY &worldPos, iXY &attach, unsigned char height, int frame )
-    {
-        world_pos = worldPos;
-        attach_offset = attach;
-        assert( height < _MAX_HEIGHT_LEVELS );
-        Sprite::height = height;
-        setFrame( frame );
-    }
-
-    inline void setAttrib( iXY &worldPos, iXY &attach, unsigned char height )
-    {
-        world_pos = worldPos;
-        attach_offset = attach;
-        assert( height < _MAX_HEIGHT_LEVELS );
-        Sprite::height = height;
-    }
-
-    inline void setAttrib( const iXY &worldPos, unsigned char height )
-    {
-        world_pos = worldPos;
-        assert( height < _MAX_HEIGHT_LEVELS );
-        Sprite::height = height;
-        attach_offset.x = 0;
-        attach_offset.y = 0;
-    }
-
-    virtual bool isVisible(const iRect &world_win ) const;
-
-    virtual void blit( Surface *surface, const iRect &world_win );
-};
-
 class SpritePacked : public PackedSurface, public Sprite
 {
 private:

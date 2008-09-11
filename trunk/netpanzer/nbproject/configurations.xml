@@ -296,7 +296,6 @@
           <itemPath>src/NetPanzer/Classes/Sprite.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/SpriteSorter.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/SpriteSorter.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/SurfaceDesc.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/TileEngine.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/TileEngine.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/TileSet.cpp</itemPath>
@@ -458,6 +457,10 @@
           <itemPath>src/NetPanzer/PowerUps/PowerUpInterface.hpp</itemPath>
           <itemPath>src/NetPanzer/PowerUps/UnitPowerUp.cpp</itemPath>
           <itemPath>src/NetPanzer/PowerUps/UnitPowerUp.hpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="Resources" displayName="Resources" projectFiles="true">
+          <itemPath>src/NetPanzer/Resources/ResourceManager.cpp</itemPath>
+          <itemPath>src/NetPanzer/Resources/ResourceManager.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="Structs" displayName="Structs" projectFiles="true">
           <itemPath>src/NetPanzer/Structs/TileSetStruct.hpp</itemPath>
@@ -1464,9 +1467,6 @@
       <item path="src/NetPanzer/Classes/SpriteSorter.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/SurfaceDesc.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/TileEngine.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -1906,6 +1906,12 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/PowerUps/UnitPowerUp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Resources/ResourceManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Resources/ResourceManager.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Structs/TileSetStruct.hpp">
@@ -3196,9 +3202,6 @@
       <item path="src/NetPanzer/Classes/SpriteSorter.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/SurfaceDesc.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/TileEngine.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -3638,6 +3641,12 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/PowerUps/UnitPowerUp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Resources/ResourceManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Resources/ResourceManager.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Structs/TileSetStruct.hpp">

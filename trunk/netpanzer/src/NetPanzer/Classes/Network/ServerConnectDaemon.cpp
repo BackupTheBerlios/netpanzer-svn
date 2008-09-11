@@ -31,7 +31,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkServer.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/GameConfig.hpp"
-#include "Classes/SelectionBoxSprite.hpp"
 
 #include "PlayerNetMessage.hpp"
 #include "ConnectNetMessage.hpp"

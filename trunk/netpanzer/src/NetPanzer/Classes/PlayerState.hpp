@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 #include <string.h>
+#include "Core/CoreTypes.hpp"
 #include "Classes/PlayerUnitConfig.hpp"
 #include "2D/Palette.hpp"
 
@@ -45,7 +46,7 @@ private:
     friend class PlayerStateSync;
     
     char name[64];
-    Uint8 flag;
+    FlagID flag;
     Uint16 playerindex_id;
     Uint8 status;
     Sint16 kills;
@@ -66,7 +67,7 @@ class PlayerState
 {
 private:
     std::string name;
-    unsigned char flag;
+    FlagID flag;
     Uint16 player_index;
     unsigned char status;
     short kills;
@@ -110,8 +111,8 @@ public:
     void setID( unsigned short index );
     void setStatus( unsigned char status );
     unsigned char getStatus() const;
-    void setFlag(unsigned char newflag);
-    unsigned char getFlag() const;
+    void setFlag(FlagID newflag);
+    FlagID getFlag() const;
     short getTotal() const;
     NetworkPlayerState getNetworkPlayerState() const;
     void setFromNetworkPlayerState(const NetworkPlayerState* state);

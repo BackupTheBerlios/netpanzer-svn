@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Endian.hpp"
 #include "Util/Log.hpp"
 #include "Classes/PlayerState.hpp"
-#include "Classes/SelectionBoxSprite.hpp"
 #include "Interfaces/PlayerInterface.hpp"
+#include "Resources/ResourceManager.hpp"
 #include <sstream>
 
 Uint16 NetworkPlayerState::getPlayerIndex() const
@@ -293,13 +293,8 @@ unsigned char PlayerState::getStatus() const
     return status;
 }
 
-void PlayerState::setFlag(unsigned char newflag)
+void PlayerState::setFlag(FlagID newflag)
 {
-    if ( newflag >= UNIT_FLAGS_SURFACE.getNumFrames() )
-    {
-        newflag=0;
-    }
-    
     flag = newflag;
     
     bool recheck;
@@ -312,15 +307,18 @@ void PlayerState::setFlag(unsigned char newflag)
                 continue;
                 
             PlayerState *ps=PlayerInterface::getPlayer(p);
+            
             if (  (ps->status==_player_state_connecting 
                   || ps->status==_player_state_active )
                  && ps->flag == flag
                )
             {
-                flag++;
-                if ( flag >= UNIT_FLAGS_SURFACE.getNumFrames() )
-                    flag = 0;
-                    
+                // will autorotate because it is a byte
+                do
+                {
+                    flag++;
+                } while ( ! ResourceManager::isFlagActive(flag) );
+                                    
                 if ( flag != newflag ) // there are no free flags if it is ==
                 {
                     recheck = true;
@@ -335,7 +333,7 @@ void PlayerState::setFlag(unsigned char newflag)
     } while (recheck);
 }
 
-unsigned char PlayerState::getFlag() const
+FlagID PlayerState::getFlag() const
 {
     return flag;
 }
@@ -371,15 +369,12 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
     memcpy(tmp, state->name, 64); 
     tmp[63] = 0;
     name = tmp;
-	if(state->flag < UNIT_FLAGS_SURFACE.getNumFrames())
-        {
-		flag = state->flag;
-	}
-        else
-        {
-		flag = 0;
-		LOGGER.warning("Invalid flag number received");
-	}
+    flag = state->flag;
+    if ( ! ResourceManager::isFlagActive(flag) ) 
+    {
+        LOGGER.warning("Received flag is not registered: %u", flag);
+    }
+    
     player_index = ltoh16(state->playerindex_id);
     status = state->status;
     kills = ltoh16(state->kills);

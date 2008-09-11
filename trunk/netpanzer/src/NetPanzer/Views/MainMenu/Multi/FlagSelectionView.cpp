@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include "Resources/ResourceManager.hpp"
+
 #include "FlagSelectionView.hpp"
 #include "Views/Game/GameView.hpp"
 #include "Views/GameViewGlobals.hpp"
@@ -26,7 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/MouseEvent.hpp"
 #include "2D/Color.hpp"
 
-unsigned char FlagSelectionView::playerFlagSelected = 0;
+FlagID FlagSelectionView::playerFlagSelected = 0;
+Surface FlagSelectionView::playerFlag;
 
 class FlagButton : public Button
 {
@@ -88,42 +91,55 @@ FlagSelectionView::FlagSelectionView() : RMouseHackView()
 //---------------------------------------------------------------------------
 void FlagSelectionView::init()
 {
-    if (flags.loadAllBMPInDirectory("pics/flags/") <= 0)
-        throw Exception("Couldn't find flags for menu in '%s'.",
-                        "pics/flags/");
-    flags.mapFromPalette("netp");
+    Surface flag;
+    // XXX we suppose all the flags has the same size
+    Surface * curFlag = ResourceManager::getFlag(0);
+    
+    //flags.mapFromPalette("netp");
 
-    iXY flagStartOffset(BORDER_SPACE, BORDER_SPACE * 2 + flags.getHeight());
+    iXY flagStartOffset(BORDER_SPACE, BORDER_SPACE * 2 + curFlag->getHeight());
 
-    int xOffset = flags.getWidth() + 2;
-    int yOffset = flags.getHeight() + 2;
+    int yOffset = curFlag->getHeight() + 2;
 
     int x = flagStartOffset.x;
     int y = flagStartOffset.y;
 
-    for (unsigned int i = 0; i < flags.getNumFrames(); i++) {
-        flags.setFrame(i);
+    // XXX to be able to do the loop we need int
+    // but it should be FlagID
+    // also, the 256 should be MAX_FLAG or similiar.
+    for (unsigned int i = 0; i < 256; i++)
+    {
+        if ( ! ResourceManager::isFlagActive(i) )
+            continue;
+        
+        // XXX we have to copy the flag because of different palettes
+        curFlag = ResourceManager::getFlag(i);
+        flag.create(curFlag->getWidth(), curFlag->getHeight(), 1);
+        curFlag->blt(flag, 0, 0);
+        flag.mapFromPalette("netp");
+        
+        add( new FlagButton( x, y, flag, i) );
 
-        add( new FlagButton( x, y, flags, i) );
+        x += flag.getWidth() + 2;
 
-        x += xOffset;
-
-        if (x > flagStartOffset.x + getClientRect().getSizeX() - BORDER_SPACE - (int)flags.getWidth()) {
+        if (x > flagStartOffset.x + getClientRect().getSizeX() - BORDER_SPACE - (int)flag.getWidth()) {
             x = flagStartOffset.x;
             y += yOffset;
         }
     }
 
-    if(gameconfig->playerflag.isDefaultValue()) {
+    if(gameconfig->playerflag.isDefaultValue())
+    {
         // new player, no flag...
-        gameconfig->playerflag=rand()%flags.getNumFrames();
+        gameconfig->playerflag=rand()%255; // XXX be lucky, no check for flags.
     }
     
     playerFlagSelected = gameconfig->playerflag;
-    if ( playerFlagSelected >= flags.getNumFrames() )
+    if ( ! ResourceManager::isFlagActive(playerFlagSelected) )
         playerFlagSelected = 0;
     
-    flags.setFrame(playerFlagSelected);
+    setSelectedFlag(playerFlagSelected);
+    
 } // end FlagSelectionView::init
 
 // doDraw
@@ -136,13 +152,28 @@ void FlagSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
     char strBuf[256];
     sprintf(strBuf, "Current:");
     int CHAR_XPIX = 8; // XXX hardcoded
+    
     clientArea.bltStringShadowed(
             BORDER_SPACE,
-            BORDER_SPACE + (flags.getHeight() - Surface::getFontHeight()) / 2,
+            BORDER_SPACE + (playerFlag.getHeight() - Surface::getFontHeight()) / 2,
             strBuf, windowTextColor, windowTextColorShadow);
-    flags.setFrame(playerFlagSelected);
-    flags.blt(clientArea, BORDER_SPACE + strlen(strBuf) * CHAR_XPIX + BORDER_SPACE, BORDER_SPACE);
+    
+    playerFlag.blt(clientArea, BORDER_SPACE + strlen(strBuf) * CHAR_XPIX + BORDER_SPACE, BORDER_SPACE);
 
     View::doDraw(viewArea, clientArea);
 
 } // end FlagSelectionView::doDraw
+void
+FlagSelectionView::setSelectedFlag(FlagID code)
+{
+    if ( ResourceManager::isFlagActive(code) )
+    {
+        // XXX have to map because of different palettes.
+        Surface * rflag = ResourceManager::getFlag(code);
+        playerFlag.create(rflag->getWidth(), rflag->getHeight(), 1);
+        rflag->blt(playerFlag, 0, 0);
+        playerFlag.mapFromPalette("netp");
+        
+        playerFlagSelected = code;    
+    }
+}

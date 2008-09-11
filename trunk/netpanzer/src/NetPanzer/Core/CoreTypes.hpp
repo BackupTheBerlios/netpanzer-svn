@@ -36,5 +36,7 @@ typedef Uint16 ObjectiveID;
 
 typedef Uint16 UnitID;
 
+typedef Uint8 FlagID;
+
 #endif	/* _CORETYPES_HPP */
 

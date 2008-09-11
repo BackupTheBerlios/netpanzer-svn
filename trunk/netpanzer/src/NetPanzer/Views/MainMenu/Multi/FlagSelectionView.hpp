@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __FlagSelectionView_hpp__
 #define __FlagSelectionView_hpp__
 
+#include "Core/CoreTypes.hpp"
 #include "Views/MainMenu/RMouseHackView.hpp"
 #include "2D/Surface.hpp"
 
@@ -25,8 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class FlagSelectionView : public RMouseHackView
 {
 private:
-    Surface    flags;
-    static unsigned char playerFlagSelected;
+    static FlagID playerFlagSelected;
+    static Surface playerFlag;
     
     enum { BORDER_SPACE = 4 };
 
@@ -35,12 +36,9 @@ public:
     virtual ~FlagSelectionView()
     {}
     
-    static void setSelectedFlag(unsigned char code)
-    {
-        playerFlagSelected = code;
-    }
+    static void setSelectedFlag(FlagID code);
     
-    static unsigned char getSelectedFlag()
+    static FlagID getSelectedFlag()
     {
         return playerFlagSelected;
     }

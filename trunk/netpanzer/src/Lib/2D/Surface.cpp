@@ -1283,57 +1283,6 @@ PIX Surface::getAverageColor()
     return Palette::findNearestColor(avgR, avgG, avgB);
 } // end Surface::getAverageColor
 
-// loadAllBMPInDirectory
-//---------------------------------------------------------------------------
-int Surface::loadAllBMPInDirectory(const char *path)
-{
-    char** list = filesystem::enumerateFiles(path);
-    
-    std::vector<std::string> filenames;
-    Surface tempSurface(8, 8, 1);
-    iXY maxSize(0, 0);
-    for(char** file = list; *file != 0; file++) {
-        std::string name = path;
-        name += *file;
-        if(name.find(".bmp") != std::string::npos) {
-            filenames.push_back(name);
-
-            // Get the max image size.
-            tempSurface.loadBMP(name.c_str());
-            if (maxSize.x < (int)tempSurface.getWidth()) {
-                maxSize.x = tempSurface.getWidth();
-            }
-            if (maxSize.y < (int)tempSurface.getHeight()) {
-                maxSize.y = tempSurface.getHeight();
-            }
-        }
-    }
-
-    filesystem::freeList(list);
-
-    std::sort(filenames.begin(), filenames.end());
-
-    // Create the Surface to have the size of the largest image in the
-    // diRectory.  All other images will be centered based off the
-    // largest size.
-    create(maxSize.x, maxSize.y, filenames.size());
-
-    // Now load in the sorted BMP names.
-    for (size_t i = 0; i < filenames.size(); i++) {
-        setFrame(i);
-
-        tempSurface.loadBMP(filenames[i].c_str());
-        iXY myOffset=maxSize;
-        myOffset.x-=tempSurface.getWidth();
-        myOffset.y-=tempSurface.getHeight();
-
-        fill(Color::black);
-        tempSurface.blt(*this, myOffset.x, myOffset.y);
-    }
-
-    return 1;
-} // end loadAllBMPInDirectory
-
 // initFont
 //---------------------------------------------------------------------------
 // Purpose: Load all the characters into a surface of 128 frames.  Then the
