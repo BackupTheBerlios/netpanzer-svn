@@ -435,13 +435,13 @@ void PlayerInterface::netMessageAllianceRequest(const NetMessage *message)
         if( (allie_request->getAllieByPlayerIndex() == local_player_index) ) {
             player_state = getPlayer(
                     allie_request->getAllieWithPlayerIndex());
-            ConsoleInterface::postMessage(Color::yellow, "Alliance created with %s.",
+            ConsoleInterface::postMessage(Color::yellow, false, 0, "Alliance created with %s.",
                     player_state->getName().c_str() );
         } else
             if( (allie_request->getAllieWithPlayerIndex() == local_player_index) ) {
                 player_state = getPlayer(
                         allie_request->getAllieByPlayerIndex());
-                ConsoleInterface::postMessage(Color::yellow, "%s has allied with you.",
+                ConsoleInterface::postMessage(Color::yellow, false, 0, "%s has allied with you.",
                         player_state->getName().c_str() );
             }
     } else {
@@ -451,14 +451,14 @@ void PlayerInterface::netMessageAllianceRequest(const NetMessage *message)
         if( (allie_request->getAllieByPlayerIndex() == local_player_index) ) {
             player_state = getPlayer(
                     allie_request->getAllieWithPlayerIndex());
-            ConsoleInterface::postMessage(Color::yellow, "Alliance broken with %s.",
+            ConsoleInterface::postMessage(Color::yellow, false, 0, "Alliance broken with %s.",
                     player_state->getName().c_str() );
         } else
             if( (allie_request->getAllieWithPlayerIndex()
                         == local_player_index) ) {
                 player_state = getPlayer(
                         allie_request->getAllieByPlayerIndex());
-                ConsoleInterface::postMessage(Color::yellow,
+                ConsoleInterface::postMessage(Color::yellow, false, 0,
                         "%s has broken their alliance with you.",
                         player_state->getName().c_str() );
             }
@@ -496,13 +496,13 @@ void PlayerInterface::netMessageAllianceUpdate(const NetMessage* message)
         if( (allie_update->getAllieByPlayerIndex() == local_player_index) )
         {
             player_state = getPlayer(allie_update->getAllieWithPlayerIndex());
-            ConsoleInterface::postMessage(Color::yellow, "Alliance created with %s.",
+            ConsoleInterface::postMessage(Color::yellow, false, 0, "Alliance created with %s.",
                                           player_state->getName().c_str() );
         }
         else if( allie_update->getAllieWithPlayerIndex() == local_player_index )
         {
             player_state = getPlayer(allie_update->getAllieByPlayerIndex());
-            ConsoleInterface::postMessage(Color::yellow, "%s has allied with you.",
+            ConsoleInterface::postMessage(Color::yellow, false, 0, "%s has allied with you.",
                                           player_state->getName().c_str() );
         }
     }
@@ -514,13 +514,13 @@ void PlayerInterface::netMessageAllianceUpdate(const NetMessage* message)
         if( allie_update->getAllieByPlayerIndex() == local_player_index )
         {
             player_state = getPlayer(allie_update->getAllieWithPlayerIndex());
-            ConsoleInterface::postMessage(Color::yellow, "Alliance broken with %s.",
+            ConsoleInterface::postMessage(Color::yellow, false, 0, "Alliance broken with %s.",
                                           player_state->getName().c_str() );
         }
         else if( allie_update->getAllieWithPlayerIndex() == local_player_index )
         {
             player_state = getPlayer( allie_update->getAllieByPlayerIndex());
-            ConsoleInterface::postMessage(Color::yellow,
+            ConsoleInterface::postMessage(Color::yellow, false, 0,
                                     "%s has broken their alliance with you.",
                                     player_state->getName().c_str() );
         }

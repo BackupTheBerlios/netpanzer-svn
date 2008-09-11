@@ -48,7 +48,7 @@ EnemyRadarPowerUp::onHit(UnitID unit_id)
     if(unit->player == PlayerInterface::getLocalPlayer())
     {
         MiniMapInterface::setShowEnemyRadar( 180 );
-        ConsoleInterface::postMessage(Color::unitAqua, "YOU GOT AN ENEMY RADAR POWERUP" );
+        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT AN ENEMY RADAR POWERUP" );
     }
 
     PowerUpHitMesg hit_mesg;
@@ -66,7 +66,7 @@ EnemyRadarPowerUp::onHitMessage( PowerUpHitMesg *message  )
     if( PlayerInterface::getLocalPlayerIndex() == message->getPlayerID() )
     {
         MiniMapInterface::setShowEnemyRadar( 180 );
-        ConsoleInterface::postMessage(Color::unitAqua, "YOU GOT AN ENEMY RADAR POWERUP" );
+        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT AN ENEMY RADAR POWERUP" );
     }
 
     life_cycle_state = _power_up_lifecycle_state_inactive;

@@ -138,6 +138,13 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
         unit_flag->blt( *surface, min_abs.x, min_abs.y-unit_flag->getHeight()-1 );
     }
 
+    if ( playerName.length() > 0 )
+    {   // XXX dirty trick, I don't center the text, just "by hand"
+        surface->bltString(min_abs.x+unit_flag->getWidth() + 2,
+                       min_abs.y - unit_flag->getHeight() + 2 ,
+                       playerName.c_str(), Color::white);
+    }
+    
     /*
     if ( (flag_visibility_state == true) && (allie_state == true) )
      { 

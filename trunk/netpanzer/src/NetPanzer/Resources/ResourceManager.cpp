@@ -59,6 +59,7 @@ ResourceManager::getEmptyImage()
 int
 ResourceManager::loadDefaultFlags()
 {
+    noimage.create(20,14,1);
     char** list = filesystem::enumerateFiles(DEFAULT_FLAGS_PATH);
     
     vector<string> filenames;

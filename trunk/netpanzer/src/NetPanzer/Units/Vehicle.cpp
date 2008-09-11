@@ -103,6 +103,7 @@ Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initia
     
     select_info_box.setBoxState( false );
     select_info_box.setFlag( player->getFlag() );
+    select_info_box.setName( player->getName() );
     
     body_anim_shadow.attachSprite( &body_anim, zero );
     body_anim_shadow.attachSprite( &turret_anim_shadow, zero );

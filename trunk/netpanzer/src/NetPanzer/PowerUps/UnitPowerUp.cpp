@@ -163,7 +163,7 @@ void UnitPowerUp::onHit( UnitID unit_id )
     life_cycle_state = _power_up_lifecycle_state_inactive;
 
     if(unit->player == PlayerInterface::getLocalPlayer()) {
-        ConsoleInterface::postMessage(Color::unitAqua, "YOU GOT A %s POWERUP", powerupTypeToString( unit_powerup_type ) );
+        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT A %s POWERUP", powerupTypeToString( unit_powerup_type ) );
     }
 }
 
@@ -203,7 +203,7 @@ void UnitPowerUp::onHitMessage( PowerUpHitMesg *message  )
 
     if( PlayerInterface::getLocalPlayerIndex() == message->getPlayerID() )
     {
-        ConsoleInterface::postMessage(Color::unitAqua, "YOU GOT A %s POWERUP",
+        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT A %s POWERUP",
                         powerupTypeToString( message->getUnitPowerupType() ) );
     }
 

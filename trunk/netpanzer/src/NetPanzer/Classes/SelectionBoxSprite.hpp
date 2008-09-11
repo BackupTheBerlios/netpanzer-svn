@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SELECTION_BOX_SPRITE_HPP
 #define _SELECTION_BOX_SPRITE_HPP
 
+#include <string>
+
 #include "Core/CoreTypes.hpp"
 #include "Resources/ResourceManager.hpp"
 #include "ArrayUtil/BoundBox.hpp"
@@ -59,6 +61,7 @@ protected:
     bool flag_visibility_state;
     
     Surface * unit_flag;
+    std::string playerName;
 
 public:
     UnitSelectionBox( );
@@ -97,6 +100,11 @@ public:
     inline void setAllieState( bool is_allied )
     {
         allie_state = is_allied;
+    }
+    
+    inline void setName( std::string name )
+    {
+        playerName = name;
     }
 
     virtual void blit( Surface *surface, const iRect &world_win );

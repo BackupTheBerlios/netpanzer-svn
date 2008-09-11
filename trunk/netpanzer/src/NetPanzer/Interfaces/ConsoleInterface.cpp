@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Util/Log.hpp"
 #include "Console.hpp"
+#include "Resources/ResourceManager.hpp"
 
 bool ConsoleInterface::stdout_pipe;
 
@@ -62,7 +63,7 @@ void ConsoleInterface::initialize( long size )
     vertical_spacing = 2;
 
     line_offset.x = 0;
-    line_offset.y = (8 + vertical_spacing);
+    line_offset.y = (14 + vertical_spacing);
 
     input_string_active = false;
 
@@ -99,7 +100,7 @@ void ConsoleInterface::update( Surface &surface )
     update_overlap( surface );
 }
 
-void ConsoleInterface::postMessage(PIX msgcolor, const char *format, ...)
+void ConsoleInterface::postMessage(PIX msgcolor, bool hasFlag, FlagID flag, const char *format, ...)
 {
     char temp_str[256];
     char *temp_str_ptr;
@@ -134,6 +135,8 @@ void ConsoleInterface::postMessage(PIX msgcolor, const char *format, ...)
             line_list[ line_index ].color = msgcolor;
             line_list[ line_index ].visible = true;
             line_list[ line_index ].life_timer.reset();
+            line_list[ line_index ].hasFlag = hasFlag;
+            line_list[ line_index ].flag = flag;
 
             temp_str_ptr = temp_str_ptr + max_char_per_line;
         }
@@ -149,6 +152,8 @@ void ConsoleInterface::postMessage(PIX msgcolor, const char *format, ...)
 
     line_list[ line_index ].color = msgcolor;
     line_list[ line_index ].visible = true;
+    line_list[ line_index ].hasFlag = hasFlag;
+    line_list[ line_index ].flag = flag;
     line_list[ line_index ].life_timer.reset();
 }
 
@@ -182,9 +187,24 @@ void ConsoleInterface::update_overlap( Surface &surface )
         current_line.x = bounds.min.x + line_offset.x;
     }
 
-    do {
-        if ( line_list[ index ].visible ) {
-            surface.bltStringShadowed(current_line.x, current_line.y, line_list[ index ].string, line_list[ index ].color, Color::black );
+    int flagextrax;
+    Surface * flag = 0;
+    do
+    {
+        if ( line_list[ index ].visible )
+        {
+            if ( line_list[ index ].hasFlag )
+            {
+                flag = ResourceManager::getFlag(line_list[index].flag);
+                flagextrax = flag->getWidth();
+                flag->blt(surface, current_line.x, current_line.y);
+            }
+            else
+            {
+                flagextrax = 0;
+            }
+            // XXX some values by hand
+            surface.bltStringShadowed(current_line.x + flagextrax, current_line.y+4, line_list[ index ].string, line_list[ index ].color, Color::black );
 
             current_line.y = current_line.y - line_offset.y;
         }

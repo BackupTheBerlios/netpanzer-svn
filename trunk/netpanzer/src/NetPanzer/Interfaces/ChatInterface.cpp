@@ -51,10 +51,13 @@ void ChatInterface::chatMessageRequest(const NetMessage* message)
     snprintf(chat_mesg.message_text, sizeof(chat_mesg.message_text), "%s",
              chat_request->message_text);
 
-    if( chat_request->message_scope == _chat_mesg_scope_all ) {
+    if( chat_request->message_scope == _chat_mesg_scope_all )
+    {
         SERVER->broadcastMessage(&chat_mesg, sizeof(ChatMesg));
         post_on_server = true;
-    } else if( chat_request->message_scope == _chat_mesg_scope_alliance ) {
+    }
+    else if( chat_request->message_scope == _chat_mesg_scope_alliance )
+    {
         unsigned long max_players;
         unsigned short local_player_index;
         PlayerState * player = 0;
@@ -92,14 +95,17 @@ void ChatInterface::chatMessageRequest(const NetMessage* message)
             SERVER->sendMessage( chat_request->getSourcePlayerIndex(),
                                  &chat_mesg, sizeof(ChatMesg));
         }
-    } else if( chat_request->message_scope == _chat_mesg_scope_server ) {
+    }
+    else if( chat_request->message_scope == _chat_mesg_scope_server )
+    {
         SERVER->broadcastMessage(&chat_mesg, sizeof(ChatMesg));
-        ConsoleInterface::postMessage(Color::unitAqua, "Server: %s",
+        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s",
                 chat_mesg.message_text );
         return;
     }
 
-    if (post_on_server == true) {
+    if (post_on_server == true)
+    {
         PlayerState *player_state;
 
         player_state = PlayerInterface::getPlayer(chat_mesg.getSourcePlayerIndex() );
@@ -130,7 +136,7 @@ void ChatInterface::chatMessageRequest(const NetMessage* message)
         } // ** switch
 
         // TODO add unitcolor
-        ConsoleInterface::postMessage(color, "%s: %s",
+        ConsoleInterface::postMessage(color, true, player_state->getFlag(), "%s: %s",
                 player_state->getName().c_str(), chat_mesg.message_text );
     }
 }
@@ -148,7 +154,7 @@ void ChatInterface::chatMessage(const NetMessage* message)
     }
 
     if( chat_mesg->message_scope == _chat_mesg_scope_server ) {
-        ConsoleInterface::postMessage(Color::unitAqua, "Server: %s", chat_mesg->message_text );
+        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s", chat_mesg->message_text );
         return;
     }
 
@@ -183,7 +189,7 @@ void ChatInterface::chatMessage(const NetMessage* message)
 
     } // ** switch
 
-    ConsoleInterface::postMessage(color, "%s: %s",
+    ConsoleInterface::postMessage(color, true, player_state->getFlag(), "%s: %s",
             player_state->getName().c_str(), chat_mesg->message_text );
 }
 

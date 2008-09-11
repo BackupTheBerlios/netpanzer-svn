@@ -204,7 +204,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                             = MapsManager::getNextMap(gameconfig->map);
                     }
                     
-                    ConsoleInterface::postMessage(Color::white, "loading map '%s'.",
+                    ConsoleInterface::postMessage(Color::white, false, 0, "loading map '%s'.",
                             gameconfig->map.c_str());
 
                     GameControlCycleMap cycle_map_mesg;
@@ -264,7 +264,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
 
         case _map_cycle_server_state_wait_for_client_map_load : {
                 if ( map_cycle_fsm_server_map_load_timer.count() ) {
-                    ConsoleInterface::postMessage(Color::white, "game started.");
+                    ConsoleInterface::postMessage(Color::white, false, 0, "game started.");
                     map_cycle_fsm_server_state = _map_cycle_server_state_respawn_players;
                 }
             }

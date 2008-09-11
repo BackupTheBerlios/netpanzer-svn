@@ -58,7 +58,7 @@ Objective::objectiveMesgUpdateOccupation(const ObjectiveMessage* message)
     if( objective_state.occupation_status != _occupation_status_unoccupied ) {
         PlayerState *player_state = objective_state.occupying_player;
         
-        ConsoleInterface::postMessage(Color::cyan, "'%s' has been occupied by '%s'",
+        ConsoleInterface::postMessage(Color::cyan, false, 0, "'%s' has been occupied by '%s'",
                 objective_state.name, player_state->getName().c_str() );
     }
 }

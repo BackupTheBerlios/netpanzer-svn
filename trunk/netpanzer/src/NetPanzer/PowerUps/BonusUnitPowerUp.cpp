@@ -82,7 +82,7 @@ void BonusUnitPowerUp::onHit( UnitID unit_id )
 
     if(unit->player == PlayerInterface::getLocalPlayer())
     {
-        ConsoleInterface::postMessage(Color::unitAqua, "YOU GOT A BONUS UNITS POWERUP" );
+        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT A BONUS UNITS POWERUP" );
     }
 }
 
@@ -93,6 +93,6 @@ void BonusUnitPowerUp::onHitMessage( PowerUpHitMesg *message  )
 
     if( PlayerInterface::getLocalPlayerIndex() == message->getPlayerID() )
     {
-        ConsoleInterface::postMessage( Color::unitAqua, "YOU GOT A BONUS UNITS POWERUP" );
+        ConsoleInterface::postMessage( Color::unitAqua, false, 0, "YOU GOT A BONUS UNITS POWERUP" );
     }
 }

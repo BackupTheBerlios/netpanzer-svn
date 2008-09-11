@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdarg.h>
 #include <stdio.h>
+#include "Core/CoreTypes.hpp"
 #include "ArrayUtil/ArrayTemplate.hpp"
 #include "Util/Timer.hpp"
 #include "2D/Surface.hpp"
@@ -28,8 +29,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class ConsoleLine
 {
 public:
-    bool visible;
+    bool    visible;
     PIX     color;
+    bool    hasFlag;
+    FlagID  flag;
     char    string[256];
     Timer   life_timer;
 };
@@ -72,8 +75,8 @@ public:
     static void update( Surface &surface );
     static void update_overlap( Surface &surface );
 
-    static void postMessage( PIX msgColor, const char *format, ... )
-        __attribute__(( format(printf, 2, 3) ));
+    static void postMessage( PIX msgColor, bool hasFlag, FlagID flag, const char *format, ... )
+        __attribute__(( format(printf, 4, 5) ));
 
     /* Input String Methods */
     static void setInputStringStatus( bool on_off );

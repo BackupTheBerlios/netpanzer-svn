@@ -194,7 +194,8 @@ void ServerConnectDaemon::sendConnectionAlert(ClientSocket * client)
 
     connect_alert.set( client->getPlayerIndex(), _connect_alert_mesg_connect );
     
-    ConsoleInterface::postMessage(Color::cyan, "'%s' has joined the game.",
+    ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(), 
+                                  "'%s' has joined the game.",
                                   player_state->getName().c_str() );
 
     if ( ((std::string)gameconfig->motd).length() > 0 )
@@ -565,7 +566,8 @@ void ServerConnectDaemon::startDisconnectionProcess( ClientSocket * client )
 
     disconnectClient( client );
 
-    ConsoleInterface::postMessage(Color::cyan, "'%s' has left the game.",
+    ConsoleInterface::postMessage(Color::cyan, true, player->getFlag(),
+                                  "'%s' has left the game.",
                                   (player)?player->getName().c_str():"");
 
     SERVER->broadcastMessage(&msg, sizeof(msg));
@@ -580,7 +582,8 @@ void ServerConnectDaemon::startClientDropProcess( ClientSocket * client )
     
     disconnectClient( client );
 
-    ConsoleInterface::postMessage(Color::cyan, "'%s' has left the game for some reason.",
+    ConsoleInterface::postMessage(Color::cyan, true, player->getFlag(),
+                                  "'%s' has left the game for some reason.",
                                   (player)?player->getName().c_str():"");
 
     SERVER->broadcastMessage(&msg, sizeof(msg));

@@ -178,7 +178,7 @@ void ClientConnectDaemon::netMessageConnectProcessMessage(const NetMessage* mess
 
 void ClientConnectDaemon::netMessageConnectServerDisconnect(const NetMessage* )
 {
-    ConsoleInterface::postMessage(Color::unitAqua, "Server has terminated the game" );
+    ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server has terminated the game" );
 }
 
 void ClientConnectDaemon::processNetMessage(const NetMessage* message)
@@ -213,7 +213,7 @@ void ClientConnectDaemon::processNetMessage(const NetMessage* message)
 
 void ClientConnectDaemon::serverConnectionBroken()
 {
-    ConsoleInterface::postMessage(Color::unitRed, "CONNECTION TO SERVER HAS BEEN UNEXPECTEDLY BROKEN." );
+    ConsoleInterface::postMessage(Color::unitRed, false, 0, "CONNECTION TO SERVER HAS BEEN UNEXPECTEDLY BROKEN." );
 }
 
 void ClientConnectDaemon::connectFailureResult( unsigned char result_code )
