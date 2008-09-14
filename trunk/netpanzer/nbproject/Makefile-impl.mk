@@ -31,7 +31,7 @@ DEFAULTCONF=mac-debug
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=mac-debug mac-release 
+ALLCONFS=mac-debug mac-release win-debug win-release 
 
 
 # build

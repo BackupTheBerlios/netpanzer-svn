@@ -4121,5 +4121,3475 @@
         <itemTool>3</itemTool>
       </item>
     </conf>
+    <conf name="win-debug" type="1">
+      <toolsSet>
+        <compilerSet>MinGW|MinGW</compilerSet>
+        <platform>3</platform>
+      </toolsSet>
+      <compileType>
+        <cCompilerTool>
+          <includeDirectories>
+            <directoryPath>.</directoryPath>
+            <directoryPath>src/Lib</directoryPath>
+            <directoryPath>src/NetPanzer</directoryPath>
+            <directoryPath>src/Lib/physfs</directoryPath>
+            <directoryPath>src/Lib/physfs/zlib123</directoryPath>
+            <directoryPath>C:/mingw/include/SDL</directoryPath>
+          </includeDirectories>
+          <preprocessorList>
+            <Elem>PHYSFS_SUPPORTS_ZIP=1</Elem>
+            <Elem>Z_PREFIX=1</Elem>
+          </preprocessorList>
+          <warningLevel>2</warningLevel>
+        </cCompilerTool>
+        <ccCompilerTool>
+          <includeDirectories>
+            <directoryPath>.</directoryPath>
+            <directoryPath>src/Lib</directoryPath>
+            <directoryPath>src/NetPanzer</directoryPath>
+            <directoryPath>src/Lib/physfs</directoryPath>
+            <directoryPath>src/Lib/physfs/zlib123</directoryPath>
+            <directoryPath>C:/mingw/include/SDL</directoryPath>
+          </includeDirectories>
+          <preprocessorList>
+            <Elem>PHYSFS_SUPPORTS_ZIP=1</Elem>
+            <Elem>Z_PREFIX=1</Elem>
+          </preprocessorList>
+          <warningLevel>2</warningLevel>
+        </ccCompilerTool>
+        <linkerTool>
+          <output>./netpanzer-debug</output>
+          <linkerLibItems>
+            <linkerLibLibItem>ws2_32</linkerLibLibItem>
+            <linkerLibLibItem>SDL_mixer</linkerLibLibItem>
+            <linkerLibLibItem>mingw32</linkerLibLibItem>
+            <linkerLibLibItem>SDLmain</linkerLibLibItem>
+            <linkerLibLibItem>SDL.dll</linkerLibLibItem>
+          </linkerLibItems>
+          <commandLine>-mwindows</commandLine>
+        </linkerTool>
+      </compileType>
+      <item path="src/Lib/2D/BuiltinFont.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/Color.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/Color.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/2D/ColorTable.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/ColorTable.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/2D/DigitText.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/DigitText.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/2D/FontSystem2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/2D/PackedSurface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/PackedSurface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/2D/Palette.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/Palette.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/2D/RGBColor.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/RGBColor.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/2D/Span.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/Span.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/2D/Surface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/Surface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/ArrayUtil/ArrayTemplate.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/ArrayUtil/BitArray.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/ArrayUtil/BitArray.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/ArrayUtil/BoundBox.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/ArrayUtil/BoundBox.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/ArrayUtil/BucketArrayTemplate.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/ArrayUtil/LinkListDoubleTemplate.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/ArrayUtil/QueueTemplate.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/INIParser/Section.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/INIParser/Section.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/INIParser/Store.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/INIParser/Store.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/Address.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Network/Address.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/NetworkException.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/SocketBase.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Network/SocketBase.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/SocketHeaders.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/SocketManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Network/SocketManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/SocketSet.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/TCPListenSocket.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Network/TCPListenSocket.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/TCPSocket.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Network/TCPSocket.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/UDPSocket.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Network/UDPSocket.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Types/Angle.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Types/Angle.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Types/fRect.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Types/fRect.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Types/fXY.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Types/fXYZ.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Types/fXYZ.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Types/iRect.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Types/iRect.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Types/iXY.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Types/iXY.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/BresenhamLine.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/BresenhamLine.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/Endian.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/Exception.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/Exception.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/FileStream.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/FileSystem.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/FileSystem.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/Log.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/Log.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/Math.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/Math.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/NTimer.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/NoCopy.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/StreamTokenizer.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/StringTokenizer.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/StringUtil.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/StringUtil.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/TimeStamp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/TimeStamp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/Timer.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/Timer.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/TimerInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/TimerInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/UtilInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/UtilInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lapi.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lapi.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lauxlib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lauxlib.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lbaselib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lcode.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lcode.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/ldblib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/ldebug.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/ldebug.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/ldo.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/ldo.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/ldump.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lfunc.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lfunc.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lgc.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lgc.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/linit.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/liolib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/llex.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/llex.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/llimits.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lmathlib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lmem.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lmem.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/loadlib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lobject.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lobject.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lopcodes.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lopcodes.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/loslib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lparser.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lparser.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lstate.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lstate.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lstring.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lstring.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lstrlib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/ltable.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/ltable.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/ltablib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/ltm.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/ltm.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lua.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/lua/lua.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lua.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/luaconf.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lualib.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lundump.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lundump.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lvm.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lvm.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lzio.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lzio.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/print.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/optionmm/command_line.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/optionmm/command_line.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/optionmm/option.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/optionmm/option.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/archivers/dir.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/archivers/zip.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/physfs.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/physfs.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/physfs_byteorder.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/physfs_casefolding.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/physfs_internal.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/physfs_platforms.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/physfs_unicode.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/platform/beos.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/physfs/platform/macosx.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/platform/os2.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/platform/pocketpc.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/platform/posix.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/platform/unix.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/platform/windows.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/adler32.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/compress.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/crc32.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/crc32.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/deflate.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/deflate.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/gzio.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/infback.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/inffast.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/inffast.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/inffixed.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/inflate.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/inflate.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/inftrees.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/inftrees.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/trees.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/trees.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/uncompr.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/zconf.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/zlib.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/zutil.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/zutil.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/Bot.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/Bot.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/BotPlayer.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/BotPlayer.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/BotTask.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/BotTaskList.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/BotTaskList.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/AI/Astar.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/AI/Astar.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/AI/PathList.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/AI/PathList.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/AI/PathingState.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/AI/PathingState.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/MapFile.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/MapFile.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ChatNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ClientConnectDaemon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ClientConnectDaemon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ClientMessageRouter.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ClientMessageRouter.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ClientServerNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ConnectNetMessage.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ConnectNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/GameControlNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetMessageDecoder.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetMessageDecoder.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetMessageEncoder.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetMessageEncoder.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetPacket.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetPacketDebugger.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetPacketDebugger.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetPacketQueues.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetPacketQueues.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetTypes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkClient.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkClient.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkReturnCodes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkServer.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkServer.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkState.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkState.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ObjectiveNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/PlayerNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/PowerUpNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ServerConnectDaemon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ServerConnectDaemon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ServerMessageRouter.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ServerMessageRouter.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/SystemNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/TerminalNetMesg.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/UnitNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/UnitSync.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/UnitSync.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/ObjectiveMessageTypes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/OpcodeDebugger.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/OpcodeDebugger.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/PlacementMatrix.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/PlacementMatrix.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/PlayerState.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/PlayerState.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/PlayerUnitConfig.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/PlayerUnitConfig.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/ScreenSurface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/ScreenSurface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/SelectionBoxSprite.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/SelectionBoxSprite.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/SelectionList.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/SelectionList.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/SpawnList.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/SpawnList.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Sprite.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Sprite.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/SpriteSorter.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/SpriteSorter.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/TileEngine.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/TileEngine.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/TileSet.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/TileSet.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/TipOfDay.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/TipOfDay.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/UnitMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/UnitMessageTypes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/ViewCamera.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/ViewCamera.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/WadMapTable.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/WorldInputCmdProcessor.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/WorldInputCmdProcessor.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/WorldMap.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/WorldMap.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Core/CoreTypes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Core/NetworkGlobals.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Core/NetworkGlobals.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Core/main.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/BaseGameManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/BaseGameManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/BotGameManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/BotGameManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ChatInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ChatInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ConfigVariable.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ConfigVariable.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/Console.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/Console.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ConsoleInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ConsoleInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/DedicatedGameManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/DedicatedGameManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/GameConfig.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/GameConfig.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/GameControlRulesDaemon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/GameControlRulesDaemon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/GameManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/GameManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/Heartbeat.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/Heartbeat.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/InfoSocket.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/InfoSocket.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/KeyboardInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/KeyboardInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/MapInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/MapInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/MapsManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/MapsManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/MiniMapInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/MiniMapInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/MouseInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/MouseInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/PathScheduler.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/PathScheduler.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/PlayerGameManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/PlayerGameManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/PlayerInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/PlayerInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ServerCommand.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ServerConsole.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ServerConsole.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/TileInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/TileInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/WorldViewInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/WorldViewInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/ClientSocket.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/ClientSocket.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/ProxyServer.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/ProxyServer.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/Objective.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/Objective.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/ObjectiveInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/ObjectiveInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/Outpost.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/Outpost.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ChunkTrajectoryParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ChunkTrajectoryParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/CloudParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/CloudParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/CraterParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/CraterParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/DirtKickParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/DirtKickParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ExplosionFlashParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/FireParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/FireParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/FireParticleSystem2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/FireParticleSystem2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/FlameParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/FlameParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/FlashParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/FlashParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/GroundExplosionParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/GroundExplosionParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/GroundExplosionParticleSystem2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/GroundExplosionParticleSystem2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/MovementDirtPuffParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/Particle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/Particle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ParticleInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ParticleInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ParticleSystem2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ParticleSystem2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ParticleSystemGlobals.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ParticleSystemGlobals.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ParticleTweakView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ParticleTweakView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/Physics.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/Physics.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/PuffParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/PuffParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/RadarPingParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/RadarPingParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SmokingTrajectoryParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SmokingTrajectoryParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SmolderParticleSystem2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SmolderParticleSystem2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SnowParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SnowParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SnowParticleSystem2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SnowParticleSystem2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SparkParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SparkParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/TemplateExplosionSystem.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/TemplateExplosionSystem.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/TemplateMuzzleSystem.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/TemplateMuzzleSystem.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/TrajectoryParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/TrajectoryParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/VectorPuffParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/VectorPuffParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/WindParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/WindParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Port/MapData.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Port/blitters.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Port/blitters.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/BonusUnitPowerUp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/BonusUnitPowerUp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/EnemyRadarPowerUp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/EnemyRadarPowerUp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/PowerUp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/PowerUp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/PowerUpInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/PowerUpInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/UnitPowerUp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/UnitPowerUp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Resources/ResourceManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Resources/ResourceManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Structs/TileSetStruct.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/DummySound.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/DummySound.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/SDLEvents.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/SDLEvents.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/SDLSound.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/SDLSound.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/SDLVideo.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/SDLVideo.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/Sound.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/Sound.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBase.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBlackBoard.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBlackBoard.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBucketArray.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBucketArray.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitGlobals.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitGlobals.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitLifecycles.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitList.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodeDecoder.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodeDecoder.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodeEncoder.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodeEncoder.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitProfileInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitProfileInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitState.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitState.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitTypes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/Vehicle.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/Vehicle.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Button.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Button.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/CheckBox.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/CheckBox.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Choice.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Choice.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Component.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Component.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Desktop.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Desktop.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/InputEvent.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Label.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Label.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/MouseEvent.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/ScrollBar.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/ScrollBar.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/StateChangedCallback.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/View.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/View.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/ViewGlobals.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/ViewGlobals.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/cButton.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/cButton.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/cInputField.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/cInputField.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/AreYouSureExitView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/AreYouSureExitView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/AreYouSureResignView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/AreYouSureResignView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/CodeStatsView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/CodeStatsView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/DisconectedView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/DisconectedView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/GameInfoView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/GameInfoView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/GameTemplateView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/GameTemplateView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/GameView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/GameView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/HelpScrollView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/HelpScrollView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/LibView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/LibView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/LoadingView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/LoadingView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/MiniMapView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/MiniMapView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/RankView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/RankView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/ResignView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/ResignView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/VehicleSelectionView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/VehicleSelectionView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/GameViewGlobals.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/GameViewGlobals.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/HelpView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/HelpView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/MainMenuView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/MainMenuView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/MenuTemplateView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/FlagSelectionView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/FlagSelectionView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/GetSessionView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/GetSessionView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/HostJoinTemplateView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/HostJoinTemplateView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/HostOptionsView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/HostOptionsView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/HostView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/HostView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/IPAddressView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/IPAddressView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/JoinView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/JoinView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/MapSelectionView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/MapSelectionView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerInfo.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerInfo.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerList.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerList.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerQueryThread.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerQueryThread.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/PlayerNameView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/PlayerNameView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/ServerListView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/ServerListView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/UnitColorView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/UnitColorView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/UnitSelectionView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/UnitSelectionView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Options/ControlsView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Options/ControlsView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Options/InterfaceView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Options/InterfaceView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Options/SoundView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Options/SoundView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Options/VisualsView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Options/VisualsView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/OptionsTemplateView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/OptionsTemplateView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/OrderingView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/OrderingView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/RMouseHackView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/RMouseHackView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/SkirmishView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/SkirmishView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/SpecialButtonView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/SpecialButtonView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/BulletWeapon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/BulletWeapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/MissleWeapon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/MissleWeapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/Projectile.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/Projectile.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/ProjectileInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/ProjectileInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/ShellWeapon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/ShellWeapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/Weapon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/Weapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/WeaponGlobals.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/WeaponGlobals.hpp">
+        <itemTool>3</itemTool>
+      </item>
+    </conf>
+    <conf name="win-release" type="1">
+      <toolsSet>
+        <compilerSet>MinGW|MinGW</compilerSet>
+        <platform>3</platform>
+      </toolsSet>
+      <compileType>
+        <cCompilerTool>
+          <developmentMode>5</developmentMode>
+          <includeDirectories>
+            <directoryPath>.</directoryPath>
+            <directoryPath>src/Lib</directoryPath>
+            <directoryPath>src/NetPanzer</directoryPath>
+            <directoryPath>src/Lib/physfs</directoryPath>
+            <directoryPath>src/Lib/physfs/zlib123</directoryPath>
+            <directoryPath>/Library/Frameworks/SDL.framework/Versions/A/Headers</directoryPath>
+            <directoryPath>/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers</directoryPath>
+          </includeDirectories>
+          <preprocessorList>
+            <Elem>PHYSFS_SUPPORTS_ZIP=1</Elem>
+            <Elem>Z_PREFIX=1</Elem>
+          </preprocessorList>
+          <warningLevel>2</warningLevel>
+        </cCompilerTool>
+        <ccCompilerTool>
+          <developmentMode>5</developmentMode>
+          <includeDirectories>
+            <directoryPath>.</directoryPath>
+            <directoryPath>src/Lib</directoryPath>
+            <directoryPath>src/NetPanzer</directoryPath>
+            <directoryPath>src/Lib/physfs</directoryPath>
+            <directoryPath>src/Lib/physfs/zlib123</directoryPath>
+            <directoryPath>/Library/Frameworks/SDL.framework/Versions/A/Headers</directoryPath>
+            <directoryPath>/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers</directoryPath>
+          </includeDirectories>
+          <preprocessorList>
+            <Elem>PHYSFS_SUPPORTS_ZIP=1</Elem>
+            <Elem>Z_PREFIX=1</Elem>
+          </preprocessorList>
+          <warningLevel>2</warningLevel>
+        </ccCompilerTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <linkerTool>
+          <linkerLibItems>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="src/Lib/2D/BuiltinFont.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/Color.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/Color.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/2D/ColorTable.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/ColorTable.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/2D/DigitText.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/DigitText.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/2D/FontSystem2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/2D/PackedSurface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/PackedSurface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/2D/Palette.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/Palette.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/2D/RGBColor.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/RGBColor.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/2D/Span.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/Span.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/2D/Surface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/2D/Surface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/ArrayUtil/ArrayTemplate.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/ArrayUtil/BitArray.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/ArrayUtil/BitArray.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/ArrayUtil/BoundBox.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/ArrayUtil/BoundBox.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/ArrayUtil/BucketArrayTemplate.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/ArrayUtil/LinkListDoubleTemplate.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/ArrayUtil/QueueTemplate.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/INIParser/Section.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/INIParser/Section.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/INIParser/Store.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/INIParser/Store.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/Address.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Network/Address.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/NetworkException.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/SocketBase.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Network/SocketBase.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/SocketHeaders.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/SocketManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Network/SocketManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/SocketSet.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/TCPListenSocket.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Network/TCPListenSocket.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/TCPSocket.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Network/TCPSocket.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Network/UDPSocket.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Network/UDPSocket.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Types/Angle.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Types/Angle.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Types/fRect.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Types/fRect.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Types/fXY.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Types/fXYZ.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Types/fXYZ.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Types/iRect.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Types/iRect.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Types/iXY.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Types/iXY.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/BresenhamLine.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/BresenhamLine.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/Endian.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/Exception.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/Exception.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/FileStream.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/FileSystem.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/FileSystem.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/Log.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/Log.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/Math.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/Math.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/NTimer.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/NoCopy.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/StreamTokenizer.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/StringTokenizer.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/StringUtil.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/StringUtil.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/TimeStamp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/TimeStamp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/Timer.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/Timer.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/TimerInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/TimerInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/Util/UtilInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/Util/UtilInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lapi.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lapi.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lauxlib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lauxlib.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lbaselib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lcode.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lcode.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/ldblib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/ldebug.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/ldebug.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/ldo.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/ldo.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/ldump.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lfunc.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lfunc.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lgc.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lgc.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/linit.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/liolib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/llex.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/llex.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/llimits.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lmathlib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lmem.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lmem.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/loadlib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lobject.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lobject.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lopcodes.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lopcodes.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/loslib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lparser.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lparser.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lstate.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lstate.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lstring.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lstring.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lstrlib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/ltable.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/ltable.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/ltablib.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/ltm.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/ltm.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lua.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/lua/lua.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lua.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/luaconf.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lualib.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lundump.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lundump.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lvm.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lvm.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/lzio.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/lua/lzio.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/lua/print.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/optionmm/command_line.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/optionmm/command_line.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/optionmm/option.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/optionmm/option.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/archivers/dir.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/archivers/zip.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/physfs.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/physfs.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/physfs_byteorder.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/physfs_casefolding.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/physfs_internal.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/physfs_platforms.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/physfs_unicode.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/platform/beos.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/Lib/physfs/platform/macosx.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/platform/os2.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/platform/pocketpc.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/platform/posix.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/platform/unix.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/platform/windows.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/adler32.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/compress.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/crc32.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/crc32.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/deflate.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/deflate.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/gzio.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/infback.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/inffast.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/inffast.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/inffixed.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/inflate.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/inflate.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/inftrees.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/inftrees.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/trees.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/trees.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/uncompr.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/zconf.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/zlib.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/zutil.c">
+        <itemTool>0</itemTool>
+      </item>
+      <item path="src/Lib/physfs/zlib123/zutil.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/Bot.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/Bot.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/BotPlayer.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/BotPlayer.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/BotTask.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/BotTaskList.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/BotTaskList.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/AI/Astar.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/AI/Astar.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/AI/PathList.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/AI/PathList.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/AI/PathingState.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/AI/PathingState.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/MapFile.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/MapFile.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ChatNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ClientConnectDaemon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ClientConnectDaemon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ClientMessageRouter.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ClientMessageRouter.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ClientServerNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ConnectNetMessage.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ConnectNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/GameControlNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetMessageDecoder.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetMessageDecoder.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetMessageEncoder.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetMessageEncoder.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetPacket.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetPacketDebugger.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetPacketDebugger.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetPacketQueues.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetPacketQueues.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetTypes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkClient.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkClient.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkReturnCodes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkServer.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkServer.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkState.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/NetworkState.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ObjectiveNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/PlayerNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/PowerUpNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ServerConnectDaemon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ServerConnectDaemon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ServerMessageRouter.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/ServerMessageRouter.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/SystemNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/TerminalNetMesg.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/UnitNetMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/UnitSync.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Network/UnitSync.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/ObjectiveMessageTypes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/OpcodeDebugger.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/OpcodeDebugger.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/PlacementMatrix.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/PlacementMatrix.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/PlayerState.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/PlayerState.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/PlayerUnitConfig.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/PlayerUnitConfig.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/ScreenSurface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/ScreenSurface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/SelectionBoxSprite.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/SelectionBoxSprite.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/SelectionList.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/SelectionList.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/SpawnList.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/SpawnList.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Sprite.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/Sprite.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/SpriteSorter.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/SpriteSorter.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/TileEngine.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/TileEngine.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/TileSet.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/TileSet.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/TipOfDay.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/TipOfDay.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/UnitMessage.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/UnitMessageTypes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/ViewCamera.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/ViewCamera.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/WadMapTable.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/WorldInputCmdProcessor.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/WorldInputCmdProcessor.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/WorldMap.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Classes/WorldMap.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Core/CoreTypes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Core/NetworkGlobals.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Core/NetworkGlobals.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Core/main.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/BaseGameManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/BaseGameManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/BotGameManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/BotGameManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ChatInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ChatInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ConfigVariable.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ConfigVariable.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/Console.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/Console.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ConsoleInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ConsoleInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/DedicatedGameManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/DedicatedGameManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/GameConfig.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/GameConfig.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/GameControlRulesDaemon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/GameControlRulesDaemon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/GameManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/GameManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/Heartbeat.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/Heartbeat.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/InfoSocket.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/InfoSocket.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/KeyboardInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/KeyboardInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/MapInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/MapInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/MapsManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/MapsManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/MiniMapInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/MiniMapInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/MouseInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/MouseInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/PathScheduler.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/PathScheduler.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/PlayerGameManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/PlayerGameManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/PlayerInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/PlayerInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ServerCommand.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ServerConsole.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/ServerConsole.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/TileInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/TileInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/WorldViewInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Interfaces/WorldViewInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/ClientSocket.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/ClientSocket.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/ProxyServer.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/ProxyServer.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/Objective.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/Objective.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/ObjectiveInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/ObjectiveInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/Outpost.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Objectives/Outpost.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ChunkTrajectoryParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ChunkTrajectoryParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/CloudParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/CloudParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/CraterParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/CraterParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/DirtKickParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/DirtKickParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ExplosionFlashParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/FireParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/FireParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/FireParticleSystem2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/FireParticleSystem2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/FlameParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/FlameParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/FlashParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/FlashParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/GroundExplosionParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/GroundExplosionParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/GroundExplosionParticleSystem2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/GroundExplosionParticleSystem2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/MovementDirtPuffParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/Particle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/Particle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ParticleInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ParticleInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ParticleSystem2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ParticleSystem2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ParticleSystemGlobals.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ParticleSystemGlobals.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ParticleTweakView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/ParticleTweakView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/Physics.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/Physics.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/PuffParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/PuffParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/RadarPingParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/RadarPingParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SmokingTrajectoryParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SmokingTrajectoryParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SmolderParticleSystem2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SmolderParticleSystem2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SnowParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SnowParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SnowParticleSystem2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SnowParticleSystem2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SparkParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/SparkParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/TemplateExplosionSystem.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/TemplateExplosionSystem.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/TemplateMuzzleSystem.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/TemplateMuzzleSystem.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/TrajectoryParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/TrajectoryParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/VectorPuffParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/VectorPuffParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/WindParticle2D.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Particles/WindParticle2D.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Port/MapData.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Port/blitters.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Port/blitters.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/BonusUnitPowerUp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/BonusUnitPowerUp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/EnemyRadarPowerUp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/EnemyRadarPowerUp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/PowerUp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/PowerUp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/PowerUpInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/PowerUpInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/UnitPowerUp.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/PowerUps/UnitPowerUp.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Resources/ResourceManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Resources/ResourceManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Structs/TileSetStruct.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/DummySound.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/DummySound.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/SDLEvents.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/SDLEvents.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/SDLSound.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/SDLSound.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/SDLVideo.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/SDLVideo.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/Sound.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/System/Sound.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBase.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBlackBoard.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBlackBoard.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBucketArray.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitBucketArray.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitGlobals.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitGlobals.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitLifecycles.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitList.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodeDecoder.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodeDecoder.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodeEncoder.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodeEncoder.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitOpcodes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitProfileInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitProfileInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitState.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitState.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/UnitTypes.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/Vehicle.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/Vehicle.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Button.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Button.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/CheckBox.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/CheckBox.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Choice.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Choice.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Component.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Component.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Desktop.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Desktop.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/InputEvent.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Label.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/Label.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/MouseEvent.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/ScrollBar.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/ScrollBar.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/StateChangedCallback.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/View.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/View.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/ViewGlobals.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/ViewGlobals.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/cButton.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/cButton.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/cInputField.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/cInputField.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/AreYouSureExitView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/AreYouSureExitView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/AreYouSureResignView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/AreYouSureResignView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/CodeStatsView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/CodeStatsView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/DisconectedView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/DisconectedView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/GameInfoView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/GameInfoView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/GameTemplateView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/GameTemplateView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/GameView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/GameView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/HelpScrollView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/HelpScrollView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/LibView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/LibView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/LoadingView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/LoadingView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/MiniMapView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/MiniMapView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/RankView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/RankView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/ResignView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/ResignView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/VehicleSelectionView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Game/VehicleSelectionView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/GameViewGlobals.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/GameViewGlobals.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/HelpView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/HelpView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/MainMenuView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/MainMenuView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/MenuTemplateView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/MenuTemplateView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/FlagSelectionView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/FlagSelectionView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/GetSessionView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/GetSessionView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/HostJoinTemplateView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/HostJoinTemplateView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/HostOptionsView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/HostOptionsView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/HostView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/HostView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/IPAddressView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/IPAddressView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/JoinView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/JoinView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/MapSelectionView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/MapSelectionView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerInfo.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerInfo.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerList.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerList.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerQueryThread.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerQueryThread.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/PlayerNameView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/PlayerNameView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/ServerListView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/ServerListView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/UnitColorView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/UnitColorView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/UnitSelectionView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Multi/UnitSelectionView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Options/ControlsView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Options/ControlsView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Options/InterfaceView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Options/InterfaceView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Options/SoundView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Options/SoundView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Options/VisualsView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/Options/VisualsView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/OptionsTemplateView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/OptionsTemplateView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/OrderingView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/OrderingView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/RMouseHackView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/RMouseHackView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/SkirmishView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/SkirmishView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/SpecialButtonView.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/MainMenu/SpecialButtonView.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/BulletWeapon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/BulletWeapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/MissleWeapon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/MissleWeapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/Projectile.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/Projectile.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/ProjectileInterface.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/ProjectileInterface.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/ShellWeapon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/ShellWeapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/Weapon.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/Weapon.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/WeaponGlobals.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Weapons/WeaponGlobals.hpp">
+        <itemTool>3</itemTool>
+      </item>
+    </conf>
   </confs>
 </configurationDescriptor>

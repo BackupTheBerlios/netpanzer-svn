@@ -4,7 +4,7 @@ dnl Check whether sys/socket.h defines type socklen_t. Please note
 dnl that some systems require sys/types.h to be included before
 dnl sys/socket.h can be compiled.
 dnl
-dnl @version $Id: ax_type_socklen_t.m4,v 1.1 2004/10/05 12:36:48 matzebraun Exp $
+dnl @version $Id$
 dnl @author Lars Brinkhoff <lars@nocrew.org>
 dnl
 AC_DEFUN([AX_TYPE_SOCKLEN_T],

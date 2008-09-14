@@ -343,13 +343,14 @@ void GameControlRulesDaemon::checkGameRules()
         switch( game_type )
         {
             case  _gametype_timelimit:
+            {
                 int game_minutes = GameManager::getGameTime() / 60;
                 if( game_minutes >= gameconfig->timelimit )
                 {
                     onTimelimitGameCompleted();
                 }
                 break;
-                
+            }   
             case _gametype_fraglimit:
                 if ( PlayerInterface::testRuleScoreLimit( gameconfig->fraglimit, &player_state ) == true )
                 {
@@ -358,12 +359,14 @@ void GameControlRulesDaemon::checkGameRules()
                 break;
 
             case _gametype_objective:
+            {
                 float ratio = (float) gameconfig->objectiveoccupationpercentage / 100.0;
                 if (PlayerInterface::testRuleObjectiveRatio( ratio, &player_state))
                 {
                     onObjectiveGameCompleted( );
                 }
                 break;
+            }
             default:
                 // nothing
                 ;
