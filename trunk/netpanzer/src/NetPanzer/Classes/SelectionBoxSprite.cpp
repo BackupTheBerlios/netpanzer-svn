@@ -78,7 +78,8 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
     min_abs = (world_pos + selection_area.min) - world_win.min;
     max_abs = (world_pos + selection_area.max) - world_win.min;
 
-    if ( box_state == true ) {
+    if ( box_state == true )
+    {
 
         // Modified the vehicle selection box and moved the hitpoints outside,
         // the box status check, because I may want the hitpoints drawn all the time.
@@ -87,32 +88,38 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
         assert(max_hit_points > 0);
 
         // Draw the selection box.
-        if (gameconfig->unitselectionmode == _unit_selection_box_draw_mode_rect) {
+        if (gameconfig->unitselectionmode == _unit_selection_box_draw_mode_rect)
+        {
             // Draw the rectangle selection box.
             surface->drawRect(iRect(min_abs, max_abs), selectionBoxColor);
-        } else if (gameconfig->unitselectionmode == _unit_selection_box_draw_mode_rect_edges) {
+        }
+        else // if (gameconfig->unitselectionmode == _unit_selection_box_draw_mode_rect_edges)
+        {
             surface->drawBoxCorners(
                     iRect(min_abs.x, min_abs.y, max_abs.x, max_abs.y),
                     7, selectionBoxColor);
-
-        } else {
-            assert(false);
         }
 
     } // ** box_state == true
 
     // Draw the unit hitpoints.
-    if ( gameconfig->drawunitdamage || (box_state == true) ) {
+    if ( gameconfig->drawunitdamage || (box_state == true) )
+    {
         // Draw a color coded hit bar.
         Uint8 hitBarColor;
 
         float hitPointPercent = float(hit_points) / float(max_hit_points);
 
-        if (hitPointPercent < 0.3f) {
+        if (hitPointPercent < 0.3f)
+        {
             hitBarColor = Color::red;
-        } else if (hitPointPercent < 0.6f) {
+        }
+        else if (hitPointPercent < 0.6f)
+        {
             hitBarColor = Color::yellow;
-        } else {
+        }
+        else
+        {
             hitBarColor = Color::green;
         }
 
@@ -132,19 +139,20 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
         //surface->drawHLine(min_abs.x, max_abs.y-3, max_abs.x+1, box_color);
     }
 
-    if ( gameconfig->drawunitflags == true ) {
+    if ( gameconfig->drawunitflags == true )
+    {
         //unit_flag.blt( *surface, iXY( min_abs.x, min_abs.y - unit_flag.getPix().y ) );
         //surface->bltString(min_abs.x + 2, min_abs.y - 6, "Panther1", Color::white);
         unit_flag->blt( *surface, min_abs.x, min_abs.y-unit_flag->getHeight()-1 );
+        if ( playerName.length() > 0 )
+        {   // XXX dirty trick, I don't center the text, just "by hand"
+            surface->bltString(min_abs.x+unit_flag->getWidth() + 2,
+                           min_abs.y - unit_flag->getHeight() + 2 ,
+                           playerName.c_str(), Color::white);
+        }
     }
 
-    if ( playerName.length() > 0 )
-    {   // XXX dirty trick, I don't center the text, just "by hand"
-        surface->bltString(min_abs.x+unit_flag->getWidth() + 2,
-                       min_abs.y - unit_flag->getHeight() + 2 ,
-                       playerName.c_str(), Color::white);
-    }
-    
+
     /*
     if ( (flag_visibility_state == true) && (allie_state == true) )
      { 

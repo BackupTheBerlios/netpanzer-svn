@@ -196,7 +196,7 @@ void ConsoleInterface::update_overlap( Surface &surface )
             if ( line_list[ index ].hasFlag )
             {
                 flag = ResourceManager::getFlag(line_list[index].flag);
-                flagextrax = flag->getWidth();
+                flagextrax = flag->getWidth()+2;
                 flag->blt(surface, current_line.x, current_line.y);
             }
             else
