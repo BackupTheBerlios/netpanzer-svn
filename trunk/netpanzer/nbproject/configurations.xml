@@ -296,8 +296,6 @@
           <itemPath>src/NetPanzer/Classes/Sprite.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/SpriteSorter.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/SpriteSorter.hpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/TileEngine.cpp</itemPath>
-          <itemPath>src/NetPanzer/Classes/TileEngine.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/TileSet.cpp</itemPath>
           <itemPath>src/NetPanzer/Classes/TileSet.hpp</itemPath>
           <itemPath>src/NetPanzer/Classes/TipOfDay.cpp</itemPath>
@@ -442,8 +440,6 @@
           <itemPath>src/NetPanzer/Particles/WindParticle2D.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="Port" displayName="Port" projectFiles="true">
-          <itemPath>src/NetPanzer/Port/blitters.cpp</itemPath>
-          <itemPath>src/NetPanzer/Port/blitters.hpp</itemPath>
           <itemPath>src/NetPanzer/Port/MapData.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="PowerUps" displayName="PowerUps" projectFiles="true">
@@ -518,6 +514,8 @@
             <itemPath>src/NetPanzer/Views/Components/Component.hpp</itemPath>
             <itemPath>src/NetPanzer/Views/Components/Desktop.cpp</itemPath>
             <itemPath>src/NetPanzer/Views/Components/Desktop.hpp</itemPath>
+            <itemPath>src/NetPanzer/Views/Components/InfoBar.cpp</itemPath>
+            <itemPath>src/NetPanzer/Views/Components/InfoBar.hpp</itemPath>
             <itemPath>src/NetPanzer/Views/Components/InputEvent.hpp</itemPath>
             <itemPath>src/NetPanzer/Views/Components/Label.cpp</itemPath>
             <itemPath>src/NetPanzer/Views/Components/Label.hpp</itemPath>
@@ -539,8 +537,6 @@
             <itemPath>src/NetPanzer/Views/Game/CodeStatsView.hpp</itemPath>
             <itemPath>src/NetPanzer/Views/Game/DisconectedView.cpp</itemPath>
             <itemPath>src/NetPanzer/Views/Game/DisconectedView.hpp</itemPath>
-            <itemPath>src/NetPanzer/Views/Game/GameInfoView.cpp</itemPath>
-            <itemPath>src/NetPanzer/Views/Game/GameInfoView.hpp</itemPath>
             <itemPath>src/NetPanzer/Views/Game/GameTemplateView.cpp</itemPath>
             <itemPath>src/NetPanzer/Views/Game/GameTemplateView.hpp</itemPath>
             <itemPath>src/NetPanzer/Views/Game/GameView.cpp</itemPath>
@@ -1467,12 +1463,6 @@
       <item path="src/NetPanzer/Classes/SpriteSorter.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/TileEngine.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/TileEngine.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/TileSet.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -1872,12 +1862,6 @@
       <item path="src/NetPanzer/Port/MapData.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Port/blitters.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Port/blitters.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/PowerUps/BonusUnitPowerUp.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -2046,6 +2030,12 @@
       <item path="src/NetPanzer/Views/Components/Desktop.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="src/NetPanzer/Views/Components/InfoBar.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/InfoBar.hpp">
+        <itemTool>3</itemTool>
+      </item>
       <item path="src/NetPanzer/Views/Components/InputEvent.hpp">
         <itemTool>3</itemTool>
       </item>
@@ -2113,12 +2103,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Game/DisconectedView.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/Game/GameInfoView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/Game/GameInfoView.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Game/GameTemplateView.cpp">
@@ -3202,12 +3186,6 @@
       <item path="src/NetPanzer/Classes/SpriteSorter.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/TileEngine.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/TileEngine.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/TileSet.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -3607,12 +3585,6 @@
       <item path="src/NetPanzer/Port/MapData.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Port/blitters.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Port/blitters.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/PowerUps/BonusUnitPowerUp.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -3781,6 +3753,12 @@
       <item path="src/NetPanzer/Views/Components/Desktop.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="src/NetPanzer/Views/Components/InfoBar.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/InfoBar.hpp">
+        <itemTool>3</itemTool>
+      </item>
       <item path="src/NetPanzer/Views/Components/InputEvent.hpp">
         <itemTool>3</itemTool>
       </item>
@@ -3848,12 +3826,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Game/DisconectedView.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/Game/GameInfoView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/Game/GameInfoView.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Game/GameTemplateView.cpp">
@@ -4937,12 +4909,6 @@
       <item path="src/NetPanzer/Classes/SpriteSorter.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/TileEngine.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/TileEngine.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/TileSet.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -5342,12 +5308,6 @@
       <item path="src/NetPanzer/Port/MapData.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Port/blitters.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Port/blitters.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/PowerUps/BonusUnitPowerUp.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -5516,6 +5476,12 @@
       <item path="src/NetPanzer/Views/Components/Desktop.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="src/NetPanzer/Views/Components/InfoBar.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/InfoBar.hpp">
+        <itemTool>3</itemTool>
+      </item>
       <item path="src/NetPanzer/Views/Components/InputEvent.hpp">
         <itemTool>3</itemTool>
       </item>
@@ -5583,12 +5549,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Game/DisconectedView.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/Game/GameInfoView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/Game/GameInfoView.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Game/GameTemplateView.cpp">
@@ -6672,12 +6632,6 @@
       <item path="src/NetPanzer/Classes/SpriteSorter.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/TileEngine.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/TileEngine.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/TileSet.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -7077,12 +7031,6 @@
       <item path="src/NetPanzer/Port/MapData.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Port/blitters.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Port/blitters.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/PowerUps/BonusUnitPowerUp.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -7251,6 +7199,12 @@
       <item path="src/NetPanzer/Views/Components/Desktop.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="src/NetPanzer/Views/Components/InfoBar.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/InfoBar.hpp">
+        <itemTool>3</itemTool>
+      </item>
       <item path="src/NetPanzer/Views/Components/InputEvent.hpp">
         <itemTool>3</itemTool>
       </item>
@@ -7318,12 +7272,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Game/DisconectedView.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/Game/GameInfoView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/Game/GameInfoView.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Game/GameTemplateView.cpp">

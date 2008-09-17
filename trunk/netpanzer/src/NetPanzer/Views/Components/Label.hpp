@@ -41,10 +41,13 @@ public:
     
     virtual void render()
     {
-        
+        // nothing
     }
     
-    void actionPerformed(const mMouseEvent &me) {}
+    void actionPerformed(const mMouseEvent &me)
+    {
+        // nothing
+    }
     
 private:
     string text;

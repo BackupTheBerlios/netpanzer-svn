@@ -29,6 +29,11 @@ protected:
 public:
     WorldViewInterface();
 
+    static inline ViewCamera * getMainCamera()
+    {
+        return main_camera;
+    }
+    
     static inline void scroll_right(long scroll_increment)
     {
         main_camera->scrollPlusX(scroll_increment);

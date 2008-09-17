@@ -171,7 +171,7 @@ protected:
     void draw(Surface& drawon);
     void showStatus(const char *string);
     void drawStatus(Surface &dest);
-    void checkResolution(iXY oldResolution, iXY newResolution);
+    virtual void checkResolution(iXY oldResolution, iXY newResolution);
     void checkArea(iXY viewarea);
     void toggleView();
     iXY  getScreenToClientPos(const iXY &pos);

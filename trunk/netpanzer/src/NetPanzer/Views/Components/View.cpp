@@ -1196,11 +1196,11 @@ void View::drawPressedButton(Surface &clientArea)
 //---------------------------------------------------------------------------
 void View::checkResolution(iXY oldResolution, iXY newResolution)
 {
-    iXY size = getSize();
-    
-    min.x += (newResolution.x - oldResolution.x)/2;
-    min.y += (newResolution.y - oldResolution.y)/2;
-    max = min + size;
+        iXY size = getSize();
+
+        min.x += (newResolution.x - oldResolution.x)/2;
+        min.y += (newResolution.y - oldResolution.y)/2;
+        max = min + size;
 } // end checkResolution
 
 void View::checkArea(iXY viewarea)

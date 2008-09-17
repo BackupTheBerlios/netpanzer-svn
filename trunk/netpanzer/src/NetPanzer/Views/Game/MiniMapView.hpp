@@ -61,7 +61,6 @@ public:
     virtual void lMouseDown(const iXY &pos);
     virtual int  lMouseUp(const iXY &downPos, const iXY &upPos);
     virtual void lMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
-    virtual void rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
     virtual void rMouseDown(const iXY &pos);
     virtual void mouseMove(const iXY &prevPos, const iXY &newPos);
 
@@ -74,6 +73,9 @@ public:
     static int decreaseSize;
     static int increaseSize;
 
+protected:
+    void checkResolution(iXY oldResolution, iXY newResolution);
+    
 private:
     // XXX added this...
     void addButtons();

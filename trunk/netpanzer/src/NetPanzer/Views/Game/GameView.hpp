@@ -34,11 +34,13 @@ public:
 protected:
     virtual void processEvents();
     void doActivate();
+    void checkResolution(iXY oldResolution, iXY newResolution);
 
 private:
     virtual void doDraw(Surface &windowArea, Surface &clientArea);
     //virtual void mouseEnter(const iXY &pos);
     virtual void mouseMove(const iXY & prevPos, const iXY &newPos);
+    void drawMap(Surface &window);
 }; // end GameView
 
 extern GameView gameView;

@@ -338,9 +338,10 @@ FlagID PlayerState::getFlag() const
     return flag;
 }
 
+// this "getTotal" is used to calculate the frags.
 short PlayerState::getTotal() const
 {
-    return kill_points - loss_points;
+    return kills - (losses/2);
 }
 
 NetworkPlayerState PlayerState::getNetworkPlayerState() const

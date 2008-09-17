@@ -44,13 +44,14 @@ MiniMapView::MiniMapView() : GameTemplateView()
     setAllowResize(false);
     setDisplayStatusBar(false);
     setVisible(false);
+    setAllowMove(false);
 
     setBordered(false);
 
     add(CLOSE_VIEW_BUTTON);
     add(MINMAX_VIEW_BUTTON);
 
-    resize(100, 100);
+    resize(140, 140);
 } // end MiniMapView::MiniMapView
 
 // init
@@ -61,20 +62,23 @@ void MiniMapView::init()
     miniMap = MiniMapInterface::getMiniMap();
 
     //iXY size = miniMap->getPix();
-    iXY size(((const iXY &)gameconfig->minimapsize)+iXY(2,2));
-    resize(size);
+    // don't resize minimap, set to static
+    //iXY size(((const iXY &)gameconfig->minimapsize)+iXY(2,2));
+    //resize(size);
 
-    if(gameconfig->minimapposition.isDefaultValue()) {
-        gameconfig->minimapposition = iXY(0, screen->getHeight() - 196);
-    }
-    moveTo(gameconfig->minimapposition);
-    checkArea(iXY(screen->getWidth(),screen->getHeight()));
+    //if(gameconfig->minimapposition.isDefaultValue()) {
+    //    gameconfig->minimapposition = iXY(0, screen->getHeight() - 196);
+    //}
+    
+    //moveTo(gameconfig->minimapposition);
+    
+    //checkArea(iXY(screen->getWidth(),screen->getHeight()));
 
     //int xOffset = size.x;
     //int yOffset = 0;
 
     MiniMapInterface::setMapScale(getSize() - iXY(2,2));
-    checkArea(iXY(screen->getWidth(),screen->getHeight()));
+    //checkArea(iXY(screen->getWidth(),screen->getHeight()));
 
     minMapSize =  64;
     maxMapSize = 480;
@@ -90,77 +94,17 @@ void MiniMapView::init()
     selectionAnchorCurPos.zero();
 } // end MiniMapView::init
 
+void
+MiniMapView::checkResolution(iXY oldResolution, iXY newResolution)
+{
+    moveTo(iXY(0,newResolution.y-140));
+}
+
 // doDraw
 //---------------------------------------------------------------------------
 void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    assert(this != 0);
-    assert(viewArea.getDoesExist());
-    assert(clientArea.getDoesExist());
-
-    if (decreaseSize != 0) {
-        doDecreaseSize(decreaseSize);
-        decreaseSize = 0;
-    }
-    if (increaseSize != 0) {
-        doIncreaseSize(increaseSize);
-        increaseSize = 0;
-    }
-
-    float dt = TimerInterface::getTimeSlice();
-
-    Surface *miniMap;
-    miniMap = MiniMapInterface::getMiniMap();
-
-    if (needScale) {
-        scaleGroupWait += dt;
-
-        if (scaleGroupWait > 1.0f) {
-            miniMapSurface.create(getSizeX(), getSizeY(), 1);
-
-            //miniMapSurface.scale(getViewRect().getSize());
-            iRect r(iXY(0, 0), getSize());
-
-            miniMapSurface.bltScale(*miniMap, r);
-
-            needScale      = false;
-            scaleGroupWait = 0.0f;
-        }
-    }
-
-    iRect r(iXY(0,0), getSize());
-
-    int mapDrawType=gameconfig->minimapdrawtype;
-    if (needScale) {
-        // Draw the slow on the fly scaled map.
-        if (    mapDrawType == MAP_SOLID
-             || mapDrawType == MAP_2080
-             || mapDrawType == MAP_4060 
-             || mapDrawType == MAP_BLEND_GREEN ) {
-            clientArea.bltScale(*miniMap, r);
-        } else if (mapDrawType == MAP_BLEND_GRAY) {
-            clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::gray256.getColorArray());
-        } else if (mapDrawType == MAP_BLEND_DARK_GRAY) {
-            clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::darkGray256.getColorArray());
-        } else if (mapDrawType == MAP_BLACK) {
-            clientArea.fill(Color::black);
-        } else if (mapDrawType == MAP_TRANSPARENT) {}
-    }
-    else {
-        // Draw the fast not on the fly scaled map.
-        if (   mapDrawType == MAP_SOLID 
-             || mapDrawType == MAP_2080
-             || mapDrawType == MAP_4060
-             || mapDrawType == MAP_BLEND_GREEN ) {
-            miniMapSurface.blt(clientArea, 0, 0);
-        } else if (mapDrawType == MAP_BLEND_GRAY) {
-            clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::gray256.getColorArray());
-        } else if (mapDrawType == MAP_BLEND_DARK_GRAY) {
-            clientArea.bltLookup(iRect(iXY(0, 0), getSize()), Palette::darkGray256.getColorArray());
-        } else if (mapDrawType == MAP_BLACK) {
-            clientArea.fill(Color::black);
-        } else if (mapDrawType == MAP_TRANSPARENT) {}
-    }
+    miniMapSurface.blt(clientArea, 0, 0);
 
     // Draw a hairline border.
     //viewArea.drawRect(Color::white);
@@ -255,43 +199,6 @@ void MiniMapView::setMapDrawType(MAP_DRAW_TYPES type)
 {
     gameconfig->minimapdrawtype=type;
 }
-
-//--------------------------------------------------------------------------
-void MiniMapView::rMouseDrag(const iXY&, const iXY &prevPos, const iXY &newPos)
-{
-    // Let the map go up to the min screen dimension.
-    //maxMapSize = std::min(SCREEN_XPIX, SCREEN_YPIX);
-    maxMapSize = std::min(640, 480);
-
-    iXY map_pos=min + newPos - prevPos;
-    moveTo(map_pos);
-    gameconfig->minimapposition=map_pos;
-    checkArea(iXY(screen->getWidth(),screen->getHeight()));
-
-    // Check for map blending mode change.
-    if (KeyboardInterface::getKeyPressed(SDLK_1)) {
-        setMapDrawType(MAP_SOLID);
-    } else if (KeyboardInterface::getKeyPressed(SDLK_2)) {
-        setMapDrawType(MAP_2080);
-    } else if (KeyboardInterface::getKeyPressed(SDLK_3)) {
-        setMapDrawType(MAP_4060);
-    } else if (KeyboardInterface::getKeyPressed(SDLK_4)) {
-        setMapDrawType(MAP_BLEND_GRAY);
-    } else if (KeyboardInterface::getKeyPressed(SDLK_5)) {
-        setMapDrawType(MAP_BLEND_DARK_GRAY);
-    } else if (KeyboardInterface::getKeyPressed(SDLK_6)) {
-        setMapDrawType(MAP_BLACK);
-    } else if (KeyboardInterface::getKeyPressed(SDLK_7)) {
-        setMapDrawType(MAP_TRANSPARENT);
-    }
-
-    if (KeyboardInterface::getKeyState(SDLK_KP_PLUS)) {
-        increaseSize = -1;
-    } else if (KeyboardInterface::getKeyState(SDLK_KP_MINUS)) {
-        decreaseSize = -1;
-    }
-
-} // end MiniMapView::rMouseDrag
 
 // doIncreaseSize
 //--------------------------------------------------------------------------

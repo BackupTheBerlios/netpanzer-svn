@@ -64,7 +64,6 @@ public:
         Desktop::setVisibilityAllWindows(false);
         GameManager::loadPalette("netp");
         GameManager::setNetPanzerGameOptions();
-        Desktop::setVisibility("GameInfoView", true);
         Desktop::setVisibility("MiniMapView", true);
         Desktop::setVisibility("GameView", true);
     }

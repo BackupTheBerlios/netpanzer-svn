@@ -51,9 +51,12 @@ void GameTemplateView::rMouseDrag(const iXY&, const iXY &prevPos, const iXY &new
         gameconfig->viewdrawbackgroundmode = VIEW_BACKGROUND_TRANSPARENT;
     }
 
-    moveTo(min + newPos - prevPos);
-    checkArea(iXY(screen->getWidth(),screen->getHeight()));
-    notifyMoveTo();
+    if (getAllowMove())
+    {
+        moveTo(min + newPos - prevPos);
+        checkArea(iXY(screen->getWidth(),screen->getHeight()));
+        notifyMoveTo();
+    }
 }
 
 // doActivate

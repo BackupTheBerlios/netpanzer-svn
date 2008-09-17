@@ -43,7 +43,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/WorldViewInterface.hpp"
 
 #include "Classes/ScreenSurface.hpp"
-#include "Classes/TileEngine.hpp"
 #include "Units/UnitBlackBoard.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
 #include "Classes/SpriteSorter.hpp"
@@ -92,7 +91,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/AreYouSureResignView.hpp"
 #include "Views/Game/AreYouSureExitView.hpp"
 #include "Views/Game/GameView.hpp"
-#include "Views/Game/GameInfoView.hpp"
 #include "Views/Game/MiniMapView.hpp"
 #include "Views/Game/DisconectedView.hpp"
 #include "Views/Game/LoadingView.hpp"
@@ -184,7 +182,6 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new CodeStatsView());
     Desktop::add(new LibView());
     Desktop::add(new HelpScrollView());
-    Desktop::add(new GameInfoView());
 
     Desktop::add(new LoadingView());
 
@@ -239,10 +236,6 @@ void PlayerGameManager::graphicsLoop()
     screen->lock();
 
     Desktop::draw(*screen);
-
-    if (Desktop::getVisible("GameView")) {
-        ConsoleInterface::update(*screen);
-    }
 
     MouseInterface::draw(*screen);
 
@@ -403,7 +396,6 @@ void PlayerGameManager::hostMultiPlayerGame()
 
     // Need to open at beginning of game until we are saving status of things.
     // when last played.
-    Desktop::setVisibility("GameInfoView", true);
     Desktop::setVisibility("MiniMapView", true);
     Desktop::setVisibility("GameView", true);
     Desktop::setActiveView("GameView");
