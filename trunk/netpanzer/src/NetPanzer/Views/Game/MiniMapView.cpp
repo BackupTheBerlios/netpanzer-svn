@@ -44,7 +44,7 @@ MiniMapView::MiniMapView() : GameTemplateView()
     setAllowResize(false);
     setDisplayStatusBar(false);
     setVisible(false);
-    setAllowMove(false);
+    setAllowMove(true);
 
     setBordered(false);
 

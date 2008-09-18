@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
 #include "Util/Log.hpp"
+#include "Util/NTimer.hpp"
 
 unsigned char MouseInterface::cursor_x_size;
 unsigned char MouseInterface::cursor_y_size;
@@ -34,6 +35,10 @@ unsigned char MouseInterface::button_mask;
 MouseEventQueue MouseInterface::event_queue;
 MouseInterface::cursors_t MouseInterface::cursors;
 Surface * MouseInterface::cursor;
+
+NTimer MouseInterface::clicktimer;
+int MouseInterface::clickcount;
+int MouseInterface::releasecount;
 
 void MouseInterface::initialize()
 {
@@ -57,6 +62,9 @@ void MouseInterface::initialize()
     filesystem::freeList(cursorfiles);
 
     setCursor("default.bmp");
+    clicktimer.setTimeOut(150);
+    clickcount = 0;
+    releasecount = 0;
 }
 
 void MouseInterface::shutdown()
@@ -70,6 +78,13 @@ void MouseInterface::shutdown()
 void
 MouseInterface::onMouseButtonDown(SDL_MouseButtonEvent *e)
 {
+    if ( ! clickcount )
+    {
+        clicktimer.reset();
+    }
+    
+    clickcount++;
+    
     MouseEvent event;
     button_mask |= SDL_BUTTON(e->button);
     event.button = e->button;
@@ -82,6 +97,11 @@ MouseInterface::onMouseButtonDown(SDL_MouseButtonEvent *e)
 void
 MouseInterface::onMouseButtonUp(SDL_MouseButtonEvent *e)
 {
+    if ( clickcount )
+    {
+        releasecount++;
+    }
+    
     MouseEvent event;
     button_mask &= ~(SDL_BUTTON(e->button));
     event.button = e->button;
@@ -99,5 +119,15 @@ void MouseInterface::setCursor(const char* cursorname)
         cursor = 0;
     } else {
         cursor = i->second;
+    }
+}
+void
+MouseInterface::manageClickTimer()
+{
+    if ( clickcount && clicktimer.isTimeOut() )
+    {
+        LOGGER.warning("Mouse click count and release count = %d, %d", clickcount, releasecount);
+        clickcount=0;
+        releasecount=0;
     }
 }

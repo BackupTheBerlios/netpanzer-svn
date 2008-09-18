@@ -225,6 +225,7 @@ void PlayerGameManager::initializeWindowSubSystem()
 void PlayerGameManager::inputLoop()
 {
     processSystemKeys();
+    MouseInterface::manageClickTimer();
     Desktop::manage(MouseInterface::getMouseX(),
                MouseInterface::getMouseY(), MouseInterface::getButtonMask());
 

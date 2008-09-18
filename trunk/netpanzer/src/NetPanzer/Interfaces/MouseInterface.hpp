@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "SDL.h"
 #include "2D/Surface.hpp"
+#include "Util/NTimer.hpp"
 
 class MouseEvent
 {
@@ -45,6 +46,9 @@ private:
     static Surface * cursor;
     static unsigned char cursor_x_size;
     static unsigned char cursor_y_size;
+    static NTimer clicktimer;
+    static int clickcount;
+    static int releasecount;
 
     typedef std::map<std::string,Surface*> cursors_t;
     static cursors_t cursors;
@@ -99,6 +103,7 @@ public:
 
     static void onMouseButtonDown(SDL_MouseButtonEvent *e);
     static void onMouseButtonUp(SDL_MouseButtonEvent *e);
+    static void manageClickTimer();
 
     static void setCursor(const char* cursorname);
     static inline void onMouseMoved(SDL_MouseMotionEvent *e)
