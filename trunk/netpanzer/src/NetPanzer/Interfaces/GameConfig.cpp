@@ -62,7 +62,7 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       logging("logging", false),
       publicServer("public", true),
       
-      screenresolution("resolution", 2, 0, 2),
+      screenresolution("resolution", 2, 0, 3),
       fullscreen("fullscreen", true),
       hardwareSurface("hardwareSurface", true),
       hardwareDoubleBuffer("hardwareDoubleBuffer", true),

@@ -61,6 +61,7 @@ void VisualsView::initButtons()
     choiceResolution->addItem("640x480");
     choiceResolution->addItem("800x600");
     choiceResolution->addItem("1024x768");
+    choiceResolution->addItem("1280x1024");
     choiceResolution->setLocation(x, y);
     choiceResolution->select(gameconfig->screenresolution);
     choiceResolution->setMinWidth(minWidth);

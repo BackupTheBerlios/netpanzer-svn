@@ -85,8 +85,14 @@ void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
 bool SDLVideo::isDisplayModeAvailable(int width, int height, int bpp,
                                      Uint32 flags)
 {
-    flags |= SDL_HWPALETTE | SDL_ANYFORMAT;
+    //flags |= SDL_HWPALETTE | SDL_ANYFORMAT;
+    flags |= SDL_ANYFORMAT;
+    int res = SDL_VideoModeOK(width, height, bpp, flags);
 
+    LOGGER.warning("Mode %dx%dx%d %s is %s", width, height, bpp,
+                   (flags&SDL_FULLSCREEN)?"full screen":"windowed",
+                   res?"available":"NOT available");
+    
     return SDL_VideoModeOK(width, height, bpp, flags);
 }
 

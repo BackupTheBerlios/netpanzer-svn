@@ -72,6 +72,7 @@ enum { _game_config_respawn_type_round_robin,
 enum { _game_config_standard_res_640x480,
        _game_config_standard_res_800x600,
        _game_config_standard_res_1024x768,
+       _game_config_standard_res_1280x1024,
        _game_config_standard_res_max
      };
 
