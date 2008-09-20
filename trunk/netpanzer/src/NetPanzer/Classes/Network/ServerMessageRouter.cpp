@@ -52,19 +52,10 @@ void ServerMessageRouter::processTerminalPacket(const NetPacket* packet)
             UnitInterface::processNetPacket(packet);
             break;
 
-        case _net_message_id_term_unit_gen: {
-            const TerminalOutpostUnitGenRequest* terminal_command
-                = (const TerminalOutpostUnitGenRequest*) message;
-            ObjectiveInterface::sendMessage( &(terminal_command->unit_gen_request) );
+        case _net_message_id_term_unit_gen:
+        case _net_message_id_term_output_loc:
+            ObjectiveInterface::processTerminalNetPacket( packet );
             break;
-        }
-
-        case _net_message_id_term_output_loc: {
-            const TerminalOutpostOutputLocRequest* terminal_command
-                = (const TerminalOutpostOutputLocRequest*) message;
-            ObjectiveInterface::sendMessage( &(terminal_command->output_loc_request));
-            break;
-        }
         default:
             LOGGER.warning("unnown Terminal Message (id %d, player %u)",
                     message->message_id, packet->fromPlayer);

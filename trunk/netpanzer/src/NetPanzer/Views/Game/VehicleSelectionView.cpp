@@ -301,6 +301,12 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 //--------------------------------------------------------------------------
 void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 {
+    if ( ObjectiveInterface::getObjectiveState(CURRENT_SELECTED_OUTPOST_ID)->occupying_player != PlayerInterface::getLocalPlayer() )
+    {
+        Desktop::setVisibilityNoDoAnything("VehicleSelectionView", false);
+        changeMade = false;
+    }
+    
     char strBuf[256];
 
     const int color = Color::white;
