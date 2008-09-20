@@ -76,16 +76,27 @@ bool SelectionList::selectBounded(iRect bounds, bool addunits)
 {
     Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
 
-    if(!addunits) {
+    std::vector<UnitID> tempunits;
+    UnitInterface::queryUnitsAt(tempunits, bounds, player_id, _search_player);
+    
+    if ( ! tempunits.size() )
+        return false;
+    
+    if(!addunits)
+    {
         deselect();
         unit_list.clear();
+        unit_list = tempunits;
     }
-
-    UnitInterface::queryUnitsAt(unit_list, bounds, player_id, _search_player);
-
+    else
+    {
+        // have to verify that we don't put the already selected units again
+        unit_list.insert(unit_list.end(), tempunits.begin(), tempunits.end());
+        std::sort(unit_list.begin(), unit_list.end());
+        std::unique(unit_list.begin(), unit_list.end());
+    }
+    
     select();
-    if (unit_list.size() == 0)
-        return false;
     
     resetUnitCycling();
     return true;
