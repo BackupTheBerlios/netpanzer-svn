@@ -27,7 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 WorldMap MapInterface::main_map;
 SpawnList MapInterface::spawn_list;
 WadMapTable MapInterface::wad_mapping_table;
-Surface MapInterface::mini_map_surface;
 char MapInterface::map_path[256];
 MapInterface::MapListenerList MapInterface::listenerList;
 
@@ -89,8 +88,6 @@ void MapInterface::finishMapLoad( void )
         i++;
     }
     
-    buildMiniMapSurface();
-
     strcpy( path, map_path );
 
     strcat( path, ".spn" );
@@ -119,9 +116,7 @@ void MapInterface::LoadMap( const char *file_path, bool load_tiles )
    }
  
   wad_mapping_table.deallocate();
-  
-  buildMiniMapSurface();
- 
+   
   strcpy( path, file_path );
   strcat( path, ".spn" );
   spawn_list.loadSpawnFile( path );  
@@ -160,26 +155,6 @@ void MapInterface::generateMappingTable()
 
     wad_mapping_table.used_tile_count = mapping_index;
 
-}
-
-void MapInterface::buildMiniMapSurface()
-{
-    unsigned long map_x_size, x_index;
-    unsigned long map_y_size, y_index;
-    WorldMap::MapElementType map_value;
-    unsigned char  avg_color;
-
-    map_x_size = main_map.getWidth();
-    map_y_size = main_map.getHeight();
-    mini_map_surface.create( map_x_size, map_y_size, 1 );
-
-    for( y_index = 0; y_index < map_y_size; y_index++ ) {
-        for ( x_index = 0; x_index < map_x_size; x_index++ ) {
-            map_value = main_map.getValue( x_index, y_index );
-            avg_color = tile_set.getAverageTileColor( map_value );
-            mini_map_surface.putPixel( x_index, y_index, (PIX) avg_color );
-        } // ** for x_index
-    } // ** for y_index
 }
 
 unsigned char MapInterface::getMovementValue( iXY map_loc )

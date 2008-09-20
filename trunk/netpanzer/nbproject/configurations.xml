@@ -347,8 +347,6 @@
           <itemPath>src/NetPanzer/Interfaces/MapInterface.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/MapsManager.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/MapsManager.hpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/MiniMapInterface.cpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/MiniMapInterface.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/MouseInterface.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/MouseInterface.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/PathScheduler.cpp</itemPath>
@@ -1604,12 +1602,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/MapsManager.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/MiniMapInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/MiniMapInterface.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/MouseInterface.cpp">
@@ -3335,12 +3327,6 @@
       <item path="src/NetPanzer/Interfaces/MapsManager.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Interfaces/MiniMapInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/MiniMapInterface.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Interfaces/MouseInterface.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -5064,12 +5050,6 @@
       <item path="src/NetPanzer/Interfaces/MapsManager.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Interfaces/MiniMapInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/MiniMapInterface.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Interfaces/MouseInterface.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -6791,12 +6771,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/MapsManager.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/MiniMapInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/MiniMapInterface.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Interfaces/MouseInterface.cpp">

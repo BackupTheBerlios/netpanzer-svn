@@ -93,7 +93,7 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       scrollrate("scrollrate", 1000, 100, 10000),
       minimapposition("minimapposition", iXY(0,0)),
       minimapsize("minimapsize", iXY(194,194)),
-      minimapdrawtype("minimapdrawtype", MAP_SOLID),
+      minimapdrawtype("minimapdrawtype", 0),
       gameinfoposition("gameinfoposition", iXY(0,0)),
       toolbarposition("toolbarposition", iXY(0,0)),
       rankposition("rankposition", iXY(0,0)),

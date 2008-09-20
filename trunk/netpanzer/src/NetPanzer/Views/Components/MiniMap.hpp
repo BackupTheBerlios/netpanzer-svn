@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Views/Components/Component.hpp"
 #include "Interfaces/MapInterface.hpp"
+#include "Util/NTimer.hpp"
 
 class MiniMap : public Component, public MapEventListener
 {
@@ -51,6 +52,8 @@ private:
     void drawObjectives(Surface &dest);
     void drawUnits(Surface &dest);
     void drawUnit(Surface &dest, const iXY loc, PIX color, bool forceLarge);
+    void drawWorldAndMouseBox(Surface &dest);
+    bool mouseinside;
     bool moving;
     iXY  mousepos;
     float xratio;

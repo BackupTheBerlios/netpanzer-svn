@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/AI/PathingState.hpp"
 #include "Interfaces/PathScheduler.hpp"
-#include "Interfaces/MiniMapInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Classes/Network/NetworkInterface.hpp"
@@ -77,11 +76,12 @@ static void buttonDebug( void )
 
     if ( previous_flag == false ) {
         PathScheduler::setLongPatherDebug( true );
-        MiniMapInterface::setPathingDebugMode( true );
+        // XXX if needed change for new MiniMap.hpp
+        //MiniMapInterface::setPathingDebugMode( true );
         previous_flag = true;
     } else {
         PathScheduler::setLongPatherDebug( false );
-        MiniMapInterface::setPathingDebugMode( false );
+        //MiniMapInterface::setPathingDebugMode( false );
         previous_flag = false;
     }
 }

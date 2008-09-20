@@ -25,8 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/SpawnList.hpp"
 #include "Classes/WadMapTable.hpp"
 
-#include "2D/Surface.hpp"
-
 class MapEventListener
 {
 public:
@@ -48,14 +46,12 @@ protected:
     static WorldMap main_map;
     static SpawnList spawn_list;
     static WadMapTable wad_mapping_table;
-    static Surface mini_map_surface;
     static char map_path[256];
     static const int TILE_WIDTH = 32;
     static const int TILE_HEIGHT = 32;
 
 protected:
     static void generateMappingTable();
-    static void buildMiniMapSurface();
 
 public:
     static void addMapEventListener(MapEventListener *lis)
@@ -221,11 +217,6 @@ public:
     static bool isMapLoaded()
     {
         return( main_map.isMapLoaded() );
-    }
-
-    static Surface * getMiniMapSurface()
-    {
-        return ( &mini_map_surface );
     }
 
     static unsigned char getMovementValue( iXY map_loc );

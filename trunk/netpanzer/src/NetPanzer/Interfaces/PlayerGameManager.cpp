@@ -30,7 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/MapsManager.hpp"
-#include "Interfaces/MiniMapInterface.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/PathScheduler.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
