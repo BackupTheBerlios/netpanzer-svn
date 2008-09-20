@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/WorldInputCmdProcessor.hpp"
 #include "Interfaces/GameConfig.hpp"
 
+#include "Views/Components/MiniMap.hpp"
+
 MiniMapView miniMapView;
 
 
@@ -51,7 +53,8 @@ MiniMapView::MiniMapView() : GameTemplateView()
     add(CLOSE_VIEW_BUTTON);
     add(MINMAX_VIEW_BUTTON);
 
-    resize(140, 140);
+    resize(160, 160);
+    add(new MiniMap(1,1,158,158));
 } // end MiniMapView::MiniMapView
 
 // init
@@ -60,22 +63,6 @@ void MiniMapView::init()
 {
     Surface *miniMap;
     miniMap = MiniMapInterface::getMiniMap();
-
-    //iXY size = miniMap->getPix();
-    // don't resize minimap, set to static
-    //iXY size(((const iXY &)gameconfig->minimapsize)+iXY(2,2));
-    //resize(size);
-
-    //if(gameconfig->minimapposition.isDefaultValue()) {
-    //    gameconfig->minimapposition = iXY(0, screen->getHeight() - 196);
-    //}
-    
-    //moveTo(gameconfig->minimapposition);
-    
-    //checkArea(iXY(screen->getWidth(),screen->getHeight()));
-
-    //int xOffset = size.x;
-    //int yOffset = 0;
 
     MiniMapInterface::setMapScale(getSize() - iXY(2,2));
     //checkArea(iXY(screen->getWidth(),screen->getHeight()));
@@ -97,14 +84,16 @@ void MiniMapView::init()
 void
 MiniMapView::checkResolution(iXY oldResolution, iXY newResolution)
 {
-    moveTo(iXY(0,newResolution.y-140));
+    moveTo(iXY(0,newResolution.y-300));
 }
 
 // doDraw
 //---------------------------------------------------------------------------
 void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    miniMapSurface.blt(clientArea, 0, 0);
+    //miniMapSurface.blt(clientArea, 0, 0);
+    // draw the components first
+    GameTemplateView::doDraw(viewArea, clientArea);
 
     // Draw a hairline border.
     //viewArea.drawRect(Color::white);
@@ -130,9 +119,6 @@ void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
             drawMouseBox(clientArea);
         }
     }
-
-    GameTemplateView::doDraw(viewArea, clientArea);
-
 } // end doDraw
 
 // setViewWindow

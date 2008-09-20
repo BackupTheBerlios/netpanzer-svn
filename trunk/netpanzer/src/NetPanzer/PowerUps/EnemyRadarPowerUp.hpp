@@ -26,7 +26,8 @@ protected:
     virtual void onHit( UnitID unit_id );
 
 public:
-
+    static bool isRadarActive();
+    
     EnemyRadarPowerUp(iXY map_loc, int type);
     virtual ~EnemyRadarPowerUp()
     { }

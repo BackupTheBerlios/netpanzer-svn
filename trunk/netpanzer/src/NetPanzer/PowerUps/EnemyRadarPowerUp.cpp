@@ -32,6 +32,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/PowerUpNetMessage.hpp"
 
 #include "System/Sound.hpp"
+#include "Util/NTimer.hpp"
+
+static NTimer radarTimer(180000);
+static bool radarActive = false;
+
+void
+ActivateRadar()
+{
+    radarActive = true;
+    radarTimer.reset();
+    ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT AN ENEMY RADAR POWERUP" );
+}
+
+bool
+EnemyRadarPowerUp::isRadarActive()
+{
+    if ( radarActive && radarTimer.isTimeOut() )
+    {
+        radarActive = false;
+    }
+    return radarActive;
+}
 
 EnemyRadarPowerUp::EnemyRadarPowerUp(iXY map_loc, int type)
         : PowerUp( map_loc, type )
@@ -47,8 +69,7 @@ EnemyRadarPowerUp::onHit(UnitID unit_id)
 
     if(unit->player == PlayerInterface::getLocalPlayer())
     {
-        MiniMapInterface::setShowEnemyRadar( 180 );
-        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT AN ENEMY RADAR POWERUP" );
+        ActivateRadar();
     }
 
     PowerUpHitMesg hit_mesg;
@@ -65,8 +86,7 @@ EnemyRadarPowerUp::onHitMessage( PowerUpHitMesg *message  )
 
     if( PlayerInterface::getLocalPlayerIndex() == message->getPlayerID() )
     {
-        MiniMapInterface::setShowEnemyRadar( 180 );
-        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT AN ENEMY RADAR POWERUP" );
+        ActivateRadar();
     }
 
     life_cycle_state = _power_up_lifecycle_state_inactive;

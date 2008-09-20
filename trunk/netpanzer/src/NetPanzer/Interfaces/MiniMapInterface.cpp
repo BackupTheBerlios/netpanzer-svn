@@ -233,8 +233,8 @@ void MiniMapInterface::annotateMiniMap( Surface &map_surface )
             }
         }
 
-        annotateObjectives( map_surface );
-        annotateUnits( map_surface );
+        //annotateObjectives( map_surface );
+        //annotateUnits( map_surface );
     }
 }
 

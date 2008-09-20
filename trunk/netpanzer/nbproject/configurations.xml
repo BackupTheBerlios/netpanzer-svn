@@ -519,6 +519,8 @@
             <itemPath>src/NetPanzer/Views/Components/InputEvent.hpp</itemPath>
             <itemPath>src/NetPanzer/Views/Components/Label.cpp</itemPath>
             <itemPath>src/NetPanzer/Views/Components/Label.hpp</itemPath>
+            <itemPath>src/NetPanzer/Views/Components/MiniMap.cpp</itemPath>
+            <itemPath>src/NetPanzer/Views/Components/MiniMap.hpp</itemPath>
             <itemPath>src/NetPanzer/Views/Components/MouseEvent.hpp</itemPath>
             <itemPath>src/NetPanzer/Views/Components/ScrollBar.cpp</itemPath>
             <itemPath>src/NetPanzer/Views/Components/ScrollBar.hpp</itemPath>
@@ -2043,6 +2045,12 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Components/Label.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/MiniMap.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/MiniMap.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Components/MouseEvent.hpp">
@@ -3768,6 +3776,12 @@
       <item path="src/NetPanzer/Views/Components/Label.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="src/NetPanzer/Views/Components/MiniMap.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/MiniMap.hpp">
+        <itemTool>3</itemTool>
+      </item>
       <item path="src/NetPanzer/Views/Components/MouseEvent.hpp">
         <itemTool>3</itemTool>
       </item>
@@ -5491,6 +5505,12 @@
       <item path="src/NetPanzer/Views/Components/Label.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="src/NetPanzer/Views/Components/MiniMap.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/MiniMap.hpp">
+        <itemTool>3</itemTool>
+      </item>
       <item path="src/NetPanzer/Views/Components/MouseEvent.hpp">
         <itemTool>3</itemTool>
       </item>
@@ -7212,6 +7232,12 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Components/Label.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/MiniMap.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Views/Components/MiniMap.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Components/MouseEvent.hpp">

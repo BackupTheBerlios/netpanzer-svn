@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _MAPINTERFACE_HPP
 #define _MAPINTERFACE_HPP
 
+#include <list>
+
 #include "TileInterface.hpp"
 #include "Classes/WorldMap.hpp"
 #include "Classes/SpawnList.hpp"
@@ -25,17 +27,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "2D/Surface.hpp"
 
-class MapLoadCallback
+class MapEventListener
 {
 public:
-	virtual ~MapLoadCallback()
-	{ }
-
-    virtual void MapLoadProgress(float percent);
+    virtual ~MapEventListener() {};
+protected:
+    virtual void onMapLoadedEvent() = 0;
+private:
+    friend class MapInterface;
 };
+
 
 class MapInterface : protected TileInterface
 {
+private:
+    typedef std::list<MapEventListener *> MapListenerList;
+    static MapListenerList listenerList;
+    
 protected:
     static WorldMap main_map;
     static SpawnList spawn_list;
@@ -50,6 +58,16 @@ protected:
     static void buildMiniMapSurface();
 
 public:
+    static void addMapEventListener(MapEventListener *lis)
+    {
+        listenerList.push_back(lis);
+    }
+    
+    static void removeMapEventListener(MapEventListener *lis)
+    {
+        listenerList.remove(lis);
+    }
+    
     static void getMapPointSize(iXY *map_size)
     {
         map_size->x = main_map.getWidth() * tile_set.getTileXsize();

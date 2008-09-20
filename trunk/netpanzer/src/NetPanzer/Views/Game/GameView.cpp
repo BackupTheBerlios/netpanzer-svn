@@ -46,6 +46,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/WorldViewInterface.hpp"
 
 #include "Views/Components/InfoBar.hpp"
+#include "Views/Components/MiniMap.hpp"
 
 GameView gameView;
 int GameView::gDrawSolidBackground = 0;
@@ -54,7 +55,25 @@ int GameView::gDrawSolidBackground = 0;
 // GameView
 //---------------------------------------------------------------------------
 GameView::GameView() : View()
-{} // end GameView::GameView
+{
+    setSearchName("GameView");
+    setTitle("Game");
+    setSubTitle("");
+
+    setBordered(false);
+    setAlwaysOnBottom(true);
+    setAllowResize(false);
+    setDisplayStatusBar(false);
+    setVisible(false);
+
+    resize(640,480);
+    moveTo(iXY(0, 0));
+
+    add(new InfoBar(0,0));
+    // will add after input handling is done
+    //add(new MiniMap(100,100));
+
+} // end GameView::GameView
 
 // setSize
 //---------------------------------------------------------------------------
@@ -67,20 +86,8 @@ void GameView::setSize(iXY size)
 //---------------------------------------------------------------------------
 void GameView::init()
 {
-    setSearchName("GameView");
-    setTitle("Game");
-    setSubTitle("");
-
-    setBordered(false);
-    setAlwaysOnBottom(true);
-    setAllowResize(false);
-    setDisplayStatusBar(false);
-    setVisible(false);
-
     resize(iXY(screen->getWidth(), screen->getHeight()));
     moveTo(iXY(0, 0));
-    add(new InfoBar(0,0));
-
 } // end GameView::init
 void
 GameView::checkResolution(iXY oldResolution, iXY newResolution)

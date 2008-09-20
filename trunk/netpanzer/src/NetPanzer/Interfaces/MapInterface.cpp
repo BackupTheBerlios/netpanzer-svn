@@ -29,6 +29,7 @@ SpawnList MapInterface::spawn_list;
 WadMapTable MapInterface::wad_mapping_table;
 Surface MapInterface::mini_map_surface;
 char MapInterface::map_path[256];
+MapInterface::MapListenerList MapInterface::listenerList;
 
 bool MapInterface::startMapLoad( const char *file_path, bool load_tiles,
         size_t partitions )
@@ -81,6 +82,13 @@ void MapInterface::finishMapLoad( void )
 
     wad_mapping_table.deallocate();
 
+    MapListenerList::iterator i = listenerList.begin();
+    while ( i != listenerList.end() )
+    {
+        (*i)->onMapLoadedEvent();
+        i++;
+    }
+    
     buildMiniMapSurface();
 
     strcpy( path, map_path );
