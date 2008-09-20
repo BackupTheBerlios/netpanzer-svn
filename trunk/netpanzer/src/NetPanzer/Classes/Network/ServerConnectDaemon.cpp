@@ -195,8 +195,9 @@ void ServerConnectDaemon::sendConnectionAlert(ClientSocket * client)
     connect_alert.set( client->getPlayerIndex(), _connect_alert_mesg_connect );
     
     ConsoleInterface::postMessage(Color::cyan, true, player_state->getFlag(), 
-                                  "'%s' has joined the game.",
-                                  player_state->getName().c_str() );
+                                  "'%s' [%s] has joined the game.",
+                                  player_state->getName().c_str(),
+                                  client->getIPAddress().c_str() );
 
     if ( ((std::string)gameconfig->motd).length() > 0 )
     {
