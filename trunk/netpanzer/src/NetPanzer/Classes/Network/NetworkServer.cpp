@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <algorithm>
 
 #include "NetMessage.hpp"
+#include "Core/CoreTypes.hpp"
 
 #include "Util/Log.hpp"
 #include "Classes/Network/NetworkServer.hpp"
@@ -30,6 +31,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
+
+#include "Objectives/ObjectiveInterface.hpp"
+#include "SystemNetMessage.hpp"
+#include "ConnectNetMessage.hpp"
+
 
 NetworkServer* SERVER = 0;
 
@@ -241,7 +247,8 @@ NetworkServer::dropClient(ClientSocket * client)
     
     if ( i != client_list.end() )
     {
-        ServerConnectDaemon::startClientDropProcess((*i)->client_socket);
+        // XXX hack
+        onClientDisconected(client, "dropped");
     }
 }
 
@@ -250,7 +257,7 @@ NetworkServer::shutdownClientTransport( ClientSocket * client )
 {
     
     ClientList::iterator i = client_list.begin();
-    while ( i != client_list.end() && (*i)->client_socket != client)
+    while ( i != client_list.end() )
     {
         if ( (*i)->client_socket == client )
         {
@@ -351,27 +358,94 @@ NetworkServer::onClientConnected(ClientSocket *s)
 void
 NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
 {
-    // XXX WARNING possible double free when shutdownclienttransport is called
-    LOGGER.warning("NetworkServer::onClientDisconected( %d, '%s')", s->getId(), msg);
+    LOGGER.debug("NetworkServer::onClientDisconected( %d, '%s')", s->getId(), msg);
+    
+    bool cleandisconnect = false;
+    bool sendalert = true;
+    
     if ( ServerConnectDaemon::inConnectQueue(s) )
     {
-        LOGGER.warning("NetworkServer: client bad disconnected while connecting [%d]", s->getId());
-        ServerConnectDaemon::startClientDropProcess(s);
+        // player was connecting and dropped.
+        ServerConnectDaemon::removeClientFromQueue(s);
+        sendalert = false;
+        LOGGER.debug("NetworkServer::onClientDisconected player was connecting");
     }
-    else
+    
+    if ( NetworkInterface::receive_queue.isReady() )
     {
-        ClientList::iterator i = client_list.begin();
-        while ( i != client_list.end() )
+        unsigned long frontsave = NetworkInterface::receive_queue.front;
+        while ( NetworkInterface::receive_queue.isReady() )
         {
-            if ( (*i)->client_socket == s )
+            LOGGER.debug("NetworkServer::onClientDisconected there was a packet");
+            NetPacket packet;
+
+            NetworkInterface::receive_queue.dequeue(&packet);
+
+            if ( packet.fromClient == s )
             {
-                LOGGER.warning("NetworkServer: client bad disconnection [%d]", s->getId());
-                ServerConnectDaemon::startClientDropProcess(s);
-                break;
+                LOGGER.debug("NetworkServer::onClientDisconected the packet was from our friend");
+                const NetMessage * netmessage = packet.getNetMessage();
+                if (   netmessage->message_class == _net_message_class_connect 
+                    && netmessage->message_id == _net_message_id_connect_netPanzer_client_disconnect )
+                {
+                    LOGGER.debug("NetworkServer::onClientDisconected so is a clean disconnect");
+                    cleandisconnect = true;
+                }
             }
-            ++i;
+        }
+        NetworkInterface::receive_queue.front = frontsave;
+    }
+    
+    Uint16 player_index = s->getPlayerIndex();
+    
+    ClientList::iterator i = client_list.begin();
+    while ( i != client_list.end() )
+    {
+        if ( (*i)->client_socket == s )
+        {
+            LOGGER.debug("NetworkServer:onClientDisconnected found client in list, removing and deleting [%d]", player_index);
+            client_list.erase(i);
+            delete (*i)->client_socket; // this is "s"
+            delete *i;
+            break;
+        }
+        ++i;
+    }
+    
+    if ( player_index != 0xffff )
+    {
+        PlayerState * player = PlayerInterface::getPlayer(player_index);
+        if ( player && sendalert )
+        {
+            ConsoleInterface::postMessage(Color::cyan, true, player->getFlag(),
+                                      "'%s' has left.",
+                                      player->getName().c_str());
+        }
+        
+        ObjectiveInterface::disownPlayerObjectives( player_index );
+
+        UnitInterface::destroyPlayerUnits( player_index );
+
+        PlayerInterface::disconnectPlayerCleanup( player_index );    
+
+        if ( sendalert )
+        {
+            SystemConnectAlert msg;
+            if ( cleandisconnect )
+            {
+                msg.set( player_index, _connect_alert_mesg_disconnect);
+            }
+            else
+            {
+                msg.set( player_index, _connect_alert_mesg_client_drop );
+            }
+
+            SERVER->broadcastMessage(&msg, sizeof(msg));
         }
     }
+    
+
+//    LOGGER.warning("NetworkServer::onClientDisconected( %d, '%s')", s->getId(), msg);
 }
 
 ClientSocket *

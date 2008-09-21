@@ -92,6 +92,7 @@ public:
     static bool getConnectLockStatus();
 
     static bool isConnecting();
+    static void removeClientFromQueue(ClientSocket *client);
 };
 
 #endif // ** _SERVERCONNECTDAEMON_HPP

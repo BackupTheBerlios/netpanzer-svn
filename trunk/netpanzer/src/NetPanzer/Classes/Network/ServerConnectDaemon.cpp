@@ -120,13 +120,7 @@ void ServerConnectDaemon::updateQueuedClients()
 
 void ServerConnectDaemon::netPacketClientDisconnect(const NetPacket *packet)
 {
-    // Note: this invalidates the ConnectMesgNetPanzerClientDisconnect playerID
-    // value, just use the networkID, this way avoid possible fake packet
-    // to kick other player.
-    // In a future protocol version PlayerID should be removed from this packet.
-    PlayerState *player = PlayerInterface::getPlayer(packet->fromClient->getPlayerIndex());
-    if (player)
-        startDisconnectionProcess(packet->fromClient);
+    // nothing, useless, remove
 }
 
 void ServerConnectDaemon::netPacketClientJoinRequest(const NetPacket* packet)
@@ -534,6 +528,17 @@ void ServerConnectDaemon::connectProcess()
     connectFsm( 0 );
 }
 
+void
+ServerConnectDaemon::removeClientFromQueue(ClientSocket *client)
+{
+    connect_queue.remove(client);
+    
+    if( connect_client == client )
+    {
+        connection_state = connect_state_idle;
+    }    
+}
+
 bool ServerConnectDaemon::disconnectClient( ClientSocket * client )
 {
     connect_queue.remove(client);
@@ -560,35 +565,12 @@ bool ServerConnectDaemon::disconnectClient( ClientSocket * client )
 
 void ServerConnectDaemon::startDisconnectionProcess( ClientSocket * client )
 {
-    SystemConnectAlert msg;
-    msg.set( client->getPlayerIndex(), _connect_alert_mesg_disconnect );
-
-    PlayerState * player = PlayerInterface::getPlayer(client->getPlayerIndex());
-
-    disconnectClient( client );
-
-    ConsoleInterface::postMessage(Color::cyan, true, player->getFlag(),
-                                  "'%s' has left the game.",
-                                  (player)?player->getName().c_str():"");
-
-    SERVER->broadcastMessage(&msg, sizeof(msg));
+    // nothing, useless, remove
 }
 
 void ServerConnectDaemon::startClientDropProcess( ClientSocket * client )
 {
-    SystemConnectAlert msg;
-    msg.set( client->getPlayerIndex(), _connect_alert_mesg_client_drop );
-
-    PlayerState * player = PlayerInterface::getPlayer(client->getPlayerIndex());
-    
-    disconnectClient( client );
-
-    ConsoleInterface::postMessage(Color::cyan, true, player->getFlag(),
-                                  "'%s' has left the game for some reason.",
-                                  (player)?player->getName().c_str():"");
-
-    SERVER->broadcastMessage(&msg, sizeof(msg));
-
+    // nothing, useless, remove
 }
 
 void ServerConnectDaemon::lockConnectProcess()

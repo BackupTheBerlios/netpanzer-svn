@@ -226,7 +226,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
 void
 ClientSocket::onConnected(network::TCPSocket *so)
 {
-    LOGGER.warning("ClientSocket: connected, id=%d", id);
+    LOGGER.debug("ClientSocket: connected, id=%d", id);
     socket = so;
     observer->onClientConnected(this);
 }
@@ -235,7 +235,7 @@ void
 ClientSocket::onDisconected(network::TCPSocket *so)
 {
     (void)so;
-    LOGGER.warning("ClientSocket: Disconected id=%d", id);
+    LOGGER.debug("ClientSocket: Disconected id=%d", id);
     socket=0;
     observer->onClientDisconected(this, "Network connection closed");
 }
