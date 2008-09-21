@@ -126,7 +126,7 @@ MouseInterface::manageClickTimer()
 {
     if ( clickcount && clicktimer.isTimeOut() )
     {
-        LOGGER.warning("Mouse click count and release count = %d, %d", clickcount, releasecount);
+        //LOGGER.warning("Mouse click count and release count = %d, %d", clickcount, releasecount);
         clickcount=0;
         releasecount=0;
     }

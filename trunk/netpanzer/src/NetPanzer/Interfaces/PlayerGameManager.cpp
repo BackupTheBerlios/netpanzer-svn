@@ -173,11 +173,10 @@ void PlayerGameManager::initializeWindowSubSystem()
 {
     GameManager::loadPalette("netp");
 
-    gameView.init();
-    Desktop::add( &gameView );
+    Desktop::add(new GameView());
     Desktop::add(new RankView());
     Desktop::add(new VehicleSelectionView());
-    Desktop::add( &miniMapView );
+    Desktop::add(new MiniMapView() );
     Desktop::add(new CodeStatsView());
     Desktop::add(new LibView());
     Desktop::add(new HelpScrollView());
@@ -200,8 +199,7 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new InterfaceView());
     Desktop::add(new FlagSelectionView());
     Desktop::add(new HostOptionsView());
-    PlayerNameView *playernameview=new PlayerNameView();
-    Desktop::add(playernameview);
+    Desktop::add(new PlayerNameView());
     Desktop::add(new ResignView());
     Desktop::add(new AreYouSureResignView());
     Desktop::add(new AreYouSureExitView());

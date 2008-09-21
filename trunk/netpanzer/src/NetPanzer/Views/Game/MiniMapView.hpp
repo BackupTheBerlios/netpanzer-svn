@@ -41,6 +41,4 @@ protected:
 private:
 }; // end MiniMapView
 
-extern MiniMapView miniMapView;
-
 #endif // end __MiniMapView_hpp__

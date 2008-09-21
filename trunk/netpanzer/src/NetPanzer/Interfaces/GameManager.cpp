@@ -190,7 +190,6 @@ void GameManager::setVideoMode()
     WorldViewInterface::setCameraSize( mode_res.x, mode_res.y);
     delete screen;
     screen = new ScreenSurface(Screen, mode_res.x, mode_res.y);
-    gameView.setSize(mode_res);
 
     Desktop::checkResolution(old_res, mode_res);
     Desktop::checkViewPositions(mode_res);
@@ -286,8 +285,6 @@ void GameManager::finishGameMapLoad()
     temp_path.append(".opt");
     ObjectiveInterface::loadObjectiveList( temp_path.c_str() );
 
-    if(screen)
-        miniMapView.init();
     ParticleInterface::initParticleSystems();
 
     ParticleInterface::addCloudParticle(gameconfig->cloudcoverage);

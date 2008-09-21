@@ -48,9 +48,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/InfoBar.hpp"
 #include "Views/Components/MiniMap.hpp"
 
-GameView gameView;
 int GameView::gDrawSolidBackground = 0;
-
 
 // GameView
 //---------------------------------------------------------------------------

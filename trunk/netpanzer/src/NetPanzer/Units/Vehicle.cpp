@@ -862,7 +862,8 @@ void Vehicle::aiFsmMoveToLoc()
 
         case _aiFsmMoveToLoc_wait_clear_loc : {
 
-                if ( external_ai_event == _external_event_pending_unit_destruct  ) {
+                if ( external_ai_event == _external_event_pending_unit_destruct  )
+                {
                     // External Event: This unit is about to be deleted
                     // Action : Exit fsm gracefully
                     aiFsmMoveToLoc_OnExitCleanUp();
@@ -870,48 +871,57 @@ void Vehicle::aiFsmMoveToLoc()
                     external_ai_event = _external_event_null;
                     ai_command_state = _ai_command_idle;
                     end_cycle = true;
-                } else
-                    if ( pending_AI_comm == true ) {
+                }
+                else if ( pending_AI_comm == true )
+                {
                         // External Event: A new AI command is pending
                         // Action: Allow command transition to occur
                         ai_fsm_transition_complete = true;
                         aiFsmMoveToLoc_OnExitCleanUp();
                         end_cycle = true;
-                    } else  // NextSquareOccupied: does the next square contain a abstruction
-                        if ( UnitBlackBoard::unitOccupiesLoc( aiFsmMoveToLoc_next_loc ) == true ) {
-                            // Rule: NextSquareOccupied is true
-                            // Action: Check Wait Timer
+                }
+                else  // NextSquareOccupied: does the next square contain a abstruction
+                    if ( UnitBlackBoard::unitOccupiesLoc( aiFsmMoveToLoc_next_loc ) == true )
+                {
+                    // Rule: NextSquareOccupied is true
+                    // Action: Check Wait Timer
 
-                            if ( aiFsmMoveToLoc_wait_timer.count() ) {
-                                // Rule: NextSquareOccupied is true AND WaitTimer is finished
-                                // Action: Preform path update
+                    if ( aiFsmMoveToLoc_wait_timer.count() )
+                    {
+                        // Rule: NextSquareOccupied is true AND WaitTimer is finished
+                        // Action: Preform path update
 
-                                if ( aiFsmMoveToLoc_next_loc == aiFsmMoveToLoc_goal ) {
+                        if ( aiFsmMoveToLoc_next_loc == aiFsmMoveToLoc_goal )
+                        {
 
-                                    UnitInterface::unit_placement_matrix.reset( aiFsmMoveToLoc_goal );
-                                    UnitInterface::unit_placement_matrix.getNextEmptyLoc( &aiFsmMoveToLoc_goal );
+                            UnitInterface::unit_placement_matrix.reset( aiFsmMoveToLoc_goal );
+                            UnitInterface::unit_placement_matrix.getNextEmptyLoc( &aiFsmMoveToLoc_goal );
 
-                                    PathRequest path_request;
-                                    path_request.set(id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_full );
-                                    PathScheduler::requestPath( path_request );
-                                } else {
-                                    PathRequest path_request;
-                                    path_request.set(id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_update );
-                                    PathScheduler::requestPath( path_request );
-                                }
-
-                                aiFsmMoveToLoc_state = _aiFsmMoveToLoc_path_generate;
-                            }
-
-                            end_cycle = true;
-                        } else {
-                            // Rule: NextSquareOccupied is false
-                            // Action: Begin move to next square
-                            UnitBlackBoard::markUnitLoc( aiFsmMoveToLoc_next_loc );
-                            setFsmMoveMapSquare( aiFsmMoveToLoc_next_square );
-
-                            aiFsmMoveToLoc_state = _aiFsmMoveToLoc_move_wait;
+                            PathRequest path_request;
+                            path_request.set(id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_full );
+                            PathScheduler::requestPath( path_request );
                         }
+                        else
+                        {
+                            PathRequest path_request;
+                            path_request.set(id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_update );
+                            PathScheduler::requestPath( path_request );
+                        }
+
+                        aiFsmMoveToLoc_state = _aiFsmMoveToLoc_path_generate;
+                    }
+
+                    end_cycle = true;
+                }
+                else
+                {
+                    // Rule: NextSquareOccupied is false
+                    // Action: Begin move to next square
+                    UnitBlackBoard::markUnitLoc( aiFsmMoveToLoc_next_loc );
+                    setFsmMoveMapSquare( aiFsmMoveToLoc_next_square );
+
+                    aiFsmMoveToLoc_state = _aiFsmMoveToLoc_move_wait;
+                }
 
             }
             break;

@@ -43,6 +43,4 @@ private:
     void drawMap(Surface &window);
 }; // end GameView
 
-extern GameView gameView;
-
 #endif
