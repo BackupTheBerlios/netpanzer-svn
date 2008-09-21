@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 #include <map>
-#include "Units/UnitList.hpp"
 #include "Units/UnitBucketArray.hpp"
 #include "Classes/UnitMessage.hpp"
 #include "Classes/PlayerState.hpp"

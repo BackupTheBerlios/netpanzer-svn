@@ -109,6 +109,8 @@ Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initia
     body_anim_shadow.attachSprite( &turret_anim_shadow, zero );
     body_anim_shadow.attachSprite( &turret_anim, zero );
     body_anim_shadow.attachSprite( &select_info_box, zero );
+    
+    aiFsmMoveToLoc_wait_timer.changePeriod( 0.8f );
 }
 
 void Vehicle::setUnitProperties( unsigned char utype )
@@ -924,7 +926,8 @@ void Vehicle::aiFsmMoveToLoc()
                     MapInterface::pointXYtoMapXY( aiFsmMoveToLoc_prev_loc, &aiFsmMoveToLoc_prev_loc );
                     UnitBlackBoard::markUnitLoc( aiFsmMoveToLoc_prev_loc );
 
-                    aiFsmMoveToLoc_wait_timer.changePeriod( 0.8f );
+                    //aiFsmMoveToLoc_wait_timer.changePeriod( 0.8f );
+                    aiFsmMoveToLoc_wait_timer.reset();
                     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_wait_clear_loc;
                 }
             }
@@ -971,17 +974,23 @@ void Vehicle::aiFsmMoveToLoc()
                             PathRequest path_request;
                             path_request.set(id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_full );
                             PathScheduler::requestPath( path_request );
+                            aiFsmMoveToLoc_wait_timer.changePeriod( 0.8f );
                         }
                         else
                         {
+//                            LOGGER.warning("Requesting updated path for unit %d from %d,%d to %d,%d", id,
+//                                           aiFsmMoveToLoc_prev_loc.x, aiFsmMoveToLoc_prev_loc.y,
+//                                           aiFsmMoveToLoc_goal.x,aiFsmMoveToLoc_goal.y);
                             PathRequest path_request;
                             path_request.set(id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_update );
                             PathScheduler::requestPath( path_request );
+                            // XXX the more times timeout the longer will take next time
+                            aiFsmMoveToLoc_wait_timer.changePeriod( aiFsmMoveToLoc_wait_timer.getPeriod() * 2.0f );
                         }
 
                         aiFsmMoveToLoc_state = _aiFsmMoveToLoc_path_generate;
                     }
-
+                    // can't move and has to wait, finish the loop.
                     end_cycle = true;
                 }
                 else
@@ -992,6 +1001,7 @@ void Vehicle::aiFsmMoveToLoc()
                     setFsmMoveMapSquare( aiFsmMoveToLoc_next_square );
 
                     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_move_wait;
+                    aiFsmMoveToLoc_wait_timer.changePeriod( 0.8f );
                 }
 
             }
@@ -1750,6 +1760,7 @@ void Vehicle::setCommandMoveToLoc(const UMesgAICommand* message)
     ai_command_state = _ai_command_move_to_loc;
     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_path_generate;
     aiFsmMoveToLoc_path_not_finished = true;
+    aiFsmMoveToLoc_wait_timer.changePeriod( 0.8f );
 
     opcode_move_timer.changePeriod( 0.10f );
     move_opcode_sent = false;

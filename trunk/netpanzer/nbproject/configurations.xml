@@ -482,7 +482,6 @@
           <itemPath>src/NetPanzer/Units/UnitInterface.cpp</itemPath>
           <itemPath>src/NetPanzer/Units/UnitInterface.hpp</itemPath>
           <itemPath>src/NetPanzer/Units/UnitLifecycles.hpp</itemPath>
-          <itemPath>src/NetPanzer/Units/UnitList.hpp</itemPath>
           <itemPath>src/NetPanzer/Units/UnitOpcodeDecoder.cpp</itemPath>
           <itemPath>src/NetPanzer/Units/UnitOpcodeDecoder.hpp</itemPath>
           <itemPath>src/NetPanzer/Units/UnitOpcodeEncoder.cpp</itemPath>
@@ -1953,9 +1952,6 @@
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitLifecycles.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/UnitList.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitOpcodeDecoder.cpp">
@@ -3678,9 +3674,6 @@
       <item path="src/NetPanzer/Units/UnitLifecycles.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Units/UnitList.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Units/UnitOpcodeDecoder.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -5401,9 +5394,6 @@
       <item path="src/NetPanzer/Units/UnitLifecycles.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Units/UnitList.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Units/UnitOpcodeDecoder.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -7122,9 +7112,6 @@
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitLifecycles.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/UnitList.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitOpcodeDecoder.cpp">
