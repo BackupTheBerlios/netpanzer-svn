@@ -56,17 +56,17 @@ RankView::RankView() : GameTemplateView()
 
     unsigned xOffset = 0;
     unsigned yOffset = 16;
-    add( new Label( xOffset, yOffset, "Name", Color::red) );
+    add( new Label( xOffset, yOffset, "Name", Color::red, Color::gray64, true) );
     xOffset += MAX_NAME_CHARS*CHAR_XPIX;
-    add( new Label( xOffset, yOffset, "Flag", Color::red) );
+    add( new Label( xOffset, yOffset, "Flag", Color::red, Color::gray64, true) );
     xOffset += MAX_FLAG_CHARS*CHAR_XPIX;
-    add( new Label( xOffset, yOffset, "Kills", Color::red) );
+    add( new Label( xOffset, yOffset, "Kills", Color::red, Color::gray64, true) );
     xOffset += MAX_KILLS_CHARS*CHAR_XPIX;
-    add( new Label( xOffset, yOffset, "Losses", Color::red) );
+    add( new Label( xOffset, yOffset, "Losses", Color::red, Color::gray64, true) );
     xOffset += MAX_LOSSES_CHARS*CHAR_XPIX;
-    add( new Label( xOffset, yOffset, "Points", Color::red) );
+    add( new Label( xOffset, yOffset, "Points", Color::red, Color::gray64, true) );
     xOffset += MAX_POINTS_CHARS*CHAR_XPIX;
-    add( new Label( xOffset, yOffset, "Objective", Color::red) );
+    add( new Label( xOffset, yOffset, "Objective", Color::red, Color::gray64, true) );
     xOffset += MAX_POINTS_CHARS*CHAR_XPIX;
 
     // Define the scrollBar fot this view.
@@ -167,7 +167,7 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
                 "%-20s%10i%7i%6i%10i", state->getName().substr(0,20).c_str(),
                 state->getKills(), state->getLosses(), state->getTotal(),
                 state->getObjectivesHeld());
-        dest.bltString(offset.x, offset.y, statBuf, state->getColor());
+        dest.bltStringShadowed(offset.x, offset.y, statBuf, state->getColor(), Color::gray64);
         
         flag = ResourceManager::getFlag(state->getFlag());
         flag->blt( dest, flagOffset.x, flagOffset.y );

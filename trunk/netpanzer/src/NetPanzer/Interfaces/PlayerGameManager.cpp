@@ -374,7 +374,7 @@ void PlayerGameManager::hostMultiPlayerGame()
     player_state->setName(playername);
     player_state->setFlag((unsigned char) gameconfig->playerflag);
     
-    GameManager::spawnPlayer( PlayerInterface::getLocalPlayerIndex() );
+    //GameManager::spawnPlayer( PlayerInterface::getLocalPlayerIndex() );
     
     LoadingView::update( "Spawning Player ... (100%)" );
     

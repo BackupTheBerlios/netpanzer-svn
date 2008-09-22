@@ -25,6 +25,7 @@ class UnitBlackBoard
 {
 protected:
     friend class Vehicle;
+    friend class UnitInterface; // for unmark unit hack
     
     static BitArray unit_loc_map;
 

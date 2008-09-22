@@ -460,7 +460,7 @@ bool ServerConnectDaemon::connectStateUnitSync()
 
     PowerUpInterface::syncPowerUps( connect_client );
 
-    GameManager::spawnPlayer( connect_client->getPlayerIndex() );
+    //GameManager::spawnPlayer( connect_client->getPlayerIndex() );
 
     PlayerState * player = PlayerInterface::getPlayer(connect_client->getPlayerIndex());
 

@@ -43,6 +43,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/Sound.hpp"
 #include "Particles/ParticleInterface.hpp"
 #include "Util/Log.hpp"
+#include "UnitBlackBoard.hpp"
 
 
 //UnitList * UnitInterface::unit_lists;
@@ -776,11 +777,12 @@ void UnitInterface::unitCreateMessage(const NetMessage* net_message)
                             create_mesg->getUnitID());
             return;
         }
-        UnitBase* unit = newUnit(create_mesg->unit_type,
-                iXY(create_mesg->getLocX(), create_mesg->getLocY()),
-                player_index,
-                create_mesg->getUnitID());
+        iXY unitpos(create_mesg->getLocX(), create_mesg->getLocY());
+        UnitBase* unit = newUnit(create_mesg->unit_type, unitpos,
+                                 player_index, create_mesg->getUnitID());
         addNewUnit(unit);
+        // remove unit from blackboard in client (we are client here)
+        UnitBlackBoard::unmarkUnitLoc( unitpos );
     } catch(std::exception& e) {
         LOGGER.warning("UnitInterface::unitSyncMessage() Couldn't create new unit '%s'", e.what());
     }
