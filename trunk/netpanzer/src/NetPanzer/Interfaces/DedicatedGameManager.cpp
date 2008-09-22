@@ -163,8 +163,7 @@ void DedicatedGameManager::inputLoop()
                     std::cout << "Unknown player." << std::endl;
                     break;
                 }
-                SERVER->shutdownClientTransport(SERVER->getClientSocketByPlayerIndex(id));
-                PlayerInterface::disconnectPlayerCleanup(id);
+                SERVER->dropClient(SERVER->getClientSocketByPlayerIndex(id));
                 break;
         }
         commandqueue.pop();

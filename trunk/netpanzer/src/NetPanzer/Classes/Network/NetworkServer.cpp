@@ -151,24 +151,28 @@ NetworkServer::broadcastMessage(NetMessage *message, size_t size)
     ClientList::iterator i = client_list.begin();
     while ( i != client_list.end() )
     {
-        if((*i)->wannadie)
+        if( ! (*i)->wannadie )
         {
+            try
+            {
+                message->setSize(size);
+                (*i)->client_socket->sendMessage( message, size);
+            }
+            catch(std::exception& e)
+            {
+                // XXX will it close by itself?
+                LOGGER.warning ("Network broadcast error when sending to player %d: %s",
+                       (*i)->client_socket->getPlayerIndex(), e.what() );
+            }
             ++i;
-            continue;
         }
-
-        try
+        else
         {
-            message->setSize(size);
-            (*i)->client_socket->sendMessage( message, size);
+            // cleanup dieing client.
+            delete (*i)->client_socket;
+            delete (*i);
+            i = client_list.erase(i);
         }
-        catch(std::exception& e)
-        {
-            // XXX handle properly
-            LOG( ("Error while sending network packet.") );
-        }
-        
-        ++i;
     }
 }
 
@@ -180,38 +184,30 @@ NetworkServer::sendMessage(Uint16 player_index, NetMessage* message,
         return;
     
     ClientList::iterator i = client_list.begin();
-    while ( i != client_list.end() 
-            && ! (*i)->wannadie
-            && (*i)->client_socket->getPlayerIndex() != player_index )
+    while ( i != client_list.end() )
     {
+        if ( ! (*i)->wannadie
+             && (*i)->client_socket->getPlayerIndex() == player_index )
+        {
+            try
+            {
+                message->setSize(size);
+                (*i)->client_socket->sendMessage( message, size);
+
+                NetworkState::incPacketsSent(size);
+                return; // premature exit
+            }
+            catch (NetworkException e)
+            {
+                LOGGER.warning ("Network send error when sending to player %d: %s",
+                       player_index, e.what() );
+            }            
+        }
         ++i;
     }
 
-    if ( i != client_list.end() )
-    {
-        try
-        {
-            message->setSize(size);
-            (*i)->client_socket->sendMessage( message, size);
-
-            NetworkState::incPacketsSent(size);
-            
-#ifdef NETWORKDEBUG
-            NetPacketDebugger::logMessage("S", message);
-#endif
-
-        }
-        catch (NetworkException e)
-        {
-            LOG ( ("Network send error when sending to client (index) %d: %s",
-                   player_index, e.what()) );
-            dropClient((*i)->client_socket);
-        }
-    }
-    else
-    {
-        LOGGER.warning("NetworkServer: sendMessage to unknown client: (index) %d", player_index);
-    }
+    // if didn't found player we are here.
+    LOGGER.warning("NetworkServer: sendMessage to unknown client: (index) %d", player_index);
 }
 
 bool
@@ -251,51 +247,6 @@ NetworkServer::dropClient(ClientSocket * client)
         // XXX hack
         onClientDisconected(client, "dropped");
     }
-}
-
-void
-NetworkServer::shutdownClientTransport( ClientSocket * client )
-{
-    
-    ClientList::iterator i = client_list.begin();
-    while ( i != client_list.end() )
-    {
-        if ( (*i)->client_socket == client )
-        {
-            LOGGER.warning("NetworkServer: disconnecting client [%d]", client->getPlayerIndex());
-            client_list.erase(i);
-            delete (*i)->client_socket;
-            delete *i;
-            break;
-        }
-        ++i;
-    }
-}
-
-void
-NetworkServer::cleanupClients()
-{
-    ClientList::iterator i = client_list.begin();
-    while( i != client_list.end() )
-    {
-        ServerClientListData* data = *i;
-        if(data->wannadie)
-        {
-            delete data->client_socket;
-            delete data;
-            i = client_list.erase(i);
-        }
-        else
-        {
-            ++i;
-        }
-    }
-}
-
-void
-NetworkServer::checkIncoming()
-{
-    cleanupClients();
 }
 
 void
@@ -457,8 +408,8 @@ NetworkServer::getClientSocketByPlayerIndex ( Uint16 index )
     ClientList::iterator i = client_list.begin();
     while ( i != client_list.end() )
     {
-        if ( (*i)->client_socket->getPlayerIndex() == index
-             && ! (*i)->wannadie )
+        if ( ! (*i)->wannadie
+             && (*i)->client_socket->getPlayerIndex() == index )
         {
             return (*i)->client_socket;
         }

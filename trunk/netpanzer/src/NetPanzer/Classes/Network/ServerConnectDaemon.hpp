@@ -53,7 +53,6 @@ protected:
     
     static void connectFsm(const NetMessage* message);
     static void connectProcess(const NetMessage* message);
-    static bool disconnectClient( ClientSocket * client );
 
     static void updateQueuedClients();
 
@@ -79,8 +78,6 @@ public:
 
     static void shutdownConnectDaemon();
 
-    static void startDisconnectionProcess( ClientSocket * client );
-    static void startClientDropProcess( ClientSocket * client );
     static bool inConnectQueue( ClientSocket *client );
 
     static void connectProcess();

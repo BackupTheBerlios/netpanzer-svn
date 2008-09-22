@@ -58,9 +58,6 @@ protected:
     void netPacketServerPingRequest(const NetPacket* packet);
 
     void processNetPacket(const NetPacket* packet);
-
-    /// removes client that have the wannadie flag set to true
-    void cleanupClients();
     
 public:
     NetworkServer();
@@ -84,11 +81,9 @@ public:
     bool getPacket(NetPacket* packet);
 
     void dropClient(ClientSocket * client);
-    void shutdownClientTransport( ClientSocket * client );
     
     ClientSocket * getClientSocketByPlayerIndex ( Uint16 index );
 
-    void checkIncoming();
     std::string getIP(Uint16 player_index);
 
 protected:

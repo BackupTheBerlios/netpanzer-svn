@@ -539,40 +539,6 @@ ServerConnectDaemon::removeClientFromQueue(ClientSocket *client)
     }    
 }
 
-bool ServerConnectDaemon::disconnectClient( ClientSocket * client )
-{
-    connect_queue.remove(client);
-    
-    if( connect_client == client )
-    {
-        connection_state = connect_state_idle;
-    }
-    
-    Uint16 player_index = client->getPlayerIndex();
-    
-    // after this the memory has been freed and is not safe to use client
-    SERVER->shutdownClientTransport( client );
-
-    ObjectiveInterface::disownPlayerObjectives( player_index );
-    
-    UnitInterface::destroyPlayerUnits( player_index );
-    
-    PlayerInterface::disconnectPlayerCleanup( player_index );
-
-    return true;
-}
-
-
-void ServerConnectDaemon::startDisconnectionProcess( ClientSocket * client )
-{
-    // nothing, useless, remove
-}
-
-void ServerConnectDaemon::startClientDropProcess( ClientSocket * client )
-{
-    // nothing, useless, remove
-}
-
 void ServerConnectDaemon::lockConnectProcess()
 {
     connection_lock_state = true;
