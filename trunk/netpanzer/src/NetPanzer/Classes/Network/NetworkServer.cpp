@@ -166,7 +166,6 @@ NetworkServer::broadcastMessage(NetMessage *message, size_t size)
         {
             // XXX handle properly
             LOG( ("Error while sending network packet.") );
-            return;
         }
         
         ++i;
@@ -181,7 +180,9 @@ NetworkServer::sendMessage(Uint16 player_index, NetMessage* message,
         return;
     
     ClientList::iterator i = client_list.begin();
-    while ( i != client_list.end() && (*i)->client_socket->getPlayerIndex() != player_index )
+    while ( i != client_list.end() 
+            && ! (*i)->wannadie
+            && (*i)->client_socket->getPlayerIndex() != player_index )
     {
         ++i;
     }
@@ -303,7 +304,10 @@ NetworkServer::sendRemaining()
     ClientList::iterator i = client_list.begin();
     while ( i != client_list.end() )
     {
-        (*i)->client_socket->sendRemaining();
+        if ( ! (*i)->wannadie )
+        {
+            (*i)->client_socket->sendRemaining();
+        }
         i++;
     }
 }
@@ -314,7 +318,8 @@ NetworkServer::getIP(Uint16 player_index)
     ClientList::iterator i = client_list.begin();
     while ( i != client_list.end() )
     {
-        if ( (*i)->client_socket->getPlayerIndex() == player_index )
+        if ( ! (*i)->wannadie
+             && (*i)->client_socket->getPlayerIndex() == player_index )
         {
             return (*i)->client_socket->getIPAddress();
         }
@@ -403,10 +408,8 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
     {
         if ( (*i)->client_socket == s )
         {
-            LOGGER.debug("NetworkServer:onClientDisconnected found client in list, removing and deleting [%d]", player_index);
-            client_list.erase(i);
-            delete (*i)->client_socket; // this is "s"
-            delete *i;
+            LOGGER.debug("NetworkServer:onClientDisconnected found client in list, preparing to die [%d]", player_index);
+            (*i)->wannadie = true;
             break;
         }
         ++i;
@@ -454,7 +457,8 @@ NetworkServer::getClientSocketByPlayerIndex ( Uint16 index )
     ClientList::iterator i = client_list.begin();
     while ( i != client_list.end() )
     {
-        if ( (*i)->client_socket->getPlayerIndex() == index )
+        if ( (*i)->client_socket->getPlayerIndex() == index
+             && ! (*i)->wannadie )
         {
             return (*i)->client_socket;
         }
