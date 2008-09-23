@@ -442,7 +442,11 @@ bool PlayerGameManager::mainLoop()
 
     // handle SDL Events
     if(handleSDLEvents())
+    {
+        // We got SDL_Quit, lets disconnect nicely.
+        GameManager::exitNetPanzer();
         return false;
+    }
 
     return BaseGameManager::mainLoop();
 }

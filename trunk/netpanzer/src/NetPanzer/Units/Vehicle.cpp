@@ -40,6 +40,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleInterface.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
 
+#define MOVEWAIT_TIME 0.8f
+
 enum{ _rotate_and_move, _rotate_stop_move };
 
 Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initial_loc)
@@ -110,7 +112,7 @@ Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initia
     body_anim_shadow.attachSprite( &turret_anim, zero );
     body_anim_shadow.attachSprite( &select_info_box, zero );
     
-    aiFsmMoveToLoc_wait_timer.changePeriod( 0.8f );
+    aiFsmMoveToLoc_wait_timer.changePeriod( MOVEWAIT_TIME );
 }
 
 void Vehicle::setUnitProperties( unsigned char utype )
@@ -926,7 +928,7 @@ void Vehicle::aiFsmMoveToLoc()
                     MapInterface::pointXYtoMapXY( aiFsmMoveToLoc_prev_loc, &aiFsmMoveToLoc_prev_loc );
                     UnitBlackBoard::markUnitLoc( aiFsmMoveToLoc_prev_loc );
 
-                    //aiFsmMoveToLoc_wait_timer.changePeriod( 0.8f );
+                    //aiFsmMoveToLoc_wait_timer.changePeriod( MOVEWAIT_TIME );
                     aiFsmMoveToLoc_wait_timer.reset();
                     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_wait_clear_loc;
                 }
@@ -974,7 +976,7 @@ void Vehicle::aiFsmMoveToLoc()
                             PathRequest path_request;
                             path_request.set(id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_full );
                             PathScheduler::requestPath( path_request );
-                            aiFsmMoveToLoc_wait_timer.changePeriod( 0.8f );
+                            aiFsmMoveToLoc_wait_timer.changePeriod( MOVEWAIT_TIME );
                         }
                         else
                         {
@@ -1760,7 +1762,7 @@ void Vehicle::setCommandMoveToLoc(const UMesgAICommand* message)
     ai_command_state = _ai_command_move_to_loc;
     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_path_generate;
     aiFsmMoveToLoc_path_not_finished = true;
-    aiFsmMoveToLoc_wait_timer.changePeriod( 0.8f );
+    aiFsmMoveToLoc_wait_timer.changePeriod( MOVEWAIT_TIME );
 
     opcode_move_timer.changePeriod( 0.10f );
     move_opcode_sent = false;

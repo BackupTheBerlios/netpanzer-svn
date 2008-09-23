@@ -205,11 +205,11 @@ MiniMap::drawObjectives(Surface &dest)
             //Only draw our unit collection location
             iXY objdest, src;
             MapInterface::mapXYtoPointXY(status.unit_collection_loc, &objdest);
-            objdest.x = int(float(objdest.x) / xratio)+position.x;
-            objdest.y = int(float(objdest.y) / yratio)+position.y;
-
-            src.x  = int(float(obj_state->location.x) / xratio)+position.x;
-            src.y  = int(float(obj_state->location.y) / yratio)+position.y;
+            objdest.x = int(float(objdest.x/32) / xratio)+position.x;
+            objdest.y = int(float(objdest.y/32) / yratio)+position.y;
+            
+            src.x  = int(float(obj_state->location.x/32) / xratio)+position.x;
+            src.y  = int(float(obj_state->location.y/32) / yratio)+position.y;
             dest.drawLine(src.x, src.y, objdest.x, objdest.y, color);
         }
     }

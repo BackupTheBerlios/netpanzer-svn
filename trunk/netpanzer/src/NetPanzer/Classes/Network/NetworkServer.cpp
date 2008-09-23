@@ -62,6 +62,21 @@ void NetworkServer::resetClientList()
     client_list.clear();
 }
 
+void NetworkServer::cleanUpClientList()
+{
+    ClientList::iterator i = client_list.begin();
+    while ( i != client_list.end() )
+    {
+        if( (*i)->wannadie )
+        {
+            delete (*i)->client_socket;
+            delete (*i);
+            i = client_list.erase(i);
+        }
+        i++;
+    }
+}
+
 bool NetworkServer::addClientToSendList( ClientSocket * client )
 {
     ServerClientListData *client_data = new ServerClientListData;
@@ -164,15 +179,8 @@ NetworkServer::broadcastMessage(NetMessage *message, size_t size)
                 LOGGER.warning ("Network broadcast error when sending to player %d: %s",
                        (*i)->client_socket->getPlayerIndex(), e.what() );
             }
-            ++i;
         }
-        else
-        {
-            // cleanup dieing client.
-            delete (*i)->client_socket;
-            delete (*i);
-            i = client_list.erase(i);
-        }
+        ++i;
     }
 }
 

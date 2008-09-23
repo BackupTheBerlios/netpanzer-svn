@@ -64,6 +64,7 @@ public:
     virtual ~NetworkServer();
 
     bool addClientToSendList( ClientSocket * client );
+    void cleanUpClientList();
 
     void openSession();
     

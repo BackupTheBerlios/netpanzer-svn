@@ -80,6 +80,7 @@ WorldInputCmdProcessor::WorldInputCmdProcessor()
     manual_fire_state = false;
 
     right_mouse_scroll = false;
+    right_mouse_scroll_moved = false;
 }
 
 void
@@ -118,16 +119,19 @@ WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos)
 
     scroll_increment = (long) (scroll_rate * time_slice);
 
-    if(right_mouse_scroll) {
+    if(right_mouse_scroll)
+    {
         int x,y;
         int buttons=SDL_GetMouseState(&x,&y);
-        if(!(buttons&SDL_BUTTON(SDL_BUTTON_RIGHT))) {
+        if(!(buttons&SDL_BUTTON(SDL_BUTTON_RIGHT)))
+        {
             // sometimes the winning page or something comes up
             //  as you're holding down the right mouse button
             //  and the UP message doesn't come through
             right_mouse_scroll=false;
         }
-        else if(mouse_pos.x!=right_mouse_scroll_pos.x || mouse_pos.y!=right_mouse_scroll_pos.y) {
+        else if(mouse_pos.x!=right_mouse_scroll_pos.x || mouse_pos.y!=right_mouse_scroll_pos.y)
+        {
             // we're holding down the right mouse button, and mouse has moved
             int x_move=mouse_pos.x-right_mouse_scroll_pos.x;
             int y_move=mouse_pos.y-right_mouse_scroll_pos.y;
@@ -137,6 +141,7 @@ WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos)
             WorldViewInterface::scroll_down(y_move*4);
             right_mouse_scrolled_pos.x+=x_move;
             right_mouse_scrolled_pos.y+=y_move;
+            right_mouse_scroll_moved = true;
         }
         return;
     }
@@ -721,19 +726,22 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
 void
 WorldInputCmdProcessor::evalRightMButtonEvents(const MouseEvent& event)
 {
-    static NTimer mtimer(100);
-    if (event.event == MouseEvent::EVENT_DOWN ) {
+    static NTimer mtimer(150);
+    if (event.event == MouseEvent::EVENT_DOWN )
+    {
         right_mouse_scroll=true;
+        right_mouse_scroll_moved = false;
         right_mouse_scroll_pos=event.pos;
         right_mouse_scrolled_pos.x=right_mouse_scrolled_pos.y=0;
         mtimer.reset();
     }
-    if (right_mouse_scroll && event.event == MouseEvent::EVENT_UP ) {
+    
+    if (right_mouse_scroll && event.event == MouseEvent::EVENT_UP )
+    {
         right_mouse_scroll=false;
-        if ( right_mouse_scrolled_pos.x==0 
-                            && right_mouse_scrolled_pos.y==0
-                            && mtimer.isTimeOut() ) {
-            // simple right click on the same position
+        if ( ! right_mouse_scroll_moved && mtimer.isTimeOut() )
+        {
+            // simple right click on the same position after timeout
             working_list.unGroup();
         }
         return;

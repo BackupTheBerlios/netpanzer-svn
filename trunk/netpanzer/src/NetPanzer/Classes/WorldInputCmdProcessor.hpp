@@ -38,6 +38,7 @@ protected:
     iXY right_mouse_scroll_pos;
     iXY right_mouse_scrolled_pos;
     bool right_mouse_scroll;
+    bool right_mouse_scroll_moved;
     bool selectBoundBoxUnits();
 
     bool manual_control_state;
