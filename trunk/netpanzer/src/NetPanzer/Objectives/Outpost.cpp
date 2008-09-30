@@ -60,9 +60,12 @@ Outpost::attemptOccupationChange(UnitID unit_id)
     PlayerState* player = unit->player;
     player_status = player->getStatus();
 
-    if ( objective_state.occupation_status == _occupation_status_unoccupied ) {
-        if ( player_status == _player_state_active ) {
+    if ( objective_state.occupation_status == _occupation_status_unoccupied )
+    {
+        if ( player_status == _player_state_active )
+        {
             objective_state.occupying_player = player;
+            objective_state.occupying_player->incObjectivesHeld();
             objective_state.occupation_status = _occupation_status_occupied;
 
             update_mesg.status_update.set(objective_state.ID,
@@ -77,24 +80,27 @@ Outpost::attemptOccupationChange(UnitID unit_id)
             ConsoleInterface::postMessage(Color::cyan, false, 0, "'%s' has been occupied by '%s'",
                     objective_state.name, player_state->getName().c_str() );
         }
-    } else {
-        if (objective_state.occupying_player != player) {
-            if( player_status == _player_state_active  ) {
-                objective_state.occupying_player = player;
-                objective_state.occupation_status = _occupation_status_occupied;
-                update_mesg.status_update.set(
-                        objective_state.ID,
-                        objective_state.occupation_status,
-                        objective_state.occupying_player->getID(),
-                        unit_generation_on_flag,
-                        unit_generation_type,
-                        Uint32(unit_generation_timer.getTimeLeft() * 128));
-                SERVER->broadcastMessage(&update_mesg,
-                        sizeof(ObjectiveOccupationUpdate));
-                const PlayerState *player = objective_state.occupying_player;
-                ConsoleInterface::postMessage(Color::cyan, false, 0, "'%s' has been occupied by '%s'",
-                        objective_state.name, player->getName().c_str() );
-            }
+    }
+    else if (objective_state.occupying_player != player)
+    {
+        if( player_status == _player_state_active  )
+        {
+            objective_state.occupying_player->decObjectivesHeld();
+            objective_state.occupying_player = player;
+            objective_state.occupying_player->incObjectivesHeld();
+            objective_state.occupation_status = _occupation_status_occupied;
+            update_mesg.status_update.set(
+                    objective_state.ID,
+                    objective_state.occupation_status,
+                    objective_state.occupying_player->getID(),
+                    unit_generation_on_flag,
+                    unit_generation_type,
+                    Uint32(unit_generation_timer.getTimeLeft() * 128));
+            SERVER->broadcastMessage(&update_mesg,
+                    sizeof(ObjectiveOccupationUpdate));
+            const PlayerState *player = objective_state.occupying_player;
+            ConsoleInterface::postMessage(Color::cyan, false, 0, "'%s' has been occupied by '%s'",
+                    objective_state.name, player->getName().c_str() );
         }
     }
 }

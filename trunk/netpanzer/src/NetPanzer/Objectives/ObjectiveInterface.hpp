@@ -83,8 +83,6 @@ public:
         return objective_list.size();
     }
 
-    static void updatePlayerObjectiveCounts();
-
     static int getObjectiveLimit();
 
 protected:

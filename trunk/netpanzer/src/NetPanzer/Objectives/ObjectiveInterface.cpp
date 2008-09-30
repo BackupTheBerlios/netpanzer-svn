@@ -434,35 +434,6 @@ ObjectiveInterface::syncObjectives( ClientSocket * client )
     client->sendMessage(buffer,buffer_pos);
 }
 
-void
-ObjectiveInterface::updatePlayerObjectiveCounts()
-{
-    if(mutex == 0) { // little race condition...
-        mutex = SDL_CreateMutex();
-    }
-    
-    SDL_mutexP(mutex);
-    unsigned long player_index, player_count;
-    PlayerState *player_state = 0;
-
-    player_count = PlayerInterface::getMaxPlayers();
-
-    for( player_index = 0; player_index < player_count; player_index++ ) {
-        player_state = PlayerInterface::getPlayer( (unsigned short) player_index );
-        player_state->setObjectivesHeld( 0 );
-    }
-
-    std::vector<Objective*>::iterator i;
-    for(i = objective_list.begin(); i != objective_list.end(); i++) {
-        ObjectiveState *objective_state = & ((*i)->objective_state);
-
-        if( objective_state->occupation_status == _occupation_status_occupied ) {
-            objective_state->occupying_player->incObjectivesHeld();
-        }
-    }
-    SDL_mutexV(mutex);
-}
-
 int
 ObjectiveInterface::getObjectiveLimit()
 {

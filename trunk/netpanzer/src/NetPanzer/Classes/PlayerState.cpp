@@ -263,7 +263,7 @@ void PlayerState::decObjectivesHeld()
 {
     if ( stats_locked == true )
         return;
-    objectives_held++;
+    objectives_held--;
 }
 
 short PlayerState::getObjectivesHeld() const

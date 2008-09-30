@@ -133,8 +133,6 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
 {
     char statBuf[256];
 
-    ObjectiveInterface::updatePlayerObjectiveCounts();
-
     std::vector<const PlayerState*> states;
     for(size_t i = 0; i < PlayerInterface::getMaxPlayers(); ++i) {
         PlayerState* state = PlayerInterface::getPlayer(i);

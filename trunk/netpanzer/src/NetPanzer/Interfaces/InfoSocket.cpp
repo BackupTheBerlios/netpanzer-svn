@@ -112,7 +112,6 @@ InfoSocket::prepareStatusPacket()
       << "\\fraglimit\\" << gameconfig->fraglimit
       << "\\objectivelimit\\" << ObjectiveInterface::getObjectiveLimit();
 
-    ObjectiveInterface::updatePlayerObjectiveCounts();
     int n = 0;
     for(int i = 0; i < maxPlayers; ++i) {
         PlayerState* playerState = PlayerInterface::getPlayer(i);

@@ -168,7 +168,7 @@ MiniMap::drawObjectives(Surface &dest)
                 break;
 
             case _objective_disposition_player :
-                color = gameconfig->getPlayerRadarUnitColor();
+                color = gameconfig->getPlayerOutpostRadarColor();
                 break;
 
             case _objective_disposition_allie :

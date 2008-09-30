@@ -39,12 +39,18 @@ Objective::objectiveMesgUpdateOccupation(const ObjectiveMessage* message)
     const UpdateOccupationsStatus *occupation_update
         = (const UpdateOccupationsStatus *) message;
 
+    if ( objective_state.occupation_status == _occupation_status_occupied )
+    {
+        objective_state.occupying_player->decObjectivesHeld();
+    }
+    
     objective_state.occupation_status = occupation_update->occupation_status;
     objective_state.occupying_player
         = PlayerInterface::getPlayer(occupation_update->getOccupyingPlayerID());
 
     Outpost* outpost = dynamic_cast<Outpost*> (this);
-    if(outpost) {
+    if(outpost)
+    {
         outpost->unit_generation_on_flag = occupation_update->unit_gen_on;
         outpost->unit_generation_type = occupation_update->unit_type;
         UnitProfile* profile =
@@ -55,11 +61,12 @@ Objective::objectiveMesgUpdateOccupation(const ObjectiveMessage* message)
                 float(occupation_update->getTimeLeft()) / 128.0);
     }
 
-    if( objective_state.occupation_status != _occupation_status_unoccupied ) {
-        PlayerState *player_state = objective_state.occupying_player;
+    if( objective_state.occupation_status != _occupation_status_unoccupied )
+    {
+        objective_state.occupying_player->incObjectivesHeld();
         
         ConsoleInterface::postMessage(Color::cyan, false, 0, "'%s' has been occupied by '%s'",
-                objective_state.name, player_state->getName().c_str() );
+                objective_state.name, objective_state.occupying_player->getName().c_str() );
     }
 }
 
