@@ -113,8 +113,9 @@ void Palette::setColors()
     Color::orange  = findNearestColor(255, 128,   0); // fixed
     Color::magenta = findNearestColor(255,   0, 255); // fixed
     Color::cyan    = findNearestColor(  0, 255, 255); // fixed
-    Color::brown   = findNearestColor(128,  42,  42); // fixed
-
+    //Color::brown   = findNearestColor(128,  42,  42); // fixed
+    Color::brown   = findNearestColor(200,  80,  80); // new brown is lighter
+    
     //tan                   210 180 140   0.8235 0.7059 0.5490
     Color::tan            = findNearestColor(210, 180, 140); // fixed
     //chartreuse            127 255   0   0.4980 1.0000 0.0000

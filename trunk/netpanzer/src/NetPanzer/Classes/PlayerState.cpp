@@ -48,7 +48,7 @@ Uint8 *playerColorArray[] = {
 	&Color::unitGreen,
 	&Color::unitBlueGray,
 	&Color::unitDarkRed,
-	&Color::unitBlack,
+	//&Color::unitBlack, black removed from list
 	&Color::unitDarkGreen,
 	&Color::unitWhite,
 	&Color::unitLightOrange,
@@ -384,5 +384,5 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
     loss_points = ltoh16(state->loss_points);
     total = ltoh16(state->total);
     objectives_held = ltoh16(state->objectives_held);
-    colorIndex = ltoh32(state->colorIndex);
+    setColor(ltoh32(state->colorIndex));
 }
