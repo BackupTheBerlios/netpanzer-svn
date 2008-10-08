@@ -456,6 +456,12 @@
           <itemPath>src/NetPanzer/Resources/ResourceManager.cpp</itemPath>
           <itemPath>src/NetPanzer/Resources/ResourceManager.hpp</itemPath>
         </logicalFolder>
+        <logicalFolder name="Scripts" displayName="Scripts" projectFiles="true">
+          <itemPath>src/NetPanzer/Scripts/ScriptHelper.cpp</itemPath>
+          <itemPath>src/NetPanzer/Scripts/ScriptHelper.hpp</itemPath>
+          <itemPath>src/NetPanzer/Scripts/ScriptManager.cpp</itemPath>
+          <itemPath>src/NetPanzer/Scripts/ScriptManager.hpp</itemPath>
+        </logicalFolder>
         <logicalFolder name="Structs" displayName="Structs" projectFiles="true">
           <itemPath>src/NetPanzer/Structs/TileSetStruct.hpp</itemPath>
         </logicalFolder>
@@ -1889,6 +1895,18 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Resources/ResourceManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Scripts/ScriptHelper.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Scripts/ScriptHelper.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Scripts/ScriptManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Scripts/ScriptManager.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Structs/TileSetStruct.hpp">
@@ -3611,6 +3629,18 @@
       <item path="src/NetPanzer/Resources/ResourceManager.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="src/NetPanzer/Scripts/ScriptHelper.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Scripts/ScriptHelper.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Scripts/ScriptManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Scripts/ScriptManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
       <item path="src/NetPanzer/Structs/TileSetStruct.hpp">
         <itemTool>3</itemTool>
       </item>
@@ -5331,6 +5361,18 @@
       <item path="src/NetPanzer/Resources/ResourceManager.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="src/NetPanzer/Scripts/ScriptHelper.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Scripts/ScriptHelper.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Scripts/ScriptManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Scripts/ScriptManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
       <item path="src/NetPanzer/Structs/TileSetStruct.hpp">
         <itemTool>3</itemTool>
       </item>
@@ -7049,6 +7091,18 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Resources/ResourceManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Scripts/ScriptHelper.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Scripts/ScriptHelper.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Scripts/ScriptManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Scripts/ScriptManager.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Structs/TileSetStruct.hpp">

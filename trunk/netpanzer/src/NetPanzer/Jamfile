@@ -13,6 +13,7 @@ SUBDIRS =
     Network
     Resources
     Structs
+    Scripts
     Interfaces
     Bot
     System

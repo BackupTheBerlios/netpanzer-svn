@@ -20,70 +20,93 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 #include "Color.hpp"
 
-Uint8 Color::unitAqua;
-Uint8 Color::unitYellow;
-Uint8 Color::unitRed;
-Uint8 Color::unitBlue;
-Uint8 Color::unitDarkBlue;
-Uint8 Color::unitLightGreen;
-Uint8 Color::unitGreen;
-Uint8 Color::unitBlueGray;
-Uint8 Color::unitDarkRed;
-Uint8 Color::unitBlack;
-Uint8 Color::unitDarkGreen;
-Uint8 Color::unitWhite;
-Uint8 Color::unitLightOrange;
-Uint8 Color::unitOrange;
-Uint8 Color::unitGray;
-Uint8 Color::unitDarkGray;
+// Here is some preprocessor abuse
 
-Uint8 Color::black;
-Uint8 Color::blue;
-Uint8 Color::brown;
-Uint8 Color::cyan;
-Uint8 Color::gray;
-Uint8 Color::green;
-Uint8 Color::magenta;
-Uint8 Color::orange;
-Uint8 Color::pink;
-Uint8 Color::red;
-Uint8 Color::white;
-Uint8 Color::yellow;
+#define GEN_COLORS(GENERATOR) \
+    GENERATOR(unitAqua) \
+    GENERATOR(unitYellow) \
+    GENERATOR(unitRed) \
+    GENERATOR(unitBlue) \
+    GENERATOR(unitDarkBlue) \
+    GENERATOR(unitLightGreen) \
+    GENERATOR(unitGreen) \
+    GENERATOR(unitBlueGray) \
+    GENERATOR(unitDarkRed) \
+    GENERATOR(unitBlack) \
+    GENERATOR(unitDarkGreen) \
+    GENERATOR(unitWhite) \
+    GENERATOR(unitLightOrange) \
+    GENERATOR(unitOrange) \
+    GENERATOR(unitGray) \
+    GENERATOR(unitDarkGray) \
+    GENERATOR(black) \
+    GENERATOR(blue) \
+    GENERATOR(brown) \
+    GENERATOR(cyan) \
+    GENERATOR(gray) \
+    GENERATOR(green) \
+    GENERATOR(magenta) \
+    GENERATOR(orange) \
+    GENERATOR(pink) \
+    GENERATOR(red) \
+    GENERATOR(white) \
+    GENERATOR(yellow) \
+    GENERATOR(tan) \
+    GENERATOR(chartreuse) \
+    GENERATOR(cobaltGreen) \
+    GENERATOR(emeraldGreen) \
+    GENERATOR(forestGreen) \
+    GENERATOR(darkOliveGreen) \
+    GENERATOR(terreVerte) \
+    GENERATOR(darkBlue) \
+    GENERATOR(darkBrown) \
+    GENERATOR(darkCyan) \
+    GENERATOR(darkGray) \
+    GENERATOR(darkGreen) \
+    GENERATOR(darkMagenta) \
+    GENERATOR(darkOrange) \
+    GENERATOR(darkPink) \
+    GENERATOR(darkRed) \
+    GENERATOR(darkYellow) \
+    GENERATOR(lightBlue) \
+    GENERATOR(lightBrown) \
+    GENERATOR(lightCyan) \
+    GENERATOR(lightGray) \
+    GENERATOR(lightGreen) \
+    GENERATOR(lightMagenta) \
+    GENERATOR(lightOrange) \
+    GENERATOR(lightPink) \
+    GENERATOR(lightRed) \
+    GENERATOR(lightYellow) \
+    GENERATOR(gray32) \
+    GENERATOR(gray64) \
+    GENERATOR(gray96) \
+    GENERATOR(gray128) \
+    GENERATOR(gray160) \
+    GENERATOR(gray192) \
+    GENERATOR(gray224)
 
-Uint8 Color::tan;
-Uint8 Color::chartreuse;
-Uint8 Color::cobaltGreen;
-Uint8 Color::emeraldGreen;
-Uint8 Color::forestGreen;
-Uint8 Color::darkOliveGreen;
-Uint8 Color::terreVerte;
+// Have to merge like this, cant use ##
+#define MERGE_CLASS(a) a::
+#define GEN_VAR(CNAME) Uint8 MERGE_CLASS(Color)CNAME;
 
-Uint8 Color::darkBlue;
-Uint8 Color::darkBrown;
-Uint8 Color::darkCyan;
-Uint8 Color::darkGray;
-Uint8 Color::darkGreen;
-Uint8 Color::darkMagenta;
-Uint8 Color::darkOrange;
-Uint8 Color::darkPink;
-Uint8 Color::darkRed;
-Uint8 Color::darkYellow;
+#define GEN_GETSTRUCT(CNAME) { #CNAME, GETSVTYPE_BYTE, &MERGE_CLASS(Color)CNAME },
+#define GEN_SETSTRUCT(CNAME) { #CNAME, SETSVTYPE_BYTE, &MERGE_CLASS(Color)CNAME },
 
-Uint8 Color::lightBlue;
-Uint8 Color::lightBrown;
-Uint8 Color::lightCyan;
-Uint8 Color::lightGray;
-Uint8 Color::lightGreen;
-Uint8 Color::lightMagenta;
-Uint8 Color::lightOrange;
-Uint8 Color::lightPink;
-Uint8 Color::lightRed;
-Uint8 Color::lightYellow;
+// This generate the Uint8 Color::colorname for all the colors
+// Must not have ';' at end
+GEN_COLORS(GEN_VAR)
 
-Uint8 Color::gray32;
-Uint8 Color::gray64;
-Uint8 Color::gray96;
-Uint8 Color::gray128;
-Uint8 Color::gray160;
-Uint8 Color::gray192;
-Uint8 Color::gray224;
+// This generates the tables needed for script binding
+const ScriptVarBindRecord Color::colorGetters[] =
+{
+    GEN_COLORS(GEN_GETSTRUCT)
+    {0,0}
+};
+        
+const ScriptVarBindRecord Color::colorSetters[] =
+{
+    GEN_COLORS(GEN_SETSTRUCT)
+    {0,0}
+};
+        

@@ -1,3 +1,9 @@
+
+#include "Util/Log.hpp"
+
+
+#include "Scripts/ScriptManager.hpp"
+
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
  
@@ -62,85 +68,39 @@ Palette::Palette()
 {
 } // end Palette::Palette
 
+int
+Palette::makeColor(lua_State *L)
+{
+    int r = luaL_checkint(L,1); // r
+    int g = luaL_checkint(L,2); // g
+    int b = luaL_checkint(L,3); // b
+    
+    int color = findNearestColor(r,g,b,true);
+    
+    lua_pushinteger(L, color);
+    return 1;
+}
+
+static const luaL_reg colorUtilLib[] =
+{
+    {"makeColor",   Palette::makeColor},
+    {0,0}
+};
+
+void
+Palette::registerScript()
+{
+    ScriptManager::registerLib( "ColorUtil", colorUtilLib);
+    ScriptManager::bindStaticVariables( "Color", "ColorMetaTable",
+                                       Color::colorGetters,
+                                       Color::colorSetters);
+}
+
 // setColors
 //---------------------------------------------------------------------------
 void Palette::setColors()
 {
-    Color::unitAqua        = findNearestColor(  0, 204, 255);
-    Color::unitYellow      = findNearestColor(255, 255,   0);
-    Color::unitRed         = findNearestColor(255,   0,   0);
-    Color::unitBlue        = findNearestColor(  3,   3, 255);
-    Color::unitDarkBlue    = findNearestColor(  0,   0, 128);
-    Color::unitLightGreen  = findNearestColor(163, 214, 159);
-    Color::unitGreen       = findNearestColor( 31, 166,  36);
-    Color::unitBlueGray    = findNearestColor( 43,  85, 131);
-    Color::unitDarkRed     = findNearestColor(150,   0,   0);
-    Color::unitBlack       = findNearestColor(  6,   2,   2);
-    Color::unitDarkGreen   = findNearestColor( 26,  88,  36);
-    Color::unitWhite       = findNearestColor(250, 253, 248);
-    Color::unitLightOrange = findNearestColor(246, 210,  99);
-    Color::unitOrange      = findNearestColor(205, 144,   9);
-    Color::unitGray        = findNearestColor(186, 186, 186);
-    Color::unitDarkGray    = findNearestColor( 99, 100, 102);
-
-    // Grays
-    Color::black   = findNearestColor(  0,   0,   0, true);
-    Color::gray32  = findNearestColor( 32,  32,  32);
-    Color::gray64  = findNearestColor( 64,  64,  64);
-    Color::gray96  = findNearestColor( 96,  96,  96);
-    Color::gray128 = findNearestColor(128, 128, 128);
-    Color::gray160 = findNearestColor(160, 160, 160);
-    Color::gray192 = findNearestColor(192, 192, 192);
-    Color::gray224 = findNearestColor(224, 224, 224);
-    Color::white   = findNearestColor(255, 255, 255);
-
-    // Dark Colors !FIXME!
-    Color::darkGray    = Color::gray64;
-    Color::darkRed     = findNearestColor(128,   0,   0); // fixed
-    Color::darkGreen   = findNearestColor(  0, 128,   0); // fixed
-    Color::darkBlue    = findNearestColor(  0,   0, 128); // fixed
-    Color::darkYellow  = findNearestColor(255, 168,  18); // fixed
-    Color::darkOrange  = findNearestColor(255, 140,   0); // fixed
-    Color::darkMagenta = findNearestColor(148,   0, 211); // fixed
-    Color::darkCyan    = findNearestColor(  0, 206, 209); // fixed
-
-    // Normal Colors
-    Color::gray    = Color::gray128;
-    Color::red     = findNearestColor(255,   0,   0); // fixed
-    Color::green   = findNearestColor(  0, 255,   0); // fixed
-    Color::blue    = findNearestColor(  0,   0, 255); // fixed
-    Color::yellow  = findNearestColor(255, 255,   0); // fixed
-    Color::orange  = findNearestColor(255, 128,   0); // fixed
-    Color::magenta = findNearestColor(255,   0, 255); // fixed
-    Color::cyan    = findNearestColor(  0, 255, 255); // fixed
-    //Color::brown   = findNearestColor(128,  42,  42); // fixed
-    Color::brown   = findNearestColor(200,  80,  80); // new brown is lighter
-    
-    //tan                   210 180 140   0.8235 0.7059 0.5490
-    Color::tan            = findNearestColor(210, 180, 140); // fixed
-    //chartreuse            127 255   0   0.4980 1.0000 0.0000
-    Color::chartreuse     = findNearestColor(127, 255,   0); // fixed
-    //cobalt_green           61 145  64   0.2400 0.5700 0.2500
-    Color::cobaltGreen    = findNearestColor( 61, 145,  64); // fixed
-    //emerald_green           0 201  87   0.0000 0.7900 0.3400
-    Color::emeraldGreen   = findNearestColor(  0, 201,  87); // fixed
-    //forest_green           34 139  34   0.1333 0.5451 0.1333
-    Color::forestGreen    = findNearestColor( 34, 139,  34); // fixed
-    //olive_green_dark       85 107  47   0.3333 0.4196 0.1843
-    Color::darkOliveGreen = findNearestColor( 85, 107,  47); // fixed
-    //terre_verte            56  94  15   0.2200 0.3700 0.0600
-    Color::terreVerte     = findNearestColor( 56,  94,  15); // fixed
-
-    // Normal Colors !FIXME!
-    Color::lightGray    = Color::gray192;
-    Color::lightRed     = findNearestColor(255, 160, 122); // fixed
-    Color::lightGreen   = findNearestColor( 50, 205,  50); // fixed
-    Color::lightBlue    = findNearestColor(135, 206, 250); // fixed
-    Color::lightYellow  = findNearestColor(255, 255, 224); // fixed
-    Color::lightOrange  = findNearestColor(237, 145,  33); // fixed
-    Color::lightMagenta = findNearestColor(  0, 255, 255);
-    Color::lightCyan    = findNearestColor(224, 255, 255); // fixed
-
+    ScriptManager::runFile("loadcolors","scripts/initcolors.lua");
 } // end Palette::setColors
 
 // setColorTables

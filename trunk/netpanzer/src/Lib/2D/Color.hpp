@@ -19,11 +19,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __Color_hpp__
 
 #include "SDL.h"
+#include "Scripts/ScriptManager.hpp"
 
 //---------------------------------------------------------------------------
 class Color
 {
 public:
+    static const ScriptVarBindRecord colorGetters[];
+    static const ScriptVarBindRecord colorSetters[];
     // Color for netPanzer players.
     static Uint8 unitAqua;
     static Uint8 unitYellow;

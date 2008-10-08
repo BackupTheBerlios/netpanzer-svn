@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Color.hpp"
 #include "ColorTable.hpp"
+#include "Scripts/ScriptManager.hpp"
 
 const size_t PALETTE_LENGTH = 256;
 
@@ -104,6 +105,8 @@ public:
     }
     static void setColors();
     static void setColorTables();
+    static int makeColor(lua_State *L);
+    static void registerScript();
 
     static void setBrightnessAbsolute(float brightness);
 };

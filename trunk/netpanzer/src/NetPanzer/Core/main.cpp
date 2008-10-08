@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include "Scripts/ScriptManager.hpp"
+
 #include "lua/lua.hpp"
 
 #ifdef WIN32
@@ -47,6 +49,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/BotGameManager.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
 #include "Core/NetworkGlobals.hpp"
+#include "Scripts/ScriptManager.hpp"
+#include "2D/Palette.hpp"
 
 //---------------------------------------------------------------------------
 
@@ -293,22 +297,15 @@ BaseGameManager *initialise(int argc, char** argv)
 //-----------------------------------------------------------------
 int netpanzer_main(int argc, char** argv)
 {
-    lua_State *L = lua_open();
-    if ( L ) {
-        luaL_openlibs(L);
-        char func[] = "a=5;\nprint('Lua is working, and \"a\" is '..a);\n";
-        luaL_loadbuffer(L,func,strlen(func),"test");
-        int error=lua_pcall(L,0,0,0);
-        if (error) {
-            printf("error is: %s",lua_tostring(L,-1));
-            lua_pop(L,1);
-        }
-    } else {
-        printf("Lua failed to start\n");
-    }
+    ScriptManager::initialize();
     
+    ScriptManager::runStr("LuaInitialize","print('Lua is working just fine');");
+        
     BaseGameManager *manager = initialise(argc, argv);
 
+    Palette::registerScript(); // here for the moment;
+    ScriptManager::runFile("unused","scripts/initialize.lua");
+    
     // we'll catch every exception here, to be sure the user gets at least
     // a usefull error message and SDL has a chance to shutdown...
     try {
@@ -339,7 +336,9 @@ int netpanzer_main(int argc, char** argv)
     catch(const float dummy) {
     }
 #endif
-    lua_close(L);
+    
+    ScriptManager::close();
+    
     return 0;
 }
 

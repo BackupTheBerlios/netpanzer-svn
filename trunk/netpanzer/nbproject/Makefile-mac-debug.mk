@@ -161,6 +161,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/NetPanzer/Particles/FireParticleSystem2D.o \
 	${OBJECTDIR}/src/NetPanzer/Weapons/BulletWeapon.o \
 	${OBJECTDIR}/src/Lib/lua/lzio.o \
+	${OBJECTDIR}/src/NetPanzer/Scripts/ScriptManager.o \
 	${OBJECTDIR}/src/NetPanzer/Views/Components/ScrollBar.o \
 	${OBJECTDIR}/src/NetPanzer/Classes/Network/NetPacketDebugger.o \
 	${OBJECTDIR}/src/Lib/lua/print.o \
@@ -202,11 +203,11 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/NetPanzer/Units/UnitBucketArray.o \
 	${OBJECTDIR}/src/Lib/Util/UtilInterface.o \
 	${OBJECTDIR}/src/NetPanzer/Classes/SelectionList.o \
-	${OBJECTDIR}/src/NetPanzer/Interfaces/MiniMapInterface.o \
 	${OBJECTDIR}/src/Lib/physfs/zlib123/trees.o \
 	${OBJECTDIR}/src/NetPanzer/Weapons/Weapon.o \
 	${OBJECTDIR}/src/NetPanzer/Particles/SnowParticleSystem2D.o \
 	${OBJECTDIR}/src/Lib/lua/lua.o \
+	${OBJECTDIR}/src/NetPanzer/Scripts/ScriptHelper.o \
 	${OBJECTDIR}/src/NetPanzer/Particles/SparkParticle2D.o \
 	${OBJECTDIR}/src/Lib/physfs/zlib123/zutil.o \
 	${OBJECTDIR}/src/NetPanzer/Bot/Bot.o \
@@ -252,6 +253,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/NetPanzer/Views/Game/ResignView.o \
 	${OBJECTDIR}/src/Lib/Util/Log.o \
 	${OBJECTDIR}/src/Lib/optionmm/command_line.o \
+	${OBJECTDIR}/src/NetPanzer/Views/Components/MiniMap.o \
 	${OBJECTDIR}/src/NetPanzer/Units/Vehicle.o \
 	${OBJECTDIR}/src/NetPanzer/Views/MainMenu/MenuTemplateView.o \
 	${OBJECTDIR}/src/NetPanzer/Views/Game/VehicleSelectionView.o \
@@ -855,6 +857,10 @@ ${OBJECTDIR}/src/Lib/lua/lzio.o: src/Lib/lua/lzio.c
 	${MKDIR} -p ${OBJECTDIR}/src/Lib/lua
 	$(COMPILE.c) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/Lib/lua/lzio.o src/Lib/lua/lzio.c
 
+${OBJECTDIR}/src/NetPanzer/Scripts/ScriptManager.o: src/NetPanzer/Scripts/ScriptManager.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Scripts
+	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Scripts/ScriptManager.o src/NetPanzer/Scripts/ScriptManager.cpp
+
 ${OBJECTDIR}/src/NetPanzer/Views/Components/ScrollBar.o: src/NetPanzer/Views/Components/ScrollBar.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Views/Components
 	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Views/Components/ScrollBar.o src/NetPanzer/Views/Components/ScrollBar.cpp
@@ -1019,10 +1025,6 @@ ${OBJECTDIR}/src/NetPanzer/Classes/SelectionList.o: src/NetPanzer/Classes/Select
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Classes
 	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Classes/SelectionList.o src/NetPanzer/Classes/SelectionList.cpp
 
-${OBJECTDIR}/src/NetPanzer/Interfaces/MiniMapInterface.o: src/NetPanzer/Interfaces/MiniMapInterface.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Interfaces
-	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Interfaces/MiniMapInterface.o src/NetPanzer/Interfaces/MiniMapInterface.cpp
-
 ${OBJECTDIR}/src/Lib/physfs/zlib123/trees.o: src/Lib/physfs/zlib123/trees.c 
 	${MKDIR} -p ${OBJECTDIR}/src/Lib/physfs/zlib123
 	$(COMPILE.c) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/Lib/physfs/zlib123/trees.o src/Lib/physfs/zlib123/trees.c
@@ -1038,6 +1040,10 @@ ${OBJECTDIR}/src/NetPanzer/Particles/SnowParticleSystem2D.o: src/NetPanzer/Parti
 ${OBJECTDIR}/src/Lib/lua/lua.o: src/Lib/lua/lua.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/Lib/lua
 	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/Lib/lua/lua.o src/Lib/lua/lua.cpp
+
+${OBJECTDIR}/src/NetPanzer/Scripts/ScriptHelper.o: src/NetPanzer/Scripts/ScriptHelper.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Scripts
+	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Scripts/ScriptHelper.o src/NetPanzer/Scripts/ScriptHelper.cpp
 
 ${OBJECTDIR}/src/NetPanzer/Particles/SparkParticle2D.o: src/NetPanzer/Particles/SparkParticle2D.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Particles
@@ -1218,6 +1224,10 @@ ${OBJECTDIR}/src/Lib/Util/Log.o: src/Lib/Util/Log.cpp
 ${OBJECTDIR}/src/Lib/optionmm/command_line.o: src/Lib/optionmm/command_line.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/Lib/optionmm
 	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/Lib/optionmm/command_line.o src/Lib/optionmm/command_line.cpp
+
+${OBJECTDIR}/src/NetPanzer/Views/Components/MiniMap.o: src/NetPanzer/Views/Components/MiniMap.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Views/Components
+	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Views/Components/MiniMap.o src/NetPanzer/Views/Components/MiniMap.cpp
 
 ${OBJECTDIR}/src/NetPanzer/Units/Vehicle.o: src/NetPanzer/Units/Vehicle.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Units
