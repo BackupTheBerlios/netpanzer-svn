@@ -16,6 +16,7 @@ if ! $(NO_DATA)
     SubInclude TOP wads ;
 #    SubInclude TOP fonts ;
     SubInclude TOP cache ;
+    SubInclude TOP scripts ;
 }
 
 UseAutoconf ;
