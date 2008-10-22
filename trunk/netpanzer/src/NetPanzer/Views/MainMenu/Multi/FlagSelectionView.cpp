@@ -27,23 +27,35 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Button.hpp"
 #include "Views/Components/MouseEvent.hpp"
 #include "2D/Color.hpp"
+#include "2D/Surface.hpp"
+#include "Util/FileSystem.hpp"
 
-FlagID FlagSelectionView::playerFlagSelected = 0;
+string FlagSelectionView::playerFlagSelected = "";
 Surface FlagSelectionView::playerFlag;
 
 class FlagButton : public Button
 {
 protected:
-    unsigned char fcode;
+    string fname;
 public:
-    FlagButton(int x, int y, Surface &s, unsigned char flagCode)
+    FlagButton(int x, int y, const string &flagname)
         : Button("flag")
     {
         setLocation(x, y);
-        setSize(s.getWidth(), s.getHeight());
-        bimage.create(s.getWidth(), s.getHeight(), 1);
-        s.blt(bimage, 0, 0);
-        fcode = flagCode;
+        setSize(20,14);
+        string fullname(DEFAULT_FLAGS_PATH);
+        fullname += flagname;
+        //setSize(s.getWidth(), s.getHeight());
+//        try
+//        {
+            bimage.loadBMP(fullname.c_str());
+            bimage.mapFromPalette("netp");
+//        }
+//        catch (Exception e)
+//        {
+//            
+//        }
+        fname = flagname;
         
         setExtraBorder();
         borders[1][0] = Color::red;
@@ -56,7 +68,7 @@ public:
     {
         if ( e.getID() == mMouseEvent::MOUSE_EVENT_CLICKED )
         {
-            FlagSelectionView::setSelectedFlag(fcode);
+            FlagSelectionView::setSelectedFlag(fname);
         }
         else
         {
@@ -91,52 +103,56 @@ FlagSelectionView::FlagSelectionView() : RMouseHackView()
 //---------------------------------------------------------------------------
 void FlagSelectionView::init()
 {
-    Surface flag;
-    // XXX we suppose all the flags has the same size
-    Surface * curFlag = ResourceManager::getFlag(0);
-    
-    //flags.mapFromPalette("netp");
+    iXY flagStartOffset(BORDER_SPACE, BORDER_SPACE * 2 + 14); // 14 is the flag height
 
-    iXY flagStartOffset(BORDER_SPACE, BORDER_SPACE * 2 + curFlag->getHeight());
-
-    int yOffset = curFlag->getHeight() + 2;
+    int yOffset = 14 + 2; // 14 is the flag height
 
     int x = flagStartOffset.x;
     int y = flagStartOffset.y;
 
-    // XXX to be able to do the loop we need int
-    // but it should be FlagID
-    // also, the 256 should be MAX_FLAG or similiar.
-    for (unsigned int i = 0; i < 256; i++)
+    char** list = filesystem::enumerateFiles(DEFAULT_FLAGS_PATH);
+    
+    vector<string> filenames;
+    string flagname;
+    
+    for(char** file = list; *file != 0; file++)
     {
-        if ( ! ResourceManager::isFlagActive(i) )
-            continue;
-        
-        // XXX we have to copy the flag because of different palettes
-        curFlag = ResourceManager::getFlag(i);
-        flag.create(curFlag->getWidth(), curFlag->getHeight(), 1);
-        curFlag->blt(flag, 0, 0);
-        flag.mapFromPalette("netp");
-        
-        add( new FlagButton( x, y, flag, i) );
-
-        x += flag.getWidth() + 2;
-
-        if (x > flagStartOffset.x + getClientRect().getSizeX() - BORDER_SPACE - (int)flag.getWidth()) {
-            x = flagStartOffset.x;
-            y += yOffset;
+        flagname = *file;
+        if(flagname.find(".bmp") != string::npos)
+        {
+            filenames.push_back(flagname);
         }
     }
 
-    if(gameconfig->playerflag.isDefaultValue())
+    filesystem::freeList(list);
+
+    sort(filenames.begin(), filenames.end());
+
+    // Now load in the sorted BMP names.
+    for (unsigned int i = 0; i < filenames.size(); i++)
     {
-        // new player, no flag...
-        gameconfig->playerflag=rand()%255; // XXX be lucky, no check for flags.
+        LOGGER.warning("Flag '%s'", filenames[i].c_str());
+        //flag.loadBMP(filenames[i].c_str());
+        //flag.mapFromPalette("netp");
+        try
+        {
+            add( new FlagButton( x, y, filenames[i]) );
+
+            x += 20 + 2; // 20 is the with of flag
+
+            if (x > flagStartOffset.x + getClientRect().getSizeX() - BORDER_SPACE - 20) // 20 is the width of flag
+            {
+                x = flagStartOffset.x;
+                y += yOffset;
+            }
+        }
+        catch (Exception e)
+        {
+            LOGGER.warning("Error loading flag '%s'", filenames[i].c_str());
+        }
     }
     
     playerFlagSelected = gameconfig->playerflag;
-    if ( ! ResourceManager::isFlagActive(playerFlagSelected) )
-        playerFlagSelected = 0;
     
     setSelectedFlag(playerFlagSelected);
     
@@ -164,16 +180,21 @@ void FlagSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 
 } // end FlagSelectionView::doDraw
 void
-FlagSelectionView::setSelectedFlag(FlagID code)
+FlagSelectionView::setSelectedFlag(string &fname)
 {
-    if ( ResourceManager::isFlagActive(code) )
+    string fullfile(DEFAULT_FLAGS_PATH);
+    fullfile += fname;
+    try
     {
-        // XXX have to map because of different palettes.
-        Surface * rflag = ResourceManager::getFlag(code);
-        playerFlag.create(rflag->getWidth(), rflag->getHeight(), 1);
-        rflag->blt(playerFlag, 0, 0);
-        playerFlag.mapFromPalette("netp");
-        
-        playerFlagSelected = code;    
+        Surface t;
+        t.loadBMP(fullfile.c_str());
+        t.mapFromPalette("netp");
+        playerFlag.copy(t);
+        playerFlagSelected = fname;
+    }
+    catch (Exception &e)
+    {
+        LOGGER.warning("Error loading flag '%s', using blank flag", fname.c_str());
+        playerFlag.copy(*ResourceManager::getEmptyImage());
     }
 }

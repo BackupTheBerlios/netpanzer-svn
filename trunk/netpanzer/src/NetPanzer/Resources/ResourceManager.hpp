@@ -23,8 +23,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Core/CoreTypes.hpp"
 
+#define DEFAULT_FLAGS_PATH "pics/flags/"
+
 // forward declarations
 class Surface;
+class NetMessage;
 
 class ResourceManager
 {
@@ -33,6 +36,12 @@ public:
     static int loadDefaultFlags();
     static Surface * getFlag(FlagID flag);
     static bool isFlagActive(FlagID flag);
+    static FlagID registerFlagFromData(Uint8 *flagdata);
+    static void getFlagData(const char * flagname, Uint8 *dest);
+    static void getFlagSyncData(FlagID flag, Uint8 *dest);
+    static void syncFlagFromData(FlagID flag, Uint8 *flagdata);
+    static void releaseFlag(FlagID flag);
+    static void processResourceMessage(const NetMessage* message);
 };
 
 #endif	/* _RESOURCEMANAGER_HPP */

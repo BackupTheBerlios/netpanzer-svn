@@ -455,6 +455,7 @@
         <logicalFolder name="Resources" displayName="Resources" projectFiles="true">
           <itemPath>src/NetPanzer/Resources/ResourceManager.cpp</itemPath>
           <itemPath>src/NetPanzer/Resources/ResourceManager.hpp</itemPath>
+          <itemPath>src/NetPanzer/Resources/ResourceManagerMessages.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="Scripts" displayName="Scripts" projectFiles="true">
           <itemPath>src/NetPanzer/Scripts/ScriptHelper.cpp</itemPath>
@@ -1895,6 +1896,9 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Resources/ResourceManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Resources/ResourceManagerMessages.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Scripts/ScriptHelper.cpp">
@@ -3629,6 +3633,9 @@
       <item path="src/NetPanzer/Resources/ResourceManager.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="src/NetPanzer/Resources/ResourceManagerMessages.hpp">
+        <itemTool>3</itemTool>
+      </item>
       <item path="src/NetPanzer/Scripts/ScriptHelper.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -5361,6 +5368,9 @@
       <item path="src/NetPanzer/Resources/ResourceManager.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="src/NetPanzer/Resources/ResourceManagerMessages.hpp">
+        <itemTool>3</itemTool>
+      </item>
       <item path="src/NetPanzer/Scripts/ScriptHelper.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -7091,6 +7101,9 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Resources/ResourceManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Resources/ResourceManagerMessages.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Scripts/ScriptHelper.cpp">

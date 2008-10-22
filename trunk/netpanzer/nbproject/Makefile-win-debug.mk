@@ -133,6 +133,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/Lib/2D/Color.o \
 	${OBJECTDIR}/src/NetPanzer/Particles/FireParticleSystem2D.o \
 	${OBJECTDIR}/src/NetPanzer/Particles/SmokingTrajectoryParticle2D.o \
+	${OBJECTDIR}/src/NetPanzer/Scripts/ScriptHelper.o \
 	${OBJECTDIR}/src/NetPanzer/Classes/Network/NetworkClient.o \
 	${OBJECTDIR}/src/NetPanzer/Classes/PlayerUnitConfig.o \
 	${OBJECTDIR}/src/Lib/lua/print.o \
@@ -232,6 +233,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi/MapSelectionView.o \
 	${OBJECTDIR}/src/NetPanzer/Views/Components/Label.o \
 	${OBJECTDIR}/src/NetPanzer/Views/Components/Component.o \
+	${OBJECTDIR}/src/NetPanzer/Scripts/ScriptManager.o \
 	${OBJECTDIR}/src/NetPanzer/Interfaces/Heartbeat.o \
 	${OBJECTDIR}/src/NetPanzer/Particles/TemplateMuzzleSystem.o \
 	${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi/FlagSelectionView.o \
@@ -743,6 +745,10 @@ ${OBJECTDIR}/src/NetPanzer/Particles/SmokingTrajectoryParticle2D.o: src/NetPanze
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Particles
 	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -IC\:/mingw/include/SDL -o ${OBJECTDIR}/src/NetPanzer/Particles/SmokingTrajectoryParticle2D.o src/NetPanzer/Particles/SmokingTrajectoryParticle2D.cpp
 
+${OBJECTDIR}/src/NetPanzer/Scripts/ScriptHelper.o: src/NetPanzer/Scripts/ScriptHelper.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Scripts
+	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -IC\:/mingw/include/SDL -o ${OBJECTDIR}/src/NetPanzer/Scripts/ScriptHelper.o src/NetPanzer/Scripts/ScriptHelper.cpp
+
 ${OBJECTDIR}/src/NetPanzer/Classes/Network/NetworkClient.o: src/NetPanzer/Classes/Network/NetworkClient.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Classes/Network
 	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -IC\:/mingw/include/SDL -o ${OBJECTDIR}/src/NetPanzer/Classes/Network/NetworkClient.o src/NetPanzer/Classes/Network/NetworkClient.cpp
@@ -1138,6 +1144,10 @@ ${OBJECTDIR}/src/NetPanzer/Views/Components/Label.o: src/NetPanzer/Views/Compone
 ${OBJECTDIR}/src/NetPanzer/Views/Components/Component.o: src/NetPanzer/Views/Components/Component.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Views/Components
 	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -IC\:/mingw/include/SDL -o ${OBJECTDIR}/src/NetPanzer/Views/Components/Component.o src/NetPanzer/Views/Components/Component.cpp
+
+${OBJECTDIR}/src/NetPanzer/Scripts/ScriptManager.o: src/NetPanzer/Scripts/ScriptManager.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Scripts
+	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -IC\:/mingw/include/SDL -o ${OBJECTDIR}/src/NetPanzer/Scripts/ScriptManager.o src/NetPanzer/Scripts/ScriptManager.cpp
 
 ${OBJECTDIR}/src/NetPanzer/Interfaces/Heartbeat.o: src/NetPanzer/Interfaces/Heartbeat.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Interfaces

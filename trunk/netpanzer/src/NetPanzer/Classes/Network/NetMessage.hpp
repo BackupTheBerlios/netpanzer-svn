@@ -24,6 +24,7 @@ enum { _net_message_class_multi = 0,
        _net_message_class_client_server,
        _net_message_class_system,
        _net_message_class_connect,
+       _net_message_class_resource, // for resource manager
        _net_message_class_player,
        _net_message_class_unit,
        _net_message_class_terminal,

@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ConnectNetMessage.hpp"
 #include "Util/Endian.hpp"
+#include "Resources/ResourceManager.hpp"
 
 ClientConnectJoinRequest::ClientConnectJoinRequest()
 {
@@ -116,18 +117,14 @@ ConnectClientSettings::ConnectClientSettings()
     memset(&player_name, 0, sizeof(player_name));
 }
 
-Sint16 ConnectClientSettings::getPlayerFlag() const
-{
-    return ltoh16(player_flag);
-}
-
-void ConnectClientSettings::set(const char *player_name, Uint8 unit_color,
-        Uint16 player_flag )
+void
+ConnectClientSettings::set( const char *player_name, Uint8 unit_color,
+                            const char * flagname )
 {
     strncpy(ConnectClientSettings::player_name, player_name, 64);
     ConnectClientSettings::player_name[63] = '\0';
     ConnectClientSettings::unit_color = unit_color;
-    ConnectClientSettings::player_flag = htol16(player_flag);
+    ResourceManager::getFlagData(flagname, (Uint8*)&flagdata);
 }
 
 

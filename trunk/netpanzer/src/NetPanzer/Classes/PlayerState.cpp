@@ -297,40 +297,40 @@ void PlayerState::setFlag(FlagID newflag)
 {
     flag = newflag;
     
-    bool recheck;
-    do
-    {
-        recheck = false;
-        for (Uint16 p=0; p<PlayerInterface::getMaxPlayers(); p++)
-        {
-            if ( p == player_index )
-                continue;
-                
-            PlayerState *ps=PlayerInterface::getPlayer(p);
-            
-            if (  (ps->status==_player_state_connecting 
-                  || ps->status==_player_state_active )
-                 && ps->flag == flag
-               )
-            {
-                // will autorotate because it is a byte
-                do
-                {
-                    flag++;
-                } while ( ! ResourceManager::isFlagActive(flag) );
-                                    
-                if ( flag != newflag ) // there are no free flags if it is ==
-                {
-                    recheck = true;
-                }
-                else
-                {
-                    LOGGER.warning("No more free flags");
-                }   
-                break;
-            }
-        }
-    } while (recheck);
+//    bool recheck;
+//    do
+//    {
+//        recheck = false;
+//        for (Uint16 p=0; p<PlayerInterface::getMaxPlayers(); p++)
+//        {
+//            if ( p == player_index )
+//                continue;
+//                
+//            PlayerState *ps=PlayerInterface::getPlayer(p);
+//            
+//            if (  (ps->status==_player_state_connecting 
+//                  || ps->status==_player_state_active )
+//                 && ps->flag == flag
+//               )
+//            {
+//                // will autorotate because it is a byte
+//                do
+//                {
+//                    flag++;
+//                } while ( ! ResourceManager::isFlagActive(flag) );
+//                                    
+//                if ( flag != newflag ) // there are no free flags if it is ==
+//                {
+//                    recheck = true;
+//                }
+//                else
+//                {
+//                    LOGGER.warning("No more free flags");
+//                }   
+//                break;
+//            }
+//        }
+//    } while (recheck);
 }
 
 FlagID PlayerState::getFlag() const

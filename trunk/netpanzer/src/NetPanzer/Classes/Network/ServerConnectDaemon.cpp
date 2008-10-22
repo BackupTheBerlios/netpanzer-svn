@@ -38,6 +38,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Util/Log.hpp"
+#include "Resources/ResourceManager.hpp"
+#include "Resources/ResourceManagerMessages.hpp"
 
 ServerConnectDaemon::ConnectionState 
         ServerConnectDaemon::connection_state = ServerConnectDaemon::connect_state_idle;
@@ -289,7 +291,9 @@ bool ServerConnectDaemon::connectStateWaitForClientSettings(
             player->setName( client_setting->player_name );
             player->unit_config.setUnitColor( client_setting->unit_color );
             
-            Uint8 flag = (Uint8) client_setting->getPlayerFlag();
+            FlagID flag = ResourceManager::registerFlagFromData((Uint8*)&client_setting->flagdata);
+            LOGGER.warning("Player '%s' got flag '%d'", client_setting->player_name,
+                    flag);
             player->setFlag(flag);
 
             player->setID( connect_client->getPlayerIndex() );
@@ -372,16 +376,26 @@ bool ServerConnectDaemon::connectStatePlayerStateSync()
     
     unsigned char buffer[_MAX_NET_PACKET_SIZE];
     unsigned int buffer_pos = 0;
+
     PlayerStateSync msg;
     msg.setSize(sizeof(PlayerStateSync));
-    while ( buffer_pos+sizeof(PlayerStateSync) < _MAX_NET_PACKET_SIZE
+    
+    ResourceManagerSyncFlagMessage flagmsg;
+    flagmsg.setSize(sizeof(ResourceManagerSyncFlagMessage));
+    
+    while ( buffer_pos+sizeof(msg)+sizeof(flagmsg) < _MAX_NET_PACKET_SIZE
             && percent_complete != 100)
     {
         if ( PlayerInterface::syncNextPlayerState( msg.player_state, &percent_complete) )
         {
             memcpy(buffer+buffer_pos, &msg, sizeof(PlayerStateSync));
             buffer_pos += sizeof(PlayerStateSync);
-        }
+            
+            flagmsg.setFlagID(msg.player_state.getFlag());
+            ResourceManager::getFlagSyncData(flagmsg.getFlagID(), (Uint8*)&flagmsg.flagdata);
+            memcpy(buffer+buffer_pos, &flagmsg, sizeof(flagmsg));
+            buffer_pos += sizeof(flagmsg);
+        }     
     }
 
     if ( buffer_pos )
@@ -412,6 +426,9 @@ bool ServerConnectDaemon::connectStatePlayerStateSync()
         PlayerStateSync player_state_update( p->getNetworkPlayerState() );
         player_state_update.setSize(sizeof(PlayerStateSync));
         SERVER->broadcastMessage(&player_state_update, sizeof(PlayerStateSync));
+        flagmsg.setFlagID(p->getFlag());
+        ResourceManager::getFlagSyncData(flagmsg.getFlagID(), (Uint8*)&flagmsg.flagdata);
+        SERVER->broadcastMessage(&flagmsg, sizeof(flagmsg));
         
         if(connection_state != connect_state_idle)
         {

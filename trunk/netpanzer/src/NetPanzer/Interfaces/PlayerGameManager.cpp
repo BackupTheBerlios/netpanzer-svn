@@ -372,7 +372,7 @@ void PlayerGameManager::hostMultiPlayerGame()
     player_state = PlayerInterface::allocateLoopBackPlayer();
     const char* playername = gameconfig->playername.c_str();
     player_state->setName(playername);
-    player_state->setFlag((unsigned char) gameconfig->playerflag);
+    player_state->setFlag(0);
     
     //GameManager::spawnPlayer( PlayerInterface::getLocalPlayerIndex() );
     

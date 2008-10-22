@@ -139,10 +139,10 @@ void BaseGameManager::loadGameData()
         throw Exception("Couldn't find any flag in pics/flags/.");
     }
 
-    if(gameconfig->playerflag.isDefaultValue())
-    {
-        gameconfig->playerflag=rand()%numflags;
-    }
+//    if(gameconfig->playerflag.isDefaultValue())
+//    {
+//        gameconfig->playerflag=rand()%numflags;
+//    }
 }
 //-----------------------------------------------------------------
 void BaseGameManager::initializeNetworkSubSystem()

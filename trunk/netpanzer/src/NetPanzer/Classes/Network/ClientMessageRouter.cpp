@@ -38,6 +38,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 
 #include "Classes/Network/NetworkState.hpp"
+#include "Resources/ResourceManager.hpp"
 
 NetMessage * ClientMessageRouter::temp_message;
 NetMessageDecoder ClientMessageRouter::message_decoder;
@@ -78,6 +79,10 @@ ClientMessageRouter::routeMessage(const NetMessage* message)
 
         case _net_message_class_connect:
             ClientConnectDaemon::processNetMessage(message);
+            break;
+
+        case _net_message_class_resource:
+            ResourceManager::processResourceMessage(message);
             break;
 
         case _net_message_class_objective:

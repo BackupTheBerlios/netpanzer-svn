@@ -38,6 +38,10 @@ class NetworkPlayerState
 {
 public:
     Uint16 getPlayerIndex() const;
+    FlagID getFlag()
+    {
+        return flag;
+    }
 
 private:
     NetworkPlayerState() 

@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConnectNetMessage.hpp"
 #include "PlayerNetMessage.hpp"
 #include "Util/Log.hpp"
+#include "Resources/ResourceManager.hpp"
 
 
 NetPacket ServerMessageRouter::temp_packet;
@@ -85,7 +86,11 @@ void ServerMessageRouter::routePacket(const NetPacket* packet)
         case _net_message_class_player:
             PlayerInterface::processNetMessage(message);
             break;
-
+        
+        case _net_message_class_resource:
+            ResourceManager::processResourceMessage(message);
+            break;
+            
         case _net_message_class_client_server:
             break;
 

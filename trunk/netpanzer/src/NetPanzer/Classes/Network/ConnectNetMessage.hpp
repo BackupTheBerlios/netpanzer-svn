@@ -148,15 +148,11 @@ class ConnectClientSettings : public NetMessage
 {
 public:
     char player_name[64];
-private:
-    Sint16 player_flag;
-public:
     Uint8 unit_color;
+    Uint8 flagdata[20*14]; // 20*14 = flagsize 8bpp = 280
 
     ConnectClientSettings();
-    Sint16 getPlayerFlag() const;
-    void set(const char *player_name, Uint8 unit_color,
-             Uint16 player_flag );
+    void set(const char *player_name, Uint8 unit_color, const char * flagname );
 } __attribute__((packed));
 
 class ConnectMesgServerGameSettings : public NetMessage

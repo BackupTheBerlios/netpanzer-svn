@@ -80,7 +80,7 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       effectsvolume("effectsvolume", 100, 0, 100),
       
       unitcolor("unitcolor", 0, 0, _color_last-1),
-      playerflag("playerflag", 0, 0, 100),
+      playerflag("playerflag", "albania.bmp"),
       attacknotificationtime("attacknotificationtime", 5, 0, 100),
       vehicleselectioncolor("vehicleselectioncolor", _color_blue, 0, _color_last-1),
       unitselectionmode("unitselectionmode", _unit_selection_box_draw_mode_rect_edges, 0, _unit_selection_box_draw_mode_last-1),

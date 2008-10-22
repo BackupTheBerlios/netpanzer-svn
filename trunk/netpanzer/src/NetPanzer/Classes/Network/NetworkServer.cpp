@@ -16,6 +16,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
+#include "Resources/ResourceManager.hpp"
+
+#include "NetworkServer.hpp"
 #include <algorithm>
 
 #include "NetMessage.hpp"
@@ -35,6 +39,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Objectives/ObjectiveInterface.hpp"
 #include "SystemNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
+#include "Resources/ResourceManagerMessages.hpp"
 
 
 NetworkServer* SERVER = 0;
@@ -388,7 +393,13 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
 
         UnitInterface::destroyPlayerUnits( player_index );
 
-        PlayerInterface::disconnectPlayerCleanup( player_index );    
+        ResourceManagerReleaseFlagMessage releasemsg;
+        releasemsg.setFlagID(player->getFlag());
+        ResourceManager::releaseFlag(player->getFlag());
+                
+        PlayerInterface::disconnectPlayerCleanup( player_index );
+        
+        broadcastMessage(&releasemsg, sizeof(releasemsg));
 
         if ( sendalert )
         {

@@ -20,16 +20,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 #include <algorithm>
+#include <cstring>
 
 #include "ResourceManager.hpp"
+#include "Util/Log.hpp"
 #include "2D/Surface.hpp"
 #include "Util/FileSystem.hpp"
+#include "Classes/Network/NetMessage.hpp"
+#include "ResourceManagerMessages.hpp"
+#include "Util/Exception.hpp"
 
 using namespace std;
-
-#define DEFAULT_FLAGS_PATH "pics/flags/"
-
-
 
 Surface noimage;
 
@@ -60,6 +61,8 @@ int
 ResourceManager::loadDefaultFlags()
 {
     noimage.create(20,14,1);
+    noimage.fill(0);
+/*
     char** list = filesystem::enumerateFiles(DEFAULT_FLAGS_PATH);
     
     vector<string> filenames;
@@ -91,6 +94,8 @@ ResourceManager::loadDefaultFlags()
     }
     
     return filenames.size();
+ */
+    return 1;
 }
 
 Surface *
@@ -104,3 +109,104 @@ ResourceManager::isFlagActive(FlagID flag)
 {
     return RMan.flagList[flag] != &noimage;
 }
+
+void
+ResourceManager::getFlagData(const char * flagname, Uint8 *dest)
+{
+    char fname[512];
+    snprintf(fname, sizeof(fname), DEFAULT_FLAGS_PATH "%s", flagname);
+    fname[sizeof(fname)-1] = 0;
+    
+    Surface t;
+    try
+    {
+        t.loadBMP(fname);
+    }
+    catch (Exception e)
+    {
+        LOGGER.warning("Error loading flag '%s'", flagname);
+        t.copy(*ResourceManager::getEmptyImage());
+    }
+    
+    Uint8 * surfacedata = t.getFrame0();
+    
+    for ( int n = 0; n < 14; n++ )
+    {
+        memcpy(dest + (n*20), surfacedata + (n*t.getPitch()), 20);
+    }
+}
+
+FlagID
+ResourceManager::registerFlagFromData(Uint8 *flagdata)
+{
+    // Asume always has free flags.
+    int i=0;
+    for (i = 0; i<256; i++)
+    {
+        if ( !isFlagActive(i) )
+        {
+            LOGGER.warning("Flag '%d' is free", i);
+            syncFlagFromData(i,flagdata);
+            break;
+        }
+        else
+        {
+            LOGGER.warning("Flag '%d' is used", i);
+        }
+    }
+    LOGGER.warning("Using flag '%d'", i);
+    return i;
+}
+
+void
+ResourceManager::getFlagSyncData(FlagID flag, Uint8 *dest)
+{
+    Surface * flagsurf = getFlag(flag);
+    Uint8 * surfacedata = flagsurf->getFrame0();
+    
+    for ( int n = 0; n < 14; n++ )
+    {
+        memcpy(dest + (n*20), surfacedata + (n*flagsurf->getPitch()), 20);
+    }
+
+}
+void
+ResourceManager::syncFlagFromData(FlagID flag, Uint8 *flagdata)
+{
+    Surface *newflag = new Surface(20,14,1);
+    Uint8 * surfacedata = newflag->getFrame0();
+    for ( int n = 0; n < 14; n++ )
+    {
+        memcpy( surfacedata + (n*newflag->getPitch()), flagdata + (n*20), 20);
+    }
+    
+    releaseFlag(flag);
+    RMan.flagList[flag] = newflag;    
+}
+
+void
+ResourceManager::releaseFlag(FlagID flag)
+{
+    if ( isFlagActive(flag) )
+    {
+        delete RMan.flagList[flag];
+        RMan.flagList[flag] = getEmptyImage();
+    }
+}
+
+void
+ResourceManager::processResourceMessage(const NetMessage* message)
+{
+    switch ( message->message_id )
+    {
+        case _resource_message_id_sync_flag:
+            ResourceManagerSyncFlagMessage *msg = (ResourceManagerSyncFlagMessage*)message;
+            LOGGER.warning("Received flag %d synchronization", msg->getFlagID());
+            syncFlagFromData(msg->getFlagID(), msg->flagdata);
+            break;
+        case _resource_message_id_release_flag:
+            releaseFlag(((ResourceManagerReleaseFlagMessage*)message)->getFlagID());
+            break;
+    }
+}
+
