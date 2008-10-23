@@ -200,10 +200,12 @@ ResourceManager::processResourceMessage(const NetMessage* message)
     switch ( message->message_id )
     {
         case _resource_message_id_sync_flag:
+        {
             ResourceManagerSyncFlagMessage *msg = (ResourceManagerSyncFlagMessage*)message;
             LOGGER.warning("Received flag %d synchronization", msg->getFlagID());
             syncFlagFromData(msg->getFlagID(), msg->flagdata);
             break;
+        }
         case _resource_message_id_release_flag:
             releaseFlag(((ResourceManagerReleaseFlagMessage*)message)->getFlagID());
             break;
