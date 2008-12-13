@@ -33,7 +33,7 @@ public:
 
 protected:
     void onDataReceived(UDPSocket *so, const Address &from, const char *data, const int len);
-    void onSocketError(UDPSocket *so);
+    void onSocketError(UDPSocket *so, const char * msg);
     
 private:
     string prepareStatusPacket();

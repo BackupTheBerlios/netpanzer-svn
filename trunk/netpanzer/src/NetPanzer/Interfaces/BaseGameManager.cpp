@@ -242,12 +242,17 @@ BaseGameManager::sleeping()
 void BaseGameManager::simLoop()
 {
     if ( SERVER )
+    {
         SERVER->cleanUpClientList();
+    }
     network::SocketManager::handleEvents();
     
-    if ( NetworkState::status == _network_state_server ) {
+    if ( NetworkState::status == _network_state_server )
+    {
         ServerMessageRouter::routeMessages();
-    } else {
+    }
+    else
+    {
         ClientMessageRouter::routeMessages();
     }
 
@@ -266,9 +271,13 @@ void BaseGameManager::simLoop()
 
     GameControlRulesDaemon::updateGameControlFlow();
     if ( SERVER )
+    {
         SERVER->sendRemaining();
+    }
     if ( CLIENT )
+    {
         CLIENT->sendRemaining();
+    }
 }
 //-----------------------------------------------------------------
 void BaseGameManager::inputLoop()

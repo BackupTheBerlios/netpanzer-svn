@@ -65,6 +65,13 @@ void NetworkServer::resetClientList()
         delete *i;
     }
     client_list.clear();
+    for(ClientList::iterator i = connecting_clients.begin(); i != connecting_clients.end();
+            ++i)
+    {
+        delete (*i)->client_socket;
+        delete *i;
+    }
+    connecting_clients.clear();
 }
 
 void NetworkServer::cleanUpClientList()
@@ -80,14 +87,37 @@ void NetworkServer::cleanUpClientList()
         }
         i++;
     }
+    i = connecting_clients.begin();
+    while ( i != connecting_clients.end() )
+    {
+        if( (*i)->wannadie )
+        {
+            delete (*i)->client_socket;
+            delete (*i);
+            i = connecting_clients.erase(i);
+        }
+        i++;
+    }
 }
 
 bool NetworkServer::addClientToSendList( ClientSocket * client )
 {
-    ServerClientListData *client_data = new ServerClientListData;
+    ClientList::iterator i = connecting_clients.begin();
+    while ( i != connecting_clients.end() )
+    {
+        if( (*i)->client_socket == client )
+        {
+            client_list.push_back(*i);
+            client_list.erase(i);
+            break;
+        }
+        i++;
+    }
 
-    client_data->client_socket = client;
-    client_list.push_back(client_data);
+    if ( i == connecting_clients.end() )
+    {
+        LOGGER.warning("Unknown client not added to list");
+    }
 
     return true;
 }
@@ -113,6 +143,10 @@ void NetworkServer::processNetPacket(const NetPacket* packet)
 
         case _net_message_id_server_ping_request:
             netPacketServerPingRequest(packet);
+            break;
+
+        case _net_message_id_transport_disconnect:
+            onClientDisconected(packet->fromClient, "Socket disconnected message");
             break;
 
         default:
@@ -274,6 +308,17 @@ NetworkServer::sendRemaining()
         }
         i++;
     }
+
+    i = connecting_clients.begin();
+    while ( i != connecting_clients.end() )
+    {
+        if ( ! (*i)->wannadie )
+        {
+            (*i)->client_socket->sendRemaining();
+        }
+        i++;
+    }
+
 }
 
 std::string
@@ -295,10 +340,11 @@ NetworkServer::getIP(Uint16 player_index)
 }
 
 void
-NetworkServer::onSocketError(TCPListenSocket *so)
+NetworkServer::onSocketError(TCPListenSocket *so, const char * msg)
 {
     (void)so;
-    LOGGER.warning("NetworkServer: Listen Socket error, something bad could happen from now");
+    LOGGER.warning("NetworkServer: Listen Socket error: '%s'", msg);
+    LOGGER.warning("Something bad could happen from now");
 
 }
 
@@ -322,6 +368,10 @@ NetworkServer::onClientConnected(ClientSocket *s)
     ClientMesgConnectAck connect_ack_mesg;
     connect_ack_mesg.setSize(sizeof(ClientMesgConnectAck));
     s->sendMessage( &connect_ack_mesg,sizeof(ClientMesgConnectAck));
+    
+    ServerClientListData *client_data = new ServerClientListData;
+    client_data->client_socket = s;
+    connecting_clients.push_back(client_data);
 }
 
 void
@@ -339,6 +389,8 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
         sendalert = false;
         LOGGER.debug("NetworkServer::onClientDisconected player was connecting");
     }
+
+
     
     if ( NetworkInterface::receive_queue.isReady() )
     {
@@ -373,6 +425,18 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
         if ( (*i)->client_socket == s )
         {
             LOGGER.debug("NetworkServer:onClientDisconnected found client in list, preparing to die [%d]", player_index);
+            (*i)->wannadie = true;
+            break;
+        }
+        ++i;
+    }
+    
+    i = connecting_clients.begin();
+    while ( i != connecting_clients.end() )
+    {
+        if ( (*i)->client_socket == s )
+        {
+            LOGGER.debug("NetworkServer:onClientDisconnected found client in connecting list, preparing to die [%d]", player_index);
             (*i)->wannadie = true;
             break;
         }

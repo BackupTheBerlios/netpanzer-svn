@@ -35,7 +35,7 @@ protected:
     virtual void onDataReceived(TCPSocket *so, const char *data, const int len) = 0;
     virtual void onConnected(TCPSocket *so) = 0;
     virtual void onDisconected(TCPSocket *so) = 0;
-    virtual void onSocketError(TCPSocket *so) = 0;
+    virtual void onSocketError(TCPSocket *so, const char * msg) = 0;
 };
 
 class TCPSocket : public SocketBase
@@ -55,7 +55,7 @@ protected:
     void onDataReady();
     void onConnected();
     void onDisconected();
-    void onSocketError();
+    void onSocketError(const char * msg);
     
 private:
     friend class TCPListenSocket;

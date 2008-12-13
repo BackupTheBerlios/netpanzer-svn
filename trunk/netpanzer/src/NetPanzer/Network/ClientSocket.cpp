@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Util/Endian.hpp"
 #include "Network/Address.hpp"
+#include "Classes/Network/ClientServerNetMessage.hpp"
 
 using namespace std;
 
@@ -90,51 +91,48 @@ ClientSocket::~ClientSocket()
         socket->destroy();
 }
 
+void
+ClientSocket::disconnect(const char * disconnectmsg)
+{
+    LOGGER.debug("ClientSocket:disconnect id=%d, message: %s", id, disconnectmsg);
+    NetMsgTransportDisconnect msg;
+    EnqueueIncomingPacket(&msg, sizeof(msg), playerIndex, this);
+}
+
 void ClientSocket::sendMessage(const void* data, size_t size)
 {
     if ( socket )
     {
-        if ( sendpos )
+        if ( sendpos+size > sizeof(sendbuffer) )
         {
-            if ( sendpos+size > sizeof(sendbuffer) )
-            {
-                observer->onClientDisconected(this, "Send buffer full, need to disconnect");
-                return;
-            }
-            memcpy(sendbuffer+sendpos, data, size);
-            sendpos += size;
-            sendRemaining();
+            disconnect("Send buffer full, need to disconnect");
+            return;
         }
-        else
-        {
-            size_t s = socket->send(data, size);
-            if ( s != size )
-            {
-                size_t remain = size-s;
-                if ( remain > sizeof(sendbuffer) )
-                {
-                    observer->onClientDisconected(this, "Send data bigger than buffer, need to disconnect");
-                    return;
-                }
-                memcpy(sendbuffer, (char *)data+s, remain);
-                sendpos = remain;
-            }
-        }
+        memcpy(sendbuffer+sendpos, data, size);
+        sendpos += size;
     }
 }
 
 void
 ClientSocket::sendRemaining()
 {
-    if ( socket && sendpos ) {
-        size_t s = socket->send(sendbuffer, sendpos);
+    if ( socket && sendpos )
+    {
+        int to_send = (sendpos>MAX_SEND_PER_CYCLE)?MAX_SEND_PER_CYCLE:sendpos;
+        size_t s = socket->send(sendbuffer, to_send);
         if ( !s )
+        {
             return;
-        if ( s != sendpos ) {
+        }
+        if ( s != sendpos )
+        {
             memmove(sendbuffer, sendbuffer+s, sendpos-s);
             sendpos -= s;
-        } else
+        }
+        else
+        {
             sendpos = 0;
+        }
     }
 }
 
@@ -157,13 +155,13 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             
             if ( packetsize < sizeof(NetMessage) ) {
                 LOGGER.debug("Received wrong packetsize: less than required [%d]", packetsize);
-                observer->onClientDisconected(this, "Received buggy packet size (less than required)");
+                disconnect("Received buggy packet size (less than required)");
                 break; // we are deleted
             }
             
             if ( packetsize > _MAX_NET_PACKET_SIZE ) {
                 LOGGER.debug("Received wrong packetsize: more than limit [%d]", packetsize);
-                observer->onClientDisconected(this, "Received buggy packet size (more than limit)");
+                disconnect("Received buggy packet size (more than limit)");
                 break; // we are deleted
             }
             
@@ -195,13 +193,13 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             
             if ( packetsize < sizeof(NetMessage) ) {
                 LOGGER.debug("Received wrong packetsize(half): less than required [%d]", packetsize);
-                observer->onClientDisconected(this, "Received buggy packet size (less than required(half))");
+                disconnect("Received buggy packet size (less than required(half))");
                 break; // we are deleted
             }
             
             if ( packetsize > _MAX_NET_PACKET_SIZE ) {
                 LOGGER.debug("Received wrong packetsize(half): more than limit [%d]", packetsize);
-                observer->onClientDisconected(this, "Received buggy packet size (more than limit(half))");
+                disconnect("Received buggy packet size (more than limit(half))");
                 break; // we are deleted
             }
                 
@@ -237,16 +235,16 @@ ClientSocket::onDisconected(network::TCPSocket *so)
     (void)so;
     LOGGER.debug("ClientSocket: Disconected id=%d", id);
     socket=0;
-    observer->onClientDisconected(this, "Network connection closed");
+    disconnect("Socket Disconnected");
 }
 
 void
-ClientSocket::onSocketError(network::TCPSocket *so)
+ClientSocket::onSocketError(network::TCPSocket *so, const char * msg)
 {
     (void)so;
-    LOGGER.warning("ClientSocket: Network connection error id=%d", id);
+    LOGGER.warning("ClientSocket: Network connection error id=%d, msg: '%s'", id, msg);
     socket=0;
-    observer->onClientDisconected(this, "Network connection error");
+    disconnect(msg);
 }
 
 std::string

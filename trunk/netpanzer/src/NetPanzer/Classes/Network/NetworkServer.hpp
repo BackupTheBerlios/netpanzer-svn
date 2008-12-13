@@ -46,6 +46,7 @@ class NetworkServer : public NetworkInterface,
 protected:
     typedef std::list<ServerClientListData*> ClientList;
     ClientList client_list;
+    ClientList connecting_clients;
 
     NetPacket net_packet;
 
@@ -89,7 +90,7 @@ public:
 
 protected:
     TCPSocketObserver * onNewConnection(TCPListenSocket *so,const Address &fromaddr);
-    void onSocketError(TCPListenSocket *so);
+    void onSocketError(TCPListenSocket *so, const char * msg);
     void onClientConnected(ClientSocket *s);
     void onClientDisconected(ClientSocket *s, const char * msg);
 

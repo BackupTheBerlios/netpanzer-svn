@@ -50,7 +50,7 @@ protected:
     virtual void onDataReady() = 0;
     virtual void onDisconected() {};
     virtual void onConnected() {};
-    virtual void onSocketError() = 0;
+    virtual void onSocketError(const char *msg) = 0;
     virtual void destroy() = 0;
     
 
@@ -61,16 +61,17 @@ protected:
     void bindSocket() throw(NetworkException) { bindSocketTo(addr); };
     void doListen() throw(NetworkException);
     void doConnect() throw(NetworkException);
-    int  doSend(const void* data, size_t len) throw(NetworkException);
-    int  doReceive(void* buffer, size_t len) throw(NetworkException);
-    int  doSendTo(const Address& toaddr, const void* data, size_t len) throw(NetworkException);
-    size_t  doReceiveFrom(Address& fromaddr, void* buffer, size_t len) throw(NetworkException);
-    SOCKET doAccept(Address& fromaddr) throw(NetworkException);
+    int  doSend(const void* data, size_t len);
+    int  doReceive(void* buffer, size_t len);
+    int  doSendTo(const Address& toaddr, const void* data, size_t len);
+    size_t  doReceiveFrom(Address& fromaddr, void* buffer, size_t len);
+    SOCKET doAccept(Address& fromaddr);
     
 private:
     void create(bool tcp) throw(NetworkException);
     void setNonBlocking() throw(NetworkException);
-    
+    void notifyError(const char * errortype);
+
     void connectionFinished() 
     {
         _isConnecting = false;

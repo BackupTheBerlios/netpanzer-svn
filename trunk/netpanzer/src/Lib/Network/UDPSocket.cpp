@@ -51,10 +51,12 @@ UDPSocket::destroy()
 }
 
 void
-UDPSocket::onSocketError()
+UDPSocket::onSocketError(const char * msg)
 {
     if ( observer )
-        observer->onSocketError(this);
+    {
+        observer->onSocketError(this, msg);
+    }
 }
 
 void
@@ -62,7 +64,8 @@ UDPSocket::send(const Address& toaddr, const void* data, size_t datasize)
     throw(NetworkException)
 {
     int res = doSendTo(toaddr,data,datasize);
-    if(res != (int) datasize) {
+    if(res != (int) datasize)
+    {
         std::stringstream msg;
         msg << "Send error: not all data sent.";
         throw NetworkException(msg.str());

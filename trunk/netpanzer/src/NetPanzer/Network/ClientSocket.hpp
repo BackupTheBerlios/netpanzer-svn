@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class ClientSocket;
 #define SEND_BUFFER_LEN 32768
+#define MAX_SEND_PER_CYCLE 1024
 
 class ClientSocketObserver
 {
@@ -35,7 +36,6 @@ public:
 protected:
     friend class ClientSocket;
     virtual void onClientConnected(ClientSocket *cso) = 0;
-    virtual void onClientDisconected(ClientSocket *cso, const char * msg) = 0;
 };
 
 class ClientSocket : public network::TCPSocketObserver
@@ -62,12 +62,14 @@ protected:
     void onDataReceived(network::TCPSocket *so, const char *data, const int len);
     void onConnected(network::TCPSocket *so);
     void onDisconected(network::TCPSocket *so);
-    void onSocketError(network::TCPSocket *so);
+    void onSocketError(network::TCPSocket *so, const char * msg);
 
 private:
     friend class ServerConnectDaemon;
     friend class NetworkClient;
     void initId();
+    void disconnect(const char * disconnectmsg);
+
     ClientSocketObserver * observer;
     network::TCPSocket* socket;
 

@@ -81,19 +81,20 @@ void
 TCPSocket::onDataReady()
 {
     char buffer[4096];
-    int len;
-    do {
-        len = doReceive(buffer,sizeof(buffer));
-        if (len && observer)
-            observer->onDataReceived(this, buffer,len);
-    } while (len && observer);
+    int len = doReceive(buffer,sizeof(buffer));
+    if (len && observer)
+    {
+        observer->onDataReceived(this, buffer,len);
+    }
 }
 
 void
-TCPSocket::onSocketError()
+TCPSocket::onSocketError(const char * msg)
 {
     if (observer)
-        observer->onSocketError(this);
+    {
+        observer->onSocketError(this, msg);
+    }
     destroy();
 }
 

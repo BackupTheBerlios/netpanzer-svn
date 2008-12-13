@@ -93,21 +93,30 @@ SocketManager::removeInvalidSockets()
     LOGGER.debug("Finding invalid sockets in the set...");
     SocketsIterator i;
     int error;
-    for (i = socketList.begin(); i!=socketList.end(); i++) {
+    for (i = socketList.begin(); i!=socketList.end(); i++)
+    {
         sset.clear();
-        if ((*i)->isConnecting()) {
+        if ((*i)->isConnecting())
+        {
             sset.addWrite(*i);
-        } else {
+        }
+        else
+        {
             sset.add(*i);
         }
 
-        if ( sset.select() < 0 ) {
+        if ( sset.select() < 0 )
+        {
             error = GET_NET_ERROR();
-            if ( IS_INVALID_SOCKET(error) ) {
+            if ( IS_INVALID_SOCKET(error) )
+            {
                 LOGGER.warning("SocketManager: FOUND Invalid socket, removing...");
-                (*i)->onSocketError();
+                (*i)->lastError = error;
+                (*i)->notifyError("Select");
                 removeSocket(*i);
-            } else {
+            }
+            else
+            {
                 std::stringstream msg;
                 msg << "SocketManager: Error while finding invalid sockets " << NETSTRERROR(error);
                 LOGGER.debug(msg.str().c_str());

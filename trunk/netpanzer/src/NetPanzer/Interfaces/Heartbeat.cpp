@@ -140,9 +140,9 @@ Heartbeat::onDisconected(TCPSocket *so)
 }
 
 void
-Heartbeat::onSocketError(TCPSocket *so)
+Heartbeat::onSocketError(TCPSocket *so, const char * msg)
 {
-    LOGGER.debug("Masterserver socket error [%s]", so->getAddress().getIP().c_str());
+    LOGGER.debug("Masterserver socket error [%s], '%s'", so->getAddress().getIP().c_str(), msg);
     delete masterservers[so];
     masterservers.erase(so);
 }

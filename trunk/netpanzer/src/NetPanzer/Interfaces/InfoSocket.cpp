@@ -56,10 +56,10 @@ InfoSocket::~InfoSocket()
 }
 
 void
-InfoSocket::onSocketError(UDPSocket *so)
+InfoSocket::onSocketError(UDPSocket *so, const char * msg)
 {
     (void)so;
-    LOGGER.debug("InfoSocket: socket error");
+    LOGGER.debug("InfoSocket: socket error '%s'", msg);
 }
 
 void

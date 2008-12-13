@@ -38,10 +38,12 @@ TCPListenSocket::destroy()
 }
 
 void
-TCPListenSocket::onSocketError()
+TCPListenSocket::onSocketError(const char * msg)
 {
     if ( observer )
-        observer->onSocketError(this);
+    {
+        observer->onSocketError(this, msg);
+    }
 }
 
 void
