@@ -46,7 +46,7 @@ protected:
     void netMessageClientPingAck(const NetMessage* message);
     void netMessageClientConnectAck(const NetMessage* message);
 
-    void processNetMessage(const NetMessage* message);
+    void handlePacket(const NetPacket* packet);
 
     void onClientConnected(ClientSocket *s);
     void onClientDisconected(ClientSocket *s, const char *msg);    

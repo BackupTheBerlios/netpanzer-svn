@@ -57,8 +57,6 @@ protected:
 
     void netPacketClientKeepAlive(const NetPacket* packet);
     void netPacketServerPingRequest(const NetPacket* packet);
-
-    void processNetPacket(const NetPacket* packet);
     
 public:
     NetworkServer();
@@ -80,8 +78,6 @@ public:
         
     void sendRemaining();
 
-    bool getPacket(NetPacket* packet);
-
     void dropClient(ClientSocket * client);
     
     ClientSocket * getClientSocketByPlayerIndex ( Uint16 index );
@@ -93,6 +89,7 @@ protected:
     void onSocketError(TCPListenSocket *so, const char * msg);
     void onClientConnected(ClientSocket *s);
     void onClientDisconected(ClientSocket *s, const char * msg);
+    void handlePacket(const NetPacket* packet);
 
 private:
     TCPListenSocket * socket;

@@ -21,9 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SDL.h"
 
 // ** PObject netPanzer Network Includes
-#include "Classes/Network/ClientMessageRouter.hpp"
 #include "Classes/Network/ServerConnectDaemon.hpp"
-#include "Classes/Network/ServerMessageRouter.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkClient.hpp"
@@ -59,6 +57,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/TimerInterface.hpp"
 
 #include "Network/SocketManager.hpp"
+#include "Network/MessageRouter.hpp"
 
 BaseGameManager* gamemanager = 0;
 
@@ -150,9 +149,6 @@ void BaseGameManager::initializeNetworkSubSystem()
     SERVER = new NetworkServer();
     CLIENT = new NetworkClient();
 
-    ServerMessageRouter::initialize();
-    ClientMessageRouter::initialize();
-
     ServerConnectDaemon::initialize( gameconfig->maxplayers );
 
     NetworkState::setNetworkStatus( _network_state_server );
@@ -163,13 +159,11 @@ void BaseGameManager::shutdownNetworkSubSystem()
 {
     if(SERVER) {
         SERVER->closeSession();
-        ServerMessageRouter::cleanUp();
         delete SERVER;
         SERVER = 0;
     }
     if(CLIENT) {
         CLIENT->partServer();
-        ClientMessageRouter::cleanUp();
         delete CLIENT;
         CLIENT = 0;
     }
@@ -246,14 +240,16 @@ void BaseGameManager::simLoop()
         SERVER->cleanUpClientList();
     }
     network::SocketManager::handleEvents();
-    
+
+    MessageRouter::routePackets();
+
     if ( NetworkState::status == _network_state_server )
     {
-        ServerMessageRouter::routeMessages();
+        ServerConnectDaemon::connectProcess();
     }
     else
     {
-        ClientMessageRouter::routeMessages();
+        ClientConnectDaemon::connectProcess();
     }
 
     NetworkState::updateNetworkStats();

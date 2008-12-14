@@ -19,18 +19,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _NETWORKINTERFACE_HPP
 
 #include "NetPacketQueues.hpp"
+#include "Network/MessageClassHandler.hpp"
 
 void EnqueueIncomingPacket( const void *data, Uint16 size,
                             Uint16 fromPlayer, ClientSocket *fromClient);
 
-class NetworkInterface
+class NetworkInterface : public MessageClassHandler
 {
 public:
-    static NetPacketQueue receive_queue;
-
-public:
     NetworkInterface();
-    ~NetworkInterface();
+    virtual ~NetworkInterface();
+
+    static NetPacketQueue receive_queue;
+    static bool getPacket( NetPacket * packet);
+//protected:
+//    void handlePacket(NetPacket* packet) = 0;
+
 };
+
+extern NetworkInterface * NETWORKINTERFACE;
 
 #endif // ** _NETWORKINTERFACE_HPP

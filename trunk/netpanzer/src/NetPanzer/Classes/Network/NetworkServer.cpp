@@ -132,7 +132,7 @@ void NetworkServer::netPacketServerPingRequest(const NetPacket* )
     // nothing
 }
 
-void NetworkServer::processNetPacket(const NetPacket* packet)
+void NetworkServer::handlePacket(const NetPacket* packet)
 {
     const NetMessage* message = packet->getNetMessage();
     switch(message->message_id)
@@ -255,29 +255,6 @@ NetworkServer::sendMessage(Uint16 player_index, NetMessage* message,
 
     // if didn't found player we are here.
     LOGGER.warning("NetworkServer: sendMessage to unknown client: (index) %d", player_index);
-}
-
-bool
-NetworkServer::getPacket(NetPacket* packet)
-{
-    if (receive_queue.isReady())
-    {
-        receive_queue.dequeue(packet);
-        NetworkState::incPacketsReceived(packet->getSize());
-
-        if (packet->getNetMessage()->message_class 
-                == _net_message_class_client_server)
-        {
-            processNetPacket(packet);
-        }
-
-#ifdef NETWORKDEBUG
-        NetPacketDebugger::logPacket("R", packet);
-#endif
-        return true;
-    }
-
-    return false;
 }
 
 void

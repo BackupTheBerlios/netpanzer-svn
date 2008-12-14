@@ -1,5 +1,5 @@
 #
-# Gererated Makefile - do not edit!
+# Generated Makefile - do not edit!
 #
 # Edit the Makefile in the project folder instead (../Makefile). Each target
 # has a -pre and a -post target defined where you can add customized code.
@@ -17,11 +17,14 @@ CCC=g++
 CXX=g++
 FC=
 
+# Macros
+PLATFORM=GNU-MacOSX
+
 # Include project Makefile
 include Makefile
 
 # Object Directory
-OBJECTDIR=build/mac-debug/GNU-MacOSX
+OBJECTDIR=build/mac-debug/${PLATFORM}
 
 # Object Files
 OBJECTFILES= \
@@ -42,7 +45,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi/MasterServer/ServerQueryThread.o \
 	${OBJECTDIR}/src/NetPanzer/Classes/Network/ConnectNetMessage.o \
 	${OBJECTDIR}/src/NetPanzer/Views/Components/ViewGlobals.o \
-	${OBJECTDIR}/src/NetPanzer/Classes/Network/ClientMessageRouter.o \
 	${OBJECTDIR}/src/NetPanzer/Particles/TemplateMuzzleSystem.o \
 	${OBJECTDIR}/src/Lib/2D/BuiltinFont.o \
 	${OBJECTDIR}/src/NetPanzer/Particles/ParticleInterface.o \
@@ -93,6 +95,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/NetPanzer/Interfaces/DedicatedGameManager.o \
 	${OBJECTDIR}/src/NetPanzer/Classes/Network/NetworkInterface.o \
 	${OBJECTDIR}/src/NetPanzer/Units/UnitBlackBoard.o \
+	${OBJECTDIR}/src/NetPanzer/Network/MessageRouter.o \
 	${OBJECTDIR}/src/NetPanzer/Views/Components/InfoBar.o \
 	${OBJECTDIR}/src/Lib/Types/fRect.o \
 	${OBJECTDIR}/src/NetPanzer/Interfaces/TileInterface.o \
@@ -155,7 +158,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/NetPanzer/Objectives/ObjectiveInterface.o \
 	${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi/JoinView.o \
 	${OBJECTDIR}/src/NetPanzer/Network/ProxyServer.o \
-	${OBJECTDIR}/src/NetPanzer/Classes/Network/ServerMessageRouter.o \
 	${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi/PlayerNameView.o \
 	${OBJECTDIR}/src/NetPanzer/System/Sound.o \
 	${OBJECTDIR}/src/NetPanzer/Particles/FireParticleSystem2D.o \
@@ -307,7 +309,8 @@ FFLAGS=
 LDLIBSOPTIONS=
 
 # Build Targets
-.build-conf: ${BUILD_SUBPROJECTS} ./netpanzer-debug
+.build-conf: ${BUILD_SUBPROJECTS}
+	${MAKE} -s -f nbproject/Makefile-mac-debug.mk ./netpanzer-debug
 
 ./netpanzer-debug: ${OBJECTFILES}
 	${MKDIR} -p .
@@ -380,10 +383,6 @@ ${OBJECTDIR}/src/NetPanzer/Classes/Network/ConnectNetMessage.o: src/NetPanzer/Cl
 ${OBJECTDIR}/src/NetPanzer/Views/Components/ViewGlobals.o: src/NetPanzer/Views/Components/ViewGlobals.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Views/Components
 	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Views/Components/ViewGlobals.o src/NetPanzer/Views/Components/ViewGlobals.cpp
-
-${OBJECTDIR}/src/NetPanzer/Classes/Network/ClientMessageRouter.o: src/NetPanzer/Classes/Network/ClientMessageRouter.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Classes/Network
-	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Classes/Network/ClientMessageRouter.o src/NetPanzer/Classes/Network/ClientMessageRouter.cpp
 
 ${OBJECTDIR}/src/NetPanzer/Particles/TemplateMuzzleSystem.o: src/NetPanzer/Particles/TemplateMuzzleSystem.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Particles
@@ -584,6 +583,10 @@ ${OBJECTDIR}/src/NetPanzer/Classes/Network/NetworkInterface.o: src/NetPanzer/Cla
 ${OBJECTDIR}/src/NetPanzer/Units/UnitBlackBoard.o: src/NetPanzer/Units/UnitBlackBoard.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Units
 	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Units/UnitBlackBoard.o src/NetPanzer/Units/UnitBlackBoard.cpp
+
+${OBJECTDIR}/src/NetPanzer/Network/MessageRouter.o: src/NetPanzer/Network/MessageRouter.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Network
+	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Network/MessageRouter.o src/NetPanzer/Network/MessageRouter.cpp
 
 ${OBJECTDIR}/src/NetPanzer/Views/Components/InfoBar.o: src/NetPanzer/Views/Components/InfoBar.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Views/Components
@@ -832,10 +835,6 @@ ${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi/JoinView.o: src/NetPanzer/Views/
 ${OBJECTDIR}/src/NetPanzer/Network/ProxyServer.o: src/NetPanzer/Network/ProxyServer.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Network
 	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Network/ProxyServer.o src/NetPanzer/Network/ProxyServer.cpp
-
-${OBJECTDIR}/src/NetPanzer/Classes/Network/ServerMessageRouter.o: src/NetPanzer/Classes/Network/ServerMessageRouter.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Classes/Network
-	$(COMPILE.cc) -g -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -o ${OBJECTDIR}/src/NetPanzer/Classes/Network/ServerMessageRouter.o src/NetPanzer/Classes/Network/ServerMessageRouter.cpp
 
 ${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi/PlayerNameView.o: src/NetPanzer/Views/MainMenu/Multi/PlayerNameView.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi

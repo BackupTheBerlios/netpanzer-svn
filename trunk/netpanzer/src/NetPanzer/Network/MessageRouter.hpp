@@ -1,37 +1,38 @@
 /*
-Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
+Copyright (C) 2008 by Aaron Perez <aaronps@gmail.com>
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-#ifndef _CLIENTMESSAGEROUTER_HPP
-#define _CLIENTMESSAGEROUTER_HPP
+ *
+ * Created on December 13, 2008, 6:58 PM
+ */
 
-#include "Classes/Network/NetPacket.hpp"
-#include "NetMessageDecoder.hpp"
+#ifndef _MESSAGEROUTER_HPP
+#define	_MESSAGEROUTER_HPP
 
-class ClientMessageRouter
+#include "Core/CoreTypes.hpp"
+
+class MessageClassHandler;
+
+class MessageRouter
 {
-protected:
-    static NetMessage *temp_message;
-    static NetMessageDecoder message_decoder;
-
 public:
-    static void initialize();
-    static void cleanUp();
-    static void routeMessage(const NetMessage* message);
-    static void routeMessages();
+    static void initialize(bool isServer);
+    static void routePackets();
+    static void setMessageClassHandler(MsgClassID c, MessageClassHandler * h);
+    static void clearMessageClassHandler(MsgClassID c);
 };
 
-#endif
+#endif	/* _MESSAGEROUTER_HPP */
+

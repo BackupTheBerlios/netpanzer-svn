@@ -45,6 +45,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/Physics.hpp"
 
 #include "Util/Log.hpp"
+#include "Network/MessageRouter.hpp"
 
 DedicatedGameManager::DedicatedGameManager()
     : commandqueue_mutex(0), console(0), heartbeat(0), infosocket(0)
@@ -199,6 +200,8 @@ bool DedicatedGameManager::launchNetPanzerGame()
 
     GameManager::reinitializeGameLogic();
 
+    NETWORKINTERFACE = SERVER;
+    MessageRouter::initialize(true);
     SERVER->openSession();
     SERVER->hostSession();
 

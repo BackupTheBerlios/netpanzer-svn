@@ -20,6 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <assert.h>
 #include "Util/Log.hpp"
 #include "NetworkInterface.hpp"
+#include "NetworkState.hpp"
+
+NetworkInterface * NETWORKINTERFACE = 0;
 
 void EnqueueIncomingPacket( const void *data, Uint16 size,
                             Uint16 fromPlayer, ClientSocket *fromClient)
@@ -44,5 +47,23 @@ NetworkInterface::NetworkInterface()
 NetworkInterface::~NetworkInterface()
 {
     receive_queue.deallocate();
+}
+
+bool
+NetworkInterface::getPacket( NetPacket * packet )
+{
+    if (receive_queue.isReady())
+    {
+        receive_queue.dequeue(packet);
+        NetworkState::incPacketsReceived(packet->getSize());
+
+#ifdef NETWORKDEBUG
+        NetPacketDebugger::logPacket("R", packet);
+#endif
+        return true;
+    }
+
+    return false;
+
 }
 

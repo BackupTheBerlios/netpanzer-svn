@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Network/TCPSocket.hpp"
 
 class ClientSocket;
-#define SEND_BUFFER_LEN 32768
+#define SEND_BUFFER_LEN 65536
 #define MAX_SEND_PER_CYCLE 1024
 
 class ClientSocketObserver

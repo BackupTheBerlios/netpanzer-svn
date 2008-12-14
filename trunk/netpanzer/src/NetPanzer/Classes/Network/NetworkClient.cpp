@@ -77,8 +77,9 @@ void NetworkClient::netMessageClientConnectAck(const NetMessage* )
 }
 
 
-void NetworkClient::processNetMessage(const NetMessage* message)
+void NetworkClient::handlePacket(const NetPacket* packet)
 {
+    const NetMessage * message = packet->getNetMessage();
     switch(message->message_id)
     {
         case _net_message_id_client_keep_alive:
@@ -95,6 +96,10 @@ void NetworkClient::processNetMessage(const NetMessage* message)
 
         case _net_message_id_client_connect_ack:
             netMessageClientConnectAck(message);
+            break;
+
+        case _net_message_id_transport_disconnect:
+            onClientDisconected(packet->fromClient, "Socket disconnected message");
             break;
 
         default:
@@ -170,31 +175,6 @@ void NetworkClient::sendMessage(NetMessage* message, size_t size)
 #ifdef NETWORKDEBUG
     NetPacketDebugger::logMessage("S", message);
 #endif
-}
-
-bool NetworkClient::getMessage(NetMessage *message)
-{
-    if(clientsocket == 0)
-        return false;
-    
-    if(!receive_queue.isReady())
-        return false;
-    
-    receive_queue.dequeue( &net_packet );
-    memcpy(message, net_packet.data, net_packet.getSize());
-
-#ifdef NETWORKDEBUG
-    NetPacketDebugger::logMessage("R", message);
-#endif
-
-    if ( message->message_class == _net_message_class_client_server )
-    {
-        processNetMessage( message );
-    }
-
-    NetworkState::incPacketsReceived(net_packet.getSize());
-
-    return true;
 }
 
 void NetworkClient::checkIncoming()

@@ -45,10 +45,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/UnitBlackBoard.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
 #include "Classes/SpriteSorter.hpp"
-#include "Classes/Network/ClientMessageRouter.hpp"
 #include "Classes/Network/ClientConnectDaemon.hpp"
 #include "Classes/Network/ServerConnectDaemon.hpp"
-#include "Classes/Network/ServerMessageRouter.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkState.hpp"
@@ -112,6 +110,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileSystem.hpp"
 
 #include "Bot/Bot.hpp"
+#include "Network/MessageRouter.hpp"
 
 PlayerGameManager::PlayerGameManager()
     : sdlVideo(0), heartbeat(0), infosocket(0)
@@ -285,6 +284,10 @@ void PlayerGameManager::hostMultiPlayerGame()
 		CLIENT=0;
 	}
 	CLIENT = new NetworkClient();
+
+        NETWORKINTERFACE = SERVER;
+        MessageRouter::initialize(true);
+        
         SERVER->hostSession();
 
         if((bool) gameconfig->publicServer &&
@@ -418,6 +421,8 @@ void PlayerGameManager::joinMultiPlayerGame()
     //reinitializeGameLogic();
     NetworkState::setNetworkStatus( _network_state_client );
 
+    NETWORKINTERFACE = CLIENT;
+    MessageRouter::initialize(false);
     CLIENT->joinServer(gameconfig->serverConnect);
     LoadingView::show();
 

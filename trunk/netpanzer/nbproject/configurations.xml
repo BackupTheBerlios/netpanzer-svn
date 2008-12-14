@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="45">
+<configurationDescriptor version="51">
   <logicalFolder name="root" displayName="root" projectFiles="true">
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -234,8 +234,6 @@
             <itemPath>src/NetPanzer/Classes/Network/ChatNetMessage.hpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/ClientConnectDaemon.cpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/ClientConnectDaemon.hpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Network/ClientMessageRouter.cpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Network/ClientMessageRouter.hpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/ClientServerNetMessage.hpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/ConnectNetMessage.cpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/ConnectNetMessage.hpp</itemPath>
@@ -265,8 +263,6 @@
             <itemPath>src/NetPanzer/Classes/Network/PowerUpNetMessage.hpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/ServerConnectDaemon.cpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/ServerConnectDaemon.hpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Network/ServerMessageRouter.cpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Network/ServerMessageRouter.hpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/SystemNetMessage.hpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/TerminalNetMesg.hpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/UnitNetMessage.hpp</itemPath>
@@ -366,6 +362,9 @@
         <logicalFolder name="Network" displayName="Network" projectFiles="true">
           <itemPath>src/NetPanzer/Network/ClientSocket.cpp</itemPath>
           <itemPath>src/NetPanzer/Network/ClientSocket.hpp</itemPath>
+          <itemPath>src/NetPanzer/Network/MessageClassHandler.hpp</itemPath>
+          <itemPath>src/NetPanzer/Network/MessageRouter.cpp</itemPath>
+          <itemPath>src/NetPanzer/Network/MessageRouter.hpp</itemPath>
           <itemPath>src/NetPanzer/Network/ProxyServer.cpp</itemPath>
           <itemPath>src/NetPanzer/Network/ProxyServer.hpp</itemPath>
         </logicalFolder>
@@ -653,11 +652,11 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
   </logicalFolder>
-  <sourceEncoding>UTF-8</sourceEncoding>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="mac-debug" type="1">
       <toolsSet>
+        <developmentServer>localhost</developmentServer>
         <compilerSet>GNU|GNU</compilerSet>
         <platform>4</platform>
       </toolsSet>
@@ -1292,12 +1291,6 @@
       <item path="src/NetPanzer/Classes/Network/ClientConnectDaemon.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/Network/ClientMessageRouter.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/ClientMessageRouter.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/Network/ClientServerNetMessage.hpp">
         <itemTool>3</itemTool>
       </item>
@@ -1383,12 +1376,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/ServerConnectDaemon.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/ServerMessageRouter.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/ServerMessageRouter.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/SystemNetMessage.hpp">
@@ -1659,6 +1646,15 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Network/ClientSocket.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/MessageClassHandler.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/MessageRouter.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/MessageRouter.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Network/ProxyServer.cpp">
@@ -2390,6 +2386,7 @@
     </conf>
     <conf name="mac-release" type="1">
       <toolsSet>
+        <developmentServer>localhost</developmentServer>
         <compilerSet>GNU|GNU</compilerSet>
         <platform>4</platform>
       </toolsSet>
@@ -3027,12 +3024,6 @@
       <item path="src/NetPanzer/Classes/Network/ClientConnectDaemon.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/Network/ClientMessageRouter.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/ClientMessageRouter.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/Network/ClientServerNetMessage.hpp">
         <itemTool>3</itemTool>
       </item>
@@ -3118,12 +3109,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/ServerConnectDaemon.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/ServerMessageRouter.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/ServerMessageRouter.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/SystemNetMessage.hpp">
@@ -3394,6 +3379,15 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Network/ClientSocket.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/MessageClassHandler.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/MessageRouter.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/MessageRouter.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Network/ProxyServer.cpp">
@@ -4125,6 +4119,7 @@
     </conf>
     <conf name="win-debug" type="1">
       <toolsSet>
+        <developmentServer>localhost</developmentServer>
         <compilerSet>MinGW|MinGW</compilerSet>
         <platform>3</platform>
       </toolsSet>
@@ -4762,12 +4757,6 @@
       <item path="src/NetPanzer/Classes/Network/ClientConnectDaemon.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/Network/ClientMessageRouter.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/ClientMessageRouter.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/Network/ClientServerNetMessage.hpp">
         <itemTool>3</itemTool>
       </item>
@@ -4853,12 +4842,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/ServerConnectDaemon.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/ServerMessageRouter.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/ServerMessageRouter.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/SystemNetMessage.hpp">
@@ -5129,6 +5112,15 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Network/ClientSocket.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/MessageClassHandler.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/MessageRouter.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/MessageRouter.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Network/ProxyServer.cpp">
@@ -5860,6 +5852,7 @@
     </conf>
     <conf name="win-release" type="1">
       <toolsSet>
+        <developmentServer>localhost</developmentServer>
         <compilerSet>MinGW|MinGW</compilerSet>
         <platform>3</platform>
       </toolsSet>
@@ -6497,12 +6490,6 @@
       <item path="src/NetPanzer/Classes/Network/ClientConnectDaemon.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Classes/Network/ClientMessageRouter.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/ClientMessageRouter.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Classes/Network/ClientServerNetMessage.hpp">
         <itemTool>3</itemTool>
       </item>
@@ -6588,12 +6575,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/ServerConnectDaemon.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/ServerMessageRouter.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/ServerMessageRouter.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/SystemNetMessage.hpp">
@@ -6864,6 +6845,15 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Network/ClientSocket.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/MessageClassHandler.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/MessageRouter.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Network/MessageRouter.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Network/ProxyServer.cpp">

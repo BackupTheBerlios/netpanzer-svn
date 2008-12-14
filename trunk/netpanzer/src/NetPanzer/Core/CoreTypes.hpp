@@ -38,5 +38,7 @@ typedef Uint16 UnitID;
 
 typedef Uint8 FlagID;
 
+typedef Uint8 MsgClassID;
+
 #endif	/* _CORETYPES_HPP */
 
