@@ -42,10 +42,12 @@ public:
         for (int n = 0; n < 256; n++)
         {
             flagList[n]=&noimage;
+            usedList[n]=false;
         }
     }
     
     Surface * flagList[256];
+    bool usedList[256];
 };
 
 _RMan RMan;
@@ -62,6 +64,15 @@ ResourceManager::loadDefaultFlags()
 {
     noimage.create(20,14,1);
     noimage.fill(0);
+    for (int n = 0; n < 256; n++ )
+    {
+        if ( RMan.flagList[n] == &noimage)
+        {
+            RMan.flagList[n] = new Surface(20,14,1);
+        }
+        RMan.flagList[n]->fill(0);
+        RMan.usedList[n] = false;
+    }
 /*
     char** list = filesystem::enumerateFiles(DEFAULT_FLAGS_PATH);
     
@@ -107,7 +118,7 @@ ResourceManager::getFlag(FlagID flag)
 bool
 ResourceManager::isFlagActive(FlagID flag)
 {
-    return RMan.flagList[flag] != &noimage;
+    return RMan.usedList[flag];
 }
 
 void
@@ -173,25 +184,19 @@ ResourceManager::getFlagSyncData(FlagID flag, Uint8 *dest)
 void
 ResourceManager::syncFlagFromData(FlagID flag, Uint8 *flagdata)
 {
-    Surface *newflag = new Surface(20,14,1);
-    Uint8 * surfacedata = newflag->getFrame0();
+    Uint8 * surfacedata = RMan.flagList[flag]->getFrame0();
     for ( int n = 0; n < 14; n++ )
     {
-        memcpy( surfacedata + (n*newflag->getPitch()), flagdata + (n*20), 20);
+        memcpy( surfacedata + (n*RMan.flagList[flag]->getPitch()), flagdata + (n*20), 20);
     }
     
-    releaseFlag(flag);
-    RMan.flagList[flag] = newflag;    
+    RMan.usedList[flag]=true;
 }
 
 void
 ResourceManager::releaseFlag(FlagID flag)
 {
-    if ( isFlagActive(flag) )
-    {
-        delete RMan.flagList[flag];
-        RMan.flagList[flag] = getEmptyImage();
-    }
+    RMan.usedList[flag]=false;
 }
 
 void

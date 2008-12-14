@@ -24,7 +24,7 @@ class ServerCommand
 {
 public:
     enum CommandType {
-        QUIT, CHAT, STATUS, MAPCHANGE, KICK
+        QUIT, CHAT, STATUS, MAPCHANGE, KICK, ADDBOT, REMOVEBOTS
     };
     
     CommandType type;

@@ -699,7 +699,7 @@ void UnitInterface::unitManagerMesgEndLifecycle(const UnitMessage* message)
         PlayerScoreUpdate score_update;
         score_update.set(player1->getID(), player2->getID(),
                 (UnitType) lifecycle_update->unit_type);
-        SERVER->broadcastMessage(&score_update, sizeof(PlayerScoreUpdate));
+        NetworkServer::broadcastMessage(&score_update, sizeof(PlayerScoreUpdate));
     }
 }
 

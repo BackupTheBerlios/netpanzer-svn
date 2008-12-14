@@ -58,6 +58,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Network/SocketManager.hpp"
 #include "Network/MessageRouter.hpp"
+#include "Bot/BotManager.hpp"
 
 BaseGameManager* gamemanager = 0;
 
@@ -146,8 +147,8 @@ void BaseGameManager::loadGameData()
 //-----------------------------------------------------------------
 void BaseGameManager::initializeNetworkSubSystem()
 {
-    SERVER = new NetworkServer();
-    CLIENT = new NetworkClient();
+    //SERVER = new NetworkServer();
+    //CLIENT = new NetworkClient();
 
     ServerConnectDaemon::initialize( gameconfig->maxplayers );
 
@@ -157,16 +158,8 @@ void BaseGameManager::initializeNetworkSubSystem()
 //-----------------------------------------------------------------
 void BaseGameManager::shutdownNetworkSubSystem()
 {
-    if(SERVER) {
-        SERVER->closeSession();
-        delete SERVER;
-        SERVER = 0;
-    }
-    if(CLIENT) {
-        CLIENT->partServer();
-        delete CLIENT;
-        CLIENT = 0;
-    }
+    NetworkServer::closeSession();
+    NetworkClient::partServer();
 }
 //-----------------------------------------------------------------
 // boots up netPanzer; initializes all subsystems, game objects etc.
@@ -235,10 +228,7 @@ BaseGameManager::sleeping()
 //-----------------------------------------------------------------
 void BaseGameManager::simLoop()
 {
-    if ( SERVER )
-    {
-        SERVER->cleanUpClientList();
-    }
+    NetworkServer::cleanUpClientList();
     network::SocketManager::handleEvents();
 
     MessageRouter::routePackets();
@@ -266,14 +256,9 @@ void BaseGameManager::simLoop()
     Particle2D::simAll();
 
     GameControlRulesDaemon::updateGameControlFlow();
-    if ( SERVER )
-    {
-        SERVER->sendRemaining();
-    }
-    if ( CLIENT )
-    {
-        CLIENT->sendRemaining();
-    }
+    NetworkServer::sendRemaining();
+    NetworkClient::sendRemaining();
+    BotManager::simBots();
 }
 //-----------------------------------------------------------------
 void BaseGameManager::inputLoop()

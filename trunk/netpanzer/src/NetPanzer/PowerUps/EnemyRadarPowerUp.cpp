@@ -73,7 +73,7 @@ EnemyRadarPowerUp::onHit(UnitID unit_id)
 
     PowerUpHitMesg hit_mesg;
     hit_mesg.set( ID, unit->player->getID());
-    SERVER->broadcastMessage( &hit_mesg, sizeof( PowerUpHitMesg ));
+    NetworkServer::broadcastMessage( &hit_mesg, sizeof( PowerUpHitMesg ));
 
     life_cycle_state = _power_up_lifecycle_state_inactive;
 }

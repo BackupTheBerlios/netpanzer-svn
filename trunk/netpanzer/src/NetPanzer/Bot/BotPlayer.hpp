@@ -29,12 +29,13 @@ class ObjectiveState;
 typedef std::vector<int> playerList_t;
 typedef std::vector<ObjectiveID> outpostList_t;
 
-class BotPlayer : public Bot {
+class BotPlayer : public Bot
+{
     private:
         static const int NONE_PLAYER = 0xFFFF;
         Timer m_timer;
     public:
-        BotPlayer();
+        BotPlayer(Uint16 playerid);
         virtual void processEvents();
 
         int isReady();

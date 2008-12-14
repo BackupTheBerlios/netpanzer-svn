@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 
-#include "NetworkInterface.hpp"
 #include "NetworkReturnCodes.hpp"
 #include "Network/ClientSocket.hpp"
 
@@ -35,41 +34,29 @@ enum { _connection_status_no_connection,
 #define _SERVER_KEEP_ALIVE_THRESHOLD     (120)  // in seconds
 #define _SERVER_PING_INTERVAL              (5)  // in seconds
 
-class NetworkClient : public NetworkInterface, ClientSocketObserver
+class MessageClassHandler;
+
+class NetworkClient
 {
-protected:
-    NetPacket net_packet;
-    unsigned short connection_status;
-
-    void netMessageClientKeepAlive(const NetMessage* message);
-    void netMessageClientSetKeepAliveState(const NetMessage* message);
-    void netMessageClientPingAck(const NetMessage* message);
-    void netMessageClientConnectAck(const NetMessage* message);
-
-    void handlePacket(const NetPacket* packet);
-
-    void onClientConnected(ClientSocket *s);
-    void onClientDisconected(ClientSocket *s, const char *msg);    
-
 public:
-    NetworkClient ();
-    virtual ~NetworkClient ();
+    static void initialize();
+    static bool joinServer(const std::string& server_name);
+    static void partServer();
 
-    bool joinServer(const std::string& server_name);
-    void partServer();
+    static void sendMessage(NetMessage* message, size_t size);
+    static void sendRemaining();
 
-    void sendMessage(NetMessage* message, size_t size);
-    void sendRemaining();
+    static void checkIncoming();
 
-    bool getMessage(NetMessage *message);
-
-
-    void checkIncoming();
+protected:
+    static MessageClassHandler* getPacketHandler();
+    static void onClientDisconected(ClientSocket *s, const char *msg);
 
 private:
-    ClientSocket* clientsocket;
+    friend class ClientPacketHandler;
+    friend class MessageRouter;
+    NetworkClient ();
+    virtual ~NetworkClient ();
 };
-
-extern NetworkClient *CLIENT;
 
 #endif // ** _NETWORK_CLIENT_HPP

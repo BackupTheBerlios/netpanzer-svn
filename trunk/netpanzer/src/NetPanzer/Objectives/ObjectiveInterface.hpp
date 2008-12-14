@@ -98,7 +98,7 @@ protected:
     static Uint16        objective_position_enum_player_id;
 
 public:
-    static void startObjectivePositionEnumeration();
+    static void startObjectivePositionEnumeration(Uint16 playerid);
     static bool objectivePositionEnumeration(iRect *objective_rect, unsigned char *objective_disposition, ObjectiveID *objective_id);
 };
 

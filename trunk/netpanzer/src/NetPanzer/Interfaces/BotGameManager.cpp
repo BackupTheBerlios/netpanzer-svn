@@ -65,17 +65,17 @@ void BotGameManager::initializeGameConfig(const std::string& configfile)
 //-----------------------------------------------------------------
 void BotGameManager::initializeInputDevices()
 {
-    Bot::initialize(new BotPlayer());
+//    Bot::initialize(new BotPlayer());
 }
 //-----------------------------------------------------------------
 void BotGameManager::shutdownInputDevices()
 {
-    Bot::shutdown();
+  //  Bot::shutdown();
 }
 //-----------------------------------------------------------------
 void BotGameManager::inputLoop()
 {
-    Bot::bot()->processEvents();
+    //Bot::bot()->processEvents();
 }
 
 //-----------------------------------------------------------------
@@ -84,9 +84,8 @@ bool BotGameManager::launchNetPanzerGame()
     GameManager::setNetPanzerGameOptions();
     NetworkState::setNetworkStatus( _network_state_client );
 
-    NETWORKINTERFACE = CLIENT;
     MessageRouter::initialize(false);
-    if (!CLIENT->joinServer(m_serverHost.c_str())) {
+    if (!NetworkClient::joinServer(m_serverHost.c_str())) {
         return false;
     }
 

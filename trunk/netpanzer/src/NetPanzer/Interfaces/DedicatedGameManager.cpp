@@ -16,6 +16,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
+#include "Bot/BotManager.hpp"
 #include "DedicatedGameManager.hpp"
 
 #include <stdio.h>
@@ -139,7 +141,7 @@ void DedicatedGameManager::inputLoop()
                         << std::setw(4) << playerstate->getLosses() << " "
                         << std::setw(5) << playerstate->getTotal() << " "
                         << std::setw(21) 
-                        << SERVER->getIP(playerstate->getID())
+                        << NetworkServer::getIP(playerstate->getID())
                         << "\n";
                 }
                 //*Console::server << std::flush;
@@ -157,6 +159,7 @@ void DedicatedGameManager::inputLoop()
                 std::cout << "Preparing mapchange..." << std::endl;
                 break;
             case ServerCommand::KICK:
+            {
                 std::stringstream idstream(command.argument);
                 Uint16 id = 0xffff;
                 idstream >> id;
@@ -164,7 +167,20 @@ void DedicatedGameManager::inputLoop()
                     std::cout << "Unknown player." << std::endl;
                     break;
                 }
-                SERVER->dropClient(SERVER->getClientSocketByPlayerIndex(id));
+                NetworkServer::dropClient(id);
+                break;
+            }
+            case ServerCommand::ADDBOT:
+            {
+                Uint16 botid = BotManager::addBot();
+                if ( botid != 0xffff )
+                {
+                    std::cout << "Added bot with player id " << botid << std::endl;
+                }
+                break;
+            }
+            case ServerCommand::REMOVEBOTS:
+                BotManager::removeAllBots();
                 break;
         }
         commandqueue.pop();
@@ -200,10 +216,9 @@ bool DedicatedGameManager::launchNetPanzerGame()
 
     GameManager::reinitializeGameLogic();
 
-    NETWORKINTERFACE = SERVER;
     MessageRouter::initialize(true);
-    SERVER->openSession();
-    SERVER->hostSession();
+    NetworkServer::openSession();
+    NetworkServer::hostSession();
 
     GameControlRulesDaemon::setStateServerInProgress();
     GameControlRulesDaemon::setDedicatedServer();

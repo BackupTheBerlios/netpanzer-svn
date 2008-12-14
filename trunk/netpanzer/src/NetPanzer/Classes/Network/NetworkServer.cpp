@@ -1,3 +1,6 @@
+
+#include "Bot/BotManager.hpp"
+
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
  
@@ -41,22 +44,99 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ConnectNetMessage.hpp"
 #include "Resources/ResourceManagerMessages.hpp"
 
+#include "Network/MessageClassHandler.hpp"
 
-NetworkServer* SERVER = 0;
+typedef std::list<ServerClientListData*> ClientList;
+static ClientList client_list;
+static ClientList connecting_clients;
 
-NetworkServer::NetworkServer()
-        : NetworkInterface(), socket(0)
+
+
+class ListenSocket : public TCPListenSocketObserver,
+                     public ClientSocketObserver
 {
-    // nothing
-}
+public:
+    ListenSocket() : socket(0) {};
+    ~ListenSocket()
+    {
+        if ( socket )
+        {
+            socket->destroy();
+        }
+    }
 
-NetworkServer::~NetworkServer()
-{
-    if ( socket )
-        socket->destroy();
-}
+    void listen(const std::string& address, const int port)
+    {
+        if ( socket )
+        {
+            socket->destroy();
+            socket = 0;
+        }
 
-void NetworkServer::resetClientList()
+        try
+        {
+            Address addr = Address::resolve(address, port);
+            socket = new TCPListenSocket(addr, this);
+        }
+        catch(...)
+        {
+            if (socket)
+            {
+                socket->destroy();
+            }
+            socket = 0;
+            throw;
+        }
+    }
+
+    void stopListen()
+    {
+        if ( socket )
+        {
+            socket->destroy();
+            socket = 0;
+        }
+    }
+
+    void onSocketError(TCPListenSocket *so, const char * msg)
+    {
+        (void)so;
+        LOGGER.warning("NetworkServer: Listen Socket error: '%s'", msg);
+        LOGGER.warning("Something bad could happen from now");
+
+    }
+
+    TCPSocketObserver * onNewConnection(TCPListenSocket *so, const Address &fromaddr)
+    {
+        (void)so;
+        (void)fromaddr;
+        return new ClientSocket(this);
+    }
+
+    void onClientConnected(ClientSocket *s)
+    {
+        int id = s->getId();
+        LOGGER.debug("NetworkServer: client connected [%d]", id);
+
+        ClientMesgConnectAck connect_ack_mesg;
+        connect_ack_mesg.setSize(sizeof(ClientMesgConnectAck));
+        s->sendMessage( &connect_ack_mesg,sizeof(ClientMesgConnectAck));
+
+        ServerClientListData *client_data = new ServerClientListData;
+        client_data->client_socket = s;
+        connecting_clients.push_back(client_data);
+    }
+
+private:
+    TCPListenSocket * socket;
+};
+
+static Timer keep_alive_emit_timer;
+
+static ListenSocket listener;
+
+void
+NetworkServer::resetClientList()
 {
     for(ClientList::iterator i = client_list.begin(); i != client_list.end();
             ++i)
@@ -74,7 +154,31 @@ void NetworkServer::resetClientList()
     connecting_clients.clear();
 }
 
-void NetworkServer::cleanUpClientList()
+bool
+NetworkServer::addClientToSendList( ClientSocket * client )
+{
+    ClientList::iterator i = connecting_clients.begin();
+    while ( i != connecting_clients.end() )
+    {
+        if( (*i)->client_socket == client )
+        {
+            client_list.push_back(*i);
+            client_list.erase(i);
+            break;
+        }
+        i++;
+    }
+
+    if ( i == connecting_clients.end() )
+    {
+        LOGGER.warning("Unknown client not added to list");
+    }
+
+    return true;
+}
+
+void
+NetworkServer::cleanUpClientList()
 {
     ClientList::iterator i = client_list.begin();
     while ( i != client_list.end() )
@@ -100,59 +204,26 @@ void NetworkServer::cleanUpClientList()
     }
 }
 
-bool NetworkServer::addClientToSendList( ClientSocket * client )
+void
+NetworkServer::dropClient(Uint16 playerid)
 {
-    ClientList::iterator i = connecting_clients.begin();
-    while ( i != connecting_clients.end() )
+    if ( BotManager::isBot(playerid) )
     {
-        if( (*i)->client_socket == client )
+        BotManager::removeBot(playerid);
+    }
+    else
+    {
+        ClientList::iterator i = client_list.begin();
+        while( i != client_list.end() && (*i)->client_socket->getPlayerIndex() != playerid )
         {
-            client_list.push_back(*i);
-            client_list.erase(i);
-            break;
+            ++i;
         }
-        i++;
-    }
 
-    if ( i == connecting_clients.end() )
-    {
-        LOGGER.warning("Unknown client not added to list");
-    }
-
-    return true;
-}
-
-void NetworkServer::netPacketClientKeepAlive(const NetPacket* )
-{
-    // nothing
-}
-
-void NetworkServer::netPacketServerPingRequest(const NetPacket* )
-{
-    // nothing
-}
-
-void NetworkServer::handlePacket(const NetPacket* packet)
-{
-    const NetMessage* message = packet->getNetMessage();
-    switch(message->message_id)
-    {
-        case _net_message_id_server_keep_alive: 
-            netPacketClientKeepAlive(packet);
-            break;
-
-        case _net_message_id_server_ping_request:
-            netPacketServerPingRequest(packet);
-            break;
-
-        case _net_message_id_transport_disconnect:
-            onClientDisconected(packet->fromClient, "Socket disconnected message");
-            break;
-
-        default:
-            LOGGER.warning("Unknown networkserverpacket: id:%d.",
-                    message->message_id);
-            break;
+        if ( i != client_list.end() )
+        {
+            // XXX hack
+            onClientDisconected((*i)->client_socket, "dropped");
+        }
     }
 }
 
@@ -165,39 +236,17 @@ NetworkServer::openSession()
 void
 NetworkServer::hostSession()
 {
-    if ( socket )
-    {
-        socket->destroy();
-        socket = 0;
-    }
-
     resetClientList();
-    
-    try
-    {
-        Address addr = Address::resolve(gameconfig->bindaddress,
-                                        gameconfig->serverport);
-        
-        socket = new TCPListenSocket(addr, this);
-
-    }
-    catch(...)
-    {
-        if (socket)
-            socket->destroy();
-        socket = 0;
-        throw;
-    }
+    listener.listen(gameconfig->bindaddress, gameconfig->serverport);
 }
 
 void
 NetworkServer::closeSession()
 {
-    if ( socket )
-        socket->destroy();
-    
-    socket = 0;
+    listener.stopListen();
 }
+
+
 
 void
 NetworkServer::broadcastMessage(NetMessage *message, size_t size)
@@ -227,8 +276,10 @@ void
 NetworkServer::sendMessage(Uint16 player_index, NetMessage* message,
         size_t size)
 {
-    if( socket == 0 )
+    if ( BotManager::isBot(player_index) || socket == 0 )
+    {
         return;
+    }
     
     ClientList::iterator i = client_list.begin();
     while ( i != client_list.end() )
@@ -258,22 +309,6 @@ NetworkServer::sendMessage(Uint16 player_index, NetMessage* message,
 }
 
 void
-NetworkServer::dropClient(ClientSocket * client)
-{
-    ClientList::iterator i = client_list.begin();
-    while( i != client_list.end() && (*i)->client_socket != client )
-    {
-        ++i;
-    }
-    
-    if ( i != client_list.end() )
-    {
-        // XXX hack
-        onClientDisconected(client, "dropped");
-    }
-}
-
-void
 NetworkServer::sendRemaining()
 {
     ClientList::iterator i = client_list.begin();
@@ -298,9 +333,30 @@ NetworkServer::sendRemaining()
 
 }
 
+ClientSocket *
+NetworkServer::getClientSocketByPlayerIndex ( Uint16 index )
+{
+    ClientList::iterator i = client_list.begin();
+    while ( i != client_list.end() )
+    {
+        if ( ! (*i)->wannadie
+             && (*i)->client_socket->getPlayerIndex() == index )
+        {
+            return (*i)->client_socket;
+        }
+        i++;
+    }
+
+    return NULL;
+}
+
 std::string
 NetworkServer::getIP(Uint16 player_index)
 {
+    if ( BotManager::isBot(player_index) )
+    {
+        return "Bot";
+    }
     ClientList::iterator i = client_list.begin();
     while ( i != client_list.end() )
     {
@@ -317,48 +373,13 @@ NetworkServer::getIP(Uint16 player_index)
 }
 
 void
-NetworkServer::onSocketError(TCPListenSocket *so, const char * msg)
-{
-    (void)so;
-    LOGGER.warning("NetworkServer: Listen Socket error: '%s'", msg);
-    LOGGER.warning("Something bad could happen from now");
-
-}
-
-TCPSocketObserver *
-NetworkServer::onNewConnection(TCPListenSocket *so, const Address &fromaddr)
-{
-    (void)so;
-    (void)fromaddr;
-    return new ClientSocket(this);
-}
-
-void
-NetworkServer::onClientConnected(ClientSocket *s)
-{
-    int id = s->getId();
-    LOGGER.debug("NetworkServer: client connected [%d]", id);
-    //clients[id] = s;
-    
-    // this class handle this packet and it only sends the answer
-    // send it here right now
-    ClientMesgConnectAck connect_ack_mesg;
-    connect_ack_mesg.setSize(sizeof(ClientMesgConnectAck));
-    s->sendMessage( &connect_ack_mesg,sizeof(ClientMesgConnectAck));
-    
-    ServerClientListData *client_data = new ServerClientListData;
-    client_data->client_socket = s;
-    connecting_clients.push_back(client_data);
-}
-
-void
 NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
 {
     LOGGER.debug("NetworkServer::onClientDisconected( %d, '%s')", s->getId(), msg);
-    
+
     bool cleandisconnect = false;
     bool sendalert = true;
-    
+
     if ( ServerConnectDaemon::inConnectQueue(s) )
     {
         // player was connecting and dropped.
@@ -368,34 +389,34 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
     }
 
 
-    
-    if ( NetworkInterface::receive_queue.isReady() )
-    {
-        unsigned long frontsave = NetworkInterface::receive_queue.front;
-        while ( NetworkInterface::receive_queue.isReady() )
-        {
-            LOGGER.debug("NetworkServer::onClientDisconected there was a packet");
-            NetPacket packet;
 
-            NetworkInterface::receive_queue.dequeue(&packet);
+//    if ( NetworkInterface::receive_queue.isReady() )
+//    {
+//        unsigned long frontsave = NetworkInterface::receive_queue.front;
+//        while ( NetworkInterface::receive_queue.isReady() )
+//        {
+//            LOGGER.debug("NetworkServer::onClientDisconected there was a packet");
+//            NetPacket packet;
+//
+//            NetworkInterface::receive_queue.dequeue(&packet);
+//
+//            if ( packet.fromClient == s )
+//            {
+//                LOGGER.debug("NetworkServer::onClientDisconected the packet was from our friend");
+//                const NetMessage * netmessage = packet.getNetMessage();
+//                if (   netmessage->message_class == _net_message_class_connect
+//                    && netmessage->message_id == _net_message_id_connect_netPanzer_client_disconnect )
+//                {
+//                    LOGGER.debug("NetworkServer::onClientDisconected so is a clean disconnect");
+//                    cleandisconnect = true;
+//                }
+//            }
+//        }
+//        NetworkInterface::receive_queue.front = frontsave;
+//    }
 
-            if ( packet.fromClient == s )
-            {
-                LOGGER.debug("NetworkServer::onClientDisconected the packet was from our friend");
-                const NetMessage * netmessage = packet.getNetMessage();
-                if (   netmessage->message_class == _net_message_class_connect 
-                    && netmessage->message_id == _net_message_id_connect_netPanzer_client_disconnect )
-                {
-                    LOGGER.debug("NetworkServer::onClientDisconected so is a clean disconnect");
-                    cleandisconnect = true;
-                }
-            }
-        }
-        NetworkInterface::receive_queue.front = frontsave;
-    }
-    
     Uint16 player_index = s->getPlayerIndex();
-    
+
     ClientList::iterator i = client_list.begin();
     while ( i != client_list.end() )
     {
@@ -407,7 +428,7 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
         }
         ++i;
     }
-    
+
     i = connecting_clients.begin();
     while ( i != connecting_clients.end() )
     {
@@ -419,7 +440,7 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
         }
         ++i;
     }
-    
+
     if ( player_index != 0xffff )
     {
         PlayerState * player = PlayerInterface::getPlayer(player_index);
@@ -429,7 +450,7 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
                                       "'%s' has left.",
                                       player->getName().c_str());
         }
-        
+
         ObjectiveInterface::disownPlayerObjectives( player_index );
 
         UnitInterface::destroyPlayerUnits( player_index );
@@ -437,9 +458,9 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
         ResourceManagerReleaseFlagMessage releasemsg;
         releasemsg.setFlagID(player->getFlag());
         ResourceManager::releaseFlag(player->getFlag());
-                
+
         PlayerInterface::disconnectPlayerCleanup( player_index );
-        
+
         broadcastMessage(&releasemsg, sizeof(releasemsg));
 
         if ( sendalert )
@@ -454,27 +475,52 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
                 msg.set( player_index, _connect_alert_mesg_client_drop );
             }
 
-            SERVER->broadcastMessage(&msg, sizeof(msg));
+            broadcastMessage(&msg, sizeof(msg));
         }
     }
-    
-
-//    LOGGER.warning("NetworkServer::onClientDisconected( %d, '%s')", s->getId(), msg);
 }
 
-ClientSocket *
-NetworkServer::getClientSocketByPlayerIndex ( Uint16 index )
+class ServerPacketHandler : public MessageClassHandler
 {
-    ClientList::iterator i = client_list.begin();
-    while ( i != client_list.end() )
+public:
+    void handlePacket(const NetPacket* packet)
     {
-        if ( ! (*i)->wannadie
-             && (*i)->client_socket->getPlayerIndex() == index )
+        const NetMessage* message = packet->getNetMessage();
+        switch(message->message_id)
         {
-            return (*i)->client_socket;
+            case _net_message_id_server_keep_alive:
+                netPacketClientKeepAlive(packet);
+                break;
+
+            case _net_message_id_server_ping_request:
+                netPacketServerPingRequest(packet);
+                break;
+
+            case _net_message_id_transport_disconnect:
+                NetworkServer::onClientDisconected(packet->fromClient, "Socket disconnected message");
+                break;
+
+            default:
+                LOGGER.warning("Unknown networkserverpacket: id:%d.",
+                        message->message_id);
+                break;
         }
-        i++;
     }
-    
-    return NULL;
+private:
+    void netPacketClientKeepAlive(const NetPacket* )
+    {
+        // nothing
+    }
+
+    void netPacketServerPingRequest(const NetPacket* )
+    {
+        // nothing
+    }
+
+} serverpackethandler;
+
+MessageClassHandler *
+NetworkServer::getPacketHandler()
+{
+    return &serverpackethandler;
 }

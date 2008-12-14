@@ -54,7 +54,7 @@ void bNext()
         Desktop::setVisibility("MapSelectionView", true);
         Desktop::setVisibility("PlayerNameView", true);
 
-        SERVER->openSession();
+        NetworkServer::openSession();
     } else if (gameconfig->hostorjoin == _game_session_join) {
         Desktop::setVisibility("JoinView", true);
         Desktop::setVisibility("FlagSelectionView", true);

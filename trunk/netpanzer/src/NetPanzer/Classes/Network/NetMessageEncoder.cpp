@@ -73,13 +73,13 @@ void NetMessageEncoder::sendEncodedMessage()
     if (encode_message.message_count > 0) {
         size_t size = encode_message_index + encode_message.getHeaderSize();
         if(usePlayerID) {
-            SERVER->sendMessage(player, &encode_message, size);
+            NetworkServer::sendMessage(player, &encode_message, size);
         } else if(sendAsClient) {
-            CLIENT->sendMessage(&encode_message, size);
+            NetworkClient::sendMessage(&encode_message, size);
         } else if(NetworkState::status == _network_state_server) {
-            SERVER->broadcastMessage(&encode_message, size);
+            NetworkServer::broadcastMessage(&encode_message, size);
         } else {
-            CLIENT->sendMessage(&encode_message, size);
+            NetworkClient::sendMessage(&encode_message, size);
         }
 
         resetEncoder();

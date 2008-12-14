@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
-#include "Classes/Network/NetworkInterface.hpp"
 #include "Core/NetworkGlobals.hpp"
 #include "Network/ClientSocket.hpp"
 #include "Util/UtilInterface.hpp"
@@ -32,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Endian.hpp"
 #include "Network/Address.hpp"
 #include "Classes/Network/ClientServerNetMessage.hpp"
+#include "MessageRouter.hpp"
 
 using namespace std;
 
@@ -96,7 +96,7 @@ ClientSocket::disconnect(const char * disconnectmsg)
 {
     LOGGER.debug("ClientSocket:disconnect id=%d, message: %s", id, disconnectmsg);
     NetMsgTransportDisconnect msg;
-    EnqueueIncomingPacket(&msg, sizeof(msg), playerIndex, this);
+    MessageRouter::enqueueIncomingPacket(&msg, sizeof(msg), playerIndex, this);
 }
 
 void ClientSocket::sendMessage(const void* data, size_t size)
@@ -166,7 +166,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             }
             
             if ( remaining >= packetsize ) {
-                EnqueueIncomingPacket(data+dataptr, packetsize, playerIndex, this);
+                MessageRouter::enqueueIncomingPacket(data+dataptr, packetsize, playerIndex, this);
                 remaining -= packetsize;
                 dataptr   += packetsize;
             } else {
@@ -214,7 +214,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             }
             
             if ( tempoffset == packetsize ) {
-                EnqueueIncomingPacket(tempbuffer, packetsize, playerIndex, this);
+                MessageRouter::enqueueIncomingPacket(tempbuffer, packetsize, playerIndex, this);
                 tempoffset = 0;
             }
         }
@@ -226,7 +226,10 @@ ClientSocket::onConnected(network::TCPSocket *so)
 {
     LOGGER.debug("ClientSocket: connected, id=%d", id);
     socket = so;
-    observer->onClientConnected(this);
+    if ( observer )
+    {
+        observer->onClientConnected(this);
+    }
 }
 
 void

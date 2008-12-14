@@ -341,7 +341,7 @@ void GameManager::spawnPlayer( Uint16 player )
     else
     {
         SystemSetPlayerView set_view(world_loc.x, world_loc.y);
-        SERVER->sendMessage(player, &set_view, sizeof(SystemSetPlayerView));
+        NetworkServer::sendMessage(player, &set_view, sizeof(SystemSetPlayerView));
     }
 
     sound->playTankIdle();
@@ -486,7 +486,7 @@ void GameManager::netMessagePingRequest(const NetMessage* message)
          && ping_request->getClientPlayerIndex() != 0
        )
     {
-        SERVER->sendMessage(player->getID(), &ping_ack, sizeof(SystemPingAcknowledge));
+        NetworkServer::sendMessage(player->getID(), &ping_ack, sizeof(SystemPingAcknowledge));
     }
 }
 
@@ -581,7 +581,7 @@ void GameManager::requestNetworkPing()
     SystemPingRequest ping_request(PlayerInterface::getLocalPlayerIndex());
 
     NetworkState::ping_time_stamp = now();
-    CLIENT->sendMessage( &ping_request, sizeof(SystemPingRequest));
+    NetworkClient::sendMessage( &ping_request, sizeof(SystemPingRequest));
 }
 
 void GameManager::setNetPanzerGameOptions()
@@ -601,10 +601,10 @@ void GameManager::quitNetPanzerGame()
 {
     if ( NetworkState::status == _network_state_client ) {
         ClientConnectDaemon::shutdownConnectDaemon();
-        CLIENT->partServer();
+        NetworkClient::partServer();
     } else {
         ServerConnectDaemon::shutdownConnectDaemon();
-        SERVER->closeSession();
+        NetworkServer::closeSession();
 
         // hacky...
         PlayerGameManager* playerGameManager 

@@ -215,6 +215,8 @@
         <logicalFolder name="Bot" displayName="Bot" projectFiles="true">
           <itemPath>src/NetPanzer/Bot/Bot.cpp</itemPath>
           <itemPath>src/NetPanzer/Bot/Bot.hpp</itemPath>
+          <itemPath>src/NetPanzer/Bot/BotManager.cpp</itemPath>
+          <itemPath>src/NetPanzer/Bot/BotManager.hpp</itemPath>
           <itemPath>src/NetPanzer/Bot/BotPlayer.cpp</itemPath>
           <itemPath>src/NetPanzer/Bot/BotPlayer.hpp</itemPath>
           <itemPath>src/NetPanzer/Bot/BotTask.hpp</itemPath>
@@ -251,8 +253,6 @@
             <itemPath>src/NetPanzer/Classes/Network/NetTypes.hpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/NetworkClient.cpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/NetworkClient.hpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Network/NetworkInterface.cpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Network/NetworkInterface.hpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/NetworkReturnCodes.hpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/NetworkServer.cpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/NetworkServer.hpp</itemPath>
@@ -1243,6 +1243,12 @@
       <item path="src/NetPanzer/Bot/Bot.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="src/NetPanzer/Bot/BotManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/BotManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
       <item path="src/NetPanzer/Bot/BotPlayer.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -1340,12 +1346,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/NetworkClient.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/NetworkInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/NetworkInterface.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/NetworkReturnCodes.hpp">
@@ -2976,6 +2976,12 @@
       <item path="src/NetPanzer/Bot/Bot.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="src/NetPanzer/Bot/BotManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/BotManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
       <item path="src/NetPanzer/Bot/BotPlayer.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -3073,12 +3079,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/NetworkClient.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/NetworkInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/NetworkInterface.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/NetworkReturnCodes.hpp">
@@ -4709,6 +4709,12 @@
       <item path="src/NetPanzer/Bot/Bot.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="src/NetPanzer/Bot/BotManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/BotManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
       <item path="src/NetPanzer/Bot/BotPlayer.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -4806,12 +4812,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/NetworkClient.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/NetworkInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/NetworkInterface.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/NetworkReturnCodes.hpp">
@@ -6442,6 +6442,12 @@
       <item path="src/NetPanzer/Bot/Bot.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="src/NetPanzer/Bot/BotManager.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Bot/BotManager.hpp">
+        <itemTool>3</itemTool>
+      </item>
       <item path="src/NetPanzer/Bot/BotPlayer.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -6539,12 +6545,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/NetworkClient.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/NetworkInterface.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/NetworkInterface.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/NetworkReturnCodes.hpp">

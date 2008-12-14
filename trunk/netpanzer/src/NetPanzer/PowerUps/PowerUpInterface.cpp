@@ -132,7 +132,7 @@ void PowerUpInterface::generatePowerUp()
                          power_up->type
                        );
 
-        SERVER->broadcastMessage(&create_mesg, sizeof(create_mesg));
+        NetworkServer::broadcastMessage(&create_mesg, sizeof(create_mesg));
 
         do
         {

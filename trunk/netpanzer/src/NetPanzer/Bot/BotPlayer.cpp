@@ -36,8 +36,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 
 //-----------------------------------------------------------------
-BotPlayer::BotPlayer()
-    : m_timer(1)
+BotPlayer::BotPlayer(Uint16 playerid)
+    : Bot(playerid), m_timer(1)
 {
     /* empty */
 }
@@ -46,9 +46,11 @@ BotPlayer::BotPlayer()
 BotPlayer::processEvents()
 {
     int playerIndex = isReady();
-    if (playerIndex != NONE_PLAYER) {
+    if (playerIndex != NONE_PLAYER)
+    {
         UnitBase *unit = getRandomUnit(playerIndex);
-        if (unit) {
+        if (unit)
+        {
             int unitTask = m_tasks.queryUnitTask(unit);
             if (unitTask != BotTaskList::TASK_MOVE) {
                 unitOccupyOupost(unit);
@@ -77,18 +79,17 @@ BotPlayer::processEvents()
    int 
 BotPlayer::isReady()
 {
-    int playerIndex = NONE_PLAYER;
-    if (m_timer.count()) {
-        playerIndex = PlayerInterface::getLocalPlayerIndex();
-        if (playerIndex != NONE_PLAYER) {
-            int unitCount = UnitInterface::getUnitCount(playerIndex);
-            if (unitCount > 0) {
-                m_timer.changePeriod(5.0 / unitCount);
-            }
+    if (m_timer.count())
+    {
+        int unitCount = UnitInterface::getUnitCount(botPlayerId);
+        if (unitCount > 0)
+        {
+            m_timer.changePeriod(5.0 / unitCount);
         }
+        return botPlayerId;
     }
 
-    return playerIndex;
+    return NONE_PLAYER;
 }
 //-----------------------------------------------------------------
 /**
@@ -175,7 +176,7 @@ BotPlayer::getOutposts(int disposition)
     unsigned char objectiveDisposition;
     ObjectiveID   objectiveID;
 
-    ObjectiveInterface::startObjectivePositionEnumeration();
+    ObjectiveInterface::startObjectivePositionEnumeration(botPlayerId);
     while (ObjectiveInterface::objectivePositionEnumeration(&objRect,
             &objectiveDisposition, &objectiveID))
     {

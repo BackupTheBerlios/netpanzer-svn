@@ -1,6 +1,6 @@
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	${MAKE} -s -f nbproject/Makefile-win-debug.mk ./netpanzer-debug.exe
+	${MAKE}  -f nbproject/Makefile-win-debug.mk ./netpanzer-debug.exe
 
 ./netpanzer-debug.exe: ${OBJECTFILES}
 	${MKDIR} -p .
@@ -16,3 +16,8 @@
 
 # Subprojects
 .clean-subprojects:
+
+# Enable dependency checking
+.dep.inc: .depcheck-impl
+
+include .dep.inc

@@ -279,16 +279,9 @@ void PlayerGameManager::hostMultiPlayerGame()
     // refresh the view in each append
     LoadingView::append( "Launching Server ..." );
     try {
-    	if (CLIENT) {
-		delete CLIENT;
-		CLIENT=0;
-	}
-	CLIENT = new NetworkClient();
-
-        NETWORKINTERFACE = SERVER;
         MessageRouter::initialize(true);
         
-        SERVER->hostSession();
+        NetworkServer::hostSession();
 
         if((bool) gameconfig->publicServer &&
                 (const std::string&) gameconfig->masterservers != "") {
@@ -421,9 +414,8 @@ void PlayerGameManager::joinMultiPlayerGame()
     //reinitializeGameLogic();
     NetworkState::setNetworkStatus( _network_state_client );
 
-    NETWORKINTERFACE = CLIENT;
     MessageRouter::initialize(false);
-    CLIENT->joinServer(gameconfig->serverConnect);
+    NetworkClient::joinServer(gameconfig->serverConnect);
     LoadingView::show();
 
     ClientConnectDaemon::startConnectionProcess();

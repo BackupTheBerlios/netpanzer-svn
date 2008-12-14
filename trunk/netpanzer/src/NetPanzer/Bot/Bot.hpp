@@ -24,22 +24,23 @@ class iXY;
 
 #include "BotTaskList.hpp"
 
-class Bot {
-    static class Bot *s_bot;
-    public:
-        static void initialize(Bot *bot);
-        static void shutdown();
-        static Bot *bot() { return s_bot; }
+class Bot
+{
+public:
+    Bot(Uint16 playerid);
 
-        virtual ~Bot() {}
-        virtual void processEvents() = 0;
+    virtual ~Bot() {}
+    virtual void processEvents() = 0;
 
-        void moveUnit(UnitBase *unit, iXY map_pos);
-        void attackUnit(UnitBase *unit, UnitBase *enemyUnit);
-        void manualFire(UnitBase *unit, iXY world_pos);
-        void produceUnit(ObjectiveID outpostID, int selectedProduce);
-    protected:
-        BotTaskList m_tasks;
+    void moveUnit(UnitBase *unit, iXY map_pos);
+    void attackUnit(UnitBase *unit, UnitBase *enemyUnit);
+    void manualFire(UnitBase *unit, iXY world_pos);
+    void produceUnit(ObjectiveID outpostID, int selectedProduce);
+protected:
+    BotTaskList m_tasks;
+    Uint16 botPlayerId;
+private:
+    friend class BotManager;
 };
 
 #endif

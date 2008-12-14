@@ -69,14 +69,14 @@ void BonusUnitPowerUp::onHit( UnitID unit_id )
         {
             UnitRemoteCreate create_mesg(new_unit->player->getID(),
                     new_unit->id, spawn_loc.x, spawn_loc.y, bonus_unit_type);
-            SERVER->broadcastMessage( &create_mesg, sizeof( UnitRemoteCreate ));
+            NetworkServer::broadcastMessage( &create_mesg, sizeof( UnitRemoteCreate ));
         }
 
     }
 
     PowerUpHitMesg hit_mesg;
     hit_mesg.set( ID, unit->player->getID() );
-    SERVER->broadcastMessage( &hit_mesg, sizeof( PowerUpHitMesg ));
+    NetworkServer::broadcastMessage( &hit_mesg, sizeof( PowerUpHitMesg ));
 
     life_cycle_state = _power_up_lifecycle_state_inactive;
 

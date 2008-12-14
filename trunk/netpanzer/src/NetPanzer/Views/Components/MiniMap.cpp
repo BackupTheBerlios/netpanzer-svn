@@ -155,7 +155,7 @@ MiniMap::drawObjectives(Surface &dest)
     PIX color;
     ObjectiveID objective_id;
 
-    ObjectiveInterface::startObjectivePositionEnumeration();
+    ObjectiveInterface::startObjectivePositionEnumeration(PlayerInterface::getLocalPlayerIndex());
 
     while( ObjectiveInterface::objectivePositionEnumeration( &objective_rect, &objective_status, &objective_id ) )
     {

@@ -31,16 +31,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MessageClassHandler.hpp"
 #include "Util/Log.hpp"
 #include "Classes/Network/NetPacket.hpp"
-#include "Classes/Network/NetworkInterface.hpp"
 #include "Classes/Network/NetMessageDecoder.hpp"
 #include "Classes/Network/TerminalNetMesg.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "PowerUps/PowerUpInterface.hpp"
+#include "Classes/Network/NetPacketQueues.hpp"
+#include "Classes/Network/NetworkServer.hpp"
+#include "Classes/Network/NetworkClient.hpp"
+#include "Classes/Network/NetworkState.hpp"
 
 class MultiMessage;
 
 static MessageClassHandler * handlers[256];
+static NetPacketQueue receive_queue;
 
 class NoHandler : public MessageClassHandler
 {
@@ -150,11 +154,11 @@ MessageRouter::initialize(bool isServer)
     handlers[_net_message_class_player]         = &playerhandler;
     handlers[_net_message_class_resource]       = &resourcehandler;
     handlers[_net_message_class_chat]           = &chathandler;
-    handlers[_net_message_class_client_server]  = NETWORKINTERFACE;
     if ( isServer )
     {
-       handlers[_net_message_class_terminal]      = &terminalhandler;
-       handlers[_net_message_class_connect]       = &serverconnecthandler;
+        handlers[_net_message_class_terminal]      = &terminalhandler;
+        handlers[_net_message_class_connect]       = &serverconnecthandler;
+        handlers[_net_message_class_client_server] = NetworkServer::getPacketHandler();
     }
     else
     {
@@ -163,7 +167,10 @@ MessageRouter::initialize(bool isServer)
         handlers[_net_message_class_game_control] = &gamecontrolhandler;
         handlers[_net_message_class_powerup]      = &poweruphandler;
         handlers[_net_message_class_connect]      = &clientconnecthandler;
+        handlers[_net_message_class_client_server] = NetworkClient::getPacketHandler();
     }
+    // XXX has to free the queue some time;
+    receive_queue.initialize(200);
 }
 
 void
@@ -178,14 +185,34 @@ MessageRouter::clearMessageClassHandler(MsgClassID c)
     handlers[c] = &nohandler;
 }
 
+
+void
+MessageRouter::enqueueIncomingPacket( const void *data, Uint16 size,
+                            Uint16 fromPlayer, ClientSocket *fromClient)
+{
+    static NetPacket TEMP_PACKET;
+
+    TEMP_PACKET.fromPlayer = fromPlayer;
+    TEMP_PACKET.fromClient = fromClient;
+    assert(size <= _MAX_NET_PACKET_SIZE);
+
+    memcpy(TEMP_PACKET.data, data, size);
+    receive_queue.enqueue( TEMP_PACKET );
+}
+
+
 void
 MessageRouter::routePackets()
 {
     static NetPacket np;
-
-    while( NetworkInterface::getPacket(&np) )
+    while ( receive_queue.isReady() )
     {
+        receive_queue.dequeue(&np);
+        NetworkState::incPacketsReceived(np.getSize());
+#ifdef NETWORKDEBUG
+        NetPacketDebugger::logPacket("R", packet);
+#endif
+
         handlers[np.getNetMessage()->message_class]->handlePacket(&np);
     }
-
 }

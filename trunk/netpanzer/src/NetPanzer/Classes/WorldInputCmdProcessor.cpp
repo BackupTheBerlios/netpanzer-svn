@@ -639,7 +639,7 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
                 term_mesg.output_loc_request.set( outpost_goal_selection,
                         world_pos);
                 
-                CLIENT->sendMessage(&term_mesg, sizeof(TerminalOutpostOutputLocRequest));
+                NetworkClient::sendMessage(&term_mesg, sizeof(TerminalOutpostOutputLocRequest));
 
                 if ( NetworkState::status == _network_state_client )
                 {    
@@ -928,7 +928,7 @@ WorldInputCmdProcessor::sendAllianceRequest(const iXY& world_pos, bool make_brea
         allie_request.set(PlayerInterface::getLocalPlayerIndex(),
                 target_ptr->player->getID(), type);
 
-        CLIENT->sendMessage( &allie_request, sizeof(PlayerAllianceRequest));
+        NetworkClient::sendMessage( &allie_request, sizeof(PlayerAllianceRequest));
     }
 }
 

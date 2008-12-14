@@ -62,7 +62,7 @@ void ClientConnectDaemon::shutdownConnectDaemon()
     client_disconnect.setPlayerID(
             PlayerInterface::getLocalPlayerIndex());
 
-    CLIENT->sendMessage(&client_disconnect,
+    NetworkClient::sendMessage(&client_disconnect,
             sizeof(ConnectMesgNetPanzerClientDisconnect));
 }
 
@@ -260,7 +260,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
         case _connect_state_send_connect_request : {
                 ClientConnectRequest connect_request;
 
-                CLIENT->sendMessage(&connect_request, sizeof(ClientConnectRequest));
+                NetworkClient::sendMessage(&connect_request, sizeof(ClientConnectRequest));
 
                 connection_state = _connect_state_wait_for_connect_result;
 
@@ -288,7 +288,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                                                 gameconfig->getUnitColor(),
                                                 gameconfig->playerflag.c_str() );
 
-                            CLIENT->sendMessage( &client_setting, sizeof(ConnectClientSettings));
+                            NetworkClient::sendMessage( &client_setting, sizeof(ConnectClientSettings));
 
                             connection_state = _connect_state_wait_for_server_game_setup;
                         }
@@ -297,7 +297,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                         if ( time_out_timer.count() ) {
                             if ( time_out_counter < _CLIENT_CONNECT_RETRY_LIMIT ) {
                                 ClientConnectRequest connect_request;
-                                CLIENT->sendMessage( &connect_request, sizeof(ClientConnectRequest));
+                                NetworkClient::sendMessage( &connect_request, sizeof(ClientConnectRequest));
                                 time_out_counter++;
                             } else {
                                 LoadingView::append( "Connection To Server Failed" );
@@ -313,7 +313,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                     if ( time_out_timer.count() ) {
                         if ( time_out_counter < _CLIENT_CONNECT_RETRY_LIMIT ) {
                             ClientConnectRequest connect_request;
-                            CLIENT->sendMessage( &connect_request, sizeof(ClientConnectRequest));
+                            NetworkClient::sendMessage( &connect_request, sizeof(ClientConnectRequest));
                             time_out_counter++;
                         } else {
                             LoadingView::append( "Connection To Server Failed" );
@@ -354,7 +354,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                             } else {
                                 LoadingView::append( "Loading Game Data ..." );
 
-                                CLIENT->sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
+                                NetworkClient::sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
 
                                 connection_state = _connect_state_setup_client_game;
                             }
@@ -375,14 +375,14 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                     sprintf( str_buf, "Loading Game Data ... (%d%%)", percent_complete);
                     LoadingView::update( str_buf );
 
-                    CLIENT->sendMessage( &client_game_setup_ack, sizeof(ConnectMesgClientGameSetupAck));
+                    NetworkClient::sendMessage( &client_game_setup_ack, sizeof(ConnectMesgClientGameSetupAck));
                     connection_state = _connect_state_idle;
                 } else {
                     ConnectMesgClientGameSetupPing client_game_setup_ping;
 
                     sprintf( str_buf, "Loading Game Data ... (%d%%)", percent_complete);
                     LoadingView::update( str_buf );
-                    CLIENT->sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
+                    NetworkClient::sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
                 }
 
                 end_cycle = true;

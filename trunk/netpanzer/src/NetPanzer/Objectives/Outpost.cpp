@@ -74,7 +74,7 @@ Outpost::attemptOccupationChange(UnitID unit_id)
                         unit_generation_on_flag,
                         unit_generation_type,
                         Uint32(unit_generation_timer.getTimeLeft() * 128.0));
-            SERVER->broadcastMessage(&update_mesg, sizeof(ObjectiveOccupationUpdate));
+            NetworkServer::broadcastMessage(&update_mesg, sizeof(ObjectiveOccupationUpdate));
 
             const PlayerState *player_state = objective_state.occupying_player;
             ConsoleInterface::postMessage(Color::cyan, false, 0, "'%s' has been occupied by '%s'",
@@ -96,7 +96,7 @@ Outpost::attemptOccupationChange(UnitID unit_id)
                     unit_generation_on_flag,
                     unit_generation_type,
                     Uint32(unit_generation_timer.getTimeLeft() * 128));
-            SERVER->broadcastMessage(&update_mesg,
+            NetworkServer::broadcastMessage(&update_mesg,
                     sizeof(ObjectiveOccupationUpdate));
             const PlayerState *player = objective_state.occupying_player;
             ConsoleInterface::postMessage(Color::cyan, false, 0, "'%s' has been occupied by '%s'",
@@ -159,7 +159,7 @@ Outpost::generateUnits()
                     UnitRemoteCreate create_mesg(unit->player->getID(),
                             unit->id, gen_loc.x, gen_loc.y,
                             unit_generation_type);
-                    SERVER->broadcastMessage(&create_mesg, sizeof(UnitRemoteCreate));
+                    NetworkServer::broadcastMessage(&create_mesg, sizeof(UnitRemoteCreate));
 
                     UMesgAICommand ai_command;
                     PlacementMatrix placement_matrix;
@@ -243,7 +243,7 @@ Outpost::objectiveMesgDisownPlayerObjective(const ObjectiveMessage* message)
                                            0,
                                            0);
 
-            SERVER->broadcastMessage(&update_mesg, sizeof(ObjectiveOccupationUpdate));
+            NetworkServer::broadcastMessage(&update_mesg, sizeof(ObjectiveOccupationUpdate));
 
             unit_generation_type = 0;
             UnitProfile *profile

@@ -53,7 +53,7 @@ void ChatInterface::chatMessageRequest(const NetMessage* message)
 
     if( chat_request->message_scope == _chat_mesg_scope_all )
     {
-        SERVER->broadcastMessage(&chat_mesg, sizeof(ChatMesg));
+        NetworkServer::broadcastMessage(&chat_mesg, sizeof(ChatMesg));
         post_on_server = true;
     }
     else if( chat_request->message_scope == _chat_mesg_scope_alliance )
@@ -75,7 +75,7 @@ void ChatInterface::chatMessageRequest(const NetMessage* message)
                 {
                     if ( local_player_index != i )
                     {
-                        SERVER->sendMessage((unsigned short)i, &chat_mesg,
+                        NetworkServer::sendMessage((unsigned short)i, &chat_mesg,
                                 sizeof(ChatMesg));
                     }
                     else
@@ -92,13 +92,13 @@ void ChatInterface::chatMessageRequest(const NetMessage* message)
         }
         else
         {
-            SERVER->sendMessage( chat_request->getSourcePlayerIndex(),
+            NetworkServer::sendMessage( chat_request->getSourcePlayerIndex(),
                                  &chat_mesg, sizeof(ChatMesg));
         }
     }
     else if( chat_request->message_scope == _chat_mesg_scope_server )
     {
-        SERVER->broadcastMessage(&chat_mesg, sizeof(ChatMesg));
+        NetworkServer::broadcastMessage(&chat_mesg, sizeof(ChatMesg));
         ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s",
                 chat_mesg.message_text );
         return;
@@ -242,11 +242,7 @@ void ChatInterface::sendCurrentMessage( const char *message_text )
     strncpy( current_chat_mesg.message_text, message_text, 149 );
     current_chat_mesg.message_text[ 149 ] = 0;
 
-    if ( NetworkState::status == _network_state_client ) {
-        CLIENT->sendMessage(&current_chat_mesg, sizeof(ChatMesgRequest));
-    } else {
-        processChatMessages(&current_chat_mesg);
-    }
+    NetworkClient::sendMessage(&current_chat_mesg, sizeof(ChatMesgRequest));
 
     current_chat_mesg.reset();
 }

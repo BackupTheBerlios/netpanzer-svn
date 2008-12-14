@@ -181,7 +181,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                     Desktop::setVisibility("RankView", true );
                 }
 
-                SERVER->broadcastMessage(&view_control, sizeof(SystemViewControl));
+                NetworkServer::broadcastMessage(&view_control, sizeof(SystemViewControl));
 
                 map_cycle_fsm_server_endgame_timer.changePeriod( _MAP_CYCLE_ENDGAME_WAIT_PERIOD );
                 map_cycle_fsm_server_endgame_timer.reset();
@@ -210,7 +210,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                     GameControlCycleMap cycle_map_mesg;
                     cycle_map_mesg.set( gameconfig->map.c_str() );
 
-                    SERVER->broadcastMessage( &cycle_map_mesg, sizeof( GameControlCycleMap ));
+                    NetworkServer::broadcastMessage( &cycle_map_mesg, sizeof( GameControlCycleMap ));
 
                     if ( GameControlRulesDaemon::execution_mode == _execution_mode_dedicated_server ) {
                         ObjectiveInterface::resetLogic();
@@ -274,7 +274,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 SystemResetGameLogic reset_game_logic_mesg;
 
                 GameManager::resetGameLogic();
-                SERVER->broadcastMessage( &reset_game_logic_mesg, sizeof(SystemResetGameLogic));
+                NetworkServer::broadcastMessage( &reset_game_logic_mesg, sizeof(SystemResetGameLogic));
 
                 GameManager::respawnAllPlayers();
 
@@ -284,7 +284,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 LoadingView::loadFinish();
 
                 GameControlCycleRespawnAck respawn_ack_mesg;
-                SERVER->broadcastMessage( &respawn_ack_mesg, sizeof(GameControlCycleRespawnAck));
+                NetworkServer::broadcastMessage( &respawn_ack_mesg, sizeof(GameControlCycleRespawnAck));
 
                 map_cycle_fsm_server_state = _map_cycle_server_state_idle;
 

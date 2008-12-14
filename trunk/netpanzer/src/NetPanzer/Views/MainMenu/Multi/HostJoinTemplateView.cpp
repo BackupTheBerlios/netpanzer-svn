@@ -52,12 +52,14 @@ int cOrange;
 
 static void bBack()
 {
-    if (gameconfig->hostorjoin == _game_session_join) {
-        CLIENT->partServer();
-    } else
-        if (gameconfig->hostorjoin == _game_session_host) {
-            SERVER->closeSession();
-        }
+    if (gameconfig->hostorjoin == _game_session_join)
+    {
+        NetworkClient::partServer();
+    }
+    else if (gameconfig->hostorjoin == _game_session_host)
+    {
+        NetworkServer::closeSession();
+    }
 
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("GetSessionView", true);

@@ -79,7 +79,7 @@ void ServerConnectDaemon::shutdownConnectDaemon()
     connect_unit_sync = 0;
     ConnectMesgNetPanzerServerDisconnect server_disconnect;
 
-    SERVER->broadcastMessage( &server_disconnect,
+    NetworkServer::broadcastMessage( &server_disconnect,
                          sizeof(ConnectMesgNetPanzerServerDisconnect));
 }
 
@@ -205,7 +205,7 @@ void ServerConnectDaemon::sendConnectionAlert(ClientSocket * client)
         client->sendMessage( &chat_mesg, sizeof(chat_mesg));
     }
 
-    SERVER->broadcastMessage( &connect_alert, sizeof(SystemConnectAlert));
+    NetworkServer::broadcastMessage( &connect_alert, sizeof(SystemConnectAlert));
 }
 
 void ServerConnectDaemon::resetConnectFsm()
@@ -420,15 +420,15 @@ bool ServerConnectDaemon::connectStatePlayerStateSync()
         connect_client->sendMessage( &state_mesg,
                                      sizeof(ConnectProcessStateMessage));
         
-        SERVER->addClientToSendList( connect_client );
+        NetworkServer::addClientToSendList( connect_client );
 
         PlayerState *p = PlayerInterface::getPlayer(connect_client->getPlayerIndex());
         PlayerStateSync player_state_update( p->getNetworkPlayerState() );
         player_state_update.setSize(sizeof(PlayerStateSync));
-        SERVER->broadcastMessage(&player_state_update, sizeof(PlayerStateSync));
+        NetworkServer::broadcastMessage(&player_state_update, sizeof(PlayerStateSync));
         flagmsg.setFlagID(p->getFlag());
         ResourceManager::getFlagSyncData(flagmsg.getFlagID(), (Uint8*)&flagmsg.flagdata);
-        SERVER->broadcastMessage(&flagmsg, sizeof(flagmsg));
+        NetworkServer::broadcastMessage(&flagmsg, sizeof(flagmsg));
         
         if(connection_state != connect_state_idle)
         {
@@ -486,7 +486,7 @@ bool ServerConnectDaemon::connectStateUnitSync()
     PlayerStateSync player_state_update
         (player->getNetworkPlayerState());
 
-    SERVER->broadcastMessage( &player_state_update, sizeof(PlayerStateSync));
+    NetworkServer::broadcastMessage( &player_state_update, sizeof(PlayerStateSync));
 
     state_mesg.setMessageEnum(_connect_state_sync_complete);
     // size already set

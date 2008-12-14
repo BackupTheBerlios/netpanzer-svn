@@ -1,6 +1,6 @@
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	${MAKE} -s -f nbproject/Makefile-win-release.mk dist/win-release/${PLATFORM}/netpanzer.exe
+	${MAKE}  -f nbproject/Makefile-win-release.mk dist/win-release/${PLATFORM}/netpanzer.exe
 
 dist/win-release/${PLATFORM}/netpanzer.exe: ${OBJECTFILES}
 	${MKDIR} -p dist/win-release/${PLATFORM}
@@ -16,3 +16,8 @@ dist/win-release/${PLATFORM}/netpanzer.exe: ${OBJECTFILES}
 
 # Subprojects
 .clean-subprojects:
+
+# Enable dependency checking
+.dep.inc: .depcheck-impl
+
+include .dep.inc

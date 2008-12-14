@@ -55,7 +55,7 @@ static void sendOutpostStatus()
                                    (char) vsvSelectedUnit,
                                    vsvUnitGenOn );
     
-    CLIENT->sendMessage(&term_mesg, sizeof(term_mesg));
+    NetworkClient::sendMessage(&term_mesg, sizeof(term_mesg));
     
     if(NetworkState::status == _network_state_client) {
         ObjectiveInterface::sendMessage( &(term_mesg.unit_gen_request) );
@@ -516,7 +516,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
     ObjectiveID   objectiveID = 0;
 
     WorldViewInterface::getViewWindow(&gameViewRect);
-    ObjectiveInterface::startObjectivePositionEnumeration();
+    ObjectiveInterface::startObjectivePositionEnumeration(PlayerInterface::getLocalPlayerIndex());
 
     while(ObjectiveInterface::objectivePositionEnumeration(&objectiveBounds, &objectiveOwner, &objectiveID )) {
         char strBuf[256];

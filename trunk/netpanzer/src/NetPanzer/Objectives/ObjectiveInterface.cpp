@@ -357,11 +357,11 @@ ObjectiveInterface::getOutpostStatus( ObjectiveID objective_id )
 }
 
 void
-ObjectiveInterface::startObjectivePositionEnumeration()
+ObjectiveInterface::startObjectivePositionEnumeration(Uint16 playerid)
 {
     objective_position_enum_index	= 0;
     objective_position_enum_list_size = objective_list.size();
-    objective_position_enum_player_id = PlayerInterface::getLocalPlayerIndex();
+    objective_position_enum_player_id = playerid;
 }
 
 bool

@@ -470,7 +470,7 @@ void PlayerInterface::netMessageAllianceRequest(const NetMessage *message)
     allie_update.set(allie_request->getAllieByPlayerIndex(),
                      allie_request->getAllieWithPlayerIndex(),
                      allie_request->alliance_request_type);
-    SERVER->broadcastMessage(&allie_update, sizeof(PlayerAllianceUpdate));
+    NetworkServer::broadcastMessage(&allie_update, sizeof(PlayerAllianceUpdate));
 }
 
 void PlayerInterface::netMessageAllianceUpdate(const NetMessage* message)
@@ -571,13 +571,13 @@ void PlayerInterface::disconnectPlayerCleanup( Uint16 index )
             if ( isAllied( disconnect_player_index, player_index ) == true )
             {
                 allie_update.set( disconnect_player_index, player_index, _player_break_alliance );
-                SERVER->broadcastMessage(&allie_update, sizeof(PlayerAllianceUpdate));
+                NetworkServer::broadcastMessage(&allie_update, sizeof(PlayerAllianceUpdate));
             }
 
             if ( isAllied( player_index, disconnect_player_index ) == true )
             {
                 allie_update.set( player_index, disconnect_player_index, _player_break_alliance );
-                SERVER->broadcastMessage(&allie_update, sizeof(PlayerAllianceUpdate));
+                NetworkServer::broadcastMessage(&allie_update, sizeof(PlayerAllianceUpdate));
             }
         }
 
@@ -586,6 +586,6 @@ void PlayerInterface::disconnectPlayerCleanup( Uint16 index )
         PlayerStateSync player_state_update(player_state->getNetworkPlayerState());
         SDL_mutexV(mutex);
 
-        SERVER->broadcastMessage(&player_state_update, sizeof(PlayerStateSync));
+        NetworkServer::broadcastMessage(&player_state_update, sizeof(PlayerStateSync));
     }
 }
