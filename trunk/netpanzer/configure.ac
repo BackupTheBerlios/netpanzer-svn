@@ -49,6 +49,22 @@ AC_SUBST([VARIANT])
 # find applications
 #----------------------------------------------------------------------------
 AC_PROG_CXX
+
+AC_CHECK_TOOL(WINDRES, windres, no)
+
+AC_ARG_ENABLE([linuxbin],[AC_HELP_STRING([--enable-linuxbin],
+	[build binary for multiple distributions (default NO)])],
+	[
+		if test "x$enableval" = "xyes" ; then
+			rm -rf build/static-libs
+			mkdir build
+			mkdir build/static-libs
+			ln -s `$CXX -print-file-name=libstdc++.a` build/static-libs/libstdc++.a
+			LDFLAGS="$LDFLAGS -static-libgcc -L build/static-libs"
+		fi
+	])
+
+AC_PROG_LIBTOOL
 AC_PROG_INSTALL
 
 # check if our c++ compiler is gcc3.2 or newer

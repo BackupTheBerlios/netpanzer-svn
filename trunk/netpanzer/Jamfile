@@ -26,3 +26,6 @@ if ! $(NO_SRC) {
     InstallDesktop netpanzer.desktop ;
     InstallDoc ChangeLog README TODO RELNOTES docs/tipofday.txt docs/serverhowto.html ;
 }
+
+Win32Resource netpanzer : support/icon/npicon.rc ;
+
