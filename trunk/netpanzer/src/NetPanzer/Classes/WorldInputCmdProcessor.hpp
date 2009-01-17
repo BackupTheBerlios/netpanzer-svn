@@ -41,8 +41,6 @@ protected:
     bool right_mouse_scroll_moved;
     bool selectBoundBoxUnits();
 
-    bool manual_control_state;
-    bool previous_manual_control_state;
     bool manual_fire_state;
 
     /// timer that detects double keypressed (for centering selected unit group)

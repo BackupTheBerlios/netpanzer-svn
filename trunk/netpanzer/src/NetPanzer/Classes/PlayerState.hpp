@@ -42,6 +42,10 @@ public:
     {
         return flag;
     }
+    Uint8 getStatus()
+    {
+        return status;
+    }
 
 private:
     NetworkPlayerState() 

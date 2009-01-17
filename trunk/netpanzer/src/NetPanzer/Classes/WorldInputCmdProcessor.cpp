@@ -75,8 +75,6 @@ WorldInputCmdProcessor::WorldInputCmdProcessor()
 
     selection_box_active = false;
     outpost_goal_selection = OBJECTIVE_NONE;
-    previous_manual_control_state = false;
-    manual_control_state = false;
     manual_fire_state = false;
 
     right_mouse_scroll = false;
@@ -179,7 +177,7 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
     if (selection_box_active)
         return _cursor_regular;
 
-    if( (manual_control_state == true) || (manual_fire_state == true) )
+    if( manual_fire_state == true )
     {
         return  _cursor_enemy_unit;
     }
@@ -420,8 +418,6 @@ WorldInputCmdProcessor::keyboardInputModeCommand()
     evaluateGroupingKeys();
 
     evaluateKeyCommands();
-
-    previous_manual_control_state = manual_control_state;
 }
 
 void
@@ -572,9 +568,11 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
 
     WorldViewInterface::clientXYtoWorldXY(world_win, event.pos, &world_pos);
 
-    if ( (manual_control_state == true) ||
-            KeyboardInterface::getKeyState( SDLK_LCTRL ) ||
-            KeyboardInterface::getKeyState( SDLK_RCTRL )
+    if ( (!selection_box_active)
+         && ( manual_fire_state == true
+              || KeyboardInterface::getKeyState( SDLK_LCTRL )
+              || KeyboardInterface::getKeyState( SDLK_RCTRL )
+            )
        )
     {
 

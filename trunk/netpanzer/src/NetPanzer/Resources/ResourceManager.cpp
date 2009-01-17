@@ -58,7 +58,6 @@ ResourceManager::getEmptyImage()
     return &noimage;
 }
         
-// actually loads all the flags.
 int
 ResourceManager::loadDefaultFlags()
 {

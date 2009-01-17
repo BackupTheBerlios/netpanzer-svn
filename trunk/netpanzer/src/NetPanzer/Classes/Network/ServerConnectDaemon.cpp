@@ -388,13 +388,16 @@ bool ServerConnectDaemon::connectStatePlayerStateSync()
     {
         if ( PlayerInterface::syncNextPlayerState( msg.player_state, &percent_complete) )
         {
+            if ( msg.player_state.getStatus() != _player_state_free )
+            {
+                flagmsg.setFlagID(msg.player_state.getFlag());
+                ResourceManager::getFlagSyncData(flagmsg.getFlagID(), (Uint8*)&flagmsg.flagdata);
+                memcpy(buffer+buffer_pos, &flagmsg, sizeof(flagmsg));
+                buffer_pos += sizeof(flagmsg);
+            }
+            
             memcpy(buffer+buffer_pos, &msg, sizeof(PlayerStateSync));
             buffer_pos += sizeof(PlayerStateSync);
-            
-            flagmsg.setFlagID(msg.player_state.getFlag());
-            ResourceManager::getFlagSyncData(flagmsg.getFlagID(), (Uint8*)&flagmsg.flagdata);
-            memcpy(buffer+buffer_pos, &flagmsg, sizeof(flagmsg));
-            buffer_pos += sizeof(flagmsg);
         }     
     }
 

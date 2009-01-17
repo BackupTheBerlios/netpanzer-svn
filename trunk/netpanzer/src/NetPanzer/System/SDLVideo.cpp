@@ -32,10 +32,13 @@ SDLVideo* Screen; // get rid of this later...
 SDLVideo::SDLVideo()
         : frontBuffer(0), backBuffer(0)
 {
-#ifdef _WIN32
+    // disable directx feature for now
+#if 0
+  #ifdef _WIN32
     if ( gameconfig->usedirectx ) {
         putenv("SDL_VIDEODRIVER=directx");
     }
+  #endif
 #endif
     if(SDL_InitSubSystem(SDL_INIT_VIDEO)) {
         throw Exception("Couldn't initialize SDL_video subsystem: %s",
