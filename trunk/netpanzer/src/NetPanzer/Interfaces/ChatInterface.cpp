@@ -27,6 +27,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/ChatNetMessage.hpp"
 #include "Util/Log.hpp"
+#include "GameConfig.hpp"
+#include "Util/NTimer.hpp"
 
 
 ChatMesgRequest ChatInterface::current_chat_mesg;
@@ -247,3 +249,56 @@ void ChatInterface::sendCurrentMessage( const char *message_text )
     current_chat_mesg.reset();
 }
 
+void
+ChatInterface::sendQuickMessage(unsigned int n)
+{
+    static NTimer sendtimer(2000);
+    if ( ! sendtimer.isTimeOut() )
+    {
+        return; // can't send now
+    }
+
+    sendtimer.reset();
+
+    char * msg = 0;
+    switch ( n )
+    {
+        case 0:
+            msg = (char *)gameconfig->quickchat_0.c_str();
+            break;
+        case 1:
+            msg = (char *)gameconfig->quickchat_1.c_str();
+            break;
+        case 2:
+            msg = (char *)gameconfig->quickchat_2.c_str();
+            break;
+        case 3:
+            msg = (char *)gameconfig->quickchat_3.c_str();
+            break;
+        case 4:
+            msg = (char *)gameconfig->quickchat_4.c_str();
+            break;
+        case 5:
+            msg = (char *)gameconfig->quickchat_5.c_str();
+            break;
+        case 6:
+            msg = (char *)gameconfig->quickchat_6.c_str();
+            break;
+        case 7:
+            msg = (char *)gameconfig->quickchat_7.c_str();
+            break;
+        case 8:
+            msg = (char *)gameconfig->quickchat_8.c_str();
+            break;
+        case 9:
+            msg = (char *)gameconfig->quickchat_9.c_str();
+            break;
+        default:
+            ; // nothing
+    }
+
+    if ( msg )
+    {
+        sendCurrentMessage(msg);
+    }
+}

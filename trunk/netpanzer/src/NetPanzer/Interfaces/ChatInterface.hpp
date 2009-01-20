@@ -39,6 +39,7 @@ public:
     static void setMessageScopeEnemies();
     static void setMessageScopeServer();
     static void sendCurrentMessage(const char *message_text);
+    static void sendQuickMessage(unsigned int n);
 };
 
 #endif // ** _CHATINTERFACE_HPP

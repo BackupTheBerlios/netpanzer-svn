@@ -45,6 +45,9 @@ private:
     CheckBox * checkBoxDrawAllShadows;
     CheckBox * checkBoxBlendSmoke;
     CheckBox * checkBoxFullscreen;
+    CheckBox * checkBoxDrawHitpoints;
+    CheckBox * checkBoxDrawFlags;
+    CheckBox * checkBoxDrawNames;
     //CheckBox drawUnitReload;
 
     // Option choices.

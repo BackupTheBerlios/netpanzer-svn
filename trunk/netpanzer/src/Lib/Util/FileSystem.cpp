@@ -177,7 +177,7 @@ ReadFile* openRead(const char* filename)
                 if ( strcasecmp(*curfile, fn_start) == 0 )
                 {
                     memcpy(fn_start, *curfile, fn_length-(folder_sep-fn));
-                    file = PHYSFS_openRead(filename);
+                    file = PHYSFS_openRead(fn);
                     break;
                 }
             }

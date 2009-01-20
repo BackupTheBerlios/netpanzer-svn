@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 #include "Util/Timer.hpp"
+#include "Util/NTimer.hpp"
 #include "Classes/Network/NetPacket.hpp"
 
 class GameControlRulesDaemon
@@ -27,6 +28,7 @@ class GameControlRulesDaemon
     static int execution_mode;
     static unsigned char game_state;
     static std::string nextmap;
+    static NTimer respawntimer;
 
 protected:
     static int map_cycle_fsm_server_state;
@@ -44,6 +46,7 @@ protected:
     static void onObjectiveGameCompleted();
 
     static void checkGameRules();
+    static void checkRespawn();
 
     static void mapLoadFailureResponse(int result_code, const char *map_name);
 

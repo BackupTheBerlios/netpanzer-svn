@@ -47,12 +47,6 @@ building it. Here's a list of them:
 * SDL_mixer 1.2.4 or later
   http://www.libsdl.org/projects/SDL_mixer/
 
-* SDL_image 1.2.3 or later
-  http://www.libsdl.org/projects/SDL_image/
-
-* PhysicsFS 0.1.9 or later
-  http://www.icculus.org/physfs/
-
 Thanks to all the authors of these helpful libraries that made our development
 easy and straightforward.
 
@@ -169,28 +163,14 @@ the server section of the file:
 
 5. Bot Players
 
-Netpanzer provides a bot player for these times when you don't have a human
-opponent. You can start netpanzer in a special mode where it connects to a
-server and simulates a real player. You can start netpanzer like this to connect
-as bot to a server:
-
-netpanzer -b servername
-
-Example:
-This example shows how you can play locally against 2 bots:
-
-netpanzer -d &
-netpanzer -b localhost &
-netpanzer -b localhost &
-netpanzer -c localhost
+-- this has to change for new mode --
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 6. Contact
 
-Bugs should be reported to the bug trackker on Berlios:
-    http://developer.berlios.de/bugs/?group_id=1250
-You can contact us at the netpanzer-devel mailinglist at Berlios:
-    https://lists.berlios.de/mailman/listinfo/netpanzer-devel
-or you might be able to catch us in irc at irc.freenode.net #netpanzer.
+Bugs should be reported to the netPanzer forum:
+    http://www.netpanzer.org/forum
+
+or you might be able to catch someone in irc at irc.freenode.net #netpanzer.
 

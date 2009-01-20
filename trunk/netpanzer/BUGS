@@ -2,36 +2,8 @@
 - when a client connect to a server, it will save the configuration that
   the server sent to him when exit netpanzer.
 - sometimes 2 players spawn at the same place - hard to fix, low priority
-- it is reported that in timelimit mode games might end too early (ie. client
-  display 40/60 and game ends) - is it possible that the client time doesn't
-  sync correctly with server time?
 - Astar sometimes calculates strange paths. Very obvious if you try to capture
   and outpost from the left side: Your panzers will drive around it before
   entering it. (it is not a complete Astar, needs to rewrite)
 - The no allies flag in the server config has no effect
-- Clients pressing the Abort button when connecting leave a ghost on the server
-which displays no IP. (i think matze fixed this in 0.8.1)
 - The Abort button when connecting doesn't really aborts the operation, just hide the window
--netpanzer fails on win98se
--setting allowallies=no in config has no effect
-
--NOTE: next error would be cause by previously fixed error (maybe, lets see in future)
-<BenUrban> have you encountered either of the pantom tank bugs yet MatzeB ?
-<MatzeB> nope
-<BenUrban> there's one where an actual tank is really there (apparently) but
-just not visible in the client
-<MatzeB> how do you know it's there then?
-<BenUrban> my own tanks shoot at it
-<MatzeB> and it explodes when you shoot long enough on it?
-<BenUrban> i think so
-<xpanthom> the cvs link on berlios is dead, what's the link with svn?
-<BenUrban> not sure though
-* BenUrban points out that netpanzer doesn't use cvs at all
-<xpanthom> it apparently has at some point...
-<BenUrban> the other bug occurs when someone unexpectedly disconnects
-<BenUrban> the positions that their tanks occupied become unavailable
-<BenUrban> until the next server rest
-<BenUrban> or map change
-<BenUrban> that one is far more common
-<BenUrban> and has been known to block off bases completely
-<MatzeB> oh

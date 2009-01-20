@@ -61,6 +61,9 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       motd("motd",""),
       logging("logging", false),
       publicServer("public", true),
+      capturebases("capturebases", true),
+      respawntime("respawntime", 0),
+      respawnmode("respawnmode", 0),
       
       screenresolution("resolution", 2, 0, 3),
       fullscreen("fullscreen", true),
@@ -88,6 +91,7 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       drawunitdamage("drawunitdamage", true),
       drawunitreload("drawunitreload", false),
       drawunitflags("drawunitflags", true),
+      drawunitowner("drawunitowner", true),
       consoletextdelay("consoletextdelay", 3, 1, 20),
       consoletextusage("consoletextusage", 25, 1, 100),
       scrollrate("scrollrate", 1000, 100, 10000),
@@ -119,7 +123,18 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       wolf("wolf",0),
       bear("bear",0),
       drake("drake",0),
-      archer("archer",0)
+      archer("archer",0),
+
+      quickchat_1("1", "Taking fire! Need assistance!!"),
+      quickchat_2("2", "Fight!!!"),
+      quickchat_3("3", "Who wants to fight?"),
+      quickchat_4("4", "Who wants to ally?"),
+      quickchat_5("5", "Who wants some?"),
+      quickchat_6("6", "LAG! LAG! LAG!"),
+      quickchat_7("7", "Stop!!!"),
+      quickchat_8("8", "Wait!!!"),
+      quickchat_9("9", "brb"),
+      quickchat_0("0", "Bye!!!")
 {
     this->configfile = configfile;
     this->usePhysFS = usePhysFS;
@@ -151,6 +166,9 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     serversettings.push_back(&motd);
     serversettings.push_back(&logging);
     serversettings.push_back(&publicServer);
+    serversettings.push_back(&capturebases);
+    serversettings.push_back(&respawntime);
+    serversettings.push_back(&respawnmode);
    
     visualssettings.push_back(&screenresolution);
     visualssettings.push_back(&fullscreen);
@@ -178,6 +196,7 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     interfacesettings.push_back(&drawunitdamage);
     interfacesettings.push_back(&drawunitreload);
     interfacesettings.push_back(&drawunitflags);
+    interfacesettings.push_back(&drawunitowner);
     interfacesettings.push_back(&consoletextdelay);
     interfacesettings.push_back(&consoletextusage);
     interfacesettings.push_back(&scrollrate);
@@ -198,6 +217,17 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     radarsettings.push_back(&radar_unitsize);
     radarsettings.push_back(&radar_objectivedrawmode);
     radarsettings.push_back(&radar_resizerate);
+
+    quickchatsettings.push_back(&quickchat_1);
+    quickchatsettings.push_back(&quickchat_2);
+    quickchatsettings.push_back(&quickchat_3);
+    quickchatsettings.push_back(&quickchat_4);
+    quickchatsettings.push_back(&quickchat_5);
+    quickchatsettings.push_back(&quickchat_6);
+    quickchatsettings.push_back(&quickchat_7);
+    quickchatsettings.push_back(&quickchat_8);
+    quickchatsettings.push_back(&quickchat_9);
+    quickchatsettings.push_back(&quickchat_0);
     
     try {
         loadConfig();
@@ -240,6 +270,7 @@ void GameConfig::loadConfig()
     loadSettings(inifile.getSection("radar"), radarsettings);
     loadSettings(inifile.getSection("server"), serversettings);
     loadSpawnSettings(inifile.getSection("spawnconfig"),spawnsettings);
+    loadSettings(inifile.getSection("quickchat"), quickchatsettings);
 }
 
 void GameConfig::loadSettings(const INI::Section& section,
@@ -328,6 +359,7 @@ void GameConfig::saveConfig()
     saveSettings(inifile.getSection("radar"), radarsettings);
     saveSettings(inifile.getSection("server"), serversettings);
     saveSettings(inifile.getSection("spawnconfig"),spawnsettings);
+    saveSettings(inifile.getSection("quickchat"), quickchatsettings);
 
     if(usePhysFS) {
         OFileStream out (configfile);

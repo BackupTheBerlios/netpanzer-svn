@@ -1,18 +1,8 @@
 TODO Now:
-- In SocketManager, replace list with vector, use direct access to list, and
-  change the way the sockets are added/removed.
-- In heartbeat, change the way the received information is parsed, the same method
-  should be used for other communications that use a similar protocol, like server
-  query.
-- Recreate the fd_sets in each iteration in SocketSet, and/or remove SocketSet
-  class and handle it in SocketManager.
-- Remove exception code from networking.
+- Remove remaining exception code from networking.
 - Create a task manager for the game main loop. These tasks will run each loop,
   with a defined priority to select the running order,
   should have a "runable" like interface.
-- Move all units related classes to src/NetPanzer/Units
-- Import physfs code into netpanzer trunk
-- Import lua code into netpanzer trunk 
 
 *** Old todo
 -after having a full nodelist in A* the server is getting slow
@@ -34,8 +24,6 @@ player that just left the game.
  * Create UDP broadcast code for LAN games
 
 *** Server related
- * refactor bot code, so that it is possible to directly spawn bots at the
-   server, after that we could easily add a "Skirmish" button to the main menu.
  * let dedicated server output statistics on console or in some log files. 
  * the Server has a massive memory leak somewhere - might be fixed now
  * synchronize resources between server and clients, both should have same flags
@@ -48,7 +36,6 @@ player that just left the game.
    color/style. (^ like in quake based games?)
  * Convert the 256 color stuff to truecolor, usage of opengl is probably a good
    idea.
- * bots should have different names and different flags - partly implemented
  * display alliances in the status screens.
  * think about setting unit spawnpoint/opening outpost view. It's very hard to
    select units standing in your base because of the other 2 functions.
@@ -63,9 +50,6 @@ player that just left the game.
   -a key to cycle through all (offline) outposts
   -add possibilty for setting waypoints (ALT+leftclick?)
   -add possibility to set markers for allies
-  -double clicking on a unit marks all units of the same type on screen -done
-    (tripple clicking marks all units of this type on the map?
-     or all units in screen?)
   -"subclassing" like in WC3: A key that cycles though different unit types in
    the currently selected group.
   - S key stops tanks

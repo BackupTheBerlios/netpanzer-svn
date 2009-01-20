@@ -39,8 +39,6 @@ unsigned short PlayerInterface::player_sync_index;
 unsigned short PlayerInterface::player_sync_connect_player_index;
 Timer PlayerInterface::player_sync_timer;
 
-unsigned short PlayerInterface::respawn_rule_player_index = 0;
-
 SDL_mutex* PlayerInterface::mutex = 0;
 
 void PlayerInterface::initialize(unsigned short maxPlayers)
@@ -292,32 +290,6 @@ bool PlayerInterface::testRuleObjectiveRatio( float precentage, PlayerState ** p
     } // ** for
 
     return false;
-}
-
-
-bool PlayerInterface::testRulePlayerRespawn( bool *completed, PlayerState **player_state )
-{
-    if ( respawn_rule_player_index == max_players )
-    {
-        respawn_rule_player_index = 0;
-        *completed = true;
-        return( false );
-    }
-    else
-    {
-        *completed = false;
-    }
-    
-    if ( player_lists[ respawn_rule_player_index ].getStatus() == _player_state_active )
-        if ( UnitInterface::getUnitCount( respawn_rule_player_index ) == 0 )
-        {
-            *player_state = &player_lists[ respawn_rule_player_index ];
-            respawn_rule_player_index++;
-            return( true );
-        }
-
-    respawn_rule_player_index++;
-    return( false );
 }
 
 void PlayerInterface::startPlayerStateSync(Uint16 player_index)

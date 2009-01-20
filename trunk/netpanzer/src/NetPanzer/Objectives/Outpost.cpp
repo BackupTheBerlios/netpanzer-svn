@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
+#include "Interfaces/GameConfig.hpp"
 
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkState.hpp"
@@ -190,7 +191,9 @@ Outpost::generateUnits()
 void
 Outpost::updateStatus()
 {
-    if ( NetworkState::status == _network_state_server ) {
+    if ( NetworkState::status == _network_state_server
+            && gameconfig->capturebases == true)
+    {
         checkOccupationStatus();
     }
 

@@ -98,11 +98,6 @@ public:
     static bool testRuleObjectiveRatio( float precentage, PlayerState ** player_state );
 
 protected:
-    static unsigned short respawn_rule_player_index;
-public:
-    static bool testRulePlayerRespawn( bool *completed, PlayerState **player_state );
-
-protected:
     static Uint16 player_sync_index;
     static Uint16 player_sync_connect_player_index;
     static Timer player_sync_timer;

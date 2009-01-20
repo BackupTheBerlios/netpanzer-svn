@@ -277,10 +277,15 @@ WorldInputCmdProcessor::evaluateKeyCommands()
     {
         gameconfig->drawunitflags.toggle();
     }
-    
+
     if ( (KeyboardInterface::getKeyPressed( SDLK_d ) == true) )
     {
         gameconfig->drawunitdamage.toggle();
+    }
+
+    if ( (KeyboardInterface::getKeyPressed( SDLK_n ) == true) )
+    {
+        gameconfig->drawunitowner.toggle();
     }
 
     if ( (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true)
@@ -349,50 +354,64 @@ WorldInputCmdProcessor::evaluateGroupingKeys()
     bool ctrl_status = false;
 
     if( (KeyboardInterface::getKeyState(SDLK_LCTRL) == true) ||
-            (KeyboardInterface::getKeyState(SDLK_RCTRL) == true)) {
+            (KeyboardInterface::getKeyState(SDLK_RCTRL) == true))
+    {
         ctrl_status = true;
     }
 
     if( (KeyboardInterface::getKeyState( SDLK_LALT ) == true) ||
             (KeyboardInterface::getKeyState( SDLK_RALT ) == true)
-      ) {
+      )
+    {
         alt_status = true;
     }
     
     unsigned selected_bits=0;
     int released=0;
-    for(int key_code=SDLK_0;  key_code<=SDLK_9; key_code++) {
+    for(int key_code=SDLK_0;  key_code<=SDLK_9; key_code++)
+    {
         unsigned int b=1 << (key_code-SDLK_0);
-        if ( (KeyboardInterface::getKeyState( key_code ) == true) ) {
+        if ( (KeyboardInterface::getKeyState( key_code ) == true) )
+        {
             selected_bits|=b;
         }
-        else if(current_selection_list_bits&b) {
+        else if(current_selection_list_bits&b)
+        {
             // we've released a key
             released++;
         }
     }
     
-    if(released==0 && selected_bits>0 && selected_bits!=current_selection_list_bits) {
+    if(released==0 && selected_bits>0 && selected_bits!=current_selection_list_bits)
+    {
         // we've pressed down a number key
         if(ctrl_status != true && alt_status != true &&
                 !KeyboardInterface::getKeyState(SDLK_LSHIFT) &&
-                !KeyboardInterface::getKeyState(SDLK_RSHIFT)) {
+                !KeyboardInterface::getKeyState(SDLK_RSHIFT))
+        {
             working_list.unGroup();
         }
-        for(int key_code=SDLK_0;  key_code<=SDLK_9; key_code++) {
-            if ( (KeyboardInterface::getKeyState( key_code ) != true) ) {
+
+        for(int key_code=SDLK_0;  key_code<=SDLK_9; key_code++)
+        {
+            if ( (KeyboardInterface::getKeyState( key_code ) != true) )
+            {
                 continue;
             }
             int n=key_code-SDLK_0;
-            if(ctrl_status == true) {
+            
+            if(ctrl_status == true)
+            {
                 setSelectionList(n);
                 std::stringstream s;
                 s << "Group " << n << " Created";
                 ConsoleInterface::postMessage(Color::brown, false, 0, s.str().c_str() );
                 continue;
             }
-            if(alt_status == true) {
-                cycleSelectedUnits(n);
+            
+            if(alt_status == true)
+            {
+                ChatInterface::sendQuickMessage(n);
                 continue;
             }
             working_list.addList( selection_group_lists[ n ] );

@@ -132,13 +132,16 @@ public:
     ConfigInt    objectiveoccupationpercentage;
     ConfigBool   allowallies;
     ConfigInt    cloudcoverage;
-    ConfigInt    respawntype;
     ConfigInt    windspeed;
     ConfigString map;
     ConfigString mapcycle;
     ConfigString motd;
     ConfigBool   logging;
     ConfigBool   publicServer;
+    ConfigBool   capturebases;
+    ConfigInt    respawntype; // this is round robin or random already in np
+    ConfigInt    respawnmode; // 0- normal, 1- round, 2- timer
+    ConfigInt    respawntime; // used in timer mode. in seconds
 
     // Visuals Settings
     ConfigInt   screenresolution;
@@ -169,6 +172,7 @@ public:
     ConfigBool  drawunitdamage;
     ConfigBool  drawunitreload;
     ConfigBool  drawunitflags;
+    ConfigBool  drawunitowner;
     ConfigInt   consoletextdelay;
     ConfigInt   consoletextusage;
     ConfigInt   scrollrate;
@@ -203,8 +207,21 @@ public:
     ConfigInt   bear;
     ConfigInt   drake;
     ConfigInt   archer;
-    
+
+    // quick chat settings
+    ConfigString quickchat_1;
+    ConfigString quickchat_2;
+    ConfigString quickchat_3;
+    ConfigString quickchat_4;
+    ConfigString quickchat_5;
+    ConfigString quickchat_6;
+    ConfigString quickchat_7;
+    ConfigString quickchat_8;
+    ConfigString quickchat_9;
+    ConfigString quickchat_0;
+
     std::vector<ConfigVariable*> spawnsettings;
+    std::vector<ConfigVariable*> quickchatsettings;
     
 public:
     void clearSpawnSettings()

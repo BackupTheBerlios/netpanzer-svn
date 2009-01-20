@@ -16,7 +16,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
+#include "Util/NTimer.hpp"
 #include "Interfaces/GameControlRulesDaemon.hpp"
+#include "GameManager.hpp"
 
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/GameConfig.hpp"
@@ -62,6 +65,7 @@ enum { _game_state_idle,
 int GameControlRulesDaemon::execution_mode = _execution_mode_loop_back_server;
 unsigned char GameControlRulesDaemon::game_state  = _game_state_idle;
 std::string GameControlRulesDaemon::nextmap = "";
+NTimer GameControlRulesDaemon::respawntimer;
 
 #define _MAP_CYCLE_ENDGAME_WAIT_PERIOD  (20) // seconds
 #define _MAP_CYCLE_MAP_LOAD_WAIT_PERIOD (7) // seconds
@@ -372,16 +376,60 @@ void GameControlRulesDaemon::checkGameRules()
                 ;
         }
 
-        // ** Check for Player Respawns **
-        bool respawn_rule_complete = false;
-        while( respawn_rule_complete == false )
+        checkRespawn();
+    }
+
+}
+
+void
+GameControlRulesDaemon::checkRespawn()
+{
+    bool doRespawn = false;
+
+    switch ( gameconfig->respawnmode )
+    {
+        case 1: // round mode
         {
-            if ( PlayerInterface::testRulePlayerRespawn( &respawn_rule_complete, &player_state ) )
+            unsigned short players_alive = 0;
+            for ( unsigned short player = 0; player < PlayerInterface::getMaxPlayers(); player++ )
             {
-                GameManager::spawnPlayer( player_state->getID() );
+                if ( PlayerInterface::getPlayer(player)->getStatus() == _player_state_active
+                     && UnitInterface::getUnitCount( player ) > 0 )
+                {
+                    players_alive++;
+                }
+            }
+            
+            if ( players_alive < 2 )
+            {
+                doRespawn = true;
+            }
+            break;
+        }
+        case 2: // timer mode
+            respawntimer.setTimeOut(int(gameconfig->respawntime) * 1000);
+            if ( respawntimer.isTimeOut() )
+            {
+                doRespawn = true;
+                respawntimer.reset();
+            }
+            break;
+        case 0: // normal mode
+        default:
+            doRespawn = true;
+    }
+
+    if ( doRespawn )
+    {
+        for ( unsigned short player = 0; player < PlayerInterface::getMaxPlayers(); player++ )
+        {
+            if ( PlayerInterface::getPlayer(player)->getStatus() == _player_state_active
+                 && UnitInterface::getUnitCount( player ) == 0 )
+            {
+                GameManager::spawnPlayer(player);
             }
         }
-
+        respawntimer.reset();
     }
 
 }

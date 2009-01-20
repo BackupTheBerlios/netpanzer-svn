@@ -109,8 +109,31 @@ void VisualsView::initButtons()
     checkBoxBlendSmoke->setStateChangedCallback(this);
     add(checkBoxBlendSmoke);
     y += yOffset;
-    
-    
+
+    checkBoxDrawHitpoints = new CheckBox();
+    checkBoxDrawHitpoints->setLabel("Draw Hitpoints Bar");
+    checkBoxDrawHitpoints->setState(gameconfig->drawunitdamage);
+    checkBoxDrawHitpoints->setLocation(x, y);
+    checkBoxDrawHitpoints->setStateChangedCallback(this);
+    add(checkBoxDrawHitpoints);
+    y += yOffset;
+
+    checkBoxDrawFlags = new CheckBox();
+    checkBoxDrawFlags->setLabel("Draw Flags");
+    checkBoxDrawFlags->setState(gameconfig->drawunitflags);
+    checkBoxDrawFlags->setLocation(x, y);
+    checkBoxDrawFlags->setStateChangedCallback(this);
+    add(checkBoxDrawFlags);
+    y += yOffset;
+
+    checkBoxDrawNames = new CheckBox();
+    checkBoxDrawNames->setLabel("Draw Player Names");
+    checkBoxDrawNames->setState(gameconfig->drawunitowner);
+    checkBoxDrawNames->setLocation(x, y);
+    checkBoxDrawNames->setStateChangedCallback(this);
+    add(checkBoxDrawNames);
+    y += yOffset;
+
     //removeAllButtons();
     //removeComponents();
     
@@ -160,29 +183,45 @@ void VisualsView::loadTitleSurface()
 //---------------------------------------------------------------------------
 void VisualsView::stateChanged(Component* source)
 {
-    // Check Box Draw All Shadows
-    if (source == checkBoxDrawAllShadows) {
+    if ( source == checkBoxDrawAllShadows )
+    {
         gameconfig->displayshadows = checkBoxDrawAllShadows->getState();
     }
-    // Check Box Blend Smoke
-    else if (source == checkBoxBlendSmoke) {
+    else if ( source == checkBoxBlendSmoke )
+    {
         gameconfig->blendsmoke = checkBoxBlendSmoke->getState();
-    } else if (source == checkBoxFullscreen) {
+    }
+    else if ( source == checkBoxDrawHitpoints )
+    {
+        gameconfig->drawunitdamage = checkBoxDrawHitpoints->getState();
+    }
+    else if ( source == checkBoxDrawFlags )
+    {
+        gameconfig->drawunitflags = checkBoxDrawFlags->getState();
+    }
+    else if ( source == checkBoxDrawNames )
+    {
+        gameconfig->drawunitowner = checkBoxDrawNames->getState();
+    }
+    else if ( source == checkBoxFullscreen )
+    {
         gameconfig->fullscreen = checkBoxFullscreen->getState();
         GameManager::setVideoMode();
     }
-    // Choice Resolution
-    else if (source == choiceResolution) {
+    else if ( source == choiceResolution )
+    {
         gameconfig->screenresolution = choiceResolution->getSelectedIndex();
         GameManager::setVideoMode();
     }
-    // Choice Mini Map Unit Size
-    else if (source == choiceMiniMapUnitSize) {
-        if (choiceMiniMapUnitSize->getSelectedIndex() == 0) {
+    else if ( source == choiceMiniMapUnitSize )
+    {
+        if (choiceMiniMapUnitSize->getSelectedIndex() == 0)
+        {
             gameconfig->radar_unitsize = _mini_map_unit_size_small;
-        } else if (choiceMiniMapUnitSize->getSelectedIndex() == 1) {
+        }
+        else if (choiceMiniMapUnitSize->getSelectedIndex() == 1)
+        {
             gameconfig->radar_unitsize = _mini_map_unit_size_large;
         }
     }
 }
-

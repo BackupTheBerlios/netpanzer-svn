@@ -1,9 +1,3 @@
-
-#include "Util/Log.hpp"
-
-
-#include "Scripts/ScriptManager.hpp"
-
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
  
@@ -27,9 +21,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <memory>
 
 #include "Palette.hpp"
+#include "Util/Log.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
 #include "Util/UtilInterface.hpp"
+#include "Scripts/ScriptManager.hpp"
 
 float Palette::brightness = 1.0f;
 
