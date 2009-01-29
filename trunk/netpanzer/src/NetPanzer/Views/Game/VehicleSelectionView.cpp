@@ -174,7 +174,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     const int yOffset  = 15;
     const int gapSpace =  1;
 
-    resizeClientArea(48 * 5 + gapSpace * 4, 198 + 84);
+    resize(48 * 5 + gapSpace * 4, 198 + 84);
 
     // Power status.
     iXY pos(0 ,0);
@@ -299,7 +299,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 
 // doDraw
 //--------------------------------------------------------------------------
-void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
+void VehicleSelectionView::doDraw()
 {
     if ( ObjectiveInterface::getObjectiveState(CURRENT_SELECTED_OUTPOST_ID)->occupying_player != PlayerInterface::getLocalPlayer() )
     {
@@ -377,7 +377,7 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
             // Draw the name of the outpost.
         }}
 
-    bltViewBackground(viewArea);
+    drawViewBackground();
 
     OutpostStatus outpost_status;
 
@@ -386,7 +386,7 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
     if (vsvUnitGenOn)
     {
         sprintf(strBuf, "%s", getUnitName(vsvSelectedUnit));
-        clientArea.bltString(   productionUnitPos.x, productionUnitPos.y, 
+        drawString(   productionUnitPos.x, productionUnitPos.y,
                                 strBuf, color);
 
         sprintf(strBuf, "%01d:%02d/%01d:%02d",
@@ -395,30 +395,30 @@ void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
                     ((int)outpost_status.unit_generation_time) / 60,
                     ((int)outpost_status.unit_generation_time) % 60);
          
-        clientArea.bltString(   timeRequiredPos.x, timeRequiredPos.y, 
+        drawString(   timeRequiredPos.x, timeRequiredPos.y,
                                 strBuf, color);
     }
     else
     {
         sprintf(strBuf, "power off");
-        clientArea.bltString(   productionUnitPos.x, productionUnitPos.y, 
+        drawString(   productionUnitPos.x, productionUnitPos.y,
                                 strBuf, color);
 
         sprintf(strBuf, "power off");
-        clientArea.bltString(   timeRequiredPos.x, timeRequiredPos.y, 
+        drawString(   timeRequiredPos.x, timeRequiredPos.y,
                                 strBuf, color);
     }
 
     int unitPerPlayer = gameconfig->maxunits / gameconfig->maxplayers;
     sprintf(strBuf, "%d/%d", int(UnitInterface::getUnitCount(PlayerInterface::getLocalPlayerIndex())), unitPerPlayer);
-    clientArea.bltString(unitsBuiltPos.x, unitsBuiltPos.y, strBuf, color);
+    drawString(unitsBuiltPos.x, unitsBuiltPos.y, strBuf, color);
 
-    drawUnitProfileInfo(clientArea, iXY(0, unitProfileDataY), highlightedUnitType);
+    drawUnitProfileInfo( iXY(0, unitProfileDataY), highlightedUnitType);
 
     //sprintf(strBuf, "%01d:%02d", ( (int) outpost_status.unit_generation_time_remaining ) / 60, ( (int) outpost_status.unit_generation_time_remaining) % 60 );
     //clientArea.bltString(timeRemainingPos, strBuf, color);
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw();
 
 } // end VehicleSelectionView::doDraw
 
@@ -739,7 +739,7 @@ void VehicleSelectionView::checkMaxValues(const UnitProfile &profile)
 
 } // end VehicleSelectionView::checkMaxValues
 
-void VehicleSelectionView::drawUnitProfileInfo(Surface &dest, const iXY &pos, short int unitType)
+void VehicleSelectionView::drawUnitProfileInfo( const iXY &pos, short int unitType)
 {
     if (unitType == -1) {
         return;
@@ -752,36 +752,36 @@ void VehicleSelectionView::drawUnitProfileInfo(Surface &dest, const iXY &pos, sh
     const int barOffset = 105;
     int       barLength = getClientRect().getSizeX() - barOffset;
 
-    dest.bltStringShadowed(loc.x, loc.y, "Hit Points", Color::white, Color::black);
-    drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->hit_points) / float(maxHitPoints));
+    drawStringShadowed(loc.x, loc.y, "Hit Points", Color::white, Color::black);
+    drawBar(iXY(loc.x + barOffset, loc.y), barLength, float(profile->hit_points) / float(maxHitPoints));
     loc.y += gapSpace;
 
-    dest.bltStringShadowed(loc.x, loc.y, "Attack Power", Color::white, Color::black);
-    drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->attack_factor) / float(maxAttackFactor));
+    drawStringShadowed(loc.x, loc.y, "Attack Power", Color::white, Color::black);
+    drawBar(iXY(loc.x + barOffset, loc.y), barLength, float(profile->attack_factor) / float(maxAttackFactor));
     loc.y += gapSpace;
 
-    dest.bltStringShadowed(loc.x, loc.y, "Attack Range", Color::white, Color::black);
-    drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(sqrt(profile->attack_range)) / float(maxAttackRange));
+    drawStringShadowed(loc.x, loc.y, "Attack Range", Color::white, Color::black);
+    drawBar(iXY(loc.x + barOffset, loc.y), barLength, float(sqrt(profile->attack_range)) / float(maxAttackRange));
     loc.y += gapSpace;
 
-    dest.bltStringShadowed(loc.x, loc.y, "Defend Range", Color::white, Color::black);
-    drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(sqrt(profile->defend_range)) / float(maxDefendRange));
+    drawStringShadowed(loc.x, loc.y, "Defend Range", Color::white, Color::black);
+    drawBar(iXY(loc.x + barOffset, loc.y), barLength, float(sqrt(profile->defend_range)) / float(maxDefendRange));
     loc.y += gapSpace;
 
-    dest.bltStringShadowed(loc.x, loc.y, "Speed", Color::white, Color::black);
-    drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->speed_factor + profile->speed_rate) / float(maxTotalSpeed));
+    drawStringShadowed(loc.x, loc.y, "Speed", Color::white, Color::black);
+    drawBar(iXY(loc.x + barOffset, loc.y), barLength, float(profile->speed_factor + profile->speed_rate) / float(maxTotalSpeed));
     loc.y += gapSpace;
 
-    dest.bltStringShadowed(loc.x, loc.y, "Reload Time", Color::white, Color::black);
-    drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->reload_time) / float(maxReloadTime));
+    drawStringShadowed(loc.x, loc.y, "Reload Time", Color::white, Color::black);
+    drawBar(iXY(loc.x + barOffset, loc.y), barLength, float(profile->reload_time) / float(maxReloadTime));
     loc.y += gapSpace;
 }
 
-void VehicleSelectionView::drawBar(Surface &dest, const iXY &pos, int length, float percent)
+void VehicleSelectionView::drawBar( const iXY &pos, int length, float percent)
 {
     iXY size(int(float(length) * percent), Surface::getFontHeight());
 
-    dest.fillRect(iRect(pos.x, pos.y, pos.x + size.x, pos.y + size.y), Color::red);
+    fillRect(iRect(pos.x, pos.y, pos.x + size.x, pos.y + size.y), Color::red);
 }
 
 // actionPerformed

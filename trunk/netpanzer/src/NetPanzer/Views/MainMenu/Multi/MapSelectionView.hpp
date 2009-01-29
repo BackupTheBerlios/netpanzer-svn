@@ -46,13 +46,13 @@ private:
     enum { BORDER_SPACE =   4 };
     enum { MAP_SIZE     = 100 };
     int  loadMaps();
-    void drawCurMapInfo(Surface &dest, const iXY &pos);
+    void drawCurMapInfo( const iXY &pos);
 
 public:
     MapSelectionView();
     ~MapSelectionView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
     virtual void drawBorder(Surface& )
     {}
 

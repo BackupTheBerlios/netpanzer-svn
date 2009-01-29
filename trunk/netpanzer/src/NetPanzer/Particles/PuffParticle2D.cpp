@@ -126,7 +126,7 @@ void PuffParticle2D::create(	PUFF_TYPE particleType,
 //---------------------------------------------------------------------------
 // Purpose: Draws a single puff particle, no simulation.
 //---------------------------------------------------------------------------
-void PuffParticle2D::draw(const Surface&, SpriteSorter &sorter)
+void PuffParticle2D::draw(SpriteSorter &sorter)
 {
     if (!packedSurface.nextFrame()) {
         isAlive = false;

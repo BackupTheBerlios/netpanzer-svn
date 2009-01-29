@@ -32,7 +32,7 @@ public:
     float           curFrame;
 
     static void init();
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
+    virtual void draw(SpriteSorter &sorter);
 }
 ; // end SparkParticle2D
 

@@ -93,7 +93,7 @@ FlagSelectionView::FlagSelectionView() : RMouseHackView()
     moveTo(bodyTextRect.min.x + bodyTextRect.getSizeX() / 2 + 10 + 30,
            bodyTextRect.min.y + 50);
 
-    resizeClientArea(bodyTextRect.getSizeX() / 2 - 10 - 30, 108);
+    resize(bodyTextRect.getSizeX() / 2 - 10 - 30, 108);
 
     init();
 
@@ -160,7 +160,7 @@ void FlagSelectionView::init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void FlagSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
+void FlagSelectionView::doDraw()
 {
     //iRect r(getViewRect());
     //viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
@@ -169,14 +169,15 @@ void FlagSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
     sprintf(strBuf, "Current:");
     int CHAR_XPIX = 8; // XXX hardcoded
     
-    clientArea.bltStringShadowed(
-            BORDER_SPACE,
-            BORDER_SPACE + (playerFlag.getHeight() - Surface::getFontHeight()) / 2,
+    drawStringShadowed(
+            min.x + BORDER_SPACE,
+            min.y + BORDER_SPACE + (playerFlag.getHeight() - Surface::getFontHeight()) / 2,
             strBuf, windowTextColor, windowTextColorShadow);
     
-    playerFlag.blt(clientArea, BORDER_SPACE + strlen(strBuf) * CHAR_XPIX + BORDER_SPACE, BORDER_SPACE);
+    drawImage(playerFlag, min.x + BORDER_SPACE + strlen(strBuf) * CHAR_XPIX + BORDER_SPACE, min.y + BORDER_SPACE);
 
-    View::doDraw(viewArea, clientArea);
+
+    View::doDraw();
 
 } // end FlagSelectionView::doDraw
 void

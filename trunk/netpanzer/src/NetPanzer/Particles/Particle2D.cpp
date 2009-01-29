@@ -220,7 +220,7 @@ void Particle2D::simAll()
 
 // drawAll
 //---------------------------------------------------------------------------
-void Particle2D::drawAll(const Surface &clientArea, SpriteSorter &sorter)
+void Particle2D::drawAll(SpriteSorter &sorter)
 {
     // Go through and draw all the particles.
     Particle2D *e = zParticle2D->next;
@@ -229,7 +229,7 @@ void Particle2D::drawAll(const Surface &clientArea, SpriteSorter &sorter)
 
     while (e != zParticle2D) {
         nextPtr = e->next;
-        e->draw(clientArea, sorter);
+        e->draw( sorter);
         e = nextPtr;
     }
 } // end Particle2D::drawAll
@@ -238,7 +238,7 @@ void Particle2D::drawAll(const Surface &clientArea, SpriteSorter &sorter)
 //---------------------------------------------------------------------------
 // Purpose: Draws a single particle, no simulation.
 //---------------------------------------------------------------------------
-void Particle2D::draw(const Surface&, SpriteSorter&)
+void Particle2D::draw(SpriteSorter&)
 {} // end draw
 
 // Particle2D::sim

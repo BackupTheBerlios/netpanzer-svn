@@ -78,7 +78,7 @@ MapSelectionView::MapSelectionView() : RMouseHackView()
 
     moveTo(bodyTextRect.min.x, bodyTextRect.min.y + 50);
 
-    resizeClientArea(bodyTextRect.getSizeX() / 2 - 10 + 30, MAP_SIZE + BORDER_SPACE * 2);
+    resize(bodyTextRect.getSizeX() / 2 - 10 + 30, MAP_SIZE + BORDER_SPACE * 2);
 
     init();
 
@@ -111,7 +111,7 @@ void MapSelectionView::init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void MapSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
+void MapSelectionView::doDraw()
 {
     //iRect r(getViewRect());
     //viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
@@ -122,19 +122,20 @@ void MapSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
         int result = loadMaps();
 
         if (result == 0) {
-            clientArea.bltStringCenter("No Maps Found", Color::white);
+            drawStringCenter("No Maps Found", Color::white);
         } else if (result == 1) {
-            clientArea.bltStringCenter("Outpost file error", Color::white);
+            drawStringCenter("Outpost file error", Color::white);
         }
     }
 
     if (mapList.size() > 0) {
         // Since maps were found, draw the selected map.
-        mapList[curMap]->thumbnail.blt(clientArea, BORDER_SPACE, BORDER_SPACE);
-        drawCurMapInfo(clientArea, iXY(MAP_SIZE + BORDER_SPACE * 2, BORDER_SPACE));
+        drawImage(mapList[curMap]->thumbnail, BORDER_SPACE, BORDER_SPACE);
+        //mapList[curMap]->thumbnail.blt(clientArea, BORDER_SPACE, BORDER_SPACE);
+        drawCurMapInfo(iXY(MAP_SIZE + BORDER_SPACE * 2, BORDER_SPACE));
     }
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw();
 
 } // end MapSelectionView::doDraw
 
@@ -258,7 +259,7 @@ int MapSelectionView::loadMaps()
 
 // drawCurMapInfo
 //---------------------------------------------------------------------------
-void MapSelectionView::drawCurMapInfo(Surface &dest, const iXY &pos)
+void MapSelectionView::drawCurMapInfo( const iXY &pos)
 {
     // Draw the text.
     char strBuf[256];
@@ -269,16 +270,16 @@ void MapSelectionView::drawCurMapInfo(Surface &dest, const iXY &pos)
     const int yOffset = 15;
 
     sprintf(strBuf, "Name:       %s", mapList[curMap]->name.c_str());
-    dest.bltStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
+    drawStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
     y += yOffset;
 
     int sizeX = (mapList[curMap]->cells.y * 32) / 480;
     int sizeY = (mapList[curMap]->cells.x * 32) / 640;
     sprintf(strBuf, "Size:       %d x %d", sizeX, sizeY);
-    dest.bltStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
+    drawStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
     y += yOffset;
 
     sprintf(strBuf, "Objectives: %d", mapList[curMap]->objectiveCount);
-    dest.bltStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
+    drawStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
 
 } // end MapSelectionView::drawMapInfo

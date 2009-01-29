@@ -89,7 +89,7 @@ void CraterParticle2D::init()
 
 // draw
 //---------------------------------------------------------------------------
-void CraterParticle2D::draw(const Surface&, SpriteSorter &sorter)
+void CraterParticle2D::draw(SpriteSorter &sorter)
 {
     if (!isAlive) {
         return;

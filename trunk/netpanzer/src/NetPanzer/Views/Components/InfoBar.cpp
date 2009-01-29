@@ -27,8 +27,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 
 void
-InfoBar::draw(Surface &dest)
+InfoBar::draw( int posx, int posy, Surface &dest)
 {
+    iXY oldpos = position;
+    position.x += posx;
+    position.y += posy;
+
     iRect r(position.x, position.y, dest.getWidth(), position.y+12);
     dest.bltLookup(r, Palette::darkGray256.getColorArray());
 
@@ -57,5 +61,5 @@ InfoBar::draw(Surface &dest)
              );
     
     dest.bltStringShadowed(position.x+2,position.y+2,buf,Color::white, Color::black);
-
+    position = oldpos;
 }

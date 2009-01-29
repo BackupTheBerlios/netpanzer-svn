@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include "2D/Color.hpp"
+
 #include "Views/Components/View.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/Label.hpp"
@@ -26,6 +28,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ViewGlobals.hpp"
 #include "Util/Exception.hpp"
 #include "InputEvent.hpp"
+#include "Interfaces/GameConfig.hpp"
+#include "Views/GameViewGlobals.hpp"
+#include "2D/Palette.hpp"
 
 const int RESIZE_WIDTH = 10;
 const int RESIZE_XMIN  = RESIZE_WIDTH;
@@ -136,8 +141,7 @@ void View::reset()
 void View::drawBorder(Surface &viewArea)
 {
     assert(this != 0);
-    
-    viewArea.drawWindowsBorder();
+    currentscreen->drawRect(iRect(min, max), Color::darkGray);
 } // end drawBorder
 
 // drawTitle
@@ -150,23 +154,21 @@ void View::drawTitle(Surface &viewArea)
     assert(this != 0);
 
     iRect r(borderSize, borderSize, getSizeX() - borderSize, borderSize + moveAreaHeight - 1);
+    r.translate(min);
 
-    Surface s;
-    s.setTo(viewArea, r);
-
-    s.fill(getActive() ? activeWindowTitleBodyColor : inactiveWindowTitleBodyColor);
+    viewArea.fillRect(r, getActive() ? activeWindowTitleBodyColor : inactiveWindowTitleBodyColor);
 
     char strBuf[256];
 
     sprintf(strBuf, "%s%s", title, subTitle);
 
-    s.bltStringCenter(strBuf, getActive() ? activeWindowTitleTextColor : inactiveWindowTitleTextColor);
+    viewArea.bltStringCenteredInRect(r, strBuf, getActive() ? activeWindowTitleTextColor : inactiveWindowTitleTextColor);
 
     if (getResize()) {
         {
             // Bottom-Left resize.
-            iXY verticalPos(borderSize, getSizeY() - borderSize - moveAreaHeight + 1);
-            iXY horizontalPos(borderSize + moveAreaHeight - 1, getSizeY() - borderSize);
+            iXY verticalPos(min.x + borderSize, min.y + getSizeY() - borderSize - moveAreaHeight + 1);
+            iXY horizontalPos(min.x + borderSize + moveAreaHeight - 1, min.y + getSizeY() - borderSize);
 
             viewArea.drawLine(verticalPos, horizontalPos, Color::white);
             verticalPos.y++;
@@ -208,8 +210,8 @@ void View::drawTitle(Surface &viewArea)
 
         // Top-Left resize.
         {
-            iXY verticalPos(borderSize, borderSize + moveAreaHeight - 1);
-            iXY horizontalPos(borderSize + moveAreaHeight - 1, borderSize);
+            iXY verticalPos(min.x + borderSize, min.y + borderSize + moveAreaHeight - 1);
+            iXY horizontalPos(min.x + borderSize + moveAreaHeight - 1, min.y + borderSize);
 
             viewArea.drawLine(verticalPos, horizontalPos, Color::white);
             verticalPos.y--;
@@ -251,8 +253,8 @@ void View::drawTitle(Surface &viewArea)
 
         // Top-Right resize.
         {
-            iXY verticalPos(getSizeX() - borderSize, borderSize + moveAreaHeight - 1);
-            iXY horizontalPos(getSizeX() - borderSize - moveAreaHeight, borderSize - 1);
+            iXY verticalPos(min.x + getSizeX() - borderSize, min.y + borderSize + moveAreaHeight - 1);
+            iXY horizontalPos(min.x + getSizeX() - borderSize - moveAreaHeight, min.y + borderSize - 1);
 
             viewArea.drawLine(verticalPos, horizontalPos, Color::white);
             verticalPos.y--;
@@ -294,8 +296,8 @@ void View::drawTitle(Surface &viewArea)
 
         // Bottom-Right resize.
         {
-            iXY verticalPos(getSizeX() - borderSize, getSizeY() - borderSize - moveAreaHeight + 1);
-            iXY horizontalPos(getSizeX() - borderSize - moveAreaHeight + 1, getSizeY() - borderSize);
+            iXY verticalPos(min.x + getSizeX() - borderSize, min.y + getSizeY() - borderSize - moveAreaHeight + 1);
+            iXY horizontalPos(min.x + getSizeX() - borderSize - moveAreaHeight + 1, min.y + getSizeY() - borderSize);
 
             viewArea.drawLine(verticalPos, horizontalPos, Color::white);
             verticalPos.y++;
@@ -342,17 +344,11 @@ void View::drawTitle(Surface &viewArea)
 //---------------------------------------------------------------------------
 void View::draw(Surface& surface)
 {
-    assert(this != 0);
-
     if (!getVisible())
         return;
 
     currentscreen = &surface; // hack
-    Surface* viewarea = getViewArea(surface);
-    Surface* clientarea = getClientArea(surface);
-    doDraw(*viewarea, *clientarea);
-    delete viewarea;
-    delete clientarea;
+    doDraw();
 } // end draw
 
 // activate
@@ -396,33 +392,33 @@ void View::deactivate()
 //---------------------------------------------------------------------------
 // Purpose: Default implementation - draws all the componentList of the window.
 //---------------------------------------------------------------------------
-void View::doDraw(Surface &viewArea, Surface &clientArea)
+void View::doDraw()
 {
     if (getShowStatus()) {
-        drawStatus(clientArea);
+        drawStatus(*currentscreen);
     }
 
-    drawDefinedButtons(clientArea);
-    drawInputFields(clientArea);
-    drawHighlightedButton(clientArea);
-    drawPressedButton(clientArea);
+    drawDefinedButtons();
+    drawInputFields();
+    drawHighlightedButton();
+    drawPressedButton();
 
     // Draw all non-selected components.
     ComponentsIterator i;
     for ( i=components.begin(); i != components.end(); i++) {
         if (*i != focusComponent) {
-            (*i)->draw(clientArea);
+            (*i)->draw(clientRect.min.x, clientRect.min.y, *currentscreen);
         }
     }
 
     // Now draw the selected component.
     if (focusComponent != 0) {
-        focusComponent->draw(clientArea);
+        focusComponent->draw(clientRect.min.x, clientRect.min.y, *currentscreen);
     }
 
     if (getBordered()) {
-        drawTitle(viewArea);
-        drawBorder(viewArea);
+        drawTitle(*currentscreen);
+        drawBorder(*currentscreen);
     }
 } // end View::doDraw
 
@@ -542,14 +538,7 @@ int View::getMouseActions(const iXY &pos) const
 //---------------------------------------------------------------------------
 iXY View::getScreenToClientPos(const iXY &pos)
 {
-    assert(this != 0);
-
-    if (getBordered()) {
-        return iXY( pos.x - (min.x + borderSize),
-                    pos.y - (min.y + borderSize + moveAreaHeight));
-    }
-
-    return getScreenToViewPos(pos);
+    return pos-clientRect.min;
 } // end View::getScreenToClientPos
 
 // getScreenToViewPos
@@ -562,42 +551,8 @@ iXY View::getScreenToViewPos(const iXY &pos)
 {
     assert(this != 0);
 
-    return iXY(pos.x - min.x, pos.y - min.y);
+    return pos-min;
 } // end getScreenToViewPos
-
-// getViewArea
-//---------------------------------------------------------------------------
-// Purpose: Returns a Surface of the view's dimensions.
-//---------------------------------------------------------------------------
-Surface* View::getViewArea(Surface& dest)
-{
-    assert(this != 0);
-
-    iRect rect(min, max);
-    Surface *ns;
-    ns = new Surface();
-    ns->setTo(dest,rect);
-    return ns;
-} // end View::getViewArea
-
-// getClientArea
-//---------------------------------------------------------------------------
-// Purpose:
-//---------------------------------------------------------------------------
-Surface* View::getClientArea(Surface& dest)
-{
-    Surface* viewarea = getViewArea(dest);
-    if (getBordered()) {
-        iRect rect( borderSize, borderSize+moveAreaHeight,
-                    getSizeX() - borderSize, getSizeY() - borderSize );
-        Surface *ns = new Surface();
-        ns->setTo(*viewarea, rect);
-        delete viewarea;
-        return ns;
-    }
-
-    return viewarea;
-} // end View::getClientArea
 
 // getClientRect
 //---------------------------------------------------------------------------
@@ -605,15 +560,7 @@ Surface* View::getClientArea(Surface& dest)
 //---------------------------------------------------------------------------
 iRect View::getClientRect() const
 {
-    if (getBordered()) {
-        return iRect( borderSize,
-                      borderSize + moveAreaHeight,
-                      getSizeX() - borderSize,
-                      getSizeY() - borderSize);
-    }
-
-    return iRect(0, 0, getSizeX(), getSizeY());
-
+    return clientRect;
 } // end View::getClientRect
 
 // mouseMove
@@ -953,12 +900,12 @@ void View::scrollBarMove(const iXY &prevPos, const iXY &newPos)
 //---------------------------------------------------------------------------
 // Purpose:
 //---------------------------------------------------------------------------
-void View::drawDefinedButtons(Surface &clientArea)
+void View::drawDefinedButtons()
 {
     std::vector<cButton*>::iterator i;
     for(i = buttons.begin(); i != buttons.end(); i++) {
         cButton* button = *i;
-        button->topSurface.blt(clientArea, button->getBounds().min);
+        button->topSurface.blt(*currentscreen, clientRect.min + button->getBounds().min);
     }
 } // end drawDefinedButtons
 
@@ -966,14 +913,17 @@ void View::drawDefinedButtons(Surface &clientArea)
 //---------------------------------------------------------------------------
 // Purpose:
 //---------------------------------------------------------------------------
-void View::drawInputFields(Surface &clientArea)
+void View::drawInputFields()
 {
     for (size_t num = 0; num < inputFields.size(); num++) {
         if (num == (size_t) selectedInputField) {
-            inputFields[num]->drawHighlighted(clientArea);
+            inputFields[num]->drawHighlighted();
         } else {
-            inputFields[num]->draw(clientArea);
+            inputFields[num]->draw();
         }
+        inputFields[num]->inputFieldSurface.blt(*currentscreen,
+                            clientRect.min.x + inputFields[num]->bounds.min.x,
+                            clientRect.min.y + inputFields[num]->bounds.min.y);
     }
 } // end drawInputFields
 
@@ -981,7 +931,7 @@ void View::drawInputFields(Surface &clientArea)
 //---------------------------------------------------------------------------
 // Purpose: Draws the correct image frame for the currently highlighted button.
 //---------------------------------------------------------------------------
-void View::drawHighlightedButton(Surface &clientArea)
+void View::drawHighlightedButton()
 {
     assert(this != 0);
 
@@ -989,10 +939,10 @@ void View::drawHighlightedButton(Surface &clientArea)
         return;
     } else if (buttons[highlightedButton]->topSurface.getFrameCount() < 2) {
         cButton* button = buttons[highlightedButton];
-        clientArea.drawRect(iRect(button->getBounds().min.x,
-                                  button->getBounds().min.y,
-                                  button->getBounds().max.x,
-                                  button->getBounds().max.y),
+        currentscreen->drawRect(iRect(clientRect.min.x + button->getBounds().min.x,
+                                  clientRect.min.y + button->getBounds().min.y,
+                                  clientRect.max.x + button->getBounds().max.x,
+                                  clientRect.max.y + button->getBounds().max.y),
                             Color::red);
         return;
     }
@@ -1007,9 +957,9 @@ void View::drawHighlightedButton(Surface &clientArea)
 
     // Change to the highlight button frame.
     buttons[highlightedButton]->topSurface.setFrame(1);
-    buttons[highlightedButton]->topSurface.blt(clientArea,
-            iXY(buttons[highlightedButton]->getBounds().min.x,
-                buttons[highlightedButton]->getBounds().min.y));
+    buttons[highlightedButton]->topSurface.blt(*currentscreen,
+            iXY(clientRect.min.x + buttons[highlightedButton]->getBounds().min.x,
+                clientRect.min.y + buttons[highlightedButton]->getBounds().min.y));
     buttons[highlightedButton]->topSurface.setFrame(0);
 
 } // end drawHighlightedButton
@@ -1115,23 +1065,14 @@ void View::showStatus(const char *string)
 //---------------------------------------------------------------------------
 void View::drawStatus(Surface &dest)
 {
-    // Draw the status bar.
-    iRect clientRect(getClientRect());
+    iRect r( min.x, max.y - DEFAULT_STATUS_BAR_HEIGHT, max.x, max.y);
 
-    iRect r(0,
-            clientRect.getSizeY() - DEFAULT_STATUS_BAR_HEIGHT,
-            clientRect.getSizeX(),
-            clientRect.getSizeY());
-
-    Surface s;
-    s.setTo(dest, r);
-    s.fill(Color::gray192);
+    currentscreen->fillRect(r, Color::gray192);
 
     // Draw the status text.
     if (statusText != 0) {
         int pos = (DEFAULT_STATUS_BAR_HEIGHT - Surface::getFontHeight()) >> 1;
-
-        s.bltString(pos, pos, statusText, Color::black);
+        currentscreen->bltString(r.min.x + pos, r.min.y + pos, statusText, Color::black);
     }
 } // end View::drawStatus
 
@@ -1174,7 +1115,7 @@ int View::findInputFieldContaining(const iXY &pos)
 //---------------------------------------------------------------------------
 // Purpose: Draws the selected button.
 //---------------------------------------------------------------------------
-void View::drawPressedButton(Surface &clientArea)
+void View::drawPressedButton()
 {
     assert(this != 0);
 
@@ -1184,9 +1125,9 @@ void View::drawPressedButton(Surface &clientArea)
 
     // Chage to the highlight button frame.
     buttons[pressedButton]->topSurface.setFrame(2);
-    buttons[pressedButton]->topSurface.blt(clientArea,
-            iXY(buttons[pressedButton]->getBounds().min.x,
-                buttons[pressedButton]->getBounds().min.y));
+    buttons[pressedButton]->topSurface.blt(*currentscreen,
+            iXY(clientRect.min.x + buttons[pressedButton]->getBounds().min.x,
+                clientRect.min.y + buttons[pressedButton]->getBounds().min.y));
     buttons[pressedButton]->topSurface.setFrame(0);
 } // drawPressedButton
 
@@ -1196,11 +1137,14 @@ void View::drawPressedButton(Surface &clientArea)
 //---------------------------------------------------------------------------
 void View::checkResolution(iXY oldResolution, iXY newResolution)
 {
-        iXY size = getSize();
-
-        min.x += (newResolution.x - oldResolution.x)/2;
-        min.y += (newResolution.y - oldResolution.y)/2;
-        max = min + size;
+//        iXY size = getSize();
+//
+//        min.x += (newResolution.x - oldResolution.x)/2;
+//        min.y += (newResolution.y - oldResolution.y)/2;
+//        max = min + size;
+    iXY newpos = min + ((newResolution-oldResolution) / 2);
+    //newpos -= getSize() / 2;
+    moveTo(newpos);
 } // end checkResolution
 
 void View::checkArea(iXY viewarea)
@@ -1216,27 +1160,6 @@ void View::checkArea(iXY viewarea)
         moveTo(min.x, viewarea.y - getSize().y);
 }
 
-// RESIZE CLIENT AREA
-//---------------------------------------------------------------------------
-// Purpose: Resize the client area of the window.  The window area will be
-//          resized accordingly.
-//---------------------------------------------------------------------------
-void View::resizeClientArea(const iXY &size)
-{
-    // These variables constitue the gap space needed for the window borders and
-    // move area.
-    int xExtra = borderSize * 2;
-    int yExtra = xExtra + moveAreaHeight;
-
-    iXY destSize(size);
-
-    // Add the area for the borders and move area.
-    destSize.x += xExtra;
-    destSize.y += yExtra;
-
-    resize(destSize);
-} // end View::resizeClientArea
-
 // RESIZE
 //---------------------------------------------------------------------------
 // Purpose: Resizes the current window to the specified size.
@@ -1244,6 +1167,23 @@ void View::resizeClientArea(const iXY &size)
 void View::resize(const iXY &size)
 {
     iXY destSize(size);
+    clientRect.min = min;
+    clientRect.max = min + size;
+
+    if ( getBordered() )
+    {
+        clientRect.min.x += borderSize;
+        clientRect.min.y += borderSize + moveAreaHeight;
+        clientRect.max.x += borderSize;
+        clientRect.max.y += borderSize + moveAreaHeight;
+        destSize.x += borderSize * 2;
+        destSize.y += (borderSize * 2) + moveAreaHeight;
+    }
+
+    if ( getShowStatus() )
+    {
+        destSize.y += DEFAULT_STATUS_BAR_HEIGHT;
+    }
 
     max = min + destSize;
 } // end View::resize
@@ -1279,9 +1219,12 @@ void View::setHighlightedButton(const int &button)
 //---------------------------------------------------------------------------
 void View::moveTo(iXY destMin)
 {
-    iXY size = getSize();
-    min = destMin;
-    max = min + size;
+    iXY diff = destMin - min;
+    min += diff;
+    max += diff;
+    clientRect.min += diff;
+    clientRect.max += diff;
+
 } // end moveTo
 
 // toggleView
@@ -1415,3 +1358,101 @@ void View::add(DEFAULT_VIEW_BUTTON button)
     }
 }
 
+void
+View::drawString(int x, int y, const char * str, const PIX& color)
+{
+    x += clientRect.min.x;
+    y += clientRect.min.y;
+    currentscreen->bltString(x, y, str, color);
+}
+
+void
+View::drawStringCenter(const char* string, PIX color)
+{
+    currentscreen->bltStringCenteredInRect(clientRect, string, color);
+}
+
+void
+View::drawStringInBox( const iRect &rect, const char *string, PIX color, int gapSpace, bool drawBox)
+{
+    iRect r(rect);
+    r.translate(clientRect.min);
+    currentscreen->bltStringInBox(r, string, color, gapSpace, drawBox);
+}
+
+void
+View::drawStringShadowed(int x, int y, const char *str, const PIX &textColor, const PIX &shadowColor)
+{
+    x += clientRect.min.x;
+    y += clientRect.min.y;
+    currentscreen->bltStringShadowed( x, y, str, textColor, shadowColor);
+}
+
+void
+View::drawImage( Surface &s, int x, int y)
+{
+    s.blt(*currentscreen, clientRect.min.x + x, clientRect.min.y + y );
+}
+
+void
+View::drawImageTrans( Surface &s, int x, int y)
+{
+    s.bltTrans(*currentscreen, clientRect.min.x + x, clientRect.min.y + y );
+}
+
+void
+View::drawTransRect(const iRect &destRect, const PIX table[])
+{
+    iRect r(destRect);
+    r.translate(clientRect.min);
+    currentscreen->bltLookup(r,table);
+}
+
+void
+View::drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightColor)
+{
+    bounds.translate(clientRect.min);
+    currentscreen->drawButtonBorder(bounds, topLeftColor, bottomRightColor);
+}
+
+void
+View::fill(const PIX& color)
+{
+    currentscreen->fillRect(clientRect, color);
+}
+
+void
+View::drawRect(iRect bounds, const PIX& color)
+{
+    bounds.translate(clientRect.min);
+    currentscreen->drawRect(bounds, color);
+}
+
+void
+View::fillRect(iRect bounds, const PIX& color)
+{
+    bounds.translate(clientRect.min);
+    currentscreen->fillRect(bounds, color);
+}
+
+void
+View::drawViewBackground()
+{
+    if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_DARK_GRAY_BLEND)
+    {
+        currentscreen->bltLookup(*this, Palette::darkGray256.getColorArray());
+    }
+    else if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_LIGHT_GRAY_BLEND)
+    {
+        currentscreen->bltLookup(*this, Palette::gray256.getColorArray());
+    }
+    else if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_SOLID_BLACK)
+    {
+        currentscreen->fillRect(*this, Color::black);
+    }
+    else if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_TRANSPARENT)
+    {
+        // nothing, so transparent
+    }
+
+}

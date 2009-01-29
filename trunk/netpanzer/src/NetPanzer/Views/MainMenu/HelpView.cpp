@@ -33,9 +33,9 @@ HelpView::HelpView() : MenuTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void HelpView::doDraw(Surface &viewArea, Surface &clientArea)
+void HelpView::doDraw()
 {
-    MenuTemplateView::doDraw(viewArea, clientArea);
+    MenuTemplateView::doDraw();
 } // end HelpView::doDraw
 
 // doActivate

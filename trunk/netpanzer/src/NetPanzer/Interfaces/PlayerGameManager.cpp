@@ -454,43 +454,59 @@ bool PlayerGameManager::mainLoop()
 //-----------------------------------------------------------------
 void PlayerGameManager::processSystemKeys()
 {
-    if (Desktop::getVisible("GameView")) {
-        if (KeyboardInterface::getKeyPressed( SDLK_F12 )){
+    if (Desktop::getVisible("GameView"))
+    {
+        if (KeyboardInterface::getKeyPressed( SDLK_F12 ))
+        {
             showNewPanel = !showNewPanel;
         }
         
-        if (KeyboardInterface::getKeyPressed( SDLK_F5 )) {
+        if (KeyboardInterface::getKeyPressed( SDLK_F5 ))
+        {
             //  DEBUG VIEW
             Desktop::toggleVisibility( "LibView" );
         }
     }
 
     if (KeyboardInterface::getKeyState( SDLK_LALT ) ||
-            KeyboardInterface::getKeyState( SDLK_RALT )) {
-        if (KeyboardInterface::getKeyPressed(SDLK_RETURN)) {
+            KeyboardInterface::getKeyState( SDLK_RALT ))
+    {
+        if (KeyboardInterface::getKeyPressed(SDLK_RETURN))
+        {
             gameconfig->fullscreen.toggle();
             GameManager::setVideoMode();
         }
     } // ** LFT_ALT or RGT_ALT pressed
 
-    if (Desktop::getView("GameView")->getVisible()) {
-        if (KeyboardInterface::getKeyPressed(SDLK_m)) {
+    if (Desktop::getView("GameView")->getVisible())
+    {
+        if (KeyboardInterface::getKeyPressed(SDLK_m))
+        {
             Desktop::toggleVisibility( "MiniMapView" );
         }
-        if (KeyboardInterface::getKeyPressed(SDLK_TAB) ) {
+        
+        if (KeyboardInterface::getKeyPressed(SDLK_TAB) )
+        {
             Desktop::toggleVisibility( "RankView" );
         }
-        if (KeyboardInterface::getKeyPressed(SDLK_F3)) {
+        
+        if (KeyboardInterface::getKeyPressed(SDLK_F3))
+        {
             Desktop::toggleVisibility( "DesktopView" );
         }
-        if (KeyboardInterface::getKeyPressed(SDLK_F4)) {
+        
+        if (KeyboardInterface::getKeyPressed(SDLK_F4))
+        {
             Desktop::toggleVisibility( "CodeStatsView" );
         }
-        if (KeyboardInterface::getKeyPressed(SDLK_F1)) {
+        
+        if (KeyboardInterface::getKeyPressed(SDLK_F1))
+        {
             Desktop::toggleVisibility( "HelpScrollView" );
         }
 
-        if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE)) {
+        if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE))
+        {
             if (Desktop::getView("GameView")->getVisible())
             {
                 if (!Desktop::getView("OptionsView")->getVisible() &&

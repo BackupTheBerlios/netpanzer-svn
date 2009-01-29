@@ -45,7 +45,7 @@ protected:
     // the images aspect ratio.
     bool  singleFrame;
 
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
+    virtual void draw(SpriteSorter &sorter);
     virtual void sim();
 
 }; // end FlashParticle2D

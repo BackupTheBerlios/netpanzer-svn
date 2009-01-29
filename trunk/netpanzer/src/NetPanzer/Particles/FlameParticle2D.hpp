@@ -40,7 +40,7 @@ protected:
     static PackedSurfaceList staticPackedExplosion0;
     static PackedSurfaceList staticPackedExplosion1;
 
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
+    virtual void draw(SpriteSorter &sorter);
 
     static void loadPakFiles();
 }

@@ -274,66 +274,6 @@ void Surface::resize(int x, int y)
 
 } // end Surface::resize
 
-// setTo
-//---------------------------------------------------------------------------
-// Purpose: Maps a Surface's coordinates to an existing surface.  This can
-//          save you from having to allocate memory for every single surface.
-//          You can just draw everything onto one surface in the given bounds.
-//---------------------------------------------------------------------------
-void Surface::setTo(const Surface &source, iRect bounds)
-{
-    assert(source.getDoesExist());
-    assert(this != 0);
-
-    free();
-    orderCoords(bounds);
-
-    myMem      = false;
-    frame0     = source.pixPtr(bounds.min.x, bounds.min.y);
-    mem	       = frame0;
-    if ( (unsigned int)bounds.max.x > source.getWidth() )
-        twidth = source.getWidth() - bounds.min.x;
-    else
-        twidth     = bounds.getSizeX();
-        
-    if ( (unsigned int)bounds.max.y > source.getHeight() )
-        theight = source.getHeight() - bounds.min.y;
-    else
-        theight    = bounds.getSizeY();
-        
-    tpitch     = source.getPitch();
-    numFrames  = source.getNumFrames();
-    fps        = source.getFPS();
-    
-    doesExist  = source.getDoesExist();
-
-} // end Surface::setTo
-
-// setTo
-//---------------------------------------------------------------------------
-// Purpose: Maps the calling surface to some specified coordinates of the
-//          another Surface.
-//---------------------------------------------------------------------------
-void Surface::setTo(const Surface &source)
-{
-    assert(this != 0);
-    assert(source.getDoesExist());
-
-    free();
-
-    myMem      = false;
-    frame0     = source.getFrame0();
-    mem        = frame0;
-    twidth     = source.getWidth();
-    theight    = source.getHeight();
-    tpitch     = source.getPitch();
-    numFrames  = source.getNumFrames();
-    fps        = source.getFPS();
-    offset     = source.getOffset();
-    doesExist  = source.getDoesExist();
-
-} // end Surface::setTo
-
 // grab
 //---------------------------------------------------------------------------
 // Purpose: Copies a section from another Surface.

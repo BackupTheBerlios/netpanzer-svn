@@ -30,15 +30,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class CodeStatsView : public GameTemplateView
 {
 protected:
-    void drawNetworkStats(Surface &clientArea);
-    void drawSorterStats(Surface &clientArea);
-    void drawPathingStats(Surface &clientArea);
-    void drawUnitStats(Surface &clientArea );
+    void drawNetworkStats();
+    void drawSorterStats();
+    void drawPathingStats();
+    void drawUnitStats();
 
 public:
     CodeStatsView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
 }; // end CodeStatsView
 
 

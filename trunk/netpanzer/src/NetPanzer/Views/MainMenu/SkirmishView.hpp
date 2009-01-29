@@ -28,7 +28,7 @@ class SkirmishView : public MenuTemplateView
 public:
     SkirmishView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
 }; // end SkirmishView
 
 #endif // end __SkirmishView_hpp__

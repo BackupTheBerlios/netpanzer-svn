@@ -88,7 +88,7 @@ public:
     static  void init();
     static  void loadPAKFiles();
     static  void loadTILFiles();
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
+    virtual void draw(SpriteSorter &sorter);
 
 }
 ; // end PuffParticle2D

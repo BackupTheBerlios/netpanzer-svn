@@ -112,32 +112,32 @@ GetSessionView::GetSessionView() : MenuTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void GetSessionView::doDraw(Surface &viewArea, Surface &clientArea)
+void GetSessionView::doDraw()
 {
     if (previousSessionType != gameconfig->hostorjoin) {
         loadTitleSurface();
     }
 
-    MenuTemplateView::doDraw(viewArea, clientArea);
+    MenuTemplateView::doDraw();
 
-    drawInfo(clientArea);
+    drawInfo();
 
 } // end GetSessionView::doDraw
 
 //---------------------------------------------------------------------------
-void GetSessionView::drawInfo(Surface &dest)
+void GetSessionView::drawInfo()
 {
     int connectionType = gameconfig->hostorjoin;
 
     if (connectionType == _game_session_host) {
-        drawHostInfo(dest, bodyTextRect);
+        drawHostInfo(bodyTextRect);
     } else if (connectionType == _game_session_join) {
-        drawJoinInfo(dest, bodyTextRect);
+        drawJoinInfo(bodyTextRect);
     }
 }
 
 //---------------------------------------------------------------------------
-void GetSessionView::drawHostInfo(Surface &dest, const iRect &rect)
+void GetSessionView::drawHostInfo( const iRect &rect)
 {
     static char	tcpipInfo[] =
         "HOSTING INTERNET GAMES\n"
@@ -154,11 +154,11 @@ void GetSessionView::drawHostInfo(Surface &dest, const iRect &rect)
         "\n"
         "Click the Next button to proceed";
 
-    dest.bltStringInBox(rect, tcpipInfo, Color::white, 12);
+    drawStringInBox(rect, tcpipInfo, Color::white, 12);
 }
 
 //---------------------------------------------------------------------------
-void GetSessionView::drawJoinInfo(Surface &dest, const iRect &rect)
+void GetSessionView::drawJoinInfo( const iRect &rect)
 {
     static char	tcpipInfo[] =
         "JOINING LAN OR INTERNET GAMES\n"
@@ -174,7 +174,7 @@ void GetSessionView::drawJoinInfo(Surface &dest, const iRect &rect)
         "Click the Next button to proceed.";
 
 
-    dest.bltStringInBox(rect, tcpipInfo, Color::white, 12);
+    drawStringInBox(rect, tcpipInfo, Color::white, 12);
 }
 
 // doActivate

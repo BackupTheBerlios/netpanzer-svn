@@ -57,13 +57,18 @@ MiniMap::~MiniMap()
 }
 
 void
-MiniMap::draw(Surface &dest)
+MiniMap::draw( int posx, int posy, Surface &dest)
 {
     //regenerate();
-    surface.blt(dest,position.x, position.y);
+    iXY oldpos(position);
+    position.x += posx;
+    position.y += posy;
+
+    surface.blt(dest, position.x, position.y);
     drawObjectives(dest);
     drawUnits(dest);
     drawWorldAndMouseBox(dest);
+    position = oldpos;
 }
 
 void
@@ -305,8 +310,8 @@ MiniMap::drawWorldAndMouseBox(Surface &dest)
     if ( mouseinside )
     {
         iXY size(world_win.getSize());
-        world_win.min = mousepos - (size/2);
-        world_win.max = world_win.min + size;
+        world_win.min = (mousepos - (size/2)) + position;
+        world_win.max = (world_win.min + size);
         dest.drawBoxCorners(world_win, 5, Color::red);
     }
 }

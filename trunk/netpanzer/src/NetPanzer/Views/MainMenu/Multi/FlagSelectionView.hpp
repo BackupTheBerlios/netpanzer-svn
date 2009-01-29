@@ -44,7 +44,7 @@ public:
         return playerFlagSelected;
     }
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
     //virtual int  lMouseUp(const iXY &downPos, const iXY &upPos);
     //virtual void drawBorder(Surface& )
     //{}

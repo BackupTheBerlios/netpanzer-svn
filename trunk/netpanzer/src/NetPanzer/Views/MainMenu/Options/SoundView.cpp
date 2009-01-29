@@ -166,9 +166,9 @@ void SoundView::initButtons()
 
 // doDraw
 //---------------------------------------------------------------------------
-void SoundView::doDraw(Surface &viewArea, Surface &clientArea)
+void SoundView::doDraw()
 {
-    MenuTemplateView::doDraw(viewArea, clientArea);
+    MenuTemplateView::doDraw();
 
     char strBuf[256];
     
@@ -187,7 +187,7 @@ void SoundView::doDraw(Surface &viewArea, Surface &clientArea)
     tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
     sprintf(strBuf, "%d %%", getSoundVolume());
     tempSurface.bltStringCenter(strBuf, meterTextColor);
-    tempSurface.blt(clientArea, x, y);
+    drawImage(tempSurface, x, y);
 
     // Music Volume
     y += yOffset*3;
@@ -195,7 +195,7 @@ void SoundView::doDraw(Surface &viewArea, Surface &clientArea)
     tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
     sprintf(strBuf, "%d %%", getMusicVolume());
     tempSurface.bltStringCenter(strBuf, meterTextColor);
-    tempSurface.blt(clientArea, x, y);
+    drawImage(tempSurface, x, y);
 
     //clientArea.bltStringCenter("Not available for preview", Color::white);
 

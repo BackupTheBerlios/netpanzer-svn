@@ -312,7 +312,7 @@ void cInputField::addExtendedChar(int newExtendedChar)
 
 // draw
 //--------------------------------------------------------------------------
-void cInputField::draw(Surface &dest)
+void cInputField::draw()
 {
     checkCursor();
     checkRepeat();
@@ -320,12 +320,12 @@ void cInputField::draw(Surface &dest)
     inputFieldSurface.fill(Color::black);
     inputFieldSurface.drawButtonBorder(Color::white, Color::gray64);
     inputFieldSurface.bltString(4, 2, destString+strDisplayStart, Color::white);
-    inputFieldSurface.blt(dest, pos.x, pos.y);
+    //inputFieldSurface.blt(dest, pos.x, pos.y);
 } // draw
 
 // drawHighlighted
 //--------------------------------------------------------------------------
-void cInputField::drawHighlighted(Surface &dest)
+void cInputField::drawHighlighted()
 {
     checkCursor();
     checkRepeat();
@@ -353,7 +353,7 @@ void cInputField::drawHighlighted(Surface &dest)
         }
     }
 
-    inputFieldSurface.blt(dest, pos.x, pos.y);
+    //inputFieldSurface.blt(dest, pos.x, pos.y);
 } // drawHighlighted
 
 // checkCursor

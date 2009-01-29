@@ -101,11 +101,11 @@ void OptionsTemplateView::initButtons()
 
 // doDraw
 //---------------------------------------------------------------------------
-void OptionsTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
+void OptionsTemplateView::doDraw()
 {
-    MenuTemplateView::doDraw(viewArea, clientArea);
+    MenuTemplateView::doDraw();
 
-    clientArea.bltStringCenter("Select your option category above", Color::white);
+    drawStringCenter("Select your option category above", Color::white);
 
 } // end OptionsTemplateView::doDraw
 

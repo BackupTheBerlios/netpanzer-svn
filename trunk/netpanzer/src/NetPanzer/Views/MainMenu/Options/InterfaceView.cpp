@@ -82,9 +82,9 @@ void InterfaceView::initButtons()
 
 // doDraw
 //---------------------------------------------------------------------------
-void InterfaceView::doDraw(Surface &viewArea, Surface &clientArea)
+void InterfaceView::doDraw()
 {
-    MenuTemplateView::doDraw(viewArea, clientArea);
+    MenuTemplateView::doDraw();
 
     char strBuf[256];
 
@@ -100,7 +100,7 @@ void InterfaceView::doDraw(Surface &viewArea, Surface &clientArea)
     sprintf(strBuf, "%d %%", int((float(getScrollRate()) / 
                     float(gameconfig->scrollrate.getMax())) * 100.0f));
     tempSurface.bltStringCenter(strBuf, meterTextColor);
-    tempSurface.blt(clientArea, x, y);
+    drawImage(tempSurface, x, y);
 } // end InterfaceView::doDraw
 
 // loadTitleSurface

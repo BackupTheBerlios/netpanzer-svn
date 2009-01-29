@@ -158,7 +158,7 @@ void ParticleSystem2D::simAll()
 
 // drawAll
 //---------------------------------------------------------------------------
-void ParticleSystem2D::drawAll(const Surface &clientArea, SpriteSorter &sorter)
+void ParticleSystem2D::drawAll(SpriteSorter &sorter)
 {
     // Go through and draw all the particle systems.
     ParticleSystem2D *e = zParticleSystem2D->next;
@@ -166,7 +166,7 @@ void ParticleSystem2D::drawAll(const Surface &clientArea, SpriteSorter &sorter)
 
     while (e != zParticleSystem2D) {
         nextPtr = e->next;
-        e->draw(clientArea, sorter);
+        e->draw( sorter);
         e = nextPtr;
     }
 

@@ -30,15 +30,15 @@ ParticleTweakView::ParticleTweakView() : View()
     setVisible(false);
 
     moveTo(0, 0);
-    resizeClientArea(640, 480);
+    resize(640, 480);
 
 } // end ParticleTweakView::ParticleTweakView
 
 // doDraw
 //---------------------------------------------------------------------------
-void ParticleTweakView::doDraw(Surface &viewArea, Surface &clientArea)
+void ParticleTweakView::doDraw()
 {
-    viewArea.fill(Color::black);
+    fill(Color::black);
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw();
 } // end ParticleTweakView::doDraw

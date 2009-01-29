@@ -104,7 +104,7 @@ UnitColorView::UnitColorView() : View()
     fuckingSurface.create(packedTurret.getWidth(), packedTurret.getHeight(), 1);
     fuckingSurface.fill(0);
 
-    resizeClientArea(packedTurret.getWidth(), packedTurret.getHeight());
+    resize(packedTurret.getWidth(), packedTurret.getHeight());
 
     int size = packedTurret.getWidth() / 2;
     addButtonCenterText(iXY(0, 0), size, "Up", "", bIncreaseBrightness);
@@ -117,7 +117,7 @@ UnitColorView::UnitColorView() : View()
 
 // doDraw
 //---------------------------------------------------------------------------
-void UnitColorView::doDraw(Surface &viewArea, Surface &clientArea)
+void UnitColorView::doDraw()
 {
     //unitSurface.fill(0);
 
@@ -129,14 +129,14 @@ void UnitColorView::doDraw(Surface &viewArea, Surface &clientArea)
     packedTurret.blt(fuckingSurface, 0, 0);
     fuckingSurface.bltLookup(fuckingSurface.getRect(), colorTable->getColorArray());
 
-    grassSurface.blt(clientArea, 0, 0);
-    fuckingSurface.bltTrans(clientArea, 0, 0);
+    drawImage(grassSurface, 0, 0);
+    drawImageTrans(fuckingSurface, 0, 0);
 
     char strBuf[256];
     sprintf(strBuf, "%1.3f of %1.3f", grayPercent, maxPercent);
-    clientArea.bltString(2, fuckingSurface.getHeight() - Surface::getFontHeight() - 1, strBuf, Color::white);
+    drawString(2, fuckingSurface.getHeight() - Surface::getFontHeight() - 1, strBuf, Color::white);
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw();
 
 } // end UnitColorView::doDraw
 

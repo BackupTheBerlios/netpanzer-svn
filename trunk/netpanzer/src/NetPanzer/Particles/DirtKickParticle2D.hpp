@@ -33,7 +33,7 @@ public:
 protected:
     static Surface dirtKickSprite;
 
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
+    virtual void draw(SpriteSorter &sorter);
 };
 
 #endif // __DirtKickParticle2D_hpp__

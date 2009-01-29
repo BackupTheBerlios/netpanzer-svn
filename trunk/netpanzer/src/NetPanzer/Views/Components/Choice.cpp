@@ -163,9 +163,12 @@ void Choice::actionPerformed(const mMouseEvent &me)
 
 // draw
 //---------------------------------------------------------------------------
-void Choice::draw(Surface &dest)
+void Choice::draw( int posx, int posy, Surface &dest)
 {
-    Surface s;
+    iXY oldpos = position;
+    position.x += posx;
+    position.y += posy;
+
     iRect   r;
 
     // Draw the label.
@@ -181,36 +184,37 @@ void Choice::draw(Surface &dest)
 
     getBounds(r);
 
-    s.setTo(dest, r);
-
     // Draw the border.
-    s.drawRect(iRect(0, 0, s.getWidth() - 2, s.getHeight() - 2), Color::gray96);
-    s.drawRect(iRect(1, 1, s.getWidth() - 1, s.getHeight() - 1), Color::white);
-    s.fillRect(iRect(1, 1, s.getWidth() - 2, s.getHeight() - 2), Color::terreVerte);
+    dest.drawRect(iRect(r.min.x    , r.min.y    , r.max.x - 2, r.max.y - 2), Color::gray96);
+    dest.drawRect(iRect(r.min.x + 1, r.min.y + 1, r.max.x - 1, r.max.y - 1), Color::white);
+    dest.fillRect(iRect(r.min.x + 1, r.min.y + 1, r.max.x - 2, r.max.y - 2), Color::terreVerte);
 
     if (!isOpen)	{
-        s.bltStringShadowedCenter(choiceList[index].c_str(), Color::white, Color::black);
+        // xxx change to correct position
+        dest.bltStringCenteredInRect(r, choiceList[index].c_str(), Color::white);
+        //dest.bltStringShadowedCenter(choiceList[index].c_str(), Color::white, Color::black);
     } else {
         r = iRect(position.x, position.y, position.x + size.x, position.y + ChoiceItemHeight);
 
         size_t count = choiceList.size();
 
-        for (size_t i = 0; i < count; i++) {
-            s.setTo(dest, r);
-
-            if (i == mouseover) {
+        for (size_t i = 0; i < count; i++)
+        {
+            if (i == mouseover)
+            {
                 // Higlight the selected item.
-                s.fill(Color::white);
-                s.bltStringCenter(choiceList[i].c_str(), Color::black);
+                dest.fillRect(r, Color::white);
+                dest.bltStringCenteredInRect(r,choiceList[i].c_str(), Color::black);
 
             } else {
-                s.bltStringShadowedCenter(choiceList[i].c_str(), Color::white, Color::black);
+                dest.bltStringCenteredInRect(r,choiceList[i].c_str(), Color::white);
             }
 
             r.translate(iXY(0, ChoiceItemHeight));
         }
     }
     //isOpen = 0;
+    position = oldpos;
 } // end Choice::draw
 
 // add

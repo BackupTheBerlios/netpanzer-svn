@@ -92,7 +92,7 @@ public:
     virtual void doActivate();
     virtual void doDeactivate();
     
-    void doDraw(Surface &viewArea, Surface &clientArea);
+    virtual void doDraw();
     void render();
     
 private:

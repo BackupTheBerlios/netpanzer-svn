@@ -35,7 +35,7 @@ protected:
     int rows;
 
     int  maxYOffset;
-    void drawHelpText(Surface &dest, const int &x, const int &y);
+    void drawHelpText( const int &x, const int &y);
 
     ScrollBar *scrollBar;
     std::vector<std::string> text;
@@ -56,7 +56,7 @@ public:
         delete scrollBar;
     }
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
     virtual void actionPerformed(mMouseEvent me);
     virtual void doActivate();
 }

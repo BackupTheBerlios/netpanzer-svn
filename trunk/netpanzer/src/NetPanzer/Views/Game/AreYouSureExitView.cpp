@@ -76,16 +76,14 @@ void AreYouSureExitView::init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void AreYouSureExitView::doDraw(Surface &viewArea, Surface &clientArea)
+void AreYouSureExitView::doDraw()
 {
-    iRect r(min, max);
-
-    viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
+    drawTransRect(*this, Palette::darkGray256.getColorArray());
     //viewArea.drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
 
-    viewArea.bltStringCenter("Are you sure you wish to exit netPanzer?", Color::white);
+    drawStringCenter("Are you sure you wish to exit netPanzer?", Color::white);
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw();
 } // end AreYouSureExitView::doDraw
 
 // doActivate

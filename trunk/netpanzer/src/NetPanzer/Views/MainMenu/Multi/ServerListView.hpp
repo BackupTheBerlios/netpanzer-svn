@@ -32,7 +32,7 @@ public:
     void refresh();
     void endQuery();
         
-    virtual void doDraw(Surface& windowArea, Surface& clientArea);
+    virtual void doDraw();
     virtual int lMouseUp(const iXY& up_pos, const iXY& down_pos);
 
 private:

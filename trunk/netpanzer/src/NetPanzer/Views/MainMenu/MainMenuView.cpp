@@ -39,9 +39,9 @@ MainMenuView::MainMenuView() : MenuTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void MainMenuView::doDraw(Surface &viewArea, Surface &clientArea)
+void MainMenuView::doDraw()
 {
-    MenuTemplateView::doDraw(viewArea, clientArea);
+    MenuTemplateView::doDraw();
 
     static char text[] =
         "This is NetPanzer version " PACKAGE_VERSION
@@ -61,5 +61,5 @@ void MainMenuView::doDraw(Surface &viewArea, Surface &clientArea)
         "Related Tools:\n"
         "   Tobias Blerch, Ingo Ruhnke\n";
 
-    viewArea.bltStringInBox(bodyTextRect, text, Color::white, 12);
+    drawStringInBox(bodyTextRect, text, Color::white, 12);
 } // end MainMenuView::doDraw

@@ -120,11 +120,11 @@ HostJoinTemplateView::HostJoinTemplateView() : MenuTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void HostJoinTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
+void HostJoinTemplateView::doDraw()
 {
-    MenuTemplateView::doDraw(viewArea, clientArea);
+    MenuTemplateView::doDraw();
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw();
 } // end doDraw
 
 // doActivate

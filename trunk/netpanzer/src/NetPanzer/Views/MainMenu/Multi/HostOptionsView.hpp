@@ -29,7 +29,7 @@ class HostOptionsView : public RMouseHackView
 {
 private:
     void addMeterButtons(const iXY &pos);
-    void drawMeterInfo(Surface &dest, const iXY &pos);
+    void drawMeterInfo( const iXY &pos);
 
     static int cloudCoverageCount;
     static int windSpeed;
@@ -50,7 +50,7 @@ public:
     virtual ~HostOptionsView()
     {}
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
     virtual void drawBorder(Surface& )
     {}
     virtual void actionPerformed(mMouseEvent me);

@@ -29,9 +29,9 @@ void bNext();
 class GetSessionView : public MenuTemplateView
 {
 protected:
-    void drawHostInfo(Surface &dest, const iRect &rect);
-    void drawJoinInfo(Surface &dest, const iRect &rect);
-    void drawInfo(Surface &dest);
+    void drawHostInfo(const iRect &rect);
+    void drawJoinInfo(const iRect &rect);
+    void drawInfo();
 
     virtual void loadBackgroundSurface();
     virtual void loadTitleSurface();
@@ -39,7 +39,7 @@ protected:
 public:
     GetSessionView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
     virtual void doActivate();
 }; // end GetSessionView
 

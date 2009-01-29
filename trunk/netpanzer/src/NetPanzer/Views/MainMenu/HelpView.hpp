@@ -31,7 +31,7 @@ protected:
 public:
     HelpView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
     virtual void doActivate();
     virtual void doDeactivate();
 }; // end HelpView

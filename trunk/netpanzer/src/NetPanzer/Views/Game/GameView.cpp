@@ -95,15 +95,15 @@ GameView::checkResolution(iXY oldResolution, iXY newResolution)
 }
 // doDraw
 //---------------------------------------------------------------------------
-void GameView::doDraw(Surface &va, Surface &clientArea)
+void GameView::doDraw()
 {
     // Added for debugging, accesible through LibView.
     //screen->fill(0);
 
     if (gDrawSolidBackground) {
-        screen->fill(250);
+        fill(250);
     } else {
-        drawMap(clientArea);
+        drawMap(*currentscreen);
     }
 
     // Added for debugging, accesible through LibView.
@@ -117,24 +117,24 @@ void GameView::doDraw(Surface &va, Surface &clientArea)
     SPRITE_SORTER.reset(world_win);
 
     PackedSurface::totalDrawCount = 0;
-    ParticleSystem2D::drawAll(clientArea, SPRITE_SORTER );
-    Particle2D::drawAll(clientArea, SPRITE_SORTER );
+    ParticleSystem2D::drawAll( SPRITE_SORTER );
+    Particle2D::drawAll( SPRITE_SORTER );
 
     UnitInterface::offloadGraphics( SPRITE_SORTER );
     ProjectileInterface::offloadGraphics( SPRITE_SORTER );
     ObjectiveInterface::offloadGraphics( SPRITE_SORTER );
     PowerUpInterface::offloadGraphics( SPRITE_SORTER );
 
-    SPRITE_SORTER.blitLists(&clientArea);
+    SPRITE_SORTER.blitLists(currentscreen);
 
-    VehicleSelectionView::drawMiniProductionStatus(clientArea);
+    VehicleSelectionView::drawMiniProductionStatus(*currentscreen);
 
     COMMAND_PROCESSOR.draw();
 
     // Make sure the console info is the last thing drawn.
-    ConsoleInterface::update(clientArea);
+    ConsoleInterface::update(*currentscreen);
     
-    View::doDraw(va, clientArea);
+    View::doDraw();
 } // end GameView::doDraw
 
 // lMouseDown

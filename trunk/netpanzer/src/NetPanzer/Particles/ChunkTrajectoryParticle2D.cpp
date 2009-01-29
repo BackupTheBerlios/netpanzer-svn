@@ -111,7 +111,7 @@ void ChunkTrajectoryParticle2D::init()
 
 // draw
 //---------------------------------------------------------------------------
-void ChunkTrajectoryParticle2D::draw(const Surface& , SpriteSorter &sorter)
+void ChunkTrajectoryParticle2D::draw(SpriteSorter &sorter)
 {
     assert(this != 0);
 

@@ -65,7 +65,7 @@ public:
                                int         canHaveSmoke   = 1);
 
     virtual void sim();
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
+    virtual void draw(SpriteSorter &sorter);
 
     static void init();
 

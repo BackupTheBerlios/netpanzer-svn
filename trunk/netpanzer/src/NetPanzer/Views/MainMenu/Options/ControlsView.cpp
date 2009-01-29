@@ -66,9 +66,9 @@ void ControlsView::initButtons()
 
 // doDraw
 //---------------------------------------------------------------------------
-void ControlsView::doDraw(Surface &viewArea, Surface &clientArea)
+void ControlsView::doDraw()
 {
-    MenuTemplateView::doDraw(viewArea, clientArea);
+    MenuTemplateView::doDraw();
 
     //char strBuf[256];
     //
@@ -92,7 +92,7 @@ void ControlsView::doDraw(Surface &viewArea, Surface &clientArea)
     //tempSurface.blt(clientArea, x, y);
     //
     //y += yOffset;
-    clientArea.bltStringCenter("Not available for preview", Color::white);
+    drawStringCenter("Not available for preview", Color::white);
 
 } // end ControlsView::doDraw
 

@@ -114,7 +114,7 @@ public:
         ScrollBar::viewableAmount = viewableAmount;
     }
 
-    virtual void draw(Surface &dest);
+    virtual void draw( int posx, int posy, Surface &dest);
     virtual void render()
     {
         

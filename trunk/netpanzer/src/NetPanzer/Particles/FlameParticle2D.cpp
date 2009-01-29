@@ -84,7 +84,7 @@ void FlameParticle2D::init()
 
 // draw
 //---------------------------------------------------------------------------
-void FlameParticle2D::draw(const Surface&, SpriteSorter& sorter)
+void FlameParticle2D::draw(SpriteSorter& sorter)
 {
     if (!isAlive) {
         return;

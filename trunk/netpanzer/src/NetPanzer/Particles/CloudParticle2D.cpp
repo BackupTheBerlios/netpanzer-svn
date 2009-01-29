@@ -145,7 +145,7 @@ void CloudParticle2D::sim()
 
 // draw
 //---------------------------------------------------------------------------
-void CloudParticle2D::draw(const Surface&, SpriteSorter &sorter)
+void CloudParticle2D::draw(SpriteSorter &sorter)
 {
     packedSurface.setAttrib(iXY(int(pos.x), int(pos.z)), layer);
     sorter.addSprite(&packedSurface);

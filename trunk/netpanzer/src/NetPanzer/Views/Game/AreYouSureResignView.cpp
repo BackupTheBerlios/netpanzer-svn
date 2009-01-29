@@ -146,16 +146,16 @@ void AreYouSureResignView::init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void AreYouSureResignView::doDraw(Surface &viewArea, Surface &clientArea)
+void AreYouSureResignView::doDraw()
 {
-    iRect r(min, max);
+    //iRect r(min, max);
 
-    viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
+    drawTransRect(*this, Palette::darkGray256.getColorArray());
     //viewArea.drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
 
-    viewArea.bltStringCenter("Are you sure you wish to Resign?", Color::white);
+    drawStringCenter("Are you sure you wish to Resign?", Color::white);
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw();
 } // end AreYouSureResignView::doDraw
 
 // doActivate

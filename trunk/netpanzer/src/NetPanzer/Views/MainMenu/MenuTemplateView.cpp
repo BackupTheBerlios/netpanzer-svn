@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include "Types/iRect.hpp"
+
 #include "Views/MainMenu/MenuTemplateView.hpp"
 #include "2D/Palette.hpp"
 #include "Views/Components/Desktop.hpp"
@@ -204,14 +206,17 @@ void MenuTemplateView::initButtons()
 
 // doDraw
 //---------------------------------------------------------------------------
-void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
+void MenuTemplateView::doDraw()
 {
     //setWorldRect();
     if (Desktop::getVisible("GameView")) {
 	// When ingame, tint the game into gray
-        clientArea.bltLookup(getClientRect(), Palette::darkGray256.getColorArray());
-        clientArea.drawWindowsBorder();
-
+        //r.translate(min);
+        //drawTransRect(clientRect, Palette::darkGray256.getColorArray());
+        //clientArea.drawWindowsBorder();
+        drawViewBackground();
+        drawRect(iRect(0,0,clientRect.getSizeX(), clientRect.getSizeY()), Color::gray64);
+        
     } else {
 	// When in mainmenu, make background dark and draw menu image
         if(screen->getWidth() > 640 ||
@@ -220,16 +225,17 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
         
         // Set the following to get does exist.
         if (backgroundSurface.getNumFrames() > 0) {
-            backgroundSurface.blt(viewArea, 0, 0);
+            drawImage( backgroundSurface, 0, 0);
         } else {
             throw Exception("Where is the background surface?");
         }
 
         //titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
-        titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, 390, Palette::colorTable6040);
+        //titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, 390, Palette::colorTable6040);
+        titlePackedSurface.bltBlend(*currentscreen, min.x + 40, min.y+390, Palette::colorTable6040);
     }
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw();
 } // end doDraw
 
 // doActivate

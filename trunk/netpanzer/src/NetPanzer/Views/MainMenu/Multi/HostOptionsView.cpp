@@ -266,7 +266,7 @@ HostOptionsView::HostOptionsView() : RMouseHackView()
     setVisible(false);
 
     moveTo(bodyTextRect.min.x, bodyTextRect.min.y + 190);
-    resizeClientArea(bodyTextRect.getSizeX(), 168);
+    resize(bodyTextRect.getSizeX(), 168);
 
     addMeterButtons(iXY(BORDER_SPACE, BORDER_SPACE));
 
@@ -274,15 +274,15 @@ HostOptionsView::HostOptionsView() : RMouseHackView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void HostOptionsView::doDraw(Surface &viewArea, Surface &clientArea)
+void HostOptionsView::doDraw()
 {
-    drawMeterInfo(clientArea, iXY(BORDER_SPACE, BORDER_SPACE));
+    drawMeterInfo(iXY(BORDER_SPACE, BORDER_SPACE));
 
-    clientArea.bltString( 4, clientArea.getHeight() - Surface::getFontHeight(),
+    drawString( 4, clientRect.getSizeY() - Surface::getFontHeight(),
                     "Note: Use the right mouse button to accomplish fast mouse clicking.",
                     Color::white);
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw();
 
 } // end HostOptionsView::doDraw
 
@@ -424,7 +424,7 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
 
 // drawMeterInfo
 //---------------------------------------------------------------------------
-void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
+void HostOptionsView::drawMeterInfo( const iXY &pos)
 {
     char strBuf[256];
 
@@ -441,7 +441,7 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
     tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
     sprintf(strBuf, "%d", getCurMaxPlayersCount());
     tempSurface.bltStringCenter(strBuf, meterTextColor);
-    tempSurface.blt(dest, x, y);
+    drawImage(tempSurface, x, y);
 
     // Game Max Unit Count
     y += yOffset;
@@ -449,7 +449,7 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
     tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
     sprintf(strBuf, "%d - %d max per player", getCurMaxUnitCount(), getCurMaxUnitCount() / getCurMaxPlayersCount());
     tempSurface.bltStringCenter(strBuf, meterTextColor);
-    tempSurface.blt(dest, x, y);
+    drawImage(tempSurface, x, y);
     /*
     	// Respawn Unit Count
     	y += yOffset;
@@ -489,21 +489,21 @@ void HostOptionsView::drawMeterInfo(Surface &dest, const iXY &pos)
         sprintf(strBuf, "Map Data Needed");
     }
     tempSurface.bltStringCenter(strBuf, meterTextColor);
-    tempSurface.blt(dest, x, y);
+    drawImage(tempSurface, x, y);
 
     y += yOffset;
     tempSurface.fill(meterColor);
     tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
     sprintf(strBuf, "%d:%d", getTimeLimitHours(), getTimeLimitMinutes() );
     tempSurface.bltStringCenter(strBuf, meterTextColor);
-    tempSurface.blt(dest, x, y);
+    drawImage(tempSurface, x, y);
 
     y += yOffset;
     tempSurface.fill(meterColor);
     tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
     sprintf(strBuf, "%d Frags", getFragLimit() );
     tempSurface.bltStringCenter(strBuf, meterTextColor);
-    tempSurface.blt(dest, x, y);
+    drawImage(tempSurface, x, y);
 
 
     /*

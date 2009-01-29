@@ -41,7 +41,7 @@ protected:
 public:
     ControlsView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
     virtual void initButtons();
 }; // end ControlsView
 

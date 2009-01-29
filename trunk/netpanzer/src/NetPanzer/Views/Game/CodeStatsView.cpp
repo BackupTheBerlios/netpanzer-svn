@@ -119,7 +119,7 @@ CodeStatsView::CodeStatsView() : GameTemplateView()
     long bXOffset;
     INFO_AREA_Y_OFFSET = 2;
 
-    resizeClientArea(area_size);
+    resize(area_size);
 
     bXOffset = area_size.x / 3;
     addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), bXOffset,  "Net", "", buttonNetwork);
@@ -154,25 +154,25 @@ CodeStatsView::CodeStatsView() : GameTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void CodeStatsView::doDraw(Surface &viewArea, Surface &clientArea)
+void CodeStatsView::doDraw()
 {
-    bltViewBackground(viewArea);
+    drawViewBackground();
 
     switch( display_mode ) {
     case _display_mode_network_stats :
-        drawNetworkStats( clientArea );
+        drawNetworkStats();
         break;
 
     case _display_mode_sorter_stats :
-        drawSorterStats( clientArea );
+        drawSorterStats();
         break;
 
     case _display_mode_pathing_stats :
-        drawPathingStats( clientArea );
+        drawPathingStats();
         break;
 
     case _display_mode_unit_stats :
-        drawUnitStats( clientArea );
+        drawUnitStats();
         break;
     }
 
@@ -183,12 +183,12 @@ void CodeStatsView::doDraw(Surface &viewArea, Surface &clientArea)
 
     clientArea.bltString(2, INFO_AREA_Y_OFFSET - 18, strBuf, Color::white);
     */
-    View::doDraw(viewArea, clientArea);
+    View::doDraw();
 
 } // end CodeStatsView::doDraw
 
 //---------------------------------------------------------------------------
-void CodeStatsView::drawNetworkStats(Surface &clientArea)
+void CodeStatsView::drawNetworkStats()
 {
 
     char strBuf[256];
@@ -197,58 +197,58 @@ void CodeStatsView::drawNetworkStats(Surface &clientArea)
 
     sprintf(strBuf, "Packets" );
 
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Sent %ld, %.4f 1/s, %.4f Avg",NetworkState::packets_sent,
             NetworkState::packets_sent_per_sec,
             ((float) NetworkState::packets_sent) / ((float) NetworkState::packets_sent_time) );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Recv %ld, %.4f 1/s, %.4f Avg",NetworkState::packets_received,
             NetworkState::packets_received_per_sec,
             ((float) NetworkState::packets_received) / ((float) NetworkState::packets_received_time) );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Bytes" );
 
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Sent %ld, %.4f 1/s, %.4f Avg",NetworkState::bytes_sent,
             NetworkState::bytes_sent_per_sec,
             ((float) NetworkState::bytes_sent) / ((float) NetworkState::packets_sent_time) );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Recv %ld, %.4f 1/s, %.4f Avg",NetworkState::bytes_received,
             NetworkState::bytes_received_per_sec,
             ((float) NetworkState::bytes_received) / ((float) NetworkState::packets_received_time) );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Opcodes" );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Sent : %ld, %.4f 1/s ", NetworkState::opcodes_sent,
             NetworkState::opcodes_sent_per_sec );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Recv : %ld, %.4f 1/s", NetworkState::opcodes_received,
             NetworkState::opcodes_received_per_sec );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
@@ -258,12 +258,12 @@ void CodeStatsView::drawNetworkStats(Surface &clientArea)
         sprintf(strBuf, "Ping Time: NA" );
     }
 
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
     str_loc.y += 12;
 }
 
 //---------------------------------------------------------------------------
-void CodeStatsView::drawSorterStats(Surface &clientArea)
+void CodeStatsView::drawSorterStats()
 {
 
     char strBuf[256];
@@ -271,20 +271,20 @@ void CodeStatsView::drawSorterStats(Surface &clientArea)
     iXY str_loc(2, INFO_AREA_Y_OFFSET);
 
     sprintf(strBuf, "Sorter" );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     for ( unsigned long i = 0; i < _MAX_HEIGHT_LEVELS; i++ ) {
         sprintf(strBuf, "Level %lu : %lu  ", i, SPRITE_SORTER.getMaxSprites( i ) );
-        clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+        drawString(str_loc.x, str_loc.y, strBuf, Color::white);
         str_loc.y += 12;
     }
 
 }
 
 //---------------------------------------------------------------------------
-void CodeStatsView::drawPathingStats(Surface &clientArea)
+void CodeStatsView::drawPathingStats()
 {
 
     char strBuf[256];
@@ -292,53 +292,53 @@ void CodeStatsView::drawPathingStats(Surface &clientArea)
     iXY str_loc(2, INFO_AREA_Y_OFFSET);
 
     sprintf(strBuf, "Pathing" );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "A* Time: %.6f s", PathingState::astar_gen_time );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "A* Avg: %.6f s", PathingState::getAverageAstarPathTime() );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "A* Total: %.6f s", PathingState::astar_gen_time_total );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Path Length: %ld ", PathingState::path_length );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Paths: %lu ", PathingState::path_gen_count );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Updates: %lu ", PathingState::update_gen_count );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Cache Hits: %lu ", PathingState::path_cache_hits );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Cache Misses: %lu ", PathingState::path_cache_misses );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 }
 
 //---------------------------------------------------------------------------
-void CodeStatsView::drawUnitStats(Surface &clientArea)
+void CodeStatsView::drawUnitStats()
 {
 
     char strBuf[256];
@@ -349,7 +349,7 @@ void CodeStatsView::drawUnitStats(Surface &clientArea)
     iXY str_loc(2, INFO_AREA_Y_OFFSET);
 
     sprintf(strBuf, "Units" );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
@@ -361,12 +361,12 @@ void CodeStatsView::drawUnitStats(Surface &clientArea)
         total += units;
 
         sprintf(strBuf, "Player %d : %lu  ", i, units);
-        clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+        drawString(str_loc.x, str_loc.y, strBuf, Color::white);
         str_loc.y += 12;
     }
 
     sprintf(strBuf, "UnitTotal : %d", total );
-    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
+    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 

@@ -52,9 +52,8 @@ void RadarPingParticle2D::init()
 
 // draw
 //---------------------------------------------------------------------------
-void RadarPingParticle2D::draw(const Surface &dest, SpriteSorter &sorter)
+void RadarPingParticle2D::draw(SpriteSorter &sorter)
 {
-    (void) dest;
     (void) sorter;
     // XXX
 #if 0

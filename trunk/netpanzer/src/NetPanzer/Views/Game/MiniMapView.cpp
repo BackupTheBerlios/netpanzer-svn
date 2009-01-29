@@ -56,10 +56,10 @@ MiniMapView::checkResolution(iXY oldResolution, iXY newResolution)
 
 // doDraw
 //---------------------------------------------------------------------------
-void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
+void MiniMapView::doDraw()
 {
     // border
-    viewArea.drawRect(iRect(0,0,viewArea.getWidth(), viewArea.getHeight()),Color::gray);
+    drawRect(iRect(0,0,clientRect.getSizeX(), clientRect.getSizeY()),Color::gray);
     
-    GameTemplateView::doDraw(viewArea, clientArea);
+    GameTemplateView::doDraw();
 } // end doDraw

@@ -42,7 +42,7 @@ protected:
 public:
     HostView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
 }; // end HostView
 
 #endif // end __HostView_hpp__

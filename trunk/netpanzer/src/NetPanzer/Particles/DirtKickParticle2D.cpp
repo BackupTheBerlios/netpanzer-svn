@@ -56,7 +56,7 @@ void DirtKickParticle2D::init()
 
 // draw
 //---------------------------------------------------------------------------
-void DirtKickParticle2D::draw(const Surface&, SpriteSorter&)
+void DirtKickParticle2D::draw(SpriteSorter&)
 {
     // XXX
     //assert(dirtKickSurface.getDoesExist());

@@ -28,7 +28,7 @@ class OrderingView : public MenuTemplateView
 public:
     OrderingView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
 }; // end OrderingView
 
 #endif // end __OrderingView_hpp__

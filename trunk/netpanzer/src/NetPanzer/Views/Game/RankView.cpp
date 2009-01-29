@@ -78,7 +78,7 @@ RankView::RankView() : GameTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void RankView::doDraw(Surface &viewArea, Surface &clientArea)
+void RankView::doDraw()
 {
     // make sure the window is big enough for all players
     unsigned int CHAR_YPIX = Surface::getFontHeight();
@@ -86,20 +86,20 @@ void RankView::doDraw(Surface &viewArea, Surface &clientArea)
     unsigned int entryheight = std::max(CHAR_YPIX, flagHeight) + 2;
     unsigned int newheight = 60 + entryheight * PlayerInterface::countPlayers();
     
-    if ( newheight != (unsigned int)getSizeY() ) {
+    if ( newheight != (unsigned int)clientRect.getSizeY() ) {
         resize(iXY(450, newheight));
         return; // this frame draws nothing
     }
     
-    bltViewBackground(viewArea);
+    drawViewBackground();
 
-    clientArea.drawButtonBorder(
-            iRect(0, 26, getClientRect().getSize().x - 1,
-                getClientRect().getSize().y - 1), Color::gray64, Color::white);
+    drawButtonBorder(
+            iRect(0, 26, clientRect.getSize().x - 1,
+                clientRect.getSize().y - 1), Color::gray64, Color::white);
 
-    drawPlayerStats(clientArea, flagHeight);
+    drawPlayerStats( flagHeight);
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw();
 } // end doDraw
 
 class StatesSortByFrags
@@ -129,7 +129,7 @@ public:
 //---------------------------------------------------------------------------
 // Purpose:
 //---------------------------------------------------------------------------
-void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
+void RankView::drawPlayerStats( unsigned int flagHeight)
 {
     char statBuf[256];
 
@@ -165,10 +165,10 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
                 "%-20s%10i%7i%6i%10i", state->getName().substr(0,20).c_str(),
                 state->getKills(), state->getLosses(), state->getTotal(),
                 state->getObjectivesHeld());
-        dest.bltStringShadowed(offset.x, offset.y, statBuf, state->getColor(), Color::gray64);
+        drawStringShadowed(offset.x, offset.y, statBuf, state->getColor(), Color::gray64);
         
         flag = ResourceManager::getFlag(state->getFlag());
-        flag->blt( dest, flagOffset.x, flagOffset.y );
+        drawImage( *flag, flagOffset.x, flagOffset.y );
 
         offset.y += entryHeight;
         flagOffset.y += entryHeight;        

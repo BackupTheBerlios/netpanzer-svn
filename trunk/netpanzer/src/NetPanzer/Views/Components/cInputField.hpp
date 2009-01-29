@@ -107,12 +107,13 @@ public:
     void setExcludedCharacters(const char *exChars);
     void addChar(int newChar);
     void addExtendedChar(int newExtendedChar);
-   void draw(Surface &dest);
-    void drawHighlighted(Surface &dest);
+    void draw();
+    void drawHighlighted();
     void checkCursor();
     void resetString();     // reset string position
 
 private:
+    friend class View;
     iXY      pos;
     size_t   maxCharCount;
     int     strDisplayStart;  // which char to start displaying from

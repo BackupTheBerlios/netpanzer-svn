@@ -129,8 +129,12 @@ void ScrollBar::setSize()
 
 // draw
 //---------------------------------------------------------------------------
-void ScrollBar::draw(Surface &dest)
+void ScrollBar::draw( int posx, int posy, Surface &dest)
 {
+    iXY oldpos = position;
+    position.x += posx;
+    position.y += posy;
+
     setLocation();
     setSize();
 
@@ -162,7 +166,6 @@ void ScrollBar::draw(Surface &dest)
 
         iRect r(drawMin, drawMin + size);
 
-        surface.setTo(dest, r);
         //surface.fill(Color::gray128);
         //surface.shade(Color::white);
 
@@ -171,15 +174,15 @@ void ScrollBar::draw(Surface &dest)
             int midHandlePos = (int) (float(size.y) * percent);
 
             r = iRect(0, midHandlePos, size.x, midHandlePos);
-            surface.fillRect(r, Color::gray128);
-            surface.drawButtonBorder(r, Color::gray64, Color::gray192);
+            dest.fillRect(r, Color::gray128);
+            dest.drawButtonBorder(r, Color::gray64, Color::gray192);
 
         } else if (orientation == HORIZONTAL) {
             int midHandlePos = (int) (float(size.x) * percent);
 
             r = iRect(midHandlePos, 0, midHandlePos, size.y);
-            surface.fillRect(r, Color::gray128);
-            surface.drawButtonBorder(r, Color::gray64, Color::gray192);
+            dest.fillRect(r, Color::gray128);
+            dest.drawButtonBorder(r, Color::gray64, Color::gray192);
 
         } else {
             assert(false);
@@ -249,7 +252,7 @@ void ScrollBar::draw(Surface &dest)
         //surface.fill(background);
         //surface.shade(Color::red);
     }
-
+    position = oldpos;
 } // end ScrollBar::draw
 
 // clicked

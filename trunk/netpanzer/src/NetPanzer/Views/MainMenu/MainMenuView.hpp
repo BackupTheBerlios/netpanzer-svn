@@ -28,7 +28,7 @@ class MainMenuView : public MenuTemplateView
 public:
     MainMenuView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
 }; // end MainMenuView
 
 #endif // end __MainMenuView_hpp__

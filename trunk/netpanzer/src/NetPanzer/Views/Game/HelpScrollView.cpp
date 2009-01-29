@@ -132,16 +132,17 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void HelpScrollView::doDraw(Surface &viewArea, Surface &clientArea)
+void HelpScrollView::doDraw()
 {
-    if (Desktop::getVisible("GameView")) {
-        bltViewBackground(viewArea);
+    if (Desktop::getVisible("GameView"))
+    {
+        drawViewBackground();
     }
 
-    drawHelpText(clientArea, 0, 0);
+    drawHelpText( 0, 0);
 
-    clientArea.bltString(   4,
-                            clientArea.getHeight() - Surface::getFontHeight(),
+    drawString(   4,
+                            clientRect.getSizeY() - Surface::getFontHeight(),
                             "Note: Use the right mouse button to accomplish fast mouse clicking.",
                             Color::white);
 
@@ -149,12 +150,12 @@ void HelpScrollView::doDraw(Surface &viewArea, Surface &clientArea)
     //sprintf(strBuf, "%d", scrollBar->getValue());
     //clientArea.bltStringCenter(strBuf, Color::red);
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw();
 } // end HelpScrollView::doDraw
 
 // drawHelpText
 //--------------------------------------------------------------------------
-void HelpScrollView::drawHelpText(Surface &dest, const int &, const int &)
+void HelpScrollView::drawHelpText( const int &, const int &)
 {
     PIX color   = Color::white;
 
@@ -170,7 +171,7 @@ void HelpScrollView::drawHelpText(Surface &dest, const int &, const int &)
     //
     int curIndex = 0;
     for (int i = topViewableItem; i < topViewableItem + maxViewableItems; i++) {
-        dest.bltString(1, 6 + curIndex * (TEXT_GAP_SPACE +
+        drawString(1, 6 + curIndex * (TEXT_GAP_SPACE +
                     Surface::getFontHeight()), text[i].c_str(), color);
         curIndex++;
     }

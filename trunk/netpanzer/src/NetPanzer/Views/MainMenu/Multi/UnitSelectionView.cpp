@@ -50,12 +50,12 @@ UnitSelectionView::UnitSelectionView() : View()
 
 // doDraw
 //---------------------------------------------------------------------------
-void UnitSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
+void UnitSelectionView::doDraw()
 {
     char strBuf[256];
     sprintf(strBuf, "%d", scrollBar->getValue());
-    clientArea.bltStringCenter(strBuf, Color::white);
+    drawStringCenter(strBuf, Color::white);
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw();
 
 } // end UnitSelectionView::doDraw

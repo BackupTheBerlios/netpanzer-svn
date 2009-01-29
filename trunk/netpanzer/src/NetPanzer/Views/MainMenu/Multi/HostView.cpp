@@ -85,9 +85,9 @@ HostView::HostView() : HostJoinTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void HostView::doDraw(Surface &viewArea, Surface &clientArea)
+void HostView::doDraw()
 {
-    HostJoinTemplateView::doDraw(viewArea, clientArea);
+    HostJoinTemplateView::doDraw();
 
     /*
     	char strBuf[256];
@@ -119,7 +119,7 @@ void HostView::doDraw(Surface &viewArea, Surface &clientArea)
     	sprintf(strBuf, "%3d", gameconfig->GetNumberPlayers());
     	clientArea.bltString(x + 125, y, strBuf, Color::white);
     */
-    View::doDraw(viewArea, clientArea);
+    View::doDraw();
 
 } // end HostView::doDraw
 

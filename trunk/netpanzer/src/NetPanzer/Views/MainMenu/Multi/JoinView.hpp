@@ -32,7 +32,7 @@ protected:
 public:
     JoinView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
     virtual void doDeactivate();
 }; // end JoinView
 

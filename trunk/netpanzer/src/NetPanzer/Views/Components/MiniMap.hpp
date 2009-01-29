@@ -31,7 +31,7 @@ public:
     MiniMap(int x, int y, int w, int h);
     virtual ~MiniMap();
     
-    void draw(Surface &dest);
+    void draw( int posx, int posy, Surface &dest);
     
     virtual void render()
     {

@@ -32,7 +32,7 @@ protected:
 public:
     OptionsTemplateView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
     virtual void initButtons();
 }; // end OptionsTemplateView
 

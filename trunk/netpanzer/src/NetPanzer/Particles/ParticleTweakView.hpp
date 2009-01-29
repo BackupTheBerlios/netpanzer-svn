@@ -29,7 +29,7 @@ protected:
 public:
     ParticleTweakView();
 
-    virtual void doDraw (Surface &viewArea, Surface &clientArea);
+    virtual void doDraw();
 }; // end ParticleTweakView
 
 

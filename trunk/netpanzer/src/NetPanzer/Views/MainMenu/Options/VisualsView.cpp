@@ -157,11 +157,11 @@ void VisualsView::initButtons()
 
 // doDraw
 //---------------------------------------------------------------------------
-void VisualsView::doDraw(Surface &viewArea, Surface &clientArea)
+void VisualsView::doDraw()
 {
-    MenuTemplateView::doDraw(viewArea, clientArea);
+    MenuTemplateView::doDraw();
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw();
 
 } // end VisualsView::doDraw
 

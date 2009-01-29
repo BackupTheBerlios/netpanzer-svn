@@ -31,7 +31,7 @@ public:
 
  void Init();
 
- virtual void doDraw(Surface &windowArea, Surface &clientArea); 
+ virtual void doDraw();
 }; // end IPAddressView
 
 #endif // end __IPAddressView_h__

@@ -146,15 +146,11 @@ public:
     
     void resize(int xPix, int yPix);
 
-    void setTo(const Surface &s, iRect bounds);
-    void setTo(const Surface &source);
-
     void blt(Surface &dest, int x, int y) const;
     void bltTrans(Surface &dest, int x, int y) const;
     void bltTransColor(Surface &dest, int x, int y, const PIX &color) const;
     void bltScale(const Surface &source, const iRect &destRect);
     void bltLookup(const iRect &destRect, const PIX table[]);
-
 
     void drawHLine(int x1, int y,  int x2, const PIX &color);
     void drawVLine(int x,  int y1, int y2, const PIX &color);

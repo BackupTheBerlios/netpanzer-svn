@@ -52,7 +52,7 @@ LoadingView::init()
 
 
 void
-LoadingView::doDraw(Surface &viewArea, Surface &clientArea)
+LoadingView::doDraw()
 {
     if ( Palette::getName() != "netpmenu" )
     {
@@ -63,10 +63,10 @@ LoadingView::doDraw(Surface &viewArea, Surface &clientArea)
         render();
     
     screen->fill(Color::black);
-    backgroundSurface.blt(clientArea, 0, 0);
-    surface.blt(clientArea, 179, 153);
+    drawImage(backgroundSurface, 0, 0);
+    drawImage(surface, 179, 153);
     
-    View::doDraw(viewArea, clientArea);    
+    View::doDraw();    
 }
 
 void

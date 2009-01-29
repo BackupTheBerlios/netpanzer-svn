@@ -106,9 +106,8 @@ void FireParticleSystem2D::sim()
 
 // draw
 //---------------------------------------------------------------------------
-void FireParticleSystem2D::draw(const Surface &dest, SpriteSorter &sorter)
+void FireParticleSystem2D::draw(SpriteSorter &sorter)
 {
-    (void) dest;
     (void) sorter;
     for (int num = 0; num < 100; num++) {
         //dest.fillRect(100, 100, 110, 110, Color::red);

@@ -33,10 +33,10 @@ SkirmishView::SkirmishView() : MenuTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void SkirmishView::doDraw(Surface &viewArea, Surface &clientArea)
+void SkirmishView::doDraw()
 {
-    MenuTemplateView::doDraw(viewArea, clientArea);
+    MenuTemplateView::doDraw();
 
-    clientArea.bltString(100, 200, "Umm... complete me!", Color::white);
+    drawString(100, 200, "Umm... complete me!", Color::white);
 
 } // end SkirmishView::doDraw

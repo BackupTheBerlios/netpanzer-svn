@@ -44,7 +44,7 @@ protected:
 public:
     SoundView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
     virtual void initButtons();
     virtual void stateChanged(Component* source);
 }; // end SoundView

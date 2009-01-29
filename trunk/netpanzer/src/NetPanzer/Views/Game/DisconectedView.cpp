@@ -129,14 +129,12 @@ DisconectedView::init()
 }
 
 void
-DisconectedView::doDraw(Surface &viewArea, Surface &clientArea)
+DisconectedView::doDraw()
 {
-    iRect r(min, max);
+    drawTransRect(*this, Palette::darkGray256.getColorArray());
+    drawStringCenter(disconectMsg.c_str(), Color::white);
 
-    viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
-    viewArea.bltStringCenter(disconectMsg.c_str(), Color::white);
-
-    View::doDraw(viewArea, clientArea);
+    View::doDraw();
 }
 
 void

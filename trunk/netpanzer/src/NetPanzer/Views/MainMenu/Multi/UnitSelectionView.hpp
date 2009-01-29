@@ -38,7 +38,7 @@ public:
         delete scrollBar;
     }
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
 }; // end UnitSelectionView
 
 #endif // end __UnitSelectionView_hpp__

@@ -30,7 +30,7 @@ private:
 public:
     ResignView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
     virtual void doActivate();
 }; // end ResignView
 

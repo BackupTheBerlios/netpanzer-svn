@@ -40,7 +40,7 @@ ServerListView::ServerListView()
     setSubTitle("");
 
     moveTo(bodyTextRect.min + iXY(0, 170));
-    resizeClientArea(bodyTextRect.max - bodyTextRect.min - iXY(0,170));
+    resize(bodyTextRect.max - bodyTextRect.min - iXY(0,170));
 
     setAllowResize(false);
     setAllowMove(false);
@@ -107,9 +107,9 @@ ServerListView::buttonRefresh()
 }
 
 void
-ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
+ServerListView::doDraw()
 {
-    clientArea.fill(Color::black);
+    fill(Color::black);
     
     if(queryThread && queryThread->isRunning()) {
         queryThread->checkTimeOuts();
@@ -122,8 +122,8 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
         } else {
             msg = "Resolving masterserver address";
         }
-        clientArea.bltString(0, 0, msg, Color::white);
-        View::doDraw(windowArea, clientArea);
+        drawString(0, 0, msg, Color::white);
+        View::doDraw();
         return;
     }
 
@@ -133,17 +133,17 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
         const masterserver::ServerInfo& server = *(*i);
 
         if(server.status == masterserver::ServerInfo::QUERYING) {
-            clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
-            clientArea.bltString(140, y, "querying...", Color::gray);
+            drawString(0,   y, server.address.c_str(), Color::gray);
+            drawString(140, y, "querying...", Color::gray);
         } else if(server.status == masterserver::ServerInfo::TIMEOUT) {
-            clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
-            clientArea.bltString(140, y, "timeout", Color::gray);
+            drawString(0,   y, server.address.c_str(), Color::gray);
+            drawString(140, y, "timeout", Color::gray);
         } else if(server.protocol < NETPANZER_PROTOCOL_VERSION) {
-            clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
-            clientArea.bltString(140, y, "server protocol too old", Color::gray);
+            drawString(0,   y, server.address.c_str(), Color::gray);
+            drawString(140, y, "server protocol too old", Color::gray);
         } else if(server.protocol > NETPANZER_PROTOCOL_VERSION) {
-            clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
-            clientArea.bltString(140, y, "server protocol too new", Color::gray);
+            drawString(0,   y, server.address.c_str(), Color::gray);
+            drawString(140, y, "server protocol too new", Color::gray);
         } else {
             std::stringstream playerstr;
             playerstr << server.players << "/" << server.maxplayers;
@@ -158,26 +158,26 @@ ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
             
             if (servaddr.str()==IPAddressView::szServer.getString()) {
                 textcolor = Color::yellow;
-                clientArea.fillRect(
-                    iRect(0,y,clientArea.getWidth(),y+Surface::getFontHeight()),
+                fillRect(
+                    iRect(0,y,clientRect.getSizeX(),y+Surface::getFontHeight()),
                     Color::blue);
             }
 
             char ssn[44];
             SDL_strlcpy(ssn, server.name.c_str(), sizeof(ssn));
-            clientArea.bltString(0,   y, ssn, textcolor);
-            clientArea.bltString(350, y, playerstr.str().c_str(), textcolor);
-            clientArea.bltString(400, y, server.map.c_str(), textcolor);
-            clientArea.bltString(550, y, pingstr.str().c_str(), textcolor);
+            drawString(0,   y, ssn, textcolor);
+            drawString(350, y, playerstr.str().c_str(), textcolor);
+            drawString(400, y, server.map.c_str(), textcolor);
+            drawString(550, y, pingstr.str().c_str(), textcolor);
 
         }
 
         y += Surface::getFontHeight();
-        if(y >= clientArea.getHeight())
+        if(y >= clientRect.getSizeY())
             break;                             
     }
 
-    View::doDraw(windowArea, clientArea);
+    View::doDraw();
 }
 
 int

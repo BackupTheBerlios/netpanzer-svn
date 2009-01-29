@@ -38,7 +38,7 @@ protected:
 
     float FPS;
 
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
+    virtual void draw(SpriteSorter &sorter);
 
 }
 ; // end RadarPingParticle2D

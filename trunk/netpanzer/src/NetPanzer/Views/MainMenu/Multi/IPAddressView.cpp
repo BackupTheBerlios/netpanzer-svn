@@ -40,7 +40,7 @@ IPAddressView::IPAddressView() : View()
     iXY  area_size = iXY(
             30 * 8 + 16,
             Surface::getFontHeight() + 4 + 8);
-    resizeClientArea(area_size);
+    resize(area_size);
 
     Init();
 } // end IPAddressView constructor
@@ -53,9 +53,9 @@ void IPAddressView::Init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void IPAddressView::doDraw(Surface &viewArea, Surface &clientArea)
+void IPAddressView::doDraw()
 {
-    clientArea.fill(Color::black);
-    View::doDraw(viewArea, clientArea);
+    fill(Color::black);
+    View::doDraw();
 } // end IPAddressView::doDraw
 

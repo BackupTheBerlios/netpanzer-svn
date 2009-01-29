@@ -45,7 +45,7 @@ protected:
     void reset();
 
     virtual void sim();
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
+    virtual void draw(SpriteSorter &sorter);
 
 }
 ; // end FireParticleSystem2D

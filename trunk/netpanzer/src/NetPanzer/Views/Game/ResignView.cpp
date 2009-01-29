@@ -83,14 +83,14 @@ void ResignView::init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void ResignView::doDraw(Surface &viewArea, Surface &clientArea)
+void ResignView::doDraw()
 {
-    iRect r(0, 0, currentscreen->getWidth(), currentscreen->getHeight());
+    //iRect r(0, 0, currentscreen->getWidth(), currentscreen->getHeight());
 
-    currentscreen->bltLookup(r, Palette::darkGray256.getColorArray());
-    currentscreen->drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
+    drawTransRect(*this, Palette::darkGray256.getColorArray());
+    drawButtonBorder(*this, Color::lightGreen, Color::darkGreen);
 
-    View::doDraw(viewArea, clientArea);
+    View::doDraw();
 } // end ResignView::doDraw
 
 // doActivate

@@ -35,7 +35,7 @@ private:
 public:
     UnitColorView();
 
-    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
     virtual void rMouseDown  (const iXY &pos);
     virtual void rMouseUp    (const iXY &downPos, const iXY &upPos);
     virtual void rMouseDrag  (const iXY &downPos, const iXY &prevPos, const iXY &newPos);

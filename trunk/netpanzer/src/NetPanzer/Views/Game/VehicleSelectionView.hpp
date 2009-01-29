@@ -82,8 +82,8 @@ private:
     int  getUnitRegenTime(unsigned short unitType);
     void checkMaxValues(const UnitProfile &profile);
     void getProfileData();
-    void drawBar(Surface &dest, const iXY &pos, int length, float percent);
-    void drawUnitProfileInfo(Surface &dest, const iXY &pos, short int unitType);
+    void drawBar( const iXY &pos, int length, float percent);
+    void drawUnitProfileInfo( const iXY &pos, short int unitType);
 
     iXY            productionUnitPos;
     iXY            timeRequiredPos;
@@ -100,7 +100,7 @@ public:
     {}
 
     virtual void        doActivate();
-    virtual void        doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void doDraw();
     virtual void        mouseMove(const iXY &prevPos, const iXY &newPos);
     static  const char *getUnitName(int unitType);
     static  void        drawMiniProductionStatus(Surface &dest);

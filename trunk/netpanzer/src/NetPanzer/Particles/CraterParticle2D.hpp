@@ -52,7 +52,7 @@ public:
 
 protected:
 
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
+    virtual void draw(SpriteSorter &sorter);
     virtual void sim();
 
     // Statistic data.

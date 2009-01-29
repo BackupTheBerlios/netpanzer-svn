@@ -49,11 +49,11 @@ public:
         Particle2D::bltTo = bltTo;
     }
 
-    static  void drawAll(const Surface &dest, SpriteSorter &sorter);
+    static  void drawAll(SpriteSorter &sorter);
     static  void removeAll();
     static  void simAll();
 
-    virtual void draw(const Surface &dest, SpriteSorter &sorter);
+    virtual void draw(SpriteSorter &sorter);
     virtual void sim();
 
     void *operator new(size_t numBytes);  // Overloaded for static array.
