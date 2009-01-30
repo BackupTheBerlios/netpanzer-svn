@@ -15,21 +15,15 @@
 #include "Classes/ScreenSurface.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Views/Components/Desktop.hpp"
+#include "Views/Components/Button.hpp"
 
 list<string> LoadingView::lines;
 bool LoadingView::dirty = true;
 
-static void bAbort()
+enum
 {
-    if(gameconfig->quickConnect) {
-        GameManager::exitNetPanzer();
-        return;
-    }
-    sound->stopTankIdle();
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("MainView", true);
-}
-
+    BTN_ABORT
+};
 
 void
 LoadingView::init()
@@ -46,7 +40,7 @@ LoadingView::init()
 
     resize(640, 480);
     
-    addButtonCenterText(iXY(628 - 60, 302 - 15), 60, "Abort", "Cancel the joining of this game.", bAbort);
+    add( Button::createTextButton("abort","Abort", iXY(628 - 60, 302 - 15), 60, BTN_ABORT) );
     
 }
 
@@ -101,4 +95,20 @@ LoadingView::doDeactivate()
 {
     backgroundSurface.free();
     surface.free();
+}
+
+void
+LoadingView::onComponentClicked(Component* c)
+{
+    if ( c->getCustomCode() == BTN_ABORT )
+    {
+        if(gameconfig->quickConnect)
+        {
+            GameManager::exitNetPanzer();
+            return;
+        }
+        sound->stopTankIdle();
+        Desktop::setVisibilityAllWindows(false);
+        Desktop::setVisibility("MainView", true);
+    }
 }

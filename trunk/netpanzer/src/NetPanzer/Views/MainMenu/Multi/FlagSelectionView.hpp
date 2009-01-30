@@ -31,7 +31,9 @@ private:
     static Surface playerFlag;
     
     enum { BORDER_SPACE = 4 };
-
+protected:
+    void onComponentClicked(Component * c);
+    
 public:
     FlagSelectionView();
     virtual ~FlagSelectionView()

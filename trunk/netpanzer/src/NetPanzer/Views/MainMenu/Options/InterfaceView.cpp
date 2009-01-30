@@ -17,24 +17,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include "Views/Components/Button.hpp"
+
 #include "Views/MainMenu/Options/InterfaceView.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/Label.hpp"
 
-
-static void bIncreaseScrollRate()
+enum
 {
-    if(gameconfig->scrollrate + 100 <= gameconfig->scrollrate.getMax())
-        gameconfig->scrollrate = gameconfig->scrollrate + 100;
-}
-
-static void bDecreaseScrollRate()
-{
-    if(gameconfig->scrollrate - 100 >= gameconfig->scrollrate.getMin())
-        gameconfig->scrollrate = gameconfig->scrollrate - 100;
-}
+    DEC_SCROLL,
+    INC_SCROLL
+};
 
 static int getScrollRate()
 {
@@ -73,10 +68,11 @@ void InterfaceView::initButtons()
 
     x = xTextStart;
     add( new Label( x, y, "Scroll Rate", Color::white) );
+
     x = optionsMeterStartX;
-    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseScrollRate);
+    add( Button::createTextButton("decscroll","<",iXY(x-1,y),arrowButtonWidth, DEC_SCROLL));
     x += optionsMeterWidth + arrowButtonWidth;
-    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseScrollRate);
+    add( Button::createTextButton("incscroll",">",iXY(x+1,y),arrowButtonWidth, INC_SCROLL));
     y += yOffset;
 }
 
@@ -102,6 +98,27 @@ void InterfaceView::doDraw()
     tempSurface.bltStringCenter(strBuf, meterTextColor);
     drawImage(tempSurface, x, y);
 } // end InterfaceView::doDraw
+
+void
+InterfaceView::onComponentClicked(Component* c)
+{
+    switch ( c->getCustomCode() )
+    {
+        case DEC_SCROLL:
+            if(gameconfig->scrollrate - 100 >= gameconfig->scrollrate.getMin())
+            {
+                gameconfig->scrollrate = gameconfig->scrollrate - 100;
+            }
+            break;
+
+        case INC_SCROLL:
+            if(gameconfig->scrollrate + 100 <= gameconfig->scrollrate.getMax())
+            {
+                gameconfig->scrollrate = gameconfig->scrollrate + 100;
+            }
+            break;
+    }
+}
 
 // loadTitleSurface
 //---------------------------------------------------------------------------

@@ -232,7 +232,7 @@ void MenuTemplateView::doDraw()
 
         //titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
         //titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, 390, Palette::colorTable6040);
-        titlePackedSurface.bltBlend(*currentscreen, min.x + 40, min.y+390, Palette::colorTable6040);
+        titlePackedSurface.bltBlend(*screen, min.x + 40, min.y+390, Palette::colorTable6040);
     }
 
     View::doDraw();

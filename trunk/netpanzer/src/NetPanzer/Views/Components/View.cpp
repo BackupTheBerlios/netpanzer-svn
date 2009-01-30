@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "2D/Palette.hpp"
+#include "Classes/ScreenSurface.hpp"
 
 const int RESIZE_WIDTH = 10;
 const int RESIZE_XMIN  = RESIZE_WIDTH;
@@ -51,7 +52,6 @@ void View::add(Component *component)
 // View
 //---------------------------------------------------------------------------
 View::View()
-    : currentscreen(0)
 {
     reset();
 } // end View::View
@@ -138,10 +138,10 @@ void View::reset()
 //---------------------------------------------------------------------------
 // Purpose: Draws the borders of the window.
 //---------------------------------------------------------------------------
-void View::drawBorder(Surface &viewArea)
+void View::drawBorder()
 {
     assert(this != 0);
-    currentscreen->drawRect(iRect(min, max), Color::darkGray);
+    screen->drawRect(iRect(min, max), Color::darkGray);
 } // end drawBorder
 
 // drawTitle
@@ -149,20 +149,20 @@ void View::drawBorder(Surface &viewArea)
 // Purpose: Draws the title of the view and colors the move area background
 //          depending on whether the view is active.
 //---------------------------------------------------------------------------
-void View::drawTitle(Surface &viewArea)
+void View::drawTitle()
 {
     assert(this != 0);
 
     iRect r(borderSize, borderSize, getSizeX() - borderSize, borderSize + moveAreaHeight - 1);
     r.translate(min);
 
-    viewArea.fillRect(r, getActive() ? activeWindowTitleBodyColor : inactiveWindowTitleBodyColor);
+    screen->fillRect(r, getActive() ? activeWindowTitleBodyColor : inactiveWindowTitleBodyColor);
 
     char strBuf[256];
 
     sprintf(strBuf, "%s%s", title, subTitle);
 
-    viewArea.bltStringCenteredInRect(r, strBuf, getActive() ? activeWindowTitleTextColor : inactiveWindowTitleTextColor);
+    screen->bltStringCenteredInRect(r, strBuf, getActive() ? activeWindowTitleTextColor : inactiveWindowTitleTextColor);
 
     if (getResize()) {
         {
@@ -170,40 +170,40 @@ void View::drawTitle(Surface &viewArea)
             iXY verticalPos(min.x + borderSize, min.y + getSizeY() - borderSize - moveAreaHeight + 1);
             iXY horizontalPos(min.x + borderSize + moveAreaHeight - 1, min.y + getSizeY() - borderSize);
 
-            viewArea.drawLine(verticalPos, horizontalPos, Color::white);
+            screen->drawLine(verticalPos, horizontalPos, Color::white);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray224);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray192);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x--;
         }
@@ -213,40 +213,40 @@ void View::drawTitle(Surface &viewArea)
             iXY verticalPos(min.x + borderSize, min.y + borderSize + moveAreaHeight - 1);
             iXY horizontalPos(min.x + borderSize + moveAreaHeight - 1, min.y + borderSize);
 
-            viewArea.drawLine(verticalPos, horizontalPos, Color::white);
+            screen->drawLine(verticalPos, horizontalPos, Color::white);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray224);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray192);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x--;
         }
@@ -256,40 +256,40 @@ void View::drawTitle(Surface &viewArea)
             iXY verticalPos(min.x + getSizeX() - borderSize, min.y + borderSize + moveAreaHeight - 1);
             iXY horizontalPos(min.x + getSizeX() - borderSize - moveAreaHeight, min.y + borderSize - 1);
 
-            viewArea.drawLine(verticalPos, horizontalPos, Color::white);
+            screen->drawLine(verticalPos, horizontalPos, Color::white);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray224);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray192);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y--;
             horizontalPos.x++;
         }
@@ -299,40 +299,40 @@ void View::drawTitle(Surface &viewArea)
             iXY verticalPos(min.x + getSizeX() - borderSize, min.y + getSizeY() - borderSize - moveAreaHeight + 1);
             iXY horizontalPos(min.x + getSizeX() - borderSize - moveAreaHeight + 1, min.y + getSizeY() - borderSize);
 
-            viewArea.drawLine(verticalPos, horizontalPos, Color::white);
+            screen->drawLine(verticalPos, horizontalPos, Color::white);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray224);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray224);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray192);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray192);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
-            viewArea.drawLine(verticalPos, horizontalPos, Color::gray160);
+            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
             verticalPos.y++;
             horizontalPos.x++;
         }
@@ -342,12 +342,11 @@ void View::drawTitle(Surface &viewArea)
 
 // draw
 //---------------------------------------------------------------------------
-void View::draw(Surface& surface)
+void View::draw()
 {
     if (!getVisible())
         return;
 
-    currentscreen = &surface; // hack
     doDraw();
 } // end draw
 
@@ -395,7 +394,7 @@ void View::deactivate()
 void View::doDraw()
 {
     if (getShowStatus()) {
-        drawStatus(*currentscreen);
+        drawStatus();
     }
 
     drawDefinedButtons();
@@ -407,18 +406,18 @@ void View::doDraw()
     ComponentsIterator i;
     for ( i=components.begin(); i != components.end(); i++) {
         if (*i != focusComponent) {
-            (*i)->draw(clientRect.min.x, clientRect.min.y, *currentscreen);
+            (*i)->draw(clientRect.min.x, clientRect.min.y, *screen);
         }
     }
 
     // Now draw the selected component.
     if (focusComponent != 0) {
-        focusComponent->draw(clientRect.min.x, clientRect.min.y, *currentscreen);
+        focusComponent->draw(clientRect.min.x, clientRect.min.y, *screen);
     }
 
     if (getBordered()) {
-        drawTitle(*currentscreen);
-        drawBorder(*currentscreen);
+        drawTitle();
+        drawBorder();
     }
 } // end View::doDraw
 
@@ -905,7 +904,7 @@ void View::drawDefinedButtons()
     std::vector<cButton*>::iterator i;
     for(i = buttons.begin(); i != buttons.end(); i++) {
         cButton* button = *i;
-        button->topSurface.blt(*currentscreen, clientRect.min + button->getBounds().min);
+        button->topSurface.blt(*screen, clientRect.min + button->getBounds().min);
     }
 } // end drawDefinedButtons
 
@@ -921,7 +920,7 @@ void View::drawInputFields()
         } else {
             inputFields[num]->draw();
         }
-        inputFields[num]->inputFieldSurface.blt(*currentscreen,
+        inputFields[num]->inputFieldSurface.blt(*screen,
                             clientRect.min.x + inputFields[num]->bounds.min.x,
                             clientRect.min.y + inputFields[num]->bounds.min.y);
     }
@@ -939,7 +938,7 @@ void View::drawHighlightedButton()
         return;
     } else if (buttons[highlightedButton]->topSurface.getFrameCount() < 2) {
         cButton* button = buttons[highlightedButton];
-        currentscreen->drawRect(iRect(clientRect.min.x + button->getBounds().min.x,
+        screen->drawRect(iRect(clientRect.min.x + button->getBounds().min.x,
                                   clientRect.min.y + button->getBounds().min.y,
                                   clientRect.max.x + button->getBounds().max.x,
                                   clientRect.max.y + button->getBounds().max.y),
@@ -957,7 +956,7 @@ void View::drawHighlightedButton()
 
     // Change to the highlight button frame.
     buttons[highlightedButton]->topSurface.setFrame(1);
-    buttons[highlightedButton]->topSurface.blt(*currentscreen,
+    buttons[highlightedButton]->topSurface.blt(*screen,
             iXY(clientRect.min.x + buttons[highlightedButton]->getBounds().min.x,
                 clientRect.min.y + buttons[highlightedButton]->getBounds().min.y));
     buttons[highlightedButton]->topSurface.setFrame(0);
@@ -970,21 +969,6 @@ void View::addButtonPackedSurface(const iXY &pos, PackedSurface &source, const c
     button->createPacked(pos, source, toolTip, leftClickFunc);
     buttons.push_back(button);
 }
-
-// addButtonCenterText
-//---------------------------------------------------------------------------
-// Purpose: Adds a centered type button to the list of buttons.
-//---------------------------------------------------------------------------
-void View::addButtonCenterText(const iXY &pos,
-                               const int &xSize,
-                               const char *name,
-                               const char *toolTip,
-                               ITEM_FUNC leftClickFunc)
-{
-    cButton* button = new cButton;
-    button->createCenterText(pos, xSize, name, toolTip, leftClickFunc);
-    buttons.push_back(button);
-} // end addButtonCenterText
 
 // setSearchName
 //---------------------------------------------------------------------------
@@ -1063,16 +1047,16 @@ void View::showStatus(const char *string)
 
 // drawStatus
 //---------------------------------------------------------------------------
-void View::drawStatus(Surface &dest)
+void View::drawStatus()
 {
     iRect r( min.x, max.y - DEFAULT_STATUS_BAR_HEIGHT, max.x, max.y);
 
-    currentscreen->fillRect(r, Color::gray192);
+    screen->fillRect(r, Color::gray192);
 
     // Draw the status text.
     if (statusText != 0) {
         int pos = (DEFAULT_STATUS_BAR_HEIGHT - Surface::getFontHeight()) >> 1;
-        currentscreen->bltString(r.min.x + pos, r.min.y + pos, statusText, Color::black);
+        screen->bltString(r.min.x + pos, r.min.y + pos, statusText, Color::black);
     }
 } // end View::drawStatus
 
@@ -1125,7 +1109,7 @@ void View::drawPressedButton()
 
     // Chage to the highlight button frame.
     buttons[pressedButton]->topSurface.setFrame(2);
-    buttons[pressedButton]->topSurface.blt(*currentscreen,
+    buttons[pressedButton]->topSurface.blt(*screen,
             iXY(clientRect.min.x + buttons[pressedButton]->getBounds().min.x,
                 clientRect.min.y + buttons[pressedButton]->getBounds().min.y));
     buttons[pressedButton]->topSurface.setFrame(0);
@@ -1363,13 +1347,13 @@ View::drawString(int x, int y, const char * str, const PIX& color)
 {
     x += clientRect.min.x;
     y += clientRect.min.y;
-    currentscreen->bltString(x, y, str, color);
+    screen->bltString(x, y, str, color);
 }
 
 void
 View::drawStringCenter(const char* string, PIX color)
 {
-    currentscreen->bltStringCenteredInRect(clientRect, string, color);
+    screen->bltStringCenteredInRect(clientRect, string, color);
 }
 
 void
@@ -1377,7 +1361,7 @@ View::drawStringInBox( const iRect &rect, const char *string, PIX color, int gap
 {
     iRect r(rect);
     r.translate(clientRect.min);
-    currentscreen->bltStringInBox(r, string, color, gapSpace, drawBox);
+    screen->bltStringInBox(r, string, color, gapSpace, drawBox);
 }
 
 void
@@ -1385,19 +1369,19 @@ View::drawStringShadowed(int x, int y, const char *str, const PIX &textColor, co
 {
     x += clientRect.min.x;
     y += clientRect.min.y;
-    currentscreen->bltStringShadowed( x, y, str, textColor, shadowColor);
+    screen->bltStringShadowed( x, y, str, textColor, shadowColor);
 }
 
 void
 View::drawImage( Surface &s, int x, int y)
 {
-    s.blt(*currentscreen, clientRect.min.x + x, clientRect.min.y + y );
+    s.blt(*screen, clientRect.min.x + x, clientRect.min.y + y );
 }
 
 void
 View::drawImageTrans( Surface &s, int x, int y)
 {
-    s.bltTrans(*currentscreen, clientRect.min.x + x, clientRect.min.y + y );
+    s.bltTrans(*screen, clientRect.min.x + x, clientRect.min.y + y );
 }
 
 void
@@ -1405,34 +1389,34 @@ View::drawTransRect(const iRect &destRect, const PIX table[])
 {
     iRect r(destRect);
     r.translate(clientRect.min);
-    currentscreen->bltLookup(r,table);
+    screen->bltLookup(r,table);
 }
 
 void
 View::drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightColor)
 {
     bounds.translate(clientRect.min);
-    currentscreen->drawButtonBorder(bounds, topLeftColor, bottomRightColor);
+    screen->drawButtonBorder(bounds, topLeftColor, bottomRightColor);
 }
 
 void
 View::fill(const PIX& color)
 {
-    currentscreen->fillRect(clientRect, color);
+    screen->fillRect(clientRect, color);
 }
 
 void
 View::drawRect(iRect bounds, const PIX& color)
 {
     bounds.translate(clientRect.min);
-    currentscreen->drawRect(bounds, color);
+    screen->drawRect(bounds, color);
 }
 
 void
 View::fillRect(iRect bounds, const PIX& color)
 {
     bounds.translate(clientRect.min);
-    currentscreen->fillRect(bounds, color);
+    screen->fillRect(bounds, color);
 }
 
 void
@@ -1440,15 +1424,15 @@ View::drawViewBackground()
 {
     if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_DARK_GRAY_BLEND)
     {
-        currentscreen->bltLookup(*this, Palette::darkGray256.getColorArray());
+        screen->bltLookup(*this, Palette::darkGray256.getColorArray());
     }
     else if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_LIGHT_GRAY_BLEND)
     {
-        currentscreen->bltLookup(*this, Palette::gray256.getColorArray());
+        screen->bltLookup(*this, Palette::gray256.getColorArray());
     }
     else if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_SOLID_BLACK)
     {
-        currentscreen->fillRect(*this, Color::black);
+        screen->fillRect(*this, Color::black);
     }
     else if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_TRANSPARENT)
     {

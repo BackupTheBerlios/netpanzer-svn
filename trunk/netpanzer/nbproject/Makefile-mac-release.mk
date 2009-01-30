@@ -102,7 +102,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/NetPanzer/Classes/OpcodeDebugger.o \
 	${OBJECTDIR}/src/NetPanzer/System/DummySound.o \
 	${OBJECTDIR}/src/Lib/lua/lfunc.o \
-	${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi/UnitColorView.o \
 	${OBJECTDIR}/src/NetPanzer/Units/UnitState.o \
 	${OBJECTDIR}/src/NetPanzer/Resources/ResourceManager.o \
 	${OBJECTDIR}/src/NetPanzer/Particles/SmolderParticleSystem2D.o \
@@ -252,7 +251,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/Lib/optionmm/option.o \
 	${OBJECTDIR}/src/Lib/lua/lobject.o \
 	${OBJECTDIR}/src/Lib/lua/llex.o \
-	${OBJECTDIR}/src/NetPanzer/Views/Game/ResignView.o \
 	${OBJECTDIR}/src/Lib/Util/Log.o \
 	${OBJECTDIR}/src/Lib/optionmm/command_line.o \
 	${OBJECTDIR}/src/NetPanzer/Views/Components/MiniMap.o \
@@ -685,11 +683,6 @@ ${OBJECTDIR}/src/Lib/lua/lfunc.o: src/Lib/lua/lfunc.c
 	${MKDIR} -p ${OBJECTDIR}/src/Lib/lua
 	${RM} $@.d
 	$(COMPILE.c) -O2 -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/Lib/lua/lfunc.o src/Lib/lua/lfunc.c
-
-${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi/UnitColorView.o: src/NetPanzer/Views/MainMenu/Multi/UnitColorView.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/NetPanzer/Views/MainMenu/Multi/UnitColorView.o src/NetPanzer/Views/MainMenu/Multi/UnitColorView.cpp
 
 ${OBJECTDIR}/src/NetPanzer/Units/UnitState.o: src/NetPanzer/Units/UnitState.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Units
@@ -1435,11 +1428,6 @@ ${OBJECTDIR}/src/Lib/lua/llex.o: src/Lib/lua/llex.c
 	${MKDIR} -p ${OBJECTDIR}/src/Lib/lua
 	${RM} $@.d
 	$(COMPILE.c) -O2 -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/Lib/lua/llex.o src/Lib/lua/llex.c
-
-${OBJECTDIR}/src/NetPanzer/Views/Game/ResignView.o: src/NetPanzer/Views/Game/ResignView.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/NetPanzer/Views/Game
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -Wall -DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -I. -Isrc/Lib -Isrc/NetPanzer -Isrc/Lib/physfs -Isrc/Lib/physfs/zlib123 -I/Library/Frameworks/SDL.framework/Versions/A/Headers -I/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/NetPanzer/Views/Game/ResignView.o src/NetPanzer/Views/Game/ResignView.cpp
 
 ${OBJECTDIR}/src/Lib/Util/Log.o: src/Lib/Util/Log.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/Lib/Util

@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "Views/Components/Button.hpp"
+#include "Views/Components/View.hpp"
 #include "Util/Log.hpp"
 
 #include "MouseEvent.hpp"
@@ -62,17 +63,26 @@ Button::render()
 void Button::actionPerformed(const mMouseEvent &me)
 {
     if (me.getID() == mMouseEvent::MOUSE_EVENT_ENTERED
-                || me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED) {
+                || me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED)
+    {
         bstate = BOVER;
         textColor = Color::red;
         dirty = true; // draw text in red
-    } else if (me.getID() == mMouseEvent::MOUSE_EVENT_EXITED) {
+    }
+    else if (me.getID() == mMouseEvent::MOUSE_EVENT_EXITED)
+    {
         bstate = BNORMAL;
         textColor = Color::white;
         dirty = true; // draw defaults;
-    } else if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED) {
+    }
+    else if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED)
+    {
         bstate = BPRESSED;
         textColor = Color::yellow;
         dirty = true;
+    }
+    else if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED)
+    {
+        ((View *)parent)->onComponentClicked(this);
     }
 } // end Button::actionPerformed

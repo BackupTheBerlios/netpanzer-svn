@@ -33,49 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 string FlagSelectionView::playerFlagSelected = "";
 Surface FlagSelectionView::playerFlag;
 
-class FlagButton : public Button
-{
-protected:
-    string fname;
-public:
-    FlagButton(int x, int y, const string &flagname)
-        : Button("flag")
-    {
-        setLocation(x, y);
-        setSize(20,14);
-        string fullname(DEFAULT_FLAGS_PATH);
-        fullname += flagname;
-        //setSize(s.getWidth(), s.getHeight());
-//        try
-//        {
-            bimage.loadBMP(fullname.c_str());
-            bimage.mapFromPalette("netp");
-//        }
-//        catch (Exception e)
-//        {
-//            
-//        }
-        fname = flagname;
-        
-        setExtraBorder();
-        borders[1][0] = Color::red;
-        borders[1][1] = Color::darkRed;
-        borders[2][0] = Color::green;
-        borders[2][1] = Color::darkGreen;
-    }
-    
-    void actionPerformed( const mMouseEvent &e)
-    {
-        if ( e.getID() == mMouseEvent::MOUSE_EVENT_CLICKED )
-        {
-            FlagSelectionView::setSelectedFlag(fname);
-        }
-        else
-        {
-            Button::actionPerformed(e);
-        }
-    }
-};
+#define FLAGBUTTONCODE 0xabba
 
 // FlagSelectionView
 //---------------------------------------------------------------------------
@@ -127,6 +85,7 @@ void FlagSelectionView::init()
     filesystem::freeList(list);
 
     sort(filenames.begin(), filenames.end());
+    Surface buttonimg;
 
     // Now load in the sorted BMP names.
     for (unsigned int i = 0; i < filenames.size(); i++)
@@ -136,7 +95,18 @@ void FlagSelectionView::init()
         //flag.mapFromPalette("netp");
         try
         {
-            add( new FlagButton( x, y, filenames[i]) );
+            string fullname(DEFAULT_FLAGS_PATH);
+            fullname += filenames[i];
+            buttonimg.loadBMP(fullname.c_str());
+            buttonimg.mapFromPalette("netp");
+
+            Button * newButton = new Button(filenames[i]);
+            newButton->setCustomCode(FLAGBUTTONCODE);
+            newButton->setLocation(x, y);
+            newButton->setImage(buttonimg);
+            newButton->setRedGreenBorder();
+
+            add(newButton);
 
             x += 20 + 2; // 20 is the with of flag
 
@@ -170,16 +140,17 @@ void FlagSelectionView::doDraw()
     int CHAR_XPIX = 8; // XXX hardcoded
     
     drawStringShadowed(
-            min.x + BORDER_SPACE,
-            min.y + BORDER_SPACE + (playerFlag.getHeight() - Surface::getFontHeight()) / 2,
+            BORDER_SPACE,
+            BORDER_SPACE + (playerFlag.getHeight() - Surface::getFontHeight()) / 2,
             strBuf, windowTextColor, windowTextColorShadow);
     
-    drawImage(playerFlag, min.x + BORDER_SPACE + strlen(strBuf) * CHAR_XPIX + BORDER_SPACE, min.y + BORDER_SPACE);
+    drawImage(playerFlag, strlen(strBuf) * CHAR_XPIX + (BORDER_SPACE*2), BORDER_SPACE);
 
 
     View::doDraw();
 
 } // end FlagSelectionView::doDraw
+
 void
 FlagSelectionView::setSelectedFlag(string &fname)
 {
@@ -197,5 +168,15 @@ FlagSelectionView::setSelectedFlag(string &fname)
     {
         LOGGER.warning("Error loading flag '%s', using blank flag", fname.c_str());
         playerFlag.copy(*ResourceManager::getEmptyImage());
+    }
+}
+
+void
+FlagSelectionView::onComponentClicked(Component* c)
+{
+    if ( c->getCustomCode() == FLAGBUTTONCODE )
+    {
+        string n = c->getName();
+        setSelectedFlag(n);
     }
 }

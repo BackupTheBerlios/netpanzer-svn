@@ -172,7 +172,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     moveTo(iXY(0, 0));
 
     const int yOffset  = 15;
-    const int gapSpace =  1;
+    const int gapSpace =  2;
 
     resize(48 * 5 + gapSpace * 4, 198 + 84);
 

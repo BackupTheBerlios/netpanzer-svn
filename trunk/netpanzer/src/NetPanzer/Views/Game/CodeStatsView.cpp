@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PathScheduler.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Units/UnitInterface.hpp"
+#include "Views/Components/Button.hpp"
 
 enum{ _display_mode_network_stats,
       _display_mode_pathing_stats,
@@ -35,70 +36,16 @@ enum{ _display_mode_network_stats,
 int gPacketSize = 0;
 int display_mode;
 
-
-/*
-static void bPlusPacketSize( void )
- {
-  gPacketSize++ 
- }
- 
-static void bMinusPacketSize( void )
- {
-  gPacketSize--;
- }
- 
-static void bSend( void )
- {
- 
- }
-*/
-
-static void buttonNetwork( void )
+enum
 {
-    display_mode = _display_mode_network_stats;
-
-}
-
-static void buttonSorter( void )
-{
-    display_mode = _display_mode_sorter_stats;
-}
-
-static void buttonPathing( void )
-{
-    display_mode = _display_mode_pathing_stats;
-}
-
-static void buttonDebug( void )
-{
-    static bool previous_flag = false;
-
-    if ( previous_flag == false ) {
-        PathScheduler::setLongPatherDebug( true );
-        // XXX if needed change for new MiniMap.hpp
-        //MiniMapInterface::setPathingDebugMode( true );
-        previous_flag = true;
-    } else {
-        PathScheduler::setLongPatherDebug( false );
-        //MiniMapInterface::setPathingDebugMode( false );
-        previous_flag = false;
-    }
-}
-
-static void buttonSample( void )
-{
-    PathScheduler::sampleLongPather( );
-}
-
-static void buttonUnit( void )
-{
-    display_mode = _display_mode_unit_stats;
-}
-
-static void bNetLog( void )
-{
-    NetworkState::logNetworkStats();
-}
+    BTN_NETWORK,
+    BTN_SORTER,
+    BTN_UNIT,
+    BTN_PATHING,
+    BTN_DEBUG,
+    BTN_SAMPLE,
+    BTN_NETLOG
+};
 
 static long INFO_AREA_Y_OFFSET = 60;
 
@@ -122,18 +69,18 @@ CodeStatsView::CodeStatsView() : GameTemplateView()
     resize(area_size);
 
     bXOffset = area_size.x / 3;
-    addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), bXOffset,  "Net", "", buttonNetwork);
-    addButtonCenterText(iXY(bXOffset, INFO_AREA_Y_OFFSET), bXOffset, "Sprite", "", buttonSorter);
-    addButtonCenterText(iXY(bXOffset*2, INFO_AREA_Y_OFFSET), bXOffset, "Unit", "", buttonUnit);
+    add( Button::createTextButton( "net", "Net", iXY(0, INFO_AREA_Y_OFFSET), bXOffset, BTN_NETWORK));
+    add( Button::createTextButton( "sprite", "Sprite", iXY(bXOffset, INFO_AREA_Y_OFFSET), bXOffset, BTN_SORTER));
+    add( Button::createTextButton( "unit", "Unit", iXY(bXOffset*2, INFO_AREA_Y_OFFSET), bXOffset, BTN_UNIT));
 
     INFO_AREA_Y_OFFSET += 18;
-    addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), area_size.x, "Path", "", buttonPathing);
+    add( Button::createTextButton( "path", "Path", iXY(0, INFO_AREA_Y_OFFSET), area_size.x, BTN_PATHING));
 
     INFO_AREA_Y_OFFSET += 18;
     bXOffset = area_size.x / 3;
-    addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), bXOffset,  "Debug", "", buttonDebug);
-    addButtonCenterText(iXY(bXOffset, INFO_AREA_Y_OFFSET), bXOffset, "Sample", "", buttonSample);
-    addButtonCenterText(iXY(bXOffset*2, INFO_AREA_Y_OFFSET), bXOffset, "NetLog", "", bNetLog );
+    add( Button::createTextButton( "debug", "Debug", iXY(0, INFO_AREA_Y_OFFSET), bXOffset, BTN_DEBUG));
+    add( Button::createTextButton( "sample", "Sample", iXY(bXOffset, INFO_AREA_Y_OFFSET), bXOffset, BTN_SAMPLE));
+    add( Button::createTextButton( "netlog", "NetLog", iXY(bXOffset*2, INFO_AREA_Y_OFFSET), bXOffset, BTN_NETLOG));
 
     INFO_AREA_Y_OFFSET += 18;
     /*
@@ -370,4 +317,41 @@ void CodeStatsView::drawUnitStats()
 
     str_loc.y += 12;
 
+}
+
+void
+CodeStatsView::onComponentClicked(Component* c)
+{
+    switch ( c->getCustomCode() )
+    {
+        case BTN_NETWORK:
+            display_mode = _display_mode_network_stats;
+            break;
+
+        case BTN_SORTER:
+            display_mode = _display_mode_sorter_stats;
+            break;
+
+        case BTN_UNIT:
+            display_mode = _display_mode_unit_stats;
+            break;
+
+        case BTN_PATHING:
+            display_mode = _display_mode_pathing_stats;
+            break;
+
+        case BTN_DEBUG:
+            static bool previous_flag = false;
+            previous_flag = !previous_flag;
+            PathScheduler::setLongPatherDebug(previous_flag);
+            break;
+
+        case BTN_SAMPLE:
+            PathScheduler::sampleLongPather();
+            break;
+
+        case BTN_NETLOG:
+            NetworkState::logNetworkStats();
+            break;
+    }
 }

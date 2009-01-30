@@ -36,7 +36,8 @@ class InterfaceView : public OptionsTemplateView
 {
 protected:
     virtual void loadTitleSurface();
-
+    void onComponentClicked(Component *c);
+    
 public:
     InterfaceView();
 

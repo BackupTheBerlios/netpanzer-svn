@@ -85,7 +85,7 @@ public:
     static void setVisibilityNoDoAnything(const char *viewName, int isVisible);
     static void add(View *view, bool autoActivate = true);
     static void remove(View *view);
-    static void draw(Surface& surface);
+    static void draw();
 
     static iXY      getMouseActionOffset  ()
     {

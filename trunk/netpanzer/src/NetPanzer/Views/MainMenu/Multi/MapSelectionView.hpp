@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Views/MainMenu/RMouseHackView.hpp"
 #include "2D/Surface.hpp"
+#include "Views/Components/Button.hpp"
 
 //---------------------------------------------------------------------------
 class MapInfo
@@ -47,6 +48,9 @@ private:
     enum { MAP_SIZE     = 100 };
     int  loadMaps();
     void drawCurMapInfo( const iXY &pos);
+
+protected:
+    void onComponentClicked(Component *c);
 
 public:
     MapSelectionView();

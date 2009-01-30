@@ -49,6 +49,9 @@ protected:
     CheckBox * checkBoxSolidBackground;
     CheckBox * checkBoxDrawExplosionParticleCount;
 
+    void onComponentClicked(Component *c);
+    int displayMode;
+
 public:
     LibView();
     virtual ~LibView()
@@ -58,8 +61,6 @@ public:
     virtual void rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
     virtual void doActivate();
     virtual void actionPerformed(mMouseEvent me);
-
-    static int displayMode;
 }; // end LibView
 
 #endif // end __LibView_hpp__

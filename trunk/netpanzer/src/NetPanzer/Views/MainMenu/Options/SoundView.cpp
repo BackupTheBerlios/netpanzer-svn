@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include "Views/Components/Button.hpp"
+
 #include "SoundView.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Views/GameViewGlobals.hpp"
@@ -27,49 +29,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/DummySound.hpp"
 #include "Interfaces/GameControlRulesDaemon.hpp"
 
-static void bDecreaseSoundVolume()
+enum
 {
-    unsigned int v = gameconfig->effectsvolume;
-    if (v) {
-        --v;
-        gameconfig->effectsvolume = v;
-        sound->setSoundVolume(v);
-    }
-}
-
-static void bIncreaseSoundVolume()
-{
-    unsigned int v = gameconfig->effectsvolume;
-    if (v<100) {
-        ++v;
-        gameconfig->effectsvolume = v;
-        sound->setSoundVolume(v);
-    }
-}
+    DEC_SOUND,
+    INC_SOUND,
+    DEC_MUSIC,
+    INC_MUSIC
+};
 
 int getSoundVolume()
 {
     return gameconfig->effectsvolume;
-}
-
-static void bDecreaseMusicVolume()
-{
-    unsigned int v = gameconfig->musicvolume;
-    if (v) {
-        --v;
-        gameconfig->musicvolume = v;
-        sound->setMusicVolume(v);
-    }
-}
-
-static void bIncreaseMusicVolume()
-{
-    unsigned int v = gameconfig->musicvolume;
-    if (v<100) {
-        ++v;
-        gameconfig->musicvolume = v;
-        sound->setMusicVolume(v);
-    }
 }
 
 int getMusicVolume()
@@ -120,10 +90,11 @@ void SoundView::initButtons()
 
     x = xTextStart;
     add( new Label( x, y, "Sound Volume", Color::white) );
+
     x = optionsMeterStartX;
-    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseSoundVolume);
+    add( Button::createTextButton( "decsound", "<", iXY( x-1, y), arrowButtonWidth, DEC_SOUND) );
     x += optionsMeterWidth + arrowButtonWidth;
-    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseSoundVolume);
+    add( Button::createTextButton( "incsound", ">", iXY( x-1, y), arrowButtonWidth, INC_SOUND) );
     y += yOffset;
 
     y += yOffset; // add a little separation
@@ -140,10 +111,12 @@ void SoundView::initButtons()
 
     x = xTextStart;
     add( new Label( x, y, "Music Volume", Color::white) );
+
     x = optionsMeterStartX;
-    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseMusicVolume);
+    add( Button::createTextButton( "decmusic", "<", iXY( x-1, y), arrowButtonWidth, DEC_MUSIC) );
+
     x += optionsMeterWidth + arrowButtonWidth;
-    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseMusicVolume);
+    add( Button::createTextButton( "incmusic", ">", iXY( x-1, y), arrowButtonWidth, INC_MUSIC) );
     y += yOffset;
 
     //
@@ -239,5 +212,52 @@ void SoundView::stateChanged(Component* source)
             checkBoxMusicEnabled->setLabel("Disabled");
         }
     }
-    
+}
+
+void
+SoundView::onComponentClicked(Component* c)
+{
+    unsigned int v;
+    switch ( c->getCustomCode() )
+    {
+        case DEC_SOUND:
+            v = gameconfig->effectsvolume;
+            if (v)
+            {
+                --v;
+                gameconfig->effectsvolume = v;
+                sound->setSoundVolume(v);
+            }
+            break;
+
+        case INC_SOUND:
+            v = gameconfig->effectsvolume;
+            if (v<100)
+            {
+                ++v;
+                gameconfig->effectsvolume = v;
+                sound->setSoundVolume(v);
+            }
+            break;
+
+        case DEC_MUSIC:
+            v = gameconfig->musicvolume;
+            if (v)
+            {
+                --v;
+                gameconfig->musicvolume = v;
+                sound->setMusicVolume(v);
+            }
+            break;
+
+        case INC_MUSIC:
+            unsigned int v = gameconfig->musicvolume;
+            if (v<100)
+            {
+                ++v;
+                gameconfig->musicvolume = v;
+                sound->setMusicVolume(v);
+            }
+            break;
+    }
 }

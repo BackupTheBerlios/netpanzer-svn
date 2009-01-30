@@ -33,36 +33,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 std::vector<MapInfo*> MapSelectionView::mapList;
 int MapSelectionView::curMap = 0;
 
-static void bNextMap()
+enum
 {
-    // Make sure some maps are loaded.
-    if (MapSelectionView::curMap == -1) {
-        return;
-    }
-
-    if (++MapSelectionView::curMap >= (int) MapSelectionView::mapList.size()) {
-        MapSelectionView::curMap = 0;
-    }
-
-    gameconfig->mapcycle = MapSelectionView::mapList[MapSelectionView::curMap]->name;
-    HostOptionsView::updateGameConfigCloudCoverage();
-}
-
-static void bPreviousMap()
-{
-    // Make sure some maps are loaded.
-    if (MapSelectionView::curMap == -1) {
-        return;
-    }
-
-    if (--MapSelectionView::curMap < 0) {
-        MapSelectionView::curMap = MapSelectionView::mapList.size() - 1;
-    }
-
-    gameconfig->mapcycle = MapSelectionView::mapList[MapSelectionView::curMap]->name;
-    HostOptionsView::updateGameConfigCloudCoverage();
-}
-
+    PREV_MAP,
+    NEXT_MAP
+};
 
 // MapSelectionView
 //---------------------------------------------------------------------------
@@ -99,15 +74,49 @@ void MapSelectionView::init()
 
     iXY pos(MAP_SIZE + BORDER_SPACE * 2, getClientRect().getSizeY() - 14 - BORDER_SPACE);
 
-    addButtonCenterText(pos, arrowButtonWidth - 1, "<", "", bPreviousMap);
+    add ( Button::createTextButton("mapprevbutton","<",pos, arrowButtonWidth, PREV_MAP) );
+
     pos.x += arrowButtonWidth;
-    addButtonCenterText(pos, arrowButtonWidth, ">", "", bNextMap);
+
+    add ( Button::createTextButton("mapnextbutton",">",pos, arrowButtonWidth, NEXT_MAP) );
 
     loadMaps();
     HostOptionsView::updateGameConfigCloudCoverage();
     HostOptionsView::updateWindSpeedString();
 
 } // end MapSelectionView::init
+
+void
+MapSelectionView::onComponentClicked(Component* c)
+{
+    if (curMap == -1)
+    {
+        return;
+    }
+    
+    switch ( c->getCustomCode() )
+    {
+        case PREV_MAP:
+            if ( --curMap < 0 )
+            {
+                curMap = mapList.size() - 1;
+            }
+
+            gameconfig->mapcycle = mapList[curMap]->name;
+            HostOptionsView::updateGameConfigCloudCoverage();
+            break;
+
+        case NEXT_MAP:
+            if (++curMap >= (int) mapList.size())
+            {
+                MapSelectionView::curMap = 0;
+            }
+
+            gameconfig->mapcycle = mapList[curMap]->name;
+            HostOptionsView::updateGameConfigCloudCoverage();
+            break;
+    }
+}
 
 // doDraw
 //---------------------------------------------------------------------------

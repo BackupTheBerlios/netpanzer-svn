@@ -28,9 +28,11 @@ class DisconectedView : public SpecialButtonView
 {
 private:
     void init();
-    static void buttonOk();
     std::string disconectMsg;
 
+protected:
+    void onComponentClicked(Component *c);
+    
 public:
     DisconectedView();
 

@@ -34,6 +34,7 @@ protected:
     void drawSorterStats();
     void drawPathingStats();
     void drawUnitStats();
+    void onComponentClicked(Component *c);
 
 public:
     CodeStatsView();

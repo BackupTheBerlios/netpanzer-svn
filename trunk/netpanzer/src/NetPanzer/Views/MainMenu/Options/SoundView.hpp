@@ -41,6 +41,8 @@ protected:
     CheckBox * checkBoxSoundEnabled;
     CheckBox * checkBoxMusicEnabled;
 
+    void onComponentClicked(Component *c);
+
 public:
     SoundView();
 

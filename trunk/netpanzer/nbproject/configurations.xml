@@ -556,8 +556,6 @@
             <itemPath>src/NetPanzer/Views/Game/MiniMapView.hpp</itemPath>
             <itemPath>src/NetPanzer/Views/Game/RankView.cpp</itemPath>
             <itemPath>src/NetPanzer/Views/Game/RankView.hpp</itemPath>
-            <itemPath>src/NetPanzer/Views/Game/ResignView.cpp</itemPath>
-            <itemPath>src/NetPanzer/Views/Game/ResignView.hpp</itemPath>
             <itemPath>src/NetPanzer/Views/Game/VehicleSelectionView.cpp</itemPath>
             <itemPath>src/NetPanzer/Views/Game/VehicleSelectionView.hpp</itemPath>
           </logicalFolder>
@@ -593,8 +591,6 @@
               <itemPath>src/NetPanzer/Views/MainMenu/Multi/PlayerNameView.hpp</itemPath>
               <itemPath>src/NetPanzer/Views/MainMenu/Multi/ServerListView.cpp</itemPath>
               <itemPath>src/NetPanzer/Views/MainMenu/Multi/ServerListView.hpp</itemPath>
-              <itemPath>src/NetPanzer/Views/MainMenu/Multi/UnitColorView.cpp</itemPath>
-              <itemPath>src/NetPanzer/Views/MainMenu/Multi/UnitColorView.hpp</itemPath>
               <itemPath>src/NetPanzer/Views/MainMenu/Multi/UnitSelectionView.cpp</itemPath>
               <itemPath>src/NetPanzer/Views/MainMenu/Multi/UnitSelectionView.hpp</itemPath>
             </logicalFolder>
@@ -2161,12 +2157,6 @@
       <item path="src/NetPanzer/Views/Game/RankView.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Views/Game/ResignView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/Game/ResignView.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Views/Game/VehicleSelectionView.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -2273,12 +2263,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/Multi/ServerListView.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/Multi/UnitColorView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/Multi/UnitColorView.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/Multi/UnitSelectionView.cpp">
@@ -3894,12 +3878,6 @@
       <item path="src/NetPanzer/Views/Game/RankView.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Views/Game/ResignView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/Game/ResignView.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Views/Game/VehicleSelectionView.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -4006,12 +3984,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/Multi/ServerListView.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/Multi/UnitColorView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/Multi/UnitColorView.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/Multi/UnitSelectionView.cpp">
@@ -5627,12 +5599,6 @@
       <item path="src/NetPanzer/Views/Game/RankView.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Views/Game/ResignView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/Game/ResignView.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Views/Game/VehicleSelectionView.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -5739,12 +5705,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/Multi/ServerListView.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/Multi/UnitColorView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/Multi/UnitColorView.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/Multi/UnitSelectionView.cpp">
@@ -7360,12 +7320,6 @@
       <item path="src/NetPanzer/Views/Game/RankView.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Views/Game/ResignView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/Game/ResignView.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Views/Game/VehicleSelectionView.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -7472,12 +7426,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/Multi/ServerListView.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/Multi/UnitColorView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/Multi/UnitColorView.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/Multi/UnitSelectionView.cpp">

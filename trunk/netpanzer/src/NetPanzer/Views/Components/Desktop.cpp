@@ -341,12 +341,12 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 //--------------------------------------------------------------------------
 // Purpose:
 //--------------------------------------------------------------------------
-void Desktop::draw(Surface& surface)
+void Desktop::draw()
 {
     std::vector<View*>::reverse_iterator i;
     for(i = views.rbegin(); i != views.rend(); i++)
     {
-        (*i)->draw(surface);
+        (*i)->draw();
     }
 } // end draw
 

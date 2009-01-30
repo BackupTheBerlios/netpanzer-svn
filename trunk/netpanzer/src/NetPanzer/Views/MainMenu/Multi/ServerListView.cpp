@@ -28,7 +28,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // XXX ultrahack
 #include "Classes/ScreenSurface.hpp"
 #include "Views/Components/Desktop.hpp"
+#include "Views/Components/Button.hpp"
 
+
+enum
+{
+    BTN_REFRESH
+};
 
 ServerListView* serverlistview = 0;
 
@@ -46,10 +52,9 @@ ServerListView::ServerListView()
     setAllowMove(false);
     setVisible(false);
 
-    addButtonCenterText(iXY(getClientRect().getSizeX()-80,
-                getClientRect().getSizeY() - Surface::getFontHeight() * 2),
-            80, "Refresh", "", buttonRefresh);
-    
+    iXY p(getClientRect().getSizeX()-80, getClientRect().getSizeY() - Surface::getFontHeight() * 2);
+    add( Button::createTextButton("refresh","Refresh",p,80,BTN_REFRESH) );
+
     // XXX ugly
     serverlistview = this;
 }
@@ -83,7 +88,7 @@ ServerListView::refresh()
         screen->lock();
         mylock = true;
     }
-    Desktop::draw(*screen); // XXX ultrahack
+    Desktop::draw(); // XXX ultrahack
     if ( mylock )
         screen->unlock();
     screen->copyToVideoFlip(); // XXX uberhack
@@ -199,3 +204,11 @@ ServerListView::lMouseUp(const iXY& down_pos, const iXY& up_pos)
     return View::lMouseUp(down_pos, up_pos);
 }
 
+void
+ServerListView::onComponentClicked(Component* c)
+{
+    if ( c->getCustomCode() == BTN_REFRESH )
+    {
+        refresh();
+    }
+}

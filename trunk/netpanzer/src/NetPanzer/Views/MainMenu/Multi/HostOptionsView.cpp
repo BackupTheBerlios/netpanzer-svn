@@ -31,6 +31,20 @@ int HostOptionsView::gameType           = 0;
 std::string HostOptionsView::cloudCoverageString;
 std::string HostOptionsView::windSpeedString;
 
+enum
+{
+    DEC_PLAYERCOUNT,
+    INC_PLAYERCOUNT,
+    DEC_MAXUNITS,
+    INC_MAXUNITS,
+    DEC_OBJPERCENT,
+    INC_OBJPERCENT,
+    DEC_TIMELIMIT,
+    INC_TIMELIMIT,
+    DEC_FRAGLIMIT,
+    INC_FRAGLIMIT
+};
+
 static int getCurMaxPlayersCount()
 {
     return gameconfig->maxplayers;
@@ -39,30 +53,6 @@ static int getCurMaxPlayersCount()
 static int  getCurMaxUnitCount()
 {
     return gameconfig->maxunits;
-}
-
-static void bDecreasePlayerCount()
-{
-    if(gameconfig->maxplayers - 1 >= gameconfig->maxplayers.getMin())
-        gameconfig->maxplayers = gameconfig->maxplayers - 1;
-}
-
-static void bIncreasePlayerCount()
-{
-    if(gameconfig->maxplayers + 1 <= gameconfig->maxplayers.getMax())
-        gameconfig->maxplayers = gameconfig->maxplayers + 1;
-}
-
-static void bDecreaseMaxUnitCount()
-{
-    if(gameconfig->maxunits - 5 >= gameconfig->maxunits.getMin())
-        gameconfig->maxunits = gameconfig->maxunits - 5;
-}
-
-static void bIncreaseMaxUnitCount()
-{
-    if(gameconfig->maxunits + 5 <= gameconfig->maxunits.getMax())
-        gameconfig->maxunits = gameconfig->maxunits + 5;
 }
 
 void HostOptionsView::updateGameConfigCloudCoverage()
@@ -155,18 +145,6 @@ static char * getGameTypeString()
     return( "Unknown" );
 }
 
-static void bIncreaseTimeLimit()
-{
-    if(gameconfig->timelimit + 5 <= gameconfig->timelimit.getMax())
-        gameconfig->timelimit = gameconfig->timelimit + 5;
-}
-
-static void bDecreaseTimeLimit()
-{
-    if(gameconfig->timelimit - 5 >= gameconfig->timelimit.getMin())
-        gameconfig->timelimit = gameconfig->timelimit - 5;
-}
-
 static int getTimeLimitHours()
 {
     return gameconfig->timelimit / 60;
@@ -175,18 +153,6 @@ static int getTimeLimitHours()
 static int getTimeLimitMinutes()
 {
     return gameconfig->timelimit % 60;
-}
-
-static void bIncreaseFragLimit()
-{
-    if(gameconfig->fraglimit + 5 <= gameconfig->fraglimit.getMax())
-        gameconfig->fraglimit = gameconfig->fraglimit + 5;
-}
-
-static void bDecreaseFragLimit()
-{
-    if(gameconfig->fraglimit - 5 >= gameconfig->fraglimit.getMin())
-        gameconfig->fraglimit = gameconfig->fraglimit - 5;
 }
 
 static int getFragLimit()
@@ -235,23 +201,6 @@ static int getObjectiveCapturePercent()
 {
     return gameconfig->objectiveoccupationpercentage;
 }
-
-static void bIncreaseObjectiveCapturePercent()
-{
-    if(gameconfig->objectiveoccupationpercentage + 5 <=
-            gameconfig->objectiveoccupationpercentage.getMax())
-        gameconfig->objectiveoccupationpercentage =
-            gameconfig->objectiveoccupationpercentage + 5;
-}
-
-static void bDecreaseObjectiveCapturePercent()
-{
-    if(gameconfig->objectiveoccupationpercentage - 5 >=
-            gameconfig->objectiveoccupationpercentage.getMin())
-        gameconfig->objectiveoccupationpercentage = 
-            gameconfig->objectiveoccupationpercentage - 5;
-}
-
 
 // HostOptionsView
 //---------------------------------------------------------------------------
@@ -302,18 +251,21 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
 
     x = xTextStart;
     add( new Label(x, y, "Max Players", windowTextColor, windowTextColorShadow, true) );
+
     x += xControlStart;
-    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreasePlayerCount);
+    add( Button::createTextButton("decplayer","<",iXY(x - 1, y),arrowButtonWidth, DEC_PLAYERCOUNT));
     x += arrowButtonWidth + meterWidth;
-    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreasePlayerCount);
+    add( Button::createTextButton("incplayer",">",iXY(x + 1, y),arrowButtonWidth, INC_PLAYERCOUNT));
+
     y += yOffset;
 
     x = xTextStart;
     add( new Label(x, y, "Game Max Unit Count", windowTextColor, windowTextColorShadow, true) );
     x += xControlStart;
-    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseMaxUnitCount);
+    add( Button::createTextButton("decunits","<",iXY(x - 1, y),arrowButtonWidth, DEC_MAXUNITS));
     x += arrowButtonWidth + meterWidth;
-    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseMaxUnitCount);
+    add( Button::createTextButton("incunits",">",iXY(x + 1, y),arrowButtonWidth, INC_MAXUNITS));
+
     y += yOffset;
     /*
     	x = xTextStart;
@@ -343,25 +295,25 @@ void HostOptionsView::addMeterButtons(const iXY &pos)
     x = xTextStart;
     add( new Label( x, y, "Objective Capture Percent", windowTextColor, windowTextColorShadow, true) );
     x += xControlStart;
-    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseObjectiveCapturePercent);
+    add( Button::createTextButton("decobjpercent","<",iXY(x - 1, y),arrowButtonWidth, DEC_OBJPERCENT));
     x += arrowButtonWidth + meterWidth;
-    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseObjectiveCapturePercent);
+    add( Button::createTextButton("incobjpercent",">",iXY(x + 1, y),arrowButtonWidth, INC_OBJPERCENT));
     y += yOffset;
 
     x = xTextStart;
     add( new Label( x, y, "Time Limit", windowTextColor, windowTextColorShadow, true) );
     x += xControlStart;
-    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseTimeLimit);
+    add( Button::createTextButton("dectime","<",iXY(x - 1, y),arrowButtonWidth, DEC_TIMELIMIT));
     x += arrowButtonWidth + meterWidth;
-    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseTimeLimit);
+    add( Button::createTextButton("inctime",">",iXY(x + 1, y),arrowButtonWidth, INC_TIMELIMIT));
     y += yOffset;
 
     x = xTextStart;
     add( new Label( x, y, "Frag Limit", windowTextColor, windowTextColorShadow, true) );
     x += xControlStart;
-    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseFragLimit);
+    add( Button::createTextButton("decfrag","<",iXY(x - 1, y),arrowButtonWidth, DEC_FRAGLIMIT));
     x += arrowButtonWidth + meterWidth;
-    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseFragLimit);
+    add( Button::createTextButton("incfrag",">",iXY(x + 1, y),arrowButtonWidth, INC_FRAGLIMIT));
     y += yOffset;
 
     const int minWidth = 150;
@@ -546,3 +498,84 @@ void HostOptionsView::actionPerformed(mMouseEvent me)
         }
     }
 } // end HostOptionsView::actionPerformed
+
+void
+HostOptionsView::onComponentClicked(Component* c)
+{
+    switch ( c->getCustomCode() )
+    {
+        case DEC_PLAYERCOUNT:
+            if(gameconfig->maxplayers - 1 >= gameconfig->maxplayers.getMin())
+            {
+                gameconfig->maxplayers = gameconfig->maxplayers - 1;
+            }
+            break;
+
+        case INC_PLAYERCOUNT:
+            if(gameconfig->maxplayers + 1 <= gameconfig->maxplayers.getMax())
+            {
+                gameconfig->maxplayers = gameconfig->maxplayers + 1;
+            }
+            break;
+
+        case DEC_MAXUNITS:
+            if(gameconfig->maxunits - 5 >= gameconfig->maxunits.getMin())
+            {
+                gameconfig->maxunits = gameconfig->maxunits - 5;
+            }
+            break;
+
+        case INC_MAXUNITS:
+            if(gameconfig->maxunits + 5 <= gameconfig->maxunits.getMax())
+            {
+                gameconfig->maxunits = gameconfig->maxunits + 5;
+            }
+            break;
+
+        case DEC_OBJPERCENT:
+            if(gameconfig->objectiveoccupationpercentage - 5 >=
+                            gameconfig->objectiveoccupationpercentage.getMin())
+            {
+                gameconfig->objectiveoccupationpercentage =
+                                gameconfig->objectiveoccupationpercentage - 5;
+            }
+            break;
+
+        case INC_OBJPERCENT:
+            if(gameconfig->objectiveoccupationpercentage + 5 <=
+                            gameconfig->objectiveoccupationpercentage.getMax())
+            {
+                gameconfig->objectiveoccupationpercentage =
+                                gameconfig->objectiveoccupationpercentage + 5;
+            }
+            break;
+
+        case DEC_TIMELIMIT:
+            if(gameconfig->timelimit + 5 <= gameconfig->timelimit.getMax())
+            {
+                gameconfig->timelimit = gameconfig->timelimit + 5;
+            }
+            break;
+
+        case INC_TIMELIMIT:
+            if(gameconfig->timelimit - 5 >= gameconfig->timelimit.getMin())
+            {
+                gameconfig->timelimit = gameconfig->timelimit - 5;
+            }
+            break;
+
+        case DEC_FRAGLIMIT:
+            if(gameconfig->fraglimit - 5 >= gameconfig->fraglimit.getMin())
+            {
+                gameconfig->fraglimit = gameconfig->fraglimit - 5;
+            }
+            break;
+
+        case INC_FRAGLIMIT:
+            if(gameconfig->fraglimit + 5 <= gameconfig->fraglimit.getMax())
+            {
+                gameconfig->fraglimit = gameconfig->fraglimit + 5;
+            }
+            break;
+    }
+}

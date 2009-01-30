@@ -35,7 +35,7 @@ void Component::reset()
     visible    = true;
     parent     = 0;
     surface.free();
-
+    customCode = -1;
 } // end Component::reset
 
 // contains

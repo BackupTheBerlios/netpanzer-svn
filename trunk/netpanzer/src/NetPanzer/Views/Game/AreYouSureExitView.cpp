@@ -35,7 +35,6 @@ static void bYES()
 static void bNO()
 {
     Desktop::setVisibility("AreYouSureExitView", false);
-    //Desktop::setVisibility("ResignView", true);
 }
 
 // AreYouSureExitView

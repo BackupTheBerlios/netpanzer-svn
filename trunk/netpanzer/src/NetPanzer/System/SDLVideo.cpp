@@ -33,7 +33,7 @@ SDLVideo::SDLVideo()
         : frontBuffer(0), backBuffer(0)
 {
     // disable directx feature for now
-#if 0
+#if 1
   #ifdef _WIN32
     if ( gameconfig->usedirectx ) {
         putenv("SDL_VIDEODRIVER=directx");

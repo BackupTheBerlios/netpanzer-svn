@@ -47,6 +47,8 @@ protected:
 
     void reset();
 
+    int     customCode;
+
 public:
     Component *next;
     Component *prev;
@@ -54,6 +56,9 @@ public:
     void *parent;       // Who is my daddy?
 
     void setParent(void *parent);
+
+    void setCustomCode(int n) { customCode = n; }
+    int getCustomCode() { return customCode; }
 
     enum
     {
@@ -116,6 +121,7 @@ public:
     void setLocation(int x, int y);
     void setLocation(const iXY &p) { setLocation(p.x, p.y); }
     void setName(const std::string& name) { Component::componentName = name; }
+    std::string getName() { return componentName; };
 
     virtual void draw(int posx, int posy, Surface &dest)
     {

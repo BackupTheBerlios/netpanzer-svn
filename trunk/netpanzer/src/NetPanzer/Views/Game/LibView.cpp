@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include "Views/Components/Button.hpp"
+
 #include "LibView.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Particles/ParticleSystem2D.hpp"
@@ -36,25 +38,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 bool gDrawGameTiles = true;
 bool gDrawUnitTips  = false;
 
-
-int LibView::displayMode = LIBVIEW_MODE_SURFACE_INFO;
-
-static void bSurfaceInfo()
+enum
 {
-    LibView::displayMode = LIBVIEW_MODE_SURFACE_INFO;
-}
-
-static void bParticleInfo()
-{
-    LibView::displayMode = LIBVIEW_MODE_PARTICLE_INFO;
-}
-
-
-static void bEnvironmentInfo()
-{
-    LibView::displayMode = LIBVIEW_MODE_ENVIRONMENT_INFO;
-}
-
+    BTN_SURFACE,
+    BTN_PARTICLE,
+    BTN_ENVIRONMENT
+};
 
 // LibView
 //---------------------------------------------------------------------------
@@ -72,9 +61,9 @@ LibView::LibView() : GameTemplateView()
     moveTo(0, 0);
     resize(325, 375);
 
-    addButtonCenterText(iXY((getClientRect().getSize().x / 3) * 0, 0), getClientRect().getSize().x / 3, "Surface", "", bSurfaceInfo);
-    addButtonCenterText(iXY((getClientRect().getSize().x / 3) * 1, 0), getClientRect().getSize().x / 3, "Particles", "", bParticleInfo);
-    addButtonCenterText(iXY((getClientRect().getSize().x / 3) * 2, 0), getClientRect().getSize().x / 3, "Environment", "", bEnvironmentInfo);
+    add( Button::createTextButton("surface", "Surface", iXY((clientRect.getSizeX() / 3) * 0, 0), clientRect.getSizeX() / 3, BTN_SURFACE));
+    add( Button::createTextButton("particles", "Particles", iXY((clientRect.getSizeX() / 3) * 1, 0), clientRect.getSizeX() / 3, BTN_PARTICLE));
+    add( Button::createTextButton("environment", "Environment", iXY((clientRect.getSizeX() / 3) * 2, 0), clientRect.getSizeX() / 3, BTN_ENVIRONMENT));
 
     checkBoxAllowParticleGeneration = new CheckBox();
     checkBoxAllowParticleGeneration->setLabel("Allow Particle Generation");
@@ -124,6 +113,8 @@ LibView::LibView() : GameTemplateView()
     checkBoxDrawExplosionParticleCount->setState(ParticleInterface::gDrawExplosionParticleCount);
     add(checkBoxDrawExplosionParticleCount);
 
+    displayMode = LIBVIEW_MODE_SURFACE_INFO;
+
 } // end LibView::LibView
 
 // doDraw
@@ -135,6 +126,7 @@ void LibView::doDraw()
     int x       =   5;
     int y       = 135;
     //int yOffset =  15;
+    drawViewBackground();
 
     switch(displayMode) {
     case LIBVIEW_MODE_SURFACE_INFO: {
@@ -340,3 +332,22 @@ void LibView::actionPerformed(mMouseEvent me)
     }
 
 } // end LibView::actionPerformed
+
+void
+LibView::onComponentClicked(Component* c)
+{
+    switch ( c->getCustomCode() )
+    {
+        case BTN_SURFACE:
+            displayMode = LIBVIEW_MODE_SURFACE_INFO;
+            break;
+
+        case BTN_PARTICLE:
+            displayMode = LIBVIEW_MODE_PARTICLE_INFO;
+            break;
+
+        case BTN_ENVIRONMENT:
+            displayMode = LIBVIEW_MODE_ENVIRONMENT_INFO;
+            break;
+    }
+}

@@ -67,6 +67,21 @@ public:
     virtual ~Button()
     {}
 
+    static Button * createTextButton(   std::string cname,
+                                        std::string label,
+                                        iXY loc,
+                                        int bwidth,
+                                        int customcode = -1)
+    {
+        Button * b = new Button(cname);
+        b->setLabel(label);
+        b->setLocation(loc);
+        b->setTextButtonSize(bwidth);
+        b->setCustomCode(customcode);
+        b->setNormalBorder();
+        return b;
+    }
+
     void setLabel(const std::string& l)
     {
         label = l;
@@ -90,6 +105,7 @@ public:
     
     void setUnitSelectionBorder()
     {
+        setExtraBorder();
         borders[0][0] = Color::darkGray;
         borders[0][1] = Color::darkGray;
         borders[1][0] = Color::red;
@@ -101,6 +117,7 @@ public:
     
     void setNormalBorder()
     {
+        setExtraBorder();
         borders[0][0] = topLeftBorderColor;
         borders[0][1] = bottomRightBorderColor;
         borders[1][0] = topLeftBorderColor;
@@ -108,6 +125,17 @@ public:
         borders[2][0] = bottomRightBorderColor;
         borders[2][1] = topLeftBorderColor;
         dirty=true;
+    }
+
+    void setRedGreenBorder()
+    {
+        setExtraBorder();
+        borders[0][0] = 0;
+        borders[0][1] = 0;
+        borders[1][0] = Color::red;
+        borders[1][1] = Color::darkRed;
+        borders[2][0] = Color::green;
+        borders[2][1] = Color::darkGreen;
     }
 
     void clearBorder()
@@ -120,17 +148,28 @@ public:
     {
         Component::setSize(x+(extraBorder*2), y+(extraBorder*2));
     }
+
+    void setTextButtonSize(int xsize)
+    {
+        Component::setSize(xsize+(extraBorder*2), Surface::getFontHeight() + 4 + (extraBorder*2));
+    }
     
     void setExtraBorder()
     {
-        extraBorder = 1;
-        setSize( size.x, size.y);
+        if ( !extraBorder )
+        {
+            extraBorder = 1;
+            setSize( size.x, size.y);
+        }
     }
     
     void clearExtraBorder()
     {
-        extraBorder = 0;
-        setSize( size.x, size.y);
+        if ( extraBorder )
+        {
+            extraBorder = 0;
+            setSize( size.x, size.y);
+        }
     }
 
     const std::string& getLabel() const

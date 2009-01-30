@@ -179,6 +179,8 @@ public:
     void drawViewBackground();
     void fill(const PIX &color);
     void fillRect(iRect bounds, const PIX &color);
+
+    virtual void onComponentClicked(Component *c) { (void)c; }
     
 protected:
     virtual void     actionPerformed(mMouseEvent )
@@ -243,7 +245,6 @@ protected:
 
     // cButton Functions.
     void addButtonPackedSurface(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc);
-    void addButtonCenterText(const iXY &pos, const int &xSize, const char *nName, const char *nToolTip, ITEM_FUNC nLeftClickFunc);
     /*!FIXME!*/ void drawDefinedButtons   ();
     void drawHighlightedButton();
     void drawPressedButton();
@@ -255,7 +256,7 @@ protected:
     void  setSearchName(const char *searchName);
     void  setTitle(const char *title);
     void  setSubTitle(const char *subTitle);
-    void  drawTitle(Surface &windowArea);
+    void  drawTitle();
 
     // Input Field Functions
     cInputField* addInputField(const iXY &pos, cInputFieldString *string, const char *excludedCharacters, const bool &isSelected);
@@ -263,9 +264,9 @@ protected:
     void drawInputFields();
 
     /////////////////////////////////
-    void draw(Surface& drawon);
+    void draw();
     void showStatus(const char *string);
-    void drawStatus(Surface &dest);
+    void drawStatus();
     virtual void checkResolution(iXY oldResolution, iXY newResolution);
     void checkArea(iXY viewarea);
     void toggleView();
@@ -274,7 +275,7 @@ protected:
     /////////////////////////////////
 
     // These options can be modified on a per View type basis
-    virtual void drawBorder(Surface &windowArea);
+    virtual void drawBorder();
     virtual void doDraw();
     virtual void doActivate();
     virtual void doDeactivate();
@@ -306,7 +307,6 @@ protected:
     int borderSize;
     int snapToTolerance;
 
-    Surface* currentscreen; // HACK
     iRect clientRect;
 };
 

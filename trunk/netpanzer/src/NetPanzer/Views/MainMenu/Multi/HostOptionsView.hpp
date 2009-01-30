@@ -44,7 +44,8 @@ private:
     Choice choiceGameType;
     Choice choiceWindSpeed;
     Choice choiceCloudCoverage;
-
+protected:
+    void onComponentClicked(Component *c);
 public:
     HostOptionsView();
     virtual ~HostOptionsView()

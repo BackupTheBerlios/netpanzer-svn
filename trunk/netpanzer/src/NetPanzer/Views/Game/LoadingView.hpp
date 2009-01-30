@@ -95,6 +95,9 @@ public:
     virtual void doDraw();
     void render();
     
+protected:
+    void onComponentClicked(Component *c);
+
 private:
     static list<string> lines;
     static bool dirty;

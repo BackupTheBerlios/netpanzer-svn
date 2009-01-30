@@ -103,7 +103,7 @@ void GameView::doDraw()
     if (gDrawSolidBackground) {
         fill(250);
     } else {
-        drawMap(*currentscreen);
+        drawMap(*screen);
     }
 
     // Added for debugging, accesible through LibView.
@@ -125,14 +125,14 @@ void GameView::doDraw()
     ObjectiveInterface::offloadGraphics( SPRITE_SORTER );
     PowerUpInterface::offloadGraphics( SPRITE_SORTER );
 
-    SPRITE_SORTER.blitLists(currentscreen);
+    SPRITE_SORTER.blitLists(screen);
 
-    VehicleSelectionView::drawMiniProductionStatus(*currentscreen);
+    VehicleSelectionView::drawMiniProductionStatus(*screen);
 
     COMMAND_PROCESSOR.draw();
 
     // Make sure the console info is the last thing drawn.
-    ConsoleInterface::update(*currentscreen);
+    ConsoleInterface::update(*screen);
     
     View::doDraw();
 } // end GameView::doDraw
