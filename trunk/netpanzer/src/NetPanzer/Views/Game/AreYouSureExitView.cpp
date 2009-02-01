@@ -22,20 +22,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Palette.hpp"
 #include "Classes/ScreenSurface.hpp"
 #include "Interfaces/GameManager.hpp"
+#include "Views/Components/Button.hpp"
 
-//---------------------------------------------------------------------------
-static void bYES()
+enum
 {
-    GameManager::drawTextCenteredOnScreen("Exiting", Color::white);
-
-    GameManager::exitNetPanzer();
-}
-
-//---------------------------------------------------------------------------
-static void bNO()
-{
-    Desktop::setVisibility("AreYouSureExitView", false);
-}
+    BTN_YES,
+    BTN_NO
+};
 
 // AreYouSureExitView
 //---------------------------------------------------------------------------
@@ -51,8 +44,6 @@ AreYouSureExitView::AreYouSureExitView() : SpecialButtonView()
 //---------------------------------------------------------------------------
 void AreYouSureExitView::init()
 {
-    removeAllButtons();
-
     setBordered(false);
     setAllowResize(false);
     setDisplayStatusBar(false);
@@ -62,14 +53,12 @@ void AreYouSureExitView::init()
 
     int x = (getClientRect().getSize().x - (141 * 2 + 20)) / 2;
     int y = screen->getHeight()/2 + 30;
-    addSpecialButton(	iXY(x, y),
-                      "YES",
-                      bYES);
 
-    x += 141 + 10;
-    addSpecialButton(	iXY(x, y),
-                      "NO",
-                      bNO);
+    iXY pos(x,y);
+    add( Button::createSpecialButton("yes","Yes", pos, BTN_YES));
+
+    pos.x += 141 + 10;
+    add( Button::createSpecialButton("no","No", pos, BTN_NO));
 
 } // end AreYouSureExitView::init
 
@@ -93,3 +82,19 @@ void AreYouSureExitView::doActivate()
     Desktop::setActiveView(this);
 
 } // end AreYouSureExitView::doActivate
+
+void
+AreYouSureExitView::onComponentClicked(Component* c)
+{
+    switch ( c->getCustomCode() )
+    {
+        case BTN_YES:
+            GameManager::drawTextCenteredOnScreen("Exiting", Color::white);
+            GameManager::exitNetPanzer();
+            break;
+
+        case BTN_NO:
+            Desktop::setVisibility("AreYouSureExitView", false);
+            break;
+    }
+}

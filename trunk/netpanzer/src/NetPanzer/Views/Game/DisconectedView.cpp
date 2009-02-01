@@ -47,8 +47,6 @@ DisconectedView::DisconectedView() : SpecialButtonView()
 void
 DisconectedView::init()
 {
-    removeAllButtons();
-
     setBordered(true);
     setAllowResize(false);
 

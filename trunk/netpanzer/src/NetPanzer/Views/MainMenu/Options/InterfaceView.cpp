@@ -117,6 +117,9 @@ InterfaceView::onComponentClicked(Component* c)
                 gameconfig->scrollrate = gameconfig->scrollrate + 100;
             }
             break;
+
+        default:
+            OptionsTemplateView::onComponentClicked(c);
     }
 }
 

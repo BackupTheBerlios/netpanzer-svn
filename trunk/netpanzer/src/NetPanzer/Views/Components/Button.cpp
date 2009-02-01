@@ -28,7 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 void
 Button::render()
 {
-    if ( bimage.getNumFrames() == 1 ) {
+    if ( bimage.getNumFrames() == 1 )
+    {
         bimage.blt(surface, extraBorder, extraBorder);
     }
     else if ( bimage.getNumFrames() == 3 )
@@ -49,7 +50,7 @@ Button::render()
     if ( label.length() )
     {
         Surface text;
-        text.renderText( label.c_str(), textColor, 0);
+        text.renderText( label.c_str(), textColors[bstate], 0);
         // blit centered and transparent
         text.bltTrans(surface, (surface.getWidth()/2) - (text.getWidth()/2),
                       (surface.getHeight()/2) - (text.getHeight()/2));        
@@ -66,19 +67,16 @@ void Button::actionPerformed(const mMouseEvent &me)
                 || me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED)
     {
         bstate = BOVER;
-        textColor = Color::red;
         dirty = true; // draw text in red
     }
     else if (me.getID() == mMouseEvent::MOUSE_EVENT_EXITED)
     {
         bstate = BNORMAL;
-        textColor = Color::white;
         dirty = true; // draw defaults;
     }
     else if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED)
     {
         bstate = BPRESSED;
-        textColor = Color::yellow;
         dirty = true;
     }
     else if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED)

@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <config.h>
 
 #include "Types/iRect.hpp"
+#include "Views/Components/Button.hpp"
 
 #include "Views/MainMenu/MenuTemplateView.hpp"
 #include "2D/Palette.hpp"
@@ -38,94 +39,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Surface       MenuTemplateView::backgroundSurface;
 PackedSurface MenuTemplateView::titlePackedSurface;
 
-//PackedSurface MenuTemplateView::netPanzerLogo;
+#define BTN_MAIN            "MenuTemplateView.Main"
+#define BTN_MULTI           "MenuTemplateView.Multiplayer"
+#define BTN_OPTIONS         "MenuTemplateView.Options"
+#define BTN_HELP            "MenuTemplateView.Help"
+#define BTN_EXIT            "MenuTemplateView.Exit"
+#define BTN_INGAMEEXIT      "MenuTemplateView.InGamExit"
+#define BTN_RESIGN          "MenuTemplateView.Resign"
+#define BTN_CLOSEOPTIONS    "MenuTemplateView.CloseOptions"
+
+
 
 char MenuTemplateView::currentMultiView[] = "GetSessionView";
 char MenuTemplateView::currentView[]      = "";
-
-static void bMain()
-{
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("MainView", true);
-}
-
-static void bMulti()
-{
-    if (strcmp(MenuTemplateView::currentMultiView, "GetSessionView") == 0) {
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("GetSessionView", true);
-    } else if (strcmp(MenuTemplateView::currentMultiView, "HostView") == 0) {
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("HostView", true);
-        Desktop::setVisibility("UnitSelectionView", true);
-        Desktop::setVisibility("FlagSelectionView", true);
-        Desktop::setVisibility("HostOptionsView", true);
-        Desktop::setVisibility("MapSelectionView", true);
-        Desktop::setVisibility("PlayerNameView", true);
-    } else if (strcmp(MenuTemplateView::currentMultiView, "JoinView") == 0) {
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("JoinView", true);
-        Desktop::setVisibility("FlagSelectionView", true);
-        Desktop::setVisibility("PlayerNameView", true);
-        Desktop::setVisibility("IPAddressView", true);
-        Desktop::setVisibility("ServerListView", true);
-    } else {
-        assert(false);
-    }
-}
-
-static void bOptions()
-{
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("OptionsView", true);
-}
-
-static void bHelp()
-{
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("HelpView", true);
-}
-
-static void bExit()
-{
-    GameManager::exitNetPanzer();
-}
-
-//---------------------------------------------------------------------------
-static void bResign()
-{
-    Desktop::setVisibility("ControlsView", false);
-    Desktop::setVisibility("VisualsView", false);
-    Desktop::setVisibility("InterfaceView", false);
-    Desktop::setVisibility("SoundView", false);
-    Desktop::setVisibility("OptionsView", false);
-
-    Desktop::setVisibility("AreYouSureResignView", true);
-}
-
-//---------------------------------------------------------------------------
-static void bCloseOptions()
-{
-    GameManager::setNetPanzerGameOptions();
-
-    Desktop::setVisibility("ControlsView", false);
-    Desktop::setVisibility("VisualsView", false);
-    Desktop::setVisibility("InterfaceView", false);
-    Desktop::setVisibility("SoundView", false);
-    Desktop::setVisibility("OptionsView", false);
-}
-
-//---------------------------------------------------------------------------
-static void bExitNetPanzer()
-{
-    Desktop::setVisibility("ControlsView", false);
-    Desktop::setVisibility("VisualsView", false);
-    Desktop::setVisibility("InterfaceView", false);
-    Desktop::setVisibility("SoundView", false);
-    Desktop::setVisibility("OptionsView", false);
-
-    Desktop::setVisibility("AreYouSureExitView", true);
-}
 
 // MenuTemplateView
 //---------------------------------------------------------------------------
@@ -155,51 +81,39 @@ MenuTemplateView::MenuTemplateView() : SpecialButtonView()
 // initPreGameOptionButtons
 void MenuTemplateView::initPreGameOptionButtons()
 {
-    addSpecialButton(	mainPos,
-                      "Main",
-                      bMain);
-
-    addSpecialButton(	multiPos,
-                      "Multiplayer",
-                      bMulti);
-
-    addSpecialButton(	optionsPos,
-                      "Options",
-                      bOptions);
-
-    addSpecialButton(	helpPos,
-                      "Help",
-                      bHelp);
-
-    addSpecialButton( exitPos,
-                      "Exit netPanzer",
-                      bExit);
-
+    add( Button::createSpecialButton( BTN_MAIN, "Main", mainPos) );
+    add( Button::createSpecialButton( BTN_MULTI, "Multiplayer", multiPos) );
+    add( Button::createSpecialButton( BTN_OPTIONS, "Options", optionsPos) );
+    add( Button::createSpecialButton( BTN_HELP, "Help", helpPos) );
+    add( Button::createSpecialButton( BTN_EXIT, "Exit netPanzer", exitPos) );
 } // end MenuTemplateView::initPreGameOptionButtons
 
 // initInGameOptionButtons
 //---------------------------------------------------------------------------
 void MenuTemplateView::initInGameOptionButtons()
 {
-    if(!gameconfig->quickConnect) {
-        addSpecialButton(resignPos, "Resign", bResign);
-        addSpecialButton(exitPos, "Exit netPanzer", bExitNetPanzer);
-    } else {
-        addSpecialButton(exitPos, "Resign", bResign);
+    if(!gameconfig->quickConnect)
+    {
+        add( Button::createSpecialButton( BTN_INGAMEEXIT, "Exit netPanzer", exitPos) );
+        add( Button::createSpecialButton( BTN_RESIGN, "Resign", resignPos) );
     }
-
-    addSpecialButton( returnToGamePos,
-                      "Close Options",
-                      bCloseOptions);
+    else
+    {
+        add( Button::createSpecialButton( BTN_RESIGN, "Resign", exitPos) );
+    }
+    add( Button::createSpecialButton( BTN_CLOSEOPTIONS, "Close Options", returnToGamePos) );
 } // end MenuTemplateView::initInGameOptionButtons
 
 // initButtons
 //---------------------------------------------------------------------------
 void MenuTemplateView::initButtons()
 {
-    if (Desktop::getVisible("GameView")) {
+    if (Desktop::getVisible("GameView"))
+    {
         initInGameOptionButtons();
-    } else {
+    }
+    else
+    {
         initPreGameOptionButtons();
     }
 } // end MenuTemplateView::initButtons
@@ -304,3 +218,84 @@ void MenuTemplateView::processEvents()
 {
 } // end MenuTemplateView::processEvents
 
+void
+MenuTemplateView::onComponentClicked(Component* c)
+{
+    string cname = c->getName();
+    if ( !cname.compare("Button." BTN_MAIN) )
+    {
+        Desktop::setVisibilityAllWindows(false);
+        Desktop::setVisibility("MainView", true);
+    }
+    else if ( !cname.compare("Button." BTN_MULTI) )
+    {
+        if (strcmp(currentMultiView, "GetSessionView") == 0)
+        {
+            Desktop::setVisibilityAllWindows(false);
+            Desktop::setVisibility("GetSessionView", true);
+        }
+        else if (strcmp(currentMultiView, "HostView") == 0)
+        {
+            Desktop::setVisibilityAllWindows(false);
+            Desktop::setVisibility("HostView", true);
+            Desktop::setVisibility("UnitSelectionView", true);
+            Desktop::setVisibility("FlagSelectionView", true);
+            Desktop::setVisibility("HostOptionsView", true);
+            Desktop::setVisibility("MapSelectionView", true);
+            Desktop::setVisibility("PlayerNameView", true);
+        }
+        else if (strcmp(currentMultiView, "JoinView") == 0)
+        {
+            Desktop::setVisibilityAllWindows(false);
+            Desktop::setVisibility("JoinView", true);
+            Desktop::setVisibility("FlagSelectionView", true);
+            Desktop::setVisibility("PlayerNameView", true);
+            Desktop::setVisibility("IPAddressView", true);
+            Desktop::setVisibility("ServerListView", true);
+        }
+    }
+    else if ( !cname.compare("Button." BTN_OPTIONS) )
+    {
+        Desktop::setVisibilityAllWindows(false);
+        Desktop::setVisibility("OptionsView", true);
+    }
+    else if ( !cname.compare("Button." BTN_HELP) )
+    {
+        Desktop::setVisibilityAllWindows(false);
+        Desktop::setVisibility("HelpView", true);
+    }
+    else if ( !cname.compare("Button." BTN_EXIT) )
+    {
+        GameManager::exitNetPanzer();
+    }
+    else if ( !cname.compare("Button." BTN_RESIGN) )
+    {
+        Desktop::setVisibility("ControlsView", false);
+        Desktop::setVisibility("VisualsView", false);
+        Desktop::setVisibility("InterfaceView", false);
+        Desktop::setVisibility("SoundView", false);
+        Desktop::setVisibility("OptionsView", false);
+
+        Desktop::setVisibility("AreYouSureResignView", true);
+    }
+    else if ( !cname.compare("Button." BTN_INGAMEEXIT) )
+    {
+        Desktop::setVisibility("ControlsView", false);
+        Desktop::setVisibility("VisualsView", false);
+        Desktop::setVisibility("InterfaceView", false);
+        Desktop::setVisibility("SoundView", false);
+        Desktop::setVisibility("OptionsView", false);
+
+        Desktop::setVisibility("AreYouSureExitView", true);
+    }
+    else if ( !cname.compare("Button." BTN_CLOSEOPTIONS) )
+    {
+        GameManager::setNetPanzerGameOptions();
+
+        Desktop::setVisibility("ControlsView", false);
+        Desktop::setVisibility("VisualsView", false);
+        Desktop::setVisibility("InterfaceView", false);
+        Desktop::setVisibility("SoundView", false);
+        Desktop::setVisibility("OptionsView", false);
+    }
+}

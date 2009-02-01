@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __View_hpp__
 #define __View_hpp__
 
-#include "cButton.hpp"
 #include "2D/Surface.hpp"
 #include "2D/PackedSurface.hpp"
 #include "cInputField.hpp"
@@ -32,18 +31,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using namespace std;
 
-enum DEFAULT_VIEW_BUTTON
-{
-    CLOSE_VIEW_BUTTON,
-    MINMAX_VIEW_BUTTON
-};
+//enum DEFAULT_VIEW_BUTTON
+//{
+//    CLOSE_VIEW_BUTTON,
+//    MINMAX_VIEW_BUTTON
+//};
 
 class View : public iRect
 {
     friend class Desktop;
 public:
     void add(Component *Component);
-    void add(DEFAULT_VIEW_BUTTON button);
 
     typedef list<Component *> ComponentList;
     typedef ComponentList::iterator ComponentsIterator;
@@ -52,7 +50,6 @@ public:
     
     Component *focusComponent;
 
-    std::vector<cButton*>     buttons;
     std::vector<cInputField*> inputFields;
 
     enum
@@ -99,10 +96,7 @@ public:
     {
         moveTo(iXY(x, y));
     }
-    void removeAllButtons()
-    {
-        buttons.clear(); // XXX LEAK
-    }
+
     void removeComponents()
     {
         ComponentsIterator i = components.begin();
@@ -242,15 +236,6 @@ protected:
     //void setScrollBar       (const bool &newStatus);
 
     // Scroll bar functions.
-
-    // cButton Functions.
-    void addButtonPackedSurface(const iXY &pos, PackedSurface &source, const char *toolTip, ITEM_FUNC leftClickFunc);
-    /*!FIXME!*/ void drawDefinedButtons   ();
-    void drawHighlightedButton();
-    void drawPressedButton();
-    void setPressedButton(const int &cButton);
-    void setHighlightedButton(const int &cButton);
-    int  findButtonContaining(const iXY &pos);
 
     // SearchName, Title, and SubTitle functions.
     void  setSearchName(const char *searchName);

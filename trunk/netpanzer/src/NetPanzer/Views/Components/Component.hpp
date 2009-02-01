@@ -125,13 +125,14 @@ public:
 
     virtual void draw(int posx, int posy, Surface &dest)
     {
+        //LOGGER.warning("drawing component: '%s'", componentName.c_str());
         iRect bounds;
         getBounds(bounds);
         
         if ( dirty )
             render();
         
-        surface.blt(dest, posx + bounds.min.x, posy + bounds.min.y);
+        surface.bltTrans(dest, posx + bounds.min.x, posy + bounds.min.y);
     }
     
     virtual void render() = 0;

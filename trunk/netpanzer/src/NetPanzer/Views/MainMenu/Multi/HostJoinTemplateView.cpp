@@ -46,58 +46,11 @@ int cLightBlue;
 int cLightGreen;
 int cOrange;
 
-/////////////////////////////////////////////////////////////////////////////
-// Button functions.
-/////////////////////////////////////////////////////////////////////////////
-
-static void bBack()
+enum
 {
-    if (gameconfig->hostorjoin == _game_session_join)
-    {
-        NetworkClient::partServer();
-    }
-    else if (gameconfig->hostorjoin == _game_session_host)
-    {
-        NetworkServer::closeSession();
-    }
-
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("GetSessionView", true);
-}
-
-static void bNext()
-{
-    if ((const std::string&) gameconfig->playername == "")
-        return;
-
-    // Check a few things which should be ok.
-    if (strlen(HostJoinTemplateView::gameTypeBuf) == 0) {
-        return;
-    }
-    if (MapSelectionView::curMap == -1) {
-        return;
-    }
-    if (gameconfig->hostorjoin == _game_session_join &&
-        strcmp(IPAddressView::szServer.getString(), "") == 0)
-        return;
-
-    // Set the player flag.
-    gameconfig->playerflag = FlagSelectionView::getSelectedFlag();
-
-    // Close all menu views.
-    Desktop::setVisibilityAllWindows(false);
-
-    if(gameconfig->hostorjoin == _game_session_join) {
-        gameconfig->serverConnect = IPAddressView::szServer.getString();
-    }
-    
-    serverlistview->endQuery();
-
-    MenuTemplateView::backgroundSurface.free();
-
-    PlayerGameManager* manager = (PlayerGameManager*) gamemanager;
-    manager->launchMultiPlayerGame();
-}
+    BTN_BACK,
+    BTN_NEXT
+};
 
 // HostJoinTemplateView
 //---------------------------------------------------------------------------
@@ -107,15 +60,8 @@ HostJoinTemplateView::HostJoinTemplateView() : MenuTemplateView()
     setTitle("");
     setSubTitle("");
 
-    // Back.
-    addSpecialButton(	backPos,
-                      "Back",
-                      bBack);
-
-    addSpecialButton(   nextPos,
-                      "Next",
-                      bNext);
-
+    add( Button::createSpecialButton("back", "Back", backPos, BTN_BACK));
+    add( Button::createSpecialButton("next", "Next", nextPos, BTN_NEXT));
 } // end HostJoinTemplateView constructor
 
 // doDraw
@@ -142,3 +88,58 @@ void HostJoinTemplateView::loadBackgroundSurface()
 {
     doLoadBackgroundSurface("pics/backgrounds/menus/menu/defaultMB.bmp");
 } // end HostJoinTemplateView::loadBackgroundSurface
+
+void
+HostJoinTemplateView::onComponentClicked(Component* c)
+{
+    switch ( c->getCustomCode() )
+    {
+        case BTN_BACK:
+            if (gameconfig->hostorjoin == _game_session_join)
+            {
+                NetworkClient::partServer();
+            }
+            else if (gameconfig->hostorjoin == _game_session_host)
+            {
+                NetworkServer::closeSession();
+            }
+
+            Desktop::setVisibilityAllWindows(false);
+            Desktop::setVisibility("GetSessionView", true);
+            break;
+
+        case BTN_NEXT:
+            if (   (const std::string&) gameconfig->playername == ""
+                || strlen(HostJoinTemplateView::gameTypeBuf) == 0
+                || MapSelectionView::curMap == -1
+                || (gameconfig->hostorjoin == _game_session_join
+                        && strcmp(IPAddressView::szServer.getString(), "") == 0
+                   )
+               )
+            {
+                return;
+            }
+
+            // Set the player flag.
+            gameconfig->playerflag = FlagSelectionView::getSelectedFlag();
+
+            // Close all menu views.
+            Desktop::setVisibilityAllWindows(false);
+
+            if(gameconfig->hostorjoin == _game_session_join)
+            {
+                gameconfig->serverConnect = IPAddressView::szServer.getString();
+            }
+
+            serverlistview->endQuery();
+
+            MenuTemplateView::backgroundSurface.free();
+
+            PlayerGameManager* manager = (PlayerGameManager*) gamemanager;
+            manager->launchMultiPlayerGame();
+            break;
+
+        default:
+            MenuTemplateView::onComponentClicked(c);
+    }
+}

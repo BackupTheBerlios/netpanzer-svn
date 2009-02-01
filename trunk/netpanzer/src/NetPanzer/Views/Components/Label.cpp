@@ -19,15 +19,17 @@
 #include "Label.hpp"
 
 void
-Label::draw( int posx, int posy, Surface &dest)
-{    
+Label::render()
+{
+    surface.free();
     if ( shadowed )
     {
-        dest.bltStringShadowed(posx + position.x, posy + position.y, text.c_str(), foreground, background);
+        surface.renderShadowedText(text.c_str(), foreground, 0, background);
     }
     else
     {
-        dest.bltString(posx + position.x, posy + position.y, text.c_str(), foreground);
+        surface.renderText(text.c_str(), foreground, 0);
     }
+    dirty = false;
 }
 

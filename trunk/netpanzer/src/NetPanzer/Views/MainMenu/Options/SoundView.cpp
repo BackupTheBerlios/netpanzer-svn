@@ -259,5 +259,8 @@ SoundView::onComponentClicked(Component* c)
                 sound->setMusicVolume(v);
             }
             break;
+
+        default:
+            OptionsTemplateView::onComponentClicked(c);
     }
 }

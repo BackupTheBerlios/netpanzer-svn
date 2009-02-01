@@ -27,6 +27,9 @@ class AreYouSureExitView : public SpecialButtonView
 private:
     void init();
 
+protected:
+    void onComponentClicked(Component *c);
+
 public:
     AreYouSureExitView();
 

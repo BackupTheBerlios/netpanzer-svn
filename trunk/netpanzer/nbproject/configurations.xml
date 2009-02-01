@@ -505,8 +505,6 @@
           <logicalFolder name="Components" displayName="Components" projectFiles="true">
             <itemPath>src/NetPanzer/Views/Components/Button.cpp</itemPath>
             <itemPath>src/NetPanzer/Views/Components/Button.hpp</itemPath>
-            <itemPath>src/NetPanzer/Views/Components/cButton.cpp</itemPath>
-            <itemPath>src/NetPanzer/Views/Components/cButton.hpp</itemPath>
             <itemPath>src/NetPanzer/Views/Components/CheckBox.cpp</itemPath>
             <itemPath>src/NetPanzer/Views/Components/CheckBox.hpp</itemPath>
             <itemPath>src/NetPanzer/Views/Components/Choice.cpp</itemPath>
@@ -612,12 +610,8 @@
             <itemPath>src/NetPanzer/Views/MainMenu/MenuTemplateView.hpp</itemPath>
             <itemPath>src/NetPanzer/Views/MainMenu/OptionsTemplateView.cpp</itemPath>
             <itemPath>src/NetPanzer/Views/MainMenu/OptionsTemplateView.hpp</itemPath>
-            <itemPath>src/NetPanzer/Views/MainMenu/OrderingView.cpp</itemPath>
-            <itemPath>src/NetPanzer/Views/MainMenu/OrderingView.hpp</itemPath>
             <itemPath>src/NetPanzer/Views/MainMenu/RMouseHackView.cpp</itemPath>
             <itemPath>src/NetPanzer/Views/MainMenu/RMouseHackView.hpp</itemPath>
-            <itemPath>src/NetPanzer/Views/MainMenu/SkirmishView.cpp</itemPath>
-            <itemPath>src/NetPanzer/Views/MainMenu/SkirmishView.hpp</itemPath>
             <itemPath>src/NetPanzer/Views/MainMenu/SpecialButtonView.cpp</itemPath>
             <itemPath>src/NetPanzer/Views/MainMenu/SpecialButtonView.hpp</itemPath>
           </logicalFolder>
@@ -2079,12 +2073,6 @@
       <item path="src/NetPanzer/Views/Components/ViewGlobals.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Views/Components/cButton.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/Components/cButton.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Views/Components/cInputField.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -2301,22 +2289,10 @@
       <item path="src/NetPanzer/Views/MainMenu/OptionsTemplateView.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Views/MainMenu/OrderingView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/OrderingView.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Views/MainMenu/RMouseHackView.cpp">
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/RMouseHackView.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/SkirmishView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/SkirmishView.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/SpecialButtonView.cpp">
@@ -3800,12 +3776,6 @@
       <item path="src/NetPanzer/Views/Components/ViewGlobals.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Views/Components/cButton.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/Components/cButton.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Views/Components/cInputField.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -4022,22 +3992,10 @@
       <item path="src/NetPanzer/Views/MainMenu/OptionsTemplateView.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Views/MainMenu/OrderingView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/OrderingView.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Views/MainMenu/RMouseHackView.cpp">
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/RMouseHackView.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/SkirmishView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/SkirmishView.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/SpecialButtonView.cpp">
@@ -5521,12 +5479,6 @@
       <item path="src/NetPanzer/Views/Components/ViewGlobals.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Views/Components/cButton.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/Components/cButton.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Views/Components/cInputField.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -5743,22 +5695,10 @@
       <item path="src/NetPanzer/Views/MainMenu/OptionsTemplateView.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Views/MainMenu/OrderingView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/OrderingView.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Views/MainMenu/RMouseHackView.cpp">
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/RMouseHackView.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/SkirmishView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/SkirmishView.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/SpecialButtonView.cpp">
@@ -7242,12 +7182,6 @@
       <item path="src/NetPanzer/Views/Components/ViewGlobals.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Views/Components/cButton.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/Components/cButton.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Views/Components/cInputField.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -7464,22 +7398,10 @@
       <item path="src/NetPanzer/Views/MainMenu/OptionsTemplateView.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Views/MainMenu/OrderingView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/OrderingView.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Views/MainMenu/RMouseHackView.cpp">
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/RMouseHackView.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/SkirmishView.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Views/MainMenu/SkirmishView.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/MainMenu/SpecialButtonView.cpp">

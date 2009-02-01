@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "GetSessionView.hpp"
 #include "Views/Components/Desktop.hpp"
+#include "Views/Components/Button.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/MouseInterface.hpp"
@@ -31,55 +32,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 static int previousSessionType = _game_session_join;
 
-
-/////////////////////////////////////////////////////////////////////////////
-// Button functions.
-/////////////////////////////////////////////////////////////////////////////
-
-static void bBack()
+enum
 {
-    Desktop::setVisibilityAllWindows(false);
-    Desktop::setVisibility("MainView", true);
-}
-
-void bNext()
-{
-    if (gameconfig->hostorjoin == _game_session_host) {
-        Desktop::setVisibilityAllWindows(false);
-
-        Desktop::setVisibility("HostView", true);
-        Desktop::setVisibility("UnitSelectionView", true);
-        Desktop::setVisibility("FlagSelectionView", true);
-        Desktop::setVisibility("HostOptionsView", true);
-        Desktop::setVisibility("MapSelectionView", true);
-        Desktop::setVisibility("PlayerNameView", true);
-
-        NetworkServer::openSession();
-    } else if (gameconfig->hostorjoin == _game_session_join) {
-        Desktop::setVisibility("JoinView", true);
-        Desktop::setVisibility("FlagSelectionView", true);
-        Desktop::setVisibility("PlayerNameView", true);
-
-        Desktop::setVisibility("IPAddressView", true);
-        Desktop::setVisibility("ServerListView", true);
-        serverlistview->refresh();
-    }
-}
-
-static void bHost()
-{
-    previousSessionType = gameconfig->hostorjoin;
-
-    gameconfig->hostorjoin = _game_session_host;
-}
-
-static void bJoin()
-{
-    previousSessionType = gameconfig->hostorjoin;
-
-    gameconfig->hostorjoin = _game_session_join;
-}
-
+    BTN_HOST,
+    BTN_JOIN,
+    BTN_BACK,
+    BTN_NEXT
+};
 
 // GetSessionView
 //---------------------------------------------------------------------------
@@ -89,25 +48,11 @@ GetSessionView::GetSessionView() : MenuTemplateView()
     setTitle("Select Session");
     setSubTitle("");
 
-    // Join.
-    addSpecialButton(	joinPos,
-                      "Join",
-                      bJoin);
+    add( Button::createSpecialButton("host", "Host", hostPos, BTN_HOST));
+    add( Button::createSpecialButton("join", "Join", joinPos, BTN_JOIN));
+    add( Button::createSpecialButton("back", "Back", backPos, BTN_BACK));
+    add( Button::createSpecialButton("next", "Next", nextPos, BTN_NEXT));
 
-    // Host.
-    addSpecialButton(	hostPos,
-                      "Host",
-                      bHost);
-
-    // Next.
-    addSpecialButton(	nextPos,
-                      "Next",
-                      bNext);
-
-    // Back.
-    addSpecialButton(	backPos,
-                      "Back",
-                      bBack);
 } // end GetSessionView::GetSessionView
 
 // doDraw
@@ -129,9 +74,12 @@ void GetSessionView::drawInfo()
 {
     int connectionType = gameconfig->hostorjoin;
 
-    if (connectionType == _game_session_host) {
+    if (connectionType == _game_session_host)
+    {
         drawHostInfo(bodyTextRect);
-    } else if (connectionType == _game_session_join) {
+    }
+    else if (connectionType == _game_session_join)
+    {
         drawJoinInfo(bodyTextRect);
     }
 }
@@ -206,3 +154,51 @@ void GetSessionView::loadTitleSurface()
     }
 
 } // end GetSessionView::loadTitleSurface
+void
+GetSessionView::onComponentClicked(Component* c)
+{
+    switch ( c->getCustomCode() )
+    {
+        case BTN_HOST:
+            previousSessionType = gameconfig->hostorjoin;
+            gameconfig->hostorjoin = _game_session_host;
+            break;
+
+        case BTN_JOIN:
+            previousSessionType = gameconfig->hostorjoin;
+            gameconfig->hostorjoin = _game_session_join;
+            break;
+            
+        case BTN_BACK:
+            Desktop::setVisibilityAllWindows(false);
+            Desktop::setVisibility("MainView", true);
+            break;
+
+        case BTN_NEXT:
+            if (gameconfig->hostorjoin == _game_session_host)
+            {
+                Desktop::setVisibilityAllWindows(false);
+                Desktop::setVisibility("HostView", true);
+                Desktop::setVisibility("UnitSelectionView", true);
+                Desktop::setVisibility("FlagSelectionView", true);
+                Desktop::setVisibility("HostOptionsView", true);
+                Desktop::setVisibility("MapSelectionView", true);
+                Desktop::setVisibility("PlayerNameView", true);
+
+                NetworkServer::openSession();
+            }
+            else if (gameconfig->hostorjoin == _game_session_join)
+            {
+                Desktop::setVisibility("JoinView", true);
+                Desktop::setVisibility("FlagSelectionView", true);
+                Desktop::setVisibility("PlayerNameView", true);
+                Desktop::setVisibility("IPAddressView", true);
+                Desktop::setVisibility("ServerListView", true);
+                serverlistview->refresh();
+            }
+            break;
+
+        default:
+            MenuTemplateView::onComponentClicked(c);
+    }
+}

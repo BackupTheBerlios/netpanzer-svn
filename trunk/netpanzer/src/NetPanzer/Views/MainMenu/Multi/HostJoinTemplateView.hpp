@@ -36,6 +36,8 @@ private:
     
     virtual void loadBackgroundSurface();
 
+protected:
+    void onComponentClicked(Component *c);
 public:
     static char gameTypeBuf[256];
 

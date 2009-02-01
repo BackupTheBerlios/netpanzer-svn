@@ -193,6 +193,7 @@ public:
 
     // Text rendering functions
     void renderText(const char *str, PIX color, PIX bgcolor);
+    void renderShadowedText(const char *str, PIX color, PIX bgcolor, PIX shadowcolor);
     
     // Blit a single character of text.
     void bltChar8x8(int x, int y, unsigned char character, const PIX &color);

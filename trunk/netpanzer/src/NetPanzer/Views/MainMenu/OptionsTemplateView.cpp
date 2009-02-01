@@ -20,52 +20,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/OptionsTemplateView.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/GameViewGlobals.hpp"
+#include "Views/Components/Button.hpp"
 
-static void bInterface()
-{
-    if (Desktop::getVisible("GameView")) {
-        Desktop::setVisibility("ControlsView", false);
-        Desktop::setVisibility("VisualsView", false);
-        Desktop::setVisibility("InterfaceView", false);
-        Desktop::setVisibility("SoundView", false);
-        Desktop::setVisibility("OptionsView", false);
-    } else {
-        Desktop::setVisibilityAllWindows(false);
-    }
-
-    Desktop::setVisibility("InterfaceView", true);
-}
-
-static void bVisuals()
-{
-    if (Desktop::getVisible("GameView")) {
-        Desktop::setVisibility("ControlsView", false);
-        Desktop::setVisibility("VisualsView", false);
-        Desktop::setVisibility("InterfaceView", false);
-        Desktop::setVisibility("SoundView", false);
-        Desktop::setVisibility("OptionsView", false);
-    } else {
-        Desktop::setVisibilityAllWindows(false);
-    }
-
-    Desktop::setVisibility("VisualsView", true);
-}
-
-static void bSound()
-{
-    if (Desktop::getVisible("GameView")) {
-        Desktop::setVisibility("ControlsView", false);
-        Desktop::setVisibility("VisualsView", false);
-        Desktop::setVisibility("InterfaceView", false);
-        //Desktop::setVisibility("SoundView", false);
-        Desktop::setVisibility("OptionsView", false);
-    } else {
-        Desktop::setVisibilityAllWindows(false);
-    }
-    Desktop::setVisibility("SoundView", true);
-    //Desktop::setVisibility("VisualsView", true);
-}
-
+#define BTN_INTERFACE "OptionsTemplateView.Interface"
+#define BTN_VISUALS "OptionsTemplateView.Visuals"
+#define BTN_SOUND "OptionsTemplateView.Sound"
 
 // OptionsTemplateView
 //---------------------------------------------------------------------------
@@ -84,14 +43,13 @@ OptionsTemplateView::OptionsTemplateView() : MenuTemplateView()
 //---------------------------------------------------------------------------
 void OptionsTemplateView::initButtons()
 {
-    removeAllButtons();
     removeComponents();
 
     MenuTemplateView::initButtons();
 
-    addSpecialButton( soundPos,     "Sound",     bSound);
-    addSpecialButton( interfacePos, "Interface", bInterface);
-    addSpecialButton( visualsPos,   "Visuals",   bVisuals);
+    add( Button::createSpecialButton( BTN_SOUND,"Sound", soundPos));
+    add( Button::createSpecialButton( BTN_INTERFACE,"Interface", interfacePos));
+    add( Button::createSpecialButton( BTN_VISUALS,"Visuals",visualsPos));
 
 #if 0 // XXX
     addSpecialButton( controlsPos,  "Controls",  bControls);
@@ -124,3 +82,64 @@ void OptionsTemplateView::loadTitleSurface()
     doLoadTitleSurface("optionsTitle");
 
 } // end ControlsView::loadTitleSurface
+
+void
+OptionsTemplateView::onComponentClicked(Component* c)
+{
+    string cname = c->getName();
+
+    if ( ! cname.compare("Button." BTN_INTERFACE) )
+    {
+        if (Desktop::getVisible("GameView"))
+        {
+            Desktop::setVisibility("ControlsView", false);
+            Desktop::setVisibility("VisualsView", false);
+            Desktop::setVisibility("InterfaceView", false);
+            Desktop::setVisibility("SoundView", false);
+            Desktop::setVisibility("OptionsView", false);
+        }
+        else
+        {
+            Desktop::setVisibilityAllWindows(false);
+        }
+
+        Desktop::setVisibility("InterfaceView", true);
+    }
+    else if ( ! cname.compare("Button." BTN_VISUALS) )
+    {
+        if (Desktop::getVisible("GameView"))
+        {
+            Desktop::setVisibility("ControlsView", false);
+            Desktop::setVisibility("VisualsView", false);
+            Desktop::setVisibility("InterfaceView", false);
+            Desktop::setVisibility("SoundView", false);
+            Desktop::setVisibility("OptionsView", false);
+        }
+        else
+        {
+            Desktop::setVisibilityAllWindows(false);
+        }
+
+        Desktop::setVisibility("VisualsView", true);
+    }
+    else if ( ! cname.compare("Button." BTN_SOUND) )
+    {
+        if (Desktop::getVisible("GameView"))
+        {
+            Desktop::setVisibility("ControlsView", false);
+            Desktop::setVisibility("VisualsView", false);
+            Desktop::setVisibility("InterfaceView", false);
+            //Desktop::setVisibility("SoundView", false);
+            Desktop::setVisibility("OptionsView", false);
+        }
+        else
+        {
+            Desktop::setVisibilityAllWindows(false);
+        }
+        Desktop::setVisibility("SoundView", true);
+    }
+    else
+    {
+        MenuTemplateView::onComponentClicked(c);
+    }
+}

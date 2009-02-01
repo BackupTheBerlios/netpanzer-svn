@@ -41,6 +41,7 @@ protected:
 
     typedef void (*ITEM_FUNC)(void);
 
+    void onComponentClicked(Component *c);
 public:
     MenuTemplateView();
 

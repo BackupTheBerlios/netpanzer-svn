@@ -27,8 +27,10 @@ using namespace std;
 class Label:public Component
 {
 public:
-    Label(int x, int y, string t, PIX color, PIX bgcolor=Color::black, bool shadow=false)
+    Label( int x, int y, string t, PIX color, PIX bgcolor=Color::black, bool shadow=false)
+            : Component("Label." + t)
     {
+        dirty = true;
         text = t;
         background = bgcolor;
         foreground = color;
@@ -36,13 +38,8 @@ public:
         position.x = x;
         position.y = y;
     }
-    
-    void draw( int posx, int posy, Surface &dest);
-    
-    virtual void render()
-    {
-        // nothing
-    }
+        
+    void render();
     
     void actionPerformed(const mMouseEvent &me)
     {

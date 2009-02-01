@@ -1306,6 +1306,70 @@ Surface::renderText(const char *str, PIX color, PIX bgcolor)
     }
 }
 
+void
+Surface::renderShadowedText(const char *str, PIX color, PIX bgcolor, PIX shadowcolor)
+{
+    if ( !str )
+        return;
+
+    int len = strlen(str);
+    if ( !len )
+        return;
+
+    unsigned int need_width = (len * FONT_WIDTH) + 1;
+    unsigned int need_height = FONT_HEIGHT + 1;
+
+    if ( frame0 != 0 )
+    {
+        if ( getWidth() != need_width || getHeight() != need_height )
+        {
+            free();
+            create( need_width, need_height, 1);
+        }
+    }
+    else
+    {
+        create( need_width, need_height, 1);
+    }
+    
+    //clear corner pixels.
+    putPixel(need_width-1, 0, bgcolor);
+    putPixel(0, need_height-1, bgcolor);
+
+    for ( int line = 0; line < FONT_HEIGHT; ++line)
+    {
+        PIX * dptr = getFrame0() + (line * (int)getPitch());
+        PIX * shadowptr = dptr + (int)getPitch() + sizeof(PIX);
+        const char * pstr = str;
+        for ( unsigned char c = *pstr; c; c= *(++pstr))
+        {
+            if ( c >=128 ) c = ' ';
+
+            char * fptr = staticFont + (c*FONT_WIDTH) + (128*FONT_WIDTH*line);
+            PIX * eptr = dptr+FONT_WIDTH;
+            do
+            {
+                if ( *(fptr++) == 0 ) // is bg
+                {
+                    if ( *dptr != shadowcolor )
+                    {
+                        *dptr = bgcolor;
+                    }
+                    *(shadowptr++) = bgcolor;
+                    dptr++;
+                }
+                else
+                {
+                    *(dptr++) = color;
+                    *(shadowptr++) = shadowcolor;
+                }
+
+            } while ( dptr < eptr );
+        }
+    }
+}
+
+
 // bltChar8x8
 //---------------------------------------------------------------------------
 // Purpose: Blits the specied rom character to the screen at the specified

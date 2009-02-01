@@ -36,6 +36,8 @@ protected:
     virtual void loadBackgroundSurface();
     virtual void loadTitleSurface();
 
+    void onComponentClicked(Component *c);
+    
 public:
     GetSessionView();
 
