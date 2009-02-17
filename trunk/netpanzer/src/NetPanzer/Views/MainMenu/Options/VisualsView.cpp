@@ -165,13 +165,6 @@ void VisualsView::doDraw()
 
 } // end VisualsView::doDraw
 
-// processEvents
-//---------------------------------------------------------------------------
-void VisualsView::processEvents()
-{
-    OptionsTemplateView::processEvents();
-} // end VisualsView::processEvents
-
 // loadTitleSurface
 //---------------------------------------------------------------------------
 void VisualsView::loadTitleSurface()

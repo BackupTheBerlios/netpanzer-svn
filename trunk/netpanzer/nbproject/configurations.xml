@@ -385,7 +385,6 @@
           <itemPath>src/NetPanzer/Particles/CraterParticle2D.hpp</itemPath>
           <itemPath>src/NetPanzer/Particles/DirtKickParticle2D.cpp</itemPath>
           <itemPath>src/NetPanzer/Particles/DirtKickParticle2D.hpp</itemPath>
-          <itemPath>src/NetPanzer/Particles/ExplosionFlashParticle2D.hpp</itemPath>
           <itemPath>src/NetPanzer/Particles/FireParticle2D.cpp</itemPath>
           <itemPath>src/NetPanzer/Particles/FireParticle2D.hpp</itemPath>
           <itemPath>src/NetPanzer/Particles/FireParticleSystem2D.cpp</itemPath>
@@ -1693,9 +1692,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Particles/DirtKickParticle2D.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Particles/ExplosionFlashParticle2D.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Particles/FireParticle2D.cpp">
@@ -3398,9 +3394,6 @@
       <item path="src/NetPanzer/Particles/DirtKickParticle2D.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Particles/ExplosionFlashParticle2D.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Particles/FireParticle2D.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -5101,9 +5094,6 @@
       <item path="src/NetPanzer/Particles/DirtKickParticle2D.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Particles/ExplosionFlashParticle2D.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Particles/FireParticle2D.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -6802,9 +6792,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Particles/DirtKickParticle2D.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Particles/ExplosionFlashParticle2D.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Particles/FireParticle2D.cpp">

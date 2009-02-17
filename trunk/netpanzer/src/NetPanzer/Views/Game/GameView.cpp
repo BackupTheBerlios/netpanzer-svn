@@ -1,9 +1,3 @@
-
-#include "2D/Surface.hpp"
-
-
-#include "GameView.hpp"
-
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
  
@@ -37,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleSystem2D.hpp"
 #include "Views/Components/ViewGlobals.hpp"
 #include "Particles/ParticleInterface.hpp"
+#include "2D/Surface.hpp"
 #include "2D/PackedSurface.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
 #include "PowerUps/PowerUpInterface.hpp"

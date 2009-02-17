@@ -76,7 +76,6 @@ public:
     VisualsView();
 
     virtual void doDraw();
-    virtual void processEvents();
     virtual void initButtons();
     virtual void stateChanged(Component* source);
 }

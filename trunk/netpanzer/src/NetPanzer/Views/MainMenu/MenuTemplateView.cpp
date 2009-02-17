@@ -162,7 +162,6 @@ void MenuTemplateView::doActivate()
 
     loadBackgroundSurface();
     loadTitleSurface();
-    loadNetPanzerLogo();
 
     SpecialButtonView::doActivate();
 } // end doActivate
@@ -207,16 +206,6 @@ void MenuTemplateView::doLoadTitleSurface(const std::string& string)
 void MenuTemplateView::doDeactivate()
 {
 } // end doDeactivate
-
-//---------------------------------------------------------------------------
-void MenuTemplateView::loadNetPanzerLogo()
-{} // end MenuTemplateView::loadNetPanzerLogo
-
-// processEvents
-//---------------------------------------------------------------------------
-void MenuTemplateView::processEvents()
-{
-} // end MenuTemplateView::processEvents
 
 void
 MenuTemplateView::onComponentClicked(Component* c)

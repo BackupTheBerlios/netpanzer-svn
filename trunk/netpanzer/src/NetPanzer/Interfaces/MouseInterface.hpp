@@ -31,11 +31,13 @@ class MouseEvent
 public:
     enum {
         EVENT_DOWN = SDL_MOUSEBUTTONDOWN,
-        EVENT_UP = SDL_MOUSEBUTTONUP
+        EVENT_UP = SDL_MOUSEBUTTONUP,
+        EVENT_MOVE = SDL_MOUSEMOTION
     };
     unsigned char button;
     unsigned char event;
     iXY pos;
+    iXY relpos;
 };
 
 typedef std::deque<MouseEvent> MouseEventQueue;
@@ -106,11 +108,7 @@ public:
     static void manageClickTimer();
 
     static void setCursor(const char* cursorname);
-    static inline void onMouseMoved(SDL_MouseMotionEvent *e)
-    {
-        mouse_pos.x = e->x;
-        mouse_pos.y = e->y;
-    }
+    static void onMouseMoved(SDL_MouseMotionEvent *e);
     
     static inline iXY getMousePosition()   { return mouse_pos; }
     

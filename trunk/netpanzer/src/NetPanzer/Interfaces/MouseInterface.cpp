@@ -111,6 +111,22 @@ MouseInterface::onMouseButtonUp(SDL_MouseButtonEvent *e)
     event_queue.push_back(event);
 }
 
+void
+MouseInterface::onMouseMoved(SDL_MouseMotionEvent* e)
+{
+    mouse_pos.x = e->x;
+    mouse_pos.y = e->y;
+
+    MouseEvent event;
+    event.event = MouseEvent::EVENT_MOVE;
+    event.button = e->state;
+    event.pos.x = e->x;
+    event.pos.y = e->y;
+    event.relpos.x = e->xrel;
+    event.relpos.y = e->yrel;
+    event_queue.push_back(event);
+}
+
 void MouseInterface::setCursor(const char* cursorname)
 {
     cursors_t::iterator i = cursors.find(cursorname);

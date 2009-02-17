@@ -322,13 +322,6 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
     prevButton   = curButton;
     prevMousePos = mousePos;
 
-    //mouseView = findViewContaining(mousePos);
-    unsigned effActions = mouseActions;
-    if (mouseView != 0 && effActions == 0)
-    {
-        effActions = mouseView->getMouseActions(mousePos-mouseView->min);
-    }
-
     if (focus != 0)
     {
         focus->processEvents();

@@ -264,4 +264,3 @@ void SelectionList::validateList()
 
     unit_list.clear();
 }
-

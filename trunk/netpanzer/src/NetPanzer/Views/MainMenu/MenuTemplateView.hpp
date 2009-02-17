@@ -28,8 +28,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class MenuTemplateView : public SpecialButtonView
 {
 protected:
-    static  void loadNetPanzerLogo();
-
     virtual void loadBackgroundSurface();
     virtual void loadTitleSurface();
 
@@ -48,7 +46,6 @@ public:
     virtual void doDraw();
     virtual void doActivate();
     virtual void doDeactivate();
-    virtual void processEvents();
 
     void initInGameOptionButtons();
     void initPreGameOptionButtons();

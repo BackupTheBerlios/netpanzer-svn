@@ -35,9 +35,6 @@ protected:
     ObjectiveID outpost_goal_selection; //number of the outpost, -1 if none
     iXY output_pos_press;
 
-    iXY right_mouse_scroll_pos;
-    iXY right_mouse_scrolled_pos;
-    bool right_mouse_scroll;
     bool right_mouse_scroll_moved;
     bool selectBoundBoxUnits();
 
@@ -52,7 +49,6 @@ protected:
     unsigned int current_selection_list_bits;
     SelectionList target_list;
 
-    void switchSelectionList(unsigned long new_list_index);
     void setSelectionList(unsigned long new_list_index);
     void cycleSelectedUnits(unsigned long new_list_index);
 
@@ -70,6 +66,7 @@ protected:
 
     void evalLeftMButtonEvents(const MouseEvent &event);
     void evalRightMButtonEvents(const MouseEvent &event);
+    void evalMouseMoveEvents(const MouseEvent &event);
 
     void evaluateMouseEvents();
 
