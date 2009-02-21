@@ -95,6 +95,7 @@ void AreYouSureResignView::doActivate()
 void
 AreYouSureResignView::onComponentClicked(Component* c)
 {
+    View *v = 0;
     switch ( c->getCustomCode() )
     {
         case BTN_YES:
@@ -124,8 +125,7 @@ AreYouSureResignView::onComponentClicked(Component* c)
             Desktop::setVisibilityAllWindows(false);
             Desktop::setVisibility("MainView", true);
 
-            View *v = Desktop::getView("OptionsView");
-
+            v = Desktop::getView("OptionsView");
             if (v != 0)
             {
                 ((OptionsTemplateView *)v)->initButtons();

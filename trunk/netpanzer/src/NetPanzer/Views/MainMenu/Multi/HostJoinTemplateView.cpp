@@ -135,8 +135,7 @@ HostJoinTemplateView::onComponentClicked(Component* c)
 
             MenuTemplateView::backgroundSurface.free();
 
-            PlayerGameManager* manager = (PlayerGameManager*) gamemanager;
-            manager->launchMultiPlayerGame();
+            ((PlayerGameManager*)gamemanager)->launchMultiPlayerGame();
             break;
 
         default:

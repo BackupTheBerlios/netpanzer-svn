@@ -251,7 +251,7 @@ SoundView::onComponentClicked(Component* c)
             break;
 
         case INC_MUSIC:
-            unsigned int v = gameconfig->musicvolume;
+            v = gameconfig->musicvolume;
             if (v<100)
             {
                 ++v;
