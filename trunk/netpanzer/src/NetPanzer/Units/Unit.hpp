@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _VEHICLE_HPP
 #define _VEHICLE_HPP
 #include <string>
+#include <vector>
 
 #include "UnitState.hpp"
 #include "Util/Timer.hpp"
@@ -29,62 +30,30 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/SelectionBoxSprite.hpp"
 #include "Classes/SpriteSorter.hpp"
 
-enum { _control_idle,
-       _control_move,
-       _control_move_map_square,
-       _control_turret_track_point,
-       _control_turret_track_target,
-       _control_gunnery_location,
-       _control_gunnery_target    };
-
-enum { _ai_command_idle,
-       _ai_command_move_to_loc,
-       _ai_command_attack_unit,
-       _ai_command_manual_move,
-       _ai_command_defend_hold };
-
-enum { _aiFsmMoveToLoc_path_generate,
-       _aiFsmMoveToLoc_check_goal,
-       _aiFsmMoveToLoc_next_move,
-       _aiFsmMoveToLoc_move_wait,
-       _aiFsmMoveToLoc_wait_clear_loc,
-       _aiFsmMoveToLoc_check_fsm_transition };
-
-enum { _aiFsmAttackUnit_path_generate,
-       _aiFsmAttackUnit_range_check,
-       _aiFsmAttackUnit_idle,
-       _aiFsmAttackUnit_next_move,
-       _aiFsmAttackUnit_move_wait,
-       _aiFsmAttackUnit_wait_clear_loc,
-       _aiFsmAttackUnit_check_fsm_transition,
-       _aiFsmAttackUnit_check_path_deviation };
-
-enum { _aiFsmDefendHold_search_for_enemy,
-       _aiFsmDefendHold_attack_enemy };
-
-enum { _aiFsmManualMove_next_move,
-       _aiFsmManualMove_move_wait,
-       _aiFsmManualMove_check_fsm_transition };
-
-enum { _external_event_null,
-       _external_event_pending_unit_destruct };
-
-enum { _rotate_pos, _rotate_neg };
-
-
 class PlayerState;
 
 class Unit
 {
-    friend class UnitInterface;
 public:
     PlayerState* player;
     UnitID       id;
     UnitState    unit_state;
     bool         in_sync_flag;
 
+    Unit(PlayerState* ownplayer, unsigned char utype, UnitID uid, iXY initial_loc);
+
     void soundSelected();
 
+    void updateState();
+
+    void processMessage(const UnitMessage* message);
+
+    void evalCommandOpcode(const UnitOpcode* opcode);
+
+    void syncUnit();
+
+    float smolderWait;
+    float smolderWaitMin;
 
 protected:
     SpritePacked body_anim;
@@ -253,23 +222,9 @@ protected:
     
     void setUnitProperties( unsigned char utype );
 
-public:
-    Unit(PlayerState* ownplayer, unsigned char utype, UnitID uid, iXY initial_loc);
-
-    void updateState();
-
-    void processMessage(const UnitMessage* message);
-
-    void evalCommandOpcode(const UnitOpcode* opcode);
-
-    void syncUnit();
-
-    void offloadGraphics( SpriteSorter &sorter );
-
-    float smolderWait;
-    float smolderWaitMin;
-
 private:
+    friend class UnitInterface;
+
     void setID(UnitID id)
     {
         this->id = id;

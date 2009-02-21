@@ -42,11 +42,11 @@ class UnitInterface
 {
 public:
     typedef std::map<UnitID, Unit*> Units;
-    typedef std::vector<Unit*> PlayerUnitList;
+    typedef std::vector<UnitList> PlayerUnitList;
     
 private:
     static Units units;
-    static PlayerUnitList* playerUnitLists;
+    static PlayerUnitList playerUnitLists;
         
     static UnitBucketArray unit_bucket_array;
     static unsigned short max_players;
@@ -63,8 +63,6 @@ private:
     static void addNewUnit(Unit *unit);
     static void removeUnit(Units::iterator i);
 
-    static void sortBucketArray();
-
 public:
     static void initialize( unsigned long max_units );
     static void cleanUp();
@@ -75,7 +73,7 @@ public:
         return units;
     }
 
-    static const PlayerUnitList& getPlayerUnits(Uint16 player_id)
+    static const UnitList& getPlayerUnits(Uint16 player_id)
     {
         assert(player_id < max_players);
         return playerUnitLists[player_id];

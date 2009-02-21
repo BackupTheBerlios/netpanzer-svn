@@ -22,131 +22,144 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <list>
 #include "Units/Unit.hpp"
 
-typedef std::list<Unit *> UnitBucketList;
+typedef std::vector<Unit *> UnitList;
+typedef std::vector<UnitList> BucketList;
 
 class UnitBucketArray // : public UnitBucketArrayTemplate
 {
 protected:
-    std::vector<UnitBucketList> buckets;
+    BucketList buckets;
     long map_x_sample_factor;
     long map_y_sample_factor;
     long pixel_x_sample_factor;
     long pixel_y_sample_factor;
-    iXY map_size;
-    long map_size_x;
-    long map_size_y;
-    iXY tile_size;
-    size_t size;
     size_t row_size;
     size_t column_size;
 
-
 public:
 
-    UnitBucketArray( );
-    ~UnitBucketArray( );
+    UnitBucketArray( ) {};
+    ~UnitBucketArray( ) {};
 
-    size_t getSize() const
+    void sort();
+
+    void initialize( const iXY & map_size, const iXY & tile_size, long x_super_sample, long y_super_sample );
+    void initialize( const iXY & map_size, const iXY & tile_size)
     {
-        return size;
+        initialize( map_size, tile_size, 10, 10 );
+    }
+    
+    void moveUnit( Unit * unit, unsigned int from_bucket_index, unsigned int to_bucket_index )
+    {
+        UnitList & uli = getBucket(from_bucket_index);
+        uli.erase(std::remove(uli.begin(), uli.end(), unit), uli.end());
+        getBucket(to_bucket_index).push_back(unit);
     }
 
-    UnitBucketList * getBucket(size_t bucket_index)
+    void cleanUp()
     {
-        assert( bucket_index < size );
-        return( &(buckets[ bucket_index ]) );
+        buckets.clear();
     }
 
-    UnitBucketList * getBucket( size_t row, size_t column )
+    Unit * getUnitAtWorldLoc( const UnitID unit_id, const iXY & world_loc)
     {
-        size_t bucket_index = (row * column_size) + column;
-
-        assert( bucket_index < size );
-        return( &(buckets[ bucket_index ]) );
+        UnitList & uli = getBucketAssocWorldLoc(world_loc);
+        UnitList::iterator iter;
+        iter = std::find_if( uli.begin(), uli.end(), FindUnit(unit_id));
+        return (iter != uli.end())?*iter:0;
     }
 
-    void initialize( iXY map_size, iXY tile_size);
-    void initialize( iXY map_size, iXY tile_size, long x_super_sample, long y_super_sample );
-    void cleanUp();
-
-    inline long getXSample( void )
+    Unit * getUnitAtMapLoc( const UnitID unit_id, const iXY & map_loc )
     {
-        return( map_x_sample_factor );
+        UnitList & uli = getBucketAssocMapLoc(map_loc);
+        UnitList::iterator iter;
+        iter = std::find_if( uli.begin(), uli.end(), FindUnit(unit_id));
+        return (iter != uli.end())?*iter:0;
     }
 
-    inline long getYSample( void )
+    void addUnit( Unit *unit )
     {
-        return( map_y_sample_factor );
+        getBucketAssocWorldLoc(unit->unit_state.location).push_back(unit);
     }
 
-    inline iXY getSample( void )
+    void removeUnit( Unit *unit )
     {
-        return( iXY( map_x_sample_factor, map_y_sample_factor) );
+        UnitList & uli = getBucketAssocWorldLoc(unit->unit_state.location);
+        uli.erase(std::remove(uli.begin(), uli.end(), unit), uli.end());
     }
 
-    inline unsigned long mapLocToBucketIndex( iXY map_loc )
+    unsigned int getSize() const
     {
-        long bucket_index;
-
-        bucket_index = ((map_loc.y / map_y_sample_factor) * column_size) +
-                       (map_loc.x / map_x_sample_factor);
-
-        return( bucket_index );
+        return buckets.size();
     }
 
-    inline unsigned long worldLocToBucketIndex( iXY world_loc )
+    UnitList & getBucket(unsigned int bucket_index)
     {
-        long bucket_index;
-
-        bucket_index = ((world_loc.y / pixel_y_sample_factor) * column_size) +
-                       (world_loc.x / pixel_x_sample_factor);
-
-        return( bucket_index );
+        assert( bucket_index < getSize() );
+        return( buckets[ bucket_index ] );
     }
 
-    inline iXY mapLocToBucketLoc( iXY map_loc )
+    UnitList & getBucket( unsigned int row, unsigned int column )
     {
-        return( iXY( (map_loc.x / map_x_sample_factor), (map_loc.y / map_y_sample_factor) ) );
+        return ( getBucket((row * column_size) + column) );
     }
 
-    inline iXY worldLocToBucketLoc( iXY world_loc )
+    unsigned int mapLocToBucketIndex( const iXY & map_loc )
     {
-        return( iXY(  (world_loc.x / pixel_x_sample_factor) , (world_loc.y / pixel_y_sample_factor) ) );
+        return ((map_loc.y / map_y_sample_factor) * column_size)
+                + (map_loc.x / map_x_sample_factor);
     }
 
-    inline iRect worldRectToBucketRect( iRect &world_rect )
+    unsigned int worldLocToBucketIndex( const iXY & world_loc )
     {
-        return( iRect( world_rect.min.x / pixel_x_sample_factor,
-                       world_rect.min.y / pixel_y_sample_factor,
-                       world_rect.max.x / pixel_x_sample_factor,
-                       world_rect.max.y / pixel_y_sample_factor  )
-              );
+        return ((world_loc.y / pixel_y_sample_factor) * column_size)
+                + (world_loc.x / pixel_x_sample_factor);
     }
 
-    iRect getWorldRectBucketUnits( iRect &world_rect );
-
-    inline iRect mapRectToBucketRect( iRect &map_rect )
+    void worldLocToBucketLoc( const iXY & world_loc, iXY & bucket_loc )
     {
-        return( iRect( map_rect.min.x / map_x_sample_factor,
-                       map_rect.min.y / map_y_sample_factor,
-                       map_rect.max.x / map_x_sample_factor,
-                       map_rect.max.y / map_y_sample_factor  )
-              );
+        bucket_loc.x = (world_loc.x-1) / pixel_x_sample_factor;
+        bucket_loc.y = (world_loc.y-1) / pixel_y_sample_factor;
     }
 
-    UnitBucketList * getBucketAssocWorldLoc( iXY world_loc );
-    UnitBucketList * getBucketAssocMapLoc( iXY map_loc );
+    void worldRectToBucketRect( const iRect & world_rect, iRect &bucket_rect )
+    {
+        worldLocToBucketLoc(world_rect.min, bucket_rect.min);
+        worldLocToBucketLoc(world_rect.max, bucket_rect.max);
+    }
 
-    void addUnit( Unit *unit );
-    void removeUnit( Unit *unit );
+    void mapLocToBucketLoc( const iXY & map_loc, iXY & bucket_loc)
+    {
+        bucket_loc.x = map_loc.x / map_x_sample_factor;
+        bucket_loc.y = map_loc.y / map_y_sample_factor;
+    }
 
-    long getUnitBucketIndex( UnitID unit_id );
+    void mapRectToBucketRect( const iRect & map_rect, iRect &bucket_rect )
+    {
+        mapLocToBucketLoc(map_rect.min, bucket_rect.min);
+        mapLocToBucketLoc(map_rect.max, bucket_rect.max);
+    }
 
-    Unit * getUnit( UnitID unit_id, unsigned long bucket_index );
-    Unit * getUnitAtWorldLoc( UnitID unit_id, iXY world_loc );
-    Unit * getUnitAtMapLoc( UnitID unit_id, iXY map_loc );
+    UnitList & getBucketAssocWorldLoc( const iXY & world_loc )
+    {
+        return getBucket(worldLocToBucketIndex(world_loc));
+    }
 
-    bool moveUnit( UnitID unit_id, unsigned long from_bucket_index, unsigned long to_bucket_index );
+    UnitList & getBucketAssocMapLoc( const iXY & map_loc )
+    {
+        return getBucket(mapLocToBucketIndex(map_loc));
+    }
+    
+private:
+    struct FindUnit
+    {
+        const UnitID toFind;
+        FindUnit(const UnitID u) : toFind(u) {}
+        bool operator()(Unit* ub) const
+        {
+            return ub->id == toFind;
+        }
+    };
 
 };
 

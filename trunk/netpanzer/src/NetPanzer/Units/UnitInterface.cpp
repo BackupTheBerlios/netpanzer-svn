@@ -20,8 +20,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <iostream>
 #include <algorithm>
 
-#include "Units/UnitInterface.hpp"
-#include "Units/UnitProfileInterface.hpp"
+#include "UnitInterface.hpp"
+#include "UnitProfileInterface.hpp"
+#include "UnitBucketArray.hpp"
+#include "UnitOpcodeDecoder.hpp"
+#include "UnitBlackBoard.hpp"
+
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
@@ -34,7 +38,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/NetMessageEncoder.hpp"
 #include "Interfaces/Console.hpp"
-#include "Units/UnitOpcodeDecoder.hpp"
 
 #include "Classes/UnitMessageTypes.hpp"
 #include "Classes/Network/PlayerNetMessage.hpp"
@@ -44,13 +47,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/Sound.hpp"
 #include "Particles/ParticleInterface.hpp"
 #include "Util/Log.hpp"
-#include "UnitBlackBoard.hpp"
 #include "Interfaces/GameConfig.hpp"
 
 
 //UnitList * UnitInterface::unit_lists;
 UnitInterface::Units UnitInterface::units;
-UnitInterface::PlayerUnitList* UnitInterface::playerUnitLists = 0;
+UnitInterface::PlayerUnitList UnitInterface::playerUnitLists;
 UnitBucketArray UnitInterface::unit_bucket_array;
 
 unsigned short UnitInterface::max_players;
@@ -80,7 +82,7 @@ void UnitInterface::initialize( unsigned long max_units )
     max_players = PlayerInterface::getMaxPlayers();
 
     //unit_lists = new UnitList [ max_players ];
-    playerUnitLists = new PlayerUnitList[max_players];
+    playerUnitLists.resize(max_players);
 
     unit_bucket_array.initialize(MapInterface::getSize(), TileInterface::getTileSize() );
 
@@ -97,25 +99,27 @@ void UnitInterface::cleanUp()
 {
     unit_bucket_array.cleanUp();
 
-    delete[] playerUnitLists;
-    playerUnitLists = 0;
+    playerUnitLists.clear();
 
     for(Units::iterator i = units.begin(); i != units.end(); ++i)
+    {
         delete i->second;
+    }
     units.clear();
 }
 
 void
 UnitInterface::reset()
 {
-    for(size_t i = 0; i < max_players; i++ ) {
-        playerUnitLists[i].clear();
-    }
+    playerUnitLists.clear();
+    playerUnitLists.resize(PlayerInterface::getMaxPlayers());
 
     unit_bucket_array.initialize( MapInterface::getSize(), TileInterface::getTileSize() );
 
-    for(Units::iterator i = units.begin(); i != units.end(); ++i)
+    for( Units::iterator i = units.begin();i != units.end(); ++i )
+    {
         delete i->second;
+    }
     units.clear();
 }
 
@@ -141,11 +145,16 @@ UnitInterface::processNetPacket(const NetPacket* packet)
 void
 UnitInterface::sendMessage(const UnitMessage* message,const PlayerState* player)
 {
-    if (message->isFlagged(_umesg_flag_unique)) {
+    if (message->isFlagged(_umesg_flag_unique))
+    {
         Unit* unit = getUnit(message->getUnitID());
         if(unit == 0)
+        {
             return;
-        if(player && unit->player != player) {
+        }
+        
+        if(player && unit->player != player)
+        {
             LOGGER.warning(
                 "Terminal request for unit (%u) not owned by player (%u).\n",
                 unit->id, player->getID());
@@ -153,21 +162,29 @@ UnitInterface::sendMessage(const UnitMessage* message,const PlayerState* player)
         }
                     
         unit->processMessage(message);
-    } else if (message->isFlagged( _umesg_flag_broadcast) ) {
-        if(message->message_id != _umesg_weapon_hit) {
+    }
+    else if (message->isFlagged( _umesg_flag_broadcast) )
+    {
+        if(message->message_id != _umesg_weapon_hit)
+        {
             LOGGER.warning("Broadcast flag only allowed for weapon hit.");
-            if(player) {
+            if(player)
+            {
                 LOGGER.warning("from player %u.\n", player->getID());
             }
             return;
         }
             
-        for(Units::iterator i = units.begin(); i != units.end(); ++i) {
+        for(Units::iterator i = units.begin(); i != units.end(); ++i)
+        {
             Unit* unit = i->second;
             unit->processMessage(message);
         }
-    } else if (message->isFlagged( _umesg_flag_manager_request) ) {
-        if(player) {
+    }
+    else if (message->isFlagged( _umesg_flag_manager_request) )
+    {
+        if(player)
+        {
             LOGGER.warning(
                     "UnitManagerMessage sent out by player %u not allowed.",
                     player->getID());
@@ -194,15 +211,10 @@ void UnitInterface::removeUnit(Units::iterator i)
     // delete the unit
     unit_bucket_array.removeUnit(unit);
 
-    PlayerUnitList& plist =
-        playerUnitLists[unit->player->getID()];
+    UnitList& plist = playerUnitLists[unit->player->getID()];
     
-    PlayerUnitList::iterator pi
-        = std::find(plist.begin(), plist.end(), unit);
-    assert(pi != plist.end());
-    if(pi != plist.end())
-        plist.erase(pi);
-
+    plist.erase(std::remove(plist.begin(), plist.end(), unit), plist.end());
+    
     units.erase(i);
     delete unit;
 }
@@ -211,10 +223,12 @@ void UnitInterface::removeUnit(Units::iterator i)
 
 void UnitInterface::updateUnitStatus()
 {
-    for(Units::iterator i = units.begin(); i != units.end(); /*nothing*/ ) {
+    for(Units::iterator i = units.begin(); i != units.end(); /*nothing*/ )
+    {
         Unit* unit = i->second;
 	    
-        if (unit->unit_state.lifecycle_state == _UNIT_LIFECYCLE_INACTIVE) {
+        if (unit->unit_state.lifecycle_state == _UNIT_LIFECYCLE_INACTIVE)
+        {
             Units::iterator next = i;
             ++next;
             removeUnit(i);
@@ -228,21 +242,25 @@ void UnitInterface::updateUnitStatus()
         pre_update_bucket_index 
             = unit_bucket_array.worldLocToBucketIndex(
                     unit->unit_state.location );
+
         unit->updateState();
 
         post_update_bucket_index 
             = unit_bucket_array.worldLocToBucketIndex(
                     unit->unit_state.location );
 
-        if ( post_update_bucket_index != pre_update_bucket_index ) {
-            unit_bucket_array.moveUnit(unit->id,
+        if ( post_update_bucket_index != pre_update_bucket_index )
+        {
+            unit_bucket_array.moveUnit(unit,
                     pre_update_bucket_index, post_update_bucket_index );
         }
         ++i;
     }
 
-    if ( NetworkState::status == _network_state_server ) {
-        if (message_timer.count()) {
+    if ( NetworkState::status == _network_state_server )
+    {
+        if (message_timer.count())
+        {
             opcode_encoder.send();
         }
     }
@@ -252,12 +270,11 @@ void UnitInterface::offloadGraphics(SpriteSorter& sorter)
 {
     iRect world_window_rect;
     iRect bucket_rect;
-    UnitBucketList *bucket_list;
-    UnitBucketList::iterator bucket_iter;
+    UnitList::iterator bucket_iter;
     Unit * unit = 0;
 
     world_window_rect = sorter.getWorldWindow();
-    bucket_rect = unit_bucket_array.getWorldRectBucketUnits(world_window_rect);
+    unit_bucket_array.worldRectToBucketRect(world_window_rect, bucket_rect);
 
     for(long row_index = bucket_rect.min.y;
             row_index <= bucket_rect.max.y; row_index++ )
@@ -265,10 +282,10 @@ void UnitInterface::offloadGraphics(SpriteSorter& sorter)
         for(long column_index = bucket_rect.min.x;
                 column_index <= bucket_rect.max.x; column_index++ )
         {
-            bucket_list = unit_bucket_array.getBucket(row_index, column_index);
+            UnitList & bucket_list = unit_bucket_array.getBucket(row_index, column_index);
 
-            for(bucket_iter = bucket_list->begin();
-                    bucket_iter != bucket_list->end(); ++bucket_iter)
+            for(bucket_iter = bucket_list.begin();
+                    bucket_iter != bucket_list.end(); ++bucket_iter)
             {
                 unit = *bucket_iter;
 
@@ -301,12 +318,6 @@ void UnitInterface::offloadGraphics(SpriteSorter& sorter)
 
                     sorter.forceAddSprite( &(unit->body_anim_shadow) );
                 }
-
-
-
-
-
-//                (*bucket_iter)->offloadGraphics(sorter);
             }
         }
     }
@@ -361,40 +372,9 @@ void UnitInterface::addNewUnit(Unit *unit)
 {
     units.insert(std::make_pair(unit->id, unit));
    
-    Uint16 player_index = unit->player->getID();
-    playerUnitLists[player_index].push_back(unit);
+    playerUnitLists[unit->player->getID()].push_back(unit);
 
     unit_bucket_array.addUnit(unit);
-}
-
-// ******************************************************************
-
-void UnitInterface::sortBucketArray()
-{
-    unsigned long bucket_count;
-    unsigned long bucket_index;
-    UnitBucketList *bucket_list;
-    UnitBucketList::iterator bucket_iter;
-
-
-    bucket_count = unit_bucket_array.getSize();
-
-    for( bucket_index = 0; bucket_index < bucket_count; bucket_index++ ) {
-        bucket_list = unit_bucket_array.getBucket( bucket_index );
-
-        for (bucket_iter = bucket_list->begin(); bucket_iter != bucket_list->end();
-                    ++bucket_iter)
-        {
-            unsigned long unit_bucket_index;
-
-            unit_bucket_index = unit_bucket_array.worldLocToBucketIndex( (*bucket_iter)->unit_state.location );
-
-            if( unit_bucket_index != bucket_index ) {
-                unit_bucket_array.moveUnit( (*bucket_iter)->id,
-                        bucket_index, unit_bucket_index );
-            }
-        }
-    }
 }
 
 // ******************************************************************
@@ -403,7 +383,8 @@ Unit*
 UnitInterface::getUnit(UnitID id)
 {
     Units::iterator i = units.find(id);
-    if(i == units.end()) {
+    if(i == units.end())
+    {
         return 0;
     }
 
@@ -416,7 +397,9 @@ Unit* UnitInterface::createUnit( unsigned short unit_type,
                                       Uint16 player_id)
 {
     if (playerUnitLists[player_id].size() >= units_per_player)
-	return 0;
+    {
+        return 0;
+    }
 
     Unit* unit = newUnit(unit_type, location, player_id, newUnitID());
     addNewUnit(unit);
@@ -440,10 +423,12 @@ void UnitInterface::spawnPlayerUnits(const iXY &location,
 
     unit_placement_matrix.reset( location );
 
-    for ( unit_type_index = 0; unit_type_index < UnitProfileInterface::getNumUnitTypes(); unit_type_index++ ) {
+    for ( unit_type_index = 0; unit_type_index < UnitProfileInterface::getNumUnitTypes(); unit_type_index++ )
+    {
 
         unit_spawn_count = unit_config.getSpawnUnitCount( unit_type_index );
-        for ( unit_spawn_index = 0; unit_spawn_index < unit_spawn_count; unit_spawn_index++ ) {
+        for ( unit_spawn_index = 0; unit_spawn_index < unit_spawn_count; unit_spawn_index++ )
+        {
             unit_placement_matrix.getNextEmptyLoc( &next_loc );
             unit = createUnit(unit_type_index, next_loc, player_id);
 
@@ -463,8 +448,10 @@ void
 UnitInterface::queryUnitsAt(std::vector<UnitID>& working_list,
         const iXY& point, Uint16 player_id, unsigned char search_flags)
 {
-    for(Units::iterator i = units.begin(); i != units.end(); ++i) {
-        Unit* unit = i->second;
+    UnitList & ubl = unit_bucket_array.getBucketAssocWorldLoc(point);
+    for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
+    {
+        Unit* unit = *i;
         if(!unit->unit_state.bounds(point))
             continue;
 
@@ -552,30 +539,35 @@ bool UnitInterface::queryClosestUnit( Unit **closest_unit_ptr, iRect &bounding_r
     Unit *closest_unit = 0;
     long closest_magnitude = 0;
     iRect bucket_rect;
-    UnitBucketList *bucket_list;
-    UnitBucketList::iterator bucket_iter;
+    UnitList::iterator bucket_iter;
 
-    bucket_rect = unit_bucket_array.worldRectToBucketRect( bounding_rect );
+    unit_bucket_array.worldRectToBucketRect( bounding_rect, bucket_rect );
 
-    for( long row_index = bucket_rect.min.y; row_index <= bucket_rect.max.y; row_index++ ) {
-        for( long column_index = bucket_rect.min.x; column_index <= bucket_rect.max.x; column_index++ ) {
-            bucket_list = unit_bucket_array.getBucket( row_index, column_index );
+    for( long row_index = bucket_rect.min.y; row_index <= bucket_rect.max.y; row_index++ )
+    {
+        for( long column_index = bucket_rect.min.x; column_index <= bucket_rect.max.x; column_index++ )
+        {
+            UnitList &bucket_list = unit_bucket_array.getBucket( row_index, column_index );
 
-            for ( bucket_iter = bucket_list->begin();
-                    bucket_iter != bucket_list->end(); ++bucket_iter)
+            for ( bucket_iter = bucket_list.begin();
+                    bucket_iter != bucket_list.end(); ++bucket_iter)
             {
                 iXY delta;
                 long temp_mag;
 
-                if ( closest_unit == 0 ) {
+                if ( closest_unit == 0 )
+                {
                     closest_unit = *bucket_iter;
                     delta  = loc - (*bucket_iter)->unit_state.location;
                     closest_magnitude = long(delta.mag2());
-                } else {
+                }
+                else
+                {
                     delta  = loc - (*bucket_iter)->unit_state.location;
                     temp_mag = long(delta.mag2());
 
-                    if ( closest_magnitude > temp_mag ) {
+                    if ( closest_magnitude > temp_mag )
+                    {
                         closest_unit = *bucket_iter;
                         closest_magnitude = temp_mag;
                     }
@@ -584,7 +576,8 @@ bool UnitInterface::queryClosestUnit( Unit **closest_unit_ptr, iRect &bounding_r
         }
     }
 
-    if( closest_unit != 0 ) {
+    if( closest_unit != 0 )
+    {
         *closest_unit_ptr = closest_unit;
         return true;
     }
@@ -687,7 +680,8 @@ bool UnitInterface::queryUnitAtMapLoc(iXY map_loc, UnitID *queary_unit_id)
 
 void UnitInterface::processManagerMessage(const UnitMessage* message)
 {
-    switch(message->message_id) {
+    switch(message->message_id)
+    {
         case _umesg_end_lifecycle:
             unitManagerMesgEndLifecycle(message);
             break;
@@ -833,13 +827,14 @@ void UnitInterface::unitCreateMessage(const NetMessage* net_message)
 
 void UnitInterface::unitSyncIntegrityCheckMessage(const NetMessage* )
 {
-    sortBucketArray();
+    unit_bucket_array.sort();
 }
 
 // ******************************************************************
 void UnitInterface::processNetMessage(const NetMessage* net_message)
 {
-    switch(net_message->message_id)  {
+    switch(net_message->message_id)
+    {
         case _net_message_id_ini_sync_mesg:
             unitSyncMessage(net_message);
             break;
@@ -877,9 +872,9 @@ void UnitInterface::destroyPlayerUnits(Uint16 player_id)
     UMesgSelfDestruct self_destruct;
     self_destruct.setHeader(0, _umesg_flag_unique);
 
-    PlayerUnitList& unitlist = playerUnitLists[player_id];
-    for(PlayerUnitList::iterator i = unitlist.begin();
-            i != unitlist.end(); ++i) {
+    UnitList& unitlist = playerUnitLists[player_id];
+    for(UnitList::iterator i = unitlist.begin(); i != unitlist.end(); ++i)
+    {
         Unit* unit = *i;
         unit->processMessage(&self_destruct);
     }

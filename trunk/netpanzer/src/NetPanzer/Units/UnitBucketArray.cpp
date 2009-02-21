@@ -24,25 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Palette.hpp"
 #include "Units/UnitBucketArray.hpp"
 
-UnitBucketArray::UnitBucketArray( )
-//        : UnitBucketArrayTemplate( )
-{
-    map_x_sample_factor = 0;
-    map_y_sample_factor = 0;
-}
-
-UnitBucketArray::~UnitBucketArray( )
-{
-}
-
 void
-UnitBucketArray::initialize( iXY map_size, iXY tile_size )
-{
-    initialize( map_size, tile_size, 10, 10 );
-}
-
-void
-UnitBucketArray::initialize( iXY map_size, iXY tile_size,
+UnitBucketArray::initialize( const iXY & map_size, const iXY & tile_size,
         long x_super_sample, long y_super_sample )
 {
     cleanUp();
@@ -52,19 +35,16 @@ UnitBucketArray::initialize( iXY map_size, iXY tile_size,
     assert( x_super_sample >= 1 );
     assert( y_super_sample >= 1 );
 
-    UnitBucketArray::tile_size = tile_size;
-    UnitBucketArray::map_size = map_size;
-    UnitBucketArray::map_size_x = map_size.x;
-    UnitBucketArray::map_size_y = map_size.y;
-
     map_x_sample_factor = x_super_sample;
     map_y_sample_factor = y_super_sample;
 
-    while( (map_size.x % map_x_sample_factor) > 0 ) {
+    while( (map_size.x % map_x_sample_factor) > 0 )
+    {
         map_x_sample_factor++;
     }
 
-    while( (map_size.y % map_y_sample_factor) > 0 ) {
+    while( (map_size.y % map_y_sample_factor) > 0 )
+    {
         map_y_sample_factor++;
     }
 
@@ -76,206 +56,33 @@ UnitBucketArray::initialize( iXY map_size, iXY tile_size,
 
     row_size = rows;
     column_size = columns;
-    size = rows*columns;
-    buckets.resize(size);
-    //UnitBucketArrayTemplate::initialize( rows, columns );
+    buckets.resize(rows*columns);
 }
 
 void
-UnitBucketArray::cleanUp()
+UnitBucketArray::sort()
 {
-    buckets.clear();
-}
+    unsigned int index;
+    unsigned int real_index;
+    UnitList::iterator iter;
 
-iRect
-UnitBucketArray::getWorldRectBucketUnits( iRect &world_rect )
-{
-    long bucket_min_x = world_rect.min.x / pixel_x_sample_factor;
-    long bucket_min_y = world_rect.min.y / pixel_y_sample_factor;
-    long bucket_max_x = world_rect.max.x / pixel_x_sample_factor;
-    long bucket_max_y = world_rect.max.y / pixel_y_sample_factor;
-
-    if ( bucket_max_x >= (long) column_size )
+    for( index = 0; index < getSize(); ++index )
     {
-        bucket_max_x = column_size - 1;
-    }
+        UnitList & uli = getBucket(index);
 
-    if ( bucket_max_y >= (long) row_size )
-    {
-        bucket_max_y = row_size  - 1;
-    }
-
-    return( iRect( bucket_min_x,
-                   bucket_min_y,
-                   bucket_max_x,
-                   bucket_max_y
-                 )
-          );
-}
-
-UnitBucketList*
-UnitBucketArray::getBucketAssocWorldLoc( iXY world_loc )
-{
-    long bucket_index;
-
-    bucket_index = ((world_loc.y / pixel_y_sample_factor) * column_size) +
-                   (world_loc.x / pixel_x_sample_factor);
-
-    assert( bucket_index < (long) size );
-
-    return( &(buckets[ bucket_index ]) );
-}
-
-UnitBucketList*
-UnitBucketArray::getBucketAssocMapLoc( iXY map_loc )
-{
-    long bucket_index;
-
-    bucket_index = ((map_loc.y / map_y_sample_factor) * column_size) +
-                   (map_loc.x / map_x_sample_factor);
-
-    assert( bucket_index < (long) size );
-
-    return( &(buckets[ bucket_index ]) );
-}
-
-void
-UnitBucketArray::addUnit( Unit *unit )
-{
-    long bucket_index;
-
-    bucket_index = ((unit->unit_state.location.y / pixel_y_sample_factor) * column_size) +
-                   (unit->unit_state.location.x / pixel_x_sample_factor);
-
-    assert( bucket_index < (long) size );
-
-    buckets[ bucket_index ].push_front( unit );
-}
-
-struct
-FindUnit
-{
-    UnitID toFind;
-    FindUnit(UnitID u) : toFind(u) {}
-    bool operator()(Unit* ub)
-    {
-        return ub->id == toFind;
-    }
-};
-
-long
-UnitBucketArray::getUnitBucketIndex(UnitID unit_id)
-{
-    UnitBucketList::iterator iter;
-    for( unsigned long bucket_index = 0; bucket_index < size; bucket_index++ )
-    {
-        iter = std::find_if( buckets[bucket_index].begin(),
-                             buckets[bucket_index].end(), FindUnit(unit_id));
-
-        if ( iter != buckets[bucket_index].end() )
+        for (iter = uli.begin(); iter != uli.end(); /* nothing */)
         {
-            return (long) bucket_index;
+            real_index = worldLocToBucketIndex( (*iter)->unit_state.location );
+
+            if( real_index != index )
+            {
+                getBucket(real_index).push_back(*iter);
+                iter = uli.erase(iter);
+            }
+            else
+            {
+                ++iter;
+            }
         }
     }
-
-    return -1;
-}
-
-Unit*
-UnitBucketArray::getUnit(UnitID unit_id, unsigned long bucket_index)
-{
-    UnitBucketList::iterator iter;
-
-    iter = std::find_if( buckets[bucket_index].begin(),
-                         buckets[bucket_index].end(), FindUnit(unit_id));
-
-    if ( iter != buckets[bucket_index].end() )
-    {
-        return *iter;
-    }
-
-    return 0;
-}
-
-Unit* UnitBucketArray::getUnitAtWorldLoc(UnitID unit_id, iXY world_loc)
-{
-    long bucket_index;
-
-    bucket_index = ((world_loc.y / pixel_y_sample_factor) * column_size) +
-                   (world_loc.x / pixel_x_sample_factor);
-
-    assert( bucket_index < (long) size );
-
-    UnitBucketList::iterator iter;
-    iter = std::find_if( buckets[bucket_index].begin(),
-                         buckets[bucket_index].end(), FindUnit(unit_id));
-
-    if ( iter != buckets[bucket_index].end() )
-    {
-        return *iter;
-    }
-
-    return 0;
-}
-
-Unit*
-UnitBucketArray::getUnitAtMapLoc(UnitID unit_id, iXY map_loc)
-{
-    long bucket_index;
-
-    bucket_index = ((map_loc.y / map_y_sample_factor) * column_size) +
-                   (map_loc.x / map_x_sample_factor);
-
-    assert( bucket_index < (long) size );
-    UnitBucketList::iterator iter;
-    iter = std::find_if( buckets[bucket_index].begin(),
-                         buckets[bucket_index].end(), FindUnit(unit_id));
-
-    if ( iter != buckets[bucket_index].end() )
-    {
-        return *iter;
-    }
-
-    return 0;
-}
-
-bool
-UnitBucketArray::moveUnit(UnitID unit_id, unsigned long from_bucket_index,
-			       unsigned long to_bucket_index )
-{
-    assert(from_bucket_index < size);
-    assert(to_bucket_index < size);
-
-    UnitBucketList::iterator iter = std::find_if( buckets[from_bucket_index].begin(),
-                                                  buckets[from_bucket_index].end(),
-                                                  FindUnit(unit_id));
-
-    if ( iter != buckets[from_bucket_index].end() )
-    {
-        buckets[ to_bucket_index ].push_front( *iter );
-        buckets[ from_bucket_index ].erase( iter );
-    }
-    else
-    {
-        long from_bucket_index = getUnitBucketIndex( unit_id );
-        if(from_bucket_index != -1)
-        {
-            return( moveUnit( unit_id, from_bucket_index, to_bucket_index ) );
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-void
-UnitBucketArray::removeUnit( Unit *unit )
-{
-    long bucket_index;
-
-    bucket_index = worldLocToBucketIndex( unit->unit_state.location );
-    buckets[bucket_index].remove(unit);
 }
