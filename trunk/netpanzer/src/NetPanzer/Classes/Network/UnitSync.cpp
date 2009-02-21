@@ -23,9 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/Unit.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Classes/Network/UnitNetMessage.hpp"
-
-
-
+#include "Classes/PlayerState.hpp"
 
 UnitSync::UnitSync(ClientSocket * c)
     : client(c), count(0), unitid(0), unitstosync(0), lastunit(0)

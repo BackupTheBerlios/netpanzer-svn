@@ -25,12 +25,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitBucketArray.hpp"
 #include "UnitOpcodeDecoder.hpp"
 #include "UnitBlackBoard.hpp"
+#include "Unit.hpp"
 
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
-
-#include "Units/Unit.hpp"
 
 #include "Types/iXY.hpp"
 #include "Util/Timer.hpp"
@@ -55,7 +54,6 @@ UnitInterface::Units UnitInterface::units;
 UnitInterface::PlayerUnitList UnitInterface::playerUnitLists;
 UnitBucketArray UnitInterface::unit_bucket_array;
 
-unsigned short UnitInterface::max_players;
 PlacementMatrix UnitInterface::unit_placement_matrix;
 
 UnitID UnitInterface::lastUnitID;
@@ -79,10 +77,7 @@ Timer		UnitInterface::sync_units_packet_timer;
 
 void UnitInterface::initialize( unsigned long max_units )
 {
-    max_players = PlayerInterface::getMaxPlayers();
-
-    //unit_lists = new UnitList [ max_players ];
-    playerUnitLists.resize(max_players);
+    playerUnitLists.resize(PlayerInterface::getMaxPlayers());
 
     unit_bucket_array.initialize(MapInterface::getSize(), TileInterface::getTileSize() );
 
@@ -205,14 +200,11 @@ void UnitInterface::removeUnit(Units::iterator i)
     
     // unit explosion sound
     sound->playAmbientSound("expl",                   
-            WorldViewInterface::getCameraDistance(
-                unit->unit_state.location ) );
+            WorldViewInterface::getCameraDistance( unit->unit_state.location ));
     
-    // delete the unit
     unit_bucket_array.removeUnit(unit);
 
     UnitList& plist = playerUnitLists[unit->player->getID()];
-    
     plist.erase(std::remove(plist.begin(), plist.end(), unit), plist.end());
     
     units.erase(i);
@@ -229,32 +221,26 @@ void UnitInterface::updateUnitStatus()
 	    
         if (unit->unit_state.lifecycle_state == _UNIT_LIFECYCLE_INACTIVE)
         {
-            Units::iterator next = i;
-            ++next;
-            removeUnit(i);
-            i = next;
+            removeUnit(i++);
             continue;
         }
-	    
-        unsigned long pre_update_bucket_index;
-        unsigned long post_update_bucket_index;
 
-        pre_update_bucket_index 
-            = unit_bucket_array.worldLocToBucketIndex(
-                    unit->unit_state.location );
+        ++i;
+	    
+        unsigned int bucket_before;
+        bucket_before = unit_bucket_array.worldLocToBucketIndex(
+                                                    unit->unit_state.location );
 
         unit->updateState();
 
-        post_update_bucket_index 
-            = unit_bucket_array.worldLocToBucketIndex(
-                    unit->unit_state.location );
+        unsigned int bucket_after;
+        bucket_after = unit_bucket_array.worldLocToBucketIndex(
+                                                    unit->unit_state.location );
 
-        if ( post_update_bucket_index != pre_update_bucket_index )
+        if ( bucket_before != bucket_after )
         {
-            unit_bucket_array.moveUnit(unit,
-                    pre_update_bucket_index, post_update_bucket_index );
+            unit_bucket_array.moveUnit( unit, bucket_before, bucket_after );
         }
-        ++i;
     }
 
     if ( NetworkState::status == _network_state_server )
@@ -329,7 +315,9 @@ UnitID UnitInterface::newUnitID()
 {
     UnitID newID = lastUnitID++;
     while(getUnit(newID) != 0)
+    {
         newID = lastUnitID++;
+    }
 
     return newID;
 }
@@ -371,7 +359,7 @@ Unit * UnitInterface::newUnit( unsigned short unit_type,
 void UnitInterface::addNewUnit(Unit *unit)
 {
     units.insert(std::make_pair(unit->id, unit));
-   
+
     playerUnitLists[unit->player->getID()].push_back(unit);
 
     unit_bucket_array.addUnit(unit);
@@ -745,9 +733,11 @@ void UnitInterface::unitSyncMessage(const NetMessage *net_message)
     const UnitIniSyncMessage* sync_message 
         = (const UnitIniSyncMessage *) net_message;
 
-    try {
+    try
+    {
         std::map<UnitID, Unit*>::iterator uit = units.find(sync_message->getUnitID());
-        if ( uit != units.end() ) {
+        if ( uit != units.end() )
+        {
             LOGGER.warning("UnitInterface::unitSyncMessage() Received an existing unit [%d]",
                             sync_message->getUnitID());
             return;
@@ -757,7 +747,9 @@ void UnitInterface::unitSyncMessage(const NetMessage *net_message)
                 sync_message->getPlayerID(), sync_message->getUnitID());
         unit->in_sync_flag = false;
         addNewUnit(unit);
-    } catch(std::exception& e) {
+    }
+    catch(std::exception& e)
+    {
         LOGGER.warning("UnitInterface::unitSyncMessage() Couldn't sync unit '%s'", e.what());
     }
 }
@@ -791,7 +783,8 @@ void UnitInterface::unitDestroyMessage(const NetMessage *net_message)
         = (const UnitRemoteDestroy *) net_message;
 
     Units::iterator i = units.find(remote_destroy->getUnitToDestroy());
-    if(i != units.end()) {
+    if(i != units.end())
+    {
         removeUnit(i);
     }
 }
@@ -805,9 +798,11 @@ void UnitInterface::unitCreateMessage(const NetMessage* net_message)
 
     Uint16 player_index = create_mesg->getPlayerID();
 
-    try {
+    try
+    {
         std::map<UnitID, Unit*>::iterator uit = units.find(create_mesg->getUnitID());
-        if ( uit != units.end() ) {
+        if ( uit != units.end() )
+        {
             LOGGER.warning("UnitInterface::unitCreateMessage() Received an existing unit [%d]",
                             create_mesg->getUnitID());
             return;
@@ -818,8 +813,10 @@ void UnitInterface::unitCreateMessage(const NetMessage* net_message)
         addNewUnit(unit);
         // remove unit from blackboard in client (we are client here)
         UnitBlackBoard::unmarkUnitLoc( unitpos );
-    } catch(std::exception& e) {
-        LOGGER.warning("UnitInterface::unitSyncMessage() Couldn't create new unit '%s'", e.what());
+    }
+    catch(std::exception& e)
+    {
+        LOGGER.warning("UnitInterface::unitCreateMessage() Couldn't create new unit '%s'", e.what());
     }
 }
 

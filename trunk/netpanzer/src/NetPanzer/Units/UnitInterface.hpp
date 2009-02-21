@@ -15,24 +15,28 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
 #ifndef _UNITINTERFACE_HPP
 #define _UNITINTERFACE_HPP
 
 #include <vector>
 #include <map>
-#include "Units/UnitBucketArray.hpp"
-#include "Classes/UnitMessage.hpp"
-#include "Classes/PlayerState.hpp"
-#include "Util/Timer.hpp"
+#include <cassert>
+#include "Core/CoreTypes.hpp"
+
+#include "UnitBucketArray.hpp"
+#include "UnitOpcodeEncoder.hpp"
+
 #include "Classes/PlacementMatrix.hpp"
+#include "Classes/PlayerUnitConfig.hpp"
 
-#include "Classes/Network/UnitNetMessage.hpp"
-#include "Units/UnitOpcodeEncoder.hpp"
-
-enum { _search_all_players,
-       _search_player,
-       _search_exclude_player,
-       _search_enemy_only };
+enum
+{
+    _search_all_players,
+    _search_player,
+    _search_exclude_player,
+    _search_enemy_only
+};
 
 enum { _no_unit_found, _unit_player, _unit_allied, _unit_enemy };
 
@@ -49,7 +53,6 @@ private:
     static PlayerUnitList playerUnitLists;
         
     static UnitBucketArray unit_bucket_array;
-    static unsigned short max_players;
     static size_t units_per_player;
     static PlacementMatrix unit_placement_matrix;
 
@@ -75,21 +78,13 @@ public:
 
     static const UnitList& getPlayerUnits(Uint16 player_id)
     {
-        assert(player_id < max_players);
+        assert(player_id < playerUnitLists.size());
         return playerUnitLists[player_id];
     }
 
-#if 0
-    static UnitList * getUnitList(size_t player)
-    {
-        assert( (player < max_players) );
-        return ( &unit_lists[ player ] );
-    }
-#endif
-
     static size_t getUnitCount(unsigned short player_index)
     {
-        assert( (player_index < max_players) );
+        assert( player_index < playerUnitLists.size() );
         return playerUnitLists[player_index].size();
     }
 

@@ -20,9 +20,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/TileSet.hpp"
 
 #include <memory>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <unistd.h>
+#include <cassert>
 
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
