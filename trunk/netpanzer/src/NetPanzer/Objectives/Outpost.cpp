@@ -128,7 +128,8 @@ Outpost::checkOccupationStatus()
         {
             iXY unit_loc;
             unit_loc = unit_ptr->unit_state.location;
-            if ( objective_state.capture_area.bounds( occupation_pad_loc, unit_loc ) ) {
+            if ( objective_state.capture_area.bounds( occupation_pad_loc, unit_loc ) )
+            {
                 attemptOccupationChange( unit_ptr->id );
             }
 

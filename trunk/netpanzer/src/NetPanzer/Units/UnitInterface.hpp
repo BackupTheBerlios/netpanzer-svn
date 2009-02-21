@@ -45,47 +45,36 @@ class NetPacket;
 class UnitInterface
 {
 public:
+    // type definitions
     typedef std::map<UnitID, Unit*> Units;
     typedef std::vector<UnitList> PlayerUnitList;
-    
-private:
-    static Units units;
-    static PlayerUnitList playerUnitLists;
-        
-    static UnitBucketArray unit_bucket_array;
-    static size_t units_per_player;
-    static PlacementMatrix unit_placement_matrix;
 
-    static Uint16 lastUnitID;
-    static UnitID newUnitID();
-
-    static Unit* newUnit(unsigned short unit_type,
-                             const iXY &location,
-                             unsigned short player_index,
-                             UnitID id);
-    static void addNewUnit(Unit *unit);
-    static void removeUnit(Units::iterator i);
-
-public:
-    static void initialize( unsigned long max_units );
+    // initialization/cleanup
+    static void initialize( const unsigned int max_units );
     static void cleanUp();
     static void reset();
+
+    // unit getters
+    static Unit * getUnit( UnitID id )
+    {
+        Units::iterator i = units.find(id);
+        return (i!=units.end())?i->second:0;
+    }
 
     static const Units& getUnits()
     {
         return units;
     }
 
-    static const UnitList& getPlayerUnits(Uint16 player_id)
+    static const UnitList& getPlayerUnits( const Uint16 player_id )
     {
         assert(player_id < playerUnitLists.size());
         return playerUnitLists[player_id];
     }
 
-    static size_t getUnitCount(unsigned short player_index)
+    static size_t getUnitCount( const Uint16 player_index )
     {
-        assert( player_index < playerUnitLists.size() );
-        return playerUnitLists[player_index].size();
+        return getPlayerUnits(player_index).size();
     }
 
     static size_t getTotalUnitCount()
@@ -93,86 +82,110 @@ public:
         return units.size();
     }
 
-    static Unit* getUnit(UnitID unit_id);
-
-    static void processNetPacket(const NetPacket* packet);
-    static void sendMessage(const UnitMessage* message,
-            const PlayerState* player = 0);
-
+    // main loop methods
     static void updateUnitStatus();
 
+    // graphic methods
     static void offloadGraphics( SpriteSorter &sorter );
 
-    static Unit* createUnit( unsigned short unit_type,
-                                  const iXY &location,
-                                  Uint16 player_id);
+    // unit creation
+    static Unit* createUnit( const unsigned short unit_type,
+                             const iXY &location,
+                             const Uint16 player_id);
 
-    static void spawnPlayerUnits( const iXY &location,
-                                  Uint16 player_id,
-                                  const PlayerUnitConfig &unit_config );
+    static void spawnPlayerUnits( const iXY & location,
+                                  const Uint16 player_id,
+                                  const PlayerUnitConfig & unit_config );
 
-    static void queryUnitsAt(std::vector<UnitID>& working_list,
-                             const iXY& point, Uint16 player_id,
-                             unsigned char search_flags);
+    static void destroyPlayerUnits( const Uint16 player_id );
 
-    static void queryUnitsAt(std::vector<UnitID>& working_list,
-                            const iRect& rect, Uint16 player_id,
-                            unsigned char search_flags);
+
+    // unit querying
+    static void queryUnitsAt( std::vector<UnitID>& working_list,
+                              const iXY& point,
+                              const Uint16 player_id,
+                              const unsigned char search_flags );
+
+    static void queryUnitsAt( std::vector<UnitID>& working_list,
+                              const iRect& rect,
+                              const Uint16 player_id,
+                              const unsigned char search_flags );
 
     static bool queryClosestUnit( Unit **closest_unit_ptr,
-                                   iXY &loc,
-                                   Uint16 player_id,
-                                   unsigned char search_flags );
+                                  const iXY &loc,
+                                  const Uint16 player_id,
+                                  const unsigned char search_flags );
 
     static bool queryClosestUnit( Unit **closest_unit_ptr,
-                                   iRect &bounding_rect,
-                                   iXY &loc );
+                                  const iRect &bounding_rect,
+                                  const iXY &loc );
 
-    static bool queryClosestEnemyUnit(Unit **closest_unit_ptr,
-                                      iXY &loc,
-                                      Uint16 player_index);
+    static bool queryClosestEnemyUnit( Unit **closest_unit_ptr,
+                                       const iXY &loc,
+                                       const Uint16 player_index );
 
-    static bool queryUnitAtMapLoc( iXY map_loc, UnitID *query_unit_id );
+    static bool queryUnitAtMapLoc( const iXY & map_loc, UnitID *query_unit_id );
 
-    static unsigned char queryUnitLocationStatus( iXY loc );
+    static unsigned char queryUnitLocationStatus( const iXY & loc );
 
-protected:
-    // Unit Message Handler Methods
-    static void processManagerMessage(const UnitMessage *message);
-    static void unitManagerMesgEndLifecycle(const UnitMessage *message);
+    // message methods
+    static void processNetPacket( const NetPacket* packet );
+    static void sendMessage( const UnitMessage* message,
+                             const PlayerState* player = 0 );
 
-protected:
+    static void processNetMessage( const NetMessage *net_message );
+
+private:
     friend class Unit;
-    
+
+    // Unit Message Handler Methods
+    static void processManagerMessage( const UnitMessage *message );
+    static void unitManagerMesgEndLifecycle( const UnitMessage *message );
+
     // Network Message Handler Variables
     static Timer message_timer;
     static Timer no_guarantee_message_timer;
     static UnitOpcodeEncoder opcode_encoder;
 
     // Network Message Handler Methods
-    static void sendOpcode(const UnitOpcode* opcode)
+    static void sendOpcode( const UnitOpcode* opcode )
     {
         opcode_encoder.encode(opcode);
     }
 
-    static void unitSyncMessage(const NetMessage *net_message );
-    static void unitOpcodeMessage(const NetMessage *net_message );
-    static void unitDestroyMessage(const NetMessage *net_message );
-    static void unitCreateMessage(const NetMessage *net_message );
-    static void unitSyncIntegrityCheckMessage(const NetMessage *net_message );
+    static void unitCreateMessage( const NetMessage *net_message );
+    static void unitDestroyMessage( const NetMessage *net_message );
+    static void unitSyncMessage( const NetMessage *net_message );
+    static void unitOpcodeMessage( const NetMessage *net_message );
+    static void unitSyncIntegrityCheckMessage( const NetMessage *net_message );
 
-protected:
     static unsigned long  sync_units_iterator;
-    static bool	      sync_units_complete_flag;
+    static bool           sync_units_complete_flag;
     static unsigned short sync_units_list_index;
     static Timer	  sync_units_packet_timer;
     static unsigned long  sync_units_in_sync_count;
     static unsigned long  sync_units_in_sync_partial_count;
     static unsigned long  sync_units_total_units;
 
-public:
-    static void processNetMessage(const NetMessage *net_message );
-    static void destroyPlayerUnits(Uint16 player_id);
+    static Units units;
+    static PlayerUnitList playerUnitLists;
+        
+    static UnitBucketArray unit_bucket_array;
+    static unsigned int units_per_player;
+    static PlacementMatrix unit_placement_matrix;
+
+    static Uint16 lastUnitID;
+    static UnitID newUnitID();
+
+    static Unit* newUnit( const unsigned short unit_type,
+                          const iXY &location,
+                          const unsigned short player_index,
+                          const UnitID id );
+
+    static void addUnit( Unit *unit );
+    
+    static void removeUnit( Units::iterator i );
+
 };
 
 #endif // ** _UNITINTERFACE_HPP

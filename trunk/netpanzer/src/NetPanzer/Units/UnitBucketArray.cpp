@@ -26,17 +26,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 void
 UnitBucketArray::initialize( const iXY & map_size, const iXY & tile_size,
-        long x_super_sample, long y_super_sample )
+        const unsigned int x_sample, const unsigned int y_sample )
 {
     cleanUp();
 
     unsigned long rows, columns;
 
-    assert( x_super_sample >= 1 );
-    assert( y_super_sample >= 1 );
+    assert( x_sample >= 1 );
+    assert( y_sample >= 1 );
 
-    map_x_sample_factor = x_super_sample;
-    map_y_sample_factor = y_super_sample;
+    map_x_sample_factor = x_sample;
+    map_y_sample_factor = y_sample;
 
     while( (map_size.x % map_x_sample_factor) > 0 )
     {

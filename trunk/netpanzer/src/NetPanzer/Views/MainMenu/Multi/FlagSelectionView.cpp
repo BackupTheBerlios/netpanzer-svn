@@ -180,6 +180,7 @@ FlagSelectionView::onComponentClicked(Component* c)
     if ( c->getCustomCode() == FLAGBUTTONCODE )
     {
         string n = c->getName();
-        setSelectedFlag(n);
+        string fname( n.substr( (n.find('.'))+1 ) );
+        setSelectedFlag( fname );
     }
 }
