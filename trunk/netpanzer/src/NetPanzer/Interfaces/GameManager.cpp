@@ -57,7 +57,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/SystemNetMessage.hpp"
 #include "Classes/Network/ConnectNetMessage.hpp"
-#include "Units/Vehicle.hpp"
+#include "Units/Unit.hpp"
 #include "Units/UnitGlobals.hpp"
 
 #include "2D/Palette.hpp"

@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Bot.hpp"
 
 #include "Classes/PlacementMatrix.hpp"
-#include "Units/UnitBase.hpp"
+#include "Units/Unit.hpp"
 #include "Objectives/Objective.hpp"
 #include "Classes/Network/TerminalNetMesg.hpp"
 #include "Classes/Network/NetworkClient.hpp"
@@ -37,7 +37,7 @@ Bot::Bot(Uint16 playerid)
 }
 
 void
-Bot::moveUnit(UnitBase *unit, iXY map_pos)
+Bot::moveUnit(Unit *unit, iXY map_pos)
 {
     assert(unit != 0);
 
@@ -56,7 +56,7 @@ Bot::moveUnit(UnitBase *unit, iXY map_pos)
 }
 //-----------------------------------------------------------------
 void
-Bot::attackUnit(UnitBase *unit, UnitBase *enemyUnit)
+Bot::attackUnit(Unit *unit, Unit *enemyUnit)
 {
     assert(unit != 0);
     assert(enemyUnit != 0);
@@ -72,7 +72,7 @@ Bot::attackUnit(UnitBase *unit, UnitBase *enemyUnit)
 }
 //-----------------------------------------------------------------
 void
-Bot::manualFire(UnitBase *unit, iXY world_pos)
+Bot::manualFire(Unit *unit, iXY world_pos)
 {
     assert(unit != 0);
 

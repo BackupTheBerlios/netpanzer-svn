@@ -64,7 +64,7 @@ EnemyRadarPowerUp::onHit(UnitID unit_id)
 {
     sound->playPowerUpSound();
 
-    UnitBase* unit = UnitInterface::getUnit(unit_id);
+    Unit* unit = UnitInterface::getUnit(unit_id);
 
     if(unit->player == PlayerInterface::getLocalPlayer())
     {

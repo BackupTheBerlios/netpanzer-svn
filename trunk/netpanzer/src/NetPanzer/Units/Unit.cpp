@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string.h>
 #include "Util/Log.hpp"
 #include "Units/UnitBlackBoard.hpp"
-#include "Units/Vehicle.hpp"
+#include "Units/Unit.hpp"
 #include "Units/UnitGlobals.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Interfaces/PathScheduler.hpp"
@@ -44,8 +44,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 enum{ _rotate_and_move, _rotate_stop_move };
 
-Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initial_loc)
-    : UnitBase(player, id)
+Unit::Unit(PlayerState* ownplayer, unsigned char utype, UnitID uid, iXY initial_loc)
+    : player(ownplayer), id(uid)
 {
     smolderWait    = 0.0f;
     smolderWaitMin = 0.0f;
@@ -115,7 +115,7 @@ Vehicle::Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initia
     aiFsmMoveToLoc_wait_timer.changePeriod( MOVEWAIT_TIME );
 }
 
-void Vehicle::setUnitProperties( unsigned char utype )
+void Unit::setUnitProperties( unsigned char utype )
 {
     UnitProfile *profile;
     
@@ -162,7 +162,7 @@ void Vehicle::setUnitProperties( unsigned char utype )
 }
 
 
-void Vehicle::updateUnitStateProperties()
+void Unit::updateUnitStateProperties()
 {
     if ( reload_counter < unit_state.reload_time )
         reload_counter++;
@@ -192,7 +192,7 @@ void Vehicle::updateUnitStateProperties()
     }
 }
 
-void Vehicle::orientationToOffset( unsigned short orientation, signed char *offset_x, signed char *offset_y )
+void Unit::orientationToOffset( unsigned short orientation, signed char *offset_x, signed char *offset_y )
 {
     switch ( orientation )
     {
@@ -224,7 +224,7 @@ void Vehicle::orientationToOffset( unsigned short orientation, signed char *offs
 
 }
 
-unsigned short Vehicle::mapXYtoOrientation( unsigned long square, long *goal_angle )
+unsigned short Unit::mapXYtoOrientation( unsigned long square, long *goal_angle )
 {
     iXY current_loc, next_loc;
 
@@ -285,7 +285,7 @@ unsigned short Vehicle::mapXYtoOrientation( unsigned long square, long *goal_ang
 
 }
 
-unsigned short Vehicle::shortestRotation( AngleInt &angle, long goal_angle, long *delta )
+unsigned short Unit::shortestRotation( AngleInt &angle, long goal_angle, long *delta )
 {
     long delta_plus, delta_minus;
 
@@ -311,7 +311,7 @@ unsigned short Vehicle::shortestRotation( AngleInt &angle, long goal_angle, long
     }
 }
 
-void Vehicle::locationOffset( unsigned long square, iXY &offset )
+void Unit::locationOffset( unsigned long square, iXY &offset )
 {
     iXY square_map_loc;
     iXY unit_map_loc;
@@ -322,13 +322,13 @@ void Vehicle::locationOffset( unsigned long square, iXY &offset )
     offset = unit_map_loc - square_map_loc ;
 }
 
-void Vehicle::setFsmBodyRotate( long goal_angle, unsigned short rotation )
+void Unit::setFsmBodyRotate( long goal_angle, unsigned short rotation )
 {
     fsmBodyRotate_rotation = rotation;
     fsmBodyRotate_goal_angle = goal_angle;
 }
 
-bool Vehicle::fsmBodyRotate()
+bool Unit::fsmBodyRotate()
 {
     if( unit_state.body_angle.angle_int != fsmBodyRotate_goal_angle )
     {
@@ -349,13 +349,13 @@ bool Vehicle::fsmBodyRotate()
     return( false );
 }
 
-void Vehicle::setFsmTurretRotate( long goal_angle, unsigned short rotation )
+void Unit::setFsmTurretRotate( long goal_angle, unsigned short rotation )
 {
     fsmTurretRotate_rotation = rotation;
     fsmTurretRotate_goal_angle = goal_angle;
 }
 
-bool Vehicle::fsmTurretRotate()
+bool Unit::fsmTurretRotate()
 {
     if( unit_state.turret_angle.angle_int != fsmTurretRotate_goal_angle )
     {
@@ -376,7 +376,7 @@ bool Vehicle::fsmTurretRotate()
     return( false );
 }
 
-void Vehicle::setFsmMove( unsigned short orientation )
+void Unit::setFsmMove( unsigned short orientation )
 {
     fsm_timer.changeRate( unit_state.speed_rate );
     orientationToOffset( orientation, &fsmMove_offset_x, &fsmMove_offset_y );
@@ -391,7 +391,7 @@ void Vehicle::setFsmMove( unsigned short orientation )
     */
 }
 
-bool Vehicle::fsmMove()
+bool Unit::fsmMove()
 {
     /*
     long move_offset;
@@ -442,7 +442,7 @@ bool Vehicle::fsmMove()
     return( false );
 }
 
-void Vehicle::setFsmMoveMapSquare( unsigned long square )
+void Unit::setFsmMoveMapSquare( unsigned long square )
 {
     long goal_angle = 0;
     long delta;
@@ -483,7 +483,7 @@ void Vehicle::setFsmMoveMapSquare( unsigned long square )
 
 
 
-bool Vehicle::fsmMoveMapSquare()
+bool Unit::fsmMoveMapSquare()
 {
     if ( move_opcode_sent == false && NetworkState::status == _network_state_server )
     {
@@ -541,7 +541,7 @@ bool Vehicle::fsmMoveMapSquare()
 }
 
 
-void Vehicle::setFsmTurretTrackPoint(const iXY& target)
+void Unit::setFsmTurretTrackPoint(const iXY& target)
 {
     iXY direction_vector;
 
@@ -565,7 +565,7 @@ void Vehicle::setFsmTurretTrackPoint(const iXY& target)
 
 }
 
-void Vehicle::clearFsmTurretTrackPoint()
+void Unit::clearFsmTurretTrackPoint()
 {
     fsm_active_list[ _control_turret_track_point ] = false;
 
@@ -581,7 +581,7 @@ void Vehicle::clearFsmTurretTrackPoint()
     }
 }
 
-void Vehicle::syncFsmTurretTrackPoint()
+void Unit::syncFsmTurretTrackPoint()
 {
     if ( fsm_active_list[ _control_turret_track_point ] == true )
     {
@@ -596,7 +596,7 @@ void Vehicle::syncFsmTurretTrackPoint()
     }
 }
 
-void Vehicle::fsmTurretTrackPoint()
+void Unit::fsmTurretTrackPoint()
 {
     long goal_angle;
     long delta;
@@ -617,7 +617,7 @@ void Vehicle::fsmTurretTrackPoint()
 
 }
 
-void Vehicle::setFsmTurretTrackTarget(UnitID target_id)
+void Unit::setFsmTurretTrackTarget(UnitID target_id)
 {
     fsmTurretTrackTarget_target_id = target_id;
     fsm_active_list[ _control_turret_track_target ] = true;
@@ -634,7 +634,7 @@ void Vehicle::setFsmTurretTrackTarget(UnitID target_id)
 
 }
 
-void Vehicle::clearFsmTurretTrackTarget()
+void Unit::clearFsmTurretTrackTarget()
 {
     fsm_active_list[ _control_turret_track_target ] = false;
 
@@ -649,7 +649,7 @@ void Vehicle::clearFsmTurretTrackTarget()
 
 }
 
-void Vehicle::syncFsmTurretTrackTarget()
+void Unit::syncFsmTurretTrackTarget()
 {
     if ( fsm_active_list[ _control_turret_track_target ] == true )
     {
@@ -665,12 +665,12 @@ void Vehicle::syncFsmTurretTrackTarget()
 }
 
 
-void Vehicle::fsmTurretTrackTarget()
+void Unit::fsmTurretTrackTarget()
 {
     long goal_angle;
     long delta;
     unsigned short rotation;
-    UnitBase *target_unit_ptr;
+    Unit *target_unit_ptr;
     iXY direction_vector;
 
     target_unit_ptr = UnitInterface::getUnit( fsmTurretTrackTarget_target_id );
@@ -697,7 +697,7 @@ void Vehicle::fsmTurretTrackTarget()
 
 
 
-void Vehicle::setFsmGunneryLocation(const iXY& target )
+void Unit::setFsmGunneryLocation(const iXY& target )
 {
     if ( fsm_active_list[ _control_gunnery_target ] == true )
     {
@@ -709,13 +709,13 @@ void Vehicle::setFsmGunneryLocation(const iXY& target )
     fsm_active_list[ _control_gunnery_location ] = true;
 }
 
-void Vehicle::clearFsmGunneryLocation()
+void Unit::clearFsmGunneryLocation()
 {
     fsm_active_list[ _control_gunnery_location ] = false;
     clearFsmTurretTrackPoint();
 }
 
-void Vehicle::fsmGunneryLocation()
+void Unit::fsmGunneryLocation()
 {
     iXY range_vector;
 
@@ -732,7 +732,7 @@ void Vehicle::fsmGunneryLocation()
 
 }
 
-void Vehicle::setFsmGunneryTarget(UnitID target_id)
+void Unit::setFsmGunneryTarget(UnitID target_id)
 {
     if ( fsm_active_list[ _control_gunnery_location ] == true )
     {
@@ -749,15 +749,15 @@ void Vehicle::setFsmGunneryTarget(UnitID target_id)
     fsm_active_list[ _control_gunnery_target ] = true;
 }
 
-void Vehicle::clearFsmGunneryTarget()
+void Unit::clearFsmGunneryTarget()
 {
     fsm_active_list[ _control_gunnery_target ] = false;
     clearFsmTurretTrackTarget();
 }
 
-void Vehicle::fsmGunneryTarget()
+void Unit::fsmGunneryTarget()
 {
-    UnitBase *target_unit_ptr;
+    Unit *target_unit_ptr;
     UnitState *target_unit_state;
     iXY range_vector;
 
@@ -791,7 +791,7 @@ void Vehicle::fsmGunneryTarget()
 
 }
 
-void Vehicle::aiFsmIdle()
+void Unit::aiFsmIdle()
 {
     if ( pending_AI_comm == true )
     {
@@ -800,7 +800,7 @@ void Vehicle::aiFsmIdle()
 
 }
 
-bool Vehicle::ruleMoveToLoc_GoalReached()
+bool Unit::ruleMoveToLoc_GoalReached()
 {
     iXY map_loc;
     MapInterface::pointXYtoMapXY( unit_state.location, &map_loc );
@@ -811,7 +811,7 @@ bool Vehicle::ruleMoveToLoc_GoalReached()
 }
 
 
-void Vehicle::aiFsmMoveToLoc()
+void Unit::aiFsmMoveToLoc()
 {
     bool end_cycle = false;
 
@@ -1065,20 +1065,20 @@ void Vehicle::aiFsmMoveToLoc()
     } while (end_cycle == false);
 }
 
-void Vehicle::aiFsmMoveToLoc_OnExitCleanUp()
+void Unit::aiFsmMoveToLoc_OnExitCleanUp()
 {
     PathScheduler::killRequest(id);
     clearFsmTurretTrackPoint();
 }
 
-void Vehicle::aiFsmAttackUnit()
+void Unit::aiFsmAttackUnit()
 {
     bool end_cycle = false;
 
     UnitState *target_unit_state = 0;
     iXY range_vector;
 
-    UnitBase* target_unit_ptr 
+    Unit* target_unit_ptr
         = UnitInterface::getUnit( aiFsmAttackUnit_target_ID );
     if ( target_unit_ptr == 0 )
     {
@@ -1395,24 +1395,24 @@ void Vehicle::aiFsmAttackUnit()
 
 }
 
-void Vehicle::aiFsmAttackUnit_OnExitCleanUp()
+void Unit::aiFsmAttackUnit_OnExitCleanUp()
 {
     PathScheduler::killRequest( id );
     clearFsmGunneryTarget();
 }
 
-void Vehicle::setAiFsmDefendHold()
+void Unit::setAiFsmDefendHold()
 {
     ai_command_state = _ai_command_defend_hold;
     aiFsmDefendHold_state = _aiFsmDefendHold_search_for_enemy;
     aiFsmDefendHold_search_timer.changePeriod( .5 );
 }
 
-void Vehicle::aiFsmDefendHold()
+void Unit::aiFsmDefendHold()
 {
     bool end_cycle = false;
 
-    UnitBase  *target_unit_ptr;
+    Unit  *target_unit_ptr;
     UnitState *target_unit_state;
 
     iXY range_vector;
@@ -1533,7 +1533,7 @@ void Vehicle::aiFsmDefendHold()
 
 
 
-void Vehicle::aiFsmManualMove()
+void Unit::aiFsmManualMove()
 {
     bool end_cycle = false;
     signed char offset_x = 0, offset_y = 0;
@@ -1617,7 +1617,7 @@ void Vehicle::aiFsmManualMove()
 
 }
 
-void Vehicle::fireWeapon( iXY &target_loc )
+void Unit::fireWeapon( iXY &target_loc )
 {
     reload_counter = 0;
 
@@ -1638,12 +1638,12 @@ void Vehicle::fireWeapon( iXY &target_loc )
 }
 
 //-----------------------------------------------------------------
-void Vehicle::soundSelected()
+void Unit::soundSelected()
 {
         sound->playSound( soundSelect.size()?soundSelect.c_str():"yessir");
 }
 
-void Vehicle::accessThreatLevels()
+void Unit::accessThreatLevels()
 {
     if ( unit_state.threat_level == _threat_level_under_attack )
     {
@@ -1656,7 +1656,7 @@ void Vehicle::accessThreatLevels()
 }
 
 //-----------------------------------------------------------------
-unsigned short Vehicle::launchProjectile()
+unsigned short Unit::launchProjectile()
 {
     long distance = WorldViewInterface::getCameraDistance(unit_state.location);
     sound->playAmbientSound(fireSound.c_str(), distance );
@@ -1666,7 +1666,7 @@ unsigned short Vehicle::launchProjectile()
 }
 
 //-----------------------------------------------------------------
-void Vehicle::updateFsmState()
+void Unit::updateFsmState()
 {
     if ( fsm_timer.count() ) {
         if ( fsm_active_list[ _control_move_map_square ] == true )
@@ -1687,7 +1687,7 @@ void Vehicle::updateFsmState()
 }
 
 
-void Vehicle::updateAIState()
+void Unit::updateAIState()
 {
     switch(ai_command_state)
     {
@@ -1714,7 +1714,7 @@ void Vehicle::updateAIState()
 }
 
 
-void Vehicle::checkPendingAICommStatus()
+void Unit::checkPendingAICommStatus()
 {
     if ( (pending_AI_comm == true) &&
             (ai_fsm_transition_complete == true) )
@@ -1749,7 +1749,7 @@ void Vehicle::checkPendingAICommStatus()
 
 }
 
-void Vehicle::setCommandMoveToLoc(const UMesgAICommand* message)
+void Unit::setCommandMoveToLoc(const UMesgAICommand* message)
 {
     iXY start;
 
@@ -1783,10 +1783,10 @@ void Vehicle::setCommandMoveToLoc(const UMesgAICommand* message)
     setFsmTurretTrackPoint( target );
 }
 
-void Vehicle::setCommandAttackUnit(const UMesgAICommand* message)
+void Unit::setCommandAttackUnit(const UMesgAICommand* message)
 {
     iXY start;
-    UnitBase *target_unit_ptr;
+    Unit *target_unit_ptr;
     UnitState *target_unit_state;
 
     aiFsmAttackUnit_target_ID = message->getTargetUnitID();
@@ -1817,7 +1817,7 @@ void Vehicle::setCommandAttackUnit(const UMesgAICommand* message)
     setFsmGunneryTarget( aiFsmAttackUnit_target_ID );
 }
 
-void Vehicle::setCommandManualMove(const UMesgAICommand* message)
+void Unit::setCommandManualMove(const UMesgAICommand* message)
 {
     if ( message->command == _command_start_manual_move )
     {
@@ -1832,12 +1832,12 @@ void Vehicle::setCommandManualMove(const UMesgAICommand* message)
     }
 }
 
-void Vehicle::setCommandManualFire(const UMesgAICommand* message)
+void Unit::setCommandManualFire(const UMesgAICommand* message)
 {
     setFsmGunneryLocation(message->getTargetLoc());
 }
 
-void Vehicle::messageAICommand(const UnitMessage* message)
+void Unit::messageAICommand(const UnitMessage* message)
 {
     const UMesgAICommand *command_mesg = (const UMesgAICommand *) message;
 
@@ -1856,7 +1856,7 @@ void Vehicle::messageAICommand(const UnitMessage* message)
 }
 
 
-void Vehicle::messageWeaponHit(const UnitMessage *message)
+void Unit::messageWeaponHit(const UnitMessage *message)
 {
     const UMesgWeaponHit *weapon_hit = (const UMesgWeaponHit *) message;
 
@@ -1891,7 +1891,7 @@ void Vehicle::messageWeaponHit(const UnitMessage *message)
     }
 }
 
-void Vehicle::messageSelectBoxUpdate(const UnitMessage* message)
+void Unit::messageSelectBoxUpdate(const UnitMessage* message)
 {
     const UMesgUpdateSelectBoxInfo *select_box_update 
         = (const UMesgUpdateSelectBoxInfo *) message;
@@ -1919,7 +1919,7 @@ void Vehicle::messageSelectBoxUpdate(const UnitMessage* message)
     }
 }
 
-void Vehicle::messageSelfDestruct(const UnitMessage* )
+void Unit::messageSelfDestruct(const UnitMessage* )
 {
     unit_state.lifecycle_state = _UNIT_LIFECYCLE_PENDING_DESTRUCT;
     external_ai_event = _external_event_pending_unit_destruct;
@@ -1930,7 +1930,7 @@ void Vehicle::messageSelfDestruct(const UnitMessage* )
     UnitBlackBoard::unmarkUnitLoc( current_map_loc );
 }
 
-void Vehicle::processMessage(const UnitMessage* message)
+void Unit::processMessage(const UnitMessage* message)
 {
     if (unit_state.lifecycle_state != _UNIT_LIFECYCLE_ACTIVE)
         return;
@@ -1960,7 +1960,7 @@ void Vehicle::processMessage(const UnitMessage* message)
     }
 }
 
-void Vehicle::unitOpcodeMove(const UnitOpcode* opcode)
+void Unit::unitOpcodeMove(const UnitOpcode* opcode)
 {
     if ( ( (in_sync_flag == false) && !(opcode->flags & _unit_opcode_flag_sync) ) ||
             ( (in_sync_flag == true) && (opcode->flags & _unit_opcode_flag_sync) )
@@ -1986,7 +1986,7 @@ void Vehicle::unitOpcodeMove(const UnitOpcode* opcode)
     setFsmMoveMapSquare(move_opcode->getSquare());
 }
 
-void Vehicle::unitOpcodeTrackPoint(const UnitOpcode* opcode )
+void Unit::unitOpcodeTrackPoint(const UnitOpcode* opcode )
 {
     if ( ( (in_sync_flag == false) && !(opcode->flags & _unit_opcode_flag_sync) ) ||
             ( (in_sync_flag == true) && (opcode->flags & _unit_opcode_flag_sync) )
@@ -2008,7 +2008,7 @@ void Vehicle::unitOpcodeTrackPoint(const UnitOpcode* opcode )
 
 }
 
-void Vehicle::unitOpcodeTrackTarget(const UnitOpcode* opcode )
+void Unit::unitOpcodeTrackTarget(const UnitOpcode* opcode )
 {
     if ( ( (in_sync_flag == false) && !(opcode->flags & _unit_opcode_flag_sync) ) ||
             ( (in_sync_flag == true) && (opcode->flags & _unit_opcode_flag_sync) )
@@ -2029,7 +2029,7 @@ void Vehicle::unitOpcodeTrackTarget(const UnitOpcode* opcode )
 
 }
 
-void Vehicle::unitOpcodeFireWeapon(const UnitOpcode* opcode )
+void Unit::unitOpcodeFireWeapon(const UnitOpcode* opcode )
 {
     iXY target_loc;
 
@@ -2043,12 +2043,12 @@ void Vehicle::unitOpcodeFireWeapon(const UnitOpcode* opcode )
     fireWeapon( target_loc );
 }
 
-void Vehicle::unitOpcodeSync(const UnitOpcode* )
+void Unit::unitOpcodeSync(const UnitOpcode* )
 {
     in_sync_flag = true;
 }
 
-void Vehicle::unitOpcodeUpdateState(const UnitOpcode* opcode )
+void Unit::unitOpcodeUpdateState(const UnitOpcode* opcode )
 {
     const UpdateStateUnitOpcode *update_state_opcode
         = (const UpdateStateUnitOpcode *) opcode;
@@ -2059,12 +2059,12 @@ void Vehicle::unitOpcodeUpdateState(const UnitOpcode* opcode )
     threat_level_under_attack_timer.changePeriod( 30 );
 }
 
-void Vehicle::unitOpcodeDestruct(const UnitOpcode* )
+void Unit::unitOpcodeDestruct(const UnitOpcode* )
 {
     unit_state.lifecycle_state = _UNIT_LIFECYCLE_INACTIVE;
 }
 
-void Vehicle::syncUnit()
+void Unit::syncUnit()
 {
     syncFsmTurretTrackPoint();
     syncFsmTurretTrackTarget();
@@ -2077,7 +2077,7 @@ void Vehicle::syncUnit()
 }
 
 
-void Vehicle::processMoveOpcodeQueue()
+void Unit::processMoveOpcodeQueue()
 {
     if (!move_opcode_queue.empty())
     {
@@ -2100,7 +2100,7 @@ void Vehicle::processMoveOpcodeQueue()
 
 }
 
-void Vehicle::processOpcodeQueue()
+void Unit::processOpcodeQueue()
 {
     processMoveOpcodeQueue();
 
@@ -2144,7 +2144,7 @@ void Vehicle::processOpcodeQueue()
     }
 }
 
-void Vehicle::evalCommandOpcode(const UnitOpcode* opcode)
+void Unit::evalCommandOpcode(const UnitOpcode* opcode)
 {
     if (opcode->opcode == _UNIT_OPCODE_MOVE)
     {
@@ -2156,7 +2156,7 @@ void Vehicle::evalCommandOpcode(const UnitOpcode* opcode)
     }
 }
 
-void Vehicle::updateState()
+void Unit::updateState()
 {
     updateFsmState();
 
@@ -2198,7 +2198,7 @@ void Vehicle::updateState()
 }
 
 
-void Vehicle::offloadGraphics( SpriteSorter &sorter )
+void Unit::offloadGraphics( SpriteSorter &sorter )
 {
     body_anim_shadow.setWorldPos( unit_state.location);
 

@@ -49,7 +49,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/ConsoleInterface.hpp"
 
-#include "Units/Vehicle.hpp"
+#include "Units/Unit.hpp"
 
 WorldInputCmdProcessor COMMAND_PROCESSOR;
 
@@ -300,7 +300,7 @@ WorldInputCmdProcessor::jumpLastAttackedUnit()
     for(UnitInterface::Units::const_iterator i = units.begin();
             i != units.end(); ++i)
     {
-        UnitBase* unit = i->second;
+        Unit* unit = i->second;
         if(unit->player != PlayerInterface::getLocalPlayer())
             continue;
 
@@ -697,7 +697,7 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
                 current_selection_list_index = 0xFFFF;
                 if (working_list.unit_list.size() > 0)
                 {
-                    UnitBase *unit = UnitInterface::getUnit(
+                    Unit *unit = UnitInterface::getUnit(
                             working_list.unit_list[0]);
                     if(unit)
                         unit->soundSelected();
@@ -761,7 +761,7 @@ WorldInputCmdProcessor::sendMoveCommand(const iXY& world_pos)
 
     unsigned long id_list_index;
     size_t id_list_size;
-    UnitBase *unit_ptr;
+    Unit *unit_ptr;
 
     TerminalUnitCmdRequest comm_mesg;
 
@@ -802,15 +802,15 @@ WorldInputCmdProcessor::sendAttackCommand(const iXY &world_pos)
 {
     TerminalUnitCmdRequest comm_mesg;
 
-    UnitBase *target_ptr;
+    Unit *target_ptr;
 
     size_t id_list_index;
     size_t id_list_size;
-    UnitBase *unit_ptr;
+    Unit *unit_ptr;
 
     if ( working_list.isSelected() == true ) {
         target_list.selectTarget( world_pos );
-        LOGGER.warning("num units in list=%d", target_list.unit_list.size());
+        LOGGER.warning("num units in list=%d", (int)target_list.unit_list.size());
 
         target_ptr = UnitInterface::getUnit( target_list.unit_list[0] );
 
@@ -849,7 +849,7 @@ WorldInputCmdProcessor::sendManualMoveCommand(unsigned char orientation,
     TerminalUnitCmdRequest comm_mesg;
     size_t id_list_index;
     size_t id_list_size;
-    UnitBase *unit_ptr;
+    Unit *unit_ptr;
 
     if ( working_list.unit_list.size() > 0 ) {
         id_list_size = working_list.unit_list.size();
@@ -884,7 +884,7 @@ WorldInputCmdProcessor::sendManualFireCommand(const iXY &world_pos)
 
     size_t id_list_index;
     size_t id_list_size;
-    UnitBase *unit_ptr;
+    Unit *unit_ptr;
 
     if ( working_list.unit_list.size() > 0 ) {
         id_list_size = working_list.unit_list.size();
@@ -916,7 +916,7 @@ WorldInputCmdProcessor::sendManualFireCommand(const iXY &world_pos)
 void
 WorldInputCmdProcessor::sendAllianceRequest(const iXY& world_pos, bool make_break)
 {
-    UnitBase *target_ptr;
+    Unit *target_ptr;
 
     target_list.selectTarget(world_pos);
 
@@ -1075,10 +1075,10 @@ WorldInputCmdProcessor::centerSelectedUnits()
      * group (if that group is in a very long queue passing the map).
      */
     
-    UnitBase *maxyunit = 0;
-    UnitBase *maxxunit = 0;
-    UnitBase *minyunit = 0;
-    UnitBase *minxunit = 0;
+    Unit *maxyunit = 0;
+    Unit *maxxunit = 0;
+    Unit *minyunit = 0;
+    Unit *minxunit = 0;
 
     // Direction initialize
     int direction[8];
@@ -1088,7 +1088,7 @@ WorldInputCmdProcessor::centerSelectedUnits()
     // Vote direction
     bool firstunit = true;
     for(unsigned int id_list_index = 0; id_list_index < working_list.unit_list.size(); id_list_index++) {
-        UnitBase* unit_ptr = UnitInterface::getUnit(working_list.unit_list[id_list_index]);
+        Unit* unit_ptr = UnitInterface::getUnit(working_list.unit_list[id_list_index]);
 
         if(unit_ptr == 0)
             continue;
@@ -1126,7 +1126,7 @@ WorldInputCmdProcessor::centerSelectedUnits()
     }
         
     // Chose Best unit correspondig to chosen direction
-    UnitBase* unit = 0;
+    Unit* unit = 0;
     switch(preferred_direction) {
       case 0:
           unit = maxxunit;

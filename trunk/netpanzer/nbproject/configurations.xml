@@ -28,14 +28,10 @@
           <itemPath>src/Lib/2D/Surface.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="ArrayUtil" displayName="ArrayUtil" projectFiles="true">
-          <itemPath>src/Lib/ArrayUtil/ArrayTemplate.hpp</itemPath>
           <itemPath>src/Lib/ArrayUtil/BitArray.cpp</itemPath>
           <itemPath>src/Lib/ArrayUtil/BitArray.hpp</itemPath>
           <itemPath>src/Lib/ArrayUtil/BoundBox.cpp</itemPath>
           <itemPath>src/Lib/ArrayUtil/BoundBox.hpp</itemPath>
-          <itemPath>src/Lib/ArrayUtil/BucketArrayTemplate.hpp</itemPath>
-          <itemPath>src/Lib/ArrayUtil/LinkListDoubleTemplate.hpp</itemPath>
-          <itemPath>src/Lib/ArrayUtil/QueueTemplate.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="INIParser" displayName="INIParser" projectFiles="true">
           <itemPath>src/Lib/INIParser/Section.cpp</itemPath>
@@ -248,8 +244,6 @@
             <itemPath>src/NetPanzer/Classes/Network/NetPacket.hpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/NetPacketDebugger.cpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/NetPacketDebugger.hpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Network/NetPacketQueues.cpp</itemPath>
-            <itemPath>src/NetPanzer/Classes/Network/NetPacketQueues.hpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/NetTypes.hpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/NetworkClient.cpp</itemPath>
             <itemPath>src/NetPanzer/Classes/Network/NetworkClient.hpp</itemPath>
@@ -477,7 +471,8 @@
           <itemPath>src/NetPanzer/System/Sound.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="Units" displayName="Units" projectFiles="true">
-          <itemPath>src/NetPanzer/Units/UnitBase.hpp</itemPath>
+          <itemPath>src/NetPanzer/Units/Unit.cpp</itemPath>
+          <itemPath>src/NetPanzer/Units/Unit.hpp</itemPath>
           <itemPath>src/NetPanzer/Units/UnitBlackBoard.cpp</itemPath>
           <itemPath>src/NetPanzer/Units/UnitBlackBoard.hpp</itemPath>
           <itemPath>src/NetPanzer/Units/UnitBucketArray.cpp</itemPath>
@@ -497,8 +492,6 @@
           <itemPath>src/NetPanzer/Units/UnitState.cpp</itemPath>
           <itemPath>src/NetPanzer/Units/UnitState.hpp</itemPath>
           <itemPath>src/NetPanzer/Units/UnitTypes.hpp</itemPath>
-          <itemPath>src/NetPanzer/Units/Vehicle.cpp</itemPath>
-          <itemPath>src/NetPanzer/Units/Vehicle.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="Views" displayName="Views" projectFiles="true">
           <logicalFolder name="Components" displayName="Components" projectFiles="true">
@@ -743,9 +736,6 @@
       <item path="src/Lib/2D/Surface.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/Lib/ArrayUtil/ArrayTemplate.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/Lib/ArrayUtil/BitArray.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -756,15 +746,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/Lib/ArrayUtil/BoundBox.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/Lib/ArrayUtil/BucketArrayTemplate.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/Lib/ArrayUtil/LinkListDoubleTemplate.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/Lib/ArrayUtil/QueueTemplate.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/Lib/INIParser/Section.cpp">
@@ -1320,12 +1301,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/NetPacketDebugger.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/NetPacketQueues.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/NetPacketQueues.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/NetTypes.hpp">
@@ -1928,7 +1903,10 @@
       <item path="src/NetPanzer/System/Sound.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Units/UnitBase.hpp">
+      <item path="src/NetPanzer/Units/Unit.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/Unit.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitBlackBoard.cpp">
@@ -1986,12 +1964,6 @@
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitTypes.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/Vehicle.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/Vehicle.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Components/Button.cpp">
@@ -2443,9 +2415,6 @@
       <item path="src/Lib/2D/Surface.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/Lib/ArrayUtil/ArrayTemplate.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/Lib/ArrayUtil/BitArray.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -2456,15 +2425,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/Lib/ArrayUtil/BoundBox.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/Lib/ArrayUtil/BucketArrayTemplate.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/Lib/ArrayUtil/LinkListDoubleTemplate.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/Lib/ArrayUtil/QueueTemplate.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/Lib/INIParser/Section.cpp">
@@ -3020,12 +2980,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/NetPacketDebugger.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/NetPacketQueues.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/NetPacketQueues.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/NetTypes.hpp">
@@ -3628,7 +3582,10 @@
       <item path="src/NetPanzer/System/Sound.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Units/UnitBase.hpp">
+      <item path="src/NetPanzer/Units/Unit.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/Unit.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitBlackBoard.cpp">
@@ -3686,12 +3643,6 @@
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitTypes.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/Vehicle.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/Vehicle.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Components/Button.cpp">
@@ -4143,9 +4094,6 @@
       <item path="src/Lib/2D/Surface.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/Lib/ArrayUtil/ArrayTemplate.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/Lib/ArrayUtil/BitArray.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -4156,15 +4104,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/Lib/ArrayUtil/BoundBox.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/Lib/ArrayUtil/BucketArrayTemplate.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/Lib/ArrayUtil/LinkListDoubleTemplate.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/Lib/ArrayUtil/QueueTemplate.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/Lib/INIParser/Section.cpp">
@@ -4720,12 +4659,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/NetPacketDebugger.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/NetPacketQueues.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/NetPacketQueues.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/NetTypes.hpp">
@@ -5328,7 +5261,10 @@
       <item path="src/NetPanzer/System/Sound.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Units/UnitBase.hpp">
+      <item path="src/NetPanzer/Units/Unit.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/Unit.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitBlackBoard.cpp">
@@ -5386,12 +5322,6 @@
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitTypes.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/Vehicle.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/Vehicle.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Components/Button.cpp">
@@ -5843,9 +5773,6 @@
       <item path="src/Lib/2D/Surface.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/Lib/ArrayUtil/ArrayTemplate.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/Lib/ArrayUtil/BitArray.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -5856,15 +5783,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/Lib/ArrayUtil/BoundBox.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/Lib/ArrayUtil/BucketArrayTemplate.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/Lib/ArrayUtil/LinkListDoubleTemplate.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/Lib/ArrayUtil/QueueTemplate.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/Lib/INIParser/Section.cpp">
@@ -6420,12 +6338,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/NetPacketDebugger.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/NetPacketQueues.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Classes/Network/NetPacketQueues.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Classes/Network/NetTypes.hpp">
@@ -7028,7 +6940,10 @@
       <item path="src/NetPanzer/System/Sound.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Units/UnitBase.hpp">
+      <item path="src/NetPanzer/Units/Unit.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="src/NetPanzer/Units/Unit.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitBlackBoard.cpp">
@@ -7086,12 +7001,6 @@
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitTypes.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/Vehicle.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/Vehicle.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Views/Components/Button.cpp">

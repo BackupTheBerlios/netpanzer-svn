@@ -18,39 +18,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNIT_BUCKET_ARRAY_HPP
 #define _UNIT_BUCKET_ARRAY_HPP
 
-#include "ArrayUtil/BucketArrayTemplate.hpp"
+#include <vector>
+#include <list>
+#include "Units/Unit.hpp"
 
-#include "Units/UnitBase.hpp"
+typedef std::list<Unit *> UnitBucketList;
 
-class UnitBucketPointer
-{
-public:
-    UnitBase *unit;
-
-    UnitBucketPointer()
-    {
-        unit = 0;
-        next = 0;
-        prev = 0;
-    }
-
-    UnitBucketPointer(UnitBase *unit)
-    {
-        UnitBucketPointer::unit = unit;
-        next = 0;
-        prev = 0;
-    }
-
-    UnitBucketPointer *next;
-    UnitBucketPointer *prev;
-};
-
-typedef BucketArrayTemplate< UnitBucketPointer > UnitBucketArrayTemplate;
-typedef LinkListDoubleTemplate< UnitBucketPointer > UnitBucketList;
-
-class UnitBucketArray : public UnitBucketArrayTemplate
+class UnitBucketArray // : public UnitBucketArrayTemplate
 {
 protected:
+    std::vector<UnitBucketList> buckets;
     long map_x_sample_factor;
     long map_y_sample_factor;
     long pixel_x_sample_factor;
@@ -59,14 +36,38 @@ protected:
     long map_size_x;
     long map_size_y;
     iXY tile_size;
+    size_t size;
+    size_t row_size;
+    size_t column_size;
+
 
 public:
 
     UnitBucketArray( );
     ~UnitBucketArray( );
 
+    size_t getSize() const
+    {
+        return size;
+    }
+
+    UnitBucketList * getBucket(size_t bucket_index)
+    {
+        assert( bucket_index < size );
+        return( &(buckets[ bucket_index ]) );
+    }
+
+    UnitBucketList * getBucket( size_t row, size_t column )
+    {
+        size_t bucket_index = (row * column_size) + column;
+
+        assert( bucket_index < size );
+        return( &(buckets[ bucket_index ]) );
+    }
+
     void initialize( iXY map_size, iXY tile_size);
     void initialize( iXY map_size, iXY tile_size, long x_super_sample, long y_super_sample );
+    void cleanUp();
 
     inline long getXSample( void )
     {
@@ -122,8 +123,7 @@ public:
               );
     }
 
-    iRect worldRectToBucketRectClip( iRect &world_rect );
-
+    iRect getWorldRectBucketUnits( iRect &world_rect );
 
     inline iRect mapRectToBucketRect( iRect &map_rect )
     {
@@ -137,18 +137,17 @@ public:
     UnitBucketList * getBucketAssocWorldLoc( iXY world_loc );
     UnitBucketList * getBucketAssocMapLoc( iXY map_loc );
 
-    void addUnit( UnitBase *unit );
-    void addUnit( UnitBucketPointer *unit_bucket_ptr );
+    void addUnit( Unit *unit );
+    void removeUnit( Unit *unit );
 
     long getUnitBucketIndex( UnitID unit_id );
 
-    UnitBase * getUnit( UnitID unit_id, unsigned long bucket_index );
-    UnitBase * getUnitAtWorldLoc( UnitID unit_id, iXY world_loc );
-    UnitBase * getUnitAtMapLoc( UnitID unit_id, iXY map_loc );
+    Unit * getUnit( UnitID unit_id, unsigned long bucket_index );
+    Unit * getUnitAtWorldLoc( UnitID unit_id, iXY world_loc );
+    Unit * getUnitAtMapLoc( UnitID unit_id, iXY map_loc );
 
     bool moveUnit( UnitID unit_id, unsigned long from_bucket_index, unsigned long to_bucket_index );
 
-    bool deleteUnitBucketPointer( UnitID unit_id, iXY world_loc );
 };
 
 #endif // ** _UNIT_BUCKET_ARRAY_HPP

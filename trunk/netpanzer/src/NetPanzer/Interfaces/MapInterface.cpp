@@ -79,7 +79,7 @@ void MapInterface::finishMapLoad( void )
 {
     char path[256];
 
-    wad_mapping_table.deallocate();
+    wad_mapping_table.clear();
 
     MapListenerList::iterator i = listenerList.begin();
     while ( i != listenerList.end() )
@@ -132,7 +132,7 @@ void MapInterface::generateMappingTable()
     tile_count = tile_set.getTileCount();
     map_size = main_map.getSize();
 
-    wad_mapping_table.initialize( tile_count );
+    wad_mapping_table.resize( tile_count );
     wad_mapping_table.resetMappingTable();
 
     // ** Find all of the used tiles **

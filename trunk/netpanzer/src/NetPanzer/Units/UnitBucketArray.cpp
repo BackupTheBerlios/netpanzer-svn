@@ -17,11 +17,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include "Util/Log.hpp"
+#include <list>
+#include <algorithm>
+
 #include "2D/Palette.hpp"
 #include "Units/UnitBucketArray.hpp"
 
 UnitBucketArray::UnitBucketArray( )
-        : UnitBucketArrayTemplate( )
+//        : UnitBucketArrayTemplate( )
 {
     map_x_sample_factor = 0;
     map_y_sample_factor = 0;
@@ -41,6 +45,8 @@ void
 UnitBucketArray::initialize( iXY map_size, iXY tile_size,
         long x_super_sample, long y_super_sample )
 {
+    cleanUp();
+
     unsigned long rows, columns;
 
     assert( x_super_sample >= 1 );
@@ -68,27 +74,39 @@ UnitBucketArray::initialize( iXY map_size, iXY tile_size,
     rows = (unsigned long) map_size.y / map_y_sample_factor;
     columns = (unsigned long) map_size.x / map_x_sample_factor;
 
-    UnitBucketArrayTemplate::initialize( rows, columns );
+    row_size = rows;
+    column_size = columns;
+    size = rows*columns;
+    buckets.resize(size);
+    //UnitBucketArrayTemplate::initialize( rows, columns );
+}
+
+void
+UnitBucketArray::cleanUp()
+{
+    buckets.clear();
 }
 
 iRect
-UnitBucketArray::worldRectToBucketRectClip( iRect &world_rect )
+UnitBucketArray::getWorldRectBucketUnits( iRect &world_rect )
 {
-    long bucket_max_x;
-    long bucket_max_y;
+    long bucket_min_x = world_rect.min.x / pixel_x_sample_factor;
+    long bucket_min_y = world_rect.min.y / pixel_y_sample_factor;
+    long bucket_max_x = world_rect.max.x / pixel_x_sample_factor;
+    long bucket_max_y = world_rect.max.y / pixel_y_sample_factor;
 
-    bucket_max_x = world_rect.max.x / pixel_x_sample_factor;
-    if ( bucket_max_x >= (long) column_size ) {
+    if ( bucket_max_x >= (long) column_size )
+    {
         bucket_max_x = column_size - 1;
     }
 
-    bucket_max_y = world_rect.max.y / pixel_y_sample_factor;
-    if ( bucket_max_y >= (long) row_size ) {
+    if ( bucket_max_y >= (long) row_size )
+    {
         bucket_max_y = row_size  - 1;
     }
 
-    return( iRect( world_rect.min.x / pixel_x_sample_factor,
-                   world_rect.min.y / pixel_y_sample_factor,
+    return( iRect( bucket_min_x,
+                   bucket_min_y,
                    bucket_max_x,
                    bucket_max_y
                  )
@@ -105,7 +123,7 @@ UnitBucketArray::getBucketAssocWorldLoc( iXY world_loc )
 
     assert( bucket_index < (long) size );
 
-    return( &(array[ bucket_index ]) );
+    return( &(buckets[ bucket_index ]) );
 }
 
 UnitBucketList*
@@ -118,13 +136,12 @@ UnitBucketArray::getBucketAssocMapLoc( iXY map_loc )
 
     assert( bucket_index < (long) size );
 
-    return( &(array[ bucket_index ]) );
+    return( &(buckets[ bucket_index ]) );
 }
 
 void
-UnitBucketArray::addUnit( UnitBase *unit )
+UnitBucketArray::addUnit( Unit *unit )
 {
-    UnitBucketPointer *unit_bucket_ptr;
     long bucket_index;
 
     bucket_index = ((unit->unit_state.location.y / pixel_y_sample_factor) * column_size) +
@@ -132,64 +149,55 @@ UnitBucketArray::addUnit( UnitBase *unit )
 
     assert( bucket_index < (long) size );
 
-    unit_bucket_ptr = new UnitBucketPointer(unit);
-
-    array[ bucket_index ].addFront( unit_bucket_ptr );
+    buckets[ bucket_index ].push_front( unit );
 }
 
-void
-UnitBucketArray::addUnit( UnitBucketPointer *unit_bucket_ptr )
+struct
+FindUnit
 {
-    long bucket_index;
-    UnitBase *unit;
-
-    unit = unit_bucket_ptr->unit;
-
-    bucket_index = ((unit->unit_state.location.y / pixel_y_sample_factor) * column_size) +
-                   (unit->unit_state.location.x / pixel_x_sample_factor);
-
-    assert( bucket_index < (long) size );
-
-    array[ bucket_index ].addFront( unit_bucket_ptr );
-}
-
+    UnitID toFind;
+    FindUnit(UnitID u) : toFind(u) {}
+    bool operator()(Unit* ub)
+    {
+        return ub->id == toFind;
+    }
+};
 
 long
 UnitBucketArray::getUnitBucketIndex(UnitID unit_id)
 {
-    for( unsigned long bucket_index = 0; bucket_index < size; bucket_index++ ) {
-        UnitBucketPointer *traversal_ptr;
+    UnitBucketList::iterator iter;
+    for( unsigned long bucket_index = 0; bucket_index < size; bucket_index++ )
+    {
+        iter = std::find_if( buckets[bucket_index].begin(),
+                             buckets[bucket_index].end(), FindUnit(unit_id));
 
-        traversal_ptr = array[ bucket_index ].getFront();
-
-        while( traversal_ptr != 0 ) {
-            if( traversal_ptr->unit->id == unit_id )
-                return (long) bucket_index;
-
-            traversal_ptr = traversal_ptr->next;
+        if ( iter != buckets[bucket_index].end() )
+        {
+            return (long) bucket_index;
         }
-
     }
 
     return -1;
 }
 
-UnitBase*
+Unit*
 UnitBucketArray::getUnit(UnitID unit_id, unsigned long bucket_index)
 {
-    UnitBucketPointer *traversal_ptr = array[bucket_index].getFront();
+    UnitBucketList::iterator iter;
 
-    while( traversal_ptr != 0 ) {
-        if(traversal_ptr->unit->id == unit_id)
-            return traversal_ptr->unit;
+    iter = std::find_if( buckets[bucket_index].begin(),
+                         buckets[bucket_index].end(), FindUnit(unit_id));
 
-        traversal_ptr = traversal_ptr->next;
+    if ( iter != buckets[bucket_index].end() )
+    {
+        return *iter;
     }
 
     return 0;
 }
 
-UnitBase* UnitBucketArray::getUnitAtWorldLoc(UnitID unit_id, iXY world_loc)
+Unit* UnitBucketArray::getUnitAtWorldLoc(UnitID unit_id, iXY world_loc)
 {
     long bucket_index;
 
@@ -198,21 +206,19 @@ UnitBase* UnitBucketArray::getUnitAtWorldLoc(UnitID unit_id, iXY world_loc)
 
     assert( bucket_index < (long) size );
 
-    UnitBucketPointer *traversal_ptr;
+    UnitBucketList::iterator iter;
+    iter = std::find_if( buckets[bucket_index].begin(),
+                         buckets[bucket_index].end(), FindUnit(unit_id));
 
-    traversal_ptr = array[ bucket_index ].getFront();
-
-    while( traversal_ptr != 0 ) {
-        if(traversal_ptr->unit->id == unit_id)
-            return traversal_ptr->unit;
-
-        traversal_ptr = traversal_ptr->next;
+    if ( iter != buckets[bucket_index].end() )
+    {
+        return *iter;
     }
 
     return 0;
 }
 
-UnitBase*
+Unit*
 UnitBucketArray::getUnitAtMapLoc(UnitID unit_id, iXY map_loc)
 {
     long bucket_index;
@@ -221,16 +227,13 @@ UnitBucketArray::getUnitAtMapLoc(UnitID unit_id, iXY map_loc)
                    (map_loc.x / map_x_sample_factor);
 
     assert( bucket_index < (long) size );
+    UnitBucketList::iterator iter;
+    iter = std::find_if( buckets[bucket_index].begin(),
+                         buckets[bucket_index].end(), FindUnit(unit_id));
 
-    UnitBucketPointer *traversal_ptr;
-
-    traversal_ptr = array[ bucket_index ].getFront();
-
-    while( traversal_ptr != 0 ) {
-        if(traversal_ptr->unit->id == unit_id)
-            return traversal_ptr->unit;
-
-        traversal_ptr = traversal_ptr->next;
+    if ( iter != buckets[bucket_index].end() )
+    {
+        return *iter;
     }
 
     return 0;
@@ -242,55 +245,37 @@ UnitBucketArray::moveUnit(UnitID unit_id, unsigned long from_bucket_index,
 {
     assert(from_bucket_index < size);
     assert(to_bucket_index < size);
-    
-    bool found = false;
-    UnitBucketPointer *traversal_ptr;
-    UnitBucketPointer *move_ptr;
 
-    traversal_ptr = array[ from_bucket_index ].getFront();
+    UnitBucketList::iterator iter = std::find_if( buckets[from_bucket_index].begin(),
+                                                  buckets[from_bucket_index].end(),
+                                                  FindUnit(unit_id));
 
-    while( (traversal_ptr != 0) && (found == false) ) {
-        if(traversal_ptr->unit->id == unit_id) {
-            move_ptr = traversal_ptr;
-            traversal_ptr = traversal_ptr->next;
-            array[ from_bucket_index ].removeObject( move_ptr );
-            array[ to_bucket_index ].addFront( move_ptr );
-            found = true;
-        } else {
-            traversal_ptr = traversal_ptr->next;
-        }
+    if ( iter != buckets[from_bucket_index].end() )
+    {
+        buckets[ to_bucket_index ].push_front( *iter );
+        buckets[ from_bucket_index ].erase( iter );
     }
-
-    if ( found == false ) {
+    else
+    {
         long from_bucket_index = getUnitBucketIndex( unit_id );
-        if(from_bucket_index != -1) {
+        if(from_bucket_index != -1)
+        {
             return( moveUnit( unit_id, from_bucket_index, to_bucket_index ) );
-        } else
+        }
+        else
+        {
             return false;
+        }
     }
 
     return true;
 }
 
-bool
-UnitBucketArray::deleteUnitBucketPointer(UnitID unit_id, iXY world_loc)
+void
+UnitBucketArray::removeUnit( Unit *unit )
 {
     long bucket_index;
 
-    bucket_index = worldLocToBucketIndex( world_loc );
-
-    UnitBucketPointer *traversal_ptr;
-
-    traversal_ptr = array[ bucket_index ].getFront();
-
-    while( traversal_ptr != 0 ) {
-        if(traversal_ptr->unit->id == unit_id) {
-            array[ bucket_index ].deleteObject( traversal_ptr );
-            return true;
-        }
-
-        traversal_ptr = traversal_ptr->next;
-    }
-
-    return false;
+    bucket_index = worldLocToBucketIndex( unit->unit_state.location );
+    buckets[bucket_index].remove(unit);
 }

@@ -37,6 +37,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "PowerUps/EnemyRadarPowerUp.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
+#include "Units/Unit.hpp"
 
 MiniMap::MiniMap(int x, int y, int w, int h) : mousepos(0,0)
 {
@@ -227,7 +228,7 @@ MiniMap::drawUnits(Surface &dest)
     for(UnitInterface::Units::const_iterator i = units.begin();
             i != units.end(); ++i)
     {
-        UnitBase* unit = i->second;
+        Unit* unit = i->second;
         PIX color;
         bool forceLarge = false;
         UnitState& unit_state = unit->unit_state;

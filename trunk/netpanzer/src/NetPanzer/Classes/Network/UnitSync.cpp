@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "UnitSync.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Units/UnitInterface.hpp"
-#include "Units/UnitBase.hpp"
+#include "Units/Unit.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Classes/Network/UnitNetMessage.hpp"
 
@@ -55,7 +55,7 @@ bool UnitSync::sendNextUnit()
         return false;
     }
     
-    UnitBase* unit = i->second;
+    Unit* unit = i->second;
     unitid = unit->id;
 
     iXY unit_map_loc;

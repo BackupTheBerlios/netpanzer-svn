@@ -41,8 +41,8 @@ class NetPacket;
 class UnitInterface
 {
 public:
-    typedef std::map<UnitID, UnitBase*> Units;
-    typedef std::vector<UnitBase*> PlayerUnitList;
+    typedef std::map<UnitID, Unit*> Units;
+    typedef std::vector<Unit*> PlayerUnitList;
     
 private:
     static Units units;
@@ -56,11 +56,11 @@ private:
     static Uint16 lastUnitID;
     static UnitID newUnitID();
 
-    static UnitBase* newUnit(unsigned short unit_type,
+    static Unit* newUnit(unsigned short unit_type,
                              const iXY &location,
                              unsigned short player_index,
                              UnitID id);
-    static void addNewUnit(UnitBase *unit);
+    static void addNewUnit(Unit *unit);
     static void removeUnit(Units::iterator i);
 
     static void sortBucketArray();
@@ -100,7 +100,7 @@ public:
         return units.size();
     }
 
-    static UnitBase* getUnit(UnitID unit_id);
+    static Unit* getUnit(UnitID unit_id);
 
     static void processNetPacket(const NetPacket* packet);
     static void sendMessage(const UnitMessage* message,
@@ -110,7 +110,7 @@ public:
 
     static void offloadGraphics( SpriteSorter &sorter );
 
-    static UnitBase* createUnit( unsigned short unit_type,
+    static Unit* createUnit( unsigned short unit_type,
                                   const iXY &location,
                                   Uint16 player_id);
 
@@ -126,16 +126,16 @@ public:
                             const iRect& rect, Uint16 player_id,
                             unsigned char search_flags);
 
-    static bool queryClosestUnit( UnitBase **closest_unit_ptr,
+    static bool queryClosestUnit( Unit **closest_unit_ptr,
                                    iXY &loc,
                                    Uint16 player_id,
                                    unsigned char search_flags );
 
-    static bool queryClosestUnit( UnitBase **closest_unit_ptr,
+    static bool queryClosestUnit( Unit **closest_unit_ptr,
                                    iRect &bounding_rect,
                                    iXY &loc );
 
-    static bool queryClosestEnemyUnit(UnitBase **closest_unit_ptr,
+    static bool queryClosestEnemyUnit(Unit **closest_unit_ptr,
                                       iXY &loc,
                                       Uint16 player_index);
 
@@ -149,7 +149,7 @@ protected:
     static void unitManagerMesgEndLifecycle(const UnitMessage *message);
 
 protected:
-    friend class Vehicle;
+    friend class Unit;
     
     // Network Message Handler Variables
     static Timer message_timer;

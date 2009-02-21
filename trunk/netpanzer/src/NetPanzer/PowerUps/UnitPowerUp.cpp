@@ -123,7 +123,7 @@ void UnitPowerUp::onHit( UnitID unit_id )
 {
     sound->playPowerUpSound();
 
-    UnitBase* unit = UnitInterface::getUnit( unit_id );
+    Unit* unit = UnitInterface::getUnit( unit_id );
 
     switch( unit_powerup_type )
     {

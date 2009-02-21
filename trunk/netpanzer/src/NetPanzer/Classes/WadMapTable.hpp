@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _WADMAPTABLE_HPP
 #define _WADMAPTABLE_HPP
 
-#include "ArrayUtil/ArrayTemplate.hpp"
-#include "string.h"
+#include <vector>
+#include <algorithm>
 
 class WadTileMapInfo
 {
@@ -28,14 +28,17 @@ public:
     unsigned short remap_index;
 };
 
-class WadMapTable : public ArrayTemplate< WadTileMapInfo >
+class WadMapTable : public std::vector<WadTileMapInfo>
 {
 public:
     unsigned long used_tile_count;
 
     void resetMappingTable( void )
     {
-        memset( array, 0, (sizeof( WadTileMapInfo ) * size) );
+        WadTileMapInfo t;
+        t.is_used = false;
+        t.remap_index = 0;
+        std::fill(begin(),end(),t);
     }
 
 

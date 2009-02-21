@@ -47,7 +47,7 @@ void BonusUnitPowerUp::onHit( UnitID unit_id )
 
     sound->playPowerUpSound();
 
-    UnitBase* unit = UnitInterface::getUnit(unit_id);
+    Unit* unit = UnitInterface::getUnit(unit_id);
 
     MapInterface::pointXYtoMapXY( unit->unit_state.location, &map_pos );
 
@@ -56,7 +56,7 @@ void BonusUnitPowerUp::onHit( UnitID unit_id )
 
     for( int i = 0; i < 9; i++ )
     {
-        UnitBase *new_unit;
+        Unit *new_unit;
         iXY spawn_loc;
 
         placement_matrix.getNextEmptyLoc( &spawn_loc );

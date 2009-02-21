@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "BotTaskList.hpp"
 #include "BotTask.hpp"
 #include "Util/Log.hpp"
+#include "Units/Unit.hpp"
 
 //-----------------------------------------------------------------
 BotTaskList::~BotTaskList()
@@ -32,7 +33,7 @@ BotTaskList::~BotTaskList()
 /**
  * If unit didn't move then task=IDLE
  */
-void BotTaskList::adjustLastUnitLoc(UnitBase *unit)
+void BotTaskList::adjustLastUnitLoc(Unit *unit)
 {
     iXY curLoc = unit->unit_state.location;
     if (curLoc == m_tasks[unit->id]->getLastLoc()) {
@@ -41,7 +42,7 @@ void BotTaskList::adjustLastUnitLoc(UnitBase *unit)
     m_tasks[unit->id]->setLastLoc(curLoc);
 }
 //-----------------------------------------------------------------
-void BotTaskList::setUnitTask(UnitBase *unit, int task)
+void BotTaskList::setUnitTask(Unit *unit, int task)
 {
     bottasks_t::iterator it = m_tasks.find(unit->id);
     if (it == m_tasks.end()) {
@@ -56,7 +57,7 @@ void BotTaskList::setUnitTask(UnitBase *unit, int task)
 /**
  * Query for unit task and adjust unit last location.
  */
-int BotTaskList::queryUnitTask(UnitBase *unit)
+int BotTaskList::queryUnitTask(Unit *unit)
 {
     bottasks_t::iterator it = m_tasks.find(unit->id);
     if (it == m_tasks.end()) {

@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * Created on December 13, 2008, 6:58 PM
  */
 
+#include <queue>
+
 #include "Resources/ResourceManager.hpp"
 
 
@@ -36,7 +38,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "PowerUps/PowerUpInterface.hpp"
-#include "Classes/Network/NetPacketQueues.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkState.hpp"
@@ -44,7 +45,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class MultiMessage;
 
 static MessageClassHandler * handlers[256];
-static NetPacketQueue receive_queue;
+static std::queue<NetPacket> receive_queue;
 
 class NoHandler : public MessageClassHandler
 {
@@ -170,7 +171,7 @@ MessageRouter::initialize(bool isServer)
         handlers[_net_message_class_client_server] = NetworkClient::getPacketHandler();
     }
     // XXX has to free the queue some time;
-    receive_queue.initialize(200);
+    //receive_queue.initialize(200);
 }
 
 void
@@ -197,7 +198,7 @@ MessageRouter::enqueueIncomingPacket( const void *data, Uint16 size,
     assert(size <= _MAX_NET_PACKET_SIZE);
 
     memcpy(TEMP_PACKET.data, data, size);
-    receive_queue.enqueue( TEMP_PACKET );
+    receive_queue.push( TEMP_PACKET );
 }
 
 
@@ -205,9 +206,10 @@ void
 MessageRouter::routePackets()
 {
     static NetPacket np;
-    while ( receive_queue.isReady() )
+    while ( ! receive_queue.empty() )
     {
-        receive_queue.dequeue(&np);
+        np = receive_queue.front();
+        receive_queue.pop();
         NetworkState::incPacketsReceived(np.getSize());
 #ifdef NETWORKDEBUG
         NetPacketDebugger::logPacket("R", packet);

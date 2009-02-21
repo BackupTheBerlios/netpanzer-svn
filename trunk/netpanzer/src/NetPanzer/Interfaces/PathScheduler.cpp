@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
 
+#include <algorithm>
 #include <math.h>
 
 #include "Util/Log.hpp"
@@ -34,7 +35,7 @@ void PathCache::initialize( unsigned long cache_size )
 
     entry_replace_index = PathCache::cache_size;
 
-    cache_list.initialize( PathCache::cache_size );
+    cache_list.resize( PathCache::cache_size );
 
     for( unsigned long i = 0; i < PathCache::cache_size; i++ ) {
         //cache_list[ i ].path.initialize();
@@ -345,16 +346,15 @@ void PathGenerator::run( )
 
 void PathRequestQueue::killRequest( UnitID &unit_id )
 {
-    unsigned long index;
-
-    index = front;
-
-    while( index != rear ) {
-        index = (index + 1) % size;
-
-        if ( (array[ index ].unit_id == unit_id ) ) {
-            array[ index ].status = _slot_status_flush;
+    PathRequestQueue::iterator i = begin();
+    while ( i != end() )
+    {
+        if ( i->unit_id == unit_id )
+        {
+            i->status = _slot_status_flush;
+            // no break?
         }
+        ++i;
     }
 }
 
@@ -411,8 +411,8 @@ void PathScheduler::initialize( unsigned long short_queue_size,
     short_pather_count = 1;
     long_pather_count  = 1;
 
-    short_request_queue.initialize( short_queue_size );
-    long_request_queue.initialize( long_queue_size );
+    //short_request_queue.resize( short_queue_size );
+    //long_request_queue.resize( long_queue_size );
 
     unsigned long i;
 
@@ -429,8 +429,8 @@ void PathScheduler::initialize( unsigned long short_queue_size,
 
 void PathScheduler::cleanUp( void )
 {
-    short_request_queue.deallocate();
-    long_request_queue.deallocate();
+    short_request_queue.clear();
+    long_request_queue.clear();
 }
 
 void PathScheduler::requestPath( PathRequest &path_request )
@@ -441,9 +441,9 @@ void PathScheduler::requestPath( PathRequest &path_request )
         = long ((path_request.start - path_request.goal).mag2());
 
     if ( path_distance_estimate <= short_queue_distance_threshold ) {
-        short_request_queue.enqueue( path_request );
+        short_request_queue.push_back( path_request );
     } else {
-        long_request_queue.enqueue( path_request );
+        long_request_queue.push_back( path_request );
     }
 }
 
@@ -490,8 +490,9 @@ void PathScheduler::run()
 
     for ( i = 0; i < short_pather_count; i++	) {
         if( short_pather[ i ].generationStatus() == _path_generator_status_free) {
-            if ( short_request_queue.isReady() ) {
-                request = short_request_queue.dequeue();
+            if ( ! short_request_queue.empty() ) {
+                request = short_request_queue.front();
+                short_request_queue.pop_front();
 
                 if ( request.status != _slot_status_flush ) {
                     short_pather[ i ].initializePathGeneration( request );
@@ -504,8 +505,9 @@ void PathScheduler::run()
 
     for ( i = 0; i < long_pather_count; i++  ) {
         if( long_pather[ i ].generationStatus() == _path_generator_status_free) {
-            if ( long_request_queue.isReady() ) {
-                request = long_request_queue.dequeue();
+            if ( ! long_request_queue.empty() ) {
+                request = long_request_queue.front();
+                long_request_queue.pop_front();
 
                 if ( request.status != _slot_status_flush ) {
                     long_pather[ i ].initializePathGeneration( request );

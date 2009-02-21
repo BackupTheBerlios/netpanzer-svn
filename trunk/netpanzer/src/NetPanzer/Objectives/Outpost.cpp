@@ -57,7 +57,7 @@ Outpost::attemptOccupationChange(UnitID unit_id)
     ObjectiveOccupationUpdate update_mesg;
     int player_status;
 
-    UnitBase* unit = UnitInterface::getUnit(unit_id);
+    Unit* unit = UnitInterface::getUnit(unit_id);
     PlayerState* player = unit->player;
     player_status = player->getStatus();
 
@@ -111,7 +111,7 @@ Outpost::checkOccupationStatus()
 {
     if( occupation_status_timer.count()  )	//
     {
-        UnitBase *unit_ptr;
+        Unit *unit_ptr;
         iRect bounding_area;
         iXY occupation_pad_loc;
 
@@ -148,7 +148,7 @@ Outpost::generateUnits()
         {
             if( (unit_generation_timer.count() == true) )
             {
-                UnitBase *unit;
+                Unit *unit;
                 iXY gen_loc;
                 gen_loc = outpost_map_loc + unit_generation_loc;
 

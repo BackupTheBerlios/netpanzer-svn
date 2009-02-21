@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _UNITMESSAGE_HPP
 #define _UNITMESSAGE_HPP
 
-#include "Units/UnitBase.hpp"
+#include "Core/CoreTypes.hpp"
 
 enum { _umesg_flag_unique          = 0x01,
        _umesg_flag_broadcast       = 0x02,

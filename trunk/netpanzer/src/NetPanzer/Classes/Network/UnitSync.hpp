@@ -18,8 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __UNITSYNC_HPP__
 #define __UNITSYNC_HPP__
 
-#include "Units/UnitBase.hpp"
-
+#include "Core/CoreTypes.hpp"
 class ClientSocket;
 
 class UnitSync

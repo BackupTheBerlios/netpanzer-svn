@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _VEHICLE_HPP
 #include <string>
 
-#include "Units/UnitBase.hpp"
+#include "UnitState.hpp"
 #include "Util/Timer.hpp"
 #include "Classes/UnitMessageTypes.hpp"
 #include "Units/UnitOpcodes.hpp"
@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/Sprite.hpp"
 #include "Classes/SelectionBoxSprite.hpp"
+#include "Classes/SpriteSorter.hpp"
 
 enum { _control_idle,
        _control_move,
@@ -70,8 +71,21 @@ enum { _external_event_null,
 
 enum { _rotate_pos, _rotate_neg };
 
-class Vehicle : public UnitBase
+
+class PlayerState;
+
+class Unit
 {
+    friend class UnitInterface;
+public:
+    PlayerState* player;
+    UnitID       id;
+    UnitState    unit_state;
+    bool         in_sync_flag;
+
+    void soundSelected();
+
+
 protected:
     SpritePacked body_anim;
     SpritePacked turret_anim;
@@ -200,8 +214,7 @@ protected:
     void aiFsmManualMove();
 
     void fireWeapon( iXY &target_loc );
-    virtual unsigned short launchProjectile();
-    virtual void soundSelected();
+    unsigned short launchProjectile();
 
     TimerFrameBase threat_level_under_attack_timer;
     void accessThreatLevels();
@@ -241,20 +254,32 @@ protected:
     void setUnitProperties( unsigned char utype );
 
 public:
-    Vehicle(PlayerState* player, unsigned char utype, UnitID id, iXY initial_loc);
+    Unit(PlayerState* ownplayer, unsigned char utype, UnitID uid, iXY initial_loc);
 
-    virtual void updateState();
+    void updateState();
 
-    virtual void processMessage(const UnitMessage* message);
+    void processMessage(const UnitMessage* message);
 
-    virtual void evalCommandOpcode(const UnitOpcode* opcode);
+    void evalCommandOpcode(const UnitOpcode* opcode);
 
-    virtual void syncUnit();
+    void syncUnit();
 
-    virtual void offloadGraphics( SpriteSorter &sorter );
+    void offloadGraphics( SpriteSorter &sorter );
 
     float smolderWait;
     float smolderWaitMin;
+
+private:
+    void setID(UnitID id)
+    {
+        this->id = id;
+    }
+
+    UnitID getID() const
+    {
+        return id;
+    }
+
 };
 
 

@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef BOT_H
 #define BOT_H
 
-class UnitBase;
+class Unit;
 class ObjectiveState;
 class iXY;
 
@@ -32,9 +32,9 @@ public:
     virtual ~Bot() {}
     virtual void processEvents() = 0;
 
-    void moveUnit(UnitBase *unit, iXY map_pos);
-    void attackUnit(UnitBase *unit, UnitBase *enemyUnit);
-    void manualFire(UnitBase *unit, iXY world_pos);
+    void moveUnit(Unit *unit, iXY map_pos);
+    void attackUnit(Unit *unit, Unit *enemyUnit);
+    void manualFire(Unit *unit, iXY world_pos);
     void produceUnit(ObjectiveID outpostID, int selectedProduce);
 protected:
     BotTaskList m_tasks;

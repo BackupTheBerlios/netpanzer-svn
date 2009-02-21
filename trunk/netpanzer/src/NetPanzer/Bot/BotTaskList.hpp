@@ -18,9 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef BOTTASKSLIST_H
 #define BOTTASKSLIST_H
 
-class BotTask;
+#include "Core/CoreTypes.hpp"
 
-#include "Units/UnitBase.hpp"
+class BotTask;
+class Unit;
 
 #include <map>
 typedef std::map<UnitID, BotTask*> bottasks_t;
@@ -35,12 +36,12 @@ class BotTaskList {
     private:
         bottasks_t m_tasks;
 
-        void adjustLastUnitLoc(UnitBase *unit);
+        void adjustLastUnitLoc(Unit *unit);
     public:
         ~BotTaskList();
 
-        void setUnitTask(UnitBase *unit, int task);
-        int queryUnitTask(UnitBase *unit);
+        void setUnitTask(Unit *unit, int task);
+        int queryUnitTask(Unit *unit);
 };
 
 #endif

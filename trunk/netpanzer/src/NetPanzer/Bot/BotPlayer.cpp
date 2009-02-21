@@ -29,10 +29,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/UnitProfileInterface.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
-#include "Units/UnitBase.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Objectives/Objective.hpp"
-#include "Units/Vehicle.hpp"
+#include "Units/Unit.hpp"
 #include "Util/Log.hpp"
 
 //-----------------------------------------------------------------
@@ -48,7 +47,7 @@ BotPlayer::processEvents()
     int playerIndex = isReady();
     if (playerIndex != NONE_PLAYER)
     {
-        UnitBase *unit = getRandomUnit(playerIndex);
+        Unit *unit = getRandomUnit(playerIndex);
         if (unit)
         {
             int unitTask = m_tasks.queryUnitTask(unit);
@@ -57,7 +56,7 @@ BotPlayer::processEvents()
             }
 
             // manual fire on closest enemy
-            UnitBase *enemyUnit;
+            Unit *enemyUnit;
             if (UnitInterface::queryClosestEnemyUnit(&enemyUnit,
                         unit->unit_state.location, playerIndex))
             {
@@ -95,10 +94,10 @@ BotPlayer::isReady()
 /**
  * @return unit which belong to playerIndex
  */
-UnitBase *
+Unit *
 BotPlayer::getRandomUnit(int playerIndex)
 {
-    const std::vector<UnitBase*>& units 
+    const std::vector<Unit*>& units
         = UnitInterface::getPlayerUnits(playerIndex);
 
     if(units.size() == 0)
@@ -148,10 +147,10 @@ BotPlayer::getRandomEnemyPlayer()
 /**
  * @return enemy unit
  */
-UnitBase *
+Unit *
 BotPlayer::getRandomEnemy()
 {
-    UnitBase *enemyUnit = 0;
+    Unit *enemyUnit = 0;
     int enemyPlayer = getRandomEnemyPlayer();
     if (enemyPlayer != NONE_PLAYER) {
         enemyUnit = getRandomUnit(enemyPlayer);
@@ -206,7 +205,7 @@ BotPlayer::getRandomOutpost(int disposition)
  * Occupy free or enemy oupost.
  */
 void
-BotPlayer::unitOccupyOupost(UnitBase *unit)
+BotPlayer::unitOccupyOupost(Unit *unit)
 {
     ObjectiveState *outpost =
         getRandomOutpost(_objective_disposition_unoccupied);

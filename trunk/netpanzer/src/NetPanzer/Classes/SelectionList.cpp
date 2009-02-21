@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/UnitInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Util/Log.hpp"
-#include "Units/UnitBase.hpp"
+#include "Units/Unit.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
 #include <algorithm>
 
@@ -149,7 +149,7 @@ void SelectionList::select()
 {
     unsigned long id_list_index;
     unsigned long id_list_size;
-    UnitBase *unit;
+    Unit *unit;
 
     std::sort(unit_list.begin(), unit_list.end());
     unit_list.erase(std::unique(unit_list.begin(), unit_list.end()), unit_list.end());
@@ -169,7 +169,7 @@ void SelectionList::deselect( void )
 {
     unsigned long id_list_index;
     unsigned long id_list_size;
-    UnitBase *unit;
+    Unit *unit;
 
     id_list_size = unit_list.size();
 
@@ -183,7 +183,7 @@ void SelectionList::deselect( void )
 
 void SelectionList::cycleNextUnit( void )
 {
-    UnitBase *unit;
+    Unit *unit;
     unsigned long start_index;
 
     start_index = unit_cycle_index;
@@ -229,7 +229,7 @@ void SelectionList::addList( SelectionList &source_list )
 
 unsigned short SelectionList::getHeadUnitType()
 {
-    UnitBase *unit;
+    Unit *unit;
 
     if ( unit_list.size() > 0 ) {
         unit = UnitInterface::getUnit( unit_list[ 0 ] );
@@ -247,7 +247,7 @@ void SelectionList::validateList()
 {
     unsigned long id_list_index;
     unsigned long id_list_size;
-    UnitBase *unit;
+    Unit *unit;
 
     id_list_size = unit_list.size();
 

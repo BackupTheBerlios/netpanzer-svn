@@ -39,15 +39,15 @@ class BotPlayer : public Bot
         virtual void processEvents();
 
         int isReady();
-        UnitBase *getRandomUnit(int playerIndex);
+        Unit *getRandomUnit(int playerIndex);
 
         playerList_t getEnemyPlayers();
         int getRandomEnemyPlayer();
-        UnitBase *getRandomEnemy();
+        Unit *getRandomEnemy();
 
         outpostList_t getOutposts(int disposition);
         ObjectiveState *getRandomOutpost(int disposition);
-        void unitOccupyOupost(UnitBase *unit);
+        void unitOccupyOupost(Unit *unit);
         void outpostProduce();
 };
 

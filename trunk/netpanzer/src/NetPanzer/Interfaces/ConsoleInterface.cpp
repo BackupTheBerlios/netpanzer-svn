@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 bool ConsoleInterface::stdout_pipe;
 
 long ConsoleInterface::console_size;
-ConsoleLineArray ConsoleInterface::line_list;
+std::vector<ConsoleLine> ConsoleInterface::line_list;
 
 iXY ConsoleInterface::surface_size;
 iRect    ConsoleInterface::bounds;
@@ -51,7 +51,7 @@ void ConsoleInterface::initialize( long size )
     assert( size > 0 );
 
     console_size = size;
-    line_list.initialize( size );
+    line_list.resize( size );
 
     line_index = console_size - 1;
 

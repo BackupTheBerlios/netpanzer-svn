@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "NetMessage.hpp"
 #include "Units/UnitState.hpp"
-#include "Units/UnitBase.hpp"
 #include "Units/UnitOpcodes.hpp"
 
 #define _OPCODE_MESSAGE_LIMIT 488

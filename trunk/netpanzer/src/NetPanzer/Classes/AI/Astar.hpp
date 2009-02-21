@@ -20,11 +20,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <queue>
 
+#include "Core/CoreTypes.hpp"
+
 #include "ArrayUtil/BitArray.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Units/UnitBlackBoard.hpp"
 #include "Classes/AI/PathList.hpp"
-#include "Units/UnitBase.hpp"
 
 enum { _path_request_full, _path_request_update };
 enum { _slot_status_free, _slot_status_busy, _slot_status_wait, _slot_status_flush };

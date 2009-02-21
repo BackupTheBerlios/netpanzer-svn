@@ -18,10 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _CONSOLEINTERFACE_HPP
 #define _CONSOLEINTERFACE_HPP
 
+#include <vector>
 #include <stdarg.h>
 #include <stdio.h>
 #include "Core/CoreTypes.hpp"
-#include "ArrayUtil/ArrayTemplate.hpp"
 #include "Util/Timer.hpp"
 #include "2D/Surface.hpp"
 
@@ -35,9 +35,8 @@ public:
     FlagID  flag;
     char    string[256];
     Timer   life_timer;
+    ConsoleLine() : visible(false) {}
 };
-
-typedef ArrayTemplate< ConsoleLine > ConsoleLineArray;
 
 enum { _console_overlap, _console_full };
 
@@ -47,7 +46,7 @@ protected:
     static bool stdout_pipe;
 
     static long console_size;
-    static ConsoleLineArray line_list;
+    static std::vector<ConsoleLine> line_list;
 
     static iXY surface_size;
     static iRect    bounds;
