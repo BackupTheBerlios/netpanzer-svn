@@ -55,6 +55,8 @@ private:
     typedef std::map<std::string,Surface*> cursors_t;
     static cursors_t cursors;
 
+    static bool isGrabMode;
+
 protected:
     static iXY mouse_pos;
 
@@ -83,10 +85,15 @@ public:
 
     static void initialize();
     static void shutdown();
+    static void setGrabMode(bool wantGrab)
+    {
+        isGrabMode = wantGrab;
+    }
     
     static void draw(Surface &dest)
     {
-        if (cursor) {
+        if ( cursor && ! isGrabMode )
+        {
             cursor->nextFrame();
             cursor->bltTrans(dest, mouse_pos.x, mouse_pos.y);
         }

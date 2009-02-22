@@ -40,6 +40,8 @@ NTimer MouseInterface::clicktimer;
 int MouseInterface::clickcount;
 int MouseInterface::releasecount;
 
+bool MouseInterface::isGrabMode;
+
 void MouseInterface::initialize()
 {
     const char* cursorpath = "pics/cursors/";
@@ -65,6 +67,7 @@ void MouseInterface::initialize()
     clicktimer.setTimeOut(150);
     clickcount = 0;
     releasecount = 0;
+    isGrabMode = false;
 }
 
 void MouseInterface::shutdown()
@@ -114,16 +117,31 @@ MouseInterface::onMouseButtonUp(SDL_MouseButtonEvent *e)
 void
 MouseInterface::onMouseMoved(SDL_MouseMotionEvent* e)
 {
-    mouse_pos.x = e->x;
-    mouse_pos.y = e->y;
+    if ( isGrabMode && e->x == mouse_pos.x && e->y == mouse_pos.y )
+    {
+        return; // this is the move to previous position;
+    }
 
     MouseEvent event;
     event.event = MouseEvent::EVENT_MOVE;
     event.button = e->state;
-    event.pos.x = e->x;
-    event.pos.y = e->y;
     event.relpos.x = e->xrel;
     event.relpos.y = e->yrel;
+
+    if ( ! isGrabMode )
+    {
+        mouse_pos.x = e->x;
+        mouse_pos.y = e->y;
+        event.pos.x = e->x;
+        event.pos.y = e->y;
+    }
+    else
+    {
+        event.pos.x = mouse_pos.x;
+        event.pos.y = mouse_pos.y;
+        SDL_WarpMouse(mouse_pos.x, mouse_pos.y);
+    }
+
     event_queue.push_back(event);
 }
 

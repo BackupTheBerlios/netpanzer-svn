@@ -739,12 +739,14 @@ WorldInputCmdProcessor::evalRightMButtonEvents(const MouseEvent& event)
     static NTimer mtimer(150);
     if (event.event == MouseEvent::EVENT_DOWN )
     {
+        MouseInterface::setGrabMode(true);
         right_mouse_scroll_moved = false;
         mtimer.reset();
     }
     
     if (event.event == MouseEvent::EVENT_UP )
     {
+        MouseInterface::setGrabMode(false);
         if ( ! right_mouse_scroll_moved && mtimer.isTimeOut() )
         {
             // simple right click on the same position after timeout
