@@ -46,7 +46,7 @@ Bot::moveUnit(Unit *unit, iXY map_pos)
     matrix.getNextEmptyLoc(&map_pos);
 
     TerminalUnitCmdRequest comm_mesg;
-    comm_mesg.comm_request.setHeader(unit->id, _umesg_flag_unique);
+    comm_mesg.comm_request.setHeader(unit->id);
     comm_mesg.comm_request.setMoveToLoc(map_pos);
 
     MessageRouter::enqueueIncomingPacket(&comm_mesg, sizeof(TerminalUnitCmdRequest), botPlayerId, NULL);
@@ -62,7 +62,7 @@ Bot::attackUnit(Unit *unit, Unit *enemyUnit)
     assert(enemyUnit != 0);
 
     TerminalUnitCmdRequest comm_mesg;
-    comm_mesg.comm_request.setHeader(unit->id, _umesg_flag_unique);
+    comm_mesg.comm_request.setHeader(unit->id);
     comm_mesg.comm_request.setTargetUnit(enemyUnit->id);
 
     MessageRouter::enqueueIncomingPacket(&comm_mesg, sizeof(TerminalUnitCmdRequest), botPlayerId, NULL);
@@ -77,7 +77,7 @@ Bot::manualFire(Unit *unit, iXY world_pos)
     assert(unit != 0);
 
     TerminalUnitCmdRequest comm_mesg;
-    comm_mesg.comm_request.setHeader(unit->id, _umesg_flag_unique);
+    comm_mesg.comm_request.setHeader(unit->id);
     comm_mesg.comm_request.setManualFire(world_pos);
 
     MessageRouter::enqueueIncomingPacket(&comm_mesg, sizeof(TerminalUnitCmdRequest), botPlayerId, NULL);

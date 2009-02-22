@@ -20,15 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Core/CoreTypes.hpp"
 
-enum { _umesg_flag_unique          = 0x01,
-       _umesg_flag_broadcast       = 0x02,
-       _umesg_flag_player          = 0x04,
-       _umesg_flag_notplayer       = 0x08,
-       _umesg_flag_send            = 0x0F,
-       _umesg_flag_queue           = 0x20,
-       _umesg_flag_manager_request = 0x40
-     };
-
 #ifdef MSVC
 #pragma pack(1)
 #endif
@@ -39,19 +30,17 @@ private:
     Uint16 unit_id;
 public:
     Uint8 message_id;
-    Uint8 message_flags;
 
 public:
     UnitMessage()
     {
         this->unit_id = 0xBADB;
         message_id = 0;
-        message_flags = 0;
     }
 
-    UnitMessage(UnitID unit_Id, unsigned char flags)
+    UnitMessage( UnitID unit_Id )
     {
-        setHeader(unit_Id, flags);
+        setHeader(unit_Id);
     }
 
     UnitID getUnitID() const
@@ -59,19 +48,11 @@ public:
         return ltoh16(unit_id);
     }
 
-    void setHeader(UnitID unit_id, unsigned char flags )
+    void setHeader( UnitID unit_id )
     {
         this->unit_id = htol16(unit_id);
-        message_flags = flags;
     }
 
-    bool isFlagged(unsigned char flags) const
-    {
-        if ( (flags & message_flags) == flags )
-            return true;
-
-        return false;
-    }
 } __attribute__((packed));
 
 #ifdef MSVC

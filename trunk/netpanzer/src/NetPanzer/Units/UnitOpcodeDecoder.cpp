@@ -53,12 +53,11 @@ UnitOpcodeDecoder::setMessage(const NetMessage* message)
 bool
 UnitOpcodeDecoder::decode(UnitOpcode** opcode)
 {
-    if(opcode_index + opcode_message.getHeaderSize() >=
-            opcode_message.getSize())
+    if(opcode_index+opcode_message.getHeaderSize() >= opcode_message.getSize() )
         return false;
     
     *opcode = (UnitOpcode*) (opcode_message.data + opcode_index);
-    opcode_index += UnitOpcode::getSize();
+    opcode_index += (*opcode)->getSize();
     return true;
 }
 

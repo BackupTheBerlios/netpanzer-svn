@@ -26,7 +26,7 @@ class UnitPowerUp : public PowerUp
 protected:
     int unit_powerup_type;
 
-    virtual void onHit( UnitID unit_id );
+    virtual void onHit( Unit * unit );
 
     void powerUpHitPoints( UnitState *unit_state);
     void powerUpRange( UnitState *unit_state);

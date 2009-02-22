@@ -38,7 +38,7 @@ public:
     Timer unit_generation_timer;
 
 private:
-    void attemptOccupationChange(UnitID unit_id);
+    void attemptOccupationChange(Uint16 player_id);
 
     void checkOccupationStatus( void );
 

@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class EnemyRadarPowerUp : public PowerUp
 {
 protected:
-    virtual void onHit( UnitID unit_id );
+    virtual void onHit( Unit * unit );
 
 public:
     static bool isRadarActive();

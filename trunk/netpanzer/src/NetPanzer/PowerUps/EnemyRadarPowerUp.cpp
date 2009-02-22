@@ -60,11 +60,9 @@ EnemyRadarPowerUp::EnemyRadarPowerUp(iXY map_loc, int type)
 }
 
 void
-EnemyRadarPowerUp::onHit(UnitID unit_id)
+EnemyRadarPowerUp::onHit( Unit * unit )
 {
     sound->playPowerUpSound();
-
-    Unit* unit = UnitInterface::getUnit(unit_id);
 
     if(unit->player == PlayerInterface::getLocalPlayer())
     {

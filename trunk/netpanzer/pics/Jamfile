@@ -15,7 +15,7 @@ PATHS =
         flags
         cursors
         menus/vehicleSelectionView
-        backgrounds/menus/buttons/default/pak
+        backgrounds/menus/buttons/default
         backgrounds/menus/menu/pak
         backgrounds/menus/menu
         .

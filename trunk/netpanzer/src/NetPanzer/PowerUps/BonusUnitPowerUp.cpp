@@ -40,14 +40,12 @@ BonusUnitPowerUp::BonusUnitPowerUp(iXY map_loc, int type)
 }
 
 
-void BonusUnitPowerUp::onHit( UnitID unit_id )
+void BonusUnitPowerUp::onHit( Unit * unit )
 {
     PlacementMatrix placement_matrix;
     iXY map_pos;
 
     sound->playPowerUpSound();
-
-    Unit* unit = UnitInterface::getUnit(unit_id);
 
     MapInterface::pointXYtoMapXY( unit->unit_state.location, &map_pos );
 

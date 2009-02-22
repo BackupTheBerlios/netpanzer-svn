@@ -52,6 +52,11 @@ public:
 
     void syncUnit();
 
+    UnitID getID() const
+    {
+        return id;
+    }
+
     float smolderWait;
     float smolderWaitMin;
 
@@ -212,7 +217,6 @@ protected:
 
     void setCommandMoveToLoc(const UMesgAICommand* message);
     void setCommandAttackUnit(const UMesgAICommand* message);
-    void setCommandManualMove(const UMesgAICommand* message);
     void setCommandManualFire(const UMesgAICommand* message);
 
     void messageAICommand(const UnitMessage* message);
@@ -228,11 +232,6 @@ private:
     void setID(UnitID id)
     {
         this->id = id;
-    }
-
-    UnitID getID() const
-    {
-        return id;
     }
 
 };

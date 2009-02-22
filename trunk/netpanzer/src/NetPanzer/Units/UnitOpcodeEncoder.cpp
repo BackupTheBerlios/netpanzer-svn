@@ -43,12 +43,14 @@ UnitOpcodeEncoder::reset()
 void
 UnitOpcodeEncoder::encode(const UnitOpcode *opcode)
 {
-    if(opcode_index + UnitOpcode::getSize() > sizeof(opcode_message.data)) {
+    unsigned int size = opcode->getSize();
+    if(opcode_index + size > sizeof(opcode_message.data))
+    {
         send();
     }
    
-    memcpy(opcode_message.data + opcode_index, opcode, UnitOpcode::getSize());
-    opcode_index += UnitOpcode::getSize();
+    memcpy(opcode_message.data + opcode_index, opcode, size);
+    opcode_index += size;
 }
 
 void

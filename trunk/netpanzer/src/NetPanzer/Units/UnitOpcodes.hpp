@@ -22,31 +22,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Types/iXY.hpp"
 #include <queue>
 
-enum { _unit_opcode_flag_sync = 0x01 };
-
-/** The following is a tricky macro to ensure a struct has a specific size. THe
- * check is done at compiletime. The trick is that C doesn't allow duplicate
- * case labels...
- */
-#define ASSERT_SIZE(mystruct, size)                                     \
-    namespace TRICKYTESTS { static inline void mystruct##_test() {      \
-        int i=0; switch(i) { case 0: ; case (sizeof(mystruct) == (size)): ; } \
-    } }
+enum { _unit_opcode_flag_sync = 0x80 };
 
 #ifdef MSVC
 #pragma pack(1)
 #endif
 
+#define _UNIT_OPCODE_MOVE                   1
+#define _UNIT_OPCODE_TURRET_TRACK_POINT     2
+#define _UNIT_OPCODE_TURRET_TRACK_TARGET    3
+#define _UNIT_OPCODE_FIRE_WEAPON            4
+#define _UNIT_OPCODE_SYNC_UNIT              5
+#define _UNIT_OPCODE_UPDATE_STATE           6
+#define _UNIT_OPCODE_DESTRUCT               7
+
+inline unsigned int getOpcodeSize(unsigned char code);
+
 // do not use this directly, cast to 1 of the UnitOpcode classes...
 struct UnitOpcodeStruct
 {
-public:
+private:
     Uint8 opcode;
-private:
     Uint16 unit_index;
-public:
-    Uint8 flags;
-private:
     Uint8 op_data[7];
 } __attribute__((packed));
 
@@ -54,17 +51,26 @@ typedef std::queue<UnitOpcodeStruct> UnitOpcodeQueue;
 
 class UnitOpcode
 {
-public:
+protected:
     Uint8 opcode;
-    //Uint8 player_index;
+    
 private:
     Uint16 unit_id;
-public:
-    Uint8 flags;
 
-    static size_t getSize()
+public:
+    Uint8 getOpcode() const
     {
-        return sizeof(UnitOpcodeStruct);
+        return opcode&0x7f;
+    }
+
+    bool isSyncFlag() const
+    {
+        return opcode & _unit_opcode_flag_sync;
+    }
+
+    size_t getSize() const
+    {
+        return getOpcodeSize(getOpcode());
     }
 
     void setUnitID(UnitID id)
@@ -78,10 +84,6 @@ public:
     }
 } __attribute__((packed));
 
-ASSERT_SIZE(UnitOpcode, sizeof(UnitOpcodeStruct)-7)
-
-#define _UNIT_OPCODE_MOVE 1
-
 class MoveOpcode : public UnitOpcode
 {
 private:
@@ -90,17 +92,14 @@ private:
 public:
     Sint8 loc_x_offset;
     Sint8 loc_y_offset;
-    Uint8 pad[1];
 
     MoveOpcode( )
     {
-        flags = 0;
         opcode = _UNIT_OPCODE_MOVE;
 
         square = 0;
         loc_x_offset = 0;
         loc_y_offset = 0;
-        pad[0] = 0;
     }
 
     void setSquare(Uint32 square)
@@ -114,10 +113,6 @@ public:
     }
 } __attribute__((packed));
 
-ASSERT_SIZE(MoveOpcode, 7 + sizeof(UnitOpcode))
-
-#define _UNIT_OPCODE_TURRET_TRACK_POINT 2
-
 class TurretTrackPointOpcode : public UnitOpcode
 {
 private:
@@ -126,16 +121,13 @@ private:
 
 public:
     Uint8  activate;
-    Uint8 pad[2];
 
-    TurretTrackPointOpcode( )
+    TurretTrackPointOpcode( UnitID unitid, Uint8 flag, bool _activate)
     {
-        flags = 0;
-        opcode = _UNIT_OPCODE_TURRET_TRACK_POINT;
-
+        opcode = _UNIT_OPCODE_TURRET_TRACK_POINT | flag;
+        setUnitID(unitid);
         target_x = target_y = 0;
-        activate = false;
-        pad[0] = pad[1] = 0;
+        activate = _activate;
     }
 
     void setTarget(iXY pos)
@@ -150,26 +142,19 @@ public:
     }
 } __attribute__((packed));
 
-ASSERT_SIZE(TurretTrackPointOpcode, 7 + sizeof(UnitOpcode))
-
-#define _UNIT_OPCODE_TURRET_TRACK_TARGET 3
-
 class TurretTrackTargetOpcode : public UnitOpcode
 {
 private:
     Uint16 targetUnitID;
 public:
     Uint8 activate;
-    Uint8 pad[4];
 
-    TurretTrackTargetOpcode( )
+    TurretTrackTargetOpcode( UnitID unitid, Uint8 flag, bool _activate )
     {
-        flags = 0;
-        opcode = _UNIT_OPCODE_TURRET_TRACK_TARGET;
-
+        opcode = _UNIT_OPCODE_TURRET_TRACK_TARGET | flag;
+        setUnitID(unitid);
         targetUnitID = 0;
-        activate = false;
-        pad[0] = pad[1] = pad[2] = pad[3] = 0;
+        activate = _activate;
     }
 
     void setTargetUnitID(UnitID id)
@@ -183,26 +168,20 @@ public:
     }
 } __attribute__((packed));
 
-ASSERT_SIZE(TurretTrackTargetOpcode, 7 + sizeof(UnitOpcode))
-
-#define _UNIT_OPCODE_FIRE_WEAPON 4
-
 class FireWeaponOpcode : public UnitOpcode
 {
 private:
     Uint16 x;
     Uint16 y;
-    Uint8 pad[3];
     
 public:
 
-    FireWeaponOpcode( )
+    FireWeaponOpcode( UnitID unitid )
     {
-        flags = 0;
         opcode = _UNIT_OPCODE_FIRE_WEAPON;
+        setUnitID(unitid);
 
         x = y = 0;
-        pad[0] = pad[1] = pad[2] = 0;
     }
 
     void setTarget(iXY target)
@@ -217,44 +196,28 @@ public:
     }
 } __attribute__((packed));
 
-ASSERT_SIZE(FireWeaponOpcode, 7 + sizeof(UnitOpcode))
-
-#define _UNIT_OPCODE_SYNC_UNIT 5
-
 class SyncUnitOpcode : public UnitOpcode
 {
 public:
-    Uint8 pad[7];
 
-    SyncUnitOpcode( )
+    SyncUnitOpcode( UnitID unitid )
     {
-        flags = 0;
         opcode = _UNIT_OPCODE_SYNC_UNIT;
+        setUnitID(unitid);
 
-        for(int i=0;i<7;i++)
-            pad[i] = 0;
     }
 
 } __attribute__((packed));
-
-ASSERT_SIZE(SyncUnitOpcode, 7 + sizeof(UnitOpcode))
-
-#define _UNIT_OPCODE_UPDATE_STATE 6
 
 class UpdateStateUnitOpcode : public UnitOpcode
 {
 private:
     Sint16 hit_points;
 public:
-    Uint8 pad[5];
 
     UpdateStateUnitOpcode( )
     {
-        flags = 0;
         opcode = _UNIT_OPCODE_UPDATE_STATE;
-
-        for(int i=0; i<5; i++)
-            pad[i] = 0;
     }
 
     void setHitPoints(Sint16 newhitpoints)
@@ -268,29 +231,47 @@ public:
     }
 } __attribute__((packed));
 
-ASSERT_SIZE(UpdateStateUnitOpcode, 7 + sizeof(UnitOpcode))
-
-#define _UNIT_OPCODE_DESTRUCT 7
-
 class DestructUnitOpcode : public UnitOpcode
 {
 public:
-    unsigned char pad[7];
 
     DestructUnitOpcode( )
     {
-        flags = 0;
         opcode = _UNIT_OPCODE_DESTRUCT;
-
-        for(int i=0; i<7; i++)
-            pad[i] = 0;
     }
 } __attribute__((packed));
-
-ASSERT_SIZE(DestructUnitOpcode, 7 + sizeof(UnitOpcode))
 
 #ifdef MSVC
 #pragma pack()
 #endif
+
+inline unsigned int getOpcodeSize(unsigned char code)
+{
+    switch ( code )
+    {
+        case _UNIT_OPCODE_MOVE:
+            return sizeof(MoveOpcode);
+
+        case _UNIT_OPCODE_TURRET_TRACK_POINT:
+            return sizeof(TurretTrackPointOpcode);
+
+        case _UNIT_OPCODE_TURRET_TRACK_TARGET:
+            return sizeof(TurretTrackTargetOpcode);
+
+        case _UNIT_OPCODE_FIRE_WEAPON:
+            return sizeof(FireWeaponOpcode);
+
+        case _UNIT_OPCODE_SYNC_UNIT:
+            return sizeof(SyncUnitOpcode);
+
+        case _UNIT_OPCODE_UPDATE_STATE:
+            return sizeof(UpdateStateUnitOpcode);
+
+        case _UNIT_OPCODE_DESTRUCT:
+            return sizeof(DestructUnitOpcode);
+
+    }
+    return sizeof(UnitOpcodeStruct);
+}
 
 #endif

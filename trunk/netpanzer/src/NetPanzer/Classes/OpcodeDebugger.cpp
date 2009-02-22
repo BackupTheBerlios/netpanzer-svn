@@ -28,8 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 void OpcodeDebugger::logOpcode(std::ostream& log, UnitOpcode* opcode)
 {
     log << " UNIT:" << opcode->getUnitID()
-        << " FL:" << (int) opcode->flags << " ";
-    switch(opcode->opcode) {
+        << " FL:" << int(opcode->getOpcode()&0x80) << " ";
+    switch(opcode->getOpcode()) {
         case _UNIT_OPCODE_MOVE:
         {
             MoveOpcode* movecode = (MoveOpcode*) opcode;

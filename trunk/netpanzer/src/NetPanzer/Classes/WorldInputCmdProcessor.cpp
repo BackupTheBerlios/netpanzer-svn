@@ -780,8 +780,7 @@ WorldInputCmdProcessor::sendMoveCommand(const iXY& world_pos)
         if ( unit_ptr != 0 ) {
             if ( unit_ptr->unit_state.select == true ) {
                 matrix.getNextEmptyLoc( &map_pos );
-                comm_mesg.comm_request.setHeader(unit_ptr->id,
-                        _umesg_flag_unique );
+                comm_mesg.comm_request.setHeader(unit_ptr->id);
 
                 comm_mesg.comm_request.setMoveToLoc( map_pos );
                 encoder.encodeMessage(&comm_mesg,
@@ -808,11 +807,15 @@ WorldInputCmdProcessor::sendAttackCommand(const iXY &world_pos)
     size_t id_list_size;
     Unit *unit_ptr;
 
-    if ( working_list.isSelected() == true ) {
-        target_list.selectTarget( world_pos );
-        LOGGER.warning("num units in list=%d", (int)target_list.unit_list.size());
+    if ( working_list.isSelected() == true )
+    {
+        target_ptr = UnitInterface::queryNonPlayerUnitAtWorld(world_pos,
+                                        PlayerInterface::getLocalPlayerIndex());
 
-        target_ptr = UnitInterface::getUnit( target_list.unit_list[0] );
+        if ( ! target_ptr ) // there was nothing there
+        {
+            return;
+        }
 
         id_list_size = working_list.unit_list.size();
 
@@ -821,12 +824,14 @@ WorldInputCmdProcessor::sendAttackCommand(const iXY &world_pos)
 
         NetMessageEncoder encoder(true);
 
-        for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
+        for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ )
+        {
             unit_ptr = UnitInterface::getUnit( working_list.unit_list[ id_list_index ] );
-            if ( unit_ptr != 0 ) {
-                if ( unit_ptr->unit_state.select == true ) {
-                    comm_mesg.comm_request.setHeader(unit_ptr->id,
-                            _umesg_flag_unique);
+            if ( unit_ptr != 0 )
+            {
+                if ( unit_ptr->unit_state.select == true )
+                {
+                    comm_mesg.comm_request.setHeader(unit_ptr->id);
                     comm_mesg.comm_request.setTargetUnit(target_ptr->id);
 
                     encoder.encodeMessage(&comm_mesg,
@@ -839,41 +844,6 @@ WorldInputCmdProcessor::sendAttackCommand(const iXY &world_pos)
 
         //sfx
         sound->playSound("target");
-    }
-}
-
-void
-WorldInputCmdProcessor::sendManualMoveCommand(unsigned char orientation,
-        bool start_stop)
-{
-    TerminalUnitCmdRequest comm_mesg;
-    size_t id_list_index;
-    size_t id_list_size;
-    Unit *unit_ptr;
-
-    if ( working_list.unit_list.size() > 0 ) {
-        id_list_size = working_list.unit_list.size();
-
-        NetMessageEncoder encoder(true);
-
-        for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
-            unit_ptr = UnitInterface::getUnit( working_list.unit_list[ id_list_index ] );
-            if ( unit_ptr != 0 ) {
-                if ( unit_ptr->unit_state.select == true ) {
-                    comm_mesg.comm_request.setHeader(unit_ptr->id,
-                            _umesg_flag_unique);
-                    if ( start_stop == true ) {
-                        comm_mesg.comm_request.setStartManualMove( orientation );
-                    } else {
-                        comm_mesg.comm_request.setStopManualMove();
-                    }
-
-                    encoder.encodeMessage(&comm_mesg,
-                            sizeof(TerminalUnitCmdRequest) );
-                }
-            }
-        }
-        encoder.sendEncodedMessage();
     }
 }
 
@@ -896,8 +866,7 @@ WorldInputCmdProcessor::sendManualFireCommand(const iXY &world_pos)
 
             if ( unit_ptr != 0 ) {
                 if ( unit_ptr->unit_state.select == true ) {
-                    comm_mesg.comm_request.setHeader(unit_ptr->id,
-                            _umesg_flag_unique);
+                    comm_mesg.comm_request.setHeader(unit_ptr->id);
                     comm_mesg.comm_request.setManualFire(world_pos);
 
                     encoder.encodeMessage(&comm_mesg,
@@ -916,23 +885,24 @@ WorldInputCmdProcessor::sendManualFireCommand(const iXY &world_pos)
 void
 WorldInputCmdProcessor::sendAllianceRequest(const iXY& world_pos, bool make_break)
 {
-    Unit *target_ptr;
+    Unit *target_ptr = UnitInterface::queryNonPlayerUnitAtWorld(world_pos,
+                                        PlayerInterface::getLocalPlayerIndex());
 
-    target_list.selectTarget(world_pos);
-
-    if ( target_list.isSelected() == true ) {
-        target_ptr = UnitInterface::getUnit( target_list.unit_list[0] );
-
+    if ( target_ptr )
+    {
         Uint8 type;
-        if ( make_break ) {
+        if ( make_break )
+        {
             type = _player_make_alliance;
-        } else {
+        }
+        else
+        {
             type = _player_break_alliance;
         }
 
         PlayerAllianceRequest allie_request;
         allie_request.set(PlayerInterface::getLocalPlayerIndex(),
-                target_ptr->player->getID(), type);
+                                            target_ptr->player->getID(), type);
 
         NetworkClient::sendMessage( &allie_request, sizeof(PlayerAllianceRequest));
     }

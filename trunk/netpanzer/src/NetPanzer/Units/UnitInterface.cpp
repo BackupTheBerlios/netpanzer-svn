@@ -288,7 +288,7 @@ void
 UnitInterface::destroyPlayerUnits( const Uint16 player_id )
 {
     UMesgSelfDestruct self_destruct;
-    self_destruct.setHeader(0, _umesg_flag_unique);
+    self_destruct.setHeader(0);
 
     UnitList& unitlist = playerUnitLists[player_id];
     for(UnitList::iterator i = unitlist.begin(); i != unitlist.end(); ++i)
@@ -374,51 +374,107 @@ UnitInterface::removeUnit( Units::iterator i )
 // ******************************************************************
 
 void
-UnitInterface::queryUnitsAt( std::vector<UnitID>& working_list,
-                             const iXY& point,
-                             const Uint16 player_id,
-                             const unsigned char search_flags )
+UnitInterface::queryPlayerUnitsAt( std::vector<UnitID>& working_list,
+                                   const iXY& point,
+                                   const Uint16 player_id )
 {
     UnitList & ubl = unit_bucket_array.getBucketAssocWorldLoc(point);
     for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
     {
         Unit* unit = *i;
-        if(!unit->unit_state.bounds(point))
-            continue;
-
-        if(search_flags == _search_exclude_player
-                && unit->player->getID() == player_id)
-            continue;
-        if(search_flags == _search_player
-                && unit->player->getID() != player_id)
-            continue;
-
-        working_list.push_back(unit->id);
+        if( (*i)->unit_state.bounds(point)
+            && (*i)->player->getID() == player_id )
+        {
+            working_list.push_back(unit->id);
+        }
     }
 }
 
 // ******************************************************************
 
 void
-UnitInterface::queryUnitsAt( std::vector<UnitID>& working_list,
-                             const iRect& rect,
-                             const Uint16 player_id,
-                             const unsigned char search_flags )
+UnitInterface::queryUnitsInWorldRect( std::vector<Unit *>& working_list,
+                                      const iRect& rect )
 {
-    for(Units::iterator i = units.begin(); i != units.end(); ++i)
+    UnitList::iterator iter;
+    iRect bucket_rect;
+    unit_bucket_array.worldRectToBucketRect( rect, bucket_rect);
+
+    for( int row = bucket_rect.min.y; row <= bucket_rect.max.y; ++row )
     {
-        Unit* unit = i->second;
-        if(!rect.contains(unit->unit_state.location))
-            continue;
+        for( int col = bucket_rect.min.x; col <= bucket_rect.max.x; ++col )
+        {
+            UnitList & bucket_list = unit_bucket_array.getBucket(row, col);
 
-        if(search_flags == _search_exclude_player
-                && unit->player->getID() == player_id)
-            continue;
-        if(search_flags == _search_player
-                && unit->player->getID() != player_id)
-            continue;
+            for( iter = bucket_list.begin(); iter != bucket_list.end(); ++iter )
+            {
+                if( rect.contains((*iter)->unit_state.location) )
+                {
+                    working_list.push_back(*iter);
+                }
 
-        working_list.push_back(unit->id);
+            }
+        }
+    }
+}
+
+// ******************************************************************
+
+void
+UnitInterface::queryPlayerUnitsInWorldRect( std::vector<UnitID>& working_list,
+                                            const iRect& rect,
+                                            const Uint16 player_id )
+{
+    UnitList::iterator iter;
+    iRect bucket_rect;
+    unit_bucket_array.worldRectToBucketRect( rect, bucket_rect);
+
+    for( int row = bucket_rect.min.y; row <= bucket_rect.max.y; ++row )
+    {
+        for( int col = bucket_rect.min.x; col <= bucket_rect.max.x; ++col )
+        {
+            UnitList & bucket_list = unit_bucket_array.getBucket(row, col);
+
+            for( iter = bucket_list.begin(); iter != bucket_list.end(); ++iter )
+            {
+                if(    rect.contains((*iter)->unit_state.location)
+                    && (*iter)->player->getID() == player_id )
+                {
+                    working_list.push_back((*iter)->id);
+                }
+
+            }
+        }
+    }
+}
+
+// ******************************************************************
+
+void
+UnitInterface::queryNonPlayerUnitsInWorldRect( std::vector<Unit *>& working_list,
+                                               const iRect& rect,
+                                               const Uint16 player_id )
+{
+    UnitList::iterator iter;
+    iRect bucket_rect;
+    unit_bucket_array.worldRectToBucketRect( rect, bucket_rect);
+
+    for( int row = bucket_rect.min.y; row <= bucket_rect.max.y; ++row )
+    {
+        for( int col = bucket_rect.min.x; col <= bucket_rect.max.x; ++col )
+        {
+            UnitList & bucket_list = unit_bucket_array.getBucket(row, col);
+
+            for( iter = bucket_list.begin(); iter != bucket_list.end(); ++iter )
+            {
+                if(    rect.contains((*iter)->unit_state.location)
+                    && (*iter)->player->getID() != player_id )
+                {
+                    working_list.push_back(*iter);
+                }
+
+            }
+        }
     }
 }
 
@@ -544,33 +600,41 @@ UnitInterface::queryClosestEnemyUnit( Unit **closest_unit_ptr,
     Unit *closest_unit = 0;
     long closest_magnitude = 0;
 
-    for(Units::iterator i = units.begin(); i != units.end(); ++i) {
+    for(Units::iterator i = units.begin(); i != units.end(); ++i)
+    {
         Unit* unit = i->second;
         Uint16 unitPlayerID = unit->player->getID();
 
         if(unitPlayerID == player_index
                 || PlayerInterface::isAllied(player_index, unitPlayerID))
+        {
             continue;
+        }
 
         iXY delta;
         long temp_mag;
 
-        if ( closest_unit == 0 ) {
+        if ( closest_unit == 0 )
+        {
             closest_unit = unit;
             delta  = loc - unit->unit_state.location;
             closest_magnitude = long(delta.mag2());
-        } else {
+        }
+        else
+        {
             delta  = loc - unit->unit_state.location;
             temp_mag = long(delta.mag2());
 
-            if ( closest_magnitude > temp_mag ) {
+            if ( closest_magnitude > temp_mag )
+            {
                 closest_unit = unit;
                 closest_magnitude = temp_mag;
             }
         }
     }
 
-    if( closest_unit != 0 ) {
+    if( closest_unit != 0 )
+    {
         *closest_unit_ptr = closest_unit;
         return true;
     }
@@ -581,24 +645,41 @@ UnitInterface::queryClosestEnemyUnit( Unit **closest_unit_ptr,
 
 // ******************************************************************
 
-bool
-UnitInterface::queryUnitAtMapLoc( const iXY & map_loc,
-                                  UnitID *queary_unit_id )
+Unit *
+UnitInterface::queryUnitAtMapLoc( const iXY & map_loc )
 {
-    iXY unit_map_loc;
+    iXY world_loc;
+    MapInterface::mapXYtoPointXY(map_loc, &world_loc);
 
-    for(Units::iterator i = units.begin(); i != units.end(); ++i) {
-        Unit* unit = i->second;
-        UnitState* unit_state = & unit->unit_state;
-
-        MapInterface::pointXYtoMapXY( unit_state->location, &unit_map_loc );
-        if( map_loc == unit_map_loc ) {
-            *queary_unit_id = unit->id;
-            return true;
+    UnitList & ubl = unit_bucket_array.getBucketAssocMapLoc(map_loc);
+    for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
+    {
+        if ( (*i)->unit_state.bounds(world_loc) )
+        {
+            return *i;
         }
     }
 
-    return false;
+    return 0;
+}
+
+// ******************************************************************
+
+Unit *
+UnitInterface::queryNonPlayerUnitAtWorld( const iXY & world_loc,
+                                          const Uint16 player_id )
+{
+    UnitList & ubl = unit_bucket_array.getBucketAssocWorldLoc(world_loc);
+    for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
+    {
+        if ( (*i)->unit_state.bounds(world_loc)
+              && (*i)->player->getID() != player_id )
+        {
+            return *i;
+        }
+    }
+
+    return 0;
 }
 
 // ******************************************************************
@@ -608,25 +689,26 @@ UnitInterface::queryUnitLocationStatus( const iXY & loc )
 {
     Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
 
-    std::vector<UnitID> locUnits;
-    queryUnitsAt(locUnits, loc, player_id, 0);
-    if(locUnits.size() == 0) {
-        return _no_unit_found;
+    UnitList & ubl = unit_bucket_array.getBucketAssocWorldLoc(loc);
+    for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
+    {
+        if ( (*i)->unit_state.bounds(loc) )
+        {
+            if ( (*i)->player->getID() == player_id )
+            {
+                return _unit_player;
+            }
+
+            if( PlayerInterface::isAllied(player_id, (*i)->player->getID()) )
+            {
+                return _unit_allied;
+            }
+
+            return _unit_enemy;
+        }
     }
 
-    UnitID id = locUnits[0];
-    Unit* unit = getUnit(id);
-    if(!unit) {
-        return _no_unit_found;
-    }
-    if(unit->player->getID() == player_id) {
-        return _unit_player;
-    }
-    if(PlayerInterface::isAllied(player_id, unit->player->getID())) {
-        return _unit_allied;
-    }
-
-    return _unit_enemy;
+    return _no_unit_found;
 }
 
 // ******************************************************************
@@ -656,7 +738,21 @@ void
 UnitInterface::sendMessage( const UnitMessage* message,
                             const PlayerState* player )
 {
-    if (message->isFlagged(_umesg_flag_unique))
+    if ( message->message_id == _umesg_weapon_hit )
+    {
+        UnitList & uli = unit_bucket_array.getBucketAssocWorldLoc(
+                                ((UMesgWeaponHit*)message)->getHitLocation() );
+
+        for ( UnitList::iterator i = uli.begin(); i != uli.end(); ++i)
+        {
+            (*i)->processMessage(message);
+        }
+    }
+    else if ( message->message_id == _umesg_end_lifecycle )
+    {
+        unitManagerMesgEndLifecycle(message);
+    }
+    else
     {
         Unit* unit = getUnit(message->getUnitID());
         if(unit == 0)
@@ -673,35 +769,6 @@ UnitInterface::sendMessage( const UnitMessage* message,
         }
 
         unit->processMessage(message);
-    }
-    else if (message->isFlagged( _umesg_flag_broadcast) )
-    {
-        if(message->message_id != _umesg_weapon_hit)
-        {
-            LOGGER.warning("Broadcast flag only allowed for weapon hit.");
-            if(player)
-            {
-                LOGGER.warning("from player %u.\n", player->getID());
-            }
-            return;
-        }
-
-        for(Units::iterator i = units.begin(); i != units.end(); ++i)
-        {
-            Unit* unit = i->second;
-            unit->processMessage(message);
-        }
-    }
-    else if (message->isFlagged( _umesg_flag_manager_request) )
-    {
-        if(player)
-        {
-            LOGGER.warning(
-                    "UnitManagerMessage sent out by player %u not allowed.",
-                    player->getID());
-            return;
-        }
-  	processManagerMessage(message);
     }
 }
 
@@ -745,25 +812,6 @@ UnitInterface::processNetMessage( const NetMessage* net_message )
 // ******************************************************************
 
 void
-UnitInterface::processManagerMessage( const UnitMessage* message )
-{
-    switch(message->message_id)
-    {
-        case _umesg_end_lifecycle:
-            unitManagerMesgEndLifecycle(message);
-            break;
-        default:
-            LOGGER.warning("Unknown unit Manage Message type (%u).",
-                    message->message_id);
-#ifdef DEBUG
-            assert(false);
-#endif
-    }
-}
-
-// ******************************************************************
-
-void
 UnitInterface::unitManagerMesgEndLifecycle( const UnitMessage* message )
 {
     const UMesgEndLifeCycleUpdate *lifecycle_update
@@ -771,13 +819,16 @@ UnitInterface::unitManagerMesgEndLifecycle( const UnitMessage* message )
 
     Unit* unit1 = getUnit(lifecycle_update->getDestroyer());
     Unit* unit2 = getUnit(lifecycle_update->getDestroyed());
-    if(unit1 == 0 || unit2 == 0) {
+    
+    if(unit1 == 0 || unit2 == 0)
+    {
         LOGGER.warning(
                 "Unit in EndLifeCycle message doesn't exist anymore"
                 "(u1: %u u2: %u)", lifecycle_update->getDestroyer(),
                 lifecycle_update->getDestroyed());
         return;
     }
+
     PlayerState* player1 = unit1->player;
     PlayerState* player2 = unit2->player;
 
@@ -787,14 +838,16 @@ UnitInterface::unitManagerMesgEndLifecycle( const UnitMessage* message )
     int unittype2 = unit2->unit_state.unit_type;
     const std::string& unitname2 =
         UnitProfileInterface::getUnitProfile(unittype2)->unitname;
-    if(Console::server) {
+    if(Console::server)
+    {
         *Console::server << "'" << player1->getName() << "' killed a '"
             << unitname2 << "' from '" << player2->getName()
             << "' with his '" << unitname1 << "'." << std::endl;
     }
 
     // killing own units doesn't give score
-    if(player1 != player2) {
+    if(player1 != player2)
+    {
         PlayerInterface::setKill(unit1->player, unit2->player,
                 (UnitType) lifecycle_update->unit_type);
 
@@ -890,10 +943,12 @@ UnitInterface::unitOpcodeMessage( const NetMessage *net_message )
     decoder.setMessage(net_message);
 
     UnitOpcode* opcode;
-    while(decoder.decode(&opcode)) {
+    while(decoder.decode(&opcode))
+    {
         Unit* unit = getUnit(opcode->getUnitID());
 
-        if(!unit) {
+        if(!unit)
+        {
             LOGGER.debug("Update for non-existant unit: %d",
                     opcode->getUnitID());
             continue;

@@ -16,6 +16,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include <config.h>
+
+#include "Classes/PlayerState.hpp"
 #include "Outpost.hpp"
 
 #include "Units/UnitInterface.hpp"
@@ -38,7 +40,7 @@ Outpost::Outpost( ObjectiveID ID, iXY location, BoundBox area )
     objective_state.selection_box.max = location + iXY( 64, 32 );
     objective_state.selection_box.min = location + iXY( -224, -128 );
     objective_state.area.min = iXY( -400, -144 );
-    objective_state.area.max = iXY(  400,  240 );
+    objective_state.area.max = iXY(  350,  240 );
     objective_state.outpost_type = 0;
     
 
@@ -52,13 +54,12 @@ Outpost::Outpost( ObjectiveID ID, iXY location, BoundBox area )
 }
 
 void
-Outpost::attemptOccupationChange(UnitID unit_id)
+Outpost::attemptOccupationChange( Uint16 player_id )
 {
     ObjectiveOccupationUpdate update_mesg;
     int player_status;
 
-    Unit* unit = UnitInterface::getUnit(unit_id);
-    PlayerState* player = unit->player;
+    PlayerState* player = PlayerInterface::getPlayer( player_id );
     player_status = player->getStatus();
 
     if ( objective_state.occupation_status == _occupation_status_unoccupied )
@@ -109,31 +110,58 @@ Outpost::attemptOccupationChange(UnitID unit_id)
 void
 Outpost::checkOccupationStatus()
 {
-    if( occupation_status_timer.count()  )	//
+    if ( occupation_status_timer.count() )
     {
-        Unit *unit_ptr;
         iRect bounding_area;
-        iXY occupation_pad_loc;
 
-        occupation_pad_loc = objective_state.location + occupation_pad_offset;
-        bounding_area = objective_state.capture_area.getAbsRect( occupation_pad_loc );
+        // This was used for previous ocupation checks
+        //iXY occupation_pad_loc;
+        //occupation_pad_loc = objective_state.location + occupation_pad_offset;
+        //bounding_area = objective_state.capture_area.getAbsRect( occupation_pad_loc );
+        
+        bounding_area = objective_state.area.getAbsRect(objective_state.location);
 
-
-        UnitInterface::queryClosestUnit( &unit_ptr,
-                                          bounding_area,
-                                          occupation_pad_loc
-                                        );
-
-        if ( unit_ptr != 0 )
+        std::vector<Unit*> unitsInArea;
+        if ( objective_state.occupation_status == _occupation_status_occupied )
         {
-            iXY unit_loc;
-            unit_loc = unit_ptr->unit_state.location;
-            if ( objective_state.capture_area.bounds( occupation_pad_loc, unit_loc ) )
+            std::vector<UnitID> playerunits;
+            UnitInterface::queryPlayerUnitsInWorldRect(playerunits,
+                                    bounding_area,
+                                    objective_state.occupying_player->getID() );
+
+            if ( ! playerunits.empty() )
             {
-                attemptOccupationChange( unit_ptr->id );
+                return;
             }
 
-        } // ** if unit_ptr != 0
+            UnitInterface::queryNonPlayerUnitsInWorldRect(unitsInArea,
+                                    bounding_area,
+                                    objective_state.occupying_player->getID() );
+
+        }
+        else
+        {
+            UnitInterface::queryUnitsInWorldRect( unitsInArea, bounding_area );  
+        }
+
+
+        if ( ! unitsInArea.empty() )
+        {
+            std::vector<Unit*>::iterator i = unitsInArea.begin();
+
+            Uint16 ocu_player = (*i)->player->getID();
+
+            while ( ++i != unitsInArea.end() )
+            {
+                if ( (*i)->player->getID() != ocu_player )
+                {
+                    // more than one player in area, must be alone to capture
+                    return;
+                }
+            }
+
+            attemptOccupationChange( ocu_player );
+        }
 
     } // ** if occupation_status_timer.count()
 
@@ -172,7 +200,7 @@ Outpost::generateUnits()
                     placement_matrix.reset( collection_loc );
                     placement_matrix.getNextEmptyLoc( &loc );
 
-                    ai_command.setHeader( unit->id, _umesg_flag_unique );
+                    ai_command.setHeader( unit->id);
                     ai_command.setMoveToLoc( loc );
                     UnitInterface::sendMessage( &ai_command );
                 }

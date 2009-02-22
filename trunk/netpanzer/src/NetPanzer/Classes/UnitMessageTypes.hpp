@@ -45,29 +45,21 @@ private:
     Sint32 goal_loc_x;
     Sint32 goal_loc_y;
     Uint16 target_id;
-public:
-    Uint8 manual_move_orientation;
-private:
-    Sint32 target_loc_x;
-    Sint32 target_loc_y;
+
 public:
     UMesgAICommand()
     {
         command = 0;
         goal_loc_x = goal_loc_y = 0;
         target_id = 0;
-        manual_move_orientation = 0;
-        target_loc_x = target_loc_y = 0;
     }
 
-    UMesgAICommand(UnitID unit_id, unsigned char flags)
-            : UnitMessage(unit_id, flags )
+    UMesgAICommand( UnitID unit_id )
+            : UnitMessage( unit_id )
     {
         command = 0;
         goal_loc_x = goal_loc_y = 0;
         target_id = 0;
-        manual_move_orientation = 0;
-        target_loc_x = target_loc_y = 0;
     }
 
     void setMoveToLoc(const iXY& goal)
@@ -76,7 +68,6 @@ public:
         command = _command_move_to_loc;
         goal_loc_x = htol32(goal.x);
         goal_loc_y = htol32(goal.y);
-        manual_move_orientation = 0;
     }
 
     void setTargetUnit(UnitID target)
@@ -84,30 +75,14 @@ public:
         message_id = _umesg_ai_command;
         command = _command_attack_unit;
         target_id = htol16(target);
-        manual_move_orientation = 0;
-    }
-
-    void setStartManualMove(unsigned char orientation)
-    {
-        message_id = _umesg_ai_command;
-        command = _command_start_manual_move;
-        manual_move_orientation = orientation;
-    }
-
-    void setStopManualMove()
-    {
-        message_id = _umesg_ai_command;
-        command = _command_stop_manual_move;
-        manual_move_orientation = 0;
     }
 
     void setManualFire(const iXY& target)
     {
         message_id = _umesg_ai_command;
         command = _command_manual_fire;
-        target_loc_x = htol32(target.x);
-        target_loc_y = htol32(target.y);
-        manual_move_orientation = 0;
+        goal_loc_x = htol32(target.x);
+        goal_loc_y = htol32(target.y);
     }
 
     iXY getGoalLoc() const
@@ -122,7 +97,7 @@ public:
 
     iXY getTargetLoc() const
     {
-        return iXY(ltoh32(target_loc_x), ltoh32(target_loc_y));
+        return iXY(ltoh32(goal_loc_x), ltoh32(goal_loc_y));
     }
 }
 __attribute__((packed));
@@ -180,7 +155,6 @@ public:
             unsigned char unit_type )
     {
         message_id = _umesg_end_lifecycle;
-        message_flags = _umesg_flag_manager_request;
         destroyed = htol16(destroyed_unit);
         destroyer = htol16(destroyer_unit);
         this->unit_type = unit_type;

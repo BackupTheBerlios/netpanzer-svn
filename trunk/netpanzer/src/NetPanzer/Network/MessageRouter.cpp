@@ -41,6 +41,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkState.hpp"
+#include "Classes/Network/NetPacketDebugger.hpp"
+
 
 class MultiMessage;
 
@@ -212,7 +214,7 @@ MessageRouter::routePackets()
         receive_queue.pop();
         NetworkState::incPacketsReceived(np.getSize());
 #ifdef NETWORKDEBUG
-        NetPacketDebugger::logPacket("R", packet);
+        NetPacketDebugger::logPacket("R", &np);
 #endif
 
         handlers[np.getNetMessage()->message_class]->handlePacket(&np);

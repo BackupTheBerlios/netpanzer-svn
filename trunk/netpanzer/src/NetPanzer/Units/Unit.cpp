@@ -1,3 +1,6 @@
+
+#include "UnitOpcodes.hpp"
+
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
  
@@ -538,7 +541,7 @@ void Unit::setFsmMoveMapSquare( unsigned long square )
     {
         iXY loc_offset;
 
-        move_opcode.opcode = _UNIT_OPCODE_MOVE;
+        //move_opcode.opcode = _UNIT_OPCODE_MOVE;
         move_opcode.setUnitID(id);
         move_opcode.setSquare(square);
         locationOffset( square, loc_offset );
@@ -627,11 +630,8 @@ void Unit::setFsmTurretTrackPoint(const iXY& target)
 
     if ( NetworkState::status == _network_state_server )
     {
-        TurretTrackPointOpcode track_point_opcode;
-        track_point_opcode.opcode = _UNIT_OPCODE_TURRET_TRACK_POINT;
-        track_point_opcode.setUnitID(id);
+        TurretTrackPointOpcode track_point_opcode(id, 0, true);
         track_point_opcode.setTarget(target);
-        track_point_opcode.activate = true;
         UnitInterface::sendOpcode( &track_point_opcode );
     }
 
@@ -645,10 +645,7 @@ void Unit::clearFsmTurretTrackPoint()
 
     if ( NetworkState::status == _network_state_server )
     {
-        TurretTrackPointOpcode track_point_opcode;
-        track_point_opcode.opcode = _UNIT_OPCODE_TURRET_TRACK_POINT;
-        track_point_opcode.setUnitID(id);
-        track_point_opcode.activate = false;
+        TurretTrackPointOpcode track_point_opcode(id, 0, false);
         UnitInterface::sendOpcode( &track_point_opcode );
     }
 }
@@ -657,13 +654,8 @@ void Unit::syncFsmTurretTrackPoint()
 {
     if ( fsm_active_list[ _control_turret_track_point ] == true )
     {
-        TurretTrackPointOpcode track_point_opcode;
-        track_point_opcode.flags = _unit_opcode_flag_sync;
-        track_point_opcode.opcode = _UNIT_OPCODE_TURRET_TRACK_POINT;
-        track_point_opcode.setUnitID(id);
+        TurretTrackPointOpcode track_point_opcode(id, _unit_opcode_flag_sync, true);
         track_point_opcode.setTarget(fsmTurretTrackPoint_target);
-        track_point_opcode.activate = true;
-
         UnitInterface::sendOpcode( &track_point_opcode );
     }
 }
@@ -696,11 +688,8 @@ void Unit::setFsmTurretTrackTarget(UnitID target_id)
 
     if ( NetworkState::status == _network_state_server )
     {
-        TurretTrackTargetOpcode track_target_opcode;
-        track_target_opcode.opcode  = _UNIT_OPCODE_TURRET_TRACK_TARGET;
-        track_target_opcode.setUnitID(id);
+        TurretTrackTargetOpcode track_target_opcode(id, 0, true);
         track_target_opcode.setTargetUnitID(target_id);
-        track_target_opcode.activate = true;
         UnitInterface::sendOpcode( &track_target_opcode );
     }
 
@@ -712,10 +701,7 @@ void Unit::clearFsmTurretTrackTarget()
 
     if ( NetworkState::status == _network_state_server )
     {
-        TurretTrackTargetOpcode track_target_opcode;
-        track_target_opcode.opcode  = _UNIT_OPCODE_TURRET_TRACK_TARGET;
-        track_target_opcode.setUnitID(id);
-        track_target_opcode.activate = false;
+        TurretTrackTargetOpcode track_target_opcode(id, 0, false);
         UnitInterface::sendOpcode( &track_target_opcode );
     }
 
@@ -725,12 +711,8 @@ void Unit::syncFsmTurretTrackTarget()
 {
     if ( fsm_active_list[ _control_turret_track_target ] == true )
     {
-        TurretTrackTargetOpcode track_target_opcode;
-        track_target_opcode.opcode  = _UNIT_OPCODE_TURRET_TRACK_TARGET;
-        track_target_opcode.flags = _unit_opcode_flag_sync;
-        track_target_opcode.setUnitID(id);
+        TurretTrackTargetOpcode track_target_opcode(id, _unit_opcode_flag_sync, true);
         track_target_opcode.setTargetUnitID(fsmTurretTrackTarget_target_id);
-        track_target_opcode.activate = true;
         UnitInterface::sendOpcode( &track_target_opcode );
     }
 
@@ -1701,9 +1683,7 @@ void Unit::fireWeapon( iXY &target_loc )
                                       );
 
     if ( NetworkState::status == _network_state_server ) {
-        FireWeaponOpcode fire_opcode;
-        fire_opcode.opcode = _UNIT_OPCODE_FIRE_WEAPON;
-        fire_opcode.setUnitID(id);
+        FireWeaponOpcode fire_opcode(id);
         fire_opcode.setTarget(target_loc);
         UnitInterface::sendOpcode(&fire_opcode);
     }
@@ -1806,13 +1786,6 @@ void Unit::checkPendingAICommStatus()
                     setCommandAttackUnit( &pending_AI_comm_mesg );
                     break;
 
-                case _command_start_manual_move :
-                    setCommandManualMove( &pending_AI_comm_mesg  );
-                    break;
-
-                case _command_stop_manual_move :
-                    setCommandManualMove( &pending_AI_comm_mesg  );
-                    break;
             } // ** switch
 
         } // ** unit_state.lifecycle_state == _UNIT_LIFECYCLE_ACTIVE
@@ -1887,21 +1860,6 @@ void Unit::setCommandAttackUnit(const UMesgAICommand* message)
     //move_opcode_sent = true;
 
     setFsmGunneryTarget( aiFsmAttackUnit_target_ID );
-}
-
-void Unit::setCommandManualMove(const UMesgAICommand* message)
-{
-    if ( message->command == _command_start_manual_move )
-    {
-        aiFsmManualMove_move_orientation = message->manual_move_orientation;
-        MapInterface::pointXYtoMapXY( unit_state.location, &aiFsmManualMove_next_loc );
-        aiFsmManualMove_state = _aiFsmManualMove_next_move;
-        ai_command_state = _ai_command_manual_move;
-    }
-    else if ( message->command == _command_stop_manual_move )
-    {
-        ai_command_state = _ai_command_idle;
-    }
 }
 
 void Unit::setCommandManualFire(const UMesgAICommand* message)
@@ -2034,8 +1992,8 @@ void Unit::processMessage(const UnitMessage* message)
 
 void Unit::unitOpcodeMove(const UnitOpcode* opcode)
 {
-    if ( ( (in_sync_flag == false) && !(opcode->flags & _unit_opcode_flag_sync) ) ||
-            ( (in_sync_flag == true) && (opcode->flags & _unit_opcode_flag_sync) )
+    if ( ( (in_sync_flag == false) && !(opcode->isSyncFlag()) ) ||
+            ( (in_sync_flag == true) && (opcode->isSyncFlag()) )
        )
         return;
 
@@ -2060,8 +2018,8 @@ void Unit::unitOpcodeMove(const UnitOpcode* opcode)
 
 void Unit::unitOpcodeTrackPoint(const UnitOpcode* opcode )
 {
-    if ( ( (in_sync_flag == false) && !(opcode->flags & _unit_opcode_flag_sync) ) ||
-            ( (in_sync_flag == true) && (opcode->flags & _unit_opcode_flag_sync) )
+    if ( ( (in_sync_flag == false) && !(opcode->isSyncFlag()) ) ||
+            ( (in_sync_flag == true) && (opcode->isSyncFlag()) )
        )
         return;
 
@@ -2082,8 +2040,8 @@ void Unit::unitOpcodeTrackPoint(const UnitOpcode* opcode )
 
 void Unit::unitOpcodeTrackTarget(const UnitOpcode* opcode )
 {
-    if ( ( (in_sync_flag == false) && !(opcode->flags & _unit_opcode_flag_sync) ) ||
-            ( (in_sync_flag == true) && (opcode->flags & _unit_opcode_flag_sync) )
+    if ( ( (in_sync_flag == false) && !(opcode->isSyncFlag()) ) ||
+            ( (in_sync_flag == true) && (opcode->isSyncFlag()) )
        )
         return;
 
@@ -2105,8 +2063,8 @@ void Unit::unitOpcodeFireWeapon(const UnitOpcode* opcode )
 {
     iXY target_loc;
 
-    if ( ( (in_sync_flag == false) && !(opcode->flags & _unit_opcode_flag_sync) ) ||
-            ( (in_sync_flag == true) && (opcode->flags & _unit_opcode_flag_sync) )
+    if ( ( (in_sync_flag == false) && !(opcode->isSyncFlag()) ) ||
+            ( (in_sync_flag == true) && (opcode->isSyncFlag()) )
        )
         return;
 
@@ -2141,10 +2099,8 @@ void Unit::syncUnit()
     syncFsmTurretTrackPoint();
     syncFsmTurretTrackTarget();
 
-    SyncUnitOpcode sync_opcode;
+    SyncUnitOpcode sync_opcode(id);
 
-    sync_opcode.opcode = _UNIT_OPCODE_SYNC_UNIT;
-    sync_opcode.setUnitID(id);
     UnitInterface::sendOpcode( &sync_opcode );
 }
 
@@ -2181,7 +2137,7 @@ void Unit::processOpcodeQueue()
         UnitOpcodeStruct opcodedata = opcode_queue.front();
         const UnitOpcode* opcode = (UnitOpcode*) &opcodedata;
 
-        switch(opcode->opcode )
+        switch( opcode->getOpcode() )
         {
             case _UNIT_OPCODE_TURRET_TRACK_POINT:
                 unitOpcodeTrackPoint(opcode);
@@ -2208,7 +2164,7 @@ void Unit::processOpcodeQueue()
                 break;
 
             default:
-                LOGGER.warning("Unknown Opcode: %d.\n", opcode->opcode);
+                LOGGER.warning("Unknown Opcode: %d.\n", opcode->getOpcode());
                 assert(false);
                 break;
         }
@@ -2218,7 +2174,7 @@ void Unit::processOpcodeQueue()
 
 void Unit::evalCommandOpcode(const UnitOpcode* opcode)
 {
-    if (opcode->opcode == _UNIT_OPCODE_MOVE)
+    if (opcode->getOpcode() == _UNIT_OPCODE_MOVE)
     {
         move_opcode_queue.push(*((const UnitOpcodeStruct*) opcode));
     }

@@ -101,15 +101,20 @@ public:
 
 
     // unit querying
-    static void queryUnitsAt( std::vector<UnitID>& working_list,
-                              const iXY& point,
-                              const Uint16 player_id,
-                              const unsigned char search_flags );
+    static void queryPlayerUnitsAt( std::vector<UnitID>& working_list,
+                                    const iXY& point,
+                                    const Uint16 player_id );
 
-    static void queryUnitsAt( std::vector<UnitID>& working_list,
-                              const iRect& rect,
-                              const Uint16 player_id,
-                              const unsigned char search_flags );
+    static void queryUnitsInWorldRect( std::vector<Unit *>& working_list,
+                                       const iRect& rect );
+
+    static void queryPlayerUnitsInWorldRect( std::vector<UnitID>& working_list,
+                                             const iRect& rect,
+                                             const Uint16 player_id );
+
+    static void queryNonPlayerUnitsInWorldRect( std::vector<Unit *>& working_list,
+                                                const iRect& rect,
+                                                const Uint16 player_id );
 
     static bool queryClosestUnit( Unit **closest_unit_ptr,
                                   const iXY &loc,
@@ -124,7 +129,10 @@ public:
                                        const iXY &loc,
                                        const Uint16 player_index );
 
-    static bool queryUnitAtMapLoc( const iXY & map_loc, UnitID *query_unit_id );
+    static Unit * queryUnitAtMapLoc( const iXY & map_loc );
+
+    static Unit * queryNonPlayerUnitAtWorld( const iXY & world_loc,
+                                         const Uint16 player_id );
 
     static unsigned char queryUnitLocationStatus( const iXY & loc );
 
@@ -139,7 +147,6 @@ private:
     friend class Unit;
 
     // Unit Message Handler Methods
-    static void processManagerMessage( const UnitMessage *message );
     static void unitManagerMesgEndLifecycle( const UnitMessage *message );
 
     // Network Message Handler Variables

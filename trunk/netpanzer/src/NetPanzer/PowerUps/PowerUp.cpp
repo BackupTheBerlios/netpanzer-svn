@@ -67,17 +67,6 @@ PowerUp::PowerUp(iXY map_loc, int type)
     sprite_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
 }
 
-bool PowerUp::isPowerUpHit(UnitID *unit_id)
-{
-    if( UnitBlackBoard::unitOccupiesLoc(map_loc) 
-        && UnitInterface::queryUnitAtMapLoc(map_loc, unit_id) )
-    {
-        return true;
-    }
-    
-    return false;
-}
-
 void PowerUp::offloadGraphics( SpriteSorter &sorter )
 {
     sprite.nextFrame();
@@ -93,10 +82,13 @@ PowerUp::updateState( void )
     if ( NetworkState::status == _network_state_server
          && life_cycle_state == _power_up_lifecycle_state_active )
     {
-        UnitID unit_id;
-        if( isPowerUpHit( &unit_id ) == true )
+        if( UnitBlackBoard::unitOccupiesLoc(map_loc) )
         {
-            onHit( unit_id );
+            Unit * unit = UnitInterface::queryUnitAtMapLoc(map_loc);
+            if ( unit )
+            {
+                onHit( unit );
+            }
         }
     }
 }

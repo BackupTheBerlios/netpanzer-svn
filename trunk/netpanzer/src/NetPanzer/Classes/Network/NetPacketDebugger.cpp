@@ -280,16 +280,6 @@ void NetPacketDebugger::logAICommand(std::ostream& log,
             log << "Attack: " << cmd.getTargetUnitID();
             break;
         }
-        case _command_start_manual_move:
-        {
-            log << "mmove: O:" << cmd.manual_move_orientation;
-            break;
-        }
-        case _command_stop_manual_move:
-        {
-            log << "stop mm";
-            break;
-        }
         case _command_manual_fire:
         {
             log << "MFire: " << cmd.getTargetLoc().x 

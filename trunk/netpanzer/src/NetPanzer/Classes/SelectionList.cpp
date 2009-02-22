@@ -29,8 +29,8 @@ bool SelectionList::selectUnit(iXY point)
     deselect();
     unit_list.clear();
 
-    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
-    UnitInterface::queryUnitsAt(unit_list, point, player_id, _search_player);
+    UnitInterface::queryPlayerUnitsAt(unit_list, point,
+                                        PlayerInterface::getLocalPlayerIndex());
 
     select();
     if (unit_list.size() == 0)
@@ -44,8 +44,8 @@ bool SelectionList::addUnit(iXY point)
 {
     deselect();
 
-    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
-    UnitInterface::queryUnitsAt(unit_list, point, player_id, _search_player);
+    UnitInterface::queryPlayerUnitsAt(unit_list, point,
+                                        PlayerInterface::getLocalPlayerIndex());
 
     select();
     if (unit_list.size() == 0)
@@ -55,29 +55,11 @@ bool SelectionList::addUnit(iXY point)
     return true;
 }
 
-
-bool SelectionList::selectTarget(iXY point)
-{
-    deselect();
-    unit_list.clear();
-
-    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
-    UnitInterface::queryUnitsAt(unit_list, point, player_id,
-            _search_exclude_player);
-
-    if (unit_list.size() == 0)
-        return false;
-    
-    resetUnitCycling();
-    return true;
-}
-
 bool SelectionList::selectBounded(iRect bounds, bool addunits)
 {
-    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
-
     std::vector<UnitID> tempunits;
-    UnitInterface::queryUnitsAt(tempunits, bounds, player_id, _search_player);
+    UnitInterface::queryPlayerUnitsInWorldRect(tempunits, bounds,
+                                       PlayerInterface::getLocalPlayerIndex() );
     
     if ( ! tempunits.size() )
         return false;
@@ -113,7 +95,7 @@ bool SelectionList::selectSameTypeVisible( iXY point, bool addunits)
 
     std::vector<UnitID> temp_list;
 
-    UnitInterface::queryUnitsAt(temp_list, point, player_id, _search_player);
+    UnitInterface::queryPlayerUnitsAt(temp_list, point, player_id);
     
     if ( temp_list.empty() )
         return false;
@@ -123,7 +105,7 @@ bool SelectionList::selectSameTypeVisible( iXY point, bool addunits)
     
     iRect wr;
     WorldViewInterface::getViewWindow(&wr);
-    UnitInterface::queryUnitsAt(temp_list, wr, player_id, _search_player);
+    UnitInterface::queryPlayerUnitsInWorldRect(temp_list, wr, player_id );
     
     int p = temp_list.size();
     if ( !p )

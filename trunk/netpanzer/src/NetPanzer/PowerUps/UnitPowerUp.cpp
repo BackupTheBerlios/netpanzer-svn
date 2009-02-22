@@ -114,16 +114,14 @@ void UnitPowerUp::powerUpReload( UnitState *unit_state)
 void UnitPowerUp::powerUpDestruct( UnitID unit_id )
 {
     UMesgSelfDestruct self_destruct;
-    self_destruct.setHeader( unit_id, _umesg_flag_unique );
+    self_destruct.setHeader( unit_id );
     UnitInterface::sendMessage( &self_destruct );
 }
 
 
-void UnitPowerUp::onHit( UnitID unit_id )
+void UnitPowerUp::onHit( Unit * unit )
 {
     sound->playPowerUpSound();
-
-    Unit* unit = UnitInterface::getUnit( unit_id );
 
     switch( unit_powerup_type )
     {
@@ -152,7 +150,7 @@ void UnitPowerUp::onHit( UnitID unit_id )
             break;
 
         case _unit_powerup_destruct:
-            powerUpDestruct( unit_id );
+            powerUpDestruct( unit->getID() );
             break;
     }
 

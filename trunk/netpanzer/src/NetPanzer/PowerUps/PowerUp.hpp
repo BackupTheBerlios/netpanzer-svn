@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Sprite.hpp"
 #include "Classes/Network/PowerUpNetMessage.hpp"
 
+class Unit;
+
 enum { _power_up_lifecycle_state_active,
        _power_up_lifecycle_state_inactive
      };
@@ -30,8 +32,7 @@ enum { _power_up_lifecycle_state_active,
 class PowerUp
 {
 protected:
-    bool isPowerUpHit( UnitID *unit_id );
-    virtual void onHit( UnitID unit_id ) = 0;
+    virtual void onHit( Unit * unit ) = 0;
     
     SpritePacked sprite;
     SpritePacked sprite_shadow;
