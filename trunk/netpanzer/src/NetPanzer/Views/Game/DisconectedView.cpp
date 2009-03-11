@@ -71,6 +71,7 @@ DisconectedView::doDraw()
 void
 DisconectedView::doActivate()
 {
+    removeComponents();
     init();
     Desktop::setActiveView(this);
 }

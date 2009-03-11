@@ -88,6 +88,7 @@ void AreYouSureResignView::doDraw()
 //---------------------------------------------------------------------------
 void AreYouSureResignView::doActivate()
 {
+    removeComponents();
     init();
     Desktop::setActiveView(this);
 } // end AreYouSureResignView::doActivate

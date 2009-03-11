@@ -78,6 +78,7 @@ void AreYouSureExitView::doDraw()
 //---------------------------------------------------------------------------
 void AreYouSureExitView::doActivate()
 {
+    removeComponents();
     init();
     Desktop::setActiveView(this);
 
