@@ -82,6 +82,7 @@ void GameView::init()
     resize(iXY(screen->getWidth(), screen->getHeight()));
     moveTo(iXY(0, 0));
 } // end GameView::init
+
 void
 GameView::checkResolution(iXY oldResolution, iXY newResolution)
 {
@@ -140,6 +141,12 @@ void GameView::doActivate()
     MouseInterface::event_queue.clear();
     COMMAND_PROCESSOR.inFocus();
 } // end GameView::doActivate
+
+void
+GameView::doDeactivate()
+{
+    COMMAND_PROCESSOR.closeSelectionBox();
+}
 
 // processEvents
 //---------------------------------------------------------------------------

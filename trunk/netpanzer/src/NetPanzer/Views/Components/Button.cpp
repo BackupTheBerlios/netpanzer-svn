@@ -23,6 +23,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "MouseEvent.hpp"
 
+Button::Button(const std::string &cname)
+        : Component("Button." + cname)
+{
+    setTextColors(Color::white, Color::red, Color::yellow);
+    position.zero();
+    label.clear();
+    bstate = BNORMAL;
+    memset(borders, 0, sizeof(borders));
+    extraBorder = 0;
+    dirty = true;
+}
 
 // render
 void
@@ -61,7 +72,8 @@ Button::render()
 
 // actionPerformed
 //---------------------------------------------------------------------------
-void Button::actionPerformed(const mMouseEvent &me)
+void
+Button::actionPerformed(const mMouseEvent &me)
 {
     if (me.getID() == mMouseEvent::MOUSE_EVENT_ENTERED
                 || me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED)
@@ -84,3 +96,54 @@ void Button::actionPerformed(const mMouseEvent &me)
         ((View *)parent)->onComponentClicked(this);
     }
 } // end Button::actionPerformed
+
+Button *
+Button::createTextButton(   std::string cname,
+                            std::string label,
+                            iXY loc,
+                            int bwidth,
+                            int customcode)
+{
+    Button * b = new Button(cname);
+    b->setLabel(label);
+    b->setLocation(loc);
+    b->setTextButtonSize(bwidth);
+    b->setCustomCode(customcode);
+    b->setNormalBorder();
+    return b;
+}
+
+Button *
+Button::createSpecialButton( std::string cname,
+                             std::string label,
+                             iXY loc,
+                             int customcode)
+{
+    Surface bnormal;
+    bnormal.loadBMP("pics/backgrounds/menus/buttons/default/specialbutton0.bmp");
+
+    Surface bhover;
+    bhover.loadBMP("pics/backgrounds/menus/buttons/default/specialbutton1.bmp");
+
+    Surface bclick;
+    bclick.loadBMP("pics/backgrounds/menus/buttons/default/specialbutton2.bmp");
+
+    Surface spbutton(bnormal.getWidth(), bnormal.getHeight(), 3);
+
+    spbutton.setFrame(0);
+    bnormal.blt(spbutton,0,0);
+    spbutton.setFrame(1);
+    bhover.blt(spbutton,0,0);
+    spbutton.setFrame(2);
+    bclick.blt(spbutton,0,0);
+    spbutton.setFrame(0);
+
+    Button *b = new Button(cname);
+    b->setImage(spbutton);
+    b->setLabel(label);
+    b->setLocation(loc);
+    b->setTextColors(Color::yellow, Color::white, Color::white);
+    b->setCustomCode(customcode);
+
+    return b;
+}

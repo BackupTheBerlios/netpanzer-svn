@@ -859,7 +859,9 @@ bool Unit::ruleMoveToLoc_GoalReached()
     iXY map_loc;
     MapInterface::pointXYtoMapXY( unit_state.location, &map_loc );
     if ( map_loc == aiFsmMoveToLoc_goal )
+    {
         return true;
+    }
 
     return false;
 }
@@ -1720,21 +1722,32 @@ unsigned short Unit::launchProjectile()
 //-----------------------------------------------------------------
 void Unit::updateFsmState()
 {
-    if ( fsm_timer.count() ) {
+    if ( fsm_timer.count() )
+    {
         if ( fsm_active_list[ _control_move_map_square ] == true )
+        {
             fsmMoveMapSquare();
+        }
 
         if ( fsm_active_list[ _control_turret_track_point ] == true )
+        {
             fsmTurretTrackPoint();
+        }
 
         if ( fsm_active_list[ _control_turret_track_target ] == true )
+        {
             fsmTurretTrackTarget();
+        }
 
         if ( fsm_active_list[ _control_gunnery_location ] == true )
+        {
             fsmGunneryLocation();
+        }
 
         if ( fsm_active_list[ _control_gunnery_target ] == true )
+        {
             fsmGunneryTarget();
+        }
     }
 }
 
@@ -1838,7 +1851,9 @@ void Unit::setCommandAttackUnit(const UMesgAICommand* message)
 
     target_unit_ptr = UnitInterface::getUnit( aiFsmAttackUnit_target_ID );
     if ( target_unit_ptr == 0 )
+    {
         return;
+    }
 
     target_unit_state = &(target_unit_ptr->unit_state);
 

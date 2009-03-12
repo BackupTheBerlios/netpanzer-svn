@@ -54,7 +54,7 @@ protected:
 
 public:
     MapSelectionView();
-    ~MapSelectionView();
+    virtual ~MapSelectionView();
 
     virtual void doDraw();
     virtual void drawBorder(Surface& )

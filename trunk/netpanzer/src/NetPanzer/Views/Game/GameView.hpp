@@ -34,6 +34,7 @@ public:
 protected:
     virtual void processEvents();
     void doActivate();
+    void doDeactivate();
     void checkResolution(iXY oldResolution, iXY newResolution);
 
 private:

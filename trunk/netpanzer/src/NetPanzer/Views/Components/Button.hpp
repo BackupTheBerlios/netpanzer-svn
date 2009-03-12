@@ -53,68 +53,20 @@ protected:
     }
 
 public:
-    Button(const std::string &cname) : Component("Button." + cname)
-    {
-        setTextColors(Color::white, Color::red, Color::yellow);
-        position.zero();
-        label.clear();
-        bstate = BNORMAL;
-        memset(borders, 0, sizeof(borders));
-        extraBorder = 0;
-        dirty = true;
-    }
+    Button(const std::string &cname);
 
-    virtual ~Button()
-    {}
+    virtual ~Button() {}
 
     static Button * createTextButton(   std::string cname,
                                         std::string label,
                                         iXY loc,
                                         int bwidth,
-                                        int customcode = -1)
-    {
-        Button * b = new Button(cname);
-        b->setLabel(label);
-        b->setLocation(loc);
-        b->setTextButtonSize(bwidth);
-        b->setCustomCode(customcode);
-        b->setNormalBorder();
-        return b;
-    }
+                                        int customcode = -1);
 
     static Button * createSpecialButton(std::string cname,
                                         std::string label,
                                         iXY loc,
-                                        int customcode = -1)
-    {
-        Surface bnormal;
-        bnormal.loadBMP("pics/backgrounds/menus/buttons/default/specialbutton0.bmp");
-
-        Surface bhover;
-        bhover.loadBMP("pics/backgrounds/menus/buttons/default/specialbutton1.bmp");
-
-        Surface bclick;
-        bclick.loadBMP("pics/backgrounds/menus/buttons/default/specialbutton2.bmp");
-
-        Surface spbutton(bnormal.getWidth(), bnormal.getHeight(), 3);
-
-        spbutton.setFrame(0);
-        bnormal.blt(spbutton,0,0);
-        spbutton.setFrame(1);
-        bhover.blt(spbutton,0,0);
-        spbutton.setFrame(2);
-        bclick.blt(spbutton,0,0);
-        spbutton.setFrame(0);
-
-        Button *b = new Button(cname);
-        b->setImage(spbutton);
-        b->setLabel(label);
-        b->setLocation(loc);
-        b->setTextColors(Color::yellow, Color::white, Color::white);
-        b->setCustomCode(customcode);
-
-        return b;
-    }
+                                        int customcode = -1);
 
     void setTextColors( PIX normal, PIX over, PIX pressed)
     {
