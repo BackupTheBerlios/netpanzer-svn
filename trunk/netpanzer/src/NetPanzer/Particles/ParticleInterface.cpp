@@ -42,7 +42,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //#include "SmokingTrajectoryParticle2D.hpp"
 #include "Units/UnitProfileInterface.hpp"
 #include "TemplateMuzzleSystem.hpp"
-#include "Units/UnitGlobals.hpp"
 #include "CraterParticle2D.hpp"
 #include "Util/Exception.hpp"
 #include "System/Sound.hpp"

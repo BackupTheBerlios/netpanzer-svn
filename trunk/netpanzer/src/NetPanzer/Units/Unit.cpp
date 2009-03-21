@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Units/UnitBlackBoard.hpp"
 #include "Units/Unit.hpp"
-#include "Units/UnitGlobals.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Interfaces/PathScheduler.hpp"
 #include "Interfaces/MapInterface.hpp"
@@ -36,7 +35,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/UnitProfileInterface.hpp"
 #include "System/Sound.hpp"
 
-
 // NOTE: Temp unit new sprites put in
 #include "Interfaces/GameConfig.hpp"
 
@@ -45,6 +43,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/WorldViewInterface.hpp"
 
 #define MOVEWAIT_TIME 0.8f
+
+#define UNIT_LAYER 3
 
 enum
 {
@@ -173,10 +173,10 @@ Unit::Unit(PlayerState* ownplayer, unsigned char utype, UnitID uid, iXY initial_
     setUnitProperties(utype);
     iXY zero;
     zero.zero();
-    body_anim.setAttrib( zero, zero, unitLayer );
-    turret_anim.setAttrib( zero, zero, unitLayer );
-    body_anim_shadow.setAttrib( zero, zero, unitLayer);
-    turret_anim_shadow.setAttrib( zero, zero, unitLayer);
+    body_anim.setAttrib( zero, zero, UNIT_LAYER );
+    turret_anim.setAttrib( zero, zero, UNIT_LAYER );
+    body_anim_shadow.setAttrib( zero, zero, UNIT_LAYER);
+    turret_anim_shadow.setAttrib( zero, zero, UNIT_LAYER);
     
     select_info_box.setBoxState( false );
     select_info_box.setFlag( player->getFlag() );

@@ -46,7 +46,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/BaseGameManager.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/DedicatedGameManager.hpp"
-#include "Interfaces/BotGameManager.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
 #include "Core/NetworkGlobals.hpp"
 #include "Scripts/ScriptManager.hpp"
@@ -131,9 +130,7 @@ BaseGameManager *initialise(int argc, char** argv)
     bool_option dedicated_option('d', "dedicated",
             "Run as dedicated server", false);
     commandline.add(&dedicated_option);
-    option<std::string, true, false> bot_option('b', "bot",
-            "Connect as bot to specific server", "");
-    commandline.add(&bot_option);
+    
     option<int> port_option('p', "port", "Run server on specific port", 0);
     commandline.add(&port_option);
     bool_option debug_option('g', "debug",
@@ -205,15 +202,14 @@ BaseGameManager *initialise(int argc, char** argv)
 
     if(dedicated_option.value())
         LOGGER.openLogFile("server");
-    else if(bot_option.value().size() > 0)
-        LOGGER.openLogFile("bot");
     else
         LOGGER.openLogFile("netpanzer");
 
 #ifdef WIN32
     // SDL redirects stdout and stderr to 2 textfiles, better open a new console
     // for the dedicated server and the bot
-    if(dedicated_option.value() || bot_option.value().size() > 0) {
+    if( dedicated_option.value() )
+    {
         AllocConsole();
         freopen("CON", "w", stdout);
         freopen("CON", "w", stderr);
@@ -252,12 +248,12 @@ BaseGameManager *initialise(int argc, char** argv)
     BaseGameManager *manager;
     // finally initialize the game objects
     try {
-        if (dedicated_option.value()) {
+        if (dedicated_option.value())
+        {
             manager = new DedicatedGameManager();
         }
-        else if (bot_option.value().size() > 0) {
-            manager = new BotGameManager(bot_option.value());
-        } else {
+        else
+        {
             manager = new PlayerGameManager();
         }
 

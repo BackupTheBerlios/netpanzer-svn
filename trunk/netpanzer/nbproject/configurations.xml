@@ -309,8 +309,6 @@
         <logicalFolder name="Interfaces" displayName="Interfaces" projectFiles="true">
           <itemPath>src/NetPanzer/Interfaces/BaseGameManager.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/BaseGameManager.hpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/BotGameManager.cpp</itemPath>
-          <itemPath>src/NetPanzer/Interfaces/BotGameManager.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ChatInterface.cpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ChatInterface.hpp</itemPath>
           <itemPath>src/NetPanzer/Interfaces/ConfigVariable.cpp</itemPath>
@@ -477,8 +475,6 @@
           <itemPath>src/NetPanzer/Units/UnitBlackBoard.hpp</itemPath>
           <itemPath>src/NetPanzer/Units/UnitBucketArray.cpp</itemPath>
           <itemPath>src/NetPanzer/Units/UnitBucketArray.hpp</itemPath>
-          <itemPath>src/NetPanzer/Units/UnitGlobals.cpp</itemPath>
-          <itemPath>src/NetPanzer/Units/UnitGlobals.hpp</itemPath>
           <itemPath>src/NetPanzer/Units/UnitInterface.cpp</itemPath>
           <itemPath>src/NetPanzer/Units/UnitInterface.hpp</itemPath>
           <itemPath>src/NetPanzer/Units/UnitLifecycles.hpp</itemPath>
@@ -1477,12 +1473,6 @@
       <item path="src/NetPanzer/Interfaces/BaseGameManager.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Interfaces/BotGameManager.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/BotGameManager.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Interfaces/ChatInterface.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -1919,12 +1909,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitBucketArray.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/UnitGlobals.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/UnitGlobals.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitInterface.cpp">
@@ -3156,12 +3140,6 @@
       <item path="src/NetPanzer/Interfaces/BaseGameManager.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Interfaces/BotGameManager.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/BotGameManager.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Interfaces/ChatInterface.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -3598,12 +3576,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitBucketArray.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/UnitGlobals.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/UnitGlobals.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitInterface.cpp">
@@ -4835,12 +4807,6 @@
       <item path="src/NetPanzer/Interfaces/BaseGameManager.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Interfaces/BotGameManager.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/BotGameManager.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Interfaces/ChatInterface.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -5277,12 +5243,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitBucketArray.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/UnitGlobals.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/UnitGlobals.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitInterface.cpp">
@@ -6514,12 +6474,6 @@
       <item path="src/NetPanzer/Interfaces/BaseGameManager.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/NetPanzer/Interfaces/BotGameManager.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Interfaces/BotGameManager.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/NetPanzer/Interfaces/ChatInterface.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -6956,12 +6910,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitBucketArray.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/UnitGlobals.cpp">
-        <itemTool>1</itemTool>
-      </item>
-      <item path="src/NetPanzer/Units/UnitGlobals.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/NetPanzer/Units/UnitInterface.cpp">

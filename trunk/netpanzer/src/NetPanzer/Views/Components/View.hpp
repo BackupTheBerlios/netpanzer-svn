@@ -31,12 +31,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using namespace std;
 
-//enum DEFAULT_VIEW_BUTTON
-//{
-//    CLOSE_VIEW_BUTTON,
-//    MINMAX_VIEW_BUTTON
-//};
-
 class View : public iRect
 {
     friend class Desktop;
@@ -99,14 +93,12 @@ public:
 
     void removeComponents()
     {
-        ComponentsIterator i = components.begin();
-        while ( i != components.end() )
+        while ( ! components.empty() )
         {
-            Component *c = *i;
-            i++;
-            delete c;
+            delete components.back();
+            components.pop_back();
         }
-        components.clear();
+
         focusComponent      = 0;
     }
 

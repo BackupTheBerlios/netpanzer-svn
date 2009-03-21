@@ -114,11 +114,6 @@ AreYouSureResignView::onComponentClicked(Component* c)
             GameManager::quitNetPanzerGame();
             //----------------------
 
-            // Swap to the menu resolution.
-            //GameManager::setVideoMode(iXY(640, 480), false);
-
-            GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
-
             GameManager::loadPalette("netpmenu");
 
             // Must remove the gameView first so that the initButtons detects that
