@@ -628,56 +628,59 @@
                    displayName="Important Files"
                    projectFiles="false">
       <itemPath>Makefile</itemPath>
+      <itemPath>SConstruct</itemPath>
     </logicalFolder>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
-    <conf name="mac-debug" type="1">
+    <conf name="mac-debug" type="0">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
         <compilerSet>GNU|GNU</compilerSet>
         <platform>4</platform>
       </toolsSet>
-      <compileType>
-        <cCompilerTool>
-          <includeDirectories>
-            <directoryPath>.</directoryPath>
-            <directoryPath>src/Lib</directoryPath>
-            <directoryPath>src/NetPanzer</directoryPath>
-            <directoryPath>src/Lib/physfs</directoryPath>
-            <directoryPath>src/Lib/physfs/zlib123</directoryPath>
-            <directoryPath>/Library/Frameworks/SDL.framework/Versions/A/Headers</directoryPath>
-            <directoryPath>/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers</directoryPath>
-          </includeDirectories>
-          <preprocessorList>
-            <Elem>PHYSFS_SUPPORTS_ZIP=1</Elem>
-            <Elem>Z_PREFIX=1</Elem>
-          </preprocessorList>
-          <warningLevel>2</warningLevel>
-        </cCompilerTool>
-        <ccCompilerTool>
-          <includeDirectories>
-            <directoryPath>.</directoryPath>
-            <directoryPath>src/Lib</directoryPath>
-            <directoryPath>src/NetPanzer</directoryPath>
-            <directoryPath>src/Lib/physfs</directoryPath>
-            <directoryPath>src/Lib/physfs/zlib123</directoryPath>
-            <directoryPath>/Library/Frameworks/SDL.framework/Versions/A/Headers</directoryPath>
-            <directoryPath>/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers</directoryPath>
-          </includeDirectories>
-          <preprocessorList>
-            <Elem>PHYSFS_SUPPORTS_ZIP=1</Elem>
-            <Elem>Z_PREFIX=1</Elem>
-          </preprocessorList>
-          <warningLevel>2</warningLevel>
-        </ccCompilerTool>
-        <linkerTool>
-          <output>./netpanzer-debug</output>
-          <linkerLibItems>
-          </linkerLibItems>
-          <commandLine>-lSDLmain -framework SDL -framework SDL_mixer -framework IOKit -framework Cocoa</commandLine>
-        </linkerTool>
-      </compileType>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>scons</buildCommand>
+          <cleanCommand>scons -c</cleanCommand>
+          <executablePath></executablePath>
+          <cCompilerTool>
+            <includeDirectories>
+              <directoryPath>.</directoryPath>
+              <directoryPath>src/Lib</directoryPath>
+              <directoryPath>src/NetPanzer</directoryPath>
+              <directoryPath>src/Lib/physfs</directoryPath>
+              <directoryPath>src/Lib/physfs/zlib123</directoryPath>
+              <directoryPath>/Library/Frameworks/SDL.framework/Versions/A/Headers</directoryPath>
+              <directoryPath>/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers</directoryPath>
+            </includeDirectories>
+            <preprocessorList>
+              <Elem>PHYSFS_SUPPORTS_ZIP=1</Elem>
+              <Elem>Z_PREFIX=1</Elem>
+            </preprocessorList>
+            <warningLevel>2</warningLevel>
+          </cCompilerTool>
+          <ccCompilerTool>
+            <includeDirectories>
+              <directoryPath>.</directoryPath>
+              <directoryPath>src/Lib</directoryPath>
+              <directoryPath>src/NetPanzer</directoryPath>
+              <directoryPath>src/Lib/physfs</directoryPath>
+              <directoryPath>src/Lib/physfs/zlib123</directoryPath>
+              <directoryPath>/Library/Frameworks/SDL.framework/Versions/A/Headers</directoryPath>
+              <directoryPath>/Library/Frameworks/SDL_mixer.framework/Versions/A/Headers</directoryPath>
+            </includeDirectories>
+            <preprocessorList>
+              <Elem>PHYSFS_SUPPORTS_ZIP=1</Elem>
+              <Elem>Z_PREFIX=1</Elem>
+            </preprocessorList>
+            <warningLevel>2</warningLevel>
+          </ccCompilerTool>
+        </makeTool>
+        <requiredProjects>
+        </requiredProjects>
+      </makefileType>
       <item path="src/Lib/2D/BuiltinFont.cpp">
         <itemTool>1</itemTool>
       </item>
