@@ -76,7 +76,7 @@ MakeStaticLib(networkenv, 'npnetwork', 'Network', '*.cpp')
 MakeStaticLib(luaenv, 'nplua', 'lua', '*.c')
 
 # BUILDS PHYSFS
-physfsenv.Append( CFLAGS = '-DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1' )
+physfsenv.Append( CFLAGS = '-DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -DPHYSFS_NO_CDROM_SUPPORT=1' )
 physfsenv.Append( CPPPATH = 'src/Lib/physfs' )
 MakeStaticLib(physfsenv, 'npphysfs', 'physfs physfs/platform physfs/archivers physfs/zlib123', '*.c')
 
@@ -113,7 +113,7 @@ npdirs = """
 """
 
 env.Append( NPSOURCES = globSources(env, 'src/NetPanzer', npdirs, "*.cpp") )
-env.Append( NPLIBS = ['nplua','npphysfs','np2d','npnetwork','nplibs'] )
+env.Append( NPLIBS = ['nplua','np2d','npnetwork','nplibs','npphysfs'] )
 env.Append( NPLIBPATH = env['FINALLIBSDIR'] )
 
 env.Program( env['FINALEXENAME'], env['NPSOURCES'],
