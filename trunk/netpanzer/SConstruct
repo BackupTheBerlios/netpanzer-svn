@@ -19,47 +19,52 @@ if env['crossmingw']:
 else:
     finalplatform = env['PLATFORM']
 
-finalbuildir = 'build/' + finalplatform + '/' + env['mode'] + '/'
-finallibsdir = finalbuildir + 'libs/'
-finalbindir = finalbuildir + 'bin/'
+env['FINALBUILDDIR'] = 'build/' + finalplatform + '/' + env['mode'] + '/'
+env['FINALLIBSDIR'] = env['FINALBUILDDIR'] + 'libs/'
 
-def GlobBuildFiles(builddir, pattern):
-    sources = map(lambda x: builddir + '/' + x, glob.glob(pattern))
+def GlobBuildFiles(localenv, pattern):
+    sources = map(lambda x: localenv['FINALBUILDDIR'] + x, glob.glob(pattern))
     return sources
 
-env.VariantDir(finalbuildir,'.',duplicate=0)
+# Modified copy from BosWars
+def globSources(localenv, sourcePrefix, sourceDirs, pattern):
+    sources = []
+    sourceDirs = Split(sourceDirs)
+    for d in sourceDirs:
+        sources.append(glob.glob( sourcePrefix + '/' + d + '/' + pattern))
+    sources = Flatten(sources)
+    targetsources = []
+    for s in sources:
+        targetsources.append(localenv['FINALBUILDDIR'] + s)
+
+    return targetsources
+
+def MakeStaticLib(localenv, libname, libdirs, pattern):
+    sources = globSources(localenv, 'src/Lib', libdirs, pattern)
+    localenv.StaticLibrary( localenv['FINALLIBSDIR'] + libname, sources)
+
+env.VariantDir(env['FINALBUILDDIR'],'.',duplicate=0)
 
 env['CPPPATH'] = [ '.', 'src/Lib', 'src/NetPanzer' ]
 env.Append(CPPPATH = ['src/Lib/physfs'])
-env.Append(CPPPATH = ['/usr/local/include/SDL'])
+#env.Append(CPPPATH = ['/usr/local/include/SDL'])
 
 # BUILDS 2D
-env.StaticLibrary(finallibsdir + 'np2d',GlobBuildFiles(finalbuildir, 'src/Lib/2D/*.cpp'))
+MakeStaticLib(env, 'np2d', '2D', '*.cpp')
 
 # BUILDS NETWORK
-env.StaticLibrary(finallibsdir + 'npnetwork',GlobBuildFiles(finalbuildir, 'src/Lib/Network/*.cpp'))
+MakeStaticLib(env, 'npnetwork', 'Network', '*.cpp')
 
 # BUILDS LUA
-env.StaticLibrary(finallibsdir + 'nplua',GlobBuildFiles(finalbuildir, 'src/Lib/lua/*.c'))
+MakeStaticLib(env, 'nplua', 'lua', '*.c')
 
 # BUILDS REST OF LIBRARIES
-env.StaticLibrary(finallibsdir + 'nplibs',
-                    GlobBuildFiles(finalbuildir, 'src/Lib/ArrayUtil/*.cpp')
-                    + GlobBuildFiles(finalbuildir, 'src/Lib/INIParser/*.cpp')
-                    + GlobBuildFiles(finalbuildir, 'src/Lib/Types/*.cpp')
-                    + GlobBuildFiles(finalbuildir, 'src/Lib/Util/*.cpp')
-                    + GlobBuildFiles(finalbuildir, 'src/Lib/optionmm/*.cpp')
-                )
+MakeStaticLib(env, 'nplibs', 'ArrayUtil INIParser Types Util optionmm','*.cpp')
 
 # BUILDS PHYSFS
 physfsenv = env.Clone()
 physfsenv['CFLAGS'] = '-DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1'
-physfsenv.StaticLibrary(finallibsdir + 'npphysfs',
-                    GlobBuildFiles(finalbuildir, 'src/Lib/physfs/*.c')
-                    + GlobBuildFiles(finalbuildir, 'src/Lib/physfs/platform/*.c')
-                    + GlobBuildFiles(finalbuildir, 'src/Lib/physfs/archivers/*.c')
-                    + GlobBuildFiles(finalbuildir, 'src/Lib/physfs/zlib123/*.c')
-                )
+MakeStaticLib(physfsenv, 'npphysfs', 'physfs physfs/platform physfs/archivers physfs/zlib123', '*.c')
 
 npdirs = """
     Bot
@@ -86,23 +91,10 @@ npdirs = """
     Views/MainMenu/Options
 """
 
-# Modified copy from BosWars
-def globSources(sourcePrefix, sourceDirs, builddir, pattern):
-    sources = []
-    sourceDirs = Split(sourceDirs)
-    for d in sourceDirs:
-        sources.append(glob.glob( sourcePrefix + '/' + d + '/' + pattern))
-    sources = Flatten(sources)
-    targetsources = []
-    for s in sources:
-        targetsources.append(builddir + s)
-
-    return targetsources
-
-netpsources = globSources('src/NetPanzer', npdirs, finalbuildir, "*.cpp")
+netpsources = globSources(env, 'src/NetPanzer', npdirs, "*.cpp")
 env.AppendUnique(FRAMEWORKS=Split('SDL SDL_mixer Cocoa IOKit'))
-env.Program(    finalbindir + 'netpanzer',
+env.Program(    'netpanzer',
                 netpsources,
                 LIBS=['nplua','npphysfs','np2d','npnetwork','nplibs', 'SDLmain'],
-                LIBPATH=finallibsdir
+                LIBPATH=env['FINALLIBSDIR']
             )
