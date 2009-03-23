@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include <config.h>
 
 #include <iostream>
 using namespace std;
@@ -27,7 +26,6 @@ using namespace std;
 #include "SocketHeaders.hpp"
 #include "SocketBase.hpp"
 #include "SocketManager.hpp"
-#include "Util/Log.hpp"
 
 namespace network
 {
@@ -89,7 +87,7 @@ SocketBase::create (bool tcp) throw(NetworkException)
         sockfd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
     }
 
-    LOGGER.debug("SocketBase:: Create [%s:%d] socket", (tcp)?"tcp":"udp",sockfd);
+    //LOGGER.debug("SocketBase:: Create [%s:%d] socket", (tcp)?"tcp":"udp",sockfd);
     
     if(sockfd == INVALID_SOCKET)
     {
@@ -230,7 +228,7 @@ SocketBase::doReceive(void* buffer, size_t len)
     }
     
     if (!res) {
-        LOGGER.debug("SocketBase::doReceive Disconected from server");
+        //LOGGER.debug("SocketBase::doReceive Disconected from server");
         onDisconected();
     }
     
@@ -293,7 +291,7 @@ SocketBase::doAccept(Address& fromaddr)
 void
 SocketBase::doClose()
 {
-    LOGGER.debug("SocketBase:: Closing [%d] socket", sockfd);
+    //LOGGER.debug("SocketBase:: Closing [%d] socket", sockfd);
     SocketManager::removeSocket(this);
     closesocket(sockfd);
 }
@@ -303,7 +301,7 @@ SocketBase::notifyError(const char * errorType)
 {
     std::stringstream msg;
     msg << errorType << " error: " << NETSTRERROR(lastError);
-    LOGGER.debug("SocketBase::notifyError '%s'", msg.str().c_str());
+    //LOGGER.debug("SocketBase::notifyError '%s'", msg.str().c_str());
     onSocketError(msg.str().c_str());
 }
 

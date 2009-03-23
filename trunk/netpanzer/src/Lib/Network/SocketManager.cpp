@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <sstream>
 #include "SocketManager.hpp"
-#include "Util/Log.hpp"
 
 namespace network {
 
@@ -32,18 +31,20 @@ SocketManager::handleEvents()
 {
     SocketsIterator i;
 
-    if (!deletedSockets.empty()) {
-        for (i = deletedSockets.begin(); i!=deletedSockets.end(); i++) {
-            LOGGER.debug("SocketManager:: Removing socket [%d,%08lx]",(*i)->sockfd, (unsigned long)(*i));
+    if (!deletedSockets.empty())
+    {
+        for (i = deletedSockets.begin(); i!=deletedSockets.end(); i++)
+        {
             socketList.erase(*i);
             delete *i;
         }
         deletedSockets.clear();
     }
 
-    if (!newSockets.empty()) {
-        for (i = newSockets.begin(); i!=newSockets.end(); i++) {
-            LOGGER.debug("SocketManager:: Adding socket [%d,%08lx]",(*i)->sockfd, (unsigned long)(*i));
+    if (!newSockets.empty())
+    {
+        for (i = newSockets.begin(); i!=newSockets.end(); i++)
+        {
             socketList.insert(*i);
         }
         newSockets.clear();
@@ -51,38 +52,54 @@ SocketManager::handleEvents()
 
     // Make the socketset every time, not all OS works the same way
     sset.clear();
-    for (i = socketList.begin(); i!=socketList.end(); i++) {
-        if ((*i)->isConnecting()) {
+    for (i = socketList.begin(); i!=socketList.end(); i++)
+    {
+        if ((*i)->isConnecting())
+        {
             sset.addWrite(*i);
-        } else {
+        }
+        else
+        {
             sset.add(*i);
         }
     }
 
     int r = sset.select(0);
     if ( !r ) // most common first
+    {
         return;
+    }
     
-    if ( r > 0 ) {    
-        for (i = socketList.begin(); i!=socketList.end(); i++) {
-            if ((*i)->isConnecting()) {
-                if (sset.isWriteable(*i)) {
+    if ( r > 0 )
+    {
+        for (i = socketList.begin(); i!=socketList.end(); i++)
+        {
+            if ((*i)->isConnecting())
+            {
+                if (sset.isWriteable(*i))
+                {
                     (*i)->connectionFinished();
                 }
-            } else {
-                if (sset.dataAvailable(*i)) {
+            }
+            else
+            {
+                if (sset.dataAvailable(*i))
+                {
                     (*i)->onDataReady();
                 }
             }
         }
-    } else { // some error happened
+    }
+    else
+    { // some error happened
         int error = sset.getError();
-        if ( IS_INVALID_SOCKET(error) ) {
+        if ( IS_INVALID_SOCKET(error) )
+        {
             removeInvalidSockets();
-        } else if ( !IS_INTERRUPTED(error) ) { // beware: is NOT interrupted
-            std::stringstream msg;
-            msg << "SocketManager: BAD BAD ERROR " << NETSTRERROR(error);
-            LOGGER.debug(msg.str().c_str());
+        }
+        else if ( !IS_INTERRUPTED(error) )
+        { // beware: is NOT interrupted
+            // BAD ERROR
         }
     }
 }
@@ -90,7 +107,7 @@ SocketManager::handleEvents()
 void
 SocketManager::removeInvalidSockets()
 {
-    LOGGER.debug("Finding invalid sockets in the set...");
+    //LOGGER.debug("Finding invalid sockets in the set...");
     SocketsIterator i;
     int error;
     for (i = socketList.begin(); i!=socketList.end(); i++)
@@ -110,16 +127,16 @@ SocketManager::removeInvalidSockets()
             error = GET_NET_ERROR();
             if ( IS_INVALID_SOCKET(error) )
             {
-                LOGGER.warning("SocketManager: FOUND Invalid socket, removing...");
+                //LOGGER.warning("SocketManager: FOUND Invalid socket, removing...");
                 (*i)->lastError = error;
                 (*i)->notifyError("Select");
                 removeSocket(*i);
             }
             else
             {
-                std::stringstream msg;
-                msg << "SocketManager: Error while finding invalid sockets " << NETSTRERROR(error);
-                LOGGER.debug(msg.str().c_str());
+                //std::stringstream msg;
+                //msg << "SocketManager: Error while finding invalid sockets " << NETSTRERROR(error);
+                //LOGGER.debug(msg.str().c_str());
             }
         }
     }

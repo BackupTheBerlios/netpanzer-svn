@@ -4,6 +4,7 @@ import glob
 opts = Options()
 opts.AddOptions(
     ('mode','set compile mode to debug or release','release'),
+    ('sdlconfig','sets the sdl-config full path', 'sdl-config'),
     BoolOption('crossmingw', 'Set to 1 for cross-compilation with mingw', 0)
 )
 
@@ -14,6 +15,14 @@ if not (env['mode'] in ['debug', 'release']):
     print "Error: mode can only be 'debug' or 'release', found: " + env['mode']
     Exit(1)
 
+# HANDLE 'mode' flags
+if env['mode'] == 'debug':
+    env.Append(CCFLAGS = ['-g', '-O0'])
+    env['FINALEXENAME'] = 'netpanzer-debug'
+else:
+    env.Append(CCFLAGS = ['-O2','-s'])
+    env['FINALEXENAME'] = 'netpanzer'
+
 if env['crossmingw']:
     finalplatform = 'mingw'
 else:
@@ -22,11 +31,7 @@ else:
 env['FINALBUILDDIR'] = 'build/' + finalplatform + '/' + env['mode'] + '/'
 env['FINALLIBSDIR'] = env['FINALBUILDDIR'] + 'libs/'
 
-def GlobBuildFiles(localenv, pattern):
-    sources = map(lambda x: localenv['FINALBUILDDIR'] + x, glob.glob(pattern))
-    return sources
-
-# Modified copy from BosWars
+# Modified copy from BosWars of globSources
 def globSources(localenv, sourcePrefix, sourceDirs, pattern):
     sources = []
     sourceDirs = Split(sourceDirs)
@@ -45,26 +50,42 @@ def MakeStaticLib(localenv, libname, libdirs, pattern):
 
 env.VariantDir(env['FINALBUILDDIR'],'.',duplicate=0)
 
-env['CPPPATH'] = [ '.', 'src/Lib', 'src/NetPanzer' ]
-env.Append(CPPPATH = ['src/Lib/physfs'])
-#env.Append(CPPPATH = ['/usr/local/include/SDL'])
+luaenv = env.Clone()
+physfsenv = env.Clone()
+networkenv = env.Clone()
+
+env.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer' ] )
+env.Append( CPPPATH = [ 'src/Lib/physfs' ] )
+
+if finalplatform == 'darwin':
+    env.Append(CPPPATH = ['/Library/Frameworks/SDL.framework/Headers',
+                          '/Library/Frameworks/SDL_mixer.framework/Headers' ] )
+    env.AppendUnique(FRAMEWORKS=Split('SDL SDL_mixer Cocoa IOKit'))
+    env.Append( NPSOURCES =  ['support/macosx/SDLMain.m'] )
+elif finalplatform == 'win32':
+    print 'win32 not done'
+    Exit(1)
+else:
+    env.ParseConfig(env['sdlconfig'] + ' --cflags --libs')
+    env.Append( NPLIBS = [ 'SDL_mixer' ] )
+
+# BUILDS NETWORK
+MakeStaticLib(networkenv, 'npnetwork', 'Network', '*.cpp')
+
+# BUILDS LUA
+MakeStaticLib(luaenv, 'nplua', 'lua', '*.c')
+
+# BUILDS PHYSFS
+physfsenv.Append( CFLAGS = '-DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1' )
+physfsenv.Append( CPPPATH = 'src/Lib/physfs' )
+MakeStaticLib(physfsenv, 'npphysfs', 'physfs physfs/platform physfs/archivers physfs/zlib123', '*.c')
 
 # BUILDS 2D
 MakeStaticLib(env, 'np2d', '2D', '*.cpp')
 
-# BUILDS NETWORK
-MakeStaticLib(env, 'npnetwork', 'Network', '*.cpp')
-
-# BUILDS LUA
-MakeStaticLib(env, 'nplua', 'lua', '*.c')
-
 # BUILDS REST OF LIBRARIES
 MakeStaticLib(env, 'nplibs', 'ArrayUtil INIParser Types Util optionmm','*.cpp')
 
-# BUILDS PHYSFS
-physfsenv = env.Clone()
-physfsenv['CFLAGS'] = '-DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1'
-MakeStaticLib(physfsenv, 'npphysfs', 'physfs physfs/platform physfs/archivers physfs/zlib123', '*.c')
 
 npdirs = """
     Bot
@@ -91,10 +112,9 @@ npdirs = """
     Views/MainMenu/Options
 """
 
-netpsources = globSources(env, 'src/NetPanzer', npdirs, "*.cpp")
-env.AppendUnique(FRAMEWORKS=Split('SDL SDL_mixer Cocoa IOKit'))
-env.Program(    'netpanzer',
-                netpsources,
-                LIBS=['nplua','npphysfs','np2d','npnetwork','nplibs', 'SDLmain'],
-                LIBPATH=env['FINALLIBSDIR']
-            )
+env.Append( NPSOURCES = globSources(env, 'src/NetPanzer', npdirs, "*.cpp") )
+env.Append( NPLIBS = ['nplua','npphysfs','np2d','npnetwork','nplibs'] )
+env.Append( NPLIBPATH = env['FINALLIBSDIR'] )
+
+env.Program( env['FINALEXENAME'], env['NPSOURCES'],
+             LIBS=env['NPLIBS'], LIBPATH=env['NPLIBPATH'] )

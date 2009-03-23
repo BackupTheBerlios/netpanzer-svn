@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include <config.h>
 
 #include <sstream>
 #include <string>
@@ -66,7 +65,7 @@ Address::getIP() const
     return std::string(inet_ntoa(((struct sockaddr_in &)ss).sin_addr));
 }
 
-Uint16
+unsigned short
 Address::getPort() const
 {
     // XXX quick hack to get it working until get full ss support
@@ -75,7 +74,7 @@ Address::getPort() const
 }
 
 Address
-Address::resolve(const std::string& name, Uint16 port)
+Address::resolve(const std::string& name, unsigned short port)
     throw(NetworkException)
 {
     // TODO: make a better resolver (ex: getaddrinfo)
@@ -91,7 +90,7 @@ Address::resolve(const std::string& name, Uint16 port)
     if(!hentry) {
         std::stringstream msg;
         msg << "Couldn't resolve address '" << name;
-#ifdef USE_WINSOCK
+#ifdef _WIN32
         msg << "' (code " << WSAGetLastError() << ")";
 #else
         msg << "': " << hstrerror(h_errno);

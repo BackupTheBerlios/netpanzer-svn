@@ -23,13 +23,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkException.hpp"
 #include "SocketHeaders.hpp"
 #include "Address.hpp"
-#include "Util/NoCopy.hpp"
 
 namespace network
 {
 
 /** Base class for sockets, this is intended for internal use only */
-class SocketBase : public NoCopy
+class SocketBase
 {
 public:
     const Address& getAddress() const
@@ -68,6 +67,9 @@ protected:
     SOCKET doAccept(Address& fromaddr);
     
 private:
+    SocketBase(const SocketBase& );
+    void operator=(const SocketBase& );
+    
     void create(bool tcp) throw(NetworkException);
     void setNonBlocking() throw(NetworkException);
     void notifyError(const char * errortype);

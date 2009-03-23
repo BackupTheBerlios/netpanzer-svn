@@ -15,10 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include <config.h>
 
 #include "TCPListenSocket.hpp"
-#include "Util/Log.hpp"
 
 namespace network
 {
@@ -52,14 +50,18 @@ TCPListenSocket::onDataReady()
     Address newaddr;
     SOCKET newsock;
     TCPSocketObserver * newobserver;
-    try {
-        while ( (newsock=doAccept(newaddr)) != INVALID_SOCKET) {
+    try
+    {
+        while ( (newsock=doAccept(newaddr)) != INVALID_SOCKET)
+        {
             newobserver = observer->onNewConnection(this, newaddr);
             TCPSocket * newcon = new TCPSocket(newsock,newaddr,newobserver);
             newcon->onConnected();
         }
-    } catch (NetworkException e) {
-        LOGGER.warning("Error Accepting new connections: '%s'", e.what());
+    }
+    catch (NetworkException e)
+    {
+        //LOGGER.warning("Error Accepting new connections: '%s'", e.what());
     }
 }
 
