@@ -30,7 +30,7 @@ using namespace std;
 namespace network
 {
 
-#ifdef USE_WINSOCK
+#ifdef _WIN32
 
 class WinSockInit {
 public:
@@ -102,7 +102,7 @@ void
 SocketBase::setNonBlocking() throw(NetworkException)
 {
     int res;
-#ifdef USE_WINSOCK
+#ifdef _WIN32
     unsigned long mode = 1;
     res = ioctlsocket(sockfd, FIONBIO, &mode);
 #else
