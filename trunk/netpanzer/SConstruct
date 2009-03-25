@@ -1,5 +1,6 @@
 import os
 import glob
+import sys
 
 # Modified copy from BosWars of globSources
 def globSources(localenv, sourcePrefix, sourceDirs, pattern):
@@ -27,6 +28,7 @@ opts.AddOptions(
 )
 
 env = Environment(ENV = {'PATH' : os.environ['PATH']}, options = opts)
+Help(opts.GenerateHelpText(env))
 
 if env['crosstarget'] == 'mingw':
     if env['compilerprefix'] == '':
@@ -47,11 +49,28 @@ if env['crosstarget'] == 'mingw':
     env.Append( LDFLAGS = [ '-mwindows' ] )
     env.Append( LIBS = [ 'ws2_32', 'mingw32' ] )
     env['PROGSUFFIX'] = '.exe'
+elif env['crosstarget'] == 'linux':
+    if env['compilerprefix'] == '':
+        print 'You need to set a compiler prefix for cross compilation'
+        Exit(1)
 
+    if env['sdlconfig'] == 'sdl-config':
+        print 'You need to set the full path of sdl-config for cross compilation'
+        Exit(1)
+
+    finalplatform = 'linux'
+    env = DefaultEnvironment(ENV = {'PATH' : os.environ['PATH']},tools = ['gcc','g++','ar','gnulink'], options=opts )
+    env.Replace( CXX = env['compilerprefix'] + env['CXX'] )
+    env.Replace( CC = env['compilerprefix'] + env['CC'] )
+    env.Replace( AR = env['compilerprefix'] + env['AR'] )
+    env.Replace( RANLIB = env['compilerprefix'] + env['RANLIB'] )
+    env.Command('libstdc++.a', None, Action('ln -sf `%s -print-file-name=libstdc++.a` build/linux/' % env['CXX'] ) )
+    env.Append( LIBS = [ 'libstdc++.a' ] )
+    
 else:
     finalplatform = env['PLATFORM']
 
-Help(opts.GenerateHelpText(env))
+print sys.platform
 
 if not (env['mode'] in ['debug', 'release']):
     print "Error: mode can only be 'debug' or 'release', found: " + env['mode']
