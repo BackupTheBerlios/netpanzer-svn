@@ -73,11 +73,11 @@ public:
         message_class = _net_message_class_unit;
         message_id = _net_message_id_ini_sync_mesg;
         this->unit_type = unit_type;
-        //this->player_id = htol16(player_id);
+        //this->player_id = SDL_SwapLE16(player_id);
         this->player_id = (Uint8) player_id;
-        this->unit_id = htol16(unit_id);
-        this->location_x = htol32(location_x);
-        this->location_y = htol32(location_y);
+        this->unit_id = SDL_SwapLE16(unit_id);
+        this->location_x = SDL_SwapLE32(location_x);
+        this->location_y = SDL_SwapLE32(location_y);
     }
       
     unsigned short realSize() const
@@ -86,16 +86,16 @@ public:
     }
     Uint32 getLocX() const
     {
-        return ltoh32(location_x);
+        return SDL_SwapLE32(location_x);
     }
     Uint32 getLocY() const
     {
-        return ltoh32(location_y);
+        return SDL_SwapLE32(location_y);
     }
 
     UnitID getUnitID() const
     {
-        return ltoh16(unit_id);
+        return SDL_SwapLE16(unit_id);
     }
     Uint16 getPlayerID() const
     {
@@ -119,11 +119,11 @@ public:
 
     void setUnitToDestroy(UnitID id)
     {
-        unit_to_destroy = htol16(id);
+        unit_to_destroy = SDL_SwapLE16(id);
     }
     UnitID getUnitToDestroy() const
     {
-        return ltoh16(unit_to_destroy);
+        return SDL_SwapLE16(unit_to_destroy);
     }
 } __attribute__((packed));
 
@@ -143,28 +143,28 @@ public:
     {
         message_class = _net_message_class_unit;
         message_id = _net_message_id_create_unit;
-        this->player_id = htol16(player_id);             
-        new_unit_id = htol16(id);
-        location_x = htol32(x);
-        location_y = htol32(y);
+        this->player_id = SDL_SwapLE16(player_id);             
+        new_unit_id = SDL_SwapLE16(id);
+        location_x = SDL_SwapLE32(x);
+        location_y = SDL_SwapLE32(y);
         unit_type = type;
     }
         
     Uint32 getLocX() const
     {
-        return ltoh32(location_x);
+        return SDL_SwapLE32(location_x);
     }
     Uint32 getLocY() const
     {
-        return ltoh32(location_y);
+        return SDL_SwapLE32(location_y);
     }
     UnitID getUnitID() const
     {
-        return ltoh16(new_unit_id);
+        return SDL_SwapLE16(new_unit_id);
     }
     Uint16 getPlayerID() const
     {
-        return ltoh16(player_id);
+        return SDL_SwapLE16(player_id);
     }
 } __attribute__((packed));
 

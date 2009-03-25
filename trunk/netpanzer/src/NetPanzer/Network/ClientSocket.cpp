@@ -16,11 +16,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include <config.h>
+
 #include <string>
 #include <string.h>
 #include <sstream>
 #include <stdexcept>
+
+#include "SDL_endian.h"
 
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
@@ -28,7 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Network/ClientSocket.hpp"
 #include "Util/UtilInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
-#include "Util/Endian.hpp"
 #include "Network/Address.hpp"
 #include "Classes/Network/ClientServerNetMessage.hpp"
 #include "MessageRouter.hpp"
@@ -151,7 +152,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
                 break; // no more data
             }
             
-            packetsize=htol16(*((Uint16*)(data+dataptr)));;
+            packetsize=SDL_SwapLE16(*((Uint16*)(data+dataptr)));;
             
             if ( packetsize < sizeof(NetMessage) ) {
                 LOGGER.debug("Received wrong packetsize: less than required [%d]", packetsize);
@@ -189,7 +190,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             if ( tempoffset < sizeof(NetMessage) )
                 break; // no more data
                 
-            packetsize=htol16(*((Uint16*)tempbuffer));;
+            packetsize=SDL_SwapLE16(*((Uint16*)tempbuffer));;
             
             if ( packetsize < sizeof(NetMessage) ) {
                 LOGGER.debug("Received wrong packetsize(half): less than required [%d]", packetsize);

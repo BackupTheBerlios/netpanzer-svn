@@ -45,12 +45,12 @@ public:
 
     UnitID getUnitID() const
     {
-        return ltoh16(unit_id);
+        return SDL_SwapLE16(unit_id);
     }
 
     void setHeader( UnitID unit_id )
     {
-        this->unit_id = htol16(unit_id);
+        this->unit_id = SDL_SwapLE16(unit_id);
     }
 
 } __attribute__((packed));

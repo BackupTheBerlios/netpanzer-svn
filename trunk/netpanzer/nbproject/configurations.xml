@@ -181,7 +181,6 @@
         <logicalFolder name="Util" displayName="Util" projectFiles="true">
           <itemPath>src/Lib/Util/BresenhamLine.cpp</itemPath>
           <itemPath>src/Lib/Util/BresenhamLine.hpp</itemPath>
-          <itemPath>src/Lib/Util/Endian.hpp</itemPath>
           <itemPath>src/Lib/Util/Exception.cpp</itemPath>
           <itemPath>src/Lib/Util/Exception.hpp</itemPath>
           <itemPath>src/Lib/Util/FileStream.hpp</itemPath>
@@ -841,9 +840,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/Lib/Util/BresenhamLine.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/Lib/Util/Endian.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/Lib/Util/Exception.cpp">
@@ -2507,9 +2503,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/Lib/Util/BresenhamLine.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/Lib/Util/Endian.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/Lib/Util/Exception.cpp">
@@ -4176,9 +4169,6 @@
       <item path="src/Lib/Util/BresenhamLine.hpp">
         <itemTool>3</itemTool>
       </item>
-      <item path="src/Lib/Util/Endian.hpp">
-        <itemTool>3</itemTool>
-      </item>
       <item path="src/Lib/Util/Exception.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -5841,9 +5831,6 @@
         <itemTool>1</itemTool>
       </item>
       <item path="src/Lib/Util/BresenhamLine.hpp">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="src/Lib/Util/Endian.hpp">
         <itemTool>3</itemTool>
       </item>
       <item path="src/Lib/Util/Exception.cpp">

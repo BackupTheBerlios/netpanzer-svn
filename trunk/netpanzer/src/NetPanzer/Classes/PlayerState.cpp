@@ -15,9 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include <config.h>
 
-#include "Util/Endian.hpp"
+
+#include "SDL_endian.h"
 #include "Util/Log.hpp"
 #include "Classes/PlayerState.hpp"
 #include "Interfaces/PlayerInterface.hpp"
@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Uint16 NetworkPlayerState::getPlayerIndex() const
 {
-    return ltoh16(playerindex_id);
+    return SDL_SwapLE16(playerindex_id);
 }
 
 //If you modify this array, also modify the constant above
@@ -351,15 +351,15 @@ NetworkPlayerState PlayerState::getNetworkPlayerState() const
     memset(state.name, 0, sizeof(state.name));
     strncpy(state.name, name.c_str(), sizeof(state.name)-1);
     state.flag = flag;
-    state.playerindex_id = htol16(player_index);
+    state.playerindex_id = SDL_SwapLE16(player_index);
     state.status = status;
-    state.kills = htol16(kills);
-    state.kill_points = htol16(kill_points);
-    state.losses = htol16(losses);
-    state.loss_points = htol16(loss_points);
-    state.total = htol16(total);
-    state.objectives_held = htol16(objectives_held);
-    state.colorIndex = htol32(colorIndex);
+    state.kills = SDL_SwapLE16(kills);
+    state.kill_points = SDL_SwapLE16(kill_points);
+    state.losses = SDL_SwapLE16(losses);
+    state.loss_points = SDL_SwapLE16(loss_points);
+    state.total = SDL_SwapLE16(total);
+    state.objectives_held = SDL_SwapLE16(objectives_held);
+    state.colorIndex = SDL_SwapLE32(colorIndex);
     
     return state;
 }
@@ -376,13 +376,13 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
         LOGGER.warning("Received flag is not registered: %u", flag);
     }
     
-    player_index = ltoh16(state->playerindex_id);
+    player_index = SDL_SwapLE16(state->playerindex_id);
     status = state->status;
-    kills = ltoh16(state->kills);
-    kill_points = ltoh16(state->kill_points);
-    losses = ltoh16(state->losses);
-    loss_points = ltoh16(state->loss_points);
-    total = ltoh16(state->total);
-    objectives_held = ltoh16(state->objectives_held);
-    setColor(ltoh32(state->colorIndex));
+    kills = SDL_SwapLE16(state->kills);
+    kill_points = SDL_SwapLE16(state->kill_points);
+    losses = SDL_SwapLE16(state->losses);
+    loss_points = SDL_SwapLE16(state->loss_points);
+    total = SDL_SwapLE16(state->total);
+    objectives_held = SDL_SwapLE16(state->objectives_held);
+    setColor(SDL_SwapLE32(state->colorIndex));
 }

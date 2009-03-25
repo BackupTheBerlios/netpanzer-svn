@@ -66,38 +66,38 @@ public:
     {
         message_id = _umesg_ai_command;
         command = _command_move_to_loc;
-        goal_loc_x = htol32(goal.x);
-        goal_loc_y = htol32(goal.y);
+        goal_loc_x = SDL_SwapLE32(goal.x);
+        goal_loc_y = SDL_SwapLE32(goal.y);
     }
 
     void setTargetUnit(UnitID target)
     {
         message_id = _umesg_ai_command;
         command = _command_attack_unit;
-        target_id = htol16(target);
+        target_id = SDL_SwapLE16(target);
     }
 
     void setManualFire(const iXY& target)
     {
         message_id = _umesg_ai_command;
         command = _command_manual_fire;
-        goal_loc_x = htol32(target.x);
-        goal_loc_y = htol32(target.y);
+        goal_loc_x = SDL_SwapLE32(target.x);
+        goal_loc_y = SDL_SwapLE32(target.y);
     }
 
     iXY getGoalLoc() const
     {
-        return iXY(ltoh32(goal_loc_x), ltoh32(goal_loc_y));
+        return iXY(SDL_SwapLE32(goal_loc_x), SDL_SwapLE32(goal_loc_y));
     }
 
     UnitID getTargetUnitID() const
     {
-        return ltoh16(target_id);
+        return SDL_SwapLE16(target_id);
     }
 
     iXY getTargetLoc() const
     {
-        return iXY(ltoh32(goal_loc_x), ltoh32(goal_loc_y));
+        return iXY(SDL_SwapLE32(goal_loc_x), SDL_SwapLE32(goal_loc_y));
     }
 }
 __attribute__((packed));
@@ -113,32 +113,32 @@ private:
 public:
     void setOwnerUnitID(UnitID id)
     {
-        owner_id = htol16(id);
+        owner_id = SDL_SwapLE16(id);
     }
 
     UnitID getOwnerUnitID() const
     {
-        return ltoh16(owner_id);
+        return SDL_SwapLE16(owner_id);
     }
 
     void setHitLocation(const iXY& point)
     {
-        hit_location_x = htol32(point.x);
-        hit_location_y = htol32(point.y);
+        hit_location_x = SDL_SwapLE32(point.x);
+        hit_location_y = SDL_SwapLE32(point.y);
     }
 
     iXY getHitLocation() const
     {
-        return iXY(ltoh32(hit_location_x), ltoh32(hit_location_y));
+        return iXY(SDL_SwapLE32(hit_location_x), SDL_SwapLE32(hit_location_y));
     }
 
     void setDamageFactor(Uint16 damage_factor)
     {
-        this->damage_factor = htol16(damage_factor);
+        this->damage_factor = SDL_SwapLE16(damage_factor);
     }
     Uint16 getDamageFactor() const
     {
-        return ltoh16(damage_factor);
+        return SDL_SwapLE16(damage_factor);
     }
 } __attribute__((packed));
 
@@ -155,19 +155,19 @@ public:
             unsigned char unit_type )
     {
         message_id = _umesg_end_lifecycle;
-        destroyed = htol16(destroyed_unit);
-        destroyer = htol16(destroyer_unit);
+        destroyed = SDL_SwapLE16(destroyed_unit);
+        destroyer = SDL_SwapLE16(destroyer_unit);
         this->unit_type = unit_type;
     }
 
     UnitID getDestroyed() const
     {
-        return ltoh16(destroyed);
+        return SDL_SwapLE16(destroyed);
     }
 
     UnitID getDestroyer() const
     {
-        return ltoh16(destroyer);
+        return SDL_SwapLE16(destroyer);
     }
 }
 __attribute__((packed));

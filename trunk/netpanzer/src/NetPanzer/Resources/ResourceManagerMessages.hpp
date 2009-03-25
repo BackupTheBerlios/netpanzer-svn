@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _RESOURCEMANAGERMESSAGES_HPP
 #define	_RESOURCEMANAGERMESSAGES_HPP
 
-#include "config.h"
 #include "Core/CoreTypes.hpp"
 #include "Classes/Network/NetMessage.hpp"
 

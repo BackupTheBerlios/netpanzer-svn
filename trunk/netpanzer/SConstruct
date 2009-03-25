@@ -94,7 +94,10 @@ elif env['crosstarget'] == 'linux':
 else:
     finalplatform = env['PLATFORM']
 
-print 'Building for ' + sys.platform
+NPVERSION = 'svn'
+env.Append( CCFLAGS = [ '-DPACKAGE_VERSION=\\"' + NPVERSION + '\\"' ] )
+
+print 'Building version ' + NPVERSION + ' for ' + sys.platform
 
 if not (env['mode'] in ['debug', 'release']):
     print "Error: mode can only be 'debug' or 'release', found: " + env['mode']

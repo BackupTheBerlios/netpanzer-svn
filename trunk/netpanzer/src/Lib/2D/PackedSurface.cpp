@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include <config.h>
+
 
 #include <iostream>
 #include <vector>
@@ -23,11 +23,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <algorithm>
 #include <memory>
 
+#include "SDL_endian.h"
+
 #include "Util/TimerInterface.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
 #include "Util/UtilInterface.hpp"
-#include "Util/Endian.hpp"
 #include "PackedSurface.hpp"
 #include "Surface.hpp"
 #include "Span.hpp"
@@ -166,8 +167,8 @@ void PackedSurface::pack(const Surface &source)
                 // Now write the data into the chunk.
 
                 SpanHead *span = (SpanHead *)(packedDataChunk + curByteOffset);
-                span->x1 = htol16(spanX1);
-                span->len = htol16(spanLen);
+                span->x1 = SDL_SwapLE16(spanX1);
+                span->len = SDL_SwapLE16(spanLen);
                 memcpy(span + 1, &rowPtr[spanX1], spanLen * sizeof(PIX));
                 curByteOffset = newSize;
             }
@@ -334,9 +335,9 @@ void PackedSurface::blt(Surface &dest, int destX, int destY) const
             for (;;) {
                 if (rowData >= rowEnd) goto nextRow;
                 span = (SpanHead *)rowData;
-                x1 = ltoh16(span->x1);
-                x2 = x1 + ltoh16(span->len);
-                rowData += (sizeof(*span) + ltoh16(span->len)*sizeof(PIX) + 3) & ~3;
+                x1 = SDL_SwapLE16(span->x1);
+                x2 = x1 + SDL_SwapLE16(span->len);
+                rowData += (sizeof(*span) + SDL_SwapLE16(span->len)*sizeof(PIX) + 3) & ~3;
                 if (x2 > srcMin.x) break;
             }
 
@@ -369,14 +370,14 @@ void PackedSurface::blt(Surface &dest, int destX, int destY) const
 
                 if (rowData >= rowEnd) goto nextRow;
                 span = (SpanHead *)rowData;
-                x1 = ltoh16(span->x1);
+                x1 = SDL_SwapLE16(span->x1);
                 if (x1 >= srcMax.x) {
                     rowData = rowEnd;
                     goto nextRow;
                 }
-                x2 = x1 + ltoh16(span->len);
+                x2 = x1 + SDL_SwapLE16(span->len);
                 data = (const PIX *)(span + 1);
-                rowData += (sizeof(*span) + ltoh16(span->len)*sizeof(PIX) + 3) & ~3;
+                rowData += (sizeof(*span) + SDL_SwapLE16(span->len)*sizeof(PIX) + 3) & ~3;
             }
 
 nextRow:
@@ -392,9 +393,9 @@ nextRow:
 
             while (rowData < rowEnd) {
                 SpanHead *span = (SpanHead *)rowData;
-                memcpy(destRowPtr + ltoh16(span->x1), span + 1,
-                    ltoh16(span->len) * sizeof(PIX));
-                rowData += (sizeof(*span) + ltoh16(span->len)*sizeof(PIX) + 3) & ~3;
+                memcpy(destRowPtr + SDL_SwapLE16(span->x1), span + 1,
+                    SDL_SwapLE16(span->len) * sizeof(PIX));
+                rowData += (sizeof(*span) + SDL_SwapLE16(span->len)*sizeof(PIX) + 3) & ~3;
             }
             assert(rowData == rowEnd);
             destRowPtr += dest.getPitch();
@@ -504,9 +505,9 @@ void PackedSurface::bltBlend(Surface &dest, int destX, int destY, ColorTable &co
             for (;;) {
                 if (rowData >= rowEnd) goto nextRow;
                 span = (SpanHead *)rowData;
-                x1 = ltoh16(span->x1);
-                x2 = x1 + ltoh16(span->len);
-                rowData += (sizeof(*span) + ltoh16(span->len)*sizeof(PIX) + 3) & ~3;
+                x1 = SDL_SwapLE16(span->x1);
+                x2 = x1 + SDL_SwapLE16(span->len);
+                rowData += (sizeof(*span) + SDL_SwapLE16(span->len)*sizeof(PIX) + 3) & ~3;
                 if (x2 > srcMin.x) break;
             }
 
@@ -540,14 +541,14 @@ void PackedSurface::bltBlend(Surface &dest, int destX, int destY, ColorTable &co
 
                 if (rowData >= rowEnd) goto nextRow;
                 span = (SpanHead *)rowData;
-                x1 = ltoh16(span->x1);
+                x1 = SDL_SwapLE16(span->x1);
                 if (x1 >= srcMax.x) {
                     rowData = rowEnd;
                     goto nextRow;
                 }
-                x2 = x1 + ltoh16(span->len);
+                x2 = x1 + SDL_SwapLE16(span->len);
                 data = (const PIX *)(span + 1);
-                rowData += (sizeof(*span) + ltoh16(span->len)*sizeof(PIX) + 3) & ~3;
+                rowData += (sizeof(*span) + SDL_SwapLE16(span->len)*sizeof(PIX) + 3) & ~3;
             }
 
 nextRow:
@@ -564,10 +565,10 @@ nextRow:
             while (rowData < rowEnd) {
                 SpanHead *span = (SpanHead *)rowData;
 
-                bltBlendSpan(destRowPtr + ltoh16(span->x1),
-                    (const PIX *)(span + 1), ltoh16(span->len), cTable);
+                bltBlendSpan(destRowPtr + SDL_SwapLE16(span->x1),
+                    (const PIX *)(span + 1), SDL_SwapLE16(span->len), cTable);
 
-                rowData += (sizeof(*span) + ltoh16(span->len)*sizeof(PIX) + 3) & ~3;
+                rowData += (sizeof(*span) + SDL_SwapLE16(span->len)*sizeof(PIX) + 3) & ~3;
             }
             assert(rowData == rowEnd);
             destRowPtr += dest.getPitch();

@@ -19,8 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _NETPACKET_HPP
 
 #include <string.h>
-
-#include "Util/Endian.hpp"
+#include "SDL_endian.h"
 #include "NetMessage.hpp"
 
 static const Uint16 _MAX_NET_PACKET_SIZE=512;

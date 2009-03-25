@@ -229,11 +229,11 @@ public:
 
     void setPlayerID(Uint16 id)
     {
-        player_id = htol16(id);
+        player_id = SDL_SwapLE16(id);
     }
     Uint16 getPlayerID() const
     {
-        return ltoh16(player_id);
+        return SDL_SwapLE16(player_id);
     }
 } __attribute__((packed));
 

@@ -48,17 +48,17 @@ public:
     {
         message_class = _net_message_class_system;
         message_id = _net_message_id_system_set_view;
-        camera_loc_x = htol32(x);
-        camera_loc_y = htol32(y);
+        camera_loc_x = SDL_SwapLE32(x);
+        camera_loc_y = SDL_SwapLE32(y);
     }
         
     Sint32 getCameraLocX() const
     {
-        return ltoh32(camera_loc_x);
+        return SDL_SwapLE32(camera_loc_x);
     }
     Sint32 getCameraLocY() const
     {
-        return ltoh32(camera_loc_y);
+        return SDL_SwapLE32(camera_loc_y);
     }
 }
 __attribute__((packed));
@@ -111,12 +111,12 @@ public:
     {
         message_class = _net_message_class_system;
         message_id = _net_message_id_system_ping_request;
-        client_player_index = htol16(playerIndex);
+        client_player_index = SDL_SwapLE16(playerIndex);
     }
     
     Uint16 getClientPlayerIndex() const
     {
-        return ltoh16(client_player_index);
+        return SDL_SwapLE16(client_player_index);
     }
 } __attribute__((packed));
 
@@ -151,13 +151,13 @@ public:
         
     void set(const Uint16 player_idx, unsigned char alert_type)
     {
-        player_index = htol16(player_idx);
+        player_index = SDL_SwapLE16(player_idx);
         alert_enum = alert_type;
     }                                               
     
     Uint16 getPlayerID() const
     {
-        return ltoh16(player_index);
+        return SDL_SwapLE16(player_index);
     }
 
 } __attribute__((packed));

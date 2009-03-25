@@ -46,18 +46,18 @@ public:
     }
     void set(iXY map_loc, PowerUpID ID, int type)
     {
-        this->map_loc_x = htol32(map_loc.x);
-        this->map_loc_y = htol32(map_loc.y);
+        this->map_loc_x = SDL_SwapLE32(map_loc.x);
+        this->map_loc_y = SDL_SwapLE32(map_loc.y);
         this->ID = PowerUpID_toPortable(ID); // XXX protocol
-        this->type = htol32(type);
+        this->type = SDL_SwapLE32(type);
     }
     Sint32 getLocX() const
     {
-        return ltoh32(map_loc_x);
+        return SDL_SwapLE32(map_loc_x);
     }
     Sint32 getLocY() const
     {
-        return ltoh32(map_loc_y);
+        return SDL_SwapLE32(map_loc_y);
     }
     PowerUpID getID() const
     {
@@ -65,7 +65,7 @@ public:
     }
     Sint32 getType() const
     {
-        return ltoh32(type);
+        return SDL_SwapLE32(type);
     }
 } __attribute__((packed));
 
@@ -87,8 +87,8 @@ public:
     void set(PowerUpID ID, Uint16 player_id, int type=0)
     {
         this->ID = PowerUpID_toPortable(ID); // XXX protocol
-        this->player_id = htol16(player_id);
-        this->unit_powerup_type = htol32(type);
+        this->player_id = SDL_SwapLE16(player_id);
+        this->unit_powerup_type = SDL_SwapLE32(type);
     }
     PowerUpID getID() const
     {
@@ -96,11 +96,11 @@ public:
     }
     Uint16 getPlayerID() const
     {
-        return ltoh16(player_id);
+        return SDL_SwapLE16(player_id);
     }
     Sint32 getUnitPowerupType() const
     {
-        return ltoh32(unit_powerup_type);
+        return SDL_SwapLE32(unit_powerup_type);
     }
 } __attribute__((packed));
 

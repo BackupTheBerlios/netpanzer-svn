@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __NETTYPES_HPP__
 #define __NETTYPES_HPP__
 
-#include "Util/Endian.hpp"
+#include "SDL_endian.h"
 
 namespace net
 {
@@ -38,11 +38,11 @@ public:
 
     operator Uint32() const
     {
-        return ltoh32(val);
+        return SDL_SwapLE32(val);
     }
     void operator=(Uint32 val)
     {
-        this->val = htol32(val);
+        this->val = SDL_SwapLE32(val);
         return val;
     }
 } __attribute__((packed));
@@ -59,11 +59,11 @@ public:
 
     operator Uint16() const
     {
-        return ltoh16(val);
+        return SDL_SwapLE16(val);
     }
     void operator=(Uint16 val)
     {
-        this->val = htol16(val);
+        this->val = SDL_SwapLE16(val);
         return val;
     }
 } __attribute__((packed));

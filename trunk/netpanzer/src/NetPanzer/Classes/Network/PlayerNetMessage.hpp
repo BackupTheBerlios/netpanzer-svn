@@ -81,27 +81,27 @@ public:
 
     void set(Uint16 kill_by_index, Uint16 kill_on_index, Uint8 unit_type)
     {
-        kill_by_player_index = htol16(kill_by_index);
-        kill_on_player_index = htol16(kill_on_index);
+        kill_by_player_index = SDL_SwapLE16(kill_by_index);
+        kill_on_player_index = SDL_SwapLE16(kill_on_index);
         this->unit_type = unit_type;
     }
 
     void setKillByPlayerIndex(Uint16 kill_by_index)
     {
-        kill_by_player_index = htol16(kill_by_index);
+        kill_by_player_index = SDL_SwapLE16(kill_by_index);
     }
     Uint16 getKillByPlayerIndex() const
     {
-        return ltoh16(kill_by_player_index);
+        return SDL_SwapLE16(kill_by_player_index);
     }
 
     void setKillOnPlayerIndex(Uint16 kill_on_index)
     {
-        kill_on_player_index = htol16(kill_on_index);
+        kill_on_player_index = SDL_SwapLE16(kill_on_index);
     }
     Uint16 getKillOnPlayerIndex() const
     {
-        return ltoh16(kill_on_player_index);
+        return SDL_SwapLE16(kill_on_player_index);
     }
 }
 __attribute__((packed));
@@ -128,17 +128,17 @@ public:
     void set(Uint16 allie_by_player_index, Uint16 allie_with_player_index,
             Uint8 alliance_request_type)
     {
-        this->allie_by_player_index = htol16(allie_by_player_index);
-        this->allie_with_player_index = htol16(allie_with_player_index);
+        this->allie_by_player_index = SDL_SwapLE16(allie_by_player_index);
+        this->allie_with_player_index = SDL_SwapLE16(allie_with_player_index);
         this->alliance_request_type = alliance_request_type;
     }
     Uint16 getAllieByPlayerIndex() const
     {
-        return ltoh16(allie_by_player_index);
+        return SDL_SwapLE16(allie_by_player_index);
     }
     Uint16 getAllieWithPlayerIndex() const
     {
-        return ltoh16(allie_with_player_index);
+        return SDL_SwapLE16(allie_with_player_index);
     }
 }
 __attribute__((packed));
@@ -161,18 +161,18 @@ public:
     void set(Uint16 by_player_index, Uint16 with_player_index,
             Uint8 update_type )
     {
-        allie_by_player_index = htol16(by_player_index);
-        allie_with_player_index = htol16(with_player_index);
+        allie_by_player_index = SDL_SwapLE16(by_player_index);
+        allie_with_player_index = SDL_SwapLE16(with_player_index);
         alliance_update_type = update_type;
     }
 
     Uint16 getAllieByPlayerIndex() const
     {
-        return ltoh16(allie_by_player_index);
+        return SDL_SwapLE16(allie_by_player_index);
     }
     Uint16 getAllieWithPlayerIndex() const
     {
-        return ltoh16(allie_with_player_index);
+        return SDL_SwapLE16(allie_with_player_index);
     }
 }
 __attribute__((packed));

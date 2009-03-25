@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __NETMESSAGE_HPP__
 #define __NETMESSAGE_HPP__
 
-#include "Util/Endian.hpp"
+#include "SDL_endian.h"
 
 enum { _net_message_class_multi = 0,
        _net_message_class_client_server,
@@ -49,12 +49,12 @@ public:
 
     Uint16 getSize() const
     {
-        return ltoh16(size);
+        return SDL_SwapLE16(size);
     }
 
     void setSize(Uint16 newsize)
     {
-        size = htol16(newsize);
+        size = SDL_SwapLE16(newsize);
     }
 } __attribute__((packed));
 

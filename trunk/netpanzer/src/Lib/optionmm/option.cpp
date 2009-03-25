@@ -23,7 +23,7 @@
     @author Christian Holm
     @date   Sat Dec 28 19:10:36 2002
     @brief  Command line option  */
-#include <config.h>
+
 
 #ifndef OPTIONMM_option
 #include "option.hpp"

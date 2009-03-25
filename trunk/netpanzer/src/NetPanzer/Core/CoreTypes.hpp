@@ -23,15 +23,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // SDL.h included for the basic types [U|S]int[8|16|32]
 #include "SDL.h"
-#include "Util/Endian.hpp"
+#include "SDL_endian.h"
 
 typedef Sint32 PowerUpID;
-#define PowerUpID_toPortable(a) htol32(a)
-#define PowerUpID_fromPortable(a) ltoh32(a)
+#define PowerUpID_toPortable(a) SDL_SwapLE32(a)
+#define PowerUpID_fromPortable(a) SDL_SwapLE32(a)
 
 typedef Uint16 ObjectiveID;
-#define ObjectiveID_toPortable(a) htol16(a)
-#define ObjectiveID_fromPortable(a) ltoh16(a)
+#define ObjectiveID_toPortable(a) SDL_SwapLE16(a)
+#define ObjectiveID_fromPortable(a) SDL_SwapLE16(a)
 #define OBJECTIVE_NONE 0xffff
 
 typedef Uint16 UnitID;

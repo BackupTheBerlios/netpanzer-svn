@@ -75,12 +75,12 @@ public:
 
     void setUnitID(UnitID id)
     {
-        unit_id = htol16(id);
+        unit_id = SDL_SwapLE16(id);
     }
 
     UnitID getUnitID() const
     {
-        return ltoh16(unit_id);
+        return SDL_SwapLE16(unit_id);
     }
 } __attribute__((packed));
 
@@ -104,12 +104,12 @@ public:
 
     void setSquare(Uint32 square)
     {
-        this->square = htol32(square);
+        this->square = SDL_SwapLE32(square);
     }
 
     Uint32 getSquare() const
     {
-        return ltoh32(square);
+        return SDL_SwapLE32(square);
     }
 } __attribute__((packed));
 
@@ -132,13 +132,13 @@ public:
 
     void setTarget(iXY pos)
     {
-        target_x = htol16(pos.x);
-        target_y = htol16(pos.y);
+        target_x = SDL_SwapLE16(pos.x);
+        target_y = SDL_SwapLE16(pos.y);
     }
 
     iXY getTarget() const
     {
-        return iXY(ltoh16(target_x), ltoh16(target_y));
+        return iXY(SDL_SwapLE16(target_x), SDL_SwapLE16(target_y));
     }
 } __attribute__((packed));
 
@@ -159,12 +159,12 @@ public:
 
     void setTargetUnitID(UnitID id)
     {
-        targetUnitID = htol16(id);
+        targetUnitID = SDL_SwapLE16(id);
     }
     
     UnitID getTargetUnitID() const
     {
-        return ltoh16(targetUnitID);
+        return SDL_SwapLE16(targetUnitID);
     }
 } __attribute__((packed));
 
@@ -186,13 +186,13 @@ public:
 
     void setTarget(iXY target)
     {
-        x = htol16(target.x);
-        y = htol16(target.y);
+        x = SDL_SwapLE16(target.x);
+        y = SDL_SwapLE16(target.y);
     }
 
     iXY getTarget() const
     {
-        return iXY(ltoh16(x), ltoh16(y));
+        return iXY(SDL_SwapLE16(x), SDL_SwapLE16(y));
     }
 } __attribute__((packed));
 
@@ -222,12 +222,12 @@ public:
 
     void setHitPoints(Sint16 newhitpoints)
     {
-        hit_points = htol16(newhitpoints);
+        hit_points = SDL_SwapLE16(newhitpoints);
     }
 
     Sint16 getHitPoints() const
     {
-        return ltoh16(hit_points);
+        return SDL_SwapLE16(hit_points);
     }
 } __attribute__((packed));
 

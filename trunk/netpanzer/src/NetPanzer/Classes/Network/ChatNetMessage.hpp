@@ -91,11 +91,11 @@ public:
     }
     Uint16 getSourcePlayerIndex() const
     {
-        return ltoh16(source_player_index);
+        return SDL_SwapLE16(source_player_index);
     }
     void setSourcePlayerIndex(Uint16 playerIndex)
     {
-        source_player_index = htol16(playerIndex);
+        source_player_index = SDL_SwapLE16(playerIndex);
     }
 } __attribute__((packed));
 
@@ -118,11 +118,11 @@ public:
 
     Uint16 getSourcePlayerIndex() const
     {
-        return ltoh16(source_player_index);
+        return SDL_SwapLE16(source_player_index);
     }
     void setSourcePlayerIndex(Uint16 playerIndex)
     {
-        source_player_index = htol16(playerIndex);
+        source_player_index = SDL_SwapLE16(playerIndex);
     }
 } __attribute__((packed));
 
