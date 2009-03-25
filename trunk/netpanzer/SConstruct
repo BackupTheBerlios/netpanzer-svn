@@ -1,6 +1,30 @@
 import os
 import glob
 import sys
+import string
+import subprocess
+
+class ourSpawn:
+    def ourspawn(self, sh, escape, cmd, args, env):
+        newargs = string.join(args[1:], ' ')
+        cmdline = cmd + " " + newargs
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        proc = subprocess.Popen(cmdline, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE, startupinfo=startupinfo, shell = False, env = env)
+        data, err = proc.communicate()
+        rv = proc.wait()
+        if rv:
+            print "====="
+            print err
+            print "====="
+        return rv
+
+def SetupSpawn( env ):
+    if sys.platform == 'win32':
+        buf = ourSpawn()
+        buf.ourenv = env
+        env['SPAWN'] = buf.ourspawn
 
 # Modified copy from BosWars of globSources
 def globSources(localenv, sourcePrefix, sourceDirs, pattern):
@@ -27,7 +51,7 @@ opts.AddOptions(
     ('compilerprefix', 'sets the prefix of the compilers, example: i686-pc-linux-gnu-', '')
 )
 
-env = Environment(ENV = {'PATH' : os.environ['PATH']}, options = opts)
+env = Environment(ENV = os.environ, options = opts)
 Help(opts.GenerateHelpText(env))
 
 if env['crosstarget'] == 'mingw':
@@ -70,7 +94,7 @@ elif env['crosstarget'] == 'linux':
 else:
     finalplatform = env['PLATFORM']
 
-print sys.platform
+print 'Building for ' + sys.platform
 
 if not (env['mode'] in ['debug', 'release']):
     print "Error: mode can only be 'debug' or 'release', found: " + env['mode']
@@ -84,7 +108,6 @@ else:
     env.Append(CCFLAGS = ['-O2','-s'])
     env['FINALEXENAME'] = 'netpanzer'
 
-
 env['FINALBUILDDIR'] = 'build/' + finalplatform + '/' + env['mode'] + '/'
 env['FINALLIBSDIR'] = env['FINALBUILDDIR'] + 'libs/'
 
@@ -97,14 +120,20 @@ networkenv = env.Clone()
 env.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer' ] )
 env.Append( CPPPATH = [ 'src/Lib/physfs' ] )
 
+
 if finalplatform == 'darwin':
     env.Append(CPPPATH = ['/Library/Frameworks/SDL.framework/Headers',
                           '/Library/Frameworks/SDL_mixer.framework/Headers' ] )
     env.AppendUnique(FRAMEWORKS=Split('SDL SDL_mixer Cocoa IOKit'))
     env.Append( NPSOURCES =  ['support/macosx/SDLMain.m'] )
 elif finalplatform == 'win32':
-    print 'win32 not done'
-    Exit(1)
+    env.Append( CPPPATH = [ 'C:/mingw/include/SDL' ] )
+    env.Append( LIBS = [ 'ws2_32', 'mingw32', 'SDLMain', 'SDL' ] )
+    env.Append( CCFLAGS = [ '-Dsocklen_t=int' ] )
+    networkenv.Append( CCFLAGS = [ '-Dsocklen_t=int' ] )
+    env.Append( _LIBFLAGS = [ '-mwindows' ] )
+    env.Prepend( _LIBFLAGS = [ 'c:/mingw/lib/SDL_mixer.lib' ] )
+    SetupSpawn(env)
 else:
     env.ParseConfig(env['sdlconfig'] + ' --cflags --libs')
     env.Append( NPLIBS = [ 'SDL_mixer' ] )
