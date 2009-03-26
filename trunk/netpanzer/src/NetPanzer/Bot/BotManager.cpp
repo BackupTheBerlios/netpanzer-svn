@@ -103,11 +103,14 @@ BotManager::removeBot(Uint16 playerid)
 void
 BotManager::removeAllBots()
 {
-    for (BotList::iterator i = bot_list.begin(); i != bot_list.end(); i++)
+    BotList::iterator i = bot_list.begin();
+    while ( i != bot_list.end() )
     {
+        // removeBot will erase the item from list
         removeBot((*i)->botPlayerId);
+        i = bot_list.begin();
     }
-    bot_list.clear();
+    // bot_list already cleared
 }
 
 bool

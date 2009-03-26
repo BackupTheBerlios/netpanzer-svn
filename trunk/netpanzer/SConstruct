@@ -95,6 +95,15 @@ else:
     finalplatform = env['PLATFORM']
 
 NPVERSION = 'svn'
+SVERSION = ''
+try:
+    SVERSION = os.popen('svnversion').read()[:-1]
+    SVERSION = SVERSION.split(':')[-1]
+except e:
+    pass
+
+print "SVERSION = " + SVERSION
+
 env.Append( CCFLAGS = [ '-DPACKAGE_VERSION=\\"' + NPVERSION + '\\"' ] )
 
 print 'Building version ' + NPVERSION + ' for ' + sys.platform

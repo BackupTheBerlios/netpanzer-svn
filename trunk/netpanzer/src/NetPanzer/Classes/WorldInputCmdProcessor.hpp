@@ -91,6 +91,8 @@ protected:
 
     bool getConsoleInputString(char *input_string);
 
+    void selectAllUnitsOnScreen();
+
     static ObjectiveID selected_objective_id;
 
 public:

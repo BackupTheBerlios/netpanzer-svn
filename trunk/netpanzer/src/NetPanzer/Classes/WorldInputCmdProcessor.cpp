@@ -233,6 +233,11 @@ WorldInputCmdProcessor::getManualControlStatus()
 void
 WorldInputCmdProcessor::evaluateKeyCommands()
 {
+    if ( (KeyboardInterface::getKeyPressed( SDLK_e ) == true) )
+    {
+       selectAllUnitsOnScreen ();
+    }
+
     if ( (KeyboardInterface::getKeyPressed( SDLK_o ) == true) )
     {
         toggleDisplayOutpostNames();
@@ -1143,4 +1148,20 @@ WorldInputCmdProcessor::centerSelectedUnits()
     
     if(unit != 0)
         WorldViewInterface::setCameraPosition(unit->unit_state.location);
+}
+
+void
+WorldInputCmdProcessor::selectAllUnitsOnScreen()
+{
+    iRect wr;
+    WorldViewInterface::getViewWindow(&wr);
+
+    bool addunits = false;
+    if(    (KeyboardInterface::getKeyState(SDLK_LSHIFT) == true)
+        || (KeyboardInterface::getKeyState(SDLK_RSHIFT) == true))
+    {
+        addunits = true;
+    }
+
+    working_list.selectBounded(wr, addunits);
 }
