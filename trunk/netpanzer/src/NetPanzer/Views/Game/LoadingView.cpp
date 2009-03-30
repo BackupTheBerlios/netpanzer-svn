@@ -32,7 +32,6 @@ LoadingView::init()
     setTitle("Loading Progress");
     setSubTitle("");
     
-    setAllowResize(false);
     setAllowMove(false);
     setDisplayStatusBar(false);
     setVisible(false);

@@ -55,23 +55,6 @@ public:
         MAX_WINDOW_CLIENT_YSIZE = 458
     };
 
-    int getPressedButton()
-    {
-        return pressedButton;
-    }
-    int getPrevPressedButton()
-    {
-        return prevPressedButton;
-    }
-    int getHighlightedButton()
-    {
-        return highlightedButton;
-    }
-    int getPrevHighlightedButton()
-    {
-        return prevHighlightedButton;
-    }
-
     // Hack city, should be protected???????
     void setAlwaysOnBottom(const bool &newStatus);
     void setVisible(const bool &newStatus);
@@ -140,16 +123,6 @@ public:
     {
         return status & STATUS_DISPLAY_STATUS_BAR;
     }
-    inline int getResize() const
-    {
-        return status & STATUS_ALLOW_RESIZE;
-    }
-    inline int getScrollBar() const
-    {
-        return status & STATUS_SCROLL_BAR;
-    }
-
-    virtual int getMouseActions(const iXY &p) const;
 
     iRect getClientRect() const;
 
@@ -172,11 +145,6 @@ protected:
     virtual void     actionPerformed(mMouseEvent )
     {}
 
-    int              pressedButton;
-    int              prevPressedButton;
-    int              highlightedButton;
-    int              prevHighlightedButton;
-
     int              selectedInputField;
     char            *searchName;
     char            *title;
@@ -185,49 +153,23 @@ protected:
 
     char            *statusText;
 
-    enum { RESIZE_XMINSIZE = 15 };
-    enum { RESIZE_YMINSIZE = 15 };
-
     // Status items
     enum { STATUS_ACTIVE             = (1U << 0) };
     enum { STATUS_VISIBLE            = (1U << 1) };
-    enum { STATUS_ALLOW_RESIZE       = (1U << 2) };
-    enum { STATUS_ALLOW_MOVE         = (1U << 3) };
-    enum { STATUS_ALWAYS_ON_BOTTOM   = (1U << 4) };
-    enum { STATUS_BORDERED           = (1U << 5) };
-    enum { STATUS_DISPLAY_STATUS_BAR = (1U << 6) };
-    enum { STATUS_SCROLL_BAR         = (1U << 7) };
-
-    // Mouse actions
-    enum { MA_RESIZE_TOP    = (1U <<  0) };
-    enum { MA_RESIZE_LEFT   = (1U <<  1) };
-    enum { MA_RESIZE_BOTTOM = (1U <<  2) };
-    enum { MA_RESIZE_RIGHT  = (1U <<  3) };
-    enum { MA_MOVE          = (1U <<  4) };
-    enum { MA_CLOSE         = (1U <<  5) };
-    enum { MA_MINIMIZE      = (1U <<  6) };
-    enum { MA_MAXIMIZE      = (1U <<  7) };
-    enum { MA_RESTORE       = (1U <<  8) };
-    enum { MA_IMAGE_TILES   = (1U <<  9) };
-    enum { MA_SCROLL_BAR    = (1U << 10) };
-    enum { MA_MOUSE_ENTER   = (1U << 11) };
-    enum { MA_MOUSE_EXIT    = (1U << 12) };
+    enum { STATUS_ALLOW_MOVE         = (1U << 2) };
+    enum { STATUS_ALWAYS_ON_BOTTOM   = (1U << 3) };
+    enum { STATUS_BORDERED           = (1U << 4) };
+    enum { STATUS_DISPLAY_STATUS_BAR = (1U << 5) };
 
     void        reset     ();
     void        activate  ();
     void        deactivate();
 
-    typedef void (*ITEM_FUNC)(void);
-
     // View Status Functions.
-    void setAllowResize     (const bool &newStatus);
     void setDisplayStatusBar(const bool &newStatus);
     void setBordered        (const bool &newStatus);
     void setAllowMove       (const bool &newStatus);
     void setActive          (const bool &newStatus);
-    //void setScrollBar       (const bool &newStatus);
-
-    // Scroll bar functions.
 
     // SearchName, Title, and SubTitle functions.
     void  setSearchName(const char *searchName);
@@ -270,7 +212,6 @@ protected:
     virtual void mouseEnter(const iXY &pos);
     virtual void mouseExit(const iXY &pos);
     //virtual void keyUp();
-    void scrollBarMove(const iXY &prevpos, const iXY &newpos);
 
     void resize(const iXY &size);
     inline void resize(const int &x, const int &y)

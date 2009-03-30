@@ -31,7 +31,6 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     setTitle("Help Information");
     setSubTitle("");
 
-    setAllowResize(false);
     setAllowMove(false);
 
     moveTo(bodyTextRect.min);

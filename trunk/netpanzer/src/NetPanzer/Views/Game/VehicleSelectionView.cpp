@@ -164,7 +164,6 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     setTitle("Unit Production");
     setSubTitle("");
 
-    setAllowResize(false);
     setVisible(false);
     setBordered(true);
     setDisplayStatusBar(true);

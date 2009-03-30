@@ -61,7 +61,6 @@ MenuTemplateView::MenuTemplateView() : SpecialButtonView()
     setTitle("MenuTemplate");
     setSubTitle("");
 
-    setAllowResize(false);
     setVisible(false);
     setAllowMove(false);
     setDisplayStatusBar(false);

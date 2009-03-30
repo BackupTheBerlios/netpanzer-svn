@@ -46,7 +46,6 @@ FlagSelectionView::FlagSelectionView() : RMouseHackView()
     setTitle("Flag Selection");
     setSubTitle("");
 
-    setAllowResize(false);
     setAllowMove(false);
     setVisible(false);
 

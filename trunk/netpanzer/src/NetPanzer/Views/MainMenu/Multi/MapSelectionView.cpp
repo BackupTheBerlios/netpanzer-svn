@@ -47,7 +47,6 @@ MapSelectionView::MapSelectionView() : RMouseHackView()
     setTitle("Map Selection");
     setSubTitle("");
 
-    setAllowResize(false);
     setAllowMove(false);
     setVisible(false);
 

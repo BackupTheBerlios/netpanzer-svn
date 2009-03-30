@@ -31,7 +31,6 @@ IPAddressView::IPAddressView() : View()
     setTitle("Server IP Address");
     setSubTitle("");
 
-    setAllowResize(false);
     setAllowMove(false);
     setVisible(false);
 

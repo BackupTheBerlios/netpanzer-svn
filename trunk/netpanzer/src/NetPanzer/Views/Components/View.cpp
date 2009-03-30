@@ -101,22 +101,17 @@ void View::reset()
     setTitle("donut");
     setSubTitle("donut");
 
-    //scrollBar             = 0;
-
     removeComponents();
 
     moveAreaHeight  = DEFAULT_MOVE_AREA_HEIGHT;
     borderSize      = DEFAULT_BORDER_SIZE;
     snapToTolerance = DEFAULT_SNAP_TOLERANCE;
 
-    setAllowResize(true);
     setAllowMove(true);
     setBordered(true);
     setVisible(false);
     setDisplayStatusBar(false);
     setAlwaysOnBottom(false);
-
-    //setScrollBar(false);
 } // end reset
 
 // drawBorder
@@ -148,180 +143,6 @@ void View::drawTitle()
     sprintf(strBuf, "%s%s", title, subTitle);
 
     screen->bltStringCenteredInRect(r, strBuf, getActive() ? activeWindowTitleTextColor : inactiveWindowTitleTextColor);
-
-    if (getResize()) {
-        {
-            // Bottom-Left resize.
-            iXY verticalPos(min.x + borderSize, min.y + getSizeY() - borderSize - moveAreaHeight + 1);
-            iXY horizontalPos(min.x + borderSize + moveAreaHeight - 1, min.y + getSizeY() - borderSize);
-
-            screen->drawLine(verticalPos, horizontalPos, Color::white);
-            verticalPos.y++;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray224);
-            verticalPos.y++;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray192);
-            verticalPos.y++;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x--;
-        }
-
-        // Top-Left resize.
-        {
-            iXY verticalPos(min.x + borderSize, min.y + borderSize + moveAreaHeight - 1);
-            iXY horizontalPos(min.x + borderSize + moveAreaHeight - 1, min.y + borderSize);
-
-            screen->drawLine(verticalPos, horizontalPos, Color::white);
-            verticalPos.y--;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray224);
-            verticalPos.y--;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray192);
-            verticalPos.y--;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x--;
-        }
-
-        // Top-Right resize.
-        {
-            iXY verticalPos(min.x + getSizeX() - borderSize, min.y + borderSize + moveAreaHeight - 1);
-            iXY horizontalPos(min.x + getSizeX() - borderSize - moveAreaHeight, min.y + borderSize - 1);
-
-            screen->drawLine(verticalPos, horizontalPos, Color::white);
-            verticalPos.y--;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray224);
-            verticalPos.y--;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray192);
-            verticalPos.y--;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y--;
-            horizontalPos.x++;
-        }
-
-        // Bottom-Right resize.
-        {
-            iXY verticalPos(min.x + getSizeX() - borderSize, min.y + getSizeY() - borderSize - moveAreaHeight + 1);
-            iXY horizontalPos(min.x + getSizeX() - borderSize - moveAreaHeight + 1, min.y + getSizeY() - borderSize);
-
-            screen->drawLine(verticalPos, horizontalPos, Color::white);
-            verticalPos.y++;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray224);
-            verticalPos.y++;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray192);
-            verticalPos.y++;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-            screen->drawLine(verticalPos, horizontalPos, Color::gray160);
-            verticalPos.y++;
-            horizontalPos.x++;
-        }
-    }
 
 } // end View::drawTitle
 
@@ -366,8 +187,6 @@ void View::deactivate()
 
     doDeactivate();
 
-    highlightedButton     = -1;
-    prevHighlightedButton = -1;
     selectedInputField    = -1;
 
 } // end View::deactivate
@@ -386,18 +205,22 @@ void View::doDraw()
 
     // Draw all non-selected components.
     ComponentsIterator i;
-    for ( i=components.begin(); i != components.end(); i++) {
-        if (*i != focusComponent) {
+    for ( i=components.begin(); i != components.end(); ++i)
+    {
+        if (*i != focusComponent)
+        {
             (*i)->draw(clientRect.min.x, clientRect.min.y, *screen);
         }
     }
 
     // Now draw the selected component.
-    if (focusComponent != 0) {
+    if (focusComponent != 0)
+    {
         focusComponent->draw(clientRect.min.x, clientRect.min.y, *screen);
     }
 
-    if (getBordered()) {
+    if (getBordered())
+    {
         drawTitle();
         drawBorder();
     }
@@ -411,9 +234,10 @@ void View::doActivate()
 {
     // Tell all the components the mouse entered the view.
     ComponentsIterator i;
-    for ( i=components.begin(); i != components.end(); i++)
+    for ( i=components.begin(); i != components.end(); ++i)
     {
-        if ((*i)->contains(MouseInterface::getMousePosition())) {
+        if ((*i)->contains(MouseInterface::getMousePosition()))
+        {
             mMouseEvent me((*i),
                 mMouseEvent::MOUSE_EVENT_ENTERED, now(), 0, 
                 MouseInterface::getMouseX(), MouseInterface::getMouseY(), 0, false);
@@ -443,73 +267,6 @@ void View::doDeactivate()
         actionPerformed(me);
     }
 } // end View::doDeactivate
-
-
-// getMouseActions
-//---------------------------------------------------------------------------
-// Purpose: Find the actions associated with the position of the mouse arrow
-//          cursor in the window.
-//---------------------------------------------------------------------------
-int View::getMouseActions(const iXY &pos) const
-{
-    assert(this != 0);
-
-    int actions = 0;
-
-    if (!getVisible() || !getActive()) {
-        return actions;
-    }
-
-    if (!getBordered()) {
-        return actions;
-    }
-
-    if (getResize()) {
-        // Now lets check for a window resize
-        iXY minOff;
-        iXY maxOff;
-
-        minOff.x = abs(pos.x); maxOff.x = abs(pos.x - getSizeX());
-        minOff.y = abs(pos.y); maxOff.y = abs(pos.y - getSizeY());
-
-        // Check the left,  then the right
-        if      (minOff.x < RESIZE_XMIN) actions |= MA_RESIZE_LEFT;
-        else if (maxOff.x < RESIZE_XMIN) actions |= MA_RESIZE_RIGHT;
-
-        // Check the top, then the bottom
-        if      (minOff.y < RESIZE_YMIN) actions |= MA_RESIZE_TOP;
-        else if (maxOff.y < RESIZE_YMIN) actions |= MA_RESIZE_BOTTOM;
-
-        // If a left or right was turned on, then give more area for selecting the
-        // resize area
-        if (actions & (MA_RESIZE_LEFT | MA_RESIZE_RIGHT)) {
-            if      (minOff.y < RESIZE_YMAX) actions |= MA_RESIZE_TOP;
-            else if (maxOff.y < RESIZE_YMAX) actions |= MA_RESIZE_BOTTOM;
-        }
-
-        if (actions & (MA_RESIZE_TOP | MA_RESIZE_BOTTOM)) {
-            if      (minOff.x < RESIZE_XMAX) actions |= MA_RESIZE_LEFT;
-            else if (maxOff.x < RESIZE_XMAX) actions |= MA_RESIZE_RIGHT;
-        }
-    }
-
-    // Check for moving the window via the move area.
-    if (getAllowMove()) {
-        //iRect titleBar(borderSize, borderSize, getSizeX()-borderSize, borderSize + moveAreaHeight);
-        iRect titleBar(borderSize, borderSize, getSizeX() - borderSize, borderSize + moveAreaHeight);
-        if (titleBar.contains(pos)) return actions |= MA_MOVE;
-    }
-
-    // Check for moving the window via the status bar.
-    //if (getAllowMove())
-    //{
-    //	//iRect titleBar(borderSize, borderSize, getSizeX()-borderSize, borderSize + moveAreaHeight);
-    //	iRect titleBar(borderSize, getSizeY() - borderSize - DEFAULT_STATUS_BAR_HEIGHT, getSizeX() - borderSize, getSizeY() - borderSize);
-    //	if (titleBar.contains(pos)) return actions |= MA_MOVE;
-    //}
-
-    return actions;
-} // end getMouseActions
 
 // getScreenToClientPos
 //---------------------------------------------------------------------------
@@ -841,20 +598,6 @@ void View::mouseExit(const iXY &pos)
 
 } // end View::mouseExit
 
-// scrollBarMove
-//---------------------------------------------------------------------------
-// Purpose:
-//---------------------------------------------------------------------------
-void View::scrollBarMove(const iXY &prevPos, const iXY &newPos)
-{
-    (void) prevPos;
-    (void) newPos;
-    //if (scrollBar != 0)
-    //{
-    //	scrollBar->actionPerformed(newPos);
-    //}
-} // end scrollBarMove
-
 // drawInputFields
 //---------------------------------------------------------------------------
 // Purpose:
@@ -1059,16 +802,6 @@ void View::toggleView()
 {
     Desktop::toggleVisibility(searchName);
 } // end toggleView
-
-// setAllowResize
-//---------------------------------------------------------------------------
-// Purpose: Allows this view to be resized or not.
-//---------------------------------------------------------------------------
-void View::setAllowResize(const bool &newStatus)
-{
-    if (newStatus == true) status |=  STATUS_ALLOW_RESIZE;
-    else                   status &= ~STATUS_ALLOW_RESIZE;
-} // end setAllowResize
 
 // setDisplayStatusBar
 //---------------------------------------------------------------------------

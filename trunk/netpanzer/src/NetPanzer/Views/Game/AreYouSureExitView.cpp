@@ -45,7 +45,6 @@ AreYouSureExitView::AreYouSureExitView() : SpecialButtonView()
 void AreYouSureExitView::init()
 {
     setBordered(false);
-    setAllowResize(false);
     setDisplayStatusBar(false);
 
     resize(screen->getWidth(), screen->getHeight());

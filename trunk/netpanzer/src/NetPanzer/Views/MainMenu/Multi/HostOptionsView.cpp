@@ -210,7 +210,6 @@ HostOptionsView::HostOptionsView() : RMouseHackView()
     setTitle("Host Options");
     setSubTitle("");
 
-    setAllowResize(false);
     setAllowMove(false);
     setVisible(false);
 

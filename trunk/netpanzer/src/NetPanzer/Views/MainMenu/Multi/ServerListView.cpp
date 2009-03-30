@@ -48,7 +48,6 @@ ServerListView::ServerListView()
     moveTo(bodyTextRect.min + iXY(0, 170));
     resize(bodyTextRect.max - bodyTextRect.min - iXY(0,170));
 
-    setAllowResize(false);
     setAllowMove(false);
     setVisible(false);
 

@@ -53,7 +53,6 @@ LibView::LibView() : GameTemplateView()
     setTitle("Lib Stats");
     setSubTitle(" - F5");
 
-    setAllowResize(false);
     setAllowMove(true);
     setDisplayStatusBar(false);
     setVisible(false);

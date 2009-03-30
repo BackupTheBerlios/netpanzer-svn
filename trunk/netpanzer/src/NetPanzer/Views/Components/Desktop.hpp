@@ -29,18 +29,9 @@ class Surface;
 
 class Desktop
 {
-private: // Variables
-    enum { RESIZE_NONE,
-           RESIZE_TOPLEFT,
-           RESIZE_TOPRIGHT,
-           RESIZE_BOTTOMLEFT,
-           RESIZE_BOTTOMRIGHT };
-
-    static float      totalMouseDownTime;
-    static float      currentMouseDownTime;
+private:
     static std::vector<View*> views;
     static View      *focus;
-    static int        mouseActions;
     static iXY        lMouseDownPos;
     static iXY        rMouseDownPos;
     static iXY        prevMousePos;
@@ -50,29 +41,11 @@ private: // Variables
     static View      *rMouseView;
     static View      *mouseView;
     static View      *prevMouseView;
-    static TimeStamp  lDoubleClickDeadline;
-    static TimeStamp  rDoubleClickDeadline;
-    static float      doubleClickTime;
-    static int        mouseMoveStatus;
 
-    // Movement events. MOVE THIS OUT OF THIS CLASS!  INTO GAME_WIN.
-    enum { MM_LEFT  = (1U << 0) };
-    enum { MM_RIGHT = (1U << 1) };
-    enum { MM_UP    = (1U << 2) };
-    enum { MM_DOWN  = (1U << 3) };
+    static iXY mouseActionOffset;
 
-    // The following are used when the window is moved using move()
-    static iXY mouseActionOffset; // The displacement from the mouse press to th window
-
-private: // Functions
-    static void isMouseInBox(int mouseX, int mouseY, int x1, int y1, int x2, int y2);
-
-    static unsigned isMouseOverResizeArea(int mouseX, int mouseY);
-    static bool     isMouseOverMoveArea  (int mouseX, int mouseY);
-
-    static bool   isMouseInView(int mouseX, int mouseY);
+private:
     static View *findViewContaining(iXY p);
-    static void   doMouseActions(const iXY &mousePos);
 
 public:
     Desktop();
@@ -87,15 +60,11 @@ public:
     static void remove(View *view);
     static void draw();
 
-    static iXY      getMouseActionOffset  ()
-    {
-        return mouseActionOffset;
-    }
     static void     resetMouseActionOffset()
     {
         mouseActionOffset.zero();
     }
-
+    
     static int         getViewCount();
     static const char *getViewTitle(int viewNum);
     static const char *getViewSearchName(int viewNum);

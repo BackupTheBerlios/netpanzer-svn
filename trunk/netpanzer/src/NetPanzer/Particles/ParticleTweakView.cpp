@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ParticleTweakView::ParticleTweakView() : View()
 {
     setTitle("ParticleTweakView");
-    setAllowResize(false);
     setAllowMove(true);
     setDisplayStatusBar(true);
     setVisible(false);

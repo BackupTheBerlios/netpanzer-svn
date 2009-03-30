@@ -55,7 +55,6 @@ CodeStatsView::CodeStatsView() : GameTemplateView()
     setTitle("CodeStatsView");
     setSubTitle(" - F4");
 
-    setAllowResize(false);
     setAllowMove(true);
     setDisplayStatusBar(true);
     setVisible(false);

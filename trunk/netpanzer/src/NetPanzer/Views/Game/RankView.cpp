@@ -40,7 +40,6 @@ RankView::RankView() : GameTemplateView()
     setTitle("Rankings");
     setSubTitle(" - TAB");
 
-    setAllowResize(false);
     moveTo(gameconfig->rankposition);
     resize(iXY(450, 200));
     checkArea(iXY(screen->getWidth(),screen->getHeight()));

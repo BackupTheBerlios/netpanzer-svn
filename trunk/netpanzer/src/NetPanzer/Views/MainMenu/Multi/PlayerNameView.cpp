@@ -31,7 +31,6 @@ PlayerNameView::PlayerNameView() : View()
     setTitle("Player Name");
     setSubTitle("");
 
-    setAllowResize(false);
     setAllowMove(false);
     setVisible(false);
 

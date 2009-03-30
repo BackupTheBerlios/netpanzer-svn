@@ -55,7 +55,6 @@ GameView::GameView() : View()
 
     setBordered(false);
     setAlwaysOnBottom(true);
-    setAllowResize(false);
     setDisplayStatusBar(false);
     setVisible(false);
 

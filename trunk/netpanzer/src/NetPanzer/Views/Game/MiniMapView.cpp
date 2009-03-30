@@ -29,7 +29,6 @@ MiniMapView::MiniMapView() : GameTemplateView()
     setSearchName("MiniMapView");
     setTitle("MiniMapView");
     setSubTitle("");
-    setAllowResize(false);
     setDisplayStatusBar(false);
     setVisible(false);
     setAllowMove(true);

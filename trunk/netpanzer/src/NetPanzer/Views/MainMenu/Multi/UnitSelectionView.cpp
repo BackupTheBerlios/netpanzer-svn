@@ -28,7 +28,6 @@ UnitSelectionView::UnitSelectionView() : View()
     setTitle("Selects Your Units");
     setSubTitle("");
 
-    setAllowResize(false);
     setAllowMove(false);
     setDisplayStatusBar(true);
     setVisible(false);

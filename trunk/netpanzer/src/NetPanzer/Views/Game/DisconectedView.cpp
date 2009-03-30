@@ -48,7 +48,6 @@ void
 DisconectedView::init()
 {
     setBordered(true);
-    setAllowResize(false);
 
     resize(screen->getWidth(),screen->getHeight());
     moveTo(0,0);
