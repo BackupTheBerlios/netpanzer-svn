@@ -47,12 +47,7 @@ LoadingView::init()
 
 void
 LoadingView::doDraw()
-{
-    if ( Palette::getName() != "netpmenu" )
-    {
-        GameManager::loadPalette("netpmenu");
-    }
-    
+{    
     if (dirty)
         render();
     

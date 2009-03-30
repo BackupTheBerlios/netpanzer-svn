@@ -100,8 +100,6 @@ DisconectedView::onComponentClicked(Component* c)
 
         GameManager::drawTextCenteredOnScreen("Loading Main View...", Color::white);
 
-        GameManager::loadPalette("netpmenu");
-
         // Must remove the gameView first so that the initButtons detects that
         // and loads the correct buttons.
         Desktop::setVisibilityAllWindows(false);

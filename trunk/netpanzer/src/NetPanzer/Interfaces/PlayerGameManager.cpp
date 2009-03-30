@@ -177,8 +177,6 @@ void PlayerGameManager::initializeWindowSubSystem()
 
     Desktop::add(new LoadingView());
 
-    GameManager::loadPalette("netpmenu");
-
     Desktop::add(new MapSelectionView());
     Desktop::add(new MainMenuView());
     Desktop::add(new JoinView());
@@ -378,9 +376,6 @@ void PlayerGameManager::hostMultiPlayerGame()
     GameManager::startGameTimer();
 
     LoadingView::hide();
-
-    // Set the palette to the game palette.
-    GameManager::loadPalette( "netp");
 
     GameManager::setNetPanzerGameOptions();
 

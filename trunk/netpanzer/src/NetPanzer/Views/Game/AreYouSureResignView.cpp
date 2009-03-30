@@ -113,9 +113,6 @@ AreYouSureResignView::onComponentClicked(Component* c)
             //----------------------
             GameManager::quitNetPanzerGame();
             //----------------------
-
-            GameManager::loadPalette("netpmenu");
-
             // Must remove the gameView first so that the initButtons detects that
             // and loads the correct buttons.
             Desktop::setVisibilityAllWindows(false);

@@ -101,7 +101,6 @@ void FlagSelectionView::init()
             string fullname(DEFAULT_FLAGS_PATH);
             fullname += filenames[i];
             buttonimg.loadBMP(fullname.c_str());
-            buttonimg.mapFromPalette("netp");
 
             Button * newButton = new Button(filenames[i]);
             newButton->setCustomCode(FLAGBUTTONCODE);
@@ -161,10 +160,7 @@ FlagSelectionView::setSelectedFlag(string &fname)
     fullfile += fname;
     try
     {
-        Surface t;
-        t.loadBMP(fullfile.c_str());
-        t.mapFromPalette("netp");
-        playerFlag.copy(t);
+        playerFlag.loadBMP(fullfile.c_str());
         playerFlagSelected = fname;
     }
     catch (Exception &e)

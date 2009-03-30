@@ -251,10 +251,6 @@ int MapSelectionView::loadMaps()
 	}	
     }
 
-    for (size_t i = 0; i < mapList.size(); i++) {
-        mapList[i]->thumbnail.mapFromPalette("netp");
-    }
-
     if (mapList.size() == 0) {
         throw Exception("ERROR: No maps in map directory");
     }

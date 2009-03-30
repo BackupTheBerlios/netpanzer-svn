@@ -1626,38 +1626,6 @@ void Surface::bltStringInBox(const iRect &rect, const char *string, PIX color, i
 
 } // end Surface::bltStringInBox
 
-// mapFromPalette
-//--------------------------------------------------------------------------
-// Purpose: Maps this image from the specified palette to the current palette.
-//--------------------------------------------------------------------------
-void Surface::mapFromPalette(const std::string& oldPalette)
-{
-    // Load the source palette.
-    Uint8     bestFitArray[256];
-    SDL_Color sourceColor[256];
-
-    try {
-        std::string filename = "wads/" + oldPalette + ".act";
-	std::auto_ptr<filesystem::ReadFile> file(
-                filesystem::openRead(filename));
-
-	for (int i = 0; i < 256; i++) {
-	    file->read(&sourceColor[i], 3, 1);
-	}
-
-	for (int i = 0; i < 256; i++) {
-	    bestFitArray[i] = Palette::findNearestColor(sourceColor[i].r,sourceColor[i].g,sourceColor[i].b);
-	}
-
-	for (size_t x = 0; x < (size_t) (getWidth() * getHeight() * getNumFrames()); x++) {
-	    frame0[x] = bestFitArray[frame0[x]];
-	}
-    } catch(std::exception& e) {
-	throw Exception("Error while reading palette '%s': %s",
-		oldPalette.c_str(), e.what());
-    }
-} // end Surface::mapFromPalette
-
 // drawBoxCorners
 //--------------------------------------------------------------------------
 // Purpose: Draws lines in the corners of the surface of the specified length
