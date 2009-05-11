@@ -89,7 +89,10 @@ ClientSocket::initId()
 ClientSocket::~ClientSocket()
 {
     if (socket)
+    {
+	logStatistics();
         socket->destroy();
+    }
 }
 
 void
@@ -111,6 +114,7 @@ void ClientSocket::sendMessage(const void* data, size_t size)
         }
         memcpy(sendbuffer+sendpos, data, size);
         sendpos += size;
+	++packetsSent; // it may NOT be a real packet;
     }
 }
 
@@ -129,9 +133,11 @@ ClientSocket::sendRemaining()
         {
             memmove(sendbuffer, sendbuffer+s, sendpos-s);
             sendpos -= s;
+	    bytesSent += s;
         }
         else
         {
+	    bytesSent += s;
             sendpos = 0;
         }
     }
@@ -143,6 +149,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
     (void)so;
     int dataptr = 0;
     unsigned int remaining = len;
+    bytesReceived += len;
     Uint16 packetsize=0;
     while ( remaining ) {
         if ( !tempoffset ) {
@@ -167,6 +174,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             }
             
             if ( remaining >= packetsize ) {
+		++packetsReceived;
                 MessageRouter::enqueueIncomingPacket(data+dataptr, packetsize, playerIndex, this);
                 remaining -= packetsize;
                 dataptr   += packetsize;
@@ -215,6 +223,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             }
             
             if ( tempoffset == packetsize ) {
+		++packetsReceived;
                 MessageRouter::enqueueIncomingPacket(tempbuffer, packetsize, playerIndex, this);
                 tempoffset = 0;
             }
@@ -225,8 +234,13 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
 void
 ClientSocket::onConnected(network::TCPSocket *so)
 {
-    LOGGER.debug("ClientSocket: connected, id=%d", id);
+    connectStartSeconds = time(0);
+    bytesReceived = 0;
+    packetsReceived = 0;
+    bytesSent = 0;
+    packetsSent = 0;
     socket = so;
+    LOGGER.debug("ClientSocket: connected [%s] id=%d at %d", getIPAddress().c_str(), id, connectStartSeconds);
     if ( observer )
     {
         observer->onClientConnected(this);
@@ -237,7 +251,8 @@ void
 ClientSocket::onDisconected(network::TCPSocket *so)
 {
     (void)so;
-    LOGGER.debug("ClientSocket: Disconected id=%d", id);
+    LOGGER.debug("ClientSocket: Disconected [%s] id=%d", getIPAddress().c_str(), id);
+    logStatistics();
     socket=0;
     disconnect("Socket Disconnected");
 }
@@ -246,9 +261,25 @@ void
 ClientSocket::onSocketError(network::TCPSocket *so, const char * msg)
 {
     (void)so;
-    LOGGER.warning("ClientSocket: Network connection error id=%d, msg: '%s'", id, msg);
+    LOGGER.warning("ClientSocket: Network connection error [%s] id=%d, msg: '%s'", getIPAddress().c_str(), id, msg);
+    logStatistics();
     socket=0;
     disconnect(msg);
+}
+
+void
+ClientSocket::logStatistics()
+{
+    time_t connectedTime = time(0) - connectStartSeconds;
+    LOGGER.warning( "ClientSocket statistics for [%s]:\n"
+		    " * Seconds Connected: %d\n"
+		    " * Packets Received/Sent: %u / %u\n"
+		    " * Bytes Received/Sent: %u / %u",
+		    getIPAddress().c_str(),
+		    connectedTime,
+		    packetsReceived, packetsSent,
+		    bytesReceived, bytesSent
+		  );
 }
 
 std::string

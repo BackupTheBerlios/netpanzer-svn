@@ -69,6 +69,8 @@ InfoSocket::onDataReceived(UDPSocket *s, const Address &from, const char *data, 
     string querypacket(data,len);
     StringTokenizer qtokenizer(querypacket, '\\');
     
+    LOGGER.info("Infosocket:: received packet from [%s]", s->getAddress().getIP().c_str());
+
     string query;
     while ( !(query = qtokenizer.getNextToken()).empty()) {
         LOGGER.debug("InfoSocket:: Received query '%s'", query.c_str());

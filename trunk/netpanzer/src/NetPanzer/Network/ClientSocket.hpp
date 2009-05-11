@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __UILIB_NETWORK_CLIENTSOCKET_HPP__
 
 #include <string>
+#include <time.h>
 
 #include "Classes/Network/NetPacket.hpp"
 #include "ProxyServer.hpp"
@@ -79,6 +80,14 @@ private:
     Uint16 tempoffset;
     int id;
     int playerIndex;
+
+    /** statistics */
+    void logStatistics();
+    unsigned int bytesReceived;
+    unsigned int packetsReceived;
+    unsigned int bytesSent;
+    unsigned int packetsSent;
+    time_t connectStartSeconds;
 };
 
 #endif
