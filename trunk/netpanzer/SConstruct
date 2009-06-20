@@ -74,6 +74,10 @@ Help(opts.GenerateHelpText(env))
 # Create Environments
 ################################################################
 
+if not (env['mode'] in ['debug', 'release']):
+    print "Error: mode can only be 'debug' or 'release', found: " + env['mode']
+    Exit(1)
+
 crossmingwenv = env.Clone();
 crosslinuxenv = env.Clone();
 
@@ -86,16 +90,16 @@ if 'crossmingw' in COMMAND_LINE_TARGETS:
         print 'You need to set the full path of sdl-config for mingw cross compilation'
         Exit(1)
 
-    #finalplatform = 'mingw'
-    crossmingwenv = Environment(ENV = {'PATH' : os.environ['PATH']}, tools = ['mingw'], options=opts )
-    print crossmingwenv
-    crossmingwenv.Replace( CXX = env['crossmingwcompilerprefix'] + env['CXX'] )
-    crossmingwenv.Replace( CC = env['crossmingwcompilerprefix'] + env['CC'] )
-    crossmingwenv.Replace( AR = env['crossmingwcompilerprefix'] + env['AR'] )
-    crossmingwenv.Replace( RANLIB = env['crossmingwcompilerprefix'] + env['RANLIB'] )
+    crossmingwenv = Environment( ENV = {'PATH' : os.environ['PATH']}, tools = ['mingw'], options=opts )
+    crossmingwenv.Replace( CXX = env['crossmingwcompilerprefix'] + crossmingwenv['CXX'] )
+    crossmingwenv.Replace( CC = env['crossmingwcompilerprefix'] + crossmingwenv['CC'] )
+    crossmingwenv.Replace( AR = env['crossmingwcompilerprefix'] + crossmingwenv['AR'] )
+    crossmingwenv.Replace( RANLIB = env['crossmingwcompilerprefix'] + crossmingwenv['RANLIB'] )
+    crossmingwenv.Replace( RC = env['crossmingwcompilerprefix'] + crossmingwenv['RC'] )
     crossmingwenv.Append( CCFLAGS = [ '-Dsocklen_t=int' ] )
     crossmingwenv.Append( LDFLAGS = [ '-mwindows' ] )
     crossmingwenv.Append( LIBS = [ 'ws2_32', 'mingw32' ] )
+    crossmingwenv['WINICON'] = crossmingwenv.RES( 'support/icon/npicon.rc' )
     crossmingwenv['PROGSUFFIX'] = '.exe'
 
 if 'crosslinux' in COMMAND_LINE_TARGETS:
@@ -107,19 +111,12 @@ if 'crosslinux' in COMMAND_LINE_TARGETS:
         print 'You need to set the full path of sdl-config for linux cross compilation'
         Exit(1)
 
-    #finalplatform = 'linux'
     crosslinuxenv= Environment(ENV = {'PATH' : os.environ['PATH']},tools = ['gcc','g++','ar','gnulink'], options=opts )
     crosslinuxenv.Replace( CXX = env['crosslinuxcompilerprefix'] + env['CXX'] )
     crosslinuxenv.Replace( CC = env['crosslinuxcompilerprefix'] + env['CC'] )
     crosslinuxenv.Replace( AR = env['crosslinuxcompilerprefix'] + env['AR'] )
     crosslinuxenv.Replace( RANLIB = env['crosslinuxcompilerprefix'] + env['RANLIB'] )
-    crosslinuxenv.Command('libstdc++.a', None, Action('ln -sf `%s -print-file-name=libstdc++.a` build/linux/' % crosslinuxenv['CXX'] ) )
-    crosslinuxenv.Append( LIBS = [ 'libstdc++.a' ] )
-
-
-if not (env['mode'] in ['debug', 'release']):
-    print "Error: mode can only be 'debug' or 'release', found: " + env['mode']
-    Exit(1)
+    crosslinuxenv.Append( _LIBFLAGS = [ '`' + crosslinuxenv['CXX'] + ' -print-file-name=libstdc++.a`' ] )
 
 env['FINALBUILDDIR'] = 'build/' + env['mode'] + '/'
 env['FINALLIBSDIR'] = env['FINALBUILDDIR'] + 'libs/'
@@ -203,6 +200,7 @@ elif thisplatform == 'win32':
     networkenv.Append( CCFLAGS = [ '-Dsocklen_t=int' ] )
     env.Append( _LIBFLAGS = [ '-mwindows' ] )
     env.Prepend( _LIBFLAGS = [ 'c:/mingw/lib/SDL_mixer.lib' ] )
+    env['WINICON'] = env.RES( 'support/icon/npicon.rc' )
     SetupSpawn(env)
 else:
     env.ParseConfig(env['sdlconfig'] + ' --cflags --libs')
@@ -283,7 +281,13 @@ npdirs = """
 """
 
 env.Append( NPSOURCES = globSources(env, 'src/NetPanzer', npdirs, "*.cpp") )
+if env.has_key('WINICON'):
+    env.Append( NPSOURCES = env['WINICON'] )
+
 crossmingwenv.Append( NPSOURCES = globSources(crossmingwenv, 'src/NetPanzer', npdirs, "*.cpp") )
+if crossmingwenv.has_key('WINICON'):
+    crossmingwenv.Append( NPSOURCES = crossmingwenv['WINICON'] )
+    
 crosslinuxenv.Append( NPSOURCES = globSources(crosslinuxenv, 'src/NetPanzer', npdirs, "*.cpp") )
 
 env.Append( NPLIBS = ['nplua','np2d','npnetwork','nplibs','npphysfs'] )
@@ -302,6 +306,8 @@ if crosslinuxenv.has_key('LIBS'):
 env.Append( NPLIBPATH = env['FINALLIBSDIR'] )
 crossmingwenv.Append( NPLIBPATH = crossmingwenv['FINALLIBSDIR'] )
 crosslinuxenv.Append( NPLIBPATH = crosslinuxenv['FINALLIBSDIR'] )
+
+
 
 netpanzer = env.Program( env['FINALEXENAME'], env['NPSOURCES'],
              LIBS=env['NPLIBS'], LIBPATH=env['NPLIBPATH'] )
