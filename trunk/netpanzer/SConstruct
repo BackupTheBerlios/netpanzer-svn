@@ -162,15 +162,26 @@ crosslinuxnetworkenv = crosslinuxenv.Clone()
 # Set NetPanzer Version
 ################################################################
 
-NPVERSION = 'svn'
+NPVERSION = ''
 SVERSION = ''
+
+try:
+    FILE = open('RELEASE_VERSION', 'r')
+    NPVERSION = FILE.readline().strip(' \n\r')
+    FILE.close()
+except:
+    pass
+
 try:
     SVERSION = os.popen('svnversion').read()[:-1]
     SVERSION = SVERSION.split(':')[-1]
-except e:
+except:
     pass
 
+print "NPVERSION = " + NPVERSION
 print "SVERSION = " + SVERSION
+if NPVERSION == '' and SVERSION != '':
+    NPVERSION = 'svn-' + SVERSION;
 
 env.Append( CCFLAGS = [ '-DPACKAGE_VERSION=\\"' + NPVERSION + '\\"' ] )
 crossmingwenv.Append( CCFLAGS = [ '-DPACKAGE_VERSION=\\"' + NPVERSION + '\\"' ] )
