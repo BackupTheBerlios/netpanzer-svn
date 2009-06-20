@@ -1,8 +1,0 @@
-SubDir TOP src Lib optionmm ;
-
-Library optionmm
-    : [ Wildcard *.cpp *.hpp ]
-    : noinstall
-;
-Help optionmm : "Build the optionmm support library" ;
-

@@ -1,3 +1,0 @@
-SubDir TOP sound ;
-
-InstallData [ Wildcard *.wav ] : sound ;

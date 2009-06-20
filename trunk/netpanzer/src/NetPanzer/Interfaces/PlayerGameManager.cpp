@@ -110,9 +110,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 PlayerGameManager::PlayerGameManager()
     : sdlVideo(0), heartbeat(0), infosocket(0)
 {
-    //fontManager.loadFont("fixed10", "fonts/fixed10.pcf", 10);
-
-    showNewPanel = false;
+    // nothing
 }
 
 //-----------------------------------------------------------------
@@ -197,6 +195,7 @@ void PlayerGameManager::initializeWindowSubSystem()
 
     Desktop::add(new IPAddressView());
     Desktop::add(new ServerListView());
+    Desktop::add(new DesktopView());
 
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("MainView", true);
@@ -442,20 +441,6 @@ bool PlayerGameManager::mainLoop()
 //-----------------------------------------------------------------
 void PlayerGameManager::processSystemKeys()
 {
-    if (Desktop::getVisible("GameView"))
-    {
-        if (KeyboardInterface::getKeyPressed( SDLK_F12 ))
-        {
-            showNewPanel = !showNewPanel;
-        }
-        
-        if (KeyboardInterface::getKeyPressed( SDLK_F5 ))
-        {
-            //  DEBUG VIEW
-            Desktop::toggleVisibility( "LibView" );
-        }
-    }
-
     if (KeyboardInterface::getKeyState( SDLK_LALT ) ||
             KeyboardInterface::getKeyState( SDLK_RALT ))
     {
@@ -465,6 +450,12 @@ void PlayerGameManager::processSystemKeys()
             GameManager::setVideoMode();
         }
     } // ** LFT_ALT or RGT_ALT pressed
+
+    if (KeyboardInterface::getKeyPressed(SDLK_F3))
+    {
+        Desktop::toggleVisibility( "DesktopView" );
+    }
+
 
     if (Desktop::getView("GameView")->getVisible())
     {
@@ -477,17 +468,18 @@ void PlayerGameManager::processSystemKeys()
         {
             Desktop::toggleVisibility( "RankView" );
         }
-        
-        if (KeyboardInterface::getKeyPressed(SDLK_F3))
-        {
-            Desktop::toggleVisibility( "DesktopView" );
-        }
-        
+                
         if (KeyboardInterface::getKeyPressed(SDLK_F4))
         {
             Desktop::toggleVisibility( "CodeStatsView" );
         }
-        
+
+        if (KeyboardInterface::getKeyPressed( SDLK_F5 ))
+        {
+            //  DEBUG VIEW
+            Desktop::toggleVisibility( "LibView" );
+        }
+   
         if (KeyboardInterface::getKeyPressed(SDLK_F1))
         {
             Desktop::toggleVisibility( "HelpScrollView" );

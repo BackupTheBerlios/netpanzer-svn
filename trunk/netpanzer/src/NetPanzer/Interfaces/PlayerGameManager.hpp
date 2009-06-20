@@ -58,7 +58,6 @@ private:
     //Panels::TestPanel * testpanel;
     //UI::FontManager fontManager;
     SDLVideo* sdlVideo;
-    bool showNewPanel;
 
     Heartbeat * heartbeat;
     InfoSocket * infosocket;

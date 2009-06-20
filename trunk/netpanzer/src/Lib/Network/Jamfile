@@ -1,8 +1,0 @@
-SubDir TOP src Lib Network ;
-
-Library netpanzernetwork
-    : [ Wildcard *.cpp *.hpp ]
-    : noinstall
-;
-C++Flags netpanzernetwork : $(SDL_CFLAGS) ;
-

@@ -1,9 +1,0 @@
-SubDir TOP src Lib Types ;
-
-Library netpanzertypes
-    : [ Wildcard *.cpp *.hpp ]
-    : noinstall
-;
-ExternalLibs netpanzertypes : XML SDL PHYSFS ;
-Help netpanzertypes : "Build the netpanzer types support library" ;
-

@@ -1,3 +1,0 @@
-SubDir TOP scripts ;
-
-InstallData [ Wildcard *.lua ] : scripts ;

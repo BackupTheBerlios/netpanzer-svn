@@ -1,4 +1,0 @@
-SubDir TOP fonts ;
-
-InstallData [ Wildcard *.pcf ] : fonts ;
-
