@@ -218,12 +218,14 @@ else:
     env.Append( NPLIBS = [ 'SDL_mixer' ] )
 
 # for crossmingw platform
-crossmingwenv.ParseConfig(env['crossmingwsdlconfig'] + ' --cflags --libs')
-crossmingwenv.Append( NPLIBS = [ 'SDL_mixer' ] )
+if 'crossmingw' in COMMAND_LINE_TARGETS:
+    crossmingwenv.ParseConfig(env['crossmingwsdlconfig'] + ' --cflags --libs')
+    crossmingwenv.Append( NPLIBS = [ 'SDL_mixer' ] )
 
 # for crosslinux platform
-crosslinuxenv.ParseConfig(env['crosslinuxsdlconfig'] + ' --cflags --libs')
-crosslinuxenv.Append( NPLIBS = [ 'SDL_mixer' ] )
+if 'crosslinux' in COMMAND_LINE_TARGETS:
+    crosslinuxenv.ParseConfig(env['crosslinuxsdlconfig'] + ' --cflags --libs')
+    crosslinuxenv.Append( NPLIBS = [ 'SDL_mixer' ] )
 
 ################################################################
 # Makes libs
