@@ -60,6 +60,7 @@ def MakeStaticLib(localenv, libname, libdirs, pattern):
 opts = Options()
 opts.AddOptions(
     ('mode','set compile mode to debug or release','release'),
+    ('datadir','define the extra directory where the netpanzer will look for data files, usefull for linux distributions, defaults to no extra directory',''),
     ('sdlconfig','sets the sdl-config full path', 'sdl-config'),
     ('crosslinuxcompilerprefix', 'sets the prefix for the cross linux compiler, example: i686-pc-linux-gnu-', ''),
     ('crossmingwcompilerprefix', 'sets the prefix for the cross mingw compiler, example: i686-mingw32-', ''),
@@ -184,6 +185,9 @@ if NPVERSION == '' and SVERSION != '':
     NPVERSION = 'svn-' + SVERSION;
 
 env.Append( CCFLAGS = [ '-DPACKAGE_VERSION=\\"' + NPVERSION + '\\"' ] )
+if env['datadir'] != '':
+    env.Append( CCFLAGS = [ '-DNP_DATADIR=\\"' +  env['datadir'] + '\\"' ])
+    
 crossmingwenv.Append( CCFLAGS = [ '-DPACKAGE_VERSION=\\"' + NPVERSION + '\\"' ] )
 crosslinuxenv.Append( CCFLAGS = [ '-DPACKAGE_VERSION=\\"' + NPVERSION + '\\"' ] )
 
@@ -269,28 +273,10 @@ MakeStaticLib(crosslinuxenv, 'nplibs', 'ArrayUtil INIParser Types Util optionmm'
 ################################################################
 
 npdirs = """
-    Bot
-    Classes
-    Classes/AI
-    Classes/Network
-    Core
-    Interfaces
-    Network
-    Objectives
-    Particles
-    PowerUps
-    Resources
-    Scripts
-    System
-    Units
-    Weapons
-    Views
-    Views/Components
-    Views/Game
-    Views/MainMenu
-    Views/MainMenu/Multi
-    Views/MainMenu/Multi/MasterServer
-    Views/MainMenu/Options
+    Bot Classes Classes/AI Classes/Network Core Interfaces Network
+    Objectives Particles PowerUps Resources Scripts System Units Weapons
+    Views Views/Components Views/Game Views/MainMenu Views/MainMenu/Multi
+    Views/MainMenu/Multi/MasterServer Views/MainMenu/Options
 """
 
 env.Append( NPSOURCES = globSources(env, 'src/NetPanzer', npdirs, "*.cpp") )
@@ -319,8 +305,6 @@ if crosslinuxenv.has_key('LIBS'):
 env.Append( NPLIBPATH = env['FINALLIBSDIR'] )
 crossmingwenv.Append( NPLIBPATH = crossmingwenv['FINALLIBSDIR'] )
 crosslinuxenv.Append( NPLIBPATH = crosslinuxenv['FINALLIBSDIR'] )
-
-
 
 netpanzer = env.Program( env['FINALEXENAME'], env['NPSOURCES'],
              LIBS=env['NPLIBS'], LIBPATH=env['NPLIBPATH'] )
