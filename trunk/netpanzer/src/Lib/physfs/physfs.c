@@ -245,7 +245,8 @@ static void __PHYSFS_quick_sort(void *a, PHYSFS_uint32 lo, PHYSFS_uint32 hi,
                 break;
             swapfn(a, i, j);
         } /* while */
-        swapfn(a, i, hi-1);
+        if (i != (hi-1))
+            swapfn(a, i, hi-1);
         __PHYSFS_quick_sort(a, lo, j, cmpfn, swapfn);
         __PHYSFS_quick_sort(a, i+1, hi, cmpfn, swapfn);
     } /* else */
@@ -1978,6 +1979,8 @@ PHYSFS_sint64 PHYSFS_read(PHYSFS_File *handle, void *buffer,
     FileHandle *fh = (FileHandle *) handle;
 
     BAIL_IF_MACRO(!fh->forReading, ERR_FILE_ALREADY_OPEN_W, -1);
+    BAIL_IF_MACRO(objSize == 0, NULL, 0);
+    BAIL_IF_MACRO(objCount == 0, NULL, 0);
     if (fh->buffer != NULL)
         return(doBufferedRead(fh, buffer, objSize, objCount));
 
@@ -2011,6 +2014,8 @@ PHYSFS_sint64 PHYSFS_write(PHYSFS_File *handle, const void *buffer,
     FileHandle *fh = (FileHandle *) handle;
 
     BAIL_IF_MACRO(fh->forReading, ERR_FILE_ALREADY_OPEN_R, -1);
+    BAIL_IF_MACRO(objSize == 0, NULL, 0);
+    BAIL_IF_MACRO(objCount == 0, NULL, 0);
     if (fh->buffer != NULL)
         return(doBufferedWrite(handle, buffer, objSize, objCount));
 
