@@ -17,15 +17,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "Scripts/ScriptManager.hpp"
-
-#include "lua/lua.hpp"
-
 #ifdef WIN32
-#include <windows.h>
+  #include <windows.h>
 #else
-#include <sys/types.h>
-#include <unistd.h>
+  #include <sys/types.h>
+  #include <unistd.h>
 #endif
 
 #include <fstream>
@@ -37,10 +33,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <signal.h>
 #include "SDL.h"
 
-#include <optionmm/command_line.hpp>
+#include "optionmm/command_line.hpp"
 
 #include "Util/Log.hpp"
-//#include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 
 #include "Interfaces/BaseGameManager.hpp"
@@ -50,6 +45,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Core/NetworkGlobals.hpp"
 #include "Scripts/ScriptManager.hpp"
 #include "2D/Palette.hpp"
+#include "lua/lua.hpp"
 
 //---------------------------------------------------------------------------
 
@@ -184,26 +180,50 @@ BaseGameManager *initialise(int argc, char** argv)
     }
 
 #ifdef NP_DATADIR
-    try {
+    try
+    {
 	filesystem::addToSearchPath(NP_DATADIR);
-    } catch(...)
-    { }
-#endif
-
-#ifdef __APPLE__
-    // Mac OS X puts the data files into NetPanzer.app/Contents/Resources
-    try {
-      std::ostringstream dir;
-      dir << PHYSFS_getBaseDir() << "/NetPanzer.app/Contents/Resources/";
-      filesystem::addToSearchPath(dir.str().c_str());
-    } catch(...)
+    }
+    catch(...)
     { }
 #endif
 
     if(dedicated_option.value())
+    {
         LOGGER.openLogFile("server");
+    }
     else
+    {
         LOGGER.openLogFile("netpanzer");
+    }
+
+#ifdef __APPLE__
+    // Mac OS X puts the data files into NetPanzer.app/Contents/Resources
+    try
+    {
+        char * relpath = strdup(argv[0]);
+        char * spos = strrchr(relpath, '/');
+        if ( spos )
+        {
+            *spos = 0; // remove '/netpanzer';
+        }
+
+        spos = strrchr(relpath, '/');
+        if ( spos )
+        {
+            *spos = 0; // remove '/MacOS'
+        }
+        // relpath should have the path up until Contents in the app bundle
+
+        std::ostringstream dir;
+        dir << relpath << "/Resources/";
+        filesystem::addToSearchPath(dir.str().c_str());
+    }
+    catch(...)
+    { }
+#endif
+
+    
 
 #ifdef WIN32
     // SDL redirects stdout and stderr to 2 textfiles, better open a new console
