@@ -223,6 +223,8 @@ static void CustomApplicationMain (int argc, char **argv)
 
     /* Create SDLMain and make it the app delegate */
     sdlMain = [[SDLMain alloc] init];
+    [[NSAppleEventManager sharedAppleEventManager] setEventHandler:sdlMain andSelector:@selector(handleOpenURL:withReplyEvent:) forEventClass:kInternetEventClass andEventID:kAEGetURL];
+
     [NSApp setDelegate:sdlMain];
     
     /* Start the main event loop */
@@ -283,6 +285,19 @@ static void CustomApplicationMain (int argc, char **argv)
     return TRUE;
 }
 
+- (void)handleOpenURL:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent
+{
+	NSString *url = [[event paramDescriptorForKeyword:keyDirectObject] stringValue];
+	if ( url )
+	{
+		const char * cstring = [url UTF8String];
+		char * cparam = SDL_strdup("-c");
+		char * cstringparam = SDL_strdup(cstring);
+		gArgv[gArgc++] = cparam;
+		gArgv[gArgc++] = cstringparam;
+		gArgv[gArgc] = NULL;
+	}
+}
 
 /* Called when the internal event loop has just started running */
 - (void) applicationDidFinishLaunching: (NSNotification *) note

@@ -64,6 +64,17 @@ cat << EOF > "${CONTENTSDIR}/Info.plist"
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>0.0.1d1</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>NetPanzer game URL</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>netpanzer</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
 EOF
