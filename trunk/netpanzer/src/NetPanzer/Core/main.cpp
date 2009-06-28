@@ -182,7 +182,7 @@ BaseGameManager *initialise(int argc, char** argv)
 #ifdef NP_DATADIR
     try
     {
-	filesystem::addToSearchPath(NP_DATADIR);
+		filesystem::addToSearchPath(NP_DATADIR);
     }
     catch(...)
     { }
@@ -223,7 +223,33 @@ BaseGameManager *initialise(int argc, char** argv)
     { }
 #endif
 
-    
+#ifndef WIN32
+    // Handle "datadir=" at the end of the executable file to find the data dir.
+	{
+		FILE *f = fopen(argv[0], "r");
+		if ( f )
+		{
+			char extradata[257];
+			fseek(f, -256, SEEK_END);
+			fread(extradata, 256, 1, f);
+			extradata[256]=0;
+			if ( !strncmp(extradata,"datadir=", 8) )
+			{
+				for ( int bytepos=255; bytepos>8 && extradata[bytepos]==' '; --bytepos )
+				{
+					extradata[bytepos]=0;
+				}
+				try
+				{
+					filesystem::addToSearchPath(extradata+8);
+				}
+				catch(...)
+				{ }
+			}
+			fclose(f);
+		}
+	}
+#endif
 
 #ifdef WIN32
     // SDL redirects stdout and stderr to 2 textfiles, better open a new console

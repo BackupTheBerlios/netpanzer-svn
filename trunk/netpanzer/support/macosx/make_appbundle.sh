@@ -22,17 +22,9 @@ hdiutil attach "${TEMPDMG}" -mountpoint "${DMGROOT}"
 
 mkdir "${CONTENTSDIR}" "${CONTENTSDIR}"/{Frameworks,MacOS,Resources}
 
-echo -n "Copying files"
-find cache maps pics powerups scripts sound units wads ! -type d  ! -path '*/.svn/*' ! -iname '.DS_Store' -print | \
-	while read fname; do 
-		DNAME="`dirname \"${fname}\"`"
-		[ ! -d "${CONTENTSDIR}/Resources/${DNAME}" ] && mkdir -p "${CONTENTSDIR}/Resources/${DNAME}"
-		cp "${fname}" "${CONTENTSDIR}/Resources/${fname}"
-		echo -n "."
-	done
-	
-cp BUGS ChangeLog COPYING LICENSE-physfs.txt README README-zlib123.txt RELNOTES TODO "${DMGDOC}"
-echo -n "."
+support/scripts/copy_datafiles.sh "${CONTENTSDIR}/Resources"
+support/scripts/copy_docfiles.sh "${DMGDOC}"
+
 cp support/icon/netpanzer.icns "${CONTENTSDIR}/Resources"
 echo -n "."
 cp netpanzer "${CONTENTSDIR}/MacOS/"
