@@ -142,7 +142,7 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
     if (selection_box_active)
         return _cursor_regular;
 
-    if( manual_fire_state == true )
+    if( manual_fire_state == true && working_list.isSelected() )
     {
         return  _cursor_enemy_unit;
     }
