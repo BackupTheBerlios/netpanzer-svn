@@ -30,6 +30,8 @@ protected:
     static bool *alliance_matrix;
 
     static void resetAllianceMatrix();
+    static void setAlliance( unsigned short by_player, unsigned short with_player );
+    static void clearAlliance( unsigned short by_player, unsigned short with_player );
 
     static unsigned short local_player_index;
 
@@ -49,11 +51,8 @@ public:
     static void setKill(PlayerState* by_player, PlayerState* on_player,
             UnitType unit_type );
 
-    static void setAlliance( unsigned short by_player, unsigned short with_player );
-
-    static void clearAlliance( unsigned short by_player, unsigned short with_player );
-
     static bool isAllied(unsigned short player, unsigned short with_player);
+	static bool isSingleAllied(unsigned short player, unsigned short with_player);
 
     static void lockPlayerStats();
     static void unlockPlayerStats();
@@ -113,6 +112,7 @@ public:
     static bool syncNextPlayerState( NetworkPlayerState &dest, int *percent_complete);
     static void processNetMessage(const NetMessage *message );
     static void disconnectPlayerCleanup( Uint16 index );
+	static void disconnectedPlayerAllianceCleanup( Uint16 index );
 };
 
 #endif // ** _PLAYERINTERFACE_HP

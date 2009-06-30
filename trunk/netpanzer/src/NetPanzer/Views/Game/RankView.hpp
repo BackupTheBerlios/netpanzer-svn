@@ -20,11 +20,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __RankView_hpp__
 #define __RankView_hpp__
 
+#include <vector>
+
 #include "Views/Components/View.hpp"
 #include "2D/Surface.hpp"
 #include "GameTemplateView.hpp"
 #include "Views/Components/ScrollBar.hpp"
 
+class PlayerState;
 
 //---------------------------------------------------------------------------
 class RankView : public GameTemplateView
@@ -33,7 +36,11 @@ private:
     int viewableMessageCount;
     enum { ITEM_GAP_SPACE = 10 };
     void drawPlayerStats( unsigned int flagHeight);
-
+	Surface allyImage;
+	Surface allyRequestImage;
+	Surface allyOtherImage;
+	Surface noAllyImage;
+    std::vector<const PlayerState*> states;
     ScrollBar *scrollBar;
 
 public:
@@ -45,6 +52,9 @@ public:
 
     virtual void doDraw();
     virtual void notifyMoveTo();
+	
+protected:
+	virtual void lMouseDown(const iXY &pos);
 }
 ; // end _WIN
 

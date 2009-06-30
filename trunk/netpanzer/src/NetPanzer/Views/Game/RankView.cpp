@@ -26,6 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "RankView.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Classes/ScreenSurface.hpp"
+#include "Classes/Network/PlayerNetMessage.hpp"
+#include "Classes/Network/NetworkClient.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
@@ -41,11 +43,12 @@ RankView::RankView() : GameTemplateView()
     setSubTitle(" - TAB");
 
     moveTo(gameconfig->rankposition);
-    resize(iXY(450, 200));
+    resize(iXY(450 + 20, 200));
     checkArea(iXY(screen->getWidth(),screen->getHeight()));
 
-    const unsigned MAX_NAME_CHARS      = 20;
+    const unsigned MAX_ALLY_CHARS		=  6;
     const unsigned MAX_FLAG_CHARS      =  5;
+	const unsigned MAX_NAME_CHARS      = 20;
     const unsigned MAX_KILLS_CHARS     =  6;
     const unsigned MAX_LOSSES_CHARS    =  7;
     const unsigned MAX_POINTS_CHARS    =  7;
@@ -55,10 +58,12 @@ RankView::RankView() : GameTemplateView()
 
     unsigned xOffset = 0;
     unsigned yOffset = 16;
+    add( new Label( xOffset, yOffset, "*Flag", Color::red, Color::gray64, true) );
+    xOffset += MAX_ALLY_CHARS*CHAR_XPIX;
+//    add( new Label( xOffset, yOffset, "Flag", Color::red, Color::gray64, true) );
+//    xOffset += MAX_FLAG_CHARS*CHAR_XPIX;
     add( new Label( xOffset, yOffset, "Name", Color::red, Color::gray64, true) );
     xOffset += MAX_NAME_CHARS*CHAR_XPIX;
-    add( new Label( xOffset, yOffset, "Flag", Color::red, Color::gray64, true) );
-    xOffset += MAX_FLAG_CHARS*CHAR_XPIX;
     add( new Label( xOffset, yOffset, "Kills", Color::red, Color::gray64, true) );
     xOffset += MAX_KILLS_CHARS*CHAR_XPIX;
     add( new Label( xOffset, yOffset, "Losses", Color::red, Color::gray64, true) );
@@ -68,7 +73,14 @@ RankView::RankView() : GameTemplateView()
     add( new Label( xOffset, yOffset, "Objective", Color::red, Color::gray64, true) );
     xOffset += MAX_POINTS_CHARS*CHAR_XPIX;
 
-    // Define the scrollBar fot this view.
+	allyImage.loadBMP("pics/default/ally.bmp");
+	allyRequestImage.loadBMP("pics/default/allyRequest.bmp");
+	allyOtherImage.loadBMP("pics/default/allyOther.bmp");
+	noAllyImage.loadBMP("pics/default/noAlly.bmp");
+	
+	states.clear();
+    
+	// Define the scrollBar fot this view.
     scrollBar = new ScrollBar(ScrollBar::VERTICAL, 0, 1, 0, 100);
     if (scrollBar == 0) {
         throw Exception("ERROR: Unable to allocate the scrollBar.");
@@ -86,7 +98,7 @@ void RankView::doDraw()
     unsigned int newheight = 60 + entryheight * PlayerInterface::countPlayers();
     
     if ( newheight != (unsigned int)clientRect.getSizeY() ) {
-        resize(iXY(450, newheight));
+        resize(iXY(450+20, newheight));
         return; // this frame draws nothing
     }
     
@@ -132,15 +144,19 @@ void RankView::drawPlayerStats( unsigned int flagHeight)
 {
     char statBuf[256];
 
-    std::vector<const PlayerState*> states;
-    for(size_t i = 0; i < PlayerInterface::getMaxPlayers(); ++i) {
+	states.clear();
+	for(size_t i = 0; i < PlayerInterface::getMaxPlayers(); ++i)
+	{
         PlayerState* state = PlayerInterface::getPlayer(i);
         if(state->getStatus() != _player_state_active)
-            continue;
+        {
+			continue;
+		}
         states.push_back(state);
     }
 
-    switch(gameconfig->gametype) {
+    switch(gameconfig->gametype)
+	{
         case _gametype_objective:
             std::sort(states.begin(), states.end(), StatesSortByObjectives());
             break;
@@ -152,8 +168,8 @@ void RankView::drawPlayerStats( unsigned int flagHeight)
 
     unsigned int CHAR_YPIX = Surface::getFontHeight();
     unsigned int entryHeight = std::max(CHAR_YPIX, flagHeight) + 2;
-    iXY offset(2, 40);
-    iXY flagOffset(162, 40 + (int(CHAR_YPIX - flagHeight))/2);
+    iXY offset( 6*8, 40);
+    iXY flagOffset(26, 40 + (int(CHAR_YPIX - flagHeight))/2);
     Surface * flag = 0;
 
     for(std::vector<const PlayerState*>::iterator i = states.begin();
@@ -161,14 +177,35 @@ void RankView::drawPlayerStats( unsigned int flagHeight)
         const PlayerState* state = *i;
 
         snprintf(statBuf, sizeof(statBuf),
-                "%-20s%10i%7i%6i%10i", state->getName().substr(0,20).c_str(),
+                "%-20s%5i%7i%7i%10i", state->getName().substr(0,20).c_str(),
                 state->getKills(), state->getLosses(), state->getTotal(),
                 state->getObjectivesHeld());
         drawStringShadowed(offset.x, offset.y, statBuf, state->getColor(), Color::gray64);
         
         flag = ResourceManager::getFlag(state->getFlag());
         drawImage( *flag, flagOffset.x, flagOffset.y );
-
+		if ( state->getID() != PlayerInterface::getLocalPlayerIndex() )
+		{
+			bool meWithHim = PlayerInterface::isSingleAllied(PlayerInterface::getLocalPlayerIndex(), state->getID());
+			bool himWithMe = PlayerInterface::isSingleAllied(state->getID(), PlayerInterface::getLocalPlayerIndex());
+			if ( meWithHim && himWithMe )
+			{
+				drawImage( allyImage, 4, flagOffset.y );
+			}
+			else if ( meWithHim )
+			{
+				drawImage( allyRequestImage, 4, flagOffset.y );
+			}
+			else if ( himWithMe )
+			{
+				drawImage( allyOtherImage, 4, flagOffset.y );
+			}
+			else
+			{
+				drawImage( noAllyImage, 4, flagOffset.y );
+			}
+		}
+		
         offset.y += entryHeight;
         flagOffset.y += entryHeight;        
     }
@@ -178,4 +215,40 @@ void RankView::drawPlayerStats( unsigned int flagHeight)
 void RankView::notifyMoveTo()
 {
     gameconfig->rankposition=min;
+}
+
+void
+RankView::lMouseDown(const iXY &pos)
+{
+	LOGGER.info("Mouse down, pos = %d,%d", pos.x, pos.y);
+	GameTemplateView::lMouseDown(pos);
+
+	if ( pos.x >= 4 && pos.x <= 24 && pos.y >= 40 )
+	{
+		unsigned int ypos = pos.y - 40;
+		unsigned int CHAR_YPIX = Surface::getFontHeight();
+		unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
+		unsigned int entryHeight = std::max(CHAR_YPIX, flagHeight) + 2;
+		unsigned int linepos = ypos / entryHeight;
+		if ( linepos < states.size() )
+		{
+			unsigned int destplayer = states[linepos]->getID();
+			unsigned int localplayer = PlayerInterface::getLocalPlayerIndex();
+			if ( destplayer != localplayer )
+			{
+				PlayerAllianceRequest allie_request;
+
+				if ( PlayerInterface::isSingleAllied(localplayer, destplayer) )
+				{
+					allie_request.set( localplayer, destplayer, _player_break_alliance);
+				}
+				else
+				{
+					allie_request.set( localplayer, destplayer, _player_make_alliance);
+				}
+				
+				NetworkClient::sendMessage( &allie_request, sizeof(PlayerAllianceRequest));
+			}
+		}
+	}
 }

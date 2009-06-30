@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __NETWORK_GLOBALS_HPP__
 
 #define NETPANZER_DEFAULT_PORT_TCP     3030
-#define NETPANZER_PROTOCOL_VERSION     1021
+#define NETPANZER_PROTOCOL_VERSION     1022
 #define MASTERSERVER_PORT             28900
 
 #endif

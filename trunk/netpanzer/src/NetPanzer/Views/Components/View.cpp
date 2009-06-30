@@ -362,7 +362,7 @@ void View::lMouseDown(const iXY &pos)
 
     focusComponent = 0;
 
-    // Check all components for a pressed event.
+	// Check all components for a pressed event.
     ComponentsIterator i;
     for ( i=components.begin(); i != components.end(); i++)
     {        

@@ -291,8 +291,7 @@ ObjectiveInterface::offloadGraphics( SpriteSorter &sorter )
 
 
 bool
-ObjectiveInterface::testRuleObjectiveOccupationRatio(
-        Uint16 player_index, float precentage)
+ObjectiveInterface::testRuleObjectiveOccupationRatio( Uint16 player_index, float precentage)
 {
     size_t occupation_ratio = (size_t)
         ( ((float) objective_list.size()) * precentage  + 0.999);
@@ -302,19 +301,21 @@ ObjectiveInterface::testRuleObjectiveOccupationRatio(
 
     std::vector<Objective*>::iterator i;
     size_t occupied = 0;
-    for(i = objective_list.begin(); i != objective_list.end(); i++) {
+    for(i = objective_list.begin(); i != objective_list.end(); i++)
+    {
         ObjectiveState *objective_state = & ((*i)->objective_state);
-        if(objective_state->occupation_status == _occupation_status_occupied) {
+        if(objective_state->occupation_status == _occupation_status_occupied)
+        {
             Uint16 occuping_player_index 
                 = objective_state->occupying_player->getID();
 
-            if ( occuping_player_index == player_index ) {
+            if ( occuping_player_index == player_index )
+            {
                 occupied++;
-            } else if (PlayerInterface::isAllied(
-                        occuping_player_index, player_index) &&
-                        PlayerInterface::isAllied(player_index,
-                            occuping_player_index)) {
-                    occupied++;
+            }
+            else if (PlayerInterface::isAllied( occuping_player_index, player_index) )
+            {
+                occupied++;
             }
         }
     }
