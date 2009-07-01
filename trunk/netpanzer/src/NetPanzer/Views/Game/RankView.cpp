@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "RankView.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Classes/ScreenSurface.hpp"
+#include "Classes/WorldInputCmdProcessor.hpp"
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Interfaces/PlayerInterface.hpp"
@@ -250,4 +251,10 @@ RankView::lMouseDown(const iXY &pos)
 			}
 		}
 	}
+}
+
+void
+RankView::processEvents()
+{
+    COMMAND_PROCESSOR.process(false);
 }

@@ -931,11 +931,14 @@ WorldInputCmdProcessor::sendAllianceRequest(const iXY& world_pos, bool make_brea
 }
 
 void
-WorldInputCmdProcessor::process()
+WorldInputCmdProcessor::process(bool handleMouse)
 {
     evaluateKeyboardEvents();
-    evaluateMouseEvents();
-
+    if ( handleMouse )
+    {
+        evaluateMouseEvents();
+    }
+    
     working_list.validateList();
 }
 

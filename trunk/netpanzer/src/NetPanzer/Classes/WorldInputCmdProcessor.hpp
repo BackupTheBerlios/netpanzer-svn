@@ -98,7 +98,7 @@ protected:
 public:
     WorldInputCmdProcessor();
 
-    void process();
+    void process(bool handleMouse);
 
     void inFocus();
 

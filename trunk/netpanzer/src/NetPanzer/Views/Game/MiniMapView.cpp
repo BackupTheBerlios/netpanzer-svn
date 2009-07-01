@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "MiniMapView.hpp"
 #include "Views/Components/MiniMap.hpp"
+#include "Classes/WorldInputCmdProcessor.hpp"
 
 // MiniMapView
 //---------------------------------------------------------------------------
@@ -62,3 +63,9 @@ void MiniMapView::doDraw()
     
     GameTemplateView::doDraw();
 } // end doDraw
+
+void
+MiniMapView::processEvents()
+{
+    COMMAND_PROCESSOR.process(false);
+}

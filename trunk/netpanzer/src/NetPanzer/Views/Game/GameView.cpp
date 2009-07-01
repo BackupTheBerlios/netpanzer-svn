@@ -151,7 +151,7 @@ GameView::doDeactivate()
 //---------------------------------------------------------------------------
 void GameView::processEvents()
 {
-    COMMAND_PROCESSOR.process();
+    COMMAND_PROCESSOR.process(true);
 } // end GameView::processEvents
 
 // mouseMove

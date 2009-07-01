@@ -55,6 +55,7 @@ public:
 	
 protected:
 	virtual void lMouseDown(const iXY &pos);
+    virtual void processEvents();
 }
 ; // end _WIN
 
