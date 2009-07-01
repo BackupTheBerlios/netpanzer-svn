@@ -34,43 +34,6 @@ Objective::Objective(ObjectiveID ID, iXY location, BoundBox area)
 }
 
 void
-Objective::objectiveMesgUpdateOccupation(const ObjectiveMessage* message)
-{
-    const UpdateOccupationsStatus *occupation_update
-        = (const UpdateOccupationsStatus *) message;
-
-    if ( objective_state.occupation_status == _occupation_status_occupied )
-    {
-        objective_state.occupying_player->decObjectivesHeld();
-    }
-    
-    objective_state.occupation_status = occupation_update->occupation_status;
-    objective_state.occupying_player
-        = PlayerInterface::getPlayer(occupation_update->getOccupyingPlayerID());
-
-    Outpost* outpost = dynamic_cast<Outpost*> (this);
-    if(outpost)
-    {
-        outpost->unit_generation_on_flag = occupation_update->unit_gen_on;
-        outpost->unit_generation_type = occupation_update->unit_type;
-        UnitProfile* profile =
-            UnitProfileInterface::getUnitProfile(
-                    outpost->unit_generation_type );
-        outpost->unit_generation_timer.changePeriod((float)profile->regen_time);
-        outpost->unit_generation_timer.setTimeLeft(
-                float(occupation_update->getTimeLeft()) / 128.0);
-    }
-
-    if( objective_state.occupation_status != _occupation_status_unoccupied )
-    {
-        objective_state.occupying_player->incObjectivesHeld();
-        
-        ConsoleInterface::postMessage(Color::cyan, false, 0, "'%s' has been occupied by '%s'",
-                objective_state.name, objective_state.occupying_player->getName().c_str() );
-    }
-}
-
-void
 Objective::objectiveMesgSync(const ObjectiveMessage* message)
 {
     const SyncObjective *sync_mesg = (const SyncObjective*) message;
@@ -107,10 +70,6 @@ void Objective::getSyncData(SyncObjective& objective_sync_mesg)
 void Objective::processMessage(const ObjectiveMessage* message)
 {
     switch(message->message_type) {
-        case _objective_mesg_update_occupation:
-            objectiveMesgUpdateOccupation(message);
-            break;
-
         case _objective_mesg_sync_objective:
             objectiveMesgSync(message);
             break;
@@ -118,6 +77,7 @@ void Objective::processMessage(const ObjectiveMessage* message)
         case _objective_mesg_change_unit_generation:
         case _objective_mesg_disown_player_objective:
         case _objective_mesg_change_output_location:
+        case _objective_mesg_update_occupation:
             break;
 
         default:

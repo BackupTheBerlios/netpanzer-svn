@@ -154,9 +154,15 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
         return _cursor_blocked;
     }
 	
-	Unit * unit = UnitInterface::queryNonPlayerUnitAtWorld( loc, PlayerInterface::getLocalPlayerIndex() );
+	//Unit * unit = UnitInterface::queryNonPlayerUnitAtWorld( loc, PlayerInterface::getLocalPlayerIndex() );
+    Unit * unit = UnitInterface::queryUnitAtMapLoc( map_loc );
 	if ( unit )
 	{
+        if ( unit->player->getID() == PlayerInterface::getLocalPlayerIndex() )
+        {
+            return _cursor_player_unit;
+        }
+        
 		if ( ! PlayerInterface::isAllied(unit->player->getID(), PlayerInterface::getLocalPlayerIndex() ) )
 		{
 			if ( KeyboardInterface::getKeyState(SDLK_a) )

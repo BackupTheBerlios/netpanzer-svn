@@ -220,7 +220,6 @@ void RankView::notifyMoveTo()
 void
 RankView::lMouseDown(const iXY &pos)
 {
-	LOGGER.info("Mouse down, pos = %d,%d", pos.x, pos.y);
 	GameTemplateView::lMouseDown(pos);
 
 	if ( pos.x >= 4 && pos.x <= 24 && pos.y >= 40 )

@@ -25,10 +25,13 @@ class Outpost : public Objective
 {
 private:
     unsigned char outpost_state;
-    iXY outpost_map_loc;
     iXY unit_generation_loc;
-    iXY unit_collection_loc;
     iXY occupation_pad_offset;
+    
+protected:
+    iXY outpost_map_loc;
+    iXY unit_collection_loc;
+
 public:
     unsigned short unit_generation_type;
     bool unit_generation_on_flag;
@@ -48,6 +51,7 @@ private:
     void objectiveMesgChangeUnitGeneration(const ObjectiveMessage* message);
     void objectiveMesgDisownPlayerObjective(const ObjectiveMessage* message);
     void objectiveMesgChangeOutputLocation(const ObjectiveMessage* message);
+    void objectiveMesgUpdateOccupation(const ObjectiveMessage* message);
 
 public:
 

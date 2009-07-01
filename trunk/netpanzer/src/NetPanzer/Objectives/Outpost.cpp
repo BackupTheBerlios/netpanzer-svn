@@ -69,7 +69,8 @@ Outpost::attemptOccupationChange( Uint16 player_id )
             objective_state.occupying_player = player;
             objective_state.occupying_player->incObjectivesHeld();
             objective_state.occupation_status = _occupation_status_occupied;
-
+            unit_collection_loc = outpost_map_loc + iXY( 13, 13 );
+            
             update_mesg.status_update.set(objective_state.ID,
                         objective_state.occupation_status,
                         objective_state.occupying_player->getID(),
@@ -91,6 +92,8 @@ Outpost::attemptOccupationChange( Uint16 player_id )
             objective_state.occupying_player = player;
             objective_state.occupying_player->incObjectivesHeld();
             objective_state.occupation_status = _occupation_status_occupied;
+            unit_collection_loc = outpost_map_loc + iXY( 13, 13 );
+            
             update_mesg.status_update.set(
                     objective_state.ID,
                     objective_state.occupation_status,
@@ -310,9 +313,44 @@ Outpost::getOutpostStatus( OutpostStatus &status )
 }
 
 void
+Outpost::objectiveMesgUpdateOccupation(const ObjectiveMessage* message)
+{
+    const UpdateOccupationsStatus *occupation_update
+        = (const UpdateOccupationsStatus *) message;
+
+    if ( objective_state.occupation_status == _occupation_status_occupied )
+    {
+        objective_state.occupying_player->decObjectivesHeld();
+    }
+    
+    objective_state.occupation_status = occupation_update->occupation_status;
+    objective_state.occupying_player
+        = PlayerInterface::getPlayer(occupation_update->getOccupyingPlayerID());
+
+    unit_generation_on_flag = occupation_update->unit_gen_on;
+    unit_generation_type = occupation_update->unit_type;
+    
+    UnitProfile* profile = UnitProfileInterface::getUnitProfile( unit_generation_type );
+    
+    unit_generation_timer.changePeriod((float)profile->regen_time);
+    unit_generation_timer.setTimeLeft(
+                                float(occupation_update->getTimeLeft()) / 128.0);
+    unit_collection_loc = outpost_map_loc + iXY( 13, 13 );
+
+    if( objective_state.occupation_status != _occupation_status_unoccupied )
+    {
+        objective_state.occupying_player->incObjectivesHeld();
+        
+        ConsoleInterface::postMessage(Color::cyan, false, 0, "'%s' has been occupied by '%s'",
+                objective_state.name, objective_state.occupying_player->getName().c_str() );
+    }
+}
+
+void
 Outpost::processMessage(const ObjectiveMessage* message)
 {
-    switch(message->message_type) {
+    switch(message->message_type)
+    {
         case _objective_mesg_change_unit_generation:
             objectiveMesgChangeUnitGeneration(message);
             break;
@@ -324,6 +362,11 @@ Outpost::processMessage(const ObjectiveMessage* message)
         case _objective_mesg_change_output_location:
             objectiveMesgChangeOutputLocation(message);
             break;
+            
+        case _objective_mesg_update_occupation:
+            objectiveMesgUpdateOccupation(message);
+            break;
+            
     }
 
     Objective::processMessage(message);

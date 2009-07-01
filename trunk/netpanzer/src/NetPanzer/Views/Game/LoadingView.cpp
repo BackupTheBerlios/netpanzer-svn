@@ -39,7 +39,7 @@ LoadingView::init()
 
     resize(640, 480);
     
-    add( Button::createTextButton("abort","Abort", iXY(628 - 60, 302 - 15), 60, BTN_ABORT) );
+    add( Button::createTextButton("abort","Abort", iXY(530-60-2, 250+175), 60, BTN_ABORT) );
     
 }
 
@@ -52,7 +52,9 @@ LoadingView::doDraw()
     
     screen->fill(Color::black);
     drawImage(backgroundSurface, 0, 0);
-    drawImage(surface, 179, 153);
+    iRect r(120,250,120+410,250+175);
+    drawTransRect(r, Palette::darkGray256.getColorArray());
+    drawImageTrans(surface, 120, 250);
     
     View::doDraw();    
 }
@@ -62,7 +64,7 @@ LoadingView::render()
 {
     dirty=false;
     
-    surface.fill(Color::black);
+    surface.fill(0);//Color::black);
     
     int ypos = surface.getHeight() - Surface::getFontHeight();
     int fontHeight = Surface::getFontHeight();
@@ -71,7 +73,7 @@ LoadingView::render()
     while ( i != lines.rend() && ypos > -fontHeight )
     {
         surface.bltString( 0, ypos, (*i).c_str(), Color::white);
-        i++;
+        ++i;
         ypos -= fontHeight;
     }
 }
@@ -79,8 +81,8 @@ LoadingView::render()
 void
 LoadingView::doActivate()
 {
-    backgroundSurface.loadBMP("pics/backgrounds/menus/menu/loadingMB.bmp");
-    surface.create(628 - 179, 302 - 153, 1);
+    backgroundSurface.loadBMP("pics/default/loadingBG.bmp");
+    surface.create(410, 175, 1);
     dirty=true;
 }
 
