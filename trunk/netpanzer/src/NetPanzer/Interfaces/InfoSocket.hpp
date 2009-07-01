@@ -36,6 +36,7 @@ protected:
     void onSocketError(UDPSocket *so, const char * msg);
     
 private:
+    string prepareFlagPacket(const int flagNum);
     string prepareStatusPacket();
     string statusHead;
     UDPSocket * socket;

@@ -117,7 +117,12 @@ if 'crosslinux' in COMMAND_LINE_TARGETS:
     crosslinuxenv.Replace( CC = env['crosslinuxcompilerprefix'] + env['CC'] )
     crosslinuxenv.Replace( AR = env['crosslinuxcompilerprefix'] + env['AR'] )
     crosslinuxenv.Replace( RANLIB = env['crosslinuxcompilerprefix'] + env['RANLIB'] )
-    crosslinuxenv.Append( _LIBFLAGS = [ '`' + crosslinuxenv['CXX'] + ' -print-file-name=libstdc++.a`' ] )
+    crosslinuxenv.Append( LINKFLAGS = [ '-static-libgcc' ] )
+    #crosslinuxenv.Prepend( _LIBFLAGS = [ '-static-libgcc' ] )
+    #crosslinuxenv.Prepend( _LIBFLAGS = [ '-lstdc++' ] )
+    #crosslinuxenv.Append( _LIBFLAGS = [ '`' + crosslinuxenv['CXX'] + ' -print-file-name=libstdc++.a`' ] )
+    #crosslinuxenv.Prepend( _LIBFLAGS = [ '/usr/local/gcc/i686-linux/lib/gcc/i686-linux/4.2.4/../../../../i686-linux/lib/libstdc++.a' ] )
+    
 
 env['FINALBUILDDIR'] = 'build/' + env['mode'] + '/'
 env['FINALLIBSDIR'] = env['FINALBUILDDIR'] + 'libs/'

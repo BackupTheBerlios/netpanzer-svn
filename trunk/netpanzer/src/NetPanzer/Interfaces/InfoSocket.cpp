@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/GameManager.hpp"
+#include "Resources/ResourceManager.hpp"
 
 #include "Util/Log.hpp"
 
@@ -72,19 +73,39 @@ InfoSocket::onDataReceived(UDPSocket *s, const Address &from, const char *data, 
     LOGGER.info("Infosocket:: received packet from [%s] size [%d]", from.getIP().c_str(), len);
 
     string query;
-    while ( !(query = qtokenizer.getNextToken()).empty()) {
+    while ( !(query = qtokenizer.getNextToken()).empty())
+    {
         LOGGER.debug("InfoSocket:: Received query '%s'", query.c_str());
-        if ( query == "status" ) {
+        if ( query == "status" )
+        {
             string answer = prepareStatusPacket();
 
             LOGGER.debug("InfoSocket:: sending answer [%s][%d]", answer.c_str(), (int)answer.size());
             socket->send(from, answer.c_str(), answer.size());
 
             break;
-        } else if(query == "echo") {
+        }
+        else if(query == "echo")
+        {
             string echotoken = qtokenizer.getNextToken();
+            LOGGER.info("InfoSocket:: Received echo query of size %d", echotoken.size());
             if ( echotoken.size() )
                 socket->send(from, echotoken.c_str(), echotoken.size());
+        }
+        else if ( query == "getflag" )
+        {
+            string flagstr = qtokenizer.getNextToken();
+            
+            LOGGER.info("InfoSocket:: Received flag query for %s", flagstr.c_str());
+            if ( flagstr.size() )
+            {
+                unsigned int flagnum = atoi(flagstr.c_str());
+                if ( flagnum < 256 && ResourceManager::isFlagActive(flagnum) )
+                {
+                    string answer = prepareFlagPacket(flagnum);
+                    socket->send(from, answer.c_str(), answer.size());
+                }
+            }
         }
     }
 }
@@ -130,5 +151,32 @@ InfoSocket::prepareStatusPacket()
     
     s << "\\final\\";
 
+    return s.str();
+}
+
+static const char hextochar[] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' };
+
+string
+InfoSocket::prepareFlagPacket(const int flagNum)
+{
+    Surface * fsurf = ResourceManager::getFlag(flagNum);
+    unsigned char flagdata[((20*14)*2) + 1];
+    flagdata[((20*14)*2)] = 0;
+    Uint8 * surfacedata = fsurf->getFrame0();
+    int curpos = 0;
+    for ( int y = 0; y < 14; ++y )
+    {
+        for ( int x = 0; x < 20; ++x )
+        {
+            unsigned char b = *(surfacedata + (y*fsurf->getPitch()) + x);
+            flagdata[curpos] = hextochar[((b>>4)&0x0f)];
+            ++curpos;
+            flagdata[curpos] = hextochar[b&0x0f];
+            ++curpos;
+        }
+    }
+    
+    stringstream s;
+    s << "\\flag\\" << flagNum << '\\' << flagdata << '\\';
     return s.str();
 }
