@@ -24,7 +24,6 @@ scons crosslinux \
       crosslinuxsdlconfig=/usr/local/gcc/i686-linux/bin/sdl-config
 
 i686-linux-strip "${EXENAME}"
-exit 1
 
 [ -d "${NPDEST}" ] && rm -rf "${NPDEST}"
 
@@ -46,4 +45,4 @@ popd
 [ -f "${RELEASEDIR}/${ZIPNAME}" ] && rm -f "${RELEASEDIR}/${ZIPNAME}"
 
 mv "${NPDEST}/../${ZIPNAME}" "${RELEASEDIR}"
-#rm -rf "${NPDEST}"
+rm -rf "${NPDEST}"
