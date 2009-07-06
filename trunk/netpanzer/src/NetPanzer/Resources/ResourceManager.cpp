@@ -43,11 +43,13 @@ public:
         {
             flagList[n]=&noimage;
             usedList[n]=false;
+            flagUsedCount[n] = 0;
         }
     }
     
     Surface * flagList[256];
     bool usedList[256];
+    unsigned char flagUsedCount[256];
 };
 
 _RMan RMan;
@@ -180,6 +182,13 @@ ResourceManager::getFlagSyncData(FlagID flag, Uint8 *dest)
     }
 
 }
+
+int
+ResourceManager::getFlagUsedCount(FlagID flag)
+{
+    return RMan.flagUsedCount[flag];
+}
+
 void
 ResourceManager::syncFlagFromData(FlagID flag, Uint8 *flagdata)
 {
@@ -190,6 +199,7 @@ ResourceManager::syncFlagFromData(FlagID flag, Uint8 *flagdata)
     }
     
     RMan.usedList[flag]=true;
+    ++RMan.flagUsedCount[flag];
 }
 
 void

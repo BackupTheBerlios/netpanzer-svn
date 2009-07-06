@@ -145,7 +145,8 @@ InfoSocket::prepareStatusPacket()
           << "\\deaths_" << n << "\\" << playerState->getLosses()
           << "\\score_"  << n << "\\" << playerState->getObjectivesHeld()
           << "\\points_"  << n << "\\" << playerState->getTotal()
-          << "\\flag_"   << n << "\\" << (int) playerState->getFlag();
+          << "\\flag_"   << n << "\\" << (int) playerState->getFlag()
+          << "\\flagu_"   << n << "\\" << ResourceManager::getFlagUsedCount(playerState->getFlag());
         n++;
     }
     

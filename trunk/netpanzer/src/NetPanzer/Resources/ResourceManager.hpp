@@ -39,6 +39,7 @@ public:
     static FlagID registerFlagFromData(Uint8 *flagdata);
     static void getFlagData(const char * flagname, Uint8 *dest);
     static void getFlagSyncData(FlagID flag, Uint8 *dest);
+    static int getFlagUsedCount(FlagID flag);
     static void syncFlagFromData(FlagID flag, Uint8 *flagdata);
     static void releaseFlag(FlagID flag);
     static void processResourceMessage(const NetMessage* message);
