@@ -16,16 +16,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+require_once "UDPListener.php";
+
 class ServerInfo
 {
-    var $ip;
-    var $port;
-    var $protocol;
-    var $lastHeartbeatTime;
-    var $alive;
-    var $clientSock;
+    public $ip;
+    public $port;
+    public $protocol;
+    public $lastHeartbeatTime;
+    public $alive;
+    public $clientSock;
     
-    function ServerInfo( $ip, $port, $protocol, $client )
+    public function __construct( $ip, $port, $protocol, ClientSock $client )
     {
         $this->ip = $ip;
         $this->port = $port;
@@ -35,7 +37,7 @@ class ServerInfo
         $this->clientSock = $client;
     }
 	
-    function touch()
+    public function touch()
     {
         $this->lastHeartbeatTime = time();
         if ( isset($this->clientSock) )
@@ -46,14 +48,14 @@ class ServerInfo
         $this->alive = true;
     }
 	
-    function sendQuery()
+    public function sendQuery()
     {
-        global $udpsock;
+        global $udpListener;
         $msg = "status";
-        socket_sendto($udpsock, $msg, strlen($msg), 0, $this->ip, $this->port);
+        socket_sendto($udpListener->_socket, $msg, strlen($msg), 0, $this->ip, $this->port);
     }
 
-    function onTimeout()
+    public function onTimeout()
     {
         if ( isset($this->clientSock) )
         {

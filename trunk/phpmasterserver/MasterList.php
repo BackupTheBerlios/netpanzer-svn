@@ -17,47 +17,83 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 require_once "MasterInfo.php";
+require_once "MasterHeartbeat.php";
+require_once "SocketManager.php";
 
 class MasterList
 {
-    var $servers;
+    public static $servers = array();
+    private static $lastHeartbeatTime;
     
-    function MasterList()
+    public static function Initialize()
     {
-        $this->servers = array();
+        self::$lastHeartbeatTime = time();
+        #$this->servers = array();
     }
     
-    function addServer($masterinfo)
+    public static function addServer( MasterInfo $masterinfo )
     {
         $sid = $masterinfo->ip . ":" . $masterinfo->port;
-        $this->servers[$sid] = $masterinfo;
+        self::$servers[$sid] = $masterinfo;
     }
     
-    function removeServer($ip, $port)
+    public static function removeServer( $ip, $port )
     {
         $sid = $ip . ":" . $port;
-        unset($this->servers[$sid]);
+        unset(self::$servers[$sid]);
     }
     
-    function getServer($ip, $port)
+    public static function getServer( $ip, $port )
     {
         $sid = $ip . ":" . $port;
-        return( @$this->servers[$sid]);
+        return( @self::$servers[$sid]);
     }
     
-    function checkTimeouts()
+    public static function checkTimeouts()
     {
         global $MASTERTIMEOUT;
-
+        global $MASTERUPDATETIME;
+        
         $curtime = time();
-        foreach ( $this->servers as $srv )
+        if ( $curtime - self::$lastHeartbeatTime >= $MASTERUPDATETIME )
         {
-#            print "Curtime = $curtime lasthb = $srv->lastHeartbeatTime diff=" . ($curtime - $srv->lastHeartbeatTime) . "\n";
+            self::$lastHeartbeatTime = $curtime;
+            foreach ( self::$servers as $srv )
+            {
+                try
+                {
+                    $hb = new MasterHeartbeat($srv);
+                    SocketManager::addSocket($hb);
+                }
+                catch ( Exception $e)
+                {
+                    print "Heartbeat error: " . $e->getMessage() . "\n";
+                }
+            }
+        }
+        
+        foreach ( self::$servers as $srv )
+        {
             if ( $curtime - $srv->lastHeartbeatTime >= $MASTERTIMEOUT)
             {
-                print "Masterserver Timeout, removing {$srv->ip}:{$srv->port}\n";
-                $this->removeServer($srv->ip, $srv->port);
+                if ( $srv->removeable === true )
+                {
+                    print "Masterserver Timeout, removing {$srv->ip}:{$srv->port}\n";
+                    self::removeServer($srv->ip, $srv->port);
+                }
+                else
+                {
+                    print "Masterserver Timeout (unremoveable) {$srv->ip}:{$srv->port}\n";
+                }
             }
+        }
+    }
+    
+    public static function dumpServers()
+    {
+        foreach ( self::$servers as $srv )
+        {
+            print "Masterserver: $srv->ip:$srv->port\n";
         }
     }
 }

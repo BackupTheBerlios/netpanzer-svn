@@ -20,45 +20,53 @@ require_once "ServerInfo.php";
 
 class ServerList
 {
-    var $servers;
-    function ServerList()
+    public static $servers = array();
+    
+    public static function Initialize()
     {
-        $this->servers = array();
+        #$this->servers = array();
     }
     
-    function addServer($serverinfo)
+    public static function addServer( ServerInfo $serverinfo )
     {
         $sid = $serverinfo->ip . ":" . $serverinfo->port;
-        $this->servers[$sid] = $serverinfo;
+        self::$servers[$sid] = $serverinfo;
     }
     
-    function removeServer($ip, $port)
+    public function removeServer( $ip, $port )
     {
         $sid = $ip . ":" . $port;
-        unset($this->servers[$sid]);
+        unset(self::$servers[$sid]);
     }
     
-    function getServer($ip, $port)
+    public function getServer( $ip, $port )
     {
         $sid = $ip . ":" . $port;
-        return( $this->servers[$sid]);
+        return( @self::$servers[$sid]);
     }
     
-    function checkTimeouts()
+    public function checkTimeouts()
     {
         global $SRVTIMEOUT;
         $curtime = time();
-        foreach ( $this->servers as $srv )
+        foreach ( self::$servers as $srv )
         {
-#            print "Curtime = $curtime lasthb = $srv->lastHeartbeatTime diff=" . ($curtime - $srv->lastHeartbeatTime) . "\n";
             if ( $curtime - $srv->lastHeartbeatTime >= $SRVTIMEOUT)
             {
                 print "Server Timeout, removing\n";
                 if ( $srv->onTimeout() == true )
                 {
-                    $this->removeServer($srv->ip, $srv->port);
+                    self::removeServer($srv->ip, $srv->port);
                 }
             }
+        }
+    }
+    
+    public static function dumpServers()
+    {
+        foreach ( self::$servers as $srv )
+        {
+            print "Gameserver: $srv->ip:$srv->port\n";
         }
     }
 }

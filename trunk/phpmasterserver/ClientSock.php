@@ -16,31 +16,70 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+require_once "MasterList.php";
+require_once "ServerList.php";
+
 class ClientSock
 {
-    var $sock;
-    var $state;
-    var $ip;
-    var $port;
-    var $data;
-    var $removeme;
+    public $_socket;
+    public $state;
+    public $ip;
+    public $port;
+    public $data;
+    public $removeme;
 	
-    function ClientSock($socket)
+    public function __construct( $socket )
     {
-        $this->sock = $socket;
+        $this->_socket = $socket;
         socket_getpeername( $socket, $this->ip, $this->port);
         print "New client: " . $this->ip . ":" . $this->port . " socket " . $socket . "\n";
         $this->data = "";
         $this->removeme = false;
     }
-	
-    function sendError( $msg )
+    
+    public function wantsToReceive()
+    {
+        return true;
+    }
+    
+    public function wantsToSend()
+    {
+        return false;
+    }
+    
+    public function onReadyToReceive()
+    {
+        $data = @socket_read( $this->_socket, 1024);
+        if ( $data === false )
+        {
+            $etype = socket_last_error( $this->_socket);
+            if (   $etype != SOCKET_EAGAIN
+                && $etype != SOCKET_EINTR )
+            {
+                print "Client ERROR: {$this->ip}:{$this->port}\n";
+                $this->removeme = true;
+            }
+            print "Other ERROR: {$this->ip}:{$this->port}\n";
+        }
+        else if ( strlen($data) == 0 )
+        {
+            print "Client disconnected: {$this->ip}:{$this->port}\n";
+            $this->removeme = true;
+        }
+        else
+        {
+            print "Client data from {$this->ip}:{$this->port}: $data\n";
+            $this->onQueryReceived($data);
+        }
+    }
+    
+    private function sendError( $msg )
     {
         $fullmsg = "\\error\\$msg\\final\\";
-        socket_write($this->sock, $fullmsg);
+        socket_write($this->_socket, $fullmsg);
     }
 	
-    function onQueryReceived( $rdata )
+    public function onQueryReceived( $rdata )
     {
         $this->data .= $rdata;
         if ( substr($this->data, -7) == "\\final\\" )
@@ -49,7 +88,7 @@ class ClientSock
         }
     }
 	
-    function handleQuery()
+    private function handleQuery()
     {
         $str = $this->data;
         $this->data = "";
@@ -72,16 +111,14 @@ class ClientSock
             }
             else
             {
-                # some unknown command send, ignore the rest
                 break;
             }
             $command = strtok("\\");
-            print "next command is $command";
         }
-        socket_write($this->sock, "\\");
+        socket_write($this->_socket, "\\");
     }
     
-    function getAttributes()
+    private function getAttributes()
     {
         $att = array();
         while (1)
@@ -102,7 +139,7 @@ class ClientSock
         return $att;
     }
     
-    function handleHeartbeat($attributes)
+    private function handleHeartbeat( $attributes )
     {
 
         if ( ! isset($attributes['port']) || $attributes['port'] < 1 || $attributes['port'] > 65535)
@@ -117,22 +154,31 @@ class ClientSock
         }
         elseif ( $attributes['gamename'] == "netpanzer" )
         {
-            global $serverList;
             if ( isset($attributes['protocol']) && $attributes['protocol'] > 1 && $attributes['protocol'] < 65535 )
             {
-                $sinfo = new ServerInfo($this->ip, $attributes['port'], $this->gameprotocol, $this);
+                $sinfo = ServerList::getServer( $this->ip, $attributes['port'] );
+                if ( ! isset( $sinfo ) )
+                {
+                    print "New server on {$this->ip}:{$attributes['port']}\n";
+                    $sinfo = new ServerInfo($this->ip, $attributes['port'], $attributes['protocol'], $this);
+                    ServerList::addServer($sinfo);
+                }
+                else
+                {
+                    print "Heartbeat of server on {$this->ip}:{$attributes['port']}\n";
+                    $sinfo->clientSock = $this;
+                    $sinfo->protocol = $attributes['protocol'];
+                }
                 $sinfo->sendQuery();
-                $serverList->addServer($sinfo);
             }
         }
         elseif ( $attributes['gamename'] == "master" )
         {
-            global $masterList;
             global $MASTERPASSWORD;
             
             if ( isset( $attributes['password']) && $attributes['password'] == $MASTERPASSWORD )
             {
-                $sinfo = $masterList->getServer($this->ip, $attributes['port']);
+                $sinfo = MasterList::getServer($this->ip, $attributes['port']);
                 if ( isset($sinfo) )
                 {
                     $sinfo->touch();
@@ -141,13 +187,13 @@ class ClientSock
                 {
                     print "New MasterServer connected: {$this->ip}:{$attributes['port']}\n";
                     $sinfo = new MasterInfo($this->ip, $attributes['port']);
-                    $masterList->addServer($sinfo);
+                    MasterList::addServer($sinfo);
                 }
             }
         }
     }
 	
-    function handleListQuery($attributes)
+    private function handleListQuery( $attributes )
     {
         if ( ! isset($attributes['gamename']) )
         {
@@ -156,9 +202,8 @@ class ClientSock
         }
         if ( $attributes['gamename'] == "netpanzer" )
         {
-            global $serverList;
             $answer = "";
-            foreach ($serverList->servers as $srv)
+            foreach ( ServerList::$servers as $srv )
             {
                 if ( $srv->alive == false )
                 {
@@ -175,27 +220,26 @@ class ClientSock
                 }
             }
             $answer .= "\\final";
-            socket_write($this->sock, $answer);
+            socket_write($this->_socket, $answer);
         }
         elseif ( $attributes['gamename'] == "master" )
         {
-            global $masterList;
-            socket_getsockname($this->sock, $myip, $myport);
+            socket_getsockname($this->_socket, $myip, $myport);
             $answer = "\\ip\\$myip\\port\\$myport";
-            foreach ($masterList->servers as $srv)
+            foreach ( MasterList::$servers as $srv)
             {
                 $answer .= "\\ip\\$srv->ip\\port\\$srv->port";
             }
             $answer .= "\\final";
-            socket_write($this->sock, $answer);
+            socket_write($this->_socket, $answer);
         }
         else
         {
-            socket_Write($this->sock, "\\error\\Wrong query\\final\\");
+            socket_Write($this->_socket, "\\error\\Wrong query\\final\\");
         }
     }
     
-    function handleQuitCommand($attributes)
+    private function handleQuitCommand( $attributes )
     {
         if ( ! isset($attributes['port']) || $attributes['port'] < 1 || $attributes['port'] > 65535 )
         {
@@ -203,23 +247,23 @@ class ClientSock
         }
         else
         {
-            global $serverList;
-            $srvinfo = $serverList->getServer($this->ip, $attributes['port']);
+            $srvinfo = ServerList::getServer($this->ip, $attributes['port']);
             if ( isset($srvinfo) )
             {
-                socket_write($this->sock, "\\final\\");
-                $serverList->removeServer($this->ip, $attributes['port']);
+                socket_write($this->_socket, "\\final\\");
+                ServerList::removeServer($this->ip, $attributes['port']);
             }
         }
         $this->removeme = true;
     }
     
-    function serverDidReply()
+    public function serverDidReply()
     {
-        socket_write($this->sock, "\\final\\");
+        print "Server did repply\n";
+        socket_write($this->_socket, "final\\");
     }
 	
-    function serverDidTimeout()
+    public function serverDidTimeout()
     {
         $this->sendError("Unable to query server, check your port settings");
         $this->removeme = true;

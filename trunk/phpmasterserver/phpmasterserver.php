@@ -23,194 +23,36 @@ require_once "ServerInfo.php";
 require_once "ServerList.php";
 require_once "MasterList.php";
 require_once "MasterInfo.php";
+require_once "UDPListener.php";
+require_once "TCPListener.php";
 
 set_time_limit(0);
 
-$udpsock = socket_create(AF_INET, SOCK_DGRAM, 0) or die("Could not create udp socket\n");
-socket_set_nonblock($udpsock);
-if (!socket_set_option($udpsock, SOL_SOCKET, SO_REUSEADDR, 1))
-{ 
-    echo socket_strerror(socket_last_error($sock)); 
-    exit; 
-} 
-socket_bind($udpsock, $listenip, 0) or die("Could not bind to socket\n");
+$udpListener = new UDPListener($listenip, $listenport);
+$tcpListener = new TCPListener($listenip, $listenport);
 
-$tcpsock = socket_create(AF_INET, SOCK_STREAM, 0) or die("Could not create tcp socket\n");
-socket_set_nonblock($tcpsock);
-if (!socket_set_option($tcpsock, SOL_SOCKET, SO_REUSEADDR, 1))
-{ 
-    echo socket_strerror(socket_last_error($tcpsock)); 
-    exit; 
-} 
-socket_bind($tcpsock, $listenip, $listenport) or die("Could not bind to socket\n");
-socket_listen( $tcpsock, 32);
+ServerList::Initialize();
+MasterList::Initialize();
+SocketManager::Initialize();
 
-$serverList = new ServerList();
-$masterList = new MasterList();
+$testms = new MasterInfo( "83.142.228.166", 28900, false);
+MasterList::addServer($testms);
 
-$testms = new MasterInfo("83.142.228.166", 28900);
-$masterList->addServer($testms);
-
-$clients = array();
-$masterMap = array();
-
-$thenull = NULL;
+SocketManager::addSocket($udpListener);
+SocketManager::addSocket($tcpListener);
 
 $isRunning = true;
 
-$lastMSHeartbeat = 0;
-
 while ( $isRunning )
 {
-    print "There are " . count($clients) . " clients\n";
-    
-    $serverList->checkTimeouts();
-    $masterList->checkTimeouts();
+    ServerList::checkTimeouts();
+    MasterList::checkTimeouts();
 
-    foreach ( $masterList->servers as $srv )
-    {
-        print "Masterserver: $srv->ip:$srv->port running\n";
-    }
-    
-    foreach ( $serverList->servers as $srv )
-    {
-        print "Server: $srv->ip:$srv->port running\n";
-    }
-	
-    $writesocks = array();
-    if ( time() - $lastMSHeartbeat >= $MASTERUPDATETIME )
-    {
-        $lastMSHeartbeat = time();
-        foreach ( $masterList->servers as $srv )
-        {
-            $msock =  socket_create(AF_INET, SOCK_STREAM, 0);
-            socket_set_nonblock($msock);
-            $res = @socket_connect($msock, $srv->ip, $srv->port);
-            if ( $res === false )
-            {
-                $error = socket_last_error($msock);
-                if ( $error != SOCKET_EINPROGRESS )
-                {
-                    print "Error connecting to masterserver {$srv->ip}:{$srv->port}\n";
-                    socket_close($msock);
-                }
-                else
-                {
-                    $masterMap[$msock] = $srv;
-                    $writesocks[] = $msock;
-                }
-            }
-            else
-            {
-                $srv->sendHeartbeat($msock);
-                @socket_shutdown($msock);
-                @socket_close($msock);
-            }
-        }
-    }
-    
-    $readsocks = array($tcpsock, $udpsock);
-    foreach ( $clients as $clt )
-    {
-	$readsocks[] = $clt->sock;
-    }
-    
-    print "Listening with " . count($readsocks) . " read sockets and " . count($writesocks) . " write sockets\n";
+    MasterList::dumpServers();
+    ServerList::dumpServers();
 
-    $selres = socket_select( $readsocks, $writesocks, $thenull, 1 );
-    if ( $selres === false )
-    {
-        print "Some error happened on select";	
-        $isRunning = false;
-        continue;
-    }
-    else if ( $selres == 0 )
-    {
-        continue;
-    }
-    print "Something happened\n";
-    foreach ($readsocks as $sock)
-    {
-        if ( $sock == $tcpsock )
-        {
-            while ( ($thenewsock = @socket_accept($tcpsock)) !== false )
-            {
-                print "New Client: $thenewsock\n";
-                $newClient = new ClientSock($thenewsock);
-                $clients[$thenewsock] = $newClient;
-            }
-        }
-        else if ( $sock == $udpsock )
-        {
-            $datalen = @socket_recvfrom($udpsock, $bug, 1500, 0, $fromip, $fromport);
-            while ( $datalen > 0 )
-            {
-                $srvdata = $serverList->getServer($fromip, $fromport);
-                if ( $srvdata === NULL)
-                {
-                    print "Received UDP packet from unknown server: $fromip:$fromport\n";
-                }
-                else
-                {
-                    print "Received UDP packet from $fromip:$fromport\n";
-                    $srvdata->touch();
-                }
-                $datalen = @socket_recvfrom($udpsock, $bug, 1500, 0, $fromip, $fromport);
-            }
-        }
-        else
-        {
-            $client = $clients[$sock];
-            if ( $client != NULL )
-            {
-                $data = @socket_read($sock, 1024);
-                if ( $data === false )
-                {
-                    $etype = socket_last_error($sock);
-                    if (   $etype != SOCKET_EAGAIN
-                        && $etype != SOCKET_EINTR )
-                    {
-                        print "Client ERROR: {$clients[$sock]->ip}:{$clients[$sock]->port}\n";
-                        $client->removeme = true;
-                    }
-                    print "Other ERROR: {$clients[$sock]->ip}:{$clients[$sock]->port}\n";
-                }
-                else if ( strlen($data) == 0 )
-                {
-                    print "Client disconnected: {$clients[$sock]->ip}:{$clients[$sock]->port}\n";
-                    $client->removeme = true;
-                }
-                else
-                {
-                    print "Client data from {$clients[$sock]->ip}:{$clients[$sock]->port}: $data\n";
-                    $clients[$sock]->onQueryReceived($data);
-                }
-            }
-        }
-    }
+    SocketManager::handleEvents();
     
-    foreach ( $writesocks as $sock )
-    {
-        $srv = $masterMap[$sock];
-        $srv->sendHeartbeat($sock);
-        @socket_shutdown($sock);
-        @socket_close($sock);
-        unset($masterMap[$sock]);
-    }
-    
-    foreach ( $clients as $clt )
-    {
-        if ( $clt->removeme === true )
-        {
-            print "Removing socket: $clt->sock\n";
-            @socket_shutdown($clt->sock);
-            @socket_close($clt->sock);
-            unset($clients[$clt->sock]);
-        }
-    }
 }
-
-socket_close($tcpsock);
-socket_close($udpsock);
 
 ?>

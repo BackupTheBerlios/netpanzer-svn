@@ -18,31 +18,32 @@
 
 class MasterInfo
 {
-    var $ip;
-    var $port;
-    var $lastHeartbeatTime;
-    var $lastConnectTime;
+    public $ip;
+    public $port;
+    public $lastHeartbeatTime;
+    public $lastConnectTime;
+    public $removeable;
     
-    function MasterInfo( $ip, $port )
+    public function __construct( $ip, $port, $canRemove = true )
     {
         $this->ip = $ip;
         $this->port = $port;
         $this->lastHeartbeatTime = time();
+        $this->removeable = $canRemove;
     }
 	
-    function touch()
+    public function touch()
     {
         $this->lastHeartbeatTime = time();
     }
     
-    function sendHeartbeat($sock)
+    public function sendHeartbeat( $sock )
     {
         global $listenport;
         global $MASTERPASSWORD;
         $msg = "\\heartbeat\\port\\$listenport\\gamename\\master\\password\\$MASTERPASSWORD\\final\\";
         @socket_write($sock, $msg);
     }
-    
 }
 
 ?>
