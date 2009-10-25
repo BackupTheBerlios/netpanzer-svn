@@ -34,7 +34,7 @@ InfoBar::draw( int posx, int posy, Surface &dest)
     position.y += posy;
 
     iRect r(position.x, position.y, dest.getWidth(), position.y+12);
-    dest.bltLookup(r, Palette::darkGray256.getColorArray());
+    dest.bltLookup(r);
 
     char buf[512];
     

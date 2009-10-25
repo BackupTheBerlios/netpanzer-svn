@@ -140,12 +140,7 @@ ResourceManager::getFlagData(const char * flagname, Uint8 *dest)
         t.copy(*ResourceManager::getEmptyImage());
     }
     
-    Uint8 * surfacedata = t.getFrame0();
-    
-    for ( int n = 0; n < 14; n++ )
-    {
-        memcpy(dest + (n*20), surfacedata + (n*t.getPitch()), 20);
-    }
+    t.getRawDataFromPixels(dest, 20*14); // size of a flag
 }
 
 FlagID
@@ -174,13 +169,7 @@ void
 ResourceManager::getFlagSyncData(FlagID flag, Uint8 *dest)
 {
     Surface * flagsurf = getFlag(flag);
-    Uint8 * surfacedata = flagsurf->getFrame0();
-    
-    for ( int n = 0; n < 14; n++ )
-    {
-        memcpy(dest + (n*20), surfacedata + (n*flagsurf->getPitch()), 20);
-    }
-
+    flagsurf->getRawDataFromPixels(dest, 20*14); // size of flag;
 }
 
 int
@@ -192,12 +181,7 @@ ResourceManager::getFlagUsedCount(FlagID flag)
 void
 ResourceManager::syncFlagFromData(FlagID flag, Uint8 *flagdata)
 {
-    Uint8 * surfacedata = RMan.flagList[flag]->getFrame0();
-    for ( int n = 0; n < 14; n++ )
-    {
-        memcpy( surfacedata + (n*RMan.flagList[flag]->getPitch()), flagdata + (n*20), 20);
-    }
-    
+    RMan.flagList[flag]->setPixelsFromRawData(flagdata, 20*14);
     RMan.usedList[flag]=true;
     ++RMan.flagUsedCount[flag];
 }

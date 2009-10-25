@@ -27,17 +27,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 #include "System/Sound.hpp"
 #include "Views/Components/ViewGlobals.hpp"
-#include "Particles/RadarPingParticle2D.hpp"
 #include "Classes/ScreenSurface.hpp"
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleSystem2D.hpp"
-#include "2D/PackedSurface.hpp"
+#include "2D/Surface.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Util/Exception.hpp"
 #include "Views/GameViewGlobals.hpp"
 
-Surface       MenuTemplateView::backgroundSurface;
-PackedSurface MenuTemplateView::titlePackedSurface;
+Surface backgroundSurface;
+Surface titlePackedSurface;
 
 #define BTN_MAIN            "MenuTemplateView.Main"
 #define BTN_MULTI           "MenuTemplateView.Multiplayer"
@@ -47,8 +46,6 @@ PackedSurface MenuTemplateView::titlePackedSurface;
 #define BTN_INGAMEEXIT      "MenuTemplateView.InGamExit"
 #define BTN_RESIGN          "MenuTemplateView.Resign"
 #define BTN_CLOSEOPTIONS    "MenuTemplateView.CloseOptions"
-
-
 
 char MenuTemplateView::currentMultiView[] = "GetSessionView";
 char MenuTemplateView::currentView[]      = "";
@@ -105,6 +102,11 @@ void MenuTemplateView::initInGameOptionButtons()
 
 // initButtons
 //---------------------------------------------------------------------------
+void MenuTemplateView::freeBackgroundSurface()
+{
+	backgroundSurface.freeFrames();
+}
+
 void MenuTemplateView::initButtons()
 {
     if (Desktop::getVisible("GameView"))
@@ -125,7 +127,6 @@ void MenuTemplateView::doDraw()
     if (Desktop::getVisible("GameView")) {
 	// When ingame, tint the game into gray
         //r.translate(min);
-        //drawTransRect(clientRect, Palette::darkGray256.getColorArray());
         //clientArea.drawWindowsBorder();
         drawViewBackground();
         drawRect(iRect(0,0,clientRect.getSizeX(), clientRect.getSizeY()), Color::gray64);
@@ -143,9 +144,8 @@ void MenuTemplateView::doDraw()
             throw Exception("Where is the background surface?");
         }
 
-        //titlePackedSurface.blt(clientArea, bodyTextRect.min.x, 390);
-        //titlePackedSurface.bltBlend(clientArea, bodyTextRect.min.x, 390, Palette::colorTable6040);
-        titlePackedSurface.bltBlend(*screen, min.x + 40, min.y+390, Palette::colorTable6040);
+        titlePackedSurface.blt(*screen, min.x + 40, min.y + 390);
+//        titlePackedSurface.bltBlend(*screen, min.x + 40, min.y+390, Palette::colorTable6040);
     }
 
     View::doDraw();
@@ -169,14 +169,14 @@ void MenuTemplateView::doActivate()
 //---------------------------------------------------------------------------
 void MenuTemplateView::loadBackgroundSurface()
 {
-    doLoadBackgroundSurface("pics/backgrounds/menus/menu/defaultMB.bmp");
+    doLoadBackgroundSurface("pics/default/defaultMB.png");
 } // end MenuTemplateView::loadBackgroundSurface
 
 // doLoadBackgroundSurface
 //---------------------------------------------------------------------------
 void MenuTemplateView::doLoadBackgroundSurface(const std::string& string)
 {
-    backgroundSurface.loadBMP(string.c_str());
+    backgroundSurface.loadPNG(string.c_str());
 } // end MenuTemplateView::doLoadBackgroundSurface
 
 // loadTitleSurface
@@ -193,11 +193,12 @@ void MenuTemplateView::doLoadTitleSurface(const std::string& string)
     curTitleFlashTime  = 0.0f;
     titleFlashTimeHalf = 2.5;
 
-    std::string pakString = "pics/backgrounds/menus/menu/pak/";
+    std::string pakString = "pics/default/";
     pakString += string;
-    pakString += ".pak";
+    pakString += ".png";
 
-    titlePackedSurface.load(pakString);
+    titlePackedSurface.loadPNG(pakString.c_str());
+    titlePackedSurface.setColorkey();
 } // end MenuTemplateView::doLoadTitleSurface
 
 // doDeactivate
@@ -226,7 +227,6 @@ MenuTemplateView::onComponentClicked(Component* c)
         {
             Desktop::setVisibilityAllWindows(false);
             Desktop::setVisibility("HostView", true);
-            Desktop::setVisibility("UnitSelectionView", true);
             Desktop::setVisibility("FlagSelectionView", true);
             Desktop::setVisibility("HostOptionsView", true);
             Desktop::setVisibility("MapSelectionView", true);

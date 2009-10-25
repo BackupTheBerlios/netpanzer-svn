@@ -86,7 +86,7 @@ void HostJoinTemplateView::doActivate()
 //---------------------------------------------------------------------------
 void HostJoinTemplateView::loadBackgroundSurface()
 {
-    doLoadBackgroundSurface("pics/backgrounds/menus/menu/defaultMB.bmp");
+    doLoadBackgroundSurface("pics/default/defaultMB.png");
 } // end HostJoinTemplateView::loadBackgroundSurface
 
 void
@@ -133,7 +133,7 @@ HostJoinTemplateView::onComponentClicked(Component* c)
 
             serverlistview->endQuery();
 
-            MenuTemplateView::backgroundSurface.free();
+            MenuTemplateView::freeBackgroundSurface();
 
             ((PlayerGameManager*)gamemanager)->launchMultiPlayerGame();
             break;

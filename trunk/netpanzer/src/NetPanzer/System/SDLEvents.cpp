@@ -30,26 +30,36 @@ bool handleSDLEvents()
     static SDL_Event event;
 
     KeyboardInterface::sampleKeyboard();
-    while(SDL_PollEvent(&event)) {
-        switch (event.type) {
-        case SDL_QUIT:
-            return true;
-            break;
-        case SDL_MOUSEBUTTONDOWN:
-            MouseInterface::onMouseButtonDown(&event.button);
-            break;
-        case SDL_MOUSEBUTTONUP:
-            MouseInterface::onMouseButtonUp(&event.button);
-            break;
-        case SDL_MOUSEMOTION:
-            MouseInterface::onMouseMoved(&event.motion);
-            break;
-        case SDL_KEYDOWN: {
+    while ( SDL_PollEvent(&event) )
+    {
+        switch (event.type)
+        {
+            case SDL_QUIT:
+                return true;
+                break;
+
+            case SDL_MOUSEBUTTONDOWN:
+                MouseInterface::onMouseButtonDown(&event.button);
+                break;
+
+            case SDL_MOUSEBUTTONUP:
+                MouseInterface::onMouseButtonUp(&event.button);
+                break;
+
+            case SDL_MOUSEMOTION:
+                MouseInterface::onMouseMoved(&event.motion);
+                break;
+
+            case SDL_KEYDOWN:
+            {
                 KeyboardInterface::keyPressed(event.key.keysym.sym);
                 char c = event.key.keysym.unicode & 0x7F;
-                if (isprint(c)) {
+                if ( isprint(c) )
+                {
                     KeyboardInterface::putChar(c);
-                } else {
+                }
+                else
+                {
                     // it's not a normal char put the 0 into the char buffer to
                     // indicate extended chars...
                     KeyboardInterface::putChar(0);
@@ -57,16 +67,11 @@ bool handleSDLEvents()
                 }
                 break;
             }
-        case SDL_KEYUP:
-            KeyboardInterface::keyReleased(event.key.keysym.sym);
-            break;
-       
-        case SDL_ACTIVEEVENT:
-            if ( (event.active.state&SDL_APPACTIVE)
-                 && (event.active.gain==1)
-                 && gameconfig->fullscreen )
-                Screen->setPalette(Palette::color);
-             break;
+
+            case SDL_KEYUP:
+                KeyboardInterface::keyReleased(event.key.keysym.sym);
+                break;
+
         }
     }
 

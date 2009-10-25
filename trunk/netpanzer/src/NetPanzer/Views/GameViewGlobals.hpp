@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __GameViewGlobals_hpp__
 #define __GameViewGlobals_hpp__
 
-#include "2D/Surface.hpp"
 #include "Types/iRect.hpp"
 #include "Types/iXY.hpp"
 

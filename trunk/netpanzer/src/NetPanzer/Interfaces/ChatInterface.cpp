@@ -120,7 +120,7 @@ void ChatInterface::chatMessageRequest(const NetMessage* message)
             addChatString( chat_mesg.message_text );
         }
 
-        PIX color = Color::white;
+        IntColor color = Color::white;
 
         switch ( chat_request->message_scope ) {
         case _chat_mesg_scope_all :
@@ -174,7 +174,7 @@ void ChatInterface::chatMessage(const NetMessage* message)
         addChatString( chat_mesg->message_text );
     } // ** if
 
-    PIX color = Color::white;
+    IntColor color = Color::white;
 
     switch ( chat_mesg->message_scope ) {
     case _chat_mesg_scope_all :

@@ -40,5 +40,7 @@ typedef Uint8 FlagID;
 
 typedef Uint8 MsgClassID;
 
+typedef Uint32 IntColor;
+
 #endif	/* _CORETYPES_HPP */
 

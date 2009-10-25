@@ -30,7 +30,7 @@ Uint16 NetworkPlayerState::getPlayerIndex() const
 }
 
 //If you modify this array, also modify the constant above
-Uint8 *playerColorArray[] = {
+IntColor *playerColorArray[] = {
 	&Color::red,
 	&Color::green,
 	&Color::brown,

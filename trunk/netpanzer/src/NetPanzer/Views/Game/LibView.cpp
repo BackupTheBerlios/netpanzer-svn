@@ -28,9 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/GameViewGlobals.hpp"
 #include "Util/UtilInterface.hpp"
 #include "Util/TimerInterface.hpp"
-#include "2D/PackedSurface.hpp"
 #include "Particles/ParticleInterface.hpp"
-#include "2D/Span.hpp"
 #include "GameView.hpp"
 #include "Particles/CraterParticle2D.hpp"
 #include "Classes/ScreenSurface.hpp"
@@ -75,12 +73,6 @@ LibView::LibView() : GameTemplateView()
     checkBoxAllowTimeSlice->setLocation(0, 30);
     checkBoxAllowTimeSlice->setState(gTimeSliceFlag);
     add(checkBoxAllowTimeSlice);
-
-    checkBoxAllowSpanBlitting = new CheckBox();
-    checkBoxAllowSpanBlitting->setLabel("Allow Blended Span Blitting");
-    checkBoxAllowSpanBlitting->setLocation(0, 45);
-    checkBoxAllowSpanBlitting->setState(allowSpanBlitting);
-    add(checkBoxAllowSpanBlitting);
 
     checkBoxParticlesCanHaveSmoke = new CheckBox();
     checkBoxParticlesCanHaveSmoke->setLabel("Allow Explosion Particle Smoke");
@@ -164,31 +156,6 @@ void LibView::drawSurfaceInfo( iXY pos)
     drawString(pos.x, pos.y, strBuf, Color::white);
     pos.y += yOffset;
 
-    drawString(pos.x, pos.y, "-- Packed Surface Info --", Color::green);
-    pos.y += yOffset;
-
-    sprintf(strBuf, "Alive Count: %d", PackedSurface::getTotalSurfaceCount());
-    drawString(pos.x, pos.y, strBuf, Color::white);
-    pos.y += yOffset;
-
-    sprintf(strBuf, "Draw Count:  %d", PackedSurface::totalDrawCount);
-    drawString(pos.x, pos.y, strBuf, Color::white);
-    pos.y += yOffset;
-
-    sprintf(strBuf, "Mem: %d b, %d k, %3.2f MG", PackedSurface::getTotalByteCount(), PackedSurface::getTotalByteCount() / 1024, float(PackedSurface::getTotalByteCount()) / 1024.0f / 1024.0f);
-    drawString(pos.x, pos.y, strBuf, Color::white);
-    pos.y += yOffset;
-
-    drawString(pos.x, pos.y, "-- ColorTable Info --", Color::green);
-    pos.y += yOffset;
-
-    sprintf(strBuf, "Count:     %d", ColorTable::getTotalColorArrayCount());
-    drawString(pos.x, pos.y, strBuf, Color::white);
-    pos.y += yOffset;
-
-    sprintf(strBuf, "Mem: %d b, %d k, %3.2f MG", ColorTable::getTotalByteCount(), ColorTable::getTotalByteCount() / 1024, float(ColorTable::getTotalByteCount()) / 1024.0f / 1024.0f);
-    drawString(pos.x, pos.y, strBuf, Color::white);
-    pos.y += yOffset;
 }
 
 //--------------------------------------------------------------------------
@@ -316,8 +283,6 @@ void LibView::actionPerformed(mMouseEvent me)
         Particle2D::setCreateParticles(checkBoxAllowParticleGeneration->getState());
     } else if (me.getSource()==checkBoxAllowTimeSlice) {
         gTimeSliceFlag = checkBoxAllowTimeSlice->getState();
-    } else if (me.getSource()==checkBoxAllowSpanBlitting) {
-        allowSpanBlitting = checkBoxAllowSpanBlitting->getState();
     } else if (me.getSource()==checkBoxParticlesCanHaveSmoke) {
         ParticleInterface::gParticlesCanHaveSmoke = checkBoxParticlesCanHaveSmoke->getState();
     } else if (me.getSource()==checkBoxSolidColorExplosionParticles) {

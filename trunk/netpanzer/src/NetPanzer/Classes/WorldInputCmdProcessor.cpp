@@ -137,7 +137,6 @@ unsigned char
 WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
 {
     iXY map_loc;
-    unsigned char unit_loc_status;
     
     if (selection_box_active)
         return _cursor_regular;
@@ -201,31 +200,31 @@ WorldInputCmdProcessor::setMouseCursor(unsigned char world_cursor_status)
     switch(world_cursor_status)
     {
         case _cursor_regular :
-            MouseInterface::setCursor("default.bmp");
+            MouseInterface::setCursor("default.png");
             break;
 
         case _cursor_move :
-            MouseInterface::setCursor("move.bmp");
+            MouseInterface::setCursor("move.png");
             break;
 
         case _cursor_blocked :
-            MouseInterface::setCursor("noentry.bmp");
+            MouseInterface::setCursor("noentry.png");
             break;
 
         case _cursor_player_unit :
-            MouseInterface::setCursor("select.bmp");
+            MouseInterface::setCursor("select.png");
             break;
 
         case _cursor_enemy_unit :
-            MouseInterface::setCursor("target.bmp");
+            MouseInterface::setCursor("target.png");
             break;
 
         case _cursor_make_allie :
-            MouseInterface::setCursor("allie.bmp");
+            MouseInterface::setCursor("allie.png");
             break;
 
         case _cursor_break_allie :
-            MouseInterface::setCursor("breakallie.bmp");
+            MouseInterface::setCursor("breakallie.png");
             break;
     }
 }
@@ -310,6 +309,11 @@ WorldInputCmdProcessor::evaluateKeyCommands()
     else if( KeyboardInterface::getKeyState( SDLK_LEFT ) == true )
     {
     	WorldViewInterface::scroll_left( 15 );
+    }
+
+    if( KeyboardInterface::getKeyPressed( SDLK_z ) == true )
+    {
+    	SDL_SaveBMP(SDL_GetVideoSurface(), "/Users/krom/cap.bmp");
     }
 }
 

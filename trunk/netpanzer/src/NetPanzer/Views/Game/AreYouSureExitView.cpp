@@ -65,8 +65,7 @@ void AreYouSureExitView::init()
 //---------------------------------------------------------------------------
 void AreYouSureExitView::doDraw()
 {
-    drawTransRect(*this, Palette::darkGray256.getColorArray());
-    //viewArea.drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
+    drawTransRect(*this);
 
     drawStringCenter("Are you sure you wish to exit netPanzer?", Color::white);
 

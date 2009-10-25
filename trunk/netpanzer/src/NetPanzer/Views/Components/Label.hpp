@@ -27,7 +27,7 @@ using namespace std;
 class Label:public Component
 {
 public:
-    Label( int x, int y, string t, PIX color, PIX bgcolor=Color::black, bool shadow=false)
+    Label( int x, int y, string t, IntColor color, IntColor bgcolor=Color::black, bool shadow=false)
             : Component("Label." + t)
     {
         dirty = true;

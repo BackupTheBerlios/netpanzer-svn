@@ -23,8 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/MapInterface.hpp"
 #include "Classes/Network/NetworkState.hpp"
 
-SpritePacked PowerUp::POWERUP_ANIM;
-SpritePacked PowerUp::POWERUP_ANIM_SHADOW;
+Surface PowerUp::POWERUP_ANIM;
+Surface PowerUp::POWERUP_ANIM_SHADOW;
 
 PowerUp::PowerUp()
 {
@@ -46,7 +46,7 @@ PowerUp::PowerUp(iXY map_loc, PowerUpID ID, int type)
 
     sprite_shadow.setData( POWERUP_ANIM_SHADOW );
     sprite_shadow.setAttrib( world_loc, iXY(0,0), 4 );
-    sprite_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
+    sprite_shadow.setDrawModeBlend(64); // dark a lot
 }
 
 PowerUp::PowerUp(iXY map_loc, int type)
@@ -64,7 +64,7 @@ PowerUp::PowerUp(iXY map_loc, int type)
 
     sprite_shadow.setData( POWERUP_ANIM_SHADOW );
     sprite_shadow.setAttrib( world_loc, iXY(0,0), 4 );
-    sprite_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
+    sprite_shadow.setDrawModeBlend(64); // dark a lot
 }
 
 void PowerUp::offloadGraphics( SpriteSorter &sorter )

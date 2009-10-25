@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sstream>
 
 using namespace std;
+#define MAKE_STRING(X) #X
 
 InfoSocket::InfoSocket(int p) : socket(0)
 {
@@ -45,7 +46,7 @@ InfoSocket::InfoSocket(int p) : socket(0)
     stringstream s;
     s << "gamename\\netpanzer\\protocol\\" << NETPANZER_PROTOCOL_VERSION
       << "\\hostname\\" << gameconfig->playername
-      << "\\gameversion\\" << PACKAGE_VERSION;
+      << "\\gameversion\\" << MAKE_STRING(PACKAGE_VERSION);
     statusHead = s.str();
 }
 
@@ -88,7 +89,7 @@ InfoSocket::onDataReceived(UDPSocket *s, const Address &from, const char *data, 
         else if(query == "echo")
         {
             string echotoken = qtokenizer.getNextToken();
-            LOGGER.info("InfoSocket:: Received echo query of size %d", echotoken.size());
+            LOGGER.info("InfoSocket:: Received echo query of size %lu", (unsigned long)echotoken.size());
             if ( echotoken.size() )
                 socket->send(from, echotoken.c_str(), echotoken.size());
         }
@@ -160,16 +161,18 @@ static const char hextochar[] = { '0','1','2','3','4','5','6','7','8','9','a','b
 string
 InfoSocket::prepareFlagPacket(const int flagNum)
 {
-    Surface * fsurf = ResourceManager::getFlag(flagNum);
+    Uint8 rawflag[20*14];
+    ResourceManager::getFlagSyncData(flagNum, rawflag);
+
     unsigned char flagdata[((20*14)*2) + 1];
     flagdata[((20*14)*2)] = 0;
-    Uint8 * surfacedata = fsurf->getFrame0();
+
     int curpos = 0;
     for ( int y = 0; y < 14; ++y )
     {
         for ( int x = 0; x < 20; ++x )
         {
-            unsigned char b = *(surfacedata + (y*fsurf->getPitch()) + x);
+            unsigned char b = rawflag[(y*20)+x];
             flagdata[curpos] = hextochar[((b>>4)&0x0f)];
             ++curpos;
             flagdata[curpos] = hextochar[b&0x0f];

@@ -25,36 +25,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ArrayUtil/BoundBox.hpp"
 #include "Classes/Sprite.hpp"
 
-class SelectionBoxSprite : public Sprite
+class Surface;
+
+class UnitSelectionBox : public Sprite
 {
 protected:
     BoundBox selection_area;
-    unsigned char box_color;
+    IntColor box_color;
     bool box_state;
 
-public:
-    inline void setBoxAttributes( BoundBox box, unsigned char box_color )
-    {
-        selection_area = box;
-        SelectionBoxSprite::box_color = box_color;
-    }
-
-    inline void setBoxState( bool on_off )
-    {
-        box_state = on_off;
-    }
-
-    virtual bool isVisible(const iRect &world_win ) const;
-
-    virtual void blit( Surface *surface, const iRect &world_win );
-};
-
-class UnitSelectionBox : public SelectionBoxSprite
-{
-protected:
     float hit_points;
     float max_hit_points;
-    unsigned char hit_bar_color;
+    IntColor hit_bar_color;
 
     bool allied_visiblity_state;
     bool allie_state;
@@ -66,10 +48,21 @@ protected:
 public:
     UnitSelectionBox( );
 
+    inline void setBoxAttributes( BoundBox box, IntColor box_color )
+    {
+        selection_area = box;
+        box_color = box_color;
+    }
+
+    inline void setBoxState( bool on_off )
+    {
+        box_state = on_off;
+    }
+
     virtual ~UnitSelectionBox()
     { }
 
-    inline void setHitBarAttributes( int max_points, unsigned char bar_color )
+    inline void setHitBarAttributes( int max_points, IntColor bar_color )
     {
         max_hit_points = (float) max_points;
         hit_bar_color =  bar_color;
@@ -107,7 +100,10 @@ public:
         playerName = name;
     }
 
+    virtual bool isVisible(const iRect &world_win ) const;
+
     virtual void blit( Surface *surface, const iRect &world_win );
+
 };
 
 #endif // ** _SELECTION_BOX_SPRITE_HPP

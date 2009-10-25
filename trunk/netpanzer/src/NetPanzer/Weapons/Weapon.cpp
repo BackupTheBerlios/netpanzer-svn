@@ -39,15 +39,32 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 void Weapon::init()
 {
     //packFiles();
-    gMissleMediumPackedSurface.load("pics/particles/missles/pak/misslesMedium.pak");
-    gMissleSmallPackedSurface.load("pics/particles/missles/pak/misslesSmall.pak");
-    gShellPackedSurface.load("pics/particles/shells/pak/shells.pak");
+//    gMissleMediumPackedSurface.loadPAK("pics/particles/missles/pak/misslesMedium.pak");
+//    gMissleSmallPackedSurface.loadPAK("pics/particles/missles/pak/misslesSmall.pak");
+//    gShellPackedSurface.loadPAK("pics/particles/shells/pak/shells.pak");
 
-    Surface       temp;
-    PackedSurface pack;
+    gMissleMediumPackedSurface.loadPNGSheet("pics/particles/missles/misslesMedium.png", 14, 14, 360);
+    gMissleMediumPackedSurface.setColorkey();
+//    gMissleMediumPackedSurface.setOffsetCenter();
 
-    gMissleThrustPackedSurface.load("pics/particles/lights/pak/missleThrust.pak");
-    gMissleGroundLightPackedSurface.load("pics/particles/lights/pak/missleGroundLight.pak");
+    gMissleSmallPackedSurface.loadPNGSheet("pics/particles/missles/misslesSmall.png", 14, 14, 360);
+    gMissleSmallPackedSurface.setColorkey();
+//    gMissleSmallPackedSurface.setOffsetCenter();
+
+    gShellPackedSurface.loadPNGSheet("pics/particles/shells/shells.png", 14, 14, 360);
+    gShellPackedSurface.setColorkey();
+//    gShellPackedSurface.setOffsetCenter();
+
+    gMissleThrustPackedSurface.loadPNG("pics/particles/lights/missleThrust.png");
+    gMissleThrustPackedSurface.setColorkey();
+    gMissleThrustPackedSurface.setOffset(iXY(-15, -15));
+
+    gMissleGroundLightPackedSurface.loadPNG("pics/particles/lights/missleGroundLight.png");
+    gMissleGroundLightPackedSurface.setColorkey();
+    gMissleGroundLightPackedSurface.setOffset(iXY(-33,-24));
+
+//    gMissleThrustPackedSurface.brigthenFrames();
+//    gMissleGroundLightPackedSurface.brigthenFrames();
 }
 
 Weapon::Weapon(UnitID owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end)

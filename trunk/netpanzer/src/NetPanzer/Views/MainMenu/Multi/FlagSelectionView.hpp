@@ -21,15 +21,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 #include "Core/CoreTypes.hpp"
 #include "Views/MainMenu/RMouseHackView.hpp"
-#include "2D/Surface.hpp"
 
 //---------------------------------------------------------------------------
 class FlagSelectionView : public RMouseHackView
 {
 private:
-    static std::string playerFlagSelected;
-    static Surface playerFlag;
-    
+    static string playerFlagSelected;
     enum { BORDER_SPACE = 4 };
 protected:
     void onComponentClicked(Component * c);

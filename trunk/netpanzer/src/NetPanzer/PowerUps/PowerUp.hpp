@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/SpriteSorter.hpp"
 #include "Classes/Sprite.hpp"
 #include "Classes/Network/PowerUpNetMessage.hpp"
+#include "2D/Surface.hpp"
 
 class Unit;
 
@@ -38,8 +39,8 @@ protected:
     SpritePacked sprite_shadow;
 
 public:
-    static SpritePacked POWERUP_ANIM;
-    static SpritePacked POWERUP_ANIM_SHADOW;
+    static Surface POWERUP_ANIM;
+    static Surface POWERUP_ANIM_SHADOW;
 
     iXY       map_loc;
     iXY       world_loc;

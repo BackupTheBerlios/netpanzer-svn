@@ -97,9 +97,6 @@ void VectorPuffParticle2D::sim()
 
         waitTime = 0.0f;
 
-        try {
-            //new cSparkParticle2D(fXYZ(pos.x, pos.y, zPos));
-        } catch(...) {}
     }
 
     if (age > lifetime) {

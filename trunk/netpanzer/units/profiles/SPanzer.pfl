@@ -10,11 +10,11 @@ SPEED_RATE        22;
 SPEED_FACTOR       4;
 REPATH_TIME       20;
 FUEL_CAPACITY  10000;
-IMAGE "pics/menus/vehicleSelectionView/scout.bmp";
-BODYSPRITE "units/pics/pak/SpahHNSD.pak"
-BODYSHADOW "units/pics/pak/SpahHSSD.pak"
-TURRETSPRITE "units/pics/pak/SpahTNSD.pak"
-TURRETSHADOW "units/pics/pak/SpahTSSD.pak"
+IMAGE "units/pics/scout-image.png";
+BODYSPRITE "units/pics/SpahHNSD.png"
+BODYSHADOW "units/pics/SpahHSSD.png"
+TURRETSPRITE "units/pics/SpahTNSD.png"
+TURRETSHADOW "units/pics/SpahTSSD.png"
 SOUNDSELECTED "yessir"
 FIRESOUND "lt-fire"
 WEAPON "SHELL"

@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "FlameParticle2D.hpp"
 
-PackedSurfaceList FlameParticle2D::staticPackedExplosion0;
-PackedSurfaceList FlameParticle2D::staticPackedExplosion1;
+SurfaceList FlameParticle2D::staticPackedExplosion0;
+SurfaceList FlameParticle2D::staticPackedExplosion1;
 
 const int explosionFPS = 18;
 
@@ -62,19 +62,63 @@ FlameParticle2D::FlameParticle2D(	const fXYZ  &pos,
 //---------------------------------------------------------------------------
 void FlameParticle2D::loadPakFiles()
 {
-    char pathExplosion0[] = "pics/particles/explosion/explosion0/pak/";
+    staticPackedExplosion0.push_back(new Surface());
+    staticPackedExplosion0[staticPackedExplosion0.size()-1]->loadPNGSheet(
+            "pics/particles/explosion/explosion0_0001.png", 13, 18, 16);
+    staticPackedExplosion0.push_back(new Surface());
+    staticPackedExplosion0[staticPackedExplosion0.size()-1]->loadPNGSheet(
+            "pics/particles/explosion/explosion0_0002.png", 27, 36, 16);
+    staticPackedExplosion0.push_back(new Surface());
+    staticPackedExplosion0[staticPackedExplosion0.size()-1]->loadPNGSheet(
+            "pics/particles/explosion/explosion0_0003.png", 41, 54, 16);
+    staticPackedExplosion0.push_back(new Surface());
+    staticPackedExplosion0[staticPackedExplosion0.size()-1]->loadPNGSheet(
+            "pics/particles/explosion/explosion0_0004.png", 54, 73, 16);
+    staticPackedExplosion0.push_back(new Surface());
+    staticPackedExplosion0[staticPackedExplosion0.size()-1]->loadPNGSheet(
+            "pics/particles/explosion/explosion0_0005.png", 68, 91, 16);
+    staticPackedExplosion0.push_back(new Surface());
+    staticPackedExplosion0[staticPackedExplosion0.size()-1]->loadPNGSheet(
+            "pics/particles/explosion/explosion0_0006.png", 82, 109, 16);
+    staticPackedExplosion0.push_back(new Surface());
+    staticPackedExplosion0[staticPackedExplosion0.size()-1]->loadPNGSheet(
+            "pics/particles/explosion/explosion0_0007.png", 96, 128, 16);
 
-    if (!loadAllPAKInDirectory(pathExplosion0, staticPackedExplosion0)) {
-        throw Exception("ERROR: Unable to load any exposion images in %s", pathExplosion0);
+    for ( unsigned int n = 0; n < staticPackedExplosion0.size(); ++n )
+    {
+        staticPackedExplosion0[n]->setColorkey();
+//        staticPackedExplosion0[n]->setOffsetCenter();
     }
 
-    char pathExplosion1[] = "pics/particles/explosion/explosion1/pak/";
+    staticPackedExplosion1.push_back(new Surface());
+    staticPackedExplosion1[staticPackedExplosion1.size()-1]->loadPNGSheet(
+            "pics/particles/explosion/explosion1_0001.png", 18, 13, 15);
+    staticPackedExplosion1.push_back(new Surface());
+    staticPackedExplosion1[staticPackedExplosion1.size()-1]->loadPNGSheet(
+            "pics/particles/explosion/explosion1_0002.png", 36, 27, 15);
+    staticPackedExplosion1.push_back(new Surface());
+    staticPackedExplosion1[staticPackedExplosion1.size()-1]->loadPNGSheet(
+            "pics/particles/explosion/explosion1_0003.png", 54, 41, 15);
+    staticPackedExplosion1.push_back(new Surface());
+    staticPackedExplosion1[staticPackedExplosion1.size()-1]->loadPNGSheet(
+            "pics/particles/explosion/explosion1_0004.png", 73, 54, 15);
+    staticPackedExplosion1.push_back(new Surface());
+    staticPackedExplosion1[staticPackedExplosion1.size()-1]->loadPNGSheet(
+            "pics/particles/explosion/explosion1_0005.png", 91, 68, 15);
+    staticPackedExplosion1.push_back(new Surface());
+    staticPackedExplosion1[staticPackedExplosion1.size()-1]->loadPNGSheet(
+            "pics/particles/explosion/explosion1_0006.png", 109, 82, 15);
+    staticPackedExplosion1.push_back(new Surface());
+    staticPackedExplosion1[staticPackedExplosion1.size()-1]->loadPNGSheet(
+            "pics/particles/explosion/explosion1_0007.png", 128, 96, 15);
 
-    if (!loadAllPAKInDirectory(pathExplosion1, staticPackedExplosion1)) {
-        throw Exception("ERROR: Unable to load any exposion images in %s", pathExplosion1);
+    for ( unsigned int n = 0; n < staticPackedExplosion1.size(); ++n )
+    {
+        staticPackedExplosion1[n]->setColorkey();
+//        staticPackedExplosion1[n]->setOffsetCenter();
     }
+
 }
-
 // init
 //---------------------------------------------------------------------------
 void FlameParticle2D::init()

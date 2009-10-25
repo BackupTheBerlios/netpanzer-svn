@@ -240,7 +240,7 @@ ClientSocket::onConnected(network::TCPSocket *so)
     bytesSent = 0;
     packetsSent = 0;
     socket = so;
-    LOGGER.debug("ClientSocket: connected [%s] id=%d at %d", getIPAddress().c_str(), id, connectStartSeconds);
+    LOGGER.debug("ClientSocket: connected [%s] id=%d at %lu", getIPAddress().c_str(), id, (unsigned long)connectStartSeconds);
     if ( observer )
     {
         observer->onClientConnected(this);
@@ -272,11 +272,11 @@ ClientSocket::logStatistics()
 {
     time_t connectedTime = time(0) - connectStartSeconds;
     LOGGER.warning( "ClientSocket statistics for [%s]:\n"
-		    " * Seconds Connected: %d\n"
+		    " * Seconds Connected: %lu\n"
 		    " * Packets Received/Sent: %u / %u\n"
 		    " * Bytes Received/Sent: %u / %u",
 		    getIPAddress().c_str(),
-		    connectedTime,
+		    (unsigned long)connectedTime,
 		    packetsReceived, packetsSent,
 		    bytesReceived, bytesSent
 		  );

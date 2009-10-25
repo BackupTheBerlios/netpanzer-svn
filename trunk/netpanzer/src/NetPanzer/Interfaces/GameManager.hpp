@@ -93,9 +93,7 @@ public:
 
     static void setVideoMode();
 
-    static void loadPalette(const std::string& palette_path );
-
-    static void drawTextCenteredOnScreen(const char *string, unsigned char color);
+    static void drawTextCenteredOnScreen(const char *string, IntColor color);
 
     static void   startGameTimer();
     static time_t getGameTime();

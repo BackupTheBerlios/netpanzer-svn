@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __GameTemplateView_hpp__
 
 #include "Views/Components/View.hpp"
-#include "2D/Surface.hpp"
 
 //---------------------------------------------------------------------------
 class GameTemplateView : public View

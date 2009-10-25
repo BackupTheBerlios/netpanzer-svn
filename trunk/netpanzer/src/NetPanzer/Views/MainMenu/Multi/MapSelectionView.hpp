@@ -22,21 +22,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string.h>
 
 #include "Views/MainMenu/RMouseHackView.hpp"
-#include "2D/Surface.hpp"
 #include "Views/Components/Button.hpp"
 
-//---------------------------------------------------------------------------
+class Surface;
+
 class MapInfo
 {
 public:
-    Surface thumbnail;
+    Surface * thumbnail;
     std::string name;
     std::string description;
     iXY     cells;
     int     objectiveCount;
 
-    MapInfo()
+    MapInfo() : thumbnail(0)
     {
+    }
+    ~MapInfo()
+    {
+    	if ( thumbnail )
+    	{
+    		delete thumbnail;
+    	}
     }
 }; // end MapInfo
 

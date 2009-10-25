@@ -24,8 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class NTimer
 {
 public:
-    NTimer() : starttime(0), timeout(0) {};
-    NTimer(Uint32 t) : starttime(0), timeout(t) {};
+    NTimer() : starttime(0), timeout(0) {}
+    NTimer(Uint32 t) : starttime(0), timeout(t) {}
 
     inline void reset()              { starttime = SDL_GetTicks(); }
     /** Sets start time to t */
@@ -38,6 +38,7 @@ public:
     inline Uint32 getTimeOut()       { return timeout; }
     
     inline bool isTimeOut() { return (SDL_GetTicks()-starttime)>timeout; }
+
     /** Checks the time with the provided time (supposed to be now) */
     inline bool isTimeOut(Uint32 t) { return (t-starttime)>timeout; }
     

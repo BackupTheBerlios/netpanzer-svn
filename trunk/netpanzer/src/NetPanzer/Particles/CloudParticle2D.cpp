@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "CloudParticle2D.hpp"
 #include "Util/TimerInterface.hpp"
-#include "2D/PackedSurface.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Util/Exception.hpp"
 #include "2D/Palette.hpp"
@@ -27,7 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 // Statics.
-PackedSurface CloudParticle2D::staticPackedCloud;
+Surface CloudParticle2D::staticPackedCloud;
+Surface CloudParticle2D::staticCloudShadow;
 iXY CloudParticle2D::worldSize(0, 0);
 
 
@@ -60,25 +60,15 @@ void CloudParticle2D::setRandomSurface()
 {
     packedSurface.setData(staticPackedCloud);
 
-    int randFrame = rand() % staticPackedCloud.getFrameCount();
+    int randFrame = rand() % staticPackedCloud.getNumFrames();
     packedSurface.setFrame(randFrame);
 
-    packedSurfaceShadow.setData(staticPackedCloud);
+    packedSurfaceShadow.setData(staticCloudShadow);
     packedSurfaceShadow.setFrame(randFrame);
 
-    packedSurfaceShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
+    packedSurfaceShadow.setDrawModeBlend(32);
 
-    int randColorTable = rand() % 3;
-
-    if (randColorTable == 0) {
-        packedSurface.setDrawModeBlend(&Palette::colorTable2080);
-    } else if(randColorTable == 1) {
-        packedSurface.setDrawModeBlend(&Palette::colorTable4060);
-    } else if(randColorTable == 2) {
-        packedSurface.setDrawModeBlend(&Palette::colorTable6040);
-    } else {
-        assert(false);
-    }
+    packedSurface.setDrawModeBlend(128);
 
 } // end CloudParticle2D::setRandomSurface
 
@@ -89,8 +79,12 @@ void CloudParticle2D::packFiles()
 //---------------------------------------------------------------------------
 void CloudParticle2D::loadPAKFiles()
 {
-    staticPackedCloud.load("pics/particles/clouds/pak/clouds.pak");
-    staticPackedCloud.setOffsetCenter();
+    staticPackedCloud.loadPNGSheet("pics/particles/clouds/clouds.png", 300, 300, 10);
+    staticPackedCloud.setColorkey();
+//    staticPackedCloud.setOffsetCenter();
+
+    staticCloudShadow.createShadow(staticPackedCloud);
+//    staticCloudShadow.setOffsetCenter();
 }
 
 // init

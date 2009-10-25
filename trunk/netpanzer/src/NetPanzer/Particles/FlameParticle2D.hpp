@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 
 #include "Particles/Particle2D.hpp"
-#include "2D/PackedSurface.hpp"
+#include "2D/Surface.hpp"
 
 // FlameParticle2D
 //--------------------------------------------------------------------------
@@ -37,8 +37,8 @@ public:
     static void init();
 
 protected:
-    static PackedSurfaceList staticPackedExplosion0;
-    static PackedSurfaceList staticPackedExplosion1;
+    static SurfaceList staticPackedExplosion0;
+    static SurfaceList staticPackedExplosion1;
 
     virtual void draw(SpriteSorter &sorter);
 

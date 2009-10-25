@@ -34,7 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 using namespace std;
 
 string FlagSelectionView::playerFlagSelected = "";
-Surface FlagSelectionView::playerFlag;
+Surface playerFlag;
 
 #define FLAGBUTTONCODE 0xabba
 
@@ -92,9 +92,6 @@ void FlagSelectionView::init()
     // Now load in the sorted BMP names.
     for (unsigned int i = 0; i < filenames.size(); i++)
     {
-        LOGGER.warning("Flag '%s'", filenames[i].c_str());
-        //flag.loadBMP(filenames[i].c_str());
-        //flag.mapFromPalette("netp");
         try
         {
             string fullname(DEFAULT_FLAGS_PATH);
@@ -133,9 +130,6 @@ void FlagSelectionView::init()
 //---------------------------------------------------------------------------
 void FlagSelectionView::doDraw()
 {
-    //iRect r(getViewRect());
-    //viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
-
     char strBuf[256];
     sprintf(strBuf, "Current:");
     int CHAR_XPIX = 8; // XXX hardcoded

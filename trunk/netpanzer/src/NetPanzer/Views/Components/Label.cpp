@@ -21,7 +21,7 @@
 void
 Label::render()
 {
-    surface.free();
+    surface.freeFrames();
     if ( shadowed )
     {
         surface.renderShadowedText(text.c_str(), foreground, 0, background);

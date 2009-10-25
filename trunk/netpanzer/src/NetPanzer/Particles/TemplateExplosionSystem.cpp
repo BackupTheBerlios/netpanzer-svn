@@ -101,16 +101,6 @@ TemplateExplosionSystem::TemplateExplosionSystem(const fXYZ& pos,
         } catch(...) {}
         //}
 
-        //for (int i = 0; i < e.flashCount - 1; i++)
-        //{
-        //	fXYZ offset;
-        //
-        //	offset.x = pos.x - (rand() % bounds.getSizeX()) + halfBoundsX;
-        //	offset.y = 0.0f;
-        //	offset.z = pos.z - (rand() % bounds.getSizeY()) + halfBoundsY;
-        //
-        //	new FlashParticle2D(offset, e.flashMinScale, e.flashRandScale, e.flashLifetime, ExplosionSystem::flashLayer);
-        //}
     }
     else {
         ParticleInterface::gExplosionFlameFlashCullHitCount++;

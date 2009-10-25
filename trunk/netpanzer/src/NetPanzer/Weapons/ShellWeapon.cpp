@@ -28,8 +28,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleInterface.hpp"
 #include "Util/Math.hpp"
 #include "Interfaces/GameConfig.hpp"
-#include "Particles/FlashParticle2D.hpp"
-
 
 ShellWeapon::ShellWeapon(UnitID owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end)
         : Weapon(owner, owner_type_id, damage, start, end)
@@ -49,14 +47,14 @@ ShellWeapon::ShellWeapon(UnitID owner, unsigned short owner_type_id, unsigned sh
 
     shell.setData(gShellPackedSurface);
     shell.setFrame(frame360);
-    shell.setSpriteHeight(weaponLayer);
+    shell.setLayer(weaponLayer);
 
     shell.setDrawModeSolid();
 
-    shellShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
+    shellShadow.setDrawModeBlend(64); // dark little
     shellShadow.setData(gShellPackedSurface);
     shellShadow.setFrame(getGoalAngle(start, end));
-    shellShadow.setSpriteHeight(weaponShadowLayer);
+    shellShadow.setLayer(weaponShadowLayer);
 }
 
 void ShellWeapon::fsmFlight()

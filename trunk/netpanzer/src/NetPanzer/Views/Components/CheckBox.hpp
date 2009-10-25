@@ -33,7 +33,7 @@ protected:
     bool   state;
     StateChangedCallback* callback;
 
-    PIX textColor;
+    IntColor textColor;
 
     void render();
 

@@ -140,8 +140,8 @@ Unit::Unit(PlayerState* ownplayer, unsigned char utype, UnitID uid, iXY initial_
 
     in_sync_flag = true;
 
-    body_anim_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
-    turret_anim_shadow.setDrawModeBlend(&Palette::colorTableDarkenALot);
+    body_anim_shadow.setDrawModeBlend(128); // dark a lot
+    turret_anim_shadow.setDrawModeBlend(128); // dark a lot
 
     path_generated = false;
     critical_ai_section = false;

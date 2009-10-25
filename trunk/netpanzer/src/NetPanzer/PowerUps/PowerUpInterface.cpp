@@ -147,9 +147,14 @@ void PowerUpInterface::generatePowerUp()
 
 void PowerUpInterface::initialize( void )
 {
-    PowerUp::POWERUP_ANIM.load( "powerups/Bolt.pak" );
+    PowerUp::POWERUP_ANIM.loadPNGSheet("powerups/Bolt.png", 127, 127, 36);
+    PowerUp::POWERUP_ANIM.setColorkey();
+    PowerUp::POWERUP_ANIM.setOffsetCenter();
     PowerUp::POWERUP_ANIM.setFPS( 15 );
-    PowerUp::POWERUP_ANIM_SHADOW.load( "powerups/BoltS.pak" );
+    Surface t;
+    t.loadPNGSheet("powerups/BoltS.png", 127, 127, 36);
+    PowerUp::POWERUP_ANIM_SHADOW.createShadow(t);
+    PowerUp::POWERUP_ANIM_SHADOW.setOffsetCenter();
 }
 
 void PowerUpInterface::resetLogic( void )

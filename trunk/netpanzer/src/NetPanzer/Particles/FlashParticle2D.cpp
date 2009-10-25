@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/FlashParticle2D.hpp"
 #include "2D/Palette.hpp"
 
-PackedSurface FlashParticle2D::staticPackedFlash;
+Surface FlashParticle2D::staticPackedFlash;
 
 // FlashParticle2D
 //---------------------------------------------------------------------------
@@ -38,7 +38,7 @@ FlashParticle2D::FlashParticle2D(	const fXYZ  &pos,
     FlashParticle2D::lifetime    = lifetime;
 
     packedSurface.setData(staticPackedFlash);
-    packedSurface.setDrawModeBlend(&Palette::colorTableBrighten);
+    packedSurface.setDrawModeBlend(224); // more bright
 
 } // end FlashParticle2D::FlashParticle2D
 
@@ -46,7 +46,10 @@ FlashParticle2D::FlashParticle2D(	const fXYZ  &pos,
 //---------------------------------------------------------------------------
 void FlashParticle2D::init()
 {
-    staticPackedFlash.load("pics/particles/lights/pak/flash2.pak");
+    staticPackedFlash.loadPNGSheet("pics/particles/lights/flash2.png", 240, 149, 20);
+    staticPackedFlash.setColorkey();
+//    staticPackedFlash.setOffsetCenter();
+//    staticPackedFlash.brigthenFrames();
 } // end FlashParticle2D::init
 
 // draw

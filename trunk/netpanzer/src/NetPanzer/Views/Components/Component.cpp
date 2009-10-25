@@ -34,7 +34,7 @@ void Component::reset()
     enabled    = true;
     visible    = true;
     parent     = 0;
-    surface.free();
+    surface.freeFrames();
     customCode = -1;
 } // end Component::reset
 

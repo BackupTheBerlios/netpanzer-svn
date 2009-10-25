@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _DISCONECTEDVIEW_HPP
 
 #include "Views/MainMenu/SpecialButtonView.hpp"
-#include "2D/Surface.hpp"
 #include <string>
 
 //---------------------------------------------------------------------------

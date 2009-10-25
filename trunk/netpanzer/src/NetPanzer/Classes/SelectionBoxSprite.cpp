@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Resources/ResourceManager.hpp"
 
-bool SelectionBoxSprite::isVisible(const iRect &world_win) const
+bool UnitSelectionBox::isVisible(const iRect &world_win) const
 {
     if (
         (world_win.contains( world_pos + selection_area.min ) && (visible == true ) ) ||
@@ -31,35 +31,6 @@ bool SelectionBoxSprite::isVisible(const iRect &world_win) const
         return( true );
 
     return( false );
-}
-
-
-void SelectionBoxSprite::blit( Surface *surface, const iRect &world_win )
-{
-    iXY min_abs, max_abs;
-
-    if ( box_state == false )
-        return;
-
-    min_abs = (world_pos + selection_area.min) - world_win.min;
-    max_abs = (world_pos + selection_area.max) - world_win.min;
-
-    if( (min_abs.x >= 0 ) ) {
-        surface->drawVLine(min_abs.x, min_abs.y, max_abs.y, box_color);
-    }
-
-    if( ((unsigned int)max_abs.x < surface->getWidth())  ) {
-        surface->drawVLine(max_abs.x, min_abs.y, max_abs.y, box_color);
-    }
-
-    if( (min_abs.y >= 0 ) ) {
-        surface->drawHLine(min_abs.x, min_abs.y, max_abs.x, box_color);
-    }
-
-    if ( ((unsigned int)max_abs.y < surface->getHeight()) ) {
-        surface->drawHLine(min_abs.x, max_abs.y, max_abs.x+1, box_color);
-    }
-
 }
 
 UnitSelectionBox::UnitSelectionBox( )
@@ -83,7 +54,7 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
 
         // Modified the vehicle selection box and moved the hitpoints outside,
         // the box status check, because I may want the hitpoints drawn all the time.
-        PIX selectionBoxColor = gameconfig->getVehicleSelectionBoxColor();
+        IntColor selectionBoxColor = gameconfig->getVehicleSelectionBoxColor();
 
         assert(max_hit_points > 0);
 
@@ -106,7 +77,7 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
     if ( gameconfig->drawunitdamage || (box_state == true) )
     {
         // Draw a color coded hit bar.
-        Uint8 hitBarColor;
+        IntColor hitBarColor;
 
         float hitPointPercent = float(hit_points) / float(max_hit_points);
 
@@ -127,7 +98,7 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
 
         iRect r(min_abs.x + 1, max_abs.y - 5, max_abs.x - 1, max_abs.y - 1);
 
-        surface->bltLookup(r, Palette::darkGray256.getColorArray());
+        surface->bltLookup(r);
 
         r = iRect(min_abs.x + 2, max_abs.y - 4, min_abs.x + 2 + hit_bar_size, max_abs.y - 3);
 

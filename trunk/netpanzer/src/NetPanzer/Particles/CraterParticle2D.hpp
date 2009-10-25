@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include "Particles/Particle2D.hpp"
 
-class Surface;
+#include "2D/Surface.hpp"
 
 class CraterCacheInfo
 {
@@ -39,7 +39,7 @@ public:
 
     static void init();
 
-    static PackedSurface staticPackedCrater;
+    static Surface staticPackedCrater;
 
     static int getCacheHitCount()
     {

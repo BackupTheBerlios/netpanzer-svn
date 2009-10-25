@@ -22,25 +22,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "TrajectoryParticle2D.hpp"
 #include "ParticleSystemGlobals.hpp"
-#include "2D/PackedSurface.hpp"
-
 
 // ChunkTrajectoryParticle2D
 //--------------------------------------------------------------------------
 class ChunkTrajectoryParticle2D : public TrajectoryParticle2D
 {
 protected:
-    static PackedSurface staticPackedGroundChunks;
-    static PackedSurface staticPackedBurnGroundChunks;
-    static PackedSurface staticPackedUnitGreenChunks;
-    static PackedSurface staticPackedUnitGrayChunks;
-
-    static void createPAKFiles();
-    static void createGroundChunks();
-    static void createBurnGroundChunks();
-    static void createUnitBodyGreenChunks();
-    static void createUnitBodyGrayChunks();
-
     float     arcYPix;
     int       hasSmoke;
     float     smokeWaitTime;

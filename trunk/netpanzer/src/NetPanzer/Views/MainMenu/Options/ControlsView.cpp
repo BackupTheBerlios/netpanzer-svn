@@ -86,7 +86,6 @@ void ControlsView::doDraw()
     //
     // Joystick State
     //tempSurface.fill(meterColor);
-    //tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
     //sprintf(strBuf, "%s", getJoystickState());
     //tempSurface.bltStringCenter(strBuf, meterTextColor);
     //tempSurface.blt(clientArea, x, y);

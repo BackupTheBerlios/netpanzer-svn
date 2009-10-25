@@ -95,35 +95,6 @@ void MapInterface::finishMapLoad( void )
     spawn_list.loadSpawnFile( path );
 }
 
-/*
-void MapInterface::LoadMap( const char *file_path, bool load_tiles )
- {
-  char path[80];
-  
-  strcpy( path, file_path );
-  strcat( path, ".npm" );
-  
-  tile_set.loadTileSetInfo( "./wads/wad.tls" );
-  generateMappingTable();
-  main_map.reMap( wad_mapping_table );
-  
-  if ( load_tiles == true )
-   {
-    tile_set.loadTileSet( "./wads/wad.tls", wad_mapping_table ); 
-   }
-  else
-   {
-    tile_set.loadTileSetInfo( "./wads/wad.tls", wad_mapping_table ); 
-   }
- 
-  wad_mapping_table.deallocate();
-   
-  strcpy( path, file_path );
-  strcat( path, ".spn" );
-  spawn_list.loadSpawnFile( path );  
- }
-*/
-
 void MapInterface::generateMappingTable()
 {
     unsigned short tile_count;

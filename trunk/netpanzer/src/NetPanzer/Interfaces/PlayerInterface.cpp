@@ -627,7 +627,6 @@ void PlayerInterface::disconnectPlayerCleanup( Uint16 index )
     {
         PlayerAllianceUpdate allie_update;
 
-        unsigned short player_index;
         unsigned short disconnect_player_index;
 
         disconnect_player_index = index;

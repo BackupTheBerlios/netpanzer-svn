@@ -10,11 +10,11 @@ SPEED_RATE       16;
 SPEED_FACTOR      2;
 REPATH_TIME      20;
 FUEL_CAPACITY  2000;
-IMAGE "pics/menus/vehicleSelectionView/drake.bmp"
-BODYSPRITE "units/pics/pak/DrakHNSD.pak"
-BODYSHADOW "units/pics/pak/DrakHSSD.pak"
-TURRETSPRITE "units/pics/pak/DrakTNSD.pak"
-TURRETSHADOW "units/pics/pak/DrakTSSD.pak"
+IMAGE "units/pics/drake-image.png"
+BODYSPRITE "units/pics/DrakHNSD.png"
+BODYSHADOW "units/pics/DrakHSSD.png"
+TURRETSPRITE "units/pics/DrakTNSD.png"
+TURRETSHADOW "units/pics/DrakTSSD.png"
 SOUNDSELECTED "ht-selected"
 FIRESOUND "ht-fire"
 WEAPON "SHELL"

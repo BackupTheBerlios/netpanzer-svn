@@ -16,7 +16,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "System/SDLVideo.hpp"
 #include "Classes/ScreenSurface.hpp"
 
@@ -25,34 +24,35 @@ ScreenSurface* screen = 0;
 ScreenSurface::ScreenSurface(SDLVideo* newdraw, int width, int height)
         : Surface(), draw(newdraw)
 {
-    myMem = false;
-    numFrames = 1;
-
+    frames.resize(1);
     twidth =width;
     theight=height;
     tpitch = width;
-    
-    numFrames = 1;
-    doesExist = false;
+    cur_frame = 0;
 }
 
 void ScreenSurface::lock()
 {
-    // XXX HERE HERE 
-    assert(doesExist == false);
-    draw->lockDoubleBuffer( (unsigned char **) &frame0 );
-    mem = frame0;
-    doesExist = true;
+    draw->lockDoubleBuffer();
+    cur_frame = draw->getSurface();
+    mem = (Uint8*) cur_frame->pixels;
+    twidth = cur_frame->w;
+    theight = cur_frame->h;
+    tpitch = cur_frame->pitch;
 }
 
 void ScreenSurface::unlock() 
 {
-    assert(doesExist == true);
+    cur_frame = 0;
     draw->unlockDoubleBuffer();
-    doesExist = false;
 }
 
 void ScreenSurface::copyToVideoFlip()
 {
     draw->copyDoubleBufferandFlip();
+}
+
+const SDL_PixelFormat* ScreenSurface::getPixelFormat()
+{
+    return draw->getSurface()->format;
 }

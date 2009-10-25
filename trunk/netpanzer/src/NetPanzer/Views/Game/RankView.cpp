@@ -48,7 +48,7 @@ RankView::RankView() : GameTemplateView()
     checkArea(iXY(screen->getWidth(),screen->getHeight()));
 
     const unsigned MAX_ALLY_CHARS		=  6;
-    const unsigned MAX_FLAG_CHARS      =  5;
+//    const unsigned MAX_FLAG_CHARS      =  5;
 	const unsigned MAX_NAME_CHARS      = 20;
     const unsigned MAX_KILLS_CHARS     =  6;
     const unsigned MAX_LOSSES_CHARS    =  7;
@@ -74,18 +74,12 @@ RankView::RankView() : GameTemplateView()
     add( new Label( xOffset, yOffset, "Objective", Color::red, Color::gray64, true) );
     xOffset += MAX_POINTS_CHARS*CHAR_XPIX;
 
-	allyImage.loadBMP("pics/default/ally.bmp");
-	allyRequestImage.loadBMP("pics/default/allyRequest.bmp");
-	allyOtherImage.loadBMP("pics/default/allyOther.bmp");
-	noAllyImage.loadBMP("pics/default/noAlly.bmp");
+        allyImage.loadPNG("pics/default/ally.png");
+        allyRequestImage.loadPNG("pics/default/allyRequest.png");
+        allyOtherImage.loadPNG("pics/default/allyOther.png");
+        noAllyImage.loadPNG("pics/default/noAlly.png");
 	
 	states.clear();
-    
-	// Define the scrollBar fot this view.
-    scrollBar = new ScrollBar(ScrollBar::VERTICAL, 0, 1, 0, 100);
-    if (scrollBar == 0) {
-        throw Exception("ERROR: Unable to allocate the scrollBar.");
-    }
 } // end RankView::RankView
 
 // doDraw

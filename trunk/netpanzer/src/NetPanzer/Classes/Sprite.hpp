@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _SPRITE_HPP
 
 #include "2D/Surface.hpp"
-#include "2D/PackedSurface.hpp"
 
 #define _MAX_HEIGHT_LEVELS 8
 
@@ -32,7 +31,6 @@ public:
     unsigned char height;
     bool       visible;
 
-public:
     Sprite();
 	virtual ~Sprite()
 	{ }
@@ -68,13 +66,13 @@ public:
         attach_offset.y = 0;
     }
 
-    inline void setSpriteHeight( unsigned char height )
+    inline void setLayer( unsigned char layer )
     {
-        assert( height < _MAX_HEIGHT_LEVELS );
-        Sprite::height = height;
+        assert( layer < _MAX_HEIGHT_LEVELS );
+        Sprite::height = layer;
     }
 
-    inline unsigned char getSpriteHeight() const
+    inline unsigned char getLayer() const
     {
         return( height );
     }
@@ -117,31 +115,32 @@ protected:
 
 };
 
-class SpritePacked : public PackedSurface, public Sprite
+class SpritePacked : public Sprite
 {
 private:
+    Surface imageData;
     enum DRAW_MODE
     {
         BLEND,
         SOLID
     };
 
-    ColorTable *colorTable;
     DRAW_MODE   drawMode;
+    Uint8 alpha;
 
 public:
 
     SpritePacked();
 
-    SpritePacked( PackedSurface &source );
+    SpritePacked( Surface &source );
 
     virtual ~SpritePacked()
     { }
 
-    inline void setDrawModeBlend(ColorTable *colorTable)
+    inline void setDrawModeBlend(Uint8 alpha)
     {
-        SpritePacked::colorTable = colorTable;
         SpritePacked::drawMode   = BLEND;
+        this->alpha = alpha;
     }
 
     inline void setDrawModeSolid()
@@ -150,11 +149,17 @@ public:
     }
 
 
-    inline void setData( PackedSurface &source )
+    inline void setData( Surface &source )
     {
-        setTo( source );
-        setOffsetCenter();
+    	imageData.linkData(source);
+    	imageData.setOffsetCenter();
     }
+
+    inline void setData( SpritePacked &source )
+	{
+		imageData.linkData(source.imageData);
+		imageData.setOffsetCenter();
+	}
 
     inline void setAttrib( const iXY &worldPos, const iXY &attach,
                            unsigned char height, int frame )
@@ -163,7 +168,7 @@ public:
         attach_offset = attach;
         assert( height < _MAX_HEIGHT_LEVELS );
         Sprite::height = height;
-        setFrame( frame );
+        imageData.setFrame( frame );
     }
 
 
@@ -184,6 +189,19 @@ public:
         attach_offset.x = 0;
         attach_offset.y = 0;
     }
+
+    int getCenterX() { return imageData.getWidth()/2; }
+    int getCenterY() { return imageData.getHeight()/2; }
+    int getHeight()  { return imageData.getHeight(); }
+    int getWidth()  { return imageData.getWidth(); }
+    int getOffsetX()  { return imageData.getOffset().x; }
+    int getOffsetY()  { return imageData.getOffset().y; }
+    void setFrame(int f) { imageData.setFrame(f); }
+    void setFPS(unsigned int f)  { imageData.setFPS(f); }
+    float getFPS() const { return imageData.getFPS(); }
+    int nextFrame() { return imageData.nextFrame(); }
+    int getFrameCount() { return imageData.getNumFrames(); }
+    int getCurFrame () { return imageData.getCurFrame(); }
 
     virtual bool isVisible(const iRect &world_win ) const;
 

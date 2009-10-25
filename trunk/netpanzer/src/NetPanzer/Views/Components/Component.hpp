@@ -33,8 +33,8 @@ class mMouseEvent;
 class Component : public NoCopy
 {
 protected:
-    PIX    background;
-    PIX    foreground;
+    IntColor    background;
+    IntColor    foreground;
     iXY     size;
     iXY    position;
     Surface surface;
@@ -117,7 +117,7 @@ public:
     }
 
 //    void setEnabled(bool _enabled) { enabled = _enabled; }
-//    void setForeground(PIX _foreground) { foreground = _foreground; }
+//    void setForeground(IntColor _foreground) { foreground = _foreground; }
     void setLocation(int x, int y);
     void setLocation(const iXY &p) { setLocation(p.x, p.y); }
     void setName(const std::string& name) { Component::componentName = name; }

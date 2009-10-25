@@ -47,6 +47,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Palette.hpp"
 #include "lua/lua.hpp"
 
+#define MAKE_STRING(X) #X
+
 //---------------------------------------------------------------------------
 
 static std::string pidfile;
@@ -116,7 +118,7 @@ BaseGameManager *initialise(int argc, char** argv)
 
     // Parse commandline
     using namespace optionmm;
-    command_line commandline("netPanzer", PACKAGE_VERSION,
+    command_line commandline("netPanzer", MAKE_STRING(PACKAGE_VERSION),
             "Copyright(c) 1998 Pyrosoft Inc. and nepanzer-devel team", "",
             argc, argv);
 

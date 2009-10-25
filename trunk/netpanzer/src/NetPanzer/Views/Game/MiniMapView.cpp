@@ -59,7 +59,7 @@ MiniMapView::checkResolution(iXY oldResolution, iXY newResolution)
 void MiniMapView::doDraw()
 {
     // border
-    drawRect(iRect(0,0,clientRect.getSizeX(), clientRect.getSizeY()),Color::gray);
+    drawRect(iRect(0,0,clientRect.getSizeX()-1, clientRect.getSizeY()-1),Color::gray);
     
     GameTemplateView::doDraw();
 } // end doDraw

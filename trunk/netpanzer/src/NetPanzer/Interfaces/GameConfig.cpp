@@ -67,8 +67,8 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       
       screenresolution("resolution", 2, 0, 3),
       fullscreen("fullscreen", true),
-      hardwareSurface("hardwareSurface", true),
-      hardwareDoubleBuffer("hardwareDoubleBuffer", true),
+      hardwareSurface("hardwareSurface", false),
+      hardwareDoubleBuffer("hardwareDoubleBuffer", false),
       displayshadows("displayshadows", true),
       blendsmoke("blendsmoke", true),
       screengamma("gamma", 50, 0, 100),

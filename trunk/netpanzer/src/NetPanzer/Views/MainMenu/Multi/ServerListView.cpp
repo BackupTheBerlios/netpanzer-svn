@@ -158,7 +158,7 @@ ServerListView::doDraw()
             std::stringstream servaddr;
             servaddr << server.address << ':' << server.port;
             
-            Uint8 textcolor = Color::white;
+            IntColor textcolor = Color::white;
             
             if (servaddr.str()==IPAddressView::szServer.getString()) {
                 textcolor = Color::yellow;
@@ -177,8 +177,10 @@ ServerListView::doDraw()
         }
 
         y += Surface::getFontHeight();
-        if(y >= clientRect.getSizeY())
-            break;                             
+        if(y >= (unsigned int)clientRect.getSizeY())
+		{
+        	break;
+		}
     }
 
     View::doDraw();

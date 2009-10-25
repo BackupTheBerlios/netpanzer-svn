@@ -27,8 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleInterface.hpp"
 #include "WeaponGlobals.hpp"
 #include "Util/Math.hpp"
-#include "Particles/FlashParticle2D.hpp"
-
 
 float MissleWeapon::thrustForce = gMissleThrustForce;
 // size 0 = small 1 = medium
@@ -54,15 +52,15 @@ MissleWeapon::MissleWeapon(UnitID owner, unsigned short owner_type_id, unsigned 
     shell.setFrame(getGoalAngle(start, end));
     shell.setAttrib(location, weaponLayer);
 
-    shellShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
+    shellShadow.setDrawModeBlend(64); // dark little
     shellShadow.setFrame(getGoalAngle(start, end));
     shellShadow.setAttrib(location, weaponShadowLayer);
 
-    thrust.setDrawModeBlend(&Palette::colorTableBrighten);
+    thrust.setDrawModeBlend(192); // brighten
     thrust.setData(gMissleThrustPackedSurface);
     thrust.setAttrib(location, weaponPuffLayer);
 
-    groundLight.setDrawModeBlend(&Palette::colorTableBrighten);
+    groundLight.setDrawModeBlend(192); // brighten
     groundLight.setData(gMissleGroundLightPackedSurface);
     groundLight.setAttrib(location, weaponPuffLayer);
 }

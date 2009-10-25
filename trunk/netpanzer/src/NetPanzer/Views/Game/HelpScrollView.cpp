@@ -156,7 +156,7 @@ void HelpScrollView::doDraw()
 //--------------------------------------------------------------------------
 void HelpScrollView::drawHelpText( const int &, const int &)
 {
-    PIX color   = Color::white;
+    IntColor color = Color::white;
 
     //if (scrollBar != 0)
     //{

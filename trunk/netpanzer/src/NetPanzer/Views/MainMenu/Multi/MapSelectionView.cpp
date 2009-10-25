@@ -121,9 +121,6 @@ MapSelectionView::onComponentClicked(Component* c)
 //---------------------------------------------------------------------------
 void MapSelectionView::doDraw()
 {
-    //iRect r(getViewRect());
-    //viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
-
     if (mapList.size() <= 0) {
         // Since there are no maps loaded, try to load some maps.
 
@@ -138,7 +135,7 @@ void MapSelectionView::doDraw()
 
     if (mapList.size() > 0) {
         // Since maps were found, draw the selected map.
-        drawImage(mapList[curMap]->thumbnail, BORDER_SPACE, BORDER_SPACE);
+        drawImage(*(mapList[curMap]->thumbnail), BORDER_SPACE, BORDER_SPACE);
         //mapList[curMap]->thumbnail.blt(clientArea, BORDER_SPACE, BORDER_SPACE);
         drawCurMapInfo(iXY(MAP_SIZE + BORDER_SPACE * 2, BORDER_SPACE));
     }
@@ -197,19 +194,19 @@ int MapSelectionView::loadMaps()
 	    MapFile netPanzerMapHeader;
 	    netPanzerMapHeader.load(*file);
 
-    	    MapInfo* mapinfo = new MapInfo;
+		MapInfo* mapinfo = new MapInfo;
 
-            std::string mapname;
-            const char* filestring = mapfiles[i].c_str();
-            size_t i = 0;
-            char c;
-            while( (c = filestring[i++]) != 0) {
-                if(c == '.')
-                    break;
-                mapname += c;
-            }
-            
-            mapinfo->name = mapname;
+		std::string mapname;
+		const char* filestring = mapfiles[i].c_str();
+		size_t i = 0;
+		char c;
+		while( (c = filestring[i++]) != 0) {
+			if(c == '.')
+				break;
+			mapname += c;
+		}
+
+		mapinfo->name = mapname;
 	    mapinfo->description = netPanzerMapHeader.description;
 
 	    mapinfo->cells.x = netPanzerMapHeader.width;
@@ -223,13 +220,14 @@ int MapSelectionView::loadMaps()
 	    pix.x = netPanzerMapHeader.thumbnail_width;
 	    pix.y = netPanzerMapHeader.thumbnail_height;
 
-	    mapinfo->thumbnail.create(pix.x, pix.y, 1);
+	    mapinfo->thumbnail = new Surface(pix.x, pix.y, 1);
 	    
 	    int numBytes = pix.getArea();
+	    Uint8 previewBuffer[numBytes];
+	    file->read(previewBuffer, numBytes, 1);
+	    mapinfo->thumbnail->setPixelsFromRawData(previewBuffer,numBytes);
 
-	    file->read(mapinfo->thumbnail.getFrame0(), numBytes, 1);
-
-	    mapinfo->thumbnail.scale(100,100);
+	    mapinfo->thumbnail->scale(100,100);
 	
 	    // Now try to get the outpost count from the outpost file.
 	    int objectiveCount = 0;

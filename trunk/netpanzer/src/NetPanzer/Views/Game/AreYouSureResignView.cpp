@@ -75,8 +75,7 @@ void AreYouSureResignView::doDraw()
 {
     //iRect r(min, max);
 
-    drawTransRect(*this, Palette::darkGray256.getColorArray());
-    //viewArea.drawButtonBorder(r, Color::lightGreen, Color::darkGreen);
+    drawTransRect(*this);
 
     drawStringCenter("Are you sure you wish to Resign?", Color::white);
 

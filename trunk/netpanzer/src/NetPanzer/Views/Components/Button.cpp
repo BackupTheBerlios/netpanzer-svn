@@ -120,13 +120,13 @@ Button::createSpecialButton( std::string cname,
                              int customcode)
 {
     Surface bnormal;
-    bnormal.loadBMP("pics/backgrounds/menus/buttons/default/specialbutton0.bmp");
+    bnormal.loadPNG("pics/default/specialbutton0.png");
 
     Surface bhover;
-    bhover.loadBMP("pics/backgrounds/menus/buttons/default/specialbutton1.bmp");
+    bhover.loadPNG("pics/default/specialbutton1.png");
 
     Surface bclick;
-    bclick.loadBMP("pics/backgrounds/menus/buttons/default/specialbutton2.bmp");
+    bclick.loadPNG("pics/default/specialbutton2.png");
 
     Surface spbutton(bnormal.getWidth(), bnormal.getHeight(), 3);
 

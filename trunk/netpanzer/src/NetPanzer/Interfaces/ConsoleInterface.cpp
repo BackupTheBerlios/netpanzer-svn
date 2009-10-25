@@ -100,7 +100,7 @@ void ConsoleInterface::update( Surface &surface )
     update_overlap( surface );
 }
 
-void ConsoleInterface::postMessage(PIX msgcolor, bool hasFlag, FlagID flag, const char *format, ...)
+void ConsoleInterface::postMessage(IntColor msgcolor, bool hasFlag, FlagID flag, const char *format, ...)
 {
     char temp_str[256];
     char *temp_str_ptr;

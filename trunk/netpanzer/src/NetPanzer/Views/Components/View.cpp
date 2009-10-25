@@ -906,7 +906,7 @@ cInputField* View::addInputField(
 } // end addInputField
 
 void
-View::drawString(int x, int y, const char * str, const PIX& color)
+View::drawString(int x, int y, const char * str, const IntColor color)
 {
     x += clientRect.min.x;
     y += clientRect.min.y;
@@ -914,13 +914,13 @@ View::drawString(int x, int y, const char * str, const PIX& color)
 }
 
 void
-View::drawStringCenter(const char* string, PIX color)
+View::drawStringCenter(const char* string, IntColor color)
 {
     screen->bltStringCenteredInRect(clientRect, string, color);
 }
 
 void
-View::drawStringInBox( const iRect &rect, const char *string, PIX color, int gapSpace, bool drawBox)
+View::drawStringInBox( const iRect &rect, const char *string, IntColor color, int gapSpace, bool drawBox)
 {
     iRect r(rect);
     r.translate(clientRect.min);
@@ -928,7 +928,7 @@ View::drawStringInBox( const iRect &rect, const char *string, PIX color, int gap
 }
 
 void
-View::drawStringShadowed(int x, int y, const char *str, const PIX &textColor, const PIX &shadowColor)
+View::drawStringShadowed(int x, int y, const char *str, const IntColor textColor, const IntColor shadowColor)
 {
     x += clientRect.min.x;
     y += clientRect.min.y;
@@ -948,35 +948,35 @@ View::drawImageTrans( Surface &s, int x, int y)
 }
 
 void
-View::drawTransRect(const iRect &destRect, const PIX table[])
+View::drawTransRect(const iRect &destRect)
 {
     iRect r(destRect);
     r.translate(clientRect.min);
-    screen->bltLookup(r,table);
+    screen->bltLookup(r);
 }
 
 void
-View::drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightColor)
+View::drawButtonBorder(iRect bounds, IntColor topLeftColor, IntColor bottomRightColor)
 {
     bounds.translate(clientRect.min);
     screen->drawButtonBorder(bounds, topLeftColor, bottomRightColor);
 }
 
 void
-View::fill(const PIX& color)
+View::fill(const IntColor color)
 {
     screen->fillRect(clientRect, color);
 }
 
 void
-View::drawRect(iRect bounds, const PIX& color)
+View::drawRect(iRect bounds, const IntColor color)
 {
     bounds.translate(clientRect.min);
     screen->drawRect(bounds, color);
 }
 
 void
-View::fillRect(iRect bounds, const PIX& color)
+View::fillRect(iRect bounds, const IntColor color)
 {
     bounds.translate(clientRect.min);
     screen->fillRect(bounds, color);
@@ -987,11 +987,11 @@ View::drawViewBackground()
 {
     if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_DARK_GRAY_BLEND)
     {
-        screen->bltLookup(*this, Palette::darkGray256.getColorArray());
+        screen->bltLookup(*this);
     }
     else if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_LIGHT_GRAY_BLEND)
     {
-        screen->bltLookup(*this, Palette::gray256.getColorArray());
+        screen->bltLookup(*this);
     }
     else if (gameconfig->viewdrawbackgroundmode == VIEW_BACKGROUND_SOLID_BLACK)
     {

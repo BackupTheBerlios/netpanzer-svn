@@ -139,7 +139,7 @@ void GetSessionView::doActivate()
 //---------------------------------------------------------------------------
 void GetSessionView::loadBackgroundSurface()
 {
-    doLoadBackgroundSurface("pics/backgrounds/menus/menu/sessionMB.bmp");
+    doLoadBackgroundSurface("pics/default/sessionMB.png");
 
 } // end GetSessionView::loadBackgroundSurface
 
@@ -179,7 +179,6 @@ GetSessionView::onComponentClicked(Component* c)
             {
                 Desktop::setVisibilityAllWindows(false);
                 Desktop::setVisibility("HostView", true);
-                Desktop::setVisibility("UnitSelectionView", true);
                 Desktop::setVisibility("FlagSelectionView", true);
                 Desktop::setVisibility("HostOptionsView", true);
                 Desktop::setVisibility("MapSelectionView", true);

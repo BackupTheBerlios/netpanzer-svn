@@ -32,7 +32,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/ViewGlobals.hpp"
 #include "Particles/ParticleInterface.hpp"
 #include "2D/Surface.hpp"
-#include "2D/PackedSurface.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
 #include "PowerUps/PowerUpInterface.hpp"
 
@@ -111,7 +110,6 @@ void GameView::doDraw()
     WorldViewInterface::getViewWindow( &world_win );
     SPRITE_SORTER.reset(world_win);
 
-    PackedSurface::totalDrawCount = 0;
     ParticleSystem2D::drawAll( SPRITE_SORTER );
     Particle2D::drawAll( SPRITE_SORTER );
 
@@ -163,56 +161,10 @@ void GameView::mouseMove(const iXY & prevPos, const iXY &newPos)
     if (!MouseInterface::getButtonMask() && Desktop::getFocus() != this) {
         Desktop::setFocusView(this);
         //Desktop::setActiveView(this);
-        MouseInterface::setCursor("default.bmp");
+        MouseInterface::setCursor("default.png");
     }
 
 } // end GameView::mouseMove
-
-void
-blitTile(Surface &dest, unsigned short tile, int x, int y)
-{
-    PIX * tileptr = TileInterface::getTileSet()->getTile(tile);
-    
-    int lines = 32;
-    int columns = 32;
-    
-    if ( y < 0 )
-    {
-        lines = 32 + y;
-        tileptr += ((32-lines)*32);
-        y = 0;
-    }
-    
-    if ( x < 0 )
-    {
-        columns = 32 + x;
-        tileptr += (32-columns); // advance the unseen pixels
-        x = 0;
-    }
-    
-    PIX * destptr = dest.getFrame0();
-    destptr += (y * dest.getPitch()) + x;
-
-    
-    if ( y + 32 > (int)dest.getHeight() )
-    {
-        lines = (int)dest.getHeight() - y;
-    }
-    
-    if ( x + 32 > (int)dest.getWidth())
-    {
-        columns = (int)dest.getWidth() - x;
-    }
-    
-    PIX * endptr = destptr + (lines * dest.getPitch());
-    
-    for ( /* nothing */ ; destptr < endptr; destptr += dest.getPitch())
-    {
-        memcpy(destptr,tileptr,columns);
-        tileptr +=32;
-    }
-    
-}
 
 void
 GameView::drawMap(Surface &window)
@@ -248,6 +200,7 @@ GameView::drawMap(Surface &window)
     WorldMap * map = MapInterface::getMap();
     
     unsigned short tmx;
+    Surface * tile_surf = 0;
     
     for ( ; y < (int)window.getHeight(); y += tile_size )
     {
@@ -255,7 +208,11 @@ GameView::drawMap(Surface &window)
         for ( int x = start_x; x < (int)window.getWidth(); x += tile_size )
         {
             tile = map->getValue(tmx++, map_y);
-            blitTile(window, tile, x, y);
+            tile_surf = TileInterface::getTileSet()->getTile(tile);
+            if ( tile_surf )
+            {
+            	tile_surf->blt(window, x, y);
+            }
         }
         map_y ++;
     }

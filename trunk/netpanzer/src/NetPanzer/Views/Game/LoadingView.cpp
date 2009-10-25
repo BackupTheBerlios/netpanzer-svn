@@ -53,7 +53,7 @@ LoadingView::doDraw()
     screen->fill(Color::black);
     drawImage(backgroundSurface, 0, 0);
     iRect r(120,250,120+410,250+175);
-    drawTransRect(r, Palette::darkGray256.getColorArray());
+    drawTransRect(r);
     drawImageTrans(surface, 120, 250);
     
     View::doDraw();    
@@ -81,7 +81,7 @@ LoadingView::render()
 void
 LoadingView::doActivate()
 {
-    backgroundSurface.loadBMP("pics/default/loadingBG.bmp");
+    backgroundSurface.loadPNG("pics/default/loadingBG.png");
     surface.create(410, 175, 1);
     dirty=true;
 }
@@ -89,8 +89,8 @@ LoadingView::doActivate()
 void
 LoadingView::doDeactivate()
 {
-    backgroundSurface.free();
-    surface.free();
+    backgroundSurface.freeFrames();
+    surface.freeFrames();
 }
 
 void

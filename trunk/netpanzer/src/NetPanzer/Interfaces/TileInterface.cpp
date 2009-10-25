@@ -32,7 +32,7 @@ iXY TileInterface::getTileSize( void )
     return( iXY( tile_set.getTileXsize(), tile_set.getTileYsize() ) );
 }
 
-PIX TileInterface::getWorldPixColor(int worldX, int worldY)
+IntColor TileInterface::getWorldPixColor(int worldX, int worldY)
 {
     int tileX = worldX / tile_set.getTileXsize();
     int tileY = worldY / tile_set.getTileYsize();

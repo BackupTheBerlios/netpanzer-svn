@@ -10,11 +10,11 @@ SPEED_RATE       20;
 SPEED_FACTOR      4;
 REPATH_TIME      2;
 FUEL_CAPACITY  2000;
-IMAGE "pics/menus/vehicleSelectionView/manta.bmp"
-BODYSPRITE "units/pics/pak/MantHNSD.pak"
-BODYSHADOW "units/pics/pak/MantHSSD.pak"
-TURRETSPRITE "units/pics/pak/MantTNSD.pak"
-TURRETSHADOW "units/pics/pak/MantTSSD.pak"
+IMAGE "units/pics/manta-image.png"
+BODYSPRITE "units/pics/MantHNSD.png"
+BODYSHADOW "units/pics/MantHSSD.png"
+TURRETSPRITE "units/pics/MantTNSD.png"
+TURRETSHADOW "units/pics/MantTSSD.png"
 SOUNDSELECTED "lt-selected"
 FIRESOUND "lt-fire"
 WEAPON "SHELL"

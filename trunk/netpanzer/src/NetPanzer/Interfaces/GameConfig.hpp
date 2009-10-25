@@ -274,42 +274,42 @@ public:
         return( "Unknown" );
     }
 
-    PIX getUnitColor() const
+    IntColor getUnitColor() const
     {
         return colorEnumToPix(unitcolor);
     }
 
-    PIX getPlayerRadarUnitColor() const
+    IntColor getPlayerRadarUnitColor() const
     {
         return( colorEnumToPix( radar_playerunitcolor ) );
     }
 
-    PIX getSelectedRadarUnitColor() const
+    IntColor getSelectedRadarUnitColor() const
     {
         return( colorEnumToPix( radar_selectedunitcolor ) );
     }
     
-    PIX getAlliedRadarUnitColor() const
+    IntColor getAlliedRadarUnitColor() const
     {
         return( colorEnumToPix( radar_alliedunitcolor ) );
     }
 
-    PIX getPlayerOutpostRadarColor() const
+    IntColor getPlayerOutpostRadarColor() const
     {
         return( colorEnumToPix( radar_playeroutpostcolor ) );
     }
 
-    PIX getAlliedOutpostRadarColor() const
+    IntColor getAlliedOutpostRadarColor() const
     {
         return( colorEnumToPix( radar_alliedoutpostcolor ) );
     }
     
-    PIX getEnemyOutpostRadarColor() const
+    IntColor getEnemyOutpostRadarColor() const
     {
         return( colorEnumToPix( radar_enemyoutpostcolor ) );
     }
     
-    PIX getVehicleSelectionBoxColor() const
+    IntColor getVehicleSelectionBoxColor() const
     {
         return( colorEnumToPix( vehicleselectioncolor ) );
     }
@@ -328,7 +328,7 @@ private:
     std::string configfile;
     bool usePhysFS;
 
-    PIX colorEnumToPix(int color_enum) const
+    IntColor colorEnumToPix(int color_enum) const
     {
         switch( color_enum ) {
         case _color_aqua         : return( Color::unitAqua );

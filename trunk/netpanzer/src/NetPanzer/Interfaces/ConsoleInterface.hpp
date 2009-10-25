@@ -30,7 +30,7 @@ class ConsoleLine
 {
 public:
     bool    visible;
-    PIX     color;
+    IntColor     color;
     bool    hasFlag;
     FlagID  flag;
     char    string[256];
@@ -74,7 +74,7 @@ public:
     static void update( Surface &surface );
     static void update_overlap( Surface &surface );
 
-    static void postMessage( PIX msgColor, bool hasFlag, FlagID flag, const char *format, ... )
+    static void postMessage( IntColor msgColor, bool hasFlag, FlagID flag, const char *format, ... )
         __attribute__(( format(printf, 4, 5) ));
 
     /* Input String Methods */

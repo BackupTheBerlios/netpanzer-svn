@@ -18,8 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _TILESET_HPP
 #define _TILESET_HPP
 
+#include <vector>
 #include "Structs/TileSetStruct.hpp"
 #include "Classes/WadMapTable.hpp"
+#include "2D/Surface.hpp"
 
 namespace filesystem {
 class ReadFile;
@@ -31,7 +33,9 @@ protected:
     bool tile_set_loaded;
     TILE_DBASE_HEADER tile_set_info;
     TILE_HEADER *tile_info;
-    unsigned char *tile_data;
+//    unsigned char *tile_data;
+    std::vector<Surface*> tiles;
+
 
     unsigned long tile_size;
     unsigned long tile_count;
@@ -49,16 +53,17 @@ public:
     void readTileDbHeader(filesystem::ReadFile& file, TILE_DBASE_HEADER *header);
     void loadTileSetInfo( const char *file_path );
     void loadTileSetInfo( const char *file_path, WadMapTable &mapping_table );
-    void loadTileSet( const char *file_path, WadMapTable &mapping_table );
 
     bool startPartitionTileSetLoad( const char *file_path, WadMapTable &mapping_table, unsigned long partitions );
     bool partitionTileSetLoad( WadMapTable &mapping_table, int *percent_complete );
 
     void loadTileSet( const char *file_path );
-    inline unsigned char * getTile(unsigned long index) const
+
+    inline Surface * getTile(unsigned long index) const
     {
-        return( tile_data + (index * tile_size) );
+        return tiles[index];
     }
+
     inline unsigned short getTileXsize() const
     {
         return ( tile_set_info.x_pix );
@@ -84,23 +89,15 @@ public:
     inline unsigned char getTilePixel( unsigned long index , unsigned int pixX,
                                        unsigned int pixY)
     {
-        if( index < tile_count ) {
-            return( *(getTile(index) + (pixY * getTileXsize()) + pixX));
+        if( index < tiles.size() )
+        {
+            return getTile(index)->getPixel(pixX, pixY);
         }
 
         return( 0 );
     }
-
-    /*
-       inline unsigned char getTilePixel( long *index , unsigned int pixX, unsigned int pixY)
-        {
-         if( ( (*index) >= 0) && ( (*index) < (long) tile_count) )
-          { return( *(getTile( (unsigned long) index) + (pixY * getTileXsize()) + pixX)); }
-        
-         (*index) = -1;
-         return( 0 );
-        }
-    */
+private:
+    void freeTiles();
 };
 
 #endif // ** _TILESET_HPP

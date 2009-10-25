@@ -38,8 +38,8 @@ private:
 protected:
     std::string label;
         
-    PIX borders[3][2];
-    PIX textColors[3];
+    IntColor borders[3][2];
+    IntColor textColors[3];
     
     Surface bimage;
     
@@ -68,7 +68,7 @@ public:
                                         iXY loc,
                                         int customcode = -1);
 
-    void setTextColors( PIX normal, PIX over, PIX pressed)
+    void setTextColors( IntColor normal, IntColor over, IntColor pressed)
     {
         textColors[BNORMAL] = normal;
         textColors[BOVER] = over;
@@ -87,13 +87,13 @@ public:
             bimage.copy(s);
             setSize(bimage.getWidth(), bimage.getHeight());
         } else {
-            bimage.free();
+            bimage.freeFrames();
         }
         dirty = true;
     }
     void clearImage()
     {
-        bimage.free();
+        bimage.freeFrames();
     }
     
     void setUnitSelectionBorder()

@@ -63,7 +63,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/Multi/JoinView.hpp"
 #include "Views/MainMenu/Multi/HostView.hpp"
 #include "Views/MainMenu/Multi/GetSessionView.hpp"
-#include "Views/MainMenu/Multi/UnitSelectionView.hpp"
 #include "Views/MainMenu/Multi/FlagSelectionView.hpp"
 #include "Views/MainMenu/Multi/HostOptionsView.hpp"
 #include "Views/MainMenu/Multi/MapSelectionView.hpp"
@@ -119,7 +118,6 @@ void PlayerGameManager::initializeVideoSubSystem()
     LOGGER.info("Initializing video mode");
     sdlVideo = new SDLVideo();
     Screen = sdlVideo;
-    initFont();
     GameManager::setVideoMode();
 }
 
@@ -163,8 +161,7 @@ void PlayerGameManager::initializeInputDevices()
 //-----------------------------------------------------------------
 void PlayerGameManager::initializeWindowSubSystem()
 {
-    GameManager::loadPalette("netp");
-
+    Palette::setColors();
     Desktop::add(new GameView());
     Desktop::add(new RankView());
     Desktop::add(new VehicleSelectionView());

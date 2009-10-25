@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include "WindParticle2D.hpp"
-#include "2D/PackedSurface.hpp"
+#include "2D/Surface.hpp"
 #include "Types/iXY.hpp"
 
 
@@ -33,8 +33,8 @@ private:
 
     static iXY worldSize;    // How big the is the current world map?
 
-    static PackedSurface staticPackedCloud;
-
+    static Surface staticPackedCloud;
+    static Surface staticCloudShadow;
     void setRandomSurface();
 
 public:

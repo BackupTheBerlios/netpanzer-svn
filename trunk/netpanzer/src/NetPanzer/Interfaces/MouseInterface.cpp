@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Util/NTimer.hpp"
 
+#include "2D/Surface.hpp"
+
 unsigned char MouseInterface::cursor_x_size;
 unsigned char MouseInterface::cursor_y_size;
 
@@ -54,7 +56,7 @@ void MouseInterface::initialize()
             if(filesystem::isDirectory(filename.c_str())) {
                 continue;
             }
-            surface->loadBMP(filename.c_str());
+            surface->loadPNG(filename.c_str());
             surface->setOffsetCenter();
             cursors.insert(std::pair<std::string,Surface*> (*i, surface));
         } catch(std::exception& e) {
@@ -63,7 +65,7 @@ void MouseInterface::initialize()
     }
     filesystem::freeList(cursorfiles);
 
-    setCursor("default.bmp");
+    setCursor("default.png");
     clicktimer.setTimeOut(150);
     clickcount = 0;
     releasecount = 0;
@@ -165,3 +167,13 @@ MouseInterface::manageClickTimer()
         releasecount=0;
     }
 }
+void
+MouseInterface::draw(Surface &dest)
+{
+	if ( cursor && ! isGrabMode )
+	{
+		cursor->nextFrame();
+		cursor->bltTrans(dest, mouse_pos.x, mouse_pos.y);
+	}
+}
+

@@ -71,7 +71,7 @@ void OptionsTemplateView::doDraw()
 //---------------------------------------------------------------------------
 void OptionsTemplateView::loadBackgroundSurface()
 {
-    doLoadBackgroundSurface("pics/backgrounds/menus/menu/optionsMB.bmp");
+    doLoadBackgroundSurface("pics/default/optionsMB.png");
 
 } // end OptionsTemplateView::loadBackgroundSurface
 

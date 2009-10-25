@@ -63,9 +63,6 @@ void PlayerNameView::init()
 //---------------------------------------------------------------------------
 void PlayerNameView::doDraw()
 {
-    //iRect r(getViewRect());
-    //viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
-
     View::doDraw();
 } // end PlayerNameView::doDraw
 

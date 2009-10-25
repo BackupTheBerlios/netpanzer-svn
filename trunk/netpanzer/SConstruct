@@ -147,6 +147,7 @@ else:
     crosslinuxenv.Append(CCFLAGS = ['-O2','-s'])
     crosslinuxenv['FINALEXENAME'] = crosslinuxenv['FINALBUILDDIR'] + 'netpanzer'
 
+env.Append(CCFLAGS = ['-Wall' ])
 
 env.BuildDir(env['FINALBUILDDIR'],'.',duplicate=0)
 crossmingwenv.BuildDir(crossmingwenv['FINALBUILDDIR'],'.',duplicate=0)
@@ -211,11 +212,11 @@ crosslinuxenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer' , 'src/lib/phy
 if thisplatform == 'darwin':
     env.Append( CPPPATH = ['/Library/Frameworks/SDL.framework/Headers',
                            '/Library/Frameworks/SDL_mixer.framework/Headers' ] )
-    env.Append( CCFLAGS = [ '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386' ] )
-    luaenv.Append( CCFLAGS = [ '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386' ] )
-    physfsenv.Append( CCFLAGS = [ '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386' ] )
-    networkenv.Append( CCFLAGS = [ '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386' ] )
-    env.Append( LINKFLAGS = [ '-mmacosx-version-min=10.4', '-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386' ] )
+#    env.Append( CCFLAGS = [ '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386' ] )
+#    luaenv.Append( CCFLAGS = [ '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386' ] )
+#    physfsenv.Append( CCFLAGS = [ '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386' ] )
+#    networkenv.Append( CCFLAGS = [ '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386' ] )
+#    env.Append( LINKFLAGS = [ '-mmacosx-version-min=10.4', '-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386' ] )
     env.AppendUnique(FRAMEWORKS=Split('SDL SDL_mixer Cocoa IOKit'))
     env.Append( NPSOURCES =  ['support/macosx/SDLMain.m'] )
 elif thisplatform == 'win32':
@@ -269,9 +270,11 @@ crosslinuxphysfsenv.Append( CPPPATH = [ 'src/Lib/physfs', 'src/Lib/physfs/zlib12
 MakeStaticLib(crosslinuxphysfsenv, 'npphysfs', 'physfs physfs/platform physfs/archivers physfs/zlib123', '*.c')
 
 # BUILDS 2D
-MakeStaticLib(env, 'np2d', '2D', '*.cpp')
-MakeStaticLib(crossmingwenv, 'np2d', '2D', '*.cpp')
-MakeStaticLib(crosslinuxenv, 'np2d', '2D', '*.cpp')
+env.Append( CFLAGS = '-DZ_PREFIX=1' )
+env.Append( CPPPATH = 'src/Lib/physfs/zlib123' )
+MakeStaticLib(env, 'np2d', '2D 2D/libpng', '*.c*')
+MakeStaticLib(crossmingwenv, 'np2d', '2D 2D/libpng', '*.c*')
+MakeStaticLib(crosslinuxenv, 'np2d', '2D 2D/libpng', '*.c*')
 
 # BUILDS REST OF LIBRARIES
 MakeStaticLib(env, 'nplibs', 'ArrayUtil INIParser Types Util optionmm','*.cpp')

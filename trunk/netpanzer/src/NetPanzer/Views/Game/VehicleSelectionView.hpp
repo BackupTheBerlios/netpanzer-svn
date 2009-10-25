@@ -26,31 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Component.hpp"
 #include "Views/Components/Button.hpp"
 
-
-// The following may be used some day.
-/*
-class NETPANZER_UNIT
-{
-public:
-  Surface hull;
-  Surface turret;
-  enum { NUM_CHARS = 40 };
- 
-  char length[NUM_CHARS];
-  char width[NUM_CHARS];
-  char height[NUM_CHARS];
-  char weight[NUM_CHARS];
-  char engine[NUM_CHARS];
-  char speed[NUM_CHARS];
-  char radiusOfAction[NUM_CHARS];
-  char groundPressure[NUM_CHARS];
-  char armament[NUM_CHARS];
-  char crew[NUM_CHARS];
-  char notes[NUM_CHARS];
- 
-}; // end UNIT
-*/
-
 extern int vsvSelectedUnit;     // Vehicle Selection View Selected Unit
 extern int vsvTempSelectedUnit; // Vehicle Selection View Temp Selected Unit
 

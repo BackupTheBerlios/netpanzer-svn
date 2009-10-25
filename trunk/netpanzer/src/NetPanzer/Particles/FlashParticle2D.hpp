@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/Particle2D.hpp"
 #include "2D/Surface.hpp"
 
-
 // FlashParticle2D
 //--------------------------------------------------------------------------
 class FlashParticle2D : public Particle2D
@@ -38,7 +37,7 @@ public:
 
     static void init();
 
-    static PackedSurface staticPackedFlash;
+    static Surface staticPackedFlash;
 
 protected:
     // The size relative to the original image.  This is so we can keep

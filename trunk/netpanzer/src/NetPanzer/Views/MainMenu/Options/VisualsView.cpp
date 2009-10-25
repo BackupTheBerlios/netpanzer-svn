@@ -71,7 +71,7 @@ void VisualsView::initButtons()
     checkBoxFullscreen = new CheckBox();
     checkBoxFullscreen->setLabel("Fullscreen");
     checkBoxFullscreen->setState(gameconfig->fullscreen);    
-    checkBoxFullscreen->setLocation(x+ 200, y);
+    checkBoxFullscreen->setLocation(x+ 250, y);
     checkBoxFullscreen->setStateChangedCallback(this);
     add(checkBoxFullscreen);
     y += yOffset;

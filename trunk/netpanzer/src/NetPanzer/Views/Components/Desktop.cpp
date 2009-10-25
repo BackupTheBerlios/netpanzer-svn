@@ -65,7 +65,7 @@ void Desktop::manage(int mouseX, int mouseY, int curButton)
 {
     iXY mousePos(mouseX, mouseY);
 
-    MouseInterface::setCursor("default.bmp");
+    MouseInterface::setCursor("default.png");
 
     prevMouseView = mouseView;
 
@@ -221,7 +221,6 @@ void Desktop::draw()
 void Desktop::add(View *view, bool autoActivate)
 {
     assert(view != 0);
-    LOGGER.warning("Desktop:add(%p) name=%s", view, view->searchName);
     views.push_back(view);
     if (autoActivate)
     {

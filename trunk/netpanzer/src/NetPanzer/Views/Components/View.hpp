@@ -19,8 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __View_hpp__
 #define __View_hpp__
 
-#include "2D/Surface.hpp"
-#include "2D/PackedSurface.hpp"
+class Surface;
 #include "cInputField.hpp"
 #include "Types/iRect.hpp"
 #include "Types/iXY.hpp"
@@ -126,18 +125,18 @@ public:
 
     iRect getClientRect() const;
 
-    void drawString(int x, int y, const char * str, const PIX& color);
-    void drawStringCenter(const char *string, PIX color);
-    void drawStringInBox( const iRect &rect, const char *string, PIX color, int gapSpace = 14, bool drawBox = false);
-    void drawStringShadowed(int x, int y, const char *str, const PIX &textColor, const PIX &shadowColor);
+    void drawString(int x, int y, const char * str, const IntColor color);
+    void drawStringCenter(const char *string, IntColor color);
+    void drawStringInBox( const iRect &rect, const char *string, IntColor color, int gapSpace = 14, bool drawBox = false);
+    void drawStringShadowed(int x, int y, const char *str, const IntColor textColor, const IntColor shadowColor);
     void drawImage( Surface &s, int x, int y);
     void drawImageTrans( Surface &s, int x, int y);
-    void drawTransRect(const iRect &destRect, const PIX table[]);
-    void drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightColor);
-    void drawRect(iRect bounds, const PIX &color);
+    void drawTransRect(const iRect &destRect);
+    void drawButtonBorder(iRect bounds, IntColor topLeftColor, IntColor bottomRightColor);
+    void drawRect(iRect bounds, const IntColor color);
     void drawViewBackground();
-    void fill(const PIX &color);
-    void fillRect(iRect bounds, const PIX &color);
+    void fill(const IntColor color);
+    void fillRect(iRect bounds, const IntColor color);
 
     virtual void onComponentClicked(Component *c) { (void)c; }
     

@@ -29,10 +29,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class PuffParticle2D : public WindParticle2D
 {
 protected:
-    // Lists of packed surfaces.
-    static PackedSurfaceList staticPackedSmokeLightPuff;
-    static PackedSurfaceList staticPackedSmokeDarkPuff;
-    static PackedSurfaceList staticPackedDirtPuff;
 
     void create(	PUFF_TYPE particleType,
                  float     scaleMin,

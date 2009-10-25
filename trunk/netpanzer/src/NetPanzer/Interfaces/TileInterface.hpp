@@ -18,9 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _TILEINTERFACE_HPP
 #define _TILEINTERFACE_HPP
 
-#include "2D/Surface.hpp"
 #include "Classes/TileSet.hpp"
 #include "2D/Palette.hpp"
+#include "Core/CoreTypes.hpp"
+#include "Types/iXY.hpp"
 
 class TileInterface
 {
@@ -37,7 +38,7 @@ public:
 
     static iXY getTileSize( void );
 
-    static PIX  getWorldPixColor(int worldX, int worldY);
+    static IntColor getWorldPixColor(int worldX, int worldY);
     static long getWorldPixMovementValue(int worldX, int worldY);
 };
 

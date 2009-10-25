@@ -238,7 +238,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     {
         uprofile = UnitProfileInterface::getUnitProfile(ut);
         
-        tempSurface.loadBMP(uprofile->imagefile.c_str());
+        tempSurface.loadPNG(uprofile->imagefile.c_str());
         unitImages.setFrame(ut);
         tempSurface.blt(unitImages, 0, 0);
         
@@ -370,10 +370,6 @@ void VehicleSelectionView::doDraw()
             screen->drawLine(cornerPos, b, Color::white);
             screen->fillRect(r, Color::white);
 
-            //screen.bltLookup(r, Palette::darkGray256.getColorArray());
-            //screen.drawButtonBorder(r, Color::white, Color::gray96);
-
-            // Draw the name of the outpost.
         }}
 
     drawViewBackground();
@@ -570,7 +566,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                     //pos.y = (miniProductionRect.getSizeY() - CHAR_YPIX) / 2 + miniProductionRect.min.y;
 
                     // Objective is off.
-                    dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
+                    dest.bltLookup(miniProductionRect);
 
                     dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
                     pos.y += 16;
@@ -605,8 +601,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                                 % 60);
                     checkMiniProductionRect(timeLeftBuf);
 
-                    dest.bltLookup(miniProductionRect,
-                            Palette::darkGray256.getColorArray());
+                    dest.bltLookup(miniProductionRect);
 
                     dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
                     pos.y += 16;
@@ -655,7 +650,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                     }
                     checkMiniProductionRect(outpostNameBuf);
 
-                    dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
+                    dest.bltLookup(miniProductionRect);
 
                     dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
                 }

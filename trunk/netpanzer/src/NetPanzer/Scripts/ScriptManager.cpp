@@ -78,6 +78,7 @@ ScriptManager::bindStaticVariables(const char * objectName,
 
     // we don't save the address of new data
     void * t = lua_newuserdata(luavm,sizeof(void*));
+    (void)t;
     luaL_getmetatable(luavm, metaName);
     lua_setmetatable(luavm,-2);
     lua_setglobal(luavm,objectName);

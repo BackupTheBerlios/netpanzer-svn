@@ -23,8 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <deque>
 
 #include "SDL.h"
-#include "2D/Surface.hpp"
 #include "Util/NTimer.hpp"
+#include "Types/iXY.hpp"
+
+class Surface;
 
 class MouseEvent
 {
@@ -90,14 +92,7 @@ public:
         isGrabMode = wantGrab;
     }
     
-    static void draw(Surface &dest)
-    {
-        if ( cursor && ! isGrabMode )
-        {
-            cursor->nextFrame();
-            cursor->bltTrans(dest, mouse_pos.x, mouse_pos.y);
-        }
-    }
+    static void draw(Surface &dest);
 
     static inline void getMousePosition( int *x, int *y )
     {

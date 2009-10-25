@@ -10,11 +10,11 @@ SPEED_RATE       16;
 SPEED_FACTOR      2;
 REPATH_TIME      20;
 FUEL_CAPACITY  2000; 
-IMAGE "pics/menus/vehicleSelectionView/titan.bmp"
-BODYSPRITE "units/pics/pak/TitaHNSD.pak"
-BODYSHADOW "units/pics/pak/TitaHSSD.pak"
-TURRETSPRITE "units/pics/pak/TitaTNSD.pak"
-TURRETSHADOW "units/pics/pak/TitaTSSD.pak"
+IMAGE "units/pics/titan-image.png"
+BODYSPRITE "units/pics/TitaHNSD.png"
+BODYSHADOW "units/pics/TitaHSSD.png"
+TURRETSPRITE "units/pics/TitaTNSD.png"
+TURRETSHADOW "units/pics/TitaTSSD.png"
 SOUNDSELECTED "ht-selected"
 FIRESOUND "ht-fire"
 WEAPON "SHELL"

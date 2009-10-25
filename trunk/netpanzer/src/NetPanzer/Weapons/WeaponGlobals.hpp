@@ -18,8 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __WeaponGlobals_hpp__
 #define __WeaponGlobals_hpp__
 
-
-#include "2D/PackedSurface.hpp"
+class Surface;
 
 extern int gShellVelocity;
 
@@ -27,11 +26,11 @@ extern int gMissleMaxVelocity;
 extern int gMissleThrustForce;
 extern int gBulletVelocity;
 
-extern PackedSurface gShellPackedSurface;
-extern PackedSurface gMissleSmallPackedSurface;
-extern PackedSurface gMissleMediumPackedSurface;
-extern PackedSurface gMissleThrustPackedSurface;
-extern PackedSurface gMissleGroundLightPackedSurface;
+extern Surface gShellPackedSurface;
+extern Surface gMissleSmallPackedSurface;
+extern Surface gMissleMediumPackedSurface;
+extern Surface gMissleThrustPackedSurface;
+extern Surface gMissleGroundLightPackedSurface;
 
 extern int weaponLayer;
 extern int weaponShadowLayer;

@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/Log.hpp"
+#include "2D/Palette.hpp"
 #include <ctype.h>
 #include <memory>
 #include <string.h>
@@ -302,21 +303,33 @@ void read_vehicle_profile(const std::string& unitName, UnitProfile *profile)
             break;
         
         case _bodysprite:
-            profile->bodySprite.load(param_list.params[1]);
+            profile->bodySprite.loadPNGSheet(param_list.params[1], 127, 127, 36);
+            profile->bodySprite.setColorkey();
+//            profile->bodySprite.setOffsetCenter();
             break;
 
         case _bodyshadow:
-            profile->bodyShadow.load(param_list.params[1]);
+        {
+            Surface t;
+            t.loadPNGSheet(param_list.params[1], 127, 127, 36);
+            profile->bodyShadow.createShadow(t);
+//            profile->bodyShadow.setOffsetCenter();
             break;
-            
+        }
         case _turretsprite:
-            profile->turretSprite.load(param_list.params[1]);
+            profile->turretSprite.loadPNGSheet(param_list.params[1], 127, 127, 36);
+            profile->turretSprite.setColorkey();
+//            profile->turretSprite.setOffsetCenter();
             break;
 
         case _turretshadow:
-            profile->turretShadow.load(param_list.params[1]);
+        {
+            Surface t;
+            t.loadPNGSheet(param_list.params[1], 127, 127, 36);
+            profile->turretShadow.createShadow(t);
+//            profile->turretShadow.setOffsetCenter();
             break;
-                
+        }
         case _soundselected:
             profile->soundSelected = param_list.params[1];
             break;

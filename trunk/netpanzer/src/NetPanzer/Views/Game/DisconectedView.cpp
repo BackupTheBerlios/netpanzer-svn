@@ -61,7 +61,7 @@ DisconectedView::init()
 void
 DisconectedView::doDraw()
 {
-    drawTransRect(*this, Palette::darkGray256.getColorArray());
+    drawTransRect(*this);
     drawStringCenter(disconectMsg.c_str(), Color::white);
 
     View::doDraw();
