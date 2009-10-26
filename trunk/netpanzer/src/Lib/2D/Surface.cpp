@@ -278,6 +278,13 @@ void Surface::bltSolid(Surface &dest, int x, int y) const
     SDL_BlitSurface( cur_frame, 0, dest.cur_frame, &r);
 }
 
+void
+Surface::bltRect(SDL_Rect *sourceRect, Surface &dest, int x, int y)
+{
+    SDL_Rect r = { x, y, 0, 0 };
+    SDL_BlitSurface(cur_frame, sourceRect, dest.cur_frame, &r);
+}
+
 // bltTrans
 //---------------------------------------------------------------------------
 // Purpose: Puts the surface onto the destination using the slowest form of

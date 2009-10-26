@@ -224,26 +224,15 @@ void GameManager::shutdownParticleSystems()
 }
 
 // ******************************************************************
-void GameManager::startGameMapLoad(const char *map_file_path,
-                                   unsigned long partitions)
+void GameManager::loadGameMap(const char *map_file_path)
 {
     map_path = "maps/";
     map_path.append(map_file_path);
 
-    if (!MapInterface::startMapLoad( map_path.c_str(), true, partitions))
+    if (!MapInterface::loadMap( map_path.c_str(), true ))
         throw Exception("map format error.");
-}
 
-// ******************************************************************
-
-bool GameManager::gameMapLoad( int *percent_complete )
-{
-    if( MapInterface::loadMap( percent_complete ) == false ) {
-        finishGameMapLoad();
-        return false;
-    }
-
-    return true;
+    finishGameMapLoad();
 }
 
 // ******************************************************************
@@ -252,6 +241,7 @@ void GameManager::finishGameMapLoad()
 {
     std::string temp_path = map_path;
     temp_path.append(".opt");
+    LOGGER.warning("Loading objectives from %s", temp_path.c_str());
     ObjectiveInterface::loadObjectiveList( temp_path.c_str() );
 
     ParticleInterface::initParticleSystems();
@@ -284,9 +274,11 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
     map_path = "maps/";
     map_path.append(map_name);
 
-    MapInterface::startMapLoad( map_path.c_str(), false, 0 );
+    MapInterface::loadMap( map_path.c_str(), false );
 
     map_path.append(".opt");
+    LOGGER.warning("Loading objectives: %s", map_path.c_str());
+
     ObjectiveInterface::loadObjectiveList( map_path.c_str() );
 
     ParticleInterface::initParticleSystems();
@@ -488,9 +480,9 @@ bool GameManager::startClientGameSetup(const NetMessage* message, int *result_co
     game_elapsed_time_offset = game_setup->getElapsedTime();
 
     try {
-        startGameMapLoad( game_setup->map_name, 20);
+        loadGameMap(game_setup->map_name);
     } catch(std::exception& e) {
-        LOGGER.warning("Error while loading map '%s': %s",
+        LOGGER.warning("XError while loading map '%s': %s",
                 game_setup->map_name, e.what());
         *result_code = _mapload_result_no_map_file;
         return false;
@@ -502,14 +494,9 @@ bool GameManager::startClientGameSetup(const NetMessage* message, int *result_co
 
 // ******************************************************************
 
-bool GameManager::clientGameSetup( int *percent_complete )
+void GameManager::clientGameSetup( )
 {
-    if( gameMapLoad( percent_complete ) == false ) {
-        reinitializeGameLogic();
-        return false;
-    }
-
-    return true;
+    reinitializeGameLogic();
 }
 
 // ******************************************************************

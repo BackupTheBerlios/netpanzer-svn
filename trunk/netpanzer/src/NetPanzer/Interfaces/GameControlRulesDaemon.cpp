@@ -116,7 +116,7 @@ void GameControlRulesDaemon::mapCycleFsmClient()
                 LoadingView::append( "Loading Game Map ..." );
 
                 try {
-                    GameManager::startGameMapLoad(gameconfig->map.c_str(), 16);
+                    GameManager::loadGameMap(gameconfig->map.c_str());
                 } catch(std::exception& e) {
                     LoadingView::append("Error while loading map:");
                     LoadingView::append(e.what());
@@ -134,17 +134,17 @@ void GameControlRulesDaemon::mapCycleFsmClient()
                 int percent_complete;
                 char str_buf[128];
 
-                if ( GameManager::gameMapLoad( &percent_complete ) == false ) {
+//                if ( GameManager::gameMapLoad( &percent_complete ) == false ) {
                     map_cycle_fsm_client_state = _map_cycle_client_wait_for_respawn_ack;
-
-                    sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
-                    LoadingView::update( str_buf );
-
-                    LoadingView::append( "Waiting to respawn ..." );
-                } else {
-                    sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
-                    LoadingView::update( str_buf );
-                }
+//
+//                    sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
+//                    LoadingView::update( str_buf );
+//
+//                    LoadingView::append( "Waiting to respawn ..." );
+//                } else {
+//                    sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
+//                    LoadingView::update( str_buf );
+//                }
 
                 return;
             }
@@ -234,8 +234,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                         ObjectiveInterface::resetLogic();
 
                         try {
-                            GameManager::startGameMapLoad
-                                (gameconfig->map.c_str(), 16);
+                            GameManager::loadGameMap(gameconfig->map.c_str());
                         } catch(std::exception& e) {
                             LoadingView::append(
                                     "Error while loading map:");
@@ -257,12 +256,12 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 int percent_complete;
                 char str_buf[128];
 
-                if ( GameManager::gameMapLoad( &percent_complete ) == false ) {
+//                if ( GameManager::gameMapLoad( &percent_complete ) == false ) {
                     map_cycle_fsm_server_state = _map_cycle_server_state_respawn_players;
-                }
-
-                sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
-                LoadingView::update( str_buf );
+//                }
+//
+//                sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
+//                LoadingView::update( str_buf );
             }
             break;
 

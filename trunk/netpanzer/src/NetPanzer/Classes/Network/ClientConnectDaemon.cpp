@@ -369,21 +369,22 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                 char str_buf[128];
                 int percent_complete;
 
-                if ( GameManager::clientGameSetup( &percent_complete ) == false ) {
-                    ConnectMesgClientGameSetupAck client_game_setup_ack;
+                GameManager::clientGameSetup();
+                ConnectMesgClientGameSetupAck client_game_setup_ack;
 
-                    sprintf( str_buf, "Loading Game Data ... (%d%%)", percent_complete);
-                    LoadingView::update( str_buf );
+                sprintf( str_buf, "Loading Game Data ... (%d%%)", percent_complete);
+                LoadingView::update( str_buf );
 
-                    NetworkClient::sendMessage( &client_game_setup_ack, sizeof(ConnectMesgClientGameSetupAck));
-                    connection_state = _connect_state_idle;
-                } else {
-                    ConnectMesgClientGameSetupPing client_game_setup_ping;
+                NetworkClient::sendMessage( &client_game_setup_ack, sizeof(ConnectMesgClientGameSetupAck));
+                connection_state = _connect_state_idle;
 
-                    sprintf( str_buf, "Loading Game Data ... (%d%%)", percent_complete);
-                    LoadingView::update( str_buf );
-                    NetworkClient::sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
-                }
+//                } else {
+//                    ConnectMesgClientGameSetupPing client_game_setup_ping;
+//
+//                    sprintf( str_buf, "Loading Game Data ... (%d%%)", percent_complete);
+//                    LoadingView::update( str_buf );
+//                    NetworkClient::sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
+//                }
 
                 end_cycle = true;
             }

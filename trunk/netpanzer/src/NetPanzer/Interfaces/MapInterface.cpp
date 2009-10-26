@@ -27,12 +27,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 WorldMap MapInterface::main_map;
 SpawnList MapInterface::spawn_list;
-WadMapTable MapInterface::wad_mapping_table;
 char MapInterface::map_path[256];
 MapInterface::MapListenerList MapInterface::listenerList;
 
-bool MapInterface::startMapLoad( const char *file_path, bool load_tiles,
-        size_t partitions )
+bool MapInterface::loadMap(const char *file_path, bool load_tiles)
 {
     char path[256];
     char tile_set_path[256];
@@ -43,44 +41,25 @@ bool MapInterface::startMapLoad( const char *file_path, bool load_tiles,
     strcat( path, ".npm" );
     main_map.loadMapFile( path );
 
-    strcpy( tile_set_path, "wads/" );
+    strcpy( tile_set_path, "tilesets/" );
     strcat( tile_set_path, main_map.getAssocTileSet() );
 
-    tile_set.loadTileSetInfo( tile_set_path );
-    generateMappingTable();
-    main_map.reMap( wad_mapping_table );
-
-    if ( load_tiles == true ) {
-        if ( tile_set.startPartitionTileSetLoad( tile_set_path, wad_mapping_table, partitions ) == false ) {
-            finishMapLoad();
-            return false;
-        }
-
-    } else {
-        tile_set.loadTileSetInfo( tile_set_path, wad_mapping_table );
-        finishMapLoad();
-        return false;
+    if ( load_tiles == true )
+    {
+        tile_set.loadTileSet(tile_set_path);
+    }
+    else
+    {
+        tile_set.loadTileSetInfo(tile_set_path);
     }
 
+    finishMapLoad();
     return true;
 }
-
-bool MapInterface::loadMap( int *percent_complete )
-{
-    if( tile_set.partitionTileSetLoad( wad_mapping_table, percent_complete ) == false ) {
-        finishMapLoad();
-        return( false );
-    } else {
-        return( true );
-    }
-}
-
 
 void MapInterface::finishMapLoad( void )
 {
     char path[256];
-
-    wad_mapping_table.clear();
 
     MapListenerList::iterator i = listenerList.begin();
     while ( i != listenerList.end() )
@@ -93,40 +72,6 @@ void MapInterface::finishMapLoad( void )
 
     strcat( path, ".spn" );
     spawn_list.loadSpawnFile( path );
-}
-
-void MapInterface::generateMappingTable()
-{
-    unsigned short tile_count;
-    size_t map_size;
-    size_t map_index;
-
-    tile_count = tile_set.getTileCount();
-    map_size = main_map.getSize();
-
-    wad_mapping_table.resize( tile_count );
-    wad_mapping_table.resetMappingTable();
-
-    // ** Find all of the used tiles **
-    unsigned short tile_index;
-
-    for ( map_index = 0; map_index < map_size; map_index++ ) {
-        tile_index = main_map.getValue(map_index);
-        wad_mapping_table[ tile_index ].is_used = true;
-    } // ** for
-
-    // ** Remap the used tiles **
-    unsigned short mapping_index = 0;
-
-    for ( tile_index = 0; tile_index < tile_count; tile_index++ ) {
-        if ( wad_mapping_table[ tile_index ].is_used == true ) {
-            wad_mapping_table[ tile_index ].remap_index = mapping_index;
-            mapping_index++;
-        }
-    }
-
-    wad_mapping_table.used_tile_count = mapping_index;
-
 }
 
 unsigned char MapInterface::getMovementValue( iXY map_loc )
@@ -167,7 +112,7 @@ unsigned char MapInterface::getMovementValue( iXY map_loc )
 
 }
 
-unsigned char MapInterface::getAverageColorPointXY( iXY &point_loc )
+const SDL_Color * MapInterface::getAverageColorPointXY( iXY &point_loc )
 {
     WorldMap::MapElementType map_value =
         main_map.getValue(point_loc.x/32, point_loc.y/32);
@@ -175,7 +120,7 @@ unsigned char MapInterface::getAverageColorPointXY( iXY &point_loc )
     return( tile_set.getAverageTileColor( map_value ) );
 }
 
-unsigned char MapInterface::getAverageColorMapXY( iXY &map_loc )
+const SDL_Color * MapInterface::getAverageColorMapXY( iXY &map_loc )
 {
     unsigned short map_value;
 

@@ -35,7 +35,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "CraterParticle2D.hpp"
 #include "Util/Exception.hpp"
 #include "System/Sound.hpp"
-
+#include "Util/Log.hpp"
 
 std::vector<UnitParticleInfo> ParticleInterface::unitParticleInfo;
 int ParticleInterface::unitBodyMaxArea                   = 0;
@@ -514,12 +514,19 @@ void ParticleInterface::getUnitParticleInfo()
 {
     // Create the correct number of unit information slots.
     unitParticleInfo.resize(UnitProfileInterface::getNumUnitTypes());
-    
+    LOGGER.warning("Going to do the unit things for %d units\n", UnitProfileInterface::getNumUnitTypes());
     for ( int i=0; i< UnitProfileInterface::getNumUnitTypes(); i++ )
     {
         UnitProfile * uprofile = UnitProfileInterface::getUnitProfile(i);
         getMuzzleTips(uprofile->turretSprite, unitParticleInfo[i].muzzleTip);
-        getMinBounds(uprofile->bodySprite, unitParticleInfo[i].minBounds);        
+        getMinBounds(uprofile->bodySprite, unitParticleInfo[i].minBounds);
+        LOGGER.warning("min bounds for unit %d: %d,%d to %d,%d",
+                       i,
+                       unitParticleInfo[i].minBounds.min.x,
+                       unitParticleInfo[i].minBounds.min.y,
+                       unitParticleInfo[i].minBounds.max.x,
+                       unitParticleInfo[i].minBounds.max.y);
+
     }
 }
 

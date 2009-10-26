@@ -265,14 +265,17 @@ void PlayerGameManager::hostMultiPlayerGame()
     LoadingView::show();
     // refresh the view in each append
     LoadingView::append( "Launching Server ..." );
-    try {
+    try
+    {
         MessageRouter::initialize(true);
         
         NetworkServer::hostSession();
 
-        if((bool) gameconfig->publicServer &&
-                (const std::string&) gameconfig->masterservers != "") {
-            try {
+        if(    (bool) gameconfig->publicServer
+            && (const std::string&) gameconfig->masterservers != "")
+        {
+            try
+            {
                 if ( infosocket ) {
                     delete infosocket;
                     infosocket = 0;
@@ -283,7 +286,9 @@ void PlayerGameManager::hostMultiPlayerGame()
                     heartbeat = 0;
                 }
                 heartbeat = new Heartbeat();
-            } catch(std::exception& e) {
+            }
+            catch(std::exception& e)
+            {
                 LOGGER.warning("heartbeats disabled: %s", e.what());
                 if ( infosocket ) {
                     delete infosocket;
@@ -295,7 +300,9 @@ void PlayerGameManager::hostMultiPlayerGame()
                 }
             }
         }
-    } catch(std::exception& e) {
+    }
+    catch(std::exception& e)
+    {
         LoadingView::append( "SERVER LAUNCH FAILED" );
         LoadingView::append(e.what());
         wait.changePeriod( 4 );
@@ -318,10 +325,12 @@ void PlayerGameManager::hostMultiPlayerGame()
     gameconfig->map = MapsManager::getNextMap("");
     const char* mapname = gameconfig->map.c_str();
 
+    ObjectiveInterface::resetLogic();
+
     try {
-        GameManager::startGameMapLoad(mapname, 20);
+        GameManager::loadGameMap(mapname);
     } catch(std::exception& e) {
-        LOGGER.warning("Error while loading map '%s':", mapname);
+        LOGGER.warning("YError while loading map '%s':", mapname);
         LOGGER.warning(e.what());
         LoadingView::loadError();
         return;
@@ -330,13 +339,12 @@ void PlayerGameManager::hostMultiPlayerGame()
     int percent_complete;
     char strbuf[256];
 
-    ObjectiveInterface::resetLogic();
 
-    while( GameManager::gameMapLoad( &percent_complete ) == true ) {
-        sprintf( strbuf, "Loading Game Data ... (%d%%)", percent_complete);
-        LoadingView::update( strbuf );
-        graphicsLoop();
-    }
+//    while( GameManager::gameMapLoad( &percent_complete ) == true ) {
+//        sprintf( strbuf, "Loading Game Data ... (%d%%)", percent_complete);
+//        LoadingView::update( strbuf );
+//        graphicsLoop();
+//    }
 
     sprintf( strbuf, "Loading Game Data ... (%d%%)", percent_complete);
     LoadingView::update( strbuf );

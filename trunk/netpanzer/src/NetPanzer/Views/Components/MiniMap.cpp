@@ -129,7 +129,7 @@ MiniMap::regenerate()
     yratio = (float)MapInterface::getHeight() / surface.getHeight();
     float mapx;
     float mapy = 0.0f;
-    Uint8 oldColor;
+    const SDL_Color * oldColor;
     
     for ( int y=0; y<(int)surface.getHeight(); y++)
     {
@@ -140,9 +140,7 @@ MiniMap::regenerate()
             iXY pos((int)mapx,(int)mapy);
             // XXX Beware, no check for limits, could raise assert and quit the game.
             oldColor = MapInterface::getAverageColorMapXY(pos);
-            surface.putPixel(x, y, Palette::color[oldColor].r,
-                                   Palette::color[oldColor].g,
-                                   Palette::color[oldColor].b);
+            surface.putPixel(x, y, oldColor->r, oldColor->g, oldColor->b);
             mapx += xratio;
         }
         mapy += yratio;

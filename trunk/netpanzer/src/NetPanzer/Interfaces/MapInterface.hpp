@@ -23,7 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "TileInterface.hpp"
 #include "Classes/WorldMap.hpp"
 #include "Classes/SpawnList.hpp"
-#include "Classes/WadMapTable.hpp"
+
+struct SDL_Color;
 
 class MapEventListener
 {
@@ -45,13 +46,9 @@ private:
 protected:
     static WorldMap main_map;
     static SpawnList spawn_list;
-    static WadMapTable wad_mapping_table;
     static char map_path[256];
     static const int TILE_WIDTH = 32;
     static const int TILE_HEIGHT = 32;
-
-protected:
-    static void generateMappingTable();
 
 public:
     static void addMapEventListener(MapEventListener *lis)
@@ -211,8 +208,7 @@ protected:
     static void finishMapLoad();
 
 public:
-    static bool startMapLoad(const char *file_path, bool load_tiles, size_t partitions);
-    static bool loadMap( int *percent_complete );
+    static bool loadMap(const char *file_path, bool load_tiles);
 
     static bool isMapLoaded()
     {
@@ -221,9 +217,9 @@ public:
 
     static unsigned char getMovementValue( iXY map_loc );
 
-    static unsigned char getAverageColorPointXY( iXY &point_loc );
+    static const SDL_Color * getAverageColorPointXY( iXY &point_loc );
 
-    static unsigned char getAverageColorMapXY( iXY &map_loc );
+    static const SDL_Color * getAverageColorMapXY( iXY &map_loc );
 
     static iXY getFreeSpawnPoint()
     {

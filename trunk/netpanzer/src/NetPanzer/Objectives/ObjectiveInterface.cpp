@@ -131,6 +131,8 @@ ObjectiveInterface::loadObjectiveList(const char *file_path)
         std::stringstream ss(objectivecount);
         ss >> objective_count;
 
+        LOGGER.warning("There are %d objectives", objective_count);
+
         size_t loc_x, loc_y;
         size_t world_x, world_y;
         std::string name;
@@ -144,7 +146,11 @@ ObjectiveInterface::loadObjectiveList(const char *file_path)
             std::stringstream ss(location);
             ss >> loc_x >> loc_y;
             
+            LOGGER.warning("\t%s in %d,%d", name.c_str(), loc_x, loc_y);
+
             MapInterface::mapXYtoPointXY( loc_x, loc_y, &world_x, &world_y );
+
+            LOGGER.warning("\t\tin world %d,%d", world_x, world_y);
 
             objective_obj = new Outpost(objective_index, iXY(world_x, world_y),
                     BoundBox( -48, -32, 48, 32 )

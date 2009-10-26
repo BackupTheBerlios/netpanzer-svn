@@ -19,43 +19,51 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _TILESET_HPP
 
 #include <vector>
-#include "Structs/TileSetStruct.hpp"
-#include "Classes/WadMapTable.hpp"
 #include "2D/Surface.hpp"
+#include "SDL.h"
+#include "Util/FileStream.hpp"
 
-namespace filesystem {
-class ReadFile;
-}
+namespace filesystem { class ReadFile; }
+
+typedef struct TileSetHeader_s
+{
+    unsigned char netp_id_header[64];
+    int     version;
+    int     x_pix;
+    int     y_pix;
+    int     tile_count;
+    Uint8   palette[768];
+
+    std::string image_file;
+    std::string unused;
+
+} TileSetHeader;
+
+typedef struct TileAttributes_s
+{
+    Uint8 attrib;
+    Uint8 move_value;
+    SDL_Color avg_color;
+} TileAttributes;
 
 class TileSet
 {
 protected:
     bool tile_set_loaded;
-    TILE_DBASE_HEADER tile_set_info;
-    TILE_HEADER *tile_info;
-//    unsigned char *tile_data;
+    TileSetHeader header;
+    std::vector<TileAttributes> tile_attributes;
     std::vector<Surface*> tiles;
 
 
     unsigned long tile_size;
-    unsigned long tile_count;
     void computeTileConsts( void );
-
-    filesystem::ReadFile* partition_load_fhandle;
-    unsigned long partition_load_partition_count;
-    unsigned long partition_load_tile_index;
-    unsigned long partition_load_mapped_index;
 
 public:
     TileSet();
     ~TileSet();
 
-    void readTileDbHeader(filesystem::ReadFile& file, TILE_DBASE_HEADER *header);
+    void readTileSetHeader(IFileStream& file);
     void loadTileSetInfo( const char *file_path );
-    void loadTileSetInfo( const char *file_path, WadMapTable &mapping_table );
-
-    bool startPartitionTileSetLoad( const char *file_path, WadMapTable &mapping_table, unsigned long partitions );
-    bool partitionTileSetLoad( WadMapTable &mapping_table, int *percent_complete );
 
     void loadTileSet( const char *file_path );
 
@@ -66,24 +74,27 @@ public:
 
     inline unsigned short getTileXsize() const
     {
-        return ( tile_set_info.x_pix );
+        return ( header.x_pix );
     }
+
     inline unsigned short getTileYsize() const
     {
-        return ( tile_set_info.y_pix );
+        return ( header.y_pix );
     }
+
     inline unsigned short getTileCount() const
     {
-        return ( tile_set_info.tile_count );
+        return ( header.tile_count );
     }
-    inline unsigned char getAverageTileColor(unsigned long index) const
+
+    inline const SDL_Color* getAverageTileColor(unsigned long index) const
     {
-        return( tile_info[ index ].avg_color );
+        return( &(tile_attributes[ index ].avg_color) );
     }
 
     inline char getTileMovementValue( unsigned long index )
     {
-        return( tile_info[ index ].move_value );
+        return( tile_attributes[ index ].move_value );
     }
 
     inline unsigned char getTilePixel( unsigned long index , unsigned int pixX,
@@ -97,6 +108,7 @@ public:
         return( 0 );
     }
 private:
+    void loadTileAttributes(IFileStream& file);
     void freeTiles();
 };
 

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "HostOptionsView.hpp"
-#include "Classes/MapFile.hpp"
+#include "Classes/WorldMap.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/FileStream.hpp"
 #include "Util/Exception.hpp"
@@ -191,34 +191,37 @@ int MapSelectionView::loadMaps()
 	    std::auto_ptr<filesystem::ReadFile> file 
 		(filesystem::openRead(filename));
 
-	    MapFile netPanzerMapHeader;
-	    netPanzerMapHeader.load(*file);
+            WorldMap netPanzerMap;
+            netPanzerMap.loadHeader(*file);
 
-		MapInfo* mapinfo = new MapInfo;
+            MapInfo* mapinfo = new MapInfo;
 
-		std::string mapname;
-		const char* filestring = mapfiles[i].c_str();
-		size_t i = 0;
-		char c;
-		while( (c = filestring[i++]) != 0) {
-			if(c == '.')
-				break;
-			mapname += c;
-		}
+            std::string mapname;
+            const char* filestring = mapfiles[i].c_str();
+            size_t i = 0;
+            char c;
+            while( (c = filestring[i++]) != 0)
+            {
+                if(c == '.')
+                {
+                    break;
+                }
+                mapname += c;
+            }
 
-		mapinfo->name = mapname;
-	    mapinfo->description = netPanzerMapHeader.description;
+            mapinfo->name = mapname;
+            mapinfo->description = netPanzerMap.getDescription();
 
-	    mapinfo->cells.x = netPanzerMapHeader.width;
-	    mapinfo->cells.y = netPanzerMapHeader.height;
+            mapinfo->cells.x = netPanzerMap.getWidth();
+            mapinfo->cells.y = netPanzerMap.getHeight();
 
 	    int seekAmount = mapinfo->cells.getArea() * sizeof(Uint16);
 
 	    file->seek(file->tell()+seekAmount);
 
 	    iXY pix;
-	    pix.x = netPanzerMapHeader.thumbnail_width;
-	    pix.y = netPanzerMapHeader.thumbnail_height;
+            pix.x = netPanzerMap.getThumbnailWidth();
+            pix.y = netPanzerMap.getThumbnailHeight();
 
 	    mapinfo->thumbnail = new Surface(pix.x, pix.y, 1);
 	    

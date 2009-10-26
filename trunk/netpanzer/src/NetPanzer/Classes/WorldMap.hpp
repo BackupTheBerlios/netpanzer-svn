@@ -18,60 +18,63 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _WORLDMAP_HPP
 #define _WORLDMAP_HPP
 
-#include "SDL_endian.h"
-#include "MapFile.hpp"
-#include "Classes/WadMapTable.hpp"
 #include <string>
+#include <vector>
+
+namespace filesystem { class ReadFile; }
+
+typedef struct MapHeader_s
+{
+    char netp_id_header[64];
+    Uint16 id;
+    char name[256];
+    char description[1024];
+    Uint16 width;
+    Uint16 height;
+    char tile_set[256];
+
+    Uint16 thumbnail_width;
+    Uint16 thumbnail_height;
+} MapHeader;
 
 class WorldMap
 {
 public:
-    typedef Uint16 MapElementType;
+    void dumpInfo();
+    typedef int MapElementType;
+    typedef std::vector<MapElementType> MapData;
     
     WorldMap();
     ~WorldMap();
 
     void loadMapFile(const std::string& filename);
+    void loadHeader(filesystem::ReadFile &file);
+    void loadTiles(filesystem::ReadFile &file);
 
-    void reMap( WadMapTable &mapping_table );
+    bool isMapLoaded() const            { return loaded; }
 
-    bool isMapLoaded() const
-    {
-        return map_loaded;
-    }
+    std::string getName() const         { return std::string(header.name); }
+    const char * getDescription() const { return header.description; }
+    size_t getWidth() const             { return header.width; }
+    size_t getHeight() const            { return header.height; }
+    const char* getAssocTileSet() const { return header.tile_set; }
+    Uint16 getThumbnailWidth() const    { return header.thumbnail_width; }
+    Uint16 getThumbnailHeight() const   { return header.thumbnail_height; }
 
-    std::string getName() const
-    {
-        return std::string(map_info.name);
-    }
-
-    size_t getWidth() const
-    {
-        return map_info.width;
-    }
-
-    size_t getHeight() const
-    {
-        return map_info.height;
-    }
-
-    size_t getSize() const
-    {
-        return getWidth() * getHeight();
-    }
+    size_t getSize() const { return getWidth() * getHeight(); }
 
     MapElementType getValue(size_t x, size_t y) const
     {
         assert(x < getWidth());
         assert(y < getHeight());
-        return map_buffer[y*getWidth() + x];
+        return data[y*getWidth() + x];
     }
 
     /** @deprecatet */
     MapElementType getValue(size_t offset) const
     {
         assert(offset < getSize());
-        return map_buffer[offset];
+        return data[offset];
     }
 
     void setMapValue(size_t x, size_t y, MapElementType value)
@@ -79,18 +82,14 @@ public:
         assert(x < getWidth());
         assert(y < getHeight());
        
-        map_buffer[y*getWidth() + x] = value;
+        data[y*getWidth() + x] = value;
     }
 
-    const char* getAssocTileSet() const
-    {
-        return map_info.tile_set;
-    }
 
 private:
-    bool map_loaded;               
-    MapFile map_info;
-    MapElementType *map_buffer;
+    bool      loaded;
+    MapHeader header;
+    MapData   data;
 };
 
 #endif // ** _WORLDMAP_HPP

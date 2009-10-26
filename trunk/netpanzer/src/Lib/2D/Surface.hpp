@@ -114,6 +114,7 @@ public:
     void bltTrans(Surface &dest, int x, int y) const;
     void bltScale(const Surface &source, const iRect &destRect);
     void bltLookup(const iRect &destRect);
+    void bltRect(SDL_Rect *sourceRect, Surface &dest, int x, int y);
 
     void createShadow(Surface &other);
 
