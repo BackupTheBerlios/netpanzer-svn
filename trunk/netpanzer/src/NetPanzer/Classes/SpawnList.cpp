@@ -34,7 +34,7 @@ SpawnList::SpawnList()
 
 void SpawnList::loadSpawnFile(const std::string& file_path)
 {
-    clear();
+    spawn_points.clear();
 
     try {
         IFileStream in(file_path);
@@ -51,7 +51,7 @@ void SpawnList::loadSpawnFile(const std::string& file_path)
             if(!in.good())
                 throw Exception("file too short");
             
-            push_back(iXY(x, y));
+            spawn_points.push_back(iXY(x, y));
         }
 
         last_spawn_index = 0;
@@ -67,15 +67,15 @@ iXY SpawnList::getFreeSpawnPoint()
 
     switch(gameconfig->respawntype) {
         case _game_config_respawn_type_round_robin :
-            spawn_index = (last_spawn_index + 1) % size();
+            spawn_index = (last_spawn_index + 1) % spawn_points.size();
             last_spawn_index = spawn_index;
             break;
         case _game_config_respawn_type_random :
-            spawn_index = rand() % size();
+            spawn_index = rand() % spawn_points.size();
             break;
         default:
             throw Exception("unknown respawn type");
     }
 
-    return at(spawn_index);
+    return spawn_points[spawn_index];
 }

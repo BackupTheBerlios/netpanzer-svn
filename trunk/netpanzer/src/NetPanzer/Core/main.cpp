@@ -33,6 +33,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <signal.h>
 #include "SDL.h"
 
+#include "Core/GlobalEngineState.hpp"
+
 #include "optionmm/command_line.hpp"
 
 #include "Util/Log.hpp"
@@ -344,22 +346,29 @@ int netpanzer_main(int argc, char** argv)
     ScriptManager::initialize();
     
     ScriptManager::runStr("LuaInitialize","print('Lua is working just fine');");
-        
-    BaseGameManager *manager = initialise(argc, argv);
 
     Palette::registerScript(); // here for the moment;
+
+    global_engine_state = new GlobalEngineState();
+
+    global_engine_state->game_manager = initialise(argc, argv);
+
     ScriptManager::runFile("unused","scripts/initialize.lua");
     
     // we'll catch every exception here, to be sure the user gets at least
     // a usefull error message and SDL has a chance to shutdown...
     try {
-        if (manager->launchNetPanzerGame()) {
-            while(manager->mainLoop())
-                ;
+        if ( global_engine_state->game_manager->launchNetPanzerGame() )
+        {
+            while ( global_engine_state->game_manager->mainLoop() )
+            {
+                // nothing
+            }
         }
 
-        manager->shutdown();
-        delete manager;
+        global_engine_state->game_manager->shutdown();
+        delete global_engine_state->game_manager;
+        delete global_engine_state;
         LOGGER.info("successfull shutdown.");
         shutdown();
     } 

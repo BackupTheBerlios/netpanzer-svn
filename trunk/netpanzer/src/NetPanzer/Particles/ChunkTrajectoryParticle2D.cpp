@@ -61,8 +61,6 @@ ChunkTrajectoryParticle2D::ChunkTrajectoryParticle2D(	const fXYZ &pos,
 
     ChunkTrajectoryParticle2D::particleType = particleType;
 
-    //TileInterface::getWorldPixColor(int worldX, int worldY)
-
     // int randChunk = rand() % staticPackedGroundChunks.getFrameCount();
 
     packedSurface.setData(staticPackedGroundChunks);
@@ -74,7 +72,7 @@ ChunkTrajectoryParticle2D::ChunkTrajectoryParticle2D(	const fXYZ &pos,
         index = 253;
 
     } else {
-        index = TileInterface::getWorldPixColor((int) pos.x, (int) pos.z);
+        index = rand() % staticPackedGroundChunks.getNumFrames();
     }
 
     //int randFrame = rand() % staticPackedChunks[randChunk].getFrameCount();

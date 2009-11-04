@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/PlacementMatrix.hpp"
 #include "Classes/PlayerUnitConfig.hpp"
+#include "Units/UnitBlackBoard.hpp"
 
 enum
 {
@@ -45,154 +46,136 @@ class NetPacket;
 class UnitInterface
 {
 public:
+    UnitBucketArray unit_bucket_array;
+
+    UnitInterface();
+    ~UnitInterface();
+
     // type definitions
     typedef std::map<UnitID, Unit*> Units;
     typedef std::vector<UnitList> PlayerUnitList;
 
     // initialization/cleanup
-    static void initialize( const unsigned int max_units );
-    static void cleanUp();
-    static void reset();
+    void initialize( const unsigned int max_units );
+    void cleanUp();
+    void reset();
 
     // unit getters
-    static Unit * getUnit( UnitID id )
+    Unit * getUnit( UnitID id )
     {
         Units::iterator i = units.find(id);
         return (i!=units.end())?i->second:0;
     }
 
-    static const Units& getUnits()
+    const Units& getUnits()
     {
         return units;
     }
 
-    static const UnitList& getPlayerUnits( const Uint16 player_id )
+    const UnitList& getPlayerUnits( const Uint16 player_id )
     {
         assert(player_id < playerUnitLists.size());
         return playerUnitLists[player_id];
     }
 
-    static size_t getUnitCount( const Uint16 player_index )
+    size_t getUnitCount( const Uint16 player_index )
     {
         return getPlayerUnits(player_index).size();
     }
 
-    static size_t getTotalUnitCount()
+    size_t getTotalUnitCount()
     {
         return units.size();
     }
 
     // main loop methods
-    static void updateUnitStatus();
+    void updateUnitStatus();
 
     // graphic methods
-    static void offloadGraphics( SpriteSorter &sorter );
+    void offloadGraphics( SpriteSorter &sorter );
 
     // unit creation
-    static Unit* createUnit( const unsigned short unit_type,
+    Unit* createUnit( const unsigned short unit_type,
                              const iXY &location,
                              const Uint16 player_id);
 
-    static void spawnPlayerUnits( const iXY & location,
+    void spawnPlayerUnits( const iXY & location,
                                   const Uint16 player_id,
                                   const PlayerUnitConfig & unit_config );
 
-    static void destroyPlayerUnits( const Uint16 player_id );
-
-
-    // unit querying
-    static void queryPlayerUnitsAt( std::vector<UnitID>& working_list,
-                                    const iXY& point,
-                                    const Uint16 player_id );
-
-    static void queryUnitsInWorldRect( std::vector<Unit *>& working_list,
-                                       const iRect& rect );
-
-    static void queryPlayerUnitsInWorldRect( std::vector<UnitID>& working_list,
-                                             const iRect& rect,
-                                             const Uint16 player_id );
-
-    static void queryNonPlayerUnitsInWorldRect( std::vector<Unit *>& working_list,
-                                                const iRect& rect,
-                                                const Uint16 player_id );
-
-    static bool queryClosestUnit( Unit **closest_unit_ptr,
-                                  const iXY &loc,
-                                  const Uint16 player_id,
-                                  const unsigned char search_flags );
-
-    static bool queryClosestUnit( Unit **closest_unit_ptr,
-                                  const iRect &bounding_rect,
-                                  const iXY &loc );
-
-    static bool queryClosestEnemyUnit( Unit **closest_unit_ptr,
-                                       const iXY &loc,
-                                       const Uint16 player_index );
-
-    static Unit * queryUnitAtMapLoc( const iXY & map_loc );
-
-    static Unit * queryNonPlayerUnitAtWorld( const iXY & world_loc,
-                                         const Uint16 player_id );
-
-    static unsigned char queryUnitLocationStatus( const iXY & loc );
+    void destroyPlayerUnits( const Uint16 player_id );
 
     // message methods
-    static void processNetPacket( const NetPacket* packet );
-    static void sendMessage( const UnitMessage* message,
+    void processNetPacket( const NetPacket* packet );
+    void sendMessage( const UnitMessage* message,
                              const PlayerState* player = 0 );
 
-    static void processNetMessage( const NetMessage *net_message );
+    void processNetMessage( const NetMessage *net_message );
+
+    bool unitOccupiesLoc( iXY &unit_map_loc )
+    {
+        return unit_black_board.unitOccupiesLoc(unit_map_loc);
+    }
+
+    void markUnitLoc( iXY &unit_map_loc )
+    {
+        unit_black_board.markUnitLoc(unit_map_loc);
+    }
+
+    void unmarkUnitLoc( iXY &unit_map_loc )
+    {
+        unit_black_board.unmarkUnitLoc(unit_map_loc);
+    }
 
 private:
     friend class Unit;
 
+    UnitBlackBoard unit_black_board;
     // Unit Message Handler Methods
-    static void unitManagerMesgEndLifecycle( const UnitMessage *message );
+    void unitManagerMesgEndLifecycle( const UnitMessage *message );
 
     // Network Message Handler Variables
-    static Timer message_timer;
-    static Timer no_guarantee_message_timer;
-    static UnitOpcodeEncoder opcode_encoder;
+    Timer message_timer;
+    Timer no_guarantee_message_timer;
+    UnitOpcodeEncoder opcode_encoder;
 
     // Network Message Handler Methods
-    static void sendOpcode( const UnitOpcode* opcode )
+    void sendOpcode( const UnitOpcode* opcode )
     {
         opcode_encoder.encode(opcode);
     }
 
-    static void unitCreateMessage( const NetMessage *net_message );
-    static void unitDestroyMessage( const NetMessage *net_message );
-    static void unitSyncMessage( const NetMessage *net_message );
-    static void unitOpcodeMessage( const NetMessage *net_message );
-    static void unitSyncIntegrityCheckMessage( const NetMessage *net_message );
+    void unitCreateMessage( const NetMessage *net_message );
+    void unitDestroyMessage( const NetMessage *net_message );
+    void unitSyncMessage( const NetMessage *net_message );
+    void unitOpcodeMessage( const NetMessage *net_message );
+    void unitSyncIntegrityCheckMessage( const NetMessage *net_message );
 
-    static unsigned long  sync_units_iterator;
-    static bool           sync_units_complete_flag;
-    static unsigned short sync_units_list_index;
-    static Timer	  sync_units_packet_timer;
-    static unsigned long  sync_units_in_sync_count;
-    static unsigned long  sync_units_in_sync_partial_count;
-    static unsigned long  sync_units_total_units;
+    unsigned long  sync_units_iterator;
+    bool           sync_units_complete_flag;
+    unsigned short sync_units_list_index;
+    Timer	  sync_units_packet_timer;
+    unsigned long  sync_units_in_sync_count;
+    unsigned long  sync_units_in_sync_partial_count;
+    unsigned long  sync_units_total_units;
 
-    static Units units;
-    static PlayerUnitList playerUnitLists;
+    Units units;
+    PlayerUnitList playerUnitLists;
         
-    static UnitBucketArray unit_bucket_array;
-    static unsigned int units_per_player;
-    static PlacementMatrix unit_placement_matrix;
+    unsigned int units_per_player;
+    PlacementMatrix unit_placement_matrix;
 
-    static Uint16 lastUnitID;
-    static UnitID newUnitID();
+    Uint16 lastUnitID;
+    UnitID newUnitID();
 
-    static Unit* newUnit( const unsigned short unit_type,
+    Unit* newUnit( const unsigned short unit_type,
                           const iXY &location,
                           const unsigned short player_index,
                           const UnitID id );
 
-    static void addUnit( Unit *unit );
+    void addUnit( Unit *unit );
     
-    static void removeUnit( Units::iterator i );
-
+    void removeUnit( Units::iterator i );
 };
 
 #endif // ** _UNITINTERFACE_HPP

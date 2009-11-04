@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "BonusUnitPowerUp.hpp"
+#include "Core/GlobalEngineState.hpp"
+#include "Core/GlobalGameState.hpp"
 
 #include <stdlib.h>
 #include "Units/UnitTypes.hpp"
@@ -36,7 +38,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 BonusUnitPowerUp::BonusUnitPowerUp(iXY map_loc, int type)
         : PowerUp( map_loc, type )
 {
-    bonus_unit_type = rand() % UnitProfileInterface::getNumUnitTypes();
+    bonus_unit_type = rand() % global_game_state->unit_profile_interface->getNumUnitTypes();
 }
 
 
@@ -45,7 +47,7 @@ void BonusUnitPowerUp::onHit( Unit * unit )
     PlacementMatrix placement_matrix;
     iXY map_pos;
 
-    sound->playPowerUpSound();
+    global_engine_state->sound_manager->playPowerUpSound();
 
     MapInterface::pointXYtoMapXY( unit->unit_state.location, &map_pos );
 
@@ -59,7 +61,7 @@ void BonusUnitPowerUp::onHit( Unit * unit )
 
         placement_matrix.getNextEmptyLoc( &spawn_loc );
 
-        new_unit = UnitInterface::createUnit(bonus_unit_type,
+        new_unit = global_game_state->unit_manager->createUnit(bonus_unit_type,
                                              spawn_loc,
                                              unit->player->getID() );
 
@@ -86,7 +88,7 @@ void BonusUnitPowerUp::onHit( Unit * unit )
 
 void BonusUnitPowerUp::onHitMessage( PowerUpHitMesg *message  )
 {
-    sound->playPowerUpSound();
+    global_engine_state->sound_manager->playPowerUpSound();
     life_cycle_state = _power_up_lifecycle_state_inactive;
 
     if( PlayerInterface::getLocalPlayerIndex() == message->getPlayerID() )

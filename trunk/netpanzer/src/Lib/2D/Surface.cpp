@@ -104,6 +104,15 @@ Surface::Surface(unsigned int w, unsigned int h, unsigned int nframes)
     totalByteCount += sizeof(Surface);
 } // end Surface::Surface
 
+Surface::Surface(unsigned int w, unsigned int h, unsigned int nframes, int bpp)
+{
+    reset();
+
+    alloc( w, h, nframes, bpp);
+
+    totalSurfaceCount++;
+    totalByteCount += sizeof(Surface);
+} // end Surface::Surface
 // ~Surface
 //---------------------------------------------------------------------------
 Surface::~Surface()
@@ -120,13 +129,13 @@ Surface::~Surface()
 void
 Surface::freeFrames()
 {
-	for ( unsigned int n = 0; n < frames.size(); ++n )
-	{
-		SDL_FreeSurface(frames[n]);
-	}
-	frames.clear();
-	cur_frame = 0;
-	mem = 0;
+    for ( unsigned int n = 0; n < frames.size(); ++n )
+    {
+        SDL_FreeSurface(frames[n]);
+    }
+    frames.clear();
+    cur_frame = 0;
+    mem = 0;
 }
 
 // reset
@@ -1033,16 +1042,26 @@ Surface::setPixelsFromRawData( Uint8 * rawdata, int buffer_length )
         return false;
     }
 
+
     for ( unsigned int line=0; line<getHeight(); ++line )
     {
+        Uint8 * ptr8 = mem + (line * getPitch());
         for ( unsigned int column=0; column < getWidth(); ++column )
         {
             Uint8 c = *rawdata;
             ++rawdata;
-            putPixel(column, line, SDL_MapRGB(cur_frame->format,
-                                              Palette::color[c].r,
-                                              Palette::color[c].g,
-                                              Palette::color[c].b));
+            if ( cur_frame->format->BitsPerPixel == 8 )
+            {
+                *ptr8 = c;
+                ++ptr8;
+            }
+            else
+            {
+                putPixel(column, line, SDL_MapRGB(cur_frame->format,
+                                                  Palette::color[c].r,
+                                                  Palette::color[c].g,
+                                                  Palette::color[c].b));
+            }
 //            memcpy(pixPtr(0,line), rawdata+(line*getWidth()), getWidth());
         }
     }
@@ -1052,16 +1071,25 @@ Surface::setPixelsFromRawData( Uint8 * rawdata, int buffer_length )
 bool
 Surface::getRawDataFromPixels( Uint8 * rawdata, int buffer_length )
 {
-	if ( buffer_length < getArea() )
-	{
-		return false;
-	}
+    if ( buffer_length < getArea() )
+    {
+        return false;
+    }
 
-	for ( unsigned int line=0; line<getHeight(); ++line )
-	{
-		memcpy(rawdata+(line*getWidth()),  pixPtr(0,line), getWidth());
-	}
-	return true;
+//    for ( unsigned int line=0; line<getHeight(); ++line )
+//    {
+//        for ( unsigned int column=0; column < getWidth(); ++column )
+//        {
+//            Uint32 pcolor = getPixel(column, line);
+//            *rawdata = pcolor&0xff;
+//            ++rawdata;
+//        }
+//    }
+    for ( unsigned int line=0; line<getHeight(); ++line )
+    {
+        memcpy(rawdata+(line*getWidth()),  pixPtr(0,line), getWidth());
+    }
+    return true;
 }
 
 void

@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include <math.h>
+#include "Core/GlobalEngineState.hpp"
+#include "Core/GlobalGameState.hpp"
 
 #include "Weapons/Weapon.hpp"
 
@@ -114,14 +116,14 @@ void Weapon::fsmFlight( void )
                     weapon_hit.setOwnerUnitID(owner_id);
                     weapon_hit.setHitLocation(location);
                     weapon_hit.setDamageFactor(damage_factor);
-                    UnitInterface::sendMessage( &weapon_hit );
+                    global_game_state->unit_manager->sendMessage( &weapon_hit );
                 }
 
                 fsmFlight_state = _fsmFlight_idle;
                 lifecycle_status = _lifecycle_weapon_in_active;
 
                 //SFX
-                sound->playSound("hit_target");
+                global_engine_state->sound_manager->playSound("hit_target");
 
                 // **  Particle Shit
                 iXY loc = iXY( location.x, location.y );

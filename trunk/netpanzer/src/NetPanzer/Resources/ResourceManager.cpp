@@ -69,7 +69,7 @@ ResourceManager::loadDefaultFlags()
     {
         if ( RMan.flagList[n] == &noimage)
         {
-            RMan.flagList[n] = new Surface(20,14,1);
+            RMan.flagList[n] = new Surface(20, 14, 1, 8);
         }
         RMan.flagList[n]->fill(0);
         RMan.usedList[n] = false;

@@ -42,6 +42,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/InfoBar.hpp"
 #include "Views/Components/MiniMap.hpp"
 
+#include "Core/GlobalGameState.hpp"
+
 int GameView::gDrawSolidBackground = 0;
 
 // GameView
@@ -113,7 +115,7 @@ void GameView::doDraw()
     ParticleSystem2D::drawAll( SPRITE_SORTER );
     Particle2D::drawAll( SPRITE_SORTER );
 
-    UnitInterface::offloadGraphics( SPRITE_SORTER );
+    global_game_state->unit_manager->offloadGraphics( SPRITE_SORTER );
     ProjectileInterface::offloadGraphics( SPRITE_SORTER );
     ObjectiveInterface::offloadGraphics( SPRITE_SORTER );
     PowerUpInterface::offloadGraphics( SPRITE_SORTER );
@@ -169,7 +171,7 @@ void GameView::mouseMove(const iXY & prevPos, const iXY &newPos)
 void
 GameView::drawMap(Surface &window)
 {
-    TileSet * ts = TileInterface::getTileSet();
+    TileSet * ts = global_game_state->tile_set;
     unsigned long world_x;
     unsigned long world_y;
     unsigned short map_x;
@@ -197,7 +199,7 @@ GameView::drawMap(Surface &window)
     
     unsigned int tile = 0;
     
-    WorldMap * map = MapInterface::getMap();
+    WorldMap * map = global_game_state->world_map;
     
     unsigned short tmx;
     Surface * tile_surf = 0;
@@ -208,7 +210,7 @@ GameView::drawMap(Surface &window)
         for ( int x = start_x; x < (int)window.getWidth(); x += tile_size )
         {
             tile = map->getValue(tmx++, map_y);
-            tile_surf = TileInterface::getTileSet()->getTile(tile);
+            tile_surf = ts->getTile(tile);
             if ( tile_surf )
             {
             	tile_surf->blt(window, x, y);

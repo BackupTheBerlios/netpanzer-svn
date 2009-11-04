@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <queue>
 
 #include "Resources/ResourceManager.hpp"
-
+#include "Core/GlobalGameState.hpp"
 
 #include "Interfaces/PlayerInterface.hpp"
 
@@ -92,7 +92,7 @@ public:
         switch ( p->getNetMessage()->message_id )
         {
             case _net_message_id_term_unit_cmd:
-                UnitInterface::processNetPacket(p);
+                global_game_state->unit_manager->processNetPacket(p);
                 break;
             case _net_message_id_term_unit_gen:
             case _net_message_id_term_output_loc:
@@ -110,7 +110,7 @@ class ToMessageHandler : public MessageClassHandler
 private:
     void (*func)(const NetMessage *);
 public:
-    ToMessageHandler(void (*f)(const NetMessage *)) : func(f) {};
+    ToMessageHandler(void (*f)(const NetMessage *)) : func(f) {}
     void handlePacket(const NetPacket *p)
     {
         func(p->getNetMessage());
@@ -122,10 +122,20 @@ class ToPacketHandler : public MessageClassHandler
 private:
     void (*func)(const NetPacket *);
 public:
-    ToPacketHandler(void (*f)(const NetPacket *)) : func(f) {};
+    ToPacketHandler(void (*f)(const NetPacket *)) : func(f) {}
     void handlePacket(const NetPacket *p)
     {
         func(p);
+    }
+};
+
+class ToUnitHandler : public MessageClassHandler
+{
+public:
+    ToUnitHandler() {}
+    void handlePacket(const NetPacket *p)
+    {
+        global_game_state->unit_manager->processNetMessage(p->getNetMessage());
     }
 };
 
@@ -134,7 +144,7 @@ static ToPacketHandler serverconnecthandler(&ServerConnectDaemon::processNetPack
 static ToMessageHandler clientconnecthandler(&ClientConnectDaemon::processNetMessage);
 static ToMessageHandler resourcehandler(&ResourceManager::processResourceMessage);
 static ToMessageHandler playerhandler(&PlayerInterface::processNetMessage);
-static ToMessageHandler unithandler(&UnitInterface::processNetMessage);
+static ToUnitHandler unithandler;
 static ToMessageHandler objectivehandler(&ObjectiveInterface::processNetMessages);
 static ToMessageHandler gamecontrolhandler(GameControlRulesDaemon::processNetMessage);
 static ToMessageHandler poweruphandler(&PowerUpInterface::processNetMessages);
@@ -203,7 +213,6 @@ MessageRouter::enqueueIncomingPacket( const void *data, Uint16 size,
     receive_queue.push( TEMP_PACKET );
 }
 
-
 void
 MessageRouter::routePackets()
 {
@@ -219,4 +228,22 @@ MessageRouter::routePackets()
 
         handlers[np.getNetMessage()->message_class]->handlePacket(&np);
     }
+}
+
+void
+MessageRouter::routePacket(const NetPacket& np)
+{
+    handlers[np.getNetMessage()->message_class]->handlePacket(&np);
+}
+
+bool
+MessageRouter::getNextPacket(NetPacket& np)
+{
+    if ( ! receive_queue.empty() )
+    {
+        np = receive_queue.front();
+        receive_queue.pop();
+        return true;
+    }
+    return false;
 }

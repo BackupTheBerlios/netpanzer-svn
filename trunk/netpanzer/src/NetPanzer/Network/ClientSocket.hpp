@@ -32,8 +32,8 @@ class ClientSocket;
 class ClientSocketObserver
 {
 public:
-    ClientSocketObserver(){};
-    virtual ~ClientSocketObserver(){};
+    ClientSocketObserver(){}
+    virtual ~ClientSocketObserver(){}
 protected:
     friend class ClientSocket;
     virtual void onClientConnected(ClientSocket *cso) = 0;
@@ -51,7 +51,7 @@ public:
     void sendRemaining();
     ProxyServer proxy;
 
-    int getId() { return id; };
+    int getId() { return id; }
     std::string getIPAddress();
     
     int getPlayerIndex()

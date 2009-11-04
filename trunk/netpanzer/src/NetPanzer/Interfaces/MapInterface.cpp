@@ -17,16 +17,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "Interfaces/MapInterface.hpp"
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
+#include "Core/GlobalGameState.hpp"
+#include "Classes/SpawnList.hpp"
+#include <cstdlib>
+#include <cstring>
+#include <cstdio>
 
-#include "SDL_endian.h"
 
-#include "Port/MapData.hpp"
-
-WorldMap MapInterface::main_map;
-SpawnList MapInterface::spawn_list;
 char MapInterface::map_path[256];
 MapInterface::MapListenerList MapInterface::listenerList;
 
@@ -39,19 +36,33 @@ bool MapInterface::loadMap(const char *file_path, bool load_tiles)
 
     strcpy( path, file_path );
     strcat( path, ".npm" );
-    main_map.loadMapFile( path );
+
+    WorldMap * map = new WorldMap();
+    map->loadMapFile( path );
+    if ( global_game_state->world_map )
+    {
+        delete global_game_state->world_map;
+    }
+    global_game_state->world_map = map;
 
     strcpy( tile_set_path, "tilesets/" );
-    strcat( tile_set_path, main_map.getAssocTileSet() );
+    strcat( tile_set_path, global_game_state->world_map->getAssocTileSet() );
 
+    TileSet * ts = new TileSet();
     if ( load_tiles == true )
     {
-        tile_set.loadTileSet(tile_set_path);
+        ts->loadTileSet(tile_set_path);
     }
     else
     {
-        tile_set.loadTileSetInfo(tile_set_path);
+        ts->loadTileSetInfo(tile_set_path);
     }
+
+    if ( global_game_state->tile_set )
+    {
+        delete global_game_state->tile_set;
+    }
+    global_game_state->tile_set = ts;
 
     finishMapLoad();
     return true;
@@ -61,17 +72,23 @@ void MapInterface::finishMapLoad( void )
 {
     char path[256];
 
+    strcpy( path, map_path );
+    strcat( path, ".spn" );
+
+    SpawnList * sl = new SpawnList();
+    sl->loadSpawnFile(path);
+    if ( global_game_state->spawn_list )
+    {
+        delete global_game_state->spawn_list;
+    }
+    global_game_state->spawn_list = sl;
+
     MapListenerList::iterator i = listenerList.begin();
     while ( i != listenerList.end() )
     {
         (*i)->onMapLoadedEvent();
         i++;
     }
-    
-    strcpy( path, map_path );
-
-    strcat( path, ".spn" );
-    spawn_list.loadSpawnFile( path );
 }
 
 unsigned char MapInterface::getMovementValue( iXY map_loc )
@@ -79,11 +96,11 @@ unsigned char MapInterface::getMovementValue( iXY map_loc )
     unsigned short tile_val;
     char move_val;
 
-    if (      (map_loc.x >= 0) && ((size_t) map_loc.x < main_map.getWidth() )
-              && (map_loc.y >= 0) && ((size_t) map_loc.y < main_map.getHeight() )
+    if (      (map_loc.x >= 0) && ((size_t) map_loc.x < global_game_state->world_map->getWidth() )
+              && (map_loc.y >= 0) && ((size_t) map_loc.y < global_game_state->world_map->getHeight() )
        ) {
-        tile_val = main_map.getValue( (unsigned short) map_loc.x, (unsigned short) map_loc.y ) ;
-        move_val = tile_set.getTileMovementValue( tile_val );
+        tile_val = global_game_state->world_map->getValue( (unsigned short) map_loc.x, (unsigned short) map_loc.y ) ;
+        move_val = global_game_state->tile_set->getTileMovementValue( tile_val );
 
         switch( move_val ) {
         case 0 :
@@ -110,21 +127,4 @@ unsigned char MapInterface::getMovementValue( iXY map_loc )
         return( 0xFF );
     }
 
-}
-
-const SDL_Color * MapInterface::getAverageColorPointXY( iXY &point_loc )
-{
-    WorldMap::MapElementType map_value =
-        main_map.getValue(point_loc.x/32, point_loc.y/32);
-
-    return( tile_set.getAverageTileColor( map_value ) );
-}
-
-const SDL_Color * MapInterface::getAverageColorMapXY( iXY &map_loc )
-{
-    unsigned short map_value;
-
-    map_value = main_map.getValue( map_loc.x, map_loc.y );
-
-    return( tile_set.getAverageTileColor( map_value ) );
 }

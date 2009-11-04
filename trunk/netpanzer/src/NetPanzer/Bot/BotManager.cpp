@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include <list>
+#include "Core/GlobalGameState.hpp"
 
 #include "BotManager.hpp"
 #include "Bot.hpp"
@@ -79,7 +80,7 @@ BotManager::removeBot(Uint16 playerid)
 
             ObjectiveInterface::disownPlayerObjectives( playerid );
 
-            UnitInterface::destroyPlayerUnits( playerid );
+            global_game_state->unit_manager->destroyPlayerUnits( playerid );
 
             ResourceManagerReleaseFlagMessage releasemsg;
             releasemsg.setFlagID(player->getFlag());

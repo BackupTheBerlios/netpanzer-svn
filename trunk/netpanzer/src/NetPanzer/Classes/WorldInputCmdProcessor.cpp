@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include <sstream>
+#include "Core/GlobalEngineState.hpp"
+#include "Core/GlobalGameState.hpp"
 #include "WorldInputCmdProcessor.hpp"
 
 #include "Interfaces/MouseInterface.hpp"
@@ -154,7 +156,7 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
     }
 	
 	//Unit * unit = UnitInterface::queryNonPlayerUnitAtWorld( loc, PlayerInterface::getLocalPlayerIndex() );
-    Unit * unit = UnitInterface::queryUnitAtMapLoc( map_loc );
+    Unit * unit = global_game_state->unit_manager->unit_bucket_array.queryUnitAtMapLoc( map_loc );
 	if ( unit )
 	{
         if ( unit->player->getID() == PlayerInterface::getLocalPlayerIndex() )
@@ -320,7 +322,7 @@ WorldInputCmdProcessor::evaluateKeyCommands()
 void
 WorldInputCmdProcessor::jumpLastAttackedUnit()
 {
-    const UnitInterface::Units& units = UnitInterface::getUnits();
+    const UnitInterface::Units& units = global_game_state->unit_manager->getUnits();
     for(UnitInterface::Units::const_iterator i = units.begin();
             i != units.end(); ++i)
     {
@@ -721,7 +723,7 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
                 current_selection_list_index = 0xFFFF;
                 if (working_list.unit_list.size() > 0)
                 {
-                    Unit *unit = UnitInterface::getUnit(
+                    Unit *unit = global_game_state->unit_manager->getUnit(
                             working_list.unit_list[0]);
                     if(unit)
                         unit->soundSelected();
@@ -785,6 +787,7 @@ WorldInputCmdProcessor::sendMoveCommand(const iXY& world_pos)
     iXY map_pos;
     PlacementMatrix matrix;
 
+    LOGGER.warning("Wants to move to world %d,%d", world_pos.x, world_pos.y);
     unsigned long id_list_index;
     size_t id_list_size;
     Unit *unit_ptr;
@@ -797,15 +800,21 @@ WorldInputCmdProcessor::sendMoveCommand(const iXY& world_pos)
         return;
 
     MapInterface::pointXYtoMapXY( world_pos, &map_pos );
+    LOGGER.warning("Wants to move to map %d,%d", map_pos.x, map_pos.y);
     matrix.reset( map_pos );
 
     NetMessageEncoder encoder(true);
 
     for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
-        unit_ptr = UnitInterface::getUnit(working_list.unit_list[ id_list_index ]);
+        unit_ptr = global_game_state->unit_manager->getUnit(working_list.unit_list[ id_list_index ]);
         if ( unit_ptr != 0 ) {
             if ( unit_ptr->unit_state.select == true ) {
                 matrix.getNextEmptyLoc( &map_pos );
+                LOGGER.warning("Unit %d move from %d, %d to %d,%d",
+                               unit_ptr->id,
+                               unit_ptr->unit_state.location.x/32,
+                               unit_ptr->unit_state.location.y/32,
+                               map_pos.x, map_pos.y);
                 comm_mesg.comm_request.setHeader(unit_ptr->id);
 
                 comm_mesg.comm_request.setMoveToLoc( map_pos );
@@ -818,8 +827,8 @@ WorldInputCmdProcessor::sendMoveCommand(const iXY& world_pos)
     encoder.sendEncodedMessage();
 
     //sfx
-    sound->playUnitSound(working_list.getHeadUnitType() );
-    sound->playSound("move");
+    global_engine_state->sound_manager->playUnitSound(working_list.getHeadUnitType());
+    global_engine_state->sound_manager->playSound("move");
 }
 
 void
@@ -835,7 +844,7 @@ WorldInputCmdProcessor::sendAttackCommand(const iXY &world_pos)
 
     if ( working_list.isSelected() == true )
     {
-        target_ptr = UnitInterface::queryNonPlayerUnitAtWorld(world_pos,
+        target_ptr = global_game_state->unit_manager->unit_bucket_array.queryNonPlayerUnitAtWorld(world_pos,
                                         PlayerInterface::getLocalPlayerIndex());
 
         if ( ! target_ptr ) // there was nothing there
@@ -852,7 +861,7 @@ WorldInputCmdProcessor::sendAttackCommand(const iXY &world_pos)
 
         for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ )
         {
-            unit_ptr = UnitInterface::getUnit( working_list.unit_list[ id_list_index ] );
+            unit_ptr = global_game_state->unit_manager->getUnit( working_list.unit_list[ id_list_index ] );
             if ( unit_ptr != 0 )
             {
                 if ( unit_ptr->unit_state.select == true )
@@ -869,7 +878,7 @@ WorldInputCmdProcessor::sendAttackCommand(const iXY &world_pos)
         encoder.sendEncodedMessage();
 
         //sfx
-        sound->playSound("target");
+        global_engine_state->sound_manager->playSound("target");
     }
 }
 
@@ -888,7 +897,7 @@ WorldInputCmdProcessor::sendManualFireCommand(const iXY &world_pos)
         NetMessageEncoder encoder(true);
 
         for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
-            unit_ptr = UnitInterface::getUnit( working_list.unit_list[ id_list_index ] );
+            unit_ptr = global_game_state->unit_manager->getUnit( working_list.unit_list[ id_list_index ] );
 
             if ( unit_ptr != 0 ) {
                 if ( unit_ptr->unit_state.select == true ) {
@@ -904,14 +913,14 @@ WorldInputCmdProcessor::sendManualFireCommand(const iXY &world_pos)
         encoder.sendEncodedMessage();
         
         // SFX
-        sound->playSound("target");
+        global_engine_state->sound_manager->playSound("target");
     } // ** if containsItems() > 0
 }
 
 void
 WorldInputCmdProcessor::sendAllianceRequest(const iXY& world_pos, bool make_break)
 {
-    Unit *target_ptr = UnitInterface::queryNonPlayerUnitAtWorld(world_pos,
+    Unit *target_ptr = global_game_state->unit_manager->unit_bucket_array.queryNonPlayerUnitAtWorld(world_pos,
                                         PlayerInterface::getLocalPlayerIndex());
 
     if ( target_ptr )
@@ -1016,15 +1025,16 @@ WorldInputCmdProcessor::draw()
 void
 WorldInputCmdProcessor::closeSelectionBox()
 {
-    iXY world_pos;
-    iXY mouse_pos;
+    if (selection_box_active == true)
+    {
+        iXY world_pos;
+        iXY mouse_pos;
 
-    MouseInterface::getMousePosition( &mouse_pos.x, &mouse_pos.y );
+        MouseInterface::getMousePosition( &mouse_pos.x, &mouse_pos.y );
 
-    WorldViewInterface::getViewWindow( &world_win );
-    WorldViewInterface::clientXYtoWorldXY( world_win, mouse_pos, &world_pos );
+        WorldViewInterface::getViewWindow( &world_win );
+        WorldViewInterface::clientXYtoWorldXY( world_win, mouse_pos, &world_pos );
 
-    if (selection_box_active == true) {
         selection_box_active = false;
         box_release = world_pos;
         left_button_hold_action_complete = selectBoundBoxUnits();
@@ -1087,7 +1097,7 @@ WorldInputCmdProcessor::centerSelectedUnits()
     // Vote direction
     bool firstunit = true;
     for(unsigned int id_list_index = 0; id_list_index < working_list.unit_list.size(); id_list_index++) {
-        Unit* unit_ptr = UnitInterface::getUnit(working_list.unit_list[id_list_index]);
+        Unit* unit_ptr = global_game_state->unit_manager->getUnit(working_list.unit_list[id_list_index]);
 
         if(unit_ptr == 0)
             continue;

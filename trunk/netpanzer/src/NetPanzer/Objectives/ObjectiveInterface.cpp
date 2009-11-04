@@ -146,11 +146,11 @@ ObjectiveInterface::loadObjectiveList(const char *file_path)
             std::stringstream ss(location);
             ss >> loc_x >> loc_y;
             
-            LOGGER.warning("\t%s in %d,%d", name.c_str(), loc_x, loc_y);
+            LOGGER.warning("\t%s in %lu,%lu", name.c_str(), (unsigned long)loc_x, (unsigned long)loc_y);
 
             MapInterface::mapXYtoPointXY( loc_x, loc_y, &world_x, &world_y );
 
-            LOGGER.warning("\t\tin world %d,%d", world_x, world_y);
+            LOGGER.warning("\t\tin world %lu,%lu", (unsigned long)world_x, (unsigned long)world_y);
 
             objective_obj = new Outpost(objective_index, iXY(world_x, world_y),
                     BoundBox( -48, -32, 48, 32 )

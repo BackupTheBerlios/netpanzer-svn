@@ -18,35 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Units/UnitBlackBoard.hpp"
 
-#include "Interfaces/MapInterface.hpp"
-
-BitArray UnitBlackBoard::unit_loc_map;
-
-void UnitBlackBoard::initializeBlackBoard( void )
+void UnitBlackBoard::initialize(unsigned long mapWidth, unsigned long mapHeight)
 {
-    unit_loc_map.initialize( MapInterface::getWidth(),
-                             MapInterface::getHeight() );
-
+    unit_loc_map.initialize(mapWidth, mapHeight);
     unit_loc_map.clear();
 }
 
-void UnitBlackBoard::resetBlackBoard()
+void UnitBlackBoard::cleanUp()
 {
     unit_loc_map.clear();
-}
-
-
-void UnitBlackBoard::updateUnitLocs( void )
-{
-    unsigned long i,k,x_limit,y_limit;
-
-    x_limit = unit_loc_map.x_size;
-    y_limit = unit_loc_map.y_size;
-
-    for( i = 0; i < y_limit; i++ )
-        for ( k = 0; k < x_limit; k++ ) {
-            if ( unit_loc_map.getBit( k, i ) == true )
-                MapInterface::markLocHack( iXY( k, i ) );
-        }
-
 }

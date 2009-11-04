@@ -209,23 +209,13 @@ void DedicatedGameManager::pushCommand(const ServerCommand& command)
 //-----------------------------------------------------------------
 bool DedicatedGameManager::launchNetPanzerGame()
 {
-    *Console::server << "starting dedicated netPanzer server\n";
-
-    gameconfig->map = MapsManager::getNextMap("");
-
-    GameManager::dedicatedLoadGameMap(gameconfig->map.c_str());
-
-    GameManager::reinitializeGameLogic();
-
     MessageRouter::initialize(true);
     NetworkServer::openSession();
     NetworkServer::hostSession();
 
-    GameControlRulesDaemon::setStateServerInProgress();
     GameControlRulesDaemon::setDedicatedServer();
+    GameControlRulesDaemon::setStateServerLoadingMap();
     NetworkState::setNetworkStatus( _network_state_server );
-
-    GameManager::setNetPanzerGameOptions();
 
     gameconfig->hostorjoin=_game_session_host;
 
@@ -258,12 +248,11 @@ bool DedicatedGameManager::launchNetPanzerGame()
         }
     }
 
-    *Console::server << "game started." << std::endl;
+    *Console::server << "Game starting." << std::endl;
 
     console = new ServerConsole(this);
     console->startThread();
 
-    GameManager::startGameTimer();
     return true;
 }
 

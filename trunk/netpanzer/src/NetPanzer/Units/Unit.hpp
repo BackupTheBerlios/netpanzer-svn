@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/SpriteSorter.hpp"
 
 class PlayerState;
+class UnitInterface;
 
 class Unit
 {
@@ -40,7 +41,7 @@ public:
     UnitState    unit_state;
     bool         in_sync_flag;
 
-    Unit(PlayerState* ownplayer, unsigned char utype, UnitID uid, iXY initial_loc);
+    Unit(PlayerState* ownplayer, UnitInterface * unit_manager, unsigned char utype, UnitID uid, iXY initial_loc);
 
     void soundSelected();
 
@@ -228,6 +229,7 @@ protected:
 
 private:
     friend class UnitInterface;
+    UnitInterface * my_manager;
 
     void setID(UnitID id)
     {

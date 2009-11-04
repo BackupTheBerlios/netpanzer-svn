@@ -16,6 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "Core/GlobalGameState.hpp"
 #include "SelectionList.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
@@ -29,7 +30,7 @@ bool SelectionList::selectUnit(iXY point)
     deselect();
     unit_list.clear();
 
-    UnitInterface::queryPlayerUnitsAt(unit_list, point,
+    global_game_state->unit_manager->unit_bucket_array.queryPlayerUnitsAt(unit_list, point,
                                         PlayerInterface::getLocalPlayerIndex());
 
     select();
@@ -44,7 +45,7 @@ bool SelectionList::addUnit(iXY point)
 {
     deselect();
 
-    UnitInterface::queryPlayerUnitsAt(unit_list, point,
+    global_game_state->unit_manager->unit_bucket_array.queryPlayerUnitsAt(unit_list, point,
                                         PlayerInterface::getLocalPlayerIndex());
 
     select();
@@ -58,7 +59,7 @@ bool SelectionList::addUnit(iXY point)
 bool SelectionList::selectBounded(iRect bounds, bool addunits)
 {
     std::vector<UnitID> tempunits;
-    UnitInterface::queryPlayerUnitsInWorldRect(tempunits, bounds,
+    global_game_state->unit_manager->unit_bucket_array.queryPlayerUnitsInWorldRect(tempunits, bounds,
                                        PlayerInterface::getLocalPlayerIndex() );
     
     if ( ! tempunits.size() )
@@ -95,17 +96,17 @@ bool SelectionList::selectSameTypeVisible( iXY point, bool addunits)
 
     std::vector<UnitID> temp_list;
 
-    UnitInterface::queryPlayerUnitsAt(temp_list, point, player_id);
+    global_game_state->unit_manager->unit_bucket_array.queryPlayerUnitsAt(temp_list, point, player_id);
     
     if ( temp_list.empty() )
         return false;
         
-    unsigned char t=UnitInterface::getUnit(temp_list[0])->unit_state.unit_type;
+    unsigned char t=global_game_state->unit_manager->getUnit(temp_list[0])->unit_state.unit_type;
     temp_list.clear();
     
     iRect wr;
     WorldViewInterface::getViewWindow(&wr);
-    UnitInterface::queryPlayerUnitsInWorldRect(temp_list, wr, player_id );
+    global_game_state->unit_manager->unit_bucket_array.queryPlayerUnitsInWorldRect(temp_list, wr, player_id );
     
     int p = temp_list.size();
     if ( !p )
@@ -113,7 +114,7 @@ bool SelectionList::selectSameTypeVisible( iXY point, bool addunits)
 
     p--;
     do {
-        if ( UnitInterface::getUnit(temp_list[p])->unit_state.unit_type == t)
+        if ( global_game_state->unit_manager->getUnit(temp_list[p])->unit_state.unit_type == t)
             unit_list.push_back(temp_list[p]);
     } while (p--);
 
@@ -139,7 +140,7 @@ void SelectionList::select()
     id_list_size = unit_list.size();
 
     for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
-        unit = UnitInterface::getUnit( unit_list[ id_list_index ] );
+        unit = global_game_state->unit_manager->getUnit( unit_list[ id_list_index ] );
         if ( unit != 0 ) {
             unit->unit_state.select = true;
         }
@@ -156,7 +157,7 @@ void SelectionList::deselect( void )
     id_list_size = unit_list.size();
 
     for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
-        unit = UnitInterface::getUnit( unit_list[ id_list_index ] );
+        unit = global_game_state->unit_manager->getUnit( unit_list[ id_list_index ] );
         if ( unit != 0 ) {
             unit->unit_state.select = false;
         }
@@ -176,7 +177,7 @@ void SelectionList::cycleNextUnit( void )
     deselect();
     do {
 
-        unit = UnitInterface::getUnit( unit_list[ unit_cycle_index ] );
+        unit = global_game_state->unit_manager->getUnit( unit_list[ unit_cycle_index ] );
         if ( unit != 0 ) {
             unit->unit_state.select = true;
         }
@@ -214,7 +215,7 @@ unsigned short SelectionList::getHeadUnitType()
     Unit *unit;
 
     if ( unit_list.size() > 0 ) {
-        unit = UnitInterface::getUnit( unit_list[ 0 ] );
+        unit = global_game_state->unit_manager->getUnit( unit_list[ 0 ] );
         if( unit != 0 ) {
             return unit->unit_state.unit_type;
         } else {
@@ -238,7 +239,7 @@ void SelectionList::validateList()
     }
 
     for( id_list_index = 0; id_list_index < id_list_size; id_list_index++ ) {
-        unit = UnitInterface::getUnit( unit_list[ id_list_index ] );
+        unit = global_game_state->unit_manager->getUnit( unit_list[ id_list_index ] );
         if ( unit != 0 ) {
             return;
         }

@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/PlacementMatrix.hpp"
 #include "Interfaces/MapInterface.hpp"
-#include "Units/UnitBlackBoard.hpp"
+#include "Units/UnitInterface.hpp"
 
 void PlacementMatrix::reset( iXY ini_map_loc )
 {
@@ -36,9 +36,9 @@ bool PlacementMatrix::verifyLocation( iXY &loc )
     iXY succ;
     unsigned long direction_index;
 
-    if ( ( MapInterface::getMovementValue( loc ) >= 0xFF) ||
-            ( UnitBlackBoard::unitOccupiesLoc( loc ) == true )
-       ) {
+    if ( MapInterface::getMovementValue(loc) >= 0xFF
+        || global_game_state->unit_manager->unitOccupiesLoc(loc) == true )
+    {
         return(false);
     }
 
@@ -89,9 +89,9 @@ bool PlacementMatrix::verifyLocation( iXY &loc )
         succ.x = loc.x + (x_offset);
         succ.y = loc.y + (y_offset);
 
-        if ( ( MapInterface::getMovementValue( succ ) < 0xFF) &&
-                ( UnitBlackBoard::unitOccupiesLoc( succ ) == false )
-           ) {
+        if ( MapInterface::getMovementValue(succ) < 0xFF
+             && global_game_state->unit_manager->unitOccupiesLoc(succ) == false )
+        {
             return true;
         }
 
@@ -212,116 +212,3 @@ bool PlacementMatrix::getNextEmptyLoc( iXY *loc )
 
     return( false );
 }
-
-/*
-void PlacementMatrix::reset( iXY ini_map_loc )
- {
-  *
-  ini_loc = ini_map_loc;
-  level = 2;
-  direction = 0;
- }
- 
-bool PlacementMatrix::getNextEmptyLoc( iXY *loc )
- {
-  long x_offset, y_offset;
-  iXY succ;
-  iXY succ_right;
-  iXY succ_left;
- 
-  while ( level < 50 )
-   {
-    switch( direction )
-     {
-      case 0: { x_offset =  0; y_offset =  0; } break;
-      case 1: { x_offset =  1; y_offset =  0; } break;
-      case 2: { x_offset =  1; y_offset = -1; } break;
-      case 3: { x_offset =  0; y_offset = -1; } break;
-      case 4: { x_offset = -1; y_offset = -1; } break;
-      case 5: { x_offset = -1; y_offset =  0; } break;
-      case 6: { x_offset = -1; y_offset =  1; } break;
-      case 7: { x_offset =  0; y_offset =  1; } break;
-      case 8: { x_offset =  1; y_offset =  1; } break; 
-     } // ** switch   
-      
-    succ.x = ini_loc.x + (x_offset * level);
-    succ.y = ini_loc.y + (y_offset * level);
- 
-     switch( direction )
-       {
-        case 0: { succ_right.y = succ.y; 
-                  succ_left.y = succ.y;
-                  succ_right.x = succ.x;
-                  succ_left.x = succ.x;  } break;
- 
-        case 1: { succ_right.y = succ.y + 1; 
-                  succ_left.y = succ.y - 1;
-                  succ_right.x = succ.x;
-                  succ_left.x = succ.x;  } break;
-        
-        case 2: { succ_right.y = succ.y + 1;
-                  succ_left.x = succ.x - 1;
-                  succ_right.x = succ.x;
-                  succ_left.y = succ.y;   } break;
-        
-        case 3: { succ_right.x = succ.x + 1; 
-                  succ_left.x = succ.x - 1;
-                  succ_right.y = succ.y;
-                  succ_left.y = succ.y; } break;
-                  
-        case 4: { succ_right.x = succ.x + 1; 
-                  succ_left.y = succ.y + 1;
-                  succ_right.y = succ.y;
-                  succ_left.x = succ.x; } break;
-        
-        case 5: { succ_right.y = succ.y - 1; 
-                  succ_left.y = succ.y + 1;
-                  succ_right.x = succ.x;
-                  succ_left.x = succ.x; } break;
-        
-        case 6: { succ_right.y = succ.y - 1; 
-                  succ_left.x = succ.x + 1;
-                  succ_right.x = succ.x;
-                  succ_left.y = succ.y; } break;
-        
-        case 7: { succ_right.x = succ.x - 1; 
-                  succ_left.x = succ.x + 1;
-                  succ_right.y = succ.y;
-                  succ_left.y = succ.y; } break;
-        
-        case 8: { succ_right.x = succ.x + 1; 
-                  succ_left.y = succ.y - 1;
-                  succ_right.y = succ.y;
-                  succ_left.x = succ.x; } break;
-        
-      } // ** switch    
- 
-   if ( ( MapInterface::getMovementValue( succ ) < 0xFF) &&
-        ( UnitBlackBoard::unitOccupiesLoc( succ ) == false ) &&
-		( (MapInterface::getMovementValue( succ_right ) < 0xFF) 
-		   || (MapInterface::getMovementValue( succ ) < 0xFF) 
-		)
-      )
-    {
-     *loc = succ;
-	 direction++;
-	 if (direction == 9)
-	  {
-	   level++;
-	   direction = 0;
-	  }	   
-	 return( true );
-    }
-  
-   direction++;
-   if (direction == 9)
-    {
-     level++;
-     direction = 0;
-    }	   
-  
-  } // ** while 
-  
-  return( false );
- }
- */

@@ -54,6 +54,8 @@ public:
 
     Surface();
     Surface(unsigned int w, unsigned int h, unsigned int nframes);
+    Surface(unsigned int w, unsigned int h, unsigned int nframes, int bpp);
+
     ~Surface(); // no inheritance please
     
     void freeFrames();

@@ -23,35 +23,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class UnitBlackBoard
 {
-protected:
-    friend class Unit;
-    friend class UnitInterface; // for unmark unit hack
-    
-    static BitArray unit_loc_map;
-
-    static inline void markUnitLoc( iXY &unit_map_loc )
-    {
-        unit_loc_map.setBit( unit_map_loc.x, unit_map_loc.y );
-    }
-
-    static inline void unmarkUnitLoc( iXY &unit_map_loc )
-    {
-        unit_loc_map.clearBit( unit_map_loc.x, unit_map_loc.y );
-    }
-
 public:
-    static void initializeBlackBoard( void );
+    void initialize(unsigned long mapWidth, unsigned long mapHeight);
 
-    static void resetBlackBoard();
+    void cleanUp();
 
-    static void updateUnitLocs( void );
-
-    static inline bool unitOccupiesLoc( iXY &unit_map_loc )
+    bool unitOccupiesLoc( iXY &unit_map_loc )
     {
         return( unit_loc_map.getBit( unit_map_loc.x, unit_map_loc.y ) );
     }
 
+    void markUnitLoc( iXY &unit_map_loc )
+    {
+        unit_loc_map.setBit( unit_map_loc.x, unit_map_loc.y );
+    }
 
+    void unmarkUnitLoc( iXY &unit_map_loc )
+    {
+        unit_loc_map.clearBit( unit_map_loc.x, unit_map_loc.y );
+    }
+
+private:
+    BitArray unit_loc_map;
 };
 
 #endif // ** _UNITBLACKBOARD_HPP

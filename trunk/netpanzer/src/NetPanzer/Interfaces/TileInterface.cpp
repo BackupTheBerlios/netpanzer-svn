@@ -20,47 +20,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/MapInterface.hpp"
 #include "Util/Log.hpp"
 
-TileSet TileInterface::tile_set;
-
-void TileInterface::loadTileSet( const char *file_path )
-{
-    tile_set.loadTileSet( file_path );
-}
-
 iXY TileInterface::getTileSize( void )
 {
-    return( iXY( tile_set.getTileXsize(), tile_set.getTileYsize() ) );
-}
-
-IntColor TileInterface::getWorldPixColor(int worldX, int worldY)
-{
-    int tileX = worldX / tile_set.getTileXsize();
-    int tileY = worldY / tile_set.getTileYsize();
-
-    int subPixX = worldX % tile_set.getTileXsize();
-    int subPixY = worldY % tile_set.getTileYsize();
-
-    if(tileX >= (int) MapInterface::getWidth()
-            || tileY >= (int) MapInterface::getHeight()
-            || tileX < 0 || tileY < 0 ) 
-    {
-        LOGGER.warning("query for worldpixcolor outside map (%d,%d)",
-                worldX, worldY);
-        return 0;
-    }
-
-    int tileValue = MapInterface::MapValue(tileX, tileY);
-
-    return tile_set.getTilePixel(tileValue, subPixX, subPixY);
+    return( iXY( global_game_state->tile_set->getTileXsize(), global_game_state->tile_set->getTileYsize() ) );
 }
 
 long TileInterface::getWorldPixMovementValue(int worldX, int worldY)
 {
-    int tileX = worldX / tile_set.getTileXsize();
-    int tileY = worldY / tile_set.getTileYsize();
+    int tileX = worldX / global_game_state->tile_set->getTileXsize();
+    int tileY = worldY / global_game_state->tile_set->getTileYsize();
 
-    if(tileX >= (int) MapInterface::getWidth()
-            || tileY >= (int) MapInterface::getHeight()
+    if(tileX >= (int) global_game_state->world_map->getWidth()
+            || tileY >= (int) global_game_state->world_map->getHeight()
             || tileX < 0 || tileY < 0 ) 
     {
         LOGGER.warning("query for worldpixmovement outside map (%d,%d)",
@@ -69,5 +40,5 @@ long TileInterface::getWorldPixMovementValue(int worldX, int worldY)
     }                                                                               
     int tileValue = MapInterface::MapValue(tileX, tileY);
 
-    return tile_set.getTileMovementValue(tileValue);
+    return global_game_state->tile_set->getTileMovementValue(tileValue);
 }

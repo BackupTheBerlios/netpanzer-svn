@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
+#include "Core/GlobalGameState.hpp"
 #include "Classes/PlayerState.hpp"
 #include "Outpost.hpp"
 
@@ -128,7 +128,7 @@ Outpost::checkOccupationStatus()
         if ( objective_state.occupation_status == _occupation_status_occupied )
         {
             std::vector<UnitID> playerunits;
-            UnitInterface::queryPlayerUnitsInWorldRect(playerunits,
+            global_game_state->unit_manager->unit_bucket_array.queryPlayerUnitsInWorldRect(playerunits,
                                     bounding_area,
                                     objective_state.occupying_player->getID() );
 
@@ -137,16 +137,18 @@ Outpost::checkOccupationStatus()
                 return;
             }
 
-            UnitInterface::queryNonPlayerUnitsInWorldRect(unitsInArea,
+            global_game_state->unit_manager->unit_bucket_array.queryNonPlayerUnitsInWorldRect(unitsInArea,
                                     bounding_area,
                                     objective_state.occupying_player->getID() );
 
         }
         else
         {
-            UnitInterface::queryUnitsInWorldRect( unitsInArea, bounding_area );  
+            if ( global_game_state->unit_manager )
+            {
+                global_game_state->unit_manager->unit_bucket_array.queryUnitsInWorldRect( unitsInArea, bounding_area );
+            }
         }
-
 
         if ( ! unitsInArea.empty() )
         {
@@ -184,7 +186,7 @@ Outpost::generateUnits()
                 iXY gen_loc;
                 gen_loc = outpost_map_loc + unit_generation_loc;
 
-                unit = UnitInterface::createUnit(unit_generation_type,
+                unit = global_game_state->unit_manager->createUnit(unit_generation_type,
                         gen_loc, objective_state.occupying_player->getID());
 
                 if ( unit != 0 )
@@ -205,7 +207,7 @@ Outpost::generateUnits()
 
                     ai_command.setHeader( unit->id);
                     ai_command.setMoveToLoc( loc );
-                    UnitInterface::sendMessage( &ai_command );
+                    global_game_state->unit_manager->sendMessage( &ai_command );
                 }
             } // ** if
         } // ** if
@@ -255,7 +257,7 @@ Outpost::objectiveMesgChangeUnitGeneration(const ObjectiveMessage* message)
     unit_generation_type = unit_gen_mesg->unit_type;
     unit_generation_on_flag = unit_gen_mesg->unit_gen_on;
 
-    profile = UnitProfileInterface::getUnitProfile( unit_generation_type );
+    profile = global_game_state->unit_profile_interface->getUnitProfile( unit_generation_type );
     unit_generation_timer.changePeriod( (float) profile->regen_time );
 }
 
@@ -282,7 +284,7 @@ Outpost::objectiveMesgDisownPlayerObjective(const ObjectiveMessage* message)
 
             unit_generation_type = 0;
             UnitProfile *profile
-                = UnitProfileInterface::getUnitProfile( unit_generation_type );
+                = global_game_state->unit_profile_interface->getUnitProfile( unit_generation_type );
             unit_generation_timer.changePeriod( (float) profile->regen_time );
             unit_generation_on_flag = false;
         }
@@ -298,7 +300,7 @@ Outpost::getOutpostStatus( OutpostStatus &status )
     status.unit_generation_on_off = unit_generation_on_flag;
     status.unit_collection_loc = unit_collection_loc;
 
-    profile = UnitProfileInterface::getUnitProfile( unit_generation_type );
+    profile = global_game_state->unit_profile_interface->getUnitProfile( unit_generation_type );
     if ( profile )
         status.unit_generation_time = (float) profile->regen_time;
     else
@@ -330,7 +332,7 @@ Outpost::objectiveMesgUpdateOccupation(const ObjectiveMessage* message)
     unit_generation_on_flag = occupation_update->unit_gen_on;
     unit_generation_type = occupation_update->unit_type;
     
-    UnitProfile* profile = UnitProfileInterface::getUnitProfile( unit_generation_type );
+    UnitProfile* profile = global_game_state->unit_profile_interface->getUnitProfile( unit_generation_type );
     
     unit_generation_timer.changePeriod((float)profile->regen_time);
     unit_generation_timer.setTimeLeft(

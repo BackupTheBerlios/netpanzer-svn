@@ -88,6 +88,6 @@ void GameTemplateView::doDeactivate()
 {
     View::doDeactivate();
 
-    Desktop::setActiveView("GameView");
+//    Desktop::setActiveView("GameView");
 
 } // end GameTemplateView::doDeactivate

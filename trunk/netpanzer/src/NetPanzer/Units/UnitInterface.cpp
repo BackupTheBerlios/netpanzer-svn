@@ -20,6 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <iostream>
 #include <algorithm>
 
+#include "Core/GlobalEngineState.hpp"
+#include "Core/GlobalGameState.hpp"
+
 #include "UnitInterface.hpp"
 #include "UnitProfileInterface.hpp"
 #include "UnitBucketArray.hpp"
@@ -48,36 +51,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Interfaces/GameConfig.hpp"
 
+UnitInterface::UnitInterface()
+{
+    // nothing
+}
 
-//UnitList * UnitInterface::unit_lists;
-UnitInterface::Units UnitInterface::units;
-UnitInterface::PlayerUnitList UnitInterface::playerUnitLists;
-UnitBucketArray UnitInterface::unit_bucket_array;
-
-PlacementMatrix UnitInterface::unit_placement_matrix;
-
-UnitID UnitInterface::lastUnitID;
-
-UnitOpcodeEncoder UnitInterface::opcode_encoder;
-
-Timer UnitInterface::message_timer;
-Timer UnitInterface::no_guarantee_message_timer;
-
-unsigned long   UnitInterface::sync_units_iterator;
-bool	        UnitInterface::sync_units_complete_flag;
-unsigned short  UnitInterface::sync_units_list_index;
-unsigned long   UnitInterface::sync_units_total_units;
-unsigned long   UnitInterface::sync_units_in_sync_count;
-unsigned long   UnitInterface::sync_units_in_sync_partial_count;
-unsigned int    UnitInterface::units_per_player;
-Timer		UnitInterface::sync_units_packet_timer;
-
-// ******************************************************************
+UnitInterface::~UnitInterface()
+{
+    // nothing
+}
 
 void
 UnitInterface::initialize( const unsigned int max_units )
 {
-    unit_bucket_array.initialize(MapInterface::getSize(), TileInterface::getTileSize() );
+    unit_black_board.initialize(global_game_state->world_map->getWidth(),
+                                global_game_state->world_map->getHeight());
+
+    unit_bucket_array.initialize(MapInterface::getSize(),
+                                 TileInterface::getTileSize());
 
     playerUnitLists.resize(PlayerInterface::getMaxPlayers());
 
@@ -93,6 +84,8 @@ UnitInterface::initialize( const unsigned int max_units )
 
 void UnitInterface::cleanUp()
 {
+    unit_black_board.cleanUp();
+
     unit_bucket_array.cleanUp();
 
     playerUnitLists.clear();
@@ -109,16 +102,8 @@ void UnitInterface::cleanUp()
 void
 UnitInterface::reset()
 {
-    playerUnitLists.clear();
-    playerUnitLists.resize(PlayerInterface::getMaxPlayers());
-
-    unit_bucket_array.initialize( MapInterface::getSize(), TileInterface::getTileSize() );
-
-    for( Units::iterator i = units.begin();i != units.end(); ++i )
-    {
-        delete i->second;
-    }
-    units.clear();
+    cleanUp();
+    initialize(units_per_player);
 }
 
 // ******************************************************************
@@ -260,7 +245,7 @@ UnitInterface::spawnPlayerUnits( const iXY &location,
 
     unit_placement_matrix.reset( location );
 
-    for ( utype = 0; utype < UnitProfileInterface::getNumUnitTypes(); ++utype )
+    for ( utype = 0; utype < global_game_state->unit_profile_interface->getNumUnitTypes(); ++utype )
     {
         numunits = unit_config.getSpawnUnitCount( utype );
         while ( numunits )
@@ -326,9 +311,9 @@ UnitInterface::newUnit( const unsigned short unit_type,
     PlayerState* player = PlayerInterface::getPlayer( player_index );
     unit_flag = player->getFlag();
 
-    if ( unit_type < UnitProfileInterface::getNumUnitTypes() )
+    if ( unit_type < global_game_state->unit_profile_interface->getNumUnitTypes() )
     {
-        unit = new Unit(player, unit_type, id, location);
+        unit = new Unit(player, this, unit_type, id, location);
     }
     else
     {   // XXX change for a error window
@@ -359,7 +344,7 @@ UnitInterface::removeUnit( Units::iterator i )
     ParticleInterface::addHit(unit->unit_state);
 
     // unit explosion sound
-    sound->playAmbientSound("expl",
+    global_engine_state->sound_manager->playAmbientSound("expl",
             WorldViewInterface::getCameraDistance( unit->unit_state.location ));
 
     unit_bucket_array.removeUnit(unit);
@@ -373,343 +358,13 @@ UnitInterface::removeUnit( Units::iterator i )
 
 // ******************************************************************
 
-void
-UnitInterface::queryPlayerUnitsAt( std::vector<UnitID>& working_list,
-                                   const iXY& point,
-                                   const Uint16 player_id )
-{
-    UnitList & ubl = unit_bucket_array.getBucketAssocWorldLoc(point);
-    for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
-    {
-        Unit* unit = *i;
-        if( (*i)->unit_state.bounds(point)
-            && (*i)->player->getID() == player_id )
-        {
-            working_list.push_back(unit->id);
-        }
-    }
-}
+
 
 // ******************************************************************
 
-void
-UnitInterface::queryUnitsInWorldRect( std::vector<Unit *>& working_list,
-                                      const iRect& rect )
-{
-    UnitList::iterator iter;
-    iRect bucket_rect;
-    unit_bucket_array.worldRectToBucketRect( rect, bucket_rect);
 
-    for( int row = bucket_rect.min.y; row <= bucket_rect.max.y; ++row )
-    {
-        for( int col = bucket_rect.min.x; col <= bucket_rect.max.x; ++col )
-        {
-            UnitList & bucket_list = unit_bucket_array.getBucket(row, col);
-
-            for( iter = bucket_list.begin(); iter != bucket_list.end(); ++iter )
-            {
-                if( rect.contains((*iter)->unit_state.location) )
-                {
-                    working_list.push_back(*iter);
-                }
-
-            }
-        }
-    }
-}
 
 // ******************************************************************
-
-void
-UnitInterface::queryPlayerUnitsInWorldRect( std::vector<UnitID>& working_list,
-                                            const iRect& rect,
-                                            const Uint16 player_id )
-{
-    UnitList::iterator iter;
-    iRect bucket_rect;
-    unit_bucket_array.worldRectToBucketRect( rect, bucket_rect);
-
-    for( int row = bucket_rect.min.y; row <= bucket_rect.max.y; ++row )
-    {
-        for( int col = bucket_rect.min.x; col <= bucket_rect.max.x; ++col )
-        {
-            UnitList & bucket_list = unit_bucket_array.getBucket(row, col);
-
-            for( iter = bucket_list.begin(); iter != bucket_list.end(); ++iter )
-            {
-                if(    rect.contains((*iter)->unit_state.location)
-                    && (*iter)->player->getID() == player_id )
-                {
-                    working_list.push_back((*iter)->id);
-                }
-
-            }
-        }
-    }
-}
-
-// ******************************************************************
-
-void
-UnitInterface::queryNonPlayerUnitsInWorldRect( std::vector<Unit *>& working_list,
-                                               const iRect& rect,
-                                               const Uint16 player_id )
-{
-    UnitList::iterator iter;
-    iRect bucket_rect;
-    unit_bucket_array.worldRectToBucketRect( rect, bucket_rect);
-
-    for( int row = bucket_rect.min.y; row <= bucket_rect.max.y; ++row )
-    {
-        for( int col = bucket_rect.min.x; col <= bucket_rect.max.x; ++col )
-        {
-            UnitList & bucket_list = unit_bucket_array.getBucket(row, col);
-
-            for( iter = bucket_list.begin(); iter != bucket_list.end(); ++iter )
-            {
-                if(    rect.contains((*iter)->unit_state.location)
-                    && (*iter)->player->getID() != player_id )
-                {
-                    working_list.push_back(*iter);
-                }
-
-            }
-        }
-    }
-}
-
-// ******************************************************************
-
-bool
-UnitInterface::queryClosestUnit( Unit **closest_unit_ptr,
-                                 const iXY &loc,
-                                 const Uint16 player_id,
-                                 unsigned char search_flags )
-{
-    long closest_magnitude = 0;
-    Unit* closest_unit = 0;
-
-    for(Units::iterator i = units.begin(); i != units.end(); ++i)
-    {
-        Unit* unit = i->second;
-
-        if(search_flags == _search_exclude_player
-                && unit->player->getID() == player_id)
-            continue;
-
-        if(search_flags == _search_player
-                && unit->player->getID() != player_id)
-            continue;
-
-        iXY delta;
-        long temp_mag;
-
-        if ( closest_unit == 0 )
-        {
-            closest_unit = unit;
-            delta  = loc - unit->unit_state.location;
-            closest_magnitude = long(delta.mag2());
-        }
-        else
-        {
-            delta  = loc - unit->unit_state.location;
-            temp_mag = long(delta.mag2());
-
-            if ( closest_magnitude > temp_mag )
-            {
-                closest_unit = unit;
-                closest_magnitude = temp_mag;
-            }
-        }
-    }
-
-    if(closest_unit != 0)
-    {
-        *closest_unit_ptr = closest_unit;
-        return true;
-    }
-
-    *closest_unit_ptr = 0;
-    return false;
-}
-
-// ******************************************************************
-
-bool
-UnitInterface::queryClosestUnit( Unit **closest_unit_ptr,
-                                 const iRect &bounding_rect,
-                                 const iXY &loc )
-{
-    Unit *closest_unit = 0;
-    long closest_magnitude = 0;
-    iRect bucket_rect;
-    UnitList::iterator bucket_iter;
-
-    unit_bucket_array.worldRectToBucketRect( bounding_rect, bucket_rect );
-
-    for( long row_index = bucket_rect.min.y; row_index <= bucket_rect.max.y; row_index++ )
-    {
-        for( long column_index = bucket_rect.min.x; column_index <= bucket_rect.max.x; column_index++ )
-        {
-            UnitList &bucket_list = unit_bucket_array.getBucket( row_index, column_index );
-
-            for ( bucket_iter = bucket_list.begin();
-                    bucket_iter != bucket_list.end(); ++bucket_iter)
-            {
-                iXY delta;
-                long temp_mag;
-
-                if ( closest_unit == 0 )
-                {
-                    closest_unit = *bucket_iter;
-                    delta  = loc - (*bucket_iter)->unit_state.location;
-                    closest_magnitude = long(delta.mag2());
-                }
-                else
-                {
-                    delta  = loc - (*bucket_iter)->unit_state.location;
-                    temp_mag = long(delta.mag2());
-
-                    if ( closest_magnitude > temp_mag )
-                    {
-                        closest_unit = *bucket_iter;
-                        closest_magnitude = temp_mag;
-                    }
-                }
-            }
-        }
-    }
-
-    if( closest_unit != 0 )
-    {
-        *closest_unit_ptr = closest_unit;
-        return true;
-    }
-
-    *closest_unit_ptr = 0;
-    return false;
-}
-
-// ******************************************************************
-
-bool
-UnitInterface::queryClosestEnemyUnit( Unit **closest_unit_ptr,
-                                      const iXY &loc,
-                                      const Uint16 player_index )
-{
-    Unit *closest_unit = 0;
-    long closest_magnitude = 0;
-
-    for(Units::iterator i = units.begin(); i != units.end(); ++i)
-    {
-        Unit* unit = i->second;
-        Uint16 unitPlayerID = unit->player->getID();
-
-        if(unitPlayerID == player_index
-                || PlayerInterface::isAllied(player_index, unitPlayerID))
-        {
-            continue;
-        }
-
-        iXY delta;
-        long temp_mag;
-
-        if ( closest_unit == 0 )
-        {
-            closest_unit = unit;
-            delta  = loc - unit->unit_state.location;
-            closest_magnitude = long(delta.mag2());
-        }
-        else
-        {
-            delta  = loc - unit->unit_state.location;
-            temp_mag = long(delta.mag2());
-
-            if ( closest_magnitude > temp_mag )
-            {
-                closest_unit = unit;
-                closest_magnitude = temp_mag;
-            }
-        }
-    }
-
-    if( closest_unit != 0 )
-    {
-        *closest_unit_ptr = closest_unit;
-        return true;
-    }
-
-    *closest_unit_ptr = 0;
-    return false;
-}
-
-// ******************************************************************
-
-Unit *
-UnitInterface::queryUnitAtMapLoc( const iXY & map_loc )
-{
-    iXY world_loc;
-    MapInterface::mapXYtoPointXY(map_loc, &world_loc);
-
-    UnitList & ubl = unit_bucket_array.getBucketAssocMapLoc(map_loc);
-    for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
-    {
-        if ( (*i)->unit_state.bounds(world_loc) )
-        {
-            return *i;
-        }
-    }
-
-    return 0;
-}
-
-// ******************************************************************
-
-Unit *
-UnitInterface::queryNonPlayerUnitAtWorld( const iXY & world_loc,
-                                          const Uint16 player_id )
-{
-    UnitList & ubl = unit_bucket_array.getBucketAssocWorldLoc(world_loc);
-    for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
-    {
-        if ( (*i)->unit_state.bounds(world_loc)
-              && (*i)->player->getID() != player_id )
-        {
-            return *i;
-        }
-    }
-
-    return 0;
-}
-
-// ******************************************************************
-
-unsigned char
-UnitInterface::queryUnitLocationStatus( const iXY & loc )
-{
-    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
-
-    UnitList & ubl = unit_bucket_array.getBucketAssocWorldLoc(loc);
-    for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
-    {
-        if ( (*i)->unit_state.bounds(loc) )
-        {
-            if ( (*i)->player->getID() == player_id )
-            {
-                return _unit_player;
-            }
-
-            if( PlayerInterface::isAllied(player_id, (*i)->player->getID()) )
-            {
-                return _unit_allied;
-            }
-
-            return _unit_enemy;
-        }
-    }
-
-    return _no_unit_found;
-}
 
 // ******************************************************************
 
@@ -834,10 +489,12 @@ UnitInterface::unitManagerMesgEndLifecycle( const UnitMessage* message )
 
     int unittype1 = unit1->unit_state.unit_type;
     const std::string& unitname1 =
-        UnitProfileInterface::getUnitProfile(unittype1)->unitname;
+        global_game_state->unit_profile_interface->getUnitProfile(unittype1)->unitname;
+
     int unittype2 = unit2->unit_state.unit_type;
     const std::string& unitname2 =
-        UnitProfileInterface::getUnitProfile(unittype2)->unitname;
+        global_game_state->unit_profile_interface->getUnitProfile(unittype2)->unitname;
+
     if(Console::server)
     {
         *Console::server << "'" << player1->getName() << "' killed a '"
@@ -882,7 +539,7 @@ UnitInterface::unitCreateMessage( const NetMessage* net_message )
                                  player_index, create_mesg->getUnitID());
         addUnit(unit);
         // remove unit from blackboard in client (we are client here)
-        UnitBlackBoard::unmarkUnitLoc( unitpos );
+        global_game_state->unit_manager->unmarkUnitLoc( unitpos );
     }
     catch(std::exception& e)
     {

@@ -37,6 +37,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 
+#include "Core/GlobalEngineState.hpp"
+
 char HostJoinTemplateView::gameTypeBuf[256];
 
 Surface playerColor;
@@ -135,7 +137,7 @@ HostJoinTemplateView::onComponentClicked(Component* c)
 
             MenuTemplateView::freeBackgroundSurface();
 
-            ((PlayerGameManager*)gamemanager)->launchMultiPlayerGame();
+            ((PlayerGameManager*)global_engine_state->game_manager)->launchMultiPlayerGame();
             break;
 
         default:

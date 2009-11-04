@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "EnemyRadarPowerUp.hpp"
+#include "Core/GlobalEngineState.hpp"
 
 #include <stdlib.h>
 #include "Units/UnitTypes.hpp"
@@ -62,7 +63,7 @@ EnemyRadarPowerUp::EnemyRadarPowerUp(iXY map_loc, int type)
 void
 EnemyRadarPowerUp::onHit( Unit * unit )
 {
-    sound->playPowerUpSound();
+    global_engine_state->sound_manager->playPowerUpSound();
 
     if(unit->player == PlayerInterface::getLocalPlayer())
     {
@@ -79,7 +80,7 @@ EnemyRadarPowerUp::onHit( Unit * unit )
 void
 EnemyRadarPowerUp::onHitMessage( PowerUpHitMesg *message  )
 {
-    sound->playPowerUpSound();
+    global_engine_state->sound_manager->playPowerUpSound();
 
     if( PlayerInterface::getLocalPlayerIndex() == message->getPlayerID() )
     {

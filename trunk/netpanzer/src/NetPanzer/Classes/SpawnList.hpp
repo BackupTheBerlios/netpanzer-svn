@@ -22,16 +22,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 #include "Types/iXY.hpp"
 
-class SpawnList : public std::vector<iXY>
+class SpawnList
 {
-private:
-    size_t last_spawn_index;
-
 public:
     SpawnList();
 
     void loadSpawnFile(const std::string& file_path);
     iXY getFreeSpawnPoint();
+
+private:
+    size_t last_spawn_index;
+    std::vector<iXY> spawn_points;
 };
 
 #endif // ** _SPAWNLIST_HPP

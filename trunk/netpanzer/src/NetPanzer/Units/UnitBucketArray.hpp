@@ -22,25 +22,43 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <list>
 #include <algorithm>
 #include "Units/Unit.hpp"
+#include "Types/iRect.hpp"
 
 typedef std::vector<Unit *> UnitList;
 typedef std::vector<UnitList> BucketList;
 
-class UnitBucketArray // : public UnitBucketArrayTemplate
+class UnitBucketArray
 {
-protected:
-    BucketList buckets;
-    long map_x_sample_factor;
-    long map_y_sample_factor;
-    long pixel_x_sample_factor;
-    long pixel_y_sample_factor;
-    size_t row_size;
-    size_t column_size;
-
 public:
+    void queryPlayerUnitsAt(std::vector<UnitID>& working_list,
+                            const iXY& point,
+                            const Uint16 player_id);
 
-    UnitBucketArray( ) {};
-    ~UnitBucketArray( ) {};
+    void queryUnitsInWorldRect(std::vector<Unit *>& working_list,
+                               const iRect& rect);
+
+    void queryPlayerUnitsInWorldRect(std::vector<UnitID>& working_list,
+                                     const iRect& rect,
+                                     const Uint16 player_id);
+
+    void queryNonPlayerUnitsInWorldRect(std::vector<Unit *>& working_list,
+                                        const iRect& rect,
+                                        const Uint16 player_id);
+
+    Unit * queryUnitAtMapLoc(const iXY& map_loc);
+
+    Unit * queryNonPlayerUnitAtWorld(const iXY & world_loc,
+                                     const Uint16 player_id);
+
+    bool queryClosestEnemyUnitInRange(Unit **closest_unit_ptr,
+                                      const iXY &loc,
+                                      unsigned long range,
+                                      const Uint16 player_id);
+
+private:
+    friend class UnitInterface;
+    UnitBucketArray( ) {}
+    ~UnitBucketArray( ) {}
 
     void sort();
 
@@ -130,6 +148,29 @@ public:
         worldLocToBucketLoc(world_rect.max, bucket_rect.max);
     }
 
+    void unitRangeToBucketRect( const iXY& world_loc, unsigned long range, iRect &bucket_rect ) const
+    {
+        worldLocToBucketLoc(world_loc, bucket_rect.min);
+        worldLocToBucketLoc(world_loc, bucket_rect.max);
+        // add range
+        unsigned long range_buckets = range / ( (pixel_x_sample_factor*pixel_x_sample_factor)
+                                              + (pixel_y_sample_factor*pixel_y_sample_factor));
+        bucket_rect.min.x -= range_buckets;
+        bucket_rect.min.y -= range_buckets;
+        bucket_rect.max.x += range_buckets;
+        bucket_rect.max.y += range_buckets;
+
+        if ( (size_t)bucket_rect.max.x >= column_size )
+        {
+            bucket_rect.max.x = column_size-1;
+        }
+
+        if ( (size_t)bucket_rect.max.y >= row_size )
+        {
+            bucket_rect.max.y = row_size-1;
+        }
+    }
+
     void mapLocToBucketLoc( const iXY & map_loc, iXY & bucket_loc) const
     {
         bucket_loc.x = map_loc.x / map_x_sample_factor;
@@ -151,8 +192,15 @@ public:
     {
         return getBucket(mapLocToBucketIndex(map_loc));
     }
-    
-private:
+
+    BucketList buckets;
+    long map_x_sample_factor;
+    long map_y_sample_factor;
+    long pixel_x_sample_factor;
+    long pixel_y_sample_factor;
+    size_t row_size;
+    size_t column_size;
+
     struct FindUnit
     {
         const UnitID toFind;

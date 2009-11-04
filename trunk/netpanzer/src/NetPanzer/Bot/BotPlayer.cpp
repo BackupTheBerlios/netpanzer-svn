@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdlib.h>
 #include <assert.h>
 
+#include "Core/GlobalGameState.hpp"
+
 #include "BotPlayer.hpp"
 
 #include "Interfaces/PlayerInterface.hpp"
@@ -57,8 +59,8 @@ BotPlayer::processEvents()
 
             // manual fire on closest enemy
             Unit *enemyUnit;
-            if (UnitInterface::queryClosestEnemyUnit(&enemyUnit,
-                        unit->unit_state.location, playerIndex))
+            if (global_game_state->unit_manager->unit_bucket_array.queryClosestEnemyUnitInRange(&enemyUnit,
+                        unit->unit_state.location, unit->unit_state.weapon_range, playerIndex))
             {
                 manualFire(unit, enemyUnit->unit_state.location);
             }
@@ -80,7 +82,7 @@ BotPlayer::isReady()
 {
     if (m_timer.count())
     {
-        int unitCount = UnitInterface::getUnitCount(botPlayerId);
+        int unitCount = global_game_state->unit_manager->getUnitCount(botPlayerId);
         if (unitCount > 0)
         {
             m_timer.changePeriod(5.0 / unitCount);
@@ -98,7 +100,7 @@ Unit *
 BotPlayer::getRandomUnit(int playerIndex)
 {
     const std::vector<Unit*>& units
-        = UnitInterface::getPlayerUnits(playerIndex);
+        = global_game_state->unit_manager->getPlayerUnits(playerIndex);
 
     if(units.size() == 0)
         return 0;
@@ -237,7 +239,7 @@ BotPlayer::outpostProduce()
         OutpostStatus outpostStatus =
             ObjectiveInterface::getOutpostStatus(*i);
         if (outpostStatus.unit_generation_on_off == false) {
-            produceUnit(*i, rand() % UnitProfileInterface::getNumUnitTypes() );
+            produceUnit(*i, rand() % global_game_state->unit_profile_interface->getNumUnitTypes() );
         }
     }
 }

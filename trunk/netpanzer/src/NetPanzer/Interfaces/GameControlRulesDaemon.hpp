@@ -37,7 +37,6 @@ protected:
     static void mapCycleFsmServer();
 
     static int map_cycle_fsm_client_state;
-    static char map_cycle_fsm_client_map_name[256];
     static bool map_cycle_fsm_client_respawn_ack_flag;
     static void mapCycleFsmClient();
 
@@ -54,7 +53,9 @@ protected:
     static void netMessageCycleRespawnAck(const NetMessage* message);
 
 public:
-    static void setStateServerInProgress();
+    static void setStateServerLoadingMap();
+    static void setStateClientLoadingMap();
+    static void setStateClientConnectToServer(const std::string&  server_name);
     static void setStateServerIdle();
     static void setDedicatedServer();
 
@@ -62,7 +63,7 @@ public:
 
     static void processNetMessage(const NetMessage* message);
     static void updateGameControlFlow();
-    static unsigned char getGameState() { return game_state; }
+    static unsigned char getGameState() { return map_cycle_fsm_server_state; }
 };
 
 #endif // ** _GAME_CONTROL_RULES_DAEMON_HPP

@@ -89,8 +89,8 @@ void PowerUpInterface::generatePowerUp()
 
     if( (powerup_list.size() < (size_t) power_up_limit) )
     {
-        map_size_x = MapInterface::getWidth();
-        map_size_y = MapInterface::getHeight();
+        map_size_x = global_game_state->world_map->getWidth();
+        map_size_y = global_game_state->world_map->getHeight();
 
         do
         {
@@ -169,8 +169,8 @@ void PowerUpInterface::resetLogic( void )
     // here memory leak, should delete the pointer to powerups in the list
     powerup_list.clear();
 
-    map_size_x = MapInterface::getWidth();
-    map_size_y = MapInterface::getHeight();
+    map_size_x = global_game_state->world_map->getWidth();
+    map_size_y = global_game_state->world_map->getHeight();
 
     setPowerUpLimits( map_size_x, map_size_y );
 

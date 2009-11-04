@@ -50,6 +50,12 @@ NetworkClient::initialize()
     partServer();
 }
 
+bool
+NetworkClient::isConnected()
+{
+    return connection_status == _connection_status_connected;
+}
+
 void
 NetworkClient::onClientDisconected(ClientSocket *s, const char *msg)
 {

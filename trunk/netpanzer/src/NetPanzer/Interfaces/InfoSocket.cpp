@@ -16,7 +16,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
+#include "Core/GlobalEngineState.hpp"
+#include "Interfaces/BaseGameManager.hpp"
 
 #include "InfoSocket.hpp"
 #include "Util/StringTokenizer.hpp"
@@ -131,7 +132,7 @@ InfoSocket::prepareStatusPacket()
 
     s << "\\gamestyle\\" << gameconfig->getGameTypeString()
       << "\\units_per_player\\" << gameconfig->GetUnitsPerPlayer()
-      << "\\time\\" << GameManager::getGameTime()/60
+      << "\\time\\" << global_engine_state->game_manager->getGameTime()/60
       << "\\timelimit\\" << gameconfig->timelimit
       << "\\fraglimit\\" << gameconfig->fraglimit
       << "\\objectivelimit\\" << ObjectiveInterface::getObjectiveLimit();

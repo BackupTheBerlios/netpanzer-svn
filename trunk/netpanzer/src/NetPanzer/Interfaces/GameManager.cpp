@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "Interfaces/GameManager.hpp"
+#include "Core/GlobalEngineState.hpp"
 
 #include <stdio.h>
 #include <fcntl.h>
@@ -100,17 +101,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Bot/Bot.hpp"
 
+#include "Classes/SpawnList.hpp"
+
 #define _MAX_INITIALIZE_PROCS (10)
 #define _MAX_DEDICATED_INITIALIZE_PROCS (8)
-
-
-time_t GameManager::game_start_time = 0;
-time_t GameManager::game_elapsed_time_offset = 0;
-
-bool GameManager::display_frame_rate_flag = false;
-bool GameManager::display_network_info_flag;
-
-std::string GameManager::map_path;
 
 // ******************************************************************
 
@@ -178,45 +172,6 @@ void GameManager::setVideoMode()
     Palette::setColors();
 }
 
-// ******************************************************************
-void GameManager::initializeGameLogic()
-{
-    PlayerInterface::initialize(gameconfig->maxplayers);
-    UnitBlackBoard::initializeBlackBoard();
-    UnitInterface::initialize( gameconfig->GetUnitsPerPlayer() );
-    PathScheduler::initialize();
-    PowerUpInterface::resetLogic();
-}
-
-// ******************************************************************
-void GameManager::reinitializeGameLogic()
-{
-    shutdownGameLogic();
-    initializeGameLogic();
-}
-
-// ******************************************************************
-bool GameManager::resetGameLogic()
-{
-    PlayerInterface::reset();
-    UnitInterface::reset();
-    UnitBlackBoard::initializeBlackBoard();
-    PathScheduler::initialize();
-    PowerUpInterface::resetLogic();
-    ProjectileInterface::resetLogic();
-    startGameTimer();
-    return true;
-}
-
-// ******************************************************************
-void GameManager::shutdownGameLogic()
-{
-    PlayerInterface::cleanUp();
-    UnitInterface::cleanUp();
-    PathScheduler::cleanUp();
-    //ObjectiveInterface::cleanUp();
-}
-
 void GameManager::shutdownParticleSystems()
 {
     ParticleSystem2D::removeAll();
@@ -226,29 +181,19 @@ void GameManager::shutdownParticleSystems()
 // ******************************************************************
 void GameManager::loadGameMap(const char *map_file_path)
 {
-    map_path = "maps/";
+    std::string map_path("maps/");
     map_path.append(map_file_path);
 
     if (!MapInterface::loadMap( map_path.c_str(), true ))
         throw Exception("map format error.");
 
-    finishGameMapLoad();
-}
-
-// ******************************************************************
-
-void GameManager::finishGameMapLoad()
-{
-    std::string temp_path = map_path;
-    temp_path.append(".opt");
-    LOGGER.warning("Loading objectives from %s", temp_path.c_str());
-    ObjectiveInterface::loadObjectiveList( temp_path.c_str() );
+    map_path.append(".opt");
+    ObjectiveInterface::loadObjectiveList( map_path.c_str() );
 
     ParticleInterface::initParticleSystems();
 
     ParticleInterface::addCloudParticle(gameconfig->cloudcoverage);
-    Physics::wind.setVelocity(gameconfig->windspeed, 107);
-}
+    Physics::wind.setVelocity(gameconfig->windspeed, 107);}
 
 // ******************************************************************
 
@@ -269,16 +214,14 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
         << "Powerups: " << (gameconfig->powerups ? "yes" : "no") << "\n"
         << "AllowAllies: " << (gameconfig->allowallies ? "yes" : "no") << "\n"
         << "CloudCoverage: " << gameconfig->cloudcoverage << " (Windspeed "
-           << gameconfig->windspeed << ")" << std::endl;
+                             << gameconfig->windspeed << ")" << std::endl;
     
-    map_path = "maps/";
+    std::string map_path("maps/");
     map_path.append(map_name);
 
     MapInterface::loadMap( map_path.c_str(), false );
 
     map_path.append(".opt");
-    LOGGER.warning("Loading objectives: %s", map_path.c_str());
-
     ObjectiveInterface::loadObjectiveList( map_path.c_str() );
 
     ParticleInterface::initParticleSystems();
@@ -288,10 +231,11 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
 // ******************************************************************
 void GameManager::spawnPlayer( Uint16 player )
 {
-    sound->stopTankIdle();
+    global_engine_state->sound_manager->stopTankIdle();
 
     // ** Get a new spawn point and spawn the player **
-    iXY spawn_point = MapInterface::getFreeSpawnPoint();
+    iXY spawn_point = global_game_state->spawn_list->getFreeSpawnPoint();
+
     PlayerInterface::spawnPlayer( player, spawn_point );
 
     //** Change the location of the view camera to the spawn point **
@@ -307,7 +251,7 @@ void GameManager::spawnPlayer( Uint16 player )
         NetworkServer::sendMessage(player, &set_view, sizeof(SystemSetPlayerView));
     }
 
-    sound->playTankIdle();
+    global_engine_state->sound_manager->playTankIdle();
 }
 
 void GameManager::respawnAllPlayers()
@@ -403,7 +347,7 @@ void GameManager::netMessageConnectAlert(const NetMessage* message)
 
 void GameManager::netMessageResetGameLogic(const NetMessage* )
 {
-    resetGameLogic();
+    global_engine_state->game_manager->resetGameLogic();
 }
 
 // ******************************************************************
@@ -422,7 +366,7 @@ ConnectMesgServerGameSettings* GameManager::getServerGameSetup()
     game_setup->powerup_state = gameconfig->powerups;
     game_setup->setFragLimit(gameconfig->fraglimit);
     game_setup->setTimeLimit(gameconfig->timelimit);
-    game_setup->setElapsedTime(getGameTime());
+    game_setup->setElapsedTime(global_engine_state->game_manager->getGameTime());
 
     return game_setup;
 }
@@ -476,17 +420,17 @@ bool GameManager::startClientGameSetup(const NetMessage* message, int *result_co
     gameconfig->fraglimit = game_setup->getFragLimit();
     gameconfig->timelimit = game_setup->getTimeLimit();
 
-    startGameTimer();
-    game_elapsed_time_offset = game_setup->getElapsedTime();
+    global_engine_state->game_manager->setElapsetTimeOffset(game_setup->getElapsedTime());
+    gameconfig->map = game_setup->map_name;
 
-    try {
-        loadGameMap(game_setup->map_name);
-    } catch(std::exception& e) {
-        LOGGER.warning("XError while loading map '%s': %s",
-                game_setup->map_name, e.what());
-        *result_code = _mapload_result_no_map_file;
-        return false;
-    }
+//    try {
+//        loadGameMap(game_setup->map_name);
+//    } catch(std::exception& e) {
+//        LOGGER.warning("XError while loading map '%s': %s",
+//                game_setup->map_name, e.what());
+//        *result_code = _mapload_result_no_map_file;
+//        return false;
+//    }
 
     *result_code = _mapload_result_success;
     return true;
@@ -496,7 +440,7 @@ bool GameManager::startClientGameSetup(const NetMessage* message, int *result_co
 
 void GameManager::clientGameSetup( )
 {
-    reinitializeGameLogic();
+    global_engine_state->game_manager->reinitializeGameLogic();
 }
 
 // ******************************************************************
@@ -552,7 +496,7 @@ void GameManager::exitNetPanzer()
 {
     quitNetPanzerGame();
 
-    gamemanager->stopMainLoop();
+    global_engine_state->game_manager->stopMainLoop();
 }
 
 void GameManager::quitNetPanzerGame()
@@ -566,32 +510,16 @@ void GameManager::quitNetPanzerGame()
 
         // hacky...
         PlayerGameManager* playerGameManager 
-            = dynamic_cast<PlayerGameManager*>(gamemanager);
+            = dynamic_cast<PlayerGameManager*>(global_engine_state->game_manager);
         if(playerGameManager)
             playerGameManager->quitGame();
     }
 
     ParticleSystem2D::removeAll();
     Particle2D::removeAll();
-    sound->stopTankIdle();
-    UnitInterface::reset();
+    global_engine_state->sound_manager->stopTankIdle();
+//    UnitInterface::reset();
     PlayerInterface::reset();
     ObjectiveInterface::resetLogic();
     GameControlRulesDaemon::setStateServerIdle();
 }
-
-void GameManager::startGameTimer()
-{
-    game_elapsed_time_offset = 0;
-    time( &game_start_time );
-}
-
-time_t GameManager::getGameTime()
-{
-    time_t current_time;
-
-    time( &current_time );
-
-    return( (current_time - game_start_time) + game_elapsed_time_offset );
-}
-

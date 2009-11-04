@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 #include <vector>
+#include "SDL.h"
 
 namespace filesystem { class ReadFile; }
 
@@ -69,22 +70,6 @@ public:
         assert(y < getHeight());
         return data[y*getWidth() + x];
     }
-
-    /** @deprecatet */
-    MapElementType getValue(size_t offset) const
-    {
-        assert(offset < getSize());
-        return data[offset];
-    }
-
-    void setMapValue(size_t x, size_t y, MapElementType value)
-    {
-        assert(x < getWidth());
-        assert(y < getHeight());
-       
-        data[y*getWidth() + x] = value;
-    }
-
 
 private:
     bool      loaded;

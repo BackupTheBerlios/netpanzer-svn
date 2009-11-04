@@ -19,7 +19,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
+#include "Core/GlobalGameState.hpp"
 #include "Resources/ResourceManager.hpp"
 
 #include "NetworkServer.hpp"
@@ -47,16 +47,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Network/MessageClassHandler.hpp"
 
 typedef std::list<ServerClientListData*> ClientList;
+
 static ClientList client_list;
 static ClientList connecting_clients;
-
-
 
 class ListenSocket : public TCPListenSocketObserver,
                      public ClientSocketObserver
 {
 public:
-    ListenSocket() : socket(0) {};
+    ListenSocket() : socket(0) {}
     ~ListenSocket()
     {
         if ( socket )
@@ -103,7 +102,6 @@ public:
         (void)so;
         LOGGER.warning("NetworkServer: Listen Socket error: '%s'", msg);
         LOGGER.warning("Something bad could happen from now");
-
     }
 
     TCPSocketObserver * onNewConnection(TCPListenSocket *so, const Address &fromaddr)
@@ -453,7 +451,7 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
 
         ObjectiveInterface::disownPlayerObjectives( player_index );
 
-        UnitInterface::destroyPlayerUnits( player_index );
+        global_game_state->unit_manager->destroyPlayerUnits( player_index );
 
         ResourceManagerReleaseFlagMessage releasemsg;
         releasemsg.setFlagID(player->getFlag());

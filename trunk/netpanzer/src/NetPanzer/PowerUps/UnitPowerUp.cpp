@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "UnitPowerUp.hpp"
+#include "Core/GlobalEngineState.hpp"
+#include "Core/GlobalGameState.hpp"
 
 #include <stdlib.h>
 #include "Units/UnitTypes.hpp"
@@ -115,13 +117,13 @@ void UnitPowerUp::powerUpDestruct( UnitID unit_id )
 {
     UMesgSelfDestruct self_destruct;
     self_destruct.setHeader( unit_id );
-    UnitInterface::sendMessage( &self_destruct );
+    global_game_state->unit_manager->sendMessage( &self_destruct );
 }
 
 
 void UnitPowerUp::onHit( Unit * unit )
 {
-    sound->playPowerUpSound();
+    global_engine_state->sound_manager->playPowerUpSound();
 
     switch( unit_powerup_type )
     {
@@ -196,7 +198,7 @@ char * UnitPowerUp::powerupTypeToString( int type )
 
 void UnitPowerUp::onHitMessage( PowerUpHitMesg *message  )
 {
-    sound->playPowerUpSound();
+    global_engine_state->sound_manager->playPowerUpSound();
     life_cycle_state = _power_up_lifecycle_state_inactive;
 
     if( PlayerInterface::getLocalPlayerIndex() == message->getPlayerID() )

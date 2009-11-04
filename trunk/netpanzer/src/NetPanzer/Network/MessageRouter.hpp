@@ -25,12 +25,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class MessageClassHandler;
 class ClientSocket;
+class NetPacket;
 
 class MessageRouter
 {
 public:
     static void initialize(bool isServer);
     static void routePackets();
+    static void routePacket(const NetPacket& np);
+    static bool getNextPacket(NetPacket& np);
     static void enqueueIncomingPacket( const void *data, Uint16 size,
                                    Uint16 fromPlayer, ClientSocket *fromClient);
     static void setMessageClassHandler(MsgClassID c, MessageClassHandler * h);

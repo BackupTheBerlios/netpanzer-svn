@@ -19,13 +19,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "Util/NTimer.hpp"
-
-
+#include "Core/GlobalGameState.hpp"
 #include "Util/Log.hpp"
 #include "MiniMap.hpp"
-
-
-// work in progres first has to change the input handling of game.
 
 #include "Core/CoreTypes.hpp"
 #include "Views/Components/MiniMap.hpp"
@@ -125,21 +121,22 @@ MiniMap::regenerate()
 {
     LOGGER.warning("Regenerating minimap....");
     
-    xratio = (float)MapInterface::getWidth() / surface.getWidth();    
-    yratio = (float)MapInterface::getHeight() / surface.getHeight();
+    WorldMap * map = global_game_state->world_map;
+    TileSet * tile_set = global_game_state->tile_set;
     float mapx;
     float mapy = 0.0f;
     const SDL_Color * oldColor;
+
+    xratio = (float)map->getWidth() / surface.getWidth();
+    yratio = (float)map->getHeight() / surface.getHeight();
     
     for ( int y=0; y<(int)surface.getHeight(); y++)
     {
         mapx = 0.0f;
         for ( int x=0; x<(int)surface.getWidth(); x++)
         {
-            // XXX float conversion
-            iXY pos((int)mapx,(int)mapy);
             // XXX Beware, no check for limits, could raise assert and quit the game.
-            oldColor = MapInterface::getAverageColorMapXY(pos);
+            oldColor = tile_set->getAverageTileColor(map->getValue((int)mapx, (int)mapy));
             surface.putPixel(x, y, oldColor->r, oldColor->g, oldColor->b);
             mapx += xratio;
         }
@@ -218,7 +215,7 @@ MiniMap::drawObjectives(Surface &dest)
 void
 MiniMap::drawUnits(Surface &dest)
 {
-    const UnitInterface::Units& units = UnitInterface::getUnits();
+    const UnitInterface::Units& units = global_game_state->unit_manager->getUnits();
     for(UnitInterface::Units::const_iterator i = units.begin();
             i != units.end(); ++i)
     {

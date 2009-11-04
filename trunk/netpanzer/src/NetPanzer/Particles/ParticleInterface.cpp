@@ -16,7 +16,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
+#include "Core/GlobalEngineState.hpp"
+#include "Core/GlobalGameState.hpp"
 #include "Particles/ParticleInterface.hpp"
 #include "PuffParticle2D.hpp"
 #include "FlameParticle2D.hpp"
@@ -121,7 +122,7 @@ void ParticleInterface::testSim()
         groupTime0 = 0.0f;
 
         //SFX
-        sound->playSound("expl");
+        global_engine_state->sound_manager->playSound("expl");
 
         iRect gameViewRect;
         WorldViewInterface::getViewWindow(&gameViewRect);
@@ -132,7 +133,7 @@ void ParticleInterface::testSim()
         unitState.location.y = gameViewRect.min.y + 100 + (rand() % (gameViewRect.getSizeY() - 200));
 
         // Hack until all the units are actually used.
-        unitState.unit_type = rand() % UnitProfileInterface::getNumUnitTypes();
+        unitState.unit_type = rand() % global_game_state->unit_profile_interface->getNumUnitTypes();
         //unitState.unit_type = rand() % 7;
 
         addHit(unitState);
@@ -142,7 +143,7 @@ void ParticleInterface::testSim()
         groupTime1 = 0.0f;
 
         //SFX
-        sound->playSound("expl");
+        global_engine_state->sound_manager->playSound("expl");
 
         iRect gameViewRect;
         WorldViewInterface::getViewWindow(&gameViewRect);
@@ -152,7 +153,7 @@ void ParticleInterface::testSim()
         location.x = gameViewRect.min.x + 100 + (rand() % (gameViewRect.getSizeX() - 200));
         location.y = gameViewRect.min.y + 100 + (rand() % (gameViewRect.getSizeY() - 200));
 
-        addMiss(location, rand() % UnitProfileInterface::getNumUnitTypes());
+        addMiss(location, rand() % global_game_state->unit_profile_interface->getNumUnitTypes());
     }
 }
 
@@ -192,7 +193,7 @@ void ParticleInterface::addHit(const UnitState &unitState)
 
     float hitPointScale = 1.0f;
 
-    UnitProfile *p = UnitProfileInterface::getUnitProfile(unitState.unit_type);
+    UnitProfile *p = global_game_state->unit_profile_interface->getUnitProfile(unitState.unit_type);
     if (p != 0) {
         hitPointScale = float(unitHitPointTable[unitState.unit_type]) / 18.0f;
     } else {
@@ -328,11 +329,11 @@ void ParticleInterface::addMiss(const iXY &worldPos, Uint8 unitType)
 
 void ParticleInterface::buildUnitTables()
 {
-    unitHitPointTable.resize(UnitProfileInterface::getNumUnitTypes());
-    unitAttackFactorTable.resize(UnitProfileInterface::getNumUnitTypes());
+    unitHitPointTable.resize(global_game_state->unit_profile_interface->getNumUnitTypes());
+    unitAttackFactorTable.resize(global_game_state->unit_profile_interface->getNumUnitTypes());
     
-    for (int i = 0; i < UnitProfileInterface::getNumUnitTypes(); i++) {
-        UnitProfile *p = UnitProfileInterface::getUnitProfile(i);
+    for (int i = 0; i < global_game_state->unit_profile_interface->getNumUnitTypes(); i++) {
+        UnitProfile *p = global_game_state->unit_profile_interface->getUnitProfile(i);
 
         unitHitPointTable[i]     = int(sqrt(p->hit_points));
         unitAttackFactorTable[i] = int(sqrt(p->attack_factor * 2));
@@ -512,21 +513,12 @@ void ParticleInterface::addMoveDirtPuff(const UnitState &unitState)
 //--------------------------------------------------------------------------
 void ParticleInterface::getUnitParticleInfo()
 {
-    // Create the correct number of unit information slots.
-    unitParticleInfo.resize(UnitProfileInterface::getNumUnitTypes());
-    LOGGER.warning("Going to do the unit things for %d units\n", UnitProfileInterface::getNumUnitTypes());
-    for ( int i=0; i< UnitProfileInterface::getNumUnitTypes(); i++ )
+    unitParticleInfo.resize(global_game_state->unit_profile_interface->getNumUnitTypes());
+    for ( int i=0; i< global_game_state->unit_profile_interface->getNumUnitTypes(); i++ )
     {
-        UnitProfile * uprofile = UnitProfileInterface::getUnitProfile(i);
+        UnitProfile * uprofile = global_game_state->unit_profile_interface->getUnitProfile(i);
         getMuzzleTips(uprofile->turretSprite, unitParticleInfo[i].muzzleTip);
         getMinBounds(uprofile->bodySprite, unitParticleInfo[i].minBounds);
-        LOGGER.warning("min bounds for unit %d: %d,%d to %d,%d",
-                       i,
-                       unitParticleInfo[i].minBounds.min.x,
-                       unitParticleInfo[i].minBounds.min.y,
-                       unitParticleInfo[i].minBounds.max.x,
-                       unitParticleInfo[i].minBounds.max.y);
-
     }
 }
 

@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
+#include "Core/GlobalGameState.hpp"
 #include "CodeStatsView.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Classes/SpriteSorter.hpp"
@@ -303,7 +303,7 @@ void CodeStatsView::drawUnitStats()
 
     for ( int i = 0; i < max_players; i++ ) {
         unsigned long units;
-        units = UnitInterface::getUnitCount( i );
+        units = global_game_state->unit_manager->getUnitCount( i );
         total += units;
 
         sprintf(strBuf, "Player %d : %lu  ", i, units);

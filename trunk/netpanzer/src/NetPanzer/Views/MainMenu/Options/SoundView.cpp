@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Views/Components/Button.hpp"
 
+#include "Core/GlobalEngineState.hpp"
+
 #include "SoundView.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Views/GameViewGlobals.hpp"
@@ -184,31 +186,50 @@ void SoundView::loadTitleSurface()
 
 void SoundView::stateChanged(Component* source)
 {
-    if (source == checkBoxSoundEnabled) {
+    if (source == checkBoxSoundEnabled)
+    {
         gameconfig->enablesound = checkBoxSoundEnabled->getState();
         
-        delete sound;
+        delete global_engine_state->sound_manager;
+        global_engine_state->sound_manager = 0;
 
-        if ( checkBoxSoundEnabled->getState() ) {
-            sound = new SDLSound();
+        if ( checkBoxSoundEnabled->getState() )
+        {
+            global_engine_state->sound_manager = new SDLSound();
             checkBoxSoundEnabled->setLabel("Enabled");
-            if ( GameControlRulesDaemon::getGameState() ) {
-                sound->playTankIdle();
+            if ( !global_engine_state->sound_manager )
+            {
+                global_engine_state->sound_manager = new DummySound();
             }
+
+            if ( GameControlRulesDaemon::getGameState() )
+            {
+                global_engine_state->sound_manager->playTankIdle();
+            }
+
             if ( checkBoxMusicEnabled->getState() )
-                sound->playMusic("sound/music/");
-        } else {
-            sound = new DummySound();
+            {
+                global_engine_state->sound_manager->playMusic("sound/music/");
+            }
+        }
+        else
+        {
+            global_engine_state->sound_manager = new DummySound();
             checkBoxSoundEnabled->setLabel("Disabled");
         }
-    } else if (source == checkBoxMusicEnabled) {
+    }
+    else if (source == checkBoxMusicEnabled)
+    {
         gameconfig->enablemusic = checkBoxMusicEnabled->getState();
         
-        if ( checkBoxMusicEnabled->getState() ) {
-            sound->playMusic("sound/music/");
+        if ( checkBoxMusicEnabled->getState() )
+        {
+            global_engine_state->sound_manager->playMusic("sound/music/");
             checkBoxMusicEnabled->setLabel("Enabled");
-        } else {
-            sound->stopMusic();
+        }
+        else
+        {
+            global_engine_state->sound_manager->stopMusic();
             checkBoxMusicEnabled->setLabel("Disabled");
         }
     }
@@ -226,7 +247,7 @@ SoundView::onComponentClicked(Component* c)
             {
                 --v;
                 gameconfig->effectsvolume = v;
-                sound->setSoundVolume(v);
+                global_engine_state->sound_manager->setSoundVolume(v);
             }
             break;
 
@@ -236,7 +257,7 @@ SoundView::onComponentClicked(Component* c)
             {
                 ++v;
                 gameconfig->effectsvolume = v;
-                sound->setSoundVolume(v);
+                global_engine_state->sound_manager->setSoundVolume(v);
             }
             break;
 
@@ -246,7 +267,7 @@ SoundView::onComponentClicked(Component* c)
             {
                 --v;
                 gameconfig->musicvolume = v;
-                sound->setMusicVolume(v);
+                global_engine_state->sound_manager->setMusicVolume(v);
             }
             break;
 
@@ -256,7 +277,7 @@ SoundView::onComponentClicked(Component* c)
             {
                 ++v;
                 gameconfig->musicvolume = v;
-                sound->setMusicVolume(v);
+                global_engine_state->sound_manager->setMusicVolume(v);
             }
             break;
 

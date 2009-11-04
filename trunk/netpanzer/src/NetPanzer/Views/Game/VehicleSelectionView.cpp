@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
+#include "Core/GlobalGameState.hpp"
 #include "Util/Exception.hpp"
 #include "VehicleSelectionView.hpp"
 #include "Units/UnitTypes.hpp"
@@ -232,11 +233,11 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     
     UnitSelectionButton *usb;
     UnitProfile *uprofile;
-    unitImages.create(48, 48, UnitProfileInterface::getNumUnitTypes());
+    unitImages.create(48, 48, global_game_state->unit_profile_interface->getNumUnitTypes());
     // XXX order by something?
-    for ( int ut=0; ut < UnitProfileInterface::getNumUnitTypes(); ut++)
+    for ( int ut=0; ut < global_game_state->unit_profile_interface->getNumUnitTypes(); ut++)
     {
-        uprofile = UnitProfileInterface::getUnitProfile(ut);
+        uprofile = global_game_state->unit_profile_interface->getUnitProfile(ut);
         
         tempSurface.loadPNG(uprofile->imagefile.c_str());
         unitImages.setFrame(ut);
@@ -405,7 +406,7 @@ void VehicleSelectionView::doDraw()
     }
 
     int unitPerPlayer = gameconfig->maxunits / gameconfig->maxplayers;
-    sprintf(strBuf, "%d/%d", int(UnitInterface::getUnitCount(PlayerInterface::getLocalPlayerIndex())), unitPerPlayer);
+    sprintf(strBuf, "%d/%d", int(global_game_state->unit_manager->getUnitCount(PlayerInterface::getLocalPlayerIndex())), unitPerPlayer);
     drawString(unitsBuiltPos.x, unitsBuiltPos.y, strBuf, color);
 
     drawUnitProfileInfo( iXY(0, unitProfileDataY), highlightedUnitType);
@@ -430,7 +431,7 @@ void VehicleSelectionView::drawUnitImage(Surface &dest, const iXY &pos, int unit
 //---------------------------------------------------------------------------
 const char *VehicleSelectionView::getUnitName(int unitType)
 {
-    UnitProfile *p = UnitProfileInterface::getUnitProfile(unitType);
+    UnitProfile *p = global_game_state->unit_profile_interface->getUnitProfile(unitType);
     if ( p )
     {
         return p->unitname.c_str();
@@ -472,7 +473,7 @@ const char *VehicleSelectionView::getUnitName(int unitType)
 //---------------------------------------------------------------------------
 int VehicleSelectionView::getUnitRegenTime(unsigned short unitType)
 {
-    UnitProfile *profile = UnitProfileInterface::getUnitProfile(unitType);
+    UnitProfile *profile = global_game_state->unit_profile_interface->getUnitProfile(unitType);
     if ( profile )
         return (int) profile->regen_time;
 
@@ -697,8 +698,8 @@ void VehicleSelectionView::doActivate()
 //---------------------------------------------------------------------------
 void VehicleSelectionView::getProfileData()
 {
-    for (int i = 0; i < UnitProfileInterface::getNumUnitTypes(); i++) {
-        const UnitProfile *p = UnitProfileInterface::getUnitProfile(i);
+    for (int i = 0; i < global_game_state->unit_profile_interface->getNumUnitTypes(); i++) {
+        const UnitProfile *p = global_game_state->unit_profile_interface->getUnitProfile(i);
 
         checkMaxValues(*p);
     }
@@ -739,7 +740,7 @@ void VehicleSelectionView::drawUnitProfileInfo( const iXY &pos, short int unitTy
         return;
     }
 
-    const UnitProfile *profile = UnitProfileInterface::getUnitProfile(unitType);
+    const UnitProfile *profile = global_game_state->unit_profile_interface->getUnitProfile(unitType);
 
     iXY       loc       = pos;
     const int gapSpace  = 10;

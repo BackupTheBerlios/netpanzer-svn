@@ -31,21 +31,16 @@ fXY  Physics::directionTable[DIRECTION_TABLE_COUNT];
 //--------------------------------------------------------------------------
 void Physics::init()
 {
-    // Clear out the velocity table.
-    memset(&directionTable, 0, sizeof(fXYZ));
-
     gravity = 32 * 12;
 
     float radians;
 
-    for (int degree = 0; degree < DIRECTION_TABLE_COUNT; degree++) {
+    for (int degree = 0; degree < DIRECTION_TABLE_COUNT; degree++)
+    {
         radians = Math::deg2Rad(degree);
 
         fXY direction;
         direction.x = float(cos(radians));
-        //direction.y = float(Math::deg2Rad((rand() % 20) + 70)); // Radians
-        //const int min = 80;
-        //direction.y = (rand() % (90 - min)) + min; // Degrees
         direction.y = float(sin(radians));
 
         directionTable[degree] = direction;

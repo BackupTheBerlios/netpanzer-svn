@@ -9,6 +9,8 @@
 
 #include "LoadingView.hpp"
 
+#include "Core/GlobalEngineState.hpp"
+
 #include "Interfaces/GameConfig.hpp"
 #include "System/Sound.hpp"
 #include "2D/Palette.hpp"
@@ -103,7 +105,7 @@ LoadingView::onComponentClicked(Component* c)
             GameManager::exitNetPanzer();
             return;
         }
-        sound->stopTankIdle();
+        global_engine_state->sound_manager->stopTankIdle();
         Desktop::setVisibilityAllWindows(false);
         Desktop::setVisibility("MainView", true);
     }

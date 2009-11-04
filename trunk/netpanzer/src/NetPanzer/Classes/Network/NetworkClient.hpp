@@ -47,6 +47,8 @@ public:
 
     static void checkIncoming();
 
+    static bool isConnected();
+
 protected:
     static MessageClassHandler* getPacketHandler();
     static void onClientDisconected(ClientSocket *s, const char *msg);

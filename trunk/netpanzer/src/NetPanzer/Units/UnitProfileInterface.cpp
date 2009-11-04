@@ -360,8 +360,6 @@ void read_vehicle_profile(const std::string& unitName, UnitProfile *profile)
     }
 } // function
 
-vector<UnitProfile *> UnitProfileInterface::profiles;
-
 void
 UnitProfileInterface::clearProfiles()
 {

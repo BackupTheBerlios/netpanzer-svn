@@ -74,12 +74,13 @@ RankView::RankView() : GameTemplateView()
     add( new Label( xOffset, yOffset, "Objective", Color::red, Color::gray64, true) );
     xOffset += MAX_POINTS_CHARS*CHAR_XPIX;
 
-        allyImage.loadPNG("pics/default/ally.png");
-        allyRequestImage.loadPNG("pics/default/allyRequest.png");
-        allyOtherImage.loadPNG("pics/default/allyOther.png");
-        noAllyImage.loadPNG("pics/default/noAlly.png");
-	
-	states.clear();
+    // shall be in resource manager
+    allyImage.loadPNG("pics/default/ally.png");
+    allyRequestImage.loadPNG("pics/default/allyRequest.png");
+    allyOtherImage.loadPNG("pics/default/allyOther.png");
+    noAllyImage.loadPNG("pics/default/noAlly.png");
+
+    states.clear();
 } // end RankView::RankView
 
 // doDraw

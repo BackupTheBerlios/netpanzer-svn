@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "BaseGameManager.hpp"
-
+#include "Core/GlobalEngineState.hpp"
 #include "SDL.h"
 
 // ** PObject netPanzer Network Includes
@@ -32,7 +32,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/DummySound.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Units/UnitInterface.hpp"
-#include "Units/UnitBlackBoard.hpp"
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleSystem2D.hpp"
 #include "Particles/ParticleInterface.hpp"
@@ -58,33 +57,29 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Network/MessageRouter.hpp"
 #include "Bot/BotManager.hpp"
 
-BaseGameManager* gamemanager = 0;
-
 //------------------------------------------------------------------
 BaseGameManager::BaseGameManager()
     : running(true)
 {
-    assert(gamemanager == 0);
-    gamemanager = this;
 }
 
 //------------------------------------------------------------------
 BaseGameManager::~BaseGameManager()
 {
-    gamemanager = 0;
 }
 
 //-----------------------------------------------------------------
-void BaseGameManager::initializeSoundSubSystem()
+Sound * BaseGameManager::initializeSoundSubSystem()
 {
-    sound = new DummySound();
+     return new DummySound();
 }
 //-----------------------------------------------------------------
 void BaseGameManager::shutdownSoundSubSystem()
 {
-    if(sound) {
-        delete sound;
-        sound = 0;
+    if ( global_engine_state->sound_manager )
+    {
+        delete global_engine_state->sound_manager;
+        global_engine_state->sound_manager = 0;
     }
 }
 //-----------------------------------------------------------------
@@ -113,15 +108,16 @@ void BaseGameManager::shutdownInputDevices()
 //-----------------------------------------------------------------
 void BaseGameManager::initializeGameObjects()
 {
-    loadGameData();
+    loadGameData(); // load unit profiles and start resource manager.
+                   // unit profiles should be loaded when real game starts
 
-    Physics::init();
-    Weapon::init();
+    Physics::init(); // ok, only precalculates some values.
+    Weapon::init(); // only load images, should be on the resourcemanager.
+    PowerUpInterface::initialize(); // only load images
 
-    ConsoleInterface::initialize(25);
-    PowerUpInterface::initialize();
+    ConsoleInterface::initialize(25); // aargh
 
-    GameManager::initializeGameLogic();
+//    GameManager::initializeGameLogic(); // should be initialized when real game starts.
 }
 //-----------------------------------------------------------------
 void BaseGameManager::shutdownGameObjects()
@@ -129,18 +125,21 @@ void BaseGameManager::shutdownGameObjects()
 //-----------------------------------------------------------------
 void BaseGameManager::loadGameData()
 {
-    UnitProfileInterface::loadUnitProfiles();
-    
+    global_game_state = new GlobalGameState();
+
+    UnitProfileInterface * upi = new UnitProfileInterface();
+    upi->loadUnitProfiles();
+    if ( global_game_state->unit_profile_interface )
+    {
+        delete global_game_state->unit_profile_interface;
+    }
+    global_game_state->unit_profile_interface = upi;
+
     int numflags = ResourceManager::loadDefaultFlags();
     if ( numflags <= 0 )
     {
         throw Exception("Couldn't find any flag in pics/flags/.");
     }
-
-//    if(gameconfig->playerflag.isDefaultValue())
-//    {
-//        gameconfig->playerflag=rand()%numflags;
-//    }
 }
 //-----------------------------------------------------------------
 void BaseGameManager::initializeNetworkSubSystem()
@@ -148,7 +147,7 @@ void BaseGameManager::initializeNetworkSubSystem()
     //SERVER = new NetworkServer();
     //CLIENT = new NetworkClient();
 
-    ServerConnectDaemon::initialize( gameconfig->maxplayers );
+    ServerConnectDaemon::initialize( gameconfig->maxplayers ); // only if server
 
     NetworkState::setNetworkStatus( _network_state_server );
     NetworkState::resetNetworkStats();
@@ -163,16 +162,22 @@ void BaseGameManager::shutdownNetworkSubSystem()
 // boots up netPanzer; initializes all subsystems, game objects etc.
 void BaseGameManager::initialize(const std::string& configfile)
 {
-    try {
-        if(!filesystem::exists("config"))
+    try
+    {
+        if( !filesystem::exists("config") )
+        {
             filesystem::mkdir("config");
+        }
+
         initializeGameConfig(configfile);
-        initializeSoundSubSystem();
+        global_engine_state->sound_manager = initializeSoundSubSystem();
         initializeVideoSubSystem();
-        initializeGameObjects();
+        initializeGameObjects(); // aargh
         initializeNetworkSubSystem();
         initializeInputDevices();
-    } catch(std::exception& e) {
+    }
+    catch(std::exception& e)
+    {
         LOGGER.warning("Initialisation failed:\n%s", e.what());
         shutdown();
         throw Exception("bootstrap failed.");
@@ -186,7 +191,8 @@ void BaseGameManager::shutdown()
 //-----------------------------------------------------------------
 void BaseGameManager::shutdownSubSystems()
 {
-    GameManager::shutdownGameLogic();
+    shutdownGameLogic();
+
     shutdownNetworkSubSystem();
     shutdownSoundSubSystem();
     shutdownVideoSubSystem();
@@ -229,20 +235,26 @@ void BaseGameManager::simLoop()
     NetworkServer::cleanUpClientList();
     network::SocketManager::handleEvents();
 
+    // GameControlRulesDaemon might take some packets before they are routed.
+    GameControlRulesDaemon::updateGameControlFlow();
     MessageRouter::routePackets();
 
     if ( NetworkState::status == _network_state_server )
     {
         ServerConnectDaemon::connectProcess();
     }
-    else
-    {
-        ClientConnectDaemon::connectProcess();
-    }
+//    else
+//    {
+//        ClientConnectDaemon::connectProcess();
+//    }
 
     NetworkState::updateNetworkStats();
 
-    UnitInterface::updateUnitStatus();
+    if ( global_game_state->unit_manager )
+    {
+        global_game_state->unit_manager->updateUnitStatus();
+    }
+
     ProjectileInterface::updateStatus();
     ObjectiveInterface::updateObjectiveStatus();
     PowerUpInterface::updateState();
@@ -253,7 +265,8 @@ void BaseGameManager::simLoop()
     ParticleSystem2D::simAll();
     Particle2D::simAll();
 
-    GameControlRulesDaemon::updateGameControlFlow();
+//    GameControlRulesDaemon::updateGameControlFlow(); // moved up
+
     NetworkServer::sendRemaining();
     NetworkClient::sendRemaining();
     BotManager::simBots();
@@ -272,4 +285,78 @@ void
 BaseGameManager::stopMainLoop()
 {
     running = false;
+}
+
+void
+BaseGameManager::initializeGameLogic()
+{
+    PlayerInterface::initialize(gameconfig->maxplayers); // can pas
+
+    UnitInterface * uin = new UnitInterface();
+    uin->initialize(gameconfig->maxunits); // uses map
+    global_game_state->unit_manager = uin;
+
+    PathScheduler::initialize(); // uses map
+    PowerUpInterface::resetLogic(); // depends on map loaded
+
+    startGameTimer();
+}
+
+void
+BaseGameManager::reinitializeGameLogic()
+{
+    shutdownGameLogic();
+    initializeGameLogic();
+}
+
+bool
+BaseGameManager::resetGameLogic()
+{
+    PlayerInterface::reset();
+
+    if ( global_game_state->unit_manager )
+    {
+        global_game_state->unit_manager->reset();
+    }
+
+    PathScheduler::initialize();
+    PowerUpInterface::resetLogic();
+    ProjectileInterface::resetLogic();
+
+    startGameTimer();
+    return true;
+}
+
+void
+BaseGameManager::shutdownGameLogic()
+{
+    PlayerInterface::cleanUp();
+
+    if ( global_game_state->unit_manager )
+    {
+        delete global_game_state->unit_manager;
+        global_game_state->unit_manager = 0;
+    }
+
+//    UnitInterface::cleanUp();
+    PathScheduler::cleanUp();
+    //ObjectiveInterface::cleanUp();
+
+    game_elapsed_time_offset = 0;
+}
+
+void
+BaseGameManager::startGameTimer()
+{
+    time( &game_start_time );
+}
+
+time_t
+BaseGameManager::getGameTime()
+{
+    time_t current_time;
+
+    time( &current_time );
+
+    return( (current_time - game_start_time) + game_elapsed_time_offset );
 }

@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include <stdexcept>
+#include "Core/GlobalGameState.hpp"
 
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
@@ -260,7 +261,7 @@ void PlayerInterface::spawnPlayer( unsigned short player_index, const iXY &locat
         SDL_mutexP(mutex);
         if ( player_lists[player_index].getStatus() != _player_state_free )
         {
-            UnitInterface::spawnPlayerUnits( location,
+            global_game_state->unit_manager->spawnPlayerUnits( location,
                                              player_index,
                                              player_lists[ player_index ].unit_config
                                            );
@@ -389,7 +390,7 @@ void PlayerInterface::netMessageScoreUpdate(const NetMessage *message)
             || score_update->getKillOnPlayerIndex() 
             >= PlayerInterface::getMaxPlayers())
     {
-        LOGGER.warning("Malformed scrore update packet.");
+        LOGGER.warning("Malformed score update packet.");
         return;
     }
 
@@ -400,10 +401,10 @@ void PlayerInterface::netMessageScoreUpdate(const NetMessage *message)
 
 void PlayerInterface::netMessageAllianceRequest(const NetMessage *message)
 {
-	if ( gameconfig->allowallies == false )
-	{
-		return;
-	}
+    if ( gameconfig->allowallies == false )
+    {
+        return;
+    }
 	
     PlayerState *player_state;
 
@@ -411,83 +412,92 @@ void PlayerInterface::netMessageAllianceRequest(const NetMessage *message)
         = (const PlayerAllianceRequest *) message;
 
     if(allie_request->getAllieByPlayerIndex() >= max_players
-       || allie_request->getAllieWithPlayerIndex() >= max_players) {
+       || allie_request->getAllieWithPlayerIndex() >= max_players)
+    {
         LOGGER.warning("Invalid alliance request message");
         return;                                                       
     }
 
     SDL_mutexP(mutex);
     if ( allie_request->alliance_request_type == _player_make_alliance )
-	{
-		setAlliance(  allie_request->getAllieByPlayerIndex(),
-					  allie_request->getAllieWithPlayerIndex());
+    {
+        setAlliance(allie_request->getAllieByPlayerIndex(),
+                    allie_request->getAllieWithPlayerIndex());
 
         if ( allie_request->getAllieByPlayerIndex() == local_player_index )
-		{
-            player_state = getPlayer( allie_request->getAllieWithPlayerIndex() );
-			if ( isSingleAllied( player_state->getID(), local_player_index) )
-			{
-				ConsoleInterface::postMessage( Color::yellow, false, 0, "You accepted %s alliance request.",
-												player_state->getName().c_str() );
-			}
-			else
-			{
-				ConsoleInterface::postMessage( Color::yellow, false, 0, "You request alliance with %s.",
-												player_state->getName().c_str() );
-			}
+        {
+            player_state = getPlayer(allie_request->getAllieWithPlayerIndex());
+            if ( isSingleAllied( player_state->getID(), local_player_index) )
+            {
+                ConsoleInterface::postMessage(Color::yellow, false, 0,
+                                              "You accepted %s alliance request.",
+                                              player_state->getName().c_str());
+            }
+            else
+            {
+                ConsoleInterface::postMessage(Color::yellow, false, 0,
+                                              "You request alliance with %s.",
+                                              player_state->getName().c_str());
+            }
         }
-		else if ( allie_request->getAllieWithPlayerIndex() == local_player_index )
-		{
-			player_state = getPlayer( allie_request->getAllieByPlayerIndex() );
-			if ( isSingleAllied( local_player_index, player_state->getID()) )
-			{
-				ConsoleInterface::postMessage( Color::yellow, false, 0, "%s accepted your alliance request.",
-												player_state->getName().c_str() );
-			}
-			else
-			{
-				ConsoleInterface::postMessage( Color::yellow, false, 0, "%s request to ally with you.",
-												player_state->getName().c_str() );
-			}
+        else if ( allie_request->getAllieWithPlayerIndex() == local_player_index )
+        {
+            player_state = getPlayer( allie_request->getAllieByPlayerIndex() );
+            if ( isSingleAllied( local_player_index, player_state->getID()) )
+            {
+                ConsoleInterface::postMessage(Color::yellow, false, 0,
+                                           "%s accepted your alliance request.",
+                                           player_state->getName().c_str());
+            }
+            else
+            {
+                ConsoleInterface::postMessage(Color::yellow, false, 0,
+                                              "%s request to ally with you.",
+                                              player_state->getName().c_str());
+            }
         }
     }
-	else
-	{
-		// break alliance cancels both alliances
+    else
+    {
+        // break alliance cancels both alliances
         clearAlliance( allie_request->getAllieByPlayerIndex(),
                        allie_request->getAllieWithPlayerIndex());
 
         if ( allie_request->getAllieByPlayerIndex() == local_player_index )
-		{
+        {
             player_state = getPlayer( allie_request->getAllieWithPlayerIndex() );
-			if ( isSingleAllied( player_state->getID(), local_player_index) )
-			{
-				ConsoleInterface::postMessage( Color::yellow, false, 0, "You broke the alliance with %s.",
-												player_state->getName().c_str() );
-			}
-			else
-			{
-				ConsoleInterface::postMessage( Color::yellow, false, 0, "You cancel your alliance request with %s.",
-												player_state->getName().c_str() );
-			}
+            if ( isSingleAllied( player_state->getID(), local_player_index) )
+            {
+                ConsoleInterface::postMessage(Color::yellow, false, 0,
+                                              "You broke the alliance with %s.",
+                                              player_state->getName().c_str());
+            }
+            else
+            {
+                ConsoleInterface::postMessage(Color::yellow, false, 0,
+                                              "You cancel your alliance request with %s.",
+                                              player_state->getName().c_str());
+            }
         }
-		else if ( allie_request->getAllieWithPlayerIndex() == local_player_index )
-		{
-			player_state = getPlayer( allie_request->getAllieByPlayerIndex() );
-			if ( isSingleAllied( local_player_index, player_state->getID()) )
-			{
-				ConsoleInterface::postMessage( Color::yellow, false, 0, "%s broke the alliance with you.",
-												player_state->getName().c_str() );
-			}
-			else
-			{
-				ConsoleInterface::postMessage( Color::yellow, false, 0, "%s cancelled the alliance request with you.",
-												player_state->getName().c_str() );
-			}
-		}
-		
-		clearAlliance( allie_request->getAllieWithPlayerIndex(),
-						allie_request->getAllieByPlayerIndex());
+        else if ( allie_request->getAllieWithPlayerIndex() == local_player_index )
+        {
+            player_state = getPlayer( allie_request->getAllieByPlayerIndex() );
+            if ( isSingleAllied( local_player_index, player_state->getID()) )
+            {
+                ConsoleInterface::postMessage(Color::yellow, false, 0,
+                                              "%s broke the alliance with you.",
+                                              player_state->getName().c_str());
+            }
+            else
+            {
+                ConsoleInterface::postMessage(Color::yellow, false, 0,
+                                              "%s cancelled the alliance request with you.",
+                                              player_state->getName().c_str());
+            }
+        }
+
+        clearAlliance(allie_request->getAllieWithPlayerIndex(),
+                      allie_request->getAllieByPlayerIndex());
     }
     SDL_mutexV(mutex);
 
@@ -496,14 +506,16 @@ void PlayerInterface::netMessageAllianceRequest(const NetMessage *message)
                      allie_request->getAllieWithPlayerIndex(),
                      allie_request->alliance_request_type);
     //NetworkServer::broadcastMessage(&allie_update, sizeof(PlayerAllianceUpdate));
-	if ( allie_request->getAllieByPlayerIndex() != local_player_index )
-	{
-		NetworkServer::sendMessage( allie_request->getAllieByPlayerIndex(), &allie_update, sizeof(PlayerAllianceUpdate) );
-	}
-	if ( allie_request->getAllieWithPlayerIndex() != local_player_index )
-	{
-		NetworkServer::sendMessage( allie_request->getAllieWithPlayerIndex(), &allie_update, sizeof(PlayerAllianceUpdate) );
-	}
+    if ( allie_request->getAllieByPlayerIndex() != local_player_index )
+    {
+        NetworkServer::sendMessage(allie_request->getAllieByPlayerIndex(),
+                                   &allie_update, sizeof(PlayerAllianceUpdate));
+    }
+    if ( allie_request->getAllieWithPlayerIndex() != local_player_index )
+    {
+        NetworkServer::sendMessage(allie_request->getAllieWithPlayerIndex(),
+                                   &allie_update, sizeof(PlayerAllianceUpdate));
+    }
 }
 
 void PlayerInterface::netMessageAllianceUpdate(const NetMessage* message)

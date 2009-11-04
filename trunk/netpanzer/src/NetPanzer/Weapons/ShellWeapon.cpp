@@ -16,7 +16,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
+#include "Core/GlobalEngineState.hpp"
+#include "Core/GlobalGameState.hpp"
 #include "ShellWeapon.hpp"
 #include "Classes/UnitMessageTypes.hpp"
 #include "Units/UnitInterface.hpp"
@@ -88,14 +89,14 @@ void ShellWeapon::fsmFlight()
                     weapon_hit.setOwnerUnitID(owner_id);
                     weapon_hit.setHitLocation(location);
                     weapon_hit.setDamageFactor(damage_factor);
-                    UnitInterface::sendMessage( &weapon_hit );
+                    global_game_state->unit_manager->sendMessage( &weapon_hit );
                 }
 
                 fsmFlight_state = _fsmFlight_idle;
                 lifecycle_status = _lifecycle_weapon_in_active;
 
                 //SFX
-                sound->playAmbientSound("hit",
+                global_engine_state->sound_manager->playAmbientSound("hit",
                                         WorldViewInterface::getCameraDistance( location ) );
 
                 // **  Particle Shit

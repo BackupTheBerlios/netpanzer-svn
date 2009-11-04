@@ -37,7 +37,7 @@ protected:
     virtual void initializeVideoSubSystem();
     virtual void shutdownVideoSubSystem();
 
-    virtual void initializeSoundSubSystem();
+    virtual Sound * initializeSoundSubSystem();
 
     virtual void shutdownNetworkSubSystem();
 

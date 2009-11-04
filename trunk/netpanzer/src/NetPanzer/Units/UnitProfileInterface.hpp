@@ -65,14 +65,14 @@ public:
 class UnitProfileInterface
 {
 protected:
-    static vector<UnitProfile *> profiles;
-    static void clearProfiles();
+    vector<UnitProfile *> profiles;
+    void clearProfiles();
     
 public:
-    static void loadUnitProfiles( void );
-    static UnitProfile * getUnitProfile( unsigned short unit_type );
-    static UnitProfile * getProfileByName( const std::string &name );
-    static unsigned short getNumUnitTypes()
+    void loadUnitProfiles( void );
+    UnitProfile * getUnitProfile( unsigned short unit_type );
+    UnitProfile * getProfileByName( const std::string &name );
+    unsigned short getNumUnitTypes()
     {
         return profiles.size();
     }

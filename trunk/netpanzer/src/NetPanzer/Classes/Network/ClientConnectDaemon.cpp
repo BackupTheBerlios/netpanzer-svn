@@ -344,20 +344,19 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                             LoadingView::append( str_buf);
                             connection_state = _connect_state_connect_failure;
                             failure_display_timer.reset();
-                        } else
-                            if( result_code == _mapload_result_no_wad_file ) {
-                                LoadingView::append( "MAP TILE SET NOT FOUND!" );
-                                LoadingView::append( "please download the appropriate tileset" );
-                                LoadingView::append( "from www.pyrosoftgames.com" );
-                                connection_state = _connect_state_connect_failure;
-                                failure_display_timer.reset();
-                            } else {
-                                LoadingView::append( "Loading Game Data ..." );
+                        } else if( result_code == _mapload_result_no_wad_file ) {
+                            LoadingView::append( "MAP TILE SET NOT FOUND!" );
+                            LoadingView::append( "please download the appropriate tileset" );
+                            LoadingView::append( "from www.pyrosoftgames.com" );
+                            connection_state = _connect_state_connect_failure;
+                            failure_display_timer.reset();
+                        } else {
+                            LoadingView::append( "Loading Game Data ..." );
 
-                                NetworkClient::sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
+                            NetworkClient::sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
 
-                                connection_state = _connect_state_setup_client_game;
-                            }
+                            connection_state = _connect_state_setup_client_game;
+                        }
                     }
                 }
 
@@ -369,7 +368,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                 char str_buf[128];
                 int percent_complete;
 
-                GameManager::clientGameSetup();
+//                GameManager::clientGameSetup();
                 ConnectMesgClientGameSetupAck client_game_setup_ack;
 
                 sprintf( str_buf, "Loading Game Data ... (%d%%)", percent_complete);
@@ -377,14 +376,6 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
 
                 NetworkClient::sendMessage( &client_game_setup_ack, sizeof(ConnectMesgClientGameSetupAck));
                 connection_state = _connect_state_idle;
-
-//                } else {
-//                    ConnectMesgClientGameSetupPing client_game_setup_ping;
-//
-//                    sprintf( str_buf, "Loading Game Data ... (%d%%)", percent_complete);
-//                    LoadingView::update( str_buf );
-//                    NetworkClient::sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
-//                }
 
                 end_cycle = true;
             }

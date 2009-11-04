@@ -22,9 +22,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetPacket.hpp"
 #include "Util/Timer.hpp"
 
+class ConnectState;
+
 class ClientConnectDaemon
 {
-protected:
+public:
+    static void startConnectDaemon();
+
+    static void shutdownConnectDaemon();
+
+    static void startConnectionProcess();
+
+    static void connectProcess();
+
+    static void processNetMessage(const NetMessage* message);
+
+    static void serverConnectionBroken();
+
+private:
+    static ConnectState * connect_state;
     static Timer failure_display_timer;
     static Timer time_out_timer;
     static int   time_out_counter;
@@ -39,20 +55,6 @@ protected:
     static void connectProcess(const NetMessage* message);
 
     static void connectFailureResult( unsigned char result_code );
-
-public:
-    static void startConnectDaemon();
-
-    static void shutdownConnectDaemon();
-
-    static void startConnectionProcess();
-
-    static void connectProcess();
-
-    static void processNetMessage(const NetMessage* message);
-
-    static void serverConnectionBroken();
-
 };
 
 #endif // ** _CLIENTCONNECTDAEMON_HPP

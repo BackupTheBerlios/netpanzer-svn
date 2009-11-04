@@ -21,8 +21,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <list>
 #include <algorithm>
 
-#include "2D/Palette.hpp"
 #include "Units/UnitBucketArray.hpp"
+#include "Classes/PlayerState.hpp"
+#include "Interfaces/PlayerInterface.hpp"
+#include "Interfaces/MapInterface.hpp"
 
 void
 UnitBucketArray::initialize( const iXY & map_size, const iXY & tile_size,
@@ -85,4 +87,201 @@ UnitBucketArray::sort()
             }
         }
     }
+}
+
+void
+UnitBucketArray::queryPlayerUnitsAt(std::vector<UnitID>& working_list,
+                                    const iXY& point,
+                                    const Uint16 player_id)
+{
+    UnitList & ubl = getBucketAssocWorldLoc(point);
+    for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
+    {
+        Unit* unit = *i;
+        if( (*i)->unit_state.bounds(point)
+            && (*i)->player->getID() == player_id )
+        {
+            working_list.push_back(unit->id);
+        }
+    }
+}
+
+void
+UnitBucketArray::queryUnitsInWorldRect(std::vector<Unit *>& working_list,
+                                       const iRect& rect)
+{
+    UnitList::iterator iter;
+    iRect bucket_rect;
+    worldRectToBucketRect( rect, bucket_rect);
+
+    for( int row = bucket_rect.min.y; row <= bucket_rect.max.y; ++row )
+    {
+        for( int col = bucket_rect.min.x; col <= bucket_rect.max.x; ++col )
+        {
+            UnitList & bucket_list = getBucket(row, col);
+
+            for( iter = bucket_list.begin(); iter != bucket_list.end(); ++iter )
+            {
+                if( rect.contains((*iter)->unit_state.location) )
+                {
+                    working_list.push_back(*iter);
+                }
+            }
+        }
+    }
+}
+
+void
+UnitBucketArray::queryPlayerUnitsInWorldRect(std::vector<UnitID>& working_list,
+                                             const iRect& rect,
+                                             const Uint16 player_id)
+{
+    UnitList::iterator iter;
+    iRect bucket_rect;
+    worldRectToBucketRect( rect, bucket_rect);
+
+    for( int row = bucket_rect.min.y; row <= bucket_rect.max.y; ++row )
+    {
+        for( int col = bucket_rect.min.x; col <= bucket_rect.max.x; ++col )
+        {
+            UnitList & bucket_list = getBucket(row, col);
+
+            for( iter = bucket_list.begin(); iter != bucket_list.end(); ++iter )
+            {
+                if(    rect.contains((*iter)->unit_state.location)
+                    && (*iter)->player->getID() == player_id )
+                {
+                    working_list.push_back((*iter)->id);
+                }
+
+            }
+        }
+    }
+}
+
+void
+UnitBucketArray::queryNonPlayerUnitsInWorldRect(std::vector<Unit *>& working_list,
+                                                const iRect& rect,
+                                                const Uint16 player_id)
+{
+    UnitList::iterator iter;
+    iRect bucket_rect;
+    worldRectToBucketRect( rect, bucket_rect);
+
+    for( int row = bucket_rect.min.y; row <= bucket_rect.max.y; ++row )
+    {
+        for( int col = bucket_rect.min.x; col <= bucket_rect.max.x; ++col )
+        {
+            UnitList & bucket_list = getBucket(row, col);
+
+            for( iter = bucket_list.begin(); iter != bucket_list.end(); ++iter )
+            {
+                if(    rect.contains((*iter)->unit_state.location)
+                    && (*iter)->player->getID() != player_id )
+                {
+                    working_list.push_back(*iter);
+                }
+
+            }
+        }
+    }
+}
+
+bool
+UnitBucketArray::queryClosestEnemyUnitInRange(Unit **closest_unit_ptr,
+                                              const iXY &loc,
+                                              unsigned long range,
+                                              const Uint16 player_id)
+{
+    Unit *closest_unit = 0;
+    long closest_magnitude = 0;
+    iRect bucket_rect;
+    UnitList::iterator bucket_iter;
+
+    unitRangeToBucketRect( loc, range, bucket_rect );
+
+    for( long row_index = bucket_rect.min.y; row_index <= bucket_rect.max.y; row_index++ )
+    {
+        for( long column_index = bucket_rect.min.x; column_index <= bucket_rect.max.x; column_index++ )
+        {
+            UnitList &bucket_list = getBucket( row_index, column_index );
+
+            for ( bucket_iter = bucket_list.begin();
+                    bucket_iter != bucket_list.end(); ++bucket_iter)
+            {
+                iXY delta;
+                long temp_mag;
+
+                Uint16 unitPlayerID = (*bucket_iter)->player->getID();
+
+                if (   unitPlayerID == player_id
+                    || PlayerInterface::isAllied(player_id, unitPlayerID) )
+                {
+                    continue;
+                }
+
+                if ( closest_unit == 0 )
+                {
+                    closest_unit = *bucket_iter;
+                    delta  = loc - (*bucket_iter)->unit_state.location;
+                    closest_magnitude = long(delta.mag2());
+                }
+                else
+                {
+                    delta  = loc - (*bucket_iter)->unit_state.location;
+                    temp_mag = long(delta.mag2());
+
+                    if ( closest_magnitude > temp_mag )
+                    {
+                        closest_unit = *bucket_iter;
+                        closest_magnitude = temp_mag;
+                    }
+                }
+            }
+        }
+    }
+
+    if( closest_unit != 0 )
+    {
+        *closest_unit_ptr = closest_unit;
+        return true;
+    }
+
+    *closest_unit_ptr = 0;
+    return false;
+}
+
+Unit *
+UnitBucketArray::queryUnitAtMapLoc(const iXY & map_loc)
+{
+    iXY world_loc;
+    MapInterface::mapXYtoPointXY(map_loc, &world_loc);
+
+    UnitList & ubl = getBucketAssocMapLoc(map_loc);
+    for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
+    {
+        if ( (*i)->unit_state.bounds(world_loc) )
+        {
+            return *i;
+        }
+    }
+
+    return 0;
+}
+
+Unit *
+UnitBucketArray::queryNonPlayerUnitAtWorld(const iXY & world_loc,
+                                           const Uint16 player_id)
+{
+    UnitList & ubl = getBucketAssocWorldLoc(world_loc);
+    for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
+    {
+        if ( (*i)->unit_state.bounds(world_loc)
+              && (*i)->player->getID() != player_id )
+        {
+            return *i;
+        }
+    }
+
+    return 0;
 }
