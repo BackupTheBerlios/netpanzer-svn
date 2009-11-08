@@ -49,8 +49,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Palette.hpp"
 #include "lua/lua.hpp"
 
-#define MAKE_STRING(X) #X
-
 //---------------------------------------------------------------------------
 
 static std::string pidfile;
@@ -120,7 +118,7 @@ BaseGameManager *initialise(int argc, char** argv)
 
     // Parse commandline
     using namespace optionmm;
-    command_line commandline("netPanzer", MAKE_STRING(PACKAGE_VERSION),
+    command_line commandline("netPanzer", PACKAGE_VERSION,
             "Copyright(c) 1998 Pyrosoft Inc. and nepanzer-devel team", "",
             argc, argv);
 
@@ -183,15 +181,6 @@ BaseGameManager *initialise(int argc, char** argv)
         exit(1);
     }
 
-#ifdef NP_DATADIR
-    try
-    {
-		filesystem::addToSearchPath(NP_DATADIR);
-    }
-    catch(...)
-    { }
-#endif
-
     if(dedicated_option.value())
     {
         LOGGER.openLogFile("server");
@@ -200,60 +189,6 @@ BaseGameManager *initialise(int argc, char** argv)
     {
         LOGGER.openLogFile("netpanzer");
     }
-
-#ifdef __APPLE__
-    // Mac OS X puts the data files into NetPanzer.app/Contents/Resources
-    try
-    {
-        char * relpath = strdup(argv[0]);
-        char * spos = strrchr(relpath, '/');
-        if ( spos )
-        {
-            *spos = 0; // remove '/netpanzer';
-        }
-
-        spos = strrchr(relpath, '/');
-        if ( spos )
-        {
-            *spos = 0; // remove '/MacOS'
-        }
-        // relpath should have the path up until Contents in the app bundle
-
-        std::ostringstream dir;
-        dir << relpath << "/Resources/";
-        filesystem::addToSearchPath(dir.str().c_str());
-    }
-    catch(...)
-    { }
-#endif
-
-#ifndef WIN32
-    // Handle "datadir=" at the end of the executable file to find the data dir.
-	{
-		FILE *f = fopen(argv[0], "r");
-		if ( f )
-		{
-			char extradata[257];
-			fseek(f, -256, SEEK_END);
-			fread(extradata, 256, 1, f);
-			extradata[256]=0;
-			if ( !strncmp(extradata,"datadir=", 8) )
-			{
-				for ( int bytepos=255; bytepos>8 && extradata[bytepos]==' '; --bytepos )
-				{
-					extradata[bytepos]=0;
-				}
-				try
-				{
-					filesystem::addToSearchPath(extradata+8);
-				}
-				catch(...)
-				{ }
-			}
-			fclose(f);
-		}
-	}
-#endif
 
 #ifdef WIN32
     // SDL redirects stdout and stderr to 2 textfiles, better open a new console
@@ -321,7 +256,8 @@ BaseGameManager *initialise(int argc, char** argv)
             }
             gameconfig->serverConnect = connecthost;
             gameconfig->quickConnect = true;
-        }                                                               
+        }
+
         if (master_server_option.value().size() > 0) {
             if (master_server_option.value() == "none") {
                 gameconfig->masterservers = "";

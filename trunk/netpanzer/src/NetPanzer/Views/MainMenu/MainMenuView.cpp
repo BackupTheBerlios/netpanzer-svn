@@ -26,8 +26,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/MainMenu/Multi/GetSessionView.hpp"
 #include "Interfaces/GameConfig.hpp"
 
-#define MAKE_STRING(X) #X
-
 // MainMenuView
 //---------------------------------------------------------------------------
 MainMenuView::MainMenuView() : MenuTemplateView()
@@ -46,7 +44,7 @@ void MainMenuView::doDraw()
     MenuTemplateView::doDraw();
 
     static char text[] =
-        "This is NetPanzer version " MAKE_STRING(PACKAGE_VERSION)
+        "This is NetPanzer version " PACKAGE_VERSION
         ", a massively multiplayer tank battle game.  "
         "This application is free software under the terms of the "
         "Gnu General Public license (GPL). See the COPYING file for details."

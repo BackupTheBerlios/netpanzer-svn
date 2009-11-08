@@ -35,7 +35,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sstream>
 
 using namespace std;
-#define MAKE_STRING(X) #X
 
 InfoSocket::InfoSocket(int p) : socket(0)
 {
@@ -47,7 +46,7 @@ InfoSocket::InfoSocket(int p) : socket(0)
     stringstream s;
     s << "gamename\\netpanzer\\protocol\\" << NETPANZER_PROTOCOL_VERSION
       << "\\hostname\\" << gameconfig->playername
-      << "\\gameversion\\" << MAKE_STRING(PACKAGE_VERSION);
+      << "\\gameversion\\" << PACKAGE_VERSION;
     statusHead = s.str();
 }
 

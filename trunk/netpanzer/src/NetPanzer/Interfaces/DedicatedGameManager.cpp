@@ -48,8 +48,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Network/MessageRouter.hpp"
 
-#define MAKE_STRING(X) #X
-
 DedicatedGameManager::DedicatedGameManager()
     : commandqueue_mutex(0), console(0), heartbeat(0), infosocket(0)
 {
@@ -120,7 +118,7 @@ void DedicatedGameManager::inputLoop()
                 //*Console::server
                 std::cout
                     << "Server " << gameconfig->playername
-                    << " version " << MAKE_STRING(PACKAGE_VERSION) << " port "
+                    << " version " << PACKAGE_VERSION << " port "
                     << gameconfig->serverport << "\n"
                     << "Map: " << gameconfig-> map << "\n"
                     << std::setw(3) << "ID" << " "
@@ -254,13 +252,6 @@ bool DedicatedGameManager::launchNetPanzerGame()
     console->startThread();
 
     return true;
-}
-
-//---------------------------------------------------------------------------
-void
-DedicatedGameManager::initializeNetworkSubSystem()
-{
-    BaseGameManager::initializeNetworkSubSystem();
 }
 
 void

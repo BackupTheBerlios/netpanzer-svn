@@ -38,7 +38,6 @@ protected:
     virtual void initializeInputDevices();
     virtual void initializeGameConfig(const std::string& configfile);
 
-    virtual void initializeNetworkSubSystem();
     virtual void shutdownNetworkSubSystem();
 
     virtual void inputLoop();

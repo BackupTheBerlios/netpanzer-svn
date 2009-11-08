@@ -121,7 +121,7 @@ public:
     void setLocation(int x, int y);
     void setLocation(const iXY &p) { setLocation(p.x, p.y); }
     void setName(const std::string& name) { Component::componentName = name; }
-    std::string getName() { return componentName; };
+    std::string getName() { return componentName; }
 
     virtual void draw(int posx, int posy, Surface &dest)
     {

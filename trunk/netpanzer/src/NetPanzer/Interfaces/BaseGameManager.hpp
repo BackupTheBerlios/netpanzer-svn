@@ -31,7 +31,7 @@ public:
 
     virtual void shutdown();
 
-    virtual void initialize(const std::string& configfile = "");
+    void initialize(const std::string& configfile = "");
 
     /// mainloop, return false if you want to quit
     virtual bool mainLoop();
@@ -53,7 +53,7 @@ public:
     }
 
 protected:
-    virtual void initializeNetworkSubSystem();
+    void initializeNetworkSubSystem(); // non virtual.
     virtual void shutdownNetworkSubSystem();
 
     virtual void initializeInputDevices();

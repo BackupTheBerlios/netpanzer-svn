@@ -16,9 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-#include <stdio.h>
-#include <string.h>
+#include <sstream>
+#include <cstdio>
+#include <cstring>
 #include "Exception.hpp"
 #include "Log.hpp"
 #include "FileSystem.hpp"
@@ -59,9 +59,61 @@ void initialize(const char* argv0, const char* ,
     }
 
     PHYSFS_addToSearchPath(writedir, 0);
+    delete[] writedir;
+
     PHYSFS_addToSearchPath(basedir, 1);
 
-    delete[] writedir;
+#ifdef NP_DATADIR
+    PHYSFS_addToSearchPath(NP_DATADIR, 1);
+#endif
+
+#ifdef __APPLE__
+    // Mac OS X puts the data files into NetPanzer.app/Contents/Resources
+    {
+        char * relpath = strdup(argv0);
+        char * spos = strrchr(relpath, '/');
+        if ( spos )
+        {
+            *spos = 0; // remove '/netpanzer';
+        }
+
+        spos = strrchr(relpath, '/');
+        if ( spos )
+        {
+            *spos = 0; // remove '/MacOS'
+        }
+        // relpath should have the path up until Contents in the app bundle
+
+        std::ostringstream dir;
+        dir << relpath << "/Resources/";
+
+        PHYSFS_addToSearchPath(dir.str().c_str(), 1);
+    }
+#endif
+
+#ifndef WIN32
+    // Handle "datadir=" at the end of the executable file to find the data dir.
+    {
+        FILE *f = fopen(argv0, "r");
+        if ( f )
+        {
+            char extradata[257];
+            fseek(f, -256, SEEK_END);
+            fread(extradata, 256, 1, f);
+            extradata[256]=0;
+            if ( !strncmp(extradata,"datadir=", 8) )
+            {
+                for ( int bytepos=255; bytepos>8 && extradata[bytepos]==' '; --bytepos )
+                {
+                    extradata[bytepos]=0;
+                }
+
+                PHYSFS_addToSearchPath(extradata+8, 1);
+            }
+            fclose(f);
+        }
+    }
+#endif
 
     /* Root out archives, and add them to search path... */
     char* archiveExt = "zip";

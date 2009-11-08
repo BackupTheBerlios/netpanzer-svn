@@ -25,8 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
   #include "Interfaces/GameConfig.hpp"
 #endif
 
-#define MAKE_STRING(X) #X
-
 #define ADD_STANDARD_SDL_FLAGS(flags) flags |= SDL_ANYFORMAT
 #define flaginfo(f,xxflag) if ( f & xxflag ) LOGGER.warning("\t" #xxflag)
 
@@ -174,7 +172,7 @@ void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
 
     SDL_ShowCursor(SDL_DISABLE);
 
-    SDL_WM_SetCaption("netPanzer " MAKE_STRING(PACKAGE_VERSION), 0);
+    SDL_WM_SetCaption("netPanzer " PACKAGE_VERSION, 0);
 }
 
 bool SDLVideo::isDisplayModeAvailable(int width, int height, int bpp,
