@@ -115,7 +115,7 @@ private:
 
     UnitList & getBucket(const unsigned int bucket_index)
     {
-        assert( bucket_index < getSize() );
+//        assert( bucket_index < getSize() );
         return( buckets[ bucket_index ] );
     }
 

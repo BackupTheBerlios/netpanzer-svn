@@ -250,26 +250,10 @@ void BaseGameManager::simLoop()
 
     NetworkState::updateNetworkStats();
 
-    if ( global_game_state->unit_manager )
-    {
-        global_game_state->unit_manager->updateUnitStatus();
-    }
-
-    ProjectileInterface::updateStatus();
-    ObjectiveInterface::updateObjectiveStatus();
-    PowerUpInterface::updateState();
-    PathScheduler::run();
-
-    Physics::sim();
-
-    ParticleSystem2D::simAll();
-    Particle2D::simAll();
-
 //    GameControlRulesDaemon::updateGameControlFlow(); // moved up
 
     NetworkServer::sendRemaining();
     NetworkClient::sendRemaining();
-    BotManager::simBots();
 }
 //-----------------------------------------------------------------
 void BaseGameManager::inputLoop()

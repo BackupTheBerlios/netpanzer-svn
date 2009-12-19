@@ -33,6 +33,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Interfaces/ChatInterface.hpp"
 
+#include "Weapons/ProjectileInterface.hpp"
+#include "PowerUps/PowerUpInterface.hpp"
+#include "Interfaces/PathScheduler.hpp"
+#include "Particles/Physics.hpp"
+#include "Particles/ParticleSystem2D.hpp"
+#include "Bot/BotManager.hpp"
+
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/SystemNetMessage.hpp"
 #include "Classes/Network/GameControlNetMessage.hpp"
@@ -70,7 +77,8 @@ enum { _map_cycle_client_idle,
        _map_cycle_client_load_map,
        _map_cycle_client_wait_for_resetgamelogic_or_connectid,
        _map_cycle_client_wait_complete_connect,
-       _map_cycle_client_wait_for_respawn_ack
+       _map_cycle_client_wait_for_respawn_ack,
+       _map_cycle_client_state_in_progress
    };
 
 enum { _execution_mode_loop_back_server,
@@ -387,6 +395,11 @@ void GameControlRulesDaemon::mapCycleFsmClient()
                             }
                             break;
                         default:
+                            char buf[1024];
+                            snprintf(buf,sizeof(buf), "Received unknown packet: %d:%d",
+                                        np.getNetMessage()->message_class,
+                                        np.getNetMessage()->message_id);
+                            LoadingView::append(buf);
                             // TODO fail here if message is not expected
                             ;
                     }
@@ -400,7 +413,7 @@ void GameControlRulesDaemon::mapCycleFsmClient()
             {
                 LoadingView::loadFinish();
                 map_cycle_fsm_client_respawn_ack_flag = false;
-                map_cycle_fsm_client_state = _map_cycle_client_idle;
+                map_cycle_fsm_client_state = _map_cycle_client_state_in_progress;
             }
             break;
 
@@ -415,12 +428,28 @@ void GameControlRulesDaemon::mapCycleFsmClient()
                         && ((ConnectProcessStateMessage*)np.getNetMessage())->getMessageEnum() == _connect_state_sync_complete
                        )
                     {
-                        map_cycle_fsm_client_state = _map_cycle_client_idle;
+                        map_cycle_fsm_client_state = _map_cycle_client_state_in_progress;
                     }
 
                     MessageRouter::routePacket(np);
                 }
             }
+            break;
+        case _map_cycle_client_state_in_progress:
+//            if ( global_game_state->unit_manager )
+//            {
+                global_game_state->unit_manager->updateUnitStatus();
+//            }
+
+            ProjectileInterface::updateStatus();
+            ObjectiveInterface::updateObjectiveStatus();
+            PowerUpInterface::updateState();
+            PathScheduler::run();
+
+            Physics::sim();
+
+            ParticleSystem2D::simAll();
+            Particle2D::simAll();
             break;
     } // ** switch
 
@@ -557,8 +586,8 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 {
                     ConsoleInterface::postMessage(Color::white, false, 0, "Resetting game logic.");
                     SystemResetGameLogic reset_game_logic_mesg;
-                    global_engine_state->game_manager->resetGameLogic();
                     NetworkServer::broadcastMessage( &reset_game_logic_mesg, sizeof(SystemResetGameLogic));
+                    global_engine_state->game_manager->resetGameLogic();
                 }
 
                 GameManager::respawnAllPlayers();
@@ -577,6 +606,23 @@ void GameControlRulesDaemon::mapCycleFsmServer()
             break;
 
         case _map_cycle_server_state_in_progress:
+//            if ( global_game_state->unit_manager )
+//            {
+                global_game_state->unit_manager->updateUnitStatus();
+//            }
+
+            ProjectileInterface::updateStatus();
+            ObjectiveInterface::updateObjectiveStatus();
+            PowerUpInterface::updateState();
+            PathScheduler::run();
+
+            Physics::sim();
+
+            ParticleSystem2D::simAll();
+            Particle2D::simAll();
+
+            BotManager::simBots();
+
             checkGameRules();
             break;
 
