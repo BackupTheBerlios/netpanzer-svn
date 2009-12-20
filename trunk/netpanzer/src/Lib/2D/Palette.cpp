@@ -35,32 +35,11 @@ Palette::Palette()
 } // end Palette::Palette
 
 int
-Palette::makeColor(lua_State *L)
+Palette::makeColor(int r, int g, int b)
 {
-    int r = luaL_checkint(L,1); // r
-    int g = luaL_checkint(L,2); // g
-    int b = luaL_checkint(L,3); // b
-    
 //    int color = findNearestColor(r,g,b,true);
     IntColor color = SDL_MapRGB(screen->getPixelFormat(), r, g, b);
-    
-    lua_pushinteger(L, color);
-    return 1;
-}
-
-static const luaL_reg colorUtilLib[] =
-{
-    {"makeColor",   Palette::makeColor},
-    {0,0}
-};
-
-void
-Palette::registerScript()
-{
-    ScriptManager::registerLib( "ColorUtil", colorUtilLib);
-    ScriptManager::bindStaticVariables( "Color", "ColorMetaTable",
-                                       Color::colorGetters,
-                                       Color::colorSetters);
+    return color;
 }
 
 // setColors

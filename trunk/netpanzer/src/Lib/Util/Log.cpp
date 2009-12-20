@@ -142,6 +142,14 @@ Logger::openNext()
     }    
 
 }
+
+void
+Logger::log(const char * str)
+{
+//    printf("xxx Received str: '%s'\n", str);
+    warning("* %s", str);
+}
+
 //-----------------------------------------------------------------
 void
 Logger::log(int priority, const char *fmt, va_list ap)

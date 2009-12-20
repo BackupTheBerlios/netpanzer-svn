@@ -1,0 +1,8 @@
+$#include "Util/Log.hpp"
+
+class Logger
+{
+    void log(const char * str);
+};
+
+tolua_readonly Logger LOGGER;

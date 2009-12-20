@@ -1,109 +1,10 @@
-/*
-Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
- 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
- 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
- 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-#ifndef __Color_hpp__
-#define __Color_hpp__
+$#include "2D/Color.hpp"
+$#include "2D/Palette.hpp"
 
-#include "SDL.h"
-#include "Scripts/ScriptManager.hpp"
-#include "Core/CoreTypes.hpp"
-
-//---------------------------------------------------------------------------
-
-class NamedColors
-{
-public:
-	enum
-	{
-		black = 0,
-		gray32,
-		gray64,
-		gray96,
-		gray128,
-		gray160,
-		gray192,
-		gray224,
-		white,
-
-		blue,
-		brown,
-		cyan,
-		gray,
-		green,
-		magenta,
-		orange,
-		pink,
-		red,
-		yellow,
-
-		darkBlue,
-		darkBrown,
-		darkCyan,
-		darkGray,
-		darkGreen,
-		darkMagenta,
-		darkOrange,
-		darkPink,
-		darkRed,
-		darkYellow,
-
-		lightBlue,
-		lightBrown,
-		lightCyan,
-		lightGray,
-		lightGreen,
-		lightMagenta,
-		lightOrange,
-		lightPink,
-		lightRed,
-		lightYellow,
-
-		tan,
-		chartreuse,
-		cobaltGreen,
-		emeraldGreen,
-		forestGreen,
-		darkOliveGreen,
-		terreVerte,
-
-		unitAqua,
-		unitYellow,
-		unitRed,
-		unitBlue,
-		unitDarkBlue,
-		unitLightGreen,
-		unitGreen,
-		unitBlueGray,
-		unitDarkRed,
-		unitBlack,
-		unitDarkGreen,
-		unitWhite,
-		unitLightOrange,
-		unitOrange,
-		unitGray,
-		unitDarkGray
-	};
-	static SDL_Color colors[];
-};
+typedef int IntColor;
 
 class Color
 {
-public:
-    // Color for netPanzer players.
     static IntColor unitAqua;
     static IntColor unitYellow;
     static IntColor unitRed;
@@ -179,5 +80,7 @@ public:
 
 };
 
-#endif // end __Color_hpp__
-
+class Palette
+{
+    static int makeColor(int r, int g, int b);
+};

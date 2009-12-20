@@ -283,7 +283,8 @@ void Surface::bltBlend(Surface &dest, int x, int y, Uint8 alpha) const
 void Surface::bltSolid(Surface &dest, int x, int y) const
 {
     SDL_Rect r = { x + offset.x, y+offset.y, 0, 0 };
-    SDL_SetAlpha(cur_frame, cur_frame->flags & (~SDL_SRCALPHA), 255);
+    // XXX this slows it so much
+//    SDL_SetAlpha(cur_frame, cur_frame->flags & (~SDL_SRCALPHA), 255);
     SDL_BlitSurface( cur_frame, 0, dest.cur_frame, &r);
 }
 

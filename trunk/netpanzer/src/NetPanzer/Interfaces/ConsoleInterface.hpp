@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Core/CoreTypes.hpp"
 #include "Util/Timer.hpp"
 #include "2D/Surface.hpp"
+#include "Util/Log.hpp"
 
 
 class ConsoleLine
@@ -76,6 +77,11 @@ public:
 
     static void postMessage( IntColor msgColor, bool hasFlag, FlagID flag, const char *format, ... )
         __attribute__(( format(printf, 4, 5) ));
+
+    static void post( IntColor msgColor, bool hasFlag, FlagID flag, const char *msg )
+    {
+        postMessage( msgColor, hasFlag ,flag, "%s", msg);
+    }
 
     /* Input String Methods */
     static void setInputStringStatus( bool on_off );

@@ -88,25 +88,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define MERGE_CLASS(a) a::
 #define GEN_VAR(CNAME) IntColor MERGE_CLASS(Color)CNAME;
 
-#define GEN_GETSTRUCT(CNAME) { #CNAME, GETSVTYPE_INT, &MERGE_CLASS(Color)CNAME },
-#define GEN_SETSTRUCT(CNAME) { #CNAME, SETSVTYPE_INT, &MERGE_CLASS(Color)CNAME },
-
 // This generate the Uint8 Color::colorname for all the colors
 // Must not have ';' at end
 GEN_COLORS(GEN_VAR)
-
-// This generates the tables needed for script binding
-const ScriptVarBindRecord Color::colorGetters[] =
-{
-    GEN_COLORS(GEN_GETSTRUCT)
-    {0,0}
-};
-        
-const ScriptVarBindRecord Color::colorSetters[] =
-{
-    GEN_COLORS(GEN_SETSTRUCT)
-    {0,0}
-};
 
 SDL_Color NamedColors::colors[] =
 {

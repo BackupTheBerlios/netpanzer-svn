@@ -139,6 +139,26 @@ public:
     void fillRect(iRect bounds, const IntColor color);
 
     virtual void onComponentClicked(Component *c) { (void)c; }
+
+    // View Status Functions.
+    void setDisplayStatusBar(const bool &newStatus);
+    void setBordered        (const bool &newStatus);
+    void setAllowMove       (const bool &newStatus);
+    void setActive          (const bool &newStatus);
+
+    // SearchName, Title, and SubTitle functions.
+    void  setSearchName(const char *searchName);
+    void  setTitle(const char *title);
+    void  setSubTitle(const char *subTitle);
+
+    void showStatus(const char *string);
+
+    void resize(const iXY &size);
+    inline void resize(const int &x, const int &y)
+    {
+        resize(iXY(x, y));
+    }
+
     
 protected:
     virtual void     actionPerformed(mMouseEvent )
@@ -164,16 +184,6 @@ protected:
     void        activate  ();
     void        deactivate();
 
-    // View Status Functions.
-    void setDisplayStatusBar(const bool &newStatus);
-    void setBordered        (const bool &newStatus);
-    void setAllowMove       (const bool &newStatus);
-    void setActive          (const bool &newStatus);
-
-    // SearchName, Title, and SubTitle functions.
-    void  setSearchName(const char *searchName);
-    void  setTitle(const char *title);
-    void  setSubTitle(const char *subTitle);
     void  drawTitle();
 
     // Input Field Functions
@@ -183,7 +193,6 @@ protected:
 
     /////////////////////////////////
     void draw();
-    void showStatus(const char *string);
     void drawStatus();
     virtual void checkResolution(iXY oldResolution, iXY newResolution);
     void checkArea(iXY viewarea);
@@ -211,12 +220,6 @@ protected:
     virtual void mouseEnter(const iXY &pos);
     virtual void mouseExit(const iXY &pos);
     //virtual void keyUp();
-
-    void resize(const iXY &size);
-    inline void resize(const int &x, const int &y)
-    {
-        resize(iXY(x, y));
-    }
 
     virtual void processEvents();
 

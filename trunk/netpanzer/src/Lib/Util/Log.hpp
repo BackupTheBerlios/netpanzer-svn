@@ -49,6 +49,8 @@ public:
     void warning(const char *fmt, ...)
         __attribute__((format (__printf__, 2, 3)));
 
+    void log(const char * str);
+
 private:
     void log(int priority, const char *fmt, va_list ap);
     void cleanLogs();

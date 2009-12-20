@@ -147,7 +147,7 @@ else:
     crosslinuxenv.Append(CCFLAGS = ['-O2','-s'])
     crosslinuxenv['FINALEXENAME'] = crosslinuxenv['FINALBUILDDIR'] + 'netpanzer'
 
-env.Append(CCFLAGS = ['-Wall' ])
+env.Append(CCFLAGS = ['-Wall'])
 
 env.BuildDir(env['FINALBUILDDIR'],'.',duplicate=0)
 crossmingwenv.BuildDir(crossmingwenv['FINALBUILDDIR'],'.',duplicate=0)
@@ -204,9 +204,9 @@ print 'Building version ' + NPVERSION + ' in ' + sys.platform
 # Configure Environments
 ################################################################
 
-env.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer' , 'src/lib/physfs'] )
-crossmingwenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer' , 'src/lib/physfs'] )
-crosslinuxenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer' , 'src/lib/physfs'] )
+env.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'] )
+crossmingwenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'])
+crosslinuxenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'])
 
 # for this platform
 if thisplatform == 'darwin':
@@ -252,7 +252,8 @@ MakeStaticLib(crossmingwnetworkenv, 'npnetwork', 'Network', '*.cpp')
 MakeStaticLib(crosslinuxnetworkenv, 'npnetwork', 'Network', '*.cpp')
 
 # BUILDS LUA
-MakeStaticLib(luaenv, 'nplua', 'lua', '*.c')
+luaenv.Append( CPPPATH = [ 'src/Lib/lua', 'src/Lib/toluapp'] )
+MakeStaticLib(luaenv, 'nplua', 'lua toluapp', '*.c')
 MakeStaticLib(crossmingwluaenv, 'nplua', 'lua', '*.c')
 MakeStaticLib(crosslinuxluaenv, 'nplua', 'lua', '*.c')
 

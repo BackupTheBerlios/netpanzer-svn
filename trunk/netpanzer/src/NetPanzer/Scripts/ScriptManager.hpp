@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SCRIPTMANAGER_HPP
 #define	_SCRIPTMANAGER_HPP
 
-#include "ScriptHelper.hpp"
+#include "lua/lua.hpp"
 
 class ScriptManager
 {
@@ -30,20 +30,14 @@ public:
     static void close();
     
     static void registerLib(const char * libname, const luaL_reg * functions);
-    
-    static void bindStaticVariables(const char * objectName,
-                                    const char * metaName,
-                                    ScriptVarBindRecord * getters,
-                                    ScriptVarBindRecord * setters);
-    
+        
     static void runStr(const char * runname, const char * str);
     
     // NOTE: runFile has to run after FileSystem has been initialized.
     static void runFile(const char * runname, const char * filename);
+    static lua_State* getLuavm() { return luavm; }
     
-private:
-    static void bindStaticVars (ScriptVarBindRecord * recordlist);
-        
+private:        
     static lua_State *luavm;
 };
 

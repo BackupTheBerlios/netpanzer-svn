@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <cassert>
 
 #include "Color.hpp"
-#include "Scripts/ScriptManager.hpp"
 
 const size_t PALETTE_LENGTH = 256;
 
@@ -49,8 +48,7 @@ public:
     static Uint8 findNearestColor(int r, int g, int b, const bool &ignoreIndexZero = false);
     static void init();
     static void setColors();
-    static int makeColor(lua_State *L);
-    static void registerScript();
+    static int makeColor(int r, int g, int b);
 };
 
 #endif // end __Palette_hpp__

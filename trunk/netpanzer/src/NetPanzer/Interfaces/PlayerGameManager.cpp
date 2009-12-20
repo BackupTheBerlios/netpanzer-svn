@@ -327,7 +327,6 @@ void PlayerGameManager::hostMultiPlayerGame()
 //    GameControlRulesDaemon::setStateServerInProgress();
     GameControlRulesDaemon::setStateServerLoadingMap();
     NetworkState::setNetworkStatus( _network_state_server );
-
 }
 
 void PlayerGameManager::quitGame()

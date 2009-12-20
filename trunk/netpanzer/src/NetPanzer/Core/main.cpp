@@ -280,13 +280,8 @@ BaseGameManager *initialise(int argc, char** argv)
 int netpanzer_main(int argc, char** argv)
 {
     ScriptManager::initialize();
-    
-    ScriptManager::runStr("LuaInitialize","print('Lua is working just fine');");
-
-    Palette::registerScript(); // here for the moment;
 
     global_engine_state = new GlobalEngineState();
-
     global_engine_state->game_manager = initialise(argc, argv);
 
     ScriptManager::runFile("unused","scripts/initialize.lua");

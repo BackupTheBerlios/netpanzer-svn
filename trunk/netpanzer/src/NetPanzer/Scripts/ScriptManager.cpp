@@ -22,6 +22,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ScriptManager.hpp"
 #include "Util/FileSystem.hpp"
 
+#include "bindings/NetPanzerBindings.hpp"
+
 lua_State * ScriptManager::luavm = 0;
 
 void
@@ -34,7 +36,10 @@ ScriptManager::initialize()
         {
             luaL_openlibs(luavm);
         }
+        tolua_NetPanzer_open(luavm);
+
     }
+
 }
     
 void
@@ -51,37 +56,6 @@ void
 ScriptManager::registerLib(const char * libname, const luaL_reg * functions)
 {
     luaL_openlib(luavm, libname, functions, 0);   
-}
-    
-void
-ScriptManager::bindStaticVariables(const char * objectName,
-                                   const char * metaName,
-                                   ScriptVarBindRecord * getters,
-                                   ScriptVarBindRecord * setters)
-{
-    luaL_newmetatable(luavm, metaName);
-    int metatable = lua_gettop(luavm);
-
-    lua_pushliteral(luavm, "__index");
-    lua_pushvalue(luavm, metatable);  /* upvalue index 1 */
-    bindStaticVars(getters);     /* fill metatable with getters */
-    lua_pushcclosure(luavm, ScriptHelper::index_handler, 1);
-    lua_rawset(luavm, metatable);     /* metatable.__index = index_handler */
-
-    lua_pushliteral(luavm, "__newindex");
-    lua_newtable(luavm);              /* table for members you can set */
-    bindStaticVars(setters);     /* fill with setters */
-    lua_pushcclosure(luavm, ScriptHelper::newindex_handler, 1);
-    lua_rawset(luavm, metatable);     /* metatable.__newindex = newindex_handler */
-
-    lua_pop(luavm, 1);                /* drop metatable */
-
-    // we don't save the address of new data
-    void * t = lua_newuserdata(luavm,sizeof(void*));
-    (void)t;
-    luaL_getmetatable(luavm, metaName);
-    lua_setmetatable(luavm,-2);
-    lua_setglobal(luavm,objectName);
 }
     
 void
@@ -105,16 +79,5 @@ ScriptManager::runFile(const char * runname, const char * filename)
     {
         printf("error is: %s\n",lua_tostring(luavm,-1));
         lua_pop(luavm,1);
-    }
-}
-    
-void
-ScriptManager::bindStaticVars (ScriptVarBindRecord * recordlist)
-{
-    for (; recordlist->name; recordlist++)
-    {
-        lua_pushstring(luavm, recordlist->name);
-        lua_pushlightuserdata(luavm, (void*)recordlist);
-        lua_settable(luavm, -3);
     }
 }

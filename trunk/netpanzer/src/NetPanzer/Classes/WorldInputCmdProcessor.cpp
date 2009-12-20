@@ -448,7 +448,23 @@ WorldInputCmdProcessor::keyboardInputModeChatMesg()
     char chat_string[256];
     if (getConsoleInputString(chat_string)) {
         if(strcmp(chat_string, "") != 0)
+        {
+            lua_State *L = ScriptManager::getLuavm();
+            lua_getglobal(L, "onUserMessage");
+            if ( lua_isfunction(L, -1) )
+            {
+                lua_pushstring(L, chat_string);
+                if ( lua_pcall(L, 1, 0, 0) != 0 )
+                {
+                    LOGGER.warning("error running function `onChatMessageEntered': %s\n",lua_tostring(L, -1));
+                }
+            }
+            else
+            {
+                lua_pop(L, 1);
+            }
             ChatInterface::sendCurrentMessage( chat_string );
+        }
         keyboard_input_mode = _keyboard_input_mode_command;
         ConsoleInterface::setInputStringStatus(false);             
     }
@@ -607,8 +623,8 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
     {
         if ( (!selection_box_active)
              && ( manual_fire_state == true
-                 || KeyboardInterface::getKeyState( SDLK_LCTRL )
-                 || KeyboardInterface::getKeyState( SDLK_RCTRL )
+//                 || KeyboardInterface::getKeyState( SDLK_LCTRL )
+//                 || KeyboardInterface::getKeyState( SDLK_RCTRL )
                 )
            )
         {
@@ -740,8 +756,8 @@ WorldInputCmdProcessor::evalLeftMButtonEvents(const MouseEvent &event)
 
             case _cursor_enemy_unit:
                  if ( manual_fire_state != true
-                        && !KeyboardInterface::getKeyState( SDLK_LCTRL )
-                        && !KeyboardInterface::getKeyState( SDLK_RCTRL )
+//                        && !KeyboardInterface::getKeyState( SDLK_LCTRL )
+//                        && !KeyboardInterface::getKeyState( SDLK_RCTRL )
                      )
                  {
                      sendAttackCommand(world_pos);
