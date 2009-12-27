@@ -45,9 +45,6 @@ public:
 
     static void cleanUp();
 
-    static void lock();
-    static void unLock();
-
     static void setKill(PlayerState* by_player, PlayerState* on_player,
             UnitType unit_type );
 

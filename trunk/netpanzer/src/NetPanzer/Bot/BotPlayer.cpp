@@ -59,7 +59,7 @@ BotPlayer::processEvents()
 
             // manual fire on closest enemy
             Unit *enemyUnit;
-            if (global_game_state->unit_manager->unit_bucket_array.queryClosestEnemyUnitInRange(&enemyUnit,
+            if (UnitBucketArray::queryClosestEnemyUnitInRange(&enemyUnit,
                         unit->unit_state.location, unit->unit_state.weapon_range, playerIndex))
             {
                 manualFire(unit, enemyUnit->unit_state.location);
@@ -82,7 +82,7 @@ BotPlayer::isReady()
 {
     if (m_timer.count())
     {
-        int unitCount = global_game_state->unit_manager->getUnitCount(botPlayerId);
+        int unitCount = UnitInterface::getPlayerUnitCount(botPlayerId);
         if (unitCount > 0)
         {
             m_timer.changePeriod(5.0 / unitCount);
@@ -99,14 +99,16 @@ BotPlayer::isReady()
 Unit *
 BotPlayer::getRandomUnit(int playerIndex)
 {
-    const std::vector<Unit*>& units
-        = global_game_state->unit_manager->getPlayerUnits(playerIndex);
+    const std::vector<Unit*>* units
+        = UnitInterface::getPlayerUnits(playerIndex);
 
-    if(units.size() == 0)
+    if ( ! units || units->size() == 0 )
+    {
         return 0;
-    
-    size_t unitIndex = rand() % units.size();
-    return units[unitIndex];
+    }
+
+    size_t unitIndex = rand() % units->size();
+    return (*units)[unitIndex];
 }
 
 //-----------------------------------------------------------------

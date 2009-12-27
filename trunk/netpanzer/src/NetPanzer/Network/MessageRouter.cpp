@@ -92,7 +92,7 @@ public:
         switch ( p->getNetMessage()->message_id )
         {
             case _net_message_id_term_unit_cmd:
-                global_game_state->unit_manager->processNetPacket(p);
+                UnitInterface::processNetPacket(p);
                 break;
             case _net_message_id_term_unit_gen:
             case _net_message_id_term_output_loc:
@@ -129,26 +129,16 @@ public:
     }
 };
 
-class ToUnitHandler : public MessageClassHandler
-{
-public:
-    ToUnitHandler() {}
-    void handlePacket(const NetPacket *p)
-    {
-        global_game_state->unit_manager->processNetMessage(p->getNetMessage());
-    }
-};
-
 static ToMessageHandler systemhandler(&GameManager::processSystemMessage);
 static ToPacketHandler serverconnecthandler(&ServerConnectDaemon::processNetPacket);
 static ToMessageHandler clientconnecthandler(&ClientConnectDaemon::processNetMessage);
 static ToMessageHandler resourcehandler(&ResourceManager::processResourceMessage);
 static ToMessageHandler playerhandler(&PlayerInterface::processNetMessage);
-static ToUnitHandler unithandler;
+static ToMessageHandler unithandler(&UnitInterface::processNetMessage);
 static ToMessageHandler objectivehandler(&ObjectiveInterface::processNetMessages);
-static ToMessageHandler gamecontrolhandler(GameControlRulesDaemon::processNetMessage);
+static ToMessageHandler gamecontrolhandler(&GameControlRulesDaemon::processNetMessage);
 static ToMessageHandler poweruphandler(&PowerUpInterface::processNetMessages);
-static ToMessageHandler chathandler(&ChatInterface::processChatMessages);
+static ToPacketHandler chathandler(&ChatInterface::processChatMessages);
 
 void
 MessageRouter::initialize(bool isServer)

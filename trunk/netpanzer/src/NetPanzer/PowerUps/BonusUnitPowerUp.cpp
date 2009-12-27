@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
 
+#include "Classes/PlacementMatrix.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/UnitNetMessage.hpp"
@@ -61,7 +62,7 @@ void BonusUnitPowerUp::onHit( Unit * unit )
 
         placement_matrix.getNextEmptyLoc( &spawn_loc );
 
-        new_unit = global_game_state->unit_manager->createUnit(bonus_unit_type,
+        new_unit = UnitInterface::createUnit(bonus_unit_type,
                                              spawn_loc,
                                              unit->player->getID() );
 

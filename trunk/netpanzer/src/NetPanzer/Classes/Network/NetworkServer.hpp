@@ -52,6 +52,7 @@ public:
     static bool addClientToSendList( ClientSocket * client );
     static void cleanUpClientList();
     static void dropClient(Uint16 playerid);
+    static void removePlayerSocket(const Uint16 player_id);
 
     static void openSession();
     static void hostSession();
@@ -64,8 +65,6 @@ public:
         
     static void sendRemaining();
     
-    static ClientSocket * getClientSocketByPlayerIndex ( Uint16 index );
-
     static std::string getIP(Uint16 player_index);
 
 protected:

@@ -104,6 +104,7 @@ static std::string connecting_server_name;
 //-----------------------------------------------------------------
 void GameControlRulesDaemon::setStateServerLoadingMap()
 {
+    map_cycle_fsm_server_endgame_timer.changePeriod( 0.0f );
     GameControlRulesDaemon::map_cycle_fsm_server_state = _map_cycle_server_state_cycle_next_map;
 }
 //-----------------------------------------------------------------
@@ -436,10 +437,7 @@ void GameControlRulesDaemon::mapCycleFsmClient()
             }
             break;
         case _map_cycle_client_state_in_progress:
-//            if ( global_game_state->unit_manager )
-//            {
-                global_game_state->unit_manager->updateUnitStatus();
-//            }
+            UnitInterface::updateUnitStatus();
 
             ProjectileInterface::updateStatus();
             ObjectiveInterface::updateObjectiveStatus();
@@ -483,7 +481,6 @@ void GameControlRulesDaemon::mapCycleFsmServer()
                 NetworkServer::broadcastMessage(&view_control, sizeof(SystemViewControl));
 
                 map_cycle_fsm_server_endgame_timer.changePeriod( _MAP_CYCLE_ENDGAME_WAIT_PERIOD );
-                map_cycle_fsm_server_endgame_timer.reset();
 
                 map_cycle_fsm_server_state = _map_cycle_server_state_cycle_next_map;
             }
@@ -568,7 +565,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
 
         case _map_cycle_server_state_respawn_players :
             {
-                if ( ! global_game_state->unit_manager )
+                if ( ! UnitInterface::getUnits() )
                 {
                     ConsoleInterface::postMessage(Color::white, false, 0, "Reinitializing game logic.");
                     global_engine_state->game_manager->reinitializeGameLogic();
@@ -606,10 +603,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
             break;
 
         case _map_cycle_server_state_in_progress:
-//            if ( global_game_state->unit_manager )
-//            {
-                global_game_state->unit_manager->updateUnitStatus();
-//            }
+            UnitInterface::updateUnitStatus();
 
             ProjectileInterface::updateStatus();
             ObjectiveInterface::updateObjectiveStatus();
@@ -714,7 +708,7 @@ GameControlRulesDaemon::checkRespawn()
             for ( unsigned short player = 0; player < PlayerInterface::getMaxPlayers(); player++ )
             {
                 if ( PlayerInterface::getPlayer(player)->getStatus() == _player_state_active
-                     && global_game_state->unit_manager->getUnitCount( player ) > 0 )
+                     && UnitInterface::getPlayerUnitCount( player ) > 0 )
                 {
                     players_alive++;
                 }
@@ -744,7 +738,7 @@ GameControlRulesDaemon::checkRespawn()
         for ( unsigned short player = 0; player < PlayerInterface::getMaxPlayers(); player++ )
         {
             if ( PlayerInterface::getPlayer(player)->getStatus() == _player_state_active
-                 && global_game_state->unit_manager->getUnitCount( player ) == 0 )
+                 && UnitInterface::getPlayerUnitCount( player ) == 0 )
             {
                 GameManager::spawnPlayer(player);
             }

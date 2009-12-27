@@ -45,6 +45,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Resources/ResourceManagerMessages.hpp"
 
 #include "Network/MessageClassHandler.hpp"
+#include "Interfaces/GameManager.hpp"
 
 typedef std::list<ServerClientListData*> ClientList;
 
@@ -161,7 +162,7 @@ NetworkServer::addClientToSendList( ClientSocket * client )
         if( (*i)->client_socket == client )
         {
             client_list.push_back(*i);
-            client_list.erase(i);
+            connecting_clients.erase(i);
             break;
         }
         i++;
@@ -205,22 +206,38 @@ NetworkServer::cleanUpClientList()
 void
 NetworkServer::dropClient(Uint16 playerid)
 {
-    if ( BotManager::isBot(playerid) )
+    ClientList::iterator i = client_list.begin();
+    while( i != client_list.end() && (*i)->client_socket->getPlayerIndex() != playerid )
     {
-        BotManager::removeBot(playerid);
+        ++i;
     }
-    else
-    {
-        ClientList::iterator i = client_list.begin();
-        while( i != client_list.end() && (*i)->client_socket->getPlayerIndex() != playerid )
-        {
-            ++i;
-        }
 
-        if ( i != client_list.end() )
+    if ( i != client_list.end() )
+    {
+        // XXX hack
+        onClientDisconected((*i)->client_socket, "dropped");
+    }
+}
+
+void
+NetworkServer::removePlayerSocket(const Uint16 player_id)
+{
+    ClientList::iterator i;
+    for ( i = client_list.begin(); i != client_list.end(); ++i)
+    {
+        if ( (*i)->client_socket->getPlayerIndex() == player_id )
         {
-            // XXX hack
-            onClientDisconected((*i)->client_socket, "dropped");
+            (*i)->wannadie = true;
+            return;
+        }
+    }
+
+    for ( i = connecting_clients.begin(); i != connecting_clients.end(); ++i)
+    {
+        if ( (*i)->client_socket->getPlayerIndex() == player_id )
+        {
+            (*i)->wannadie = true;
+            return;
         }
     }
 }
@@ -331,23 +348,6 @@ NetworkServer::sendRemaining()
 
 }
 
-ClientSocket *
-NetworkServer::getClientSocketByPlayerIndex ( Uint16 index )
-{
-    ClientList::iterator i = client_list.begin();
-    while ( i != client_list.end() )
-    {
-        if ( ! (*i)->wannadie
-             && (*i)->client_socket->getPlayerIndex() == index )
-        {
-            return (*i)->client_socket;
-        }
-        i++;
-    }
-
-    return NULL;
-}
-
 std::string
 NetworkServer::getIP(Uint16 player_index)
 {
@@ -385,8 +385,6 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
         sendalert = false;
         LOGGER.debug("NetworkServer::onClientDisconected player was connecting");
     }
-
-
 
 //    if ( NetworkInterface::receive_queue.isReady() )
 //    {
@@ -449,32 +447,23 @@ NetworkServer::onClientDisconected(ClientSocket *s, const char * msg)
                                       player->getName().c_str());
         }
 
-        ObjectiveInterface::disownPlayerObjectives( player_index );
 
-        global_game_state->unit_manager->destroyPlayerUnits( player_index );
+        GameManager::disconnectPlayerCleanUp(player_index);
 
-        ResourceManagerReleaseFlagMessage releasemsg;
-        releasemsg.setFlagID(player->getFlag());
-        ResourceManager::releaseFlag(player->getFlag());
-
-        PlayerInterface::disconnectPlayerCleanup( player_index );
-
-        broadcastMessage(&releasemsg, sizeof(releasemsg));
-
-        if ( sendalert )
-        {
-            SystemConnectAlert msg;
-            if ( cleandisconnect )
-            {
-                msg.set( player_index, _connect_alert_mesg_disconnect);
-            }
-            else
-            {
-                msg.set( player_index, _connect_alert_mesg_client_drop );
-            }
-
-            broadcastMessage(&msg, sizeof(msg));
-        }
+//        if ( sendalert )
+//        {
+//            SystemConnectAlert msg;
+//            if ( cleandisconnect )
+//            {
+//                msg.set( player_index, _connect_alert_mesg_disconnect);
+//            }
+//            else
+//            {
+//                msg.set( player_index, _connect_alert_mesg_client_drop );
+//            }
+//
+//            broadcastMessage(&msg, sizeof(msg));
+//        }
     }
 }
 

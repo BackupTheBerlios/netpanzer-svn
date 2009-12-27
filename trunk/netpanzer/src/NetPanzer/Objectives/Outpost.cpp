@@ -32,6 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/UnitNetMessage.hpp"
 #include "Classes/Network/ObjectiveNetMessage.hpp"
 #include "Classes/UnitMessageTypes.hpp"
+#include "Classes/PlacementMatrix.hpp"
 
 Outpost::Outpost( ObjectiveID ID, iXY location, BoundBox area )
         : Objective( ID, location, area )
@@ -128,7 +129,7 @@ Outpost::checkOccupationStatus()
         if ( objective_state.occupation_status == _occupation_status_occupied )
         {
             std::vector<UnitID> playerunits;
-            global_game_state->unit_manager->unit_bucket_array.queryPlayerUnitsInWorldRect(playerunits,
+            UnitBucketArray::queryPlayerUnitsInWorldRect(playerunits,
                                     bounding_area,
                                     objective_state.occupying_player->getID() );
 
@@ -137,17 +138,14 @@ Outpost::checkOccupationStatus()
                 return;
             }
 
-            global_game_state->unit_manager->unit_bucket_array.queryNonPlayerUnitsInWorldRect(unitsInArea,
+            UnitBucketArray::queryNonPlayerUnitsInWorldRect(unitsInArea,
                                     bounding_area,
                                     objective_state.occupying_player->getID() );
 
         }
         else
         {
-            if ( global_game_state->unit_manager )
-            {
-                global_game_state->unit_manager->unit_bucket_array.queryUnitsInWorldRect( unitsInArea, bounding_area );
-            }
+            UnitBucketArray::queryUnitsInWorldRect( unitsInArea, bounding_area );
         }
 
         if ( ! unitsInArea.empty() )
@@ -186,7 +184,7 @@ Outpost::generateUnits()
                 iXY gen_loc;
                 gen_loc = outpost_map_loc + unit_generation_loc;
 
-                unit = global_game_state->unit_manager->createUnit(unit_generation_type,
+                unit = UnitInterface::createUnit(unit_generation_type,
                         gen_loc, objective_state.occupying_player->getID());
 
                 if ( unit != 0 )
@@ -207,7 +205,7 @@ Outpost::generateUnits()
 
                     ai_command.setHeader( unit->id);
                     ai_command.setMoveToLoc( loc );
-                    global_game_state->unit_manager->sendMessage( &ai_command );
+                    UnitInterface::sendMessage( &ai_command );
                 }
             } // ** if
         } // ** if

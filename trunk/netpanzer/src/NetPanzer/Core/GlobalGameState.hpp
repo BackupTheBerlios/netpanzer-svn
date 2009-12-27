@@ -23,7 +23,6 @@ class TileSet;
 class WorldMap;
 class SpawnList;
 class UnitProfileInterface;
-class UnitInterface;
 
 class GlobalGameState
 {
@@ -33,7 +32,6 @@ public:
     TileSet * tile_set;
     WorldMap * world_map;
     SpawnList * spawn_list;
-    UnitInterface * unit_manager;
     UnitProfileInterface * unit_profile_interface;
 };
 

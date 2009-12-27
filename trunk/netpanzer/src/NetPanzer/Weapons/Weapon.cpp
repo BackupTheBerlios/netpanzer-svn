@@ -116,7 +116,7 @@ void Weapon::fsmFlight( void )
                     weapon_hit.setOwnerUnitID(owner_id);
                     weapon_hit.setHitLocation(location);
                     weapon_hit.setDamageFactor(damage_factor);
-                    global_game_state->unit_manager->sendMessage( &weapon_hit );
+                    UnitInterface::sendMessage( &weapon_hit );
                 }
 
                 fsmFlight_state = _fsmFlight_idle;

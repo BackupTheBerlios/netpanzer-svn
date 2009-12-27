@@ -24,12 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string.h>
 #include "Util/Log.hpp"
-#include "Units/UnitBlackBoard.hpp"
 #include "Units/Unit.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Interfaces/PathScheduler.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Classes/PlayerState.hpp"
+#include "Classes/PlacementMatrix.hpp"
 #include "Weapons/ProjectileInterface.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
@@ -65,7 +65,6 @@ enum
     _ai_command_idle,
     _ai_command_move_to_loc,
     _ai_command_attack_unit,
-    _ai_command_manual_move,
     _ai_command_defend_hold
 };
 
@@ -75,8 +74,7 @@ enum
     _aiFsmMoveToLoc_check_goal,
     _aiFsmMoveToLoc_next_move,
     _aiFsmMoveToLoc_move_wait,
-    _aiFsmMoveToLoc_wait_clear_loc,
-    _aiFsmMoveToLoc_check_fsm_transition
+    _aiFsmMoveToLoc_wait_clear_loc
 };
 
 enum
@@ -87,7 +85,6 @@ enum
     _aiFsmAttackUnit_next_move,
     _aiFsmAttackUnit_move_wait,
     _aiFsmAttackUnit_wait_clear_loc,
-    _aiFsmAttackUnit_check_fsm_transition,
     _aiFsmAttackUnit_check_path_deviation
 };
 
@@ -95,13 +92,6 @@ enum
 {
     _aiFsmDefendHold_search_for_enemy,
     _aiFsmDefendHold_attack_enemy
-};
-
-enum
-{
-    _aiFsmManualMove_next_move,
-    _aiFsmManualMove_move_wait,
-    _aiFsmManualMove_check_fsm_transition
 };
 
 enum
@@ -122,10 +112,9 @@ enum
     _rotate_stop_move
 };
 
-Unit::Unit(PlayerState* ownplayer, UnitInterface * unit_manager, unsigned char utype, UnitID uid, iXY initial_loc)
+Unit::Unit(PlayerState* ownplayer, unsigned char utype, UnitID uid, iXY initial_loc)
     : player(ownplayer), id(uid)
 {
-    my_manager = unit_manager;
     smolderWait    = 0.0f;
     smolderWaitMin = 0.0f;
 
@@ -138,7 +127,7 @@ Unit::Unit(PlayerState* ownplayer, UnitInterface * unit_manager, unsigned char u
     MapInterface::mapXYtoPointXY(initial_loc, &loc);
 
     unit_state.location = loc;
-    global_game_state->unit_manager->markUnitLoc( initial_loc );
+//    UnitInterface::markUnitLoc( initial_loc );
     fsm_timer.changeRate( 10 );
     unit_state_timer.changeRate( 10 );
     setAiFsmDefendHold();
@@ -151,8 +140,6 @@ Unit::Unit(PlayerState* ownplayer, UnitInterface * unit_manager, unsigned char u
     body_anim_shadow.setDrawModeBlend(128); // dark a lot
     turret_anim_shadow.setDrawModeBlend(128); // dark a lot
 
-    path_generated = false;
-    critical_ai_section = false;
     ai_fsm_transition_complete = false;
     
     reload_counter = 0;
@@ -266,7 +253,7 @@ void Unit::updateUnitStateProperties()
 
             DestructUnitOpcode destruct_opcode;
             destruct_opcode.setUnitID(id);
-            my_manager->sendOpcode(&destruct_opcode);
+            UnitInterface::sendOpcode(&destruct_opcode);
         }
         else
         {
@@ -543,7 +530,6 @@ void Unit::setFsmMoveMapSquare( unsigned long square )
         fsmMoveMapSquare_movement_type = _rotate_stop_move;
 
     fsm_active_list[ _control_move_map_square ] = true;
-    critical_ai_section = true;
 
     if ( NetworkState::status == _network_state_server )
     {
@@ -557,7 +543,7 @@ void Unit::setFsmMoveMapSquare( unsigned long square )
         move_opcode.loc_y_offset = (signed char) loc_offset.y;
         if ( move_opcode_sent == true )
         {
-            my_manager->sendOpcode(&move_opcode);
+            UnitInterface::sendOpcode(&move_opcode);
         }
     }
 
@@ -572,7 +558,7 @@ bool Unit::fsmMoveMapSquare()
     {
         if ( opcode_move_timer.count() )
         {
-            my_manager->sendOpcode(&move_opcode);
+            UnitInterface::sendOpcode(&move_opcode);
             move_opcode_sent = true;
         }
     }
@@ -586,11 +572,10 @@ bool Unit::fsmMoveMapSquare()
                 if ( fsmMove() )
                 {
                     fsm_active_list[ _control_move_map_square ] = false;
-                    critical_ai_section = false;
 
                     if ( move_opcode_sent == false && NetworkState::status == _network_state_server )
                     {
-                        my_manager->sendOpcode(&move_opcode);
+                        UnitInterface::sendOpcode(&move_opcode);
                         move_opcode_sent = true;
                     }
                     
@@ -606,11 +591,10 @@ bool Unit::fsmMoveMapSquare()
             if ( fsmMove() )
             {
                 fsm_active_list[ _control_move_map_square ] = false;
-                critical_ai_section = false;
 
                 if ( move_opcode_sent == false && NetworkState::status == _network_state_server )
                 {
-                    my_manager->sendOpcode(&move_opcode);
+                    UnitInterface::sendOpcode(&move_opcode);
                     move_opcode_sent = true;
                 }
 
@@ -640,7 +624,7 @@ void Unit::setFsmTurretTrackPoint(const iXY& target)
     {
         TurretTrackPointOpcode track_point_opcode(id, 0, true);
         track_point_opcode.setTarget(target);
-        my_manager->sendOpcode( &track_point_opcode );
+        UnitInterface::sendOpcode( &track_point_opcode );
     }
 
 }
@@ -654,7 +638,7 @@ void Unit::clearFsmTurretTrackPoint()
     if ( NetworkState::status == _network_state_server )
     {
         TurretTrackPointOpcode track_point_opcode(id, 0, false);
-        my_manager->sendOpcode( &track_point_opcode );
+        UnitInterface::sendOpcode( &track_point_opcode );
     }
 }
 
@@ -664,7 +648,7 @@ void Unit::syncFsmTurretTrackPoint()
     {
         TurretTrackPointOpcode track_point_opcode(id, _unit_opcode_flag_sync, true);
         track_point_opcode.setTarget(fsmTurretTrackPoint_target);
-        my_manager->sendOpcode( &track_point_opcode );
+        UnitInterface::sendOpcode( &track_point_opcode );
     }
 }
 
@@ -698,7 +682,7 @@ void Unit::setFsmTurretTrackTarget(UnitID target_id)
     {
         TurretTrackTargetOpcode track_target_opcode(id, 0, true);
         track_target_opcode.setTargetUnitID(target_id);
-        my_manager->sendOpcode( &track_target_opcode );
+        UnitInterface::sendOpcode( &track_target_opcode );
     }
 
 }
@@ -710,7 +694,7 @@ void Unit::clearFsmTurretTrackTarget()
     if ( NetworkState::status == _network_state_server )
     {
         TurretTrackTargetOpcode track_target_opcode(id, 0, false);
-        my_manager->sendOpcode( &track_target_opcode );
+        UnitInterface::sendOpcode( &track_target_opcode );
     }
 
 }
@@ -721,7 +705,7 @@ void Unit::syncFsmTurretTrackTarget()
     {
         TurretTrackTargetOpcode track_target_opcode(id, _unit_opcode_flag_sync, true);
         track_target_opcode.setTargetUnitID(fsmTurretTrackTarget_target_id);
-        my_manager->sendOpcode( &track_target_opcode );
+        UnitInterface::sendOpcode( &track_target_opcode );
     }
 
 }
@@ -735,7 +719,7 @@ void Unit::fsmTurretTrackTarget()
     Unit *target_unit_ptr;
     iXY direction_vector;
 
-    target_unit_ptr = my_manager->getUnit( fsmTurretTrackTarget_target_id );
+    target_unit_ptr = UnitInterface::getUnit( fsmTurretTrackTarget_target_id );
 
     if ( target_unit_ptr != 0 )
     {
@@ -823,7 +807,7 @@ void Unit::fsmGunneryTarget()
     UnitState *target_unit_state;
     iXY range_vector;
 
-    target_unit_ptr = my_manager->getUnit( fsmGunneryTarget_target_id );
+    target_unit_ptr = UnitInterface::getUnit( fsmGunneryTarget_target_id );
     if ( target_unit_ptr == 0 )
     {
         clearFsmGunneryTarget();
@@ -877,47 +861,40 @@ bool Unit::ruleMoveToLoc_GoalReached()
 
 void Unit::aiFsmMoveToLoc()
 {
-    bool end_cycle = false;
 //LOGGER.warning("Unit %d move", id);
+
+    if ( external_ai_event == _external_event_pending_unit_destruct  )
+    {
+        if ( aiFsmMoveToLoc_state == _aiFsmMoveToLoc_move_wait )
+        {
+            // two positions are used on the unit blackboard, clear both
+            UnitInterface::unmarkUnitLoc(aiFsmMoveToLoc_prev_loc);
+            UnitInterface::unmarkUnitLoc(aiFsmMoveToLoc_next_loc);
+        }
+        
+        aiFsmMoveToLoc_OnExitCleanUp();
+        external_ai_event = _external_event_null;
+        ai_command_state = _ai_command_idle;
+        return;
+    }
+    else if ( pending_AI_comm == true && aiFsmMoveToLoc_state != _aiFsmMoveToLoc_move_wait )
+    {
+        ai_fsm_transition_complete = true;
+        aiFsmMoveToLoc_OnExitCleanUp();
+        return;
+    }
+
+    bool end_cycle = false;
     do
     {
         switch ( aiFsmMoveToLoc_state )
         {
-
             // *************************************************************
             case _aiFsmMoveToLoc_path_generate :
             {
-//LOGGER.warning("path_generate");
-                // QueryPath: Has a path been generated for unit ?
-                path_generated = PathScheduler::queryPath(id);
-
-
-                if ( external_ai_event == _external_event_pending_unit_destruct  )
-                {
-                    // External Event: This unit is about to be deleted
-                    // Action : Exit fsm gracefully
-                    aiFsmMoveToLoc_OnExitCleanUp();
-
-                    iXY current_map_loc;
-                    MapInterface::pointXYtoMapXY( unit_state.location, &current_map_loc );
-                    global_game_state->unit_manager->unmarkUnitLoc( current_map_loc );
-
-                    external_ai_event = _external_event_null;
-                    ai_command_state = _ai_command_idle;
-                    end_cycle = true;
-                }
-                else if ( pending_AI_comm == true )
-                {
-                    // External Event: A new AI command is pending
-                    // Action: Allow command transition to occur
-                    ai_fsm_transition_complete = true;
-                    aiFsmMoveToLoc_OnExitCleanUp();
-                    end_cycle = true;
-                }
-                else if ( path_generated == true )
+                if ( PathScheduler::queryPath(id) )
                 {
                     // Rule QueryPath: is true move to next state
-                    LOG( ("Path Successfully Generated") );
                     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_check_goal;
                 }
                 else
@@ -931,27 +908,16 @@ void Unit::aiFsmMoveToLoc()
 
             case _aiFsmMoveToLoc_check_goal :
             {
-//LOGGER.warning("check_goal");
-                //  GoalReached: Has the goal been reached ?
                 if ( ruleMoveToLoc_GoalReached() == true )
                 {
-//LOGGER.warning("check_goal -> goal_reached");
-                    // Rule GoalReached : is true
-                    // Action : Exit fsm
-                    aiFsmMoveToLoc_prev_loc = unit_state.location;
-                    MapInterface::pointXYtoMapXY( aiFsmMoveToLoc_prev_loc, &aiFsmMoveToLoc_prev_loc );
-                    global_game_state->unit_manager->markUnitLoc( aiFsmMoveToLoc_prev_loc );
-
                     aiFsmMoveToLoc_OnExitCleanUp();
                     setAiFsmDefendHold();
-
                     end_cycle = true;
                 }
                 else
                 {
                     if ( aiFsmMoveToLoc_path_not_finished == false )
                     {
-//LOGGER.warning("check_goal -> path_not_finished");
                         //  Rule: GoalReached is false AND Unit is at the end of path
                         //  Action : Request path generation to goal
                         iXY start;
@@ -966,7 +932,6 @@ void Unit::aiFsmMoveToLoc()
                     }
                     else
                     {
-//LOGGER.warning("check_goal -> path_finished");
                         // Rule GoalReached: is false
                         // Action: Get next move;
                         aiFsmMoveToLoc_state = _aiFsmMoveToLoc_next_move;
@@ -979,30 +944,24 @@ void Unit::aiFsmMoveToLoc()
 
             case _aiFsmMoveToLoc_next_move :
             {
-//LOGGER.warning("next_move");
                 // CurrentPathComplete: is Unit at the end of the current path
                 aiFsmMoveToLoc_path_not_finished = path.popFirst( &aiFsmMoveToLoc_next_square );
                 MapInterface::offsetToMapXY( aiFsmMoveToLoc_next_square, &aiFsmMoveToLoc_next_loc );
-//LOGGER.warning("Unit:moving to %d,%d", aiFsmMoveToLoc_next_loc.x, aiFsmMoveToLoc_next_loc.y);
 
                 if ( !aiFsmMoveToLoc_path_not_finished )
                 {
-//LOGGER.warning("next_move -> path_finished");
                     // Rule: CurrentPathComplete is true
                     // Action : check if unit is at the goal
                     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_check_goal;
                 }
                 else
                 {
-//LOGGER.warning("next_move -> path_not_finished");
                     // Rule: CurrentPathComplete is false
                     // Action: Check if next location is empty
-                    aiFsmMoveToLoc_prev_loc = unit_state.location;
-                    MapInterface::pointXYtoMapXY( aiFsmMoveToLoc_prev_loc, &aiFsmMoveToLoc_prev_loc );
-                    global_game_state->unit_manager->markUnitLoc( aiFsmMoveToLoc_prev_loc );
+                    // Save the current position
+                    MapInterface::pointXYtoMapXY( unit_state.location, &aiFsmMoveToLoc_prev_loc );
 
-                    //aiFsmMoveToLoc_wait_timer.changePeriod( MOVEWAIT_TIME );
-                    aiFsmMoveToLoc_wait_timer.reset();
+                    aiFsmMoveToLoc_wait_timer.changePeriod( MOVEWAIT_TIME );
                     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_wait_clear_loc;
                 }
             }
@@ -1012,59 +971,28 @@ void Unit::aiFsmMoveToLoc()
 
             case _aiFsmMoveToLoc_wait_clear_loc :
             {
-//LOGGER.warning("wait_clear_loc");
-
-                if ( external_ai_event == _external_event_pending_unit_destruct  )
+                if ( UnitInterface::unitOccupiesLoc( aiFsmMoveToLoc_next_loc ) == true )
                 {
-                    // External Event: This unit is about to be deleted
-                    // Action : Exit fsm gracefully
-                    aiFsmMoveToLoc_OnExitCleanUp();
-                    global_game_state->unit_manager->unmarkUnitLoc( aiFsmMoveToLoc_prev_loc );
-                    external_ai_event = _external_event_null;
-                    ai_command_state = _ai_command_idle;
-                    end_cycle = true;
-                }
-                else if ( pending_AI_comm == true )
-                {
-                    // External Event: A new AI command is pending
-                    // Action: Allow command transition to occur
-                    ai_fsm_transition_complete = true;
-                    aiFsmMoveToLoc_OnExitCleanUp();
-                    end_cycle = true;
-                } // NextSquareOccupied: does the next square contain a abstruction
-                else if ( global_game_state->unit_manager->unitOccupiesLoc( aiFsmMoveToLoc_next_loc ) == true )
-                {
-//LOGGER.warning("wait_clear_loc -> unit occupy loc %d,%d", aiFsmMoveToLoc_next_loc.x, aiFsmMoveToLoc_next_loc.y);
-
-                    // Rule: NextSquareOccupied is true
-                    // Action: Check Wait Timer
-
+                    // There is something in the next position, wait to see if it moves
                     if ( aiFsmMoveToLoc_wait_timer.count() )
                     {
-                        // Rule: NextSquareOccupied is true AND WaitTimer is finished
-                        // Action: Preform path update
+                        // It didn't move generate other path
                         if ( aiFsmMoveToLoc_next_loc == aiFsmMoveToLoc_goal )
                         {
-//LOGGER.warning("wait_clear_loc -> unit occupy loc do repath");
-
-                            my_manager->unit_placement_matrix.reset( aiFsmMoveToLoc_goal );
-                            my_manager->unit_placement_matrix.getNextEmptyLoc( &aiFsmMoveToLoc_goal );
+                            PlacementMatrix::reset( aiFsmMoveToLoc_goal );
+                            PlacementMatrix::getNextEmptyLoc( &aiFsmMoveToLoc_goal );
 
                             PathRequest path_request;
+                            // XXX from current position to goal, full
                             path_request.set(id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_full );
                             PathScheduler::requestPath( path_request );
-                            aiFsmMoveToLoc_wait_timer.changePeriod( MOVEWAIT_TIME );
                         }
                         else
                         {
-//LOGGER.warning("wait_clear_loc -> Requesting updated path for unit %d from %d,%d to %d,%d", id,
-//                                           aiFsmMoveToLoc_prev_loc.x, aiFsmMoveToLoc_prev_loc.y,
-//                                           aiFsmMoveToLoc_goal.x,aiFsmMoveToLoc_goal.y);
                             PathRequest path_request;
+                            // XXX from current position to goal, update
                             path_request.set(id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_update );
                             PathScheduler::requestPath( path_request );
-                            // XXX the more times timeout the longer will take next time
-                            aiFsmMoveToLoc_wait_timer.changePeriod( aiFsmMoveToLoc_wait_timer.getPeriod() * 2.0f );
                         }
 
                         aiFsmMoveToLoc_state = _aiFsmMoveToLoc_path_generate;
@@ -1074,12 +1002,11 @@ void Unit::aiFsmMoveToLoc()
                 }
                 else
                 {
-//LOGGER.warning("wait_clear_loc -> is empty");
                     // Rule: NextSquareOccupied is false
                     // Action: Begin move to next square
-                    global_game_state->unit_manager->markUnitLoc( aiFsmMoveToLoc_next_loc );
+                    // XXX should mark the next loc to reserve it for me.
+                    UnitInterface::markUnitLoc( aiFsmMoveToLoc_next_loc );
                     setFsmMoveMapSquare( aiFsmMoveToLoc_next_square );
-//LOGGER.warning("Unit:moving to %d,%d moved", aiFsmMoveToLoc_next_loc.x, aiFsmMoveToLoc_next_loc.y);
 
                     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_move_wait;
                     aiFsmMoveToLoc_wait_timer.changePeriod( 0.8f );
@@ -1092,58 +1019,19 @@ void Unit::aiFsmMoveToLoc()
 
             case _aiFsmMoveToLoc_move_wait :
             {
-//LOGGER.warning("move_wait");
                 // MoveFinished : has the low level fsm finshed
                 if ( fsm_active_list[ _control_move_map_square ] == false )
                 {
-//LOGGER.warning("move_wait -> finished");
-                    // Rule: MoveFinished is true
-                    // Action: Check for a pending transition
-                    global_game_state->unit_manager->unmarkUnitLoc( aiFsmMoveToLoc_prev_loc );
-                    aiFsmMoveToLoc_state = _aiFsmMoveToLoc_check_fsm_transition;
-                    end_cycle = true;
-                }
-                else
-                {
-                    end_cycle = true;
-                } // ** else
-
-            }
-            break;
-
-            // *************************************************************
-
-            case _aiFsmMoveToLoc_check_fsm_transition :
-            {
-//LOGGER.warning("check_fsm_transition");
-                if ( external_ai_event == _external_event_pending_unit_destruct )
-                {
-                    // External Event: This unit is about to be deleted
-                    // Action : Exit fsm gracefully
-                    aiFsmMoveToLoc_OnExitCleanUp();
-                    global_game_state->unit_manager->unmarkUnitLoc( aiFsmMoveToLoc_next_loc );
-                    external_ai_event = _external_event_null;
-                    ai_command_state = _ai_command_idle;
-                    end_cycle = true;
-                }
-                else if ( pending_AI_comm == true )
-                {
-                    // External Event: A new AI command is pending
-                    // Action: Allow command transition to occur
-                    ai_fsm_transition_complete = true;
-                    aiFsmMoveToLoc_OnExitCleanUp();
-                    end_cycle = true;
-                }
-                else
-                {
+                    // Move finished, check goal.
+                    // Remove the unit from the previous position
+                    UnitInterface::unmarkUnitLoc( aiFsmMoveToLoc_prev_loc );
                     aiFsmMoveToLoc_state = _aiFsmMoveToLoc_check_goal;
                 }
-
+                end_cycle = true;
             }
             break;
-            
+
         } // ** switch
-        
     } while (end_cycle == false);
 }
 
@@ -1155,13 +1043,12 @@ void Unit::aiFsmMoveToLoc_OnExitCleanUp()
 
 void Unit::aiFsmAttackUnit()
 {
-    bool end_cycle = false;
 
     UnitState *target_unit_state = 0;
     iXY range_vector;
 
     Unit* target_unit_ptr
-        = my_manager->getUnit( aiFsmAttackUnit_target_ID );
+        = UnitInterface::getUnit( aiFsmAttackUnit_target_ID );
     if ( target_unit_ptr == 0 )
     {
         aiFsmAttackUnit_target_destroyed = true;
@@ -1189,6 +1076,28 @@ void Unit::aiFsmAttackUnit()
         }
     }
 
+    if ( external_ai_event == _external_event_pending_unit_destruct )
+    {
+        if ( aiFsmAttackUnit_state == _aiFsmAttackUnit_move_wait )
+        {
+            // two positions are used on the unit blackboard, clear both
+            UnitInterface::unmarkUnitLoc( aiFsmAttackUnit_prev_loc );
+            UnitInterface::unmarkUnitLoc( aiFsmAttackUnit_next_loc );
+        }
+        
+        aiFsmAttackUnit_OnExitCleanUp();
+        external_ai_event = _external_event_null;
+        ai_command_state = _ai_command_idle;
+        return;
+    }
+    else if ( pending_AI_comm == true && aiFsmAttackUnit_state != _aiFsmAttackUnit_move_wait )
+    {
+        ai_fsm_transition_complete = true;
+        aiFsmAttackUnit_OnExitCleanUp();
+        return;
+    }
+
+    bool end_cycle = false;
     do
     {
         switch ( aiFsmAttackUnit_state )
@@ -1197,32 +1106,7 @@ void Unit::aiFsmAttackUnit()
 
             case _aiFsmAttackUnit_path_generate :
             {
-                // QueryPath: Has a path been generated for unit ?
-                path_generated = PathScheduler::queryPath(id);
-
-                if ( external_ai_event == _external_event_pending_unit_destruct )
-                {
-                    // External Event: This unit is about to be deleted
-                    // Action : Exit fsm gracefully
-                    aiFsmAttackUnit_OnExitCleanUp();
-
-                    iXY current_map_loc;
-                    MapInterface::pointXYtoMapXY( unit_state.location, &current_map_loc );
-                    global_game_state->unit_manager->unmarkUnitLoc( current_map_loc );
-
-                    external_ai_event = _external_event_null;
-                    ai_command_state = _ai_command_idle;
-                    end_cycle = true;
-                }
-                else if ( pending_AI_comm == true )
-                {
-                    // External Event: A new AI command is pending
-                    // Action: Allow command transition to occur
-                    ai_fsm_transition_complete = true;
-                    aiFsmAttackUnit_OnExitCleanUp();
-                    end_cycle = true;
-                }
-                else if ( path_generated == true )
+                if ( PathScheduler::queryPath(id) )
                 {
                     // Rule QueryPath: is true move to next state
                     aiFsmAttackUnit_state = _aiFsmAttackUnit_range_check;
@@ -1245,9 +1129,6 @@ void Unit::aiFsmAttackUnit()
                 {
                     // Rule: RangeVector < WeaponRange, unit is in range
                     // Action: Remain in position
-                    aiFsmAttackUnit_prev_loc = unit_state.location;
-                    MapInterface::pointXYtoMapXY( aiFsmAttackUnit_prev_loc, &aiFsmAttackUnit_prev_loc );
-                    global_game_state->unit_manager->markUnitLoc( aiFsmAttackUnit_prev_loc );
                     aiFsmAttackUnit_state = _aiFsmAttackUnit_idle;
                     end_cycle = true;
                 }
@@ -1280,25 +1161,7 @@ void Unit::aiFsmAttackUnit()
             {
                 range_vector = target_unit_state->location - unit_state.location;
 
-                if ( external_ai_event == _external_event_pending_unit_destruct )
-                {
-                    // External Event: This unit is about to be deleted
-                    // Action : Exit fsm gracefully
-                    aiFsmAttackUnit_OnExitCleanUp();
-                    global_game_state->unit_manager->unmarkUnitLoc( aiFsmAttackUnit_prev_loc );
-                    external_ai_event = _external_event_null;
-                    ai_command_state = _ai_command_idle;
-                    end_cycle = true;
-                }
-                else if ( pending_AI_comm == true )
-                {
-                    // External Event: A new AI command is pending
-                    // Action: Allow command transition to occur
-                    ai_fsm_transition_complete = true;
-                    aiFsmAttackUnit_OnExitCleanUp();
-                    end_cycle = true;
-                }
-                else if ( range_vector.mag2() < unit_state.weapon_range )
+                if ( range_vector.mag2() < unit_state.weapon_range )
                 {
                     // Rule: RangeVector < WeaponRange, unit is in range
                     // Action: Remain in position
@@ -1331,9 +1194,9 @@ void Unit::aiFsmAttackUnit()
                 {
                     // Rule: CurrentPathComplete is false
                     // Action: Check if next location is empty
-                    aiFsmAttackUnit_prev_loc = unit_state.location;
-                    MapInterface::pointXYtoMapXY( aiFsmAttackUnit_prev_loc, &aiFsmAttackUnit_prev_loc );
-                    global_game_state->unit_manager->markUnitLoc( aiFsmAttackUnit_prev_loc );
+                    // Save current location
+                    MapInterface::pointXYtoMapXY( unit_state.location, &aiFsmAttackUnit_prev_loc );
+
                     aiFsmAttackUnit_wait_timer.changePeriod( 0.8f );
                     aiFsmAttackUnit_state = _aiFsmAttackUnit_wait_clear_loc;
                 }
@@ -1344,37 +1207,18 @@ void Unit::aiFsmAttackUnit()
 
             case _aiFsmAttackUnit_wait_clear_loc :
             {
-                if ( external_ai_event == _external_event_pending_unit_destruct )
-                {
-                    // External Event: This unit is about to be deleted
-                    // Action : Exit fsm gracefully
-                    aiFsmAttackUnit_OnExitCleanUp();
-                    global_game_state->unit_manager->unmarkUnitLoc( aiFsmAttackUnit_prev_loc );
-                    external_ai_event = _external_event_null;
-                    ai_command_state = _ai_command_idle;
-                    end_cycle = true;
-                }
-                else if ( pending_AI_comm == true )
-                {
-                    // External Event: A new AI command is pending
-                    // Action: Allow command transition to occur
-                    ai_fsm_transition_complete = true;
-                    aiFsmAttackUnit_OnExitCleanUp();
-                    end_cycle = true;
-                }
-                else if ( global_game_state->unit_manager->unitOccupiesLoc( aiFsmAttackUnit_next_loc ) == true )
+                if ( UnitInterface::unitOccupiesLoc( aiFsmAttackUnit_next_loc ) == true )
                 {
                     if ( aiFsmAttackUnit_wait_timer.count() )
                     {
                         if ( aiFsmAttackUnit_next_loc == aiFsmAttackUnit_target_goal_loc )
                         {
-                            my_manager->unit_placement_matrix.reset( aiFsmAttackUnit_target_goal_loc );
-                            my_manager->unit_placement_matrix.getNextEmptyLoc( &aiFsmAttackUnit_target_goal_loc );
+                            PlacementMatrix::reset( aiFsmAttackUnit_target_goal_loc );
+                            PlacementMatrix::getNextEmptyLoc( &aiFsmAttackUnit_target_goal_loc );
 
                             PathRequest path_request;
                             path_request.set( id, aiFsmAttackUnit_prev_loc, aiFsmAttackUnit_target_goal_loc, 0, &path, _path_request_full );
                             PathScheduler::requestPath( path_request );
-
                         }
                         else
                         {
@@ -1390,7 +1234,7 @@ void Unit::aiFsmAttackUnit()
                 }
                 else
                 {
-                    global_game_state->unit_manager->markUnitLoc( aiFsmAttackUnit_next_loc );
+                    UnitInterface::markUnitLoc( aiFsmAttackUnit_next_loc );
                     setFsmMoveMapSquare( aiFsmAttackUnit_next_square );
                     aiFsmAttackUnit_state = _aiFsmAttackUnit_move_wait;
                 }
@@ -1403,45 +1247,13 @@ void Unit::aiFsmAttackUnit()
             {
                 if ( fsm_active_list[ _control_move_map_square ] == false )
                 {
-                    global_game_state->unit_manager->unmarkUnitLoc( aiFsmAttackUnit_prev_loc );
-                    aiFsmAttackUnit_state = _aiFsmAttackUnit_check_fsm_transition;
+                    UnitInterface::unmarkUnitLoc( aiFsmAttackUnit_prev_loc );
+                    aiFsmAttackUnit_state = _aiFsmAttackUnit_check_path_deviation;
                 }
                 end_cycle = true;
             }
             break;
 
-            // *************************************************************
-
-            case _aiFsmAttackUnit_check_fsm_transition :
-            {
-                if ( external_ai_event == _external_event_pending_unit_destruct )
-                {
-                    // External Event: This unit is about to be deleted
-                    // Action : Exit fsm gracefully
-                    aiFsmAttackUnit_OnExitCleanUp();
-                    global_game_state->unit_manager->unmarkUnitLoc( aiFsmAttackUnit_next_loc );
-                    external_ai_event = _external_event_null;
-                    ai_command_state = _ai_command_idle;
-                    end_cycle = true;
-                }
-                else if ( pending_AI_comm == true )
-                {
-                    ai_fsm_transition_complete = true;
-                    aiFsmAttackUnit_OnExitCleanUp();
-                    end_cycle = true;
-                }
-                else if (  aiFsmAttackUnit_target_destroyed == true )
-                {
-                    setAiFsmDefendHold();
-                    aiFsmAttackUnit_OnExitCleanUp();
-                    end_cycle = true;
-                }
-                else
-                {
-                    aiFsmAttackUnit_state = _aiFsmAttackUnit_check_path_deviation;
-                }
-            }
-            break;
             // *************************************************************
 
             case _aiFsmAttackUnit_check_path_deviation :
@@ -1457,6 +1269,7 @@ void Unit::aiFsmAttackUnit()
                     MapInterface::pointXYtoMapXY( target_unit_state->location, &aiFsmAttackUnit_target_goal_loc );
 
                     PathRequest path_request;
+                    // XXX move from current position to target unit position, full
                     path_request.set( id, aiFsmAttackUnit_next_loc, aiFsmAttackUnit_target_goal_loc, 0, &path, _path_request_full );
                     PathScheduler::requestPath( path_request );
 
@@ -1492,209 +1305,65 @@ void Unit::setAiFsmDefendHold()
 
 void Unit::aiFsmDefendHold()
 {
-    bool end_cycle = false;
-
+    if ( external_ai_event == _external_event_pending_unit_destruct )
+    {
+        // External Event: This unit is about to be deleted
+        // Action : Exit fsm gracefully
+        clearFsmGunneryTarget();
+        external_ai_event = _external_event_null;
+        ai_command_state = _ai_command_idle;
+        return;
+    }
+    else if ( pending_AI_comm == true )
+    {
+        // External Event: A new AI command is pending
+        // Action: Allow command transition to occur
+        clearFsmGunneryTarget();
+        ai_fsm_transition_complete = true;
+        return;
+    }
+    
     Unit  *target_unit_ptr;
-    UnitState *target_unit_state;
-
-    iXY range_vector;
-
+    bool end_cycle = false;
     do
     {
         switch ( aiFsmDefendHold_state )
         {
             case _aiFsmDefendHold_search_for_enemy :
             {
-                if ( external_ai_event == _external_event_pending_unit_destruct )
+                if ( aiFsmDefendHold_search_timer.count() )
                 {
-                    // External Event: This unit is about to be deleted
-                    // Action : Exit fsm gracefully
-                    external_ai_event = _external_event_null;
-                    ai_command_state = _ai_command_idle;
-                    end_cycle = true;
-                }
-                else if ( pending_AI_comm == true )
-                {
-                    // External Event: A new AI command is pending
-                    // Action: Allow command transition to occur
-                    ai_fsm_transition_complete = true;
-                    end_cycle = true;
-                }
-                else if ( aiFsmDefendHold_search_timer.count() )
-                {
-                    if (my_manager->unit_bucket_array.queryClosestEnemyUnitInRange(
+                    if ( UnitBucketArray::queryClosestEnemyUnitInRange(
                                 &target_unit_ptr, unit_state.location, unit_state.weapon_range,
-                                player->getID() ) )
+                                player->getID()) )
                     {
-                        target_unit_state = &(target_unit_ptr->unit_state);
-                        range_vector = target_unit_state->location - unit_state.location;
-                        if ( range_vector.mag2() <= unit_state.defend_range )
+                        if ( (target_unit_ptr->unit_state.location - unit_state.location).mag2() <= unit_state.defend_range )
                         {
                             aiFsmDefendHold_target_ID = target_unit_ptr->id;
                             setFsmGunneryTarget( aiFsmDefendHold_target_ID );
                             aiFsmDefendHold_state = _aiFsmDefendHold_attack_enemy;
-                            end_cycle = true;
                         }
-                        else
-                        {
-                            end_cycle = true;
-                        }
-                    } // **  quearyClosestEnemyUnit
-                    else
-                    {
-                        end_cycle = true;
                     }
-
-                } // ** aiFsmDefendHold_search_timer.count()
-                else
-                {
-                    end_cycle = true;
                 }
+                end_cycle = true;
             }
             break;
 
             case _aiFsmDefendHold_attack_enemy :
             {
-                if ( external_ai_event == _external_event_pending_unit_destruct )
+                target_unit_ptr = UnitInterface::getUnit( aiFsmDefendHold_target_ID );
+                if (   target_unit_ptr == 0
+                    || target_unit_ptr->unit_state.lifecycle_state == _UNIT_LIFECYCLE_DESTROYED
+                    || (target_unit_ptr->unit_state.location - unit_state.location).mag2() > unit_state.defend_range )
                 {
-                    // External Event: This unit is about to be deleted
-                    // Action : Exit fsm gracefully
                     clearFsmGunneryTarget();
-                    external_ai_event = _external_event_null;
-                    ai_command_state = _ai_command_idle;
-                    end_cycle = true;
-                }
-                else if ( pending_AI_comm == true )
-                {
-                    // External Event: A new AI command is pending
-                    // Action: Allow command transition to occur
-                    clearFsmGunneryTarget();
-                    ai_fsm_transition_complete = true;
-                    end_cycle = true;
-                }
-                else
-                {
-                    target_unit_ptr = my_manager->getUnit( aiFsmDefendHold_target_ID );
-                    if ( target_unit_ptr == 0 )
-                    {
-                        clearFsmGunneryTarget();
-                        aiFsmDefendHold_state = _aiFsmDefendHold_search_for_enemy;
-                        end_cycle = true;
-                    }
-                    else
-                    {
-                        target_unit_state = &(target_unit_ptr->unit_state);
-                        if ( target_unit_state->lifecycle_state == _UNIT_LIFECYCLE_DESTROYED )
-                        {
-                            clearFsmGunneryTarget();
-                            aiFsmDefendHold_state = _aiFsmDefendHold_search_for_enemy;
-                            end_cycle = true;
-                        } // ** if
-                        else
-                        {
-                            range_vector = target_unit_state->location - unit_state.location;
-                            if ( range_vector.mag2() > unit_state.defend_range )
-                            {
-                                clearFsmGunneryTarget();
-                                aiFsmDefendHold_state = _aiFsmDefendHold_search_for_enemy;
-                                end_cycle = true;
-                            }
-                        } 
-                    }
+                    aiFsmDefendHold_state = _aiFsmDefendHold_search_for_enemy;
                 }
                 end_cycle = true;
             }
             break;
         } // ** switch
 
-    } while ( end_cycle == false );
-
-}
-
-
-
-
-
-void Unit::aiFsmManualMove()
-{
-    bool end_cycle = false;
-    signed char offset_x = 0, offset_y = 0;
-    size_t next_square;
-
-    do
-    {
-        switch( aiFsmManualMove_state )
-        {
-            case _aiFsmManualMove_next_move :
-            {
-                aiFsmManualMove_prev_loc = aiFsmManualMove_next_loc;
-                orientationToOffset( aiFsmManualMove_move_orientation, &offset_x, &offset_y );
-                aiFsmManualMove_next_loc.x += offset_x;
-                aiFsmManualMove_next_loc.y += offset_y;
-                next_square = MapInterface::mapXYtoOffset(aiFsmManualMove_next_loc);
-
-                if ( MapInterface::getMovementValue( aiFsmManualMove_next_loc ) == 0xFF )
-                {
-                    setAiFsmDefendHold();
-                    end_cycle = true;
-                }
-                else if( global_game_state->unit_manager->unitOccupiesLoc( aiFsmManualMove_next_loc ) == true )
-                {
-                    setAiFsmDefendHold();
-                    end_cycle = true;
-                }
-                else
-                {
-                    global_game_state->unit_manager->markUnitLoc( aiFsmManualMove_next_loc );
-                    setFsmMoveMapSquare( next_square );
-                    aiFsmManualMove_state = _aiFsmManualMove_move_wait;
-                }
-            }
-            break;
-
-            // *************************************************************
-
-            case _aiFsmManualMove_move_wait :
-            {
-                if ( fsm_active_list[ _control_move_map_square ] == false )
-                {
-                    global_game_state->unit_manager->unmarkUnitLoc( aiFsmManualMove_prev_loc );
-                    aiFsmManualMove_state = _aiFsmManualMove_check_fsm_transition;
-                    end_cycle = true;
-                }
-                else
-                {
-                    end_cycle = true;
-                } // ** else
-            }
-            break;
-
-            // *************************************************************
-
-            case _aiFsmManualMove_check_fsm_transition :
-            {
-                if ( external_ai_event == _external_event_pending_unit_destruct )
-                {
-                    // External Event: This unit is about to be deleted
-                    // Action : Exit fsm gracefully
-                    global_game_state->unit_manager->unmarkUnitLoc( aiFsmManualMove_next_loc );
-                    external_ai_event = _external_event_null;
-                    ai_command_state = _ai_command_idle;
-                    end_cycle = true;
-                }
-                else if ( pending_AI_comm == true )
-                {
-                    ai_fsm_transition_complete = true;
-                    end_cycle = true;
-                }
-                else
-                {
-                    aiFsmManualMove_state = _aiFsmManualMove_next_move;
-                }
-            }
-            break;
-
-        } // ** switch
     } while ( end_cycle == false );
 
 }
@@ -1713,7 +1382,7 @@ void Unit::fireWeapon( iXY &target_loc )
     if ( NetworkState::status == _network_state_server ) {
         FireWeaponOpcode fire_opcode(id);
         fire_opcode.setTarget(target_loc);
-        my_manager->sendOpcode(&fire_opcode);
+        UnitInterface::sendOpcode(&fire_opcode);
     }
 }
 
@@ -1798,9 +1467,6 @@ void Unit::updateAIState()
             aiFsmAttackUnit();
             break;
 
-        case _ai_command_manual_move:
-            aiFsmManualMove();
-            break;
     }
 }
 
@@ -1874,7 +1540,7 @@ void Unit::setCommandAttackUnit(const UMesgAICommand* message)
 
     aiFsmAttackUnit_target_ID = message->getTargetUnitID();
 
-    target_unit_ptr = my_manager->getUnit( aiFsmAttackUnit_target_ID );
+    target_unit_ptr = UnitInterface::getUnit( aiFsmAttackUnit_target_ID );
     if ( target_unit_ptr == 0 )
     {
         return;
@@ -1942,7 +1608,7 @@ void Unit::messageWeaponHit(const UnitMessage *message)
 
     update_state_opcode.setUnitID(id);
     update_state_opcode.setHitPoints(unit_state.hit_points);
-    my_manager->sendOpcode( &update_state_opcode );
+    UnitInterface::sendOpcode( &update_state_opcode );
 
     if ( unit_state.hit_points <= 0 )
     {
@@ -1952,12 +1618,12 @@ void Unit::messageWeaponHit(const UnitMessage *message)
         UMesgEndLifeCycleUpdate lifecycle_update;
         lifecycle_update.set(id, weapon_hit->getOwnerUnitID(),
                 unit_state.unit_type);
-        my_manager->sendMessage(&lifecycle_update);
+        UnitInterface::sendMessage(&lifecycle_update);
 
         // ** Note: Temp
-        iXY current_map_loc;
-        MapInterface::pointXYtoMapXY(unit_state.location, &current_map_loc);
-        global_game_state->unit_manager->unmarkUnitLoc(current_map_loc);
+//        iXY current_map_loc;
+//        MapInterface::pointXYtoMapXY(unit_state.location, &current_map_loc);
+//        UnitInterface::unmarkUnitLoc(current_map_loc);
     }
 }
 
@@ -1995,9 +1661,9 @@ void Unit::messageSelfDestruct(const UnitMessage* )
     external_ai_event = _external_event_pending_unit_destruct;
 
     // ** Note: Temp
-    iXY current_map_loc;
-    MapInterface::pointXYtoMapXY( unit_state.location, &current_map_loc );
-    global_game_state->unit_manager->unmarkUnitLoc( current_map_loc );
+//    iXY current_map_loc;
+//    MapInterface::pointXYtoMapXY( unit_state.location, &current_map_loc );
+//    UnitInterface::unmarkUnitLoc( current_map_loc );
 }
 
 void Unit::processMessage(const UnitMessage* message)
@@ -2141,7 +1807,7 @@ void Unit::syncUnit()
 
     SyncUnitOpcode sync_opcode(id);
 
-    my_manager->sendOpcode( &sync_opcode );
+    UnitInterface::sendOpcode( &sync_opcode );
 }
 
 

@@ -18,38 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PLACEMENTMATRIX_HPP
 #define _PLACEMENTMATRIX_HPP
 
-#include "Types/iXY.hpp"
+class iXY;
 
 class PlacementMatrix
 {
-protected:
-    enum { _placement_state_base_case,
-           _placement_state_top_run,
-           _placement_state_right_run,
-           _placement_state_bottom_run,
-           _placement_state_left_run
-         };
-
-    unsigned char placement_state;
-    long run_length;
-    long run_counter;
-    iXY current_offset;
-    iXY current_loc;
-    iXY ini_loc;
-
-    bool verifyLocation( iXY &loc );
-
-protected:
-    //long level;
-    //long direction;
-    //iXY ini_loc;
-
 public:
-    void reset( iXY ini_map_loc );
-
-    bool getNextEmptyLoc( iXY *loc );
-
-
+    static void reset( const iXY& ini_map_loc );
+    static bool getNextEmptyLoc( iXY *loc );
 };
 
 #endif // ** _PLACEMENTMATRIX_HPP

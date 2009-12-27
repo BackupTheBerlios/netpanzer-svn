@@ -34,17 +34,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ChatMesgRequest ChatInterface::current_chat_mesg;
 void (* ChatInterface::addChatString)( const char *message_text ) = 0;
 
-void ChatInterface::chatMessageRequest(const NetMessage* message)
+void ChatInterface::chatMessageRequest(const NetPacket* packet)
 {
     bool post_on_server = false;
     ChatMesg chat_mesg;
-    const ChatMesgRequest* chat_request = (const ChatMesgRequest*) message;
+    const ChatMesgRequest* chat_request = (const ChatMesgRequest*) packet->getNetMessage();
 
-    if(chat_request->message_scope != _chat_mesg_scope_server
-            && chat_request->getSourcePlayerIndex() 
-            >= PlayerInterface::getMaxPlayers())
+    if (   chat_request->message_scope != _chat_mesg_scope_server
+        && chat_request->getSourcePlayerIndex() != packet->fromPlayer )
     {
-        LOGGER.warning("Invalid chatMessageRequest");
+        LOGGER.warning("Chat message cheat from player %d", packet->fromPlayer);
+        return;
+    }
+
+    if (   chat_request->message_scope == _chat_mesg_scope_server
+        && NetworkState::getNetworkStatus() == _network_state_server
+        && packet->fromClient )
+    {
+        LOGGER.warning("Chat server message cheat from player %d", packet->fromPlayer);
         return;
     }
 
@@ -55,8 +62,37 @@ void ChatInterface::chatMessageRequest(const NetMessage* message)
 
     if( chat_request->message_scope == _chat_mesg_scope_all )
     {
-        NetworkServer::broadcastMessage(&chat_mesg, sizeof(ChatMesg));
-        post_on_server = true;
+            lua_State *L = ScriptManager::getLuavm();
+            lua_getglobal(L, "serverHandleMessage");
+            if ( lua_isfunction(L, -1) )
+            {
+                lua_pushstring(L, chat_mesg.message_text);
+                lua_pushinteger(L, packet->fromPlayer );
+                if ( lua_pcall(L, 2, 1, 0) != 0 )
+                {
+                    LOGGER.warning("error running function 'serverHandleMessage': %s\n",lua_tostring(L, -1));
+                }
+
+                if ( lua_isboolean(L,-1) )
+                {
+                    bool want_broadcast = lua_toboolean(L, -1);
+                    lua_pop(L,1);
+                    if ( want_broadcast )
+                    {
+                        NetworkServer::broadcastMessage(&chat_mesg, sizeof(ChatMesg));
+                        post_on_server = true;
+                    }
+                }
+            }
+            else
+            {
+                lua_pop(L, 1);
+                NetworkServer::broadcastMessage(&chat_mesg, sizeof(ChatMesg));
+                post_on_server = true;
+            }
+
+//        NetworkServer::broadcastMessage(&chat_mesg, sizeof(ChatMesg));
+//        post_on_server = true;
     }
     else if( chat_request->message_scope == _chat_mesg_scope_alliance )
     {
@@ -143,10 +179,10 @@ void ChatInterface::chatMessageRequest(const NetMessage* message)
     }
 }
 
-void ChatInterface::chatMessage(const NetMessage* message)
+void ChatInterface::chatMessage(const NetPacket* packet)
 {
     unsigned short local_player_index;
-    const ChatMesg *chat_mesg = (const ChatMesg*) message;
+    const ChatMesg *chat_mesg = (const ChatMesg*) packet->getNetMessage();
 
     if(chat_mesg->message_scope != _chat_mesg_scope_server 
             && chat_mesg->getSourcePlayerIndex() 
@@ -195,20 +231,21 @@ void ChatInterface::chatMessage(const NetMessage* message)
             player_state->getName().c_str(), chat_mesg->message_text );
 }
 
-void ChatInterface::processChatMessages(const NetMessage* message)
+void ChatInterface::processChatMessages(const NetPacket* packet)
 {
-    switch(message->message_id) {
+    switch(packet->getNetMessage()->message_id) {
         case _net_message_id_chat_mesg_req:
-            chatMessageRequest(message);
+            chatMessageRequest(packet);
             break;
 
         case _net_message_id_chat_mesg:
-            chatMessage(message);
+            chatMessage(packet);
             break;
 
         default:
             LOGGER.warning("Received unknown chat message (id %d-%d)",
-                    message->message_class, message->message_id);
+                            packet->getNetMessage()->message_class,
+                            packet->getNetMessage()->message_id);
     }
 }
 
@@ -302,3 +339,56 @@ ChatInterface::sendQuickMessage(unsigned int n)
         sendCurrentMessage(msg);
     }
 }
+
+void
+ChatInterface::say(const char *message)
+{
+    ChatMesgRequest cmsg;
+    cmsg.setSourcePlayerIndex(PlayerInterface::getLocalPlayerIndex());
+    strncpy( cmsg.message_text, message, 149 );
+    cmsg.message_text[ 149 ] = 0;
+    cmsg.message_scope = _chat_mesg_scope_all;
+    NetworkClient::sendMessage(&cmsg, sizeof(cmsg));
+}
+
+void
+ChatInterface::teamsay(const char* message)
+{
+    ChatMesgRequest cmsg;
+    cmsg.setSourcePlayerIndex(PlayerInterface::getLocalPlayerIndex());
+    strncpy( cmsg.message_text, message, 149 );
+    cmsg.message_text[ 149 ] = 0;
+    cmsg.message_scope = _chat_mesg_scope_alliance;
+    NetworkClient::sendMessage(&cmsg, sizeof(cmsg));
+}
+
+void
+ChatInterface::serversay(const char* message)
+{
+    ChatMesgRequest cmsg;
+    cmsg.setSourcePlayerIndex(PlayerInterface::getLocalPlayerIndex());
+    strncpy( cmsg.message_text, message, 149 );
+    cmsg.message_text[ 149 ] = 0;
+    cmsg.message_scope = _chat_mesg_scope_server;
+//    NetworkServer::broadcastMessage(&cmsg, sizeof(cmsg));
+    NetworkClient::sendMessage(&cmsg, sizeof(cmsg));
+}
+
+void
+ChatInterface::serversayTo(const Uint16 player, const char* message)
+{
+    if ( player == PlayerInterface::getLocalPlayerIndex() )
+    {
+        ConsoleInterface::postMessage(Color::unitAqua, false, 0, "Server: %s", message );
+    }
+    else
+    {
+        ChatMesgRequest cmsg;
+        cmsg.setSourcePlayerIndex(PlayerInterface::getLocalPlayerIndex());
+        strncpy( cmsg.message_text, message, 149 );
+        cmsg.message_text[ 149 ] = 0;
+        cmsg.message_scope = _chat_mesg_scope_server;
+        NetworkServer::sendMessage(player, &cmsg, sizeof(cmsg));
+    }
+}
+

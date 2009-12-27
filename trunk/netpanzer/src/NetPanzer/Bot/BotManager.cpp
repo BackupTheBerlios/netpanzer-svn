@@ -72,46 +72,15 @@ BotManager::addBot()
 void
 BotManager::removeBot(Uint16 playerid)
 {
-    for (BotList::iterator i = bot_list.begin(); i != bot_list.end(); i++)
+    for (BotList::iterator i = bot_list.begin(); i != bot_list.end(); ++i)
     {
         if ( (*i)->botPlayerId == playerid )
         {
-            PlayerState * player = PlayerInterface::getPlayer(playerid);
-
-            ObjectiveInterface::disownPlayerObjectives( playerid );
-
-            global_game_state->unit_manager->destroyPlayerUnits( playerid );
-
-            ResourceManagerReleaseFlagMessage releasemsg;
-            releasemsg.setFlagID(player->getFlag());
-            ResourceManager::releaseFlag(player->getFlag());
-
-            PlayerInterface::disconnectPlayerCleanup( playerid );
-
-            NetworkServer::broadcastMessage(&releasemsg, sizeof(releasemsg));
-
-            SystemConnectAlert msg;
-            msg.set( playerid, _connect_alert_mesg_disconnect);
-            NetworkServer::broadcastMessage(&msg, sizeof(msg));
-            
             delete (*i);
             bot_list.erase(i);
             break;
         }
     }
-}
-
-void
-BotManager::removeAllBots()
-{
-    BotList::iterator i = bot_list.begin();
-    while ( i != bot_list.end() )
-    {
-        // removeBot will erase the item from list
-        removeBot((*i)->botPlayerId);
-        i = bot_list.begin();
-    }
-    // bot_list already cleared
 }
 
 bool

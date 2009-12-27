@@ -28,7 +28,6 @@ class BotManager
 public:
     static Uint16 addBot();
     static void removeBot(Uint16 playerid);
-    static void removeAllBots();
     static bool isBot(Uint16 playerid);
     static void simBots();
     

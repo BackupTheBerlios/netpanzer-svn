@@ -38,22 +38,33 @@ class ConnectMesgServerGameSettings;
 class GameManager
 {
 public:
+    // ** Game Rules Methods
+    static void spawnPlayer( const Uint16 player );
+    static void spawnPlayerAt( const Uint16 player, const iXY& position );
+    static void respawnAllPlayers();
+
+    static void kickPlayer( const Uint16 player );
+    static void destroyPlayerUnits( const Uint16 player );
+    static void disownPlayerObjectives( const Uint16 player );
+
+    static Uint16 addBot();
+    static void removeAllBots();
+
+    static void exitNetPanzer();
+    static void quitNetPanzerGame();
+
+    static bool changeMap(const char * map_name);
+
+    static void disconnectPlayerCleanUp( const Uint16 player );
+
     static void dedicatedLoadGameMap(const char *map_file_path );
     static void loadGameMap(const char *map_file_path);
-
-    // ** Game Rules Methods
-    static void spawnPlayer( Uint16 player );
-    static void respawnAllPlayers();
 
     static void shutdownParticleSystems();
 
     static bool startClientGameSetup(const NetMessage* message, int *result_code);
     static void clientGameSetup();
     static ConnectMesgServerGameSettings* getServerGameSetup();
-
-    static void exitNetPanzer();
-
-    static void quitNetPanzerGame();
 
     static void setNetPanzerGameOptions();
 

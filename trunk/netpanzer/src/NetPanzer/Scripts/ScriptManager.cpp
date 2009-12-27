@@ -73,8 +73,9 @@ ScriptManager::runStr(const char * runname, const char * str)
 void
 ScriptManager::runFile(const char * runname, const char * filename)
 {
-    luaL_loadfile(luavm, filesystem::getRealName(filename).c_str());
-    int error=lua_pcall(luavm,0,0,0);
+//    luaL_loadfile(luavm, filesystem::getRealName(filename).c_str());
+//    int error=lua_pcall(luavm,0,0,0);
+    int error = luaL_dofile(luavm, filesystem::getRealName(filename).c_str());
     if (error)
     {
         printf("error is: %s\n",lua_tostring(luavm,-1));

@@ -41,7 +41,7 @@ public:
     UnitState    unit_state;
     bool         in_sync_flag;
 
-    Unit(PlayerState* ownplayer, UnitInterface * unit_manager, unsigned char utype, UnitID uid, iXY initial_loc);
+    Unit(PlayerState* ownplayer, unsigned char utype, UnitID uid, iXY initial_loc);
 
     void soundSelected();
 
@@ -79,8 +79,6 @@ protected:
     bool fsm_active_list[ 7 ];
 
     PathList path;
-    bool path_generated;
-    bool critical_ai_section;
     bool ai_fsm_transition_complete;
 
     unsigned short reload_counter;
@@ -181,13 +179,6 @@ protected:
     void aiFsmAttackUnit_OnExitCleanUp();
     void aiFsmAttackUnit();
 
-
-    unsigned char aiFsmManualMove_move_orientation;
-    unsigned char aiFsmManualMove_state;
-    iXY aiFsmManualMove_next_loc;
-    iXY aiFsmManualMove_prev_loc;
-    void aiFsmManualMove();
-
     void fireWeapon( iXY &target_loc );
     unsigned short launchProjectile();
 
@@ -229,7 +220,6 @@ protected:
 
 private:
     friend class UnitInterface;
-    UnitInterface * my_manager;
 
     void setID(UnitID id)
     {

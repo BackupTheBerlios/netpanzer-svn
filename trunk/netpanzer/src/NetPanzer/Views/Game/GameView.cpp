@@ -115,7 +115,7 @@ void GameView::doDraw()
     ParticleSystem2D::drawAll( SPRITE_SORTER );
     Particle2D::drawAll( SPRITE_SORTER );
 
-    global_game_state->unit_manager->offloadGraphics( SPRITE_SORTER );
+    UnitInterface::offloadGraphics( SPRITE_SORTER );
     ProjectileInterface::offloadGraphics( SPRITE_SORTER );
     ObjectiveInterface::offloadGraphics( SPRITE_SORTER );
     PowerUpInterface::offloadGraphics( SPRITE_SORTER );

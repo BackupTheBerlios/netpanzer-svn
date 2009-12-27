@@ -276,9 +276,7 @@ BaseGameManager::initializeGameLogic()
 {
     PlayerInterface::initialize(gameconfig->maxplayers); // can pas
 
-    UnitInterface * uin = new UnitInterface();
-    uin->initialize(gameconfig->maxunits); // uses map
-    global_game_state->unit_manager = uin;
+    UnitInterface::initialize(gameconfig->maxunits);
 
     PathScheduler::initialize(); // uses map
     PowerUpInterface::resetLogic(); // depends on map loaded
@@ -298,10 +296,7 @@ BaseGameManager::resetGameLogic()
 {
     PlayerInterface::reset();
 
-    if ( global_game_state->unit_manager )
-    {
-        global_game_state->unit_manager->reset();
-    }
+    UnitInterface::reset();
 
     PathScheduler::initialize();
     PowerUpInterface::resetLogic();
@@ -316,13 +311,8 @@ BaseGameManager::shutdownGameLogic()
 {
     PlayerInterface::cleanUp();
 
-    if ( global_game_state->unit_manager )
-    {
-        delete global_game_state->unit_manager;
-        global_game_state->unit_manager = 0;
-    }
-
-//    UnitInterface::cleanUp();
+    UnitInterface::cleanUp();
+    
     PathScheduler::cleanUp();
     //ObjectiveInterface::cleanUp();
 

@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ArrayUtil/BitArray.hpp"
 #include "Interfaces/MapInterface.hpp"
-#include "Units/UnitBlackBoard.hpp"
 #include "Classes/AI/PathList.hpp"
 
 enum { _path_request_full, _path_request_update };

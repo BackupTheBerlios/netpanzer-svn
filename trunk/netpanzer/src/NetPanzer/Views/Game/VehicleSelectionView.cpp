@@ -406,7 +406,7 @@ void VehicleSelectionView::doDraw()
     }
 
     int unitPerPlayer = gameconfig->maxunits / gameconfig->maxplayers;
-    sprintf(strBuf, "%d/%d", int(global_game_state->unit_manager->getUnitCount(PlayerInterface::getLocalPlayerIndex())), unitPerPlayer);
+    sprintf(strBuf, "%d/%d", int(UnitInterface::getPlayerUnitCount(PlayerInterface::getLocalPlayerIndex())), unitPerPlayer);
     drawString(unitsBuiltPos.x, unitsBuiltPos.y, strBuf, color);
 
     drawUnitProfileInfo( iXY(0, unitProfileDataY), highlightedUnitType);

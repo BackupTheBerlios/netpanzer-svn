@@ -47,7 +47,7 @@ InfoBar::draw( int posx, int posy, Surface &dest)
              "game %s | units %3d/%-3d | frags %4d/%-4d | objs. %3d/%-3d | time %02d:%02d/%02d:%02d | FPS %.2f",
              gameconfig->getGameTypeString(),
              
-             int(global_game_state->unit_manager->getUnitCount(PlayerInterface::getLocalPlayerIndex())),
+             int(UnitInterface::getPlayerUnitCount(PlayerInterface::getLocalPlayerIndex())),
              gameconfig->maxunits / gameconfig->maxplayers,
              
              PlayerInterface::getLocalPlayer()->getTotal(),

@@ -30,58 +30,61 @@ typedef std::vector<UnitList> BucketList;
 class UnitBucketArray
 {
 public:
-    void queryPlayerUnitsAt(std::vector<UnitID>& working_list,
+    static void queryPlayerUnitsAt(std::vector<UnitID>& working_list,
                             const iXY& point,
                             const Uint16 player_id);
 
-    void queryUnitsInWorldRect(std::vector<Unit *>& working_list,
+    static void queryUnitsInWorldRect(std::vector<Unit *>& working_list,
                                const iRect& rect);
 
-    void queryPlayerUnitsInWorldRect(std::vector<UnitID>& working_list,
+    static void queryPlayerUnitsInWorldRect(std::vector<UnitID>& working_list,
                                      const iRect& rect,
                                      const Uint16 player_id);
 
-    void queryNonPlayerUnitsInWorldRect(std::vector<Unit *>& working_list,
+    static void queryNonPlayerUnitsInWorldRect(std::vector<Unit *>& working_list,
                                         const iRect& rect,
                                         const Uint16 player_id);
 
-    Unit * queryUnitAtMapLoc(const iXY& map_loc);
+    static Unit * queryUnitAtMapLoc(const iXY& map_loc);
 
-    Unit * queryNonPlayerUnitAtWorld(const iXY & world_loc,
+    static Unit * queryNonPlayerUnitAtWorld(const iXY & world_loc,
                                      const Uint16 player_id);
 
-    bool queryClosestEnemyUnitInRange(Unit **closest_unit_ptr,
+    static bool queryClosestEnemyUnitInRange(Unit **closest_unit_ptr,
                                       const iXY &loc,
                                       unsigned long range,
                                       const Uint16 player_id);
 
 private:
     friend class UnitInterface;
-    UnitBucketArray( ) {}
-    ~UnitBucketArray( ) {}
+    
+    static void initialize(const iXY & map_size, const iXY & tile_size,
+                     const unsigned int x_sample, const unsigned int y_sample);
 
-    void sort();
-
-    void initialize( const iXY & map_size, const iXY & tile_size,
-                     const unsigned int x_sample, const unsigned int y_sample );
-    void initialize( const iXY & map_size, const iXY & tile_size)
+    static void initialize(const iXY & map_size, const iXY & tile_size)
     {
         initialize( map_size, tile_size, 10, 10 );
     }
+
+    static void cleanUp()
+    {
+        if ( buckets )
+        {
+            delete buckets;
+            buckets = 0;
+        }
+    }
+
+    static void sort();
     
-    void moveUnit( Unit * unit, const unsigned int from, const unsigned int to )
+    static void moveUnit(Unit * unit, const unsigned int from, const unsigned int to)
     {
         UnitList & uli = getBucket(from);
         uli.erase(std::remove(uli.begin(), uli.end(), unit), uli.end());
         getBucket(to).push_back(unit);
     }
 
-    void cleanUp()
-    {
-        buckets.clear();
-    }
-
-    Unit * getUnitAtWorldLoc( const UnitID unit_id, const iXY & world_loc)
+    static Unit * getUnitAtWorldLoc(const UnitID unit_id, const iXY & world_loc)
     {
         UnitList & uli = getBucketAssocWorldLoc(world_loc);
         UnitList::iterator iter;
@@ -89,7 +92,7 @@ private:
         return (iter != uli.end())?*iter:0;
     }
 
-    Unit * getUnitAtMapLoc( const UnitID unit_id, const iXY & map_loc )
+    static Unit * getUnitAtMapLoc(const UnitID unit_id, const iXY & map_loc)
     {
         UnitList & uli = getBucketAssocMapLoc(map_loc);
         UnitList::iterator iter;
@@ -97,58 +100,60 @@ private:
         return (iter != uli.end())?*iter:0;
     }
 
-    void addUnit( Unit *unit )
+    static void addUnit(Unit *unit)
     {
         getBucketAssocWorldLoc(unit->unit_state.location).push_back(unit);
     }
 
-    void removeUnit( const Unit *unit )
+    static void removeUnit(const Unit *unit)
     {
         UnitList & uli = getBucketAssocWorldLoc(unit->unit_state.location);
         uli.erase(std::remove(uli.begin(), uli.end(), unit), uli.end());
     }
 
-    unsigned int getSize() const
+    static unsigned int getSize()
     {
-        return buckets.size();
+        return buckets->size();
     }
 
-    UnitList & getBucket(const unsigned int bucket_index)
+    static UnitList & getBucket(const unsigned int bucket_index)
     {
 //        assert( bucket_index < getSize() );
-        return( buckets[ bucket_index ] );
+        return( (*buckets)[ bucket_index ] );
     }
 
-    UnitList & getBucket( const unsigned int row, const unsigned int column )
+    static UnitList & getBucket(const unsigned int row, const unsigned int col)
     {
-        return ( getBucket((row * column_size) + column) );
+        return ( getBucket((row * column_size) + col) );
     }
 
-    unsigned int mapLocToBucketIndex( const iXY & map_loc ) const
+    static unsigned int mapLocToBucketIndex(const iXY & map_loc)
     {
         return ((map_loc.y / map_y_sample_factor) * column_size)
                 + (map_loc.x / map_x_sample_factor);
     }
 
-    unsigned int worldLocToBucketIndex( const iXY & world_loc ) const
+    static unsigned int worldLocToBucketIndex(const iXY & world_loc)
     {
         return ((world_loc.y / pixel_y_sample_factor) * column_size)
                 + (world_loc.x / pixel_x_sample_factor);
     }
 
-    void worldLocToBucketLoc( const iXY & world_loc, iXY & bucket_loc ) const
+    static void worldLocToBucketLoc(const iXY & world_loc, iXY & bucket_loc)
     {
         bucket_loc.x = (world_loc.x-1) / pixel_x_sample_factor;
         bucket_loc.y = (world_loc.y-1) / pixel_y_sample_factor;
     }
 
-    void worldRectToBucketRect( const iRect & world_rect, iRect &bucket_rect ) const
+    static void worldRectToBucketRect(const iRect & world_rect, iRect &bucket_rect)
     {
         worldLocToBucketLoc(world_rect.min, bucket_rect.min);
         worldLocToBucketLoc(world_rect.max, bucket_rect.max);
     }
 
-    void unitRangeToBucketRect( const iXY& world_loc, unsigned long range, iRect &bucket_rect ) const
+    static void unitRangeToBucketRect(const iXY& world_loc,
+                                      unsigned long range,
+                                      iRect &bucket_rect)
     {
         worldLocToBucketLoc(world_loc, bucket_rect.min);
         worldLocToBucketLoc(world_loc, bucket_rect.max);
@@ -171,35 +176,35 @@ private:
         }
     }
 
-    void mapLocToBucketLoc( const iXY & map_loc, iXY & bucket_loc) const
+    static void mapLocToBucketLoc(const iXY & map_loc, iXY & bucket_loc)
     {
         bucket_loc.x = map_loc.x / map_x_sample_factor;
         bucket_loc.y = map_loc.y / map_y_sample_factor;
     }
 
-    void mapRectToBucketRect( const iRect & map_rect, iRect &bucket_rect ) const
+    static void mapRectToBucketRect(const iRect & map_rect, iRect &bucket_rect)
     {
         mapLocToBucketLoc(map_rect.min, bucket_rect.min);
         mapLocToBucketLoc(map_rect.max, bucket_rect.max);
     }
 
-    UnitList & getBucketAssocWorldLoc( const iXY & world_loc )
+    static UnitList & getBucketAssocWorldLoc(const iXY & world_loc)
     {
         return getBucket(worldLocToBucketIndex(world_loc));
     }
 
-    UnitList & getBucketAssocMapLoc( const iXY & map_loc )
+    static UnitList & getBucketAssocMapLoc(const iXY & map_loc)
     {
         return getBucket(mapLocToBucketIndex(map_loc));
     }
 
-    BucketList buckets;
-    long map_x_sample_factor;
-    long map_y_sample_factor;
-    long pixel_x_sample_factor;
-    long pixel_y_sample_factor;
-    size_t row_size;
-    size_t column_size;
+    static BucketList* buckets;
+    static long map_x_sample_factor;
+    static long map_y_sample_factor;
+    static long pixel_x_sample_factor;
+    static long pixel_y_sample_factor;
+    static size_t row_size;
+    static size_t column_size;
 
     struct FindUnit
     {

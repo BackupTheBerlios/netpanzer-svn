@@ -23,5 +23,5 @@ GlobalGameState * global_game_state = 0;
 
 GlobalGameState::GlobalGameState()
         : tile_set(0), world_map(0), spawn_list(0),
-          unit_manager(0), unit_profile_interface(0)
+          unit_profile_interface(0)
 {}

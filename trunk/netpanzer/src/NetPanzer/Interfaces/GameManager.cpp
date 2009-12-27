@@ -48,7 +48,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/WorldViewInterface.hpp"
 
 #include "Classes/ScreenSurface.hpp"
-#include "Units/UnitBlackBoard.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
 #include "Classes/SpriteSorter.hpp"
 #include "Classes/Network/ClientConnectDaemon.hpp"
@@ -100,8 +99,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileSystem.hpp"
 
 #include "Bot/Bot.hpp"
+#include "Bot/BotManager.hpp"
 
 #include "Classes/SpawnList.hpp"
+#include "Resources/ResourceManager.hpp"
+#include "Resources/ResourceManagerMessages.hpp"
 
 #define _MAX_INITIALIZE_PROCS (10)
 #define _MAX_DEDICATED_INITIALIZE_PROCS (8)
@@ -230,7 +232,7 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
 }
 
 // ******************************************************************
-void GameManager::spawnPlayer( Uint16 player )
+void GameManager::spawnPlayer( const Uint16 player )
 {
     global_engine_state->sound_manager->stopTankIdle();
 
@@ -239,20 +241,19 @@ void GameManager::spawnPlayer( Uint16 player )
 
     PlayerInterface::spawnPlayer( player, spawn_point );
 
-    //** Change the location of the view camera to the spawn point **
-    iXY world_loc;
-    MapInterface::mapXYtoPointXY( spawn_point, &world_loc );
-    if ( PlayerInterface::getLocalPlayerIndex() == player )
-    {
-        WorldViewInterface::setCameraPosition( world_loc );
-    }
-    else
-    {
-        SystemSetPlayerView set_view(world_loc.x, world_loc.y);
-        NetworkServer::sendMessage(player, &set_view, sizeof(SystemSetPlayerView));
-    }
-
     global_engine_state->sound_manager->playTankIdle();
+}
+
+void GameManager::spawnPlayerAt( const Uint16 player, const iXY& location )
+{
+    if (   location.x >=0 && location.y >=0
+        && location.x < global_game_state->world_map->getWidth()
+        && location.y < global_game_state->world_map->getHeight() )
+    {
+        global_engine_state->sound_manager->stopTankIdle();
+        PlayerInterface::spawnPlayer( player, location );
+        global_engine_state->sound_manager->playTankIdle();
+    }
 }
 
 void GameManager::respawnAllPlayers()
@@ -271,6 +272,82 @@ void GameManager::respawnAllPlayers()
             spawnPlayer( player_index );
         }
     }
+}
+
+void GameManager::disconnectPlayerCleanUp(const Uint16 player)
+{
+    destroyPlayerUnits(player);
+    disownPlayerObjectives(player);
+
+    PlayerState* player_st = PlayerInterface::getPlayer(player);
+
+    ResourceManagerReleaseFlagMessage releasemsg;
+    releasemsg.setFlagID(player_st->getFlag());
+    ResourceManager::releaseFlag(player_st->getFlag());
+    NetworkServer::broadcastMessage(&releasemsg, sizeof(releasemsg));
+
+    PlayerInterface::disconnectPlayerCleanup( player );
+
+    SystemConnectAlert msg;
+    msg.set( player, _connect_alert_mesg_disconnect);
+    NetworkServer::broadcastMessage(&msg, sizeof(msg));
+}
+
+void GameManager::kickPlayer(const Uint16 player)
+{
+    if ( player < PlayerInterface::getMaxPlayers() )
+    {
+        if ( BotManager::isBot(player) )
+        {
+            BotManager::removeBot(player);
+        }
+        else
+        {
+            NetworkServer::removePlayerSocket(player);
+        }
+        disconnectPlayerCleanUp(player);
+    }
+}
+
+void GameManager::destroyPlayerUnits(const Uint16 player)
+{
+    UnitInterface::destroyPlayerUnits(player);
+}
+
+void GameManager::disownPlayerObjectives(const Uint16 player)
+{
+    if ( player < PlayerInterface::getMaxPlayers() )
+    {
+        ObjectiveInterface::disownPlayerObjectives(player);
+    }
+}
+
+Uint16 GameManager::addBot()
+{
+    return BotManager::addBot();
+}
+
+void GameManager::removeAllBots()
+{
+    for (Uint16 player=0; player<PlayerInterface::getMaxPlayers(); ++player)
+    {
+        if ( BotManager::isBot(player) )
+        {
+            BotManager::removeBot(player);
+            disconnectPlayerCleanUp(player);
+        }
+    }
+}
+
+bool GameManager::changeMap(const char* map_name)
+{
+    if ( !MapsManager::existsMap(map_name) )
+    {
+        return false;
+    }
+
+    GameControlRulesDaemon::forceMapChange(map_name);
+    return true;
 }
 
 // ******************************************************************

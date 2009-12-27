@@ -28,9 +28,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 UnitSync::UnitSync(ClientSocket * c)
     : client(c), count(0), unitid(0), unitstosync(0), lastunit(0)
 {
-    unitstosync = global_game_state->unit_manager->getTotalUnitCount();
+    unitstosync = UnitInterface::getTotalUnitCount();
     if ( unitstosync ) {
-        lastunit = global_game_state->unit_manager->getUnits().rbegin()->first;
+        lastunit = UnitInterface::getUnits()->rbegin()->first;
     }
 }
 
@@ -47,9 +47,9 @@ int UnitSync::getPercentComplete() const
 
 bool UnitSync::sendNextUnit()
 {
-    const UnitInterface::Units& units = global_game_state->unit_manager->getUnits();
-    UnitInterface::Units::const_iterator i = units.lower_bound(unitid);
-    if(i == units.end() || i->first > lastunit ) {
+    const UnitInterface::Units* units = UnitInterface::getUnits();
+    UnitInterface::Units::const_iterator i = units->lower_bound(unitid);
+    if(i == units->end() || i->first > lastunit ) {
         return false;
     }
     

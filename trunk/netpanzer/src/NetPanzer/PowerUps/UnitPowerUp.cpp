@@ -117,7 +117,7 @@ void UnitPowerUp::powerUpDestruct( UnitID unit_id )
 {
     UMesgSelfDestruct self_destruct;
     self_destruct.setHeader( unit_id );
-    global_game_state->unit_manager->sendMessage( &self_destruct );
+    UnitInterface::sendMessage( &self_destruct );
 }
 
 

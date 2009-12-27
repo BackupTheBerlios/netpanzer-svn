@@ -40,6 +40,7 @@ BitArray::~BitArray( void )
 
 BitArray::BitArray( unsigned long x_size, unsigned long y_size )
 {
+    array = 0;
     initialize( x_size, y_size );
 }
 

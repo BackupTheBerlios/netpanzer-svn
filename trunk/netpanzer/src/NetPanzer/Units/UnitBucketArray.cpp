@@ -16,7 +16,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "Util/Log.hpp"
 #include <list>
 #include <algorithm>
@@ -25,6 +24,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/PlayerState.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
+
+BucketList* UnitBucketArray::buckets = 0;
+long        UnitBucketArray::map_x_sample_factor = 0;
+long        UnitBucketArray::map_y_sample_factor = 0;
+long        UnitBucketArray::pixel_x_sample_factor = 0;
+long        UnitBucketArray::pixel_y_sample_factor = 0;
+size_t      UnitBucketArray::row_size = 0;
+size_t      UnitBucketArray::column_size = 0;
 
 void
 UnitBucketArray::initialize( const iXY & map_size, const iXY & tile_size,
@@ -58,7 +65,8 @@ UnitBucketArray::initialize( const iXY & map_size, const iXY & tile_size,
 
     row_size = rows;
     column_size = columns;
-    buckets.resize(rows*columns);
+    buckets = new BucketList();
+    buckets->resize(rows*columns);
 }
 
 void

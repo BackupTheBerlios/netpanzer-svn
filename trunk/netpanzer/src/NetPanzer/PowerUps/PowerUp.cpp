@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PowerUps/PowerUp.hpp"
 #include "Core/GlobalGameState.hpp"
 
-#include "Units/UnitBlackBoard.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Classes/Network/NetworkState.hpp"
@@ -83,9 +82,9 @@ PowerUp::updateState( void )
     if ( NetworkState::status == _network_state_server
          && life_cycle_state == _power_up_lifecycle_state_active )
     {
-        if ( global_game_state->unit_manager->unitOccupiesLoc(map_loc) )
+        if ( UnitInterface::unitOccupiesLoc(map_loc) )
         {
-            Unit * unit = global_game_state->unit_manager->unit_bucket_array.queryUnitAtMapLoc(map_loc);
+            Unit * unit = UnitBucketArray::queryUnitAtMapLoc(map_loc);
             if ( unit )
             {
                 onHit( unit );

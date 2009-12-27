@@ -1,4 +1,8 @@
+$pfile "base_types.pkg"
 $pfile "colors.pkg"
 $pfile "log.pkg"
 $pfile "consoleinterface.pkg"
 $pfile "players.pkg"
+$pfile "config.pkg"
+$pfile "chat.pkg"
+$pfile "gamemanager.pkg"

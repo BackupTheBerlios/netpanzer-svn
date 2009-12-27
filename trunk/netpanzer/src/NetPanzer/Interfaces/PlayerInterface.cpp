@@ -21,6 +21,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/MapInterface.hpp"
+#include "Interfaces/WorldViewInterface.hpp"
+#include "Classes/Network/SystemNetMessage.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
@@ -90,16 +93,6 @@ void PlayerInterface::cleanUp()
 
     SDL_DestroyMutex(mutex);
     mutex = 0;
-}
-
-void PlayerInterface::lock()
-{
-    SDL_mutexP(mutex);
-}
-
-void PlayerInterface::unLock()
-{
-    SDL_mutexV(mutex);
 }
 
 void PlayerInterface::setKill(PlayerState* by_player, PlayerState* on_player,
@@ -198,7 +191,7 @@ void PlayerInterface::resetAllianceMatrix()
 int PlayerInterface::getActivePlayerCount()
 {
     unsigned long player_index;
-    int count = 0;;
+    int count = 0;
 
     for ( player_index = 0; player_index < max_players; player_index++ ) {
         if ( player_lists[ player_index ].getStatus() == _player_state_active ) {
@@ -261,10 +254,22 @@ void PlayerInterface::spawnPlayer( unsigned short player_index, const iXY &locat
         SDL_mutexP(mutex);
         if ( player_lists[player_index].getStatus() != _player_state_free )
         {
-            global_game_state->unit_manager->spawnPlayerUnits( location,
+            UnitInterface::spawnPlayerUnits( location,
                                              player_index,
                                              player_lists[ player_index ].unit_config
                                            );
+            
+            iXY world_loc;
+            MapInterface::mapXYtoPointXY( location, &world_loc );
+            if ( getLocalPlayerIndex() == player_index )
+            {
+                WorldViewInterface::setCameraPosition( world_loc );
+            }
+            else
+            {
+                SystemSetPlayerView set_view(world_loc.x, world_loc.y);
+                NetworkServer::sendMessage(player_index, &set_view, sizeof(SystemSetPlayerView));
+            }
         } // ** if _player_state_active
         SDL_mutexV(mutex);
     }
@@ -651,7 +656,7 @@ void PlayerInterface::disconnectPlayerCleanup( Uint16 index )
 
         PlayerStateSync player_state_update(player_state->getNetworkPlayerState());
         
-		SDL_mutexV(mutex);
+        SDL_mutexV(mutex);
 
         NetworkServer::broadcastMessage(&player_state_update, sizeof(PlayerStateSync));
     }

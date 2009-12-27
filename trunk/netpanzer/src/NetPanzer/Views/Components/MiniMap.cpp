@@ -215,9 +215,9 @@ MiniMap::drawObjectives(Surface &dest)
 void
 MiniMap::drawUnits(Surface &dest)
 {
-    const UnitInterface::Units& units = global_game_state->unit_manager->getUnits();
-    for(UnitInterface::Units::const_iterator i = units.begin();
-            i != units.end(); ++i)
+    const UnitInterface::Units* units = UnitInterface::getUnits();
+    for(UnitInterface::Units::const_iterator i = units->begin();
+            i != units->end(); ++i)
     {
         Unit* unit = i->second;
         IntColor color;

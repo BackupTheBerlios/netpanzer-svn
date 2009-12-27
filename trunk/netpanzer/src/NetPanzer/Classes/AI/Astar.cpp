@@ -228,7 +228,7 @@ unsigned char Astar::generateSucc(unsigned short direction, AstarNode *node, Ast
 
     movement_val = getMovementValue( succ->map_loc );
     if ( movement_val != 0xFF
-         && global_game_state->unit_manager->unitOccupiesLoc(succ->map_loc) == true
+         && UnitInterface::unitOccupiesLoc(succ->map_loc) == true
          && succ->map_loc != goal_node.map_loc )
     {
         movement_val = 200;

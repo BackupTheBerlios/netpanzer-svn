@@ -148,13 +148,12 @@ void DedicatedGameManager::inputLoop()
                 break;
             }
             case ServerCommand::MAPCHANGE:
-                if(!MapsManager::existsMap(command.argument)) {
+                if ( ! GameManager::changeMap(command.argument.c_str()) )
+                {
                     std::cout << "map '" << command.argument
-                        << "' doesn't exist." << std::endl;
+                              << "' doesn't exist." << std::endl;
                     break;
                 }
-            
-                GameControlRulesDaemon::forceMapChange(command.argument);
                 std::cout << "Preparing mapchange..." << std::endl;
                 break;
             case ServerCommand::KICK:
@@ -166,12 +165,12 @@ void DedicatedGameManager::inputLoop()
                     std::cout << "Unknown player." << std::endl;
                     break;
                 }
-                NetworkServer::dropClient(id);
+                GameManager::kickPlayer(id);
                 break;
             }
             case ServerCommand::ADDBOT:
             {
-                Uint16 botid = BotManager::addBot();
+                Uint16 botid = GameManager::addBot();
                 if ( botid != 0xffff )
                 {
                     std::cout << "Added bot with player id " << botid << std::endl;
@@ -179,7 +178,7 @@ void DedicatedGameManager::inputLoop()
                 break;
             }
             case ServerCommand::REMOVEBOTS:
-                BotManager::removeAllBots();
+                GameManager::removeAllBots();
                 break;
         }
         commandqueue.pop();

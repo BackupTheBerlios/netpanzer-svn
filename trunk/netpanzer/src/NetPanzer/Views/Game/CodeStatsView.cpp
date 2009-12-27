@@ -303,7 +303,7 @@ void CodeStatsView::drawUnitStats()
 
     for ( int i = 0; i < max_players; i++ ) {
         unsigned long units;
-        units = global_game_state->unit_manager->getUnitCount( i );
+        units = UnitInterface::getPlayerUnitCount( i );
         total += units;
 
         sprintf(strBuf, "Player %d : %lu  ", i, units);
