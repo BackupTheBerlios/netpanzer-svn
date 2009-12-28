@@ -464,8 +464,7 @@ void GameControlRulesDaemon::mapCycleFsmServer()
 
         case _map_cycle_server_state_display_endgame_views:
             {
-                ChatInterface::setMessageScopeServer();
-                ChatInterface::sendCurrentMessage("Round is over");
+                ChatInterface::serversay("Round is over");
                                                                 
                 SystemViewControl view_control;
 

@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define	_SCRIPTMANAGER_HPP
 
 #include "lua/lua.hpp"
+#include "Core/CoreTypes.hpp"
 
 class ScriptManager
 {
@@ -32,6 +33,8 @@ public:
     static void registerLib(const char * libname, const luaL_reg * functions);
         
     static void runStr(const char * runname, const char * str);
+    static bool runUserCommand(const char * str);
+    static bool runServerCommand(const char * str, Uint16 runPlayer);
     
     // NOTE: runFile has to run after FileSystem has been initialized.
     static void runFile(const char * runname, const char * filename);

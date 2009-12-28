@@ -434,8 +434,7 @@ void
 WorldInputCmdProcessor::setKeyboardInputModeChatMesg()
 {
     ConsoleInterface::setInputStringStatus( true );
-    ConsoleInterface::resetInputString( "Message All: " );
-    ChatInterface::setMessageScopeAll();
+    ConsoleInterface::resetInputString( "> " );
     KeyboardInterface::flushCharBuffer();
     KeyboardInterface::setTextMode(true);
     enter_key_hit_count = 1;
@@ -450,20 +449,9 @@ WorldInputCmdProcessor::keyboardInputModeChatMesg()
     {
         if(strcmp(chat_string, "") != 0)
         {
-            lua_State *L = ScriptManager::getLuavm();
-            lua_getglobal(L, "onUserMessage");
-            if ( lua_isfunction(L, -1) )
+            if ( chat_string[0] != '/' || ! ScriptManager::runUserCommand(&chat_string[1]) )
             {
-                lua_pushstring(L, chat_string);
-                if ( lua_pcall(L, 1, 0, 0) != 0 )
-                {
-                    LOGGER.warning("error running function 'onUserMessage': %s\n",lua_tostring(L, -1));
-                }
-            }
-            else
-            {
-                lua_pop(L, 1);
-                ChatInterface::sendCurrentMessage( chat_string );
+                ChatInterface::say(chat_string);
             }
         }
         keyboard_input_mode = _keyboard_input_mode_command;
@@ -475,8 +463,7 @@ void
 WorldInputCmdProcessor::setKeyboardInputModeAllieChatMesg()
 {
     ConsoleInterface::setInputStringStatus( true );
-    ConsoleInterface::resetInputString( "Message Allies : " );
-    ChatInterface::setMessageScopeAllies();
+    ConsoleInterface::resetInputString( "[Team]> " );
     KeyboardInterface::flushCharBuffer();
     KeyboardInterface::setTextMode(true);
     enter_key_hit_count = 1;
@@ -490,7 +477,7 @@ WorldInputCmdProcessor::keyboardInputModeAllieChatMesg()
     if ( getConsoleInputString( chat_string ) == true ) {
         keyboard_input_mode = _keyboard_input_mode_command;
         ConsoleInterface::setInputStringStatus( false );
-        ChatInterface::sendCurrentMessage( chat_string );
+        ChatInterface::teamsay( chat_string );
     }
 }
 

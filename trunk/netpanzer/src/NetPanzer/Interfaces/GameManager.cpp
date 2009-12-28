@@ -291,6 +291,7 @@ void GameManager::disconnectPlayerCleanUp(const Uint16 player)
     SystemConnectAlert msg;
     msg.set( player, _connect_alert_mesg_disconnect);
     NetworkServer::broadcastMessage(&msg, sizeof(msg));
+    NetworkClient::sendMessage(&msg, sizeof(msg));
 }
 
 void GameManager::kickPlayer(const Uint16 player)

@@ -165,9 +165,19 @@ private:
         bucket_rect.max.x += range_buckets;
         bucket_rect.max.y += range_buckets;
 
+        if ( bucket_rect.min.x < 0 )
+        {
+            bucket_rect.min.x = 0;
+        }
+
         if ( (size_t)bucket_rect.max.x >= column_size )
         {
             bucket_rect.max.x = column_size-1;
+        }
+
+        if ( bucket_rect.min.y < 0 )
+        {
+            bucket_rect.min.y = 0;
         }
 
         if ( (size_t)bucket_rect.max.y >= row_size )

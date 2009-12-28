@@ -109,8 +109,7 @@ void DedicatedGameManager::inputLoop()
             }
             case ServerCommand::CHAT:
             {
-                ChatInterface::setMessageScopeServer();
-                ChatInterface::sendCurrentMessage(command.argument.c_str());
+                ChatInterface::serversay(command.argument.c_str());
                 break;
             }
             case ServerCommand::STATUS:

@@ -1,6 +1,5 @@
 
 LOGGER:log("Script initialization");
-
 LOGGER:log("gametype is " .. gameconfig.gametype);
 
 UserCommands =
@@ -68,24 +67,9 @@ UserCommands =
         ConsoleInterface:post( Color.cyan, true, ps:getFlag(), "Your name is " .. ps:getName());
         ConsoleInterface:post( Color.cyan, false, 0, "Your id is " .. ps:getID());
         ConsoleInterface:post( Color.cyan, false, 0, "Your have " .. ps:getObjectivesHeld() .. " bases");
-    end,
-
-    testrules = function(param)
-        test_game_rules();
     end
+
 };
-
-function onUserMessage(msg)
-    local cmd,arg = msg:match('^/(%w+) *(.*)');
-    if cmd then
-        local func = UserCommands[cmd];
-        if type(func) == "function" then
-            func(arg);
-        end
-    else
-        ChatInterface:say(msg);
-    end
-end
 
 -- modes: 0=objective, 1=frag limit, 2=time limit
 function test_game_rules()
@@ -96,26 +80,31 @@ end
 
 ServerCommands =
 {
+    say_help = "Says something to all players as server.",
     say = function(param, player)
         if param then
             ChatInterface:serversay(param);
         end
     end,
 
+    kick_help = "Kicks a player, use the player number (starts in 0)",
     kick = function(param, player)
         if param then
             GameManager:kickPlayer(param);
         end
     end,
 
+    addbot_help = "Adds a new bot to the server.",
     addbot = function(param, player)
         GameManager:addBot();
     end,
 
+    removebots_help = "Removes all bots from server",
     removebots = function(param, player)
         GameManager:removeAllBots();
     end,
 
+    map_help = "Change the map",
     map = function(param, player)
         local ok = GameManager:changeMap(param);
         if ok then
@@ -125,6 +114,7 @@ ServerCommands =
         end
     end,
 
+    listcommands_help = "List the server commands",
     listcommands = function(param, player)
         local out;
         for k,v in pairs(ServerCommands) do
@@ -139,20 +129,18 @@ ServerCommands =
         ChatInterface:serversayTo(player, out);
     end,
 
+    _help = "Type /server help <wanted_command> or /server listcommands",
+    help_help = "Provides this kind of help",
+    help = function(param, player)
+        local ht = ServerCommands[param .. "_help"];
+        if ht then
+            ChatInterface:serversayTo( player, param .. ": " .. ht);
+        else
+            ChatInterface:serversayTo( player, "Help not found for " .. param .. ". Use /server listcommands");
+        end
+    end,
+
     testrules = function(param)
         test_game_rules();
     end
 };
-
-function serverHandleMessage(msg, player)
-    local cmd,arg = msg:match('^/(%w+) *(.*)');
-    if cmd then
-        local func = ServerCommands[cmd];
-        if func and type(func) == "function" then
-            func(arg, player);
-        end
---        ConsoleInterface:post( Color.cyan, false, 0, 'received command "' .. msg .. '" from player ' .. player);
-        return false;
-    end
-    return true;
-end

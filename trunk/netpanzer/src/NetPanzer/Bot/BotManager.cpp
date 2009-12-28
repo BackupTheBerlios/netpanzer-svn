@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Bot.hpp"
 #include "BotPlayer.hpp"
 #include "Interfaces/PlayerInterface.hpp"
+#include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/PlayerNetMessage.hpp"
 #include "Classes/Network/SystemNetMessage.hpp"
@@ -32,6 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Units/UnitInterface.hpp"
 #include "Resources/ResourceManager.hpp"
 #include "Resources/ResourceManagerMessages.hpp"
+#include "Interfaces/ChatInterface.hpp"
 
 using namespace std;
 
@@ -63,6 +65,7 @@ BotManager::addBot()
         SystemConnectAlert connect_alert;
         connect_alert.set( p->getID(), _connect_alert_mesg_connect );
         NetworkServer::broadcastMessage( &connect_alert, sizeof(SystemConnectAlert));
+        NetworkClient::sendMessage(&connect_alert, sizeof(SystemConnectAlert));
         
         return p->getID();
     }

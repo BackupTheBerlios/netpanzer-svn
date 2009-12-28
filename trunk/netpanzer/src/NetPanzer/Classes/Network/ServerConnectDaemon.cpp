@@ -40,6 +40,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Resources/ResourceManager.hpp"
 #include "Resources/ResourceManagerMessages.hpp"
+#include "NetworkClient.hpp"
 
 ServerConnectDaemon::ConnectionState 
         ServerConnectDaemon::connection_state = ServerConnectDaemon::connect_state_idle;
@@ -197,15 +198,10 @@ void ServerConnectDaemon::sendConnectionAlert(ClientSocket * client)
 
     if ( ((std::string)gameconfig->motd).length() > 0 )
     {
-        ChatMesg chat_mesg;
-        chat_mesg.message_scope=_chat_mesg_scope_server;
-        chat_mesg.setSourcePlayerIndex(0);
-        snprintf(chat_mesg.message_text, sizeof(chat_mesg.message_text), "%s",gameconfig->motd.c_str());
-        chat_mesg.setSize(sizeof(ChatMesg));
-        client->sendMessage( &chat_mesg, sizeof(chat_mesg));
+        ChatInterface::serversayTo(client->getPlayerIndex(), gameconfig->motd.c_str());
     }
 
-    NetworkServer::broadcastMessage( &connect_alert, sizeof(SystemConnectAlert));
+    NetworkServer::broadcastMessage(&connect_alert, sizeof(SystemConnectAlert));
 }
 
 void ServerConnectDaemon::resetConnectFsm()
