@@ -43,11 +43,11 @@ MissleWeapon::MissleWeapon(UnitID owner, unsigned short owner_type_id, unsigned 
     // Set the correct missle type.
     if ( size ) {
         shell.setData(gMissleMediumPackedSurface);
-        shellShadow.setData(gMissleMediumPackedSurface);
+        shellShadow.setData(gMissleMediumShadowSurface);
 
     } else {
         shell.setData(gMissleSmallPackedSurface);
-        shellShadow.setData(gMissleSmallPackedSurface);
+        shellShadow.setData(gMissleSmallShadowSurface);
     }
 
     shell.setFrame(getGoalAngle(start, end));

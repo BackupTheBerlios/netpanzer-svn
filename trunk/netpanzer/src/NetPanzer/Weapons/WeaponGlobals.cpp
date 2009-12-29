@@ -27,8 +27,11 @@ int gMissleThrustForce = 5;
 int gBulletVelocity    = 60;
 
 Surface gShellPackedSurface;
+Surface gShellShadowSurface;
 Surface gMissleSmallPackedSurface;
+Surface gMissleSmallShadowSurface;
 Surface gMissleMediumPackedSurface;
+Surface gMissleMediumShadowSurface;
 Surface gMissleThrustPackedSurface;
 Surface gMissleGroundLightPackedSurface;
 

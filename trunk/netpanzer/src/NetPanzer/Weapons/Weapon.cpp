@@ -46,14 +46,17 @@ void Weapon::init()
 //    gShellPackedSurface.loadPAK("pics/particles/shells/pak/shells.pak");
 
     gMissleMediumPackedSurface.loadPNGSheet("pics/particles/missles/misslesMedium.png", 14, 14, 360);
+    gMissleMediumShadowSurface.createShadow(gMissleMediumPackedSurface);
     gMissleMediumPackedSurface.setColorkey();
 //    gMissleMediumPackedSurface.setOffsetCenter();
 
     gMissleSmallPackedSurface.loadPNGSheet("pics/particles/missles/misslesSmall.png", 14, 14, 360);
+    gMissleSmallShadowSurface.createShadow(gMissleSmallPackedSurface);
     gMissleSmallPackedSurface.setColorkey();
 //    gMissleSmallPackedSurface.setOffsetCenter();
 
     gShellPackedSurface.loadPNGSheet("pics/particles/shells/shells.png", 14, 14, 360);
+    gShellShadowSurface.createShadow(gShellPackedSurface);
     gShellPackedSurface.setColorkey();
 //    gShellPackedSurface.setOffsetCenter();
 

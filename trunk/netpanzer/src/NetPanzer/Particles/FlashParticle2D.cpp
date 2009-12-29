@@ -46,8 +46,9 @@ FlashParticle2D::FlashParticle2D(	const fXYZ  &pos,
 //---------------------------------------------------------------------------
 void FlashParticle2D::init()
 {
-    staticPackedFlash.loadPNGSheet("pics/particles/lights/flash2.png", 240, 149, 20);
+    staticPackedFlash.loadPNGSheet("pics/particles/lights/flash2.png", 240, 194, 20);
     staticPackedFlash.setColorkey();
+//    staticPackedFlash.setAlpha();
 //    staticPackedFlash.setOffsetCenter();
 //    staticPackedFlash.brigthenFrames();
 } // end FlashParticle2D::init

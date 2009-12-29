@@ -27,8 +27,11 @@ extern int gMissleThrustForce;
 extern int gBulletVelocity;
 
 extern Surface gShellPackedSurface;
+extern Surface gShellShadowSurface;
 extern Surface gMissleSmallPackedSurface;
+extern Surface gMissleSmallShadowSurface;
 extern Surface gMissleMediumPackedSurface;
+extern Surface gMissleMediumShadowSurface;
 extern Surface gMissleThrustPackedSurface;
 extern Surface gMissleGroundLightPackedSurface;
 
