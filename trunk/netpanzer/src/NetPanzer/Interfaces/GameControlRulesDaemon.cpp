@@ -343,7 +343,6 @@ void GameControlRulesDaemon::mapCycleFsmClient()
 //                char str_buf[128];
             LoadingView::append("Map loaded, sending ack...");
 
-            global_engine_state->game_manager->reinitializeGameLogic();
 //                if ( GameManager::gameMapLoad( &percent_complete ) == false ) {
 //
 //                    sprintf( str_buf, "Loading Game Map ... (%d%%)", percent_complete);
@@ -371,6 +370,7 @@ void GameControlRulesDaemon::mapCycleFsmClient()
                         case _net_message_class_player:
                             if ( np.getNetMessage()->message_id == _net_message_id_player_connect_id )
                             {
+                                global_engine_state->game_manager->reinitializeGameLogic();
                                 LoadingView::append("Received my id...");
                                 MessageRouter::routePacket(np);
                                 loop_finished = false;

@@ -140,6 +140,29 @@ ServerCommands =
         end
     end,
 
+    listplayers_help = "List the players",
+    listplayers = function(param,player)
+        local playerst;
+        local out;
+        for p = 0,PlayerInterface:getMaxPlayers()-1 do
+            playerst = PlayerInterface:getPlayer(p);
+            if playerst:isConnecting() then
+                if out then
+                    out = out .. ",".. p .. ":" .. playerst:getName() .. "[connecting:" .. PlayerInterface:getPlayerIP(p) .. "]";
+                else
+                    out = p .. ":" .. playerst:getName() .. "[connecting:".. PlayerInterface:getPlayerIP(p) .. "]";
+                end
+            elseif playerst:isActive() then
+                if out then
+                    out = out .. ",".. p .. ":" .. playerst:getName() .. "[" .. PlayerInterface:getPlayerIP(p) .. "]";
+                else
+                    out = p .. ":" .. playerst:getName() .. "[" .. PlayerInterface:getPlayerIP(p) .. "]";
+                end
+            end
+        end
+        ChatInterface:serversayTo(player, out);
+    end,
+
     testrules = function(param)
         test_game_rules();
     end

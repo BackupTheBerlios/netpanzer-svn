@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <SDL_thread.h>
 #include "Classes/PlayerState.hpp"
 #include "Units/UnitInterface.hpp"
+#include "Classes/Network/NetworkServer.hpp"
 
 class PlayerInterface
 {
@@ -57,6 +58,15 @@ public:
     static unsigned short getMaxPlayers( )
     {
         return max_players;
+    }
+
+    static string getPlayerIP(Uint16 player_index)
+    {
+        if ( player_index == getLocalPlayerIndex() )
+        {
+            return "local";
+        }
+        return NetworkServer::getIP(player_index);
     }
 
     static PlayerState* getPlayer(Uint16 player_index)

@@ -126,6 +126,11 @@ public:
     void setFromNetworkPlayerState(const NetworkPlayerState* state);
     void setColor( Uint32 index );
     Uint8 getColor() const;
+
+    bool isFree() const { return status == _player_state_free; }
+    bool isAllocated() const { return status == _player_state_allocated; }
+    bool isConnecting() const { return status == _player_state_connecting; }
+    bool isActive() const { return status == _player_state_active; }
 };
 
 #endif // ** _PLAYERSTATE_HPP

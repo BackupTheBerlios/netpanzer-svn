@@ -22,6 +22,11 @@ class PlayerState
 
     void setColor( Uint32 index );
     IntColor getColor() const;
+
+    bool isFree() const;
+    bool isAllocated() const;
+    bool isConnecting() const;
+    bool isActive() const;
 };
 
 class PlayerInterface
@@ -43,5 +48,6 @@ class PlayerInterface
     static int getActivePlayerCount();
 
     static int countPlayers();
+    static string getPlayerIP(Uint16 player_index);
 };
 

@@ -1,6 +1,6 @@
 /*
 ** Lua binding: NetPanzer
-** Generated automatically by tolua++-1.0.92 on Sun Dec 27 14:13:08 2009.
+** Generated automatically by tolua++-1.0.92 on Tue Dec 29 22:34:50 2009.
 */
 
 #ifndef __cplusplus
@@ -2143,6 +2143,134 @@ static int tolua_NetPanzer_PlayerState_getColor00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: isFree of class  PlayerState */
+#ifndef TOLUA_DISABLE_tolua_NetPanzer_PlayerState_isFree00
+static int tolua_NetPanzer_PlayerState_isFree00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"const PlayerState",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  const PlayerState* self = (const PlayerState*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'isFree'", NULL);
+#endif
+  {
+   bool tolua_ret = (bool)  self->isFree();
+   tolua_pushboolean(tolua_S,(bool)tolua_ret);
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'isFree'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: isAllocated of class  PlayerState */
+#ifndef TOLUA_DISABLE_tolua_NetPanzer_PlayerState_isAllocated00
+static int tolua_NetPanzer_PlayerState_isAllocated00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"const PlayerState",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  const PlayerState* self = (const PlayerState*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'isAllocated'", NULL);
+#endif
+  {
+   bool tolua_ret = (bool)  self->isAllocated();
+   tolua_pushboolean(tolua_S,(bool)tolua_ret);
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'isAllocated'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: isConnecting of class  PlayerState */
+#ifndef TOLUA_DISABLE_tolua_NetPanzer_PlayerState_isConnecting00
+static int tolua_NetPanzer_PlayerState_isConnecting00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"const PlayerState",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  const PlayerState* self = (const PlayerState*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'isConnecting'", NULL);
+#endif
+  {
+   bool tolua_ret = (bool)  self->isConnecting();
+   tolua_pushboolean(tolua_S,(bool)tolua_ret);
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'isConnecting'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: isActive of class  PlayerState */
+#ifndef TOLUA_DISABLE_tolua_NetPanzer_PlayerState_isActive00
+static int tolua_NetPanzer_PlayerState_isActive00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"const PlayerState",0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  const PlayerState* self = (const PlayerState*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'isActive'", NULL);
+#endif
+  {
+   bool tolua_ret = (bool)  self->isActive();
+   tolua_pushboolean(tolua_S,(bool)tolua_ret);
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'isActive'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: lockPlayerStats of class  PlayerInterface */
 #ifndef TOLUA_DISABLE_tolua_NetPanzer_PlayerInterface_lockPlayerStats00
 static int tolua_NetPanzer_PlayerInterface_lockPlayerStats00(lua_State* tolua_S)
@@ -2426,6 +2554,36 @@ static int tolua_NetPanzer_PlayerInterface_countPlayers00(lua_State* tolua_S)
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'countPlayers'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getPlayerIP of class  PlayerInterface */
+#ifndef TOLUA_DISABLE_tolua_NetPanzer_PlayerInterface_getPlayerIP00
+static int tolua_NetPanzer_PlayerInterface_getPlayerIP00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertable(tolua_S,1,"PlayerInterface",0,&tolua_err) ||
+     !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+   int player_index = ((  int)  tolua_tonumber(tolua_S,2,0));
+  {
+   string tolua_ret = (string)  PlayerInterface::getPlayerIP(player_index);
+   tolua_pushcppstring(tolua_S,(const char*)tolua_ret);
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getPlayerIP'.",&tolua_err);
  return 0;
 #endif
 }
@@ -3118,6 +3276,10 @@ TOLUA_API int tolua_NetPanzer_open (lua_State* tolua_S)
    tolua_function(tolua_S,"getTotal",tolua_NetPanzer_PlayerState_getTotal00);
    tolua_function(tolua_S,"setColor",tolua_NetPanzer_PlayerState_setColor00);
    tolua_function(tolua_S,"getColor",tolua_NetPanzer_PlayerState_getColor00);
+   tolua_function(tolua_S,"isFree",tolua_NetPanzer_PlayerState_isFree00);
+   tolua_function(tolua_S,"isAllocated",tolua_NetPanzer_PlayerState_isAllocated00);
+   tolua_function(tolua_S,"isConnecting",tolua_NetPanzer_PlayerState_isConnecting00);
+   tolua_function(tolua_S,"isActive",tolua_NetPanzer_PlayerState_isActive00);
   tolua_endmodule(tolua_S);
   tolua_cclass(tolua_S,"PlayerInterface","PlayerInterface","",NULL);
   tolua_beginmodule(tolua_S,"PlayerInterface");
@@ -3131,6 +3293,7 @@ TOLUA_API int tolua_NetPanzer_open (lua_State* tolua_S)
    tolua_function(tolua_S,"getLocalPlayerIndex",tolua_NetPanzer_PlayerInterface_getLocalPlayerIndex00);
    tolua_function(tolua_S,"getActivePlayerCount",tolua_NetPanzer_PlayerInterface_getActivePlayerCount00);
    tolua_function(tolua_S,"countPlayers",tolua_NetPanzer_PlayerInterface_countPlayers00);
+   tolua_function(tolua_S,"getPlayerIP",tolua_NetPanzer_PlayerInterface_getPlayerIP00);
   tolua_endmodule(tolua_S);
   tolua_cclass(tolua_S,"GameConfig","GameConfig","",NULL);
   tolua_beginmodule(tolua_S,"GameConfig");
