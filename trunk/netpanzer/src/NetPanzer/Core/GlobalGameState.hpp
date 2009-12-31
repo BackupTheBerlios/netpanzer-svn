@@ -19,9 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef GLOBAL_GAME_STATE_HPP__
 #define GLOBAL_GAME_STATE_HPP__
 
-class TileSet;
-class WorldMap;
-class SpawnList;
 class UnitProfileInterface;
 
 class GlobalGameState
@@ -29,9 +26,6 @@ class GlobalGameState
 public:
     GlobalGameState();
 
-    TileSet * tile_set;
-    WorldMap * world_map;
-    SpawnList * spawn_list;
     UnitProfileInterface * unit_profile_interface;
 };
 

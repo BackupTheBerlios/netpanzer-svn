@@ -118,8 +118,8 @@ Unit::Unit(PlayerState* ownplayer, unsigned char utype, UnitID uid, iXY initial_
     smolderWait    = 0.0f;
     smolderWaitMin = 0.0f;
 
-    if ( (unsigned int)initial_loc.x >= global_game_state->world_map->getWidth()
-       ||(unsigned int)initial_loc.y >= global_game_state->world_map->getHeight())
+    if ( (unsigned int)initial_loc.x >= MapInterface::getWidth()
+       ||(unsigned int)initial_loc.y >= MapInterface::getHeight())
     {
         throw std::runtime_error("Invalid position");
     }

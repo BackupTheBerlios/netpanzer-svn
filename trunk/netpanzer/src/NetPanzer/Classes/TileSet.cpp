@@ -34,114 +34,142 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Surface.hpp"
 #include "Util/Log.hpp"
 
-TileSet::TileSet( )
-{
-    tile_set_loaded = false;
-}
+TileSetHeader* TileSet::header = 0;
+std::vector<TileAttributes>* TileSet::tile_attributes = 0;
+std::vector<Surface *>* TileSet::tiles = 0;
+std::string* TileSet::name = 0;
 
-TileSet::~TileSet()
+void
+TileSet::cleanUp()
 {
     freeTiles();
+    if ( tile_attributes )
+    {
+        delete tile_attributes;
+        tile_attributes = 0;
+    }
+
+    if ( header )
+    {
+        delete header;
+        header = 0;
+    }
+
+    if ( name )
+    {
+        delete name;
+        name = 0;
+    }
 }
 
 void
 TileSet::freeTiles()
 {
-    for ( std::vector<Surface*>::iterator i = tiles.begin();
-                    i != tiles.end(); ++i )
+    if ( tiles )
     {
-        delete(*i);
+        for ( std::vector<Surface*>::iterator i = tiles->begin();
+                        i != tiles->end(); ++i )
+        {
+            delete(*i);
+        }
+        delete tiles;
+        tiles = 0;
     }
-    tiles.resize(0);
 }
 
 void TileSet::readTileSetHeader(IFileStream & file)
 {
-    std::getline(file, header.image_file, ':');
-    std::getline(file, header.unused, ':');
-    file >> header.version;
-    file.ignore(1);
-    file >> header.x_pix;
-    file.ignore(1);
-    file >> header.y_pix;
-    file.ignore(1);
-    file >> header.tile_count;
+    if ( ! header )
+    {
+        header = new TileSetHeader();
+    }
 
-    LOGGER.info("TSinfo %s (%s) version %d with %d tiles of %dx%d",
-                header.image_file.c_str(), header.unused.c_str(), header.version,
-                header.tile_count, header.x_pix, header.y_pix);
+    std::getline(file, header->image_file, ':');
+    std::getline(file, header->unused, ':');
+    file >> header->version;
+    file.ignore(1);
+    file >> header->x_pix;
+    file.ignore(1);
+    file >> header->y_pix;
+    file.ignore(1);
+    file >> header->tile_count;
+
+    LOGGER.debug("TSinfo %s (%s) version %d with %d tiles of %dx%d",
+                header->image_file.c_str(), header->unused.c_str(), header->version,
+                header->tile_count, header->x_pix, header->y_pix);
 }
 
-void TileSet::computeTileConsts( void )
+void
+TileSet::load(const char * tsname)
 {
-    tile_size = header.x_pix * header.y_pix;
-}
-
-void TileSet::loadTileSetInfo( const char *file_path )
-{
-    IFileStream file(file_path);
-
-    freeTiles();
-    tile_set_loaded = false;
-
-    readTileSetHeader(file);
-    loadTileAttributes(file);
-
-    tile_set_loaded = true;
-
-    computeTileConsts();
-}
-
-void TileSet::loadTileSet( const char *file_path )
-{
+    if ( ! name )
+    {
+        name = new std::string(tsname);
+    }
+    else if ( ! name->compare(tsname) )
+    {
+        LOGGER.warning("TileSet not loaded, new %s, old %s", tsname, name->c_str());
+        return; // is same tileset, do not load it.
+    }
+    
+    std::string file_path("tilesets/");
+    file_path.append(tsname);
     try {
         IFileStream file(file_path);
 
         freeTiles();
-        tile_set_loaded = false;
 
         readTileSetHeader(file);
         loadTileAttributes(file);
-
-        Surface big;
-
-        std::string iname("tilesets/");
-        iname += header.image_file;
-
-        big.loadPNG(iname.c_str());
-        SDL_Rect r = { 0, 0, header.x_pix, header.y_pix };
-
-        tiles.resize(header.tile_count);
-        for ( unsigned int n = 0; n < tiles.size(); ++n )
-        {
-                tiles[n] = new Surface(header.x_pix, header.y_pix, 1);
-                big.bltRect(&r, *tiles[n], 0, 0);
-                tiles[n]->optimize();
-                r.x += header.x_pix;
-                if ( (unsigned int)r.x >= big.getWidth() )
-                {
-                    r.x = 0;
-                    r.y += header.y_pix;
-                }
-        }
-
-        tile_set_loaded = true;
-	
-	computeTileConsts();
+        
     } catch(std::exception& e) {
 	throw Exception("Couldn't load tileset '%s': %s",
-		file_path, e.what());
+		file_path.c_str(), e.what());
+    }
+}
+
+void
+TileSet::loadImages()
+{
+    freeTiles();
+
+    Surface big;
+
+    std::string iname("tilesets/");
+    iname += header->image_file;
+
+    big.loadPNG(iname.c_str());
+    SDL_Rect r = { 0, 0, header->x_pix, header->y_pix };
+
+    tiles = new std::vector<Surface*>();
+    int ntiles = header->tile_count;
+    tiles->resize(ntiles);
+    for ( unsigned int n = 0; n < ntiles; ++n )
+    {
+            (*tiles)[n] = new Surface(header->x_pix, header->y_pix, 1);
+            big.bltRect(&r, *(*tiles)[n], 0, 0);
+            (*tiles)[n]->optimize();
+            r.x += header->x_pix;
+            if ( (unsigned int)r.x >= big.getWidth() )
+            {
+                r.x = 0;
+                r.y += header->y_pix;
+            }
     }
 }
 
 void
 TileSet::loadTileAttributes(IFileStream& file)
 {
+    if ( ! tile_attributes )
+    {
+        tile_attributes = new std::vector<TileAttributes>();
+    }
     int number;
-    tile_attributes.resize(header.tile_count);
+    tile_attributes->resize(header->tile_count);
 
     std::vector<TileAttributes>::iterator i;
-    for ( i = tile_attributes.begin(); i != tile_attributes.end(); ++i )
+    for ( i = tile_attributes->begin(); i != tile_attributes->end(); ++i )
     {
         file >> number;
         file.ignore(1);

@@ -171,7 +171,6 @@ void GameView::mouseMove(const iXY & prevPos, const iXY &newPos)
 void
 GameView::drawMap(Surface &window)
 {
-    TileSet * ts = global_game_state->tile_set;
     unsigned long world_x;
     unsigned long world_y;
     unsigned short map_x;
@@ -181,7 +180,7 @@ GameView::drawMap(Surface &window)
                               &world_x, &world_y);
     MapInterface::pointXYtoMapXY( world_x, world_y, &map_x, &map_y );
         
-    unsigned short tile_size = ts->getTileXsize();
+    unsigned short tile_size = TileSet::getTileXsize();
     
     long partial_y = world_y % tile_size;
     int y = 0;
@@ -197,10 +196,6 @@ GameView::drawMap(Surface &window)
         start_x -= partial_x;
     }
     
-    unsigned int tile = 0;
-    
-    WorldMap * map = global_game_state->world_map;
-    
     unsigned short tmx;
     Surface * tile_surf = 0;
     
@@ -209,8 +204,7 @@ GameView::drawMap(Surface &window)
         tmx = map_x;
         for ( int x = start_x; x < (int)window.getWidth(); x += tile_size )
         {
-            tile = map->getValue(tmx++, map_y);
-            tile_surf = ts->getTile(tile);
+            tile_surf = TileSet::getTile(MapInterface::getValue(tmx++, map_y));
             if ( tile_surf )
             {
             	tile_surf->blt(window, x, y);

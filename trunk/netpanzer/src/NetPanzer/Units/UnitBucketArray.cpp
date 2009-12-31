@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/PlayerState.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
+#include "Classes/TileSet.hpp"
 
 BucketList* UnitBucketArray::buckets = 0;
 long        UnitBucketArray::map_x_sample_factor = 0;
@@ -34,10 +35,12 @@ size_t      UnitBucketArray::row_size = 0;
 size_t      UnitBucketArray::column_size = 0;
 
 void
-UnitBucketArray::initialize( const iXY & map_size, const iXY & tile_size,
-        const unsigned int x_sample, const unsigned int y_sample )
+UnitBucketArray::initialize(const unsigned int x_sample, const unsigned int y_sample)
 {
     cleanUp();
+
+    unsigned int map_width = MapInterface::getWidth();
+    unsigned int map_height = MapInterface::getHeight();
 
     unsigned long rows, columns;
 
@@ -47,21 +50,21 @@ UnitBucketArray::initialize( const iXY & map_size, const iXY & tile_size,
     map_x_sample_factor = x_sample;
     map_y_sample_factor = y_sample;
 
-    while( (map_size.x % map_x_sample_factor) > 0 )
+    while( (map_width % map_x_sample_factor) > 0 )
     {
         map_x_sample_factor++;
     }
 
-    while( (map_size.y % map_y_sample_factor) > 0 )
+    while( (map_height % map_y_sample_factor) > 0 )
     {
         map_y_sample_factor++;
     }
 
-    pixel_x_sample_factor = tile_size.x * map_x_sample_factor;
-    pixel_y_sample_factor = tile_size.y * map_y_sample_factor;
+    pixel_x_sample_factor = TileSet::getTileXsize() * map_x_sample_factor;
+    pixel_y_sample_factor = TileSet::getTileYsize() * map_y_sample_factor;
 
-    rows = (unsigned long) map_size.y / map_y_sample_factor;
-    columns = (unsigned long) map_size.x / map_x_sample_factor;
+    rows = (unsigned long) map_width / map_y_sample_factor;
+    columns = (unsigned long) map_height / map_x_sample_factor;
 
     row_size = rows;
     column_size = columns;

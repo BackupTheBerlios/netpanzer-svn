@@ -374,11 +374,11 @@ long PathScheduler::short_queue_distance_threshold;
 
 void PathScheduler::initialize()
 {
-    if( global_game_state->world_map ) {
+    if( MapInterface::isLoaded() ) {
         unsigned long resources;
         size_t path_list_size;
-        float map_x_size = global_game_state->world_map->getWidth();
-        float map_y_size = global_game_state->world_map->getHeight();
+        float map_x_size = MapInterface::getWidth();
+        float map_y_size = MapInterface::getHeight();
         float map_size = (map_x_size * map_y_size);
 
         resources = (unsigned long) ( (map_size * 0.019018) + 4018.0 );

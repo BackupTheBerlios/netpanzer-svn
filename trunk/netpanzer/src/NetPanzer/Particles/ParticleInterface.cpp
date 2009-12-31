@@ -37,6 +37,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "System/Sound.hpp"
 #include "Util/Log.hpp"
+#include "2D/Color.hpp"
 
 std::vector<UnitParticleInfo> ParticleInterface::unitParticleInfo;
 int ParticleInterface::unitBodyMaxArea                   = 0;
@@ -468,7 +469,7 @@ void ParticleInterface::addMoveDirtPuff(const UnitState &unitState)
 
     movePuffWaitGroup += TimerInterface::getTimeSlice();
 
-    if (TileInterface::getWorldPixMovementValue(unitState.location.x, unitState.location.y) == 0) {
+    if (MapInterface::getWorldPixMovementValue(unitState.location.x, unitState.location.y) == 0) {
         if (movePuffWaitGroup >= movePuffWaitTotal) {
             iXY size     = unitParticleInfo[unitState.unit_type].minBounds.getSize();
 

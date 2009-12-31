@@ -76,6 +76,7 @@ public:
     
     static void show()
     {
+        Desktop::setVisibilityAllWindows(false);
         Desktop::setVisibility("LoadingView", true);
     }
     

@@ -32,6 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Classes/PlacementMatrix.hpp"
 #include "Classes/PlayerUnitConfig.hpp"
+#include "Classes/TileSet.hpp"
 
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
@@ -89,11 +90,10 @@ UnitInterface::initialize( const unsigned int max_units )
 {
     cleanUp();
 
-    unit_black_board = new BitArray(global_game_state->world_map->getWidth(),
-                                    global_game_state->world_map->getHeight());
+    unit_black_board = new BitArray(MapInterface::getWidth(),
+                                    MapInterface::getHeight());
 
-    UnitBucketArray::initialize(MapInterface::getSize(),
-                                TileInterface::getTileSize());
+    UnitBucketArray::initialize();
 
     units = new Units();
 
@@ -110,7 +110,14 @@ UnitInterface::initialize( const unsigned int max_units )
 
     opcode_encoder = new UnitOpcodeEncoder();
 
-    units_per_player = max_units;
+    if ( max_units )
+    {
+        units_per_player = max_units / PlayerInterface::getMaxPlayers();
+    }
+    else
+    {
+        units_per_player = 0;
+    }
 }
 
 // ******************************************************************
@@ -335,12 +342,13 @@ UnitInterface::spawnPlayerUnits( const iXY &location,
             PlacementMatrix::getNextEmptyLoc( &next_loc );
             unit = createUnit(utype, next_loc, player_id);
 
-            assert(unit != 0);
-
-            UnitRemoteCreate create_mesg(unit->player->getID(), unit->id,
+            if ( unit )
+            {
+                UnitRemoteCreate create_mesg(unit->player->getID(), unit->id,
                             next_loc.x, next_loc.y, unit->unit_state.unit_type);
 
-            encoder.encodeMessage(&create_mesg, sizeof(create_mesg));
+                encoder.encodeMessage(&create_mesg, sizeof(create_mesg));
+            }
         }
     }
 

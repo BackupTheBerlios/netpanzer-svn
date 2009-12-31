@@ -35,11 +35,11 @@ Astar::Astar()
 void Astar::initializeAstar( unsigned long node_list_size,
                              unsigned long step_limit)
 {
-    open_set.initialize(global_game_state->world_map->getWidth(),
-                        global_game_state->world_map->getHeight());
+    open_set.initialize(MapInterface::getWidth(),
+                        MapInterface::getHeight());
 
-    closed_set.initialize(global_game_state->world_map->getWidth(),
-                          global_game_state->world_map->getHeight());
+    closed_set.initialize(MapInterface::getWidth(),
+                          MapInterface::getHeight());
 
     open = std::priority_queue<AstarNode*, std::vector<AstarNode*>,
            AstarNodePtrCompare>();
@@ -160,8 +160,8 @@ unsigned long Astar::mapXYtoAbsloc( iXY map_loc )
 {
     unsigned long abs;
 
-    if ( ( map_loc.x < 0 ) || (map_loc.x >= (int) global_game_state->world_map->getWidth() ) ||
-            ( map_loc.y < 0 ) || (map_loc.y >= (int) global_game_state->world_map->getHeight() )
+    if ( ( map_loc.x < 0 ) || (map_loc.x >= (int) MapInterface::getWidth() ) ||
+            ( map_loc.y < 0 ) || (map_loc.y >= (int) MapInterface::getHeight() )
        )
         return 0xFFFFFFFF;
 
@@ -432,8 +432,8 @@ void Astar::setDebugMode(bool on_off)
     debug_mode_flag = on_off;
 
     if ( debug_mode_flag == true ) {
-        astar_set_array.initialize(global_game_state->world_map->getWidth(),
-                                   global_game_state->world_map->getHeight());
+        astar_set_array.initialize(MapInterface::getWidth(),
+                                   MapInterface::getHeight());
     } else {
         astar_set_array.deallocate();
     }

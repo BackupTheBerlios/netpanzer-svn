@@ -55,16 +55,17 @@ public:
                                       unsigned long range,
                                       const Uint16 player_id);
 
+    static void initialize()
+    {
+        initialize(10, 10);
+    }
+
+
 private:
     friend class UnitInterface;
     
-    static void initialize(const iXY & map_size, const iXY & tile_size,
-                     const unsigned int x_sample, const unsigned int y_sample);
+    static void initialize(const unsigned int x_sample, const unsigned int y_sample);
 
-    static void initialize(const iXY & map_size, const iXY & tile_size)
-    {
-        initialize( map_size, tile_size, 10, 10 );
-    }
 
     static void cleanUp()
     {

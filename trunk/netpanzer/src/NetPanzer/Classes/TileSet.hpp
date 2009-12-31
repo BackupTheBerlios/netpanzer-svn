@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <vector>
 #include "2D/Surface.hpp"
+#include "Types/iXY.hpp"
 #include "SDL.h"
 #include "Util/FileStream.hpp"
 
@@ -27,10 +28,10 @@ namespace filesystem { class ReadFile; }
 
 typedef struct TileSetHeader_s
 {
-    int     version;
-    int     x_pix;
-    int     y_pix;
-    int     tile_count;
+    unsigned int version;
+    unsigned int x_pix;
+    unsigned int y_pix;
+    unsigned int tile_count;
     std::string image_file;
     std::string unused;
 } TileSetHeader;
@@ -45,51 +46,42 @@ typedef struct TileAttributes_s
 class TileSet
 {
 public:
-    TileSet();
-    ~TileSet();
+    static const std::string& getName() { return *name; }
 
-    void readTileSetHeader(IFileStream& file);
-    void loadTileSetInfo( const char *file_path );
+    static void load(const char * tsname);
+    static void loadImages();
 
-    void loadTileSet( const char *file_path );
+    static bool tileImagesLoaded() { return tiles != 0; }
 
-    Surface * getTile(unsigned long index) const { return tiles[index]; }
+    static void cleanUp();
 
-    unsigned short getTileXsize() const { return header.x_pix; }
-    unsigned short getTileYsize() const { return header.y_pix; }
-    unsigned short getTileCount() const { return header.tile_count; }
+    static Surface * getTile(unsigned long index) { return (*tiles)[index]; }
 
-    const SDL_Color* getAverageTileColor(unsigned long index) const
+    static unsigned int getTileXsize() { return header->x_pix; }
+    static unsigned int getTileYsize() { return header->y_pix; }
+    static unsigned int getTileCount() { return header->tile_count; }
+
+    static const SDL_Color* getAverageTileColor(unsigned long index)
     {
-        return &tile_attributes[ index ].avg_color;
+        return &(*tile_attributes)[ index ].avg_color;
     }
 
-    char getTileMovementValue( unsigned long index )
+    static char getTileMovementValue( unsigned long index )
     {
-        return tile_attributes[ index ].move_value;
-    }
-
-    unsigned char getTilePixel( unsigned long index , unsigned int pixX,
-                                       unsigned int pixY)
-    {
-        if( index < tiles.size() )
-        {
-            return getTile(index)->getPixel(pixX, pixY);
-        }
-
-        return( 0 );
+        return (*tile_attributes)[ index ].move_value;
     }
 
 private:
-    bool                        tile_set_loaded;
-    TileSetHeader               header;
-    std::vector<TileAttributes> tile_attributes;
-    std::vector<Surface*>       tiles;
-    unsigned long               tile_size;
+    TileSet();
+    ~TileSet();
+    static TileSetHeader*               header;
+    static std::vector<TileAttributes>* tile_attributes;
+    static std::vector<Surface*>*       tiles;
+    static std::string*                 name;
 
-    void computeTileConsts( void );
-    void loadTileAttributes(IFileStream& file);
-    void freeTiles();
+    static void readTileSetHeader(IFileStream& file);
+    static void loadTileAttributes(IFileStream& file);
+    static void freeTiles();
 };
 
 #endif // ** _TILESET_HPP

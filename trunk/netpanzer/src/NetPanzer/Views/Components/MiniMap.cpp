@@ -56,6 +56,12 @@ MiniMap::~MiniMap()
 void
 MiniMap::draw( int posx, int posy, Surface &dest)
 {
+    if ( dirty )
+    {
+        regenerate();
+        dirty = false;
+    }
+    
     iXY oldpos(position);
     position.x += posx;
     position.y += posy;
@@ -121,14 +127,12 @@ MiniMap::regenerate()
 {
     LOGGER.warning("Regenerating minimap....");
     
-    WorldMap * map = global_game_state->world_map;
-    TileSet * tile_set = global_game_state->tile_set;
     float mapx;
     float mapy = 0.0f;
     const SDL_Color * oldColor;
 
-    xratio = (float)map->getWidth() / surface.getWidth();
-    yratio = (float)map->getHeight() / surface.getHeight();
+    xratio = (float)MapInterface::getWidth() / surface.getWidth();
+    yratio = (float)MapInterface::getHeight() / surface.getHeight();
     
     for ( int y=0; y<(int)surface.getHeight(); y++)
     {
@@ -136,7 +140,7 @@ MiniMap::regenerate()
         for ( int x=0; x<(int)surface.getWidth(); x++)
         {
             // XXX Beware, no check for limits, could raise assert and quit the game.
-            oldColor = tile_set->getAverageTileColor(map->getValue((int)mapx, (int)mapy));
+            oldColor = TileSet::getAverageTileColor(MapInterface::getValue((int)mapx, (int)mapy));
             surface.putPixel(x, y, oldColor->r, oldColor->g, oldColor->b);
             mapx += xratio;
         }

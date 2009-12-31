@@ -37,7 +37,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "PowerUps/PowerUpInterface.hpp"
 #include "Weapons/ProjectileInterface.hpp"
-#include "Interfaces/TileInterface.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
 #include "Interfaces/WorldViewInterface.hpp"

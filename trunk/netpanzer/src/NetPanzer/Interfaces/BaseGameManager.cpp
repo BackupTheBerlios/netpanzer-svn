@@ -57,6 +57,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Network/MessageRouter.hpp"
 #include "Bot/BotManager.hpp"
 
+#include "Core/GlobalGameState.hpp"
+
 //------------------------------------------------------------------
 BaseGameManager::BaseGameManager()
     : running(true)
@@ -237,7 +239,7 @@ void BaseGameManager::simLoop()
 
     // GameControlRulesDaemon might take some packets before they are routed.
     GameControlRulesDaemon::updateGameControlFlow();
-    MessageRouter::routePackets();
+//    MessageRouter::routePackets();
 
     if ( NetworkState::status == _network_state_server )
     {

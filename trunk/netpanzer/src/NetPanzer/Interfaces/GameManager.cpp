@@ -42,7 +42,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "PowerUps/PowerUpInterface.hpp"
 #include "Weapons/ProjectileInterface.hpp"
-#include "Interfaces/TileInterface.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
@@ -186,7 +185,7 @@ void GameManager::loadGameMap(const char *map_file_path)
     std::string map_path("maps/");
     map_path.append(map_file_path);
 
-    if (!MapInterface::loadMap( map_path.c_str(), true ))
+    if ( !MapInterface::load( map_path.c_str()) )
         throw Exception("map format error.");
 
     map_path.append(".opt");
@@ -194,7 +193,7 @@ void GameManager::loadGameMap(const char *map_file_path)
 
     ParticleInterface::initParticleSystems();
 
-    ParticleInterface::addCloudParticle(gameconfig->cloudcoverage);
+//    ParticleInterface::addCloudParticle(gameconfig->cloudcoverage);
     Physics::wind.setVelocity(gameconfig->windspeed, 107);
 }
 
@@ -222,7 +221,7 @@ void GameManager::dedicatedLoadGameMap(const char *map_name )
     std::string map_path("maps/");
     map_path.append(map_name);
 
-    MapInterface::loadMap( map_path.c_str(), false );
+    MapInterface::load( map_path.c_str() );
 
     map_path.append(".opt");
     ObjectiveInterface::loadObjectiveList( map_path.c_str() );
@@ -237,7 +236,7 @@ void GameManager::spawnPlayer( const Uint16 player )
     global_engine_state->sound_manager->stopTankIdle();
 
     // ** Get a new spawn point and spawn the player **
-    iXY spawn_point = global_game_state->spawn_list->getFreeSpawnPoint();
+    iXY spawn_point = MapInterface::getFreeSpawnPoint();
 
     PlayerInterface::spawnPlayer( player, spawn_point );
 
@@ -247,8 +246,8 @@ void GameManager::spawnPlayer( const Uint16 player )
 void GameManager::spawnPlayerAt( const Uint16 player, const iXY& location )
 {
     if (   location.x >=0 && location.y >=0
-        && location.x < global_game_state->world_map->getWidth()
-        && location.y < global_game_state->world_map->getHeight() )
+        && location.x < MapInterface::getWidth()
+        && location.y < MapInterface::getHeight() )
     {
         global_engine_state->sound_manager->stopTankIdle();
         PlayerInterface::spawnPlayer( player, location );

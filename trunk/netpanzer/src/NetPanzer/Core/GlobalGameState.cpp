@@ -22,6 +22,5 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 GlobalGameState * global_game_state = 0;
 
 GlobalGameState::GlobalGameState()
-        : tile_set(0), world_map(0), spawn_list(0),
-          unit_profile_interface(0)
+        : unit_profile_interface(0)
 {}

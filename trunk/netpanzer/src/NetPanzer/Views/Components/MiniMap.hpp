@@ -44,7 +44,8 @@ protected:
     void onMapLoadedEvent()
     {
         LOGGER.warning("onMapLoadedEvent received........");
-        regenerate();
+        dirty = true;
+//        regenerate();
     }
     
 private:

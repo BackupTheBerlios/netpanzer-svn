@@ -20,9 +20,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <list>
 
-#include "TileInterface.hpp"
-#include "Classes/WorldMap.hpp"
-#include "Core/GlobalGameState.hpp"
+//#include "Classes/WorldMap.hpp"
+#include "Classes/TileSet.hpp"
+#include "Classes/SpawnList.hpp"
 
 struct SDL_Color;
 
@@ -37,12 +37,16 @@ private:
 };
 
 
-class MapInterface : protected TileInterface
+class MapInterface
 {
 public:
-    static bool loadMap(const char *file_path, bool load_tiles);
+    static bool load(const char *file_path);
+    static void cleanUp();
 
     static unsigned char getMovementValue( iXY map_loc );
+    static unsigned char getWorldPixMovementValue( int worldX, int worldY );
+    static iXY getFreeSpawnPoint() { return spawn_list->getFreeSpawnPoint(); }
+    static bool isLoaded() { return map_data != 0; }
 
     static void addMapEventListener(MapEventListener *lis)
     {
@@ -56,18 +60,16 @@ public:
     
     static void getMapPointSize(iXY *map_size)
     {
-        map_size->x = global_game_state->world_map->getWidth() * global_game_state->tile_set->getTileXsize();
-        map_size->y = global_game_state->world_map->getHeight() * global_game_state->tile_set->getTileYsize();
+        map_size->x = width * TileSet::getTileXsize();
+        map_size->y = height * TileSet::getTileYsize();
     }
 
-    static iXY getSize()
-    {
-        return iXY(global_game_state->world_map->getWidth(), global_game_state->world_map->getHeight());
-    }
+    static unsigned int getWidth() { return width; }
+    static unsigned int getHeight() { return height; }
 
-    static WorldMap::MapElementType MapValue(size_t x, size_t y)
+    static int getValue(size_t x, size_t y)
     {
-        return global_game_state->world_map->getValue(x, y);
+        return map_data[(y*width) + x];
     }
 
     static void mapXYtoPointXY(unsigned short map_x, unsigned short map_y,
@@ -98,7 +100,7 @@ public:
 
     static size_t mapXYtoOffset(size_t map_x, size_t map_y)
     {
-        return (map_y * global_game_state->world_map->getWidth()) + map_x;
+        return (map_y * width) + map_x;
     }
 
     static size_t mapXYtoOffset(const iXY& map_loc)
@@ -108,19 +110,25 @@ public:
 
     static void offsetToMapXY(size_t offset, iXY *map_loc)
     {
-        map_loc->y = offset/global_game_state->world_map->getWidth();
-        map_loc->x = offset - (map_loc->y * global_game_state->world_map->getWidth());
+        map_loc->y = offset/width;
+        map_loc->x = offset - (map_loc->y * width);
     }
 
-protected:
+private:
     typedef std::list<MapEventListener *> MapListenerList;
     static MapListenerList listenerList;
 
-    static char map_path[256];
     static const int TILE_WIDTH = 32;
     static const int TILE_HEIGHT = 32;
 
-    static void finishMapLoad();
+    static int* map_data;
+    static unsigned int width;
+    static unsigned int height;
+    static char tileset_name[256];
+
+    static SpawnList * spawn_list;
+
+    static void notifyMapLoad();
 };
 
 #endif
