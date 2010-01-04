@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "FlameParticle2D.hpp"
 #include "lua/lua.hpp"
 #include "2D/ImageArray.hpp"
-#include "util/Log.hpp"
+#include "Util/Log.hpp"
 #include "tolua++.h"
 
 typedef struct s_FlameArray
