@@ -20,8 +20,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "Particles/FlashParticle2D.hpp"
 #include "2D/Palette.hpp"
+#include "lua/lua.hpp"
+#include "Util/Log.hpp"
 
-Surface FlashParticle2D::staticPackedFlash;
+Surface* staticPackedFlash = 0;
 
 // FlashParticle2D
 //---------------------------------------------------------------------------
@@ -37,20 +39,51 @@ FlashParticle2D::FlashParticle2D(	const fXYZ  &pos,
     FlashParticle2D::layer       = layer;
     FlashParticle2D::lifetime    = lifetime;
 
-    packedSurface.setData(staticPackedFlash);
+    packedSurface.setData(*staticPackedFlash);
     packedSurface.setDrawModeBlend(224); // more bright
 
 } // end FlashParticle2D::FlashParticle2D
 
 // init
 //---------------------------------------------------------------------------
-void FlashParticle2D::init()
+void FlashParticle2D::init(lua_State *L)
 {
-    staticPackedFlash.loadPNGSheet("pics/particles/lights/flash2.png", 240, 194, 20);
-    staticPackedFlash.setColorkey();
-//    staticPackedFlash.setAlpha();
-//    staticPackedFlash.setOffsetCenter();
-//    staticPackedFlash.brigthenFrames();
+    if ( staticPackedFlash )
+    {
+        return; // already loaded
+    }
+
+    int luatop = lua_gettop(L);
+
+    lua_getfield(L, -1, "flash");
+    if ( ! lua_istable(L, -1) )
+    {
+        LOGGER.warning("flash configuration not found.");
+        lua_settop(L, luatop);
+        return;
+    }
+
+//    lua_rawgeti(L, -1, 1);
+
+    lua_rawgeti(L, -1, 1); // file_name
+    lua_rawgeti(L, -2, 2); // width
+    lua_rawgeti(L, -3, 3); // height
+    lua_rawgeti(L, -4, 4); // nframes
+
+    Surface* s = new Surface();
+    s->loadPNGSheet( lua_tostring(L, -4),
+                    lua_tointeger(L, -3),
+                    lua_tointeger(L, -2),
+                    lua_tointeger(L, -1));
+
+//    lua_pop(L, 5);
+
+    s->setColorkey();
+    s->setOffsetCenter();
+
+    staticPackedFlash = s;
+
+    lua_settop(L, luatop);
 } // end FlashParticle2D::init
 
 // draw

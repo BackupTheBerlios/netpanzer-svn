@@ -86,7 +86,7 @@ public:
     int getFPS(int FPSmin, int FPSrand);
 
     // Returns the pak index depending on the the specified scale.
-    static int getPakIndex(float scale, int pakImageCount);
+    static unsigned int getPakIndex(float scale, unsigned int pakImageCount);
 
     static float getScale(float scaleMin, float scaleRand);
 

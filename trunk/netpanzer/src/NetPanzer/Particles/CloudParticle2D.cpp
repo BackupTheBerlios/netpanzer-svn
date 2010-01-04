@@ -24,10 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Palette.hpp"
 #include "Classes/Sprite.hpp"
 
+#include "Util/Log.hpp"
 
 // Statics.
-Surface CloudParticle2D::staticPackedCloud;
-Surface CloudParticle2D::staticCloudShadow;
+Surface* staticPackedCloud = 0;
+Surface* staticCloudShadow = 0;
 iXY CloudParticle2D::worldSize(0, 0);
 
 
@@ -58,12 +59,12 @@ CloudParticle2D::CloudParticle2D(	const fXYZ &pos,
 //---------------------------------------------------------------------------
 void CloudParticle2D::setRandomSurface()
 {
-    packedSurface.setData(staticPackedCloud);
+    packedSurface.setData(*staticPackedCloud);
 
-    int randFrame = rand() % staticPackedCloud.getNumFrames();
+    int randFrame = rand() % staticPackedCloud->getNumFrames();
     packedSurface.setFrame(randFrame);
 
-    packedSurfaceShadow.setData(staticCloudShadow);
+    packedSurfaceShadow.setData(*staticCloudShadow);
     packedSurfaceShadow.setFrame(randFrame);
 
     packedSurfaceShadow.setDrawModeBlend(32);
@@ -72,26 +73,48 @@ void CloudParticle2D::setRandomSurface()
 
 } // end CloudParticle2D::setRandomSurface
 
-//---------------------------------------------------------------------------
-void CloudParticle2D::packFiles()
-{}
-
-//---------------------------------------------------------------------------
-void CloudParticle2D::loadPAKFiles()
-{
-    staticPackedCloud.loadPNGSheet("pics/particles/clouds/clouds.png", 300, 300, 10);
-    staticPackedCloud.setColorkey();
-//    staticPackedCloud.setOffsetCenter();
-
-    staticCloudShadow.createShadow(staticPackedCloud);
-//    staticCloudShadow.setOffsetCenter();
-}
-
 // init
 //---------------------------------------------------------------------------
-void CloudParticle2D::init()
+void CloudParticle2D::init(lua_State *L)
 {
-    loadPAKFiles();
+    if ( staticPackedCloud )
+    {
+        return; // already loaded
+    }
+
+    int luatop = lua_gettop(L);
+
+    lua_getfield(L, -1, "clouds");
+    if ( ! lua_istable(L, -1) )
+    {
+        LOGGER.warning("clouds configuration not found.");
+        lua_settop(L, luatop);
+        return;
+    }
+
+//    lua_rawgeti(L, -1, 1);
+
+    lua_rawgeti(L, -1, 1); // file_name
+    lua_rawgeti(L, -2, 2); // width
+    lua_rawgeti(L, -3, 3); // height
+    lua_rawgeti(L, -4, 4); // nframes
+
+    Surface* s = new Surface();
+    s->loadPNGSheet( lua_tostring(L, -4),
+                    lua_tointeger(L, -3),
+                    lua_tointeger(L, -2),
+                    lua_tointeger(L, -1));
+
+//    lua_pop(L, 5);
+
+    s->setColorkey();
+    s->setOffsetCenter();
+
+    staticPackedCloud = s;
+    staticCloudShadow = new Surface();
+    staticCloudShadow->createShadow(*staticPackedCloud);
+
+    lua_settop(L, luatop);
 } // end CloudParticle2D::init
 
 // sim

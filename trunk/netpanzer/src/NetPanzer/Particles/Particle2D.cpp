@@ -277,9 +277,9 @@ int Particle2D::getFPS(int FPSmin, int FPSrand)
 
 // getPakIndex
 //--------------------------------------------------------------------------
-int Particle2D::getPakIndex(float scale, int pakImageCount)
+unsigned int Particle2D::getPakIndex(float scale, unsigned int pakImageCount)
 {
-    int destIndex = (int) (scale * float(pakImageCount));
+    unsigned int destIndex = (unsigned int) (scale * float(pakImageCount));
 
     if (destIndex > pakImageCount - 1) {
         destIndex = pakImageCount - 1;

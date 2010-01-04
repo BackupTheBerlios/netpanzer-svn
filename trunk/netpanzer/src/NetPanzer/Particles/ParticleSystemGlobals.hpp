@@ -35,10 +35,10 @@ enum
 
 enum PUFF_TYPE
 {
-    LIGHT,
+    LIGHT = 0,
     DARK,
-    SMOKE,
-    DIRT
+    DIRT,
+    PUFF_TYPE_LAST
 };
 
 enum EXPLOSION_TYPE

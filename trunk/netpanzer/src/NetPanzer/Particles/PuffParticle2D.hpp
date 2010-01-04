@@ -19,10 +19,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __PuffParticle2D_hpp__
 #define __PuffParticle2D_hpp__
 
-#include <vector>
-
 #include "WindParticle2D.hpp"
 #include "ParticleSystemGlobals.hpp"
+
+struct lua_State;
 
 // PuffParticle2D
 //--------------------------------------------------------------------------
@@ -30,7 +30,7 @@ class PuffParticle2D : public WindParticle2D
 {
 protected:
 
-    void create(	PUFF_TYPE particleType,
+    void create( unsigned int particleType,
                  float     scaleMin,
                  float     scaleRand,
                  int       FPSMin,
@@ -45,9 +45,9 @@ protected:
 public:
     // A minSize of 1.0f would be the original size of the image.
     // WindScale is how much the wind effects this particle.  1.0f is full.
-    PuffParticle2D(	const fXYZ &pos,
+    PuffParticle2D( const fXYZ &pos,
                     const fXYZ &shadowPos,
-                    PUFF_TYPE   particleType,
+                    unsigned int particleType,
                     float       scaleMin,
                     float       scaleRand,
                     int         FPSMin,
@@ -81,12 +81,9 @@ public:
                 isFarAway);
     }
 
-    static  void init();
-    static  void loadPAKFiles();
-    static  void loadTILFiles();
+    static  void init(lua_State *L);
     virtual void draw(SpriteSorter &sorter);
 
-}
-; // end PuffParticle2D
+}; // end PuffParticle2D
 
 #endif // __PuffParticle2D_hpp__

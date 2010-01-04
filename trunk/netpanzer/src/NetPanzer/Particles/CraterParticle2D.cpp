@@ -20,12 +20,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "CraterParticle2D.hpp"
 #include "2D/Palette.hpp"
 
+#include "lua/lua.hpp"
+#include "Util/Log.hpp"
+
 // Set to 1 for divide by zero issues.
 int CraterParticle2D::cacheHitCount  = 1;
 int CraterParticle2D::cacheMissCount = 1;
 int CraterParticle2D::halfBoundsSize = 24;
 
-Surface CraterParticle2D::staticPackedCrater;
+Surface* staticPackedCrater = 0;
 
 std::vector<CraterCacheInfo> CraterParticle2D::craterCache;
 int CraterParticle2D::curCraterIndex = 0;
@@ -35,11 +38,11 @@ int CraterParticle2D::curCraterIndex = 0;
 //---------------------------------------------------------------------------
 CraterParticle2D::CraterParticle2D(const fXYZ  &pos) : Particle2D(pos)
 {
-    packedSurface.setData(staticPackedCrater);
+    packedSurface.setData(*staticPackedCrater);
 
     packedSurface.setDrawModeSolid();
 
-    packedSurface.setFrame(rand() % staticPackedCrater.getNumFrames());
+    packedSurface.setFrame(rand() % staticPackedCrater->getNumFrames());
 
     // Check to see if this is valid crater ground.
 
@@ -76,7 +79,7 @@ CraterParticle2D::CraterParticle2D(const fXYZ  &pos) : Particle2D(pos)
 
 // init
 //---------------------------------------------------------------------------
-void CraterParticle2D::init()
+void CraterParticle2D::init(lua_State *L)
 {
     craterCache.resize(40);
     for (size_t i = 0; i < craterCache.size(); i++) {
@@ -84,8 +87,42 @@ void CraterParticle2D::init()
         craterCache[i].pos.zero();
     }
 
-    staticPackedCrater.loadPNGSheet("pics/particles/craters/craters.png", 32, 32, 3);
-    staticPackedCrater.setColorkey();
+    if ( staticPackedCrater )
+    {
+        return; // already loaded
+    }
+
+    int luatop = lua_gettop(L);
+
+    lua_getfield(L, -1, "craters");
+    if ( ! lua_istable(L, -1) )
+    {
+        LOGGER.warning("craters configuration not found.");
+        lua_settop(L, luatop);
+        return;
+    }
+
+//    lua_rawgeti(L, -1, 1);
+
+    lua_rawgeti(L, -1, 1); // file_name
+    lua_rawgeti(L, -2, 2); // width
+    lua_rawgeti(L, -3, 3); // height
+    lua_rawgeti(L, -4, 4); // nframes
+
+    Surface* s = new Surface();
+    s->loadPNGSheet( lua_tostring(L, -4),
+                    lua_tointeger(L, -3),
+                    lua_tointeger(L, -2),
+                    lua_tointeger(L, -1));
+
+//    lua_pop(L, 5);
+
+    s->setColorkey();
+    s->setOffsetCenter();
+
+    staticPackedCrater = s;
+
+    lua_settop(L, luatop);
 } // end CraterParticle2D::init
 
 // draw

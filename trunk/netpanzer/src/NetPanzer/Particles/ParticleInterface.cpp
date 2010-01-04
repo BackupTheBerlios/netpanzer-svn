@@ -39,6 +39,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "2D/Color.hpp"
 
+#include "lua/lua.hpp"
+
 std::vector<UnitParticleInfo> ParticleInterface::unitParticleInfo;
 int ParticleInterface::unitBodyMaxArea                   = 0;
 int ParticleInterface::gParticlesCanHaveSmoke            = 1;
@@ -436,17 +438,44 @@ void ParticleInterface::addCloudParticle(int count /* = 1 */)
     }
 }
 
+static bool initialized = false;
 void ParticleInterface::initParticleSystems()
 {
-    PuffParticle2D::init();
-    CloudParticle2D::init();
-    FlameParticle2D::init();
-    FlashParticle2D::init();
-    ChunkTrajectoryParticle2D::init();
-    CraterParticle2D::init();
+    if ( ! initialized )
+    {
+        lua_State *L = luaL_newstate();
+        int error = luaL_dofile(L, filesystem::getRealName("scripts/particles.lcfg").c_str());
+        if (error)
+        {
+            LOGGER.warning("Can't initialize particles, lua error: %s\n",lua_tostring(L,-1));
+            lua_close(L);
+            return;
+        }
 
-    buildUnitTables();
-    getUnitParticleInfo();
+        lua_getglobal(L, "particles");
+        if ( ! lua_istable(L, -1) )
+        {
+            LOGGER.warning("Particle configuration not found.");
+            lua_close(L);
+            return;
+        }
+
+        PuffParticle2D::init(L);
+        CloudParticle2D::init(L);
+        FlameParticle2D::init(L);
+        FlashParticle2D::init(L);
+        ChunkTrajectoryParticle2D::init(L);
+
+        CraterParticle2D::init(L);
+
+        // requires unit_profiles_interface
+        buildUnitTables();
+        // requires unit profiles sprites
+        getUnitParticleInfo();
+        
+        lua_close(L);
+        initialized = true;
+    }
 }
 
 // Purpose: Add dirt puffs under the units.

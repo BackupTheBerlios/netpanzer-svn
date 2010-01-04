@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "2D/Surface.hpp"
 
+struct lua_State;
+
 class CraterCacheInfo
 {
 public:
@@ -37,9 +39,7 @@ class CraterParticle2D : public Particle2D
 public:
     CraterParticle2D(const fXYZ  &pos);
 
-    static void init();
-
-    static Surface staticPackedCrater;
+    static void init(lua_State *L);
 
     static int getCacheHitCount()
     {

@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "TrajectoryParticle2D.hpp"
 #include "ParticleSystemGlobals.hpp"
 
+struct lua_State;
+
 // ChunkTrajectoryParticle2D
 //--------------------------------------------------------------------------
 class ChunkTrajectoryParticle2D : public TrajectoryParticle2D
@@ -54,7 +56,7 @@ public:
     virtual void sim();
     virtual void draw(SpriteSorter &sorter);
 
-    static void init();
+    static void init(lua_State *L);
 
 }
 ; // end ChunkTrajectoryParticle2D

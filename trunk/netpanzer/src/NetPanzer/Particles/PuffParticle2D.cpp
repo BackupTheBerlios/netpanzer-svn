@@ -16,24 +16,25 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "PuffParticle2D.hpp"
-#include "Util/TimerInterface.hpp"
 #include "ParticleSystemGlobals.hpp"
-#include "Util/Exception.hpp"
-#include "2D/Palette.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Util/Log.hpp"
+#include "2D/ImageArray.hpp"
 
-// Static images.
-SurfaceList staticPackedSmokeLightPuff;
-SurfaceList staticPackedSmokeDarkPuff;
-SurfaceList staticPackedDirtPuff;
+typedef struct s_PuffArray
+{
+    unsigned int num_puff_types;
+    ImageArray* puffImageArray;
+} PuffArray;
+
+static PuffArray* puff_array = 0;
 
 // PuffParticle2D
 //---------------------------------------------------------------------------
 PuffParticle2D::PuffParticle2D(	const fXYZ &pos,
                                 const fXYZ &shadowPos,
-                                PUFF_TYPE   particleType,
+                                unsigned int particleType,
                                 float       minScale,
                                 float       randScale,
                                 int         minFPS,
@@ -52,7 +53,7 @@ PuffParticle2D::PuffParticle2D(	const fXYZ &pos,
 
 // create
 //---------------------------------------------------------------------------
-void PuffParticle2D::create(	PUFF_TYPE particleType,
+void PuffParticle2D::create( unsigned int particleType,
                              float     scaleMin,
                              float     scaleRand,
                              int       FPSmin,
@@ -70,20 +71,18 @@ void PuffParticle2D::create(	PUFF_TYPE particleType,
     PuffParticle2D::shadowLayer = shadowLayer;
     PuffParticle2D::isFarAway   = isFarAway;
 
-    index = getPakIndex(scale, staticPackedSmokeLightPuff.size());
-
-    if (particleType == LIGHT) {
-        packedSurface.setData( *(staticPackedSmokeLightPuff[index]) );
-        packedSurfaceShadow.setData( *(staticPackedSmokeLightPuff[index]) );
-    } else if (particleType == DARK) {
-        packedSurface.setData( *(staticPackedSmokeDarkPuff[index]) );
-        packedSurfaceShadow.setData( *(staticPackedSmokeDarkPuff[index]) );
-    } else if (particleType == DIRT) {
-        packedSurface.setData( *(staticPackedDirtPuff[index]) );
-        packedSurfaceShadow.setData( *(staticPackedDirtPuff[index]) );
-    } else {
-        throw Exception("ERROR: Unsupported particleType.");
+    if ( particleType >= puff_array->num_puff_types )
+    {
+        particleType = 0;
+        LOGGER.warning("Wrong puff_type %d, using 0", particleType);
     }
+
+    index = getPakIndex(scale, puff_array->puffImageArray[particleType].size());
+
+    Surface *s = puff_array->puffImageArray[particleType].getImage(index);
+
+    packedSurface.setData( *s );
+    packedSurfaceShadow.setData( *s );
 
     packedSurfaceShadow.setDrawModeBlend(32); // dark a little
 
@@ -126,7 +125,7 @@ void PuffParticle2D::draw(SpriteSorter &sorter)
     if (gameconfig->displayshadows) {
         if (!userDefinedShadowPos) {
             shadowPos.x = pos.x - ((float(index) /
-                        float(staticPackedSmokeLightPuff.size())) * packedSurfaceShadow.getCurFrame() * 10);
+                        float(puff_array->puffImageArray[0].size())) * packedSurfaceShadow.getCurFrame() * 10);
         }
 
         packedSurfaceShadow.setAttrib(iXY((int) shadowPos.x, (int) shadowPos.z), shadowLayer);
@@ -135,152 +134,45 @@ void PuffParticle2D::draw(SpriteSorter &sorter)
 
 } // end PuffParticle2D::draw
 
+static bool loadPuffData(lua_State *L, const char * field_name, int puff_num)
+{
+    lua_getfield(L, -1, field_name);
+    if ( ! lua_istable(L, -1) )
+    {
+        LOGGER.warning("%s puffs configuration not found.", field_name);
+        lua_pop(L, 1);
+        return false;
+    }
+
+    puff_array->puffImageArray[puff_num].loadImageSheetArray(L);
+
+    lua_pop(L, 1);
+}
+
 // init
 //---------------------------------------------------------------------------
-void PuffParticle2D::init()
+void PuffParticle2D::init(lua_State* L)
 {
-    //loadTILFiles();
-    loadPAKFiles();
+    if ( ! puff_array )
+    {
+        int luatop = lua_gettop(L);
 
-    // Uncomment the following to produce packed puff particles.
-    //pakFiles();
+        lua_getfield(L, -1, "puffs");
+        if ( ! lua_istable(L, -1) )
+        {
+            LOGGER.warning("Puffs configuration not found.");
+            lua_settop(L, luatop);
+            return;
+        }
 
+        puff_array = new PuffArray;
+        puff_array->num_puff_types = 3;
+        puff_array->puffImageArray = new ImageArray[3]();
+
+        loadPuffData(L, "light", 0);
+        loadPuffData(L, "dark", 1);
+        loadPuffData(L, "dirt", 2);
+        
+        lua_settop(L, luatop);
+    }
 } // end PuffParticle2D::init
-
-//---------------------------------------------------------------------------
-void PuffParticle2D::loadPAKFiles()
-{
-    staticPackedSmokeLightPuff.push_back(new Surface());
-    staticPackedSmokeLightPuff[staticPackedSmokeLightPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeLightPuff0004.png", 4, 4, 26);
-    staticPackedSmokeLightPuff.push_back(new Surface());
-    staticPackedSmokeLightPuff[staticPackedSmokeLightPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeLightPuff0008.png", 8, 8, 26);
-    staticPackedSmokeLightPuff.push_back(new Surface());
-    staticPackedSmokeLightPuff[staticPackedSmokeLightPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeLightPuff0012.png", 12, 12, 26);
-    staticPackedSmokeLightPuff.push_back(new Surface());
-    staticPackedSmokeLightPuff[staticPackedSmokeLightPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeLightPuff0016.png", 16, 16, 26);
-    staticPackedSmokeLightPuff.push_back(new Surface());
-    staticPackedSmokeLightPuff[staticPackedSmokeLightPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeLightPuff0020.png", 20, 20, 26);
-    staticPackedSmokeLightPuff.push_back(new Surface());
-    staticPackedSmokeLightPuff[staticPackedSmokeLightPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeLightPuff0024.png", 24, 24, 26);
-    staticPackedSmokeLightPuff.push_back(new Surface());
-    staticPackedSmokeLightPuff[staticPackedSmokeLightPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeLightPuff0028.png", 28, 28, 26);
-    staticPackedSmokeLightPuff.push_back(new Surface());
-    staticPackedSmokeLightPuff[staticPackedSmokeLightPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeLightPuff0032.png", 32, 32, 26);
-    staticPackedSmokeLightPuff.push_back(new Surface());
-    staticPackedSmokeLightPuff[staticPackedSmokeLightPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeLightPuff0036.png", 36, 36, 26);
-    staticPackedSmokeLightPuff.push_back(new Surface());
-    staticPackedSmokeLightPuff[staticPackedSmokeLightPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeLightPuff0040.png", 40, 40, 26);
-    staticPackedSmokeLightPuff.push_back(new Surface());
-    staticPackedSmokeLightPuff[staticPackedSmokeLightPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeLightPuff0044.png", 44, 44, 26);
-    staticPackedSmokeLightPuff.push_back(new Surface());
-    staticPackedSmokeLightPuff[staticPackedSmokeLightPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeLightPuff0048.png", 48, 48, 26);
-
-    for ( unsigned int n = 0; n < staticPackedSmokeLightPuff.size(); ++n )
-    {
-        staticPackedSmokeLightPuff[n]->setColorkey();
-        staticPackedSmokeLightPuff[n]->setOffsetCenter();
-    }
-
-    staticPackedSmokeDarkPuff.push_back(new Surface());
-    staticPackedSmokeDarkPuff[staticPackedSmokeDarkPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeDarkPuff0004.png", 4, 4, 26);
-    staticPackedSmokeDarkPuff.push_back(new Surface());
-    staticPackedSmokeDarkPuff[staticPackedSmokeDarkPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeDarkPuff0008.png", 8, 8, 26);
-    staticPackedSmokeDarkPuff.push_back(new Surface());
-    staticPackedSmokeDarkPuff[staticPackedSmokeDarkPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeDarkPuff0012.png", 12, 12, 26);
-    staticPackedSmokeDarkPuff.push_back(new Surface());
-    staticPackedSmokeDarkPuff[staticPackedSmokeDarkPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeDarkPuff0016.png", 16, 16, 26);
-    staticPackedSmokeDarkPuff.push_back(new Surface());
-    staticPackedSmokeDarkPuff[staticPackedSmokeDarkPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeDarkPuff0020.png", 20, 20, 26);
-    staticPackedSmokeDarkPuff.push_back(new Surface());
-    staticPackedSmokeDarkPuff[staticPackedSmokeDarkPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeDarkPuff0024.png", 24, 24, 26);
-    staticPackedSmokeDarkPuff.push_back(new Surface());
-    staticPackedSmokeDarkPuff[staticPackedSmokeDarkPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeDarkPuff0028.png", 28, 28, 26);
-    staticPackedSmokeDarkPuff.push_back(new Surface());
-    staticPackedSmokeDarkPuff[staticPackedSmokeDarkPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeDarkPuff0032.png", 32, 32, 26);
-    staticPackedSmokeDarkPuff.push_back(new Surface());
-    staticPackedSmokeDarkPuff[staticPackedSmokeDarkPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeDarkPuff0036.png", 36, 36, 26);
-    staticPackedSmokeDarkPuff.push_back(new Surface());
-    staticPackedSmokeDarkPuff[staticPackedSmokeDarkPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeDarkPuff0040.png", 40, 40, 26);
-    staticPackedSmokeDarkPuff.push_back(new Surface());
-    staticPackedSmokeDarkPuff[staticPackedSmokeDarkPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeDarkPuff0044.png", 44, 44, 26);
-    staticPackedSmokeDarkPuff.push_back(new Surface());
-    staticPackedSmokeDarkPuff[staticPackedSmokeDarkPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/smokeDarkPuff0048.png", 48, 48, 26);
-
-    for ( unsigned int n = 0; n < staticPackedSmokeDarkPuff.size(); ++n )
-    {
-        staticPackedSmokeDarkPuff[n]->setColorkey();
-        staticPackedSmokeDarkPuff[n]->setOffsetCenter();
-    }
-
-    staticPackedDirtPuff.push_back(new Surface());
-    staticPackedDirtPuff[staticPackedDirtPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/dirtPuff0004.png", 4, 4, 26);
-    staticPackedDirtPuff.push_back(new Surface());
-    staticPackedDirtPuff[staticPackedDirtPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/dirtPuff0008.png", 8, 8, 26);
-    staticPackedDirtPuff.push_back(new Surface());
-    staticPackedDirtPuff[staticPackedDirtPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/dirtPuff0012.png", 12, 12, 26);
-    staticPackedDirtPuff.push_back(new Surface());
-    staticPackedDirtPuff[staticPackedDirtPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/dirtPuff0016.png", 16, 16, 26);
-    staticPackedDirtPuff.push_back(new Surface());
-    staticPackedDirtPuff[staticPackedDirtPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/dirtPuff0020.png", 20, 20, 26);
-    staticPackedDirtPuff.push_back(new Surface());
-    staticPackedDirtPuff[staticPackedDirtPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/dirtPuff0024.png", 24, 24, 26);
-    staticPackedDirtPuff.push_back(new Surface());
-    staticPackedDirtPuff[staticPackedDirtPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/dirtPuff0028.png", 28, 28, 26);
-    staticPackedDirtPuff.push_back(new Surface());
-    staticPackedDirtPuff[staticPackedDirtPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/dirtPuff0032.png", 32, 32, 26);
-    staticPackedDirtPuff.push_back(new Surface());
-    staticPackedDirtPuff[staticPackedDirtPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/dirtPuff0036.png", 36, 36, 26);
-    staticPackedDirtPuff.push_back(new Surface());
-    staticPackedDirtPuff[staticPackedDirtPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/dirtPuff0040.png", 40, 40, 26);
-    staticPackedDirtPuff.push_back(new Surface());
-    staticPackedDirtPuff[staticPackedDirtPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/dirtPuff0044.png", 44, 44, 26);
-    staticPackedDirtPuff.push_back(new Surface());
-    staticPackedDirtPuff[staticPackedDirtPuff.size()-1]->loadPNGSheet(
-            "pics/particles/puff/dirtPuff0048.png", 48, 48, 26);
-
-    for ( unsigned int n = 0; n < staticPackedDirtPuff.size(); ++n )
-    {
-        staticPackedDirtPuff[n]->setColorkey();
-        staticPackedDirtPuff[n]->setOffsetCenter();
-    }
-}
-
-//---------------------------------------------------------------------------
-void PuffParticle2D::loadTILFiles()
-{
-}

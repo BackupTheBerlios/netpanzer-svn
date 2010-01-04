@@ -25,7 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
 
-Surface staticPackedGroundChunks;
+#include "lua/lua.hpp"
+#include "Util/Log.hpp"
+
+Surface* staticPackedGroundChunks = 0;
 
 // ChunkTrajectoryParticle2D
 //---------------------------------------------------------------------------
@@ -62,7 +65,7 @@ ChunkTrajectoryParticle2D::ChunkTrajectoryParticle2D(	const fXYZ &pos,
 
     // int randChunk = rand() % staticPackedGroundChunks.getFrameCount();
 
-    packedSurface.setData(staticPackedGroundChunks);
+    packedSurface.setData(*staticPackedGroundChunks);
     packedSurface.setDrawModeSolid();
     //packedSurface.setDrawModeBlend(&Palette::colorTableBrighten);
 
@@ -71,13 +74,13 @@ ChunkTrajectoryParticle2D::ChunkTrajectoryParticle2D(	const fXYZ &pos,
         index = 253;
 
     } else {
-        index = rand() % staticPackedGroundChunks.getNumFrames();
+        index = rand() % staticPackedGroundChunks->getNumFrames();
     }
 
     //int randFrame = rand() % staticPackedChunks[randChunk].getFrameCount();
-    staticPackedGroundChunks.setFrame(index);
+    staticPackedGroundChunks->setFrame(index);
 
-    packedSurfaceShadow.setData(staticPackedGroundChunks);
+    packedSurfaceShadow.setData(*staticPackedGroundChunks);
     packedSurfaceShadow.setDrawModeBlend(128); // dark a little
 
     if (ParticleInterface::gParticlesCanHaveSmoke && canHaveSmoke) {
@@ -94,10 +97,44 @@ ChunkTrajectoryParticle2D::ChunkTrajectoryParticle2D(	const fXYZ &pos,
 
 // init
 //---------------------------------------------------------------------------
-void ChunkTrajectoryParticle2D::init()
+void ChunkTrajectoryParticle2D::init(lua_State *L)
 {
-//    staticPackedGroundChunks.loadPAK("pics/particles/chunks/pak/groundChunks.pak");
-    staticPackedGroundChunks.loadPNGSheet("pics/particles/chunks/groundChunks.png", 2, 2, 256);
+    if ( staticPackedGroundChunks )
+    {
+        return; // already loaded
+    }
+
+    int luatop = lua_gettop(L);
+
+    lua_getfield(L, -1, "chunks");
+    if ( ! lua_istable(L, -1) )
+    {
+        LOGGER.warning("chunks configuration not found.");
+        lua_settop(L, luatop);
+        return;
+    }
+
+//    lua_rawgeti(L, -1, 1);
+
+    lua_rawgeti(L, -1, 1); // file_name
+    lua_rawgeti(L, -2, 2); // width
+    lua_rawgeti(L, -3, 3); // height
+    lua_rawgeti(L, -4, 4); // nframes
+
+    Surface* s = new Surface();
+    s->loadPNGSheet( lua_tostring(L, -4),
+                    lua_tointeger(L, -3),
+                    lua_tointeger(L, -2),
+                    lua_tointeger(L, -1));
+
+//    lua_pop(L, 5);
+
+    s->setColorkey();
+    s->setOffsetCenter();
+
+    staticPackedGroundChunks = s;
+
+    lua_settop(L, luatop);
 } // end ChunkTrajectoryParticle2D::init
 
 // draw

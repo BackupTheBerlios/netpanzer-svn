@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/Particle2D.hpp"
 #include "2D/Surface.hpp"
 
+struct lua_State;
+
 // FlameParticle2D
 //--------------------------------------------------------------------------
 class FlameParticle2D : public Particle2D
@@ -34,15 +36,10 @@ public:
                      float       lifetime,
                      int         layer);
 
-    static void init();
-
+    static void init(lua_State *L);
+    
 protected:
-    static SurfaceList staticPackedExplosion0;
-    static SurfaceList staticPackedExplosion1;
-
     virtual void draw(SpriteSorter &sorter);
-
-    static void loadPakFiles();
 }
 ; // end FlameParticle2D
 

@@ -193,7 +193,7 @@ void GameManager::loadGameMap(const char *map_file_path)
 
     ParticleInterface::initParticleSystems();
 
-//    ParticleInterface::addCloudParticle(gameconfig->cloudcoverage);
+    ParticleInterface::addCloudParticle(gameconfig->cloudcoverage);
     Physics::wind.setVelocity(gameconfig->windspeed, 107);
 }
 

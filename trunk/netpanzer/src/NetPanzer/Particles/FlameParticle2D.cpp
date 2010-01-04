@@ -19,9 +19,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Util/Exception.hpp"
 #include "FlameParticle2D.hpp"
+#include "lua/lua.hpp"
+#include "2D/ImageArray.hpp"
+#include "util/Log.hpp"
+#include "tolua++.h"
 
-SurfaceList FlameParticle2D::staticPackedExplosion0;
-SurfaceList FlameParticle2D::staticPackedExplosion1;
+typedef struct s_FlameArray
+{
+    unsigned int num_flames;
+    ImageArray* flameImageArray;
+} FlameArray;
+
+static FlameArray* flame_array = 0;
+static unsigned int num_explosions = 0;
 
 const int explosionFPS = 18;
 
@@ -42,88 +52,44 @@ FlameParticle2D::FlameParticle2D(	const fXYZ  &pos,
     scale = getScale(scaleMin, scaleRand);
 
     // There are 2 explosion images to choose from.
-    int picNum = rand() % 2;
+    int picNum = rand() % flame_array->num_flames;
 
-    if (picNum == 0) {
-        index = getPakIndex(scale, staticPackedExplosion0.size());
-        packedSurface.setData(* (staticPackedExplosion0[index]) );
-    } else if (picNum == 1) {
-        index = getPakIndex(scale, staticPackedExplosion1.size());
-        packedSurface.setData(* (staticPackedExplosion1[index]));
-    } else {
-        assert(false);
-    }
+    index = getPakIndex(scale, flame_array->flameImageArray[picNum].size());
+    packedSurface.setData(* (flame_array->flameImageArray[picNum].getImage(index)) );
 
     // Check for accelerated flames.
     packedSurface.setFPS(getFPS(explosionFPS, 0));
 } // end FlameParticle2D::FlameParticle2D
 
-// loadPakFiles
-//---------------------------------------------------------------------------
-void FlameParticle2D::loadPakFiles()
-{
-    staticPackedExplosion0.push_back(new Surface());
-    staticPackedExplosion0[staticPackedExplosion0.size()-1]->loadPNGSheet(
-            "pics/particles/explosion/explosion0_0001.png", 13, 18, 16);
-    staticPackedExplosion0.push_back(new Surface());
-    staticPackedExplosion0[staticPackedExplosion0.size()-1]->loadPNGSheet(
-            "pics/particles/explosion/explosion0_0002.png", 27, 36, 16);
-    staticPackedExplosion0.push_back(new Surface());
-    staticPackedExplosion0[staticPackedExplosion0.size()-1]->loadPNGSheet(
-            "pics/particles/explosion/explosion0_0003.png", 41, 54, 16);
-    staticPackedExplosion0.push_back(new Surface());
-    staticPackedExplosion0[staticPackedExplosion0.size()-1]->loadPNGSheet(
-            "pics/particles/explosion/explosion0_0004.png", 54, 73, 16);
-    staticPackedExplosion0.push_back(new Surface());
-    staticPackedExplosion0[staticPackedExplosion0.size()-1]->loadPNGSheet(
-            "pics/particles/explosion/explosion0_0005.png", 68, 91, 16);
-    staticPackedExplosion0.push_back(new Surface());
-    staticPackedExplosion0[staticPackedExplosion0.size()-1]->loadPNGSheet(
-            "pics/particles/explosion/explosion0_0006.png", 82, 109, 16);
-    staticPackedExplosion0.push_back(new Surface());
-    staticPackedExplosion0[staticPackedExplosion0.size()-1]->loadPNGSheet(
-            "pics/particles/explosion/explosion0_0007.png", 96, 128, 16);
-
-    for ( unsigned int n = 0; n < staticPackedExplosion0.size(); ++n )
-    {
-        staticPackedExplosion0[n]->setColorkey();
-//        staticPackedExplosion0[n]->setOffsetCenter();
-    }
-
-    staticPackedExplosion1.push_back(new Surface());
-    staticPackedExplosion1[staticPackedExplosion1.size()-1]->loadPNGSheet(
-            "pics/particles/explosion/explosion1_0001.png", 18, 13, 15);
-    staticPackedExplosion1.push_back(new Surface());
-    staticPackedExplosion1[staticPackedExplosion1.size()-1]->loadPNGSheet(
-            "pics/particles/explosion/explosion1_0002.png", 36, 27, 15);
-    staticPackedExplosion1.push_back(new Surface());
-    staticPackedExplosion1[staticPackedExplosion1.size()-1]->loadPNGSheet(
-            "pics/particles/explosion/explosion1_0003.png", 54, 41, 15);
-    staticPackedExplosion1.push_back(new Surface());
-    staticPackedExplosion1[staticPackedExplosion1.size()-1]->loadPNGSheet(
-            "pics/particles/explosion/explosion1_0004.png", 73, 54, 15);
-    staticPackedExplosion1.push_back(new Surface());
-    staticPackedExplosion1[staticPackedExplosion1.size()-1]->loadPNGSheet(
-            "pics/particles/explosion/explosion1_0005.png", 91, 68, 15);
-    staticPackedExplosion1.push_back(new Surface());
-    staticPackedExplosion1[staticPackedExplosion1.size()-1]->loadPNGSheet(
-            "pics/particles/explosion/explosion1_0006.png", 109, 82, 15);
-    staticPackedExplosion1.push_back(new Surface());
-    staticPackedExplosion1[staticPackedExplosion1.size()-1]->loadPNGSheet(
-            "pics/particles/explosion/explosion1_0007.png", 128, 96, 15);
-
-    for ( unsigned int n = 0; n < staticPackedExplosion1.size(); ++n )
-    {
-        staticPackedExplosion1[n]->setColorkey();
-//        staticPackedExplosion1[n]->setOffsetCenter();
-    }
-
-}
 // init
 //---------------------------------------------------------------------------
-void FlameParticle2D::init()
+void FlameParticle2D::init(lua_State *L)
 {
-    loadPakFiles();
+    if ( ! flame_array )
+    {
+        int luatop = lua_gettop(L);
+
+        lua_getfield(L, -1, "explosions");
+        if ( ! lua_istable(L, -1) )
+        {
+            LOGGER.warning("explosions configuration not found.");
+            lua_settop(L, luatop);
+            return;
+        }
+
+        flame_array = new FlameArray;
+        flame_array->num_flames = lua_objlen(L,-1);
+        flame_array->flameImageArray = new ImageArray[flame_array->num_flames]();
+
+        for ( int n = 1; n <= flame_array->num_flames; ++n )
+        {
+            lua_rawgeti(L, -1, n);
+            flame_array->flameImageArray[n-1].loadImageSheetArray(L);
+            lua_pop(L, 1);
+        }
+        
+        lua_settop(L, luatop);
+    }
 } // end FlameParticle2D::init
 
 // draw
@@ -143,4 +109,3 @@ void FlameParticle2D::draw(SpriteSorter& sorter)
     sorter.addSprite(&packedSurface);
 
 } // end FlameParticle2D::draw
-
