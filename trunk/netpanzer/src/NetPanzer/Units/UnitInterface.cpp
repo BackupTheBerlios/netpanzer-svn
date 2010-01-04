@@ -175,7 +175,7 @@ void
 UnitInterface::reset()
 {
     cleanUp();
-    initialize(units_per_player);
+    initialize(gameconfig->maxunits);
 }
 
 // ******************************************************************

@@ -191,43 +191,6 @@ void GameManager::loadGameMap(const char *map_file_path)
     map_path.append(".opt");
     ObjectiveInterface::loadObjectiveList( map_path.c_str() );
 
-    ParticleInterface::initParticleSystems();
-
-    ParticleInterface::addCloudParticle(gameconfig->cloudcoverage);
-    Physics::wind.setVelocity(gameconfig->windspeed, 107);
-}
-
-// ******************************************************************
-
-void GameManager::dedicatedLoadGameMap(const char *map_name )
-{
-    Console::mapSwitch(map_name);
-    *Console::server << "Server Settings:\n"
-        << "Map: " << gameconfig->map << "\n"
-        << "MaxPlayers: " << gameconfig->maxplayers << "\n"
-        << "MaxUnits: " << gameconfig->maxunits << "\n"
-        << "Gametype: " << gameconfig->getGameTypeString() << "\n"
-        << "ObjectivePercentage: " <<
-            gameconfig->objectiveoccupationpercentage << "\n"
-        << "TimeLimit: " << gameconfig->timelimit << "\n"
-        << "FragLimit: " << gameconfig->fraglimit << "\n"
-        << "RespawnType: " << gameconfig->getRespawnTypeString() << "\n"
-        << "Mapcycle: " << gameconfig->mapcycle << "\n"
-        << "Powerups: " << (gameconfig->powerups ? "yes" : "no") << "\n"
-        << "AllowAllies: " << (gameconfig->allowallies ? "yes" : "no") << "\n"
-        << "CloudCoverage: " << gameconfig->cloudcoverage << " (Windspeed "
-                             << gameconfig->windspeed << ")" << std::endl;
-    
-    std::string map_path("maps/");
-    map_path.append(map_name);
-
-    MapInterface::load( map_path.c_str() );
-
-    map_path.append(".opt");
-    ObjectiveInterface::loadObjectiveList( map_path.c_str() );
-
-    ParticleInterface::initParticleSystems();
-    Particle2D::setCreateParticles(false);
 }
 
 // ******************************************************************
@@ -599,5 +562,5 @@ void GameManager::quitNetPanzerGame()
 //    UnitInterface::reset();
     PlayerInterface::reset();
     ObjectiveInterface::resetLogic();
-    GameControlRulesDaemon::setStateServerIdle();
+    GameControlRulesDaemon::setStateIdle();
 }

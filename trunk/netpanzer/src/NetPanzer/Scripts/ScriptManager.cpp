@@ -68,7 +68,7 @@ ScriptManager::runStr(const char * runname, const char * str)
     int error=lua_pcall(luavm,0,0,0);
     if (error)
     {
-        printf("error is: %s\n",lua_tostring(luavm,-1));
+        printf("Error is: %s\n",lua_tostring(luavm,-1));
         lua_pop(luavm,1);
     }
 }

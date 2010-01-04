@@ -57,7 +57,6 @@ public:
 
     static void disconnectPlayerCleanUp( const Uint16 player );
 
-    static void dedicatedLoadGameMap(const char *map_file_path );
     static void loadGameMap(const char *map_file_path);
 
     static void shutdownParticleSystems();
