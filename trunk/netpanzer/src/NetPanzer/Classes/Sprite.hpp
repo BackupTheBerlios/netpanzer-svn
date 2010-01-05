@@ -156,10 +156,10 @@ public:
     }
 
     inline void setData( SpritePacked &source )
-	{
-		imageData.linkData(source.imageData);
-		imageData.setOffsetCenter();
-	}
+    {
+        imageData.linkData(source.imageData);
+        imageData.setOffsetCenter();
+    }
 
     inline void setAttrib( const iXY &worldPos, const iXY &attach,
                            unsigned char height, int frame )

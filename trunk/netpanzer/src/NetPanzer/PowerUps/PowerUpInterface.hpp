@@ -18,36 +18,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _POWERUP_INTERFACE_HPP
 #define _POWERUP_INTERFACE_HPP
 
-#include <vector>
+#include "Core/CoreTypes.hpp"
 
-#include "PowerUps/PowerUp.hpp"
-#include "Util/Timer.hpp"
-#include "Classes/Network/NetPacket.hpp"
-#include "Network/ClientSocket.hpp"
+class PowerUp;
+class NetMessage;
+class ClientSocket;
+class SpriteSorter;
 
 class PowerUpInterface
 {
-protected:
-    typedef std::vector<PowerUp *> PowerUpList;
-    static PowerUpList powerup_list;
-    
-    static PowerUpID getNextPowerUpID();
-    
-    static int power_up_limit;
-    static int power_up_regen_time_upper_bound;
-    static int power_up_regen_time_lower_bound;
-
-    static Timer regen_timer;
-
-    static void setPowerUpLimits( unsigned long map_size_x, unsigned long map_size_y );
-
-    static void generatePowerUp();
-
-    static void netMessagePowerUpCreate(const NetMessage* message);
-    static void netMessagePowerUpHit(const NetMessage* message );
-
 public:
-
     static void initialize();
     static void resetLogic();
 

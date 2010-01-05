@@ -144,6 +144,25 @@ private:
     {
         bucket_loc.x = (world_loc.x-1) / pixel_x_sample_factor;
         bucket_loc.y = (world_loc.y-1) / pixel_y_sample_factor;
+        if ( bucket_loc.x < 0 )
+        {
+            bucket_loc.x = 0;
+        }
+
+        if ( (size_t)bucket_loc.x >= column_size)
+        {
+            bucket_loc.x = column_size-1;
+        }
+
+        if ( bucket_loc.y < 0 )
+        {
+            bucket_loc.y = 0;
+        }
+
+        if ( (size_t)bucket_loc.y >= row_size )
+        {
+            bucket_loc.y = row_size -1;
+        }
     }
 
     static void worldRectToBucketRect(const iRect & world_rect, iRect &bucket_rect)

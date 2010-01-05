@@ -32,6 +32,8 @@ enum { _power_up_lifecycle_state_active,
 
 class PowerUp
 {
+private:
+    friend class PowerUpInterface;
 protected:
     virtual void onHit( Unit * unit ) = 0;
     
@@ -48,16 +50,9 @@ public:
     int       type;
     int       life_cycle_state;
 
-public:
-    PowerUp();
-    PowerUp(iXY map_loc, PowerUpID ID, int type);
-    PowerUp(iXY map_loc, int type);
+    PowerUp(const iXY& map_loc, PowerUpID ID, int type);
     virtual ~PowerUp()
     { }
-
-    void updateState();
-
-    void offloadGraphics(SpriteSorter& );
 
     virtual void onHitMessage(PowerUpHitMesg* )
     { }

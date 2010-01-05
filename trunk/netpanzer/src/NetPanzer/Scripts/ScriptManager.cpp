@@ -127,7 +127,7 @@ ScriptManager::runUserCommand(const char* str)
     }
     else
     {
-        ConsoleInterface::postMessage(Color::cyan, false, 0, "There is no defined UserCommands", str);
+        ConsoleInterface::postMessage(Color::cyan, false, 0, "There is no defined UserCommands");
     }
 
     lua_settop(luavm, luatop);
@@ -207,8 +207,6 @@ ScriptManager::runServerCommand(const char* str, Uint16 runPlayer)
 void
 ScriptManager::runFile(const char * runname, const char * filename)
 {
-//    luaL_loadfile(luavm, filesystem::getRealName(filename).c_str());
-//    int error=lua_pcall(luavm,0,0,0);
     int error = luaL_dofile(luavm, filesystem::getRealName(filename).c_str());
     if (error)
     {

@@ -48,7 +48,7 @@ enum { _unit_powerup_hitpoints,
      };
 
 UnitPowerUp::UnitPowerUp(iXY map_loc, int type)
-        : PowerUp( map_loc, type )
+        : PowerUp( map_loc, -1, type )
 {
     unit_powerup_type = rand() % _unit_powerup_enum_count;
 }

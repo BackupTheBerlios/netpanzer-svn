@@ -26,37 +26,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Surface PowerUp::POWERUP_ANIM;
 Surface PowerUp::POWERUP_ANIM_SHADOW;
 
-PowerUp::PowerUp()
-{
-    life_cycle_state = _power_up_lifecycle_state_active;
-}
-
-PowerUp::PowerUp(iXY map_loc, PowerUpID ID, int type)
+PowerUp::PowerUp(const iXY& map_loc, PowerUpID ID, int type)
 {
     this->map_loc = map_loc;
     this->ID = ID;
     this->type = type;
 
     MapInterface::mapXYtoPointXY( map_loc, &(this->world_loc) );
-    
-    this->life_cycle_state = _power_up_lifecycle_state_active;
-    
-    sprite.setData( POWERUP_ANIM );
-    sprite.setAttrib( world_loc, iXY(0,0), 5 );
 
-    sprite_shadow.setData( POWERUP_ANIM_SHADOW );
-    sprite_shadow.setAttrib( world_loc, iXY(0,0), 4 );
-    sprite_shadow.setDrawModeBlend(64); // dark a lot
-}
-
-PowerUp::PowerUp(iXY map_loc, int type)
-{
-    this->map_loc = map_loc;
-    this->ID = -1;
-    this->type = type;
-
-    MapInterface::mapXYtoPointXY( map_loc, &(this->world_loc) );
-    
     this->life_cycle_state = _power_up_lifecycle_state_active;
 
     sprite.setData( POWERUP_ANIM );
@@ -66,30 +43,3 @@ PowerUp::PowerUp(iXY map_loc, int type)
     sprite_shadow.setAttrib( world_loc, iXY(0,0), 4 );
     sprite_shadow.setDrawModeBlend(64); // dark a lot
 }
-
-void PowerUp::offloadGraphics( SpriteSorter &sorter )
-{
-    sprite.nextFrame();
-    sprite_shadow.setFrame( sprite.getCurFrame() );
-
-    sorter.addSprite( &sprite );
-    sorter.addSprite( &sprite_shadow );
-}
-
-void
-PowerUp::updateState( void )
-{
-    if ( NetworkState::status == _network_state_server
-         && life_cycle_state == _power_up_lifecycle_state_active )
-    {
-        if ( UnitInterface::unitOccupiesLoc(map_loc) )
-        {
-            Unit * unit = UnitBucketArray::queryUnitAtMapLoc(map_loc);
-            if ( unit )
-            {
-                onHit( unit );
-            }
-        }
-    }
-}
-

@@ -56,7 +56,7 @@ EnemyRadarPowerUp::isRadarActive()
 }
 
 EnemyRadarPowerUp::EnemyRadarPowerUp(iXY map_loc, int type)
-        : PowerUp( map_loc, type )
+        : PowerUp( map_loc, -1, type )
 {
 }
 

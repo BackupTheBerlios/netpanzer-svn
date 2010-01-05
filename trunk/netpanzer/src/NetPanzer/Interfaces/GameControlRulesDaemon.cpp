@@ -149,6 +149,7 @@ void GameControlRulesDaemon::updateGameControlFlow()
             return;
 
         case _fsm_state_connecting_to_server:
+            ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
             LoadingView::show();
             LoadingView::append("Starting network connection...");
             fsm_state = _fsm_state_connecting_to_server_work;
@@ -358,6 +359,9 @@ void GameControlRulesDaemon::updateGameControlFlow()
             if (   map_cycle_fsm_server_endgame_timer.count()
                 && ServerConnectDaemon::isConnecting() == false )
             {
+                ScriptManager::runFile("server_commands_load","scripts/servercommands.lua");
+                ScriptManager::runFile("user_commands_load","scripts/usercommands.lua");
+
                 if ( nextmap != "" )
                 {
                     gameconfig->map = nextmap;
@@ -465,6 +469,7 @@ void GameControlRulesDaemon::updateGameControlFlow()
             TileSet::loadImages();
             LoadingView::append("Initializing particles...");
             fsm_state = _fsm_state_init_particles;
+            break;
 
         case _fsm_state_init_particles:
             ParticleInterface::initParticleSystems();
