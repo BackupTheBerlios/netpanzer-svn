@@ -27,20 +27,20 @@ public:
     NTimer() : starttime(0), timeout(0) {}
     NTimer(Uint32 t) : starttime(0), timeout(t) {}
 
-    inline void reset()              { starttime = SDL_GetTicks(); }
+    inline void reset()                    { starttime = SDL_GetTicks(); }
     /** Sets start time to t */
-    inline void reset(Uint32 t)      { starttime = t; }
+    inline void reset(const Uint32 t)      { starttime = t; }
     
-    inline Uint32 getStartTime()     { return starttime; }
+    inline Uint32 getStartTime() const     { return starttime; }
 
-    inline void setTimeOut(Uint32 t) { timeout = t; }
+    inline void setTimeOut(const Uint32 t) { timeout = t; }
 
-    inline Uint32 getTimeOut()       { return timeout; }
+    inline Uint32 getTimeOut() const       { return timeout; }
     
-    inline bool isTimeOut() { return (SDL_GetTicks()-starttime)>timeout; }
+    inline bool isTimeOut() const { return (SDL_GetTicks()-starttime)>timeout; }
 
     /** Checks the time with the provided time (supposed to be now) */
-    inline bool isTimeOut(Uint32 t) { return (t-starttime)>timeout; }
+    inline bool isTimeOut(const Uint32 t) const { return (t-starttime)>timeout; }
     
 private:
     Uint32 starttime;

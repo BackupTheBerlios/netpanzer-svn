@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdlib.h>
 
-#include "Util/Timer.hpp"
+#include "Util/NTimer.hpp"
 
 #include "Interfaces/GameConfig.hpp"
 
@@ -36,14 +36,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/PowerUpNetMessage.hpp"
 
+// 4 minutes in miliseconds
+#define TIME_RANGE_TO_REGEN (4 * 60 * 1000)
+
+// 1 minute in miliseconds
+#define MINIMUM_TIME_TO_REGEN (1 * 60 * 1000)
+
 static PowerUp* powerups = 0;
 static unsigned int num_powerups = 0;
+static PowerUpID nextid = 0;
 
-static Timer regen_timer;
+static NTimer regen_timer;
 
 static unsigned int power_up_limit;
-static int power_up_regen_time_upper_bound = 300;
-static int power_up_regen_time_lower_bound = 60;
+static Uint32 power_up_regen_time_upper_bound = TIME_RANGE_TO_REGEN;
+static Uint32 power_up_regen_time_lower_bound = MINIMUM_TIME_TO_REGEN;
 
 enum { _powerup_bonus_units,
        _powerup_unit,
@@ -55,8 +62,7 @@ int  powerup_probability_table[3] = { _powerup_unit,
                                       _powerup_enemy_radar
                                     };
 
-static void setPowerUpLimits(unsigned long map_size_x,
-        unsigned long map_size_y )
+static void setPowerUpLimits()
 {
     int active_players;
 
@@ -66,18 +72,12 @@ static void setPowerUpLimits(unsigned long map_size_x,
     int player_factor = int(( 0.10 ) * active_players);
     
     // Magic Number 0.0000625 = 1/16000
-    int power_limit = int( ( 0.0000625 ) * ( (map_size_x * map_size_y) ) );
+    unsigned int power_limit = (unsigned int)( ( 0.0000625 ) * ( (MapInterface::getWidth() * MapInterface::getHeight()) ) );
     power_limit = power_limit + (power_limit * player_factor);
 
     power_up_limit = power_limit;
-    power_up_regen_time_upper_bound =  300;
-    power_up_regen_time_lower_bound =  60;
-}
-
-static PowerUpID getNextPowerUpID()
-{
-    static PowerUpID nextid = 0;
-    return nextid++;
+    power_up_regen_time_upper_bound =  TIME_RANGE_TO_REGEN;
+    power_up_regen_time_lower_bound =  MINIMUM_TIME_TO_REGEN;
 }
 
 static PowerUp* addNewPowerUp(const iXY& map_pos, PowerUpID id, int type)
@@ -131,10 +131,9 @@ static PowerUp* deleteRemovePowerUp(PowerUp* previous_power_up, const PowerUp* p
 
 static void generatePowerUp()
 {
-    if( num_powerups < (unsigned int)power_up_limit )
+    if( num_powerups < power_up_limit )
     {
         iXY loc;
-
         unsigned int map_size_x = MapInterface::getWidth();
         unsigned int map_size_y = MapInterface::getHeight();
 
@@ -146,7 +145,7 @@ static void generatePowerUp()
 
         int powerup_type = powerup_probability_table[ rand() % 3 ];
 
-        PowerUp* power_up = addNewPowerUp(loc, getNextPowerUpID(), powerup_type);
+        PowerUp* power_up = addNewPowerUp(loc, nextid++, powerup_type);
 
         if ( power_up )
         {
@@ -159,15 +158,13 @@ static void generatePowerUp()
             LOGGER.warning("Couldn't create powerup");
         }
 
-        float next_regen_interval;
-        do
-        {
-            next_regen_interval = rand() % (power_up_regen_time_upper_bound + 1);
-        } while( next_regen_interval < power_up_regen_time_lower_bound );
+        int next_regen_interval = rand() % power_up_regen_time_upper_bound;
+        next_regen_interval += power_up_regen_time_lower_bound;
 
-        regen_timer.changePeriod( next_regen_interval );
+        regen_timer.setTimeOut( next_regen_interval );
+        regen_timer.reset();
 
-        setPowerUpLimits( map_size_x, map_size_y );
+        setPowerUpLimits();
     }
 }
 
@@ -186,14 +183,12 @@ void PowerUpInterface::initialize( void )
 void PowerUpInterface::resetLogic( void )
 {
     PowerUp *del = 0;
-    PowerUp *p = powerups;
-    while ( p )
+    while ( powerups )
     {
-        del = p;
-        p = p->next;
+        del = powerups;
+        powerups = powerups->next;
         delete del;
     }
-    powerups = 0;
     num_powerups = 0;
 
     if( gameconfig->powerups == false )
@@ -201,9 +196,10 @@ void PowerUpInterface::resetLogic( void )
         return;
     }
 
-    setPowerUpLimits(MapInterface::getWidth(), MapInterface::getHeight());
+    setPowerUpLimits();
 
-    regen_timer.changePeriod( power_up_regen_time_upper_bound );
+    regen_timer.setTimeOut( power_up_regen_time_upper_bound );
+    regen_timer.reset();
 
     if ( NetworkState::status == _network_state_server )
     {
@@ -222,7 +218,7 @@ void PowerUpInterface::updateState()
 
     if ( NetworkState::status == _network_state_server )
     {
-        if( regen_timer.count() )
+        if( regen_timer.isTimeOut() )
         {
             generatePowerUp();
         }

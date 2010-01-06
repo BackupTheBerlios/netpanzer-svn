@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Core/GlobalEngineState.hpp"
 
 #include <stdlib.h>
+#include "Units/Unit.hpp"
 #include "Units/UnitTypes.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"

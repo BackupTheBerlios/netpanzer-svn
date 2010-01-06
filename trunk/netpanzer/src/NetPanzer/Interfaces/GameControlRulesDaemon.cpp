@@ -59,6 +59,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/Console.hpp"
 #include "Particles/ParticleInterface.hpp"
+#include "Resources/ResourceManager.hpp"
 
 enum
 {

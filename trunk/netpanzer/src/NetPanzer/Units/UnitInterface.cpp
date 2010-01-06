@@ -183,7 +183,7 @@ UnitInterface::reset()
 void
 UnitInterface::updateUnitStatus()
 {
-//    iXY prev_unit_loc;
+    iXY prev_unit_loc;
 //    iXY unit_map_loc;
 
     for(Units::iterator i = units->begin(); i != units->end(); /*nothing*/ )
@@ -198,29 +198,13 @@ UnitInterface::updateUnitStatus()
 
         ++i;
 
-//        prev_unit_loc = unit->unit_state.location;
-
-        unsigned int bucket_before;
-        bucket_before = UnitBucketArray::worldLocToBucketIndex(
-                                                    unit->unit_state.location );
+        prev_unit_loc = unit->unit_state.location;
 
         unit->updateState();
 
-//        if ( prev_unit_loc != unit->unit_state.location )
-//        {
-//            MapInterface::pointXYtoMapXY(prev_unit_loc, &unit_map_loc);
-//            unmarkUnitLoc(unit_map_loc);
-//            MapInterface::pointXYtoMapXY(unit->unit_state.location, &unit_map_loc);
-//            markUnitLoc(unit_map_loc);
-//        }
-
-        unsigned int bucket_after;
-        bucket_after = UnitBucketArray::worldLocToBucketIndex(
-                                                    unit->unit_state.location );
-
-        if ( bucket_before != bucket_after )
+        if ( prev_unit_loc != unit->unit_state.location )
         {
-            UnitBucketArray::moveUnit( unit, bucket_before, bucket_after );
+            UnitBucketArray::moveUnit( unit, prev_unit_loc);
         }
     }
 
@@ -238,60 +222,44 @@ UnitInterface::updateUnitStatus()
 void
 UnitInterface::offloadGraphics( SpriteSorter& sorter )
 {
-    iRect world_window_rect;
-    iRect bucket_rect;
-    UnitList::iterator bucket_iter;
     Unit * unit = 0;
 
-    world_window_rect = sorter.getWorldWindow();
-    UnitBucketArray::worldRectToBucketRect(world_window_rect, bucket_rect);
+    std::vector<Unit*> unit_list;
+    UnitBucketArray::queryUnitsInWorldRectBuckets(unit_list, sorter.getWorldWindow());
 
-    for( int row_index = bucket_rect.min.y;
-         row_index <= bucket_rect.max.y;
-         ++row_index )
+    std::vector<Unit*>::iterator i = unit_list.begin();
+    while ( i != unit_list.end() )
     {
-        for( int column_index = bucket_rect.min.x;
-             column_index <= bucket_rect.max.x;
-             ++column_index )
+        unit = *i;
+        ++i;
+
+        unit->body_anim_shadow.setWorldPos( unit->unit_state.location);
+
+        if ( sorter.cullSprite( unit->body_anim_shadow ) == false )
         {
-            UnitList & bucket_list = UnitBucketArray::getBucket(row_index, column_index);
+            // Body
+            unit->body_anim.setWorldPos( unit->unit_state.location );
+            unit->body_anim.setFrame( unit->unit_state.body_angle.angle_int );
 
-            for( bucket_iter = bucket_list.begin();
-                 bucket_iter != bucket_list.end();
-                 ++bucket_iter )
-            {
-                unit = *bucket_iter;
+            // Turret
+            unit->turret_anim.setWorldPos( unit->unit_state.location );
+            unit->turret_anim.setFrame( unit->unit_state.turret_angle.angle_int );
 
+            // Body Shadow
+            unit->body_anim_shadow.setFrame( unit->unit_state.body_angle.angle_int );
 
-                unit->body_anim_shadow.setWorldPos( unit->unit_state.location);
+            // Turret Shadow
+            unit->turret_anim_shadow.setWorldPos( unit->unit_state.location );
+            unit->turret_anim_shadow.setFrame( unit->unit_state.turret_angle.angle_int );
 
-                if ( sorter.cullSprite( unit->body_anim_shadow ) == false )
-                {
-                    // Body
-                    unit->body_anim.setWorldPos( unit->unit_state.location );
-                    unit->body_anim.setFrame( unit->unit_state.body_angle.angle_int );
+            unit->select_info_box.setBoxState( unit->unit_state.select );
 
-                    // Turret
-                    unit->turret_anim.setWorldPos( unit->unit_state.location );
-                    unit->turret_anim.setFrame( unit->unit_state.turret_angle.angle_int );
+            //Added layer selection to the selection box info.
+            unit->select_info_box.setAttrib( unit->unit_state.location,
+                    gameconfig->unitinfodrawlayer );
+            unit->select_info_box.setHitPoints( unit->unit_state.hit_points );
 
-                    // Body Shadow
-                    unit->body_anim_shadow.setFrame( unit->unit_state.body_angle.angle_int );
-
-                    // Turret Shadow
-                    unit->turret_anim_shadow.setWorldPos( unit->unit_state.location );
-                    unit->turret_anim_shadow.setFrame( unit->unit_state.turret_angle.angle_int );
-
-                    unit->select_info_box.setBoxState( unit->unit_state.select );
-
-                    //Added layer selection to the selection box info.
-                    unit->select_info_box.setAttrib( unit->unit_state.location,
-                            gameconfig->unitinfodrawlayer );
-                    unit->select_info_box.setHitPoints( unit->unit_state.hit_points );
-
-                    sorter.forceAddSprite( &(unit->body_anim_shadow) );
-                }
-            }
+            sorter.forceAddSprite( &(unit->body_anim_shadow) );
         }
     }
 }
@@ -479,12 +447,14 @@ UnitInterface::sendMessage( const UnitMessage* message,
 {
     if ( message->message_id == _umesg_weapon_hit )
     {
-        UnitList & uli = UnitBucketArray::getBucketAssocWorldLoc(
-                                ((UMesgWeaponHit*)message)->getHitLocation() );
-
-        for ( UnitList::iterator i = uli.begin(); i != uli.end(); ++i)
+        std::vector<Unit*> unit_list;
+        UnitBucketArray::queryUnitsAtWorldLocBucket(unit_list,
+                                ((UMesgWeaponHit*)message)->getHitLocation());
+        std::vector<Unit*>::iterator i = unit_list.begin();
+        while ( i != unit_list.end() )
         {
             (*i)->processMessage(message);
+            ++i;
         }
     }
     else if ( message->message_id == _umesg_end_lifecycle )

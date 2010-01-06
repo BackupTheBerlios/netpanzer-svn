@@ -21,18 +21,128 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <algorithm>
 
 #include "Units/UnitBucketArray.hpp"
+#include "Units/Unit.hpp"
+
 #include "Classes/PlayerState.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Classes/TileSet.hpp"
 
-BucketList* UnitBucketArray::buckets = 0;
-long        UnitBucketArray::map_x_sample_factor = 0;
-long        UnitBucketArray::map_y_sample_factor = 0;
-long        UnitBucketArray::pixel_x_sample_factor = 0;
-long        UnitBucketArray::pixel_y_sample_factor = 0;
-size_t      UnitBucketArray::row_size = 0;
-size_t      UnitBucketArray::column_size = 0;
+typedef std::vector<UnitList> BucketList;
+
+BucketList*   buckets = 0;
+static long   map_x_sample_factor = 0;
+static long   map_y_sample_factor = 0;
+static long   pixel_x_sample_factor = 0;
+static long   pixel_y_sample_factor = 0;
+static size_t row_size = 0;
+static size_t column_size = 0;
+
+static UnitList& getBucket(const unsigned int bucket_index)
+{
+//    assert( bucket_index < getSize() );
+    return( (*buckets)[ bucket_index ] );
+}
+
+// conversion functions
+
+static unsigned int mapLocToBucketIndex(const iXY & map_loc)
+{
+    return ((map_loc.y / map_y_sample_factor) * column_size)
+            + (map_loc.x / map_x_sample_factor);
+}
+
+static unsigned int worldLocToBucketIndex(const iXY & world_loc)
+{
+    return ((world_loc.y / pixel_y_sample_factor) * column_size)
+            + (world_loc.x / pixel_x_sample_factor);
+}
+
+static void worldLocToBucketLoc(const iXY & world_loc, iXY & bucket_loc)
+{
+    bucket_loc.x = (world_loc.x-1) / pixel_x_sample_factor;
+    bucket_loc.y = (world_loc.y-1) / pixel_y_sample_factor;
+    if ( bucket_loc.x < 0 )
+    {
+        bucket_loc.x = 0;
+    }
+
+    if ( (size_t)bucket_loc.x >= column_size)
+    {
+        bucket_loc.x = column_size-1;
+    }
+
+    if ( bucket_loc.y < 0 )
+    {
+        bucket_loc.y = 0;
+    }
+
+    if ( (size_t)bucket_loc.y >= row_size )
+    {
+        bucket_loc.y = row_size -1;
+    }
+}
+
+static void worldRectToBucketRect(const iRect & world_rect, iRect &bucket_rect)
+{
+    worldLocToBucketLoc(world_rect.min, bucket_rect.min);
+    worldLocToBucketLoc(world_rect.max, bucket_rect.max);
+}
+
+static void unitRangeToBucketRect(const iXY& world_loc,
+                                  unsigned long range,
+                                  iRect &bucket_rect)
+{
+    worldLocToBucketLoc(world_loc, bucket_rect.min);
+    worldLocToBucketLoc(world_loc, bucket_rect.max);
+    // add range
+    unsigned long range_buckets = range / ( (pixel_x_sample_factor*pixel_x_sample_factor)
+                                          + (pixel_y_sample_factor*pixel_y_sample_factor));
+    bucket_rect.min.x -= range_buckets;
+    bucket_rect.min.y -= range_buckets;
+    bucket_rect.max.x += range_buckets;
+    bucket_rect.max.y += range_buckets;
+
+    if ( bucket_rect.min.x < 0 )
+    {
+        bucket_rect.min.x = 0;
+    }
+
+    if ( (size_t)bucket_rect.max.x >= column_size )
+    {
+        bucket_rect.max.x = column_size-1;
+    }
+
+    if ( bucket_rect.min.y < 0 )
+    {
+        bucket_rect.min.y = 0;
+    }
+
+    if ( (size_t)bucket_rect.max.y >= row_size )
+    {
+        bucket_rect.max.y = row_size-1;
+    }
+}
+
+static void mapLocToBucketLoc(const iXY & map_loc, iXY & bucket_loc)
+{
+    bucket_loc.x = map_loc.x / map_x_sample_factor;
+    bucket_loc.y = map_loc.y / map_y_sample_factor;
+}
+
+static unsigned int bucketLocToBucketIndex(const unsigned int row, const unsigned int col)
+{
+    return (row * column_size) + col;
+}
+
+//static void mapRectToBucketRect(const iRect & map_rect, iRect &bucket_rect)
+//{
+//    mapLocToBucketLoc(map_rect.min, bucket_rect.min);
+//    mapLocToBucketLoc(map_rect.max, bucket_rect.max);
+//}
+
+
+// UnitBucketArray methods
 
 void
 UnitBucketArray::initialize(const unsigned int x_sample, const unsigned int y_sample)
@@ -63,13 +173,47 @@ UnitBucketArray::initialize(const unsigned int x_sample, const unsigned int y_sa
     pixel_x_sample_factor = TileSet::getTileXsize() * map_x_sample_factor;
     pixel_y_sample_factor = TileSet::getTileYsize() * map_y_sample_factor;
 
-    rows = (unsigned long) map_width / map_y_sample_factor;
-    columns = (unsigned long) map_height / map_x_sample_factor;
+    rows = (unsigned long) map_height / map_y_sample_factor;
+    columns = (unsigned long) map_width / map_x_sample_factor;
 
     row_size = rows;
     column_size = columns;
     buckets = new BucketList();
     buckets->resize(rows*columns);
+}
+
+void
+UnitBucketArray::cleanUp()
+{
+    if ( buckets )
+    {
+        delete buckets;
+        buckets = 0;
+    }
+}
+
+void UnitBucketArray::addUnit(Unit *unit)
+{
+    getBucket(worldLocToBucketIndex(unit->unit_state.location)).push_back(unit);
+}
+
+void UnitBucketArray::removeUnit(const Unit *unit)
+{
+    UnitList& uli = getBucket(worldLocToBucketIndex(unit->unit_state.location));
+    uli.erase(std::remove(uli.begin(), uli.end(), unit), uli.end());
+}
+
+void
+UnitBucketArray::moveUnit(Unit * unit, const iXY& prev_unit_loc)
+{
+    unsigned int from_bucket = worldLocToBucketIndex(prev_unit_loc);
+    unsigned int to_bucket = worldLocToBucketIndex(unit->unit_state.location);
+    if ( from_bucket != to_bucket )
+    {
+        UnitList & uli = getBucket(from_bucket);
+        uli.erase(std::remove(uli.begin(), uli.end(), unit), uli.end());
+        getBucket(to_bucket).push_back(unit);
+    }
 }
 
 void
@@ -79,7 +223,7 @@ UnitBucketArray::sort()
     unsigned int real_index;
     UnitList::iterator iter;
 
-    for( index = 0; index < getSize(); ++index )
+    for( index = 0; index < buckets->size(); ++index )
     {
         UnitList & uli = getBucket(index);
 
@@ -105,7 +249,7 @@ UnitBucketArray::queryPlayerUnitsAt(std::vector<UnitID>& working_list,
                                     const iXY& point,
                                     const Uint16 player_id)
 {
-    UnitList & ubl = getBucketAssocWorldLoc(point);
+    UnitList & ubl = getBucket(worldLocToBucketIndex(point));
     for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
     {
         Unit* unit = *i;
@@ -129,7 +273,7 @@ UnitBucketArray::queryUnitsInWorldRect(std::vector<Unit *>& working_list,
     {
         for( int col = bucket_rect.min.x; col <= bucket_rect.max.x; ++col )
         {
-            UnitList & bucket_list = getBucket(row, col);
+            UnitList & bucket_list = getBucket(bucketLocToBucketIndex(row, col));
 
             for( iter = bucket_list.begin(); iter != bucket_list.end(); ++iter )
             {
@@ -137,6 +281,28 @@ UnitBucketArray::queryUnitsInWorldRect(std::vector<Unit *>& working_list,
                 {
                     working_list.push_back(*iter);
                 }
+            }
+        }
+    }
+}
+
+void
+UnitBucketArray::queryUnitsInWorldRectBuckets(std::vector<Unit *>& working_list,
+                                              const iRect& rect)
+{
+    UnitList::iterator iter;
+    iRect bucket_rect;
+    worldRectToBucketRect( rect, bucket_rect);
+
+    for( int row = bucket_rect.min.y; row <= bucket_rect.max.y; ++row )
+    {
+        for( int col = bucket_rect.min.x; col <= bucket_rect.max.x; ++col )
+        {
+            UnitList & bucket_list = getBucket(bucketLocToBucketIndex(row, col));
+
+            for( iter = bucket_list.begin(); iter != bucket_list.end(); ++iter )
+            {
+                working_list.push_back(*iter);
             }
         }
     }
@@ -155,7 +321,7 @@ UnitBucketArray::queryPlayerUnitsInWorldRect(std::vector<UnitID>& working_list,
     {
         for( int col = bucket_rect.min.x; col <= bucket_rect.max.x; ++col )
         {
-            UnitList & bucket_list = getBucket(row, col);
+            UnitList & bucket_list = getBucket(bucketLocToBucketIndex(row, col));
 
             for( iter = bucket_list.begin(); iter != bucket_list.end(); ++iter )
             {
@@ -183,7 +349,7 @@ UnitBucketArray::queryNonPlayerUnitsInWorldRect(std::vector<Unit *>& working_lis
     {
         for( int col = bucket_rect.min.x; col <= bucket_rect.max.x; ++col )
         {
-            UnitList & bucket_list = getBucket(row, col);
+            UnitList & bucket_list = getBucket(bucketLocToBucketIndex(row, col));
 
             for( iter = bucket_list.begin(); iter != bucket_list.end(); ++iter )
             {
@@ -215,7 +381,7 @@ UnitBucketArray::queryClosestEnemyUnitInRange(Unit **closest_unit_ptr,
     {
         for( long column_index = bucket_rect.min.x; column_index <= bucket_rect.max.x; column_index++ )
         {
-            UnitList &bucket_list = getBucket( row_index, column_index );
+            UnitList &bucket_list = getBucket(bucketLocToBucketIndex(row_index, column_index));
 
             for ( bucket_iter = bucket_list.begin();
                     bucket_iter != bucket_list.end(); ++bucket_iter)
@@ -262,13 +428,24 @@ UnitBucketArray::queryClosestEnemyUnitInRange(Unit **closest_unit_ptr,
     return false;
 }
 
+void
+UnitBucketArray::queryUnitsAtWorldLocBucket(std::vector<Unit *>& working_list,
+                                            const iXY& world_loc)
+{
+    UnitList & ubl = getBucket(worldLocToBucketIndex(world_loc));
+    for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
+    {
+        working_list.push_back(*i);
+    }
+}
+
 Unit *
 UnitBucketArray::queryUnitAtMapLoc(const iXY & map_loc)
 {
     iXY world_loc;
     MapInterface::mapXYtoPointXY(map_loc, &world_loc);
 
-    UnitList & ubl = getBucketAssocMapLoc(map_loc);
+    UnitList & ubl = getBucket(mapLocToBucketIndex(map_loc));
     for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
     {
         if ( (*i)->unit_state.bounds(world_loc) )
@@ -284,7 +461,7 @@ Unit *
 UnitBucketArray::queryNonPlayerUnitAtWorld(const iXY & world_loc,
                                            const Uint16 player_id)
 {
-    UnitList & ubl = getBucketAssocWorldLoc(world_loc);
+    UnitList & ubl = getBucket(worldLocToBucketIndex(world_loc));
     for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
     {
         if ( (*i)->unit_state.bounds(world_loc)

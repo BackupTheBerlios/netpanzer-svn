@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/PlayerState.hpp"
 #include "Outpost.hpp"
 
+#include "Units/Unit.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
