@@ -18,13 +18,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _TILESET_HPP
 #define _TILESET_HPP
 
+#include <string>
 #include <vector>
-#include "2D/Surface.hpp"
-#include "Types/iXY.hpp"
 #include "SDL.h"
-#include "Util/FileStream.hpp"
 
 namespace filesystem { class ReadFile; }
+
+class Surface;
+class IFileStream;
 
 typedef struct TileSetHeader_s
 {

@@ -187,7 +187,7 @@ public:
 
     void brigthenFrames();
     void setColorkey();
-    void setAlpha();
+    void setAlpha(unsigned int alpha = 128);
     void optimize();
 
 private:

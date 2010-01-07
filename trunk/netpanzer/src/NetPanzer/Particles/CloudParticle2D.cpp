@@ -67,9 +67,9 @@ void CloudParticle2D::setRandomSurface()
     packedSurfaceShadow.setData(*staticCloudShadow);
     packedSurfaceShadow.setFrame(randFrame);
 
-    packedSurfaceShadow.setDrawModeBlend(32);
+//    packedSurfaceShadow.setDrawModeBlend(32);
 
-    packedSurface.setDrawModeBlend(128);
+//    packedSurface.setDrawModeBlend(128);
 
 } // end CloudParticle2D::setRandomSurface
 
@@ -113,6 +113,10 @@ void CloudParticle2D::init(lua_State *L)
     staticPackedCloud = s;
     staticCloudShadow = new Surface();
     staticCloudShadow->createShadow(*staticPackedCloud);
+
+    s->setAlpha(128);
+
+    staticCloudShadow->setAlpha(32);
 
     lua_settop(L, luatop);
 } // end CloudParticle2D::init

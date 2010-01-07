@@ -41,5 +41,4 @@ PowerUp::PowerUp(const iXY& map_loc, PowerUpID ID, int type)
 
     sprite_shadow.setData( POWERUP_ANIM_SHADOW );
     sprite_shadow.setAttrib( world_loc, iXY(0,0), 4 );
-    sprite_shadow.setDrawModeBlend(64); // dark a lot
 }

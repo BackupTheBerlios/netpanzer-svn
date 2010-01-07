@@ -1125,11 +1125,11 @@ Surface::setColorkey()
 }
 
 void
-Surface::setAlpha()
+Surface::setAlpha(unsigned int alpha)
 {
     for ( unsigned int n = 0; n < frames.size(); ++n )
     {
-        SDL_SetAlpha(frames[n], SDL_SRCALPHA, 128);
+        SDL_SetAlpha(frames[n], SDL_SRCALPHA, alpha);
     }
 }
 

@@ -30,8 +30,8 @@ public:
     SDLVideo();
     virtual ~SDLVideo();
 
-    void setVideoMode(int width, int height, int bpp, Uint32 flags);
-    bool isDisplayModeAvailable(int width, int height, int bpp, Uint32 flags);
+    void setVideoMode(int width, int height, Uint32 flags);
+    bool isDisplayModeAvailable(int width, int height, Uint32 flags);
     void lockDoubleBuffer();
     void unlockDoubleBuffer();
     void copyDoubleBufferandFlip();

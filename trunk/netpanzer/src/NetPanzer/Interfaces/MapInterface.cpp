@@ -16,13 +16,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <cstdlib>
+#include <cstring>
+#include <cstdio>
 #include "Interfaces/MapInterface.hpp"
 #include "Core/GlobalGameState.hpp"
 #include "Classes/SpawnList.hpp"
 #include "Util/Log.hpp"
-#include <cstdlib>
-#include <cstring>
-#include <cstdio>
+#include "Util/FileSystem.hpp"
 
 MapInterface::MapListenerList MapInterface::listenerList;
 int* MapInterface::map_data = 0;

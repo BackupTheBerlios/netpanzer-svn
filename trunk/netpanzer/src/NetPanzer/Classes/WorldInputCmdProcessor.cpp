@@ -945,6 +945,7 @@ WorldInputCmdProcessor::process(bool handleMouse)
     evaluateKeyboardEvents();
     if ( handleMouse )
     {
+        updateScrollStatus( MouseInterface::getMousePosition() );
         evaluateMouseEvents();
     }
     

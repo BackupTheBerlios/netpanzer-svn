@@ -55,13 +55,24 @@ void VisualsView::initButtons()
     
     x = xTextStart + 10;
     y = 100;
-    
+
+    char res_str[20];
     choiceResolution = new Choice();
     choiceResolution->setName("Resolution");
-    choiceResolution->addItem("640x480");
-    choiceResolution->addItem("800x600");
-    choiceResolution->addItem("1024x768");
-    choiceResolution->addItem("1280x1024");
+
+    SDL_Rect** modes = SDL_ListModes(0, SDL_FULLSCREEN);
+    int cur_mode = 0;
+    if ( modes && modes != (SDL_Rect**)-1 )
+    {
+        while ( modes[cur_mode] )
+        {
+            snprintf(res_str,sizeof(res_str),"%dx%d", modes[cur_mode]->w, modes[cur_mode]->h);
+            res_str[sizeof(res_str)-1] = 0;
+            choiceResolution->addItem(res_str);
+            ++cur_mode;
+        }
+    }
+    
     choiceResolution->setLocation(x, y);
     choiceResolution->select(gameconfig->screenresolution);
     choiceResolution->setMinWidth(minWidth);
@@ -203,7 +214,28 @@ void VisualsView::stateChanged(Component* source)
     }
     else if ( source == choiceResolution )
     {
-        gameconfig->screenresolution = choiceResolution->getSelectedIndex();
+        SDL_Rect** modes = SDL_ListModes(0, SDL_FULLSCREEN);
+        SDL_Rect* mode = 0;
+        if ( modes && modes != (SDL_Rect**)-1 )
+        {
+            mode = modes[choiceResolution->getSelectedIndex()];
+        }
+
+        if ( mode )
+        {
+            gameconfig->windowWidth = mode->w;
+            gameconfig->windowHeight = mode->h;
+        }
+
+        if ( choiceResolution->getSelectedIndex() == 0 && ! gameconfig->fullscreen )
+        {
+            // on Mac crash if we are in window and we select the biggest
+            // resolution (the first one in theory), we make it smaller so it
+            // wont crash, it is a SDL error.
+            gameconfig->windowHeight -= 50;
+            gameconfig->windowWidth -= 4;
+        }
+
         GameManager::setVideoMode();
     }
     else if ( source == choiceMiniMapUnitSize )

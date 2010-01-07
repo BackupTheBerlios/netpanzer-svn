@@ -178,6 +178,7 @@ void PowerUpInterface::initialize( void )
     t.loadPNGSheet("powerups/BoltS.png", 127, 127, 36);
     PowerUp::POWERUP_ANIM_SHADOW.createShadow(t);
     PowerUp::POWERUP_ANIM_SHADOW.setOffsetCenter();
+    PowerUp::POWERUP_ANIM_SHADOW.setAlpha();
 }
 
 void PowerUpInterface::resetLogic( void )

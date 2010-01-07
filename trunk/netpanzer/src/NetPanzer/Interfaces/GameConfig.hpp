@@ -108,6 +108,9 @@ public:
     void loadConfig();
     void saveConfig();
 
+    unsigned int windowWidth;
+    unsigned int windowHeight;
+
     // game Settings (there are not saved to disk)
     ConfigInt       hostorjoin;         // 1=host, 2=join
     ConfigBool      quickConnect;

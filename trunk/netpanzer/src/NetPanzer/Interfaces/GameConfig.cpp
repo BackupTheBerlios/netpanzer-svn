@@ -32,7 +32,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     // VariableName("Name", value [, minimum, maximum])
-    : hostorjoin("hostorjoin", _game_session_join, 0, _game_session_last-1),
+    : windowWidth(800), windowHeight(600),
+      hostorjoin("hostorjoin", _game_session_join, 0, _game_session_last-1),
       quickConnect("quickconnect", false),
       serverConnect("serverconnect", ""),
     

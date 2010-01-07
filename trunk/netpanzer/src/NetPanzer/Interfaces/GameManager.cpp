@@ -136,27 +136,36 @@ void GameManager::setVideoMode()
     flags |= gameconfig->hardwareSurface ? SDL_HWSURFACE : 0;
     flags |= gameconfig->hardwareDoubleBuffer ? SDL_DOUBLEBUF : 0;
 
-    int bpp = 32;
-    int mode;
-    for(mode=gameconfig->screenresolution; mode>=0; mode--) {
-        switch(mode) {
-            case 0: mode_res = iXY(640,480); break;
-            case 1: mode_res = iXY(800,600); break;
-            case 2: mode_res = iXY(1024,768); break;
-            case 3: mode_res = iXY(1280,1024); break;
-        }
-
-        if(Screen->isDisplayModeAvailable(mode_res.x, mode_res.y, bpp, flags))
-        {
-            gameconfig->screenresolution = mode;
-            break;
-        }
+    if ( ! gameconfig->fullscreen )
+    {
+        flags |= SDL_RESIZABLE;
     }
 
-    if(mode<0)
-        throw Exception("couldn't find a usable video mode");
+    mode_res.x = gameconfig->windowWidth;
+    mode_res.y = gameconfig->windowHeight;
+//    for(mode=gameconfig->screenresolution; mode>=0; mode--) {
+//        switch(mode) {
+//            case 0: mode_res = iXY(640,480); break;
+//            case 1: mode_res = iXY(800,600); break;
+//            case 2: mode_res = iXY(1024,768); break;
+//            case 3: mode_res = iXY(1280,1024); break;
+//        }
+//
+//        if(Screen->isDisplayModeAvailable(mode_res.x, mode_res.y, flags))
+//        {
+//            gameconfig->screenresolution = mode;
+//            break;
+//        }
+//    }
+//
+//    if(mode<0)
+//        throw Exception("couldn't find a usable video mode");
 
-    Screen->setVideoMode(mode_res.x, mode_res.y, bpp, flags);
+    Screen->setVideoMode(mode_res.x, mode_res.y, flags);
+
+    SDL_Surface *v = Screen->getSurface();
+    mode_res.x = v->w;
+    mode_res.y = v->h;
 
     WorldViewInterface::setCameraSize( mode_res.x, mode_res.y);
     delete screen;

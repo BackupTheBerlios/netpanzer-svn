@@ -25,10 +25,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
   #include "Interfaces/GameConfig.hpp"
 #endif
 
-#define ADD_STANDARD_SDL_FLAGS(flags) flags |= SDL_ANYFORMAT
 #define flaginfo(f,xxflag) if ( f & xxflag ) LOGGER.warning("\t" #xxflag)
 
 SDLVideo* Screen; // get rid of this later...
+
+static int best_bpp = 0;
 
 static void
 logVideoInfo()
@@ -47,6 +48,27 @@ logVideoInfo()
         LOGGER.warning("\tHardware memory: %d", v->video_mem);
         LOGGER.warning("\tSize: %d x %d", v->current_w, v->current_h);
         LOGGER.warning("\tbpp: %d (%d)",v->vfmt->BitsPerPixel, v->vfmt->BytesPerPixel);
+}
+
+static void
+logAvailableModes(Uint32 flags)
+{
+    SDL_Rect ** modes = SDL_ListModes(NULL, flags | SDL_FULLSCREEN);
+    if ( modes == (SDL_Rect**) 0 )
+    {
+        LOGGER.warning("No modes available");
+    }
+    else if ( modes == (SDL_Rect**)-1 )
+    {
+        LOGGER.warning("All modes available");
+    }
+    else
+    {
+        for ( int n = 0; modes[n]; ++n )
+        {
+            LOGGER.warning("Mode: %d x %d", modes[n]->w, modes[n]->h);
+        }
+    }
 }
 
 static void
@@ -85,6 +107,15 @@ SDLVideo::SDLVideo()
                         );
     }
 
+    if ( ! best_bpp )
+    {
+        const SDL_VideoInfo *v = SDL_GetVideoInfo();
+        if ( v )
+        {
+            best_bpp = v->vfmt->BitsPerPixel;
+        }
+    }
+
     logVideoInfo();
 
     // XXX unfortunately SDL initializes the keyboard again :-/
@@ -101,7 +132,43 @@ SDLVideo::~SDLVideo()
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
+static bool getNearestFullScreenMode(int flags, int* width, int* height)
+{
+    SDL_Rect** modes = SDL_ListModes(0, flags);
+    if ( modes == 0 )
+    {
+        return false;
+    }
+    else if ( modes == (SDL_Rect**)-1 )
+    {
+        return true;
+    }
+    else
+    {
+        unsigned int mode_size = (*width) * (*height);
+        LOGGER.warning("mode_size=%u",mode_size);
+        unsigned int mindif = -1;
+        unsigned int nearest = 0;
+        for ( int n = 0; modes[n]; ++n )
+        {
+            unsigned int new_size = modes[n]->w * modes[n]->h;
+            unsigned int new_dif = abs(mode_size-new_size);
+            LOGGER.warning("new_size=%u , new_dif=%u", new_size, new_dif);
+
+            if ( new_dif < mindif )
+            {
+                nearest = n;
+                mindif = new_dif;
+                LOGGER.warning("nearest is %d", nearest);
+            }
+        }
+        LOGGER.warning("final nearest is %d", nearest);
+        *width = modes[nearest]->w;
+        *height = modes[nearest]->h;
+    }
+}
+
+void SDLVideo::setVideoMode(int width, int height, Uint32 flags)
 {
     // eventually delete old backbuffer
     if (    frontBuffer
@@ -111,25 +178,46 @@ void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
     {
         SDL_FreeSurface(backBuffer);
     }
-    
-    ADD_STANDARD_SDL_FLAGS(flags);
+
+    int bpp = best_bpp;
+    int new_width = width;
+    int new_height = height;
+    if ( ! (flags&SDL_FULLSCREEN) )
+    {
+        bpp = 0;
+        flags |= SDL_ANYFORMAT;
+    }
+    else
+    {
+        getNearestFullScreenMode(flags, &new_width, &new_height);
+        LOGGER.warning("Setting fullscreen mode %d x %d (original %d x %d)",
+                            new_width, new_height, width, height);
+    }
 
     LOGGER.warning("Flags before setting mode");
     logFlags(flags);
 
-    frontBuffer = SDL_SetVideoMode(width, height, bpp, flags);
+    logAvailableModes(flags);
+
+    frontBuffer = SDL_SetVideoMode(new_width, new_height, bpp, flags);
 
     if ( !frontBuffer )
     {
-        throw Exception("Couldn't set display mode (%dx%d, %X): %s",
-                        width, height, flags, SDL_GetError());
+        throw Exception("Couldn't set display mode, original %d x %d, modified %d x %d (%X): %s",
+                        width, height, new_width, new_height, flags, SDL_GetError());
     }
 
     if ( !(frontBuffer->flags & SDL_DOUBLEBUF) )
     {
         LOGGER.warning("--->Doing custom buffer<---");
-        backBuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height,
-                                          bpp, 0, 0, 0, 0
+        backBuffer = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                                          frontBuffer->w,
+                                          frontBuffer->h,
+                                          frontBuffer->format->BitsPerPixel,
+                                          frontBuffer->format->Rmask,
+                                          frontBuffer->format->Gmask,
+                                          frontBuffer->format->Bmask,
+                                          frontBuffer->format->Amask
                                           );
 
         if ( !backBuffer )
@@ -157,28 +245,34 @@ void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
         SDL_FreeSurface(Surface::blackScreen);
     }
 
-    SDL_Surface *s = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height,
-                                          backBuffer->format->BitsPerPixel,
-                                          backBuffer->format->Rmask,
-                                          backBuffer->format->Gmask,
-                                          backBuffer->format->Bmask,
-                                          backBuffer->format->Amask
+    SDL_Surface *s = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                                          frontBuffer->w,
+                                          frontBuffer->h,
+                                          frontBuffer->format->BitsPerPixel,
+                                          frontBuffer->format->Rmask,
+                                          frontBuffer->format->Gmask,
+                                          frontBuffer->format->Bmask,
+                                          frontBuffer->format->Amask
                                           );
 
     SDL_SetAlpha(s, SDL_SRCALPHA, 128);
     Surface::blackScreen = s;
 
-    logVideoInfo();
+//    logVideoInfo();
 
     SDL_ShowCursor(SDL_DISABLE);
 
     SDL_WM_SetCaption("netPanzer " PACKAGE_VERSION, 0);
 }
 
-bool SDLVideo::isDisplayModeAvailable(int width, int height, int bpp,
-                                     Uint32 flags)
+bool SDLVideo::isDisplayModeAvailable(int width, int height, Uint32 flags)
 {
-    ADD_STANDARD_SDL_FLAGS(flags);
+    int bpp = best_bpp;
+    if ( ! (flags&SDL_FULLSCREEN) )
+    {
+        bpp = 0;
+        flags |= SDL_ANYFORMAT;
+    }
 
     int res = SDL_VideoModeOK(width, height, bpp, flags);
 
@@ -223,5 +317,3 @@ SDL_Surface * SDLVideo::getSurface()
 {
     return backBuffer;
 }
-
-

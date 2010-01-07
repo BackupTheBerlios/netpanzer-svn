@@ -24,6 +24,7 @@
 #include "SDLVideo.hpp"
 #include "2D/Palette.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/GameManager.hpp"
 
 bool handleSDLEvents()
 {
@@ -70,6 +71,12 @@ bool handleSDLEvents()
 
             case SDL_KEYUP:
                 KeyboardInterface::keyReleased(event.key.keysym.sym);
+                break;
+
+            case SDL_VIDEORESIZE:
+                gameconfig->windowWidth = event.resize.w;
+                gameconfig->windowHeight = event.resize.h;
+                GameManager::setVideoMode();
                 break;
 
         }
