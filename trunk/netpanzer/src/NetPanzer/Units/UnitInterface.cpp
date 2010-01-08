@@ -192,7 +192,14 @@ UnitInterface::updateUnitStatus()
 
         if (unit->unit_state.lifecycle_state == _UNIT_LIFECYCLE_INACTIVE)
         {
-            removeUnit(i++);
+            if ( unit->death_timer.isTimeOut() )
+            {
+                removeUnit(i++);
+            }
+            else
+            {
+                ++i;
+            }
             continue;
         }
 

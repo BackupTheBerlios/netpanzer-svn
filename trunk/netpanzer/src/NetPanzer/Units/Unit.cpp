@@ -250,7 +250,8 @@ void Unit::updateUnitStateProperties()
         if ( death_counter == 5 )
         {
             unit_state.lifecycle_state = _UNIT_LIFECYCLE_INACTIVE;
-
+            death_timer.setTimeOut(500);
+            death_timer.reset();
             DestructUnitOpcode destruct_opcode;
             destruct_opcode.setUnitID(id);
             UnitInterface::sendOpcode(&destruct_opcode);
@@ -1798,6 +1799,8 @@ void Unit::unitOpcodeUpdateState(const UnitOpcode* opcode )
 void Unit::unitOpcodeDestruct(const UnitOpcode* )
 {
     unit_state.lifecycle_state = _UNIT_LIFECYCLE_INACTIVE;
+    death_timer.setTimeOut(500);
+    death_timer.reset();
 }
 
 void Unit::syncUnit()

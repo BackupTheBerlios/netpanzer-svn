@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "UnitState.hpp"
 #include "Util/Timer.hpp"
+#include "Util/NTimer.hpp"
 #include "Classes/UnitMessageTypes.hpp"
 #include "Units/UnitOpcodes.hpp"
 #include "Classes/AI/PathList.hpp"
@@ -73,6 +74,8 @@ protected:
     std::string soundSelect;
     std::string fireSound;
     unsigned short weaponType;
+
+    NTimer death_timer;
 
     Timer unit_state_timer;
     Timer fsm_timer;
