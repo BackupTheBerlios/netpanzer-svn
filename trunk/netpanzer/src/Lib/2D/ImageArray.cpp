@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ImageArray.hpp"
 #include "Surface.hpp"
 #include "lua/lua.hpp"
+#include "Util/Log.hpp"
 
 ImageArray::~ImageArray()
 {
@@ -33,8 +34,7 @@ ImageArray::~ImageArray()
 bool
 ImageArray::loadImageSheetArray(lua_State* L)
 {
-    int num_images = lua_objlen(L, -1);
-    num_images = num_images;
+    num_images = lua_objlen(L, -1);
     images = new Surface*[num_images];
 
     for ( int n = 1; n <= num_images; ++n )
