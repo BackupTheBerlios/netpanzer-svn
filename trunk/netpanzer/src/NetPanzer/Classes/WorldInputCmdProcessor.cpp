@@ -53,6 +53,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Units/Unit.hpp"
 
+#include "Scripts/ScriptManager.hpp"
+
 WorldInputCmdProcessor COMMAND_PROCESSOR;
 
 enum { _cursor_regular,

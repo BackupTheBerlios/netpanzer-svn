@@ -233,7 +233,6 @@ void VisualsView::stateChanged(Component* source)
             // resolution (the first one in theory), we make it smaller so it
             // wont crash, it is a SDL error.
             gameconfig->windowHeight -= 50;
-            gameconfig->windowWidth -= 4;
         }
 
         GameManager::setVideoMode();

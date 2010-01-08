@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __Color_hpp__
 
 #include "SDL.h"
-#include "Scripts/ScriptManager.hpp"
 #include "Core/CoreTypes.hpp"
 
 //---------------------------------------------------------------------------
@@ -176,7 +175,9 @@ public:
     static IntColor gray160;
     static IntColor gray192;
     static IntColor gray224;
-
+private:
+    friend class ScriptManager;
+    static void registerScript(const char* table_name);
 };
 
 #endif // end __Color_hpp__

@@ -46,7 +46,7 @@ Palette::makeColor(int r, int g, int b)
 //---------------------------------------------------------------------------
 void Palette::setColors()
 {
-    ScriptManager::runFile("loadcolors","scripts/initcolors.lua");
+    ScriptManager::runFileInTable("scripts/initcolors.lua", "Color");
 } // end Palette::setColors
 
 // findNearestColor

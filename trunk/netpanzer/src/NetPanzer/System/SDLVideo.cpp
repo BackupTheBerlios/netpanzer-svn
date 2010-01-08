@@ -145,24 +145,24 @@ static bool getNearestFullScreenMode(int flags, int* width, int* height)
     }
     else
     {
-        unsigned int mode_size = (*width) * (*height);
-        LOGGER.warning("mode_size=%u",mode_size);
-        unsigned int mindif = -1;
+        unsigned int min_x_dif = -1;
+        unsigned int min_y_dif = -1;
         unsigned int nearest = 0;
         for ( int n = 0; modes[n]; ++n )
         {
-            unsigned int new_size = modes[n]->w * modes[n]->h;
-            unsigned int new_dif = abs(mode_size-new_size);
-            LOGGER.warning("new_size=%u , new_dif=%u", new_size, new_dif);
+            unsigned int new_x_dif = abs((*width) - modes[n]->w);
 
-            if ( new_dif < mindif )
+            if ( new_x_dif <= min_x_dif )
             {
-                nearest = n;
-                mindif = new_dif;
-                LOGGER.warning("nearest is %d", nearest);
+                unsigned int new_y_dif = abs((*height) - modes[n]->h);
+                if ( new_y_dif <= min_y_dif )
+                {
+                    nearest = n;
+                    min_x_dif = new_x_dif;
+                    min_y_dif = new_y_dif;
+                }
             }
         }
-        LOGGER.warning("final nearest is %d", nearest);
         *width = modes[nearest]->w;
         *height = modes[nearest]->h;
     }

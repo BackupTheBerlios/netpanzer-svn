@@ -17,6 +17,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "Color.hpp"
+#include "Classes/ScreenSurface.hpp"
+#include "Scripts/ScriptManager.hpp"
+#include "Scripts/ScriptHelper.hpp"
+#include "lua/lua.hpp"
 
 // Here is some preprocessor abuse
 
@@ -88,9 +92,51 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define MERGE_CLASS(a) a::
 #define GEN_VAR(CNAME) IntColor MERGE_CLASS(Color)CNAME;
 
+#define GEN_GETSTRUCT(CNAME) { #CNAME, GETSVTYPE_INT, &MERGE_CLASS(Color)CNAME },
+#define GEN_SETSTRUCT(CNAME) { #CNAME, SETSVTYPE_INT, &MERGE_CLASS(Color)CNAME },
+
 // This generate the Uint8 Color::colorname for all the colors
 // Must not have ';' at end
 GEN_COLORS(GEN_VAR)
+
+// This generates the tables needed for script binding
+static const ScriptVarBindRecord color_getters[] =
+{
+    GEN_COLORS(GEN_GETSTRUCT)
+    {0,0}
+};
+
+static const ScriptVarBindRecord color_setters[] =
+{
+    GEN_COLORS(GEN_SETSTRUCT)
+    {0,0}
+};
+
+static int color_rgb(lua_State *L)
+{
+    int r = luaL_checkint(L,1); // r
+    int g = luaL_checkint(L,2); // g
+    int b = luaL_checkint(L,3); // b
+
+    IntColor color = SDL_MapRGB(screen->getPixelFormat(), r, g, b);
+
+    lua_pushinteger(L, color);
+    return 1;
+}
+
+static const luaL_Reg color_methods[] =
+{
+    {"rgb", color_rgb},
+    {0,0}
+};
+
+void
+Color::registerScript(const char *table_name)
+{
+    ScriptManager::registerLib( table_name, color_methods);
+    ScriptManager::bindStaticVariables(table_name, "ColorMetaTable",
+                                       color_getters, color_setters);
+}
 
 SDL_Color NamedColors::colors[] =
 {

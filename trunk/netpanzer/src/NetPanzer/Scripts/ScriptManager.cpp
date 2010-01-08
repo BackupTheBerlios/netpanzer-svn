@@ -20,11 +20,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <cstring>
 #include "ScriptManager.hpp"
+#include "ScriptHelper.hpp"
 #include "Util/FileSystem.hpp"
 
 #include "bindings/NetPanzerBindings.hpp"
 
 #include "2D/Color.hpp"
+
 #include "Interfaces/ConsoleInterface.hpp"
 
 lua_State * ScriptManager::luavm = 0;
@@ -40,6 +42,7 @@ ScriptManager::initialize()
             luaL_openlibs(luavm);
         }
         tolua_NetPanzer_open(luavm);
+        Color::registerScript("Color");
 
     }
 
@@ -56,9 +59,9 @@ ScriptManager::close()
 }
     
 void
-ScriptManager::registerLib(const char * libname, const luaL_reg * functions)
+ScriptManager::registerLib(const char * libname, const luaL_Reg * functions)
 {
-    luaL_openlib(luavm, libname, functions, 0);   
+    luaL_register(luavm, libname, functions);
 }
     
 void
@@ -212,5 +215,91 @@ ScriptManager::runFile(const char * runname, const char * filename)
     {
         printf("error is: %s\n",lua_tostring(luavm,-1));
         lua_pop(luavm,1);
+    }
+}
+
+void
+ScriptManager::runFileInTable(const char * filename, const char * table)
+{
+    int r = luaL_loadfile(luavm, filesystem::getRealName(filename).c_str());
+    if ( r )
+    {
+        LOGGER.warning("Error in runFileInTable: file loading error.");
+        lua_pop(luavm,1);
+        return;
+    }
+
+    lua_getglobal(luavm, table);
+    if ( ! lua_istable(luavm, -1) )
+    {
+        LOGGER.warning("Error in runFileInTable: table doesn't exists.");
+        lua_pop(luavm, 2);
+        return;
+    }
+
+    if ( ! lua_setfenv(luavm, -2) )
+    {
+        LOGGER.warning("Error in runFileInTable: can't set environment.");
+        lua_pop(luavm,2);
+        return;
+    }
+
+    if ( lua_pcall(luavm, 0, 0, 0) )
+    {
+        LOGGER.warning("Error in runFileInTable: %s\n",lua_tostring(luavm,-1));
+        lua_pop(luavm,1);
+    }
+}
+
+
+void
+ScriptManager::bindStaticVariables(const char * objectName,
+                                   const char * metaName,
+                                   ScriptVarBindRecord * getters,
+                                   ScriptVarBindRecord * setters)
+{
+    luaL_newmetatable(luavm, metaName);
+    int metatable = lua_gettop(luavm);
+
+    lua_pushliteral(luavm, "__index");
+    lua_pushvalue(luavm, metatable);  /* upvalue index 1 */
+    bindStaticVars(getters);     /* fill metatable with getters */
+    lua_pushcclosure(luavm, ScriptHelper::index_handler, 1);
+    lua_rawset(luavm, metatable);     /* metatable.__index = index_handler */
+
+    lua_pushliteral(luavm, "__newindex");
+    lua_newtable(luavm);              /* table for members you can set */
+    bindStaticVars(setters);     /* fill with setters */
+    lua_pushcclosure(luavm, ScriptHelper::newindex_handler, 1);
+    lua_rawset(luavm, metatable);     /* metatable.__newindex = newindex_handler */
+
+    lua_pop(luavm, 1);                /* drop metatable */
+
+    lua_getglobal(luavm, objectName);
+    
+    bool isRegistered = !lua_isnil(luavm, -1);
+    if ( ! isRegistered )
+    {
+        void * t = lua_newuserdata(luavm,sizeof(void*));
+        (void)t;
+    }
+
+    luaL_getmetatable(luavm, metaName);
+    lua_setmetatable(luavm,-2);
+
+    if ( ! isRegistered )
+    {
+        lua_setglobal(luavm,objectName);
+    }
+}
+
+void
+ScriptManager::bindStaticVars (ScriptVarBindRecord * recordlist)
+{
+    for (; recordlist->name; recordlist++)
+    {
+        lua_pushstring(luavm, recordlist->name);
+        lua_pushlightuserdata(luavm, (void*)recordlist);
+        lua_settable(luavm, -3);
     }
 }

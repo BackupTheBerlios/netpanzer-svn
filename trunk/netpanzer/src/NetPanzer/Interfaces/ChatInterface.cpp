@@ -34,6 +34,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetMessage.hpp"
 #include "Classes/Network/NetPacket.hpp"
 
+#include "Scripts/ScriptManager.hpp"
+
 enum { _net_message_id_chat_mesg_req,
        _net_message_id_chat_mesg
 };

@@ -1,5 +1,4 @@
 $pfile "base_types.pkg"
-$pfile "colors.pkg"
 $pfile "log.pkg"
 $pfile "consoleinterface.pkg"
 $pfile "players.pkg"
