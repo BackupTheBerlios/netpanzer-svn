@@ -282,7 +282,13 @@ ScriptManager::bindStaticVariables(const char * objectName,
     /* metatable.__newindex = newindex_handler */
     lua_rawset(luavm, metatable);                               // -2
 
-    lua_pop(luavm, 1);                /* drop metatable */      // -1 (clean)
+    lua_pushliteral(luavm, "__next");                           // +1
+    lua_pushlightuserdata(luavm, (void*)getters);                      // +1
+    lua_pushcclosure(luavm, ScriptHelper::next_handler, 1);     // 0 = -1 +1
+    /* metatable.__next = next_handler */
+    lua_rawset(luavm, metatable);                               // -2 (clean)
+
+//    lua_pop(luavm, 1);                /* drop metatable */      // -1 (clean)
 
     lua_getglobal(luavm, objectName);                           // +1
     

@@ -67,6 +67,7 @@ private:
     static int staticVarCall(lua_State *L);
     static int index_handler (lua_State *L);
     static int newindex_handler (lua_State *L);
+    static int next_handler(lua_State *L);
 };
 
 #endif	/* _SCRIPTHELPER_HPP */

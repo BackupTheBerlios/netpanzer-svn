@@ -144,7 +144,7 @@ ScriptHelper::staticVarCall(lua_State *L)
 int
 ScriptHelper::index_handler (lua_State *L)
 {
-    /* stack has userdata, index */
+    /* stack has table, index */
     lua_pushvalue(L, 2);                     /* dup index */
     lua_rawget(L, lua_upvalueindex(1));      /* lookup member by name */
     if (!lua_islightuserdata(L, -1))
@@ -164,7 +164,7 @@ ScriptHelper::index_handler (lua_State *L)
 int
 ScriptHelper::newindex_handler (lua_State *L)
 {
-    /* stack has userdata, index, value */
+    /* stack has table, index, value */
     lua_pushvalue(L, 2);                     /* dup index */
     lua_rawget(L, lua_upvalueindex(1));      /* lookup member by name */
     if (!lua_islightuserdata(L, -1))         /* invalid member */
@@ -173,4 +173,39 @@ ScriptHelper::newindex_handler (lua_State *L)
         return 0;
     }
     return staticVarCall(L);                      /* call set function */
+}
+
+int
+ScriptHelper::next_handler(lua_State* L)
+{
+    /* stack has table, key */
+    ScriptVarBindRecord * record = (ScriptVarBindRecord *)lua_topointer(L, lua_upvalueindex(1));
+    if ( ! lua_isnil(L,2) )
+    {
+        // find this key
+        const char * key = lua_tostring(L, 2);
+
+        while ( record->name && strcmp(record->name, key) )
+        {
+            ++record;
+        }
+
+        // want next key
+        if ( record->name )
+        {
+            ++record;
+        }
+    }
+
+    if ( record->name )
+    {
+        lua_pushstring(L, record->name);
+
+        record->func(L, (void *)(record->data));
+
+        return 2;
+    }
+
+    lua_pushnil(L);
+    return 1;
 }
