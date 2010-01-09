@@ -44,48 +44,6 @@ FlashParticle2D::FlashParticle2D(	const fXYZ  &pos,
 
 } // end FlashParticle2D::FlashParticle2D
 
-// init
-//---------------------------------------------------------------------------
-void FlashParticle2D::init(lua_State *L)
-{
-    if ( staticPackedFlash )
-    {
-        return; // already loaded
-    }
-
-    int luatop = lua_gettop(L);
-
-    lua_getfield(L, -1, "flash");
-    if ( ! lua_istable(L, -1) )
-    {
-        LOGGER.warning("flash configuration not found.");
-        lua_settop(L, luatop);
-        return;
-    }
-
-//    lua_rawgeti(L, -1, 1);
-
-    lua_rawgeti(L, -1, 1); // file_name
-    lua_rawgeti(L, -2, 2); // width
-    lua_rawgeti(L, -3, 3); // height
-    lua_rawgeti(L, -4, 4); // nframes
-
-    Surface* s = new Surface();
-    s->loadPNGSheet( lua_tostring(L, -4),
-                    lua_tointeger(L, -3),
-                    lua_tointeger(L, -2),
-                    lua_tointeger(L, -1));
-
-//    lua_pop(L, 5);
-
-    s->setColorkey();
-    s->setOffsetCenter();
-
-    staticPackedFlash = s;
-
-    lua_settop(L, luatop);
-} // end FlashParticle2D::init
-
 // draw
 //---------------------------------------------------------------------------
 void FlashParticle2D::draw(SpriteSorter& sorter)

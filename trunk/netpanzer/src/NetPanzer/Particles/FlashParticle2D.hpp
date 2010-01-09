@@ -37,7 +37,6 @@ public:
                      int   layer,
                      bool  singleFrame = false);
 
-    static void init(lua_State *L);
 protected:
     // The size relative to the original image.  This is so we can keep
     // the images aspect ratio.

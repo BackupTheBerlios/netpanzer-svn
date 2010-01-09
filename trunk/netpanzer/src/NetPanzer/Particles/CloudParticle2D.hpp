@@ -40,7 +40,7 @@ public:
                      float       windMin,
                      float       windRand);
 
-    static void init(lua_State *L);
+    static int loadClouds(lua_State * L, void * v);
 
     virtual void sim();
     virtual void draw(SpriteSorter &sorter);

@@ -32,6 +32,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "Palette.hpp"
 #include "Surface.hpp"
+
+#include "lua/lua.hpp"
+
 extern "C"
 {
     SDL_Surface *IMG_LoadPNG_RW(SDL_RWops *src);
@@ -1150,4 +1153,35 @@ Surface::optimize()
             frames[n] = op;
         }
     }
+}
+
+int Surface::loadPNGSheetPointer(lua_State* L, void* v)
+{
+    if ( ! lua_istable(L, -1) )
+    {
+        return 0;
+    }
+
+    Surface** dest = (Surface**) v;
+
+    lua_rawgeti(L, -1, 1); // file_name
+    lua_rawgeti(L, -2, 2); // width
+    lua_rawgeti(L, -3, 3); // height
+    lua_rawgeti(L, -4, 4); // nframes
+
+    if ( ! *dest )
+    {
+        *dest = new Surface();
+    }
+
+    (*dest)->loadPNGSheet( lua_tostring(L, -4),
+                          lua_tointeger(L, -3),
+                          lua_tointeger(L, -2),
+                          lua_tointeger(L, -1));
+
+    lua_pop(L, 4);
+
+    (*dest)->setColorkey();
+    (*dest)->setOffsetCenter();
+    return 0;
 }

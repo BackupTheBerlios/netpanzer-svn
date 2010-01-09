@@ -32,6 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class Palette;
 class Surface;
+struct lua_State;
 
 typedef std::vector<Surface*> SurfaceList;
 
@@ -189,6 +190,10 @@ public:
     void setColorkey();
     void setAlpha(unsigned int alpha = 128);
     void optimize();
+
+    // for scripts
+    // pointer is: pointer to a surface pointer;
+    static int loadPNGSheetPointer(lua_State *L, void *v);
 
 private:
     static SDL_Surface * blackScreen;

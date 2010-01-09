@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "bindings/NetPanzerBindings.hpp"
 
 #include "2D/Color.hpp"
+#include "Particles/ParticleInterface.hpp"
 
 #include "Interfaces/ConsoleInterface.hpp"
 
@@ -43,6 +44,7 @@ ScriptManager::initialize()
         }
         tolua_NetPanzer_open(luavm);
         Color::registerScript("Color");
+        ParticleInterface::registerScript("particles");
 
     }
 
@@ -85,8 +87,8 @@ ScriptManager::runUserCommand(const char* str)
     if ( lua_istable(luavm, -1) )
     {
         char cmd[128];
-        int cmdpos = 0;
-        int strpos = 0;
+        unsigned int cmdpos = 0;
+        unsigned int strpos = 0;
 
         while ( cmdpos < sizeof(cmd) && str[strpos] && !isspace(str[strpos]) )
         {
@@ -146,8 +148,8 @@ ScriptManager::runServerCommand(const char* str, Uint16 runPlayer)
     if ( lua_istable(luavm, -1) )
     {
         char cmd[128];
-        int cmdpos = 0;
-        int strpos = 0;
+        unsigned int cmdpos = 0;
+        unsigned int strpos = 0;
 
         while ( cmdpos < sizeof(cmd) && str[strpos] && !isspace(str[strpos]) )
         {
@@ -224,7 +226,7 @@ ScriptManager::runFileInTable(const char * filename, const char * table)
     int r = luaL_loadfile(luavm, filesystem::getRealName(filename).c_str());
     if ( r )
     {
-        LOGGER.warning("Error in runFileInTable: file loading error.");
+        LOGGER.warning("Error in runFileInTable: %s\n",lua_tostring(luavm,-1));
         lua_pop(luavm,1);
         return;
     }
@@ -232,9 +234,10 @@ ScriptManager::runFileInTable(const char * filename, const char * table)
     lua_getglobal(luavm, table);
     if ( ! lua_istable(luavm, -1) )
     {
-        LOGGER.warning("Error in runFileInTable: table doesn't exists.");
-        lua_pop(luavm, 2);
-        return;
+        lua_pop(luavm,1);
+        lua_createtable(luavm, 6, 0);
+        lua_pushvalue(luavm, -1);
+        lua_setglobal(luavm, table);
     }
 
     if ( ! lua_setfenv(luavm, -2) )
@@ -280,8 +283,10 @@ ScriptManager::bindStaticVariables(const char * objectName,
     bool isRegistered = !lua_isnil(luavm, -1);
     if ( ! isRegistered )
     {
-        void * t = lua_newuserdata(luavm,sizeof(void*));
-        (void)t;
+        lua_pop(luavm,1);
+        lua_createtable(luavm, 0, 0);
+        lua_pushvalue(luavm, -1);
+        lua_setglobal(luavm, objectName);
     }
 
     luaL_getmetatable(luavm, metaName);

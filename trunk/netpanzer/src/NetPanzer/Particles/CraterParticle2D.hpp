@@ -39,7 +39,7 @@ class CraterParticle2D : public Particle2D
 public:
     CraterParticle2D(const fXYZ  &pos);
 
-    static void init(lua_State *L);
+    static int loadCraters(lua_State *L, void *v);
 
     static int getCacheHitCount()
     {

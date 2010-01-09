@@ -36,7 +36,7 @@ public:
                      float       lifetime,
                      int         layer);
 
-    static void init(lua_State *L);
+    static int loadFlames(lua_State *L, void *v);
     
 protected:
     virtual void draw(SpriteSorter &sorter);

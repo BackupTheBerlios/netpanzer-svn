@@ -31,7 +31,6 @@ typedef struct s_FlameArray
 } FlameArray;
 
 static FlameArray* flame_array = 0;
-static unsigned int num_explosions = 0;
 
 const int explosionFPS = 18;
 
@@ -63,33 +62,41 @@ FlameParticle2D::FlameParticle2D(	const fXYZ  &pos,
 
 // init
 //---------------------------------------------------------------------------
-void FlameParticle2D::init(lua_State *L)
+int FlameParticle2D::loadFlames(lua_State *L, void *v)
 {
+    if ( ! lua_istable(L, -1) )
+    {
+        LOGGER.warning("BAD explosions configuration, not loaded.");
+        return 0;
+    }
+
     if ( ! flame_array )
     {
-        int luatop = lua_gettop(L);
+        flame_array = new FlameArray;
+        flame_array->num_flames = 0;
+        flame_array->flameImageArray = 0;
+    }
 
-        lua_getfield(L, -1, "explosions");
-        if ( ! lua_istable(L, -1) )
+
+    if ( flame_array->num_flames != lua_objlen(L, -1) )
+    {
+        if ( flame_array->flameImageArray )
         {
-            LOGGER.warning("explosions configuration not found.");
-            lua_settop(L, luatop);
-            return;
+            delete[] flame_array->flameImageArray;
         }
 
-        flame_array = new FlameArray;
         flame_array->num_flames = lua_objlen(L,-1);
         flame_array->flameImageArray = new ImageArray[flame_array->num_flames]();
-
-        for ( int n = 1; n <= flame_array->num_flames; ++n )
-        {
-            lua_rawgeti(L, -1, n);
-            flame_array->flameImageArray[n-1].loadImageSheetArray(L);
-            lua_pop(L, 1);
-        }
-        
-        lua_settop(L, luatop);
     }
+
+    for ( unsigned int n = 1; n <= flame_array->num_flames; ++n )
+    {
+        lua_rawgeti(L, -1, n);
+        flame_array->flameImageArray[n-1].loadImageSheetArray(L);
+        lua_pop(L, 1);
+    }
+
+    return 0;
 } // end FlameParticle2D::init
 
 // draw

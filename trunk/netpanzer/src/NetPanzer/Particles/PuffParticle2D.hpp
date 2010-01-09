@@ -81,7 +81,9 @@ public:
                 isFarAway);
     }
 
-    static  void init(lua_State *L);
+    static int loadLightPuff(lua_State *L, void *v);
+    static int loadDarkPuff(lua_State *L, void *v);
+    static int loadDirtPuff(lua_State *L, void *v);
     virtual void draw(SpriteSorter &sorter);
 
 }; // end PuffParticle2D

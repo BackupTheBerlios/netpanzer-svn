@@ -74,53 +74,27 @@ void CloudParticle2D::setRandomSurface()
 
 } // end CloudParticle2D::setRandomSurface
 
-// init
-//---------------------------------------------------------------------------
-void CloudParticle2D::init(lua_State *L)
+int CloudParticle2D::loadClouds(lua_State * L, void * v)
 {
-    if ( staticPackedCloud )
+    Surface::loadPNGSheetPointer(L, &staticPackedCloud);
+    if ( ! staticPackedCloud )
     {
-        return; // already loaded
+        LOGGER.warning("BAD clouds configuration, not loading clouds.");
+        return 0;
     }
 
-    int luatop = lua_gettop(L);
-
-    lua_getfield(L, -1, "clouds");
-    if ( ! lua_istable(L, -1) )
+    if ( ! staticCloudShadow )
     {
-        LOGGER.warning("clouds configuration not found.");
-        lua_settop(L, luatop);
-        return;
+        staticCloudShadow = new Surface();
     }
 
-//    lua_rawgeti(L, -1, 1);
-
-    lua_rawgeti(L, -1, 1); // file_name
-    lua_rawgeti(L, -2, 2); // width
-    lua_rawgeti(L, -3, 3); // height
-    lua_rawgeti(L, -4, 4); // nframes
-
-    Surface* s = new Surface();
-    s->loadPNGSheet( lua_tostring(L, -4),
-                    lua_tointeger(L, -3),
-                    lua_tointeger(L, -2),
-                    lua_tointeger(L, -1));
-
-//    lua_pop(L, 5);
-
-    s->setColorkey();
-    s->setOffsetCenter();
-
-    staticPackedCloud = s;
-    staticCloudShadow = new Surface();
     staticCloudShadow->createShadow(*staticPackedCloud);
-
-    s->setAlpha(128);
-
     staticCloudShadow->setAlpha(32);
 
-    lua_settop(L, luatop);
-} // end CloudParticle2D::init
+    staticPackedCloud->setAlpha(128);
+
+    return 0;
+}
 
 // sim
 //---------------------------------------------------------------------------

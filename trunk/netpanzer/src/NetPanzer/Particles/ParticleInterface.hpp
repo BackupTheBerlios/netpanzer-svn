@@ -44,6 +44,8 @@ public:
 class ParticleInterface
 {
 private:
+    friend class ScriptManager;
+    static void registerScript(const char * table_name);
     static std::vector<UnitParticleInfo> unitParticleInfo;
     static int unitBodyMaxArea;
 

@@ -95,48 +95,6 @@ ChunkTrajectoryParticle2D::ChunkTrajectoryParticle2D(	const fXYZ &pos,
 
 } // end ChunkTrajectoryParticle2D::ChunkTrajectoryParticle2D
 
-// init
-//---------------------------------------------------------------------------
-void ChunkTrajectoryParticle2D::init(lua_State *L)
-{
-    if ( staticPackedGroundChunks )
-    {
-        return; // already loaded
-    }
-
-    int luatop = lua_gettop(L);
-
-    lua_getfield(L, -1, "chunks");
-    if ( ! lua_istable(L, -1) )
-    {
-        LOGGER.warning("chunks configuration not found.");
-        lua_settop(L, luatop);
-        return;
-    }
-
-//    lua_rawgeti(L, -1, 1);
-
-    lua_rawgeti(L, -1, 1); // file_name
-    lua_rawgeti(L, -2, 2); // width
-    lua_rawgeti(L, -3, 3); // height
-    lua_rawgeti(L, -4, 4); // nframes
-
-    Surface* s = new Surface();
-    s->loadPNGSheet( lua_tostring(L, -4),
-                    lua_tointeger(L, -3),
-                    lua_tointeger(L, -2),
-                    lua_tointeger(L, -1));
-
-//    lua_pop(L, 5);
-
-    s->setColorkey();
-    s->setOffsetCenter();
-
-    staticPackedGroundChunks = s;
-
-    lua_settop(L, luatop);
-} // end ChunkTrajectoryParticle2D::init
-
 // draw
 //---------------------------------------------------------------------------
 void ChunkTrajectoryParticle2D::draw(SpriteSorter &sorter)

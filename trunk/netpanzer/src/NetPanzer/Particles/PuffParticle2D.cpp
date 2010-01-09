@@ -138,43 +138,43 @@ void PuffParticle2D::draw(SpriteSorter &sorter)
 
 static bool loadPuffData(lua_State *L, const char * field_name, int puff_num)
 {
-    lua_getfield(L, -1, field_name);
     if ( ! lua_istable(L, -1) )
     {
-        LOGGER.warning("%s puffs configuration not found.", field_name);
-        lua_pop(L, 1);
+        LOGGER.warning("BAD %s configuration, not loaded.", field_name);
         return false;
     }
 
     puff_array->puffImageArray[puff_num].loadImageSheetArray(L);
-
-    lua_pop(L, 1);
+    return true;
 }
 
-// init
-//---------------------------------------------------------------------------
-void PuffParticle2D::init(lua_State* L)
+static void ensurePuffArray()
 {
     if ( ! puff_array )
     {
-        int luatop = lua_gettop(L);
-
-        lua_getfield(L, -1, "puffs");
-        if ( ! lua_istable(L, -1) )
-        {
-            LOGGER.warning("Puffs configuration not found.");
-            lua_settop(L, luatop);
-            return;
-        }
-
         puff_array = new PuffArray;
         puff_array->num_puff_types = 3;
         puff_array->puffImageArray = new ImageArray[3]();
-
-        loadPuffData(L, "light", 0);
-        loadPuffData(L, "dark", 1);
-        loadPuffData(L, "dirt", 2);
-        
-        lua_settop(L, luatop);
     }
-} // end PuffParticle2D::init
+}
+
+int PuffParticle2D::loadLightPuff(lua_State* L, void* v)
+{
+    ensurePuffArray();
+    loadPuffData(L, "lightpuffs", LIGHT);
+    return 0;
+}
+
+int PuffParticle2D::loadDarkPuff(lua_State* L, void* v)
+{
+    ensurePuffArray();
+    loadPuffData(L, "darkpuffs", DARK);
+    return 0;
+}
+
+int PuffParticle2D::loadDirtPuff(lua_State* L, void* v)
+{
+    ensurePuffArray();
+    loadPuffData(L, "dirtpuffs", DIRT);
+    return 0;
+}

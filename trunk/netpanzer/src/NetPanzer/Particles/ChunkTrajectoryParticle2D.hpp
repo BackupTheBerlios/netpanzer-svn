@@ -55,10 +55,7 @@ public:
 
     virtual void sim();
     virtual void draw(SpriteSorter &sorter);
-
-    static void init(lua_State *L);
-
-}
-; // end ChunkTrajectoryParticle2D
+    
+}; // end ChunkTrajectoryParticle2D
 
 #endif // __ChunkTrajectoryParticle2D_hpp__

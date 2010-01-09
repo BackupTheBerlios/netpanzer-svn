@@ -41,6 +41,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Color.hpp"
 
 #include "lua/lua.hpp"
+#include "Scripts/ScriptManager.hpp"
+#include "Scripts/ScriptHelper.hpp"
 
 std::vector<UnitParticleInfo> ParticleInterface::unitParticleInfo;
 int ParticleInterface::unitBodyMaxArea                   = 0;
@@ -56,6 +58,37 @@ int ParticleInterface::gMuzzleSystemCullHitCount         = 1;
 vector<int> ParticleInterface::unitHitPointTable;
 vector<int> ParticleInterface::unitAttackFactorTable;
 
+extern Surface* staticPackedFlash;
+extern Surface* staticPackedGroundChunks;
+extern Surface* staticPackedCrater;
+
+static const ScriptVarBindRecord particle_getters[] =
+{
+//    { "clouds", CloudParticle2D::loadClouds, 0},
+    {0,0}
+};
+
+static const ScriptVarBindRecord particle_setters[] =
+{
+    { "clouds",     CloudParticle2D::loadClouds,   0},
+    { "flash",      Surface::loadPNGSheetPointer,  &staticPackedFlash},
+    { "chunks",     Surface::loadPNGSheetPointer,  &staticPackedGroundChunks},
+    { "craters",    CraterParticle2D::loadCraters, &staticPackedCrater},
+    { "lightpuffs", PuffParticle2D::loadLightPuff, 0},
+    { "darkpuffs",  PuffParticle2D::loadDarkPuff,  0},
+    { "dirtpuffs",  PuffParticle2D::loadDirtPuff,  0},
+    { "explosions", FlameParticle2D::loadFlames,   0},
+
+    {0,0}
+};
+
+
+void ParticleInterface::registerScript(const char * table_name)
+{
+    ScriptManager::bindStaticVariables(table_name, "ParticlesMetaTable",
+                                       particle_getters, particle_setters);
+
+}
 
 //--------------------------------------------------------------------------
 ParticleInterface::ParticleInterface()
@@ -444,37 +477,13 @@ void ParticleInterface::initParticleSystems()
 {
     if ( ! initialized )
     {
-        lua_State *L = luaL_newstate();
-        int error = luaL_dofile(L, filesystem::getRealName("scripts/particles.lcfg").c_str());
-        if (error)
-        {
-            LOGGER.warning("Can't initialize particles, lua error: %s\n",lua_tostring(L,-1));
-            lua_close(L);
-            return;
-        }
-
-        lua_getglobal(L, "particles");
-        if ( ! lua_istable(L, -1) )
-        {
-            LOGGER.warning("Particle configuration not found.");
-            lua_close(L);
-            return;
-        }
-
-        PuffParticle2D::init(L);
-        CloudParticle2D::init(L);
-        FlameParticle2D::init(L);
-        FlashParticle2D::init(L);
-        ChunkTrajectoryParticle2D::init(L);
-
-        CraterParticle2D::init(L);
+        ScriptManager::runFileInTable("scripts/particles.lcfg", "particles");
 
         // requires unit_profiles_interface
         buildUnitTables();
         // requires unit profiles sprites
         getUnitParticleInfo();
         
-        lua_close(L);
         initialized = true;
     }
 }
