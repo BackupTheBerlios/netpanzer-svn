@@ -108,8 +108,16 @@ public:
     void loadConfig();
     void saveConfig();
 
-    unsigned int windowWidth;
-    unsigned int windowHeight;
+    static unsigned int video_width;
+    static unsigned int video_height;
+    static bool         video_fullscreen;
+    static bool         video_hardwaresurface;
+    static bool         video_doublebuffer;
+    static bool         video_shadows;
+    static bool         video_blendsmoke;
+#ifdef _WIN32
+    static bool         video_usedirectx;
+#endif
 
     // game Settings (there are not saved to disk)
     ConfigInt       hostorjoin;         // 1=host, 2=join
@@ -145,18 +153,6 @@ public:
     ConfigInt    respawntype; // this is round robin or random already in np
     ConfigInt    respawnmode; // 0- normal, 1- round, 2- timer
     ConfigInt    respawntime; // used in timer mode. in seconds
-
-    // Visuals Settings
-    ConfigInt   screenresolution;
-    ConfigBool  fullscreen;
-    ConfigBool  hardwareSurface;
-    ConfigBool  hardwareDoubleBuffer;
-    ConfigBool  displayshadows;
-    ConfigBool  blendsmoke;
-    ConfigInt   screengamma;
-#ifdef _WIN32
-    ConfigBool  usedirectx;
-#endif
 
     // sound settings
     ConfigBool  enablesound;
@@ -328,6 +324,8 @@ public:
     }
 
 private:
+    friend class ScriptManager;
+    static void registerScript(const char * table_name);
     std::string configfile;
     bool usePhysFS;
 
@@ -365,7 +363,6 @@ private:
     std::vector<ConfigVariable*> gamesettings;
     std::vector<ConfigVariable*> playersettings;
     std::vector<ConfigVariable*> serversettings;
-    std::vector<ConfigVariable*> visualssettings;
     std::vector<ConfigVariable*> soundsettings;
     std::vector<ConfigVariable*> interfacesettings;
     std::vector<ConfigVariable*> radarsettings;

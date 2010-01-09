@@ -31,6 +31,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define SETSVTYPE_NUMBER ScriptHelper::set_number
 #define GETSVTYPE_STRING ScriptHelper::get_string
 //#define SETSVTYPE_STRING ScriptHelper::set_string
+#define GETSVTYPE_BOOLEAN ScriptHelper::get_boolean
+#define SETSVTYPE_BOOLEAN ScriptHelper::set_boolean
 
 typedef int (*ScriptBindFunction) (lua_State *L, void *v);
 
@@ -55,7 +57,10 @@ public:
     static int set_number (lua_State *L, void *v);
 
     static int get_string (lua_State *L, void *v);
-    
+
+    static int get_boolean (lua_State *L, void *v);
+    static int set_boolean (lua_State *L, void *v);
+
 private:
     friend class ScriptManager;
     

@@ -88,7 +88,7 @@ void PuffParticle2D::create( unsigned int particleType,
 
     packedSurfaceShadow.setDrawModeBlend(32); // dark a little
 
-    if (gameconfig->blendsmoke) {
+    if ( GameConfig::video_blendsmoke ) {
         packedSurface.setDrawModeBlend(128);
     } else {
         packedSurface.setDrawModeSolid();
@@ -124,7 +124,7 @@ void PuffParticle2D::draw(SpriteSorter &sorter)
     packedSurface.setAttrib(iXY((int) pos.x, (int) pos.z), layer);
     sorter.addSprite(&packedSurface);
 
-    if (gameconfig->displayshadows) {
+    if (GameConfig::video_shadows) {
         if (!userDefinedShadowPos) {
             shadowPos.x = pos.x - ((float(index) /
                         float(puff_array->puffImageArray[0].size())) * packedSurfaceShadow.getCurFrame() * 10);

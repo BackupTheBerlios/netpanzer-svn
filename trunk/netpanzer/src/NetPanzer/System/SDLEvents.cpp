@@ -74,8 +74,8 @@ bool handleSDLEvents()
                 break;
 
             case SDL_VIDEORESIZE:
-                gameconfig->windowWidth = event.resize.w;
-                gameconfig->windowHeight = event.resize.h;
+                GameConfig::video_width = event.resize.w;
+                GameConfig::video_height = event.resize.h;
                 GameManager::setVideoMode();
                 break;
 

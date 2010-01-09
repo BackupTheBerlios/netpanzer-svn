@@ -51,6 +51,7 @@ public:
 
     void   add(const std::string& item);
     void   addItem(const std::string& item);
+    void   updateItem(const std::string& new_val, unsigned int item);
     void   copyItems(const Choice &choice);
     size_t getItemCount() const
     {

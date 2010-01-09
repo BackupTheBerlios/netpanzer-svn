@@ -85,7 +85,7 @@ static const ScriptVarBindRecord particle_setters[] =
 
 void ParticleInterface::registerScript(const char * table_name)
 {
-    ScriptManager::bindStaticVariables(table_name, "ParticlesMetaTable",
+    ScriptManager::bindStaticVariables(table_name, 0, "ParticlesMetaTable",
                                        particle_getters, particle_setters);
 
 }

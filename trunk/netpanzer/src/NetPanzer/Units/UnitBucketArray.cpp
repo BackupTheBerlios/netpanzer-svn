@@ -124,11 +124,11 @@ static void unitRangeToBucketRect(const iXY& world_loc,
     }
 }
 
-static void mapLocToBucketLoc(const iXY & map_loc, iXY & bucket_loc)
-{
-    bucket_loc.x = map_loc.x / map_x_sample_factor;
-    bucket_loc.y = map_loc.y / map_y_sample_factor;
-}
+//static void mapLocToBucketLoc(const iXY & map_loc, iXY & bucket_loc)
+//{
+//    bucket_loc.x = map_loc.x / map_x_sample_factor;
+//    bucket_loc.y = map_loc.y / map_y_sample_factor;
+//}
 
 static unsigned int bucketLocToBucketIndex(const unsigned int row, const unsigned int col)
 {

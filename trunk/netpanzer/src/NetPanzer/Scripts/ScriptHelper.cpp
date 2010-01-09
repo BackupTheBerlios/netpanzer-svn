@@ -116,7 +116,21 @@ ScriptHelper::get_string (lua_State *L, void *v)
     lua_pushstring(L, (char*)v );
     return 1;
 }
-    
+
+int
+ScriptHelper::get_boolean (lua_State *L, void *v)
+{
+    lua_pushboolean(L, *(bool*)v);
+    return 1;
+}
+
+int
+ScriptHelper::set_boolean (lua_State *L, void *v)
+{
+    *(bool*)v = lua_toboolean(L, 3);
+    return 0;
+}
+
 int
 ScriptHelper::staticVarCall(lua_State *L)
 {

@@ -41,10 +41,20 @@ void Choice::addItem(const std::string& item)
 
     int borderSpace = borderSize * 2;
 
-    size.x = std::max((Surface::getTextLength(item) + borderSpace), size.y);
+    size.x = std::max((Surface::getTextLength(item) + borderSpace), size.x);
     size.y = ChoiceItemHeight;
 }
 
+//---------------------------------------------------------------------------
+void Choice::updateItem(const std::string& new_val, unsigned int item)
+{
+    if ( item < choiceList.size() )
+    {
+        choiceList[item] = new_val;
+        int borderSpace = borderSize * 2;
+        size.x = std::max((Surface::getTextLength(new_val) + borderSpace), size.x);
+    }
+}
 //---------------------------------------------------------------------------
 void Choice::select(const std::string& item)
 {

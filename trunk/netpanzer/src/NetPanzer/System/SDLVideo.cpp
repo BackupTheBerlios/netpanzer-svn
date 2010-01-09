@@ -95,7 +95,7 @@ SDLVideo::SDLVideo()
         : frontBuffer(0), backBuffer(0)
 {
 #ifdef _WIN32
-    if ( gameconfig->usedirectx )
+    if ( GameConfig::video_usedirectx )
     {
         putenv("SDL_VIDEODRIVER=directx");
     }
@@ -139,11 +139,7 @@ static bool getNearestFullScreenMode(int flags, int* width, int* height)
     {
         return false;
     }
-    else if ( modes == (SDL_Rect**)-1 )
-    {
-        return true;
-    }
-    else
+    else if ( modes != (SDL_Rect**)-1 )
     {
         unsigned int min_x_dif = -1;
         unsigned int min_y_dif = -1;
@@ -166,6 +162,7 @@ static bool getNearestFullScreenMode(int flags, int* width, int* height)
         *width = modes[nearest]->w;
         *height = modes[nearest]->h;
     }
+    return true;
 }
 
 void SDLVideo::setVideoMode(int width, int height, Uint32 flags)

@@ -37,7 +37,7 @@ ImageArray::loadImageSheetArray(lua_State* L)
     num_images = lua_objlen(L, -1);
     images = new Surface*[num_images];
 
-    for ( int n = 1; n <= num_images; ++n )
+    for ( unsigned int n = 1; n <= num_images; ++n )
     {
         lua_rawgeti(L, -1, n); // current record
 

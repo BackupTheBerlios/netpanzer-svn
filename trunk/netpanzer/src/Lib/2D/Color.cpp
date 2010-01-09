@@ -134,7 +134,7 @@ void
 Color::registerScript(const char *table_name)
 {
     ScriptManager::registerLib( table_name, color_methods);
-    ScriptManager::bindStaticVariables(table_name, "ColorMetaTable",
+    ScriptManager::bindStaticVariables(table_name, 0, "ColorMetaTable",
                                        color_getters, color_setters);
 }
 

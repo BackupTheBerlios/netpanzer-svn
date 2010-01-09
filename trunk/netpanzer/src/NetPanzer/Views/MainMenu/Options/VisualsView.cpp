@@ -59,7 +59,7 @@ void VisualsView::initButtons()
     char res_str[20];
     choiceResolution = new Choice();
     choiceResolution->setName("Resolution");
-
+    choiceResolution->addItem("current");
     SDL_Rect** modes = SDL_ListModes(0, SDL_FULLSCREEN);
     int cur_mode = 0;
     if ( modes && modes != (SDL_Rect**)-1 )
@@ -74,14 +74,17 @@ void VisualsView::initButtons()
     }
     
     choiceResolution->setLocation(x, y);
-    choiceResolution->select(gameconfig->screenresolution);
+    choiceResolution->select(0);
     choiceResolution->setMinWidth(minWidth);
     choiceResolution->setStateChangedCallback(this);
     add(choiceResolution);
+
+    current_width = 0;
+    current_height = 0;
     
     checkBoxFullscreen = new CheckBox();
     checkBoxFullscreen->setLabel("Fullscreen");
-    checkBoxFullscreen->setState(gameconfig->fullscreen);    
+    checkBoxFullscreen->setState(GameConfig::video_fullscreen);
     checkBoxFullscreen->setLocation(x+ 250, y);
     checkBoxFullscreen->setStateChangedCallback(this);
     add(checkBoxFullscreen);
@@ -107,7 +110,7 @@ void VisualsView::initButtons()
     
     checkBoxDrawAllShadows = new CheckBox();
     checkBoxDrawAllShadows->setLabel("Draw All Shadows");
-    checkBoxDrawAllShadows->setState(gameconfig->displayshadows);
+    checkBoxDrawAllShadows->setState(GameConfig::video_shadows);
     checkBoxDrawAllShadows->setLocation(x, y);
     checkBoxDrawAllShadows->setStateChangedCallback(this);
     add(checkBoxDrawAllShadows);
@@ -115,7 +118,7 @@ void VisualsView::initButtons()
     
     checkBoxBlendSmoke = new CheckBox();
     checkBoxBlendSmoke->setLabel("Blend Smoke");
-    checkBoxBlendSmoke->setState(gameconfig->blendsmoke);
+    checkBoxBlendSmoke->setState(GameConfig::video_blendsmoke);
     checkBoxBlendSmoke->setLocation(x, y);
     checkBoxBlendSmoke->setStateChangedCallback(this);
     add(checkBoxBlendSmoke);
@@ -170,6 +173,20 @@ void VisualsView::initButtons()
 //---------------------------------------------------------------------------
 void VisualsView::doDraw()
 {
+    checkBoxFullscreen->setState(GameConfig::video_fullscreen);
+    checkBoxBlendSmoke->setState(GameConfig::video_blendsmoke);
+    checkBoxDrawAllShadows->setState(GameConfig::video_shadows);
+
+    if (   current_width != GameConfig::video_width
+        || current_height != GameConfig::video_height )
+    {
+        current_width = GameConfig::video_width;
+        current_height = GameConfig::video_height;
+        char new_res[100];
+        snprintf(new_res,sizeof(new_res),"current(%d x %d)", current_width, current_height);
+        choiceResolution->updateItem(new_res,0);
+    }
+
     MenuTemplateView::doDraw();
 
     View::doDraw();
@@ -189,11 +206,11 @@ void VisualsView::stateChanged(Component* source)
 {
     if ( source == checkBoxDrawAllShadows )
     {
-        gameconfig->displayshadows = checkBoxDrawAllShadows->getState();
+        GameConfig::video_shadows = checkBoxDrawAllShadows->getState();
     }
     else if ( source == checkBoxBlendSmoke )
     {
-        gameconfig->blendsmoke = checkBoxBlendSmoke->getState();
+        GameConfig::video_blendsmoke = checkBoxBlendSmoke->getState();
     }
     else if ( source == checkBoxDrawHitpoints )
     {
@@ -209,30 +226,36 @@ void VisualsView::stateChanged(Component* source)
     }
     else if ( source == checkBoxFullscreen )
     {
-        gameconfig->fullscreen = checkBoxFullscreen->getState();
+        GameConfig::video_fullscreen = checkBoxFullscreen->getState();
         GameManager::setVideoMode();
     }
     else if ( source == choiceResolution )
     {
+        int sel_index = choiceResolution->getSelectedIndex()-1;
+        if ( sel_index < 0 )
+        {
+            return;
+        }
+
         SDL_Rect** modes = SDL_ListModes(0, SDL_FULLSCREEN);
         SDL_Rect* mode = 0;
         if ( modes && modes != (SDL_Rect**)-1 )
         {
-            mode = modes[choiceResolution->getSelectedIndex()];
+            mode = modes[sel_index];
         }
 
         if ( mode )
         {
-            gameconfig->windowWidth = mode->w;
-            gameconfig->windowHeight = mode->h;
+            GameConfig::video_width = mode->w;
+            GameConfig::video_height = mode->h;
         }
 
-        if ( choiceResolution->getSelectedIndex() == 0 && ! gameconfig->fullscreen )
+        if ( sel_index == 0 && ! GameConfig::video_fullscreen )
         {
             // on Mac crash if we are in window and we select the biggest
             // resolution (the first one in theory), we make it smaller so it
             // wont crash, it is a SDL error.
-            gameconfig->windowHeight -= 50;
+            GameConfig::video_height -= 50;
         }
 
         GameManager::setVideoMode();

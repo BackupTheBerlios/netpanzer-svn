@@ -47,6 +47,7 @@ public:
     static lua_State* getLuavm() { return luavm; }
 
     static void bindStaticVariables(const char * objectName,
+                                    const char * fieldName,
                                     const char * metaName,
                                     ScriptVarBindRecord * getters,
                                     ScriptVarBindRecord * setters);

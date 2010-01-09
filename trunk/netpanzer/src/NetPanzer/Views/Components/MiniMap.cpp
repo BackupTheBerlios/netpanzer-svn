@@ -153,7 +153,7 @@ MiniMap::drawObjectives(Surface &dest)
 {
     iRect objective_rect, map_rect;
     unsigned char objective_status;
-    IntColor color;
+    IntColor color = Color::black;
     ObjectiveID objective_id;
 
     ObjectiveInterface::startObjectivePositionEnumeration(PlayerInterface::getLocalPlayerIndex());

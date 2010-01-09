@@ -142,7 +142,7 @@ TileSet::loadImages()
     SDL_Rect r = { 0, 0, header->x_pix, header->y_pix };
 
     tiles = new std::vector<Surface*>();
-    int ntiles = header->tile_count;
+    unsigned int ntiles = header->tile_count;
     tiles->resize(ntiles);
     for ( unsigned int n = 0; n < ntiles; ++n )
     {

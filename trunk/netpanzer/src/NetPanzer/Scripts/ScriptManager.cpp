@@ -45,6 +45,7 @@ ScriptManager::initialize()
         tolua_NetPanzer_open(luavm);
         Color::registerScript("Color");
         ParticleInterface::registerScript("particles");
+        GameConfig::registerScript("config");
 
     }
 
@@ -257,45 +258,60 @@ ScriptManager::runFileInTable(const char * filename, const char * table)
 
 void
 ScriptManager::bindStaticVariables(const char * objectName,
+                                   const char * fieldName,
                                    const char * metaName,
                                    ScriptVarBindRecord * getters,
                                    ScriptVarBindRecord * setters)
-{
-    luaL_newmetatable(luavm, metaName);
+{                                                               // stack change
+    luaL_newmetatable(luavm, metaName);                         // +1
     int metatable = lua_gettop(luavm);
 
-    lua_pushliteral(luavm, "__index");
-    lua_pushvalue(luavm, metatable);  /* upvalue index 1 */
-    bindStaticVars(getters);     /* fill metatable with getters */
-    lua_pushcclosure(luavm, ScriptHelper::index_handler, 1);
-    lua_rawset(luavm, metatable);     /* metatable.__index = index_handler */
+    lua_pushliteral(luavm, "__index");                          // +1
+    lua_pushvalue(luavm, metatable);                            // +1
+    bindStaticVars(getters);                                    // 0
+    lua_pushcclosure(luavm, ScriptHelper::index_handler, 1);    // 0 = -1 +1
+    /* metatable.__index = index_handler */
+    lua_rawset(luavm, metatable);                               // -2
 
-    lua_pushliteral(luavm, "__newindex");
-    lua_newtable(luavm);              /* table for members you can set */
-    bindStaticVars(setters);     /* fill with setters */
-    lua_pushcclosure(luavm, ScriptHelper::newindex_handler, 1);
-    lua_rawset(luavm, metatable);     /* metatable.__newindex = newindex_handler */
+    // metatable still in stack (1)
 
-    lua_pop(luavm, 1);                /* drop metatable */
+    lua_pushliteral(luavm, "__newindex");                       // +1
+    lua_newtable(luavm);   /* table for members you can set */  // +1
+    bindStaticVars(setters);     /* fill with setters */        // 0
+    lua_pushcclosure(luavm, ScriptHelper::newindex_handler, 1); // 0 = -1 +1
+    /* metatable.__newindex = newindex_handler */
+    lua_rawset(luavm, metatable);                               // -2
 
-    lua_getglobal(luavm, objectName);
+    lua_pop(luavm, 1);                /* drop metatable */      // -1 (clean)
+
+    lua_getglobal(luavm, objectName);                           // +1
     
-    bool isRegistered = !lua_isnil(luavm, -1);
+    bool isRegistered = !lua_isnil(luavm, -1);                  // 0
     if ( ! isRegistered )
     {
-        lua_pop(luavm,1);
-        lua_createtable(luavm, 0, 0);
-        lua_pushvalue(luavm, -1);
-        lua_setglobal(luavm, objectName);
+        // pop nil
+        lua_pop(luavm,1);                                       // -1 (clean)
+        lua_createtable(luavm, 0, 0);                           // +1
+        lua_pushvalue(luavm, -1);                               // +1
+        lua_setglobal(luavm, objectName);                       // -1
     }
 
-    luaL_getmetatable(luavm, metaName);
-    lua_setmetatable(luavm,-2);
+    // we have the global object on stack
 
-    if ( ! isRegistered )
+    int fields_to_pop = 1;
+
+    if ( fieldName )
     {
-        lua_setglobal(luavm,objectName);
+        ++fields_to_pop;
+        lua_createtable(luavm, 0, 0);                           // +1
+        lua_pushvalue(luavm, -1);                               // +1
+        lua_setfield(luavm, -3, fieldName);                     // -1
     }
+
+    luaL_getmetatable(luavm, metaName);                         // +1
+    lua_setmetatable(luavm,-2);                                 // -1
+
+    lua_pop(luavm, fields_to_pop);
 }
 
 void
@@ -303,8 +319,8 @@ ScriptManager::bindStaticVars (ScriptVarBindRecord * recordlist)
 {
     for (; recordlist->name; recordlist++)
     {
-        lua_pushstring(luavm, recordlist->name);
-        lua_pushlightuserdata(luavm, (void*)recordlist);
-        lua_settable(luavm, -3);
+        lua_pushstring(luavm, recordlist->name);            // +1
+        lua_pushlightuserdata(luavm, (void*)recordlist);    // +1
+        lua_settable(luavm, -3);                            // -2
     }
 }
