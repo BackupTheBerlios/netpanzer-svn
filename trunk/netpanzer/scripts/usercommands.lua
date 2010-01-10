@@ -63,8 +63,11 @@ UserCommands =
         local ps = PlayerInterface:getLocalPlayer();
         ConsoleInterface:post( Color.cyan, true, ps:getFlag(), "Your name is " .. ps:getName());
         ConsoleInterface:post( Color.cyan, false, 0, "Your id is " .. ps:getID());
-        ConsoleInterface:post( Color.cyan, false, 0, "Your have " .. ps:getObjectivesHeld() .. " bases");
+        local numOb = ps:getObjectivesHeld();
+        if (numOb == 0) then ConsoleInterface:post( Color.cyan, false, 0, "You have'nt bases")
+        elseif (numOb == 1) then ConsoleInterface:post( Color.cyan, false, 0, "You have 1 base")
+    	else ConsoleInterface:post( Color.cyan, false, 0, "You have " .. numOb .. " bases") end
     end
-
+    
 };
 

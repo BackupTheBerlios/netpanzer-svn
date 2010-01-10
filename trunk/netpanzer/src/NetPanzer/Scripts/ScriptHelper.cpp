@@ -18,6 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * Created on October 8, 2008, 10:53 PM
  */
 
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+
 #include "ScriptHelper.hpp"
 #include "Util/Log.hpp"
 

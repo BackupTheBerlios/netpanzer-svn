@@ -204,9 +204,9 @@ print 'Building version ' + NPVERSION + ' in ' + sys.platform
 # Configure Environments
 ################################################################
 
-env.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'] )
-crossmingwenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'])
-crosslinuxenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'])
+env.Append(           CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'] )
+crossmingwenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'] )
+crosslinuxenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/lib/physfs', 'src/Lib/lua', 'src/Lib/toluapp'] )
 
 # for this platform
 if thisplatform == 'darwin':
@@ -247,15 +247,17 @@ if 'crosslinux' in COMMAND_LINE_TARGETS:
 ################################################################
 
 # BUILDS NETWORK
-MakeStaticLib(networkenv, 'npnetwork', 'Network', '*.cpp')
+MakeStaticLib(          networkenv, 'npnetwork', 'Network', '*.cpp')
 MakeStaticLib(crossmingwnetworkenv, 'npnetwork', 'Network', '*.cpp')
 MakeStaticLib(crosslinuxnetworkenv, 'npnetwork', 'Network', '*.cpp')
 
 # BUILDS LUA
-luaenv.Append( CPPPATH = [ 'src/Lib/lua', 'src/Lib/toluapp'] )
-MakeStaticLib(luaenv, 'nplua', 'lua toluapp', '*.c')
-MakeStaticLib(crossmingwluaenv, 'nplua', 'lua', '*.c')
-MakeStaticLib(crosslinuxluaenv, 'nplua', 'lua', '*.c')
+luaenv.Append(           CPPPATH = [ 'src/Lib/lua', 'src/Lib/toluapp'] )
+crossmingwluaenv.Append( CPPPATH = [ 'src/Lib/lua', 'src/Lib/toluapp'] )
+crosslinuxluaenv.Append( CPPPATH = [ 'src/Lib/lua', 'src/Lib/toluapp'] )
+MakeStaticLib(          luaenv, 'nplua', 'lua toluapp', '*.c')
+MakeStaticLib(crossmingwluaenv, 'nplua', 'lua toluapp', '*.c')
+MakeStaticLib(crosslinuxluaenv, 'nplua', 'lua toluapp', '*.c')
 
 # BUILDS PHYSFS
 physfsenv.Append( CFLAGS = '-DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -DPHYSFS_NO_CDROM_SUPPORT=1' )
@@ -274,7 +276,11 @@ MakeStaticLib(crosslinuxphysfsenv, 'npphysfs', 'physfs physfs/platform physfs/ar
 env.Append( CFLAGS = '-DZ_PREFIX=1' )
 env.Append( CPPPATH = 'src/Lib/physfs/zlib123' )
 MakeStaticLib(env, 'np2d', '2D 2D/libpng', '*.c*')
+crossmingwenv.Append( CFLAGS = '-DZ_PREFIX=1' )
+crossmingwenv.Append( CPPPATH = 'src/Lib/physfs/zlib123' )
 MakeStaticLib(crossmingwenv, 'np2d', '2D 2D/libpng', '*.c*')
+crosslinuxenv.Append( CFLAGS = '-DZ_PREFIX=1' )
+crosslinuxenv.Append( CPPPATH = 'src/Lib/physfs/zlib123' )
 MakeStaticLib(crosslinuxenv, 'np2d', '2D 2D/libpng', '*.c*')
 
 # BUILDS REST OF LIBRARIES
@@ -303,7 +309,7 @@ if crossmingwenv.has_key('WINICON'):
     
 crosslinuxenv.Append( NPSOURCES = globSources(crosslinuxenv, 'src/NetPanzer', npdirs, "*.cpp") )
 
-env.Append( NPLIBS = ['nplua','np2d','npnetwork','nplibs','npphysfs'] )
+env.Append(           NPLIBS = ['nplua','np2d','npnetwork','nplibs','npphysfs'] )
 crossmingwenv.Append( NPLIBS = ['nplua','np2d','npnetwork','nplibs','npphysfs'] )
 crosslinuxenv.Append( NPLIBS = ['nplua','np2d','npnetwork','nplibs','npphysfs'] )
 
@@ -316,7 +322,7 @@ if crossmingwenv.has_key('LIBS'):
 if crosslinuxenv.has_key('LIBS'):
     crosslinuxenv.Append( NPLIBS = crosslinuxenv['LIBS'] )
 
-env.Append( NPLIBPATH = env['FINALLIBSDIR'] )
+env.Append(           NPLIBPATH =           env['FINALLIBSDIR'] )
 crossmingwenv.Append( NPLIBPATH = crossmingwenv['FINALLIBSDIR'] )
 crosslinuxenv.Append( NPLIBPATH = crosslinuxenv['FINALLIBSDIR'] )
 
