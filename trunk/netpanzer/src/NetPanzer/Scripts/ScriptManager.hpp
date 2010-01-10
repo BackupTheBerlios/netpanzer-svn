@@ -43,6 +43,7 @@ public:
     static void runFile(const char * runname, const char * filename);
 
     static void runFileInTable(const char * filename, const char * table);
+    static void loadConfigFile(const char * filename, const char * table);
 
     static lua_State* getLuavm() { return luavm; }
 

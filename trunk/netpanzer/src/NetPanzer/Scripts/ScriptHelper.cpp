@@ -213,3 +213,35 @@ ScriptHelper::next_handler(lua_State* L)
     lua_pushnil(L);
     return 1;
 }
+
+int
+ScriptHelper::autotable_indexhandler(lua_State* L)
+{
+    // stack has mtable, index
+    lua_pushvalue(L, 2);
+    // stack has mtable, index, index
+    lua_rawget(L, 1);
+    // stack has mtable, index, result
+    if ( lua_isnil(L, -1) )
+    {
+        lua_pop(L, 1);
+        // stack has mtable, index
+        lua_createtable(L,0,0);
+        // stack has mtable, index, ntable
+        lua_pushvalue(L, -1);
+        // stack has mtable, index, ntable, ntable
+        lua_insert(L, 2);
+        // stack has mtable, ntable, index, ntable
+        lua_rawset(L, 1);
+        // stack has mtable, ntable
+        lua_createtable(L, 0, 1);
+        // stack has mtable, ntable, meta
+        lua_pushliteral(L, "__index");
+        lua_pushcfunction(L, autotable_indexhandler);
+        lua_rawset(L, -3);
+        // stack has mtable, ntable, meta
+        lua_setmetatable(L, -2);
+        // stack has mtable, ntable
+    }
+    return 1;
+}

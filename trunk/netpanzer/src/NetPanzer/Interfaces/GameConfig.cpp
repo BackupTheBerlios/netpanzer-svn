@@ -283,7 +283,7 @@ GameConfig::~GameConfig()
 
 void GameConfig::loadConfig()
 {
-    ScriptManager::runFileInTable("config/config.cfg", "config");
+    ScriptManager::loadConfigFile("config/config.cfg", "config");
 
     INI::Store inifile;
     if(usePhysFS) {
@@ -385,22 +385,6 @@ void GameConfig::loadSpawnSettings(const INI::Section& section,
 
 void GameConfig::saveConfig()
 {
-    {
-        OFileStream out("config/config.cfg");
-        out << "-- Beware this file is overwritten each time netpanzer exits" << std::endl;
-        out << "video.width = " << video_width << std::endl;
-        out << "video.height = " << video_height << std::endl;
-        out << "video.fullscreen = " << WRITE_BOOL(video_fullscreen) << std::endl;
-        out << "video.hardwaresurface = " << WRITE_BOOL(video_hardwaresurface) << std::endl;
-        out << "video.doublebuffer = " << WRITE_BOOL(video_doublebuffer) << std::endl;
-        out << "video.shadows = " << WRITE_BOOL(video_shadows) << std::endl;
-        out << "video.blendsmoke = " << WRITE_BOOL(video_blendsmoke) << std::endl;
-#ifdef _WIN32
-        out << "video.usedirectx = " << WRITE_BOOL(video_usedirectx) << std::endl;
-#endif
-
-//        out << "video. = " << WRITE_BOOL(video_) << std::endl;
-    }
     INI::Store inifile;
 
     saveSettings(inifile.getSection("game"), gamesettings);
@@ -419,6 +403,45 @@ void GameConfig::saveConfig()
         std::ofstream out(configfile.c_str());
         inifile.save(out);
     }
+
+    lua_State *L = ScriptManager::getLuavm();
+        
+    lua_getglobal(L,"config");
+    if ( ! lua_istable(L, -1) )
+    {
+        LOGGER.warning("ERROR: Can't save configuration, config doesn't exits.");
+        return;
+    }
+    
+    lua_pushliteral(L, "dump");
+    lua_rawget(L, -2);
+    if ( ! lua_isfunction(L, -1) )
+    {
+        LOGGER.warning("ERROR: Can't save configuration, config.dump function doesn't exits.");
+        lua_pop(L, 2);
+        return;
+    }
+
+    lua_pushvalue(L, -2);
+    lua_remove(L, -3);
+    
+    if ( lua_pcall(L, 1, 1, 0) )
+    {
+        LOGGER.warning("ERROR: Can't save configuration, Lua error: '%s'", lua_tostring(L, -1));
+        lua_pop(L, 1);
+        return;
+    }
+    
+    if ( ! lua_isstring(L, -1) )
+    {
+        LOGGER.warning("ERROR: Can't save configuration, dump result is not a string.");
+        lua_pop(L, 1);
+        return;
+    }
+    
+    OFileStream out("config/config.cfg");
+    out << lua_tostring(L, -1) << std::endl;
+    lua_pop(L, 1);
 }
 
 void GameConfig::saveSettings(INI::Section& section,

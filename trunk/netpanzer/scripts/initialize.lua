@@ -3,10 +3,6 @@ LOGGER:log("Script initialization");
 LOGGER:log("Video Config: " .. config.video.width .. " x " .. config.video.height)
 LOGGER:log("Fullscreen: " .. tostring(config.video.fullscreen))
 
-config.morethings = 4
-
-config.master = { master1="one", master2="two"}
-
 function pairs(t)
     local mt = getmetatable(t)
     local iter = mt and mt.__next or next
@@ -15,8 +11,9 @@ end
 
 function dump_table(result, t, extra)
     local lin = extra or ""
+
     if type(t) ~= 'table' then
-        print('You fucker, give ma table')
+        LOGGER:log("ERROR dumping table: it is not a table")
         return
     end
 	for key,value in pairs(t) do
@@ -26,22 +23,19 @@ function dump_table(result, t, extra)
 	    elseif type(value) == 'string' then
 	        value = string.gsub(value,'"','\\"')
 	        table.insert(result, lin .. key .. " = \"" .. value .. "\"");
-		    --print(lin .. key .. " = \"" .. value .. "\"")
-	    else
-	        table.insert(result, lin .. key .. " = " .. tostring(value))
-		    --print(lin .. key .. " = " .. tostring(value))
+	    elseif type(value) ~= 'function' then
+	        table.insert(result, lin .. key .. " = " .. tostring(value));
 		end
 	end
 end
 
---for k,v in pairs(config.video) do
---    print(k .. " = " .. tostring(v))
---end
+gconcat = table.concat;
 
-result={}
-dump_table(result, config)
+config.dump = function(table)
+    result = {}
+    dump_table(result, table)
+    return gconcat(result,"\n");
+end
 
---table.sort(result)
-
-print(table.concat(result,"\n"))
+LOGGER:log("Dumping conf:\n" .. config.dump(config))
 

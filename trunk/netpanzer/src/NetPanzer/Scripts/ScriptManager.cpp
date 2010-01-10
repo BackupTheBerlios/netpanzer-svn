@@ -255,6 +255,60 @@ ScriptManager::runFileInTable(const char * filename, const char * table)
     }
 }
 
+void
+ScriptManager::loadConfigFile(const char * filename, const char * table)
+{
+    int r = luaL_loadfile(luavm, filesystem::getRealName(filename).c_str());
+    if ( r )
+    {
+        LOGGER.warning("Error in loadConfigFile: %s\n",lua_tostring(luavm,-1));
+        lua_pop(luavm,1);
+        return;
+    }
+
+    lua_getglobal(luavm, table);
+    if ( ! lua_istable(luavm, -1) )
+    {
+        lua_pop(luavm,1);
+        lua_createtable(luavm, 6, 0);
+        lua_pushvalue(luavm, -1);
+        lua_setglobal(luavm, table);
+    }
+
+    // stack: file, table
+
+    if ( ! lua_getmetatable(luavm, -1) )
+    {
+        lua_createtable(luavm, 0, 1);
+    }
+
+    // stack: file, table, metatable
+
+    lua_pushliteral(luavm, "__index");
+    lua_pushcfunction(luavm, ScriptHelper::autotable_indexhandler);
+    lua_rawset(luavm, -3);
+
+    // stack: file, table, metatable(with __index)
+
+    lua_setmetatable(luavm, -2);
+
+    // stack: file, table
+
+    if ( ! lua_setfenv(luavm, -2) )
+    {
+        LOGGER.warning("Error in loadConfigFile: can't set environment.");
+        lua_pop(luavm,2);
+        return;
+    }
+
+    // stack: file
+
+    if ( lua_pcall(luavm, 0, 0, 0) )
+    {
+        LOGGER.warning("Error in loadConfigFile: %s\n",lua_tostring(luavm,-1));
+        lua_pop(luavm,1);
+    }
+}
 
 void
 ScriptManager::bindStaticVariables(const char * objectName,
