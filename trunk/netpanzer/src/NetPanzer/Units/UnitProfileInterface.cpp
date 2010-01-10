@@ -313,6 +313,7 @@ void read_vehicle_profile(const std::string& unitName, UnitProfile *profile)
             Surface t;
             t.loadPNGSheet(param_list.params[1], 127, 127, 36);
             profile->bodyShadow.createShadow(t);
+            profile->bodyShadow.setAlpha(128);
 //            profile->bodyShadow.setOffsetCenter();
             break;
         }
