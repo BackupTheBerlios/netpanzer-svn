@@ -137,9 +137,6 @@ Unit::Unit(PlayerState* ownplayer, unsigned char utype, UnitID uid, iXY initial_
 
     in_sync_flag = true;
 
-    body_anim_shadow.setDrawModeBlend(128); // dark a lot
-    turret_anim_shadow.setDrawModeBlend(128); // dark a lot
-
     ai_fsm_transition_complete = false;
     
     reload_counter = 0;

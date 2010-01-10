@@ -15,17 +15,37 @@ function dump_table(result, t, extra)
     if type(t) ~= 'table' then
         LOGGER:log("ERROR dumping table: it is not a table")
         return
-    end
+    end    
+    
 	for key,value in pairs(t) do
-	    -- print('temporal: ' .. key .. ' is ' .. type(value))
+        local keytext
+	    local valuetext
+    
+        if type(key) == 'number' then
+            if extra then
+                keytext = "[" .. key .. "]"
+            end
+        else
+            if extra then
+                keytext = "." .. key
+            else
+                keytext = key;
+            end
+        end
+        
 	    if type(value) == 'table' then
-	        dump_table(result, value, (lin or "") .. key .. ".")
+	        if keytext then
+	            dump_table(result, value, (lin or "") .. keytext)
+            end
 	    elseif type(value) == 'string' then
-	        value = string.gsub(value,'"','\\"')
-	        table.insert(result, lin .. key .. " = \"" .. value .. "\"");
-	    elseif type(value) ~= 'function' then
-	        table.insert(result, lin .. key .. " = " .. tostring(value));
-		end
+            valuetext = '"' .. string.gsub(value,'"','\\"') .. '"'
+        elseif type(value) ~= 'function' then
+            valuetext = tostring(value)
+        end
+        
+        if keytext and valuetext then
+            table.insert(result, lin .. keytext .. " = " .. valuetext)
+        end
 	end
 end
 

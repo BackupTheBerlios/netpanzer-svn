@@ -68,10 +68,6 @@ void CloudParticle2D::setRandomSurface()
     packedSurfaceShadow.setData(*staticCloudShadow);
     packedSurfaceShadow.setFrame(randFrame);
 
-//    packedSurfaceShadow.setDrawModeBlend(32);
-
-//    packedSurface.setDrawModeBlend(128);
-
 } // end CloudParticle2D::setRandomSurface
 
 int CloudParticle2D::loadClouds(lua_State * L, void * v)

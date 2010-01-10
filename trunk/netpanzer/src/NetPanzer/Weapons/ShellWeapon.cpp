@@ -52,7 +52,6 @@ ShellWeapon::ShellWeapon(UnitID owner, unsigned short owner_type_id, unsigned sh
 
     shell.setDrawModeSolid();
 
-    shellShadow.setDrawModeBlend(64); // dark little
     shellShadow.setData(gShellShadowSurface);
     shellShadow.setFrame(getGoalAngle(start, end));
     shellShadow.setLayer(weaponShadowLayer);

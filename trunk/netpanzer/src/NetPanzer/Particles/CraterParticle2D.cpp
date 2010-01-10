@@ -40,7 +40,7 @@ CraterParticle2D::CraterParticle2D(const fXYZ  &pos) : Particle2D(pos)
 {
     packedSurface.setData(*staticPackedCrater);
 
-    packedSurface.setDrawModeSolid();
+    packedSurface.setDrawModeBlend(255);
 
     packedSurface.setFrame(rand() % staticPackedCrater->getNumFrames());
 
@@ -118,13 +118,13 @@ void CraterParticle2D::sim()
             craterCache[cacheIndex].pos.zero();
         }
     } else if (age > lifetime * 0.9f) {
-        packedSurface.setDrawModeBlend(200); // 80%
+        packedSurface.setDrawModeBlend(50); // 80% 200
     } else if (age > lifetime * 0.8f) {
-        packedSurface.setDrawModeBlend(150); // 60%
+        packedSurface.setDrawModeBlend(100); // 60% 150
     } else if (age > lifetime * 0.7f) {
-        packedSurface.setDrawModeBlend(100); // 40%
+        packedSurface.setDrawModeBlend(150); // 40% 100
     } else if (age > lifetime * 0.6f) {
-        packedSurface.setDrawModeBlend(50); // 20%
+        packedSurface.setDrawModeBlend(200); // 20% 50
     }
 
     Particle2D::sim();

@@ -67,7 +67,6 @@ ChunkTrajectoryParticle2D::ChunkTrajectoryParticle2D(	const fXYZ &pos,
 
     packedSurface.setData(*staticPackedGroundChunks);
     packedSurface.setDrawModeSolid();
-    //packedSurface.setDrawModeBlend(&Palette::colorTableBrighten);
 
     // Get particle color.
     if (ParticleInterface::gSolidColorExplosionParticles) {
