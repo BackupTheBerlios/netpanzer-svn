@@ -54,7 +54,6 @@ ImageArray::loadImageSheetArray(lua_State* L)
 
         lua_pop(L, 5);
 
-        s->setColorkey();
         s->setOffsetCenter();
         images[n-1] = s;
     }

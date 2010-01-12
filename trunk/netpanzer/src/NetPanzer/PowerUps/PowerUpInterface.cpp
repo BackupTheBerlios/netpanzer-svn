@@ -171,7 +171,6 @@ static void generatePowerUp()
 void PowerUpInterface::initialize( void )
 {
     PowerUp::POWERUP_ANIM.loadPNGSheet("powerups/Bolt.png", 127, 127, 36);
-    PowerUp::POWERUP_ANIM.setColorkey();
     PowerUp::POWERUP_ANIM.setOffsetCenter();
     PowerUp::POWERUP_ANIM.setFPS( 15 );
     Surface t;

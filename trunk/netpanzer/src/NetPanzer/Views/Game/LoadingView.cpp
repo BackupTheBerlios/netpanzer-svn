@@ -41,7 +41,7 @@ LoadingView::init()
 
     resize(640, 480);
     
-    add( Button::createTextButton("abort","Abort", iXY(530-60-2, 250+175), 60, BTN_ABORT) );
+    add( Button::createTextButton("abort","Abort", iXY(570, 295), 60, BTN_ABORT) );
     
 }
 
@@ -54,9 +54,7 @@ LoadingView::doDraw()
     
     screen->fill(Color::black);
     drawImage(backgroundSurface, 0, 0);
-    iRect r(120,250,120+410,250+175);
-    drawTransRect(r);
-    drawImageTrans(surface, 120, 250);
+    drawImage(surface, 180, 150);
     
     View::doDraw();    
 }
@@ -83,8 +81,8 @@ LoadingView::render()
 void
 LoadingView::doActivate()
 {
-    backgroundSurface.loadPNG("pics/default/loadingBG.png");
-    surface.create(410, 175, 1);
+    backgroundSurface.loadPNG("pics/default/loadingMB.png");
+    surface.create(456, 144, 1);
     dirty=true;
 }
 

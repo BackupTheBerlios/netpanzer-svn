@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Surface.hpp"
 
 #include "lua/lua.hpp"
+#include "Interfaces/MapInterface.hpp"
 
 extern "C"
 {
@@ -176,17 +177,34 @@ void Surface::setOffsetCenter()
 //          otherwise false is returned.
 //---------------------------------------------------------------------------
 void
-Surface::alloc(unsigned int w, unsigned int h, int nframes, int bpp)
+Surface::alloc(unsigned int w, unsigned int h, int nframes, int bpp, bool alpha)
 {
     assert(this != 0);
 
     freeFrames();
-
-
+    Uint32 Rmask = 0;
+    Uint32 Gmask = 0;
+    Uint32 Bmask = 0;
+    Uint32 Amask = 0;
+    if ( alpha )
+    {
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+        Rmask = 0x000000FF;
+        Gmask = 0x0000FF00;
+        Bmask = 0x00FF0000;
+        Amask = 0xFF000000;
+#else
+        Rmask = 0xFF000000;
+        Gmask = 0x00FF0000;
+        Bmask = 0x0000FF00;
+        Amask = 0x000000FF;
+#endif
+    }
+    
     frames.resize(nframes);
     for ( int n = 0; n < nframes; ++n )
     {
-        frames[n] = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, bpp, 0, 0, 0, 0);
+        frames[n] = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, bpp, Rmask, Gmask, Bmask, Amask);
         if ( bpp == 8 )
         {
             SDL_SetColors(frames[n], Palette::color, 0, 256);
@@ -904,20 +922,56 @@ Surface::loadPNGSheet(const char * fileName, int width, int height, int count)
     Surface t;
     t.loadPNG(fileName);
 
-    alloc(width, height, count, 32);
+    Uint32 orig_flags = t.frames[0]->flags;
+
+    SDL_Color colorkey;
+    Uint32 orig_colorkey;
+    bool has_colorkey = orig_flags & SDL_SRCCOLORKEY;
+
+    if ( has_colorkey )
+    {
+        orig_colorkey = t.frames[0]->format->colorkey;
+        SDL_GetRGB(orig_colorkey, t.frames[0]->format,
+                                        &colorkey.r, &colorkey.g, &colorkey.b);
+
+        SDL_SetColorKey(t.frames[0],0,0);
+    }
+
+    Uint8 orig_alpha;
+    bool has_alpha = orig_flags & SDL_SRCALPHA;
+    if ( has_alpha )
+    {
+        orig_alpha = t.frames[0]->format->alpha;
+        t.frames[0]->flags &= ~SDL_SRCALPHA;
+    }
+
+    alloc(width, height, count, 32, has_alpha);
 
     SDL_Rect r = {0, 0, width, height};
 
     for ( int n = 0; n < count; ++n )
     {
         SDL_BlitSurface(t.frames[0], &r, frames[n], 0);
+        if ( has_colorkey )
+        {
+            SDL_SetColorKey(frames[n], SDL_SRCCOLORKEY|SDL_RLEACCELOK,
+                    SDL_MapRGB(frames[n]->format, colorkey.r, colorkey.g, colorkey.b));
+        }
+
+        if ( has_alpha )
+        {
+            SDL_SetAlpha(frames[n], SDL_SRCALPHA|SDL_RLEACCELOK, orig_alpha);
+        }
+
         r.x += width;
-        if ( r.x > t.frames[0]->w )
+        if ( r.x >= t.frames[0]->w )
         {
             r.x = 0;
             r.y += height;
         }
     }
+
+    // we don't recover the old image as it is deleted now.
 }
 // drawButtonBorder
 //---------------------------------------------------------------------------
@@ -1123,7 +1177,7 @@ Surface::setColorkey()
 {
     for ( unsigned int n = 0; n < frames.size(); ++n )
     {
-        SDL_SetColorKey(frames[n], SDL_SRCCOLORKEY | SDL_RLEACCEL, 0);
+        SDL_SetColorKey(frames[n], (frames[n]->flags & SDL_SRCALPHA) | SDL_SRCCOLORKEY | SDL_RLEACCEL, 0);
     }
 }
 
@@ -1157,6 +1211,7 @@ Surface::optimize()
 
 int Surface::loadPNGSheetPointer(lua_State* L, void* v)
 {
+    // stack -1 = object with sheet data
     if ( ! lua_istable(L, -1) )
     {
         return 0;
@@ -1181,7 +1236,13 @@ int Surface::loadPNGSheetPointer(lua_State* L, void* v)
 
     lua_pop(L, 4);
 
-    (*dest)->setColorkey();
+//    lua_getfield(L, -1, "colorkey");
+//    if ( ! lua_isnil(L, -1) )
+//    {
+//        (*dest)->setColorkey();
+//    }
+//    lua_pop(L,-1);
+
     (*dest)->setOffsetCenter();
     return 0;
 }

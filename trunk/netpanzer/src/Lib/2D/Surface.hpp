@@ -211,7 +211,7 @@ private:
     SDL_Surface * cur_frame;
     Uint8   *mem;       // Pointer to upperleft most pixel
 
-    void alloc(unsigned int w, unsigned int h, int nframes, int bpp);
+    void alloc(unsigned int w, unsigned int h, int nframes, int bpp, bool alpha=false);
 
     inline Uint32 *pixPtr(const unsigned int x, const unsigned int y) const
     {

@@ -40,37 +40,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 void Weapon::init()
 {
-    //packFiles();
-//    gMissleMediumPackedSurface.loadPAK("pics/particles/missles/pak/misslesMedium.pak");
-//    gMissleSmallPackedSurface.loadPAK("pics/particles/missles/pak/misslesSmall.pak");
-//    gShellPackedSurface.loadPAK("pics/particles/shells/pak/shells.pak");
-
     gMissleMediumPackedSurface.loadPNGSheet("pics/particles/missles/misslesMedium.png", 14, 14, 360);
     gMissleMediumShadowSurface.createShadow(gMissleMediumPackedSurface);
     gMissleMediumShadowSurface.setAlpha(64);
-    gMissleMediumPackedSurface.setColorkey();
 //    gMissleMediumPackedSurface.setOffsetCenter();
 
     gMissleSmallPackedSurface.loadPNGSheet("pics/particles/missles/misslesSmall.png", 14, 14, 360);
     gMissleSmallShadowSurface.createShadow(gMissleSmallPackedSurface);
     gMissleSmallShadowSurface.setAlpha(64);
-    gMissleSmallPackedSurface.setColorkey();
 //    gMissleSmallPackedSurface.setOffsetCenter();
 
     gShellPackedSurface.loadPNGSheet("pics/particles/shells/shells.png", 14, 14, 360);
     gShellShadowSurface.createShadow(gShellPackedSurface);
     gShellShadowSurface.setAlpha(64);
-    gShellPackedSurface.setColorkey();
 //    gShellPackedSurface.setOffsetCenter();
 
     gMissleThrustPackedSurface.loadPNG("pics/particles/lights/missleThrust.png");
-    gMissleThrustPackedSurface.setColorkey();
-    gMissleThrustPackedSurface.setAlpha(192);
+//    gMissleThrustPackedSurface.setAlpha(192);
     gMissleThrustPackedSurface.setOffset(iXY(-15, -15));
 
     gMissleGroundLightPackedSurface.loadPNG("pics/particles/lights/missleGroundLight.png");
-    gMissleGroundLightPackedSurface.setColorkey();
-    gMissleGroundLightPackedSurface.setAlpha(192);
+//    gMissleGroundLightPackedSurface.setAlpha(192);
     gMissleGroundLightPackedSurface.setOffset(iXY(-33,-24));
 
 //    gMissleThrustPackedSurface.brigthenFrames();

@@ -198,7 +198,9 @@ void MenuTemplateView::doLoadTitleSurface(const std::string& string)
     pakString += ".png";
 
     titlePackedSurface.loadPNG(pakString.c_str());
-    titlePackedSurface.setColorkey();
+//    titlePackedSurface.setColorkey();
+    titlePackedSurface.setAlpha(128);
+
 } // end MenuTemplateView::doLoadTitleSurface
 
 // doDeactivate

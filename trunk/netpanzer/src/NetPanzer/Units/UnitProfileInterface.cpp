@@ -304,30 +304,28 @@ void read_vehicle_profile(const std::string& unitName, UnitProfile *profile)
         
         case _bodysprite:
             profile->bodySprite.loadPNGSheet(param_list.params[1], 127, 127, 36);
-            profile->bodySprite.setColorkey();
 //            profile->bodySprite.setOffsetCenter();
             break;
 
         case _bodyshadow:
         {
-            Surface t;
-            t.loadPNGSheet(param_list.params[1], 127, 127, 36);
-            profile->bodyShadow.createShadow(t);
+            profile->bodyShadow.loadPNGSheet(param_list.params[1], 127, 127, 36);
             profile->bodyShadow.setAlpha(128);
+//            Surface t;
+//            t.loadPNGSheet(param_list.params[1], 127, 127, 36);
+//            profile->bodyShadow.createShadow(t);
 //            profile->bodyShadow.setOffsetCenter();
             break;
         }
         case _turretsprite:
             profile->turretSprite.loadPNGSheet(param_list.params[1], 127, 127, 36);
-            profile->turretSprite.setColorkey();
 //            profile->turretSprite.setOffsetCenter();
             break;
 
         case _turretshadow:
         {
-            Surface t;
-            t.loadPNGSheet(param_list.params[1], 127, 127, 36);
-            profile->turretShadow.createShadow(t);
+            profile->turretShadow.loadPNGSheet(param_list.params[1], 127, 127, 36);
+            profile->turretShadow.setAlpha(128);
 //            profile->turretShadow.setOffsetCenter();
             break;
         }
