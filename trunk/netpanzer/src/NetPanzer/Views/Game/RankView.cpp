@@ -91,7 +91,7 @@ void RankView::doDraw()
     unsigned int CHAR_YPIX = Surface::getFontHeight();
     unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
     unsigned int entryheight = std::max(CHAR_YPIX, flagHeight) + 2;
-    unsigned int newheight = 60 + entryheight * PlayerInterface::countPlayers();
+    unsigned int newheight = 60 + (entryheight * (PlayerInterface::countPlayers()-1));
     
     if ( newheight != (unsigned int)clientRect.getSizeY() ) {
         resize(iXY(450+20, newheight));
@@ -176,7 +176,7 @@ void RankView::drawPlayerStats( unsigned int flagHeight)
                 "%-20s%5i%7i%7i%10i", state->getName().substr(0,20).c_str(),
                 state->getKills(), state->getLosses(), state->getTotal(),
                 state->getObjectivesHeld());
-        drawStringShadowed(offset.x, offset.y, statBuf, state->getColor(), Color::gray64);
+        drawStringShadowed(offset.x, offset.y, statBuf, Color::white, Color::gray64);
         
         flag = ResourceManager::getFlag(state->getFlag());
         drawImage( *flag, flagOffset.x, flagOffset.y );

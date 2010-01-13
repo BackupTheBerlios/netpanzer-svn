@@ -173,7 +173,8 @@ public:
 
     void loadBMP(const char *fileName);
     void loadPNG(const char *fileName);
-    void loadPNGSheet(const char * fileName, int width, int height, int count);
+    void loadPNGSheet(const char * fileName, int width, int height, int count,
+                      bool has_alpha=false, int alpha=255);
 
     void drawBoxCorners(const iRect &rect, int cornerLength, IntColor color);
     void drawBoxCorners(const iXY &min, const iXY &max,
@@ -211,7 +212,7 @@ private:
     SDL_Surface * cur_frame;
     Uint8   *mem;       // Pointer to upperleft most pixel
 
-    void alloc(unsigned int w, unsigned int h, int nframes, int bpp, bool alpha=false);
+    void alloc(unsigned int w, unsigned int h, int nframes, int bpp);
 
     inline Uint32 *pixPtr(const unsigned int x, const unsigned int y) const
     {
