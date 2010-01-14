@@ -145,6 +145,7 @@ void
 GameView::doDeactivate()
 {
     COMMAND_PROCESSOR.closeSelectionBox();
+    MouseInterface::setGrabMode(false);
 }
 
 // processEvents
