@@ -247,6 +247,9 @@ if 'crosslinux' in COMMAND_LINE_TARGETS:
 ################################################################
 
 # BUILDS NETWORK
+networkenv.Append(           CPPPATH = [ 'src/Lib' ] )
+crossmingwnetworkenv.Append( CPPPATH = [ 'src/Lib' ] )
+crosslinuxnetworkenv.Append( CPPPATH = [ 'src/Lib' ] )
 MakeStaticLib(          networkenv, 'npnetwork', 'Network', '*.cpp')
 MakeStaticLib(crossmingwnetworkenv, 'npnetwork', 'Network', '*.cpp')
 MakeStaticLib(crosslinuxnetworkenv, 'npnetwork', 'Network', '*.cpp')

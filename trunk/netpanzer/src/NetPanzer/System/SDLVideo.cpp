@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include <config.h>
+
 
 #include <iostream>
 
@@ -79,7 +79,7 @@ void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
     // let's scare the mouse :)
     SDL_ShowCursor(SDL_DISABLE);
     // and set a window title
-    SDL_WM_SetCaption(PACKAGE_STRING, 0);
+    SDL_WM_SetCaption("NetPanzer " PACKAGE_VERSION, 0);
 }
 
 bool SDLVideo::isDisplayModeAvailable(int width, int height, int bpp,
