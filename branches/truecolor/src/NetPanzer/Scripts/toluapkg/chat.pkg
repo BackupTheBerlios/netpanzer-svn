@@ -1,0 +1,11 @@
+$#include "Interfaces/ChatInterface.hpp"
+
+typedef int Uint16;
+
+class ChatInterface
+{
+    static void say(const char *message_text);
+    static void teamsay(const char *message_text);
+    static void serversay(const char *message_text);
+    static void serversayTo(const Uint16 player, const char *message_text);
+};

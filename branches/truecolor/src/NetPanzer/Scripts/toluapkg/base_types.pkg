@@ -1,0 +1,9 @@
+$#include "Types/iXY.hpp"
+
+struct iXY
+{
+    int x;
+    int y;
+    iXY();
+    iXY(int newx, int newy);
+};

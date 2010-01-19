@@ -1,0 +1,24 @@
+HITPOINTS         60;
+DAMAGE_FACTOR      0;
+ATTACK_FACTOR      15;
+RELOAD_TIME       20;
+REACTION_TIME      8;
+RANGE_MAX     100000;
+REGEN_TIME      20;
+DEFEND_RANGE   60000;
+SPEED_RATE        22;
+SPEED_FACTOR       4;
+REPATH_TIME       20;
+FUEL_CAPACITY  10000;
+IMAGE "units/pics/scout-image.png";
+BODYSPRITE "units/pics/SpahHNSD.png"
+BODYSHADOW "units/pics/SpahHSSD.png"
+TURRETSPRITE "units/pics/SpahTNSD.png"
+TURRETSHADOW "units/pics/SpahTSSD.png"
+SOUNDSELECTED "yessir"
+FIRESOUND "lt-fire"
+WEAPON "SHELL"
+BOUNDBOX 40
+END; 
+
+

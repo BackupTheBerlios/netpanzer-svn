@@ -1,0 +1,23 @@
+$#include "Interfaces/GameManager.hpp"
+
+typedef int Uint16;
+
+class GameManager
+{
+    static void spawnPlayer( const Uint16 player );
+    static void spawnPlayerAt( const Uint16 player, const iXY& position );
+    static void respawnAllPlayers();
+
+    static void kickPlayer( const Uint16 player );
+    static void destroyPlayerUnits( const Uint16 player );
+    static void disownPlayerObjectives( const Uint16 player );
+
+    static Uint16 addBot();
+    static void removeAllBots();
+
+    static void exitNetPanzer();
+    static void quitNetPanzerGame();
+
+    static bool changeMap(const char * map_name);
+
+};
