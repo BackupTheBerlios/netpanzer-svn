@@ -34,7 +34,7 @@ public:
 protected:
     friend class UDPSocket;
     virtual void onDataReceived(UDPSocket *so, const Address &from, const char *data, const int len) = 0;
-    virtual void onSocketError(UDPSocket *so, const char * msg) = 0;
+    virtual void onSocketError(UDPSocket *so) = 0;
 };
 
 
@@ -57,7 +57,7 @@ public:
 protected:
     ~UDPSocket();
     void onDataReady();
-    void onSocketError(const char * msg);
+    void onSocketError();
 
 private:
     UDPSocketObserver *observer;

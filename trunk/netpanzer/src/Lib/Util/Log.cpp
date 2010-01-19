@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include <stdarg.h>
 #include <errno.h>
@@ -142,14 +142,6 @@ Logger::openNext()
     }    
 
 }
-
-void
-Logger::log(const char * str)
-{
-//    printf("xxx Received str: '%s'\n", str);
-    warning("* %s", str);
-}
-
 //-----------------------------------------------------------------
 void
 Logger::log(int priority, const char *fmt, va_list ap)

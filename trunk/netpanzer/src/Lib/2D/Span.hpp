@@ -15,27 +15,18 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include <config.h>
-#include <sstream>
+#ifndef __Span_hpp__
+#define __Span_hpp__
 
-#include <sys/stat.h>
-#include <string.h>
-#include "Exception.hpp"
-#include "FileSystem.hpp"
-#include "UtilInterface.hpp"
-#include "Log.hpp"
+#include "Surface.hpp"
 
-// split server:port string, doesn't always set the port
-void UtilInterface::splitServerPort(const std::string& server,std::string& address,int *port)
-{
-    std::string::size_type colon = server.find(':',0);
-    if(colon == std::string::npos) {
-        address=server;
-    } else {
-        address=server.substr(0, colon);
-        colon++;
-        std::string port_str(server.substr(colon, server.length() - colon));
-        port[0]=atoi(port_str.c_str());
-    }
-}
+extern int allowSpanBlitting; // Used for debugging.
 
+void bltBlendSpan(PIX *dRow, const PIX *sRow, size_t pixelsPerRow, const Uint8* table);
+void bltBlendScaleSpan(PIX *dRow, const PIX *sRow, int srcX1FracWithCount,
+                       int	stepAndDecCount, int stepWholePart, const Uint8* table);
+void bltLookupSpan(PIX *dRow, size_t pixelsPerRow, const PIX *table);
+void bltScaleSpan(PIX *dRow, const PIX *sRow, int srcX1FracWithCount,
+                  int stepAndDecCount, int stepWholePart);
+
+#endif // end __Span_hpp__

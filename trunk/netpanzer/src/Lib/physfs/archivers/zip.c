@@ -447,8 +447,6 @@ static PHYSFS_sint64 zip_find_end_of_central_dir(void *in, PHYSFS_sint64 *len)
             break;
 
         filepos -= (maxread - 4);
-        if (filepos < 0)
-            filepos = 0;
     } /* while */
 
     BAIL_IF_MACRO(!found, ERR_NOT_AN_ARCHIVE, -1);
@@ -838,7 +836,7 @@ static int zip_version_does_symlinks(PHYSFS_uint32 version)
 } /* zip_version_does_symlinks */
 
 
-static int zip_entry_is_symlink(const ZIPentry *entry)
+static int zip_entry_is_symlink(ZIPentry *entry)
 {
     return((entry->resolved == ZIP_UNRESOLVED_SYMLINK) ||
            (entry->resolved == ZIP_BROKEN_SYMLINK) ||
@@ -952,27 +950,19 @@ zip_load_entry_puked:
 
 static int zip_entry_cmp(void *_a, PHYSFS_uint32 one, PHYSFS_uint32 two)
 {
-    if (one != two)
-    {
-        const ZIPentry *a = (const ZIPentry *) _a;
-        return(strcmp(a[one].name, a[two].name));
-    } /* if */
-
-    return 0;
+    ZIPentry *a = (ZIPentry *) _a;
+    return(strcmp(a[one].name, a[two].name));
 } /* zip_entry_cmp */
 
 
 static void zip_entry_swap(void *_a, PHYSFS_uint32 one, PHYSFS_uint32 two)
 {
-    if (one != two)
-    {
-        ZIPentry tmp;
-        ZIPentry *first = &(((ZIPentry *) _a)[one]);
-        ZIPentry *second = &(((ZIPentry *) _a)[two]);
-        memcpy(&tmp, first, sizeof (ZIPentry));
-        memcpy(first, second, sizeof (ZIPentry));
-        memcpy(second, &tmp, sizeof (ZIPentry));
-    } /* if */
+    ZIPentry tmp;
+    ZIPentry *first = &(((ZIPentry *) _a)[one]);
+    ZIPentry *second = &(((ZIPentry *) _a)[two]);
+    memcpy(&tmp, first, sizeof (ZIPentry));
+    memcpy(first, second, sizeof (ZIPentry));
+    memcpy(second, &tmp, sizeof (ZIPentry));
 } /* zip_entry_swap */
 
 
@@ -1303,7 +1293,7 @@ static int ZIP_isDirectory(dvoid *opaque, const char *name, int *fileExists)
 static int ZIP_isSymLink(dvoid *opaque, const char *name, int *fileExists)
 {
     int isDir;
-    const ZIPentry *entry = zip_find_entry((ZIPinfo *) opaque, name, &isDir);
+    ZIPentry *entry = zip_find_entry((ZIPinfo *) opaque, name, &isDir);
     *fileExists = ((isDir) || (entry != NULL));
     BAIL_IF_MACRO(entry == NULL, NULL, 0);
     return(zip_entry_is_symlink(entry));

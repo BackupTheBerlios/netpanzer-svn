@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
+#include <config.h>
 #include <assert.h>
 #include <string.h>
 #include "BitArray.hpp"
@@ -40,7 +40,6 @@ BitArray::~BitArray( void )
 
 BitArray::BitArray( unsigned long x_size, unsigned long y_size )
 {
-    array = 0;
     initialize( x_size, y_size );
 }
 

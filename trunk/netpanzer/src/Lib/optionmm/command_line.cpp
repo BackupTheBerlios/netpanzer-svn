@@ -23,7 +23,7 @@
     @author Christian Holm
     @date   Sat Dec 28 19:02:59 2002
     @brief  Command line parser */
-
+#include <config.h>
 
 #ifndef OPTIONMM_command_line
 #include "command_line.hpp"

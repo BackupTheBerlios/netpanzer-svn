@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
 
 #include <iostream>
 using namespace std;
@@ -26,11 +27,12 @@ using namespace std;
 #include "SocketHeaders.hpp"
 #include "SocketBase.hpp"
 #include "SocketManager.hpp"
+#include "Util/Log.hpp"
 
 namespace network
 {
 
-#ifdef _WIN32
+#ifdef USE_WINSOCK
 
 class WinSockInit {
 public:
@@ -78,19 +80,15 @@ SocketBase::SocketBase(SOCKET fd, const Address &a)
 void
 SocketBase::create (bool tcp) throw(NetworkException)
 {
-    if(tcp)
-    {
+    if(tcp) {
         sockfd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    }
-    else
-    {
+    } else {
         sockfd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
     }
 
-    //LOGGER.debug("SocketBase:: Create [%s:%d] socket", (tcp)?"tcp":"udp",sockfd);
+    LOGGER.debug("SocketBase:: Create [%s:%d] socket", (tcp)?"tcp":"udp",sockfd);
     
-    if(sockfd == INVALID_SOCKET)
-    {
+    if(sockfd == INVALID_SOCKET) {
         lastError = GET_NET_ERROR();
         std::stringstream msg;
         msg << "Couldn't create socket: " << NETSTRERROR(lastError);
@@ -102,14 +100,13 @@ void
 SocketBase::setNonBlocking() throw(NetworkException)
 {
     int res;
-#ifdef _WIN32
+#ifdef USE_WINSOCK
     unsigned long mode = 1;
     res = ioctlsocket(sockfd, FIONBIO, &mode);
 #else
     res = fcntl(sockfd, F_SETFL, O_NONBLOCK);
 #endif
-    if ( res == SOCKET_ERROR )
-    {
+    if ( res == SOCKET_ERROR ) {
         lastError = GET_NET_ERROR();
         doClose();
         std::stringstream msg;
@@ -122,8 +119,7 @@ void
 SocketBase::bindSocketTo(const Address& toaddr) throw(NetworkException)
 {
     int res = bind(sockfd, toaddr.getSockaddr(), toaddr.getSockaddrLen());
-    if(res == SOCKET_ERROR)
-    {
+    if(res == SOCKET_ERROR) {
         lastError = GET_NET_ERROR();
         doClose();
         std::stringstream msg;
@@ -139,8 +135,7 @@ SocketBase::setReuseAddr() throw(NetworkException)
 {
     SETSOCKOPT_PARAMTYPE val = 1;
     int res = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
-    if(res == SOCKET_ERROR)
-    {
+    if(res == SOCKET_ERROR) {
         lastError = GET_NET_ERROR();
         doClose();
         std::stringstream msg;
@@ -153,8 +148,7 @@ void
 SocketBase::doListen() throw(NetworkException)
 {
     int res = listen(sockfd, 20);
-    if(res == SOCKET_ERROR)
-    {
+    if(res == SOCKET_ERROR) {
         lastError = GET_NET_ERROR();
         doClose();
         std::stringstream msg;
@@ -167,11 +161,9 @@ void
 SocketBase::doConnect() throw(NetworkException)
 {
     int res = connect(sockfd, addr.getSockaddr(), addr.getSockaddrLen());
-    if(res == SOCKET_ERROR)
-    {
+    if(res == SOCKET_ERROR) {
         lastError = GET_NET_ERROR();
-        if (IS_CONNECT_INPROGRESS(lastError))
-        {
+        if (IS_CONNECT_INPROGRESS(lastError)) {
             _isConnecting = true;
             return;
         }
@@ -184,51 +176,47 @@ SocketBase::doConnect() throw(NetworkException)
 }
 
 int
-SocketBase::doSend(const void* data, size_t len)
+SocketBase::doSend(const void* data, size_t len) throw(NetworkException)
 {
     int res = send(sockfd, (const char*) data, len, SEND_FLAGS);
-    if(res == SOCKET_ERROR)
-    {
+    if(res == SOCKET_ERROR) {
         lastError = GET_NET_ERROR();
-        if ( IS_DISCONECTED(lastError) )
-        {
+        if ( IS_DISCONECTED(lastError) ) {
             onDisconected();
             return 0;
         }
         
         if ( IS_IGNORABLE_ERROR(lastError) )
-        {
             return 0;
-        }
-
-        notifyError("Send");
+        
+        std::stringstream msg;
+        msg << "Send error: " << NETSTRERROR(lastError);
+        throw NetworkException(msg.str());
     }
     return res;
 }
 
 int
-SocketBase::doReceive(void* buffer, size_t len)
+SocketBase::doReceive(void* buffer, size_t len) throw(NetworkException)
 {
     int res = recv(sockfd, (char*) buffer, len, RECV_FLAGS);
-    if(res == SOCKET_ERROR)
-    {
+    if(res == SOCKET_ERROR) {
         lastError = GET_NET_ERROR();
-        if ( IS_DISCONECTED(lastError) )
-        {
+        if ( IS_DISCONECTED(lastError) ) {
             onDisconected();
             return 0;
         }
         
         if ( IS_IGNORABLE_ERROR(lastError) )
-        {
             return 0;
-        }
 
-        notifyError("Receive");
+        std::stringstream msg;
+        msg << "Read error: " << NETSTRERROR(lastError);
+        throw NetworkException(msg.str());
     }
     
     if (!res) {
-        //LOGGER.debug("SocketBase::doReceive Disconected from server");
+        LOGGER.debug("SocketBase::doReceive Disconected from server");
         onDisconected();
     }
     
@@ -236,54 +224,50 @@ SocketBase::doReceive(void* buffer, size_t len)
 }
 
 int
-SocketBase::doSendTo(const Address& toaddr, const void* data, size_t len)
+SocketBase::doSendTo(const Address& toaddr, const void* data, size_t len) throw(NetworkException)
 {
     int res = sendto(sockfd, (const char*) data, len, SEND_FLAGS,
                 toaddr.getSockaddr(), toaddr.getSockaddrLen());
-    if(res == SOCKET_ERROR)
-    {
+    if(res == SOCKET_ERROR) {
         lastError = GET_NET_ERROR();
         if ( IS_SENDTO_IGNORABLE(lastError) )
-        {
             return 0;
-        }
-
-        notifyError("SendTo");
+        std::stringstream msg;
+        msg << "Send error: " << NETSTRERROR(lastError);
+        throw NetworkException(msg.str());
     }
     return res;
 }
 
 size_t
-SocketBase::doReceiveFrom(Address& fromaddr, void* buffer, size_t len)
+SocketBase::doReceiveFrom(Address& fromaddr, void* buffer, size_t len) throw(NetworkException)
 {
     int res = recvfrom(sockfd, (char*) buffer, len, RECV_FLAGS,
             fromaddr.getSockaddr(), fromaddr.getSockaddrLenPointer());
-    if(res == SOCKET_ERROR)
-    {
+    if(res == SOCKET_ERROR) {
         lastError = GET_NET_ERROR();
         if ( IS_RECVFROM_IGNORABLE(lastError) )
-        {
             return 0;
-        }
 
-        notifyError("ReceiveFrom");
+        std::stringstream msg;
+        msg << "Receive error: " << NETSTRERROR(lastError);
+        throw NetworkException(msg.str());
     }
     return res;
 }
 
 SOCKET
-SocketBase::doAccept(Address& fromaddr)
+SocketBase::doAccept(Address& fromaddr) throw(NetworkException)
 {
     SOCKET newsock;
-    newsock = accept(sockfd, fromaddr.getSockaddr(),
-                             fromaddr.getSockaddrLenPointer());
-    if (newsock == INVALID_SOCKET)
-    {
+    newsock= accept(sockfd, fromaddr.getSockaddr(), fromaddr.getSockaddrLenPointer());
+    if (newsock == INVALID_SOCKET) {
         lastError = GET_NET_ERROR();
-        if ( ! IS_ACCEPT_IGNORABLE(lastError) )
-        {
-            notifyError("Accept");
-        }
+        if ( IS_ACCEPT_IGNORABLE(lastError) )
+            return INVALID_SOCKET; // XXX this could be better
+        std::stringstream msg;
+        msg << "Accept error: " << NETSTRERROR(lastError);
+        throw NetworkException(msg.str());
     }
     return newsock;
 }
@@ -291,18 +275,9 @@ SocketBase::doAccept(Address& fromaddr)
 void
 SocketBase::doClose()
 {
-    //LOGGER.debug("SocketBase:: Closing [%d] socket", sockfd);
+    LOGGER.debug("SocketBase:: Closing [%d] socket", sockfd);
     SocketManager::removeSocket(this);
     closesocket(sockfd);
-}
-
-void
-SocketBase::notifyError(const char * errorType)
-{
-    std::stringstream msg;
-    msg << errorType << " error: " << NETSTRERROR(lastError);
-    //LOGGER.debug("SocketBase::notifyError '%s'", msg.str().c_str());
-    onSocketError(msg.str().c_str());
 }
 
 }

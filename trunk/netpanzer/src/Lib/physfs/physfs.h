@@ -334,7 +334,7 @@ PHYSFS_COMPILE_TIME_ASSERT(sint64, sizeof(PHYSFS_sint64) == 8);
  * \sa PHYSFS_setBuffer
  * \sa PHYSFS_flush
  */
-typedef struct PHYSFS_File
+typedef struct
 {
     void *opaque;  /**< That's all you get. Don't touch. */
 } PHYSFS_File;
@@ -369,7 +369,7 @@ typedef struct PHYSFS_File
  *
  * \sa PHYSFS_supportedArchiveTypes
  */
-typedef struct PHYSFS_ArchiveInfo
+typedef struct
 {
     const char *extension;   /**< Archive file extension: "ZIP", for example. */
     const char *description; /**< Human-readable archive description. */
@@ -391,7 +391,7 @@ typedef struct PHYSFS_ArchiveInfo
  * \sa PHYSFS_VERSION
  * \sa PHYSFS_getLinkedVersion
  */
-typedef struct PHYSFS_Version
+typedef struct
 {
     PHYSFS_uint8 major; /**< major revision */
     PHYSFS_uint8 minor; /**< minor revision */
@@ -399,9 +399,9 @@ typedef struct PHYSFS_Version
 } PHYSFS_Version;
 
 #ifndef DOXYGEN_SHOULD_IGNORE_THIS
-#define PHYSFS_VER_MAJOR 2
-#define PHYSFS_VER_MINOR 0
-#define PHYSFS_VER_PATCH 0
+#define PHYSFS_VER_MAJOR 1
+#define PHYSFS_VER_MINOR 1
+#define PHYSFS_VER_PATCH 1
 #endif  /* DOXYGEN_SHOULD_IGNORE_THIS */
 
 
@@ -498,9 +498,8 @@ __EXPORT__ int PHYSFS_init(const char *argv0);
  *  handle a specific failure.
  *
  * Once successfully deinitialized, PHYSFS_init() can be called again to
- *  restart the subsystem. All default API states are restored at this
- *  point, with the exception of any custom allocator you might have
- *  specified, which survives between initializations.
+ *  restart the subsystem. All defaults API states are restored at this
+ *  point.
  *
  *  \return nonzero on success, zero on error. Specifics of the error can be
  *          gleaned from PHYSFS_getLastError(). If failure, state of PhysFS is
@@ -531,7 +530,7 @@ __EXPORT__ int PHYSFS_deinit(void);
  * for (i = PHYSFS_supportedArchiveTypes(); *i != NULL; i++)
  * {
  *     printf("Supported archive: [%s], which is [%s].\n",
- *              (*i)->extension, (*i)->description);
+ *              i->extension, i->description);
  * }
  * \endcode
  *
@@ -1974,7 +1973,7 @@ __EXPORT__ int PHYSFS_symbolicLinksPermitted(void);
  *
  * \sa PHYSFS_setAllocator
  */
-typedef struct PHYSFS_Allocator
+typedef struct
 {
     int (*Init)(void);   /**< Initialize. Can be NULL. Zero on failure. */
     void (*Deinit)(void);  /**< Deinitialize your allocator. Can be NULL. */

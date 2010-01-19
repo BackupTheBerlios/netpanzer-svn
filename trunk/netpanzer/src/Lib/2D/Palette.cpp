@@ -1,3 +1,9 @@
+
+#include "Util/Log.hpp"
+
+
+#include "Scripts/ScriptManager.hpp"
+
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
  
@@ -15,18 +21,46 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include <math.h>
 #include <memory>
 
 #include "Palette.hpp"
-#include "Util/Log.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
 #include "Util/UtilInterface.hpp"
-#include "Scripts/ScriptManager.hpp"
-#include "Classes/ScreenSurface.hpp"
+
+float Palette::brightness = 1.0f;
+
+std::string Palette::name;
+
+ColorTable Palette::colorTable2080;
+ColorTable Palette::colorTable4060;
+ColorTable Palette::colorTable6040;
+ColorTable Palette::colorTable8020;
+//ColorTable Palette::colorTableSolid;
+//ColorTable Palette::colorTableSolidTrans0;
+ColorTable Palette::colorTableBrighten;
+ColorTable Palette::colorTableDarkenALot;
+ColorTable Palette::colorTableDarkenALittle;
+ColorTable Palette::colorTableLightDark;
+ColorTable Palette::fire;
+ColorTable Palette::gray16;
+ColorTable Palette::gray64;
+ColorTable Palette::gray128;
+ColorTable Palette::gray256;
+ColorTable Palette::darkGray256;
+ColorTable Palette::brightness256;
+ColorTable Palette::red32;
+ColorTable Palette::green32;
+ColorTable Palette::blue32;
+//ColorTable Palette::earth256;
+SDL_Color   Palette::color[PALETTE_LENGTH];
+SDL_Color   Palette::originalColor[PALETTE_LENGTH];
+ColorTable Palette::gradientWhite2Green;
+ColorTable Palette::gradientWhite2Blue;
+ColorTable Palette::gradientWhite2Red;
 
 // Palette
 //---------------------------------------------------------------------------
@@ -35,19 +69,248 @@ Palette::Palette()
 } // end Palette::Palette
 
 int
-Palette::makeColor(int r, int g, int b)
+Palette::makeColor(lua_State *L)
 {
-//    int color = findNearestColor(r,g,b,true);
-    IntColor color = SDL_MapRGB(screen->getPixelFormat(), r, g, b);
-    return color;
+    int r = luaL_checkint(L,1); // r
+    int g = luaL_checkint(L,2); // g
+    int b = luaL_checkint(L,3); // b
+    
+    int color = findNearestColor(r,g,b,true);
+    
+    lua_pushinteger(L, color);
+    return 1;
+}
+
+static const luaL_reg colorUtilLib[] =
+{
+    {"makeColor",   Palette::makeColor},
+    {0,0}
+};
+
+void
+Palette::registerScript()
+{
+    ScriptManager::registerLib( "ColorUtil", colorUtilLib);
+    ScriptManager::bindStaticVariables( "Color", "ColorMetaTable",
+                                       Color::colorGetters,
+                                       Color::colorSetters);
 }
 
 // setColors
 //---------------------------------------------------------------------------
 void Palette::setColors()
 {
-    ScriptManager::runFileInTable("scripts/initcolors.lua", "Color");
+    ScriptManager::runFile("loadcolors","scripts/initcolors.lua");
 } // end Palette::setColors
+
+// setColorTables
+//---------------------------------------------------------------------------
+// Purpose: Creates some palettes which are specifically set to certain
+//          best matched colors in the palette.
+//---------------------------------------------------------------------------
+void Palette::setColorTables()
+{
+    // 16 shades of fire.
+    fire.init(16);
+    fire.setColor( 0, findNearestColor(255, 252, 159));
+    fire.setColor( 1, findNearestColor(255, 237, 146));
+    fire.setColor( 2, findNearestColor(255, 229, 126));
+    fire.setColor( 3, findNearestColor(255, 198, 130));
+    fire.setColor( 4, findNearestColor(255, 213, 102));
+    fire.setColor( 5, findNearestColor(255, 211,  68));
+    fire.setColor( 6, findNearestColor(255, 191,  62));
+    fire.setColor( 7, findNearestColor(253, 180,  42));
+    fire.setColor( 8, findNearestColor(250, 160,  52));
+    fire.setColor( 9, findNearestColor(251, 157,  12));
+    fire.setColor(10, findNearestColor(243, 130,   3));
+    fire.setColor(11, findNearestColor(229, 135,  34));
+    fire.setColor(12, findNearestColor(238, 105,   1));
+    fire.setColor(13, findNearestColor(221, 107,   6));
+    fire.setColor(14, findNearestColor(222,  87,   3));
+    fire.setColor(15, findNearestColor(223,  67,   0));
+    //fire[ 9] = findNearestColor(SDL_Color(201,  53,   1));
+    //fire[10] = findNearestColor(SDL_Color(171,  21,   0));
+    //fire[11] = findNearestColor(SDL_Color(140,   3,   0));
+
+    // 16 shades of gray.
+    gray16.init(16);
+    int num;
+    for (num = 0; num < 16; num++)
+        gray16.setColor(num, findNearestColor(16*(16-num)-1, 16*(16-num)-1, 16*(16-num)-1));
+
+    // 64 shades of gray.
+    gray64.init(64);
+    for (num = 0; num < 64; num++) {
+        gray64.setColor(num, findNearestColor(num*2, num*2, num*2));
+    }
+    // 128 shades of gray.
+    gray128.init(128);
+    int index;
+    for (num = 0; num < 128; num++) {
+        index = num * 2 + 1;
+        gray128.setColor(num, findNearestColor(index, index, index));
+    }
+
+    // 256 shades of gray.
+    gray256.init(256);
+    for (num = 0; num < 256; num++) {
+        int c = int(color[num].r+color[num].g+color[num].b)/3; //brightness
+        int nearestColor = findNearestColor((int) (c * 1.2f),
+                                            (int) (c * 1.2f),
+                                            (int) (c * 1.2f));
+        gray256.setColor(num, nearestColor);
+    }
+
+    // 256 shades of dark gray.
+    darkGray256.init(256);
+    for (num = 0; num < 256; num++) {
+        int c = int(color[num].r+color[num].g+color[num].b)/3; //brightness
+        int nearestColor = findNearestColor((int) (float(c) / 2.0f),
+                                            (int) (float(c) / 2.0f),
+                                            (int) (float(c) / 2.0f));
+        darkGray256.setColor(num, nearestColor);
+    }
+
+    /*// 64 shades of gray.
+    for (num = 0; num < 64; num++)
+    {
+    	grayLower64[num] = findNearestColor(SDL_Color(num, num, num));
+    }
+    // 64 shades of gray.
+    for (num = 0; num < 64; num++)
+    {
+    	grayUpper64[num] = findNearestColor(SDL_Color(num*2, num*2, num*2));
+    }
+    */
+    // 256 brightness values.
+    brightness256.init(256);
+    for (num = 0; num < 256; num++) {
+        // this is brihtness int(color[num].r+color[num].g+color[num].b)/3;
+        brightness256.setColor(num, int(color[num].r+color[num].g+color[num].b)/3);
+    }
+
+    // 32 shades of red.
+    red32.init(32);
+    for (num = 0; num < 31; num++) {
+        red32.setColor(num, findNearestColor(num*8, 0, 0));
+    }
+
+    // 32 shades of green.
+    green32.init(32);
+    for (num = 0; num < 31; num++) {
+        green32.setColor(num, findNearestColor(0, num*8, 0));
+    }
+
+    // 32 shades of blue.
+    blue32.init(32);
+    for (num = 0; num < 31; num++) {
+        blue32.setColor(num, findNearestColor(0, 0, num*8));
+    }
+
+    // white 2 green
+    {
+        SDL_Color c[8];
+
+        ramp(c, 0, 255, 255, 255, 7, 0, 255, 0);
+
+        gradientWhite2Green.init(8);
+
+        for (int i = 0; i < gradientWhite2Green.getColorCount(); i++)
+        {
+            gradientWhite2Green.setColor(i, findNearestColor(c[i].r, c[i].g, c[i].b, true));
+        }
+    }
+
+    // white 2 blue
+    {
+        SDL_Color c[8];
+
+        ramp(c, 0, 255, 255, 255, 7, 0, 0, 255);
+
+        gradientWhite2Blue.init(8);
+
+        for (int i = 0; i < gradientWhite2Blue.getColorCount(); i++)
+        {
+            gradientWhite2Blue.setColor(i, findNearestColor(c[i].r, c[i].g, c[i].b, true));
+        }
+    }
+
+    // white 2 red
+    {
+        SDL_Color c[8];
+
+        ramp(c, 0, 255, 255, 255, 7, 255, 0, 0);
+
+        gradientWhite2Red.init(8);
+
+        for (int i = 0; i < gradientWhite2Red.getColorCount(); i++)
+        {
+            gradientWhite2Red.setColor(i, findNearestColor(c[i].r, c[i].g, c[i].b, true));
+        }
+    }
+
+    char tablePath[512];
+    snprintf(tablePath, 512, "cache/colorfilters/%s", name.c_str());
+    if(!filesystem::exists(tablePath)) {
+        filesystem::mkdir(tablePath);
+    }
+    char strBuf[512];
+
+    // Best color match.
+    sprintf(strBuf, "%s/2080.tbl", tablePath);
+    colorTable2080.create(20, 80, strBuf);
+
+    sprintf(strBuf, "%s/4060.tbl", tablePath);
+    colorTable4060.create(40, 60, strBuf);
+
+    sprintf(strBuf, "%s/6040.tbl", tablePath);
+    colorTable6040.create(60, 40, strBuf);
+
+    sprintf(strBuf, "%s/8020.tbl", tablePath);
+    colorTable8020.create(80, 20, strBuf);
+
+    //sprintf(strBuf, "%sSolidTrans0", tablePath);
+    //colorTableSolidTrans0.createTrans0(0, 100, strBuf);
+
+    //sprintf(strBuf, "%sSolid", tablePath);
+    //colorTableSolid.create(0, 100, strBuf);
+
+    // Brighten.
+    sprintf(strBuf, "%s/Brighten.tbl", tablePath);
+    colorTableBrighten.createBrightenFilter(strBuf, 256);
+
+    // Darken.
+    sprintf(strBuf, "%s/DarkenALot.tbl", tablePath);
+    colorTableDarkenALot.createDarkenFilter(strBuf, 0.5f);
+    sprintf(strBuf, "%s/DarkenALittle.tbl", tablePath);
+    colorTableDarkenALittle.createDarkenFilter(strBuf, 0.15f);
+
+    sprintf(strBuf, "%s/LightDark.tbl", tablePath);
+    colorTableLightDark.createLightDarkFilter(strBuf);
+} // end setColorTables
+
+// loadACT
+//---------------------------------------------------------------------------
+// Purpose: Opens the specified .act palette file and loads it into the
+//          programs defined palette, system palette is not changed.
+//---------------------------------------------------------------------------
+void Palette::loadACT(const std::string& newname)
+{
+    name = newname;
+    std::string filename = "wads/" + name + ".act";
+
+    std::auto_ptr<filesystem::ReadFile> file (filesystem::openRead(filename));
+
+    try {
+	for (int i = 0; i < 256; i++) {
+	    file->read(&color[i], 3, 1);
+	    originalColor[i] = color[i];
+	}
+    } catch(std::exception& e) {
+	throw Exception("Error while reading Palette '%s': %s",
+		filename.c_str(), e.what());
+    }
+} // end Palette::loadACT
 
 // findNearestColor
 //---------------------------------------------------------------------------
@@ -60,15 +323,13 @@ Uint8 Palette::findNearestColor(int r, int g, int b, const bool &ignoreIndexZero
     int   best     = 0;
     int   start    = ignoreIndexZero ? 1 : 0;
 
-    for (int i = start; i < 256; i++)
-    {
+    for (int i = start; i < 256; i++) {
         int dr = color[i].r-r;
         int dg = color[i].g-g;
         int db = color[i].b-b;
         int dist = (dr * dr) + (dg * dg) + (db * db);
 
-        if (dist < bestDist)
-        {
+        if (dist < bestDist) {
             bestDist = dist;
             best = i;
         }
@@ -78,269 +339,73 @@ Uint8 Palette::findNearestColor(int r, int g, int b, const bool &ignoreIndexZero
 
 } // end Palette::findNearestColor
 
+// ramp
+//---------------------------------------------------------------------------
+void Palette::ramp(SDL_Color table [], int startRGB, int r1, int g1, int b1, int endRGB, int r2, int g2, int b2)
+{
+    float r;
+    float g;
+    float b;
+
+    r = float(r2 - r1) / float(endRGB - startRGB);
+    g = float(g2 - g1) / float(endRGB - startRGB);
+    b = float(b2 - b1) / float(endRGB - startRGB);
+
+    for(int i = startRGB; i <= endRGB; i++) {
+        table[i].r = r1 + int(r * (i - startRGB));
+        table[i].g = g1 + int(g * (i - startRGB));
+        table[i].b = b1 + int(b * (i - startRGB));
+    }
+
+} // end Palette::ramp
+
 // init
 //---------------------------------------------------------------------------
-void Palette::init()
+void Palette::init(const std::string& name)
 {
+    loadACT(name);
     setColors();
+    setColorTables();
+    setBrightnessAbsolute(brightness);
 } // end Palette::init
 
-SDL_Color Palette::color[PALETTE_LENGTH] =
+// setBrightnessAbsolute
+//---------------------------------------------------------------------------
+void Palette::setBrightnessAbsolute(float brightness)
 {
-	{  0,   0,   0,  0},
-	{  6,   2,   2,  0},
-	{ 14,   4,   7,  0},
-	{ 22,  10,   7,  0},
-	{ 12,  16,  15,  0},
-	{ 10,  22,  15,  0},
-	{ 22,  16,  12,  0},
-	{ 16,  20,  18,  0},
-	{ 32,   7,   6,  0},
-	{ 17,  22,  21,  0},
-	{ 24,  23,  13,  0},
-	{ 36,   0,   0,  0},
-	{ 19,  25,  20,  0},
-	{  9,   7,  37,  0},
-	{ 16,  27,  22,  0},
-	{ 22,  26,  25,  0},
-	{ 16,  35,  19,  0},
-	{ 25,  30,  24,  0},
-	{ 20,  32,  26,  0},
-	{ 45,  11,   8,  0},
-	{ 26,  33,  26,  0},
-	{ 21,  38,  28,  0},
-	{ 26,  36,  28,  0},
-	{ 32,  36,  25,  0},
-	{ 19,  46,  25,  0},
-	{ 30,  37,  30,  0},
-	{ 31,  30,  36,  0},
-	{ 60,   1,   0,  0},
-	{ 30,  41,  32,  0},
-	{ 57,  17,  12,  0},
-	{ 34,  35,  35,  0},
-	{ 22,  30,  46,  0},
-	{ 26,  44,  35,  0},
-	{ 35,  37,  36,  0},
-	{ 34,  43,  33,  0},
-	{ 44,  38,  33,  0},
-	{ 36,  40,  40,  0},
-	{ 29,  50,  38,  0},
-	{ 37,  48,  37,  0},
-	{ 67,  25,  17,  0},
-	{ 41,  47,  40,  0},
-	{ 27,  62,  33,  0},
-	{ 41,  51,  41,  0},
-	{ 39,  46,  48,  0},
-	{ 79,   2,   0,  0},
-	{ 32,  51,  48,  0},
-	{ 45,  50,  44,  0},
-	{ 44,  54,  40,  0},
-	{ 42,  58,  43,  0},
-	{ 46,  56,  47,  0},
-	{ 47,  49,  53,  0},
-	{ 47,  53,  52,  0},
-	{ 87,  20,   4,  0},
-	{ 33,  74,  38,  0},
-	{ 81,  34,  20,  0},
-	{ 51,  58,  48,  0},
-	{ 45,  63,  51,  0},
-	{ 50,  61,  49,  0},
-	{ 95,   1,   0,  0},
-	{ 52,  56,  57,  0},
-	{ 42,  68,  54,  0},
-	{ 49,  67,  52,  0},
-	{ 52,  61,  57,  0},
-	{ 26,  88,  36,  0},
-	{ 54,  66,  54,  0},
-	{ 62,  64,  50,  0},
-	{ 58,  58,  59,  0},
-	{ 52,  58,  67,  0},
-	{100,  25,   0,  0},
-	{ 54,  64,  62,  0},
-	{ 54,  68,  58,  0},
-	{ 46,  49,  80,  0},
-	{ 72,  61,  48,  0},
-	{ 98,  37,  11,  0},
-	{ 92,  49,  29,  0},
-	{ 39,  89,  46,  0},
-	{ 58,  71,  58,  0},
-	{ 56,  69,  64,  0},
-	{ 61,  64,  66,  0},
-	{ 58,  74,  60,  0},
-	{ 55,  77,  59,  0},
-	{ 48,  50,  89,  0},
-	{ 63,  73,  62,  0},
-	{ 73,  71,  55,  0},
-	{ 55,  73,  72,  0},
-	{ 62,  70,  69,  0},
-	{ 60,  78,  62,  0},
-	{ 67,  67,  68,  0},
-	{ 50,  77,  74,  0},
-	{ 62,  80,  65,  0},
-	{ 64,  78,  66,  0},
-	{112,  46,   2,  0},
-	{118,  31,   0,  0},
-	{ 68,  80,  64,  0},
-	{ 38,  71,  93,  0},
-	{ 69,  72,  73,  0},
-	{ 58,  77,  79,  0},
-	{ 66,  83,  68,  0},
-	{ 71,  83,  64,  0},
-	{  0,   0, 128,  0},
-	{ 74,  86,  58,  0},
-	{ 19,  72, 103,  0},
-	{ 67,  87,  69,  0},
-	{ 59,  81,  83,  0},
-	{ 44, 111,  50,  0},
-	{ 53,  94,  72,  0},
-	{ 26,  79, 102,  0},
-	{ 74,  80,  73,  0},
-	{ 69,  87,  75,  0},
-	{ 71,  89,  74,  0},
-	{ 63,  82,  89,  0},
-	{ 73,  90,  72,  0},
-	{ 77,  84,  77,  0},
-	{129,  50,   0,  0},
-	{ 32,  85, 105,  0},
-	{ 56,  71, 105,  0},
-	{ 75,  94,  71,  0},
-	{ 76,  91,  77,  0},
-	{ 63,  84,  97,  0},
-	{ 84,  84,  80,  0},
-	{ 59,  93,  94,  0},
-	{ 78,  97,  77,  0},
-	{ 39,  90, 108,  0},
-	{107,  81,  57,  0},
-	{ 70,  73, 109,  0},
-	{ 67,  89,  99,  0},
-	{ 92,  96,  68,  0},
-	{ 85,  94,  80,  0},
-	{150,   0,   0,  0},
-	{ 68, 112,  74,  0},
-	{ 33,  78, 125,  0},
-	{ 81, 101,  80,  0},
-	{ 45,  95, 112,  0},
-	{  9, 149,  17,  0},
-	{141,  63,   0,  0},
-	{ 83, 104,  82,  0},
-	{ 69,  91, 107,  0},
-	{ 89, 100,  81,  0},
-	{ 55, 100, 111,  0},
-	{104,  96,  73,  0},
-	{ 92,  94,  91,  0},
-	{140,  79,   1,  0},
-	{ 86, 108,  83,  0},
-	{ 43,  85, 131,  0},
-	{ 86, 105,  88,  0},
-	{ 69,  85, 121,  0},
-	{ 75,  90, 114,  0},
-	{ 74,  96, 113,  0},
-	{102, 105,  77,  0},
-	{ 91, 110,  88,  0},
-	{ 90, 112,  87,  0},
-	{ 65, 107, 112,  0},
-	{ 60, 105, 117,  0},
-	{ 58, 102, 121,  0},
-	{ 88, 115,  89,  0},
-	{ 75, 100, 118,  0},
-	{ 94, 114,  89,  0},
-	{ 31, 166,  36,  0},
-	{ 55,  91, 137,  0},
-	{ 99, 100, 102,  0},
-	{ 67, 112, 120,  0},
-	{ 97, 118,  93,  0},
-	{104, 109,  96,  0},
-	{ 75, 110, 123,  0},
-	{ 79, 103, 127,  0},
-	{157,  92,   1,  0},
-	{129, 103,  78,  0},
-	{149, 103,  19,  0},
-	{ 97, 123,  96,  0},
-	{106, 121,  91,  0},
-	{ 82,  95, 141,  0},
-	{111, 108, 109,  0},
-	{180,  65,   0,  0},
-	{ 83, 112, 132,  0},
-	{102, 129, 102,  0},
-	{ 81, 119, 130,  0},
-	{112, 117, 107,  0},
-	{108, 134, 102,  0},
-	{ 85, 104, 149,  0},
-	{176,  99,   0,  0},
-	{204,   0,   0,  0},
-	{124, 129, 102,  0},
-	{170, 116,  17,  0},
-	{119, 137, 103,  0},
-	{120, 122, 122,  0},
-	{111, 144, 109,  0},
-	{ 92, 127, 143,  0},
-	{173, 126,  44,  0},
-	{190, 112,   0,  0},
-	{205,  78,   0,  0},
-	{117, 148, 115,  0},
-	{131, 130, 130,  0},
-	{133, 147, 114,  0},
-	{191, 125,   2,  0},
-	{156, 133, 101,  0},
-	{122, 157, 120,  0},
-	{103, 114, 177,  0},
-	{237,   1,   1,  0},
-	{125, 164, 123,  0},
-	{200, 134,   5,  0},
-	{139, 140, 138,  0},
-	{194, 142,  40,  0},
-	{188, 142,  66,  0},
-	{147, 159, 115,  0},
-	{132, 168, 128,  0},
-	{204, 144,   9,  0},
-	{109, 120, 193,  0},
-	{  3,   3, 255,  0},
-	{255,   0,   0,  0},
-	{149, 147, 146,  0},
-	{133, 180, 133,  0},
-	{199, 153,  77,  0},
-	{141, 179, 136,  0},
-	{212, 158,  29,  0},
-	{158, 157, 154,  0},
-	{206, 161,  75,  0},
-	{150, 194, 146,  0},
-	{165, 167, 162,  0},
-	{223, 174,  45,  0},
-	{211, 170, 102,  0},
-	{220, 175,  75,  0},
-	{175, 176, 174,  0},
-	{162, 202, 163,  0},
-	{213, 176, 135,  0},
-	{223, 183, 118,  0},
-	{163, 214, 159,  0},
-	{230, 192, 104,  0},
-	{208, 184, 158,  0},
-	{186, 186, 186,  0},
-	{  0, 204, 255,  0},
-	{229, 191, 136,  0},
-	{173, 223, 176,  0},
-	{223, 191, 159,  0},
-	{190, 196, 195,  0},
-	{246, 210,  99,  0},
-	{203, 198, 191,  0},
-	{235, 202, 150,  0},
-	{228, 199, 173,  0},
-	{185, 235, 190,  0},
-	{206, 206, 206,  0},
-	{237, 209, 174,  0},
-	{255, 255,   0,  0},
-	{220, 213, 210,  0},
-	{246, 216, 179,  0},
-	{237, 215, 199,  0},
-	{197, 248, 210,  0},
-	{220, 220, 219,  0},
-	{254, 227, 186,  0},
-	{229, 227, 226,  0},
-	{217, 217, 255,  0},
-	{254, 239, 196,  0},
-	{210, 253, 235,  0},
-	{234, 238, 237,  0},
-	{255, 253, 209,  0},
-	{246, 240, 248,  0},
-	{250, 253, 248,  0},
-};
+    Palette::brightness = brightness;
+
+    for (int i = 0; i < 256; i++) {
+        // Set the colors based on the original colors.
+        int red = (int) (float(originalColor[i].r) * brightness);
+        if (red > 255) {
+            red = 255;
+        } else if (red < 0) {
+            red = 0;
+        }
+
+        int green = (int) (float(originalColor[i].g) * brightness);
+        if (green > 255) {
+            green = 255;
+        } else if (green < 0) {
+            green = 0;
+        }
+
+        int blue = (int) (float(originalColor[i].b) * brightness);
+        if (blue > 255) {
+            blue = 255;
+        } else if (blue < 0) {
+            blue = 0;
+        }
+
+        //		curRed   = Palette::color[y].red + ((255 - Palette::color[y].red) * (x-128) / 127);
+        //		curGreen = Palette::color[y].green + ((255 - Palette::color[y].green) * (x-128) / 127);
+        //		curBlue  = Palette::color[y].blue + ((255 - Palette::color[y].blue) * (x-128) / 127);
+
+        // Save the modified values into the palette.
+        color[i].r = red;
+        color[i].g = green;
+        color[i].b = blue;
+    }
+
+} // end Palette::setBrightnessAbsolute

@@ -19,57 +19,47 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __Surface_hpp__
 
 #include <string>
-#include <vector>
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 #include "Types/iXY.hpp"
 #include "Types/iRect.hpp"
-#include "Core/CoreTypes.hpp"
+#include "Util/NoCopy.hpp"
 
 #include "SDL.h"
 
+class ColorTable;
 class Palette;
-class Surface;
-struct lua_State;
+typedef Uint8 PIX;
 
-typedef std::vector<Surface*> SurfaceList;
+// This must be called before any of the string blitting functions are used.
+void initFont();
 
 /////////////////////////////////////////////////////////////////////////////
 // class Surface
 /////////////////////////////////////////////////////////////////////////////
 
 //---------------------------------------------------------------------------
-class Surface
+class Surface : public NoCopy
 {
 public:
     static int getTotalSurfaceCount()   { return totalSurfaceCount; }
     static int getTotalByteCount()      { return totalByteCount; }
-    static unsigned int getFontHeight();
-    static int getTextLength(const char* text);
-    static int getTextLength(const std::string& text)
-    {
-        return getTextLength(text.c_str());
-    }
 
     Surface();
     Surface(unsigned int w, unsigned int h, unsigned int nframes);
-    Surface(unsigned int w, unsigned int h, unsigned int nframes, int bpp);
 
-    ~Surface(); // no inheritance please
+    virtual ~Surface();
     
-    void freeFrames();
-
     void create(unsigned int w, unsigned int h, unsigned int nframes);
+    void free();
 
     void setOffset(const iXY &o) { offset = o; }
     void setOffsetX(int ox)      { offset.x = ox; }
     void setOffsetY(int oy)      { offset.y = oy; }
     void setFPS(unsigned int f)  { fps = f; }
     void setOffsetCenter();
-    bool setPixelsFromRawData( Uint8 * rawdata, int buffer_length );
-    bool getRawDataFromPixels( Uint8 * rawdata, int buffer_length );
 
     // Accessor functions.
     unsigned int getWidth()  const { return twidth; }
@@ -80,157 +70,167 @@ public:
     int     getCenterX()    const { return getWidth()>>1; }
     int     getCenterY()    const { return getHeight()>>1; }
 
-    unsigned int getNumFrames() const { return frames.size(); }
+    unsigned int getNumFrames() const { return numFrames; }
 
     float  getFPS()         const { return fps; }
-    bool   getDoesExist()   const { return cur_frame!=0; }
+    bool   getDoesExist()   const { return doesExist; }
     int    getCurFrame ()   const { return (int) curFrame; }
+    PIX   *getMem()         const { return mem; }
+    PIX   *getFrame0()      const { return frame0; }
     iXY    getOffset()      const { return offset; }
+    int    getOffsetX()     const { return offset.x; }
+    int    getOffsetY()     const { return offset.y; }
     int    getArea()        const { return getWidth() * getHeight(); }
 
-    inline void putPixel(const unsigned int x, const unsigned int y, const Uint32 color)
+    float  getAspectXOverY() const
+    {
+        return float(getWidth()) / float(getHeight());
+    }
+    float  getAspectYOverX() const
+    {
+        return float(getHeight()) / float(getWidth());
+    }
+    iRect  getRect() const
+    {
+        return iRect(0, 0, getWidth() - 1, getHeight() - 1);
+    }
+
+    void putPixel(unsigned int x, unsigned int y, const PIX &color) 
     {
         if ( x >= getWidth() || y >= getHeight())
             return;
-        (*pixPtr(x,y)) = color;
+        *(mem + (y * getPitch()) + x) = color;
     }
 
-    inline void putPixel(const unsigned int x, const unsigned int y,
-                         const Uint8 r, const Uint8 g, const Uint8 b)
-    {
-        putPixel(x, y, SDL_MapRGB(cur_frame->format, r, g, b));
-    }
-
-    inline Uint32 getPixel(const unsigned int x, const unsigned int y) const
+    PIX getPixel(unsigned int x, unsigned int y) const
     {
         return *pixPtr(x,y);
     }
 
-    void drawRect(iRect bounds, const IntColor color);
-    void fillRect(iRect bounds, const IntColor color);
+    void drawRect(iRect bounds, const PIX &color);
+    void fillRect(iRect bounds, const PIX &color);
 
-    void linkData(Surface &other);
+private:
+    friend class ScreenSurface;
+    friend class PackedSurface;
+    PIX   *mem;       // Pointer to upperleft most pixel
+    PIX   *frame0;    // Pointer to first frame
+    
+    void alloc(unsigned int w, unsigned int h, int nframes);
+    bool grab(const Surface &s, iRect bounds);
+
+    PIX *pixPtr(unsigned int x, unsigned int y) const
+    {
+        assert((y * getPitch() + x) < getPitch() * getHeight());
+        return mem + (y * getPitch()) + x;
+    }
+
+protected:
+    iXY   offset;     // Used like a hot spot for drawing.
+    float fps;        // The speed to change the frames. Make sure TimerInterface::getTimeSlice() is being updated.
+    unsigned int twidth;
+    unsigned int theight;
+    unsigned int tpitch;     // Number of bytes from one row to the next.
+    unsigned int numFrames;
+
+    float curFrame;   // Current frame of frameCount.
+    bool  myMem;	  // Am I the owner of this surface, or am I mapped to some other surface.
+    bool  doesExist;  // Is it ok o write to this surface?
+
+    static int totalSurfaceCount;  // The number of surfaces alive.
+    static int totalByteCount;     // The number of bytes of the surfaces alive.
+
+    void        reset();
+
+public:
+    
+    void resize(int xPix, int yPix);
+
+    void setTo(const Surface &s, iRect bounds);
+    void setTo(const Surface &source);
 
     void blt(Surface &dest, int x, int y) const;
-    void bltBlend(Surface &dest, int x, int y, Uint8 alpha) const;
-    void bltSolid(Surface &dest, int x, int y) const;
     void bltTrans(Surface &dest, int x, int y) const;
+    void bltTransColor(Surface &dest, int x, int y, const PIX &color) const;
     void bltScale(const Surface &source, const iRect &destRect);
-    void bltLookup(const iRect &destRect);
-    void bltRect(SDL_Rect *sourceRect, Surface &dest, int x, int y);
+    void bltLookup(const iRect &destRect, const PIX table[]);
 
-    void createShadow(Surface &other);
 
-    void drawHLine(int x1, int y,  int x2, const IntColor color);
-    void drawVLine(int x,  int y1, int y2, const IntColor color);
+    void drawHLine(int x1, int y,  int x2, const PIX &color);
+    void drawVLine(int x,  int y1, int y2, const PIX &color);
 
-    void drawLine(int x1, int y1, int x2, int y2, const IntColor color);
+    void drawLine(int x1, int y1, int x2, int y2, const PIX &color);
 
-    void drawLine(const iXY &a, const iXY &b, const IntColor color)
+    void drawLine(const iXY &a, const iXY &b, const PIX &color)
     {
         drawLine(a.x, a.y, b.x, b.y, color);
     }
 
     // Surface Effects.
-    void drawButtonBorder(iRect bounds, IntColor topLeftColor, IntColor bottomRightColor);
-    void drawButtonBorder(IntColor topLeftColor, IntColor bottomRightColor)
+    void drawButtonBorder(iRect bounds, PIX topLeftColor, PIX bottomRightColor);
+    void drawButtonBorder(PIX topLeftColor, PIX bottomRightColor)
     {
         drawButtonBorder(iRect(0, 0, getWidth(), getHeight()), topLeftColor, bottomRightColor);
     }
 
     void drawWindowsBorder();
-
-    void fill(const IntColor color);
+    
+    void fill(const PIX &color);
+    void flipVertical();
+    void rotate(int angle);
     void copy(const Surface &source);
 
     int nextFrame();
 
     void setFrame(const float &frameNum)
     {
-        cur_frame = frames[(int)frameNum];
-        mem = (Uint8 *)cur_frame->pixels;
+        assert(frameNum >= 0.0);
+        assert(frameNum < getNumFrames());
+        mem = frame0 + (getHeight() * getPitch()) * int(frameNum);
     }
+
+    PIX getAverageColor();
 
     void scale(unsigned int x, unsigned int y);
 
-    // Text rendering functions
-    void renderText(const char *str, IntColor color, IntColor bgcolor);
-    void renderShadowedText(const char *str, IntColor color, IntColor bgcolor, IntColor shadowcolor);
+    void shrinkWrap();
 
+    // Text rendering functions
+    void renderText(const char *str, PIX color, PIX bgcolor);
+    
     // Blit a single character of text.
-    void bltChar8x8(int x, int y, unsigned char character, const IntColor color);
-    void bltString(int x, int y, const char * str, const IntColor color);
-    void bltStringInBox(const iRect &rect, const char *string, IntColor color, int gapSpace = 14, bool drawBox = false);
+    void bltChar8x8(int x, int y, unsigned char character, const PIX &color);
+    void bltString(int x, int y, const char * str, const PIX& color);
+    void bltStringInBox(const iRect &rect, const char *string, PIX color, int gapSpace = 14, bool drawBox = false);
 
     // Blit a shadowed string of text.
-    void bltStringShadowed(int x, int y, const char *str, const IntColor textColor, const IntColor shadowColor);
+    void bltStringShadowed(int x, int y, const char *str, const PIX &textColor, const PIX &shadowColor);
 
     // Blits a string of text and centers it horizontally and vertically on the screen.
-    void bltStringCenter(const char *string, IntColor color);
+    void bltStringCenter(const char *string, PIX color);
 
-    void bltStringShadowedCenter(const char *string, IntColor foreground, IntColor background);
-    void bltStringCenteredInRect(const iRect &rect, const char *string, const IntColor color);
+    void bltStringShadowedCenter(const char *string, PIX foreground, PIX background);
+    void bltStringCenteredInRect(const iRect &rect, const char *string, const PIX &color);
 
-    void loadBMP(const char *fileName);
-    void loadPNG(const char *fileName);
-    void loadPNGSheet(const char * fileName, int width, int height, int count,
-                      bool has_alpha=false, int alpha=255);
+    void loadBMP(const char *fileName, bool needAlloc = true);
 
-    void drawBoxCorners(const iRect &rect, int cornerLength, IntColor color);
+    void mapFromPalette(const std::string& oldPalette);
+
+    void drawBoxCorners(const iRect &rect, int cornerLength, PIX color);
     void drawBoxCorners(const iXY &min, const iXY &max,
-            int cornerLength, IntColor color)
+            int cornerLength, PIX color)
     {
         drawBoxCorners(iRect(min.x, min.y, max.x, max.y), cornerLength, color);
     }
-    void drawBoxCorners(int cornerLength, IntColor color)
+    void drawBoxCorners(int cornerLength, PIX color)
     {
         drawBoxCorners(iRect(0, 0, getWidth() - 1, getHeight() - 1), cornerLength, color);
     }
 
-    void brigthenFrames();
-    void setColorkey();
-    void setAlpha(unsigned int alpha = 128);
-    void optimize();
-
-    // for scripts
-    // pointer is: pointer to a surface pointer;
-    static int loadPNGSheetPointer(lua_State *L, void *v);
-
-private:
-    static SDL_Surface * blackScreen;
-    static int totalSurfaceCount;  // The number of surfaces alive.
-    static int totalByteCount;     // The number of bytes of the surfaces alive.
-
-    friend class ScreenSurface;
-    friend class PackedSurface;
-    friend class SDLVideo;
-
-    Surface(const Surface& );
-    Surface& operator=(const Surface& );
-
-    std::vector<SDL_Surface*> frames;
-    SDL_Surface * cur_frame;
-    Uint8   *mem;       // Pointer to upperleft most pixel
-
-    void alloc(unsigned int w, unsigned int h, int nframes, int bpp);
-
-    inline Uint32 *pixPtr(const unsigned int x, const unsigned int y) const
-    {
-//        assert((y * getPitch() + x) < getPitch() * getHeight());
-        return (Uint32*)(mem + (y * getPitch()) + (x * 4));
-    }
-
-    iXY   offset;     // Used like a hot spot for drawing.
-    float fps;        // The speed to change the frames. Make sure TimerInterface::getTimeSlice() is being updated.
-    unsigned int twidth;
-
-    unsigned int theight;
-    unsigned int tpitch;     // Number of bytes from one row to the next.
-
-    float curFrame;   // Current frame of frameCount.
-
-    void        reset();
-
+    static unsigned int getFontHeight();
+    static int getTextLength(const char* text);
+    static int getTextLength(const std::string& text)
+    { return getTextLength(text.c_str()); } 
 }; // end Surface
 
 #endif // __Surface_HPP__

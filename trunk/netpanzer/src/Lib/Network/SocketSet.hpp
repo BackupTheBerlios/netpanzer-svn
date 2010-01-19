@@ -20,11 +20,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "SocketHeaders.hpp"
 #include "SocketBase.hpp"
+#include "Util/NoCopy.hpp"
 
 namespace network
 {
 
-class SocketSet
+class SocketSet : public NoCopy
 {
 public:
     SocketSet()
@@ -95,9 +96,6 @@ public:
     inline int getError() const { return select_error; }
     
 private:
-    SocketSet( const SocketSet&);
-    void operator=( const SocketSet&);
-
     SOCKET maxfd;
     fd_set readset;
     fd_set writeset;

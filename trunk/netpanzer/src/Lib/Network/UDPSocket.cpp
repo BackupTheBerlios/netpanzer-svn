@@ -16,7 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <config.h>
+
 #include "UDPSocket.hpp"
+#include <sstream>
+
 
 namespace network
 {
@@ -47,12 +51,10 @@ UDPSocket::destroy()
 }
 
 void
-UDPSocket::onSocketError(const char * msg)
+UDPSocket::onSocketError()
 {
     if ( observer )
-    {
-        observer->onSocketError(this, msg);
-    }
+        observer->onSocketError(this);
 }
 
 void
@@ -60,9 +62,10 @@ UDPSocket::send(const Address& toaddr, const void* data, size_t datasize)
     throw(NetworkException)
 {
     int res = doSendTo(toaddr,data,datasize);
-    if(res != (int) datasize)
-    {
-        onSocketError("UDPSocket::send error: not all data sent.");
+    if(res != (int) datasize) {
+        std::stringstream msg;
+        msg << "Send error: not all data sent.";
+        throw NetworkException(msg.str());
     }
 }
 
@@ -72,13 +75,10 @@ UDPSocket::onDataReady()
     Address a;
     char buffer[4096];
     int len;
-    do
-    {
+    do {
         len=doReceiveFrom(a,buffer,sizeof(buffer));
         if (len && observer)
-        {
             observer->onDataReceived(this,a,buffer,len);
-        }
     } while (len && observer);
 }
 

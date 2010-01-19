@@ -41,12 +41,9 @@ protected:
     static void addSocket(SocketBase *s)
     {
         SocketsIterator i = deletedSockets.find(s);
-        if ( i != deletedSockets.end() )
-        {
+        if ( i != deletedSockets.end() ) {
             deletedSockets.erase(i);
-        }
-        else
-        {
+        } else {
             newSockets.insert(s);
         }
     }
@@ -54,12 +51,9 @@ protected:
     static void removeSocket(SocketBase *s)
     {
         SocketsIterator i = newSockets.find(s);
-        if ( i != newSockets.end() )
-        {
+        if ( i != newSockets.end() ) {
             newSockets.erase(i);
-        }
-        else
-        {
+        } else {
             deletedSockets.insert(s);
         }
     }

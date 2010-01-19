@@ -15,10 +15,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
+
+#include <sstream>
+#include <stdexcept>
 
 #include "SocketHeaders.hpp"
 #include "Address.hpp"
 #include "TCPSocket.hpp"
+#include "Util/Log.hpp"
 
 
 namespace network
@@ -53,9 +58,7 @@ TCPSocket::send(const void* data, size_t size) throw(NetworkException)
 {
     int res = doSend(data,size);
     if (!res && !observer) // disconnected
-    {
         return size; // as is disconnected, avoid catching of unsend data
-    }
     return res;
 }
 
@@ -63,18 +66,14 @@ void
 TCPSocket::onConnected()
 {
     if (observer)
-    {
         observer->onConnected(this);
-    }
 }
 
 void
 TCPSocket::onDisconected()
 {
     if (observer)
-    {
         observer->onDisconected(this);
-    }
     destroy();
 }
 
@@ -82,20 +81,19 @@ void
 TCPSocket::onDataReady()
 {
     char buffer[4096];
-    int len = doReceive(buffer,sizeof(buffer));
-    if (len && observer)
-    {
-        observer->onDataReceived(this, buffer,len);
-    }
+    int len;
+    do {
+        len = doReceive(buffer,sizeof(buffer));
+        if (len && observer)
+            observer->onDataReceived(this, buffer,len);
+    } while (len && observer);
 }
 
 void
-TCPSocket::onSocketError(const char * msg)
+TCPSocket::onSocketError()
 {
     if (observer)
-    {
-        observer->onSocketError(this, msg);
-    }
+        observer->onSocketError(this);
     destroy();
 }
 

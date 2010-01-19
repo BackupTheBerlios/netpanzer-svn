@@ -34,7 +34,7 @@ public:
 protected:
     friend class TCPListenSocket;
     virtual TCPSocketObserver * onNewConnection(TCPListenSocket *so, const Address &fromaddr) = 0;
-    virtual void onSocketError(TCPListenSocket *so, const char * msg) = 0;
+    virtual void onSocketError(TCPListenSocket *so) = 0;
 };
     
 
@@ -48,7 +48,7 @@ protected:
     ~TCPListenSocket() {};
     
     void onDataReady();
-    void onSocketError(const char * msg);
+    void onSocketError();
 
 private:
     TCPListenSocketObserver * observer;

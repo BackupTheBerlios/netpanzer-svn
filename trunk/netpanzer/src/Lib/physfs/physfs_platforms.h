@@ -12,11 +12,7 @@
  *  PHYSFS_PLATFORM_UNIX on that system.
  */
 
-#if (defined __HAIKU__)
-#  define PHYSFS_PLATFORM_HAIKU
-#  define PHYSFS_PLATFORM_BEOS
-#  define PHYSFS_PLATFORM_POSIX
-#elif ((defined __BEOS__) || (defined __beos__))
+#if ((defined __BEOS__) || (defined __beos__))
 #  define PHYSFS_PLATFORM_BEOS
 #  define PHYSFS_PLATFORM_POSIX
 #elif (defined _WIN32_WCE) || (defined _WIN64_WCE)
@@ -26,16 +22,8 @@
 #elif (defined OS2)
 #  define PHYSFS_PLATFORM_OS2
 #elif ((defined __MACH__) && (defined __APPLE__))
-/* To check if iphone or not, we need to include this file */
-# include <TargetConditionals.h> 
-# if (defined(TARGET_IPHONE_SIMULATOR) || (defined TARGET_OS_IPHONE))
-#    define PHYSFS_PLATFORM_UNIX
-#    define PHYSFS_PLATFORM_POSIX
-#    define PHYSFS_NO_CDROM_SUPPORT
-#  else
-#    define PHYSFS_PLATFORM_MACOSX
-#    define PHYSFS_PLATFORM_POSIX
-#  endif
+#  define PHYSFS_PLATFORM_MACOSX
+#  define PHYSFS_PLATFORM_POSIX
 #elif defined(macintosh)
 #  error Classic Mac OS support was dropped from PhysicsFS 2.0. Move to OS X.
 #elif defined(unix)

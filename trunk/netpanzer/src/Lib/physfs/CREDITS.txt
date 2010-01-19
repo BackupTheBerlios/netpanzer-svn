@@ -32,7 +32,7 @@ QPAK archiver:
     Ed Sinjiashvili
 
 French translation:
-    StÃ©phane Peter
+    Stéphane Peter
 
 Debian package support:
     Colin Bayer
@@ -49,9 +49,6 @@ German translation:
 Apple Project Builder support,
 Mac OS X improvements:
     Eric Wing
-
-iPhone support:
-    Christian Gmeiner
 
 HOG archiver,
 MVL archiver:
@@ -70,7 +67,7 @@ Brazillian Portuguese translation:
     Danny Angelo Carminati Grein
 
 Spanish translation:
-    Pedro J. PÃ©rez
+    Pedro J. Pérez
 
 MacOS Classic fixes,
 MPW support,
@@ -81,14 +78,8 @@ Mingw support,
 General bug fixes:
     Matze Braun
 
-Haiku support:
-    scott mc
-
 Bug fixes:
-    JÃ¶rg Walter
-
-Bug fixes:
-    Olivier Boudeville
+    Jörg Walter
 
 Windows .rc file,
 7zip/lzma archiver:

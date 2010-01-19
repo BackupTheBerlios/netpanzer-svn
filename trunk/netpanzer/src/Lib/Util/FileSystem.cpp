@@ -15,10 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
 
-#include <sstream>
-#include <cstdio>
-#include <cstring>
+#include <stdio.h>
+#include <string.h>
 #include "Exception.hpp"
 #include "Log.hpp"
 #include "FileSystem.hpp"
@@ -59,61 +59,9 @@ void initialize(const char* argv0, const char* ,
     }
 
     PHYSFS_addToSearchPath(writedir, 0);
-    delete[] writedir;
-
     PHYSFS_addToSearchPath(basedir, 1);
 
-#ifdef NP_DATADIR
-    PHYSFS_addToSearchPath(NP_DATADIR, 1);
-#endif
-
-#ifdef __APPLE__
-    // Mac OS X puts the data files into NetPanzer.app/Contents/Resources
-    {
-        char * relpath = strdup(argv0);
-        char * spos = strrchr(relpath, '/');
-        if ( spos )
-        {
-            *spos = 0; // remove '/netpanzer';
-        }
-
-        spos = strrchr(relpath, '/');
-        if ( spos )
-        {
-            *spos = 0; // remove '/MacOS'
-        }
-        // relpath should have the path up until Contents in the app bundle
-
-        std::ostringstream dir;
-        dir << relpath << "/Resources/";
-
-        PHYSFS_addToSearchPath(dir.str().c_str(), 1);
-    }
-#endif
-
-#ifndef WIN32
-    // Handle "datadir=" at the end of the executable file to find the data dir.
-    {
-        FILE *f = fopen(argv0, "r");
-        if ( f )
-        {
-            char extradata[257];
-            fseek(f, -256, SEEK_END);
-            fread(extradata, 256, 1, f);
-            extradata[256]=0;
-            if ( !strncmp(extradata,"datadir=", 8) )
-            {
-                for ( int bytepos=255; bytepos>8 && extradata[bytepos]==' '; --bytepos )
-                {
-                    extradata[bytepos]=0;
-                }
-
-                PHYSFS_addToSearchPath(extradata+8, 1);
-            }
-            fclose(f);
-        }
-    }
-#endif
+    delete[] writedir;
 
     /* Root out archives, and add them to search path... */
     char* archiveExt = "zip";
@@ -201,47 +149,8 @@ ReadFile* openRead(const char* filename)
 {
     PHYSFS_file* file = PHYSFS_openRead(filename);
     if(!file)
-    {
-        int fn_length = strlen(filename)+1;
-        char fn[fn_length];
-        memcpy(fn, filename, fn_length); // includes \0;
-
-        char * folder_sep = strrchr(fn, '/');
-        char * fn_start = fn;
-        char ** filelist = 0;
-        if ( folder_sep )
-        {
-            *folder_sep = 0;
-            filelist = enumerateFiles(fn);
-            *folder_sep = '/';
-            fn_start = folder_sep+1;
-        }
-        else
-        {
-            filelist = enumerateFiles(".");
-            folder_sep = fn;
-        }
-
-        if ( filelist )
-        {
-            for(char** curfile = filelist; *curfile != 0; curfile++)
-            {
-                if ( strcasecmp(*curfile, fn_start) == 0 )
-                {
-                    memcpy(fn_start, *curfile, fn_length-(folder_sep-fn));
-                    file = PHYSFS_openRead(fn);
-                    break;
-                }
-            }
-            freeList(filelist);
-        }
-
-        if ( !file )
-        {
-            throw Exception("couldn't open file '%s' for reading: %s", filename,
+        throw Exception("couldn't open file '%s' for reading: %s", filename,
                         PHYSFS_getLastError());
-        }
-    }
 
     return new ReadFile(file);
 }
