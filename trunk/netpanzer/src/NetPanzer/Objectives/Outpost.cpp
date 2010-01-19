@@ -15,25 +15,20 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-#include "Core/GlobalGameState.hpp"
-#include "Classes/PlayerState.hpp"
+#include <config.h>
 #include "Outpost.hpp"
 
-#include "Units/Unit.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
-#include "Interfaces/GameConfig.hpp"
 
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/UnitNetMessage.hpp"
 #include "Classes/Network/ObjectiveNetMessage.hpp"
 #include "Classes/UnitMessageTypes.hpp"
-#include "Classes/PlacementMatrix.hpp"
 
 Outpost::Outpost( ObjectiveID ID, iXY location, BoundBox area )
         : Objective( ID, location, area )
@@ -42,7 +37,7 @@ Outpost::Outpost( ObjectiveID ID, iXY location, BoundBox area )
     objective_state.selection_box.max = location + iXY( 64, 32 );
     objective_state.selection_box.min = location + iXY( -224, -128 );
     objective_state.area.min = iXY( -400, -144 );
-    objective_state.area.max = iXY(  350,  240 );
+    objective_state.area.max = iXY(  400,  240 );
     objective_state.outpost_type = 0;
     
 
@@ -56,12 +51,13 @@ Outpost::Outpost( ObjectiveID ID, iXY location, BoundBox area )
 }
 
 void
-Outpost::attemptOccupationChange( Uint16 player_id )
+Outpost::attemptOccupationChange(UnitID unit_id)
 {
     ObjectiveOccupationUpdate update_mesg;
     int player_status;
 
-    PlayerState* player = PlayerInterface::getPlayer( player_id );
+    UnitBase* unit = UnitInterface::getUnit(unit_id);
+    PlayerState* player = unit->player;
     player_status = player->getStatus();
 
     if ( objective_state.occupation_status == _occupation_status_unoccupied )
@@ -71,15 +67,14 @@ Outpost::attemptOccupationChange( Uint16 player_id )
             objective_state.occupying_player = player;
             objective_state.occupying_player->incObjectivesHeld();
             objective_state.occupation_status = _occupation_status_occupied;
-            unit_collection_loc = outpost_map_loc + iXY( 13, 13 );
-            
+
             update_mesg.status_update.set(objective_state.ID,
                         objective_state.occupation_status,
                         objective_state.occupying_player->getID(),
                         unit_generation_on_flag,
                         unit_generation_type,
                         Uint32(unit_generation_timer.getTimeLeft() * 128.0));
-            NetworkServer::broadcastMessage(&update_mesg, sizeof(ObjectiveOccupationUpdate));
+            SERVER->broadcastMessage(&update_mesg, sizeof(ObjectiveOccupationUpdate));
 
             const PlayerState *player_state = objective_state.occupying_player;
             ConsoleInterface::postMessage(Color::cyan, false, 0, "'%s' has been occupied by '%s'",
@@ -94,8 +89,6 @@ Outpost::attemptOccupationChange( Uint16 player_id )
             objective_state.occupying_player = player;
             objective_state.occupying_player->incObjectivesHeld();
             objective_state.occupation_status = _occupation_status_occupied;
-            unit_collection_loc = outpost_map_loc + iXY( 13, 13 );
-            
             update_mesg.status_update.set(
                     objective_state.ID,
                     objective_state.occupation_status,
@@ -103,7 +96,7 @@ Outpost::attemptOccupationChange( Uint16 player_id )
                     unit_generation_on_flag,
                     unit_generation_type,
                     Uint32(unit_generation_timer.getTimeLeft() * 128));
-            NetworkServer::broadcastMessage(&update_mesg,
+            SERVER->broadcastMessage(&update_mesg,
                     sizeof(ObjectiveOccupationUpdate));
             const PlayerState *player = objective_state.occupying_player;
             ConsoleInterface::postMessage(Color::cyan, false, 0, "'%s' has been occupied by '%s'",
@@ -115,57 +108,30 @@ Outpost::attemptOccupationChange( Uint16 player_id )
 void
 Outpost::checkOccupationStatus()
 {
-    if ( occupation_status_timer.count() )
+    if( occupation_status_timer.count()  )	//
     {
+        UnitBase *unit_ptr;
         iRect bounding_area;
+        iXY occupation_pad_loc;
 
-        // This was used for previous ocupation checks
-        //iXY occupation_pad_loc;
-        //occupation_pad_loc = objective_state.location + occupation_pad_offset;
-        //bounding_area = objective_state.capture_area.getAbsRect( occupation_pad_loc );
-        
-        bounding_area = objective_state.area.getAbsRect(objective_state.location);
+        occupation_pad_loc = objective_state.location + occupation_pad_offset;
+        bounding_area = objective_state.capture_area.getAbsRect( occupation_pad_loc );
 
-        std::vector<Unit*> unitsInArea;
-        if ( objective_state.occupation_status == _occupation_status_occupied )
+
+        UnitInterface::queryClosestUnit( &unit_ptr,
+                                          bounding_area,
+                                          occupation_pad_loc
+                                        );
+
+        if ( unit_ptr != 0 )
         {
-            std::vector<UnitID> playerunits;
-            UnitBucketArray::queryPlayerUnitsInWorldRect(playerunits,
-                                    bounding_area,
-                                    objective_state.occupying_player->getID() );
-
-            if ( ! playerunits.empty() )
-            {
-                return;
+            iXY unit_loc;
+            unit_loc = unit_ptr->unit_state.location;
+            if ( objective_state.capture_area.bounds( occupation_pad_loc, unit_loc ) ) {
+                attemptOccupationChange( unit_ptr->id );
             }
 
-            UnitBucketArray::queryNonPlayerUnitsInWorldRect(unitsInArea,
-                                    bounding_area,
-                                    objective_state.occupying_player->getID() );
-
-        }
-        else
-        {
-            UnitBucketArray::queryUnitsInWorldRect( unitsInArea, bounding_area );
-        }
-
-        if ( ! unitsInArea.empty() )
-        {
-            std::vector<Unit*>::iterator i = unitsInArea.begin();
-
-            Uint16 ocu_player = (*i)->player->getID();
-
-            while ( ++i != unitsInArea.end() )
-            {
-                if ( (*i)->player->getID() != ocu_player )
-                {
-                    // more than one player in area, must be alone to capture
-                    return;
-                }
-            }
-
-            attemptOccupationChange( ocu_player );
-        }
+        } // ** if unit_ptr != 0
 
     } // ** if occupation_status_timer.count()
 
@@ -181,7 +147,7 @@ Outpost::generateUnits()
         {
             if( (unit_generation_timer.count() == true) )
             {
-                Unit *unit;
+                UnitBase *unit;
                 iXY gen_loc;
                 gen_loc = outpost_map_loc + unit_generation_loc;
 
@@ -193,7 +159,7 @@ Outpost::generateUnits()
                     UnitRemoteCreate create_mesg(unit->player->getID(),
                             unit->id, gen_loc.x, gen_loc.y,
                             unit_generation_type);
-                    NetworkServer::broadcastMessage(&create_mesg, sizeof(UnitRemoteCreate));
+                    SERVER->broadcastMessage(&create_mesg, sizeof(UnitRemoteCreate));
 
                     UMesgAICommand ai_command;
                     PlacementMatrix placement_matrix;
@@ -204,7 +170,7 @@ Outpost::generateUnits()
                     placement_matrix.reset( collection_loc );
                     placement_matrix.getNextEmptyLoc( &loc );
 
-                    ai_command.setHeader( unit->id);
+                    ai_command.setHeader( unit->id, _umesg_flag_unique );
                     ai_command.setMoveToLoc( loc );
                     UnitInterface::sendMessage( &ai_command );
                 }
@@ -224,9 +190,7 @@ Outpost::generateUnits()
 void
 Outpost::updateStatus()
 {
-    if ( NetworkState::status == _network_state_server
-            && gameconfig->capturebases == true)
-    {
+    if ( NetworkState::status == _network_state_server ) {
         checkOccupationStatus();
     }
 
@@ -256,7 +220,7 @@ Outpost::objectiveMesgChangeUnitGeneration(const ObjectiveMessage* message)
     unit_generation_type = unit_gen_mesg->unit_type;
     unit_generation_on_flag = unit_gen_mesg->unit_gen_on;
 
-    profile = global_game_state->unit_profile_interface->getUnitProfile( unit_generation_type );
+    profile = UnitProfileInterface::getUnitProfile( unit_generation_type );
     unit_generation_timer.changePeriod( (float) profile->regen_time );
 }
 
@@ -279,11 +243,11 @@ Outpost::objectiveMesgDisownPlayerObjective(const ObjectiveMessage* message)
                                            0,
                                            0);
 
-            NetworkServer::broadcastMessage(&update_mesg, sizeof(ObjectiveOccupationUpdate));
+            SERVER->broadcastMessage(&update_mesg, sizeof(ObjectiveOccupationUpdate));
 
             unit_generation_type = 0;
             UnitProfile *profile
-                = global_game_state->unit_profile_interface->getUnitProfile( unit_generation_type );
+                = UnitProfileInterface::getUnitProfile( unit_generation_type );
             unit_generation_timer.changePeriod( (float) profile->regen_time );
             unit_generation_on_flag = false;
         }
@@ -299,7 +263,7 @@ Outpost::getOutpostStatus( OutpostStatus &status )
     status.unit_generation_on_off = unit_generation_on_flag;
     status.unit_collection_loc = unit_collection_loc;
 
-    profile = global_game_state->unit_profile_interface->getUnitProfile( unit_generation_type );
+    profile = UnitProfileInterface::getUnitProfile( unit_generation_type );
     if ( profile )
         status.unit_generation_time = (float) profile->regen_time;
     else
@@ -314,44 +278,9 @@ Outpost::getOutpostStatus( OutpostStatus &status )
 }
 
 void
-Outpost::objectiveMesgUpdateOccupation(const ObjectiveMessage* message)
-{
-    const UpdateOccupationsStatus *occupation_update
-        = (const UpdateOccupationsStatus *) message;
-
-    if ( objective_state.occupation_status == _occupation_status_occupied )
-    {
-        objective_state.occupying_player->decObjectivesHeld();
-    }
-    
-    objective_state.occupation_status = occupation_update->occupation_status;
-    objective_state.occupying_player
-        = PlayerInterface::getPlayer(occupation_update->getOccupyingPlayerID());
-
-    unit_generation_on_flag = occupation_update->unit_gen_on;
-    unit_generation_type = occupation_update->unit_type;
-    
-    UnitProfile* profile = global_game_state->unit_profile_interface->getUnitProfile( unit_generation_type );
-    
-    unit_generation_timer.changePeriod((float)profile->regen_time);
-    unit_generation_timer.setTimeLeft(
-                                float(occupation_update->getTimeLeft()) / 128.0);
-    unit_collection_loc = outpost_map_loc + iXY( 13, 13 );
-
-    if( objective_state.occupation_status != _occupation_status_unoccupied )
-    {
-        objective_state.occupying_player->incObjectivesHeld();
-        
-        ConsoleInterface::postMessage(Color::cyan, false, 0, "'%s' has been occupied by '%s'",
-                objective_state.name, objective_state.occupying_player->getName().c_str() );
-    }
-}
-
-void
 Outpost::processMessage(const ObjectiveMessage* message)
 {
-    switch(message->message_type)
-    {
+    switch(message->message_type) {
         case _objective_mesg_change_unit_generation:
             objectiveMesgChangeUnitGeneration(message);
             break;
@@ -363,11 +292,6 @@ Outpost::processMessage(const ObjectiveMessage* message)
         case _objective_mesg_change_output_location:
             objectiveMesgChangeOutputLocation(message);
             break;
-            
-        case _objective_mesg_update_occupation:
-            objectiveMesgUpdateOccupation(message);
-            break;
-            
     }
 
     Objective::processMessage(message);

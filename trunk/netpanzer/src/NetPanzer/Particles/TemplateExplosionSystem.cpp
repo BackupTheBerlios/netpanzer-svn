@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "TemplateExplosionSystem.hpp"
 #include "ChunkTrajectoryParticle2D.hpp"
@@ -24,8 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/Particle2D.hpp"
 #include "Util/TimerInterface.hpp"
 #include "CraterParticle2D.hpp"
+#include "Interfaces/TileInterface.hpp"
 #include "Particles/ParticleInterface.hpp"
-#include "Interfaces/MapInterface.hpp"
 
 
 // TemplateExplosionSystem
@@ -55,7 +55,7 @@ TemplateExplosionSystem::TemplateExplosionSystem(const fXYZ& pos,
     int halfBoundsY = bounds.getSizeY() / 2;
 
     // Add a crater on the ground if it is a logical location.
-    int pixMovementValue = MapInterface::getWorldPixMovementValue(int(pos.x), int(pos.z));
+    int pixMovementValue = TileInterface::getWorldPixMovementValue(int(pos.x), int(pos.z));
 
     // Check for water or impassible.
     if (pixMovementValue != 5 &&
@@ -101,6 +101,16 @@ TemplateExplosionSystem::TemplateExplosionSystem(const fXYZ& pos,
         } catch(...) {}
         //}
 
+        //for (int i = 0; i < e.flashCount - 1; i++)
+        //{
+        //	fXYZ offset;
+        //
+        //	offset.x = pos.x - (rand() % bounds.getSizeX()) + halfBoundsX;
+        //	offset.y = 0.0f;
+        //	offset.z = pos.z - (rand() % bounds.getSizeY()) + halfBoundsY;
+        //
+        //	new FlashParticle2D(offset, e.flashMinScale, e.flashRandScale, e.flashLifetime, ExplosionSystem::flashLayer);
+        //}
     }
     else {
         ParticleInterface::gExplosionFlameFlashCullHitCount++;

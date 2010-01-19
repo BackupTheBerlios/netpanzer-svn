@@ -21,9 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 #include "Particles/Particle2D.hpp"
 
-#include "2D/Surface.hpp"
-
-struct lua_State;
+class Surface;
 
 class CraterCacheInfo
 {
@@ -39,7 +37,9 @@ class CraterParticle2D : public Particle2D
 public:
     CraterParticle2D(const fXYZ  &pos);
 
-    static int loadCraters(lua_State *L, void *v);
+    static void init();
+
+    static PackedSurface staticPackedCrater;
 
     static int getCacheHitCount()
     {
@@ -52,7 +52,7 @@ public:
 
 protected:
 
-    virtual void draw(SpriteSorter &sorter);
+    virtual void draw(const Surface &dest, SpriteSorter &sorter);
     virtual void sim();
 
     // Statistic data.

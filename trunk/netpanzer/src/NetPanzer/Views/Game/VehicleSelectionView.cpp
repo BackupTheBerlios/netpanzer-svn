@@ -15,9 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
 
-
-#include "Core/GlobalGameState.hpp"
 #include "Util/Exception.hpp"
 #include "VehicleSelectionView.hpp"
 #include "Units/UnitTypes.hpp"
@@ -56,7 +55,7 @@ static void sendOutpostStatus()
                                    (char) vsvSelectedUnit,
                                    vsvUnitGenOn );
     
-    NetworkClient::sendMessage(&term_mesg, sizeof(term_mesg));
+    CLIENT->sendMessage(&term_mesg, sizeof(term_mesg));
     
     if(NetworkState::status == _network_state_client) {
         ObjectiveInterface::sendMessage( &(term_mesg.unit_gen_request) );
@@ -165,6 +164,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     setTitle("Unit Production");
     setSubTitle("");
 
+    setAllowResize(false);
     setVisible(false);
     setBordered(true);
     setDisplayStatusBar(true);
@@ -172,9 +172,9 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     moveTo(iXY(0, 0));
 
     const int yOffset  = 15;
-    const int gapSpace =  2;
+    const int gapSpace =  1;
 
-    resize(48 * 5 + gapSpace * 4, 198 + 84);
+    resizeClientArea(48 * 5 + gapSpace * 4, 198 + 84);
 
     // Power status.
     iXY pos(0 ,0);
@@ -233,13 +233,13 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
     
     UnitSelectionButton *usb;
     UnitProfile *uprofile;
-    unitImages.create(48, 48, global_game_state->unit_profile_interface->getNumUnitTypes());
+    unitImages.create(48, 48, UnitProfileInterface::getNumUnitTypes());
     // XXX order by something?
-    for ( int ut=0; ut < global_game_state->unit_profile_interface->getNumUnitTypes(); ut++)
+    for ( int ut=0; ut < UnitProfileInterface::getNumUnitTypes(); ut++)
     {
-        uprofile = global_game_state->unit_profile_interface->getUnitProfile(ut);
+        uprofile = UnitProfileInterface::getUnitProfile(ut);
         
-        tempSurface.loadPNG(uprofile->imagefile.c_str());
+        tempSurface.loadBMP(uprofile->imagefile.c_str());
         unitImages.setFrame(ut);
         tempSurface.blt(unitImages, 0, 0);
         
@@ -299,7 +299,7 @@ VehicleSelectionView::VehicleSelectionView() : GameTemplateView()
 
 // doDraw
 //--------------------------------------------------------------------------
-void VehicleSelectionView::doDraw()
+void VehicleSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     if ( ObjectiveInterface::getObjectiveState(CURRENT_SELECTED_OUTPOST_ID)->occupying_player != PlayerInterface::getLocalPlayer() )
     {
@@ -371,9 +371,13 @@ void VehicleSelectionView::doDraw()
             screen->drawLine(cornerPos, b, Color::white);
             screen->fillRect(r, Color::white);
 
+            //screen.bltLookup(r, Palette::darkGray256.getColorArray());
+            //screen.drawButtonBorder(r, Color::white, Color::gray96);
+
+            // Draw the name of the outpost.
         }}
 
-    drawViewBackground();
+    bltViewBackground(viewArea);
 
     OutpostStatus outpost_status;
 
@@ -382,7 +386,7 @@ void VehicleSelectionView::doDraw()
     if (vsvUnitGenOn)
     {
         sprintf(strBuf, "%s", getUnitName(vsvSelectedUnit));
-        drawString(   productionUnitPos.x, productionUnitPos.y,
+        clientArea.bltString(   productionUnitPos.x, productionUnitPos.y, 
                                 strBuf, color);
 
         sprintf(strBuf, "%01d:%02d/%01d:%02d",
@@ -391,30 +395,30 @@ void VehicleSelectionView::doDraw()
                     ((int)outpost_status.unit_generation_time) / 60,
                     ((int)outpost_status.unit_generation_time) % 60);
          
-        drawString(   timeRequiredPos.x, timeRequiredPos.y,
+        clientArea.bltString(   timeRequiredPos.x, timeRequiredPos.y, 
                                 strBuf, color);
     }
     else
     {
         sprintf(strBuf, "power off");
-        drawString(   productionUnitPos.x, productionUnitPos.y,
+        clientArea.bltString(   productionUnitPos.x, productionUnitPos.y, 
                                 strBuf, color);
 
         sprintf(strBuf, "power off");
-        drawString(   timeRequiredPos.x, timeRequiredPos.y,
+        clientArea.bltString(   timeRequiredPos.x, timeRequiredPos.y, 
                                 strBuf, color);
     }
 
     int unitPerPlayer = gameconfig->maxunits / gameconfig->maxplayers;
-    sprintf(strBuf, "%d/%d", int(UnitInterface::getPlayerUnitCount(PlayerInterface::getLocalPlayerIndex())), unitPerPlayer);
-    drawString(unitsBuiltPos.x, unitsBuiltPos.y, strBuf, color);
+    sprintf(strBuf, "%d/%d", int(UnitInterface::getUnitCount(PlayerInterface::getLocalPlayerIndex())), unitPerPlayer);
+    clientArea.bltString(unitsBuiltPos.x, unitsBuiltPos.y, strBuf, color);
 
-    drawUnitProfileInfo( iXY(0, unitProfileDataY), highlightedUnitType);
+    drawUnitProfileInfo(clientArea, iXY(0, unitProfileDataY), highlightedUnitType);
 
     //sprintf(strBuf, "%01d:%02d", ( (int) outpost_status.unit_generation_time_remaining ) / 60, ( (int) outpost_status.unit_generation_time_remaining) % 60 );
     //clientArea.bltString(timeRemainingPos, strBuf, color);
 
-    View::doDraw();
+    View::doDraw(viewArea, clientArea);
 
 } // end VehicleSelectionView::doDraw
 
@@ -431,7 +435,7 @@ void VehicleSelectionView::drawUnitImage(Surface &dest, const iXY &pos, int unit
 //---------------------------------------------------------------------------
 const char *VehicleSelectionView::getUnitName(int unitType)
 {
-    UnitProfile *p = global_game_state->unit_profile_interface->getUnitProfile(unitType);
+    UnitProfile *p = UnitProfileInterface::getUnitProfile(unitType);
     if ( p )
     {
         return p->unitname.c_str();
@@ -473,7 +477,7 @@ const char *VehicleSelectionView::getUnitName(int unitType)
 //---------------------------------------------------------------------------
 int VehicleSelectionView::getUnitRegenTime(unsigned short unitType)
 {
-    UnitProfile *profile = global_game_state->unit_profile_interface->getUnitProfile(unitType);
+    UnitProfile *profile = UnitProfileInterface::getUnitProfile(unitType);
     if ( profile )
         return (int) profile->regen_time;
 
@@ -512,7 +516,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
     ObjectiveID   objectiveID = 0;
 
     WorldViewInterface::getViewWindow(&gameViewRect);
-    ObjectiveInterface::startObjectivePositionEnumeration(PlayerInterface::getLocalPlayerIndex());
+    ObjectiveInterface::startObjectivePositionEnumeration();
 
     while(ObjectiveInterface::objectivePositionEnumeration(&objectiveBounds, &objectiveOwner, &objectiveID )) {
         char strBuf[256];
@@ -567,7 +571,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                     //pos.y = (miniProductionRect.getSizeY() - CHAR_YPIX) / 2 + miniProductionRect.min.y;
 
                     // Objective is off.
-                    dest.bltLookup(miniProductionRect);
+                    dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
 
                     dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
                     pos.y += 16;
@@ -602,7 +606,8 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                                 % 60);
                     checkMiniProductionRect(timeLeftBuf);
 
-                    dest.bltLookup(miniProductionRect);
+                    dest.bltLookup(miniProductionRect,
+                            Palette::darkGray256.getColorArray());
 
                     dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
                     pos.y += 16;
@@ -651,7 +656,7 @@ void VehicleSelectionView::drawMiniProductionStatus(Surface &dest)
                     }
                     checkMiniProductionRect(outpostNameBuf);
 
-                    dest.bltLookup(miniProductionRect);
+                    dest.bltLookup(miniProductionRect, Palette::darkGray256.getColorArray());
 
                     dest.bltString(pos.x, pos.y, outpostNameBuf, Color::white);
                 }
@@ -698,8 +703,8 @@ void VehicleSelectionView::doActivate()
 //---------------------------------------------------------------------------
 void VehicleSelectionView::getProfileData()
 {
-    for (int i = 0; i < global_game_state->unit_profile_interface->getNumUnitTypes(); i++) {
-        const UnitProfile *p = global_game_state->unit_profile_interface->getUnitProfile(i);
+    for (int i = 0; i < UnitProfileInterface::getNumUnitTypes(); i++) {
+        const UnitProfile *p = UnitProfileInterface::getUnitProfile(i);
 
         checkMaxValues(*p);
     }
@@ -734,49 +739,49 @@ void VehicleSelectionView::checkMaxValues(const UnitProfile &profile)
 
 } // end VehicleSelectionView::checkMaxValues
 
-void VehicleSelectionView::drawUnitProfileInfo( const iXY &pos, short int unitType)
+void VehicleSelectionView::drawUnitProfileInfo(Surface &dest, const iXY &pos, short int unitType)
 {
     if (unitType == -1) {
         return;
     }
 
-    const UnitProfile *profile = global_game_state->unit_profile_interface->getUnitProfile(unitType);
+    const UnitProfile *profile = UnitProfileInterface::getUnitProfile(unitType);
 
     iXY       loc       = pos;
     const int gapSpace  = 10;
     const int barOffset = 105;
     int       barLength = getClientRect().getSizeX() - barOffset;
 
-    drawStringShadowed(loc.x, loc.y, "Hit Points", Color::white, Color::black);
-    drawBar(iXY(loc.x + barOffset, loc.y), barLength, float(profile->hit_points) / float(maxHitPoints));
+    dest.bltStringShadowed(loc.x, loc.y, "Hit Points", Color::white, Color::black);
+    drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->hit_points) / float(maxHitPoints));
     loc.y += gapSpace;
 
-    drawStringShadowed(loc.x, loc.y, "Attack Power", Color::white, Color::black);
-    drawBar(iXY(loc.x + barOffset, loc.y), barLength, float(profile->attack_factor) / float(maxAttackFactor));
+    dest.bltStringShadowed(loc.x, loc.y, "Attack Power", Color::white, Color::black);
+    drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->attack_factor) / float(maxAttackFactor));
     loc.y += gapSpace;
 
-    drawStringShadowed(loc.x, loc.y, "Attack Range", Color::white, Color::black);
-    drawBar(iXY(loc.x + barOffset, loc.y), barLength, float(sqrt(profile->attack_range)) / float(maxAttackRange));
+    dest.bltStringShadowed(loc.x, loc.y, "Attack Range", Color::white, Color::black);
+    drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(sqrt(profile->attack_range)) / float(maxAttackRange));
     loc.y += gapSpace;
 
-    drawStringShadowed(loc.x, loc.y, "Defend Range", Color::white, Color::black);
-    drawBar(iXY(loc.x + barOffset, loc.y), barLength, float(sqrt(profile->defend_range)) / float(maxDefendRange));
+    dest.bltStringShadowed(loc.x, loc.y, "Defend Range", Color::white, Color::black);
+    drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(sqrt(profile->defend_range)) / float(maxDefendRange));
     loc.y += gapSpace;
 
-    drawStringShadowed(loc.x, loc.y, "Speed", Color::white, Color::black);
-    drawBar(iXY(loc.x + barOffset, loc.y), barLength, float(profile->speed_factor + profile->speed_rate) / float(maxTotalSpeed));
+    dest.bltStringShadowed(loc.x, loc.y, "Speed", Color::white, Color::black);
+    drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->speed_factor + profile->speed_rate) / float(maxTotalSpeed));
     loc.y += gapSpace;
 
-    drawStringShadowed(loc.x, loc.y, "Reload Time", Color::white, Color::black);
-    drawBar(iXY(loc.x + barOffset, loc.y), barLength, float(profile->reload_time) / float(maxReloadTime));
+    dest.bltStringShadowed(loc.x, loc.y, "Reload Time", Color::white, Color::black);
+    drawBar(dest, iXY(loc.x + barOffset, loc.y), barLength, float(profile->reload_time) / float(maxReloadTime));
     loc.y += gapSpace;
 }
 
-void VehicleSelectionView::drawBar( const iXY &pos, int length, float percent)
+void VehicleSelectionView::drawBar(Surface &dest, const iXY &pos, int length, float percent)
 {
     iXY size(int(float(length) * percent), Surface::getFontHeight());
 
-    fillRect(iRect(pos.x, pos.y, pos.x + size.x, pos.y + size.y), Color::red);
+    dest.fillRect(iRect(pos.x, pos.y, pos.x + size.x, pos.y + size.y), Color::red);
 }
 
 // actionPerformed

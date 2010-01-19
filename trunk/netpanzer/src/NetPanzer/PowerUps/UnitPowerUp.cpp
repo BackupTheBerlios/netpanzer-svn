@@ -15,13 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 #include "UnitPowerUp.hpp"
-#include "Core/GlobalEngineState.hpp"
-#include "Core/GlobalGameState.hpp"
 
 #include <stdlib.h>
-#include "Units/Unit.hpp"
 #include "Units/UnitTypes.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Classes/UnitMessageTypes.hpp"
@@ -49,7 +46,7 @@ enum { _unit_powerup_hitpoints,
      };
 
 UnitPowerUp::UnitPowerUp(iXY map_loc, int type)
-        : PowerUp( map_loc, -1, type )
+        : PowerUp( map_loc, type )
 {
     unit_powerup_type = rand() % _unit_powerup_enum_count;
 }
@@ -117,14 +114,16 @@ void UnitPowerUp::powerUpReload( UnitState *unit_state)
 void UnitPowerUp::powerUpDestruct( UnitID unit_id )
 {
     UMesgSelfDestruct self_destruct;
-    self_destruct.setHeader( unit_id );
+    self_destruct.setHeader( unit_id, _umesg_flag_unique );
     UnitInterface::sendMessage( &self_destruct );
 }
 
 
-void UnitPowerUp::onHit( Unit * unit )
+void UnitPowerUp::onHit( UnitID unit_id )
 {
-    global_engine_state->sound_manager->playPowerUpSound();
+    sound->playPowerUpSound();
+
+    UnitBase* unit = UnitInterface::getUnit( unit_id );
 
     switch( unit_powerup_type )
     {
@@ -153,13 +152,13 @@ void UnitPowerUp::onHit( Unit * unit )
             break;
 
         case _unit_powerup_destruct:
-            powerUpDestruct( unit->getID() );
+            powerUpDestruct( unit_id );
             break;
     }
 
     PowerUpHitMesg hit_mesg;
     hit_mesg.set(ID, unit->player->getID(), unit_powerup_type);
-    NetworkServer::broadcastMessage(&hit_mesg, sizeof(PowerUpHitMesg));
+    SERVER->broadcastMessage(&hit_mesg, sizeof(PowerUpHitMesg));
 
     life_cycle_state = _power_up_lifecycle_state_inactive;
 
@@ -199,7 +198,7 @@ char * UnitPowerUp::powerupTypeToString( int type )
 
 void UnitPowerUp::onHitMessage( PowerUpHitMesg *message  )
 {
-    global_engine_state->sound_manager->playPowerUpSound();
+    sound->playPowerUpSound();
     life_cycle_state = _power_up_lifecycle_state_inactive;
 
     if( PlayerInterface::getLocalPlayerIndex() == message->getPlayerID() )

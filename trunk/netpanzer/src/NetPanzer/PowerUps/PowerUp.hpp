@@ -22,9 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/SpriteSorter.hpp"
 #include "Classes/Sprite.hpp"
 #include "Classes/Network/PowerUpNetMessage.hpp"
-#include "2D/Surface.hpp"
-
-class Unit;
 
 enum { _power_up_lifecycle_state_active,
        _power_up_lifecycle_state_inactive
@@ -32,17 +29,16 @@ enum { _power_up_lifecycle_state_active,
 
 class PowerUp
 {
-private:
-    friend class PowerUpInterface;
 protected:
-    virtual void onHit( Unit * unit ) = 0;
+    bool isPowerUpHit( UnitID *unit_id );
+    virtual void onHit( UnitID unit_id ) = 0;
     
     SpritePacked sprite;
     SpritePacked sprite_shadow;
 
 public:
-    static Surface POWERUP_ANIM;
-    static Surface POWERUP_ANIM_SHADOW;
+    static SpritePacked POWERUP_ANIM;
+    static SpritePacked POWERUP_ANIM_SHADOW;
 
     iXY       map_loc;
     iXY       world_loc;
@@ -50,9 +46,16 @@ public:
     int       type;
     int       life_cycle_state;
 
-    PowerUp(const iXY& map_loc, PowerUpID ID, int type);
+public:
+    PowerUp();
+    PowerUp(iXY map_loc, PowerUpID ID, int type);
+    PowerUp(iXY map_loc, int type);
     virtual ~PowerUp()
     { }
+
+    void updateState();
+
+    void offloadGraphics(SpriteSorter& );
 
     virtual void onHitMessage(PowerUpHitMesg* )
     { }

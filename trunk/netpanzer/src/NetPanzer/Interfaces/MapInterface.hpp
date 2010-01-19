@@ -20,15 +20,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <list>
 
-#include "Classes/TileSet.hpp"
+#include "TileInterface.hpp"
+#include "Classes/WorldMap.hpp"
 #include "Classes/SpawnList.hpp"
-
-struct SDL_Color;
+#include "Classes/WadMapTable.hpp"
 
 class MapEventListener
 {
 public:
-    virtual ~MapEventListener() {}
+    virtual ~MapEventListener() {};
 protected:
     virtual void onMapLoadedEvent() = 0;
 private:
@@ -36,17 +36,24 @@ private:
 };
 
 
-class MapInterface
+class MapInterface : protected TileInterface
 {
+private:
+    typedef std::list<MapEventListener *> MapListenerList;
+    static MapListenerList listenerList;
+    
+protected:
+    static WorldMap main_map;
+    static SpawnList spawn_list;
+    static WadMapTable wad_mapping_table;
+    static char map_path[256];
+    static const int TILE_WIDTH = 32;
+    static const int TILE_HEIGHT = 32;
+
+protected:
+    static void generateMappingTable();
+
 public:
-    static bool load(const char *file_path);
-    static void cleanUp();
-
-    static unsigned char getMovementValue( iXY map_loc );
-    static unsigned char getWorldPixMovementValue( int worldX, int worldY );
-    static iXY getFreeSpawnPoint() { return spawn_list->getFreeSpawnPoint(); }
-    static bool isLoaded() { return map_data != 0; }
-
     static void addMapEventListener(MapEventListener *lis)
     {
         listenerList.push_back(lis);
@@ -59,75 +66,174 @@ public:
     
     static void getMapPointSize(iXY *map_size)
     {
-        map_size->x = width * TileSet::getTileXsize();
-        map_size->y = height * TileSet::getTileYsize();
+        map_size->x = main_map.getWidth() * tile_set.getTileXsize();
+        map_size->y = main_map.getHeight() * tile_set.getTileYsize();
     }
 
-    static unsigned int getWidth() { return width; }
-    static unsigned int getHeight() { return height; }
-
-    static int getValue(size_t x, size_t y)
+    static iXY getSize()
     {
-        return map_data[(y*width) + x];
+        return iXY(main_map.getWidth(), main_map.getHeight());
+    }
+
+    static size_t getWidth()
+    {
+        return main_map.getWidth();
+    }
+
+    static size_t getHeight()
+    {
+        return main_map.getHeight();
+    }
+
+    static WorldMap::MapElementType MapValue(size_t x, size_t y)
+    {
+        return main_map.getValue(x, y);
+    }
+
+    static WorldMap::MapElementType MapValue(size_t offset)
+    {
+        return main_map.getValue(offset);
+    }
+
+    static void offsetToPointXY(size_t offset, size_t* point_x, size_t *point_y )
+    {
+        *point_y = ( offset  /  main_map.getWidth() );
+
+        *point_x = ( offset - ( (*point_y) * main_map.getWidth() ) ) * TILE_WIDTH
+                   + (TILE_WIDTH / 2);
+
+        *point_y = (*point_y) * TILE_HEIGHT + (TILE_HEIGHT / 2);
+    }
+
+    static void offsetToMapXY(size_t offset, size_t& x, size_t& y)
+    {
+        y = offset / main_map.getWidth();
+        x = offset - y * main_map.getWidth();
+    }
+
+    static void offsetToMapXY(size_t offset, iXY *map_loc)
+    {
+        size_t map_x, map_y;
+        offsetToMapXY(offset, map_x, map_y);
+        map_loc->x = map_x;
+        map_loc->y = map_y;
     }
 
     static void mapXYtoPointXY(unsigned short map_x, unsigned short map_y,
                                size_t *point_x, size_t *point_y )
     {
-        *point_x = (map_x * TILE_WIDTH) + (TILE_WIDTH / 2);
-        *point_y = (map_y * TILE_HEIGHT) + (TILE_HEIGHT / 2);
+        iXY loc = mapXYtoPointXY(iXY(map_x, map_y));
+        *point_x = loc.x;
+        *point_y = loc.y;
     }
 
-    static void mapXYtoPointXY(const iXY& map_loc, iXY *loc)
+    static void mapXYtoPointXY(iXY map_loc, iXY *loc)
     {
-        loc->x = (map_loc.x * TILE_WIDTH) + (TILE_WIDTH / 2);
-        loc->y = (map_loc.y * TILE_HEIGHT) + (TILE_HEIGHT / 2);
+        *loc = mapXYtoPointXY(map_loc);
+    }
+
+    static iXY mapXYtoPointXY(iXY map_loc)
+    {
+#ifdef DEBUG
+        assert(inside(map_loc));
+#endif
+        return iXY((map_loc.x * TILE_WIDTH) + (TILE_WIDTH / 2),
+                (map_loc.y * TILE_HEIGHT) + (TILE_HEIGHT / 2));
     }
 
     static void pointXYtoMapXY(size_t point_x, size_t point_y,
             unsigned short *map_x, unsigned short *map_y )
     {
-        *map_x = point_x / TILE_WIDTH;
-        *map_y = point_y / TILE_HEIGHT;
+        iXY mapxy = pointXYtoMapXY(iXY(point_x, point_y));
+        *map_x = mapxy.x;
+        *map_y = mapxy.y;
     }
 
     static void pointXYtoMapXY(const iXY& point, iXY *map_loc)
     {
-        map_loc->x = point.x / TILE_WIDTH;
-        map_loc->y = point.y / TILE_HEIGHT;
+        *map_loc = pointXYtoMapXY(point);
+    }
+
+    static iXY pointXYtoMapXY(const iXY& point)
+    {
+#ifdef DEBUG
+        assert(point.x >= 0 && point.x >= 0 
+                && point.x < (int) (getWidth() * TILE_WIDTH)
+                && point.y < (int) (getHeight() * TILE_HEIGHT));
+#endif
+        return iXY(point.x / TILE_WIDTH, point.y / TILE_HEIGHT);
     }
 
     static size_t mapXYtoOffset(size_t map_x, size_t map_y)
     {
-        return (map_y * width) + map_x;
+        return mapXYtoOffset(iXY(map_x, map_y));
     }
 
     static size_t mapXYtoOffset(const iXY& map_loc)
     {
-        return mapXYtoOffset(map_loc.x, map_loc.y);
+        return map_loc.y * main_map.getWidth() + map_loc.x;
     }
 
-    static void offsetToMapXY(size_t offset, iXY *map_loc)
+    static void markLocHack(const iXY& loc)
     {
-        map_loc->y = offset/width;
-        map_loc->x = offset - (map_loc->y * width);
+        main_map.setMapValue(loc.x, loc.y, 27);
     }
 
-private:
-    typedef std::list<MapEventListener *> MapListenerList;
-    static MapListenerList listenerList;
+    static void unmarkLocHack(const iXY& loc)
+    {
+        main_map.setMapValue(loc.x, loc.y, 28);
+    }
 
-    static const int TILE_WIDTH = 32;
-    static const int TILE_HEIGHT = 32;
+    static void normalizePointXY(size_t point_x, size_t point_y, size_t *norm_x, size_t *norm_y)
+    {
+        unsigned short map_x, map_y;
 
-    static int* map_data;
-    static unsigned int width;
-    static unsigned int height;
-    static char tileset_name[256];
+        pointXYtoMapXY( point_x, point_y, &map_x, &map_y );
+        mapXYtoPointXY( map_x, map_y, norm_x, norm_y );
+    }
 
-    static SpawnList * spawn_list;
+    static WorldMap* getMap()
+    {
+        return( &main_map );
+    }
 
-    static void notifyMapLoad();
+    static bool inside(const iXY& map_loc)
+    {
+        if(map_loc.x < 0 || map_loc.y < 0
+                || map_loc.x >= (int) getWidth() 
+                || map_loc.y >= (int) getHeight())
+            return false;
+
+        return true;
+    }
+
+protected:
+    static void finishMapLoad();
+
+public:
+    static bool startMapLoad(const char *file_path, bool load_tiles, size_t partitions);
+    static bool loadMap( int *percent_complete );
+
+    static bool isMapLoaded()
+    {
+        return( main_map.isMapLoaded() );
+    }
+
+    static unsigned char getMovementValue( iXY map_loc );
+
+    static unsigned char getAverageColorPointXY( iXY &point_loc );
+
+    static unsigned char getAverageColorMapXY( iXY &map_loc );
+
+    static iXY getFreeSpawnPoint()
+    {
+        return spawn_list.getFreeSpawnPoint();
+    }
+
+    static SpawnList* getSpawnList()
+    {
+        return &spawn_list;
+    }
 };
 
 #endif

@@ -15,9 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
-#include "Views/Components/Button.hpp"
+#include <config.h>
 
 #include "Views/MainMenu/Options/InterfaceView.hpp"
 #include "Interfaces/GameConfig.hpp"
@@ -25,11 +23,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/Label.hpp"
 
-enum
+
+static void bIncreaseScrollRate()
 {
-    DEC_SCROLL,
-    INC_SCROLL
-};
+    if(gameconfig->scrollrate + 100 <= gameconfig->scrollrate.getMax())
+        gameconfig->scrollrate = gameconfig->scrollrate + 100;
+}
+
+static void bDecreaseScrollRate()
+{
+    if(gameconfig->scrollrate - 100 >= gameconfig->scrollrate.getMin())
+        gameconfig->scrollrate = gameconfig->scrollrate - 100;
+}
 
 static int getScrollRate()
 {
@@ -68,19 +73,18 @@ void InterfaceView::initButtons()
 
     x = xTextStart;
     add( new Label( x, y, "Scroll Rate", Color::white) );
-
     x = optionsMeterStartX;
-    add( Button::createTextButton("decscroll","<",iXY(x-1,y),arrowButtonWidth, DEC_SCROLL));
+    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseScrollRate);
     x += optionsMeterWidth + arrowButtonWidth;
-    add( Button::createTextButton("incscroll",">",iXY(x+1,y),arrowButtonWidth, INC_SCROLL));
+    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseScrollRate);
     y += yOffset;
 }
 
 // doDraw
 //---------------------------------------------------------------------------
-void InterfaceView::doDraw()
+void InterfaceView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    MenuTemplateView::doDraw();
+    MenuTemplateView::doDraw(viewArea, clientArea);
 
     char strBuf[256];
 
@@ -96,32 +100,8 @@ void InterfaceView::doDraw()
     sprintf(strBuf, "%d %%", int((float(getScrollRate()) / 
                     float(gameconfig->scrollrate.getMax())) * 100.0f));
     tempSurface.bltStringCenter(strBuf, meterTextColor);
-    drawImage(tempSurface, x, y);
+    tempSurface.blt(clientArea, x, y);
 } // end InterfaceView::doDraw
-
-void
-InterfaceView::onComponentClicked(Component* c)
-{
-    switch ( c->getCustomCode() )
-    {
-        case DEC_SCROLL:
-            if(gameconfig->scrollrate - 100 >= gameconfig->scrollrate.getMin())
-            {
-                gameconfig->scrollrate = gameconfig->scrollrate - 100;
-            }
-            break;
-
-        case INC_SCROLL:
-            if(gameconfig->scrollrate + 100 <= gameconfig->scrollrate.getMax())
-            {
-                gameconfig->scrollrate = gameconfig->scrollrate + 100;
-            }
-            break;
-
-        default:
-            OptionsTemplateView::onComponentClicked(c);
-    }
-}
 
 // loadTitleSurface
 //---------------------------------------------------------------------------

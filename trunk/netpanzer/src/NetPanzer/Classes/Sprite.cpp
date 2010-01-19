@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 #include "Classes/Sprite.hpp"
 #include "2D/Palette.hpp"
 
@@ -30,16 +30,16 @@ Sprite::Sprite( )
 SpritePacked::SpritePacked()
         : Sprite()
 {
+    colorTable = 0;
     drawMode   = SOLID;
-    alpha = 255;
 }
 
-SpritePacked::SpritePacked( Surface &source )
+SpritePacked::SpritePacked( PackedSurface &source )
         : Sprite()
 {
-    imageData.linkData( source );
+    setTo( source );
+    colorTable = 0;
     drawMode   = SOLID;
-    alpha = 255;
 }
 
 bool SpritePacked::isVisible(const iRect &world_win ) const
@@ -51,8 +51,8 @@ bool SpritePacked::isVisible(const iRect &world_win ) const
     long pix_x;
     long pix_y;
 
-    pix_x = imageData.getWidth() >> 1;
-    pix_y = imageData.getHeight() >> 1;
+    pix_x = pix.x >> 1;
+    pix_y = pix.y >> 1;
 
     min_x = world_pos.x - pix_x;
     min_y = world_pos.y - pix_y;
@@ -66,6 +66,17 @@ bool SpritePacked::isVisible(const iRect &world_win ) const
         return( false );
 
     return( true );
+
+    /*
+     iXY temp_pix = pix;
+     temp_pix.x = temp_pix.x/2;
+     temp_pix.y = temp_pix.y/2;
+        
+     if ( world_win.clip( iRect( world_pos - temp_pix, world_pos + temp_pix) ) )  
+      return( false );
+
+     return( true );  
+     */
 }
 
 void SpritePacked::blit( Surface *surface, const iRect &world_win )
@@ -74,16 +85,12 @@ void SpritePacked::blit( Surface *surface, const iRect &world_win )
 
     blit_offset = (world_pos + attach_offset) - world_win.min;
 
-    if (drawMode == BLEND)
-    {
-        imageData.bltBlend(*surface, blit_offset.x, blit_offset.y, alpha);
-    }
-    else if (drawMode == SOLID)
-    {
-        imageData.bltSolid(*surface, blit_offset.x, blit_offset.y);
-    }
-    else
-    {
+    if (drawMode == BLEND) {
+        bltBlend(*surface, blit_offset.x, blit_offset.y, *colorTable);
+
+    } else if (drawMode == SOLID) {
+        blt(*surface, blit_offset);
+    } else {
         assert(false);
     }
 }

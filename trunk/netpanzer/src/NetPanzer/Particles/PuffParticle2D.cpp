@@ -15,28 +15,26 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
 
 #include "PuffParticle2D.hpp"
+#include "2D/PackedSurface.hpp"
+#include "Util/TimerInterface.hpp"
 #include "ParticleSystemGlobals.hpp"
+#include "Util/Exception.hpp"
+#include "2D/Palette.hpp"
 #include "Interfaces/GameConfig.hpp"
-#include "Util/Log.hpp"
-#include "2D/ImageArray.hpp"
 
-#include "lua/lua.hpp"
-
-typedef struct s_PuffArray
-{
-    unsigned int num_puff_types;
-    ImageArray* puffImageArray;
-} PuffArray;
-
-static PuffArray* puff_array = 0;
+// Static images.
+PackedSurfaceList PuffParticle2D::staticPackedSmokeLightPuff;
+PackedSurfaceList PuffParticle2D::staticPackedSmokeDarkPuff;
+PackedSurfaceList PuffParticle2D::staticPackedDirtPuff;
 
 // PuffParticle2D
 //---------------------------------------------------------------------------
 PuffParticle2D::PuffParticle2D(	const fXYZ &pos,
                                 const fXYZ &shadowPos,
-                                unsigned int particleType,
+                                PUFF_TYPE   particleType,
                                 float       minScale,
                                 float       randScale,
                                 int         minFPS,
@@ -55,7 +53,7 @@ PuffParticle2D::PuffParticle2D(	const fXYZ &pos,
 
 // create
 //---------------------------------------------------------------------------
-void PuffParticle2D::create( unsigned int particleType,
+void PuffParticle2D::create(	PUFF_TYPE particleType,
                              float     scaleMin,
                              float     scaleRand,
                              int       FPSmin,
@@ -73,23 +71,39 @@ void PuffParticle2D::create( unsigned int particleType,
     PuffParticle2D::shadowLayer = shadowLayer;
     PuffParticle2D::isFarAway   = isFarAway;
 
-    if ( particleType >= puff_array->num_puff_types )
-    {
-        particleType = 0;
-        LOGGER.warning("Wrong puff_type %d, using 0", particleType);
+    index = getPakIndex(scale, staticPackedSmokeLightPuff.size());
+
+    if (particleType == LIGHT) {
+        packedSurface.setData( *(staticPackedSmokeLightPuff[index]) );
+        packedSurfaceShadow.setData( *(staticPackedSmokeLightPuff[index]) );
+    } else if (particleType == DARK) {
+        packedSurface.setData( *(staticPackedSmokeDarkPuff[index]) );
+        packedSurfaceShadow.setData( *(staticPackedSmokeDarkPuff[index]) );
+    } else if (particleType == DIRT) {
+        packedSurface.setData( *(staticPackedDirtPuff[index]) );
+        packedSurfaceShadow.setData( *(staticPackedDirtPuff[index]) );
+    } else {
+        throw Exception("ERROR: Unsupported particleType.");
     }
 
-    index = getPakIndex(scale, puff_array->puffImageArray[particleType].size());
+    packedSurfaceShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
 
-    Surface *s = puff_array->puffImageArray[particleType].getImage(index);
+    if (gameconfig->blendsmoke) {
+        int randColorTable = rand() % 4;
 
-    packedSurface.setData( *s );
-    packedSurfaceShadow.setData( *s );
+        if (randColorTable == 0) {
+            packedSurface.setDrawModeBlend(&Palette::colorTable2080);
+        } else if(randColorTable == 1) {
+            packedSurface.setDrawModeBlend(&Palette::colorTable4060);
+        } else if(randColorTable == 2) {
+            packedSurface.setDrawModeBlend(&Palette::colorTable6040);
+        } else if(randColorTable == 3) {
+            packedSurface.setDrawModeBlend(&Palette::colorTable8020);
 
-    packedSurfaceShadow.setDrawModeBlend(32); // dark a little
+        } else {
+            assert(false);
+        }
 
-    if ( GameConfig::video_blendsmoke ) {
-        packedSurface.setDrawModeBlend(128);
     } else {
         packedSurface.setDrawModeSolid();
     }
@@ -112,7 +126,7 @@ void PuffParticle2D::create( unsigned int particleType,
 //---------------------------------------------------------------------------
 // Purpose: Draws a single puff particle, no simulation.
 //---------------------------------------------------------------------------
-void PuffParticle2D::draw(SpriteSorter &sorter)
+void PuffParticle2D::draw(const Surface&, SpriteSorter &sorter)
 {
     if (!packedSurface.nextFrame()) {
         isAlive = false;
@@ -124,10 +138,10 @@ void PuffParticle2D::draw(SpriteSorter &sorter)
     packedSurface.setAttrib(iXY((int) pos.x, (int) pos.z), layer);
     sorter.addSprite(&packedSurface);
 
-    if (GameConfig::video_shadows) {
+    if (gameconfig->displayshadows) {
         if (!userDefinedShadowPos) {
             shadowPos.x = pos.x - ((float(index) /
-                        float(puff_array->puffImageArray[0].size())) * packedSurfaceShadow.getCurFrame() * 10);
+                        float(staticPackedSmokeLightPuff.size())) * packedSurfaceShadow.getCurFrame() * 10);
         }
 
         packedSurfaceShadow.setAttrib(iXY((int) shadowPos.x, (int) shadowPos.z), shadowLayer);
@@ -136,45 +150,41 @@ void PuffParticle2D::draw(SpriteSorter &sorter)
 
 } // end PuffParticle2D::draw
 
-static bool loadPuffData(lua_State *L, const char * field_name, int puff_num)
+// init
+//---------------------------------------------------------------------------
+void PuffParticle2D::init()
 {
-    if ( ! lua_istable(L, -1) )
-    {
-        LOGGER.warning("BAD %s configuration, not loaded.", field_name);
-        return false;
+    //loadTILFiles();
+    loadPAKFiles();
+
+    // Uncomment the following to produce packed puff particles.
+    //pakFiles();
+
+} // end PuffParticle2D::init
+
+//---------------------------------------------------------------------------
+void PuffParticle2D::loadPAKFiles()
+{
+    char pathSmokeLight[] = "pics/particles/puff/smokeLight/pak/";
+
+    if (!loadAllPAKInDirectory(pathSmokeLight, staticPackedSmokeLightPuff)) {
+        throw Exception("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeLight);
     }
 
-    puff_array->puffImageArray[puff_num].loadImageSheetArray(L);
-    return true;
-}
+    char pathSmokeDark[] = "pics/particles/puff/smokeDark/pak/";
 
-static void ensurePuffArray()
-{
-    if ( ! puff_array )
-    {
-        puff_array = new PuffArray;
-        puff_array->num_puff_types = 3;
-        puff_array->puffImageArray = new ImageArray[3]();
+    if (!loadAllPAKInDirectory(pathSmokeDark, staticPackedSmokeDarkPuff)) {
+        throw Exception("ERROR: Unable to load any smoke puff particle images in %s", pathSmokeDark);
+    }
+
+    char pathDirt[] = "pics/particles/puff/dirt/pak/";
+
+    if (!loadAllPAKInDirectory(pathDirt, staticPackedDirtPuff)) {
+        throw Exception("ERROR: Unable to load any dirt puff particle images in %s", pathDirt);
     }
 }
 
-int PuffParticle2D::loadLightPuff(lua_State* L, void* v)
+//---------------------------------------------------------------------------
+void PuffParticle2D::loadTILFiles()
 {
-    ensurePuffArray();
-    loadPuffData(L, "lightpuffs", LIGHT);
-    return 0;
-}
-
-int PuffParticle2D::loadDarkPuff(lua_State* L, void* v)
-{
-    ensurePuffArray();
-    loadPuffData(L, "darkpuffs", DARK);
-    return 0;
-}
-
-int PuffParticle2D::loadDirtPuff(lua_State* L, void* v)
-{
-    ensurePuffArray();
-    loadPuffData(L, "dirtpuffs", DIRT);
-    return 0;
 }

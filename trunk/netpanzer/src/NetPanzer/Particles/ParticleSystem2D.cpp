@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include <assert.h>
 #include "ParticleSystem2D.hpp"
@@ -158,7 +158,7 @@ void ParticleSystem2D::simAll()
 
 // drawAll
 //---------------------------------------------------------------------------
-void ParticleSystem2D::drawAll(SpriteSorter &sorter)
+void ParticleSystem2D::drawAll(const Surface &clientArea, SpriteSorter &sorter)
 {
     // Go through and draw all the particle systems.
     ParticleSystem2D *e = zParticleSystem2D->next;
@@ -166,7 +166,7 @@ void ParticleSystem2D::drawAll(SpriteSorter &sorter)
 
     while (e != zParticleSystem2D) {
         nextPtr = e->next;
-        e->draw( sorter);
+        e->draw(clientArea, sorter);
         e = nextPtr;
     }
 

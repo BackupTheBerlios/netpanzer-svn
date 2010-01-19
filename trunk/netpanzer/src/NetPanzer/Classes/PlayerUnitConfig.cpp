@@ -15,11 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 #include "Classes/PlayerUnitConfig.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Units/UnitProfileInterface.hpp"
-#include "Core/GlobalGameState.hpp"
 
 PlayerUnitConfig::PlayerUnitConfig()
 {
@@ -28,7 +27,7 @@ PlayerUnitConfig::PlayerUnitConfig()
 void PlayerUnitConfig::initialize()
 {
     max_allowed_units = gameconfig->maxunits / gameconfig->maxplayers;
-    unit_spawn_list.resize(global_game_state->unit_profile_interface->getNumUnitTypes(), 0);
+    unit_spawn_list.resize(UnitProfileInterface::getNumUnitTypes(), 0);
     
     int rem_units = max_allowed_units;
     int numunits;
@@ -36,7 +35,7 @@ void PlayerUnitConfig::initialize()
     vector<ConfigVariable*>::iterator i = gameconfig->spawnsettings.begin();
     while ( i != gameconfig->spawnsettings.end() )
     {
-        UnitProfile * u = global_game_state->unit_profile_interface->getProfileByName((*i)->getName());
+        UnitProfile * u = UnitProfileInterface::getProfileByName((*i)->getName());
         if ( u )
         {
             numunits = *(ConfigInt *)(*i);
@@ -55,7 +54,7 @@ void PlayerUnitConfig::initialize()
         for ( int a=0; a<(int)unit_spawn_list.size(); a++ )
         {
             unit_spawn_list[a] = 1;
-            UnitProfile * u = global_game_state->unit_profile_interface->getUnitProfile(a);
+            UnitProfile * u = UnitProfileInterface::getUnitProfile(a);
             gameconfig->spawnsettings.push_back(new ConfigInt(u->unitname,1));
         }
     }

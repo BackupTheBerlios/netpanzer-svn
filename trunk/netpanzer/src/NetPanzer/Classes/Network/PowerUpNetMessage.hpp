@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Core/CoreTypes.hpp"
 #include "NetMessage.hpp"
 
+#include "Units/UnitBase.hpp"
+
 enum { _net_message_id_powerup_create,
        _net_message_id_powerup_hit
      };
@@ -46,18 +48,18 @@ public:
     }
     void set(iXY map_loc, PowerUpID ID, int type)
     {
-        this->map_loc_x = SDL_SwapLE32(map_loc.x);
-        this->map_loc_y = SDL_SwapLE32(map_loc.y);
+        this->map_loc_x = htol32(map_loc.x);
+        this->map_loc_y = htol32(map_loc.y);
         this->ID = PowerUpID_toPortable(ID); // XXX protocol
-        this->type = SDL_SwapLE32(type);
+        this->type = htol32(type);
     }
     Sint32 getLocX() const
     {
-        return SDL_SwapLE32(map_loc_x);
+        return ltoh32(map_loc_x);
     }
     Sint32 getLocY() const
     {
-        return SDL_SwapLE32(map_loc_y);
+        return ltoh32(map_loc_y);
     }
     PowerUpID getID() const
     {
@@ -65,7 +67,7 @@ public:
     }
     Sint32 getType() const
     {
-        return SDL_SwapLE32(type);
+        return ltoh32(type);
     }
 } __attribute__((packed));
 
@@ -87,8 +89,8 @@ public:
     void set(PowerUpID ID, Uint16 player_id, int type=0)
     {
         this->ID = PowerUpID_toPortable(ID); // XXX protocol
-        this->player_id = SDL_SwapLE16(player_id);
-        this->unit_powerup_type = SDL_SwapLE32(type);
+        this->player_id = htol16(player_id);
+        this->unit_powerup_type = htol32(type);
     }
     PowerUpID getID() const
     {
@@ -96,11 +98,11 @@ public:
     }
     Uint16 getPlayerID() const
     {
-        return SDL_SwapLE16(player_id);
+        return ltoh16(player_id);
     }
     Sint32 getUnitPowerupType() const
     {
-        return SDL_SwapLE32(unit_powerup_type);
+        return ltoh32(unit_powerup_type);
     }
 } __attribute__((packed));
 

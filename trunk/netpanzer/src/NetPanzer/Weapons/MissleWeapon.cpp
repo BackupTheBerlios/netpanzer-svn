@@ -15,9 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
 
-#include "Core/GlobalEngineState.hpp"
-#include "Core/GlobalGameState.hpp"
 #include "MissleWeapon.hpp"
 #include "Classes/UnitMessageTypes.hpp"
 #include "Classes/Network/NetworkState.hpp"
@@ -28,6 +27,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleInterface.hpp"
 #include "WeaponGlobals.hpp"
 #include "Util/Math.hpp"
+#include "Particles/FlashParticle2D.hpp"
+
 
 float MissleWeapon::thrustForce = gMissleThrustForce;
 // size 0 = small 1 = medium
@@ -43,22 +44,25 @@ MissleWeapon::MissleWeapon(UnitID owner, unsigned short owner_type_id, unsigned 
     // Set the correct missle type.
     if ( size ) {
         shell.setData(gMissleMediumPackedSurface);
-        shellShadow.setData(gMissleMediumShadowSurface);
+        shellShadow.setData(gMissleMediumPackedSurface);
 
     } else {
         shell.setData(gMissleSmallPackedSurface);
-        shellShadow.setData(gMissleSmallShadowSurface);
+        shellShadow.setData(gMissleSmallPackedSurface);
     }
 
     shell.setFrame(getGoalAngle(start, end));
     shell.setAttrib(location, weaponLayer);
 
+    shellShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
     shellShadow.setFrame(getGoalAngle(start, end));
     shellShadow.setAttrib(location, weaponShadowLayer);
 
+    thrust.setDrawModeBlend(&Palette::colorTableBrighten);
     thrust.setData(gMissleThrustPackedSurface);
     thrust.setAttrib(location, weaponPuffLayer);
 
+    groundLight.setDrawModeBlend(&Palette::colorTableBrighten);
     groundLight.setData(gMissleGroundLightPackedSurface);
     groundLight.setAttrib(location, weaponPuffLayer);
 }
@@ -106,7 +110,7 @@ void MissleWeapon::fsmFlight()
                 UMesgWeaponHit weapon_hit;
 
                 if ( NetworkState::status == _network_state_server ) {
-                    weapon_hit.setHeader(0);
+                    weapon_hit.setHeader(0, _umesg_flag_broadcast);
                     weapon_hit.message_id = _umesg_weapon_hit;
                     weapon_hit.setOwnerUnitID(owner_id);
                     weapon_hit.setHitLocation(location);
@@ -118,7 +122,7 @@ void MissleWeapon::fsmFlight()
                 lifecycle_status = _lifecycle_weapon_in_active;
 
                 //SFX
-                global_engine_state->sound_manager->playAmbientSound("hit",
+                sound->playAmbientSound("hit",
                                         WorldViewInterface::getCameraDistance( location ) );
 
                 // **  Particle Shit
@@ -148,7 +152,7 @@ void MissleWeapon::updateStatus( void )
 
     groundLight.setWorldPos(location.x + thrustOffset.x, location.y + thrustOffset.y + heightFromGround);
 
-    if (GameConfig::video_shadows) {
+    if (gameconfig->displayshadows) {
         shellShadow.setWorldPos(location.x - 20, location.y);
     }
 }
@@ -159,7 +163,7 @@ void MissleWeapon::offloadGraphics(SpriteSorter &sorter)
     sorter.addSprite(&thrust);
     //sorter.addSprite(&groundLight);
 
-    if (GameConfig::video_shadows) {
+    if (gameconfig->displayshadows) {
         sorter.addSprite(&shellShadow);
     }
 }

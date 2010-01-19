@@ -19,9 +19,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "Util/NTimer.hpp"
-#include "Core/GlobalGameState.hpp"
+
+
 #include "Util/Log.hpp"
 #include "MiniMap.hpp"
+
+
+// work in progres first has to change the input handling of game.
 
 #include "Core/CoreTypes.hpp"
 #include "Views/Components/MiniMap.hpp"
@@ -33,7 +37,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "PowerUps/EnemyRadarPowerUp.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
-#include "Units/Unit.hpp"
 
 MiniMap::MiniMap(int x, int y, int w, int h) : mousepos(0,0)
 {
@@ -54,23 +57,13 @@ MiniMap::~MiniMap()
 }
 
 void
-MiniMap::draw( int posx, int posy, Surface &dest)
+MiniMap::draw(Surface &dest)
 {
-    if ( dirty )
-    {
-        regenerate();
-        dirty = false;
-    }
-    
-    iXY oldpos(position);
-    position.x += posx;
-    position.y += posy;
-
-    surface.blt(dest, position.x, position.y);
+    //regenerate();
+    surface.blt(dest,position.x, position.y);
     drawObjectives(dest);
     drawUnits(dest);
     drawWorldAndMouseBox(dest);
-    position = oldpos;
 }
 
 void
@@ -126,24 +119,30 @@ void
 MiniMap::regenerate()
 {
     LOGGER.warning("Regenerating minimap....");
+    PIX *ptr = surface.getFrame0();
+    if ( !ptr )
+        return;
     
+    xratio = (float)MapInterface::getWidth() / surface.getWidth();    
+    yratio = (float)MapInterface::getHeight() / surface.getHeight();
     float mapx;
     float mapy = 0.0f;
-    const SDL_Color * oldColor;
-
-    xratio = (float)MapInterface::getWidth() / surface.getWidth();
-    yratio = (float)MapInterface::getHeight() / surface.getHeight();
     
+    PIX *curline = ptr;
+    PIX *curptr;
     for ( int y=0; y<(int)surface.getHeight(); y++)
     {
+        curptr = curline;
         mapx = 0.0f;
         for ( int x=0; x<(int)surface.getWidth(); x++)
         {
+            iXY pos(mapx,mapy);
             // XXX Beware, no check for limits, could raise assert and quit the game.
-            oldColor = TileSet::getAverageTileColor(MapInterface::getValue((int)mapx, (int)mapy));
-            surface.putPixel(x, y, oldColor->r, oldColor->g, oldColor->b);
+            *curptr = MapInterface::getAverageColorMapXY(pos);
+            curptr++;
             mapx += xratio;
         }
+        curline += surface.getPitch();
         mapy += yratio;
     }
 }
@@ -153,10 +152,10 @@ MiniMap::drawObjectives(Surface &dest)
 {
     iRect objective_rect, map_rect;
     unsigned char objective_status;
-    IntColor color = Color::black;
+    PIX color;
     ObjectiveID objective_id;
 
-    ObjectiveInterface::startObjectivePositionEnumeration(PlayerInterface::getLocalPlayerIndex());
+    ObjectiveInterface::startObjectivePositionEnumeration();
 
     while( ObjectiveInterface::objectivePositionEnumeration( &objective_rect, &objective_status, &objective_id ) )
     {
@@ -219,12 +218,12 @@ MiniMap::drawObjectives(Surface &dest)
 void
 MiniMap::drawUnits(Surface &dest)
 {
-    const UnitInterface::Units* units = UnitInterface::getUnits();
-    for(UnitInterface::Units::const_iterator i = units->begin();
-            i != units->end(); ++i)
+    const UnitInterface::Units& units = UnitInterface::getUnits();
+    for(UnitInterface::Units::const_iterator i = units.begin();
+            i != units.end(); ++i)
     {
-        Unit* unit = i->second;
-        IntColor color;
+        UnitBase* unit = i->second;
+        PIX color;
         bool forceLarge = false;
         UnitState& unit_state = unit->unit_state;
         iXY map_loc = iXY( int(float(unit_state.location.x/32) / xratio)+position.x,
@@ -278,7 +277,7 @@ MiniMap::drawUnits(Surface &dest)
 }
 
 void
-MiniMap::drawUnit(Surface &dest, const iXY loc, IntColor color, bool forceLarge)
+MiniMap::drawUnit(Surface &dest, const iXY loc, PIX color, bool forceLarge)
 {
     dest.putPixel( loc.x  , loc.y  , color );
     if ( gameconfig->radar_unitsize == _mini_map_unit_size_large || forceLarge )
@@ -300,14 +299,14 @@ MiniMap::drawWorldAndMouseBox(Surface &dest)
     world_win.max.x = int(float(world_win.max.x/32) / xratio)+position.x;
     world_win.max.y = int(float(world_win.max.y/32) / yratio)+position.y;
 
-    dest.bltLookup(world_win);
+    dest.bltLookup(world_win, Palette::darkGray256.getColorArray());
     dest.drawBoxCorners(world_win, 5, Color::white);
     
     if ( mouseinside )
     {
         iXY size(world_win.getSize());
-        world_win.min = (mousepos - (size/2)) + position;
-        world_win.max = (world_win.min + size);
+        world_win.min = mousepos - (size/2);
+        world_win.max = world_win.min + size;
         dest.drawBoxCorners(world_win, 5, Color::red);
     }
 }

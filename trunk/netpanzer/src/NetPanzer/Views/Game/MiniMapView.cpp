@@ -15,11 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "MiniMapView.hpp"
 #include "Views/Components/MiniMap.hpp"
-#include "Classes/WorldInputCmdProcessor.hpp"
 
 // MiniMapView
 //---------------------------------------------------------------------------
@@ -30,6 +29,7 @@ MiniMapView::MiniMapView() : GameTemplateView()
     setSearchName("MiniMapView");
     setTitle("MiniMapView");
     setSubTitle("");
+    setAllowResize(false);
     setDisplayStatusBar(false);
     setVisible(false);
     setAllowMove(true);
@@ -56,16 +56,10 @@ MiniMapView::checkResolution(iXY oldResolution, iXY newResolution)
 
 // doDraw
 //---------------------------------------------------------------------------
-void MiniMapView::doDraw()
+void MiniMapView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     // border
-    drawRect(iRect(0,0,clientRect.getSizeX()-1, clientRect.getSizeY()-1),Color::gray);
+    viewArea.drawRect(iRect(0,0,viewArea.getWidth(), viewArea.getHeight()),Color::gray);
     
-    GameTemplateView::doDraw();
+    GameTemplateView::doDraw(viewArea, clientArea);
 } // end doDraw
-
-void
-MiniMapView::processEvents()
-{
-    COMMAND_PROCESSOR.process(false);
-}

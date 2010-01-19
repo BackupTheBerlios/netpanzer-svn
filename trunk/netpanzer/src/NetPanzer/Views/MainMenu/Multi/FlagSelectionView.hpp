@@ -18,32 +18,32 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __FlagSelectionView_hpp__
 #define __FlagSelectionView_hpp__
 
-#include <string>
 #include "Core/CoreTypes.hpp"
 #include "Views/MainMenu/RMouseHackView.hpp"
+#include "2D/Surface.hpp"
 
 //---------------------------------------------------------------------------
 class FlagSelectionView : public RMouseHackView
 {
 private:
-    static string playerFlagSelected;
-    enum { BORDER_SPACE = 4 };
-protected:
-    void onComponentClicked(Component * c);
+    static FlagID playerFlagSelected;
+    static Surface playerFlag;
     
+    enum { BORDER_SPACE = 4 };
+
 public:
     FlagSelectionView();
     virtual ~FlagSelectionView()
     {}
     
-    static void setSelectedFlag(string &flagname);
+    static void setSelectedFlag(FlagID code);
     
-    static string getSelectedFlag()
+    static FlagID getSelectedFlag()
     {
         return playerFlagSelected;
     }
 
-    virtual void doDraw();
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     //virtual int  lMouseUp(const iXY &downPos, const iXY &upPos);
     //virtual void drawBorder(Surface& )
     //{}

@@ -16,11 +16,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 //---------------------------------------------------------------------------
-
+#include <config.h>
 
 #include "Util/Exception.hpp"
 #include "Particles/Particle2D.hpp"
 #include "Util/TimerInterface.hpp"
+#include "2D/PackedSurface.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
 
 
@@ -35,7 +36,7 @@ int   Particle2D::createParticles     = 1;
 int   Particle2D::drawParticles       = 1;
 
 // Pre-allocation variables.
-const  size_t MAX_PARTICLE_CLASS_SIZE = 512;
+const  size_t MAX_PARTICLE_CLASS_SIZE = 340;
 const  int    MAX_PARTICLES           = 3000;
 //static size_t biggestParticle         = 0;
 
@@ -219,7 +220,7 @@ void Particle2D::simAll()
 
 // drawAll
 //---------------------------------------------------------------------------
-void Particle2D::drawAll(SpriteSorter &sorter)
+void Particle2D::drawAll(const Surface &clientArea, SpriteSorter &sorter)
 {
     // Go through and draw all the particles.
     Particle2D *e = zParticle2D->next;
@@ -228,7 +229,7 @@ void Particle2D::drawAll(SpriteSorter &sorter)
 
     while (e != zParticle2D) {
         nextPtr = e->next;
-        e->draw( sorter);
+        e->draw(clientArea, sorter);
         e = nextPtr;
     }
 } // end Particle2D::drawAll
@@ -237,7 +238,7 @@ void Particle2D::drawAll(SpriteSorter &sorter)
 //---------------------------------------------------------------------------
 // Purpose: Draws a single particle, no simulation.
 //---------------------------------------------------------------------------
-void Particle2D::draw(SpriteSorter&)
+void Particle2D::draw(const Surface&, SpriteSorter&)
 {} // end draw
 
 // Particle2D::sim
@@ -277,9 +278,9 @@ int Particle2D::getFPS(int FPSmin, int FPSrand)
 
 // getPakIndex
 //--------------------------------------------------------------------------
-unsigned int Particle2D::getPakIndex(float scale, unsigned int pakImageCount)
+int Particle2D::getPakIndex(float scale, int pakImageCount)
 {
-    unsigned int destIndex = (unsigned int) (scale * float(pakImageCount));
+    int destIndex = (int) (scale * float(pakImageCount));
 
     if (destIndex > pakImageCount - 1) {
         destIndex = pakImageCount - 1;

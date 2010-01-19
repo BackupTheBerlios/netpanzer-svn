@@ -62,6 +62,7 @@ public:
     static void loadFinish()
     {
         Desktop::setVisibilityAllWindows(false);
+        GameManager::loadPalette("netp");
         GameManager::setNetPanzerGameOptions();
         Desktop::setVisibility("MiniMapView", true);
         Desktop::setVisibility("GameView", true);
@@ -69,6 +70,7 @@ public:
 
     static void loadError()
     {
+        GameManager::loadPalette("netpmenu");
         Desktop::setVisibilityAllWindows(false);
         Desktop::setVisibility("MainView", true);
 
@@ -76,7 +78,6 @@ public:
     
     static void show()
     {
-        Desktop::setVisibilityAllWindows(false);
         Desktop::setVisibility("LoadingView", true);
     }
     
@@ -91,12 +92,9 @@ public:
     virtual void doActivate();
     virtual void doDeactivate();
     
-    virtual void doDraw();
+    void doDraw(Surface &viewArea, Surface &clientArea);
     void render();
     
-protected:
-    void onComponentClicked(Component *c);
-
 private:
     static list<string> lines;
     static bool dirty;

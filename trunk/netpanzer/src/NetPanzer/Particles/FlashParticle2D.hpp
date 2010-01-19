@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/Particle2D.hpp"
 #include "2D/Surface.hpp"
 
-struct lua_State;
 
 // FlashParticle2D
 //--------------------------------------------------------------------------
@@ -37,12 +36,16 @@ public:
                      int   layer,
                      bool  singleFrame = false);
 
+    static void init();
+
+    static PackedSurface staticPackedFlash;
+
 protected:
     // The size relative to the original image.  This is so we can keep
     // the images aspect ratio.
     bool  singleFrame;
 
-    virtual void draw(SpriteSorter &sorter);
+    virtual void draw(const Surface &dest, SpriteSorter &sorter);
     virtual void sim();
 
 }; // end FlashParticle2D

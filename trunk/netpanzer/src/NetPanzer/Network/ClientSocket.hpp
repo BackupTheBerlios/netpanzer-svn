@@ -19,24 +19,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __UILIB_NETWORK_CLIENTSOCKET_HPP__
 
 #include <string>
-#include <time.h>
 
 #include "Classes/Network/NetPacket.hpp"
 #include "ProxyServer.hpp"
 #include "Network/TCPSocket.hpp"
 
 class ClientSocket;
-#define SEND_BUFFER_LEN 65536
-#define MAX_SEND_PER_CYCLE 1024
+#define SEND_BUFFER_LEN 32768
 
 class ClientSocketObserver
 {
 public:
-    ClientSocketObserver(){}
-    virtual ~ClientSocketObserver(){}
+    ClientSocketObserver(){};
+    virtual ~ClientSocketObserver(){};
 protected:
     friend class ClientSocket;
     virtual void onClientConnected(ClientSocket *cso) = 0;
+    virtual void onClientDisconected(ClientSocket *cso, const char * msg) = 0;
 };
 
 class ClientSocket : public network::TCPSocketObserver
@@ -51,7 +50,7 @@ public:
     void sendRemaining();
     ProxyServer proxy;
 
-    int getId() { return id; }
+    int getId() { return id; };
     std::string getIPAddress();
     
     int getPlayerIndex()
@@ -63,14 +62,12 @@ protected:
     void onDataReceived(network::TCPSocket *so, const char *data, const int len);
     void onConnected(network::TCPSocket *so);
     void onDisconected(network::TCPSocket *so);
-    void onSocketError(network::TCPSocket *so, const char * msg);
+    void onSocketError(network::TCPSocket *so);
 
 private:
     friend class ServerConnectDaemon;
     friend class NetworkClient;
     void initId();
-    void disconnect(const char * disconnectmsg);
-
     ClientSocketObserver * observer;
     network::TCPSocket* socket;
 
@@ -80,14 +77,6 @@ private:
     Uint16 tempoffset;
     int id;
     int playerIndex;
-
-    /** statistics */
-    void logStatistics();
-    unsigned int bytesReceived;
-    unsigned int packetsReceived;
-    unsigned int bytesSent;
-    unsigned int packetsSent;
-    time_t connectStartSeconds;
 };
 
 #endif

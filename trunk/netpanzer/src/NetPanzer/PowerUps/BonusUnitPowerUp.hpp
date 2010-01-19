@@ -25,7 +25,7 @@ class BonusUnitPowerUp : public PowerUp
 protected:
     int bonus_unit_type;
 
-    virtual void onHit( Unit * unit );
+    virtual void onHit( UnitID unit_id );
 
 public:
     virtual ~BonusUnitPowerUp()

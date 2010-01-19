@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "Interfaces/ConsoleInterface.hpp"
 
@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 bool ConsoleInterface::stdout_pipe;
 
 long ConsoleInterface::console_size;
-std::vector<ConsoleLine> ConsoleInterface::line_list;
+ConsoleLineArray ConsoleInterface::line_list;
 
 iXY ConsoleInterface::surface_size;
 iRect    ConsoleInterface::bounds;
@@ -51,7 +51,7 @@ void ConsoleInterface::initialize( long size )
     assert( size > 0 );
 
     console_size = size;
-    line_list.resize( size );
+    line_list.initialize( size );
 
     line_index = console_size - 1;
 
@@ -100,7 +100,7 @@ void ConsoleInterface::update( Surface &surface )
     update_overlap( surface );
 }
 
-void ConsoleInterface::postMessage(IntColor msgcolor, bool hasFlag, FlagID flag, const char *format, ...)
+void ConsoleInterface::postMessage(PIX msgcolor, bool hasFlag, FlagID flag, const char *format, ...)
 {
     char temp_str[256];
     char *temp_str_ptr;

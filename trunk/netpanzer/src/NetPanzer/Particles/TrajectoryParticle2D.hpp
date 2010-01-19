@@ -41,7 +41,7 @@ public:
                           int         dieAtMidFlight = 0);
 
     virtual void sim();
-    virtual void draw(SpriteSorter&)
+    virtual void draw(const Surface&, SpriteSorter&)
     {}
 
 }

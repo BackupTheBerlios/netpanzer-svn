@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __MenuTemplateView_hpp__
 
 #include "Views/MainMenu/SpecialButtonView.hpp"
+#include "2D/Surface.hpp"
+#include "2D/PackedSurface.hpp"
 #include "Types/iRect.hpp"
 #include "Types/iXY.hpp"
 
@@ -26,6 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class MenuTemplateView : public SpecialButtonView
 {
 protected:
+    static  void loadNetPanzerLogo();
+
     virtual void loadBackgroundSurface();
     virtual void loadTitleSurface();
 
@@ -35,14 +39,15 @@ protected:
     float curTitleFlashTime;  // Where am I at in the flash?
     float titleFlashTimeHalf; // Time it takes for a half flash.
 
-    void onComponentClicked(Component *c);
+    typedef void (*ITEM_FUNC)(void);
+
 public:
     MenuTemplateView();
-    static void freeBackgroundSurface();
 
-    virtual void doDraw();
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void doActivate();
     virtual void doDeactivate();
+    virtual void processEvents();
 
     void initInGameOptionButtons();
     void initPreGameOptionButtons();
@@ -52,8 +57,11 @@ public:
     static char currentMultiView[256];  // Used to keep track of where you are in the multiplayer menus.
     static char currentView[256];       // Used to keep track of which menu you are currently in.
 
+    //static PackedSurface netPanzerLogo;
     static bool          firstTimeInMenu;
-
+    //static PackedSurface globeSurface;
+    static Surface       backgroundSurface;
+    static PackedSurface titlePackedSurface;
 }; // end MenuTemplateView
 
 #endif // end __MenuTemplateView_hpp__

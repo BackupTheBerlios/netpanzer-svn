@@ -15,13 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-#include "Core/GlobalGameState.hpp"
+#include <config.h>
 #include "SelectionList.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Util/Log.hpp"
-#include "Units/Unit.hpp"
+#include "Units/UnitBase.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
 #include <algorithm>
 
@@ -30,8 +29,8 @@ bool SelectionList::selectUnit(iXY point)
     deselect();
     unit_list.clear();
 
-    UnitBucketArray::queryPlayerUnitsAt(unit_list, point,
-                                        PlayerInterface::getLocalPlayerIndex());
+    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
+    UnitInterface::queryUnitsAt(unit_list, point, player_id, _search_player);
 
     select();
     if (unit_list.size() == 0)
@@ -45,8 +44,8 @@ bool SelectionList::addUnit(iXY point)
 {
     deselect();
 
-    UnitBucketArray::queryPlayerUnitsAt(unit_list, point,
-                                        PlayerInterface::getLocalPlayerIndex());
+    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
+    UnitInterface::queryUnitsAt(unit_list, point, player_id, _search_player);
 
     select();
     if (unit_list.size() == 0)
@@ -56,11 +55,29 @@ bool SelectionList::addUnit(iXY point)
     return true;
 }
 
+
+bool SelectionList::selectTarget(iXY point)
+{
+    deselect();
+    unit_list.clear();
+
+    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
+    UnitInterface::queryUnitsAt(unit_list, point, player_id,
+            _search_exclude_player);
+
+    if (unit_list.size() == 0)
+        return false;
+    
+    resetUnitCycling();
+    return true;
+}
+
 bool SelectionList::selectBounded(iRect bounds, bool addunits)
 {
+    Uint16 player_id = PlayerInterface::getLocalPlayerIndex();
+
     std::vector<UnitID> tempunits;
-    UnitBucketArray::queryPlayerUnitsInWorldRect(tempunits, bounds,
-                                       PlayerInterface::getLocalPlayerIndex() );
+    UnitInterface::queryUnitsAt(tempunits, bounds, player_id, _search_player);
     
     if ( ! tempunits.size() )
         return false;
@@ -96,7 +113,7 @@ bool SelectionList::selectSameTypeVisible( iXY point, bool addunits)
 
     std::vector<UnitID> temp_list;
 
-    UnitBucketArray::queryPlayerUnitsAt(temp_list, point, player_id);
+    UnitInterface::queryUnitsAt(temp_list, point, player_id, _search_player);
     
     if ( temp_list.empty() )
         return false;
@@ -106,7 +123,7 @@ bool SelectionList::selectSameTypeVisible( iXY point, bool addunits)
     
     iRect wr;
     WorldViewInterface::getViewWindow(&wr);
-    UnitBucketArray::queryPlayerUnitsInWorldRect(temp_list, wr, player_id );
+    UnitInterface::queryUnitsAt(temp_list, wr, player_id, _search_player);
     
     int p = temp_list.size();
     if ( !p )
@@ -132,7 +149,7 @@ void SelectionList::select()
 {
     unsigned long id_list_index;
     unsigned long id_list_size;
-    Unit *unit;
+    UnitBase *unit;
 
     std::sort(unit_list.begin(), unit_list.end());
     unit_list.erase(std::unique(unit_list.begin(), unit_list.end()), unit_list.end());
@@ -152,7 +169,7 @@ void SelectionList::deselect( void )
 {
     unsigned long id_list_index;
     unsigned long id_list_size;
-    Unit *unit;
+    UnitBase *unit;
 
     id_list_size = unit_list.size();
 
@@ -166,7 +183,7 @@ void SelectionList::deselect( void )
 
 void SelectionList::cycleNextUnit( void )
 {
-    Unit *unit;
+    UnitBase *unit;
     unsigned long start_index;
 
     start_index = unit_cycle_index;
@@ -212,7 +229,7 @@ void SelectionList::addList( SelectionList &source_list )
 
 unsigned short SelectionList::getHeadUnitType()
 {
-    Unit *unit;
+    UnitBase *unit;
 
     if ( unit_list.size() > 0 ) {
         unit = UnitInterface::getUnit( unit_list[ 0 ] );
@@ -230,7 +247,7 @@ void SelectionList::validateList()
 {
     unsigned long id_list_index;
     unsigned long id_list_size;
-    Unit *unit;
+    UnitBase *unit;
 
     id_list_size = unit_list.size();
 
@@ -247,3 +264,4 @@ void SelectionList::validateList()
 
     unit_list.clear();
 }
+

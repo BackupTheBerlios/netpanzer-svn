@@ -32,12 +32,9 @@ public:
     void refresh();
     void endQuery();
         
-    virtual void doDraw();
+    virtual void doDraw(Surface& windowArea, Surface& clientArea);
     virtual int lMouseUp(const iXY& up_pos, const iXY& down_pos);
 
-protected:
-    void onComponentClicked(Component *c);
-    
 private:
     masterserver::ServerList serverlist;
     masterserver::ServerQueryThread* queryThread;

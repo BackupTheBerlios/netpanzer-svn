@@ -25,7 +25,7 @@ using namespace std;
 
 #include "Units/UnitTypes.hpp"
 #include "Units/UnitState.hpp"
-#include "2D/Surface.hpp"
+#include "2D/PackedSurface.hpp"
 
 class UnitProfile
 {
@@ -52,10 +52,10 @@ public:
     // ** for ecm truck only **
     long  jamming_range;
     std::string imagefile;
-    Surface bodySprite;
-    Surface bodyShadow;
-    Surface turretSprite;
-    Surface turretShadow;
+    PackedSurface bodySprite;
+    PackedSurface bodyShadow;
+    PackedSurface turretSprite;
+    PackedSurface turretShadow;
     std::string soundSelected;
     std::string fireSound;
     std::string weaponType;
@@ -65,14 +65,14 @@ public:
 class UnitProfileInterface
 {
 protected:
-    vector<UnitProfile *> profiles;
-    void clearProfiles();
+    static vector<UnitProfile *> profiles;
+    static void clearProfiles();
     
 public:
-    void loadUnitProfiles( void );
-    UnitProfile * getUnitProfile( unsigned short unit_type );
-    UnitProfile * getProfileByName( const std::string &name );
-    unsigned short getNumUnitTypes()
+    static void loadUnitProfiles( void );
+    static UnitProfile * getUnitProfile( unsigned short unit_type );
+    static UnitProfile * getProfileByName( const std::string &name );
+    static unsigned short getNumUnitTypes()
     {
         return profiles.size();
     }

@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "HostView.hpp"
 #include "Interfaces/GameConfig.hpp"
@@ -85,9 +85,9 @@ HostView::HostView() : HostJoinTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void HostView::doDraw()
+void HostView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    HostJoinTemplateView::doDraw();
+    HostJoinTemplateView::doDraw(viewArea, clientArea);
 
     /*
     	char strBuf[256];
@@ -119,7 +119,7 @@ void HostView::doDraw()
     	sprintf(strBuf, "%3d", gameconfig->GetNumberPlayers());
     	clientArea.bltString(x + 125, y, strBuf, Color::white);
     */
-    View::doDraw();
+    View::doDraw(viewArea, clientArea);
 
 } // end HostView::doDraw
 

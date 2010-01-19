@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 #include "ViewCamera.hpp"
 
 ViewCamera::ViewCamera()
@@ -30,7 +30,7 @@ void ViewCamera::scrollPlusX( long scroll_increment )
     iXY map_size;
 
     view.x = loc.x + scroll_increment;
-    view.x = view.x + (view.x % 4);
+    view.x = view.x - (view.x % 4);
 
     getMapPointSize( &map_size );
 
@@ -75,7 +75,7 @@ void ViewCamera::scrollPlusY( long scroll_increment )
     iXY map_size;
 
     view.y = loc.y + scroll_increment;
-    view.y = view.y + (view.y % 4);
+    view.y = view.y - (view.y % 4);
 
     getMapPointSize( &map_size );
 

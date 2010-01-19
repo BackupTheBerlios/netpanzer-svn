@@ -15,302 +15,120 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
+
+#include <iostream>
 
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
 #include "SDLVideo.hpp"
-#include "2D/Surface.hpp"
 #include <stdlib.h>
 #ifdef _WIN32
   #include "Interfaces/GameConfig.hpp"
 #endif
 
-#define flaginfo(f,xxflag) if ( f & xxflag ) LOGGER.warning("\t" #xxflag)
-
 SDLVideo* Screen; // get rid of this later...
-
-static int best_bpp = 0;
-
-static void
-logVideoInfo()
-{
-        const SDL_VideoInfo *v = SDL_GetVideoInfo();
-        LOGGER.warning("Video Info:");
-        LOGGER.warning("\tHardware Surfaces: %d", v->hw_available);
-        LOGGER.warning("\tWindow Manager: %d", v->wm_available);
-        LOGGER.warning("\tHardware -> Hardware blit accelerated: %d", v->blit_hw);
-        LOGGER.warning("\tHardware Colorkey -> Hardware blit accelerated: %d", v->blit_hw_CC);
-        LOGGER.warning("\tHardware Alpha -> Hardware blit accelerated: %d", v->blit_hw_A);
-        LOGGER.warning("\tSoftware -> Hardware blit accelerated: %d", v->blit_sw);
-        LOGGER.warning("\tSoftware Colorkey -> Hardware blit accelerated: %d", v->blit_sw_CC);
-        LOGGER.warning("\tSoftware Alpha -> Hardware blit accelerated: %d", v->blit_sw_A);
-        LOGGER.warning("\tFill color accelerated: %d", v->blit_fill);
-        LOGGER.warning("\tHardware memory: %d", v->video_mem);
-        LOGGER.warning("\tSize: %d x %d", v->current_w, v->current_h);
-        LOGGER.warning("\tbpp: %d (%d)",v->vfmt->BitsPerPixel, v->vfmt->BytesPerPixel);
-}
-
-static void
-logAvailableModes(Uint32 flags)
-{
-    SDL_Rect ** modes = SDL_ListModes(NULL, flags | SDL_FULLSCREEN);
-    if ( modes == (SDL_Rect**) 0 )
-    {
-        LOGGER.warning("No modes available");
-    }
-    else if ( modes == (SDL_Rect**)-1 )
-    {
-        LOGGER.warning("All modes available");
-    }
-    else
-    {
-        for ( int n = 0; modes[n]; ++n )
-        {
-            LOGGER.warning("Mode: %d x %d", modes[n]->w, modes[n]->h);
-        }
-    }
-}
-
-static void
-logFlags(Uint32 f)
-{
-    flaginfo(f,SDL_SWSURFACE);
-    flaginfo(f,SDL_HWSURFACE);
-    flaginfo(f,SDL_ASYNCBLIT);
-    flaginfo(f,SDL_ANYFORMAT);
-    flaginfo(f,SDL_HWPALETTE);
-    flaginfo(f,SDL_DOUBLEBUF);
-    flaginfo(f,SDL_FULLSCREEN);
-    flaginfo(f,SDL_OPENGL);
-    flaginfo(f,SDL_OPENGLBLIT);
-    flaginfo(f,SDL_RESIZABLE);
-    flaginfo(f,SDL_HWACCEL);
-    flaginfo(f,SDL_SRCCOLORKEY);
-    flaginfo(f,SDL_RLEACCEL);
-    flaginfo(f,SDL_SRCALPHA);
-    flaginfo(f,SDL_PREALLOC);
-}
 
 SDLVideo::SDLVideo()
         : frontBuffer(0), backBuffer(0)
 {
 #ifdef _WIN32
-    if ( GameConfig::video_usedirectx )
-    {
+    if ( gameconfig->usedirectx ) {
         putenv("SDL_VIDEODRIVER=directx");
     }
 #endif
-    if ( SDL_InitSubSystem(SDL_INIT_VIDEO) )
-    {
+    if(SDL_InitSubSystem(SDL_INIT_VIDEO)) {
         throw Exception("Couldn't initialize SDL_video subsystem: %s",
-                         SDL_GetError()
-                        );
+                SDL_GetError());
     }
-
-    if ( ! best_bpp )
-    {
-        const SDL_VideoInfo *v = SDL_GetVideoInfo();
-        if ( v )
-        {
-            best_bpp = v->vfmt->BitsPerPixel;
-        }
-    }
-
-    logVideoInfo();
-
     // XXX unfortunately SDL initializes the keyboard again :-/
     SDL_EnableUNICODE(1);
 }
 
 SDLVideo::~SDLVideo()
 {
-    if ( backBuffer )
-    {
+    if(backBuffer)
         SDL_FreeSurface(backBuffer);
-    }
     
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-static bool getNearestFullScreenMode(int flags, int* width, int* height)
-{
-    SDL_Rect** modes = SDL_ListModes(0, flags);
-    if ( modes == 0 )
-    {
-        return false;
-    }
-    else if ( modes != (SDL_Rect**)-1 )
-    {
-        unsigned int min_x_dif = -1;
-        unsigned int min_y_dif = -1;
-        unsigned int nearest = 0;
-        for ( int n = 0; modes[n]; ++n )
-        {
-            unsigned int new_x_dif = abs((*width) - modes[n]->w);
-
-            if ( new_x_dif <= min_x_dif )
-            {
-                unsigned int new_y_dif = abs((*height) - modes[n]->h);
-                if ( new_y_dif <= min_y_dif )
-                {
-                    nearest = n;
-                    min_x_dif = new_x_dif;
-                    min_y_dif = new_y_dif;
-                }
-            }
-        }
-        *width = modes[nearest]->w;
-        *height = modes[nearest]->h;
-    }
-    return true;
-}
-
-void SDLVideo::setVideoMode(int width, int height, Uint32 flags)
+void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
 {
     // eventually delete old backbuffer
-    if (    frontBuffer
-         && !(frontBuffer->flags & SDL_DOUBLEBUF)
-         && backBuffer
-       )
-    {
-        SDL_FreeSurface(backBuffer);
+    if(frontBuffer && !(frontBuffer->flags & SDL_DOUBLEBUF)) {
+        if(backBuffer)
+            SDL_FreeSurface(backBuffer);
     }
+    
+    flags |= SDL_HWPALETTE | SDL_ANYFORMAT;
+    frontBuffer = SDL_SetVideoMode(width, height, bpp, flags);
+    if(!frontBuffer)
+        throw Exception("Couldn't set display mode (%dx%d, %X): %s",
+                        width, height, flags, SDL_GetError());
 
-    int bpp = best_bpp;
-    int new_width = width;
-    int new_height = height;
-    if ( ! (flags&SDL_FULLSCREEN) )
-    {
-        bpp = 0;
-        flags |= SDL_ANYFORMAT;
-    }
-    else
-    {
-        getNearestFullScreenMode(flags, &new_width, &new_height);
-        LOGGER.warning("Setting fullscreen mode %d x %d (original %d x %d)",
-                            new_width, new_height, width, height);
-    }
-
-    LOGGER.warning("Flags before setting mode");
-    logFlags(flags);
-
-    logAvailableModes(flags);
-
-    frontBuffer = SDL_SetVideoMode(new_width, new_height, bpp, flags);
-
-    if ( !frontBuffer )
-    {
-        throw Exception("Couldn't set display mode, original %d x %d, modified %d x %d (%X): %s",
-                        width, height, new_width, new_height, flags, SDL_GetError());
-    }
-
-    if ( !(frontBuffer->flags & SDL_DOUBLEBUF) )
-    {
-        LOGGER.warning("--->Doing custom buffer<---");
-        backBuffer = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                                          frontBuffer->w,
-                                          frontBuffer->h,
-                                          frontBuffer->format->BitsPerPixel,
-                                          frontBuffer->format->Rmask,
-                                          frontBuffer->format->Gmask,
-                                          frontBuffer->format->Bmask,
-                                          frontBuffer->format->Amask
-                                          );
-
-        if ( !backBuffer )
-        {
+    if(! (frontBuffer->flags & SDL_DOUBLEBUF)) {
+        backBuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height,
+                bpp, 0, 0, 0, 0);
+        if(!backBuffer)
             throw Exception("Couldn't create backBuffer");
-        }
-    }
-    else
-    {
+    } else {
         backBuffer = frontBuffer;
     }
 
-    LOGGER.warning("VidMode info: %d x %d x %d (%d)",
-                    frontBuffer->w,
-                    frontBuffer->h,
-                    frontBuffer->format->BitsPerPixel,
-                    frontBuffer->format->BytesPerPixel
-                  );
-
-    LOGGER.warning("Flags after setting mode");
-    logFlags(frontBuffer->flags);
-
-    if ( Surface::blackScreen )
-    {
-        SDL_FreeSurface(Surface::blackScreen);
-    }
-
-    SDL_Surface *s = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                                          frontBuffer->w,
-                                          frontBuffer->h,
-                                          frontBuffer->format->BitsPerPixel,
-                                          frontBuffer->format->Rmask,
-                                          frontBuffer->format->Gmask,
-                                          frontBuffer->format->Bmask,
-                                          frontBuffer->format->Amask
-                                          );
-
-    SDL_SetAlpha(s, SDL_SRCALPHA, 128);
-    Surface::blackScreen = s;
-
-//    logVideoInfo();
-
+    // let's scare the mouse :)
     SDL_ShowCursor(SDL_DISABLE);
-
-    SDL_WM_SetCaption("netPanzer " PACKAGE_VERSION, 0);
+    // and set a window title
+    SDL_WM_SetCaption(PACKAGE_STRING, 0);
 }
 
-bool SDLVideo::isDisplayModeAvailable(int width, int height, Uint32 flags)
+bool SDLVideo::isDisplayModeAvailable(int width, int height, int bpp,
+                                     Uint32 flags)
 {
-    int bpp = best_bpp;
-    if ( ! (flags&SDL_FULLSCREEN) )
-    {
-        bpp = 0;
-        flags |= SDL_ANYFORMAT;
-    }
-
+    //flags |= SDL_HWPALETTE | SDL_ANYFORMAT;
+    flags |= SDL_ANYFORMAT;
     int res = SDL_VideoModeOK(width, height, bpp, flags);
 
     LOGGER.warning("Mode %dx%dx%d %s is %s", width, height, bpp,
-                   (flags&SDL_FULLSCREEN) ? "full screen" : "windowed",
-                   res ? "available" : "NOT available"
-                  );
+                   (flags&SDL_FULLSCREEN)?"full screen":"windowed",
+                   res?"available":"NOT available");
     
-    return res;
+    return SDL_VideoModeOK(width, height, bpp, flags);
 }
 
-void SDLVideo::lockDoubleBuffer()
+void SDLVideo::lockDoubleBuffer(unsigned char **buffer)
 {
-    if ( SDL_MUSTLOCK(backBuffer) && SDL_LockSurface(backBuffer) )
-    {
+    if(SDL_MUSTLOCK(backBuffer) && SDL_LockSurface(backBuffer))
         throw Exception("Couldn't lock display buffer");
-    }
+
+    *buffer = (unsigned char *)backBuffer->pixels;
 }
 
 void SDLVideo::unlockDoubleBuffer()
 {
-    if ( SDL_MUSTLOCK(backBuffer) )
-    {
+    if(SDL_MUSTLOCK(backBuffer))
         SDL_UnlockSurface(backBuffer);
-    }
 }
 
 void SDLVideo::copyDoubleBufferandFlip()
 {
-    if ( !(frontBuffer->flags & SDL_DOUBLEBUF) )
-    {
+    if(! (frontBuffer->flags & SDL_DOUBLEBUF)) {
         SDL_BlitSurface(backBuffer, 0, frontBuffer, 0);
     }
 
-    if ( SDL_Flip(frontBuffer) )
-    {
-        throw Exception("Error while swapping double buffer");
-    }
+    if (SDL_Flip(frontBuffer))
+        throw Exception("Error while swapping double buffer");        
 }
 
-SDL_Surface * SDLVideo::getSurface()
+void SDLVideo::setPalette(SDL_Color *color)
+{
+    SDL_SetColors(backBuffer, color, 0, 256);
+    if(frontBuffer != backBuffer && frontBuffer->format->BitsPerPixel == 8)
+        SDL_SetColors(frontBuffer, color, 0, 256);
+}
+
+SDL_Surface* SDLVideo::getSurface()
 {
     return backBuffer;
 }
+

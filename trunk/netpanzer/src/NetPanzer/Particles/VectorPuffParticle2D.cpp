@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "VectorPuffParticle2D.hpp"
 #include "PuffParticle2D.hpp"
@@ -97,6 +97,9 @@ void VectorPuffParticle2D::sim()
 
         waitTime = 0.0f;
 
+        try {
+            //new cSparkParticle2D(fXYZ(pos.x, pos.y, zPos));
+        } catch(...) {}
     }
 
     if (age > lifetime) {

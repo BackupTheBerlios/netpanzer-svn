@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include <string.h>
 #include <ctype.h>
@@ -312,7 +312,7 @@ void cInputField::addExtendedChar(int newExtendedChar)
 
 // draw
 //--------------------------------------------------------------------------
-void cInputField::draw()
+void cInputField::draw(Surface &dest)
 {
     checkCursor();
     checkRepeat();
@@ -320,12 +320,12 @@ void cInputField::draw()
     inputFieldSurface.fill(Color::black);
     inputFieldSurface.drawButtonBorder(Color::white, Color::gray64);
     inputFieldSurface.bltString(4, 2, destString+strDisplayStart, Color::white);
-    //inputFieldSurface.blt(dest, pos.x, pos.y);
+    inputFieldSurface.blt(dest, pos.x, pos.y);
 } // draw
 
 // drawHighlighted
 //--------------------------------------------------------------------------
-void cInputField::drawHighlighted()
+void cInputField::drawHighlighted(Surface &dest)
 {
     checkCursor();
     checkRepeat();
@@ -353,7 +353,7 @@ void cInputField::drawHighlighted()
         }
     }
 
-    //inputFieldSurface.blt(dest, pos.x, pos.y);
+    inputFieldSurface.blt(dest, pos.x, pos.y);
 } // drawHighlighted
 
 // checkCursor

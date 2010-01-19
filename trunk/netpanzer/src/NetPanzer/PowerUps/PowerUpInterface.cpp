@@ -15,12 +15,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 #include "PowerUps/PowerUpInterface.hpp"
 
 #include <stdlib.h>
 
-#include "Util/NTimer.hpp"
 
 #include "Interfaces/GameConfig.hpp"
 
@@ -36,21 +35,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/PowerUpNetMessage.hpp"
 
-// 4 minutes in miliseconds
-#define TIME_RANGE_TO_REGEN (4 * 60 * 1000)
+PowerUpInterface::PowerUpList PowerUpInterface::powerup_list;
 
-// 1 minute in miliseconds
-#define MINIMUM_TIME_TO_REGEN (1 * 60 * 1000)
+int PowerUpInterface::power_up_limit;
+int PowerUpInterface::power_up_regen_time_upper_bound = 300;
+int PowerUpInterface::power_up_regen_time_lower_bound = 60;
 
-static PowerUp* powerups = 0;
-static unsigned int num_powerups = 0;
-static PowerUpID nextid = 0;
-
-static NTimer regen_timer;
-
-static unsigned int power_up_limit;
-static Uint32 power_up_regen_time_upper_bound = TIME_RANGE_TO_REGEN;
-static Uint32 power_up_regen_time_lower_bound = MINIMUM_TIME_TO_REGEN;
+Timer PowerUpInterface::regen_timer;
 
 enum { _powerup_bonus_units,
        _powerup_unit,
@@ -62,7 +53,8 @@ int  powerup_probability_table[3] = { _powerup_unit,
                                       _powerup_enemy_radar
                                     };
 
-static void setPowerUpLimits()
+void PowerUpInterface::setPowerUpLimits(unsigned long map_size_x,
+        unsigned long map_size_y )
 {
     int active_players;
 
@@ -72,70 +64,33 @@ static void setPowerUpLimits()
     int player_factor = int(( 0.10 ) * active_players);
     
     // Magic Number 0.0000625 = 1/16000
-    unsigned int power_limit = (unsigned int)( ( 0.0000625 ) * ( (MapInterface::getWidth() * MapInterface::getHeight()) ) );
-    power_limit = power_limit + (power_limit * player_factor);
+    int power_up_limit = int( ( 0.0000625 ) * ( (map_size_x * map_size_y) ) );
+    power_up_limit = power_up_limit + (power_up_limit * player_factor);
 
-    power_up_limit = power_limit;
-    power_up_regen_time_upper_bound =  TIME_RANGE_TO_REGEN;
-    power_up_regen_time_lower_bound =  MINIMUM_TIME_TO_REGEN;
+    PowerUpInterface::power_up_limit = power_up_limit;
+    power_up_regen_time_upper_bound =  300;
+    power_up_regen_time_lower_bound =  60;
 }
 
-static PowerUp* addNewPowerUp(const iXY& map_pos, PowerUpID id, int type)
+PowerUpID
+PowerUpInterface::getNextPowerUpID()
 {
-    PowerUp* power_up = 0;
-    switch( type )
-    {
-        case _powerup_bonus_units :
-            power_up = new BonusUnitPowerUp( map_pos, type );
-            break;
-
-        case _powerup_unit :
-            power_up = new UnitPowerUp( map_pos, type );
-            break;
-
-        case _powerup_enemy_radar :
-            power_up = new EnemyRadarPowerUp( map_pos, type );
-            break;
-
-        default:
-            LOGGER.info("Unknown powerup type?!?");
-    }
-
-    if ( power_up )
-    {
-        power_up->ID = id;
-        power_up->next = powerups;
-        powerups = power_up;
-        ++num_powerups;
-    }
-
-    return power_up;
+    static PowerUpID nextid = 0;
+    return nextid++;
 }
 
-static PowerUp* deleteRemovePowerUp(PowerUp* previous_power_up, const PowerUp* power_up)
+void PowerUpInterface::generatePowerUp()
 {
-    PowerUp* next_power_up = power_up->next;
-    if ( ! previous_power_up )
-    {
-        powerups = next_power_up;
-    }
-    else
-    {
-        previous_power_up->next = next_power_up;
-    }
+    unsigned long map_size_x, map_size_y;
+    PowerUp *power_up = 0;
+    float next_regen_interval;
+    PowerUpCreateMesg create_mesg;
+    iXY loc;
 
-    delete power_up;
-    --num_powerups;
-    return next_power_up;
-}
-
-static void generatePowerUp()
-{
-    if( num_powerups < power_up_limit )
+    if( (powerup_list.size() < (size_t) power_up_limit) )
     {
-        iXY loc;
-        unsigned int map_size_x = MapInterface::getWidth();
-        unsigned int map_size_y = MapInterface::getHeight();
+        map_size_x = MapInterface::getWidth();
+        map_size_y = MapInterface::getHeight();
 
         do
         {
@@ -143,63 +98,78 @@ static void generatePowerUp()
             loc.y = rand() % map_size_y;
         } while( MapInterface::getMovementValue( loc ) == 0xFF );
 
-        int powerup_type = powerup_probability_table[ rand() % 3 ];
+        int prob_table_index;
+        int powerup_type;
 
-        PowerUp* power_up = addNewPowerUp(loc, nextid++, powerup_type);
+        prob_table_index = rand() % 3;
+        powerup_type = powerup_probability_table[ prob_table_index ];
 
-        if ( power_up )
+
+        switch( powerup_type )
         {
-            PowerUpCreateMesg create_mesg;
-            create_mesg.set(power_up->map_loc, power_up->ID, power_up->type);
-            NetworkServer::broadcastMessage(&create_mesg, sizeof(create_mesg));
+            case _powerup_bonus_units :
+                power_up = new BonusUnitPowerUp( loc, powerup_type );
+                break;
+
+            case _powerup_unit :
+                power_up = new UnitPowerUp( loc, powerup_type );
+                break;
+
+            case _powerup_enemy_radar :
+                power_up = new EnemyRadarPowerUp( loc, powerup_type );
+                break;
+
+            default:
+                LOGGER.info("Unknown powerup type?!?");
+                return;
         }
-        else
+
+        power_up->ID = getNextPowerUpID();
+        powerup_list.push_back(power_up);
+
+        create_mesg.set( power_up->map_loc,
+                         power_up->ID,
+                         power_up->type
+                       );
+
+        SERVER->broadcastMessage(&create_mesg, sizeof(create_mesg));
+
+        do
         {
-            LOGGER.warning("Couldn't create powerup");
-        }
+            next_regen_interval = rand() % (power_up_regen_time_upper_bound + 1);
+        } while( next_regen_interval < power_up_regen_time_lower_bound );
 
-        int next_regen_interval = rand() % power_up_regen_time_upper_bound;
-        next_regen_interval += power_up_regen_time_lower_bound;
+        regen_timer.changePeriod( next_regen_interval );
 
-        regen_timer.setTimeOut( next_regen_interval );
-        regen_timer.reset();
-
-        setPowerUpLimits();
+        setPowerUpLimits( map_size_x, map_size_y );
     }
 }
 
 void PowerUpInterface::initialize( void )
 {
-    PowerUp::POWERUP_ANIM.loadPNGSheet("powerups/Bolt.png", 127, 127, 36);
-    PowerUp::POWERUP_ANIM.setOffsetCenter();
+    PowerUp::POWERUP_ANIM.load( "powerups/Bolt.pak" );
     PowerUp::POWERUP_ANIM.setFPS( 15 );
-    Surface t;
-    t.loadPNGSheet("powerups/BoltS.png", 127, 127, 36);
-    PowerUp::POWERUP_ANIM_SHADOW.createShadow(t);
-    PowerUp::POWERUP_ANIM_SHADOW.setOffsetCenter();
-    PowerUp::POWERUP_ANIM_SHADOW.setAlpha();
+    PowerUp::POWERUP_ANIM_SHADOW.load( "powerups/BoltS.pak" );
 }
 
 void PowerUpInterface::resetLogic( void )
 {
-    PowerUp *del = 0;
-    while ( powerups )
-    {
-        del = powerups;
-        powerups = powerups->next;
-        delete del;
-    }
-    num_powerups = 0;
+    unsigned long map_size_x, map_size_y;
 
     if( gameconfig->powerups == false )
     {
         return;
     }
 
-    setPowerUpLimits();
+    // here memory leak, should delete the pointer to powerups in the list
+    powerup_list.clear();
 
-    regen_timer.setTimeOut( power_up_regen_time_upper_bound );
-    regen_timer.reset();
+    map_size_x = MapInterface::getWidth();
+    map_size_y = MapInterface::getHeight();
+
+    setPowerUpLimits( map_size_x, map_size_y );
+
+    regen_timer.changePeriod( power_up_regen_time_upper_bound );
 
     if ( NetworkState::status == _network_state_server )
     {
@@ -218,36 +188,27 @@ void PowerUpInterface::updateState()
 
     if ( NetworkState::status == _network_state_server )
     {
-        if( regen_timer.isTimeOut() )
+        if( regen_timer.count() )
         {
             generatePowerUp();
         }
     }
 
-    PowerUp* powerup = powerups;
-    PowerUp* previous_power_up = 0;
-    while ( powerup )
+    for (PowerUpList::iterator i = powerup_list.begin();
+            i != powerup_list.end(); /* empty */)
     {
-        if ( powerup->life_cycle_state == _power_up_lifecycle_state_inactive )
+        PowerUp* powerup = *i;
+
+        if(powerup->life_cycle_state ==
+                _power_up_lifecycle_state_inactive)
         {
-            powerup = deleteRemovePowerUp(previous_power_up, powerup);
-            // previous remains;
+            delete powerup;
+            i = powerup_list.erase(i);
         }
         else
         {
-            if ( NetworkState::status == _network_state_server )
-            {
-                if ( UnitInterface::unitOccupiesLoc(powerup->map_loc) )
-                {
-                    Unit * unit = UnitBucketArray::queryUnitAtMapLoc(powerup->map_loc);
-                    if ( unit )
-                    {
-                        powerup->onHit( unit );
-                    }
-                }
-            }
-            previous_power_up = powerup;
-            powerup = powerup->next;
+            powerup->updateState();
+            i++;
         }
     }
  }
@@ -259,44 +220,63 @@ void PowerUpInterface::offloadGraphics( SpriteSorter &sorter )
         return;
     }
 
-    PowerUp* powerup = powerups;
-    while ( powerup )
+    PowerUpList::iterator i;
+    for(i=powerup_list.begin(); i!=powerup_list.end(); i++)
     {
-        powerup->sprite.nextFrame();
-        powerup->sprite_shadow.setFrame( powerup->sprite.getCurFrame() );
-
-        sorter.addSprite( &powerup->sprite );
-        sorter.addSprite( &powerup->sprite_shadow );
-
-        powerup = powerup->next;
+        PowerUp* powerup = *i;
+        powerup->offloadGraphics(sorter);
     }
 }
 
-static void netMessagePowerUpCreate(const NetMessage* message)
+void PowerUpInterface::netMessagePowerUpCreate(const NetMessage* message)
 {
     PowerUp *power_up = 0;
     PowerUpCreateMesg *create_mesg;
 
     create_mesg = (PowerUpCreateMesg *) message;
 
-    power_up = addNewPowerUp(iXY(create_mesg->getLocX(), create_mesg->getLocY()),
-                             create_mesg->getID(),
-                             create_mesg->getType());
+    switch( create_mesg->getType() )
+    {
+        case _powerup_bonus_units :
+            power_up = new BonusUnitPowerUp( 
+                    iXY(create_mesg->getLocX(), create_mesg->getLocY()),
+                    _powerup_bonus_units );
+            break;
+
+        case _powerup_unit :
+            power_up = new UnitPowerUp(
+                    iXY(create_mesg->getLocX(), create_mesg->getLocY()),
+                    _powerup_unit );
+            break;
+
+        case _powerup_enemy_radar :
+            power_up = new EnemyRadarPowerUp(
+                    iXY(create_mesg->getLocX(), create_mesg->getLocY()),
+                    _powerup_enemy_radar);
+            break;
+
+        default:
+            LOGGER.info("Unknown powerup type?!?");
+            return;
+    }
+
+    power_up->ID = create_mesg->getID();
+
+    powerup_list.push_back(power_up);
 }
 
-static void netMessagePowerUpHit(const NetMessage* message)
+void PowerUpInterface::netMessagePowerUpHit(const NetMessage* message)
 {
     PowerUpHitMesg *hit_mesg = (PowerUpHitMesg *) message;
 
-    PowerUp* powerup = powerups;
-    while ( powerup )
+    PowerUpList::iterator i;
+    for ( i = powerup_list.begin(); i != powerup_list.end(); i++)
     {
-        if ( powerup->ID == hit_mesg->getID() )
+        if ( (*i)->ID == hit_mesg->getID() )
         {
-            powerup->onHitMessage( hit_mesg );
+            (*i)->onHitMessage( hit_mesg );
             break;
         }
-        powerup = powerup->next;
     }
 }
 
@@ -321,16 +301,18 @@ void PowerUpInterface::processNetMessages(const NetMessage* message )
 
 void PowerUpInterface::syncPowerUps( ClientSocket * client )
 {
-    PowerUp* powerup = powerups;
-    while ( powerup )
+    PowerUpList::iterator i;
+    for(i=powerup_list.begin(); i!=powerup_list.end(); i++)
     {
-        if ( powerup->life_cycle_state != _power_up_lifecycle_state_inactive )
-        {
-            PowerUpCreateMesg create_mesg;
-            create_mesg.set(powerup->map_loc, powerup->ID, powerup->type);
-            client->sendMessage( &create_mesg, sizeof(create_mesg));
-        }
-        powerup = powerup->next;
+        PowerUp* powerup_ptr = *i;
+
+        PowerUpCreateMesg create_mesg;
+        create_mesg.set( powerup_ptr->map_loc,
+                         powerup_ptr->ID,
+                         powerup_ptr->type
+                       );
+
+        client->sendMessage( &create_mesg, sizeof(create_mesg));
     }
 }
 

@@ -52,7 +52,7 @@ public:
 
     static void  removeAll();
     static void  simAll();
-    static void  drawAll(SpriteSorter &sorter);
+    static void  drawAll(const Surface &dest, SpriteSorter &sorter);
     static int   getParticleSystemCount()
     {
         return particleSystemCount;
@@ -84,7 +84,7 @@ protected:
     void reset();
 
     virtual void sim();
-    virtual void draw(SpriteSorter&)
+    virtual void draw(const Surface&, SpriteSorter&)
     {}
 
     void insertMe();

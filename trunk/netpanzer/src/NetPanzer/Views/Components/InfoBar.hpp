@@ -32,7 +32,7 @@ public:
         position.y = y;
     }
     
-    void draw( int posx, int posy, Surface &dest);
+    void draw(Surface &dest);
     
     virtual void render()
     {

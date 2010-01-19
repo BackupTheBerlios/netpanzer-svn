@@ -29,25 +29,24 @@ class ObjectiveState;
 typedef std::vector<int> playerList_t;
 typedef std::vector<ObjectiveID> outpostList_t;
 
-class BotPlayer : public Bot
-{
+class BotPlayer : public Bot {
     private:
         static const int NONE_PLAYER = 0xFFFF;
         Timer m_timer;
     public:
-        BotPlayer(Uint16 playerid);
+        BotPlayer();
         virtual void processEvents();
 
         int isReady();
-        Unit *getRandomUnit(int playerIndex);
+        UnitBase *getRandomUnit(int playerIndex);
 
         playerList_t getEnemyPlayers();
         int getRandomEnemyPlayer();
-        Unit *getRandomEnemy();
+        UnitBase *getRandomEnemy();
 
         outpostList_t getOutposts(int disposition);
         ObjectiveState *getRandomOutpost(int disposition);
-        void unitOccupyOupost(Unit *unit);
+        void unitOccupyOupost(UnitBase *unit);
         void outpostProduce();
 };
 

@@ -19,18 +19,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __PuffParticle2D_hpp__
 #define __PuffParticle2D_hpp__
 
+#include <vector>
+
 #include "WindParticle2D.hpp"
 #include "ParticleSystemGlobals.hpp"
-
-struct lua_State;
 
 // PuffParticle2D
 //--------------------------------------------------------------------------
 class PuffParticle2D : public WindParticle2D
 {
 protected:
+    // Lists of packed surfaces.
+    static PackedSurfaceList staticPackedSmokeLightPuff;
+    static PackedSurfaceList staticPackedSmokeDarkPuff;
+    static PackedSurfaceList staticPackedDirtPuff;
 
-    void create( unsigned int particleType,
+    void create(	PUFF_TYPE particleType,
                  float     scaleMin,
                  float     scaleRand,
                  int       FPSMin,
@@ -45,9 +49,9 @@ protected:
 public:
     // A minSize of 1.0f would be the original size of the image.
     // WindScale is how much the wind effects this particle.  1.0f is full.
-    PuffParticle2D( const fXYZ &pos,
+    PuffParticle2D(	const fXYZ &pos,
                     const fXYZ &shadowPos,
-                    unsigned int particleType,
+                    PUFF_TYPE   particleType,
                     float       scaleMin,
                     float       scaleRand,
                     int         FPSMin,
@@ -81,11 +85,12 @@ public:
                 isFarAway);
     }
 
-    static int loadLightPuff(lua_State *L, void *v);
-    static int loadDarkPuff(lua_State *L, void *v);
-    static int loadDirtPuff(lua_State *L, void *v);
-    virtual void draw(SpriteSorter &sorter);
+    static  void init();
+    static  void loadPAKFiles();
+    static  void loadTILFiles();
+    virtual void draw(const Surface &dest, SpriteSorter &sorter);
 
-}; // end PuffParticle2D
+}
+; // end PuffParticle2D
 
 #endif // __PuffParticle2D_hpp__

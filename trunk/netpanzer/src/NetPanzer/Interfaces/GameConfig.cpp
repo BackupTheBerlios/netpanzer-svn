@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 #include <fstream>
 #include <sstream>
 
@@ -30,66 +30,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/MiniMapView.hpp"
 #include "Views/GameViewGlobals.hpp"
 
-#include "Scripts/ScriptManager.hpp"
-#include "Scripts/ScriptHelper.hpp"
-
-unsigned int GameConfig::video_width = 800;
-unsigned int GameConfig::video_height = 600;
-bool         GameConfig::video_fullscreen = false;
-bool         GameConfig::video_hardwaresurface = false;
-bool         GameConfig::video_doublebuffer = false;
-bool         GameConfig::video_shadows = true;
-bool         GameConfig::video_blendsmoke = true;
-#ifdef _WIN32
-bool         GameConfig::video_usedirectx = true;
-#endif
-
-
-#define WRITE_BOOL(v) ((v)?"true":"false")
-
-// This generates the tables needed for script binding
-static const ScriptVarBindRecord video_getters[] =
-{
-    { "width",           GETSVTYPE_INT,     &GameConfig::video_width },
-    { "height",          GETSVTYPE_INT,     &GameConfig::video_height },
-    { "fullscreen",      GETSVTYPE_BOOLEAN, &GameConfig::video_fullscreen },
-    { "hardwaresurface", GETSVTYPE_BOOLEAN, &GameConfig::video_hardwaresurface },
-    { "doublebuffer",    GETSVTYPE_BOOLEAN, &GameConfig::video_doublebuffer },
-    { "shadows",         GETSVTYPE_BOOLEAN, &GameConfig::video_shadows },
-    { "blendsmoke",      GETSVTYPE_BOOLEAN, &GameConfig::video_blendsmoke },
-#ifdef _WIN32
-    { "usedirectx",      GETSVTYPE_BOOLEAN, &GameConfig::video_usedirectx },
-#endif
-    {0,0}
-};
-
-static const ScriptVarBindRecord video_setters[] =
-{
-    { "width",           SETSVTYPE_INT,     &GameConfig::video_width },
-    { "height",          SETSVTYPE_INT,     &GameConfig::video_height },
-    { "fullscreen",      SETSVTYPE_BOOLEAN, &GameConfig::video_fullscreen },
-    { "hardwaresurface", SETSVTYPE_BOOLEAN, &GameConfig::video_hardwaresurface },
-    { "doublebuffer",    SETSVTYPE_BOOLEAN, &GameConfig::video_doublebuffer },
-    { "shadows",         SETSVTYPE_BOOLEAN, &GameConfig::video_shadows },
-    { "blendsmoke",      SETSVTYPE_BOOLEAN, &GameConfig::video_blendsmoke },
-#ifdef _WIN32
-    { "usedirectx",      SETSVTYPE_BOOLEAN, &GameConfig::video_usedirectx },
-#endif
-    {0,0}
-};
-
-void GameConfig::registerScript(const char * table_name)
-{
-//    ScriptManager::registerLib( table_name, video_methods);
-    ScriptManager::bindStaticVariables(table_name, "video", "ConfigVideoMetaTable",
-                                       video_getters, video_setters);
-
-}
-
 GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     // VariableName("Name", value [, minimum, maximum])
-    : 
-      hostorjoin("hostorjoin", _game_session_join, 0, _game_session_last-1),
+    : hostorjoin("hostorjoin", _game_session_join, 0, _game_session_last-1),
       quickConnect("quickconnect", false),
       serverConnect("serverconnect", ""),
     
@@ -110,18 +53,26 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       objectiveoccupationpercentage("objectivepercentage", 75, 1, 100),
       allowallies("allowallies", true),
       cloudcoverage("cloudcoverage", 0),
+      respawntype("respawntype", _game_config_respawn_type_round_robin, 0,
+                _game_config_respawn_type_last-1),
       windspeed("windspeed", 30),
       map("map", "Bad Neuburg"),
       mapcycle("mapcycle", "Cramped, Tight Quarters, Two Villages"),
       motd("motd",""),
       logging("logging", false),
       publicServer("public", true),
-      capturebases("capturebases", true),
-      respawntype("respawntype", _game_config_respawn_type_round_robin, 0,
-                _game_config_respawn_type_last-1),
-      respawnmode("respawnmode", 0),
-      respawntime("respawntime", 0),
       
+      screenresolution("resolution", 2, 0, 3),
+      fullscreen("fullscreen", true),
+      hardwareSurface("hardwareSurface", true),
+      hardwareDoubleBuffer("hardwareDoubleBuffer", true),
+      displayshadows("displayshadows", true),
+      blendsmoke("blendsmoke", true),
+      screengamma("gamma", 50, 0, 100),
+#ifdef _WIN32
+      usedirectx("usedirectx", true),
+#endif
+
       enablesound("enable", true),
       enablemusic("music", true),
       musicvolume("musicvolume", 80, 0, 100),
@@ -129,7 +80,7 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       effectsvolume("effectsvolume", 100, 0, 100),
       
       unitcolor("unitcolor", 0, 0, _color_last-1),
-      playerflag("playerflag", "albania.bmp"),
+      playerflag("playerflag", 0, 0, 100),
       attacknotificationtime("attacknotificationtime", 5, 0, 100),
       vehicleselectioncolor("vehicleselectioncolor", _color_blue, 0, _color_last-1),
       unitselectionmode("unitselectionmode", _unit_selection_box_draw_mode_rect_edges, 0, _unit_selection_box_draw_mode_last-1),
@@ -137,7 +88,6 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       drawunitdamage("drawunitdamage", true),
       drawunitreload("drawunitreload", false),
       drawunitflags("drawunitflags", true),
-      drawunitowner("drawunitowner", true),
       consoletextdelay("consoletextdelay", 3, 1, 20),
       consoletextusage("consoletextusage", 25, 1, 100),
       scrollrate("scrollrate", 1000, 100, 10000),
@@ -169,18 +119,7 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       wolf("wolf",0),
       bear("bear",0),
       drake("drake",0),
-      archer("archer",0),
-
-      quickchat_1("1", "Taking fire! Need assistance!!"),
-      quickchat_2("2", "Fight!!!"),
-      quickchat_3("3", "Who wants to fight?"),
-      quickchat_4("4", "Who wants to ally?"),
-      quickchat_5("5", "Who wants some?"),
-      quickchat_6("6", "LAG! LAG! LAG!"),
-      quickchat_7("7", "Stop!!!"),
-      quickchat_8("8", "Wait!!!"),
-      quickchat_9("9", "brb"),
-      quickchat_0("0", "Bye!!!")
+      archer("archer",0)
 {
     this->configfile = configfile;
     this->usePhysFS = usePhysFS;
@@ -212,10 +151,18 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     serversettings.push_back(&motd);
     serversettings.push_back(&logging);
     serversettings.push_back(&publicServer);
-    serversettings.push_back(&capturebases);
-    serversettings.push_back(&respawntime);
-    serversettings.push_back(&respawnmode);
    
+    visualssettings.push_back(&screenresolution);
+    visualssettings.push_back(&fullscreen);
+    visualssettings.push_back(&hardwareSurface);
+    visualssettings.push_back(&hardwareDoubleBuffer);
+    visualssettings.push_back(&displayshadows);
+    visualssettings.push_back(&blendsmoke);
+    visualssettings.push_back(&screengamma);
+#ifdef _WIN32
+    visualssettings.push_back(&usedirectx);
+#endif
+
     soundsettings.push_back(&enablesound);
     soundsettings.push_back(&enablemusic);
     soundsettings.push_back(&musicvolume);
@@ -231,7 +178,6 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     interfacesettings.push_back(&drawunitdamage);
     interfacesettings.push_back(&drawunitreload);
     interfacesettings.push_back(&drawunitflags);
-    interfacesettings.push_back(&drawunitowner);
     interfacesettings.push_back(&consoletextdelay);
     interfacesettings.push_back(&consoletextusage);
     interfacesettings.push_back(&scrollrate);
@@ -252,17 +198,6 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     radarsettings.push_back(&radar_unitsize);
     radarsettings.push_back(&radar_objectivedrawmode);
     radarsettings.push_back(&radar_resizerate);
-
-    quickchatsettings.push_back(&quickchat_1);
-    quickchatsettings.push_back(&quickchat_2);
-    quickchatsettings.push_back(&quickchat_3);
-    quickchatsettings.push_back(&quickchat_4);
-    quickchatsettings.push_back(&quickchat_5);
-    quickchatsettings.push_back(&quickchat_6);
-    quickchatsettings.push_back(&quickchat_7);
-    quickchatsettings.push_back(&quickchat_8);
-    quickchatsettings.push_back(&quickchat_9);
-    quickchatsettings.push_back(&quickchat_0);
     
     try {
         loadConfig();
@@ -283,8 +218,6 @@ GameConfig::~GameConfig()
 
 void GameConfig::loadConfig()
 {
-    ScriptManager::loadConfigFile("config/config.cfg", "config");
-
     INI::Store inifile;
     if(usePhysFS) {
         IFileStream in(configfile);
@@ -301,12 +234,12 @@ void GameConfig::loadConfig()
         default_player << "Player" << (rand()%1000);
         playername=default_player.str();
     }
+    loadSettings(inifile.getSection("visuals"), visualssettings);
     loadSettings(inifile.getSection("sound"), soundsettings);
     loadSettings(inifile.getSection("interface"), interfacesettings);
     loadSettings(inifile.getSection("radar"), radarsettings);
     loadSettings(inifile.getSection("server"), serversettings);
     loadSpawnSettings(inifile.getSection("spawnconfig"),spawnsettings);
-    loadSettings(inifile.getSection("quickchat"), quickchatsettings);
 }
 
 void GameConfig::loadSettings(const INI::Section& section,
@@ -389,12 +322,12 @@ void GameConfig::saveConfig()
 
     saveSettings(inifile.getSection("game"), gamesettings);
     saveSettings(inifile.getSection("player"), playersettings);
+    saveSettings(inifile.getSection("visuals"), visualssettings);
     saveSettings(inifile.getSection("sound"), soundsettings);
     saveSettings(inifile.getSection("interface"), interfacesettings);
     saveSettings(inifile.getSection("radar"), radarsettings);
     saveSettings(inifile.getSection("server"), serversettings);
     saveSettings(inifile.getSection("spawnconfig"),spawnsettings);
-    saveSettings(inifile.getSection("quickchat"), quickchatsettings);
 
     if(usePhysFS) {
         OFileStream out (configfile);
@@ -403,45 +336,6 @@ void GameConfig::saveConfig()
         std::ofstream out(configfile.c_str());
         inifile.save(out);
     }
-
-    lua_State *L = ScriptManager::getLuavm();
-        
-    lua_getglobal(L,"config");
-    if ( ! lua_istable(L, -1) )
-    {
-        LOGGER.warning("ERROR: Can't save configuration, config doesn't exits.");
-        return;
-    }
-    
-    lua_pushliteral(L, "dump");
-    lua_rawget(L, -2);
-    if ( ! lua_isfunction(L, -1) )
-    {
-        LOGGER.warning("ERROR: Can't save configuration, config.dump function doesn't exits.");
-        lua_pop(L, 2);
-        return;
-    }
-
-    lua_pushvalue(L, -2);
-    lua_remove(L, -3);
-    
-    if ( lua_pcall(L, 1, 1, 0) )
-    {
-        LOGGER.warning("ERROR: Can't save configuration, Lua error: '%s'", lua_tostring(L, -1));
-        lua_pop(L, 1);
-        return;
-    }
-    
-    if ( ! lua_isstring(L, -1) )
-    {
-        LOGGER.warning("ERROR: Can't save configuration, dump result is not a string.");
-        lua_pop(L, 1);
-        return;
-    }
-    
-    OFileStream out("config/config.cfg");
-    out << lua_tostring(L, -1) << std::endl;
-    lua_pop(L, 1);
 }
 
 void GameConfig::saveSettings(INI::Section& section,

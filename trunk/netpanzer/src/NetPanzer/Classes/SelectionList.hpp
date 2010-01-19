@@ -29,10 +29,16 @@ protected:
 public:
     std::vector<UnitID> unit_list;
 
-    SelectionList( ) : unit_cycle_index(0) {}
+    SelectionList( )
+        : unit_cycle_index(0)
+    { }
 
     bool selectUnit( iXY point );
+
     bool addUnit( iXY point );
+
+    bool selectTarget( iXY point );
+
     bool selectBounded(iRect bounds, bool addunits);
     bool selectSameTypeVisible(iXY point, bool addunits);
 

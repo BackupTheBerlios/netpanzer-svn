@@ -55,5 +55,7 @@ private:
     int m_battleCount;
 };
 
+extern Sound* sound;
+
 #endif
 

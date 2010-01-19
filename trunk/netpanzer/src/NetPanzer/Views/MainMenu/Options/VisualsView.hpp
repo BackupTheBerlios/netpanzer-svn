@@ -45,15 +45,10 @@ private:
     CheckBox * checkBoxDrawAllShadows;
     CheckBox * checkBoxBlendSmoke;
     CheckBox * checkBoxFullscreen;
-    CheckBox * checkBoxDrawHitpoints;
-    CheckBox * checkBoxDrawFlags;
-    CheckBox * checkBoxDrawNames;
     //CheckBox drawUnitReload;
 
     // Option choices.
     Choice   * choiceResolution;
-    unsigned int current_width;
-    unsigned int current_height;
     Choice   * choiceGameViewBackgroundColor;
     Choice   * choiceMiniMapObjectiveDrawMode;
     Choice   * choiceMiniMapUnitSize;
@@ -77,7 +72,8 @@ private:
 public:
     VisualsView();
 
-    virtual void doDraw();
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
+    virtual void processEvents();
     virtual void initButtons();
     virtual void stateChanged(Component* source);
 }

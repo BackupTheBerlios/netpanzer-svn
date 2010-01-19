@@ -15,8 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-#include "SDL_endian.h"
+#include <config.h>
+#include "Util/Endian.hpp"
 #include "Units/UnitState.hpp"
 
 UnitState::UnitState()
@@ -65,25 +65,25 @@ NetworkUnitState UnitState::getNetworkUnitState() const
     NetworkUnitState state;
 
     state.unit_type = unit_type;
-    state.location_x = SDL_SwapLE32(location.x);
-    state.location_y = SDL_SwapLE32(location.y);
-    state.bbox_min_x = SDL_SwapLE32(bbox.min.x);
-    state.bbox_min_y = SDL_SwapLE32(bbox.min.y);
-    state.bbox_max_x = SDL_SwapLE32(bbox.max.x);
-    state.bbox_max_y = SDL_SwapLE32(bbox.max.y);
+    state.location_x = htol32(location.x);
+    state.location_y = htol32(location.y);
+    state.bbox_min_x = htol32(bbox.min.x);
+    state.bbox_min_y = htol32(bbox.min.y);
+    state.bbox_max_x = htol32(bbox.max.x);
+    state.bbox_max_y = htol32(bbox.max.y);
 
     state.body_angle = body_angle.getNetworkAngleInt();
     state.turret_angle = turret_angle.getNetworkAngleInt();
-    state.orientation = SDL_SwapLE16(orientation);
-    state.speed_rate = SDL_SwapLE16(speed_rate);
-    state.speed_factor = SDL_SwapLE16(speed_factor);
+    state.orientation = htol16(orientation);
+    state.speed_rate = htol16(speed_rate);
+    state.speed_factor = htol16(speed_factor);
     
-    state.reload_time = SDL_SwapLE16(reload_time);
-    state.max_hit_points = SDL_SwapLE16(max_hit_points);
-    state.hit_points = SDL_SwapLE16(hit_points);
-    state.damage_factor = SDL_SwapLE16(damage_factor);
-    state.weapon_range = SDL_SwapLE32(weapon_range);
-    state.defend_range = SDL_SwapLE32(defend_range);
+    state.reload_time = htol16(reload_time);
+    state.max_hit_points = htol16(max_hit_points);
+    state.hit_points = htol16(hit_points);
+    state.damage_factor = htol16(damage_factor);
+    state.weapon_range = htol32(weapon_range);
+    state.defend_range = htol32(defend_range);
     
     state.threat_level = threat_level;
     state.lifecycle_state = lifecycle_state;
@@ -96,26 +96,26 @@ void UnitState::setFromNetworkUnitState(const NetworkUnitState& state)
     select = false;
 
     unit_type = state.unit_type;
-    location.x = SDL_SwapLE32(state.location_x);
-    location.y = SDL_SwapLE32(state.location_y);
-    bbox.min.x = SDL_SwapLE32(state.bbox_min_x);
-    bbox.min.y = SDL_SwapLE32(state.bbox_min_y);
-    bbox.max.x = SDL_SwapLE32(state.bbox_max_x);
-    bbox.max.y = SDL_SwapLE32(state.bbox_max_y);
+    location.x = ltoh32(state.location_x);
+    location.y = ltoh32(state.location_y);
+    bbox.min.x = ltoh32(state.bbox_min_x);
+    bbox.min.y = ltoh32(state.bbox_min_y);
+    bbox.max.x = ltoh32(state.bbox_max_x);
+    bbox.max.y = ltoh32(state.bbox_max_y);
 
     body_angle.setFromNetworkAngleInt(state.body_angle);
     turret_angle.setFromNetworkAngleInt(state.turret_angle);
 
-    orientation = SDL_SwapLE16(state.orientation);
-    speed_rate = SDL_SwapLE16(state.speed_rate);
-    speed_factor = SDL_SwapLE16(state.speed_factor);
+    orientation = ltoh16(state.orientation);
+    speed_rate = ltoh16(state.speed_rate);
+    speed_factor = ltoh16(state.speed_factor);
     
-    reload_time = SDL_SwapLE16(state.reload_time);
-    max_hit_points = SDL_SwapLE16(state.max_hit_points);
-    hit_points = SDL_SwapLE16(state.hit_points);
-    damage_factor = SDL_SwapLE16(state.damage_factor);
-    weapon_range = SDL_SwapLE32(state.weapon_range);
-    defend_range = SDL_SwapLE32(state.defend_range);
+    reload_time = ltoh16(state.reload_time);
+    max_hit_points = ltoh16(state.max_hit_points);
+    hit_points = ltoh16(state.hit_points);
+    damage_factor = ltoh16(state.damage_factor);
+    weapon_range = ltoh32(state.weapon_range);
+    defend_range = ltoh32(state.defend_range);
 
     threat_level = state.threat_level;
     lifecycle_state = state.lifecycle_state;

@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __OptionsTemplateView_hpp__
 
 #include "Views/Components/View.hpp"
+#include "2D/Surface.hpp"
 #include "Views/MainMenu/MenuTemplateView.hpp"
 
 //--------------------------------------------------------------------------
@@ -28,12 +29,10 @@ protected:
     virtual void loadBackgroundSurface();
     virtual void loadTitleSurface();
 
-    void onComponentClicked(Component *c);
-
 public:
     OptionsTemplateView();
 
-    virtual void doDraw();
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void initButtons();
 }; // end OptionsTemplateView
 

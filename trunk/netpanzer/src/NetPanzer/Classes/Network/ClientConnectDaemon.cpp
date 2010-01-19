@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 #include "Classes/Network/ClientConnectDaemon.hpp"
 
 #include <stdio.h>
@@ -62,7 +62,7 @@ void ClientConnectDaemon::shutdownConnectDaemon()
     client_disconnect.setPlayerID(
             PlayerInterface::getLocalPlayerIndex());
 
-    NetworkClient::sendMessage(&client_disconnect,
+    CLIENT->sendMessage(&client_disconnect,
             sizeof(ConnectMesgNetPanzerClientDisconnect));
 }
 
@@ -260,7 +260,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
         case _connect_state_send_connect_request : {
                 ClientConnectRequest connect_request;
 
-                NetworkClient::sendMessage(&connect_request, sizeof(ClientConnectRequest));
+                CLIENT->sendMessage(&connect_request, sizeof(ClientConnectRequest));
 
                 connection_state = _connect_state_wait_for_connect_result;
 
@@ -286,9 +286,9 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                             client_setting.set( 
                                     gameconfig->playername.c_str(),
                                                 gameconfig->getUnitColor(),
-                                                gameconfig->playerflag.c_str() );
+                                                gameconfig->playerflag );
 
-                            NetworkClient::sendMessage( &client_setting, sizeof(ConnectClientSettings));
+                            CLIENT->sendMessage( &client_setting, sizeof(ConnectClientSettings));
 
                             connection_state = _connect_state_wait_for_server_game_setup;
                         }
@@ -297,7 +297,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                         if ( time_out_timer.count() ) {
                             if ( time_out_counter < _CLIENT_CONNECT_RETRY_LIMIT ) {
                                 ClientConnectRequest connect_request;
-                                NetworkClient::sendMessage( &connect_request, sizeof(ClientConnectRequest));
+                                CLIENT->sendMessage( &connect_request, sizeof(ClientConnectRequest));
                                 time_out_counter++;
                             } else {
                                 LoadingView::append( "Connection To Server Failed" );
@@ -313,7 +313,7 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                     if ( time_out_timer.count() ) {
                         if ( time_out_counter < _CLIENT_CONNECT_RETRY_LIMIT ) {
                             ClientConnectRequest connect_request;
-                            NetworkClient::sendMessage( &connect_request, sizeof(ClientConnectRequest));
+                            CLIENT->sendMessage( &connect_request, sizeof(ClientConnectRequest));
                             time_out_counter++;
                         } else {
                             LoadingView::append( "Connection To Server Failed" );
@@ -344,19 +344,20 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                             LoadingView::append( str_buf);
                             connection_state = _connect_state_connect_failure;
                             failure_display_timer.reset();
-                        } else if( result_code == _mapload_result_no_wad_file ) {
-                            LoadingView::append( "MAP TILE SET NOT FOUND!" );
-                            LoadingView::append( "please download the appropriate tileset" );
-                            LoadingView::append( "from www.pyrosoftgames.com" );
-                            connection_state = _connect_state_connect_failure;
-                            failure_display_timer.reset();
-                        } else {
-                            LoadingView::append( "Loading Game Data ..." );
+                        } else
+                            if( result_code == _mapload_result_no_wad_file ) {
+                                LoadingView::append( "MAP TILE SET NOT FOUND!" );
+                                LoadingView::append( "please download the appropriate tileset" );
+                                LoadingView::append( "from www.pyrosoftgames.com" );
+                                connection_state = _connect_state_connect_failure;
+                                failure_display_timer.reset();
+                            } else {
+                                LoadingView::append( "Loading Game Data ..." );
 
-                            NetworkClient::sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
+                                CLIENT->sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
 
-                            connection_state = _connect_state_setup_client_game;
-                        }
+                                connection_state = _connect_state_setup_client_game;
+                            }
                     }
                 }
 
@@ -368,14 +369,21 @@ void ClientConnectDaemon::connectFsm(const NetMessage* message )
                 char str_buf[128];
                 int percent_complete;
 
-//                GameManager::clientGameSetup();
-                ConnectMesgClientGameSetupAck client_game_setup_ack;
+                if ( GameManager::clientGameSetup( &percent_complete ) == false ) {
+                    ConnectMesgClientGameSetupAck client_game_setup_ack;
 
-                sprintf( str_buf, "Loading Game Data ... (%d%%)", percent_complete);
-                LoadingView::update( str_buf );
+                    sprintf( str_buf, "Loading Game Data ... (%d%%)", percent_complete);
+                    LoadingView::update( str_buf );
 
-                NetworkClient::sendMessage( &client_game_setup_ack, sizeof(ConnectMesgClientGameSetupAck));
-                connection_state = _connect_state_idle;
+                    CLIENT->sendMessage( &client_game_setup_ack, sizeof(ConnectMesgClientGameSetupAck));
+                    connection_state = _connect_state_idle;
+                } else {
+                    ConnectMesgClientGameSetupPing client_game_setup_ping;
+
+                    sprintf( str_buf, "Loading Game Data ... (%d%%)", percent_complete);
+                    LoadingView::update( str_buf );
+                    CLIENT->sendMessage( &client_game_setup_ping, sizeof(ConnectMesgClientGameSetupPing));
+                }
 
                 end_cycle = true;
             }

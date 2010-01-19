@@ -15,12 +15,38 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "Views/MainMenu/SpecialButtonView.hpp"
+#include "2D/Surface.hpp"
+#include "2D/PackedSurface.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Util/Exception.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
+
+// addSpecialButton
+//---------------------------------------------------------------------------
+void SpecialButtonView::addSpecialButton(const iXY &pos, const char *,
+        const char *fileString, ITEM_FUNC function)
+{
+    char strBuf[256];
+
+    std::string prefix;
+
+    // Check to see which type of button to load since we have multiple palettes.
+    if (Desktop::getVisible("GameView")) {
+        prefix = "inGame";
+    } else {
+        prefix = "inMenus";
+    }
+
+    sprintf(strBuf, "pics/backgrounds/menus/buttons/default/pak/%s%s.pak",
+            prefix.c_str(), fileString);
+
+    PackedSurface tempPack;
+    tempPack.load(strBuf);
+    addButtonPackedSurface(pos, tempPack, "", function);
+} // end SpecialButtonView::addSpecialButton
 
 // mouseMove
 //--------------------------------------------------------------------------

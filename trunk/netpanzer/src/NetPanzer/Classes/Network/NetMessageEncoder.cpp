@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 #include "Classes/Network/NetMessageEncoder.hpp"
 
 #include <string.h>
@@ -73,13 +73,13 @@ void NetMessageEncoder::sendEncodedMessage()
     if (encode_message.message_count > 0) {
         size_t size = encode_message_index + encode_message.getHeaderSize();
         if(usePlayerID) {
-            NetworkServer::sendMessage(player, &encode_message, size);
+            SERVER->sendMessage(player, &encode_message, size);
         } else if(sendAsClient) {
-            NetworkClient::sendMessage(&encode_message, size);
+            CLIENT->sendMessage(&encode_message, size);
         } else if(NetworkState::status == _network_state_server) {
-            NetworkServer::broadcastMessage(&encode_message, size);
+            SERVER->broadcastMessage(&encode_message, size);
         } else {
-            NetworkClient::sendMessage(&encode_message, size);
+            CLIENT->sendMessage(&encode_message, size);
         }
 
         resetEncoder();

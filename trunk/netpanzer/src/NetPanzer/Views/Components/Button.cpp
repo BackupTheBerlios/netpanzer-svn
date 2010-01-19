@@ -15,32 +15,19 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "Views/Components/Button.hpp"
-#include "Views/Components/View.hpp"
 #include "Util/Log.hpp"
 
 #include "MouseEvent.hpp"
 
-Button::Button(const std::string &cname)
-        : Component("Button." + cname)
-{
-    setTextColors(Color::white, Color::red, Color::yellow);
-    position.zero();
-    label.clear();
-    bstate = BNORMAL;
-    memset(borders, 0, sizeof(borders));
-    extraBorder = 0;
-    dirty = true;
-}
 
 // render
 void
 Button::render()
 {
-    if ( bimage.getNumFrames() == 1 )
-    {
+    if ( bimage.getNumFrames() == 1 ) {
         bimage.blt(surface, extraBorder, extraBorder);
     }
     else if ( bimage.getNumFrames() == 3 )
@@ -61,7 +48,7 @@ Button::render()
     if ( label.length() )
     {
         Surface text;
-        text.renderText( label.c_str(), textColors[bstate], 0);
+        text.renderText( label.c_str(), textColor, 0);
         // blit centered and transparent
         text.bltTrans(surface, (surface.getWidth()/2) - (text.getWidth()/2),
                       (surface.getHeight()/2) - (text.getHeight()/2));        
@@ -72,78 +59,20 @@ Button::render()
 
 // actionPerformed
 //---------------------------------------------------------------------------
-void
-Button::actionPerformed(const mMouseEvent &me)
+void Button::actionPerformed(const mMouseEvent &me)
 {
     if (me.getID() == mMouseEvent::MOUSE_EVENT_ENTERED
-                || me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED)
-    {
+                || me.getID() == mMouseEvent::MOUSE_EVENT_RELEASED) {
         bstate = BOVER;
+        textColor = Color::red;
         dirty = true; // draw text in red
-    }
-    else if (me.getID() == mMouseEvent::MOUSE_EVENT_EXITED)
-    {
+    } else if (me.getID() == mMouseEvent::MOUSE_EVENT_EXITED) {
         bstate = BNORMAL;
+        textColor = Color::white;
         dirty = true; // draw defaults;
-    }
-    else if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED)
-    {
+    } else if (me.getID() == mMouseEvent::MOUSE_EVENT_PRESSED) {
         bstate = BPRESSED;
+        textColor = Color::yellow;
         dirty = true;
     }
-    else if (me.getID() == mMouseEvent::MOUSE_EVENT_CLICKED)
-    {
-        ((View *)parent)->onComponentClicked(this);
-    }
 } // end Button::actionPerformed
-
-Button *
-Button::createTextButton(   std::string cname,
-                            std::string label,
-                            iXY loc,
-                            int bwidth,
-                            int customcode)
-{
-    Button * b = new Button(cname);
-    b->setLabel(label);
-    b->setLocation(loc);
-    b->setTextButtonSize(bwidth);
-    b->setCustomCode(customcode);
-    b->setNormalBorder();
-    return b;
-}
-
-Button *
-Button::createSpecialButton( std::string cname,
-                             std::string label,
-                             iXY loc,
-                             int customcode)
-{
-    Surface bnormal;
-    bnormal.loadPNG("pics/default/specialbutton0.png");
-
-    Surface bhover;
-    bhover.loadPNG("pics/default/specialbutton1.png");
-
-    Surface bclick;
-    bclick.loadPNG("pics/default/specialbutton2.png");
-
-    Surface spbutton(bnormal.getWidth(), bnormal.getHeight(), 3);
-
-    spbutton.setFrame(0);
-    bnormal.blt(spbutton,0,0);
-    spbutton.setFrame(1);
-    bhover.blt(spbutton,0,0);
-    spbutton.setFrame(2);
-    bclick.blt(spbutton,0,0);
-    spbutton.setFrame(0);
-
-    Button *b = new Button(cname);
-    b->setImage(spbutton);
-    b->setLabel(label);
-    b->setLocation(loc);
-    b->setTextColors(Color::yellow, Color::white, Color::white);
-    b->setCustomCode(customcode);
-
-    return b;
-}

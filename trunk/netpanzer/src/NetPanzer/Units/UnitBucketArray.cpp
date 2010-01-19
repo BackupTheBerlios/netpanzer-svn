@@ -15,461 +15,282 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
 
-#include "Util/Log.hpp"
-#include <list>
-#include <algorithm>
-
+#include "2D/Palette.hpp"
 #include "Units/UnitBucketArray.hpp"
-#include "Units/Unit.hpp"
 
-#include "Classes/PlayerState.hpp"
-#include "Interfaces/PlayerInterface.hpp"
-#include "Interfaces/MapInterface.hpp"
-#include "Classes/TileSet.hpp"
-
-typedef std::vector<UnitList> BucketList;
-
-BucketList*   buckets = 0;
-static long   map_x_sample_factor = 0;
-static long   map_y_sample_factor = 0;
-static long   pixel_x_sample_factor = 0;
-static long   pixel_y_sample_factor = 0;
-static size_t row_size = 0;
-static size_t column_size = 0;
-
-static UnitList& getBucket(const unsigned int bucket_index)
+UnitBucketArray::UnitBucketArray( )
+        : UnitBucketArrayTemplate( )
 {
-//    assert( bucket_index < getSize() );
-    return( (*buckets)[ bucket_index ] );
+    map_x_sample_factor = 0;
+    map_y_sample_factor = 0;
 }
 
-// conversion functions
-
-static unsigned int mapLocToBucketIndex(const iXY & map_loc)
+UnitBucketArray::~UnitBucketArray( )
 {
-    return ((map_loc.y / map_y_sample_factor) * column_size)
-            + (map_loc.x / map_x_sample_factor);
 }
-
-static unsigned int worldLocToBucketIndex(const iXY & world_loc)
-{
-    return ((world_loc.y / pixel_y_sample_factor) * column_size)
-            + (world_loc.x / pixel_x_sample_factor);
-}
-
-static void worldLocToBucketLoc(const iXY & world_loc, iXY & bucket_loc)
-{
-    bucket_loc.x = (world_loc.x-1) / pixel_x_sample_factor;
-    bucket_loc.y = (world_loc.y-1) / pixel_y_sample_factor;
-    if ( bucket_loc.x < 0 )
-    {
-        bucket_loc.x = 0;
-    }
-
-    if ( (size_t)bucket_loc.x >= column_size)
-    {
-        bucket_loc.x = column_size-1;
-    }
-
-    if ( bucket_loc.y < 0 )
-    {
-        bucket_loc.y = 0;
-    }
-
-    if ( (size_t)bucket_loc.y >= row_size )
-    {
-        bucket_loc.y = row_size -1;
-    }
-}
-
-static void worldRectToBucketRect(const iRect & world_rect, iRect &bucket_rect)
-{
-    worldLocToBucketLoc(world_rect.min, bucket_rect.min);
-    worldLocToBucketLoc(world_rect.max, bucket_rect.max);
-}
-
-static void unitRangeToBucketRect(const iXY& world_loc,
-                                  unsigned long range,
-                                  iRect &bucket_rect)
-{
-    worldLocToBucketLoc(world_loc, bucket_rect.min);
-    worldLocToBucketLoc(world_loc, bucket_rect.max);
-    // add range
-    unsigned long range_buckets = range / ( (pixel_x_sample_factor*pixel_x_sample_factor)
-                                          + (pixel_y_sample_factor*pixel_y_sample_factor));
-    bucket_rect.min.x -= range_buckets;
-    bucket_rect.min.y -= range_buckets;
-    bucket_rect.max.x += range_buckets;
-    bucket_rect.max.y += range_buckets;
-
-    if ( bucket_rect.min.x < 0 )
-    {
-        bucket_rect.min.x = 0;
-    }
-
-    if ( (size_t)bucket_rect.max.x >= column_size )
-    {
-        bucket_rect.max.x = column_size-1;
-    }
-
-    if ( bucket_rect.min.y < 0 )
-    {
-        bucket_rect.min.y = 0;
-    }
-
-    if ( (size_t)bucket_rect.max.y >= row_size )
-    {
-        bucket_rect.max.y = row_size-1;
-    }
-}
-
-//static void mapLocToBucketLoc(const iXY & map_loc, iXY & bucket_loc)
-//{
-//    bucket_loc.x = map_loc.x / map_x_sample_factor;
-//    bucket_loc.y = map_loc.y / map_y_sample_factor;
-//}
-
-static unsigned int bucketLocToBucketIndex(const unsigned int row, const unsigned int col)
-{
-    return (row * column_size) + col;
-}
-
-//static void mapRectToBucketRect(const iRect & map_rect, iRect &bucket_rect)
-//{
-//    mapLocToBucketLoc(map_rect.min, bucket_rect.min);
-//    mapLocToBucketLoc(map_rect.max, bucket_rect.max);
-//}
-
-
-// UnitBucketArray methods
 
 void
-UnitBucketArray::initialize(const unsigned int x_sample, const unsigned int y_sample)
+UnitBucketArray::initialize( iXY map_size, iXY tile_size )
 {
-    cleanUp();
+    initialize( map_size, tile_size, 10, 10 );
+}
 
-    unsigned int map_width = MapInterface::getWidth();
-    unsigned int map_height = MapInterface::getHeight();
-
+void
+UnitBucketArray::initialize( iXY map_size, iXY tile_size,
+        long x_super_sample, long y_super_sample )
+{
     unsigned long rows, columns;
 
-    assert( x_sample >= 1 );
-    assert( y_sample >= 1 );
+    assert( x_super_sample >= 1 );
+    assert( y_super_sample >= 1 );
 
-    map_x_sample_factor = x_sample;
-    map_y_sample_factor = y_sample;
+    UnitBucketArray::tile_size = tile_size;
+    UnitBucketArray::map_size = map_size;
+    UnitBucketArray::map_size_x = map_size.x;
+    UnitBucketArray::map_size_y = map_size.y;
 
-    while( (map_width % map_x_sample_factor) > 0 )
-    {
+    map_x_sample_factor = x_super_sample;
+    map_y_sample_factor = y_super_sample;
+
+    while( (map_size.x % map_x_sample_factor) > 0 ) {
         map_x_sample_factor++;
     }
 
-    while( (map_height % map_y_sample_factor) > 0 )
-    {
+    while( (map_size.y % map_y_sample_factor) > 0 ) {
         map_y_sample_factor++;
     }
 
-    pixel_x_sample_factor = TileSet::getTileXsize() * map_x_sample_factor;
-    pixel_y_sample_factor = TileSet::getTileYsize() * map_y_sample_factor;
+    pixel_x_sample_factor = tile_size.x * map_x_sample_factor;
+    pixel_y_sample_factor = tile_size.y * map_y_sample_factor;
 
-    rows = (unsigned long) map_height / map_y_sample_factor;
-    columns = (unsigned long) map_width / map_x_sample_factor;
+    rows = (unsigned long) map_size.y / map_y_sample_factor;
+    columns = (unsigned long) map_size.x / map_x_sample_factor;
 
-    row_size = rows;
-    column_size = columns;
-    buckets = new BucketList();
-    buckets->resize(rows*columns);
+    UnitBucketArrayTemplate::initialize( rows, columns );
 }
 
-void
-UnitBucketArray::cleanUp()
+iRect
+UnitBucketArray::worldRectToBucketRectClip( iRect &world_rect )
 {
-    if ( buckets )
-    {
-        delete buckets;
-        buckets = 0;
+    long bucket_max_x;
+    long bucket_max_y;
+
+    bucket_max_x = world_rect.max.x / pixel_x_sample_factor;
+    if ( bucket_max_x >= (long) column_size ) {
+        bucket_max_x = column_size - 1;
     }
-}
 
-void UnitBucketArray::addUnit(Unit *unit)
-{
-    getBucket(worldLocToBucketIndex(unit->unit_state.location)).push_back(unit);
-}
-
-void UnitBucketArray::removeUnit(const Unit *unit)
-{
-    UnitList& uli = getBucket(worldLocToBucketIndex(unit->unit_state.location));
-    uli.erase(std::remove(uli.begin(), uli.end(), unit), uli.end());
-}
-
-void
-UnitBucketArray::moveUnit(Unit * unit, const iXY& prev_unit_loc)
-{
-    unsigned int from_bucket = worldLocToBucketIndex(prev_unit_loc);
-    unsigned int to_bucket = worldLocToBucketIndex(unit->unit_state.location);
-    if ( from_bucket != to_bucket )
-    {
-        UnitList & uli = getBucket(from_bucket);
-        uli.erase(std::remove(uli.begin(), uli.end(), unit), uli.end());
-        getBucket(to_bucket).push_back(unit);
+    bucket_max_y = world_rect.max.y / pixel_y_sample_factor;
+    if ( bucket_max_y >= (long) row_size ) {
+        bucket_max_y = row_size  - 1;
     }
+
+    return( iRect( world_rect.min.x / pixel_x_sample_factor,
+                   world_rect.min.y / pixel_y_sample_factor,
+                   bucket_max_x,
+                   bucket_max_y
+                 )
+          );
+}
+
+UnitBucketList*
+UnitBucketArray::getBucketAssocWorldLoc( iXY world_loc )
+{
+    long bucket_index;
+
+    bucket_index = ((world_loc.y / pixel_y_sample_factor) * column_size) +
+                   (world_loc.x / pixel_x_sample_factor);
+
+    assert( bucket_index < (long) size );
+
+    return( &(array[ bucket_index ]) );
+}
+
+UnitBucketList*
+UnitBucketArray::getBucketAssocMapLoc( iXY map_loc )
+{
+    long bucket_index;
+
+    bucket_index = ((map_loc.y / map_y_sample_factor) * column_size) +
+                   (map_loc.x / map_x_sample_factor);
+
+    assert( bucket_index < (long) size );
+
+    return( &(array[ bucket_index ]) );
 }
 
 void
-UnitBucketArray::sort()
+UnitBucketArray::addUnit( UnitBase *unit )
 {
-    unsigned int index;
-    unsigned int real_index;
-    UnitList::iterator iter;
+    UnitBucketPointer *unit_bucket_ptr;
+    long bucket_index;
 
-    for( index = 0; index < buckets->size(); ++index )
-    {
-        UnitList & uli = getBucket(index);
+    bucket_index = ((unit->unit_state.location.y / pixel_y_sample_factor) * column_size) +
+                   (unit->unit_state.location.x / pixel_x_sample_factor);
 
-        for (iter = uli.begin(); iter != uli.end(); /* nothing */)
-        {
-            real_index = worldLocToBucketIndex( (*iter)->unit_state.location );
+    assert( bucket_index < (long) size );
 
-            if( real_index != index )
-            {
-                getBucket(real_index).push_back(*iter);
-                iter = uli.erase(iter);
-            }
-            else
-            {
-                ++iter;
-            }
+    unit_bucket_ptr = new UnitBucketPointer(unit);
+
+    array[ bucket_index ].addFront( unit_bucket_ptr );
+}
+
+void
+UnitBucketArray::addUnit( UnitBucketPointer *unit_bucket_ptr )
+{
+    long bucket_index;
+    UnitBase *unit;
+
+    unit = unit_bucket_ptr->unit;
+
+    bucket_index = ((unit->unit_state.location.y / pixel_y_sample_factor) * column_size) +
+                   (unit->unit_state.location.x / pixel_x_sample_factor);
+
+    assert( bucket_index < (long) size );
+
+    array[ bucket_index ].addFront( unit_bucket_ptr );
+}
+
+
+long
+UnitBucketArray::getUnitBucketIndex(UnitID unit_id)
+{
+    for( unsigned long bucket_index = 0; bucket_index < size; bucket_index++ ) {
+        UnitBucketPointer *traversal_ptr;
+
+        traversal_ptr = array[ bucket_index ].getFront();
+
+        while( traversal_ptr != 0 ) {
+            if( traversal_ptr->unit->id == unit_id )
+                return (long) bucket_index;
+
+            traversal_ptr = traversal_ptr->next;
         }
+
     }
+
+    return -1;
 }
 
-void
-UnitBucketArray::queryPlayerUnitsAt(std::vector<UnitID>& working_list,
-                                    const iXY& point,
-                                    const Uint16 player_id)
+UnitBase*
+UnitBucketArray::getUnit(UnitID unit_id, unsigned long bucket_index)
 {
-    UnitList & ubl = getBucket(worldLocToBucketIndex(point));
-    for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
-    {
-        Unit* unit = *i;
-        if( (*i)->unit_state.bounds(point)
-            && (*i)->player->getID() == player_id )
-        {
-            working_list.push_back(unit->id);
-        }
+    UnitBucketPointer *traversal_ptr = array[bucket_index].getFront();
+
+    while( traversal_ptr != 0 ) {
+        if(traversal_ptr->unit->id == unit_id)
+            return traversal_ptr->unit;
+
+        traversal_ptr = traversal_ptr->next;
     }
+
+    return 0;
 }
 
-void
-UnitBucketArray::queryUnitsInWorldRect(std::vector<Unit *>& working_list,
-                                       const iRect& rect)
+UnitBase* UnitBucketArray::getUnitAtWorldLoc(UnitID unit_id, iXY world_loc)
 {
-    UnitList::iterator iter;
-    iRect bucket_rect;
-    worldRectToBucketRect( rect, bucket_rect);
+    long bucket_index;
 
-    for( int row = bucket_rect.min.y; row <= bucket_rect.max.y; ++row )
-    {
-        for( int col = bucket_rect.min.x; col <= bucket_rect.max.x; ++col )
-        {
-            UnitList & bucket_list = getBucket(bucketLocToBucketIndex(row, col));
+    bucket_index = ((world_loc.y / pixel_y_sample_factor) * column_size) +
+                   (world_loc.x / pixel_x_sample_factor);
 
-            for( iter = bucket_list.begin(); iter != bucket_list.end(); ++iter )
-            {
-                if( rect.contains((*iter)->unit_state.location) )
-                {
-                    working_list.push_back(*iter);
-                }
-            }
-        }
+    assert( bucket_index < (long) size );
+
+    UnitBucketPointer *traversal_ptr;
+
+    traversal_ptr = array[ bucket_index ].getFront();
+
+    while( traversal_ptr != 0 ) {
+        if(traversal_ptr->unit->id == unit_id)
+            return traversal_ptr->unit;
+
+        traversal_ptr = traversal_ptr->next;
     }
+
+    return 0;
 }
 
-void
-UnitBucketArray::queryUnitsInWorldRectBuckets(std::vector<Unit *>& working_list,
-                                              const iRect& rect)
+UnitBase*
+UnitBucketArray::getUnitAtMapLoc(UnitID unit_id, iXY map_loc)
 {
-    UnitList::iterator iter;
-    iRect bucket_rect;
-    worldRectToBucketRect( rect, bucket_rect);
+    long bucket_index;
 
-    for( int row = bucket_rect.min.y; row <= bucket_rect.max.y; ++row )
-    {
-        for( int col = bucket_rect.min.x; col <= bucket_rect.max.x; ++col )
-        {
-            UnitList & bucket_list = getBucket(bucketLocToBucketIndex(row, col));
+    bucket_index = ((map_loc.y / map_y_sample_factor) * column_size) +
+                   (map_loc.x / map_x_sample_factor);
 
-            for( iter = bucket_list.begin(); iter != bucket_list.end(); ++iter )
-            {
-                working_list.push_back(*iter);
-            }
-        }
+    assert( bucket_index < (long) size );
+
+    UnitBucketPointer *traversal_ptr;
+
+    traversal_ptr = array[ bucket_index ].getFront();
+
+    while( traversal_ptr != 0 ) {
+        if(traversal_ptr->unit->id == unit_id)
+            return traversal_ptr->unit;
+
+        traversal_ptr = traversal_ptr->next;
     }
-}
 
-void
-UnitBucketArray::queryPlayerUnitsInWorldRect(std::vector<UnitID>& working_list,
-                                             const iRect& rect,
-                                             const Uint16 player_id)
-{
-    UnitList::iterator iter;
-    iRect bucket_rect;
-    worldRectToBucketRect( rect, bucket_rect);
-
-    for( int row = bucket_rect.min.y; row <= bucket_rect.max.y; ++row )
-    {
-        for( int col = bucket_rect.min.x; col <= bucket_rect.max.x; ++col )
-        {
-            UnitList & bucket_list = getBucket(bucketLocToBucketIndex(row, col));
-
-            for( iter = bucket_list.begin(); iter != bucket_list.end(); ++iter )
-            {
-                if(    rect.contains((*iter)->unit_state.location)
-                    && (*iter)->player->getID() == player_id )
-                {
-                    working_list.push_back((*iter)->id);
-                }
-
-            }
-        }
-    }
-}
-
-void
-UnitBucketArray::queryNonPlayerUnitsInWorldRect(std::vector<Unit *>& working_list,
-                                                const iRect& rect,
-                                                const Uint16 player_id)
-{
-    UnitList::iterator iter;
-    iRect bucket_rect;
-    worldRectToBucketRect( rect, bucket_rect);
-
-    for( int row = bucket_rect.min.y; row <= bucket_rect.max.y; ++row )
-    {
-        for( int col = bucket_rect.min.x; col <= bucket_rect.max.x; ++col )
-        {
-            UnitList & bucket_list = getBucket(bucketLocToBucketIndex(row, col));
-
-            for( iter = bucket_list.begin(); iter != bucket_list.end(); ++iter )
-            {
-                if(    rect.contains((*iter)->unit_state.location)
-                    && (*iter)->player->getID() != player_id )
-                {
-                    working_list.push_back(*iter);
-                }
-
-            }
-        }
-    }
+    return 0;
 }
 
 bool
-UnitBucketArray::queryClosestEnemyUnitInRange(Unit **closest_unit_ptr,
-                                              const iXY &loc,
-                                              unsigned long range,
-                                              const Uint16 player_id)
+UnitBucketArray::moveUnit(UnitID unit_id, unsigned long from_bucket_index,
+			       unsigned long to_bucket_index )
 {
-    Unit *closest_unit = 0;
-    long closest_magnitude = 0;
-    iRect bucket_rect;
-    UnitList::iterator bucket_iter;
+    assert(from_bucket_index < size);
+    assert(to_bucket_index < size);
+    
+    bool found = false;
+    UnitBucketPointer *traversal_ptr;
+    UnitBucketPointer *move_ptr;
 
-    unitRangeToBucketRect( loc, range, bucket_rect );
+    traversal_ptr = array[ from_bucket_index ].getFront();
 
-    for( long row_index = bucket_rect.min.y; row_index <= bucket_rect.max.y; row_index++ )
-    {
-        for( long column_index = bucket_rect.min.x; column_index <= bucket_rect.max.x; column_index++ )
-        {
-            UnitList &bucket_list = getBucket(bucketLocToBucketIndex(row_index, column_index));
-
-            for ( bucket_iter = bucket_list.begin();
-                    bucket_iter != bucket_list.end(); ++bucket_iter)
-            {
-                iXY delta;
-                long temp_mag;
-
-                Uint16 unitPlayerID = (*bucket_iter)->player->getID();
-
-                if (   unitPlayerID == player_id
-                    || PlayerInterface::isAllied(player_id, unitPlayerID) )
-                {
-                    continue;
-                }
-
-                if ( closest_unit == 0 )
-                {
-                    closest_unit = *bucket_iter;
-                    delta  = loc - (*bucket_iter)->unit_state.location;
-                    closest_magnitude = long(delta.mag2());
-                }
-                else
-                {
-                    delta  = loc - (*bucket_iter)->unit_state.location;
-                    temp_mag = long(delta.mag2());
-
-                    if ( closest_magnitude > temp_mag )
-                    {
-                        closest_unit = *bucket_iter;
-                        closest_magnitude = temp_mag;
-                    }
-                }
-            }
+    while( (traversal_ptr != 0) && (found == false) ) {
+        if(traversal_ptr->unit->id == unit_id) {
+            move_ptr = traversal_ptr;
+            traversal_ptr = traversal_ptr->next;
+            array[ from_bucket_index ].removeObject( move_ptr );
+            array[ to_bucket_index ].addFront( move_ptr );
+            found = true;
+        } else {
+            traversal_ptr = traversal_ptr->next;
         }
     }
 
-    if( closest_unit != 0 )
-    {
-        *closest_unit_ptr = closest_unit;
-        return true;
+    if ( found == false ) {
+        long from_bucket_index = getUnitBucketIndex( unit_id );
+        if(from_bucket_index != -1) {
+            return( moveUnit( unit_id, from_bucket_index, to_bucket_index ) );
+        } else
+            return false;
     }
 
-    *closest_unit_ptr = 0;
+    return true;
+}
+
+bool
+UnitBucketArray::deleteUnitBucketPointer(UnitID unit_id, iXY world_loc)
+{
+    long bucket_index;
+
+    bucket_index = worldLocToBucketIndex( world_loc );
+
+    UnitBucketPointer *traversal_ptr;
+
+    traversal_ptr = array[ bucket_index ].getFront();
+
+    while( traversal_ptr != 0 ) {
+        if(traversal_ptr->unit->id == unit_id) {
+            array[ bucket_index ].deleteObject( traversal_ptr );
+            return true;
+        }
+
+        traversal_ptr = traversal_ptr->next;
+    }
+
     return false;
-}
-
-void
-UnitBucketArray::queryUnitsAtWorldLocBucket(std::vector<Unit *>& working_list,
-                                            const iXY& world_loc)
-{
-    UnitList & ubl = getBucket(worldLocToBucketIndex(world_loc));
-    for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
-    {
-        working_list.push_back(*i);
-    }
-}
-
-Unit *
-UnitBucketArray::queryUnitAtMapLoc(const iXY & map_loc)
-{
-    iXY world_loc;
-    MapInterface::mapXYtoPointXY(map_loc, &world_loc);
-
-    UnitList & ubl = getBucket(mapLocToBucketIndex(map_loc));
-    for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
-    {
-        if ( (*i)->unit_state.bounds(world_loc) )
-        {
-            return *i;
-        }
-    }
-
-    return 0;
-}
-
-Unit *
-UnitBucketArray::queryNonPlayerUnitAtWorld(const iXY & world_loc,
-                                           const Uint16 player_id)
-{
-    UnitList & ubl = getBucket(worldLocToBucketIndex(world_loc));
-    for(UnitList::iterator i = ubl.begin(); i != ubl.end(); ++i)
-    {
-        if ( (*i)->unit_state.bounds(world_loc)
-              && (*i)->player->getID() != player_id )
-        {
-            return *i;
-        }
-    }
-
-    return 0;
 }

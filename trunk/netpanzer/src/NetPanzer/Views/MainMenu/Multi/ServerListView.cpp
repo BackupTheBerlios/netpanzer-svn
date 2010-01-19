@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "ServerListView.hpp"
 
@@ -28,13 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // XXX ultrahack
 #include "Classes/ScreenSurface.hpp"
 #include "Views/Components/Desktop.hpp"
-#include "Views/Components/Button.hpp"
 
-
-enum
-{
-    BTN_REFRESH
-};
 
 ServerListView* serverlistview = 0;
 
@@ -46,14 +40,16 @@ ServerListView::ServerListView()
     setSubTitle("");
 
     moveTo(bodyTextRect.min + iXY(0, 170));
-    resize(bodyTextRect.max - bodyTextRect.min - iXY(0,170));
+    resizeClientArea(bodyTextRect.max - bodyTextRect.min - iXY(0,170));
 
+    setAllowResize(false);
     setAllowMove(false);
     setVisible(false);
 
-    iXY p(getClientRect().getSizeX()-80, getClientRect().getSizeY() - Surface::getFontHeight() * 2);
-    add( Button::createTextButton("refresh","Refresh",p,80,BTN_REFRESH) );
-
+    addButtonCenterText(iXY(getClientRect().getSizeX()-80,
+                getClientRect().getSizeY() - Surface::getFontHeight() * 2),
+            80, "Refresh", "", buttonRefresh);
+    
     // XXX ugly
     serverlistview = this;
 }
@@ -87,7 +83,7 @@ ServerListView::refresh()
         screen->lock();
         mylock = true;
     }
-    Desktop::draw(); // XXX ultrahack
+    Desktop::draw(*screen); // XXX ultrahack
     if ( mylock )
         screen->unlock();
     screen->copyToVideoFlip(); // XXX uberhack
@@ -111,9 +107,9 @@ ServerListView::buttonRefresh()
 }
 
 void
-ServerListView::doDraw()
+ServerListView::doDraw(Surface& windowArea, Surface& clientArea)
 {
-    fill(Color::black);
+    clientArea.fill(Color::black);
     
     if(queryThread && queryThread->isRunning()) {
         queryThread->checkTimeOuts();
@@ -126,8 +122,8 @@ ServerListView::doDraw()
         } else {
             msg = "Resolving masterserver address";
         }
-        drawString(0, 0, msg, Color::white);
-        View::doDraw();
+        clientArea.bltString(0, 0, msg, Color::white);
+        View::doDraw(windowArea, clientArea);
         return;
     }
 
@@ -137,17 +133,17 @@ ServerListView::doDraw()
         const masterserver::ServerInfo& server = *(*i);
 
         if(server.status == masterserver::ServerInfo::QUERYING) {
-            drawString(0,   y, server.address.c_str(), Color::gray);
-            drawString(140, y, "querying...", Color::gray);
+            clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
+            clientArea.bltString(140, y, "querying...", Color::gray);
         } else if(server.status == masterserver::ServerInfo::TIMEOUT) {
-            drawString(0,   y, server.address.c_str(), Color::gray);
-            drawString(140, y, "timeout", Color::gray);
+            clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
+            clientArea.bltString(140, y, "timeout", Color::gray);
         } else if(server.protocol < NETPANZER_PROTOCOL_VERSION) {
-            drawString(0,   y, server.address.c_str(), Color::gray);
-            drawString(140, y, "server protocol too old", Color::gray);
+            clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
+            clientArea.bltString(140, y, "server protocol too old", Color::gray);
         } else if(server.protocol > NETPANZER_PROTOCOL_VERSION) {
-            drawString(0,   y, server.address.c_str(), Color::gray);
-            drawString(140, y, "server protocol too new", Color::gray);
+            clientArea.bltString(0,   y, server.address.c_str(), Color::gray);
+            clientArea.bltString(140, y, "server protocol too new", Color::gray);
         } else {
             std::stringstream playerstr;
             playerstr << server.players << "/" << server.maxplayers;
@@ -158,32 +154,30 @@ ServerListView::doDraw()
             std::stringstream servaddr;
             servaddr << server.address << ':' << server.port;
             
-            IntColor textcolor = Color::white;
+            Uint8 textcolor = Color::white;
             
             if (servaddr.str()==IPAddressView::szServer.getString()) {
                 textcolor = Color::yellow;
-                fillRect(
-                    iRect(0,y,clientRect.getSizeX(),y+Surface::getFontHeight()),
+                clientArea.fillRect(
+                    iRect(0,y,clientArea.getWidth(),y+Surface::getFontHeight()),
                     Color::blue);
             }
 
             char ssn[44];
             SDL_strlcpy(ssn, server.name.c_str(), sizeof(ssn));
-            drawString(0,   y, ssn, textcolor);
-            drawString(350, y, playerstr.str().c_str(), textcolor);
-            drawString(400, y, server.map.c_str(), textcolor);
-            drawString(550, y, pingstr.str().c_str(), textcolor);
+            clientArea.bltString(0,   y, ssn, textcolor);
+            clientArea.bltString(350, y, playerstr.str().c_str(), textcolor);
+            clientArea.bltString(400, y, server.map.c_str(), textcolor);
+            clientArea.bltString(550, y, pingstr.str().c_str(), textcolor);
 
         }
 
         y += Surface::getFontHeight();
-        if(y >= (unsigned int)clientRect.getSizeY())
-		{
-        	break;
-		}
+        if(y >= clientArea.getHeight())
+            break;                             
     }
 
-    View::doDraw();
+    View::doDraw(windowArea, clientArea);
 }
 
 int
@@ -205,11 +199,3 @@ ServerListView::lMouseUp(const iXY& down_pos, const iXY& up_pos)
     return View::lMouseUp(down_pos, up_pos);
 }
 
-void
-ServerListView::onComponentClicked(Component* c)
-{
-    if ( c->getCustomCode() == BTN_REFRESH )
-    {
-        refresh();
-    }
-}

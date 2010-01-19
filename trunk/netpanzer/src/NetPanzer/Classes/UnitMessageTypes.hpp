@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _UNITMESSAGETYPES_HPP
 
 #include "Classes/UnitMessage.hpp"
-#include "Types/iXY.hpp"
 
 enum { _umesg_ai_command,
        _umesg_weapon_hit,
@@ -45,59 +44,84 @@ private:
     Sint32 goal_loc_x;
     Sint32 goal_loc_y;
     Uint16 target_id;
-
+public:
+    Uint8 manual_move_orientation;
+private:
+    Sint32 target_loc_x;
+    Sint32 target_loc_y;
 public:
     UMesgAICommand()
     {
         command = 0;
         goal_loc_x = goal_loc_y = 0;
         target_id = 0;
+        manual_move_orientation = 0;
+        target_loc_x = target_loc_y = 0;
     }
 
-    UMesgAICommand( UnitID unit_id )
-            : UnitMessage( unit_id )
+    UMesgAICommand(UnitID unit_id, unsigned char flags)
+            : UnitMessage(unit_id, flags )
     {
         command = 0;
         goal_loc_x = goal_loc_y = 0;
         target_id = 0;
+        manual_move_orientation = 0;
+        target_loc_x = target_loc_y = 0;
     }
 
     void setMoveToLoc(const iXY& goal)
     {
         message_id = _umesg_ai_command;
         command = _command_move_to_loc;
-        goal_loc_x = SDL_SwapLE32(goal.x);
-        goal_loc_y = SDL_SwapLE32(goal.y);
+        goal_loc_x = htol32(goal.x);
+        goal_loc_y = htol32(goal.y);
+        manual_move_orientation = 0;
     }
 
     void setTargetUnit(UnitID target)
     {
         message_id = _umesg_ai_command;
         command = _command_attack_unit;
-        target_id = SDL_SwapLE16(target);
+        target_id = htol16(target);
+        manual_move_orientation = 0;
+    }
+
+    void setStartManualMove(unsigned char orientation)
+    {
+        message_id = _umesg_ai_command;
+        command = _command_start_manual_move;
+        manual_move_orientation = orientation;
+    }
+
+    void setStopManualMove()
+    {
+        message_id = _umesg_ai_command;
+        command = _command_stop_manual_move;
+        manual_move_orientation = 0;
     }
 
     void setManualFire(const iXY& target)
     {
         message_id = _umesg_ai_command;
         command = _command_manual_fire;
-        goal_loc_x = SDL_SwapLE32(target.x);
-        goal_loc_y = SDL_SwapLE32(target.y);
+        target_loc_x = htol32(target.x);
+        target_loc_y = htol32(target.y);
+        manual_move_orientation = 0;
     }
 
     iXY getGoalLoc() const
     {
-        return iXY(SDL_SwapLE32(goal_loc_x), SDL_SwapLE32(goal_loc_y));
+        return iXY(ltoh32(goal_loc_x), ltoh32(goal_loc_y));
     }
 
     UnitID getTargetUnitID() const
     {
-        return SDL_SwapLE16(target_id);
+        return ltoh16(target_id);
     }
 
     iXY getTargetLoc() const
     {
-        return iXY(SDL_SwapLE32(goal_loc_x), SDL_SwapLE32(goal_loc_y));
+        return iXY(ltoh32(target_loc_x), ltoh32(target_loc_y));
     }
 }
 __attribute__((packed));
@@ -113,32 +137,32 @@ private:
 public:
     void setOwnerUnitID(UnitID id)
     {
-        owner_id = SDL_SwapLE16(id);
+        owner_id = htol16(id);
     }
 
     UnitID getOwnerUnitID() const
     {
-        return SDL_SwapLE16(owner_id);
+        return ltoh16(owner_id);
     }
 
     void setHitLocation(const iXY& point)
     {
-        hit_location_x = SDL_SwapLE32(point.x);
-        hit_location_y = SDL_SwapLE32(point.y);
+        hit_location_x = htol32(point.x);
+        hit_location_y = htol32(point.y);
     }
 
     iXY getHitLocation() const
     {
-        return iXY(SDL_SwapLE32(hit_location_x), SDL_SwapLE32(hit_location_y));
+        return iXY(ltoh32(hit_location_x), ltoh32(hit_location_y));
     }
 
     void setDamageFactor(Uint16 damage_factor)
     {
-        this->damage_factor = SDL_SwapLE16(damage_factor);
+        this->damage_factor = htol16(damage_factor);
     }
     Uint16 getDamageFactor() const
     {
-        return SDL_SwapLE16(damage_factor);
+        return ltoh16(damage_factor);
     }
 } __attribute__((packed));
 
@@ -155,19 +179,20 @@ public:
             unsigned char unit_type )
     {
         message_id = _umesg_end_lifecycle;
-        destroyed = SDL_SwapLE16(destroyed_unit);
-        destroyer = SDL_SwapLE16(destroyer_unit);
+        message_flags = _umesg_flag_manager_request;
+        destroyed = htol16(destroyed_unit);
+        destroyer = htol16(destroyer_unit);
         this->unit_type = unit_type;
     }
 
     UnitID getDestroyed() const
     {
-        return SDL_SwapLE16(destroyed);
+        return ltoh16(destroyed);
     }
 
     UnitID getDestroyer() const
     {
-        return SDL_SwapLE16(destroyer);
+        return ltoh16(destroyer);
     }
 }
 __attribute__((packed));

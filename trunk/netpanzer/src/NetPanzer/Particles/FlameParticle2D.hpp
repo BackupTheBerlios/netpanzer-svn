@@ -21,9 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <vector>
 
 #include "Particles/Particle2D.hpp"
-#include "2D/Surface.hpp"
-
-struct lua_State;
+#include "2D/PackedSurface.hpp"
 
 // FlameParticle2D
 //--------------------------------------------------------------------------
@@ -36,10 +34,15 @@ public:
                      float       lifetime,
                      int         layer);
 
-    static int loadFlames(lua_State *L, void *v);
-    
+    static void init();
+
 protected:
-    virtual void draw(SpriteSorter &sorter);
+    static PackedSurfaceList staticPackedExplosion0;
+    static PackedSurfaceList staticPackedExplosion1;
+
+    virtual void draw(const Surface &dest, SpriteSorter &sorter);
+
+    static void loadPakFiles();
 }
 ; // end FlameParticle2D
 

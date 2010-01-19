@@ -15,21 +15,19 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "CloudParticle2D.hpp"
 #include "Util/TimerInterface.hpp"
+#include "2D/PackedSurface.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Util/Exception.hpp"
 #include "2D/Palette.hpp"
 #include "Classes/Sprite.hpp"
 
-#include "Util/Log.hpp"
-#include "lua/lua.hpp"
 
 // Statics.
-Surface* staticPackedCloud = 0;
-Surface* staticCloudShadow = 0;
+PackedSurface CloudParticle2D::staticPackedCloud;
 iXY CloudParticle2D::worldSize(0, 0);
 
 
@@ -60,37 +58,47 @@ CloudParticle2D::CloudParticle2D(	const fXYZ &pos,
 //---------------------------------------------------------------------------
 void CloudParticle2D::setRandomSurface()
 {
-    packedSurface.setData(*staticPackedCloud);
+    packedSurface.setData(staticPackedCloud);
 
-    int randFrame = rand() % staticPackedCloud->getNumFrames();
+    int randFrame = rand() % staticPackedCloud.getFrameCount();
     packedSurface.setFrame(randFrame);
 
-    packedSurfaceShadow.setData(*staticCloudShadow);
+    packedSurfaceShadow.setData(staticPackedCloud);
     packedSurfaceShadow.setFrame(randFrame);
+
+    packedSurfaceShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
+
+    int randColorTable = rand() % 3;
+
+    if (randColorTable == 0) {
+        packedSurface.setDrawModeBlend(&Palette::colorTable2080);
+    } else if(randColorTable == 1) {
+        packedSurface.setDrawModeBlend(&Palette::colorTable4060);
+    } else if(randColorTable == 2) {
+        packedSurface.setDrawModeBlend(&Palette::colorTable6040);
+    } else {
+        assert(false);
+    }
 
 } // end CloudParticle2D::setRandomSurface
 
-int CloudParticle2D::loadClouds(lua_State * L, void * v)
+//---------------------------------------------------------------------------
+void CloudParticle2D::packFiles()
+{}
+
+//---------------------------------------------------------------------------
+void CloudParticle2D::loadPAKFiles()
 {
-    Surface::loadPNGSheetPointer(L, &staticPackedCloud);
-    if ( ! staticPackedCloud )
-    {
-        LOGGER.warning("BAD clouds configuration, not loading clouds.");
-        return 0;
-    }
-
-    if ( ! staticCloudShadow )
-    {
-        staticCloudShadow = new Surface();
-    }
-
-    staticCloudShadow->createShadow(*staticPackedCloud);
-    staticCloudShadow->setAlpha(32);
-
-    staticPackedCloud->setAlpha(128);
-
-    return 0;
+    staticPackedCloud.load("pics/particles/clouds/pak/clouds.pak");
+    staticPackedCloud.setOffsetCenter();
 }
+
+// init
+//---------------------------------------------------------------------------
+void CloudParticle2D::init()
+{
+    loadPAKFiles();
+} // end CloudParticle2D::init
 
 // sim
 //---------------------------------------------------------------------------
@@ -137,12 +145,12 @@ void CloudParticle2D::sim()
 
 // draw
 //---------------------------------------------------------------------------
-void CloudParticle2D::draw(SpriteSorter &sorter)
+void CloudParticle2D::draw(const Surface&, SpriteSorter &sorter)
 {
     packedSurface.setAttrib(iXY(int(pos.x), int(pos.z)), layer);
     sorter.addSprite(&packedSurface);
 
-    if (GameConfig::video_shadows) {
+    if (gameconfig->displayshadows) {
         packedSurfaceShadow.setAttrib(iXY(int(pos.x - 300), int(pos.z)), shadowLayer);
         sorter.addSprite(&packedSurfaceShadow);
     }

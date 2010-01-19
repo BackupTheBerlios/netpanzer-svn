@@ -148,11 +148,15 @@ class ConnectClientSettings : public NetMessage
 {
 public:
     char player_name[64];
+private:
+    Sint16 player_flag;
+public:
     Uint8 unit_color;
-    Uint8 flagdata[20*14]; // 20*14 = flagsize 8bpp = 280
 
     ConnectClientSettings();
-    void set(const char *player_name, Uint8 unit_color, const char * flagname );
+    Sint16 getPlayerFlag() const;
+    void set(const char *player_name, Uint8 unit_color,
+             Uint16 player_flag );
 } __attribute__((packed));
 
 class ConnectMesgServerGameSettings : public NetMessage
@@ -229,11 +233,11 @@ public:
 
     void setPlayerID(Uint16 id)
     {
-        player_id = SDL_SwapLE16(id);
+        player_id = htol16(id);
     }
     Uint16 getPlayerID() const
     {
-        return SDL_SwapLE16(player_id);
+        return ltoh16(player_id);
     }
 } __attribute__((packed));
 

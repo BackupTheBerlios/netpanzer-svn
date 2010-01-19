@@ -15,16 +15,57 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "Views/MainMenu/OptionsTemplateView.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/GameViewGlobals.hpp"
-#include "Views/Components/Button.hpp"
 
-#define BTN_INTERFACE "OptionsTemplateView.Interface"
-#define BTN_VISUALS "OptionsTemplateView.Visuals"
-#define BTN_SOUND "OptionsTemplateView.Sound"
+static void bInterface()
+{
+    if (Desktop::getVisible("GameView")) {
+        Desktop::setVisibility("ControlsView", false);
+        Desktop::setVisibility("VisualsView", false);
+        Desktop::setVisibility("InterfaceView", false);
+        Desktop::setVisibility("SoundView", false);
+        Desktop::setVisibility("OptionsView", false);
+    } else {
+        Desktop::setVisibilityAllWindows(false);
+    }
+
+    Desktop::setVisibility("InterfaceView", true);
+}
+
+static void bVisuals()
+{
+    if (Desktop::getVisible("GameView")) {
+        Desktop::setVisibility("ControlsView", false);
+        Desktop::setVisibility("VisualsView", false);
+        Desktop::setVisibility("InterfaceView", false);
+        Desktop::setVisibility("SoundView", false);
+        Desktop::setVisibility("OptionsView", false);
+    } else {
+        Desktop::setVisibilityAllWindows(false);
+    }
+
+    Desktop::setVisibility("VisualsView", true);
+}
+
+static void bSound()
+{
+    if (Desktop::getVisible("GameView")) {
+        Desktop::setVisibility("ControlsView", false);
+        Desktop::setVisibility("VisualsView", false);
+        Desktop::setVisibility("InterfaceView", false);
+        //Desktop::setVisibility("SoundView", false);
+        Desktop::setVisibility("OptionsView", false);
+    } else {
+        Desktop::setVisibilityAllWindows(false);
+    }
+    Desktop::setVisibility("SoundView", true);
+    //Desktop::setVisibility("VisualsView", true);
+}
+
 
 // OptionsTemplateView
 //---------------------------------------------------------------------------
@@ -43,13 +84,14 @@ OptionsTemplateView::OptionsTemplateView() : MenuTemplateView()
 //---------------------------------------------------------------------------
 void OptionsTemplateView::initButtons()
 {
+    removeAllButtons();
     removeComponents();
 
     MenuTemplateView::initButtons();
 
-    add( Button::createSpecialButton( BTN_SOUND,"Sound", soundPos));
-    add( Button::createSpecialButton( BTN_INTERFACE,"Interface", interfacePos));
-    add( Button::createSpecialButton( BTN_VISUALS,"Visuals",visualsPos));
+    addSpecialButton( soundPos,     "Sound",     bSound);
+    addSpecialButton( interfacePos, "Interface", bInterface);
+    addSpecialButton( visualsPos,   "Visuals",   bVisuals);
 
 #if 0 // XXX
     addSpecialButton( controlsPos,  "Controls",  bControls);
@@ -59,11 +101,11 @@ void OptionsTemplateView::initButtons()
 
 // doDraw
 //---------------------------------------------------------------------------
-void OptionsTemplateView::doDraw()
+void OptionsTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    MenuTemplateView::doDraw();
+    MenuTemplateView::doDraw(viewArea, clientArea);
 
-    drawStringCenter("Select your option category above", Color::white);
+    clientArea.bltStringCenter("Select your option category above", Color::white);
 
 } // end OptionsTemplateView::doDraw
 
@@ -71,7 +113,7 @@ void OptionsTemplateView::doDraw()
 //---------------------------------------------------------------------------
 void OptionsTemplateView::loadBackgroundSurface()
 {
-    doLoadBackgroundSurface("pics/default/optionsMB.png");
+    doLoadBackgroundSurface("pics/backgrounds/menus/menu/optionsMB.bmp");
 
 } // end OptionsTemplateView::loadBackgroundSurface
 
@@ -82,64 +124,3 @@ void OptionsTemplateView::loadTitleSurface()
     doLoadTitleSurface("optionsTitle");
 
 } // end ControlsView::loadTitleSurface
-
-void
-OptionsTemplateView::onComponentClicked(Component* c)
-{
-    string cname = c->getName();
-
-    if ( ! cname.compare("Button." BTN_INTERFACE) )
-    {
-        if (Desktop::getVisible("GameView"))
-        {
-            Desktop::setVisibility("ControlsView", false);
-            Desktop::setVisibility("VisualsView", false);
-            Desktop::setVisibility("InterfaceView", false);
-            Desktop::setVisibility("SoundView", false);
-            Desktop::setVisibility("OptionsView", false);
-        }
-        else
-        {
-            Desktop::setVisibilityAllWindows(false);
-        }
-
-        Desktop::setVisibility("InterfaceView", true);
-    }
-    else if ( ! cname.compare("Button." BTN_VISUALS) )
-    {
-        if (Desktop::getVisible("GameView"))
-        {
-            Desktop::setVisibility("ControlsView", false);
-            Desktop::setVisibility("VisualsView", false);
-            Desktop::setVisibility("InterfaceView", false);
-            Desktop::setVisibility("SoundView", false);
-            Desktop::setVisibility("OptionsView", false);
-        }
-        else
-        {
-            Desktop::setVisibilityAllWindows(false);
-        }
-
-        Desktop::setVisibility("VisualsView", true);
-    }
-    else if ( ! cname.compare("Button." BTN_SOUND) )
-    {
-        if (Desktop::getVisible("GameView"))
-        {
-            Desktop::setVisibility("ControlsView", false);
-            Desktop::setVisibility("VisualsView", false);
-            Desktop::setVisibility("InterfaceView", false);
-            //Desktop::setVisibility("SoundView", false);
-            Desktop::setVisibility("OptionsView", false);
-        }
-        else
-        {
-            Desktop::setVisibilityAllWindows(false);
-        }
-        Desktop::setVisibility("SoundView", true);
-    }
-    else
-    {
-        MenuTemplateView::onComponentClicked(c);
-    }
-}

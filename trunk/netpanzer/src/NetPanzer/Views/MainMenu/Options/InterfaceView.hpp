@@ -36,12 +36,11 @@ class InterfaceView : public OptionsTemplateView
 {
 protected:
     virtual void loadTitleSurface();
-    void onComponentClicked(Component *c);
-    
+
 public:
     InterfaceView();
 
-    virtual void doDraw();
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void initButtons();
 }; // end InterfaceView
 

@@ -15,29 +15,40 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include <iostream>
 
 #include "Bot.hpp"
 
 #include "Classes/PlacementMatrix.hpp"
-#include "Units/Unit.hpp"
+#include "Units/UnitBase.hpp"
 #include "Objectives/Objective.hpp"
 #include "Classes/Network/TerminalNetMesg.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Util/Log.hpp"
-#include "Network/MessageRouter.hpp"
 
-Bot::Bot(Uint16 playerid)
-{
-    botPlayerId = playerid;
-}
-
+Bot *Bot::s_bot = 0;
+//-----------------------------------------------------------------
 void
-Bot::moveUnit(Unit *unit, iXY map_pos)
+Bot::initialize(Bot *bot)
+{
+    s_bot = bot;
+}
+//-----------------------------------------------------------------
+void
+Bot::shutdown()
+{
+    if (s_bot) {
+        delete s_bot;
+        s_bot = 0;
+    }
+}
+//-----------------------------------------------------------------
+void
+Bot::moveUnit(UnitBase *unit, iXY map_pos)
 {
     assert(unit != 0);
 
@@ -46,41 +57,41 @@ Bot::moveUnit(Unit *unit, iXY map_pos)
     matrix.getNextEmptyLoc(&map_pos);
 
     TerminalUnitCmdRequest comm_mesg;
-    comm_mesg.comm_request.setHeader(unit->id);
+    comm_mesg.comm_request.setHeader(unit->id, _umesg_flag_unique);
     comm_mesg.comm_request.setMoveToLoc(map_pos);
 
-    MessageRouter::enqueueIncomingPacket(&comm_mesg, sizeof(TerminalUnitCmdRequest), botPlayerId, NULL);
+    CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest));
     m_tasks.setUnitTask(unit, BotTaskList::TASK_MOVE);
 
-//    LOGGER.debug("bot: moveUnit %d to %dx%d", unit->id, map_pos.x, map_pos.y);
+    LOGGER.debug("bot: moveUnit %d to %dx%d", unit->id, map_pos.x, map_pos.y);
 }
 //-----------------------------------------------------------------
 void
-Bot::attackUnit(Unit *unit, Unit *enemyUnit)
+Bot::attackUnit(UnitBase *unit, UnitBase *enemyUnit)
 {
     assert(unit != 0);
     assert(enemyUnit != 0);
 
     TerminalUnitCmdRequest comm_mesg;
-    comm_mesg.comm_request.setHeader(unit->id);
+    comm_mesg.comm_request.setHeader(unit->id, _umesg_flag_unique);
     comm_mesg.comm_request.setTargetUnit(enemyUnit->id);
 
-    MessageRouter::enqueueIncomingPacket(&comm_mesg, sizeof(TerminalUnitCmdRequest), botPlayerId, NULL);
+    CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest));
     m_tasks.setUnitTask(unit, BotTaskList::TASK_ATTACK);
 
-//    LOGGER.debug("bot: attackUnit %d to %d", unit->id, enemyUnit->id);
+    LOGGER.debug("bot: attackUnit %d to %d", unit->id, enemyUnit->id);
 }
 //-----------------------------------------------------------------
 void
-Bot::manualFire(Unit *unit, iXY world_pos)
+Bot::manualFire(UnitBase *unit, iXY world_pos)
 {
     assert(unit != 0);
 
     TerminalUnitCmdRequest comm_mesg;
-    comm_mesg.comm_request.setHeader(unit->id);
+    comm_mesg.comm_request.setHeader(unit->id, _umesg_flag_unique);
     comm_mesg.comm_request.setManualFire(world_pos);
 
-    MessageRouter::enqueueIncomingPacket(&comm_mesg, sizeof(TerminalUnitCmdRequest), botPlayerId, NULL);
+    CLIENT->sendMessage(&comm_mesg, sizeof(TerminalUnitCmdRequest));
     //NOTE: manual fire is not special unit task,
     // unit can move and fire simultanous
 }
@@ -88,19 +99,19 @@ Bot::manualFire(Unit *unit, iXY world_pos)
 void
 Bot::produceUnit(ObjectiveID outpostID, int selectedProduce)
 {
-//    LOGGER.debug("bot: produceUnit outpost=%d selectedProduce=%d",
-//                 outpostID, selectedProduce);
+    LOGGER.debug("bot: produceUnit outpost=%d selectedProduce=%d",
+                 outpostID, selectedProduce);
 
     // Send the server the selected unit and whether factory power is on.
     TerminalOutpostUnitGenRequest term_mesg;
 
     term_mesg.unit_gen_request.set(outpostID, selectedProduce, true);
 
-    MessageRouter::enqueueIncomingPacket(&term_mesg, sizeof(TerminalOutpostUnitGenRequest), botPlayerId, NULL);
+    CLIENT->sendMessage(&term_mesg, sizeof(TerminalOutpostUnitGenRequest));
 
     // XXX is this needed?
-//    if (NetworkState::status == _network_state_client) {
-//        ObjectiveInterface::sendMessage(&(term_mesg.unit_gen_request));
-//    }
+    if (NetworkState::status == _network_state_client) {
+        ObjectiveInterface::sendMessage(&(term_mesg.unit_gen_request));
+    }
  }
 

@@ -15,11 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-
-#include "Views/Components/Button.hpp"
-
-#include "Core/GlobalEngineState.hpp"
+#include <config.h>
 
 #include "SoundView.hpp"
 #include "Interfaces/GameConfig.hpp"
@@ -31,17 +27,49 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/DummySound.hpp"
 #include "Interfaces/GameControlRulesDaemon.hpp"
 
-enum
+static void bDecreaseSoundVolume()
 {
-    DEC_SOUND,
-    INC_SOUND,
-    DEC_MUSIC,
-    INC_MUSIC
-};
+    unsigned int v = gameconfig->effectsvolume;
+    if (v) {
+        --v;
+        gameconfig->effectsvolume = v;
+        sound->setSoundVolume(v);
+    }
+}
+
+static void bIncreaseSoundVolume()
+{
+    unsigned int v = gameconfig->effectsvolume;
+    if (v<100) {
+        ++v;
+        gameconfig->effectsvolume = v;
+        sound->setSoundVolume(v);
+    }
+}
 
 int getSoundVolume()
 {
     return gameconfig->effectsvolume;
+}
+
+static void bDecreaseMusicVolume()
+{
+    unsigned int v = gameconfig->musicvolume;
+    if (v) {
+        --v;
+        gameconfig->musicvolume = v;
+        sound->setMusicVolume(v);
+    }
+}
+
+static void bIncreaseMusicVolume()
+{
+    unsigned int v = gameconfig->musicvolume;
+    if (v<100) {
+        ++v;
+        gameconfig->musicvolume = v;
+        sound->setMusicVolume(v);
+    }
 }
 
 int getMusicVolume()
@@ -92,11 +120,10 @@ void SoundView::initButtons()
 
     x = xTextStart;
     add( new Label( x, y, "Sound Volume", Color::white) );
-
     x = optionsMeterStartX;
-    add( Button::createTextButton( "decsound", "<", iXY( x-1, y), arrowButtonWidth, DEC_SOUND) );
+    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseSoundVolume);
     x += optionsMeterWidth + arrowButtonWidth;
-    add( Button::createTextButton( "incsound", ">", iXY( x-1, y), arrowButtonWidth, INC_SOUND) );
+    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseSoundVolume);
     y += yOffset;
 
     y += yOffset; // add a little separation
@@ -113,12 +140,10 @@ void SoundView::initButtons()
 
     x = xTextStart;
     add( new Label( x, y, "Music Volume", Color::white) );
-
     x = optionsMeterStartX;
-    add( Button::createTextButton( "decmusic", "<", iXY( x-1, y), arrowButtonWidth, DEC_MUSIC) );
-
+    addButtonCenterText(iXY(x - 1, y), arrowButtonWidth, "<", "", bDecreaseMusicVolume);
     x += optionsMeterWidth + arrowButtonWidth;
-    add( Button::createTextButton( "incmusic", ">", iXY( x-1, y), arrowButtonWidth, INC_MUSIC) );
+    addButtonCenterText(iXY(x + 1, y), arrowButtonWidth, ">", "", bIncreaseMusicVolume);
     y += yOffset;
 
     //
@@ -141,9 +166,9 @@ void SoundView::initButtons()
 
 // doDraw
 //---------------------------------------------------------------------------
-void SoundView::doDraw()
+void SoundView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    MenuTemplateView::doDraw();
+    MenuTemplateView::doDraw(viewArea, clientArea);
 
     char strBuf[256];
     
@@ -162,7 +187,7 @@ void SoundView::doDraw()
     tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
     sprintf(strBuf, "%d %%", getSoundVolume());
     tempSurface.bltStringCenter(strBuf, meterTextColor);
-    drawImage(tempSurface, x, y);
+    tempSurface.blt(clientArea, x, y);
 
     // Music Volume
     y += yOffset*3;
@@ -170,7 +195,7 @@ void SoundView::doDraw()
     tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
     sprintf(strBuf, "%d %%", getMusicVolume());
     tempSurface.bltStringCenter(strBuf, meterTextColor);
-    drawImage(tempSurface, x, y);
+    tempSurface.blt(clientArea, x, y);
 
     //clientArea.bltStringCenter("Not available for preview", Color::white);
 
@@ -186,102 +211,33 @@ void SoundView::loadTitleSurface()
 
 void SoundView::stateChanged(Component* source)
 {
-    if (source == checkBoxSoundEnabled)
-    {
+    if (source == checkBoxSoundEnabled) {
         gameconfig->enablesound = checkBoxSoundEnabled->getState();
         
-        delete global_engine_state->sound_manager;
-        global_engine_state->sound_manager = 0;
+        delete sound;
 
-        if ( checkBoxSoundEnabled->getState() )
-        {
-            global_engine_state->sound_manager = new SDLSound();
+        if ( checkBoxSoundEnabled->getState() ) {
+            sound = new SDLSound();
             checkBoxSoundEnabled->setLabel("Enabled");
-            if ( !global_engine_state->sound_manager )
-            {
-                global_engine_state->sound_manager = new DummySound();
+            if ( GameControlRulesDaemon::getGameState() ) {
+                sound->playTankIdle();
             }
-
-            if ( GameControlRulesDaemon::getGameState() )
-            {
-                global_engine_state->sound_manager->playTankIdle();
-            }
-
             if ( checkBoxMusicEnabled->getState() )
-            {
-                global_engine_state->sound_manager->playMusic("sound/music/");
-            }
-        }
-        else
-        {
-            global_engine_state->sound_manager = new DummySound();
+                sound->playMusic("sound/music/");
+        } else {
+            sound = new DummySound();
             checkBoxSoundEnabled->setLabel("Disabled");
         }
-    }
-    else if (source == checkBoxMusicEnabled)
-    {
+    } else if (source == checkBoxMusicEnabled) {
         gameconfig->enablemusic = checkBoxMusicEnabled->getState();
         
-        if ( checkBoxMusicEnabled->getState() )
-        {
-            global_engine_state->sound_manager->playMusic("sound/music/");
+        if ( checkBoxMusicEnabled->getState() ) {
+            sound->playMusic("sound/music/");
             checkBoxMusicEnabled->setLabel("Enabled");
-        }
-        else
-        {
-            global_engine_state->sound_manager->stopMusic();
+        } else {
+            sound->stopMusic();
             checkBoxMusicEnabled->setLabel("Disabled");
         }
     }
-}
-
-void
-SoundView::onComponentClicked(Component* c)
-{
-    unsigned int v;
-    switch ( c->getCustomCode() )
-    {
-        case DEC_SOUND:
-            v = gameconfig->effectsvolume;
-            if (v)
-            {
-                --v;
-                gameconfig->effectsvolume = v;
-                global_engine_state->sound_manager->setSoundVolume(v);
-            }
-            break;
-
-        case INC_SOUND:
-            v = gameconfig->effectsvolume;
-            if (v<100)
-            {
-                ++v;
-                gameconfig->effectsvolume = v;
-                global_engine_state->sound_manager->setSoundVolume(v);
-            }
-            break;
-
-        case DEC_MUSIC:
-            v = gameconfig->musicvolume;
-            if (v)
-            {
-                --v;
-                gameconfig->musicvolume = v;
-                global_engine_state->sound_manager->setMusicVolume(v);
-            }
-            break;
-
-        case INC_MUSIC:
-            v = gameconfig->musicvolume;
-            if (v<100)
-            {
-                ++v;
-                gameconfig->musicvolume = v;
-                global_engine_state->sound_manager->setMusicVolume(v);
-            }
-            break;
-
-        default:
-            OptionsTemplateView::onComponentClicked(c);
-    }
+    
 }

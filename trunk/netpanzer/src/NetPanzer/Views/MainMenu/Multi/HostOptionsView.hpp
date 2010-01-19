@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __HostOptionsView_hpp__
 
 #include "Views/MainMenu/RMouseHackView.hpp"
+#include "2D/Surface.hpp"
 #include "Views/Components/Choice.hpp"
 
 #include "Views/Components/CheckBox.hpp"
@@ -28,7 +29,7 @@ class HostOptionsView : public RMouseHackView
 {
 private:
     void addMeterButtons(const iXY &pos);
-    void drawMeterInfo( const iXY &pos);
+    void drawMeterInfo(Surface &dest, const iXY &pos);
 
     static int cloudCoverageCount;
     static int windSpeed;
@@ -43,14 +44,13 @@ private:
     Choice choiceGameType;
     Choice choiceWindSpeed;
     Choice choiceCloudCoverage;
-protected:
-    void onComponentClicked(Component *c);
+
 public:
     HostOptionsView();
     virtual ~HostOptionsView()
     {}
 
-    virtual void doDraw();
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void drawBorder(Surface& )
     {}
     virtual void actionPerformed(mMouseEvent me);

@@ -15,54 +15,33 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
 
-
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <memory>
-#include <cassert>
-
-#include "SDL_endian.h"
 
 #include "Classes/WorldMap.hpp"
 #include "Port/MapData.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
-#include "Util/Log.hpp"
-
+#include "Util/Endian.hpp"
 
 WorldMap::WorldMap()
-    : loaded(false)
+    : map_loaded(false), map_buffer(0)
 {
 }
 
 WorldMap::~WorldMap()
 {
+    delete[] map_buffer;
 }
 
-void
-WorldMap::loadHeader(filesystem::ReadFile& file)
+void WorldMap::reMap( WadMapTable &mapping_table )
 {
-    file.read(&header.netp_id_header, sizeof(header.netp_id_header), 1);
-    header.id = file.readULE16();
-    file.read(&header.name, sizeof(header.name), 1);
-    file.read(&header.description, sizeof(header.description), 1);
-    header.width = file.readULE16();
-    header.height = file.readULE16();
-    file.read(&header.tile_set, sizeof(header.tile_set), 1);
-    header.thumbnail_width = file.readULE16();
-    header.thumbnail_height = file.readULE16();
-}
-
-void
-WorldMap::loadTiles(filesystem::ReadFile &file)
-{
-    data.resize(getSize());
-
-    for( MapData::iterator i = data.begin(); i != data.end(); ++i)
-    {
-        *i = file.readULE16();
+    for(size_t i = 0; i < getSize(); ++i) {
+        map_buffer[i] = mapping_table[map_buffer[i]].remap_index;
     }
 }
 
@@ -72,27 +51,25 @@ void WorldMap::loadMapFile(const std::string& filename)
 	std::auto_ptr<filesystem::ReadFile> file(
                 filesystem::openRead(filename));
 
-        loaded = false;
+	if ( map_loaded == true ) {
+	    delete[] map_buffer;
+	    map_buffer = 0;
+	    map_loaded = false;
+	}
 
-        loadHeader(*file);
-        loadTiles(*file);
+	map_info.load(*file);
 
-        loaded = true;
+	size_t map_size = map_info.width * map_info.height;
 
+	map_buffer = new MapElementType [ map_size ];
+
+        for(size_t i = 0; i < map_size; ++i) {
+            map_buffer[i] = file->readULE16();
+        }
+	
+	map_loaded = true;
     } catch(std::exception& e) {
 	throw Exception("Error while reading mapfile '%s': %s",
 		filename.c_str(), e.what());
     }
-    dumpInfo();
-}
-
-void
-WorldMap::dumpInfo()
-{
-    LOGGER.info("WorldMap info:");
-    LOGGER.info("\tName: %s", header.name);
-    LOGGER.info("\tDescription: %s", header.description);
-    LOGGER.info("\tSize: %dx%d", header.width, header.height);
-    LOGGER.info("\tTile Set: %s", header.tile_set);
-    LOGGER.info("\tThumbnail Size: %dx%d", header.thumbnail_width, header.thumbnail_height);
 }

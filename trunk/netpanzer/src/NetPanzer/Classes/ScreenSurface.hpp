@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "2D/Surface.hpp"
 
 class SDLVideo;
-struct SDL_PixelFormat;
 
 class ScreenSurface : public Surface
 {
@@ -29,7 +28,6 @@ public:
     ScreenSurface(SDLVideo* draw, int width, int height);
 
     void create(int xPix, int yPix, int nStride, int nNumFrames);
-    const SDL_PixelFormat * getPixelFormat();
 
     void lock();
     void unlock();

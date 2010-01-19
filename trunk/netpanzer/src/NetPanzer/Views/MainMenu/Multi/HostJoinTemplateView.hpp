@@ -19,9 +19,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __HostJoinTemplateView_hpp__
 
 #include "Views/Components/View.hpp"
+#include "2D/Surface.hpp"
 #include "Views/MainMenu/MenuTemplateView.hpp"
 
+
+extern Surface           playerColor;
+
 void bReady();
+
 
 //---------------------------------------------------------------------------
 class HostJoinTemplateView : public MenuTemplateView
@@ -31,14 +36,12 @@ private:
     
     virtual void loadBackgroundSurface();
 
-protected:
-    void onComponentClicked(Component *c);
 public:
     static char gameTypeBuf[256];
 
     HostJoinTemplateView();
 
-    virtual void doDraw();
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void doActivate();
 }; // end HostJoinTemplateView
 

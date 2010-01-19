@@ -15,15 +15,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "Util/Exception.hpp"
 #include "Particles/FlashParticle2D.hpp"
 #include "2D/Palette.hpp"
-#include "lua/lua.hpp"
-#include "Util/Log.hpp"
 
-Surface* staticPackedFlash = 0;
+PackedSurface FlashParticle2D::staticPackedFlash;
 
 // FlashParticle2D
 //---------------------------------------------------------------------------
@@ -39,14 +37,21 @@ FlashParticle2D::FlashParticle2D(	const fXYZ  &pos,
     FlashParticle2D::layer       = layer;
     FlashParticle2D::lifetime    = lifetime;
 
-    packedSurface.setData(*staticPackedFlash);
-    packedSurface.setDrawModeBlend(224); // more bright
+    packedSurface.setData(staticPackedFlash);
+    packedSurface.setDrawModeBlend(&Palette::colorTableBrighten);
 
 } // end FlashParticle2D::FlashParticle2D
 
+// init
+//---------------------------------------------------------------------------
+void FlashParticle2D::init()
+{
+    staticPackedFlash.load("pics/particles/lights/pak/flash2.pak");
+} // end FlashParticle2D::init
+
 // draw
 //---------------------------------------------------------------------------
-void FlashParticle2D::draw(SpriteSorter& sorter)
+void FlashParticle2D::draw(const Surface&, SpriteSorter& sorter)
 {
     if (!isAlive) {
         return;

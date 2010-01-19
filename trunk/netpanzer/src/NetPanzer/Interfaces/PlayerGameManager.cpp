@@ -15,10 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include <exception>
-#include "Core/GlobalEngineState.hpp"
 
 #include "Interfaces/PlayerGameManager.hpp"
 #include "Interfaces/BaseGameManager.hpp"
@@ -37,32 +36,41 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "PowerUps/PowerUpInterface.hpp"
 #include "Weapons/ProjectileInterface.hpp"
+#include "Interfaces/TileInterface.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
 
 #include "Classes/ScreenSurface.hpp"
+#include "Units/UnitBlackBoard.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
 #include "Classes/SpriteSorter.hpp"
+#include "Classes/Network/ClientMessageRouter.hpp"
 #include "Classes/Network/ClientConnectDaemon.hpp"
 #include "Classes/Network/ServerConnectDaemon.hpp"
+#include "Classes/Network/ServerMessageRouter.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/SystemNetMessage.hpp"
 #include "Classes/Network/ConnectNetMessage.hpp"
-#include "Units/Unit.hpp"
+#include "Units/Vehicle.hpp"
+#include "Units/UnitGlobals.hpp"
 
 #include "2D/Palette.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/ViewGlobals.hpp"
 #include "Views/MainMenu/MainMenuView.hpp"
 #include "Views/MainMenu/OptionsTemplateView.hpp"
+#include "Views/MainMenu/OrderingView.hpp"
+#include "Views/MainMenu/SkirmishView.hpp"
 #include "Views/MainMenu/HelpView.hpp"
 #include "Views/MainMenu/Multi/JoinView.hpp"
 #include "Views/MainMenu/Multi/HostView.hpp"
 #include "Views/MainMenu/Multi/GetSessionView.hpp"
+#include "Views/MainMenu/Multi/UnitSelectionView.hpp"
 #include "Views/MainMenu/Multi/FlagSelectionView.hpp"
+#include "Views/MainMenu/Multi/UnitColorView.hpp"
 #include "Views/MainMenu/Multi/HostOptionsView.hpp"
 #include "Views/MainMenu/Multi/MapSelectionView.hpp"
 #include "Views/MainMenu/Multi/PlayerNameView.hpp"
@@ -78,6 +86,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/CodeStatsView.hpp"
 #include "Views/Game/LibView.hpp"
 #include "Views/Game/HelpScrollView.hpp"
+#include "Views/Game/ResignView.hpp"
 #include "Views/Game/AreYouSureResignView.hpp"
 #include "Views/Game/AreYouSureExitView.hpp"
 #include "Views/Game/GameView.hpp"
@@ -103,12 +112,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileSystem.hpp"
 
 #include "Bot/Bot.hpp"
-#include "Network/MessageRouter.hpp"
 
 PlayerGameManager::PlayerGameManager()
     : sdlVideo(0), heartbeat(0), infosocket(0)
 {
-    // nothing
+    //fontManager.loadFont("fixed10", "fonts/fixed10.pcf", 10);
+
+    showNewPanel = false;
 }
 
 //-----------------------------------------------------------------
@@ -117,6 +127,7 @@ void PlayerGameManager::initializeVideoSubSystem()
     LOGGER.info("Initializing video mode");
     sdlVideo = new SDLVideo();
     Screen = sdlVideo;
+    initFont();
     GameManager::setVideoMode();
 }
 
@@ -128,37 +139,29 @@ void PlayerGameManager::shutdownVideoSubSystem()
     Screen = 0;
 }
 //-----------------------------------------------------------------
-Sound * PlayerGameManager::initializeSoundSubSystem()
+void PlayerGameManager::initializeSoundSubSystem()
 {
-    Sound * s = 0;
+    delete sound;
+    sound = 0;
     
     LOGGER.info("Initializing sound system.");
-    try
-    {
-        if ( gameconfig->enablesound )
-        {
-            s = new SDLSound();
-        }
-    }
-    catch(std::exception& e)
-    {
+    try {
+        if(gameconfig->enablesound)
+            sound = new SDLSound();
+    } catch(std::exception& e) {
         LOGGER.warning("Couldn't initialize sound: %s", e.what());
     }
 
-    if ( s == 0 )
-    {
-        s = new DummySound();
-    }
+    if(sound == 0)
+        sound = new DummySound();
 
-    s->setSoundVolume(gameconfig->effectsvolume);
+    sound->setSoundVolume(gameconfig->effectsvolume);
 
     // start some music
-    if ( gameconfig->enablemusic )
-    {
-        s->setMusicVolume(gameconfig->musicvolume);
-        s->playMusic("sound/music/");
+    if(gameconfig->enablemusic) {
+        sound->playMusic("sound/music/");
+        sound->setMusicVolume(gameconfig->musicvolume);
     }
-    return s;
 }
 //-----------------------------------------------------------------
 void PlayerGameManager::initializeInputDevices()
@@ -168,16 +171,19 @@ void PlayerGameManager::initializeInputDevices()
 //-----------------------------------------------------------------
 void PlayerGameManager::initializeWindowSubSystem()
 {
-    Desktop::add(new GameView(), false); // all of this should be loaded when game starts
-    Desktop::add(new RankView(), false);
-    Desktop::add(new VehicleSelectionView(), false); // depends on unit profiles loaded
-    Desktop::add(new MiniMapView(), false); // depends on map manager
-    Desktop::add(new CodeStatsView(), false);
-    Desktop::add(new LibView(), false);
+    GameManager::loadPalette("netp");
 
+    Desktop::add(new GameView());
+    Desktop::add(new RankView());
+    Desktop::add(new VehicleSelectionView());
+    Desktop::add(new MiniMapView() );
+    Desktop::add(new CodeStatsView());
+    Desktop::add(new LibView());
     Desktop::add(new HelpScrollView());
 
     Desktop::add(new LoadingView());
+
+    GameManager::loadPalette("netpmenu");
 
     Desktop::add(new MapSelectionView());
     Desktop::add(new MainMenuView());
@@ -185,6 +191,7 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new HostView());
     Desktop::add(new GetSessionView());
     Desktop::add(new OptionsTemplateView());
+    Desktop::add(new OrderingView());
     Desktop::add(new HelpView());
     Desktop::add(new SoundView());
     Desktop::add(new ControlsView());
@@ -193,19 +200,23 @@ void PlayerGameManager::initializeWindowSubSystem()
     Desktop::add(new FlagSelectionView());
     Desktop::add(new HostOptionsView());
     Desktop::add(new PlayerNameView());
+    Desktop::add(new ResignView());
     Desktop::add(new AreYouSureResignView());
     Desktop::add(new AreYouSureExitView());
     Desktop::add(new DisconectedView());
 
     Desktop::add(new IPAddressView());
     Desktop::add(new ServerListView());
-    Desktop::add(new DesktopView());
 
     Desktop::setVisibilityAllWindows(false);
     Desktop::setVisibility("MainView", true);
 
     Desktop::checkResolution(iXY(640,480), iXY(screen->getWidth(),screen->getHeight()));
     Desktop::checkViewPositions(iXY(screen->getWidth(),screen->getHeight()));
+
+
+    //Test for new UI
+    //testpanel = new Panels::TestPanel(iXY(30, 60), &fontManager);
 }
 //-----------------------------------------------------------------
 void PlayerGameManager::inputLoop()
@@ -214,13 +225,15 @@ void PlayerGameManager::inputLoop()
     MouseInterface::manageClickTimer();
     Desktop::manage(MouseInterface::getMouseX(),
                MouseInterface::getMouseY(), MouseInterface::getButtonMask());
+
+    COMMAND_PROCESSOR.updateScrollStatus( MouseInterface::getMousePosition() );
 }
 //-----------------------------------------------------------------
 void PlayerGameManager::graphicsLoop()
 {
     screen->lock();
 
-    Desktop::draw();
+    Desktop::draw(*screen);
 
     MouseInterface::draw(*screen);
 
@@ -260,54 +273,46 @@ void PlayerGameManager::shutdownNetworkSubSystem()
 //-----------------------------------------------------------------
 void PlayerGameManager::hostMultiPlayerGame()
 {
+    PlayerState *player_state;
     Timer wait;
 
     LoadingView::show();
     // refresh the view in each append
     LoadingView::append( "Launching Server ..." );
-    try
-    {
-        MessageRouter::initialize(true);
-        
-        NetworkServer::hostSession();
+    try {
+    	if (CLIENT) {
+		delete CLIENT;
+		CLIENT=0;
+	}
+	CLIENT = new NetworkClient();
+        SERVER->hostSession();
 
-        if(    (bool) gameconfig->publicServer
-            && (const std::string&) gameconfig->masterservers != "")
-        {
-            try
-            {
-                if ( infosocket )
-                {
+        if((bool) gameconfig->publicServer &&
+                (const std::string&) gameconfig->masterservers != "") {
+            try {
+                if ( infosocket ) {
                     delete infosocket;
                     infosocket = 0;
                 }
                 infosocket = new InfoSocket(gameconfig->serverport);
-
-                if ( heartbeat )
-                {
+                if ( heartbeat ) {
                     delete heartbeat;
                     heartbeat = 0;
                 }
                 heartbeat = new Heartbeat();
-            }
-            catch(std::exception& e)
-            {
+            } catch(std::exception& e) {
                 LOGGER.warning("heartbeats disabled: %s", e.what());
-                if ( infosocket )
-                {
+                if ( infosocket ) {
                     delete infosocket;
                     infosocket = 0;
                 }
-                if ( heartbeat )
-                {
+                if ( heartbeat ) {
                     delete heartbeat;
                     heartbeat = 0;
                 }
             }
         }
-    }
-    catch(std::exception& e)
-    {
+    } catch(std::exception& e) {
         LoadingView::append( "SERVER LAUNCH FAILED" );
         LoadingView::append(e.what());
         wait.changePeriod( 4 );
@@ -321,9 +326,77 @@ void PlayerGameManager::hostMultiPlayerGame()
     LoadingView::update( "Launching Server ... (100%) " );
     graphicsLoop();
 
-//    GameControlRulesDaemon::setStateServerInProgress();
-    GameControlRulesDaemon::setStateServerLoadingMap();
+    GameControlRulesDaemon::setStateServerInProgress();
     NetworkState::setNetworkStatus( _network_state_server );
+
+    LoadingView::append( "Loading Game Data ..." );
+    graphicsLoop();
+    
+    gameconfig->map = MapsManager::getNextMap("");
+    const char* mapname = gameconfig->map.c_str();
+
+    try {
+        GameManager::startGameMapLoad(mapname, 20);
+    } catch(std::exception& e) {
+        LOGGER.warning("Error while loading map '%s':", mapname);
+        LOGGER.warning(e.what());
+        LoadingView::loadError();
+        return;
+    }
+
+    int percent_complete;
+    char strbuf[256];
+
+    ObjectiveInterface::resetLogic();
+
+    while( GameManager::gameMapLoad( &percent_complete ) == true ) {
+        sprintf( strbuf, "Loading Game Data ... (%d%%)", percent_complete);
+        LoadingView::update( strbuf );
+        graphicsLoop();
+    }
+
+    sprintf( strbuf, "Loading Game Data ... (%d%%)", percent_complete);
+    LoadingView::update( strbuf );
+    graphicsLoop();
+
+
+    LoadingView::append( "Initializing Game Logic ..." );
+    graphicsLoop();
+    GameManager::reinitializeGameLogic();
+    LoadingView::update( "Initializing Game Logic ... (100%) " );
+    graphicsLoop();
+    
+    LoadingView::append( "Spawning Player ..." );
+    graphicsLoop();
+    
+    player_state = PlayerInterface::allocateLoopBackPlayer();
+    const char* playername = gameconfig->playername.c_str();
+    player_state->setName(playername);
+    player_state->setFlag((unsigned char) gameconfig->playerflag);
+    
+    //GameManager::spawnPlayer( PlayerInterface::getLocalPlayerIndex() );
+    
+    LoadingView::update( "Spawning Player ... (100%)" );
+    
+    graphicsLoop();
+
+    wait.changePeriod( 3 );
+    //while( !wait.count() );
+
+    GameManager::startGameTimer();
+
+    LoadingView::hide();
+
+    // Set the palette to the game palette.
+    GameManager::loadPalette( "netp");
+
+    GameManager::setNetPanzerGameOptions();
+
+    // Need to open at beginning of game until we are saving status of things.
+    // when last played.
+    Desktop::setVisibility("MiniMapView", true);
+    Desktop::setVisibility("GameView", true);
+    Desktop::setActiveView("GameView");
 }
 
 void PlayerGameManager::quitGame()
@@ -342,16 +415,14 @@ void PlayerGameManager::quitGame()
 void PlayerGameManager::joinMultiPlayerGame()
 {
     GameManager::setNetPanzerGameOptions();
-    //global_engine_state->game_manager->reinitializeGameLogic();
+    //reinitializeGameLogic();
     NetworkState::setNetworkStatus( _network_state_client );
 
-//    MessageRouter::initialize(false);
-//    NetworkClient::joinServer(gameconfig->serverConnect);
-//    LoadingView::show();
+    CLIENT->joinServer(gameconfig->serverConnect);
+    LoadingView::show();
 
-//    ClientConnectDaemon::startConnectionProcess();
-    GameControlRulesDaemon::setStateClientConnectToServer(gameconfig->serverConnect);
-    global_engine_state->sound_manager->playTankIdle();
+    ClientConnectDaemon::startConnectionProcess();
+    sound->playTankIdle();
 }
 
 bool PlayerGameManager::mainLoop()
@@ -383,60 +454,52 @@ bool PlayerGameManager::mainLoop()
 //-----------------------------------------------------------------
 void PlayerGameManager::processSystemKeys()
 {
+    if (Desktop::getVisible("GameView")) {
+        if (KeyboardInterface::getKeyPressed( SDLK_F12 )){
+            showNewPanel = !showNewPanel;
+        }
+        
+        if (KeyboardInterface::getKeyPressed( SDLK_F5 )) {
+            //  DEBUG VIEW
+            Desktop::toggleVisibility( "LibView" );
+        }
+    }
+
     if (KeyboardInterface::getKeyState( SDLK_LALT ) ||
-            KeyboardInterface::getKeyState( SDLK_RALT ))
-    {
-        if (KeyboardInterface::getKeyPressed(SDLK_RETURN))
-        {
-            GameConfig::video_fullscreen = !GameConfig::video_fullscreen;
+            KeyboardInterface::getKeyState( SDLK_RALT )) {
+        if (KeyboardInterface::getKeyPressed(SDLK_RETURN)) {
+            gameconfig->fullscreen.toggle();
             GameManager::setVideoMode();
         }
     } // ** LFT_ALT or RGT_ALT pressed
 
-    if (KeyboardInterface::getKeyPressed(SDLK_F3))
-    {
-        Desktop::toggleVisibility( "DesktopView" );
-    }
-
-    if ( Desktop::getVisible("GameView") )
-    {
-        if (KeyboardInterface::getKeyPressed(SDLK_m))
-        {
+    if (Desktop::getView("GameView")->getVisible()) {
+        if (KeyboardInterface::getKeyPressed(SDLK_m)) {
             Desktop::toggleVisibility( "MiniMapView" );
         }
-
-        if (KeyboardInterface::getKeyPressed(SDLK_TAB) )
-        {
+        if (KeyboardInterface::getKeyPressed(SDLK_TAB) ) {
             Desktop::toggleVisibility( "RankView" );
         }
-
-        if (KeyboardInterface::getKeyPressed(SDLK_F4))
-        {
+        if (KeyboardInterface::getKeyPressed(SDLK_F3)) {
+            Desktop::toggleVisibility( "DesktopView" );
+        }
+        if (KeyboardInterface::getKeyPressed(SDLK_F4)) {
             Desktop::toggleVisibility( "CodeStatsView" );
         }
-
-        if (KeyboardInterface::getKeyPressed( SDLK_F5 ))
-        {
-            //  DEBUG VIEW
-            Desktop::toggleVisibility( "LibView" );
-        }
-
-        if (KeyboardInterface::getKeyPressed(SDLK_F1))
-        {
+        if (KeyboardInterface::getKeyPressed(SDLK_F1)) {
             Desktop::toggleVisibility( "HelpScrollView" );
         }
 
-        if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE))
-        {
-            if ( Desktop::getVisible("GameView") )
+        if (KeyboardInterface::getKeyPressed(SDLK_ESCAPE)) {
+            if (Desktop::getView("GameView")->getVisible())
             {
-                if (   !Desktop::getVisible("OptionsView")
-                    && !Desktop::getVisible("SoundView")
-                    && !Desktop::getVisible("ControlsView")
-                    && !Desktop::getVisible("InterfaceView")
-                    && !Desktop::getVisible("VisualsView") )
+                if (!Desktop::getView("OptionsView")->getVisible() &&
+                        !Desktop::getView("SoundView")->getVisible() &&
+                        !Desktop::getView("ControlsView")->getVisible() &&
+                        !Desktop::getView("InterfaceView")->getVisible() &&
+                        !Desktop::getView("VisualsView")->getVisible())
                 {
-
+                    
                     View *v = Desktop::getView("OptionsView");
                     assert(v != 0);
                     ((OptionsTemplateView *)v)->initButtons();

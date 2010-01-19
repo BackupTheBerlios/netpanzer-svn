@@ -65,6 +65,7 @@ public:
 class Objective
 {
 protected:
+    void objectiveMesgUpdateOccupation(const ObjectiveMessage* message);
     void objectiveMesgSync(const ObjectiveMessage* message);
 
 public:

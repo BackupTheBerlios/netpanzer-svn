@@ -1,3 +1,9 @@
+
+#include "2D/Surface.hpp"
+
+
+#include "GameView.hpp"
+
 /*
 Copyright (C) 1998 Pyrosoft Inc. (www.pyrosoftgames.com), Matthew Bogue
  
@@ -15,7 +21,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "GameView.hpp"
 #include "Views/Components/Desktop.hpp"
@@ -31,7 +37,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleSystem2D.hpp"
 #include "Views/Components/ViewGlobals.hpp"
 #include "Particles/ParticleInterface.hpp"
-#include "2D/Surface.hpp"
+#include "2D/PackedSurface.hpp"
 #include "Views/Game/VehicleSelectionView.hpp"
 #include "PowerUps/PowerUpInterface.hpp"
 
@@ -41,8 +47,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Views/Components/InfoBar.hpp"
 #include "Views/Components/MiniMap.hpp"
-
-#include "Core/GlobalGameState.hpp"
 
 int GameView::gDrawSolidBackground = 0;
 
@@ -56,6 +60,7 @@ GameView::GameView() : View()
 
     setBordered(false);
     setAlwaysOnBottom(true);
+    setAllowResize(false);
     setDisplayStatusBar(false);
     setVisible(false);
 
@@ -82,7 +87,6 @@ void GameView::init()
     resize(iXY(screen->getWidth(), screen->getHeight()));
     moveTo(iXY(0, 0));
 } // end GameView::init
-
 void
 GameView::checkResolution(iXY oldResolution, iXY newResolution)
 {
@@ -91,15 +95,15 @@ GameView::checkResolution(iXY oldResolution, iXY newResolution)
 }
 // doDraw
 //---------------------------------------------------------------------------
-void GameView::doDraw()
+void GameView::doDraw(Surface &va, Surface &clientArea)
 {
     // Added for debugging, accesible through LibView.
     //screen->fill(0);
 
     if (gDrawSolidBackground) {
-        fill(250);
+        screen->fill(250);
     } else {
-        drawMap(*screen);
+        drawMap(clientArea);
     }
 
     // Added for debugging, accesible through LibView.
@@ -112,24 +116,25 @@ void GameView::doDraw()
     WorldViewInterface::getViewWindow( &world_win );
     SPRITE_SORTER.reset(world_win);
 
-    ParticleSystem2D::drawAll( SPRITE_SORTER );
-    Particle2D::drawAll( SPRITE_SORTER );
+    PackedSurface::totalDrawCount = 0;
+    ParticleSystem2D::drawAll(clientArea, SPRITE_SORTER );
+    Particle2D::drawAll(clientArea, SPRITE_SORTER );
 
     UnitInterface::offloadGraphics( SPRITE_SORTER );
     ProjectileInterface::offloadGraphics( SPRITE_SORTER );
     ObjectiveInterface::offloadGraphics( SPRITE_SORTER );
     PowerUpInterface::offloadGraphics( SPRITE_SORTER );
 
-    SPRITE_SORTER.blitLists(screen);
+    SPRITE_SORTER.blitLists(&clientArea);
 
-    VehicleSelectionView::drawMiniProductionStatus(*screen);
+    VehicleSelectionView::drawMiniProductionStatus(clientArea);
 
     COMMAND_PROCESSOR.draw();
 
     // Make sure the console info is the last thing drawn.
-    ConsoleInterface::update(*screen);
+    ConsoleInterface::update(clientArea);
     
-    View::doDraw();
+    View::doDraw(va, clientArea);
 } // end GameView::doDraw
 
 // lMouseDown
@@ -141,18 +146,11 @@ void GameView::doActivate()
     COMMAND_PROCESSOR.inFocus();
 } // end GameView::doActivate
 
-void
-GameView::doDeactivate()
-{
-    COMMAND_PROCESSOR.closeSelectionBox();
-    MouseInterface::setGrabMode(false);
-}
-
 // processEvents
 //---------------------------------------------------------------------------
 void GameView::processEvents()
 {
-    COMMAND_PROCESSOR.process(true);
+    COMMAND_PROCESSOR.process();
 } // end GameView::processEvents
 
 // mouseMove
@@ -164,14 +162,61 @@ void GameView::mouseMove(const iXY & prevPos, const iXY &newPos)
     if (!MouseInterface::getButtonMask() && Desktop::getFocus() != this) {
         Desktop::setFocusView(this);
         //Desktop::setActiveView(this);
-        MouseInterface::setCursor("default.png");
+        MouseInterface::setCursor("default.bmp");
     }
 
 } // end GameView::mouseMove
 
 void
+blitTile(Surface &dest, unsigned short tile, int x, int y)
+{
+    PIX * tileptr = TileInterface::getTileSet()->getTile(tile);
+    
+    int lines = 32;
+    int columns = 32;
+    
+    if ( y < 0 )
+    {
+        lines = 32 + y;
+        tileptr += ((32-lines)*32);
+        y = 0;
+    }
+    
+    if ( x < 0 )
+    {
+        columns = 32 + x;
+        tileptr += (32-columns); // advance the unseen pixels
+        x = 0;
+    }
+    
+    PIX * destptr = dest.getFrame0();
+    destptr += (y * dest.getPitch()) + x;
+
+    
+    if ( y + 32 > (int)dest.getHeight() )
+    {
+        lines = (int)dest.getHeight() - y;
+    }
+    
+    if ( x + 32 > (int)dest.getWidth())
+    {
+        columns = (int)dest.getWidth() - x;
+    }
+    
+    PIX * endptr = destptr + (lines * dest.getPitch());
+    
+    for ( /* nothing */ ; destptr < endptr; destptr += dest.getPitch())
+    {
+        memcpy(destptr,tileptr,columns);
+        tileptr +=32;
+    }
+    
+}
+
+void
 GameView::drawMap(Surface &window)
 {
+    TileSet * ts = TileInterface::getTileSet();
     unsigned long world_x;
     unsigned long world_y;
     unsigned short map_x;
@@ -181,7 +226,7 @@ GameView::drawMap(Surface &window)
                               &world_x, &world_y);
     MapInterface::pointXYtoMapXY( world_x, world_y, &map_x, &map_y );
         
-    unsigned short tile_size = TileSet::getTileXsize();
+    unsigned short tile_size = ts->getTileXsize();
     
     long partial_y = world_y % tile_size;
     int y = 0;
@@ -197,19 +242,19 @@ GameView::drawMap(Surface &window)
         start_x -= partial_x;
     }
     
+    unsigned int tile = 0;
+    
+    WorldMap * map = MapInterface::getMap();
+    
     unsigned short tmx;
-    Surface * tile_surf = 0;
     
     for ( ; y < (int)window.getHeight(); y += tile_size )
     {
         tmx = map_x;
         for ( int x = start_x; x < (int)window.getWidth(); x += tile_size )
         {
-            tile_surf = TileSet::getTile(MapInterface::getValue(tmx++, map_y));
-            if ( tile_surf )
-            {
-            	tile_surf->blt(window, x, y);
-            }
+            tile = map->getValue(tmx++, map_y);
+            blitTile(window, tile, x, y);
         }
         map_y ++;
     }

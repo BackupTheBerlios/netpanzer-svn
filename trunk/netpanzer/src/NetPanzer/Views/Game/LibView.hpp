@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __LibView_hpp__
 
 #include "GameTemplateView.hpp"
+#include "2D/Surface.hpp"
 #include "Views/Components/CheckBox.hpp"
 
 extern bool gDrawGameTiles;
@@ -35,30 +36,30 @@ enum
 class LibView : public GameTemplateView
 {
 protected:
-    void drawSurfaceInfo( iXY pos);
-    void drawParticleInfo( iXY pos);
-    void drawEnvironmentInfo( iXY pos);
+    void drawSurfaceInfo(Surface &clientArea, iXY pos);
+    void drawParticleInfo(Surface &clientArea, iXY pos);
+    void drawEnvironmentInfo(Surface &dest, iXY pos);
 
     CheckBox * checkBoxAllowParticleGeneration;
     CheckBox * checkBoxAllowTimeSlice;
+    CheckBox * checkBoxAllowSpanBlitting;
     CheckBox * checkBoxParticlesCanHaveSmoke;
     CheckBox * checkBoxSolidColorExplosionParticles;
     CheckBox * checkBoxParticleInterfaceSim;
     CheckBox * checkBoxSolidBackground;
     CheckBox * checkBoxDrawExplosionParticleCount;
 
-    void onComponentClicked(Component *c);
-    int displayMode;
-
 public:
     LibView();
     virtual ~LibView()
     {}
 
-    virtual void doDraw();
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void rMouseDrag(const iXY &downPos, const iXY &prevPos, const iXY &newPos);
     virtual void doActivate();
     virtual void actionPerformed(mMouseEvent me);
+
+    static int displayMode;
 }; // end LibView
 
 #endif // end __LibView_hpp__

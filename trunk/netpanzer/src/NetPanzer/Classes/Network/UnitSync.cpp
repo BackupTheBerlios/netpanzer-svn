@@ -15,22 +15,24 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
 
-#include "Core/GlobalGameState.hpp"
 #include "UnitSync.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Units/UnitInterface.hpp"
-#include "Units/Unit.hpp"
+#include "Units/UnitBase.hpp"
 #include "Interfaces/MapInterface.hpp"
 #include "Classes/Network/UnitNetMessage.hpp"
-#include "Classes/PlayerState.hpp"
+
+
+
 
 UnitSync::UnitSync(ClientSocket * c)
     : client(c), count(0), unitid(0), unitstosync(0), lastunit(0)
 {
     unitstosync = UnitInterface::getTotalUnitCount();
     if ( unitstosync ) {
-        lastunit = UnitInterface::getUnits()->rbegin()->first;
+        lastunit = UnitInterface::getUnits().rbegin()->first;
     }
 }
 
@@ -47,13 +49,13 @@ int UnitSync::getPercentComplete() const
 
 bool UnitSync::sendNextUnit()
 {
-    const UnitInterface::Units* units = UnitInterface::getUnits();
-    UnitInterface::Units::const_iterator i = units->lower_bound(unitid);
-    if(i == units->end() || i->first > lastunit ) {
+    const UnitInterface::Units& units = UnitInterface::getUnits();
+    UnitInterface::Units::const_iterator i = units.lower_bound(unitid);
+    if(i == units.end() || i->first > lastunit ) {
         return false;
     }
     
-    Unit* unit = i->second;
+    UnitBase* unit = i->second;
     unitid = unit->id;
 
     iXY unit_map_loc;

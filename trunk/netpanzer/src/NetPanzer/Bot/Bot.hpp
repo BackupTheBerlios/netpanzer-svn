@@ -18,29 +18,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef BOT_H
 #define BOT_H
 
-class Unit;
+class UnitBase;
 class ObjectiveState;
 class iXY;
 
 #include "BotTaskList.hpp"
 
-class Bot
-{
-public:
-    Bot(Uint16 playerid);
+class Bot {
+    static class Bot *s_bot;
+    public:
+        static void initialize(Bot *bot);
+        static void shutdown();
+        static Bot *bot() { return s_bot; }
 
-    virtual ~Bot() {}
-    virtual void processEvents() = 0;
+        virtual ~Bot() {}
+        virtual void processEvents() = 0;
 
-    void moveUnit(Unit *unit, iXY map_pos);
-    void attackUnit(Unit *unit, Unit *enemyUnit);
-    void manualFire(Unit *unit, iXY world_pos);
-    void produceUnit(ObjectiveID outpostID, int selectedProduce);
-protected:
-    BotTaskList m_tasks;
-    Uint16 botPlayerId;
-private:
-    friend class BotManager;
+        void moveUnit(UnitBase *unit, iXY map_pos);
+        void attackUnit(UnitBase *unit, UnitBase *enemyUnit);
+        void manualFire(UnitBase *unit, iXY world_pos);
+        void produceUnit(ObjectiveID outpostID, int selectedProduce);
+    protected:
+        BotTaskList m_tasks;
 };
 
 #endif

@@ -15,13 +15,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 #include "BaseGameManager.hpp"
-#include "Core/GlobalEngineState.hpp"
+
 #include "SDL.h"
 
 // ** PObject netPanzer Network Includes
+#include "Classes/Network/ClientMessageRouter.hpp"
 #include "Classes/Network/ServerConnectDaemon.hpp"
+#include "Classes/Network/ServerMessageRouter.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkClient.hpp"
@@ -32,6 +34,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "System/DummySound.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Units/UnitInterface.hpp"
+#include "Units/UnitBlackBoard.hpp"
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleSystem2D.hpp"
 #include "Particles/ParticleInterface.hpp"
@@ -46,6 +49,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 #include "Resources/ResourceManager.hpp"
+#include "Units/UnitGlobals.hpp"
+#include "2D/ColorTable.hpp"
 #include "2D/Palette.hpp"
 
 
@@ -54,34 +59,34 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/TimerInterface.hpp"
 
 #include "Network/SocketManager.hpp"
-#include "Network/MessageRouter.hpp"
-#include "Bot/BotManager.hpp"
 
-#include "Core/GlobalGameState.hpp"
+BaseGameManager* gamemanager = 0;
 
 //------------------------------------------------------------------
 BaseGameManager::BaseGameManager()
     : running(true)
 {
+    assert(gamemanager == 0);
+    gamemanager = this;
 }
 
 //------------------------------------------------------------------
 BaseGameManager::~BaseGameManager()
 {
+    gamemanager = 0;
 }
 
 //-----------------------------------------------------------------
-Sound * BaseGameManager::initializeSoundSubSystem()
+void BaseGameManager::initializeSoundSubSystem()
 {
-     return new DummySound();
+    sound = new DummySound();
 }
 //-----------------------------------------------------------------
 void BaseGameManager::shutdownSoundSubSystem()
 {
-    if ( global_engine_state->sound_manager )
-    {
-        delete global_engine_state->sound_manager;
-        global_engine_state->sound_manager = 0;
+    if(sound) {
+        delete sound;
+        sound = 0;
     }
 }
 //-----------------------------------------------------------------
@@ -110,16 +115,15 @@ void BaseGameManager::shutdownInputDevices()
 //-----------------------------------------------------------------
 void BaseGameManager::initializeGameObjects()
 {
-    loadGameData(); // load unit profiles and start resource manager.
-                   // unit profiles should be loaded when real game starts
+    loadGameData();
 
-    Physics::init(); // ok, only precalculates some values.
-    Weapon::init(); // only load images, should be on the resourcemanager.
-    PowerUpInterface::initialize(); // only load images
+    Physics::init();
+    Weapon::init();
 
-    ConsoleInterface::initialize(25); // aargh
+    ConsoleInterface::initialize(25);
+    PowerUpInterface::initialize();
 
-//    GameManager::initializeGameLogic(); // should be initialized when real game starts.
+    GameManager::initializeGameLogic();
 }
 //-----------------------------------------------------------------
 void BaseGameManager::shutdownGameObjects()
@@ -127,29 +131,29 @@ void BaseGameManager::shutdownGameObjects()
 //-----------------------------------------------------------------
 void BaseGameManager::loadGameData()
 {
-    global_game_state = new GlobalGameState();
-
-    UnitProfileInterface * upi = new UnitProfileInterface();
-    upi->loadUnitProfiles();
-    if ( global_game_state->unit_profile_interface )
-    {
-        delete global_game_state->unit_profile_interface;
-    }
-    global_game_state->unit_profile_interface = upi;
-
+    UnitProfileInterface::loadUnitProfiles();
+    
     int numflags = ResourceManager::loadDefaultFlags();
     if ( numflags <= 0 )
     {
         throw Exception("Couldn't find any flag in pics/flags/.");
     }
+
+    if(gameconfig->playerflag.isDefaultValue())
+    {
+        gameconfig->playerflag=rand()%numflags;
+    }
 }
 //-----------------------------------------------------------------
 void BaseGameManager::initializeNetworkSubSystem()
 {
-    //SERVER = new NetworkServer();
-    //CLIENT = new NetworkClient();
+    SERVER = new NetworkServer();
+    CLIENT = new NetworkClient();
 
-    ServerConnectDaemon::initialize( gameconfig->maxplayers ); // only if server
+    ServerMessageRouter::initialize();
+    ClientMessageRouter::initialize();
+
+    ServerConnectDaemon::initialize( gameconfig->maxplayers );
 
     NetworkState::setNetworkStatus( _network_state_server );
     NetworkState::resetNetworkStats();
@@ -157,29 +161,33 @@ void BaseGameManager::initializeNetworkSubSystem()
 //-----------------------------------------------------------------
 void BaseGameManager::shutdownNetworkSubSystem()
 {
-    NetworkServer::closeSession();
-    NetworkClient::partServer();
+    if(SERVER) {
+        SERVER->closeSession();
+        ServerMessageRouter::cleanUp();
+        delete SERVER;
+        SERVER = 0;
+    }
+    if(CLIENT) {
+        CLIENT->partServer();
+        ClientMessageRouter::cleanUp();
+        delete CLIENT;
+        CLIENT = 0;
+    }
 }
 //-----------------------------------------------------------------
 // boots up netPanzer; initializes all subsystems, game objects etc.
 void BaseGameManager::initialize(const std::string& configfile)
 {
-    try
-    {
-        if( !filesystem::exists("config") )
-        {
+    try {
+        if(!filesystem::exists("config"))
             filesystem::mkdir("config");
-        }
-
         initializeGameConfig(configfile);
-        global_engine_state->sound_manager = initializeSoundSubSystem();
+        initializeSoundSubSystem();
         initializeVideoSubSystem();
-        initializeGameObjects(); // aargh
+        initializeGameObjects();
         initializeNetworkSubSystem();
         initializeInputDevices();
-    }
-    catch(std::exception& e)
-    {
+    } catch(std::exception& e) {
         LOGGER.warning("Initialisation failed:\n%s", e.what());
         shutdown();
         throw Exception("bootstrap failed.");
@@ -193,8 +201,7 @@ void BaseGameManager::shutdown()
 //-----------------------------------------------------------------
 void BaseGameManager::shutdownSubSystems()
 {
-    shutdownGameLogic();
-
+    GameManager::shutdownGameLogic();
     shutdownNetworkSubSystem();
     shutdownSoundSubSystem();
     shutdownVideoSubSystem();
@@ -234,28 +241,34 @@ BaseGameManager::sleeping()
 //-----------------------------------------------------------------
 void BaseGameManager::simLoop()
 {
-    NetworkServer::cleanUpClientList();
+    if ( SERVER )
+        SERVER->cleanUpClientList();
     network::SocketManager::handleEvents();
-
-    // GameControlRulesDaemon might take some packets before they are routed.
-    GameControlRulesDaemon::updateGameControlFlow();
-//    MessageRouter::routePackets();
-
-    if ( NetworkState::status == _network_state_server )
-    {
-        ServerConnectDaemon::connectProcess();
+    
+    if ( NetworkState::status == _network_state_server ) {
+        ServerMessageRouter::routeMessages();
+    } else {
+        ClientMessageRouter::routeMessages();
     }
-//    else
-//    {
-//        ClientConnectDaemon::connectProcess();
-//    }
 
     NetworkState::updateNetworkStats();
 
-//    GameControlRulesDaemon::updateGameControlFlow(); // moved up
+    UnitInterface::updateUnitStatus();
+    ProjectileInterface::updateStatus();
+    ObjectiveInterface::updateObjectiveStatus();
+    PowerUpInterface::updateState();
+    PathScheduler::run();
 
-    NetworkServer::sendRemaining();
-    NetworkClient::sendRemaining();
+    Physics::sim();
+
+    ParticleSystem2D::simAll();
+    Particle2D::simAll();
+
+    GameControlRulesDaemon::updateGameControlFlow();
+    if ( SERVER )
+        SERVER->sendRemaining();
+    if ( CLIENT )
+        CLIENT->sendRemaining();
 }
 //-----------------------------------------------------------------
 void BaseGameManager::inputLoop()
@@ -271,68 +284,4 @@ void
 BaseGameManager::stopMainLoop()
 {
     running = false;
-}
-
-void
-BaseGameManager::initializeGameLogic()
-{
-    PlayerInterface::initialize(gameconfig->maxplayers); // can pas
-
-    UnitInterface::initialize(gameconfig->maxunits);
-
-    PathScheduler::initialize(); // uses map
-    PowerUpInterface::resetLogic(); // depends on map loaded
-
-    startGameTimer();
-}
-
-void
-BaseGameManager::reinitializeGameLogic()
-{
-    shutdownGameLogic();
-    initializeGameLogic();
-}
-
-bool
-BaseGameManager::resetGameLogic()
-{
-    PlayerInterface::reset();
-
-    UnitInterface::reset();
-
-    PathScheduler::initialize();
-    PowerUpInterface::resetLogic();
-    ProjectileInterface::resetLogic();
-
-    startGameTimer();
-    return true;
-}
-
-void
-BaseGameManager::shutdownGameLogic()
-{
-    PlayerInterface::cleanUp();
-
-    UnitInterface::cleanUp();
-    
-    PathScheduler::cleanUp();
-    //ObjectiveInterface::cleanUp();
-
-    game_elapsed_time_offset = 0;
-}
-
-void
-BaseGameManager::startGameTimer()
-{
-    time( &game_start_time );
-}
-
-time_t
-BaseGameManager::getGameTime()
-{
-    time_t current_time;
-
-    time( &current_time );
-
-    return( (current_time - game_start_time) + game_elapsed_time_offset );
 }

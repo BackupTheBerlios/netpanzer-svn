@@ -33,10 +33,9 @@ public:
 
 protected:
     void onDataReceived(UDPSocket *so, const Address &from, const char *data, const int len);
-    void onSocketError(UDPSocket *so, const char * msg);
+    void onSocketError(UDPSocket *so);
     
 private:
-    string prepareFlagPacket(const int flagNum);
     string prepareStatusPacket();
     string statusHead;
     UDPSocket * socket;

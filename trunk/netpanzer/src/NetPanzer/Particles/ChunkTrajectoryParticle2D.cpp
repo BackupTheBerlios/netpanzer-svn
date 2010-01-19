@@ -15,20 +15,24 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "ChunkTrajectoryParticle2D.hpp"
 #include "Util/TimerInterface.hpp"
 #include "PuffParticle2D.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Util/Math.hpp"
+#include "Interfaces/TileInterface.hpp"
+#include "Units/UnitGlobals.hpp"
 #include "Particles/ParticleInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
 
-#include "lua/lua.hpp"
-#include "Util/Log.hpp"
 
-Surface* staticPackedGroundChunks = 0;
+PackedSurface ChunkTrajectoryParticle2D::staticPackedGroundChunks;
+PackedSurface ChunkTrajectoryParticle2D::staticPackedBurnGroundChunks;
+PackedSurface ChunkTrajectoryParticle2D::staticPackedUnitGreenChunks;
+PackedSurface ChunkTrajectoryParticle2D::staticPackedUnitGrayChunks;
+
 
 // ChunkTrajectoryParticle2D
 //---------------------------------------------------------------------------
@@ -63,24 +67,27 @@ ChunkTrajectoryParticle2D::ChunkTrajectoryParticle2D(	const fXYZ &pos,
 
     ChunkTrajectoryParticle2D::particleType = particleType;
 
+    //TileInterface::getWorldPixColor(int worldX, int worldY)
+
     // int randChunk = rand() % staticPackedGroundChunks.getFrameCount();
 
-    packedSurface.setData(*staticPackedGroundChunks);
+    packedSurface.setData(staticPackedGroundChunks);
     packedSurface.setDrawModeSolid();
+    //packedSurface.setDrawModeBlend(&Palette::colorTableBrighten);
 
     // Get particle color.
     if (ParticleInterface::gSolidColorExplosionParticles) {
         index = 253;
 
     } else {
-        index = rand() % staticPackedGroundChunks->getNumFrames();
+        index = TileInterface::getWorldPixColor((int) pos.x, (int) pos.z);
     }
 
     //int randFrame = rand() % staticPackedChunks[randChunk].getFrameCount();
-    staticPackedGroundChunks->setFrame(index);
+    staticPackedGroundChunks.setFrame(index);
 
-    packedSurfaceShadow.setData(*staticPackedGroundChunks);
-    packedSurfaceShadow.setDrawModeBlend(128); // dark a little
+    packedSurfaceShadow.setData(staticPackedGroundChunks);
+    packedSurfaceShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
 
     if (ParticleInterface::gParticlesCanHaveSmoke && canHaveSmoke) {
         hasSmoke = rand() % 3;
@@ -94,16 +101,24 @@ ChunkTrajectoryParticle2D::ChunkTrajectoryParticle2D(	const fXYZ &pos,
 
 } // end ChunkTrajectoryParticle2D::ChunkTrajectoryParticle2D
 
+// init
+//---------------------------------------------------------------------------
+void ChunkTrajectoryParticle2D::init()
+{
+    createPAKFiles();
+
+} // end ChunkTrajectoryParticle2D::init
+
 // draw
 //---------------------------------------------------------------------------
-void ChunkTrajectoryParticle2D::draw(SpriteSorter &sorter)
+void ChunkTrajectoryParticle2D::draw(const Surface& , SpriteSorter &sorter)
 {
     assert(this != 0);
 
     packedSurface.setAttrib(iXY((int) pos.x, (int) (pos.z - arcYPix)), layer);
     sorter.addSprite(&packedSurface);
 
-    if (GameConfig::video_shadows) {
+    if (gameconfig->displayshadows) {
         packedSurfaceShadow.setAttrib(iXY((int) (pos.x - arcYPix), (int) pos.z), shadowLayer);
         sorter.addSprite(&packedSurfaceShadow);
     }
@@ -137,3 +152,213 @@ void ChunkTrajectoryParticle2D::sim()
     TrajectoryParticle2D::sim();
 
 } // end ChunkTrajectoryParticle2D::sim
+
+// createGroundChunks
+//---------------------------------------------------------------------------
+void ChunkTrajectoryParticle2D::createGroundChunks()
+{
+    PackedSurface tempPackedSurface;
+    Surface       tempSurface;
+
+    // Build a table of the ground colors.
+    tempSurface.create(2, 2, 256);
+    for (unsigned int i = 0; i < tempSurface.getNumFrames(); i++) {
+        tempSurface.setFrame(i);
+        tempSurface.fill(i);
+
+        if (i == 0) {
+            tempSurface.fill(1);
+        }
+    }
+
+    tempPackedSurface.pack(tempSurface);
+
+    char chunkPathPAK[] = "pics/particles/chunks/pak/";
+    char strBuf[256];
+    sprintf(strBuf, "%sgroundChunks.pak", chunkPathPAK);
+    tempPackedSurface.save(strBuf);
+} // end ChunkTrajectoryParticle2D::createGroundChunks
+
+// createPAKFiles
+//---------------------------------------------------------------------------
+void ChunkTrajectoryParticle2D::createPAKFiles()
+{
+#if 0
+    createGroundChunks();
+    createBurnGroundChunks();
+    createUnitBodyGreenChunks();
+    createUnitBodyGrayChunks();
+#endif
+
+    staticPackedGroundChunks.load("pics/particles/chunks/pak/groundChunks.pak");
+    staticPackedBurnGroundChunks.load("pics/particles/chunks/pak/greenUnitChunks.pak");
+    staticPackedUnitGreenChunks.load("pics/particles/chunks/pak/grayUnitChunks.pak");
+    staticPackedUnitGrayChunks.load("pics/particles/chunks/pak/burnGroundChunks.pak");
+
+} // end ChunkTrajectoryParticle2D::createPAKFiles
+
+
+// createUnitBodyGrayChunks
+//---------------------------------------------------------------------------
+void ChunkTrajectoryParticle2D::createUnitBodyGrayChunks()
+{
+    // Blt the green titan body onto a surface to pull colors from.
+    Surface tempUnitBodyGray;
+    UnitProfile * uprofile = UnitProfileInterface::getUnitProfile(0);
+
+    tempUnitBodyGray.create(uprofile->bodySprite.getWidth(), uprofile->bodySprite.getHeight(), 1);
+    tempUnitBodyGray.fill(0);
+    uprofile->bodySprite.blt(tempUnitBodyGray, 0, 0);
+
+    // Build a table of the green unit colors.
+    Surface tempSurface(2, 2, 64);
+
+    unsigned int x = 0;
+    unsigned int y = 0;
+
+    for (unsigned int i = 0; i < tempSurface.getNumFrames(); i++) {
+        tempSurface.setFrame(i);
+
+        while (tempUnitBodyGray.getPixel(x, y) == 0) {
+            x++;
+
+            if (x > tempUnitBodyGray.getWidth() - 1) {
+                x = 0;
+                y++;
+            } else if (y > tempUnitBodyGray.getHeight() - 1) {
+                assert(false);
+            }
+        }
+
+        tempSurface.fill(tempUnitBodyGray.getPixel(x, y));
+    }
+
+    PackedSurface tempPackedSurface;
+    tempPackedSurface.pack(tempSurface);
+
+    char chunkPathPAK[] = "pics/particles/chunks/pak/";
+    char strBuf[256];
+    sprintf(strBuf, "%sgrayUnitChunks.pak", chunkPathPAK);
+    tempPackedSurface.save(strBuf);
+
+} // end ChunkTrajectoryParticle2D::createUnitBodyGrayChunks
+
+// createUnitBodyGreenChunks
+//---------------------------------------------------------------------------
+void ChunkTrajectoryParticle2D::createUnitBodyGreenChunks()
+{
+
+    // Blt the green titan body onto a surface to pull colors from.
+    Surface tempUnitBodyGray;
+    UnitProfile * uprofile = UnitProfileInterface::getUnitProfile(0);
+    
+    tempUnitBodyGray.create(uprofile->bodySprite.getWidth(), uprofile->bodySprite.getHeight(), 1);
+    tempUnitBodyGray.fill(0);
+    uprofile->bodySprite.blt(tempUnitBodyGray, 0, 0);
+
+    // Build a table of the green unit colors.
+    Surface tempSurface(2, 2, 64);
+
+    unsigned int x = 0;
+    unsigned int y = 0;
+
+    for (unsigned int i = 0; i < tempSurface.getNumFrames(); i++) {
+        tempSurface.setFrame(i);
+
+        while (tempUnitBodyGray.getPixel(x, y) == 0) {
+            x++;
+
+            if (x > tempUnitBodyGray.getWidth() - 1) {
+                x = 0;
+                y++;
+            } else if (y > tempUnitBodyGray.getHeight() - 1) {
+                assert(false);
+            }
+        }
+
+        tempSurface.fill(tempUnitBodyGray.getPixel(x, y));
+    }
+
+    PackedSurface tempPackedSurface;
+    tempPackedSurface.pack(tempSurface);
+
+    char chunkPathPAK[] = "pics/particles/chunks/pak/";
+    char strBuf[256];
+    sprintf(strBuf, "%sgreenUnitChunks.pak", chunkPathPAK);
+    tempPackedSurface.save(strBuf);
+
+} // end ChunkTrajectoryParticle2D::createUnitBodyGreenChunks
+
+// createBurnGroundChunks
+//---------------------------------------------------------------------------
+void ChunkTrajectoryParticle2D::createBurnGroundChunks()
+{
+    Surface       tempSurface;
+    tempSurface.create(2, 2, 26);
+
+    int curFrame = 0;
+
+    // Browns.
+    tempSurface.fill(Palette::findNearestColor(204, 144, 9));
+    tempSurface.setFrame(curFrame++);
+    tempSurface.fill(Palette::findNearestColor(212, 158, 29));
+    tempSurface.setFrame(curFrame++);
+    tempSurface.fill(Palette::findNearestColor(149, 103, 19));
+    tempSurface.setFrame(curFrame++);
+    tempSurface.fill(Palette::findNearestColor(170, 116, 17));
+    tempSurface.setFrame(curFrame++);
+    tempSurface.fill(Palette::findNearestColor(173, 126, 44));
+    tempSurface.setFrame(curFrame++);
+    tempSurface.fill(Palette::findNearestColor(206, 161, 75));
+    tempSurface.setFrame(curFrame++);
+    tempSurface.fill(Palette::findNearestColor(235, 202, 150));
+    tempSurface.setFrame(curFrame++);
+    tempSurface.fill(Palette::findNearestColor(190, 112, 0));
+    tempSurface.setFrame(curFrame++);
+    tempSurface.fill(Palette::findNearestColor(229, 191, 136));
+    tempSurface.setFrame(curFrame++);
+    tempSurface.fill(Palette::findNearestColor(140, 79, 1));
+    tempSurface.setFrame(curFrame++);
+    tempSurface.fill(Palette::findNearestColor(156, 133, 101));
+    tempSurface.setFrame(curFrame++);
+    tempSurface.fill(Palette::findNearestColor(213, 176, 135));
+    tempSurface.setFrame(curFrame++);
+    tempSurface.fill(Palette::findNearestColor(107, 81, 57));
+    tempSurface.setFrame(curFrame++);
+    tempSurface.fill(Palette::findNearestColor(141, 63, 0));
+    tempSurface.setFrame(curFrame++);
+    tempSurface.fill(Palette::findNearestColor(149, 147, 146));
+    tempSurface.setFrame(curFrame++);
+    tempSurface.fill(Palette::findNearestColor(22, 10, 7));
+    tempSurface.setFrame(curFrame++);
+    tempSurface.fill(Palette::findNearestColor(111, 108, 109));
+
+    PackedSurface tempPackedSurface;
+    tempPackedSurface.pack(tempSurface);
+
+    char chunkPathPAK[] = "pics/particles/chunks/pak/";
+    char strBuf[256];
+    sprintf(strBuf, "%sburnGroundChunks.pak", chunkPathPAK);
+    tempPackedSurface.save(strBuf);
+
+} // end ChunkTrajectoryParticle2D::createBurnGroundChunks
+
+// Greens.
+//tempSurface.setFrame(curFrame++);
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(26, 88, 36)));
+//tempSurface.setFrame(curFrame++);
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(58, 74, 60)));
+//tempSurface.setFrame(curFrame++);
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(185, 235, 190)));
+//tempSurface.setFrame(curFrame++);
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(42, 58, 43)));
+//tempSurface.setFrame(curFrame++);
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(9, 149, 17)));
+//tempSurface.setFrame(curFrame++);
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(31, 166, 36)));
+//tempSurface.setFrame(curFrame++);
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(133, 180, 133)));
+//tempSurface.setFrame(curFrame++);
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(141, 179, 136)));
+//tempSurface.setFrame(curFrame++);
+//tempSurface.fill(Palette::findNearestColor(SDL_Color(147, 159, 115)));

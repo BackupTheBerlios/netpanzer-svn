@@ -15,142 +15,171 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 #ifndef _UNITINTERFACE_HPP
 #define _UNITINTERFACE_HPP
 
 #include <vector>
 #include <map>
-#include "Core/CoreTypes.hpp"
+#include "Units/UnitBucketArray.hpp"
+#include "Classes/UnitMessage.hpp"
+#include "Classes/PlayerState.hpp"
+#include "Util/Timer.hpp"
+#include "Classes/PlacementMatrix.hpp"
 
-#include "ArrayUtil/BitArray.hpp"
-#include "UnitBucketArray.hpp"
-#include "UnitOpcodeEncoder.hpp"
+#include "Classes/Network/UnitNetMessage.hpp"
+#include "Units/UnitOpcodeEncoder.hpp"
+
+enum { _search_all_players,
+       _search_player,
+       _search_exclude_player,
+       _search_enemy_only };
+
+enum { _no_unit_found, _unit_player, _unit_allied, _unit_enemy };
 
 class NetPacket;
-class UnitMessage;
-class PlayerUnitConfig;
-class PlayerState;
-class SpriteSorter;
 
 class UnitInterface
 {
 public:
-    // type definitions
-    typedef std::map<UnitID, Unit*> Units;
-    typedef std::vector<UnitList> PlayerUnitList;
+    typedef std::map<UnitID, UnitBase*> Units;
+    typedef std::vector<UnitBase*> PlayerUnitList;
+    
+private:
+    static Units units;
+    static PlayerUnitList* playerUnitLists;
+        
+    static UnitBucketArray unit_bucket_array;
+    static unsigned short max_players;
+    static size_t units_per_player;
+    static PlacementMatrix unit_placement_matrix;
 
-    // initialization/cleanup
-    static void initialize( const unsigned int max_units );
+    static Uint16 lastUnitID;
+    static UnitID newUnitID();
+
+    static UnitBase* newUnit(unsigned short unit_type,
+                             const iXY &location,
+                             unsigned short player_index,
+                             UnitID id);
+    static void addNewUnit(UnitBase *unit);
+    static void removeUnit(Units::iterator i);
+
+    static void sortBucketArray();
+
+public:
+    static void initialize( unsigned long max_units );
     static void cleanUp();
     static void reset();
 
-    // unit getters
-    static Unit * getUnit( UnitID id )
-    {
-        Units::iterator i = units->find(id);
-        return (i!=units->end())?i->second:0;
-    }
-
-    static const Units* getUnits()
+    static const Units& getUnits()
     {
         return units;
     }
-    
-    static const UnitList* getPlayerUnits( const Uint16 player_id )
+
+    static const PlayerUnitList& getPlayerUnits(Uint16 player_id)
     {
-        if ( player_id < playerUnitLists->size() )
-        {
-            return &(*playerUnitLists)[player_id];
-        }
-        return 0;
+        assert(player_id < max_players);
+        return playerUnitLists[player_id];
     }
 
-    static size_t getPlayerUnitCount( const Uint16 player_id )
+#if 0
+    static UnitList * getUnitList(size_t player)
     {
-        if ( player_id < playerUnitLists->size() )
-        {
-            return (*playerUnitLists)[player_id].size();
-        }
-        return 0;
+        assert( (player < max_players) );
+        return ( &unit_lists[ player ] );
+    }
+#endif
+
+    static size_t getUnitCount(unsigned short player_index)
+    {
+        assert( (player_index < max_players) );
+        return playerUnitLists[player_index].size();
     }
 
     static size_t getTotalUnitCount()
     {
-        return units->size();
+        return units.size();
     }
 
-    // main loop methods
+    static UnitBase* getUnit(UnitID unit_id);
+
+    static void processNetPacket(const NetPacket* packet);
+    static void sendMessage(const UnitMessage* message,
+            const PlayerState* player = 0);
+
     static void updateUnitStatus();
 
-    // graphic methods
     static void offloadGraphics( SpriteSorter &sorter );
 
-    // unit creation
-    static Unit* createUnit(const unsigned short unit_type,
-                            const iXY &location,
-                            const Uint16 player_id);
+    static UnitBase* createUnit( unsigned short unit_type,
+                                  const iXY &location,
+                                  Uint16 player_id);
 
-    static void spawnPlayerUnits(const iXY & location,
-                                 const Uint16 player_id,
-                                 const PlayerUnitConfig & unit_config );
+    static void spawnPlayerUnits( const iXY &location,
+                                  Uint16 player_id,
+                                  const PlayerUnitConfig &unit_config );
 
-    static void destroyPlayerUnits( const Uint16 player_id );
+    static void queryUnitsAt(std::vector<UnitID>& working_list,
+                             const iXY& point, Uint16 player_id,
+                             unsigned char search_flags);
 
-    // message methods
-    static void processNetPacket( const NetPacket* packet );
-    static void sendMessage( const UnitMessage* message,
-                             const PlayerState* player = 0 );
+    static void queryUnitsAt(std::vector<UnitID>& working_list,
+                            const iRect& rect, Uint16 player_id,
+                            unsigned char search_flags);
 
-    static void processNetMessage( const NetMessage *net_message );
+    static bool queryClosestUnit( UnitBase **closest_unit_ptr,
+                                   iXY &loc,
+                                   Uint16 player_id,
+                                   unsigned char search_flags );
 
-    static bool unitOccupiesLoc(const iXY &unit_map_loc)
-    {
-        return unit_black_board->getBit(unit_map_loc.x, unit_map_loc.y);
-    }
+    static bool queryClosestUnit( UnitBase **closest_unit_ptr,
+                                   iRect &bounding_rect,
+                                   iXY &loc );
 
-    static void markUnitLoc(const iXY &unit_map_loc)
-    {
-        unit_black_board->setBit(unit_map_loc.x, unit_map_loc.y);
-    }
+    static bool queryClosestEnemyUnit(UnitBase **closest_unit_ptr,
+                                      iXY &loc,
+                                      Uint16 player_index);
 
-    static void unmarkUnitLoc(const iXY &unit_map_loc)
-    {
-        unit_black_board->clearBit(unit_map_loc.x, unit_map_loc.y);
-    }
+    static bool queryUnitAtMapLoc( iXY map_loc, UnitID *query_unit_id );
 
-private:
-    friend class Unit;
-    UnitInterface();
-    ~UnitInterface();
+    static unsigned char queryUnitLocationStatus( iXY loc );
 
+protected:
     // Unit Message Handler Methods
-    static void unitManagerMesgEndLifecycle( const UnitMessage *message );
+    static void processManagerMessage(const UnitMessage *message);
+    static void unitManagerMesgEndLifecycle(const UnitMessage *message);
+
+protected:
+    friend class Vehicle;
+    
+    // Network Message Handler Variables
+    static Timer message_timer;
+    static Timer no_guarantee_message_timer;
+    static UnitOpcodeEncoder opcode_encoder;
 
     // Network Message Handler Methods
-    static void sendOpcode( const UnitOpcode* opcode )
+    static void sendOpcode(const UnitOpcode* opcode)
     {
-        opcode_encoder->encode(opcode);
+        opcode_encoder.encode(opcode);
     }
 
-    static void unitCreateMessage( const NetMessage *net_message );
-    static void unitDestroyMessage( const NetMessage *net_message );
-    static void unitSyncMessage( const NetMessage *net_message );
-    static void unitOpcodeMessage( const NetMessage *net_message );
-    static void unitSyncIntegrityCheckMessage( const NetMessage *net_message );
+    static void unitSyncMessage(const NetMessage *net_message );
+    static void unitOpcodeMessage(const NetMessage *net_message );
+    static void unitDestroyMessage(const NetMessage *net_message );
+    static void unitCreateMessage(const NetMessage *net_message );
+    static void unitSyncIntegrityCheckMessage(const NetMessage *net_message );
 
-    static Unit* newUnit( const unsigned short unit_type,
-                          const iXY &location,
-                          const unsigned short player_index,
-                          const UnitID id );
+protected:
+    static unsigned long  sync_units_iterator;
+    static bool	      sync_units_complete_flag;
+    static unsigned short sync_units_list_index;
+    static Timer	  sync_units_packet_timer;
+    static unsigned long  sync_units_in_sync_count;
+    static unsigned long  sync_units_in_sync_partial_count;
+    static unsigned long  sync_units_total_units;
 
-    static void addUnit( Unit *unit );
-    static void removeUnit( Units::iterator i );
-
-    static Units* units;
-    static PlayerUnitList* playerUnitLists;
-    static BitArray* unit_black_board;
-    static UnitOpcodeEncoder* opcode_encoder;
+public:
+    static void processNetMessage(const NetMessage *net_message );
+    static void destroyPlayerUnits(Uint16 player_id);
 };
 
 #endif // ** _UNITINTERFACE_HPP

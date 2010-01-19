@@ -15,9 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
 
-
-#include "SDL_endian.h"
+#include "Util/Endian.hpp"
 #include "Util/Log.hpp"
 #include "Classes/PlayerState.hpp"
 #include "Interfaces/PlayerInterface.hpp"
@@ -26,11 +26,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Uint16 NetworkPlayerState::getPlayerIndex() const
 {
-    return SDL_SwapLE16(playerindex_id);
+    return ltoh16(playerindex_id);
 }
 
 //If you modify this array, also modify the constant above
-IntColor *playerColorArray[] = {
+Uint8 *playerColorArray[] = {
 	&Color::red,
 	&Color::green,
 	&Color::brown,
@@ -297,40 +297,40 @@ void PlayerState::setFlag(FlagID newflag)
 {
     flag = newflag;
     
-//    bool recheck;
-//    do
-//    {
-//        recheck = false;
-//        for (Uint16 p=0; p<PlayerInterface::getMaxPlayers(); p++)
-//        {
-//            if ( p == player_index )
-//                continue;
-//                
-//            PlayerState *ps=PlayerInterface::getPlayer(p);
-//            
-//            if (  (ps->status==_player_state_connecting 
-//                  || ps->status==_player_state_active )
-//                 && ps->flag == flag
-//               )
-//            {
-//                // will autorotate because it is a byte
-//                do
-//                {
-//                    flag++;
-//                } while ( ! ResourceManager::isFlagActive(flag) );
-//                                    
-//                if ( flag != newflag ) // there are no free flags if it is ==
-//                {
-//                    recheck = true;
-//                }
-//                else
-//                {
-//                    LOGGER.warning("No more free flags");
-//                }   
-//                break;
-//            }
-//        }
-//    } while (recheck);
+    bool recheck;
+    do
+    {
+        recheck = false;
+        for (Uint16 p=0; p<PlayerInterface::getMaxPlayers(); p++)
+        {
+            if ( p == player_index )
+                continue;
+                
+            PlayerState *ps=PlayerInterface::getPlayer(p);
+            
+            if (  (ps->status==_player_state_connecting 
+                  || ps->status==_player_state_active )
+                 && ps->flag == flag
+               )
+            {
+                // will autorotate because it is a byte
+                do
+                {
+                    flag++;
+                } while ( ! ResourceManager::isFlagActive(flag) );
+                                    
+                if ( flag != newflag ) // there are no free flags if it is ==
+                {
+                    recheck = true;
+                }
+                else
+                {
+                    LOGGER.warning("No more free flags");
+                }   
+                break;
+            }
+        }
+    } while (recheck);
 }
 
 FlagID PlayerState::getFlag() const
@@ -351,15 +351,15 @@ NetworkPlayerState PlayerState::getNetworkPlayerState() const
     memset(state.name, 0, sizeof(state.name));
     strncpy(state.name, name.c_str(), sizeof(state.name)-1);
     state.flag = flag;
-    state.playerindex_id = SDL_SwapLE16(player_index);
+    state.playerindex_id = htol16(player_index);
     state.status = status;
-    state.kills = SDL_SwapLE16(kills);
-    state.kill_points = SDL_SwapLE16(kill_points);
-    state.losses = SDL_SwapLE16(losses);
-    state.loss_points = SDL_SwapLE16(loss_points);
-    state.total = SDL_SwapLE16(total);
-    state.objectives_held = SDL_SwapLE16(objectives_held);
-    state.colorIndex = SDL_SwapLE32(colorIndex);
+    state.kills = htol16(kills);
+    state.kill_points = htol16(kill_points);
+    state.losses = htol16(losses);
+    state.loss_points = htol16(loss_points);
+    state.total = htol16(total);
+    state.objectives_held = htol16(objectives_held);
+    state.colorIndex = htol32(colorIndex);
     
     return state;
 }
@@ -376,13 +376,13 @@ void PlayerState::setFromNetworkPlayerState(const NetworkPlayerState* state)
         LOGGER.warning("Received flag is not registered: %u", flag);
     }
     
-    player_index = SDL_SwapLE16(state->playerindex_id);
+    player_index = ltoh16(state->playerindex_id);
     status = state->status;
-    kills = SDL_SwapLE16(state->kills);
-    kill_points = SDL_SwapLE16(state->kill_points);
-    losses = SDL_SwapLE16(state->losses);
-    loss_points = SDL_SwapLE16(state->loss_points);
-    total = SDL_SwapLE16(state->total);
-    objectives_held = SDL_SwapLE16(state->objectives_held);
-    setColor(SDL_SwapLE32(state->colorIndex));
+    kills = ltoh16(state->kills);
+    kill_points = ltoh16(state->kill_points);
+    losses = ltoh16(state->losses);
+    loss_points = ltoh16(state->loss_points);
+    total = ltoh16(state->total);
+    objectives_held = ltoh16(state->objectives_held);
+    setColor(ltoh32(state->colorIndex));
 }

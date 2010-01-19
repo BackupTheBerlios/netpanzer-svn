@@ -9,23 +9,27 @@
 
 #include "LoadingView.hpp"
 
-#include "Core/GlobalEngineState.hpp"
-
 #include "Interfaces/GameConfig.hpp"
 #include "System/Sound.hpp"
 #include "2D/Palette.hpp"
 #include "Classes/ScreenSurface.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Views/Components/Desktop.hpp"
-#include "Views/Components/Button.hpp"
 
 list<string> LoadingView::lines;
 bool LoadingView::dirty = true;
 
-enum
+static void bAbort()
 {
-    BTN_ABORT
-};
+    if(gameconfig->quickConnect) {
+        GameManager::exitNetPanzer();
+        return;
+    }
+    sound->stopTankIdle();
+    Desktop::setVisibilityAllWindows(false);
+    Desktop::setVisibility("MainView", true);
+}
+
 
 void
 LoadingView::init()
@@ -34,6 +38,7 @@ LoadingView::init()
     setTitle("Loading Progress");
     setSubTitle("");
     
+    setAllowResize(false);
     setAllowMove(false);
     setDisplayStatusBar(false);
     setVisible(false);
@@ -41,22 +46,27 @@ LoadingView::init()
 
     resize(640, 480);
     
-    add( Button::createTextButton("abort","Abort", iXY(570, 295), 60, BTN_ABORT) );
+    addButtonCenterText(iXY(628 - 60, 302 - 15), 60, "Abort", "Cancel the joining of this game.", bAbort);
     
 }
 
 
 void
-LoadingView::doDraw()
-{    
+LoadingView::doDraw(Surface &viewArea, Surface &clientArea)
+{
+    if ( Palette::getName() != "netpmenu" )
+    {
+        GameManager::loadPalette("netpmenu");
+    }
+    
     if (dirty)
         render();
     
     screen->fill(Color::black);
-    drawImage(backgroundSurface, 0, 0);
-    drawImage(surface, 180, 150);
+    backgroundSurface.blt(clientArea, 0, 0);
+    surface.blt(clientArea, 179, 153);
     
-    View::doDraw();    
+    View::doDraw(viewArea, clientArea);    
 }
 
 void
@@ -64,7 +74,7 @@ LoadingView::render()
 {
     dirty=false;
     
-    surface.fill(0);//Color::black);
+    surface.fill(Color::black);
     
     int ypos = surface.getHeight() - Surface::getFontHeight();
     int fontHeight = Surface::getFontHeight();
@@ -73,7 +83,7 @@ LoadingView::render()
     while ( i != lines.rend() && ypos > -fontHeight )
     {
         surface.bltString( 0, ypos, (*i).c_str(), Color::white);
-        ++i;
+        i++;
         ypos -= fontHeight;
     }
 }
@@ -81,30 +91,14 @@ LoadingView::render()
 void
 LoadingView::doActivate()
 {
-    backgroundSurface.loadPNG("pics/default/loadingMB.png");
-    surface.create(456, 144, 1);
+    backgroundSurface.loadBMP("pics/backgrounds/menus/menu/loadingMB.bmp");
+    surface.create(628 - 179, 302 - 153, 1);
     dirty=true;
 }
 
 void
 LoadingView::doDeactivate()
 {
-    backgroundSurface.freeFrames();
-    surface.freeFrames();
-}
-
-void
-LoadingView::onComponentClicked(Component* c)
-{
-    if ( c->getCustomCode() == BTN_ABORT )
-    {
-        if(gameconfig->quickConnect)
-        {
-            GameManager::exitNetPanzer();
-            return;
-        }
-        global_engine_state->sound_manager->stopTankIdle();
-        Desktop::setVisibilityAllWindows(false);
-        Desktop::setVisibility("MainView", true);
-    }
+    backgroundSurface.free();
+    surface.free();
 }

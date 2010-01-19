@@ -37,7 +37,7 @@ protected:
     virtual void initializeVideoSubSystem();
     virtual void shutdownVideoSubSystem();
 
-    virtual Sound * initializeSoundSubSystem();
+    virtual void initializeSoundSubSystem();
 
     virtual void shutdownNetworkSubSystem();
 
@@ -58,6 +58,7 @@ private:
     //Panels::TestPanel * testpanel;
     //UI::FontManager fontManager;
     SDLVideo* sdlVideo;
+    bool showNewPanel;
 
     Heartbeat * heartbeat;
     InfoSocket * infosocket;

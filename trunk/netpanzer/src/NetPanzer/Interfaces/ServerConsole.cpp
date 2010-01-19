@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include <iostream>
 
@@ -52,9 +52,7 @@ static CommandHelp commands[] = {
     { "say", "Prints a message on client displays" },
     { "map mapname", "Change map" },
     { "kick n",
-        "Kick player or bot with number n (you can lookup numbers with \"status\")" },
-    { "addbot", "Adds a new bot in server" },
-    { "removebots", "Removes all the bots in the server" },
+        "Kick player with number n (you can lookup numbers with \"status\")" },
     { 0, 0 }
 };
 
@@ -97,12 +95,6 @@ void ServerConsole::executeCommand(const std::string& commandline)
         if(argument != "")
             manager->pushCommand(
                     ServerCommand(ServerCommand::CHAT, argument));
-    } else if(command == "addbot") {
-            manager->pushCommand(
-                    ServerCommand(ServerCommand::ADDBOT));
-    } else if(command == "removebots") {
-            manager->pushCommand(
-                    ServerCommand(ServerCommand::REMOVEBOTS));
     } else {
         if(command != "")
             std::cout << "Unknown command.\n";

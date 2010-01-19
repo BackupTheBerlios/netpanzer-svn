@@ -15,9 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
 
-#include "Core/GlobalEngineState.hpp"
-#include "Core/GlobalGameState.hpp"
 #include "BulletWeapon.hpp"
 #include "Classes/UnitMessageTypes.hpp"
 #include "Classes/Network/NetworkState.hpp"
@@ -60,7 +59,7 @@ void BulletWeapon::fsmFlight()
             case _fsmFlight_on_target:
                 if (NetworkState::status == _network_state_server) {
                     UMesgWeaponHit weapon_hit;
-                    weapon_hit.setHeader(0);
+                    weapon_hit.setHeader(0, _umesg_flag_broadcast);
                     weapon_hit.message_id = _umesg_weapon_hit;
                     weapon_hit.setOwnerUnitID(owner_id);
                     weapon_hit.setHitLocation(location);
@@ -72,9 +71,14 @@ void BulletWeapon::fsmFlight()
                 lifecycle_status = _lifecycle_weapon_in_active;
 
                 //SFX
-                global_engine_state->sound_manager->playAmbientSound("hit",
+                sound->playAmbientSound("hit",
                         WorldViewInterface::getCameraDistance(location) );
 
+                // **  Particle Shit
+                {
+                    iXY loc = iXY( location.x, location.y );
+                    ParticleInterface::addDirtKick(loc);
+                }
                 end_cycle = true;
                 break;
             default:

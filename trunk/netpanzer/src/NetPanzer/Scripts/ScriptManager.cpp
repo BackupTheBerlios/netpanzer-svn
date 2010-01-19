@@ -20,15 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <cstring>
 #include "ScriptManager.hpp"
-#include "ScriptHelper.hpp"
 #include "Util/FileSystem.hpp"
-
-#include "bindings/NetPanzerBindings.hpp"
-
-#include "2D/Color.hpp"
-#include "Particles/ParticleInterface.hpp"
-
-#include "Interfaces/ConsoleInterface.hpp"
 
 lua_State * ScriptManager::luavm = 0;
 
@@ -42,13 +34,7 @@ ScriptManager::initialize()
         {
             luaL_openlibs(luavm);
         }
-        tolua_NetPanzer_open(luavm);
-        Color::registerScript("Color");
-        ParticleInterface::registerScript("particles");
-        GameConfig::registerScript("config");
-
     }
-
 }
     
 void
@@ -62,9 +48,39 @@ ScriptManager::close()
 }
     
 void
-ScriptManager::registerLib(const char * libname, const luaL_Reg * functions)
+ScriptManager::registerLib(const char * libname, const luaL_reg * functions)
 {
-    luaL_register(luavm, libname, functions);
+    luaL_openlib(luavm, libname, functions, 0);   
+}
+    
+void
+ScriptManager::bindStaticVariables(const char * objectName,
+                                   const char * metaName,
+                                   ScriptVarBindRecord * getters,
+                                   ScriptVarBindRecord * setters)
+{
+    luaL_newmetatable(luavm, metaName);
+    int metatable = lua_gettop(luavm);
+
+    lua_pushliteral(luavm, "__index");
+    lua_pushvalue(luavm, metatable);  /* upvalue index 1 */
+    bindStaticVars(getters);     /* fill metatable with getters */
+    lua_pushcclosure(luavm, ScriptHelper::index_handler, 1);
+    lua_rawset(luavm, metatable);     /* metatable.__index = index_handler */
+
+    lua_pushliteral(luavm, "__newindex");
+    lua_newtable(luavm);              /* table for members you can set */
+    bindStaticVars(setters);     /* fill with setters */
+    lua_pushcclosure(luavm, ScriptHelper::newindex_handler, 1);
+    lua_rawset(luavm, metatable);     /* metatable.__newindex = newindex_handler */
+
+    lua_pop(luavm, 1);                /* drop metatable */
+
+    // we don't save the address of new data
+    void * t = lua_newuserdata(luavm,sizeof(void*));
+    luaL_getmetatable(luavm, metaName);
+    lua_setmetatable(luavm,-2);
+    lua_setglobal(luavm,objectName);
 }
     
 void
@@ -74,313 +90,30 @@ ScriptManager::runStr(const char * runname, const char * str)
     int error=lua_pcall(luavm,0,0,0);
     if (error)
     {
-        printf("Error is: %s\n",lua_tostring(luavm,-1));
-        lua_pop(luavm,1);
-    }
-}
-
-bool
-ScriptManager::runUserCommand(const char* str)
-{
-    int luatop = lua_gettop(luavm);
-
-    lua_getglobal(luavm, "UserCommands");
-    if ( lua_istable(luavm, -1) )
-    {
-        char cmd[128];
-        unsigned int cmdpos = 0;
-        unsigned int strpos = 0;
-
-        while ( cmdpos < sizeof(cmd) && str[strpos] && !isspace(str[strpos]) )
-        {
-            cmd[cmdpos++] = str[strpos++];
-        }
-
-        if ( cmdpos == 0 )
-        {
-            lua_settop(luavm, luatop);
-            return false;
-        }
-
-        if ( cmdpos == sizeof(cmd) )
-        {
-            cmd[sizeof(cmd)-1] = 0;
-        }
-        else
-        {
-            cmd[cmdpos] = 0;
-        }
-
-        lua_getfield(luavm, -1, cmd);
-        if ( lua_isfunction(luavm, -1) )
-        {
-            while ( str[strpos] && isspace(str[strpos]) )
-            {
-                strpos++;
-            }
-
-            lua_pushstring(luavm, &str[strpos]);
-            
-            if ( lua_pcall(luavm, 1, 0, 0) != 0 )
-            {
-                ConsoleInterface::postMessage(Color::cyan, false, 0, "Error running user command '%s': %s", str, lua_tostring(luavm, -1));
-            }
-        }
-        else
-        {
-            ConsoleInterface::postMessage(Color::cyan, false, 0, "User command '%s' not found", str);
-        }
-    }
-    else
-    {
-        ConsoleInterface::postMessage(Color::cyan, false, 0, "There is no defined UserCommands");
-    }
-
-    lua_settop(luavm, luatop);
-    return true;
-}
-
-bool
-ScriptManager::runServerCommand(const char* str, Uint16 runPlayer)
-{
-    int luatop = lua_gettop(luavm);
-
-    lua_getglobal(luavm, "ServerCommands");
-    if ( lua_istable(luavm, -1) )
-    {
-        char cmd[128];
-        unsigned int cmdpos = 0;
-        unsigned int strpos = 0;
-
-        while ( cmdpos < sizeof(cmd) && str[strpos] && !isspace(str[strpos]) )
-        {
-            cmd[cmdpos++] = str[strpos++];
-        }
-
-        if ( cmdpos == 0 )
-        {
-            lua_settop(luavm, luatop);
-            return false;
-        }
-
-        if ( cmdpos == sizeof(cmd) )
-        {
-            cmd[sizeof(cmd)-1] = 0;
-        }
-        else
-        {
-            cmd[cmdpos] = 0;
-        }
-
-        lua_getfield(luavm, -1, cmd);
-        if ( lua_isfunction(luavm, -1) )
-        {
-            while ( str[strpos] && isspace(str[strpos]) )
-            {
-                strpos++;
-            }
-
-            lua_pushstring(luavm, &str[strpos]);
-            lua_pushnumber(luavm, runPlayer);
-            
-            if ( lua_pcall(luavm, 2, 0, 0) != 0 )
-            {
-                char errormsg[512];
-                snprintf(errormsg,sizeof(errormsg),
-                        "Error running server command '%s': %s",
-                        str, lua_tostring(luavm, -1));
-                errormsg[sizeof(errormsg)-1] = 0;
-                ChatInterface::serversayTo(runPlayer, errormsg);
-            }
-        }
-        else
-        {
-            char errormsg[512];
-            snprintf(errormsg,sizeof(errormsg), "Server command '%s' not found", str);
-            errormsg[sizeof(errormsg)-1] = 0;
-            ChatInterface::serversayTo(runPlayer, errormsg);
-        }
-    }
-    else
-    {
-        ChatInterface::serversayTo(runPlayer, "There is no defined ServerCommands");
-    }
-
-    lua_settop(luavm, luatop);
-    return true;
-}
-
-void
-ScriptManager::runFile(const char * runname, const char * filename)
-{
-    int error = luaL_dofile(luavm, filesystem::getRealName(filename).c_str());
-    if (error)
-    {
         printf("error is: %s\n",lua_tostring(luavm,-1));
         lua_pop(luavm,1);
     }
 }
 
 void
-ScriptManager::runFileInTable(const char * filename, const char * table)
+ScriptManager::runFile(const char * runname, const char * filename)
 {
-    int r = luaL_loadfile(luavm, filesystem::getRealName(filename).c_str());
-    if ( r )
+    luaL_loadfile(luavm, filesystem::getRealName(filename).c_str());
+    int error=lua_pcall(luavm,0,0,0);
+    if (error)
     {
-        LOGGER.warning("Error in runFileInTable: %s\n",lua_tostring(luavm,-1));
-        lua_pop(luavm,1);
-        return;
-    }
-
-    lua_getglobal(luavm, table);
-    if ( ! lua_istable(luavm, -1) )
-    {
-        lua_pop(luavm,1);
-        lua_createtable(luavm, 6, 0);
-        lua_pushvalue(luavm, -1);
-        lua_setglobal(luavm, table);
-    }
-
-    if ( ! lua_setfenv(luavm, -2) )
-    {
-        LOGGER.warning("Error in runFileInTable: can't set environment.");
-        lua_pop(luavm,2);
-        return;
-    }
-
-    if ( lua_pcall(luavm, 0, 0, 0) )
-    {
-        LOGGER.warning("Error in runFileInTable: %s\n",lua_tostring(luavm,-1));
+        printf("error is: %s\n",lua_tostring(luavm,-1));
         lua_pop(luavm,1);
     }
 }
-
-void
-ScriptManager::loadConfigFile(const char * filename, const char * table)
-{
-    int r = luaL_loadfile(luavm, filesystem::getRealName(filename).c_str());
-    if ( r )
-    {
-        LOGGER.warning("Error in loadConfigFile: %s\n",lua_tostring(luavm,-1));
-        lua_pop(luavm,1);
-        return;
-    }
-
-    lua_getglobal(luavm, table);
-    if ( ! lua_istable(luavm, -1) )
-    {
-        lua_pop(luavm,1);
-        lua_createtable(luavm, 6, 0);
-        lua_pushvalue(luavm, -1);
-        lua_setglobal(luavm, table);
-    }
-
-    // stack: file, table
-
-    if ( ! lua_getmetatable(luavm, -1) )
-    {
-        lua_createtable(luavm, 0, 1);
-    }
-
-    // stack: file, table, metatable
-
-    lua_pushliteral(luavm, "__index");
-    lua_pushcfunction(luavm, ScriptHelper::autotable_indexhandler);
-    lua_rawset(luavm, -3);
-
-    // stack: file, table, metatable(with __index)
-
-    lua_setmetatable(luavm, -2);
-
-    // stack: file, table
-
-    if ( ! lua_setfenv(luavm, -2) )
-    {
-        LOGGER.warning("Error in loadConfigFile: can't set environment.");
-        lua_pop(luavm,2);
-        return;
-    }
-
-    // stack: file
-
-    if ( lua_pcall(luavm, 0, 0, 0) )
-    {
-        LOGGER.warning("Error in loadConfigFile: %s\n",lua_tostring(luavm,-1));
-        lua_pop(luavm,1);
-    }
-}
-
-void
-ScriptManager::bindStaticVariables(const char * objectName,
-                                   const char * fieldName,
-                                   const char * metaName,
-                                   ScriptVarBindRecord * getters,
-                                   ScriptVarBindRecord * setters)
-{                                                               // stack change
-    luaL_newmetatable(luavm, metaName);                         // +1
-    int metatable = lua_gettop(luavm);
-
-    lua_pushliteral(luavm, "__index");                          // +1
-    lua_pushvalue(luavm, metatable);                            // +1
-    bindStaticVars(getters);                                    // 0
-    lua_pushcclosure(luavm, ScriptHelper::index_handler, 1);    // 0 = -1 +1
-    /* metatable.__index = index_handler */
-    lua_rawset(luavm, metatable);                               // -2
-
-    // metatable still in stack (1)
-
-    lua_pushliteral(luavm, "__newindex");                       // +1
-    lua_newtable(luavm);   /* table for members you can set */  // +1
-    bindStaticVars(setters);     /* fill with setters */        // 0
-    lua_pushcclosure(luavm, ScriptHelper::newindex_handler, 1); // 0 = -1 +1
-    /* metatable.__newindex = newindex_handler */
-    lua_rawset(luavm, metatable);                               // -2
-
-    lua_pushliteral(luavm, "__next");                           // +1
-    lua_pushlightuserdata(luavm, (void*)getters);                      // +1
-    lua_pushcclosure(luavm, ScriptHelper::next_handler, 1);     // 0 = -1 +1
-    /* metatable.__next = next_handler */
-    lua_rawset(luavm, metatable);                               // -2 (clean)
-
-//    lua_pop(luavm, 1);                /* drop metatable */      // -1 (clean)
-
-    lua_getglobal(luavm, objectName);                           // +1
     
-    bool isRegistered = !lua_isnil(luavm, -1);                  // 0
-    if ( ! isRegistered )
-    {
-        // pop nil
-        lua_pop(luavm,1);                                       // -1 (clean)
-        lua_createtable(luavm, 0, 0);                           // +1
-        lua_pushvalue(luavm, -1);                               // +1
-        lua_setglobal(luavm, objectName);                       // -1
-    }
-
-    // we have the global object on stack
-
-    int fields_to_pop = 1;
-
-    if ( fieldName )
-    {
-        ++fields_to_pop;
-        lua_createtable(luavm, 0, 0);                           // +1
-        lua_pushvalue(luavm, -1);                               // +1
-        lua_setfield(luavm, -3, fieldName);                     // -1
-    }
-
-    luaL_getmetatable(luavm, metaName);                         // +1
-    lua_setmetatable(luavm,-2);                                 // -1
-
-    lua_pop(luavm, fields_to_pop);
-}
-
 void
 ScriptManager::bindStaticVars (ScriptVarBindRecord * recordlist)
 {
     for (; recordlist->name; recordlist++)
     {
-        lua_pushstring(luavm, recordlist->name);            // +1
-        lua_pushlightuserdata(luavm, (void*)recordlist);    // +1
-        lua_settable(luavm, -3);                            // -2
+        lua_pushstring(luavm, recordlist->name);
+        lua_pushlightuserdata(luavm, (void*)recordlist);
+        lua_settable(luavm, -3);
     }
 }

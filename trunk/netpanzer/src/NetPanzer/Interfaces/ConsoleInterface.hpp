@@ -18,26 +18,26 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _CONSOLEINTERFACE_HPP
 #define _CONSOLEINTERFACE_HPP
 
-#include <vector>
 #include <stdarg.h>
 #include <stdio.h>
 #include "Core/CoreTypes.hpp"
+#include "ArrayUtil/ArrayTemplate.hpp"
 #include "Util/Timer.hpp"
 #include "2D/Surface.hpp"
-#include "Util/Log.hpp"
 
 
 class ConsoleLine
 {
 public:
     bool    visible;
-    IntColor     color;
+    PIX     color;
     bool    hasFlag;
     FlagID  flag;
     char    string[256];
     Timer   life_timer;
-    ConsoleLine() : visible(false) {}
 };
+
+typedef ArrayTemplate< ConsoleLine > ConsoleLineArray;
 
 enum { _console_overlap, _console_full };
 
@@ -47,7 +47,7 @@ protected:
     static bool stdout_pipe;
 
     static long console_size;
-    static std::vector<ConsoleLine> line_list;
+    static ConsoleLineArray line_list;
 
     static iXY surface_size;
     static iRect    bounds;
@@ -75,13 +75,8 @@ public:
     static void update( Surface &surface );
     static void update_overlap( Surface &surface );
 
-    static void postMessage( IntColor msgColor, bool hasFlag, FlagID flag, const char *format, ... )
+    static void postMessage( PIX msgColor, bool hasFlag, FlagID flag, const char *format, ... )
         __attribute__(( format(printf, 4, 5) ));
-
-    static void post( IntColor msgColor, bool hasFlag, FlagID flag, const char *msg )
-    {
-        postMessage( msgColor, hasFlag ,flag, "%s", msg);
-    }
 
     /* Input String Methods */
     static void setInputStringStatus( bool on_off );

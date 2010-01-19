@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <SDL_thread.h>
 #include "Classes/PlayerState.hpp"
 #include "Units/UnitInterface.hpp"
-#include "Classes/Network/NetworkServer.hpp"
 
 class PlayerInterface
 {
@@ -31,8 +30,6 @@ protected:
     static bool *alliance_matrix;
 
     static void resetAllianceMatrix();
-    static void setAlliance( unsigned short by_player, unsigned short with_player );
-    static void clearAlliance( unsigned short by_player, unsigned short with_player );
 
     static unsigned short local_player_index;
 
@@ -46,11 +43,17 @@ public:
 
     static void cleanUp();
 
+    static void lock();
+    static void unLock();
+
     static void setKill(PlayerState* by_player, PlayerState* on_player,
             UnitType unit_type );
 
+    static void setAlliance( unsigned short by_player, unsigned short with_player );
+
+    static void clearAlliance( unsigned short by_player, unsigned short with_player );
+
     static bool isAllied(unsigned short player, unsigned short with_player);
-	static bool isSingleAllied(unsigned short player, unsigned short with_player);
 
     static void lockPlayerStats();
     static void unlockPlayerStats();
@@ -58,15 +61,6 @@ public:
     static unsigned short getMaxPlayers( )
     {
         return max_players;
-    }
-
-    static string getPlayerIP(Uint16 player_index)
-    {
-        if ( player_index == getLocalPlayerIndex() )
-        {
-            return "local";
-        }
-        return NetworkServer::getIP(player_index);
     }
 
     static PlayerState* getPlayer(Uint16 player_index)
@@ -104,6 +98,11 @@ public:
     static bool testRuleObjectiveRatio( float precentage, PlayerState ** player_state );
 
 protected:
+    static unsigned short respawn_rule_player_index;
+public:
+    static bool testRulePlayerRespawn( bool *completed, PlayerState **player_state );
+
+protected:
     static Uint16 player_sync_index;
     static Uint16 player_sync_connect_player_index;
     static Timer player_sync_timer;
@@ -119,7 +118,6 @@ public:
     static bool syncNextPlayerState( NetworkPlayerState &dest, int *percent_complete);
     static void processNetMessage(const NetMessage *message );
     static void disconnectPlayerCleanup( Uint16 index );
-	static void disconnectedPlayerAllianceCleanup( Uint16 index );
 };
 
 #endif // ** _PLAYERINTERFACE_HP

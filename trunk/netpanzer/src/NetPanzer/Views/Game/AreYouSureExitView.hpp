@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __AreYouSureExitView_hpp__
 
 #include "Views/MainMenu/SpecialButtonView.hpp"
+#include "2D/Surface.hpp"
 
 //---------------------------------------------------------------------------
 class AreYouSureExitView : public SpecialButtonView
@@ -26,13 +27,10 @@ class AreYouSureExitView : public SpecialButtonView
 private:
     void init();
 
-protected:
-    void onComponentClicked(Component *c);
-
 public:
     AreYouSureExitView();
 
-    virtual void doDraw();
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void doActivate();
 }; // end AreYouSureExitView
 

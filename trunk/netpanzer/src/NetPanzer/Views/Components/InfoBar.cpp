@@ -18,10 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * Created on September 17, 2008, 8:50 PM
  */
 
-#include "Core/GlobalGameState.hpp"
-#include "Core/GlobalEngineState.hpp"
-#include "Interfaces/BaseGameManager.hpp"
-
 #include "Views/Components/InfoBar.hpp"
 #include "2D/Palette.hpp"
 #include "Interfaces/GameConfig.hpp"
@@ -31,14 +27,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameManager.hpp"
 
 void
-InfoBar::draw( int posx, int posy, Surface &dest)
+InfoBar::draw(Surface &dest)
 {
-    iXY oldpos = position;
-    position.x += posx;
-    position.y += posy;
-
     iRect r(position.x, position.y, dest.getWidth(), position.y+12);
-    dest.bltLookup(r);
+    dest.bltLookup(r, Palette::darkGray256.getColorArray());
 
     char buf[512];
     
@@ -47,7 +39,7 @@ InfoBar::draw( int posx, int posy, Surface &dest)
              "game %s | units %3d/%-3d | frags %4d/%-4d | objs. %3d/%-3d | time %02d:%02d/%02d:%02d | FPS %.2f",
              gameconfig->getGameTypeString(),
              
-             int(UnitInterface::getPlayerUnitCount(PlayerInterface::getLocalPlayerIndex())),
+             int(UnitInterface::getUnitCount(PlayerInterface::getLocalPlayerIndex())),
              gameconfig->maxunits / gameconfig->maxplayers,
              
              PlayerInterface::getLocalPlayer()->getTotal(),
@@ -56,8 +48,8 @@ InfoBar::draw( int posx, int posy, Surface &dest)
              PlayerInterface::getLocalPlayer()->getObjectivesHeld(),
              (gameconfig->gametype == _gametype_objective)?ObjectiveInterface::getObjectiveLimit():0,
              
-             (int)global_engine_state->game_manager->getGameTime() / 3600,
-             (int)(global_engine_state->game_manager->getGameTime() / 60) % 60,
+             (int)GameManager::getGameTime() / 3600,
+             (int)(GameManager::getGameTime() / 60) % 60,
              (gameconfig->gametype == _gametype_timelimit)?gameconfig->timelimit / 60:0,
              (gameconfig->gametype == _gametype_timelimit)?gameconfig->timelimit % 60:0,
              
@@ -65,5 +57,5 @@ InfoBar::draw( int posx, int posy, Surface &dest)
              );
     
     dest.bltStringShadowed(position.x+2,position.y+2,buf,Color::white, Color::black);
-    position = oldpos;
+
 }

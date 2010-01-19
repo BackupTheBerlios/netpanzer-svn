@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include <iostream>
 
@@ -23,22 +23,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdlib.h>
 #include <assert.h>
 
-#include "Core/GlobalGameState.hpp"
-
 #include "BotPlayer.hpp"
 
 #include "Interfaces/PlayerInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Interfaces/MapInterface.hpp"
+#include "Units/UnitBase.hpp"
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Objectives/Objective.hpp"
-#include "Units/Unit.hpp"
+#include "Units/Vehicle.hpp"
 #include "Util/Log.hpp"
 
 //-----------------------------------------------------------------
-BotPlayer::BotPlayer(Uint16 playerid)
-    : Bot(playerid), m_timer(1)
+BotPlayer::BotPlayer()
+    : m_timer(1)
 {
     /* empty */
 }
@@ -47,20 +46,18 @@ BotPlayer::BotPlayer(Uint16 playerid)
 BotPlayer::processEvents()
 {
     int playerIndex = isReady();
-    if (playerIndex != NONE_PLAYER)
-    {
-        Unit *unit = getRandomUnit(playerIndex);
-        if (unit)
-        {
+    if (playerIndex != NONE_PLAYER) {
+        UnitBase *unit = getRandomUnit(playerIndex);
+        if (unit) {
             int unitTask = m_tasks.queryUnitTask(unit);
             if (unitTask != BotTaskList::TASK_MOVE) {
                 unitOccupyOupost(unit);
             }
 
             // manual fire on closest enemy
-            Unit *enemyUnit;
-            if (UnitBucketArray::queryClosestEnemyUnitInRange(&enemyUnit,
-                        unit->unit_state.location, unit->unit_state.weapon_range, playerIndex))
+            UnitBase *enemyUnit;
+            if (UnitInterface::queryClosestEnemyUnit(&enemyUnit,
+                        unit->unit_state.location, playerIndex))
             {
                 manualFire(unit, enemyUnit->unit_state.location);
             }
@@ -80,35 +77,34 @@ BotPlayer::processEvents()
    int 
 BotPlayer::isReady()
 {
-    if (m_timer.count())
-    {
-        int unitCount = UnitInterface::getPlayerUnitCount(botPlayerId);
-        if (unitCount > 0)
-        {
-            m_timer.changePeriod(5.0 / unitCount);
+    int playerIndex = NONE_PLAYER;
+    if (m_timer.count()) {
+        playerIndex = PlayerInterface::getLocalPlayerIndex();
+        if (playerIndex != NONE_PLAYER) {
+            int unitCount = UnitInterface::getUnitCount(playerIndex);
+            if (unitCount > 0) {
+                m_timer.changePeriod(5.0 / unitCount);
+            }
         }
-        return botPlayerId;
     }
 
-    return NONE_PLAYER;
+    return playerIndex;
 }
 //-----------------------------------------------------------------
 /**
  * @return unit which belong to playerIndex
  */
-Unit *
+UnitBase *
 BotPlayer::getRandomUnit(int playerIndex)
 {
-    const std::vector<Unit*>* units
+    const std::vector<UnitBase*>& units 
         = UnitInterface::getPlayerUnits(playerIndex);
 
-    if ( ! units || units->size() == 0 )
-    {
+    if(units.size() == 0)
         return 0;
-    }
-
-    size_t unitIndex = rand() % units->size();
-    return (*units)[unitIndex];
+    
+    size_t unitIndex = rand() % units.size();
+    return units[unitIndex];
 }
 
 //-----------------------------------------------------------------
@@ -151,10 +147,10 @@ BotPlayer::getRandomEnemyPlayer()
 /**
  * @return enemy unit
  */
-Unit *
+UnitBase *
 BotPlayer::getRandomEnemy()
 {
-    Unit *enemyUnit = 0;
+    UnitBase *enemyUnit = 0;
     int enemyPlayer = getRandomEnemyPlayer();
     if (enemyPlayer != NONE_PLAYER) {
         enemyUnit = getRandomUnit(enemyPlayer);
@@ -179,7 +175,7 @@ BotPlayer::getOutposts(int disposition)
     unsigned char objectiveDisposition;
     ObjectiveID   objectiveID;
 
-    ObjectiveInterface::startObjectivePositionEnumeration(botPlayerId);
+    ObjectiveInterface::startObjectivePositionEnumeration();
     while (ObjectiveInterface::objectivePositionEnumeration(&objRect,
             &objectiveDisposition, &objectiveID))
     {
@@ -209,7 +205,7 @@ BotPlayer::getRandomOutpost(int disposition)
  * Occupy free or enemy oupost.
  */
 void
-BotPlayer::unitOccupyOupost(Unit *unit)
+BotPlayer::unitOccupyOupost(UnitBase *unit)
 {
     ObjectiveState *outpost =
         getRandomOutpost(_objective_disposition_unoccupied);
@@ -241,7 +237,7 @@ BotPlayer::outpostProduce()
         OutpostStatus outpostStatus =
             ObjectiveInterface::getOutpostStatus(*i);
         if (outpostStatus.unit_generation_on_off == false) {
-            produceUnit(*i, rand() % global_game_state->unit_profile_interface->getNumUnitTypes() );
+            produceUnit(*i, rand() % UnitProfileInterface::getNumUnitTypes() );
         }
     }
 }

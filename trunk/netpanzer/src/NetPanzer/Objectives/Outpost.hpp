@@ -20,18 +20,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Objectives/Objective.hpp"
 #include "Util/Timer.hpp"
+#include "Units/UnitBase.hpp"
 
 class Outpost : public Objective
 {
 private:
     unsigned char outpost_state;
-    iXY unit_generation_loc;
-    iXY occupation_pad_offset;
-    
-protected:
     iXY outpost_map_loc;
+    iXY unit_generation_loc;
     iXY unit_collection_loc;
-
+    iXY occupation_pad_offset;
 public:
     unsigned short unit_generation_type;
     bool unit_generation_on_flag;
@@ -41,7 +39,7 @@ public:
     Timer unit_generation_timer;
 
 private:
-    void attemptOccupationChange(Uint16 player_id);
+    void attemptOccupationChange(UnitID unit_id);
 
     void checkOccupationStatus( void );
 
@@ -51,7 +49,6 @@ private:
     void objectiveMesgChangeUnitGeneration(const ObjectiveMessage* message);
     void objectiveMesgDisownPlayerObjective(const ObjectiveMessage* message);
     void objectiveMesgChangeOutputLocation(const ObjectiveMessage* message);
-    void objectiveMesgUpdateOccupation(const ObjectiveMessage* message);
 
 public:
 

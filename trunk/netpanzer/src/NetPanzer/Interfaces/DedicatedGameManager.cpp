@@ -15,8 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-#include "Bot/BotManager.hpp"
+#include <config.h>
 #include "DedicatedGameManager.hpp"
 
 #include <stdio.h>
@@ -43,9 +42,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Particles/Particle2D.hpp"
 #include "Particles/ParticleInterface.hpp"
+#include "Particles/Physics.hpp"
 
 #include "Util/Log.hpp"
-#include "Network/MessageRouter.hpp"
 
 DedicatedGameManager::DedicatedGameManager()
     : commandqueue_mutex(0), console(0), heartbeat(0), infosocket(0)
@@ -108,7 +107,8 @@ void DedicatedGameManager::inputLoop()
             }
             case ServerCommand::CHAT:
             {
-                ChatInterface::serversay(command.argument.c_str());
+                ChatInterface::setMessageScopeServer();
+                ChatInterface::sendCurrentMessage(command.argument.c_str());
                 break;
             }
             case ServerCommand::STATUS:
@@ -138,7 +138,7 @@ void DedicatedGameManager::inputLoop()
                         << std::setw(4) << playerstate->getLosses() << " "
                         << std::setw(5) << playerstate->getTotal() << " "
                         << std::setw(21) 
-                        << NetworkServer::getIP(playerstate->getID())
+                        << SERVER->getIP(playerstate->getID())
                         << "\n";
                 }
                 //*Console::server << std::flush;
@@ -146,16 +146,16 @@ void DedicatedGameManager::inputLoop()
                 break;
             }
             case ServerCommand::MAPCHANGE:
-                if ( ! GameManager::changeMap(command.argument.c_str()) )
-                {
+                if(!MapsManager::existsMap(command.argument)) {
                     std::cout << "map '" << command.argument
-                              << "' doesn't exist." << std::endl;
+                        << "' doesn't exist." << std::endl;
                     break;
                 }
+            
+                GameControlRulesDaemon::forceMapChange(command.argument);
                 std::cout << "Preparing mapchange..." << std::endl;
                 break;
             case ServerCommand::KICK:
-            {
                 std::stringstream idstream(command.argument);
                 Uint16 id = 0xffff;
                 idstream >> id;
@@ -163,20 +163,7 @@ void DedicatedGameManager::inputLoop()
                     std::cout << "Unknown player." << std::endl;
                     break;
                 }
-                GameManager::kickPlayer(id);
-                break;
-            }
-            case ServerCommand::ADDBOT:
-            {
-                Uint16 botid = GameManager::addBot();
-                if ( botid != 0xffff )
-                {
-                    std::cout << "Added bot with player id " << botid << std::endl;
-                }
-                break;
-            }
-            case ServerCommand::REMOVEBOTS:
-                GameManager::removeAllBots();
+                SERVER->dropClient(SERVER->getClientSocketByPlayerIndex(id));
                 break;
         }
         commandqueue.pop();
@@ -204,13 +191,22 @@ void DedicatedGameManager::pushCommand(const ServerCommand& command)
 //-----------------------------------------------------------------
 bool DedicatedGameManager::launchNetPanzerGame()
 {
-    MessageRouter::initialize(true);
-    NetworkServer::openSession();
-    NetworkServer::hostSession();
+    *Console::server << "starting dedicated netPanzer server\n";
 
+    gameconfig->map = MapsManager::getNextMap("");
+
+    GameManager::dedicatedLoadGameMap(gameconfig->map.c_str());
+
+    GameManager::reinitializeGameLogic();
+
+    SERVER->openSession();
+    SERVER->hostSession();
+
+    GameControlRulesDaemon::setStateServerInProgress();
     GameControlRulesDaemon::setDedicatedServer();
-    GameControlRulesDaemon::setStateServerLoadingMap();
     NetworkState::setNetworkStatus( _network_state_server );
+
+    GameManager::setNetPanzerGameOptions();
 
     gameconfig->hostorjoin=_game_session_host;
 
@@ -243,12 +239,20 @@ bool DedicatedGameManager::launchNetPanzerGame()
         }
     }
 
-    *Console::server << "Game starting." << std::endl;
+    *Console::server << "game started." << std::endl;
 
     console = new ServerConsole(this);
     console->startThread();
 
+    GameManager::startGameTimer();
     return true;
+}
+
+//---------------------------------------------------------------------------
+void
+DedicatedGameManager::initializeNetworkSubSystem()
+{
+    BaseGameManager::initializeNetworkSubSystem();
 }
 
 void

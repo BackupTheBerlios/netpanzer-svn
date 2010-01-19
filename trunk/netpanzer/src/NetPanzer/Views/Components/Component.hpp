@@ -33,8 +33,8 @@ class mMouseEvent;
 class Component : public NoCopy
 {
 protected:
-    IntColor    background;
-    IntColor    foreground;
+    PIX    background;
+    PIX    foreground;
     iXY     size;
     iXY    position;
     Surface surface;
@@ -47,8 +47,6 @@ protected:
 
     void reset();
 
-    int     customCode;
-
 public:
     Component *next;
     Component *prev;
@@ -56,9 +54,6 @@ public:
     void *parent;       // Who is my daddy?
 
     void setParent(void *parent);
-
-    void setCustomCode(int n) { customCode = n; }
-    int getCustomCode() { return customCode; }
 
     enum
     {
@@ -117,22 +112,20 @@ public:
     }
 
 //    void setEnabled(bool _enabled) { enabled = _enabled; }
-//    void setForeground(IntColor _foreground) { foreground = _foreground; }
+//    void setForeground(PIX _foreground) { foreground = _foreground; }
     void setLocation(int x, int y);
     void setLocation(const iXY &p) { setLocation(p.x, p.y); }
     void setName(const std::string& name) { Component::componentName = name; }
-    std::string getName() { return componentName; }
 
-    virtual void draw(int posx, int posy, Surface &dest)
+    virtual void draw(Surface &dest)
     {
-        //LOGGER.warning("drawing component: '%s'", componentName.c_str());
         iRect bounds;
         getBounds(bounds);
         
         if ( dirty )
             render();
         
-        surface.bltTrans(dest, posx + bounds.min.x, posy + bounds.min.y);
+        surface.blt(dest, bounds.min.x, bounds.min.y);
     }
     
     virtual void render() = 0;

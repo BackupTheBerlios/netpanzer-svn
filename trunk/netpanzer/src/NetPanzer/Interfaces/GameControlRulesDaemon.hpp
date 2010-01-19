@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 #include "Util/Timer.hpp"
-#include "Util/NTimer.hpp"
 #include "Classes/Network/NetPacket.hpp"
 
 class GameControlRulesDaemon
@@ -28,36 +27,39 @@ class GameControlRulesDaemon
     static int execution_mode;
     static unsigned char game_state;
     static std::string nextmap;
-    static NTimer respawntimer;
 
 protected:
+    static int map_cycle_fsm_server_state;
     static Timer map_cycle_fsm_server_endgame_timer;
     static Timer map_cycle_fsm_server_map_load_timer;
+    static void mapCycleFsmServer();
 
+    static int map_cycle_fsm_client_state;
+    static char map_cycle_fsm_client_map_name[256];
     static bool map_cycle_fsm_client_respawn_ack_flag;
+    static void mapCycleFsmClient();
 
     static void onTimelimitGameCompleted();
     static void onFraglimitGameCompleted();
     static void onObjectiveGameCompleted();
 
     static void checkGameRules();
-    static void checkRespawn();
+
+    static void mapLoadFailureResponse(int result_code, const char *map_name);
 
     static void netMessageCycleMap(const NetMessage* message);
     static void netMessageCycleRespawnAck(const NetMessage* message);
 
 public:
-    static void setStateIdle();
-    static void setStateServerLoadingMap();
-    static void setStateClientConnectToServer(const std::string&  server_name);
-
+    static void setStateServerInProgress();
+    static void setStateServerIdle();
     static void setDedicatedServer();
 
     static void forceMapChange(std::string map);
 
     static void processNetMessage(const NetMessage* message);
     static void updateGameControlFlow();
-    static unsigned char getGameState();
+    static unsigned char getGameState() { return game_state; }
 };
 
 #endif // ** _GAME_CONTROL_RULES_DAEMON_HPP

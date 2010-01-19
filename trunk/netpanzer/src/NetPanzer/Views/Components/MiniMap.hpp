@@ -31,7 +31,7 @@ public:
     MiniMap(int x, int y, int w, int h);
     virtual ~MiniMap();
     
-    void draw( int posx, int posy, Surface &dest);
+    void draw(Surface &dest);
     
     virtual void render()
     {
@@ -44,15 +44,14 @@ protected:
     void onMapLoadedEvent()
     {
         LOGGER.warning("onMapLoadedEvent received........");
-        dirty = true;
-//        regenerate();
+        regenerate();
     }
     
 private:
     void regenerate();
     void drawObjectives(Surface &dest);
     void drawUnits(Surface &dest);
-    void drawUnit(Surface &dest, const iXY loc, IntColor color, bool forceLarge);
+    void drawUnit(Surface &dest, const iXY loc, PIX color, bool forceLarge);
     void drawWorldAndMouseBox(Surface &dest);
     bool mouseinside;
     bool moving;

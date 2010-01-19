@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _NETWORKSERVER_HPP
 
 #include <list>
+#include "NetworkInterface.hpp"
 #include "NetworkReturnCodes.hpp"
 #include "Network/TCPListenSocket.hpp"
 #include "Network/ClientSocket.hpp"
@@ -26,8 +27,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Timer.hpp"
 
 using namespace network;
-
-class MessageClassHandler;
 
 class ServerClientListData
 {
@@ -40,43 +39,64 @@ public:
     { }
 };
 
-class NetworkServer
+class NetworkServer : public NetworkInterface,
+                      public TCPListenSocketObserver,
+                      public ClientSocketObserver
 {
 protected:
+    typedef std::list<ServerClientListData*> ClientList;
+    ClientList client_list;
 
+    NetPacket net_packet;
 
-    static void updateKeepAliveState();
-    static void resetClientList();
+    Timer keep_alive_emit_timer;
+
+    void updateKeepAliveState();
+    void resetClientList();
+
+    void netPacketClientKeepAlive(const NetPacket* packet);
+    void netPacketServerPingRequest(const NetPacket* packet);
+
+    void processNetPacket(const NetPacket* packet);
     
 public:
-    static bool addClientToSendList( ClientSocket * client );
-    static void cleanUpClientList();
-    static void dropClient(Uint16 playerid);
-    static void removePlayerSocket(const Uint16 player_id);
+    NetworkServer();
+    virtual ~NetworkServer();
 
-    static void openSession();
-    static void hostSession();
-    static void closeSession();
+    bool addClientToSendList( ClientSocket * client );
+    void cleanUpClientList();
 
-    static void broadcastMessage(NetMessage *message, size_t size);
+    void openSession();
     
-    static void sendMessage(Uint16 player_index, NetMessage* message,
+    void hostSession();
+    
+    void closeSession();
+
+    void broadcastMessage(NetMessage *message, size_t size);
+    
+    void sendMessage(Uint16 player_index, NetMessage* message,
             size_t size);
         
-    static void sendRemaining();
+    void sendRemaining();
+
+    bool getPacket(NetPacket* packet);
+
+    void dropClient(ClientSocket * client);
     
-    static std::string getIP(Uint16 player_index);
+    ClientSocket * getClientSocketByPlayerIndex ( Uint16 index );
+
+    std::string getIP(Uint16 player_index);
 
 protected:
-    static void onClientDisconected(ClientSocket *s, const char * msg);
-    static MessageClassHandler* getPacketHandler();
+    TCPSocketObserver * onNewConnection(TCPListenSocket *so,const Address &fromaddr);
+    void onSocketError(TCPListenSocket *so);
+    void onClientConnected(ClientSocket *s);
+    void onClientDisconected(ClientSocket *s, const char * msg);
 
 private:
-    friend class MessageRouter;
-    friend class ServerPacketHandler;
-    NetworkServer();
-    ~NetworkServer();
-
+    TCPListenSocket * socket;
 };
+
+extern NetworkServer *SERVER;
 
 #endif // ** _NETWORKSERVER_HPP

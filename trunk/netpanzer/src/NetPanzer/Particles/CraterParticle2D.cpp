@@ -15,20 +15,17 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "CraterParticle2D.hpp"
 #include "2D/Palette.hpp"
-
-#include "lua/lua.hpp"
-#include "Util/Log.hpp"
 
 // Set to 1 for divide by zero issues.
 int CraterParticle2D::cacheHitCount  = 1;
 int CraterParticle2D::cacheMissCount = 1;
 int CraterParticle2D::halfBoundsSize = 24;
 
-Surface* staticPackedCrater = 0;
+PackedSurface CraterParticle2D::staticPackedCrater;
 
 std::vector<CraterCacheInfo> CraterParticle2D::craterCache;
 int CraterParticle2D::curCraterIndex = 0;
@@ -38,11 +35,11 @@ int CraterParticle2D::curCraterIndex = 0;
 //---------------------------------------------------------------------------
 CraterParticle2D::CraterParticle2D(const fXYZ  &pos) : Particle2D(pos)
 {
-    packedSurface.setData(*staticPackedCrater);
+    packedSurface.setData(staticPackedCrater);
 
-    packedSurface.setDrawModeBlend(255);
+    packedSurface.setDrawModeSolid();
 
-    packedSurface.setFrame(rand() % staticPackedCrater->getNumFrames());
+    packedSurface.setFrame(rand() % staticPackedCrater.getFrameCount());
 
     // Check to see if this is valid crater ground.
 
@@ -79,7 +76,7 @@ CraterParticle2D::CraterParticle2D(const fXYZ  &pos) : Particle2D(pos)
 
 // init
 //---------------------------------------------------------------------------
-int CraterParticle2D::loadCraters(lua_State *L, void *v)
+void CraterParticle2D::init()
 {
     craterCache.resize(40);
     for (size_t i = 0; i < craterCache.size(); i++) {
@@ -87,12 +84,12 @@ int CraterParticle2D::loadCraters(lua_State *L, void *v)
         craterCache[i].pos.zero();
     }
 
-    return Surface::loadPNGSheetPointer(L, v);
+    staticPackedCrater.load("pics/particles/craters/pak/craters.pak");
 } // end CraterParticle2D::init
 
 // draw
 //---------------------------------------------------------------------------
-void CraterParticle2D::draw(SpriteSorter &sorter)
+void CraterParticle2D::draw(const Surface&, SpriteSorter &sorter)
 {
     if (!isAlive) {
         return;
@@ -118,13 +115,13 @@ void CraterParticle2D::sim()
             craterCache[cacheIndex].pos.zero();
         }
     } else if (age > lifetime * 0.9f) {
-        packedSurface.setDrawModeBlend(50); // 80% 200
+        packedSurface.setDrawModeBlend(&Palette::colorTable8020);
     } else if (age > lifetime * 0.8f) {
-        packedSurface.setDrawModeBlend(100); // 60% 150
+        packedSurface.setDrawModeBlend(&Palette::colorTable6040);
     } else if (age > lifetime * 0.7f) {
-        packedSurface.setDrawModeBlend(150); // 40% 100
+        packedSurface.setDrawModeBlend(&Palette::colorTable4060);
     } else if (age > lifetime * 0.6f) {
-        packedSurface.setDrawModeBlend(200); // 20% 50
+        packedSurface.setDrawModeBlend(&Palette::colorTable2080);
     }
 
     Particle2D::sim();

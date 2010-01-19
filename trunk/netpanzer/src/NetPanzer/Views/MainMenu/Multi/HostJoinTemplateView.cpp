@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include <ctype.h>
 #include <sstream>
@@ -37,8 +37,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 
-#include "Core/GlobalEngineState.hpp"
-
 char HostJoinTemplateView::gameTypeBuf[256];
 
 Surface playerColor;
@@ -48,11 +46,56 @@ int cLightBlue;
 int cLightGreen;
 int cOrange;
 
-enum
+/////////////////////////////////////////////////////////////////////////////
+// Button functions.
+/////////////////////////////////////////////////////////////////////////////
+
+static void bBack()
 {
-    BTN_BACK,
-    BTN_NEXT
-};
+    if (gameconfig->hostorjoin == _game_session_join) {
+        CLIENT->partServer();
+    } else
+        if (gameconfig->hostorjoin == _game_session_host) {
+            SERVER->closeSession();
+        }
+
+    Desktop::setVisibilityAllWindows(false);
+    Desktop::setVisibility("GetSessionView", true);
+}
+
+static void bNext()
+{
+    if ((const std::string&) gameconfig->playername == "")
+        return;
+
+    // Check a few things which should be ok.
+    if (strlen(HostJoinTemplateView::gameTypeBuf) == 0) {
+        return;
+    }
+    if (MapSelectionView::curMap == -1) {
+        return;
+    }
+    if (gameconfig->hostorjoin == _game_session_join &&
+        strcmp(IPAddressView::szServer.getString(), "") == 0)
+        return;
+
+    // Set the player flag.
+    gameconfig->playerflag = FlagSelectionView::getSelectedFlag();
+
+    // Close all menu views.
+    Desktop::setVisibilityAllWindows(false);
+
+    if(gameconfig->hostorjoin == _game_session_join) {
+        gameconfig->serverConnect = IPAddressView::szServer.getString();
+    }
+    
+    serverlistview->endQuery();
+
+    MenuTemplateView::backgroundSurface.free();
+
+    PlayerGameManager* manager = (PlayerGameManager*) gamemanager;
+    manager->launchMultiPlayerGame();
+}
 
 // HostJoinTemplateView
 //---------------------------------------------------------------------------
@@ -62,17 +105,24 @@ HostJoinTemplateView::HostJoinTemplateView() : MenuTemplateView()
     setTitle("");
     setSubTitle("");
 
-    add( Button::createSpecialButton("back", "Back", backPos, BTN_BACK));
-    add( Button::createSpecialButton("next", "Next", nextPos, BTN_NEXT));
+    // Back.
+    addSpecialButton(	backPos,
+                      "Back",
+                      bBack);
+
+    addSpecialButton(   nextPos,
+                      "Next",
+                      bNext);
+
 } // end HostJoinTemplateView constructor
 
 // doDraw
 //---------------------------------------------------------------------------
-void HostJoinTemplateView::doDraw()
+void HostJoinTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    MenuTemplateView::doDraw();
+    MenuTemplateView::doDraw(viewArea, clientArea);
 
-    View::doDraw();
+    View::doDraw(viewArea, clientArea);
 } // end doDraw
 
 // doActivate
@@ -88,59 +138,5 @@ void HostJoinTemplateView::doActivate()
 //---------------------------------------------------------------------------
 void HostJoinTemplateView::loadBackgroundSurface()
 {
-    doLoadBackgroundSurface("pics/default/defaultMB.png");
+    doLoadBackgroundSurface("pics/backgrounds/menus/menu/defaultMB.bmp");
 } // end HostJoinTemplateView::loadBackgroundSurface
-
-void
-HostJoinTemplateView::onComponentClicked(Component* c)
-{
-    switch ( c->getCustomCode() )
-    {
-        case BTN_BACK:
-            if (gameconfig->hostorjoin == _game_session_join)
-            {
-                NetworkClient::partServer();
-            }
-            else if (gameconfig->hostorjoin == _game_session_host)
-            {
-                NetworkServer::closeSession();
-            }
-
-            Desktop::setVisibilityAllWindows(false);
-            Desktop::setVisibility("GetSessionView", true);
-            break;
-
-        case BTN_NEXT:
-            if (   (const std::string&) gameconfig->playername == ""
-                || strlen(HostJoinTemplateView::gameTypeBuf) == 0
-                || MapSelectionView::curMap == -1
-                || (gameconfig->hostorjoin == _game_session_join
-                        && strcmp(IPAddressView::szServer.getString(), "") == 0
-                   )
-               )
-            {
-                return;
-            }
-
-            // Set the player flag.
-            gameconfig->playerflag = FlagSelectionView::getSelectedFlag();
-
-            // Close all menu views.
-            Desktop::setVisibilityAllWindows(false);
-
-            if(gameconfig->hostorjoin == _game_session_join)
-            {
-                gameconfig->serverConnect = IPAddressView::szServer.getString();
-            }
-
-            serverlistview->endQuery();
-
-            MenuTemplateView::freeBackgroundSurface();
-
-            ((PlayerGameManager*)global_engine_state->game_manager)->launchMultiPlayerGame();
-            break;
-
-        default:
-            MenuTemplateView::onComponentClicked(c);
-    }
-}

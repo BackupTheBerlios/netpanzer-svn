@@ -15,13 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "Units/UnitProfileInterface.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/Log.hpp"
-#include "2D/Palette.hpp"
 #include <ctype.h>
 #include <memory>
 #include <string.h>
@@ -303,32 +302,21 @@ void read_vehicle_profile(const std::string& unitName, UnitProfile *profile)
             break;
         
         case _bodysprite:
-            profile->bodySprite.loadPNGSheet(param_list.params[1], 127, 127, 36);
-//            profile->bodySprite.setOffsetCenter();
+            profile->bodySprite.load(param_list.params[1]);
             break;
 
         case _bodyshadow:
-        {
-            profile->bodyShadow.loadPNGSheet(param_list.params[1], 127, 127, 36);
-            profile->bodyShadow.setAlpha(128);
-//            Surface t;
-//            t.loadPNGSheet(param_list.params[1], 127, 127, 36);
-//            profile->bodyShadow.createShadow(t);
-//            profile->bodyShadow.setOffsetCenter();
+            profile->bodyShadow.load(param_list.params[1]);
             break;
-        }
+            
         case _turretsprite:
-            profile->turretSprite.loadPNGSheet(param_list.params[1], 127, 127, 36);
-//            profile->turretSprite.setOffsetCenter();
+            profile->turretSprite.load(param_list.params[1]);
             break;
 
         case _turretshadow:
-        {
-            profile->turretShadow.loadPNGSheet(param_list.params[1], 127, 127, 36);
-            profile->turretShadow.setAlpha(128);
-//            profile->turretShadow.setOffsetCenter();
+            profile->turretShadow.load(param_list.params[1]);
             break;
-        }
+                
         case _soundselected:
             profile->soundSelected = param_list.params[1];
             break;
@@ -358,6 +346,8 @@ void read_vehicle_profile(const std::string& unitName, UnitProfile *profile)
 		file_path.c_str(), e.what());
     }
 } // function
+
+vector<UnitProfile *> UnitProfileInterface::profiles;
 
 void
 UnitProfileInterface::clearProfiles()

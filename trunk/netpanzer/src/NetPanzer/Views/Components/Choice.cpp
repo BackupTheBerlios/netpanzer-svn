@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include <algorithm>
 #include "Views/Components/Choice.hpp"
@@ -41,20 +41,10 @@ void Choice::addItem(const std::string& item)
 
     int borderSpace = borderSize * 2;
 
-    size.x = std::max((Surface::getTextLength(item) + borderSpace), size.x);
+    size.x = std::max((Surface::getTextLength(item) + borderSpace), size.y);
     size.y = ChoiceItemHeight;
 }
 
-//---------------------------------------------------------------------------
-void Choice::updateItem(const std::string& new_val, unsigned int item)
-{
-    if ( item < choiceList.size() )
-    {
-        choiceList[item] = new_val;
-        int borderSpace = borderSize * 2;
-        size.x = std::max((Surface::getTextLength(new_val) + borderSpace), size.x);
-    }
-}
 //---------------------------------------------------------------------------
 void Choice::select(const std::string& item)
 {
@@ -173,12 +163,9 @@ void Choice::actionPerformed(const mMouseEvent &me)
 
 // draw
 //---------------------------------------------------------------------------
-void Choice::draw( int posx, int posy, Surface &dest)
+void Choice::draw(Surface &dest)
 {
-    iXY oldpos = position;
-    position.x += posx;
-    position.y += posy;
-
+    Surface s;
     iRect   r;
 
     // Draw the label.
@@ -194,37 +181,36 @@ void Choice::draw( int posx, int posy, Surface &dest)
 
     getBounds(r);
 
+    s.setTo(dest, r);
+
     // Draw the border.
-    dest.drawRect(iRect(r.min.x    , r.min.y    , r.max.x - 2, r.max.y - 2), Color::gray96);
-    dest.drawRect(iRect(r.min.x + 1, r.min.y + 1, r.max.x - 1, r.max.y - 1), Color::white);
-    dest.fillRect(iRect(r.min.x + 1, r.min.y + 1, r.max.x - 2, r.max.y - 2), Color::terreVerte);
+    s.drawRect(iRect(0, 0, s.getWidth() - 2, s.getHeight() - 2), Color::gray96);
+    s.drawRect(iRect(1, 1, s.getWidth() - 1, s.getHeight() - 1), Color::white);
+    s.fillRect(iRect(1, 1, s.getWidth() - 2, s.getHeight() - 2), Color::terreVerte);
 
     if (!isOpen)	{
-        // xxx change to correct position
-        dest.bltStringCenteredInRect(r, choiceList[index].c_str(), Color::white);
-        //dest.bltStringShadowedCenter(choiceList[index].c_str(), Color::white, Color::black);
+        s.bltStringShadowedCenter(choiceList[index].c_str(), Color::white, Color::black);
     } else {
         r = iRect(position.x, position.y, position.x + size.x, position.y + ChoiceItemHeight);
 
         size_t count = choiceList.size();
 
-        for (size_t i = 0; i < count; i++)
-        {
-            if (i == mouseover)
-            {
+        for (size_t i = 0; i < count; i++) {
+            s.setTo(dest, r);
+
+            if (i == mouseover) {
                 // Higlight the selected item.
-                dest.fillRect(r, Color::white);
-                dest.bltStringCenteredInRect(r,choiceList[i].c_str(), Color::black);
+                s.fill(Color::white);
+                s.bltStringCenter(choiceList[i].c_str(), Color::black);
 
             } else {
-                dest.bltStringCenteredInRect(r,choiceList[i].c_str(), Color::white);
+                s.bltStringShadowedCenter(choiceList[i].c_str(), Color::white, Color::black);
             }
 
             r.translate(iXY(0, ChoiceItemHeight));
         }
     }
     //isOpen = 0;
-    position = oldpos;
 } // end Choice::draw
 
 // add

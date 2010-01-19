@@ -108,17 +108,6 @@ public:
     void loadConfig();
     void saveConfig();
 
-    static unsigned int video_width;
-    static unsigned int video_height;
-    static bool         video_fullscreen;
-    static bool         video_hardwaresurface;
-    static bool         video_doublebuffer;
-    static bool         video_shadows;
-    static bool         video_blendsmoke;
-#ifdef _WIN32
-    static bool         video_usedirectx;
-#endif
-
     // game Settings (there are not saved to disk)
     ConfigInt       hostorjoin;         // 1=host, 2=join
     ConfigBool      quickConnect;
@@ -143,16 +132,25 @@ public:
     ConfigInt    objectiveoccupationpercentage;
     ConfigBool   allowallies;
     ConfigInt    cloudcoverage;
+    ConfigInt    respawntype;
     ConfigInt    windspeed;
     ConfigString map;
     ConfigString mapcycle;
     ConfigString motd;
     ConfigBool   logging;
     ConfigBool   publicServer;
-    ConfigBool   capturebases;
-    ConfigInt    respawntype; // this is round robin or random already in np
-    ConfigInt    respawnmode; // 0- normal, 1- round, 2- timer
-    ConfigInt    respawntime; // used in timer mode. in seconds
+
+    // Visuals Settings
+    ConfigInt   screenresolution;
+    ConfigBool  fullscreen;
+    ConfigBool  hardwareSurface;
+    ConfigBool  hardwareDoubleBuffer;
+    ConfigBool  displayshadows;
+    ConfigBool  blendsmoke;
+    ConfigInt   screengamma;
+#ifdef _WIN32
+    ConfigBool  usedirectx;
+#endif
 
     // sound settings
     ConfigBool  enablesound;
@@ -163,7 +161,7 @@ public:
    
     // interface settings
     ConfigInt   unitcolor;
-    ConfigString   playerflag;
+    ConfigInt   playerflag;
     ConfigInt   attacknotificationtime;
     ConfigInt   vehicleselectioncolor;
     ConfigInt   unitselectionmode;
@@ -171,7 +169,6 @@ public:
     ConfigBool  drawunitdamage;
     ConfigBool  drawunitreload;
     ConfigBool  drawunitflags;
-    ConfigBool  drawunitowner;
     ConfigInt   consoletextdelay;
     ConfigInt   consoletextusage;
     ConfigInt   scrollrate;
@@ -206,21 +203,8 @@ public:
     ConfigInt   bear;
     ConfigInt   drake;
     ConfigInt   archer;
-
-    // quick chat settings
-    ConfigString quickchat_1;
-    ConfigString quickchat_2;
-    ConfigString quickchat_3;
-    ConfigString quickchat_4;
-    ConfigString quickchat_5;
-    ConfigString quickchat_6;
-    ConfigString quickchat_7;
-    ConfigString quickchat_8;
-    ConfigString quickchat_9;
-    ConfigString quickchat_0;
-
+    
     std::vector<ConfigVariable*> spawnsettings;
-    std::vector<ConfigVariable*> quickchatsettings;
     
 public:
     void clearSpawnSettings()
@@ -273,42 +257,42 @@ public:
         return( "Unknown" );
     }
 
-    IntColor getUnitColor() const
+    PIX getUnitColor() const
     {
         return colorEnumToPix(unitcolor);
     }
 
-    IntColor getPlayerRadarUnitColor() const
+    PIX getPlayerRadarUnitColor() const
     {
         return( colorEnumToPix( radar_playerunitcolor ) );
     }
 
-    IntColor getSelectedRadarUnitColor() const
+    PIX getSelectedRadarUnitColor() const
     {
         return( colorEnumToPix( radar_selectedunitcolor ) );
     }
     
-    IntColor getAlliedRadarUnitColor() const
+    PIX getAlliedRadarUnitColor() const
     {
         return( colorEnumToPix( radar_alliedunitcolor ) );
     }
 
-    IntColor getPlayerOutpostRadarColor() const
+    PIX getPlayerOutpostRadarColor() const
     {
         return( colorEnumToPix( radar_playeroutpostcolor ) );
     }
 
-    IntColor getAlliedOutpostRadarColor() const
+    PIX getAlliedOutpostRadarColor() const
     {
         return( colorEnumToPix( radar_alliedoutpostcolor ) );
     }
     
-    IntColor getEnemyOutpostRadarColor() const
+    PIX getEnemyOutpostRadarColor() const
     {
         return( colorEnumToPix( radar_enemyoutpostcolor ) );
     }
     
-    IntColor getVehicleSelectionBoxColor() const
+    PIX getVehicleSelectionBoxColor() const
     {
         return( colorEnumToPix( vehicleselectioncolor ) );
     }
@@ -324,12 +308,10 @@ public:
     }
 
 private:
-    friend class ScriptManager;
-    static void registerScript(const char * table_name);
     std::string configfile;
     bool usePhysFS;
 
-    IntColor colorEnumToPix(int color_enum) const
+    PIX colorEnumToPix(int color_enum) const
     {
         switch( color_enum ) {
         case _color_aqua         : return( Color::unitAqua );
@@ -363,6 +345,7 @@ private:
     std::vector<ConfigVariable*> gamesettings;
     std::vector<ConfigVariable*> playersettings;
     std::vector<ConfigVariable*> serversettings;
+    std::vector<ConfigVariable*> visualssettings;
     std::vector<ConfigVariable*> soundsettings;
     std::vector<ConfigVariable*> interfacesettings;
     std::vector<ConfigVariable*> radarsettings;

@@ -18,71 +18,89 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _TILESET_HPP
 #define _TILESET_HPP
 
-#include <string>
-#include <vector>
-#include "SDL.h"
+#include "Structs/TileSetStruct.hpp"
+#include "Classes/WadMapTable.hpp"
 
-namespace filesystem { class ReadFile; }
-
-class Surface;
-class IFileStream;
-
-typedef struct TileSetHeader_s
-{
-    unsigned int version;
-    unsigned int x_pix;
-    unsigned int y_pix;
-    unsigned int tile_count;
-    std::string image_file;
-    std::string unused;
-} TileSetHeader;
-
-typedef struct TileAttributes_s
-{
-    Uint8 attrib;
-    Uint8 move_value;
-    SDL_Color avg_color;
-} TileAttributes;
+namespace filesystem {
+class ReadFile;
+}
 
 class TileSet
 {
+protected:
+    bool tile_set_loaded;
+    TILE_DBASE_HEADER tile_set_info;
+    TILE_HEADER *tile_info;
+    unsigned char *tile_data;
+
+    unsigned long tile_size;
+    unsigned long tile_count;
+    void computeTileConsts( void );
+
+    filesystem::ReadFile* partition_load_fhandle;
+    unsigned long partition_load_partition_count;
+    unsigned long partition_load_tile_index;
+    unsigned long partition_load_mapped_index;
+
 public:
-    static const std::string& getName() { return *name; }
-
-    static void load(const char * tsname);
-    static void loadImages();
-
-    static bool tileImagesLoaded() { return tiles != 0; }
-
-    static void cleanUp();
-
-    static Surface * getTile(unsigned long index) { return (*tiles)[index]; }
-
-    static unsigned int getTileXsize() { return header->x_pix; }
-    static unsigned int getTileYsize() { return header->y_pix; }
-    static unsigned int getTileCount() { return header->tile_count; }
-
-    static const SDL_Color* getAverageTileColor(unsigned long index)
-    {
-        return &(*tile_attributes)[ index ].avg_color;
-    }
-
-    static char getTileMovementValue( unsigned long index )
-    {
-        return (*tile_attributes)[ index ].move_value;
-    }
-
-private:
     TileSet();
     ~TileSet();
-    static TileSetHeader*               header;
-    static std::vector<TileAttributes>* tile_attributes;
-    static std::vector<Surface*>*       tiles;
-    static std::string*                 name;
 
-    static void readTileSetHeader(IFileStream& file);
-    static void loadTileAttributes(IFileStream& file);
-    static void freeTiles();
+    void readTileDbHeader(filesystem::ReadFile& file, TILE_DBASE_HEADER *header);
+    void loadTileSetInfo( const char *file_path );
+    void loadTileSetInfo( const char *file_path, WadMapTable &mapping_table );
+    void loadTileSet( const char *file_path, WadMapTable &mapping_table );
+
+    bool startPartitionTileSetLoad( const char *file_path, WadMapTable &mapping_table, unsigned long partitions );
+    bool partitionTileSetLoad( WadMapTable &mapping_table, int *percent_complete );
+
+    void loadTileSet( const char *file_path );
+    inline unsigned char * getTile(unsigned long index) const
+    {
+        return( tile_data + (index * tile_size) );
+    }
+    inline unsigned short getTileXsize() const
+    {
+        return ( tile_set_info.x_pix );
+    }
+    inline unsigned short getTileYsize() const
+    {
+        return ( tile_set_info.y_pix );
+    }
+    inline unsigned short getTileCount() const
+    {
+        return ( tile_set_info.tile_count );
+    }
+    inline unsigned char getAverageTileColor(unsigned long index) const
+    {
+        return( tile_info[ index ].avg_color );
+    }
+
+    inline char getTileMovementValue( unsigned long index )
+    {
+        return( tile_info[ index ].move_value );
+    }
+
+    inline unsigned char getTilePixel( unsigned long index , unsigned int pixX,
+                                       unsigned int pixY)
+    {
+        if( index < tile_count ) {
+            return( *(getTile(index) + (pixY * getTileXsize()) + pixX));
+        }
+
+        return( 0 );
+    }
+
+    /*
+       inline unsigned char getTilePixel( long *index , unsigned int pixX, unsigned int pixY)
+        {
+         if( ( (*index) >= 0) && ( (*index) < (long) tile_count) )
+          { return( *(getTile( (unsigned long) index) + (pixY * getTileXsize()) + pixX)); }
+        
+         (*index) = -1;
+         return( 0 );
+        }
+    */
 };
 
 #endif // ** _TILESET_HPP

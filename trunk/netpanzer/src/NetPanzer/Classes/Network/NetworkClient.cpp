@@ -15,8 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-#include <sys/param.h>
+#include <config.h>
 
 #include "Util/Log.hpp"
 #include "Core/NetworkGlobals.hpp"
@@ -24,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "NetworkClient.hpp"
 
 #include "Classes/Network/NetworkState.hpp"
-#include "Classes/Network/NetPacketDebugger.hpp"
 
 #include "ClientServerNetMessage.hpp"
 #include "ConnectNetMessage.hpp"
@@ -38,22 +36,78 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/LoadingView.hpp"
 #include "Views/Game/DisconectedView.hpp"
 
-#include "Network/MessageRouter.hpp"
-#include "Network/MessageClassHandler.hpp"
+NetworkClient *CLIENT = 0;
 
-static ClientSocket * clientsocket = 0;
-static unsigned short connection_status = _connection_status_no_connection;
-
-void
-NetworkClient::initialize()
+NetworkClient::NetworkClient( void )
+        : NetworkInterface(), clientsocket(0)
 {
-    partServer();
+    connection_status = _connection_status_no_connection;
 }
 
-bool
-NetworkClient::isConnected()
+NetworkClient::~NetworkClient()
 {
-    return connection_status == _connection_status_connected;
+    if ( clientsocket )
+        delete clientsocket;
+}
+
+void NetworkClient::netMessageClientKeepAlive(const NetMessage* )
+{
+    // nothing
+}
+
+void NetworkClient::netMessageClientSetKeepAliveState(const NetMessage* )
+{
+    // nothing
+}
+
+void NetworkClient::netMessageClientPingAck(const NetMessage* )
+{
+    // nothing
+}
+
+void NetworkClient::netMessageClientConnectAck(const NetMessage* )
+{
+    ClientConnectJoinRequest join_request;
+
+    connection_status = _connection_status_connected;
+
+    join_request.setProtocolVersion(NETPANZER_PROTOCOL_VERSION);
+
+    sendMessage( &join_request, sizeof(ClientConnectJoinRequest));
+}
+
+
+void NetworkClient::processNetMessage(const NetMessage* message)
+{
+    switch(message->message_id)
+    {
+        case _net_message_id_client_keep_alive:
+            netMessageClientKeepAlive(message);
+            break;
+
+        case _net_message_id_client_set_keepalive_state: 
+            netMessageClientSetKeepAliveState(message);
+            break;
+
+        case _net_message_id_client_ping_ack:
+            netMessageClientPingAck(message);
+            break;
+
+        case _net_message_id_client_connect_ack:
+            netMessageClientConnectAck(message);
+            break;
+
+        default:
+            LOGGER.warning("Unknown messageid in clientnetmessage (id %d)",
+                    message->message_id);
+            break;
+    }
+}
+
+void
+NetworkClient::onClientConnected(ClientSocket *s)
+{
+    (void)s;
 }
 
 void
@@ -69,15 +123,16 @@ NetworkClient::onClientDisconected(ClientSocket *s, const char *msg)
     clientsocket=0;
 }
 
-bool
-NetworkClient::joinServer(const std::string& server_name)
+bool NetworkClient::joinServer(const std::string& server_name)
 {
-    partServer();
+    if ( clientsocket )
+        delete clientsocket;
+    clientsocket = 0;
     
     LOG( ("Trying to join server '%s'.\n", server_name.c_str()) );
     try
     {
-        clientsocket = new ClientSocket(NULL, server_name);
+        clientsocket = new ClientSocket(this, server_name);
     }
     catch(std::exception& e)
     {
@@ -94,11 +149,8 @@ NetworkClient::joinServer(const std::string& server_name)
 void NetworkClient::partServer()
 {
     if ( clientsocket )
-    {
         delete clientsocket;
-    }
     clientsocket = 0;
-    connection_status = _connection_status_no_connection;
 }
 
 void NetworkClient::sendMessage(NetMessage* message, size_t size)
@@ -107,7 +159,7 @@ void NetworkClient::sendMessage(NetMessage* message, size_t size)
     
     if ( !clientsocket )
     {
-        MessageRouter::enqueueIncomingPacket( message, size, PlayerInterface::getLocalPlayerIndex(), 0);
+        EnqueueIncomingPacket( message, size, PlayerInterface::getLocalPlayerIndex(), 0);
     }
     else
     {
@@ -120,6 +172,31 @@ void NetworkClient::sendMessage(NetMessage* message, size_t size)
 #endif
 }
 
+bool NetworkClient::getMessage(NetMessage *message)
+{
+    if(clientsocket == 0)
+        return false;
+    
+    if(!receive_queue.isReady())
+        return false;
+    
+    receive_queue.dequeue( &net_packet );
+    memcpy(message, net_packet.data, net_packet.getSize());
+
+#ifdef NETWORKDEBUG
+    NetPacketDebugger::logMessage("R", message);
+#endif
+
+    if ( message->message_class == _net_message_class_client_server )
+    {
+        processNetMessage( message );
+    }
+
+    NetworkState::incPacketsReceived(net_packet.getSize());
+
+    return true;
+}
+
 void NetworkClient::checkIncoming()
 {
    // nothing
@@ -130,73 +207,4 @@ NetworkClient::sendRemaining()
 {
     if ( clientsocket )
         clientsocket->sendRemaining();
-}
-
-class ClientPacketHandler : public MessageClassHandler
-{
-public:
-    void handlePacket(const NetPacket* packet)
-    {
-        const NetMessage * message = packet->getNetMessage();
-        switch(message->message_id)
-        {
-            case _net_message_id_client_keep_alive:
-                netMessageClientKeepAlive(message);
-                break;
-
-            case _net_message_id_client_set_keepalive_state:
-                netMessageClientSetKeepAliveState(message);
-                break;
-
-            case _net_message_id_client_ping_ack:
-                netMessageClientPingAck(message);
-                break;
-
-            case _net_message_id_client_connect_ack:
-                netMessageClientConnectAck(message);
-                break;
-
-            case _net_message_id_transport_disconnect:
-                NetworkClient::onClientDisconected(packet->fromClient, "Socket disconnected message");
-                break;
-
-            default:
-                LOGGER.warning("Unknown messageid in clientnetmessage (id %d)",
-                        message->message_id);
-                break;
-        }
-    }
-private:
-    void netMessageClientKeepAlive(const NetMessage* )
-    {
-        // nothing
-    }
-
-    void netMessageClientSetKeepAliveState(const NetMessage* )
-    {
-        // nothing
-    }
-
-    void netMessageClientPingAck(const NetMessage* )
-    {
-        // nothing
-    }
-
-    void netMessageClientConnectAck(const NetMessage* )
-    {
-        ClientConnectJoinRequest join_request;
-
-        connection_status = _connection_status_connected;
-
-        join_request.setProtocolVersion(NETPANZER_PROTOCOL_VERSION);
-
-        NetworkClient::sendMessage( &join_request, sizeof(ClientConnectJoinRequest));
-    }
-
-} clientpackethandler;
-
-MessageClassHandler *
-NetworkClient::getPacketHandler()
-{
-    return &clientpackethandler;
 }

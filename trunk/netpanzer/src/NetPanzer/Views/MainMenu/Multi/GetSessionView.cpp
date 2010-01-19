@@ -15,11 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "GetSessionView.hpp"
 #include "Views/Components/Desktop.hpp"
-#include "Views/Components/Button.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/GameManager.hpp"
 #include "Interfaces/MouseInterface.hpp"
@@ -32,13 +31,55 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 static int previousSessionType = _game_session_join;
 
-enum
+
+/////////////////////////////////////////////////////////////////////////////
+// Button functions.
+/////////////////////////////////////////////////////////////////////////////
+
+static void bBack()
 {
-    BTN_HOST,
-    BTN_JOIN,
-    BTN_BACK,
-    BTN_NEXT
-};
+    Desktop::setVisibilityAllWindows(false);
+    Desktop::setVisibility("MainView", true);
+}
+
+void bNext()
+{
+    if (gameconfig->hostorjoin == _game_session_host) {
+        Desktop::setVisibilityAllWindows(false);
+
+        Desktop::setVisibility("HostView", true);
+        Desktop::setVisibility("UnitSelectionView", true);
+        Desktop::setVisibility("FlagSelectionView", true);
+        Desktop::setVisibility("HostOptionsView", true);
+        Desktop::setVisibility("MapSelectionView", true);
+        Desktop::setVisibility("PlayerNameView", true);
+
+        SERVER->openSession();
+    } else if (gameconfig->hostorjoin == _game_session_join) {
+        Desktop::setVisibility("JoinView", true);
+        Desktop::setVisibility("FlagSelectionView", true);
+        Desktop::setVisibility("PlayerNameView", true);
+
+        Desktop::setVisibility("IPAddressView", true);
+        Desktop::setVisibility("ServerListView", true);
+        serverlistview->refresh();
+    }
+}
+
+static void bHost()
+{
+    previousSessionType = gameconfig->hostorjoin;
+
+    gameconfig->hostorjoin = _game_session_host;
+}
+
+static void bJoin()
+{
+    previousSessionType = gameconfig->hostorjoin;
+
+    gameconfig->hostorjoin = _game_session_join;
+}
+
 
 // GetSessionView
 //---------------------------------------------------------------------------
@@ -48,44 +89,55 @@ GetSessionView::GetSessionView() : MenuTemplateView()
     setTitle("Select Session");
     setSubTitle("");
 
-    add( Button::createSpecialButton("host", "Host", hostPos, BTN_HOST));
-    add( Button::createSpecialButton("join", "Join", joinPos, BTN_JOIN));
-    add( Button::createSpecialButton("back", "Back", backPos, BTN_BACK));
-    add( Button::createSpecialButton("next", "Next", nextPos, BTN_NEXT));
+    // Join.
+    addSpecialButton(	joinPos,
+                      "Join",
+                      bJoin);
 
+    // Host.
+    addSpecialButton(	hostPos,
+                      "Host",
+                      bHost);
+
+    // Next.
+    addSpecialButton(	nextPos,
+                      "Next",
+                      bNext);
+
+    // Back.
+    addSpecialButton(	backPos,
+                      "Back",
+                      bBack);
 } // end GetSessionView::GetSessionView
 
 // doDraw
 //---------------------------------------------------------------------------
-void GetSessionView::doDraw()
+void GetSessionView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     if (previousSessionType != gameconfig->hostorjoin) {
         loadTitleSurface();
     }
 
-    MenuTemplateView::doDraw();
+    MenuTemplateView::doDraw(viewArea, clientArea);
 
-    drawInfo();
+    drawInfo(clientArea);
 
 } // end GetSessionView::doDraw
 
 //---------------------------------------------------------------------------
-void GetSessionView::drawInfo()
+void GetSessionView::drawInfo(Surface &dest)
 {
     int connectionType = gameconfig->hostorjoin;
 
-    if (connectionType == _game_session_host)
-    {
-        drawHostInfo(bodyTextRect);
-    }
-    else if (connectionType == _game_session_join)
-    {
-        drawJoinInfo(bodyTextRect);
+    if (connectionType == _game_session_host) {
+        drawHostInfo(dest, bodyTextRect);
+    } else if (connectionType == _game_session_join) {
+        drawJoinInfo(dest, bodyTextRect);
     }
 }
 
 //---------------------------------------------------------------------------
-void GetSessionView::drawHostInfo( const iRect &rect)
+void GetSessionView::drawHostInfo(Surface &dest, const iRect &rect)
 {
     static char	tcpipInfo[] =
         "HOSTING INTERNET GAMES\n"
@@ -102,11 +154,11 @@ void GetSessionView::drawHostInfo( const iRect &rect)
         "\n"
         "Click the Next button to proceed";
 
-    drawStringInBox(rect, tcpipInfo, Color::white, 12);
+    dest.bltStringInBox(rect, tcpipInfo, Color::white, 12);
 }
 
 //---------------------------------------------------------------------------
-void GetSessionView::drawJoinInfo( const iRect &rect)
+void GetSessionView::drawJoinInfo(Surface &dest, const iRect &rect)
 {
     static char	tcpipInfo[] =
         "JOINING LAN OR INTERNET GAMES\n"
@@ -122,7 +174,7 @@ void GetSessionView::drawJoinInfo( const iRect &rect)
         "Click the Next button to proceed.";
 
 
-    drawStringInBox(rect, tcpipInfo, Color::white, 12);
+    dest.bltStringInBox(rect, tcpipInfo, Color::white, 12);
 }
 
 // doActivate
@@ -139,7 +191,7 @@ void GetSessionView::doActivate()
 //---------------------------------------------------------------------------
 void GetSessionView::loadBackgroundSurface()
 {
-    doLoadBackgroundSurface("pics/default/sessionMB.png");
+    doLoadBackgroundSurface("pics/backgrounds/menus/menu/sessionMB.bmp");
 
 } // end GetSessionView::loadBackgroundSurface
 
@@ -154,50 +206,3 @@ void GetSessionView::loadTitleSurface()
     }
 
 } // end GetSessionView::loadTitleSurface
-void
-GetSessionView::onComponentClicked(Component* c)
-{
-    switch ( c->getCustomCode() )
-    {
-        case BTN_HOST:
-            previousSessionType = gameconfig->hostorjoin;
-            gameconfig->hostorjoin = _game_session_host;
-            break;
-
-        case BTN_JOIN:
-            previousSessionType = gameconfig->hostorjoin;
-            gameconfig->hostorjoin = _game_session_join;
-            break;
-            
-        case BTN_BACK:
-            Desktop::setVisibilityAllWindows(false);
-            Desktop::setVisibility("MainView", true);
-            break;
-
-        case BTN_NEXT:
-            if (gameconfig->hostorjoin == _game_session_host)
-            {
-                Desktop::setVisibilityAllWindows(false);
-                Desktop::setVisibility("HostView", true);
-                Desktop::setVisibility("FlagSelectionView", true);
-                Desktop::setVisibility("HostOptionsView", true);
-                Desktop::setVisibility("MapSelectionView", true);
-                Desktop::setVisibility("PlayerNameView", true);
-
-                NetworkServer::openSession();
-            }
-            else if (gameconfig->hostorjoin == _game_session_join)
-            {
-                Desktop::setVisibility("JoinView", true);
-                Desktop::setVisibility("FlagSelectionView", true);
-                Desktop::setVisibility("PlayerNameView", true);
-                Desktop::setVisibility("IPAddressView", true);
-                Desktop::setVisibility("ServerListView", true);
-                serverlistview->refresh();
-            }
-            break;
-
-        default:
-            MenuTemplateView::onComponentClicked(c);
-    }
-}

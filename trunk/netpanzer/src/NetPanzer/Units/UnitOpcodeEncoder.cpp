@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "Units/UnitOpcodeEncoder.hpp"
 #include "Classes/Network/NetworkServer.hpp"
@@ -43,14 +43,12 @@ UnitOpcodeEncoder::reset()
 void
 UnitOpcodeEncoder::encode(const UnitOpcode *opcode)
 {
-    unsigned int size = opcode->getSize();
-    if(opcode_index + size > sizeof(opcode_message.data))
-    {
+    if(opcode_index + UnitOpcode::getSize() > sizeof(opcode_message.data)) {
         send();
     }
    
-    memcpy(opcode_message.data + opcode_index, opcode, size);
-    opcode_index += size;
+    memcpy(opcode_message.data + opcode_index, opcode, UnitOpcode::getSize());
+    opcode_index += UnitOpcode::getSize();
 }
 
 void
@@ -60,7 +58,7 @@ UnitOpcodeEncoder::send()
         return;
 
     size_t size = opcode_message.getHeaderSize() + opcode_index;
-    NetworkServer::broadcastMessage(&opcode_message, size);
+    SERVER->broadcastMessage(&opcode_message, size);
 
     reset();
     NetworkState::incOpcodesSent();

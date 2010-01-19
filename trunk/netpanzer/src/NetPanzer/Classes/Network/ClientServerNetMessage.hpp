@@ -28,8 +28,7 @@ enum { _net_message_id_transport_client_accept,
        _net_message_id_server_client_disconnect,
        _net_message_id_server_keep_alive,
        _net_message_id_server_ping_request,
-       _net_message_id_client_ping_ack,
-       _net_message_id_transport_disconnect
+       _net_message_id_client_ping_ack
      };
 
 #ifdef MSVC
@@ -96,17 +95,6 @@ public:
     {
         message_class = _net_message_class_client_server;
         message_id = _net_message_id_client_ping_ack;
-    }
-} __attribute__((packed));
-
-class NetMsgTransportDisconnect: public NetMessage
-{
-public:
-    NetMsgTransportDisconnect()
-    {
-        message_class = _net_message_class_client_server;
-        message_id = _net_message_id_transport_disconnect;
-        setSize(sizeof(*this));
     }
 } __attribute__((packed));
 

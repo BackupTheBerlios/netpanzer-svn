@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "HelpScrollView.hpp"
 #include "GameView.hpp"
@@ -31,6 +31,7 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
     setTitle("Help Information");
     setSubTitle("");
 
+    setAllowResize(false);
     setAllowMove(false);
 
     moveTo(bodyTextRect.min);
@@ -131,17 +132,16 @@ HelpScrollView::HelpScrollView() : SpecialButtonView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void HelpScrollView::doDraw()
+void HelpScrollView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    if (Desktop::getVisible("GameView"))
-    {
-        drawViewBackground();
+    if (Desktop::getVisible("GameView")) {
+        bltViewBackground(viewArea);
     }
 
-    drawHelpText( 0, 0);
+    drawHelpText(clientArea, 0, 0);
 
-    drawString(   4,
-                            clientRect.getSizeY() - Surface::getFontHeight(),
+    clientArea.bltString(   4,
+                            clientArea.getHeight() - Surface::getFontHeight(),
                             "Note: Use the right mouse button to accomplish fast mouse clicking.",
                             Color::white);
 
@@ -149,14 +149,14 @@ void HelpScrollView::doDraw()
     //sprintf(strBuf, "%d", scrollBar->getValue());
     //clientArea.bltStringCenter(strBuf, Color::red);
 
-    View::doDraw();
+    View::doDraw(viewArea, clientArea);
 } // end HelpScrollView::doDraw
 
 // drawHelpText
 //--------------------------------------------------------------------------
-void HelpScrollView::drawHelpText( const int &, const int &)
+void HelpScrollView::drawHelpText(Surface &dest, const int &, const int &)
 {
-    IntColor color = Color::white;
+    PIX color   = Color::white;
 
     //if (scrollBar != 0)
     //{
@@ -170,7 +170,7 @@ void HelpScrollView::drawHelpText( const int &, const int &)
     //
     int curIndex = 0;
     for (int i = topViewableItem; i < topViewableItem + maxViewableItems; i++) {
-        drawString(1, 6 + curIndex * (TEXT_GAP_SPACE +
+        dest.bltString(1, 6 + curIndex * (TEXT_GAP_SPACE +
                     Surface::getFontHeight()), text[i].c_str(), color);
         curIndex++;
     }

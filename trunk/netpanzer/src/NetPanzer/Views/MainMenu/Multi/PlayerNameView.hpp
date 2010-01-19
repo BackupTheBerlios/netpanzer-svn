@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __PlayerNameView_hpp__
 
 #include "Views/Components/View.hpp"
+#include "2D/Surface.hpp"
 
 //---------------------------------------------------------------------------
 class PlayerNameView : public View
@@ -27,7 +28,7 @@ public:
     PlayerNameView();
     virtual ~PlayerNameView();
 
-    virtual void doDraw();
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void drawBorder(Surface&)
     {}
 

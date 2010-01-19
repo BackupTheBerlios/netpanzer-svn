@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SDL.h"
 
 #include "Objectives/Objective.hpp"
+#include "ArrayUtil/ArrayTemplate.hpp"
 
 #include "Classes/Network/NetPacket.hpp"
 #include "Classes/Network/NetMessageEncoder.hpp"
@@ -97,7 +98,7 @@ protected:
     static Uint16        objective_position_enum_player_id;
 
 public:
-    static void startObjectivePositionEnumeration(Uint16 playerid);
+    static void startObjectivePositionEnumeration();
     static bool objectivePositionEnumeration(iRect *objective_rect, unsigned char *objective_disposition, ObjectiveID *objective_id);
 };
 

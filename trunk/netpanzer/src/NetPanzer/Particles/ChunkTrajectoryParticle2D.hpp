@@ -22,14 +22,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "TrajectoryParticle2D.hpp"
 #include "ParticleSystemGlobals.hpp"
+#include "2D/PackedSurface.hpp"
 
-struct lua_State;
 
 // ChunkTrajectoryParticle2D
 //--------------------------------------------------------------------------
 class ChunkTrajectoryParticle2D : public TrajectoryParticle2D
 {
 protected:
+    static PackedSurface staticPackedGroundChunks;
+    static PackedSurface staticPackedBurnGroundChunks;
+    static PackedSurface staticPackedUnitGreenChunks;
+    static PackedSurface staticPackedUnitGrayChunks;
+
+    static void createPAKFiles();
+    static void createGroundChunks();
+    static void createBurnGroundChunks();
+    static void createUnitBodyGreenChunks();
+    static void createUnitBodyGrayChunks();
+
     float     arcYPix;
     int       hasSmoke;
     float     smokeWaitTime;
@@ -54,8 +65,11 @@ public:
                                int         canHaveSmoke   = 1);
 
     virtual void sim();
-    virtual void draw(SpriteSorter &sorter);
-    
-}; // end ChunkTrajectoryParticle2D
+    virtual void draw(const Surface &dest, SpriteSorter &sorter);
+
+    static void init();
+
+}
+; // end ChunkTrajectoryParticle2D
 
 #endif // __ChunkTrajectoryParticle2D_hpp__

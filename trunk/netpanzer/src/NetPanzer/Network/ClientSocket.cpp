@@ -16,23 +16,21 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 #include <string>
 #include <string.h>
 #include <sstream>
 #include <stdexcept>
 
-#include "SDL_endian.h"
-
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
+#include "Classes/Network/NetworkInterface.hpp"
 #include "Core/NetworkGlobals.hpp"
 #include "Network/ClientSocket.hpp"
 #include "Util/UtilInterface.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Util/Endian.hpp"
 #include "Network/Address.hpp"
-#include "Classes/Network/ClientServerNetMessage.hpp"
-#include "MessageRouter.hpp"
 
 using namespace std;
 
@@ -89,57 +87,54 @@ ClientSocket::initId()
 ClientSocket::~ClientSocket()
 {
     if (socket)
-    {
-	logStatistics();
         socket->destroy();
-    }
-}
-
-void
-ClientSocket::disconnect(const char * disconnectmsg)
-{
-    LOGGER.debug("ClientSocket:disconnect id=%d, message: %s", id, disconnectmsg);
-    NetMsgTransportDisconnect msg;
-    MessageRouter::enqueueIncomingPacket(&msg, sizeof(msg), playerIndex, this);
 }
 
 void ClientSocket::sendMessage(const void* data, size_t size)
 {
     if ( socket )
     {
-        if ( sendpos+size > sizeof(sendbuffer) )
+        if ( sendpos )
         {
-            disconnect("Send buffer full, need to disconnect");
-            return;
+            if ( sendpos+size > sizeof(sendbuffer) )
+            {
+                observer->onClientDisconected(this, "Send buffer full, need to disconnect");
+                return;
+            }
+            memcpy(sendbuffer+sendpos, data, size);
+            sendpos += size;
+            sendRemaining();
         }
-        memcpy(sendbuffer+sendpos, data, size);
-        sendpos += size;
-	++packetsSent; // it may NOT be a real packet;
+        else
+        {
+            size_t s = socket->send(data, size);
+            if ( s != size )
+            {
+                size_t remain = size-s;
+                if ( remain > sizeof(sendbuffer) )
+                {
+                    observer->onClientDisconected(this, "Send data bigger than buffer, need to disconnect");
+                    return;
+                }
+                memcpy(sendbuffer, (char *)data+s, remain);
+                sendpos = remain;
+            }
+        }
     }
 }
 
 void
 ClientSocket::sendRemaining()
 {
-    if ( socket && sendpos )
-    {
-        int to_send = (sendpos>MAX_SEND_PER_CYCLE)?MAX_SEND_PER_CYCLE:sendpos;
-        size_t s = socket->send(sendbuffer, to_send);
+    if ( socket && sendpos ) {
+        size_t s = socket->send(sendbuffer, sendpos);
         if ( !s )
-        {
             return;
-        }
-        if ( s != sendpos )
-        {
+        if ( s != sendpos ) {
             memmove(sendbuffer, sendbuffer+s, sendpos-s);
             sendpos -= s;
-	    bytesSent += s;
-        }
-        else
-        {
-	    bytesSent += s;
+        } else
             sendpos = 0;
-        }
     }
 }
 
@@ -149,7 +144,6 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
     (void)so;
     int dataptr = 0;
     unsigned int remaining = len;
-    bytesReceived += len;
     Uint16 packetsize=0;
     while ( remaining ) {
         if ( !tempoffset ) {
@@ -159,23 +153,22 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
                 break; // no more data
             }
             
-            packetsize=SDL_SwapLE16(*((Uint16*)(data+dataptr)));;
+            packetsize=htol16(*((Uint16*)(data+dataptr)));;
             
             if ( packetsize < sizeof(NetMessage) ) {
                 LOGGER.debug("Received wrong packetsize: less than required [%d]", packetsize);
-                disconnect("Received buggy packet size (less than required)");
+                observer->onClientDisconected(this, "Received buggy packet size (less than required)");
                 break; // we are deleted
             }
             
             if ( packetsize > _MAX_NET_PACKET_SIZE ) {
                 LOGGER.debug("Received wrong packetsize: more than limit [%d]", packetsize);
-                disconnect("Received buggy packet size (more than limit)");
+                observer->onClientDisconected(this, "Received buggy packet size (more than limit)");
                 break; // we are deleted
             }
             
             if ( remaining >= packetsize ) {
-		++packetsReceived;
-                MessageRouter::enqueueIncomingPacket(data+dataptr, packetsize, playerIndex, this);
+                EnqueueIncomingPacket(data+dataptr, packetsize, playerIndex, this);
                 remaining -= packetsize;
                 dataptr   += packetsize;
             } else {
@@ -198,17 +191,17 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             if ( tempoffset < sizeof(NetMessage) )
                 break; // no more data
                 
-            packetsize=SDL_SwapLE16(*((Uint16*)tempbuffer));;
+            packetsize=htol16(*((Uint16*)tempbuffer));;
             
             if ( packetsize < sizeof(NetMessage) ) {
                 LOGGER.debug("Received wrong packetsize(half): less than required [%d]", packetsize);
-                disconnect("Received buggy packet size (less than required(half))");
+                observer->onClientDisconected(this, "Received buggy packet size (less than required(half))");
                 break; // we are deleted
             }
             
             if ( packetsize > _MAX_NET_PACKET_SIZE ) {
                 LOGGER.debug("Received wrong packetsize(half): more than limit [%d]", packetsize);
-                disconnect("Received buggy packet size (more than limit(half))");
+                observer->onClientDisconected(this, "Received buggy packet size (more than limit(half))");
                 break; // we are deleted
             }
                 
@@ -223,8 +216,7 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
             }
             
             if ( tempoffset == packetsize ) {
-		++packetsReceived;
-                MessageRouter::enqueueIncomingPacket(tempbuffer, packetsize, playerIndex, this);
+                EnqueueIncomingPacket(tempbuffer, packetsize, playerIndex, this);
                 tempoffset = 0;
             }
         }
@@ -234,52 +226,27 @@ ClientSocket::onDataReceived(network::TCPSocket * so, const char *data, const in
 void
 ClientSocket::onConnected(network::TCPSocket *so)
 {
-    connectStartSeconds = time(0);
-    bytesReceived = 0;
-    packetsReceived = 0;
-    bytesSent = 0;
-    packetsSent = 0;
+    LOGGER.debug("ClientSocket: connected, id=%d", id);
     socket = so;
-    LOGGER.debug("ClientSocket: connected [%s] id=%d at %lu", getIPAddress().c_str(), id, (unsigned long)connectStartSeconds);
-    if ( observer )
-    {
-        observer->onClientConnected(this);
-    }
+    observer->onClientConnected(this);
 }
 
 void
 ClientSocket::onDisconected(network::TCPSocket *so)
 {
     (void)so;
-    LOGGER.debug("ClientSocket: Disconected [%s] id=%d", getIPAddress().c_str(), id);
-    logStatistics();
+    LOGGER.debug("ClientSocket: Disconected id=%d", id);
     socket=0;
-    disconnect("Socket Disconnected");
+    observer->onClientDisconected(this, "Network connection closed");
 }
 
 void
-ClientSocket::onSocketError(network::TCPSocket *so, const char * msg)
+ClientSocket::onSocketError(network::TCPSocket *so)
 {
     (void)so;
-    LOGGER.warning("ClientSocket: Network connection error [%s] id=%d, msg: '%s'", getIPAddress().c_str(), id, msg);
-    logStatistics();
+    LOGGER.warning("ClientSocket: Network connection error id=%d", id);
     socket=0;
-    disconnect(msg);
-}
-
-void
-ClientSocket::logStatistics()
-{
-    time_t connectedTime = time(0) - connectStartSeconds;
-    LOGGER.warning( "ClientSocket statistics for [%s]:\n"
-		    " * Seconds Connected: %lu\n"
-		    " * Packets Received/Sent: %u / %u\n"
-		    " * Bytes Received/Sent: %u / %u",
-		    getIPAddress().c_str(),
-		    (unsigned long)connectedTime,
-		    packetsReceived, packetsSent,
-		    bytesReceived, bytesSent
-		  );
+    observer->onClientDisconected(this, "Network connection error");
 }
 
 std::string

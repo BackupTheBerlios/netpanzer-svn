@@ -15,12 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 #include "EnemyRadarPowerUp.hpp"
-#include "Core/GlobalEngineState.hpp"
 
 #include <stdlib.h>
-#include "Units/Unit.hpp"
 #include "Units/UnitTypes.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Interfaces/PlayerInterface.hpp"
@@ -57,14 +55,16 @@ EnemyRadarPowerUp::isRadarActive()
 }
 
 EnemyRadarPowerUp::EnemyRadarPowerUp(iXY map_loc, int type)
-        : PowerUp( map_loc, -1, type )
+        : PowerUp( map_loc, type )
 {
 }
 
 void
-EnemyRadarPowerUp::onHit( Unit * unit )
+EnemyRadarPowerUp::onHit(UnitID unit_id)
 {
-    global_engine_state->sound_manager->playPowerUpSound();
+    sound->playPowerUpSound();
+
+    UnitBase* unit = UnitInterface::getUnit(unit_id);
 
     if(unit->player == PlayerInterface::getLocalPlayer())
     {
@@ -73,7 +73,7 @@ EnemyRadarPowerUp::onHit( Unit * unit )
 
     PowerUpHitMesg hit_mesg;
     hit_mesg.set( ID, unit->player->getID());
-    NetworkServer::broadcastMessage( &hit_mesg, sizeof( PowerUpHitMesg ));
+    SERVER->broadcastMessage( &hit_mesg, sizeof( PowerUpHitMesg ));
 
     life_cycle_state = _power_up_lifecycle_state_inactive;
 }
@@ -81,7 +81,7 @@ EnemyRadarPowerUp::onHit( Unit * unit )
 void
 EnemyRadarPowerUp::onHitMessage( PowerUpHitMesg *message  )
 {
-    global_engine_state->sound_manager->playPowerUpSound();
+    sound->playPowerUpSound();
 
     if( PlayerInterface::getLocalPlayerIndex() == message->getPlayerID() )
     {

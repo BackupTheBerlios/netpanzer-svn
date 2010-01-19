@@ -18,10 +18,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PATHSCHEDULER_HPP
 #define _PATHSCHEDULER_HPP
 
-#include <vector>
-#include <deque>
 #include "Classes/AI/Astar.hpp"
 #include "Classes/AI/PathList.hpp"
+#include "Units/UnitBase.hpp"
+#include "ArrayUtil/QueueTemplate.hpp"
+#include "ArrayUtil/ArrayTemplate.hpp"
 
 
 class PathCacheEntry
@@ -48,7 +49,7 @@ protected:
 
     unsigned long add_path_length_threshold;
 
-    std::vector<PathCacheEntry> cache_list;
+    ArrayTemplate<PathCacheEntry> cache_list;
 
     unsigned long cache_size;
     unsigned long entry_replace_index;
@@ -132,7 +133,7 @@ public:
     void run();
 };
 
-class PathRequestQueue : public std::deque<PathRequest> //QueueTemplate< PathRequest >
+class PathRequestQueue : public QueueTemplate< PathRequest >
 {
 public:
     void killRequest( UnitID &unit_id );

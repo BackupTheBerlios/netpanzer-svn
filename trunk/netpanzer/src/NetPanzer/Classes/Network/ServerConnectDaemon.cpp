@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 #include <algorithm>
 #include "Classes/Network/ServerConnectDaemon.hpp"
 #include "Interfaces/ChatInterface.hpp"
@@ -38,9 +38,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/ConsoleInterface.hpp"
 #include "Util/Log.hpp"
-#include "Resources/ResourceManager.hpp"
-#include "Resources/ResourceManagerMessages.hpp"
-#include "NetworkClient.hpp"
 
 ServerConnectDaemon::ConnectionState 
         ServerConnectDaemon::connection_state = ServerConnectDaemon::connect_state_idle;
@@ -80,7 +77,7 @@ void ServerConnectDaemon::shutdownConnectDaemon()
     connect_unit_sync = 0;
     ConnectMesgNetPanzerServerDisconnect server_disconnect;
 
-    NetworkServer::broadcastMessage( &server_disconnect,
+    SERVER->broadcastMessage( &server_disconnect,
                          sizeof(ConnectMesgNetPanzerServerDisconnect));
 }
 
@@ -198,10 +195,15 @@ void ServerConnectDaemon::sendConnectionAlert(ClientSocket * client)
 
     if ( ((std::string)gameconfig->motd).length() > 0 )
     {
-        ChatInterface::serversayTo(client->getPlayerIndex(), gameconfig->motd.c_str());
+        ChatMesg chat_mesg;
+        chat_mesg.message_scope=_chat_mesg_scope_server;
+        chat_mesg.setSourcePlayerIndex(0);
+        snprintf(chat_mesg.message_text, sizeof(chat_mesg.message_text), "%s",gameconfig->motd.c_str());
+        chat_mesg.setSize(sizeof(ChatMesg));
+        client->sendMessage( &chat_mesg, sizeof(chat_mesg));
     }
 
-    NetworkServer::broadcastMessage(&connect_alert, sizeof(SystemConnectAlert));
+    SERVER->broadcastMessage( &connect_alert, sizeof(SystemConnectAlert));
 }
 
 void ServerConnectDaemon::resetConnectFsm()
@@ -287,9 +289,7 @@ bool ServerConnectDaemon::connectStateWaitForClientSettings(
             player->setName( client_setting->player_name );
             player->unit_config.setUnitColor( client_setting->unit_color );
             
-            FlagID flag = ResourceManager::registerFlagFromData((Uint8*)&client_setting->flagdata);
-            LOGGER.warning("Player '%s' got flag '%d'", client_setting->player_name,
-                    flag);
+            Uint8 flag = (Uint8) client_setting->getPlayerFlag();
             player->setFlag(flag);
 
             player->setID( connect_client->getPlayerIndex() );
@@ -372,29 +372,16 @@ bool ServerConnectDaemon::connectStatePlayerStateSync()
     
     unsigned char buffer[_MAX_NET_PACKET_SIZE];
     unsigned int buffer_pos = 0;
-
     PlayerStateSync msg;
     msg.setSize(sizeof(PlayerStateSync));
-    
-    ResourceManagerSyncFlagMessage flagmsg;
-    flagmsg.setSize(sizeof(ResourceManagerSyncFlagMessage));
-    
-    while ( buffer_pos+sizeof(msg)+sizeof(flagmsg) < _MAX_NET_PACKET_SIZE
+    while ( buffer_pos+sizeof(PlayerStateSync) < _MAX_NET_PACKET_SIZE
             && percent_complete != 100)
     {
         if ( PlayerInterface::syncNextPlayerState( msg.player_state, &percent_complete) )
         {
-            if ( msg.player_state.getStatus() != _player_state_free )
-            {
-                flagmsg.setFlagID(msg.player_state.getFlag());
-                ResourceManager::getFlagSyncData(flagmsg.getFlagID(), (Uint8*)&flagmsg.flagdata);
-                memcpy(buffer+buffer_pos, &flagmsg, sizeof(flagmsg));
-                buffer_pos += sizeof(flagmsg);
-            }
-            
             memcpy(buffer+buffer_pos, &msg, sizeof(PlayerStateSync));
             buffer_pos += sizeof(PlayerStateSync);
-        }     
+        }
     }
 
     if ( buffer_pos )
@@ -419,15 +406,12 @@ bool ServerConnectDaemon::connectStatePlayerStateSync()
         connect_client->sendMessage( &state_mesg,
                                      sizeof(ConnectProcessStateMessage));
         
-        NetworkServer::addClientToSendList( connect_client );
+        SERVER->addClientToSendList( connect_client );
 
         PlayerState *p = PlayerInterface::getPlayer(connect_client->getPlayerIndex());
         PlayerStateSync player_state_update( p->getNetworkPlayerState() );
         player_state_update.setSize(sizeof(PlayerStateSync));
-        NetworkServer::broadcastMessage(&player_state_update, sizeof(PlayerStateSync));
-        flagmsg.setFlagID(p->getFlag());
-        ResourceManager::getFlagSyncData(flagmsg.getFlagID(), (Uint8*)&flagmsg.flagdata);
-        NetworkServer::broadcastMessage(&flagmsg, sizeof(flagmsg));
+        SERVER->broadcastMessage(&player_state_update, sizeof(PlayerStateSync));
         
         if(connection_state != connect_state_idle)
         {
@@ -485,7 +469,7 @@ bool ServerConnectDaemon::connectStateUnitSync()
     PlayerStateSync player_state_update
         (player->getNetworkPlayerState());
 
-    NetworkServer::broadcastMessage( &player_state_update, sizeof(PlayerStateSync));
+    SERVER->broadcastMessage( &player_state_update, sizeof(PlayerStateSync));
 
     state_mesg.setMessageEnum(_connect_state_sync_complete);
     // size already set

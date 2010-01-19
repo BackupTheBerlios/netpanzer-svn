@@ -41,12 +41,10 @@ protected:
     CheckBox * checkBoxSoundEnabled;
     CheckBox * checkBoxMusicEnabled;
 
-    void onComponentClicked(Component *c);
-
 public:
     SoundView();
 
-    virtual void doDraw();
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void initButtons();
     virtual void stateChanged(Component* source);
 }; // end SoundView

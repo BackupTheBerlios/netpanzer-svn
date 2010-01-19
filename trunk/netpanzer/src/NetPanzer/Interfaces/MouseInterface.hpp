@@ -23,23 +23,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <deque>
 
 #include "SDL.h"
+#include "2D/Surface.hpp"
 #include "Util/NTimer.hpp"
-#include "Types/iXY.hpp"
-
-class Surface;
 
 class MouseEvent
 {
 public:
     enum {
         EVENT_DOWN = SDL_MOUSEBUTTONDOWN,
-        EVENT_UP = SDL_MOUSEBUTTONUP,
-        EVENT_MOVE = SDL_MOUSEMOTION
+        EVENT_UP = SDL_MOUSEBUTTONUP
     };
     unsigned char button;
     unsigned char event;
     iXY pos;
-    iXY relpos;
 };
 
 typedef std::deque<MouseEvent> MouseEventQueue;
@@ -56,8 +52,6 @@ private:
 
     typedef std::map<std::string,Surface*> cursors_t;
     static cursors_t cursors;
-
-    static bool isGrabMode;
 
 protected:
     static iXY mouse_pos;
@@ -87,12 +81,14 @@ public:
 
     static void initialize();
     static void shutdown();
-    static void setGrabMode(bool wantGrab)
-    {
-        isGrabMode = wantGrab;
-    }
     
-    static void draw(Surface &dest);
+    static void draw(Surface &dest)
+    {
+        if (cursor) {
+            cursor->nextFrame();
+            cursor->bltTrans(dest, mouse_pos.x, mouse_pos.y);
+        }
+    }
 
     static inline void getMousePosition( int *x, int *y )
     {
@@ -110,7 +106,11 @@ public:
     static void manageClickTimer();
 
     static void setCursor(const char* cursorname);
-    static void onMouseMoved(SDL_MouseMotionEvent *e);
+    static inline void onMouseMoved(SDL_MouseMotionEvent *e)
+    {
+        mouse_pos.x = e->x;
+        mouse_pos.y = e->y;
+    }
     
     static inline iXY getMousePosition()   { return mouse_pos; }
     

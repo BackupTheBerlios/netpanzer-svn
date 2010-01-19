@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "SDL.h"
 
@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Exception.hpp"
 #include "Util/Log.hpp"
 #include "Util/NTimer.hpp"
-
-#include "2D/Surface.hpp"
 
 unsigned char MouseInterface::cursor_x_size;
 unsigned char MouseInterface::cursor_y_size;
@@ -42,8 +40,6 @@ NTimer MouseInterface::clicktimer;
 int MouseInterface::clickcount;
 int MouseInterface::releasecount;
 
-bool MouseInterface::isGrabMode;
-
 void MouseInterface::initialize()
 {
     const char* cursorpath = "pics/cursors/";
@@ -56,7 +52,7 @@ void MouseInterface::initialize()
             if(filesystem::isDirectory(filename.c_str())) {
                 continue;
             }
-            surface->loadPNG(filename.c_str());
+            surface->loadBMP(filename.c_str());
             surface->setOffsetCenter();
             cursors.insert(std::pair<std::string,Surface*> (*i, surface));
         } catch(std::exception& e) {
@@ -65,11 +61,10 @@ void MouseInterface::initialize()
     }
     filesystem::freeList(cursorfiles);
 
-    setCursor("default.png");
+    setCursor("default.bmp");
     clicktimer.setTimeOut(150);
     clickcount = 0;
     releasecount = 0;
-    isGrabMode = false;
 }
 
 void MouseInterface::shutdown()
@@ -116,37 +111,6 @@ MouseInterface::onMouseButtonUp(SDL_MouseButtonEvent *e)
     event_queue.push_back(event);
 }
 
-void
-MouseInterface::onMouseMoved(SDL_MouseMotionEvent* e)
-{
-    if ( isGrabMode && e->x == mouse_pos.x && e->y == mouse_pos.y )
-    {
-        return; // this is the move to previous position;
-    }
-
-    MouseEvent event;
-    event.event = MouseEvent::EVENT_MOVE;
-    event.button = e->state;
-    event.relpos.x = e->xrel;
-    event.relpos.y = e->yrel;
-
-    if ( ! isGrabMode )
-    {
-        mouse_pos.x = e->x;
-        mouse_pos.y = e->y;
-        event.pos.x = e->x;
-        event.pos.y = e->y;
-    }
-    else
-    {
-        event.pos.x = mouse_pos.x;
-        event.pos.y = mouse_pos.y;
-        SDL_WarpMouse(mouse_pos.x, mouse_pos.y);
-    }
-
-    event_queue.push_back(event);
-}
-
 void MouseInterface::setCursor(const char* cursorname)
 {
     cursors_t::iterator i = cursors.find(cursorname);
@@ -167,13 +131,3 @@ MouseInterface::manageClickTimer()
         releasecount=0;
     }
 }
-void
-MouseInterface::draw(Surface &dest)
-{
-	if ( cursor && ! isGrabMode )
-	{
-		cursor->nextFrame();
-		cursor->bltTrans(dest, mouse_pos.x, mouse_pos.y);
-	}
-}
-

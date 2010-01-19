@@ -37,33 +37,53 @@ class ConnectMesgServerGameSettings;
 
 class GameManager
 {
+private:
+    static std::string map_path;
+
+protected:
+    static time_t game_start_time;
+    static time_t game_elapsed_time_offset;
+
+    static bool display_frame_rate_flag;
+    static bool display_network_info_flag;
+
+protected:
+    static void finishGameMapLoad();
+
+    // ** Network Message Handlers
+    static void netMessageSetView(const NetMessage* message);
+    static void netMessageViewControl(const  NetMessage* message);
+    static void netMessageClientGameSetup(const NetMessage* message);
+    static void netMessagePingRequest(const NetMessage* message);
+    static void netMessagePingAcknowledge(const NetMessage* message);
+    static void netMessageConnectAlert(const NetMessage* message);
+    static void netMessageResetGameLogic(const NetMessage* message);
+
 public:
+    static void dedicatedLoadGameMap(const char *map_file_path );
+    static void startGameMapLoad(const char *map_file_path,
+                                 unsigned long partitions);
+    static bool gameMapLoad( int *percent_complete );
+
     // ** Game Rules Methods
-    static void spawnPlayer( const Uint16 player );
-    static void spawnPlayerAt( const Uint16 player, const iXY& position );
+    static void spawnPlayer( Uint16 player );
     static void respawnAllPlayers();
 
-    static void kickPlayer( const Uint16 player );
-    static void destroyPlayerUnits( const Uint16 player );
-    static void disownPlayerObjectives( const Uint16 player );
-
-    static Uint16 addBot();
-    static void removeAllBots();
-
-    static void exitNetPanzer();
-    static void quitNetPanzerGame();
-
-    static bool changeMap(const char * map_name);
-
-    static void disconnectPlayerCleanUp( const Uint16 player );
-
-    static void loadGameMap(const char *map_file_path);
+    static void initializeGameLogic();
+    static void reinitializeGameLogic();
+    static bool resetGameLogic();
+    static void shutdownGameLogic();
 
     static void shutdownParticleSystems();
 
     static bool startClientGameSetup(const NetMessage* message, int *result_code);
-    static void clientGameSetup();
+    static bool clientGameSetup( int *percent_complete );
     static ConnectMesgServerGameSettings* getServerGameSetup();
+
+public:
+    static void exitNetPanzer();
+
+    static void quitNetPanzerGame();
 
     static void setNetPanzerGameOptions();
 
@@ -73,17 +93,12 @@ public:
 
     static void setVideoMode();
 
-    static void drawTextCenteredOnScreen(const char *string, IntColor color);
+    static void loadPalette(const std::string& palette_path );
 
-protected:
-    // ** Network Message Handlers
-    static void netMessageSetView(const NetMessage* message);
-    static void netMessageViewControl(const  NetMessage* message);
-    static void netMessageClientGameSetup(const NetMessage* message);
-    static void netMessagePingRequest(const NetMessage* message);
-    static void netMessagePingAcknowledge(const NetMessage* message);
-    static void netMessageConnectAlert(const NetMessage* message);
-    static void netMessageResetGameLogic(const NetMessage* message);
+    static void drawTextCenteredOnScreen(const char *string, unsigned char color);
+
+    static void   startGameTimer();
+    static time_t getGameTime();
 };
 
 #endif

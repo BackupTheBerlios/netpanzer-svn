@@ -18,11 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _OBJECTIVE_MESSSAGE_TYPES_HPP
 #define _OBJECTIVE_MESSSAGE_TYPES_HPP
 
-#include "SDL_endian.h"
-
 #include "Core/CoreTypes.hpp"
 #include "Classes/PlayerState.hpp"
 #include "Types/iXY.hpp"
+#include "Util/Endian.hpp"
 
 #ifdef MSVC
 #pragma pack(1)
@@ -71,19 +70,19 @@ public:
         message_type = _objective_mesg_update_occupation;
         setObjectiveID(id);
         occupation_status = status;
-        occupying_player_id = SDL_SwapLE16(player_id);
+        occupying_player_id = htol16(player_id);
         this->unit_gen_on = unit_gen_on;
-        this->timeleft = SDL_SwapLE32(timeleft);
+        this->timeleft = htol32(timeleft);
         this->unit_type = unit_type;
     }
    
     Uint16 getOccupyingPlayerID() const
     {
-        return SDL_SwapLE16(occupying_player_id);
+        return ltoh16(occupying_player_id);
     }
     Uint32 getTimeLeft() const
     {
-        return SDL_SwapLE32(timeleft);
+        return ltoh32(timeleft);
     }
 } __attribute__((packed));
 
@@ -112,12 +111,12 @@ public:
     void set(ObjectiveID id, Uint16 disowned_player)
     {
         setObjectiveID(id);
-        disowned_player_id = SDL_SwapLE16(disowned_player);
+        disowned_player_id = htol16(disowned_player);
         message_type = _objective_mesg_disown_player_objective;        
     }
     Uint16 getDisownedPlayerID() const
     {
-        return SDL_SwapLE16(disowned_player_id);
+        return ltoh16(disowned_player_id);
     }
 } __attribute__((packed));
 
@@ -138,11 +137,11 @@ public:
                                                                              
         this->objective_status = objective_status;
         this->occupation_status = occupation_status;
-        this->occupying_player_id = SDL_SwapLE16(occupying_player);
+        this->occupying_player_id = htol16(occupying_player);
     }
     Uint16 getOccupyingPlayerID() const
     {
-        return SDL_SwapLE16(occupying_player_id);
+        return ltoh16(occupying_player_id);
     }
 } __attribute__((packed));
 
@@ -156,17 +155,17 @@ public:
     void set(ObjectiveID id, iXY point)
     {
         setObjectiveID(id);
-        new_point_x = SDL_SwapLE32(point.x);
-        new_point_y = SDL_SwapLE32(point.y);
+        new_point_x = htol32(point.x);
+        new_point_y = htol32(point.y);
         message_type = _objective_mesg_change_output_location;
     }
     Sint32 getPointX() const
     {
-        return SDL_SwapLE32(new_point_x);
+        return ltoh32(new_point_x);
     }
     Sint32 getPointY() const
     {
-        return SDL_SwapLE32(new_point_y);
+        return ltoh32(new_point_y);
     }
 } __attribute__((packed));
 

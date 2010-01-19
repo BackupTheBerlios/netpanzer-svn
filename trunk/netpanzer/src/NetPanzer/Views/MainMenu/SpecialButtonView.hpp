@@ -23,6 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //--------------------------------------------------------------------------
 class SpecialButtonView : public RMouseHackView
 {
+protected:
+    void addSpecialButton(const iXY &pos, const char *labelString, ITEM_FUNC function)
+    {
+        addSpecialButton(pos, labelString, labelString, function);
+    }
+    void addSpecialButton(const iXY &pos, const char *labelString, const char *fileString, ITEM_FUNC function);
+
 public:
     SpecialButtonView() : RMouseHackView()
     {}

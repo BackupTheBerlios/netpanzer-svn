@@ -15,177 +15,326 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "Classes/TileSet.hpp"
 
-#include <iostream>
-#include <istream>
-
 #include <memory>
-#include <cstdio>
-#include <cstdlib>
+#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
-#include <cassert>
 
-#include "Util/FileStream.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
-#include "2D/Surface.hpp"
-#include "Util/Log.hpp"
 
-TileSetHeader* TileSet::header = 0;
-std::vector<TileAttributes>* TileSet::tile_attributes = 0;
-std::vector<Surface *>* TileSet::tiles = 0;
-std::string* TileSet::name = 0;
-
-void
-TileSet::cleanUp()
+TileSet::TileSet( )
 {
-    freeTiles();
-    if ( tile_attributes )
-    {
-        delete tile_attributes;
-        tile_attributes = 0;
-    }
-
-    if ( header )
-    {
-        delete header;
-        header = 0;
-    }
-
-    if ( name )
-    {
-        delete name;
-        name = 0;
-    }
+    tile_info = 0;
+    tile_data = 0;
+    tile_set_loaded = false;
+    tile_count = 0;
 }
 
-void
-TileSet::freeTiles()
+TileSet::~TileSet()
 {
-    if ( tiles )
-    {
-        for ( std::vector<Surface*>::iterator i = tiles->begin();
-                        i != tiles->end(); ++i )
-        {
-            delete(*i);
-        }
-        delete tiles;
-        tiles = 0;
-    }
+    delete[] tile_info;
+    delete[] tile_data;
 }
 
-void TileSet::readTileSetHeader(IFileStream & file)
+void TileSet::readTileDbHeader(filesystem::ReadFile& file,
+        TILE_DBASE_HEADER *dbHeader)
 {
-    if ( ! header )
-    {
-        header = new TileSetHeader();
-    }
-
-    std::getline(file, header->image_file, ':');
-    std::getline(file, header->unused, ':');
-    file >> header->version;
-    file.ignore(1);
-    file >> header->x_pix;
-    file.ignore(1);
-    file >> header->y_pix;
-    file.ignore(1);
-    file >> header->tile_count;
-
-    LOGGER.debug("TSinfo %s (%s) version %d with %d tiles of %dx%d",
-                header->image_file.c_str(), header->unused.c_str(), header->version,
-                header->tile_count, header->x_pix, header->y_pix);
+    file.read(&dbHeader->netp_id_header, sizeof(dbHeader->netp_id_header), 1);
+    dbHeader->version = file.readULE16();
+    dbHeader->x_pix = file.readULE16();
+    dbHeader->y_pix = file.readULE16();
+    dbHeader->tile_count = file.readULE16();
+    file.read(&dbHeader->palette, sizeof(dbHeader->palette), 1);
 }
 
-void
-TileSet::load(const char * tsname)
+void TileSet::computeTileConsts( void )
 {
-    if ( ! name )
-    {
-        name = new std::string(tsname);
-    }
-    else if ( ! name->compare(tsname) )
-    {
-        LOGGER.warning("TileSet not loaded, new %s, old %s", tsname, name->c_str());
-        return; // is same tileset, do not load it.
-    }
-    
-    std::string file_path("tilesets/");
-    file_path.append(tsname);
+    tile_size = tile_set_info.x_pix * tile_set_info.y_pix;
+}
+
+void TileSet::loadTileSetInfo( const char *file_path )
+{
+    std::auto_ptr<filesystem::ReadFile> file (filesystem::openRead(file_path));
+
+    delete[] tile_data;
+    tile_data = 0;
+    delete[] tile_info;
+    tile_info = 0;
+    tile_set_loaded = false;
+
+    readTileDbHeader(*file, &tile_set_info);
+
+    tile_count = tile_set_info.tile_count;
+
+    tile_set_loaded = true;
+
+    computeTileConsts();
+}
+
+void TileSet::loadTileSet( const char *file_path )
+{
+    unsigned long  tile_buffer_size;
+
     try {
-        IFileStream file(file_path);
+	std::auto_ptr<filesystem::ReadFile> file(
+                filesystem::openRead(file_path));
 
-        freeTiles();
+        delete[] tile_data;
+        tile_data = 0;
+        delete[] tile_info;
+        tile_info = 0;
+        tile_set_loaded = false;
 
-        readTileSetHeader(file);
-        loadTileAttributes(file);
-        
+	readTileDbHeader(*file, &tile_set_info);
+
+	tile_buffer_size = (tile_set_info.x_pix * tile_set_info.y_pix) * tile_set_info.tile_count;
+
+	tile_info =  new TILE_HEADER [ tile_set_info.tile_count ];
+	assert( tile_info != 0 );
+
+	tile_data =  new unsigned char[tile_buffer_size];
+	assert( tile_data != 0 );
+
+	file->read(tile_info, tile_set_info.tile_count, sizeof(TILE_HEADER));
+	file->read( tile_data, tile_buffer_size, 1);
+
+    	tile_set_loaded = true;
+	
+	computeTileConsts();
     } catch(std::exception& e) {
 	throw Exception("Couldn't load tileset '%s': %s",
-		file_path.c_str(), e.what());
+		file_path, e.what());
     }
 }
 
-void
-TileSet::loadImages()
+
+void TileSet::loadTileSet( const char *file_path, WadMapTable &mapping_table )
 {
-    freeTiles();
+    try {
+	unsigned long  tile_buffer_size;
+	unsigned long  tile_size;
 
-    Surface big;
+	std::auto_ptr<filesystem::ReadFile> file(
+                filesystem::openRead(file_path));
 
-    std::string iname("tilesets/");
-    iname += header->image_file;
+	delete[] tile_data;
+	tile_data = 0;
+	delete[] tile_info;
+	tile_info = 0;
+	tile_set_loaded = false;
 
-    big.loadPNG(iname.c_str());
-    SDL_Rect r = { 0, 0, header->x_pix, header->y_pix };
+	// ** Read Header Info **
+    	readTileDbHeader(*file, &tile_set_info);
 
-    tiles = new std::vector<Surface*>();
-    unsigned int ntiles = header->tile_count;
-    tiles->resize(ntiles);
-    for ( unsigned int n = 0; n < ntiles; ++n )
-    {
-            (*tiles)[n] = new Surface(header->x_pix, header->y_pix, 1);
-            big.bltRect(&r, *(*tiles)[n], 0, 0);
-            (*tiles)[n]->optimize();
-            r.x += header->x_pix;
-            if ( (unsigned int)r.x >= big.getWidth() )
-            {
-                r.x = 0;
-                r.y += header->y_pix;
-            }
+	// ** Read in Tile Info **
+	tile_info = new TILE_HEADER [ mapping_table.used_tile_count ];
+
+	unsigned short tile_count   = 0;
+	unsigned long  tile_index   = 0;
+	unsigned long  mapped_index = 0;
+	unsigned long  unused_tile_count;
+	unsigned long  used_tile_count;
+
+    	tile_count = getTileCount();
+
+	for ( tile_index = 0; tile_index < tile_count; tile_index++ ) {
+	    if ( mapping_table[ tile_index ].is_used == true ) {
+		file->read( (tile_info + mapped_index), sizeof(TILE_HEADER), 1);
+		mapped_index++;
+	    } else {
+		file->seek(file->tell() + sizeof( TILE_HEADER ));
+	    }
+	}
+
+	// ** Read in tile data **
+	tile_buffer_size = (tile_set_info.x_pix * tile_set_info.y_pix) * mapping_table.used_tile_count;
+	tile_size = (tile_set_info.x_pix * tile_set_info.y_pix);
+
+	tile_data =  new unsigned char [tile_buffer_size];
+
+	mapped_index = 0;
+	tile_index = 0;
+
+	while ( tile_index < tile_count ) {
+	    used_tile_count = 0;
+	    unused_tile_count = 0;
+
+	    //** find the next used tile
+	    while( (tile_index < tile_count) && (mapping_table[ tile_index ].is_used == false) ) {
+		unused_tile_count++;
+		tile_index++;
+	    }
+
+	    if ( tile_index < tile_count) {
+		if (unused_tile_count != 0) {
+		    file->seek(file->tell()+ tile_size * unused_tile_count);
+		}
+
+		while( (tile_index < tile_count) && (mapping_table[ tile_index ].is_used == true) ) {
+		    used_tile_count++;
+		    tile_index++;
+		}
+		
+		if (used_tile_count != 0) {
+		    file->read( (tile_data + (mapped_index*tile_size)),
+			    tile_size , used_tile_count);
+		    mapped_index += used_tile_count;
+		}
+
+    	    }	// ** if ( tile_index < tile_count)
+	}
+
+	tile_set_loaded = true;
+
+	TileSet::tile_count = mapping_table.used_tile_count;
+	computeTileConsts();
+    } catch(std::exception& e) {
+	throw Exception("Error while reading tileset '%s': %s",
+		file_path, e.what());
     }
 }
 
-void
-TileSet::loadTileAttributes(IFileStream& file)
-{
-    if ( ! tile_attributes )
-    {
-        tile_attributes = new std::vector<TileAttributes>();
-    }
-    int number;
-    tile_attributes->resize(header->tile_count);
 
-    std::vector<TileAttributes>::iterator i;
-    for ( i = tile_attributes->begin(); i != tile_attributes->end(); ++i )
-    {
-        file >> number;
-        file.ignore(1);
-        file >> number;
-        i->attrib = number;
-        file.ignore(1);
-        file >> number;
-        i->move_value = number;
-        file.ignore(1);
-        file >> number;
-        i->avg_color.r = number;
-        file.ignore(1);
-        file >> number;
-        i->avg_color.g = number;
-        file.ignore(1);
-        file >> number;
-        i->avg_color.b = number;
+void TileSet::loadTileSetInfo( const char *file_path, WadMapTable &mapping_table )
+{
+    try {
+	std::auto_ptr<filesystem::ReadFile> file(
+                filesystem::openRead(file_path));
+
+	delete[] tile_data;
+	tile_data = 0;
+	delete[] tile_info;
+	tile_info = 0;
+	tile_set_loaded = false;
+
+	// ** Read Header Info **
+	readTileDbHeader(*file, &tile_set_info);
+
+	// ** Read in Tile Info **
+	tile_info =  new TILE_HEADER [ mapping_table.used_tile_count ];
+
+	unsigned short tile_count   = 0;
+	unsigned long  tile_index   = 0;
+	unsigned long  mapped_index = 0;
+
+	tile_count = getTileCount();
+
+	for ( tile_index = 0; tile_index < tile_count; tile_index++ ) {
+	    if ( mapping_table[ tile_index ].is_used == true ) {
+		file->read((tile_info + mapped_index), sizeof ( TILE_HEADER ), 1);
+		mapped_index++;
+	    } else {
+		file->seek(file->tell()+sizeof( TILE_HEADER ));
+	    }
+	}
+
+	tile_set_loaded = true;
+
+	TileSet::tile_count = mapping_table.used_tile_count;
+	computeTileConsts();
+    } catch(std::exception& e) {
+	throw Exception("Error while reading tileset '%s': %s", file_path,
+		e.what());
+    }
+}
+
+bool TileSet::startPartitionTileSetLoad( const char *file_path, WadMapTable &mapping_table, unsigned long partitions )
+{
+    unsigned long  tile_buffer_size;
+    unsigned long  tile_size;
+
+    partition_load_fhandle = filesystem::openRead(file_path);
+
+    delete[] tile_data;
+    tile_data = 0;
+    delete[] tile_info;
+    tile_info = 0;
+    tile_set_loaded = false;
+
+    // ** Read Header Info **
+    readTileDbHeader(*partition_load_fhandle, &tile_set_info);
+
+    // ** Read in Tile Info **
+    tile_info =  new TILE_HEADER [ mapping_table.used_tile_count ];
+    assert( tile_info != 0 );
+
+    unsigned short tile_count   = 0;
+    unsigned long  tile_index   = 0;
+    unsigned long  mapped_index = 0;
+
+    tile_count = getTileCount();
+
+    for ( tile_index = 0; tile_index < tile_count; tile_index++ ) {
+        if ( mapping_table[ tile_index ].is_used == true ) {
+            partition_load_fhandle->read((tile_info + mapped_index), sizeof ( TILE_HEADER ), 1 );
+            mapped_index++;
+        } else {
+            partition_load_fhandle->seek(partition_load_fhandle->tell()+sizeof( TILE_HEADER ));
+        }
+    }
+
+    // ** Read in tile data **
+    tile_buffer_size = (tile_set_info.x_pix * tile_set_info.y_pix) * mapping_table.used_tile_count;
+    TileSet::tile_size = tile_size = (tile_set_info.x_pix * tile_set_info.y_pix);
+
+    tile_data = new unsigned char [tile_buffer_size];
+    assert( tile_data != 0 );
+
+    partition_load_tile_index = 0;
+    partition_load_mapped_index = 0;
+
+    if( partitions == 0 ) {
+        partition_load_partition_count = tile_count;
+        int percent;
+        partitionTileSetLoad( mapping_table, &percent );
+        return( false );
+    } else {
+        partition_load_partition_count = tile_count / partitions;
+        return( true );
+    }
+}
+
+bool TileSet::partitionTileSetLoad( WadMapTable &mapping_table, int *percent_complete )
+{
+    unsigned long tile_count = getTileCount();
+    unsigned long partition_index = 0;
+
+    *percent_complete = -1;
+
+    while( (partition_load_tile_index < tile_count) && (partition_index < partition_load_partition_count) ) {
+        if ( mapping_table[ partition_load_tile_index ].is_used == true ) {
+            partition_load_fhandle->read((tile_data + (partition_load_mapped_index*tile_size)), tile_size, 1);
+            partition_load_mapped_index++;
+        } else {
+            partition_load_fhandle->seek(partition_load_fhandle->tell()+tile_size);
+        }
+
+        partition_index++;
+        partition_load_tile_index++;
+    }
+
+    if ( partition_load_tile_index == tile_count ) {
+        delete partition_load_fhandle;
+        partition_load_fhandle = 0;
+        tile_set_loaded = true;
+
+        TileSet::tile_count = mapping_table.used_tile_count;
+        computeTileConsts();
+
+        *percent_complete = 100;
+
+        return false;
+    } else {
+        float percent;
+        percent = ( ( (float) partition_load_tile_index) / ( (float) tile_count ) ) * 100;
+        *percent_complete = (int) percent;
+
+        partition_index = 0;
+        return true;
     }
 }

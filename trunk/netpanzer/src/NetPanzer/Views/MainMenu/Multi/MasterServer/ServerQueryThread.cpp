@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "ServerQueryThread.hpp"
 
@@ -136,17 +136,17 @@ ServerQueryThread::onDisconected(network::TCPSocket *s)
 }
 
 void
-ServerQueryThread::onSocketError(network::TCPSocket *s, const char * msg)
+ServerQueryThread::onSocketError(network::TCPSocket *s)
 {
-    LOGGER.warning("MASTERSERVER Socket error [%s] '%s'", s->getAddress().getIP().c_str(), msg);
+    LOGGER.warning("MASTERSERVER Socket error [%s]", s->getAddress().getIP().c_str());
     delete querying_msdata[s];
     querying_msdata.erase(s);    
 }
 
 void
-ServerQueryThread::onSocketError(network::UDPSocket *s, const char * msg)
+ServerQueryThread::onSocketError(network::UDPSocket *s)
 {
-    LOGGER.warning("SERVER query socket error [%s] '%s'", s->getAddress().getIP().c_str(), msg);
+    LOGGER.warning("SERVER query socket error [%s]", s->getAddress().getIP().c_str());
     udpsocket = 0;
 }
 

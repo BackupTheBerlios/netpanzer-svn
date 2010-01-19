@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "JoinView.hpp"
 #include "Views/Components/Desktop.hpp"
@@ -35,9 +35,9 @@ JoinView::JoinView() : HostJoinTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void JoinView::doDraw()
+void JoinView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    HostJoinTemplateView::doDraw();
+    HostJoinTemplateView::doDraw(viewArea, clientArea);
 } // end JoinView::doDraw
 
 // doDeactivate

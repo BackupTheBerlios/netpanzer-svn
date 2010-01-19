@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include <string>
 #include <sstream>
@@ -28,8 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 void OpcodeDebugger::logOpcode(std::ostream& log, UnitOpcode* opcode)
 {
     log << " UNIT:" << opcode->getUnitID()
-        << " FL:" << int(opcode->getOpcode()&0x80) << " ";
-    switch(opcode->getOpcode()) {
+        << " FL:" << (int) opcode->flags << " ";
+    switch(opcode->opcode) {
         case _UNIT_OPCODE_MOVE:
         {
             MoveOpcode* movecode = (MoveOpcode*) opcode;

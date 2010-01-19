@@ -15,12 +15,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "BotTaskList.hpp"
 #include "BotTask.hpp"
 #include "Util/Log.hpp"
-#include "Units/Unit.hpp"
 
 //-----------------------------------------------------------------
 BotTaskList::~BotTaskList()
@@ -33,7 +32,7 @@ BotTaskList::~BotTaskList()
 /**
  * If unit didn't move then task=IDLE
  */
-void BotTaskList::adjustLastUnitLoc(Unit *unit)
+void BotTaskList::adjustLastUnitLoc(UnitBase *unit)
 {
     iXY curLoc = unit->unit_state.location;
     if (curLoc == m_tasks[unit->id]->getLastLoc()) {
@@ -42,7 +41,7 @@ void BotTaskList::adjustLastUnitLoc(Unit *unit)
     m_tasks[unit->id]->setLastLoc(curLoc);
 }
 //-----------------------------------------------------------------
-void BotTaskList::setUnitTask(Unit *unit, int task)
+void BotTaskList::setUnitTask(UnitBase *unit, int task)
 {
     bottasks_t::iterator it = m_tasks.find(unit->id);
     if (it == m_tasks.end()) {
@@ -57,7 +56,7 @@ void BotTaskList::setUnitTask(Unit *unit, int task)
 /**
  * Query for unit task and adjust unit last location.
  */
-int BotTaskList::queryUnitTask(Unit *unit)
+int BotTaskList::queryUnitTask(UnitBase *unit)
 {
     bottasks_t::iterator it = m_tasks.find(unit->id);
     if (it == m_tasks.end()) {

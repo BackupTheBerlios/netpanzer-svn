@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _DISCONECTEDVIEW_HPP
 
 #include "Views/MainMenu/SpecialButtonView.hpp"
+#include "2D/Surface.hpp"
 #include <string>
 
 //---------------------------------------------------------------------------
@@ -27,15 +28,13 @@ class DisconectedView : public SpecialButtonView
 {
 private:
     void init();
+    static void buttonOk();
     std::string disconectMsg;
 
-protected:
-    void onComponentClicked(Component *c);
-    
 public:
     DisconectedView();
 
-    virtual void doDraw();
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void doActivate();
     void setMsg(const char * msg) { disconectMsg=msg; }
 };

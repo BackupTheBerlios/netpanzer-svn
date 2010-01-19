@@ -15,9 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 #include "Interfaces/GameManager.hpp"
-#include "Core/GlobalEngineState.hpp"
 
 #include <stdio.h>
 #include <fcntl.h>
@@ -42,32 +41,41 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PlayerInterface.hpp"
 #include "PowerUps/PowerUpInterface.hpp"
 #include "Weapons/ProjectileInterface.hpp"
+#include "Interfaces/TileInterface.hpp"
 #include "Units/UnitInterface.hpp"
 #include "Units/UnitProfileInterface.hpp"
 #include "Interfaces/WorldViewInterface.hpp"
 
 #include "Classes/ScreenSurface.hpp"
+#include "Units/UnitBlackBoard.hpp"
 #include "Classes/WorldInputCmdProcessor.hpp"
 #include "Classes/SpriteSorter.hpp"
+#include "Classes/Network/ClientMessageRouter.hpp"
 #include "Classes/Network/ClientConnectDaemon.hpp"
 #include "Classes/Network/ServerConnectDaemon.hpp"
+#include "Classes/Network/ServerMessageRouter.hpp"
 #include "Classes/Network/NetworkState.hpp"
 #include "Classes/Network/NetworkServer.hpp"
 #include "Classes/Network/NetworkClient.hpp"
 #include "Classes/Network/SystemNetMessage.hpp"
 #include "Classes/Network/ConnectNetMessage.hpp"
-#include "Units/Unit.hpp"
+#include "Units/Vehicle.hpp"
+#include "Units/UnitGlobals.hpp"
 
 #include "2D/Palette.hpp"
 #include "Views/Components/Desktop.hpp"
 #include "Views/Components/ViewGlobals.hpp"
 #include "Views/MainMenu/MainMenuView.hpp"
 #include "Views/MainMenu/OptionsTemplateView.hpp"
+#include "Views/MainMenu/OrderingView.hpp"
+#include "Views/MainMenu/SkirmishView.hpp"
 #include "Views/MainMenu/HelpView.hpp"
 #include "Views/MainMenu/Multi/JoinView.hpp"
 #include "Views/MainMenu/Multi/HostView.hpp"
 #include "Views/MainMenu/Multi/GetSessionView.hpp"
+#include "Views/MainMenu/Multi/UnitSelectionView.hpp"
 #include "Views/MainMenu/Multi/FlagSelectionView.hpp"
+#include "Views/MainMenu/Multi/UnitColorView.hpp"
 #include "Views/MainMenu/Multi/HostOptionsView.hpp"
 #include "Views/MainMenu/Multi/MapSelectionView.hpp"
 #include "Views/MainMenu/Multi/PlayerNameView.hpp"
@@ -81,6 +89,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Views/Game/CodeStatsView.hpp"
 #include "Views/Game/LibView.hpp"
 #include "Views/Game/HelpScrollView.hpp"
+#include "Views/Game/ResignView.hpp"
 #include "Views/Game/AreYouSureResignView.hpp"
 #include "Views/Game/AreYouSureExitView.hpp"
 #include "Views/Game/GameView.hpp"
@@ -98,18 +107,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileSystem.hpp"
 
 #include "Bot/Bot.hpp"
-#include "Bot/BotManager.hpp"
-
-#include "Classes/SpawnList.hpp"
-#include "Resources/ResourceManager.hpp"
-#include "Resources/ResourceManagerMessages.hpp"
 
 #define _MAX_INITIALIZE_PROCS (10)
 #define _MAX_DEDICATED_INITIALIZE_PROCS (8)
 
+
+time_t GameManager::game_start_time = 0;
+time_t GameManager::game_elapsed_time_offset = 0;
+
+bool GameManager::display_frame_rate_flag = false;
+bool GameManager::display_network_info_flag;
+
+std::string GameManager::map_path;
+
+static Surface hostLoadSurface;
+
 // ******************************************************************
 
-void GameManager::drawTextCenteredOnScreen(const char *string, IntColor color)
+void GameManager::drawTextCenteredOnScreen(const char *string, PIX color)
 {
         Surface text;
         text.renderText(string, color, 0);
@@ -126,29 +141,51 @@ void GameManager::drawTextCenteredOnScreen(const char *string, IntColor color)
 
 // ******************************************************************
 
+void GameManager::loadPalette(const std::string& palette_name)
+{
+    if ( Screen ) {
+        Palette::init(palette_name);
+        Screen->setPalette(Palette::color);
+    }
+}
+
+// ******************************************************************
+
 void GameManager::setVideoMode()
 {
+    // try to find sensible defaults for SDL flags...
+    if(gameconfig->hardwareSurface.isDefaultValue()) {
+        gameconfig->hardwareSurface = false;
+    }
+    if(gameconfig->hardwareDoubleBuffer.isDefaultValue()) {
+        gameconfig->hardwareDoubleBuffer = false;
+    }
 
     // construct flags
     iXY mode_res;
     iXY old_res = screen ? iXY(screen->getWidth(), screen->getHeight()): iXY(0,0);
-    Uint32 flags = GameConfig::video_fullscreen ? SDL_FULLSCREEN : 0;
-    flags |= GameConfig::video_hardwaresurface ? SDL_HWSURFACE : 0;
-    flags |= GameConfig::video_doublebuffer ? SDL_DOUBLEBUF : 0;
+    Uint32 flags = gameconfig->fullscreen ? SDL_FULLSCREEN : 0;
+    flags |= gameconfig->hardwareSurface ? SDL_HWSURFACE : 0;
+    flags |= gameconfig->hardwareDoubleBuffer ? SDL_DOUBLEBUF : 0;
 
-    if ( ! GameConfig::video_fullscreen )
-    {
-        flags |= SDL_RESIZABLE;
+    int mode;
+    for(mode=gameconfig->screenresolution; mode>=0; mode--) {
+        switch(mode) {
+            case 0: mode_res = iXY(640,480); break;
+            case 1: mode_res = iXY(800,600); break;
+            case 2: mode_res = iXY(1024,768); break;
+            case 3: mode_res = iXY(1280,1024); break;
+        }
+
+        if(Screen->isDisplayModeAvailable(mode_res.x, mode_res.y, 8, flags)) {
+            gameconfig->screenresolution = mode;
+            break;
+        }
     }
+    if(mode<0)
+        throw Exception("couldn't find a usable video mode");
 
-    mode_res.x = GameConfig::video_width;
-    mode_res.y = GameConfig::video_height;
-
-    Screen->setVideoMode(mode_res.x, mode_res.y, flags);
-
-    SDL_Surface *v = Screen->getSurface();
-    mode_res.x = v->w;
-    mode_res.y = v->h;
+    Screen->setVideoMode(mode_res.x, mode_res.y, 8, flags);
 
     WorldViewInterface::setCameraSize( mode_res.x, mode_res.y);
     delete screen;
@@ -157,12 +194,58 @@ void GameManager::setVideoMode()
     Desktop::checkResolution(old_res, mode_res);
     Desktop::checkViewPositions(mode_res);
 
-    if(old_res == iXY(0,0))
-    {
-        drawTextCenteredOnScreen("Loading...", 0xffffff); // white
+    if(old_res == iXY(0,0)) {
+        // users can get annoyed when they see a black screen for half a minute
+        // so we display something here... (we're just hoping that palette1 is
+        // not black)
+        Palette::color[255].r = 255;
+        Palette::color[255].g = 255;
+        Palette::color[255].b = 255;
+        Screen->setPalette(Palette::color);
+        drawTextCenteredOnScreen("Please wait... generating palettes", 255);
     }
     
-    Palette::setColors();
+    // reset palette
+    Screen->setPalette(Palette::color);
+}
+
+// ******************************************************************
+void GameManager::initializeGameLogic()
+{
+    PlayerInterface::initialize(gameconfig->maxplayers);
+    UnitBlackBoard::initializeBlackBoard();
+    UnitInterface::initialize( gameconfig->GetUnitsPerPlayer() );
+    PathScheduler::initialize();
+    PowerUpInterface::resetLogic();
+}
+
+// ******************************************************************
+void GameManager::reinitializeGameLogic()
+{
+    shutdownGameLogic();
+    initializeGameLogic();
+}
+
+// ******************************************************************
+bool GameManager::resetGameLogic()
+{
+    PlayerInterface::reset();
+    UnitInterface::reset();
+    UnitBlackBoard::initializeBlackBoard();
+    PathScheduler::initialize();
+    PowerUpInterface::resetLogic();
+    ProjectileInterface::resetLogic();
+    startGameTimer();
+    return true;
+}
+
+// ******************************************************************
+void GameManager::shutdownGameLogic()
+{
+    PlayerInterface::cleanUp();
+    UnitInterface::cleanUp();
+    PathScheduler::cleanUp();
+    //ObjectiveInterface::cleanUp();
 }
 
 void GameManager::shutdownParticleSystems()
@@ -172,42 +255,98 @@ void GameManager::shutdownParticleSystems()
 }
 
 // ******************************************************************
-void GameManager::loadGameMap(const char *map_file_path)
+void GameManager::startGameMapLoad(const char *map_file_path,
+                                   unsigned long partitions)
 {
-    std::string map_path("maps/");
+    map_path = "maps/";
     map_path.append(map_file_path);
 
-    if ( !MapInterface::load( map_path.c_str()) )
+    if (!MapInterface::startMapLoad( map_path.c_str(), true, partitions))
         throw Exception("map format error.");
+}
+
+// ******************************************************************
+
+bool GameManager::gameMapLoad( int *percent_complete )
+{
+    if( MapInterface::loadMap( percent_complete ) == false ) {
+        finishGameMapLoad();
+        return false;
+    }
+
+    return true;
+}
+
+// ******************************************************************
+
+void GameManager::finishGameMapLoad()
+{
+    std::string temp_path = map_path;
+    temp_path.append(".opt");
+    ObjectiveInterface::loadObjectiveList( temp_path.c_str() );
+
+    ParticleInterface::initParticleSystems();
+
+    ParticleInterface::addCloudParticle(gameconfig->cloudcoverage);
+    Physics::wind.setVelocity(gameconfig->windspeed, 107);
+}
+
+// ******************************************************************
+
+void GameManager::dedicatedLoadGameMap(const char *map_name )
+{
+    Console::mapSwitch(map_name);
+    *Console::server << "Server Settings:\n"
+        << "Map: " << gameconfig->map << "\n"
+        << "MaxPlayers: " << gameconfig->maxplayers << "\n"
+        << "MaxUnits: " << gameconfig->maxunits << "\n"
+        << "Gametype: " << gameconfig->getGameTypeString() << "\n"
+        << "ObjectivePercentage: " <<
+            gameconfig->objectiveoccupationpercentage << "\n"
+        << "TimeLimit: " << gameconfig->timelimit << "\n"
+        << "FragLimit: " << gameconfig->fraglimit << "\n"
+        << "RespawnType: " << gameconfig->getRespawnTypeString() << "\n"
+        << "Mapcycle: " << gameconfig->mapcycle << "\n"
+        << "Powerups: " << (gameconfig->powerups ? "yes" : "no") << "\n"
+        << "AllowAllies: " << (gameconfig->allowallies ? "yes" : "no") << "\n"
+        << "CloudCoverage: " << gameconfig->cloudcoverage << " (Windspeed "
+           << gameconfig->windspeed << ")" << std::endl;
+    
+    map_path = "maps/";
+    map_path.append(map_name);
+
+    MapInterface::startMapLoad( map_path.c_str(), false, 0 );
 
     map_path.append(".opt");
     ObjectiveInterface::loadObjectiveList( map_path.c_str() );
 
+    ParticleInterface::initParticleSystems();
+    Particle2D::setCreateParticles(false);
 }
 
 // ******************************************************************
-void GameManager::spawnPlayer( const Uint16 player )
+void GameManager::spawnPlayer( Uint16 player )
 {
-    global_engine_state->sound_manager->stopTankIdle();
+    sound->stopTankIdle();
 
     // ** Get a new spawn point and spawn the player **
     iXY spawn_point = MapInterface::getFreeSpawnPoint();
-
     PlayerInterface::spawnPlayer( player, spawn_point );
 
-    global_engine_state->sound_manager->playTankIdle();
-}
-
-void GameManager::spawnPlayerAt( const Uint16 player, const iXY& location )
-{
-    if (   location.x >=0 && location.y >=0
-        && location.x < (int)MapInterface::getWidth()
-        && location.y < (int)MapInterface::getHeight() )
+    //** Change the location of the view camera to the spawn point **
+    iXY world_loc;
+    MapInterface::mapXYtoPointXY( spawn_point, &world_loc );
+    if ( PlayerInterface::getLocalPlayerIndex() == player )
     {
-        global_engine_state->sound_manager->stopTankIdle();
-        PlayerInterface::spawnPlayer( player, location );
-        global_engine_state->sound_manager->playTankIdle();
+        WorldViewInterface::setCameraPosition( world_loc );
     }
+    else
+    {
+        SystemSetPlayerView set_view(world_loc.x, world_loc.y);
+        SERVER->sendMessage(player, &set_view, sizeof(SystemSetPlayerView));
+    }
+
+    sound->playTankIdle();
 }
 
 void GameManager::respawnAllPlayers()
@@ -226,83 +365,6 @@ void GameManager::respawnAllPlayers()
             spawnPlayer( player_index );
         }
     }
-}
-
-void GameManager::disconnectPlayerCleanUp(const Uint16 player)
-{
-    destroyPlayerUnits(player);
-    disownPlayerObjectives(player);
-
-    PlayerState* player_st = PlayerInterface::getPlayer(player);
-
-    ResourceManagerReleaseFlagMessage releasemsg;
-    releasemsg.setFlagID(player_st->getFlag());
-    ResourceManager::releaseFlag(player_st->getFlag());
-    NetworkServer::broadcastMessage(&releasemsg, sizeof(releasemsg));
-
-    PlayerInterface::disconnectPlayerCleanup( player );
-
-    SystemConnectAlert msg;
-    msg.set( player, _connect_alert_mesg_disconnect);
-    NetworkServer::broadcastMessage(&msg, sizeof(msg));
-    NetworkClient::sendMessage(&msg, sizeof(msg));
-}
-
-void GameManager::kickPlayer(const Uint16 player)
-{
-    if ( player < PlayerInterface::getMaxPlayers() )
-    {
-        if ( BotManager::isBot(player) )
-        {
-            BotManager::removeBot(player);
-        }
-        else
-        {
-            NetworkServer::removePlayerSocket(player);
-        }
-        disconnectPlayerCleanUp(player);
-    }
-}
-
-void GameManager::destroyPlayerUnits(const Uint16 player)
-{
-    UnitInterface::destroyPlayerUnits(player);
-}
-
-void GameManager::disownPlayerObjectives(const Uint16 player)
-{
-    if ( player < PlayerInterface::getMaxPlayers() )
-    {
-        ObjectiveInterface::disownPlayerObjectives(player);
-    }
-}
-
-Uint16 GameManager::addBot()
-{
-    return BotManager::addBot();
-}
-
-void GameManager::removeAllBots()
-{
-    for (Uint16 player=0; player<PlayerInterface::getMaxPlayers(); ++player)
-    {
-        if ( BotManager::isBot(player) )
-        {
-            BotManager::removeBot(player);
-            disconnectPlayerCleanUp(player);
-        }
-    }
-}
-
-bool GameManager::changeMap(const char* map_name)
-{
-    if ( !MapsManager::existsMap(map_name) )
-    {
-        return false;
-    }
-
-    GameControlRulesDaemon::forceMapChange(map_name);
-    return true;
 }
 
 // ******************************************************************
@@ -380,7 +442,7 @@ void GameManager::netMessageConnectAlert(const NetMessage* message)
 
 void GameManager::netMessageResetGameLogic(const NetMessage* )
 {
-    global_engine_state->game_manager->resetGameLogic();
+    resetGameLogic();
 }
 
 // ******************************************************************
@@ -399,7 +461,7 @@ ConnectMesgServerGameSettings* GameManager::getServerGameSetup()
     game_setup->powerup_state = gameconfig->powerups;
     game_setup->setFragLimit(gameconfig->fraglimit);
     game_setup->setTimeLimit(gameconfig->timelimit);
-    game_setup->setElapsedTime(global_engine_state->game_manager->getGameTime());
+    game_setup->setElapsedTime(getGameTime());
 
     return game_setup;
 }
@@ -426,7 +488,7 @@ void GameManager::netMessagePingRequest(const NetMessage* message)
          && ping_request->getClientPlayerIndex() != 0
        )
     {
-        NetworkServer::sendMessage(player->getID(), &ping_ack, sizeof(SystemPingAcknowledge));
+        SERVER->sendMessage(player->getID(), &ping_ack, sizeof(SystemPingAcknowledge));
     }
 }
 
@@ -453,17 +515,17 @@ bool GameManager::startClientGameSetup(const NetMessage* message, int *result_co
     gameconfig->fraglimit = game_setup->getFragLimit();
     gameconfig->timelimit = game_setup->getTimeLimit();
 
-    global_engine_state->game_manager->setElapsetTimeOffset(game_setup->getElapsedTime());
-    gameconfig->map = game_setup->map_name;
+    startGameTimer();
+    game_elapsed_time_offset = game_setup->getElapsedTime();
 
-//    try {
-//        loadGameMap(game_setup->map_name);
-//    } catch(std::exception& e) {
-//        LOGGER.warning("XError while loading map '%s': %s",
-//                game_setup->map_name, e.what());
-//        *result_code = _mapload_result_no_map_file;
-//        return false;
-//    }
+    try {
+        startGameMapLoad( game_setup->map_name, 20);
+    } catch(std::exception& e) {
+        LOGGER.warning("Error while loading map '%s': %s",
+                game_setup->map_name, e.what());
+        *result_code = _mapload_result_no_map_file;
+        return false;
+    }
 
     *result_code = _mapload_result_success;
     return true;
@@ -471,9 +533,14 @@ bool GameManager::startClientGameSetup(const NetMessage* message, int *result_co
 
 // ******************************************************************
 
-void GameManager::clientGameSetup( )
+bool GameManager::clientGameSetup( int *percent_complete )
 {
-    global_engine_state->game_manager->reinitializeGameLogic();
+    if( gameMapLoad( percent_complete ) == false ) {
+        reinitializeGameLogic();
+        return false;
+    }
+
+    return true;
 }
 
 // ******************************************************************
@@ -516,7 +583,7 @@ void GameManager::requestNetworkPing()
     SystemPingRequest ping_request(PlayerInterface::getLocalPlayerIndex());
 
     NetworkState::ping_time_stamp = now();
-    NetworkClient::sendMessage( &ping_request, sizeof(SystemPingRequest));
+    CLIENT->sendMessage( &ping_request, sizeof(SystemPingRequest));
 }
 
 void GameManager::setNetPanzerGameOptions()
@@ -529,30 +596,46 @@ void GameManager::exitNetPanzer()
 {
     quitNetPanzerGame();
 
-    global_engine_state->game_manager->stopMainLoop();
+    gamemanager->stopMainLoop();
 }
 
 void GameManager::quitNetPanzerGame()
 {
     if ( NetworkState::status == _network_state_client ) {
         ClientConnectDaemon::shutdownConnectDaemon();
-        NetworkClient::partServer();
+        CLIENT->partServer();
     } else {
         ServerConnectDaemon::shutdownConnectDaemon();
-        NetworkServer::closeSession();
+        SERVER->closeSession();
 
         // hacky...
         PlayerGameManager* playerGameManager 
-            = dynamic_cast<PlayerGameManager*>(global_engine_state->game_manager);
+            = dynamic_cast<PlayerGameManager*>(gamemanager);
         if(playerGameManager)
             playerGameManager->quitGame();
     }
 
     ParticleSystem2D::removeAll();
     Particle2D::removeAll();
-    global_engine_state->sound_manager->stopTankIdle();
-//    UnitInterface::reset();
+    sound->stopTankIdle();
+    UnitInterface::reset();
     PlayerInterface::reset();
     ObjectiveInterface::resetLogic();
-    GameControlRulesDaemon::setStateIdle();
+    GameControlRulesDaemon::setStateServerIdle();
 }
+
+void GameManager::startGameTimer()
+{
+    game_elapsed_time_offset = 0;
+    time( &game_start_time );
+}
+
+time_t GameManager::getGameTime()
+{
+    time_t current_time;
+
+    time( &current_time );
+
+    return( (current_time - game_start_time) + game_elapsed_time_offset );
+}
+

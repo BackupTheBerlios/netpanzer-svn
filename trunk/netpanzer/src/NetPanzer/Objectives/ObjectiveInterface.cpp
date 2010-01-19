@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 #include "Objectives/ObjectiveInterface.hpp"
 
 #include <stdio.h>
@@ -131,8 +131,6 @@ ObjectiveInterface::loadObjectiveList(const char *file_path)
         std::stringstream ss(objectivecount);
         ss >> objective_count;
 
-        LOGGER.warning("There are %d objectives", objective_count);
-
         size_t loc_x, loc_y;
         size_t world_x, world_y;
         std::string name;
@@ -146,11 +144,7 @@ ObjectiveInterface::loadObjectiveList(const char *file_path)
             std::stringstream ss(location);
             ss >> loc_x >> loc_y;
             
-            LOGGER.warning("\t%s in %lu,%lu", name.c_str(), (unsigned long)loc_x, (unsigned long)loc_y);
-
             MapInterface::mapXYtoPointXY( loc_x, loc_y, &world_x, &world_y );
-
-            LOGGER.warning("\t\tin world %lu,%lu", (unsigned long)world_x, (unsigned long)world_y);
 
             objective_obj = new Outpost(objective_index, iXY(world_x, world_y),
                     BoundBox( -48, -32, 48, 32 )
@@ -297,7 +291,8 @@ ObjectiveInterface::offloadGraphics( SpriteSorter &sorter )
 
 
 bool
-ObjectiveInterface::testRuleObjectiveOccupationRatio( Uint16 player_index, float precentage)
+ObjectiveInterface::testRuleObjectiveOccupationRatio(
+        Uint16 player_index, float precentage)
 {
     size_t occupation_ratio = (size_t)
         ( ((float) objective_list.size()) * precentage  + 0.999);
@@ -307,21 +302,19 @@ ObjectiveInterface::testRuleObjectiveOccupationRatio( Uint16 player_index, float
 
     std::vector<Objective*>::iterator i;
     size_t occupied = 0;
-    for(i = objective_list.begin(); i != objective_list.end(); i++)
-    {
+    for(i = objective_list.begin(); i != objective_list.end(); i++) {
         ObjectiveState *objective_state = & ((*i)->objective_state);
-        if(objective_state->occupation_status == _occupation_status_occupied)
-        {
+        if(objective_state->occupation_status == _occupation_status_occupied) {
             Uint16 occuping_player_index 
                 = objective_state->occupying_player->getID();
 
-            if ( occuping_player_index == player_index )
-            {
+            if ( occuping_player_index == player_index ) {
                 occupied++;
-            }
-            else if (PlayerInterface::isAllied( occuping_player_index, player_index) )
-            {
-                occupied++;
+            } else if (PlayerInterface::isAllied(
+                        occuping_player_index, player_index) &&
+                        PlayerInterface::isAllied(player_index,
+                            occuping_player_index)) {
+                    occupied++;
             }
         }
     }
@@ -364,11 +357,11 @@ ObjectiveInterface::getOutpostStatus( ObjectiveID objective_id )
 }
 
 void
-ObjectiveInterface::startObjectivePositionEnumeration(Uint16 playerid)
+ObjectiveInterface::startObjectivePositionEnumeration()
 {
     objective_position_enum_index	= 0;
     objective_position_enum_list_size = objective_list.size();
-    objective_position_enum_player_id = playerid;
+    objective_position_enum_player_id = PlayerInterface::getLocalPlayerIndex();
 }
 
 bool

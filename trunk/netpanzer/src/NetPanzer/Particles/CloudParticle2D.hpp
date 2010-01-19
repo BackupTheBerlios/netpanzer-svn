@@ -21,16 +21,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include "WindParticle2D.hpp"
-#include "2D/Surface.hpp"
+#include "2D/PackedSurface.hpp"
 #include "Types/iXY.hpp"
-
-struct lua_State;
 
 
 class CloudParticle2D : public WindParticle2D
 {
 private:
+    static void loadPAKFiles();
+    static void packFiles();
+
     static iXY worldSize;    // How big the is the current world map?
+
+    static PackedSurface staticPackedCloud;
 
     void setRandomSurface();
 
@@ -40,10 +43,10 @@ public:
                      float       windMin,
                      float       windRand);
 
-    static int loadClouds(lua_State * L, void * v);
+    static void init();
 
     virtual void sim();
-    virtual void draw(SpriteSorter &sorter);
+    virtual void draw(const Surface &dest, SpriteSorter &sorter);
 };
 
 #endif // __CloudParticle2D_hpp__

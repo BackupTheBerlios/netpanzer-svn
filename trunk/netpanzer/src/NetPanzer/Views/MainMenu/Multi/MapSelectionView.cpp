@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include <memory>
 #include <vector>
@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/GameConfig.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "HostOptionsView.hpp"
-#include "Classes/WorldMap.hpp"
+#include "Classes/MapFile.hpp"
 #include "Util/FileSystem.hpp"
 #include "Util/FileStream.hpp"
 #include "Util/Exception.hpp"
@@ -33,11 +33,36 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 std::vector<MapInfo*> MapSelectionView::mapList;
 int MapSelectionView::curMap = 0;
 
-enum
+static void bNextMap()
 {
-    PREV_MAP,
-    NEXT_MAP
-};
+    // Make sure some maps are loaded.
+    if (MapSelectionView::curMap == -1) {
+        return;
+    }
+
+    if (++MapSelectionView::curMap >= (int) MapSelectionView::mapList.size()) {
+        MapSelectionView::curMap = 0;
+    }
+
+    gameconfig->mapcycle = MapSelectionView::mapList[MapSelectionView::curMap]->name;
+    HostOptionsView::updateGameConfigCloudCoverage();
+}
+
+static void bPreviousMap()
+{
+    // Make sure some maps are loaded.
+    if (MapSelectionView::curMap == -1) {
+        return;
+    }
+
+    if (--MapSelectionView::curMap < 0) {
+        MapSelectionView::curMap = MapSelectionView::mapList.size() - 1;
+    }
+
+    gameconfig->mapcycle = MapSelectionView::mapList[MapSelectionView::curMap]->name;
+    HostOptionsView::updateGameConfigCloudCoverage();
+}
+
 
 // MapSelectionView
 //---------------------------------------------------------------------------
@@ -47,12 +72,13 @@ MapSelectionView::MapSelectionView() : RMouseHackView()
     setTitle("Map Selection");
     setSubTitle("");
 
+    setAllowResize(false);
     setAllowMove(false);
     setVisible(false);
 
     moveTo(bodyTextRect.min.x, bodyTextRect.min.y + 50);
 
-    resize(bodyTextRect.getSizeX() / 2 - 10 + 30, MAP_SIZE + BORDER_SPACE * 2);
+    resizeClientArea(bodyTextRect.getSizeX() / 2 - 10 + 30, MAP_SIZE + BORDER_SPACE * 2);
 
     init();
 
@@ -73,11 +99,9 @@ void MapSelectionView::init()
 
     iXY pos(MAP_SIZE + BORDER_SPACE * 2, getClientRect().getSizeY() - 14 - BORDER_SPACE);
 
-    add ( Button::createTextButton("mapprevbutton","<",pos, arrowButtonWidth, PREV_MAP) );
-
+    addButtonCenterText(pos, arrowButtonWidth - 1, "<", "", bPreviousMap);
     pos.x += arrowButtonWidth;
-
-    add ( Button::createTextButton("mapnextbutton",">",pos, arrowButtonWidth, NEXT_MAP) );
+    addButtonCenterText(pos, arrowButtonWidth, ">", "", bNextMap);
 
     loadMaps();
     HostOptionsView::updateGameConfigCloudCoverage();
@@ -85,62 +109,32 @@ void MapSelectionView::init()
 
 } // end MapSelectionView::init
 
-void
-MapSelectionView::onComponentClicked(Component* c)
-{
-    if (curMap == -1)
-    {
-        return;
-    }
-    
-    switch ( c->getCustomCode() )
-    {
-        case PREV_MAP:
-            if ( --curMap < 0 )
-            {
-                curMap = mapList.size() - 1;
-            }
-
-            gameconfig->mapcycle = mapList[curMap]->name;
-            HostOptionsView::updateGameConfigCloudCoverage();
-            break;
-
-        case NEXT_MAP:
-            if (++curMap >= (int) mapList.size())
-            {
-                MapSelectionView::curMap = 0;
-            }
-
-            gameconfig->mapcycle = mapList[curMap]->name;
-            HostOptionsView::updateGameConfigCloudCoverage();
-            break;
-    }
-}
-
 // doDraw
 //---------------------------------------------------------------------------
-void MapSelectionView::doDraw()
+void MapSelectionView::doDraw(Surface &viewArea, Surface &clientArea)
 {
+    //iRect r(getViewRect());
+    //viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
+
     if (mapList.size() <= 0) {
         // Since there are no maps loaded, try to load some maps.
 
         int result = loadMaps();
 
         if (result == 0) {
-            drawStringCenter("No Maps Found", Color::white);
+            clientArea.bltStringCenter("No Maps Found", Color::white);
         } else if (result == 1) {
-            drawStringCenter("Outpost file error", Color::white);
+            clientArea.bltStringCenter("Outpost file error", Color::white);
         }
     }
 
     if (mapList.size() > 0) {
         // Since maps were found, draw the selected map.
-        drawImage(*(mapList[curMap]->thumbnail), BORDER_SPACE, BORDER_SPACE);
-        //mapList[curMap]->thumbnail.blt(clientArea, BORDER_SPACE, BORDER_SPACE);
-        drawCurMapInfo(iXY(MAP_SIZE + BORDER_SPACE * 2, BORDER_SPACE));
+        mapList[curMap]->thumbnail.blt(clientArea, BORDER_SPACE, BORDER_SPACE);
+        drawCurMapInfo(clientArea, iXY(MAP_SIZE + BORDER_SPACE * 2, BORDER_SPACE));
     }
 
-    View::doDraw();
+    View::doDraw(viewArea, clientArea);
 
 } // end MapSelectionView::doDraw
 
@@ -191,46 +185,42 @@ int MapSelectionView::loadMaps()
 	    std::auto_ptr<filesystem::ReadFile> file 
 		(filesystem::openRead(filename));
 
-            WorldMap netPanzerMap;
-            netPanzerMap.loadHeader(*file);
+	    MapFile netPanzerMapHeader;
+	    netPanzerMapHeader.load(*file);
 
-            MapInfo* mapinfo = new MapInfo;
+    	    MapInfo* mapinfo = new MapInfo;
 
             std::string mapname;
             const char* filestring = mapfiles[i].c_str();
             size_t i = 0;
             char c;
-            while( (c = filestring[i++]) != 0)
-            {
+            while( (c = filestring[i++]) != 0) {
                 if(c == '.')
-                {
                     break;
-                }
                 mapname += c;
             }
-
+            
             mapinfo->name = mapname;
-            mapinfo->description = netPanzerMap.getDescription();
+	    mapinfo->description = netPanzerMapHeader.description;
 
-            mapinfo->cells.x = netPanzerMap.getWidth();
-            mapinfo->cells.y = netPanzerMap.getHeight();
+	    mapinfo->cells.x = netPanzerMapHeader.width;
+	    mapinfo->cells.y = netPanzerMapHeader.height;
 
 	    int seekAmount = mapinfo->cells.getArea() * sizeof(Uint16);
 
 	    file->seek(file->tell()+seekAmount);
 
 	    iXY pix;
-            pix.x = netPanzerMap.getThumbnailWidth();
-            pix.y = netPanzerMap.getThumbnailHeight();
+	    pix.x = netPanzerMapHeader.thumbnail_width;
+	    pix.y = netPanzerMapHeader.thumbnail_height;
 
-	    mapinfo->thumbnail = new Surface(pix.x, pix.y, 1);
+	    mapinfo->thumbnail.create(pix.x, pix.y, 1);
 	    
 	    int numBytes = pix.getArea();
-	    Uint8 previewBuffer[numBytes];
-	    file->read(previewBuffer, numBytes, 1);
-	    mapinfo->thumbnail->setPixelsFromRawData(previewBuffer,numBytes);
 
-	    mapinfo->thumbnail->scale(100,100);
+	    file->read(mapinfo->thumbnail.getFrame0(), numBytes, 1);
+
+	    mapinfo->thumbnail.scale(100,100);
 	
 	    // Now try to get the outpost count from the outpost file.
 	    int objectiveCount = 0;
@@ -251,6 +241,10 @@ int MapSelectionView::loadMaps()
 	}	
     }
 
+    for (size_t i = 0; i < mapList.size(); i++) {
+        mapList[i]->thumbnail.mapFromPalette("netp");
+    }
+
     if (mapList.size() == 0) {
         throw Exception("ERROR: No maps in map directory");
     }
@@ -264,7 +258,7 @@ int MapSelectionView::loadMaps()
 
 // drawCurMapInfo
 //---------------------------------------------------------------------------
-void MapSelectionView::drawCurMapInfo( const iXY &pos)
+void MapSelectionView::drawCurMapInfo(Surface &dest, const iXY &pos)
 {
     // Draw the text.
     char strBuf[256];
@@ -275,16 +269,16 @@ void MapSelectionView::drawCurMapInfo( const iXY &pos)
     const int yOffset = 15;
 
     sprintf(strBuf, "Name:       %s", mapList[curMap]->name.c_str());
-    drawStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
+    dest.bltStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
     y += yOffset;
 
     int sizeX = (mapList[curMap]->cells.y * 32) / 480;
     int sizeY = (mapList[curMap]->cells.x * 32) / 640;
     sprintf(strBuf, "Size:       %d x %d", sizeX, sizeY);
-    drawStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
+    dest.bltStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
     y += yOffset;
 
     sprintf(strBuf, "Objectives: %d", mapList[curMap]->objectiveCount);
-    drawStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
+    dest.bltStringShadowed(x, y, strBuf, windowTextColor, windowTextColorShadow);
 
 } // end MapSelectionView::drawMapInfo

@@ -32,7 +32,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // Forwards.
 /////////////////////////////////////////////////////////////////////////////
 
+class ColorTable;
 class Surface;
+class PackedSurface;
+
 
 //--------------------------------------------------------------------------
 class Particle2D
@@ -46,11 +49,11 @@ public:
         Particle2D::bltTo = bltTo;
     }
 
-    static  void drawAll(SpriteSorter &sorter);
+    static  void drawAll(const Surface &dest, SpriteSorter &sorter);
     static  void removeAll();
     static  void simAll();
 
-    virtual void draw(SpriteSorter &sorter);
+    virtual void draw(const Surface &dest, SpriteSorter &sorter);
     virtual void sim();
 
     void *operator new(size_t numBytes);  // Overloaded for static array.
@@ -86,7 +89,7 @@ public:
     int getFPS(int FPSmin, int FPSrand);
 
     // Returns the pak index depending on the the specified scale.
-    static unsigned int getPakIndex(float scale, unsigned int pakImageCount);
+    static int getPakIndex(float scale, int pakImageCount);
 
     static float getScale(float scaleMin, float scaleRand);
 
@@ -129,6 +132,149 @@ protected:
     Particle2D *next;              // Next in the list.
     Particle2D *prev;              // Previous in the list.
 
-}; // end Particle2D
+}
+; // end Particle2D
+
+//// SpriteBltNormal
+////--------------------------------------------------------------------------
+//class SpriteBltNormal : public SpriteSurface
+//{
+//public:
+//	virtual void blit(Surface *surface, iRect &world_win);
+//
+//}; // end SpriteBltNormal
+//
+//// SpriteBlt
+////--------------------------------------------------------------------------
+//class SpriteBlt
+//{
+//public:
+//	virtual void blit(Surface *surface, iRect &world_win);
+//
+//	ColorTable *colorTable;
+//
+//	float scale;
+//
+//}; // end SpriteBltNormal
+//
+//// SpriteBltTrans
+////--------------------------------------------------------------------------
+//class SpriteBltTrans : public SpriteSurface
+//{
+//public:
+//	virtual void blit(Surface *surface, iRect &world_win);
+//
+//}; // end SpriteBltTrans
+//
+//// SpriteBltBrightness
+////--------------------------------------------------------------------------
+//class SpriteBltBrightness : public SpriteSurface
+//{
+//public:
+//	float brightness;
+//
+//	virtual void blit(Surface *surface, iRect &world_win);
+//
+//}; // end SpriteBltTrans
+//
+//// SpriteBltBlendRandom
+////--------------------------------------------------------------------------
+//class SpriteBltBlendRandom : public SpriteSurface
+//{
+//private:
+//	int blendTable;
+//
+//public:
+//	SpriteBltBlendRandom();
+//
+//	virtual void blit(Surface *surface, iRect &world_win);
+//
+//}; // end SpriteBltBlendRandom
+//
+//// SpriteBltBlendRandomScale
+////--------------------------------------------------------------------------
+//class SpriteBltBlendRandomScale : public SpriteSurface
+//{
+//private:
+//	int blendTable;
+//
+//public:
+//	SpriteBltBlendRandomScale();
+//	float yPos;
+//
+//	virtual void blit(Surface *surface, iRect &world_win);
+//
+//}; // end SpriteBltBlendRandomScale
+//
+//// SpriteBltBlendRandomScale
+////--------------------------------------------------------------------------
+//class SpriteBltBlendScale : public SpriteSurface
+//{
+//public:
+//	SpriteBltBlendScale()
+//	{
+//		colorTable = 0;
+//	}
+//
+//	virtual void blit(Surface *surface, iRect &world_win);
+//
+//	ColorTable *colorTable;
+//	float       scale;
+//
+//}; // end SpriteBltBlendScale
+//
+//// SpriteBltBlend
+////--------------------------------------------------------------------------
+//class SpriteBltBlend : public SpriteSurface
+//{
+//public:
+//	SpriteBltBlend()
+//	{
+//		colorTable = 0;
+//		useBlend   = 1;
+//	}
+//
+//	virtual void blit(Surface *surface, iRect &world_win);
+//
+//	ColorTable *colorTable;
+//	char        useBlend;
+//
+//}; // end SpriteBltBlend
+//
+//// SpriteBltScale
+////--------------------------------------------------------------------------
+//class SpriteBltScale : public SpriteSurface
+//{
+//public:
+//	SpriteBltScale() {}
+//
+//	virtual void blit(Surface *surface, iRect &world_win);
+//
+//	float scale;
+//
+//}; // end SpriteBltScale
+//
+//// PackedSurfacePreScaled
+////--------------------------------------------------------------------------
+//class PackedSurfacePreScaled : SpriteSurface
+//{
+//public:
+//	PackedSurfacePreScaled() {}
+//
+//	virtual void blit(Surface *surface, iRect &world_win);
+//	virtual void setTo(const PackedSurface &source);
+//
+//}; // end PackedSurfacePreScaled
+//
+//// SpritePackedBlt
+////--------------------------------------------------------------------------
+//class SpritePackedBlt : public SpritePacked
+//{
+//public:
+//	SpritePackedBlt() {}
+//
+//	virtual void blit( Surface *surface, iRect &world_win );
+//
+//}; // end SpritePackedBlt
 
 #endif // __Particle2D_hpp__

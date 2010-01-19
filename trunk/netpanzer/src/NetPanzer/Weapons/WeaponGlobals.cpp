@@ -15,9 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 #include "WeaponGlobals.hpp"
-#include "2D/Surface.hpp"
+
 
 int gShellVelocity     = 30;
 
@@ -26,14 +26,11 @@ int gMissleThrustForce = 5;
 
 int gBulletVelocity    = 60;
 
-Surface gShellPackedSurface;
-Surface gShellShadowSurface;
-Surface gMissleSmallPackedSurface;
-Surface gMissleSmallShadowSurface;
-Surface gMissleMediumPackedSurface;
-Surface gMissleMediumShadowSurface;
-Surface gMissleThrustPackedSurface;
-Surface gMissleGroundLightPackedSurface;
+PackedSurface gShellPackedSurface;
+PackedSurface gMissleSmallPackedSurface;
+PackedSurface gMissleMediumPackedSurface;
+PackedSurface gMissleThrustPackedSurface;
+PackedSurface gMissleGroundLightPackedSurface;
 
 int weaponLayer        = 3;
 int weaponShadowLayer  = 2;

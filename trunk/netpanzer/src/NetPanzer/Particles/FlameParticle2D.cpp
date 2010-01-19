@@ -15,22 +15,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "Util/Exception.hpp"
 #include "FlameParticle2D.hpp"
-#include "lua/lua.hpp"
-#include "2D/ImageArray.hpp"
-#include "Util/Log.hpp"
-#include "tolua++.h"
 
-typedef struct s_FlameArray
-{
-    unsigned int num_flames;
-    ImageArray* flameImageArray;
-} FlameArray;
-
-static FlameArray* flame_array = 0;
+PackedSurfaceList FlameParticle2D::staticPackedExplosion0;
+PackedSurfaceList FlameParticle2D::staticPackedExplosion1;
 
 const int explosionFPS = 18;
 
@@ -51,57 +42,49 @@ FlameParticle2D::FlameParticle2D(	const fXYZ  &pos,
     scale = getScale(scaleMin, scaleRand);
 
     // There are 2 explosion images to choose from.
-    int picNum = rand() % flame_array->num_flames;
+    int picNum = rand() % 2;
 
-    index = getPakIndex(scale, flame_array->flameImageArray[picNum].size());
-    packedSurface.setData(* (flame_array->flameImageArray[picNum].getImage(index)) );
+    if (picNum == 0) {
+        index = getPakIndex(scale, staticPackedExplosion0.size());
+        packedSurface.setData(* (staticPackedExplosion0[index]) );
+    } else if (picNum == 1) {
+        index = getPakIndex(scale, staticPackedExplosion1.size());
+        packedSurface.setData(* (staticPackedExplosion1[index]));
+    } else {
+        assert(false);
+    }
 
     // Check for accelerated flames.
     packedSurface.setFPS(getFPS(explosionFPS, 0));
 } // end FlameParticle2D::FlameParticle2D
 
+// loadPakFiles
+//---------------------------------------------------------------------------
+void FlameParticle2D::loadPakFiles()
+{
+    char pathExplosion0[] = "pics/particles/explosion/explosion0/pak/";
+
+    if (!loadAllPAKInDirectory(pathExplosion0, staticPackedExplosion0)) {
+        throw Exception("ERROR: Unable to load any exposion images in %s", pathExplosion0);
+    }
+
+    char pathExplosion1[] = "pics/particles/explosion/explosion1/pak/";
+
+    if (!loadAllPAKInDirectory(pathExplosion1, staticPackedExplosion1)) {
+        throw Exception("ERROR: Unable to load any exposion images in %s", pathExplosion1);
+    }
+}
+
 // init
 //---------------------------------------------------------------------------
-int FlameParticle2D::loadFlames(lua_State *L, void *v)
+void FlameParticle2D::init()
 {
-    if ( ! lua_istable(L, -1) )
-    {
-        LOGGER.warning("BAD explosions configuration, not loaded.");
-        return 0;
-    }
-
-    if ( ! flame_array )
-    {
-        flame_array = new FlameArray;
-        flame_array->num_flames = 0;
-        flame_array->flameImageArray = 0;
-    }
-
-
-    if ( flame_array->num_flames != lua_objlen(L, -1) )
-    {
-        if ( flame_array->flameImageArray )
-        {
-            delete[] flame_array->flameImageArray;
-        }
-
-        flame_array->num_flames = lua_objlen(L,-1);
-        flame_array->flameImageArray = new ImageArray[flame_array->num_flames]();
-    }
-
-    for ( unsigned int n = 1; n <= flame_array->num_flames; ++n )
-    {
-        lua_rawgeti(L, -1, n);
-        flame_array->flameImageArray[n-1].loadImageSheetArray(L);
-        lua_pop(L, 1);
-    }
-
-    return 0;
+    loadPakFiles();
 } // end FlameParticle2D::init
 
 // draw
 //---------------------------------------------------------------------------
-void FlameParticle2D::draw(SpriteSorter& sorter)
+void FlameParticle2D::draw(const Surface&, SpriteSorter& sorter)
 {
     if (!isAlive) {
         return;
@@ -116,3 +99,4 @@ void FlameParticle2D::draw(SpriteSorter& sorter)
     sorter.addSprite(&packedSurface);
 
 } // end FlameParticle2D::draw
+

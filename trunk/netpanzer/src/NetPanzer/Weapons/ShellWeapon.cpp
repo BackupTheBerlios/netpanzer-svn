@@ -15,9 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
 
-#include "Core/GlobalEngineState.hpp"
-#include "Core/GlobalGameState.hpp"
 #include "ShellWeapon.hpp"
 #include "Classes/UnitMessageTypes.hpp"
 #include "Units/UnitInterface.hpp"
@@ -29,6 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Particles/ParticleInterface.hpp"
 #include "Util/Math.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Particles/FlashParticle2D.hpp"
+
 
 ShellWeapon::ShellWeapon(UnitID owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end)
         : Weapon(owner, owner_type_id, damage, start, end)
@@ -48,13 +49,14 @@ ShellWeapon::ShellWeapon(UnitID owner, unsigned short owner_type_id, unsigned sh
 
     shell.setData(gShellPackedSurface);
     shell.setFrame(frame360);
-    shell.setLayer(weaponLayer);
+    shell.setSpriteHeight(weaponLayer);
 
     shell.setDrawModeSolid();
 
-    shellShadow.setData(gShellShadowSurface);
+    shellShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
+    shellShadow.setData(gShellPackedSurface);
     shellShadow.setFrame(getGoalAngle(start, end));
-    shellShadow.setLayer(weaponShadowLayer);
+    shellShadow.setSpriteHeight(weaponShadowLayer);
 }
 
 void ShellWeapon::fsmFlight()
@@ -83,7 +85,7 @@ void ShellWeapon::fsmFlight()
                 UMesgWeaponHit weapon_hit;
 
                 if ( NetworkState::status == _network_state_server ) {
-                    weapon_hit.setHeader(0);
+                    weapon_hit.setHeader(0, _umesg_flag_broadcast);
                     weapon_hit.message_id = _umesg_weapon_hit;
                     weapon_hit.setOwnerUnitID(owner_id);
                     weapon_hit.setHitLocation(location);
@@ -95,7 +97,7 @@ void ShellWeapon::fsmFlight()
                 lifecycle_status = _lifecycle_weapon_in_active;
 
                 //SFX
-                global_engine_state->sound_manager->playAmbientSound("hit",
+                sound->playAmbientSound("hit",
                                         WorldViewInterface::getCameraDistance( location ) );
 
                 // **  Particle Shit
@@ -118,7 +120,7 @@ void ShellWeapon::updateStatus( void )
 
     shell.setWorldPos(location);
 
-    if (GameConfig::video_shadows) {
+    if (gameconfig->displayshadows) {
         shellShadow.setWorldPos(location);
     }
 }
@@ -127,13 +129,13 @@ void ShellWeapon::offloadGraphics(SpriteSorter &sorter)
 {
     shell.setWorldPos(location);
 
-    if (GameConfig::video_shadows) {
+    if (gameconfig->displayshadows) {
         shellShadow.setWorldPos(location.x - 10, location.y);
     }
 
     sorter.addSprite(&shell);
 
-    if (GameConfig::video_shadows) {
+    if (gameconfig->displayshadows) {
         sorter.addSprite(&shellShadow);
     }
 }

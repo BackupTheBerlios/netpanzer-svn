@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __GetSessionView_hpp__
 
 #include "Views/Components/View.hpp"
+#include "2D/Surface.hpp"
 #include "Views/MainMenu/MenuTemplateView.hpp"
 
 void bNext();
@@ -28,19 +29,17 @@ void bNext();
 class GetSessionView : public MenuTemplateView
 {
 protected:
-    void drawHostInfo(const iRect &rect);
-    void drawJoinInfo(const iRect &rect);
-    void drawInfo();
+    void drawHostInfo(Surface &dest, const iRect &rect);
+    void drawJoinInfo(Surface &dest, const iRect &rect);
+    void drawInfo(Surface &dest);
 
     virtual void loadBackgroundSurface();
     virtual void loadTitleSurface();
 
-    void onComponentClicked(Component *c);
-    
 public:
     GetSessionView();
 
-    virtual void doDraw();
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void doActivate();
 }; // end GetSessionView
 

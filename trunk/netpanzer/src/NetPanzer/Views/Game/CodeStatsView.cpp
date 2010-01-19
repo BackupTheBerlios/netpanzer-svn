@@ -15,8 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
 
-#include "Core/GlobalGameState.hpp"
 #include "CodeStatsView.hpp"
 #include "Views/GameViewGlobals.hpp"
 #include "Classes/SpriteSorter.hpp"
@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Interfaces/PathScheduler.hpp"
 #include "Interfaces/PlayerInterface.hpp"
 #include "Units/UnitInterface.hpp"
-#include "Views/Components/Button.hpp"
+#include "Classes/Network/NetworkInterface.hpp"
 
 enum{ _display_mode_network_stats,
       _display_mode_pathing_stats,
@@ -36,16 +36,70 @@ enum{ _display_mode_network_stats,
 int gPacketSize = 0;
 int display_mode;
 
-enum
+
+/*
+static void bPlusPacketSize( void )
+ {
+  gPacketSize++ 
+ }
+ 
+static void bMinusPacketSize( void )
+ {
+  gPacketSize--;
+ }
+ 
+static void bSend( void )
+ {
+ 
+ }
+*/
+
+static void buttonNetwork( void )
 {
-    BTN_NETWORK,
-    BTN_SORTER,
-    BTN_UNIT,
-    BTN_PATHING,
-    BTN_DEBUG,
-    BTN_SAMPLE,
-    BTN_NETLOG
-};
+    display_mode = _display_mode_network_stats;
+
+}
+
+static void buttonSorter( void )
+{
+    display_mode = _display_mode_sorter_stats;
+}
+
+static void buttonPathing( void )
+{
+    display_mode = _display_mode_pathing_stats;
+}
+
+static void buttonDebug( void )
+{
+    static bool previous_flag = false;
+
+    if ( previous_flag == false ) {
+        PathScheduler::setLongPatherDebug( true );
+        // XXX if needed change for new MiniMap.hpp
+        //MiniMapInterface::setPathingDebugMode( true );
+        previous_flag = true;
+    } else {
+        PathScheduler::setLongPatherDebug( false );
+        //MiniMapInterface::setPathingDebugMode( false );
+        previous_flag = false;
+    }
+}
+
+static void buttonSample( void )
+{
+    PathScheduler::sampleLongPather( );
+}
+
+static void buttonUnit( void )
+{
+    display_mode = _display_mode_unit_stats;
+}
+
+static void bNetLog( void )
+{
+    NetworkState::logNetworkStats();
+}
 
 static long INFO_AREA_Y_OFFSET = 60;
 
@@ -55,6 +109,7 @@ CodeStatsView::CodeStatsView() : GameTemplateView()
     setTitle("CodeStatsView");
     setSubTitle(" - F4");
 
+    setAllowResize(false);
     setAllowMove(true);
     setDisplayStatusBar(true);
     setVisible(false);
@@ -65,21 +120,21 @@ CodeStatsView::CodeStatsView() : GameTemplateView()
     long bXOffset;
     INFO_AREA_Y_OFFSET = 2;
 
-    resize(area_size);
+    resizeClientArea(area_size);
 
     bXOffset = area_size.x / 3;
-    add( Button::createTextButton( "net", "Net", iXY(0, INFO_AREA_Y_OFFSET), bXOffset, BTN_NETWORK));
-    add( Button::createTextButton( "sprite", "Sprite", iXY(bXOffset, INFO_AREA_Y_OFFSET), bXOffset, BTN_SORTER));
-    add( Button::createTextButton( "unit", "Unit", iXY(bXOffset*2, INFO_AREA_Y_OFFSET), bXOffset, BTN_UNIT));
+    addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), bXOffset,  "Net", "", buttonNetwork);
+    addButtonCenterText(iXY(bXOffset, INFO_AREA_Y_OFFSET), bXOffset, "Sprite", "", buttonSorter);
+    addButtonCenterText(iXY(bXOffset*2, INFO_AREA_Y_OFFSET), bXOffset, "Unit", "", buttonUnit);
 
     INFO_AREA_Y_OFFSET += 18;
-    add( Button::createTextButton( "path", "Path", iXY(0, INFO_AREA_Y_OFFSET), area_size.x, BTN_PATHING));
+    addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), area_size.x, "Path", "", buttonPathing);
 
     INFO_AREA_Y_OFFSET += 18;
     bXOffset = area_size.x / 3;
-    add( Button::createTextButton( "debug", "Debug", iXY(0, INFO_AREA_Y_OFFSET), bXOffset, BTN_DEBUG));
-    add( Button::createTextButton( "sample", "Sample", iXY(bXOffset, INFO_AREA_Y_OFFSET), bXOffset, BTN_SAMPLE));
-    add( Button::createTextButton( "netlog", "NetLog", iXY(bXOffset*2, INFO_AREA_Y_OFFSET), bXOffset, BTN_NETLOG));
+    addButtonCenterText(iXY(0, INFO_AREA_Y_OFFSET), bXOffset,  "Debug", "", buttonDebug);
+    addButtonCenterText(iXY(bXOffset, INFO_AREA_Y_OFFSET), bXOffset, "Sample", "", buttonSample);
+    addButtonCenterText(iXY(bXOffset*2, INFO_AREA_Y_OFFSET), bXOffset, "NetLog", "", bNetLog );
 
     INFO_AREA_Y_OFFSET += 18;
     /*
@@ -100,25 +155,25 @@ CodeStatsView::CodeStatsView() : GameTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void CodeStatsView::doDraw()
+void CodeStatsView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    drawViewBackground();
+    bltViewBackground(viewArea);
 
     switch( display_mode ) {
     case _display_mode_network_stats :
-        drawNetworkStats();
+        drawNetworkStats( clientArea );
         break;
 
     case _display_mode_sorter_stats :
-        drawSorterStats();
+        drawSorterStats( clientArea );
         break;
 
     case _display_mode_pathing_stats :
-        drawPathingStats();
+        drawPathingStats( clientArea );
         break;
 
     case _display_mode_unit_stats :
-        drawUnitStats();
+        drawUnitStats( clientArea );
         break;
     }
 
@@ -129,12 +184,12 @@ void CodeStatsView::doDraw()
 
     clientArea.bltString(2, INFO_AREA_Y_OFFSET - 18, strBuf, Color::white);
     */
-    View::doDraw();
+    View::doDraw(viewArea, clientArea);
 
 } // end CodeStatsView::doDraw
 
 //---------------------------------------------------------------------------
-void CodeStatsView::drawNetworkStats()
+void CodeStatsView::drawNetworkStats(Surface &clientArea)
 {
 
     char strBuf[256];
@@ -143,58 +198,58 @@ void CodeStatsView::drawNetworkStats()
 
     sprintf(strBuf, "Packets" );
 
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Sent %ld, %.4f 1/s, %.4f Avg",NetworkState::packets_sent,
             NetworkState::packets_sent_per_sec,
             ((float) NetworkState::packets_sent) / ((float) NetworkState::packets_sent_time) );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Recv %ld, %.4f 1/s, %.4f Avg",NetworkState::packets_received,
             NetworkState::packets_received_per_sec,
             ((float) NetworkState::packets_received) / ((float) NetworkState::packets_received_time) );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Bytes" );
 
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Sent %ld, %.4f 1/s, %.4f Avg",NetworkState::bytes_sent,
             NetworkState::bytes_sent_per_sec,
             ((float) NetworkState::bytes_sent) / ((float) NetworkState::packets_sent_time) );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Recv %ld, %.4f 1/s, %.4f Avg",NetworkState::bytes_received,
             NetworkState::bytes_received_per_sec,
             ((float) NetworkState::bytes_received) / ((float) NetworkState::packets_received_time) );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Opcodes" );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Sent : %ld, %.4f 1/s ", NetworkState::opcodes_sent,
             NetworkState::opcodes_sent_per_sec );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Recv : %ld, %.4f 1/s", NetworkState::opcodes_received,
             NetworkState::opcodes_received_per_sec );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
@@ -204,12 +259,12 @@ void CodeStatsView::drawNetworkStats()
         sprintf(strBuf, "Ping Time: NA" );
     }
 
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
     str_loc.y += 12;
 }
 
 //---------------------------------------------------------------------------
-void CodeStatsView::drawSorterStats()
+void CodeStatsView::drawSorterStats(Surface &clientArea)
 {
 
     char strBuf[256];
@@ -217,20 +272,20 @@ void CodeStatsView::drawSorterStats()
     iXY str_loc(2, INFO_AREA_Y_OFFSET);
 
     sprintf(strBuf, "Sorter" );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     for ( unsigned long i = 0; i < _MAX_HEIGHT_LEVELS; i++ ) {
         sprintf(strBuf, "Level %lu : %lu  ", i, SPRITE_SORTER.getMaxSprites( i ) );
-        drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+        clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
         str_loc.y += 12;
     }
 
 }
 
 //---------------------------------------------------------------------------
-void CodeStatsView::drawPathingStats()
+void CodeStatsView::drawPathingStats(Surface &clientArea)
 {
 
     char strBuf[256];
@@ -238,53 +293,53 @@ void CodeStatsView::drawPathingStats()
     iXY str_loc(2, INFO_AREA_Y_OFFSET);
 
     sprintf(strBuf, "Pathing" );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "A* Time: %.6f s", PathingState::astar_gen_time );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "A* Avg: %.6f s", PathingState::getAverageAstarPathTime() );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "A* Total: %.6f s", PathingState::astar_gen_time_total );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Path Length: %ld ", PathingState::path_length );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Paths: %lu ", PathingState::path_gen_count );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Updates: %lu ", PathingState::update_gen_count );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Cache Hits: %lu ", PathingState::path_cache_hits );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
     sprintf(strBuf, "Cache Misses: %lu ", PathingState::path_cache_misses );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 }
 
 //---------------------------------------------------------------------------
-void CodeStatsView::drawUnitStats()
+void CodeStatsView::drawUnitStats(Surface &clientArea)
 {
 
     char strBuf[256];
@@ -295,7 +350,7 @@ void CodeStatsView::drawUnitStats()
     iXY str_loc(2, INFO_AREA_Y_OFFSET);
 
     sprintf(strBuf, "Units" );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
@@ -303,54 +358,17 @@ void CodeStatsView::drawUnitStats()
 
     for ( int i = 0; i < max_players; i++ ) {
         unsigned long units;
-        units = UnitInterface::getPlayerUnitCount( i );
+        units = UnitInterface::getUnitCount( i );
         total += units;
 
         sprintf(strBuf, "Player %d : %lu  ", i, units);
-        drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+        clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
         str_loc.y += 12;
     }
 
     sprintf(strBuf, "UnitTotal : %d", total );
-    drawString(str_loc.x, str_loc.y, strBuf, Color::white);
+    clientArea.bltString(str_loc.x, str_loc.y, strBuf, Color::white);
 
     str_loc.y += 12;
 
-}
-
-void
-CodeStatsView::onComponentClicked(Component* c)
-{
-    switch ( c->getCustomCode() )
-    {
-        case BTN_NETWORK:
-            display_mode = _display_mode_network_stats;
-            break;
-
-        case BTN_SORTER:
-            display_mode = _display_mode_sorter_stats;
-            break;
-
-        case BTN_UNIT:
-            display_mode = _display_mode_unit_stats;
-            break;
-
-        case BTN_PATHING:
-            display_mode = _display_mode_pathing_stats;
-            break;
-
-        case BTN_DEBUG:
-            static bool previous_flag = false;
-            previous_flag = !previous_flag;
-            PathScheduler::setLongPatherDebug(previous_flag);
-            break;
-
-        case BTN_SAMPLE:
-            PathScheduler::sampleLongPather();
-            break;
-
-        case BTN_NETLOG:
-            NetworkState::logNetworkStats();
-            break;
-    }
 }

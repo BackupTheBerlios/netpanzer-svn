@@ -19,7 +19,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __JoinView_hpp__
 
 #include "Views/Components/View.hpp"
+#include "2D/Surface.hpp"
 #include "HostJoinTemplateView.hpp"
+
 
 //---------------------------------------------------------------------------
 class JoinView : public HostJoinTemplateView
@@ -30,7 +32,7 @@ protected:
 public:
     JoinView();
 
-    virtual void doDraw();
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void doDeactivate();
 }; // end JoinView
 

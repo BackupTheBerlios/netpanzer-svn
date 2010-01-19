@@ -15,15 +15,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include <functional>
 #include "Astar.hpp"
 #include "Util/Timer.hpp"
 #include "PathingState.hpp"
 #include "Util/Log.hpp"
-#include "Core/GlobalGameState.hpp"
-#include "Units/UnitInterface.hpp"
 
 #define HEURISTIC_WEIGHT    10
 
@@ -35,12 +33,10 @@ Astar::Astar()
 void Astar::initializeAstar( unsigned long node_list_size,
                              unsigned long step_limit)
 {
-    open_set.initialize(MapInterface::getWidth(),
-                        MapInterface::getHeight());
-
-    closed_set.initialize(MapInterface::getWidth(),
-                          MapInterface::getHeight());
-
+    open_set.initialize( MapInterface::getWidth(),
+            MapInterface::getHeight() );
+    closed_set.initialize( MapInterface::getWidth(),
+            MapInterface::getHeight() );
     open = std::priority_queue<AstarNode*, std::vector<AstarNode*>,
            AstarNodePtrCompare>();
 
@@ -160,8 +156,8 @@ unsigned long Astar::mapXYtoAbsloc( iXY map_loc )
 {
     unsigned long abs;
 
-    if ( ( map_loc.x < 0 ) || (map_loc.x >= (int) MapInterface::getWidth() ) ||
-            ( map_loc.y < 0 ) || (map_loc.y >= (int) MapInterface::getHeight() )
+    if ( ( map_loc.x < 0 ) || (map_loc.x >= (int) main_map.getWidth() ) ||
+            ( map_loc.y < 0 ) || (map_loc.y >= (int) main_map.getHeight() )
        )
         return 0xFFFFFFFF;
 
@@ -227,12 +223,12 @@ unsigned char Astar::generateSucc(unsigned short direction, AstarNode *node, Ast
     succ->abs_loc = mapXYtoAbsloc( succ->map_loc );
 
     movement_val = getMovementValue( succ->map_loc );
-    if ( movement_val != 0xFF
-         && UnitInterface::unitOccupiesLoc(succ->map_loc) == true
-         && succ->map_loc != goal_node.map_loc )
-    {
-        movement_val = 200;
-    }
+    if ( movement_val != 0xFF )
+        if ( ( (UnitBlackBoard::unitOccupiesLoc( succ->map_loc ) == true ) &&
+                (succ->map_loc != goal_node.map_loc) )
+           ) {
+            movement_val = 200;
+        }
 
     succ->g += node->g + movement_val;
 
@@ -284,7 +280,7 @@ bool Astar::process_succ( PathList *path, int *result_code )
             done = true;
             break;
         }
-//LOGGER.warning("ASTAR:best node is %d,%d goal is %d, %d", best_node->map_loc.x, best_node->map_loc.y, goal_node.map_loc.x, goal_node.map_loc.y);
+
         if ( (best_node->map_loc == goal_node.map_loc) ) {
             done = true;
         } else {
@@ -370,7 +366,7 @@ bool Astar::process_succ( PathList *path, int *result_code )
 
         node = best_node;
         while ( (node != 0) && (insert_successful == true) ) {
-//LOGGER.warning("ASTAR:adding to path: %d,%d", node->map_loc.x, node->map_loc.y);
+
             if ( path_merge_type == _path_merge_front ) {
                 insert_successful = path->pushFirst( node->abs_loc );
             } else {
@@ -433,7 +429,7 @@ void Astar::setDebugMode(bool on_off)
 
     if ( debug_mode_flag == true ) {
         astar_set_array.initialize(MapInterface::getWidth(),
-                                   MapInterface::getHeight());
+                MapInterface::getHeight() );
     } else {
         astar_set_array.deallocate();
     }

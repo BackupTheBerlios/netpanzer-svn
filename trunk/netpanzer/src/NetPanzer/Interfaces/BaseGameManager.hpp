@@ -19,41 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _BASEGAMEMANAGER_HPP
 
 #include <string>
-#include <ctime>
-
-class Sound;
 
 class BaseGameManager
 {
-public:
-    BaseGameManager();
-    virtual ~BaseGameManager();
-
-    virtual void shutdown();
-
-    void initialize(const std::string& configfile = "");
-
-    /// mainloop, return false if you want to quit
-    virtual bool mainLoop();
-
-    /// stop the mainloop
-    void stopMainLoop();
-
-    virtual bool launchNetPanzerGame() = 0;
-
-    void initializeGameLogic();
-    void reinitializeGameLogic();
-    bool resetGameLogic();
-    void shutdownGameLogic();
-
-    time_t getGameTime();
-    void setElapsetTimeOffset(time_t time_offset)
-    {
-        game_elapsed_time_offset = time_offset;
-    }
-
 protected:
-    void initializeNetworkSubSystem(); // non virtual.
+    virtual void initializeNetworkSubSystem();
     virtual void shutdownNetworkSubSystem();
 
     virtual void initializeInputDevices();
@@ -62,7 +32,7 @@ protected:
     virtual void initializeVideoSubSystem() = 0;
     virtual void shutdownVideoSubSystem() = 0;
 
-    virtual Sound* initializeSoundSubSystem();
+    virtual void initializeSoundSubSystem();
     virtual void shutdownSoundSubSystem();
 
     virtual void initializeGameConfig(const std::string& configfile);
@@ -77,17 +47,31 @@ protected:
     virtual void graphicsLoop();
 
     virtual void shutdownSubSystems();
+public:
+    BaseGameManager();
+    virtual ~BaseGameManager();
+
+    virtual void shutdown();
+
+    virtual void initialize(const std::string& configfile = "");
+
+    /// mainloop, return false if you want to quit
+    virtual bool mainLoop();
+    /// stop the mainloop
+    void stopMainLoop();
+
+    virtual bool launchNetPanzerGame() = 0;
+
 private:
     void loadGameData();
-    void sleeping();
-
-    void   startGameTimer();
-    time_t game_start_time;
-    time_t game_elapsed_time_offset;
-
+    void sleeping();                       
+    
     static const int TIMEINTERVAL = 20;
     /// this should be set to false if you want to quit netpanzer
     bool running;
 };
+
+/// the currently active gamemanager
+extern BaseGameManager* gamemanager;
 
 #endif

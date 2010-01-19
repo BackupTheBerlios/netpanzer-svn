@@ -15,11 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include <math.h>
-#include "Core/GlobalEngineState.hpp"
-#include "Core/GlobalGameState.hpp"
 
 #include "Weapons/Weapon.hpp"
 
@@ -40,31 +38,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 void Weapon::init()
 {
-    gMissleMediumPackedSurface.loadPNGSheet("pics/particles/missles/misslesMedium.png", 14, 14, 360);
-    gMissleMediumShadowSurface.createShadow(gMissleMediumPackedSurface);
-    gMissleMediumShadowSurface.setAlpha(64);
-//    gMissleMediumPackedSurface.setOffsetCenter();
+    //packFiles();
+    gMissleMediumPackedSurface.load("pics/particles/missles/pak/misslesMedium.pak");
+    gMissleSmallPackedSurface.load("pics/particles/missles/pak/misslesSmall.pak");
+    gShellPackedSurface.load("pics/particles/shells/pak/shells.pak");
 
-    gMissleSmallPackedSurface.loadPNGSheet("pics/particles/missles/misslesSmall.png", 14, 14, 360);
-    gMissleSmallShadowSurface.createShadow(gMissleSmallPackedSurface);
-    gMissleSmallShadowSurface.setAlpha(64);
-//    gMissleSmallPackedSurface.setOffsetCenter();
+    Surface       temp;
+    PackedSurface pack;
 
-    gShellPackedSurface.loadPNGSheet("pics/particles/shells/shells.png", 14, 14, 360);
-    gShellShadowSurface.createShadow(gShellPackedSurface);
-    gShellShadowSurface.setAlpha(64);
-//    gShellPackedSurface.setOffsetCenter();
-
-    gMissleThrustPackedSurface.loadPNG("pics/particles/lights/missleThrust.png");
-//    gMissleThrustPackedSurface.setAlpha(192);
-    gMissleThrustPackedSurface.setOffset(iXY(-15, -15));
-
-    gMissleGroundLightPackedSurface.loadPNG("pics/particles/lights/missleGroundLight.png");
-//    gMissleGroundLightPackedSurface.setAlpha(192);
-    gMissleGroundLightPackedSurface.setOffset(iXY(-33,-24));
-
-//    gMissleThrustPackedSurface.brigthenFrames();
-//    gMissleGroundLightPackedSurface.brigthenFrames();
+    gMissleThrustPackedSurface.load("pics/particles/lights/pak/missleThrust.pak");
+    gMissleGroundLightPackedSurface.load("pics/particles/lights/pak/missleGroundLight.pak");
 }
 
 Weapon::Weapon(UnitID owner, unsigned short owner_type_id, unsigned short damage, iXY &start, iXY &end)
@@ -109,7 +92,7 @@ void Weapon::fsmFlight( void )
                 UMesgWeaponHit weapon_hit;
 
                 if (NetworkState::status == _network_state_server) {
-                    weapon_hit.setHeader(0);
+                    weapon_hit.setHeader(0, _umesg_flag_broadcast);
                     weapon_hit.message_id = _umesg_weapon_hit;
                     weapon_hit.setOwnerUnitID(owner_id);
                     weapon_hit.setHitLocation(location);
@@ -121,7 +104,7 @@ void Weapon::fsmFlight( void )
                 lifecycle_status = _lifecycle_weapon_in_active;
 
                 //SFX
-                global_engine_state->sound_manager->playSound("hit_target");
+                sound->playSound("hit_target");
 
                 // **  Particle Shit
                 iXY loc = iXY( location.x, location.y );

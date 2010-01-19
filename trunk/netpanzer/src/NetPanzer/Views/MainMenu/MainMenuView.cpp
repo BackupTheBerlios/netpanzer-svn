@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "MainMenuView.hpp"
 #include "Views/Components/Desktop.hpp"
@@ -39,9 +39,9 @@ MainMenuView::MainMenuView() : MenuTemplateView()
 
 // doDraw
 //---------------------------------------------------------------------------
-void MainMenuView::doDraw()
+void MainMenuView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    MenuTemplateView::doDraw();
+    MenuTemplateView::doDraw(viewArea, clientArea);
 
     static char text[] =
         "This is NetPanzer version " PACKAGE_VERSION
@@ -61,5 +61,5 @@ void MainMenuView::doDraw()
         "Related Tools:\n"
         "   Tobias Blerch, Ingo Ruhnke\n";
 
-    drawStringInBox(bodyTextRect, text, Color::white, 12);
+    viewArea.bltStringInBox(bodyTextRect, text, Color::white, 12);
 } // end MainMenuView::doDraw

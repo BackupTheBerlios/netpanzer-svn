@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -34,7 +34,7 @@ SpawnList::SpawnList()
 
 void SpawnList::loadSpawnFile(const std::string& file_path)
 {
-    spawn_points.clear();
+    clear();
 
     try {
         IFileStream in(file_path);
@@ -51,7 +51,7 @@ void SpawnList::loadSpawnFile(const std::string& file_path)
             if(!in.good())
                 throw Exception("file too short");
             
-            spawn_points.push_back(iXY(x, y));
+            push_back(iXY(x, y));
         }
 
         last_spawn_index = 0;
@@ -67,15 +67,15 @@ iXY SpawnList::getFreeSpawnPoint()
 
     switch(gameconfig->respawntype) {
         case _game_config_respawn_type_round_robin :
-            spawn_index = (last_spawn_index + 1) % spawn_points.size();
+            spawn_index = (last_spawn_index + 1) % size();
             last_spawn_index = spawn_index;
             break;
         case _game_config_respawn_type_random :
-            spawn_index = rand() % spawn_points.size();
+            spawn_index = rand() % size();
             break;
         default:
             throw Exception("unknown respawn type");
     }
 
-    return spawn_points[spawn_index];
+    return at(spawn_index);
 }

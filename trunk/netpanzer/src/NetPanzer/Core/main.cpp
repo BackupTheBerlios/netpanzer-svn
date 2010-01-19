@@ -15,13 +15,17 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <config.h>
 
+#include "Scripts/ScriptManager.hpp"
+
+#include "lua/lua.hpp"
 
 #ifdef WIN32
-  #include <windows.h>
+#include <windows.h>
 #else
-  #include <sys/types.h>
-  #include <unistd.h>
+#include <sys/types.h>
+#include <unistd.h>
 #endif
 
 #include <fstream>
@@ -33,21 +37,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <signal.h>
 #include "SDL.h"
 
-#include "Core/GlobalEngineState.hpp"
-
-#include "optionmm/command_line.hpp"
+#include <optionmm/command_line.hpp>
 
 #include "Util/Log.hpp"
+//#include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
 
 #include "Interfaces/BaseGameManager.hpp"
 #include "Interfaces/GameConfig.hpp"
 #include "Interfaces/DedicatedGameManager.hpp"
+#include "Interfaces/BotGameManager.hpp"
 #include "Interfaces/PlayerGameManager.hpp"
 #include "Core/NetworkGlobals.hpp"
 #include "Scripts/ScriptManager.hpp"
 #include "2D/Palette.hpp"
-#include "lua/lua.hpp"
 
 //---------------------------------------------------------------------------
 
@@ -118,7 +121,7 @@ BaseGameManager *initialise(int argc, char** argv)
 
     // Parse commandline
     using namespace optionmm;
-    command_line commandline("netPanzer", PACKAGE_VERSION,
+    command_line commandline(PACKAGE_NAME, PACKAGE_VERSION,
             "Copyright(c) 1998 Pyrosoft Inc. and nepanzer-devel team", "",
             argc, argv);
 
@@ -128,7 +131,9 @@ BaseGameManager *initialise(int argc, char** argv)
     bool_option dedicated_option('d', "dedicated",
             "Run as dedicated server", false);
     commandline.add(&dedicated_option);
-    
+    option<std::string, true, false> bot_option('b', "bot",
+            "Connect as bot to specific server", "");
+    commandline.add(&bot_option);
     option<int> port_option('p', "port", "Run server on specific port", 0);
     commandline.add(&port_option);
     bool_option debug_option('g', "debug",
@@ -181,20 +186,34 @@ BaseGameManager *initialise(int argc, char** argv)
         exit(1);
     }
 
+#ifdef NP_DATADIR
+    try {
+	filesystem::addToSearchPath(NP_DATADIR);
+    } catch(...)
+    { }
+#endif
+
+#ifdef __APPLE__
+    // Mac OS X puts the data files into NetPanzer.app/Contents/Resources
+    try {
+      std::ostringstream dir;
+      dir << PHYSFS_getBaseDir() << "/NetPanzer.app/Contents/Resources/";
+      filesystem::addToSearchPath(dir.str().c_str());
+    } catch(...)
+    { }
+#endif
+
     if(dedicated_option.value())
-    {
         LOGGER.openLogFile("server");
-    }
+    else if(bot_option.value().size() > 0)
+        LOGGER.openLogFile("bot");
     else
-    {
         LOGGER.openLogFile("netpanzer");
-    }
 
 #ifdef WIN32
     // SDL redirects stdout and stderr to 2 textfiles, better open a new console
     // for the dedicated server and the bot
-    if( dedicated_option.value() )
-    {
+    if(dedicated_option.value() || bot_option.value().size() > 0) {
         AllocConsole();
         freopen("CON", "w", stdout);
         freopen("CON", "w", stderr);
@@ -233,12 +252,12 @@ BaseGameManager *initialise(int argc, char** argv)
     BaseGameManager *manager;
     // finally initialize the game objects
     try {
-        if (dedicated_option.value())
-        {
+        if (dedicated_option.value()) {
             manager = new DedicatedGameManager();
         }
-        else
-        {
+        else if (bot_option.value().size() > 0) {
+            manager = new BotGameManager(bot_option.value());
+        } else {
             manager = new PlayerGameManager();
         }
 
@@ -256,8 +275,7 @@ BaseGameManager *initialise(int argc, char** argv)
             }
             gameconfig->serverConnect = connecthost;
             gameconfig->quickConnect = true;
-        }
-
+        }                                                               
         if (master_server_option.value().size() > 0) {
             if (master_server_option.value() == "none") {
                 gameconfig->masterservers = "";
@@ -280,26 +298,24 @@ BaseGameManager *initialise(int argc, char** argv)
 int netpanzer_main(int argc, char** argv)
 {
     ScriptManager::initialize();
+    
+    ScriptManager::runStr("LuaInitialize","print('Lua is working just fine');");
+        
+    BaseGameManager *manager = initialise(argc, argv);
 
-    global_engine_state = new GlobalEngineState();
-    global_engine_state->game_manager = initialise(argc, argv);
-
+    Palette::registerScript(); // here for the moment;
     ScriptManager::runFile("unused","scripts/initialize.lua");
     
     // we'll catch every exception here, to be sure the user gets at least
     // a usefull error message and SDL has a chance to shutdown...
     try {
-        if ( global_engine_state->game_manager->launchNetPanzerGame() )
-        {
-            while ( global_engine_state->game_manager->mainLoop() )
-            {
-                // nothing
-            }
+        if (manager->launchNetPanzerGame()) {
+            while(manager->mainLoop())
+                ;
         }
 
-        global_engine_state->game_manager->shutdown();
-        delete global_engine_state->game_manager;
-        delete global_engine_state;
+        manager->shutdown();
+        delete manager;
         LOGGER.info("successfull shutdown.");
         shutdown();
     } 

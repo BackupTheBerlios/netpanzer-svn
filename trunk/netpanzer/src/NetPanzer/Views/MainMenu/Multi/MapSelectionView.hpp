@@ -22,28 +22,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string.h>
 
 #include "Views/MainMenu/RMouseHackView.hpp"
-#include "Views/Components/Button.hpp"
+#include "2D/Surface.hpp"
 
-class Surface;
-
+//---------------------------------------------------------------------------
 class MapInfo
 {
 public:
-    Surface * thumbnail;
+    Surface thumbnail;
     std::string name;
     std::string description;
     iXY     cells;
     int     objectiveCount;
 
-    MapInfo() : thumbnail(0)
+    MapInfo()
     {
-    }
-    ~MapInfo()
-    {
-    	if ( thumbnail )
-    	{
-    		delete thumbnail;
-    	}
     }
 }; // end MapInfo
 
@@ -54,16 +46,13 @@ private:
     enum { BORDER_SPACE =   4 };
     enum { MAP_SIZE     = 100 };
     int  loadMaps();
-    void drawCurMapInfo( const iXY &pos);
-
-protected:
-    void onComponentClicked(Component *c);
+    void drawCurMapInfo(Surface &dest, const iXY &pos);
 
 public:
     MapSelectionView();
-    virtual ~MapSelectionView();
+    ~MapSelectionView();
 
-    virtual void doDraw();
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
     virtual void drawBorder(Surface& )
     {}
 

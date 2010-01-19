@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __CodeStatsView_hpp__
 
 #include "GameTemplateView.hpp"
+#include "2D/Surface.hpp"
+
 
 #if _MSC_VER > 1000
 	#pragma once
@@ -28,16 +30,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class CodeStatsView : public GameTemplateView
 {
 protected:
-    void drawNetworkStats();
-    void drawSorterStats();
-    void drawPathingStats();
-    void drawUnitStats();
-    void onComponentClicked(Component *c);
+    void drawNetworkStats(Surface &clientArea);
+    void drawSorterStats(Surface &clientArea);
+    void drawPathingStats(Surface &clientArea);
+    void drawUnitStats(Surface &clientArea );
 
 public:
     CodeStatsView();
 
-    virtual void doDraw();
+    virtual void doDraw(Surface &windowArea, Surface &clientArea);
 }; // end CodeStatsView
 
 

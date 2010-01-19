@@ -18,21 +18,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _CHATINTERFACE_HPP
 #define _CHATINTERFACE_HPP
 
-#include "Core/CoreTypes.hpp"
-
-class NetPacket;
+#include "Classes/Network/ChatNetMessage.hpp"
 
 class ChatInterface
 {
+protected:
+    static ChatMesgRequest current_chat_mesg;
+    static void (* addChatString)( const char *message_text );
+
+    static void chatMessageRequest(const NetMessage* message);
+    static void chatMessage(const NetMessage* message);
+
 public:
-    static void processChatMessages(const NetPacket* packet);
+    static void processChatMessages(const NetMessage* message);
 
-    static void say(const char * message);
-    static void teamsay(const char * message);
-    static void serversay(const char * message);
-    static void serversayTo(const Uint16 player, const char * message);
-
-    static void sendQuickMessage(unsigned int n);
+    // ** ChatView Interface Methods
+    static void setNewMessageCallBack( void (* addStringCallBack)( const char *message_text ) );
+    static void setMessageScopeAll();
+    static void setMessageScopeAllies();
+    static void setMessageScopeEnemies();
+    static void setMessageScopeServer();
+    static void sendCurrentMessage(const char *message_text);
 };
 
 #endif // ** _CHATINTERFACE_HPP

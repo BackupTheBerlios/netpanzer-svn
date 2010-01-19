@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "ControlsView.hpp"
 #include "Views/Components/Desktop.hpp"
@@ -66,9 +66,9 @@ void ControlsView::initButtons()
 
 // doDraw
 //---------------------------------------------------------------------------
-void ControlsView::doDraw()
+void ControlsView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    MenuTemplateView::doDraw();
+    MenuTemplateView::doDraw(viewArea, clientArea);
 
     //char strBuf[256];
     //
@@ -86,12 +86,13 @@ void ControlsView::doDraw()
     //
     // Joystick State
     //tempSurface.fill(meterColor);
+    //tempSurface.drawButtonBorder(meterTopLeftBorderColor, meterBottomRightBorderColor);
     //sprintf(strBuf, "%s", getJoystickState());
     //tempSurface.bltStringCenter(strBuf, meterTextColor);
     //tempSurface.blt(clientArea, x, y);
     //
     //y += yOffset;
-    drawStringCenter("Not available for preview", Color::white);
+    clientArea.bltStringCenter("Not available for preview", Color::white);
 
 } // end ControlsView::doDraw
 

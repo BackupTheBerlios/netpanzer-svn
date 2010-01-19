@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "SDL.h"
 
@@ -31,6 +31,7 @@ PlayerNameView::PlayerNameView() : View()
     setTitle("Player Name");
     setSubTitle("");
 
+    setAllowResize(false);
     setAllowMove(false);
     setVisible(false);
 
@@ -39,7 +40,7 @@ PlayerNameView::PlayerNameView() : View()
     // The plus 8 for x and 4 for y are what I put in input field.  Add function to find out,
     // inpit field dimension.
     int CHAR_XPIX = 8; // XXX hardcoded :-/
-    resize(INPUT_FIELD_CHARACTERS * CHAR_XPIX + 8 + BORDER_SPACE * 2, Surface::getFontHeight() + 4 + BORDER_SPACE * 2);
+    resizeClientArea(INPUT_FIELD_CHARACTERS * CHAR_XPIX + 8 + BORDER_SPACE * 2, Surface::getFontHeight() + 4 + BORDER_SPACE * 2);
 
     init();
 } // end PlayerNameView::PlayerNameView
@@ -61,9 +62,12 @@ void PlayerNameView::init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void PlayerNameView::doDraw()
+void PlayerNameView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    View::doDraw();
+    //iRect r(getViewRect());
+    //viewArea.bltLookup(r, Palette::darkGray256.getColorArray());
+
+    View::doDraw(viewArea, clientArea);
 } // end PlayerNameView::doDraw
 
 void PlayerNameView::textChanged(cInputField* input)

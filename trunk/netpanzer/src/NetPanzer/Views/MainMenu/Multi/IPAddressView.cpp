@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
+#include <config.h>
 
 #include "IPAddressView.hpp"
 #include "Views/Components/Desktop.hpp"
@@ -31,6 +31,7 @@ IPAddressView::IPAddressView() : View()
     setTitle("Server IP Address");
     setSubTitle("");
 
+    setAllowResize(false);
     setAllowMove(false);
     setVisible(false);
 
@@ -39,7 +40,7 @@ IPAddressView::IPAddressView() : View()
     iXY  area_size = iXY(
             30 * 8 + 16,
             Surface::getFontHeight() + 4 + 8);
-    resize(area_size);
+    resizeClientArea(area_size);
 
     Init();
 } // end IPAddressView constructor
@@ -52,9 +53,9 @@ void IPAddressView::Init()
 
 // doDraw
 //---------------------------------------------------------------------------
-void IPAddressView::doDraw()
+void IPAddressView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    fill(Color::black);
-    View::doDraw();
+    clientArea.fill(Color::black);
+    View::doDraw(viewArea, clientArea);
 } // end IPAddressView::doDraw
 

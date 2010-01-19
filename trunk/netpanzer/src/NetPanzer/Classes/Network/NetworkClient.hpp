@@ -20,10 +20,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string>
 
+#include "NetworkInterface.hpp"
 #include "NetworkReturnCodes.hpp"
 #include "Network/ClientSocket.hpp"
 
 #include "Util/Timer.hpp"
+#include "ArrayUtil/ArrayTemplate.hpp"
 
 enum { _connection_status_no_connection,
        _connection_status_connected
@@ -33,31 +35,41 @@ enum { _connection_status_no_connection,
 #define _SERVER_KEEP_ALIVE_THRESHOLD     (120)  // in seconds
 #define _SERVER_PING_INTERVAL              (5)  // in seconds
 
-class MessageClassHandler;
-
-class NetworkClient
+class NetworkClient : public NetworkInterface, ClientSocketObserver
 {
-public:
-    static void initialize();
-    static bool joinServer(const std::string& server_name);
-    static void partServer();
-
-    static void sendMessage(NetMessage* message, size_t size);
-    static void sendRemaining();
-
-    static void checkIncoming();
-
-    static bool isConnected();
-
 protected:
-    static MessageClassHandler* getPacketHandler();
-    static void onClientDisconected(ClientSocket *s, const char *msg);
+    NetPacket net_packet;
+    unsigned short connection_status;
 
-private:
-    friend class ClientPacketHandler;
-    friend class MessageRouter;
+    void netMessageClientKeepAlive(const NetMessage* message);
+    void netMessageClientSetKeepAliveState(const NetMessage* message);
+    void netMessageClientPingAck(const NetMessage* message);
+    void netMessageClientConnectAck(const NetMessage* message);
+
+    void processNetMessage(const NetMessage* message);
+
+    void onClientConnected(ClientSocket *s);
+    void onClientDisconected(ClientSocket *s, const char *msg);    
+
+public:
     NetworkClient ();
     virtual ~NetworkClient ();
+
+    bool joinServer(const std::string& server_name);
+    void partServer();
+
+    void sendMessage(NetMessage* message, size_t size);
+    void sendRemaining();
+
+    bool getMessage(NetMessage *message);
+
+
+    void checkIncoming();
+
+private:
+    ClientSocket* clientsocket;
 };
+
+extern NetworkClient *CLIENT;
 
 #endif // ** _NETWORK_CLIENT_HPP

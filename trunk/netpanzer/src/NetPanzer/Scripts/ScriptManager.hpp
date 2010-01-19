@@ -21,11 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _SCRIPTMANAGER_HPP
 #define	_SCRIPTMANAGER_HPP
 
-#include "Core/CoreTypes.hpp"
-
-typedef const struct s_ScriptVarBindRecord ScriptVarBindRecord;
-struct lua_State;
-struct luaL_Reg;
+#include "ScriptHelper.hpp"
 
 class ScriptManager
 {
@@ -33,29 +29,21 @@ public:
     static void initialize();
     static void close();
     
-    static void registerLib(const char * libname, const luaL_Reg * functions);
-        
-    static void runStr(const char * runname, const char * str);
-    static bool runUserCommand(const char * str);
-    static bool runServerCommand(const char * str, Uint16 runPlayer);
+    static void registerLib(const char * libname, const luaL_reg * functions);
     
-    // NOTE: runFile has to run after FileSystem has been initialized.
-    static void runFile(const char * runname, const char * filename);
-
-    static void runFileInTable(const char * filename, const char * table);
-    static void loadConfigFile(const char * filename, const char * table);
-
-    static lua_State* getLuavm() { return luavm; }
-
     static void bindStaticVariables(const char * objectName,
-                                    const char * fieldName,
                                     const char * metaName,
                                     ScriptVarBindRecord * getters,
                                     ScriptVarBindRecord * setters);
-
-    static void bindStaticVars(ScriptVarBindRecord * recordlist);
     
-private:        
+    static void runStr(const char * runname, const char * str);
+    
+    // NOTE: runFile has to run after FileSystem has been initialized.
+    static void runFile(const char * runname, const char * filename);
+    
+private:
+    static void bindStaticVars (ScriptVarBindRecord * recordlist);
+        
     static lua_State *luavm;
 };
 

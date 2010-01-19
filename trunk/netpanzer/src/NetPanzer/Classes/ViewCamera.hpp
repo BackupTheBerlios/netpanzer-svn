@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define _VIEWCAMERA_HPP
 
 #include "Interfaces/MapInterface.hpp"
-#include "Types/iRect.hpp"
+#include "Interfaces/TileInterface.hpp"
 
 class ViewCamera : private MapInterface
 {
