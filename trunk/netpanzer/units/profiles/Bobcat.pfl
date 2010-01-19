@@ -10,11 +10,11 @@ SPEED_RATE       20;
 SPEED_FACTOR      4;
 REPATH_TIME      20;
 FUEL_CAPACITY  2000;
-IMAGE "units/pics/bobcat-image.png"
-BODYSPRITE "units/pics/BobcHNSD.png"
-BODYSHADOW "units/pics/BobcHSSD.png"
-TURRETSPRITE "units/pics/BobcTNSD.png"
-TURRETSHADOW "units/pics/BobcTSSD.png"
+IMAGE "pics/menus/vehicleSelectionView/bobcat.bmp"
+BODYSPRITE "units/pics/pak/BobcHNSD.pak"
+BODYSHADOW "units/pics/pak/BobcHSSD.pak"
+TURRETSPRITE "units/pics/pak/BobcTNSD.pak"
+TURRETSHADOW "units/pics/pak/BobcTSSD.pak"
 SOUNDSELECTED "lt-selected"
 FIRESOUND "lt-fire"
 WEAPON "SHELL"

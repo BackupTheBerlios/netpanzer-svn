@@ -10,11 +10,11 @@ SPEED_RATE       18;
 SPEED_FACTOR      2;
 REPATH_TIME      10;
 FUEL_CAPACITY  2000;
-IMAGE "units/pics/stinger-image.png"
-BODYSPRITE "units/pics/StinHNSD.png"
-BODYSHADOW "units/pics/StinHSSD.png"
-TURRETSPRITE "units/pics/StinTNSD.png"
-TURRETSHADOW "units/pics/StinTSSD.png"
+IMAGE "pics/menus/vehicleSelectionView/stinger.bmp"
+BODYSPRITE "units/pics/pak/StinHNSD.pak"
+BODYSHADOW "units/pics/pak/StinHSSD.pak"
+TURRETSPRITE "units/pics/pak/StinTNSD.pak"
+TURRETSHADOW "units/pics/pak/StinTSSD.pak"
 SOUNDSELECTED "mu-selected"
 FIRESOUND "mu-fire"
 WEAPON "QUADMISSILE"

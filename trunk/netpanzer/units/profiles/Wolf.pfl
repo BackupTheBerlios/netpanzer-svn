@@ -10,11 +10,11 @@ SPEED_RATE       20;
 SPEED_FACTOR      4;
 REPATH_TIME      2;
 FUEL_CAPACITY  2000;
-IMAGE "units/pics/wolf-image.png"
-BODYSPRITE "units/pics/WolfHNSD.png"
-BODYSHADOW "units/pics/WolfHSSD.png"
-TURRETSPRITE "units/pics/WolfTNSD.png"
-TURRETSHADOW "units/pics/WolfTSSD.png"
+IMAGE "pics/menus/vehicleSelectionView/wolf.bmp"
+BODYSPRITE "units/pics/pak/WolfHNSD.pak"
+BODYSHADOW "units/pics/pak/WolfHSSD.pak"
+TURRETSPRITE "units/pics/pak/WolfTNSD.pak"
+TURRETSHADOW "units/pics/pak/WolfTSSD.pak"
 SOUNDSELECTED "lt-selected"
 FIRESOUND "lt-fire"
 WEAPON "SHELL"

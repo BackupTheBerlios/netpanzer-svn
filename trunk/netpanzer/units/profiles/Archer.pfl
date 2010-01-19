@@ -10,11 +10,11 @@ SPEED_RATE       16;
 SPEED_FACTOR      2;
 REPATH_TIME      10;
 FUEL_CAPACITY  2000;
-IMAGE "units/pics/archer-image.png"
-BODYSPRITE "units/pics/ArchHNSD.png"
-BODYSHADOW "units/pics/ArchHSSD.png"
-TURRETSPRITE "units/pics/ArchTNSD.png"
-TURRETSHADOW "units/pics/ArchTSSD.png"
+IMAGE "pics/menus/vehicleSelectionView/archer.bmp"
+BODYSPRITE "units/pics/pak/ArchHNSD.pak"
+BODYSHADOW "units/pics/pak/ArchHSSD.pak"
+TURRETSPRITE "units/pics/pak/ArchTNSD.pak"
+TURRETSHADOW "units/pics/pak/ArchTSSD.pak"
 SOUNDSELECTED "mu-selected"
 FIRESOUND "mu-fire"
 WEAPON "DOUBLEMISSILE"

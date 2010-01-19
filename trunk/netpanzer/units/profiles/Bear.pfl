@@ -10,11 +10,11 @@ SPEED_RATE       14;
 SPEED_FACTOR      2;
 REPATH_TIME      2;
 FUEL_CAPACITY  2000;
-IMAGE "units/pics/bear-image.png"
-BODYSPRITE "units/pics/BearHNSD.png"
-BODYSHADOW "units/pics/BearHSSD.png"
-TURRETSPRITE "units/pics/BearTNSD.png"
-TURRETSHADOW "units/pics/BearTSSD.png"
+IMAGE "pics/menus/vehicleSelectionView/bear.bmp"
+BODYSPRITE "units/pics/pak/BearHNSD.pak"
+BODYSHADOW "units/pics/pak/BearHSSD.pak"
+TURRETSPRITE "units/pics/pak/BearTNSD.pak"
+TURRETSHADOW "units/pics/pak/BearTSSD.pak"
 SOUNDSELECTED "mt-selected"
 FIRESOUND "mt-fire"
 WEAPON "SHELL"

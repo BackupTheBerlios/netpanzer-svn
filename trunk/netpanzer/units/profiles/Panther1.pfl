@@ -10,11 +10,11 @@ SPEED_RATE       18;
 SPEED_FACTOR      2;
 REPATH_TIME      20;
 FUEL_CAPACITY  2000;
-IMAGE "units/pics/panther1-image.png"
-BODYSPRITE "units/pics/PantHNSD.png"
-BODYSHADOW "units/pics/PantHSSD.png"
-TURRETSPRITE "units/pics/PantTNSD.png"
-TURRETSHADOW "units/pics/PantTSSD.png"
+IMAGE "pics/menus/vehicleSelectionView/panther1.bmp"
+BODYSPRITE "units/pics/pak/PantHNSD.pak"
+BODYSHADOW "units/pics/pak/PantHSSD.pak"
+TURRETSPRITE "units/pics/pak/PantTNSD.pak"
+TURRETSHADOW "units/pics/pak/PantTSSD.pak"
 SOUNDSELECTED "mt-selected"
 FIRESOUND "mt-fire"
 WEAPON "SHELL"
