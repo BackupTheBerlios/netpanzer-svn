@@ -22,7 +22,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include <math.h>
 #include <memory>
 
@@ -30,6 +29,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileSystem.hpp"
 #include "Util/Exception.hpp"
 #include "Util/UtilInterface.hpp"
+
+#include "lua/lua.hpp"
 
 float Palette::brightness = 1.0f;
 
@@ -68,39 +69,11 @@ Palette::Palette()
 {
 } // end Palette::Palette
 
-int
-Palette::makeColor(lua_State *L)
-{
-    int r = luaL_checkint(L,1); // r
-    int g = luaL_checkint(L,2); // g
-    int b = luaL_checkint(L,3); // b
-    
-    int color = findNearestColor(r,g,b,true);
-    
-    lua_pushinteger(L, color);
-    return 1;
-}
-
-static const luaL_reg colorUtilLib[] =
-{
-    {"makeColor",   Palette::makeColor},
-    {0,0}
-};
-
-void
-Palette::registerScript()
-{
-    ScriptManager::registerLib( "ColorUtil", colorUtilLib);
-    ScriptManager::bindStaticVariables( "Color", "ColorMetaTable",
-                                       Color::colorGetters,
-                                       Color::colorSetters);
-}
-
 // setColors
 //---------------------------------------------------------------------------
 void Palette::setColors()
 {
-    ScriptManager::runFile("loadcolors","scripts/initcolors.lua");
+    ScriptManager::runFileInTable("scripts/initcolors.lua", "Color");
 } // end Palette::setColors
 
 // setColorTables

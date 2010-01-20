@@ -16,9 +16,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-
 #include "Color.hpp"
+#include "Palette.hpp"
+#include "Scripts/ScriptManager.hpp"
+#include "Scripts/ScriptHelper.hpp"
 
 // Here is some preprocessor abuse
 
@@ -98,15 +99,42 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 GEN_COLORS(GEN_VAR)
 
 // This generates the tables needed for script binding
-const ScriptVarBindRecord Color::colorGetters[] =
+static const ScriptVarBindRecord color_getters[] =
 {
     GEN_COLORS(GEN_GETSTRUCT)
     {0,0}
 };
         
-const ScriptVarBindRecord Color::colorSetters[] =
+static const ScriptVarBindRecord color_setters[] =
 {
     GEN_COLORS(GEN_SETSTRUCT)
     {0,0}
 };
+
+static int color_rgb(lua_State *L)
+{
+    int r = luaL_checkint(L,1); // r
+    int g = luaL_checkint(L,2); // g
+    int b = luaL_checkint(L,3); // b
+
+    int color = Palette::findNearestColor(r,g,b, true);
+
+    lua_pushinteger(L, color);
+    return 1;
+}
+
+static const luaL_Reg color_methods[] =
+{
+    { "rgb", color_rgb },
+    { 0, 0}
+};
+
+void
+Color::registerScript(const char *table_name)
+{
+    ScriptManager::registerLib( table_name, color_methods);
+    ScriptManager::bindStaticVariables(table_name, 0, "ColorMetaTable",
+                                       color_getters, color_setters);
+}
+
         

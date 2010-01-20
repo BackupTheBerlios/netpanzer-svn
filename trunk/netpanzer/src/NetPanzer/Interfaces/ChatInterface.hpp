@@ -18,12 +18,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _CHATINTERFACE_HPP
 #define _CHATINTERFACE_HPP
 
-#include "Classes/Network/ChatNetMessage.hpp"
+//#include "Classes/Network/ChatNetMessage.hpp"
+
+class NetMessage;
 
 class ChatInterface
 {
 protected:
-    static ChatMesgRequest current_chat_mesg;
+//    static ChatMesgRequest current_chat_mesg;
     static void (* addChatString)( const char *message_text );
 
     static void chatMessageRequest(const NetMessage* message);
@@ -31,6 +33,12 @@ protected:
 
 public:
     static void processChatMessages(const NetMessage* message);
+
+    static void say(const char * message);
+    static void teamsay(const char * message);
+    static void serversay(const char * message);
+    static void serversayTo(const int player, const char * message);
+
 
     // ** ChatView Interface Methods
     static void setNewMessageCallBack( void (* addStringCallBack)( const char *message_text ) );

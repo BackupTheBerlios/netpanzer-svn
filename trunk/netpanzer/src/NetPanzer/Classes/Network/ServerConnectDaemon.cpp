@@ -195,12 +195,7 @@ void ServerConnectDaemon::sendConnectionAlert(ClientSocket * client)
 
     if ( ((std::string)gameconfig->motd).length() > 0 )
     {
-        ChatMesg chat_mesg;
-        chat_mesg.message_scope=_chat_mesg_scope_server;
-        chat_mesg.setSourcePlayerIndex(0);
-        snprintf(chat_mesg.message_text, sizeof(chat_mesg.message_text), "%s",gameconfig->motd.c_str());
-        chat_mesg.setSize(sizeof(ChatMesg));
-        client->sendMessage( &chat_mesg, sizeof(chat_mesg));
+    	ChatInterface::serversayTo(client->getPlayerIndex(), gameconfig->motd.c_str());
     }
 
     SERVER->broadcastMessage( &connect_alert, sizeof(SystemConnectAlert));

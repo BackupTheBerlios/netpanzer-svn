@@ -307,7 +307,6 @@ int netpanzer_main(int argc, char** argv)
         
     BaseGameManager *manager = initialise(argc, argv);
 
-    Palette::registerScript(); // here for the moment;
     ScriptManager::runFile("unused","scripts/initialize.lua");
     
     // we'll catch every exception here, to be sure the user gets at least
