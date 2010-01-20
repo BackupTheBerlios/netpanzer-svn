@@ -27,6 +27,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
   #include "Interfaces/GameConfig.hpp"
 #endif
 
+#ifndef PACKAGE_VERSION
+	#define PACKAGE_VERSION "testing"
+#endif
+
 SDLVideo* Screen; // get rid of this later...
 
 SDLVideo::SDLVideo()

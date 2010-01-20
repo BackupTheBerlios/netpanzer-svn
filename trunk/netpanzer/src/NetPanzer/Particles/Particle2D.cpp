@@ -36,7 +36,7 @@ int   Particle2D::createParticles     = 1;
 int   Particle2D::drawParticles       = 1;
 
 // Pre-allocation variables.
-const  size_t MAX_PARTICLE_CLASS_SIZE = 340;
+const  size_t MAX_PARTICLE_CLASS_SIZE = 512;
 const  int    MAX_PARTICLES           = 3000;
 //static size_t biggestParticle         = 0;
 
