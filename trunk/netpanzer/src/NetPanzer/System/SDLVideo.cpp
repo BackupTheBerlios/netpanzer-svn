@@ -116,13 +116,13 @@ void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
 
 //    flags |= SDL_HWPALETTE | SDL_ANYFORMAT;
 
-    frontBuffer = SDL_SetVideoMode(new_width, new_width, bpp, flags);
+    frontBuffer = SDL_SetVideoMode(new_width, new_height, bpp, flags);
     if(!frontBuffer)
         throw Exception("Couldn't set display mode (%dx%d, %X): %s",
-                new_width, new_width, flags, SDL_GetError());
+                new_width, new_height, flags, SDL_GetError());
 
     if(! (frontBuffer->flags & SDL_DOUBLEBUF)) {
-        backBuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, new_width, new_width,
+        backBuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, new_width, new_height,
                 bpp, 0, 0, 0, 0);
         if(!backBuffer)
             throw Exception("Couldn't create backBuffer");
