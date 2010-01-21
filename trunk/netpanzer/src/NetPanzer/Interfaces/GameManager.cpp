@@ -165,10 +165,24 @@ void GameManager::setVideoMode()
         flags |= SDL_RESIZABLE;
     }
 
+    if ( GameConfig::video_width < 640 )
+    {
+        GameConfig::video_width = 640;
+    }
+
+    if ( GameConfig::video_height < 480 )
+    {
+        GameConfig::video_height = 480;
+    }
+
     mode_res.x = GameConfig::video_width;
     mode_res.y = GameConfig::video_height;
 
     Screen->setVideoMode(mode_res.x, mode_res.y, 8, flags);
+
+    SDL_Surface* vs = Screen->getSurface();
+    mode_res.x = vs->w;
+    mode_res.y = vs->h;
 
     WorldViewInterface::setCameraSize( mode_res.x, mode_res.y);
     delete screen;
