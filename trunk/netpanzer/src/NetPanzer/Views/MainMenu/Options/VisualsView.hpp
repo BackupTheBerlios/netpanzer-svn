@@ -49,6 +49,9 @@ private:
 
     // Option choices.
     Choice   * choiceResolution;
+    unsigned int current_width;
+    unsigned int current_height;
+
     Choice   * choiceGameViewBackgroundColor;
     Choice   * choiceMiniMapObjectiveDrawMode;
     Choice   * choiceMiniMapUnitSize;

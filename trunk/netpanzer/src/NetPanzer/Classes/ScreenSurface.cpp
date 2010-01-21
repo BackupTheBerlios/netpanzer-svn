@@ -42,6 +42,7 @@ void ScreenSurface::lock()
     assert(doesExist == false);
     draw->lockDoubleBuffer( (unsigned char **) &frame0 );
     mem = frame0;
+    tpitch = draw->getSurface()->pitch;
     doesExist = true;
 }
 

@@ -88,7 +88,7 @@ void PuffParticle2D::create(	PUFF_TYPE particleType,
 
     packedSurfaceShadow.setDrawModeBlend(&Palette::colorTableDarkenALittle);
 
-    if (gameconfig->blendsmoke) {
+    if (GameConfig::video_blendsmoke) {
         int randColorTable = rand() % 4;
 
         if (randColorTable == 0) {
@@ -138,7 +138,7 @@ void PuffParticle2D::draw(const Surface&, SpriteSorter &sorter)
     packedSurface.setAttrib(iXY((int) pos.x, (int) pos.z), layer);
     sorter.addSprite(&packedSurface);
 
-    if (gameconfig->displayshadows) {
+    if (GameConfig::video_shadows) {
         if (!userDefinedShadowPos) {
             shadowPos.x = pos.x - ((float(index) /
                         float(staticPackedSmokeLightPuff.size())) * packedSurfaceShadow.getCurFrame() * 10);

@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/ChatInterface.hpp"
 #include "Interfaces/ConsoleInterface.hpp"
+#include "Interfaces/GameConfig.hpp"
 
 lua_State * ScriptManager::luavm = 0;
 
@@ -43,7 +44,7 @@ ScriptManager::initialize()
         }
         Color::registerScript("Color");
 //        ParticleInterface::registerScript("particles");
-//        GameConfig::registerScript("config");
+        GameConfig::registerScript("config");
 
     }
 

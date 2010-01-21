@@ -1,7 +1,7 @@
-LOGGER:log("Script initialization");
+--LOGGER:log("Script initialization");
 
-LOGGER:log("Video Config: " .. config.video.width .. " x " .. config.video.height)
-LOGGER:log("Fullscreen: " .. tostring(config.video.fullscreen))
+--LOGGER:log("Video Config: " .. config.video.width .. " x " .. config.video.height)
+--LOGGER:log("Fullscreen: " .. tostring(config.video.fullscreen))
 
 function pairs(t)
     local mt = getmetatable(t)
@@ -13,7 +13,7 @@ function dump_table(result, t, extra)
     local lin = extra or ""
 
     if type(t) ~= 'table' then
-        LOGGER:log("ERROR dumping table: it is not a table")
+        --LOGGER:log("ERROR dumping table: it is not a table")
         return
     end    
     
@@ -57,5 +57,5 @@ config.dump = function(table)
     return gconcat(result,"\n");
 end
 
-LOGGER:log("Dumping conf:\n" .. config.dump(config))
+--LOGGER:log("Dumping conf:\n" .. config.dump(config))
 

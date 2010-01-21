@@ -468,7 +468,7 @@ void PlayerGameManager::processSystemKeys()
     if (KeyboardInterface::getKeyState( SDLK_LALT ) ||
             KeyboardInterface::getKeyState( SDLK_RALT )) {
         if (KeyboardInterface::getKeyPressed(SDLK_RETURN)) {
-            gameconfig->fullscreen.toggle();
+            GameConfig::video_fullscreen = !GameConfig::video_fullscreen;
             GameManager::setVideoMode();
         }
     } // ** LFT_ALT or RGT_ALT pressed

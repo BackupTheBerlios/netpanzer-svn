@@ -24,6 +24,7 @@
 #include "SDLVideo.hpp"
 #include "2D/Palette.hpp"
 #include "Interfaces/GameConfig.hpp"
+#include "Interfaces/GameManager.hpp"
 
 bool handleSDLEvents()
 {
@@ -64,9 +65,14 @@ bool handleSDLEvents()
         case SDL_ACTIVEEVENT:
             if ( (event.active.state&SDL_APPACTIVE)
                  && (event.active.gain==1)
-                 && gameconfig->fullscreen )
+                 && GameConfig::video_fullscreen )
                 Screen->setPalette(Palette::color);
              break;
+        case SDL_VIDEORESIZE:
+            GameConfig::video_width = event.resize.w;
+            GameConfig::video_height = event.resize.h;
+            GameManager::setVideoMode();
+            break;
         }
     }
 

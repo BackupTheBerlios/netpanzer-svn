@@ -37,7 +37,7 @@ SDLVideo::SDLVideo()
         : frontBuffer(0), backBuffer(0)
 {
 #ifdef _WIN32
-    if ( gameconfig->usedirectx ) {
+    if ( GameConfig::video_usedirectx ) {
         putenv("SDL_VIDEODRIVER=directx");
     }
 #endif
@@ -57,6 +57,41 @@ SDLVideo::~SDLVideo()
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
+static bool getNearestFullScreenMode(int flags, int* width, int* height)
+{
+    SDL_Rect** modes = SDL_ListModes(0, flags);
+    if ( modes == 0 )
+    {
+        return false;
+    }
+    else if ( modes != (SDL_Rect**)-1 )
+    {
+        unsigned int min_x_dif = -1;
+        unsigned int min_y_dif = -1;
+        unsigned int nearest = 0;
+        for ( int n = 0; modes[n]; ++n )
+        {
+            unsigned int new_x_dif = abs((*width) - modes[n]->w);
+
+            if ( new_x_dif <= min_x_dif )
+            {
+                unsigned int new_y_dif = abs((*height) - modes[n]->h);
+                if ( new_y_dif <= min_y_dif )
+                {
+                    nearest = n;
+                    min_x_dif = new_x_dif;
+                    min_y_dif = new_y_dif;
+                }
+            }
+        }
+        *width = modes[nearest]->w;
+        *height = modes[nearest]->h;
+    }
+
+    return true;
+}
+
+
 void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
 {
     // eventually delete old backbuffer
@@ -65,7 +100,22 @@ void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
             SDL_FreeSurface(backBuffer);
     }
     
-    flags |= SDL_HWPALETTE | SDL_ANYFORMAT;
+    int new_width = width;
+    int new_height = height;
+    if ( ! (flags&SDL_FULLSCREEN) )
+    {
+//        bpp = 0;
+        flags |= SDL_ANYFORMAT;
+    }
+    else
+    {
+        getNearestFullScreenMode(flags, &new_width, &new_height);
+        LOGGER.warning("Setting fullscreen mode %d x %d (original %d x %d)",
+                             new_width, new_height, width, height);
+    }
+
+//    flags |= SDL_HWPALETTE | SDL_ANYFORMAT;
+
     frontBuffer = SDL_SetVideoMode(width, height, bpp, flags);
     if(!frontBuffer)
         throw Exception("Couldn't set display mode (%dx%d, %X): %s",

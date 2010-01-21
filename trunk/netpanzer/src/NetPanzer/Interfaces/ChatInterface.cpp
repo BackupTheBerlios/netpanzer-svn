@@ -27,8 +27,6 @@
 //#include "Classes/Network/ChatNetMessage.hpp"
 #include "Util/Log.hpp"
 
-void (* ChatInterface::addChatString)(const char *message_text) = 0;
-
 enum { _net_message_id_chat_mesg_req,
        _net_message_id_chat_mesg
 };
@@ -122,9 +120,7 @@ public:
     }
 } __attribute__((packed));
 
-static ChatMesgRequest current_chat_mesg;
-
-void ChatInterface::chatMessageRequest(const NetMessage* message) {
+static void chatMessageRequest(const NetMessage* message) {
 	bool post_on_server = false;
 	ChatMesg chat_mesg;
 	const ChatMesgRequest* chat_request = (const ChatMesgRequest*) message;
@@ -188,14 +184,6 @@ void ChatInterface::chatMessageRequest(const NetMessage* message) {
 		player_state = PlayerInterface::getPlayer(
 				chat_mesg.getSourcePlayerIndex());
 
-		if ((addChatString != 0)) {
-			char mesg_str[256];
-			sprintf(mesg_str, " ---- %s ----", player_state->getName().c_str());
-
-			addChatString(mesg_str);
-			addChatString(chat_mesg.message_text);
-		}
-
 		PIX color = Color::white;
 
 		switch (chat_request->message_scope) {
@@ -220,7 +208,7 @@ void ChatInterface::chatMessageRequest(const NetMessage* message) {
 	}
 }
 
-void ChatInterface::chatMessage(const NetMessage* message) {
+static void chatMessage(const NetMessage* message) {
 	unsigned short local_player_index;
 	const ChatMesg *chat_mesg = (const ChatMesg*) message;
 
@@ -243,14 +231,6 @@ void ChatInterface::chatMessage(const NetMessage* message) {
 
 	player_state
 			= PlayerInterface::getPlayer(chat_mesg->getSourcePlayerIndex());
-
-	if ((addChatString != 0)) {
-		char mesg_str[144];
-		sprintf(mesg_str, " ---- %s ----", player_state->getName().c_str());
-
-		addChatString(mesg_str);
-		addChatString(chat_mesg->message_text);
-	} // ** if
 
 	PIX color = Color::white;
 
@@ -287,42 +267,6 @@ void ChatInterface::processChatMessages(const NetMessage* message) {
 		LOGGER.warning("Received unknown chat message (id %d-%d)",
 				message->message_class, message->message_id);
 	}
-}
-
-void ChatInterface::setNewMessageCallBack(void(* addStringCallBack)(
-		const char *message_text)) {
-	addChatString = addStringCallBack;
-}
-
-void ChatInterface::setMessageScopeAll() {
-	current_chat_mesg.message_scope = _chat_mesg_scope_all;
-}
-
-void ChatInterface::setMessageScopeAllies() {
-	current_chat_mesg.message_scope = _chat_mesg_scope_alliance;
-}
-
-void ChatInterface::setMessageScopeEnemies() {
-	current_chat_mesg.message_scope = _chat_mesg_scope_enemies;
-}
-
-void ChatInterface::setMessageScopeServer() {
-	current_chat_mesg.message_scope = _chat_mesg_scope_server;
-}
-
-void ChatInterface::sendCurrentMessage(const char *message_text) {
-	current_chat_mesg.setSourcePlayerIndex(
-			PlayerInterface::getLocalPlayerIndex());
-	strncpy(current_chat_mesg.message_text, message_text, 149);
-	current_chat_mesg.message_text[149] = 0;
-
-	if (NetworkState::status == _network_state_client) {
-		CLIENT->sendMessage(&current_chat_mesg, sizeof(ChatMesgRequest));
-	} else {
-		processChatMessages(&current_chat_mesg);
-	}
-
-	current_chat_mesg.reset();
 }
 
 void ChatInterface::say(const char *message)

@@ -148,7 +148,7 @@ WorldInputCmdProcessor::updateScrollStatus(const iXY &mouse_pos)
         return;
     }
 
-    if(((bool)gameconfig->fullscreen)!=true) {
+    if ( GameConfig::video_fullscreen != true ) {
         // don't do border scrolling on windowed mode because
         //  the window isn't always on the edge of the screen.
         return;
