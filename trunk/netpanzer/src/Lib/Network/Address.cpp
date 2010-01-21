@@ -91,7 +91,7 @@ Address::resolve(const std::string& name, unsigned short port)
     if(!hentry) {
         std::stringstream msg;
         msg << "Couldn't resolve address '" << name;
-#ifdef USE_WINSOCK
+#ifdef _WIN32
         msg << "' (code " << WSAGetLastError() << ")";
 #else
         msg << "': " << hstrerror(h_errno);

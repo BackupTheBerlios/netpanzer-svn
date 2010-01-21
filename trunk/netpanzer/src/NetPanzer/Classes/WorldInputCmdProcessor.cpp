@@ -51,6 +51,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Units/Vehicle.hpp"
 
+#include "Scripts/ScriptManager.hpp"
+
 WorldInputCmdProcessor COMMAND_PROCESSOR;
 
 enum { _cursor_regular,
@@ -428,8 +430,7 @@ void
 WorldInputCmdProcessor::setKeyboardInputModeChatMesg()
 {
     ConsoleInterface::setInputStringStatus( true );
-    ConsoleInterface::resetInputString( "Message All: " );
-    ChatInterface::setMessageScopeAll();
+    ConsoleInterface::resetInputString( "> " );
     KeyboardInterface::flushCharBuffer();
     KeyboardInterface::setTextMode(true);
     enter_key_hit_count = 1;
@@ -440,9 +441,15 @@ void
 WorldInputCmdProcessor::keyboardInputModeChatMesg()
 {
     char chat_string[256];
-    if (getConsoleInputString(chat_string)) {
+    if (getConsoleInputString(chat_string))
+    {
         if(strcmp(chat_string, "") != 0)
-            ChatInterface::sendCurrentMessage( chat_string );
+        {
+            if ( chat_string[0] != '/' || ! ScriptManager::runUserCommand(&chat_string[1]) )
+            {
+                ChatInterface::say(chat_string);
+            }
+        }
         keyboard_input_mode = _keyboard_input_mode_command;
         ConsoleInterface::setInputStringStatus(false);             
     }
@@ -452,8 +459,7 @@ void
 WorldInputCmdProcessor::setKeyboardInputModeAllieChatMesg()
 {
     ConsoleInterface::setInputStringStatus( true );
-    ConsoleInterface::resetInputString( "Message Allies : " );
-    ChatInterface::setMessageScopeAllies();
+    ConsoleInterface::resetInputString( "[Team]> " );
     KeyboardInterface::flushCharBuffer();
     KeyboardInterface::setTextMode(true);
     enter_key_hit_count = 1;
@@ -467,7 +473,7 @@ WorldInputCmdProcessor::keyboardInputModeAllieChatMesg()
     if ( getConsoleInputString( chat_string ) == true ) {
         keyboard_input_mode = _keyboard_input_mode_command;
         ConsoleInterface::setInputStringStatus( false );
-        ChatInterface::sendCurrentMessage( chat_string );
+        ChatInterface::teamsay( chat_string );
     }
 }
 
@@ -945,21 +951,28 @@ bool
 WorldInputCmdProcessor::getConsoleInputString(char *input_string)
 {
     int key_char;
-    while (KeyboardInterface::getChar(key_char)) {
+    while (KeyboardInterface::getChar(key_char))
+    {
         // Check for extended code.
-        if (key_char == 0) {
-            if (KeyboardInterface::getChar(key_char)) {
+        if (key_char == 0)
+        {
+            if (KeyboardInterface::getChar(key_char))
+            {
                 ConsoleInterface::addExtendedChar(key_char);
-                if ((key_char == SDLK_RETURN) ) {
+                if ((key_char == SDLK_RETURN) )
+                {
                     enter_key_hit_count++;
-                    if (enter_key_hit_count == 2) {
-			KeyboardInterface::setTextMode(false);
+                    if (enter_key_hit_count == 2)
+                    {
+                        KeyboardInterface::setTextMode(false);
                         ConsoleInterface::getInputString( input_string );
                         return true;
                     }
                 }
             }
-        } else {
+        }
+        else
+        {
             ConsoleInterface::addChar(key_char);
         }
 

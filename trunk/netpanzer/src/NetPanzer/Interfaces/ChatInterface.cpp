@@ -332,10 +332,10 @@ void ChatInterface::say(const char *message)
 
 	if ( text_len >= sizeof(cmsg.message_text) )
 	{
-		text_len = sizeof(cmsg.message_text);
+		text_len = sizeof(cmsg.message_text)-1;
 	}
 	memcpy(cmsg.message_text, message, text_len);
-	cmsg.message_text[sizeof(cmsg.message_text)-1] = 0;
+	cmsg.message_text[text_len] = 0;
 
 	cmsg.message_scope = _chat_mesg_scope_all;
 
@@ -361,10 +361,10 @@ void ChatInterface::teamsay(const char* message)
 
 	if ( text_len >= sizeof(cmsg.message_text) )
 	{
-		text_len = sizeof(cmsg.message_text);
+		text_len = sizeof(cmsg.message_text)-1;
 	}
 	memcpy(cmsg.message_text, message, text_len);
-	cmsg.message_text[sizeof(cmsg.message_text)-1] = 0;
+	cmsg.message_text[text_len] = 0;
 
 	cmsg.message_scope = _chat_mesg_scope_alliance;
 
@@ -390,10 +390,10 @@ void ChatInterface::serversay(const char* message)
 
 	if ( text_len >= sizeof(cmsg.message_text) )
 	{
-		text_len = sizeof(cmsg.message_text);
+		text_len = sizeof(cmsg.message_text)-1;
 	}
 	memcpy(cmsg.message_text, message, text_len);
-	cmsg.message_text[sizeof(cmsg.message_text)-1] = 0;
+	cmsg.message_text[text_len] = 0;
 
 	cmsg.message_scope = _chat_mesg_scope_server;
 
@@ -427,10 +427,10 @@ void ChatInterface::serversayTo(const int player, const char* message)
 		cmsg.setSourcePlayerIndex(PlayerInterface::getLocalPlayerIndex());
 		if ( text_len >= sizeof(cmsg.message_text) )
 		{
-			text_len = sizeof(cmsg.message_text);
+			text_len = sizeof(cmsg.message_text)-1;
 		}
 		memcpy(cmsg.message_text, message, text_len);
-		cmsg.message_text[sizeof(cmsg.message_text)-1] = 0;
+		cmsg.message_text[text_len] = 0;
 
 		cmsg.message_scope = _chat_mesg_scope_server;
 
