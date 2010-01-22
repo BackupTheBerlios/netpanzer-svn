@@ -157,8 +157,8 @@ void GameManager::setVideoMode()
     iXY mode_res;
     iXY old_res = screen ? iXY(screen->getWidth(), screen->getHeight()): iXY(0,0);
     Uint32 flags = GameConfig::video_fullscreen ? SDL_FULLSCREEN : 0;
-    flags |= GameConfig::video_hardwaresurface ? SDL_HWSURFACE : 0;
-    flags |= GameConfig::video_doublebuffer ? SDL_DOUBLEBUF : 0;
+//    flags |= GameConfig::video_hardwaresurface ? SDL_HWSURFACE : 0;
+//    flags |= GameConfig::video_doublebuffer ? SDL_DOUBLEBUF : 0;
 
     if ( ! GameConfig::video_fullscreen )
     {

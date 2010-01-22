@@ -95,17 +95,17 @@ static bool getNearestFullScreenMode(int flags, int* width, int* height)
 void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
 {
     // eventually delete old backbuffer
-    if(frontBuffer && !(frontBuffer->flags & SDL_DOUBLEBUF)) {
-        if(backBuffer)
-            SDL_FreeSurface(backBuffer);
-    }
+//    if(frontBuffer && !(frontBuffer->flags & SDL_DOUBLEBUF)) {
+//        if(backBuffer)
+//            SDL_FreeSurface(backBuffer);
+//    }
     
     int new_width = width;
     int new_height = height;
     if ( ! (flags&SDL_FULLSCREEN) )
     {
 //        bpp = 0;
-        flags |= SDL_ANYFORMAT;
+//        flags |= SDL_ANYFORMAT;
     }
     else
     {
@@ -121,14 +121,14 @@ void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
         throw Exception("Couldn't set display mode (%dx%d, %X): %s",
                 new_width, new_height, flags, SDL_GetError());
 
-    if(! (frontBuffer->flags & SDL_DOUBLEBUF)) {
-        backBuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, new_width, new_height,
-                bpp, 0, 0, 0, 0);
-        if(!backBuffer)
-            throw Exception("Couldn't create backBuffer");
-    } else {
-        backBuffer = frontBuffer;
-    }
+//    if(! (frontBuffer->flags & SDL_DOUBLEBUF)) {
+//        backBuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, new_width, new_height,
+//                bpp, 0, 0, 0, 0);
+//        if(!backBuffer)
+//            throw Exception("Couldn't create backBuffer");
+//    } else {
+//        backBuffer = frontBuffer;
+//    }
 
     // let's scare the mouse :)
     SDL_ShowCursor(SDL_DISABLE);
@@ -140,7 +140,7 @@ bool SDLVideo::isDisplayModeAvailable(int width, int height, int bpp,
                                      Uint32 flags)
 {
     //flags |= SDL_HWPALETTE | SDL_ANYFORMAT;
-    flags |= SDL_ANYFORMAT;
+//    flags |= SDL_ANYFORMAT;
     int res = SDL_VideoModeOK(width, height, bpp, flags);
 
     LOGGER.warning("Mode %dx%dx%d %s is %s", width, height, bpp,
@@ -152,37 +152,39 @@ bool SDLVideo::isDisplayModeAvailable(int width, int height, int bpp,
 
 void SDLVideo::lockDoubleBuffer(unsigned char **buffer)
 {
-    if(SDL_MUSTLOCK(backBuffer) && SDL_LockSurface(backBuffer))
+    if(SDL_MUSTLOCK(frontBuffer) && SDL_LockSurface(frontBuffer))
         throw Exception("Couldn't lock display buffer");
 
-    *buffer = (unsigned char *)backBuffer->pixels;
+    *buffer = (unsigned char *)frontBuffer->pixels;
 }
 
 void SDLVideo::unlockDoubleBuffer()
 {
-    if(SDL_MUSTLOCK(backBuffer))
-        SDL_UnlockSurface(backBuffer);
+    if(SDL_MUSTLOCK(frontBuffer))
+        SDL_UnlockSurface(frontBuffer);
 }
 
 void SDLVideo::copyDoubleBufferandFlip()
 {
-    if(! (frontBuffer->flags & SDL_DOUBLEBUF)) {
-        SDL_BlitSurface(backBuffer, 0, frontBuffer, 0);
-    }
+//    if(! (frontBuffer->flags & SDL_DOUBLEBUF)) {
+//        SDL_BlitSurface(backBuffer, 0, frontBuffer, 0);
+//    }
 
-    if (SDL_Flip(frontBuffer))
-        throw Exception("Error while swapping double buffer");        
+//    if (SDL_Flip(frontBuffer))
+//        throw Exception("Error while swapping double buffer");
+    SDL_UpdateRect(frontBuffer, 0, 0, 0, 0);
 }
 
 void SDLVideo::setPalette(SDL_Color *color)
 {
-    SDL_SetColors(backBuffer, color, 0, 256);
-    if(frontBuffer != backBuffer && frontBuffer->format->BitsPerPixel == 8)
-        SDL_SetColors(frontBuffer, color, 0, 256);
+    SDL_SetPalette(frontBuffer, SDL_LOGPAL, color, 0, 256);
+//    SDL_SetColors(backBuffer, color, 0, 256);
+//    if(frontBuffer != backBuffer && frontBuffer->format->BitsPerPixel == 8)
+//        SDL_SetColors(frontBuffer, color, 0, 256);
 }
 
 SDL_Surface* SDLVideo::getSurface()
 {
-    return backBuffer;
+    return frontBuffer;
 }
 
