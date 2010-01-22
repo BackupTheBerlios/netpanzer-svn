@@ -178,7 +178,7 @@ void GameManager::setVideoMode()
     mode_res.x = GameConfig::video_width;
     mode_res.y = GameConfig::video_height;
 
-    Screen->setVideoMode(mode_res.x, mode_res.y, 8, flags);
+    Screen->setVideoMode(mode_res.x, mode_res.y, 32, flags);
 
     SDL_Surface* vs = Screen->getSurface();
     mode_res.x = vs->w;
