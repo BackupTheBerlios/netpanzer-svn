@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Interfaces/ConsoleInterface.hpp"
 
+#include "cstring"
+
 #include <time.h>
 #include "Interfaces/GameConfig.hpp"
 #include "Util/Log.hpp"
@@ -271,8 +273,13 @@ void ConsoleInterface::addChar(int newChar)
     // Add the character.
     int length = strlen(inputString) + 1;
 
-    inputString[cursorPos] = newChar;
+    if ( cursorPos != length )
+    {
+        memmove(&inputString[cursorPos+1], &inputString[cursorPos], length-cursorPos);
+        ++length;
+    }
 
+    inputString[cursorPos] = newChar;
     inputString[length] = '\0';
 
     if (cursorPos < maxCharCount - 1) {

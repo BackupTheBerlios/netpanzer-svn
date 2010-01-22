@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
-#include "Util/Filesystem.hpp"
+#include "Util/FileSystem.hpp"
 #include "SDLVideo.hpp"
 #include <stdlib.h>
 #ifdef _WIN32
@@ -36,6 +36,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #endif
 
 SDLVideo* Screen; // get rid of this later...
+
+static int best_bpp = 0;
 
 SDLVideo::SDLVideo()
         : frontBuffer(0), backBuffer(0)
@@ -49,6 +51,16 @@ SDLVideo::SDLVideo()
         throw Exception("Couldn't initialize SDL_video subsystem: %s",
                 SDL_GetError());
     }
+
+    if ( ! best_bpp )
+    {
+        const SDL_VideoInfo *v = SDL_GetVideoInfo();
+        if ( v )
+        {
+            best_bpp = v->vfmt->BitsPerPixel;
+        }
+    }
+
     // XXX unfortunately SDL initializes the keyboard again :-/
     SDL_EnableUNICODE(1);
 }
@@ -98,42 +110,41 @@ static bool getNearestFullScreenMode(int flags, int* width, int* height)
 
 void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
 {
-    // eventually delete old backbuffer
-//    if(frontBuffer && !(frontBuffer->flags & SDL_DOUBLEBUF)) {
-        if(backBuffer)
-            SDL_FreeSurface(backBuffer);
-//    }
+    if(backBuffer)
+    {
+        SDL_FreeSurface(backBuffer);
+    }
     
     int new_width = width;
     int new_height = height;
-    if ( ! (flags&SDL_FULLSCREEN) )
+
+    if ( flags&SDL_FULLSCREEN )
     {
-//        bpp = 0;
-        flags |= SDL_ANYFORMAT;
-    }
-    else
-    {
-        flags |= SDL_ANYFORMAT;
+        bpp = best_bpp;
         getNearestFullScreenMode(flags, &new_width, &new_height);
         LOGGER.warning("Setting fullscreen mode %d x %d (original %d x %d)",
                              new_width, new_height, width, height);
     }
+    else
+    {
+        bpp = 0;
+    }
 
-//    flags |= SDL_HWPALETTE | SDL_ANYFORMAT;
+    flags |= SDL_ANYFORMAT;
 
     frontBuffer = SDL_SetVideoMode(new_width, new_height, bpp, flags);
     if(!frontBuffer)
+    {
         throw Exception("Couldn't set display mode (%dx%d, %X): %s",
-                new_width, new_height, flags, SDL_GetError());
+                        new_width, new_height, flags, SDL_GetError());
+    }
 
-//    if(! (frontBuffer->flags & SDL_DOUBLEBUF)) {
-        backBuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, new_width, new_height,
-                                          8, 0, 0, 0, 0);
-        if(!backBuffer)
-            throw Exception("Couldn't create backBuffer");
-//    } else {
-//        backBuffer = frontBuffer;
-//    }
+    backBuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, new_width, new_height,
+                                      8, 0, 0, 0, 0);
+    if(!backBuffer)
+    {
+        throw Exception("Couldn't create backBuffer");
+    }
 
     // let's scare the mouse :)
     SDL_ShowCursor(SDL_DISABLE);
@@ -144,7 +155,6 @@ void SDLVideo::setVideoMode(int width, int height, int bpp, Uint32 flags)
 bool SDLVideo::isDisplayModeAvailable(int width, int height, int bpp,
                                      Uint32 flags)
 {
-    //flags |= SDL_HWPALETTE | SDL_ANYFORMAT;
     flags |= SDL_ANYFORMAT;
     int res = SDL_VideoModeOK(width, height, bpp, flags);
 
@@ -171,21 +181,13 @@ void SDLVideo::unlockDoubleBuffer()
 
 void SDLVideo::copyDoubleBufferandFlip()
 {
-//    if(! (frontBuffer->flags & SDL_DOUBLEBUF)) {
-        SDL_BlitSurface(backBuffer, 0, frontBuffer, 0);
-//    }
-
-//    if (SDL_Flip(frontBuffer))
-//        throw Exception("Error while swapping double buffer");
+    SDL_BlitSurface(backBuffer, 0, frontBuffer, 0);
     SDL_UpdateRect(frontBuffer, 0, 0, 0, 0);
 }
 
 void SDLVideo::setPalette(SDL_Color *color)
 {
-//    SDL_SetPalette(frontBuffer, SDL_LOGPAL, color, 0, 256);
     SDL_SetColors(backBuffer, color, 0, 256);
-//    if(frontBuffer != backBuffer && frontBuffer->format->BitsPerPixel == 8)
-//        SDL_SetColors(frontBuffer, color, 0, 256);
 }
 
 SDL_Surface* SDLVideo::getSurface()
@@ -195,12 +197,14 @@ SDL_Surface* SDLVideo::getSurface()
 
 void SDLVideo::doScreenshoot()
 {
+    // this is called blind faith
+
     filesystem::mkdir("screenshoots");
 
     char buf[256];
     time_t curtime = time(0);
     struct tm* loctime = localtime(&curtime);
-    int timelen = strftime(buf, sizeof(buf), "screenshoots/%Y%m%d_%H%M%S.bmp", loctime);
+    strftime(buf, sizeof(buf), "screenshoots/%Y%m%d_%H%M%S.bmp", loctime);
 
     std::string bmpfile = filesystem::getRealWriteName(buf);
     SDL_SaveBMP(backBuffer, bmpfile.c_str());
