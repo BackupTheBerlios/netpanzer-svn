@@ -465,6 +465,11 @@ void PlayerGameManager::processSystemKeys()
         }
     }
 
+    if ( KeyboardInterface::getKeyState(SDLK_F9) )
+    {
+        Screen->doScreenshoot();
+    }
+
     if (KeyboardInterface::getKeyState( SDLK_LALT ) ||
             KeyboardInterface::getKeyState( SDLK_RALT )) {
         if (KeyboardInterface::getKeyPressed(SDLK_RETURN)) {

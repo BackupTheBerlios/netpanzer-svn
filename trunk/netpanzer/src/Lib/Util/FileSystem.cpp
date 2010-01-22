@@ -125,6 +125,18 @@ std::string getRealName(const char* filename)
     return realname;
 }
 
+std::string getRealWriteName(const char* filename)
+{
+    const char* dir = PHYSFS_getWriteDir();
+    if (dir == 0) {
+        throw Exception("no writedir defined");
+    }
+    std::string realname = dir;
+    realname += PHYSFS_getDirSeparator();
+    realname += filename;
+    return realname;
+}
+
 char** enumerateFiles(const char* directory)
 {
     return PHYSFS_enumerateFiles(directory);

@@ -38,6 +38,7 @@ public:
     void unlockDoubleBuffer();
     void copyDoubleBufferandFlip();
     void setPalette(SDL_Color *color);
+    void doScreenshoot();
 
     SDL_Surface* getSurface();
 }; // end DirectDraw

@@ -142,6 +142,7 @@ void removeFromSearchPath(const char* dir);
 
 const char* getRealDir(const char* filename);
 std::string getRealName(const char* filename);
+std::string getRealWriteName(const char* filename);
 /// remember to call freeLisT
 char** enumerateFiles(const char* directory);
 static inline char** enumerateFiles(const std::string& directory)

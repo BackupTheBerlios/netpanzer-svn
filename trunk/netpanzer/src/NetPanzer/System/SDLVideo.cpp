@@ -18,9 +18,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 #include <iostream>
+#include <string>
+
+#include <time.h>
 
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
+#include "Util/Filesystem.hpp"
 #include "SDLVideo.hpp"
 #include <stdlib.h>
 #ifdef _WIN32
@@ -187,5 +191,18 @@ void SDLVideo::setPalette(SDL_Color *color)
 SDL_Surface* SDLVideo::getSurface()
 {
     return backBuffer;
+}
+
+void SDLVideo::doScreenshoot()
+{
+    filesystem::mkdir("screenshoots");
+
+    char buf[256];
+    time_t curtime = time(0);
+    struct tm* loctime = localtime(&curtime);
+    int timelen = strftime(buf, sizeof(buf), "screenshoots/%Y%m%d_%H%M%S.bmp", loctime);
+
+    std::string bmpfile = filesystem::getRealWriteName(buf);
+    SDL_SaveBMP(backBuffer, bmpfile.c_str());
 }
 
