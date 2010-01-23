@@ -151,10 +151,11 @@ SocketBase::setNoDelay() throw(NetworkException)
     int res = setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &val, sizeof(val));
     if(res == SOCKET_ERROR) {
         lastError = GET_NET_ERROR();
-        doClose();
+//        doClose();
         std::stringstream msg;
         msg << "Couldn't set TCP_NODELAY: " << NETSTRERROR(lastError);
-        throw NetworkException(msg.str());
+//        throw NetworkException(msg.str());
+        LOGGER.warning("NetError: %s", msg.str().c_str());
     }
 }
 

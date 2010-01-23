@@ -59,3 +59,6 @@ popd
 
 mv "${NPDEST}/../${ZIPNAME}" "${RELEASEDIR}"
 rm -rf "${NPDEST}"
+
+support/macosx/make_appbundle.sh
+
