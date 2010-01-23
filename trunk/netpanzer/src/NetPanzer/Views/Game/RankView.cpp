@@ -92,9 +92,8 @@ RankView::RankView() : GameTemplateView()
 void RankView::doDraw(Surface &viewArea, Surface &clientArea)
 {
     // make sure the window is big enough for all players
-    unsigned int CHAR_YPIX = Surface::getFontHeight();
     unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
-    unsigned int entryheight = std::max(CHAR_YPIX, flagHeight) + 2;
+    unsigned int entryheight = 20; //std::max(CHAR_YPIX, flagHeight) + 2;
     unsigned int newheight = 60 + entryheight * PlayerInterface::countPlayers();
     
     if ( newheight != (unsigned int)getSizeY() ) {
@@ -162,10 +161,9 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
             break;
     }
 
-    unsigned int CHAR_YPIX = Surface::getFontHeight();
-    unsigned int entryHeight = std::max(CHAR_YPIX, flagHeight) + 2;
-    iXY offset(64, 40);
-    iXY flagOffset(30, 40 + (int(CHAR_YPIX - flagHeight))/2);
+    unsigned int entryHeight = 20;
+    iXY offset(64, 40 + ((entryHeight - Surface::getFontHeight())/2));
+    iXY flagOffset(30, 40 + (int(entryHeight - flagHeight))/2);
     Surface * flag = 0;
     int cur_state = 0;
     for(std::vector<const PlayerState*>::iterator i = states.begin();
@@ -177,7 +175,7 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
                 state->getKills(), state->getLosses(), state->getTotal(),
                 state->getObjectivesHeld());
         dest.bltStringShadowed(offset.x, offset.y, statBuf,
-                               (cur_state == selected_line)?Color::darkOrange:Color::gray224,
+                               (cur_state == selected_line)?Color::yellow:Color::gray224,
                                Color::gray64);
         
         flag = ResourceManager::getFlag(state->getFlag());
@@ -221,9 +219,7 @@ void RankView::lMouseDown(const iXY& pos)
     if ( pos.x >= 4 && pos.x <= 24 && pos.y >= 40 )
     {
         unsigned int ypos = pos.y - 40;
-        unsigned int CHAR_YPIX = Surface::getFontHeight();
-        unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
-        unsigned int entryHeight = std::max(CHAR_YPIX, flagHeight) + 2;
+        unsigned int entryHeight = 20;
         unsigned int linepos = ypos / entryHeight;
         if ( linepos < states.size() )
         {
@@ -252,8 +248,7 @@ void RankView::mouseMove(const iXY & prevPos, const iXY &newPos)
 {
     GameTemplateView::mouseMove(prevPos, newPos);
     selected_line = -1;
-    unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
-    unsigned int entryHeight = std::max(Surface::getFontHeight(), flagHeight)+2;
+    unsigned int entryHeight = 20;
     if ( newPos.y >= 40 )
     {
         selected_line = (newPos.y-40) / entryHeight;
