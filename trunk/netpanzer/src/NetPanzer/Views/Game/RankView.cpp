@@ -57,10 +57,10 @@ RankView::RankView() : GameTemplateView()
     // hardcoded for now
     int CHAR_XPIX = 8;
 
-    unsigned xOffset = 0;
+    unsigned xOffset = 8;
     unsigned yOffset = 16;
-    add( new Label( xOffset, yOffset, "Flag", Color::red, Color::gray64, true) );
-    xOffset += MAX_ALLY_CHARS*CHAR_XPIX;
+    add( new Label( xOffset, yOffset, "* Flag", Color::red, Color::gray64, true) );
+    xOffset += (MAX_ALLY_CHARS*CHAR_XPIX) + 8 ;
     add( new Label( xOffset, yOffset, "Name", Color::red, Color::gray64, true) );
     xOffset += MAX_NAME_CHARS*CHAR_XPIX;
     add( new Label( xOffset, yOffset, "Kills", Color::red, Color::gray64, true) );
@@ -82,6 +82,8 @@ RankView::RankView() : GameTemplateView()
     allyRequestImage.loadBMP("pics/default/allyRequest.bmp");
     allyOtherImage.loadBMP("pics/default/allyOther.bmp");
     noAllyImage.loadBMP("pics/default/noAlly.bmp");
+
+    selected_line = -1;
 
 } // end RankView::RankView
 
@@ -162,19 +164,21 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
 
     unsigned int CHAR_YPIX = Surface::getFontHeight();
     unsigned int entryHeight = std::max(CHAR_YPIX, flagHeight) + 2;
-    iXY offset(6*8, 40);
-    iXY flagOffset(26, 40 + (int(CHAR_YPIX - flagHeight))/2);
+    iXY offset(64, 40);
+    iXY flagOffset(30, 40 + (int(CHAR_YPIX - flagHeight))/2);
     Surface * flag = 0;
-
+    int cur_state = 0;
     for(std::vector<const PlayerState*>::iterator i = states.begin();
             i != states.end(); ++i) {
         const PlayerState* state = *i;
 
         snprintf(statBuf, sizeof(statBuf),
-                "%-20s%5i%7i%6i%10i", state->getName().substr(0,20).c_str(),
+                "%-20s%5i%7i%7i%10i", state->getName().substr(0,20).c_str(),
                 state->getKills(), state->getLosses(), state->getTotal(),
                 state->getObjectivesHeld());
-        dest.bltStringShadowed(offset.x, offset.y, statBuf, state->getColor(), Color::gray64);
+        dest.bltStringShadowed(offset.x, offset.y, statBuf,
+                               (cur_state == selected_line)?Color::darkOrange:Color::gray224,
+                               Color::gray64);
         
         flag = ResourceManager::getFlag(state->getFlag());
         flag->blt( dest, flagOffset.x, flagOffset.y );
@@ -200,7 +204,8 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
             }
         }
         offset.y += entryHeight;
-        flagOffset.y += entryHeight;        
+        flagOffset.y += entryHeight;
+        ++cur_state;
     }
 
 } // end RankView::drawPlayerStats
@@ -241,4 +246,26 @@ void RankView::lMouseDown(const iXY& pos)
             }
         }
     }
+}
+
+void RankView::mouseMove(const iXY & prevPos, const iXY &newPos)
+{
+    GameTemplateView::mouseMove(prevPos, newPos);
+    selected_line = -1;
+    unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
+    unsigned int entryHeight = std::max(Surface::getFontHeight(), flagHeight)+2;
+    if ( newPos.y >= 40 )
+    {
+        selected_line = (newPos.y-40) / entryHeight;
+    }
+}
+
+void RankView::doActivate()
+{
+    selected_line = -1;
+}
+
+void RankView::doDeactivate()
+{
+    selected_line = -1;
 }

@@ -42,6 +42,7 @@ private:
     Surface allyOtherImage;
     Surface noAllyImage;
     std::vector<const PlayerState*> states;
+    int selected_line;
 
 public:
     RankView();
@@ -55,6 +56,9 @@ public:
 
 protected:
     virtual void lMouseDown(const iXY &pos);
+    virtual void mouseMove(const iXY & prevPos, const iXY &newPos);
+    virtual void doActivate();
+    virtual void doDeactivate();
 //    virtual void processEvents();
 }
 ; // end _WIN
