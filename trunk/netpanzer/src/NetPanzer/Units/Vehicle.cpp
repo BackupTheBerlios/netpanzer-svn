@@ -986,8 +986,8 @@ void Vehicle::aiFsmMoveToLoc()
                             PathRequest path_request;
                             path_request.set(id, aiFsmMoveToLoc_prev_loc, aiFsmMoveToLoc_goal, 0, &path, _path_request_update );
                             PathScheduler::requestPath( path_request );
-                            // XXX the more times timeout the longer will take next time
-                            aiFsmMoveToLoc_wait_timer.changePeriod( aiFsmMoveToLoc_wait_timer.getPeriod() * 2.0f );
+                            // XXX the more times timeout the longer will take next time --> bad idea
+                            aiFsmMoveToLoc_wait_timer.changePeriod( MOVEWAIT_TIME );
                         }
 
                         aiFsmMoveToLoc_state = _aiFsmMoveToLoc_path_generate;
