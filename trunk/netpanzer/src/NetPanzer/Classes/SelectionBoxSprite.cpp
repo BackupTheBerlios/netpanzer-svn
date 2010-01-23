@@ -103,7 +103,7 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
     } // ** box_state == true
 
     // Draw the unit hitpoints.
-    if ( gameconfig->drawunitdamage || (box_state == true) )
+    if ( GameConfig::interface_show_health || (box_state == true) )
     {
         // Draw a color coded hit bar.
         Uint8 hitBarColor;
@@ -139,19 +139,22 @@ void UnitSelectionBox::blit( Surface *surface, const iRect &world_win )
         //surface->drawHLine(min_abs.x, max_abs.y-3, max_abs.x+1, box_color);
     }
 
-    if ( gameconfig->drawunitflags == true )
+    if ( GameConfig::interface_show_flags == true )
     {
         //unit_flag.blt( *surface, iXY( min_abs.x, min_abs.y - unit_flag.getPix().y ) );
         //surface->bltString(min_abs.x + 2, min_abs.y - 6, "Panther1", Color::white);
         unit_flag->blt( *surface, min_abs.x, min_abs.y-unit_flag->getHeight()-1 );
+    }
+
+    if ( GameConfig::interface_show_names == true )
+    {
         if ( playerName.length() > 0 )
         {   // XXX dirty trick, I don't center the text, just "by hand"
             surface->bltString(min_abs.x+unit_flag->getWidth() + 2,
                            min_abs.y - unit_flag->getHeight() + 2 ,
-                           playerName.c_str(), Color::white);
+                           playerName.c_str(), Color::gray224);
         }
     }
-
 
     /*
     if ( (flag_visibility_state == true) && (allie_state == true) )

@@ -41,6 +41,7 @@ TCPSocket::TCPSocket(const Address& address, TCPSocketObserver *o)
     : SocketBase(address,true), observer(o)
 {
     doConnect();
+    setNoDelay();
 }
 
 TCPSocket::~TCPSocket()

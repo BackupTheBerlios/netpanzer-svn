@@ -103,22 +103,22 @@ void ClientSocket::sendMessage(const void* data, size_t size)
             }
             memcpy(sendbuffer+sendpos, data, size);
             sendpos += size;
-            sendRemaining();
+//            sendRemaining(); // lets send later
         }
         else
         {
-            size_t s = socket->send(data, size);
-            if ( s != size )
-            {
-                size_t remain = size-s;
-                if ( remain > sizeof(sendbuffer) )
+//            size_t s = socket->send(data, size); // lets send later
+//            if ( s != size )
+//            {
+//                size_t remain = size-s;
+                if ( size > sizeof(sendbuffer) )
                 {
                     observer->onClientDisconected(this, "Send data bigger than buffer, need to disconnect");
                     return;
                 }
-                memcpy(sendbuffer, (char *)data+s, remain);
-                sendpos = remain;
-            }
+                memcpy(sendbuffer, (char *)data, size);
+                sendpos = size;
+//            }
         }
     }
 }

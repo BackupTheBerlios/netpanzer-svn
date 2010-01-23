@@ -55,6 +55,7 @@ protected:
     
 
     void setReuseAddr() throw(NetworkException);
+    void setNoDelay() throw(NetworkException);
     void doClose();
     
     void bindSocketTo(const Address& toaddr) throw(NetworkException);

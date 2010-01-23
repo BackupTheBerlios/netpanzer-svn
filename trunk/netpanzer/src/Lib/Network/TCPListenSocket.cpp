@@ -54,6 +54,7 @@ TCPListenSocket::onDataReady()
         while ( (newsock=doAccept(newaddr)) != INVALID_SOCKET) {
             newobserver = observer->onNewConnection(this, newaddr);
             TCPSocket * newcon = new TCPSocket(newsock,newaddr,newobserver);
+            newcon->setNoDelay();
             newcon->onConnected();
         }
     } catch (NetworkException e) {

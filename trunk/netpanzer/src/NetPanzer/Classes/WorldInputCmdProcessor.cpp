@@ -293,12 +293,17 @@ WorldInputCmdProcessor::evaluateKeyCommands()
 
     if ( (KeyboardInterface::getKeyPressed( SDLK_f ) == true) )
     {
-        gameconfig->drawunitflags.toggle();
+        GameConfig::interface_show_flags = !GameConfig::interface_show_flags;
     }
     
+    if ( (KeyboardInterface::getKeyPressed( SDLK_n ) == true) )
+    {
+        GameConfig::interface_show_names = !GameConfig::interface_show_names;
+    }
+
     if ( (KeyboardInterface::getKeyPressed( SDLK_d ) == true) )
     {
-        gameconfig->drawunitdamage.toggle();
+        GameConfig::interface_show_health = !GameConfig::interface_show_health;
     }
 
     if ( (KeyboardInterface::getKeyPressed( SDLK_RETURN ) == true)

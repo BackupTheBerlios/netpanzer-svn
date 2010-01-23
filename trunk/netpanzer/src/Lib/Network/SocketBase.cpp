@@ -145,6 +145,21 @@ SocketBase::setReuseAddr() throw(NetworkException)
 }
 
 void
+SocketBase::setNoDelay() throw(NetworkException)
+{
+    SETSOCKOPT_PARAMTYPE val = 1;
+    int res = setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &val, sizeof(val));
+    if(res == SOCKET_ERROR) {
+        lastError = GET_NET_ERROR();
+        doClose();
+        std::stringstream msg;
+        msg << "Couldn't set TCP_NODELAY: " << NETSTRERROR(lastError);
+        throw NetworkException(msg.str());
+    }
+}
+
+
+void
 SocketBase::doListen() throw(NetworkException)
 {
     int res = listen(sockfd, 20);

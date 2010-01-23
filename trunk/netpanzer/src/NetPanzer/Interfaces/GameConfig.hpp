@@ -119,6 +119,10 @@ public:
     static bool         video_usedirectx;
 #endif
 
+    static bool interface_show_health;
+    static bool interface_show_flags;
+    static bool interface_show_names;
+
     // game Settings (there are not saved to disk)
     ConfigInt       hostorjoin;         // 1=host, 2=join
     ConfigBool      quickConnect;
@@ -165,9 +169,7 @@ public:
     ConfigInt   vehicleselectioncolor;
     ConfigInt   unitselectionmode;
     ConfigInt   unitinfodrawlayer;
-    ConfigBool  drawunitdamage;
     ConfigBool  drawunitreload;
-    ConfigBool  drawunitflags;
     ConfigInt   consoletextdelay;
     ConfigInt   consoletextusage;
     ConfigInt   scrollrate;

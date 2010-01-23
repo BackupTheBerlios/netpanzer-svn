@@ -44,6 +44,9 @@ bool         GameConfig::video_blendsmoke = true;
 bool         GameConfig::video_usedirectx = true;
 #endif
 
+bool GameConfig::interface_show_health = true;
+bool GameConfig::interface_show_flags = true;
+bool GameConfig::interface_show_names = true;
 
 #define WRITE_BOOL(v) ((v)?"true":"false")
 
@@ -78,15 +81,33 @@ static const ScriptVarBindRecord video_setters[] =
     {0,0}
 };
 
+static const ScriptVarBindRecord interface_getters[] =
+{
+    { "show_health",   GETSVTYPE_BOOLEAN, &GameConfig::interface_show_health },
+    { "show_flags",    GETSVTYPE_BOOLEAN, &GameConfig::interface_show_flags },
+    { "show_names",    GETSVTYPE_BOOLEAN, &GameConfig::interface_show_names },
+    {0,0}
+};
+
+static const ScriptVarBindRecord interface_setters[] =
+{
+    { "show_health",   SETSVTYPE_BOOLEAN, &GameConfig::interface_show_health },
+    { "show_flags",    SETSVTYPE_BOOLEAN, &GameConfig::interface_show_flags },
+    { "show_names",    SETSVTYPE_BOOLEAN, &GameConfig::interface_show_names },
+    {0,0}
+};
+
 void GameConfig::registerScript(const char * table_name)
 {
 //    ScriptManager::registerLib( table_name, video_methods);
-    ScriptManager::bindStaticVariables(table_name, "video", "ConfigVideoMetaTable",
+    ScriptManager::bindStaticVariables(table_name, "video",
+                                       "ConfigVideoMetaTable",
                                        video_getters, video_setters);
+    ScriptManager::bindStaticVariables(table_name, "interface",
+                                       "ConfigInterfaceMetaTable",
+                                       interface_getters, interface_setters);
 
 }
-
-
 
 GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     // VariableName("Name", value [, minimum, maximum])
@@ -133,9 +154,7 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
       vehicleselectioncolor("vehicleselectioncolor", _color_blue, 0, _color_last-1),
       unitselectionmode("unitselectionmode", _unit_selection_box_draw_mode_rect_edges, 0, _unit_selection_box_draw_mode_last-1),
       unitinfodrawlayer("unitinfodrawlayer", 0, 0, 1),
-      drawunitdamage("drawunitdamage", true),
       drawunitreload("drawunitreload", false),
-      drawunitflags("drawunitflags", true),
       consoletextdelay("consoletextdelay", 3, 1, 20),
       consoletextusage("consoletextusage", 25, 1, 100),
       scrollrate("scrollrate", 1000, 100, 10000),
@@ -212,9 +231,7 @@ GameConfig::GameConfig(const std::string& configfile, bool usePhysFS)
     interfacesettings.push_back(&vehicleselectioncolor);
     interfacesettings.push_back(&unitselectionmode);
     interfacesettings.push_back(&unitinfodrawlayer);
-    interfacesettings.push_back(&drawunitdamage);
     interfacesettings.push_back(&drawunitreload);
-    interfacesettings.push_back(&drawunitflags);
     interfacesettings.push_back(&consoletextdelay);
     interfacesettings.push_back(&consoletextusage);
     interfacesettings.push_back(&scrollrate);
