@@ -176,7 +176,6 @@ unsigned char
 WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
 {
     iXY map_loc;
-    unsigned char unit_loc_status;
     
     if (selection_box_active)
         return _cursor_regular;
@@ -193,24 +192,39 @@ WorldInputCmdProcessor::getCursorStatus(const iXY& loc)
         return _cursor_blocked;
     }
 
-    unit_loc_status = UnitInterface::queryUnitLocationStatus(loc);
-    if ( unit_loc_status == _unit_player )
+    UnitID unit_id;
+    if ( UnitInterface::queryUnitAtMapLoc(map_loc, &unit_id) )
     {
-        return _cursor_player_unit;
-    }
-    else if ((unit_loc_status == _unit_enemy) 
-            && KeyboardInterface::getKeyState(SDLK_a))
-    {
-        return _cursor_make_allie;
-    }
-    else if ((unit_loc_status == _unit_enemy) && working_list.isSelected())
-    {
-        return _cursor_enemy_unit;
-    }
-    else if ( (unit_loc_status == _unit_allied) 
-            && KeyboardInterface::getKeyState(SDLK_a))
-    {
-        return _cursor_break_allie;
+        UnitBase * unit = UnitInterface::getUnit(unit_id);
+        if ( unit->player->getID() == PlayerInterface::getLocalPlayerIndex() )
+        {
+            return _cursor_player_unit;
+        }
+
+        if ( ! PlayerInterface::isAllied(unit->player->getID(), PlayerInterface::getLocalPlayerIndex() ) )
+        {
+            if ( KeyboardInterface::getKeyState(SDLK_a) )
+            {
+                if ( PlayerInterface::isSingleAllied(PlayerInterface::getLocalPlayerIndex(), unit->player->getID() ) )
+                {
+                    return _cursor_break_allie;
+                }
+
+                return _cursor_make_allie;
+            }
+            else if ( working_list.isSelected() )
+            {
+                return _cursor_enemy_unit;
+            }
+        }
+        else
+        {
+            if ( KeyboardInterface::getKeyState(SDLK_a) )
+            {
+                return _cursor_break_allie;
+            }
+        }
+        return _cursor_regular;
     }
 
     if (working_list.isSelected())

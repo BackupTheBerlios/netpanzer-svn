@@ -27,10 +27,6 @@ class PlayerInterface
 protected:
     static PlayerState *player_lists;
     static unsigned short max_players;
-    static bool *alliance_matrix;
-
-    static void resetAllianceMatrix();
-
     static unsigned short local_player_index;
 
     static SDL_mutex* mutex;
@@ -49,11 +45,8 @@ public:
     static void setKill(PlayerState* by_player, PlayerState* on_player,
             UnitType unit_type );
 
-    static void setAlliance( unsigned short by_player, unsigned short with_player );
-
-    static void clearAlliance( unsigned short by_player, unsigned short with_player );
-
     static bool isAllied(unsigned short player, unsigned short with_player);
+    static bool isSingleAllied(unsigned short player, unsigned short with_player);
 
     static void lockPlayerStats();
     static void unlockPlayerStats();

@@ -20,6 +20,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SocketManager.hpp"
 #include "Util/Log.hpp"
 
+#include <cstdio>
+#include <cstring>
+#include <errno.h>
+
 namespace network {
 
 SocketManager::Sockets SocketManager::socketList;
