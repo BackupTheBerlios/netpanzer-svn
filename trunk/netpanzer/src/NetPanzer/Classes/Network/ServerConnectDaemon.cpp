@@ -112,7 +112,7 @@ void ServerConnectDaemon::updateQueuedClients()
         process_update.setQueuePosition(queue_position);
 
         (*i)->sendMessage( &process_update, sizeof(ConnectProcessUpdate));
-
+        (*i)->sendRemaining();
         queue_position++;
     }
 
@@ -157,6 +157,7 @@ void ServerConnectDaemon::netPacketClientJoinRequest(const NetPacket* packet)
     join_request_ack.setSize(sizeof(ClientConnectJoinRequestAck));
     packet->fromClient->sendMessage(&join_request_ack,
                          sizeof(ClientConnectJoinRequestAck));
+    packet->fromClient->sendRemaining();
 }
 
 void ServerConnectDaemon::processNetPacket(const NetPacket* packet)
@@ -222,7 +223,7 @@ bool ServerConnectDaemon::connectStateIdle()
         
         connect_client->sendMessage( &start_connect,
                                      sizeof(ClientConnectStartConnect));
-
+        connect_client->sendRemaining();
         time_out_timer.changePeriod( _SERVER_CONNECT_TIME_OUT_TIME );
         time_out_timer.reset();
         time_out_counter = 0;
@@ -257,7 +258,7 @@ bool ServerConnectDaemon::connectStateWaitForConnectRequest(
         connect_result.setSize(sizeof(ClientConnectResult));
         connect_client->sendMessage( &connect_result,
                                      sizeof(ClientConnectResult));
-
+        connect_client->sendRemaining();
         if ( connection_state != connect_state_idle )
         {
             connection_state = connect_state_wait_for_client_settings;
@@ -296,6 +297,7 @@ bool ServerConnectDaemon::connectStateWaitForClientSettings(
             server_game_setup->setSize(sizeof(ConnectMesgServerGameSettings));
             connect_client->sendMessage( server_game_setup,
                                          sizeof(ConnectMesgServerGameSettings));
+            connect_client->sendRemaining();
             delete server_game_setup;
 
             time_out_timer.reset();
@@ -336,7 +338,7 @@ bool ServerConnectDaemon::connectStateWaitForClientGameSetupAck(
             state_mesg.setSize(sizeof(ConnectProcessStateMessage));
             connect_client->sendMessage( &state_mesg,
                                          sizeof(ConnectProcessStateMessage));
-
+            connect_client->sendRemaining();
             if(connection_state != connect_state_idle)
             {
                 connection_state = connect_state_player_state_sync;
@@ -388,7 +390,8 @@ bool ServerConnectDaemon::connectStatePlayerStateSync()
     state_mesg.setPercentComplete(percent_complete);
     state_mesg.setSize(sizeof(ConnectProcessStateMessage));
     connect_client->sendMessage( &state_mesg, sizeof(ConnectProcessStateMessage));
-    
+    connect_client->sendRemaining();
+
     if ( percent_complete == 100 )
     {
         delete connect_unit_sync;

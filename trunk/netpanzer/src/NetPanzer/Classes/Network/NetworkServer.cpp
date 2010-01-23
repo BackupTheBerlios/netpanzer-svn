@@ -317,6 +317,7 @@ NetworkServer::onClientConnected(ClientSocket *s)
     ClientMesgConnectAck connect_ack_mesg;
     connect_ack_mesg.setSize(sizeof(ClientMesgConnectAck));
     s->sendMessage( &connect_ack_mesg,sizeof(ClientMesgConnectAck));
+    s->sendRemaining();
 }
 
 void

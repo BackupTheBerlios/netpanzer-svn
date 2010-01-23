@@ -1,14 +1,24 @@
 #! /bin/bash
 
+if [ ! -f RELEASE_VERSION ]; then
+    echo "ERROR: RELEASE_VERSION file missing, cannot create"
+    exit 1
+fi
+
+VERSION="`<RELEASE_VERSION`"
 RELEASEDIR="releases"
 APPNAME="NetPanzer"
 BASEDMG="support/macosx/basedmg.dmg"
 TEMPDMG="${RELEASEDIR}/tempdmg.dmg"
-FINALDMG="${RELEASEDIR}/NetPanzer.dmg"
+FINALDMG="${RELEASEDIR}/NetPanzer-${VERSION}.dmg"
 DMGROOT="${RELEASEDIR}/MacOS_DMGROOT"
 DMGDOC="${DMGROOT}/Documentation"
 APPDIR="${DMGROOT}/${APPNAME}.app"
 CONTENTSDIR="${APPDIR}/Contents"
+
+echo "Compiling Mac version ${VERSION}"
+
+scons universal=true
 
 echo "Cleaning work folder"
 [ ! -d ${RELEASEDIR} ] && mkdir ${RELEASEDIR}
