@@ -328,7 +328,7 @@ PlayerState * PlayerInterface::allocateNewPlayer()
         {
             player_lists[ player_index ].setStatus( _player_state_allocated );
             player_lists[ player_index ].resetStats();
-	    player_lists[ player_index ].setColor( player_index );
+            player_lists[ player_index ].setColor( player_index );
             player_lists[ player_index ].setID((unsigned short)player_index);
             SDL_mutexV(mutex);
             return( &player_lists[ player_index ] );
@@ -362,7 +362,7 @@ bool PlayerInterface::testRuleScoreLimit( long score_limit, PlayerState ** playe
     unsigned long player_index;
 
     for ( player_index = 0; player_index < max_players; player_index++ ) {
-        if ( player_lists[ player_index ].getTotal() >= score_limit ) {
+        if ( player_lists[ player_index ].getKills() >= score_limit ) {
             *player_state = &player_lists[ player_index ];
             return( true );
         } // ** if

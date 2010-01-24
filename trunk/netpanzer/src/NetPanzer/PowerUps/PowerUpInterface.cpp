@@ -92,11 +92,12 @@ void PowerUpInterface::generatePowerUp()
         map_size_x = MapInterface::getWidth();
         map_size_y = MapInterface::getHeight();
 
-        do
+        loc.x = rand() % map_size_x;
+        loc.y = rand() % map_size_y;
+        if ( MapInterface::getMovementValue( loc ) == 0xFF )
         {
-            loc.x = rand() % map_size_x;
-            loc.y = rand() % map_size_y;
-        } while( MapInterface::getMovementValue( loc ) == 0xFF );
+            return; // no powerup, try next time.
+        }
 
         int prob_table_index;
         int powerup_type;
@@ -134,11 +135,9 @@ void PowerUpInterface::generatePowerUp()
 
         SERVER->broadcastMessage(&create_mesg, sizeof(create_mesg));
 
-        do
-        {
-            next_regen_interval = rand() % (power_up_regen_time_upper_bound + 1);
-        } while( next_regen_interval < power_up_regen_time_lower_bound );
-
+        int regrange = power_up_regen_time_upper_bound - power_up_regen_time_lower_bound;
+        next_regen_interval = rand() % regrange;
+        next_regen_interval += power_up_regen_time_lower_bound;
         regen_timer.changePeriod( next_regen_interval );
 
         setPowerUpLimits( map_size_x, map_size_y );

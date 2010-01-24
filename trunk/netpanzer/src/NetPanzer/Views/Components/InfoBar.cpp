@@ -42,7 +42,7 @@ InfoBar::draw(Surface &dest)
              int(UnitInterface::getUnitCount(PlayerInterface::getLocalPlayerIndex())),
              gameconfig->maxunits / gameconfig->maxplayers,
              
-             PlayerInterface::getLocalPlayer()->getTotal(),
+             PlayerInterface::getLocalPlayer()->getKills(),
              (gameconfig->gametype == _gametype_fraglimit)?(int)gameconfig->fraglimit:0,
              
              PlayerInterface::getLocalPlayer()->getObjectivesHeld(),
