@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "UDPSocket.hpp"
 #include <sstream>
-
+#include "Util/Log.hpp"
 
 namespace network
 {
@@ -65,7 +65,7 @@ UDPSocket::send(const Address& toaddr, const void* data, size_t datasize)
     if(res != (int) datasize) {
         std::stringstream msg;
         msg << "Send error: not all data sent.";
-        throw NetworkException(msg.str());
+        LOGGER.warning(msg.str().c_str());
     }
 }
 
