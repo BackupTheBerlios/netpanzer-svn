@@ -222,7 +222,7 @@ public:
     {
         switch(gametype) {
         case _gametype_objective :
-            return( "Objective" );
+            return( "Objective " );
         case _gametype_fraglimit :
             return( "Frag Limit" );
         case _gametype_timelimit :

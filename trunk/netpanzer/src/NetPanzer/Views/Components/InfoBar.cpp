@@ -26,6 +26,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Objectives/ObjectiveInterface.hpp"
 #include "Interfaces/GameManager.hpp"
 
+
+static const PIX titles_color = 206; // #6d78c1 more or less "slate blue"
+static const char* titles =
+        "game              units           frags             objs.           time               FPS";
+
+static const PIX format_color = 249; // #d9d9ff
+static const char* format =
+        "     %s         %3d/%-3d         %4d/%-4d         %3d/%-3d        %02d:%02d/%02d:%02d       %.2f";
+
+static const PIX bars_color = 185; // #6f906d
+static const char* bars =
+        "                |               |                 |               |                  |";
+
+
+
 void
 InfoBar::draw(Surface &dest)
 {
@@ -35,8 +50,8 @@ InfoBar::draw(Surface &dest)
     char buf[512];
     
     snprintf(buf, sizeof(buf),
-
-             "game %s | units %3d/%-3d | frags %4d/%-4d | objs. %3d/%-3d | time %02d:%02d/%02d:%02d | FPS %.2f",
+             format,
+//             "game %s | units %3d/%-3d | frags %4d/%-4d | objs. %3d/%-3d | time %02d:%02d/%02d:%02d | FPS %.2f",
              gameconfig->getGameTypeString(),
              
              int(UnitInterface::getUnitCount(PlayerInterface::getLocalPlayerIndex())),
@@ -55,7 +70,12 @@ InfoBar::draw(Surface &dest)
              
              TimerInterface::getFPSAvg()
              );
+    int posx = position.x + 2;
+    int posy = position.y + 2;
+    dest.bltStringShadowed(posx, posy, titles, titles_color, Color::black);
+    dest.bltStringShadowed(posx, posy, bars, bars_color, Color::black);
+    dest.bltStringShadowed(posx, posy, buf, format_color, Color::black);
     
-    dest.bltStringShadowed(position.x+2,position.y+2,buf,Color::white, Color::black);
+//    dest.bltStringShadowed(position.x+2,position.y+2,buf,Color::white, Color::black);
 
 }

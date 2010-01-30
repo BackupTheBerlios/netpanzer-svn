@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/Log.hpp"
 #include "Util/Exception.hpp"
 #include "Util/FileSystem.hpp"
+#include "Util/NTimer.hpp"
 #include "SDLVideo.hpp"
 #include <stdlib.h>
 
@@ -202,6 +203,12 @@ SDL_Surface* SDLVideo::getSurface()
 void SDLVideo::doScreenshoot()
 {
     // this is called blind faith
+    static NTimer timer(1000);
+
+    if ( ! timer.isTimeOut() )
+    {
+        return;
+    }
 
     filesystem::mkdir("screenshoots");
 
@@ -213,5 +220,6 @@ void SDLVideo::doScreenshoot()
     std::string bmpfile = filesystem::getRealWriteName(buf);
     SDL_SaveBMP(backBuffer, bmpfile.c_str());
     ConsoleInterface::postMessage(Color::cyan, false, 0, "Screenshoot saved as: %s", buf);
+    timer.reset();
 }
 
