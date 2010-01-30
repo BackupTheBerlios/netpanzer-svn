@@ -38,7 +38,7 @@ public:
 
     void set(const char* newmap_name)
     {
-        snprintf(map_name, sizeof(map_name), newmap_name);
+        snprintf(map_name, sizeof(map_name), "%s", newmap_name);
     }
 
     GameControlCycleMap()

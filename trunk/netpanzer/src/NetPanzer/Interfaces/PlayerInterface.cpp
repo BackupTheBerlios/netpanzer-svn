@@ -309,8 +309,10 @@ PlayerState* PlayerInterface::allocateLoopBackPlayer()
 int PlayerInterface::countPlayers()
 {
     int count=0;
-    for ( int player_index = 0; player_index < max_players; player_index++ ) {
-        if ( player_lists[ player_index ].getStatus() != _player_state_free ) {
+    for ( int player_index = 0; player_index < max_players; player_index++ )
+    {
+        if ( player_lists[ player_index ].getStatus() == _player_state_active )
+        {
             count++;
         }
     }

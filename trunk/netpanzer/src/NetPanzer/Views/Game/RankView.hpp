@@ -41,6 +41,7 @@ private:
     Surface allyRequestImage;
     Surface allyOtherImage;
     Surface noAllyImage;
+    Surface colorImage;
     std::vector<const PlayerState*> states;
     int selected_line;
 

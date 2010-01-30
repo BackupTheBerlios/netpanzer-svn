@@ -183,7 +183,7 @@ void GetSessionView::doActivate()
 {
     MenuTemplateView::doActivate();
 
-    sprintf(currentMultiView, searchName);
+    sprintf(currentMultiView, "%s", searchName);
 
 } // end GetSessionView::doActivate
 

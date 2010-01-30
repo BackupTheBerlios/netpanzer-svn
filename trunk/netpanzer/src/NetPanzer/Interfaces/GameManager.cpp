@@ -451,7 +451,7 @@ ConnectMesgServerGameSettings* GameManager::getServerGameSetup()
 
     game_setup->setMaxPlayers(gameconfig->maxplayers);
     game_setup->setMaxUnits(gameconfig->maxunits);
-    snprintf(game_setup->map_name, 32, gameconfig->map.c_str()); 
+    snprintf(game_setup->map_name, 32, "%s", gameconfig->map.c_str());
     game_setup->setCloudCoverage(gameconfig->cloudcoverage);
     game_setup->setWindSpeed(gameconfig->windspeed);
     game_setup->setGameType(gameconfig->gametype);

@@ -151,7 +151,7 @@ public:
 
     void blt(Surface &dest, int x, int y) const;
     void bltTrans(Surface &dest, int x, int y) const;
-    void bltTransColor(Surface &dest, int x, int y, const PIX &color) const;
+    void bltTransColor(Surface &dest, int x, int y, const PIX color) const;
     void bltScale(const Surface &source, const iRect &destRect);
     void bltLookup(const iRect &destRect, const PIX table[]);
 

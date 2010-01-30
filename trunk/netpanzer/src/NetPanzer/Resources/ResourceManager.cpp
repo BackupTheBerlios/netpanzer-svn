@@ -60,6 +60,7 @@ int
 ResourceManager::loadDefaultFlags()
 {
     noimage.create(20,14,1);
+    noimage.fill(0);
     char** list = filesystem::enumerateFiles(DEFAULT_FLAGS_PATH);
     
     vector<string> filenames;

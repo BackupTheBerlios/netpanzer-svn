@@ -254,7 +254,7 @@ void ConsoleInterface::setInputStringStatus( bool on_off )
     input_string_active = on_off;
 }
 
-void ConsoleInterface::resetInputString( char *prompt )
+void ConsoleInterface::resetInputString( const char *prompt )
 {
     cursorPos = 0;
     inputString[0] = 0;

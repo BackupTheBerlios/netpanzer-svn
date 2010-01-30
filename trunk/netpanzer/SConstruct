@@ -213,7 +213,12 @@ crosslinuxenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/lib/phys
 if thisplatform == 'darwin':
     env.Append( CPPPATH = ['/Library/Frameworks/SDL.framework/Headers',
                            '/Library/Frameworks/SDL_mixer.framework/Headers' ] )
-                           
+    env.Append( CCFLAGS = [ '-arch', 'i386' ] )
+    luaenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
+    physfsenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
+    networkenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
+    env.Append( LINKFLAGS = [ '-arch', 'i386' ] )
+ 
     if env['universal'] != 'false':
 		env.Append( CCFLAGS = [ '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386' ] )
 		luaenv.Append( CCFLAGS = [ '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386' ] )
@@ -267,26 +272,26 @@ MakeStaticLib(crossmingwluaenv, 'nplua', 'lua toluapp', '*.c')
 MakeStaticLib(crosslinuxluaenv, 'nplua', 'lua toluapp', '*.c')
 
 # BUILDS PHYSFS
-physfsenv.Append( CFLAGS = '-DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -DPHYSFS_NO_CDROM_SUPPORT=1' )
+physfsenv.Append( CFLAGS = [ '-DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -DPHYSFS_NO_CDROM_SUPPORT=1' ] )
 physfsenv.Append( CPPPATH = [ 'src/Lib/physfs', 'src/Lib/physfs/zlib123' ] )
 MakeStaticLib(physfsenv, 'npphysfs', 'physfs physfs/platform physfs/archivers physfs/zlib123', '*.c')
 
-crossmingwphysfsenv.Append( CFLAGS = '-DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -DPHYSFS_NO_CDROM_SUPPORT=1' )
+crossmingwphysfsenv.Append( CFLAGS = [ '-DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -DPHYSFS_NO_CDROM_SUPPORT=1' ] )
 crossmingwphysfsenv.Append( CPPPATH = [ 'src/Lib/physfs', 'src/Lib/physfs/zlib123' ] )
 MakeStaticLib(crossmingwphysfsenv, 'npphysfs', 'physfs physfs/platform physfs/archivers physfs/zlib123', '*.c')
 
-crosslinuxphysfsenv.Append( CFLAGS = '-DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -DPHYSFS_NO_CDROM_SUPPORT=1' )
+crosslinuxphysfsenv.Append( CFLAGS = [ '-DPHYSFS_SUPPORTS_ZIP=1 -DZ_PREFIX=1 -DPHYSFS_NO_CDROM_SUPPORT=1' ] )
 crosslinuxphysfsenv.Append( CPPPATH = [ 'src/Lib/physfs', 'src/Lib/physfs/zlib123' ] )
 MakeStaticLib(crosslinuxphysfsenv, 'npphysfs', 'physfs physfs/platform physfs/archivers physfs/zlib123', '*.c')
 
 # BUILDS 2D
-env.Append( CFLAGS = '-DZ_PREFIX=1' )
+env.Append( CFLAGS = [ '-DZ_PREFIX=1' ] )
 env.Append( CPPPATH = 'src/Lib/physfs/zlib123' )
 MakeStaticLib(env, 'np2d', '2D 2D/libpng', '*.c*')
-crossmingwenv.Append( CFLAGS = '-DZ_PREFIX=1' )
+crossmingwenv.Append( CFLAGS = [ '-DZ_PREFIX=1' ] )
 crossmingwenv.Append( CPPPATH = 'src/Lib/physfs/zlib123' )
 MakeStaticLib(crossmingwenv, 'np2d', '2D 2D/libpng', '*.c*')
-crosslinuxenv.Append( CFLAGS = '-DZ_PREFIX=1' )
+crosslinuxenv.Append( CFLAGS = [ '-DZ_PREFIX=1' ] )
 crosslinuxenv.Append( CPPPATH = 'src/Lib/physfs/zlib123' )
 MakeStaticLib(crosslinuxenv, 'np2d', '2D 2D/libpng', '*.c*')
 

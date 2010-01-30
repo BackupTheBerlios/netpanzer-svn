@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Surface.hpp"
 #include "Util/UtilInterface.hpp"
 
-char *ColorTable::extension = ".tbl";
+const char *ColorTable::extension = ".tbl";
 
 int ColorTable::totalColorArrayCount = 0;
 int ColorTable::totalByteCount       = 0;

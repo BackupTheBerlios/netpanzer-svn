@@ -131,7 +131,7 @@ void HostJoinTemplateView::doActivate()
 {
     MenuTemplateView::doActivate();
 
-    sprintf(currentMultiView, searchName);
+    sprintf(currentMultiView, "%s", searchName);
 } // end doActivate
 
 // loadBackgroundSurface

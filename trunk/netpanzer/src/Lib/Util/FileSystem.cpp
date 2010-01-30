@@ -64,7 +64,7 @@ void initialize(const char* argv0, const char* ,
     delete[] writedir;
 
     /* Root out archives, and add them to search path... */
-    char* archiveExt = "zip";
+    const char* archiveExt = "zip";
     if (archiveExt != NULL) {
         char **rc = PHYSFS_enumerateFiles("/");
         char **i;

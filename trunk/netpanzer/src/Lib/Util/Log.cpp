@@ -155,7 +155,7 @@ Logger::log(int priority, const char *fmt, va_list ap)
     strcat(buf, "\n");
     
     if (m_logLevel >= priority) {
-        fprintf(stderr, buf);
+        fprintf(stderr, "%s", buf);
     }
     
     if (m_logfile != 0) {

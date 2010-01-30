@@ -62,10 +62,9 @@ UDPSocket::send(const Address& toaddr, const void* data, size_t datasize)
     throw(NetworkException)
 {
     int res = doSendTo(toaddr,data,datasize);
-    if(res != (int) datasize) {
-        std::stringstream msg;
-        msg << "Send error: not all data sent.";
-        LOGGER.warning(msg.str().c_str());
+    if(res != (int) datasize)
+    {
+        LOGGER.warning("Send error: not all data sent.");
     }
 }
 

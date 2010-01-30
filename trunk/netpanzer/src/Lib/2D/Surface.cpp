@@ -535,7 +535,7 @@ void Surface::bltTrans(Surface &dest, int x, int y) const
 //          clipping on the bounds of the object. The non-transparent pixels
 //          are blitted in the specified color.
 //---------------------------------------------------------------------------
-void Surface::bltTransColor(Surface &dest, int x, int y, const Uint8 &color) const
+void Surface::bltTransColor(Surface &dest, int x, int y, const Uint8 color) const
 {
     assert(getDoesExist());
     assert(dest.getDoesExist());

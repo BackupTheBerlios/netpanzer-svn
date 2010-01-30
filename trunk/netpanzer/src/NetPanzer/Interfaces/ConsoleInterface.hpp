@@ -80,7 +80,7 @@ public:
 
     /* Input String Methods */
     static void setInputStringStatus( bool on_off );
-    static void resetInputString( char *prompt );
+    static void resetInputString( const char *prompt );
     static void addChar(int newChar);
     static void addExtendedChar(int newExtendedChar);
     static void getInputString( char *string );

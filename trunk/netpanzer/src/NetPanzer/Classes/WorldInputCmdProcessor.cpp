@@ -409,9 +409,7 @@ WorldInputCmdProcessor::evaluateGroupingKeys()
             int n=key_code-SDLK_0;
             if(ctrl_status == true) {
                 setSelectionList(n);
-                std::stringstream s;
-                s << "Group " << n << " Created";
-                ConsoleInterface::postMessage(Color::brown, false, 0, s.str().c_str() );
+                ConsoleInterface::postMessage(Color::brown, false, 0, "Group %d created", n );
                 continue;
             }
             if(alt_status == true) {

@@ -41,8 +41,8 @@ ServerConsole::~ServerConsole()
 class CommandHelp
 {
 public:
-    char* name;
-    char* help;
+    const char* name;
+    const char* help;
 };
 
 static CommandHelp commands[] = {

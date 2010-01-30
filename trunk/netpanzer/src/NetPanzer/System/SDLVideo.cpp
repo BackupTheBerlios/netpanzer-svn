@@ -27,6 +27,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Util/FileSystem.hpp"
 #include "SDLVideo.hpp"
 #include <stdlib.h>
+
+#include "Interfaces/ConsoleInterface.hpp"
+#include "2D/Color.hpp"
+
 #ifdef _WIN32
   #include "Interfaces/GameConfig.hpp"
 #endif
@@ -208,5 +212,6 @@ void SDLVideo::doScreenshoot()
 
     std::string bmpfile = filesystem::getRealWriteName(buf);
     SDL_SaveBMP(backBuffer, bmpfile.c_str());
+    ConsoleInterface::postMessage(Color::cyan, false, 0, "Screenshoot saved as: %s", buf);
 }
 

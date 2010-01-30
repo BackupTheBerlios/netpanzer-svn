@@ -133,7 +133,7 @@ void HostOptionsView::updateGameConfigGameType()
 
 }
 
-static char * getGameTypeString()
+static const char * getGameTypeString()
 {
     switch ( gameconfig->gametype ) {
     case _gametype_objective: {

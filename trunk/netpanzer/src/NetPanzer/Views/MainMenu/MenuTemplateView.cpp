@@ -237,7 +237,7 @@ void MenuTemplateView::doDraw(Surface &viewArea, Surface &clientArea)
 void MenuTemplateView::doActivate()
 {
     // Make the activating view active, redo this please!
-    sprintf(currentView, searchName);
+    sprintf(currentView, "%s", searchName);
     Desktop::setActiveView(searchName);
 
     loadBackgroundSurface();

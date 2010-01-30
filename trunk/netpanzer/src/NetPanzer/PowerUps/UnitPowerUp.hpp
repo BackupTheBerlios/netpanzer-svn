@@ -36,8 +36,6 @@ protected:
     void powerUpReload( UnitState *unit_state);
     void powerUpDestruct( UnitID unit_id );
 
-    char * powerupTypeToString( int type );
-
 public:
 
     UnitPowerUp(iXY map_loc, int type);

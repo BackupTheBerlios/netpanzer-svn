@@ -16,7 +16,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "Resources/ResourceManager.hpp"
 
 #include <vector>
@@ -34,6 +33,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Views/Components/Label.hpp"
 
+#define HEADER_HEIGHT 24
+#define ENTRY_HEIGHT 20
+
+#define TABLE_BORDER 2
+#define TABLE_BORDER_START (HEADER_HEIGHT+TABLE_BORDER)
+#define TABLE_START (HEADER_HEIGHT + TABLE_BORDER)
+
+#define ALLY_START 4
+#define FLAG_START 26
+// characters * character width
+#define NAME_START (6*8)
+
+#define TABLE_HEADER_PIX_LEN (52*8)
+
+#define WINDOW_WIDTH (TABLE_HEADER_PIX_LEN + ((DEFAULT_BORDER_SIZE+TABLE_BORDER) * 2 ) + 14+2)
+
+static const char * table_header =
+        "      Name                 Frags Deaths Points Objs.";
+
+static const char * stats_format = "%-20s%6i%7i%7i%6i";
+
 // RankView
 //---------------------------------------------------------------------------
 RankView::RankView() : GameTemplateView()
@@ -44,33 +64,8 @@ RankView::RankView() : GameTemplateView()
 
     setAllowResize(false);
     moveTo(gameconfig->rankposition);
-    resize(iXY(450+20, 200));
+    resize(iXY(WINDOW_WIDTH, 200));
     checkArea(iXY(screen->getWidth(),screen->getHeight()));
-
-    const unsigned MAX_ALLY_CHARS      =  6;
-//    const unsigned MAX_FLAG_CHARS      =  5;
-    const unsigned MAX_NAME_CHARS      = 20;
-    const unsigned MAX_KILLS_CHARS     =  6;
-    const unsigned MAX_LOSSES_CHARS    =  7;
-    const unsigned MAX_POINTS_CHARS    =  7;
-
-    // hardcoded for now
-    int CHAR_XPIX = 8;
-
-    unsigned xOffset = 8;
-    unsigned yOffset = 16;
-    add( new Label( xOffset, yOffset, "* Flag", Color::red, Color::gray64, true) );
-    xOffset += (MAX_ALLY_CHARS*CHAR_XPIX) + 8 ;
-    add( new Label( xOffset, yOffset, "Name", Color::red, Color::gray64, true) );
-    xOffset += MAX_NAME_CHARS*CHAR_XPIX;
-    add( new Label( xOffset, yOffset, "Kills", Color::red, Color::gray64, true) );
-    xOffset += MAX_KILLS_CHARS*CHAR_XPIX;
-    add( new Label( xOffset, yOffset, "Losses", Color::red, Color::gray64, true) );
-    xOffset += MAX_LOSSES_CHARS*CHAR_XPIX;
-    add( new Label( xOffset, yOffset, "Points", Color::red, Color::gray64, true) );
-    xOffset += MAX_POINTS_CHARS*CHAR_XPIX;
-    add( new Label( xOffset, yOffset, "Objective", Color::red, Color::gray64, true) );
-    xOffset += MAX_POINTS_CHARS*CHAR_XPIX;
 
     // Define the scrollBar fot this view.
     scrollBar = new ScrollBar(ScrollBar::VERTICAL, 0, 1, 0, 100);
@@ -82,6 +77,7 @@ RankView::RankView() : GameTemplateView()
     allyRequestImage.loadBMP("pics/default/allyRequest.bmp");
     allyOtherImage.loadBMP("pics/default/allyOther.bmp");
     noAllyImage.loadBMP("pics/default/noAlly.bmp");
+    colorImage.loadBMP("pics/default/playerColor.bmp");
 
     selected_line = -1;
 
@@ -91,22 +87,26 @@ RankView::RankView() : GameTemplateView()
 //---------------------------------------------------------------------------
 void RankView::doDraw(Surface &viewArea, Surface &clientArea)
 {
-    // make sure the window is big enough for all players
     unsigned int flagHeight = ResourceManager::getFlag(0)->getHeight();
-    unsigned int entryheight = 20; //std::max(CHAR_YPIX, flagHeight) + 2;
-    unsigned int newheight = 60 + entryheight * PlayerInterface::countPlayers();
-    
-    if ( newheight != (unsigned int)getSizeY() ) {
-        resize(iXY(450+20, newheight));
+    unsigned int newheight = HEADER_HEIGHT
+                             + (TABLE_BORDER * 2)
+                             + (ENTRY_HEIGHT * PlayerInterface::countPlayers())
+                             + DEFAULT_MOVE_AREA_HEIGHT
+                             + (DEFAULT_BORDER_SIZE * 2);
+
+    if ( newheight != (unsigned int)getSizeY() )
+    {
+        resize(WINDOW_WIDTH, newheight);
         return; // this frame draws nothing
     }
     
     bltViewBackground(viewArea);
 
     clientArea.drawButtonBorder(
-            iRect(0, 26, getClientRect().getSize().x - 1,
-                getClientRect().getSize().y - 1), Color::gray64, Color::white);
+            iRect(0, TABLE_BORDER_START, clientArea.getWidth()-1, clientArea.getHeight()-1),
+            Color::gray64, Color::white);
 
+    clientArea.bltStringShadowed(0, 16, table_header, Color::red, Color::gray64);
     drawPlayerStats(clientArea, flagHeight);
 
     View::doDraw(viewArea, clientArea);
@@ -161,9 +161,8 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
             break;
     }
 
-    unsigned int entryHeight = 20;
-    iXY offset(64, 40 + ((entryHeight - Surface::getFontHeight())/2));
-    iXY flagOffset(30, 40 + (int(entryHeight - flagHeight))/2);
+    int cur_line_pos = TABLE_START + ((ENTRY_HEIGHT - Surface::getFontHeight())/2);
+    int flag_pos = TABLE_START + (int(ENTRY_HEIGHT - flagHeight))/2;
     Surface * flag = 0;
     int cur_state = 0;
     for(std::vector<const PlayerState*>::iterator i = states.begin();
@@ -171,38 +170,41 @@ void RankView::drawPlayerStats(Surface &dest, unsigned int flagHeight)
         const PlayerState* state = *i;
 
         snprintf(statBuf, sizeof(statBuf),
-                "%-20s%5i%7i%7i%10i", state->getName().substr(0,20).c_str(),
+                stats_format, state->getName().substr(0,20).c_str(),
                 state->getKills(), state->getLosses(), state->getTotal(),
                 state->getObjectivesHeld());
-        dest.bltStringShadowed(offset.x, offset.y, statBuf,
+        dest.bltStringShadowed(NAME_START, cur_line_pos, statBuf,
                                (cur_state == selected_line)?Color::yellow:Color::gray224,
                                Color::gray64);
         
         flag = ResourceManager::getFlag(state->getFlag());
-        flag->blt( dest, flagOffset.x, flagOffset.y );
+        flag->blt( dest, FLAG_START, flag_pos );
         if ( state->getID() != PlayerInterface::getLocalPlayerIndex() )
         {
             bool meWithHim = PlayerInterface::isSingleAllied(PlayerInterface::getLocalPlayerIndex(), state->getID());
             bool himWithMe = PlayerInterface::isSingleAllied(state->getID(), PlayerInterface::getLocalPlayerIndex());
             if ( meWithHim && himWithMe )
             {
-                allyImage.bltTrans(dest, 4, flagOffset.y );
+                allyImage.bltTrans(dest, ALLY_START, flag_pos );
             }
             else if ( meWithHim )
             {
-                allyRequestImage.bltTrans(dest, 4, flagOffset.y );
+                allyRequestImage.bltTrans(dest, ALLY_START, flag_pos );
             }
             else if ( himWithMe )
             {
-                allyOtherImage.bltTrans(dest, 4, flagOffset.y );
+                allyOtherImage.bltTrans(dest, ALLY_START, flag_pos );
             }
             else
             {
-                noAllyImage.bltTrans(dest, 4, flagOffset.y );
+                noAllyImage.bltTrans(dest, ALLY_START, flag_pos );
             }
         }
-        offset.y += entryHeight;
-        flagOffset.y += entryHeight;
+
+        colorImage.bltTransColor(dest, TABLE_HEADER_PIX_LEN+2, flag_pos, state->getColor());
+
+        cur_line_pos += ENTRY_HEIGHT;
+        flag_pos += ENTRY_HEIGHT;
         ++cur_state;
     }
 
@@ -216,11 +218,10 @@ void RankView::notifyMoveTo()
 void RankView::lMouseDown(const iXY& pos)
 {
     GameTemplateView::lMouseDown(pos);
-    if ( pos.x >= 4 && pos.x <= 24 && pos.y >= 40 )
+    if ( pos.x >= 4 && pos.x <= 24 && pos.y >= TABLE_START )
     {
-        unsigned int ypos = pos.y - 40;
-        unsigned int entryHeight = 20;
-        unsigned int linepos = ypos / entryHeight;
+        unsigned int ypos = pos.y - TABLE_START;
+        unsigned int linepos = ypos / ENTRY_HEIGHT;
         if ( linepos < states.size() )
         {
             unsigned int destplayer = states[linepos]->getID();
@@ -248,10 +249,9 @@ void RankView::mouseMove(const iXY & prevPos, const iXY &newPos)
 {
     GameTemplateView::mouseMove(prevPos, newPos);
     selected_line = -1;
-    unsigned int entryHeight = 20;
-    if ( newPos.y >= 40 )
+    if ( newPos.y >= TABLE_START )
     {
-        selected_line = (newPos.y-40) / entryHeight;
+        selected_line = (newPos.y-TABLE_START) / ENTRY_HEIGHT;
     }
 }
 

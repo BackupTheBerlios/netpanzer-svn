@@ -118,6 +118,34 @@ void UnitPowerUp::powerUpDestruct( UnitID unit_id )
     UnitInterface::sendMessage( &self_destruct );
 }
 
+static const char * powerupTypeToString( int type )
+{
+    switch( type )
+    {
+        case _unit_powerup_hitpoints:
+            return( "UNIT HITPOINTS" );
+
+        case _unit_powerup_range:
+            return( "UNIT WEAPON RANGE" );
+
+        case _unit_powerup_firepower:
+            return( "UNIT FIREPOWER" );
+
+        case _unit_powerup_speed:
+            return( "UNIT SPEED" );
+
+        case _unit_powerup_repair:
+            return( "UNIT REPAIR" );
+
+        case _unit_powerup_reload:
+            return( "UNIT RELOAD TIME" );
+
+        case _unit_powerup_destruct:
+            return( "UNIT DESTRUCT" );
+    }
+
+    return("");
+}
 
 void UnitPowerUp::onHit( UnitID unit_id )
 {
@@ -165,35 +193,6 @@ void UnitPowerUp::onHit( UnitID unit_id )
     if(unit->player == PlayerInterface::getLocalPlayer()) {
         ConsoleInterface::postMessage(Color::unitAqua, false, 0, "YOU GOT A %s POWERUP", powerupTypeToString( unit_powerup_type ) );
     }
-}
-
-char * UnitPowerUp::powerupTypeToString( int type )
-{
-    switch( type )
-    {
-        case _unit_powerup_hitpoints:
-            return( "UNIT HITPOINTS" );
-
-        case _unit_powerup_range:
-            return( "UNIT WEAPON RANGE" );
-
-        case _unit_powerup_firepower:
-            return( "UNIT FIREPOWER" );
-
-        case _unit_powerup_speed:
-            return( "UNIT SPEED" );
-
-        case _unit_powerup_repair:
-            return( "UNIT REPAIR" );
-
-        case _unit_powerup_reload:
-            return( "UNIT RELOAD TIME" );
-
-        case _unit_powerup_destruct:
-            return( "UNIT DESTRUCT" );
-    }
-
-    return("");
 }
 
 void UnitPowerUp::onHitMessage( PowerUpHitMesg *message  )

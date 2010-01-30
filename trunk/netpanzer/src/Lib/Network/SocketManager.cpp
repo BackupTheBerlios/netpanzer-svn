@@ -85,8 +85,8 @@ SocketManager::handleEvents()
             removeInvalidSockets();
         } else if ( !IS_INTERRUPTED(error) ) { // beware: is NOT interrupted
             std::stringstream msg;
-            msg << "SocketManager: BAD BAD ERROR " << NETSTRERROR(error);
-            LOGGER.debug(msg.str().c_str());
+            msg << NETSTRERROR(error);
+            LOGGER.debug("SocketManager: BAD BAD ERROR %s", msg.str().c_str());
         }
     }
 }
@@ -113,8 +113,8 @@ SocketManager::removeInvalidSockets()
                 removeSocket(*i);
             } else {
                 std::stringstream msg;
-                msg << "SocketManager: Error while finding invalid sockets " << NETSTRERROR(error);
-                LOGGER.debug(msg.str().c_str());
+                msg << NETSTRERROR(error);
+                LOGGER.debug("SocketManager: Error while finding invalid sockets %s", msg.str().c_str());
             }
         }
     }

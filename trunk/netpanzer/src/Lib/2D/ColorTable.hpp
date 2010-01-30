@@ -28,7 +28,7 @@ class ColorTable
     friend class Palette;
 
 protected:
-    static char *extension;
+    static const char *extension;
 
     int   colorCount;
     Uint8 *colorArray;

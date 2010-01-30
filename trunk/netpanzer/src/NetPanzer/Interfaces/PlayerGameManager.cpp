@@ -338,8 +338,7 @@ void PlayerGameManager::hostMultiPlayerGame()
     try {
         GameManager::startGameMapLoad(mapname, 20);
     } catch(std::exception& e) {
-        LOGGER.warning("Error while loading map '%s':", mapname);
-        LOGGER.warning(e.what());
+        LOGGER.warning("Error while loading map '%s': %s", mapname, e.what());
         LoadingView::loadError();
         return;
     }
