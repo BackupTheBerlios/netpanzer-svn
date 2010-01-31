@@ -213,19 +213,20 @@ crosslinuxenv.Append( CPPPATH = [ '.', 'src/Lib', 'src/NetPanzer', 'src/lib/phys
 if thisplatform == 'darwin':
     env.Append( CPPPATH = ['/Library/Frameworks/SDL.framework/Headers',
                            '/Library/Frameworks/SDL_mixer.framework/Headers' ] )
-    env.Append( CCFLAGS = [ '-arch', 'i386' ] )
-    luaenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
-    physfsenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
-    networkenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
-    env.Append( LINKFLAGS = [ '-arch', 'i386' ] )
  
     if env['universal'] != 'false':
-		env.Append( CCFLAGS = [ '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386' ] )
-		luaenv.Append( CCFLAGS = [ '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386' ] )
-		physfsenv.Append( CCFLAGS = [ '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386' ] )
-		networkenv.Append( CCFLAGS = [ '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386' ] )
-		env.Append( LINKFLAGS = [ '-mmacosx-version-min=10.4', '-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386' ] )
-		
+		env.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
+		luaenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
+		physfsenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
+		networkenv.Append( CCFLAGS = [ '-arch', 'ppc', '-arch', 'i386' ] )
+		env.Append( LINKFLAGS = [ '-mmacosx-version-min=10.4', '-arch', 'ppc', '-arch', 'i386' ] )
+    else:
+        env.Append( CCFLAGS = [ '-arch', 'i386' ] )
+        luaenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
+        physfsenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
+        networkenv.Append( CCFLAGS = [ '-arch', 'i386' ] )
+        env.Append( LINKFLAGS = [ '-arch', 'i386' ] )
+	
     env.AppendUnique(FRAMEWORKS=Split('SDL SDL_mixer Cocoa IOKit'))
     env.Append( NPSOURCES =  ['support/macosx/SDLMain.m'] )
 elif thisplatform == 'win32':
